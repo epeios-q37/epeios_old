@@ -9,6 +9,11 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
+&cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
+&cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
+&cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
+&cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
+&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
 &dbiapi		&ldbi		&		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&		&DataBase Interface Adavanced Programmer Interface (for backend)
 &dbibsc		&ldbi		&		&DataBase Interface BaSiCs
@@ -26,13 +31,11 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
 &dbitfl_	&ldbi		&		&Database Interface Table FieLds (for backend)
 &err		&epeios		&2000-		&ERRor handling
-&cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
-&cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
-&cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
-&cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
-&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
 &flw		&epeios		&2000-		&FLoW
-&gsbbsc		&lgsb		&2000-		&GeSBib BaSiC
+&gsbbsc		&lgsb		&		&GeSBib BaSiC
+&gsbmlt		&lgsb		&		&GeSBib MuLTi
+&gsbrlt		&lgsb		&		&GeSBib ReLaTionnal
+&gsbwrd		&lgsb		&		&GeSBib WoRDs
 &ids		&epeios		&		&ID Store
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
@@ -51,8 +54,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &tol		&epeios		&2000-		&TOoL
 &tym		&epeios		&2000-		&TYped Memory
 &uym		&epeios		&2000-		&UnTyped Memory
-&xmlbsc		&exml		&2000-		&XML BaSiC
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
+&xmlbsc		&exml		&2000-		&XML BaSiC
 &xmlcor		&exml		&2000-		&XML CORe
 &xmldbs		&exml		&2000-		&XML DataBaSe
 &xmldcm		&exml		&2000-		&XML DoCuMent
