@@ -262,7 +262,7 @@ namespace flx {
 		void reset( bool P = true )
 		{
 			iflow__::reset( P );
-			Set_ = NULL;
+			Bunch_ = NULL;
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.

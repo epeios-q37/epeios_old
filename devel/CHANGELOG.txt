@@ -60,6 +60,7 @@ FLW:
 
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
+- (01/08/04) Correcting little error.
 
 HTP:
 - (18/07/04) little improvements.
