@@ -16,9 +16,9 @@ $NOTICE$
 #include "err.h"
 #include "stf.h"
 
-use stf::cin;
-use stf::cout;
-use stf::cerr;
+using stf::cin;
+using stf::cout;
+using stf::cerr;
 
 void Generic( int argc, char *argv[] )
 {

@@ -219,6 +219,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
 &gsbrmd		&lgsb		&\
 	&GeSBib Record Multi Data
+&gsbrmd_	&lgsb		&\
+	&GeSBib Record Multi Data (for backend)
 &gsbsrb		&lgsb		&\
 	&GeSBib Search Request Builder
 &gsbsrq		&lgsb		&\
