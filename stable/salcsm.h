@@ -151,9 +151,9 @@ namespace salcsm {
 	{
 	private:
 		// Position de la prochaine lecture.
-		bch::row__ Lecture_;
+		bch::row_t__ Lecture_;
 		// Position de la prochaine écriture.
-		bch::row__ Ecriture_;
+		bch::row_t__ Ecriture_;
 	public:
 		tampon( void )
 		{

@@ -108,7 +108,7 @@
  
  <xsl:template name="lib-index-target">
   <xsl:param name="item"/>
-    <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
+  <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
   <xsl:value-of select="$item/parent::*/Name"/>
   <xsl:text disable-output-escaping="yes">.</xsl:text>
   <xsl:value-of select="name($item)"/>
@@ -415,19 +415,22 @@
  </xsl:template>
 
  <xsl:template name="index">
-  <xsl:param name="discriminator"/>
-  <xsl:text disable-output-escaping="yes">&lt;A HREF="#</xsl:text>
-  <xsl:value-of select="$discriminator"/>
-  <xsl:text disable-output-escaping="yes">.</xsl:text>
-  <xsl:value-of select="Name"/>
-  <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-  <xsl:value-of select="Name"/>
-  <xsl:text disable-output-escaping="yes">&lt;/A&gt; </xsl:text>
+  <xsl:if test="preceding-sibling::*/Name=Name">coucou</xsl:if>
+   <xsl:param name="discriminator"/>
+   <xsl:text disable-output-escaping="yes">&lt;A HREF="#</xsl:text>
+   <xsl:value-of select="$discriminator"/>
+   <xsl:text disable-output-escaping="yes">.</xsl:text>
+   <xsl:value-of select="Name"/>
+   <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+   <xsl:value-of select="Name"/>
+   <xsl:text disable-output-escaping="yes">&lt;/A&gt; </xsl:text>
+  </xsl:if>
  </xsl:template>
  
  
  <xsl:template name="index-target">
   <xsl:param name="discriminator"/>
+  toto<xsl:if test="preceding-sibling::*/Name=Name">coucou</xsl:if>
     <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
   <xsl:value-of select="$discriminator"/>
   <xsl:text disable-output-escaping="yes">.</xsl:text>

@@ -97,7 +97,7 @@ status fil::file_oflow___::Init(
 
 	ostream_oflow___::Init();
 
-	Stream_.open( FileName, ios::binary | ios::out | ( ( Mode == fil::mAppend ) ? ios::ate : 0 ) );
+	Stream_.open( FileName, ios::binary | ios::out | ( ( Mode == fil::mAppend ) ? ios::app : 0 ) );
 
 	if ( Stream_.fail() )
 	{
