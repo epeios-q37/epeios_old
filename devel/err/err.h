@@ -88,8 +88,8 @@ namespace err {
 		// system error
 		usr = 8,
 		// user error
-		brk = 16,
-		// broker error
+		bkd = 16,
+		// backend error
 		thw = 32,
 		// throw error; launch the error behavior (user press the ctrl-break key, for example).
 		ccp = 64,
@@ -127,9 +127,10 @@ namespace err {
 		// user error
 	enum b
 	{
-		bGeneric
+		bGeneric,
+		bInexistentData	// The asked data does not exist.
 	};
-		// broker error
+		// backend error
 	enum t
 	{
 		tGeneric
@@ -220,8 +221,8 @@ namespace err {
 //m Throw an user error.
 #define ERRu()			ERRU( uGeneric )
 
-#define ERRB( m )		ERRCommon( err::brk, m )
-//m Throw an interface error.
+#define ERRB( m )		ERRCommon( err::bkd, m )
+//m Throw a backend error.
 #define ERRb()			ERRB( bGeneric )
 
 #define ERRT( m )		ERRCommon( err::thw, m )

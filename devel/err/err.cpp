@@ -137,8 +137,8 @@ const char *err::Message(
 	case err::usr:
 		strcat( Message, "USR" );
 		break;
-	case err::brk:
-		strcat( Message, "BRK" );
+	case err::bkd:
+		strcat( Message, "BKD" );
 		break;
 	case err::thw:
 		strcat( Message, "THW" );

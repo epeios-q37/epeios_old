@@ -49,6 +49,8 @@ EPSMSC:
 
 ERR:
 - Adding external error (ERRX, ext).
+- Changing 'brk' to 'bkd'.
+- Adding 'bInexistentData' for 'bkd' error.
 
 FLM:
 - Using now the UNIX system calls under UNIX instead of the C/C++ call (which seems bugged).
