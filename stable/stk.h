@@ -153,6 +153,7 @@ namespace stk {
 #endif
 			return E_MEMORY_( t )::Read( Last() );
 		}
+		NAVt( amount_extent_manager_<r>::, r ) 
 	};
 
 	AUTO2( stack )
