@@ -55,6 +55,7 @@ FLW:
 - Fixing bug which fills the cache even if there is asked for more then the cache can contain.
 - Adding length feature.
 - 'data__' type renamed in 'datum__'.
+- Adding 'Skip()' method.
 
 FLX:
 - Adapting to vhanges in 'FLW'.

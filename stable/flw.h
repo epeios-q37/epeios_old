@@ -313,6 +313,12 @@ namespace flw {
 
 			return C;
 		}
+		//f Skip 'Amount' bytes.
+		void Skip( amount__ Amount )
+		{
+			while ( Amount-- )
+				Get();
+		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. */
 		void EOFD( const char *Data )
