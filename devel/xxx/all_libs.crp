@@ -14,6 +14,7 @@ NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &mscvkx	&emsc	&		&MuSiC VK (from Roland VK combo organ) XML
 &pip	&epeios	&2000-		&PIPe
 &spp	&epeios	&2000-		&Shared PiPe
+&str	&epeios	&2000-		&STRing
 &xmlbsc	&exml	&2000-		&XML BaSiC
 &xmlcor	&exml	&2000-		&XML CORe
 &xmldbs	&exml	&2000-		&XML DataBaSe

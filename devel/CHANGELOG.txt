@@ -122,6 +122,7 @@ STK:
 STR:
 - Adding missing 'const' qualifier.
 - Adding 'ToLF()' method.
+- Adding 'Init()' with str::string_ argument.
 
 TOL:
 - Fixing bug in the 'NAVt()' macro.
