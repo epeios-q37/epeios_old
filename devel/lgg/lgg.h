@@ -67,8 +67,8 @@ extern class ttr_tutor &LGGTutor;
 namespace lgg {
 	//e Languages.
 	enum language__ {
-		//i Not really a language : for testing purpose only.
-		lTest,
+		//i Not really a language : for testing purpose or internal gestion.
+		lRaw,
 		//i English.
 		lEnglish,
 		//i French.

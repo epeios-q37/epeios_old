@@ -91,15 +91,15 @@ namespace msg {
 	class i18_messages_
 	{
 	protected:
-		virtual const char *MSGGetBaseMessage( int MessageId) const = 0;
+		virtual const char *MSGGetRawMessage( int MessageId) const = 0;
 	private:
-		const char *_GetBaseMessage( int MessageId ) const
+		const char *_GetRawMessage( int MessageId ) const
 		{
-			return MSGGetBaseMessage( MessageId );
+			return MSGGetRawMessage( MessageId );
 		}
 		xtf::location__ LoadMessages_(
 			xtf::extended_text_iflow__ &Flow,
-			const messages_ &Base );
+			const messages_ &RawMessages );
 		const messages_ &_GetMessages( lgg::language__ Language ) const;
 		const char *_GetMessage(
 			int MessageId,
@@ -108,12 +108,14 @@ namespace msg {
 	public:
 		struct s {
 			messages_::s French, English, German;
-		};
+			bso::ubyte__ Amount;
+		} &S_;
 		messages_ French;
 		messages_ English;
 		messages_ German;
 		i18_messages_( s &S )
-		: French( S.French ),
+		: S_( S ),
+		  French( S.French ),
 		  English( S.English ),
 		  German( S.German )
 		{}
@@ -122,6 +124,7 @@ namespace msg {
 			French.reset( P );
 			English.reset( P );
 			German.reset( P );
+			S_.Amount = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -131,6 +134,8 @@ namespace msg {
 		}
 		i18_messages_ &operator =( const i18_messages_ &IM )
 		{
+			S_.Amount = IM.S_.Amount;
+
 			French = IM.French;
 			English = IM.English;
 			German = IM.German;
@@ -138,22 +143,21 @@ namespace msg {
 			return *this;
 		}
 		//f Initialization.
-		void Init( void )
+		void Init( bso::ubyte__ Amount )
 		{
+			S_.Amount = Amount;
+
 			French.Init();
 			English.Init();
 			German.Init();
 		}
-		xtf::location__ LoadMessages(
-			xtf::extended_text_iflow__ &Flow,
-			int Amount );
+		xtf::location__ LoadMessages( xtf::extended_text_iflow__ &Flow );
 		const char *GetMessage(
 			int MessageId,
 			lgg::language__ Language,
 			buffer__ &Buffer ) const;
-		void DumpBaseMessages(
-			txf::text_oflow__ &Flow,
-			int Amount ) const;
+		void DumpRawMessages( txf::text_oflow__ &Flow ) const;
+		void DumpRawMessages( messages_ &Messages ) const;
 	};
 
 	E_AUTO( i18_messages )

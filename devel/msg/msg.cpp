@@ -36,7 +36,7 @@ using namespace msg;
 enum state__ {
 	sUnknow,
 	sEnd,
-	sBase,
+	sRaw,
 	sTranslation
 };
 
@@ -59,7 +59,7 @@ static state__ GetFirstNonEmptyLine_(
 				if ( Line( 0 ) == '\t' )
 					State = sTranslation;
 				else
-					State = sBase;
+					State = sRaw;
 			}
 		}
 	}
@@ -69,7 +69,7 @@ static state__ GetFirstNonEmptyLine_(
 
 xtf::location__ msg::i18_messages_::LoadMessages_(
 	xtf::extended_text_iflow__ &Flow,
-	const messages_ &Base )
+	const messages_ &RawMessages )
 {
 	xtf::location__ Location = 0;
 ERRProlog
@@ -77,10 +77,10 @@ ERRProlog
 	state__ State = sUnknow;
 	int Language = 1;
 	epeios::row__ Row;
-	ctn::E_CMITEM( message_ ) BaseMessage;
+	ctn::E_CMITEM( message_ ) RawMessage;
 ERRBegin
-	Row = Base.First();
-	BaseMessage.Init( Base );
+	Row = RawMessages.First();
+	RawMessage.Init( RawMessages );
 
 	Line.Init();
 
@@ -90,8 +90,8 @@ ERRBegin
 		switch ( State = GetFirstNonEmptyLine_( Flow, Line ) ) {
 		case sEnd:
 			break;
-		case sBase:
-			if ( ( Row == NONE ) || ( BaseMessage( Row ) != Line ) ) {
+		case sRaw:
+			if ( ( Row == NONE ) || ( RawMessage( Row ) != Line ) ) {
 				State = sEnd;
 				Location = Flow.Line();
 			} else {
@@ -99,7 +99,7 @@ ERRBegin
 				French.New();
 				German.New();
 				Language = 1;
-				Row = Base.Next( Row );
+				Row = RawMessages.Next( Row );
 			}
 			break;
 		case sTranslation:
@@ -135,20 +135,18 @@ ERREpilog
 	return Location;
 }
 
-xtf::location__ msg::i18_messages_::LoadMessages(
-	xtf::extended_text_iflow__ &Flow,
-	int Amount )
+xtf::location__ msg::i18_messages_::LoadMessages( xtf::extended_text_iflow__ &Flow )
 {
 	xtf::location__ Location = 0;
 ERRProlog
-	messages Base;
+	messages RawMessages;
 ERRBegin
-	Base.Init();
+	RawMessages.Init();
 
-	for ( int i = 0; i < Amount ; i++ )
-		Base.Append( str::string( _GetBaseMessage( i ) ) );
+	for ( int i = 0; i < S_.Amount ; i++ )
+		RawMessages.Append( str::string( _GetRawMessage( i ) ) );
 
-	Location = LoadMessages_( Flow, Base );
+	Location = LoadMessages_( Flow, RawMessages );
 ERRErr
 ERREnd
 ERREpilog
@@ -206,27 +204,31 @@ const char *msg::i18_messages_::GetMessage(
 {
 	const char *Message = NULL;
 
-	if ( Language == lgg::lTest )
-		Message = _GetBaseMessage( MessageId );
+	if ( Language == lgg::lRaw )
+		Message = _GetRawMessage( MessageId );
 	else {
 		Message = _GetMessage( MessageId, Language, Buffer );
 
 		if ( Message[0] == 0 )
-			Message = _GetMessage( MessageId, lgg::lTest, Buffer );
+			Message = _GetMessage( MessageId, lgg::lRaw, Buffer );
 
 		if ( Message[0] == 0 )
-			Message = _GetBaseMessage( MessageId );
+			Message = _GetRawMessage( MessageId );
 	}
 
 	return Message;
 }
 
-void msg::i18_messages_::DumpBaseMessages(
-	txf::text_oflow__ &Flow,
-	int Amount ) const
+void msg::i18_messages_::DumpRawMessages( txf::text_oflow__ &Flow ) const
 {
-	for ( int i = 0; i < Amount ; i++ )
-		Flow << _GetBaseMessage( i ) << txf::nl;
+	for ( int i = 0; i < S_.Amount ; i++ )
+		Flow << _GetRawMessage( i ) << txf::nl;
+}
+
+void msg::i18_messages_::DumpRawMessages( messages_ &Messages ) const
+{
+	for ( int i = 0; i < S_.Amount ; i++ )
+		Messages.Append( message( _GetRawMessage( i ) ) );
 }
 
 

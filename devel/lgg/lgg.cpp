@@ -58,7 +58,7 @@ public:
 using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
-	"test",
+	"raw",
 	"English",
 	"Français",
 	"Deutsch",
