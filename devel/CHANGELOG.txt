@@ -1,5 +1,8 @@
 $Id$
 
+CTN:
+- Adding a 'FlushTest()' to '=' operator in debug mode.
+
 EPSMSC:
 - Adding 'EPSMSC_COPYRIGHT()' macro.
 

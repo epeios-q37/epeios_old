@@ -1,6 +1,6 @@
 /*
 	Header for the 'ctn' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -117,6 +117,10 @@ namespace ctn {
 		}
 		basic_container_ &operator =( const basic_container_ &O )
 		{
+#ifdef CTN_DBG
+			FlushTest();
+			O.FlushTest();
+#endif
 			Dynamics.Copy( O.Dynamics, O.Amount() );
 			Statics.Allocate( O.Amount() );
 			Statics.Store( O.Statics, O.Amount() ); 

@@ -117,6 +117,10 @@ namespace ctn {
 		}
 		basic_container_ &operator =( const basic_container_ &O )
 		{
+#ifdef CTN_DBG
+			FlushTest();
+			O.FlushTest();
+#endif
 			Dynamics.Copy( O.Dynamics, O.Amount() );
 			Statics.Allocate( O.Amount() );
 			Statics.Store( O.Statics, O.Amount() ); 
