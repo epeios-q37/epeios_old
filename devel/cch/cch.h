@@ -88,6 +88,8 @@ namespace cch {
 	//t Position in the buffer.
 	typedef bso::bsize__ position__;
 
+#define CCH_POSITION_MAX	BSO_BSIZE_MAX
+
 	//t Amount of data in a buffer.
 	typedef bso::bsize__ amount__;
 
@@ -135,17 +137,6 @@ namespace cch {
 				ERRc();
 #endif
 			memcpy( Buffer, *Position - Position_ + Buffer_, Amount * sizeof( type__ ) );
-		}
-		void WriteIntoBuffer_(
-			const type__ *Buffer,
-			epeios::size__ Amount,
-			r Position )
-		{
-#ifdef CCH_DBG
-			if ( !IsInsideBuffer_( Position, Amount ) )
-				ERRc();
-#endif
-			memcpy( *Position - Position_ + Buffer_, Buffer, Amount * sizeof( type__ ) );
 		}
 		epeios::size__ BunchAmount_( void )
 		{
@@ -257,6 +248,10 @@ namespace cch {
 	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
 	: public const_bunch_cache___< type__, r, bunch_caller__>
 	{
+	private:
+		position__ 
+			First_,	// Position of the first datum written.
+			Last_;	// Position of the last datum written.
 	protected:
 		void Allocate_( epeios::size__ Size )
 		{
@@ -267,11 +262,19 @@ namespace cch {
 			epeios::size__ Amount,
 			r Position )
 		{
+			position__ First = *Position - Position_;
+			position__ Last = First + Amount - 1;
 #ifdef CCH_DBG
 			if ( !IsInsideBuffer_( Position, Amount ) )
 				ERRc();
 #endif
-			memcpy( *Position - Position_ + Buffer_, Buffer, Amount * sizeof( type__ ) );
+			if ( First < First_ )
+				First_ = First;
+
+			if ( Last > Last_ )
+				Last_ = Last;
+
+			memcpy( Buffer_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
@@ -282,24 +285,28 @@ namespace cch {
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
-			if ( Amount_ ) {
-
-				if ( Adjust )
-					Allocate_( Position_ + Amount_ );
+			if ( Amount_ )
+				if ( Last_ > First_ ) {
+					if ( Adjust )
+						Allocate_( Position_ + Amount_ );
 #ifdef CCH_DBG
-				if ( ( Position_ + Amount_ ) > BunchAmount_() )
-					ERRc();
+					if ( ( Position_ + Amount_ ) > BunchAmount_() )
+						ERRc();
 #endif
-				WriteDirectlyIntoBunch_( Buffer_, Amount_, Position_ );
-			}
+					WriteDirectlyIntoBunch_( Buffer_ + First_, Last_ - First_ + 1, Position_ );
+				}
 
 			Amount_ = 0;
 			Position_ = NONE;
+			Last_ = 0;
+			First_ = CCH_POSITION_MAX;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			const_bunch_cache___< type__, r, bunch_caller__>::reset( P );
+			Last_ = 0;
+			First_ = CCH_POSITION_MAX;
 		}
 		volatile_bunch_cache___( void )
 		{
