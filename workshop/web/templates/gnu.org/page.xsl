@@ -18,7 +18,7 @@
       <xsl:value-of select="bookmark"/> - GNU Project - Free Software Foundation (FSF)</TITLE>
     <LINK REV="made" HREF="mailto:webmasters@www.gnu.org"/>
   </xsl:template>
-  <xsl:template match="document" mode="body">
+  <xsl:template match="document" mode="body" xml:space="preserve">
     <H3>
       <xsl:value-of select="general/title"/>
     </H3>
@@ -29,13 +29,13 @@
     <xsl:apply-templates select="Libraries"/>
     <xsl:apply-templates select="specific/WEB/redirection"/>
     <HR/>
-    <P/>Return to<A HREF="/home.html">GNU's home page</A>.<P/>Please send FSF &amp; GNU inquiries &amp; questions to<A HREF="mailto:gnu@gnu.org">
+    <P/>Return to <A HREF="/home.html">GNU's home page</A>.<P/>Please send FSF &amp; GNU inquiries &amp; questions to <A HREF="mailto:gnu@gnu.org">
       <EM>gnu@gnu.org</EM>
-    </A>. There are also<A HREF="/home.html#ContactInfo">other ways to contact</A>the FSF.<P/>Please send comments on these web pages to<A HREF="mailto:webmasters@gnu.org">
+    </A>. There are also <A HREF="/home.html#ContactInfo">other ways to contact</A> the FSF.<P/>Please send comments on these web pages to <A HREF="mailto:webmasters@gnu.org">
       <EM>webmasters@gnu.org</EM>
-    </A>, send other questions to<A HREF="mailto:gnu@gnu.org">
+    </A>, send other questions to <A HREF="mailto:gnu@gnu.org">
       <EM>gnu@gnu.org</EM>
-    </A>.<P/>Copyright (C) 2001 Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA<P/>Verbatim copying and distribution of this entire article is permitted in any medium, provided this notice is preserved.<P/>Updated:<!-- timestamp start -->$Date$ $Author$<!-- timestamp end --><HR/></xsl:template>
+    </A>.<P/>Copyright (C) 2001 Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA<P/>Verbatim copying and distribution of this entire article is permitted in any medium, provided this notice is preserved.<P/>Updated: <!-- timestamp start -->$Date$ $Author$<!-- timestamp end --><HR/></xsl:template>
   <xsl:template match="warning" mode="warning">
     <xsl:apply-templates/>
   </xsl:template>
