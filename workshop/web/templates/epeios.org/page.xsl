@@ -16,7 +16,7 @@
   </xsl:template>
   <xsl:template match="document/specific/WEB" mode="head" xml:space="preserve">
     <xsl:apply-templates select="redirection" mode="head"/>
-    <title>The Epeios project - <xsl:value-of select="bookmark"/></title>
+    <title>Epeios - <xsl:value-of select="bookmark"/></title>
     <xsl:call-template name="meta">
       <xsl:with-param name="name">robots</xsl:with-param>
       <xsl:with-param name="value">

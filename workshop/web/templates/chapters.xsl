@@ -8,6 +8,9 @@
       </a>
       <OL>
         <xsl:apply-templates select="chapter" mode="index"/>
+        <xsl:text>
+          <!-- To avoid <OL/>-->
+        </xsl:text>
       </OL>
     </LI>
   </xsl:template>
