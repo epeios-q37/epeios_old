@@ -82,6 +82,9 @@ _iflow__ cio::cinf( ::cin_ );
 txf::text_oflow__ cio::cout( cio::coutf ), cio::cerr( cerrf );
 txf::text_iflow__ cio::cin( cio::cinf );
 
+ltf::line_text_flow__<> cio::lout( cout );
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

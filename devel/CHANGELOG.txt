@@ -1,5 +1,7 @@
 $Id$
 
+- Codage bibliothèque LTF.
+
 26/03/05:
 - FLW:
 	- Amélioration visant à pouvoir utiliser un flux de sortie sans cache.

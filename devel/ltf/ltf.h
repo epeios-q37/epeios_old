@@ -119,7 +119,7 @@ namespace ltf {
 		: TFlow_( TFlow ),
 		  flw::oflow__( NULL, 0, BSO_ULONG_MAX )
 		{
-			if ( Size_ > LTF__SIZE_MAX )
+			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
 			Data_ = Data;
