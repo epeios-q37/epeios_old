@@ -212,7 +212,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbdbm		&lgsb		&\
 	&GeSBib DataBase Manager
 &gsbdbm_	&lgsb		&\
-	&GeSBib DataBase Manager (for backebnd).
+	&GeSBib DataBase Manager (for backebnd)
+&gsbdrv		&lgsb		&\
+	&GeSBib DeRiVed field
 &gsbdtb		&lgsb		&\
 	&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-\
@@ -235,6 +237,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib Search ReQuest (for backend)
 &gsbtbl		&lgsb		&\
 	&GeSBib TaBLe
+&gsbtfd		&lgsb		&\
+	&GeSBib Table Fields Definition
 &gsbtfd_	&lgsb		&\
 	&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
