@@ -266,6 +266,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib DaTaBase
 &gsbetr		&lgsb		&\
 	&GeSBib EnTRies
+&gsbetr_	&lgsb		&\
+	&GeSBib EnTRies (for backend).
 &gsbfil		&lgsb		&\
 	&GeSBib FILler
 &gsbfld		&lgsb		&2002-\
