@@ -1,7 +1,7 @@
 /*
 	Header for the 'mmi' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ namespace mmi {
 	using namespace epeios;
 
 	//t The type of an index in the indexed multimemory.
-	TYPEDEF( epeios::row_t__, index__ );
+	E_TYPEDEF( epeios::row_t__, index__ );
 
 	struct descripteur__
 	{
@@ -266,7 +266,7 @@ namespace mmi {
 		}
 	};
 
-	AUTO( indexed_multimemory )
+	E_AUTO( indexed_multimemory )
 
 	using mdr::E_MEMORY_DRIVER_;
 

@@ -1,7 +1,7 @@
 /*
 	Header for the 'lst' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -242,7 +242,7 @@ namespace lst {
 		}
 	};
 
-	AUTO2( list )
+	E_AUTO2( list )
 
 
 	#define E_LISTtx( r, r_t )	list<r, r_t>

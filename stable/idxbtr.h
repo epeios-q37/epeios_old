@@ -1,6 +1,6 @@
 /*
 	Header for the 'idxbtr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -310,7 +310,7 @@ namespace idxbtr {
 		}
 	};
 
-	AUTO1( tree_index )
+	E_AUTO1( tree_index )
 
 	#define E_IBTREEt( r )	tree_index< r >
 	#define E_IBTREEt_( r )	tree_index_< r >

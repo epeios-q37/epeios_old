@@ -1,6 +1,6 @@
 /*
 	Header for the 'bitbch' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -234,7 +234,7 @@ namespace bitbch {
 		}
 	};
 
-	AUTO1( bit_bunch )
+	E_AUTO1( bit_bunch )
 
 #if 0	// Code in .cpp as deseapered ...
 	bso::bool__ ComparerBitABit_(
@@ -380,7 +380,7 @@ namespace bitbch {
 	};
 
 
-	AUTO1( bibit_bunch )
+	E_AUTO1( bibit_bunch )
 
 #if 0
 	/* Stocke dans 'D' 'O1' & 'O2', tous étant de taille 'Taille'.

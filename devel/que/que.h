@@ -175,7 +175,29 @@ namespace que {
 			row_t__ End );
 	};
 	
-	AUTO( links )
+	E_AUTO( links )
+
+	E_TYPEDEF( epeios::row_t__, _stack_item_row__ );
+
+	// simulates :
+	// 	template<typename r> typedef stk::stack_<r, _stack_item_row__> _stack_;
+	template <typename r> class _stack_
+	: public stk::stack_<r, _stack_item_row__>
+	{
+	public:
+		struct s
+		: stk::stack_<r, _stack_item_row__>::s
+		{};
+		_stack_( s &S )
+		: stk::stack_<r, _stack_item_row__>( S )
+		{}
+	};
+
+	E_AUTO1( _stack )
+
+	#define E_QSTACK_( r ) _stack_<r>
+	#define E_QSTACK( r ) _stack<r>
+
 	
 	//c A queue. Use 'QUEUE_' rather than directly this.
 	template <typename r> class queue_
@@ -362,12 +384,12 @@ namespace que {
 			return Links.Exists( *Node );
 		}
 		void Dump(
-			stk::E_STACK_( r ) &Stack,
+			E_QSTACK_( r ) &Stack,
 			r Begin,
 			que::direction Direction ) const;
 	};
 
-	AUTO1( queue )
+	E_AUTO1( queue )
 
 	//d A queue.
 	#define E_QUEUEt_( r )		queue_< r >
@@ -378,16 +400,16 @@ namespace que {
 
 	void Dump_(
 		const E_QUEUE_ &Queue,
-		stk::E_STACK_( epeios::row__ ) &Stack,
+		E_QSTACK_( epeios::row__ ) &Stack,
 		epeios::row__ Begin,
 		direction Direction );
 
 	template <typename r> inline void queue_<r>::Dump(
-		stk::E_STACK_( r ) &Stack,
+		E_QSTACK_( r ) &Stack,
 		r Begin,
 		que::direction Direction ) const
 	{
-		Dump_( *(E_QUEUE_ *)this, Stack, Begin, Direction );
+		Dump_( *(E_QUEUE_ *)this, *(E_QSTACK_( epeios::row__)*)&Stack, Begin, Direction );
 	}
 
 
@@ -714,7 +736,7 @@ namespace que {
 		}
 	};
 
-	AUTO1( managed_queue )
+	E_AUTO1( managed_queue )
 
 	//d A managed queue.
 	#define E_MQUEUEt_( r )		managed_queue_< r >

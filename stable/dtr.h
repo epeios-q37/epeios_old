@@ -1,6 +1,6 @@
 /*
 	Header for the 'dtr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -321,7 +321,7 @@ namespace dtr {
 		}
 	};
 
-	AUTO1( dynamic_tree )
+	E_AUTO1( dynamic_tree )
 
 	#define E_DTREEt( r )	dynamic_tree< r >
 	#define E_DTREEt_( r )	dynamic_tree_< r >

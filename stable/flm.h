@@ -1,6 +1,6 @@
 /*
 	Header for the 'flm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -517,7 +517,7 @@ namespace flm {
 		}
 	};
 
-	AUTO( file_memory_driver )
+	E_AUTO( file_memory_driver )
 }
 
 /*$END$*/

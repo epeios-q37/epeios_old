@@ -1,7 +1,7 @@
 /*
 	Header for the 'ssnmng' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -255,7 +255,7 @@ namespace ssnmng {
 		}
 	};
 
-	AUTO( sessions_manager )
+	E_AUTO( sessions_manager )
 }
 
 /*$END$*/

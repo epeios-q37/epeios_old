@@ -1,7 +1,7 @@
 /*
 	Header for the 'bch' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -385,7 +385,7 @@ namespace bch {
 		{};
 	};
 
-	AUTO2( bunch )
+	E_AUTO2( bunch )
 
 	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
 	#define E_BUNCHt_( Type, r )		bunch_< Type, r >
@@ -409,7 +409,7 @@ namespace bch {
 		{};
 	};
 
-	AUTO2( p_bunch )
+	E_AUTO2( p_bunch )
 
 	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
 	#define E_P_BUNCHt_( Type, r )		p_bunch_< Type, r >

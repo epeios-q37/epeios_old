@@ -103,7 +103,7 @@ namespace lstctn {
 
 			return *this;
 		}
-		NAVt( list_<TOL_2EN1(row,row_t)>::, row )
+		E_NAVt( list_<E_COVER2(row,row_t)>::, row )
 		//f Initialization.
 		void Init( void )
 		{
@@ -124,7 +124,7 @@ namespace lstctn {
 		}
 	};
 
-	AUTO3( list_container )
+	E_AUTO3( list_container )
 
 	template <typename container, typename object, typename row, typename row_t> class list_xcontainer_
 	: public list_container_<container, row, row_t>
@@ -164,7 +164,7 @@ namespace lstctn {
 		}
 	};
 
-	AUTO4( list_xcontainer )
+	E_AUTO4( list_xcontainer )
 
 	#define E_LMCONTAINERtx_( type, row, row_t )	list_container_< ctn::E_MCONTAINERt_( type, row ), row, row_t >
 	#define E_LMCONTAINERtx( type, row, row_t )		list_container< ctn::E_MCONTAINERt( type, row ), row, row_t >

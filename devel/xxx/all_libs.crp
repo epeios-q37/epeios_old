@@ -23,27 +23,27 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Binary Tree Seeker
 &cch		&epeios		&2001, \
 	&CaCHe
-&clnarg		&epeios		&2000, 2001, \
+&clnarg		&epeios		&2000-2001, \
 	&Command LiNe ARGuments
-&clt		&epeios		&2000, 2001, \
+&clt		&epeios		&2000-2001, \
 	&CLienT
-&cpe		&epeios		&2000, 2001, \
+&cpe		&epeios		&2000-2001, \
 	&ComPilation Enviroment
-&csm		&epeios		&2000, 2001, \
+&csm		&epeios		&2000-2001, \
 	&Client/Server Manager
 &ctn		&epeios		&2000-\
 	&ConTaiNer (of dynamic objects)
-&cvm		&epeios		&2002, 2001, \
+&cvm		&epeios		&2002-2001, \
 	&ConVentional Memory
 &dbt		&epeios		&\
 	&Differentiated Binary Tree
 &dte		&epeios		&2001,\
 	&DaTE
-&dtfbsc		&epeios		&2000, 2001, \
+&dtfbsc		&epeios		&2000-2001, \
 	&Data transFert BaSiC
 &dtflcf		&epeios		&2000, \
 	&Data TransFert LoCal Features
-&dtfrmf		&epeios		&2000, 2001, \
+&dtfrmf		&epeios		&2000-2001, \
 	&Data TransFert ReMote Features
 &dtr		&epeios		&2000-\
 	&Dynamic TRee
@@ -55,11 +55,11 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&EPeioS MiSC
 &err		&epeios		&2000-\
 	&ERRor handling
-&fam		&epeios		&2000, 2001, \
+&fam		&epeios		&2000-2001, \
 	&Fast Allocation Memory
 &fgm		&epeios		&2000, \
 	&Fragmented memory
-&fil		&epeios		&2000, 2001, \
+&fil		&epeios		&2000-2001, \
 	&FILe
 &flm		&epeios		&2000-\
 	&FiLe Memory
@@ -67,9 +67,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&FLoW
 &flx		&epeios		&2000-\
 	&FLow eXtension
-&fnm		&epeios		&2000, 2001, \
+&fnm		&epeios		&2000-2001, \
 	&File Name Manager
-&gnumll		&epeios		&2000, 2001, \
+&gnumll		&epeios		&2000-2001, \
 	&GNU MaiLing List
 &htp		&epeios		&2002, \
 	&Hypertext Transfert Protocol
@@ -95,8 +95,11 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Memory DRiver
 &mmg		&epeios		&2000-\
 	&Memory MerGer
-&mmi		&epeios		&2000-		&MultiMemory Index
-&mtk		&epeios		&2000, 2001, 	&MultiTasKing
+&mmi		&epeios		&2000-2001, \
+	&MultiMemory Index
+&mmm		&epeios		&2000-2001, \
+	&MultiMeMory
+&mtk		&epeios		&2000-2001, 	&MultiTasKing
 &mtx		&epeios		&2000, 		&MuTeX
 &pip		&epeios		&2000-		&PIPe
 &que		&epeios		&2000-\
@@ -106,21 +109,26 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
-&srv		&epeios		&2000, 2001, 	&SeRVer
-&ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
-&stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow
+&srv		&epeios		&2000-2001, 	&SeRVer
+&ssnmng		&epeios		&2000-\
+	&SeSsioN MaNaGer
+&stf		&epeios		&2000-2001, 	&STream (or STandard) Flow
 &stk		&epeios		&2000-\
 	&STacK
 &str		&epeios		&2000-		&STRing
-&tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
-&tol		&epeios		&2000-		&TOoL
+&tagdtc		&epeios		&2000-2001,	&TAG DeTeCtor
+&tol		&epeios		&2000-\
+	&TOoL
 &tsrcpr		&epeios		&2000-		&Tagged SouRCe PaRser
 &ttr		&epeios		&2000-		&TuToR
 &txf		&epeios		&2000-		&TeXt Flow
-&txmpgh		&epeios		&2000, 2001, 	&TeXt Manager ParaGrapH
+&txmpgh		&epeios		&2000-2001, 	&TeXt Manager ParaGrapH
 &txmtbl		&epeios		&2000		&TeXt Manager TabBLe
-&tym		&epeios		&2000-		&TYped Memory
+&tym		&epeios		&2000-\
+	&TYped Memory
 &uym		&epeios		&2000-		&UnTyped Memory
+
+
 
 #Epeios BKD libraries.
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
@@ -130,13 +138,21 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
-&bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
+&bkdtpm		&ebkd		&2001-\
+	&BacKenD TyPes Manager
+
+
 
 #Epeios CGI libraries.
-&cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
-&cgidat		&ecgi		&2002-		&CGI (Common Gateway Interface) DATa
+&cgiarg		&ecgi		&2001-\
+	&CGI (Common Gateway Interface) ARGument
+&cgidat		&ecgi		&2002-\
+	&CGI (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
-&cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
+&cgitol		&ecgi		&2002-\
+	&CGI (Common Gateway Interface) TOoL
+
+
 
 #Logi+ DBI libraries.
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
@@ -152,10 +168,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dbimsq		&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database)
 &dbimsq_	&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
 &dbipgs		&ldbi		&2002-		&DataBase Interface PostGreS
-&dbisql		&ldbi		&2002-		&DataBase Interface SQL (from language)
+&dbisql		&ldbi		&2002-\
+	&DataBase Interface SQL (from language)
 &dbisrq		&ldbi		&2002-		&DataBase Interface Search ReQuest
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
+
+
 
 #Logi+ GSB libraries.
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
@@ -177,15 +196,21 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 
+
+
 #Epeios MSC libraries.
 &mscmdf		&emsc		&2002-		&MuSiC MiDi File		
 &mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
 &mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
 
+
+
 #Epeios MTH libraries.
-&mthitg		&emth		&2000, 2001, 	&MaTH InTeGer
-&mthvct		&emth		&2000, 2001, 	&MaTH VeCTor
+&mthitg		&emth		&2000-2001, 	&MaTH InTeGer
+&mthvct		&emth		&2000-2001, 	&MaTH VeCTor
+
+
 
 #Epeios TMC libraries.
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
@@ -195,15 +220,23 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 
 
+
+
 #Private WSA libraries.
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 
+
+
 #Epeios XML libraries.
-&xmlbsc		&exml		&2000-		&XML BaSiC
-&xmlcor		&exml		&2000-		&XML CORe
-&xmldbs		&exml		&2000-		&XML DataBaSe
+&xmlbsc		&exml		&2001-\
+	&XML BaSiC
+&xmlcor		&exml		&2001-\
+	&XML CORe
+&xmldbs		&exml		&20001\
+	&XML DataBaSe
 &xmldcm		&exml		&2000-		&XML DoCuMent
 &xmlprs		&exml		&2000-		&XML PaRSer
 &xmltag		&exml		&2000-		&XML TAG
 &xmltol		&exml		&2000-		&XML TOoL
-&xmlval		&exml		&2000-		&XML VALue
+&xmlval		&exml		&2001-\
+	&XML VALue

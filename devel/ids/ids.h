@@ -1,7 +1,7 @@
 /*
 	Header for the 'ids' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -165,12 +165,10 @@ namespace ids {
 		}
 	};
 
-	AUTO1( ids_store )
+	E_AUTO1( ids_store )
 
 	#define E_IDS_STORE_( t )	ids_store_<t>
 	#define E_IDS_STORE( t )	ids_store<t>
-	
-
 }
 
 /*$END$*/

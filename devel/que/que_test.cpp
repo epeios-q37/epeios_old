@@ -35,12 +35,14 @@
 #include "err.h"
 #include "stf.h"
 
+TYPEDEF( epeios::row_t__, dummy__ );
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	que::links L;
 	que::E_QUEUE Queue;
-	stk::E_STACK( epeios::row__ ) Stack;
+	que::E_QSTACK( epeios::row__ ) Stack;
 ERRBegin
 	Queue.reset();
 	Queue.Dump( Stack, 0, que::dAscending );

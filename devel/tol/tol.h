@@ -1,7 +1,7 @@
 /*
 	Header for the 'tol' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -112,7 +112,7 @@ namespace tol
 
 /*m Same as 'typedef type alias', but 2 'alias' with same 'type' are not interchangeable.
 This is only for static objects. Use 'TYPEDEF_( type, alias )' for dynamic objects. */
-#define TYPEDEF( type, alias )\
+#define E_TYPEDEF( type, alias )\
 struct alias\
 {\
 private:\
@@ -159,7 +159,7 @@ public:\
 
 /*m Same as 'TYPEDEF( type, alias ), but for dynamic objects
 Both '_' version and instanciable version are created. */
-#define TYPEDEF_( type, alias )\
+#define E_TYPEDEF_( type, alias )\
 class alias##_\
 : public type##_\
 {\
@@ -216,7 +216,7 @@ public:\
 };
 
 //m Same as 'TYPEDEF( type, alias ), but light version, without comparison operators.
-#define TYPEDEF__( type, alias )\
+#define E_TYPEDEF__( type, alias )\
 struct alias\
 {\
 private:\
@@ -248,12 +248,12 @@ public:\
 
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
-'TOL_2EN1( a, b )' donne 'a, b' */
-#define TOL_2EN1(a, b)	a, b
+'E_SHIELD2( a, b )' donne 'a, b' */
+#define E_COVER2(a, b)	a, b
 
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
-#define AUTO( Name )	\
+#define E_AUTO( Name )	\
 class Name\
 : public Name##_\
 {\
@@ -283,8 +283,8 @@ public:\
 };
 
 
-//m Same as 'AUTO()' but with one template parameter of type 'TypeName'
-#define AUTO1( Name )	\
+//m Same as 'E_AUTO()' but with one template parameter of type 'TypeName'
+#define E_AUTO1( Name )	\
 template < typename t > class Name\
 : public Name##_<t>\
 {\
@@ -314,8 +314,8 @@ public:\
 };
 
 
-//m Same as 'AUTO()' but with two template parameter.
-#define AUTO2( Name )	\
+//m Same as 'E_AUTO()' but with two template parameter.
+#define E_AUTO2( Name )	\
 template < typename t, typename u > class Name\
 : public Name##_<t,u>\
 {\
@@ -344,8 +344,8 @@ public:\
 	}\
 };
 
-//m Same as 'AUTO()' but with three template parameter.
-#define AUTO3( Name )	\
+//m Same as 'E_AUTO()' but with three template parameter.
+#define E_AUTO3( Name )	\
 template < typename t, typename u, typename v > class Name\
 : public Name##_<t,u,v>\
 {\
@@ -374,8 +374,8 @@ public:\
 	}\
 };
 
-//m Same as 'AUTO()' but with four template parameter.
-#define AUTO4( Name )	\
+//m Same as 'E_AUTO()' but with four template parameter.
+#define E_AUTO4( Name )	\
 template < typename t, typename u, typename v, typename w > class Name\
 : public Name##_<t,u,v,w>\
 {\
@@ -507,7 +507,7 @@ namespace tol {
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
-#define NAVt( Object, Type )\
+#define E_NAVt( Object, Type )\
 	Type First( void ) const\
 	{\
 		return Object  First();\
@@ -541,10 +541,8 @@ namespace tol {
 		return Object Exists( P );\
 	}
 	
-#define NAV( Object )	NAVt( Object, epeios::row__ )
+#define E_NAV( Object )	E_NAVt( Object, epeios::row__ )
 
-
-#ifdef CPE__MT
 namespace tol {
 	/*f Force the program to exit after 'Seconds' second.
 	Usefull to force a server to exit to obtain the profiling file. */
@@ -553,17 +551,6 @@ namespace tol {
 	//f Tell the remainder to give hand to the next thread.
 	void Defer( void );
 }
-
-#if 0
-#	ifdef CPE__VC
-inline void TOLYield( void )
-{
-	tol::Yield();
-}
-#	endif
-#endif
-#endif
-
 
 namespace mmm {
 	class multimemory_;
@@ -614,7 +601,7 @@ namespace tol {
 		}
 	};
 
-	AUTO2( object )
+	E_AUTO2( object )
 
 	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.
 	template <typename t> inline void Free( t *&Pointer )

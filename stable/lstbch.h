@@ -1,6 +1,6 @@
 /*
 	Header for the 'lstbch' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2002-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -112,7 +112,7 @@ namespace lstbch {
 			list_<row, row_t>::Init();
 			bunch_<type, row>::Init();
 		}
-		NAVt( list_<TOL_2EN1(row,row_t)>::, row )
+		E_NAVt( list_<E_COVER2(row,row_t)>::, row )
 		//f Add 'Object' and return its row.
 		row Add( const type &Object )
 		{
@@ -134,7 +134,7 @@ namespace lstbch {
 		}
 	};
 
-	AUTO3( list_bunch )
+	E_AUTO3( list_bunch )
 
 	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
 	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>

@@ -1,6 +1,6 @@
 /*
 	Header for the 'clnarg' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -213,7 +213,7 @@ namespace clnarg {
 		const char *GetOptionLabels( int Id ) const;
 	};
 
-	AUTO( description )
+	E_AUTO( description )
 
 	//t An argument.
 	typedef str::string_ argument_;

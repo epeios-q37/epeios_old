@@ -1,7 +1,7 @@
 /*
 	Header for the 'idxbtq' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -122,7 +122,7 @@ namespace idxbtq {
 			E_IBTREEt_( r )::Init();
 			E_IQUEUEt_( r )::Init();
 		}
-		NAVt( E_IQUEUEt_( r )::, r )
+		E_NAVt( E_IQUEUEt_( r )::, r )
 		//f 'Item' becomes the first item of the index, if empty.
 		void Create( r Item )
 		{
@@ -194,7 +194,7 @@ namespace idxbtq {
 		}
 	};
 
-	AUTO1( tree_queue_index )
+	E_AUTO1( tree_queue_index )
 }
 
 //d An index.

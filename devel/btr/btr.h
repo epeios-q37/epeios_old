@@ -1,7 +1,7 @@
 /*
 	Header for the 'btr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -562,7 +562,7 @@ namespace btr {
 	*/
 	};
 
-	AUTO1( binary_tree )
+	E_AUTO1( binary_tree )
 
 	#define E_BTREEt_( r )	binary_tree_<r>
 	#define E_BTREEt( r )	binary_tree<r>

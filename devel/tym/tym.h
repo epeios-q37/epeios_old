@@ -1,7 +1,7 @@
 /*
 	Header for the 'tym' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -285,7 +285,7 @@ namespace tym {
 	{};
 	*/
 
-	AUTO2( memory )
+	E_AUTO2( memory )
 
 	//m 'memory' would be often used, then create a special name.
 	#define E_MEMORYt( t, r )	memory< t, r >

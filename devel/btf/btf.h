@@ -1,7 +1,7 @@
 /*
 	Header for the 'btf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -146,7 +146,7 @@ namespace btf {
 		}
 	};
 
-	AUTO1( binary_tree_filler )
+	E_AUTO1( binary_tree_filler )
 
 	#define E_BTREE_FILLERt_( t )	binary_tree_filler_< t >
 	#define E_BTREE_FILLERt( t )	binary_tree_filler< t >

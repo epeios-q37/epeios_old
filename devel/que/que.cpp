@@ -69,9 +69,9 @@ void que::links_::Initialize(
 }
 
 
-void Dump_(
+void que::Dump_(
 		const E_QUEUE_ &Queue,
-		stk::E_STACK_( epeios::row__ ) &Stack,
+		E_QSTACK_( epeios::row__ ) &Stack,
 		epeios::row__ Begin,
 		direction Direction )
 {

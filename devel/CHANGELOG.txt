@@ -4,6 +4,7 @@ GENERAL:
 - Adapting to Code Warrior for Windows and Macintosh.
 - Fixing g++ warning.
 - Fixing CW warnings (all but 'unused argument').
+- Adapting to changes in 'TOL' library ('E_' prefix for macros).
 
 BITBCH:
 - Fixing bug.
@@ -68,6 +69,7 @@ PIP:
 
 QUE:
 - Adding some missing 'const' qualifier.
+- Adding 'E_STACK(r)' due to 'Exists()' method conflict due to changes in 'STK' library.
 
 SSNMNG:
 - Adapting to changes in 'LST' library.
@@ -78,6 +80,8 @@ STF:
 STK:
 - Renaming 'ObjectExists' to 'Exists', to avoid some mistake risks.
 - Adding 'Top()' method.
+- Using 'E_NAVt' macro.
+- Fixing the bug about the 'E_MEMORY_' used instead of 'E_MEMORYt_'.
 
 STR:
 - Adding 'ToU[S|B]()'.
