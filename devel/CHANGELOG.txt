@@ -176,6 +176,10 @@ TXF:
 - (28/08/04) Removing references to the 'CIO' library in order to allowing
 			 the use of this library in a program with GUI.
 
+TXMTBL:
+- (05/12/04) The'GetUniqueCell' methods return now a boolean to signal if there is or not really only one cell.
+-			 Adding 'Location()' method to 'table_' object.
+
 XTF:
 - (31/05/04) Removing a tailing '_' to object name.
 - (20/07/04) Fixing 'View()' bug.

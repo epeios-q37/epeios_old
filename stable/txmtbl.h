@@ -288,13 +288,14 @@ namespace txmtbl {
 		}
 		/*f Return the unique cell in 'Cell'. Undefined result if there is no
 		or more than one cell. */
-		void GetUniqueCell( cell_ &Cell ) const
+		bso::bool__ GetUniqueCell( cell_ &Cell ) const
 		{
-#ifdef TXMTBL_DBG
 			if ( Amount() != 1 )
-				ERRu();
-#endif
+				return false;
+
 			Recall( First(), Cell );
+
+			return true;
 		}
 		E_NAV( cells_:: )
 	};
@@ -388,7 +389,7 @@ namespace txmtbl {
 		}
 		/*f Return the unique cell in line 'Row' in 'Cell'. Undefined result if there is no
 		or more than one cell. */
-		void GetUniqueCell(
+		bso::bool__ GetUniqueCell(
 			epeios::row__ Row,
 			cell_ &Cell ) const
 		{
@@ -396,7 +397,15 @@ namespace txmtbl {
 
 			Line.Init( *this );
 
-			Line( Row ).GetUniqueCell( Cell );
+			return Line( Row ).GetUniqueCell( Cell );
+		}
+		location__ Location( epeios::row__ Row )
+		{
+			ctn::E_CITEM( line_ ) Line;
+
+			Line.Init( *this );
+
+			return Line( Row ).Location();
 		}
 
 		E_NAV( lines_:: )

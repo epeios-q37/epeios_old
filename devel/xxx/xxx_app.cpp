@@ -160,7 +160,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise();
+		TTR.Advertise( cio::cout );
 		ERRi();
 		break;
 	case cHelp:
@@ -220,19 +220,11 @@ int main(
 	int argc,
 	const char *argv[] )
 {
-	int ExitValue = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	Main( argc, argv );
 ERRFErr
-	ExitValue = EXIT_FAILURE;
-
-	if ( ERRMajor == err::itn )
-		ERRRst();
-
 ERRFEnd
 ERRFEpilog
-	cout << txf::sync;
-
-	return ExitValue;
+	return ERRExitValue;
 }
