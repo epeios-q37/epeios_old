@@ -17,11 +17,8 @@ GNUMLL:
 STF: 
 - Take away all the internal 'EOT' stuff. Using the standard 'EOD' instead.
 
-
 TAGEXP:
 - Adapting to changes in 'STF'.
-
-
 
 TSRCPR:
 - Correcting '#define' bogue.
@@ -33,8 +30,6 @@ TXMPGH:
 
 XTF:
 - Correct a bug due to a missing 'EOX()' in 'GetLine()'.
-
-	
 
 
 20040501
