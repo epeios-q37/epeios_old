@@ -34,6 +34,76 @@
 
 #include "err.h"
 #include "stf.h"
+#include "flm.h"
+
+#define NOMBRE 50
+
+using namespace txf;
+using namespace set;
+
+void Essai( void )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory M;
+	::set::SET( bso__ulong ) E1, E2;
+//	fch_flot_entree_fichier Entree;
+//	fch_flot_sortie_fichier Sortie;
+	::set::SET__( int, 3 ) G, H;
+	bso__ulong i;
+	POSITION__ P;
+ERRBegin
+	F.Init( "couocu.tmp" );
+	M.plug( F );
+	M.Init();
+
+	E1.plug( M );
+	E1.Init();
+
+	E2.plug( M );
+	E2.Init();
+
+	E1.Allocate( NOMBRE );
+	E2.Allocate( NOMBRE );
+
+	for ( i = 0; i < NOMBRE; i++ )
+	{
+		E1.Write( i, i );
+		E2.Write( (bso__ulong)( NOMBRE - i ), i );
+	}
+
+	for ( i = 0; i < E1.Amount(); i++ )
+		fout << E1(i) << tab << E2(i) << tab;
+
+	fout << nl;
+
+	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+
+	E1.Insert( E2, NOMBRE / 2 );
+
+	for ( P = 0; P < E1.Amount(); P++ )
+		fout << E1( P ) << tab;
+
+	fout << nl;
+
+	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+
+	for ( P = 0; P < E2.Amount(); P++ )
+		fout << E2( P ) << tab;
+
+	fout << nl;
+
+	E1 = E2;
+
+	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+
+ERRErr
+	// instructions à exécuter si erreur
+ERREnd
+	// instructions à exécuter, erreur ou non
+ERREpilog
+}
+
 
 void Generic( int argc, char *argv[] )
 {
@@ -54,6 +124,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
