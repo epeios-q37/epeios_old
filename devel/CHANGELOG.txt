@@ -75,6 +75,7 @@ IDXBTR
 
 LCK:
 - Adding 'GetUnlocked()' method.
+- (17/08/04) Some little changes in names.
 
 MDR:
 - (15/06/04) Adding some useful constants.

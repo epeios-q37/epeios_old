@@ -73,7 +73,7 @@ namespace lck {
 	//d Maximum amount of concurrent read.
 	#define LCK_MAX_CONCURRENT_READ	BSO_UBYTE_MAX
 	
-	class read_write_lock___
+	class lock___
 	{
 	public:
 		mtx::mutex_handler__ ReadCounterProtection;
@@ -104,11 +104,11 @@ namespace lck {
 
 			ReadCounter = 0;
 		}
-		read_write_lock___( void )
+		lock___( void )
 		{
 			reset( false );
 		}
-		~read_write_lock___( void )
+		~lock___( void )
 		{
 			reset( true );
 		}
@@ -182,16 +182,16 @@ namespace lck {
 	{
 	private:
 		object *Object_;
-		lck::read_write_lock___ *Lock_;
+		lck::lock___ *Lock_;
 		bso::bool__ Locked_;
-		bso::bool__ Writing_;
+		bso::bool__ Exclusive_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			Object_ = NULL;
 			Lock_ = NULL;
 			Locked_ = false;
-			Writing_ = false;
+			Exclusive_ = false;
 		}
 		access_control__( void )
 		{
@@ -203,12 +203,12 @@ namespace lck {
 		}
 		void Init(
 			object &Object,
-			lck::read_write_lock___ &Lock )
+			lck::lock___ &Lock )
 		{
 			Object_ = &Object;
 			Lock_ = &Lock;
 		}
-		const object &GetForReading( void )
+		const object &GetShared( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -217,24 +217,24 @@ namespace lck {
 			Lock_->WaitUntilReadingAllowed();
 
 			Locked_ = true;
-			Writing_ = false;
+			Exclusive_ = false;
 
 			return *Object_;
 		}
-		void ReleaseReading( void )
+		void ReleaseShared( void )
 		{
 #ifdef LCK__DBG
 			if ( !Locked_ )
 				ERRu();
 
-			if ( Writing_ )
+			if ( Exclusive_ )
 				ERRu();
 #endif
 			Lock_->ReadingAchieved();
 
 			Locked_ = false;
 		}
-		object &GetForWriting( void )
+		object &GetExclusive( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -243,25 +243,25 @@ namespace lck {
 			Lock_->WaitUntilWritingAllowed();
 
 			Locked_ = true;
-			Writing_ = true;
+			Exclusive_ = true;
 
 			return *Object_;
 		}
-		object &GetUnlocked( void )
+		object &GetWithoutLocking( void )
 		{
 			return *Object_;
 		}
-		const object &GetUnlocked( void ) const
+		const object &GetWithoutLocking( void ) const
 		{
 			return *Object_;
 		}
-		void ReleaseWriting( void )
+		void ReleaseExclusive( void )
 		{
 #ifdef LCK__DBG
 			if ( !Locked_ )
 				ERRu();
 
-			if ( !Writing_ )
+			if ( !Exclusive_ )
 				ERRu();
 #endif
 			Lock_->WritingAchieved();
@@ -272,17 +272,21 @@ namespace lck {
 		{
 			return Locked_;
 		}
-		bso::bool__ IsWriting( void ) const
+		bso::bool__ IsExclusive( void ) const
 		{
-			return Writing_;
+			return Exclusive_;
+		}
+		bso::bool__ IsShared( void ) const
+		{
+			return !Exclusive_;
 		}
 		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
 		{
 			if ( IsLocked() ) {
-				if ( IsWriting() ) 
-					ReleaseWriting();
+				if ( IsExclusive() ) 
+					ReleaseExclusive();
 				else
-					ReleaseReading();
+					ReleaseShared();
 				return true;
 			} else
 				return false;
