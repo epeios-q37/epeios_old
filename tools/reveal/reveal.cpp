@@ -779,7 +779,7 @@ ERRBegin
 		ERRt();
 	}
 
-	DFile.EOFT( XTF_EOXT );
+	DFile.EOFD( XTF_EOXT );
 
 	DText.Init( DFile );
 
@@ -795,13 +795,13 @@ ERRBegin
 			ERRt();
 		}
 
-		IFile.EOFT( XTF_EOXT );
+		IFile.EOFD( XTF_EOXT );
 
 		IFlow = &IFile;
 	}
 	else
 	{
-		stf::finF.EOFT( XTF_EOXT );
+		stf::finF.EOFD( XTF_EOXT );
 
 		IFlow = &stf::finF;
 	}

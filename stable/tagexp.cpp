@@ -96,7 +96,7 @@ ERRBegin
 	Name = FileName.Convert();
 
 	if ( ( Return = File.Init( Name, ErrHandle ) ) == fil::sSuccess ){
-		File.EOFT( XTF_EOXT );
+		File.EOFD( XTF_EOXT );
 
 		IFlow.Init( File );
 

@@ -1,1 +1,3 @@
 $Id$
+
+- Adapting to changes in 'STF'.
