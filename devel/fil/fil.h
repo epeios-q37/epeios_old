@@ -62,8 +62,42 @@ extern class ttr_tutor &FILTutor;
 
 //D FILe. File management.
 
+#include "cpe.h"
+
+#ifdef FIL_USE_STANDARD_IO
+#	define FIL__STANDARD_IO
+#elif defined( FIL_USE_LOWLEVEL_IO )
+#	define FIL__LOWLEVEL_IO
+#else
+#	if defined( CPE__MS ) || defined( CPE__UNIX )
+#		define FIL__LOWLEVEL_IO
+#	else
+#		define FIL__STANDARD_IO
+#	endif
+#endif
+
+#ifdef FIL__LOWLEVEL_IO
+#	ifdef CPE__MS
+#		define FIL__MS_LOWLEVEL_IO
+#	elif ( defined( CPE__UNIX )
+#		define FIL__UNIX_LOWLEVEL_IO
+#	else
+#		error "No low-level I/O available for this plateform"
+#	endif
+#endif
+
 #include "err.h"
-#include "flf.h"
+
+#ifdef FLM__UNIX_LOWLEVEL_IO
+#	include <unistd.h>
+#	include <fcntl.h>
+#elif defined( FLM__MS_LOWLEVEL_IO )
+#	include <io.h>
+#	include <fcntl.h>
+#	include <sys/stat.h>
+#elif defined( FLM__STANDARD_IO )
+#	include <stdio.h>
+#endif
 
 namespace fil
 {
@@ -97,18 +131,34 @@ namespace fil
 	: public _iflow__
 	{
 	private:
+#ifdef FIL__STANDARD_IO
 		FILE *File_;
+#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
+		int FD_;
+#endif
 	public:
 		void reset( bool P = true )
 		{
 			_iflow__::reset( P );
 
 			if ( P ) {
+#ifdef FIL__STANDARD_IO
 				if ( File_ != NULL )
 					fclose( File_ );
+#elif defined( FIL__MS_LOWLEVEL_IO )
+				if ( FD_ != -1 )
+					_close( FD_ );
+#elif defined( FIL__UNIX_LOWLEVEL_IO )
+				if ( FD_ != -1 )
+					close( FD_ );
+#endif
 			}
 
+#ifdef FIL__STANDARD_IO
 			File_ = NULL;
+#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
+			FD_ = -1;
+#endif
 		}
 		file_iflow___( void )
 		: _iflow__( File_ )
@@ -133,18 +183,35 @@ namespace fil
 	: public _oflow__
 	{
 	private:
+	private:
+#ifdef FIL__STANDARD_IO
 		FILE *File_;
+#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
+		int FD_;
+#endif
 	public:
 		void reset( bool P = true )
 		{
-			_oflow__::reset( P );
+			_iflow__::reset( P );
 
 			if ( P ) {
+#ifdef FIL__STANDARD_IO
 				if ( File_ != NULL )
-				fclose( File_ );
+					fclose( File_ );
+#elif defined( FIL__MS_LOWLEVEL_IO )
+				if ( FD_ != -1 )
+					_close( FD_ );
+#elif defined( FIL__UNIX_LOWLEVEL_IO )
+				if ( FD_ != -1 )
+					close( FD_ );
+#endif
 			}
 
+#ifdef FIL__STANDARD_IO
 			File_ = NULL;
+#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
+			FD_ = -1;
+#endif
 		}
 		file_oflow___( void )
 		: _oflow__( File_ )

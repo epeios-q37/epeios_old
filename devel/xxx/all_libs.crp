@@ -31,6 +31,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CLienT
 &cpe		&epeios		&2000-2001, \
 	&ComPilation Enviroment
+&cslio		&epeios		&\
+	&C Standard Library Input/Output
 &csm		&epeios		&2000-2001, \
 	&Client/Server Manager
 &ctn		&epeios		&2000-\
@@ -89,6 +91,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&InDeX Binary TRee
 &idxque		&epeios		&2000-\
 	&InDeX QUEue
+&iodef		&epeios		&\
+	&Input/Output DEFinitions.
 &lck		&epeios		&\
 	&LoCKs
 &lgg		&epeios		&2000, 2002-\
@@ -103,6 +107,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&LiST ConTaiNer
 &mdr		&epeios		&2000-\
 	&Memory DRiver
+&mllio		&epeios		&\
+	&MacIntosh Low-Level Input/Output
 &mmg		&epeios		&2000-\
 	&Memory MerGer
 &mmi		&epeios		&2000-2001, \
@@ -116,6 +122,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &mtx		&epeios		&2000, 2003-\
 	&MuTeX
 &pip		&epeios		&2000-		&PIPe
+&pllio		&epeios		&\
+	&POSIX Low-Level Input/Output
 &que		&epeios		&2000-\
 	&QUEue
 &salcsm		&epeios		&2000-\
@@ -155,6 +163,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&User Interface Framework (based on wxWidgets).
 &uym		&epeios		&2000-\
 	&UnTyped Memory
+&wllio		&epeios		&\
+	&Windows Low-Level Input/Output
 &xtf		&epeios		&2000-\
 	&eXtended Text Flow.
 
