@@ -233,7 +233,7 @@ namespace ssnmng {
 
 			if ( ( E_MQUEUE_::Amount() != 1 ) && ( E_MQUEUE_::Tail() != P ) ) {
 				E_MQUEUE_::Remove( P );
-				E_MQUEUE_::InsertItemAfterNode( P, E_MQUEUE_::Tail() );
+				E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Tail() );
 			}
 		}
 		//f Return true if session corresponding to 'P' is valid.

@@ -133,7 +133,7 @@ namespace ssnmng {
 				break;
 			}
 
-			E_MQUEUE_::InsertItemAfterNode( P, E_MQUEUE_::Tail() );
+			E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Tail() );
 		}
 
 
