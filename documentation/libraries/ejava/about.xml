@@ -1,0 +1,18 @@
+
+<!-- $Id$ -->
+<content>
+  <section>
+    <para>A CGI (Common Gateway Interface) is a piece of software called by a http server and which handles user requests and returns a HTML page. CGIs allow the generation of dynamic HTML pages. They are more and more written using dedicated langages, like PHP, or other scripting langages, like Perl or Python, but they can be written using almost all language, including, of course, C++.</para>
+  </section>
+  <section>
+    <para xml:space="preserve">CGIs written using the <raw>ECGI</raw> libraries are radically different. Such a CGI is, in fact, a daemon which receives the user request and returns an XML flow. I will call them <raw>CGID</raw> (Common Gateway Interface Daemon) to avoid confusion with classical CGIs.</para>
+    <para xml:space="preserve">To develop such a CGID, the <raw>ECGI</raw> libraries provide objects dedicated to the handling of the user request and the managing of sessions. The core Epeios libraries provide what is needed to generate the XML flow.</para>
+    <para>CGIDs can be can be hosted by a different server as the one hosting the http server, and so can be accessed by several http server simultaneously. This is useful for load balancing and high avaibility.</para>
+  </section>
+  <section>
+    <para xml:space="preserve">Naturally, the http server doesn't directly access a CGID. It goes through a little CGI, called <raw>epeios.cgi</raw>, which sends user request to the CGID and transform the XML file, returned by the CGID, in a HTML file suitable for the http server.</para>
+    <para xml:space="preserve">The request issued by the http server, in addition to the user data, contains two reserved key, which values indicates to the CGI which CGID it has to work with, and which XSL file must be used to transform the XML flow returned by the CGID in a HTML flow for the http server. So, it's very easy to change the look and feel of the WEB pages, and the <raw>epeios.cgi</raw> CGI can be used for all the CGIDs.</para>
+    <para xml:space="preserve">The <raw>epeios.cgi</raw> script is actually a Perl script, because it is the only one solution I know which works under GNU/Linux and under Windows. This will probably change in the future, along with the evolution of XML/XSL(T) tools.</para>
+  </section>
+  <section/>
+</content>
