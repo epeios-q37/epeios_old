@@ -171,7 +171,7 @@ amount__ sck::Get_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Read( Socket, Wanted - Amount, Buffer + Amount, TimeOut ) ) == 0 )
+			if ( ( Result = Read( Socket, Wanted - Amount, Buffer + Amount, TimeOut ) ) == SCK_DISCONNECTED )
 				ERRd();
 			Amount += Result;
 		}
@@ -201,7 +201,7 @@ amount__ sck::Put_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Write( Socket, Buffer + Amount, Wanted - Amount, TimeOut ) ) == 0 )
+			if ( ( Result = Write( Socket, Buffer + Amount, Wanted - Amount, TimeOut ) ) == SCK_DISCONNECTED )
 				ERRd();
 			Amount += Result;
 		}

@@ -1,7 +1,7 @@
 /*
-  'sck' library by Claude L. Simon (epeios@epeios.org)
+  'sck' library by Claude L. Simon (simon@epeios.org)
   Requires the 'sck' header file ('sck.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( SCK_NAME )
 	{
 #ifdef SCK_DBG
-		Version = SCK_VERSION " (DBG)";
+		Version = SCK_VERSION "\b\bD $";
 #else
 		Version = SCK_VERSION;
 #endif
@@ -170,7 +171,7 @@ amount__ sck::Get_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Read( Socket, Wanted - Amount, Buffer + Amount, TimeOut ) ) == 0 )
+			if ( ( Result = Read( Socket, Wanted - Amount, Buffer + Amount, TimeOut ) ) == SCK_DISCONNECTED )
 				ERRd();
 			Amount += Result;
 		}
@@ -200,7 +201,7 @@ amount__ sck::Put_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Write( Socket, Buffer + Amount, Wanted - Amount, TimeOut ) ) == 0 )
+			if ( ( Result = Write( Socket, Buffer + Amount, Wanted - Amount, TimeOut ) ) == SCK_DISCONNECTED )
 				ERRd();
 			Amount += Result;
 		}

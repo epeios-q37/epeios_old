@@ -63,6 +63,7 @@ struct server_data__
 {
 	spp::shared_bipipe___ *Bipipe;
 	csm::manager___ *Manager;
+	mtx::mutex_handler__ Mutex;
 };
 
 struct client_data__
@@ -75,6 +76,7 @@ struct listener_data__ {
 	srv::service__ Service;
 	err::handle Handler;
 	struct client_data__ Client;
+	mtx::mutex_handler__ Mutex;
 };
 
 static void Client__(
@@ -122,11 +124,18 @@ namespace {
 
 static void Server_( void *P )
 {
-ERRProlog
+ERRFProlog
 	server_data__ SD = *(server_data__ *)P;
 	void *PUS;
 	spp::slave_shared_bipipe_ioflow___ Pipe;
-ERRBegin
+ERRFBegin
+	mtx::Lock( SD.Mutex );
+	// Unlocked as soon as 'Listener()' managed to bind the socket.
+	
+	mtx::Unlock( SD.Mutex );
+	mtx::Delete( SD.Mutex );
+	SD.Mutex = MTX_INVALID_HANDLER;
+
 	Pipe.Init( *SD.Bipipe );
 
 #ifdef CSM_DBG
@@ -137,10 +146,10 @@ ERRBegin
 	PUS = SD.Manager->SI();
 
 	while ( SD.Manager->SP( Pipe, PUS ) == bContinue);
-ERRErr
-ERREnd
+ERRFErr
+ERRFEnd
 	SD.Manager->SE( PUS );
-ERREpilog
+ERRFEpilog
 }
 
 static void Listener_( void *P )
@@ -153,6 +162,8 @@ ERRBegin
 	Functions.ClientData = &LD.Client;
 
 	Server.Init( LD.Service );
+	
+	mtx::Unlock( LD.Mutex );
 
 	Server.Process( Functions, LD.Handler );
 ERRErr
@@ -171,8 +182,8 @@ void csm::manager___::Process(
 {
 ERRProlog
 	spp::shared_bipipe___ SharedBipipe;
-	server_data__ SD = { NULL, NULL };
-	listener_data__ LD = {0, err::hUsual, { NULL, NULL } };
+	server_data__ SD = { NULL, NULL, MTX_INVALID_HANDLER };
+	listener_data__ LD = {0, err::hUsual, { NULL, NULL }, MTX_INVALID_HANDLER };
 ERRBegin
 	SharedBipipe.Init();
 
@@ -183,6 +194,11 @@ ERRBegin
 	LD.Service = Service;
 	LD.Client.Bipipe = &SharedBipipe;
 	LD.Client.Manager = this;
+	
+	SD.Mutex = mtx::Create();
+	LD.Mutex = SD.Mutex;
+	
+	mtx::Lock( SD.Mutex );	// Unlocked by 'Listener()'.
 
 	MTKLaunch( Server_, &SD );
 
@@ -198,6 +214,8 @@ ERRBegin
 	// les processus 'Serveur_' et 'Client_' ai le temps d'en copier le contenu ...
 ERRErr
 ERREnd
+	if ( SD.Mutex != MTX_INVALID_HANDLER )
+		mtx::Delete( SD.Mutex );
 ERREpilog
 }
 
