@@ -223,7 +223,7 @@ namespace {
 		ERRProlog
 			sck::socket_ioflow___ SocketFlow;
 		ERRBegin
-			SocketFlow.Init( Socket );
+			SocketFlow.Init( Socket, TimeOut );
 			Functions->Process( SocketFlow );
 		ERRErr
 		ERREnd
@@ -231,16 +231,19 @@ namespace {
 		}
 	public:
 		flow_functions__ *Functions;
+		sck::duration__ TimeOut;
 	};
 }
 
 void server___::Process(
 	flow_functions__ &Functions,
+	sck::duration__ TimeOut,
 	err::handle ErrHandle )
 {
 	internal_functions__ F;
 
 	F.Functions = &Functions;
+	F.TimeOut = TimeOut;
 
 	Process( F, ErrHandle );
 }

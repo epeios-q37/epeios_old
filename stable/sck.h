@@ -103,14 +103,18 @@ extern class ttr_tutor &SCKTutor;
 
 #ifndef SCK_SOCKET_FLOW_BUFFER_SIZE
 //d The size of the buffers used by the flows.
-#define SCK_SOCKET_FLOW_BUFFER_SIZE	500
+#	define SCK_SOCKET_FLOW_BUFFER_SIZE	500
 #endif
 
 #ifdef SCK_DEFAULT_TIMEOUT
 #	define SCK__DEFAULT_TIMEOUT	SCK_DEFAULT_TIMEOUT
 #else
+#	ifdef XXX_DBG
+#		define SCK__DEFAULT_TIMEOUT	SCK_INFINITE
+#	else
 //d Default timeout, in seconds.
-#	define SCK__DEFAULT_TIMEOUT	( 5 * 60 )
+#		define SCK__DEFAULT_TIMEOUT	( 30 * 60 )	// half an hour.
+#	endif
 #endif
 
 //d Max data amount of concurrent write and read.

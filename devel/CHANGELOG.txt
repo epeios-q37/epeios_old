@@ -116,6 +116,9 @@ SCK:
 - (31/07/04) A timeout yet launch an error.
 -			 Rearranging some '#define'
 
+SRV:
+- (21/09/04) Adding socket timeout handling.
+
 SSNMNG:
 - Using own row type for session id 'row__'.
 - Adding 'sessions_manager_::IsValid()' method.

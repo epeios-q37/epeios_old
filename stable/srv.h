@@ -63,6 +63,8 @@ extern class ttr_tutor &SRVTutor;
 #include "err.h"
 #include "sck.h"
 
+#define SRV__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
+
 namespace srv {
 	using namespace sck;
 
@@ -198,6 +200,7 @@ namespace srv {
 		/*f Handle each new connection using 'Functions'. */
 		void Process(
 			flow_functions__ &Functions,
+			sck::duration__ TimeOut = SRV__DEFAULT_TIMEOUT,
 			err::handle ErrHandle = err::hUsual );
 	};
 
