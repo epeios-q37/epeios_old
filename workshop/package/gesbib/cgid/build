@@ -17,9 +17,11 @@ $GET exml $DIR stable/*.cpp
 $GET ebkd $DIR stable/*.h
 $GET ebkd $DIR stable/*.cpp
 
-$GET lgsb $DIR apps/gesbib/cgid/*.h
-$GET lgsb $DIR apps/gesbib/cgid/*.cpp
-$GET lgsb $DIR apps/gesbib/cgid/Makefile
+$GET lgsb $DIR apps/gesbib/frontend/*.h
+$GET lgsb $DIR apps/gesbib/frontend/*.cpp
+$GET lgsb $DIR apps/gesbib/frontend/cgid/*.h
+$GET lgsb $DIR apps/gesbib/frontend/cgid/*.cpp
+$GET lgsb $DIR apps/gesbib/frontend/cgid/Makefile
 
 #../../../create_pkg $DIR
 tar --gzip -cf $DIR.tar.gz $DIR
