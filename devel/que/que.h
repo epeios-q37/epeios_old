@@ -98,12 +98,12 @@ namespace que {
 			Previous = Next = NONE;
 		}
 		// Return 'true' if node has next node, false otherwise.
-		bso::bool__ HasNext( void )
+		bso::bool__ HasNext( void ) const
 		{
 			return Next != NONE;
 		}
 		// Return 'true' if node has previous node, false otherwise.
-		bso::bool__ HasPrevious( void )
+		bso::bool__ HasPrevious( void ) const
 		{
 			return Previous != NONE;
 		}

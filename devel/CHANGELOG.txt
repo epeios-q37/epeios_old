@@ -30,12 +30,19 @@ LSTCTN:
 MMI:
 - Adding some missing 'const' qualifier'.
 
+QUE:
+- Adding some missing 'const' qualifier.
+
 SSNMNG:
 - Adapting to changes in 'LST' library.
 
+TAGDTC:
+- Adapting to changes in 'TYM' library.
+
 TYM:
 - Fixing bug.
-- Revert to version bzfore adaotation to CW.
+- Revert to version before adaptation to CW.
+- Adding 'const' qualifier to return value to avoid smoe problems.
 
 --------
 20030219

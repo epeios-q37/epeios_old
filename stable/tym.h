@@ -1,6 +1,6 @@
 /*
 	Header for the 'tym' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -154,7 +154,7 @@ namespace tym {
 			Lire_( *Position, Quantity, Destination, *Offset );
 		}
 		//f Return the object at 'Position'.
-		t Read( r Position ) const
+		const t Read( r Position ) const
 		{
 			t V;
 
@@ -224,7 +224,7 @@ namespace tym {
 			Allocate_( Size );
 		}
 		//f Return the object at 'Position'..
-		t operator ()( r Position ) const
+		const t operator ()( r Position ) const
 		{
 			return Read( Position );
 		}

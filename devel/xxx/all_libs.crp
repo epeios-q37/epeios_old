@@ -84,15 +84,19 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
 &stk		&epeios		&2000-		&STacK
 &str		&epeios		&2000-		&STRing
+&tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
 &tmcset		&etmc		&2000-		&TiMeCode SET
 &tmcset_	&etmc		&2000-		&TiMeCode SET (for backend)
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 &tol		&epeios		&2000-		&TOoL
+&tsrcpr		&epeios		&2000-		&Tagged SouRCe PaRser
 &ttr		&epeios		&2000-		&TuToR
 &txf		&epeios		&2000-		&TeXt Flow
 &tym		&epeios		&2000-		&TYped Memory
+&txmtbl		&epeios		&2000		&TeXt Manager TabBLe
+&txmpgh		&epeios		&2000, 2001, 	&TeXt Manager ParaGrapH
 &uym		&epeios		&2000-		&UnTyped Memory
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 &xmlbsc		&exml		&2000-		&XML BaSiC

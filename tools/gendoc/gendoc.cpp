@@ -76,7 +76,7 @@ ERRBegin
 			{
 				Swap = true;
 
-				Table.Sync();
+				Table.Flush();
 
 				Table.Swap( Courant, S );
 
@@ -86,7 +86,7 @@ ERRBegin
 		}
 	}
 
-	Table.Sync();
+	Table.Flush();
 ERRErr
 ERREnd
 ERREpilog
@@ -333,7 +333,7 @@ template <class t> void GenererCorpsItemsClasse(
 		Courant = Items.Next( Courant );
 	}
 
-	Items.Sync();
+	Items.Flush();
 	
 	XMLDF.PopTag();
 }
@@ -787,7 +787,7 @@ void GenererDocumentationClasses(
 
 	XMLDF.PopTag();
 	
-	Classes.Sync();
+	Classes.Flush();
 }
 
 void GenererDocumentationFonctions(
@@ -1117,7 +1117,7 @@ ERRBegin
 		}
 	}
 
-	Liste.Sync();
+	Liste.Flush();
 ERRErr
 ERREnd
 ERREpilog
@@ -1180,12 +1180,12 @@ ERRBegin
 		Courant = Librairies.Create();
 		Librairies( Courant ).Init();
 		Analyser( Librairies( Courant ), Liste( PListe ), Repertoire );
-		Librairies.Sync();
+		Librairies.Flush();
 
 		PListe = Liste.Next( PListe );
 	}
 
-	Liste.Sync();
+	Liste.Flush();
 
 	fout << "Library parsing : terminated.                             " << nl;
 ERRErr
@@ -1216,7 +1216,7 @@ ERRBegin
 		}
 	}
 
-	Librairies.Sync();
+	Librairies.Flush();
 	
 	XMLDF.PopTag();
 
