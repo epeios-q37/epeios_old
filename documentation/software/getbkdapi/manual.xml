@@ -10,10 +10,10 @@
   <chapter title="Synopsis">
     <section>
       <para>
-        <raw>tmcdecgi [-g|--get] &lt;backend> [file]</raw>
+        <raw>getbkdapi [-g|--get] &lt;backend> [file]</raw>
       </para>
       <para>
-        <raw>tmcdecgi --help|--version|--license</raw>
+        <raw>getbkdapi --help|--version|--license</raw>
       </para>
     </section>
   </chapter>
@@ -26,7 +26,7 @@
   <chapter title="Return values">
     <section>
       <para xml:space="preserve">
-        <raw>tmcdecgi</raw> returns following values upon completion :<list>
+        <raw>getbkdapi</raw> returns following values upon completion :<list>
           <item>0 : completed successfully.</item>
           <item>other value : an error occurs.</item>
         </list></para>
@@ -37,7 +37,7 @@
   </chapter>
   <chapter title="Author">
     <para xml:space="preserve">
-      <raw>tmcdecgi</raw> was developed by <contact adress="csimon@epeios.org" type="long">Claude SIMON</contact>.</para>
+      <raw>getbkdapi</raw> was developed by <contact adress="csimon@epeios.org" type="long">Claude SIMON</contact>.</para>
   </chapter>
   <chapter title="Standard conformance">
     <para>

@@ -1,3 +1,4 @@
+
 <!-- $$Id$$ -->
 <site name="epeios.org">
   <template>
@@ -132,9 +133,7 @@
       </general>
       <specific>
         <WEB hierarchy="about" name="about" robots="$ROBOTS$" bookmark="About" parent="."/>
-      </specific>
-      $PROJECT_ABOUT$
-    </document>
+      </specific>$PROJECT_ABOUT$</document>
   </dir>
   <dir id="general">
     <document>
@@ -179,9 +178,7 @@
       </general>
       <specific>
         <WEB hierarchy="general" name="general" bookmark="General documentation" parent="." robots="$ROBOTS$"/>
-      </specific>
-      $PROJECT_GENERAL$
-    </document>
+      </specific>$PROJECT_GENERAL$</document>
   </dir>
   <dir id="libraries">
     <document id="homepage">
@@ -208,6 +205,12 @@
             <item xml:space="preserve">
         <link URL="epeios/">Core libraries</link> : the core libraries of the Epeios project. They are not dedicated to special tasks, but all the other libraries are based on them.</item>
             <item xml:space="preserve">
+        <link URL="ehos/" xml:space="preserve">
+          <raw>EHOS</raw> libraries</link> : libraries dedicated to the handling of herarchically organized structures (XML-like).</item>
+            <item xml:space="preserve">
+        <link URL="emth/" xml:space="preserve">
+          <raw>EMTH</raw> libraries</link> : libraries dedicated to mathematical libraries, for high-precision calculations.</item>
+            <item xml:space="preserve">
         <link URL="ebkd/" xml:space="preserve">
           <raw>EBKD</raw> libraries</link> : libraries dedicated to backend handling.</item>
             <item xml:space="preserve">
@@ -216,11 +219,14 @@
             <item xml:space="preserve">
         <link URL="etmc/" xml:space="preserve">
           <raw>ETMC</raw> libraries</link> : libraries dedicated to timecodes.</item>
+            <item xml:space="preserve">
+        <link URL="ejava/" xml:space="preserve">
+          <raw>EJAVA</raw> libraries</link> : JAVA implementation of the Epeios frontend/backend protocol.</item>
           </list>
         </section>
       </content>
     </document>
-    <dir id="core">
+    <dir id="'core' libraries">
       <document id="homepage">
         <general title="Epeios core libraries homepage" abstract="The Epeios core libraries, for general purposes." keywords="Epeios, libraries, general, core">
           <author>$AUTHOR$</author>
@@ -358,9 +364,7 @@
           </general>
           <specific>
             <WEB hierarchy="epeios/quickdoc" name="quickdoc" bookmark="Core libraries quickedoc" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $CORE_QUICKDOC$
-        </document>
+          </specific>$CORE_QUICKDOC$</document>
       </dir>
       <dir id="user documentation">
         <document id="homepage">
@@ -405,12 +409,10 @@
           </general>
           <specific>
             <WEB hierarchy="epeios/user" name="user" bookmark="Core libraries user documentation" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $CORE_USER$
-        </document>
+          </specific>$CORE_USER$</document>
       </dir>
     </dir>
-    <dir id="ebkd">
+    <dir id="'ebkd' libraries">
       <document id="homepage">
         <general title="EBKD libraries homepage." abstract="The backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd">
           <author>$AUTHOR$</author>
@@ -499,9 +501,7 @@
           </general>
           <specific>
             <WEB hierarchy="ebkd/about" name="about" bookmark="about EBKD" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $EBKD_ABOUT$
-        </document>
+          </specific>$EBKD_ABOUT$</document>
       </dir>
       <document id="cvs">
         <general title="CVS access for the EBKD libraries." abstract="The CVS access for the backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, CVS">
@@ -599,9 +599,7 @@
           </general>
           <specific>
             <WEB hierarchy="ebkd/quickdoc" name="quickdoc" bookmark="EBKD quickdoc" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $EBKD_QUICKDOC$
-        </document>
+          </specific>$EBKD_QUICKDOC$</document>
       </dir>
       <dir id="user">
         <document id="homepage">
@@ -646,12 +644,10 @@
           </general>
           <specific>
             <WEB hierarchy="ebkd/user" name="user" bookmark="EBKD libraries user documentation" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $EBKD_USER$
-        </document>
+          </specific>$EBKD_USER$</document>
       </dir>
     </dir>
-    <dir id="ecgi">
+    <dir id="'ecgi' libraries">
       <document id="homepage">
         <general title="ECGI libraries homepage." abstract="The CGI-related libraries (ECGI) from the Epeios project." keywords="Epeios, libraries, CGI, ecgi">
           <author>$AUTHOR$</author>
@@ -738,9 +734,7 @@
           </general>
           <specific>
             <WEB hierarchy="ecgi/about" name="about" bookmark="about ECGI" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $ECGI_ABOUT$
-        </document>
+          </specific>$ECGI_ABOUT$</document>
       </dir>
       <document id="cvs">
         <general title="CVS access for the ECGI libraries." abstract="The CVS access for CGI-related libraries (ECGI) from the Epeios project." keywords="Epeios, libraries, CGI, ecgi, CVS">
@@ -838,12 +832,296 @@
           </general>
           <specific>
             <WEB hierarchy="ecgi/quickdoc" name="quickdoc" bookmark="ECGI quickdoc" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $ECGI_QUICKDOC$
-        </document>
+          </specific>$ECGI_QUICKDOC$</document>
       </dir>
     </dir>
-    <dir id="etmc">
+    <dir id="'ehos' libraries">
+      <document id="homepage">
+        <general title="EHOS libraries homepage." abstract="The hierarchically organized structure libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ehos" name="index" bookmark="EHOS libraries" parent="../libraries.html" robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <section>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+          </section>
+          <section>
+            <para xml:space="preserve">You will find here all that concern the Epeios libraries to handle structures organized in a hierarchical way. Data in XML format are organized in such a way. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
+            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, are able to read, manipulate an write XML data.</para>
+          </section>
+          <section>
+            <list xml:space="preserve">
+      <item>
+        About (not available yet) : more about this libraries.</item>
+      <item>
+        <link URL="quickdoc/">Quickdoc</link> : to quickly find the description of the classes/methods/functions.</item>
+<ignore>      <item>
+        <link URL="user/">User documentation</link> : how to use the libraries.</item></ignore>
+      <item>
+        User documentation (not available yet) : how to use the libraries.</item>
+      <item>
+        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+      <item>
+        <link URL="download/" type="external">Download</link> : the download section.</item>
+      <item>
+        <link URL="cvs/">CVS</link> : the CVS-related section.</item>
+    </list>
+          </section>
+        </content>
+      </document>
+      <document id="cvs">
+        <general title="CVS access for the EHOS libraries." abstract="The CVS access for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, CVS">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ehos/cvs" name="index" bookmark="EHOS CVS" parent=".." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <CVS server="cvs.ehos.sf.net" root="/cvsroot/ehos" module="stable">
+            <link URL="http://cvs.ehos.sf.net/cgi-bin/viewcvs.cgi/ehos/stable/"/>
+          </CVS>
+        </content>
+      </document>
+      <document id="download">
+        <general title="Download section for the EHOS libraries." abstract="The download section for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, download">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ehos/download" name="index" bookmark="EHOS download" robots="$ROBOTS$">
+            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EHOS_SF_ID$"/>
+          </WEB>
+        </specific>
+        <content/>
+      </document>
+      <dir id="quickdoc">
+        <document id="homepage">
+          <general title="Quickdoc homepage for the EHOS libraries." abstract="The quickdoc homepage for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, quickdoc, homepage">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EHOS_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="ehos/quickdoc" name="index" bookmark="EHOS quickdoc homepage" parent=".." robots="$ROBOTS$"/>
+          </specific>
+          <content>
+            <section>
+              <para xml:space="preserve">The quickdoc allows to find quickly find how to use classes/methods/functions. It is generated directly from tagged commentaries placed in the source files.</para>
+            </section>
+            <section>
+              <list>
+                <item>
+                  <link URL="quickdoc.html">In HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.gz">In gzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.bz2">In bzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>In HTML, one library per page (comming soon).</item>
+                <item>In gzipped tar HTML, one library per page (comming soon).</item>
+                <item>In bzipped tar HTML, one library per page (comming soon).</item>
+                <item>In zipped HTML, one library per page (comming soon).</item>
+              </list>
+            </section>
+          </content>
+        </document>
+        <document id="core">
+          <general title="EHOS quickdoc." abstract="Quickdoc of the hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, quickdoc">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>1994 - 2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EHOS_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="ehos/quickdoc" name="quickdoc" bookmark="EHOS quickdoc" parent="." robots="$ROBOTS$"/>
+          </specific>$EHOS_QUICKDOC$</document>
+      </dir>
+    </dir>
+    <dir id="'emth' libraries">
+      <document id="homepage">
+        <general title="EMTH libraries homepage." abstract="The mathematical libraries (EMTH) from the Epeios project." keywords="Epeios, libraries, mathematic, emth">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EMTH_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="emth" name="index" bookmark="EMTH libraries" parent="../libraries.html" robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <section>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+          </section>
+          <section>
+            <para xml:space="preserve">You will find here all that concern the Epeios mathmetical libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
+            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, allow high precision calculations.</para>
+          </section>
+          <section>
+            <list xml:space="preserve">
+      <item>
+        About (not available yet) : more about this libraries.</item>
+      <item>
+        <link URL="quickdoc/">Quickdoc</link> : to quickly find the description of the classes/methods/functions.</item>
+<ignore>      <item>
+        <link URL="user/">User documentation</link> : how to use the libraries.</item></ignore>
+      <item>
+        User documentation (not available yet) : how to use the libraries.</item>
+      <item>
+        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+      <item>
+        <link URL="download/" type="external">Download</link> : the download section.</item>
+      <item>
+        <link URL="cvs/">CVS</link> : the CVS-related section.</item>
+    </list>
+          </section>
+        </content>
+      </document>
+      <document id="cvs">
+        <general title="CVS access for the EMTH libraries." abstract="The CVS access for mathematical libraries (EMTH) from the Epeios project." keywords="Epeios, libraries, mathematic, emth, CVS">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EMTH_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="emth/cvs" name="index" bookmark="EMTH CVS" parent=".." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <CVS server="cvs.emth.sf.net" root="/cvsroot/emth" module="stable">
+            <link URL="http://cvs.emth.sf.net/cgi-bin/viewcvs.cgi/emth/stable/"/>
+          </CVS>
+        </content>
+      </document>
+      <document id="download">
+        <general title="Download section for the EMTH libraries." abstract="The download section for mathmatic libraries (EMTH) from the Epeios project." keywords="Epeios, libraries, mathematic, emth, download">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EMTH_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="emth/download" name="index" bookmark="EMTH download" robots="$ROBOTS$">
+            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EMTH_SF_ID$"/>
+          </WEB>
+        </specific>
+        <content/>
+      </document>
+      <dir id="quickdoc">
+        <document id="homepage">
+          <general title="Quickdoc homepage for the EMTH libraries." abstract="The quickdoc homepage for mathematical libraries (EMTH) from the Epeios project." keywords="Epeios, libraries, mathematic, emth, quickdoc, homepage">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EMTH_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="emth/quickdoc" name="index" bookmark="EMTH quickdoc homepage" parent=".." robots="$ROBOTS$"/>
+          </specific>
+          <content>
+            <section>
+              <para xml:space="preserve">The quickdoc allows to find quickly find how to use classes/methods/functions. It is generated directly from tagged commentaries placed in the source files.</para>
+            </section>
+            <section>
+              <list>
+                <item>
+                  <link URL="quickdoc.html">In HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.gz">In gzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.bz2">In bzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>In HTML, one library per page (comming soon).</item>
+                <item>In gzipped tar HTML, one library per page (comming soon).</item>
+                <item>In bzipped tar HTML, one library per page (comming soon).</item>
+                <item>In zipped HTML, one library per page (comming soon).</item>
+              </list>
+            </section>
+          </content>
+        </document>
+        <document id="core">
+          <general title="EMTH quickdoc." abstract="Quickdoc of the mathematical libraries (EMTH) from the Epeios project." keywords="Epeios, libraries, mathematical, emth, quickdoc">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>1994 - 2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EMTH_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="emth/quickdoc" name="quickdoc" bookmark="EMTH quickdoc" parent="." robots="$ROBOTS$"/>
+          </specific>$EMTH_QUICKDOC$</document>
+      </dir>
+    </dir>
+    <dir id="'etmc' libraries">
       <document id="homepage">
         <general title="ETMC libraries homepage." abstract="The timecode-related libraries (ETMC) from the Epeios project." keywords="Epeios, libraries, timecode, etmc">
           <author>$AUTHOR$</author>
@@ -981,10 +1259,87 @@
           </general>
           <specific>
             <WEB hierarchy="etmc/quickdoc" name="quickdoc" bookmark="ETMC quickdoc" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $ETMC_QUICKDOC$
-        </document>
+          </specific>$ETMC_QUICKDOC$</document>
       </dir>
+    </dir>
+    <dir id="'ejava' libraries">
+      <document id="homepage">
+        <general title="EJAVA libraries homepage." abstract="The JAVA libraries (EJAVA) from the Epeios project." keywords="Epeios, libraries, java, ejava">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EJAVA_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ejava" name="index" bookmark="EJAVA libraries" parent="../libraries.html" robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <section>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+          </section>
+          <section>
+            <para xml:space="preserve">You will find here all that concern the Epeios JAVA libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
+            <para xml:space="preserve">This libraries are the JAVA implementation of the Epeios frontend/backend protocol (see the <link URL="/ebkd/" type="external">EBKD libraries</link>).</para>
+          </section>
+          <section>
+            <list xml:space="preserve">
+              <item>
+        User documentation (not available yet) : how to use the libraries.</item>
+      <item>
+        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+      <item>
+        <link URL="download/" type="external">Download</link> : the download section.</item>
+      <item>
+        <link URL="cvs/">CVS</link> : the CVS-related section.</item>
+    </list>
+          </section>
+        </content>
+      </document>
+      <document id="cvs">
+        <general title="CVS access for the EJAVA libraries." abstract="The CVS access for the JAVA libraries (EJAVA) from the Epeios project." keywords="Epeios, libraries, JAVA, ejava, CVS">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EJAVA_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ejava/cvs" name="index" bookmark="EJAVA CVS" parent=".." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <CVS server="cvs.ejava.sf.net" root="/cvsroot/ejava" module="libs">
+            <link URL="http://cvs.ejava.sf.net/cgi-bin/viewcvs.cgi/ejava/libs/"/>
+          </CVS>
+        </content>
+      </document>
+      <document id="download">
+        <general title="Download section for the EJAVA libraries." abstract="The download section for the JAVA libraries (EJAVA) from the Epeios project." keywords="Epeios, libraries, JAVA, ejava, download">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EJAVA_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="ejava/download" name="index" bookmark="EJAVA download" robots="$ROBOTS$">
+            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EJAVA_SF_ID$"/>
+          </WEB>
+        </specific>
+        <content/>
+      </document>
     </dir>
   </dir>
   <dir id="software">
@@ -1012,7 +1367,7 @@
           <para>As part of the Epeios project, all the software work under Windows too. You have to compile it, but, because Windows compiler don't all work the same way, as far as I know, there is no standard procedure to doing that.</para>
         </section>
         <section>
-          <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html" type="external">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports" type="external">here</link> for miscelleanous port). To work, two enviroment variables must be defined. The first, <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows. The second one, <raw>EPEIOS_SRC</raw> must contain all the needed source directories separated by <raw>:</raw> under GNU/Linux and <raw>;</raw> under Windows and without an ending <raw>/</raw> or <raw>\</raw>.</para>
+          <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html" type="external">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports" type="external">here</link> for miscelleanous port). To work, the enviroment variable <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows.</para>
           <para xml:space="preserve">Under GNU/Linux, the software were tested with <link URL="http://gcc.gnu.org" type="external">GNU GCC</link> V3.0. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/" type="external">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
         </section>
         <section>
@@ -1028,11 +1383,13 @@
         <link URL="reveal/" xml:space="default">reveal</link> : replaces tags in a file by text or file content.</item>
             <item xml:space="preserve">
         <link URL="tmcde/" xml:space="default">tmcde</link> : interactive software for timecode calculation.</item>
+            <item xml:space="preserve">
+        <link URL="getbkdapi/" xml:space="default">getbkdapi</link> : software to generate the API of an Epeios backend.</item>
           </list>
         </section>
       </content>
     </document>
-    <dir id="tmcde">
+    <dir id="'tmcde' software">
       <document id="homepage">
         <general title="TMCDE software homepage." abstract="The timecode manager software (TMCDE) from the Epeios project." keywords="Epeios, software, timecode, tmcde, homepage">
           <author>$AUTHOR$</author>
@@ -1193,9 +1550,7 @@
             </general>
             <specific>
               <WEB hierarchy="tmcde/backend/manual" name="manual" bookmark="TMCDE backend user manual" parent="." robots="$ROBOTS$"/>
-            </specific>
-            $TMCDE_BACKEND_MANUAL$
-          </document>
+            </specific>$TMCDE_BACKEND_MANUAL$</document>
         </dir>
       </dir>
       <dir id="CGID">
@@ -1320,13 +1675,11 @@
             </general>
             <specific>
               <WEB hierarchy="tmcde/CGID/manual" name="manual" bookmark="TMCDE CGID user manual" parent="." robots="$ROBOTS$"/>
-            </specific>
-            $TMCDE_CGID_MANUAL$
-          </document>
+            </specific>$TMCDE_CGID_MANUAL$</document>
         </dir>
       </dir>
     </dir>
-    <dir id="mll2html">
+    <dir id="'mll2html' software">
       <document id="homepage">
         <general title="GNU 'mll2html' software homepage." abstract="The homepage of the GNU 'mll2html' software from the Epeios project." keywords="Epeios, GNU, FSF, software, mll2html, homepage">
           <author>$AUTHOR$</author>
@@ -1472,12 +1825,10 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
           </general>
           <specific>
             <WEB hierarchy="mll2html/manual" name="manual" bookmark="'mll2html' user manual" parent="." robots="$ROBOTS$"/>
-          </specific>
-          $MLL2HTML_MANUAL$
-        </document>
+          </specific>$MLL2HTML_MANUAL$</document>
       </dir>
     </dir>
-    <dir id="reveal">
+    <dir id="'reveal' software">
       <document id="homepage">
         <general title="'reveal' software homepage." abstract="The homepage of the 'reveal' software from the Epeios project." keywords="Epeios, software, reveal, homepage">
           <author>$AUTHOR$</author>
@@ -1622,9 +1973,153 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
           </general>
           <specific>
             <WEB hierarchy="reveal/manual" name="manual" bookmark="'reveal' user manual" parent="." robots="$ROBOTS$"/>
+          </specific>$REVEAL_MANUAL$</document>
+      </dir>
+    </dir>
+    <dir id="'getbkdapi' software">
+      <document id="homepage">
+        <general title="'getbkdapi' software homepage." abstract="The homepage of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapi, homepage">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EBKD_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="getbkdapi" name="index" bookmark="'getbkdapi' homepage" parent="../software.html" robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <section>
+            <para xml:space="preserve">The <raw>getbkdapi</raw> connects to an Epeios backend (i.e. which uses the <link URL="/ebkd/" type="external">EBKD libraries</link>), and generates, in XML format, the description of all the objects and their methods which are handled by this backend. With the appropriate XSL file, an API for this backend can be generated in all langages. Actually, the XSL file is available for C++ and JAVA. Go to <link URL="../software.html">Epeios software main page</link> to know how to obtain the binary.</para>
+          </section>
+          <section>
+            <para>
+              <list>
+                <item>
+                  <link URL="manual/">User manual</link>.</item>
+                <item>
+                  <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                <item>
+                  <link URL="download/" type="external">Download</link>.</item>
+                <item>
+                  <link URL="example.html">Example</link>.</item>
+                <item>
+                  <link URL="cvs/">CVS access</link>.</item>
+              </list>
+            </para>
+          </section>
+        </content>
+      </document>
+      <document id="example">
+        <general title="'getbkdapi' software example of use." abstract="An example of use of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapil, example">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EBKD_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="getbkdapi" name="example" bookmark="'getbkdapi' example" parent="." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <section>
+            <para>No example available yet.</para>
+          </section>
+        </content>
+      </document>
+      <document id="cvs">
+        <general title="'getbkdapi' software CVS access." abstract="The CVS access of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapi, CVS">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EBKD_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="getbkdapi/cvs" name="index" bookmark="'getbkdapi' CVS" parent=".." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <CVS server="cvs.ebkd.sourceforge.net" root="/cvsroot/ebkd" module="apps/getbkdapi">
+            <link URL="http://cvs.ebkd.sourceforge.net/cgi-bin/viewcvs.cgi/ebkd/apps/getbkdapi/"/>
+          </CVS>
+        </content>
+      </document>
+      <document id="download">
+        <general title="'getbkdapi' software download section." abstract="The download section of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapi, download">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2001</date>
+          </copyright>
+          <misc>
+            <sourceforge group_id="$EBKD_SF_ID$"/>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="getbkdapi/download" name="index" bookmark="'getbkdapi' download" robots="$ROBOTS$">
+            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EBKD_SF_ID$"/>
+          </WEB>
+        </specific>
+        <content/>
+      </document>
+      <dir id="manual">
+        <document id="homepage">
+          <general title="'getbkdapi' software user manual homepage." abstract="The user manual homepage of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapi, user manual, hompage">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EBKD_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="getbkdapi/manual" name="index" bookmark="'getbkdapi' user manual homepage" parent=".." robots="$ROBOTS$"/>
           </specific>
-          $REVEAL_MANUAL$
+          <content>
+            <section>
+              <para xml:space="preserve">You will find here the user manual for the <raw>getbkdapi</raw> software in miscelleanous format.</para>
+              <section>
+                <list>
+                  <item>
+                    <link URL="manual.html">In HTML.</link>
+                  </item>
+                  <item>(Coming soon).</item>
+                </list>
+              </section>
+            </section>
+          </content>
         </document>
+        <document id="core">
+          <general title="'getbkdapi' software user manual." abstract="The user manual of the 'getbkdapi' software from the Epeios project." keywords="Epeios, software, getbkdapi, user manual">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2001</date>
+            </copyright>
+            <misc>
+              <sourceforge group_id="$EBKD_SF_ID$"/>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="getbkdapi/manual" name="manual" bookmark="'getbkdapi' user manual" parent="." robots="$ROBOTS$"/>
+          </specific>$GETBKDAPI_MANUAL$</document>
       </dir>
     </dir>
   </dir>

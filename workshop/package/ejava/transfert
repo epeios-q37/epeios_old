@@ -1,0 +1,4 @@
+# $Id$
+export DIR=workdir/ejava-sources_`date +%Y-%m-%d`
+ncftpput -V -F upload.sourceforge.net /incoming $DIR.tar.gz $DIR.tar.bz2 $DIR.zip
+rm -rf workdir

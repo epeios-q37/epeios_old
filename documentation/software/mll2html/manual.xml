@@ -12,16 +12,10 @@
   <chapter title="Synopsis">
     <section>
       <para>
-        <raw>mll2html [-c|--convert] [options] &lt;source_file> &lt;template-file> [dest-file]</raw>
+        <raw>mll2html [-c|--convert] [options] &lt;source-file> &lt;template-file> [dest-file]</raw>
       </para>
       <para>
-        <raw>mll2html --version</raw>
-      </para>
-      <para>
-        <raw>mll2html --license</raw>
-      </para>
-      <para>
-        <raw>mll2html --help</raw>
+        <raw>mll2html --help|--version|--license</raw>
       </para>
     </section>
   </chapter>

@@ -2,7 +2,7 @@
 
 include Makefile.header
 
-filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml
+filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/ehos.xml i/emth.xml
 
 ifeq ("$(EPEIOS_OS)","linux")
 sab_arg='$$os=$(EPEIOS_OS)'

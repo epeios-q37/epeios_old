@@ -13,10 +13,7 @@
         <raw>reveal [-r|--reveal] [options] &lt;tags description file> [&lt;source file> [&lt;destination file>]]</raw>
       </para>
       <para>
-        <raw>reveal --help</raw>
-      </para>
-      <para>
-        <raw>reveal --version</raw>
+        <raw>reveal --help|--livernse|--version</raw>
       </para>
     </section>
   </chapter>

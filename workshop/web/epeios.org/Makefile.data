@@ -14,14 +14,20 @@ all:
 	$(copy) $(cvs)/ecgi/devel/CHANGELOG.txt $(dest)/ecgi/CHANGELOG
 	$(copy) $(cvs)/etmc/devel/CHANGELOG.txt $(dest)/etmc/CHANGELOG
 	$(copy) $(cvs)/ebkd/devel/CHANGELOG.txt $(dest)/ebkd/CHANGELOG
+	$(copy) $(cvs)/ehos/devel/CHANGELOG.txt $(dest)/ehos/CHANGELOG
+	$(copy) $(cvs)/emth/devel/CHANGELOG.txt $(dest)/emth/CHANGELOG
+	$(copy) $(cvs)/ejava/libs/CHANGELOG.txt $(dest)/ejava/CHANGELOG
 	$(copy) $(cvs)/epeios/tools/reveal/CHANGELOG.txt $(dest)/reveal/CHANGELOG
 	$(copy) $(cvs)/epeios/tools/mll2html/CHANGELOG.txt $(dest)/mll2html/CHANGELOG
 	$(copy) $(cvs)/etmc/apps/backend/CHANGELOG.txt $(dest)/tmcde/backend/CHANGELOG
 	$(copy) $(cvs)/etmc/apps/CGID/CHANGELOG.txt $(dest)/tmcde/CGID/CHANGELOG
+	$(copy) $(cvs)/ebkd/apps/getbkdapi/CHANGELOG.txt $(dest)/getbkdapi/CHANGELOG
 ifeq ("$(EPEIOS_OS)","linux")
 	make -C $(dest)/epeios/quickdoc -f $(mkf)
 	make -C $(dest)/etmc/quickdoc -f $(mkf)
 	make -C $(dest)/ecgi/quickdoc -f $(mkf) 
 	make -C $(dest)/ebkd/quickdoc -f $(mkf)
+	make -C $(dest)/ehos/quickdoc -f $(mkf)
+	make -C $(dest)/emth/quickdoc -f $(mkf)
 endif
 

@@ -1,0 +1,23 @@
+# $Id$
+mkdir workdir
+cd workdir
+export DIR=ehos-sources_`date +%Y-%m-%d`
+
+cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios login
+cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR stable/
+cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/licenses/gnu_gpl.txt
+cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/packages/ehos/README.txt
+cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
+
+cvs -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos login
+cvs -z3 -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos export -l -D today -d $DIR stable/
+cvs -z3 -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos export -l -D today -d $DIR devel/CHANGELOG.txt
+cvs -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos logout
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+mv $DIR/gnu_gpl.txt $DIR/LICENSE
+mv $DIR/README.txt $DIR/README
+cp ~/website/libraries/ehos/quickdoc/quickdoc.html $DIR
+tar --gzip -cf $DIR.tar.gz $DIR
+tar -c $DIR | bzip2 >$DIR.tar.bz2
+zip -r -q $DIR.zip $DIR
+
