@@ -79,10 +79,10 @@ namespace stf {
 	{
 	private:
 		ostream &Stream_;
-		flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Tampon,
+			const flw::datum__ *Tampon,
 			flw::amount__ Nombre,
 			flw::amount__,
 			bool Synchronize )
@@ -135,13 +135,13 @@ namespace stf {
 		: public iflow___
 		{
 		private:
-			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
+			flw::datum__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 		protected:
 			// Le stream en question.
 			istream &Stream_;
 			flw::amount__ HandleAmount_(
 				flw::amount__ Minimum,
-				flw::data__ *Tampon,
+				flw::datum__ *Tampon,
 				flw::amount__ Desire,
 				flw::amount__ AmountRead )
 			{
@@ -187,7 +187,7 @@ namespace stf {
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Tampon,
+			flw::datum__ *Tampon,
 			flw::amount__ Desire )
 		{
 	#ifdef STF_DBG
@@ -236,7 +236,7 @@ namespace stf {
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Tampon,
+			flw::datum__ *Tampon,
 			flw::amount__ Desire )
 		{
 			flw::amount__ NombreLus = 0;

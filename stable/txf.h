@@ -64,7 +64,7 @@ extern class ttr_tutor &TXFTutor;
 
 namespace txf {
 	using flw::amount__;
-	using flw::data__;
+	using flw::datum__;
 
 	//c Input text flow.
 	class text_iflow___
@@ -78,7 +78,7 @@ namespace txf {
 		}
 		amount__ Lire_(
 			amount__ Nombre,
-			data__ *Tampon )
+			datum__ *Tampon )
 		{
 			return Flow_->GetUpTo( Nombre, Tampon );
 		}
@@ -105,7 +105,7 @@ namespace txf {
 			char C[9];
 			amount__ Pos;
 
-			if ( ( Pos = Lire_( 9, (data__ *)C ) ) > 8 )
+			if ( ( Pos = Lire_( 9, (datum__ *)C ) ) > 8 )
 				ERRf();
 
 			if ( !isxdigit( C[0] ) )
@@ -168,7 +168,7 @@ namespace txf {
 		//f Read 'Amount' characters and put them in 'Buffer'.
 		amount__ Get(
 			amount__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
 			return Lire_( Amount, Buffer );
 		}
@@ -204,7 +204,7 @@ namespace txf {
 			Flow_->Put( C );
 		}
 		void Ecrire_(
-			const data__ *Tampon,
+			const datum__ *Tampon,
 			amount__ Nombre )
 		{
 			Flow_->Put( Tampon, Nombre );
@@ -242,7 +242,7 @@ namespace txf {
 		}
 		text_oflow___ &operator <<( const char *C )
 		{
-			Ecrire_( (const data__ *)C, strlen( C ) );
+			Ecrire_( (const datum__ *)C, strlen( C ) );
 
 			return *this;
 		}
@@ -285,7 +285,7 @@ namespace txf {
 		}
 		//f Wrtie 'Amount' data from 'Buffer'.
 		void Put(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount )
 		{
 			Ecrire_( Buffer, Amount );

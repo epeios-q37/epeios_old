@@ -73,15 +73,15 @@ namespace flw {
 	//t Size (of a cache, for example).
 	typedef size_t			size__;
 
-	//t Type of the data
-	typedef unsigned char			data__;
+	//t Type of aa datum.
+	typedef unsigned char			datum__;
 
 	//c Base input flow.
 	class iflow___
 	{
 	private:
 		// The cache.
-		data__ *Cache_;
+		datum__ *Cache_;
 		// Size of the cache.
 		size__ Size_;
 		// Amount of data available in the cache.
@@ -91,7 +91,7 @@ namespace flw {
 		// Data for the end of flow (EOFD).
 		struct {
 			// The data.
-			const data__ *Data;
+			const datum__ *Data;
 			// Size of the data.
 			size__ Size;
 			// The length of the content of th flow.
@@ -108,7 +108,7 @@ namespace flw {
 		directly from device. */
 		amount__ DirectGet_(
 			amount__ Minimum,
-			data__ *Buffer,
+			datum__ *Buffer,
 			amount__ Wanted )
 		{
 			amount__ Amount = 0;
@@ -167,7 +167,7 @@ namespace flw {
 		Return amount of data red. */
 		amount__ ReadFromCache_(
 			amount__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
 #ifdef FLW_DBG
 			Test_();
@@ -189,7 +189,7 @@ namespace flw {
 		The cache must be empty. */
 		amount__ ReadFromCacheOrDirectly_(
 			amount__ Minimum,
-			data__ *Buffer,
+			datum__ *Buffer,
 			amount__ Wanted )
 		{
 #ifdef FLW_DBG
@@ -208,7 +208,7 @@ namespace flw {
 		Return number of bytes red. */
 		amount__ GetUpTo_(
 			amount__ Amount,
-			data__ *Buffer,
+			datum__ *Buffer,
 			amount__ Minimum )
 		{
 			amount__ Available = ReadFromCache_( Amount, Buffer );
@@ -221,7 +221,7 @@ namespace flw {
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Get_(
 			amount__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
 			amount__ Available = ReadFromCache_( Amount, Buffer );
 
@@ -234,13 +234,13 @@ namespace flw {
 		must return	as fast as possible if there is no data to read. */
 		virtual amount__ FLWGet(
 			amount__ Minimum,
-			data__ *Buffer,
+			datum__ *Buffer,
 			amount__ Wanted ) = 0;
 		/*f Handle EOFD. To call when no more data available in the medium.
 		Return amount of data written. If 0 is returned, then there is no
 		more end of flow data available, and an error should be launched. */
 		size__ HandleEOFD(
-			data__ *Buffer,
+			datum__ *Buffer,
 			size__ Size )
 		{
 			EOFD_.HandlingEOFD = true;
@@ -278,7 +278,7 @@ namespace flw {
 		}
 		//f Initialization with 'Cache' of size 'Size' (>=2) as cache.
 		void Init(
-			data__ *Cache,
+			datum__ *Cache,
 			size__ Size )
 		{
 			reset();
@@ -295,19 +295,19 @@ namespace flw {
 			void *Buffer,
 			amount__ Minimum = 1 )
 		{
-			return GetUpTo_( Amount, (data__ *)Buffer, Minimum );
+			return GetUpTo_( Amount, (datum__ *)Buffer, Minimum );
 		}
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Get(
 			amount__ Amount,
 			void *Buffer )
 		{
-			Get_( Amount, (data__ *)Buffer );
+			Get_( Amount, (datum__ *)Buffer );
 		}
 		//f Get next byte.
-		data__ Get( void )
+		datum__ Get( void )
 		{
-			data__ C;
+			datum__ C;
 
 			Get_( 1, &C );
 
@@ -317,7 +317,7 @@ namespace flw {
 		'Data' is NOT suplicated and should not be modified. */
 		void EOFD( const char *Data )
 		{
-			EOFD_.Data = (const data__ *)Data;
+			EOFD_.Data = (const datum__ *)Data;
 			EOFD_.Size = strlen( Data );
 			EOFD_.HandleLength = false;
 		}
@@ -366,14 +366,14 @@ namespace flw {
 	{
 	private:
 		// The cache.
-		data__ *Cache_;
+		datum__ *Cache_;
 		// The size of the cache.
 		size__ Size_;
 		// The amount of bytes yet free.
 		amount__ Free_;
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
 		amount__ DirectPut_(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Wanted,
 			amount__ Minimum,
 			bool Synchronization )
@@ -404,7 +404,7 @@ namespace flw {
 		/* Write up to 'Amount' bytes from 'Buffer' into the cache.
 		Return amount of bytes written. */
 		amount__ WriteIntoCache_(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount )
 		{
 			if ( Free_ < Amount )
@@ -419,7 +419,7 @@ namespace flw {
 		/* Put up to 'Amount' bytes from 'Buffer' directly or through the cache.
 		Return amount of bytes written. Cache MUST be EMPTY. */
 		amount__ WriteIntoCacheOrDirectly_(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount )
 		{
 #ifdef FLW_DBG
@@ -434,7 +434,7 @@ namespace flw {
 		}
 		// Force writing of 'Amount( bytes of 'Buffer'.
 		void ForceWriting_(
-			const data__ *Data,
+			const datum__ *Data,
 			amount__ Amount );
 		// Synchronization.
 		void Synchronize_( void )
@@ -444,7 +444,7 @@ namespace flw {
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		amount__ PutUpTo_(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount )
 		{
 			amount__ AmountWritten = WriteIntoCache_( Buffer, Amount );
@@ -461,7 +461,7 @@ namespace flw {
 		}
 		// Put 'Amount' data from 'Buffer'.
 		void Put_(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount )
 		{
 			amount__ AmountWritten = PutUpTo( Buffer, Amount );
@@ -476,7 +476,7 @@ namespace flw {
 		If 'Minimum' == 0, then the function must return as fast as
 		possible if no data can be written. */
 		virtual amount__ FLWPut(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Wanted,
 			amount__ Minimum,
 			bool Synchronization ) = 0;
@@ -502,7 +502,7 @@ namespace flw {
 		}
 		//f Initialization with 'Cache' of size 'Size' as cache.
 		void Init(
-			data__ *Cache,
+			datum__ *Cache,
 			size__ Size )
 		{
 			reset();
@@ -515,17 +515,17 @@ namespace flw {
 			const void *Buffer,
 			amount__ Amount )
 		{
-			return PutUpTo_( (data__ *)Buffer, Amount );
+			return PutUpTo_( (datum__ *)Buffer, Amount );
 		}
 		//f Put 'Amount' data from 'Buffer'.
 		void Put(
 			const void *Buffer,
 			amount__ Amount )
 		{
-			Put_( (const data__ *)Buffer, Amount );
+			Put_( (const datum__ *)Buffer, Amount );
 		}
 		//f Put 'C'.
-		void Put( data__ C )
+		void Put( datum__ C )
 		{
 			Put_( &C, 1 );
 		}
@@ -575,9 +575,9 @@ namespace flw {
 		'OSize' as, respectively, cache and size of this cache for the input flow
 		and output flow. */
 		void Init(
-			data__ *ICache,
+			datum__ *ICache,
 			size__ ISize,
-			data__ *OCache,
+			datum__ *OCache,
 			size__ OSize )
 		{
 			iflow___::Init( ICache, ISize );
@@ -585,7 +585,7 @@ namespace flw {
 		}
 		//f Initialisation with cache 'Cache' of size 'Size'.
 		void Init(
-			data__ *Cache,
+			datum__ *Cache,
 			size__ Size )
 		{
 			Init( Cache, Size / 2, Cache + Size / 2, Size / 2 );

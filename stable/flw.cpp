@@ -61,7 +61,7 @@ public:
 using namespace flw;
 
 void flw::oflow___::ForceWriting_(
-	const data__ *Buffer,
+	const datum__ *Buffer,
 	amount__ Amount )
 {
 	amount__ AmountWritten = PutUpTo( Buffer, Amount );
