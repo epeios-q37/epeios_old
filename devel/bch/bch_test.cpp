@@ -52,7 +52,7 @@ ERREpilog
 using namespace txf;
 using namespace bch;
 
-typedef int my__;
+typedef bso::ubyte__ my__;
 typedef bch::E_BUNCH__( my__, 20 ) mys__;
 typedef bch::E_BUNCH_( mys__ ) mys_;
 E_AUTO( mys )
@@ -87,7 +87,7 @@ ERRBegin
 
 	for( int i = 0; i < 10 ; i++ ) {
 		Mys__.Init();
-		for( int j = i; j < i + 10 ; j++ )
+		for( int j = i; j < 10 ; j++ )
 			Mys__.Add( j );
 
 		Mys.Add( Mys__ );

@@ -531,7 +531,7 @@ namespace bch {
 
 
 	template <typename type, int size, typename row> class p_bunch__
-	: public _bunch__< type, size, row, aem::p_amount_extent_manager_<row> >
+	: public _bunch__< type, size, row, aem::p_amount_extent_manager__<size, row> >
 	{};
 
 
