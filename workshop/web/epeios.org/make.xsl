@@ -10,16 +10,16 @@ all:
   <xsl:template match="document/specific/WEB" xml:space="preserve">	$(mkdir) -p $(dest)/<xsl:value-of select="@hierarchy"/>
 	sabcmd file://$(templates)/epeios.org/page.xsl i/site.xml $(dest)/<xsl:value-of select="@hierarchy"/>/<xsl:value-of select="@name"/>.html <xsl:choose>
       <xsl:when test="$os='windows'">"</xsl:when>
-      <xsl:when test="$os='windows'">'</xsl:when>
+      <xsl:when test="$os='linux'">'</xsl:when>
     </xsl:choose>$$hierarchy=<xsl:value-of select="@hierarchy"/><xsl:choose>
       <xsl:when test="$os='windows'">"</xsl:when>
-  <xsl:when test="$os='windows'">'</xsl:when>
+  <xsl:when test="$os='linux'">'</xsl:when>
  </xsl:choose><xsl:text> </xsl:text><xsl:choose>
   <xsl:when test="$os='windows'">"</xsl:when>
-  <xsl:when test="$os='windows'">'</xsl:when>
+  <xsl:when test="$os='linux'">'</xsl:when>
 </xsl:choose>$$name=<xsl:value-of select="@name"/><xsl:choose>
   <xsl:when test="$os='windows'">"</xsl:when>
-  <xsl:when test="$os='windows'">'</xsl:when>
+  <xsl:when test="$os='linux'">'</xsl:when>
 </xsl:choose><xsl:text>
 </xsl:text></xsl:template>
 </xsl:stylesheet>
