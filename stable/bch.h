@@ -334,12 +334,12 @@ namespace bch {
 		//f Store 'Count' 'Object' at 'Row'. Adjust the size of the bunch.
 		void StoreAndAdjust(
 			const type &Object,
-			epeios::size__ Count,
-			row Row = 0 )
+			row Row,
+			epeios::size__ Count )
 		{
-			Allocate( Row + Count );
+			Allocate( *Row + Count );
 
-			mmr::Store( Object, Count, Row );
+			mmr::Store( Object, Row, Count );
 		}
 		//f Return reference to memory.
 		mmr &Memory( void )
