@@ -616,7 +616,7 @@ inline flw::oflow___ &operator <<(
 	flw::oflow___ &OFlow,
 	char Character )
 {
-	OFlow.Put( Character );
+	OFlow.Put( (flw::datum__)Character );
 
 	return OFlow;
 }

@@ -79,7 +79,7 @@ namespace lst {
 
 
 	//c Handle a list of objects. Use 'LIST_' rather than directly this class.
-	template <typename r> class list_
+	template <typename r, typename r_t> class list_
 	{
 	protected:
 		/*v Cette fonction est appelée lors d'allocations dans la liste;
@@ -167,7 +167,7 @@ namespace lst {
 		//f Return the position of a new entry.
 		r New( void )
 		{
-			return Nouveau_();
+			return (r_t)Nouveau_();
 		}
 		//f Return the first entry if exists, 'NONE' if list empty.
 		r First( void ) const
@@ -242,11 +242,15 @@ namespace lst {
 		}
 	};
 
-	AUTO1( list )
+	AUTO2( list )
+
+
+	#define E_LISTtx( r, r_t )	list<r, r_t>
+	#define E_LISTtx_( r, r_t )	list_<r, r_t>
 
 	//d Handle a list of objects.
-	#define E_LISTt( r )	list<r>
-	#define E_LISTt_( r )	list_<r>
+	#define E_LISTt( r )	E_LISTtx( r, epeios::row_t__ )
+	#define E_LISTt_( r )	E_LISTtx_( r, epeios::row_t__ )
 
 	#define E_LIST	E_LISTt( epeios::row__ )
 	#define E_LIST_	E_LISTt_( epeios::row__ )

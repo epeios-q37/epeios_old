@@ -68,8 +68,8 @@ extern class ttr_tutor &LSTCTNTutor;
 namespace lstctn {
 	using lst::list_;
 
-	template <typename container, typename row> class list_container_
-	: public list_<row>,
+	template <typename container, typename row, typename row_t> class list_container_
+	: public list_<row, row_t>,
 	  public container
 	{
 	protected:
@@ -79,35 +79,35 @@ namespace lstctn {
 		}
 	public:
 		struct s
-		: public list_<row>::s,
+		: public list_<row, row_t>::s,
 		  public container::s
 		{};
 		list_container_( s &S )
-		: list_<row>( S ), 
+		: list_<row, row_t>( S ), 
 		  container( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			list_<row>::reset( P );
+			list_<row, row_t>::reset( P );
 			container::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			list_<row>::plug( MM );
+			list_<row, row_t>::plug( MM );
 			container::plug( MM );
 		}
 		list_container_ &operator =( const list_container_ &LC )
 		{
-			list_<row>::operator =( LC );
+			list_<row, row_t>::operator =( LC );
 			container::operator =( LC );
 
 			return *this;
 		}
-		NAVt( list_<row>::, row )
+		NAVt( list_<TOL_2EN1(row,row_t)>::, row )
 		//f Initialization.
 		void Init( void )
 		{
-			list_<row>::Init();
+			list_<row, row_t>::Init();
 			container::Init();
 		}
 		//f RemoveDelete object at 'Row'.
@@ -115,32 +115,32 @@ namespace lstctn {
 		{
 			container::operator()( Row ).reset();
 			container::Flush();
-			list_<row>::Delete( Row );
+			list_<row, row_t>::Delete( Row );
 		}
 		//f Create new entry.
 		row New( void )
 		{
-			return list_<row>::New();
+			return list_<row, row_t>::New();
 		}
 	};
 
-	AUTO2( list_container )
+	AUTO3( list_container )
 
-	template <typename container, typename object, typename row> class list_xcontainer_
-	: public list_container_<container, row>
+	template <typename container, typename object, typename row, typename row_t> class list_xcontainer_
+	: public list_container_<container, row, row_t>
 	{
 	public:
 		struct s
-		: public list_container_<container, row>::s
+		: public list_container_<container, row, row_t>::s
 		{};
 		list_xcontainer_( s &S )
-		: list_container_<container, row>( S )
+		: list_container_<container, row, row_t>( S )
 		{}
 		row Create( void )
 		{
-			row Row = list_container_<container, row>::New();
+			row Row = list_container_<container, row, row_t>::New();
 
-			list_container_<container, row>::operator()( Row ).Init();
+			list_container_<container, row, row_t>::operator()( Row ).Init();
 
 			return Row;
 		}
@@ -148,36 +148,48 @@ namespace lstctn {
 		{
 			row Row = Create();
 
-			list_container_<container, row>::operator()( Row ).operator =( Object );
+			list_container_<container, row, row_t>::operator()( Row ).operator =( Object );
 
-			list_container_<container, row>::Flush();
+			list_container_<container, row, row_t>::Flush();
 
 			return Row;
 		}
 	};
 
-	AUTO3( list_xcontainer )
+	AUTO4( list_xcontainer )
 
-	#define E_LMCONTAINERt_( type, row )	list_container_< ctn::E_MCONTAINERt_( type, row ), row >
-	#define E_LMCONTAINERt( type, row )		list_container< ctn::E_MCONTAINERt( type, row ), row >
+	#define E_LMCONTAINERtx_( type, row, row_t )	list_container_< ctn::E_MCONTAINERt_( type, row ), row, row_t >
+	#define E_LMCONTAINERtx( type, row, row_t )		list_container< ctn::E_MCONTAINERt( type, row ), row, row_t >
+
+	#define E_LMCONTAINERt_( type, row )	E_LMCONTAINERtx_( type, row, epeios::row_t__ )
+	#define E_LMCONTAINERt( type, row )		E_LMCONTAINERtx( type, row, epeios::row_t__ )
 
 	#define E_LMCONTAINER_( type )			E_LMCONTAINERt_( type, epeios::row__ )
 	#define E_LMCONTAINER( type )			E_LMCONTAINERt( type, epeios::row__ )
 
-	#define E_LCONTAINERt_( type, row )		list_container_< ctn::E_CONTAINERt_( type, row ), row >
-	#define E_LCONTAINERt( type, row )		list_container< ctn::E_CONTAINERt( type, row ), row >
+	#define E_LCONTAINERtx_( type, row, row_t )		list_container_< ctn::E_CONTAINERt_( type, row ), row, row_t >
+	#define E_LCONTAINERtx( type, row, row_t )		list_container< ctn::E_CONTAINERt( type, row ), row, row_t >
+
+	#define E_LCONTAINERt_( type, row )		E_LCONTAINERtx_( type, row, epeios::row_t__ )
+	#define E_LCONTAINERt( type, row )		E_LCONTAINERtx( type, row, epeios::row_t__ )
 
 	#define E_LCONTAINER_( type )			E_LCONTAINERt_( type, epeios::row__ )
 	#define E_LCONTAINER( type )			E_LCONTAINERt( type, epeios::row__ )
 
-	#define E_LXMCONTAINERt_( type, row )	list_xcontainer_< ctn::E_XMCONTAINERt_( type, row ), type, row >
-	#define E_LXMCONTAINERt( type, row )	list_xcontainer< ctn::E_XMCONTAINERt( type, row ), type, row >
+	#define E_LXMCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_XMCONTAINERt_( type, row ), type, row, row_t >
+	#define E_LXMCONTAINERtx( type, row, row_t )	list_xcontainer< ctn::E_XMCONTAINERt( type, row ), type, row, row_t >
+
+	#define E_LXMCONTAINERt_( type, row )	E_LXMCONTAINERtx_( type, row, epeios::row_t__ )
+	#define E_LXMCONTAINERt( type, row )	E_LXMCONTAINERtx( type, row, epeios::row_t__ )
 
 	#define E_LXMCONTAINER_( type )			E_LXMCONTAINERt_( type, epeios::row__ )
 	#define E_LXMCONTAINER( type )			E_LXMCONTAINERt( type, epeios::row__ )
 
-	#define E_LXCONTAINERt_( type, row )	list_xcontainer_< ctn::E_XCONTAINERt_( type, row ), type, row >
-	#define E_LXCONTAINERt( type, row )		list_xcontainer< ctn::E_XCONTAINERt( type, row ), type, row >
+	#define E_LXCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_XCONTAINERt_( type, row ), type, row, row_t >
+	#define E_LXCONTAINERtx( type, row, row_t )		list_xcontainer< ctn::E_XCONTAINERt( type, row ), type, row, row_t >
+
+	#define E_LXCONTAINERt_( type, row )	E_LXCONTAINERtx_( type, row, epeios::row_t__ )
+	#define E_LXCONTAINERt( type, row )		E_LXCONTAINERtx( type, row, epeios::row_t__ )
 
 	#define E_LXCONTAINER_( type )			E_LXCONTAINERt_( type, epeios::row__ )
 	#define E_LXCONTAINER( type )			E_LXCONTAINERt( type, epeios::row__ )

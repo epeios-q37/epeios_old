@@ -1,25 +1,24 @@
 /*
-  Header for the 'bso' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'bso' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define BSO_NAME		"BSO"
 
-#define	BSO_VERSION	"$Revision$"	
+#define	BSO_VERSION	"$Revision$"
 
 #define BSO_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &BSOTutor;
 
 #if defined( XXX_DBG ) && !defined( BSO_NODBG )
-#define BSO_DBG 
+#define BSO_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &BSOTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D BaSic Objects 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
@@ -108,8 +112,8 @@ namespace bso {
 		{
 			raw__ *P = (raw__ *)&Op_;			
 
-			P[0] = Op & 0xff;
-			P[1] = ( Op >> 8 ) & 0xff;
+			P[0] = (raw__)( Op & 0xff );
+			P[1] = (raw__)( ( Op >> 8 ) & 0xff );
 		}
 		operator t( void )
 		{
@@ -271,7 +275,7 @@ namespace bso {
 	public:
 		sign__( sbyte__ Sign = 0 )
 		{
-			Sign_ = ( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
+			Sign_ = (sbyte__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
 		}
 		operator sbyte__( void )
 		{

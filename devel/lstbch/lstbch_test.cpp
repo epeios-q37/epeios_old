@@ -37,7 +37,7 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	lstbch::list_bunch< int, epeios::row__> List;
+	lstbch::list_bunch< int, epeios::row__, epeios::row_t__> List;
 ERRBegin
 ERRErr
 ERREnd

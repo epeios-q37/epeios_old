@@ -120,7 +120,7 @@ namespace aem {
 		}
 		step_size__ StepSize_( void ) const
 		{
-			return StepValue_() * AEM_STEP_COEFFICIENT;
+			return (step_size__)( StepValue_() * AEM_STEP_COEFFICIENT );
 		}
 		bso::bool__ Decrease_( epeios::size__ &Size )
 		{

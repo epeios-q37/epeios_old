@@ -112,8 +112,8 @@ namespace bso {
 		{
 			raw__ *P = (raw__ *)&Op_;			
 
-			P[0] = Op & 0xff;
-			P[1] = ( Op >> 8 ) & 0xff;
+			P[0] = (raw__)( Op & 0xff );
+			P[1] = (raw__)( ( Op >> 8 ) & 0xff );
 		}
 		operator t( void )
 		{
@@ -275,7 +275,7 @@ namespace bso {
 	public:
 		sign__( sbyte__ Sign = 0 )
 		{
-			Sign_ = ( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
+			Sign_ = (sbyte__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
 		}
 		operator sbyte__( void )
 		{

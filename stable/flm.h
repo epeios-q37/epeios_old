@@ -188,7 +188,7 @@ namespace flm {
 	protected:
 		void Lire(
 			position__ Position,
-			int Nombre,
+			unsigned int Nombre,
 			void *Tampon )
 		{
 			Ouvrir_();
@@ -244,7 +244,7 @@ namespace flm {
 			retourne le nombre d'octets effectivement lus */
 		void Ecrire(
 			const void *Tampon,
-			int Nombre,
+			unsigned int Nombre,
 			position__ Position )
 		{
 			Ouvrir_();
@@ -459,7 +459,7 @@ namespace flm {
 			bsize__ Amount,
 			data__ *Buffer )
 		{
-			memoire_fichier_base_::Lire( Position, Amount, Buffer );
+			memoire_fichier_base_::Lire( (position__)Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRWrite(
@@ -467,12 +467,12 @@ namespace flm {
 			bsize__ Amount,
 			row__ Position )
 		{
-			memoire_fichier_base_::Ecrire( Buffer, Amount, Position );
+			memoire_fichier_base_::Ecrire( Buffer, Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( size__ Size )
 		{
-			memoire_fichier_base_::Allouer( Size );
+			memoire_fichier_base_::Allouer( (capacite__)Size );
 		}
 		// alloue 'Taille' octets
 	public:

@@ -3,6 +3,7 @@ $Id$
 GENERAL:
 - Adapting to Code Warrior for Windows and Macintosh.
 - Fixing g++ warning.
+- Fixing CW warnings (all but 'unused argument').
 
 BITBCH:
 - Fixing bug.
@@ -34,6 +35,7 @@ IDS:
 
 LST:
 - Renaming 'CreateEntry' to 'New'.
+- Introducing feature to fix some cast problem.
 
 LSTBCH:
 - Fixing bug.
@@ -43,7 +45,7 @@ LSTCTN:
 - Fixing bug.
 - Adapting to changes in 'LST' library.
 - Adapting to changes in 'CTN' library.
-- Adding missing 'F	lush()' to 'Delete' method.
+- Adding missing 'Flush()' to 'Delete' method.
 
 MMI:
 - Adding some missing 'const' qualifier'.
@@ -79,6 +81,7 @@ TOL:
 - Adapting to changes in 'STF' library.
 - Adapting to CodeWarrior.
 - Renaming 'Yield()' to 'Defer()' due to the silly 'Yield()' definition under Windows.
+- Adding 'AUTO4()' macro.
 
 TTR:
 - Adapting to changes in 'STF' library.

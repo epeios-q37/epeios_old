@@ -71,8 +71,8 @@ namespace lstbch {
 	using bch::bunch_;
 
 	//c Bunch associated to a list.
-	template <typename type, typename row> class list_bunch_
-	: public list_<row>,
+	template <typename type, typename row, typename row_t> class list_bunch_
+	: public list_<row, row_t>,
 	  public bunch_<type, row>
 	{
 	protected:
@@ -82,26 +82,26 @@ namespace lstbch {
 		}
 	public:
 		struct s
-		: public list_<row>::s,
+		: public list_<row, row_t>::s,
 		  public bunch_<type, row>::s
 		{};
 		list_bunch_( s &S )
-		: list_<row>( S ),
+		: list_<row, row_t>( S ),
 		  bunch_<type, row>( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			list_<row>::reset( P );
+			list_<row, row_t>::reset( P );
 			bunch_<type, row>::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			list_<row>::plug( MM );
+			list_<row, row_t>::plug( MM );
 			bunch_<type, row>::plug( MM );
 		}
 		list_bunch_ &operator =( const list_bunch_ &LB )
 		{
-			list_<row>::operator =( LB );
+			list_<row, row_t>::operator =( LB );
 			bunch_<type, row>::operator =( LB );
 
 			return *this;
@@ -109,14 +109,14 @@ namespace lstbch {
 		//f Initialization.
 		void Init( void )
 		{
-			list_<row>::Init();
+			list_<row, row_t>::Init();
 			bunch_<type, row>::Init();
 		}
-		NAVt( list_<row>::, row )
+		NAVt( list_<TOL_2EN1(row,row_t)>::, row )
 		//f Add 'Object' and return its row.
 		row Add( const type &Object )
 		{
-			row Row = list_<row>::New();
+			row Row = list_<row, row_t>::New();
 
 			bunch_<type, row>::Write( Object, Row );
 
@@ -125,19 +125,22 @@ namespace lstbch {
 		//f Delete entry 'Row'.
 		void Delete( row Row )
 		{
-			list_<row>::Delete( Row );
+			list_<row, row_t>::Delete( Row );
 		}
 		//f Create new entry and return its row.
 		row New( void )
 		{
-			return list_<row>::New();
+			return list_<row, row_t>::New();
 		}
 	};
 
-	AUTO2( list_bunch )
+	AUTO3( list_bunch )
 
-	#define E_LBUNCHt_( type, row )	list_bunch_<type, row>
-	#define E_LBUNCHt( type, row )	list_bunch<type, row>
+	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
+	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>
+
+	#define E_LBUNCHt_( type, row )	E_LBUNCHtx_( type, row, epeios::row_t__)
+	#define E_LBUNCHt( type, row )	E_LBUNCHtx( type, row, epeios::row_t__)
 
 	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, epeios::row__ )
 	#define  E_LBUNCH( type )		E_LBUNCHt( type, epeios::row__ )

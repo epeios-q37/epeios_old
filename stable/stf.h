@@ -95,7 +95,7 @@ namespace stf {
 			if ( ( Tampon == NULL ) && Nombre )
 				ERRu();
 #endif
-			if ( Stream_.write( (char *)Tampon, Nombre ).fail() )
+			if ( Stream_.write( (char *)Tampon, (long)Nombre ).fail() )
 			{
 				if ( Tampon == NULL )
 					Stream_.clear();	// Some compiler (BC++ V5.5) doesn't like 'Tampon' = NULL, even if 'Nombre' = 0.
@@ -202,10 +202,10 @@ namespace stf {
 
 			if ( !Stream_.eof() )
 			{
-				if ( Stream_.read( (char *)Tampon, Desire ).bad() )
+				if ( Stream_.read( (char *)Tampon, (long)Desire ).bad() )
 					ERRd();
 
-				NombreLus = Stream_.gcount();
+				NombreLus = (flw::amount__)Stream_.gcount();
 			}
 
 			return HandleAmount_( Minimum, Tampon, Desire, NombreLus );
@@ -247,10 +247,10 @@ namespace stf {
 
 			if ( !Stream_.eof() )
 			{
-				if ( Stream_.getline( (char *)Tampon, Desire ).bad() )
+				if ( Stream_.getline( (char *)Tampon, (long)Desire ).bad() )
 					ERRd();
 
-				NombreLus = Stream_.gcount();
+				NombreLus = (flw::amount__)Stream_.gcount();
 
 				if ( NombreLus && !Tampon[NombreLus-1] )
 					Tampon[NombreLus-1]='\n';

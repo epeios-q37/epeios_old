@@ -76,7 +76,7 @@ namespace txf {
 	private:
 		// Flow from which data are red.
 		flw::iflow___ *Flow_;
-		unsigned char Lire_( void )
+		datum__ Lire_( void )
 		{
 			return Flow_->Get();
 		}
@@ -100,7 +100,7 @@ namespace txf {
 		}
 		text_iflow___ &operator >>( char &C )
 		{
-			C = Lire_();
+			C = (char)Lire_();
 
 			return *this;
 		}
@@ -147,7 +147,7 @@ namespace txf {
 			if ( C == '+' )
 				if ( L > LONG_MAX )
 					ERRf();
-				else E = L;
+				else E = (signed long)L;
 			else
 				if ( L > ((unsigned long)-(LONG_MIN + 1 ) + 1UL ) )
 					ERRf();
@@ -203,7 +203,7 @@ namespace txf {
 	private:
 		// Flow to write into.
 		flw::oflow___ *Flow_;
-		void Ecrire_( unsigned char C )
+		void Ecrire_( datum__ C )
 		{
 			Flow_->Put( C );
 		}
@@ -240,7 +240,7 @@ namespace txf {
 		}
 		text_oflow___ &operator <<( char C )
 		{
-			Ecrire_( C );
+			Ecrire_( (datum__)C );
 
 			return *this;
 		}

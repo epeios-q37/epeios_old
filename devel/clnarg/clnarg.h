@@ -179,7 +179,7 @@ namespace clnarg {
 			
 			Command.Short = Short;
 			Command.Long = Long;
-			Command.Id = Id;
+			Command.Id = (id__)Id;
 
 			AddCommand( Command );
 		}
@@ -201,7 +201,7 @@ namespace clnarg {
 
 			Option.Long = Long;
 			Option.Short = Short;
-			Option.Id = Id;
+			Option.Id = (id__)Id;
 
 			AddOption( Option );
 		}

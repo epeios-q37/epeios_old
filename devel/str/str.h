@@ -278,7 +278,7 @@ namespace str {
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;
 		else
-			return T1 == T2 ? 0 : T1 > T2 ? 1 : -1;
+			return (bso::sbyte__)( T1 == T2 ? 0 : T1 > T2 ? 1 : -1 );
 	}
 
 	inline bso::bool__ operator ==(

@@ -177,7 +177,7 @@ namespace uym {
 		{
 			return Driver();
 		}
-		operator int( void ) const
+		operator bool( void ) const
 		{
 			return Pilote_ != NULL;
 		}

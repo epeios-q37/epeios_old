@@ -102,7 +102,7 @@ namespace tol
 		//i Duplicate it.
 		hbfDuplicate
 	};
-};
+}
 
 
 #ifdef CPE__VC
@@ -246,12 +246,10 @@ public:\
 }
 
 
-#if 0	// to delete ?
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
 'TOL_2EN1( a, b )' donne 'a, b' */
 #define TOL_2EN1(a, b)	a, b
-#endif
 
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
@@ -371,6 +369,36 @@ public:\
 	Name &operator =( const Name##_<t,u,v> &S )\
 	{\
 		Name##_<t,u,v>::operator =( S );\
+\
+		return *this;\
+	}\
+};
+
+//m Same as 'AUTO()' but with four template parameter.
+#define AUTO4( Name )	\
+template < typename t, typename u, typename v, typename w > class Name\
+: public Name##_<t,u,v,w>\
+{\
+public:\
+	typename Name##_<t,u,v,w>::s static_;\
+	Name ( void )\
+	: Name##_<t,u,v,w>( static_ )\
+	{\
+		reset( false );\
+	}\
+	~Name ( void )\
+	{\
+		reset( true );\
+	}\
+	Name &operator =( const Name &S )\
+	{\
+		Name##_<t,u,v,w>::operator =( S );\
+\
+		return *this;\
+	}\
+	Name &operator =( const Name##_<t,u,v,w> &S )\
+	{\
+		Name##_<t,u,v,w>::operator =( S );\
 \
 		return *this;\
 	}\
