@@ -1644,7 +1644,9 @@ ERREpilog
 /**** NIVEAU FONDAMENTAL ****/
 /****************************/
 
-int main( int argc, char *argv[] )
+int main(
+	int argc,
+	const char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
