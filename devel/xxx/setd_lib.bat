@@ -77,6 +77,8 @@ del %CRP%
 del %TMP%\%LNM%.cpp
 del %TMP%\%LNM%.h
 
+cd ..
+
 :end
 echo on
 

@@ -20,6 +20,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
 &err		&epeios		&2000-		&ERRor handling
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
+&cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
