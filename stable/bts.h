@@ -153,15 +153,23 @@ namespace bts {
 				if ( !Tree_->HasParent( Current_ ) ) {
 					Candidate = NONE;
 					break;
+				} else if ( Tree_->IsRight( Current_ ) ) {
+					Candidate = *Tree_->Parent( Current_ );
+					Type_ = tParent;
+					break;
 				}
 			case tLeft:
-				Candidate = First_( *Tree_->Parent( Current_ ) );
+				Candidate = *Tree_->Parent( Current_ );
 
-				if ( Tree_->IsRight( Current_ ) )
-					Type_ = tRight;
-				else
-					Type_ = tLeft;
+				if ( Tree_->HasRight( Candidate ) ) {
+					Candidate = First_( *Tree_->Right( Candidate ) );
 
+					if ( Tree_->IsRight( Candidate ) )
+						Type_ = tRight;
+					else
+						Type_ = tLeft;
+				} else
+					Type_ = tParent;
 				break;
 			case tRight:
 				Candidate = *Tree_->Parent( Current_ );
