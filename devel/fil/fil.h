@@ -62,41 +62,13 @@ extern class ttr_tutor &FILTutor;
 
 //D FILe. File management.
 
-#include "cpe.h"
+#include "iof.h"
+#include "flw.h"
 
-#ifdef FIL_USE_STANDARD_IO
-#	define FIL__STANDARD_IO
-#elif defined( FIL_USE_LOWLEVEL_IO )
-#	define FIL__LOWLEVEL_IO
+#ifdef FIL_FLOW_BUFFER_SIZE
+#	define FIL__FLOW_BUFFER_SIZE FIL_FLOW_BUFFER_SIZE
 #else
-#	if defined( CPE__MS ) || defined( CPE__UNIX )
-#		define FIL__LOWLEVEL_IO
-#	else
-#		define FIL__STANDARD_IO
-#	endif
-#endif
-
-#ifdef FIL__LOWLEVEL_IO
-#	ifdef CPE__MS
-#		define FIL__MS_LOWLEVEL_IO
-#	elif ( defined( CPE__UNIX )
-#		define FIL__UNIX_LOWLEVEL_IO
-#	else
-#		error "No low-level I/O available for this plateform"
-#	endif
-#endif
-
-#include "err.h"
-
-#ifdef FLM__UNIX_LOWLEVEL_IO
-#	include <unistd.h>
-#	include <fcntl.h>
-#elif defined( FLM__MS_LOWLEVEL_IO )
-#	include <io.h>
-#	include <fcntl.h>
-#	include <sys/stat.h>
-#elif defined( FLM__STANDARD_IO )
-#	include <stdio.h>
+#	define FIL__FLOW_BUFFER_SIZE	100
 #endif
 
 namespace fil
@@ -124,44 +96,58 @@ namespace fil
 		s_amount
 	};
 
-	typedef flf::file_iflow__	_iflow__;
+	typedef flw::iflow__	_iflow__;
 
 	//c A file as standard input flow.
 	class file_iflow___
 	: public _iflow__
 	{
 	private:
-#ifdef FIL__STANDARD_IO
-		FILE *File_;
-#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
-		int FD_;
+		flw::datum__ Cache_[FIL__FLOW_BUFFER_SIZE];
+		iof::file_io___ File_;
+		flw::amount__ _HandleAmount(
+			flw::amount__ Minimum,
+			flw::datum__ *Tampon,
+			flw::amount__ Desire,
+			flw::amount__ AmountRead )
+		{
+			if ( AmountRead < Minimum )
+			{
+				if ( !File_.EOF() )
+					ERRd();
+				else
+					AmountRead += _iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
+
+				if ( AmountRead < Minimum )
+					ERRd();
+			}
+
+			return AmountRead;
+		}
+	protected:
+		virtual flw::size__ FLWRead(
+			flw::size__ Minimum,
+			flw::datum__ *Tampon,
+			flw::size__ Desire )
+		{
+#ifdef FIL_DBG
+			if( Tampon == NULL )
+				ERRu();
 #endif
-	public:
+			flw::amount__ NombreLus = 0;
+
+			if ( !File_.EOF() )
+				NombreLus = File_.Read( Desire, Tampon );
+
+			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+		}
+public:
 		void reset( bool P = true )
 		{
 			_iflow__::reset( P );
-
-			if ( P ) {
-#ifdef FIL__STANDARD_IO
-				if ( File_ != NULL )
-					fclose( File_ );
-#elif defined( FIL__MS_LOWLEVEL_IO )
-				if ( FD_ != -1 )
-					_close( FD_ );
-#elif defined( FIL__UNIX_LOWLEVEL_IO )
-				if ( FD_ != -1 )
-					close( FD_ );
-#endif
-			}
-
-#ifdef FIL__STANDARD_IO
-			File_ = NULL;
-#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
-			FD_ = -1;
-#endif
+			File_.reset( P );
 		}
 		file_iflow___( void )
-		: _iflow__( File_ )
 		{
 			reset( false );
 		}
@@ -176,45 +162,42 @@ namespace fil
 			err::handle ErrHandle = err::hUsual );
 	};
 
-	typedef flf::file_oflow__	_oflow__;
+	typedef flw::oflow__	_oflow__;
 
 	//c A file as standard output flow.
 	class file_oflow___
 	: public _oflow__
 	{
 	private:
-	private:
-#ifdef FIL__STANDARD_IO
-		FILE *File_;
-#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
-		int FD_;
+		iof::file_io___ File_;
+		flw::datum__ Cache_[FIL__FLOW_BUFFER_SIZE];
+	protected:
+		virtual flw::size__ FLWWrite(
+			const flw::datum__ *Tampon,
+			flw::size__ Nombre,
+			flw::size__,
+			bool Synchronize )
+		{
+#ifdef STF_DBG
+			if ( ( Tampon == NULL ) && Nombre )
+				ERRu();
 #endif
+			if ( (flw::size__)File_.Write( Tampon, Nombre ) < Nombre )
+				ERRd();
+
+			if ( Synchronize )
+				File_.Flush();
+
+			return Nombre;
+		}
 	public:
 		void reset( bool P = true )
 		{
-			_iflow__::reset( P );
+			_oflow__::reset( P );
+			File_.reset( P );
 
-			if ( P ) {
-#ifdef FIL__STANDARD_IO
-				if ( File_ != NULL )
-					fclose( File_ );
-#elif defined( FIL__MS_LOWLEVEL_IO )
-				if ( FD_ != -1 )
-					_close( FD_ );
-#elif defined( FIL__UNIX_LOWLEVEL_IO )
-				if ( FD_ != -1 )
-					close( FD_ );
-#endif
-			}
-
-#ifdef FIL__STANDARD_IO
-			File_ = NULL;
-#elif defined( FIL__MS_LOWLEVEL_IO ) ||defined( FIL__UNIX_LOWLEVEL_IO )
-			FD_ = -1;
-#endif
 		}
 		file_oflow___( void )
-		: _oflow__( File_ )
 		{
 			reset( false );
 		}

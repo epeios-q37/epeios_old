@@ -1,13 +1,20 @@
 $Id$
 
 GENERAL:
-- (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO', 'CSLIO' libraries.
+- (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
+- (02/02/05) Adding 'LLIO' and 'io' libraries.
 
 BCH:
 - (10/01/05) Fixing type problem.
 
 CCH:
 - (24/01/05) Adapting to changes in 'TOL' library.
+
+FIL:
+- (02/02/05) Use now 'IOF' library.
+
+FLM:
+- (02/02/05) Use now 'IOF' library.
 
 MSG:
 - (26/01/05) Coding workaround for the silly 'GetMessage' problem for cygwin too.
@@ -116,7 +123,7 @@ FLW:
 - (12/12/04) Improving error handling.
 
 FLF:
-- (02/02/05) Amelioration, bug ficing about the EOF handling.
+- (02/02/05) Amelioration, bug fixing about the EOF handling.
 
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
@@ -124,7 +131,7 @@ FLX:
 - (05/11/04) Adding 'E_STRING_(I|O)FLOW__'.
 
 FNM:
-- (15/12/4) Adding the 'GetLocation()' function.
+- (15/12/04) Adding the 'GetLocation()' function.
 
 GNUMLL:
 - (09/01/05) Adapting to changes in 'XTF' and 'TXF' libraries.
@@ -518,7 +525,7 @@ STR:
 
 TOL:
 - Adding the 'Exists()' method to 'NAV(t)' macro.
-- Fixong bug in 'AUTO3' macro.
+- Fixing bug in 'AUTO3' macro.
 
 --------
 20030104

@@ -63,52 +63,17 @@ extern class ttr_tutor &FLMTutor;
 
 #include "cpe.h"
 #include "tol.h"
-
-#ifdef FLM_UNIX_LIKE
-#	define FLM__UNIX_LIKE
-#elif defined( FLM_MS_LOWLEVEL_IO )
-#	define FLM__MS_LOWLEVEL_IO
-#elif defined( FLM_IOSTREAM )
-#	define FLM__IOSTREAM
-#else
-#	ifdef CPE__UNIX
-#		define FLM__UNIX_LIKE
-#	elif defined( CPE__MS )
-#		define FLM__MS_LOWLEVEL_IO
-#	else
-#		define FLM__IOSTREAM
-#	endif
-#endif
-
-#ifdef FLM__UNIX_LIKE
-#	include <unistd.h>
-#	include <fcntl.h>
-#elif defined( FLM__MS_LOWLEVEL_IO )
-#	include <io.h>
-#	include <fcntl.h>
-#	include <sys/stat.h>
-#elif defined( FLM__IOSTREAM )
-#	include <fstream.h>
-#	include <iostream.h>
-#include <ostream.h>
-#endif
-
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"
+#include "iof.h"
 
 namespace flm {
 	using namespace mdr;
 
-#ifdef FLM__UNIX_LIKE
-	typedef int	capacite__;
-#elif defined( FLM__MS_LOWLEVEL_IO ) 
-	typedef long	capacite__;
-#elif defined( FLM__IOSTREAM )
-	typedef fstream::off_type capacite__;
-#endif
+	using iof::amount__;
 
-	typedef capacite__ position__;
+	typedef amount__ position__;
 	// type définissant une position dans la mémoire
 
 	/*******************************************************************/
@@ -126,16 +91,12 @@ namespace flm {
 
 	class memoire_fichier_base_
 	{
-	#if defined( FLM__UNIX_LIKE ) || defined( FLM__MS_LOWLEVEL_IO )
-		int FD_;
-	#elif defined( FLM__IOSTREAM )
-		// le stream servant de mémoire
-		fstream Stream_;
-	#endif
+	private:
+		iof::file_io___ File_;
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
-		capacite__ TailleFichier_;
+		amount__ TailleFichier_;
 		// différents témoins
 		struct {
 			int
@@ -155,34 +116,13 @@ namespace flm {
 		{
 			if ( !Temoin_.Ouvert )
 			{
-				if ( Temoin_.Mode == mdr::mReadOnly )
-#ifdef FLM__UNIX_LIKE
-					FD_ = open( Nom_, O_RDONLY );
-#elif defined( FLM__MS_LOWLEVEL_IO )
-					FD_ = _open( Nom_, _O_RDONLY | _O_BINARY );
-#elif defined( FLM__IOSTREAM )
-#	ifdef CPE__NO_IOS_EXTENSION
-					Stream_.open( Nom_, ios::in | ios::binary );
-#	else
-					Stream_.open( Nom_, ios::in | ios::binary | ios::nocreate );
-#	endif
-#endif
-				else
-#ifdef FLM__UNIX_LIKE
-					FD_ = open( Nom_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH );
-#elif defined( FLM__MS_LOWLEVEL_IO )
-					FD_ = _open( Nom_, _O_RDWR | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE );
-#elif defined( FLM__IOSTREAM )
-					Stream_.open( Nom_, ios::in | ios::out | ios::binary );
-#endif
-
-#if defined( FLM__UNIX_LIKE ) || defined( FLM__MS_LOWLEVEL_IO )
-				if ( FD_ == -1 )
-#else
-				if ( Stream_.fail() )
-#endif
-					ERRd();
-
+				if ( Temoin_.Mode == mdr::mReadOnly ) {
+					if ( File_.Init( Nom_, iof::mReadOnly ) == iof::sFailure )
+						ERRd();
+				} else {
+					if ( File_.Init( Nom_, iof::mReadWrite ) == iof::sFailure )
+						ERRd();
+				}
 				Temoin_.Ouvert = 1;
 			}
 		}
@@ -193,36 +133,14 @@ namespace flm {
 			void *Tampon )
 		{
 			Ouvrir_();
-#if defined( FLM__UNIX_LIKE ) || defined( FLM__MS_LOWLEVEL_IO )
-#	ifdef FLM__UNIX_LIKE
-			ssize_t Amount;
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-			int Amount;
-#	else
-#		error "Bad preprocessing directive"
-#	endif
 
-#	ifdef FLM__UNIX_LIKE
-			if ( lseek( FD_, Position, SEEK_SET ) != Position )
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-			if ( _lseek( FD_, Position, SEEK_SET ) != Position )
-#	else
-#		error "Bad preprocessing directive"
-#	endif
-				ERRd();
+			amount__ Amount;
+
+			File_.Seek( Position );
 				
 			while( Nombre > 0 ) {
 				
-#	ifdef FLM__UNIX_LIKE
-				if ( Nombre <= SSIZE_MAX )
-					Amount = read( FD_, Tampon, Nombre );
-				else
-					Amount = read( FD_, Tampon, SSIZE_MAX );
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-				Amount = _read( FD_, Tampon, Nombre );
-#	else
-#		error "Bad preprocessing directive"
-#	endif
+				Amount = File_.Read( Nombre, Tampon );
 					
 				if ( Amount <= 0 )
 					ERRd();
@@ -230,13 +148,6 @@ namespace flm {
 				Nombre -= Amount;
 				Tampon = (char *)Tampon + Amount;
 			}
-#elif defined( FLM__IOSTREAM )
-			if ( Stream_.seekg( Position ).fail() )
-				ERRd();
-
-			if ( Stream_.read( (char *)Tampon, Nombre ).fail() )
-				ERRd();
-#endif
 
 			if ( !Temoin_.Manuel )
 				Liberer();
@@ -249,71 +160,33 @@ namespace flm {
 			position__ Position )
 		{
 			Ouvrir_();
-#if defined( FLM__UNIX_LIKE ) || defined( FLM__MS_LOWLEVEL_IO )
-#	ifdef FLM__UNIX_LIKE
-			ssize_t Amount;
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-			int Amount;
-#	else
-#		error "Bad preprocessing directive"
-#	endif
 
-#	ifdef FLM__UNIX_LIKE
-			if ( lseek( FD_, Position, SEEK_SET ) != Position )
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-			if ( _lseek( FD_, Position, SEEK_SET ) != Position )
-#	else
-#		error "Bad preprocessing directive"
-#	endif
-				ERRd();
+			amount__ Amount;
+
+			File_.Seek( Position );
 
 			while( Nombre > 0 ) {
 			
-#	ifdef FLM__UNIX_LIKE
-				if ( Nombre <= SSIZE_MAX )
-					Amount = write( FD_, Tampon, Nombre );
-				else
-					Amount = write( FD_, Tampon, SSIZE_MAX );
-#	elif defined( FLM__MS_LOWLEVEL_IO )
-				Amount = _write( FD_, Tampon, Nombre );
-#	else
-#		error "Bad preprocessing directive"
-#	endif
+				Amount = File_.Write( Tampon, Nombre );
 			
-				if ( Amount < 0 )
-					ERRd();
-					
 				Tampon = (char *)Tampon + Amount;
 				Nombre -= Amount;
 			}
-#elif defined( FLM__IOSTREAM )
-			if ( Stream_.seekp( Position ).fail() )
-				ERRd();
 
-			if ( Stream_.write( (char *)Tampon, Nombre ).fail() )
-				ERRd();
-#endif
 			if ( !Temoin_.Manuel )
 				Liberer();
 		}
 			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
 			agrandit la mémoire si nécessaire */
-		void Allouer( capacite__ Capacite )
+		void Allouer( amount__ Capacite )
 		{
 			if ( Capacite > TailleFichier_ )
 			{
 				Ouvrir_();
 				
-#ifdef FLM__UNIX_LIKE
-				if ( ( lseek( FD_, Capacite - (capacite__)1, SEEK_SET ) == -1 )
-				      || ( write( FD_, &Capacite, 1 ) != 1 ) )
-#elif defined( FLM__MS_LOWLEVEL_IO )
-				if ( ( _lseek( FD_, Capacite - (capacite__)1, SEEK_SET ) == -1 )
-				      || ( _write( FD_, &Capacite, 1 ) != 1 ) )
-#elif defined( FLM__IOSTREAM )
-				if ( Stream_.seekp( ( Capacite - (capacite__)1 ) ).fail()
-					 || Stream_.put( (char)0 ).fail() )
-#endif
+				File_.Seek( Capacite - (amount__)1 );
+
+				if ( File_.Write( &Capacite, 1 ) != 1 )
 				{
 					if ( !Temoin_.Manuel )
 						Liberer();
@@ -408,13 +281,7 @@ namespace flm {
 		void Liberer( void )
 		{
 			if ( Temoin_.Ouvert )
-#ifdef FLM__UNIX_LIKE
-				close( FD_ );
-#elif defined( FLM__MS_LOWLEVEL_IO )
-				_close( FD_ );
-#elif defined( FLM__IOSTREAM )
-				Stream_.close();
-#endif
+				File_.reset();
 
 			Temoin_.Ouvert = 0;
 		}
@@ -473,7 +340,7 @@ namespace flm {
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			memoire_fichier_base_::Allouer( (capacite__)Size );
+			memoire_fichier_base_::Allouer( (amount__)Size );
 		}
 		// alloue 'Taille' octets
 	public:

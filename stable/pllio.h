@@ -70,6 +70,8 @@ namespace pllio {
 
 	using namespace iodef;
 
+	typedef int	amount__;
+
 	class lowlevel_io__
 	{
 	private:
@@ -79,28 +81,50 @@ namespace pllio {
 		: FD_( FD )
 		{}
 		unsigned int Read(
-			int Amount,
+			amount__ Amount,
 			void *Buffer )
 		{
 			if ( ( Amount = read( FD_, Buffer, Amount ) ) == -1 )
-				ERRx();
+				ERRd();
 
 			return Amount;
 		}
 		int Write(
-			void *Buffer,
-			int Amount )
+			const void *Buffer,
+			amount__ Amount )
 		{
 			if ( Amount = write( FD_, Buffer, Amount ) == -1 )
-				ERRx();
+				ERRd();
 
 			return Amount;
 		}
 		void Seek( long Offset )
 		{
 			if ( lseek( FD_, Offset, SEEK_SET ) != Offset )
-				ERRx();
+				ERRd();
 		}
+		void Flush( void )
+		{
+#ifdef CPE__CYGWIN
+			fsync( FD_ );
+#else
+			fdatasync( FD_ );
+#endif
+		}
+		bso::bool__ EOF( void )
+		{
+			stat Stat;
+			off_t Position;
+
+			if ( fstat( FD_, &Stat ) != 0 )
+				ERRd();
+
+			if ( ( Position = lseek( FD_, 0, SEEK_CUR ) ) == -1 )
+				ERRd();
+
+			return Position >= Stat.st_size;
+		}
+
 	};
 
 	class file_lowlevel_io___

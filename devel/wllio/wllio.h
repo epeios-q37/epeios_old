@@ -66,9 +66,13 @@ extern class ttr_tutor &WLLIOTutor;
 #include <io.h>
 #include <fcntl.h>
 
+#undef EOF
+
 namespace wllio {
 
 	using namespace iodef;
+
+	typedef int amount__;
 
 	class lowlevel_io__
 	{
@@ -79,27 +83,47 @@ namespace wllio {
 		: FD_( FD )
 		{}
 		unsigned int Read(
-			int Amount,
+			amount__ Amount,
 			void *Buffer )
 		{
 			if ( ( Amount = _read( FD_, Buffer, Amount ) ) == -1 )
-				ERRx();
+				ERRd();
 
 			return Amount;
 		}
 		int Write(
-			void *Buffer,
-			int Amount )
+			const void *Buffer,
+			amount__ Amount )
 		{
 			if ( ( Amount = _write( FD_, Buffer, Amount ) ) == -1 )
-				ERRx();
+				ERRd();
 
 			return Amount;
 		}
 		void Seek( long Offset )
 		{
 			if ( _lseek( FD_, Offset, SEEK_SET ) != Offset )
-				ERRx();
+				ERRd();
+		}
+		void Flush( void )
+		{
+			if ( _commit( FD_ ) != 0 )
+				ERRd();
+		}
+		bso::bool__ EOF( void )
+		{
+			switch( _eof( FD_ ) ) {
+			case 1:
+				return true;
+				break;
+			case 0:
+				return false;
+				break;
+			default:
+				ERRd();
+				return 1;
+				break;
+			}
 		}
 	};
 
@@ -154,7 +178,7 @@ namespace wllio {
 				break;
 			}
 
-			if ( ( FD_ = ( FileName, Flags ) ) ==  -1 )
+			if ( ( FD_ = _open( FileName, Flags ) ) ==  -1 )
 				return sFailure;
 			else
 				return sSuccess;

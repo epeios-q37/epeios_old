@@ -64,9 +64,14 @@ extern class ttr_tutor &CSLIOTutor;
 #include <stdio.h>
 #include "flf.h"
 
+#ifdef CPE__MS
+#	undef EOF
+#endif
 
 namespace cslio {
 	using namespace iodef;
+
+	typedef size_t	amount__;
 
 	class standard_io__
 	{
@@ -77,21 +82,29 @@ namespace cslio {
 		: FD_( FD )
 		{}
 		size_t Read(
-			size_t Amount,
+			amount__ Amount,
 			void *Buffer )
 		{
 			return fread( Buffer, 1, Amount, FD_ );
 		}
 		size_t Write(
-			void *Buffer,
-			size_t Amount )
+			const void *Buffer,
+			amount__ Amount )
 		{
-			return fread( Buffer, 1, Amount, FD_ );
+			return fwrite( Buffer, 1, Amount, FD_ );
 		}
 		void Seek( long Offset )
 		{
 			if ( fseek( FD_, Offset, SEEK_SET ) != Offset )
 				ERRx();
+		}
+		void Flush( void )
+		{
+			fflush( FD_ );
+		}
+		bool EOF( void )
+		{
+			return feof( FD_ ) != 0;
 		}
 	};
 

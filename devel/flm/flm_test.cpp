@@ -33,7 +33,6 @@
 #include "flm.h"
 
 #include "err.h"
-#include "stf.h"
 
 void Generic( int argc, char *argv[] )
 {

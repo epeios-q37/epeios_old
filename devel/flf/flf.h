@@ -60,6 +60,8 @@ extern class ttr_tutor &FLFTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete !"
+
 #include "err.h"
 #include "flw.h"
 #include <stdio.h>

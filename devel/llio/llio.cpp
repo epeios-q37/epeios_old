@@ -1,8 +1,8 @@
 /*
-	'fil' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'fil' header file ('fil.h').
-	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
-
+	'llio' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'llio' header file ('llio.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define FIL__COMPILATION
+#define LLIO__COMPILATION
 
-#include "fil.h"
+#include "llio.h"
 
-class filtutor
+class lliotutor
 : public ttr_tutor
 {
 public:
-	filtutor( void )
-	: ttr_tutor( FIL_NAME )
+	lliotutor( void )
+	: ttr_tutor( LLIO_NAME )
 	{
-#ifdef FIL_DBG
-		Version = FIL_VERSION "\b\bD $";
+#ifdef LLIO_DBG
+		Version = LLIO_VERSION "\b\bD $";
 #else
-		Version = FIL_VERSION;
+		Version = LLIO_VERSION;
 #endif
-		Owner = FIL_OWNER;
+		Owner = LLIO_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~filtutor( void ){}
+	virtual ~lliotutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,77 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cpe.h"
-
-using namespace fil;
-
-status fil::file_iflow___::Init(
-	const char *FileName,
-	err::handle ErrHandle )
-{
-	status Status = sSuccess;
-
-	reset();
-
-	if ( ( File_.Init( FileName, iof::mReadOnly ) ) == sFailure )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		Status = sFailure;
-	}
-
-	_iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
-
-	return Status;
-}
-
-
-status fil::file_oflow___::Init(
-	const char *FileName,
-	mode Mode,
-	err::handle ErrHandle )
-{
-	iof::status__ Status = iof::sSuccess;
-
-	reset();
-
-	if ( Mode == fil::mAppend )
-		Status = File_.Init( FileName, iof::mAppend  );
-	else
-		Status = File_.Init( FileName, iof::mRemove );
-
-	if ( Status == iof::sFailure )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		return sFailure;
-	}
-
-	_oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
-
-	return sSuccess;
-}
-
-
+using namespace llio;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class filpersonnalization
-: public filtutor
+
+class lliopersonnalization
+: public lliotutor
 {
 public:
-	filpersonnalization( void )
+	lliopersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~filpersonnalization( void )
+	~lliopersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -141,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static filpersonnalization Tutor;
+static lliopersonnalization Tutor;
 
-ttr_tutor &FILTutor = Tutor;
+ttr_tutor &LLIOTutor = Tutor;

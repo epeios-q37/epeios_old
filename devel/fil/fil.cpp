@@ -67,7 +67,7 @@ status fil::file_iflow___::Init(
 
 	reset();
 
-	if ( ( File_ = fopen( FileName, "rb" ) ) == NULL )
+	if ( ( File_.Init( FileName, iof::mReadOnly ) ) == sFailure )
 	{
 		if ( ErrHandle == err::hUsual )
 			ERRd();
@@ -77,7 +77,7 @@ status fil::file_iflow___::Init(
 		Status = sFailure;
 	}
 
-	_iflow__::Init();
+	_iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 
 	return Status;
 }
@@ -88,28 +88,28 @@ status fil::file_oflow___::Init(
 	mode Mode,
 	err::handle ErrHandle )
 {
-	status Status = sSuccess;
+	iof::status__ Status = iof::sSuccess;
 
 	reset();
 
 	if ( Mode == fil::mAppend )
-		File_ = fopen( FileName, "wb+"  );
+		Status = File_.Init( FileName, iof::mAppend  );
 	else
-		File_ = fopen( FileName, "wb" );
+		Status = File_.Init( FileName, iof::mRemove );
 
-	if ( File_ == NULL )
+	if ( Status == iof::sFailure )
 	{
 		if ( ErrHandle == err::hUsual )
 			ERRd();
 		else if ( ErrHandle != err::hSkip )
 			ERRu();
 
-		Status = sFailure;
+		return sFailure;
 	}
 
-	_oflow__::Init();
+	_oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 
-	return Status;
+	return sSuccess;
 }
 
 

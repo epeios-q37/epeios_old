@@ -91,6 +91,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&InDeX Binary TRee
 &idxque		&epeios		&2000-\
 	&InDeX QUEue
+&iof		&epeios		&\
+	&Input/Output and Files
 &iodef		&epeios		&\
 	&Input/Output DEFinitions.
 &lck		&epeios		&\
@@ -99,6 +101,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&LanGuaGes
 &lgpmsc		&epeios		&\
 	&LoGiPlus (Logi+) MiSC
+&llio		&epeios		&\
+	&Low-Level Input/Output
 &lst		&epeios		&2000-\
 	&LiST
 &lstbch		&epeios		&\
