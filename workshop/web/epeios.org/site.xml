@@ -661,7 +661,7 @@
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios backed-related libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
-            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, are dedicated to CGI (Common Graphic Interface) handling. CGI's were created for and used internsively by WEB server, to generate dynamic pages.</para>
+            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, are dedicated to CGI (Common Gateway Interface) handling. CGI's were created for and used internsively by WEB server, to generate dynamic pages.</para>
           </section>
           <section>
             <list xml:space="preserve">
