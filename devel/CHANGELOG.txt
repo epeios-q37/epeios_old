@@ -43,6 +43,7 @@ CTN:
 - Fixing GNU GCC issues.
 - Renaming 'Create()' into 'New()' to avoid mistakes.
 - Renaming 'Add' to 'Append'.
+- Adding features to avoid problems which appears when some 'Flush' call are missed.
 
 CPE:
 - Adding detection of cygwin.

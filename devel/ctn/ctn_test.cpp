@@ -50,6 +50,130 @@ ERREnd
 ERREpilog
 }
 
+
+/* Begin bug tracking code */
+
+typedef str::string_	datum_;
+typedef str::string		datum;
+
+typedef ctn::E_XCONTAINER_( datum_ ) data_;
+E_AUTO( data )
+
+typedef ctn::E_XCONTAINER_( data_ ) data_cluster_;
+E_AUTO( data_cluster )
+
+void Print( const data_ &Data )
+{
+	epeios::row__ Row = NONE;
+	ctn::E_CITEM( datum_ ) Datum;
+
+	Datum.Init( Data );
+
+	Row = Data.First();
+
+	stf::cout << "****" << txf::tab << txf::sync;
+
+	while( Row != NONE ) {
+		stf::cout << '>' << txf::sync;
+		stf::cout << Datum( Row ) << '<' << txf::tab << txf::sync;
+		Row = Data.Next( Row );
+	}
+
+	stf::cout << txf::nl << txf::sync;
+}
+
+void Fill( data_cluster_ &DataCluster )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	data Data;
+ERRBegin
+
+	Data.Init();
+
+	Data.Append( datum( "tut" ) );
+	Data.Append( datum( "tata" ) );
+	Data.Append( datum( "to" ) );
+
+	DataCluster.Allocate( 3 );
+	Row = DataCluster.First();
+
+	while( Row != NONE ) {
+		DataCluster( Row ).Append( Data( Row ) );
+		DataCluster( Row ).Flush();
+		Row = DataCluster.Next( Row );
+	}
+
+	DataCluster.Flush();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void PrintV( data_cluster_ &DataCluster )
+{
+	epeios::row__ Row = NONE;
+
+	DataCluster.Flush();
+
+	Row = DataCluster.First();
+
+	stf::cout << ">>> V" << txf::nl << txf::sync;
+
+	while( Row != NONE ) {
+		Print( DataCluster( Row ) );
+		Row = DataCluster.Next( Row );
+	}
+
+	stf::cout << "V >>>" << txf::nl << txf::sync;
+}
+
+void PrintC( const data_cluster_ &DataCluster )
+{
+	epeios::row__ Row = NONE;
+	ctn::E_CITEM( data_ ) Data;
+
+	Data.Init( DataCluster );
+
+	Row = DataCluster.First();
+
+	stf::cout << ">>> C" << txf::nl << txf::sync;
+
+	while( Row != NONE ) {
+		Print( Data( Row ) );
+		Row = DataCluster.Next( Row );
+	}
+
+	stf::cout << "C >>>" << txf::nl << txf::sync;
+}
+
+void BugTracking( void )
+{
+ERRProlog
+	data_cluster DataCluster;
+	epeios::row__ Row = NONE;
+ERRBegin
+	DataCluster.Init();
+	Fill( DataCluster );
+	PrintC( DataCluster );
+	PrintV( DataCluster );
+
+	DataCluster.Init();
+	DataCluster.Allocate( 3 );
+
+	PrintC( DataCluster );
+	PrintV( DataCluster );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+/* End bug tracking code */
+
+
+
+
 void EssaiBasic( void )
 {
 ERRProlog
@@ -649,16 +773,18 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+#if 0
 		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		Essai( argc, argv );
-#if 1
 		stf::cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		stf::cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
+#else
+		BugTracking();
 #endif
 		break;
 	case 2:

@@ -83,6 +83,10 @@ namespace ctn {
 	template <class st, typename r> class basic_container_
 	: public aem::amount_extent_manager_<r>
 	{
+#ifdef CTN_DBG
+	protected:
+		virtual bso::bool__ IsFlushed( void ) const = 0;
+#endif
 	public:
 		//r All the static parts.
 		tym::E_MEMORYt_( st, r ) Statics;
@@ -132,9 +136,19 @@ namespace ctn {
 			Dynamics.read( IFlow );
 			Statics.read( IFlow );
 		}
+#ifdef CTN_DBG
+		void test( void ) const
+		{
+			if ( !IsFlushed() )
+				ERRu();
+		}
+#endif
 		//f Initialization.
 		void Init( void )
 		{
+#ifdef CTN_DBG
+			test();
+#endif
 			Dynamics.Init();
 			Statics.Init();
 			this->amount_extent_manager_<r>::Init();
@@ -146,6 +160,9 @@ namespace ctn {
 			st &ST,
 			aem::mode Mode )
 		{
+#ifdef CTN_DBG
+			test();
+#endif
 			epeios::size__ AncCap;
 			epeios::size__ Extent = Size;
 
@@ -182,6 +199,9 @@ namespace ctn {
 		//f Adjust the extent/amount to 'Size'.
 		void Adjust( void )
 		{
+#ifdef CTN_DBG
+			test();
+#endif
 			epeios::size__ Extent = this->Extent();
 
 			if ( amount_extent_manager_<r>::Force( Size ) ) {
@@ -195,6 +215,9 @@ namespace ctn {
 			epeios::size__ Amount = 1,
 			aem::mode Mode = aem::mDefault )
 		{
+#ifdef CTN_DBG
+			test();
+#endif
 			epeios::size__ CurrentExtent = amount_extent_manager_<r>::Extent();
 			epeios::size__ NewExtent = CurrentExtent - Amount;
 
@@ -222,10 +245,10 @@ namespace ctn {
 		void Vider_( void )
 		{
 			if ( ( !Vide_() && ( Mode_ == mdr::mReadWrite ) ) /*&& ( Conteneur_->Mode() == plm::mModification )*/ ) {
-	#ifdef CTN_DBG
+#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
 					ERRu();
-	#endif
+#endif
 				Conteneur_->Statics.Store( ctn_S_, *Pilote_.Index() );
 			}
 
@@ -290,6 +313,9 @@ namespace ctn {
 			basic_container_<st,r> *Conteneur,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
+#ifdef CTN_DBG
+			Conteneur->test();
+#endif
 			Conteneur_ = Conteneur;
 			Pilote_.Init( Conteneur->Dynamics );
 			Mode_ = Mode;
@@ -387,6 +413,9 @@ namespace ctn {
 		// Rattache au conteneur 'Conteneur'.
 		void Init( const basic_container_<st,r> &Conteneur )
 		{
+#ifdef CTN_DBG
+			Conteneur.test();
+#endif
 			Conteneur_ = &Conteneur;
 			Pilote_.Init( Conteneur.Dynamics );
 		}
@@ -518,8 +547,7 @@ namespace ctn {
 		void Init(const mono_container_< t , r > &Container )
 		{
 #ifdef CTN_DBG
-			if ( !Container.IsFlushed() )
-				ERRu();
+			Container.test();
 #endif
 			item_base_const__< item_mono_statique__< typename_ t::s >, r >::Init( Container );
 		}
@@ -815,6 +843,9 @@ namespace ctn {
 			basic_container_< item_multi_statique__< typename t::s >, r > &Container,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
+#ifdef CTN_DBG
+			Container.test();
+#endif
 			Multimemoire.Init();
 			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container, Mode );
 		}
@@ -872,6 +903,9 @@ namespace ctn {
 		//f Initializing with container 'Container'.
 		void Init( const basic_container_< item_multi_statique__<typename t::s>, r > &Container )
 		{
+#ifdef CTN_DBG
+			Container.test();
+#endif
 			Multimemoire.Init();
 			item_base_const__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
 		}
