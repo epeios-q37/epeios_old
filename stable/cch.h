@@ -107,7 +107,8 @@ namespace cch {
 			r Position,
 			epeios::size__ Amount )
 		{
-			return ( *Position >= Position_ ) && ( ( *Position + Amount ) <= ( Position_ + Amount_ ) );
+			return ( *Position >= Position_ )
+				     && ( ( *Position + Amount ) <= ( Position_ + Amount_ ) );
 		}
 		void ReadFromBuffer_(
 			r Position,
@@ -178,6 +179,8 @@ namespace cch {
 
 			if ( Amount_ != 0 )
 				ReadDirectlyFromBunch_( Position_, Amount_, Buffer_ );
+			else
+				Position_ = NONE;
 		}
 	public:
 		void reset( bso::bool__ P = true )
