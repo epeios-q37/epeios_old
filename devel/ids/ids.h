@@ -148,7 +148,7 @@ namespace ids {
 				return true;
 			} else {
 #ifdef IDS_DBG
-				if ( IsAvailable( ID ) )
+				if ( !IsAvailable_( ID ) )
 					ERRu();
 #endif
 				Released.Remove( Released.Search( ID ) );

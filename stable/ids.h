@@ -1,6 +1,6 @@
 /*
 	Header for the 'ids' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2002, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2002, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -148,7 +148,7 @@ namespace ids {
 				return true;
 			} else {
 #ifdef IDS_DBG
-				if ( IsAvailable( ID ) )
+				if ( !IsAvailable_( ID ) )
 					ERRu();
 #endif
 				Released.Remove( Released.Search( ID ) );

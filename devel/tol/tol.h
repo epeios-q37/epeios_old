@@ -784,19 +784,32 @@ namespace tol {
 #endif
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
-#define E_RODISCLOSE_(type__, name )\
+#define E_RRODISCLOSE_(type__, name )\
 	const type__ Get##name( void ) const\
 	{\
 		return S_.name;\
 	}\
+
+
+//d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
+#define E_RODISCLOSE_(type__, name )\
+	E_RRODISCLOSE_( type__, name )\
 	const type__ &name( void ) const\
 	{\
 		return S_.name;\
 	}
 
 //d Make accessible the static member, for read-write access, of a dynamic object, named 'name' of type 'type__'.
+#define E_RRWDISCLOSE_(type__, name )\
+	E_RRODISCLOSE_( type__, name )\
+	void Set##name( const type__ &V )\
+	{\
+		S_.name = V;\
+	}\
+
+//d Make accessible the static member, for read-write access, of a dynamic object, named 'name' of type 'type__'.
 #define E_RWDISCLOSE_(type__, name )\
-	E_RODISCLOSE_( type__, name )\
+	E_RRWDISCLOSE_( type__, name )\
 	void Set##name( const type__ &V )\
 	{\
 		S_.name = V;\
@@ -806,24 +819,31 @@ namespace tol {
 		return S_.name;\
 	}
 
-//d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
-#define E_RODISCLOSE__(type__, name )\
+#define E_RRODISCLOSE__(type__, name )\
 	const type__ Get##name( void ) const\
 	{\
 		return name##_;\
 	}\
+
+
+//d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
+#define E_RODISCLOSE__(type__, name )\
+	E_RRODISCLOSE__( type__, name )\
 	const type__ &name( void ) const\
 	{\
 		return name##_;\
 	}
 
-//d Make accessible the member, for read-write access, of a static object, named 'name' of type 'type__'.
-#define E_RWDISCLOSE__(type__, name )\
-	E_RODISCLOSE__( type__, name )\
+#define E_RRWDISCLOSE__(type__, name )\
+	E_RRODISCLOSE__( type__, name )\
 	void Set##name( const type__ &V )\
 	{\
 		name##_ = V;\
 	}\
+
+//d Make accessible the member, for read-write access, of a static object, named 'name' of type 'type__'.
+#define E_RWDISCLOSE__(type__, name )\
+	E_RRWDISCLOSE__( type__, name )\
 	type__ &name( void )\
 	{\
 		return name##_;\
