@@ -154,10 +154,10 @@ namespace mmm {
 			if ( P )
 			{
 				Liberer_();
-			}
+			} else
+				Multimemoire_ = NULL;
 
 			S_.Descripteur = 0;
-			Multimemoire_ = NULL;
 			
 			E_MEMORY_DRIVER_::reset( P );
 		}

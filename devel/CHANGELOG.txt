@@ -91,6 +91,9 @@ MDR:
 MMI:
 - Adding some missing 'const' qualifier'.
 
+MMM:
+- Fixing 'reset()' bug.
+
 MTX:
 - Using counter under cygwin due to problems with pthread mutexes .
 - Adding of testing if we are in a multitasking context.
