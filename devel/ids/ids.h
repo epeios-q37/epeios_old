@@ -128,7 +128,7 @@ namespace ids {
 			return ID;
 		}
 		//f Return a new unused id.
-		void New( void )
+		id__ New( void )
 		{
 			bso::bool__ Released;
 

@@ -22,6 +22,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
+&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
 &ids		&epeios		&		&ID Store
 &lst		&epeios		&2000-		&LiST
 &mscmdf		&emsc		&		&MuSiC MiDi File		
