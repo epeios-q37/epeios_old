@@ -92,15 +92,17 @@ namespace htp {
 		s_unknow,
 	};
 
-	enum field_name__ {
-		fnURL,
-		fnHost,
-		fnReferrer,
-		fnAccept,
-		fnContentType,
-		fn_amount,
-		fn_unknow,
-		fn_end
+	enum field__ {
+		fURL,
+		fHost,
+		fReferrer,
+		fAccept,
+		fContentType,
+		fContentLength,
+		fLocation,
+		f_amount,
+		f_unknow,
+		f_end
 	};
 
 	typedef str::string_	field_value_;
@@ -109,7 +111,7 @@ namespace htp {
 	class field_ {
 	public :
 		struct s {
-			field_name__ Name;
+			field__ Name;
 			field_value_::s Value;
 		} &S_;
 		field_value_ Value;
@@ -120,7 +122,7 @@ namespace htp {
 		void reset( bso::bool__ P = true )
 		{
 			Value.reset( P );
-			S_.Name = fn_unknow;
+			S_.Name = f_unknow;
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
@@ -139,24 +141,24 @@ namespace htp {
 		}
 		void Init( void )
 		{
-			S_.Name = fn_unknow;
+			S_.Name = f_unknow;
 			Value.Init();
 		}
 		void Init(
-			field_name__ Name,
+			field__ Name,
 			const str::string_ &Value )
 		{
 			S_.Name = Name;
 			this->Value.Init( Value );
 		}
 		void Init(
-			field_name__ Name,
+			field__ Name,
 			const char *Value )
 		{
 			S_.Name = Name;
 			this->Value.Init( Value );
 		}
-		E_RODISCLOSE_( field_name__, Name )
+		E_RODISCLOSE_( field__, Name )
 	};
 
 	E_AUTO( field );
@@ -175,25 +177,31 @@ namespace htp {
 		{
 			content_length__ ContentLength;
 			str::string_::s Location;
+			str::string_::s ContentType;
 		} &S_;
 		header_( s &S )
 		: S_( S ),
-		  Location ( S.Location )
+		  Location( S.Location ),
+		  ContentType( S.ContentType )
 		{}
 		str::string_ Location;
+		str::string_ ContentType;
 		void reset( bso::bool__ P = true )
 		{
 			S_.ContentLength = 0;
 			Location.reset( P );
+			ContentType.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Location.plug( MM );
+			ContentType.plug( MM );
 		}
 		header_ &operator =( const header_ &H )
 		{
 			S_.ContentLength = H.S_.ContentLength;
 			Location = H.Location;
+			ContentType = H.ContentType;
 
 			return *this;
 		}
@@ -201,6 +209,7 @@ namespace htp {
 		{
 			S_.ContentLength = 0;
 			Location.Init();
+			ContentType.Init();
 		}
 		E_RODISCLOSE_( content_length__, ContentLength );
 	};

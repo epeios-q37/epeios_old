@@ -63,8 +63,6 @@ using namespace htp;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-#define CONTENT_LENGTH_STRING	"Content-Length: "
-#define LOCATION_STRING			"Location: "
 #define HTTP_SIGNATURE			"HTTP/1.1 "
 #define NL	"\r\n"
 
@@ -120,43 +118,48 @@ static void GetHeader_(
 	} while ( Continue );
 }
 
-static void GetContentLengthValue_(
-	const str::string_ &RawHeader,
-	header_ &Header )
+static inline const char *GetFieldLabel_( field__ Name )
 {
-	epeios::row__ P = NONE;
-
-	Header.S_.ContentLength = 0;
-
-	P = *RawHeader.Search( str::string( CONTENT_LENGTH_STRING ) );
-
-	if ( P == NONE )
-		ERRf();
-
-	*P += sizeof( CONTENT_LENGTH_STRING ) - 1;
-	
-	while ( ( P != NONE ) && ( isdigit( RawHeader( P ) ) ) ) {
-		Header.S_.ContentLength = Header.S_.ContentLength * 10 + RawHeader( P ) - '0';
-		P = RawHeader.Next( P );
+	switch ( Name ) {
+	case fContentLength:
+		return "Content-Length";
+		break;
+	case fLocation:
+		return "Location";
+		break;
+	case fHost:
+		return "Host";
+		break;
+	case fReferrer:
+		return "Referrer";
+		break;
+	case fAccept:
+		return "Accept";
+		break;
+	case fContentType:
+		return "Content-Type";
+		break;
+	default:
+		ERRu();
+		return NULL;
+		break;
 	}
-	
-	if ( P == NONE )
-		ERRf();
 }
 
-static void GetLocationValue_(
+static void GetValue_(
 	const str::string_ &RawHeader,
-	header_ &Header )
+	const str::string_ &FieldName,
+	str::string_ &Value )
 {
 	epeios::row__ P = NONE;
 
-	P = *RawHeader.Search( str::string( LOCATION_STRING ) );
+	P = *RawHeader.Search( FieldName );
 
 	if ( P != NONE ) {
-		*P += sizeof( LOCATION_STRING ) - 1;
+		P = RawHeader.Next( P, FieldName.Amount() );
 		
 		while ( ( P != NONE ) && ( RawHeader( P ) != NL[0] ) ) {
-			Header.Location.Append( RawHeader( P ) );
+			Value.Append( RawHeader( P ) );
 			P = RawHeader.Next( P );
 		}
 		
@@ -165,20 +168,63 @@ static void GetLocationValue_(
 	}
 }
 
+static void GetValue_(
+	const str::string_ &RawHeader,
+	field__ Field,
+	str::string_ &Value )
+{
+ERRProlog
+	str::string FieldName;
+ERRBegin
+	FieldName.Init( GetFieldLabel_( Field ) );
+
+	FieldName.Append( ": " );
+
+	GetValue_( RawHeader, FieldName, Value );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static bso::ulong__ GetULong_( 
+	const str::string_ &RawHeader,
+	field__ Field )
+{
+	bso::ulong__ Value = 0;
+ERRProlog
+	str::string SValue;
+	epeios::row__ Error;
+ERRBegin
+	SValue.Init();
+
+	GetValue_( RawHeader, Field, SValue );
+
+	Value = SValue.ToUL( &Error );
+
+	if ( Error != NONE )
+		ERRu();
+ERRErr
+ERREnd
+ERREpilog
+	return Value;
+}
+
 static void FillField_(
 	flw::iflow__ &IFlow,
 	header_ &Header )
 {
 ERRProlog
 	str::string RawHeader;
+	const char *Label = NULL;
 ERRBegin
 	RawHeader.Init();
 
 	GetHeader_( IFlow, RawHeader );
 
-	GetContentLengthValue_(	RawHeader, Header );
+	Header.S_.ContentLength = GetULong_( RawHeader, fContentLength );
 
-	GetLocationValue_( RawHeader, Header );
+	GetValue_( RawHeader, fLocation, Header.Location );
+	GetValue_( RawHeader, fContentType, Header.ContentType );
 ERRErr
 ERREnd
 ERREpilog
@@ -231,31 +277,8 @@ htp::status__ htp::Parse(
 	return Status;
 }
 
-static inline const char *GetFieldLabel_( field_name__ Name )
-{
-	switch ( Name ) {
-	case fnHost:
-		return "Host";
-		break;
-	case fnReferrer:
-		return "Referrer";
-		break;
-	case fnAccept:
-		return "Accept";
-		break;
-	case fnContentType:
-		return "Content-Type";
-		break;
-	default:
-		ERRu();
-		return NULL;
-		break;
-	}
-}
-
-
 static inline void Write_(
-	field_name__ Name,
+	field__ Name,
 	txf::text_oflow__ &Flow )
 {
 	Flow << GetFieldLabel_( Name ) << ": ";

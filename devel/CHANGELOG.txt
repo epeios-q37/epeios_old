@@ -1,5 +1,10 @@
 $Id$
 
+16/03/05:
+- HTP:
+	- Ajout du champ 'Content-Type' dans l'objet 'header'.
+	- Modifications cosmétiques.
+
 13/03/05:
 - HTP:
 	- Ajout du traitement du code '302' ('Found').
