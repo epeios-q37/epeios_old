@@ -159,6 +159,19 @@ namespace bch {
 		{
 			Allouer_( Size, Mode );
 		}
+		//f Allocate 'Size' objects and fill newly created object with 'Object'. Extent is forced to 'Size' when 'Mode' = 'mFit'.
+		void Allocate(
+			epeios::size__ Size,
+			const type &Object,
+			aem::mode Mode = aem::mDefault )
+		{
+			epeios::size__ PreviousSize = Amount();
+
+			Allouer_( Size, Mode );
+
+			if ( Size > PreviousSize )
+				Fill( Object, PreviousSize - Size, PreviousSize );
+		}
 		/*f Store at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
 		Adjust the size of the bunch. */
 		void StoreAndAdjust(

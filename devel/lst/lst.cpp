@@ -84,6 +84,16 @@ epeios::row_t__ lst::Predecesseur_(
 		return NONE;
 }
 
+void lst::MarkAsReleased_(
+	epeios::row_t__ First,
+	epeios::row_t__ Last,
+	store_ &Store )
+{
+	while ( First <= Last )
+		Store.RestorationRelease( Last-- );
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class lstpersonnalization

@@ -65,6 +65,7 @@ extern class ttr_tutor &IDSTutor;
 #include "stk.h"
 
 namespace ids {
+
 	//c Store of ids of type 'id__'. Use 'ID_STORE' rather than directly this class.
 	template <typename id__> class ids_store_ 
 	{
@@ -139,6 +140,22 @@ namespace ids {
 
 			return New( Released );
 		}
+		//f Mark 'ID' as used. Return true if 'ID' out of range. For restoration purpose only.
+		bso::bool__ RestorationNew( id__ ID )
+		{
+			if ( ID >= S_.FirstUnused ) {
+				S_.FirstUnused = ID + 1;
+				return true;
+			} else {
+#ifdef IDS_DBG
+				if ( IsAvailable( ID ) )
+					ERRu();
+#endif
+				Released.Remove( Released.Locate( ID ) );
+
+				return false;
+			}
+		}
 		//f Released id 'ID'.
 		void Release( id__ ID )
 		{
@@ -147,6 +164,18 @@ namespace ids {
 				ERRu();
 #endif
 			Released.Push( ID );
+		}
+		//f Modify the whole object so that 'ID' appears as available. For restoration purpose only.
+		void RestorationRelease( id__ ID )
+		{
+#ifdef IDS_DBG
+			if ( IsAvailable( ID ) )
+				ERRu();
+#endif
+			if ( ID >= S_.FirstUnused )
+				S_.FirstUnused = ID + 1;
+
+			Release( ID );
 		}
 		//f Return the first available id.
 		id__ GetFirstAvailable( void ) const

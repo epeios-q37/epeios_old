@@ -225,6 +225,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbfld		&lgsb		&2002-\
 	&GeSBib FieLDs
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
+&gsbimp		&lgsb		&\
+	&GeSBib IMportatioN
 &gsbmgr		&lgsb		&\
 	&GeSBib MiGRation
 &gsbmlt		&lgsb		&2002-\

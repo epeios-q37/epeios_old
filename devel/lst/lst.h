@@ -77,6 +77,16 @@ namespace lst {
 		tym::row_t__ Element,
 		const store_ &Libres );
 
+	void Insert_(
+		epeios::row_t__ First,
+		epeios::row_t__ Last,
+		store_ &Store );
+
+	void MarkAsReleased_(
+		epeios::row_t__ First,
+		epeios::row_t__ Last,
+		store_ &Store );
+
 
 	//c Handle a list of objects. Use 'LIST_' rather than directly this class.
 	template <typename r, typename r_t> class list_
@@ -168,6 +178,12 @@ namespace lst {
 		r New( void )
 		{
 			return (r_t)Nouveau_();
+		}
+		//f Return 'Row' as it is a new entry. For restoration purpose only.
+		r RestorationNew( r Row )
+		{
+			if ( Locations.RestorationNew( Row ) )
+				MarkAsReleased_( Locations.FirstUnused(), Row - 1, Locations );
 		}
 		//f Return the first entry if exists, 'NONE' if list empty.
 		r First( void ) const

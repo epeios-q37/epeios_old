@@ -132,6 +132,11 @@ namespace lstbch {
 		{
 			return list_<row, row_t>::New();
 		}
+		//f Create new entry with row 'Row'.
+		row New( row Row )
+		{
+			return list_<row, row_t>::New( Row );
+		}
 		// To avoid the use of herited 'Append' methods.
 		void Append( void ) const
 		{

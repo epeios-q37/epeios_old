@@ -122,6 +122,11 @@ namespace lstctn {
 		{
 			return list_<row, row_t>::New();
 		}
+		//f Create new entry with row 'Row'.
+		row New( row Row )
+		{
+			return list_<row, row_t>::New( Row );
+		}
 	};
 
 	E_AUTO3( list_container )
