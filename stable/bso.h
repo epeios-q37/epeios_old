@@ -393,7 +393,7 @@ namespace bso {
 		lfloat__ Value,
 		char *String )
 	{
-		sprintf( String, "%Lf", Value );
+		sprintf( String, "%Lg", Value );
 	}
 
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.

@@ -7,6 +7,9 @@ BSO:
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
 
+DTE:
+- (15/04/04) Introducing the new structure.
+
 EPSMSC:
 - Adding 'EPSMSC_COPYRIGHT()' macro.
 

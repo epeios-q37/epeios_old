@@ -55,29 +55,50 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+/* Structure of a date.
+
+  A date is stored in a 'raw_date__', which is 32 bits long.
+
+  Here is the description of each bit from less significant, to more significant.
+
+  0		  (1)	: Day reliability (0: no, 1: yes)
+  1		  (1)	: Month reliability (0: no, 1: yes)
+  2		  (1)	: Year reliabilty (0: no, 1: yes)
+  3 - 4   (2)	: Meaningfullness (?) of the year.
+				  ( 00 : only millenary is significant (1xxx).
+				    01 : only millenary and century is significant (19xx).
+					10 : only millenary, century, and decade is significant (196x).
+					11 : all the given year is significant (1969). )
+  5 - 9   (5)	: day (0 to 31 ; 0 : don't bother or don't know, according to bit 0.
+  10 - 13 (4)	: month (0 to 12 ; 0 : don't bother, don't know, according to bit 1)
+  14 - 27 (14)	: year ( 0 to 16383 ; 0 don't bother or don't know, according to bit 2).
+  28 - 30 (3)	: for future use.
+  31	  (1)	: sign (0: before J.C., 1: after J.C.)
+
+*/			
+
+
+
 using namespace dte;
 
-raw_date__ dte::date__::Convert_( bso::ulong__ Date )
+raw_date__ dte::date__::_Convert(
+	day__ Day,
+	month__ Month,
+	year__ Year ) const
 {
-	year__ Year;
-	month__ Month;
-	day__ Day;
-
-	Year = this->Year( Date );
-	Month = this->Month( Date );
-	Day = this->Day( Date );
-
 	if ( Year > ( ( 2 << 14 ) - 1 )
 		 || ( Day > 31 )
 		 ||  ( Month > 12 ) )
 		return DTE_INVALID_DATE;
 	else
-		return ( Year << 9 | Month << 5 | Day ) << DTE_SHIFT;
+		return ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
 }
 
-raw_date__ date__::Convert_( const char *Date )
+raw_date__ date__::_Convert( const char *Date )
 {
-	long Jour = 0, Mois = 0, Annee = 0;
+	day__ Jour = 0;
+	month__ Mois = 0;
+	year__ Annee = 0;
 
 	while( *Date && !isdigit( *Date ) )
 		Date++;
@@ -112,7 +133,7 @@ raw_date__ date__::Convert_( const char *Date )
 		else
 			Annee += 2000;
 
-	return Convert_( (raw_date__)( ( Annee << 4 ) | Mois << 2 - Jour ) );
+	return _Convert( Jour, Mois, Annee );
 }
 
 const char *date__::ASCII( char *Result ) const
