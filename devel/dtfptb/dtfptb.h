@@ -133,7 +133,7 @@ namespace dtfptb {
 	}
 
 	//f Put 'SLong' into 'Flow'.
-	inline void PutSShort(
+	inline void PutSLong(
 		slong__ SLong,
 		flw::oflow__ &Flow )
 	{

@@ -509,6 +509,30 @@ namespace tol {
 	//f Return current date é time.
 	const char *DateAndTime( buffer__ &Buffer );
 
+
+#ifndef CPE__MT
+	inline const char *Date( void )
+	{
+		static buffer__ Buffer;
+
+		return Date( Buffer );
+	}
+
+	inline const char *Time( void )
+	{
+		static buffer__ Buffer;
+
+		return Time( Buffer );
+	}
+
+	inline const char *DateAndTime( void )
+	{
+		static buffer__ Buffer;
+
+		return DateAndTime( Buffer );
+	}
+#endif
+
 #ifndef CPE__CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'clock()' only return how long

@@ -57,6 +57,9 @@ DTE:
 - (09/08/04) Fixing sign bug.
 - (14/09/04) Some improvements.
 
+DTFPTB:
+- (13/10/04) Correcting misspelled function name (PutSShort -> PutSLong).
+
 EPEIOS:
 - (15/06/04) Adding some useful constants.
 - (26/09/04) Adding 'EPEIOS_ROW_MAX'.
