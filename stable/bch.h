@@ -79,9 +79,10 @@ namespace bch {
 		'Position' de 'Quantite' positions */
 		void Pousser_(
 			tym::row__ Position,
-			tym::size__ Quantite )
+			tym::size__ Quantite,
+			aem::mode Mode )
 		{
-			Allouer_( Amount() + Quantite, aem::mFast );
+			Allouer_( Amount() + Quantite, Mode );
 			mmr::Write( *this, Amount() - Position - Quantite, Position, Position + Quantite);
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
@@ -144,10 +145,10 @@ namespace bch {
 			mmr::Init();
 			mng::Init();
 		}
-		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
+		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Adjust' at true.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast)
+			aem::mode Mode = aem::mFast )
 		{
 			Allouer_( Size, Mode );
 		}
@@ -216,7 +217,7 @@ namespace bch {
 			if ( Amount > this->Amount() )
 				ERRu();
 	#endif
-			Allocate( this->Amoun() - Amount );
+			Allouer_( this->Amount() - Amount, false );
 		}
 		//f Add 'Set'. Return the position where added.
 		tym::row__ Add( const bunch_core_ &Set )
@@ -261,7 +262,7 @@ namespace bch {
 		{
 			mmr::Write( *this, this->Amount() - ( Amount + Position ), Position + Amount, Position );
 
-			Allouer_( this->Amount() - Amount, aem::mFast );
+			Allouer_( this->Amount() - Amount, false );
 		}
 		//f Return the position of the first of 'Amount' new object.
 		tym::row__ New( tym::size__ Amount = 1 )
@@ -420,15 +421,15 @@ namespace bch {
 		: bunch_core_<type, tym::E_MEMORY__( type, size ), aem::amount_extent_manager__< size > >( S_ ) {}
 		bunch__ &operator =( const bunch__ &S )
 		{
-			set_bunch_core_<type, tym::E_MEMORY__( type, size )>::WriteAndAdjust( S, S.Amount_ );
+			bunch_core_<type, tym::E_MEMORY__( type, size ), aem::amount_extent_manager__< size > >::WriteAndAdjust( S, S.Amount_ );
 			Size_ = S.Amount_;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			bunch_core_<type, tym::E_MEMORY__( type, size )>::Init();
-			bunch_core_<type, tym::E_MEMORY__( type, size )>::SetStepValue( 0 );
+			bunch_core_<type, tym::E_MEMORY__( type, size ), aem::amount_extent_manager__< size > >::Init();
+			bunch_core_<type, tym::E_MEMORY__( type, size ), aem::amount_extent_manager__< size > >::SetStepValue( 0 );
 		}
 	};
 

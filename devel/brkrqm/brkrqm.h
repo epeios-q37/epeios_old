@@ -228,17 +228,12 @@ namespace brkrqm {
 			if ( Channel_->Get() != Cast )
 				ERRu();
 		}
-		void TestOutput_(
-			cast Cast,
-			bso__bool ExplanationMessage = false )
+		void TestOutput_( cast Cast )
 		{
 			if ( !Parsed_ ) {
 				Test_( cEnd );
-
-				if ( !ExplanationMessage )
-					Channel_->Put( 0 );	// Empty explanation message.
-				else
-					ERRb();
+				
+				Channel_->Put( 0 );	// Empty explanation message.
 
 				Parsed_ = true;
 			}
@@ -543,7 +538,10 @@ namespace brkrqm {
 		void SendExplanationMessage( const char *Message )
 		{
 			if ( Description_ != NULL )
-				TestOutput_( cEnd, true );
+				if ( Parsed_ )
+					ERRb();
+				else
+					TestInput_( cEnd );
 
 			if ( !Message[0] )
 				ERRu();

@@ -190,7 +190,7 @@ namespace txmtbl {
 	protected:
 		virtual void LSTAllocate( tym::size__ Size )
 		{
-			cells_::Allocate( Size,true );
+			cells_::Allocate( Size, aem::mFit );
 		}
 	public:
 		struct s

@@ -79,9 +79,10 @@ namespace bch {
 		'Position' de 'Quantite' positions */
 		void Pousser_(
 			tym::row__ Position,
-			tym::size__ Quantite )
+			tym::size__ Quantite,
+			aem::mode Mode )
 		{
-			Allouer_( Amount() + Quantite, false );
+			Allouer_( Amount() + Quantite, Mode );
 			mmr::Write( *this, Amount() - Position - Quantite, Position, Position + Quantite);
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
@@ -107,16 +108,16 @@ namespace bch {
 		// Allocation de la place nécessaire à 'Taille' objets.
 		void Allouer_(
 			tym::size__ Taille,
-			bso__bool Adjust )
+			aem::mode Mode )
 		{
-			if ( mng::AmountToAllocate( Taille, Adjust ) )
+			if ( mng::AmountToAllocate( Taille, Mode ) )
 				mmr::Allocate( Taille );
 		}
 		// allocate if the set not big enough.
 		void AllocateIfNecessary_( tym::size__ Quantity )
 		{
 			if ( Quantity > Amount() )
-				Allouer_( Quantity, false );
+				Allouer_( Quantity, aem::mFast );
 		}
 	public:
 		struct s
@@ -147,9 +148,9 @@ namespace bch {
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Adjust' at true.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false)
+			aem::mode Mode = aem::mFast )
 		{
-			Allouer_( Size, Adjust );
+			Allouer_( Size, Mode );
 		}
 		//f Same as 'Write()', but allocate additionnaly mmr if needed.
 		void WriteAndAdjust(
@@ -177,7 +178,7 @@ namespace bch {
 		{
 			tym::size__ Amount = this->Amount();
 
-			Allouer_( Amount + 1, false );
+			Allouer_( Amount + 1, aem::mFast );
 
 			mmr::Write( Object , Amount );
 
@@ -190,7 +191,7 @@ namespace bch {
 		{
 			tym::row__ Retour = this->Amount();
 
-			Allouer_( Retour + Amount, false );
+			Allouer_( Retour + Amount, aem::mFast );
 
 			mmr::Write( Buffer, Amount, Retour );
 
