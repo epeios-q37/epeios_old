@@ -71,6 +71,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__MS
 #undef CPE__GCC
 #undef CPE__DJGPP
+#undef CPE__CYGWIN
 #undef CPE__UNIX
 #undef CPE__BEOS
 #undef CPE__MAC
@@ -118,8 +119,13 @@ extern class ttr_tutor &CPETutor;
 #		elif defined( __unix__ )
 #			define CPE__UNIX
 #		endif
-#	elif defined( __unix__ )
-#		define CPE__UNIX
+#	elif defined( __CYGWIN__ )
+#		define CPE__CYGWIN
+#		ifdef __MSDOS__
+#			define CPE__MS
+#		elif defined( __unix__ )
+#			define CPE__UNIX
+#		endif
 #	elif defined( __BEOS__ )
 #		define CPE__BEOS
 #	endif

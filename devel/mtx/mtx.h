@@ -65,11 +65,30 @@ extern class ttr_tutor &MTXTutor;
 /* End addendum to automatic documentation generation part. */
 
 #include "bso.h"
+#include "cpe.h"
 
-#if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER )
-#define MTX__USE_PTHREAD_MUTEX
-#include <pthread.h>
-#include <errno.h>
+#if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER ) && !defined( CPE__CYGWIN )
+#	define MTX__USE_PTHREAD_MUTEX
+#	include <pthread.h>
+#	include <errno.h>
+#else
+#	define MTX__USE_COUNTER
+#endif
+
+#if !defined( MTX__USE_PTHREAD_MUTEX ) && !defined( MTX__USE_COUNTER )
+#	error "Don't know what mutex type to use."
+#endif
+
+#ifdef MTX_CONTROL
+#	ifdef MTX_DBG
+#		ifdef MTX__USE_PTHREAD_MUTEX
+#			error "'MTX_CONTROL' can not be using pthread mutexes."
+#		else
+#			define MTX__CONTROL
+#		endif
+#	else
+#		error "'MTX_CONTROL' can be used only in debug modus!".
+#	endif
 #endif
 
 #include "stf.h"
@@ -82,15 +101,19 @@ extern class ttr_tutor &MTXTutor;
 
 namespace mtx {
 
-#ifndef MTX__USE_PTHREAD_MUTEX
+#ifdef MTX__USE_COUNTER
 	namespace {
 		typedef bso::ubyte__ counter__;
 	};
 #endif
 
+#ifdef MTX__CONTROL
+#	define MTX_RELEASED_MUTEX	BSO_UBYTE_MAX
+#endif
+
 #ifdef MTX__USE_PTHREAD_MUTEX
 	typedef pthread_mutex_t *mutex_handler__;
-#else
+#elif defined( MTX__USE_COUNTER )
 	//t A mutex handler.
 	typedef counter__ *mutex_handler__;
 #endif
@@ -106,7 +129,7 @@ namespace mtx {
 #ifdef MTX__USE_PTHREAD_MUTEX
 		if ( pthread_mutex_init( Handler, NULL ) != 0 )
 			ERRs();
-#else
+#elif defined( MTX__USE_COUNTER )
 		*Handler = 0;
 #endif
 
@@ -128,7 +151,11 @@ namespace mtx {
 			ERRs();
 			break;
 		}
-#else
+#elif defined( MTX__USE_COUNTER )
+#	ifdef MTX__CONTROL
+		if ( *Handler == MTX_RELEASED_MUTEX )
+			ERRu();
+#	endif
 		if ( *Handler != 0 )
 			return false;
 
@@ -147,7 +174,7 @@ namespace mtx {
 #endif
 	}
 
-#ifndef MTX__USE_PTHREAD_MUTEX
+#ifdef MTX__USE_COUNTER
 
 	// Wait until mutex unlocked.
 	inline void WaitUntilUnlocked_( mutex_handler__ Handler )
@@ -174,7 +201,11 @@ namespace mtx {
 #ifdef MTX__USE_PTHREAD_MUTEX
 		if ( pthread_mutex_lock( Handler ) != 0 )
 			ERRs();
-#else
+#elif defined( MTX__USE_COUNTER )
+#	ifdef MTX__CONTROL
+		if ( *Handler == MTX_RELEASED_MUTEX )
+			ERRu();
+#	endif
 		if ( !TryToLock( Handler ) )
 			WaitUntilUnlocked_( Handler );
 #endif
@@ -186,7 +217,13 @@ namespace mtx {
 #ifdef MTX__USE_PTHREAD_MUTEX
 		if ( pthread_mutex_unlock( Handler ) != 0 )
 			ERRs();
-#else
+#elif defined( MTX__USE_COUNTER )
+#	ifdef MTX__CONTROL
+		if ( *Handler == MTX_RELEASED_MUTEX )
+			ERRu();
+		if ( *Handler == 0 )
+			ERRu();
+#	endif
 		(*Handler)--;
 #endif
 	}
@@ -195,14 +232,18 @@ namespace mtx {
 	inline void Delete( mutex_handler__ Handler )
 	{
 #ifdef MTX__USE_PTHREAD_MUTEX
-//		pthread_mutex_destroy( Handler );
-		mtx::Lock( Handler );
-		mtx::Unlock( Handler );
 		if ( pthread_mutex_destroy( Handler ) != 0 ) {
 				ERRs();
 		}
 #endif
+#ifdef MTX__CONTROL
+		if ( *Handler != 0 )
+			ERRu();
+		*Handler = MTX_RELEASED_MUTEX;
+#else
 		free( Handler );
+#endif
+
 	}
 
 	//c A mutex.

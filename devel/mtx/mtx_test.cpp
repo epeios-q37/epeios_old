@@ -84,10 +84,14 @@ ERRBegin
 	mtx::Lock( Mutex );
 
 	stf::fout << "+ Locked ..." << txf::nl;
+
+	mtx::Unlock( Mutex );
 ERRErr
 ERREnd
 	if ( Mutex != MTX_INVALID_HANDLER )
 		mtx::Delete( Mutex );
+
+	mtx::Lock( Mutex );
 ERREpilog
 }
 

@@ -14,6 +14,9 @@ CTN:
 - Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
 - Fixing GNU GCC issues.
 
+CPE:
+- Adding detection of cygwin.
+
 DBT:
 - Adapting to changes in 'LST' library.
 
@@ -41,6 +44,9 @@ LSTCTN:
 
 MMI:
 - Adding some missing 'const' qualifier'.
+
+MTX:
+- Using counter undes cygwin due to problems with pthread mutexes .
 
 QUE:
 - Adding some missing 'const' qualifier.
