@@ -1,3 +1,3 @@
 # $Id$
-scp -r workdir/*.tar.gz csimon@musicanet.org:gesbib
+scp -r workdir/*.tar.gz csimon@musicanet.org:gesbib6
 rm -rf workdir
