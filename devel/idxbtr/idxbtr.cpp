@@ -54,161 +54,173 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-POSITION__ idxbtr_tree_index_::NoeudSansFils_( POSITION__ Position ) const
-{
-	while( btr_binary_tree_::HasLeft( Position ) )
-		Position = btr_binary_tree_::Left( Position );
+namespace idxbtr {
 
-	return Position;
-}
-
-// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-POSITION__ idxbtr_tree_index_::NoeudSansFille_( POSITION__ Position ) const
-{
-	while( btr_binary_tree_::HasRight( Position ) )
-		Position = btr_binary_tree_::Right( Position );
-
-	return Position;
-}
-
-// Retourne le premier noeud qui est fils en remontant.
-POSITION__ idxbtr_tree_index_::PereFilsEnRemontant_( POSITION__ Position ) const
-{
-	while( !btr_binary_tree_::IsLeft( Position ) && btr_binary_tree_::HasParent( Position ) )
-		Position = btr_binary_tree_::Parent( Position );
-
-	if ( btr_binary_tree_::IsLeft( Position ) )
-		return btr_binary_tree_::Parent( Position );
-	else
-		return NONE;
-}
-
-// Retourne le premier noeud qui est fille en remontant.
-POSITION__ idxbtr_tree_index_::PereFilleEnRemontant_( POSITION__ Position ) const
-{
-	while( !btr_binary_tree_::IsRight( Position ) && btr_binary_tree_::HasParent( Position ) )
-		Position = btr_binary_tree_::Parent( Position );
-
-	if ( btr_binary_tree_::IsRight( Position ) )
-		return btr_binary_tree_::Parent( Position );
-	else
-		return NONE;
-}
-
-void idxbtr_tree_index_::Balance( void )
-{
-ERRProlog
-	POSITION__ Current, Head, Temp;
-	QUEUE Queue;	
-ERRBegin
-	Queue.Init();
-	Queue.Allocate( Extent() );
-
-	Current = First();
-
-	if ( Current != NONE )
+	/* structure de description d'un arbre.
+	Est utilisé lors du rééquilibrage d'un arbre. Usage interne. */
+	struct desc__
 	{
-		Head = Temp = Current;
+		// Racine de l'arbre. N'a pas de fils droit. L'arbre de fils gauche est complet.
+		tym::row__ Racine;
+		// Niveau de l'arbre.
+		tym::size__ Niveau;
+	};
 
-		Current = Next( Temp );
+	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
+	tym::row__ tree_index_::NoeudSansFils_( tym::row__ Position ) const
+	{
+		while( binary_tree_::HasLeft( Position ) )
+			Position = binary_tree_::Left( Position );
 
-		while ( Current != NONE )
-		{
-			Queue.InsertItemAfterNode( Current, Temp );
-
-			Temp = Current;
-
-			Current = Next( Temp );
-		}
-
-		Fill( Queue, Head );
+		return Position;
 	}
 
-ERRErr
-ERREnd
-ERREpilog
-}
-
-/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
-la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
-POSITION__ idxbtr_tree_index_::Equilibrer_(
-	QUEUE_ &File,
-	POSITION__ Premier,
-	MEMORY_DRIVER_ &Pilote )
-{
-	POSITION__ Racine, &Courant = Premier;
-ERRProlog
-	stk_stack<idxbtr__desc> Pile;
-	SIZE__ Niveau = 0;
-	idxbtr__desc Sommet;
-	bso__bool Boucler = true;
-ERRBegin
-
-	if ( &Pilote )
-		Pile.plug( Pilote );
-		
-	Pile.Init();
-
-	Racine = Courant;
-
-	do
+	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
+	tym::row__ tree_index_::NoeudSansFille_( tym::row__ Position ) const
 	{
-		while( !Pile.IsEmpty() && ( Pile( Pile.Last() ).Niveau == Niveau ) )
+		while( binary_tree_::HasRight( Position ) )
+			Position = binary_tree_::Right( Position );
+
+		return Position;
+	}
+
+	// Retourne le premier noeud qui est fils en remontant.
+	tym::row__ tree_index_::PereFilsEnRemontant_( tym::row__ Position ) const
+	{
+		while( !binary_tree_::IsLeft( Position ) && binary_tree_::HasParent( Position ) )
+			Position = binary_tree_::Parent( Position );
+
+		if ( binary_tree_::IsLeft( Position ) )
+			return binary_tree_::Parent( Position );
+		else
+			return NONE;
+	}
+
+	// Retourne le premier noeud qui est fille en remontant.
+	tym::row__ tree_index_::PereFilleEnRemontant_( tym::row__ Position ) const
+	{
+		while( !binary_tree_::IsRight( Position ) && binary_tree_::HasParent( Position ) )
+			Position = binary_tree_::Parent( Position );
+
+		if ( binary_tree_::IsRight( Position ) )
+			return binary_tree_::Parent( Position );
+		else
+			return NONE;
+	}
+
+	void tree_index_::Balance( void )
+	{
+	ERRProlog
+		tym::row__ Current, Head, Temp;
+		que::E_QUEUE Queue;	
+	ERRBegin
+		Queue.Init();
+		Queue.Allocate( Extent() );
+
+		Current = First();
+
+		if ( Current != NONE )
+		{
+			Head = Temp = Current;
+
+			Current = Next( Temp );
+
+			while ( Current != NONE )
+			{
+				Queue.InsertItemAfterNode( Current, Temp );
+
+				Temp = Current;
+
+				Current = Next( Temp );
+			}
+
+			Fill( Queue, Head );
+		}
+
+	ERRErr
+	ERREnd
+	ERREpilog
+	}
+
+	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
+	la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
+	tym::row__ tree_index_::Equilibrer_(
+		que::E_QUEUE_ &File,
+		tym::row__ Premier,
+		mdr::E_MEMORY_DRIVER_ &Pilote )
+	{
+		tym::row__ Racine, &Courant = Premier;
+	ERRProlog
+		stk::E_STACK( desc__ ) Pile;
+		tym::size__ Niveau = 0;
+		desc__ Sommet;
+		bso__bool Boucler = true;
+	ERRBegin
+
+		if ( &Pilote )
+			Pile.plug( Pilote );
+
+		Pile.Init();
+
+		Racine = Courant;
+
+		do
+		{
+			while( !Pile.IsEmpty() && ( Pile( Pile.Last() ).Niveau == Niveau ) )
+			{
+				Sommet = Pile.Pop();
+
+				Niveau = Sommet.Niveau + 1;
+				binary_tree_::BecomeRight( Racine, Sommet.Racine );
+
+				Racine = Sommet.Racine;
+			}
+
+			Courant = File.Next( Courant );
+
+			if ( Courant != NONE )
+			{
+				if ( File.HasNext( Courant ) )
+				{
+					binary_tree_::BecomeLeft( Racine, Courant );
+
+					Sommet.Racine = Courant;
+					Sommet.Niveau = Niveau;
+
+					Pile.Push( Sommet );
+
+					Courant = File.Next( Courant );
+				}
+				else
+				{
+					Boucler = false;
+					binary_tree_::BecomeRight( Courant, NoeudSansFille_( Racine ) );
+				}
+			}
+			else
+				Boucler = false;
+
+			if ( Boucler )
+			{
+				Racine = Courant;
+				Niveau = 0;
+			}
+		} while( Boucler );
+
+		while( !Pile.IsEmpty() )
 		{
 			Sommet = Pile.Pop();
 
-			Niveau = Sommet.Niveau + 1;
-			btr_binary_tree_::BecomeRight( Racine, Sommet.Racine );
+			binary_tree_::BecomeRight( Racine, Sommet.Racine );
 
 			Racine = Sommet.Racine;
 		}
-
-		Courant = File.Next( Courant );
-
-		if ( Courant != NONE )
-		{
-			if ( File.HasNext( Courant ) )
-			{
-				btr_binary_tree_::BecomeLeft( Racine, Courant );
-
-				Sommet.Racine = Courant;
-				Sommet.Niveau = Niveau;
-
-				Pile.Push( Sommet );
-
-				Courant = File.Next( Courant );
-			}
-			else
-			{
-				Boucler = false;
-				btr_binary_tree_::BecomeRight( Courant, NoeudSansFille_( Racine ) );
-			}
-		}
-		else
-			Boucler = false;
-
-		if ( Boucler )
-		{
-			Racine = Courant;
-			Niveau = 0;
-		}
-	} while( Boucler );
-
-	while( !Pile.IsEmpty() )
-	{
-		Sommet = Pile.Pop();
-
-		btr_binary_tree_::BecomeRight( Racine, Sommet.Racine );
-
-		Racine = Sommet.Racine;
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Racine;
 	}
-ERRErr
-ERREnd
-ERREpilog
-	return Racine;
 }
-
 
 
 

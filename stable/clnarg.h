@@ -184,6 +184,10 @@ namespace clnarg {
 
 			AddOption( Option );
 		}
+		//f Return the command label corresponding to 'Id'.
+		const char *GetCommandLabel( int Id ) const;
+		//f Return the option label corresponding to 'Id'.
+		const char *GetOptionLabel( int Id ) const;
 	};
 
 	AUTO( description )
@@ -259,7 +263,31 @@ namespace clnarg {
 			arguments_ &Arguments );
 		//f Put in 'Arguments' arguments no associated to an option. A 'GetArguments( Id, ... )' for each option MUST be called before calling this function.
 		void GetArguments( arguments_ &Arguments );
+		//f Return descriptions.
+		const description_ &Description( void )
+		{
+			return *Description_;
+		}
 	};
+	
+	/*f Print the usage text for command in 'Description' identified by 'CommandId'
+	using 'Text'. If 'OneLine' at false, text is print on 2 lines, other wise
+	on one line.. If 'Default' at true, the command is the default one. */
+	void PrintCommandUsage(
+		const description_ &Description,
+		int CommandId,
+		const char *Text,
+		bso__bool OneLine,
+		bso__bool Default );
+		
+	/*f Print the usage text for option in 'Description' identified by 'OptionId'
+	using 'Text'. If 'OneLine' at false, text is print on 2 lines, other wise
+	on one line.. If 'Default' at true, the command is the default one. */
+	void PrintOptionUsage(
+		const description_ &Description,
+		int CommandId,
+		const char *Text,
+		bso__bool OneLine );
 }
 
 /*$END$*/

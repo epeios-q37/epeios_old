@@ -61,262 +61,256 @@ extern class ttr_tutor &IDXBTRTutor;
 #include "que.h"
 #include "stk.h"
 
-/* structure de description d'un arbre.
-Est utilisé lors du rééquilibrage d'un arbre. Usage interne. */
-struct idxbtr__desc
-{
-	// Racine de l'arbre. N'a pas de fils droit. L'arbre de fils gauche est complet.
-	POSITION__ Racine;
-	// Niveau de l'arbre.
-	SIZE__ Niveau;
-};
+namespace idxbtr {
 
-//c Tree-based index, fast sorting, but slow browsing.
-class idxbtr_tree_index_
-: public btr_binary_tree_
-{
-private:
-	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-	POSITION__ NoeudSansFils_( POSITION__ Position ) const;
-	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-	POSITION__ NoeudSansFille_( POSITION__ Position ) const;
-	// Retourne le père du premier noeud qui est fils en remontant.
-	POSITION__ PereFilsEnRemontant_( POSITION__ Position ) const;
-	// Retourne le père du premier noeud qui est fille en remontant.
-	POSITION__ PereFilleEnRemontant_( POSITION__ Position ) const;
-	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
-	la file 'File' de tête 'Tete' et que l'on doit utiliser la 'Pilote' si != NULL.
-	Retourne la nouvelle racine de l'arbre. */
-	POSITION__ Equilibrer_(
-		que_queue_ &Index,
-		POSITION__ Premier,
-		MEMORY_DRIVER_ &Pilote );
-public:
-	struct s
-	: public btr_binary_tree_::s
-	{
-		// La racine de l'arbre.
-		POSITION__ Racine;
-	} &S_;
-	idxbtr_tree_index_( s &S )
-	: S_( S ),
-	  btr_binary_tree_( S )
-	{}
-	void reset( bool P = true )
-	{
-		btr_binary_tree_::reset( P );
+	using btr::binary_tree_;
 
-		S_.Racine = NONE;
-	}
-	void plug( mmm_multimemory_ &MM )
+	//c Tree-based index, fast sorting, but slow browsing.
+	class tree_index_
+	: public binary_tree_
 	{
-		btr_binary_tree_::plug( MM );
-	}
-	void plug( MEMORY_DRIVER_ &MD )
-	{
-		btr_binary_tree_::plug( MD );
-	}
-	idxbtr_tree_index_ &operator =( const idxbtr_tree_index_ &I )
-	{
-		btr_binary_tree_::operator =( I );
-
-		S_.Racine = I.S_.Racine;
-
-		return *this;
-	}
-/*	void ecrire( flo_sortie_ &Flot ) const
-	{
-		FLOEcrire( S_.Racine, Flot );
-		bts_binary_tree_::ecrire( Flot );
-	}
-	void lire( flo_entree_ &Flot )
-	{
-		FLOLire( Flot, S_.Racine );
-		bts_binary_tree_::lire( Flot );
-	}
-*/	//f Initialization.
-	void Init( void )
-	{
-		S_.Racine = NONE;
-
-		btr_binary_tree_::Init();
-	}
-	//f Return the root of the tree. To use as the first node for the 'NextAvailable()' and 'PreviousAvailablbe()' functions.
-	POSITION__ Root( void ) const
-	{
-		return S_.Racine;
-	}
-	//f Return true if index empty, false otherwise.
-	bso__bool IsEmpty( void ) const
-	{
-		return S_.Racine == NONE;
-	}
-	//f 'Item' becomes the first item of the index, which must be empty.
-	void Create( POSITION__ Item )
-	{
-		if ( !IsEmpty() )
-			ERRu();
-
-		S_.Racine = Item;
-	}
-	//f Return the first item of the index.
-	POSITION__ First( void ) const
-	{
-		if ( S_.Racine == NONE )
-			return NONE;
-		else
-			return NoeudSansFils_( S_.Racine );
-	}
-	//f Return the last item of the index.
-	POSITION__ Last( void ) const
-	{
-		if ( S_.Racine == NONE )
-			return NONE;
-		else
-			return NoeudSansFille_( S_.Racine );
-	}
-	//f Return the item next to 'Item'.
-	POSITION__ Next( POSITION__ Item ) const
-	{
-		if ( btr_binary_tree_::HasRight( Item ) )
-			return NoeudSansFils_( btr_binary_tree_::Right( Item ) );
-		else
-			if ( btr_binary_tree_::IsLeft( Item ) )
-				return btr_binary_tree_::Parent( Item );
-			else if ( btr_binary_tree_::IsRight( Item ) )
-				return PereFilsEnRemontant_( Item );
-			else
-				return NONE;
-	}
-	//f Return the item previous to 'Item'.
-	POSITION__ Previous( POSITION__ Position ) const
-	{
-		if ( btr_binary_tree_::HasLeft( Position ) )
-			return NoeudSansFille_( btr_binary_tree_::Left( Position ) );
-		else
-			if ( btr_binary_tree_::IsRight( Position ) )
-				return btr_binary_tree_::Parent( Position );
-			else if ( btr_binary_tree_::IsLeft( Position ) )
-				return PereFilleEnRemontant_( Position );
-			else
-				return NONE;
-	}
-	//f Remove 'Item'.
-	void Remove( POSITION__ Item )
-	{
-		POSITION__ Fils = btr_binary_tree_::Left( Item );
-		POSITION__ Fille = btr_binary_tree_::Right( Item );
-		POSITION__ Pere = btr_binary_tree_::Parent( Item );
-
-		if ( Fils != NONE )
-			btr_binary_tree_::Cut( Fils );
-
-		if ( Fille != NONE )
-			btr_binary_tree_::Cut( Fille );
-
-		if ( btr_binary_tree_::IsLeft( Item ) )
+	private:
+		// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
+		tym::row__ NoeudSansFils_( tym::row__ Position ) const;
+		// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
+		tym::row__ NoeudSansFille_( tym::row__ Position ) const;
+		// Retourne le père du premier noeud qui est fils en remontant.
+		tym::row__ PereFilsEnRemontant_( tym::row__ Position ) const;
+		// Retourne le père du premier noeud qui est fille en remontant.
+		tym::row__ PereFilleEnRemontant_( tym::row__ Position ) const;
+		/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
+		la file 'File' de tête 'Tete' et que l'on doit utiliser la 'Pilote' si != NULL.
+		Retourne la nouvelle racine de l'arbre. */
+		tym::row__ Equilibrer_(
+			que::E_QUEUE_ &Index,
+			tym::row__ Premier,
+			mdr::E_MEMORY_DRIVER_ &Pilote );
+	public:
+		struct s
+		: public binary_tree_::s
 		{
-			btr_binary_tree_::Cut( Item );
+			// La racine de l'arbre.
+			tym::row__ Racine;
+		} &S_;
+		tree_index_( s &S )
+		: S_( S ),
+		  binary_tree_( S )
+		{}
+		void reset( bool P = true )
+		{
+			binary_tree_::reset( P );
+
+			S_.Racine = NONE;
+		}
+		void plug( mmm::multimemory_ &MM )
+		{
+			binary_tree_::plug( MM );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			binary_tree_::plug( MD );
+		}
+		tree_index_ &operator =( const tree_index_ &I )
+		{
+			binary_tree_::operator =( I );
+
+			S_.Racine = I.S_.Racine;
+
+			return *this;
+		}
+	/*	void ecrire( flo_sortie_ &Flot ) const
+		{
+			FLOEcrire( S_.Racine, Flot );
+			bts_binary_tree_::ecrire( Flot );
+		}
+		void lire( flo_entree_ &Flot )
+		{
+			FLOLire( Flot, S_.Racine );
+			bts_binary_tree_::lire( Flot );
+		}
+	*/	//f Initialization.
+		void Init( void )
+		{
+			S_.Racine = NONE;
+
+			binary_tree_::Init();
+		}
+		//f Return the root of the tree. To use as the first node for the 'NextAvailable()' and 'PreviousAvailablbe()' functions.
+		tym::row__ Root( void ) const
+		{
+			return S_.Racine;
+		}
+		//f Return true if index empty, false otherwise.
+		bso__bool IsEmpty( void ) const
+		{
+			return S_.Racine == NONE;
+		}
+		//f 'Item' becomes the first item of the index, which must be empty.
+		void Create( tym::row__ Item )
+		{
+			if ( !IsEmpty() )
+				ERRu();
+
+			S_.Racine = Item;
+		}
+		//f Return the first item of the index.
+		tym::row__ First( void ) const
+		{
+			if ( S_.Racine == NONE )
+				return NONE;
+			else
+				return NoeudSansFils_( S_.Racine );
+		}
+		//f Return the last item of the index.
+		tym::row__ Last( void ) const
+		{
+			if ( S_.Racine == NONE )
+				return NONE;
+			else
+				return NoeudSansFille_( S_.Racine );
+		}
+		//f Return the item next to 'Item'.
+		tym::row__ Next( tym::row__ Item ) const
+		{
+			if ( binary_tree_::HasRight( Item ) )
+				return NoeudSansFils_( binary_tree_::Right( Item ) );
+			else
+				if ( binary_tree_::IsLeft( Item ) )
+					return binary_tree_::Parent( Item );
+				else if ( binary_tree_::IsRight( Item ) )
+					return PereFilsEnRemontant_( Item );
+				else
+					return NONE;
+		}
+		//f Return the item previous to 'Item'.
+		tym::row__ Previous( tym::row__ Position ) const
+		{
+			if ( binary_tree_::HasLeft( Position ) )
+				return NoeudSansFille_( binary_tree_::Left( Position ) );
+			else
+				if ( binary_tree_::IsRight( Position ) )
+					return binary_tree_::Parent( Position );
+				else if ( binary_tree_::IsLeft( Position ) )
+					return PereFilleEnRemontant_( Position );
+				else
+					return NONE;
+		}
+		//f Remove 'Item'.
+		void Remove( tym::row__ Item )
+		{
+			tym::row__ Fils = binary_tree_::Left( Item );
+			tym::row__ Fille = binary_tree_::Right( Item );
+			tym::row__ Pere = binary_tree_::Parent( Item );
 
 			if ( Fils != NONE )
-			{
-				btr_binary_tree_::BecomeLeft( Fils, Pere );
-
-				if ( Fille != NONE )
-					btr_binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
-			}
-			else if ( Fille != NONE )
-				btr_binary_tree_::BecomeLeft( Fille, Pere );
-		}
-		else if ( btr_binary_tree_::IsRight( Item ) )
-		{
-			btr_binary_tree_::Cut( Item );
+				binary_tree_::Cut( Fils );
 
 			if ( Fille != NONE )
+				binary_tree_::Cut( Fille );
+
+			if ( binary_tree_::IsLeft( Item ) )
 			{
-				btr_binary_tree_::BecomeRight( Fille, Pere );
+				binary_tree_::Cut( Item );
 
 				if ( Fils != NONE )
-					btr_binary_tree_::BecomeLeft( Fils, NoeudSansFils_( Fille ) );
-			}
-			else if ( Fils != NONE )
-				btr_binary_tree_::BecomeRight( Fils, Pere );
-		}
-		else
-		{
-			if ( Fils != NONE )
-			{
-				btr_binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+				{
+					binary_tree_::BecomeLeft( Fils, Pere );
 
-				S_.Racine = Fils;
+					if ( Fille != NONE )
+						binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+				}
+				else if ( Fille != NONE )
+					binary_tree_::BecomeLeft( Fille, Pere );
+			}
+			else if ( binary_tree_::IsRight( Item ) )
+			{
+				binary_tree_::Cut( Item );
+
+				if ( Fille != NONE )
+				{
+					binary_tree_::BecomeRight( Fille, Pere );
+
+					if ( Fils != NONE )
+						binary_tree_::BecomeLeft( Fils, NoeudSansFils_( Fille ) );
+				}
+				else if ( Fils != NONE )
+					binary_tree_::BecomeRight( Fils, Pere );
 			}
 			else
-				S_.Racine = Fille;
+			{
+				if ( Fils != NONE )
+				{
+					binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+
+					S_.Racine = Fils;
+				}
+				else
+					S_.Racine = Fille;
+			}
 		}
-	}
-	/*f Return false and put in 'Item' the next node of 'Item', or return
-	true and let 'Item' unchanged if 'Item' next node is free. */
-	bso__bool NextAvailable( POSITION__ &Item ) const
-	{
-		if ( btr_binary_tree_::HasRight( Item ) )
+		/*f Return false and put in 'Item' the next node of 'Item', or return
+		true and let 'Item' unchanged if 'Item' next node is free. */
+		bso__bool NextAvailable( tym::row__ &Item ) const
 		{
-			Item = Right( Item );
-			return false;
+			if ( binary_tree_::HasRight( Item ) )
+			{
+				Item = Right( Item );
+				return false;
+			}
+			else
+				return true;
 		}
-		else
-			return true;
-	}
-	/*f Return false and put in 'Item' the previous node of 'Item', or return
-	true and let 'Item' unchanged if 'Item' next node is free. */
-	bso__bool PreviousAvailable( POSITION__ &Item ) const
-	{
-		if ( btr_binary_tree_::HasLeft( Item ) )
+		/*f Return false and put in 'Item' the previous node of 'Item', or return
+		true and let 'Item' unchanged if 'Item' next node is free. */
+		bso__bool PreviousAvailable( tym::row__ &Item ) const
 		{
-			Item = Left( Item );
-			return false;
+			if ( binary_tree_::HasLeft( Item ) )
+			{
+				Item = Left( Item );
+				return false;
+			}
+			else
+				return true;
 		}
-		else
-			return true;
-	}
-	/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
-	return true to use this function. */
-	void BecomeNext(
-		POSITION__ New,
-		POSITION__ Item )
-	{
-		btr_binary_tree_::BecomeRight( New, Item );
-	}
-	/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
-	return true to use this function. */
-	void BecomePrevious(
-		POSITION__ New,
-		POSITION__ Item )
-	{
-		btr_binary_tree_::BecomeLeft( New, Item );
-	}
-	//f Balances the tree which underlies the index.
-	void Balance( void );
-	//f Fill the index with the items in 'Queue' beginning at 'Head', using 'MD' as memory driver if != 'NULL'.
-	void Fill(
-		que_queue_ &Queue,
-		POSITION__ Head,
-		MEMORY_DRIVER_ &MD = *(MEMORY_DRIVER_ *)NULL )
-	{
-		Init();
+		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
+		return true to use this function. */
+		void BecomeNext(
+			tym::row__ New,
+			tym::row__ Item )
+		{
+			binary_tree_::BecomeRight( New, Item );
+		}
+		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
+		return true to use this function. */
+		void BecomePrevious(
+			tym::row__ New,
+			tym::row__ Item )
+		{
+			binary_tree_::BecomeLeft( New, Item );
+		}
+		//f Balances the tree which underlies the index.
+		void Balance( void );
+		//f Fill the index with the items in 'Queue' beginning at 'Head', using 'MD' as memory driver if != 'NULL'.
+		void Fill(
+			que::E_QUEUE_ &Queue,
+			tym::row__ Head,
+			mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+		{
+			Init();
 
-		Allocate( Queue.Amount() );
+			Allocate( Queue.Amount() );
 
-		S_.Racine = Equilibrer_( Queue, Head, MD );
-	}
-	//f Print the tree structure of the index.
-	void PrintStructure( txf::text_oflow___ &OStream ) const
-	{
-		btr_binary_tree_::PrintStructure( S_.Racine, OStream );
-	}
-};
+			S_.Racine = Equilibrer_( Queue, Head, MD );
+		}
+		//f Print the tree structure of the index.
+		void PrintStructure( txf::text_oflow___ &OStream ) const
+		{
+			binary_tree_::PrintStructure( S_.Racine, OStream );
+		}
+	};
 
-AUTO( idxbtr_tree_index )
-
+	AUTO( tree_index )
+}
 
 
 /*$END$*/

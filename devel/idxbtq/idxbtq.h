@@ -60,108 +60,107 @@ extern class ttr_tutor &IDXBTQTutor;
 #include "idxque.h"
 #include "idxbtr.h"
 
-//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
-class idxbtq_tree_queue_index_
-: public idxbtr_tree_index_,
-  public idxque_queue_index_
-{
-public:
-	struct s
-	: public idxbtr_tree_index_::s,
-	  public idxque_queue_index_::s
-	{};
-	idxbtq_tree_queue_index_( s &S )
-	: idxbtr_tree_index_( S ),
-	  idxque_queue_index_( S )
-	{}
-	void reset( bool P = true )
-	{
-		idxbtr_tree_index_::reset( P );
-		idxque_queue_index_::reset( P );
-	}
-	void plug( mmm_multimemory_ &MM )
-	{
-		idxbtr_tree_index_::plug( MM );
-		idxque_queue_index_::plug( MM );
-	}
-	idxbtq_tree_queue_index_ &operator =( const idxbtq_tree_queue_index_ &I )
-	{
-		idxbtr_tree_index_::operator =( I );
-		idxque_queue_index_::operator =( I );
+namespace idxbtq {
+	using idxbtr::tree_index_;
+	using idxque::queue_index_;
 
-		return *this;
-	}
-/*	void ecrire( flo_sortie_ &Flot ) const
+	//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
+	class tree_queue_index_
+	: public tree_index_,
+	  public queue_index_
 	{
-		idxbtr_tree_index_::ecrire( Flot );
-		idxque_queue_index_::ecrire( Flot );
-	}
-	void lire( flo_entree_ &Flot )
-	{
-		idxbtr_tree_index_::lire( Flot );
-		idxque_queue_index_::lire( Flot );
-	}
-*/	//f Initializtion.
-	void Init( void )
-	{
-		idxbtr_tree_index_::Init();
-		idxque_queue_index_::Init();
-	}
-	FNLPA( idxque_queue_index_:: )
-	//f 'Item' becomes the first item of the index, if empty.
-	void Create( POSITION__ Item )
-	{
-		if ( !IsEmpty() )
-			ERRu();
+	public:
+		struct s
+		: public tree_index_::s,
+		  public queue_index_::s
+		{};
+		tree_queue_index_( s &S )
+		: tree_index_( S ),
+		  queue_index_( S )
+		{}
+		void reset( bool P = true )
+		{
+			tree_index_::reset( P );
+			queue_index_::reset( P );
+		}
+		void plug( mmm::multimemory_ &MM )
+		{
+			tree_index_::plug( MM );
+			queue_index_::plug( MM );
+		}
+		tree_queue_index_ &operator =( const tree_queue_index_ &I )
+		{
+			tree_index_::operator =( I );
+			queue_index_::operator =( I );
 
-		idxbtr_tree_index_::Create( Item );
-		idxque_queue_index_::Create( Item );
-	}
-	//f Allocate enough room to contain 'Size' items.
-	void Allocate( SIZE__ Size )
-	{
-		idxbtr_tree_index_::Allocate( Size );
-		idxque_queue_index_::Allocate( Size );
-	}
-	/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
-	return true to use this function. */
-	void BecomeNext(
-		POSITION__ New,
-		POSITION__ Item )
-	{
-		idxbtr_tree_index_::BecomeNext( New, Item );
-		idxque_queue_index_::BecomeNext( New, Item );
-	}
-	/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
-	return true to use this function. */
-	void BecomePrevious(
-		POSITION__ New,
-		POSITION__ Item )
-	{
-		idxbtr_tree_index_::BecomePrevious( New, Item );
-		idxque_queue_index_::BecomePrevious( New, Item );
-	}
-	//f Remove 'Item'.
-	void Remove( POSITION__ Item )
-	{
-		idxque_queue_index_::Remove( Item );
-		idxbtr_tree_index_::Remove( Item );
-	}
-	//f Balances the tree of the index.
-	void Balance( MEMORY_DRIVER_ &MD = *(MEMORY_DRIVER_ *)NULL )
-	{
-		if ( idxque_queue_index_::Amount() )
-			idxbtr_tree_index_::Fill( idxque_queue_index_::Queue, idxque_queue_index_::First(), MD );
-	}
-	//f Return the extent of the index, NOT the amount of item.
-	SIZE__ Extent( void ) const
-	{
-		return idxbtr_tree_index_::Extent();
-	}
-};
+			return *this;
+		}
+	/*	void ecrire( flo_sortie_ &Flot ) const
+		{
+			tree_index_::ecrire( Flot );
+			queue_index_::ecrire( Flot );
+		}
+		void lire( flo_entree_ &Flot )
+		{
+			tree_index_::lire( Flot );
+			queue_index_::lire( Flot );
+		}
+	*/	//f Initializtion.
+		void Init( void )
+		{
+			tree_index_::Init();
+			queue_index_::Init();
+		}
+		NAV( queue_index_:: )
+		//f 'Item' becomes the first item of the index, if empty.
+		void Create( tym::row__ Item )
+		{
+			if ( !IsEmpty() )
+				ERRu();
 
-AUTO( idxbtq_tree_queue_index )
+			tree_index_::Create( Item );
+			queue_index_::Create( Item );
+		}
+		//f Allocate enough room to contain 'Size' items.
+		void Allocate( tym::size__ Size )
+		{
+			tree_index_::Allocate( Size );
+			queue_index_::Allocate( Size );
+		}
+		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
+		return true to use this function. */
+		void BecomeNext(
+			tym::row__ New,
+			tym::row__ Item )
+		{
+			tree_index_::BecomeNext( New, Item );
+			queue_index_::BecomeNext( New, Item );
+		}
+		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
+		return true to use this function. */
+		void BecomePrevious(
+			tym::row__ New,
+			tym::row__ Item )
+		{
+			tree_index_::BecomePrevious( New, Item );
+			queue_index_::BecomePrevious( New, Item );
+		}
+		//f Remove 'Item'.
+		void Remove( tym::row__ Item )
+		{
+			queue_index_::Remove( Item );
+			tree_index_::Remove( Item );
+		}
+		//f Balances the tree of the index.
+		void Balance( mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+		{
+			if ( queue_index_::Amount() )
+				tree_index_::Fill( queue_index_::Queue, queue_index_::First(), MD );
+		}
+	};
 
+	AUTO( tree_queue_index )
+}
 
 
 /*$END$*/

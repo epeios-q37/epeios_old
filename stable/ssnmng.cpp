@@ -75,13 +75,13 @@ namespace ssnmng {
 		return strcmp( S1, S2 );
 	}
 
-	static POSITION__ Search_( 
-		const idxbtr_tree_index_ &I,
-		const SET_( session_id__ ) &T,
+	static tym::row__ Search_( 
+		const idxbtr::tree_index_ &I,
+		const bch::E_BUNCH_( session_id__ ) &T,
 		const char *S,
 		bso__sbyte &Test )
 	{
-		POSITION__ P = I.Root();
+		tym::row__ P = I.Root();
 		bso__bool Cont = true;
 
 		while ( Cont )
@@ -95,9 +95,9 @@ namespace ssnmng {
 		return P;
 	}
 
-	POSITION__ sessions_manager_::Open( void )
+	tym::row__ sessions_manager_::Open( void )
 	{
-		POSITION__ P = LIST_::CreateEntry();
+		tym::row__ P = E_LIST_::CreateEntry();
 		session_id__ SessionID;
 		chrono__ C;
 
@@ -108,11 +108,11 @@ namespace ssnmng {
 		Table.Write( SessionID, P );
 
 		if ( Index.IsEmpty() ) {
-			MQUEUE_::Create( P );
+			E_MQUEUE_::Create( P );
 			Index.Create( P );
 		} else {
 			bso__sbyte Test;
-			POSITION__ PI = Search_( Index, Table, SessionID.Value(), Test );
+			tym::row__ PI = Search_( Index, Table, SessionID.Value(), Test );
 
 			if ( Test > 0 )
 				Index.BecomeNext( P, PI );
@@ -121,7 +121,7 @@ namespace ssnmng {
 			else
 				ERRc();
 
-			MQUEUE_::InsertItemAfterNode( P, MQUEUE_::Tail() );
+			E_MQUEUE_::InsertItemAfterNode( P, E_MQUEUE_::Tail() );
 		}
 
 
@@ -136,9 +136,9 @@ namespace ssnmng {
 		return P;
 	}
 
-	POSITION__ sessions_manager_::Position( const char *SessionID ) const
+	tym::row__ sessions_manager_::Position( const char *SessionID ) const
 	{
-		POSITION__ P = NONE;
+		tym::row__ P = NONE;
 
 		if ( !Index.IsEmpty() )	{
 			bso__sbyte Test;
@@ -151,7 +151,7 @@ namespace ssnmng {
 
 		return P;
 	}
-	POSITION__ sessions_manager_::Position( const str_string_ &SessionID ) const
+	tym::row__ sessions_manager_::Position( const str::string_ &SessionID ) const
 	{
 		char Buffer[SSNMNG_SIZE+1];
 

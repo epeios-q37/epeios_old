@@ -1,7 +1,7 @@
 /*
   'sck' library by Claude L. Simon (simon@epeios.org)
   Requires the 'sck' header file ('sck.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -53,6 +53,10 @@ public:
 				  /*			  unless specified			 */
 				  /*******************************************/
 /*$BEGIN$*/
+
+#ifdef CPE__UNIX
+#	include <signal.h>
+#endif
 
 using namespace sck;
 
@@ -228,6 +232,9 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+#ifdef CPE__UNIX
+	signal( SIGPIPE, SIG_IGN );
+#endif
 	}
 	~sckpersonnalization( void )
 	{

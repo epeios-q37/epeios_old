@@ -514,10 +514,16 @@ namespace brkrqm {
 		{
 			if ( Closed_ )
 				return;
-
+				
 			if ( Description_ != NULL ) /* If == 'NULL', it means that the request was handled
 								   by handling DIRECTLY the underlying flows. */
 			{
+				if ( !Parsed_ ) {
+					Test_( cEnd );
+					
+					Channel_->Put( 0 );	// Empty explanation message.
+				}
+			
 				if ( Channel_->Get() != brkcst::cEnd )
 					ERRb();
 
@@ -536,7 +542,8 @@ namespace brkrqm {
 		//f Send a message that explain the reason of no treatment.
 		void SendExplanationMessage( const char *Message )
 		{
-			TestOutput_( cEnd, true );
+			if ( Description_ != NULL )
+				TestOutput_( cEnd, true );
 
 			if ( !Message[0] )
 				ERRu();

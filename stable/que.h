@@ -468,6 +468,11 @@ namespace que {
 		{
 			return Amount_;
 		}
+		//f return 'true' if empty, false otherwise.
+		bso__bool IsEmpty( void ) const
+		{
+			return !Amount_;
+		}
 		//f Return the head.
 		tym::row__ Head( const E_QUEUE_ & ) const
 		{
@@ -612,6 +617,16 @@ namespace que {
 		tym::size__ Amount( void ) const
 		{
 			return S_.QueueManager.Amount( Queue );
+		}
+		//f Return extent of node in the queue.
+		tym::size__ Extent( void ) const
+		{
+			return Queue.Extent();
+		}
+		//f Return 'true' if empty, false otherwise.
+		bso__bool IsEmpty( void ) const
+		{
+			return S_.QueueManager.IsEmpty();
 		}
 		//f Return the head.
 		tym::row__ Head( void ) const

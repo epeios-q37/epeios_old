@@ -174,7 +174,7 @@ namespace brktpm {
 	typedef bso__ushort	object_t__;
 	TYPEDEF( object_t__, object__ );
 	typedef bso__bool boolean_t__;
-	TYPEDEF( boolean_t__,	boolean__ );
+	typedef boolean_t__	boolean__;
 	typedef bso__ubyte id8_t__;
 	TYPEDEF( id8_t__,	id8__ );
 	typedef bch::E_BUNCH_( id8__ ) ids8_;
@@ -188,13 +188,13 @@ namespace brktpm {
 	typedef bch::E_BUNCH_( id32__ ) ids32_;
 	typedef bch::E_BUNCH( id32__ ) ids32;
 	typedef bso__char char_t__;
-	TYPEDEF( char_t__,	char__ );
+	typedef char_t__	char__;
 	typedef str::string_	string_;
 	typedef str::string	string;
 	typedef ctn::E_XMCONTAINER_( string_ )	strings_;
 	typedef ctn::E_XMCONTAINER( string_ )	strings;
 	typedef bso__raw	byte_t__;
-	TYPEDEF( byte_t__,	byte__ );
+	typedef byte_t__	byte__;
 	typedef bch::E_BUNCH_( bso__raw ) binary_;
 	typedef bch::E_BUNCH( bso__raw )	binary;
 	typedef ctn::E_XMCONTAINER_( binary_ ) binaries_;

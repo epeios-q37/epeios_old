@@ -69,6 +69,9 @@ extern class ttr_tutor &SSNMNGTutor;
 
 namespace ssnmng {
 
+	using lst::E_LIST_;
+	using que::E_MQUEUE_;
+
 	//c A session id.
 	class session_id__
 	{
@@ -105,71 +108,71 @@ namespace ssnmng {
 
 	//c A session manager.
 	class sessions_manager_
-	: public LIST_,
-	  public MQUEUE_
+	: public E_LIST_,
+	  public E_MQUEUE_
 	{
 	protected:
-		virtual void LSTAllocate( SIZE__ Size )
+		virtual void LSTAllocate( tym::size__ Size )
 		{
 			Table.Allocate( Size );
 			Index.Allocate( Size );
 			Chronos.Allocate( Size );
 			SSNMNGAllocate( Size );
-			MQUEUE_::Allocate( Size );
+			E_MQUEUE_::Allocate( Size );
 			
 		}
 		//v Permit to make an allocation with a affected structure.
-		virtual void SSNMNGAllocate( SIZE__ Size ){}
+		virtual void SSNMNGAllocate( tym::size__ Size ){}
 	public:
 		struct s
-		: public LIST_::s,
-		public MQUEUE_::s
+		: public E_LIST_::s,
+		public E_MQUEUE_::s
 		{
-			SET_( session_id__ )::s Table;
-			idxbtq_tree_queue_index_::s Index;
-			SET_( chrono__ )::s Chronos;
+			bch::E_BUNCH_( session_id__ )::s Table;
+			idxbtq::tree_queue_index_::s Index;
+			bch::E_BUNCH_( chrono__ )::s Chronos;
 			bso__ushort Absolute;
 			bso__ushort Relative;
 		} &S_;
 		//o The table of session ids.
-		SET_( session_id__ ) Table;
+		bch::E_BUNCH_( session_id__ ) Table;
 		//o The index.
-		idxbtq_tree_queue_index_ Index;
+		idxbtq::tree_queue_index_ Index;
 		//o The timing.
-		SET_( chrono__ ) Chronos;
+		bch::E_BUNCH_( chrono__ ) Chronos;
 		sessions_manager_( s &S )
 		: S_( S ),
-		  LIST_( S ),
+		  E_LIST_( S ),
 		  Table( S.Table ),
 		  Index( S.Index ),
 		  Chronos( S.Chronos ),
-		  MQUEUE_( S )
+		  E_MQUEUE_( S )
 		{}
 		void reset( bool P = true )
 		{
 			S_.Absolute = S_.Relative = 0;
 
-			LIST_::reset( P );
+			E_LIST_::reset( P );
 			Table.reset( P );
 			Index.reset( P );
 			Chronos.reset( P );
-			MQUEUE_::reset( P );
+			E_MQUEUE_::reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
-			LIST_::plug( M );
+			E_LIST_::plug( M );
 			Table.plug( M );
 			Index.plug( M );
 			Chronos.plug( M );
-			MQUEUE_::plug( M );
+			E_MQUEUE_::plug( M );
 		}
 		sessions_manager_ &operator =( const sessions_manager_ &S )
 		{
-			LIST_::operator =( S );
+			E_LIST_::operator =( S );
 			Table = S.Table;
 			Index = S.Index;
 			Chronos = S.Chronos;
-			MQUEUE_::operator =( S );
+			E_MQUEUE_::operator =( S );
 
 			S_.Relative = S.S_.Relative;
 			S_.Absolute = S.S_.Absolute;
@@ -181,40 +184,40 @@ namespace ssnmng {
 			bso__ushort Relative = BSO_USHORT_MAX,
 			bso__ushort Absolute = BSO_USHORT_MAX )
 		{
-			LIST_::Init();
+			E_LIST_::Init();
 			Table.Init();
 			Index.Init();
 			Chronos.Init();
-			MQUEUE_::Init();
+			E_MQUEUE_::Init();
 
 			S_.Relative = Relative;
 			S_.Absolute = Absolute;
 		}
 		//f Return the position of a mandatory new session.
-		POSITION__ Open( void );
+		tym::row__ Open( void );
 		//f Remove the session id at position 'Position'.
-		void Close( POSITION__ Position )
+		void Close( tym::row__ Position )
 		{
 			Index.Remove( Position );
-			LIST_::Remove( Position );
-			MQUEUE_::Remove( Position );
+			E_LIST_::Remove( Position );
+			E_MQUEUE_::Remove( Position );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		POSITION__ Position( const session_id__ &SessionID ) const
+		tym::row__ Position( const session_id__ &SessionID ) const
 		{
 			return Position( SessionID.Value() );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		POSITION__ Position( const char *SessionID ) const;
+		tym::row__ Position( const char *SessionID ) const;
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		POSITION__ Position( const str_string_ &SessionID ) const;
+		tym::row__ Position( const str::string_ &SessionID ) const;
 		//f Return the session id. corresponding to 'Position'.
-		session_id__ SessionID( POSITION__ Position )
+		session_id__ SessionID( tym::row__ Position )
 		{
 			return Table( Position );
 		}
 		//f Touche the session corresponding at position 'P'.
-		void Touch( POSITION__ P )
+		void Touch( tym::row__ P )
 		{
 			chrono__ C = Chronos.Read( P );
 
@@ -224,17 +227,17 @@ namespace ssnmng {
 			Chronos.Write( C, P );
 
 	#ifdef SSNMNG_DBG
-			if ( MQUEUE_::Amount() == 0 )
+			if ( E_MQUEUE_::Amount() == 0 )
 				ERRu();
 	#endif
 
-			if ( ( MQUEUE_::Amount() != 1 ) && ( MQUEUE_::Tail() != P ) ) {
-				MQUEUE_::Remove( P );
-				MQUEUE_::InsertItemAfterNode( P, MQUEUE_::Tail() );
+			if ( ( E_MQUEUE_::Amount() != 1 ) && ( E_MQUEUE_::Tail() != P ) ) {
+				E_MQUEUE_::Remove( P );
+				E_MQUEUE_::InsertItemAfterNode( P, E_MQUEUE_::Tail() );
 			}
 		}
 		//f Return true if session corresponding to 'P' is valid.
-		bso__bool IsValid( POSITION__ P ) const
+		bso__bool IsValid( tym::row__ P ) const
 		{
 			chrono__ C = Chronos.Read( P );
 

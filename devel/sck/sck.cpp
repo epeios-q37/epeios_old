@@ -54,6 +54,10 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#ifdef CPE__UNIX
+#	include <signal.h>
+#endif
+
 using namespace sck;
 
 #ifdef CPE__MS
@@ -228,6 +232,9 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+#ifdef CPE__UNIX
+	signal( SIGPIPE, SIG_IGN );
+#endif
 	}
 	~sckpersonnalization( void )
 	{

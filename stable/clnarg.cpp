@@ -54,6 +54,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "stf.h"
+
 using namespace clnarg;
 
 enum type {
@@ -353,6 +355,103 @@ void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 		i++;
 	}
 }
+
+static const char *GetLabel_(
+	const item__ &Item,
+	int Id )
+{
+	static char Label[50];
+	
+	if ( Item.Short != CLNARG_NO_SHORT ) {
+		Label[0] = '-';
+		Label[1] = Item.Short;
+		Label[2] = 0;
+	} else
+		Label[0] = 0;
+		
+	if ( Item.Long != NULL ) {
+		if ( Label[0] != 0 )
+			strcat( Label, ", " );
+		
+		strcat( Label, "--" );
+		
+		if (  strlen( Label ) + strlen( Item.Long ) >= sizeof( Label ) )
+			ERRl();
+		
+		strcat( Label, Item.Long );
+	}
+	
+	return Label;
+}	
+		
+static const char *GetLabel_(
+	const bch::E_BUNCH_( item__ ) &Items,
+	int Id )
+{
+	tym::row__ P = Items.First();
+	
+	while( ( P != NONE ) && ( Items( P ).Id != Id ) )
+		P = Items.Next( P );
+		
+	if ( P == NONE )
+		ERRu();
+		
+	return  GetLabel_( Items( P ), Id );
+}
+	
+const char *description_::GetCommandLabel( int Id ) const
+{
+	return GetLabel_( Commands, Id );
+}
+	
+const char *description_::GetOptionLabel( int Id ) const
+{
+	return GetLabel_( Options, Id );
+}
+
+void clnarg::PrintCommandUsage(
+	const description_ &Description,
+	int CommandId,
+	const char *Text,
+	bso__bool OneLine,
+	bso__bool Default )
+{
+	fout << txf::tab;
+		
+	if ( Default )
+		fout << "<none>, ";
+			
+	fout << Description.GetCommandLabel( CommandId ) << ':';
+		
+	if ( OneLine )
+		fout << txf::tab;
+	else
+		fout << txf::nl << txf::tab << txf::tab;
+		
+	fout << Text << txf::nl;
+}
+
+void clnarg::PrintOptionUsage(
+	const description_ &Description,
+	int CommandId,
+	const char *Text,
+	bso__bool OneLine )
+{
+	fout << txf::tab;
+		
+	fout << Description.GetOptionLabel( CommandId ) << ':';
+		
+	if ( OneLine )
+		fout << txf::tab;
+	else
+		fout << txf::nl << txf::tab << txf::tab;
+		
+	fout << Text << txf::nl;
+}
+
+	
+	
+
 
 
 /* Although in theory this class is inaccessible to the different modules,
