@@ -311,6 +311,9 @@ void bitbch::Not(
 	epeios::size__ Current = 0;
 	epeios::size__ Amount = BUFFER_SIZE;
 
+	if ( R.Amount() < O.Amount() )
+		R.Allocate( O.Amount() );
+
 	while ( Current < Size ) {
 		if ( ( Size - Current ) < Amount )
 			Amount = Size - Current;

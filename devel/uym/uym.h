@@ -185,6 +185,10 @@ namespace uym {
 		{
 			if ( !Pilote_ )
 				ERRu();
+ 
+			if ( Position >= S_.Size )
+				if ( Nombre > 0 )
+					ERRu();
 
 			if ( ( Position + Nombre ) > S_.Size )
 				ERRu();

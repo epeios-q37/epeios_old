@@ -367,6 +367,7 @@ UYM:
 - Fixing bug in 'untyped_memory__(_)'
 - Renaming 'Locate' into 'Search'.
 - Fixing 'Search()' bug.
+- Test in debug mode more reliable.
 
 XTF:
 - Adapting to changes in 'BCH' library.
