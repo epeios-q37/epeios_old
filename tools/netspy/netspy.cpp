@@ -58,8 +58,8 @@ struct parameters {
 	const char *Target;
 	parameters( void )
 	{
-		PortToListen = "80";
-		Target = "212.95.72.27:80";
+		PortToListen = "5433";
+		Target = "localhost:5432";
 //		Target = "www.epeios.org:80";
 //		Target = "linuxfr.org:80";
 		
@@ -215,12 +215,26 @@ void Server( void *UP )
 	data__ &D = *(data__ *)UP;
 	flw::data__ Buffer[100];
 	flw::size__ Size;
+	unsigned char C;
 	
-	for(;;) {
+/*	for(;;) {
 		Size = D.Server->GetUpTo( sizeof( Buffer ), Buffer );
 		fout.Put( Buffer, Size );
 		fout << txf::sync;
 		D.Client->Put( Buffer, Size );
+		D.Client->Synchronize();
+	}
+*/	for(;;) {
+		C = D.Server->Get();
+		
+		if ( isprint( C ) )
+			fout << (char)C;
+		else
+			fout << '>' << (unsigned long)C << '<';
+	
+		fout << txf::sync;
+		
+		D.Client->Put( C );
 		D.Client->Synchronize();
 	}
 }
@@ -230,12 +244,27 @@ void Client( void *UP )
 	data__ &D = *(data__ *)UP;
 	flw::data__ Buffer[100];
 	flw::size__ Size;
+	unsigned char C;
 	
-	for(;;) {
+/*	for(;;) {
 		Size = D.Client->GetUpTo( sizeof( Buffer ), Buffer );
 		fout.Put( Buffer, Size );
 		fout << txf::sync;
 		D.Server->Put( Buffer, Size );
+		D.Server->Synchronize();
+	}
+*/
+	for(;;) {
+		C = D.Client->Get();
+		
+/*		if ( isprint( C ) )
+			fout << (char)C;
+		else
+			fout << '>' << (unsigned long)C << '<';
+*/	
+		fout << txf::sync;
+		
+		D.Server->Put( C );
 		D.Server->Synchronize();
 	}
 }

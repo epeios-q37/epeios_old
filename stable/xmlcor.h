@@ -70,6 +70,118 @@ namespace xmlcor {
 	using namespace xmltag;
 	using namespace xmlval;
 	
+	/*c A quick tag. Speeds tag handling by providing directly
+	the tag row rather then the tag name. */
+	class quick_tag_
+	{
+	private:
+		//r The tag name.
+		name_ Name_;
+	public:
+		struct s {
+			name_::s Name_;
+			tag_row__ Row;
+		} &S_;
+		quick_tag_( s &S )
+		: S_( S ),
+		  Name_( S.Name_ )
+		 {}
+		void reset( bso::bool__ P = true )
+		{
+		 	Name_.reset( P );
+			S_.Row = NONE;
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			Name_.plug( MD );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			Name_.plug( M );
+		}
+		quick_tag_ &operator =( const quick_tag_ &QT )
+		{
+			Name_ = QT.Name_;
+			S_.Row = QT.S_.Row;
+			
+			return *this;
+		}
+		//f Initialization with tag name 'Name'.
+		void Init( const char *Name )
+		{
+			Name_.Init();
+			Name_ = Name;
+			S_.Row = NONE;
+		}
+		//f Initialization with tag name 'Name'.
+		void Init( const name_ &Name )
+		{
+			Name_.Init();
+			Name_ = Name;
+			S_.Row = NONE;
+		}
+		//f Return the name.
+		const name_ &GetName( void ) const
+		{
+			return Name_;
+		}
+		//f Return the row.
+		tag_row__ GetRow( void ) const
+		{
+			return S_.Row;
+		}
+		//f 'Row' becomes the current row value.
+		void PutRow( tag_row__ Row )
+		{
+			S_.Row = Row;
+		}
+	};
+	
+	AUTO( quick_tag )
+		 
+	/*c A quick tag. Speeds tag handling by providing directly
+	the tag row rather then the tag name. */
+	class quick_tag__
+	{
+	private:
+		//r The tag name.
+		const char *Name_;
+		//r The tag row.
+		tag_row__ Row_;
+	public:
+		quick_tag__( void )
+		{
+			reset( false );
+		}
+		void reset( bso::bool__ P = true )
+		{
+		 	Name_ = NULL;
+			Row_ = NONE;
+		}
+		//f Initialization with tag name 'Name'.
+		void Init( const char *Name )
+		{
+			Name_ = Name;
+			Row_ = NONE;
+		}
+		//f Return the name.
+		const char *GetName( void ) const
+		{
+			return Name_;
+		}
+		//f Return the row.
+		tag_row__ GetRow( void ) const
+		{
+			return Row_;
+		}
+		//f 'Row' becomes the current row value.
+		void PutRow( tag_row__ Row )
+		{
+			 Row_;
+		}
+	};
+		
+	
 	//c Core file drivers 
 	class core_file_memory_drivers
 	{

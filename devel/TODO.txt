@@ -14,6 +14,9 @@ CTN:
 SSNMNG:
 - Use typedef instead of directly bso::... and handle 'BSO_' constant.
 
+STR:
+- Add 'Init' fucntion which takes a 'const char *'.
+
 TXMPGH:
 - Introduce an alias to 'str::string_' when used as a line (txmpgh::line ?).
 
