@@ -58,6 +58,9 @@ DBT:
 DTR:
 - Fixing call to an iexistent method;
 
+EPSMSC:
+- Adapting to changes in the 'STF' library.
+
 ERR:
 - Adding the 'tReturn' item.
 - Adapting to changes in 'STF' library.

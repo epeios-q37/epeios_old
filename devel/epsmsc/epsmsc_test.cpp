@@ -47,7 +47,7 @@ void Essai( void )
 {
 ERRProlog
 ERRBegin
-	fout << EPSMSC_IDEALX_TEXT << txf::nl;
+	fout << EPSMSC_EPEIOS_TEXT << txf::nl;
 ERRErr
 ERREnd
 ERREpilog

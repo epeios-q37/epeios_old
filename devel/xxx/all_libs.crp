@@ -139,8 +139,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Epeios BKD libraries.
 &bkdacc		&ebkd		&2001-\
 	&BacKenD ACCess
-&bkdcst		&ebkd		&2000-		&BacKenD CaSTs
-&bkddcb		&ebkd		&2000-		&BacKenD DesCriBer
+&bkdcst		&ebkd		&2001, \
+	&BacKenD CaSTs
+&bkddcb		&ebkd		&2001, \
+	&BacKenD DesCriBer
 &bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2001-\
