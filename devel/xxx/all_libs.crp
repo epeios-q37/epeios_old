@@ -1,5 +1,7 @@
 # Details for each library.
 NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
+&dbibsc	&ldbi	&		&DataBase Interface BaSiCs
+&dbidpd	&ldbi	&		&Database DePenDences
 &dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
 &dbiapi	&ldbi	&		&DataBase Interface Adavanced Programmer Interface
 &mscmdf	&emsc	&		&MuSiC MiDi File		
