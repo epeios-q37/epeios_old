@@ -259,6 +259,15 @@ namespace aem {
 			else
 				return NONE;
 		}
+		row Last( epeios::size__ Offset ) const
+		{
+			row Row = Last();
+
+			if ( Row != NONE )
+				Row = Previous( Row, Offset  );
+
+			return Row;
+		}
 		//f Return position of the first object of the set.
 		row First( void ) const
 		{
@@ -266,6 +275,15 @@ namespace aem {
 				return 0;
 			else
 				return NONE;
+		}
+		row First( epeios::size__ Offset ) const
+		{
+			row Row = First();
+
+			if ( Row != NONE )
+				Row =  Next( Row, Offset  );
+
+			return Row;
 		}
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
@@ -392,6 +410,15 @@ namespace aem {
 			else
 				return NONE;
 		}
+		row Last( epeios::size__ Offset ) const
+		{
+			row Row = Last();
+
+			if ( Row != NONE )
+				Row =  Previous( Row, Offset  );
+
+			return Row;
+		}
 		//f Return position of the first object of the set.
 		row First( void ) const
 		{
@@ -399,6 +426,15 @@ namespace aem {
 				return 0;
 			else
 				return NONE;
+		}
+		row First( epeios::size__ Offset ) const
+		{
+			row Row = First();
+
+			if ( Row != NONE )
+				Row = Next( Row, Offset  );
+
+			return Row;
 		}
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(

@@ -208,7 +208,7 @@ ERRBegin
 	do {
 		Location = Flow.Line();
 
-		Loop = ( GetCell( Flow, Cell, Separator ) == txmtbl::dSeparator ) && !Flow.EOX();
+		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EOX();
 
 		if ( Loop || Cell.Amount() || Line.Amount() )
 			Line.Add( Cell, Location );

@@ -1,5 +1,15 @@
 $Id$
 
+23/03/05:
+- AEM :
+	- Rajout des méthodes 'First()' et 'Last()' avec offset.
+- LST :
+	- Adaptation aux changements de la bibliothèque 'AEM'.
+- TOL :
+	- Adaptation aux changements de la bibliothèque 'AEM'.
+- TXMTBL :
+	- Correction de bogue.
+
 21/03/05:
 - FLX :
 	- Correction de bogue.

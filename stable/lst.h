@@ -1,6 +1,6 @@
 /*
 	Header for the 'lst' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -208,6 +208,15 @@ namespace lst {
 			else
 				return NONE;
 		}
+		r First( epeios::size__ Offset ) const
+		{
+			r Row = First();
+
+			if ( Row != NONE )
+				Row = Next( Row, Offset  );
+
+			return Row;
+		}
 		//f Return the last entry, 'NONE' if list empty.
 		r Last( void ) const
 		{
@@ -223,15 +232,26 @@ namespace lst {
 			else
 				return NONE;
 		}
+		r Last( epeios::size__ Offset ) const
+		{
+			r Row = Last();
+
+			if ( Row != NONE )
+				Row = Previous( Row, Offset  );
+
+			return Row;
+		}
 		//f Return true if empty, false otherway.
 		bso::bool__ IsEmpty( void ) const
 		{
 			return Amount() == 0;
 		}
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
-		r Next( r Entry ) const
+		r Next(
+			r Entry,
+			epeios::size__ Offset = 1 ) const
 		{
-			if ( ++*Entry < Extent_() )
+			if ( ( *Entry += Offset ) < Extent_() )
 				if ( !Locations.IsAvailable( *Entry ) )
 					return Entry;
 				else
@@ -240,9 +260,11 @@ namespace lst {
 				return NONE;
 		}
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
-		r Previous( r Entry ) const
+		r Previous(
+			r Entry,
+			epeios::size__ Offset = 1 ) const
 		{
-			if ( (*Entry)-- > 0 )
+			if ( ( *Entry -= Offset ) > 0 )
 				if ( !Locations.IsAvailable( *Entry ) )
 					return Entry;
 				else

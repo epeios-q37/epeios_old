@@ -590,17 +590,37 @@ namespace tol {
 	{\
 		return Object  First();\
 	}\
+	Type First( epeios::size__ Offset ) const\
+	{\
+		return Object  First( Offset );\
+	}\
 	Type Last( void ) const\
 	{\
 		return Object Last();\
+	}\
+	Type Last( epeios::size__ Offset ) const\
+	{\
+		return Object Last( Offset );\
 	}\
 	Type Previous( Type P ) const\
 	{\
 		return Object Previous( P );\
 	}\
+	Type Previous(\
+		Type P,\
+		epeios::size__ Offset ) const\
+	{\
+		return Object Previous( P, Offset );\
+	}\
 	Type Next( Type P ) const\
 	{\
 		return Object Next( P );\
+	}\
+	Type Next(\
+		Type P,\
+		epeios::size__ Offset ) const\
+	{\
+		return Object Next( P, Offset  );\
 	}\
 	epeios::size__ Amount( void ) const\
 	{\
