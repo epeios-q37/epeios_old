@@ -1,6 +1,6 @@
 /*
 	Header for the 'aem' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2002-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -331,8 +331,11 @@ namespace aem {
 	protected:
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
-		bso::bool__ AmountToAllocate( epeios::size__ &Size )
+		bso::bool__ AmountToAllocate(
+			epeios::size__ &Size,
+			mode Mode)
 		{
+			Amount_ = Size;
 			return false;
 		}
 	public:
@@ -386,7 +389,7 @@ namespace aem {
 		//f Return the position of the object after 'Current' (to the top).
 		row Next( row Current ) const
 		{
-			if ( ++Current < Amount() )
+			if ( ++*Current < Amount() )
 				return Current;
 			else
 				return NONE;
@@ -404,13 +407,54 @@ namespace aem {
 	//c Core amount/extent manager for fixed size set of object.
 	template <int extent, typename row> class amount_extent_manager__
 	: public core_amount_extent_manager__<extent, row, mdr::size__>
-	{};
+	{
+	public:
+		struct s
+		: public core_amount_extent_manager__<extent, row, mdr::size__>::s
+		{};
+		amount_extent_manager__( s &S = *(s *)NULL )
+		: core_amount_extent_manager__<extent, row, mdr::size__>( S )
+		{}
+	};
 
 	//c Core amount/extent manager for fixed size set of object.
 	template <int extent, typename row> class p_amount_extent_manager__
 	: public core_amount_extent_manager__<extent, row, mdr::p_size__>
-	{};
+	{
+	public:
+		struct s
+		: public core_amount_extent_manager__<extent, row, mdr::p_size__>::s
+		{};
+		p_amount_extent_manager__( s &S = *(s *)NULL )
+		: core_amount_extent_manager__<extent, row, mdr::p_size__>( S )
+		{}
+	};
 
+	//c A amount/extent manager.
+	template <typename row> class amount_extent_manager___
+	: public amount_extent_manager_<row>
+	{
+	public:
+		struct s
+		: amount_extent_manager_<row>::s
+		{};
+		amount_extent_manager___( s &S )
+		: amount_extent_manager_<row>( S )
+		{}
+	};
+
+	//c A portable amount/extent manager.
+	template <typename row> class p_amount_extent_manager___
+	: public p_amount_extent_manager_<row>
+	{
+	public:
+		struct s
+		: p_amount_extent_manager_<row>::s
+		{};
+		p_amount_extent_manager___( s &S )
+		: p_amount_extent_manager_<row>( S )
+		{}
+	};
 
 
 }

@@ -481,12 +481,12 @@ namespace bch {
 		void Init( void )
 		{
 			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::Init();
-			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
+//			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
 		}
 	};
 
 	template <typename type, int size, typename row> class bunch__
-	: public _bunch__< type, size, row, aem::amount_extent_manager_<row> >
+	: public _bunch__< type, size, row, aem::amount_extent_manager__<size, row> >
 	{};
 
 
@@ -519,7 +519,7 @@ namespace bch {
 	};
 
 	template <typename type, typename row> class bunch___
-	: public _bunch___< type, row, aem::amount_extent_manager_<row> >
+	: public _bunch___< type, row, aem::amount_extent_manager___<row> >
 	{};
 
 

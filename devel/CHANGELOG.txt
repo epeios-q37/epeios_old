@@ -6,6 +6,13 @@ GENERAL:
 - Fixing CW warnings (all but 'unused argument').
 - Adapting to changes in 'TOL' library ('E_' prefix for macros).
 
+AEM:
+- Bug fixing of the (p_)_amount_extent_manager__ and related classes.
+- Adding (p_)_amount_extent_manager___ class.
+
+BCH:
+- Bug fixing of the E_BUNCHt__(_) and related classes.
+
 BITBCH:
 - Fixing bug.
 
