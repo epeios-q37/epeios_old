@@ -62,6 +62,7 @@ extern class ttr_tutor &FLMTutor;
 //D FiLe Memory.
 
 #include "cpe.h"
+#include "tol.h"
 
 #ifdef FLM_UNIX_LIKE
 #	define FLM__UNIX_LIKE
@@ -456,7 +457,7 @@ namespace flm {
 	protected:
 		virtual void MDRRecall(
 			row__ Position,
-			bsize__ Amount,
+			mdr::bsize__ Amount,
 			datum__ *Buffer )
 		{
 			memoire_fichier_base_::Lire( (position__)Position, Amount, Buffer );
@@ -464,13 +465,13 @@ namespace flm {
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRStore(
 			const datum__ *Buffer,
-			bsize__ Amount,
+			mdr::bsize__ Amount,
 			row__ Position )
 		{
 			memoire_fichier_base_::Ecrire( Buffer, Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRAllocate( size__ Size )
+		virtual void MDRAllocate( mdr::size__ Size )
 		{
 			memoire_fichier_base_::Allouer( (capacite__)Size );
 		}
