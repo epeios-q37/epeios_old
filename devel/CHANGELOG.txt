@@ -1,5 +1,9 @@
 $Id$
 
+GENERAL:
+- moving backed-related libraries ('BDKEND', 'BDKxxx' & also 'FRTEND') to 'ebkd' sub-project.
+- moving cgi-related libraries and software ('FRTEND', 'URLARG' and 'getbkdapi') to 'ecgi' sub-project.
+
 --------
 20010618
 --------
