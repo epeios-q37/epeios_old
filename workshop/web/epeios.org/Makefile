@@ -15,6 +15,7 @@ endif
 
 all: $(filelist)
 	$(mkdir) -p i
+	sabcmd file://$(templates)/map.xsl site.xml i/map.xml
 	reveal $(crpfile) site.crp i/site.crp
 	reveal i/site.crp site.xml i/site.xml
 	sabcmd make.xsl site.xml i/Makefile $(sab_arg)

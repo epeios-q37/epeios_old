@@ -20,6 +20,21 @@
       <content/>
     </document>
   </template>
+  <document id="map">
+    <general title="Map of the Epeios WEB site" abstract="the Epeios WEB site map." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF, map">
+      <author>$AUTHOR$</author>
+      <copyright>
+        <owner>$OWNER$</owner>
+        <date>2001-2002</date>
+      </copyright>
+      <misc>
+        <sourceforge group_id="$CORE_SF_ID$"/>
+        <stamp date="$DATE$" time="$TIME$"/>
+      </misc>
+    </general>
+    <specific>
+      <WEB hierarchy="" name="map" robots="$ROBOTS$" bookmark="Map"/>
+    </specific>$MAP$</document>
   <document id="homepage">
     <general title="Welcome to the Epeios project WEB site." abstract="The Epeios project, the ultimate programming resource." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF">
       <author>$AUTHOR$</author>
