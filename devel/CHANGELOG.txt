@@ -134,6 +134,7 @@ LSTCTN:
 - Adapting to changes in 'CTN' library.
 - Adding missing 'Flush()' to 'Delete' method.
 - Renaming 'Create()' into 'New()' to avoid mistakes.
+- Adding the 'New' with parameter.
 
 MDR:
 - Using 'Store', 'Recall' and 'Flush' instead of 'Write', 'Read' and 'Synchronize'.

@@ -168,14 +168,10 @@ namespace ids {
 		//f Modify the whole object so that 'ID' appears as available. For restoration purpose only.
 		void RestorationRelease( id__ ID )
 		{
-#ifdef IDS_DBG
-			if ( IsAvailable( ID ) )
-				ERRu();
-#endif
 			if ( *ID >= *S_.FirstUnused )
 				S_.FirstUnused = *ID + 1;
 
-			Release( ID );
+			Released.Push( ID );
 		}
 		//f Return the first available id.
 		id__ GetFirstAvailable( void ) const

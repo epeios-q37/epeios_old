@@ -143,6 +143,14 @@ namespace lstctn {
 
 			return Row;
 		}
+		row NewWithoutFlush_( row Row )
+		{
+			Row = list_container_<container, row, row_t>::New( Row );
+
+			list_container_<container, row, row_t>::operator()( Row ).Init();
+
+			return Row;
+		}
 	public:
 		struct s
 		: public list_container_<container, row, row_t>::s
@@ -153,6 +161,14 @@ namespace lstctn {
 		row New( void )
 		{
 			row Row = NewWithoutFlush_();
+
+			list_container_<container, row, row_t>::Flush();
+
+			return Row;
+		}
+		row New( row Row )
+		{
+			Row = NewWithoutFlush_( Row );
 
 			list_container_<container, row, row_t>::Flush();
 

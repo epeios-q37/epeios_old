@@ -185,10 +185,15 @@ namespace lst {
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
 
-				if ( Locations.RestorationNew( *Row ) )
-					MarkAsReleased_( *FirstAvailable, *Row - 1, Locations );
+				if ( Locations.RestorationNew( *Row ) ) {
 
-					return Row;
+					LSTAllocate( *Row + 1 );
+
+					if ( Row != FirstAvailable )
+						MarkAsReleased_( *FirstAvailable, *Row - 1, Locations );
+				}
+
+				return Row;
 			} else
 				return New();
 		}

@@ -89,8 +89,10 @@ void lst::MarkAsReleased_(
 	epeios::row_t__ Last,
 	store_ &Store )
 {
-	while ( First <= Last )
+	while ( First < Last )
 		Store.RestorationRelease( Last-- );
+
+	Store.RestorationRelease( First );
 }
 
 
