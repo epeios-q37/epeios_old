@@ -65,10 +65,13 @@ extern class ttr_tutor &DTRTutor;
 namespace dtr {
 	//e Browse status;
 	enum browse {
-		//i Unknow.
-		bUnknow,
-		//i Is root.
-		bRoot,
+		//i Undefined status.
+		bUndefined,
+		//i First element (always the root node).
+		bFirst,
+		/*i Last element, unless given root node have no child. So don't trust
+		this item to stop browsing. */
+		bLast,
 		//i Is child
 		bChild,
 		//i Is brother.
@@ -76,23 +79,46 @@ namespace dtr {
 		//i Is parent (already handled).
 		bParent
 	};
+	
+	template <typename r> class dynamic_tree_;	// Predeclaration.
+
 
 	//c Browse structure.
-	template <typename r> struct browse__
+	template <typename r> struct browser__
 	{
-		browse Status;
-		r P;
-		browse__( void )
+	private:
+		browse Status_;
+		r Position_;
+		r Root_;
+	public:
+		browser__( void )
 		{
-			Status = bUnknow;
-			P = NONE;
+			Status_ = bUndefined;
+			Position_ = NONE;
+			Root_ = NONE;
 		}
-		//f Initialization wih 'Root' as root'.
+		//f Initialization wih 'Root' as root.
 		void Init( r Root )
 		{
-			Status = bRoot;
-			P = Root;
+			Status_ = bFirst;
+			Position_ = Root_ = Root;
 		}
+		//f Return current position.
+		r Position( void )
+		{
+			return Position_;
+		}
+		//r Return root.
+		r Root( void )
+		{
+			return Root_;
+		}
+		//f Return status.
+		browse Status( void )
+		{
+			return Status_;
+		}
+		friend class dynamic_tree_<r>;
 	};
 
 	//c A dynamic tree.
@@ -245,34 +271,49 @@ namespace dtr {
 		{
 			return Tree.Parent( Node );
 		}
-		/*f Return the first, then next node, or 'NONE' if no more,
-		using 'BrowseStruct'. In 'Status' is put the browse status
-		with the previous node.*/
-		r Browse(
-			browse__<r> &BrowseStruct,
-			browse &BrowseStatus ) const
+		//f Return amount of nodes.
+		epeios::size__ Amount( void ) const
 		{
-			r P = BrowseStruct.P;
-			BrowseStatus = BrowseStruct.Status;
-
-			if ( P != NONE ) {
-				if ( ( BrowseStruct.Status != dtr::bParent ) )
+			return Tree.Amount();
+		}
+		/*f Return the first, then next node, or 'NONE' if no more,
+		using 'BrowseStruct'. */
+		r Browse( browser__<r> &Browser ) const
+		{
+			r P = Browser.Position_;
+			
+			if ( Browser.Status_ == dtr::bUndefined )
+				Browser.Position_ = NONE;
+			else if ( ( Browser.Status_ == dtr::bLast )
+			 	       && ( Browser.Root_ == NONE ) ) {
+				Browser.Position_ = NONE;
+				Browser.Status_ = dtr::bUndefined;
+			} else if ( P != NONE ) {
+				if ( ( Browser.Status_ != dtr::bParent ) )
 					if ( First( P ) != NONE ) {
-						BrowseStruct.Status = dtr::bChild;
-						BrowseStruct.P = First( P );
+						Browser.Status_ = dtr::bChild;
+						Browser.Position_ = First( P );
 					}
 
-				if ( P == BrowseStruct.P )
-					if ( Next( P ) != NONE ) {
-						BrowseStruct.Status = dtr::bBrother;
-						BrowseStruct.P = Next( P );
-					} else  if ( ( BrowseStruct.P = Parent( P ) ) != NONE )
-						BrowseStruct.Status = dtr::bParent;
-					else
-						BrowseStruct.Status = dtr::bUnknow;
+				if ( P == Browser.Position_ )
+					if ( P != Browser.Root_ ) {
+						if ( Next( P ) != NONE ) {
+							Browser.Status_ = dtr::bBrother;
+							Browser.Position_ = Next( P );
+						} else  if ( ( Browser.Position_ = Parent( P ) ) != Browser.Root_ )
+							Browser.Status_ = dtr::bParent;
+						else {
+							Browser.Status_ = dtr::bLast;
+							Browser.Root_ = NONE;
+						}
+					} else {
+						Browser.Root_ = NONE;
+						Browser.Position_ = NONE;
+						Browser.Status_ = dtr::bUndefined;
+					}
 			}
 
-			return P;
+			return Browser.Position_;
 		}
 	};
 

@@ -27,9 +27,10 @@
 
 name = gendoc
 copt = -DXXX_DBG
+copt += -DHDBXML_NO_PARSING
 lopt = 
 libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil\
-       txmtbl tagexp lst tagdtc btr hdbtag hdbval hdbmnb
+       txmtbl tagexp lst tagdtc btr hdbtag hdbval hdbmnb hdbxml
 
 epeios_os=$(EPEIOS_OS)
 epeios_src=$(EPEIOS_SRC)

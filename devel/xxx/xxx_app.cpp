@@ -36,6 +36,7 @@
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
+#define CVS_DETAILS		"$Id$"
 
 /*$RAW$*/
 
@@ -44,6 +45,7 @@
 enum command {
 	cHelp,
 	cVersion,
+	cLicense
 };
 
 enum option {
@@ -62,6 +64,7 @@ void PrintUsage( const clnarg::description_ &Description )
 	fout << "Command:" << txf::nl;
 	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", true, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
 	fout << "Options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, o, "", false );
@@ -70,8 +73,30 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	fout << NAME " V" VERSION " "__DATE__ " " __TIME__ " " COPYRIGHT << txf::nl;
+	fout << "( CVS details : " CVS_DETAILS  " )" << txf::nl;
 //	fout << EPSMSC_IDEALX_TEXT <<txf::nl;
 	fout << EPSMSC_EPEIOS_TEXT <<txf::nl;
+}
+
+void PrintLicense( void )
+{
+	fout << 
+	"This program is free software; you can redistribute it and/or" << txf::nl
+	"modify it under the terms of the GNU General Public License" << txf::nl
+	"as published by the Free Software Foundation; either version 2" << txf::nl
+	"of the License, or (at your option) any later version." << txf::nl
+	<< txf::nl;
+	"This program is distributed in the hope that it will be useful," << txf::nl
+	"but WITHOUT ANY WARRANTY; without even the implied warranty of" << txf::nl
+	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << txf::nl
+	"GNU General Public License for more details." << txf::nl
+	<< txf::nl
+	"You should have received a copy of the GNU General Public License" << txf::nl
+	"along with this program; if not, go to http://www.fsf.org/" << txf::nl
+	"or write to the:" << txf::nl
+	<< txf::nl
+    "               	Free Software Foundation, Inc.," << txf::nl;
+	"   	   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA." << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -166,6 +191,9 @@ ERRBegin
 	case cHelp:
 		PrintUsage( Description );
 		ERRt();
+		break;
+	case cLicence:
+		PrintLicense();
 		break;
 	case c:
 	case CLNARG_NONE:

@@ -30,9 +30,10 @@
 #include "fnm.h"
 #include "flx.h"
 #include "txmtbl.h"
-#include "hdbfil.h"
+#include "hdbtol.h"
+#include "hdbxml.h"
 
-typedef hdbfil::hierarchical_database_filler__	hdbf__;
+typedef hdbxml::hierarchical_database_filler__	hdbf__;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
@@ -135,43 +136,17 @@ public:
 typedef ctn::E_XCONTAINER( librairie_ ) librairies;
 typedef ctn::E_XCONTAINER_( librairie_ ) librairies_;
 
-/*
-class librairies
-: public LIST,
-  public CONTAINER( librairie_ )
-{
-protected:
-	void LSTAllocate( SIZE__ Size )
-	{
-		CONTAINER( librairie_ )::Allocate( Size );
-	}
-public:
-	void Init( void )
-	{
-		LIST::Init();
-		CONTAINER( librairie_ )::Init();
-	}
-	tym::row__ Nouveau( void )
-	{
-		tym::row__ P =  LIST::CreateEntry();
-		
-		CONTAINER( librairie_ )::operator()( P ) .Init();
-
-		CONTAINER( librairie_ )::Sync();
-
-		return P;
-
-	}
-	FNLP( LIST:: )
-};
-*/
 // Procède à la mise en forme de commentaire.
-str::string_ &MiseEnFormeCommentaire( const str::string_ &C )
+void PutComment(
+	const str::string_ &C,
+	hdbf__ &HDBF )
 {
-	static str::string S;
 ERRProlog
+	str::string S;
 	bool Espace = true, Special = false;
 ERRBegin
+	HDBF.PushTag( "Comment" );
+
 	S.Init();
 
 	for ( epeios::row_t__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
@@ -181,44 +156,42 @@ ERRBegin
 			Espace = true;
 			S.Add( ' ' );
 		}
-		else if ( C.Read( Compteur ) == '<' )
-			S.Add( "&lt;" );
-		else if ( C.Read( Compteur ) == '>' )
-			S.Add( "&gt;" );
 		else if ( C.Read( Compteur ) == '\r' ) {}
 		else if ( C.Read( Compteur ) == '\n' ) {}
-		else if ( C.Read( Compteur ) == '&' )
-			S.Add( "&amp;" );
 		else
 		{
-/*			if ( C.Read( Compteur ) == '\'' )
+			if ( C.Read( Compteur ) == '\'' )
 			{
 				if ( Special )
 				{
-					S.Add( "</TT></B><EM>" );
+					HDBF.PutValue( S, "Ref" );
+					S.Init();
 					Special = false;
 				}
 				else if ( Espace )
 				{
+					HDBF.PutValue( S );
+					S.Init();
 					Special = true;
-					S.Add( "</EM><B><TT>" );
 				}
 				else
 					S.Add( '\'' );
 			}
 			else
-*/				S.Add( C.Read( Compteur ) );
+				S.Add( C.Read( Compteur ) );
 
 			Espace = false;
 		}
 	}
 	
 	S.Add( '\n' );
+	HDBF.PutValue( S );
+	
+	HDBF.PopTag();
 
 ERRErr
 ERREnd
 ERREpilog
-	return S;
 }
 
 /* fournit une référence sur un 'str::string_' dont les caractères '<' et '>' ont
@@ -250,7 +223,12 @@ inline void GenererDocumentationParametre(
 	const parametre_ &Parametre,
 	hdbf__ &HDBF )
 {
-	HDBF.PutValue( Parametre.Valeur, "Parameter" );
+	HDBF.PushTag( "Parameter" );
+	if ( Parametre.Valeur.Amount() != 0 )
+		HDBF.PutValue( Parametre.Valeur, "Value" );
+	HDBF.PutValue( Parametre.Type, "Type" );
+	HDBF.PutValue( Parametre.Name, "Name" );
+	HDBF.PopTag();
 }
 
 /*******************/
@@ -299,7 +277,7 @@ inline void GenererCorpsItemClasse(
 	HDBF.PushTag( "Object" );
 	HDBF.PutValue( Item.Name, "Name" );
 	HDBF.PutValue( Filtrer( Item.Type ), "Type" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
+	PutComment( Item.Commentaire, HDBF );
 	HDBF.PopTag();
 }
 
@@ -310,8 +288,7 @@ inline void GenererCorpsItemClasse(
 	HDBF.PushTag( "Method" );
 	HDBF.PutValue( Item.Name, "Name" );
 	HDBF.PutValue( Item.Type, "Type" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
-	GenererDocumentationParametres( Item.Parametres, HDBF );
+	PutComment( Item.Commentaire, HDBF );
 	HDBF.PopTag();
 }
 
@@ -322,7 +299,8 @@ inline void GenererCorpsItemClasse(
 	HDBF.PushTag( "Function" );
 	HDBF.PutValue( Filtrer( Item.Name ), "Name" );
 	HDBF.PutValue( Item.Type, "Type" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
+	PutComment( Item.Commentaire, HDBF );
+	GenererDocumentationParametres( Item.Parametres, HDBF );
 	HDBF.PopTag();
 }
 
@@ -332,10 +310,13 @@ inline void GenererCorpsItemClasse(
 /*******************/
 
 template <class t> void GenererCorpsItemsClasse(
+	const char *Tag,
 	t &Items,
 	hdbf__ &HDBF )
 {
 	tym::row__ Courant = Items.First();
+
+	HDBF.PushTag( Tag );
 
 	while ( Courant != NONE )
 	{
@@ -344,6 +325,8 @@ template <class t> void GenererCorpsItemsClasse(
 	}
 
 	Items.Sync();
+	
+	HDBF.PopTag();
 }
 
 
@@ -399,11 +382,12 @@ ERREpilog
 
 
 template <class t> void GenererDocumentationItemsClasse(
+	const char *Tag,
 	t &Items,
 	hdbf__ &HDBF )
 {
 	if ( Items.Amount() )
-		GenererCorpsItemsClasse( Items, HDBF );
+		GenererCorpsItemsClasse( Tag, Items, HDBF );
 }
 
 void GenererDocumentationBasesClasseItems(
@@ -438,14 +422,20 @@ ERRProlog
 	tym::row__ Courant = Items.First();
 ERRBegin
 	Item.Init( Items );
+	
+	HDBF.PushTag( "Items" );
 
 	while ( Courant != NONE )
 	{
+		HDBF.PushTag( "Item" );
 		HDBF.PutValue( Item( Courant ).Name, "Name" );
-		HDBF.PutValue( MiseEnFormeCommentaire( Item( Courant ).Commentary ), "Comment" );
+		PutComment( Item( Courant ).Commentary, HDBF );
 		
 		Courant = Items.Next( Courant );
+		HDBF.PopTag();
 	}
+	
+	HDBF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -505,10 +495,10 @@ void GenererDocumentationObjetsClasse(
 {
 
 	if ( Classe.Objets.Amount() )
-		GenererDocumentationItemsClasse( Classe.Objets, HDBF );
+		GenererDocumentationItemsClasse( "Object", Classe.Objets, HDBF );
 
 	if ( Classe.Restreints.Amount() )
-		GenererDocumentationItemsClasse( Classe.Restreints, HDBF );
+		GenererDocumentationItemsClasse( "Restrict", Classe.Restreints, HDBF );
 }
 
 void GenererDocumentationMethodesClasse(
@@ -516,10 +506,10 @@ void GenererDocumentationMethodesClasse(
 	hdbf__ &HDBF )
 {
 	if ( Classe.Methodes.Amount() )
-		GenererDocumentationItemsClasse( Classe.Methodes, HDBF );
+		GenererDocumentationItemsClasse( "Methods", Classe.Methodes, HDBF );
 
 	if ( Classe.Virtuels.Amount() )
-		GenererDocumentationItemsClasse( Classe.Virtuels, HDBF );
+		GenererDocumentationItemsClasse( "Vituals", Classe.Virtuels, HDBF );
 }
 
 
@@ -540,11 +530,15 @@ void GenererDocumentationEnum(
 	const enum_ &Enum,
 	hdbf__ &HDBF )
 {
+	HDBF.PushTag( "Enum" );
+
 	HDBF.PutValue( Enum.Name, "Name" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Enum.Commentary ), "Comment" );
-	
+	PutComment( Enum.Commentary, HDBF );
+
 	if ( Enum.Items.Amount() )
 		GenererDocumentationItemsEnum( Enum.Items, HDBF );
+		
+	HDBF.PopTag();
 }
 
 void GenererDocumentationShortcut(
@@ -553,15 +547,17 @@ void GenererDocumentationShortcut(
 {
 	HDBF.PutValue( Shortcut.Name, "Name" );
 	HDBF.PutValue( Shortcut.Alias, "Alias" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Shortcut.Commentaire ), "Comment" );
+	PutComment( Shortcut.Commentaire, HDBF );
 }
 
 void GenererDocumentationTypedef(
 	const typedef_ &Typedef,
 	hdbf__ &HDBF )
 {
+	HDBF.PushTag( "Typedef" );
 	HDBF.PutValue( Typedef.Name, "Name" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Typedef.Commentaire ), "Comment" );
+	PutComment( Typedef.Commentaire, HDBF );
+	HDBF.PopTag();
 }
 
 inline void GenererDocumentationClasse(
@@ -569,8 +565,9 @@ inline void GenererDocumentationClasse(
 	hdbf__ &HDBF )
 {
 
+	HDBF.PushTag( "Classe" );
 	HDBF.PutValue( Classe.Name, "Name" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Classe.Commentaire ), "Comment" );
+	PutComment( Classe.Commentaire, HDBF );
 
 	GenererDocumentationTemplateClasse( Classe.Template, HDBF );
 
@@ -579,6 +576,7 @@ inline void GenererDocumentationClasse(
 
 	GenererDocumentationObjetsClasse( Classe, HDBF );
 	GenererDocumentationMethodesClasse( Classe, HDBF );
+	HDBF.PopTag();
 }
 
 
@@ -589,7 +587,7 @@ inline void GenererDocumentationFonction(
 
 	HDBF.PutValue( Fonction.Name, "Name" );
 	HDBF.PutValue( Fonction.Type, "Type" );
-	HDBF.PutValue( MiseEnFormeCommentaire( Fonction.Commentaire ), "Comment" );
+	PutComment( Fonction.Commentaire, HDBF );
 	GenererDocumentationParametres( Fonction.Parametres, HDBF );
 	GenererDocumentationTemplateFonction( Fonction.Template, HDBF );
 
@@ -725,22 +723,14 @@ void GenererDocumentationFonctions(
 	table_<function_> &Fonctions,
 	hdbf__ &HDBF )
 {
-	HDBF.PushTag( "Functions" );
-
-	GenererDocumentationItemsClasse( Fonctions, HDBF );
-	
-	HDBF.PopTag();
-
+	GenererDocumentationItemsClasse( "Functions", Fonctions, HDBF );
 }
 
 void GenererDocumentationObjets(
 	table_<objet_> &Objets,
 	hdbf__ &HDBF )
 {
-	HDBF.PushTag( "Objects" );
-	GenererDocumentationItemsClasse( Objets, HDBF );
-
-	HDBF.PopTag();
+	GenererDocumentationItemsClasse( "Objects", Objets, HDBF );
 }
 
 
@@ -1256,7 +1246,7 @@ ERRFProlog
 	const char *&RepertoireLibrary = argv[2];
 	const char *&FichierDestination = argv[3];
 	hdbmnb::hierarchical_database HDB;
-	hdbfil::hierarchical_database_filler__ HDBF;
+	hdbxml::hierarchical_database_filler__ HDBF;
 	fil::file_oflow___ OFlow;
 	txf::text_oflow___ TFlow;
 
@@ -1276,7 +1266,7 @@ ERRFBegin
 	
 	GenererEnTeteFichierXML( TFlow );
 	
-	hdbmnb::WriteXML( HDB, TFlow );
+	hdbxml::WriteXML( HDB, TFlow );
 
 	fout << "Génération documentations librairie: achevée.                             " << nl;
 ERRFErr

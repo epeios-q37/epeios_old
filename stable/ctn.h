@@ -507,9 +507,16 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Sync()' before. */
-		t &operator ()( r Position )
+		t &Read( r Position )
 		{
 			return Ponctuel_( Position );
+		}
+		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
+		and if you want to call another fonction as this fonction or the next, you MUST call
+		the function 'Sync()' before. */
+		t &operator ()( r Position )
+		{
+			return Read( Position );
 		}
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
@@ -527,13 +534,21 @@ namespace ctn {
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
-		const t& operator()(
+		const t& Read(
 			r Position,
 			E_CMITEMt( t, r ) &Item ) const
 		{
 			Item.Init( *this );
 
 			return Item( Position );
+		}
+		/*f Return the object at 'Position' using 'Item'.
+		Valid only until next modification of 'Item'. */
+		const t& operator()(
+			r Position,
+			E_CMITEMt( t, r ) &Item ) const
+		{
+			return Read( Position, Item );
 		}
 		//f Write 'Object' at 'Position'.
 		void Write(
@@ -825,9 +840,16 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Sync()' before. */
-		t &operator ()( r Position )
+		t &Read( r Position )
 		{
 			return Ponctuel_( Position );
+		}
+		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
+		and if you want to call another fonction as this fonction or the next, you MUST call
+		the function 'Sync()' before. */
+		t &operator ()( r Position )
+		{
+			return Read( Position );
 		}
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
@@ -845,13 +867,21 @@ namespace ctn {
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
-		const t& operator()(
+		const t& Read(
 			r Position,
 			E_CITEMt( t, r ) &Item ) const
 		{
 			Item.Init( *this );
 
 			return Item( Position );
+		}
+		/*f Return the object at 'Position' using 'Item'.
+		Valid only until next modification of 'Item'. */
+		const t& operator()(
+			r Position,
+			E_CITEMt( t, r ) &Item ) const
+		{
+			return Read( Position, Item );
 		}
 		//f Write 'Object' at 'Position'.
 		void Write(
