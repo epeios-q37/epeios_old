@@ -101,7 +101,7 @@ namespace ids {
 		}
 		ids_store_ &operator =( const ids_store_ &IS )
 		{
-			Released = S_.Released;
+			Released = IS.Released;
 			S_.FirstUnused = IS.S_.FirstUnused;
 
 			return *this;

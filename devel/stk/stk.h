@@ -98,8 +98,13 @@ namespace stk {
 		}
 		stack_ &operator =( const stack_ &S )
 		{
+			epeios::size__ Size = S.Amount();
+
 			amount_extent_manager_<r>::operator =( S );
-			E_MEMORYt_( t, r )::Allocate( S.Amount() );
+
+			if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
+				E_MEMORYt_( t, r )::Allocate( Size );
+
 			E_MEMORYt_( t, r )::Store( S, S.Amount() );
 
 			return *this;

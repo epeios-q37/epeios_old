@@ -97,6 +97,7 @@ GNUMLL:
 
 IDS:
 - Adapting to changes in 'STK' library.
+- Fixing the 'operator =()' bug.
 
 LST:
 - Renaming 'CreateEntry' to 'New'.
@@ -150,6 +151,7 @@ STK:
 - Fixing the bug about the 'E_MEMORY_' used instead of 'E_MEMORYt_'.
 - Adapting to changes in 'BCH' library.
 - Introducing the 'Row' type to avoid conflict with default 'epeios::row__' type.
+- Fixing the 'operator =()' bug.
 
 STR:
 - Adding 'ToU[S|B]()'.
