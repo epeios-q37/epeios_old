@@ -69,11 +69,8 @@ extern class ttr_tutor &DTETutor;
 #include "flw.h"
 #include "bso.h"
 
-//d An undefined date.
-#define DTE_UNDEFINED_DATE	0
-
 //d An invalid date.
-#define DTE_INVALID_DATE	(raw_date__)-1
+#define DTE_INVALID_DATE	0
 
 /*d Decennia under which we consider we are in the XXI century,
 and over which we consider we are in the XX century. */
@@ -148,9 +145,9 @@ namespace dte {
 		// Return true if 'Date' is a simplified raw date (yyyymmdd).
 		bso::bool__ _IsSimplifiedRawDate( bso::ulong__ Date ) const
 		{
-			return ( Date != DTE_UNDEFINED_DATE ) && ( ( Date & DTE_SIGN_MASK ) == 0 );
+			return ( Date != DTE_INVALID_DATE ) && ( ( Date & DTE_SIGN_MASK ) == 0 );
 		}
-		// Convert a simplified raw date (yyyymmyy) to raw date.
+		// Convert a simplified raw date (yyyymmdd) to raw date.
 		raw_date__ _Convert( bso::ulong__ Date ) const
 		{
 			if ( _IsSimplifiedRawDate( Date ) )
@@ -163,7 +160,7 @@ namespace dte {
 		{
 			RawDate_ = DTE_INVALID_DATE;
 		}
-		date__( bso::ulong__ Date = DTE_UNDEFINED_DATE )
+		date__( bso::ulong__ Date = DTE_INVALID_DATE )
 		{
 			reset( false );
 
@@ -185,7 +182,7 @@ namespace dte {
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Initialization with date 'Date'.
-		void Init( bso::ulong__ Date = DTE_UNDEFINED_DATE )
+		void Init( bso::ulong__ Date = DTE_INVALID_DATE )
 		{
 			reset();
 
