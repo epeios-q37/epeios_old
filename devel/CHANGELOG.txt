@@ -33,6 +33,9 @@ ERR:
 FLW:
 - Changing some type definition to simplify castings.
 
+FLW:
+- Adding some casting to avoid warning under VC++.
+
 IDS:
 - Adapting to changes in 'STK' library.
 
