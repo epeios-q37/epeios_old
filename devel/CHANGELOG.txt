@@ -21,6 +21,7 @@ BITBCH:
 - (23/06/04) Fixing some template problems.
 - (07/07/04) Adding 'operator <<' function.
 - (30/07/04) Fixing error preventing compiling under g++.
+- (18/08/04) Optimization.
 
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.

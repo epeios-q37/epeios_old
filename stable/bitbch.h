@@ -67,9 +67,11 @@ extern class ttr_tutor &BITBCHTutor;
 
 /* ATTENTION: si la taille du réceptacle n'est plus de 1 octet, modifier la valeur
 des #define ci-dessous. */
-#define BITBCH_NB_BITS_RECEPTACLE	8
-//#define BITBCH_NB_BITS_RECEPTACLE	( 8 * sizeof( receptacle__ ) )
-#define BITBCH_VALEUR_MAX_RECEPTACLE	((receptacle__)-1L)
+#define BITBCH__RECEPTACLE_SIZE_IN_BYTES	sizeof( bitbch::receptacle__ )
+
+#define BITBCH__RECEPTACLE_SIZE_IN_BITS		( 8 * BITBCH__RECEPTACLE_SIZE_IN_BYTES )
+//#define BITBCH__RECEPTACLE_SIZE_IN_BYTES	( 8 * sizeof( receptacle__ ) )
+#define BITBCH__RECEPTACLE_VALUE_MAX	((bitbch::receptacle__)-1L)
 
 
 namespace bitbch {
@@ -85,12 +87,12 @@ namespace bitbch {
 	private:
 		static receptacle__ Offset_( r Position )
 		{
-			return (receptacle__)( *Position % BITBCH_NB_BITS_RECEPTACLE );
+			return (receptacle__)( *Position % BITBCH__RECEPTACLE_SIZE_IN_BYTES );
 		}
 		// retourne l'offset correpondant à 'Position'
 		static r Indice_( r Position )
 		{
-			return *Position / BITBCH_NB_BITS_RECEPTACLE;
+			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BYTES;
 		}
 		// retourne l'indice correspondant à 'Position'
 		static bso::ubyte__ Masque_( r Position )
@@ -124,7 +126,7 @@ namespace bitbch {
 	private:
 		tym::size__ Convert_( tym::size__ Amount )
 		{
-			return Amount ? ( Amount - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 : 0;
+			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BYTES + 1 : 0;
 		}
 		bso::bool__ Lire_( r Position ) const
 		{
@@ -585,7 +587,7 @@ namespace bitbch {
 	template <int t, typename r> class bit_bunch__
 	{
 	private:
-		receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> Table_;
+		receptacles__<((t - 1)/BITBCH__RECEPTACLE_SIZE_IN_BITS)+1> Table_;
 	public:
 		bit_bunch__( void )
 		{
@@ -594,7 +596,7 @@ namespace bitbch {
 		//f Return the value at position 'Position'.
 		bso::bool__ Get( r Position ) const
 		{
-			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1>, r >::Lire( Position, Table_ );
+			return (int)functions__< receptacles__<((t - 1)/BITBCH__RECEPTACLE_SIZE_IN_BYTES)+1>, r >::Lire( Position, Table_ );
 		}
 			//f Return the value at position 'Position'.
 		bso::bool__ operator()( r Position )
@@ -606,7 +608,7 @@ namespace bitbch {
 			bso::bool__ Value,
 			r Position )
 		{
-			functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1>, r >::Ecrire( Value, Position, Table_ );
+			functions__< receptacles__<((t - 1)/BITBCH__RECEPTACLE_SIZE_IN_BYTES)+1>, r >::Ecrire( Value, Position, Table_ );
 		}
 		//f Set all the bits to 'Value'.
 		void Reset( bso::bool__ Value = false )

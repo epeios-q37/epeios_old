@@ -59,6 +59,13 @@ public:
 
 using namespace bitbch;
 
+#ifdef BITBCH_BUFEER_SIZE
+#	define BUFFER_SIZE	BITBCH_BUFFER_SIZE
+#else
+#	define BUFFER_SIZE	5000
+#endif
+
+#if 0
 void bitbch::And(
 	const E_BIT_BUNCH_ &O1,
 	const E_BIT_BUNCH_ &O2,
@@ -81,7 +88,52 @@ void bitbch::And(
 		Row++;
 	}
 }
+#else
 
+static inline void And_(
+	const receptacle__ *O1,
+	const receptacle__ *O2,
+	epeios::size__ Amount,
+	receptacle__ *R )
+{
+	while ( Amount-- )
+		R[Amount] = O1[Amount] & O2[Amount];
+}
+
+void bitbch::And(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	receptacle__ Buffer[3 * BUFFER_SIZE];
+	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	epeios::size__ Current = 0;
+	epeios::size__ Amount = BUFFER_SIZE;
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	while ( Current < Size ) {
+		if ( ( Size - Current ) < Amount )
+			Amount = Size - Current;
+
+		O1.Table.Recall( Current, Amount, Buffer );
+		O2.Table.Recall( Current, Amount, Buffer + BUFFER_SIZE);
+
+		And_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
+
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+
+		Current += Amount;
+	}
+}
+
+#if 0
 void bitbch::Or(
 	const E_BIT_BUNCH_ &O1,
 	const E_BIT_BUNCH_ &O2,
@@ -104,7 +156,53 @@ void bitbch::Or(
 		Row++;
 	}
 }
+#else
 
+static inline void Or_(
+	const receptacle__ *O1,
+	const receptacle__ *O2,
+	epeios::size__ Amount,
+	receptacle__ *R )
+{
+	while ( Amount-- )
+		R[Amount] = O1[Amount] | O2[Amount];
+}
+
+void bitbch::Or(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	receptacle__ Buffer[3 * BUFFER_SIZE];
+	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	epeios::size__ Current = 0;
+	epeios::size__ Amount = BUFFER_SIZE;
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	while ( Current < Size ) {
+		if ( ( Size - Current ) < Amount )
+			Amount = Size - Current;
+
+		O1.Table.Recall( Current, Amount, Buffer );
+		O2.Table.Recall( Current, Amount, Buffer + BUFFER_SIZE);
+
+		Or_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
+
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+
+		Current += Amount;
+	}
+}
+#endif
+
+#if 0
 void bitbch::XOr(
 	const E_BIT_BUNCH_ &O1,
 	const E_BIT_BUNCH_ &O2,
@@ -127,7 +225,53 @@ void bitbch::XOr(
 		Row++;
 	}
 }
+#else
 
+static inline void XOr_(
+	const receptacle__ *O1,
+	const receptacle__ *O2,
+	epeios::size__ Amount,
+	receptacle__ *R )
+{
+	while ( Amount-- )
+		R[Amount] = O1[Amount] ^ O2[Amount];
+}
+
+void bitbch::XOr(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	receptacle__ Buffer[3 * BUFFER_SIZE];
+	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	epeios::size__ Current = 0;
+	epeios::size__ Amount = BUFFER_SIZE;
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	while ( Current < Size ) {
+		if ( ( Size - Current ) < Amount )
+			Amount = Size - Current;
+
+		O1.Table.Recall( Current, Amount, Buffer );
+		O2.Table.Recall( Current, Amount, Buffer + BUFFER_SIZE);
+
+		XOr_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
+
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+
+		Current += Amount;
+	}
+}
+#endif
+
+#if 0
 void bitbch::Not(
 	const E_BIT_BUNCH_ &O,
 	E_BIT_BUNCH_ &R )
@@ -138,12 +282,50 @@ void bitbch::Not(
 	epeios::row_t__ Row = 0;
 	epeios::size__ Limit = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
+	if ( R.Amount() < O.Amount() )
+		R.Allocate( O.Amount() );
+
 	while ( Row != NONE ) {
 		R.Table.Store( ~O.Table( Row ), Row );
 
 		Row++;
 	}
 }
+#else
+
+static inline void Not_(
+	const receptacle__ *O,
+	epeios::size__ Amount,
+	receptacle__ *R )
+{
+	while ( Amount-- )
+		R[Amount] = ~O[Amount];
+}
+
+void bitbch::Not(
+	const E_BIT_BUNCH_ &O,
+	E_BIT_BUNCH_ &R )
+{
+	receptacle__ Buffer[2 * BUFFER_SIZE];
+	epeios::size__ Size = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	epeios::size__ Current = 0;
+	epeios::size__ Amount = BUFFER_SIZE;
+
+	while ( Current < Size ) {
+		if ( ( Size - Current ) < Amount )
+			Amount = Size - Current;
+
+		O.Table.Recall( Current, Amount, Buffer );
+
+		Not_( Buffer, Amount, Buffer + BUFFER_SIZE );
+
+		R.Table.Store( Buffer + BUFFER_SIZE, Current, Amount );
+
+		Current += Amount;
+	}
+}
+#endif
+#endif
 
 txf::text_oflow__ &operator <<(
 	txf::text_oflow__ &OStream,
