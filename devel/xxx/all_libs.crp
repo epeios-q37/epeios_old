@@ -136,8 +136,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &bkddcb		&ebkd		&2000-		&BacKenD DesCriBer
 &bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
-&bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
-&bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
+&bkdmng		&ebkd		&2001-\
+	&BacKenD MaNaGer
+&bkdrqm		&ebkd		&2001-\
+	&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2001-\
 	&BacKenD TyPes Manager
 
@@ -157,43 +159,56 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Logi+ DBI libraries.
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
-&dbibsc		&ldbi		&2002-		&DataBase Interface BaSiCs
+&dbibsc		&ldbi		&2002-\
+	&DataBase Interface BaSiCs
 &dbibsc_	&ldbi		&2002-		&DataBase Interface BaSiCs (for backend)
-&dbidpd		&ldbi		&2002-		&DataBase Interface Database DePenDences
+&dbidpd		&ldbi		&2002-\
+	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
 &dbiifl_	&ldbi		&2002-		&Database Interface Index FieLds (for backend)
-&dbimng		&ldbi		&2002-		&Database Interface MaNaGer
+&dbimng		&ldbi		&2002-\
+	&Database Interface MaNaGer
 &dbimng_	&ldbi		&2002-		&Database Interface MaNaGer (for backend)
 &dbimsc		&ldbi		&2002-		&BataBase Interface MiSC
-&dbimsq		&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database)
+&dbimsq		&ldbi		&2002-\
+	&DataBase Interface MySQl (from MySQL database)
 &dbimsq_	&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
 &dbipgs		&ldbi		&2002-		&DataBase Interface PostGreS
 &dbisql		&ldbi		&2002-\
 	&DataBase Interface SQL (from language)
-&dbisrq		&ldbi		&2002-		&DataBase Interface Search ReQuest
+&dbisrq		&ldbi		&2002-\
+	&DataBase Interface Search ReQuest
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
 
 
 
 #Logi+ GSB libraries.
-&gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
+&gsbbsc		&lgsb		&2002-\
+	&GeSBib BaSiC
 &gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
-&gsbcor		&lgsb		&		&GeSBib field CORe
+&gsbcor		&lgsb		&\
+	&GeSBib field CORe
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdbm_	&lgsb		&		&GeSBib DataBase Manager (for backebnd).
 &gsbdtb		&lgsb		&\
 	&GeSBib DaTaBase
-&gsbfld		&lgsb		&2002-		&GeSBib FieLDs
+&gsbfld		&lgsb		&2002-\
+	&GeSBib FieLDs
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
-&gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
-&gsbrgl		&lgsb		&		&GeSBib ReGuLar field
+&gsbmlt		&lgsb		&2002-\
+	&GeSBib MuLTi field
+&gsbrgl		&lgsb		&\
+	&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
-&gsbsrq		&lgsb		&		&GeSBib Search ReQuest
-&gsbsrq_	&lgsb		&		&GeSBib Search ReQuest (for backend)
+&gsbsrq		&lgsb		&\
+	&GeSBib Search ReQuest
+&gsbsrq_	&lgsb		&\
+	&GeSBib Search ReQuest (for backend)
 &gsbtbl		&lgsb		&\
 	&GeSBib TaBLe
-&gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
+&gsbtfd_	&lgsb		&\
+	&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 
 

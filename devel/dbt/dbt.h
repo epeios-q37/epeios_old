@@ -1,7 +1,7 @@
 /*
 	Header for the 'dbt' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -71,10 +71,10 @@ extern class ttr_tutor &DBTTutor;
 
 namespace dbt {
 	//t Row type for an internal node.
-	TYPEDEF( epeios::row_t__, internal_row__ );	// Node with childrens (always 2).
+	E_TYPEDEF( epeios::row_t__, internal_row__ );	// Node with childrens (always 2).
 
 	//t Row type for an external node.
-	TYPEDEF( epeios::row_t__, external_row__ );	// Node without children.
+	E_TYPEDEF( epeios::row_t__, external_row__ );	// Node without children.
 
 	enum type__ {
 		internal = 0,	// false
@@ -257,7 +257,7 @@ namespace dbt {
 		}
 	};
 
-	AUTO3( differentiated_binary_tree )
+	E_AUTO3( differentiated_binary_tree )
 
 	#define E_DBTREEt_( internal, external, row )	differentiated_binary_tree_<internal, external, row>
 	#define E_DBTREEt( internal, external, row )	differentiated_binary_tree<internal, external, row>
@@ -317,7 +317,7 @@ namespace dbt {
 		}
 	};
 
-	AUTO3( differentiated_binary_tree_filler )
+	E_AUTO3( differentiated_binary_tree_filler )
 
 	#define E_DBTREE_FILLERt_( internal, external, row )	differentiated_binary_tree_filler_<internal, external, row>
 	#define E_DBTREE_FILLERt( internal, external, row )		differentiated_binary_tree_filler<internal, external, row>
