@@ -1,6 +1,6 @@
 /*
 	Header for the 'mdr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -77,12 +77,15 @@ namespace mdr {
 
 	//t The size of a memory.
 	typedef bso::ulong__	size__;
+	#define MDR_SIZE_MAX	BSO_ULONG_MAX
 
 	//t The portable version of a 'size__'.
 	typedef bso::p_ulong__	p_size__;
+	#define MDR_P_SIZE_MAX	BSO_P_ULONG_MAX
 
 	//t The size of a buffer.
 	typedef bso::bsize__	bsize__;
+	#define MDR_BSIZE_MAX	BSO_BSIZE_MAX
 
 	//t The type of the datum in a memory.
 	typedef bso::raw__	datum__;

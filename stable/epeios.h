@@ -1,6 +1,6 @@
 /*
 	Header for the 'epeios' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -74,7 +74,11 @@ namespace epeios {
 	typedef mdr::row__	row_t__;
 	E_TYPEDEF( row_t__, row__ );
 	using mdr::size__;
+	#define EPEIOS_SIZE_MAX	MDR_SIZE_MAX
+
 	using mdr::bsize__;
+	#define EPEIOS_BSIZE_MAX	MDR_BSIZE_MAX
+
 	using mdr::datum__;
 }
 

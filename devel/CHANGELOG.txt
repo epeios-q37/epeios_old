@@ -28,6 +28,9 @@ CTN:
 DTE:
 - (15/04/04) Introducing the new structure.
 
+EPEIOS:
+- (15/06/04) Adding some useful constants.
+
 EPSMSC:
 - Adding 'EPSMSC_COPYRIGHT()' macro.
 
@@ -43,6 +46,9 @@ IDXBTR
 
 LCK:
 - Adding 'GetUnlocked()' method.
+
+MDR:
+- (15/06/04) Adding some useful constants.
 
 SSNMNG:
 - Using own row type for session id 'row__'.
