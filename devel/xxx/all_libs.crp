@@ -32,6 +32,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
 &flw		&epeios		&2000-		&FLoW
+&gsbbsc		&lgsb		&2000-		&GeSBib BaSiC
 &ids		&epeios		&		&ID Store
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
