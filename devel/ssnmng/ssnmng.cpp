@@ -57,128 +57,150 @@ public:
 
 #define DIGITS "azertyuiopmlkjhgfdsqwxcvbnNBVCXWQSDFGHJKLMPOIUYTREZA9876543210"
 
-namespace ssnmng {
+using namespace ssnmng;
 
-	void session_id__::New( void )
-	{
-		int i;
+void ssnmng::session_id__::New( void )
+{
+	int i;
 
-		for( i = 0; i < SSNMNG_SIZE; i++ )
-			Raw_[i] = DIGITS[rand() % sizeof( DIGITS )];
+	for( i = 0; i < SSNMNG_SIZE; i++ )
+		Raw_[i] = DIGITS[rand() % sizeof( DIGITS )];
 
-		Raw_[i] = 0;
+	Raw_[i] = 0;
+}
+
+static inline bso::sign__ Test_(
+	const char *S1,
+	const char *S2 )
+{
+	return strcmp( S1, S2 );
+}
+
+static bso::sign__ Search_( 
+	const idxbtr::E_IBTREEt_( row__ ) &I,
+	const bch::E_BUNCHt_( session_id__, row__ ) &T,
+	const char *S,
+	idxbtr::E_TSEEKERt__( row__ ) &Seeker )
+{
+	bso::sign__ Test;
+
+	while ( ( Seeker.GetState() == idxbtr::sFound )
+			&& ( ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) != 0 ) ) {
+		switch( Test ) {
+		case 1:
+			Seeker.SearchGreater();
+			break;
+		case -1:
+			Seeker.SearchLesser();
+			break;
+		default:
+			ERRc();
+			break;
+		}
 	}
 
-	static inline bso::sign__ Test_(
-		const char *S1,
-		const char *S2 )
-	{
-		return strcmp( S1, S2 );
-	}
+	return Test;
+}
 
-	static bso::sign__ Search_( 
-		const idxbtr::E_IBTREE_ &I,
-		const bch::E_BUNCH_( session_id__ ) &T,
-		const char *S,
-		idxbtr::E_TSEEKER__ &Seeker )
-	{
-		bso::sign__ Test;
+row__ ssnmng::sessions_manager_::Open( void )
+{
+	row__ P = _list_::New();
+	session_id__ SessionID;
+	chrono__ C;
 
-		while ( ( Seeker.GetState() == idxbtr::sFound )
-			    && ( ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) != 0 ) ) {
-			switch( Test ) {
-			case 1:
-				Seeker.SearchGreater();
-				break;
-			case -1:
-				Seeker.SearchLesser();
-				break;
-			default:
-				ERRc();
-				break;
-			}
+	do {
+		SessionID.New();
+	} while( Position( SessionID ) != NONE );
+
+	Table.Store( SessionID, P );
+
+	if ( Index.IsEmpty() ) {
+		_queue_::Create( P );
+		Index.Create( P );
+	} else {
+		idxbtr::E_TSEEKERt__( row__ ) Seeker;
+
+		Seeker.Init( Index );
+
+		switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
+		case 1:
+			Index.MarkAsGreater( P, Seeker.GetCurrent() );
+			break;
+		case -1:
+			Index.MarkAsLesser( P, Seeker.GetCurrent() );
+			break;
+		default:
+			ERRc();
+			break;
 		}
 
-		return Test;
+		_queue_::BecomeNext( P, _queue_::Tail() );
 	}
 
-	epeios::row__ sessions_manager_::Open( void )
-	{
-		epeios::row__ P = E_LIST_::New();
-		session_id__ SessionID;
-		chrono__ C;
 
-		do {
-			SessionID.New();
-		} while( Position( SessionID ) != NONE );
+	if ( time( &C.Relative ) == -1 )
+		ERRs();
 
-		Table.Store( SessionID, P );
+	if ( time( &C.Absolute ) == -1 )
+		ERRs();
 
-		if ( Index.IsEmpty() ) {
-			E_MQUEUE_::Create( P );
-			Index.Create( P );
-		} else {
-			idxbtr::E_TSEEKER__ Seeker;
+	Chronos.Store( C, P );
 
-			Seeker.Init( Index );
+	return P;
+}
 
-			switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
-			case 1:
-				Index.MarkAsGreater( P, Seeker.GetCurrent() );
-				break;
-			case -1:
-				Index.MarkAsLesser( P, Seeker.GetCurrent() );
-				break;
-			default:
-				ERRc();
-				break;
-			}
+row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
+{
+	if ( !Index.IsEmpty() )	{
+		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
-			E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Tail() );
-		}
+		Seeker.Init( Index );
 
-
-		if ( time( &C.Relative ) == -1 )
-			ERRs();
-
-		if ( time( &C.Absolute ) == -1 )
-			ERRs();
-
-		Chronos.Store( C, P );
-
-		return P;
-	}
-
-	epeios::row__ sessions_manager_::Position( const char *SessionID ) const
-	{
-		if ( !Index.IsEmpty() )	{
-			idxbtr::E_TSEEKER__ Seeker;
-
-			Seeker.Init( Index );
-
-			if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
-				return Seeker.GetCurrent();
-			else
-				return NONE;
-		}
-
-		return NONE;
-	}
-	epeios::row__ sessions_manager_::Position( const str::string_ &SessionID ) const
-	{
-		char Buffer[SSNMNG_SIZE+1];
-
-		if ( SessionID.Amount() != SSNMNG_SIZE )
+		if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
+			return Seeker.GetCurrent();
+		else
 			return NONE;
+	}
 
-		SessionID.Recall( 0, SSNMNG_SIZE, Buffer );
+	return NONE;
+}
 
-		Buffer[SSNMNG_SIZE] = 0;
+row__ ssnmng::sessions_manager_::Position( const str::string_ &SessionID ) const
+{
+	char Buffer[SSNMNG_SIZE+1];
 
-		return Position( Buffer );
+	if ( SessionID.Amount() != SSNMNG_SIZE )
+		return NONE;
+
+	SessionID.Recall( 0, SSNMNG_SIZE, Buffer );
+
+	Buffer[SSNMNG_SIZE] = 0;
+
+	return Position( Buffer );
+}
+
+void ssnmng::sessions_manager_::GetExpired( bch::E_BUNCH_( row__ ) &Expired ) const
+{
+	row__ Row = First();
+
+	while ( Row != NONE ) {
+		if ( IsExpired( Row ) )
+			Expired.Append( Row );
+
+		Row = Next( Row );
 	}
 }
 
+const bch::E_BUNCH_( row__ ) &ssnmng::sessions_manager_::GetExpired( void ) const
+{
+	static bch::E_BUNCH( row__ ) Expired;
+
+	Expired.Init();
+
+	GetExpired( Expired );
+
+	return Expired;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

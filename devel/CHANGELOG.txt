@@ -1,7 +1,16 @@
 $Id$
 
+IDXBTR
+- Fixing bug in the 'tree_index_::Remove()' function
+
 LCK:
 - Adding 'GetUnlocked()' method.
+
+SSNMNG:
+- Using own row type for session id 'row__'.
+- Adding 'sessions_manager_::IsValid()' method.
+- Adding 'sessions_manager_::GetExpired()' methods.
+- Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
 
 --------
 20040215

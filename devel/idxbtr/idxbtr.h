@@ -207,9 +207,9 @@ namespace idxbtr {
 		//f Remove 'Item'.
 		void Remove( r Item )
 		{
-			epeios::row__ Fils = E_BTREEt_( r )::Left( Item );
-			epeios::row__ Fille = E_BTREEt_( r )::Right( Item );
-			epeios::row__ Pere = E_BTREEt_( r )::Parent( Item );
+			r Fils = E_BTREEt_( r )::Left( Item );
+			r Fille = E_BTREEt_( r )::Right( Item );
+			r Pere = E_BTREEt_( r )::Parent( Item );
 
 			if ( Fils != NONE )
 				E_BTREEt_( r )::Cut( Fils );

@@ -73,8 +73,8 @@ extern class ttr_tutor &SSNMNGTutor;
 
 namespace ssnmng {
 
-	using lst::list_;
-	using que::managed_queue_;
+	//t The type of the row of a session.
+	E_ROW( row__ );
 
 	//c A session id.
 	class session_id__
@@ -115,10 +115,13 @@ namespace ssnmng {
 		time_t Absolute;
 	};
 
+	typedef lst::E_LISTt_( row__ )	_list_;
+	typedef que::E_MQUEUEt_( row__ ) _queue_;
+
 	//c A session manager.
 	class sessions_manager_
-	: public E_LIST_,
-	  public E_MQUEUE_
+	: public _list_,
+	  public _queue_
 	{
 	protected:
 		virtual void LSTAllocate( epeios::size__ Size )
@@ -127,61 +130,61 @@ namespace ssnmng {
 			Index.Allocate( Size );
 			Chronos.Allocate( Size );
 			SSNMNGAllocate( Size );
-			E_MQUEUE_::Allocate( Size );
+			_queue_::Allocate( Size );
 			
 		}
 		//v Permit to make an allocation with a affected structure.
 		virtual void SSNMNGAllocate( epeios::size__ Size ){}
 	public:
 		struct s
-		: public E_LIST_::s,
-		public E_MQUEUE_::s
+		: public _list_::s,
+		public _queue_::s
 		{
-			bch::E_BUNCH_( session_id__ )::s Table;
-			idxbtq::E_INDEX_::s Index;
-			bch::E_BUNCH_( chrono__ )::s Chronos;
+			bch::E_BUNCHt_( session_id__, row__ )::s Table;
+			idxbtq::E_INDEXt_( row__ )::s Index;
+			bch::E_BUNCHt_( chrono__, row__ )::s Chronos;
 			bso::ushort__ Absolute;
 			bso::ushort__ Relative;
 		} &S_;
 		//o The table of session ids.
-		bch::E_BUNCH_( session_id__ ) Table;
+		bch::E_BUNCHt_( session_id__, row__ ) Table;
 		//o The index.
-		idxbtq::E_INDEX_ Index;
+		idxbtq::E_INDEXt_( row__ ) Index;
 		//o The timing.
-		bch::E_BUNCH_( chrono__ ) Chronos;
+		bch::E_BUNCHt_( chrono__, row__ ) Chronos;
 		sessions_manager_( s &S )
 		: S_( S ),
-		  E_LIST_( S ),
+		  _list_( S ),
 		  Table( S.Table ),
 		  Index( S.Index ),
 		  Chronos( S.Chronos ),
-		  E_MQUEUE_( S )
+		  _queue_( S )
 		{}
 		void reset( bool P = true )
 		{
 			S_.Absolute = S_.Relative = 0;
 
-			E_LIST_::reset( P );
+			_list_::reset( P );
 			Table.reset( P );
 			Index.reset( P );
 			Chronos.reset( P );
-			E_MQUEUE_::reset( P );
+			_queue_::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_LIST_::plug( M );
+			_list_::plug( M );
 			Table.plug( M );
 			Index.plug( M );
 			Chronos.plug( M );
-			E_MQUEUE_::plug( M );
+			_queue_::plug( M );
 		}
 		sessions_manager_ &operator =( const sessions_manager_ &S )
 		{
-			E_LIST_::operator =( S );
+			_list_::operator =( S );
 			Table = S.Table;
 			Index = S.Index;
 			Chronos = S.Chronos;
-			E_MQUEUE_::operator =( S );
+			_queue_::operator =( S );
 
 			S_.Relative = S.S_.Relative;
 			S_.Absolute = S.S_.Absolute;
@@ -193,40 +196,40 @@ namespace ssnmng {
 			bso::ushort__ Relative = BSO_USHORT_MAX,
 			bso::ushort__ Absolute = BSO_USHORT_MAX )
 		{
-			E_LIST_::Init();
+			_list_::Init();
 			Table.Init();
 			Index.Init();
 			Chronos.Init();
-			E_MQUEUE_::Init();
+			_queue_::Init();
 
 			S_.Relative = Relative;
 			S_.Absolute = Absolute;
 		}
 		//f Return the position of a mandatory new session.
-		epeios::row__ Open( void );
+		row__ Open( void );
 		//f Remove the session id at position 'Position'.
-		void Close( epeios::row__ Position )
+		void Close( row__ Position )
 		{
 			Index.Remove( Position );
-			E_LIST_::Delete( Position );
-			E_MQUEUE_::Delete( Position );
+			_list_::Delete( Position );
+			_queue_::Delete( Position );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		epeios::row__ Position( const session_id__ &SessionID ) const
+		row__ Position( const session_id__ &SessionID ) const
 		{
 			return Position( SessionID.Value() );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		epeios::row__ Position( const char *SessionID ) const;
+		row__ Position( const char *SessionID ) const;
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		epeios::row__ Position( const str::string_ &SessionID ) const;
+		row__ Position( const str::string_ &SessionID ) const;
 		//f Return the session id. corresponding to 'Position'.
-		session_id__ SessionID( epeios::row__ Position )
+		session_id__ SessionID( row__ Position )
 		{
 			return Table( Position );
 		}
 		//f Touche the session corresponding at position 'P'.
-		void Touch( epeios::row__ P )
+		void Touch( row__ P )
 		{
 			chrono__ C = Chronos.Get( P );
 
@@ -236,28 +239,38 @@ namespace ssnmng {
 			Chronos.Store( C, P );
 
 	#ifdef SSNMNG_DBG
-			if ( E_MQUEUE_::Amount() == 0 )
+			if ( _queue_::Amount() == 0 )
 				ERRu();
 	#endif
 
-			if ( ( E_MQUEUE_::Amount() != 1 ) && ( E_MQUEUE_::Tail() != P ) ) {
-				E_MQUEUE_::Delete( P );
-				E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Tail() );
+			if ( ( _queue_::Amount() != 1 ) && ( _queue_::Tail() != P ) ) {
+				_queue_::Delete( P );
+				_queue_::BecomeNext( P, _queue_::Tail() );
 			}
 		}
 		//f Return true if session corresponding to 'P' is valid.
-		bso::bool__ IsValid( epeios::row__ P ) const
+		bso::bool__ IsValid( row__ P ) const
 		{
 			chrono__ C = Chronos.Get( P );
 
 			return ( difftime( time( NULL ), C.Absolute ) < S_.Absolute )
 				   && ( difftime( time( NULL ), C.Relative ) < S_.Relative );
 		}
+		//f Return true if session (which must exists) corresponding to row 'Row' is expired, false otherwise.
+		bso::bool__ IsExpired( row__ Row ) const
+		{
+			return !IsValid( Row );
+		}
 		//f Balance the index. 
 		void Balance( void )
 		{
 			Index.Balance();
 		}
+		//f Return the expired sessions. Only valid until next call.
+		const bch::E_BUNCH_( row__ ) &GetExpired( void ) const;
+		//f Put in 'Expired' the expired sessions.
+		void GetExpired( bch::E_BUNCH_( row__ ) &Expired ) const;
+		E_NAVt( _queue_::, row__ )
 	};
 
 	E_AUTO( sessions_manager )
