@@ -1,10 +1,17 @@
 $Id$
 
+08/03/05:
+- IDXBTR:
+	- Correction d'un bogue potentiel.
+	- Renommage de la méthode 'Remove' en 'Delete'.
+
 07/03/05
 - SSNMNG: Correction d'un bogue dans la méthode 'Close()'.
 
 06/03/05:
 - SSNMNG : Ajout de la gestion des pointeurs utilisateurs.
+
+==== Ancien format ====
 
 GENERAL:
 - (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.

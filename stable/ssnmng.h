@@ -217,7 +217,7 @@ namespace ssnmng {
 		//f Remove the session id at position 'Position'.
 		void Close( row__ Position )
 		{
-			S_.Root = Index.Remove( Position, S_.Root );
+			S_.Root = Index.Delete( Position, S_.Root );
 			_list_::Delete( Position );
 			_queue_::Delete( Position );
 		}

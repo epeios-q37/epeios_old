@@ -171,7 +171,7 @@ namespace idxbtr {
 					return NONE;
 		}
 		//f Remove 'Item'. Return the new root.
-		r Remove(
+		r Delete(
 			r Item,
 			r Root )
 		{
@@ -217,7 +217,8 @@ namespace idxbtr {
 			{
 				if ( Fils != NONE )
 				{
-					E_BTREEt_( r )::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+					if ( Fille != NONE )
+						E_BTREEt_( r )::BecomeRight( Fille, NoeudSansFille_( Fils ) );
 
 					return Fils;
 				}

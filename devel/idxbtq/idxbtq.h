@@ -169,11 +169,12 @@ namespace idxbtq {
 			E_IBTREEt_( r )::MarkAsSame( Row, Current );
 			E_IQUEUEt_( r )::MarkAsSame( Row, Current );
 		}
-		//f Remove 'Item'.
-		void Delete( r Item )
+		r Delete(
+			r Item,
+			r Root )
 		{
 			E_IQUEUEt_( r )::Delete( Item );
-			E_IBTREEt_( r )::Delete( Item );
+			return E_IBTREEt_( r )::Delete( Item, Root );
 		}
 		//f Balances the tree of the index.
 		r Balance(
