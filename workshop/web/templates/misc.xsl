@@ -41,7 +41,7 @@
       <xsl:value-of select="."/>
     </pre>
   </xsl:template>
-  <xsl:template match="specific/WEB/parent">
+  <xsl:template match="specific/WEB/@parent">
     <a>
       <xsl:attribute name="href">
         <xsl:value-of select="."/>

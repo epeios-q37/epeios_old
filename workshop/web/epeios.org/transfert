@@ -1,3 +1,0 @@
-# $Id$
-
-rsync -v -c -r -e ssh --delete --force --exclude stats/ /home/csimon/website/ csimon@epeios.sourceforge.net:http/htdocs
