@@ -48,6 +48,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &fnm		&epeios		&2000-		&File Name Manager
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
 &gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
+&gsbcor		&lgsb		&		&GeSBib field CORe
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdbm_	&lgsb		&		&GeSBib DataBase Manager (for backebnd).
 &gsbdtb		&lgsb		&		&GeSBib DaTaBase
