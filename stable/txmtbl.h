@@ -265,7 +265,7 @@ namespace txmtbl {
 		}
 		/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
 		Return amount of cell deleted.*/
-		amount__ DeleteCommentary( bso::char__ Marker );
+		amount__ DeleteComment( bso::char__ Marker );
 		//f 'Location' becomes the location.
 		void Location( location__ Location )
 		{
@@ -358,7 +358,7 @@ namespace txmtbl {
 		//f Delete all empty cells between the first and last non-empty cells from all the lines.
 		void DeleteCentralEmptyCells( void );
 		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
-		void DeleteCommentaries( bso::char__ Marker );
+		void DeleteComments( bso::char__ Marker );
 		NAV( lines_:: )
 	};
 

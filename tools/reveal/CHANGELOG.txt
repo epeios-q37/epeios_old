@@ -1,7 +1,9 @@
 $Id$
 
+20010507
 - UPGRADING TO 1.0.0.
 - Adapting to changes in 'STF'.
 - Adding '--license' command.
 - Using advanced 'CLNARG' functions.
 - Adding CVS details printing.
+- Changing 'commentary' to 'comment'.

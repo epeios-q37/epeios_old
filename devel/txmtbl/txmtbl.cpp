@@ -417,7 +417,7 @@ static inline bool IsCommentary_(
 	return Cell.Amount() && ( Cell( 0 ) == Marker );
 }
 
-amount__ line_::DeleteCommentary( bso::char__ Marker )
+amount__ line_::DeleteComment( bso::char__ Marker )
 {
 	tym::row__ Position = First();
 	ctn::E_CMITEM( cell_ ) Cell;
@@ -569,13 +569,13 @@ void table_::DeleteCentralEmptyCells( void )
 	lines_::Sync();
 }
 
-void table_::DeleteCommentaries( bso::char__ Marker )
+void table_::DeleteComments( bso::char__ Marker )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator()( Current ).DeleteCommentary( Marker );
+		lines_::operator()( Current ).DeleteComment( Marker );
 
 		Current = Next( Current );
 	}

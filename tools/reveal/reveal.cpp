@@ -41,14 +41,14 @@
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define DEFAULT_TAG_DELIMITER_S		"$"
-#define DEFAULT_COMMENTARY_MARKER_S	"#"
+#define DEFAULT_COMMENT_MARKER_S	"#"
 #define DEFAULT_TEXT_MARKER_S		"&"
 #define DEFAULT_FILE_MARKER_S		"%"
 #define RESERVED_TAG_PREFIX_S		"_"
 #define UNKNOW_RESERVED_TAG			tagexp::t_amount
 
 #define DEFAULT_TAG_DELIMITER		DEFAULT_TAG_DELIMITER_S[0]
-#define DEFAULT_COMMENTARY_MARKER	DEFAULT_COMMENTARY_MARKER_S[0]
+#define DEFAULT_COMMENT_MARKER		DEFAULT_COMMENT_MARKER_S[0]
 #define DEFAULT_TEXT_MARKER			DEFAULT_TEXT_MARKER_S[0]
 #define DEFAULT_FILE_MARKER			DEFAULT_FILE_MARKER_S[0]
 #define BUFFER_SIZE					100
@@ -84,7 +84,7 @@ enum command {
 };
 
 enum option {
-	oCommentaryMarker,
+	oCommentMarker,
 	oTagDelimiter,
 	oTextMarker,
 	oFileMarker,
@@ -526,12 +526,12 @@ ERREpilog
 
 void GetTable(
 	xtf::extended_text_iflow___ &Desc,
-	bso::char__ Commentary,
+	bso::char__ Comment,
 	table_ &Table )
 {
 	txmtbl::GetTable( Desc, Table );
 
-	Table.DeleteCommentaries( Commentary );
+	Table.DeleteComments( Comment );
 	Table.DeleteEmptyCells();
 	Table.DeleteEmptyLines();
 }
@@ -550,7 +550,7 @@ void PrintUsage( const clnarg::description_ &Description )
 	fout << "Options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", false );
 	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", false );
-	clnarg::PrintOptionUsage( Description, oCommentaryMarker, "CHAR", "CHAR becomes the marker for commentary ('" DEFAULT_COMMENTARY_MARKER_S "' by default).", false );
+	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", false );
 	clnarg::PrintOptionUsage( Description, oTextMarker, "CHAR", "CHAR becomes the marker for text ('" DEFAULT_TEXT_MARKER_S "' by default).", false );
 	clnarg::PrintOptionUsage( Description, oFileMarker, "CHAR",  "CHAR becomes the marker for file ('" DEFAULT_FILE_MARKER_S "' by default).", false );
 }
@@ -567,7 +567,7 @@ static void AnalyzeOptions(
 	clnarg::analyzer___ &Analyzer,
 	tagexp::action &Action,
 	char &Delimiter,
-	char &Commentary,
+	char &Comment,
 	char &Text,
 	char &File )
 {
@@ -605,18 +605,18 @@ ERRBegin
 			else
 				Delimiter = Argument( 0 );
 			break;
-		case oCommentaryMarker:
+		case oCommentMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-c,--commentary-marker' must have one argument." << txf::nl;
+				ferr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-c,--commentary-marker' must be a character." << txf::nl;
+				ferr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
-				Commentary = Argument( 0 );
+				Comment = Argument( 0 );
 			break;
 		case oTextMarker:
 			Analyzer.GetArgument( Option, Argument );
@@ -710,7 +710,7 @@ static void AnalyzeArgs(
 	char *&Dest,
 	tagexp::action &Action,
 	char &Delimiter,
-	char &Commentary,
+	char &Comment,
 	char &Text,
 	char &File )
 {
@@ -722,7 +722,7 @@ ERRBegin
 
 	Description.AddOption( 's', "skip", oSkip );
 	Description.AddOption( 'd', "tag-delimiter", oTagDelimiter );
-	Description.AddOption( 'c', "commentary-marker", oCommentaryMarker );
+	Description.AddOption( 'c', "comment-marker", oCommentMarker );
 	Description.AddOption( 't', "text-marker", oTextMarker );
 	Description.AddOption( 'f', "file-marker", oFileMarker );
 	Description.AddOption( 'l', "correct-location", cVersion );
@@ -754,7 +754,7 @@ ERRBegin
 		ERRc();
 	}
 
-	AnalyzeOptions( Analyzer, Action, Delimiter, Commentary, Text, File );
+	AnalyzeOptions( Analyzer, Action, Delimiter, Comment, Text, File );
 
 	AnalyzeFreeArguments( Analyzer, Desc, Source, Dest );
 
@@ -781,12 +781,12 @@ ERRProlog
 	char *Dest = NULL;
 	tagexp::action Action = tagexp::aPrint;
 	char Delimiter = DEFAULT_TAG_DELIMITER;
-	char Commentary = DEFAULT_COMMENTARY_MARKER;
+	char Comment = DEFAULT_COMMENT_MARKER;
 	char Text = DEFAULT_TEXT_MARKER;
 	char File = DEFAULT_FILE_MARKER;
 	table Table;
 ERRBegin
-	AnalyzeArgs( argc, argv, Desc, Source, Dest, Action, Delimiter, Commentary, Text, File );
+	AnalyzeArgs( argc, argv, Desc, Source, Dest, Action, Delimiter, Comment, Text, File );
 
 	if ( DFile.Init( Desc, err::hSkip ) != fil::sSuccess)
 	{
@@ -800,7 +800,7 @@ ERRBegin
 
 	Table.Init();
 
-	GetTable( DText, Commentary, Table );
+	GetTable( DText, Comment, Table );
 
 	if ( Source ) {
 

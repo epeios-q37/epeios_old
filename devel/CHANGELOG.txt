@@ -31,6 +31,9 @@ TXMPGH:
 - Adapting to namespace use in 'CTN', 'STR' and 'BSO'.
 - Using 'EPEIOS' stuff.
 
+TXMTBL:
+- Changing 'commentary' label to 'comment'.
+
 XTF:
 - Correct a bug due to a missing 'EOX()' in 'GetLine()'.
 
