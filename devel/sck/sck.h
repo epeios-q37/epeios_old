@@ -117,17 +117,17 @@ namespace sck {
 	using flw::datum__;
 #ifdef CPE__MS
 	typedef SOCKET socket__;
-	typedef char *	sck__cast;
+	typedef char *	cast__;
 #elif defined( SCK__UNIX_LIKE )
 	typedef int	socket__;
-	typedef void * sck__cast;
+	typedef void * cast__;
 #else
 #	error "Unknow compiler enviroment"
 #endif
 
 	typedef int error__;
 
-	typedef int	amount__;
+	typedef flw::size__	amount__;
 
 	typedef bso::ushort__	duration__;
 

@@ -40,9 +40,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dte		&epeios		&2001,\
 	&DaTE
 &dtfbsc		&epeios		&2000-2001, \
-	&Data transFert BaSiC
+	&Data TransFert BaSiC
 &dtflcf		&epeios		&2000, \
 	&Data TransFert LoCal Features
+&dtfntv		&epeios		&\
+	&Data TransFert NaTiVe
+&dtfptb		&epeios		&\
+	&Data TransFert PorTaBle
 &dtfrmf		&epeios		&2000-2001, \
 	&Data TransFert ReMote Features
 &dtr		&epeios		&2000-\

@@ -1,7 +1,7 @@
 /*
-	Header for the 'dtflcf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2003 Claude SIMON (csimon@epeios.org).
-
+	Header for the 'dtfntv' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef DTFLCF__INC
-#define DTFLCF__INC
+#ifndef DTFNTV__INC
+#define DTFNTV__INC
 
-#define DTFLCF_NAME		"DTFLCF"
+#define DTFNTV_NAME		"DTFNTV"
 
-#define	DTFLCF_VERSION	"$Revision$"
+#define	DTFNTV_VERSION	"$Revision$"
 
-#define DTFLCF_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define DTFNTV_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &DTFLCFTutor;
+extern class ttr_tutor &DTFNTVTutor;
 
-#if defined( XXX_DBG ) && !defined( DTFLCF_NODBG )
-#define DTFLCF_DBG
+#if defined( XXX_DBG ) && !defined( DTFNTV_NODBG )
+#define DTFNTV_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,18 +55,16 @@ extern class ttr_tutor &DTFLCFTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Data TransFert LoCal Features 
+//D Data TransFert NaTiVe 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-#error "Obsolete. Use 'dtfntv' library instead."
 
 #include "err.h"
 #include "flw.h"
 #include "dtfbsc.h"
 
-namespace dtflcf {
+namespace dtfntv {
 	using namespace dtfbsc;
 
 	//f Put 'Object', which is a pointer of type 'object', in 'Flow'.	
@@ -86,24 +84,79 @@ namespace dtflcf {
 		
 		return P;
 	}
-	
-	//f Put 'Object' to 'Flow'.
-	template <typename object__> inline void Put(
-		object__ &Object,
+
+	template <typename object__> inline void _Put(
+		const object__ &Object,
 		flw::oflow___ &Flow )
 	{
 		flw::Put( Object, Flow );
 	}
-	
-	//f Return an object of type 'object__' from 'Flow'.
-	template <typename object__> inline object__ Get( flw::iflow___ &Flow )
+
+	template <typename object__> inline object__ _Get( flw::iflow___ &Flow )
 	{
-		object__ O;
-		
-		flw::Get( Flow, O );
-		
-		return O;
+		flw::datum__ Object[sizeof( object__ )];
+
+		Flow.Get( sizeof( object__), Object );
+
+		return *(object__ *)Object;
 	}
+
+	//f Put 'UShort' into 'Flow'.
+	inline void PutUShort(
+		ushort__ UShort,
+		flw::oflow___ &Flow )
+	{
+		_Put( UShort, Flow );
+	}
+
+	//f Return the unsigned short stored in 'Flow'.
+	inline ushort__ GetUShort( flw::iflow___ &Flow )
+	{
+		return _Get<ushort__>( Flow );
+	}
+
+	//f Put 'SShort' into 'Flow'.
+	inline void PutSShort(
+		sshort__ SShort,
+		flw::oflow___ &Flow )
+	{
+		_Put( SShort, Flow );
+	}
+
+	//f Return the signed short stored in 'Flow'.
+	inline sshort__ GetSShort( flw::iflow___ &Flow )
+	{
+		return _Get<sshort__>( Flow );
+	}
+
+	//f Put 'ULong' into 'Flow'.
+	inline void PutULong(
+		ushort__ ULong,
+		flw::oflow___ &Flow )
+	{
+		_Put( ULong, Flow );
+	}
+
+	//f Return the unsigned long stored in 'Flow'.
+	inline ulong__ GetULong( flw::iflow___ &Flow )
+	{
+		return _Get<ulong__>( Flow );
+	}
+
+	//f Put 'SLong' into 'Flow'.
+	inline void PutSLong(
+		sshort__ SLong,
+		flw::oflow___ &Flow )
+	{
+		_Put( SLong, Flow );
+	}
+
+	//f Return the signed long stored in 'Flow'.
+	inline slong__ GetSLong( flw::iflow___ &Flow )
+	{
+		return _Get<slong__>( Flow );
+	}
+
 }
 
 /*$END$*/

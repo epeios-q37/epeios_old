@@ -6,7 +6,7 @@ GENERAL:
 - Fixing CW warnings (all but 'unused argument').
 - Adapting to changes in 'TOL' library ('E_' prefix for macros).
 - Renaming 'Read', 'Write', 'Synchronize' adn 'data__' in
-  'Recall' 'Store', 'Flush' and 'datum__' in all memory-related libraries.
+- 'Recall' 'Store', 'Flush' and 'datum__' in all memory-related libraries.
 
 AEM:
 - Bug fixing of the (p_)_amount_extent_manager__ and related classes.

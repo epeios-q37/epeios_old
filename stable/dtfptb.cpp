@@ -1,7 +1,7 @@
 /*
-	'dte' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'dte' header file ('dte.h').
-	Copyright (C) 2001,2003 Claude SIMON (csimon@epeios.org).
+	'dtfptb' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'dtfptb' header file ('dtfptb.h').
+	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define DTE__COMPILATION
+#define DTFPTB__COMPILATION
 
-#include "dte.h"
+#include "dtfptb.h"
 
-class dtetutor
+class dtfptbtutor
 : public ttr_tutor
 {
 public:
-	dtetutor( void )
-	: ttr_tutor( DTE_NAME )
+	dtfptbtutor( void )
+	: ttr_tutor( DTFPTB_NAME )
 	{
-#ifdef DTE_DBG
-		Version = DTE_VERSION "\b\bD $";
+#ifdef DTFPTB_DBG
+		Version = DTFPTB_VERSION "\b\bD $";
 #else
-		Version = DTE_VERSION;
+		Version = DTFPTB_VERSION;
 #endif
-		Owner = DTE_OWNER;
+		Owner = DTFPTB_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~dtetutor( void ){}
+	virtual ~dtfptbtutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,97 +55,88 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace dte;
+using namespace dtfptb;
 
-raw_date__ dte::date__::Convert_( bso::ulong__ Date )
+
+#define M1	255
+#define M2	65535
+#define M3	16777215
+
+void dtfptb::PutSize(
+	bso::ulong__ Size,
+	flw::oflow___ &Flow )
 {
-	year__ Year;
-	month__ Month;
-	day__ Day;
+	if ( Size >= M1 )
+	{
+		Flow.Put( (flw::datum__)M1 );
+		Size -= M1;
 
-	Year = this->Year( Date );
-	Month = this->Month( Date );
-	Day = this->Day( Date );
+		if ( Size >= M2 )
+		{
+			Flow.Put( (flw::datum__)M1 );
+			Flow.Put( (flw::datum__)M1 );
+			Size -= M2;
 
-	if ( Year > 9999
-		 || ( Day < 1 ) || ( Day > 31 )
-		 || ( Month < 1 ) ||  ( Month > 12 ) )
-		return 0;
-	else
-		return Date;
+			if ( Size >= M3 )
+			{
+				Flow.Put( (flw::datum__)M1 );
+				Flow.Put( (flw::datum__)M1 );
+				Flow.Put( (flw::datum__)M1 );
+
+				Size -= M3;
+
+				Flow.Put( (flw::datum__)( ( Size & ( 255 << 24 ) ) >> 24 ) );
+			}
+			Flow.Put( (flw::datum__)( ( Size & ( 255 << 16 ) ) >> 16 ) );
+		}
+		Flow.Put( (flw::datum__)( ( Size & ( 255 << 8 ) ) >> 8 ) );
+	}
+	Flow.Put( (flw::datum__)( Size & 255 ) );
 }
 
-raw_date__ date__::Convert_( const char *Date )
+bso::ulong__ dtfptb::GetSize( flw::iflow___ &IFlow )
 {
-	long Jour = 0, Mois = 0, Annee = 0;
+	bso::ulong__ Size = (bso::ubyte__)IFlow.Get();
 
-	while( *Date && !isdigit( *Date ) )
-		Date++;
+	if ( Size == M1 )
+	{
+		flw::datum__ Data[4];
 
-	if ( !*Date )
-		return 0;
+		IFlow.Get( 2, Data );
 
-	while( isdigit( *Date ) )
-		Jour = Jour * 10 + *Date++ - '0';
+		Size += ( Data[0] << 8 ) | Data[1];
 
-	while( *Date && !isdigit( *Date ) )
-		Date++;
+		if ( Size == ( M1 + M2 ) )
+		{
+			IFlow.Get( 3, Data );
 
-	if ( !*Date )
-		return 0;
+			Size += ( Data[0] << 16 ) | ( Data[1] << 8 ) | Data[2];
 
-	while( isdigit( *Date ) )
-		Mois = Mois * 10 + *Date++ - '0';
+			if ( Size == ( M1 + M2 + M3 ) ) {
 
-	while( *Date && !isdigit( *Date ) )
-		Date++;
+				IFlow.Get( 4, Data );
 
-	if ( !*Date )
-		return 0;
+				Size += ( Data[0] << 24 ) | ( Data[1] << 16 ) | ( Data[2] << 8 ) | Data[3];
+			}
+		}
+	}
 
-	while( isdigit( *Date ) )
-		Annee = Annee * 10 + *Date++ - '0';
-
-	if ( Annee < 100 )
-		if ( Annee >= DTE_LIMIT_DECENNIA )
-			Annee += 1900;
-		else
-			Annee += 2000;
-
-	return Convert_( (raw_date__)( Annee * 10000 + Mois * 100 + Jour ) );
+	return Size;
 }
-
-const char *date__::ASCII( char *Result ) const
-{
-	static char Retour[11];
-
-	if ( !Result )
-		Result = Retour;
-
-	if ( !RawDate_ )
-		sprintf( Result, "invalid" );
-	else
-		sprintf( Result, "%02i/%02i/%i", (int)Day(), (int)Month(), (int)Year() );
-
-	return Result;
-}
-
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class dtepersonnalization
-: public dtetutor
+class dtfptbpersonnalization
+: public dtfptbtutor
 {
 public:
-	dtepersonnalization( void )
+	dtfptbpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~dtepersonnalization( void )
+	~dtfptbpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -161,6 +152,6 @@ public:
 
 // 'static' by GNU C++.
 
-static dtepersonnalization Tutor;
+static dtfptbpersonnalization Tutor;
 
-ttr_tutor &DTETutor = Tutor;
+ttr_tutor &DTFPTBTutor = Tutor;

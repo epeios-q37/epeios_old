@@ -70,44 +70,41 @@ extern class ttr_tutor &DTFBSCTutor;
 #include "bso.h"
 
 namespace dtfbsc {
-	//t A byte.
-	typedef bso::ubyte__	byte__;
+	using bso::ubyte__;
+	using bso::sbyte__;
+	using bso::ushort__;
+	using bso::sshort__;
+	using bso::ulong__;
+	using bso::slong__;
 
-	//t A short.
-	typedef bso::ushort__ short__;
-
-	//t A long.
-	typedef bso::ulong__ long__;
-
-	// Internal use.	
-	template <typename generic> inline generic GenericGet_( flw::iflow___ &Flow )
-	{
-		return (generic)Flow.Get();
-	}
-	
-	// Internal use.	
-	template <typename generic> inline void GenericPut_(
-		generic Generic,
+	//f Put 'UByte' in 'Flow'.
+	inline void PutUByte(
+		ubyte__ UByte,
 		flw::oflow___ &Flow )
 	{
-		byte__ B = Generic;
-	
-		FLWPut( B, Flow );
+		Flow.Put( *(flw::datum__ *)&UByte );
 	}
 
-	//f Put 'Byte' in 'Flow'.
-	inline void PutByte(
-		byte__ Byte,
+	//f Return unsigned byte in 'Flow'.
+	inline ubyte__ GetUByte( flw::iflow___ &Flow )
+	{
+		return (unsigned char)Flow.Get();
+	}
+
+	//f Put 'SByte' in 'Flow'.
+	inline void PutSByte(
+		sbyte__ SByte,
 		flw::oflow___ &Flow )
 	{
-		flw::Put( Byte, Flow );
+		Flow.Put( *(flw::datum__ *)&SByte );
 	}
 
-	//f Return byte in 'Flow'.
-	inline byte__ GetByte( flw::iflow___ &Flow )
+	//f Return unsigned byte in 'Flow'.
+	inline sbyte__ GetSByte( flw::iflow___ &Flow )
 	{
-		return (byte__)Flow.Get();
+		return (signed char)Flow.Get();
 	}
+
 }
 
 /*$END$*/

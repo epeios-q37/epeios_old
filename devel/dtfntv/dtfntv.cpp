@@ -1,6 +1,6 @@
 /*
-	'dte' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'dte' header file ('dte.h').
+	'dtfntv' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'dtfntv' header file ('dtfntv.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define DTE__COMPILATION
+#define DTFNTV__COMPILATION
 
-#include "dte.h"
+#include "dtfntv.h"
 
-class dtetutor
+class dtfntvtutor
 : public ttr_tutor
 {
 public:
-	dtetutor( void )
-	: ttr_tutor( DTE_NAME )
+	dtfntvtutor( void )
+	: ttr_tutor( DTFNTV_NAME )
 	{
-#ifdef DTE_DBG
-		Version = DTE_VERSION "\b\bD $";
+#ifdef DTFNTV_DBG
+		Version = DTFNTV_VERSION "\b\bD $";
 #else
-		Version = DTE_VERSION;
+		Version = DTFNTV_VERSION;
 #endif
-		Owner = DTE_OWNER;
+		Owner = DTFNTV_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~dtetutor( void ){}
+	virtual ~dtfntvtutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,97 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace dte;
-
-raw_date__ dte::date__::Convert_( bso::ulong__ Date )
-{
-	year__ Year;
-	month__ Month;
-	day__ Day;
-
-	Year = this->Year( Date );
-	Month = this->Month( Date );
-	Day = this->Day( Date );
-
-	if ( Year > 9999
-		 || ( Day < 1 ) || ( Day > 31 )
-		 || ( Month < 1 ) ||  ( Month > 12 ) )
-		return 0;
-	else
-		return Date;
-}
-
-raw_date__ date__::Convert_( const char *Date )
-{
-	long Jour = 0, Mois = 0, Annee = 0;
-
-	while( *Date && !isdigit( *Date ) )
-		Date++;
-
-	if ( !*Date )
-		return 0;
-
-	while( isdigit( *Date ) )
-		Jour = Jour * 10 + *Date++ - '0';
-
-	while( *Date && !isdigit( *Date ) )
-		Date++;
-
-	if ( !*Date )
-		return 0;
-
-	while( isdigit( *Date ) )
-		Mois = Mois * 10 + *Date++ - '0';
-
-	while( *Date && !isdigit( *Date ) )
-		Date++;
-
-	if ( !*Date )
-		return 0;
-
-	while( isdigit( *Date ) )
-		Annee = Annee * 10 + *Date++ - '0';
-
-	if ( Annee < 100 )
-		if ( Annee >= DTE_LIMIT_DECENNIA )
-			Annee += 1900;
-		else
-			Annee += 2000;
-
-	return Convert_( (raw_date__)( Annee * 10000 + Mois * 100 + Jour ) );
-}
-
-const char *date__::ASCII( char *Result ) const
-{
-	static char Retour[11];
-
-	if ( !Result )
-		Result = Retour;
-
-	if ( !RawDate_ )
-		sprintf( Result, "invalid" );
-	else
-		sprintf( Result, "%02i/%02i/%i", (int)Day(), (int)Month(), (int)Year() );
-
-	return Result;
-}
-
-
-
+using namespace dtfntv;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class dtepersonnalization
-: public dtetutor
+class dtfntvpersonnalization
+: public dtfntvtutor
 {
 public:
-	dtepersonnalization( void )
+	dtfntvpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~dtepersonnalization( void )
+	~dtfntvpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -161,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static dtepersonnalization Tutor;
+static dtfntvpersonnalization Tutor;
 
-ttr_tutor &DTETutor = Tutor;
+ttr_tutor &DTFNTVTutor = Tutor;

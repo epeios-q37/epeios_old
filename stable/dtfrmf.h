@@ -60,10 +60,7 @@ extern class ttr_tutor &DTFRMFTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D Data Transfert ReMote Features.
-/* End addendum to automatic documentation generation part. */
-
+#error "Obsolete. Use 'dtfptb' library instead."
 
 #include "err.h"
 #include "flw.h"

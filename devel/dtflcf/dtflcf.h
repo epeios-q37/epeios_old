@@ -60,10 +60,7 @@ extern class ttr_tutor &DTFLCFTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D Data Transfer LoCal Fetures.
-/* End addendum to automatic documentation generation part. */
-
+#error "Obsolete. Use 'dtfntv' library instead."
 
 #include "err.h"
 #include "flw.h"

@@ -1,7 +1,7 @@
 /*
 	'sck' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'sck' header file ('sck.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -93,7 +95,7 @@ amount__ sck::Read(
 
 	if ( Result == 1 )
 	{
-		Result = recv( Socket, (sck__cast)Buffer, Amount, 0 );
+		Result = recv( Socket, (cast__)Buffer, (int)Amount, 0 );
 
 		if ( Result == SCK_SOCKET_ERROR )
 		{
@@ -110,7 +112,7 @@ amount__ sck::Read(
 	else if ( Result != 0 )
 		ERRs();
 
-	return Result;
+	return (amount__)Result;
 }
 
 amount__ sck::Write(
@@ -139,7 +141,7 @@ amount__ sck::Write(
 
 	if ( Result == 1 )
 	{
-		Result = send( Socket, (const sck__cast)Buffer, Amount, 0 );
+		Result = send( Socket, (const cast__)Buffer, (int)Amount, 0 );
 
 		if ( Result == SCK_SOCKET_ERROR )
 		{
@@ -156,7 +158,7 @@ amount__ sck::Write(
 	else if ( Result != 0 )
 		ERRs();
 
-	return Result;
+	return (amount__)Result;
 }
 
 
@@ -172,8 +174,8 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Read( Socket_, Wanted - Amount, Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
-				if ( ( Result = iflow___::HandleEOFD( Buffer, Wanted - Amount ) ) == 0 ) {
+			if ( ( Result = Read( Socket_, (amount__)( Wanted - Amount ), Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
+				if ( ( Result = (amount__)iflow___::HandleEOFD( Buffer, (flw::size__)( Wanted - Amount ) ) ) == 0 ) {
 					Socket_ = SCK_INVALID_SOCKET;
 					Error_ = true;
 					ERRd();
