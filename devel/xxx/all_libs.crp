@@ -55,7 +55,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
 &gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
 &gsbrgl		&lgsb		&		&GeSBib ReGuLar field
-&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal field
+&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
 &gsbsrq		&lgsb		&		&GeSBib Search ReQuest
 &gsbsrq_	&lgsb		&		&GeSBib Search ReQuest (for backend)
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe

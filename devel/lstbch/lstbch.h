@@ -125,7 +125,7 @@ namespace lstbch {
 		//f Delete entry 'Row'.
 		void Delete( row Row )
 		{
-			list_<row>::Remove( Row );
+			list_<row>::Delete( Row );
 		}
 	};
 
