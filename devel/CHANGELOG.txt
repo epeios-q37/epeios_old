@@ -27,10 +27,12 @@ IDXQUE:
 
 QUE:
 - Fixing bug from typed queue.
+- Fixing amount/size handling bug.
 
 MMG:
 - Fixing autonome declaration bug.
 - Adaptation to changes in underlying libraries.
+- Coding of operators '->' and '*' to replace operator '()'.
 
 MMM:
 - Adding 'E_MULTIMEMORY(_)' #define.

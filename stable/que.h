@@ -139,7 +139,7 @@ namespace que {
 		links_ &operator =( const links_ &QL )
 		{
 			amount_extent_manager_<row__>::operator =( QL );
-			E_MEMORY_( que::link__ )::Allocate( QL.Amount() );
+			Allocate( QL.Amount() );
 			E_MEMORY_( que::link__ )::Write( QL, QL.Amount() );
 
 			return *this;

@@ -326,9 +326,14 @@ namespace mmg
 			return Pilote_.Mode();
 		}
 		//f Return the object which is handled by.
-		t &operator()( void )
+		t &operator*( void )
 		{
 			return Object;
+		}
+		//f Return the object which is handled by.
+		t *operator ->( void )
+		{
+			return &Object;
 		}
 	};
 
