@@ -64,9 +64,11 @@
       <section>
         <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude SIMON</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the Epeios libraries. I wish I could spent more time on the Epeios project, because I think that it would probably take months or even years for me to write the documentation for the more then 80 available libraries.</para>
       </section>
-      <section>
-        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). You will find <link URL="http://epeios.org/cv/" aspect="long">here</link> a french version of my CV.</para>
-      </section>
+      <ignore>
+        <section>
+          <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). You will find <link URL="http://epeios.org/cv/" aspect="long">here</link> a french version of my CV.</para>
+        </section>
+      </ignore>
     </content>
   </document>
   <document id="license statement">
