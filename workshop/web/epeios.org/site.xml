@@ -1368,7 +1368,7 @@
         </section>
         <section>
           <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html" type="external">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports" type="external">here</link> for miscelleanous port). To work, the enviroment variable <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows.</para>
-          <para xml:space="preserve">Under GNU/Linux, the software were tested with <link URL="http://gcc.gnu.org" type="external">GNU GCC</link> V3.0. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/" type="external">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
+          <para xml:space="preserve">Under GNU/Linux, the software were tested with <link URL="http://gcc.gnu.org" type="external">GNU GCC</link> V$GCC_VERSION$. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/" type="external">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
         </section>
         <section>
           <para>The packages found under the download section of each software didn't contain the software version in its name as usual, but the date of its release. This is due to the particular way the Epeios software are made.</para>
