@@ -89,9 +89,12 @@ extern class ttr_tutor &BROKERTutor;
 
 namespace broker {
 
-	TYPEDEF( POSITION__, index__ );
 
 	using namespace brkrqm;
+
+	typedef POSITION__ index__;
+	typedef brktpm::id16__	command__;
+	typedef brktpm::id16__	type__;
 
 	typedef void (* function__ )(
 		class broker &Broker,
@@ -193,7 +196,7 @@ namespace broker {
 			else if ( P > BROKER_COMMAND_MAX )
 				ERRl();
 
-			return (tcommand__)P;
+			return (command__)P;
 		}
 		POSITION__ Add(
 			const char *Name,
@@ -430,26 +433,26 @@ namespace broker {
 			if ( P > BROKER_TYPE_MAX )
 				ERRl();
 
-			IdObjet = (ttype__)P;
+			IdObjet = (type__)P;
 
 			Lien.Type = IdType;
 			Lien.Index = Index;
 
-			SET( link__ )::Write( Lien, IdObjet() );
+			SET( link__ )::Write( Lien, IdObjet );
 
 			return IdObjet;
 		}
 		void Remove( object__ IdObjet )
 		{
-			LIST::Remove( IdObjet() );
+			LIST::Remove( IdObjet );
 		}
 		type__ Type( object__ IdObjet ) const
 		{
-			return SET( link__ )::Read( IdObjet() ).Type;
+			return SET( link__ )::Read( IdObjet ).Type;
 		}
 		index__ Index( object__ IdObjet ) const
 		{
-			return SET( link__ )::Read( IdObjet() ).Index;
+			return SET( link__ )::Read( IdObjet ).Index;
 		}
 		SIZE__ Amount( void ) const
 		{
@@ -464,18 +467,18 @@ namespace broker {
 	private:
 		master_module Master_;
 		// Retourne le module correspondant à 'IdType'.
-		untyped_module &Module_( type__ IdType ) const
+		untyped_module &ModuleFromType_( type__ IdType ) const
 		{
-			if ( IdType() != BROKER_MASTER_TYPE )
-				return *Modules( IdType() );
+			if ( IdType != BROKER_MASTER_TYPE )
+				return *Modules( IdType );
 			else
 				return (untyped_module &)Master_;	// Not very happy about this conversion, 
 		}
 		// Retourne le module correspondant à 'IdObjet'.
-		untyped_module &Module_( object__ IdObjet ) const
+		untyped_module &ModuleFromObject_( object__ IdObjet ) const
 		{
-			if ( IdObjet() != BROKER_MASTER_OBJECT )
-				return Module_( Type_( IdObjet ) );
+			if ( IdObjet != BROKER_MASTER_OBJECT )
+				return ModuleFromType_( Type_( IdObjet ) );
 			else
 				return (untyped_module &)Master_; // Not very happy about this conversion, 
 		}
@@ -539,7 +542,7 @@ namespace broker {
 			type__ IdType,
 			const description_ &Description )
 		{
-			return Module_( IdType ).Command( Description );
+			return ModuleFromType_( IdType ).Command( Description );
 		}
 		//f Return the error breaking status.
 		bso__bool ErrorBreaking( void  )
@@ -552,19 +555,19 @@ namespace broker {
 			Master_.ErrorBreaking( Value );
 		}
 		//f Give the module for the object of type 'Type'.
-		const untyped_module &Module( type__ Type ) const
+		const untyped_module &ModuleFromType( type__ Type ) const
 		{
-			return Module_( Type );
+			return ModuleFromType_( Type );
 		}
 		//f Give the module for object 'Object'.
-		const untyped_module &Module( object__ Object ) const
+		const untyped_module &ModuleFromObject( object__ Object ) const
 		{
-			return Module_( Object );
+			return ModuleFromObject_( Object );
 		}
 		//f Return a pointer to the 'Object' object.
 		const void *Object( object__ Object )
 		{
-			return Module_( Object ).Object( Links.Index( Object ) );
+			return ModuleFromObject_( Object ).Object( Links.Index( Object ) );
 		}
 		//f Give a new object.
 		object__ New( type__ Type )
@@ -572,7 +575,7 @@ namespace broker {
 			if ( (unsigned long)Links.Amount() >= (unsigned long)BROKER_TYPE_MAX )
 				ERRl();
 
-			return Links.New( Type, Module_( Type ).New() );
+			return Links.New( Type, ModuleFromType_( Type ).New() );
 		}
 		//f Give the type of the object 'Object'.
 		type__ Type( object__ Object)
@@ -584,7 +587,7 @@ namespace broker {
 		//f Remove object 'Object'.
 		void Remove( object__ Object )
 		{
-			Module_( Object ).Remove( Links.Index( Object ) );
+			ModuleFromObject_( Object ).Remove( Links.Index( Object ) );
 		}
 		/*f Tell that 'Amount' language indicated in 'Languages' are supported.
 		'Languages' is not copied and should NOT be modified. */
@@ -614,7 +617,7 @@ namespace broker {
 		//f Return the name of objects of type 'Type'.
 		const char *Name( type__ IdType ) const
 		{
-			return Module( IdType ).Name();
+			return ModuleFromType( IdType ).Name();
 		}
 		//f Return the name of the object 'Object'.
 		const char *Name( object__ Object )

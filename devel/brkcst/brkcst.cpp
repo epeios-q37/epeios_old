@@ -57,8 +57,41 @@ using namespace brkcst;
 
 // MUST reflect 'brkcst::cast'
 const char *brkcst::CastsNames[c_amount] = {
-	"_end_", "Object", "Type", "Casts", "Command", "Boolean", "Id.8", "Id.16", "Id.32", 
-	"Char.", "String", "Byte", "Binary", "Pointer", "Array" };
+	"_end_",
+	"Object",
+	"Boolean",
+	"Id8",
+	"Ids8",
+	"Id16",
+	"Ids16",
+	"Id32", 
+	"Ids32", 
+	"Char",
+	"String",
+	"Strings",
+	"Byte",
+	"Binary",
+	"Binaries",
+	"Items8",
+	"Items16",
+	"Items32",
+	"CommandsDetails",
+	"ObjectsRefences"
+};
+
+cast brkcst::GetID( const char *CastName )
+{
+	int i = 0;
+
+	while( ( i < c_amount ) && strcmp( CastName, CastsNames[i] ) )
+		i++;
+
+	if ( i >= c_amount )
+		i = cInvalid;
+
+	return (cast)i;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -72,33 +72,44 @@ namespace brkcst {
 		cEnd = 0,
 		//i Object ('bso::ushort__')'.
 		cObject,
-		//i Type ('bso::ushort__').
-		cType,
-		//i Set of casts ('SET_( bso::ubyte__ )').
-		cCasts,
-		//i Command ('bso::ushort__').
-		cCommand,
 		//i Boolean ('bso::bool__')
 		cBoolean,
-		//i Short identifier (8 bits, 'bso::ubyte__').
+		//i 8 bits identifier ( 'bso::ubyte__' ).
 		cId8,
-		//i Medium identifier (16 bits, 'bso::ushort__').
+		//i Array of 8 bits identifiers ( 'SET_( bso::ubyte__ )' )
+		cIds8,
+		//i 16 bits identifier ( 'bso::ushort__' ).
 		cId16,
-		//i Long identifier (32 bits, 'bso::ulong__').
+		//i Array of 16 bits identifiers ( 'SET_( bso::ushort__ )' )
+		cIds16,
+		//i 32 bits identifier ('bso::ulong__').
 		cId32,
+		//i Array of 32 bits identifiers ( 'SET_( bso::ulong__ )' )
+		cIds32,
 		//i Character ('bso::char__' ).
 		cChar,
 		//i String ('str::string_').
 		cString,
+		//i Array of strings ( 'XMCONTAINER_( str::string_ )' )
+		cStrings,
 		/*i A byte, as data common data cluster for all plateform.
 		Has no intrensec signification ('bso::raw__'). */
 		cByte,
 		//i Binary 'SET_( bso::raw__ )'.
 		cBinary,
-		//i Pointer ('void *').
-		cPointer,
-		//i An array of casts ending with 'brkcst::cEnd'.
-		cArray,
+		//i Array of binaries ( 'XMCONTAINER_( SET_( bso::raw__ ) )' ).
+		cBinaries,
+		//i An array of 8 bits items ( 'XMCONTAINER_( { bso::ubyte__, str::string_ } )' ).
+		cItems8,
+		//i An array of 16 bits items ( 'XMCONTAINER_( { bso::ushort__, str::string_ } )' ).
+		cItems16,
+		//i An array of 32 bits items ( 'XMCONTAINER_( { bso::ulong__, str::string_ } )' ).
+		cItems32,
+		// The following casts are used for some special commands.
+		//i Array of command descriptions ( 'XCONTAINER_( { str::string_, SET_( bso::ubyte__ ) } )' ).
+		cCommandsDetails,
+		//i Array of object types and identifiers. ( 'SET_( { bso::ushort__, bso::ushort__ } )' ).
+		cObjectsReferences,
 		//i Amount of casts.
 		c_amount,
 		//i Not a cast, but signalize an invalid cast.
@@ -107,6 +118,9 @@ namespace brkcst {
 
 	//o The casts names.
 	extern const char *CastsNames[c_amount];
+
+	//f Get id from cast named 'CastName'.
+	cast GetID( const char *CastName );
 
 };
 

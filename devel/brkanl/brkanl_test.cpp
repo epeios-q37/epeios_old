@@ -24,11 +24,12 @@
 
 //	$Id$
 
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>
-
+*/
 #include "brkanl.h"
 
 using namespace brkanl;
@@ -140,10 +141,13 @@ ERRProlog
 	sck::socket_ioflow___ Flow;
 ERRBegin
 	Types.Init();
+#if 1
 	Flow.Init( clt::Connect( "localhost:1234" ) );
 	Frontend.Init( Flow );
-//	Manager.Init();
-//	Frontend.Init( Manager.Process() );
+#else
+	Manager.Init();
+	Frontend.Init( Manager.Process() );
+#endif
 	
 	Analyze( Frontend, Types );
 

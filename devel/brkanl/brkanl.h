@@ -60,14 +60,18 @@ extern class ttr_tutor &BRKANLTutor;
 #include "err.h"
 #include "flw.h"
 #include "frtend.h"
+#include "bso.h"
+#include "brktpm.h"
 
 namespace brkanl {
 	//t Broker parameters.
-	typedef frtend::casts_ 	parameters_;
-	typedef frtend::casts	parameters;
-	
-	using frtend::command_item_;
-	using frtend::type_item_;
+	typedef frtend::ids8_ 	parameters_;
+	typedef frtend::ids8	parameters;
+
+	BRKTPM_ITEM( bso__ushort, command_item )
+	BRKTPM_ITEMS( command_item, commands_items )
+	BRKTPM_ITEM( bso__ushort, type_item )
+	BRKTPM_ITEMS( type_item, types_items )
 	
 	//c A broker Command.
 	class command_

@@ -60,13 +60,13 @@ using namespace frtend;
 namespace {
 
 	void HandleCommands_(
-		const command_items_ &Items,
+		const commands_items_ &Items,
 		type__ Type,
 		frontend___ &Frontend,
 		commands_ &Commands )
 	{
 	ERRProlog
-		CMITEM( language_item_ ) Item;
+		CMITEM( command_item_ ) Item;
 		POSITION__ P =NONE;
 		command Command;
 	ERRBegin
@@ -93,7 +93,7 @@ namespace {
 		commands_ &Commands )
 	{
 	ERRProlog
-		command_items Items;
+		commands_items Items;
 	ERRBegin
 		Items.Init();
 
@@ -106,7 +106,7 @@ namespace {
 	}
 
 	void HandleTypes_(
-		const type_items_ &Items,
+		const types_items_ &Items,
 		frtend::frontend___ &Frontend,
 		types_ &Types )
 	{
@@ -135,7 +135,7 @@ namespace {
 	ERREpilog
 	}
 
-	void PutMasterType_( type_items_ &Items )
+	void PutMasterType_( types_items_ &Items )
 	{
 	ERRProlog
 		type_item Item;
@@ -157,7 +157,7 @@ void brkanl::Analyze(
 	types_ &Types )
 {
 ERRProlog
-	type_items Items;
+	types_items Items;
 ERRBegin
 	Items.Init();
 	

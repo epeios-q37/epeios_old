@@ -82,44 +82,34 @@ static const cast GetErrorBreakingStatus[] = {
 		cBoolean,	// Boolean of the old error modus.
 	cEnd };
 static const cast GetNewObject[] = {
-		cType,		// The type of the new object.
+		cId16,		// The type of the new object.
 	cEnd,
 		cObject,	// The asked object.
 	cEnd };
 static const cast GetType[] = {
 		cString,	// The name of the type.
 	cEnd,
-		cType,		// The type asked.
+		cId16,		// The type asked.
 	cEnd };
 static const cast GetCommand[] = {
-		cType,		// The object type.
+		cId16,		// The object type.
 		cString,	// The command name.
-		cCasts,	// The casts of the command.
+		cIds8,	// The casts of the command.
 	cEnd,
-		cCommand,	// The asked command.
+		cId16,	// The asked command.
 	cEnd };
 static const cast GetCommands[] = {
-		cType,		// The object type.
-		cArray,		// The wanted commands caracteristics.
-			cString,	// Name of the command.
-			cCasts,	// Casts of the command
-		cEnd,
+		cId16,		// The object type.
+		cCommandsDetails,	// The wanted commands caracteristics.
 	cEnd,
-		cArray,		// The asked commands.
-			cCommand,	// Command identifier.
-		cEnd,
+		cIds16,		// The asked commands.
 	cEnd };
 static const cast GetTypeAndCommands[] = {
 		cString,	// The name of the type.
-		cArray,		// The wanted commands caracteristics.
-			cString,	// Name of the command.
-			cCasts,	// Casts of the command
-		cEnd,
+		cCommandsDetails,		// The wanted commands caracteristics.
 	cEnd,
-		cType,		// The asked type.
-		cArray,		// The asked commands.
-			cCommand,	// Command identifier.
-		cEnd,
+		cId16,		// The asked type.
+		cIds16,		// The asked commands.
 	cEnd };
 static const cast RemoveObject[] = {
 		cObject,	// The object to remove.
@@ -127,10 +117,7 @@ static const cast RemoveObject[] = {
 	cEnd };
 static const cast GetLanguagesIDAndName[] = {
 	cEnd,
-		cArray,	// The language IDs ('Id.16') and name ('String').
-			cId16,	// Language ID.
-			cString,	// Language name.
-		cEnd,
+		cItems16,	// The language IDs and name.
 	cEnd };
 static const cast GetVersion[] = {
 	cEnd,
@@ -141,24 +128,18 @@ static const cast Disconnect[] = {
 	cEnd };
 static const cast GetTypesIDAndName[] = {
 	cEnd,
-		cArray,	// The types ID and name ('String').
-			cType,	// The type.
-			cString,	// The name
-		cEnd,
+		cItems16,	// The types ID and name.
 	cEnd };
 static const cast GetCommandsIDAndName[] = {
-		cType,		// Type of objects from which you want the commands name.
+		cId16,		// Type of objects from which you want the commands name.
 	cEnd,
-		cArray,	// The names of the commands.
-			cCommand,	// command id.
-			cString,	// The name.
-		cEnd,
+		cItems16,	// The ids and names of the commands.
 	cEnd };
 static const cast GetParameters[] = {
-		cType,		// Type of objects from which you want the parameters.
-		cCommand,	// Command of objects from which you want the parameters.
+		cId16,		// Type of objects from which you want the parameters.
+		cId16,	// Command of objects from which you want the parameters.
 	cEnd,
-		cCasts,	// The parameters of the commands.
+		cIds8,	// The parameters of the commands.
 	cEnd };
 
 const cast *brkcmd::CommandsParameters[brkcmd::c_amount] = {

@@ -57,6 +57,25 @@ using namespace broker;
 
 static const char *PrimaryCommandName = brkcmd::CommandsNames[brkcmd::cGetCommand];
 
+namespace {
+	cast GetCastID_( const str_string_ &Name )
+	{
+		cast C = cInvalid;
+	ERRProlog
+		char *N = NULL;
+	ERRBegin
+		N = Name.Convert();
+
+		C = GetID( N );
+	ERRErr
+	ERREnd
+		if ( N != NULL )
+			free( N );
+	ERREpilog
+		return C;
+	}
+}
+
 struct master_data__ {
 	bso__bool Deconnexion;
 	void *UP;
@@ -72,10 +91,10 @@ void master_module::Handle_(
 
 	flw::Get( Requete.Input(), C );
 
-	if (  C() < Descriptions.Amount() )
+	if (  C < Descriptions.Amount() )
 	{
-		Requete.SetDescription( Descriptions( C() ) );
-		(*(function__)UPs( C() ))( *Broker(), *this, C, Requete, MasterData.Deconnexion, MasterData.UP );
+		Requete.SetDescription( Descriptions( C ) );
+		(*(function__)UPs( C ))( *Broker(), *this, C, Requete, MasterData.Deconnexion, MasterData.UP );
 	}
 	else if ( C == BROKER_MASTER_COMMAND )
 	{
@@ -97,7 +116,7 @@ ERRBegin
 				while( ( Car = Requete.Input().Get() ) != 0 )
 					S.Add( Car );
 
-				Cast = GetCast( S );
+				Cast = GetCastID_( S );
 
 				flw::Put( Cast, Requete.Output() );
 
@@ -115,7 +134,7 @@ ERREpilog
 				P = Descriptions.Next( P );
 
 			if ( P != NONE )
-				C = (tcommand__)P;
+				C = (command__)P;
 
 			Requete.Output().Put( 0 );	// No explanation message;
 
@@ -129,7 +148,7 @@ ERREpilog
 
 
 // Donne la liste des identificateurs et des libellés des langues.
-static void GetLanguagesIDAndName(
+static void GetLanguagesIDAndName_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -138,34 +157,33 @@ static void GetLanguagesIDAndName(
 	void * )
 {
 ERRProlog
-	bso__ushort IdLangue;
-	str_string Name;
+	items16 Items;
+	item16 Item;
 ERRBegin
-	Requete.BeginArray();
+	Items.Init();
+	Item.Init();
 
-	IdLangue = lgg::lDefault;
-	Requete.AddValue( cId16, &IdLangue );
-	
-	Name.Init();
-	Name = LGGLanguageName[IdLangue];
-	Requete.AddValue( cString, &Name );
+	Item.ID( lgg::lDefault );
+	Item.Value = LGGLanguageName[lgg::lDefault];
+	Items.Add( Item );
 
 	for ( bso__ushort I = 0; I < Broker.Langues_.Nombre; I++ )
 	{
-		IdLangue = Broker.Langues_.Identificateurs[I];
-		Name.Init();
-		Name = LGGLanguageName[IdLangue];
-		Requete.AddValue( cString, &Name );
+		Item.Init();
+		Item.ID( Broker.Langues_.Identificateurs[I] );
+		Item.Value = LGGLanguageName[Broker.Langues_.Identificateurs[I]];
+		Items.Add( Item );
 	}
 
-	Requete.EndArray();
+	Requete.PushItems16( Items );
+	Requete.Complete();
 ERRErr
 ERREnd
 ERREpilog
 }
 
 // Donne la liste des identificateurs et des libellés de types
-static void GetTypesIDAndName(
+static void GetTypesIDAndName_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -174,24 +192,33 @@ static void GetTypesIDAndName(
 	void * )
 {
 ERRProlog
+	items16 Items;
+	item16 Item;
+	POSITION__ P;
 	type__ Type;
-	POSITION__ P = Broker.Modules.First();
-	str_string Name;
 ERRBegin
-	Requete.BeginArray();
+	Items.Init();
+
+	P = Broker.Modules.First();
 
 	while( P != NONE )
 	{
-		Type = (ttype__)P;
-		Requete.AddValue( cType, &Type );
-		
-		Name.Init();
-		Name = Broker.Name( Type );
-		Requete.AddValue( cString, &Name );
+		Item.Init();
+
+#ifdef BROKER_DEBUG
+		if ( P > BROKER_TYPE_MAX )
+			ERRc();
+#endif
+		Type = (type__)P;
+
+		Item.ID( Type );
+		Item.Value = Broker.Name( Type );
+		Items.Add( Item );
 		P = Broker.Modules.Next( P );
 	}
 
-	Requete.EndArray();
+	Requete.PushItems16( Items );
+	Requete.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -201,27 +228,43 @@ static void WriteCommandsIDAndName_(
 	const descriptions_ &Descriptions,
 	request_manager___ &Requete )
 {
-	command__ Command;
+ERRProlog
+	items16 Items;
+	item16 Item;
 	CITEM( description_ ) Description;
-	POSITION__ P = Descriptions.First();
+	POSITION__ P;
+	command__ Command;
+ERRBegin
+	Items.Init();
+
+	P = Descriptions.First();
 
 	Description.Init( Descriptions );
 
-	Requete.BeginArray();
-
 	while( P != NONE )
 	{
-		Command = (tcommand__)P;
-		Requete.AddValue( cCommand, &Command );
-		Requete.AddValue( cString, &Description( P ) );
+		Item.Init();
+
+#ifdef BROKER_DEBUG
+		if ( P > BROKER_COMMAND_MAX )
+			ERRC();
+#endif
+		Command = (command__)P;
+
+		Item.ID( Command );
+		Item.Value = Description( P ).Name;
+		Items.Add( Item );
 		P = Descriptions.Next( P );
 	}
 
-	Requete.EndArray();
+	Requete.PushItems16( Items );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 
-static void GetCommandsIDAndName(
+static void GetCommandsIDAndName_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -229,18 +272,20 @@ static void GetCommandsIDAndName(
 	bso__bool &,
 	void * )
 {
-	type__ Type;
+	id16__ Type;
 
-	Requete.GetValue( cType, &Type );
+	Requete.PopId16( Type );
 
-	WriteCommandsIDAndName_( Broker.Module( Type ).Descriptions, Requete );
+	WriteCommandsIDAndName_( Broker.ModuleFromType( Type ).Descriptions, Requete );
+
+	Requete.Complete();
 }
 
 static inline void WriteParameters_(
 	const description_ &Description,
 	request_manager___ &Requete )
 {
-	Requete.AddValue( cCasts, &Description.Casts );
+	Requete.PushIds8( Description.Casts );
 }
 
 
@@ -253,11 +298,11 @@ static void WriteParameters_(
 
 	Description.Init( Descriptions );
 
-	WriteParameters_( Description( Command() ), Requete );
+	WriteParameters_( Description( Command ), Requete );
 }
 
 
-static void GetParameters(
+static void GetParameters_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__,
@@ -268,15 +313,17 @@ static void GetParameters(
 	type__ Type;
 	command__ Command;
 
-	Requete.GetValue( cType, &Type );
-	Requete.GetValue( cCommand, &Command );
+	Requete.PopId16( Type );
+	Requete.PopId16( Command );
 
-	WriteParameters_( Broker.Module( Type ).Descriptions, Command, Requete );
+	WriteParameters_( Broker.ModuleFromType( Type ).Descriptions, Command, Requete );
+
+	Requete.Complete();
 }
 
 
 // Donne le libellés de la version de l'interface.
-static void GetVersion(
+static void GetVersion_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -284,20 +331,12 @@ static void GetVersion(
 	bso__bool &,
 	void * )
 {
-ERRProlog
-	str_string Version;
-ERRBegin
-	Version.Init();
-	Version = Broker.Version_;
-
-	Requete.AddValue( cString, &Version );
-ERRErr
-ERREnd
-ERREpilog
+	Requete.PushString( string( Broker.Version_ ) );
+	Requete.Complete();
 }
 
 // Définit le comportement provoqué par une erreur et retourne son ancien comportement.
-static void SetErrorBreakingStatus(
+static void SetErrorBreakingStatus_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -310,17 +349,17 @@ static void SetErrorBreakingStatus(
 
 	Retour = (bso__raw)Broker.ErrorBreaking();
 
-	Requete.GetValue( cBoolean, &O );
+	Requete.PopBoolean( O );
 
 	Broker.ErrorBreaking( O != 0  );
 
-	Requete.AddValue( cBoolean, &Retour );
+	Requete.PushBoolean( Retour );
 
 	Requete.Complete();
 }
 
 // Retourne l'error breaking.
-static void GetErrorBreakingStatus(
+static void GetErrorBreakingStatus_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -332,13 +371,13 @@ static void GetErrorBreakingStatus(
 
 	Retour = (bso__raw)Broker.ErrorBreaking();
 
-	Requete.AddValue( cBoolean, &Retour );
+	Requete.PushBoolean( Retour );
 
 	Requete.Complete();
 }
 
 // Retourne un nouvel objet.
-static void GetNewObject(
+static void GetNewObject_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -346,12 +385,12 @@ static void GetNewObject(
 	bso__bool &,
 	void * )
 {
-	static object__ O;
+	object__ O;
 	type__ T;
 
-	Requete.GetValue( cType, &T );
+	Requete.PopId16( T );
 
-	if ( T() >= Broker.Modules.Amount() )
+	if ( T >= Broker.Modules.Amount() )
 		ERRb();
 
 	if ( T == BROKER_INVALID_TYPE )
@@ -359,8 +398,8 @@ static void GetNewObject(
 
 	O = Broker.New( T );
 
-	if ( O() != BROKER_INVALID_TYPE )
-		Requete.AddValue( cObject, &O );
+	if ( O != BROKER_INVALID_TYPE )
+		Requete.PushObject( O );
 	else
 		Requete.SendExplanationMessage( "No such object type." );
 
@@ -368,7 +407,7 @@ static void GetNewObject(
 }
 
 // Retourne l'identificateur correspondant à un type donné.
-static void GetType(
+static void GetType_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -378,16 +417,16 @@ static void GetType(
 {
 ERRProlog
 	str_string Type;
-	static type__ T;
+	type__ T;
 ERRBegin
 	Type.Init();
 
-	Requete.GetValue( cString, &Type );
+	Requete.PopId16( T );
 
 	T = Broker.Type( Type );
 
-	if ( ( T() != BROKER_INVALID_TYPE )  )
-		Requete.AddValue( cType, &T );
+	if ( ( T != BROKER_INVALID_TYPE )  )
+		Requete.PushId16( T );
 	else
 		Requete.SendExplanationMessage( "No such object type name." );
 
@@ -398,7 +437,7 @@ ERREpilog
 }
 
 // Supprime un objet.
-static void RemoveObject(
+static void RemoveObject_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -408,7 +447,7 @@ static void RemoveObject(
 {
 	object__ O;
 
-	Requete.GetValue( cObject, &O );
+	Requete.PopObject( O );
 
 /*	if ( !Broker.Valide( O ) )
 		ERRb();
@@ -418,62 +457,34 @@ static void RemoveObject(
 	Requete.Complete();
 }
 
-static void GetDescriptions_(
-	request_manager___ &Manager,
-	descriptions_ &Descriptions )
+static void FillCommands_(
+	broker_ &Broker,
+	type__ Type,
+	const commands_details_ &CommandsDetails,
+	ids16_ &Commands )
 {
 ERRProlog
+	id16__ Command;
+	POSITION__ Position = CommandsDetails.First();
+	CITEM( command_detail_ ) CommandDetail;
 	description Description;
 ERRBegin
-	Description.Init();
-
-	if ( !Manager.GetArrayValue( cString, &Description.Name ) )
-		ERRb();
-
-	while( Manager.GetArrayValue( cCasts, &Description.Casts ) )
-	{
-		Descriptions.Add( Description );
-
-		Description.Init();
-
-		if ( !Manager.GetArrayValue( cString, &Description.Name ) )
-			ERRb();
-	}
-
-	Descriptions.Add( Description );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-static void SendCommandIDs_(
-	type__ Type,
-	broker_ &Broker,
-	const descriptions_ &Descriptions,
-	request_manager___ &Manager )
-{
-ERRProlog
-	command__ Command;
-	POSITION__ Position = Descriptions.First();
-	CITEM( description_ ) Description;
-ERRBegin
-	Description.Init( Descriptions );
-
-	Manager.BeginArray();
+	CommandDetail.Init( CommandsDetails );
 
 	while( Position != NONE )
 	{
-		if ( ( Command = Broker.Command( Type, Description( Position ) ) ) == BROKER_INVALID_COMMAND )
+		Description.Init();
+
+		Description.Name = CommandDetail( Position ).Name;
+		Description.Casts = CommandDetail( Position ).Casts;
+
+		if ( ( Command = Broker.Command( Type, Description ) ) == BROKER_INVALID_COMMAND )
 			ERRb();
 
-		Manager.AddValue( cCommand, &Command );
+		Commands.Add( Command );
 
-		Position = Descriptions.Next( Position );
+		Position = CommandsDetails.Next( Position );
 	}
-
-	Manager.EndArray();
-
-	Manager.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -482,7 +493,7 @@ ERREpilog
 
 
 // Retourne l'identificateur de type et les identificateurs de commande demandé.
-static void GetTypeAndCommands(
+static void GetTypeAndCommands_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -491,23 +502,27 @@ static void GetTypeAndCommands(
 	void * )
 {
 ERRProlog
-	descriptions Descriptions;
-	type__ Type;
-	str_string TypeName;
+	string Name;
+	commands_details CommandsDetails;
+	id16__ Type;
+	ids16 Commands;
 ERRBegin
-	Descriptions.Init();
-	TypeName.Init();
+	Name.Init();
+	CommandsDetails.Init();
 
-	Requete.GetValue( cString, &TypeName );
+	Requete.PopString( Name );
+	Requete.PopCommandsDetails( CommandsDetails );
 
-	if ( ( Type = Broker.Type( TypeName ) ) == BROKER_INVALID_TYPE )
+	if ( ( Type = Broker.Type( Name ) ) == BROKER_INVALID_TYPE )
 		ERRb();
 
-	GetDescriptions_( Requete, Descriptions );
+	Commands.Init();
 
-	Requete.AddValue( cType, &Type );
+	FillCommands_( Broker, Type, CommandsDetails, Commands );
 
-	SendCommandIDs_( Type, Broker, Descriptions, Requete );
+	Requete.PushId16( Type );
+	Requete.PushIds16( Commands );
+	Requete.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -515,7 +530,7 @@ ERREpilog
 
 
 // Retourne l'identificateur d'une commande donnée pour un type donné.
-static void GetCommand(
+static void GetCommand_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -524,24 +539,24 @@ static void GetCommand(
 	void * )
 {
 ERRProlog
+	id16__ Type;
 	description Description;
-	type__ T;
-	command__ C;
+	command__ Command;
 ERRBegin
-	Description.Init();
+	Requete.PopId16( Type );
 
-	Requete.GetValue( cType, &T );
-	Requete.GetValue( cString, &Description.Name );
-	Requete.GetValue( cCasts, &Description.Casts );
+	Description.Init();
+	Requete.PopString( Description.Name );
+	Requete.PopIds8( Description.Casts );
 
 /*	if ( !Broker.Valide( T ) )
 		if ( T() != BROKER9_TYPE_MAITRE )
 			ERRb();
 */
-	C = Broker.Command( T, Description );
+	Command = Broker.Command( Type, Description );
 
-	if ( ( C() != BROKER_INVALID_COMMAND ) )
-		Requete.AddValue( cCommand, &C );
+	if ( ( Command != BROKER_INVALID_COMMAND ) )
+		Requete.PushId16( Command );
 	else
 		Requete.SendExplanationMessage( "No such command name or with such description" );
 
@@ -553,7 +568,7 @@ ERREpilog
 
 
 // Retourne l'identificateur des commandes demandées pour un type donné.
-static void GetCommands(
+static void GetCommands_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -562,16 +577,21 @@ static void GetCommands(
 	void * )
 {
 ERRProlog
-	descriptions Descriptions;
 	type__ Type;
+	commands_details CommandsDetails;
+	ids16 Commands;
 ERRBegin
-	Descriptions.Init();
+	Requete.PopId16( Type );
 
-	Requete.GetValue( cType, &Type );
+	CommandsDetails.Init();
+	Requete.PopCommandsDetails( CommandsDetails );
 
-	GetDescriptions_( Requete, Descriptions );
+	Commands.Init();
 
-	SendCommandIDs_( Type, Broker, Descriptions, Requete );
+	FillCommands_( Broker, Type, CommandsDetails, Commands );
+
+	Requete.PushIds16( Commands );
+	Requete.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -579,7 +599,7 @@ ERREpilog
 
 
 // Deconnection
-static void Disconnect(
+static void Disconnect_(
 	broker_ &Broker,
 	untyped_module &Module,
 	command__ Command,
@@ -590,10 +610,10 @@ static void Disconnect(
 	Deconnexion = true;
 }
 
-#define ADD( I )	Broker.Add( brkcmd::CommandsNames[brkcmd::c##I], ::##I, brkcmd::CommandsParameters[brkcmd::c##I] )
+#define ADD( I )	Broker.Add( brkcmd::CommandsNames[brkcmd::c##I##], ::I##_, brkcmd::CommandsParameters[brkcmd::c##I] )
 
 // Initialisation avec rattachement à l'interface 'Frontend'.
-void master_module::Init( broker_ &Broker )
+void ::broker::master_module::Init( ::broker::broker_ &Broker )
 {
 	untyped_module::Init( NULL );
 	untyped_module::Broker_ = &Broker;
@@ -655,7 +675,7 @@ namespace broker {
 		else if ( C > BROKER_INVALID_TYPE )
 			ERRl();
 
-		return (ttype__)C;
+		return (type__)C;
 	}
 
 	bso__bool broker_::Handle(
@@ -674,11 +694,11 @@ namespace broker {
 
 		flw::Get( Channel, O );
 
-		if ( ( O() >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
+		if ( ( O >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
 			ERRb();
 
 		if ( O != BROKER_MASTER_OBJECT )
-			Module_( O ).Handle( Index_( O ), Requete, PU );
+			ModuleFromObject_( O ).Handle( Index_( O ), Requete, PU );
 		else
 			Master_.Handle( (index__)0, Requete, &MasterData );
 

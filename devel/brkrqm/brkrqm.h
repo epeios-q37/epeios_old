@@ -62,10 +62,15 @@ extern class ttr_tutor &BRKRQMTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "brkcst.h"
 #include "bso.h"
 #include "str.h"
 #include "ctn.h"
+#include "brktpm.h"
+#include "brkcst.h"
+
+#ifdef CPE__VC
+#	undef GetObject
+#endif
 
 #define BRKRQM_INVALID_COMMAND		BSO_USHORT_MAX
 #define BRKRQM_COMMAND_MAX			( BRKRQM_INVALID_COMMAND - 1 )
@@ -76,24 +81,15 @@ extern class ttr_tutor &BRKRQMTutor;
 #define BRKRQM_INVALID_OBJECT		BSO_USHORT_MAX
 #define BRKRQM_OBJECT_MAX			( BRKRQM_INVALID_OBJECT - 1 )
 
-
 namespace brkrqm {
-	using namespace brkcst;
+	namespace {
+		using namespace brkcst;
+	}
 
-	typedef bso__ushort		tcommand__;
-	//t Command
-	TYPEDEF( tcommand__, command__ );
+	using namespace brktpm;
 
-	typedef bso__ushort		tobject__;
-	//t Object
-	TYPEDEF( bso__ushort, object__ );
-
-	typedef bso__ushort		ttype__;
-	//t Type
-	TYPEDEF( ttype__, type__ );
-
-	//t Cast
-	typedef bso__ubyte cast__;
+	typedef id8__ cast__;
+	using brkcst::cast;
 
 	//c The description of a request.
 	class description_
@@ -103,11 +99,11 @@ namespace brkrqm {
 		str_string_ Name;
 		/*o Parameters and return value types. Separated by 'cEnd'. The 'cEnd'
 		to signalize the end of the request must NOT be put. */
-		SET_( cast__ ) Casts;
+		ids8_ Casts;
 		struct s
 		{
 			str_string_::s Name;
-			SET_( cast__ )::s Casts;
+			ids8_::s Casts;
 		} &S_;
 		description_( s &S )
 		: S_( S ),
@@ -200,52 +196,6 @@ namespace brkrqm {
 
 	AUTO( descriptions )
 
-
-	/*f Put the object id. 'Object' in 'Request'. You must begin with this function
-	to create a request. */
-	inline void PutObject(
-		object__ Object,
-		flw::oflow___ &Request )
-	{
-		flw::Put( Object, Request );
-	}
-
-	//f Put command id 'Command' in request. Succeed immediatly after 'PutObject()'.
-	inline void PutCommand(
-		command__ Command,
-		flw::oflow___ &Request )
-	{
-		flw::Put( Command, Request );
-	}
-
-	//f Add to 'Request' the value 'Value' of type 'Type'.
-	void AddValue(
-		cast Cast,
-		const void *Value,
-		flw::oflow___ &Request );
-
-	/*f Add cast id. 'Cast' to request. Usually used to put 'cMulti' and the
-	required 'cEnd'. */
-	inline void AddCast(
-		cast Cast,
-		flw::oflow___ &Request )
-	{
-		cast__ C = Cast;
-
-		flw::Put( C, Request );
-	}
-
-	//f Complete 'Request'.
-	inline void Complete( flw::oflow___ &Request )
-	{
-		AddCast( cEnd, Request );
-		Request.Synchronize();
-	}
-
-	//f Return the cast of name 'CastName', or 'cInvalid' if non-existent.
-	cast GetCast( const str_string_ &CastName );
-
-
 	//c A request manager.
 	class request_manager___
 	{
@@ -254,60 +204,52 @@ namespace brkrqm {
 		const description_ *Description_;
 		// Position in the Description_;
 		POSITION__ Position_;
-		// Position of the beginning of th array, il any.
-		POSITION__ Array_;
 		// At true if all the answer be sent.
 		bso__bool Closed_;
 		// Cast buffer.
 		cast Cast_;
-		// At true if all the request parsed.
+		// At true if the request parsed.
 		bso__bool Parsed_;
-		// The input/output channle for the request.
+		// The input/output channel for the request.
 		flw::ioflow___ *Channel_;
-		cast GetCast_( void )
+		void Test_( cast Cast )
 		{
-			cast__ Cast = Cast_;
+			if ( Description_->Casts.Read( Position_ ) != Cast )
+				ERRu();
 
-			if ( Cast != cInvalid )
-				Cast_ = cInvalid;
-			else
-			{
-				flw::Get( *Channel_, Cast );
+			Position_ = Description_->Casts.Next( Position_ );
+		}
+		void TestInput_( cast Cast )
+		{
+			Test_( Cast );
 
-				if ( ( Array_ != NONE )
-					  && ( Cast != cEnd )
-					  && ( Description_->Casts.Read( Position_ ) == cEnd ) )
-						Position_ = Array_;
+			if ( Channel_->Get() != Cast )
+				ERRu();
+		}
+		void TestOutput_(
+			cast Cast,
+			bso__bool ExplanationMessage = false )
+		{
+			if ( !Parsed_ ) {
+				Test_( cEnd );
 
-				if ( Cast != Description_->Casts.Read( Position_ ) )
-					ERRu();
-					
-				Position_ = Description_->Casts.Next( Position_ );
+				if ( !ExplanationMessage )
+					Channel_->Put( 0 );	// Empty explanation message.
+				else
+					ERRb();
+
+				Parsed_ = true;
 			}
 
-			return (cast)Cast;
+			Test_( Cast );
+			Channel_->Put( Cast );
 		}
-		void GetValue_(
-			cast Caste,
-			void *Valeur );
-		void TestEndOfParsing_( bso__bool ExplanationMessage = false )
-		{
-			if ( !Parsed_ )
-				if ( GetCast_() != cEnd )
-					ERRu();
-				else if ( !ExplanationMessage )
-					Channel_->Put( 0 );	// Empty explanation message.
-
-			Parsed_ = true;
-		}
-		POSITION__ FindEndOfArray_( POSITION__ P );
 	public:
 		void reset( bool = true )
 		{
 			Description_ = NULL;
 
 			Position_ = NONE;
-			Array_ = NONE;
 			Closed_ = true;
 			Cast_ = cInvalid;
 			Parsed_ = false;
@@ -337,15 +279,234 @@ namespace brkrqm {
 			Description_ = &Description;
 			Position_ = Description_->Casts.First();
 		}
-		//f Put to 'Value' the next return value which is of cast 'Cast'.
-		void GetValue(
-			cast Cast,
-			void *Value );
-		/*f Put to 'Value' the next return value which is of cast 'Cast'
-		and belongs to an array. Return false if it is the last item of an array. */
-		bso__bool GetArrayValue(
-			cast Cast,
-			void *Value );
+		//f Get 'Object'.
+		void PopObject( object__ &Object )
+		{
+			TestInput_( cObject );
+			brktpm::GetObject( *Channel_, Object );
+		}
+		//f Get 'Boolean'.
+		void PopBoolean( boolean__ &Boolean )
+		{
+			TestInput_( cBoolean );
+			brktpm::GetBoolean( *Channel_, Boolean );
+		}
+		//f Get 'Id8'.
+		void PopId8( id8__ &Id8 )
+		{
+			TestInput_( cId8 );
+			brktpm::GetId8( *Channel_, Id8 );
+		}
+		//f Get 'IDs8'.
+		void PopIds8( ids8_ &Ids8 )
+		{
+			TestInput_( cIds8 );
+			brktpm::GetIds8( *Channel_, Ids8 );
+		}
+		//f Get 'Id16'.
+		void PopId16( id16__ &Id16 )
+		{
+			TestInput_( cId16 );
+			brktpm::GetId16( *Channel_, Id16 );
+		}
+		//f Get 'IDs16'.
+		void PopIds16( ids16_ &Ids16 )
+		{
+			TestInput_( cIds16 );
+			brktpm::GetIds16( *Channel_, Ids16 );
+		}
+		//f Get 'Id32'.
+		void PopId32( id32__ &Id32 )
+		{
+			TestInput_( cId32 );
+			brktpm::GetId32( *Channel_, Id32 );
+		}
+		//f Get 'IDs32'.
+		void PopIds32( ids32_ &Ids32 )
+		{
+			TestInput_( cIds32 );
+			brktpm::GetIds32( *Channel_, Ids32 );
+		}
+		//f Get 'Char'.
+		void PopChar( char__ &Char )
+		{
+			TestInput_( cChar );
+			brktpm::GetChar( *Channel_, Char );
+		}
+		//f Get 'String'.
+		void PopString( string_ &String )
+		{
+			TestInput_( cString );
+			brktpm::GetString( *Channel_, String );
+		}
+		//f Get 'Strings'.
+		void PopStrings( strings_ &Strings )
+		{
+			TestInput_( cStrings );
+			brktpm::GetStrings( *Channel_, Strings );
+		}
+		//f Get 'Byte'.
+		void PopByte( byte__ &Byte )
+		{
+			TestInput_( cByte );
+			brktpm::GetByte( *Channel_, Byte );
+		}
+		//f Get 'Binary'.
+		void PopBinary( binary_ &Binary )
+		{
+			TestInput_( cBinary );
+			brktpm::GetBinary( *Channel_, Binary );
+		}
+		//f Get 'Binaries'.
+		void PopBinaries( binaries_ &Binaries )
+		{
+			TestInput_( cBinaries );
+			brktpm::GetBinaries( *Channel_, Binaries );
+		}
+		//f Get 'Items8'.
+		void PopItems8( items8_ &Items8 )
+		{
+			TestInput_( cItems8 );
+			brktpm::GetItems8( *Channel_, Items8 );
+		}
+		//f Get 'Items16'.
+		void PopItems16( items16_ &Items16 )
+		{
+			TestInput_( cItems16 );
+			brktpm::GetItems16( *Channel_, Items16 );
+		}
+		//f Get 'Items32'.
+		void PopItems32( items32_ &Items32 )
+		{
+			TestInput_( cItems32 );
+			brktpm::GetItems32( *Channel_, Items32 );
+		}
+		//f Get 'CommandsDetails'.
+		void PopCommandsDetails( commands_details_ &CommandsDetails )
+		{
+			TestInput_( cCommandsDetails );
+			brktpm::GetCommandsDetails( *Channel_, CommandsDetails );
+		}
+		//f Get 'ObjectsReferences'.
+		void PopObjectsreferences( objects_references_ &ObjectsReferences )
+		{
+			TestInput_( cObjectsReferences );
+			brktpm::GetObjectsReferences( *Channel_, ObjectsReferences );
+		}
+		//f Put 'Object'.
+		void PushObject( object__ Object )
+		{
+			TestOutput_( cObject );
+			brktpm::PutObject( Object, *Channel_ );
+		}
+		//f Put 'Boolean'.
+		void PushBoolean( boolean__ Boolean )
+		{
+			TestOutput_( cBoolean );
+			brktpm::PutBoolean( Boolean, *Channel_ );
+		}
+		//f Put 'Id8'.
+		void PushId8( id8__ Id8 )
+		{
+			TestOutput_( cId8 );
+			brktpm::PutId8( Id8, *Channel_ );
+		}
+		//f Put 'Ids8'.
+		void PushIds8( const ids8_ &Ids8 )
+		{
+			TestOutput_( cIds8 );
+			brktpm::PutIds8( Ids8, *Channel_ );
+		}
+		//f Put 'Id16'.
+		void PushId16( id16__ Id16 )
+		{
+			TestOutput_( cId16 );
+			brktpm::PutId16( Id16, *Channel_ );
+		}
+		//f Put 'Ids16'.
+		void PushIds16( const ids16_ &Ids16 )
+		{
+			TestOutput_( cIds16 );
+			brktpm::PutIds16( Ids16, *Channel_ );
+		}
+		//f Put 'Id32'.
+		void PushId32( id32__ Id32 )
+		{
+			TestOutput_( cId32 );
+			brktpm::PutId32( Id32, *Channel_ );
+		}
+		//f Put 'Ids32'.
+		void PushIds8( const ids32_ &Ids32 )
+		{
+			TestOutput_( cIds32 );
+			brktpm::PutIds32( Ids32, *Channel_ );
+		}
+		//f Put 'Char'.
+		void PushChar( char__ Char )
+		{
+			TestOutput_( cChar );
+			brktpm::PutChar( Char, *Channel_ );
+		}
+		//f Put 'String'.
+		void PushString( const string_ &String )
+		{
+			TestOutput_( cString );
+			brktpm::PutString( String, *Channel_ );
+		}
+		//f Put 'Strings'.
+		void PushStrings( const strings_ &Strings )
+		{
+			TestOutput_( cStrings );
+			brktpm::PutStrings( Strings, *Channel_ );
+		}
+		//f Put 'Byte'.
+		void PushByte( byte__ Byte )
+		{
+			TestOutput_( cByte );
+			brktpm::PutByte( Byte, *Channel_ );
+		}
+		//f Put 'Binary'.
+		void PushBinary( const binary_ &Binary )
+		{
+			TestOutput_( cBinary );
+			brktpm::PutBinary( Binary, *Channel_ );
+		}
+		//f Put 'Binaries'.
+		void PushBinaries( const binaries_ &Binaries )
+		{
+			TestOutput_( cBinaries );
+			brktpm::PutBinaries( Binaries, *Channel_ );
+		}
+		//f Put 'Items8'
+		void PushItems8( const items8_ &Items8 )
+		{
+			TestOutput_( cItems8 );
+			brktpm::PutItems8( Items8, *Channel_ );
+		}
+		//f Put 'Items16'
+		void PushItems16( const items16_ &Items16 )
+		{
+			TestOutput_( cItems16 );
+			brktpm::PutItems16( Items16, *Channel_ );
+		}
+		//f Put 'Items32'
+		void PushItems32( const items32_ &Items32 )
+		{
+			TestOutput_( cItems32 );
+			brktpm::PutItems32( Items32, *Channel_ );
+		}
+		//f Put 'CommandsDetails'.
+		void PushCommandsDetails( const commands_details_ &CommandsDetails )
+		{
+			TestOutput_( cCommandsDetails );
+			brktpm::PutCommandsDetails( CommandsDetails, *Channel_ );
+		}
+		//f Put 'ObjectsReferences'.
+		void PushObjectsReferences( const objects_references_ &ObjectsReferences )
+		{
+			TestOutput_( cObjectsReferences );
+			brktpm::PutObjectsReferences( ObjectsReferences, *Channel_ );
+		}
 		//f Tell that the request is complete (parsed and answered).
 		void Complete( void )
 		{
@@ -355,17 +516,14 @@ namespace brkrqm {
 			if ( Description_ != NULL ) /* If == 'NULL', it means that the request was handled
 								   by handling DIRECTLY the underlying flows. */
 			{
-				TestEndOfParsing_();
+				if ( Channel_->Get() != brkcst::cEnd )
+					ERRb();
 
 				if ( Position_ != NONE )
 					ERRu();
-
-				if ( Array_ != NONE )
-					ERRu();
-
 			}
 
-			AddCast( cEnd, *Channel_ );
+			brktpm::PutId8( cEnd, *Channel_ );
 
 			Closed_ = true;
 
@@ -373,63 +531,10 @@ namespace brkrqm {
 
 			Channel_->Synchronize();
 		}
-		//f Add 'Value' of type 'Type'.
-		void AddValue(
-			cast Cast,
-			const void *Value )
-		{
-			TestEndOfParsing_();
-
-			if ( Array_ != NONE ) {
-				if ( Description_->Casts.Read( Position_ ) == cEnd )
-					Position_ = Array_;
-			}
-
-			if ( ( Position_ == NONE )
-				|| ( Description_->Casts.Read( Position_ ) != Cast ) )
-				ERRu();
-			else
-				Position_ = Description_->Casts.Next( Position_ );
-
-			brkrqm::AddValue( Cast, Value, *Channel_ );
-		}
-		//f Signalize that a array session begins.
-		void BeginArray( void )
-		{
-			TestEndOfParsing_();
-
-			if ( Array_ != NONE )
-				ERRu();
-
-			if ( ( Position_ == NONE )
-				  || ( Description_->Casts.Read( Position_ ) != cArray ) )
-				ERRu();
-				
-			Array_ = Description_->Casts.Next( Position_ );
-			Position_ = FindEndOfArray_( Position_ );
-
-
-			brkrqm::AddCast( cArray, *Channel_) ;
-		}
-		//f Signalize the end of a array session.
-		void EndArray( void )
-		{
-			if ( Array_ == NONE )
-				ERRu();
-
-			if ( Description_->Casts.Read( Position_ ) != cEnd )
-				ERRb();
-				
-			Position_ = Description_->Casts.Next( Position_ );
-
-			AddCast( cEnd, *Channel_ ) ;
-
-			Array_ = NONE;
-		}
 		//f Send a message that explain the reason of no treatment.
 		void SendExplanationMessage( const char *Message )
 		{
-			TestEndOfParsing_( true );
+			TestOutput_( cEnd, true );
 
 			if ( !Message[0] )
 				ERRu();
