@@ -11,7 +11,7 @@ SF_ID		&$$SF_ID$$
 
 GCC_VERSION	&3.0.3
 
-EHOS_SF_ID	&39211
+EXML_SF_ID	&39211
 EJAVA_SF_ID	&14732
 EPYTHON_SF_ID	&14733
 ETMC_SF_ID	&13582
@@ -30,8 +30,8 @@ ECGI_ABOUT	%$DOC$/libraries/ecgi/about.xml
 ECGI_USER	%$DOC$/libraries/ecgi/user.xml
 ETMC_ABOUT	%$DOC$/libraries/etmc/about.xml
 ETMC_USER	%$DOC$/libraries/etmc/user.xml
-EHOS_ABOUT	%$DOC$/libraries/ehos/about.xml
-EHOS_USER	%$DOC$/libraries/ehos/user.xml
+EXML_ABOUT	%$DOC$/libraries/exml/about.xml
+EXML_USER	%$DOC$/libraries/exml/user.xml
 EMTH_ABOUT	%$DOC$/libraries/emth/about.xml
 EMTH_USER	%$DOC$/libraries/emth/user.xml
 EBKL_ABOUT	%$DOC$/libraries/ebkl/about.xml
@@ -39,7 +39,7 @@ EBKL_USER	%$DOC$/libraries/ebkl/user.xml
 
 CORE_QUICKDOC	%i/epeios.xml
 EBKD_QUICKDOC	%i/ebkd.xml
-EHOS_QUICKDOC	%i/ehos.xml
+EXML_QUICKDOC	%i/exml.xml
 ETMC_QUICKDOC	%i/etmc.xml
 EBKD_QUICKDOC	%i/ebkd.xml
 EBKL_QUICKDOC	%i/ebkl.xml

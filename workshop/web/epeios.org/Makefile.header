@@ -3,8 +3,9 @@
 ifeq ("$(EPEIOS_OS)","windows")
 cvs = h:\cvs
 rootdir=/cvs/epeios
+# templates = h:/cvs/epeios/workshop/web/templates
 templates = t:
-dest = /website
+dest = /web
 copy = cp
 move = move
 mkdir = h:\bin\mkdir
@@ -14,7 +15,7 @@ ifeq ("$(EPEIOS_OS)","linux")
 cvs = /home/csimon/cvs
 rootdir=$(cvs)/epeios
 templates = $(rootdir)/workshop/web/templates
-dest = /home/csimon/website
+dest = /home/csimon/web
 copy = cp
 move = mv
 mkdir = mkdir

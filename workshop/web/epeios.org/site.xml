@@ -839,19 +839,19 @@
     </dir>
     <dir id="'exml' libraries">
       <document id="homepage">
-        <general title="EXML libraries homepage." abstract="The hierarchically organized structure libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos">
+        <general title="EXML libraries homepage." abstract="The hierarchically organized structure libraries (EXML) from the Epeios project." keywords="Epeios, libraries, XML, exml">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
             <date>2001</date>
           </copyright>
           <misc>
-            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <sourceforge group_id="$EXML_SF_ID$"/>
             <stamp date="$DATE$" time="$TIME$"/>
           </misc>
         </general>
         <specific>
-          <WEB hierarchy="ehos" name="index" bookmark="EHOS libraries" parent="../libraries.html" robots="$ROBOTS$"/>
+          <WEB hierarchy="exml" name="index" bookmark="EXML libraries" parent="../libraries.html" robots="$ROBOTS$"/>
         </specific>
         <content>
           <section>
@@ -882,60 +882,60 @@
         </content>
       </document>
       <document id="cvs">
-        <general title="CVS access for the EHOS libraries." abstract="The CVS access for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, CVS">
+        <general title="CVS access for the EXML libraries." abstract="The CVS access for hierarchically organized structures libraries (EXML) from the Epeios project." keywords="Epeios, libraries, XML, exml, CVS">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
             <date>2001</date>
           </copyright>
           <misc>
-            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <sourceforge group_id="$EXML_SF_ID$"/>
             <stamp date="$DATE$" time="$TIME$"/>
           </misc>
         </general>
         <specific>
-          <WEB hierarchy="ehos/cvs" name="index" bookmark="EHOS CVS" parent=".." robots="$ROBOTS$"/>
+          <WEB hierarchy="exml/cvs" name="index" bookmark="EXML CVS" parent=".." robots="$ROBOTS$"/>
         </specific>
         <content>
-          <CVS server="cvs.ehos.sf.net" root="/cvsroot/ehos" module="stable">
-            <link URL="http://cvs.ehos.sf.net/cgi-bin/viewcvs.cgi/ehos/stable/"/>
+          <CVS server="cvs.exml.sf.net" root="/cvsroot/exml" module="stable">
+            <link URL="http://cvs.exml.sf.net/cgi-bin/viewcvs.cgi/exml/stable/"/>
           </CVS>
         </content>
       </document>
       <document id="download">
-        <general title="Download section for the EHOS libraries." abstract="The download section for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, download">
+        <general title="Download section for the EXML libraries." abstract="The download section for hierarchically organized structures libraries (EXML) from the Epeios project." keywords="Epeios, libraries, XML, exml, download">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
             <date>2001</date>
           </copyright>
           <misc>
-            <sourceforge group_id="$EHOS_SF_ID$"/>
+            <sourceforge group_id="$EXML_SF_ID$"/>
             <stamp date="$DATE$" time="$TIME$"/>
           </misc>
         </general>
         <specific>
-          <WEB hierarchy="ehos/download" name="index" bookmark="EHOS download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EHOS_SF_ID$"/>
+          <WEB hierarchy="exml/download" name="index" bookmark="EXML download" robots="$ROBOTS$">
+            <redirection delay="5" URL="http://sourceforge.net/project/showfiles.php?group_id=$EXML_SF_ID$"/>
           </WEB>
         </specific>
         <content/>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
-          <general title="Quickdoc homepage for the EHOS libraries." abstract="The quickdoc homepage for hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, quickdoc, homepage">
+          <general title="Quickdoc homepage for the EXML libraries." abstract="The quickdoc homepage for hierarchically organized structures libraries (EXML) from the Epeios project." keywords="Epeios, libraries, XML, exml, quickdoc, homepage">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
               <date>2001</date>
             </copyright>
             <misc>
-              <sourceforge group_id="$EHOS_SF_ID$"/>
+              <sourceforge group_id="$EXML_SF_ID$"/>
               <stamp date="$DATE$" time="$TIME$"/>
             </misc>
           </general>
           <specific>
-            <WEB hierarchy="ehos/quickdoc" name="index" bookmark="EHOS quickdoc homepage" parent=".." robots="$ROBOTS$"/>
+            <WEB hierarchy="exml/quickdoc" name="index" bookmark="EXML quickdoc homepage" parent=".." robots="$ROBOTS$"/>
           </specific>
           <content>
             <section>
@@ -964,20 +964,20 @@
           </content>
         </document>
         <document id="core">
-          <general title="EHOS quickdoc." abstract="Quickdoc of the hierarchically organized structures libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos, quickdoc">
+          <general title="EXML quickdoc." abstract="Quickdoc of the hierarchically organized structures libraries (EXML) from the Epeios project." keywords="Epeios, libraries, XML, exml, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
               <date>1994 - 2001</date>
             </copyright>
             <misc>
-              <sourceforge group_id="$EHOS_SF_ID$"/>
+              <sourceforge group_id="$EXML_SF_ID$"/>
               <stamp date="$DATE$" time="$TIME$"/>
             </misc>
           </general>
           <specific>
-            <WEB hierarchy="ehos/quickdoc" name="quickdoc" bookmark="EHOS quickdoc" parent="." robots="$ROBOTS$"/>
-          </specific>$EHOS_QUICKDOC$</document>
+            <WEB hierarchy="exml/quickdoc" name="quickdoc" bookmark="EXML quickdoc" parent="." robots="$ROBOTS$"/>
+          </specific>$EXML_QUICKDOC$</document>
       </dir>
     </dir>
     <dir id="'emth' libraries">
