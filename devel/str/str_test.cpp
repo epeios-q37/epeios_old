@@ -78,7 +78,7 @@ ERRFBegin
 		stf::cout << txf::sync;
 		stf::cerr << "\nBad arguments.\n";
 		stf::cout << "Usage: " << STRTutor.Name << " [/i]\n\n";
-		ERRt();
+		ERRi();
 	}
 
 ERRFErr

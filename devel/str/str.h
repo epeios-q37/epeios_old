@@ -186,7 +186,7 @@ namespace str {
 				} else 
 					return -(bso::slong__)ToUL( Next( Begin ), ErrP, Limit );
 			else
-				return ToUL( Begin, ErrP, Limit );
+				return (bso::slong__)ToUL( Begin, ErrP, Limit );
 		}
 		//f Variation in parameters.
 		bso::slong__ ToSL(
@@ -223,7 +223,7 @@ namespace str {
 		//f Variation in parameters.
 		bso::sshort__ ToSS(
 			epeios::row__ *ErrP = NULL,
-			bso::ushort__ Limit = BSO_SSHORT_MAX ) const
+			bso::sshort__ Limit = BSO_SSHORT_MAX ) const
 		{
 			return ToSS( ErrP, 0, Limit );
 		}

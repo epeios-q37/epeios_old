@@ -1,8 +1,8 @@
 /*
 	'sck' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'sck' header file ('sck.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -172,7 +174,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Read( Socket_, Wanted - Amount, Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
+			if ( ( Result = (amount__)Read( Socket_, Wanted - Amount, Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
 				if ( ( Result = iflow___::HandleEOFD( Buffer, Wanted - Amount ) ) == 0 ) {
 					Socket_ = SCK_INVALID_SOCKET;
 					Error_ = true;
