@@ -100,11 +100,16 @@ namespace btf {
 
 			return *this;
 		}
-		//f Initialization with binary tree 'Tree'.
-		void Init( btr::E_BTREEt_( r ) &Tree )
+		//f Initialization with binary tree 'Tree' of root (if not empty) 'Root'.
+		void Init(
+			btr::E_BTREEt_( r ) &Tree,
+			r Root )
 		{
 			Tree_ = &Tree;
 			E_STACK_( r )::Init();
+
+			if ( Root != NONE )
+				E_STACK_( r )::Push( Root );
 		}
 		//f Join the 2 nodes at bottom of stack with 'Node', which is pushed in stack.
 		void Join( r Node )

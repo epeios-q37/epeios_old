@@ -175,6 +175,8 @@ namespace bitbch {
 		bit_bunch_ &operator =( const bit_bunch_ &O )
 		{
 			amount_extent_manager_<r>::operator =( O );
+
+			Allocate( O.Amount() );
 			Table.Store( O.Table, Convert_( O.Amount() ) );
 
 			return *this;

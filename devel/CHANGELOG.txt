@@ -22,9 +22,11 @@ BITBCH:
 - Renaming 'Add' to 'Append'.
 - Adapting to changes in 'BCH' library.
 - Adding 'E_BIT_BUNCH(t)(_) macros.
+- Fixing 'operator =' bug.
 
 BTF:
 - Adding a dummy 'Exists()' method, due to changes in 'STK' library.
+- Adding 'Root' parameter to the 'Init' function.
 
 BTS:
 - Adding 'tBack' and 'tForward' in replacement of 'tParent'.
@@ -55,6 +57,7 @@ DBT:
 - Adapting to changes in 'LSTBCH' library.
 - Adding the virtual 'DBTAllocate' method.
 - Using 'E_NAVt' macro.
+- Adapting to changes in 'DBT' library.
 
 DTR:
 - Fixing call to an iexistent method;

@@ -297,11 +297,13 @@ namespace dbt {
 
 			return *this;
 		}
-		//f Initialization with tree 'Tree'.
-		void Init( E_DBTREEt_( int__, ext__, row__ ) &Tree )
+		//f Initialization with tree 'Tree' of root 'Root' (if not empty).
+		void Init(
+			E_DBTREEt_( int__, ext__, row__ ) &Tree,
+			row__ Root )
 		{
 			Tree_ = &Tree;
-			E_BTREE_FILLERt_( row__ )::Init( Tree );
+			E_BTREE_FILLERt_( row__ )::Init( Tree, Root );
 		}
 		//f Push external node 'External'. Return row where the new element is added.
 		row__ Push( const ext__ &External )
