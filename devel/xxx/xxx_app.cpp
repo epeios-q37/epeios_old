@@ -85,7 +85,7 @@ ERRBegin
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
 		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
 		stf::cout << HELP << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	P = Options.First();
@@ -125,7 +125,7 @@ ERRBegin
 	default:
 		stf::cerr << "Too many arguments." << txf::nl;
 		stf::cout << HELP << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	}
 
@@ -157,15 +157,15 @@ ERRBegin
 	case cVersion:
 		PrintHeader();
 		TTR.Advertise();
-		ERRt();
+		ERRi();
 		break;
 	case cHelp:
 		PrintUsage( Description );
-		ERRt();
+		ERRi();
 		break;
 	case cLicense:
 		epsmsc::PrintLicense();
-		ERRt();
+		ERRi();
 		break;
 //	case c:
 	case CLNARG_NONE:

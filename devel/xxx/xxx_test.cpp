@@ -50,7 +50,7 @@ ERRFBegin
 		cout << txf::sync;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
-		ERRt();
+		ERRi();
 	}
 
 ERRFErr
