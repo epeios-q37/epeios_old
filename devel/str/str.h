@@ -149,9 +149,8 @@ namespace str {
 		epeios::row__ Search(
 			char C,
 			epeios::row__ Start = 0 ) const;
-		/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
-		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
-		value can have. */
+		/*f Convert to unsigned long. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ulong__ ToUL(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
@@ -163,39 +162,92 @@ namespace str {
 		{
 			return ToUL( 0, ErrP, Limit );
 		}
-		/*f Convert to unsigned short. If 'ErrP' != NULL, put the character where is 
-		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
-		value can have. */
+		/*f Convert to signed long. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max absolute value that the returned value can have. */
+		bso::slong__ ToSL(
+			epeios::row__ Begin,
+			epeios::row__ *ErrP,
+			bso::ulong__ Limit = BSO_SLONG_MAX ) const
+		{
+			if ( Get( Begin ) == '-' )
+				if ( Next( Begin ) == NONE ) {
+					*ErrP = *Begin + 1;
+					return 0;
+				} else 
+					return -(bso::slong__)ToUL( Next( Begin ), ErrP, Limit );
+			else
+				return ToUL( Begin, ErrP, Limit );
+		}
+		//f Variation in parameters.
+		bso::slong__ ToSL(
+			epeios::row__ *ErrP = NULL,
+			bso::ulong__ Limit = BSO_SLONG_MAX ) const
+		{
+			return ToSL( 0, ErrP, Limit );
+		}
+		/*f Convert to unsigned short. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP,
 			epeios::row__ Begin,
-			bso::ulong__ Limit = BSO_USHORT_MAX ) const
+			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
 			return (bso::ushort__)ToUL( Begin, ErrP, Limit );
 		}
 		//f Variation in parameters.
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP = NULL,
-			bso::ulong__ Limit = BSO_USHORT_MAX ) const
+			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
 			return ToUS( ErrP, 0, Limit );
 		}
-		/*f Convert to unsigned byte. If 'ErrP' != NULL, put the character where is 
-		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
-		value can have. */
+		/*f Convert to signed short. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
+		bso::sshort__ ToSS(
+			epeios::row__ *ErrP,
+			epeios::row__ Begin,
+			bso::sshort__ Limit = BSO_SSHORT_MAX ) const
+		{
+			return (bso::sshort__)ToSL( Begin, ErrP, Limit );
+		}
+		//f Variation in parameters.
+		bso::sshort__ ToSS(
+			epeios::row__ *ErrP = NULL,
+			bso::ushort__ Limit = BSO_SSHORT_MAX ) const
+		{
+			return ToSS( ErrP, 0, Limit );
+		}
+		/*f Convert to unsigned byte. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP,
 			epeios::row__ Begin,
-			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
+			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
 			return (bso::ubyte__)ToUL( 0, ErrP, Limit );
 		}
 		//f Variation in parameters.
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP = NULL,
-			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
+			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
 			return ToUB( ErrP, 0, Limit );
+		}
+		/*f Convert to signed byte. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
+		bso::sbyte__ ToSB(
+			epeios::row__ *ErrP,
+			epeios::row__ Begin,
+			bso::ubyte__ Limit = BSO_SBYTE_MAX ) const
+		{
+			return (bso::sbyte__)ToSL( 0, ErrP, Limit );
+		}
+		//f Variation in parameters.
+		bso::sbyte__ ToSB(
+			epeios::row__ *ErrP = NULL,
+			bso::ubyte__ Limit = BSO_SBYTE_MAX ) const
+		{
+			return ToSB( ErrP, 0, Limit );
 		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
