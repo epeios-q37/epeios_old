@@ -75,13 +75,13 @@ namespace ssnmng {
 		return strcmp( S1, S2 );
 	}
 
-	static tym::row__ Search_( 
-		const idxbtr::tree_index_ &I,
+	static epeios::row__ Search_( 
+		const idxbtr::E_IBTREE_ &I,
 		const bch::E_BUNCH_( session_id__ ) &T,
 		const char *S,
 		bso::sign__ &Test )
 	{
-		tym::row__ P = I.Root();
+		epeios::row__ P = I.Root();
 		bso::bool__ Cont = true;
 
 		while ( Cont )
@@ -95,9 +95,9 @@ namespace ssnmng {
 		return P;
 	}
 
-	tym::row__ sessions_manager_::Open( void )
+	epeios::row__ sessions_manager_::Open( void )
 	{
-		tym::row__ P = E_LIST_::CreateEntry();
+		epeios::row__ P = E_LIST_::CreateEntry();
 		session_id__ SessionID;
 		chrono__ C;
 
@@ -112,7 +112,7 @@ namespace ssnmng {
 			Index.Create( P );
 		} else {
 			bso::sign__ Test;
-			tym::row__ PI = Search_( Index, Table, SessionID.Value(), Test );
+			epeios::row__ PI = Search_( Index, Table, SessionID.Value(), Test );
 
 			if ( Test > 0 )
 				Index.BecomeNext( P, PI );
@@ -136,9 +136,9 @@ namespace ssnmng {
 		return P;
 	}
 
-	tym::row__ sessions_manager_::Position( const char *SessionID ) const
+	epeios::row__ sessions_manager_::Position( const char *SessionID ) const
 	{
-		tym::row__ P = NONE;
+		epeios::row__ P = NONE;
 
 		if ( !Index.IsEmpty() )	{
 			bso::sign__ Test;
@@ -151,7 +151,7 @@ namespace ssnmng {
 
 		return P;
 	}
-	tym::row__ sessions_manager_::Position( const str::string_ &SessionID ) const
+	epeios::row__ sessions_manager_::Position( const str::string_ &SessionID ) const
 	{
 		char Buffer[SSNMNG_SIZE+1];
 

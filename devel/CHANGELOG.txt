@@ -29,7 +29,7 @@ IDXBTQ:
 - Adding 'E_INDEX(_)'.
 - Adding 'E_IBTREEt()'.
 
-IDXBTR:
+IDXBTQ:
 - Adding 'E_IBTREEt()'.
 
 IDXQUE:
@@ -46,6 +46,9 @@ MMG:
 
 MMM:
 - Adding 'E_MULTIMEMORY(_)' #define.
+
+SSNMNG:
+- Adapting to modification made in 'idxbtq' library.
 
 STR:
 - Adding missing 'const' qualifier.

@@ -112,7 +112,7 @@ namespace ssnmng {
 	  public E_MQUEUE_
 	{
 	protected:
-		virtual void LSTAllocate( tym::size__ Size )
+		virtual void LSTAllocate( epeios::size__ Size )
 		{
 			Table.Allocate( Size );
 			Index.Allocate( Size );
@@ -122,14 +122,14 @@ namespace ssnmng {
 			
 		}
 		//v Permit to make an allocation with a affected structure.
-		virtual void SSNMNGAllocate( tym::size__ Size ){}
+		virtual void SSNMNGAllocate( epeios::size__ Size ){}
 	public:
 		struct s
 		: public E_LIST_::s,
 		public E_MQUEUE_::s
 		{
 			bch::E_BUNCH_( session_id__ )::s Table;
-			idxbtq::tree_queue_index_::s Index;
+			idxbtq::E_INDEX_::s Index;
 			bch::E_BUNCH_( chrono__ )::s Chronos;
 			bso::ushort__ Absolute;
 			bso::ushort__ Relative;
@@ -137,7 +137,7 @@ namespace ssnmng {
 		//o The table of session ids.
 		bch::E_BUNCH_( session_id__ ) Table;
 		//o The index.
-		idxbtq::tree_queue_index_ Index;
+		idxbtq::E_INDEX_ Index;
 		//o The timing.
 		bch::E_BUNCH_( chrono__ ) Chronos;
 		sessions_manager_( s &S )
@@ -194,30 +194,30 @@ namespace ssnmng {
 			S_.Absolute = Absolute;
 		}
 		//f Return the position of a mandatory new session.
-		tym::row__ Open( void );
+		epeios::row__ Open( void );
 		//f Remove the session id at position 'Position'.
-		void Close( tym::row__ Position )
+		void Close( epeios::row__ Position )
 		{
 			Index.Remove( Position );
 			E_LIST_::Remove( Position );
 			E_MQUEUE_::Remove( Position );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		tym::row__ Position( const session_id__ &SessionID ) const
+		epeios::row__ Position( const session_id__ &SessionID ) const
 		{
 			return Position( SessionID.Value() );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		tym::row__ Position( const char *SessionID ) const;
+		epeios::row__ Position( const char *SessionID ) const;
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		tym::row__ Position( const str::string_ &SessionID ) const;
+		epeios::row__ Position( const str::string_ &SessionID ) const;
 		//f Return the session id. corresponding to 'Position'.
-		session_id__ SessionID( tym::row__ Position )
+		session_id__ SessionID( epeios::row__ Position )
 		{
 			return Table( Position );
 		}
 		//f Touche the session corresponding at position 'P'.
-		void Touch( tym::row__ P )
+		void Touch( epeios::row__ P )
 		{
 			chrono__ C = Chronos.Read( P );
 
@@ -237,7 +237,7 @@ namespace ssnmng {
 			}
 		}
 		//f Return true if session corresponding to 'P' is valid.
-		bso::bool__ IsValid( tym::row__ P ) const
+		bso::bool__ IsValid( epeios::row__ P ) const
 		{
 			chrono__ C = Chronos.Read( P );
 

@@ -65,14 +65,13 @@ struct parameters {
 void PrintUsage( const clnarg::description_ &Description )
 {
 	fout << DESCRIPTION << txf::nl;
-	fout << txf::tab << NAME << " --version|--license|--help" << txf::nl;
+	fout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << txf::tab << NAME << " <command> [options] ..." << txf::nl;
+	fout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
 	fout << "command:" << txf::nl;
-	// Free argument description.
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	fout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
