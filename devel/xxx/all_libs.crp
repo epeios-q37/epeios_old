@@ -42,6 +42,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &err		&epeios		&2000-		&ERRor handling
 &flw		&epeios		&2000-		&FLoW
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
+&gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdtb		&lgsb		&		&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-		&GeSBib FieLDs
 &gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
