@@ -35,6 +35,8 @@
 #include "err.h"
 #include "stf.h"
 
+TYPEDEF( epeios::row_t__, test__ );
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
@@ -43,6 +45,45 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void Test( int argc, char *argv[] )
+{
+ERRProlog
+	bch::E_BUNCHt( bso::ubyte__, test__ ) Bunch;
+	cch::E_RW_CACHEt___( bso::ubyte__, test__ ) Cache;
+	int i;
+	int rnd;
+ERRBegin
+	Bunch.Init();
+	Bunch.Allocate( 101 );
+
+	Cache.Init( Bunch, 10 );
+
+	for( i = 0; i <= 100; i++ )
+		Cache.Put( i, i );
+
+	for( i = 0; i <= 100; i++ )
+		fout << (unsigned long)i << ": " << (unsigned long)Cache.Get( i ) << txf::tab;
+
+	fout << txf::nl;
+
+	for( i = 100; i >= 0; i-- )
+		fout << (unsigned long)i << ": " << (unsigned long)Cache.Get( i ) << txf::tab;
+
+	fout << txf::nl;
+
+
+	for( i = 0; i <= 100; i++ ) {
+		rnd = rand() % 101;
+
+		fout << (unsigned long)rnd << ": " << (unsigned long)Cache.Get( rnd ) << txf::tab;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 int main( int argc, char *argv[] )
 {
@@ -54,6 +95,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Test( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
