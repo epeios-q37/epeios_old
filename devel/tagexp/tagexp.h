@@ -117,20 +117,24 @@ namespace tagexp
 	//f Return the label of the reserved tag of id 'Id'.
 	const char *TagLabel( tagexp::tag_id Id );
 
+	//t Natures of the tag references.
+
+	typedef bitbch::bibit_bunch_<epeios::row__> base_natures_;
+
 	//c Natures of the tag references.
 	class natures_ 
-	: public bitbch::bibit_bunch_<epeios::row__>
+	: public base_natures_
 	{
 	public:
 		struct s
-		: public bitbch::bibit_bunch_<epeios::row__>::s {};
+		: public base_natures_::s {};
 		natures_( s &S )
-		: bitbch::bibit_bunch_<epeios::row__>( S )
+		: base_natures_( S )
 		{}
 		//f Return the value at 'Position'.
 		nature operator()( tym::row__ Position ) const
 		{
-			return (tagexp::nature)bitbch::bibit_bunch_<epeios::row__>::Read( Position );
+			return (tagexp::nature)base_natures_::Read( Position );
 		}
 	};
 

@@ -177,7 +177,7 @@ ERRBegin
 			{
 				if ( Special )
 				{
-					XMLDF.PutValue( S, "Ref" );
+					XMLDF.PutValue( S, "raw" );
 					S.Init();
 					Special = false;
 				}
@@ -220,7 +220,7 @@ inline void GenererDocumentationParametre(
 	if ( Parametre.Valeur.Amount() != 0 )
 		XMLDF.PutValue( Parametre.Valeur, "Value" );
 	XMLDF.PutValue( Parametre.Type, "Type" );
-	XMLDF.PutValue( Parametre.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Parametre.Name );
 	XMLDF.PopTag();
 }
 
@@ -271,7 +271,7 @@ inline void GenererCorpsItemClasse(
 	tag_row__ &ObjectTagRow )
 {
 	Push( XMLDF, ObjectTagRow, "Object" );
-	XMLDF.PutValue( Item.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Item.Name );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
 	XMLDF.PopTag();
@@ -287,7 +287,7 @@ inline void GenererCorpsItemClasse(
 	static tag_row__ ParameterTagRow = NONE;
 
 	Push( XMLDF, MethodTagRow, "Function" );
-	XMLDF.PutValue( Item.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Item.Name );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
 	GenererDocumentationParametres( Item.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
@@ -304,7 +304,7 @@ inline void GenererCorpsItemClasse(
 	static tag_row__ ParameterTagRow = NONE;
 
 	Push( XMLDF, FunctionTagRow, "Function" );
-	XMLDF.PutValue( Item.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Item.Name );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
 	GenererDocumentationParametres( Item.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
@@ -357,14 +357,20 @@ ERRProlog
 ERRBegin
 
 	Argument.Init( Arguments );
+
+	XMLDF.PushTag( "Templates" );
 	
 	while ( Courant != NONE )
 	{
-		XMLDF.PutValue( Argument( Courant ).Name, "Name" );
+		XMLDF.PushTag( "Template" );
+		XMLDF.PutAttribute( "Name", Argument( Courant ).Name );
 		XMLDF.PutValue( Argument( Courant ).Type, "Type" );
 	
 		Courant = Arguments.Next( Courant );
+		XMLDF.PopTag();
 	}
+
+	XMLDF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -383,7 +389,7 @@ ERRBegin
 	
 	while ( Courant != NONE )
 	{
-		XMLDF.PutValue( Argument( Courant ).Name, "Name" );
+		XMLDF.PutAttribute( "Name", Argument( Courant ).Name );
 		XMLDF.PutValue( Argument( Courant ).Type, "Type" );
 	
 		Courant = Arguments.Next( Courant );
@@ -420,8 +426,12 @@ ERRBegin
 	Base.Init( Bases );
 
 	while ( Courant != NONE ) {
-		XMLDF.PutValue( Base( Courant ), "Name" );
+		XMLDF.PushTag( "Base_class" );
+
+		XMLDF.PutAttribute( "Name", Base( Courant ) );
 		Courant = Bases.Next( Courant );
+
+		XMLDF.PopTag();
 	}
 ERRErr
 ERREnd
@@ -450,7 +460,7 @@ ERRBegin
 	while ( Courant != NONE )
 	{
 		Push( XMLDF, ItemTagRow, "Item" );
-		XMLDF.PutValue( Item( Courant ).Name, "Name" );
+		XMLDF.PutAttribute( "Name", Item( Courant ).Name );
 		PutComment( Item( Courant ).Commentary, XMLDF, CommentTagRow );
 		
 		Courant = Items.Next( Courant );
@@ -479,7 +489,7 @@ ERRBegin
 	while ( Courant != NONE )
 	{
 		XMLDF.PushTag( "Argument" );
-		XMLDF.PutValue( Argument( Courant ), "Name" );
+		XMLDF.PutAttribute( "Name", Argument( Courant ) );
 		XMLDF.PopTag();
 		Courant = Arguments.Next( Courant );
 	}
@@ -560,7 +570,7 @@ void GenererDocumentationDefine(
 	static tag_row__ CommentTagRow = NONE;
 	
 	XMLDF.PushTag( "Define" );
-	XMLDF.PutValue( Define.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Define.Name );
 	PutComment( Define.Commentaire, XMLDF, CommentTagRow );
 	if ( Define.Arguments.Amount() )
 		GenererDocumentationArguments( Define.Arguments, XMLDF );
@@ -575,7 +585,7 @@ void GenererDocumentationEnum(
 	
 	XMLDF.PushTag( "Enum" );
 
-	XMLDF.PutValue( Enum.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Enum.Name );
 	PutComment( Enum.Commentary, XMLDF, CommentTagRow );
 
 	if ( Enum.Items.Amount() )
@@ -591,7 +601,7 @@ void GenererDocumentationShortcut(
 	static tag_row__ CommentTagRow = NONE;
 	
 	XMLDF.PushTag( "Shortcut" );
-	XMLDF.PutValue( Shortcut.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Shortcut.Name );
 	XMLDF.PutValue( Shortcut.Alias, "Alias" );
 	PutComment( Shortcut.Commentaire, XMLDF, CommentTagRow );
 	if ( Shortcut.Arguments.Amount() )
@@ -606,7 +616,7 @@ void GenererDocumentationTypedef(
 	static tag_row__ CommentTagRow = NONE;
 	
 	XMLDF.PushTag( "Typedef" );
-	XMLDF.PutValue( Typedef.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Typedef.Name );
 	PutComment( Typedef.Commentaire, XMLDF, CommentTagRow );
 	XMLDF.PopTag();
 }
@@ -618,7 +628,7 @@ inline void GenererDocumentationClasse(
 	static tag_row__ CommentTagRow = NONE;
 	
 	XMLDF.PushTag( "Classe" );
-	XMLDF.PutValue( Classe.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Classe.Name );
 	PutComment( Classe.Commentaire, XMLDF, CommentTagRow );
 
 	GenererDocumentationTemplateClasse( Classe.Template, XMLDF );
@@ -641,7 +651,7 @@ inline void GenererDocumentationFonction(
 	static tag_row__ ParametersTagRow = NONE;
 	static tag_row__ ParameterTagRow = NONE;
 	
-	XMLDF.PutValue( Fonction.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Fonction.Name );
 	XMLDF.PutValue( Fonction.Type, "Type" );
 	PutComment( Fonction.Commentaire, XMLDF, CommentTagRow );
 	GenererDocumentationParametres( Fonction.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
@@ -1096,7 +1106,7 @@ void GenererDocumentationTechnique(
 	librairie_ &Librairie,
 	xmldf__ &XMLDF )
 {
-	XMLDF.PutValue( Librairie.Name, "Name" );
+	XMLDF.PutAttribute( "Name", Librairie.Name );
  	GenererCorpsDocumentationTechnique( Librairie.Library, XMLDF );
 }
 /*
@@ -1337,7 +1347,7 @@ ERRFBegin
 	OFlow.Init( FichierDestination );
 	TFlow.Init( OFlow );
 	
-	GenererEnTeteFichierXML( TFlow );
+//	GenererEnTeteFichierXML( TFlow );
 
 	fout << "File writing : in progress ... " << rfl << sync;
 

@@ -288,7 +288,7 @@ namespace broker {
 				ERRm();
 			}
 
-			index__ Index = lst::E_LIST::CreateEntry();
+			index__ Index = list::CreateEntry();
 
 			Objets.Write( Pointeur, Index );
 
@@ -297,7 +297,7 @@ namespace broker {
 		virtual void BROKERRemove( index__ Index )
 		{
 			delete Objets( Index );
-			lst::E_LIST::Remove( Index );
+			list::Remove( Index );
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
@@ -312,7 +312,7 @@ namespace broker {
 		//f Initialization.
 		void Init( void )
 		{
-			lst::E_LIST::Init();
+			list::Init();
 			Objets.Init();
 			module<t>::Init();
 		}
@@ -334,12 +334,12 @@ namespace broker {
 		virtual index__ BROKERNew( void )
 		{
 			Element_.Sync();
-			return lst::E_LIST::CreateEntry();
+			return list::CreateEntry();
 		}
 		virtual void BROKERRemove( index__ Index )
 		{
 			Element_( Index ).reset();
-			lst::E_LIST::Remove( Index );
+			list::Remove( Index );
 			Element_.Sync();
 		}
 		virtual void *BROKERObject( index__ Index )
@@ -356,7 +356,7 @@ namespace broker {
 		{
 			Element_.Sync();
 			Objets.reset( P );
-			lst::E_LIST::reset( P );
+			list::reset( P );
 		}
 		standard_module( void )
 		{
@@ -414,6 +414,9 @@ namespace broker {
 		index__ Index;
 	};
 
+	//t To by-pass a visual C++ bug.
+	typedef lst::E_LIST	list;
+
 	// Classe de gestion des liens entre module et objets.
 	class links
 	: private tym::E_MEMORY( link__ ),
@@ -428,7 +431,7 @@ namespace broker {
 		// Initialisation.
 		void Init( void )
 		{
-			lst::E_LIST::Init();
+			list::Init();
 			E_MEMORY( link__ )::Init();
 		}
 		object__ New(
@@ -439,7 +442,7 @@ namespace broker {
 			object__ IdObjet;
 			tym::row__ P;
 			
-			P = lst::E_LIST::CreateEntry();
+			P = list::CreateEntry();
 
 			if ( P.V > BROKER_TYPE_MAX )
 				ERRl();
@@ -455,7 +458,7 @@ namespace broker {
 		}
 		void Remove( object__ IdObjet )
 		{
-			lst::E_LIST::Remove( IdObjet.V );
+			list::Remove( IdObjet.V );
 		}
 		type__ Type( object__ IdObjet ) const
 		{
@@ -467,7 +470,7 @@ namespace broker {
 		}
 		tym::size__ Amount( void )
 		{
-			return lst::E_LIST::Amount();
+			return list::Amount();
 		}
 	};
 
