@@ -1,0 +1,26 @@
+
+<!-- $Id$ -->
+<content>
+  <section>
+    <para>The Epeios libraries are not dedicated to a special domain. Memory management, error handling and frontend/backend interaction are some of the features available. You can also handle sockets, multitasking, semaphores, pipes, etc., and various data structures like lists, stacks, queues, indexes, etc.</para>
+    <para xml:space="preserve">A big part of the libraries are written using the standard C(++) libraries, so this part should be portable on any system with a standard C++ compiler. Some other libraries are not written using the C(++) standard libraries, because the standard libraries do not support the needed features (sockets, pipes, multitasking, ...). This part of the Epeios libraries are portable under <link URL="http://www.gnu.org/gnu/linux-and-gnu.html" type="external">GNU</link>/<link URL="http://www.kernel.org/" type="external">Linux</link> and <link URL="http://www.microsoft.com/windows/" type="external">Windows</link>, and they are written so they are easily portable on other systems.</para>
+  </section>
+  <section>
+    <para>When the first libraries were written, nor a project which deals with them, nor a WEB site dedicated to them were expected (moreover, the WEB didn't exist at this time). The libraries were written because I need them during my studies in computer science, and then for some personnal work. As I noticed that the libraries became numerous and remain consistent each others, I've thought that they could probably be useful for other too. So, I've decide to publish them by creating the Epeios project and its WEB site.</para>
+    <para>I use the Epeios libraries every day, private and professionally, and the only thing I can say is, the more I use them, the more I like them, and I never found anything which was better, or even near as good as this libraries.</para>
+  </section>
+  <section>
+    <para>Originally, the Epeios project purpose was to publish the C++ libraries I've wrote, that is why it is mainly constituted of this C++ libraries. But, I consider now the Epeios project as a way to study and improve the underlying concepts of this libraries. So, they should now be considered only as one of the Epeios project issues.</para>
+    <para>Perhaps would I use another language in the future, but actually the C++ seems be a good choice because it is widespread and has some feature, such templates and cast handling, which make it easy to implements the Epeios concepts.</para>
+  </section>
+  <section>
+    <para>Althought this project claims to find and improve useful programming concepts, and to develop and maintain libraries which implements this concepts, it doesn't deal with pure theoritical problems. A new library is added to the project only because it is useful for some software. Once the new library completed and released, this library is then used in the software and eventually improved if necessary.</para>
+    <para>Some concepts of the Epeios project are well-known but not so often applied concepts, such as reusability, splitting of interface and treatment, ... Some other are more unusual, as the way of memory handling or flow handling. But all are good concepts which obvious advantages.</para>
+  </section>
+  <section>
+    <para>This project is an experimental project and it will stay experimental. This means that a library can be modified in several ways if this modifications improve the overall quality of this library, regardless if the new version of the library is compatible with the old one. Of course, the functionnalities remain the same, but the API can be modified by renaming the functions, or modifying the parameters of this functions, or by renaming the objects, or splitting them, or merging them, ... . Libraries themselves can be splitted or merged or renamed.</para>
+    <para>You should think that this prevents the use of this libraries, but this is not the case. First, more longer a library exists, less chances are that it would be modified, or that this modification being important, because this library has proven its efficiency. Mostly only recent libraries, which, therefore, are not used in many software, are subject to modifications. Second, thanks to the way the Epeios libraries are made, and the casting system of the C++, once the compilation errors introduced by the new version of the library fixed (a bunch of 'find/replace' are often enough), the software works as well as before (most often better). Third, if rewritting of code is necessary to adapt the software to the new version of the library, this is rapidely done if the software is well-written. Moreover, this is a good exercice to keep in mind how a program works.</para>
+    <para>In general, if the use of a modified library involves too much work to adapt a program to it, then this program is not well-written and probably hardly maintenable and improvable. You should then seriously consider to review and rewrite the code if you would avoid some serious trouble with it in the future.</para>
+    <para>It's better to improve a program gradually rather than invest lot of money an time to rewrite them after several years to fit it to latest technologies, with uncertain result.</para>
+  </section>
+</content>
