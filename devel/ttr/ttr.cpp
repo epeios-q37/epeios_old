@@ -1,7 +1,7 @@
 /*
 	'ttr' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'ttr' header file ('ttr.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
