@@ -1,5 +1,9 @@
 $Id$
 
+--------
+20050109
+--------
+
 GENERAL:
 - (23/05/04) Creation of the 'FLF' library.
 - (24/05/04) Creation of the 'CIO' library.
