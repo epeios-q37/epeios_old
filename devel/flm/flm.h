@@ -163,11 +163,24 @@ namespace flm {
 		{
 			Ouvrir_();
 #ifdef CPE__UNIX
-			if ( lseek( FD_, Position, 0 ) == -1 )
+			ssize_t Amount;
+
+			if ( lseek( FD_, Position, SEEK_SET ) == -1 )
 				ERRd();
 				
-			if ( read( FD_, Tampon, Nombre ) != Nombre )
-				ERRd();
+			while( Nombre > 0 ) {
+				
+				if ( Nombre <= SSIZE_MAX )
+					Amount = read( FD_, Tampon, Nombre );
+				else
+					Amount = read( FD_, Tampon, SSIZE_MAX );
+					
+				if ( Amount <= 0 )
+					ERRd();
+					
+				Nombre -= Amount;
+				(char *)Tampon += Amount;
+			}
 #else
 			if ( Stream_.seekg( Position ).fail() )
 				ERRd();
@@ -188,11 +201,24 @@ namespace flm {
 		{
 			Ouvrir_();
 #ifdef CPE__UNIX
-			if ( lseek( FD_, Position, 0 ) == -1 )
+			ssize_t Amount;
+
+			if ( lseek( FD_, Position, SEEK_SET ) == -1 )
 				ERRd();
+
+			while( Nombre > 0 ) {
+			
+				if ( Nombre <= SSIZE_MAX )
+					Amount = write( FD_, Tampon, Nombre );
+				else
+					Amount = write( FD_, Tampon, SSIZE_MAX );
 				
-			if ( write( FD_, Tampon, Nombre ) != Nombre )
-				ERRd();
+				if ( Amount < 0 )
+					ERRd();
+					
+				(char *)Tampon += Amount;
+				Nombre -= Amount;
+			}
 #else
 			if ( Stream_.seekp( Position ).fail() )
 				ERRd();
