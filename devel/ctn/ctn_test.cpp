@@ -88,7 +88,7 @@ ERREpilog
 void Classer( E_MCONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
-	bso__bool Swap = true;
+	bso::bool__ Swap = true;
 	str::string S1;
 	E_MITEM( str::string_ ) S2;
 	E_MITEM( str::string_ ) EListe;

@@ -258,19 +258,25 @@ namespace ctn {
 		} ctn_S_; //pour ne pas risquer d'ambigüité.
 		/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
 		si 'EstVide()' est à faux. */
-		item_base_volatile__( void )
-		: Pilote_( ctn_S_.Pilote_ )
+		void reset( bso::bool__ P = true )
 		{
-			Pilote_.reset( false );
+			if ( P ) {
+				Sync();
+			}
+
+			Pilote_.reset( P );
 
 			Conteneur_ = NULL;
 			Mode_ = mdr::mReadOnly;
 		}
+		item_base_volatile__( void )
+		: Pilote_( ctn_S_.Pilote_ )
+		{
+			reset( false );
+		}
 		~item_base_volatile__( void )
 		{
-			Sync();
-
-			Pilote_.reset( true );
+			reset( true );
 		}
 	/*	tym::row__ ctn_Position( void )
 		{
@@ -325,7 +331,6 @@ namespace ctn {
 	};
 
 	template <class st, typename r> class item_base_const__
-	// La fonction 'Init()' est héritée de t
 	{
 	private:
 		bool Vide_( void )
@@ -351,18 +356,24 @@ namespace ctn {
 		} ctn_S_; //pour ne pas risquer d'ambigüité.
 		/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
 		si 'EstVide()' est à faux. */
-		item_base_const__( void )
-		: Pilote_( ctn_S_.Pilote_ )
+		void reset( bso::bool__ P = true )
 		{
-			Pilote_.reset( false );
+			if ( P ) {
+				Sync();
+			}
+
+			Pilote_.reset( P );
 
 			Conteneur_ = NULL;
 		}
+		item_base_const__( void )
+		: Pilote_( ctn_S_.Pilote_ )
+		{
+			reset( false );
+		}
 		~item_base_const__( void )
 		{
-			Vider();
-
-			Pilote_.reset( true );
+			reset( true );
 		}
 	/*	mbs__position Position( void )
 		{
@@ -381,7 +392,7 @@ namespace ctn {
 			Pilote_.Init( Conteneur.Dynamics );
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
-		void Caler(	r Position )
+		void Sync( r Position )
 		{
 			if ( *Pilote_.Index() != *Position )
 			{
@@ -395,7 +406,7 @@ namespace ctn {
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
-		void Vider( void )
+		void Sync( void )
 		{
 			Vider_();
 		}
@@ -412,30 +423,31 @@ namespace ctn {
 	{
 	private:
 		t Objet_;
-		void BaseConstructeur_( void )
+	public:
+		void reset( bso::bool__ P = true )
 		{
+			item_base_volatile__< item_mono_statique__<t::s>, r >::reset( P );
+				
 			Objet_.reset( false );
 
 			Objet_.plug( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::Pilote_ );
 		}
-	public:
 		volatile_mono_item( void )
 		: Objet_( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::ctn_S_ )
 		{
-			BaseConstructeur_();
+			reset( false );
 		}
 		// Remplace la fonction d'initialisation. 
 		volatile_mono_item( basic_container_< item_mono_statique__< typename t::s >, r > &Conteneur )
 		: Objet_( item_base_volatile__< item_mono_statique__< typename t::s >, r >::ctn_S_ )
 		{
-			BaseConstructeur_();
+			reset( false );
 
-			item_base_volatile__< item_mono_statique__< typename t::s >, r >::Init( Conteneur );
+			item_base_volatile__< item_mono_statique__<t::s >, r >::Init( Conteneur );
 		}
 		virtual ~volatile_mono_item( void )
 		{
-			Sync();
-			Objet_.reset( false );
+			reset( true );
 		}
 		volatile_mono_item &operator =( const volatile_mono_item &O )
 		{
@@ -462,17 +474,25 @@ namespace ctn {
 	private:
 		t Objet_;
 	public:
-		const_mono_item( void )
-		: Objet_( item_base_const__< item_mono_statique__< typename_ t::s >, r >::ctn_S_ )
+		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				Sync();
+			}
+
+			item_base_const__< item_mono_statique__<t::s >, r >::reset( P );
 			Objet_.reset( false );
 
 			Objet_.plug( item_base_const__< item_mono_statique__< typename_ t::s >, r >::Pilote_ );
 		}
+		const_mono_item( void )
+		: Objet_( item_base_const__< item_mono_statique__< typename_ t::s >, r >::ctn_S_ )
+		{
+			reset( false );
+		}
 		virtual ~const_mono_item( void )
 		{
-			Vider();
-			Objet_.reset( false );
+			reset( true );
 		}
 		const_mono_item &operator =( const const_mono_item &O )
 		{
@@ -481,7 +501,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Caler( Position );
+			Sync( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
@@ -718,38 +738,41 @@ namespace ctn {
 	{
 	private:
 		t Objet_;
-		void BaseConstructeur_( void )
+	public:
+		mmm::multimemory_ Multimemoire;
+		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				Sync();
+			}
+
+			item_base_volatile__< item_multi_statique__<t::s>, r >::reset( P );
+
 			Objet_.reset( false );
 			Multimemoire.reset( false );
 
 			Multimemoire.plug( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
 			Objet_.plug( Multimemoire );
 		}
-	public:
-		mmm::multimemory_ Multimemoire;
 		volatile_multi_item( void )
 		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
 		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
 		{
-			BaseConstructeur_();
+			reset( false );
 		}
 		// Remplace la fonction d'initialisation.
 		volatile_multi_item( basic_container_< item_multi_statique__< typename t::s >, r > &Conteneur )
 		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
 		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
 		{
-			BaseConstructeur_();
+			reset( false );
 
 			Multimemoire.Init();
 			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Conteneur );
 		}
 		~volatile_multi_item( void )
 		{
-			Sync();
-
-			Objet_.reset( false );
-			Multimemoire.reset( true );
+			reset( true );
 		}
 		//f Initialize with container 'Container', in mode 'Mode'.
 		void Init(
@@ -786,22 +809,29 @@ namespace ctn {
 		t Objet_;
 	public:
 		mmm::multimemory_ Multimemoire;
-		const_multi_item( void )
-		: Objet_( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
-		  Multimemoire( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
+		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				Sync();
+			}
+
+			item_base_const__< item_multi_statique__<t::s>, r >::reset(  P) ;
+
 			Objet_.reset( false );
-			Multimemoire.reset( false );
+			Multimemoire.reset( P );
 
 			Multimemoire.plug( item_base_const__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
 			Objet_.plug( Multimemoire );
 		}
+		const_multi_item( void )
+		: Objet_( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
+		  Multimemoire( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
+		{
+			reset( false );
+		}
 		virtual ~const_multi_item( void )
 		{
-			Vider();
-			
-			Objet_.reset( false );
-			Multimemoire.reset( true );
+			reset( true );
 		}
 		//f Initializing with container 'Container'.
 		void Init( const basic_container_< item_multi_statique__<typename t::s>, r > &Container )
@@ -816,7 +846,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Caler( Position );
+			Sync( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.

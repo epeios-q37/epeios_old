@@ -1,10 +1,14 @@
 $Id$
 
 GENERAL:
-- Adding 'CCH'
+- Adding 'CCH'.
+- Renaming to 'Sync' where needed.
 
 BSO:
 - Adding the 'sign__' type.
+
+CTN:
+- Adding 'reset()' méthod to the item-related objects.
 
 STR:
 - Adding missing 'const' qualifier.

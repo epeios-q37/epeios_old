@@ -50,8 +50,8 @@ ERREpilog
 void Essai( int argc, char *argv[] )
 {
 ERRProlog
-	ctn::E_MCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
-	cch::E_RO_CACHES___( mytype__, test__, epeios::row__ ) ROCaches;
+	ctn::E_XMCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
+	cch::E_RW_CACHES___( mytype__, test__, epeios::row__ ) RWCaches;
 	int rnd;
 ERRBegin
 
@@ -59,20 +59,20 @@ ERRBegin
 
 	Container.Allocate( 10 );
 
+	RWCaches.Init( Container, 80 );
+
 	for( int i = 0; i < 10; i++ ) {
-		Container( i ).Allocate( 100 );
 		for( int j = 0; j < 100;  j++ )
-			Container( i ).Write( j + i * 100, j );
+			RWCaches.Add( j + i * 100, i );
 	}
 
 	Container.Sync();
 
-	ROCaches.Init( Container, 80 );
 
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 1000;
 
-		fout << (unsigned long)rnd << ": " << (unsigned long)ROCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
+		fout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -89,12 +89,11 @@ ERRProlog
 	int rnd;
 ERRBegin
 	Bunch.Init();
-	Bunch.Allocate( 101 );
 
 	RWCache.Init( Bunch, 10 );
 
 	for( i = 0; i <= 100; i++ )
-		RWCache.Put( i, i );
+		RWCache.Add( i );
 
 	for( i = 0; i <= 100; i++ )
 		fout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
