@@ -59,7 +59,7 @@ public:
 
 using namespace bitbch;
 
-#ifdef BITBCH_BUFEER_SIZE
+#ifdef BITBCH_BUFFER_SIZE
 #	define BUFFER_SIZE	BITBCH_BUFFER_SIZE
 #else
 #	define BUFFER_SIZE	5000
@@ -80,7 +80,7 @@ void bitbch::And(
 		R.Allocate( O1.Amount() );
 
 	epeios::row_t__ Row = 0;
-	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
+	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
 
 	while ( Row < Limit ) {
 		R.Table.Store( O1.Table( Row ) & O2.Table( Row ), Row );
@@ -127,7 +127,7 @@ void bitbch::And(
 
 		And_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
 
-		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Amount, Current );
 
 		Current += Amount;
 	}
@@ -195,7 +195,7 @@ void bitbch::Or(
 
 		Or_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
 
-		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Amount, Current );
 
 		Current += Amount;
 	}
@@ -264,7 +264,7 @@ void bitbch::XOr(
 
 		XOr_( Buffer, Buffer + BUFFER_SIZE, Amount, Buffer + 2 * BUFFER_SIZE );
 
-		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Current, Amount );
+		R.Table.Store( Buffer + 2 * BUFFER_SIZE, Amount, Current );
 
 		Current += Amount;
 	}
@@ -319,7 +319,7 @@ void bitbch::Not(
 
 		Not_( Buffer, Amount, Buffer + BUFFER_SIZE );
 
-		R.Table.Store( Buffer + BUFFER_SIZE, Current, Amount );
+		R.Table.Store( Buffer + BUFFER_SIZE, Amount, Current );
 
 		Current += Amount;
 	}

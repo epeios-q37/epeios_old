@@ -33,12 +33,42 @@
 #include "bitbch.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
+
+#define SIZE	32
+
+void Fill( bitbch::E_BIT_BUNCH_ &B )
+{
+	epeios::row__ Row = B.First();
+
+	while ( Row != NONE ) {
+		B.Store( ( rand() % 2 ? true : false ), Row );
+		
+		Row = B.Next( Row );
+	}
+}
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	bitbch::E_BIT_BUNCH BB1, BB2, BBR;
 ERRBegin
+//	tol::InitializeRandomGenerator();
+
+	BB1.Init();
+	BB1.Allocate( SIZE );
+	Fill( BB1 );
+	cio::cout << BB1 << txf::nl << txf::sync;
+
+	BB2.Init();
+	BB2.Allocate( SIZE );
+	Fill( BB2 );
+	cio::cout << BB2 << txf::nl << txf::sync;
+
+	BBR.Init();
+	
+	bitbch::XOr( BB1, BB2, BBR );
+	cio::cout << BBR << txf::nl << txf::sync;
 ERRErr
 ERREnd
 ERREpilog
@@ -49,7 +79,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << BITBCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << BITBCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -62,16 +92,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << BITBCHTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << BITBCHTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << BITBCHTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << BITBCHTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

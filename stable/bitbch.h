@@ -87,12 +87,12 @@ namespace bitbch {
 	private:
 		static receptacle__ Offset_( r Position )
 		{
-			return (receptacle__)( *Position % BITBCH__RECEPTACLE_SIZE_IN_BYTES );
+			return (receptacle__)( *Position % BITBCH__RECEPTACLE_SIZE_IN_BITS );
 		}
 		// retourne l'offset correpondant à 'Position'
 		static r Indice_( r Position )
 		{
-			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BYTES;
+			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BITS;
 		}
 		// retourne l'indice correspondant à 'Position'
 		static bso::ubyte__ Masque_( r Position )
@@ -126,7 +126,7 @@ namespace bitbch {
 	private:
 		tym::size__ Convert_( tym::size__ Amount )
 		{
-			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BYTES + 1 : 0;
+			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 : 0;
 		}
 		bso::bool__ Lire_( r Position ) const
 		{
