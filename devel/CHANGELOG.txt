@@ -4,6 +4,7 @@ GENERAL:
 - (23/05/04) Creation of the 'FLF' library.
 - (24/05/04) Creation of the 'CIO' library.
 - (24/05/04) Adapting to changes in 'FLW' library.
+- (24/05/04) Adapting to changes in 'TXF' library.
 
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.

@@ -104,7 +104,7 @@ namespace xtf {
 			return !Nombre_;
 		}
 		// L'entree de base.
-		flw::iflow___ *Entree_;
+		flw::iflow__ *Entree_;
 		// Un petit cache. Taille doit être < 256.
 		flw::datum__ Cache_[255];
 		// Position dans le cache
@@ -154,7 +154,7 @@ namespace xtf {
 		}
 		//f Initialization with 'Flow'..
 		void Init(
-			flw::iflow___ &IStream )
+			flw::iflow__ &IStream )
 		{
 			Ligne_ = Colonne_ = 1;
 			Position_ = Nombre_ = 0;

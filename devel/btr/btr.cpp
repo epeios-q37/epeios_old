@@ -199,7 +199,7 @@ mbs__position abb_arbre_binaire_::LireDeFlot( flo_entree_portable_ &Flot )
 
 
 static void AfficherBlancs_(
-	txf::text_oflow___ &Flot,
+	txf::text_oflow__ &Flot,
 	bso::ulong__ Nombre )
 {
 	do {
@@ -210,7 +210,7 @@ static void AfficherBlancs_(
 //f Affiche la structure de l'arbre dans 'Flot'. A des fins de deboggage.
 void btr::_nodes_manager_::PrintStructure(
 	row_t__ Racine,
-	txf::text_oflow___ &Flot ) const
+	txf::text_oflow__ &Flot ) const
 {
 	bso::ulong__ Niveau = 0;
 	bso::bool__ Left = false, Right = false;

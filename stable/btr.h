@@ -1,6 +1,6 @@
 /*
 	Header for the 'btr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -234,7 +234,7 @@ namespace btr {
 		}
 		void PrintStructure(
 			row_t__ Racine,
-			txf::text_oflow___ &Flot ) const;
+			txf::text_oflow__ &Flot ) const;
 		//f Return true if 'Node' has a child.
 		bso::bool__ HasChild( row_t__ Node ) const
 		{
@@ -539,7 +539,7 @@ namespace btr {
 		//f Print to 'OFfow' the structure of the tree whith root 'Root'.
 		void PrintStructure(
 			r Root,
-			txf::text_oflow___ &OFlow ) const
+			txf::text_oflow__ &OFlow ) const
 		{
 			Nodes.PrintStructure( *Root, OFlow );
 		}
