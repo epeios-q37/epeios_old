@@ -6,6 +6,8 @@ GENERAL:
 
 BSO:
 - Adding the 'sign__' type.
+- Adding the portable ('p_...') types.
+- Removing old unused code.
 
 CPE:
 - Adding 'CPE__USE_[VC|GCC]_WORKAROUND'.

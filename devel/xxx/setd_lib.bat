@@ -83,8 +83,8 @@ toupper "xxx	&%LNM%	" >%CRP%
 echo # >>%CRP%
 tolower "xxx	&%LNM%	" >>%CRP%
 echo # >>%CRP%
-toupper "COORDINATOR	" >>%CRP%
-echo &Claude L. SIMON >>%CRP%
+toupper "COORDINATOR	&" >>%CRP%
+echo Claude SIMON >>%CRP%
 echo # >>%CRP%
 type %SRC%\%ID%.crp >>%CRP%
 

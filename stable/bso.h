@@ -1,8 +1,8 @@
 /*
-  Header for the 'bso' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'bso' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	BSO_VERSION	"$Revision$"	
 
-#define BSO_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define BSO_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &BSOTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -67,215 +67,9 @@ namespace bso {
 	//t Boolean.
 	typedef bool bool__;
 
-#if 0 // to delete ?
-	template <class T> class bso__pointeur
-	{
-		T *Objet_;
-		// l'objet
-	public:
-		bso__pointeur( T *Objet = NULL )
-		{
-			Objet_ = Objet;
-		}
-		operator T *( void ) const
-		{
-			return Objet_;
-		}
-		// conversion
-	#pragma warning( disable: 4284 )
-		T *operator ->( void ) const
-		{
-			return Objet_;
-		}
-	#pragma warning( default: 4284 )
-		T *Valeur( void ) const
-		{
-			return Objet_;
-		}
-	};
+	//t A portable boolean;
+	typedef bool__ p_bool__;
 
-	template <class t> acs_ascii_ostream_ &operator <<(
-		acs_ascii_ostream_ &OStream,
-		const bso__pointeur<t> &P )
-	{
-		return OStream << *P;
-	}
-
-	template <class t> acs_ascii_istream_ &operator >>(
-		acs_ascii_istream_ &IStream,
-		bso__pointeur<t> &P )
-	{
-		return IStream >> *P;
-	}
-#endif
-
-
-#if 0	// to delete ?
-	/*****************************************/
-	/* COMPORTEMENT COMMUN A TOUT LES OBJETS */
-	/*****************************************/
-
-	template <class T> class bso__base
-	{
-	private:
-		T Objet_;
-		// l'objet proprement dit
-	protected:
-		T &Objet( void )
-		{
-			return Objet_;
-		}
-		// retourne l'objet
-		const T &Objet( void ) const
-		{
-			return Objet_;
-		}
-		// retourne l'objet
-		T &Objet( T Objet )
-		{
-			return Objet_ = Objet;
-		}
-		// initialise l'objet
-	public:
-		bso__base( T Objet )
-		{
-			Objet_ = Objet;
-		}
-		// conversion
-	/*	bso__base( T Valeur )
-		{
-			Objet_ = Valeur;
-		}
-	*/	// constructeur
-		T operator +( void ) const
-		{
-			return Objet_;
-		}
-		// addition
-		T operator -( void ) const
-		{
-			return (T)-Objet_;
-		}
-		// soustraction
-		T operator ++( void )
-		{
-			return ++Objet_;
-		}
-		// incrémentation préfixée
-		T operator --( void )
-		{
-			return --Objet_;
-		}
-		// decrémentation préfixée
-		T operator ++( int )
-		{
-			return Objet_++;
-		}
-		/* incrémentation postfixée
-		si si, c'est bien comme ça que ca doit être déclaré! */
-		T operator --( int )
-		{
-			return Objet_--;
-		}
-		/* decrémentation postfixée
-		si si, c'est bien comme ça que ca doit être déclaré! */
-		T operator +=( T Valeur )
-		{
-			return Objet_ = Objet_ + Valeur;
-		}
-		// addition et affectation
-		T operator -=( T Valeur )
-		{
-			return Objet_ = Objet_ - Valeur;
-		}
-		// soustraction et affectation
-		T operator *=( T Valeur )
-		{
-			return Objet_ = Objet_ * Valeur;
-		}
-		// multiplication et affectation
-		T operator /=( T Valeur )
-		{
-			return Objet_ = Objet_ / Valeur;
-		}
-		// division et affectation
-	/*	T operator !( void ) const
-		{
-			return !Objet_;
-		}
-		// inverseur
-		operator class bso__bool( void ) const
-		{
-			return Objet() != 0;
-		}
-		// convertit en booleen
-	*/
-		operator T( void )
-		{
-			return Objet_;
-		}
-		T Valeur( void )
-		{
-			return Objet_;
-		}
-	};
-
-	/***********************************/
-	/* COMPORTEMENT PROPRE AUX ENTIERS */
-	/***********************************/
-
-	template <class T> class bso__base_entier
-	: public bso__base<T>
-	{
-	public:
-		bso__base_entier( T Valeur ) : bso__base<T>( Valeur ) {}
-		// affectation
-		bso__base_entier( const bso__base_entier &Valeur ) : bso__base<T>( Valeur ) {}
-		// duplication
-		T operator %=( T Valeur )
-		{
-			return Objet( (T)( Objet() % Valeur ) );
-		}
-		// modulo et affectation
-		T operator &=( T Valeur )
-		{
-			return Objet( Objet() & Valeur );
-		}
-		// ET bit à bit ert affectation
-		T operator |=( T Valeur )
-		{
-			return Objet( Objet() | Valeur );
-		}
-		// OU bit à bit et affectation
-		T operator ^=( T Valeur )
-		{
-			return Objet( Objet() ^ Valeur );
-		}
-		// OU EXCLUSIF bit à bit et affectation
-		T operator <<=( T Valeur )
-		{
-			return Objet( (T)( Objet() << Valeur ) );
-		}
-		// decalage à gauche et affectation
-		T operator >>=( T Valeur )
-		{
-			return Objet( (T)( Objet() >> Valeur ) );
-		}
-		// decalage à droite et affectation
-		T operator ~( void ) const
-		{
-			return (T)~Objet();
-		}
-		// inversion bit à bit
-		friend inline acs_ascii_ostream_ &operator <<(
-			acs_ascii_ostream_ &Stream,
-			bso__base_entier O );
-		friend inline acs_ascii_istream_ &operator >>(
-			acs_ascii_istream_ &Stream,
-			bso__base_entier &O );
-	};
-
-#endif
 
 	//d Maximal value of a 'sbyte__'.
 	#define BSO_SBYTE_MAX		SCHAR_MAX
@@ -286,6 +80,9 @@ namespace bso {
 
 	//t Signed byte.
 	typedef signed char	sbyte__;
+
+	//t Portable signed byte.
+	typedef sbyte__ p_sbyte__;
 
 
 	//d Maximal value of a 'ubyte__'.
@@ -298,6 +95,32 @@ namespace bso {
 	//t Unsigned byte.
 	typedef unsigned char ubyte__;
 
+	//t Portable unsigned byte.
+	typedef ubyte__ p_ubyte__;
+
+	// Portable short. Internal use only.
+	template <typename t> class p_short__
+	{
+	private:
+		t Op_;
+	public:
+		p_short__( t Op )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			P[0] = Op & 0xff;
+			P[1] = ( Op >> 8 ) & 0xff;
+		}
+		operator t( void )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			return P[0] | ( P[1] << 8 );
+		}
+	};
+
+
+
 	//d Maximal value of a 'sshort__'.
 	#define BSO_SSHORT_MAX	SHRT_MAX
 	//d Minimal value of a 'sshort__'.
@@ -308,6 +131,15 @@ namespace bso {
 	// Signed short.
 	typedef signed short sshort__;
 
+	//c Portable signed short.
+	class p_sshort__
+	: public p_short__<sshort__>
+	{
+	public:
+		p_sshort__( sshort__ Op )
+		: p_short__<sshort__>( Op )
+		{}
+	};
 
 	//d Maximal value of a 'ushort__'.
 	#define BSO_USHORT_MAX	USHRT_MAX
@@ -318,6 +150,40 @@ namespace bso {
 
 	//t Unsigned short
 	typedef unsigned short ushort__;
+
+	//c Portable unsigned short.
+	class p_ushort__
+	: public p_short__<ushort__>
+	{
+	public:
+		p_ushort__( ushort__ Op )
+		: p_short__<ushort__>( Op )
+		{}
+	};
+
+	// Portable long. Internal use only.
+	template <typename t> class p_long__
+	{
+	private:
+		t Op_;
+	public:
+		p_long__( t Op )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			P[0] = Op & 0xff;
+			P[1] = ( Op >> 8 ) & 0xff;
+			P[2] = ( Op >> 16 ) & 0xff;
+			P[3] = ( Op >> 24 ) & 0xff;
+		}
+		operator t( void )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			return P[0] | ( P[1] << 8 ) | ( P[2] << 16 ) | ( P[1] << 24 );
+		}
+	};
+
 
 
 	//d Maximal value of a 'slong__'.
@@ -330,6 +196,15 @@ namespace bso {
 	//t Signed long.
 	typedef signed long slong__;
 
+	//c Portable signed long.
+	class p_slong__
+	: public p_long__<slong__>
+	{
+	public:
+		p_slong__( slong__ Op )
+		: p_long__<slong__>( Op )
+		{}
+	};
 
 	//d Maximal value of a 'ulong__'.
 	#define BSO_ULONG_MAX	ULONG_MAX
@@ -341,6 +216,16 @@ namespace bso {
 	//t Unsigned long.
 	typedef unsigned long ulong__;
 
+	//c Portable unsigned long.
+	class p_ulong__
+	: public p_long__<ulong__>
+	{
+	public:
+		p_ulong__( ulong__ Op )
+		: p_long__<ulong__>( Op )
+		{}
+	};
+
 	//d Maximal value of a 'size__'.
 	#define BSO_BSIZE_MAX	UINT_MAX
 	//d Minimal value of a 'size__'.
@@ -351,6 +236,16 @@ namespace bso {
 
 	//t Size of a buffer.
 	typedef size_t bsize__;
+
+	//t The portable version of a buffer size.
+	class p_bsize__
+	: p_long__<bsize__>
+	{
+	public:
+		p_bsize__( bsize__ Op )
+			: p_long__<bsize__>( Op )
+		{}
+	};
 
 	//t Short-sized float.
 	typedef float sfloat__;
@@ -368,8 +263,14 @@ namespace bso {
 	//t Character
 	typedef char char__;
 
+	//t A portable character.
+	typedef char__ p_char__;
+
 	//t A sign ( -(1) +(1) 0 ).
 	typedef sbyte__ sign__;
+
+	//t A portable sign.
+	typedef sign__ p_sign__;
 }
 
 /*$END$*/
