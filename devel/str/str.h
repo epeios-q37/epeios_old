@@ -1,0 +1,328 @@
+/*
+  Header for the 'str' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+//	$Id$
+
+#ifndef STR__INC
+#define STR__INC
+
+#define STR_NAME		"STR"
+
+#define	STR_VERSION	"$Revision$"	
+
+#define STR_OWNER		"the Epeios project (http://www.epeios.org/)"
+
+#include "ttr.h"
+
+extern class ttr_tutor &STRTutor;
+
+#if defined( XXX_DBG ) && !defined( STR_NODBG )
+#define STR_DBG 
+#endif
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (simon@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
+
+/******************************************************************************/
+				  /* do not modify anything above this limit */
+				  /*			  unless specified			 */
+				  /*******************************************/
+/*$BEGIN$*/
+
+#include "err.h"
+#include "txf.h"
+#include "set.h"
+
+//c A string.
+class str_string_
+: public SET_( bso__char )
+{
+private:
+public:
+	class s
+	: public SET_( char )::s {};
+	str_string_( s &S )
+	: SET_( char )( S )
+	{}
+	void reset( bool P = true )
+	{
+		SET_( char )::reset( P );
+	}
+	void plug( MEMORY_DRIVER_ &Driver )
+	{
+		SET_( char )::plug( Driver );
+	}
+	void Init( void )
+	{
+		SET_( char )::Init();
+	}
+	str_string_ &operator =( const str_string_ &O )
+	{
+		SET_( char )::operator =( O );
+
+		return *this;
+	}
+	void plug( mmm_multimemory_ &M )
+	{
+		SET_( char )::plug( M );
+	}
+	str_string_ &operator =( const char *Chaine )
+	{
+		Init();
+		SET_( char )::WriteAndAdjust( Chaine, strlen( Chaine ) );
+
+		return *this;
+	}
+	//f Write 'String' at 'Position'.
+	void Write(
+		const char *String,
+		POSITION__ Position = 0 )
+	{
+		SET_( char )::WriteAndAdjust( String, strlen( String ), Position );
+	}
+	//f Write 'Amount' char from 'String' at 'Position'.
+	void Write(
+		const char *Buffer,
+		BSIZE__ Amount,
+		POSITION__ Position )
+	{
+		SET_( char )::Write( Buffer, Amount, Position );
+	}
+
+	/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
+	void Write(
+		const str_string_ &Source,
+		SIZE__ Quantity,
+		POSITION__ Position = 0,
+		POSITION__ Offset = 0 )
+	{
+		SET_( char )::Write( Source, Quantity, Position, Offset );
+	}
+
+	//f Write 'C' at 'Position'.
+	void Write(
+		char C,
+		POSITION__ Position)
+	{
+		SET_( char )::Write( C, Position );
+	}
+	//f Add 'String' and return position where added.
+	POSITION__ Add( const char *String )
+	{
+		return SET_( char )::Add( String, strlen( String ) );
+	}
+	//f Add 'Amount' char from 'String'. Return position wherer added.
+	POSITION__ Add(
+		const char *String,
+		BSIZE__ Amount )
+	{
+		return SET_( char )::Add( String, Amount );
+	}
+	//f Add 'C'. Return position where added.
+	POSITION__ Add( char C )
+	{
+		return SET_( char )::Add( C );
+	}
+	//f Add 'Sring'. Return position where added.
+	POSITION__ Add( const str_string_ &String )
+	{
+		return SET_( char )::Add( String );
+	}
+	//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
+	char *Convert(
+		POSITION__ Position = 0,
+		SIZE__ Amount = TYM_MAX_SIZE ) const;
+	//f Filter out the 'Model' charactere.
+	void FilterOut( char Model );
+	//f Replace the 'Old' char with the 'New' one.
+	void Replace(
+		char Old,
+		char New );
+	//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
+	POSITION__ Search(
+		const str_string_ &S,
+		POSITION__ Start = 0 ) const;
+	//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'NONE' if no occurence.
+	POSITION__ Search(
+		char C,
+		POSITION__ Start = 0 ) const;
+	/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
+	an error or 'NONE' when no error. */
+	bso__ulong ToUL( POSITION__ &ErrP = *(POSITION__ *)NULL );
+};
+
+//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.
+flw::oflow___ &operator <<(
+	flw::oflow___ &OStream,
+	const str_string_ &String );
+
+//f Append all the characters from 'IStream' to 'String' until encounter a 'NULL' character.
+flw::iflow___ &operator >>(
+	flw::iflow___ &IStream,
+	str_string_ &String );
+
+
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &OStream,
+	const str_string_ &String );
+
+//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2' and a length of 'Amount'.
+inline bso__sbyte STRCompare(
+	const str_string_ &S1,
+	const str_string_ &S2,
+	POSITION__ BeginS1,
+	POSITION__ BeginS2,
+	SIZE__ Amount )
+{
+	return SETCompare( S1,S2, BeginS1 ,BeginS2 , Amount );
+}
+
+//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2'.
+inline bso__sbyte STRCompare(
+	const str_string_ &S1,
+	const str_string_ &S2,
+	POSITION__ BeginS1 = 0,
+	POSITION__ BeginS2 = 0 )
+{
+	bso__sbyte Resultat;
+	SIZE__ T1 = S1.Amount() - BeginS1, T2 = S2.Amount() - BeginS2;
+
+	if ( ( Resultat = STRCompare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
+		return Resultat;
+	else
+		return T1 == T2 ? 0 : T1 > T2 ? 1 : -1;
+}
+
+inline bso__bool operator ==(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return !STRCompare( S1, S2 );
+}
+
+inline bso__bool operator !=(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return STRCompare( S1, S2 ) != 0;
+}
+
+inline bso__bool operator <(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return STRCompare( S1, S2 ) < 0;
+}
+
+inline bso__bool operator <=(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return STRCompare( S1, S2 ) <= 0;
+}
+
+inline bso__bool operator >(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return STRCompare( S1, S2 ) > 0;
+}
+
+inline bso__bool operator >=(
+	const str_string_ &S1,
+	const str_string_ &S2 )
+{
+	return STRCompare( S1, S2 ) >= 0;
+}
+
+class str_string
+: public str_string_
+{
+public:
+	str_string_::s static_;
+	str_string( void )
+	: str_string_( static_ )
+	{
+		reset( false );
+	}
+	str_string( const char *S )
+	: str_string_( static_ )
+	{
+		reset( false );
+
+		str_string_::Init();
+		str_string_::Write( S );
+	}
+	str_string( char C )
+	: str_string_( static_ )
+	{
+		reset( false );
+
+		str_string_::Init();
+		str_string_::Add( C );
+	}
+	~str_string( void )
+	{
+		reset( true );
+	}
+	str_string &operator =( const str_string &S )
+	{
+		str_string_::operator =( S );
+
+		return *this;
+	}
+	str_string &operator =( const str_string_ &S )
+	{
+		str_string_::operator =( S );
+
+		return *this;
+	}
+	str_string &operator =( const char *O )
+	{
+		str_string_::operator =( O );
+
+		return *this;
+	}
+};
+
+
+//f Convert 'String' to upper case.
+void STRToUpper( str_string_ &String );
+
+//f Convert 'String' to lower case.
+void STRToLower( str_string_ &String );
+
+/*$END$*/
+				  /********************************************/
+				  /* do not modify anything belove this limit */
+				  /*			  unless specified		   	  */
+/******************************************************************************/
+
+#endif
