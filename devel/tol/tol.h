@@ -722,9 +722,6 @@ namespace tol {
 		}
 		t *operator =( t *P )
 		{
-			if ( P == NULL )
-				ERRa();
-
 			if ( P_ != NULL )
 				free( (void *)P_ );
 

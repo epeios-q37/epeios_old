@@ -1,7 +1,13 @@
 $Id$
 
 BCH:
-- (10/01/05) Fixing type probelm.
+- (10/01/05) Fixing type problem.
+
+TOL:
+- (20/01/05) Fixing empty 'pointer__' object copying problem.
+
+TYM:
+- (20/01/05) Fixing destructor calling problem.
 
 --------
 20050109

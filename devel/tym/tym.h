@@ -147,11 +147,11 @@ namespace tym {
 		//f Return the object at 'Position'.
 		const t Get( r Position ) const
 		{
-			t V;
+			epeios::datum__ V[sizeof( t )];
 
-			_Recall( *Position, 1, &V );
+			_Recall( *Position, 1, (t *)V );
 
-			return V;
+			return *(t *)V;
 		}
 		//f Store 'Amount' object in 'Buffer' at 'Position'.
 		void Store(
@@ -182,11 +182,11 @@ namespace tym {
 			r Position1,
 			r Position2 )
 		{
-			t O;
+			epeios::datum__ O[sizeof( t )];
 
-			O = Get( Position1 );
+			Recall( Position1, *(t *)O );
 			Store( Get( Position2 ), Position1 );
-			Store( O, Position2 );
+			Store( *(t *) O, Position2 );
 		}
 		//f Store at 'Position' 'Amount' objects.
 		void Store(
