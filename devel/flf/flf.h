@@ -168,11 +168,9 @@ namespace flf {
 			if ( ( NombreLus = fread( Tampon, 1, Desire, File_ ) ) != Desire )
 				if ( NombreLus < Minimum )
 					ERRd();
-
-			return NombreLus;
 		}
 
-		return _HandleAmount( Minimum, Tampon, Desire, Desire );
+		return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
 	}
 	public:
 		void reset( bool P = true )
