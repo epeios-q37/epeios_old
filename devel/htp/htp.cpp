@@ -206,6 +206,7 @@ htp::status htp::Parse(
 void htp::Post(
 	const str::string_ &URL,
 	const str::string_ &Host,
+	const str::string_ &Referrer,
 	const str::string_ &Accept,
 	const str::string_ &ContentType,
 	const str::string_ &Content,
@@ -213,6 +214,8 @@ void htp::Post(
 {
 	Flow << "POST " << URL << " HTTP/1.1" << NL;
 	Flow << "Host: " << Host << NL;
+	if ( Referrer.Amount() )
+		Flow << "Referrer: " << Referrer << NL;
 	Flow << "Accept: " << Accept << NL;
 	Flow << "Content-Type: " << ContentType << NL;
 	Flow << "Content-Length: " << Content.Amount() << NL;

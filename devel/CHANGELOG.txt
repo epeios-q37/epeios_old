@@ -53,6 +53,9 @@ FLW:
 - (17/07/04) Adding amount of data red/written handling.
 -			 Renaming some methods.
 
+HTP:
+- (18/07/04) little improvements.
+
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function
 

@@ -100,6 +100,10 @@ namespace htp {
 		{
 			ContentLength = 0;
 		}
+		void Init( void )
+		{
+			ContentLength = 0;
+		}
 	};
 
 	//f Parse 'flow' and fill 'Header' with it. Return status. 'Header' is only fill when return value is 'sOK'.
@@ -111,6 +115,7 @@ namespace htp {
 	void Post(
 		const str::string_ &URL,
 		const str::string_ &Host,
+		const str::string_ &Referrer,
 		const str::string_ &Accept,
 		const str::string_ &ContentType,
 		const str::string_ &Content,
