@@ -45,6 +45,8 @@ CTN:
 - Renaming 'Create()' into 'New()' to avoid mistakes.
 - Renaming 'Add' to 'Append'.
 - Adding features to avoid problems which appears when some 'Flush' call are missed.
+- Fixing mistake in 'Delete' method.
+- Adding some tests about flushing in debug context.
 
 CPE:
 - Adding detection of cygwin.

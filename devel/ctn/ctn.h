@@ -212,8 +212,8 @@ namespace ctn {
 		//f Delete 'Amount' entries from 'Position'.
 		void Delete(
 			r Position,
-			epeios::size__ Amount = 1,
-			aem::mode Mode = aem::mDefault )
+			epeios::size__ Amount,
+			aem::mode Mode )
 		{
 #ifdef CTN_DBG
 			test();
@@ -221,7 +221,7 @@ namespace ctn {
 			epeios::size__ CurrentExtent = amount_extent_manager_<r>::Extent();
 			epeios::size__ NewExtent = CurrentExtent - Amount;
 
-			Dynamics.DeleteWithoutReallocating( Position, CurrentExtent, Amount );
+			Dynamics.DeleteWithoutReallocating( *Position, CurrentExtent, Amount );
 			Statics.Store( Statics, NewExtent - *Position, *Position + Amount, Position );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( NewExtent, Mode ) ) {
@@ -686,6 +686,19 @@ namespace ctn {
 
 			return P;
 		}
+		//f Delete 'Amount' entries from 'Position'.
+		void Delete(
+			r Position,
+			epeios::size__ Amount = 1,
+			aem::mode Mode = aem::mDefault )
+		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::Delete( Position, Amount, Mode );
+		}
+
 	};
 
 	E_AUTO2( mono_container )
@@ -1054,6 +1067,18 @@ namespace ctn {
 			Allocate( P + Size );
 
 			return P;
+		}
+		//f Delete 'Amount' entries from 'Position'.
+		void Delete(
+			r Position,
+			epeios::size__ Amount = 1,
+			aem::mode Mode = aem::mDefault )
+		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::Delete( Position, Amount, Mode );
 		}
 	};
 
