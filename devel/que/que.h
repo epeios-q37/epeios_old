@@ -121,26 +121,26 @@ namespace que {
 
 	using namespace aem;
 
-	typedef bch::E_BUNCHt_( que::link__, row__ ) _bunch_;
+	typedef bch::E_BUNCHt_( que::link__, row__ ) _lbunch_;
 
 	//c A set lof links.
 	class links_
-	: public _bunch_
+	: public _lbunch_
 	{
 	public:
 		struct s
-		: _bunch_::s
+		: _lbunch_::s
 		{};
 		links_( s &S )
-		: _bunch_( S )
+		: _lbunch_( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			_bunch_::reset( P );
+			_lbunch_::reset( P );
 		}
 		links_ &operator =( const links_ &QL )
 		{
-			_bunch_::operator =( QL );
+			_lbunch_::operator =( QL );
 			return *this;
 		}
 		//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
@@ -168,12 +168,14 @@ namespace que {
 		//f Initialization.
 		void Init( void )
 		{
-			_bunch_::Init();
+			_lbunch_::Init();
 		}
 		void Initialize(
 			row_t__ Begin,
 			row_t__ End );
 	};
+	
+	AUTO( links )
 	
 	//c A queue. Use 'QUEUE_' rather than directly this.
 	template <typename r> class queue_

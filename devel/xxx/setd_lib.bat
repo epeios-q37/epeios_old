@@ -55,6 +55,7 @@ cd %DST%
 IF NOT EXIST %DST%\Makefile reveal --text-marker + %CRP% %SRC%\LibMakefile %DST%\Makefile
 IF NOT EXIST %DST%\%LNM%_test.cpp reveal --text-marker + %CRP% %SRC%\xxx_test.cpp %DST%\%LNM%_test.cpp
 IF NOT EXIST %DST%\%LNM%.dsp reveal --text-marker + %CRP% %SRC%\xxx.dsp %DST%\%LNM%.dsp
+reveal --text-marker + %CRP% %SRC%\lib_mcp.xml %DST%\%LNM%_mcp.xml
 
 reveal --text-marker + %CRP% %SRC%\xxx.cpp %TMP%\%LNM%.cpp
 reveal --text-marker + %CRP% %SRC%\xxx.h %TMP%\%LNM%.h

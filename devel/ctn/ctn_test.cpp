@@ -73,8 +73,8 @@ ERRBegin
 	C.Add( str::string( "hello" ) );
 #endif
 
-	stf::fout << C( 0 ) << txf::tab;
-	stf::fout << C( 1 ) << txf::nl;
+	stf::cout << C( 0 ) << txf::tab;
+	stf::cout << C( 1 ) << txf::nl;
 	
 ERRErr
 ERREnd
@@ -206,11 +206,11 @@ ERRBegin
 	P = CS.First();
 	
 	while( P != NONE ) {
-		stf::fout << ECS(P) << txf::tab;
+		stf::cout << ECS(P) << txf::tab;
 		P = CS.Next( P );
 	}
 
-	stf::fout << txf::nl;
+	stf::cout << txf::nl;
 
 	Classer( CS );
 #if 0
@@ -232,24 +232,24 @@ ERRBegin
 	P = CD.First();
 	
 	while( P != NONE ) {
-		stf::fout << ECD(P) << txf::tab;
+		stf::cout << ECD(P) << txf::tab;
 		P = CD.Next( P );
 	}
 
 	ECD.Flush();
 
-	stf::fout << txf::nl;
+	stf::cout << txf::nl;
 
 	CD.Delete( 3 );
 
 	P = CD.First();
 	
 	while( P != NONE ) {
-		stf::fout << ECD(P) << txf::tab;
+		stf::cout << ECD(P) << txf::tab;
 		P = CD.Next( P );
 	}
 
-	stf::fout << txf::nl;
+	stf::cout << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -311,13 +311,13 @@ ERRBegin
 				ECC( C - '0' ).Init();
 				ECC() = S;
 //				fout << S << " ";
-				stf::fout << ECC(C - '0') << " ";
+				stf::cout << ECC(C - '0') << " ";
 
 			}
 
 			ECC.Flush();
 
-			stf::fout << '\t';
+			stf::cout << '\t';
 /*
 			ECm( m - 'a' ).Init();
 			ECm() = CC;
@@ -330,12 +330,12 @@ ERRBegin
 //		ECm.Flush();
 		Cm.Flush();
 
-		stf::fout << txf::nl;
+		stf::cout << txf::nl;
 		ECM(M - 'A').Init();
 		ECM() = Cm;
 	}
 
-	stf::fout << "--------------" << txf::nl;
+	stf::cout << "--------------" << txf::nl;
 
 	ECM.ChangeMode( mdr::mReadOnly );
 //	ECm.ChangeMode( mdr::mReadOnly );
@@ -354,14 +354,14 @@ ERRBegin
 			{
 				S = ECC(C - '0');
 
-				stf::fout << S << ' ' << txf::sync;
+				stf::cout << S << ' ' << txf::sync;
 			}
 
-			stf::fout << '\t';
+			stf::cout << '\t';
 
 		}
 
-		stf::fout << txf::nl;
+		stf::cout << txf::nl;
 	}
 /*
 	CMS.Mode( plm::mModification );
@@ -398,7 +398,7 @@ ERRBegin
 
 //		E(C - '0').Adjust();
 
-		stf::fout << E(C - '0') << " " << txf::sync;
+		stf::cout << E(C - '0') << " " << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -422,7 +422,7 @@ ERRBegin
 
 		SP2( E( m - 'a' ), M, m );
 
-		stf::fout << '\t';
+		stf::cout << '\t';
 	}
 ERRErr
 ERREnd
@@ -441,7 +441,7 @@ ERRBegin
 
 	for ( char C = '0'; C <= LC; C++ )
 	{
-		stf::fout << E(C - '0') << ' ';
+		stf::cout << E(C - '0') << ' ';
 	}
 ERRErr
 ERREnd
@@ -462,7 +462,7 @@ ERRBegin
 	{
 		SSP2( E(m - 'a'), M, m );
 
-		stf::fout << '\t';
+		stf::cout << '\t';
 	}
 ERRErr
 ERREnd
@@ -499,17 +499,17 @@ ERRBegin
 
 		SP1( EGC(M - 'A' ), M );
 
-		stf::fout << txf::nl;
+		stf::cout << txf::nl;
 
 	}
 
-	stf::fout << "--------------" << txf::nl;
+	stf::cout << "--------------" << txf::nl;
 
 	for ( M = 'A'; M <= LM; M++ )
 	{
 		SSP1( EGC(M - 'A'), M );
 
-		stf::fout << txf::nl;
+		stf::cout << txf::nl;
 
 	}
 
@@ -542,8 +542,8 @@ ERRBegin
 	E(0) = str::string( "a" );
 	E(1).Init();
 	E(1)= str::string( "b" );
-	stf::fout << E(0) << txf::tab;
-	stf::fout << E(1) << txf::nl;
+	stf::cout << E(0) << txf::tab;
+	stf::cout << E(1) << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -569,8 +569,8 @@ ERRBegin
 	E(0) = str::string( "a" );
 	E(1).Init();
 	E(1)= str::string( "b" );
-	stf::fout << E(0) << txf::tab;
-	stf::fout << E(1) << txf::nl;
+	stf::cout << E(0) << txf::tab;
+	stf::cout << E(1) << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -610,7 +610,7 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	stf::fout << CS( 0 ) << txf::tab;
+	stf::cout << CS( 0 ) << txf::tab;
 
 	CS(0).Init();
 	CS() = "hello";
@@ -620,15 +620,15 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	stf::fout << CS( 0 ) << txf::tab;
+	stf::cout << CS( 0 ) << txf::tab;
 
 	CS = CC( 0 );
 	CC.Flush();
-	stf::fout << CS( 0 ) << txf::tab;
+	stf::cout << CS( 0 ) << txf::tab;
 
 	CS = CC( 1 );
 	CC.Flush();
-	stf::fout << CS( 0 ) << txf::nl;
+	stf::cout << CS( 0 ) << txf::nl;
 
 	CS.Flush();
 ERRErr
@@ -644,7 +644,7 @@ int main( int argc, const char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	stf::fout << "Test of library " << CTNTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << CTNTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -655,9 +655,9 @@ ERRFBegin
 		EssaiSimpleMulti();
 		Essai( argc, argv );
 #if 1
-		stf::fout << "********************************************************" << txf::nl;
+		stf::cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
-		stf::fout << "********************************************************" << txf::nl;
+		stf::cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
 #endif
 		break;
@@ -668,16 +668,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		stf::fout << txf::sync;
-		stf::ferr << "\nBad arguments.\n";
-		stf::fout << "Usage: " << CTNTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << CTNTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	stf::fout << "\nEnd of program " << CTNTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << CTNTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

@@ -38,10 +38,13 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	que::links L;
 	que::E_QUEUE Queue;
 	stk::E_STACK( epeios::row__ ) Stack;
 ERRBegin
+	Queue.reset();
 	Queue.Dump( Stack, 0, que::dAscending );
+	L.reset();
 ERRErr
 ERREnd
 ERREpilog
@@ -52,7 +55,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << QUETutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << QUETutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -65,16 +68,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << QUETutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << QUETutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << QUETutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << QUETutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
