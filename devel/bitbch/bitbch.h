@@ -735,7 +735,7 @@ template <typename r__> txf::text_oflow__ &operator <<(
 	txf::text_oflow__ &OStream,
 	const bitbch::E_BIT_BUNCHt_(r__) &Bunch )
 {
-	return OStream << *(const E_BIT_BUNCH_ *)&Bunch;
+	return OStream << *(const bitbch::E_BIT_BUNCH_ *)&Bunch;
 }
 
 /*$END$*/
