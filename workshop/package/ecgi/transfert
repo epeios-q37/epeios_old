@@ -1,3 +1,2 @@
 # $Id$
-scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/ecgi/
-rm -rf workdir
+../upload_pkg

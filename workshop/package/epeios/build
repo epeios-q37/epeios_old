@@ -4,7 +4,10 @@ cd workdir
 DIR=epeios-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+mkdir -p $DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
 $GET epeios $DIR devel/CHANGELOG.txt
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/epeios/README.txt

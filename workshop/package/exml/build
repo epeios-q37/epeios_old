@@ -1,24 +1,22 @@
 # $Id$
 mkdir workdir
 cd workdir
-export DIR=exml-sources
+DIR=exml-sources
 GET=../../get_cvs
+
+mkdir -p $DIR
 
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
-
-$GET epeios $DIR documentation/licenses/gnu_gpl.txt
-$GET epeios $DIR documentation/packages/exml/README.txt
-
 $GET exml $DIR stable/*.h
 $GET exml $DIR stable/*.cpp
-
 $GET exml $DIR devel/CHANGELOG.txt
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/exml/README.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-
-cp ~/web/exml/quickdoc/quickdoc.html $DIR
+cp /web/exml/quickdoc/quickdoc.html $DIR
 
 ../../create_pkg $DIR

@@ -4,16 +4,21 @@ cd workdir
 export DIR=emth-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+mkdir -p $DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/emth/README.txt
 
-$GET emth $DIR stable/
+$GET emth $DIR stable/*.h
+$GET emth $DIR stable/*.cpp
+
 $GET emth $DIR devel/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-cp ~/web/emth/quickdoc/quickdoc.html $DIR
+cp /web/emth/quickdoc/quickdoc.html $DIR
 
 ../../create_pkg $DIR

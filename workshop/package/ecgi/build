@@ -4,6 +4,8 @@ cd workdir
 DIR=ecgi-sources
 GET=../../get_cvs
 
+mkdir -p $DIR
+
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
 
@@ -18,6 +20,6 @@ $GET ecgi $DIR devel/CHANGELOG.txt
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-cp ~/web/ecgi/quickdoc/quickdoc.html $DIR
+cp /web/ecgi/quickdoc/quickdoc.html $DIR
 
 ../../create_pkg $DIR
