@@ -41,6 +41,7 @@ FLW:
 
 IDXBTR:
 - Adding 'E_INDEX(_)'.
+- Replacing '(Next|Previous)Avalaible()' and 'Become(Next|Previous)()' methods by 'TryAs(Next|Previous)()'.
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.

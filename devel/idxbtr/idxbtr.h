@@ -1,6 +1,6 @@
 /*
-  Header for the 'idxbtr' library by Claude L. Simon (csimon@webmails.com)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
+  Header for the 'idxbtr' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
   This file is part of the Epeios (http://epeios.org/) project.
   
@@ -32,7 +32,7 @@
 
 #define	IDXBTR_VERSION	"$Revision$"	
 
-#define IDXBTR_OWNER		"the Epeios project (http://epeios.org/)"
+#define IDXBTR_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &IDXBTRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@webmails.com)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -253,45 +253,25 @@ namespace idxbtr {
 					S_.Racine = Fille;
 			}
 		}
-		/*f Return false and put in 'Item' the next node of 'Item', or return
-		true and let 'Item' unchanged if 'Item' next node is free. */
-		bso::bool__ NextAvailable( r &Item ) const
+		//f Try to put 'Row' as next to 'Current'. If it fails, return the node which is in the way, 'NONE' otherwise.
+		r TryAsNext(
+			r Row,
+			r Current )
 		{
-			if ( E_BTREEt_( r )::HasRight( Item ) )
-			{
-				Item = Right( Item );
-				return false;
-			}
-			else
-				return true;
+			if ( ( Current = Right( Current ) ) == NONE )
+				BecomeRight( Row, Current );
+
+			return Current;
 		}
-		/*f Return false and put in 'Item' the previous node of 'Item', or return
-		true and let 'Item' unchanged if 'Item' next node is free. */
-		bso::bool__ PreviousAvailable( r &Item ) const
+		//f Try to put 'Row' as next to 'Current'. If it fails, return the node which is in the way, 'NONE' otherwise.
+		r TryAsPrevious(
+			r Row,
+			r Current )
 		{
-			if ( E_BTREEt_( r )::HasLeft( Item ) )
-			{
-				Item = Left( Item );
-				return false;
-			}
-			else
-				return true;
-		}
-		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
-		return true to use this function. */
-		void BecomeNext(
-			r New,
-			r Item )
-		{
-			E_BTREEt_( r )::BecomeRight( New, Item );
-		}
-		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
-		return true to use this function. */
-		void BecomePrevious(
-			r New,
-			r Item )
-		{
-			E_BTREEt_( r )::BecomeLeft( New, Item );
+			if ( ( Current = Left( Current ) ) == NONE )
+				BecomeLeft( Row, Current );
+
+			return Current;
 		}
 		//f Balances the tree which underlies the index.
 		void Balance( void );
