@@ -403,8 +403,10 @@ template <class t> void GenererDocumentationItemsClasse(
 	tag_row__ &CommentTagRow,
 	tag_row__ &ItemTagRow )
 {
-	if ( Items.Amount() )
+	if ( Items.Amount() ) {
+		Classer( Items );
 		GenererCorpsItemsClasse( Tag, TagTagRow, Items, XMLDF, Type, CommentTagRow, ItemTagRow );
+	}
 }
 
 void GenererDocumentationBasesClasseItems(
@@ -1221,7 +1223,7 @@ inline void GenererDocumentations(
 	unsigned long Total )
 {
 	XMLDF.PushTag( "Library" );
-	fout << "Génération documentations librairie: en cours ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
+	fout << "Documentation generation : in progress ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
 	GenererDocumentationTechnique( Librairie, XMLDF );
 	XMLDF.PopTag();
 }
@@ -1251,7 +1253,7 @@ ERRBegin
 
 	while( PListe != NONE )
 	{
-		fout << "Analyse des librairies: en cours ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
+		fout << "Library parsing : in progress ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
 
 		Courant = Librairies.Create();
 		Librairies( Courant ).Init();
@@ -1263,7 +1265,7 @@ ERRBegin
 
 	Liste.Sync();
 
-	fout << "Analyse des librairies: achevée.                             " << nl;
+	fout << "Library parsing : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1279,7 +1281,7 @@ ERRProlog
 	tym::row__ Courant;
 	int Compteur = 1;
 ERRBegin
-	XMLDF.PushTag( "Documentation" );
+	XMLDF.PushTag( "Libraries" );
 
 	if ( Librairies.Amount() )
 	{
@@ -1295,6 +1297,8 @@ ERRBegin
 	Librairies.Sync();
 	
 	XMLDF.PopTag();
+
+	fout << "Documentation generation : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1334,10 +1338,12 @@ ERRFBegin
 	TFlow.Init( OFlow );
 	
 	GenererEnTeteFichierXML( TFlow );
-	
+
+	fout << "File writing : in progress ... " << rfl << sync;
+
 	xmldcm::WriteXML( XMLD, TFlow );
 
-	fout << "Génération documentations librairie: achevée.                             " << nl;
+	fout << "File writing : terminated.     " << sync << nl;
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd

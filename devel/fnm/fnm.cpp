@@ -128,7 +128,7 @@ ERRBegin
 
 	if ( TailleNom )
 	{
-		if ( ( Resultat = (char *)calloc( TailleRep + TailleNom + TailleExt + 3, sizeof( char ) ) ) == NULL )
+		if ( ( Resultat = (char *)calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
 			ERRa();
 	}
 	else
@@ -157,10 +157,7 @@ ERRBegin
 		strcat( Resultat, Nom );
 
 		if ( TailleExt )
-		{
-			strcat( Resultat, "." );
 			strcat( Resultat, Ext );
-		}
 
 		break;
 	case fnm::tPath:

@@ -1,6 +1,6 @@
 /*
   Header for the 'ttr' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -89,6 +89,10 @@ public:
 
 extern ttr_chief TTR;
 
+namespace txf {
+	class text_oflow___;	// Pre-decleration, to avoid inclusion of 'tfx.h".
+};
+
 //c A tutor for one library.
 class ttr_tutor
 {
@@ -100,6 +104,8 @@ private:
 	static char Adv_[TTR_ADV_SIZE_MAX + 1];
 	// True if the chief is ready.
 	static char ChiefReady_;
+protected:
+	virtual void TTRMore( class txf::text_oflow___ &OFlow ) {}
 public:
 	//o Name of the library.
 	const char *Name;
@@ -130,24 +136,7 @@ public:
 		return Next_;
 	}
 	//f Print advertising of the library.
-	const char *Advertise( void )	// Should be modified.
-	{
-		char Format[30];
-	
-		if ( Version[0] != '$' )
-			sprintf( Adv_, "%-7s V%-6s %s (c) %s\n",
-				Name, Version, Date, Owner );
-		else {
-			sprintf( Format, "%s%i%s", "%-7s V%-7.",
-			                  		   strlen( Version ) - 13,
-							  		   "s %.10s (c) %s\n" );
-			sprintf( Adv_, Format,
-				Name, Version+11, Date+7, Owner );
-		}
-		
-
-		return Adv_;
-	}
+	void Advertise( txf::text_oflow___ &Flow );	// Should be modified.
 };
 
 inline void ttr_chief::Add( class ttr_tutor *Tutor )

@@ -127,7 +127,7 @@ namespace bitmmr {
 		}
 	};
 
-	//c A memory containg bits.
+	//t A memory containg bits.
 	typedef bit_memory_core_< tym_memory_< receptacle__ > >	bit_memory_;
 	typedef bit_memory_core_< tym_memory<receptacle__ > >	bit_memory;
 

@@ -1,8 +1,9 @@
 /*
-  Header for the 'fnm' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. Simon 
+  Header for the 'fnm' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -15,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,7 +32,7 @@
 
 #define	FNM_VERSION	"$Revision$"	
 
-#define FNM_OWNER		"the Epeios project (http://www.epeios.org/) "
+#define FNM_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
@@ -43,7 +45,7 @@ extern class ttr_tutor &FNMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C $Author$
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */

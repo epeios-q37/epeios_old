@@ -54,8 +54,7 @@ public:
 				  /*******************************************/
 /*$$BEGIN$$*/
 
-namespace $xxx$ {
-}
+using namespace $xxx$;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

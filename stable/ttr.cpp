@@ -1,7 +1,7 @@
 /*
   'ttr' library by Claude L. Simon (simon@epeios.org)
   Requires the 'ttr' header file ('ttr.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -66,7 +66,7 @@ void ttr_chief::Advertise( void )
 
 	while( Current )
 	{
-		fout << Current->Advertise();
+		Current->Advertise( fout );
 		Current = Current->Next();
 	}
 }
@@ -83,7 +83,27 @@ void ttr_chief::Sort_( ttr_tutor *Tutor )
 	*Index = Tutor;
 }
 
+	//f Print advertising of the library.
+void ttr_tutor::Advertise( txf::text_oflow___ &Flow )	// Should be modified.
+{
+	char Format[30];
 
+	if ( Version[0] != '$' )
+		sprintf( Adv_, "%-7s V%-6s %s (c) %s\n",
+			Name, Version, Date, Owner );
+	else {
+		sprintf( Format, "%s%i%s", "%-7s V%-7.",
+			                  	   strlen( Version ) - 13,
+							  	   "s %.10s (c) %s" );
+		sprintf( Adv_, Format,
+			Name, Version+11, Date+7, Owner );
+	}
+	
+
+	Flow << Adv_ << txf::nl;
+
+	TTRMore( Flow );
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

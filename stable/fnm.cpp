@@ -1,9 +1,10 @@
 /*
-  'fnm' library by Claude L. Simon (epeios@epeios.org)
+  'fnm' library by Claude L. Simon (simon@epeios.org)
   Requires the 'fnm' header file ('fnm.h').
-  Copyright (C) 2000 Claude L. Simon.
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -16,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -28,10 +30,6 @@
 
 #include "fnm.h"
 
-#ifdef FNM__LINE
-#line 12
-#endif
-
 class fnmtutor
 : public ttr_tutor
 {
@@ -40,7 +38,7 @@ public:
 	: ttr_tutor( FNM_NAME )
 	{
 #ifdef FNM_DBG
-		Version = FNM_VERSION " (DBG)";
+		Version = FNM_VERSION "\b\bD $";
 #else
 		Version = FNM_VERSION;
 #endif
@@ -130,7 +128,7 @@ ERRBegin
 
 	if ( TailleNom )
 	{
-		if ( ( Resultat = (char *)calloc( TailleRep + TailleNom + TailleExt + 3, sizeof( char ) ) ) == NULL )
+		if ( ( Resultat = (char *)calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
 			ERRa();
 	}
 	else
@@ -159,10 +157,7 @@ ERRBegin
 		strcat( Resultat, Nom );
 
 		if ( TailleExt )
-		{
-			strcat( Resultat, "." );
 			strcat( Resultat, Ext );
-		}
 
 		break;
 	case fnm::tPath:

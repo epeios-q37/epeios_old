@@ -498,6 +498,15 @@ namespace tol {
 	};
 
 	AUTO1( object )
+
+	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.
+	template <typename t> inline void Free( t *&Pointer )
+	{
+		if ( Pointer != NULL ) {
+			free( Pointer );
+			Pointer = NULL;
+		}
+	}
 }
 
 /*$END$*/
