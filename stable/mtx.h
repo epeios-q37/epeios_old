@@ -1,6 +1,6 @@
 /*
 	Header for the 'mtx' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000, 2003-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -60,15 +60,11 @@ extern class ttr_tutor &MTXTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D MuTeX.
-/* End addendum to automatic documentation generation part. */
-
 #include "bso.h"
 #include "cpe.h"
 
 #ifndef CPE__MT
-	error "This library only useful in multitasking context, in which you are not."
+#	error "This library only useful in multitasking context, in which you are not."
 #endif
 
 #if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER ) && !defined( CPE__CYGWIN )

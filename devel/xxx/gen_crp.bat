@@ -9,7 +9,7 @@
 @echo # >>%OUTPUT%
 @toupper "NAME	+" >>%OUTPUT%
 @echo $NAME$ >>%OUTPUT%
-@echo COPYRIGHT_DATES	+$COPYRIGHT_DATES$2003 >>%OUTPUT%
+@echo COPYRIGHT_DATES	+$COPYRIGHT_DATES$2004 >>%OUTPUT%
 @echo DESCRIPTION	+$DESCRIPTION$ >>%OUTPUT%
 type \cvs\epeios\devel\xxx\$PROJECT$.crp >>%OUTPUT%
 REM needed by the rest of the calling script.

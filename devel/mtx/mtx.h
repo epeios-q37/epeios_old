@@ -1,7 +1,7 @@
 /*
 	Header for the 'mtx' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -59,10 +59,6 @@ extern class ttr_tutor &MTXTutor;
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-/* Addendum to the automatic documentation generation part. */
-//D MuTeX.
-/* End addendum to automatic documentation generation part. */
 
 #include "bso.h"
 #include "cpe.h"
