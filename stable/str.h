@@ -286,6 +286,16 @@ namespace str {
 			string_::Init();
 			string_::Write( S );
 		}
+		string(
+			const char *S,
+			size_t Length )
+		: string_( static_ )
+		{
+			reset( false );
+
+			string_::Init();
+			string_::Add( S, Length );
+		}
 		string( char C )
 		: string_( static_ )
 		{

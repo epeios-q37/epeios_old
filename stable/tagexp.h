@@ -119,18 +119,18 @@ namespace tagexp
 
 	//c Natures of the tag references.
 	class natures_ 
-		: public bitbch::bibit_bunch_
+	: public bitbch::bibit_bunch_<epeios::row__>
 	{
 	public:
 		struct s
-		: public bitbch::bibit_bunch::s {};
+		: public bitbch::bibit_bunch_<epeios::row__>::s {};
 		natures_( s &S )
-		: bibit_bunch_( S )
+		: bitbch::bibit_bunch_<epeios::row__>( S )
 		{}
 		//f Return the value at 'Position'.
 		nature operator()( tym::row__ Position ) const
 		{
-			return (tagexp::nature)bibit_bunch_::Read( Position );
+			return (tagexp::nature)bitbch::bibit_bunch_<epeios::row__>::Read( Position );
 		}
 	};
 
@@ -178,7 +178,7 @@ namespace tagexp
 		//f Return the position of a new tag reference of nature 'Nature', which should be completed later.
 		id__ Create( void )
 		{
-			tym::row__ P = Values.Create();
+			epeios::row_t__ P = Values.Create().V;
 
 			if ( Natures.Add( tagexp::nUnknow ) != P )
 					ERRc();

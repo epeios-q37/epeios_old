@@ -30,74 +30,9 @@
 #include "fnm.h"
 #include "flx.h"
 #include "txmtbl.h"
-#include "tagexp.h"
+#include "hdbfil.h"
 
-enum item {
-	parameter_with_value,
-	parameter_without_value,
-	parameter_list,
-	class_item_for_index,
-	class_object,
-	class_method,
-	global_function,
-	first_class_template_argument,
-	other_class_template_argument,
-	first_function_template_argument,
-	other_function_template_argument,
-	first_base_class,
-	other_base_class,
-	items_class,
-	enum_item,
-	first_argument,
-	other_argument,
-	class_index_item,
-	argument_list,
-	function_template,
-	base_classes,
-	i_amount
-};
-
-const char *Names[i_amount] = {
-	"parameter_with_value",
-	"parameter_without_value",
-	"parameter_list",
-	"class_item_for_index",
-	"class_object",
-	"class_method",
-	"global_function",
-	"first_class_template_argument",
-	"other_class_template_argument",
-	"first_function_template_argument",
-	"other_function_template_argument",
-	"first_base_class",
-	"other_base_class",
-	"items_class",
-	"enum_item",
-	"first_argument",
-	"other_argument",
-	"class_index_item",
-	"argument_list",
-	"function_template",
-	"base_classes",
-};
-
-flx::bunch Bunchs[i_amount];
-
-typedef tagexp::tag_expander_ expander_;
-typedef tagexp::tag_expander expander;
-
-class flow
-: public xtf::extended_text_iflow___
-{
-private:
-	flx::bunch_iflow___ B;
-public:
-	void Init( const flx::bunch_ &Bunch )
-	{
-		B.Init( Bunch );
-		extended_text_iflow___::Init( B );
-	}
-} IFlow;
+typedef hdbfil::hierarchical_database_filler__	hdbf__;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
@@ -114,9 +49,9 @@ public:
 using namespace tsrcpr;
 using namespace txf;
 
-void GenererEnTeteFichierHTML( txf::text_oflow___ &Stream )
+void GenererEnTeteFichierXML( txf::text_oflow___ &Stream )
 {
-	Stream <<  "<!doctype HTML public \"-//W3O//DTD W3 HTML 3.0//EN\"><HTML>";
+	Stream <<  "<?xml version=\"1.0\"?>";
 }
 
 template <class t> void Classer( t &Table )
@@ -239,7 +174,7 @@ ERRProlog
 ERRBegin
 	S.Init();
 
-	for ( tym::row__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
+	for ( epeios::row_t__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
 	{
 		if ( C.Read( Compteur ) == ' ' )
 		{
@@ -250,9 +185,13 @@ ERRBegin
 			S.Add( "&lt;" );
 		else if ( C.Read( Compteur ) == '>' )
 			S.Add( "&gt;" );
+		else if ( C.Read( Compteur ) == '\r' ) {}
+		else if ( C.Read( Compteur ) == '\n' ) {}
+		else if ( C.Read( Compteur ) == '&' )
+			S.Add( "&amp;" );
 		else
 		{
-			if ( C.Read( Compteur ) == '\'' )
+/*			if ( C.Read( Compteur ) == '\'' )
 			{
 				if ( Special )
 				{
@@ -267,11 +206,14 @@ ERRBegin
 				else
 					S.Add( '\'' );
 			}
-			else S.Add( C.Read( Compteur ) );
+			else
+*/				S.Add( C.Read( Compteur ) );
 
 			Espace = false;
 		}
 	}
+	
+	S.Add( '\n' );
 
 ERRErr
 ERREnd
@@ -288,7 +230,7 @@ const str::string_ &Filtrer( const str::string_ &S )
 
 	R.Init();
 
-	for ( tym::row__ i = 0; i < S.Amount(); i++ )
+	for ( epeios::row_t__ i = 0; i < S.Amount(); i++ )
 		if ( S.Read( i ) == '<' )
 			R.Add( "&lt;" );
 		else if ( S.Read( i ) == '>' )
@@ -299,102 +241,6 @@ const str::string_ &Filtrer( const str::string_ &S )
 	return R;
 }
 
-inline tagexp::id__ Add(
-	expander_ &Expander,
-	const char *Name,
-	const str::string_ &Value )
-{
-	return Expander.Add( Value, tagexp::nText, str::string( Name ) );
-}
-
-inline void Assign(
-	expander_ &Expander,
-	tagexp::id__ ID,
-	const str::string_ &Value )
-{
-	Expander.Assign( Value, tagexp::nText, ID );
-}
-
-inline tagexp::id__ Add(
-	expander_ &Expander,
-	const char *Name,
-	const flx::bunch_ &Bunch )
-{
-	tagexp::id__ ID;
-ERRProlog
-	str::string String;
-ERRBegin
-	String.Init();
-	
-	String.Allocate( Bunch.Amount() );
-	
-	String.untyped_memory_::Write( Bunch, Bunch.Amount() );
-
-	ID = Expander.Add( String, tagexp::nText, str::string( Name ) );
-ERRErr
-ERREnd
-ERREpilog
-	return ID;
-}
-
-inline void Assign(
-	expander_ &Expander,
-	tagexp::id__ ID,
-	const flx::bunch_ &Bunch )
-{
-ERRProlog
-	str::string String;
-ERRBegin
-	String.Init();
-	
-	String.Allocate( Bunch.Amount(), true );
-	
-	String.untyped_memory_::Write( Bunch, Bunch.Amount() );
-
-	Expander.Assign( String, tagexp::nText, ID );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-inline tagexp::id__ Add(
-	expander_ &Expander,
-	char *Name )
-{
-	return Expander.Add( str::string(""), tagexp::nUserDefined, str::string( Name ) );
-}
-
-inline tagexp::id__ Expand(
-	expander_ &Expander,
-	item Item,
-	txf::text_oflow___ &OFlow )
-{
-	tagexp::id__ ID;
-	
-	::IFlow.Init( Bunchs[Item] );
-		
-	ID = Expander.Expand( ::IFlow, OFlow, '$', *(str::string_ *)NULL );
-	
-	if ( ID != tagexp::sOK )
-		ERRf();
-		
-	return ID;
-}
-	
-inline tagexp::id__ Expand(
-	expander_ &Expander,
-	xtf::extended_text_iflow___ &IFlow,
-	txf::text_oflow___ &OFlow )
-{
-	tagexp::id__ ID;
-		
-	ID = Expander.Expand( IFlow, OFlow, '$', *(str::string_ *)NULL );
-	
-	if ( ( ID != tagexp::sOK ) && ( ID < tagexp::sUserDefined ) )
-		ERRf();
-		
-	return ID;
-}
 	
 /********************/
 /**** NIVEAU XII ****/
@@ -402,24 +248,9 @@ inline tagexp::id__ Expand(
 
 inline void GenererDocumentationParametre(
 	const parametre_ &Parametre,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-ERRBegin
-	Expander.Init();
-	
-	Add( Expander, "TYPE", Filtrer( Parametre.Type ) );
-	Add( Expander, "NAME", Filtrer( Parametre.Name ) );
-	
-	if ( Parametre.Valeur.Amount() ) {
-		Add( Expander, "VALUE", Parametre.Valeur );
-		Expand( Expander, parameter_with_value, Flot );
-	} else 
-		Expand( Expander, parameter_without_value, Flot );
-ERRErr
-ERREnd
-ERREpilog
+	HDBF.PutValue( Parametre.Valeur, "Parameter" );
 }
 
 /*******************/
@@ -428,11 +259,13 @@ ERREpilog
 
 void GenererDocumentationParametres(
 	const table_<parametre_> &Parametres,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( parametre_ ) Parametre;
 ERRBegin
+	HDBF.PushTag( "Parameters" );
+
 	Parametre.Init( Parametres );
 	
 	if ( Parametres.Amount() )
@@ -441,10 +274,12 @@ ERRBegin
 
 		while ( Courant != NONE )
 		{
-			GenererDocumentationParametre( Parametre( Courant ), Flot );
+			GenererDocumentationParametre( Parametre( Courant ), HDBF );
 			Courant = Parametres.Next( Courant );
 		}
 	}
+	
+	HDBF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -456,204 +291,59 @@ ERREpilog
 /**** NIVEAU X ****/
 /******************/
 
-template <class t> inline void GenererIndexItemClasse(
-	const str::string_ &Name,
-	const t &Item,
-	txf::text_oflow___ &Flot )
-{
-ERRProlog
-	expander Expander;
-ERRBegin
-	Expander.Init();
-	
-	Add( Expander, "CLASS_NAME", Name );
-	Add( Expander, "ITEM_NAME", Item.Name );
-//	Flot << "<A HREF = \"#" << Name << '.' << Item.Name << "\">" << Item.Name << "</A> " << nl;
-	Expand( Expander, class_item_for_index, Flot );
-ERRErr
-ERREnd
-ERREpilog
-}
-
 inline void GenererCorpsItemClasse(
-	const str::string_ &Name,
 	const objet_ &Item,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-ERRBegin
-	Expander.Init();
-	Add( Expander, "CLASS_NAME", Name );
-	Add( Expander, "OBJECT_NAME", Item.Name );
-	Add( Expander, "OBJECT_TYPE", Filtrer( Item.Type ) );
-	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
-	
-	Expand( Expander, class_object, Flot );
-	
-//	Flot << "<LI><TT><B>" << "<A NAME = \"" << Name << '.' << Item.Name << "\">" << Item.Name << "</B> "<< Filtrer( Item.Type ) << ' ' << "</TT><BR><EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
-ERRErr
-ERREnd
-ERREpilog
+
+	HDBF.PushTag( "Object" );
+	HDBF.PutValue( Item.Name, "Name" );
+	HDBF.PutValue( Filtrer( Item.Type ), "Type" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
+	HDBF.PopTag();
 }
 
 inline void GenererCorpsItemClasse(
-	const str::string_ &Name,
 	const methode_ &Item,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-	flx::bunch Bunch;
-	flx::bunch_oflow___ Flow;
-	txf::text_oflow___ TFlow;
-ERRBegin
-
-	Expander.Init();
-	
-	Bunch.Init();
-	Flow.Init( Bunch );
-	TFlow.Init( Flow );
-	
-	GenererDocumentationParametres( Item.Parametres, TFlow );
-	
-	TFlow.reset();
-	Flow.reset();
-	
-	Add( Expander, "PARAMETER_LIST", Bunch );
-	Add( Expander, "CLASS_NAME", Name );
-	Add( Expander, "METHOD_NAME", Item.Name );
-	Add( Expander, "METHOD_TYPE", Item.Type );
-	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
-	
-	Expand( Expander, class_method, Flot );
-	
-/*
-	Flot << "<LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
-
-
-	Flot << "<EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
-*/
-ERRErr
-ERREnd
-ERREpilog
+	HDBF.PushTag( "Method" );
+	HDBF.PutValue( Item.Name, "Name" );
+	HDBF.PutValue( Item.Type, "Type" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
+	GenererDocumentationParametres( Item.Parametres, HDBF );
+	HDBF.PopTag();
 }
 
 inline void GenererCorpsItemClasse(
-	const str::string_ &,
 	const function_ &Item,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-	flx::bunch Bunch;
-	flx::bunch_oflow___ Flow;
-	txf::text_oflow___ TFlow;
-ERRBegin
-
-	Expander.Init();
-	
-	Bunch.Init();
-	Flow.Init( Bunch );
-	TFlow.Init( Flow );
-	
-	GenererDocumentationParametres( Item.Parametres, TFlow );
-	
-	TFlow.reset();
-	Flow.reset();
-	
-	Add( Expander, "PARAMETER_LIST", Bunch );
-	Add( Expander, "FUNCTION_NAME", Item.Name );
-	Add( Expander, "FUNCTION_TYPE", Item.Type );
-	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
-	
-	Expand( Expander, global_function, Flot );
-/*
-	Flot << "<B>F</B><br> <LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
-
-	GenererDocumentationParametres( Item.Parametres, Flot );
-
-	Flot << "<EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
-*/
-ERRErr
-ERREnd
-ERREpilog
+	HDBF.PushTag( "Function" );
+	HDBF.PutValue( Filtrer( Item.Name ), "Name" );
+	HDBF.PutValue( Item.Type, "Type" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Item.Commentaire ), "Comment" );
+	HDBF.PopTag();
 }
 
 
 /*******************/
 /**** NIVEAU IX ****/
 /*******************/
-/*
-inline void GenererDocumentationArgumentTemplateClasse(
-	const argument_ &Argument,
-	txf::text_oflow___ &Flot )
-{
-	Flot << Argument.Type << " <TT>" << Argument.Name << "</TT>" << nl;
-}
-
-inline void GenererDocumentationArgumentTemplateFonction(
-	const argument_ &Argument,
-	txf::text_oflow___ &Flot )
-{
-	Flot << Argument.Type << " <B>" << Argument.Name << "</B>" << nl;
-}
-*/
-
-template <class t> void GenererIndexItemsClasse(
-	const str::string_ &NameClasse,
-	t &Items,
-	txf::text_oflow___ &Flot )
-{
-ERRProlog
-	tym::row__ Courant = Items.First();
-	str::string Name;
-ERRBegin
-
-//	Flot << "<EM>";
-
-	GenererIndexItemClasse( NameClasse, Items( Courant ), Flot );
-	Name.Init();
-	Name = Items( Courant ).Name;
-
-	while ( Courant != NONE )
-	{
-		if ( Name != Items( Courant ).Name )
-		{
-			GenererIndexItemClasse( NameClasse, Items( Courant ), Flot );
-			Name = Items( Courant ).Name;
-		}
-
-		Courant = Items.Next( Courant );
-	}
-
-	Items.Sync();
-
-//	Flot << "</EM><BR>" << nl;
-ERRErr
-ERREnd
-ERREpilog
-}
 
 template <class t> void GenererCorpsItemsClasse(
-	const str::string_ &Name,
 	t &Items,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	tym::row__ Courant = Items.First();
 
-//	Flot << "<UL>";
-
 	while ( Courant != NONE )
 	{
-		GenererCorpsItemClasse( Name, Items( Courant ), Flot );
+		GenererCorpsItemClasse( Items( Courant ), HDBF );
 		Courant = Items.Next( Courant );
 	}
 
 	Items.Sync();
-
-//	Flot << "</UL>" << nl;
-
 }
 
 
@@ -663,168 +353,71 @@ template <class t> void GenererCorpsItemsClasse(
 
 void GenererDocumentationArgumentsTemplateClasse(
 	const table_<argument_> &Arguments,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( argument_ ) Argument;
 	tym::row__ Courant = Arguments.First();
-	expander Expander;
-	tagexp::id__ IDName, IDType;
 ERRBegin
 
 	Argument.Init( Arguments );
-	Expander.Init();
 	
-	IDName = Add( Expander, "NAME", Argument( Courant ).Name );
-	IDType = Add( Expander, "TYPE", Argument( Courant ).Type );
-	
-	Expand( Expander, first_class_template_argument, Flot );
-
-//	GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
-	Courant = Arguments.Next( Courant );
-
 	while ( Courant != NONE )
 	{
-		Assign( Expander, IDName, Argument( Courant ).Name );
-		Assign( Expander, IDType, Argument( Courant ).Type );
-
-		Expand( Expander, other_class_template_argument, Flot );
-		
-//		GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
+		HDBF.PutValue( Argument( Courant ).Name, "Name" );
+		HDBF.PutValue( Argument( Courant ).Type, "Type" );
+	
 		Courant = Arguments.Next( Courant );
 	}
 ERRErr
 ERREnd
 ERREpilog
 }
-
-/*
-inline void GenererDocumentationBaseClasse(
-	const str::string_ &Base,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<LI>" << Filtrer( Base ) << "</LI>" << nl;
-}
-*/
 
 void GenererDocumentationArgumentsTemplateFonction(
 	const table_<argument_> &Arguments,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( argument_ ) Argument;
 	tym::row__ Courant = Arguments.First();
-	expander Expander;
-	tagexp::id__ IDName, IDType;
 ERRBegin
 
 	Argument.Init( Arguments );
-	Expander.Init();
 	
-	IDName = Add( Expander, "NAME", Argument( Courant ).Name );
-	IDType = Add( Expander, "TYPE", Argument( Courant ).Type );
-	
-	Expand( Expander, first_function_template_argument, Flot );
-
-	Courant = Arguments.Next( Courant );
-
 	while ( Courant != NONE )
 	{
-		Assign( Expander, IDName, Argument( Courant ).Name );
-		Assign( Expander, IDType, Argument( Courant ).Type );
-
-		Expand( Expander, other_function_template_argument, Flot );
-		
+		HDBF.PutValue( Argument( Courant ).Name, "Name" );
+		HDBF.PutValue( Argument( Courant ).Type, "Type" );
+	
 		Courant = Arguments.Next( Courant );
 	}
 ERRErr
 ERREnd
 ERREpilog
 }
-/*
-{
-	ctn::E_CITEM( argument_ ) Argument;
-	tym::row__ Courant = Arguments.First();
 
-	Argument.Init( Arguments );
-
-	while ( Courant != NONE )
-	{
-		if ( Courant != Arguments.First() )
-			Flot << ", ";
-
-		GenererDocumentationArgumentTemplateFonction( Argument( Courant ), Flot );
-		Courant = Arguments.Next( Courant );
-	}
-}
-*/
 
 template <class t> void GenererDocumentationItemsClasse(
-	const str::string_ &Name,
 	t &Items,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	flx::bunch Bunch;
-	flx::bunch_oflow___ Flow;
-	txf::text_oflow___ TFlow;
-	expander Expander;
-ERRBegin
 	if ( Items.Amount() )
-	{
-		Classer( Items );
-		Expander.Init();
-		
-		Bunch.Init();
-		Flow.Init( Bunch );
-		TFlow.Init( Flow );
-		
-		GenererIndexItemsClasse( Name, Items, TFlow );
-		
-		TFlow.reset();
-		Flow.reset();
-		
-		Add( Expander, "INDEX", Bunch );
-		
-		Bunch.Init();
-		Flow.Init( Bunch );
-		TFlow.Init( Flow );
-		
-		GenererCorpsItemsClasse( Name, Items, TFlow );
-		
-		TFlow.reset();
-		Flow.reset();
-		
-		Add( Expander, "BODY", Bunch );
-		
-		Expand( Expander, items_class, Flot );
-	}
-ERRErr
-ERREnd
-ERREpilog
+		GenererCorpsItemsClasse( Items, HDBF );
 }
 
 void GenererDocumentationBasesClasseItems(
 	const table_<str::string_> &Bases,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( str::string_ ) Base;
 	tym::row__ Courant = Bases.First();
-	tagexp::id__ ID;
-	expander Expander;
 ERRBegin
 	Base.Init( Bases );
-	Expander.Init();
-
-	ID = Add( Expander, "NAME", Filtrer( Base( Courant ) ) );
-	Expand( Expander, first_base_class, Flot );
-	
-	Courant = Bases.Next( Courant );
 
 	while ( Courant != NONE ) {
-		Assign( Expander, ID, Filtrer( Base( Courant ) ) );
-		Expand( Expander, other_base_class, Flot );
+		HDBF.PutValue( Filtrer( Base( Courant ) ), "Name" );
 		Courant = Bases.Next( Courant );
 	}
 ERRErr
@@ -838,23 +431,19 @@ ERREpilog
 
 void GenererDocumentationItemsEnum(
 	const table_<item_> &Items,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
-	ctn::E_CITEM( item_ ) Item;
+	 ctn::E_CITEM( item_ ) Item;
 	tym::row__ Courant = Items.First();
-	expander Expander;
 ERRBegin
 	Item.Init( Items );
 
 	while ( Courant != NONE )
 	{
-		Expander.Init();
-		Add( Expander, "NAME", Item( Courant ).Name );
-		Add( Expander, "COMMENT", Item( Courant ).Commentary );
+		HDBF.PutValue( Item( Courant ).Name, "Name" );
+		HDBF.PutValue( MiseEnFormeCommentaire( Item( Courant ).Commentary ), "Comment" );
 		
-		Expand( Expander, enum_item, Flot );
-//		Flot << "<LI><B>" << Item( Courant ).Name << "</B>: " << Item( Courant ).Commentary << "</LI>" << nl;
 		Courant = Items.Next( Courant );
 	}
 ERRErr
@@ -865,26 +454,17 @@ ERREpilog
 
 void GenererDocumentationArguments(
 	const table_<str::string_> &Arguments,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( str::string_ ) Argument;
 	tym::row__ Courant = Arguments.First();
-	expander Expander;
-	tagexp::id__ ID;
 ERRBegin
 	Argument.Init( Arguments );
-	Expander.Init();
 	
-	ID = Add( Expander, "NAME", Argument( Courant ) );
-	Expand( Expander, first_argument, Flot );
-	Courant = Arguments.Next( Courant );
-	
-
 	while ( Courant != NONE )
 	{
-		Assign( Expander, ID, Argument( Courant ) );
-		Expand( Expander, other_argument, Flot );
+		HDBF.PutValue( Argument( Courant ), "Name" );
 		Courant = Arguments.Next( Courant );
 	}
 ERRErr
@@ -893,155 +473,53 @@ ERREpilog
 }
 
 
-inline void GenererIndexClasse(
-	const classe_ &Classe,
-	txf::text_oflow___ &Flot )
-{
-ERRProlog
-	expander Expander;
-ERRBegin
-	Expander.Init();
-	
-	Add( Expander, "NAME", Classe.Name );
-	Expand( Expander, class_index_item, Flot );
-//	Flot << "<A HREF = \"#" << Classe.Name << "\">" << Classe.Name << "</A> " << nl;
-ERRErr
-ERREnd
-ERREpilog
-}
-
 void GenererDocumentationTemplateClasse(
 	const template_ &Template,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-	tagexp::id__ ID;
-	flow IFlow;
-ERRBegin
-	IFlow.Init( Bunchs[argument_list] );
-
 	if ( Template.Arguments.Amount() )
-	{
-		Expander.Init();
-		
-		ID = Add( Expander, "ARGUMENT_LIST" );
-		
-		while( Expand( Expander, IFlow, Flot ) == ID )
-			GenererDocumentationArgumentsTemplateClasse( Template.Arguments, Flot );
-		// Flot << "<EM>( ";
-
-
-		// Flot << " )</EM>";
-	}
-ERRErr
-ERREnd
-ERREpilog
+		GenererDocumentationArgumentsTemplateClasse( Template.Arguments,HDBF );
 }
 
 void GenererDocumentationBasesClasse(
 	const table_<str::string_> &Bases,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	tagexp::id__ ID;
-	expander Expander;
-	flow IFlow;
-ERRBegin
-	Expander.Init();
-	
-	ID = Add( Expander, "BASE_CLASSES" );
-	
-	IFlow.Init( Bunchs[base_classes] );
-	
-	while( Expand( Expander, IFlow, Flot ) == ID )
-		GenererDocumentationBasesClasseItems( Bases, Flot );
+	HDBF.PushTag( "Base_classes" );
+	GenererDocumentationBasesClasseItems( Bases, HDBF );
+	HDBF.PopTag();
 
-ERRErr
-ERREnd
-ERREpilog
 }
 
 void GenererDocumentationTemplateFonction(
 	const template_ &Template,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	expander Expander;
-	flow IFlow;
-	tagexp::id__ ID;
-ERRBegin
 	if ( Template.Arguments.Amount() )
-	{
-		Expander.Init();
-		
-		ID = Add( Expander, "FUNCTION_TEMPLATE" );
-		
-		IFlow.Init( Bunchs[function_template] );
-		
-//		Flot << "<TT>" << Filtrer( str::string( "<" ) );
-	
-		while( Expand( Expander, IFlow, Flot ) == ID )
-			GenererDocumentationArgumentsTemplateFonction( Template.Arguments, Flot );
-
-//		Flot << Filtrer( str::string( "> " ) ) << "</TT> " << nl;
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void GenererIndexDocumentationClasse(
-	const classe_ &Classe,
-	txf::text_oflow___ &Flot )
-{
-
-	if ( Classe.Objets.Amount() )
-		Flot << "<A HREF = \"#" << Classe.Name << ".Objects\">Objects</A> ";
-
-	if ( Classe.Restreints.Amount() )
-		Flot << "<A HREF = \"#" << Classe.Name << ".Restricts\">Restricts</A> ";
-
-	if ( Classe.Methodes.Amount() )
-		Flot << "<A HREF = \"#" << Classe.Name << ".Functions\">Functions</A> ";
-
-	if ( Classe.Virtuels.Amount() )
-		Flot << "<A HREF = \"#" << Classe.Name << ".Virtuals\">Virtuals</A> ";
+		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, HDBF );
 }
 
 void GenererDocumentationObjetsClasse(
 	classe_ &Classe,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 
 	if ( Classe.Objets.Amount() )
-	{
-		Flot << "<A NAME = \"" << Classe.Name << ".Objects\"><H4>Objects</H4>";
-		GenererDocumentationItemsClasse( Classe.Name, Classe.Objets, Flot );
-	}
+		GenererDocumentationItemsClasse( Classe.Objets, HDBF );
 
 	if ( Classe.Restreints.Amount() )
-	{
-		Flot << "<A NAME = \"" << Classe.Name << ".Restricts\"><H4>Restricts</H4>";
-		GenererDocumentationItemsClasse( Classe.Name, Classe.Restreints, Flot );
-	}
+		GenererDocumentationItemsClasse( Classe.Restreints, HDBF );
 }
 
 void GenererDocumentationMethodesClasse(
 	classe_ &Classe,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	if ( Classe.Methodes.Amount() )
-	{
-		Flot << "<A NAME = \"" << Classe.Name << ".Functions\"><H4>Functions</H4>";
-		GenererDocumentationItemsClasse( Classe.Name, Classe.Methodes, Flot );
-	}
+		GenererDocumentationItemsClasse( Classe.Methodes, HDBF );
 
 	if ( Classe.Virtuels.Amount() )
-	{
-		Flot << "<A NAME = \"" << Classe.Name << ".Virtuals\"><H4>Virtuals</H4>";
-		GenererDocumentationItemsClasse( Classe.Name, Classe.Virtuels, Flot );
-	}
+		GenererDocumentationItemsClasse( Classe.Virtuels, HDBF );
 }
 
 
@@ -1052,124 +530,74 @@ void GenererDocumentationMethodesClasse(
 
 void GenererDocumentationDefine(
 	const define_ &Define,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<LI><TT>" << Define.Name ;
-
-	if ( Define.Arguments.Amount() ) {
-		Flot << "( ";
-		GenererDocumentationArguments( Define.Arguments, Flot );
-		Flot << " )";
-	}
-
-	Flot << ": </TT><EM>" << MiseEnFormeCommentaire( Define.Commentaire ) << "</EM>" << nl;
+	if ( Define.Arguments.Amount() )
+		GenererDocumentationArguments( Define.Arguments, HDBF );
 }
 
 void GenererDocumentationEnum(
 	const enum_ &Enum,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<LI><TT>" << Enum.Name ;
-
-	Flot << ": </TT><EM>" << MiseEnFormeCommentaire( Enum.Commentary ) << "</EM>" << nl;
-
-	if ( Enum.Items.Amount() ) {
-		Flot << "<UL>";
-		GenererDocumentationItemsEnum( Enum.Items, Flot );
-		Flot << "</UL>";
-	}
-
+	HDBF.PutValue( Enum.Name, "Name" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Enum.Commentary ), "Comment" );
+	
+	if ( Enum.Items.Amount() )
+		GenererDocumentationItemsEnum( Enum.Items, HDBF );
 }
 
 void GenererDocumentationShortcut(
 	const shortcut_ &Shortcut,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<LI><TT>" << Shortcut.Name << "( ";
-
-	if ( Shortcut.Arguments.Amount() )
-		GenererDocumentationArguments( Shortcut.Arguments, Flot );
-
-	Flot << " ): </TT><EM>" << MiseEnFormeCommentaire( Shortcut.Commentaire ) << "</EM>" << nl;
+	HDBF.PutValue( Shortcut.Name, "Name" );
+	HDBF.PutValue( Shortcut.Alias, "Alias" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Shortcut.Commentaire ), "Comment" );
 }
 
 void GenererDocumentationTypedef(
 	const typedef_ &Typedef,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<LI><TT>" << Typedef.Name << ": </TT><EM>" << MiseEnFormeCommentaire( Typedef.Commentaire ) << "</EM>";
-}
-
-void GenererIndexClasses(
-	const table_<classe_> &Classes,
-	txf::text_oflow___ &Flot )
-{
-	ctn::E_CITEM( classe_ ) Classe;
-	tym::row__ Courant = Classes.First();
-
-	Classe.Init( Classes );
-
-	Flot << "<TT>";
-
-	while ( Courant != NONE )
-	{
-		GenererIndexClasse( Classe( Courant ), Flot );
-		Courant = Classes.Next( Courant );
-	}
-
-	Flot << "</TT><BR>" << nl;
+	HDBF.PutValue( Typedef.Name, "Name" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Typedef.Commentaire ), "Comment" );
 }
 
 inline void GenererDocumentationClasse(
 	classe_ &Classe,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 
-	Flot << "<HR><H3><A NAME = \"" << Classe.Name << "\">" << Classe.Name;
+	HDBF.PutValue( Classe.Name, "Name" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Classe.Commentaire ), "Comment" );
 
-	GenererDocumentationTemplateClasse( Classe.Template, Flot );
-
-	Flot << "</H3>" << nl;
+	GenererDocumentationTemplateClasse( Classe.Template, HDBF );
 
 	if ( Classe.Bases.Amount() )
-		GenererDocumentationBasesClasse( Classe.Bases, Flot );
+		GenererDocumentationBasesClasse( Classe.Bases, HDBF );
 
-	Flot << "<EM>" << MiseEnFormeCommentaire( Classe.Commentaire ) << "</EM><BR>" << nl;
-
-	GenererIndexDocumentationClasse( Classe, Flot );
-	GenererDocumentationObjetsClasse( Classe, Flot );
-	GenererDocumentationMethodesClasse( Classe, Flot );
+	GenererDocumentationObjetsClasse( Classe, HDBF );
+	GenererDocumentationMethodesClasse( Classe, HDBF );
 }
 
-/*
-void GenererDocumentationFonctions(
-	ASD_TABLE_(fonction_) &Fonctions,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<HR><H3><A NAME = \"Fonctions\">Fonctions</H3>";
-	GenererIndexDocumentationFonctions( Classe.Fonctions, Flot );
-	GenererCorpsDocumentationFonctions( Classe.Fonctions, Flot );
-}
-*/
 
 inline void GenererDocumentationFonction(
 	const function_ &Fonction,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<LI><A NAME = \"" << Fonction.Name << "\">";
 
-	GenererDocumentationTemplateFonction( Fonction.Template, Flot );
+	HDBF.PutValue( Fonction.Name, "Name" );
+	HDBF.PutValue( Fonction.Type, "Type" );
+	HDBF.PutValue( MiseEnFormeCommentaire( Fonction.Commentaire ), "Comment" );
+	GenererDocumentationParametres( Fonction.Parametres, HDBF );
+	GenererDocumentationTemplateFonction( Fonction.Template, HDBF );
 
-	Flot << "<TT><B>" << Fonction.Name << "</B> : " << Fonction.Type << "</TT>";
-
-	GenererDocumentationParametres( Fonction.Parametres, Flot );
-
-	Flot << "<EM>" << MiseEnFormeCommentaire( Fonction.Commentaire ) << "</EM>";
 }
 
 template <class t> void GenererItems(
 	const table_<t> &Items,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 ERRProlog
 	ctn::E_CITEM( t ) Item;
@@ -1179,7 +607,7 @@ ERRBegin
 
 	while ( Courant != NONE )
 	{
-		Flot << "<LI>" << Item( Courant );
+		HDBF.PutValue( Item( Courant ), "Item" );
 		Courant = Items.Next( Courant );
 	}
 ERRErr
@@ -1195,195 +623,170 @@ ERREpilog
 
 void GenererDocumentationDefines(
 	const table_<define_> &Defines,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	ctn::E_CITEM( define_ ) Define;
 	tym::row__ Courant = Defines.First();
 
 	Define.Init( Defines );
 
-	Flot << "<HR><H2><A NAME=\"Defines\">Defines</H2><UL>";
+	HDBF.PushTag( "Defines" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationDefine( Define( Courant ), Flot );
+		GenererDocumentationDefine( Define( Courant ), HDBF );
 		Courant = Defines.Next( Courant );
 	}
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 void GenererDocumentationEnums(
 	const table_<enum_> &Enums,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	ctn::E_CITEM( enum_ ) Enum;
 	tym::row__ Courant = Enums.First();
 
 	Enum.Init( Enums );
 
-	Flot << "<HR><H2><A NAME=\"Enums\">Enums</H2><UL>";
+	HDBF.PushTag( "Enums" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationEnum( Enum( Courant ), Flot );
+		GenererDocumentationEnum( Enum( Courant ), HDBF );
 		Courant = Enums.Next( Courant );
 	}
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 void GenererDocumentationShortcuts(
 	const table_<shortcut_> &Shortcuts,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	ctn::E_CITEM( shortcut_ ) Shortcut;
 	tym::row__ Courant = Shortcuts.First();
 
 	Shortcut.Init( Shortcuts );
 
-	Flot << "<HR><H2><A NAME=\"Shortcuts\">Shortcuts</H2><UL>";
+	HDBF.PushTag( "Shortcuts" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationShortcut( Shortcut( Courant ), Flot );
+		GenererDocumentationShortcut( Shortcut( Courant ), HDBF );
 		Courant = Shortcuts.Next( Courant );
 	}
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 void GenererDocumentationTypedefs(
 	const table_<typedef_> &Typedefs,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	ctn::E_CITEM( typedef_ ) Typedef;
 	tym::row__ Courant = Typedefs.First();
 
 	Typedef.Init( Typedefs );
 
-	Flot << "<HR><H2><A NAME=\"Typedefs\">Typedefs</H2><UL>";
+	HDBF.PushTag( "Typedefs" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationTypedef( Typedef( Courant ), Flot );
+		GenererDocumentationTypedef( Typedef( Courant ), HDBF );
 		Courant = Typedefs.Next( Courant );
 	}
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 
 void GenererDocumentationClasses(
 	table_<classe_> &Classes,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	tym::row__ Courant = Classes.First();
 
-	Flot << "<HR><H2><A NAME=\"Classes\">Classes</H2>";
-
-	GenererIndexClasses( Classes, Flot );
+	HDBF.PushTag( "Classes" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationClasse( Classes( Courant ), Flot );
+		GenererDocumentationClasse( Classes( Courant ), HDBF );
 		Courant = Classes.Next( Courant );
 	}
 
+	HDBF.PopTag();
+	
 	Classes.Sync();
 }
 
 void GenererDocumentationFonctions(
 	table_<function_> &Fonctions,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	ctn::E_CITEM( function_ ) Fonction;
-	tym::row__ Courant = Fonctions.First();
+	HDBF.PushTag( "Functions" );
 
-	Fonction.Init( Fonctions );
+	GenererDocumentationItemsClasse( Fonctions, HDBF );
+	
+	HDBF.PopTag();
 
-	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2>";
-	GenererDocumentationItemsClasse( str::string( "" ), Fonctions, Flot );
-
-/*	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2><UL>";
-
-	while ( Courant != NONE )
-	{
-		GenererDocumentationFonction( Fonction( Courant ), Flot );
-		Courant = Fonctions.Next( Courant );
-	}
-*/
-
-	Flot << "</UL>";
 }
 
 void GenererDocumentationObjets(
 	table_<objet_> &Objets,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	ctn::E_CITEM( objet_ ) Objet;
-	tym::row__ Courant = Objets.First();
+	HDBF.PushTag( "Objects" );
+	GenererDocumentationItemsClasse( Objets, HDBF );
 
-	Objet.Init( Objets );
-
-	Flot << "<HR><H2><A NAME=\"Objects\">Objects</H2>";
-	GenererDocumentationItemsClasse( str::string( "" ), Objets, Flot );
-
-/*	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2><UL>";
-
-	while ( Courant != NONE )
-	{
-		GenererDocumentationFonction( Fonction( Courant ), Flot );
-		Courant = Fonctions.Next( Courant );
-	}
-*/
-
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 
 
 void GenererGeneralites(
 	const str::string_ &Generalites,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<HR><H4><A NAME = \"Généralités\">Généralités:</H4><P>" << Generalites;
+	HDBF.PutValue( Generalites, "Généralités" );
 }
 
 void GenererVersions(
 	const table_<str::string_> &Versions,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<HR><H4><A NAME = \"Versions\">Versions:</H4><P><UL>";
 
+	HDBF.PushTag( "Versions" );
+	
 	if ( Versions.Amount() )
-		GenererItems( Versions, Flot );
+		GenererItems( Versions, HDBF );
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 void GenererHistorique(
 	const table_<str::string_> &Historique,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<HR><H4><A NAME = \"Historique\">Historique:</H4><P><UL>";
+	HDBF.PushTag( "Historique" );
 
 	if ( Historique.Amount() )
-		GenererItems( Historique, Flot );
+		GenererItems( Historique, HDBF );
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 void GenererRemarques(
 	const table_<str::string_> &Remarques,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
-	Flot << "<HR><H4><A NAME = \"Remarques\">Remarques:</H4><P><UL>";
+	HDBF.PushTag( "Remarques" );
 
 	if ( Remarques.Amount() )
-		GenererItems( Remarques, Flot );
+		GenererItems( Remarques, HDBF );
 
-	Flot << "</UL>";
+	HDBF.PopTag();
 }
 
 
@@ -1506,173 +909,52 @@ ERREnd
 ERREpilog
 }
 
-void GenererTitreDocumentationTechnique(
-	const librairie_ &Librairie,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<HEAD><TITLE>" << Librairie.Name << " library documentation" << "</TITLE></HEAD><BODY>" << nl;
-	Flot << "<CENTER><A HREF=\"" << NOM_FICHIER_INDEX << "\">Back to libraries index</A></CENTER>" << nl;
-	Flot << "<H2><CENTER>Documentation of the <TT>" << Librairie.Name << "</TT> library.</H2></CENTER>";
-	Flot << "<H3><CENTER>" << Librairie.Library.Description << "</H3></CENTER>";
-	Flot << "<H4><UL>";
-	Flot << "<LI><EM>Version :</EM> " << Librairie.Library.Version << "</LI>";
-	Flot << "<LI><EM>Release :</EM> " << Librairie.Library.Release << "</LI>";
-	Flot << "<LI><EM>Coordinator :</EM> " << Librairie.Library.Coordinators << "</LI>";
-	Flot << "</UL></H4>";
-}
-
-
-// Génère l'index de la documentation technique dcorrespondat au library 'Library'.
-void GenererIndexDocumentationTechnique(
-	const library_ &Library,
-	txf::text_oflow___ &Flot )
-{
-	if ( Library.Defines.Amount() )
-		Flot << "<A HREF = \"#Defines\">Defines</A> ";
-
-	if ( Library.Enums.Amount() )
-		Flot << "<A HREF = \"#Enums\">Enums</A> ";
-
-	if ( Library.Shortcuts.Amount() )
-		Flot << "<A HREF = \"#Shortcuts\">Shortcuts</A> ";
-
-	if ( Library.Typedefs.Amount() )
-		Flot << "<A HREF = \"#Typedefs\">Typedefs</A> ";
-
-	if ( Library.Classes.Amount() )
-		Flot << "<A HREF = \"#Classes\">Classes</A> ";
-
-	if ( Library.Functions.Amount() )
-		Flot << "<A HREF = \"#Functions\">Functions</A> ";
-
-	if ( Library.Objets.Amount() )
-		Flot << "<A HREF = \"#Objects\">Objects</A> ";
-}
-
 void GenererCorpsDocumentationTechnique(
 	library_ &Library,
-	txf::text_oflow___ &Flot )
+	hdbf__ &HDBF )
 {
 	if ( Library.Defines.Amount() )
 	{
 		Classer( Library.Defines );
-		GenererDocumentationDefines( Library.Defines, Flot );
+		GenererDocumentationDefines( Library.Defines, HDBF );
 	}
 
 	if ( Library.Enums.Amount() )
 	{
 		Classer( Library.Enums );
-		GenererDocumentationEnums( Library.Enums, Flot );
+		GenererDocumentationEnums( Library.Enums, HDBF );
 	}
 
 	if ( Library.Shortcuts.Amount() )
 	{
 		Classer( Library.Shortcuts );
-		GenererDocumentationShortcuts( Library.Shortcuts, Flot );
+		GenererDocumentationShortcuts( Library.Shortcuts, HDBF );
 	}
 
 	if ( Library.Typedefs.Amount() )
 	{
 		Classer( Library.Typedefs );
-		GenererDocumentationTypedefs( Library.Typedefs, Flot );
+		GenererDocumentationTypedefs( Library.Typedefs, HDBF );
 	}
 
 	if ( Library.Classes.Amount() )
 	{
 		Classer( Library.Classes );
-		GenererDocumentationClasses( Library.Classes, Flot );
+		GenererDocumentationClasses( Library.Classes, HDBF );
 	}
 
 	if ( Library.Functions.Amount() )
 	{
 		Classer( Library.Functions );
-		GenererDocumentationFonctions( Library.Functions, Flot );
+		GenererDocumentationFonctions( Library.Functions, HDBF );
 	}
 
 	if ( Library.Objets.Amount() )
 	{
 		Classer( Library.Objets );
-		GenererDocumentationObjets( Library.Objets, Flot );
+		GenererDocumentationObjets( Library.Objets, HDBF );
 	}
 }
-
-/* Ouvre dans 'Fichier' le fichier de documentation technique de la librairie
-'Librairie' dans le répertoire 'Repertoire' */
-/*
-void OuvrirFichierDocumentationDescriptive(
-	const librairie_ &Librairie,
-	fil__file_oflow_ &Fichier,
-	const char *Repertoire )
-{
-ERRProlog
-	 str::string NameFichier;
-	 char *RelaisNameFichier = NULL;
-ERRBegin
-	NameFichier.Init();
-
-	NameFichier.Write( Repertoire );
-
-	if ( !strchr( SS ":", NameFichier( NameFichier.Amunt() - 1 ) ) )
-		NameFichier.Add( SC );
-
-	NameFichier.Add( Librairie.Name );
-	NameFichier.Add( TERM_FICHIER_DOC_DESC );
-
-	NameFichier.Add( '\0' );
-
-	RelaisNameFichier = NameFichier.Convert();
-
-	Fichier.Init( RelaisNameFichier );
-
-	if ( !Fichier )
-	{
-		fout << "Impossible d'ouvrir le fichier '" << RelaisNameFichier << "'." << nl;
-		ERRt();
-	}
-ERRErr
-ERREnd
-	if ( RelaisNameFichier )
-		free( RelaisNameFichier );
-ERREpilog
-}
-*/
-
-/*
-void GenererTitreDocumentationDescriptive(
-	const librairie_ &Librairie,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<H1><CENTER>Documentation descriptive de la librairie " << Librairie.Name << " (" << Librairie.Library.Description << ").</H1></CENTER>";
-	Flot << "<H2><CENTER>" << Librairie.Library.Version << ' ' << Librairie.Library.Coordinators << ' ' << Librairie.Library.Release <<" </H2></CENTER>";
-//	Flot << "<H2><CENTER>" << Librairie.Documentation.Description << "</CENTER></H2>";
-}
-*/
-// Génère l'index de la documentation descriptive dcorrespondant à la documentation 'Documentation'
-/*void GenererIndexDocumentationDescriptive(
-	add_documentation_ &Documentation,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<A HREF = \"#Versions\">Versions</A> ";
-
-	Flot << "<A HREF = \"#Historique\">Historique</A> ";
-
-	Flot << "<A HREF = \"#Généralités\">Généralités</A> ";
-
-	if ( !Documentation.Remarques.IsEmpty() )
-		Flot << "<A HREF = \"#Remarques\">Remarques</A> ";
-}
-*/
-/*
-void GenererCorpsDocumentationDescriptive(
-	const add_documentation_ &Documentation,
-	txf::text_oflow___ &Flot )
-{
-	GenererGeneralites( Documentation.Generalites, Flot );
-	GenererVersions( Documentation.Versions, Flot );
-	GenererHistorique( Documentation.Historique, Flot );
-	GenererRemarques( Documentation.Remarques, Flot );
-}
-*/
 
 /*********************/
 /***** NIVEAU III ****/
@@ -1751,22 +1033,10 @@ ERREpilog
 
 void GenererDocumentationTechnique(
 	librairie_ &Librairie,
-	const char *Repertoire )
+	hdbf__ &HDBF )
 {
-ERRProlog
-	fil::file_oflow___ Fichier;
-	txf::text_oflow___ Sortie;
-ERRBegin
-	OuvrirFichierDocumentationTechnique( Librairie, Fichier, Repertoire );
-	Sortie.Init( Fichier );
-	GenererEnTeteFichierHTML( Sortie );
-	GenererTitreDocumentationTechnique( Librairie, Sortie );
-	GenererIndexDocumentationTechnique( Librairie.Library, Sortie );
-	GenererCorpsDocumentationTechnique( Librairie.Library, Sortie );
-	Sortie << "<hr><p align=\"right\"><small>Generated " << TOLDateAndTime() << " by GenDoc (c) Claude SIMON</small></p></BODY>";
-ERRErr
-ERREnd
-ERREpilog
+	HDBF.PutValue( Librairie.Name, "Name" );
+ 	GenererCorpsDocumentationTechnique( Librairie.Library, HDBF );
 }
 /*
 void GenererDocumentationDescriptive(
@@ -1846,7 +1116,7 @@ ERRBegin
 		if ( Liste.Amount() )
 			S2 = Liste( 0 );
 
-		for ( tym::row__ i = 1; i < Liste.Amount(); i++ )
+		for ( epeios::row_t__ i = 1; i < Liste.Amount(); i++ )
 		{
 			S1 = S2;
 			S2 = Liste( i );
@@ -1882,88 +1152,19 @@ void Analyser(
 	AnalyserLibrary( Librairie.Library, Name, Repertoire );
 }
 
-/* Ouvre dans 'Fichier' le fichier d'index de librairie sachant qu'il doit
-être placé dans le répertoire 'Repertoire' */
-void OuvrirFichierIndex(
-	fil::file_oflow___ &Fichier,
-	const char *Repertoire )
-{
-ERRProlog
-	 str::string NameFichier;
-	 char *RelaisNameFichier = NULL;
-ERRBegin
-	NameFichier.Init();
-
-	NameFichier.Write( Repertoire );
-
-	if ( !strchr( SS ":", NameFichier( NameFichier.Amount() - 1 ) ) )
-	   NameFichier.Add( SC );
-
-	NameFichier.Add( NOM_FICHIER_INDEX );
-
-	NameFichier.Add( '\0' );
-
-	RelaisNameFichier = NameFichier.Convert();
-
-	if ( Fichier.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )
-	{
-		fout << "Impossible d'ouvrir le fichier '" << RelaisNameFichier << "'." << nl;
-		ERRt();
-	}
-ERRErr
-ERREnd
-	if ( RelaisNameFichier )
-		free( RelaisNameFichier );
-ERREpilog
-}
-
-// Ecrit dans 'Flot' l'entree de l'index des librairies correspondant à 'Librairie'.
-void GenererEntreeIndex(
-	const librairie_ &Librairie,
-	txf::text_oflow___ &Flot )
-{
-	Flot << "<LI><TT><A HREF = \"" << Librairie.Name << TERM_FICHIER_DOC "\">" << Librairie.Name << "</A> " << Librairie.Library.Version << ' ' << Librairie.Library.Release <<  " " << Librairie.Library.Description << "</TT></LI>" << nl;
-//	Flot << "<A HREF = \"" << Librairie.Name << TERM_FICHIER_DOC_DESC "\">desc.</A>):";
-//	Flot << "<EM> " << Librairie.Documentation.Description << "</EM></TT>";
-
-/*	if ( !Librairie.Documentation.Versions.IsEmpty() )
-		Flot << "<BR>(" << Librairie.Documentation.Versions[ Librairie.Documentation.Versions.Occupes.Queue( Librairie.Documentation.Versions.First() ) ] << ")";
-*/
-}
-
 
 // Créer les documentation de la librairie 'Librairie' dans le repertoir 'Repertoire'.
 inline void GenererDocumentations(
 	librairie_ &Librairie,
-	const char *Repertoire,
+	hdbf__ &HDBF,
 	unsigned long Courant,
 	unsigned long Total )
 {
+	HDBF.PushTag( "Library" );
 	fout << "Génération documentations librairie: en cours ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
-	GenererDocumentationTechnique( Librairie, Repertoire );
-//	GenererDocumentationDescriptive( Librairie, Repertoire );
+	GenererDocumentationTechnique( Librairie, HDBF );
+	HDBF.PopTag();
 }
-
-void FillTable(
-	const char *FileName,
-	txmtbl::table_ &Table )
-{
-ERRProlog
-	fil::file_iflow___ Flow;
-	xtf::extended_text_iflow___ TFlow;
-ERRBegin
-	Flow.Init( FileName );
-	Flow.EOFT( XTF_EOXT );
-	TFlow.Init( Flow );
-	txmtbl::GetTable( TFlow, Table );
-	Table.DeleteCommentaries( '#' );
-	Table.DeleteEmptyCells();
-	Table.DeleteEmptyLines();
-ERRErr
-ERREnd
-ERREpilog
-}
-
 
 /*******************/
 /***** NIVEAU I ****/
@@ -2008,147 +1209,36 @@ ERREnd
 ERREpilog
 }
 
-// Créer l'index des librairies à partir de 'Librairies' dans le répertoire 'Repertoire'
-void GenererIndex(
-	 const librairies &Librairies,
-	 const char *Repertoire )
-{
-ERRProlog
-	fil::file_oflow___ Fichier;
-	txf::text_oflow___ Sortie;
-	tym::row__ Courant;
-	ctn::E_CITEM( librairie_ ) Librairie;
-ERRBegin
-	Librairie.Init( Librairies );
-
-	fout << "Création de l'index des librairies: en cours ...               " << rfl;
-	OuvrirFichierIndex( Fichier, Repertoire );
-
-	Sortie.Init( Fichier );
-	GenererEnTeteFichierHTML( Sortie );
-
-	Sortie << "<HEAD><TITLE>Index of libraries</TITLE></HEAD><BODY>";
-	Sortie << "<H2><CENTER>Libraries index.</CENTER></H2>" << nl;
-
-/*
-	Sortie << "<H4><CENTER>";
-
-  for ( C = 'A'; C <= 'Z'; C++ )
-		Sortie << "<A HREF = \"#" << (char)C << "\">" << (char)C << "</A> ";
-
-	Sortie << "</CENTER></H4><UL>";
-*/
-
-	if ( Librairies.Amount() )
-	{
-		Courant = Librairies.First();
-
-		while( Courant != NONE )
-		{
-			GenererEntreeIndex( Librairie( Courant ), Sortie );
-			Courant = Librairies.Next( Courant );
-		}
-	}
-
-	Sortie << "</UL><hr><p align=\"right\"><small>Generated " << TOLDateAndTime() << " by GenDoc (c) Claude SIMON</small></p></BODY>";
-
-	fout << "Création de l'index des librairies: achevée.            " << nl;
-ERRErr
-ERREnd
-ERREpilog
-}
-
 
 // Créer la documentation des 'Librairies' dans le répertoire 'Repertoire'
 void GenererDocumentations(
 	 librairies &Librairies,
-	 const char *Repertoire )
+	 hdbf__ &HDBF )
 {
 ERRProlog
 	tym::row__ Courant;
 	int Compteur = 1;
 ERRBegin
+	HDBF.PushTag( "Documentation" );
+
 	if ( Librairies.Amount() )
 	{
 		Courant = Librairies.First();
 
 		while( Courant != NONE )
 		{
-			GenererDocumentations( Librairies( Courant ), Repertoire, Compteur++, Librairies.Amount() );
+			GenererDocumentations( Librairies( Courant ), HDBF, Compteur++, Librairies.Amount() );
 			Courant = Librairies.Next( Courant );
 		}
 	}
 
 	Librairies.Sync();
+	
+	HDBF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
 }
-
-void FillBunch(
-	const str::string_ &String,
-	flx::bunch_ &Bunch )
-{
-	Bunch.Allocate( String.Amount(), true );
-	
-	Bunch.untyped_memory_::Write( String, String.Amount() );
-	
-	Bunch.Add( XTF_EOXC );
-}
-	
-
-void FillBunch(
-	const txmtbl::line_ &Line,
-	flx::bunch *Bunchs )
-{
-	ctn::E_CMITEM( txmtbl::cell_ ) Cell;
-	int i = 0;
-	
-	Cell.Init( Line );
-
-	if ( Line.Amount() != 2 )
-		ERRu();
-		
-	while( ( i < i_amount ) && ( Cell( Line.First() ) != str::string( Names[i] ) ) ) 
-		i++;
-		
-	if ( i == i_amount )
-		ERRu();
-		
-	FillBunch( Cell( Line.Last() ), Bunchs[i] );
-}
-
-void FillBunchs(
-	const txmtbl::table_ &Table,
-	flx::bunch *Bunchs )
-{
-	tym::row__ Position = Table.First();
-	ctn::E_CITEM( txmtbl::line_ ) Line;
-	
-	Line.Init( Table );
-	
-	while( Position != NONE ) {
-		FillBunch( Line( Position ), Bunchs );
-		Position = Table.Next( Position );
-	}
-}
-
-void FillBunchs(
-	const char *FileName,
-	flx::bunch *Bunchs )
-{
-ERRProlog
-	txmtbl::table Table;	
-ERRBegin
-	Table.Init();
-	FillTable( FileName, Table );
-	FillBunchs( Table, Bunchs );
-	
-ERRErr
-ERREnd
-ERREpilog
-}
-
 
 /****************************/
 /**** NIVEAU FONDAMENTAL ****/
@@ -2164,20 +1254,30 @@ ERRFProlog
 	librairies Librairies;
 	const char *&Liste = argv[1];
 	const char *&RepertoireLibrary = argv[2];
-	const char *&RepertoireDestination = argv[3];
+	const char *&FichierDestination = argv[3];
+	hdbmnb::hierarchical_database HDB;
+	hdbfil::hierarchical_database_filler__ HDBF;
+	fil::file_oflow___ OFlow;
+	txf::text_oflow___ TFlow;
+
 ERRFBegin
 	if ( argc != 4 )
 		ERRt();
 		
-	for( int i = 0; i < i_amount; i++ )
-		::Bunchs[i].Init();
-		
-	FillBunchs( "conf", Bunchs );
-	
 	Librairies.Init();
 	Analyser( Liste, RepertoireLibrary, Librairies );
-	GenererIndex( Librairies, RepertoireDestination );
-	GenererDocumentations( Librairies, RepertoireDestination );
+	
+	HDB.Init();
+	HDBF.Init( HDB );
+	GenererDocumentations( Librairies, HDBF );
+	
+	OFlow.Init( FichierDestination );
+	TFlow.Init( OFlow );
+	
+	GenererEnTeteFichierXML( TFlow );
+	
+	hdbmnb::WriteXML( HDB, TFlow );
+
 	fout << "Génération documentations librairie: achevée.                             " << nl;
 ERRFErr
 	ExitCode = EXIT_FAILURE;

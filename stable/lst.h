@@ -107,12 +107,12 @@ namespace lst {
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
 		{
-			return Successeur_( Element, Amount(), Libres );
+			return lst::Successeur_( Element, Amount(), Libres );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
 		{
-			return Predecesseur_( Element, Libres );
+			return lst::Predecesseur_( Element, Libres );
 		}
 		// Retourne vrai si 'Element' existe dans la liste.
 		bso__bool Existe_( epeios::row_t__ Position ) const
@@ -216,22 +216,22 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next( r Entry ) const
 		{
-			if ( ++Entry < amount_extent_manager_<r>::Amount() )
-				if( Libres.IsEmpty() || Existe_( Entry ) )
+			if ( ++Entry.V < amount_extent_manager_<r>::Amount() )
+				if ( Libres.IsEmpty() || Existe_( Entry.V ) )
 					return Entry;
 				else
-					return Successeur_( Entry );
+					return Successeur_( Entry.V );
 			else
 				return NONE;
 		}
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
 		r Previous( r Entry ) const
 		{
-			if ( Entry-- > 0 )
-				if( Libres.IsEmpty() || Existe_( Entry ) )
+			if ( Entry.V-- > 0 )
+				if ( Libres.IsEmpty() || Existe_( Entry.V ) )
 					return Entry;
 				else
-					return Predecesseur_( Entry );
+					return Predecesseur_( Entry.V );
 			else
 				return NONE;
 		}

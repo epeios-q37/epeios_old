@@ -259,7 +259,7 @@ namespace bch {
 			r Position,
 			epeios::size__ Amount = 1)
 		{
-			mmr::Write( *this, this->Amount() - ( Amount + Position.V ), Position + Amount, Position );
+			mmr::Write( *this, this->Amount() - ( Amount + Position.V ), Position.V + Amount, Position );
 
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}

@@ -363,12 +363,12 @@ void LireDocLong_(
 
 void ExtractCVSTag_( str::string_ &Tag )
 {
-	tym::row__ P;
+	epeios::row_t__ P;
 
-	if ( ( ( P = Tag.Search( ':' ) ) != NONE ) && ( Tag.Amount() >= P + 2 ) ) {
+	if ( ( ( P = Tag.Search( ':' ).V ) != NONE ) && ( Tag.Amount() >= P + 2 ) ) {
 		Tag.Delete( 0, P + 2 );
 
-		if ( ( P = Tag.Search( '$' ) ) != NONE ) {
+		if ( ( P = Tag.Search( '$' ).V ) != NONE ) {
 			Tag.Allocate( P - 1 );
 		}
 	}

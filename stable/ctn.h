@@ -633,7 +633,7 @@ namespace ctn {
 		//f Create an initialized object. Return position of the created object.
 		r Create( void )
 		{
-			epeios::row_t__ P = Create_();
+			epeios::row__ P = Create_();
 
 			mono_container_<t, r>::Sync();
 

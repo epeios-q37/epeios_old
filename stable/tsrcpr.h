@@ -75,49 +75,49 @@ namespace tsrcpr {
 
 
 	template <class t> class table_
-	: public queue_index_,
+	: public E_IQUEUE_,
 	  public E_CONTAINER_( t )
 	{
 	public:
 		struct s
-		: public queue_index_::s,
+		: public E_IQUEUE_::s,
 		  public E_CONTAINER_( t )::s
 		{};
 		table_( s &S )
-		: queue_index_( S ),
+		: E_IQUEUE_( S ),
 		  E_CONTAINER_( t )( S ){}
 		void reset( bool P = true )
 		{
-			queue_index_::reset( P );
+			E_IQUEUE_::reset( P );
 			E_CONTAINER_( t )::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			queue_index_::plug( MM );
+			E_IQUEUE_::plug( MM );
 			E_CONTAINER_( t )::plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
-			queue_index_::operator =( T );
+			E_IQUEUE_::operator =( T );
 			E_CONTAINER_( t )::operator =( T );
 
 			return *this;
 		}
 		void Init( void )
 		{
-			queue_index_::Init();
+			E_IQUEUE_::Init();
 			E_CONTAINER_( t )::Init();
 		}
 		tym::row__ New( void )
 		{
 			tym::row__ P = E_CONTAINER_( t )::New();
 
-			queue_index_::Allocate( E_CONTAINER_( t )::Extent() );
+			E_IQUEUE_::Allocate( E_CONTAINER_( t )::Extent() );
 
-			if ( queue_index_::Amount() )
-				queue_index_::BecomeNext( P, queue_index_::Last() );
+			if ( E_IQUEUE_::Amount() )
+				E_IQUEUE_::BecomeNext( P, E_IQUEUE_::Last() );
 			else
-				queue_index_::Create( P );
+				E_IQUEUE_::Create( P );
 
 			E_CONTAINER_( t )::operator()( P ).Init();
 
@@ -129,16 +129,16 @@ namespace tsrcpr {
 		{
 			E_CONTAINER_( t )::Write( Objet, New() );
 		}
-		NAV( queue_index_:: )
+		NAV( E_IQUEUE_:: )
 	};
 
-	AUTO1( table )
+	AUTOt( table )
 
 	template <class t> inline txf::text_iflow___ &operator >>(
 		txf::text_iflow___ &Flot,
 		table_< t > &T )
 	{
-		return Flot >> *(queue_index_ *)&T;
+		return Flot >> *(E_IQUEUE_ *)&T;
 	}
 
 	//c An item.

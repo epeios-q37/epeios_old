@@ -239,13 +239,13 @@ ERRBegin
 	FileName.Init();
 
 	switch( Expander.Expand( IFlow, OFlow, Delimiter, FileName, Action, err::hSkip ) ) {
-	case tagexp::rOK:
+	case tagexp::sOK:
 		break;
-	case tagexp::rFile:
+	case tagexp::sBadFile:
 		ferr << "Error with file '" << FileName << "'." << txf::nl;
 		ERRt();
 		break;
-	case tagexp::rTag:
+	case tagexp::sUnknowTag:
 		ferr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
 		ERRt();
 		break;
