@@ -139,8 +139,9 @@ namespace err {
 	enum i
 	{
 		iGeneric,
-		iError,		// To signal an error (generally a user error, as incoorect eror in command line).
-		iNoError	// To quickly exit, without an error.
+		iError,		// To signal an error (generally a user error, an error in command line, for example).
+		iBeam,		// To rapidly go back to a certain point.
+		iReturn		// To quickly exit, without an error.
 	};
 		// throw error
 	enum c
@@ -326,9 +327,9 @@ namespace err {
 #endif
 
 #ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	err::ERR.Error && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iNoError ) )
+#define ERRTestEpilog	err::ERR.Error && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #else
-#define ERRTestEpilog	err::ERR.Error && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iNoError ) )
+#define ERRTestEpilog	err::ERR.Error && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #endif
 
 //d End of the error bloc.
@@ -373,7 +374,7 @@ namespace err {
 #define ERRExit( v )	err::ERR.ExitValue = v; ERRI( iError )
 
 // Jump to 'ERRErr' and reset the reset the err::itn/iNoError' error.
-#define	ERRReturn		ERRI( iNoError );
+#define	ERRReturn		ERRI( iReturn );
 }
 
 /*$END$*/
