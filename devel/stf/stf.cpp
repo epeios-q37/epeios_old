@@ -55,12 +55,12 @@ public:
 
 using namespace stf;
 
-stf::ostream_oflow___ stf::foutF( std::cout ), stf::ferrF( std::cerr );
-stf::istream_iflow___ stf::finF( std::cin );
-stf::istream_iflow_line___ stf::finLF( std::cin );
+stf::ostream_oflow___ stf::coutF( std::cout ), stf::cerrF( std::cerr );
+stf::istream_iflow___ stf::cinF( std::cin );
+stf::istream_iflow_line___ stf::cinLF( std::cin );
 
-txf::text_oflow___ stf::fout, stf::ferr;
-txf::text_iflow___ stf::fin;
+txf::text_oflow___ stf::cout, stf::cerr;
+txf::text_iflow___ stf::cin;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
@@ -73,16 +73,16 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-		foutF.Init();
-		fout.Init( foutF );
+		coutF.Init();
+		cout.Init( coutF );
 
-		finF.Init();
-		fin.Init( finF );
+		cinF.Init();
+		cin.Init( cinF );
 
-		ferrF.Init();
-		ferr.Init( ferrF );
+		cerrF.Init();
+		cerr.Init( cerrF );
 
-		finLF.Init();
+		cinLF.Init();
 
 	}
 	~stfpersonnalization( void )

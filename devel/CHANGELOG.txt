@@ -26,6 +26,7 @@ DTR:
 
 ERR:
 - Adding the 'tReturn' item.
+- Adapting to changes in 'STF' library.
 
 IDS:
 - Adapting to changes in 'STK' library.
@@ -55,6 +56,9 @@ QUE:
 SSNMNG:
 - Adapting to changes in 'LST' library.
 
+STF:
+- Renaming f[(out|in|err)[F]] to c[(out|in|err)[F]]
+
 STK:
 - Renaming 'ObjectExists' to 'Exists', to avoid some mistake risks.
 
@@ -66,6 +70,10 @@ TAGDTC:
 
 TOL:
 - Correcting the problem in 'NAVt()' for which the gcc 3.x preprocessor issued a warning.
+- Adapting to changes in 'STF' library.
+
+TTR:
+- Adapting to changes in 'STF' library.
 
 TYM:
 - Fixing bug.

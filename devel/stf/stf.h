@@ -281,25 +281,25 @@ namespace stf {
 
 
 	//o Standard output as a pure flow (not a text flow).
-	extern ostream_oflow___ foutF;
+	extern ostream_oflow___ coutF;
 
 	//o Error output as a pure flow (not a text flow).
-	extern ostream_oflow___ ferrF;
+	extern ostream_oflow___ cerrF;
 
 	//o Standard input as a pure flow (not a text flow).
-	extern istream_iflow___ finF;
+	extern istream_iflow___ cinF;
 
 	//o Standard input as a pure flow (not a text flow), but red line by line.
-	extern istream_iflow_line___ finLF;
+	extern istream_iflow_line___ cinLF;
 
 	//o Standard output as a text flow.
-	extern txf::text_oflow___ fout;
+	extern txf::text_oflow___ cout;
 
 	//o Error output as a text flow.
-	extern txf::text_oflow___ ferr;
+	extern txf::text_oflow___ cerr;
 
 	//o Standard input as a text flow.
-	extern txf::text_iflow___ fin;
+	extern txf::text_iflow___ cin;
 }
 
 #if 0

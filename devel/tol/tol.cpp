@@ -135,15 +135,15 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfSuppression:
-			stf::ferr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			stf::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfDuplication:
-			stf::ferr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			stf::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfRenaming:
-			stf::ferr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			stf::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfOK:
@@ -194,13 +194,13 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfAllocation:
-			stf::ferr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			stf::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
 			break;
 		case tol::rbfSuppression:
-			stf::ferr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			stf::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfRenaming:
-			stf::ferr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			stf::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfOK:
 			break;

@@ -46,26 +46,26 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << DESCRIPTION << txf::nl;
-	fout << NAME << " --version|--license|--help" << txf::nl;
+	stf::cout << DESCRIPTION << txf::nl;
+	stf::cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << NAME << " <command> [options] ..." << txf::nl;
+	stf::cout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
-	fout << "command:" << txf::nl;
+	stf::cout << "command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	fout << "options:" << txf::nl;
+	stf::cout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	fout << COPYRIGHT << txf::nl;
-	fout << INFO << txf::nl;
-	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	stf::cout << COPYRIGHT << txf::nl;
+	stf::cout << INFO << txf::nl;
+	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -83,8 +83,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		ferr << '\'' << Unknow << "': unknow option." << txf::nl;
-		fout << HELP << txf::nl;
+		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		stf::cout << HELP << txf::nl;
 		ERRt();
 	}
 
@@ -123,8 +123,8 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	default:
-		ferr << "Too many arguments." << txf::nl;
-		fout << HELP << txf::nl;
+		stf::cerr << "Too many arguments." << txf::nl;
+		stf::cout << HELP << txf::nl;
 		ERRt();
 		break;
 	}
@@ -228,7 +228,7 @@ ERRFErr
 
 ERRFEnd
 ERRFEpilog
-	fout << txf::sync;
+	stf::cout << txf::sync;
 
 	return ExitValue;
 }

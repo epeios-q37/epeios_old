@@ -10,16 +10,15 @@ $NOTICE$
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "$xxx$.h"
 
 #include "err.h"
 #include "stf.h"
 
-use stf::fin;
-use stf::fout;
-use stf::ferr;
+use stf::cin;
+use stf::cout;
+use stf::cerr;
 
 void Generic( int argc, char *argv[] )
 {
@@ -35,7 +34,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cout << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -48,16 +47,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
+		cout << txf::sync;
+		cerr << "\nBad arguments.\n";
+		cout << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << $XXX$Tutor.Name << ".\n";
+	cout << "\nEnd of program " << $XXX$Tutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
