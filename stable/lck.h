@@ -251,6 +251,10 @@ namespace lck {
 		{
 			return *Object_;
 		}
+		const object &GetUnlocked( void ) const
+		{
+			return *Object_;
+		}
 		void ReleaseWriting( void )
 		{
 #ifdef LCK__DBG
