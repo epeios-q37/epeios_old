@@ -64,7 +64,7 @@ void ssnmng::session_id__::New( void )
 	int i;
 
 	for( i = 0; i < SSNMNG_SIZE; i++ )
-		Raw_[i] = DIGITS[rand() % sizeof( DIGITS )];
+		Raw_[i] = DIGITS[rand() % ( sizeof( DIGITS ) - 1 )];
 
 	Raw_[i] = 0;
 }

@@ -17,6 +17,7 @@ SSNMNG:
 - Adding 'sessions_manager_::IsValid()' method.
 - Adding 'sessions_manager_::GetExpired()' methods.
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
+- (22/03/04) Fixing bug in session id creation.
 
 TOL:
 - Adding the 'E_DISCLOSE' macro.
