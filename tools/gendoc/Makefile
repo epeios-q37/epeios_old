@@ -32,8 +32,8 @@ copt =
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str xmltag\
-       fil xmlval xmldcm xmlcor
+libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str hostag\
+       fil hosval hosdcm hoscor
 
 ifndef EPEIOS_SRC
 	epeios_src=
