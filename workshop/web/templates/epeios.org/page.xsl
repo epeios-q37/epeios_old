@@ -190,4 +190,5 @@
   <xsl:include href="../list.xsl"/>
   <xsl:include href="../misc.xsl"/>
   <xsl:include href="../libraries.xsl"/>
+  <xsl:include href="../cvs.xsl"/>
 </xsl:stylesheet>
