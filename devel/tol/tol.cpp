@@ -69,15 +69,11 @@ public:
 #include "mtk.h"
 #endif
 
-#include <fstream.h>
+#include <fstream>
 
 bool tol::FileExists( const char *Nom )
 {
-#ifdef CPE__NO_IOS_EXTENSION
-	ifstream Stream( Nom, ios::binary );
-#else
-	ifstream Stream( Nom, ios::binary | ios::nocreate );
-#endif
+	std::ifstream Stream( Nom, std::ios::binary );
 
 #ifdef CPE__VC
 	return Stream != NULL;
@@ -110,8 +106,8 @@ ERRBegin
 		if ( Etat == tol::rbfOK )
 			if ( Handle == tol::hbfDuplicate )
 			{
-				ofstream Out( NomFichierSecurite );
-				ifstream In( NomFichier );
+				std::ofstream Out( NomFichierSecurite );
+				std::ifstream In( NomFichier );
 				int C;
 
 				while( Out && In && ( ( C = In.get() ) != EOF ) )
@@ -139,15 +135,15 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfSuppression:
-			ferr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			stf::ferr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfDuplication:
-			ferr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			stf::ferr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfRenaming:
-			ferr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			stf::ferr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
 			ERRt();
 			break;
 		case tol::rbfOK:
@@ -198,13 +194,13 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfAllocation:
-			ferr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			stf::ferr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
 			break;
 		case tol::rbfSuppression:
-			ferr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			stf::ferr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfRenaming:
-			ferr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			stf::ferr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfOK:
 			break;

@@ -84,6 +84,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &spp		&epeios		&2000-		&Shared PiPe
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
 &stk		&epeios		&2000-		&STacK
+&stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow
 &str		&epeios		&2000-		&STRing
 &tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)

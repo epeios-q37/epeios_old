@@ -217,8 +217,8 @@ void err::Final( void )
 {
 	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
 
-	fout << txf::sync;
-	ferr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;
+	stf::fout << txf::sync;
+	stf::ferr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;
 
 	ERRRst();
 }

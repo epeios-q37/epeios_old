@@ -337,8 +337,8 @@ namespace tym {
 /*	private:
 		_memory_<t, uym::untyped_memory__< amount * size >, r >::s Static_;	// Is empty.
 */	public:
-		memory__( _memory_<t, uym::untyped_memory__< amount * size >, r >::s &S = *( _memory_<t, uym::untyped_memory__< amount * size >, r >::s *) NULL )	// To simplify use in 'BCH'.
-		: _memory_<t, uym::untyped_memory__< amount * size >, r >( S )
+		memory__( typename _memory_<t, uym::untyped_memory__< amount * size >, r >::s &S = *( typename _memory_<t, uym::untyped_memory__< amount * size >, r >::s *) NULL )	// To simplify use in 'BCH'.
+		: _memory_<t, typename uym::untyped_memory__< amount * size >, r >( S )
 		{}
 	
 	};

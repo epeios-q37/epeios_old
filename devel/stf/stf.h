@@ -1,25 +1,24 @@
 /*
-  Header for the 'stf' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'stf' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define STF_NAME		"STF"
 
-#define	STF_VERSION	"$Revision$"	
+#define	STF_VERSION	"$Revision$"
 
-#define STF_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define STF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &STFTutor;
 
 #if defined( XXX_DBG ) && !defined( STF_NODBG )
-#define STF_DBG 
+#define STF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,10 +53,15 @@ extern class ttr_tutor &STFTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D STream (or STandard) Flow 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 //#include <fstream.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "err.h"
 #include "flw.h"
@@ -78,7 +82,7 @@ namespace stf {
 	: public oflow___
 	{
 	private:
-		ostream &Stream_;
+		std::ostream &Stream_;
 		flw::datum__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
@@ -109,7 +113,7 @@ namespace stf {
 		{
 			oflow___::reset( P );
 		}
-		ostream_oflow___( ostream &Stream )
+		ostream_oflow___( std::ostream &Stream )
 		: Stream_( Stream ),
 		  oflow___()
 		{
@@ -138,7 +142,7 @@ namespace stf {
 			flw::datum__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 		protected:
 			// Le stream en question.
-			istream &Stream_;
+			std::istream &Stream_;
 			flw::amount__ HandleAmount_(
 				flw::amount__ Minimum,
 				flw::datum__ *Tampon,
@@ -162,7 +166,7 @@ namespace stf {
 			void reset( bool = true )
 			{
 			}
-			istream_iflow_core___( istream &Stream )
+			istream_iflow_core___( std::istream &Stream )
 			: iflow___(),
 			  Stream_( Stream )
 			{
@@ -211,7 +215,7 @@ namespace stf {
 		{
 			istream_iflow_core___::reset( P );
 		}
-		istream_iflow___( istream &Stream )
+		istream_iflow___( std::istream &Stream )
 		: istream_iflow_core___( Stream )
 		{
 			reset( false );
@@ -259,7 +263,7 @@ namespace stf {
 		{
 			istream_iflow_core___::reset( P );
 		}
-		istream_iflow_line___( istream &Stream )
+		istream_iflow_line___( std::istream &Stream )
 		: istream_iflow_core___( Stream )
 		{
 			reset( false );
@@ -298,9 +302,11 @@ namespace stf {
 	extern txf::text_iflow___ fin;
 }
 
+#if 0
 using stf::fout;
 using stf::ferr;
 using stf::fin;
+#endif
 
 /*$END$*/
 				  /********************************************/

@@ -2,6 +2,7 @@ $Id$
 
 GENERAL:
 - Adapting to Code Warrior for Windows and Macintosh.
+- Fixing g++ warning.
 
 BITBCH:
 - Fixing bug.

@@ -17,6 +17,10 @@ $NOTICE$
 #include "err.h"
 #include "stf.h"
 
+use stf::fin;
+use stf::fout;
+use stf::ferr;
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
