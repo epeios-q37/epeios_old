@@ -7,7 +7,7 @@ GENERAL:
 - (24/05/04) Adapting to changes in 'TXF' library.
 - (30/05/04) Adapting to changes in 'FLW' library.
 - (31/05/04) Adapting to changes in 'FLW' library.
-- (31/05/04) Using 'CIO' library instaed of 'STF' for 'c(out|in|err)'.
+- (31/05/04) Using 'CIO' library instead of 'STF' for 'c(out|in|err)'.
 - (11/06/04) Adding the 'MSG' library.
 - (14/07/04) Adapting to changes in 'FLW' library.
 - (14/07/04) Adapting to changes in 'BSO' library.
