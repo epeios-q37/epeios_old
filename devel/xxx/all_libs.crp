@@ -1,26 +1,29 @@
 # Details for each library.
-NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
-&dbiapi	&ldbi	&		&DataBase Interface Adavanced Programmer Interface
-&dbibsc	&ldbi	&		&DataBase Interface BaSiCs
-&dbidpd	&ldbi	&		&Database DePenDences
-&dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
-&dbimsq	&ldbi	&		&DataBase Interface MySQl (from MySQL database)
-&dbipgs	&ldbi	&		&DataBAse Interface PostGreS
-&dbisql	&ldbi	&		&DataBase Interface SQL (from language)
-&dbisrq	&ldbi	&		&DataBase Interface Search ReQuest
-&err	&epeios	&2000-		&ERRor handling
-&mscmdf	&emsc	&		&MuSiC MiDi File		
-&mscmdm	&emsc	&		&MuSiC MiDi Messages
-&mscvkp	&emsc	&		&MuSiC VK (from Roland VK combo organ) Parameters
-&mscvkx	&emsc	&		&MuSiC VK (from Roland VK combo organ) XML
-&pip	&epeios	&2000-		&PIPe
-&spp	&epeios	&2000-		&Shared PiPe
-&str	&epeios	&2000-		&STRing
-&xmlbsc	&exml	&2000-		&XML BaSiC
-&xmlcor	&exml	&2000-		&XML CORe
-&xmldbs	&exml	&2000-		&XML DataBaSe
-&xmldcm	&exml	&2000-		&XML DoCuMent
-&xmlprs	&exml	&2000-		&XML PaRSer
-&xmltag	&exml	&2000-		&XML TAG
-&xmltol	&exml	&2000-		&XML TOoL
-&xmlval	&exml	&2000-		&XML VALue
+# $Id$
+
+NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+&dbiapi		&ldbi		&		&DataBase Interface Adavanced Programmer Interface
+&dbiapi_	&ldbi		&		&DataBase Interface Adavanced Programmer Interface (for backend)
+&dbibsc		&ldbi		&		&DataBase Interface BaSiCs
+&dbidpd		&ldbi		&		&Database DePenDences
+&dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
+&dbimsq		&ldbi		&		&DataBase Interface MySQl (from MySQL database)
+&dbipgs		&ldbi		&		&DataBAse Interface PostGreS
+&dbisql		&ldbi		&		&DataBase Interface SQL (from language)
+&dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
+&err		&epeios		&2000-		&ERRor handling
+&mscmdf		&emsc		&		&MuSiC MiDi File		
+&mscmdm		&emsc		&		&MuSiC MiDi Messages
+&mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters
+&mscvkx		&emsc		&		&MuSiC VK (from Roland VK combo organ) XML
+&pip		&epeios		&2000-		&PIPe
+&spp		&epeios		&2000-		&Shared PiPe
+&str		&epeios		&2000-		&STRing
+&xmlbsc		&exml		&2000-		&XML BaSiC
+&xmlcor		&exml		&2000-		&XML CORe
+&xmldbs		&exml		&2000-		&XML DataBaSe
+&xmldcm		&exml		&2000-		&XML DoCuMent
+&xmlprs		&exml		&2000-		&XML PaRSer
+&xmltag		&exml		&2000-		&XML TAG
+&xmltol		&exml		&2000-		&XML TOoL
+&xmlval		&exml		&2000-		&XML VALue
