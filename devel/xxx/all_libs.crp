@@ -27,6 +27,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &xmlbsc		&exml		&2000-		&XML BaSiC
+&wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 &xmlcor		&exml		&2000-		&XML CORe
 &xmldbs		&exml		&2000-		&XML DataBaSe
 &xmldcm		&exml		&2000-		&XML DoCuMent
