@@ -287,7 +287,7 @@
         </specific>
         <content>
           <CVS server="cvs.epeios.org" root="/cvsroot/epeios" module="stable">
-            <link URL="http://cvs.epeios.org/cgi-bin/viewcvs.cgi/epeios/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/epeios/epeios/stable/"/>
           </CVS>
         </content>
       </document>
@@ -522,7 +522,7 @@
         </specific>
         <content>
           <CVS server="cvs.ebkd.sf.net" root="/cvsroot/ebkd" module="stable">
-            <link URL="http://cvs.ebkd.sf.net/cgi-bin/viewcvs.cgi/ebkd/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/ebkd/ebkd/stable/"/>
           </CVS>
         </content>
       </document>
@@ -755,7 +755,7 @@
         </specific>
         <content>
           <CVS server="cvs.ecgi.sf.net" root="/cvsroot/ecgi" module="stable">
-            <link URL="http://cvs.ecgi.sf.net/cgi-bin/viewcvs.cgi/ecgi/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/ecgi/ecgi/stable/"/>
           </CVS>
         </content>
       </document>
@@ -898,7 +898,7 @@
         </specific>
         <content>
           <CVS server="cvs.exml.sf.net" root="/cvsroot/exml" module="stable">
-            <link URL="http://cvs.exml.sf.net/cgi-bin/viewcvs.cgi/exml/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/exml/exml/stable/"/>
           </CVS>
         </content>
       </document>
@@ -1041,7 +1041,7 @@
         </specific>
         <content>
           <CVS server="cvs.emth.sf.net" root="/cvsroot/emth" module="stable">
-            <link URL="http://cvs.emth.sf.net/cgi-bin/viewcvs.cgi/emth/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/emth/emth/stable/"/>
           </CVS>
         </content>
       </document>
@@ -1182,7 +1182,7 @@
         </specific>
         <content>
           <CVS server="cvs.etmc.sf.net" root="/cvsroot/etmc" module="stable">
-            <link URL="http://cvs.etmc.sf.net/cgi-bin/viewcvs.cgi/etmc/stable/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/etmc/etmc/stable/"/>
           </CVS>
         </content>
       </document>
@@ -1319,7 +1319,7 @@
         </specific>
         <content>
           <CVS server="cvs.ejava.sf.net" root="/cvsroot/ejava" module="libs">
-            <link URL="http://cvs.ejava.sf.net/cgi-bin/viewcvs.cgi/ejava/libs/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/ejava/ejava/libs/"/>
           </CVS>
         </content>
       </document>
@@ -1515,7 +1515,7 @@
           </specific>
           <content>
             <CVS server="cvs.etmc.sf.net" root="/cvsroot/etmc" module="apps/backend/">
-              <link URL="http://cvs.etmc.sf.net/cgi-bin/viewcvs.cgi/etmc/apps/backend/"/>
+              <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/etmc/etmc/apps/backend/"/>
             </CVS>
           </content>
         </document>
@@ -1640,7 +1640,7 @@
           </specific>
           <content>
             <CVS server="cvs.etmc.sf.net" root="/cvsroot/etmc" module="apps/CGID/">
-              <link URL="http://cvs.etmc.sf.net/cgi-bin/viewcvs.cgi/etmc/apps/CGID/"/>
+              <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/etmc/etmc/apps/CGID/"/>
             </CVS>
           </content>
         </document>
@@ -1790,7 +1790,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <CVS server="cvs.epeios.org" root="/cvsroot/epeios" module="tools/mll2html">
-            <link URL="http://cvs.epeios.org/cgi-bin/viewcvs.cgi/epeios/tools/mll2html/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/epeios/epeios/tools/mll2html/"/>
           </CVS>
         </content>
       </document>
@@ -1938,7 +1938,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <CVS server="cvs.epeios.org" root="/cvsroot/epeios" module="tools/reveal">
-            <link URL="http://cvs.epeios.org/cgi-bin/viewcvs.cgi/epeios/tools/reveal/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/epeios/epeios/tools/reveal/"/>
           </CVS>
         </content>
       </document>
@@ -2089,7 +2089,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <CVS server="cvs.ebkd.sourceforge.net" root="/cvsroot/ebkd" module="apps/getbkdapi">
-            <link URL="http://cvs.ebkd.sourceforge.net/cgi-bin/viewcvs.cgi/ebkd/apps/getbkdapi/"/>
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/ebkd/ebkd/apps/getbkdapi/"/>
           </CVS>
         </content>
       </document>
