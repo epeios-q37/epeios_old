@@ -1,7 +1,7 @@
 /*
 	Header for the 'lstctn' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -136,7 +136,7 @@ namespace lstctn {
 		list_xcontainer_( s &S )
 		: list_container_<container, row, row_t>( S )
 		{}
-		row Create( void )
+		row New( void )
 		{
 			row Row = list_container_<container, row, row_t>::New();
 
@@ -146,7 +146,7 @@ namespace lstctn {
 		}
 		row Add( const object &Object )
 		{
-			row Row = Create();
+			row Row = New();
 
 			list_container_<container, row, row_t>::operator()( Row ).operator =( Object );
 

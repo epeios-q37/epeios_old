@@ -1,6 +1,6 @@
 /*
 	Header for the 'stk' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 20002002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -143,6 +143,15 @@ namespace stk {
 				return E_MEMORY_( t )::Position( Object, 0, Amount() ) != NONE;
 			else
 				return false;
+		}
+		//f Return the value stord on top of the stack.
+		t Top( void ) const
+		{
+#ifdef STK_DBG
+			if ( Amount() == 0 )
+				ERRl();
+#endif
+			return E_MEMORY_( t )::Read( Last() );
 		}
 	};
 

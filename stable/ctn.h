@@ -1,6 +1,6 @@
 /*
 	Header for the 'ctn' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,8 +55,10 @@ extern class ttr_tutor &CTNTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D ConTaiNer (of dynamic objects). 
+//D ConTaiNer (of dynamic objects) 
 /* End addendum to automatic documentation generation part. */
+
+/*$BEGIN$*/
 
 #include "err.h"
 #include "flw.h"
@@ -722,9 +724,9 @@ namespace ctn {
 			mono_container_<t, r>::Init();
 		}
 		//f Create an initialized object. Return position of the created object.
-		r Create( void )
+		r New( void )
 		{
-			epeios::row__ P = Create_();
+			r P = Create_();
 
 			mono_container_<t, r>::Flush();
 
@@ -1083,7 +1085,7 @@ namespace ctn {
 			multi_container_< t, r >::Init();
 		}
 		//f Create an initialized object. Return position of the created object.
-		r Create( void )
+		r New( void )
 		{
 			r P = Create_();
 

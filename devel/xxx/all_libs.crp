@@ -105,7 +105,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &srv		&epeios		&2000, 2001, 	&SeRVer
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
 &stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow
-&stk		&epeios		&2000-		&STacK
+&stk		&epeios		&2000-\
+	&STacK
 &str		&epeios		&2000-		&STRing
 &tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
 &tol		&epeios		&2000-		&TOoL
