@@ -524,7 +524,7 @@ namespace ctn {
 	#define E_MITEMt( Type, r )		volatile_mono_item< Type, r >
 	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_MITEM( Type )		volatile_mono_item< Type, epeios::row__ >
 	#define E_CMITEM( Type )	const_mono_item< Type, epeios::row__ >
 #else
@@ -652,7 +652,7 @@ namespace ctn {
 	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
 	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_MCONTAINER_( Type )	mono_container_< Type, epeios::row__ >
 	#define E_MCONTAINER( Type )	mono_container_< Type, epeios::row__ >
 #else
@@ -738,7 +738,7 @@ namespace ctn {
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
 	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, epeios::row__ >
 	#define E_XMCONTAINER( Type )	mono_extended_container< Type, epeios::row__ >
 #else
@@ -882,7 +882,7 @@ namespace ctn {
 	#define E_ITEMt( Type, r )		volatile_multi_item< Type, r >
 	#define E_CITEMt( Type,r  )		const_multi_item< Type, r  >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_ITEM( Type )			volatile_multi_item< Type, epeios::row__ >
 	#define E_CITEM( Type )			const_multi_item< Type, epeios::row__  >
 #else
@@ -1008,7 +1008,7 @@ namespace ctn {
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_CONTAINER_( Type )	multi_container_< Type, epeios::row__ >
 	#define E_CONTAINER( Type )		multi_container< Type, epeios::row__ >
 #else
@@ -1094,7 +1094,7 @@ namespace ctn {
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >
 	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, epeios::row__ >
 	 #define E_XCONTAINER( Type )	multi_extended_container< Type, epeios::row__ >
 #else	

@@ -59,7 +59,7 @@ public:
 #elif defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	include <unistd.h>
 #	include <sched.h>
-#else
+#elif !defined( CPE__MAC )
 #	error "Unknown compilation enviroment"
 #endif
 
@@ -275,8 +275,10 @@ void tol::Wait( unsigned int Secondes )
 		Secondes = sleep( Secondes );
 	/* Because the 'sleep()' may be interrupted by an exiting child
 	in a multitasking program. (Is that a good idea ???)*/
+#elif defined( CPE__MAC )
+	ERRl();
 #else
-	#error "Unknown compilation enviroment"
+#	error "Unknown compilation enviroment"
 #endif
 }
 

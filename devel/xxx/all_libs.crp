@@ -12,6 +12,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
+&bso		&epeios		&2000-		&BaSic Objects
 &btf		&epeios		&		&Binary Tree Filler
 &btr		&epeios		&2000-		&Binary Tree
 &bts		&epeios		&		&Binary Tree Seeker
@@ -40,7 +41,9 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
 &dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
+&flm		&epeios		&2000-		&FiLe Memory
 &flw		&epeios		&2000-		&FLoW
+&fnm		&epeios		&2000-		&File Name Manager
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdtb		&lgsb		&		&GeSBib DaTaBase

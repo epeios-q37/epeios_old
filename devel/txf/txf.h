@@ -330,7 +330,7 @@ namespace txf {
 	{
 	#ifdef CPE__MS
 		return Flow << "\r\n" << sync;
-	#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
+	#elif defined( CPE__UNIX ) || defined( CPE__BEOS ) || defined( CPE__MAC ) 
 		return Flow << '\n' << sync;
 	#else
 		#error "Unknow compiler enviroment."

@@ -73,7 +73,8 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__DJGPP
 #undef CPE__UNIX
 #undef CPE__BEOS
-#undef XPE__CW
+#undef CPE__MAC
+#undef CPE__CW
 
 #ifdef _MSC_VER
 	//d If defined, we are in the 'Microsoft Visual C++'.
@@ -130,7 +131,11 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef __MWERKS__
 #	define CPE__CW	// We are using MetroWerks Code Warrior.
-#	define CPE__MS	// we are also under Microsoft OS (Would be changed, since Code Warrior exists undes Mac too)
+#	ifdef macintosh
+#		define CPE__MAC	// We are under Macintosh.
+#	else
+#		define CPE__MS	// We are also under Microsoft OS
+#	endif
 #	define CPE__NO_IOS_EXTENSION
 #endif
 

@@ -1,25 +1,24 @@
 /*
-  Header for the 'flm' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'flm' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define FLM_NAME		"FLM"
 
-#define	FLM_VERSION	"$Revision$"	
+#define	FLM_VERSION	"$Revision$"
 
 #define FLM_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &FLMTutor;
 
 #if defined( XXX_DBG ) && !defined( FLM_NODBG )
-#define FLM_DBG 
+#define FLM_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &FLMTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D FiLe Memory 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 //D FiLe Memory.
 
@@ -68,7 +72,7 @@ extern class ttr_tutor &FLMTutor;
 #else
 #	ifdef CPE__UNIX
 #		define FLM__UNIX_LIKE
-#	elif defined( CPE__VC )
+#	elif defined( CPE__MS )
 #		define FLM__MS_LOWLEVEL_IO
 #	else
 #		define FLM__IOSTREAM
@@ -85,6 +89,7 @@ extern class ttr_tutor &FLMTutor;
 #elif defined( FLM__IOSTREAM )
 #	include <fstream.h>
 #	include <iostream.h>
+#include <ostream.h>
 #endif
 
 #include "err.h"
@@ -99,7 +104,7 @@ namespace flm {
 #elif defined( FLM__MS_LOWLEVEL_IO ) 
 	typedef long	capacite__;
 #elif defined( FLM__IOSTREAM )
-	typedef streampos capacite__;
+	typedef fstream::off_type capacite__;
 #endif
 
 	typedef capacite__ position__;
@@ -354,6 +359,12 @@ namespace flm {
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
 		}
+		memoire_fichier_base_ &operator =( const memoire_fichier_base_ &MFB )
+		{
+			ERRu();	// The '=' operator has no sens for this object. It is defined only because it is neede by some macros.
+
+			return *this;
+		}
 		void Init(
 			const char *NomFichier = NULL,
 			mdr::mode Mode = mdr::mReadWrite,
@@ -487,6 +498,13 @@ namespace flm {
 		void Mode( mdr::mode Mode )
 		{
 			memoire_fichier_base_::Mode( Mode );
+		}
+		file_memory_driver_ &operator =( const file_memory_driver_ &FMD )
+		{
+			memoire_fichier_base_::operator =( FMD );
+			E_MEMORY_DRIVER_::operator =( FMD );
+
+			return *this;
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(

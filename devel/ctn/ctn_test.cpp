@@ -25,6 +25,8 @@
 
 //	$Id$
 
+#define CPE__USE_GCC_WORKAROUND
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -254,16 +256,20 @@ ERREpilog
 
 }
 
+#define A( m )	( m + m )
+#define A_( m ) ( m - m )
+
 
 
 void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
+	int a = A( A_( 3 ) );
 	flm::file_memory_driver F;
 	mmm::multimemory Mm;
-	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
-	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
 	E_XMCONTAINER( str::string_ ) CC;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
+	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
 	str::string S;
 /*	fch_flot_sortie_fichier FO;
 	fch_flot_entree_fichier FI;

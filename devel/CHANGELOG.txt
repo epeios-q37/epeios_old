@@ -1,7 +1,10 @@
 $Id$
 
+GENERAL:
+- Adapting to Code Warrior for Windows and Macintosh.
+
 --------
-20030216
+20030219
 --------
 
 GENERAL:

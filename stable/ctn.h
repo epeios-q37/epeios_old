@@ -1094,7 +1094,7 @@ namespace ctn {
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >
 	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, epeios::row__ >
 	 #define E_XCONTAINER( Type )	multi_extended_container< Type, epeios::row__ >
 #else	

@@ -304,6 +304,12 @@ namespace tym {
 	{
 		return uym::Compare( S1, S2, *BeginS1 * sizeof( t ), *BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
 	}
+	
+	//c The static part for the '_memory_' object. CodeWarrior needs this. Internal use.
+	template <class t,int size, typename r> class _memory_static_part__
+	: public _memory_<t, uym::untyped_memory__< size >, r >::s
+	{};
+	
 
 	/*c A static set of object of 'amount' objects of type 't' of size 'size'.
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
@@ -312,11 +318,12 @@ namespace tym {
 	: public _memory_< t, uym::untyped_memory__< amount * size >, r >
 	{
 	private:
-		_memory_<t, uym::untyped_memory__< amount * size >, r >::s Static_;
+		_memory_static_part__<t, amount * size, r > Static_;
 	public:
-		memory__( _memory_<t, uym::untyped_memory__<  amount * size >, r >::s &S = *(_memory_<t, uym::untyped_memory__<  amount * size >, r >::s *) NULL )	// To simplify use in 'SET'.
+		memory__( _memory_static_part__<t, amount * size , r > &S = *(_memory_static_part__<t, amount * size, r > *) NULL )	// To simplify use in 'SET'.
 		: _memory_<t, uym::untyped_memory__< amount * size >, r >( Static_ )
 		{}
+	
 	};
 
 	//d A static set of 'amount' object of type 'Type'.
@@ -330,9 +337,9 @@ namespace tym {
 	: public _memory_< t, uym::untyped_memory___, r >
 	{
 	private:
-		_memory_<t, uym::untyped_memory___, r >::s Static_;
+		_memory_static_part__<t, size, r > Static_;
 	public:
-		memory___( _memory_<t, uym::untyped_memory___, r >::s &S = *(_memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'SET'.
+		memory___( _memory_static_part__<t, size, r > &S = *(_memory_static_part__<t, size, r > *) NULL )	// To simplify use in 'SET'.
 		: _memory_<t, uym::untyped_memory___, r >( Static_ )
 		{}
 	};

@@ -95,7 +95,7 @@ extern ttr_chief TTR;
 
 namespace txf {
 	class text_oflow___;	// Pre-decleration, to avoid inclusion of 'tfx.h".
-};
+}
 
 //c A tutor for one library.
 class ttr_tutor
