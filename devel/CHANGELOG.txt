@@ -1,5 +1,9 @@
 $Id$
 
+11/03/05:
+- CTN:
+	- Corrections dûs à des précédents changements.
+
 10/03/05:
 - CTN:
 	- Ajout de méthodes 'Index()' et de nouveaux 'operator()( void )'.

@@ -628,7 +628,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( IsFlushed() )
+			if ( IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
