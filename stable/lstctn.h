@@ -144,7 +144,7 @@ namespace lstctn {
 		{
 			row Row = Create();
 
-			list_container_<container, row>::operator( Row ).operator =( Object );
+			list_container_<container, row>::operator()( Row ).operator =( Object );
 
 			return Row;
 		}

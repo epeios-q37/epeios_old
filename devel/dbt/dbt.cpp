@@ -1,7 +1,7 @@
 /*
-	'bitbch' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'bitbch' header file ('bitbch.h').
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	'dbt' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'dbt' header file ('dbt.h').
+	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -25,26 +25,26 @@
 
 //	$Id$
 
-#define BITBCH__COMPILATION
+#define DBT__COMPILATION
 
-#include "bitbch.h"
+#include "dbt.h"
 
-class bitbchtutor
+class dbttutor
 : public ttr_tutor
 {
 public:
-	bitbchtutor( void )
-	: ttr_tutor( BITBCH_NAME )
+	dbttutor( void )
+	: ttr_tutor( DBT_NAME )
 	{
-#ifdef BITBCH_DBG
-		Version = BITBCH_VERSION "\b\bD $";
+#ifdef DBT_DBG
+		Version = DBT_VERSION "\b\bD $";
 #else
-		Version = BITBCH_VERSION;
+		Version = DBT_VERSION;
 #endif
-		Owner = BITBCH_OWNER;
+		Owner = DBT_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~bitbchtutor( void ){}
+	virtual ~dbttutor( void ){}
 };
 
 /******************************************************************************/
@@ -53,22 +53,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-namespace bitbch {
-}
+using namespace dbt;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class bitbchpersonnalization
-: public bitbchtutor
+class dbtpersonnalization
+: public dbttutor
 {
 public:
-	bitbchpersonnalization( void )
+	dbtpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~bitbchpersonnalization( void )
+	~dbtpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -84,6 +83,6 @@ public:
 
 // 'static' by GNU C++.
 
-static bitbchpersonnalization Tutor;
+static dbtpersonnalization Tutor;
 
-ttr_tutor &BITBCHTutor = Tutor;
+ttr_tutor &DBTTutor = Tutor;

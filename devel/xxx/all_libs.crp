@@ -4,6 +4,7 @@
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &aem		&epeios		&2002-		&Amount/Extent managing
 &bch		&epeios		&2000-		&BunCH
+&bitbch		&epeios		&2000-		&BIT BunCH
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdcst		&ebkd		&2000-		&BacKenD CaSTs
 &bkddcb		&ebkd		&2000-		&BacKenD DesCriBer
@@ -39,6 +40,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisrq		&ldbi		&2002-		&DataBase Interface Search ReQuest
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
+&dbt		&epeios		&		&Differentiated Binary Tree
 &dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
 &flm		&epeios		&2000-		&FiLe Memory
@@ -53,6 +55,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
 &gsbrgl		&lgsb		&		&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal field
+&gsbsrq		&lgsb		&		&GeSBib Search ReQuest
+&gsbsrq_	&lgsb		&		&GeSBib Search ReQuest (for backend)
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
 &gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
@@ -70,6 +74,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
 &pip		&epeios		&2000-		&PIPe
 &que		&epeios		&2000-		&QUEue
+&sbt		&epeios		&2000-		&Simplified Binary Tree
+&sbf		&epeios		&2000-		&Simplified Binary tree Filler
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer

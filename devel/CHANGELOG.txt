@@ -3,6 +3,12 @@ $Id$
 GENERAL:
 - Adapting to Code Warrior for Windows and Macintosh.
 
+BITBCH:
+- Fixing bug.
+
+LSTCTN:
+- Fixing bug.
+
 --------
 20030219
 --------
