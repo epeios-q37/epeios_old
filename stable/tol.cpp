@@ -138,15 +138,15 @@ ERRBegin
 		switch( Etat ) {
 		case tol::rbfSuppression:
 			stf::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
-			ERRt();
+			ERRu();
 			break;
 		case tol::rbfDuplication:
 			stf::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
-			ERRt();
+			ERRu();
 			break;
 		case tol::rbfRenaming:
 			stf::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
-			ERRt();
+			ERRu();
 			break;
 		case tol::rbfOK:
 			break;

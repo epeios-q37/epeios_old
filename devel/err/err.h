@@ -90,8 +90,8 @@ namespace err {
 		// user error
 		bkd = 16,
 		// backend error
-		thw = 32,
-		// throw error; launch the error behavior (user press the ctrl-break key, for example).
+		itn = 32,
+		// intentional error; launch the error behavior (user press the ctrl-break key, for example).
 		ccp = 64,
 		// conception error: anything unexpected occurs.
 		frm = 128,
@@ -130,10 +130,10 @@ namespace err {
 		bGeneric,
 	};
 		// backend error
-	enum t
+	enum i
 	{
-		tGeneric,
-		tReturn	// To return from a function, but with taking care of the error handling.
+		iGeneric,
+		iReturn	// To return from a function, but with taking care of the error handling.
 	};
 		// throw error
 	enum c
@@ -225,9 +225,9 @@ namespace err {
 //m Throw a backend error.
 #define ERRb()			ERRB( bGeneric )
 
-#define ERRT( m )		ERRCommon( err::thw, m )
-//m Throw an error without an error.
-#define ERRt()			ERRT( tGeneric )
+#define ERRI( m )		ERRCommon( err::itn, m )
+//m Throw an intentional, error without an error.
+#define ERRi()			ERRI( iGeneric )
 
 #define ERRC( m )		ERRCommon( err::ccp, m )
 //m Throw en conception error.

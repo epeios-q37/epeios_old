@@ -85,7 +85,8 @@ EPSMSC:
 - Adapting to changes in the 'STF' library.
 
 ERR:
-- Adding the 'tReturn' item.
+- Renaming the 'throw' error in 'intentional'.
+- Adding the 'iReturn' item.
 - Adapting to changes in 'STF' library.
 
 FIL:
