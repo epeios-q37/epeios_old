@@ -1,0 +1,6 @@
+# $Id$
+rep="$1"
+dir="$2"
+mod="$3"
+cvs -z3 -d:ext:csimon@subversions.gnu.org:/cvsroot/$rep export -l -D today -d $dir $rep/$mod
+rm -rf $dir/CVS	# I don't know why, but a populated 'CVS' directory is sometimes created, preventing other cvs export command to work.
