@@ -104,6 +104,9 @@ FLX:
 FNM:
 - (15/12/4) Adding the 'GetLocation()' function.
 
+GNUMLL:
+- (09/01/05) Adapting to changes in 'XTF' and 'TXF' libraries.
+
 HTP:
 - (18/07/04) Little improvements.
 - (01/11/04) Changing 'Post' function parameters.
@@ -193,6 +196,9 @@ TXF:
 - (24/05/04) Removing tailing '_' in name objetcs.
 - (28/08/04) Removing references to the 'CIO' library in order to allowing
 			 the use of this library in a program with GUI.
+
+TXMPGH:
+- (09/01/05) Adapting to changes in 'XTF' and 'TXF' libraries.
 
 TXMTBL:
 - (05/12/04) The'GetUniqueCell' methods return now a boolean to signal if there is or not really only one cell.

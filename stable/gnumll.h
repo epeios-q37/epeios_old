@@ -234,7 +234,7 @@ namespace gnumll {
 	inline void Print_(
 		const str::string_ &S,
 		const char *L,
-		txf::text_oflow___ &F )
+		txf::text_oflow__ &F )
 	{
 		if ( S.Amount() )
 			F << txf::tab << L << ": >" << S << '<' << txf::nl;
@@ -340,29 +340,29 @@ namespace gnumll {
 			Lists.Init();
 		}
 		//f Parse the flow 'Flow'.
-		void Parse( xtf::extended_text_iflow___ &Flow );
+		void Parse( xtf::extended_text_iflow__ &Flow );
 	};
 
 	E_AUTO( mailing_lists )
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::section_ &S );
 	
-inline txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+inline txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::general_section_ &S )
 {
 	return F << "-----> Title: " << S.Title << txf::nl << S.Section << txf::nl;
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::misc_ &S );
 
-inline txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+inline txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::section_header_ &S )
 {
 	gnumll::Print_( S.Name, "Name", F );
@@ -381,29 +381,29 @@ inline txf::text_oflow___ &operator <<(
 	return F;
 }
 	
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::titles_ &S );
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::general_sections_ &S );
 
-inline txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+inline txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::list_section_ &S )
 {
 	F << "---> Header:" << txf::nl << S.Header << txf::nl;
 	return F << S.Section << txf::nl;
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::list_sections_ &S );
 
 
-inline txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+inline txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::mailing_lists_ &L )
 {
 	F << "----- HEAD -----" << txf::nl << L.Head << txf::nl;

@@ -46,7 +46,7 @@
 
 #define	DELIMITER	'$'
 
-typedef txf::text_oflow___			oflow_;
+typedef txf::text_oflow__			oflow_;
 typedef tagdtc::tag_detector_		detector_;
 typedef tagdtc::tag_detector		detector;
 typedef txmpgh::paragraph_			paragraph_;
@@ -146,7 +146,7 @@ ERRBegin
 
 		if ( IsEmailAdress( T ) ) { 
 			if ( !isalnum( C = T( T.Last() ) ) )
-				T.Delete( T.Amount() - 1 );
+				T.Remove( T.Amount() - 1 );
 
 			WriteEmail( T, F );
 
@@ -423,13 +423,7 @@ static const estring_ &AsListItem( const estring_ &Line )
 
 	String.Init();
 
-#ifdef CPE__GCC	// Due to an ICE on GCC V2.95.3
-	String = Line;
-	
-	String.Delete( 0, 2 );
-#else
 	String.StoreAndAdjust( Line, Line.Amount() - 2, 2 );
-#endif
 
 	return String;
 }
@@ -588,11 +582,11 @@ static void GetMailingLists(
 {
 ERRProlog
 	fil::file_iflow___ File;
-	xtf::extended_text_iflow___ Flow;
+	xtf::extended_text_iflow__ Flow;
 ERRBegin
 	if ( !File.Init( Source, err::hSkip ) )
 	{
-		stf::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
+		cio::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
 		ERRu();
 	}
 
@@ -645,14 +639,14 @@ static void Go(
 {
 ERRProlog
 	fil::file_iflow___ File;
-	xtf::extended_text_iflow___ Flow;
+	xtf::extended_text_iflow__ Flow;
 	mailing_lists MLL;
 	detector Detector;
 	bso::bool__ Cont = true;
 ERRBegin
 	if ( !File.Init( Template, err::hSkip ) )
 	{
-		stf::cerr << "Error while opening '" << Template << "' for reading." << txf::nl;
+		cio::cerr << "Error while opening '" << Template << "' for reading." << txf::nl;
 		ERRu();
 	}
 
@@ -714,18 +708,18 @@ ERREpilog
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	stf::cout << DESCRIPTION << txf::nl;
-	stf::cout << NAME << " --version|--license|--help" << txf::nl;
+	cio::cout << DESCRIPTION << txf::nl;
+	cio::cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	stf::cout << NAME << " <command> [options] source-file template-file [dest-file]" << txf::nl;
-	stf::cout << txf::tab << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
-	stf::cout << txf::tab << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
-	stf::cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
-	stf::cout << "Command: " << txf::nl;
+	cio::cout << NAME << " <command> [options] source-file template-file [dest-file]" << txf::nl;
+	cio::cout << txf::tab << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
+	cio::cout << txf::tab << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
+	cio::cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	cio::cout << "Command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists description to HTML file.", clnarg::vSplit, true );
-	stf::cout << "Options:" << txf::nl;
+	cio::cout << "Options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.",  clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.",  clnarg::vSplit );
 //	clnarg::PrintOptionUsage( Description, o, "", false );
@@ -733,11 +727,11 @@ void PrintUsage( const clnarg::description_ &Description )
 
 void PrintHeader( void )
 {
-	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	stf::cout << COPYRIGHT << txf::nl;
-	stf::cout << INFO << txf::nl;
-	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cio::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	cio::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cio::cout << COPYRIGHT << txf::nl;
+	cio::cout << INFO << txf::nl;
+	cio::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -754,8 +748,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		stf::cerr << '\'' << Unknow << ": unknow option." << txf::nl;
-		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cio::cerr << '\'' << Unknow << ": unknow option." << txf::nl;
+		cio::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRu();
 	}
 
@@ -766,14 +760,14 @@ ERRBegin
 		case oListsFile:
 			Analyzer.GetArgument( Option, ListsFileName );
 			if( ListsFileName.Amount() == 0 ) {
-				stf::cerr << "Option '-l' must have one argument." << txf::nl;
+				cio::cerr << "Option '-l' must have one argument." << txf::nl;
 				ERRu();
 			}
 			break;
 		case oGeneralFile:
 			Analyzer.GetArgument( Option, GeneralsFileName );
 			if( GeneralsFileName.Amount() == 0 ) {
-				stf::cerr << "Option '-g' must have one argument." << txf::nl;
+				cio::cerr << "Option '-g' must have one argument." << txf::nl;
 				ERRu();
 			}
 			break;
@@ -817,12 +811,12 @@ ERRBegin
 		break;
 	case 1:
 	case 0:
-		stf::cerr << "Too few arguments." << txf::nl;
-		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cio::cerr << "Too few arguments." << txf::nl;
+		cio::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRi();
 	default:
-		stf::cerr << "Too many arguments." << txf::nl;
-		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cio::cerr << "Too many arguments." << txf::nl;
+		cio::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRi();
 		break;
 	}
@@ -862,7 +856,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise();
+		TTR.Advertise( cio::cout );
 		ERRi();
 		break;
 	case cHelp:
@@ -917,7 +911,7 @@ ERRBegin
 
 		if ( !File.Init( Dest, err::hSkip ) )
 		{
-			stf::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
+			cio::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
 			ERRu();
 		}
 
@@ -925,7 +919,7 @@ ERRBegin
 
 		Go( Source, Template, GeneralsFileName, ListsFileName, Flow );
 	}else
-		Go( Source, Template, GeneralsFileName, ListsFileName, stf::cout );
+		Go( Source, Template, GeneralsFileName, ListsFileName, cio::cout );
 ERRErr
 	Flow.reset();
 	File.reset();

@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void txmpgh::paragraph_::GetSplitParagraph_( xtf::extended_text_iflow___ &Flow )
+void txmpgh::paragraph_::GetSplitParagraph_( xtf::extended_text_iflow__ &Flow )
 {
 ERRProlog
 	line Line;
@@ -101,8 +101,8 @@ void txmpgh::paragraph_::Merge( line_ &Line ) const
 
 
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const txmpgh::paragraph_ &P )
 {
 	epeios::row__ Position = P.First();

@@ -33,7 +33,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn str fil gnumll tagdtc\
+libs = ttr tol flw cio err uym clnarg epsmsc mmi ctn str fil gnumll tagdtc\
        txmpgh xtf txf epeios tym
 
 ifndef EPEIOS_SRC

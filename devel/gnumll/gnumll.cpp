@@ -133,7 +133,7 @@ static void GetListSectionHeader_(
 static void GetSection_(
 	txmpgh::paragraph_ &Paragraph,
 	gnumll::section_ &Section,
-	xtf::extended_text_iflow___ &Flow )
+	xtf::extended_text_iflow__ &Flow )
 {
 	bso::bool__ Cont = true;
 	ctn::E_CMITEM( str::string_ ) Item;
@@ -159,7 +159,7 @@ static void GetSection_(
 static void GetHead_(
 	txmpgh::paragraph_ &Paragraph,
 	gnumll::head_section_ &Head,
-	xtf::extended_text_iflow___ &Flow )
+	xtf::extended_text_iflow__ &Flow )
 {
 	bso::bool__ Cont = true;
 
@@ -182,7 +182,7 @@ static void GetHead_(
 static void GetGeneralSections_(
 	txmpgh::paragraph_ &Paragraph,
 	gnumll::general_sections_ &Generals,
-	xtf::extended_text_iflow___ &Flow )
+	xtf::extended_text_iflow__ &Flow )
 {
 ERRProlog
 	gnumll::general_section General;
@@ -206,7 +206,7 @@ ERREpilog
 static void GetListSections_(
 	txmpgh::paragraph_ &Paragraph,
 	gnumll::list_sections_ &Lists,
-	xtf::extended_text_iflow___ &Flow )
+	xtf::extended_text_iflow__ &Flow )
 {
 ERRProlog
 	gnumll::list_section List;
@@ -345,7 +345,7 @@ void gnumll::section_header_::Parse( const str::string_ &L )
 	}
 }
 
-void gnumll::mailing_lists_::Parse( xtf::extended_text_iflow___ &Flow )
+void gnumll::mailing_lists_::Parse( xtf::extended_text_iflow__ &Flow )
 {
 ERRProlog
 txmpgh::paragraph Paragraph;
@@ -369,7 +369,7 @@ ERREpilog
 }
 
 template <class t> void Print_(
-	txf::text_oflow___ &F,
+	txf::text_oflow__ &F,
 	const ctn::E_CONTAINER_( t ) &C )
 {
 	epeios::row__ P = C.First();
@@ -384,24 +384,24 @@ template <class t> void Print_(
 }
 
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::section_ &S )
 {
 	Print_<txmpgh::paragraph_>( F, S );
 	return F;
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::general_sections_ &S )
 {
 	Print_<gnumll::general_section_>( F, S );
 	return F;
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::list_sections_ &S )
 {
 	Print_<gnumll::list_section_>( F, S );
@@ -409,8 +409,8 @@ txf::text_oflow___ &operator <<(
 }
 
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const gnumll::titles_ &S )
 {
 	epeios::row__ P = S.First();

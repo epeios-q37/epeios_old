@@ -1,7 +1,7 @@
 /*
 	'txmpgh' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'txmpgh' header file ('txmpgh.h').
-	Copyright (C) 2000-2001,2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001,2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void txmpgh::paragraph_::GetSplitParagraph_( xtf::extended_text_iflow___ &Flow )
+void txmpgh::paragraph_::GetSplitParagraph_( xtf::extended_text_iflow__ &Flow )
 {
 ERRProlog
 	line Line;
@@ -101,8 +101,8 @@ void txmpgh::paragraph_::Merge( line_ &Line ) const
 
 
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &F,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &F,
 	const txmpgh::paragraph_ &P )
 {
 	epeios::row__ Position = P.First();

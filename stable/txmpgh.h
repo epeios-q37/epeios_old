@@ -1,6 +1,6 @@
 /*
 	Header for the 'txmpgh' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001,2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001,2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -89,7 +89,7 @@ namespace txmpgh {
 	{
 	private:
 		// Get a split paragraph from 'Flow'.
-		void GetSplitParagraph_( xtf::extended_text_iflow___ &Flow );
+		void GetSplitParagraph_( xtf::extended_text_iflow__ &Flow );
 	public:
 		struct s 
 		: lines_::s
@@ -118,7 +118,7 @@ namespace txmpgh {
 		}
 		//f Parse the 'Flow' flow. Extract one line for it, 'State' is the paragraph state.
 		void Parse(
-			xtf::extended_text_iflow___ &Flow,
+			xtf::extended_text_iflow__ &Flow,
 			txmpgh::state State = txmpgh::sIntegral )
 		{
 			if ( State == txmpgh::sIntegral )
@@ -137,8 +137,8 @@ namespace txmpgh {
 	E_AUTO( paragraph )
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flow,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &Flow,
 	const txmpgh::paragraph_ &Paragraph );
 
 
