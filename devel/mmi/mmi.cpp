@@ -1,9 +1,9 @@
 /*
-  'mmi' library by Claude L. Simon (epeios@epeios.org)
+  'mmi' library by Claude SIMON (csimon@epeios.org)
   Requires the 'mmi' header file ('mmi.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( MMI_NAME )
 	{
 #ifdef MMI_DBG
-		Version = MMI_VERSION " (DBG)";
+		Version = MMI_VERSION "\b\bD $";
 #else
 		Version = MMI_VERSION;
 #endif

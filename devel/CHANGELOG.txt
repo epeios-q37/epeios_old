@@ -4,6 +4,7 @@ GENERAL:
 - Adding 'CCH'.
 - Adding 'SMA' to use in 'CCH'.
 - Adding portable data types.
+- Adding 'HTP' library.
 
 AEM:
 - Adding portable versions of classes.
@@ -33,6 +34,9 @@ FLM:
 - Using now the UNIX system calls under UNIX instead of the C/C++ call (which seems bugged).
 - Using low-level io functions under Windows instead of the C/C++ call.
 - Adding a static part for standardization.
+
+FLW:
+- Fixing bug which fills the cache even if there is asked for more then the cache can contain.
 
 IDXBTR:
 - Adding 'E_INDEX(_)'.

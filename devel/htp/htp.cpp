@@ -1,0 +1,168 @@
+/*
+  'htp' library by Claude SIMON (csimon@epeios.org)
+  Requires the 'htp' header file ('htp.h').
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org).
+
+  This file is part of the Epeios (http://epeios.org/) project.
+  
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+//	$Id$
+
+#define HTP__COMPILATION
+
+#include "htp.h"
+
+class htptutor
+: public ttr_tutor
+{
+public:
+	htptutor( void )
+	: ttr_tutor( HTP_NAME )
+	{
+#ifdef HTP_DBG
+		Version = HTP_VERSION "\b\bD $";
+#else
+		Version = HTP_VERSION;
+#endif
+		Owner = HTP_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~htptutor( void ){}
+};
+
+/******************************************************************************/
+				  /* do not modify anything above this limit */
+				  /*			  unless specified			 */
+				  /*******************************************/
+/*$BEGIN$*/
+
+#include "str.h"
+
+using namespace htp;
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
+
+#define CONTENT_LENGTH_STRING	"Content-Length: "
+
+static void GetHeader_(
+	flw::iflow___ &IFlow,
+   str::string_ &Header )
+{
+	bso::bool__ Continue = true;
+	bso::ubyte__ State = 0;
+	bso::char__ C;
+
+	do {
+		C = IFlow.Get();
+
+		Header.Add( C );
+
+		if ( C == '\r' )
+			if ( State == 2 )
+				State = 3;
+			else
+				State = 1;
+		else if ( C == '\n' )
+			if ( State == 1 )
+				State = 2;
+			else if ( State == 3 )
+				Continue = false;
+			else
+				State = 0;
+		else
+			State = 0;
+	} while ( Continue );
+}
+
+static void GetContentLengthValue_(
+	const str::string_ &RawHeader,
+	http_header__ &Header )
+{
+	epeios::row__ P = NONE;
+
+	Header.ContentLength = 0;
+
+	P = *RawHeader.Search( str::string( CONTENT_LENGTH_STRING ) );
+
+	if ( P == NONE )
+		ERRf();
+
+	*P += sizeof( CONTENT_LENGTH_STRING ) - 1;
+	
+	while ( ( P != NONE ) && ( isdigit( RawHeader( P ) ) ) ) {
+		Header.ContentLength = Header.ContentLength * 10 + RawHeader( P ) - '0';
+		P = RawHeader.Next( P );
+	}
+	
+	if ( P == NONE )
+		ERRf();
+}
+
+void htp::Parse(
+	flw::iflow___ &IFlow,
+	http_header__ &Header )
+{
+ERRProlog
+	str::string RawHeader;
+ERRBegin
+	RawHeader.Init();
+
+	GetHeader_( IFlow, RawHeader );
+
+	GetContentLengthValue_(	RawHeader, Header );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+
+
+class htppersonnalization
+: public htptutor
+{
+public:
+	htppersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
+	}
+	~htppersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
+
+
+/*$END$*/
+				  /********************************************/
+				  /* do not modify anything belove this limit */
+				  /*			  unless specified		   	  */
+/******************************************************************************/
+
+// 'static' by GNU C++.
+
+static htppersonnalization Tutor;
+
+ttr_tutor &HTPTutor = Tutor;

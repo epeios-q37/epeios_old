@@ -1,8 +1,8 @@
 /*
-  Header for the 'flw' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'flw' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	FLW_VERSION	"$Revision$"	
 
-#define FLW_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define FLW_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &FLWTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -162,7 +162,7 @@ namespace flw {
 			if ( Available_ != 0 )				
 				ERRc();
 #endif
-			if ( Size_ > Minimum ) {
+			if ( Size_ > Wanted ) {
 				FillCache_( Minimum );
 				return ReadFromCache_( Wanted, Buffer );
 			} else
