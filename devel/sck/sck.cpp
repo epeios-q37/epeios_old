@@ -1,26 +1,25 @@
 /*
-  'sck' library by Claude SIMON (csimon@epeios.org)
-  Requires the 'sck' header file ('sck.h').
-  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org).
+	'sck' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'sck' header file ('sck.h').
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -174,8 +173,11 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		
 		while( Minimum > Amount ) {
 			if ( ( Result = Read( Socket_, Wanted - Amount, Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
-				if ( ( Result = iflow___::HandleEOFD( Buffer, Wanted - Amount ) ) == 0 )
+				if ( ( Result = iflow___::HandleEOFD( Buffer, Wanted - Amount ) ) == 0 ) {
+					Socket_ = SCK_INVALID_SOCKET;
+					Error_ = true;
 					ERRd();
+				}
 			Amount += Result;
 		}
 	}
@@ -183,8 +185,11 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		Amount = Read( Socket_, Wanted, Buffer, 0 );
 
 	if ( Amount == SCK_DISCONNECTED )
-		if ( ( Amount = iflow___::HandleEOFD( Buffer, Wanted ) ) == 0 )
-			ERRd();
+		if ( ( Amount = iflow___::HandleEOFD( Buffer, Wanted ) ) == 0 ) {
+				Socket_ = SCK_INVALID_SOCKET;
+				Error_ = true;
+				ERRd();
+			}
 
 	return Amount;
 }
@@ -194,25 +199,39 @@ flw::amount__ sck::socket_ioflow___::FLWPut(
 	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
-	bool )
+	bool Synchronization )
 {
 	flw::amount__ Amount = 0;
+
+	if ( Error_ ) {
+#ifdef SCK_DBG
+		if ( !Synchronization )
+			ERRu();
+#endif
+		return Minimum;
+	}
 
 	if ( Minimum != 0 )
 	{
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Write( Socket_, Buffer + Amount, Wanted - Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
+			if ( ( Result = Write( Socket_, Buffer + Amount, Wanted - Amount, TimeOut_ ) ) == SCK_DISCONNECTED ) {
+				Socket_ = SCK_INVALID_SOCKET;
+				Error_ = true;
 				ERRd();
+			}
 			Amount += Result;
 		}
 	}
 	else
 		Amount = Write( Socket_, Buffer, Wanted, 0 );
 
-	if ( Amount == SCK_DISCONNECTED )
+	if ( Amount == SCK_DISCONNECTED ) {
+		Socket_ = SCK_INVALID_SOCKET;
+		Error_ = true;
 		ERRd();
+	}
 
 	return Amount;
 }

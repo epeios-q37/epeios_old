@@ -60,6 +60,8 @@ FLW:
 - Adding length feature.
 - 'data__' type renamed in 'datum__'.
 - Adding 'Skip()' method.
+- Adding 'virtual' qualifier for destructor.
+- Fixing 'pure virtual call' bug when socket disconnected.
 
 FLX:
 - Adapting to vhanges in 'FLW'.

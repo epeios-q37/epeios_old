@@ -1,25 +1,24 @@
 /*
-  Header for the 'sck' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'sck' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define SCK_NAME		"SCK"
 
-#define	SCK_VERSION	"$Revision$"	
+#define	SCK_VERSION	"$Revision$"
 
 #define SCK_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &SCKTutor;
 
 #if defined( XXX_DBG ) && !defined( SCK_NODBG )
-#define SCK_DBG 
+#define SCK_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &SCKTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D SoCKet 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
@@ -265,6 +269,7 @@ namespace sck {
 	private:
 		socket__ Socket_;
 		duration__ TimeOut_;
+		bso::bool__ Error_;
 		flw::datum__ Cache_[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
@@ -288,6 +293,7 @@ namespace sck {
 								
 			Socket_ = SCK_INVALID_SOCKET;
 			TimeOut_ = SCK_INFINITE;
+			Error_ = false;
 		}
 		socket_ioflow___( void )
 		{

@@ -31,6 +31,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
+&flw		&epeios		&2000-		&FLoW
 &ids		&epeios		&		&ID Store
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
@@ -41,6 +42,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&		&MuSiC VK (from Roland VK combo organ) XML
 &pip		&epeios		&2000-		&PIPe
+&sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
 &stk		&epeios		&2000		&STacK
 &str		&epeios		&2000-		&STRing
