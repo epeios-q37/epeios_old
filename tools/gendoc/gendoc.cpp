@@ -1010,7 +1010,7 @@ ERREpilog
 /* Ouvre avec 'Streal' le fichier library de nom 'Name' (sans suffixe)
 situé dans le répertore 'Repertoire' */
 void OuvrirFichierLibrary(
-	fil__file_iflow_ &Stream,
+	fil::file_iflow___ &Stream,
 	const str_string_ &Name,
 	const char *Repertoire )
 {
@@ -1033,7 +1033,7 @@ ERRBegin
 */
 	RelaisNameFichier = NameFichier.Convert();
 
-	if ( !Stream.Init( RelaisNameFichier, err::hSkip ) )	{
+	if ( Stream.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )	{
 		fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
 		ERRt();
 	}
@@ -1048,7 +1048,7 @@ ERREpilog
 'Librairie' dans le répertoire 'Repertoire' */
 void OuvrirFichierDocumentationTechnique(
 	const librairie_ &Librairie,
-	fil__file_oflow_ &Fichier,
+	fil::file_oflow___ &Fichier,
 	const char *Repertoire )
 {
 ERRProlog
@@ -1069,7 +1069,7 @@ ERRBegin
 
 	RelaisNameFichier = NameFichier.Convert();
 
-	if ( !Fichier.Init( RelaisNameFichier, err::hSkip ) )
+	if ( Fichier.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )
 	{
 		fout << "Impossible d'ouvrir le fichier '" << RelaisNameFichier << "'." << nl;
 		ERRt();
@@ -1304,7 +1304,7 @@ void AnalyserLibrary(
 	const char *Repertoire )
 {
 ERRProlog
-	fil__file_iflow_ Fichier;
+	fil::file_iflow___ Fichier;
 	xtf__extended_text_iflow_ Entree;
 	library S;
 ERRBegin
@@ -1329,7 +1329,7 @@ void GenererDocumentationTechnique(
 	const char *Repertoire )
 {
 ERRProlog
-	fil__file_oflow_ Fichier;
+	fil::file_oflow___ Fichier;
 	txf__text_oflow_ Sortie;
 ERRBegin
 	OuvrirFichierDocumentationTechnique( Librairie, Fichier, Repertoire );
@@ -1460,8 +1460,8 @@ void Analyser(
 /* Ouvre dans 'Fichier' le fichier d'index de librairie sachant qu'il doit
 être placé dans le répertoire 'Repertoire' */
 void OuvrirFichierIndex(
-	 fil__file_oflow_ &Fichier,
-	 const char *Repertoire )
+	fil::file_oflow___ &Fichier,
+	const char *Repertoire )
 {
 ERRProlog
 	 str_string NameFichier;
@@ -1480,7 +1480,7 @@ ERRBegin
 
 	RelaisNameFichier = NameFichier.Convert();
 
-	if ( !Fichier.Init( RelaisNameFichier, err::hSkip ) )
+	if ( Fichier.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )
 	{
 		fout << "Impossible d'ouvrir le fichier '" << RelaisNameFichier << "'." << nl;
 		ERRt();
@@ -1568,7 +1568,7 @@ void GenererIndex(
 	 const char *Repertoire )
 {
 ERRProlog
-	fil__file_oflow_ Fichier;
+	fil::file_oflow___ Fichier;
 	txf__text_oflow_ Sortie;
 	POSITION__ Courant;
 	CITEM( librairie_ ) Librairie;
