@@ -82,7 +82,7 @@ static bso::sign__ Search_(
 	idxbtq::E_ISEEKERt__( row__ ) &Seeker )
 {
 	bso::sign__ Test;
-	row__ Row = Seeker.Current(); 
+	row__ Row = Seeker.GetCurrent(); 
 
 	while ( ( Row != NONE )
 			&& ( ( Test = Test_( T( Row ).Value(), S ) ) != 0 ) ) {
@@ -124,10 +124,10 @@ row__ ssnmng::sessions_manager_::Open( void )
 
 		switch ( Search_( Table, SessionID.Value(), Seeker ) ) {
 		case 1:
-			Index.MarkAsGreater( P, Seeker.Current() );
+			Index.MarkAsGreater( P, Seeker.GetCurrent() );
 			break;
 		case -1:
-			Index.MarkAsLesser( P, Seeker.Current() );
+			Index.MarkAsLesser( P, Seeker.GetCurrent() );
 			break;
 		default:
 			ERRc();
@@ -157,7 +157,7 @@ row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
 		Seeker.Init( Index, S_.Root );
 
 		if ( Search_( Table, SessionID, Seeker ) == 0 )
-			return Seeker.Current();
+			return Seeker.GetCurrent();
 		else
 			return NONE;
 	}

@@ -711,6 +711,10 @@ namespace tol {
 	void Set##name( const type__ &V )\
 	{\
 		S_.name = V;\
+	}\
+	type__ &name( void )\
+	{\
+		return S_.name;\
 	}
 
 //d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
@@ -725,7 +729,11 @@ namespace tol {
 	E_RODISCLOSE__( type__, name )\
 	void Set##name( const type__ &V )\
 	{\
-		S_.name = V;\
+		name##_ = V;\
+	}\
+	type__ &name( void )\
+	{\
+		return name##_;\
 	}
 }
 
