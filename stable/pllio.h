@@ -55,7 +55,7 @@ extern class ttr_tutor &PLLIOTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Posix Low-Level Input/Output 
+//D POSIX Low-Level Input/Output 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -75,11 +75,12 @@ namespace pllio {
 	class lowlevel_io__
 	{
 	private:
-		int &FD_;
+		int FD_;
 	public:
-		lowlevel_io__( int &FD )
-		: FD_( FD )
-		{}
+		lowlevel_io__( int FD = -1 )
+		{
+			FD_ = FD;
+		}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
@@ -123,6 +124,10 @@ namespace pllio {
 				ERRd();
 
 			return Position >= Stat.st_size;
+		}
+		void operator()( int FD )
+		{
+			FD_ = FD;
 		}
 
 	};
@@ -180,8 +185,10 @@ namespace pllio {
 
 			if ( ( FD_ = ( FileName, Flags ) ) ==  -1 )
 				return sFailure;
-			else
+			else {
+				lowlevel_io__::operator()( FD_ );
 				return sSuccess;
+			}
 		}
 	};
 }

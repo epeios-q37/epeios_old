@@ -55,7 +55,7 @@ extern class ttr_tutor &PLLIOTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Posix Low-Level Input/Output 
+//D POSIX Low-Level Input/Output 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -65,6 +65,9 @@ extern class ttr_tutor &PLLIOTutor;
 #include "iodef.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
+
+#undef EOF
 
 namespace pllio {
 
@@ -72,19 +75,22 @@ namespace pllio {
 
 	typedef int	amount__;
 
+	typedef int	descriptor__;
+
 	class lowlevel_io__
 	{
 	private:
-		int &FD_;
+		descriptor__ D_;
 	public:
-		lowlevel_io__( int &FD )
-		: FD_( FD )
-		{}
+		lowlevel_io__( descriptor__ D = -1 )
+		{
+			D_ = D;
+		}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
 		{
-			if ( ( Amount = read( FD_, Buffer, Amount ) ) == -1 )
+			if ( ( Amount = read( D_, Buffer, Amount ) ) == -1 )
 				ERRd();
 
 			return Amount;
@@ -93,36 +99,40 @@ namespace pllio {
 			const void *Buffer,
 			amount__ Amount )
 		{
-			if ( Amount = write( FD_, Buffer, Amount ) == -1 )
+			if ( Amount = write( D_, Buffer, Amount ) == -1 )
 				ERRd();
 
 			return Amount;
 		}
 		void Seek( long Offset )
 		{
-			if ( lseek( FD_, Offset, SEEK_SET ) != Offset )
+			if ( lseek( D_, Offset, SEEK_SET ) != Offset )
 				ERRd();
 		}
 		void Flush( void )
 		{
 #ifdef CPE__CYGWIN
-			fsync( FD_ );
+			fsync( D_ );
 #else
-			fdatasync( FD_ );
+			fdatasync( D_ );
 #endif
 		}
 		bso::bool__ EOF( void )
 		{
-			stat Stat;
+			struct stat Stat;
 			off_t Position;
 
-			if ( fstat( FD_, &Stat ) != 0 )
+			if ( fstat( D_, &Stat ) != 0 )
 				ERRd();
 
-			if ( ( Position = lseek( FD_, 0, SEEK_CUR ) ) == -1 )
+			if ( ( Position = lseek( D_, 0, SEEK_CUR ) ) == -1 )
 				ERRd();
 
 			return Position >= Stat.st_size;
+		}
+		void operator()( int D )
+		{
+			D_ = D;
 		}
 
 	};
@@ -180,8 +190,10 @@ namespace pllio {
 
 			if ( ( FD_ = ( FileName, Flags ) ) ==  -1 )
 				return sFailure;
-			else
+			else {
+				lowlevel_io__::operator()( FD_ );
 				return sSuccess;
+			}
 		}
 	};
 }

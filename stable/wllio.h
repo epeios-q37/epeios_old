@@ -77,11 +77,13 @@ namespace wllio {
 	class lowlevel_io__
 	{
 	private:
-		int &FD_;
+		int FD_;
 	public:
-		lowlevel_io__( int &FD )
+		lowlevel_io__( int FD = -1 )
 		: FD_( FD )
-		{}
+		{
+			FD_ = FD;
+		}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
@@ -125,6 +127,10 @@ namespace wllio {
 				break;
 			}
 		}
+		void operator()( int FD )
+		{
+			FD_ = FD;
+		}
 	};
 
 	class file_lowlevel_io___
@@ -144,7 +150,6 @@ namespace wllio {
 			FD_ = -1;
 		}
 		file_lowlevel_io___( void )
-		: lowlevel_io__( FD_ )
 		{
 			reset( false );
 		}
@@ -180,8 +185,10 @@ namespace wllio {
 
 			if ( ( FD_ = _open( FileName, Flags ) ) ==  -1 )
 				return sFailure;
-			else
+			else {
+				lowlevel_io__::operator()( FD_ );
 				return sSuccess;
+			}
 		}
 	};
 }

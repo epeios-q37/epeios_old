@@ -97,6 +97,124 @@ namespace iof {
 #endif
 
 	using namespace iodef;
+
+	using flw::oflow__;
+	using flw::iflow__;
+	
+	//c A stream output flow driver.
+	class file_oflow__
+	: public oflow__
+	{
+	private:
+		io__ IO_;
+		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
+	protected:
+		virtual flw::size__ FLWWrite(
+			const flw::datum__ *Tampon,
+			flw::size__ Nombre,
+			flw::size__,
+			bool Synchronize )
+		{
+#ifdef STF_DBG
+			if ( ( Tampon == NULL ) && Nombre )
+				ERRu();
+#endif
+			if ( fwrite( Tampon, 1, Nombre, File_ ) < Nombre )
+				ERRd();
+
+			if ( Synchronize )
+				fflush( File_ );
+
+			return Nombre;
+		}
+	public:
+		void reset( bool P = true )
+		{
+			oflow__::reset( P );
+		}
+		file_oflow__( FILE *&File )
+		: oflow__(),
+		  File_( File )
+		{
+			reset( false );
+		}
+		virtual ~file_oflow__( void )
+		{
+			reset( true );
+		}
+		//f Initialization.
+		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
+		{
+			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
+		}
+	};
+
+
+	class file_iflow__
+	: public iflow__
+	{
+	private:
+		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
+		// Le stream en question.
+		FILE *&File_;
+		flw::amount__ _HandleAmount(
+			flw::amount__ Minimum,
+			flw::datum__ *Tampon,
+			flw::amount__ Desire,
+			flw::amount__ AmountRead )
+		{
+			if ( AmountRead < Minimum )
+			{
+				if ( !feof( File_ ) )
+					ERRd();
+				else
+					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
+
+				if ( AmountRead < Minimum )
+					ERRd();
+			}
+
+			return AmountRead;
+		}
+	protected:
+	virtual flw::size__ FLWRead(
+		flw::size__ Minimum,
+		flw::datum__ *Tampon,
+		flw::size__ Desire )
+	{
+#ifdef STF_DBG
+		if( Tampon == NULL )
+			ERRu();
+#endif
+		flw::amount__ NombreLus = 0;
+
+		if ( !feof( File_ ) )
+			NombreLus = fread( Tampon, 1, Desire, File_ );
+
+		return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+	}
+	public:
+		void reset( bool P = true )
+		{
+			iflow__::reset( P );
+		}
+		file_iflow__( FILE *&File )
+		: iflow__(),
+		  File_( File )
+		{
+			reset( false );
+		}
+		virtual ~file_iflow__( void )
+		{
+			reset( true );
+		}
+		//f Initialisation.
+		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
+		{
+			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
+		}
+	};
+
 }
 
 /*$END$*/
