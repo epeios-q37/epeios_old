@@ -4,12 +4,12 @@ include Makefile.header
 
 filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/exml.xml i/emth.xml
 
-ifeq ("$(EPEIOS_OS)","linux")
-sab_arg='$$os=$(EPEIOS_OS)'
+ifeq ("$(OSTYPE)","linux")
+sab_arg='$$os=$(OSTYPE)'
 endif
 
-ifeq ("$(EPEIOS_OS)","windows")
-sab_arg="$$os=$(EPEIOS_OS)"
+ifeq ("$(OSTYPE)","cygwin")
+sab_arg='$$os=linux'
 endif
 
 

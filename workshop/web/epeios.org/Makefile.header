@@ -1,17 +1,17 @@
 # $Id$
 
-ifeq ("$(EPEIOS_OS)","windows")
-cvs = h:\cvs
-rootdir=/cvs/epeios
-# templates = h:/cvs/epeios/workshop/web/templates
-templates = t:
+ifeq ("$(OSTYPE)","cygwin")
+cvs = h:/cvs
+rootdir=h:/cvs/epeios
+templates = h:/cvs/epeios/workshop/web/templates
+# templates = t:
 dest = /web
 copy = cp
 move = move
-mkdir = h:\bin\mkdir
+mkdir = mkdir
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifeq ("$(OSTYPE)","linux")
 cvs = /home/csimon/cvs
 rootdir=$(cvs)/epeios
 templates = $(rootdir)/workshop/web/templates
@@ -21,7 +21,7 @@ move = mv
 mkdir = mkdir
 endif
 
-crpfile = $(templates)/$(EPEIOS_OS).crp
+crpfile = $(templates)/$(OSTYPE).crp
 rootxsl = $(templates)/epeios.org/page.xsl
 doc = $(rootdir)/documentation
 xsl = $(templates)/*.xsl

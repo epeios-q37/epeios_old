@@ -10,12 +10,12 @@
     </content>
   </xsl:template>
   <xsl:template match="document">
-    <item xml:space="preserve">
-      <link xml:space="preserve">
+    <item>
+      <xsl:element name="link">
         <xsl:attribute name="URL">
           <xsl:value-of select="specific/WEB/@hierarchy"/>/<xsl:value-of select="specific/WEB/@name"/>.html</xsl:attribute>
         <xsl:value-of select="general/@title"/>
-      </link> - <raw>
+      </xsl:element> - <raw>
         <xsl:value-of select="specific/WEB/@bookmark"/>
       </raw> : <xsl:value-of select="general/@abstract"/></item>
   </xsl:template>
