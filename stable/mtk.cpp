@@ -226,7 +226,7 @@ namespace {
 
 		mtx::Lock( Common.Thread );
 
-		mtx::Unlock( Common.Store );
+		mtx::Lock( Common.Store );
 	ERRErr
 		if ( Common.Data != MTX_INVALID_HANDLER )
 			mtx::Delete( Common.Data );
