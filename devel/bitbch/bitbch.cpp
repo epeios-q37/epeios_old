@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace bitbch;
+
 void bitbch::And(
 	const E_BIT_BUNCH_ &O1,
 	const E_BIT_BUNCH_ &O2,
@@ -71,7 +73,7 @@ void bitbch::And(
 	epeios::row__ Row = O1.First();
 
 	while ( Row != NONE ) {
-		R.Store( O1( Row ) & O2( Row ), Row );
+		R.Store( O1( Row ) && O2( Row ), Row );
 
 		Row = O1.Next( Row );
 	}
@@ -93,7 +95,7 @@ void bitbch::Or(
 	epeios::row__ Row = O1.First();
 
 	while ( Row != NONE ) {
-		R.Store( O1( Row ) | O2( Row ), Row );
+		R.Store( O1( Row ) || O2( Row ), Row );
 
 		Row = O1.Next( Row );
 	}
@@ -136,6 +138,22 @@ void bitbch::Not(
 		Row = O.Next( Row );
 	}
 }
+
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &OStream,
+	const E_BIT_BUNCH_ &Bunch )
+{
+	epeios::row__ Row = Bunch.First();
+
+	while ( Row != NONE ) {
+		OStream << (unsigned long)Bunch( Row );
+
+		Row = Bunch.Next( Row );
+	}
+
+	return OStream;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -727,6 +727,17 @@ namespace bitbch {
 #endif
 }
 
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &OStream,
+	const bitbch::E_BIT_BUNCH_ &Bunch );
+
+template <typename r__> txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &OStream,
+	const bitbch::E_BIT_BUNCHt_(r__) &Bunch )
+{
+	return OStream << *(const E_BIT_BUNCH_ *)&Bunch;
+}
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */
