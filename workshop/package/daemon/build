@@ -1,0 +1,26 @@
+# $Id$
+
+mkdir workdir
+cd workdir
+export DIR=daemon
+mkdir $DIR
+GET=../../get_cvs
+
+mkdir -p DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET epeios $DIR examples/daemon/*.h
+$GET epeios $DIR examples/daemon/*.cpp
+$GET epeios $DIR examples/daemon/Makefile
+$GET epeios $DIR examples/daemon/CHANGELOG.txt
+
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/daemon/README.txt
+
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+mv $DIR/gnu_gpl.txt $DIR/LICENSE
+mv $DIR/README.txt $DIR/README
+
+../../create_pkg $DIR
