@@ -1,7 +1,7 @@
-# 'reveal' Makefile by Claude L. Simon (csimon@webmails.com)
+# 'reveal' Makefile by Claude L. Simon (csimon@epeios.org)
 # Builds executable for the 'reveal' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 Claude SIMON (csimon@webmails.com).
+# Copyright (C) 2000, 2001, 2003 Claude SIMON (csimon@epeios.org).
 #
 # This file is part of the Epeios project (http://epeios.org/)
 #
@@ -28,41 +28,38 @@
 name = reveal
 copt =
 # Epeios general debugging features
-# copt += -DXXX_DBG
+copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm epsmsc
+libs = ttr tol flw stf err uym fam mmi fil tagdtc clnarg\
+epsmsc str txmtbl tagexp
 
 ifndef EPEIOS_SRC
-	epeios_src=
+	src=
 else
-	epeios_src=$(EPEIOS_SRC)
+	src=$(EPEIOS_SRC)
 endif
 
-ifndef EPEIOS_OS
-	epeios_os=linux
+ifndef EPEIOS_ENV
+	env=gnu
 else
-	epeios_os=$(EPEIOS_OS)
+	env=$(EPEIOS_ENV)
 endif
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(env)","windows")
 # compilation options
 co = -q -c -w-aus -w-inl
-# Optimization for size:
-# co += -O1
-# Optimization for speed:
-# co += -O2
 # linkage options
 lo = -q -e$(name)
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
-# co += -g
+co += -g
 # General optimization.
-co += -O
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
@@ -70,45 +67,46 @@ lo = -o $(name)
 #lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(env)","beos")
 co = -c -g
 lo = -o $(name)
 endif
 
-#
-
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(env)","windows")
 ox = obj
 cc = bcc32
 ds = ;
-larg = $(lo) *.$(ox)	# Because Windows command size limited.
+lrfs = @LinkResponseFile
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifeq ("$(env)","gnu")
 ox = o
 cc = g++ 
 ds = :
-larg = $(lo) $(objs)
+lrfs = `cat LinkResponseFile`
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(env)","beos")
 ox = o
 cc = g++
 ds = :
-larg = $(lo) $(objs)
+lrfs = `cat LinkResponseFile`
 endif
 
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+vpath %.cpp $(subst $(ds),:,$(src))
 
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
+srcd = $(subst $(ds), ,$(src))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(libs:=.$(ox))
 
-$(name):  $(objs)
-	$(cc) $(larg)
+$(name):  LinkResponseFile $(objs)
+	$(cc) $(lrfs)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $<
+	$(cc) $(co) $< 
+
+LinkResponseFile: $(objs)
+	echo $(lo) $(objs) >$@
