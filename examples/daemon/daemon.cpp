@@ -57,28 +57,80 @@ public:
 
 using namespace daemon;
 
-void daemon::user_function__::SRVProcess( flw::ioflow__ &Flow )
+bso::bool__ daemon::user_function__::_Start( txf::text_oflow__ &Flow )
 {
+	bso::bool__ Odd = false;
 ERRProlog
-	char C;
+	lck::exclusive_access___<shared__> Shared;
 ERRBegin
-	while( 1 ) {
-		C  = Flow.Get();
+	Shared.Init( Control_ );
+	Odd = ( Shared().Id % 2 ) == 1;
 
-		if ( isupper( C ) )
-			Flow.Put( tolower( C ) );
-		else if ( islower( C ) )
-			Flow.Put( toupper( C ) );
-		else
-			Flow.Put( C );
+	Flow << "Vous êtes le client numéro " << Shared().Id++ << '.' << txf::nl << txf::sync;
 
-		Flow.Synchronize();
+	Shared().Counter++;
+
+	if ( Odd ) {
+		mtx::Lock( Mutexes.Even );
+		mtx::Unlock( Mutexes.Odd );
+	} else {
+		mtx::Lock( Mutexes.Odd );
+		mtx::Unlock( Mutexes.Even );
 	}
 
 ERRErr
 ERREnd
 ERREpilog
+	return Odd;
+}
 
+void daemon::user_function__::_Other( txf::text_oflow__ &Flow )
+{
+ERRProlog
+	lck::shared_access___<shared__> Shared;
+ERRBegin
+	Shared.Init( Control_ );
+
+	Flow << "Il y a maintenant un total de " << Shared().Counter << " client(s)." << txf::nl << txf::sync;
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void daemon::user_function__::SRVProcess( flw::ioflow__ &Flow )
+{
+ERRProlog
+	txf::text_oflow__ TFlow;
+	bso::bool__ Odd = false;
+ERRBegin
+	TFlow.Init( Flow );
+
+	Odd = _Start( TFlow );
+
+	while ( 1 ) {
+		if ( Odd ) {
+			mtx::Lock( Mutexes.Even );
+		} else {
+			mtx::Lock( Mutexes.Odd );
+		}
+
+		_Other( TFlow );
+
+		if ( Odd ) {
+			mtx::Unlock( Mutexes.Even );
+		} else {
+			mtx::Unlock( Mutexes.Odd );
+		}
+
+		Odd = !Odd;
+
+	}
+
+
+ERRErr
+ERREnd
+ERREpilog
 }
 
 /* Although in theory this class is inaccessible to the different modules,

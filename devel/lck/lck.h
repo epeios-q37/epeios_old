@@ -178,50 +178,23 @@ namespace lck {
 		}
 	};
 
-	template <typename object> class control__
+	template <typename object> class control___
 	{
 	private:
 		object *Object_;
-		lck::lock___ *Lock_;
+		lck::lock___ Lock_;
 		bso::bool__ Locked_;
 		bso::bool__ Exclusive_;
-	public:
-		void reset( bso::bool__ P = true )
+		mtx::mutex_handler__ Mutex_;
+		void _Lock( void )
 		{
-			Object_ = NULL;
-			Lock_ = NULL;
-			Locked_ = false;
-			Exclusive_ = false;
+			mtx::Lock( Mutex_ );
 		}
-		control__( void )
+		void _Unlock( void )
 		{
-			reset( false );
+			mtx::Unlock( Mutex_ );
 		}
-		~control__( void )
-		{
-			reset( true );
-		}
-		void Init(
-			object &Object,
-			lck::lock___ &Lock )
-		{
-			Object_ = &Object;
-			Lock_ = &Lock;
-		}
-		const object &GetShared( void )
-		{
-#ifdef LCK__DBG
-			if ( Locked_ )
-				ERRu();
-#endif
-			Lock_->WaitUntilReadingAllowed();
-
-			Locked_ = true;
-			Exclusive_ = false;
-
-			return *Object_;
-		}
-		void ReleaseShared( void )
+		void _ReleaseShared( void )
 		{
 #ifdef LCK__DBG
 			if ( !Locked_ )
@@ -230,20 +203,91 @@ namespace lck {
 			if ( Exclusive_ )
 				ERRu();
 #endif
-			Lock_->ReadingAchieved();
+			Lock_.ReadingAchieved();
 
 			Locked_ = false;
+		}
+		void _ReleaseExclusive( void )
+		{
+#ifdef LCK__DBG
+			if ( !Locked_ )
+				ERRu();
+
+			if ( !Exclusive_ )
+				ERRu();
+#endif
+			Lock_.WritingAchieved();
+
+			Locked_ = false;
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+
+			if ( P ) {
+				if ( Mutex_ != MTX_INVALID_HANDLER )
+					mtx::Delete( Mutex_ );
+			}
+
+			Object_ = NULL;
+			Lock_.reset( P );
+			Locked_ = false;
+			Exclusive_ = false;
+			Mutex_ = MTX_INVALID_HANDLER;
+		}
+		control___( void )
+		{
+			reset( false );
+		}
+		~control___( void )
+		{
+			reset( true );
+		}
+		void Init( object &Object )
+		{
+			reset();
+
+			Object_ = &Object;
+			Lock_.Init();
+			Mutex_ = mtx::Create();
+		}
+		const object &GetShared( void )
+		{
+#ifdef LCK__DBG
+			_Lock();
+			if ( Locked_ )
+				ERRu();
+			_Unlock();
+#endif
+			Lock_.WaitUntilReadingAllowed();
+
+			_Lock();
+			Locked_ = true;
+			Exclusive_ = false;
+			_Unlock();
+
+			return *Object_;
+		}
+		void ReleaseShared( void )
+		{
+			_Lock();
+			_ReleaseShared();
+			_Unlock();
 		}
 		object &GetExclusive( void )
 		{
 #ifdef LCK__DBG
+			_Lock();
 			if ( Locked_ )
 				ERRu();
+			_Unlock();
 #endif
-			Lock_->WaitUntilWritingAllowed();
+			Lock_.WaitUntilWritingAllowed();
 
+			_Lock();
 			Locked_ = true;
 			Exclusive_ = true;
+			_Unlock();
 
 			return *Object_;
 		}
@@ -257,46 +301,34 @@ namespace lck {
 		}
 		void ReleaseExclusive( void )
 		{
-#ifdef LCK__DBG
-			if ( !Locked_ )
-				ERRu();
-
-			if ( !Exclusive_ )
-				ERRu();
-#endif
-			Lock_->WritingAchieved();
-
-			Locked_ = false;
-		}
-		bso::bool__ IsLocked( void ) const
-		{
-			return Locked_;
-		}
-		bso::bool__ IsExclusive( void ) const
-		{
-			return Exclusive_;
-		}
-		bso::bool__ IsShared( void ) const
-		{
-			return !Exclusive_;
+			_Lock();
+			_ReleaseExclusive();
+			_Unlock();
 		}
 		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
 		{
-			if ( IsLocked() ) {
-				if ( IsExclusive() ) 
+			bso::bool__ WasLocked = false;
+
+			_Lock();
+
+			if ( Locked_ ) {
+				if ( Exclusive_ ) 
 					ReleaseExclusive();
 				else
 					ReleaseShared();
-				return true;
-			} else
-				return false;
+				WasLocked =true;
+			}
+
+			_Unlock();
+
+			return WasLocked;
 		}
 	};
 
 	template <typename object> class shared_access___
 	{
 	private:
-		control__<object> *Control_;
+		control___<object> *Control_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -314,7 +346,7 @@ namespace lck {
 		{
 			reset();
 		}
-		void Init( control__<object> &Control )
+		void Init( control___<object> &Control )
 		{
 			reset();
 
@@ -338,7 +370,7 @@ namespace lck {
 	template <typename object> class exclusive_access___
 	{
 	private:
-		control__<object> *Control_;
+		control___<object> *Control_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -356,7 +388,7 @@ namespace lck {
 		{
 			reset();
 		}
-		void Init( control__<object> &Control )
+		void Init( control___<object> &Control )
 		{
 			reset();
 

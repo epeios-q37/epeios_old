@@ -62,18 +62,53 @@ extern class ttr_tutor &DAEMONTutor;
 
 #include "err.h"
 #include "flw.h"
+
+#include "mtx.h"
+#include "lck.h"
 #include "srv.h"
 
 namespace daemon {
+	struct shared__	// Les ressources partagées.
+	{
+		bso::ulong__ Counter;	// Le compteur de client.
+		bso::ulong__ Id;		// L'Identifiant de client.
+		shared__( void )
+		{
+			Counter = Id = 0;
+		}
+	};
+
+	struct mutexes___
+	{
+		mtx::mutex_handler__
+			Even,		// Le verrou pour les valeurs paires.
+			Odd;		// Le verrou pour les valeurs impaires;
+		void Init( void )
+		{
+			Even = mtx::Create();
+			Odd = mtx::Create();
+		}
+	};
+
 	class user_function__
 	: public srv::flow_functions__
 	{
+	private:
+		shared__ Shared;
+		mutexes___ Mutexes;
+		lck::control___<shared__> Control_;	// Permet de controler l'accés aux ressources partagés.
+		bso::bool__ _Start( txf::text_oflow__ &Flow );
+		void _Other( txf::text_oflow__ &Flow );
 	protected:
 		virtual void SRVProcess( flw::ioflow__ &Flow );
+	public:
+		void Init( void )
+		{
+			Mutexes.Init();
+			Control_.Init( Shared );
+			mtx::Lock( Mutexes.Even );
+		}
 	};
-
-
-
 }
 
 /*$END$*/

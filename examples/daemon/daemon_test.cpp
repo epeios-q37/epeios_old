@@ -45,6 +45,8 @@ ERRProlog
 ERRBegin
 	Server.Init( 2000, 5 );
 
+	UserFunction.Init();
+
 	Server.Process( UserFunction );
 ERRErr
 ERREnd

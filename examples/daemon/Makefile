@@ -1,7 +1,7 @@
-# 'daemon' Makefile by Claude SIMON (csimon@epeios.org)
-# Builds test executable for the 'daemon' library.
+# '$xxx$' Makefile by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
+# Builds executable for the '$xxx$' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2004  Claude SIMON (csimon@epeios.org).
+# Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,9 +21,9 @@
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-# $Id$
+# $$Id$$
 
-name = daemon
+name = $xxx$
 copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
@@ -32,16 +32,28 @@ copt += -DXXX_DBG
 lopt = 
 libs = ttr tol flw cio err
 
+$_RAW_$
 
+ifndef EPEIOS_SRC
+	src=
+else
+	src=$(EPEIOS_SRC)
+endif
 
-ifeq ("$(EPEIOS_ENV)","windows")
+ifndef EPEIOS_ENV
+	env=gnu
+else
+	env=$(EPEIOS_ENV)
+endif
+
+ifeq ("$(env)","windows")
 # compilation options
 co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
 endif
 
-ifeq ("$(EPEIOS_ENV)","gnu")
+ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
 co += -g
@@ -54,9 +66,46 @@ lo = -o $(name)
 #lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_ENV)","beos")
+ifeq ("$(env)","beos")
 co = -c -g
 lo = -o $(name)
 endif
 
-include ../xxx/LibMakefile.footer
+ifeq ("$(env)","windows")
+ox = obj
+cc = bcc32
+ds = ;
+lrfs = @LinkResponseFile
+endif
+
+ifeq ("$(env)","gnu")
+ox = o
+cc = g++ 
+ds = :
+lrfs = `cat LinkResponseFile`
+endif
+
+ifeq ("$(env)","beos")
+ox = o
+cc = g++
+ds = :
+lrfs = `cat LinkResponseFile`
+endif
+
+vpath %.cpp $(subst $(ds),:,$(src))
+
+srcd = $(subst $(ds), ,$(src))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+lo += $(EPEIOS_LOPT) $(lopt)
+
+objs = $(name).$(ox) $(libs:=.$(ox))
+
+$(name):  LinkResponseFile $(objs)
+	$(cc) $(lrfs)
+	
+%.$(ox): %.cpp
+	$(cc) $(co) $< 
+
+LinkResponseFile: $(objs)
+	echo $(lo) $(objs) >$@
