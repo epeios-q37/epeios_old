@@ -2,7 +2,7 @@
 <?codewarrior exportversion="1.0.1" ideversion="5.0" ?>
 
 <!-- $$Id$$ -->
-<!-- Template project file for CodeWarrior project. -->
+<!-- Template project file for CodeWarrior projects. -->
 
 <!DOCTYPE PROJECT [
 <!ELEMENT PROJECT (TARGETLIST, TARGETORDER, GROUPLIST, DESIGNLIST?)>
