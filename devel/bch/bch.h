@@ -296,10 +296,10 @@ namespace bch {
 			row Last )
 		{
 #ifdef BCH_DBG
-			if ( Last < First )
+			if ( *Last < *First )
 				ERRu();
 #endif
-			Crop( Last - First + 1, First );
+			Crop( *Last - *First + 1, First );
 		}
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
