@@ -154,6 +154,7 @@ UYM:
 - Renaming some classes.
 - Fixing buf in overflow detection in 'untyped_memory__' class.
 - Adding a forgotten 'const' qualifier.
+- Fixing pointer of pointer bug.
 
 XTF:
 - Adapting to vhanges in 'FLW'.
