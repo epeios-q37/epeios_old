@@ -217,7 +217,7 @@ namespace ssnmng {
 		//f Remove the session id at position 'Position'.
 		void Close( row__ Position )
 		{
-			Index.Remove( Position, S_.Root );
+			S_.Root = Index.Remove( Position, S_.Root );
 			_list_::Delete( Position );
 			_queue_::Delete( Position );
 		}
@@ -306,6 +306,7 @@ namespace ssnmng {
 			pointers_::Allocate( Size );
 		}
 		user_functions__ *_UserFunctions;
+		void _Close( const rows_ &Rows );
 	public:
 		struct s
 		: public base_sessions_manager_::s,

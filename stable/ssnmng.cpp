@@ -9,7 +9,7 @@
 	modify it under the terms of the GNU General Public License
 	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
- 
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, go to http://www.fsf.org/
 	or write to the:
-  
+
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
@@ -76,13 +76,13 @@ static inline bso::sign__ Test_(
 	return strcmp( S1, S2 );
 }
 
-static bso::sign__ Search_( 
+static bso::sign__ Search_(
 	const bch::E_BUNCHt_( session_id__, row__ ) &T,
 	const char *S,
 	idxbtq::E_ISEEKERt__( row__ ) &Seeker )
 {
 	bso::sign__ Test;
-	row__ Row = Seeker.GetCurrent(); 
+	row__ Row = Seeker.GetCurrent();
 
 	while ( ( Row != NONE )
 			&& ( ( Test = Test_( T( Row ).Value(), S ) ) != 0 ) ) {
@@ -202,26 +202,46 @@ void ssnmng::base_sessions_manager_::GetAll( rows_ &Rows ) const
 	}
 }
 
-void ssnmng::sessions_manager_::CloseAll( void )
+void ssnmng::sessions_manager_::_Close( const rows_ &Rows )
 {
-	row__ Row = First();
+	epeios::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
-		Close( Row );
-		Row = Next( Row );
+		Close( Rows( Row ) );
+
+		Row = Rows.Next( Row );
 	}
+}
+
+
+void ssnmng::sessions_manager_::CloseAll( void )
+{
+ERRProlog
+	rows Rows;
+ERRBegin
+	Rows.Init();
+
+	GetAll( Rows );
+
+	_Close( Rows );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void ssnmng::sessions_manager_::CloseExpired( void )
 {
-	row__ Row = First();
+ERRProlog
+	rows Rows;
+ERRBegin
+	Rows.Init();
 
-	while ( Row != NONE ) {
-		if ( IsExpired( Row ) )
-			Close( Row );
+	GetExpired( Rows );
 
-		Row = Next( Row );
-	}
+	_Close( Rows );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 

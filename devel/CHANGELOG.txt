@@ -1,5 +1,8 @@
 $Id$
 
+07/03/05
+- SSNMNG: Correction d'un bogue dans la méthode 'Close()'.
+
 06/03/05:
 - SSNMNG : Ajout de la gestion des pointeurs utilisateurs.
 
