@@ -170,7 +170,7 @@ TTR:
 - Adapting to changes in 'STF' library.
 
 TXF:
-- Adapting to changes in 'FLW'.
+- Adapting to changes in 'FLW' library.
 
 TYM:
 - Fixing bug.
@@ -182,6 +182,10 @@ UYM:
 - Fixing bug in 'untyped_memory__(_)'
 - Renaming 'Locate' into 'Search'.
 - Fixing 'Search()' bug.
+
+XTF:
+- Adapting to changes in 'BCH' library.
+- Adapting to changes in 'FLW' library.
 
 --------
 20030219

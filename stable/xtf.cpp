@@ -78,7 +78,7 @@ void xtf::extended_text_iflow___::GetLine( str::string_ &Line )
 			if ( Column() == 1 )
 				Cont = false;
 			else if ( &Line != NULL )
-				Line.Add( C );
+				Line.Append( C );
 
 			if ( EOX() )
 				Cont = false;

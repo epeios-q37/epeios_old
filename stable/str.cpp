@@ -65,10 +65,22 @@ namespace str {
 
 		if ( Amount != 0 )
 		{
+#ifdef STR_DBG
+			flw::datum__ C;
+#endif
 			epeios::row_t__ P = 0;
 
-			while ( P < Amount )
+
+			while ( P < Amount ) {
+#ifdef STR_DBG
+				OStream.Put( C = (flw::datum__)String.Get( P++ ) );
+
+				if ( C == 0 )
+					ERRu();
+#else
 				OStream.Put( (flw::datum__)String.Get( P++ ) );
+#endif
+			}
 		}
 	}
 
@@ -91,7 +103,7 @@ namespace str {
 	{
 		char C;
 
-		while( ( C = IStream.Get() ) != 0 )
+		while( ( C = (char)IStream.Get() ) != 0 )
 			S.Append( C );
 
 		return IStream;

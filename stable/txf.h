@@ -240,7 +240,7 @@ namespace txf {
 		}
 		text_oflow___ &operator <<( char C )
 		{
-			Ecrire_( C );
+			Ecrire_( (datum__)C );
 
 			return *this;
 		}

@@ -96,7 +96,7 @@ namespace xtf {
 			if ( !Nombre_ )
 				RemplirTampon_( Offset );
 
-			return Cache_[Position_];
+			return (char)Cache_[Position_];
 		}
 		// Retourne vrai lorsque le cache est vide, faux sinon.
 		bool CacheVide_( void )
@@ -214,7 +214,7 @@ namespace xtf {
 				Position_ = 0;
 
 			Nombre_++;
-			Cache_[Position_] = C;
+			Cache_[Position_] = (flw::datum__)C;
 
 			if ( ( C != '\n' ) && ( C != '\r' ) )
 				Colonne_--;
