@@ -88,7 +88,7 @@ namespace flw {
 	typedef unsigned char		datum__;
 
 	//c Base input flow.
-	class iflow___
+	class iflow__
 	{
 	private:
 		// The cache.
@@ -279,11 +279,11 @@ namespace flw {
 			EOFD_.Size = EOFD_.Length = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleLength = EOFD_.HandleToFew = false;
 		}
-		iflow___( void )
+		iflow__( void )
 		{
 			reset( false );
 		}
-		virtual ~iflow___( void )
+		virtual ~iflow__( void )
 		{
 			reset( true );
 		}
@@ -367,7 +367,7 @@ namespace flw {
 
 	//f Get 'StaticObject' from 'InputFlow'.
 	template <class t> inline void Get(
-		iflow___ &InputFlow,
+		iflow__ &InputFlow,
 		t &StaticObject )
 	{
 		InputFlow.Get( sizeof( t ), &StaticObject );
@@ -378,13 +378,13 @@ namespace flw {
 	the string with its final NULL character. Buffer contains then 'Maximum'
 	characters of the string. Otherwise, it returns true. */
 	bool GetString(
-		iflow___ &IFlow,
+		iflow__ &IFlow,
 		char *Buffer,
 		amount__ Maximum );
 
 
 	//c Basic output flow.
-	class oflow___
+	class oflow__
 	{
 	private:
 		// The cache.
@@ -514,11 +514,11 @@ namespace flw {
 			
 			Free_ = Size_ = 0;
 		}
-		oflow___( void )
+		oflow__( void )
 		{
 			reset( false );
 		}
-		virtual ~oflow___( void )
+		virtual ~oflow__( void )
 		{
 			reset( true );
 		}
@@ -561,7 +561,7 @@ namespace flw {
 	//f Write to 'OutputFlow' 'StaticObject'.
 	template <class t> inline void Put(
 		const t &StaticObjet,
-		oflow___ &OutputFlow )
+		oflow__ &OutputFlow )
 	{
 		OutputFlow.Put( &StaticObjet, sizeof( t ) );
 	}
@@ -569,7 +569,7 @@ namespace flw {
 	//f Write to 'OutputFlow' the 'NULL' terminated String 'String' WITH the 'NULL' character.
 	inline void PutString(
 		const char *String,
-		oflow___ &OutputFlow )
+		oflow__ &OutputFlow )
 	{
 		size_t Length = strlen( String );
 
@@ -580,21 +580,21 @@ namespace flw {
 	}
 
 	//c Basic input/output flow.
-	class ioflow___
-	: public iflow___,
-	  public oflow___
+	class ioflow__
+	: public iflow__,
+	  public oflow__
 	{
 	public:
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
-			oflow___::reset( P );
+			iflow__::reset( P );
+			oflow__::reset( P );
 		}
-		ioflow___( void )
+		ioflow__( void )
 		{
 			reset( false );
 		}
-		virtual ~ioflow___( void )
+		virtual ~ioflow__( void )
 		{
 			reset( true );
 		}
@@ -607,8 +607,8 @@ namespace flw {
 			datum__ *OCache,
 			size__ OSize )
 		{
-			iflow___::Init( ICache, ISize );
-			oflow___::Init( OCache, OSize );
+			iflow__::Init( ICache, ISize );
+			oflow__::Init( OCache, OSize );
 		}
 		//f Initialisation with cache 'Cache' of size 'Size'.
 		void Init(
@@ -620,8 +620,8 @@ namespace flw {
 	};
 }
 
-inline flw::oflow___ &operator <<(
-	flw::oflow___ &OFlow,
+inline flw::oflow__ &operator <<(
+	flw::oflow__ &OFlow,
 	const char *String )
 {
 	size_t Length = strlen( String );
@@ -634,8 +634,8 @@ inline flw::oflow___ &operator <<(
 	return OFlow;
 }
 
-inline flw::oflow___ &operator <<(
-	flw::oflow___ &OFlow,
+inline flw::oflow__ &operator <<(
+	flw::oflow__ &OFlow,
 	char Character )
 {
 	OFlow.Put( (flw::datum__)Character );

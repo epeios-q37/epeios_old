@@ -2,6 +2,8 @@ $Id$
 
 GENERAL:
 - (23/05/04) Creation of the 'FLF' library.
+- (24/05/04) Creation of the 'CIO' library.
+- (24/05/04) Adapting to changes in 'FLW' library.
 
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
@@ -24,7 +26,10 @@ EPSMSC:
 
 ERR:
 - Adding some minor features for the 'Intentional' error type.
-- (23/05/04) Usinf the 'flf' library instead of 'stf'.
+- (24/05/04) Using the 'cio' library instead of 'stf'.
+
+FLW:
+- (24/05/04) Removing the a tailing '_' to the object name.
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function
@@ -39,13 +44,23 @@ SSNMNG:
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
 - (22/03/04) Fixing bug in session id creation.
 
+STF:
+- (24/05/04) Removing the console stuff (they are put in 'CIO' library).
+- (24/05/04) Adating to changes in 'FLW' library.
+- (24/05/04) Renaming the objects ('stream...' instead'(i|o)stream...', removing one tailing '_')
+
 TOL:
 - Adding the 'E_DISCLOSE' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
-- (23/05/04) Using 'flf' library instead of 'stf'.
+- (24/05/04) Using 'cio' library instead of 'stf'.
 
 TTR:
-- (23/05/04) Using 'flf' library instead of 'stf'.
+- (23/05/04) Using 'CIO' library instead of 'STF'.
+- (24/05/04) Adapting to changes in 'TXF' library.
+
+TXF:
+- (24/05/04) Adapting to changes in 'FLW' library.
+- (24/05/04) Removing tailing '_' in name objetcs.
 
 --------
 20040215

@@ -635,12 +635,12 @@ namespace mmm {
 			PiloteMultimemoire_.reset();
 			Memoire_.plug( Pilote );
 		}
-		void write( flw::oflow___ &OFlow ) const
+		void write( flw::oflow__ &OFlow ) const
 		{
 			flw::Put( S_.Capacite, OFlow );
 			Memoire_.write( 0, S_.Capacite, OFlow );
 		}
-		void read( flw::iflow___ &IFlow )
+		void read( flw::iflow__ &IFlow )
 		{
 			flw::Get( IFlow, S_.Capacite );
 

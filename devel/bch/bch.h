@@ -392,12 +392,12 @@ namespace bch {
 
 			return *this;
 		}
-		void write( flw::oflow___ &OFlow ) const
+		void write( flw::oflow__ &OFlow ) const
 		{
 			flw::Put( Amount(), OFlow );
 			Memory().write( 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount(), OFlow );
 		}
-		void read( flw::iflow___ &IFlow )
+		void read( flw::iflow__ &IFlow )
 		{
 			size__ Amount;
 

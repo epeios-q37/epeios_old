@@ -94,7 +94,7 @@ public:
 extern ttr_chief TTR;
 
 namespace txf {
-	class text_oflow___;	// Pre-decleration, to avoid inclusion of 'tfx.h".
+	class text_oflow__;	// Pre-decleration, to avoid inclusion of 'tfx.h".
 }
 
 //c A tutor for one library.
@@ -109,7 +109,7 @@ private:
 	// True if the chief is ready.
 	static char ChiefReady_;
 protected:
-	virtual void TTRMore( class txf::text_oflow___ &OFlow ) {}
+	virtual void TTRMore( class txf::text_oflow__ &OFlow ) {}
 public:
 	//o Name of the library.
 	const char *Name;
@@ -140,7 +140,7 @@ public:
 		return Next_;
 	}
 	//f Print advertising of the library.
-	void Advertise( txf::text_oflow___ &Flow );	// Should be modified.
+	void Advertise( txf::text_oflow__ &Flow );	// Should be modified.
 };
 
 inline void ttr_chief::Add( class ttr_tutor *Tutor )

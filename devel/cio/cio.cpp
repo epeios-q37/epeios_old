@@ -1,6 +1,6 @@
 /*
-	'flw' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'flw' header file ('flw.h').
+	'cio' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'cio' header file ('cio.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define FLW__COMPILATION
+#define CIO__COMPILATION
 
-#include "flw.h"
+#include "cio.h"
 
-class flwtutor
+class ciotutor
 : public ttr_tutor
 {
 public:
-	flwtutor( void )
-	: ttr_tutor( FLW_NAME )
+	ciotutor( void )
+	: ttr_tutor( CIO_NAME )
 	{
-#ifdef FLW_DBG
-		Version = FLW_VERSION "\b\bD $";
+#ifdef CIO_DBG
+		Version = CIO_VERSION "\b\bD $";
 #else
-		Version = FLW_VERSION;
+		Version = CIO_VERSION;
 #endif
-		Owner = FLW_OWNER;
+		Owner = CIO_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~flwtutor( void ){}
+	virtual ~ciotutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,59 +55,46 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef FLW__IGNORE_SIGPIPE
-#	include <signal.h>
+using namespace cio;
+
+#ifdef CIO__USE_STREAM
+stf::stream_oflow__ cio::coutf( std::cout ), cio::cerrf( std::cerr );
+stf::stream_iflow__ cio::cinf( std::cin );
 #endif
 
-using namespace flw;
+#ifdef CIO__USE_FILE
+static FILE *cin = stdin;
+static FILE *cout = stdout;
+static FILE *cerr = stderr;
 
-void flw::oflow__::ForceWriting_(
-	const datum__ *Buffer,
-	amount__ Amount )
-{
-	amount__ AmountWritten = PutUpTo( Buffer, Amount );
+_oflow__ cio::coutf( ::cout ), cio::cerrf( ::cerr );
+_iflow__ cio::cinf( ::cin );
+#endif
 
-	while( AmountWritten < Amount )
-		AmountWritten += PutUpTo( Buffer + AmountWritten, Amount - AmountWritten );
-}
-
-void flw::oflow__::ForceDumpingOfCache_( bool Synchronisation )
-{
-	while( !DumpCache_( Synchronisation ) ) {};
-}
-
-
-bool flw::GetString(
-	iflow__ &Flot,
-	char *Tampon,
-	size__ NombreMax )
-{
-	size__ Position = 0;
-
-	while( ( Position < NombreMax ) && ( ( Tampon[Position] = (char)Flot.Get() ) != 0 ) )
-		Position++;
-
-	return Position < NombreMax;
-}
-
-
+txf::text_oflow__ cio::cout, cio::cerr;
+txf::text_iflow__ cio::cin;
 
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class flwpersonnalization
-: public flwtutor
+
+class ciopersonnalization
+: public ciotutor
 {
 public:
-	flwpersonnalization( void )
+	ciopersonnalization( void )
 	{
-#ifdef FLW__IGNORE_SIGPIPE
-//		signal( SIGPIPE, SIG_IGN );	// Witout this, an 'broken pipe' would terminate the program.
-#endif	
-		/* place here the actions concerning this library
+		cio::cinf.Init();
+		cio::coutf.Init();
+		cio::cerrf.Init();
+
+		cio::cin.Init( cio::cinf );
+		cio::cout.Init( cio::coutf );
+		cio::cerr.Init( cio::cerrf );
+	/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~flwpersonnalization( void )
+	~ciopersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -123,6 +110,6 @@ public:
 
 // 'static' by GNU C++.
 
-static flwpersonnalization Tutor;
+static ciopersonnalization Tutor;
 
-ttr_tutor &FLWTutor = Tutor;
+ttr_tutor &CIOTutor = Tutor;

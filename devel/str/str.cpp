@@ -85,8 +85,8 @@ namespace str {
 	}
 
 
-	flw::oflow___ &operator <<(
-		flw::oflow___ &OStream,
+	flw::oflow__ &operator <<(
+		flw::oflow__ &OStream,
 		const string_ &String )
 	{
 		Put_( String, OStream );
@@ -97,8 +97,8 @@ namespace str {
 	}
 
 
-	flw::iflow___ &operator >>(
-		flw::iflow___ &IStream,
+	flw::iflow__ &operator >>(
+		flw::iflow__ &IStream,
 		string_ &S )
 	{
 		char C;
@@ -110,8 +110,8 @@ namespace str {
 	}
 		
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &OStream,
+	txf::text_oflow__ &operator <<(
+		txf::text_oflow__ &OStream,
 		const string_ &String )
 	{
 		Put_( String, OStream );

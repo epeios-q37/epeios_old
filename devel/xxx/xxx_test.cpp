@@ -14,11 +14,11 @@ $NOTICE$
 #include "$xxx$.h"
 
 #include "err.h"
-#include "flf.h"
+#include "cio.h"
 
-using flf::cin;
-using flf::cout;
-using flf::cerr;
+using cio::cin;
+using cio::cout;
+using cio::cerr;
 
 void Generic( int argc, char *argv[] )
 {

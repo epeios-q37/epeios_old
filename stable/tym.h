@@ -1,6 +1,6 @@
 /*
 	Header for the 'tym' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -257,12 +257,12 @@ namespace tym {
 		void write(
 			r Position,
 			epeios::size__ Quantity,
-			flw::oflow___ &OFlow ) const
+			flw::oflow__ &OFlow ) const
 		{
 			_memory_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
-			flw::iflow___  &IFlow,
+			flw::iflow__  &IFlow,
 			r Position,
 			epeios::size__ Quantite )
 		{

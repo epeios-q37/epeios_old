@@ -1,6 +1,6 @@
 /*
 	Header for the 'mmi' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -261,14 +261,14 @@ namespace mmi {
 			epeios::size__ ActualCapacity,
 			epeios::size__ Amount );
 		void write(
-			flw::oflow___ &OFlow,
+			flw::oflow__ &OFlow,
 			epeios::size__ Size) const
 		{
 			Descripteurs.write( 0, Size, OFlow );
 			Multimemoire.write( OFlow );
 		}
 		void read(
-			flw::iflow___ &IFlow,
+			flw::iflow__ &IFlow,
 			epeios::size__ Size )
 		{
 			Descripteurs.read( IFlow, 0, Size );

@@ -30,6 +30,7 @@
 #define TOL__COMPILATION
 
 #include "tol.h"
+#include "cio.h"
 
 class toltutor
 : public ttr_tutor
@@ -54,8 +55,6 @@ public:
 				  /*			  unless specified			 */
 				  /*******************************************/
 /*$BEGIN$*/
-
-#include "flf.h"
 
 #ifdef CPE__MS
 #	include <stdlib.h>
@@ -137,15 +136,15 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfSuppression:
-			flf::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			cio::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfDuplication:
-			flf::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			cio::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfRenaming:
-			flf::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			cio::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfOK:
@@ -196,13 +195,13 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfAllocation:
-			flf::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			cio::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
 			break;
 		case tol::rbfSuppression:
-			flf::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			cio::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfRenaming:
-			flf::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			cio::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfOK:
 			break;

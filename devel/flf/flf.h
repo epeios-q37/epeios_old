@@ -61,7 +61,7 @@ extern class ttr_tutor &FLFTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "txf.h"
+#include "flw.h"
 #include <stdio.h>
 
 #ifdef FLF_FLOW_BUFFER_SIZE
@@ -73,12 +73,12 @@ extern class ttr_tutor &FLFTutor;
 
 
 namespace flf {
-	using flw::oflow___;
-	using flw::iflow___;
+	using flw::oflow__;
+	using flw::iflow__;
 	
 	//c A stream output flow driver.
 	class file_oflow__
-	: public oflow___
+	: public oflow__
 	{
 	private:
 		FILE *&File_;
@@ -105,10 +105,10 @@ namespace flf {
 	public:
 		void reset( bool P = true )
 		{
-			oflow___::reset( P );
+			oflow__::reset( P );
 		}
 		file_oflow__( FILE *&File )
-		: oflow___(),
+		: oflow__(),
 		  File_( File )
 		{
 			reset( false );
@@ -120,13 +120,13 @@ namespace flf {
 		//f Initialization.
 		void Init( void )
 		{
-			oflow___::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 
 
 	class file_iflow__
-	: public iflow___
+	: public iflow__
 	{
 	private:
 		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
@@ -143,7 +143,7 @@ namespace flf {
 				if ( !feof( File_ ) )
 					ERRd();
 				else
-					AmountRead += iflow___::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
+					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
 
 				if ( AmountRead < Minimum )
 					ERRd();
@@ -176,10 +176,10 @@ namespace flf {
 	public:
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
+			iflow__::reset( P );
 		}
 		file_iflow__( FILE *&File )
-		: iflow___(),
+		: iflow__(),
 		  File_( File )
 		{
 			reset( false );
@@ -191,28 +191,9 @@ namespace flf {
 		//f Initialisation.
 		void Init( void )
 		{
-			iflow___::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
-
-	//o Standard output as a pure flow (not a text flow).
-	extern file_oflow__ coutF;
-
-	//o Error output as a pure flow (not a text flow).
-	extern file_oflow__ cerrF;
-
-	//o Standard input as a pure flow (not a text flow).
-	extern file_iflow__ cinF;
-
-	//o Standard output as a text flow.
-	extern txf::text_oflow___ cout;
-
-	//o Error output as a text flow.
-	extern txf::text_oflow___ cerr;
-
-	//o Standard input as a text flow.
-	extern txf::text_iflow___ cin;
-
 }
 
 /*$END$*/

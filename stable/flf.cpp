@@ -57,18 +57,6 @@ public:
 
 using namespace flf;
 
-static FILE *cin = stdin;
-static FILE *cout = stdout;
-static FILE *cerr = stderr;
-
-file_oflow__ flf::coutF( ::cout );
-file_oflow__ flf::cerrF( ::cerr );
-file_iflow__ flf::cinF( ::cin );
-txf::text_oflow___ flf::cout;
-txf::text_oflow___ flf::cerr;
-txf::text_iflow___ flf::cin;
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -78,13 +66,6 @@ class flfpersonnalization
 public:
 	flfpersonnalization( void )
 	{
-		cinF.Init();
-		coutF.Init();
-		cerrF.Init();
-
-		flf::cin.Init( cinF );
-		flf::cout.Init( coutF );
-		flf::cerr.Init( cerrF );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

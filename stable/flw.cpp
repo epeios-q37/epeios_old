@@ -61,7 +61,7 @@ public:
 
 using namespace flw;
 
-void flw::oflow___::ForceWriting_(
+void flw::oflow__::ForceWriting_(
 	const datum__ *Buffer,
 	amount__ Amount )
 {
@@ -71,14 +71,14 @@ void flw::oflow___::ForceWriting_(
 		AmountWritten += PutUpTo( Buffer + AmountWritten, Amount - AmountWritten );
 }
 
-void flw::oflow___::ForceDumpingOfCache_( bool Synchronisation )
+void flw::oflow__::ForceDumpingOfCache_( bool Synchronisation )
 {
 	while( !DumpCache_( Synchronisation ) ) {};
 }
 
 
 bool flw::GetString(
-	iflow___ &Flot,
+	iflow__ &Flot,
 	char *Tampon,
 	size__ NombreMax )
 {

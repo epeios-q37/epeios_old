@@ -1,6 +1,6 @@
 /*
 	Header for the 'uym' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -275,9 +275,9 @@ namespace uym {
 		void write(
 			row__ Position,
 			size__ Size,
-			flw::oflow___ &OFlow ) const;
+			flw::oflow__ &OFlow ) const;
 		void read(
-			flw::iflow___  &IFlow,
+			flw::iflow__  &IFlow,
 			row__ Position,
 			size__ Size );
 		//f Allocates 'Capacity' bytes.

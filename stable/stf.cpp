@@ -1,7 +1,7 @@
 /*
 	'stf' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'stf' header file ('stf.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -57,13 +57,6 @@ public:
 
 using namespace stf;
 
-stf::ostream_oflow___ stf::coutF( std::cout ), stf::cerrF( std::cerr );
-stf::istream_iflow___ stf::cinF( std::cin );
-stf::istream_iflow_line___ stf::cinLF( std::cin );
-
-txf::text_oflow___ stf::cout, stf::cerr;
-txf::text_iflow___ stf::cin;
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -75,17 +68,6 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-		coutF.Init();
-		cout.Init( coutF );
-
-		cinF.Init();
-		cin.Init( cinF );
-
-		cerrF.Init();
-		cerr.Init( cerrF );
-
-		cinLF.Init();
-
 	}
 	~stfpersonnalization( void )
 	{

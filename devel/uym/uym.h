@@ -275,9 +275,9 @@ namespace uym {
 		void write(
 			row__ Position,
 			size__ Size,
-			flw::oflow___ &OFlow ) const;
+			flw::oflow__ &OFlow ) const;
 		void read(
-			flw::iflow___  &IFlow,
+			flw::iflow__  &IFlow,
 			row__ Position,
 			size__ Size );
 		//f Allocates 'Capacity' bytes.

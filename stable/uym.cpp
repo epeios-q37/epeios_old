@@ -1,7 +1,7 @@
 /*
 	'uym' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'uym' header file ('uym.h').
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -293,7 +293,7 @@ ERREpilog
 void untyped_memory_::write(
 	row__ Position,
 	size__ Quantite,
-	flw::oflow___ &OFlow ) const
+	flw::oflow__ &OFlow ) const
 {
 ERRProlog
 	datum__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
@@ -335,7 +335,7 @@ ERREpilog
 }
 
 void untyped_memory_::read(
-	flw::iflow___ &IFlow,
+	flw::iflow__ &IFlow,
 	row__ Position,
 	size__ Quantite )
 {

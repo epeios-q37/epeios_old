@@ -60,12 +60,10 @@ extern class ttr_tutor &STFTutor;
 
 /*$BEGIN$*/
 
-//#include <fstream.h>
 #include <iostream>
 
 #include "err.h"
 #include "flw.h"
-#include "txf.h"
 
 #ifndef STF_STREAM_FLOW_BUFFER_SIZE
 //d Buffer size for a stream output flow. 100 by default.
@@ -74,12 +72,12 @@ extern class ttr_tutor &STFTutor;
 
 
 namespace stf {
-	using flw::oflow___;
-	using flw::iflow___;
+	using flw::oflow__;
+	using flw::iflow__;
 	
 	//c A stream output flow driver.
-	class ostream_oflow___
-	: public oflow___
+	class stream_oflow__
+	: public oflow__
 	{
 	private:
 		std::ostream &Stream_;
@@ -111,15 +109,15 @@ namespace stf {
 	public:
 		void reset( bool P = true )
 		{
-			oflow___::reset( P );
+			oflow__::reset( P );
 		}
-		ostream_oflow___( std::ostream &Stream )
+		stream_oflow__( std::ostream &Stream )
 		: Stream_( Stream ),
-		  oflow___()
+		  oflow__()
 		{
 			reset( false );
 		}
-		virtual ~ostream_oflow___( void )
+		virtual ~stream_oflow__( void )
 		{
 			reset( true );
 		}
@@ -128,15 +126,15 @@ namespace stf {
 		{
 			reset();
 		
-			oflow___::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 
 
 	namespace {			
 		//c Internal use. Core of an input flow from an 'istream'.
-		class istream_iflow_core___
-		: public iflow___
+		class stream_iflow_core__
+		: public iflow__
 		{
 		private:
 			flw::datum__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
@@ -154,7 +152,7 @@ namespace stf {
 					if ( !Stream_.eof() )
 						ERRd();
 					else
-						AmountRead += iflow___::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
+						AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
 
 					if ( AmountRead < Minimum )
 						ERRd();
@@ -166,27 +164,26 @@ namespace stf {
 			void reset( bool = true )
 			{
 			}
-			istream_iflow_core___( std::istream &Stream )
-			: iflow___(),
-			  Stream_( Stream )
+			stream_iflow_core__( std::istream &Stream )
+			: Stream_( Stream )
 			{
 				reset( false );
 			}
-			virtual ~istream_iflow_core___( void )
+			virtual ~stream_iflow_core__( void )
 			{
 				reset( true );
 			}
 			//f Initialisation.
 			void Init( void )
 			{
-				iflow___::Init( Cache_, sizeof( Cache_ ) );
+				iflow__::Init( Cache_, sizeof( Cache_ ) );
 			}
 		};
 	}
 
 	//c Internal use. File input flow from an 'istream'.
-	class istream_iflow___
-	: public istream_iflow_core___
+	class stream_iflow__
+	: public stream_iflow_core__
 	{
 	protected:
 		virtual flw::amount__ FLWGet(
@@ -213,29 +210,29 @@ namespace stf {
 	public:
 		void reset( bool P = true )
 		{
-			istream_iflow_core___::reset( P );
+			stream_iflow_core__::reset( P );
 		}
-		istream_iflow___( std::istream &Stream )
-		: istream_iflow_core___( Stream )
+		stream_iflow__( std::istream &Stream )
+		: stream_iflow_core__( Stream )
 		{
 			reset( false );
 		}
-		virtual ~istream_iflow___( void )
+		virtual ~stream_iflow__( void )
 		{
 			reset( true );
 		}
 		//f Initialisation.
 		void Init( void )
 		{
-			istream_iflow_core___::Init();
+			stream_iflow_core__::Init();
 		}
 	};
 
 
 
 	//c Internal use. File input flow from an 'istream'.
-	class istream_iflow_line___
-	: public istream_iflow_core___
+	class stream_iflow_line__
+	: public stream_iflow_core__
 	{
 	protected:
 		virtual flw::amount__ FLWGet(
@@ -261,52 +258,24 @@ namespace stf {
 	public:
 		void reset( bool P = true )
 		{
-			istream_iflow_core___::reset( P );
+			stream_iflow_core__::reset( P );
 		}
-		istream_iflow_line___( std::istream &Stream )
-		: istream_iflow_core___( Stream )
+		stream_iflow_line__( std::istream &Stream )
+		: stream_iflow_core__( Stream )
 		{
 			reset( false );
 		}
-		virtual ~istream_iflow_line___( void )
+		virtual ~stream_iflow_line__( void )
 		{
 			reset( true );
 		}
 		//f Initialisation.
 		void Init( void )
 		{
-			istream_iflow_core___::Init();
+			stream_iflow_core__::Init();
 		}
 	};
-
-
-	//o Standard output as a pure flow (not a text flow).
-	extern ostream_oflow___ coutF;
-
-	//o Error output as a pure flow (not a text flow).
-	extern ostream_oflow___ cerrF;
-
-	//o Standard input as a pure flow (not a text flow).
-	extern istream_iflow___ cinF;
-
-	//o Standard input as a pure flow (not a text flow), but red line by line.
-	extern istream_iflow_line___ cinLF;
-
-	//o Standard output as a text flow.
-	extern txf::text_oflow___ cout;
-
-	//o Error output as a text flow.
-	extern txf::text_oflow___ cerr;
-
-	//o Standard input as a text flow.
-	extern txf::text_iflow___ cin;
 }
-
-#if 0
-using stf::fout;
-using stf::ferr;
-using stf::fin;
-#endif
 
 /*$END$*/
 				  /********************************************/

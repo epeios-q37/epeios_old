@@ -130,12 +130,12 @@ namespace ctn {
 
 			return *this;
 		}
-		void write( flw::oflow___ &OFlow ) const
+		void write( flw::oflow__ &OFlow ) const
 		{
 			Dynamics.write( OFlow );
 			Statics.write( OFlow );
 		}
-		void read( flw::iflow___ &IFlow )
+		void read( flw::iflow__ &IFlow )
 		{
 			Dynamics.read( IFlow );
 			Statics.read( IFlow );

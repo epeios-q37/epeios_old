@@ -293,7 +293,7 @@ ERREpilog
 void untyped_memory_::write(
 	row__ Position,
 	size__ Quantite,
-	flw::oflow___ &OFlow ) const
+	flw::oflow__ &OFlow ) const
 {
 ERRProlog
 	datum__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
@@ -335,7 +335,7 @@ ERREpilog
 }
 
 void untyped_memory_::read(
-	flw::iflow___ &IFlow,
+	flw::iflow__ &IFlow,
 	row__ Position,
 	size__ Quantite )
 {

@@ -257,12 +257,12 @@ namespace tym {
 		void write(
 			r Position,
 			epeios::size__ Quantity,
-			flw::oflow___ &OFlow ) const
+			flw::oflow__ &OFlow ) const
 		{
 			_memory_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
-			flw::iflow___  &IFlow,
+			flw::iflow__  &IFlow,
 			r Position,
 			epeios::size__ Quantite )
 		{

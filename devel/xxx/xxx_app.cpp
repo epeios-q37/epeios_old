@@ -9,7 +9,7 @@ $NOTICE$
 // $$Id$$
 
 #include "err.h"
-#include "flf.h"
+#include "cio.h"
 #include "epsmsc.h"
 #include "clnarg.h"
 
@@ -25,6 +25,10 @@ $NOTICE$
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 /*$RAW$*/
+
+using cio::cin;
+using cio::cout;
+using cio::cerr;
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -46,26 +50,26 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	flf::cout << DESCRIPTION << txf::nl;
-	flf::cout << NAME << " --version|--license|--help" << txf::nl;
+	cout << DESCRIPTION << txf::nl;
+	cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	flf::cout << NAME << " <command> [options] ..." << txf::nl;
+	cout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
-	flf::cout << "command:" << txf::nl;
+	cout << "command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	flf::cout << "options:" << txf::nl;
+	cout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	flf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	flf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	flf::cout << COPYRIGHT << txf::nl;
-	flf::cout << INFO << txf::nl;
-	flf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << COPYRIGHT << txf::nl;
+	cout << INFO << txf::nl;
+	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -83,8 +87,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		flf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		flf::cout << HELP << txf::nl;
+		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		cout << HELP << txf::nl;
 		ERRi();
 	}
 
@@ -123,8 +127,8 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	default:
-		flf::cerr << "Too many arguments." << txf::nl;
-		flf::cout << HELP << txf::nl;
+		cerr << "Too many arguments." << txf::nl;
+		cout << HELP << txf::nl;
 		ERRi();
 		break;
 	}
@@ -228,7 +232,7 @@ ERRFErr
 
 ERRFEnd
 ERRFEpilog
-	flf::cout << txf::sync;
+	cout << txf::sync;
 
 	return ExitValue;
 }

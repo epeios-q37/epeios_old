@@ -273,18 +273,18 @@ namespace str {
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.
-	flw::oflow___ &operator <<(
-		flw::oflow___ &OStream,
+	flw::oflow__ &operator <<(
+		flw::oflow__ &OStream,
 		const string_ &String );
 
 	//f Append all the characters from 'IStream' to 'String' until encounter a 'NULL' character.
-	flw::iflow___ &operator >>(
-		flw::iflow___ &IStream,
+	flw::iflow__ &operator >>(
+		flw::iflow__ &IStream,
 		string_ &String );
 
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &OStream,
+	txf::text_oflow__ &operator <<(
+		txf::text_oflow__ &OStream,
 		const string_ &String );
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2' and a length of 'Amount'.

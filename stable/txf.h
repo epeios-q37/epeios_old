@@ -1,6 +1,6 @@
 /*
 	Header for the 'txf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -71,11 +71,11 @@ namespace txf {
 	using flw::datum__;
 
 	//c Input text flow.
-	class text_iflow___
+	class text_iflow__
 	{
 	private:
 		// Flow from which data are red.
-		flw::iflow___ *Flow_;
+		flw::iflow__ *Flow_;
 		datum__ Lire_( void )
 		{
 			return Flow_->Get();
@@ -92,19 +92,19 @@ namespace txf {
 			Flow_ = NULL;
 		}
 		//f Initialization with the input flow 'Flow'.
-		void Init( flw::iflow___ &Flow )
+		void Init( flw::iflow__ &Flow )
 		{
 			reset();
 
 			Flow_ = &Flow;
 		}
-		text_iflow___ &operator >>( char &C )
+		text_iflow__ &operator >>( char &C )
 		{
 			C = (char)Lire_();
 
 			return *this;
 		}
-		text_iflow___ &operator >>( unsigned long &E )
+		text_iflow__ &operator >>( unsigned long &E )
 		{
 			datum__ C[9];
 			amount__ Pos;
@@ -121,7 +121,7 @@ namespace txf {
 
 			return *this;
 		}
-		text_iflow___ &operator >>( unsigned short &E )
+		text_iflow__ &operator >>( unsigned short &E )
 		{
 			unsigned long L;
 
@@ -134,7 +134,7 @@ namespace txf {
 
 			return *this;
 		}
-		text_iflow___ &operator >>( signed long &E )
+		text_iflow__ &operator >>( signed long &E )
 		{
 			unsigned long L;
 			datum__ C = Get();
@@ -156,7 +156,7 @@ namespace txf {
 
 			return *this;
 		}
-		text_iflow___ &operator >>( signed short &E )
+		text_iflow__ &operator >>( signed short &E )
 		{
 			signed long L;
 
@@ -186,11 +186,11 @@ namespace txf {
 		{
 			return *Flow_;
 		}
-	*/	text_iflow___( void )
+	*/	text_iflow__( void )
 		{
 			reset( false );
 		}
-		~text_iflow___( void )
+		~text_iflow__( void )
 		{
 			reset( true );
 		}
@@ -198,11 +198,11 @@ namespace txf {
 
 
 	//c Output text flow.
-	class text_oflow___
+	class text_oflow__
 	{
 	private:
 		// Flow to write into.
-		flw::oflow___ *Flow_;
+		flw::oflow__ *Flow_;
 		void Ecrire_( datum__ C )
 		{
 			Flow_->Put( C );
@@ -228,23 +228,23 @@ namespace txf {
 			Flow_ = NULL;
 		}
 		//f Initializing with 'Flow' as output flow.
-		void Init( flw::oflow___ &Flow )
+		void Init( flw::oflow__ &Flow )
 		{
 			reset();
 
 			Flow_ = &Flow;
 		}
-		text_oflow___ &operator <<( text_oflow___ &(* Function )( text_oflow___ &Flot ) )
+		text_oflow__ &operator <<( text_oflow__ &(* Function )( text_oflow__ &Flot ) )
 		{
 			return Function( *this );
 		}
-		text_oflow___ &operator <<( char C )
+		text_oflow__ &operator <<( char C )
 		{
 			Ecrire_( (datum__)C );
 
 			return *this;
 		}
-		text_oflow___ &operator <<( const char *C )
+		text_oflow__ &operator <<( const char *C )
 		{
 			size_t Length = strlen( C );
 
@@ -255,7 +255,7 @@ namespace txf {
 
 			return *this;
 		}
-		text_oflow___ &operator <<( unsigned long E )
+		text_oflow__ &operator <<( unsigned long E )
 		{
 			char C[11];
 
@@ -263,7 +263,7 @@ namespace txf {
 
 			return operator <<( C );
 		}
-		text_oflow___ &operator <<( long double E )
+		text_oflow__ &operator <<( long double E )
 		{
 			char C[40];
 
@@ -271,11 +271,11 @@ namespace txf {
 
 			return operator <<( C );
 		}
-		text_oflow___ &operator <<( unsigned short E )
+		text_oflow__ &operator <<( unsigned short E )
 		{
 			return operator <<( (unsigned long) E );
 		}
-		text_oflow___ &operator <<( signed long E )
+		text_oflow__ &operator <<( signed long E )
 		{
 			char C[12];
 
@@ -283,7 +283,7 @@ namespace txf {
 
 			return operator <<( C );
 		}
-		text_oflow___ &operator <<( signed short E )
+		text_oflow__ &operator <<( signed short E )
 		{
 			return operator <<( (signed long) E );
 		}
@@ -309,11 +309,11 @@ namespace txf {
 		{
 			return *Flow_;
 		}
-*/		text_oflow___( void )
+*/		text_oflow__( void )
 		{
 			reset( false );
 		}
-		~text_oflow___( void )
+		~text_oflow__( void )
 		{
 			reset( true );
 		}
@@ -321,7 +321,7 @@ namespace txf {
 
 	/* Macro pour la définition d'une fonction de sortie de nom 'Nom'.
 	( Déclaration d'une Fonction pour le txft de Sortie). */
-	#define TXF_DFS( Nom ) inline text_oflow___ & Nom ( text_oflow___ &Flow )
+	#define TXF_DFS( Nom ) inline text_oflow__ & Nom ( text_oflow__ &Flow )
 
 	// Synchronisation (vide les caches).
 	TXF_DFS( sync )

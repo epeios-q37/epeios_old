@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "flf.h"
+#include "cio.h"
 
 ttr_chief TTR;
 char ttr_tutor::Adv_[TTR_ADV_SIZE_MAX+1];
@@ -67,7 +67,7 @@ void ttr_chief::Advertise( void )
 
 	while( Current )
 	{
-		Current->Advertise( flf::cout );
+		Current->Advertise( cio::cout );
 		Current = Current->Next();
 	}
 }
@@ -85,7 +85,7 @@ void ttr_chief::Sort_( ttr_tutor *Tutor )
 }
 
 	//f Print advertising of the library.
-void ttr_tutor::Advertise( txf::text_oflow___ &Flow )	// Should be modified.
+void ttr_tutor::Advertise( txf::text_oflow__ &Flow )	// Should be modified.
 {
 	char Format[30];
 
