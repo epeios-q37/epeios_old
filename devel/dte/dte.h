@@ -184,10 +184,15 @@ namespace dte {
 		{
 			RawDate_ = _Convert( Day, Month, Year );
 		}
-		//f Return the date in raw format ('yyyymmdd').
+		//f Return the date in raw format.
 		operator unsigned long( void ) const
 		{
 			return RawDate_;
+		}
+		//f Return simplified raw date 'yyyymmdd'.
+		unsigned long GetSimplifiedRawDate( void ) const
+		{
+			return _Year( RawDate_ ) * 10000 + _Month( RawDate_ ) * 100 + _Day( RawDate_ );
 		}
 		year__ Year( raw_date__ Date = DTE_INVALID_DATE ) const
 		{
@@ -204,7 +209,7 @@ namespace dte {
 		//f Return the date in ASCII ('dd/mm/yyyy') and put in 'Result' if != 'NULL'.
 		const char *ASCII( date_buffer__ &Buffer ) const;
 #ifndef CPE__MT
-		const char *ASCII( void )
+		const char *ASCII( void ) const
 		{
 			static date_buffer__ Buffer;
 

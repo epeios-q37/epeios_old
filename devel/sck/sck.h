@@ -106,13 +106,15 @@ extern class ttr_tutor &SCKTutor;
 #define SCK_SOCKET_FLOW_BUFFER_SIZE	500
 #endif
 
-#ifndef SCK_SOCKET_DEFAULT_TIMEOUT
+#ifdef SCK_DEFAULT_TIMEOUT
+#	define SCK__DEFAULT_TIMEOUT	SCK_DEFAULT_TIMEOUT
+#else
 //d Default timeout, in seconds.
-#define SCK_SOCKET_DEFAULT_TIMEOUT	( 5 * 60 )
+#	define SCK__DEFAULT_TIMEOUT	( 5 * 60 )
 #endif
 
 //d Max data amount of concurrent write and read.
-#define SCK_AMOUNT_MAX	( 1024 * 1024 )
+#define SCK__DEFAULT_AMOUNT	( 1024 * 1024 )
 
 namespace sck {
 	using flw::datum__;
@@ -305,8 +307,8 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
-			flw::amount__ AmountMax = SCK_AMOUNT_MAX,
-			duration__ TimeOut = SCK_SOCKET_DEFAULT_TIMEOUT )
+			flw::amount__ AmountMax,
+			duration__ TimeOut )
 		{
 			reset();
 		
@@ -314,6 +316,13 @@ namespace sck {
 
 			Socket_ = Socket;
 			TimeOut_ = TimeOut;
+		}
+		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
+		void Init(
+			socket__ Socket,
+			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )
+		{
+			Init( Socket, SCK__DEFAULT_AMOUNT, TimeOut );
 		}
 	};
 

@@ -147,7 +147,7 @@ namespace flw {
 					EOFD_.HandlingEOFD = true;
 
 			} else 
-					Amount = _Read( Minimum, Buffer, Wanted );
+				Amount = _Read( Minimum, Buffer, Wanted );
 
 			return Amount;
 		}
@@ -362,6 +362,14 @@ namespace flw {
 			EOFD_.Size = (size__)Length;
 			EOFD_.HandleAmount = false;
 		}
+		//f Set the counter of red data to 0.
+		void Reset( void )
+		{
+			Red_ = Available_;
+
+			if ( Red_ == AmountMax_ )
+				EOFD_.HandlingEOFD = true;
+		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. This data will
 		be put in the flow after having read 'Amount' bytes.*/
@@ -377,15 +385,7 @@ namespace flw {
 			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
 			AmountMax_ = Amount;
-			Red_ = Available_;
-
-			if ( !Amount )
-				EOFD_.HandlingEOFD = true;
-		}
-		//f Set the counter of red data to 0.
-		void Reset( void )
-		{
-			Red_ = Available_;
+			Reset();
 		}
 		//f Return the amount of data red since last 'Reset()'.
 		amount__ AmountRed( void ) const

@@ -109,7 +109,9 @@ flw::size__ sck::Read(
 	}
 	else if ( Result == SCK_SOCKET_ERROR )
 		ERRd();
-	else if ( Result != 0 )
+	else if ( Result == 0 )
+		ERRx();
+	else
 		ERRs();
 
 	return (flw::size__)Result;
@@ -155,7 +157,9 @@ flw::size__ sck::Write(
 	}
 	else if ( Result == SCK_SOCKET_ERROR )
 		ERRd();
-	else if ( Result != 0 )
+	else if ( Result == 0 )
+		ERRx();
+	else
 		ERRs();
 
 	return (flw::size__)Result;

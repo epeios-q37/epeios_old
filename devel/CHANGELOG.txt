@@ -39,6 +39,7 @@ CTN:
 DTE:
 - (15/04/04) Introducing the new structure.
 - (21/07/04) Improving some features about the thread-safeness of this library.
+- (31/07/04) Adding the 'GetSimplifiedRawDate()' function.
 
 EPEIOS:
 - (15/06/04) Adding some useful constants.
@@ -55,6 +56,7 @@ FLW:
 - (17/07/04) Adding amount of data red/written handling.
 -			 Renaming some methods.
 - (20/07/04) Improvements.
+- (31/07/04) Fixing bug concerning the 'Reset()' function.
 
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
@@ -79,6 +81,10 @@ MMM:
 
 MTX:
 - (31/07/04) Adding a 'Delay' parameter for locking functions.
+
+SCK:
+- (31/07/04) A timeout yet launch an error.
+-			 Rearranging some '#define'
 
 SSNMNG:
 - Using own row type for session id 'row__'.
