@@ -130,7 +130,8 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef __MWERKS__
 #	define CPE__CW	// We are using MetroWerks Code Warrior.
-#	define CPE__MS
+#	define CPE__MS	// we are also under Microsoft OS (Would be changed, since Code Warrior exists undes Mac too)
+#	define CPE__NO_IOS_EXTENSION
 #endif
 
 #ifndef CPE__NO_IOS_EXTENSION
