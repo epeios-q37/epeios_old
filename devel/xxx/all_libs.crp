@@ -217,6 +217,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbrgl		&lgsb		&\
 	&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
+&gsbrmd		&lgsb		&\
+	&GeSBib Record Multi Data
 &gsbsrb		&lgsb		&\
 	&GeSBib Search Request Builder
 &gsbsrq		&lgsb		&\
