@@ -1,7 +1,7 @@
 /*
 	Header for the 'fnm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -125,6 +125,9 @@ namespace fnm
 
 		return Repere;
 	}
+
+	// Return a string contaiinig the location only. Returned pointermust be freed.
+	char *GetLocation( const char *Name );
 
 	//f Return the file name of 'Name' without localization and extension.
 	const char *GetFileNameRoot( const char *Nom );

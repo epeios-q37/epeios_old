@@ -98,6 +98,9 @@ FLX:
 - (01/08/04) Correcting little error.
 - (05/11/04) Adding 'E_STRING_(I|O)FLOW__'.
 
+FNM:
+- (15/12/4) Adding the 'GetLocation()' function.
+
 HTP:
 - (18/07/04) Little improvements.
 - (01/11/04) Changing 'Post' function parameters.

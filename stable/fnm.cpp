@@ -1,7 +1,7 @@
 /*
 	'fnm' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'fnm' header file ('fnm.h').
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -280,6 +282,28 @@ char *fnm::CorrectLocation( const char *Location )
 	return Buffer;
 }
 
+char *fnm::GetLocation( const char *Name )
+{
+	char *P = NULL;
+
+	size_t L = GetFileName( Name ) - Name;
+
+	if ( L != 0 ) {
+		if ( ( P = (char *)malloc( L + 1 ) ) == NULL )
+			ERRa();
+
+		memcpy( P, Name, L );
+
+		P[L] = 0;
+	} else {
+		if ( ( P = (char *)malloc( 1 ) ) == NULL )
+			ERRa();
+
+		P[0] = 0;
+	}
+
+	return P;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
