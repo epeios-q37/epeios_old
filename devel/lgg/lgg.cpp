@@ -65,7 +65,7 @@ language__ lgg::GetID( const char *Name )
 {
 	int i = 0;
 
-	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) );
+	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) ) {};
 
 	if ( i == l_amount )
 		return lUnknow;

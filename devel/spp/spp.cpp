@@ -64,7 +64,7 @@ static flw::amount__ Get_(
 	flw::amount__ Amount = 0;
 
 	while ( Amount < Minimum )
-		Amount += Pipe.Read( Wanted - Amount, Buffer + Amount );
+		Amount += Pipe.Read( (amount__)( Wanted - Amount ), Buffer + Amount );
 
 	return Amount;
 }
@@ -79,7 +79,7 @@ static flw::amount__ Put_(
 	flw::amount__ Amount = 0;
 
 	while ( Amount < Minimum )
-		Amount += Pipe.Write( Buffer + Amount, Wanted - Amount, Synchronization );
+		Amount += Pipe.Write( Buffer + Amount, (amount__)( Wanted - Amount ), Synchronization );
 
 	return Amount;
 }

@@ -90,7 +90,7 @@ namespace bitbch {
 	private:
 		static receptacle__ Offset_( r Position )
 		{
-			return (int)( *Position % BITBCH_NB_BITS_RECEPTACLE );
+			return (receptacle__)( *Position % BITBCH_NB_BITS_RECEPTACLE );
 		}
 		// retourne l'offset correpondant à 'Position'
 		static r Indice_( r Position )
@@ -100,7 +100,7 @@ namespace bitbch {
 		// retourne l'indice correspondant à 'Position'
 		static bso::ubyte__ Masque_( r Position )
 		{
-			return 1 << Offset_( Position );
+			return (bso::ubyte__)( 1 << Offset_( Position ) );
 		}
 		// retourne le masque correspondant à 'Position'
 	public:
@@ -116,7 +116,7 @@ namespace bitbch {
 			r Position,
 			t &Table )
 		{
-			Table.Write( ( Table.Read(Indice_( Position )) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ), Indice_( Position ) );
+			Table.Write( (receptacle__)( ( Table.Read( Indice_( Position ) ) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ) ), Indice_( Position ) );
 		}
 		// place un bit de valeur 'Valeur' à la position 'Position'
 	};
@@ -194,7 +194,7 @@ namespace bitbch {
 		//f Return the value at position 'Position'.
 		bso::bool__ Read( r Position ) const
 		{
-			return (int)Lire_( Position );
+			return (bso::bool__)Lire_( Position );
 		}
 		//f Return the value at position 'Position'.
 		bso::bool__ operator()( r Position ) const

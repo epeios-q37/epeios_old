@@ -66,7 +66,7 @@ namespace str {
 			epeios::row_t__ P = 0;
 
 			while ( P < Amount )
-				OStream.Put( String.Read( P++ ) );
+				OStream.Put( (flw::datum__)String.Read( P++ ) );
 		}
 	}
 
@@ -188,7 +188,7 @@ namespace str {
 			epeios::row_t__ Limit = this->Amount() - Amount;
 
 			while( ( *Start <= Limit )
-				&& Compare( S, *this, 0, Start, Amount ) )
+				&& ( Compare( S, *this, 0, Start, Amount ) != 0 ) )
 				(*Start)++;
 
 			if ( *Start > Limit )

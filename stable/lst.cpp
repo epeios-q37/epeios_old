@@ -59,7 +59,7 @@ epeios::row_t__ lst::Successeur_(
 	epeios::size__ Amount,
 	const store_ &Libres )
 {
-	while( ( ++Element < Amount ) && Libres.IsAvailable( Element ) );
+	while( ( ++Element < Amount ) && Libres.IsAvailable( Element ) ) {};
 
 	if ( Element >= Amount )
 		return NONE;
@@ -74,7 +74,7 @@ epeios::row_t__ lst::Predecesseur_(
 {
 	bso::bool__ Trouve = false;
 
-	while( ( Element > 0 ) && !( Trouve = !Libres.IsAvailable( --Element ) ) );
+	while( ( Element > 0 ) && !( Trouve = !Libres.IsAvailable( --Element ) ) ) {};
 
 	if ( Trouve )
 		return Element;

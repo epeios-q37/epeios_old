@@ -163,7 +163,7 @@ namespace fnm
 			const char *Base,
 			const char *Extension );
 	};
-};
+}
 
 #ifdef CPE__MS
 #	define FNM_DIRECTORY_SEPARATOR_STRING	"\\"

@@ -200,11 +200,11 @@ static flw::amount__ Get_(
 	if ( Minimum )
 	{
 		while ( Amount < Minimum )
-			Amount += Pipe.Read( Wanted - Amount, Buffer + Amount );
+			Amount += Pipe.Read( (amount__)( Wanted - Amount ), Buffer + Amount );
 	}
 	else
 		if ( Pipe.Amount() )
-			Amount = Pipe.Read( Wanted, Buffer );
+			Amount = (flw::amount__)Pipe.Read( (amount__)Wanted, Buffer );
 
 	return Amount;
 }
@@ -221,10 +221,10 @@ static flw::amount__ Put_(
 	if ( Minimum )
 	{
 		while ( Amount < Minimum )
-			Amount += Pipe.Write( Buffer + Amount, Wanted - Amount, Synchronization );
+			Amount += Pipe.Write( Buffer + Amount, (amount__)( Wanted - Amount ), Synchronization );
 	}
 	else if ( !Pipe.Amount() )
-		Amount = Pipe.Write( Buffer, Wanted, Synchronization );
+		Amount = (flw::amount__)Pipe.Write( Buffer, (amount__)Wanted, Synchronization );
 
 	return Amount;
 }

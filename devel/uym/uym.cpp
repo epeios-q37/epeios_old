@@ -55,14 +55,14 @@ public:
 
 using namespace uym;
 
-bso::sbyte__ uym::Compare(
+bso::sign__ uym::Compare(
 	const untyped_memory_ &E1,
 	const untyped_memory_ &E2,
 	row__ DebutE1,
 	row__ DebutE2,
 	size__ Nombre )
 {
-	bso::sbyte__ Resultat;
+	bso::sign__ Resultat;
 ERRProlog
 	data__ *Tampon = NULL;
 ERRBegin
@@ -80,12 +80,12 @@ ERRBegin
 				Nombre--;
 
 			if ( Nombre )
-				Resultat = ( E1.Read( DebutE1 - Nombre ) > E2.Read( DebutE2 - Nombre ) ) ? 1 : -1;
+				Resultat = ( ( E1.Read( DebutE1 - Nombre ) > E2.Read( DebutE2 - Nombre ) ) ? 1 : -1 );
 			else
 			{
 				data__ C1 = E1.Read( 0 ),  C2 = E2.Read( 0 );
 
-				Resultat = (  C1 == C2 ? 0 : C1 > C2 ? 1 : -1 );
+				Resultat = C1 == C2 ? 0 : C1 > C2 ? 1 : -1;
 			}
 		}
 		else
@@ -108,7 +108,7 @@ ERRBegin
 
 				Resultat = memcmp( T1, T2, Taille );
 			}
-			while ( !Resultat && Nombre );
+			while ( ( Resultat == 0 ) && ( Nombre != 0 ) );
 		}
 	}
 	else
@@ -230,7 +230,8 @@ ERRBegin
 
 			while ( ( PositionRelative < Taille )
 					&& ( Read( Debut + PositionRelative )
-						 == ((char *)Objet)[PositionRelative] ) );
+						 == ((char *)Objet)[PositionRelative] ) )
+			{};
 
 			if ( PositionRelative == Taille )
 				Trouve = true;
@@ -315,7 +316,11 @@ ERRBegin
 			Taille = Quantite;
 
 		Read( Position, Taille, Tampon );
-		OFlow.Put( Tampon, Taille );
+#ifdef UYM_DBG
+	if ( Taille > FLW_AMOUNT_MAX )
+		ERRc(),
+#endif
+		OFlow.Put( Tampon, (flw::amount__)Taille );
 
 		Quantite -= Taille;
 		Position += Taille;
@@ -354,7 +359,11 @@ ERRBegin
 		if ( Quantite < Taille )
 			Taille = Quantite;
 
-		IFlow.Get( Taille, Tampon );
+#ifdef UYM_DBG
+	if ( Taille > FLW_AMOUNT_MAX )
+		ERRc(),
+#endif
+		IFlow.Get( (flw::amount__)Taille, Tampon );
 
 		Write( Tampon, Taille, Position );
 

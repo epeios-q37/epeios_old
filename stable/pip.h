@@ -120,7 +120,7 @@ namespace pip {
 #else
 		#error "Unknow compilation enviroment."
 #endif
-	};
+	}
 
 	//t A pipe.
 	typedef base_pipe_type__ base_pipe__[2];
@@ -469,7 +469,7 @@ namespace pip {
 			return Master_;
 		}
 	};
-};
+}
 
 /*$END$*/
 				  /********************************************/

@@ -302,7 +302,7 @@ void clnarg::analyzer___::GetArgument(
 {
 	int i = 1;
 
-	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, Option, Argument ) );
+	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, (id__)Option, Argument ) ) {};
 }
 
 void clnarg::analyzer___::GetArguments( 
@@ -313,7 +313,7 @@ ERRProlog
 	int i = 1;
 	str::string Argument;
 ERRBegin
-	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, Option, Argument ) ) {
+	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, (id__)Option, Argument ) ) {
 		if ( Argument.Amount() )
 			Arguments.Add( Argument );
 		Argument.Init();

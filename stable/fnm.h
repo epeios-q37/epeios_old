@@ -163,19 +163,19 @@ namespace fnm
 			const char *Base,
 			const char *Extension );
 	};
-};
+}
 
 #ifdef CPE__MS
-#define FNM_DIRECTORY_SEPARATOR_STRING	"\\"
-#define FNM_DIRECTORY_SEPARATOR_CHARACTER	'\\'
+#	define FNM_DIRECTORY_SEPARATOR_STRING	"\\"
+#	define FNM_DIRECTORY_SEPARATOR_CHARACTER	'\\'
 #elif defined( FNM__UNIX_LIKE )
-#define FNM_DIRECTORY_SEPARATOR_STRING	"/"
-#define FNM_DIRECTORY_SEPARATOR_CHARACTER	'/'
+#	define FNM_DIRECTORY_SEPARATOR_STRING	"/"
+#	define FNM_DIRECTORY_SEPARATOR_CHARACTER	'/'
 #elif defined( FNM__MAC )
-#define FNM_DIRECTORY_SEPARATOR_STRING	":"
-#define FNM_DIRECTORY_SEPARATOR_CHARACTER	':'
+#	define FNM_DIRECTORY_SEPARATOR_STRING	":"
+#	define FNM_DIRECTORY_SEPARATOR_CHARACTER	':'
 #else
-#error "Unknow compiler enviroment."
+#	error "Unknow compiler enviroment."
 #endif
 
 

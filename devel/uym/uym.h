@@ -394,7 +394,7 @@ namespace uym {
 		bsize__ BufferSize );
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
-	bso::sbyte__ Compare(
+	bso::sign__ Compare(
 		const untyped_memory_ &M1,
 		const untyped_memory_ &M2,
 		row__ BeginM1,

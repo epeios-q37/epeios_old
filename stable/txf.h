@@ -109,7 +109,7 @@ namespace txf {
 			char C[9];
 			amount__ Pos;
 
-			if ( ( Pos = Lire_( 9, (datum__ *)C ) ) > 8 )
+			if ( ( Pos = Lire_( 9, C ) ) > 8 )
 				ERRf();
 
 			if ( !isxdigit( C[0] ) )
@@ -137,7 +137,7 @@ namespace txf {
 		text_iflow___ &operator >>( signed long &E )
 		{
 			unsigned long L;
-			unsigned char C = Get();
+			datum__ C = Get();
 
 			if ( ( C != '+' ) && ( C != '-' ) )
 				ERRf();
@@ -177,7 +177,7 @@ namespace txf {
 			return Lire_( Amount, Buffer );
 		}
 		//f Return the next character.
-		unsigned char Get( void )
+		datum__ Get( void )
 		{
 			return Lire_();
 		}
@@ -240,13 +240,18 @@ namespace txf {
 		}
 		text_oflow___ &operator <<( char C )
 		{
-			Ecrire_( (datum__)C );
+			Ecrire_( C );
 
 			return *this;
 		}
 		text_oflow___ &operator <<( const char *C )
 		{
-			Ecrire_( (const datum__ *)C, strlen( C ) );
+			size_t Length = strlen( C );
+
+			if ( Length > FLW_AMOUNT_MAX )
+				ERRl();
+
+			Ecrire_( C, (amount__)Length );
 
 			return *this;
 		}
@@ -283,7 +288,7 @@ namespace txf {
 			return operator <<( (signed long) E );
 		}
 		//f Write 'C';
-		void Put( unsigned char C )
+		void Put( datum__ C )
 		{
 			Ecrire_( C );
 		}

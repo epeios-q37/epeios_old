@@ -71,7 +71,7 @@ void flw::oflow___::ForceWriting_(
 
 void flw::oflow___::ForceDumpingOfCache_( bool Synchronisation )
 {
-	while( !DumpCache_( Synchronisation ) );
+	while( !DumpCache_( Synchronisation ) ) {};
 }
 
 
@@ -80,9 +80,9 @@ bool flw::GetString(
 	char *Tampon,
 	size__ NombreMax )
 {
-	size_t Position = 0;
+	size__ Position = 0;
 
-	while( ( Position < NombreMax ) && ( ( Tampon[Position] = Flot.Get() ) != 0 ) )
+	while( ( Position < NombreMax ) && ( ( Tampon[Position] = (char)Flot.Get() ) != 0 ) )
 		Position++;
 
 	return Position < NombreMax;

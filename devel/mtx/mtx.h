@@ -108,7 +108,7 @@ namespace mtx {
 #ifdef MTX__USE_COUNTER
 	namespace {
 		typedef bso::ubyte__ counter__;
-	};
+	}
 #endif
 
 #ifdef MTX__CONTROL
@@ -292,7 +292,7 @@ namespace mtx {
 			return mtx::TryToLock( Handler_ );
 		}
 	};
-};
+}
 
 
 

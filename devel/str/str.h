@@ -255,7 +255,7 @@ namespace str {
 		const string_ &String );
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2' and a length of 'Amount'.
-	inline bso::sbyte__ Compare(
+	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
 		epeios::row__ BeginS1,
@@ -266,26 +266,26 @@ namespace str {
 	}
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2'.
-	inline bso::sbyte__ Compare(
+	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
 		epeios::row__ BeginS1 = 0,
 		epeios::row__ BeginS2 = 0 )
 	{
-		bso::sbyte__ Resultat;
+		bso::sign__ Resultat;
 		epeios::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;
 		else
-			return (bso::sbyte__)( T1 == T2 ? 0 : T1 > T2 ? 1 : -1 );
+			return ( T1 == T2 ? 0 : T1 > T2 ? 1 : -1 );
 	}
 
 	inline bso::bool__ operator ==(
 		const string_ &S1,
 		const string_ &S2 )
 	{
-		return !Compare( S1, S2 );
+		return Compare( S1, S2 ) == 0;
 	}
 
 	inline bso::bool__ operator !=(

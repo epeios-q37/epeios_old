@@ -80,7 +80,7 @@ amount__ sck::Read(
 	FD_SET( Socket, &fds );
 
 	if ( TimeOut == SCK_INFINITE )
-		Result = select( Socket + 1, &fds, NULL, NULL, NULL );
+		Result = select( (int)( Socket + 1 ), &fds, NULL, NULL, NULL );
 	else
 	{
 		timeval TV;
@@ -88,7 +88,7 @@ amount__ sck::Read(
 		TV.tv_sec = TimeOut;
 		TV.tv_usec = 0;
 
-		Result = select( Socket + 1, &fds, NULL, NULL, &TV );
+		Result = select( (int)( Socket + 1 ), &fds, NULL, NULL, &TV );
 	}
 
 	if ( Result == 1 )
@@ -126,7 +126,7 @@ amount__ sck::Write(
 	FD_SET( Socket, &fds );
 
 	if ( TimeOut == SCK_INFINITE )
-		Result = select( Socket + 1, NULL, &fds, NULL, NULL );
+		Result = select( (int)( Socket + 1 ), NULL, &fds, NULL, NULL );
 	else
 	{
 		timeval TV;
@@ -134,7 +134,7 @@ amount__ sck::Write(
 		TV.tv_sec = TimeOut;
 		TV.tv_usec = 0;
 
-		Result = select( Socket + 1, NULL, &fds, NULL, &TV );
+		Result = select( (int)( Socket + 1 ), NULL, &fds, NULL, &TV );
 	}
 
 	if ( Result == 1 )
@@ -191,7 +191,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 				ERRd();
 			}
 
-	return Amount;
+		return Amount;
 }
 
 

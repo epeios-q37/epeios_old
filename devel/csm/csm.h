@@ -103,7 +103,7 @@ namespace csm {
 			srv::service__ Service,
 			err::handle Handle = err::hUsual );
 	};
-};
+}
 
 
 /*$END$*/

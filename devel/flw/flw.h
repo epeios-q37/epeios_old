@@ -63,6 +63,7 @@ extern class ttr_tutor &FLWTutor;
 
 #include "err.h"
 #include "tol.h"
+#include "limits.h"
 
 #ifdef CPE__UNIX
 #	ifndef FLW_LET_SIGPIPE
@@ -72,13 +73,19 @@ extern class ttr_tutor &FLWTutor;
 
 namespace flw {
 	//t Amount of data.
-	typedef size_t			amount__;
+	typedef int			amount__;
+
+	//t The max value for a amount.
+	#define FLW_AMOUNT_MAX	INT_MAX
 
 	//t Size (of a cache, for example).
-	typedef size_t			size__;
+	typedef int			size__;
 
-	//t Type of aa datum.
-	typedef unsigned char			datum__;
+	//t The max value for a size.
+	#define FLW_SIZE_MAX	INT_MAX
+
+	//t Type of a datum.
+	typedef char			datum__;
 
 	//c Base input flow.
 	class iflow___
@@ -180,7 +187,7 @@ namespace flw {
 				Amount = Available_;
 				
 			if ( Amount != 0 ) {
-				memcpy( Buffer, Cache_ + Position_, Amount );
+				memcpy( Buffer, Cache_ + Position_, (size_t)Amount );
 				
 				Position_ += Amount;
 				Available_ -= Amount;
@@ -256,7 +263,7 @@ namespace flw {
 				Size = EOFD_.Size;
 				
 			if ( Size != 0 ) {
-				memcpy( Buffer, EOFD_.Data, Size );
+				memcpy( Buffer, EOFD_.Data, (size_t)Size );
 				EOFD_.Size -= Size;
 				EOFD_.Data += Size;
 			}
@@ -324,11 +331,16 @@ namespace flw {
 				Get();
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
-		'Data' is NOT suplicated and should not be modified. */
+		'Data' is NOT duplicated and should not be modified. */
 		void EOFD( const char *Data )
 		{
-			EOFD_.Data = (const datum__ *)Data;
-			EOFD_.Size = strlen( Data );
+			size_t Length = strlen( Data );
+
+			if ( Length > FLW_SIZE_MAX )
+				ERRl();
+
+			EOFD_.Data = Data;
+			EOFD_.Size = (size__)Length;
 			EOFD_.HandleLength = false;
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
@@ -401,7 +413,7 @@ namespace flw {
 				AmountWritten = DirectPut_( Cache_, Stayed, Stayed, Synchronization );
 				
 				if ( AmountWritten < Stayed )
-					memmove( Cache_, Cache_ + AmountWritten, Stayed - AmountWritten );
+					memmove( Cache_, Cache_ + AmountWritten, (size_t)( Stayed - AmountWritten ) );
 					
 				Free_ += AmountWritten;
 			}
@@ -420,7 +432,7 @@ namespace flw {
 			if ( Free_ < Amount )
 				Amount = Free_;
 				
-			memcpy( Cache_ + Size_ - Free_, Buffer, Amount );
+			memcpy( Cache_ + Size_ - Free_, Buffer, (size_t)Amount );
 			
 			Free_ -= Amount;
 			
@@ -559,7 +571,12 @@ namespace flw {
 		const char *String,
 		oflow___ &OutputFlow )
 	{
-		OutputFlow.Put( String, strlen( String ) + 1 );
+		size_t Length = strlen( String );
+
+		if ( Length >= FLW_AMOUNT_MAX )
+			ERRl();
+
+		OutputFlow.Put( String, (amount__)( Length + 1 ) );
 	}
 
 	//c Basic input/output flow.
@@ -607,7 +624,12 @@ inline flw::oflow___ &operator <<(
 	flw::oflow___ &OFlow,
 	const char *String )
 {
-	OFlow.Put( String, strlen( String ) );
+	size_t Length = strlen( String );
+
+	if ( Length > FLW_AMOUNT_MAX )
+		ERRl();
+
+	OFlow.Put( String, (flw::amount__)Length );
 
 	return OFlow;
 }

@@ -169,7 +169,7 @@ namespace mtk {
 #error "Unknow compilation enviroment"
 #endif
 	}
-};
+}
 
 //t Alias for 'mtk::routine' . Obsolete.
 typedef mtk::routine__ mtk__routine;

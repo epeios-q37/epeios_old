@@ -420,7 +420,7 @@ namespace bch {
 	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, epeios::row__ )
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
-	template <class t, typename r, typename m> inline bso::sbyte__ Compare(
+	template <class t, typename r, typename m> inline bso::sign__ Compare(
 		const _bunch_<t, r, m> &S1,
 		const _bunch_<t, r, m> &S2,
 		r BeginS1 = 0,
@@ -437,7 +437,7 @@ namespace bch {
 
 
 	//f Return 'S1' - 'S2' which respectively begin at 'BeginS1' et 'Begins2' and have a length of 'Amount'.
-	template <class t, typename r> inline bso::sbyte__ Compare(
+	template <class t, typename r> inline bso::sign__ Compare(
 		const E_BUNCHt_( t, r ) &S1,
 		const E_BUNCHt_( t, r ) &S2,
 		r BeginS1,

@@ -43,6 +43,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
 &dbt		&epeios		&		&Differentiated Binary Tree
+&dte		&epeios		&2000, 2001, 	&DaTE
 &dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
 &fil		&epeios		&2000-		&FILe
@@ -83,10 +84,12 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &mtk		&epeios		&2000, 2001, 	&MultiTasKing
 &pip		&epeios		&2000-		&PIPe
 &que		&epeios		&2000-		&QUEue
+&salcsm		&epeios		&2000		&Stand ALone Client/Server Manager
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 &sbf		&epeios		&2000-		&Simplified Binary tree Filler
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
+&srv		&epeios		&2000, 2001, 	&SeRVer
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
 &stk		&epeios		&2000-		&STacK
 &stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow

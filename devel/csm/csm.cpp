@@ -97,7 +97,7 @@ ERRBegin
 
 	PU = CD.Manager->CI( SocketFlow, Pipe );
 
-	while( CD.Manager->CP( SocketFlow, Pipe, PU ) == bContinue );
+	while( CD.Manager->CP( SocketFlow, Pipe, PU ) == bContinue ) {};
 ERRErr
 ERREnd
 	CD.Manager->CE( PU );
@@ -148,7 +148,7 @@ ERRFBegin
 
 		PUS = SD.Manager->SI();
 
-		while ( SD.Manager->SP( Pipe, PUS ) == bContinue);
+		while ( SD.Manager->SP( Pipe, PUS ) == bContinue) {};
 	} 
 		
 		
@@ -218,7 +218,7 @@ ERRBegin
 	if ( !Listener_( &LD ) ) {
 		SD.Error = true;
 		mtx::Unlock( SD.Mutex );
-		while( SD.Error );
+		while( SD.Error ) {};
 		ERRs();
 	}
 		
