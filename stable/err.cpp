@@ -1,7 +1,7 @@
 /*
 	'err' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'err' header file ('err.h').
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -86,7 +86,7 @@ err::type ERRFilter = err::ok;
 #ifdef ERR__THREAD_SAFE
 bool err::Concerned( void )
 {
-	return ( ThreadID_ == MTKGetTID() );
+	return ( ThreadID_ == mtk::GetTID() );
 }
 
 void err::Unlock( void )
@@ -195,7 +195,7 @@ void err_::Handler(
 
 		M.Lock();
 
-		ThreadID_ = MTKGetTID();
+		ThreadID_ = mtk::GetTID();
 	}
 #endif
 

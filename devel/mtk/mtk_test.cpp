@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "mtk.h"
 
@@ -46,14 +46,22 @@ ERREpilog
 
 void f( void *UP)
 {
-	stf::fout << (char *)UP << txf::nl;
+	stf::cout << (char *)UP << txf::tab << (unsigned long)mtk::GetTID() << txf::nl << txf::sync;
+
+	tol::Wait( 5 );
+
+	stf::cout << "Fils" << txf::nl << txf::sync;
 }
 
 void Test( void )
 {
 	mtk::Launch( f, (char *)"Hello, world" );
 
-	tol::Wait( 5 );
+	tol::Wait( 3 );
+
+	stf::cout << "Pere" << txf::tab << (unsigned long)mtk::GetTID() << txf::nl << txf::sync;
+
+	tol::Wait( 3 );
 }
 
 int main( int argc, char *argv[] )
@@ -61,7 +69,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	stf::fout << "Test of library " << MTKTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << MTKTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -75,16 +83,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		stf::fout << txf::sync;
-		stf::ferr << "\nBad arguments.\n";
-		stf::fout << "Usage: " << MTKTutor.Name << " [/i]\n\n";
-		ERRt();
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << MTKTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	stf::fout << "\nEnd of program " << MTKTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << MTKTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

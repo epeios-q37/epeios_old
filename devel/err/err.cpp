@@ -86,7 +86,7 @@ err::type ERRFilter = err::ok;
 #ifdef ERR__THREAD_SAFE
 bool err::Concerned( void )
 {
-	return ( ThreadID_ == MTKGetTID() );
+	return ( ThreadID_ == mtk::GetTID() );
 }
 
 void err::Unlock( void )
@@ -195,7 +195,7 @@ void err_::Handler(
 
 		M.Lock();
 
-		ThreadID_ = MTKGetTID();
+		ThreadID_ = mtk::GetTID();
 	}
 #endif
 

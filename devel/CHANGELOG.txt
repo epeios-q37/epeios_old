@@ -46,6 +46,9 @@ CLNARG:
 - Adapting to changes in 'BCH' library.
 - Adaptinf to changes in 'CTN' library.
 
+CSM:
+- Adapting tochanges in 'MTK'.
+
 CTN:
 - Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
 - Fixing GNU GCC issues.
@@ -146,6 +149,10 @@ MMI:
 
 MMM:
 - Fixing 'reset()' bug.
+
+MTK:
+- Adapting to the NPTL (GNU/Linux Redhat 9)
+- Removing old MTK... functions.
 
 MTX:
 - Using counter under cygwin due to problems with pthread mutexes .

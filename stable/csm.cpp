@@ -1,7 +1,7 @@
 /*
 	'csm' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'csm' header file ('csm.h').
-	Copyright (C) 20002003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -213,7 +215,7 @@ ERRBegin
 	
 	mtx::Lock( SD.Mutex );	// Unlocked by 'Listener()'.
 
-	MTKLaunch( Server_, &SD );
+	mtk::Launch( Server_, &SD );
 
 	if ( !Listener_( &LD ) ) {
 		SD.Error = true;

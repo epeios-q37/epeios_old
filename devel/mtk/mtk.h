@@ -1,7 +1,7 @@
 /*
 	Header for the 'mtk' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -141,7 +141,7 @@ namespace mtk {
 #	ifdef CPE__BEOS
 	typedef thread_id	thread_id__;
 #	else
-	typedef pid_t	thread_id__;
+	typedef pthread_t	thread_id__;
 #	endif
 #else
 #	error "Unknow compilation enviroment"
@@ -159,36 +159,13 @@ namespace mtk {
 		if ( ID == B_NAME_NOT_FOUND )
 			ERRs();
 #	else
-		thread_id__ ID = getpid();
-
-		if ( ID == -1 )
-			ERRs();
+		thread_id__ ID = pthread_self();
 #	endif
 		return ID;
 #else
 #error "Unknow compilation enviroment"
 #endif
 	}
-}
-
-//t Alias for 'mtk::routine' . Obsolete.
-typedef mtk::routine__ mtk__routine;
-
-//f Alias go 'mtk::Launch'. Obsolete.
-inline void MTKLaunch(
-	mtk__routine Routine,
-	void *UP )
-{
-	mtk::Launch( Routine, UP );
-}
-
-//t Alias for mtk::thread_id__. Obsolete.
-typedef mtk::thread_id__	mtk__thread_id;
-
-//f Alias for 'mtk::GetTid'. Obsolete.
-inline mtk__thread_id MTKGetTID( void )
-{
-	return mtk::GetTID();
 }
 
 /*$END$*/

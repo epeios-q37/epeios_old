@@ -1,6 +1,6 @@
 /*
 	Header for the 'csm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 20002003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
