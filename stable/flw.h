@@ -522,26 +522,11 @@ namespace flw {
 			if ( AmountWritten < Amount )
 				_ForceWriting( Buffer + AmountWritten, Amount - AmountWritten );
 		}
-		virtual size__ _Write(
+		size__ _Write(
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum,
-			bool Synchronization )
-		{
-			size__ Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
-
-			if ( Synchronization && ( Amount == Wanted ) ) {
-				Written_ = 0;
-				FLWSynchronizing();
-			} else {
-				Written_ += Amount;
-	
-				if ( Written_ >= AmountMax_ )
-					ERRf();
-			}
-
-			return Amount;
-		}
+			bool Synchronization );
 	protected:
 		/*v Called to put up to 'Wanted' and a minimum of 'Minimum' bytes from
 		'Buffer'. If 'Synchronization' is true, then this fonction is called

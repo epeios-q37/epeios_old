@@ -209,13 +209,8 @@ flw::size__ sck::socket_ioflow___::FLWWrite(
 {
 	flw::size__ Amount = 0;
 
-	if ( Error_ ) {
-#ifdef SCK_DBG
-		if ( !Synchronization )
-			ERRu();
-#endif
-		return Minimum;
-	}
+	if ( Error_ )
+		ERRd();
 
 	if ( Minimum != 0 )
 	{

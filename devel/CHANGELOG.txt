@@ -86,6 +86,7 @@ FLW:
 -			 Renaming some methods.
 - (20/07/04) Improvements.
 - (31/07/04) Fixing bug concerning the 'Reset()' function.
+- (10/12/04) Improvements.
 
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
@@ -131,6 +132,7 @@ MTX:
 SCK:
 - (31/07/04) A timeout yet launch an error.
 -			 Rearranging some '#define'
+- (10/12/04) Adapting to changes in 'FLW' library.
 
 SRV:
 - (21/09/04) Adding socket timeout handling.

@@ -91,6 +91,32 @@ bool flw::GetString(
 }
 
 
+size__ flw::oflow__::_Write(
+	const datum__ *Buffer,
+	size__ Wanted,
+	size__ Minimum,
+	bool Synchronization )
+{
+	size__ Amount = 0;
+ERRProlog
+ERRBegin
+	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
+
+	if ( Synchronization && ( Amount == Wanted ) ) {
+		Written_ = 0;
+		FLWSynchronizing();
+	} else {
+		Written_ += Amount;
+
+		if ( Written_ >= AmountMax_ )
+			ERRf();
+	}
+ERRErr
+	Free_ = Size_;	// If there is an error, the buffer is considered as empty, so subsequent reset deos not try to write to device.
+ERREnd
+ERREpilog
+	return Amount;
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,
