@@ -1,5 +1,5 @@
 /*
-  Test source for the 'bch' library by Claude L. Simon (simon@epeios.org).
+  Test source for the 'gnumll' library by Claude L. Simon (simon@epeios.org).
   Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
@@ -30,7 +30,7 @@
 #include <string.h>
 #include <iostream.h>
 
-#include "bch.h"
+#include "gnumll.h"
 
 #include "err.h"
 #include "stf.h"
@@ -44,89 +44,16 @@ ERREnd
 ERREpilog
 }
 
-
-#include "flm.h"
-
-#define NOMBRE 50
-
-using namespace txf;
-using namespace bch;
-
-void Essai( void )
-{
-ERRProlog
-	flm::file_memory_driver F;
-	mmm::multimemory M;
-	E_BUNCH( bso::ulong__ ) E1, E2;
-//	fch_flot_entree_fichier Entree;
-//	fch_flot_sortie_fichier Sortie;
-	E_BUNCH__( int, 3 ) G, H;
-	bso::ulong__ i;
-	row_t__ P;
-ERRBegin
-	F.Init( "couocu.tmp" );
-	M.plug( F );
-	M.Init();
-
-	E1.plug( M );
-	E1.Init();
-
-	E2.plug( M );
-	E2.Init();
-
-	E1.Allocate( NOMBRE );
-	E2.Allocate( NOMBRE );
-
-	for ( i = 0; i < NOMBRE; i++ )
-	{
-		E1.Write( i, i );
-		E2.Write( (bso::ulong__)( NOMBRE - i ), i );
-	}
-
-	for ( i = 0; i < E1.Amount(); i++ )
-		fout << E1(i) << tab << E2(i) << tab;
-
-	fout << nl;
-
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
-
-	E1.Insert( E2, NOMBRE / 2 );
-
-	for ( P = 0; P < E1.Amount(); P++ )
-		fout << E1( P ) << tab;
-
-	fout << nl;
-
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
-
-	for ( P = 0; P < E2.Amount(); P++ )
-		fout << E2( P ) << tab;
-
-	fout << nl;
-
-	E1 = E2;
-
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
-
-ERRErr
-	// instructions à exécuter si erreur
-ERREnd
-	// instructions à exécuter, erreur ou non
-ERREpilog
-}
-
-
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << BCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	fout << "Test of library " << GNUMLLTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
-		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -137,14 +64,14 @@ ERRFBegin
 	default:
 		fout << txf::sync;
 		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << BCHTutor.Name << " [/i]\n\n";
+		fout << "Usage: " << GNUMLLTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << BCHTutor.Name << ".\n";
+	fout << "\nEnd of program " << GNUMLLTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

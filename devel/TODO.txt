@@ -12,3 +12,6 @@ FAM:
 
 CTN:
 - Test and use if working 'mutable'.
+
+TXMPGH:
+- Introduce an alias to 'str::string_' when used as a line (txmpgh::line ?).

@@ -158,7 +158,7 @@ namespace bch {
 			r Position = 0,
 			r Offset = 0 )
 		{
-			AllocateIfNecessary_( Amount + Offset );
+			AllocateIfNecessary_( Amount + Offset.V );
 
 			mmr::Write( Set, Amount, Position, Offset );
 		}
