@@ -68,7 +68,7 @@ const char *lgg::LanguageNames[lgg::l_amount] = {
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
 	"__",
-	"fr"
+	"fr",
 	"en",
 	"de",
 
