@@ -4,6 +4,9 @@ GENERAL:
 - Creating library 'BTS'.
 - Creating library 'BTF'.
 
+AEM:
+- Adding 'Exists' method.
+
 CPE:
 - Adapting to Metrowerks Codewarrior
 

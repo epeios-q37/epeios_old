@@ -2,6 +2,7 @@
 # $Id$
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+&aem		&epeios		&2002-		&Amount/Extent managing
 &bch		&epeios		&2000-		&BunCH
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdcst		&ebkd		&2000-		&BacKenD CaSTs
