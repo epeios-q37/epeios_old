@@ -1,5 +1,5 @@
 /*
-	Header for the 'cio' library by Claude SIMON (csimon@epeios.org)
+	Header for the 'ltf' library by Claude SIMON (csimon@epeios.org)
 	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef CIO__INC
-#define CIO__INC
+#ifndef LTF__INC
+#define LTF__INC
 
-#define CIO_NAME		"CIO"
+#define LTF_NAME		"LTF"
 
-#define	CIO_VERSION	"$Revision$"
+#define	LTF_VERSION	"$Revision$"
 
-#define CIO_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define LTF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CIOTutor;
+extern class ttr_tutor &LTFTutor;
 
-#if defined( XXX_DBG ) && !defined( CIO_NODBG )
-#define CIO_DBG
+#if defined( XXX_DBG ) && !defined( LTF_NODBG )
+#define LTF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,44 +55,25 @@ extern class ttr_tutor &CIOTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Console Input/Output 
+//D Line Text Flow. 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 #include "err.h"
-#include "iof.h"
+#include "flw.h"
 #include "txf.h"
 
-namespace cio {
+namespace ltf {
+	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
-	typedef iof::io_oflow__	_oflow__;
-	typedef iof::io_iflow__	_iflow__;
-
-	//o Standard output as a pure flow (not a text flow).
-	extern _oflow__ coutf;
-
-	//o Error output as a pure flow (not a text flow).
-	extern _oflow__ cerrf;
-
-	//o Standard input as a pure flow (not a text flow).
-	extern _iflow__ cinf;
-
-	//o Standard output as a text flow.
-	extern txf::text_oflow__ cout;
-
-	//o Error output as a text flow.
-	extern txf::text_oflow__ cerr;
-
-	//o Standard input as a text flow.
-	extern txf::text_iflow__ cin;
-
-	template <int limit = 80> class _line_console__
+	class _line_text_flow__
 	: public flw::oflow__
 	{
 	private:
-		flw::datum__ Data_[limit+1];
-		bso::ubyte__ Length_;
+		flw::datum__ *Data_;
+		bso::ubyte__ Size_;
+		bso::ubyte__ Amount_;
 		txf::text_oflow__ &TFlow_;
 	protected:
 		virtual flw::size__ FLWWrite(
@@ -101,72 +82,98 @@ namespace cio {
 			flw::size__ Minimum,
 			bso::bool__ Synchronization )
 		{
-			if ( Length_ == 0 )
-				TFlow_ << txf::rfl << (char *)Data_ << txf::rfl;
-
-			if ( ( Length_ + Wanted ) > limit ) {
-				if ( Wanted >= limit ) {
-					memcpy( Data_, Buffer + ( limit - Wanted ), limit );
+			if ( ( Amount_ + Wanted ) > Size_ ) {
+				if ( Wanted >= Size_ ) {
+					memcpy( Data_, Buffer + ( Size_ - Wanted ), Size_ );
 				} else {
-					memcpy( Data_, Data_ + Wanted, limit - Wanted );
-					memcpy( Data_ + limit - Wanted, Buffer, Wanted );
+					memcpy( Data_, Data_ + Wanted, Size_ - Wanted );
+					memcpy( Data_ + Size_ - Wanted, Buffer, Wanted );
 				}
 
-				Length_ = limit + 1;
+				Amount_ = Size_ + 1;
 			} else {
-				memcpy( Data_ + Length_, Buffer, Wanted );
-				Length_ += Wanted;
+				memcpy( Data_ + Amount_, Buffer, Wanted );
+				Amount_ += Wanted;
 			}
 
-			if ( Length_ < limit ) {
+			if ( Amount_ < Size_ ) {
 				TFlow_.Put( Buffer, Wanted );
-			} else if ( Length_ > limit )
+			} else if ( Amount_ > Size_ )
 				Data_[0] = '<';
 
 			if ( Synchronization ) {
-				if ( Length_ > limit )
-					TFlow_ << txf::rfl << (char *)Data_;
+				if ( Amount_ > Size_ ) {
+					TFlow_ << txf::rfl;
+					TFlow_.Put( Data_, Size_ );
+				}
 				TFlow_ << txf::sync;
 			}
 
 			return Wanted;
 		}
 	public:
-		_line_console__( txf::text_oflow__ &TFlow )
+		_line_text_flow__(
+			txf::text_oflow__ &TFlow,
+			flw::datum__ *Data,
+			flw::size__ Size )
 		: TFlow_( TFlow ),
 		  flw::oflow__( NULL, 0, BSO_ULONG_MAX )
 		{
-			if ( limit > BSO_UBYTE_MAX )
+			if ( Size_ > LTF__SIZE_MAX )
 				ERRl();
 
-			memset( Data_, ' ', limit );
-			Data_[limit] = 0;
-			Length_ = 0;
+			Data_ = Data;
+			Size_ = Size;
+
+			memset( Data_, ' ', Size_ );
+			Data_[Size_] = 0;
+			Amount_ = 0;
 		}
-		void nl( void )
+		void Clear( void )
 		{
-			TFlow_ << txf::rfl << (char *)Data_ << txf::sync;
-			Length_ = 0;
-			memset( Data_, ' ', limit );
+			CR();
+			memset( Data_, ' ', Size_ );
+			TFlow_.Put( Data_, Size_ );
+			TFlow_ << txf::rfl;
+		}
+		void CR( void )
+		{
+			TFlow_ << txf::rfl;
+			Amount_ = 0;
 		}
 	};
 
-	template <int limit = 79> class line_console__
+
+	template <int size = 79> class line_text_flow__
 	: public txf::text_oflow__
 	{
 	private:
-		_line_console__<limit> Line_;
+		flw::datum__ Data_[size];
+	protected:
+		_line_text_flow__ Flow_;
 	public:
-		line_console__( txf::text_oflow__ &TFlow )
-		: Line_( TFlow ),
-		  txf::text_oflow__( Line_ )
+		line_text_flow__( txf::text_oflow__ &TFlow )
+		: Flow_( TFlow, Data_, size ),
+		  txf::text_oflow__( Flow_ )
 		{}
-		void nl( void )
+		void CR( void )
 		{
-			Line_.nl();
+			Flow_.CR();
+		}
+		void Clear( void )
+		{
+			Flow_.Clear();
 		}
 	};
 
+/*
+	template <int size> inline line_console__<size> & CR( line_console__<size> &Flow )
+	{
+		Flow.Line_.CR();
+
+		return *this;
+	}
+*/
 
 }
 

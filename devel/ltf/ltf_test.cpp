@@ -1,5 +1,5 @@
 /*
-	Test source for the 'cio' library by Claude SIMON (csimon@epeios.org).
+	Test source for the 'ltf' library by Claude SIMON (csimon@epeios.org).
 	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cio.h"
+#include "ltf.h"
 
 #include "err.h"
+#include "cio.h"
 #include "tol.h"
 
 using cio::cin;
@@ -40,14 +41,20 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	ltf::line_text_flow__<> LC( cout );
 ERRBegin
 	while ( 1 )
 		if ( rand() % 60 ) {
-			cio::lout << (char)( rand() % 26 + 'A' ) << txf::sync;
-			tol::Suspend( 75 );
-		}else {
-			cio::lout.Clear();
-		}
+			LC << (char)( rand() % 26 + 'A' );
+
+			if ( ( rand() % 5 ) == 0 )
+				LC << txf::sync;
+
+			tol::Suspend( 100 );
+		} else if ( rand() % 3 ) {
+			LC.Clear();
+		} else
+			LC.CR();
 
 
 ERRErr
@@ -60,7 +67,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	cout << "Test of library " << CIOTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cout << "Test of library " << LTFTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -75,14 +82,14 @@ ERRFBegin
 	default:
 		cout << txf::sync;
 		cerr << "\nBad arguments.\n";
-		cout << "Usage: " << CIOTutor.Name << " [/i]\n\n";
+		cout << "Usage: " << LTFTutor.Name << " [/i]\n\n";
 		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cout << "\nEnd of program " << CIOTutor.Name << ".\n";
+	cout << "\nEnd of program " << LTFTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

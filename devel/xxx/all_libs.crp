@@ -127,6 +127,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MultiTasKing
 &mtx		&epeios		&2000, 2003-\
 	&MuTeX
+&ltf		&epeios		&\
+	&Line Text Flow.
 &pip		&epeios		&2000-		&PIPe
 &pllio		&epeios		&\
 	&POSIX Low-Level Input/Output

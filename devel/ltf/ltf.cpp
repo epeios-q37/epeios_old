@@ -1,8 +1,8 @@
 /*
-	'cio' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'cio' header file ('cio.h').
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
-
+	'ltf' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'ltf' header file ('ltf.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define CIO__COMPILATION
+#define LTF__COMPILATION
 
-#include "cio.h"
+#include "ltf.h"
 
-class ciotutor
+class ltftutor
 : public ttr_tutor
 {
 public:
-	ciotutor( void )
-	: ttr_tutor( CIO_NAME )
+	ltftutor( void )
+	: ttr_tutor( LTF_NAME )
 	{
-#ifdef CIO_DBG
-		Version = CIO_VERSION "\b\bD $";
+#ifdef LTF_DBG
+		Version = LTF_VERSION "\b\bD $";
 #else
-		Version = CIO_VERSION;
+		Version = LTF_VERSION;
 #endif
-		Owner = CIO_OWNER;
+		Owner = LTF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~ciotutor( void ){}
+	virtual ~ltftutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,57 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#if defined( CPE__MS )
-#	include <io.h>
-#	include <fcntl.h>
-#endif
-
-using namespace cio;
-
-#ifdef IOF__USE_LOWLEVEL_IO
-#	if defined( CPE__MS ) || defined( CPE__UNIX )
-static iof::descriptor__ cin_ = 0, cout_ = 1, cerr_ = 2;
-#	elif defined( CPE__MAC )
-#		error "Not implemented yet ! "
-#	else
-#		error "Unknow compilation enviroment !"
-#	endif
-#elif defined( IOF__USE_STANDARD_IO )
-static iof::descriptor__ cin_ = stdin, cout_ = stdout, cerr_ = stderr;
-#else
-#	error "Unkonw I/O enviroment !"
-#endif
-
-_oflow__ cio::coutf( ::cout_ ), cio::cerrf( ::cerr_ );
-_iflow__ cio::cinf( ::cin_ );
-
-txf::text_oflow__ cio::cout( cio::coutf ), cio::cerr( cerrf );
-txf::text_iflow__ cio::cin( cio::cinf );
-
+using namespace ltf;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class ciopersonnalization
-: public ciotutor
+class ltfpersonnalization
+: public ltftutor
 {
 public:
-	ciopersonnalization( void )
+	ltfpersonnalization( void )
 	{
-#if defined( CPE__MS )
-		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
-			ERRd();
-
-		if ( _setmode( _fileno( stdout ), _O_BINARY ) == -1 )
-			ERRd();
-
-		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
-			ERRd();
-#endif
-	/* place here the actions concerning this library
+		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~ciopersonnalization( void )
+	~ltfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -121,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static ciopersonnalization Tutor;
+static ltfpersonnalization Tutor;
 
-ttr_tutor &CIOTutor = Tutor;
+ttr_tutor &LTFTutor = Tutor;
