@@ -25,7 +25,7 @@
       <author>$AUTHOR$</author>
       <copyright>
         <owner>$OWNER$</owner>
-        <date>2001</date>
+        <date>2001-2002</date>
       </copyright>
       <misc>
         <sourceforge group_id="$CORE_SF_ID$"/>
@@ -44,7 +44,7 @@
       </section>
       <section>
         <para>All document available on this web site are written by people for which English isn't the native language ; some people are working to correct the English errors, so, please, DON'T send any report about this errors.</para>
-        <para xml:space="preserve">Other remarks/questions/suggestions are welcome and can be send to <contact adress="csimon@epeios.org" type="long">Claude L. SIMON</contact>, which can also, sometimes, be found on the dedicated <raw>#epeios</raw> IRC channel on <link URL="http://openprojects.net/" type="external" aspect="long">irc.openproject.net</link>.</para>
+        <para xml:space="preserve">Other remarks/questions/suggestions are welcome and can be send to <contact adress="csimon@epeios.org" type="long">Claude L. Simon</contact>.</para>
       </section>
       <section>
         <list>
@@ -59,10 +59,10 @@
         </list>
       </section>
       <section>
-        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/" type="external">XML</link>/<link URL="http://www.w3.org/Style/XSL/" type="external">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/" type="external">Sablotron</link>. The project is hosted by <link URL="http://sourceforge.net" type="external">sourceforge</link>.</para>
+        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/" type="external">XML</link>/<link URL="http://www.w3.org/Style/XSL/" type="external">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/" type="external">Sablotron</link>. The project is hosted by <link URL="http://sv.gnu.org" type="external">Savannah</link>.</para>
       </section>
       <section>
-        <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude SIMON</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the Epeios libraries. I wish I could spent more time on the Epeios project, because I think that it would probably take months or even years for me to write the documentation for the more then 80 available libraries.</para>
+        <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude L. Simon</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the more then 100 available Epeios libraries.</para>
       </section>
       <ignore>
         <section>

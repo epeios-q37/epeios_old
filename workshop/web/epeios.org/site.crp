@@ -3,8 +3,8 @@
 DATE		&$_DATE_$
 TIME		&$_TIME_$
 
-AUTHOR		&<name>Claude L. SIMON</name><email>csimon@epeios.org</email><URL/>
-OWNER		&<name>Claude L. SIMON</name><email>csimon@epeios.org</email><URL/>
+AUTHOR		&<name>Claude L. Simon</name><email>csimon@epeios.org</email><URL/>
+OWNER		&<name>Claude L. Simon</name><email>csimon@epeios.org</email><URL/>
 ROBOTS		&all
 
 SF_ID		&$$SF_ID$$
@@ -52,4 +52,4 @@ TMCDE_BACKEND_MANUAL	%$DOC$/software/tmcde/backend/manual.xml
 TMCDE_CGID_MANUAL	%$DOC$/software/tmcde/cgid/manual.xml
 MLL2HTML_MANUAL		%$DOC$/software/mll2html/manual.xml
 REVEAL_MANUAL		%$DOC$/software/reveal/manual.xml
-GETBKDAPI_MANUAL		%$DOC$/software/getbkdapi/manual.xml
+GETBKDAPI_MANUAL	%$DOC$/software/getbkdapi/manual.xml

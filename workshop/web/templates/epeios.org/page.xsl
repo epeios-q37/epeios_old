@@ -118,13 +118,7 @@
           <td align="center" width="33%">
             <xsl:apply-templates select="specific/WEB/@parent"/>
           </td>
-          <td align="right" width="33%">
-            <!--		  <a href="http://sourceforge.net" target="_blank"><xsl:text disable-output-escaping="yes">&lt;</xsl:text>img src="http://sourceforge.net/sflogo.php?group_id=<xsl:value-of select="general/misc/sourceforge/@group_id"/><xsl:text disable-output-escaping="yes">&amp;</xsl:text>type=1" alt="SourceForge Logo" border="0"></a>
--->
-            <a href="http://sourceforge.net" target="_blank">
-              <img src="http://sourceforge.net/sflogo.php?group_id={general/misc/sourceforge/@group_id}&amp;type=1" alt="SourceForge Logo" border="0"/>
-            </a>
-          </td>
+          <td align="right" width="33%">Hosted on<br/><a href="http://sv.gnu.org" target="_blank">Savannah</a></td>
         </tr>
       </TBODY>
     </table>
