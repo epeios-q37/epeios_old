@@ -1,7 +1,7 @@
 # $Id$
 mkdir workdir
 cd workdir
-DIR=ecgi-sources_`date +%Y-%m-%d`
+DIR=ecgi-sources
 GET=../../get_cvs
 
 $GET epeios $DIR stable/
@@ -15,7 +15,5 @@ mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
 cp ~/web/ecgi/quickdoc/quickdoc.html $DIR
-tar --gzip -cf $DIR.tar.gz $DIR
-tar -c $DIR | bzip2 >$DIR.tar.bz2
-zip -r -q $DIR.zip $DIR
 
+../../create_pkg $DIR

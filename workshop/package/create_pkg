@@ -1,0 +1,15 @@
+#$Id$
+
+NAME=$1
+DATE=`date +%Y-%m-%d`
+PKG_NAME=$NAME"_"$DATE
+PKG_DIR=packages/$NAME.pkg/$DATE
+PKG=$PKG_DIR/$PKG_NAME
+
+mv $NAME $PKG_NAME
+
+mkdir -p $PKG_DIR
+
+tar --gzip -cf $PKG.tar.gz $PKG_NAME
+tar -c $PKG_NAME | bzip2 >$PKG.tar.bz2
+zip -r -q $PKG.zip $PKG_NAME

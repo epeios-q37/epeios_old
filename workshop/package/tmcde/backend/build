@@ -1,26 +1,20 @@
 # $Id$
-
 mkdir workdir
 cd workdir
-export DIR=tmcde-backend-sources_`date +%Y-%m-%d`
-cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios login
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR stable/
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/licenses/gnu_gpl.txt
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/packages/tmcde/backend/README.txt
-cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
+export DIR=tmcde-backend-sources
+GET=../../../get_cvs
 
-cvs -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd login
-cvs -z3 -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd export -l -D today -d $DIR stable/
-cvs -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd logout
+$GET epeios $DIR stable/
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/tmcde/backend/README.txt
 
-cvs -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc login
-cvs -z3 -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc export -l -D today -d $DIR stable/
-cvs -z3 -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc export -l -D today -d $DIR apps/backend/
-cvs -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc logout
+$GET ebkd $DIR stable/
+
+$GET etmc $DIR stable/
+$GET etmc $DIR apps/backend/
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-tar --gzip -cf $DIR.tar.gz $DIR
-tar -c $DIR | bzip2 >$DIR.tar.bz2
-zip -r -q $DIR.zip $DIR
+
+../../../create_pkg $DIR

@@ -1,4 +1,3 @@
 # $Id$
-export DIR=workdir/tmcde-CGID-sources_`date +%Y-%m-%d`
-ncftpput -v upload.sourceforge.net /incoming $DIR.tar.gz $DIR.tar.bz2 $DIR.zip
+scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/etmc/
 rm -rf workdir
