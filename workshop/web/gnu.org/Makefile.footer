@@ -8,3 +8,9 @@ $(dest):
 
 i/%.crp: %.crp $(crpfile) i
 	reveal $(crpfile) $< $@
+
+$(dest)/%.html: $(dest) $(rootxsl) i/%.xml
+	sabcmd file://$(rootxsl) i/$*.xml $@
+
+i/%.xml: i $(xsl) %.xml i/%.crp
+	reveal i/$*.crp $(templates)/page.xml $@
