@@ -42,27 +42,27 @@ SET CRP=%TMP%\%LNM%.crp
 SET DIR=%RTD%\cvs
 SET ID=
 
-grep -w -o -i %LNM% %SRC%\ecdb.lst
+grep -w -q %LNM% %SRC%\ecdb.lst
 IF NOT ERRORLEVEL 1 SET ID=ecdb
-grep -w -o -i %LNM% %SRC%\eclz.lst
+grep -w -q %LNM% %SRC%\eclz.lst
 IF NOT ERRORLEVEL 1 SET ID=eclz
-grep -w -o -i %LNM% %SRC%\epeios.lst
+grep -w -q %LNM% %SRC%\epeios.lst
 IF NOT ERRORLEVEL 1 SET ID=epeios
-grep -w -o -i %LNM% %SRC%\epgs.lst
+grep -w -q %LNM% %SRC%\epgs.lst
 IF NOT ERRORLEVEL 1 SET ID=epgs
-grep -w -o -i %LNM% %SRC%\ehdb.lst
+grep -w -q %LNM% %SRC%\ehdb.lst
 IF NOT ERRORLEVEL 1 SET ID=ehdb
-grep -w -o -i %LNM% %SRC%\etmc.lst
+grep -w -q %LNM% %SRC%\etmc.lst
 IF NOT ERRORLEVEL 1 SET ID=etmc
-grep -w -o -i %LNM% %SRC%\ebkl.lst
+grep -w -q %LNM% %SRC%\ebkl.lst
 IF NOT ERRORLEVEL 1 SET ID=ebkl
-grep -w -o -i %LNM% %SRC%\ewsa.lst
+grep -w -q %LNM% %SRC%\ewsa.lst
 IF NOT ERRORLEVEL 1 SET ID=ewsa
-grep -w -o -i %LNM% %SRC%\estx.lst
+grep -w -q %LNM% %SRC%\estx.lst
 IF NOT ERRORLEVEL 1 SET ID=estx
-grep -w -o -i %LNM% %SRC%\ebkd.lst
+grep -w -q %LNM% %SRC%\ebkd.lst
 IF NOT ERRORLEVEL 1 SET ID=ebkd
-grep -w -o -i %LNM% %SRC%\ecgi.lst
+grep -w -q %LNM% %SRC%\ecgi.lst
 IF NOT ERRORLEVEL 1 SET ID=ecgi
 
 IF NOT "%ID%"=="" goto repository_defined

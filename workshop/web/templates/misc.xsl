@@ -15,7 +15,7 @@
     </xsl:if>
     <br/>
   </xsl:template>
- <xsl:template match="link">
+  <xsl:template match="link">
     <a href="{@URL}">
       <xsl:if test="@type='external'">
         <xsl:attribute name="target">_blank</xsl:attribute>
@@ -32,7 +32,7 @@
   <xsl:template match="raw">
     <TT>
       <strong>
-        <xsl:value-of select="."/>
+        <xsl:apply-templates/>
       </strong>
     </TT>
   </xsl:template>
