@@ -43,8 +43,9 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &flw		&epeios		&2000-		&FLoW
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
 &gsbfld		&lgsb		&2002-		&GeSBib FieLDs
-&gsbmlt		&lgsb		&2002-		&GeSBib MuLTi
-&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal
+&gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
+&gsbrgl		&lgsb		&		&GeSBib ReGuLar field
+&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal field
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 &ids		&epeios		&2002-		&ID Store
