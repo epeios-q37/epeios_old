@@ -5,55 +5,55 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bch		&epeios		&2000-		&BunCH
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
-&bkdlgg		&ebkd		&		&BacKenD LanGuaGes
+&bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
 &btr		&epeios		&2000-		&Binary Tree
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
-&cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
+&cgidat		&ecgi		&2002-		&CGI (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
-&cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
-&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
-&dbiapi		&ldbi		&		&DataBase Interface Adavanced Programmer Interface
-&dbiapi_	&ldbi		&		&DataBase Interface Adavanced Programmer Interface (for backend)
-&dbibsc		&ldbi		&		&DataBase Interface BaSiCs
-&dbibsc_	&ldbi		&		&DataBase Interface BaSiCs (for backend)
-&dbidpd		&ldbi		&		&DataBase Interface Database DePenDences
-&dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
-&dbiifl_	&ldbi		&		&Database Interface Index FieLds (for backend)
-&dbimng		&ldbi		&		&Database Interface MaNaGer
-&dbimng_	&ldbi		&		&Database Interface MaNaGer (for backend)
-&dbimsc		&ldbi		&		&BataBase Interface MiSC
-&dbimsq		&ldbi		&		&DataBase Interface MySQl (from MySQL database)
-&dbimsq_	&ldbi		&		&DataBase Interface MySQl (from MySQL database) (for backend)
-&dbipgs		&ldbi		&		&DataBAse Interface PostGreS
-&dbisql		&ldbi		&		&DataBase Interface SQL (from language)
-&dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
-&dbitfl_	&ldbi		&		&Database Interface Table FieLds (for backend)
+&cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
+&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects)
+&dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
+&dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
+&dbibsc		&ldbi		&2002-		&DataBase Interface BaSiCs
+&dbibsc_	&ldbi		&2002-		&DataBase Interface BaSiCs (for backend)
+&dbidpd		&ldbi		&2002-		&DataBase Interface Database DePenDences
+&dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
+&dbiifl_	&ldbi		&2002-		&Database Interface Index FieLds (for backend)
+&dbimng		&ldbi		&2002-		&Database Interface MaNaGer
+&dbimng_	&ldbi		&2002-		&Database Interface MaNaGer (for backend)
+&dbimsc		&ldbi		&2002-		&BataBase Interface MiSC
+&dbimsq		&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database)
+&dbimsq_	&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
+&dbipgs		&ldbi		&2002-		&DataBase Interface PostGreS
+&dbisql		&ldbi		&2002-		&DataBase Interface SQL (from language)
+&dbisrq		&ldbi		&2002-		&DataBase Interface Search ReQuest
+&dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
 &dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
 &flw		&epeios		&2000-		&FLoW
-&gsbbsc		&lgsb		&		&GeSBib BaSiC
-&gsbfld		&lgsb		&		&GeSBib FieLDs
-&gsbmlt		&lgsb		&		&GeSBib MuLTi
-&gsbrlt		&lgsb		&		&GeSBib ReLaTionnal
-&gsbtbl		&lgsb		&		&GeSBib TaBLe
-&gsbwrd		&lgsb		&		&GeSBib WoRDs
-&ids		&epeios		&		&ID Store
+&gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
+&gsbfld		&lgsb		&2002-		&GeSBib FieLDs
+&gsbmlt		&lgsb		&2002-		&GeSBib MuLTi
+&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal
+&gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
+&gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
+&ids		&epeios		&2002-		&ID Store
 &idxbtr		&epeios		&2000-		&InDeX Binary TRee
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
-&lstbch		&epeios		&		&LiST BunCH
-&lstctn		&epeios		&		&LiST ConTaiNer
-&mscmdf		&emsc		&		&MuSiC MiDi File		
-&mscmdm		&emsc		&		&MuSiC MiDi Messages
-&mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters
-&mscvkx		&emsc		&		&MuSiC VK (from Roland VK combo organ) XML
+&lstbch		&epeios		&2002-		&LiST BunCH
+&lstctn		&epeios		&2002-		&LiST ConTaiNer
+&mscmdf		&emsc		&2002-		&MuSiC MiDi File		
+&mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
+&mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
+&mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
 &pip		&epeios		&2000-		&PIPe
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
-&stk		&epeios		&2000		&STacK
+&stk		&epeios		&2000-		&STacK
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &tol		&epeios		&2000-		&TOoL
