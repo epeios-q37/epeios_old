@@ -110,11 +110,11 @@ namespace lstctn {
 			list_<row>::Init();
 			container::Init();
 		}
-		//f Remove object at 'Row'.
-		void Remove( row Row )
+		//f RemoveDelete object at 'Row'.
+		void Delete( row Row )
 		{
 			container::operator()( Row ).reset();
-			list_<row>::Remove( Row );
+			list_<row>::Delete( Row );
 		}
 		//f Create new entry.
 		row New( void )

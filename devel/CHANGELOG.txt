@@ -15,6 +15,12 @@ CPE:
 IDS:
 - Adapting to changes in 'STK' library.
 
+LST:
+- Renaming 'Remove' to 'Delete' which seems more appropriate.
+
+SSNMNG:
+- Adapting to changes in 'LST' library.
+
 STK:
 - Renaming 'Exists()' method to 'ObjectExists()', due to modification of the 'tol::NAVt' macro.
 

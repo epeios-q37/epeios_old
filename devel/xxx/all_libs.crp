@@ -64,6 +64,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &pip		&epeios		&2000-		&PIPe
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
+&ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
 &stk		&epeios		&2000-		&STacK
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)

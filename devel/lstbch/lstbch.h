@@ -120,8 +120,8 @@ namespace lstbch {
 
 			return Row;
 		}
-		//f Remove entry 'Row'.
-		void Remove( row Row )
+		//f Delete entry 'Row'.
+		void Delete( row Row )
 		{
 			list_<row>::Remove( Row );
 		}

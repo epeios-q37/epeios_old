@@ -159,8 +159,8 @@ namespace lst {
 		{
 			Unused.Init();
 		}
-		//f Remove 'Entry'.
-		void Remove( r Entry )
+		//f Delete 'Entry'.
+		void Delete( r Entry )
 		{
 			Unused.Release( *Entry );
 		}
@@ -307,8 +307,8 @@ namespace lst {
 
 			return Position;
 		}
-		//f Remove 'Entry', which MUST exists.
-		void Remove( r Entry )
+		//f Delete 'Entry', which MUST exists.
+		void Delete( r Entry )
 		{
 			Occupation_.Write( false, Entry );
 
