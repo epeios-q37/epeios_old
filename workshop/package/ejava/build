@@ -9,8 +9,7 @@ cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -
 cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
 
 cvs -d:pserver:anonymous@cvs.ejava.sourceforge.net:/cvsroot/ejava login
-cvs -z3 -d:pserver:anonymous@cvs.ejava.sourceforge.net:/cvsroot/ejava export -l -D today -d $DIR libs/
-cvs -z3 -d:pserver:anonymous@cvs.ejava.sourceforge.net:/cvsroot/ejava export -l -D today -d $DIR libs/CHANGELOG.txt
+cvs -z3 -d:pserver:anonymous@cvs.ejava.sourceforge.net:/cvsroot/ejava export -l -D today -d $DIR -R libs/
 cvs -d:pserver:anonymous@cvs.ejava.sourceforge.net:/cvsroot/ejava logout
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
