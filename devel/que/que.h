@@ -582,7 +582,7 @@ namespace que {
 	public:
 		E_QUEUEt_( r ) Queue;
 		struct s {
-			E_QUEUEt_( r )::s Queue;
+			typename E_QUEUEt_( r )::s Queue;
 			queue_manager__<r> QueueManager;
 		} &S_;
 		void reset( bso::bool__ P = true )

@@ -32,7 +32,7 @@ ds = ;
 larg = $(lo) *.$(ox)	# Because Windows command size limited.
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
 ox = o
 cc = g++ 
 ds = :

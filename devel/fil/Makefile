@@ -49,7 +49,7 @@ lo = -q -e$(name)
 ds = ;
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
 ox = o
 cc = g++ 
 co = -c

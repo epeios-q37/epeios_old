@@ -159,7 +159,7 @@ namespace bitbch {
 		struct s
 		: public aem::amount_extent_manager_<r>::s
 		{
-			tym::E_MEMORYt_(receptacle__, r )::s Table;
+			typename tym::E_MEMORYt_(receptacle__, r )::s Table;
 		};
 		bit_bunch_( s &S )
 		: amount_extent_manager_<r>( S ),
@@ -318,7 +318,7 @@ namespace bitbch {
 		bit_bunch_<r> T1, T2;
 		struct s
 		{
-			bit_bunch_<r>::s T1, T2;
+			typename bit_bunch_<r>::s T1, T2;
 		};
 		bibit_bunch_( s &S )
 		: T1( S.T1 ),

@@ -76,7 +76,7 @@ namespace ids {
 	public:
 		struct s
 		{
-			stk::E_STACK_( id__ )::s Released;
+			typename stk::E_STACK_( id__ )::s Released;
 			//r First unused ID.
 			id__ FirstUnused;
 		} &S_;

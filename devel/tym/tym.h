@@ -66,6 +66,8 @@ extern class ttr_tutor &TYMTutor;
 #include "mmm.h"
 #include "epeios.h"
 
+#pragma warning (disable : 4786)
+
 namespace tym {
 	using namespace epeios;
 
@@ -338,7 +340,7 @@ namespace tym {
 		_memory_<t, uym::untyped_memory__< amount * size >, r >::s Static_;	// Is empty.
 */	public:
 		memory__( typename _memory_<t, uym::untyped_memory__< amount * size >, r >::s &S = *( typename _memory_<t, uym::untyped_memory__< amount * size >, r >::s *) NULL )	// To simplify use in 'BCH'.
-		: _memory_<t, typename uym::untyped_memory__< amount * size >, r >( S )
+		: _memory_<t, uym::untyped_memory__< amount * size >, r >( S )
 		{}
 	
 	};
@@ -376,9 +378,9 @@ namespace tym {
 	: public _memory_< t, uym::untyped_memory___, r >
 	{
 	private:
-		_memory_<t, uym::untyped_memory___, r >::s Static_;
+		typename _memory_<t, uym::untyped_memory___, r >::s Static_;
 	public:
-		memory___( _memory_<t, uym::untyped_memory___, r >::s &S = *(_memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'BCH'.
+		memory___( typename _memory_<t, uym::untyped_memory___, r >::s &S = *( typename _memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'BCH'.
 		: _memory_<t, uym::untyped_memory___, r >( S )
 		{}
 	};
@@ -388,6 +390,8 @@ namespace tym {
 	#define E_MEMORYt___( type, r ) memory___< type, r > 
 	#define E_MEMORY___( type ) memory___< type, epeios::row__ > 
 }
+
+#pragma warning (default : 4786)
 
 /*$END$*/
 				  /********************************************/

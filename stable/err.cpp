@@ -54,7 +54,7 @@ public:
 /*$BEGIN$*/
 #include "fnm.h"
 
-#include <new.h>
+#include <new>
 
 using namespace err;
 

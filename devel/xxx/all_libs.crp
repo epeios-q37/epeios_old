@@ -43,6 +43,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbt		&epeios		&		&Differentiated Binary Tree
 &dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
+&fil		&epeios		&2000-		&FILe
 &flm		&epeios		&2000-		&FiLe Memory
 &flw		&epeios		&2000-		&FLoW
 &fnm		&epeios		&2000-		&File Name Manager

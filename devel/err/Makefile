@@ -27,7 +27,7 @@
 # $Id$
 
 name = err
-copt = -DERR_JMPUSE
+#copt = -DERR_JMPUSE
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
@@ -44,7 +44,7 @@ co = -q -c -w-aus -w-inl
 lo = -q -e$(name)
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
 co = -c
 # Generates debugging data.
 co += -g

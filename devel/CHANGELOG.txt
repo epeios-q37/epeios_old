@@ -17,6 +17,9 @@ CTN:
 DBT:
 - Adapting to changes in 'LST' library.
 
+DTR:
+- Fixing call to an iexistent method;
+
 ERR:
 - Adding the 'tReturn' item.
 

@@ -291,7 +291,7 @@ template < typename t > class Name\
 : public Name##_<t>\
 {\
 public:\
-	Name##_<t>::s static_;\
+	typename Name##_<t>::s static_;\
 	Name ( void )\
 	: Name##_<t>( static_ )\
 	{\
@@ -352,7 +352,7 @@ template < typename t, typename u, typename v > class Name\
 : public Name##_<t,u,v>\
 {\
 public:\
-	Name##_<t,u,v>::s static_;\
+	typename Name##_<t,u,v>::s static_;\
 	Name ( void )\
 	: Name##_<t,u,v>( static_ )\
 	{\

@@ -65,7 +65,7 @@ void ttr_chief::Advertise( void )
 
 	while( Current )
 	{
-		Current->Advertise( fout );
+		Current->Advertise( stf::fout );
 		Current = Current->Next();
 	}
 }

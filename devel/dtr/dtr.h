@@ -1,6 +1,6 @@
 /*
 	Header for the 'dtr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -135,8 +135,8 @@ namespace dtr {
 		que::E_QUEUEt_( r ) Queue;
 		struct s 
 		{
-			btr::E_BTREEt_( r )::s Tree;
-			que::E_QUEUEt_( r )::s Queue;
+			typename btr::E_BTREEt_( r )::s Tree;
+			typename que::E_QUEUEt_( r )::s Queue;
 		};
 		dynamic_tree_( s &S )
 		: Tree( S.Tree ),
@@ -273,7 +273,7 @@ namespace dtr {
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
 		{
-			return Tree.GetParent( Node );
+			return Tree.Parent( Node );
 		}
 		//f Return amount of nodes.
 		epeios::size__ Amount( void ) const

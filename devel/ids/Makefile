@@ -41,7 +41,7 @@ co = -q -c -w-aus -w-inl
 lo = -q -e$(name)
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
 co = -c
 # Generates debugging data.
 co += -g

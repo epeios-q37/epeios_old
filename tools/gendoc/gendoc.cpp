@@ -906,7 +906,7 @@ ERRBegin
 	RelaisNameFichier = NameFichier.Convert();
 
 	if ( Stream.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )	{
-		fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
+	stf::fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
 		ERRt();
 	}
 ERRErr
@@ -995,7 +995,7 @@ ERRBegin
 
 	Library = S;
 ERRErr
-	fout << nl << ">>>>> ERREUR <<<<< " << Entree.Line() << tab << Entree.Column() << nl;
+	stf::fout << nl << ">>>>> ERREUR <<<<< " << Entree.Line() << tab << Entree.Column() << nl;
 ERREnd
 ERREpilog
 }
@@ -1021,7 +1021,7 @@ ERRProlog
 	xtf::extended_text_iflow___ Text;
 ERRBegin
 	if ( !File.Init( NameList, err::hSkip ) ) {
-		ferr << "Unable to open file '" << NameList << "'." << txf::nl;
+		stf::ferr << "Unable to open file '" << NameList << "'." << txf::nl;
 		ERRt();
 	}
 
@@ -1145,7 +1145,7 @@ inline void GenererDocumentations(
 	unsigned long Total )
 {
 	XMLDF.PushTag( "Library" );
-	fout << "Documentation generation : in progress ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
+	stf::fout << "Documentation generation : in progress ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
 	GenererDocumentationTechnique( Librairie, XMLDF );
 	XMLDF.PopTag();
 }
@@ -1175,7 +1175,7 @@ ERRBegin
 
 	while( PListe != NONE )
 	{
-		fout << "Library parsing : in progress ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
+		stf::fout << "Library parsing : in progress ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
 
 		Courant = Librairies.Create();
 		Librairies( Courant ).Init();
@@ -1187,7 +1187,7 @@ ERRBegin
 
 	Liste.Flush();
 
-	fout << "Library parsing : terminated.                             " << nl;
+	stf::fout << "Library parsing : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1220,7 +1220,7 @@ ERRBegin
 	
 	XMLDF.PopTag();
 
-	fout << "Documentation generation : terminated.                             " << nl;
+	stf::fout << "Documentation generation : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1261,11 +1261,11 @@ ERRFBegin
 	
 //	GenererEnTeteFichierXML( TFlow );
 
-	fout << "File writing : in progress ... " << rfl << sync;
+	stf::fout << "File writing : in progress ... " << rfl << sync;
 
 	xmldcm::WriteXML( XMLD, TFlow );
 
-	fout << "File writing : terminated.     " << sync << nl;
+	stf::fout << "File writing : terminated.     " << sync << nl;
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd

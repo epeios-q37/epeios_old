@@ -100,7 +100,7 @@ namespace ctn {
 		struct s
 		: public aem::amount_extent_manager_<r>::s
 		{
-			tym::E_MEMORYt_( st, r )::s Statics;
+			typename tym::E_MEMORYt_( st, r )::s Statics;
 			mmi::indexed_multimemory_::s Dynamics;
 		};
 		basic_container_( s &S )
