@@ -63,6 +63,7 @@ extern class ttr_tutor &FLMTutor;
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"
+#include "cpe.h"
 
 namespace flm {
 	using namespace mdr;
@@ -114,11 +115,15 @@ namespace flm {
 			if ( !Temoin_.Ouvert )
 			{
 				if ( Temoin_.Mode == mdr::mReadOnly )
+#ifdef CPE__NO_IOS_EXTENSION
 					Stream_.open( Nom_, ios::in | ios::binary );
+#else
+					Stream_.open( Nom_, ios::in | ios::binary | ios::nocreate );
+#endif
 				else
 					Stream_.open( Nom_, ios::in | ios::out | ios::binary );
 
-				if ( Stream_.fail() )
+				if ( !Stream_ )
 					ERRd();
 
 				Temoin_.Ouvert = 1;

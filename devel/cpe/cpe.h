@@ -117,6 +117,15 @@ extern class ttr_tutor &CPETutor;
 #	elif defined( __BEOS__ )
 #		define CPE__BEOS
 #	endif
+#	if __GNUC__ == 3
+//d Defined if 'ios::nocreate' and 'ios::noreplace'.
+#		define CPE__NO_IOS_EXTENSION
+#	endif
+#endif
+
+#ifndef CPE__NO_IOS_EXTENSION
+//d Defined if 'ios::nocreate' and 'ios::replace' exists.
+#	define CPE__IOS_EXTENSION
 #endif
 
 #ifndef CPE__MT

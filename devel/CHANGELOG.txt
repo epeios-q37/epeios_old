@@ -8,14 +8,17 @@ GENERAL:
 BCH:
 - Adding the 'Init()' function with parameter.
 
+CPE:
+- Adding the 'CPE__[NO_]IOS_EXTENSION'
+
 ERR:
 - Introducing 'err' namespace due to conflict with content of a g++ 3.0 header.
 
 FIL:
-- Make changes required by g++ 3.0.
+- Make use of the 'CPE__[NO_]IOS_EXTENSION' to handle the 'ios::nocreate' problem.
 
 FLM:
-- Make changes required by g++ 3.0.
+- Make use of the 'CPE__[NO_]IOS_EXTENSION' to handle the 'ios::nocreate' problem.
 
 STF:
 - Make changes required by g++ 3.0.
@@ -30,7 +33,7 @@ TTR:
 - Changes required by g++ 3.0.
 
 TOL:
-- Changes required by g++ 3.0.
+- Make use of the 'CPE__[NO_]IOS_EXTENSION' to handle the 'ios::nocreate' problem.
 
 XMLCOR:
 - Adding the 'Convert()' function.

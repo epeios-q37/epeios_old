@@ -1,0 +1,5 @@
+$Id$
+
+- Since version 3, g++ has not the 'ios::replace' nor the 'ios::nocreate' ios extension. Along with the C++ book from Stroustrup, an open of an 'ifstream' fails if the file does not exist. But this is not true with some compiler with the 'ios' extension, which requires the 'ios::nocreate' for an 'open' to fail. So, if a compiler has this extension, the would be used, athought they are not standard, but there is no other choice.
+
+- To list macro definition with g++, use '-E -dM' command line options.

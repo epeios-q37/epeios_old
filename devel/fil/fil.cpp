@@ -55,6 +55,7 @@ public:
 /*$BEGIN$*/
 
 #include "fnm.h"
+#include "cpe.h"
 
 using namespace fil;
 
@@ -69,9 +70,13 @@ status fil::file_iflow___::Init(
 
 	istream_iflow___::Init();
 
+#ifdef CPE__NO_IOS_EXTENSION
 	Stream_.open( FileName, ios::binary | ios::in );
+#else
+	Stream_.open( FileName, ios::binary | ios::in | ios::nocreate );
+#endif
 
-	if ( Stream_.fail() )
+	if ( !Stream_ )
 	{
 		if ( ErrHandle == err::hUsual )
 			ERRd();

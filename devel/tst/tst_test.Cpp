@@ -28,60 +28,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
+#include <fstream.h>
 
 #include "tst.h"
 
 #include "err.h"
 #include "stf.h"
 
-/* Namespace problem under VC++ */
-
-namespace na {
-	template <class t> class ca
-	{
-	private:
-		t T;
-	public:
-		void f( void )
-		{}
-	};
-}
-
-namespace nb {
-
-#if 1
-	using namespace na;
-#elif 0
-	using na::ca;
-#endif
-
-	template <class t> class cb
-	: public na::ca< t >
-	{
-	public:
-		void f( void )
-		{
-			ca< t >::f();
-		}
-	};
-}
-
-na::ca< int > CA;
-
-/* End namespace problem under VC++ */
-
-
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	nb::cb< int > NB;
 ERRBegin
-	NB.f();
 ERRErr
 ERREnd
 ERREpilog
+}
+
+inline void TestReplacementNoCreate( void )
+{
+	ifstream Stream;
+
+	Stream.open( "essai", ios::binary | ios::nocreate );
+
+	if ( Stream )
+		fout << "Succes !" << txf::nl;
+	else
+		fout << "Echec !" << txf::nl;
 }
 
 int main( int argc, char *argv[] )
@@ -94,6 +67,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		TestReplacementNoCreate();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

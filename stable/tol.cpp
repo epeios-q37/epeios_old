@@ -74,9 +74,17 @@ public:
 
 bool tol::FileExists( const char *Nom )
 {
+#ifdef CPE__NO_IOS_EXTENSION
 	ifstream Stream( Nom, ios::binary );
+#else
+	ifstream Stream( Nom, ios::binary | ios::nocreate );
+#endif
 
+#ifdef CPE__VC
+	return Stream != NULL;
+#else
 	return Stream;
+#endif
 }
 
 tol::rbf tol::CreateBackupFile(
