@@ -182,6 +182,22 @@ namespace idxbtq {
 		{
 			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
 		}
+		r First( r Root ) const
+		{
+			return E_IBTREEt_( r )::First( Root );
+		}
+		r Last( r Root ) const
+		{
+			return E_IBTREEt_( r )::Last( Root );
+		}
+		r Next( r Current ) const
+		{
+			return E_IQUEUEt_( r )::Next( Current );
+		}
+		r Previous( r Current ) const
+		{
+			return E_IQUEUEt_( r )::Previous( Current );
+		}
 	};
 
 	E_AUTO1( tree_queue_index )
