@@ -1100,6 +1100,99 @@
           </specific>$EMTH_QUICKDOC$</document>
       </dir>
     </dir>
+    <dir id="'emsc' libraries">
+      <document id="cvs">
+        <general title="CVS access for the EMSC libraries." abstract="The CVS access for music-related libraries (EMSC) from the Epeios project." keywords="Epeios, libraries, music, emsc, CVS">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2004</date>
+          </copyright>
+          <misc>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="emsc/cvs" name="index" bookmark="EMSC CVS" parent=".." robots="$ROBOTS$"/>
+        </specific>
+        <content>
+          <CVS server="cvs.emsc.sf.net" root="/cvsroot/emsc" module="stable">
+            <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/emsc/emsc/stable/"/>
+          </CVS>
+        </content>
+      </document>
+      <document id="download">
+        <general title="Download section for the EMSC libraries." abstract="The download section for the music-related libraries (EMSC) from the Epeios project." keywords="Epeios, libraries, music, emsc, download">
+          <author>$AUTHOR$</author>
+          <copyright>
+            <owner>$OWNER$</owner>
+            <date>2004</date>
+          </copyright>
+          <misc>
+            <stamp date="$DATE$" time="$TIME$"/>
+          </misc>
+        </general>
+        <specific>
+          <WEB hierarchy="emsc/download" name="index" bookmark="EMSC download" robots="$ROBOTS$">
+
+          </WEB>
+        </specific>
+        <content><download URL="http://download.epeios.org/emsc/">
+</download></content>
+      </document>
+      <dir id="quickdoc">
+        <document id="homepage">
+          <general title="Quickdoc homepage for the EMSC libraries." abstract="The quickdoc homepage for the music-related libraries (EMSC) from the Epeios project." keywords="Epeios, libraries, music, emsc, quickdoc, homepage">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2004</date>
+            </copyright>
+            <misc>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="emsc/quickdoc" name="index" bookmark="EMSC quickdoc homepage" parent=".." robots="$ROBOTS$"/>
+          </specific>
+          <content>
+            <section>
+              <para xml:space="preserve">The quickdoc allows to find quickly find how to use classes/methods/functions. It is generated directly from tagged commentaries placed in the source files.</para>
+            </section>
+            <section>
+              <list>
+                <item>
+                  <link URL="quickdoc.html">In HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.gz">In gzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.bz2">In bzipped HTML, all the libraries on one page.</link>
+                </item>
+                <item>
+                  <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
+                </item>
+              </list>
+            </section>
+          </content>
+        </document>
+        <document id="core">
+          <general title="EMSC quickdoc." abstract="Quickdoc of the music-related libraries (EMSC) from the Epeios project." keywords="Epeios, libraries, music, emsc, quickdoc">
+            <author>$AUTHOR$</author>
+            <copyright>
+              <owner>$OWNER$</owner>
+              <date>2002, 2004</date>
+            </copyright>
+            <misc>
+              <stamp date="$DATE$" time="$TIME$"/>
+            </misc>
+          </general>
+          <specific>
+            <WEB hierarchy="emsc/quickdoc" name="quickdoc" bookmark="EMSC quickdoc" parent="." robots="$ROBOTS$"/>
+          </specific>$EMSC_QUICKDOC$</document>
+      </dir>
+    </dir>
     <dir id="'etmc' libraries">
       <document id="homepage">
         <general title="ETMC libraries homepage." abstract="The timecode-related libraries (ETMC) from the Epeios project." keywords="Epeios, libraries, timecode, etmc">

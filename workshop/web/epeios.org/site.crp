@@ -55,6 +55,7 @@ EBKD_QUICKDOC	%i/ebkd.xml
 EBKL_QUICKDOC	%i/ebkl.xml
 EMTH_QUICKDOC	%i/emth.xml
 ECGI_QUICKDOC	%i/ecgi.xml
+EMSC_QUICKDOC	%i/emsc.xml
 
 MAP		%i/map.xml
 

@@ -2,7 +2,7 @@
 
 include Makefile.header
 
-filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/exml.xml i/emth.xml
+filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/exml.xml i/emth.xml i/emsc.xml
 
 all: $(filelist)
 	$(mkdir) -p i
