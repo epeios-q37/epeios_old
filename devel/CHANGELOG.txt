@@ -1,5 +1,8 @@
 $Id$
 
+BSO:
+- adding the 'sign__' type.
+
 --------
 20011119
 --------

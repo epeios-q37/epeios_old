@@ -365,8 +365,11 @@ namespace bso {
 
 	typedef long double lfloat__;
 
-	// Character
+	//t Character
 	typedef char char__;
+
+	//t A sign ( -(1) +(1) 0 ).
+	typedef sbyte__ sign__;
 }
 
 /*$END$*/
