@@ -349,27 +349,14 @@ namespace idxbtr {
 		return idxbtr::Balance_( *(E_IBTREE_ *)this, *Root );
 	}
 
-	//e Search state.
-	enum state {
-		//i Unknow state.
-		sUnknow,
-		//i result found.
-		sFound,
-		//i result not found.
-		sNotFound,
-		//i Amount of states.
-		s_amount
-	};
-
 	//c To seek in a tree index.
 	template <typename r> class tree_seeker__
 	{
 	private:
 		r Current_;
 		const tree_index_<r> *Index_;
-		state State_;
 #ifdef IDXBTR_DBG
-		void Test_( void ) const
+		void _Test( void ) const
 		{
 			if ( Index_== NULL )
 				ERRu();
@@ -378,22 +365,18 @@ namespace idxbtr {
 				ERRu();
 		}
 #endif
-		state Handle_( r Row )
+		r _Handle( r Row )
 		{
-			if ( Row != NONE ) {
+			if ( Row != NONE )
 				Current_ = Row;
-				State_ =  sFound;
-			} else
-				State_ = sNotFound;
 
-			return State_;
+			return Row;
 		}
 	public:
 		void reset( bso::bool__ = true )
 		{
 			Current_ = NONE;
 			Index_ = NULL;
-			State_ = sUnknow;
 		}
 		tree_seeker__( void )
 		{
@@ -413,34 +396,24 @@ namespace idxbtr {
 			Index_ = &Index;
 
 			Current_ = Root;
-			State_ = sFound;
 		}
 		//f Try to find an element greater then the current.
-		state SearchGreater( void )
+		r SearchGreater( void )
 		{
 #ifdef IDXBTR_DBG
-			Test_();
+			_Test();
 #endif
-			return( Handle_( Index_->Right( Current_ ) ) );
+			return _Handle( Index_->Right( Current_ ) );
 		}
 		//f Try to find an element lesser then the current.
-		state SearchLesser( void )
+		r SearchLesser( void )
 		{
 #ifdef IDXBTR_DBG
-			Test_();
+			_Test();
 #endif
-			return( Handle_( Index_->Left( Current_ ) ) );
+			return _Handle( Index_->Left( Current_ ) );
 		}
-		//f Return the row of the current node.
-		r GetCurrent( void ) const
-		{
-			return Current_;
-		}
-		//f Return the state of the last operation.
-		state GetState( void ) const
-		{
-			return State_;
-		}
+		E_DISCLOSE__( r, Current )
 	};
 
 	//d A seeker.

@@ -253,8 +253,7 @@ public:\
 }
 
 // Example of use :
-// template <typename field_ref__> TTYPEDEF( lstctn::E_LXMCONTAINERt_( comparison_item_<field_ref__>, item_row__ ), comparison_items_ );
-
+// template <typename field_ref__> E_TTYPEDEF( lstctn::E_LXMCONTAINERt_( comparison_item_<field_ref__>, item_row__ ), comparison_items_ );
 #define E_TTYPEDEF( type, alias )	class alias\
 	: public type\
 	{\
@@ -265,6 +264,13 @@ public:\
 		alias( s &S )\
 		: type( S )\
 		{}\
+	}
+
+// Example of use :
+// template <typename r> E_TTYPEDEF__( tree_seeker__<r>, tree_seeker__ );
+#define E_TTYPEDEF__( type, alias )	class alias\
+	: public type\
+	{\
 	}
 
 

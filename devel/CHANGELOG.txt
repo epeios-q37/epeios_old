@@ -87,11 +87,14 @@ IDXQUE:
 IDXBTQ:
 - (15/09/04) Adapting to changes in 'IDXBTR'.
 - (16/09/04) Adapting to changes in 'IDXBTR'.
+- (17/09/04) Removing obsolete method.
+-			 Adding E_ISEEKER(t)__
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function.
 - (15/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
 - (16/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
+- (17/09/04) Simplifying the seeker object.
 
 LCK:
 - Adding 'GetUnlocked()' method.

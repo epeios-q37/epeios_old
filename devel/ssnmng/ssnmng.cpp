@@ -77,21 +77,21 @@ static inline bso::sign__ Test_(
 }
 
 static bso::sign__ Search_( 
-	const idxbtr::E_IBTREEt_( row__ ) &I,
 	const bch::E_BUNCHt_( session_id__, row__ ) &T,
 	const char *S,
-	idxbtr::E_TSEEKERt__( row__ ) &Seeker )
+	idxbtq::E_ISEEKERt__( row__ ) &Seeker )
 {
 	bso::sign__ Test;
+	row__ Row = Seeker.Current(); 
 
-	while ( ( Seeker.GetState() == idxbtr::sFound )
-			&& ( ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) != 0 ) ) {
+	while ( ( Row != NONE )
+			&& ( ( Test = Test_( T( Row ).Value(), S ) ) != 0 ) ) {
 		switch( Test ) {
 		case 1:
-			Seeker.SearchGreater();
+			Row = Seeker.SearchGreater();
 			break;
 		case -1:
-			Seeker.SearchLesser();
+			Row = Seeker.SearchLesser();
 			break;
 		default:
 			ERRc();
@@ -118,16 +118,16 @@ row__ ssnmng::sessions_manager_::Open( void )
 		S_.Root = P;
 		_queue_::Create( P );
 	} else {
-		idxbtr::E_TSEEKERt__( row__ ) Seeker;
+		idxbtq::E_ISEEKERt__( row__ ) Seeker;
 
 		Seeker.Init( Index, S_.Root );
 
-		switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
+		switch ( Search_( Table, SessionID.Value(), Seeker ) ) {
 		case 1:
-			Index.MarkAsGreater( P, Seeker.GetCurrent() );
+			Index.MarkAsGreater( P, Seeker.Current() );
 			break;
 		case -1:
-			Index.MarkAsLesser( P, Seeker.GetCurrent() );
+			Index.MarkAsLesser( P, Seeker.Current() );
 			break;
 		default:
 			ERRc();
@@ -152,12 +152,12 @@ row__ ssnmng::sessions_manager_::Open( void )
 row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
 {
 	if ( S_.Root != NONE )	{
-		idxbtr::E_TSEEKERt__( row__ ) Seeker;
+		idxbtq::E_ISEEKERt__( row__ ) Seeker;
 
 		Seeker.Init( Index, S_.Root );
 
-		if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
-			return Seeker.GetCurrent();
+		if ( Search_( Table, SessionID, Seeker ) == 0 )
+			return Seeker.Current();
 		else
 			return NONE;
 	}

@@ -66,14 +66,13 @@ extern class ttr_tutor &IDXBTQTutor;
 
 
 #include "err.h"
+#include "cpe.h"
 #include "idxque.h"
 #include "idxbtr.h"
 
 namespace idxbtq {
 	using idxbtr::tree_index_;
-	using idxbtr::tree_seeker__;
 	using idxque::queue_index_;
-	using idxbtr::state;
 
 	//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
 	template <typename r> class tree_queue_index_
@@ -121,16 +120,6 @@ namespace idxbtq {
 		{
 			E_IBTREEt_( r )::Init();
 			E_IQUEUEt_( r )::Init();
-		}
-//		E_NAVt( E_IQUEUEt_( r )::, r )
-		//f 'Item' becomes the first item of the index, if empty.
-		void Create( r Item )
-		{
-			if ( !IsEmpty() )
-				ERRu();
-
-			E_IBTREEt_( r )::Create( Item );
-			E_IQUEUEt_( r )::Create( Item );
 		}
 		//f Allocate enough room to contain 'Size' items.
 		void Allocate( epeios::size__ Size )
@@ -196,6 +185,8 @@ namespace idxbtq {
 	};
 
 	E_AUTO1( tree_queue_index )
+
+	template <typename r> E_TTYPEDEF__( idxbtr::E_TSEEKERt__( r ), index_seeker__ );
 }
 
 //d An index.
@@ -204,6 +195,9 @@ namespace idxbtq {
 
 #define E_INDEX_	E_INDEXt_( epeios::row__ )
 #define E_INDEX		E_INDEXt( epeios::row__ )
+
+#define E_ISEEKERt__( r )	index_seeker__<r>
+#define E_ISEEKER__			index_seeker__<epeios::row__>
 
 /*$END$*/
 				  /********************************************/
