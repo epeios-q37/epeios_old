@@ -181,6 +181,8 @@ namespace err {
 #endif
 
 	struct err_ {
+		// The exit value of the software.
+		static int ExitValue;
 		// line where the error occurs
 		static int Line;
 		// file where the error occurs
@@ -324,9 +326,9 @@ namespace err {
 #endif
 
 #ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	err::ERR.Error && err::Concerned()
+#define ERRTestEpilog	err::ERR.Error && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iNoError ) )
 #else
-#define ERRTestEpilog	err::ERR.Error
+#define ERRTestEpilog	err::ERR.Error && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iNoError ) )
 #endif
 
 //d End of the error bloc.
@@ -365,6 +367,13 @@ namespace err {
 		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor, Buffer );
 	}
 #endif
+
+
+// Exits the software returning 'v'.
+#define ERRExit( v )	err::ERR.ExitValue = v; ERRI( iError )
+
+// Jump to 'ERRErr' and reset the reset the err::itn/iNoError' error.
+#define	ERRReturn		ERRI( iNoError );
 }
 
 /*$END$*/

@@ -59,6 +59,7 @@ ERR:
 - Adding some minor features for the 'Intentional' error type.
 - (24/05/04) Using the 'CIO' library instead of 'STF'.
 - (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
+- (03/09/04) Adding some facilities.
 
 FLW:
 - (24/05/04) Removing the a tailing '_' to the object name.

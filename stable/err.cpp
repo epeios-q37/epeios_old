@@ -81,6 +81,7 @@ static mtk::thread_id__ ThreadID_;
 #include "tol.h"
 
 /* fin du pré-sous-module */
+int err_::ExitValue = EXIT_SUCCESS;
 int err_::Line = 0;
 const char *err_::File = NULL;
 #ifdef ERR_JMPUSE
@@ -203,7 +204,6 @@ void err_::Handler(
 		ThreadID_ = mtk::GetTID();
 	}
 #endif
-
 	if ( Fichier && !this->Error )
 	{
 		this->Major = Majeur;
@@ -213,6 +213,16 @@ void err_::Handler(
 	}
 
 	this->Error = true;
+
+/* Following lines are here to allowing the insertion of a breakpoint which
+is not concerned by the 'ITN' error. Concenrs the whole software, and
+not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
+#ifdef XXX_DBG
+	if ( Majeur != err::itn )
+		this->Major = Majeur;	// Silly, but is only goal is to allox the insertion of a breakpoint.
+	else
+		this->Major = err::itn;	// Silly too, because same goal.
+#endif
 
 	ERRR();
 }
@@ -226,14 +236,21 @@ void err::Final( void )
 
 	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor, Buffer );
 
+	if ( ERR.Major != err::itn ) {
+
+		if ( ERR.ExitValue == EXIT_SUCCESS )
+			ERR.ExitValue = EXIT_FAILURE;
+
 #ifdef CPE__CONSOLE
-	cio::cout << txf::sync;
-	cio::cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
+		cio::cout << txf::sync;
+		cio::cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
 #endif
 
 #ifdef CPE__GUI
-	wxMessageBox( Message, "Epeios error manager message", wxICON_ERROR );
+		wxMessageBox( Message, "Epeios error manager message", wxICON_ERROR );
 #endif
+	}
+
 
 	ERRRst();
 }
