@@ -52,6 +52,7 @@ FLW:
 - (24/05/04) Removing the a tailing '_' to the object name.
 - (17/07/04) Adding amount of data red/written handling.
 -			 Renaming some methods.
+- (20/07/04) Improvements.
 
 HTP:
 - (18/07/04) little improvements.
@@ -99,6 +100,7 @@ TXF:
 
 XTF:
 - (31/05/04) Removing a tailing '_' to object name.
+- (20/07/04) Fixing 'View()' bug.
 
 --------
 20040215
