@@ -108,9 +108,6 @@ namespace iof {
 #else
 #	error "Undefined I/O enviroment !"
 #endif
-
-	using namespace iodef;
-
 	using flw::oflow__;
 	using flw::iflow__;
 	using flw::ioflow__;

@@ -60,6 +60,8 @@ extern class ttr_tutor &IODEFTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete"
+
 #include "cpe.h"
 
 namespace iodef {

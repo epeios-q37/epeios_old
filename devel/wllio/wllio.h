@@ -61,14 +61,11 @@ extern class ttr_tutor &WLLIOTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "iodef.h"
 #include "bso.h"
 #include <io.h>
 #include <fcntl.h>
 
 namespace wllio {
-
-	using namespace iodef;
 
 	typedef int amount__;
 

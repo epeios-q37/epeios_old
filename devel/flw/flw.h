@@ -286,6 +286,7 @@ namespace flw {
 			Available_ = Position_ = 0;
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */

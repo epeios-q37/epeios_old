@@ -60,14 +60,11 @@ extern class ttr_tutor &CSLIOTutor;
 
 /*$BEGIN$*/
 
-#include "iodef.h"
 #include "err.h"
 #include "bso.h"
 #include <stdio.h>
 
 namespace cslio {
-	using namespace iodef;
-
 	typedef size_t	amount__;
 
 	typedef FILE *descriptor__;

@@ -117,10 +117,10 @@ namespace flm {
 			if ( !Temoin_.Ouvert )
 			{
 				if ( Temoin_.Mode == mdr::mReadOnly ) {
-					if ( File_.Init( Nom_, fil::mReadOnly ) == iof::sFailure )
+					if ( File_.Init( Nom_, fil::mReadOnly ) == fil::sFailure )
 						ERRd();
 				} else {
-					if ( File_.Init( Nom_, fil::mReadWrite ) == iof::sFailure )
+					if ( File_.Init( Nom_, fil::mReadWrite ) == fil::sFailure )
 						ERRd();
 				}
 				Temoin_.Ouvert = 1;

@@ -62,15 +62,11 @@ extern class ttr_tutor &PLLIOTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "iodef.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
 
 namespace pllio {
-
-	using namespace iodef;
-
 	typedef int	amount__;
 
 	typedef int	descriptor__;

@@ -137,7 +137,11 @@ static inline iof::descriptor__ _Open(
 	const char *Nom,
 	mode__ Mode )
 {
+#ifdef CPE__CYGWIN
 	int Flags = O_BINARY;
+#else
+	int Flags = 0;
+#endif
 
 	switch ( Mode ) {
 	case mRemove:

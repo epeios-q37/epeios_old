@@ -64,7 +64,6 @@ extern class ttr_tutor &FILTutor;
 
 #include "iof.h"
 #include "flw.h"
-#include "iodef.h"
 
 #ifdef FIL_FLOW_BUFFER_SIZE
 #	define FIL__FLOW_BUFFER_SIZE FIL_FLOW_BUFFER_SIZE
