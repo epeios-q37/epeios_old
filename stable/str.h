@@ -185,6 +185,13 @@ namespace str {
 		{
 			E_BUNCH_( bso::char__ )::Insert( String, strlen( String ), Position );
 		}
+		//f Insert 'String' at 'Position'.
+		void Insert(
+			const string_ &String,
+			epeios::row__ Position )
+		{
+			E_BUNCH_( bso::char__ )::Insert( String, Position );
+		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(
 			epeios::row__ Position = 0,

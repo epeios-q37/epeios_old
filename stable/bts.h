@@ -121,10 +121,10 @@ namespace bts {
 		{
 			Current_ = First_( Root_ );
 
-			if ( Tree_->IsRight( Current_ ) )
-				Type_ = tRight;
-			else
+			if ( Tree_->IsLeft( Current_ ) )
 				Type_ = tLeft;
+			else
+				Type_ = tRight;	// Even if 'Current_' is the root node.
 
 			return Current_;
 		}

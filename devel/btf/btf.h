@@ -118,6 +118,20 @@ namespace btf {
 
 			E_STACK_( r )::Push( Node );
 		}
+		//f Return true if the tree is complete.
+		bso::bool__ IsComplete( void ) const
+		{
+			return E_STACK_( r )::Amount() == 1;
+		}
+		//f Return the root of the tree. Significant only if 'IsComplete()' return true.
+		r GetRoot( void ) const
+		{
+#ifdef BTF_DBG
+			if ( !IsComplete() )
+				ERRu();
+#endif
+			return E_STACK_( r )::Read( E_STACK_( r )::First() );
+		}
 	};
 
 	AUTO1( binary_tree_filler )

@@ -2,6 +2,7 @@ $Id$
 
 GENERAL:
 - Creating library 'BTS'.
+- Creating library 'BTF'.
 
 STR:
 - Adding 'Insert()' method.
