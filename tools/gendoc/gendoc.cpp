@@ -44,8 +44,9 @@
 #endif
 
 using namespace tsrcpr;
+using namespace txf;
 
-void GenererEnTeteFichierHTML( txf__text_oflow_ &Stream )
+void GenererEnTeteFichierHTML( txf::text_oflow___ &Stream )
 {
 	Stream <<  "<!doctype HTML public \"-//W3O//DTD W3 HTML 3.0//EN\"><HTML>";
 }
@@ -54,16 +55,16 @@ template <class t> void Classer( t &Table )
 {
 ERRProlog
 	bool Swap = true;
-	str_string Name;
+	str::string Name;
 ERRBegin
 	while ( Swap )
 	{
-		POSITION__ Courant = Table.First();
+		tym::row__ Courant = Table.First();
 		Swap = false;
 
 		while ( Courant != Table.Last() )
 		{
-			POSITION__ S = Table.Next( Courant );
+			tym::row__ S = Table.Next( Courant );
 			Name.Init();
 			Name = Table( S ).Name;
 
@@ -94,11 +95,11 @@ public:
 	// Library analysée de la librairie.
 	library_ Library;
 	// Name de la librairie.
-	str_string_ Name;
+	str::string_ Name;
 	struct s
 	{
 		library_::s Library;
-		str_string_::s Name;
+		str::string_::s Name;
 	};
 	librairie_( s &S )
 	: Library( S.Library ),
@@ -109,12 +110,12 @@ public:
 		Library.reset( P );
 		Name.reset( P );
 	}
-	void plug( mmm_multimemory_ &M )
+	void plug( mmm::multimemory_ &M )
 	{
 		Library.plug( M );
 		Name.plug( M );
 	}
-	librairie_ &operator =( librairie_ &L )
+	librairie_ &operator =( const librairie_ &L )
 	{
 		Library = L.Library;
 		Name = L.Name;
@@ -128,8 +129,8 @@ public:
 	}
 };
 
-typedef XCONTAINER( librairie_ ) librairies;
-typedef XCONTAINER_( librairie_ ) librairies_;
+typedef ctn::E_XCONTAINER( librairie_ ) librairies;
+typedef ctn::E_XCONTAINER_( librairie_ ) librairies_;
 
 /*
 class librairies
@@ -147,9 +148,9 @@ public:
 		LIST::Init();
 		CONTAINER( librairie_ )::Init();
 	}
-	POSITION__ Nouveau( void )
+	tym::row__ Nouveau( void )
 	{
-		POSITION__ P =  LIST::CreateEntry();
+		tym::row__ P =  LIST::CreateEntry();
 		
 		CONTAINER( librairie_ )::operator()( P ) .Init();
 
@@ -162,15 +163,15 @@ public:
 };
 */
 // Procède à la mise en forme de commentaire.
-str_string_ &MiseEnFormeCommentaire( const str_string_ &C )
+str::string_ &MiseEnFormeCommentaire( const str::string_ &C )
 {
-	static str_string S;
+	static str::string S;
 ERRProlog
 	bool Espace = true, Special = false;
 ERRBegin
 	S.Init();
 
-	for ( POSITION__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
+	for ( tym::row__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
 	{
 		if ( C.Read( Compteur ) == ' ' )
 		{
@@ -210,16 +211,16 @@ ERREpilog
 	return S;
 }
 
-/* fournit une référence sur un 'str_string_' dont les caractères '<' et '>' ont
+/* fournit une référence sur un 'str::string_' dont les caractères '<' et '>' ont
 été remplacé par les symboles adéquats pour qu'un navigateur Internet ne les
 prennent pas pour des délimiteurs de tags */
-const str_string_ &Filtrer( const str_string_ &S )
+const str::string_ &Filtrer( const str::string_ &S )
 {
-	static str_string R;
+	static str::string R;
 
 	R.Init();
 
-	for ( POSITION__ i = 0; i < S.Amount(); i++ )
+	for ( tym::row__ i = 0; i < S.Amount(); i++ )
 		if ( S.Read( i ) == '<' )
 			R.Add( "&lt;" );
 		else if ( S.Read( i ) == '>' )
@@ -236,7 +237,7 @@ const str_string_ &Filtrer( const str_string_ &S )
 
 inline void GenererDocumentationParametre(
 	const parametre_ &Parametre,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT><EM>" << Filtrer( Parametre.Type ) << " <B>" << Parametre.Name << "</B></EM>";
 
@@ -254,10 +255,10 @@ inline void GenererDocumentationParametre(
 
 void GenererDocumentationParametres(
 	const table_<parametre_> &Parametres,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 ERRProlog
-	CITEM( parametre_ ) Parametre;
+	ctn::E_CITEM( parametre_ ) Parametre;
 ERRBegin
 	Flot << "<UL>";
 
@@ -265,7 +266,7 @@ ERRBegin
 
 	if ( Parametres.Amount() )
 	{
-		POSITION__ Courant = Parametres.First();
+		tym::row__ Courant = Parametres.First();
 
 		while ( Courant != NONE )
 		{
@@ -287,25 +288,25 @@ ERREpilog
 /******************/
 
 template <class t> inline void GenererIndexItemClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const t &Item,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<A HREF = \"#" << Name << '.' << Item.Name << "\">" << Item.Name << "</A> " << nl;
 }
 
 inline void GenererCorpsItemClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const objet_ &Item,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT><B>" << "<A NAME = \"" << Name << '.' << Item.Name << "\">" << Item.Name << "</B> "<< Filtrer( Item.Type ) << ' ' << "</TT><BR><EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
 }
 
 inline void GenererCorpsItemClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const methode_ &Item,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
 
@@ -315,9 +316,9 @@ inline void GenererCorpsItemClasse(
 }
 
 inline void GenererCorpsItemClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const function_ &Item,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
 
@@ -333,27 +334,27 @@ inline void GenererCorpsItemClasse(
 
 inline void GenererDocumentationArgumentTemplateClasse(
 	const argument_ &Argument,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << Argument.Type << " <TT>" << Argument.Name << "</TT>" << nl;
 }
 
 inline void GenererDocumentationArgumentTemplateFonction(
 	const argument_ &Argument,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << Argument.Type << " <B>" << Argument.Name << "</B>" << nl;
 }
 
 
 template <class t> void GenererIndexItemsClasse(
-	const str_string_ &NameClasse,
+	const str::string_ &NameClasse,
 	t &Items,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 ERRProlog
-	POSITION__ Courant = Items.First();
-	str_string Name;
+	tym::row__ Courant = Items.First();
+	str::string Name;
 ERRBegin
 
 	Flot << "<EM>";
@@ -382,11 +383,11 @@ ERREpilog
 }
 
 template <class t> void GenererCorpsItemsClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	t &Items,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	POSITION__ Courant = Items.First();
+	tym::row__ Courant = Items.First();
 
 	Flot << "<UL>";
 
@@ -409,10 +410,10 @@ template <class t> void GenererCorpsItemsClasse(
 
 void GenererDocumentationArgumentsTemplateClasse(
 	const table_<argument_> &Arguments,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( argument_ ) Argument;
-	POSITION__ Courant = Arguments.First();
+	ctn::E_CITEM( argument_ ) Argument;
+	tym::row__ Courant = Arguments.First();
 
 	Argument.Init( Arguments );
 
@@ -428,18 +429,18 @@ void GenererDocumentationArgumentsTemplateClasse(
 }
 
 inline void GenererDocumentationBaseClasse(
-	const str_string_ &Base,
-	txf__text_oflow_ &Flot )
+	const str::string_ &Base,
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI>" << Filtrer( Base ) << "</LI>" << nl;
 }
 
 void GenererDocumentationArgumentsTemplateFonction(
 	const table_<argument_> &Arguments,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( argument_ ) Argument;
-	POSITION__ Courant = Arguments.First();
+	ctn::E_CITEM( argument_ ) Argument;
+	tym::row__ Courant = Arguments.First();
 
 	Argument.Init( Arguments );
 
@@ -454,9 +455,9 @@ void GenererDocumentationArgumentsTemplateFonction(
 }
 
 template <class t> void GenererDocumentationItemsClasse(
-	const str_string_ &Name,
+	const str::string_ &Name,
 	t &Items,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Items.Amount() )
 	{
@@ -473,10 +474,10 @@ template <class t> void GenererDocumentationItemsClasse(
 
 void GenererDocumentationItems(
 	const table_<item_> &Items,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( item_ ) Item;
-	POSITION__ Courant = Items.First();
+	ctn::E_CITEM( item_ ) Item;
+	tym::row__ Courant = Items.First();
 
 	Item.Init( Items );
 
@@ -490,11 +491,11 @@ void GenererDocumentationItems(
 
 
 void GenererDocumentationArguments(
-	const table_<str_string_> &Arguments,
-	txf__text_oflow_ &Flot )
+	const table_<str::string_> &Arguments,
+	txf::text_oflow___ &Flot )
 {
-	CITEM( str_string_ ) Argument;
-	POSITION__ Courant = Arguments.First();
+	ctn::E_CITEM( str::string_ ) Argument;
+	tym::row__ Courant = Arguments.First();
 
 	Argument.Init( Arguments );
 
@@ -511,14 +512,14 @@ void GenererDocumentationArguments(
 
 inline void GenererIndexClasse(
 	const classe_ &Classe,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<A HREF = \"#" << Classe.Name << "\">" << Classe.Name << "</A> " << nl;
 }
 
 void GenererDocumentationTemplateClasse(
 	const template_ &Template,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Template.Arguments.Amount() )
 	{
@@ -531,11 +532,11 @@ void GenererDocumentationTemplateClasse(
 }
 
 void GenererDocumentationBasesClasse(
-	const table_<str_string_> &Bases,
-	txf__text_oflow_ &Flot )
+	const table_<str::string_> &Bases,
+	txf::text_oflow___ &Flot )
 {
-	CITEM( str_string_ ) Base;
-	POSITION__ Courant = Bases.First();
+	ctn::E_CITEM( str::string_ ) Base;
+	tym::row__ Courant = Bases.First();
 
 	Base.Init( Bases );
 
@@ -554,21 +555,21 @@ void GenererDocumentationBasesClasse(
 
 void GenererDocumentationTemplateFonction(
 	const template_ &Template,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Template.Arguments.Amount() )
 	{
-		Flot << "<TT>" << Filtrer( str_string( "<" ) );
+		Flot << "<TT>" << Filtrer( str::string( "<" ) );
 
 		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, Flot );
 
-		Flot << Filtrer( str_string( "> " ) ) << "</TT> " << nl;
+		Flot << Filtrer( str::string( "> " ) ) << "</TT> " << nl;
 	}
 }
 
 void GenererIndexDocumentationClasse(
 	const classe_ &Classe,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 
 	if ( Classe.Objets.Amount() )
@@ -586,7 +587,7 @@ void GenererIndexDocumentationClasse(
 
 void GenererDocumentationObjetsClasse(
 	classe_ &Classe,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 
 	if ( Classe.Objets.Amount() )
@@ -604,7 +605,7 @@ void GenererDocumentationObjetsClasse(
 
 void GenererDocumentationMethodesClasse(
 	classe_ &Classe,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Classe.Methodes.Amount() )
 	{
@@ -627,7 +628,7 @@ void GenererDocumentationMethodesClasse(
 
 void GenererDocumentationDefine(
 	const define_ &Define,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT>" << Define.Name ;
 
@@ -642,7 +643,7 @@ void GenererDocumentationDefine(
 
 void GenererDocumentationEnum(
 	const enum_ &Enum,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT>" << Enum.Name ;
 
@@ -658,7 +659,7 @@ void GenererDocumentationEnum(
 
 void GenererDocumentationShortcut(
 	const shortcut_ &Shortcut,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT>" << Shortcut.Name << "( ";
 
@@ -670,17 +671,17 @@ void GenererDocumentationShortcut(
 
 void GenererDocumentationTypedef(
 	const typedef_ &Typedef,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT>" << Typedef.Name << ": </TT><EM>" << MiseEnFormeCommentaire( Typedef.Commentaire ) << "</EM>";
 }
 
 void GenererIndexClasses(
 	const table_<classe_> &Classes,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( classe_ ) Classe;
-	POSITION__ Courant = Classes.First();
+	ctn::E_CITEM( classe_ ) Classe;
+	tym::row__ Courant = Classes.First();
 
 	Classe.Init( Classes );
 
@@ -697,7 +698,7 @@ void GenererIndexClasses(
 
 inline void GenererDocumentationClasse(
 	classe_ &Classe,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 
 	Flot << "<HR><H3><A NAME = \"" << Classe.Name << "\">" << Classe.Name;
@@ -719,7 +720,7 @@ inline void GenererDocumentationClasse(
 /*
 void GenererDocumentationFonctions(
 	ASD_TABLE_(fonction_) &Fonctions,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HR><H3><A NAME = \"Fonctions\">Fonctions</H3>";
 	GenererIndexDocumentationFonctions( Classe.Fonctions, Flot );
@@ -729,7 +730,7 @@ void GenererDocumentationFonctions(
 
 inline void GenererDocumentationFonction(
 	const function_ &Fonction,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><A NAME = \"" << Fonction.Name << "\">";
 
@@ -744,11 +745,11 @@ inline void GenererDocumentationFonction(
 
 template <class t> void GenererItems(
 	const table_<t> &Items,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 ERRProlog
-	CITEM( t ) Item;
-	POSITION__ Courant = Items.First();
+	ctn::E_CITEM( t ) Item;
+	tym::row__ Courant = Items.First();
 ERRBegin
 	Item.Init( Items );
 
@@ -770,10 +771,10 @@ ERREpilog
 
 void GenererDocumentationDefines(
 	const table_<define_> &Defines,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( define_ ) Define;
-	POSITION__ Courant = Defines.First();
+	ctn::E_CITEM( define_ ) Define;
+	tym::row__ Courant = Defines.First();
 
 	Define.Init( Defines );
 
@@ -790,10 +791,10 @@ void GenererDocumentationDefines(
 
 void GenererDocumentationEnums(
 	const table_<enum_> &Enums,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( enum_ ) Enum;
-	POSITION__ Courant = Enums.First();
+	ctn::E_CITEM( enum_ ) Enum;
+	tym::row__ Courant = Enums.First();
 
 	Enum.Init( Enums );
 
@@ -810,10 +811,10 @@ void GenererDocumentationEnums(
 
 void GenererDocumentationShortcuts(
 	const table_<shortcut_> &Shortcuts,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( shortcut_ ) Shortcut;
-	POSITION__ Courant = Shortcuts.First();
+	ctn::E_CITEM( shortcut_ ) Shortcut;
+	tym::row__ Courant = Shortcuts.First();
 
 	Shortcut.Init( Shortcuts );
 
@@ -830,10 +831,10 @@ void GenererDocumentationShortcuts(
 
 void GenererDocumentationTypedefs(
 	const table_<typedef_> &Typedefs,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( typedef_ ) Typedef;
-	POSITION__ Courant = Typedefs.First();
+	ctn::E_CITEM( typedef_ ) Typedef;
+	tym::row__ Courant = Typedefs.First();
 
 	Typedef.Init( Typedefs );
 
@@ -851,9 +852,9 @@ void GenererDocumentationTypedefs(
 
 void GenererDocumentationClasses(
 	table_<classe_> &Classes,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	POSITION__ Courant = Classes.First();
+	tym::row__ Courant = Classes.First();
 
 	Flot << "<HR><H2><A NAME=\"Classes\">Classes</H2>";
 
@@ -870,15 +871,15 @@ void GenererDocumentationClasses(
 
 void GenererDocumentationFonctions(
 	table_<function_> &Fonctions,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( function_ ) Fonction;
-	POSITION__ Courant = Fonctions.First();
+	ctn::E_CITEM( function_ ) Fonction;
+	tym::row__ Courant = Fonctions.First();
 
 	Fonction.Init( Fonctions );
 
 	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2>";
-	GenererDocumentationItemsClasse( str_string( "" ), Fonctions, Flot );
+	GenererDocumentationItemsClasse( str::string( "" ), Fonctions, Flot );
 
 /*	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2><UL>";
 
@@ -894,15 +895,15 @@ void GenererDocumentationFonctions(
 
 void GenererDocumentationObjets(
 	table_<objet_> &Objets,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
-	CITEM( objet_ ) Objet;
-	POSITION__ Courant = Objets.First();
+	ctn::E_CITEM( objet_ ) Objet;
+	tym::row__ Courant = Objets.First();
 
 	Objet.Init( Objets );
 
 	Flot << "<HR><H2><A NAME=\"Objects\">Objects</H2>";
-	GenererDocumentationItemsClasse( str_string( "" ), Objets, Flot );
+	GenererDocumentationItemsClasse( str::string( "" ), Objets, Flot );
 
 /*	Flot << "<HR><H2><A NAME=\"Functions\">Functions</H2><UL>";
 
@@ -919,15 +920,15 @@ void GenererDocumentationObjets(
 
 
 void GenererGeneralites(
-	const str_string_ &Generalites,
-	txf__text_oflow_ &Flot )
+	const str::string_ &Generalites,
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HR><H4><A NAME = \"Généralités\">Généralités:</H4><P>" << Generalites;
 }
 
 void GenererVersions(
-	const table_<str_string_> &Versions,
-	txf__text_oflow_ &Flot )
+	const table_<str::string_> &Versions,
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HR><H4><A NAME = \"Versions\">Versions:</H4><P><UL>";
 
@@ -938,8 +939,8 @@ void GenererVersions(
 }
 
 void GenererHistorique(
-	const table_<str_string_> &Historique,
-	txf__text_oflow_ &Flot )
+	const table_<str::string_> &Historique,
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HR><H4><A NAME = \"Historique\">Historique:</H4><P><UL>";
 
@@ -950,8 +951,8 @@ void GenererHistorique(
 }
 
 void GenererRemarques(
-	const table_<str_string_> &Remarques,
-	txf__text_oflow_ &Flot )
+	const table_<str::string_> &Remarques,
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HR><H4><A NAME = \"Remarques\">Remarques:</H4><P><UL>";
 
@@ -970,12 +971,12 @@ void GenererRemarques(
 situé dans le répertore 'Repertoire' */
 void OuvrirFichierDocumentation(
 	ifstream &Fichier,
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const char *Repertoire )
 {
 ERRProlog
 	char *RelaisNameFichier = NULL;
-	str_string NameFichier;
+	str::string NameFichier;
 ERRBegin
 	NameFichier.Init();
 
@@ -1011,12 +1012,12 @@ ERREpilog
 situé dans le répertore 'Repertoire' */
 void OuvrirFichierLibrary(
 	fil::file_iflow___ &Stream,
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const char *Repertoire )
 {
 ERRProlog
 	char *RelaisNameFichier = NULL;
-	str_string NameFichier;
+	str::string NameFichier;
 ERRBegin
 	NameFichier.Init();
 
@@ -1052,7 +1053,7 @@ void OuvrirFichierDocumentationTechnique(
 	const char *Repertoire )
 {
 ERRProlog
-	 str_string NameFichier;
+	 str::string NameFichier;
 	 char *RelaisNameFichier = NULL;
 ERRBegin
 	NameFichier.Init();
@@ -1083,7 +1084,7 @@ ERREpilog
 
 void GenererTitreDocumentationTechnique(
 	const librairie_ &Librairie,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<HEAD><TITLE>" << Librairie.Name << " library documentation" << "</TITLE></HEAD><BODY>" << nl;
 	Flot << "<CENTER><A HREF=\"" << NOM_FICHIER_INDEX << "\">Back to Epeios libraries index</A></CENTER>" << nl;
@@ -1100,7 +1101,7 @@ void GenererTitreDocumentationTechnique(
 // Génère l'index de la documentation technique dcorrespondat au library 'Library'.
 void GenererIndexDocumentationTechnique(
 	const library_ &Library,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Library.Defines.Amount() )
 		Flot << "<A HREF = \"#Defines\">Defines</A> ";
@@ -1126,7 +1127,7 @@ void GenererIndexDocumentationTechnique(
 
 void GenererCorpsDocumentationTechnique(
 	library_ &Library,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	if ( Library.Defines.Amount() )
 	{
@@ -1180,7 +1181,7 @@ void OuvrirFichierDocumentationDescriptive(
 	const char *Repertoire )
 {
 ERRProlog
-	 str_string NameFichier;
+	 str::string NameFichier;
 	 char *RelaisNameFichier = NULL;
 ERRBegin
 	NameFichier.Init();
@@ -1215,7 +1216,7 @@ ERREpilog
 /*
 void GenererTitreDocumentationDescriptive(
 	const librairie_ &Librairie,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<H1><CENTER>Documentation descriptive de la librairie " << Librairie.Name << " (" << Librairie.Library.Description << ").</H1></CENTER>";
 	Flot << "<H2><CENTER>" << Librairie.Library.Version << ' ' << Librairie.Library.Coordinators << ' ' << Librairie.Library.Release <<" </H2></CENTER>";
@@ -1225,7 +1226,7 @@ void GenererTitreDocumentationDescriptive(
 // Génère l'index de la documentation descriptive dcorrespondant à la documentation 'Documentation'
 /*void GenererIndexDocumentationDescriptive(
 	add_documentation_ &Documentation,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<A HREF = \"#Versions\">Versions</A> ";
 
@@ -1240,7 +1241,7 @@ void GenererTitreDocumentationDescriptive(
 /*
 void GenererCorpsDocumentationDescriptive(
 	const add_documentation_ &Documentation,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	GenererGeneralites( Documentation.Generalites, Flot );
 	GenererVersions( Documentation.Versions, Flot );
@@ -1274,7 +1275,7 @@ void OuvrirFichierListe(
 /*
 void AnalyserDocumentation(
 	add_documentation_ &Documentation,
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const char *Repertoire )
 {
 ERRProlog
@@ -1300,7 +1301,7 @@ ERREpilog
 (non suffixé) situé dans 'Repertoire'. */
 void AnalyserLibrary(
 	library_ &Library,
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const char *Repertoire )
 {
 ERRProlog
@@ -1330,7 +1331,7 @@ void GenererDocumentationTechnique(
 {
 ERRProlog
 	fil::file_oflow___ Fichier;
-	txf__text_oflow_ Sortie;
+	txf::text_oflow___ Sortie;
 ERRBegin
 	OuvrirFichierDocumentationTechnique( Librairie, Fichier, Repertoire );
 	Sortie.Init( Fichier );
@@ -1370,11 +1371,11 @@ ERREpilog
 dans le fichier prédéfinis placés dans le répertoire de nom 'Repertoire'. */
 void LireListe(
 	const char *NameListe,
-	CONTAINER_( str_string_ ) &Liste )
+	ctn::E_CONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
 	ifstream Fichier;
-	str_string Ligne;
+	str::string Ligne;
 	int C;
 	int Compteur = 100;
 ERRBegin
@@ -1405,11 +1406,11 @@ ERREpilog
 }
 
 // Classe la liste des librairies contenus dans 'Liste'.
-void ClasserListe( CONTAINER_( str_string_ ) &Liste )
+void ClasserListe( ctn::E_CONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
 	bso__bool Swap = true;
-	str_string S1, S2;
+	str::string S1, S2;
 ERRBegin
 	S1.Init();
 	S2.Init();
@@ -1421,7 +1422,7 @@ ERRBegin
 		if ( Liste.Amount() )
 			S2 = Liste( 0 );
 
-		for ( POSITION__ i = 1; i < Liste.Amount(); i++ )
+		for ( tym::row__ i = 1; i < Liste.Amount(); i++ )
 		{
 			S1 = S2;
 			S2 = Liste( i );
@@ -1449,7 +1450,7 @@ ERREpilog
 située dans le répertoire 'Repertoire'. */
 void Analyser(
 	librairie_ &Librairie,
-	const str_string_ &Name,
+	const str::string_ &Name,
 	const char *Repertoire )
 {
 	Librairie.Name = Name;
@@ -1464,7 +1465,7 @@ void OuvrirFichierIndex(
 	const char *Repertoire )
 {
 ERRProlog
-	 str_string NameFichier;
+	 str::string NameFichier;
 	 char *RelaisNameFichier = NULL;
 ERRBegin
 	NameFichier.Init();
@@ -1495,7 +1496,7 @@ ERREpilog
 // Ecrit dans 'Flot' l'entree de l'index des librairies correspondant à 'Librairie'.
 void GenererEntreeIndex(
 	const librairie_ &Librairie,
-	txf__text_oflow_ &Flot )
+	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI><TT><A HREF = \"" << Librairie.Name << TERM_FICHIER_DOC "\">" << Librairie.Name << "</A> " << Librairie.Library.Version << ' ' << Librairie.Library.Release <<  " " << Librairie.Library.Description << "</TT></LI>" << nl;
 //	Flot << "<A HREF = \"" << Librairie.Name << TERM_FICHIER_DOC_DESC "\">desc.</A>):";
@@ -1532,9 +1533,9 @@ void Analyser(
 {
 ERRProlog
 	// La liste des librairies.
-	CONTAINER (str_string_ ) Liste;
+	ctn::E_CONTAINER (str::string_ ) Liste;
 	bso__ulong Compteur = 1;
-	POSITION__ Courant, PListe;
+	tym::row__ Courant, PListe;
 ERRBegin
 	Liste.Init();
 	LireListe( NameListe, Liste );
@@ -1569,9 +1570,9 @@ void GenererIndex(
 {
 ERRProlog
 	fil::file_oflow___ Fichier;
-	txf__text_oflow_ Sortie;
-	POSITION__ Courant;
-	CITEM( librairie_ ) Librairie;
+	txf::text_oflow___ Sortie;
+	tym::row__ Courant;
+	ctn::E_CITEM( librairie_ ) Librairie;
 ERRBegin
 	Librairie.Init( Librairies );
 
@@ -1619,7 +1620,7 @@ void GenererDocumentations(
 	 const char *Repertoire )
 {
 ERRProlog
-	POSITION__ Courant;
+	tym::row__ Courant;
 	int Compteur = 1;
 ERRBegin
 	if ( Librairies.Amount() )
