@@ -33,7 +33,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err
+libs = ttr tol flw stf err uym fam
 
 
 
@@ -47,6 +47,7 @@ co = -q -c -w-aus
 # linkage options
 lo = -q -e$(name)
 ds = ;
+rfs = @
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
@@ -63,6 +64,7 @@ lo = -o $(name)
 # needed when pthread are used.
 #lo += -lglib -lgthread
 ds = :
+rfs = -specs=
 endif
 
 ifeq ("$(EPEIOS_OS)","beos")
@@ -82,8 +84,11 @@ lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
 
-$(name):  $(objs)
-	$(cc) $(lo) $(objs)
+$(name):  response $(objs)
+	$(cc) $(rfs)response
 	
 %.$(ox): %.cpp
 	$(cc) $(co) $< 
+
+response: $(objs)
+	echo $(lo) $(objs) >$@
