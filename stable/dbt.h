@@ -193,7 +193,7 @@ namespace dbt {
 		//f Return the internal row corresponding to 'Node'.
 		internal_row__ GetInternalRow( row__ Node ) const
 		{
-#ifdef SBT_DBG
+#ifdef DBT_DBG
 			if ( !IsInternal( Node ) )
 				ERRu();
 #endif
@@ -202,29 +202,29 @@ namespace dbt {
 		//f Return the external row corresponding to 'Node'.
 		external_row__ GetExternalRow( row__ Node ) const
 		{
-#ifdef SBT_DBG
+#ifdef DBT_DBG
 			if ( !IsExternal( Node ) )
 				ERRu();
 #endif
 			return Nodes( Node );
 		}
 		//f Return the object storing the internals.
-		const lstbch::E_LBUNCHt_( int__, internal_row__ ) GetInternals( void ) const
+		const lstbch::E_LBUNCHt_( int__, internal_row__ ) &GetInternals( void ) const
 		{
 			return Internals;
 		}
 		//f Return the object storing the internals.
-		lstbch::E_LBUNCHt_( int__, internal_row__ ) GetInternals( void )
+		lstbch::E_LBUNCHt_( int__, internal_row__ ) &GetInternals( void )
 		{
 			return Internals;
 		}
 		//f Return the object storing the externals.
-		const lstbch::E_LBUNCHt_( ext__, external_row__ ) GetExternals( void ) const
+		const lstbch::E_LBUNCHt_( ext__, external_row__ ) &GetExternals( void ) const
 		{
 			return Externals;
 		}
 		//f Return the object storing the externals.
-		lstbch::E_LBUNCHt_( ext__, external_row__ ) GetExternals( void )
+		lstbch::E_LBUNCHt_( ext__, external_row__ ) &GetExternals( void )
 		{
 			return Externals;
 		}
