@@ -1448,11 +1448,13 @@
           </section>
           <section>
             <list xml:space="preserve">
-      <item>
+              <item>
         <link URL="backend/">Backend</link> : the backend, common to all frontend.</item>
-<item>
+              <item>
         <link URL="CGID/">CGID</link> : the WEB frontend.</item>
-    </list>
+              <item>
+                <link URL="CGID/">Demonstration</link> : demonstration ot the software.</item>
+            </list>
           </section>
         </content>
       </document>
@@ -1473,7 +1475,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">You will find here two links to test the TMCDE software with the WEB interface. The difference between the 2 links is the appearance of the duration list. The software is 'skinnable' with by providing XSL files.<list>
+            <para xml:space="preserve">You will find here two links to test the <raw>TMCDE</raw> software with the WEB interface. The difference between the 2 links is the appearance of the duration list. The software is 'skinnable' by providing several XSL files.<list>
                 <item>
                   <link URL="http://cgi.epeios.org/cgi-bin/epeios.cgi?_target=tmcde&amp;_skin=href&amp;Create=" type="external">With links for the duration list.</link>
                 </item>
@@ -1481,23 +1483,6 @@
                   <link URL="http://cgi.epeios.org/cgi-bin/epeios.cgi?_target=tmcde&amp;_skin=select&amp;Create=" type="external">With a select box for the duration list.</link>
                 </item>
               </list>.</para>
-          </section>
-          <section>
-            <para xml:space="preserve">You will find here all that concern the Epeios timecode manager software. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
-          </section>
-          <section>
-            <para xml:space="preserve">This software allows calculation with timecodes (usually expressed in hours, minutes, second and frames). This software, like all interactive Epeios software, is divided in 2 parts. One is the backend, which is the treatment part of the software, and the other is the frontend, which is the user interface.</para>
-            <para xml:space="preserve">Actually, the backend is a daemon, which is multitasking and multi user. But, in the future, this backend would also be available as a dynamic library, for using in a monotasking, mono user context.</para>
-            <para xml:space="preserve">There is only one frontend actually available, and this is the WEB one. This frontend works only with the daemon version of the backend. It acts like a CGI, so you need an http server, like <link URL="http://httpd.apache.org/" type="external" aspect="long">Apache</link>. </para>
-            <para xml:space="preserve">A <raw>Java</raw>-based frontend is also planed, which would be usable with the yet available backend daemon, and with the comming dynamic library version of the daemon.</para>
-          </section>
-          <section>
-            <list xml:space="preserve">
-      <item>
-        <link URL="backend/">Backend</link> : the backend, common to all frontend.</item>
-<item>
-        <link URL="CGID/">CGID</link> : the WEB frontend.</item>
-    </list>
           </section>
         </content>
       </document>
