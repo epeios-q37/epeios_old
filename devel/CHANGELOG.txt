@@ -16,6 +16,9 @@ CCH:
 CIO:
 - (03/02/05) Use now 'IOF' library.
 
+ERR:
+- (26/02/05) Add 'uTest' and 'bTest' items to 'usr' and 'bkd' error type.
+
 FIL:
 - (02/02/05) Use now 'IOF' library.
 

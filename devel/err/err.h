@@ -128,12 +128,14 @@ namespace err {
 		// system error
 	enum u
 	{
-		uGeneric
+		uGeneric,
+		uTest,	// for testing purpose.
 	};
 		// user error
 	enum b
 	{
 		bGeneric,
+		bTest,	// for testing purpose.
 	};
 		// backend error
 	enum i
