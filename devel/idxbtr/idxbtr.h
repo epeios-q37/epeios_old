@@ -253,8 +253,8 @@ namespace idxbtr {
 					S_.Racine = Fille;
 			}
 		}
-		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void PutAsGreater(
+		//f Mark 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void MarkAsGreater(
 			r Row,
 			r Current )
 		{
@@ -264,8 +264,8 @@ namespace idxbtr {
 #endif
 			BecomeRight( Row, Current );
 		}
-		//f Put 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void PutAsLesser(
+		//f Mark 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void MarkAsLesser(
 			r Row,
 			r Current )
 		{
@@ -275,8 +275,8 @@ namespace idxbtr {
 #endif
 			BecomeLeft( Row, Current );
 		}
-		//f Put 'Row' as same then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void PutAsSame(
+		//f Mark 'Row' as same then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void MarkAsSame(
 			r Row,
 			r Current )
 		{

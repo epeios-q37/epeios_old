@@ -41,13 +41,14 @@ FLW:
 
 IDXBTR:
 - Adding 'E_INDEX(_)'.
-- Replacing '(Next|Previous)Avalaible()' and 'Become(Next|Previous)()' methods by 'TryAs(Next|Previous)()'.
+- Adding 'MarkAs...()' method.
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.
 
 IDXQUE:
 - Fixing bugs concerning row type.
+- Adding 'MarkAs...()' method.
 
 MDR:
 - Adding some features for portable data types.
