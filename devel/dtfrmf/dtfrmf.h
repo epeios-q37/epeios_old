@@ -89,7 +89,7 @@ namespace dtfrmf {
 
 		Flow.Get(2, Data );
 
-		return (short__)Data[0] | ( (short__)Data[1] << 8 );
+		return (short__)(bso::ubyte__)Data[0] | ( (short__)(bso::ubyte__)Data[1] << 8 );
 
 		// return (short__)( (short__)Data[0] + (short__)( (short__)Data[1] << 8 ) );
 		// Don't work with CW : in 'a + b', seems to evaluate 'b' before 'a'.
@@ -111,7 +111,7 @@ namespace dtfrmf {
 
 		Flow.Get( 4, Data );
 
-		return (long__)Data[0] | ( (long__)Data[1] << 8 ) | ( (long__)Data[2] << 16 ) | ( (long__)Data[3] << 24 );
+		return (long__)(bso::ubyte__)Data[0] | ( (long__)(bso::ubyte__)Data[1] << 8 ) | ( (long__)(bso::ubyte__)Data[2] << 16 ) | ( (long__)(bso::ubyte__)Data[3] << 24 );
 
 		// return (long__)( (long__)GetShort( Flow ) | (long__)( (long__)GetShort( Flow ) << 16 ) );
 		// Don't work with CW : in 'a + b', seems to evaluate 'b' before 'a'.
