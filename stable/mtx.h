@@ -68,7 +68,7 @@ extern class ttr_tutor &MTXTutor;
 #include "cpe.h"
 
 #ifndef CPE__MT
-#	error "This library only useful in multitasking context, in which you are not."
+	error "This library only useful in multitasking context, in which you are not."
 #endif
 
 #if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER ) && !defined( CPE__CYGWIN )
