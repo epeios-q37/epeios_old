@@ -86,9 +86,11 @@ namespace fil
 		s_amount
 	};
 
+	using stf::istream_iflow___;
+
 	//c A file as standard input flow.
 	class file_iflow___
-	: public stf::istream_iflow___
+	: public istream_iflow___
 	{
 	private:
 		ifstream Stream_;
@@ -103,7 +105,7 @@ namespace fil
 			Stream_.clear();
 		}
 		file_iflow___( void )
-		: stf::istream_iflow___( Stream_ )
+		: istream_iflow___( Stream_ )
 		{
 			reset( false );
 		}
@@ -118,9 +120,11 @@ namespace fil
 			err::handle ErrHandle = err::hUsual );
 	};
 
+	using stf::ostream_oflow___;
+
 	//c A file as standard output flow.
 	class file_oflow___
-	: public stf::ostream_oflow___
+	: public ostream_oflow___
 	{
 	private:
 		ofstream Stream_;
@@ -135,7 +139,7 @@ namespace fil
 			Stream_.clear();
 		}
 		file_oflow___( void )
-		: stf::ostream_oflow___( Stream_ )
+		: ostream_oflow___( Stream_ )
 		{
 			reset( false );
 		}

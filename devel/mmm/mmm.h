@@ -89,9 +89,9 @@ extern class ttr_tutor &MMMTutor;
 
 namespace mmm {
 
+	using namespace uym;
 
 	namespace {
-		using namespace uym;
 
 		// type d'un indicateur affecté à un bloc de la mutimémoire.
 		typedef bso__ulong		indicateur__;

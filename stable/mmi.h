@@ -263,6 +263,8 @@ namespace mmi {
 
 	AUTO( indexed_multimemory )
 
+	using mdr::E_MEMORY_DRIVER_;
+
 	//c This class is the standard memory driver for the indexed multimemory.
 	class indexed_multimemory_driver_
 	: public mdr::E_MEMORY_DRIVER_
@@ -299,13 +301,13 @@ namespace mmi {
 		}
 	public:
 		struct s
-		: public E_MEMORY_DRIVER_::s
+			: public mdr::E_MEMORY_DRIVER_::s
 		{
 			index__ Index;
 		} &S_;
 		indexed_multimemory_driver_( s &S )
 		: S_( S ),
-		  E_MEMORY_DRIVER_( S ) {}
+		  mdr::E_MEMORY_DRIVER_( S ) {}
 		void reset( bool P = true )
 		{
 			E_MEMORY_DRIVER_::reset( P );

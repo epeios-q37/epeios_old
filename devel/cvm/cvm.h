@@ -62,9 +62,7 @@ extern class ttr_tutor &CVMTutor;
 
 namespace cvm {
 
-	namespace {
-		using namespace mdr;
-	}
+	using namespace mdr;
 
 	//c Basic conventional memory.
 	class basic_conventional_memory
