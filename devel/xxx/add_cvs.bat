@@ -33,6 +33,7 @@ echo on
 cvs add %1
 @cd %1
 cvs add %1.cpp %1.h %1_test.cpp Makefile
+cd ..
 goto end
 :no_argument
 echo usage: addcvs <library name>
