@@ -85,7 +85,7 @@ namespace flw {
 	#define FLW_SIZE_MAX	INT_MAX
 
 	//t Type of a datum.
-	typedef unsigned char		datum__;
+	typedef char		datum__;
 
 	//c Base input flow.
 	class iflow___
