@@ -57,21 +57,30 @@ extern class ttr_tutor &FLMTutor;
 /*$BEGIN$*/
 //D FiLe Memory.
 
-#include <fstream.h>
-#include <iostream.h>
+#include "cpe.h"
+
+#ifdef CPE__UNIX
+#	include <unistd.h>
+#	include <fcntl.h>
+#else
+#	include <fstream.h>
+#	include <iostream.h>
+#endif
 
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"
-#include "cpe.h"
 
 namespace flm {
 	using namespace mdr;
 
+#ifdef CPE__UNIX
+	typedef int	capacite__;
+#else
 	typedef streampos capacite__;
-	// type définissant une capacite mémoire
+#endif
 
-	typedef capacite__ position_;
+	typedef capacite__ position__;
 	// type définissant une position dans la mémoire
 
 	/*******************************************************************/
@@ -89,8 +98,12 @@ namespace flm {
 
 	class memoire_fichier_base
 	{
+	#ifdef CPE__UNIX
+		int FD_;
+	#else
 		// le stream servant de mémoire
 		fstream Stream_;
+	#endif
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
@@ -115,15 +128,28 @@ namespace flm {
 			if ( !Temoin_.Ouvert )
 			{
 				if ( Temoin_.Mode == mdr::mReadOnly )
-#ifdef CPE__NO_IOS_EXTENSION
-					Stream_.open( Nom_, ios::in | ios::binary );
+#ifdef CPE__UNIX
+					FD_ = open( Nom_, O_RDONLY );
 #else
+#	ifdef CPE__NO_IOS_EXTENSION
+					Stream_.open( Nom_, ios::in | ios::binary );
+#	else
 					Stream_.open( Nom_, ios::in | ios::binary | ios::nocreate );
+#	endif
 #endif
 				else
+#ifdef CPE__UNIX
+					if ( ( FD_ = open( Nom_, O_RDWR ) ) == -1 )
+						FD_ = creat( Nom_, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH );
+#else
 					Stream_.open( Nom_, ios::in | ios::out | ios::binary );
+#endif
 
-				if ( !Stream_ )
+#ifdef CPE__UNIX
+				if ( FD_ == -1 )
+#else
+				if ( Stream_.fail() )
+#endif
 					ERRd();
 
 				Temoin_.Ouvert = 1;
@@ -131,17 +157,24 @@ namespace flm {
 		}
 	protected:
 		void Lire(
-			streampos Position,
+			position__ Position,
 			int Nombre,
 			void *Tampon )
 		{
 			Ouvrir_();
-
+#ifdef CPE__UNIX
+			if ( lseek( FD_, Position, 0 ) == -1 )
+				ERRd();
+				
+			if ( read( FD_, Tampon, Nombre ) != Nombre )
+				ERRd();
+#else
 			if ( Stream_.seekg( Position ).fail() )
 				ERRd();
 
 			if ( Stream_.read( (char *)Tampon, Nombre ).fail() )
 				ERRd();
+#endif
 
 			if ( !Temoin_.Manuel )
 				Liberer();
@@ -151,16 +184,22 @@ namespace flm {
 		void Ecrire(
 			const void *Tampon,
 			int Nombre,
-			streampos Position )
+			position__ Position )
 		{
 			Ouvrir_();
-
+#ifdef CPE__UNIX
+			if ( lseek( FD_, Position, 0 ) == -1 )
+				ERRd();
+				
+			if ( write( FD_, Tampon, Nombre ) != Nombre )
+				ERRd();
+#else
 			if ( Stream_.seekp( Position ).fail() )
 				ERRd();
 
 			if ( Stream_.write( (char *)Tampon, Nombre ).fail() )
 				ERRd();
-
+#endif
 			if ( !Temoin_.Manuel )
 				Liberer();
 		}
@@ -171,8 +210,14 @@ namespace flm {
 			if ( Capacite > TailleFichier_ )
 			{
 				Ouvrir_();
-
+				
+				Capacite--;
+#ifdef CPE__UNIX
+				if ( ( lseek( FD_, Capacite, 0 ) == -1 )
+				      || ( write( FD_, &Capacite, 1 ) != 1 ) )
+#else
 				if ( Stream_.seekp( ( Capacite - (capacite__)1 ) ).fail() || Stream_.put( (char)0 ).fail() )
+#endif
 				{
 					if ( !Temoin_.Manuel )
 						Liberer();
@@ -265,7 +310,11 @@ namespace flm {
 		void Liberer( void )
 		{
 			if ( Temoin_.Ouvert )
+#ifdef CPE__UNIX
+				close( FD_ );
+#else
 				Stream_.close();
+#endif
 
 			Temoin_.Ouvert = 0;
 		}
