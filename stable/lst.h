@@ -179,11 +179,18 @@ namespace lst {
 		{
 			return (r_t)Nouveau_();
 		}
-		//f Return 'Row' as it is a new entry. For restoration purpose only.
-		r RestorationNew( r Row )
+		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
+		r New( r Row )
 		{
-			if ( Locations.RestorationNew( Row ) )
-				MarkAsReleased_( Locations.FirstUnused(), Row - 1, Locations );
+			if ( Row != NONE ) {
+				r FirstAvailable = Locations.GetFirstAvailable();
+
+				if ( Locations.RestorationNew( *Row ) )
+					MarkAsReleased_( *FirstAvailable, *Row - 1, Locations );
+
+					return Row;
+			} else
+				return New();
 		}
 		//f Return the first entry if exists, 'NONE' if list empty.
 		r First( void ) const

@@ -151,7 +151,7 @@ namespace ids {
 				if ( IsAvailable( ID ) )
 					ERRu();
 #endif
-				Released.Remove( Released.Locate( ID ) );
+				Released.Remove( Released.Search( ID ) );
 
 				return false;
 			}

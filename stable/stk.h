@@ -61,93 +61,77 @@ extern class ttr_tutor &STKTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "tym.h"
-#include "aem.h"
+#include "bch.h"
 
 namespace stk {
 
-	using tym::memory_;
-	using aem::amount_extent_manager_;
+	using bch::bunch_;
 
 	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
 	template <class t, typename r> class stack_
-	: public tym::E_MEMORYt_( t, r ),
-	  public aem::amount_extent_manager_<r>
+	: public bch::E_BUNCHt_( t, r )
 	{
 	public:
 		struct s
-		: public tym::E_MEMORYt_( t, r )::s,
-		  public aem::amount_extent_manager_<r>::s
+		: public bch::E_BUNCHt_( t, r )::s
 		{};
 		stack_( s &S )
-		: tym::E_MEMORYt_( t, r )( S ),
-		  aem::amount_extent_manager_<r>( S )
+		: bch::E_BUNCHt_( t, r )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_MEMORYt_( t, r )::reset( P );
-			amount_extent_manager_<r>::reset( P );
+			E_BUNCHt_( t, r )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
 		{
-			E_MEMORYt_( t, r )::plug( MDriver );
+			E_BUNCHt_( t, r )::plug( MDriver );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_MEMORYt_( t, r )::plug( M );
+			E_BUNCHt_( t, r )::plug( M );
 		}
 		stack_ &operator =( const stack_ &S )
 		{
-			epeios::size__ Size = S.Amount();
-
-			amount_extent_manager_<r>::operator =( S );
-
-			if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
-				E_MEMORYt_( t, r )::Allocate( Size );
-
-			E_MEMORYt_( t, r )::Store( S, S.Amount() );
+			E_BUNCHt_( t, r )::operator =( S );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_MEMORYt_( t, r )::Init();
-			amount_extent_manager_<r>::Init();
-			amount_extent_manager_<r>::SetNoDecreasingState( true );
+			E_BUNCHt_( t, r )::Init();
+			E_BUNCHt_( t, r )::SetNoDecreasingState( true );
 		}
 		//f Place 'Object' at the top of the stack. Return the position where this object is put.
 		r Push( t Object )
 		{
-			tym::size__ Size = Amount() + 1;
-
-			if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
-				E_MEMORYt_( t, r )::Allocate( Size );
-
-			E_MEMORYt_( t, r )::Store( Object, Amount() - 1 );
-
-			return Amount() - 1;
-
+			return E_BUNCHt_( t, r )::Append( Object );
+		}
+		//f Remove the object at row 'R'. If 'Adjust' at 'true', than adjust the size of the stack.
+		void Remove(
+			r Row,
+			aem::mode Mode = aem::mDefault )
+		{
+			E_BUNCHt_( t, r )::Delete( Row );
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
 		t Pop( aem::mode Mode = aem::mDefault )
 		{
-			tym::size__ Size = Amount() - 1;
+			t Objet = E_BUNCHt_( t, r )::Get( E_BUNCHt_( t, r )::Last() );
 
-			t Objet = E_MEMORYt_( t, r )::Get( Size );
-
-			if ( amount_extent_manager_<r>::AmountToAllocate( Size, Mode ) )
-				E_MEMORYt_( t, r )::Allocate( Size );
-
+			Remove( E_BUNCHt_( t, r )::Last() );
+		
 			return Objet;
 		}
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
 		bso::bool__ Exists( t Object ) const
 		{
-			if ( Amount() )
-				return E_MEMORYt_( t, r )::Search( Object, 0, Amount() ) != NONE;
-			else
-				return false;
+			return E_BUNCHt_( t, r )::Search( Object, 0, Amount() ) != NONE;
+		}
+		//f Return true if an entry exists for row 'Row'.
+		bso::bool__ Exists( r Row ) const
+		{
+			return E_BUNCHt_( t, r )::Exists( Row );
 		}
 		//f Return the value stord on top of the stack.
 		t Top( void ) const
@@ -156,9 +140,8 @@ namespace stk {
 			if ( Amount() == 0 )
 				ERRl();
 #endif
-			return E_MEMORYt_( t, r )::Get( Last() );
+			return E_BUNCHt_( t, r )::Get( Last() );
 		}
-		E_NAVt( amount_extent_manager_<r>::, r ) 
 	};
 
 	E_AUTO2( stack )
