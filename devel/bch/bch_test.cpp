@@ -108,6 +108,8 @@ ERRBegin
 
 	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
 
+	E1.write( stf::foutF );
+
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd

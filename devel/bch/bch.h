@@ -317,6 +317,11 @@ namespace bch {
 		{
 			return *this;
 		}
+		//f Return reference to memory.
+		const mmr &Memory( void ) const
+		{
+			return *this;
+		}
 	};
 
 
@@ -349,7 +354,7 @@ namespace bch {
 		void write( flw::oflow___ &OFlow ) const
 		{
 			flw::Put( Amount(), OFlow );
-			Memory().write( 0, bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, OFlow );
+			Memory().write( 0, bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::Amount(), OFlow );
 		}
 		void read( flw::iflow___ &IFlow )
 		{
