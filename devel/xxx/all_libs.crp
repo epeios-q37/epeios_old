@@ -2,6 +2,7 @@
 # $Id$
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+&bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
