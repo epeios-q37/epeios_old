@@ -2,6 +2,8 @@
 # $Id$
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+&bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
+&bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager 
 &dbiapi		&ldbi		&		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&		&DataBase Interface Adavanced Programmer Interface (for backend)
 &dbibsc		&ldbi		&		&DataBase Interface BaSiCs
