@@ -247,6 +247,10 @@ namespace lck {
 
 			return *Object_;
 		}
+		object &GetUnlocked( void )
+		{
+			return *Object_;
+		}
 		void ReleaseWriting( void )
 		{
 #ifdef LCK__DBG

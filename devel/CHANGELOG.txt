@@ -1,5 +1,8 @@
 $Id$
 
+LCK:
+- Adding 'GetUnlocked()' method.
+
 --------
 20040215
 --------
