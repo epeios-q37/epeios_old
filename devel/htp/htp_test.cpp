@@ -34,11 +34,40 @@
 
 #include "err.h"
 #include "stf.h"
+#include "clt.h"
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Test( void )
+{
+ERRProlog
+	sck::socket__ Socket = SCK_INVALID_SOCKET;
+	sck::socket_ioflow___ RFlow;
+	txf::text_oflow___ TFlow;
+	str::string Request;
+ERRBegin
+	Socket = clt::Connect( "freshmeat.net", "80" );
+
+	RFlow.Init( Socket );
+
+	TFlow.Init( RFlow );
+
+	Request.Init( "<?xml version=\"1.0\"?><methodCall><methodName>fetch_available_release_foci</methodName><params/></methodCall>" );
+
+	htp::Post( str::string( "/xmlrpc/" ), str::string( "freshmeat.net" ), str::string( "epeios" ), str::string( "text/xml" ), Request, TFlow );
+
+	TFlow << txf::sync;
+
+	while ( 1 )
+		stf::cout << (char)RFlow.Get();
+
 ERRErr
 ERREnd
 ERREpilog
@@ -53,7 +82,8 @@ ERRFBegin
 
 	switch( argc ) {
 	case 1:
-		Generic( argc, argv );
+//		Generic( argc, argv );
+		Test();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

@@ -69,6 +69,7 @@ extern class ttr_tutor &HTPTutor;
 #include "flw.h"
 #include "bso.h"
 #include "str.h"
+#include "txf.h"
 
 namespace htp {
 	//e Status of the parsing.
@@ -109,9 +110,11 @@ namespace htp {
 	//f Post
 	void Post(
 		const str::string_ &URL,
+		const str::string_ &Host,
+		const str::string_ &UserAgent,
 		const str::string_ &ContentType,
 		const str::string_ &Content,
-		flw::oflow___ &Flow );
+		txf::text_oflow___ &Flow );
 
 
 
