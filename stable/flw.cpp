@@ -100,7 +100,7 @@ public:
 	flwpersonnalization( void )
 	{
 #ifdef FLW__IGNORE_SIGPIPE
-		signal( SIGPIPE, SIG_IGN );	// Witout this, an 'broken pipe' would terminate the program.
+//		signal( SIGPIPE, SIG_IGN );	// Witout this, an 'broken pipe' would terminate the program.
 #endif	
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

@@ -137,13 +137,13 @@ ERRProlog
 	frtend::frontend___ Frontend;
 	manager Manager;
 	types Types;
-//	sck::socket_ioflow___ Flow;
+	sck::socket_ioflow___ Flow;
 ERRBegin
 	Types.Init();
-//	Flow.Init( clt::Connect( "localhost:1234" ) );
-//	Frontend.Init( Flow, Data );
-	Manager.Init();
-	Frontend.Init( Manager.Process() );
+	Flow.Init( clt::Connect( "localhost:1234" ) );
+	Frontend.Init( Flow );
+//	Manager.Init();
+//	Frontend.Init( Manager.Process() );
 	
 	Analyze( Frontend, Types );
 

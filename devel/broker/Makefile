@@ -32,9 +32,11 @@ copt =
 copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT
+copt += -DMTK_KEEP
+copt += -DFLW_LET_SIGPIPE
 lopt = 
 libs = ttr tol flw stf err uym fam mmi csm mtk pip spp srv sck\
-       brkcmd brkcst rqm ctn lgg
+       brkcmd brkcst brkrqm ctn lgg
 
 
 ifeq ("$(EPEIOS_OS)","windows")
