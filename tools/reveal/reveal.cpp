@@ -34,7 +34,7 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"0.1.3"
+#define VERSION			"0.1.4"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR			EPSMSC_AUTHOR
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
@@ -230,7 +230,7 @@ void Expand(
 	const expander_ &Expander,
 	bso__char Delimiter,
 	tagexp::action Action,
-	xtf__extended_text_iflow_ &IFlow,
+	xtf::extended_text_iflow___ &IFlow,
 	txf__text_oflow_ &OFlow )
 {
 ERRProlog
@@ -269,7 +269,7 @@ void HandleSingle(
 {
 ERRProlog
 	expander Expander;
-	xtf__extended_text_iflow_ TIFlow;
+	xtf::extended_text_iflow___ TIFlow;
 ERRBegin
 	Expander.Init();
 
@@ -411,7 +411,7 @@ ERRProlog
 	CITEM( line_ ) Line;
 	POSITION__ P;
 	ids Ids;
-	xtf__extended_text_iflow_ TIFlow;
+	xtf::extended_text_iflow___ TIFlow;
 ERRBegin
 	Set.Init();
 
@@ -516,7 +516,7 @@ ERREpilog
 }
 
 void GetTable(
-	xtf__extended_text_iflow_ &Desc,
+	xtf::extended_text_iflow___ &Desc,
 	bso__char Commentary,
 	table_ &Table )
 {
@@ -757,7 +757,7 @@ ERRProlog
 	fil::file_oflow___ OFile;
 	txf__text_oflow_ OText;
 	fil::file_iflow___ DFile;
-	xtf__extended_text_iflow_ DText;
+	xtf::extended_text_iflow___ DText;
 	txf__text_oflow_ *OFlow = NULL;
 	flw__iflow_ *IFlow = NULL;
 	bso__bool Backup = false;
