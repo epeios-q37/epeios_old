@@ -1,6 +1,6 @@
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="xhtml" encoding="iso-8859-1" indent="yes" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
+	<xsl:output method="xhtml" encoding="iso-8859-1" indent="yes" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
 	<xsl:param name="hierarchy"/>
 	<xsl:param name="name"/>
 	<xsl:template match="/">
@@ -144,7 +144,7 @@
 						<xsl:attribute name="align">right</xsl:attribute>
 						<!-- SiteSearch Google -->
 						<xsl:element name="form">
-							<xsl:attribute name="method">GET</xsl:attribute>
+							<xsl:attribute name="method">get</xsl:attribute>
 							<xsl:attribute name="action">http://www.google.com/search</xsl:attribute>
 							<xsl:text>CVS hosted on </xsl:text>
 							<xsl:element name="a">
@@ -162,6 +162,7 @@
 								<xsl:attribute name="type">submit</xsl:attribute>
 								<xsl:attribute name="name">btnG</xsl:attribute>
 								<xsl:attribute name="value">Search</xsl:attribute>
+								<xsl:attribute name="alt">... with Google</xsl:attribute>
 							</xsl:element>
 							<xsl:element name="input">
 								<xsl:attribute name="type">hidden</xsl:attribute>

@@ -43,8 +43,7 @@
         <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of the Epeios libraries and software.</para>
       </section>
       <section>
-        <para>This project was launch on 1999, but I'm probably the only one which uses the Epeios libraries. I think this is not due to the libraires themselves, but to this site. There are no enough informations available and/or they are not showed in the propre way. I've created a <link URL="https://mail.gna.org/listinfo/epeios-evolution" aspect="long">mailing-list</link> on <link URL="http://www.gna.org">Gna!</link> to which you can write and/or subscribe if you want to discuss about this.</para>
-        <para xml:space="preserve">You can also contact me at <contact adress="csimon@epeios.org">csimon@epeios.org</contact>.</para>
+       	<para xml:space="preserve">Remarks/questions/suggestions are welcome and can be sent to <contact adress="csimon@epeios.org">csimon@epeios.org</contact>.</para>
       </section>
       <section>
         <list>
@@ -95,7 +94,7 @@
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
-          <date>2001</date>
+          <date>2001, 2004</date>
         </copyright>
         <misc>
           <sourceforge group_id="$CORE_SF_ID$"/>
@@ -113,7 +112,6 @@
           <list>
             <item>
               <link URL="about.html">in HTML</link>.</item>
-            <item>(Coming soon).</item>
           </list>
         </section>
       </content>
@@ -140,7 +138,7 @@
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
-          <date>2001</date>
+          <date>2001, 2004</date>
         </copyright>
         <misc>
           <sourceforge group_id="$CORE_SF_ID$"/>
@@ -158,7 +156,6 @@
           <list>
             <item>
               <link URL="general.html">in HTML</link>.</item>
-            <item>(Coming soon).</item>
           </list>
         </section>
       </content>
@@ -316,7 +313,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$CORE_SF_ID$"/>
@@ -344,10 +341,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -357,7 +350,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>1994 - 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$CORE_SF_ID$"/>
@@ -374,7 +367,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$CORE_SF_ID$"/>
@@ -392,7 +385,6 @@
               <list>
                 <item>
                   <link URL="user.html">in HTML</link>.</item>
-                <item>(Coming soon).</item>
               </list>
             </section>
           </content>
@@ -466,7 +458,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EBKD_SF_ID$"/>
@@ -484,7 +476,6 @@
               <list>
                 <item>
                   <link URL="about.html">in HTML</link>.</item>
-                <item>(Coming soon).</item>
               </list>
             </section>
           </content>
@@ -552,7 +543,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EBKD_SF_ID$"/>
@@ -580,10 +571,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -593,7 +580,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>1994 - 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EBKD_SF_ID$"/>
@@ -610,7 +597,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EBKD_SF_ID$"/>
@@ -628,7 +615,6 @@
               <list>
                 <item>
                   <link URL="user.html">in HTML</link>.</item>
-                <item>(Coming soon).</item>
               </list>
             </section>
           </content>
@@ -700,7 +686,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$ECGI_SF_ID$"/>
@@ -718,7 +704,6 @@
               <list>
                 <item>
                   <link URL="about.html">in HTML</link>.</item>
-                <item>(Coming soon).</item>
               </list>
             </section>
           </content>
@@ -786,7 +771,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$ECGI_SF_ID$"/>
@@ -814,10 +799,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -827,7 +808,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>1994 - 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$ECGI_SF_ID$"/>
@@ -930,7 +911,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EXML_SF_ID$"/>
@@ -958,10 +939,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -971,7 +948,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>1994 - 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EXML_SF_ID$"/>
@@ -1074,7 +1051,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EMTH_SF_ID$"/>
@@ -1102,10 +1079,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -1115,7 +1088,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>1994 - 2001</date>
+              <date>1994 - 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EMTH_SF_ID$"/>
@@ -1216,7 +1189,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$ETMC_SF_ID$"/>
@@ -1244,10 +1217,6 @@
                 <item>
                   <link URL="quickdoc.html.zip">In zipped HTML, all the libraries on one page.</link>
                 </item>
-                <item>In HTML, one library per page (comming soon).</item>
-                <item>In gzipped tar HTML, one library per page (comming soon).</item>
-                <item>In bzipped tar HTML, one library per page (comming soon).</item>
-                <item>In zipped HTML, one library per page (comming soon).</item>
               </list>
             </section>
           </content>
@@ -1257,7 +1226,7 @@
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001-2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$ETMC_SF_ID$"/>
@@ -1554,7 +1523,7 @@
               <author>$AUTHOR$</author>
               <copyright>
                 <owner>$OWNER$</owner>
-                <date>2001</date>
+                <date>2001, 2004</date>
               </copyright>
               <misc>
                 <sourceforge group_id="$ETMC_SF_ID$"/>
@@ -1572,7 +1541,6 @@
                     <item>
                       <link URL="manual.html">In HTML.</link>
                     </item>
-                    <item>(Coming soon).</item>
                   </list>
                 </section>
               </section>
@@ -1681,7 +1649,7 @@
               <author>$AUTHOR$</author>
               <copyright>
                 <owner>$OWNER$</owner>
-                <date>2001</date>
+                <date>2001, 2004</date>
               </copyright>
               <misc>
                 <sourceforge group_id="$ETMC_SF_ID$"/>
@@ -1699,7 +1667,6 @@
                     <item>
                       <link URL="manual.html">In HTML.</link>
                     </item>
-                    <item>(Coming soon).</item>
                   </list>
                 </section>
               </section>
@@ -1832,7 +1799,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$CORE_SF_ID$"/>
@@ -1850,7 +1817,6 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
                   <item>
                     <link URL="manual.html">In HTML.</link>
                   </item>
-                  <item>(Coming soon).</item>
                 </list>
               </section>
             </section>
@@ -1981,7 +1947,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$CORE_SF_ID$"/>
@@ -1999,7 +1965,6 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
                   <item>
                     <link URL="manual.html">In HTML.</link>
                   </item>
-                  <item>(Coming soon).</item>
                 </list>
               </section>
             </section>
@@ -2133,7 +2098,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
-              <date>2001</date>
+              <date>2001, 2004</date>
             </copyright>
             <misc>
               <sourceforge group_id="$EBKD_SF_ID$"/>
@@ -2151,7 +2116,6 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
                   <item>
                     <link URL="manual.html">In HTML.</link>
                   </item>
-                  <item>(Coming soon).</item>
                 </list>
               </section>
             </section>
