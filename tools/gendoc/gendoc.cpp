@@ -35,7 +35,7 @@
 #define NOM_FICHIER_INDEX		"index.html"
 #define TERM_FICHIER_DOC		".html"
 
-#ifdef CPE_UNIX
+#ifdef CPE__UNIX
 #define SS	"/"
 #define SC  '/'
 #else

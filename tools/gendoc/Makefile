@@ -3,7 +3,7 @@
 # Requires GNU make (http://www.gnu.org/).
 # Copyright (C) 2000 Claude L. Simon.
 #
-# This file is part of the Epeios project (http://www.Epeios.org/).
+# This file is part of the Epeios project (http://www.epeios.org/).
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 name = gendoc
 copt = -DXXX_DBG
 lopt = 
-libs = ttr tol flw stf err
+libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que
 
 ifeq ("$(EPEIOS_OS)","windows")
 ox = obj
@@ -40,7 +40,7 @@ endif
 ifeq ("$(EPEIOS_OS)","linux")
 ox = o
 cc = g++ 
-co = -c -g
+co = -c -O
 lo = -o $(name)
 endif
 
