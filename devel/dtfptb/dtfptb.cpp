@@ -64,7 +64,7 @@ using namespace dtfptb;
 
 void dtfptb::PutSize(
 	bso::ulong__ Size,
-	flw::oflow___ &Flow )
+	flw::oflow__ &Flow )
 {
 	if ( Size >= M1 )
 	{
@@ -94,7 +94,7 @@ void dtfptb::PutSize(
 	Flow.Put( (flw::datum__)( Size & 255 ) );
 }
 
-bso::ulong__ dtfptb::GetSize( flw::iflow___ &IFlow )
+bso::ulong__ dtfptb::GetSize( flw::iflow__ &IFlow )
 {
 	bso::ulong__ Size = (bso::ubyte__)IFlow.Get();
 

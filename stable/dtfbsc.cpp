@@ -1,7 +1,7 @@
 /*
 	'dtfbsc' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'dtfbsc' header file ('dtfbsc.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 

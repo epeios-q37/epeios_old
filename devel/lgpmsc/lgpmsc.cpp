@@ -1,8 +1,8 @@
 /*
 	'lgpmsc' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'lgpmsc' header file ('lgpmsc.h').
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -53,14 +55,14 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "stf.h"
+#include "cio.h"
 
 using namespace lgpmsc;
 using namespace txf;
 
 void lgpmsc::PrintLicense( void )
 {
-	stf::cout << "LICENSE A COMPLETER" << nl;
+	cio::cout << "LICENSE A COMPLETER" << nl;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

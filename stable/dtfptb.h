@@ -1,6 +1,6 @@
 /*
 	Header for the 'dtfptb' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -69,13 +69,13 @@ namespace dtfptb {
 
 	template <typename short__> inline void _PutShort(
 		short__ Short,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		dtfbsc::PutUByte( Short & 0xff, Flow );
 		dtfbsc::PutUByte( Short >> 8, Flow );
 	}
 
-	template <typename short__> short__ _GetShort( flw::iflow___ &Flow )
+	template <typename short__> short__ _GetShort( flw::iflow__ &Flow )
 	{
 		flw::datum__ Object[sizeof( short__ )];
 
@@ -87,13 +87,13 @@ namespace dtfptb {
 	//f Put 'SShort' into 'Flow'.
 	inline void PutSShort(
 		sshort__ SShort,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		_PutShort( SShort, Flow );
 	}
 
 	//f Return the signed short stored in 'Flow'.
-	inline sshort__ GetSShort( flw::iflow___ &Flow )
+	inline sshort__ GetSShort( flw::iflow__ &Flow )
 	{
 		return _GetShort<sshort__>( Flow );
 	}
@@ -101,13 +101,13 @@ namespace dtfptb {
 	//f Put 'UShort' into 'Flow'.
 	inline void PutUShort(
 		ushort__ UShort,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		_PutShort( UShort, Flow );
 	}
 
 	//f Return the unsigned short stored in 'Flow'.
-	inline ushort__ GetUShort( flw::iflow___ &Flow )
+	inline ushort__ GetUShort( flw::iflow__ &Flow )
 	{
 		return _GetShort<ushort__>( Flow );
 	}
@@ -115,7 +115,7 @@ namespace dtfptb {
 
 	template <typename long__> inline void _PutLong(
 		long__ Long,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		dtfbsc::PutUByte( (dtfbsc::ubyte__)( Long & 0xff ), Flow );
 		dtfbsc::PutUByte( (dtfbsc::ubyte__)( ( Long >> 8 ) & 0xff ), Flow );
@@ -123,7 +123,7 @@ namespace dtfptb {
 		dtfbsc::PutUByte( (dtfbsc::ubyte__)( Long >> 24 ), Flow );
 	}
 
-	template <typename long__> long__ _GetLong( flw::iflow___ &Flow )
+	template <typename long__> long__ _GetLong( flw::iflow__ &Flow )
 	{
 		flw::datum__ Object[sizeof( long__ )];
 
@@ -135,13 +135,13 @@ namespace dtfptb {
 	//f Put 'SLong' into 'Flow'.
 	inline void PutSShort(
 		slong__ SLong,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		_PutLong( SLong, Flow );
 	}
 
 	//f Return the signed long stored in 'Flow'.
-	inline slong__ GetSLong( flw::iflow___ &Flow )
+	inline slong__ GetSLong( flw::iflow__ &Flow )
 	{
 		return _GetLong<slong__>( Flow );
 	}
@@ -149,13 +149,13 @@ namespace dtfptb {
 	//f Put 'ULong' into 'Flow'.
 	inline void PutULong(
 		ulong__ ULong,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		_PutLong( ULong, Flow );
 	}
 
 	//f Return the unsigned long stored in 'Flow'.
-	inline ulong__ GetULong( flw::iflow___ &Flow )
+	inline ulong__ GetULong( flw::iflow__ &Flow )
 	{
 		return _GetLong<ulong__>( Flow );
 	}
@@ -163,10 +163,10 @@ namespace dtfptb {
 	//f Write 'Size' into 'Flow'.
 	void PutSize(
 		bso::ulong__ Size,
-		flw::oflow___ &Flow );
+		flw::oflow__ &Flow );
 	
 	//f Return size stored in 'Flow'.
-	bso::ulong__ GetSize( flw::iflow___ &Flow );
+	bso::ulong__ GetSize( flw::iflow__ &Flow );
 }
 
 /*$END$*/

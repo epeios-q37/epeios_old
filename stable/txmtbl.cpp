@@ -58,7 +58,7 @@ public:
 using namespace txmtbl;
 
 static inline bso::bool__ HandleEscape_(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	separator__ Separator,
 	escape__ Escape,
 	bso::bool__ &EOX,
@@ -109,7 +109,7 @@ static inline bso::bool__ HandleEscape_(
 }
 
 static inline bso::bool__ IsNotEndOfCell_(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	separator__ Separator,
 	escape__ Escape,
 	bso::bool__ &EOX,
@@ -129,7 +129,7 @@ static inline bso::bool__ IsNotEndOfCell_(
 }
 
 static inline txmtbl::delimiter GetDelimiter_( 
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	separator__ Separator,
 	bso::bool__ EOX,
 	bso::char__ C )
@@ -160,7 +160,7 @@ static inline txmtbl::delimiter GetDelimiter_(
 }
 
 txmtbl::delimiter txmtbl::GetCell(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	cell_ &Cell,
 	separator__ Separator,
 	escape__ Escape )
@@ -179,7 +179,7 @@ txmtbl::delimiter txmtbl::GetCell(
 }
 
 txmtbl::delimiter txmtbl::SkipCell(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	separator__ Separator,
 	escape__ Escape )
 {
@@ -193,7 +193,7 @@ txmtbl::delimiter txmtbl::SkipCell(
 }
 
 bso::bool__ txmtbl::GetLine(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	line_ &Line,
 	separator__ Separator,
 	escape__ Escape )
@@ -435,8 +435,8 @@ amount__ line_::DeleteComment( bso::char__ Marker )
 		return 0;
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flow,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &Flow,
 	const line_ &Line )
 {
 	tym::row__ Current;
@@ -462,7 +462,7 @@ txf::text_oflow___ &operator <<(
 }
 
 bso::bool__ txmtbl::GetFirstNonEmptyLine(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	line_ &Line,
 	separator__ Separator,
 	escape__ Escape )
@@ -486,7 +486,7 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 
 
 void txmtbl::GetTable(
-	xtf::extended_text_iflow___ &Flow,
+	xtf::extended_text_iflow__ &Flow,
 	table_ &Table,
 	separator__ Separator,
 	escape__ Escape )
@@ -616,8 +616,8 @@ ERREpilog
 
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flow,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &Flow,
 	const table_ &Table )
 {
 	ctn::E_CITEM( line_ ) Line;

@@ -163,7 +163,7 @@ namespace txmtbl {
 	/*f Put in 'Cell' the next cell in flow 'Flow'. 'Separator' delimits the celles.
 	Return the delimiter of the cell. */
 	txmtbl::delimiter GetCell(
-		xtf::extended_text_iflow___ &Flow,
+		xtf::extended_text_iflow__ &Flow,
 		cell_ &Cell,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
@@ -171,7 +171,7 @@ namespace txmtbl {
 	/*f Skip next cell in flow 'Flow'. 'Separator' delimits the cells.
 	Return the delimiter of the cell. */
 	txmtbl::delimiter SkipCell(
-		xtf::extended_text_iflow___ &Flow,
+		xtf::extended_text_iflow__ &Flow,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
@@ -304,7 +304,7 @@ namespace txmtbl {
 	/*f Put in 'Line' current line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
 	bso::bool__ GetLine(
-		xtf::extended_text_iflow___ &Flow,
+		xtf::extended_text_iflow__ &Flow,
 		line_ &Line,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
@@ -312,7 +312,7 @@ namespace txmtbl {
 	/*f Put in 'Line' the first non-empty line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
 	bso::bool__ GetFirstNonEmptyLine(
-		xtf::extended_text_iflow___ &Flow,
+		xtf::extended_text_iflow__ &Flow,
 		line_ &Line,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
@@ -406,18 +406,18 @@ namespace txmtbl {
 
 	//f Put in 'Table' the line contained in 'Flow'. Cells are separated by 'Separator'.
 	void GetTable(
-		xtf::extended_text_iflow___ &Flow,
+		xtf::extended_text_iflow__ &Flow,
 		table_ &Table,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 }
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flow,
+txf::text_oflow__ &operator <<(
+	txf::text_oflow__ &Flow,
 	const txmtbl::line_ &Line );
 	
-txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &Flot,
+txf::text_oflow__ &operator <<(
+		txf::text_oflow__ &Flot,
 		const txmtbl::table_ &Table );
 
 

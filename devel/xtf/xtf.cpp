@@ -57,7 +57,7 @@ public:
 
 using namespace xtf;
 
-void xtf::extended_text_iflow___::GetLine( str::string_ &Line )
+void xtf::extended_text_iflow__::GetLine( str::string_ &Line )
 {
 	bso::bool__ Cont = true;
 	char C;

@@ -80,7 +80,7 @@ namespace xtf {
 	typedef bso::ubyte__ _amount__;
 
 	//c To handle a text flow, with counting lines and columns.
-	class extended_text_iflow___
+	class extended_text_iflow__
 	{
 	private:
 		// Remplit le tampon. Il est supposé vide.
@@ -144,11 +144,11 @@ namespace xtf {
 			Entree_ = NULL;
 			EOL_ = false;
 		}
-		extended_text_iflow___( void )
+		extended_text_iflow__( void )
 		{
 			reset( false );
 		}
-		~extended_text_iflow___( void )
+		~extended_text_iflow__( void )
 		{
 			reset( true );
 		}

@@ -4,8 +4,10 @@ GENERAL:
 - (23/05/04) Creation of the 'FLF' library.
 - (24/05/04) Creation of the 'CIO' library.
 - (24/05/04) Adapting to changes in 'FLW' library.
-- (30/05/04) Adapting to changes in 'FLW' library.
 - (24/05/04) Adapting to changes in 'TXF' library.
+- (30/05/04) Adapting to changes in 'FLW' library.
+- (31/05/04) Adapting to changes in 'FLW' library.
+- (31/05/04) Using 'CIO' library instaed of 'STF' for 'c(out|in|err)'.
 
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
@@ -63,6 +65,9 @@ TTR:
 TXF:
 - (24/05/04) Adapting to changes in 'FLW' library.
 - (24/05/04) Removing tailing '_' in name objetcs.
+
+XTF:
+- (31/05/04) Removing a tailing '_' to object name.
 
 --------
 20040215

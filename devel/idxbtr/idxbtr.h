@@ -304,7 +304,7 @@ namespace idxbtr {
 			S_.Racine = Equilibrer_( Queue, Head, MD );
 		}
 		//f Print the tree structure of the index.
-		void PrintStructure( txf::text_oflow___ &OStream ) const
+		void PrintStructure( txf::text_oflow__ &OStream ) const
 		{
 			E_BTREEt_( r )::PrintStructure( S_.Racine, OStream );
 		}

@@ -80,13 +80,13 @@ namespace dtfbsc {
 	//f Put 'UByte' in 'Flow'.
 	inline void PutUByte(
 		ubyte__ UByte,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		Flow.Put( *(flw::datum__ *)&UByte );
 	}
 
 	//f Return unsigned byte in 'Flow'.
-	inline ubyte__ GetUByte( flw::iflow___ &Flow )
+	inline ubyte__ GetUByte( flw::iflow__ &Flow )
 	{
 		return (unsigned char)Flow.Get();
 	}
@@ -94,13 +94,13 @@ namespace dtfbsc {
 	//f Put 'SByte' in 'Flow'.
 	inline void PutSByte(
 		sbyte__ SByte,
-		flw::oflow___ &Flow )
+		flw::oflow__ &Flow )
 	{
 		Flow.Put( *(flw::datum__ *)&SByte );
 	}
 
 	//f Return unsigned byte in 'Flow'.
-	inline sbyte__ GetSByte( flw::iflow___ &Flow )
+	inline sbyte__ GetSByte( flw::iflow__ &Flow )
 	{
 		return (signed char)Flow.Get();
 	}

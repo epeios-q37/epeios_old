@@ -1,6 +1,6 @@
 /*
 	Header for the 'lgpmsc' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,7 +55,7 @@ extern class ttr_tutor &LGPMSCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D LoGiPlus (Logis+) MiSC 
+//D LoGiPlus (Logi+) MiSC 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
