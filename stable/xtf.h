@@ -264,10 +264,9 @@ namespace xtf {
 			return Consulter_( 1 );
 		}
 		//f True if at end of text.
-		bso::bool__ EOX( void )
+		bso::bool__ EOX( bso::bool__ HandleNL = false)
 		{
-#if 0
-			if ( EOL_ ) {
+			if ( HandleNL && EOL_ ) {
 				char C = View();
 
 				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
@@ -287,7 +286,6 @@ namespace xtf {
 				} else
 					return false;
 			} else
-#endif
 				return View() == XTF_EOXC;
 		}
 		//f Return the amount of data red.

@@ -56,6 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "str.h"
+#include "stdarg.h"
 
 using namespace htp;
 
@@ -176,7 +177,7 @@ htp::status htp::Parse(
 	flw::iflow__ &IFlow,
 	http_header__ &Header )
 {
-	htp::status Status = htp::sUnknow;
+	htp::status Status = htp::s_unknow;
 
 	if ( TestHTTPVersion_( IFlow ) ) {
 		switch( GetHTTPResponseCode_( IFlow ) ) {
@@ -203,29 +204,69 @@ htp::status htp::Parse(
 
 #define NL	"\r\n";
 
-void htp::Post(
+static inline const char *GetFieldLabel_( field_name__ Name )
+{
+	switch ( Name ) {
+	case fnHost:
+		return "Host";
+		break;
+	case fnReferrer:
+		return "Referrer";
+		break;
+	case fnAccept:
+		return "Accept";
+		break;
+	case fnContentType:
+		return "Content-Type";
+		break;
+	default:
+		ERRu();
+		return NULL;
+		break;
+	}
+}
+
+
+static inline void Write_(
+	field_name__ Name,
+	txf::text_oflow__ &Flow )
+{
+	Flow << GetFieldLabel_( Name ) << ": ";
+}
+
+static inline void Write_(
+	const field_ &Field,
+	txf::text_oflow__ &Flow )
+{
+	Write_( Field.GetName(), Flow );
+	Flow  << Field.Value << NL;
+
+}
+
+void htp::Post( 
 	const str::string_ &URL,
-	const str::string_ &Host,
-	const str::string_ &Referrer,
-	const str::string_ &Accept,
-	const str::string_ &ContentType,
+	const fields_ &Fields,
 	const str::string_ &Content,
 	txf::text_oflow__ &Flow )
 {
+	epeios::row__ Row = Fields.First();
+	ctn::E_CMITEM( field_ ) Field;
+
+	Field.Init( Fields );
+
 	Flow << "POST " << URL << " HTTP/1.1" << NL;
-	Flow << "Host: " << Host << NL;
-	if ( Referrer.Amount() )
-		Flow << "Referrer: " << Referrer << NL;
-	Flow << "Accept: " << Accept << NL;
-	Flow << "Content-Type: " << ContentType << NL;
+
+	while ( Row != NONE ) {
+		Write_( Field( Row ), Flow );
+
+		Row = Fields.Next( Row );
+	}
+
 	Flow << "Content-Length: " << Content.Amount() << NL;
 	Flow << NL;
 
 	Flow << Content;
 }
-
-
-
 
 
 class htppersonnalization

@@ -90,7 +90,8 @@ FLX:
 - (01/08/04) Correcting little error.
 
 HTP:
-- (18/07/04) little improvements.
+- (18/07/04) Little improvements.
+- (01/11/04) Changing 'Post' function parameters.
 
 IDXQUE:
 - (16/09/04) Using the core queue and no more the manage queue, to fit with 'IDXBTR'.
@@ -173,6 +174,7 @@ XTF:
 - (31/05/04) Removing a tailing '_' to object name.
 - (20/07/04) Fixing 'View()' bug.
 - (24/10/04) Removing previous correction. There is a conception problem.
+- (01/11/04) Adding NL handling possibility for 'EOX()'.
 
 --------
 20040215

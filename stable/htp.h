@@ -70,12 +70,11 @@ extern class ttr_tutor &HTPTutor;
 #include "bso.h"
 #include "str.h"
 #include "txf.h"
+#include "ctn.h"
 
 namespace htp {
 	//e Status of the parsing.
 	enum status {
-		//i Unknow status.
-		sUnknow,
 		//i OK (HTTP code 200).
 		sOK,
 		//i Continue (HTTP code 100)
@@ -88,7 +87,83 @@ namespace htp {
 		sUnknowProtocol,
 		//i Amount of status.
 		s_amount,
+		s_unknow,
 	};
+
+	enum field_name__ {
+		fnURL,
+		fnHost,
+		fnReferrer,
+		fnAccept,
+		fnContentType,
+		fn_amount,
+		fn_unknow,
+		fn_end
+	};
+
+	typedef str::string_	field_value_;
+	typedef str::string		field_value;
+
+	class field_ {
+	public :
+		struct s {
+			field_name__ Name;
+			field_value_::s Value;
+		} &S_;
+		field_value_ Value;
+		field_( s &S )
+		: S_( S ),
+		  Value( S.Value )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Value.reset( P );
+			S_.Name = fn_unknow;
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			Value.plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Value.plug( MM );
+		}
+		field_ &operator =( const field_ &F )
+		{
+			Value = F.Value;
+			S_.Name = F.S_.Name;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			S_.Name = fn_unknow;
+			Value.Init();
+		}
+		void Init(
+			field_name__ Name,
+			const str::string_ &Value )
+		{
+			S_.Name = Name;
+			this->Value.Init( Value );
+		}
+		void Init(
+			field_name__ Name,
+			const char *Value )
+		{
+			S_.Name = Name;
+			this->Value.Init( Value );
+		}
+		E_RODISCLOSE_( field_name__, Name )
+	};
+
+	E_AUTO( field );
+
+	typedef ctn::E_XMCONTAINER_( field_ )	fields_;
+	E_AUTO( fields )
+
+
+
 
 	//c An http 1.1 header.
 	class http_header__
@@ -111,13 +186,9 @@ namespace htp {
 		flw::iflow__ &IFlow,
 		http_header__ &Header );
 
-	//f Post
-	void Post(
+	void Post( 
 		const str::string_ &URL,
-		const str::string_ &Host,
-		const str::string_ &Referrer,
-		const str::string_ &Accept,
-		const str::string_ &ContentType,
+		const fields_ &Fields,
 		const str::string_ &Content,
 		txf::text_oflow__ &Flow );
 
