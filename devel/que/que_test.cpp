@@ -39,7 +39,9 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	que::E_QUEUE Queue;
+	stk::E_STACK( epeios::row__ ) Stack;
 ERRBegin
+	Queue.Dump( Stack, 0, que::dAscending );
 ERRErr
 ERREnd
 ERREpilog

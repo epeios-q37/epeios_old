@@ -56,6 +56,11 @@ extern class ttr_tutor &IDXQUETutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+/* Addendum to the automatic documentation generation part. */
+//D InDeX QUEue
+/* End addendum to automatic documentation generation part. */
+
+
 #include "err.h"
 #include "txf.h"
 #include "que.h"
@@ -78,7 +83,7 @@ namespace idxque {
 		{};
 	// fonctions
 		queue_index_( s &S )
-		: E_MQUEUE_( S )
+		: E_MQUEUEt_( r )( S )
 		{}
 		void reset( bool P = true )
 		{
@@ -106,22 +111,22 @@ namespace idxque {
 		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
 		void Dump(
 			stk::E_STACK_( r ) &Stack,
-			tym::row__ Begin,
+			r Begin,
 			idxque::direction Direction )
 		{
 			E_MQUEUEt_( r )::Dump( Stack, Begin, Direction );
 		}
 		//f Item becomes node next to 'Node'.
 		void BecomeNext(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 			E_MQUEUEt_( r )::InsertItemAfterNode( Item, Node );
 		}
 		//f Item becomes node previous to 'Node'.
 		void BecomePrevious(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 			E_MQUEUEt_( r )::InsertItemBeforeNode( Item, Node );
 		}

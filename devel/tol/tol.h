@@ -55,6 +55,8 @@ extern class ttr_tutor &TOLTutor;
 				  /*			  unless specified			 */
 				  /*******************************************/
 /*$BEGIN$*/
+//D TOoL
+
 #include <string.h>
 #include <stddef.h>
 #include <time.h>
@@ -485,7 +487,7 @@ namespace tol {
 	{\
 		return Object##Last();\
 	}\
-	Type Previous( tym::row__ P ) const\
+	Type Previous( Type P ) const\
 	{\
 		return Object##Previous( P );\
 	}\

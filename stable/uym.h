@@ -119,12 +119,13 @@ namespace uym {
 				{
 					delete Pilote_;
 					Interne_ = false;
+					Pilote_ = NULL;
 				}
 
+			} else {
+				Pilote_ = NULL;
+				Interne_ = false;
 			}
-
-			Pilote_ = NULL;
-			Interne_ = false;
 		}
 		memory_driver( void )
 		{

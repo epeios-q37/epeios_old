@@ -56,6 +56,11 @@ extern class ttr_tutor &IDXBTQTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+/* Addendum to the automatic documentation generation part. */
+//D InDeX Best of Tree and Queue
+/* End addendum to automatic documentation generation part. */
+
+
 #include "err.h"
 #include "idxque.h"
 #include "idxbtr.h"
@@ -65,33 +70,33 @@ namespace idxbtq {
 	using idxque::queue_index_;
 
 	//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
-	class tree_queue_index_
-	: public E_IBTREE_,
-	  public E_IQUEUE_
+	template <typename r> class tree_queue_index_
+	: public E_IBTREEt_( r ),
+	  public E_IQUEUEt_( r )
 	{
 	public:
 		struct s
-		: public E_IBTREE_::s,
-		  public E_IQUEUE_::s
+		: public E_IBTREEt_( r )::s,
+		  public E_IQUEUEt_( r )::s
 		{};
 		tree_queue_index_( s &S )
-		: E_IBTREE_( S ),
-		  E_IQUEUE_( S )
+		: E_IBTREEt_( r )( S ),
+		  E_IQUEUEt_( r )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_IBTREE_::reset( P );
-			E_IQUEUE_::reset( P );
+			E_IBTREEt_( r )::reset( P );
+			E_IQUEUEt_( r )::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			E_IBTREE_::plug( MM );
-			E_IQUEUE_::plug( MM );
+			E_IBTREEt_( r )::plug( MM );
+			E_IQUEUEt_( r )::plug( MM );
 		}
 		tree_queue_index_ &operator =( const tree_queue_index_ &I )
 		{
-			E_IBTREE_::operator =( I );
-			E_IQUEUE_::operator =( I );
+			E_IBTREEt_( r )::operator =( I );
+			E_IQUEUEt_( r )::operator =( I );
 
 			return *this;
 		}
@@ -108,64 +113,66 @@ namespace idxbtq {
 	*/	//f Initializtion.
 		void Init( void )
 		{
-			E_IBTREE_::Init();
-			E_IQUEUE_::Init();
+			E_IBTREEt_( r )::Init();
+			E_IQUEUEt_( r )::Init();
 		}
-		NAV( E_IQUEUE_:: )
+		NAVt( E_IQUEUEt_( r )::, r )
 		//f 'Item' becomes the first item of the index, if empty.
-		void Create( tym::row__ Item )
+		void Create( r Item )
 		{
 			if ( !IsEmpty() )
 				ERRu();
 
-			E_IBTREE_::Create( Item );
-			E_IQUEUE_::Create( Item );
+			E_IBTREEt_( r )::Create( Item );
+			E_IQUEUEt_( r )::Create( Item );
 		}
 		//f Allocate enough room to contain 'Size' items.
 		void Allocate( epeios::size__ Size )
 		{
-			E_IBTREE_::Allocate( Size );
-			E_IQUEUE_::Allocate( Size );
+			E_IBTREEt_( r )::Allocate( Size );
+			E_IQUEUEt_( r )::Allocate( Size );
 		}
 		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
 		return true to use this function. */
 		void BecomeNext(
-			epeios::row__ New,
-			epeios::row__ Item )
+			r New,
+			r Item )
 		{
-			E_IBTREE_::BecomeNext( New, Item );
-			E_IQUEUE_::BecomeNext( New, Item );
+			E_IBTREEt_( r )::BecomeNext( New, Item );
+			E_IQUEUEt_( r )::BecomeNext( New, Item );
 		}
 		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
 		return true to use this function. */
 		void BecomePrevious(
-			epeios::row__ New,
-			epeios::row__ Item )
+			r New,
+			r Item )
 		{
-			E_IBTREE_::BecomePrevious( New, Item );
-			E_IQUEUE_::BecomePrevious( New, Item );
+			E_IBTREEt_( r )::BecomePrevious( New, Item );
+			E_IQUEUEt_( r )::BecomePrevious( New, Item );
 		}
 		//f Remove 'Item'.
-		void Remove( tym::row__ Item )
+		void Remove( r Item )
 		{
-			E_IQUEUE_::Remove( Item );
-			E_IBTREE_::Remove( Item );
+			E_IQUEUEt_( r )::Remove( Item );
+			E_IBTREEt_( r )::Remove( Item );
 		}
 		//f Balances the tree of the index.
 		void Balance( mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
 		{
-			if ( E_IQUEUE_::Amount() )
-				E_IBTREE_::Fill( E_IQUEUE_::Queue, E_IQUEUE_::First(), MD );
+			if ( E_IQUEUEt_( r )::Amount() )
+				E_IBTREEt_( r )::Fill( E_IQUEUEt_( r )::Queue, E_IQUEUEt_( r )::First(), MD );
 		}
 	};
 
-	AUTO( tree_queue_index )
+	AUTOt( tree_queue_index )
 }
 
 //d An index.
-#define E_INDEX_	tree_queue_index_
+#define E_INDEXt_( r )	tree_queue_index_<r>
+#define E_INDEXt( r )	tree_queue_index<r>
 
-#define E_INDEX		tree_queue_index
+#define E_INDEX_	E_INDEXt_( epeios::row__ )
+#define E_INDEX		E_INDEXt( epeios::row__ )
 
 
 /*$END$*/

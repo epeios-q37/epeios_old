@@ -1,8 +1,8 @@
 /*
-  Header for the 'mmg' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'mmg' library by Claude L. Simon (csimon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	MMG_VERSION	"$Revision$"	
 
-#define MMG_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define MMG_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &MMGTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude L. SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -332,7 +332,7 @@ namespace mmg
 		}
 	};
 
-	AUTO2( memory_merger )
+	AUTO1( memory_merger )
 
 	//m Merge all the memory, including the statical part, of a 't' type object in one memory.
 	#define E_MEMORY_MERGER_( t )	memory_merger_<t, t::s>

@@ -35,10 +35,16 @@
 #include "err.h"
 #include "stf.h"
 
+TYPEDEF( epeios::row_t__, row__ );
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	idxbtr::E_IBTREEt( row__ ) Index;
 ERRBegin
+	Index.Balance();
+
+	Index.First();
 ERRErr
 ERREnd
 ERREpilog

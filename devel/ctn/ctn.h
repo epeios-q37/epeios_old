@@ -763,7 +763,7 @@ namespace ctn {
 			item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::reset( P );
 
 			Objet_.reset( false );
-			Multimemoire.reset( false );
+			Multimemoire.reset( P );
 
 			Multimemoire.plug( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
 			Objet_.plug( Multimemoire );

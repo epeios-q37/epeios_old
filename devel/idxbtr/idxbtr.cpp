@@ -67,63 +67,73 @@ namespace idxbtr {
 	};
 
 	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-	tym::row__ tree_index_::NoeudSansFils_( tym::row__ Position ) const
+	epeios::row_t__ idxbtr::NoeudSansFils_(
+		const E_IBTREE_ &Tree,
+		epeios::row_t__ Position )
 	{
-		while( E_BTREE_::HasLeft( Position ) )
-			Position = E_BTREE_::Left( Position );
+		while( Tree.E_BTREE_::HasLeft( Position ) )
+			Position = *Tree.E_BTREE_::Left( Position );
 
 		return Position;
 	}
 
 	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-	tym::row__ tree_index_::NoeudSansFille_( tym::row__ Position ) const
+	epeios::row_t__ idxbtr::NoeudSansFille_(
+		const E_IBTREE_ &Tree,
+		epeios::row_t__ Position )
 	{
-		while( E_BTREE_::HasRight( Position ) )
-			Position = E_BTREE_::Right( Position );
+		while( Tree.E_BTREE_::HasRight( Position ) )
+			Position = *Tree.E_BTREE_::Right( Position );
 
 		return Position;
 	}
 
 	// Retourne le premier noeud qui est fils en remontant.
-	tym::row__ tree_index_::PereFilsEnRemontant_( tym::row__ Position ) const
+	epeios::row_t__ idxbtr::PereFilsEnRemontant_( 
+		const E_IBTREE_ &Tree,
+		epeios::row_t__ Position )
 	{
-		while( !E_BTREE_::IsLeft( Position ) && E_BTREE_::HasParent( Position ) )
-			Position = E_BTREE_::Parent( Position );
+		while( !Tree.E_BTREE_::IsLeft( Position )
+			   && Tree.E_BTREE_::HasParent( Position ) )
+			Position = *Tree.E_BTREE_::Parent( Position );
 
-		if ( E_BTREE_::IsLeft( Position ) )
-			return E_BTREE_::Parent( Position );
+		if ( Tree.E_BTREE_::IsLeft( Position ) )
+			return *Tree.E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
 
 	// Retourne le premier noeud qui est fille en remontant.
-	tym::row__ tree_index_::PereFilleEnRemontant_( tym::row__ Position ) const
+	epeios::row_t__ idxbtr::PereFilleEnRemontant_( 
+		const E_IBTREE_ &Tree,
+		epeios::row_t__ Position )
 	{
-		while( !E_BTREE_::IsRight( Position ) && E_BTREE_::HasParent( Position ) )
-			Position = E_BTREE_::Parent( Position );
+		while( !Tree.E_BTREE_::IsRight( Position )
+			    && Tree.E_BTREE_::HasParent( Position ) )
+			Position = *Tree.E_BTREE_::Parent( Position );
 
-		if ( E_BTREE_::IsRight( Position ) )
-			return E_BTREE_::Parent( Position );
+		if ( Tree.E_BTREE_::IsRight( Position ) )
+			return *Tree.E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
 
-	void tree_index_::Balance( void )
+	void idxbtr::Balance_( E_IBTREE_ &Tree )
 	{
 	ERRProlog
 		tym::row__ Current, Head, Temp;
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
-		Queue.Allocate( Extent() );
+		Queue.Allocate( Tree.Extent() );
 
-		Current = First();
+		Current = Tree.First();
 
 		if ( Current != NONE )
 		{
 			Head = Temp = Current;
 
-			Current = Next( Temp );
+			Current = Tree.Next( Temp );
 
 			while ( Current != NONE )
 			{
@@ -131,10 +141,10 @@ namespace idxbtr {
 
 				Temp = Current;
 
-				Current = Next( Temp );
+				Current = Tree.Next( Temp );
 			}
 
-			Fill( Queue, Head );
+			Tree.Fill( Queue, Head );
 		}
 
 	ERRErr
@@ -144,12 +154,13 @@ namespace idxbtr {
 
 	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
 	la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
-	tym::row__ tree_index_::Equilibrer_(
+	epeios::row_t__ idxbtr::Equilibrer_(
+		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
-		tym::row__ Premier,
+		epeios::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER_ &Pilote )
 	{
-		tym::row__ Racine, &Courant = Premier;
+		tym::row_t__ Racine, &Courant = Premier;
 	ERRProlog
 		stk::E_STACK( desc__ ) Pile;
 		tym::size__ Niveau = 0;
@@ -171,30 +182,30 @@ namespace idxbtr {
 				Sommet = Pile.Pop();
 
 				Niveau = Sommet.Niveau + 1;
-				E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+				Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
 
-				Racine = Sommet.Racine;
+				Racine = *Sommet.Racine;
 			}
 
-			Courant = File.Next( Courant );
+			Courant = *File.Next( Courant );
 
 			if ( Courant != NONE )
 			{
 				if ( File.HasNext( Courant ) )
 				{
-					E_BTREE_::BecomeLeft( Racine, Courant );
+					Tree.E_BTREE_::BecomeLeft( Racine, Courant );
 
 					Sommet.Racine = Courant;
 					Sommet.Niveau = Niveau;
 
 					Pile.Push( Sommet );
 
-					Courant = File.Next( Courant );
+					Courant = *File.Next( Courant );
 				}
 				else
 				{
 					Boucler = false;
-					E_BTREE_::BecomeRight( Courant, NoeudSansFille_( Racine ) );
+					Tree.E_BTREE_::BecomeRight( Courant, NoeudSansFille_( Tree, Racine ) );
 				}
 			}
 			else
@@ -211,9 +222,9 @@ namespace idxbtr {
 		{
 			Sommet = Pile.Pop();
 
-			E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+			Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
 
-			Racine = Sommet.Racine;
+			Racine = *Sommet.Racine;
 		}
 	ERRErr
 	ERREnd

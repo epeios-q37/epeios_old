@@ -390,7 +390,7 @@ namespace que {
 		r Begin,
 		que::direction Direction ) const
 	{
-		Dump( this, Begin, Direction );
+		Dump_( *(E_QUEUE_ *)this, Stack, Begin, Direction );
 	}
 
 
@@ -449,7 +449,7 @@ namespace que {
 		void InsertItemAfterNode(
 			r Item,
 			r Node,
-			E_QUEUE_ &Queue )
+			que::E_QUEUEt_(r) &Queue )
 		{
 	#ifdef QUE_DBG
 			Test_();
@@ -465,7 +465,7 @@ namespace que {
 		void InsertItemBeforeNode(
 			r Item,
 			r Node ,
-			E_QUEUE_ &Queue )
+			que::E_QUEUEt_(r) &Queue )
 		{
 	#ifdef QUE_DBG
 			Test_();
@@ -480,7 +480,7 @@ namespace que {
 		//f Remove 'Node".
 		void Remove(
 			r Node,
-			E_QUEUE_ &Queue  )
+			que::E_QUEUEt_(r) &Queue  )
 		{
 	#ifdef QUE_DBG
 			Test_();
@@ -496,7 +496,7 @@ namespace que {
 			Amount_--;
 		}
 		//f Return amount of node in the queue.
-		tym::size__ Amount( const E_QUEUE_ & ) const
+		tym::size__ Amount( const que::E_QUEUEt_(r) & ) const
 		{
 			return Amount_;
 		}
@@ -506,29 +506,29 @@ namespace que {
 			return !Amount_;
 		}
 		//f Return the head.
-		r Head( const E_QUEUE_ & ) const
+		r Head( const que::E_QUEUEt_(r) & ) const
 		{
 			return Head_;
 		}
 		//f Return first node.
-		r First( const E_QUEUE_ & ) const
+		r First( const que::E_QUEUEt_(r) & ) const
 		{
 			return Head_;
 		}
 		//f Return the tail.
-		r Tail( const E_QUEUE_ & ) const
+		r Tail( const que::E_QUEUEt_(r) & ) const
 		{
 			return Tail_;
 		}
 		//f Return last node.
-		r Last( const E_QUEUE_ & ) const
+		r Last( const que::E_QUEUEt_(r) & ) const
 		{
 			return Tail_;
 		}
 		//f Return node next to 'Node'.
 		r Next(
 			r Node,
-			const E_QUEUE_ &Queue )
+			const que::E_QUEUEt_(r) &Queue )
 		{
 	#ifdef QUE_DBG
 			Test_();
@@ -541,7 +541,7 @@ namespace que {
 		//f Return node previous to 'Node'.
 		r Previous(
 			r Node,
-			const E_QUEUE_ &Queue ) const
+			const que::E_QUEUEt_(r) &Queue ) const
 		{
 	#ifdef QUE_DBG
 			Test_();
@@ -555,7 +555,7 @@ namespace que {
 		void Swap(
 			r Node1,
 			r Node2,
-			E_QUEUE_ &Queue  )
+			que::E_QUEUEt_(r) &Queue  )
 		{
 	#ifdef QUE_DBG
 			Test_();
