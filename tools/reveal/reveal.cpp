@@ -171,7 +171,7 @@ inline void Add(
 
 	if ( Line.Amount() != 2 ) {
 		stf::cerr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	P = Line.First();
@@ -179,19 +179,19 @@ inline void Add(
 
 	if ( !TestTag( Tag( P ) ) ) {
 		stf::cerr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	Nature = TestAndFormTagValue( Value, Text, File );
 
 	if ( Nature == tagexp::nUnknow ) {
 		stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 	else if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 		if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
 			stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 		else
 			Expander.Assign( Value, Nature, Id );
@@ -257,11 +257,11 @@ ERRBegin
 		break;
 	case tagexp::sBadFile:
 		stf::cerr << "Error with file '" << FileName << "'." << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	case tagexp::sUnknowTag:
 		stf::cerr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	default:
 		ERRc();
@@ -316,13 +316,13 @@ void PrepareExpander(
 	while ( P != NONE ) {
 		if ( !TestTag( Tag( P ) ) ) {
 			stf::cerr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 
 		if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 			if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
 				stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else
 				Ids.Store( Id, PV );
@@ -379,7 +379,7 @@ ERRBegin
 
 		if ( P == NONE ) {
 			stf::cerr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 
 		TagValue.Init();
@@ -389,7 +389,7 @@ ERRBegin
 
 		if ( Nature == tagexp::nUnknow ) {
 			stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 		else
 			Expander.Assign( TagValue, Nature, Ids( PV ) );
@@ -400,7 +400,7 @@ ERRBegin
 
 	if ( P != NONE ) {
 		stf::cerr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 ERRErr
 ERREnd
@@ -437,7 +437,7 @@ ERRBegin
 
 	if ( P == NONE ) {
 		stf::cerr << "Tag descriptor file contents no data." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	Ids.Init();
@@ -481,7 +481,7 @@ inline bso::bool__ IsMulti(
 
 	if ( Line.Amount() < 2 ) {
 		stf::cerr << "The content of the tag description file is incorrect." << txf::nl;
-		ERRt();
+		ERRi();
 		return false;
 	}
 	else {
@@ -591,7 +591,7 @@ ERRBegin
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
 		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
 		stf::cerr << "Try '" NAME " --help' to get more informations." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	P = Options.First();
@@ -604,11 +604,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				stf::cerr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				stf::cerr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else
 				Delimiter = Argument( 0 );
@@ -617,11 +617,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				stf::cerr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				stf::cerr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else
 				Comment = Argument( 0 );
@@ -630,11 +630,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				stf::cerr << "Option '-t,--text-marker' must have one argument." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				stf::cerr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else
 				Text = Argument( 0 );
@@ -643,11 +643,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				stf::cerr << "Option '-f,--file-marker' must have one argument." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				stf::cerr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
-				ERRt();
+				ERRi();
 			}
 			else
 				File = Argument( 0 );
@@ -696,12 +696,12 @@ ERRBegin
 	case 0:
 		stf::cerr << "Too few arguments." << txf::nl;
 		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	default:
 		stf::cerr << "Too many arguments." << txf::nl;
 		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	}
 
@@ -745,15 +745,15 @@ ERRBegin
 	case cVersion:
 		PrintHeader();
 		TTR.Advertise();
-		ERRt();
+		ERRi();
 		break;
 	case cHelp:
 		PrintUsage( Description );
-		ERRt();
+		ERRi();
 		break;
 	case cLicense:
 		epsmsc::PrintLicense();
-		ERRt();
+		ERRi();
 		break;
 	case cReveal:
 	case CLNARG_NONE:
@@ -799,7 +799,7 @@ ERRBegin
 	if ( DFile.Init( Desc, err::hSkip ) != fil::sSuccess)
 	{
 		stf::cerr << "Error while opening '" << Desc << "' for reading." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	DFile.EOFD( XTF_EOXT );
@@ -815,7 +815,7 @@ ERRBegin
 		if ( IFile.Init( Source, err::hSkip ) != fil::sSuccess )
 		{
 			stf::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 
 		IFile.EOFD( XTF_EOXT );
@@ -838,7 +838,7 @@ ERRBegin
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
 		{
 			stf::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
-			ERRt();
+			ERRi();
 		}
 
 		OText.Init( OFile );
@@ -883,7 +883,7 @@ ERRFBegin
 ERRFErr
 	Retour = EXIT_FAILURE;
 
-	if ( ERRMajor == err::thw )
+	if ( ERRMajor == err::itn )
 		ERRRst();
 ERRFEnd
 ERRFEpilog
