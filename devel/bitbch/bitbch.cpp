@@ -72,12 +72,13 @@ void bitbch::And(
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
 
-	epeios::row__ Row = O1.First();
+	epeios::row_t__ Row = 0;
+	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
-	while ( Row != NONE ) {
-		R.Store( O1( Row ) && O2( Row ), Row );
+	while ( Row < Limit ) {
+		R.Table.Store( O1.Table( Row ) & O2.Table( Row ), Row );
 
-		Row = O1.Next( Row );
+		Row++;
 	}
 }
 
@@ -94,12 +95,13 @@ void bitbch::Or(
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
 
-	epeios::row__ Row = O1.First();
+	epeios::row_t__ Row = 0;
+	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
-	while ( Row != NONE ) {
-		R.Store( O1( Row ) || O2( Row ), Row );
+	while ( Row < Limit ) {
+		R.Table.Store( O1.Table( Row ) | O2.Table( Row ), Row );
 
-		Row = O1.Next( Row );
+		Row++;
 	}
 }
 
@@ -116,12 +118,13 @@ void bitbch::XOr(
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
 
-	epeios::row__ Row = O1.First();
+	epeios::row_t__ Row = 0;
+	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
-	while ( Row != NONE ) {
-		R.Store( O1( Row ) != O2( Row ), Row );
+	while ( Row < Limit ) {
+		R.Table.Store( O1.Table( Row ) ^ O2.Table( Row ), Row );
 
-		Row = O1.Next( Row );
+		Row++;
 	}
 }
 
@@ -132,12 +135,13 @@ void bitbch::Not(
 	if ( R.Amount() < O.Amount() )
 		R.Allocate( O.Amount() );
 
-	epeios::row__ Row = O.First();
+	epeios::row_t__ Row = 0;
+	epeios::size__ Limit = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
 	while ( Row != NONE ) {
-		R.Store( !O( Row ), Row );
+		R.Table.Store( ~O.Table( Row ), Row );
 
-		Row = O.Next( Row );
+		Row++;
 	}
 }
 
