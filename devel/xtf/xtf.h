@@ -1,25 +1,24 @@
 /*
-  Header for the 'xtf' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'xtf' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define XTF_NAME		"XTF"
 
-#define	XTF_VERSION	"$Revision$"	
+#define	XTF_VERSION	"$Revision$"
 
 #define XTF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &XTFTutor;
 
 #if defined( XXX_DBG ) && !defined( XTF_NODBG )
-#define XTF_DBG 
+#define XTF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &XTFTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D eXtended Text Flow. 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 //D eXtended Text Flow. Text flow with extended features.
@@ -71,21 +75,23 @@ extern class ttr_tutor &XTFTutor;
 
 namespace xtf {
 	//t type of position in a text (line or column).
-	typedef bso::ulong__ location;
+	typedef bso::ulong__ location__;
+
+	typedef bso::ubyte__ _amount__;
 
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow___
 	{
 	private:
 		// Remplit le tampon. Il est supposé vide.
-		void RemplirTampon_( unsigned char Offset )
+		void RemplirTampon_( _amount__ Offset )
 		{
-			Nombre_ = Entree_->GetUpTo( sizeof( Cache_ ) - Offset, Cache_ + Offset, 1 );
+			Nombre_ = (_amount__)Entree_->GetUpTo( (_amount__)( sizeof( Cache_ ) - Offset ), Cache_ + Offset, 1 );
 
 			Position_ = Offset;
 		}
 		// Retourne le prochain caractère sans l'extraire.
-		char Consulter_( unsigned char Offset = 0 )
+		char Consulter_( _amount__ Offset = 0 )
 		{
 			if ( !Nombre_ )
 				RemplirTampon_( Offset );
@@ -102,13 +108,13 @@ namespace xtf {
 		// Un petit cache. Taille doit être < 256.
 		flw::datum__ Cache_[255];
 		// Position dans le cache
-		bso::ubyte__ Position_;
+		_amount__ Position_;
 		// Nombre de caractères encore disponibles dans le cache.
-		bso::ubyte__ Nombre_;
+		_amount__ Nombre_;
 		// Ligne sur laquelle se trouve le prochain caractère à lire.
-		location Ligne_;
+		location__ Ligne_;
 		// Colonne sur laquelle se situe le prochain caractère à lire.
-		location Colonne_;
+		location__ Colonne_;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
 		// Adjust cache counters after reading a char.
@@ -222,13 +228,13 @@ namespace xtf {
 
 		}
 		//f Return the ligne of the next character.
-		location Line( void )
+		location__ Line( void )
 		{
 			return Ligne_;
 		}
 		/*f Return the column of the next character. If == 0, then
 		a '\n' or a '\r' was unget()'. */
-		location Column( void )
+		location__ Column( void )
 		{
 			return Colonne_;
 		}
@@ -250,7 +256,7 @@ namespace xtf {
 			return View() == XTF_EOXC;
 		}
 	};
-};
+}
 
 /*$END$*/
 				  /********************************************/
