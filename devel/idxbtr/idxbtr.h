@@ -1,6 +1,6 @@
 /*
   Header for the 'idxbtr' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
+  Copyright (C) 2002-2002 Claude SIMON (csimon@epeios.org) 
 
   This file is part of the Epeios (http://epeios.org/) project.
   
@@ -253,25 +253,37 @@ namespace idxbtr {
 					S_.Racine = Fille;
 			}
 		}
-		//f Try to put 'Row' as next to 'Current'. If it fails, return the node which is in the way, 'NONE' otherwise.
-		r TryAsNext(
+		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsGreater(
 			r Row,
 			r Current )
 		{
-			if ( ( Current = Right( Current ) ) == NONE )
-				BecomeRight( Row, Current );
-
-			return Current;
+#ifdef IDXBTR_DBG
+			if ( HasRight( Current ) )
+				ERRu();
+#endif
+			BecomeRight( Row, Current );
 		}
-		//f Try to put 'Row' as next to 'Current'. If it fails, return the node which is in the way, 'NONE' otherwise.
-		r TryAsPrevious(
+		//f Put 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsLesser(
 			r Row,
 			r Current )
 		{
-			if ( ( Current = Left( Current ) ) == NONE )
-				BecomeLeft( Row, Current );
-
-			return Current;
+#ifdef IDXBTR_DBG
+			if ( HasLeft( Current ) )
+				ERRu();
+#endif
+			BecomeLeft( Row, Current );
+		}
+		//f Put 'Row' as same then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsSame(
+			r Row,
+			r Current )
+		{
+			if ( *Row & 1 )	// Little random generator :-).
+				BecomeLeft( Row, NoeudSansFils_( Current ) );
+			else
+				BecomeRight( Row, NoeudSansFille_( Current ) );
 		}
 		//f Balances the tree which underlies the index.
 		void Balance( void );
@@ -358,6 +370,105 @@ namespace idxbtr {
 	{
 		idxbtr::Balance_( *(E_IBTREE_ *)this );
 	}
+
+	//e Search state.
+	enum state {
+		//i Unknow state.
+		sUnknow,
+		//i result found.
+		sFound,
+		//i result not found.
+		sNotFound,
+		//i Amount of states.
+		s_amount
+	};
+
+	//s To seek in a tree index.
+	template <typename r> class tree_seeker__
+	{
+	private:
+		r Current_;
+		const tree_index_<r> *Index_;
+		state State_;
+#ifdef IDXBTR_DBG
+		void Test_( void )
+		{
+			if ( Index_== NULL )
+				ERRu();
+
+			if ( Current_ == NONE )
+				ERRu();
+		}
+#endif
+		state Handle_( r &Row )
+		{
+			if ( Row != NONE ) {
+				Current_ = Row;
+				State_ =  sFound;
+			} else
+				State_ = sNotFound;
+
+			return State_;
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			Current_ = NONE;
+			Index_ = NULL;
+			State_ = sUnknow;
+		}
+		tree_seeker__( void )
+		{
+			reset( false );
+		}
+		~tree_seeker__( void )
+		{
+			reset( true );
+		}
+		//f Initialisation with index 'Index'. 'Index' must not be empty.
+		void Init( const tree_index_<r> &Index )
+		{
+			reset( true );
+
+			Index_ = &Index;
+
+#ifdef IDXBTR_DBG
+			if ( Index_->IsEmpty() )
+				ERRu();
+#endif
+			State_ = sFound;
+		}
+		//f Try to find an element greater then the current.
+		state SearchGreater( void )
+		{
+#ifdef IDXBTR_DBG
+			Test_();
+#endif
+			return( Handle_( Index_->Right( Current_ ) ) );
+		}
+		//f Try to find an element lesser then the current.
+		state SearchLesser( void )
+		{
+#ifdef IDXBTR_DBG
+			Test_();
+#endif
+			return( Handle_( Index_->Left( Current_ ) ) );
+		}
+		//f Return the row of the current node.
+		r GetCurrent( void )
+		{
+			return Current_;
+		}
+		//f Return the state of the last operation.
+		state GetState( void )
+		{
+			return State_;
+		}
+	};
+
+	//d A seeker.
+	#define E_TSEEKERt__( r )	tree_seeker__<r>
+	#define E_TSEEKER__			tree_seeker__<epeios::row__>
 
 
 }

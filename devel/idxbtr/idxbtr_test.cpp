@@ -41,6 +41,7 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	idxbtr::E_IBTREEt( row__ ) Index;
+	idxbtr::E_TSEEKERt__( row__ )	Seeker;
 ERRBegin
 	Index.Balance();
 

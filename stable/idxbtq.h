@@ -1,6 +1,6 @@
 /*
-  Header for the 'idxbtq' library by Claude L. Simon (csimon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org) 
+  Header for the 'idxbtq' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
   This file is part of the Epeios (http://epeios.org/) project.
   
@@ -32,7 +32,7 @@
 
 #define	IDXBTQ_VERSION	"$Revision$"	
 
-#define IDXBTQ_OWNER		"the Epeios project (http://epeios.org/)"
+#define IDXBTQ_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &IDXBTQTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -67,7 +67,9 @@ extern class ttr_tutor &IDXBTQTutor;
 
 namespace idxbtq {
 	using idxbtr::tree_index_;
+	using idxbtr::tree_seeker__;
 	using idxque::queue_index_;
+	using idxbtr::state;
 
 	//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
 	template <typename r> class tree_queue_index_
@@ -150,6 +152,30 @@ namespace idxbtq {
 			E_IBTREEt_( r )::BecomePrevious( New, Item );
 			E_IQUEUEt_( r )::BecomePrevious( New, Item );
 		}
+		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsGreater(
+			r Row,
+			r Current )
+		{
+			E_IBTREEt_( r )::PutAsGreater( Row, Current );
+			E_IQUEUEt_( r )::BecomeNext( Row, Current );
+		}
+		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsLesser(
+			r Row,
+			r Current )
+		{
+			E_IBTREEt_( r )::PutAsLesser( Row, Current );
+			E_IQUEUEt_( r )::BecomePrevious( Row, Current );
+		}
+		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		void PutAsSame(
+			r Row,
+			r Current )
+		{
+			E_IBTREEt_( r )::PutAsSame( Row, Current );
+			E_IQUEUEt_( r )::BecomePrevious( Row, Current );
+		}
 		//f Remove 'Item'.
 		void Remove( r Item )
 		{
@@ -165,6 +191,11 @@ namespace idxbtq {
 	};
 
 	AUTOt( tree_queue_index )
+
+	//c An index seeker.
+	template <typename r> class seeker__
+	: public E_TSEEKERt__( r )
+	{};
 }
 
 //d An index.
@@ -173,6 +204,10 @@ namespace idxbtq {
 
 #define E_INDEX_	E_INDEXt_( epeios::row__ )
 #define E_INDEX		E_INDEXt( epeios::row__ )
+
+//d A seeker.
+#define E_SEEKERt__( r )	seeker__<r>
+#define E_SEEKER__			seeker__<epeios::row__>
 
 
 /*$END$*/

@@ -1,7 +1,7 @@
 /*
-  'ssnmng' library by Claude L. Simon (csimon@webmails.com)
+  'ssnmng' library by Claude SIMON (csimon@epeios.org)
   Requires the 'ssnmng' header file ('ssnmng.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org).
 
   This file is part of the Epeios (http://epeios.org/) project.
   

@@ -1,7 +1,7 @@
 /*
-  'idxbtq' library by Claude L. Simon (csimon@epeios.org)
+  'idxbtq' library by Claude SIMON (csimon@epeios.org)
   Requires the 'idxbtq' header file ('idxbtq.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org).
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org).
 
   This file is part of the Epeios (http://epeios.org/) project.
   
