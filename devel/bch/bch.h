@@ -281,6 +281,27 @@ namespace bch {
 #endif
 			Truncate ( Amount() - *Row );
 		}
+		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
+		void Crop(
+			epeios::size__ Amount,
+			row Row = 0 )
+		{
+			Truncate( *Row + Amount );
+
+			if ( *Row > 0 )
+				Remove( 0, *Row - 1 );
+		}
+		//f Remove all objects but objects between 'First' and 'Last' included.
+		void Crop(
+			row First,
+			row Last )
+		{
+#ifdef BCH_DBG
+			if ( Last < First )
+				ERRu();
+#endif
+			Crop( Last - First + 1, First );
+		}
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
 			const _bunch &Source,
