@@ -9,6 +9,10 @@ BITBCH:
 LSTCTN:
 - Fixing bug.
 
+TYM:
+- Fixing bug.
+- Revert to version bzfore adaotation to CW.
+
 --------
 20030219
 --------

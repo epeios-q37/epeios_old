@@ -57,6 +57,7 @@ ERRProlog
 */	tym::E_MEMORY( mytype__ ) M1;
 	tym::E_MEMORY( mytype__ ) M2;
 	tym::E_MEMORY__( mytype__, 3 ) M3;
+	tym::E_MEMORY___( mytype__ ) M4;
 	bso::ulong__ I;
 	mytype__ J;
 	ifstream IN;

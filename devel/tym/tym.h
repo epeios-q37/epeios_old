@@ -304,7 +304,8 @@ namespace tym {
 	{
 		return uym::Compare( S1, S2, *BeginS1 * sizeof( t ), *BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
 	}
-	
+
+#if 0
 	//c The static part for the '_memory_' object. CodeWarrior needs this. Internal use.
 	template <class t,int size, typename r> class _memory_static_part__
 	: public _memory_<t, uym::untyped_memory__< size >, r >::s
@@ -320,33 +321,72 @@ namespace tym {
 	private:
 		_memory_static_part__<t, amount * size, r > Static_;
 	public:
-		memory__( _memory_static_part__<t, amount * size , r > &S = *(_memory_static_part__<t, amount * size, r > *) NULL )	// To simplify use in 'SET'.
+		memory__( _memory_static_part__<t, amount * size , r > &S = *(_memory_static_part__<t, amount * size, r > *) NULL )	// To simplify use in 'BCH'.
 		: _memory_<t, uym::untyped_memory__< amount * size >, r >( Static_ )
 		{}
 	
 	};
+#endif
+
+	/*c A static set of object of 'amount' objects of type 't' of size 'size'.
+	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
+	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
+	template <class t, int amount, int size, typename r> class memory__
+	: public _memory_< t, uym::untyped_memory__< amount * size >, r >
+	{
+/*	private:
+		_memory_<t, uym::untyped_memory__< amount * size >, r >::s Static_;	// Is empty.
+*/	public:
+		memory__( _memory_<t, uym::untyped_memory__< amount * size >, r >::s &S = *( _memory_<t, uym::untyped_memory__< amount * size >, r >::s *) NULL )	// To simplify use in 'BCH'.
+		: _memory_<t, uym::untyped_memory__< amount * size >, r >( S )
+		{}
+	
+	};
+
 
 	//d A static set of 'amount' object of type 'Type'.
 	#define E_MEMORYt__( type, amount, r ) memory__< type, amount, sizeof( type ), r > 
 	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ), epeios::row__ > 
 
+#if 0
+	//c The static part for the '_memory_' object. CodeWarrior needs this. Internal use.
+	template <class t, typename r> class _memory_static_part___
+	: public _memory_<t, uym::untyped_memory___, r >::s
+	{};
+	
 	/*c A bunch of object of 'amount' objects of type 't' of size 'size' stored in conventional memory.
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
 	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
-	template <class t, int size, typename r> class memory___
+	template <class t, typename r> class memory___
 	: public _memory_< t, uym::untyped_memory___, r >
 	{
-	private:
-		_memory_static_part__<t, size, r > Static_;
-	public:
-		memory___( _memory_static_part__<t, size, r > &S = *(_memory_static_part__<t, size, r > *) NULL )	// To simplify use in 'SET'.
+/*	private:
+		_memory_static_part___<t, r > Static_; // Is empty.
+*/	public:
+		memory___( _memory_static_part___<t, r > &S = *(_memory_static_part___<t, r > *) NULL )	// To simplify use in 'BCH'.
 		: _memory_<t, uym::untyped_memory___, r >( Static_ )
 		{}
 	};
+#endif
+
+		/*c A bunch of object of 'amount' objects of type 't' of size 'size' stored in conventional memory.
+	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
+	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
+	template <class t, typename r> class memory___
+	: public _memory_< t, uym::untyped_memory___, r >
+	{
+	private:
+		_memory_<t, uym::untyped_memory___, r >::s Static_;
+	public:
+		memory___( _memory_<t, uym::untyped_memory___, r >::s &S = *(_memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'BCH'.
+		: _memory_<t, uym::untyped_memory___, r >( S )
+		{}
+	};
+
 
 	//d A static set of 'amount' object of type 'Type'.
-	#define E_MEMORYt___( type, r ) memory___< type, sizeof( type ), r > 
-	#define E_MEMORY___( type ) memory___< type, sizeof( type ), epeios::row__ > 
+	#define E_MEMORYt___( type, r ) memory___< type, r > 
+	#define E_MEMORY___( type ) memory___< type, epeios::row__ > 
 }
 
 /*$END$*/
