@@ -149,6 +149,9 @@ static void GetSection_(
 			Section.Append( Paragraph );
 		else
 			Cont = false;
+
+		Paragraph.Flush();
+	
 	} while ( Cont );
 }
 
@@ -188,6 +191,8 @@ ERRBegin
 	do {
 		General.Init();
 		General.Title = FilterTitlePrefix_( Paragraph( 0 ) );
+
+		Paragraph.Flush();
 
 		GetSection_( Paragraph, General.Section, Flow );
 

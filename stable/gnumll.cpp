@@ -1,7 +1,7 @@
 /*
 	'gnumll' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'gnumll' header file ('gnumll.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -149,6 +149,9 @@ static void GetSection_(
 			Section.Append( Paragraph );
 		else
 			Cont = false;
+
+		Paragraph.Flush();
+	
 	} while ( Cont );
 }
 
@@ -188,6 +191,8 @@ ERRBegin
 	do {
 		General.Init();
 		General.Title = FilterTitlePrefix_( Paragraph( 0 ) );
+
+		Paragraph.Flush();
 
 		GetSection_( Paragraph, General.Section, Flow );
 

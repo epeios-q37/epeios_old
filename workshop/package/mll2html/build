@@ -14,6 +14,9 @@ $GET epeios $DIR stable/*.cpp
 #$GET epeios $DIR tools/mll2html/*.h
 $GET epeios $DIR tools/mll2html/*.cpp
 $GET epeios $DIR tools/mll2html/Makefile
+$GET epeios $DIR tools/mll2html/mailinglists.txt
+$GET epeios $DIR tools/mll2html/template.html
+$GET epeios $DIR tools/mll2html/Makefile
 $GET epeios $DIR tools/mll2html/CHANGELOG.txt
 
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
