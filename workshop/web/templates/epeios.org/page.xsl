@@ -127,6 +127,7 @@
 			<xsl:element name="tbody">
 				<xsl:element name="tr">
 					<xsl:element name="td">
+						<xsl:attribute name="valign">top</xsl:attribute>
 						<xsl:element name="strong">
 							<xsl:text>The Epeios project</xsl:text>
 						</xsl:element>
@@ -139,12 +140,41 @@
 						</xsl:element>
 					</xsl:element>
 					<xsl:element name="td">
+						<xsl:attribute name="valign">top</xsl:attribute>
 						<xsl:attribute name="align">right</xsl:attribute>
-						<xsl:text>CVS hosted on </xsl:text>
-						<xsl:element name="a">
-							<xsl:attribute name="href">http://sv.gnu.org</xsl:attribute>
-							<xsl:text>Savannah</xsl:text>
+						<!-- SiteSearch Google -->
+						<xsl:element name="form">
+							<xsl:attribute name="method">GET</xsl:attribute>
+							<xsl:attribute name="action">http://www.google.com/search</xsl:attribute>
+							<xsl:text>CVS hosted on </xsl:text>
+							<xsl:element name="a">
+								<xsl:attribute name="href">http://sv.gnu.org</xsl:attribute>
+								<xsl:text>Savannah</xsl:text>
+							</xsl:element>
+							<xsl:element name="br"/>
+							<xsl:element name="input">
+								<xsl:attribute name="type">text</xsl:attribute>
+								<xsl:attribute name="name">q</xsl:attribute>
+								<xsl:attribute name="size">15</xsl:attribute>
+								<xsl:attribute name="maxlength">255</xsl:attribute>
+							</xsl:element>
+							<xsl:element name="input">
+								<xsl:attribute name="type">submit</xsl:attribute>
+								<xsl:attribute name="name">btnG</xsl:attribute>
+								<xsl:attribute name="value">Search</xsl:attribute>
+							</xsl:element>
+							<xsl:element name="input">
+								<xsl:attribute name="type">hidden</xsl:attribute>
+								<xsl:attribute name="name">domains</xsl:attribute>
+								<xsl:attribute name="value">epeios.org</xsl:attribute>
+							</xsl:element>
+							<xsl:element name="input">
+								<xsl:attribute name="type">hidden</xsl:attribute>
+								<xsl:attribute name="name">sitesearch</xsl:attribute>
+								<xsl:attribute name="value">epeios.org</xsl:attribute>
+							</xsl:element>
 						</xsl:element>
+						<!-- SiteSearch Google -->
 					</xsl:element>
 				</xsl:element>
 			</xsl:element>

@@ -1766,7 +1766,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
-            <date>2001</date>
+            <date>2001, 2004</date>
           </copyright>
           <misc>
             <sourceforge group_id="$CORE_SF_ID$"/>
@@ -1778,10 +1778,10 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <section>
-            <para xml:space="preserve">The <raw>mll2html</raw> package comes with 2 files : <raw>mailinglists.txt</raw> and <raw>templates.html</raw>. The <raw>mailinglists.txt</raw> is a text file containing the descriptions of mailing lists. The <raw>templates.html</raw> is a file containing tags (letters between two <raw>$$</raw>), which are replaced in the resulting file with the content of the <raw>mailinglists.txt</raw> file formatted in HTML. </para>
+            <para xml:space="preserve">The <raw>mll2html</raw> package comes with 2 files : <raw>mailinglists.txt</raw> and <raw>template.html</raw>. The <raw>mailinglists.txt</raw> is a text file containing the descriptions of mailing lists. The <raw>template.html</raw> is a file containing tags (letters between two <raw>$$</raw>), which are replaced in the resulting file with the content of the <raw>mailinglists.txt</raw> file formatted in HTML. </para>
           </section>
           <section>
-            <para xml:space="preserve">The following command <raw>mll2html mailinglists.txt template.html result.html</raw> generates a file named <raw>result.html</raw> which is based on <raw>templates.html</raw> with tags replaced by the content of <raw>mailinglists.txt</raw> formatted in HTML.</para>
+            <para xml:space="preserve">The following command <raw>mll2html mailinglists.txt template.html result.html</raw> generates a file named <raw>result.html</raw> which is based on <raw>template.html</raw> with tags replaced by the content of <raw>mailinglists.txt</raw> formatted in HTML.</para>
           </section>
         </content>
       </document>
