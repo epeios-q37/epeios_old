@@ -59,26 +59,29 @@ extern class ttr_tutor &BRKANLTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "broker8.h"
+#include "frtend.h"
 
 namespace brkanl {
 	//t Broker parameters.
-	typedef broker8_casts_ 	broker_parameters_;
-	typedef broker8_casts	broker_parameters;
-
+	typedef frtend::casts_ 	parameters_;
+	typedef frtend::casts	parameters;
+	
+	using frtend::command_item_;
+	using frtend::type_item_;
+	
 	//c A broker Command.
-	class broker_command_
+	class command_
 	{
 	public:
 		//o The command identification.
-		broker8_command_item_ Identification;
+		command_item_ Identification;
 		//o The parameters.
-		broker_parameters_ Parameters;
+		parameters_ Parameters;
 		struct s {
-			broker8_command_item_::s Identification;
-			broker_parameters_::s Parameters;
+			command_item_::s Identification;
+			parameters_::s Parameters;
 		};
-		broker_command_( s &S )
+		command_( s &S )
 		: Identification ( S.Identification ),
 		  Parameters( S.Parameters )
 		 {}
@@ -92,7 +95,7 @@ namespace brkanl {
 			Identification .plug( M );
 			Parameters.plug( M );
 		}
-		broker_command_ &operator =( const broker_command_ &BC )
+		command_ &operator =( const command_ &BC )
 		{
 			Identification = BC.Identification;
 			Parameters = BC.Parameters;
@@ -107,25 +110,25 @@ namespace brkanl {
 		}
 	};
 
-	AUTO( broker_command )
+	AUTO( command )
 
 	//t Broker commands.
-	typedef XCONTAINER_( broker_command_ ) broker_commands_;
-	typedef XCONTAINER( broker_command_ ) broker_commands;
+	typedef XCONTAINER_( command_ ) commands_;
+	typedef XCONTAINER( command_ ) commands;
 
 	//c A broker object type.
-	class broker_type_
+	class type_
 	{
 	public:
 		//o The type identification.
-		broker8_type_item_ Identification;
+		type_item_ Identification;
 		//o The commands of the type.
-		broker_commands_ Commands;
+		commands_ Commands;
 		struct s {
-			broker8_type_item_::s Identification;
-			broker_commands_::s Commands;
+			type_item_::s Identification;
+			commands_::s Commands;
 		};
-		broker_type_( s &S )
+		type_( s &S )
 		: Identification( S.Identification ),
 		  Commands( S.Commands )
 		{}
@@ -139,7 +142,7 @@ namespace brkanl {
 			Identification.plug( M );
 			Commands.plug( M );
 		}
-		broker_type_ &operator =( const broker_type_ &BT )
+		type_ &operator =( const type_ &BT )
 		{
 			Identification = BT.Identification;
 			Commands = BT.Commands;
@@ -154,16 +157,16 @@ namespace brkanl {
 		}
 	};
 
-	AUTO( broker_type )
+	AUTO( type )
 
 	//t Broker types.
-	typedef XCONTAINER_( broker_type_ ) broker_types_;
-	typedef XCONTAINER( broker_type_ ) broker_types;
+	typedef XCONTAINER_( type_ ) types_;
+	typedef XCONTAINER( type_ ) types;
 
 	//f Fill 'Types' with contents of 'Broker'.
 	void Analyze(
-		broker8__core_ &Broker,
-		broker_types_ &Types );	
+		frtend::frontend___ &Frontend,
+		types_ &Types );	
 }
 	
 /*$END$*/

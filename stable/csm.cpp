@@ -62,13 +62,13 @@ using namespace csm;
 struct server_data__
 {
 	spp::shared_bipipe___ *Bipipe;
-	csm::manager__ *Manager;
+	csm::manager___ *Manager;
 };
 
 struct client_data__
 {
 	spp::shared_bipipe___ *Bipipe;
-	csm::manager__ *Manager;
+	csm::manager___ *Manager;
 };
 
 struct listener_data__ {
@@ -97,6 +97,7 @@ ERRBegin
 	while( CD.Manager->CP( SocketFlow, Pipe, PU ) == bContinue );
 ERRErr
 ERREnd
+	CD.Manager->CE( PU );
 ERREpilog
 }
 
@@ -138,6 +139,7 @@ ERRBegin
 	while ( SD.Manager->SP( Pipe, PUS ) == bContinue);
 ERRErr
 ERREnd
+	SD.Manager->SE( PUS );
 ERREpilog
 }
 
@@ -163,7 +165,7 @@ ERREpilog
 'void Client(sck_flo_socket_ &, void *PUS)' et pour fonction d'initialisation
 de serveur 'void InitServeur( tub_tube_entre_sortie &, csm_tubes &, void *).
 NE REND JAMAIS LA MAIN. */
-void csm::manager__::Process(
+void csm::manager___::Process(
 	srv::service__ Service,
 	err::handle Handle )
 {

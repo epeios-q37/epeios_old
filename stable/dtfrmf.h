@@ -1,9 +1,9 @@
 /*
   Header for the 'dtfrmf' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 IDEALX (http://www.IDEALX.com/) 
+  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
 
-  This file is part of an IDEALX (http://www.IDEALX.org/) project
-  which uses Epeios (http://www.epeios.org/) technology.
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@
 
 #define	DTFRMF_VERSION	"$Revision$"	
 
-#define DTFRMF_OWNER		"IDEALX (http://www.IDEALX.com/)"
+#define DTFRMF_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 

@@ -55,18 +55,20 @@ public:
 
 using namespace brkanl;
 
+using namespace frtend;
+
 namespace {
 
 	void HandleCommands_(
-		const broker8_command_items_ &Items,
-		bso__ushort Type,
-		broker8__core_ &Broker,
-		broker_commands_ &Commands )
+		const command_items_ &Items,
+		type__ Type,
+		frontend___ &Frontend,
+		commands_ &Commands )
 	{
 	ERRProlog
-		CMITEM( broker8_language_item_ ) Item;
+		CMITEM( language_item_ ) Item;
 		POSITION__ P =NONE;
-		broker_command Command;
+		command Command;
 	ERRBegin
 		Item.Init( Items );
 
@@ -76,7 +78,7 @@ namespace {
 			Command.Init();
 			Command.Identification.Value = Item( P ).Value;
 			Command.Identification.ID( Item( P ).ID() );
-			Broker.GetParameters( Type, Item( P ).ID(), Command.Parameters );
+			Frontend.GetParameters( Type, Item( P ).ID(), Command.Parameters );
 			Commands.Add( Command );
 			P = Items.Next( P );
 		}
@@ -86,32 +88,32 @@ namespace {
 	}
 
 	void GetCommands_(
-		bso__ushort Type,
-		broker8__core_ &Broker,
-		broker_commands_ &Commands )
+		type__ Type,
+		frtend::frontend___ &Frontend,
+		commands_ &Commands )
 	{
 	ERRProlog
-		broker8_command_items Items;
+		command_items Items;
 	ERRBegin
 		Items.Init();
 
-		Broker.GetCommandsIDAndName( Type, Items );
+		Frontend.GetCommandsIDAndName( Type, Items );
 
-		HandleCommands_( Items, Type, Broker, Commands );
+		HandleCommands_( Items, Type, Frontend, Commands );
 	ERRErr
 	ERREnd
 	ERREpilog
 	}
 
 	void HandleTypes_(
-		const broker8_type_items_ &Items,
-		broker8__core_ &Broker,
-		broker_types_ &Types )
+		const type_items_ &Items,
+		frtend::frontend___ &Frontend,
+		types_ &Types )
 	{
 	ERRProlog
-		CMITEM( broker8_type_item_ ) Item;
+		CMITEM( type_item_ ) Item;
 		POSITION__ P = NONE;
-		broker_type Type;
+		type Type;
 	ERRBegin
 		Item.Init( Items );
 
@@ -123,7 +125,7 @@ namespace {
 			Type.Identification.Value = Item( P ).Value;
 			Type.Identification.ID( Item( P ).ID() );
 
-			GetCommands_( Item( P ).ID(), Broker, Type.Commands );
+			GetCommands_( Item( P ).ID(), Frontend, Type.Commands );
 
 			Types.Add( Type );
 			P = Items.Next( P );
@@ -133,10 +135,10 @@ namespace {
 	ERREpilog
 	}
 
-	void PutMasterType_( broker8_type_items_ &Items )
+	void PutMasterType_( type_items_ &Items )
 	{
 	ERRProlog
-		broker8_type_item Item;
+		type_item Item;
 	ERRBegin
 		Item.Init();
 
@@ -151,19 +153,19 @@ namespace {
 }
 
 void brkanl::Analyze(
-	broker8__core_ &Broker,
-	broker_types_ &Types )
+	frtend::frontend___ &Frontend,
+	types_ &Types )
 {
 ERRProlog
-	broker8_type_items Items;
+	type_items Items;
 ERRBegin
 	Items.Init();
 	
 	PutMasterType_( Items );
 	
-	Broker.GetTypesIDAndName( Items );
+	Frontend.GetTypesIDAndName( Items );
 	
-	HandleTypes_( Items, Broker, Types );
+	HandleTypes_( Items, Frontend, Types );
 ERRErr
 ERREnd
 ERREpilog

@@ -31,8 +31,48 @@
 
 #include "broker.h"
 
+using namespace broker;
+
 #include "err.h"
 #include "stf.h"
+#include "csm.h"
+
+class manager
+: public csm::manager___
+{
+protected:
+	//v Client process function.
+	virtual csm::behavior CSMCP(
+		flw::ioflow___ &Client,
+		flw::ioflow___ &Server,
+		void *UP )
+	{
+		::broker::broker &Broker = *(::broker::broker *)UP;
+		
+		Broker.Handle( Client ); 
+	
+		return csm::bContinue;
+	}
+	//v Client initialization function.
+	virtual void *CSMCI(
+		flw::ioflow___ &Client,
+		flw::ioflow___ &Server )
+	{
+		::broker::broker *Broker;
+		
+		if ( ( Broker = new ::broker::broker ) == NULL )
+			ERRa();
+			
+		Broker->Init();
+	}
+	//v Client ending functions.
+	virtual void CSMCE( void *UP )
+	{
+		if ( UP != NULL )
+			delete (::broker::broker *)UP;
+	
+	}
+};
 
 void Generic( int argc, char *argv[] )
 {
@@ -41,6 +81,15 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+void Essai( void )
+{
+	manager Manager;
+	
+	Manager.Init();
+	
+	Manager.Process( 1234 );
 }
 
 int main( int argc, char *argv[] )
@@ -53,6 +102,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

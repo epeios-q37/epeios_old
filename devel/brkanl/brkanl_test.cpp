@@ -31,13 +31,78 @@
 
 #include "brkanl.h"
 
+using namespace brkanl;
+
 #include "err.h"
 #include "stf.h"
+#include "clt.h"
+#include "salcsm.h"
+#include "broker.h"
+
+class manager
+: public salcsm::manager___
+{
+protected:
+	//v Client process function.
+	virtual salcsm::behavior SALCSMCP(
+		flw::ioflow___ &Client,
+		flw::ioflow___ &Server,
+		void *UP )
+	{
+		::broker::broker &Broker = *(::broker::broker *)UP;
+		
+		Broker.Handle( Client ); 
+	
+		return salcsm::bContinue;
+	}
+	//v Client initialization function.
+	virtual void *SALCSMCI(
+		flw::ioflow___ &Client,
+		flw::ioflow___ &Server )
+	{
+		::broker::broker *Broker;
+		
+		if ( ( Broker = new ::broker::broker ) == NULL )
+			ERRa();
+			
+		Broker->Init();
+		
+		return Broker;
+	}
+	//v Client ending functions.
+	virtual void SALCSMCE( void *UP )
+	{
+		if ( UP != NULL )
+			delete (::broker::broker *)UP;
+	}
+};
+
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Essai( void )
+{
+ERRProlog
+	manager Manager;
+	frtend::data__ Data;
+	frtend::frontend___ Frontend;
+	types Types;
+//	sck::socket_ioflow___ Flow;
+ERRBegin
+	Types.Init();
+//	Flow.Init( clt::Connect( "localhost:1234" ) );
+//	Frontend.Init( Flow, Data );
+	Manager.Init();
+	Frontend.Init( Manager.Process(), Data );
+	
+	Analyze( Frontend, Types );
 ERRErr
 ERREnd
 ERREpilog
@@ -53,6 +118,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

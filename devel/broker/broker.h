@@ -63,6 +63,10 @@ extern class ttr_tutor &BROKERTutor;
 #include "err.h"
 #include "flw.h"
 #include "rqm.h"
+#include "lst.h"
+#include "lgg.h"
+#include "brkcst.h"
+#include "brkcmd.h"
 
 //d An invalid value for a command.
 #define BROKER_INVALID_COMMAND		RQM_INVALID_COMMAND
@@ -76,11 +80,11 @@ extern class ttr_tutor &BROKERTutor;
 #define BROKER_INVALID_OBJECT		RQM_INVALID_OBJECT
 #define BROKER_OBJECT_MAX			RQM_OBJECT_MAX
 
-#define BROKER_MASTER_OBJECT		BROKER9_INVALID_OBJECT
+#define BROKER_MASTER_OBJECT		BROKER_INVALID_OBJECT
 
-#define BROKER_MASTER_TYPE		 	BROKER9_INVALID_TYPE
+#define BROKER_MASTER_TYPE		 	BROKER_INVALID_TYPE
 
-#define BROKER_MASTER_COMMAND		BROKER9_INVALID_COMMAND
+#define BROKER_MASTER_COMMAND		BROKER_INVALID_COMMAND
 
 
 namespace broker {
@@ -96,10 +100,17 @@ namespace broker {
 	using rqm::command__;
 	using rqm::tcommand__;
 
-	using rqm::cast;
+	using rqm::cast__;
 
-	typedef void (* function )(
-		class broker &Frontend,
+	using rqm::description_;
+	using rqm::description;
+	using rqm::descriptions_;
+	using rqm::descriptions;
+	
+	using rqm::request_manager___;
+
+	typedef void (* function__ )(
+		class broker &Broker,
 		class untyped_module &Module,
 		command__ Command,
 		rqm::request_manager___ &Request,
@@ -107,11 +118,9 @@ namespace broker {
 		void *UP );
 
 
-	using rqm::description_;
-	using rqm::description;
-
+#if 0
 	class descriptions_
-		: public rqm::descriptions_
+	: public rqm::descriptions_
 	{
 	public:
 		SET_( void *) UPs;
@@ -146,7 +155,7 @@ namespace broker {
 			rqm_descriptions_::Init();
 			UPs.Init();
 		}
-		// Cast is only here to avoid ambiguity with the nest function.
+		// Cast is only here to avoid ambiguity with the next function.
 		POSITION__ Add(
 			const char *Name,
 			void *UP,
@@ -163,7 +172,7 @@ namespace broker {
 	};
 
 	AUTO( descriptions )
-
+#endif
 
 	//c An untyped module.
 	class untyped_module
@@ -172,47 +181,49 @@ namespace broker {
 		// Libelle du type de l'objet, du module.
 		const char *Name_;
 		// L'interface auquel le module est rattaché.
-		class broker9_frontend *Frontend_;
+		class broker *Broker_;
 	protected:
 		//v To get the index of a new object.
-		virtual broker9__index BROKER9New( void )
+		virtual index__ BROKERNew( void )
 		{
 			ERRb();
-			return (broker9__index)0;	// Pour éviter un warning.
+			return 0;	// Pour éviter un warning.
 		}
 		//v To remove the object with index 'Index'.
-		virtual void BROKER9Remove( broker9__index Index )
+		virtual void BROKERRemove( index__ Index )
 		{
 			ERRb();
 		}
 		//v To get a pointer of the object of index 'Index'.
-		virtual void *BROKER9Object( broker9__index Index )
+		virtual void *BROKERObject( index__ Index )
 		{
 			ERRb();
 			return NULL;	// Pour éviter un 'warning'
 		}
 		// Fonction appelée pour traiter la requête 'Requete' pour l'objet d'index 'Index'.
 		virtual void Handle_(
-			broker9__index Index,
-			rqm__request_manager_ &Requete,
+			index__ Index,
+			request_manager___ &Requete,
 			void *PU ) = 0;
 	public:
 		//r The description of the request.
-		broker9_descriptions Descriptions;
-		broker9_untyped_module( void )
+		descriptions Descriptions;
+		//r User pointers.
+		SET( void *) UPs;
+		untyped_module( void )
 		{
 			Name_ = NULL;
-			Frontend_ = NULL;
+			Broker_ = NULL;
 		}
 		//f Give the index of a new object.
-		broker9__index New( void )
+		index__ New( void )
 		{
-			return BROKER9New();
+			return BROKERNew();
 		}
 		//f Remove the object of index 'Index'.
-		void Remove( broker9__index Index )
+		void Remove( index__ Index )
 		{
-			BROKER9Remove( Index );
+			BROKERRemove( Index );
 		}
 		//f Give the name of the objects.
 		const char *Name( void ) const
@@ -220,57 +231,70 @@ namespace broker {
 			return Name_;
 		}
 		//f Give an pointer to the object of index 'Index'.
-		void *Object( broker9__index Index )
+		void *Object( index__ Index )
 		{
-			return BROKER9Object( Index );
+			return BROKERObject( Index );
 		}
 		//f Initialization with the object name 'Name'.
 		void Init( const char *Name )
 		{
 			Descriptions.Init();
+			UPs.Init();
 
 			Name_ = Name;
 		}
 		//f Handle the request 'Request' for object of index 'Index'.
 		void Handle(
-			broker9__index Index,
-			rqm__request_manager_ &Requete,
+			index__ Index,
+			request_manager___ &Requete,
 			void *UP )
 		{
 			Handle_( Index, Requete, UP );
 		}
-		//f Return the interface attache to this module.
-		broker9_frontend *Frontend( void )
+		//f Return the broker attached to this module.
+		broker *Broker( void )
 		{
-			return Frontend_;
+			return Broker_;
 		}
 		//f Return the command which has 'Description' as description, or 'BROKER9_INVALID_COMMAND' if non-existant.
-		broker9__command Command( const rqm_description_ &Description ) const
+		command__ Command( const description_ &Description ) const
 		{
 			POSITION__ P = Descriptions.Position( Description );
 
 			if ( P == NONE )
-				P = BROKER9_INVALID_COMMAND;
-			else if ( P > BROKER9_COMMAND_MAX )
+				P = BROKER_INVALID_COMMAND;
+			else if ( P > BROKER_COMMAND_MAX )
 				ERRl();
 
-			return (broker9__tcommand)P;
+			return (tcommand__)P;
 		}
-		friend class broker9_frontend;
-		friend class broker9_master_module;
+		POSITION__ Add(
+			const char *Name,
+			const rqm::cast *Casts,
+			void * UP )
+		{
+			POSITION__ P = Descriptions.Add( Name, Casts );
+			
+			if ( UPs.Add( UP ) != P )
+				ERRc();
+				
+			return P;
+		}			
+		friend class broker;
+		friend class master_module;
 	};
 
 	//c A module for an object of type 't'.
 	template <class t> class module
-	: public broker9_untyped_module
+	: public untyped_module
 	{
 	private:
 		void Traiter_(
 			t &Objet,
-			rqm__request_manager_ &Requete,
+			request_manager___ &Requete,
 			void *PU )
 		{
-			broker9__command C;
+			command__ C;
 
 			FLWGet( Requete.Input(), C );
 
@@ -279,28 +303,29 @@ namespace broker {
 
 			Requete.SetDescription( Descriptions( C() ) );
 
-			Objet.HANDLE( *Frontend(), *this, C, Requete, PU );
+			Objet.HANDLE( *Broker(), *this, C, Requete, PU );
 		}
 	protected:
 		virtual void Handle_(
-			broker9__index Index,
-			rqm__request_manager_ &Requete,
+			index__ Index,
+			request_manager___ &Requete,
 			void *PU )
 		{
-			Traiter_( *(t *)broker9_untyped_module::Object( Index ), Requete, PU );
+			Traiter_( *(t *)untyped_module::Object( Index ), Requete, PU );
 		}
+	public:
 		//f Initialization.
 		void Init( void )
 		{
-			broker9_untyped_module::Init( t::NAME );
+			untyped_module::Init( t::NAME );
 
-			t::NOTIFY( broker9_untyped_module::Descriptions );
+			t::NOTIFY( untyped_module::Descriptions );
 		}
 	};
 
 	//c A module with object stored in RAM.
 	template <class t, class st> class ram_module
-	: public broker9_module<t>,
+	: public module<t>,
 	  private LIST
 	{
 	protected:
@@ -308,7 +333,7 @@ namespace broker {
 		{
 			Objets.Allocate( Size );
 		}
-		virtual broker9__index BROKER9New( void )
+		virtual index__ BROKER9New( void )
 		{
 			st *S = NULL;
 			t *Pointeur = NULL;
@@ -322,18 +347,18 @@ namespace broker {
 				ERRm();
 			}
 
-			broker9__index Index = LIST::CreateEntry();
+			index__ Index = LIST::CreateEntry();
 
 			Objets.Write( Pointeur, Index() );
 
 			return Index;
 		}
-		virtual void BROKER9Remove( broker9__index Index )
+		virtual void BROKER9Remove( index__ Index )
 		{
 			delete Objets( Index() );
 			LIST::Remove( Index() );
 		}
-		virtual void *BROKER9Object( broker9__index Index )
+		virtual void *BROKER9Object( index__ Index )
 		{
 			if ( Index() >= Objets.Amount() )
 				ERRu();
@@ -348,13 +373,13 @@ namespace broker {
 		{
 			LIST::Init();
 			Objets.Init();
-			broker9_module<t>::Init();
+			module<t>::Init();
 		}
 	};
 
 	//c A module with object stored in standard memory.
 	template <class t, class st> class standard_module
-	: public broker9_module<t>,
+	: public module<t>,
 	  private LIST
 	{
 	private:
@@ -365,18 +390,18 @@ namespace broker {
 			Element_.Sync();
 			Objets.Allocate( Size );
 		}
-		virtual broker9__index BROKER9New( void )
+		virtual index__ BROKERNew( void )
 		{
 			Element_.Sync();
 			return LIST::CreateEntry();
 		}
-		virtual void BROKER9Remove( broker9__index Index )
+		virtual void BROKERRemove( index__ Index )
 		{
 			Element_( Index() ).reset();
 			LIST::Remove( Index() );
 			Element_.Sync();
 		}
-		virtual void *BROKER9Object( broker9__index Index )
+		virtual void *BROKERObject( index__ Index )
 		{
 			if ( Index() >= Objets.Amount() )
 				ERRu();
@@ -392,11 +417,11 @@ namespace broker {
 			Objets.reset( P );
 			LIST::reset( P );
 		}
-		broker9_standard_module( void )
+		standard_module( void )
 		{
 			reset( false );
 		}
-		~broker9_standard_module( void )
+		~standard_module( void )
 		{
 			reset( true );
 		}
@@ -406,30 +431,30 @@ namespace broker {
 			LIST::Init();
 			Objets.Init();
 			Element_.Init( Objets );
-			broker9_untyped_module::Init( t::NAME );
-			broker9_module<t>::Init();
+			untyped_module::Init( t::NAME );
+			module<t>::Init();
 		}
 	};
 
 	// Module maître, qui fait tout le boulot.
 	class master_module
-	: public broker9_untyped_module
+	: public untyped_module
 	{
 	private:
 		// Si vrai, une erreur arrête le thread, sinon celui-ci se poursuit.
 		bso__bool ErrorBreaking_;
 	protected:
 		virtual void Handle_(
-			broker9__index Index,
-			rqm__request_manager_ &Requete,
+			index__ Index,
+			request_manager___ &Requete,
 			void *PU );
 	public:
-		broker9_master_module( void )
+		master_module( void )
 		{
 			ErrorBreaking_ = true;
 		}
-		// Initialisation avec rattachement à l'interface 'Frontend'.
-		void Init( broker9_frontend &Frontend );
+		// Initialisation avec rattachement à l'interface 'Broker'.
+		void Init( broker &Broker );
 		bso__bool ErrorBreaking( void  )
 		{
 			return ErrorBreaking_;
@@ -443,61 +468,61 @@ namespace broker {
 	struct link__
 	{
 		// Le type de l'objet
-		broker9__type Type;
+		type__ Type;
 		// L'index de l'objet;
-		broker9__index Index;
+		index__ Index;
 	};
 
 	// Classe de gestion des liens entre module et objets.
 	class links
-	: private SET( broker9__link ),
+	: private SET( link__ ),
 	  private LIST
 	{
 	protected:
 		void LSTAllocate( SIZE__ Size )
 		{
-			SET( broker9__link )::Allocate( Size );
+			SET( link__ )::Allocate( Size );
 		}
 	public:
 		// Initialisation.
 		void Init( void )
 		{
 			LIST::Init();
-			SET( broker9__link )::Init();
+			SET( link__ )::Init();
 		}
-		broker9__object New(
-			broker9__type IdType,
-			broker9__index Index )
+		object__ New(
+			type__ IdType,
+			index__ Index )
 		{
-			broker9__link Lien;
-			broker9__object IdObjet;
+			link__ Lien;
+			object__ IdObjet;
 			POSITION__ P;
 			
 			P = LIST::CreateEntry();
 
-			if ( P > BROKER9_TYPE_MAX )
+			if ( P > BROKER_TYPE_MAX )
 				ERRl();
 
-			IdObjet = (broker9__ttype)P;
+			IdObjet = (ttype__)P;
 
 			Lien.Type = IdType;
 			Lien.Index = Index;
 
-			SET( broker9__link )::Write( Lien, IdObjet() );
+			SET( link__ )::Write( Lien, IdObjet() );
 
 			return IdObjet;
 		}
-		void Remove( broker9__object IdObjet )
+		void Remove( object__ IdObjet )
 		{
 			LIST::Remove( IdObjet() );
 		}
-		broker9__type Type( broker9__object IdObjet ) const
+		type__ Type( object__ IdObjet ) const
 		{
-			return SET( broker9__link )::Read( IdObjet() ).Type;
+			return SET( link__ )::Read( IdObjet() ).Type;
 		}
-		broker9__index Index( broker9__object IdObjet ) const
+		index__ Index( object__ IdObjet ) const
 		{
-			return SET( broker9__link )::Read( IdObjet() ).Index;
+			return SET( link__ )::Read( IdObjet() ).Index;
 		}
 		SIZE__ Amount( void ) const
 		{
@@ -506,34 +531,34 @@ namespace broker {
 	};
 
 
-	//c A frontend, which handles objects od different type and request to this object.
+	//c A broker, which handles objects od different type and request to this object.
 	class broker
 	{
 	private:
-		broker9_master_module Master_;
+		master_module Master_;
 		// Retourne le module correspondant à 'IdType'.
-		broker9_untyped_module &Module_( broker9__type IdType ) const
+		untyped_module &Module_( type__ IdType ) const
 		{
-			if ( IdType() != BROKER9_MASTER_TYPE )
+			if ( IdType() != BROKER_MASTER_TYPE )
 				return *Modules( IdType() );
 			else
-				return (broker9_untyped_module &)Master_;	// Not very happy about this conversion, 
+				return (untyped_module &)Master_;	// Not very happy about this conversion, 
 		}
 		// Retourne le module correspondant à 'IdObjet'.
-		broker9_untyped_module &Module_( broker9__object IdObjet ) const
+		untyped_module &Module_( object__ IdObjet ) const
 		{
-			if ( IdObjet() != BROKER9_MASTER_OBJECT )
+			if ( IdObjet() != BROKER_MASTER_OBJECT )
 				return Module_( Type_( IdObjet ) );
 			else
-				return (broker9_untyped_module &)Master_; // Not very happy about this conversion, 
+				return (untyped_module &)Master_; // Not very happy about this conversion, 
 		}
 		// Retourne le type correpondant à l'objet d'indetificateur 'IdObjet'.
-		broker9__type Type_( broker9__object IdObjet ) const
+		type__ Type_( object__ IdObjet ) const
 		{
 			return Links.Type( IdObjet );
 		}
 		// Retourne l'indexcorrespondant à l'objet d'identificateur 'IdObjet'.
-		broker9__index Index_( broker9__object IdObjet ) const
+		index__ Index_( object__ IdObjet ) const
 		{
 			return Links.Index( IdObjet );
 		}
@@ -551,10 +576,10 @@ namespace broker {
 			lgg::language Courante;
 		} Langues_;
 		//o The different modules.
-		SET( broker9_untyped_module * ) Modules;
+		SET( untyped_module * ) Modules;
 		//o The relation between modules an index.
-		broker9_links Links;
-		broker9_frontend( void )
+		links Links;
+		broker( void )
 		{
 			Langues_.Nombre = 0;
 			Langues_.Identificateurs = NULL;
@@ -571,22 +596,21 @@ namespace broker {
 			Links.Init();
 		}
 		//f Add 'Module' to the interface.
-		void Add( broker9_untyped_module &Module )
+		void Add( untyped_module &Module )
 		{
-			Module.Frontend_ = this;
+			Module.Broker_ = this;
 			Modules.Add( &Module );
 		}
-		/*f Handle the request which come by 'Input' and write the answer to 'Output'.
+		/*f Handle the request which come by 'Channel' and write the answer to 'Channel'.
 		If 'true' is returned, than the request contains a deconnection request. */
 		bso__bool Handle(
-			flw::iflow___ &Input,
-			flw::oflow___ &Output,
+			flw::ioflow___ &Channel,
 			void *PU = NULL );
 		/*f Return the command corresponding at request description 'Description' and
 		object type 'Type'. 'BROKER9_INVALID_COMMAND' is returned if command not found. */
-		broker9__command Command(
-			broker9__type IdType,
-			const rqm_description_ &Description )
+		command__ Command(
+			type__ IdType,
+			const description_ &Description )
 		{
 			return Module_( IdType ).Command( Description );
 		}
@@ -601,37 +625,37 @@ namespace broker {
 			Master_.ErrorBreaking( Value );
 		}
 		//f Give the module for the object of type 'Type'.
-		const broker9_untyped_module &Module( broker9__type Type ) const
+		const untyped_module &Module( type__ Type ) const
 		{
 			return Module_( Type );
 		}
 		//f Give the module for object 'Object'.
-		const broker9_untyped_module &Module( broker9__object Object ) const
+		const untyped_module &Module( object__ Object ) const
 		{
 			return Module_( Object );
 		}
 		//f Return a pointer to the 'Object' object.
-		const void *Object( broker9__object Object )
+		const void *Object( object__ Object )
 		{
 			return Module_( Object ).Object( Links.Index( Object ) );
 		}
 		//f Give a new object.
-		broker9__object New( broker9__type Type )
+		object__ New( type__ Type )
 		{
-			if ( (unsigned long)Links.Amount() >= (unsigned long)BROKER9_TYPE_MAX )
+			if ( (unsigned long)Links.Amount() >= (unsigned long)BROKER_TYPE_MAX )
 				ERRl();
 
 			return Links.New( Type, Module_( Type ).New() );
 		}
 		//f Give the type of the object 'Object'.
-		broker9__type Type( broker9__object Object)
+		type__ Type( object__ Object)
 		{
 			return Type_( Object );
 		}
 		//f Give the type of a nobject named 'Name'.
-		broker9__type Type( str_string_ &Name );
+		type__ Type( str_string_ &Name );
 		//f Remove object 'Object'.
-		void Remove( broker9__object Object )
+		void Remove( object__ Object )
 		{
 			Module_( Object ).Remove( Links.Index( Object ) );
 		}
@@ -661,34 +685,40 @@ namespace broker {
 			Langues_.Courante = Langue;
 		}
 		//f Return the name of objects of type 'Type'.
-		const char *Name( broker9__type IdType ) const
+		const char *Name( type__ IdType ) const
 		{
 			return Module( IdType ).Name();
 		}
 		//f Return the name of the object 'Object'.
-		const char *Name( broker9__object Object )
+		const char *Name( object__ Object )
 		{
 			return Name( Type( Object ));
 		}
+#if 0
 		/*f Add a request descrption with name 'Name', function pointer 'FP'
 		and a list of casts. The list must contain 2 'rqm::cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts.
 		'Cast' exists only to avoid ambiguity with next function. */
 		POSITION__ Add(
 			const char *Name,
-			broker9__function FP,
+			function__ FP,
 			rqm::cast Cast,
 			... );
+#endif
 		/*f Add a request descrption with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'rqm::cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
 		POSITION__ Add(
 			const char *Name,
-			broker9__function FP,
-			const rqm::cast *Casts );
+			function__ FP,
+			const rqm::cast *Casts )
+		{
+			return Master_.Add( Name, Casts, (void *)FP );
+		}
+
 	};
 
-	typedef broker9_frontend broker9_frontend_;
+	typedef broker broker_;
 
 };
 

@@ -192,43 +192,39 @@ namespace rqm
 
 	//c Request descriptions.
 	class descriptions_
-	: public CONTAINER_( description_ )
+	: public XCONTAINER_( description_ )
 	{
 	public:
 		//o The descriptions
 		struct s
-		: public CONTAINER_( description_ )::s
+		: public XCONTAINER_( description_ )::s
 		{};
 		descriptions_( s &S )
-		: CONTAINER_( description_ )( S )
+		: XCONTAINER_( description_ )( S )
 		{}
 		void reset( bool P = true )
 		{
-			CONTAINER_( description_ )::reset( P );
+			XCONTAINER_( description_ )::reset( P );
 		}
 		void plug( mmm_multimemory_ &M )
 		{
-			CONTAINER_( description_ )::plug( M );
+			XCONTAINER_( description_ )::plug( M );
 		}
 		descriptions_ &operator =( const descriptions_ &D )
 		{
-			CONTAINER_( description_ )::operator =( D );
+			XCONTAINER_( description_ )::operator =( D );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			CONTAINER_( description_ )::Init();
+			XCONTAINER_( description_ )::Init();
 		}
 		//f Adding 'Description'. Return the position where added.
 		POSITION__ Add( const description_ &Description )
 		{
-			POSITION__ Position = CONTAINER_( description_ )::New();
-
-			CONTAINER_( description_ )::Write( Description, Position );
-
-			return Position;
+			return XCONTAINER_( description_ )::Add( Description );
 		}
 # if 0
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
@@ -238,21 +234,19 @@ namespace rqm
 			const char *Name,
 			cast Cast,
 			... );
+#endif
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */
 		POSITION__ Add(
 			const char *Name,
 			const cast *Casts )
 		{
-			POSITION__ Position = CONTAINER_( escription_ )::New();
-			description_ &Description = CONTAINER_( description_ )::operator()( Position );
+			description Description;
 
 			Description.Init( Name, Casts );
-			CONTAINER_( description_ )::Sync();
-
-			return Position;
+			
+			return Add( Description );
 		}
-#endif
 		/*f Return the position of the description of the request named 'Name' or 
 		'NONE' if non-existant. */
 		POSITION__ Position( const char *Name ) const;
@@ -261,7 +255,7 @@ namespace rqm
 		//f Return the amount of descriptions.
 		SIZE__ Amount( void ) const
 		{
-			return CONTAINER_( description_ )::Amount();
+			return XCONTAINER_( description_ )::Amount();
 		}
 	};
 
@@ -333,7 +327,7 @@ namespace rqm
 		flw::ioflow___ *Channel_;
 		cast GetCast_( void )
 		{
-			cast Cast = Cast_;
+			cast__ Cast = Cast_;
 
 			if ( Cast != cInvalid )
 				Cast_ = cInvalid;
@@ -350,7 +344,7 @@ namespace rqm
 					ERRu();
 			}
 
-			return Cast;
+			return (cast)Cast;
 		}
 		void GetValue_(
 			cast Caste,
@@ -493,8 +487,13 @@ namespace rqm
 
 			Channel_->Synchronize();
 		}
-		//f Return the channel used to handler the request.
-		flw::ioflow___ &Channel( void )
+		//f Return the channel used to handle the request as input flow.
+		flw::iflow___ &Input( void )
+		{
+			return *Channel_;
+		}
+		//f Return the channel used to handle the request as ouput flow.
+		flw::oflow___ &Output( void )
 		{
 			return *Channel_;
 		}

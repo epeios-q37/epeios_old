@@ -117,7 +117,7 @@ void rqm::description_::Init(
 	const cast *Casts )
 {
 	int i = 0;
-	cast Cast;
+	cast Cast = cInvalid;
 	bso__bool Array = false;
 
 	this->Name.Init();
@@ -142,7 +142,7 @@ void rqm::description_::Init(
 		ERRc();
 #endif
 
-	while ( Array || ( Cast = Casts[i++] ) != cEnd ) {
+	while ( ( ( Cast = Casts[i++] ) != cEnd ) || Array ) {
 		if ( Cast == cArray ) {
 			if ( Array )
 				ERRu();
@@ -265,14 +265,13 @@ void rqm::AddValue(
 		break;
 	case cCasts:
 	{
-		const SET_( cast ) &Castes = *( const SET_( cast ) * )Valeur;
-		POSITION__ Position = 0;
-		cast C;
+		const SET_( cast__ ) &Casts = *( const SET_( cast__ ) * )Valeur;
+		POSITION__ Position = Casts.First();
 
-		while ( Position < Castes.Amount() )
+		while ( Position  != NONE )
 		{
-			C = Castes( Position++ );
-			Flot.Put( &C, sizeof( C ) );
+			flw::Put( Casts( Position ), Flot );
+			Position = Casts.Next( Position );
 		}
 
 		Flot.Put( 0 );
@@ -373,21 +372,33 @@ void rqm::request_manager___::GetValue_(
 	}
 	case cCasts:
 	{
-		cast Caste;
-		SET_( cast ) &Castes = *( SET_( cast ) *)Valeur;
+		cast__ Cast = cInvalid;
+		SET_( cast__ ) &Casts = *( SET_( cast__ ) *)Valeur;
 		bso__bool Fin = false;
+		bso__bool Array = false;
 
-		flw::Get( *Channel_, Caste );
+		flw::Get( *Channel_, Cast );
 
 		do
 		{
-			if ( Caste == cEnd )
-				Fin = true;
+			if ( Cast == cArray ) {
+				if ( Array )
+					ERRc();
+				else
+					Array = true;
+			}
+					
+		
+			if ( Cast == cEnd )
+				if ( Array )
+					Array = false;
+				else
+					Fin = true;
 
-			Castes.Add( Caste );
-			flw::Get( *Channel_, Caste );
+			Casts.Add( Cast );
+			flw::Get( *Channel_, Cast );
 		}
-		while( ( Caste != cEnd ) || !Fin );
+		while( ( Cast != cEnd ) || !Fin );
 
 		break;
 	}

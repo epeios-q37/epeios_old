@@ -31,10 +31,10 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
+copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err
-
+libs = ttr tol flw stf err uym fam mmi csm mtk pip spp srv sck\
+       brkcmd brkcst rqm ctn lgg
 
 
 ifeq ("$(EPEIOS_OS)","windows")
@@ -61,7 +61,7 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
+lo += -lglib -lgthread
 ds = :
 endif
 

@@ -55,6 +55,10 @@ extern class ttr_tutor &BROKER8Tutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+//D BROKER Part 8. Obslolete.
+
+#error Oboslete. Use 'FRTEND' library instead.
+
 #include "broker1.h"
 #include "bso.h"
 #include "str.h"

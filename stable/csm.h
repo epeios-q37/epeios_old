@@ -62,15 +62,19 @@ extern class ttr_tutor &CSMTutor;
 #define CSMCP	SALCSMCP
 //d An alias for the user client initialization function.
 #define CSMCI	SALCSMCI
+//d An alias for the user client ending function.
+#define CSMCE	SALCSMCE
 //d An alias for the user server process function.
 #define CSMSP	SALCSMSP
 //d An alias for the user server initialization function.
 #define CSMSI	SALCSMSI
+//d An alias for the user server endinf function.
+#define CSMSE	SALCSMSE
 
 namespace csm {
 	using namespace salcsm;
 	//c To manage client/server operations.
-	class manager__
+	class manager___
 	: public functions__
 	{
 	public:

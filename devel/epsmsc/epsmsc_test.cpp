@@ -43,6 +43,18 @@ ERREnd
 ERREpilog
 }
 
+void Essai( void )
+{
+ERRProlog
+ERRBegin
+	fout << EPSMSC_IDEALX_TEXT << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
@@ -53,6 +65,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

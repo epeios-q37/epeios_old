@@ -61,6 +61,12 @@ extern class ttr_tutor &EPSMSCTutor;
 //d The epeios site URL.
 #define EPSMSC_EPEIOS_URL	"http://www.epeios.org/"
 
+//d The gnu URL.
+#define EPSMSC_GNU_URL	"http://www.gnu.org/"
+
+//d The IDEALX URL.
+#define EPSMSC_IDEALX_URL	"http://www.IDEALX.org/"
+
 //d The hypertext link to the Epeios project.
 #define EPSMSC_EPEIOS_LINK	"<A HREF=\"" EPSMSC_EPEIOS_URL "\">Epeios project</A>"
 
@@ -68,20 +74,24 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_APP_LINK( Name )\
 	"<A HREF=\"" EPSMSC_EPEIOS_URL "en/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
 
-//m The invitation to consult the help text for application named 'Nam'.
-#define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --version' for more informations."
+//m The invitation to consult the help text for application named 'Name'.
+#define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations."
 
 //d The author.
-#define EPSMSC_AUTHOR	"Claude L. SIMON"
+#define EPSMSC_AUTHOR_NAME	"Claude L. SIMON"
 
 //d Author e-mail
 #define EPSMSC_AUTHOR_EMAIL	"simon@epeios.org"
 
 //d Author mail hypertext link.
-#define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR "</A>"
+#define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"
 
-//d GNU Text.
-#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (http://www.gnu.org/)."
+//d GNU (http://www.gnu.org) Text.
+#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ")."
+
+//d IDEALX (http://www.idealx.org) text.
+#define EPSMSC_IDEALX_TEXT	"\tThis file is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
+							"\twhich uses Epeios (" EPSMSC_EPEIOS_URL ") technology."
 
 /*$END$*/
 				  /********************************************/

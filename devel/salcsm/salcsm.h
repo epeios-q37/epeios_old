@@ -94,6 +94,9 @@ namespace salcsm {
 		{
 			return NULL;
 		}
+		//v Client ending functions.
+		virtual void SALCSMCE( void *UP )
+		{}
 		//v Server process function.
 		virtual behavior SALCSMSP(
 			flw::ioflow___ &Client,
@@ -106,6 +109,9 @@ namespace salcsm {
 		{
 			return NULL;
 		}
+		//v Server ending function.
+		virtual void SALCSMSE( void *UP )
+		{}
 	public:
 		behavior CP(
 			flw::ioflow___ &Client,
@@ -119,6 +125,10 @@ namespace salcsm {
 		{
 			return SALCSMCI( Client, Server );
 		}
+		void CE( void *UP )
+		{
+			SALCSMCE( UP );
+		}
 		behavior SP(
 			flw::ioflow___ &Client,
 			void *UP )
@@ -128,6 +138,10 @@ namespace salcsm {
 		void *SI( void )
 		{
 			return SALCSMSI();
+		}
+		void SE( void *UP )
+		{
+			SALCSMSE( UP );
 		}
 	};
 	
@@ -202,7 +216,7 @@ namespace salcsm {
 	private:
 		functions__ *Functions_;
 		flot *Flot_;
-		void *PU_;
+		void *UP_;
 	protected:
 		virtual flw::amount__ FLWPut(
 			const flw::data__ *Buffer,
@@ -212,11 +226,16 @@ namespace salcsm {
 	public:
 		void reset( bool P = true )
 		{
+			if ( P ) {
+				if ( Functions_ != NULL )
+					Functions_->SE( UP_ );
+			}
+		
 			flot::reset( P );
 		
 			Functions_ = NULL;
 			Flot_ = NULL;
-			PU_ = NULL;
+			UP_ = NULL;
 		}
 		flot_serveur_actif( void )
 		{
@@ -231,14 +250,14 @@ namespace salcsm {
 			tampon &Lecture,
 			functions__ *Functions,
 			flot &Flot,
-			void *PU )
+			void *UP )
 		{
 			reset();
 		
 			flot::Init( Ecriture, Lecture );
 			Functions_ = Functions;
 			Flot_ = &Flot;
-			PU_ = PU;
+			UP_ = UP;
 		}
 	};
 
@@ -250,7 +269,7 @@ namespace salcsm {
 		functions__ *Functions_;
 		flot *Client_;
 		flot_serveur_actif *Serveur_;
-		void *PU_;
+		void *UP_;
 	protected:
 		virtual flw::amount__ FLWPut(
 			const flw::data__ *Buffer,
@@ -260,12 +279,17 @@ namespace salcsm {
 	public:
 		void reset( bool P = true )
 		{
+			if ( P ) {
+				if ( Functions_ != NULL )
+					Functions_->CE( UP_ );
+			}
+		
 			flot::reset( P );
 		
 			Functions_ = NULL;
 			Client_ = NULL;
 			Serveur_ = NULL;
-			PU_ = NULL;
+			UP_ = NULL;
 		}
 		flot_client_actif( void )
 		{
@@ -289,12 +313,12 @@ namespace salcsm {
 			Functions_ = Functions;
 			Serveur_ = &Serveur;
 			Client_ = &Client;
-			PU_ = PU;
+			UP_ = PU;
 		}
 	};
 	
 	//c To handle client/manager operations, as in the 'CSM' library, but without multitasking.
-	class manager__
+	class manager___
 	: public functions__
 	{
 	private:

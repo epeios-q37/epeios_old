@@ -67,7 +67,7 @@ namespace flw {
 	typedef size_t			size__;
 
 	//t Type of the data
-	typedef char			data__;
+	typedef unsigned char			data__;
 
 	//c Base input flow.
 	class iflow___

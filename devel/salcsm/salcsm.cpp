@@ -125,7 +125,7 @@ flw::amount__ salcsm::flot_serveur_actif::FLWPut(
 #endif
 
 	if ( Synchronization && ( Amount == Wanted ) )
-		Functions_->SP( *Flot_, PU_ );
+		Functions_->SP( *Flot_, UP_ );
 
 	return Amount; 
 }
@@ -146,12 +146,12 @@ flw::amount__ salcsm::flot_client_actif::FLWPut(
 #endif
 
 	if ( Synchronization && ( Amount == Wanted ) )
-			Functions_->CP( *Client_, *Serveur_, PU_ );
+			Functions_->CP( *Client_, *Serveur_, UP_ );
 
 	return Amount;
 }
 
-flw::ioflow___ &salcsm::manager__::Process( void )
+flw::ioflow___ &salcsm::manager___::Process( void )
 { 
 	void *PUS = NULL;
 	void *PUC = NULL;

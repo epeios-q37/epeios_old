@@ -1,63 +1,53 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  Header for the 'epsmsc' library by Claude L. Simon (epeios@epeios.org)
+  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
 
-			http://www.epeios.org/
-*/
-/* end of 'entete.txt' template file */
-/* begin of 'entete.h' template file V1.3 */
-/*
-Version:
-	1.0.3 06/02/2000 17:19:01
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
-Instigators:
-	Claude SIMON
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-Authors:
-	Claude SIMON
-
-Contributors:
-	/
-
-Coordinator:
-	Claude SIMON
-
-Description:
-	EPeioS MiSC
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org or write to the
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/* Begin of automatic documentation generation part. */
-
-//V 1.0.3
-//C Claude SIMON
-//D EPeioS MiSC
-//R 06/02/2000 17:19:01
-
-/* End of automatic documentation generation part. */
-
-/* end of 'entete.h' template file */
-/* begin of 'xxx.h' template file V2.5 */
+//	$Id$
 
 #ifndef EPSMSC__INC
 #define EPSMSC__INC
 
 #define EPSMSC_NAME		"EPSMSC"
 
-#define	EPSMSC_VERSION		"1.0.3"	
-#define EPSMSC_OWNER		"The Epeios Project (www.epeios.org)"	
+#define	EPSMSC_VERSION	"$Revision$"	
 
-//  	Substitution is not applied to the rest when emancipated
-
-#ifdef EPSMSC__LINE
-#line 14
-#endif
+#define EPSMSC_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &EPSMSCTutor;
+
+#if defined( XXX_DBG ) && !defined( EPSMSC_NODBG )
+#define EPSMSC_DBG 
+#endif
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (epeios@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
@@ -71,6 +61,12 @@ extern class ttr_tutor &EPSMSCTutor;
 //d The epeios site URL.
 #define EPSMSC_EPEIOS_URL	"http://www.epeios.org/"
 
+//d The gnu URL.
+#define EPSMSC_GNU_URL	"http://www.gnu.org/"
+
+//d The IDEALX URL.
+#define EPSMSC_IDEALX_URL	"http://www.IDEALX.org/"
+
 //d The hypertext link to the Epeios project.
 #define EPSMSC_EPEIOS_LINK	"<A HREF=\"" EPSMSC_EPEIOS_URL "\">Epeios project</A>"
 
@@ -78,20 +74,24 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_APP_LINK( Name )\
 	"<A HREF=\"" EPSMSC_EPEIOS_URL "en/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
 
-//m The invitation to consult the help text for application named 'Nam'.
-#define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --version' for more informations."
+//m The invitation to consult the help text for application named 'Name'.
+#define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations."
 
 //d The author.
-#define EPSMSC_AUTHOR	"Claude L. SIMON"
+#define EPSMSC_AUTHOR_NAME	"Claude L. SIMON"
 
 //d Author e-mail
 #define EPSMSC_AUTHOR_EMAIL	"simon@epeios.org"
 
 //d Author mail hypertext link.
-#define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR "</A>"
+#define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"
 
-//d GNU Text.
-#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (http://www.gnu.org/)."
+//d GNU (http://www.gnu.org) Text.
+#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ")."
+
+//d IDEALX (http://www.idealx.org) text.
+#define EPSMSC_IDEALX_TEXT	"\tThis file is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
+							"\twhich uses Epeios (" EPSMSC_EPEIOS_URL ") technology."
 
 /*$END$*/
 				  /********************************************/
@@ -100,4 +100,3 @@ extern class ttr_tutor &EPSMSCTutor;
 /******************************************************************************/
 
 #endif
-/* end of 'xxx.h' template file */
