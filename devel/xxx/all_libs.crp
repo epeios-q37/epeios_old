@@ -169,9 +169,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&BacKenD CaSTs
 &bkddcb		&ebkd		&2001, 2003-\
 	&BacKenD DesCriBer
+&bkddsc		&ebkd		&2001, 2003-\
+	&BacKenD DeSCriptions
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2001-\
 	&BacKenD MaNaGer
+&bkdprp		&ebkd		&2004\
+	&BackEnD Parameter RePository.
 &bkdrqm		&ebkd		&2001-\
 	&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2001-\
