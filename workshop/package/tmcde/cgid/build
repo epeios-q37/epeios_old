@@ -17,6 +17,10 @@ cvs -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd login
 cvs -z3 -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd export -l -D today -d $DIR stable/
 cvs -d:pserver:anonymous@cvs.ebkd.sf.net:/cvsroot/ebkd logout
 
+cvs -d:pserver:anonymous@cvs.ehos.sf.net:/cvsroot/ehos login
+cvs -z3 -d:pserver:anonymous@cvs.ehos.sf.net:/cvsroot/ehos export -l -D today -d $DIR stable/
+cvs -d:pserver:anonymous@cvs.ehos.sf.net:/cvsroot/ehos logout
+
 cvs -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc login
 cvs -z3 -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc export -l -D today -d $DIR apps/CGID/
 cvs -z3 -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc export -l -D today -d $DIR apps/CGID/XSL/
