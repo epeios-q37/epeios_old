@@ -143,7 +143,7 @@ namespace broker {
 		//r The description of the request.
 		descriptions Descriptions;
 		//r User pointers.
-		bch::E_BUNCH( void *) UPs;
+		bch::E_BUNCH( const void *) UPs;
 		untyped_module( void )
 		{
 			Name_ = NULL;
@@ -205,7 +205,7 @@ namespace broker {
 		tym::row__ Add(
 			const char *Name,
 			const cast *Casts,
-			void * UP )
+			const void *UP )
 		{
 			tym::row__ P = Descriptions.Add( Name, Casts );
 			
@@ -214,6 +214,13 @@ namespace broker {
 				
 			return P;
 		}			
+		tym::row__ Add(
+			const char *Name,
+			const void *UP,
+			... )
+		{
+			return Add( Name, (cast *)(&UP + 1), UP );
+		}
 		friend class broker;
 		friend class master_module;
 	};
@@ -415,7 +422,7 @@ namespace broker {
 	protected:
 		void LSTAllocate( tym::size__ Size )
 		{
-			E_MEMORY( link__ )::Allocate( Size, aem::mFit );
+			E_MEMORY( link__ )::Allocate( Size );
 		}
 	public:
 		// Initialisation.
@@ -627,6 +634,14 @@ namespace broker {
 			const cast *Casts )
 		{
 			return Master_.Add( Name, Casts, (void *)FP );
+		}
+		tym::row__ Add(
+			const char *Name,
+			function__ FP,
+			cast Cast,	// Added to avoid confusion with function above.
+			... )
+		{
+			return Add( Name, FP, &Cast );
 		}
 
 	};

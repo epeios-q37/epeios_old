@@ -139,10 +139,10 @@ namespace dtr {
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
-			Tree.Allocate( Size, Adjust );
-			Queue.Allocate( Size, Adjust );
+			Tree.Allocate( Size, Mode );
+			Queue.Allocate( Size, Mode );
 		}
 		//f 'First' becomes first of 'Node'.
 		void BecomeFirst( 

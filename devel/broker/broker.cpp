@@ -714,6 +714,43 @@ namespace broker {
 	ERREpilog
 		return !MasterData.Deconnexion;
 	}
+#if 0	
+	tym::row__ untyped_module::Add(
+		const char *Name,
+		const void *UP,
+		... )
+	{
+		tym::row__ P;
+	ERRProlog
+		va_list L;
+		description Description;
+		brkcst::cast Cast;
+	ERRBegin
+		Description.Init( Name );
+		
+		va_start( L, UP );
+
+		while ( ( Cast = va_arg( L, brkcst::cast ) ) != cEnd )
+			Description.Add( Cast );
+			
+		Description.Add( Cast );
+		
+		while( ( Cast = va_arg( L, brkcst::cast ) ) != cEnd )
+			Description.Add( Cast );
+			
+		va_end( L );
+		
+		P = Descriptions.Add( Description );
+		
+		if ( UPs.Add( UP ) != P )
+			ERRc();
+	ERRErr
+	ERREnd
+	ERREpilog
+		return P;
+	}
+#endif
+	
 }
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -54,6 +54,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include <math.h>
+
 namespace itg {
 	integer_ divide_(
 		const integer_ &Num,
@@ -419,33 +421,53 @@ namespace itg {
 			return Div_( Abs( Num ), Abs( Den ), Dummy );
 	}
 	
-	flw::oflow___ & operator <<(
-		flw::oflow___ &Flow,
+	integer_ Exp(
+		const integer_ &X,
+		int Y )
+	{
+	ERRProlog
+		integer Res;
+	ERRBegin
+		Res.Init();
+		Res = 1;
+		
+		while( Y-- )
+			Res *= X;
+			
+		return Res;
+	ERRErr
+	ERREnd
+	ERREpilog
+	}
+	
+	txf::text_oflow___ & operator <<(
+		txf::text_oflow___ &Flow,
 		const integer_ &Integer )
 	{
 		int Compteur, Chiffre;
+		integer_ I = Integer;
 
-		if ( !Intger )
-			return Flow << 0;
-		else if ( Integer < integer( 0 ) )
+		if ( !I )
+			return Flow << 0UL;
+		else if ( I < integer( 0 ) )
 		{
 			Flow << '-';
-			Integer = -Integer;
+			I = -I;
 		}
 
-		Compteur = (int)log10( Entier.LongFloat() );
+		Compteur = (int)log10( I.GetLongFloat() );
 
 		while( Compteur )
 		{
-			Chiffre =  (int)( Entier.GetLongFloat() / pow( 10, Compteur ) );
+			Chiffre =  (int)( I.GetLongFloat() / pow( 10, Compteur ) );
 
-			Flow << Chiffre;
+			Flow << (unsigned long)Chiffre;
 
-			Intger -= Exp( integer( 10 ), Compteur ) * integer( Chiffre );
+			I -= Exp( integer( 10 ), Compteur ) * integer( Chiffre );
 			Compteur--;
 		}
 
-		return Flow << Entier.GetUShort_();
+		return Flow << I.GetLongFloat();
 	}
 
 	

@@ -290,6 +290,10 @@ namespace itg {
 	}	
 }
 
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &OFlow,
+	const itg::integer_ &Integer );
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

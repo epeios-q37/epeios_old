@@ -141,6 +141,19 @@ namespace brkrqm {
 		void Init(
 			const char *Name,
 			const cast *Casts );
+		//f Initialization with name 'Name'. The casts would be given using 'New()'.
+		void Init( const char *Name )
+		{
+			this->Name.Init();
+			Casts.Init();
+			
+			this->Name = Name;
+		}
+		//f Add 'Cast'.
+		void Add( brkcst::cast Cast )
+		{
+			Casts.Add( (cast__)Cast );
+		}
 	};
 
 	AUTO( description )
