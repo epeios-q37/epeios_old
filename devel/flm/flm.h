@@ -118,7 +118,7 @@ namespace flm {
 		};
 	};
 
-	class memoire_fichier_base
+	class memoire_fichier_base_
 	{
 	#if defined( FLM__UNIX_LIKE ) || defined( FLM__MS_LOWLEVEL_IO )
 		int FD_;
@@ -323,6 +323,14 @@ namespace flm {
 		}
 		// alloue 'Capacite' octets
 	public:
+		struct s
+		{
+			// Standardization.
+		};
+		memoire_fichier_base_( s &S )
+		{
+			// Standardization.
+		}
 		void reset( bool P  = true )
 		{
 			if ( P )
@@ -345,18 +353,6 @@ namespace flm {
 			Temoin_.Interne = false;
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
-		}
-		void plug( class mmm::multimemory_ & )
-		{
-			// Standardization.
-		}
-		memoire_fichier_base( void )
-		{
-			reset( false );
-		}
-		virtual ~memoire_fichier_base( void )
-		{
-			reset( true );
 		}
 		void Init(
 			const char *NomFichier = NULL,
@@ -442,9 +438,9 @@ namespace flm {
 	};
 
 	//c The standard memory driver which handle a file as memory.
-	class file_memory_driver
-	: public E_MEMORY_DRIVER,
-	  public memoire_fichier_base
+	class file_memory_driver_
+	: public E_MEMORY_DRIVER_,
+	  public memoire_fichier_base_
 	{
 	protected:
 		virtual void MDRRead(
@@ -452,7 +448,7 @@ namespace flm {
 			bsize__ Amount,
 			data__ *Buffer )
 		{
-			memoire_fichier_base::Lire( Position, Amount, Buffer );
+			memoire_fichier_base_::Lire( Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRWrite(
@@ -460,42 +456,37 @@ namespace flm {
 			bsize__ Amount,
 			row__ Position )
 		{
-			memoire_fichier_base::Ecrire( Buffer, Amount, Position );
+			memoire_fichier_base_::Ecrire( Buffer, Amount, Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( size__ Size )
 		{
-			memoire_fichier_base::Allouer( Size );
+			memoire_fichier_base_::Allouer( Size );
 		}
 		// alloue 'Taille' octets
 	public:
-		file_memory_driver( void )
-		{
-			reset( false );
-		}
-		virtual ~file_memory_driver( void )
-		{
-			reset( true );
-		}
-		void plug( class mmm::multimemory_ &M )
-		{
-			memoire_fichier_base::plug( M );
-			E_MEMORY_DRIVER::plug( M );
-		}
+		struct s
+		: public E_MEMORY_DRIVER_::s,
+		  memoire_fichier_base_::s
+		{};
+		file_memory_driver_( s &S )
+		: E_MEMORY_DRIVER_( S ),
+		  memoire_fichier_base_( S )
+		{}
 		void reset( bool P = true )
 		{
-			memoire_fichier_base::reset( P );
-			E_MEMORY_DRIVER::reset( P );
+			memoire_fichier_base_::reset( P );
+			E_MEMORY_DRIVER_::reset( P );
 		}
 		//f Return the mode.
 		mdr::mode Mode( void )
 		{
-			return memoire_fichier_base::Mode();
+			return memoire_fichier_base_::Mode();
 		}
 		//f 'Mode' becomes the mode.
 		void Mode( mdr::mode Mode )
 		{
-			memoire_fichier_base::Mode( Mode );
+			memoire_fichier_base_::Mode( Mode );
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
@@ -503,12 +494,12 @@ namespace flm {
 			mdr::mode Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base::Init( FileName, Mode, Creation );
-			E_MEMORY_DRIVER::Init();
+			memoire_fichier_base_::Init( FileName, Mode, Creation );
+			E_MEMORY_DRIVER_::Init();
 		}
 	};
 
-	typedef file_memory_driver file_memory_driver_;
+	AUTO( file_memory_driver )
 }
 
 /*$END$*/

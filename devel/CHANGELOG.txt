@@ -18,6 +18,7 @@ CTN:
 FLM:
 - Using now the UNIX system calls under UNIX instead of the C++/C call (which seems bugged).
 - Using low-level io functions under Windows instead of the C/C++ call.
+- Adding a static part for standardization.
 
 IDXBTQ:
 - Adding 'E_INDEX(_)'.
