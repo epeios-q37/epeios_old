@@ -64,6 +64,10 @@ extern class ttr_tutor &DTFPTBTutor;
 #include "flw.h"
 #include "dtfbsc.h"
 
+#ifdef CPE__VC
+#	undef GetObject
+#endif
+
 namespace dtfptb {
 	using namespace dtfbsc;
 
