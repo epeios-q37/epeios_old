@@ -230,6 +230,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&DataBase Interface Search ReQuest
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
+&dbitst		&ldbi		&/\
+	&Database Interface TeST
 &dbixpr		&ldbi		&\
 	&DataBase Interface eXPoRtation
 

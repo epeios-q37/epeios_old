@@ -43,7 +43,7 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:
