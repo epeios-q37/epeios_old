@@ -92,6 +92,11 @@ extern class ttr_tutor &EPSMSCTutor;
 //d IDEALX (http://www.idealx.org) text.
 #define EPSMSC_IDEALX_TEXT	"\tThis program is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
 							"\twhich uses Epeios (" EPSMSC_EPEIOS_URL ") technology."
+							
+namespace epsmsc {
+	//f Print information about GNU GPL license.
+	void PrintLicense( void );
+}
 
 /*$END$*/
 				  /********************************************/

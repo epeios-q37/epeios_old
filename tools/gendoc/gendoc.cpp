@@ -140,7 +140,7 @@ inline void Push(
 {
 	if ( TagRow == NONE ) {
 		TagRow = XMLDF.PushTag( TagName );
-		fout << txf::nl << "--------------------" << txf::nl;
+//		fout << txf::nl << "--------------------" << txf::nl;
 	} else
 		XMLDF.PushTag( TagRow );
 }
@@ -293,7 +293,7 @@ inline void GenererCorpsItemClasse(
 	tag_row__ &ObjectTagRow )
 {
 	Push( XMLDF, ObjectTagRow, "Object" );
-	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
 	XMLDF.PutValue( Item.Name, "Name" );
 	XMLDF.PutValue( Filtrer( Item.Type ), "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
@@ -311,7 +311,7 @@ inline void GenererCorpsItemClasse(
 	static tag_row__ ParameterTagRow = NONE;
 
 	Push( XMLDF, MethodTagRow, "Method" );
-	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
 	XMLDF.PutValue( Item.Name, "Name" );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
@@ -330,7 +330,7 @@ inline void GenererCorpsItemClasse(
 	static tag_row__ ParameterTagRow = NONE;
 
 	Push( XMLDF, FunctionTagRow, "Function" );
-	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
 	XMLDF.PutValue( Filtrer( Item.Name ), "Name" );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );

@@ -32,10 +32,10 @@ lopt =
 # To activate Epeios general debugging features.
 copt += -DXXX_DBG
 # Needed by multitasking software.
-# copt += -DCPE_MTK
+# copt += -DCPE_MT
 # Speed up thread andling (used with -DCPE_MTK).
 # copt += -DMTK_KEEP
-libs = ttr tol flw stf err flw
+libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn
 
 $_RAW_$
 

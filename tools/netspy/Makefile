@@ -1,7 +1,7 @@
-# 'gendoc' Makefile by Claude L. Simon (epeios@epeios.org).
-# Builds executable for the 'gendoc' software.
+# 'netspy' Makefile by Claude L. Simon (simon@epeios.org)
+# Builds executable for the 'netspy' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000 Claude L. Simon.
+# Copyright (C) 2001 Claude L. SIMON.
 #
 # This file is part of the Epeios project (http://www.epeios.org/).
 #
@@ -16,8 +16,8 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, go to http://www.fsf.org or
-# write to the:
+# along with this program; if not, go to http://www.fsf.org/
+# or write to the:
 #
 #                       Free Software Foundation, Inc.,
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -25,15 +25,29 @@
 
 # $Id$
 
-name = gendoc
-# copt = -DXXX_DBG
-# copt +=
+name = netspy
+copt =
 lopt = 
-libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil\
-       txmtbl tagexp lst tagdtc btr xmldcm xmlval xmltag
-       
-epeios_os=$(EPEIOS_OS)
-epeios_src=$(EPEIOS_SRC)
+# Needed by multitasking software.
+copt += -DCPE_MT
+# To activate Epeios general debugging features.
+copt += -DXXX_DBG
+# Speed up thread andling (used with -DCPE_MTK).
+# copt += -DMTK_KEEP
+libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn srv sck clt mtk
+
+ifndef EPEIOS_SRC
+	epeios_src=
+else
+	epeios_src=$(EPEIOS_SRC)
+endif
+
+ifndef EPEIOS_OS
+	epeios_os=linux
+else
+	epeios_os=$(EPEIOS_OS)
+endif
+
 
 ifeq ("$(epeios_os)","windows")
 # object file extension
@@ -52,14 +66,14 @@ ox = o
 cc = g++ 
 co = -c
 # Generates debugging data.
-# co += -g
+co += -g
 # General optimization.
-co += -O2
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
+lo += -lglib -lgthread
 ds = :
 endif
 
