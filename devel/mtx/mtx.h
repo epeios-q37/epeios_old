@@ -113,9 +113,9 @@ namespace mtx {
 	inline void Delete( mutex_handler__ Handler )
 	{
 #ifdef MTX__USE_PTHREAD_MUTEX
-		pthread_mutex_destroy( Handler );
-//		if ( pthread_mutex_destroy( Handler ) != 0 )
-//			ERRs();
+//		pthread_mutex_destroy( Handler );
+		if ( pthread_mutex_destroy( Handler ) != 0 )
+			ERRs();
 #endif
 		free( Handler );
 	}

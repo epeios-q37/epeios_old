@@ -146,7 +146,7 @@ void GenFunctionParameter(
 	if ( In ) 
 		Flow << "const ";
 
-	Flow << brkcst::CastsNames[Cast] << " &";
+	Flow << GetTypeName( Cast ) << " &";
 
 	if ( In )
 		Flow << "In";
@@ -205,7 +205,7 @@ void GenFunctionBody(
 	bso__ulong Indice = 1;
 
 	while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P) ) != brkcst::cEnd ) ) {
-		Flow << txf::tab << txf::tab << txf::tab << "Broker->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
+		Flow << txf::tab << txf::tab << txf::tab << "Frontend_->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
 		P = Parameters.Next( P );
 	}
 
@@ -213,7 +213,7 @@ void GenFunctionBody(
 		ERRf();
 
 	Flow << txf::tab << txf::tab << txf::tab
-		<< "if ( ( Return = Broker_->Send() ) ) {" << txf::nl;
+		<< "if ( ( Return = Frontend_->Send() ) ) {" << txf::nl;
 
 	Indice = 0;
 
@@ -221,7 +221,7 @@ void GenFunctionBody(
 
 	while( P != NONE ) {
 		Flow << txf::tab << txf::tab << txf::tab << txf::tab
-			 << "Broker->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
+			 << "Frontend->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
 		P = Parameters.Next( P );
 	}
 
@@ -308,7 +308,7 @@ void GenAPI(
 	Flow << txf::nl;
 	Flow << txf::tab << txf::tab << txf::tab << "Commands.Init();" << txf::nl;
 	Flow << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "Broker->GetCommands( ..., ComandsDetails, Commands );" << txf::nl;
+	Flow << txf::tab << txf::tab << txf::tab << "Frontend_->GetCommands( ..., ComandsDetails, Commands );" << txf::nl;
 	Flow << txf::nl;
 	
 	Flow << txf::tab << txf::tab << txf::tab << "Commands.Read( Commands_ );" << txf::nl;
@@ -320,7 +320,7 @@ void GenAPI(
 		Flow << txf::tab << txf::tab << "bso__bool " << Command( P ).Identification.Value << "(" << txf::nl;
 		GenFunctionParameters( Command( P ).Parameters, Flow );
 		Flow << txf::tab << txf::tab << "{" << txf::nl;
-		Flow << txf::tab << txf::tab << txf::tab << "Broker->PushHeader( ID_, Commands_[" << I++ << "] );" << txf::nl;
+		Flow << txf::tab << txf::tab << txf::tab << "Frontend_->PushHeader( ID_, Commands_[" << I++ << "] );" << txf::nl;
 		GenAPIBody( Command( P ).Parameters, Flow );
 		P = Commands.Next( P );
 	}
@@ -331,6 +331,79 @@ void GenAPI(
 #endif
 
 ///////////////////////////////////
+
+inline const char *GetTypeName( brkcst::cast Cast )
+{
+	const char *TypeName = NULL;
+
+	switch ( Cast ) {
+	case brkcst::cEnd:
+		ERRc();
+		break;
+	case brkcst::cObject:
+		TypeName = "object__";
+		break;
+	case brkcst::cBoolean:
+		TypeName = "boolean__";
+		break;
+	case brkcst::cId8:
+		TypeName = "id8__";
+		break;
+	case brkcst::cIds8:
+		TypeName = "ids8_";
+		break;
+	case brkcst::cId16:
+		TypeName = "id16__";
+		break;
+	case brkcst::cIds16:
+		TypeName = "ids16_";
+		break;
+	case brkcst::cId32:
+		TypeName = "id32__";
+		break;
+	case brkcst::cIds32:
+		TypeName = "ids32_";
+		break;
+	case brkcst::cChar:
+		TypeName = "char__";
+		break;
+	case brkcst::cString:
+		TypeName = "string_";
+		break;
+	case brkcst::cStrings:
+		TypeName = "strings_";
+		break;
+	case brkcst::cByte:
+		TypeName = "byte__";
+		break;
+	case brkcst::cBinary:
+		TypeName = "binary_";
+		break;
+	case brkcst::cBinaries:
+		TypeName = "binaries__";
+		break;
+	case brkcst::cItems8:
+		TypeName = "items8_";
+		break;
+	case brkcst::cItems16:
+		TypeName = "items16_";
+		break;
+	case brkcst::cItems32:
+		TypeName = "items32_";
+		break;
+	case brkcst::cCommandsDetails:
+		TypeName = "commands_details_";
+		break;
+	case brkcst::cObjectsReferences:
+		TypeName = "objects_references_";
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return TypeName;
+}
 
 inline void GenCommandCastsList(
 	const parameters_ &Parameters,
@@ -365,325 +438,387 @@ inline void GenFillingInstruction(
 
 //////////////////////////////////////
 
-inline void GenCommandsCastsLists(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow )
-{
-	CITEM( command_ ) Command;
-	POSITION__ P = NONE;
-	
-	Command.Init( Commands );
-	
-	P = Commands.First();
-	
-	while( P != NONE ) {
-		GenCommandCastsList( Command( P ).Parameters, Flow );
-		P = Commands.Next( P );
-	}
-}
-
-inline void GenFillingInstructions(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow )
-{
-	CITEM( command_ ) Command;
-	POSITION__ P = NONE;
-	bso__ulong Cumul = 0;
-
-	Command.Init( Commands );
-
-	P = Commands.First();
-
-	while( P != NONE ) {
-		GenFillingInstruction( Command( P ), Cumul, Flow );
-		Cumul += Command( P ).Parameters.Amount();
-		P = Commands.Next( P );
-	}
-}
-
-void GenCommandFunctionParameter(
-	brkcst::cast Cast,
-	bso__bool In,
-	bso__ulong Indice,
-	txf::text_oflow___ &Flow)
-{
-	Flow << txf::tab << txf::tab << txf::tab;
-
-	if ( In ) 
-		Flow << "const ";
-
-	Flow << brkcst::CastsNames[Cast] << " &";
-
-	if ( In )
-		Flow << "In";
-	else
-		Flow << "Out";
-
-	Flow << Indice;
-}
-
-POSITION__ GenPushInstructions(
-	const parameters_ &Parameters,
-	txf::text_oflow___ &Flow )
-{
-	POSITION__ P = Parameters.First();
-	bso__ulong Indice = 1;
-	brkcst::cast Cast;
-	
-	while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P ) ) != brkcst::cEnd ) ) {
-		Flow << txf::tab << txf::tab << txf::tab << "Broker->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
-		P = Parameters.Next( P );
-	}
-
-	if ( P == NONE )
-		ERRf();
-	
-	return Parameters.Next( P );
-}
-
-POSITION__ GenPopInstructions(
-	const parameters_ &Parameters,
-	POSITION__ P,
-	txf::text_oflow___ &Flow )
-{
-	bso__ulong Indice = 1;
-
-	while( P != NONE ) {
-		Flow << txf::tab << txf::tab << txf::tab << txf::tab
-			 << "Broker->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
-		P = Parameters.Next( P );
-	}
-}
-
-	
 //////////////////////////////////////
 
-inline void GenInitFunctionDeclarations(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << txf::tab << "commands_details CommandsDetails;" << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "command_detail CommandsDetail;" << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "ids16 Commands;" << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "bso__ushort Parameters[] = {" << txf::nl;
-	
-	GenCommandsCastsLists( Commands, Flow );
-	
-	Flow << txf::tab << txf::tab << txf::tab << "};" << txf::nl;
-	Flow << txf::nl;
-}
-
-
-inline void GenInitFunctionInstructions(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << txf::tab << "CommandsDetails.Init();" << txf::nl;
-	Flow << txf::nl;
-	
-	GenFillingInstructions( Commands, Flow );
-	
-	Flow << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "Commands.Init();" << txf::nl;
-	Flow << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "Broker->GetCommands( ..., ComandsDetails, Commands );" << txf::nl;
-	Flow << txf::nl;
-	
-	Flow << txf::tab << txf::tab << txf::tab << "Commands.Read( Commands_ );" << txf::nl;
-	Flow << txf::nl;
-}
-
-
-void GenCommandFunctionParameters(
-	const parameters_ &Parameters,
-	txf::text_oflow___ &Flow)
-{
-	POSITION__ P = Parameters.First();
-	bso__bool In = true;
-	brkcst::cast Cast;
-	bso__ulong Indice = 1;
-
-	if ( (brkcst::cast)Parameters( P ) == brkcst::cEnd ) {
-		In = false;
-		P = Parameters.Next( P );
-	}
-
-	if ( P == NONE )
-		Flow << " void";
-	else {
-		Flow << txf::nl;
-		GenCommandFunctionParameter( (brkcst::cast)Parameters( P ), In, Indice++, Flow );
-		P = Parameters.Next( P );
-	}
-
-	while( P != NONE ) {
-		if ( ( Cast = (brkcst::cast)Parameters( P) ) == brkcst::cEnd ) {
-			In = false;
-			Indice = 1;
-		} else {
-			Flow << ',' << txf::nl;
-
-			GenCommandFunctionParameter( Cast, In, Indice++, Flow );
-		}
-
-		P = Parameters.Next( P );
-	}
-}
-
-inline void GenCommandFunctionDeclarations( txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab  << txf::tab << txf::tab << "bso__bool State;" << txf::nl;
-}
-
-inline void GenCommandFunctionsInstructions(
-	const parameters_ &Parameters,
-	bso__ulong Indice,
-	txf::text_oflow___ &Flow )
-{
-	POSITION__ P = NONE;
-
-	Flow << txf::tab << txf::tab << txf::tab << "Broker->PushHeader( ID_, Commands_[" << Indice << "] );" << txf::nl;
-	
-	P = GenPushInstructions( Parameters, Flow );
-	
-	Flow << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "if ( State = Broker->Send() ) {" << txf::nl;
-	
-	GenPopInstructions( Parameters, P, Flow );
-}
 
 //////////////////////////////////
 
-inline void GenInitFunctionHeader( txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << "void Init( void )" << txf::nl;
-	Flow << txf::tab << txf::tab << "{" << txf::nl;
-}
-
-inline void GenInitFunctionBody( 
-	const commands_ Commands,
-	txf::text_oflow___ &Flow )
-{
-	GenInitFunctionDeclarations( Commands, Flow );
-	GenInitFunctionInstructions( Commands, Flow );
-}
-
-inline void GenInitFunctionFooter( txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << "}" << txf::nl;
-}	
 	
-
-inline void GenCommandFunctionHeader(
-	const command_ &Command,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << "bso__bool " << Command.Identification.Value << "(";
-	GenCommandFunctionParameters( Command.Parameters, Flow );
-	Flow << " )" << txf::nl;
-	Flow << txf::tab << txf::tab << '{' << txf::nl;
-}
-
-inline void GenCommandFunctionBody(
-	const parameters_ &Parameters,
-	bso__ulong Indice,
-	txf::text_oflow___ &Flow )
-{
-	GenCommandFunctionDeclarations( Flow );
-	Flow << txf::nl;
-	GenCommandFunctionsInstructions(  Parameters, Indice, Flow );
-}
-
-inline void GenCommandFunctionFooter( txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << txf::tab << "}" << txf::nl;
-	Flow << txf::nl;
-	Flow << txf::tab << txf::tab << txf::tab << "return State;" << txf::nl;
-	Flow << txf::tab << txf::tab << "}" << txf::nl;
-}	
-
 
 //////////////////////////
 
-void GenInitFunction(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow)
-{
-	GenInitFunctionHeader( Flow );
-	GenInitFunctionBody( Commands, Flow );
-	GenInitFunctionFooter( Flow );
-}
 
-void GenCommandFunction(
-	const command_ &Command,
-	bso__ulong Indice,
-	txf::text_oflow___ &Flow )
-{
-	GenCommandFunctionHeader( Command, Flow );
-	GenCommandFunctionBody( Command.Parameters, Indice, Flow );
-	GenCommandFunctionFooter( Flow );
-}
+/////////////////////////////////////
 
 
-
-////////////////////////
-
-void GenCommandFunctions(
-	const commands_ &Commands,
-	txf::text_oflow___ &Flow )
-{
-	CITEM( command_ ) Command;
-	POSITION__ P = NONE;
-	bso__ulong Indice = 0;
-	
-	Command.Init( Commands );
-
-	P = Commands.First();
-
-	while( P != NONE ) {
-		GenCommandFunction( Command( P ), Indice++, Flow );
-		P = Commands.Next( P );
-	}
-
-	fout << txf::nl;
-}
 
 ////////////////////////////////////////////
 
-inline void GenClassHeader(
-	const type_ &Type,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << "class ";
-	Flow << Type.Identification.Value << txf::nl;
-	Flow << txf::tab << "{" << txf::nl;
+
+/////////////////////////
+
+namespace {
+	namespace {
+		inline void GenInitFunctionDeclarations(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << txf::tab << "commands_details CommandsDetails;" << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "command_detail CommandsDetail;" << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "ids16 Commands;" << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "bso__ushort Parameters[] = {" << txf::nl;
+			
+			GenCommandsCastsLists( Commands, Flow );
+			
+			Flow << txf::tab << txf::tab << txf::tab << "};" << txf::nl;
+			Flow << txf::nl;
+		}
+		inline void GenInitFunctionInstructions(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << txf::tab << "CommandsDetails.Init();" << txf::nl;
+			Flow << txf::nl;
+			
+			GenFillingInstructions( Commands, Flow );
+			
+			Flow << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "Commands.Init();" << txf::nl;
+			Flow << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "Frontend_->GetCommands( ..., ComandsDetails, Commands );" << txf::nl;
+			Flow << txf::nl;
+			
+			Flow << txf::tab << txf::tab << txf::tab << "Commands.Read( Commands_ );" << txf::nl;
+			Flow << txf::nl;
+		}
+
+		inline void GenInitFunctionHeader( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << "void Init( void )" << txf::nl;
+			Flow << txf::tab << txf::tab << "{" << txf::nl;
+		}
+
+		inline void GenInitFunctionBody( 
+			const commands_ Commands,
+			txf::text_oflow___ &Flow )
+		{
+			GenInitFunctionDeclarations( Commands, Flow );
+			GenInitFunctionInstructions( Commands, Flow );
+		}
+
+		inline void GenInitFunctionFooter( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << "}" << txf::nl;
+		}	
+
+		inline void GenInitFunction(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow)
+		{
+			GenInitFunctionHeader( Flow );
+			GenInitFunctionBody( Commands, Flow );
+			GenInitFunctionFooter( Flow );
+		}
+
+		inline void GenNewObjectFunction(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow)
+		{
+			GenNewObjectFunctionHeader( Flow );
+			GenNewObjectBody( Commands, Flow );
+			GenNewObjectFooter( Flow );
+		}
+
+		inline void GenHeader(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "class ";
+			Flow << Type.Identification.Value << "_frontend___" << txf::nl;
+			Flow << txf::tab << "{" << txf::nl;
+		}
+
+		inline void GenBody(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "private" << txf::nl;
+			Flow << txf::tab << txf::tab << "id16__ ID_;" << txf::nl;
+			Flow << txf::tab << txf::tab << "frtend::frontend___ *Frontend_;" << txf::nl;
+			Flow << txf::tab << "public:" << txf::nl;
+			Flow << txf::tab << txf::tab << "command__ Commands[" << Type.Commands.Amount()<< "];" << txf::nl;
+			GenInitFunction( Type.Commands, Flow );	
+			GenNewObjectCommand( Flow );
+		}
+			
+		inline void GenFooter(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "};" << txf::nl << txf::nl;
+		}
+
+	}
+
+	inline void GenFrontendClass(
+		const type_ &Type,
+		txf::text_oflow___ &Flow )
+	{
+		GenHeader( Type, Flow );
+		GenBody( Type, Flow );
+		GenFooter( Type, Flow );
+	}
 }
 
-inline void GenClassBody(
-	const type_ &Type,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << txf::tab << "command__ Commands_[" << Type.Commands.Amount()<< "];" << txf::nl;
-	GenInitFunction( Type.Commands, Flow );	
-	GenCommandFunctions( Type.Commands, Flow );
-}
+namespace {
+	namespace {
+		inline void GenInitFunctionHeader( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << "void Init( void )" << txf::nl;
+			Flow << txf::tab << txf::tab << "{" << txf::nl;
+		}
+
+		inline void GenInitFunctionBody( 
+			const commands_ Commands,
+			txf::text_oflow___ &Flow )
+		{
+			GenInitFunctionDeclarations( Commands, Flow );
+			GenInitFunctionInstructions( Commands, Flow );
+		}
+
+		inline void GenInitFunctionFooter( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << "}" << txf::nl;
+		}	
 	
-inline void GenClassFooter(
-	const type_ &Type,
-	txf::text_oflow___ &Flow )
-{
-	Flow << txf::tab << "};" << txf::nl << txf::nl;
+		void GenInitFunction(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow)
+		{
+			GenObjectInitFunctionHeader( Flow );
+			GenObjectInitFunctionBody( Commands, Flow );
+			GenObjectInitFunctionFooter( Flow );
+		}
+
+		void GenCommandFunctionParameter(
+			brkcst::cast Cast,
+			bso__bool In,
+			bso__ulong Indice,
+			txf::text_oflow___ &Flow)
+		{
+			Flow << txf::tab << txf::tab << txf::tab;
+
+			if ( In ) 
+				Flow << "const ";
+
+			Flow << GetTypeName( Cast ) << " &";
+
+			if ( In )
+				Flow << "In";
+			else
+				Flow << "Out";
+
+			Flow << Indice;
+		}
+
+		POSITION__ GenPushInstructions(
+			const parameters_ &Parameters,
+			txf::text_oflow___ &Flow )
+		{
+			POSITION__ P = Parameters.First();
+			bso__ulong Indice = 1;
+			brkcst::cast Cast;
+			
+			while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P ) ) != brkcst::cEnd ) ) {
+				Flow << txf::tab << txf::tab << txf::tab << "Frontend_->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
+				P = Parameters.Next( P );
+			}
+
+			if ( P == NONE )
+				ERRf();
+			
+			return Parameters.Next( P );
+		}
+
+		void GenPopInstructions(
+			const parameters_ &Parameters,
+			POSITION__ P,
+			txf::text_oflow___ &Flow )
+		{
+			bso__ulong Indice = 1;
+
+			while( P != NONE ) {
+				Flow << txf::tab << txf::tab << txf::tab << txf::tab
+					 << "Frontend_->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
+				P = Parameters.Next( P );
+			}
+		}
+
+			
+		inline void GenCommandFunctionDeclarations( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab  << txf::tab << txf::tab << "bso__bool State;" << txf::nl;
+		}
+
+		inline void GenCommandFunctionsInstructions(
+			const parameters_ &Parameters,
+			bso__ulong Indice,
+			txf::text_oflow___ &Flow )
+		{
+			POSITION__ P = NONE;
+
+			Flow << txf::tab << txf::tab << txf::tab << "Frontend_->PushHeader( ID_, Commands_[" << Indice << "] );" << txf::nl;
+			
+			P = GenPushInstructions( Parameters, Flow );
+			
+			Flow << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "if ( State = Frontend_->Send() ) {" << txf::nl;
+			
+			GenPopInstructions( Parameters, P, Flow );
+		}
+
+		void GenCommandFunctionParameters(
+			const parameters_ &Parameters,
+			txf::text_oflow___ &Flow)
+		{
+			POSITION__ P = Parameters.First();
+			bso__bool In = true;
+			brkcst::cast Cast;
+			bso__ulong Indice = 1;
+
+			if ( (brkcst::cast)Parameters( P ) == brkcst::cEnd ) {
+				In = false;
+				P = Parameters.Next( P );
+			}
+
+			if ( P == NONE )
+				Flow << " void";
+			else {
+				Flow << txf::nl;
+				GenCommandFunctionParameter( (brkcst::cast)Parameters( P ), In, Indice++, Flow );
+				P = Parameters.Next( P );
+			}
+
+			while( P != NONE ) {
+				if ( ( Cast = (brkcst::cast)Parameters( P) ) == brkcst::cEnd ) {
+					In = false;
+					Indice = 1;
+				} else {
+					Flow << ',' << txf::nl;
+
+					GenCommandFunctionParameter( Cast, In, Indice++, Flow );
+				}
+
+				P = Parameters.Next( P );
+			}
+		}
+
+		inline void GenCommandFunctionHeader(
+			const command_ &Command,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << "bso__bool " << Command.Identification.Value << "(";
+			GenCommandFunctionParameters( Command.Parameters, Flow );
+			Flow << " )" << txf::nl;
+			Flow << txf::tab << txf::tab << '{' << txf::nl;
+		}
+
+		inline void GenCommandFunctionBody(
+			const parameters_ &Parameters,
+			bso__ulong Indice,
+			txf::text_oflow___ &Flow )
+		{
+			GenCommandFunctionDeclarations( Flow );
+			Flow << txf::nl;
+			GenCommandFunctionsInstructions(  Parameters, Indice, Flow );
+		}
+
+		inline void GenCommandFunctionFooter( txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << txf::tab << txf::tab << "}" << txf::nl;
+			Flow << txf::nl;
+			Flow << txf::tab << txf::tab << txf::tab << "return State;" << txf::nl;
+			Flow << txf::tab << txf::tab << "}" << txf::nl;
+		}	
+
+
+		void GenObjectCommandFunction(
+			const command_ &Command,
+			bso__ulong Indice,
+			txf::text_oflow___ &Flow )
+		{
+			GenCommandFunctionHeader( Command, Flow );
+			GenCommandFunctionBody( Command.Parameters, Indice, Flow );
+			GenCommandFunctionFooter( Flow );
+		}
+
+		void GenCommandFunctions(
+			const commands_ &Commands,
+			txf::text_oflow___ &Flow )
+		{
+			CITEM( command_ ) Command;
+			POSITION__ P = NONE;
+			bso__ulong Indice = 0;
+			
+			Command.Init( Commands );
+
+			P = Commands.First();
+
+			while( P != NONE ) {
+				GenObjectCommandFunction( Command( P ), Indice++, Flow );
+				P = Commands.Next( P );
+			}
+
+			fout << txf::nl;
+		}
+
+		inline void GenHeader(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "class ";
+			Flow << Type.Identification.Value << "___" << txf::nl;
+			Flow << txf::tab << "{" << txf::nl;
+		}
+
+		inline void GenBody(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "private" << txf::nl;
+			Flow << txf::tab << txf::tab << "id16__ ID_;" << txf::nl;
+			Flow << txf::tab << txf::tab << Type.Identification.Value  << "_frontend___ *Frontend_;" << txf::nl;
+			GenInitFunction( Type.Commands, Flow );	
+			GenCommandFunctions( Type.Commands, Flow );
+		}
+			
+		inline void GenFooter(
+			const type_ &Type,
+			txf::text_oflow___ &Flow )
+		{
+			Flow << txf::tab << "};" << txf::nl << txf::nl;
+		}
+
+	}
+
+	inline void GenObjectClass(
+		const type_ &Type,
+		txf::text_oflow___ &Flow )
+	{
+		GenHeader( Type, Flow );
+		GenBody( Type, Flow );
+		GenFooter( Type, Flow );
+	}
 }
 
 ////////////////////////
 
-inline void GenClass( 
+inline void GenClasses( 
 	const type_ &Type,
 	txf::text_oflow___ &Flow )
 {
-	GenClassHeader( Type, Flow );
-	GenClassBody( Type, Flow );
-	GenClassFooter( Type, Flow );
+	GenFrontendClass( Type, Flow );
+	GenObjectClass( type, Flow );
 }
 
 ///////////////////////////
@@ -701,16 +836,16 @@ void GenAPI(
 	Type.Init( Types );
 
 	while( P != NONE ) {
-		GenClass( Type( P ), Flow );
+		GenClasses( Type( P ), Flow );
 		P = Types.Next( P );
 	}
 }
 
 POSITION__ FindMasterType( const types_ &Types )
 {
+	POSITION__ P = NONE;
 ERRProlog
 	CITEM( type_ ) Type;
-	POSITION__ P = NONE;
 ERRBegin
 	Type.Init( Types );
 	
@@ -724,6 +859,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+	return P;
 }
 
 void FilterMasterCommands( commands_ &Commands )
@@ -776,12 +912,6 @@ ERRBegin
 
 	P = FindMasterType( Types );
 	
-	FilterMasterCommands( Types( P ).Commands );
-	
-	Types( P ).Identification.Value = "frontend";
-	
-	Types.Sync();
-
 	GenAPI( Types, fout );
 ERRErr
 ERREnd
