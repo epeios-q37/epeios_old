@@ -1,6 +1,6 @@
 /*
   Header for the 'cpe' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -56,17 +56,91 @@ extern class ttr_tutor &CPETutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D PLEASE COMPLETE
-/* End addendum to automatic documentation generation part. */
+//#include "err.h"
+//#include "flo.h"
+
+#undef CPE__VC
+#undef CPE__MS
+#undef CPE__32
+#undef CPE__MT
+#undef CPE__BC
+#undef CPE__MS
+#undef CPE__GCC
+#undef CPE__DJGPP
+#undef CPE__UNIX
+#undef CPE__BEOS
+
+#ifdef _MSC_VER
+	//d If defined, we are in the 'Microsoft Visual C++'.
+#	define CPE__VC	// Visual C++.
+	//d If defined, we are in an Microsoft enviroment (DOS, Windows).
+#	define CPE__MS
+#	ifdef _WIN32
+	//d If defined, we are in a Windows 32 bits enviroment (Window 9x, 2000, NT, ...).
+#	define CPE__32
+#	endif	
+#	ifdef _MT
+	//d If defined, we are in a multitasking enviroment.
+#		define CPE__MT
+#	elif defined( CPE_MT )
+#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
+#	endif
+#endif
+
+#ifdef __BORLANDC__
+	//d If defined, we are in the 'Borland C++'.
+#	define CPE__BC
+#	define CPE__MS
+#	ifdef __WIN32__
+#		define CPE__32
+#	endif
+#	ifdef __MT__
+#		define CPE__MT
+#	elif defined( CPE_MT )
+#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
+#	endif
+#endif
+
+#ifdef __GNUC__
+	//d If defined, we are using 'GCC'.
+#	define CPE__GCC
+#	ifdef __DJGPP__
+		//d If defined, we are using 'DJGPP'.
+#		define CPE__DJGPP
+#		ifdef __MSDOS__
+#			define CPE__MS
+#		elif defined( __unix__ )
+#			define CPE__UNIX
+#		endif
+#	elif defined( __unix__ )
+#		define CPE__UNIX
+#	elif defined( __BEOS__ )
+#		define CPE__BEOS
+#	endif
+#endif
+
+#ifndef CPE__MT
+#	ifdef CPE_MT 
+#		define CPE__MT
+#	endif
+#endif
+
+#if defined( CPE_PROCESSES ) && !defined( CPE__MT )
+#	error "'CPE_PROCESSES' is defined, but current options doesn't allow multithreading."
+#endif
 
 
-#include "err.h"
-#include "flw.h"
+#if defined( CPE__MS ) && defined( CPE__PROCESSES )
+#	error "Processes are not allowed with MS compiler."
+#endif
 
-namespace cpe {
+#ifdef CPE_PROCESSES
+#	define CPE__PROCESSES
+#endif 
 
-}
+#ifdef CPE_THREADS_REMAINS
+#	define CPE__THREADS_REMAINS
+#endif
 
 /*$END$*/
 				  /********************************************/
