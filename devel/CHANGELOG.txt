@@ -178,6 +178,7 @@ TOL:
 - (27/10/04) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
 - (27/11/04) Removing 'Free(...)', replaced with 'E_POINTER___'.
 - (13/12/04) Improving 'E_RODISCLOSE()'.
+- (04/01/05) Adding debugging issue and missing methods to 'pointer___' object.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.

@@ -714,6 +714,12 @@ namespace tol {
 		{
 			reset();
 		}
+		pointer___ &operator =( const pointer___ &Pointer )
+		{
+			ERRu();	// Otherwise the same ressource is used twice ; which delete them ?
+
+			return *this;
+		}
 		t *operator =( t *P )
 		{
 			if ( P == NULL )
@@ -735,6 +741,30 @@ namespace tol {
 			return P_;
 		}
 		operator const t *( void ) const
+		{
+			return P_;
+		}
+		const t *operator ()( void ) const
+		{
+			return P_;
+		}
+		t *operator ()( void )
+		{
+			return P_;
+		}
+		const t *operator ->( void ) const
+		{
+			return P_;
+		}
+		t *operator ->( void )
+		{
+			return P_;
+		}
+		const t &operator *( void ) const
+		{
+			return P_;
+		}
+		t &operator *( void )
 		{
 			return P_;
 		}
