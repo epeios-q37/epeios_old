@@ -8,7 +8,7 @@ all: $(filelist)
 	$(mkdir) -p i
 	reveal $(crpfile) site.crp i/site.crp
 	reveal i/site.crp site.xml i/site.xml
-	sabcmd make.xsl site.xml i/Makefile $$web_dir=$(dest)
+	sabcmd make.xsl site.xml i/Makefile $$os=$(EPEIOS_OS)
 	make -f i/Makefile
 	make -f Makefile.data
 
