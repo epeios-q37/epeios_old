@@ -1,0 +1,10 @@
+# $Id$
+
+i:
+	$(mkdir) $@
+
+$(dest):
+	$(mkdir) -p $@
+
+i/%.crp: %.crp $(crpfile) i
+	reveal $(crpfile) $< $@

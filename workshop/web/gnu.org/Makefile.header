@@ -1,0 +1,24 @@
+# $Id$
+
+ifeq ("$(EPEIOS_OS)","windows")
+rootdir=/cvs/epeios
+dest = /GNU
+copy = cp
+move = move
+mkdir = c:\tools\mkdir
+endif
+
+ifeq ("$(EPEIOS_OS)","linux")
+rootdir=/home/csimon/libs/epeios
+dest = /home/csimon/GNU
+copy = cp
+move = mv
+mkdir = mkdir
+endif
+
+templates = $(rootdir)/workshop/web/templates
+crpfile = $(templates)/$(EPEIOS_OS).crp
+rootxsl = $(templates)/gnu.org/page.xsl
+doc = $(rootdir)/documentation
+xsl = $(templates)/*.xsl
+
