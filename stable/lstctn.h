@@ -129,6 +129,15 @@ namespace lstctn {
 	template <typename container, typename object, typename row, typename row_t> class list_xcontainer_
 	: public list_container_<container, row, row_t>
 	{
+	private:
+		row NewWithoutFlush_( void )
+		{
+			row Row = list_container_<container, row, row_t>::New();
+
+			list_container_<container, row, row_t>::operator()( Row ).Init();
+
+			return Row;
+		}
 	public:
 		struct s
 		: public list_container_<container, row, row_t>::s
@@ -138,18 +147,17 @@ namespace lstctn {
 		{}
 		row New( void )
 		{
-			row Row = list_container_<container, row, row_t>::New();
+			row Row = NewWithoutFlush_();
 
-			list_container_<container, row, row_t>::operator()( Row ).Init();
+			list_container_<container, row, row_t>::Flush();
 
 			return Row;
 		}
 		row Add( const object &Object )
 		{
-			row Row = New();
+			row Row = NewWithoutFlush_();
 
 			list_container_<container, row, row_t>::operator()( Row ).operator =( Object );
-
 			list_container_<container, row, row_t>::Flush();
 
 			return Row;
@@ -176,8 +184,8 @@ namespace lstctn {
 	#define E_LCONTAINER_( type )			E_LCONTAINERt_( type, epeios::row__ )
 	#define E_LCONTAINER( type )			E_LCONTAINERt( type, epeios::row__ )
 
-	#define E_LXMCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_XMCONTAINERt_( type, row ), type, row, row_t >
-	#define E_LXMCONTAINERtx( type, row, row_t )	list_xcontainer< ctn::E_XMCONTAINERt( type, row ), type, row, row_t >
+	#define E_LXMCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_MCONTAINERt_( type, row ), type, row, row_t >
+	#define E_LXMCONTAINERtx( type, row, row_t )	list_xcontainer< ctn::E_MCONTAINERt( type, row ), type, row, row_t >
 
 	#define E_LXMCONTAINERt_( type, row )	E_LXMCONTAINERtx_( type, row, epeios::row_t__ )
 	#define E_LXMCONTAINERt( type, row )	E_LXMCONTAINERtx( type, row, epeios::row_t__ )
@@ -185,8 +193,8 @@ namespace lstctn {
 	#define E_LXMCONTAINER_( type )			E_LXMCONTAINERt_( type, epeios::row__ )
 	#define E_LXMCONTAINER( type )			E_LXMCONTAINERt( type, epeios::row__ )
 
-	#define E_LXCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_XCONTAINERt_( type, row ), type, row, row_t >
-	#define E_LXCONTAINERtx( type, row, row_t )		list_xcontainer< ctn::E_XCONTAINERt( type, row ), type, row, row_t >
+	#define E_LXCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_CONTAINERt_( type, row ), type, row, row_t >
+	#define E_LXCONTAINERtx( type, row, row_t )		list_xcontainer< ctn::E_CONTAINERt( type, row ), type, row, row_t >
 
 	#define E_LXCONTAINERt_( type, row )	E_LXCONTAINERtx_( type, row, epeios::row_t__ )
 	#define E_LXCONTAINERt( type, row )		E_LXCONTAINERtx( type, row, epeios::row_t__ )

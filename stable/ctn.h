@@ -611,6 +611,10 @@ namespace ctn {
 			r Position,
 			E_CMITEMt( t, r ) &Item ) const
 		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
 			Item.Init( *this );
 
 			return Item( Position );
@@ -639,9 +643,7 @@ namespace ctn {
 		{
 			E_CMITEMt( t, r ) Element;
 
-			Element.Init( *this );
-
-			Objet = Element( Position );
+			Objet = Read( Position, Element );
 		}
 		//f Allocate room for 'Size' objects.
 		void Allocate(
@@ -972,6 +974,10 @@ namespace ctn {
 			r Position,
 			E_CITEMt( t, r ) &Item ) const
 		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
 			Item.Init( *this );
 
 			return Item( Position );
@@ -1000,9 +1006,7 @@ namespace ctn {
 		{
 			E_CITEMt( t, r ) Element;
 
-			Element.Init( *this );
-
-			Objet = Element( Position );
+			Objet = Read( Position, Element );
 		}
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
