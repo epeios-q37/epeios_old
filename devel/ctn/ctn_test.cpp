@@ -444,7 +444,7 @@ ERRBegin
 	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
-//	GC.plug( Mm );
+	GC.plug( Mm );
 	GC.Init();
 	GC.Allocate( LM - 'A' + 1 );
 

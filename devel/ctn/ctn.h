@@ -111,7 +111,7 @@ public:
 	}
 	ctn_basic_container_ &operator =( const ctn_basic_container_ &O )
 	{
-		Dynamics = O.Dynamics;
+		Dynamics.Copy( O.Dynamics, O.Statics.Amount() );
 		Statics = O.Statics;
 
 		return *this;
@@ -139,9 +139,9 @@ public:
 	{
 		SIZE__ AncCap;
 
-		Dynamics.Allocate( Size );
-
 		AncCap = Statics.Amount();
+
+		Dynamics.Allocate( Size, AncCap );
 
 		Statics.Allocate( Size );
 
@@ -195,7 +195,7 @@ private:
 			if ( Conteneur_ == NULL )
 				ERRu();
 #endif
-			Conteneur_->Statics.Write( ctn_S_, Pilote_.Index() );
+			Conteneur_->Statics.Write( ctn_S_, Pilote_.Index()() );
 		}
 
 		Pilote_.Index( NONE );
