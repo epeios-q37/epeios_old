@@ -21,7 +21,7 @@
     </document>
   </template>
   <document id="homepage">
-    <general title="Welcome to the Epeios project WEB site." abstract="The Epeios project, the most simple and effective way to develop software." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF">
+    <general title="Welcome to the Epeios project WEB site" abstract="The Epeios project, the most simple and effective way to develop software." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF">
       <author>$AUTHOR$</author>
       <copyright>
         <owner>$OWNER$</owner>
@@ -137,9 +137,9 @@
         <WEB hierarchy="about" name="about" robots="$ROBOTS$" bookmark="About" parent="."/>
       </specific>$PROJECT_ABOUT$</document>
   </dir>
-  <dir id="general">
+  <dir id="documentation">
     <document>
-      <general title="General documentation of the Epeios concepts (homepage)." abstract="Homepage of the general documentation from the Epeios project." keywords="Epeios, documentation">
+      <general title="Documentation of the Epeios concepts (homepage)." abstract="Homepage of documentation from the Epeios project." keywords="Epeios, documentation">
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
@@ -167,7 +167,7 @@
       </content>
     </document>
     <document id="core">
-      <general title="General documentation of the Epeios concepts." abstract="The general documentation of the Epeios concepts." keywords="Epeios, documentation">
+      <general title="Documentation of the Epeios concepts." abstract="The general documentation of the Epeios concepts." keywords="Epeios, documentation">
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
@@ -230,7 +230,7 @@
     </document>
     <dir id="'core' libraries">
       <document id="homepage">
-        <general title="Epeios core libraries homepage" abstract="The Epeios core libraries, for general purposes." keywords="Epeios, libraries, general, core">
+        <general title="Core libraries homepage" abstract="The Epeios core libraries, for general purposes." keywords="Epeios, libraries, general, core">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
@@ -271,7 +271,7 @@
         </content>
       </document>
       <document id="cvs">
-        <general title="CVS access for the Epeios core libraries." abstract="The CVS access for the core libraries from the Epeios project." keywords="Epeios, libraries, core, CVS">
+        <general title="CVS access for the core libraries." abstract="The CVS access for the core libraries from the Epeios project." keywords="Epeios, libraries, core, CVS">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
@@ -292,7 +292,7 @@
         </content>
       </document>
       <document id="download">
-        <general title="Download section for the Epeios core libraries." abstract="The download section for the Epeios core libraries." keywords="Epeios, libraries, core, download">
+        <general title="Download section for the core libraries." abstract="The download section for the Epeios core libraries." keywords="Epeios, libraries, core, download">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
@@ -312,7 +312,7 @@
       </document>
       <dir id="quickdoc">
         <document id="homepage">
-          <general title="Quickdoc homepage for the Epeios core libraries." abstract="The quickdoc homepage for the core libraries from the Epeios project." keywords="Epeios, libraries, core, quickdoc, homepage">
+          <general title="Quickdoc  for the core libraries (homepage)." abstract="The quickdoc homepage for the core libraries from the Epeios project." keywords="Epeios, libraries, core, quickdoc, homepage">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
@@ -353,7 +353,7 @@
           </content>
         </document>
         <document id="core">
-          <general title="Epeios core libraries quickdoc." abstract="Quickdoc for the Epeios core libraries." keywords="Epeios, libraries, core, quickdoc">
+          <general title="Core libraries quickdoc." abstract="Quickdoc for the Epeios core libraries." keywords="Epeios, libraries, core, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
@@ -370,7 +370,7 @@
       </dir>
       <dir id="user documentation">
         <document id="homepage">
-          <general title="User documentation homepage of the core libraries." abstract="The user documentation hompage for the core libraries from the Epeios project." keywords="Epeios, libraries, core, user documentation, homepage">
+          <general title="User documentation of the core libraries (homepage)." abstract="The user documentation hompage for the core libraries from the Epeios project." keywords="Epeios, libraries, core, user documentation, homepage">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
@@ -462,7 +462,7 @@
       </document>
       <dir id="about">
         <document id="homepage">
-          <general title="About the EBKD libraries." abstract="More about the EBKD libraries." keywords="Epeios, backend, ebkd, about">
+          <general title="About the EBKD libraries (homepage)." abstract="More about the EBKD libraries (homepage)." keywords="Epeios, backend, ebkd, about">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
@@ -527,7 +527,7 @@
         </content>
       </document>
       <document id="download">
-        <general title="Download section of the EBKD libraries." abstract="The download section for the backend-related libraries (ebkd) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, download">
+        <general title="Download section of the EBKD libraries." abstract="The download section for the backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, download">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
@@ -547,7 +547,7 @@
       </document>
       <dir id="quickdoc">
         <document id="homepage">
-          <general title="Quickdoc homepage for the EBKD libraries." abstract="The quickdoc homepage for the backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, quickdoc, homepage">
+          <general title="Quickdoc for the EBKD libraries (homepage)" abstract="The quickdoc homepage for the backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, quickdoc, homepage">
             <author>$AUTHOR$</author>
             <copyright>
               <owner>$OWNER$</owner>
@@ -2199,6 +2199,6 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
       </misc>
     </general>
     <specific>
-      <WEB hierarchy="" name="map" robots="$ROBOTS$" bookmark="Map"/>
+      <WEB hierarchy="" name="map" robots="$ROBOTS$" bookmark="Site map"/>
     </specific>$MAP$</document>
 </site>

@@ -57,6 +57,9 @@ STR:
 TOL:
 - Fixing bug in the 'NAVt()' macro.
 
+TXMTBL:
+- Adding some helpful methods.
+
 UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.
 - Fixing 'Fill()' compilation error.

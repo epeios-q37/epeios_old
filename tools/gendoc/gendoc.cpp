@@ -37,7 +37,7 @@ using hosdcm::tag_row__;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
-#define TERM_FICHIER_DOC		".html"
+#define COMMENT_MARK_LIB_LIST	'#'
 
 #ifdef CPE__UNIX
 #define SS	"/"
@@ -878,46 +878,6 @@ void GenererRemarques(
 /***** NIVEAU IV ****/
 /********************/
 
-/* Ouvre avec 'Fichier' le fichier de documentation de nom 'Name' (sans suffixe)
-situé dans le répertore 'Repertoire' */
-void OuvrirFichierDocumentation(
-	ifstream &Fichier,
-	const str::string_ &Name,
-	const char *Repertoire )
-{
-ERRProlog
-	char *RelaisNameFichier = NULL;
-	str::string NameFichier;
-ERRBegin
-	NameFichier.Init();
-
-	NameFichier.Write( Repertoire );
-
-	if ( !strchr( SS ":", NameFichier( NameFichier.Amount() - 1 ) ) )
-		NameFichier.Add( SC );
-
-	NameFichier.Add( Name );
-
-	NameFichier.Add( ".d" );
-
-	NameFichier.Add( '\0' );
-
-	RelaisNameFichier = NameFichier.Convert();
-
-	Fichier.open( RelaisNameFichier );
-
-	if ( !Fichier )
-	{
-		fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
-		ERRt();
-	}
-ERRErr
-ERREnd
-	if ( RelaisNameFichier )
-		free( RelaisNameFichier );
-ERREpilog
-}
-
 
 /* Ouvre avec 'Streal' le fichier library de nom 'Name' (sans suffixe)
 situé dans le répertore 'Repertoire' */
@@ -947,43 +907,6 @@ ERRBegin
 
 	if ( Stream.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )	{
 		fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
-		ERRt();
-	}
-ERRErr
-ERREnd
-	if ( RelaisNameFichier )
-		free( RelaisNameFichier );
-ERREpilog
-}
-
-/* Ouvre dans 'Fichier' le fichier de documentation technique de la librairie
-'Librairie' dans le répertoire 'Repertoire' */
-void OuvrirFichierDocumentationTechnique(
-	const librairie_ &Librairie,
-	fil::file_oflow___ &Fichier,
-	const char *Repertoire )
-{
-ERRProlog
-	 str::string NameFichier;
-	 char *RelaisNameFichier = NULL;
-ERRBegin
-	NameFichier.Init();
-
-	NameFichier.Write( Repertoire );
-
-	if ( !strchr( SS ":", NameFichier( NameFichier.Amount() - 1 ) ) )
-		NameFichier.Add( SC );
-
-	NameFichier.Add( Librairie.Name );
-	NameFichier.Add( TERM_FICHIER_DOC );
-
-	NameFichier.Add( '\0' );
-
-	RelaisNameFichier = NameFichier.Convert();
-
-	if ( Fichier.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )
-	{
-		fout << "Impossible d'ouvrir le fichier '" << RelaisNameFichier << "'." << nl;
 		ERRt();
 	}
 ERRErr
@@ -1049,49 +972,6 @@ void GenererCorpsDocumentationTechnique(
 /***** NIVEAU III ****/
 /*********************/
 
-/* Ouvre 'Fichier' avec le fichier prédéfini contenant la liste des librairies
-et placé dans le répertoire de nom 'Repertoire. */
-void OuvrirFichierListe(
-	const char *NameFichier,
-	ifstream &Fichier )
-{
-	Fichier.open( NameFichier );
-
-	if ( !Fichier )
-	{
-		fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
-		ERRt();
-	}
-}
-
-
-/* Place dans 'Documentation' l'analyse du fichier de documentation de nom 'Name'
-(non suffixé) situé dans 'Repertoire'. */
-/*
-void AnalyserDocumentation(
-	add_documentation_ &Documentation,
-	const str::string_ &Name,
-	const char *Repertoire )
-{
-ERRProlog
-	ifstream Stream;
-	flo_entree_texte_fichier Fichier;
-	add_documentation D;
-ERRBegin
-	D.Init();
-
-	OuvrirFichierDocumentation( Stream, Name, Repertoire );
-	Fichier.Init( Stream );
-	D.Analyser( Fichier );
-
-	Documentation = D;
-ERRErr
-	fout << nl << ">>>>> ERREUR <<<<< " << Fichier.Ligne() << tab << Fichier.Colonne() << nl;
-ERREnd
-ERREpilog
-}
-*/
-
 /* Place dans 'Library' l'analyse du fichier library de nom 'Name'
 (non suffixé) situé dans 'Repertoire'. */
 void AnalyserLibrary(
@@ -1127,62 +1007,76 @@ void GenererDocumentationTechnique(
 	XMLDF.PutAttribute( "Name", Librairie.Name );
  	GenererCorpsDocumentationTechnique( Librairie.Library, XMLDF );
 }
-/*
-void GenererDocumentationDescriptive(
-	const librairie_ &Librairie,
-	const char *Repertoire )
-{
-ERRProlog
-	fil__file_oflow Flot;
-ERRBegin
-	OuvrirFichierDocumentationDescriptive( Librairie, Flot, Repertoire );
-	GenererEnTeteFichierHTML( Flot );
-	GenererTitreDocumentationDescriptive( Librairie, Flot );
-	GenererIndexDocumentationDescriptive( Librairie.Documentation, Flot );
-	GenererCorpsDocumentationDescriptive( Librairie.Documentation, Flot );
-ERRErr
-ERREnd
-ERREpilog
-}
-*/
 
 /********************/
 /***** NIVEAU II ****/
 /********************/
 
+void ReadTable(
+	const char *NameList,
+	txmtbl::table_ &Table )
+{
+ERRProlog
+	fil::file_iflow___ File;
+	xtf::extended_text_iflow___ Text;
+ERRBegin
+	if ( !File.Init( NameList, err::hSkip ) ) {
+		ferr << "Unable to open file '" << NameList << "'." << txf::nl;
+		ERRt();
+	}
+
+	File.EOFD( XTF_EOXT );
+
+	Text.Init( File );
+
+	Table.Init();
+
+	txmtbl::GetTable( Text, Table );
+
+	Table.Purge( COMMENT_MARK_LIB_LIST );
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void PutIntoList(
+	const txmtbl::table_ &Table,
+	ctn::E_XCONTAINER_( str::string_ ) &List )
+{
+ERRProlog
+	epeios::row__ Row;
+	txmtbl::cell Cell;
+ERRBegin
+	Row = Table.First();
+	Cell.Init();
+
+	while( Row != NONE ) {
+		Table.GetUniqueCell( Row, Cell );
+		List.Add( Cell );
+
+		Row = Table.Next( Row );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 /* Place dans 'Liste' la liste des noms de librairie contenus
 dans le fichier prédéfinis placés dans le répertoire de nom 'Repertoire'. */
 void LireListe(
-	const char *NameListe,
-	ctn::E_CONTAINER_( str::string_ ) &Liste )
+	const char *NameList,
+	ctn::E_XCONTAINER_( str::string_ ) &List )
 {
 ERRProlog
-	ifstream Fichier;
-	str::string Ligne;
-	int C;
-	int Compteur = 100;
+	txmtbl::table Table;
 ERRBegin
+	Table.Init();
 
-	OuvrirFichierListe( NameListe, Fichier );
+	ReadTable( NameList, Table );
 
-	Ligne.Init();
-
-	while ( Fichier.good() && Compteur )
-	{
-		C = Fichier.get();
-
-		if ( C == '\n' )
-		{
-			if ( Ligne.Amount() )
-				Liste.Write( Ligne, Liste.New() );
-
-			Ligne.Init();
-
-			Compteur--;
-		}
-		else
-			Ligne.Add( C );
-	}
+	PutIntoList( Table, List );
 ERRErr
 ERREnd
 ERREpilog
@@ -1269,7 +1163,7 @@ void Analyser(
 {
 ERRProlog
 	// La liste des librairies.
-	ctn::E_CONTAINER (str::string_ ) Liste;
+	ctn::E_XCONTAINER (str::string_ ) Liste;
 	bso::ulong__ Compteur = 1;
 	tym::row__ Courant, PListe;
 ERRBegin

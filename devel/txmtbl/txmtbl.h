@@ -1,10 +1,9 @@
 /*
-  Header for the 'txmtbl' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'txmtbl' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
   as published by the Free Software Foundation; either version 2
@@ -32,7 +31,7 @@
 
 #define	TXMTBL_VERSION	"$Revision$"	
 
-#define TXMTBL_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define TXMTBL_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +44,7 @@ extern class ttr_tutor &TXMTBLTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -81,7 +80,7 @@ namespace txmtbl {
 	};
 
 	//t An amount of cell or of line.
-	typedef tym::size__	amount__;
+	typedef epeios::size__	amount__;
 
 	//d The default cell separator character.
 	#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
@@ -221,7 +220,7 @@ namespace txmtbl {
 		void Write(
 			const cell_ &Cell,
 			location__ Location,
-			tym::row__ Position )
+			epeios::row__ Position )
 		{
 			cells_::Write( Cell, Position );
 			cells_::Sync();
@@ -229,20 +228,20 @@ namespace txmtbl {
 			S_.Location = Location;
 		}
 		//f Add 'Cell' and 'Location'. Return position where added.
-		tym::row__ Add(
+		epeios::row__ Add(
 			const cell_ &Cell,
 			location__ Location )
 		{
-			tym::row__ P = cells_::New();
+			epeios::row__ P = cells_::New();
 
 			Write( Cell, Location, P );
 
 			return P;
 		}
 		//f Return the position of the first non-empty cell.
-		tym::row__ FirstNonEmptyCell( void ) const;
+		epeios::row__ FirstNonEmptyCell( void ) const;
 		//f Return the position of the last non-empty cell.
-		tym::row__ LastNonEmptyCell( void ) const;
+		epeios::row__ LastNonEmptyCell( void ) const;
 		//f Delete all empty cells. Retunr amount of cells deleted.
 		amount__ DeleteEmptyCells( void );
 		//f Delete all heading empty cells. Return amount of cells deleted.
@@ -252,11 +251,11 @@ namespace txmtbl {
 		//f Delete all empty cells between the first and last non-empty cells. Return amount of cells deleted.
 		amount__ DeleteCentralEmptyCells( void );
 		//f Delete all cells from 'Position'. Return amount of cells deleted.
-		amount__ DeleteCellsAt( tym::row__ Position );
+		amount__ DeleteCellsAt( epeios::row__ Position );
 		//f Delete all cells. Return amount of cells deleted.
 		amount__ DeleteAllCells( void )
 		{
-			tym::row__ P = cells_::First();
+			epeios::row__ P = cells_::First();
 
 			if ( P != NONE )
 				return DeleteCellsAt( P );
@@ -266,6 +265,12 @@ namespace txmtbl {
 		/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
 		Return amount of cell deleted.*/
 		amount__ DeleteComment( bso::char__ Marker );
+		//f Delete all non-significant cells (empty and comment).
+		void Purge( bso::char__ CommentMarker )
+		{
+			DeleteComment( CommentMarker );
+			DeleteEmptyCells();
+		}
 		//f 'Location' becomes the location.
 		void Location( location__ Location )
 		{
@@ -275,6 +280,16 @@ namespace txmtbl {
 		location__ Location( void ) const
 		{
 			return S_.Location;
+		}
+		/*f Return the unique cell in 'Cell'. Undefined result if there is no
+		or more than one cell. */
+		void GetUniqueCell( cell_ &Cell ) const
+		{
+#ifdef TXMTBL_DBG
+			if ( Amount() != 1 )
+				ERRu();
+#endif
+			Read( First(), Cell );
 		}
 		NAV( cells_:: )
 	};
@@ -333,9 +348,9 @@ namespace txmtbl {
 			lines_::Init();
 		}
 		//f Add 'Line'. Return position where added.
-		tym::row__ AddLine(	const line_ &Line )
+		epeios::row__ AddLine(	const line_ &Line )
 		{
-			tym::row__ P = lines_::New();
+			epeios::row__ P = lines_::New();
 
 			lines_::Write( Line, P );
 			lines_::Sync();
@@ -343,7 +358,7 @@ namespace txmtbl {
 			return P;
 		}
 		//f Delete the line at 'Position'.
-		void DeleteLine( tym::row__ Position )
+		void DeleteLine( epeios::row__ Position )
 		{
 			lines_::Delete( Position );
 		}
@@ -359,6 +374,26 @@ namespace txmtbl {
 		void DeleteCentralEmptyCells( void );
 		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
 		void DeleteComments( bso::char__ Marker );
+		//f Delete all non-significant cells (empty and comment).
+		void Purge( bso::char__ CommentMarker )
+		{
+			DeleteComments( CommentMarker );
+			DeleteEmptyCells();
+			DeleteEmptyLines();
+		}
+		/*f Return the unique cell in line 'Row' in 'Cell'. Undefined result if there is no
+		or more than one cell. */
+		void GetUniqueCell(
+			epeios::row__ Row,
+			cell_ &Cell ) const
+		{
+			ctn::E_CITEM( line_ ) Line;
+
+			Line.Init( *this );
+
+			Line( Row ).GetUniqueCell( Cell );
+		}
+
 		NAV( lines_:: )
 	};
 
