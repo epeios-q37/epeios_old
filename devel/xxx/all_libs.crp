@@ -1,7 +1,10 @@
 # Details for each library.
 # $Id$
 
-NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+
+NAME		PROJECT		COPYRIGHT_DATES\
+	DESCRIPTION
+
 
 # Epeios core libraries.
 &aem		&epeios		&2001-\
@@ -159,7 +162,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbcor		&lgsb		&		&GeSBib field CORe
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdbm_	&lgsb		&		&GeSBib DataBase Manager (for backebnd).
-&gsbdtb		&lgsb		&		&GeSBib DaTaBase
+&gsbdtb		&lgsb		&\
+	&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-		&GeSBib FieLDs
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
 &gsbmlt		&lgsb		&2002-		&GeSBib MuLTi field
@@ -167,7 +171,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
 &gsbsrq		&lgsb		&		&GeSBib Search ReQuest
 &gsbsrq_	&lgsb		&		&GeSBib Search ReQuest (for backend)
-&gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
+&gsbtbl		&lgsb		&\
+	&GeSBib TaBLe
 &gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 
