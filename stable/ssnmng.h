@@ -76,6 +76,9 @@ namespace ssnmng {
 	//t The type of the row of a session.
 	E_ROW( row__ );
 
+	typedef bch::E_BUNCH_( row__ ) rows_;
+	E_AUTO( rows )
+
 	//c A session id.
 	class session_id__
 	{
@@ -119,7 +122,7 @@ namespace ssnmng {
 	typedef que::E_MQUEUEt_( row__ ) _queue_;
 
 	//c A session manager.
-	class sessions_manager_
+	class base_sessions_manager_
 	: public _list_,
 	  public _queue_
 	{
@@ -153,7 +156,7 @@ namespace ssnmng {
 		idxbtq::E_INDEXt_( row__ ) Index;
 		//o The timing.
 		bch::E_BUNCHt_( chrono__, row__ ) Chronos;
-		sessions_manager_( s &S )
+		base_sessions_manager_( s &S )
 		: S_( S ),
 		  _list_( S ),
 		  Table( S.Table ),
@@ -180,7 +183,7 @@ namespace ssnmng {
 			Chronos.plug( M );
 			_queue_::plug( M );
 		}
-		sessions_manager_ &operator =( const sessions_manager_ &S )
+		base_sessions_manager_ &operator =( const base_sessions_manager_ &S )
 		{
 			_list_::operator =( S );
 			Table = S.Table;
@@ -271,14 +274,86 @@ namespace ssnmng {
 			if ( S_.Root != NONE )
 				S_.Root = Index.Balance( S_.Root );
 		}
-		//f Return the expired sessions. Only valid until next call.
-		const bch::E_BUNCH_( row__ ) &GetExpired( void ) const;
 		//f Put in 'Expired' the expired sessions.
-		void GetExpired( bch::E_BUNCH_( row__ ) &Expired ) const;
+		void GetExpired( rows_ &Expired ) const;
+		void GetAll( rows_ &Rows ) const;
 		E_NAVt( _queue_::, row__ )
 	};
 
-	E_AUTO( sessions_manager )
+	E_AUTO( base_sessions_manager )
+
+	class user_functions__
+	{
+	protected:
+		virtual void SSNMNGDelete( void *UP ) = 0;
+	public:
+		void Delete( void *UP )
+		{
+			SSNMNGDelete( UP );
+		}
+	};
+
+	typedef bch::E_BUNCHt_( void *, row__ ) pointers_;
+	E_AUTO( pointers )
+
+	class sessions_manager_
+	: public base_sessions_manager_,
+	  public pointers_
+	{
+	private:
+		void SSNMNGAllocate( tym::size__ Size )
+		{
+			pointers_::Allocate( Size );
+		}
+		user_functions__ *_UserFunctions;
+	public:
+		struct s
+		: public base_sessions_manager_::s,
+		  public pointers_::s
+		{};
+		sessions_manager_( s &S )
+		: base_sessions_manager_( S ),
+		  pointers_( S )
+		{}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			base_sessions_manager_::plug( MM );
+			pointers_::plug( MM );
+		}
+		sessions_manager_ &operator =( const sessions_manager_ &SM )
+		{
+			base_sessions_manager_::operator =( SM );
+			pointers_::operator =( SM );
+
+			return *this;
+		}
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				CloseAll();
+			_UserFunctions = NULL;
+			base_sessions_manager_::reset( P );
+	  		pointers_::reset( P );
+
+		}
+		void Init(
+			bso::ushort__ Relative,
+			bso::ushort__ Absolute,
+			user_functions__ &UserFunctions )
+		{
+			base_sessions_manager_::Init( Relative, Absolute );
+			pointers_::Init();
+			_UserFunctions = &UserFunctions;
+		}
+		void Close( row__ Row )
+		{
+			_UserFunctions->Delete( pointers_::Get( Row ) );
+			base_sessions_manager_::Close( Row );
+		}
+		void CloseAll( void );
+		void CloseExpired( void );
+		E_NAVt( base_sessions_manager_::, row__ )
+	};
 }
 
 /*$END$*/

@@ -102,7 +102,7 @@ static bso::sign__ Search_(
 	return Test;
 }
 
-row__ ssnmng::sessions_manager_::Open( void )
+row__ ssnmng::base_sessions_manager_::Open( void )
 {
 	row__ P = _list_::New();
 	session_id__ SessionID;
@@ -149,7 +149,7 @@ row__ ssnmng::sessions_manager_::Open( void )
 	return P;
 }
 
-row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
+row__ ssnmng::base_sessions_manager_::Position( const char *SessionID ) const
 {
 	if ( S_.Root != NONE )	{
 		idxbtq::E_ISEEKERt__( row__ ) Seeker;
@@ -165,7 +165,7 @@ row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
 	return NONE;
 }
 
-row__ ssnmng::sessions_manager_::Position( const str::string_ &SessionID ) const
+row__ ssnmng::base_sessions_manager_::Position( const str::string_ &SessionID ) const
 {
 	char Buffer[SSNMNG_SIZE+1];
 
@@ -179,7 +179,7 @@ row__ ssnmng::sessions_manager_::Position( const str::string_ &SessionID ) const
 	return Position( Buffer );
 }
 
-void ssnmng::sessions_manager_::GetExpired( bch::E_BUNCH_( row__ ) &Expired ) const
+void ssnmng::base_sessions_manager_::GetExpired( rows_ &Expired ) const
 {
 	row__ Row = First();
 
@@ -191,16 +191,39 @@ void ssnmng::sessions_manager_::GetExpired( bch::E_BUNCH_( row__ ) &Expired ) co
 	}
 }
 
-const bch::E_BUNCH_( row__ ) &ssnmng::sessions_manager_::GetExpired( void ) const
+void ssnmng::base_sessions_manager_::GetAll( rows_ &Rows ) const
 {
-	static bch::E_BUNCH( row__ ) Expired;
+	row__ Row = First();
 
-	Expired.Init();
+	while ( Row != NONE ) {
+		Rows.Append( Row );
 
-	GetExpired( Expired );
-
-	return Expired;
+		Row = Next( Row );
+	}
 }
+
+void ssnmng::sessions_manager_::CloseAll( void )
+{
+	row__ Row = First();
+
+	while ( Row != NONE ) {
+		Close( Row );
+		Row = Next( Row );
+	}
+}
+
+void ssnmng::sessions_manager_::CloseExpired( void )
+{
+	row__ Row = First();
+
+	while ( Row != NONE ) {
+		if ( IsExpired( Row ) )
+			Close( Row );
+
+		Row = Next( Row );
+	}
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

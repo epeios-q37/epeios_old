@@ -1,5 +1,8 @@
 $Id$
 
+06/03/05:
+- SSNMNG : Ajout de la gestion des pointeurs utilisateurs.
+
 GENERAL:
 - (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
 - (02/02/05) Adding 'LLIO' and 'io' libraries.
@@ -43,6 +46,8 @@ SCK:
 
 SSNMNG:
 - (04/03/05) Removing default values in 'Init()' function.
+- (05/03/05) Adding and using the 'rows[_]' type.
+-			 Removing a non-thread-safe method.
 
 TAGECP:
 - (03/02/05) Adapting to changes in 'FIL' library.
