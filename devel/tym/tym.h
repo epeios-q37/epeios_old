@@ -197,14 +197,14 @@ namespace tym {
 			b::Store( (uym::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (both included) or 'NONE' if non-existant.
-		r Locate(
+		r Search(
 			const t &Object,
 			r Begin,
 			r End ) const
 		{
 			epeios::row_t__ Position;
 
-			if ( ( Position = b::Locate( (uym::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Search( (uym::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;

@@ -140,7 +140,7 @@ namespace stk {
 		bso::bool__ Exists( t Object ) const
 		{
 			if ( Amount() )
-				return E_MEMORYt_( t, r )::Locate( Object, 0, Amount() ) != NONE;
+				return E_MEMORYt_( t, r )::Search( Object, 0, Amount() ) != NONE;
 			else
 				return false;
 		}

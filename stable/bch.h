@@ -316,20 +316,19 @@ namespace bch {
 			return P;
 		}
 		//f Return row of 'Object' between 'Begin' (included) and 'End' (excluded), or 'NONE' if not found.
-		row Row(
+		row Search(
 			const type &Object,
 			row Begin,
 			row End ) const
 		{
-			if ( Amount() )
-				return mmr::Row( Object, Begin, End );
+			return mmr::Search( Object, Begin, End );
 		}
 		//f Return row of 'Object' beginning at 'Begin' (included), or 'NONE' if not found.
-		row Row(
+		row Search(
 			const type &Object,
 			row Begin = 0 ) const
 		{
-			return Row( Object, Begin, Amount() );
+			return Search( Object, Begin, Amount() );
 		}
 		//f Store 'Count' 'Object' at 'Row'. Adjust the size of the bunch.
 		void StoreAndAdjust(

@@ -339,8 +339,8 @@ namespace uym {
 			bsize__ Size,
 			row__ Position,
 			size__ Count );
-		//f Locate 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
-		row__ Locate(
+		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
+		row__ Search(
 			const datum__ *Objet,
 			bsize__ Size,
 			row__ Begin,
@@ -396,14 +396,14 @@ namespace uym {
 		size__ Count,
 		row__ Position,
 		datum__ *Data );
-
+#if 0
 	row__ _Position(
 		const datum__ *Objet,
 		bsize__ Size,
 		row__ Begin,
 		row__ End,
 		const datum__ *Data );
-
+#endif
 	template <typename m> class _memory__
 	: public m
 	{
@@ -483,13 +483,13 @@ namespace uym {
 			_Store( Object, Size, Count, Position, Data_ );
 		}
 		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		uym::row__ Locate(
+		uym::row__ Search(
 			const uym::datum__ *Objet,
 			uym::bsize__ Size,
 			uym::row__ Begin,
 			uym::row__ End ) const
 		{
-			return _Locate( Object, Size, Begin, End, Data_ );
+			return _Search( Object, Size, Begin, End, Data_ );
 		}
 		//f Return the used buffer.
 		const uym::datum__ *Buffer( void ) const

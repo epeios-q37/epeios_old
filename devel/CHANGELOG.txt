@@ -16,6 +16,7 @@ BCH:
 - Bug fixing of the E_BUNCHt__(_) and related classes.
 - Rewriting 'WriteAndAdjust()' methods.
 - Renaming in 'Append' and rewriting 'Add' methods.
+- Renaming 'Row()' into 'Search()'.
 
 BITBCH:
 - Fixing bug.
@@ -162,9 +163,11 @@ TYM:
 - Fixing bug.
 - Revert to version before adaptation to CW.
 - Adding 'const' qualifier to return value to avoid smoe problems.
+- Renaming 'Locate' into 'Search'.
 
 UYM:
 - Fixing bug in 'untyped_memory__(_)'
+- Renaming 'Locate' into 'Search'.
 
 --------
 20030219

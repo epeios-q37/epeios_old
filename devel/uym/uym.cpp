@@ -189,7 +189,7 @@ void untyped_memory_::Store(
 	}
 }
 
-row__ untyped_memory_::Locate(
+row__ untyped_memory_::Search(
 	const datum__ *Objet,
 	size_t Taille,
 	row__ Debut,
@@ -390,6 +390,7 @@ void uym::_Fill(
 		memcpy( Data + Size * Count + Position, Object, Size );
 }
 
+#if 0
 row__ uym::_Position(
 	const datum__ *Objet,
 	bsize__ Size,
@@ -405,6 +406,7 @@ row__ uym::_Position(
 	else
 		return Begin;
 }
+#endif
 
 
 /* Although in theory this class is inaccessible to the different modules,
