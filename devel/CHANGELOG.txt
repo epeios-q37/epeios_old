@@ -88,6 +88,9 @@ ERR:
 - Adding the 'tReturn' item.
 - Adapting to changes in 'STF' library.
 
+FIL:
+- Fixing destructor bug.
+
 FLW:
 - Changing some type definition to simplify castings.
 - Changing 'datum__' definition from 'char' to 'unsigned char' to avoid

@@ -1,7 +1,7 @@
 /*
 	Header for the 'fil' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -150,7 +150,7 @@ namespace fil
 		}
 		virtual ~file_oflow___( void )
 		{
-			reset( false );
+			reset( true );
 		}
 		/*f Initialization with the file named 'FileName'. If this file already exists, 'Mode' is was happen with it.
 		If 'Handle' = 'hCorrect', corrects the '\' or '/' in file name.
