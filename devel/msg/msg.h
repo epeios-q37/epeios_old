@@ -78,6 +78,10 @@ extern class ttr_tutor &MSGTutor;
 #	undef GetMessage
 #endif
 
+#ifdef CPE__CYGWIN
+#	undef GetMessage
+#endif
+
 namespace msg {
 
 	struct buffer__

@@ -4,7 +4,10 @@ BCH:
 - (10/01/05) Fixing type problem.
 
 CCH:
-- (24/04/05) Adapting to changes in 'TOL' library.
+- (24/01/05) Adapting to changes in 'TOL' library.
+
+MSG:
+- (26/01/05) Coding workaround for the silly 'GetMessage' problem for cygwin too.
 
 TOL:
 - (20/01/05) Fixing empty 'pointer__' object copying problem.
