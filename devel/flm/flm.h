@@ -237,12 +237,12 @@ namespace flm {
 			{
 				Ouvrir_();
 				
-				Capacite--;
 #ifdef CPE__UNIX
-				if ( ( lseek( FD_, Capacite, 0 ) == -1 )
+				if ( ( lseek( FD_, Capacite - (capacite__)1, SEEK_SET ) == -1 )
 				      || ( write( FD_, &Capacite, 1 ) != 1 ) )
 #else
-				if ( Stream_.seekp( ( Capacite - (capacite__)1 ) ).fail() || Stream_.put( (char)0 ).fail() )
+				if ( Stream_.seekp( ( Capacite - (capacite__)1 ) ).fail()
+					 || Stream_.put( (char)0 ).fail() )
 #endif
 				{
 					if ( !Temoin_.Manuel )

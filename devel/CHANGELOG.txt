@@ -16,7 +16,7 @@ CTN:
 - Adding VC++ workaround.
 
 FLM:
-- Using nox the UNIX system calls under UNIX instead of the C++/C call (which seems bugged)..
+- Using now the UNIX system calls under UNIX instead of the C++/C call (which seems bugged).
 
 IDXBTQ:
 - Adding 'E_INDEX(_)'.
