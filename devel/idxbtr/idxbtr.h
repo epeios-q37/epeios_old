@@ -391,7 +391,7 @@ namespace idxbtr {
 		const tree_index_<r> *Index_;
 		state State_;
 #ifdef IDXBTR_DBG
-		void Test_( void )
+		void Test_( void ) const
 		{
 			if ( Index_== NULL )
 				ERRu();
@@ -400,7 +400,7 @@ namespace idxbtr {
 				ERRu();
 		}
 #endif
-		state Handle_( r &Row )
+		state Handle_( r Row )
 		{
 			if ( Row != NONE ) {
 				Current_ = Row;
@@ -456,12 +456,12 @@ namespace idxbtr {
 			return( Handle_( Index_->Left( Current_ ) ) );
 		}
 		//f Return the row of the current node.
-		r GetCurrent( void )
+		r GetCurrent( void ) const
 		{
 			return Current_;
 		}
 		//f Return the state of the last operation.
-		state GetState( void )
+		state GetState( void ) const
 		{
 			return State_;
 		}
