@@ -54,6 +54,7 @@ DBT:
 - Adapting to changes in 'LST' library.
 - Adapting to changes in 'LSTBCH' library.
 - Adding the virtual 'DBTAllocate' method.
+- Using 'E_NAVt' macro.
 
 DTR:
 - Fixing call to an iexistent method;

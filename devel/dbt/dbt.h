@@ -244,11 +244,6 @@ namespace dbt {
 
 			E_LISTt_( row__ )::Delete( Node );
 		}
-		//f Return true if 'Node' exists, false otherwise.
-		bso::bool__ Exists( row__ Node ) const
-		{
-			return E_LISTt_( row__ )::Exists( Node );
-		}
 		//f Return the internal corresponding to 'Node'.
 		int__ GetInternal( row__ Node ) const
 		{
@@ -259,6 +254,7 @@ namespace dbt {
 		{
 			return Externals( GetExternalRow( Node ) );
 		}
+		E_NAVt( E_LISTt_( row__ )::, row__ )
 	};
 
 	E_AUTO3( differentiated_binary_tree )
