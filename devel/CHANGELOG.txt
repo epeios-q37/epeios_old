@@ -1,5 +1,9 @@
 $Id$
 
+10/03/05:
+- CTN:
+	- Ajout de méthodes 'Index()' et de nouveaux 'operator()( void )'.
+
 08/03/05:
 - IDXBTR:
 	- Correction d'un bogue potentiel.

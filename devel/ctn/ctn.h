@@ -419,6 +419,10 @@ namespace ctn {
 				Mode_ = Mode;
 			}
 		}
+		r Index( void ) const
+		{
+			return *Pilote_.Index();
+		}
 	};
 
 	template <class st, typename r> class item_base_const__
@@ -509,6 +513,10 @@ namespace ctn {
 		{
 			Pilote_.Index( NONE );
 		}
+		r Index( void ) const
+		{
+			return *Pilote_.Index();
+		}
 	};
 
 
@@ -567,6 +575,14 @@ namespace ctn {
 #endif
 			return Objet_;
 		}
+		const t &operator()( void ) const
+		{
+#ifdef CTN_DBG
+			if ( IsFlushed() )
+				ERRu();
+#endif
+			return Objet_;
+		}
 	};
 
 	template <class t, typename r> class mono_container_;
@@ -609,8 +625,16 @@ namespace ctn {
 			Set( Position );
 			return Objet_;
 		}
+		t &operator()( void )
+		{
+#ifdef CTN_DBG
+			if ( IsFlushed() )
+				ERRu();
+#endif
+			return Objet_;
+		}
 		//f Return the object at current position.
-		const t &operator()( void )
+		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
 			if ( IsEmpty() )
@@ -674,7 +698,7 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Flush()' before. */
-		t &operator ()( r Position )
+		t &operator()( r Position )
 		{
 			return Get( Position );
 		}
@@ -682,7 +706,11 @@ namespace ctn {
 		gave to the previous function. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the previous,
 		you MUST call the function 'Flush()' before. */
-		t &operator ()( void )
+		t &operator()( void )
+		{
+			return Ponctuel_();
+		}
+		const t &operator()( void ) const
 		{
 			return Ponctuel_();
 		}
@@ -776,6 +804,10 @@ namespace ctn {
 				ERRu();
 #endif
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
+		}
+		r Index( void ) const
+		{
+			return Ponctuel_.Index();
 		}
 
 	};
@@ -942,8 +974,15 @@ namespace ctn {
 			Set( Position );
 			return Objet_;
 		}
-		//f Return the object at current position.
 		t &operator()( void )
+		{
+#ifdef CTN_DBG
+			if ( IsFlushed() )
+				ERRu();
+#endif
+			return Objet_;
+		}
+		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
 			if ( IsFlushed() )
@@ -1006,8 +1045,7 @@ namespace ctn {
 			Set( Position );
 			return Objet_;
 		}
-		//f Return the object at current position.
-		const t &operator()( void )
+		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
 			if ( IsEmpty() )
@@ -1059,7 +1097,7 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Flush()' before. */
-		t &operator ()( r Position )
+		t &operator()( r Position )
 		{
 			return Get( Position );
 		}
@@ -1067,7 +1105,11 @@ namespace ctn {
 		gave to the previous function. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the previous,
 		you MUST call the function 'Flush()' before. */
-		t &operator ()( void )
+		t &operator()( void )
+		{
+			return Ponctuel_();
+		}
+		const t &operator()( void ) const
 		{
 			return Ponctuel_();
 		}
@@ -1161,6 +1203,10 @@ namespace ctn {
 				ERRu();
 #endif
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
+		}
+		r Index( void ) const
+		{
+			return Ponctuel_.Index();
 		}
 	};
 
