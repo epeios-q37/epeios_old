@@ -1,0 +1,109 @@
+
+<!-- $Id$ -->
+<content>
+  <chapter title="The 2 branches of computer science.">
+    <chapter title="The mathematical branch.">
+      <section>
+        <para>This branch is the theoretical foundation of the data processing. It is based on various theories which were developed, for the main part, in the last century.</para>
+        <para>These theories are based on the binary numeration system, which is for computers what the decimal numeration system is for human. The logic, notably with Boole's algebra and De Morgan theorems, supplied the main part of the computer concepts, of which the most importants are the bit (binary digit), and the logical operators (AND, OR, NO, ... gates).</para>
+        <para>These concepts are the foundation of the hardware part of the computer, from which the processor is the most important component. The processor is the application of these concepts.</para>
+        <para>The number of tasks, their complexity, and the way that modern processors handle them have evolved in a lightning way. However, even the most evolved processors have always the same foundation.</para>
+      </section>
+    </chapter>
+    <chapter title="The data processing branch.">
+      <section>
+        <para>The object of this branch is the formalization of data processing by the study of its representation and the analysis of its process of treatment. This formalization is implemented by the software part of a computer. However, the most elementary part of this branch is, more and more, handled by the hardware.</para>
+        <para>The domain of the artificial intelligence is one of the most spectacular emanation of this branch. All the algorithms which disregards material considerations, and associated concepts, ensue directly from this branch. These algorithms are often the formalization of human behavior and they are conceived during the analysis phase of a software project.</para>
+        <para>In this document, we referred to this branch by the terms 'processing branch'.</para>
+      </section>
+    </chapter>
+  </chapter>
+  <chapter title="Definition of an object.">
+    <chapter title="Introduction.">
+      <section>
+        <para>We hear more and more often speaking about the notion of object in the computer domain, especially to qualify a language. The sense of this notion varies from a language to another, and concerns more its behavioral aspect than its contents. In brief, the term of object is so often misused that I have no scruple to give it my own definition for this document purpose.</para>
+        <para>I do not pretend, therefore, to end the debate on the question of what is an object, or a object oriented language, but simply to give my own version of this concept.</para>
+        <para>The notion of object is a pure product of the processing branch, because to an object corresponds one, or a set of informations, as well as all the operations applicable to this informations. Hence, most of the object oriented languages define operators (destructors, constructors), as well as relational mechanisms (inheritance, overloading of functions, virtual functions...) dedicated to objects. These operators and mechanisms have a very important role, but, in my opinion, they cover only an aspect, and insufficiently, of the notion of object.</para>
+      </section>
+    </chapter>
+    <chapter title="Structure of an object.">
+      <section>
+        <para>The previous chapter characterizes the object as a result of the processing branch. This characterization defines its role, but not its structure.</para>
+        <para>Indeed, the role of an object is to allow the manipulation of the information which it contains without having to care about the way it proceeds, nor the way this informations are stored. However, its structure should take care of the mathematical branch, or you should have to create, to obtain acceptable performances, special low-level objects. These low-level objects are, in fact, the objects which are available in most of the languages, especially those that are not of 4-th generation. Most of these objects are, moreover, treated as is by the processor (byte, integer, float, ...). These objects have the particularity to be of fixed size.</para>
+        <para>However, many concepts manipulated by human beings have not intrinsic limits, but any implementation of a concept is limited. These limits have to be easily raised and high enough so that any attempt to approach them exhausts the ressources of the computers of which they are implemented.</para>
+        <para>In conclusion, any object should be constituted with a dynamic part (i.e. of variable size), which is the essence of this object. But, to manipulate this object, it is advisable to add some information which describe it. This information constitutes the static part of the object. Their number, their representation, their meaning is only known by the designer of the object. This descriptive part are generally based on the low-level objects, which generally fulfill the criteria exposed in the previous paragraph, because the resources available on a given computer depends from this low-level objects.</para>
+        <para>It is advisable to consider an object as basically dynamic, and constituted by this two different parts. One can not agree, especially when considering the actual practices which generalize the use of low-level objects, and which is justified by the fact that operations on these objects are very fast. However, computers are more and more powerful, and the amount of such cases, where high performances are essential, decreases.</para>
+        <para>However, it would be inaccurate to think that the concepts developed in this chapter forbid such practices. It simply redefines their context of use. The low-level objects should be simply considered as an optimized version of their equivalent in dynamic version, having same behavior, but in a more restricted domain.</para>
+      </section>
+    </chapter>
+    <chapter title="Behavior common to all objects.">
+      <para>Constructors and destructors of an object are generally perceived as essential elements to object oriented programming. The destructor releases automatically the resources used by an object and the constructors supplies a ready-to-use object.</para>
+      <para>In the framework of my theory, the role of the constructor is only to place significant values in the static part of the object, leaving the dynamic part not only empty, but non-existent. An object, after the call of the constructor, is unusable, but monopolizes only a minimum of resources.</para>
+      <para>To be able to use it, it is necessary to call explicitly a function of initialization, which sets up everythings necessary to use the object. Another function should be supplied which purges the object, and put it exactly in the same state as after the constructor being called. Furthermore, a function of duplication should be systematically supplied. Thanks to these functions, an object uses resources only when it really needs them, and not throughout its entire life.</para>
+    </chapter>
+  </chapter>
+  <chapter title="Basic objects.">
+    <para>The notion of byte has no theoretical foundation, but became the most used data unity. Therefore, to avoid too much abstract statement, I am confering it a theoretical legitimacy.</para>
+    <chapter title="Fundamental objects.">
+      <para>A fundamental object is an object of fixed size. Object stemming directly from a language (integer, float, character...) are generally fundamental objects. Any object exclusively constituted by fundamental objects is a fundamental object.</para>
+      <para>These objects constitute generally the static part of a not fundamental object. Due to their characteristics, they are easy and fast to manipulate. They are the implementation and the extension of the mathematical branch, and it is what makes them a category on it own.</para>
+      <para>Any dynamic part of an object is, basically, constituted by a set, of variable size, of fundamental objects.</para>
+    </chapter>
+    <chapter title="Untyped memory.">
+      <para>This object is the abstraction of the RAM. Any object stores its dynamic part (when it has one) in this object. Functions for allocation, reading and writing, as well as functions allowing the copy of all or part of an untyped memory in another one.</para>
+      <para>This object allows to store your object not only in RAM, but also in files, for example.</para>
+    </chapter>
+    <chapter title="The typed memory.">
+      <para>The untyped memory allows to store bytes, the typed memory, fundamental objects. The same functions are available, but the copy between 2 typed memory is only possible if the 2 typed memory store fundamental objects of the same type.</para>
+    </chapter>
+    <chapter title="The 'set of fundamental objects' object (SFO).">
+      <para>This object is a typed memory which knows its size. So, operations like adding or removing objects are easily handled by this object.</para>
+    </chapter>
+    <chapter title="The 'set of bits' object.">
+      <para>This object is, conceptually, a SFO wich stores bits. However, because the byte is the basic data unit, at least 1 byte is needed to store 1 bit.</para>
+      <para>To avoid the waste too much place, this special object was created. Based on a SFO of bytes, each byte is used to store 8 bits, so you waste no more as 7 bits.</para>
+      <para>This object has the same behaviour as a SFO.</para>
+    </chapter>
+    <chapter title="The 'container' object.">
+      <para>The container is to not fundamental objects what the SFO is to fundamental objects. This object allows to manage a set of not fundamental objects.</para>
+      <para>A container is an object too, so a container can also contain a set of containers.</para>
+    </chapter>
+    <chapter title="Summary.">
+      <para>Any object, whatever how complex it is, is constituted only by fundamental objects, by SFOs (including the special object 'set of bits'), and\or by containers.</para>
+      <para>When the object does not contain dynamic part, it contains only fundamental objects and is so, by definition, a fundamental object. To store a set of fundamental objects, you may use SFOs. To stores a set of SFOs, you may use containers. To store a set of containers, you may also use a container. And so on.</para>
+      <para>The distinction among SFO and containers is due to the nature of the elements which they contain. Such a distinction is unusual. However, if you keep in mind the 2 branches detailed in the previous chapters, the use of these objects becomes intuitive.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The other objects.">
+    <chapter title="The 'flow' object.">
+      <para>This object is a memory with sequential access, a communication channel. The reading is made in a destructive way.</para>
+      <para>There is 2 types of flow. The first ones, called 'input flow', is for reading, and the second, called 'output flow', is for writing. For each input flow you have one and only one output flow and vice-versa.</para>
+      <para>Flows allow, for example, the communication between two processes, or the saving of an object in a file for a later reading, or the communication between two computers, ...</para>
+    </chapter>
+    <chapter title="The ordering objects.">
+      <para>Arrays of objects (SFOs, containers) store objects in a linear way. Such a data organization is not suitable to organize data in a more complex manner (as in a tree, for example), or can be very expensive in time (if used as a queue, in which you often add/remove objects, for example).</para>
+      <para>Each object in a array is identified by a row value (which is similar as a RAM pointer). You can so create an object consituted by row values and, because row values are fundamental objects, store them in a SFO (then called 'ordering SFO'). Informations about an object in a array with a given row value can be found in the ordering SFO at the same row value.</para>
+      <para>For example, if you want to store your data in a binary tree, you store the data in a container or a SFO, depending of the nature of the object, without taking care about the order in which they are stored. Once stored in the array, each object have a unique row value. For each object, create an object containing the row value for the parent, and one for each child, and store this object in a SFO, which so becames a binary tree ordering object, at the same row value as the concerned object.</para>
+      <para>As you can see, this is very easy, and you can organize the same data simultaneously in several ways, creating as much ordering SFOs as you want. Take notice that ordering SFOs, like all SFOs, can be stored in containers.</para>
+      <para>Following this model, you can handle binary trees, dynamic trees, queues, stacks, indexes,...</para>
+    </chapter>
+    <chapter title="Database like objects.">
+      <para>Database is considred as a special domain. What is designed for databases can not be used in another field and vice-versa ; each domain have their own specific tools.</para>
+      <para>Although database tools are almost indispensable in some cases, they are often use in case where only some of their features are needed. Thanks the way Epeios object are designed, you can use them instead databases in many cases. You are then no longer limited by the few predefined data types usually available with database, but you can store the objects you want, without limitations.</para>
+      <para>You need no special objects. Database like object are containers with the only difference that, thanks to the Epeios memory handling, instead using RAM to store its contents, you tell it to use files. This is done before the initialization of the container, and, once the object initialized, you handle them the same way as if the objects where stored in RAM.</para>
+      <para>The indexes are based on ordering SFO, and even objects to handle locks and transactions are easily implemented as and using classical Epeios objects.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The user interface.">
+    <chapter title="Using flows.">
+      <para>The interface should be separated from the treatment. The interface communicates with a object server, which is dedicated to treatment. The communication occurs on a request/answer base (basic principle of client/server architecture).</para>
+      <para>This concept of separation of the code concerning the treatment of that concerning the interface is well-known, because the reliability, maintenability and improvability is increased with software applying this principle. Unfortunately, because interface and treatment are generally developed using the same development environment, this rule is generally broken.</para>
+      <para>With Epeios, this concept is applied in a absolute way, notably by the fact that the communication channel is the only link between interface and treatment, and that they communicate using a dedicated protocol, which is OS-independent.</para>
+      <para>This fact make it easy to deploy Epeios software in a client/server, multitasking, muti-user enviroment, or as a monotasking, in a mono-user enviroment as a stand-alone software. This also allows the same treatement backend to be used with several interface clients, developped using different languages.</para>
+    </chapter>
+    <chapter title="Automatic generation of the API.">
+      <para>Thanks to the dedicated frontend(interface)/backend(treatment) protocol, specially designed for the Epeios project, once the backend written, the API for the frontend can be generated by querying the backend. This simplifies the development of the interface.</para>
+      <para>The client which queries the backend generates an XML files, describing all the objects and their functions available with the backend. To use this API with the language of your choice, you have only to implement the Epeios protocol in this language (this is made once), and the XSL file to transform the XML file in a file suited for the language (this is also made only once). To programm the interface, you have only to call the generated functions, and you would never had to develop anything related to the Epeios protocol, even if you want program a interface of a new Epeos software.</para>
+    </chapter>
+  </chapter>
+</content>

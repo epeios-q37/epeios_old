@@ -1,0 +1,280 @@
+
+<!-- $Id$ -->
+<content>
+  <chapter title="Introduction.">
+    <section>
+      <para xml:space="preserve">The dependencies between Epeios libraries look like a tree. It means that only some libraries are written from scratch (i.e. only using the standard C/C++ or OS specific libraries). Most Epeios libraries are based on other Epeios libraries. Because this libraries are Free Software, you have only to take a look on their sources to see examples on how to use them. By the way, take notice that all software and libraries from the Epeios project are under GNU GPL. Taking a look to the <link URL="../quickdoc/" type="external">QuickDoc</link> may be very helpful.</para>
+    </section>
+    <section>
+      <para>Most of the library do not fully implements the concept they deal about because they are written to be used by another library, so it does generally only implements what needed by this library. However, they are designed so that they can be easily completed, and this would be do in the future.</para>
+      <para>Most of the Epeios libraries are designed so they can be used on each system which have a C++ compiler, because this particular libraries use only the C(++) standard libraries. Some other Epeios libraries, which deals with more OS specific concept, like socket, pipe, shared memory, multitasking, etc., work only under UNIX and Windows, that's because this OSes are the only ones that I have access to. This means that, if you write software making use of such libraries, they actually work only on UNIX and Windows systems. But, as soon as this libraries are adapt to other systems, your software would work, without modifying the sources, on this other systems.</para>
+    </section>
+    <section>
+      <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html" type="external">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports" type="external">here</link> for miscellaneous port). To work, two enviroment variables must be defined. The first, <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows. The second one, <raw>EPEIOS_SRC</raw> must contain all the needed source directories separated by <raw>:</raw> under GNU/Linux and <raw>;</raw> under Windows and without an ending <raw>/</raw> or <raw>\</raw>.</para>
+      <para xml:space="preserve">Under GNU/Linux, the libraries were tested with <link URL="http://gcc.gnu.org" type="external">GNU GCC</link> V2.95.2. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/" type="external">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
+      <para>Concerning GNU/Linux, I test the libraries/software on a Intel/x86 system, but I occasionnaly test them on other GNU/Linux system (Apha, PPC and SPARC), and they seem to work without problems.</para>
+    </section>
+  </chapter>
+  <chapter title="Principles.">
+    <chapter title="Object types.">
+      <chapter title="Static objects.">
+        <para xml:space="preserve">Objects of this type are of fixed size. They are based on the C(++) fundamental types like integer, char, float, double, ..., which are also considered as static objects. Some more OS specific types, like <raw>handler</raw> or <raw>file descriptor</raw>, which are usually based on fundamental C(++) types, are static objects too. Any object constituted only by static objects is a static object too.</para>
+      </chapter>
+      <chapter title="Dynamic objects.">
+        <para xml:space="preserve">Objects of this type have a size which can be modified. They remain dynamic objects even if they contain one or more static objects. The heart of such an object is constituted of a set of static objects (see the <raw>SET</raw> library), or a set of dynamic objects (see <raw>CTN</raw> library). Objects which are constituted by one or more dynamic objects are dynamic objects too.</para>
+      </chapter>
+    </chapter>
+    <chapter title="Memory handling.">
+      <para>In the Epeios libraries, the memory isn't use the usually way. If you have to store some object, you have, almost always, to use a memory object. You don't have to work directly with such an object, but many Epeios libraries use such an object. By default, memory objects use RAM (or what ever the OS use for it) as memory. But you can use a file, for example, as memory.</para>
+      <para>Once the memory type chosen, the different memories have the same functionalities and can exchange their data.</para>
+    </chapter>
+    <chapter title="Flow handling.">
+      <para>A flow is an object from which you can read sequentially what you write in it, sequentially, before. It's like a pipe (or a stream). Flows are used in many situation. For example, to write to the standard output, to write/read to/from a file, for communication between machines or thread, etc. Such a flow is divide in 2 part. One part is to write in, the other to read from. They respectively called 'output flow' and 'input flow'.</para>
+    </chapter>
+    <chapter title="Writing an object.">
+      <para>To be correctly handled by the object management libraries, there is no constraints for a static object, as long as it follows the static objects specifications.</para>
+      <para>For the dynamic object, you have to respect following rules.</para>
+      <para>
+        <list>
+          <item xml:space="preserve">The pure static part of the object must be stored in a (public) structure called <raw>s</raw>. If you add some static object which are not provided by the dynamic objects you use, you have to provide a reference of an instance of the s structure. This reference usually called <raw>S_</raw> (with the appending <raw>_</raw>).</item>
+          <item xml:space="preserve">You must provide a constructor which take a <raw>s &amp;S</raw> parameter, and attach each static part of the object to the corresponding part of <raw>S</raw>. You have to initialize with <raw>S</raw> the reference to the <raw>s</raw> object, if exists.</item>
+          <item xml:space="preserve">You must provide a <raw>void reset(bool P = true)</raw> function, which must called the same function for each object. If <raw>P</raw> at true, then this function is called by the constructor, and you have to put significative values in the static objects you add. If <raw>P</raw> at false, that the destructor is called, or the user which to free all the resource occupied by the object. Handle in consequence.</item>
+          <item xml:space="preserve">You must provide a <raw>void plug( mmm_multimemory_ &amp;M)</raw> function in which you call, for all the contained dynamic object, the same function with same <raw>M</raw> parameter.</item>
+          <item xml:space="preserve">You must provide a <raw>T &amp;operator =( const T &amp;t )</raw> (<raw>T</raw> is the name of your object), in which you call the same function for all the dynamic object and for the static object you added (if applies). Return <raw>*this</raw>.</item>
+          <item xml:space="preserve">Generally, you provide a <raw>Init(...)</raw> function, with the input and output parameters you want, and in which you call the <raw>Init</raw> function for all the objects.</item>
+          <item xml:space="preserve">If the object contains only one dynamic object that is a monomemory object (i.e. this object need only one memory driver, and then have the same <raw>plug</raw> function as following), put a <raw>void plug( mmm_basic_memory_driver_ &amp;MD)</raw>, in which you call the same function for the dynamic object. This allows to that object to be handled by the <raw>monomemory_container</raw> (see library <raw>CTN</raw>).</item>
+        </list>
+      </para>
+      <para xml:space="preserve">As you can see, all this functions are serializations functions. To follow the Epeios project rules, you have to append a <raw>_</raw> to the name of the object. To obtain the instantiable version of this object, write <raw>AUTOx( T )</raw> , where <raw>T</raw> is the name of the object (without the appending <raw>_</raw>). Put <raw>1</raw>, <raw>2</raw>, or <raw>3</raw>in place of the <raw>x</raw> if this objects is a template object with respectively 1, 2 or 3 template parameters. Don't put the <raw>x</raw> if the object is not a template object.</para>
+    </chapter>
+    <chapter title="Error handling.">
+      <para>The Epeios libraries implements its own error handling system. With this system, you write your program without taking care of errors which can occur (except errors due to wrong user entry).</para>
+      <para>By default, an error prints the type of the error, and the incriminated file and line ; this is very useful during for debugging.</para>
+      <para>Once the program debugged, you have to put the appropriate error handler. There is usually not very much to do.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The ERR library (ERRor).">
+    <chapter title="The context macros.">
+      <para>You have to use them in the function which instantiates a dynamic object or a static object with destructor. Such a function have the following structure (the name, input and output values are only examples):</para>
+      <para>
+        <source xml:space="preserve">int foo( void )
+{
+1
+ERRProlog
+2
+ERRBegin
+3
+ERRErr
+4
+ERREnd
+5
+ERREpilog
+6
+}</source>
+      </para>
+      <para>
+        <list xml:space="preserve">
+          <item>
+            <raw>1</raw> : The declaration of the object which value is returned by the function. Usually, it's a static object, with no destructor.</item>
+          <item>
+            <raw>2</raw> : The declaration of objects with or without destructors.</item>
+          <item>
+            <raw>3</raw> : The body of the function.</item>
+          <item>
+            <raw>4</raw> : Instruction to execute if an error occurs while executing the body of the function (part 3).</item>
+          <item>
+            <raw>5</raw> : Instructions to execute, error or not.</item>
+          <item>
+            <raw>6</raw> : The <raw>return</raw> instruction to return the value of the variable declared at part 1.</item>
+        </list>
+      </para>
+      <para xml:space="preserve">If you proceed so, it's guaranteed that the destructor of the objects declared at part 2 are called, whether or not an error occurs.</para>
+      <para>Of course, you don't have to use this macro in all your functions. Only functions which creates objects with destructors need them. Functions which uses objects are passed as parameters, or declared in the object, if this function is a method, doesn't need this macros.</para>
+    </chapter>
+    <chapter title="The status macros.">
+      <para xml:space="preserve">This macros are generally used when an error occurs, to have details about this error. The <raw>ERRMajor</raw> give the major number of the error, which indicates what type of error occurred, and it correspond to a <raw>err::type</raw> value.</para>
+      <para xml:space="preserve">
+The <raw>ERRminor</raw> give the minor number of the error. It corresponds to the <raw>err::xxx</raw> type, where <raw>xxx</raw> is the corresponding error type given by <raw>ERRMajor</raw>.</para>
+      <para xml:space="preserve">The <raw>ERRMessage()</raw> return a descriptive message about the last occurring error if no parameter given ,or about error corresponding to the given parameters.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The memory libraries.">
+    <chapter title="Memory drivers.">
+      <chapter title="The MDR library (Memory DRiver).">
+        <para>This library provides a base class with virtual functions. You don't have to use it directly, but the memory libraries listed below overload it.</para>
+        <para xml:space="preserve">
+All the memory drivers can be used by a dynamic object by giving it to its appropriate <raw>plug()</raw> function.</para>
+      </chapter>
+      <chapter title="The CVM library (ConVentional Memory).">
+        <para>This library provides a memory driver which uses conventional memory (RAM, or what ever the OS use for it).</para>
+      </chapter>
+      <chapter title="The FGM library (FraGmented Memory).">
+        <para>Same as the CVM library, but allocates memory blocks of fixed size, which are usually not contiguous.</para>
+        <para>Was written for use with DOS program, in which you cannot allocate more then 64k of contiguous memory.</para>
+      </chapter>
+      <chapter title="The FLM library (FiLe Memory). ">
+        <para>Provides a memory driver which uses a file to store data.</para>
+        <para>You can give a file name at initialization, or let the library generating one.</para>
+        <para>You can also tell to this memory not to delete the file when the object destructed, so the same object can be used the next time you launch the program, or by another program.</para>
+      </chapter>
+      <chapter title="The MMM library (MultiMeMory).">
+        <para>This library provides a memory driver which allows to manage several memories in one.</para>
+        <para xml:space="preserve">To store an dynamic object, which contains several objects, using files, you normally need as many files as contained dynamic objets. Thanks to the <raw>MMM</raw> library, it's possible to store all the objects in one file.</para>
+        <para xml:space="preserve">To do this, you create a <raw>mmm_multimemory</raw> with the wanted type of memory (the <raw>CVM</raw> is the default one), and you give it to the object by calling the <raw>plug()</raw> function (as you do for dynamic objects).</para>
+        <para xml:space="preserve">Once configured (calling the <raw>plug()</raw> function to use another memory type as the default one) and initialized, you can give it to an object which provides the appropriate <raw>plug()</raw> function (all dynamic objects should provide this function).</para>
+      </chapter>
+      <chapter title="The MMI library (MultiMemory Indexator).">
+        <para xml:space="preserve">To use a memory in a multimemory memory, you have to store a value which refers to this memory (like the value returned by the C function <raw>malloc()</raw>). If you change the size of this memory, the value can change (like the value returned by the C function <raw>realloc()</raw>).</para>
+        <para>With the memory driver provided by this library, you can refer to a memory in a multimemory by using one value, which never change from the creating to the freeing of this memory.</para>
+      </chapter>
+    </chapter>
+    <chapter title="Memory libraries.">
+      <chapter title="The UYM library (UntYped Memory).">
+        <para>With this object, you can allocate room to store bytes. Within the allocated room, you can read or write one or more bytes. You can adjust the size of the allocated room whenever you want.</para>
+        <para xml:space="preserve">By default, the bytes are stored in RAM (it uses the memory driver provided by the <raw>CVM</raw> library). But, by giving another memory driver (with the <raw>plug()</raw> function) you can use another type of memory, like one described in the previous 'Memory drivers' chapter .</para>
+        <para>You can copy part or all of a untyped memory in another untyped memory, even if they don't use the same memory driver.</para>
+      </chapter>
+      <chapter title="The TYM library (TYped Memoty).">
+        <para xml:space="preserve">Same as untyped memory (<raw>UYM</raw> library) but it handles, through a template parameter, static objects rather then bytes. And you can only exchange data between memories which handle same static objects type.</para>
+      </chapter>
+    </chapter>
+  </chapter>
+  <chapter title="The object management libraries.">
+    <chapter title="General.">
+      <chapter title="The BCH library (BunCH).">
+        <para xml:space="preserve">Provides an object named <raw>BUNCH(t)</raw>. <raw>t</raw> is the type of static object which the <raw>BUNCH</raw> object have to store.</para>
+        <para xml:space="preserve">Same as the typed memory (<raw>TYM</raw> library), but this object knows its size. So, you can easily append objects and copy all or part of one set (of same static objects) in another.</para>
+      </chapter>
+      <chapter title="The CTN library (ConTaiNer).">
+        <para xml:space="preserve">Provides a object named <raw>CONTAINER(t)</raw>. Many variation are provided. Objects called <raw>ITEM</raw> are provided to deal with an item of the containers.</para>
+        <para xml:space="preserve">Same as the <raw>BCH</raw> library, but <raw>t</raw> is a dynamic object. And, because a <raw>CONTAINER</raw> library is designed like a dynamic object, you can store containers in containers.</para>
+      </chapter>
+      <chapter title="The BITBCH library (BIT BunCH).">
+        <para xml:space="preserve">Conceptually, the <raw>BITBCH</raw> library provides an object which is a <raw>BUNCH</raw> (from the <raw>BCH</raw> library) of bits. We had to create a special object, because <raw>BUNCH</raw>s can only store static objects with a minimal size of one byte (8 bits). For each bit, 8 bits would necessary.</para>
+        <para xml:space="preserve">The <raw>BITBCH</raw> library was designed to avoid the loss of so much room. It has the same functionalities as a normal <raw>BUNCH</raw>.</para>
+        <para xml:space="preserve">Further reference to the <raw>BCH</raw> library would also refer to this library too.</para>
+      </chapter>
+      <chapter title="Conclusion">
+        <list>
+          <item xml:space="preserve">To store static objects, use a <raw>BUNCH</raw>, or a <raw>BITBCH</raw> if you would use bits. Both of them are designed like a dynamic object.
+</item>
+          <item xml:space="preserve">To store dynamic objects, use a <raw>CONTAINER</raw>.
+</item>
+          <item xml:space="preserve">To store <raw>CONTAINER</raw>s, use a <raw>CONTAINER</raw>.
+</item>
+          <item xml:space="preserve">to store <raw>CONTAINER</raw>s of <raw>CONTAINER</raw>s, use a <raw>CONTAINER</raw> too.</item>
+          <item>And so on.</item>
+        </list>
+      </chapter>
+    </chapter>
+    <chapter title="The MMG library (Memory MerGing).">
+      <para>We have seen that we can use a file to store an object. It seems logical that it should be possible to create persistent object, which survive to the program which create it. So, the next time you launch the program, it have not to reconstruct the same object, but only to recover the one stored on the disk.</para>
+      <para xml:space="preserve">This is not possible by using only the file memory driver (<raw>FLM</raw> library), because there is only the data of the object which is stored in the file. To use it, it lacks on some data, like the room used by the object. Without this data, you can not use the object.</para>
+      <para>Although the dynamic part of the object is stored in the file, the static part, which contains, for example, the size of the object, is stored in RAM, and so loss once the software stopped.</para>
+      <para xml:space="preserve">The <raw>MMG</raw> library provides an object in which both the static part and the dynamic part are stored in the memory, so it's easy for a program to recover this object, even if it doesn't create it.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The flow related libraries.">
+    <chapter title="The FLW library (FloW).">
+      <para xml:space="preserve">This library provides the base class for all the flows. It allows that all the following flow libraries can be handled the same way, once initialized.</para>
+      <para xml:space="preserve">In addition, it provides the <raw>fout</raw>, <raw>fin</raw> and <raw>ferr</raw> flows which replace respectively the standard C++ <raw>cout</raw>, <raw>cin</raw> and <raw>cerr</raw> streams.
+
+</para>
+    </chapter>
+    <chapter title="The SCK library (SoCKet).">
+      <para>This library provides a flow driver based on sockets, which allows communication between different computer connected to the same network, like Internet.</para>
+    </chapter>
+    <chapter title="The PIP library (PIPe).">
+      <para>It's current that more that one process shared the same flow. For example, in case of several client processes all communicating with the same server process. This usually occurs through a pipe.</para>
+      <para xml:space="preserve">This library, which extends the <raw>PIP</raw> library, ensures that no more that one process at once can be access to the same pipe end.</para>
+      <para xml:space="preserve">Like the <raw>PIP</raw> library, it provides a flow driver.
+
+</para>
+    </chapter>
+  </chapter>
+  <chapter title="The ordering libraries.">
+    <chapter title="Introduction.">
+      <para xml:space="preserve">To store data, you use a <raw>BUNCH</raw> or a <raw>CONTAINER</raw>. But the data are stored in a linear way. And they are difficult to manipulate. For example, to suppress one data, you have to shift all the following data down, and to adjust the size of the storing object.</para>
+      <para>If there is a way to handle this object by itself like a stack or a queue, this is not possible for more complex structure, like trees.</para>
+      <para xml:space="preserve">In addition, you want probably to use structures which all deal with the same data, but in different orders, like indexes in databases.An object is stored at a certain position in the a <raw>BUNCH</raw> or a <raw>CONTAINER</raw>. The corresponding information for this object are stored in the different structure handling library at the same position.</para>
+      <para xml:space="preserve">An object is stored at a certain position in the a <raw>BUNCH</raw> or a <raw>CONTAINER</raw>. The corresponding information for this object are stored in the different structure handling library at the same position.</para>
+      <para xml:space="preserve">You can attach as much such structures as you want to a <raw>BUNCH</raw> or a <raw>CONTAINER</raw>.</para>
+      <para xml:space="preserve"/>
+      <para/>
+    </chapter>
+    <chapter title="the LST library (LiST).">
+      <para xml:space="preserve">This library provides an object which allows to handle a list of object. you have to overload the <raw>LSTAllocate()</raw> function, and then you can add/suppress object without carrying about the room needed.</para>
+      <para xml:space="preserve">
+When you suppress an item, the <raw>LST</raw> library store its position to use it again when a new item is needed. If there is no free room to store an object, new room is automatically allocated.
+This library is useful if you want to quickly add/remove items of a set, when the order of the items doesn't matter.</para>
+      <para>If you only add items, the order reflects the order in which you add them.</para>
+    </chapter>
+    <chapter title="The STK library (StaCK).">
+      <para>This library provides an object which handle the usual PUSH and POP functionalities which go along with the stack concept.</para>
+    </chapter>
+    <chapter title="The QUE library (QUEue).">
+      <para>This library provides a object which allows to organize data in a queue structure.</para>
+    </chapter>
+    <chapter title="The BTR library (Binary TRee).">
+      <para>This library provides a object which allows to organize data in a binary tree.</para>
+    </chapter>
+    <chapter title="The IDXBTR library (InDeX Binary Tree).">
+      <para>This library provide an index based on binary tree. It's a good index for sorting, but not the fastest for scanning.</para>
+    </chapter>
+    <chapter title="The IDXQUE library (InDex QUE).">
+      <para>This index provides an index based on queue. It's fast for scanning, but slow for sorting.</para>
+    </chapter>
+    <chapter title="The IDXBTQ library (InDex Best of Tree and Queue).">
+      <para>This library provides an index which implements both binary tree index and queue index. So, it's fast for both sorting and scanning.</para>
+    </chapter>
+  </chapter>
+  <chapter title="The socket related libraries (for use with the SCK library).">
+    <chapter title="Introduction.">
+      <para xml:space="preserve">As written before, the <raw>SCK</raw> library provides a flow driver based on sockets. But it needs a <raw>sck__desc</raw> object at initialization. This object is provided by the 2 libraries below.</para>
+    </chapter>
+    <chapter title="The CLT library (CLienT).">
+      <para xml:space="preserve">This library allows to open a connection to a computer through its IP adresse an port (<raw>www.epeios.org:http</raw> format or <raw>212.95.72.3:80</raw> format). You obtain then a <raw>sck__desc</raw> object that you can give to the <raw>SCK</raw> library to communicate with the computer through a flow, or with the <raw>SCKRead()</raw>/<raw>SCKWrite()</raw> functions.</para>
+      <para>This is the client part of a client/server architecture.</para>
+    </chapter>
+    <chapter title="The SRV library (SeRVer).">
+      <para xml:space="preserve">This library listen to a port and return a <raw>sck__desc</raw> object the incoming connection. you can then use this <raw>sck__desc</raw> object with the <raw>SCK</raw> library.
+</para>
+      <para>This library also provides an object which calls a virtual function, that you have to overload, in its own process each time a new connection is detected. This is the base of the server part of a client/server architecture.</para>
+    </chapter>
+  </chapter>
+  <chapter title="Frontend/backend related libraries.">
+    <chapter title="Introduction">
+      <para>The Epeios project provides libraries, detailed below, that implements a specific backend/frontend relation mechanism. The communication between the 2 parts is based on flows.</para>
+      <para xml:space="preserve">It's, of course, possible to run both part in one process, and alosi, thanks to the <raw>PIP</raw> library, to run each part in it's own process, communication occurring between the 2 part through pipes.</para>
+      <para xml:space="preserve">You can even run the frontend on a computer and the backend on another by using the socket implementation of the flow (library <raw>SCK</raw>). One broker accessed simultaneously by several frontend.</para>
+    </chapter>
+    <chapter title="The CSM library (Client/Server Manager).">
+      <para xml:space="preserve">This library is one of the powerfullest library of the Epeios project. All the <raw>SCK</raw>, <raw>SRV</raw>, <raw>MTK</raw>, <raw>PIP</raw>, <raw>SPP</raw>, <raw>SPH</raw>, <raw>SHM</raw> were formerly written to be used by this library.</para>
+      <para>This library allows to write a server application, i.e. a program which runs on a server machine, and which handle all connection from client machine.</para>
+      <para xml:space="preserve">The principle is to have one client process per connection (from a client machine) which all communicates with the same server process.</para>
+      <para xml:space="preserve">The exchanges between the client machine and its client process, and the exchanges between the client processes and the server process both occur through flows (<raw>FLW</raw> library).</para>
+      <para xml:space="preserve">You have only to provide the functions for the client processes and the server process.</para>
+    </chapter>
+    <chapter title="The SALCSM library (Stand ALone CSM).">
+      <para xml:space="preserve" special="yes">NOTA: <raw>CSM</raw> refers to the so-named library.</para>
+      <para xml:space="preserve">The <raw>CSM</raw> library allows several frontends to access to the same broker, broker and frontends running, each, on a different computer, or, at least, in different processes.</para>
+      <para>But you want surely to run your application on a more conventional way, i.e. one backend and one frontend on the same computer, and using one process for both.</para>
+      <para xml:space="preserve">This library allows this, without modifying the heart of you application. Frontend and backend communicate using the memory, not pipe nor sockets. This library is also useful for debugging applications designed to be using the <raw>CSM</raw> library, because all the application runs in the same thread/process.
+</para>
+    </chapter>
+  </chapter>
+  <chapter title="Miscelleanous.">
+    <chapter title="The SHM library (SHared Memory).">
+      <para>This library provides functions to handle shared memory, i.e. memory that can be shared between several process.</para>
+    </chapter>
+    <chapter title="The SPH library (SemaPHore).">
+      <para>This library deals with semaphores.</para>
+    </chapter>
+    <chapter title="The STR library (STRing).">
+      <para xml:space="preserve">This is the implementation of the string concept, which is based on the <raw>BUNCH</raw> library. It's a good example on how to use this library and to see the structure of a dynamic object.</para>
+    </chapter>
+    <chapter title="The MTK library (MultiTasKing).">
+      <para>Allow to launch a user function using a new process. The calling function and the called function run then together and simultaneously in different threads/processes.</para>
+    </chapter>
+  </chapter>
+</content>
