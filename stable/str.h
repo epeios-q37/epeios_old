@@ -392,6 +392,14 @@ namespace str {
 			string_::Init();
 			string_::Append( C );
 		}
+		string( const string_ &String )
+		: string_( static_ )
+		{
+			reset( false );
+
+			string_::Init();
+			string_::operator =( String );
+		}
 		~string( void )
 		{
 			reset( true );
@@ -416,11 +424,11 @@ namespace str {
 		}
 	};
 
-	//f Convert 'String' to upper case.
-	void ToUpper( string_ &String );
+	//f Convert 'String' to upper case. Returns cnverted 'String'.
+	string_ &ToUpper( string_ &String );
 
-	//f Convert 'String' to lower case.
-	void ToLower( string_ &String );
+	//f Convert 'String' to lower case. Returns converted 'String'.
+	string_ & ToLower( string_ &String );
 }
 
 /*$END$*/

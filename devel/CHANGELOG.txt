@@ -150,6 +150,7 @@ STF:
 
 STR:
 - (16/08/04) Fixing bug in 'ToLF' function.
+- (16/11/04) Adding 'string_' contructor and return value for 'ToUpper' and 'ToLower' functions.
 
 TOL:
 - Adding the 'E_DISCLOSE_(_)' macro.

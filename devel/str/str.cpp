@@ -120,21 +120,25 @@ namespace str {
 	}
 
 	// Convertit le contenu de 'String' en majuscule.
-	void ToUpper( string_ &String )
+	string_ &ToUpper( string_ &String )
 	{
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
 			String.Store( (char)toupper( String.Get( P ) ) , P );
+
+		return String;
 	}
 
 	// Convertit le contenu de 'String' en minuscule.
-	void ToLower( string_ &String )
+	string_ &ToLower( string_ &String )
 	{
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
 			String.Store( (char)tolower( String.Get( P )) , P );
+
+		return String;
 	}
 
 	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
