@@ -289,6 +289,7 @@ inline void GenererCorpsItemClasse(
 	HDBF.PutValue( Item.Name, "Name" );
 	HDBF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, HDBF );
+	GenererDocumentationParametres( Item.Parametres, HDBF );
 	HDBF.PopTag();
 }
 
