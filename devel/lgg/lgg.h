@@ -69,10 +69,10 @@ namespace lgg {
 	enum language__ {
 		//i Unknow language,
 		lUnknow,
-		//i French.
-		lFrench,
 		//i English.
 		lEnglish,
+		//i French.
+		lFrench,
 		//i German
 		lGerman,
 		//i Not really a language : for testing purpose only.

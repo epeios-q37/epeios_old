@@ -59,8 +59,8 @@ using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
 	"_unknow_",
-	"Français",
 	"English",
+	"Français",
 	"Deutsch",
 
 	"_test_"
@@ -68,8 +68,8 @@ const char *lgg::LanguageNames[lgg::l_amount] = {
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
 	"__",
-	"fr",
 	"en",
+	"fr",
 	"de",
 
 	"xx",
