@@ -12,6 +12,7 @@ $GET ebkd $DIR stable/
 
 $GET etmc $DIR stable/
 $GET etmc $DIR apps/backend/
+$GET etmc $DIR apps/backend/program/
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
