@@ -286,10 +286,9 @@ namespace bch {
 			epeios::size__ Amount,
 			row Row = 0 )
 		{
-			Truncate( *Row + Amount );
+			Truncate( this->Amount() - ( *Row + Amount ) );
 
-			if ( *Row > 0 )
-				Remove( 0, *Row - 1 );
+			Remove( 0, *Row );
 		}
 		//f Remove all objects but objects between 'First' and 'Last' included.
 		void Crop(

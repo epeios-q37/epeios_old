@@ -180,11 +180,25 @@ namespace ctn {
 
 			if ( AncCap < Size )
 			{
+#ifdef CTN_DBG
+				if ( &ST == NULL )
+					ERRu();
+#endif
 				if ( ( Size - AncCap ) > 1 )
 					Statics.Store( ST, AncCap, Size - AncCap );
 				else
 					Statics.Store( ST, AncCap );
 			}
+		}
+		void DecreaseTo(
+			epeios::size__ Size,
+			aem::mode Mode )
+		{
+#ifdef CTN_DBG
+			if ( Size > amount_extent_manager_<r>::Amount() )
+				ERRu();
+#endif
+			Allocate( Size, *(st *)NULL, Mode );	// 'NULL' because this parameter is used only when size increased.
 		}
 		// Comme 'ecrire()', sauf pour la multimémoire, qui contient la partie dynamique.
 	/*	void EcrireToutDansFlotSaufPartiesDynamiques( flo_sortie_ &Flot ) const
@@ -233,6 +247,50 @@ namespace ctn {
 				Dynamics.Allocate( NewAmount, CurrentAmount );
 				Statics.Allocate( NewAmount );
 			}
+		}
+		//f Remove 'Amount' objects from the end of the container.
+		void Truncate(
+			epeios::size__ Amount = 1,
+			aem::mode Mode = aem::mDefault )
+		{
+	#ifdef CTN_DBG
+			if ( Amount > this->Amount() )
+				ERRu();
+	#endif
+			DecreaseTo( this->Amount() - Amount, Mode );
+		}
+		//f Remove objects all objects beginning at 'Row'.
+		void Truncate(
+			r Row,
+			aem::mode Mode = aem::mDefault )
+		{
+#ifdef CTN_DBG
+			if ( !Exists( Row ) )
+				ERRu();
+#endif
+			Truncate ( Amount() - *Row, Mode );
+		}
+		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
+		void Crop(
+			epeios::size__ Amount,
+			r Row = 0,
+			aem::mode Mode = aem::mDefault )
+		{
+			Truncate( this->Amount() - ( *Row + Amount ), Mode );
+
+			Remove( 0, *Row, Mode );
+		}
+		//f Remove all objects but objects between 'First' and 'Last' included.
+		void Crop(
+			r First,
+			r Last,
+			aem::mode Mode = aem::mDefault )
+		{
+#ifdef BCH_DBG
+			if ( Last < First )
+				ERRu();
+#endif
+			Crop( Last - First + 1, First, Mode );
 		}
 
 	};
@@ -796,15 +854,6 @@ namespace ctn {
 
 			return P;
 		}
-		//f Remove 'Amount' objects from the end of the container.
-		void Truncate( epeios::size__ Amount = 1 )
-		{
-	#ifdef CTN_DBG
-			if ( Amount > this->Amount() )
-				ERRu();
-	#endif
-			Allocate( this->Amount() - Amount );
-		}
 	};
 
 
@@ -1188,15 +1237,6 @@ namespace ctn {
 			multi_container_< t, r >::Flush();
 
 			return P;
-		}
-		//f Remove 'Amount' objects from the end of the container.
-		void Truncate( epeios::size__ Amount = 1 )
-		{
-	#ifdef CTN_DBG
-			if ( Amount > this->Amount() )
-				ERRu();
-	#endif
-			Allocate( this->Amount() - Amount );
 		}
 	};
 

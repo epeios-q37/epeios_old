@@ -26,6 +26,7 @@ BCH:
 - (09/06/04) Adding 'relations(_)' type.
 - (07/09/04) Adding the truncate function with a position.
 - (22/10/04) Renaming 'Delete' to 'Remove'.
+- (15/12/04) Addin 'Crop()' methods.
 
 BITBCH:
 - (23/06/04) Adding the 'And', 'Or', 'XOr' and 'Not' functions.
@@ -56,6 +57,7 @@ CTN:
 - (10/05/04) Fixing 'Delete()' bug.
 - (24/10/04) Removing 'EstVide', replaced by 'IsEmpty'.
 - (13/12/04) 'Store' methods now return position where where object is stored.
+- (15/12/04) Addin 'Crop()' methods + misc. improvements.
 
 DTE:
 - (15/04/04) Introducing the new structure.
