@@ -61,6 +61,12 @@ DBT:
 - Using 'E_NAVt' macro.
 - Adapting to changes in 'DBT' library.
 
+DTFBSC:
+- Adding 'byte__', 'short__' and 'long__' type.
+
+DTFRMF:
+- Adapting to CW.
+
 DTR:
 - Fixing call to an iexistent method;
 

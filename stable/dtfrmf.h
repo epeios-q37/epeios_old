@@ -1,24 +1,24 @@
 /*
-  Header for the 'dtfrmf' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+	Header for the 'dtfrmf' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -29,22 +29,22 @@
 
 #define DTFRMF_NAME		"DTFRMF"
 
-#define	DTFRMF_VERSION	"$Revision$"	
+#define	DTFRMF_VERSION	"$Revision$"
 
-#define DTFRMF_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define DTFRMF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &DTFRMFTutor;
 
 #if defined( XXX_DBG ) && !defined( DTFRMF_NODBG )
-#define DTFRMF_DBG 
+#define DTFRMF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -53,6 +53,11 @@ extern class ttr_tutor &DTFRMFTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D Data TransFert ReMote Features 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
@@ -70,32 +75,32 @@ namespace dtfrmf {
 	
 		//f Put 'Short' in 'Flow'.
 	inline void PutShort(
-		bso::ushort__ Short,
+		short__ Short,
 		flw::oflow___ &Flow )
 	{
-		PutByte( Short & 0xff, Flow );
-		PutByte( Short >> 8, Flow );
+		PutByte( (byte__)( Short & 0xff ), Flow );
+		PutByte( (byte__)( Short >> 8 ), Flow );
 	}
 
 	//f Return short in 'Flow'
-	inline bso::ushort__ GetShort( flw::iflow___ &Flow )
+	inline short__ GetShort( flw::iflow___ &Flow )
 	{
-		return GetByte( Flow ) + ( GetByte( Flow ) << 8 );
+		return (short__)( GetByte( Flow ) + ( GetByte( Flow ) << 8 ) );
 	}
 
 	//f Put 'Long' in 'Flow'.
 	inline void PutLong(
-		bso::ulong__ Long,
+		long__ Long,
 		flw::oflow___ &Flow )
 	{
-		PutShort( (bso::ushort__)( Long & 0xffff ), Flow );
-		PutShort( (bso::ushort__)( Long >> 16 ), Flow );
+		PutShort( (short__)( Long & 0xffff ), Flow );
+		PutShort( (short__)( Long >> 16 ), Flow );
 	}
 
 	//f Return long in 'Flow'
-	inline bso::ulong__ GetLong( flw::iflow___ &Flow )
+	inline long__ GetLong( flw::iflow___ &Flow )
 	{
-		return GetShort( Flow ) + ( GetShort( Flow ) << 16 );
+		return (long__)( GetShort( Flow ) + ( GetShort( Flow ) << 16 ) );
 	}
 	
 	//f Encapsulates 'Data' in flow (put size and then the contents of data as is).
@@ -109,7 +114,7 @@ namespace dtfrmf {
 		flx::bunch_ &Data );
 		
 		
-};
+}
 
 /*$END$*/
 				  /********************************************/

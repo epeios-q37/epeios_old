@@ -70,6 +70,15 @@ extern class ttr_tutor &DTFBSCTutor;
 #include "bso.h"
 
 namespace dtfbsc {
+	//t A byte.
+	typedef bso::ubyte__	byte__;
+
+	//t A short.
+	typedef bso::ushort__ short__;
+
+	//t A long.
+	typedef bso::ulong__ long__;
+
 	// Internal use.	
 	template <typename generic> inline generic GenericGet_( flw::iflow___ &Flow )
 	{
@@ -81,23 +90,23 @@ namespace dtfbsc {
 		generic Generic,
 		flw::oflow___ &Flow )
 	{
-		bso::ubyte__ B = Generic;
+		byte__ B = Generic;
 	
 		FLWPut( B, Flow );
 	}
 
 	//f Put 'Byte' in 'Flow'.
 	inline void PutByte(
-		bso::ubyte__ Byte,
+		byte__ Byte,
 		flw::oflow___ &Flow )
 	{
 		flw::Put( Byte, Flow );
 	}
 
 	//f Return byte in 'Flow'.
-	inline bso::ubyte__ GetByte( flw::iflow___ &Flow )
+	inline byte__ GetByte( flw::iflow___ &Flow )
 	{
-		return (bso::ubyte__)Flow.Get();
+		return (byte__)Flow.Get();
 	}
 }
 
