@@ -15,6 +15,7 @@ GENERAL:
 - (21/08/04) Obsoletes 'FAM' library, because not thread-safe.
 - (10/10/04) Adding 'UIF' library.
 - (23/10/04) Replacing 'Delete' with 'Remove' or 'Erase'.
+- (27/10/04) Adapting to changes in 'TOL' lobrary.
 
 AEM:
 - (06/09/04) Adding 'Exists()' and 'IsEmpty()' to the static version.
@@ -154,7 +155,8 @@ TOL:
 - (24/06/04) Adding 'E_TTYPEDEF' macro.
 - (31/07/04) Adding 'Delay' function and 'Defer()' with delay parameter.
 - (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
-- (29/09/04) MAde it more thread-safe.
+- (29/09/04) Made it more thread-safe.
+- (27/10/04) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.

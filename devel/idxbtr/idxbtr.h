@@ -413,7 +413,7 @@ namespace idxbtr {
 #endif
 			return _Handle( Index_->Left( Current_ ) );
 		}
-		E_DISCLOSE__( r, Current )
+		E_RODISCLOSE__( r, Current )
 	};
 
 	//d A seeker.
