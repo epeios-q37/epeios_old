@@ -1,0 +1,50 @@
+# $$Id$$
+
+DATE		&$_DATE_$
+TIME		&$_TIME_$
+
+AUTHOR		&<name>Claude L. SIMON</name><email>csimon@epeios.org</email><URL/>
+OWNER		&<name>Claude L. SIMON</name><email>csimon@epeios.org</email><URL/>
+ROBOTS		&all
+
+SF_ID		&$$SF_ID$$
+
+EHOS_SF_ID	&39211
+EJAVA_SF_ID	&14732
+EPYTHON_SF_ID	&14733
+ETMC_SF_ID	&13582
+ECGI_SF_ID	&30697
+EBKD_SF_ID	&30186
+EBKL_SF_ID	&27884
+EMTH_SF_ID	&36219
+CORE_SF_ID	&93
+
+PROJECT_ABOUT	%$DOC$/project/about.xml
+PROJECT_GENERAL	%$DOC$/project/general.xml
+CORE_USER	%$DOC$/libraries/epeios/user.xml
+EBKD_ABOUT	%$DOC$/libraries/ebkd/about.xml
+EBKD_USER	%$DOC$/libraries/ebkd/user.xml
+ECGI_ABOUT	%$DOC$/libraries/ecgi/about.xml
+ECGI_USER	%$DOC$/libraries/ecgi/user.xml
+ETMC_ABOUT	%$DOC$/libraries/etmc/about.xml
+ETMC_USER	%$DOC$/libraries/etmc/user.xml
+EHOS_ABOUT	%$DOC$/libraries/ehos/about.xml
+EHOS_USER	%$DOC$/libraries/ehos/user.xml
+EMTH_ABOUT	%$DOC$/libraries/emth/about.xml
+EMTH_USER	%$DOC$/libraries/emth/user.xml
+EBKL_ABOUT	%$DOC$/libraries/ebkl/about.xml
+EBKL_USER	%$DOC$/libraries/ebkl/user.xml
+
+CORE_QUICKDOC	%i/epeios.xml
+EBKD_QUICKDOC	%i/ebkd.xml
+EHOS_QUICKDOC	%i/ehos.xml
+ETMC_QUICKDOC	%i/etmc.xml
+EBKD_QUICKDOC	%i/ebkd.xml
+EBKL_QUICKDOC	%i/ebkl.xml
+EMTH_QUICKDOC	%i/emth.xml
+ECGI_QUICKDOC	%i/ecgi.xml
+
+TMCDE_BACKEND_MANUAL	%$DOC$/software/tmcde/backend/manual.xml
+TMCDE_CGID_MANUAL	%$DOC$/software/tmcde/CGID/manual.xml
+MLL2HTML_MANUAL		%$DOC$/software/mll2html/manual.xml
+REVEAL_MANUAL		%$DOC$/software/reveal/manual.xml
