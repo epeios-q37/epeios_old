@@ -56,13 +56,75 @@ public:
 
 using namespace txmtbl;
 
-static inline bso__bool IsNotEndOfCell_(
+static inline bso__char HandleEscape_(
 	xtf::extended_text_iflow___ &Flow,
 	separator__ Separator,
+	escape__ Escape,
 	bso__bool &EOX,
 	bso__char &C )
 {
-	return !( EOX = Flow.EOX() ) && ( ( C = Flow.Get() ) != Separator ) && ( C != '\n' ) && ( C != '\r' );
+	bso__bool Retry = false;
+
+	if ( Flow.EOX() )
+		ERRf();
+		
+	switch( C = Flow.Get() ) {
+	case 'n':
+		C = '\n';
+		break;
+	case 'r':
+		C = '\r';
+		break;
+	case 's':
+		C = Separator;
+		break;
+	case 't':
+		C = '\t';
+		break;
+	case '\n':
+		if ( !( EOX = Flow.EOX() ) ) {
+			if ( Flow.View() == '\r' )
+				Flow.Get();
+			Retry = true;
+		}
+		break;
+	case '\r':
+		if ( !( EOX = Flow.EOX() ) ) {
+			if ( Flow.View() == '\n' )
+				Flow.Get();
+			Retry = true;
+		}
+		break;
+	case '\t':
+		Retry = true;
+		break;
+	default:
+		if ( C != Escape )
+			ERRf();
+		break;
+	}
+	
+	return Retry;
+}
+
+static inline bso__bool IsNotEndOfCell_(
+	xtf::extended_text_iflow___ &Flow,
+	separator__ Separator,
+	escape__ Escape,
+	bso__bool &EOX,
+	bso__char &C )
+{
+	bso__bool Loop = false;
+
+	if ( !( EOX = Flow.EOX() ) )
+		do {		
+			if ( ( C = Flow.Get() ) == Escape )
+				Loop = HandleEscape_( Flow, Separator, Escape, EOX, C );
+			else
+				Loop = false;
+		} while ( Loop );
+		
+	return !EOX && ( C != Separator ) && ( C != '\n' ) && ( C != '\r' );
 }
 
 static inline txmtbl::delimiter GetDelimiter_( 
@@ -99,7 +161,8 @@ static inline txmtbl::delimiter GetDelimiter_(
 txmtbl::delimiter txmtbl::GetCell(
 	xtf::extended_text_iflow___ &Flow,
 	cell_ &Cell,
-	separator__ Separator )
+	separator__ Separator,
+	escape__ Escape )
 {
 	bso__char C = 0;
 	bso__bool EOX = false;
@@ -108,7 +171,7 @@ txmtbl::delimiter txmtbl::GetCell(
 
 	Cell.Location( Flow.Column() );
 
-	while( IsNotEndOfCell_( Flow, Separator,EOX,C ) ) 
+	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX, C ) ) 
 		Cell.Add( C );
 	
 	return GetDelimiter_( Flow, Separator, EOX, C );
@@ -116,12 +179,13 @@ txmtbl::delimiter txmtbl::GetCell(
 
 txmtbl::delimiter txmtbl::SkipCell(
 	xtf::extended_text_iflow___ &Flow,
-	separator__ Separator )
+	separator__ Separator,
+	escape__ Escape )
 {
 	bso__char C = 0;
 	bso__bool EOX = false;
 
-	while( IsNotEndOfCell_( Flow, Separator,EOX,C ) );
+	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) );
 
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
@@ -129,7 +193,8 @@ txmtbl::delimiter txmtbl::SkipCell(
 bso__bool txmtbl::GetLine(
 	xtf::extended_text_iflow___ &Flow,
 	line_ &Line,
-	separator__ Separator )
+	separator__ Separator,
+	escape__ Escape )
 {
 ERRProlog
 	cell Cell;
@@ -360,7 +425,8 @@ txf::text_oflow___ &operator <<(
 bso__bool txmtbl::GetFirstNonEmptyLine(
 	xtf::extended_text_iflow___ &Flow,
 	line_ &Line,
-	separator__ Separator )
+	separator__ Separator,
+	escape__ Escape )
 {
 	if ( Flow.EOX() )
 		return false;
@@ -369,7 +435,7 @@ bso__bool txmtbl::GetFirstNonEmptyLine(
 		do
 		{
 			Line.Init();
-			GetLine( Flow, Line );
+			GetLine( Flow, Line, Separator, Escape );
 
 			Line.DeleteEmptyCells();
 
@@ -383,7 +449,8 @@ bso__bool txmtbl::GetFirstNonEmptyLine(
 void txmtbl::GetTable(
 	xtf::extended_text_iflow___ &Flow,
 	table_ &Table,
-	separator__ Separator )
+	separator__ Separator,
+	escape__ Escape )
 {
 ERRProlog
 	line Line;
@@ -394,7 +461,7 @@ ERRBegin
 
 		Line.Location( Flow.Line() );
 
-		GetLine( Flow, Line, Separator );
+		GetLine( Flow, Line, Separator, Escape );
 
 		Table.AddLine( Line );
 	}

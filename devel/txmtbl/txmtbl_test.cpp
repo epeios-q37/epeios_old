@@ -34,11 +34,33 @@
 
 #include "err.h"
 #include "stf.h"
+#include "fil.h"
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Essai( void )
+{
+ERRProlog
+	fil::file_iflow___ Flow;
+	xtf::extended_text_iflow___ IFlow;
+	txmtbl::table Table;
+ERRBegin
+	Flow.Init( "essai.txt" );
+	Flow.EOFT( XTF_EOXT );
+	IFlow.Init( Flow );
+	
+	Table.Init();
+	
+	GetTable( IFlow, Table );
+	
+	fout << Table << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -54,6 +76,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

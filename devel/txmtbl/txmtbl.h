@@ -83,14 +83,20 @@ namespace txmtbl {
 	//t An amount of cell or of line.
 	typedef tym::size__	amount__;
 
-	//d The default cell separator.
+	//d The default cell separator character.
 	#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
+	
+	//d The default escape character.
+	#define TXMTBL_DEFAULT_ESCAPE_CHARACTER	'\\'
 
 	//t A location (line or column).
 	typedef xtf::location	location__;
 
-	//t A separator.
+	//t A separator char.
 	typedef bso__char	separator__;
+
+	//t A escape char.
+	typedef bso__char	escape__;
 
 	//c A cell.
 	class cell_
@@ -153,13 +159,15 @@ namespace txmtbl {
 	txmtbl::delimiter GetCell(
 		xtf::extended_text_iflow___ &Flow,
 		cell_ &Cell,
-		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
+		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
 	/*f Skip next cell in flow 'Flow'. 'Separator' delimits the cells.
 	Return the delimiter of the cell. */
 	txmtbl::delimiter SkipCell(
 		xtf::extended_text_iflow___ &Flow,
-		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
+		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
 	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
 	typedef lst::E_LIST_ list_;
@@ -294,14 +302,16 @@ namespace txmtbl {
 	bso__bool GetLine(
 		xtf::extended_text_iflow___ &Flow,
 		line_ &Line,
-		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
+		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
 	/*f Put in 'Line' the first non-empty line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
 	bso__bool GetFirstNonEmptyLine(
 		xtf::extended_text_iflow___ &Flow,
 		line_ &Line,
-		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
+		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
 
 	typedef ctn::E_CONTAINER_( line_ ) lines_;
@@ -387,22 +397,25 @@ namespace txmtbl {
 		NAV( list_:: )
 	};
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &Flot,
-		const table_ &Table );
-
 	AUTO( table )
 
 	//f Put in 'Table' the line contained in 'Flow'. Cells are separated by 'Separator'.
 	void GetTable(
 		xtf::extended_text_iflow___ &Flow,
 		table_ &Table,
-		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
+		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 }
 
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &Flow,
 	const txmtbl::line_ &Line );
+	
+txf::text_oflow___ &operator <<(
+		txf::text_oflow___ &Flot,
+		const txmtbl::table_ &Table );
+
+
 
 
 /*$END$*/

@@ -25,11 +25,79 @@
 // $Id$
 
 
-
 #include "tsrcpr.h"
 #include "fil.h"
 #include "fnm.h"
+#include "flx.h"
+#include "txmtbl.h"
+#include "tagexp.h"
 
+enum item {
+	parameter_with_value,
+	parameter_without_value,
+	parameter_list,
+	class_item_for_index,
+	class_object,
+	class_method,
+	global_function,
+	first_class_template_argument,
+	other_class_template_argument,
+	first_function_template_argument,
+	other_function_template_argument,
+	first_base_class,
+	other_base_class,
+	items_class,
+	enum_item,
+	first_argument,
+	other_argument,
+	class_index_item,
+	argument_list,
+	function_template,
+	base_classes,
+	i_amount
+};
+
+const char *Names[i_amount] = {
+	"parameter_with_value",
+	"parameter_without_value",
+	"parameter_list",
+	"class_item_for_index",
+	"class_object",
+	"class_method",
+	"global_function",
+	"first_class_template_argument",
+	"other_class_template_argument",
+	"first_function_template_argument",
+	"other_function_template_argument",
+	"first_base_class",
+	"other_base_class",
+	"items_class",
+	"enum_item",
+	"first_argument",
+	"other_argument",
+	"class_index_item",
+	"argument_list",
+	"function_template",
+	"base_classes",
+};
+
+flx::bunch Bunchs[i_amount];
+
+typedef tagexp::tag_expander_ expander_;
+typedef tagexp::tag_expander expander;
+
+class flow
+: public xtf::extended_text_iflow___
+{
+private:
+	flx::bunch_iflow___ B;
+public:
+	void Init( const flx::bunch_ &Bunch )
+	{
+		B.Init( Bunch );
+		extended_text_iflow___::Init( B );
+	}
+} IFlow;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
@@ -231,6 +299,103 @@ const str::string_ &Filtrer( const str::string_ &S )
 	return R;
 }
 
+inline tagexp::id__ Add(
+	expander_ &Expander,
+	const char *Name,
+	const str::string_ &Value )
+{
+	return Expander.Add( Value, tagexp::nText, str::string( Name ) );
+}
+
+inline void Assign(
+	expander_ &Expander,
+	tagexp::id__ ID,
+	const str::string_ &Value )
+{
+	Expander.Assign( Value, tagexp::nText, ID );
+}
+
+inline tagexp::id__ Add(
+	expander_ &Expander,
+	const char *Name,
+	const flx::bunch_ &Bunch )
+{
+	tagexp::id__ ID;
+ERRProlog
+	str::string String;
+ERRBegin
+	String.Init();
+	
+	String.Allocate( Bunch.Amount() );
+	
+	String.untyped_memory_::Write( Bunch, Bunch.Amount() );
+
+	ID = Expander.Add( String, tagexp::nText, str::string( Name ) );
+ERRErr
+ERREnd
+ERREpilog
+	return ID;
+}
+
+inline void Assign(
+	expander_ &Expander,
+	tagexp::id__ ID,
+	const flx::bunch_ &Bunch )
+{
+ERRProlog
+	str::string String;
+ERRBegin
+	String.Init();
+	
+	String.Allocate( Bunch.Amount(), true );
+	
+	String.untyped_memory_::Write( Bunch, Bunch.Amount() );
+
+	Expander.Assign( String, tagexp::nText, ID );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+inline tagexp::id__ Add(
+	expander_ &Expander,
+	char *Name )
+{
+	return Expander.Add( str::string(""), tagexp::nUserDefined, str::string( Name ) );
+}
+
+inline tagexp::id__ Expand(
+	expander_ &Expander,
+	item Item,
+	txf::text_oflow___ &OFlow )
+{
+	tagexp::id__ ID;
+	
+	::IFlow.Init( Bunchs[Item] );
+		
+	ID = Expander.Expand( ::IFlow, OFlow, '$', *(str::string_ *)NULL );
+	
+	if ( ID != tagexp::sOK )
+		ERRf();
+		
+	return ID;
+}
+	
+inline tagexp::id__ Expand(
+	expander_ &Expander,
+	xtf::extended_text_iflow___ &IFlow,
+	txf::text_oflow___ &OFlow )
+{
+	tagexp::id__ ID;
+		
+	ID = Expander.Expand( IFlow, OFlow, '$', *(str::string_ *)NULL );
+	
+	if ( ( ID != tagexp::sOK ) && ( ID < tagexp::sUserDefined ) )
+		ERRf();
+		
+	return ID;
+}
+	
 /********************/
 /**** NIVEAU XII ****/
 /********************/
@@ -239,15 +404,23 @@ inline void GenererDocumentationParametre(
 	const parametre_ &Parametre,
 	txf::text_oflow___ &Flot )
 {
-	Flot << "<LI><TT><EM>" << Filtrer( Parametre.Type ) << " <B>" << Parametre.Name << "</B></EM>";
-
-	if ( Parametre.Valeur.Amount() )
-		Flot << " = " << Parametre.Valeur;
-
-	Flot << "</TT>" << nl;
+ERRProlog
+	expander Expander;
+ERRBegin
+	Expander.Init();
+	
+	Add( Expander, "TYPE", Filtrer( Parametre.Type ) );
+	Add( Expander, "NAME", Filtrer( Parametre.Name ) );
+	
+	if ( Parametre.Valeur.Amount() ) {
+		Add( Expander, "VALUE", Parametre.Valeur );
+		Expand( Expander, parameter_with_value, Flot );
+	} else 
+		Expand( Expander, parameter_without_value, Flot );
+ERRErr
+ERREnd
+ERREpilog
 }
-
-
 
 /*******************/
 /**** NIVEAU XI ****/
@@ -260,10 +433,8 @@ void GenererDocumentationParametres(
 ERRProlog
 	ctn::E_CITEM( parametre_ ) Parametre;
 ERRBegin
-	Flot << "<UL>";
-
 	Parametre.Init( Parametres );
-
+	
 	if ( Parametres.Amount() )
 	{
 		tym::row__ Courant = Parametres.First();
@@ -274,8 +445,6 @@ ERRBegin
 			Courant = Parametres.Next( Courant );
 		}
 	}
-
-	Flot << "</UL>" << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -292,7 +461,18 @@ template <class t> inline void GenererIndexItemClasse(
 	const t &Item,
 	txf::text_oflow___ &Flot )
 {
-	Flot << "<A HREF = \"#" << Name << '.' << Item.Name << "\">" << Item.Name << "</A> " << nl;
+ERRProlog
+	expander Expander;
+ERRBegin
+	Expander.Init();
+	
+	Add( Expander, "CLASS_NAME", Name );
+	Add( Expander, "ITEM_NAME", Item.Name );
+//	Flot << "<A HREF = \"#" << Name << '.' << Item.Name << "\">" << Item.Name << "</A> " << nl;
+	Expand( Expander, class_item_for_index, Flot );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 inline void GenererCorpsItemClasse(
@@ -300,7 +480,21 @@ inline void GenererCorpsItemClasse(
 	const objet_ &Item,
 	txf::text_oflow___ &Flot )
 {
-	Flot << "<LI><TT><B>" << "<A NAME = \"" << Name << '.' << Item.Name << "\">" << Item.Name << "</B> "<< Filtrer( Item.Type ) << ' ' << "</TT><BR><EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
+ERRProlog
+	expander Expander;
+ERRBegin
+	Expander.Init();
+	Add( Expander, "CLASS_NAME", Name );
+	Add( Expander, "OBJECT_NAME", Item.Name );
+	Add( Expander, "OBJECT_TYPE", Filtrer( Item.Type ) );
+	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
+	
+	Expand( Expander, class_object, Flot );
+	
+//	Flot << "<LI><TT><B>" << "<A NAME = \"" << Name << '.' << Item.Name << "\">" << Item.Name << "</B> "<< Filtrer( Item.Type ) << ' ' << "</TT><BR><EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
+ERRErr
+ERREnd
+ERREpilog
 }
 
 inline void GenererCorpsItemClasse(
@@ -308,30 +502,89 @@ inline void GenererCorpsItemClasse(
 	const methode_ &Item,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
+	expander Expander;
+	flx::bunch Bunch;
+	flx::bunch_oflow___ Flow;
+	txf::text_oflow___ TFlow;
+ERRBegin
+
+	Expander.Init();
+	
+	Bunch.Init();
+	Flow.Init( Bunch );
+	TFlow.Init( Flow );
+	
+	GenererDocumentationParametres( Item.Parametres, TFlow );
+	
+	TFlow.reset();
+	Flow.reset();
+	
+	Add( Expander, "PARAMETER_LIST", Bunch );
+	Add( Expander, "CLASS_NAME", Name );
+	Add( Expander, "METHOD_NAME", Item.Name );
+	Add( Expander, "METHOD_TYPE", Item.Type );
+	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
+	
+	Expand( Expander, class_method, Flot );
+	
+/*
 	Flot << "<LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
 
-	GenererDocumentationParametres( Item.Parametres, Flot );
 
 	Flot << "<EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
+*/
+ERRErr
+ERREnd
+ERREpilog
 }
 
 inline void GenererCorpsItemClasse(
-	const str::string_ &Name,
+	const str::string_ &,
 	const function_ &Item,
 	txf::text_oflow___ &Flot )
 {
-	Flot << "<LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
+ERRProlog
+	expander Expander;
+	flx::bunch Bunch;
+	flx::bunch_oflow___ Flow;
+	txf::text_oflow___ TFlow;
+ERRBegin
+
+	Expander.Init();
+	
+	Bunch.Init();
+	Flow.Init( Bunch );
+	TFlow.Init( Flow );
+	
+	GenererDocumentationParametres( Item.Parametres, TFlow );
+	
+	TFlow.reset();
+	Flow.reset();
+	
+	Add( Expander, "PARAMETER_LIST", Bunch );
+	Add( Expander, "FUNCTION_NAME", Item.Name );
+	Add( Expander, "FUNCTION_TYPE", Item.Type );
+	Add( Expander, "COMMENT", MiseEnFormeCommentaire( Item.Commentaire ) );
+	
+	Expand( Expander, global_function, Flot );
+/*
+	Flot << "<B>F</B><br> <LI><A NAME = \"" << Name << "." << Item.Name << "\">" << "<TT><B>" << Item.Name << "</B> : " << Item.Type << "</TT>" << nl;
 
 	GenererDocumentationParametres( Item.Parametres, Flot );
 
 	Flot << "<EM>" << MiseEnFormeCommentaire( Item.Commentaire ) << "</EM>" << nl;
+*/
+ERRErr
+ERREnd
+ERREpilog
 }
 
 
 /*******************/
 /**** NIVEAU IX ****/
 /*******************/
-
+/*
 inline void GenererDocumentationArgumentTemplateClasse(
 	const argument_ &Argument,
 	txf::text_oflow___ &Flot )
@@ -345,7 +598,7 @@ inline void GenererDocumentationArgumentTemplateFonction(
 {
 	Flot << Argument.Type << " <B>" << Argument.Name << "</B>" << nl;
 }
-
+*/
 
 template <class t> void GenererIndexItemsClasse(
 	const str::string_ &NameClasse,
@@ -357,7 +610,7 @@ ERRProlog
 	str::string Name;
 ERRBegin
 
-	Flot << "<EM>";
+//	Flot << "<EM>";
 
 	GenererIndexItemClasse( NameClasse, Items( Courant ), Flot );
 	Name.Init();
@@ -376,7 +629,7 @@ ERRBegin
 
 	Items.Sync();
 
-	Flot << "</EM><BR>" << nl;
+//	Flot << "</EM><BR>" << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -389,7 +642,7 @@ template <class t> void GenererCorpsItemsClasse(
 {
 	tym::row__ Courant = Items.First();
 
-	Flot << "<UL>";
+//	Flot << "<UL>";
 
 	while ( Courant != NONE )
 	{
@@ -399,7 +652,7 @@ template <class t> void GenererCorpsItemsClasse(
 
 	Items.Sync();
 
-	Flot << "</UL>" << nl;
+//	Flot << "</UL>" << nl;
 
 }
 
@@ -412,32 +665,83 @@ void GenererDocumentationArgumentsTemplateClasse(
 	const table_<argument_> &Arguments,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
 	ctn::E_CITEM( argument_ ) Argument;
 	tym::row__ Courant = Arguments.First();
+	expander Expander;
+	tagexp::id__ IDName, IDType;
+ERRBegin
 
 	Argument.Init( Arguments );
+	Expander.Init();
+	
+	IDName = Add( Expander, "NAME", Argument( Courant ).Name );
+	IDType = Add( Expander, "TYPE", Argument( Courant ).Type );
+	
+	Expand( Expander, first_class_template_argument, Flot );
 
-	GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
+//	GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
 	Courant = Arguments.Next( Courant );
 
 	while ( Courant != NONE )
 	{
-		Flot << ", ";
-		GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
+		Assign( Expander, IDName, Argument( Courant ).Name );
+		Assign( Expander, IDType, Argument( Courant ).Type );
+
+		Expand( Expander, other_class_template_argument, Flot );
+		
+//		GenererDocumentationArgumentTemplateClasse( Argument( Courant ), Flot );
 		Courant = Arguments.Next( Courant );
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
+/*
 inline void GenererDocumentationBaseClasse(
 	const str::string_ &Base,
 	txf::text_oflow___ &Flot )
 {
 	Flot << "<LI>" << Filtrer( Base ) << "</LI>" << nl;
 }
+*/
 
 void GenererDocumentationArgumentsTemplateFonction(
 	const table_<argument_> &Arguments,
 	txf::text_oflow___ &Flot )
+{
+ERRProlog
+	ctn::E_CITEM( argument_ ) Argument;
+	tym::row__ Courant = Arguments.First();
+	expander Expander;
+	tagexp::id__ IDName, IDType;
+ERRBegin
+
+	Argument.Init( Arguments );
+	Expander.Init();
+	
+	IDName = Add( Expander, "NAME", Argument( Courant ).Name );
+	IDType = Add( Expander, "TYPE", Argument( Courant ).Type );
+	
+	Expand( Expander, first_function_template_argument, Flot );
+
+	Courant = Arguments.Next( Courant );
+
+	while ( Courant != NONE )
+	{
+		Assign( Expander, IDName, Argument( Courant ).Name );
+		Assign( Expander, IDType, Argument( Courant ).Type );
+
+		Expand( Expander, other_function_template_argument, Flot );
+		
+		Courant = Arguments.Next( Courant );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+/*
 {
 	ctn::E_CITEM( argument_ ) Argument;
 	tym::row__ Courant = Arguments.First();
@@ -453,60 +757,139 @@ void GenererDocumentationArgumentsTemplateFonction(
 		Courant = Arguments.Next( Courant );
 	}
 }
+*/
 
 template <class t> void GenererDocumentationItemsClasse(
 	const str::string_ &Name,
 	t &Items,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
+	flx::bunch Bunch;
+	flx::bunch_oflow___ Flow;
+	txf::text_oflow___ TFlow;
+	expander Expander;
+ERRBegin
 	if ( Items.Amount() )
 	{
 		Classer( Items );
-		GenererIndexItemsClasse( Name, Items, Flot );
-		GenererCorpsItemsClasse( Name, Items, Flot );
+		Expander.Init();
+		
+		Bunch.Init();
+		Flow.Init( Bunch );
+		TFlow.Init( Flow );
+		
+		GenererIndexItemsClasse( Name, Items, TFlow );
+		
+		TFlow.reset();
+		Flow.reset();
+		
+		Add( Expander, "INDEX", Bunch );
+		
+		Bunch.Init();
+		Flow.Init( Bunch );
+		TFlow.Init( Flow );
+		
+		GenererCorpsItemsClasse( Name, Items, TFlow );
+		
+		TFlow.reset();
+		Flow.reset();
+		
+		Add( Expander, "BODY", Bunch );
+		
+		Expand( Expander, items_class, Flot );
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
+void GenererDocumentationBasesClasseItems(
+	const table_<str::string_> &Bases,
+	txf::text_oflow___ &Flot )
+{
+ERRProlog
+	ctn::E_CITEM( str::string_ ) Base;
+	tym::row__ Courant = Bases.First();
+	tagexp::id__ ID;
+	expander Expander;
+ERRBegin
+	Base.Init( Bases );
+	Expander.Init();
+
+	ID = Add( Expander, "NAME", Filtrer( Base( Courant ) ) );
+	Expand( Expander, first_base_class, Flot );
+	
+	Courant = Bases.Next( Courant );
+
+	while ( Courant != NONE ) {
+		Assign( Expander, ID, Filtrer( Base( Courant ) ) );
+		Expand( Expander, other_base_class, Flot );
+		Courant = Bases.Next( Courant );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
 /********************/
 /**** NIVEAU VII ****/
 /********************/
 
-void GenererDocumentationItems(
+void GenererDocumentationItemsEnum(
 	const table_<item_> &Items,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
 	ctn::E_CITEM( item_ ) Item;
 	tym::row__ Courant = Items.First();
-
+	expander Expander;
+ERRBegin
 	Item.Init( Items );
 
 	while ( Courant != NONE )
 	{
-		Flot << "<LI><B>" << Item( Courant ).Name << "</B>: " << Item( Courant ).Commentary << "</LI>" << nl;
+		Expander.Init();
+		Add( Expander, "NAME", Item( Courant ).Name );
+		Add( Expander, "COMMENT", Item( Courant ).Commentary );
+		
+		Expand( Expander, enum_item, Flot );
+//		Flot << "<LI><B>" << Item( Courant ).Name << "</B>: " << Item( Courant ).Commentary << "</LI>" << nl;
 		Courant = Items.Next( Courant );
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
-
 
 
 void GenererDocumentationArguments(
 	const table_<str::string_> &Arguments,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
 	ctn::E_CITEM( str::string_ ) Argument;
 	tym::row__ Courant = Arguments.First();
-
+	expander Expander;
+	tagexp::id__ ID;
+ERRBegin
 	Argument.Init( Arguments );
+	Expander.Init();
+	
+	ID = Add( Expander, "NAME", Argument( Courant ) );
+	Expand( Expander, first_argument, Flot );
+	Courant = Arguments.Next( Courant );
+	
 
 	while ( Courant != NONE )
 	{
-		if ( Courant != Arguments.First() )
-			Flot << ", ";
-
-		Flot << "<B>" << Argument( Courant ) << "</B>" << nl;
+		Assign( Expander, ID, Argument( Courant ) );
+		Expand( Expander, other_argument, Flot );
 		Courant = Arguments.Next( Courant );
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 
@@ -514,57 +897,98 @@ inline void GenererIndexClasse(
 	const classe_ &Classe,
 	txf::text_oflow___ &Flot )
 {
-	Flot << "<A HREF = \"#" << Classe.Name << "\">" << Classe.Name << "</A> " << nl;
+ERRProlog
+	expander Expander;
+ERRBegin
+	Expander.Init();
+	
+	Add( Expander, "NAME", Classe.Name );
+	Expand( Expander, class_index_item, Flot );
+//	Flot << "<A HREF = \"#" << Classe.Name << "\">" << Classe.Name << "</A> " << nl;
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void GenererDocumentationTemplateClasse(
 	const template_ &Template,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
+	expander Expander;
+	tagexp::id__ ID;
+	flow IFlow;
+ERRBegin
+	IFlow.Init( Bunchs[argument_list] );
+
 	if ( Template.Arguments.Amount() )
 	{
-		Flot << "<EM>( ";
+		Expander.Init();
+		
+		ID = Add( Expander, "ARGUMENT_LIST" );
+		
+		while( Expand( Expander, IFlow, Flot ) == ID )
+			GenererDocumentationArgumentsTemplateClasse( Template.Arguments, Flot );
+		// Flot << "<EM>( ";
 
-		GenererDocumentationArgumentsTemplateClasse( Template.Arguments, Flot );
 
-		Flot << " )</EM>";
+		// Flot << " )</EM>";
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void GenererDocumentationBasesClasse(
 	const table_<str::string_> &Bases,
 	txf::text_oflow___ &Flot )
 {
-	ctn::E_CITEM( str::string_ ) Base;
-	tym::row__ Courant = Bases.First();
+ERRProlog
+	tagexp::id__ ID;
+	expander Expander;
+	flow IFlow;
+ERRBegin
+	Expander.Init();
+	
+	ID = Add( Expander, "BASE_CLASSES" );
+	
+	IFlow.Init( Bunchs[base_classes] );
+	
+	while( Expand( Expander, IFlow, Flot ) == ID )
+		GenererDocumentationBasesClasseItems( Bases, Flot );
 
-	Base.Init( Bases );
-
-	Flot << "<UL>";
-
-	GenererDocumentationBaseClasse( Base( Courant ), Flot );
-	Courant = Bases.Next( Courant );
-
-	while ( Courant != NONE ) {
-		GenererDocumentationBaseClasse( Base( Courant ), Flot );
-		Courant = Bases.Next( Courant );
-	}
-
-	Flot << "</UL>";
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void GenererDocumentationTemplateFonction(
 	const template_ &Template,
 	txf::text_oflow___ &Flot )
 {
+ERRProlog
+	expander Expander;
+	flow IFlow;
+	tagexp::id__ ID;
+ERRBegin
 	if ( Template.Arguments.Amount() )
 	{
-		Flot << "<TT>" << Filtrer( str::string( "<" ) );
+		Expander.Init();
+		
+		ID = Add( Expander, "FUNCTION_TEMPLATE" );
+		
+		IFlow.Init( Bunchs[function_template] );
+		
+//		Flot << "<TT>" << Filtrer( str::string( "<" ) );
+	
+		while( Expand( Expander, IFlow, Flot ) == ID )
+			GenererDocumentationArgumentsTemplateFonction( Template.Arguments, Flot );
 
-		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, Flot );
-
-		Flot << Filtrer( str::string( "> " ) ) << "</TT> " << nl;
+//		Flot << Filtrer( str::string( "> " ) ) << "</TT> " << nl;
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void GenererIndexDocumentationClasse(
@@ -651,7 +1075,7 @@ void GenererDocumentationEnum(
 
 	if ( Enum.Items.Amount() ) {
 		Flot << "<UL>";
-		GenererDocumentationItems( Enum.Items, Flot );
+		GenererDocumentationItemsEnum( Enum.Items, Flot );
 		Flot << "</UL>";
 	}
 
@@ -1087,7 +1511,7 @@ void GenererTitreDocumentationTechnique(
 	txf::text_oflow___ &Flot )
 {
 	Flot << "<HEAD><TITLE>" << Librairie.Name << " library documentation" << "</TITLE></HEAD><BODY>" << nl;
-	Flot << "<CENTER><A HREF=\"" << NOM_FICHIER_INDEX << "\">Back to Epeios libraries index</A></CENTER>" << nl;
+	Flot << "<CENTER><A HREF=\"" << NOM_FICHIER_INDEX << "\">Back to libraries index</A></CENTER>" << nl;
 	Flot << "<H2><CENTER>Documentation of the <TT>" << Librairie.Name << "</TT> library.</H2></CENTER>";
 	Flot << "<H3><CENTER>" << Librairie.Library.Description << "</H3></CENTER>";
 	Flot << "<H4><UL>";
@@ -1520,6 +1944,27 @@ inline void GenererDocumentations(
 //	GenererDocumentationDescriptive( Librairie, Repertoire );
 }
 
+void FillTable(
+	const char *FileName,
+	txmtbl::table_ &Table )
+{
+ERRProlog
+	fil::file_iflow___ Flow;
+	xtf::extended_text_iflow___ TFlow;
+ERRBegin
+	Flow.Init( FileName );
+	Flow.EOFT( XTF_EOXT );
+	TFlow.Init( Flow );
+	txmtbl::GetTable( TFlow, Table );
+	Table.DeleteCommentaries( '#' );
+	Table.DeleteEmptyCells();
+	Table.DeleteEmptyLines();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 /*******************/
 /***** NIVEAU I ****/
 /*******************/
@@ -1582,8 +2027,8 @@ ERRBegin
 	Sortie.Init( Fichier );
 	GenererEnTeteFichierHTML( Sortie );
 
-	Sortie << "<HEAD><TITLE>Index of the Epeios libraries</TITLE></HEAD><BODY>";
-	Sortie << "<H2><CENTER>Epeios libraries index.</CENTER></H2>" << nl;
+	Sortie << "<HEAD><TITLE>Index of libraries</TITLE></HEAD><BODY>";
+	Sortie << "<H2><CENTER>Libraries index.</CENTER></H2>" << nl;
 
 /*
 	Sortie << "<H4><CENTER>";
@@ -1640,6 +2085,70 @@ ERREnd
 ERREpilog
 }
 
+void FillBunch(
+	const str::string_ &String,
+	flx::bunch_ &Bunch )
+{
+	Bunch.Allocate( String.Amount(), true );
+	
+	Bunch.untyped_memory_::Write( String, String.Amount() );
+	
+	Bunch.Add( XTF_EOXC );
+}
+	
+
+void FillBunch(
+	const txmtbl::line_ &Line,
+	flx::bunch *Bunchs )
+{
+	ctn::E_CMITEM( txmtbl::cell_ ) Cell;
+	int i = 0;
+	
+	Cell.Init( Line );
+
+	if ( Line.Amount() != 2 )
+		ERRu();
+		
+	while( ( i < i_amount ) && ( Cell( Line.First() ) != str::string( Names[i] ) ) ) 
+		i++;
+		
+	if ( i == i_amount )
+		ERRu();
+		
+	FillBunch( Cell( Line.Last() ), Bunchs[i] );
+}
+
+void FillBunchs(
+	const txmtbl::table_ &Table,
+	flx::bunch *Bunchs )
+{
+	tym::row__ Position = Table.First();
+	ctn::E_CITEM( txmtbl::line_ ) Line;
+	
+	Line.Init( Table );
+	
+	while( Position != NONE ) {
+		FillBunch( Line( Position ), Bunchs );
+		Position = Table.Next( Position );
+	}
+}
+
+void FillBunchs(
+	const char *FileName,
+	flx::bunch *Bunchs )
+{
+ERRProlog
+	txmtbl::table Table;	
+ERRBegin
+	Table.Init();
+	FillTable( FileName, Table );
+	FillBunchs( Table, Bunchs );
+	
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 /****************************/
 /**** NIVEAU FONDAMENTAL ****/
@@ -1659,7 +2168,12 @@ ERRFProlog
 ERRFBegin
 	if ( argc != 4 )
 		ERRt();
-
+		
+	for( int i = 0; i < i_amount; i++ )
+		::Bunchs[i].Init();
+		
+	FillBunchs( "conf", Bunchs );
+	
 	Librairies.Init();
 	Analyser( Liste, RepertoireLibrary, Librairies );
 	GenererIndex( Librairies, RepertoireDestination );

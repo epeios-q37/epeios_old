@@ -277,7 +277,7 @@ namespace aem {
 
 	AUTO( amount_extent_manager )
 
-
+	//c Amount/extent manager for fixed size set of object.
 	template <int extent> class amount_extent_manager__
 	{
 	private:

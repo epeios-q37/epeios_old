@@ -113,13 +113,13 @@ ERREpilog
 }
 
 
-static error HandleReference_(
+static status HandleReference_(
 	const value_ &Value,
 	nature Nature,
 	txf::text_oflow___ &OFlow,
 	err::handle ErrHandle )
 {
-	tagexp::error Error = tagexp::rOK;
+	tagexp::status Status = tagexp::sOK;
 
 	switch ( Nature ) {
 	case tagexp::nText:
@@ -127,17 +127,20 @@ static error HandleReference_(
 		break;
 	case tagexp::nFile:
 		if ( WriteFile_( Value, OFlow, ErrHandle ) != fil::sSuccess )
-			Error = tagexp::rFile;
+			Status = tagexp::sBadFile;
+		break;
+	case tagexp::nUserDefined:
+		Status = sUserDefined;
 		break;
 	default:
 		ERRc();
 		break;
 	}
 
-	return Error;
+	return Status;
 }
 
-error tagexp::tag_expander_::Expand(
+status tagexp::tag_expander_::Expand(
 	xtf::extended_text_iflow___ &IFlow,
 	txf::text_oflow___ &OFlow,
 	bso__char Delimiter,
@@ -148,11 +151,11 @@ error tagexp::tag_expander_::Expand(
 	bso__bool Loop = true;
 	id__ Id = TAGDTC_UNKNOW;
 	ctn::E_CMITEM( value_ ) Value;
-	tagexp::error Error = tagexp::rOK;
+	tagexp::status Status = tagexp::sOK;
 
 	Value.Init( References.Values );
 
-	while( Loop && ( Error == tagexp::rOK ) ) {
+	while( Loop && ( Status == tagexp::sOK ) ) {
 		Id = Detector.Parse( IFlow, OFlow, Delimiter, Action, ErrHandle );
 
 		if ( Id < tagexp::t_amount ) {
@@ -176,7 +179,7 @@ error tagexp::tag_expander_::Expand(
 				break;
 			}
 			if ( Action == tagexp::aPrint )
-				Error = HandleReference_( Value( Id ), References.Natures( Id ), OFlow, ErrHandle );
+				Status = HandleReference_( Value( Id ), References.Natures( Id ), OFlow, ErrHandle );
 		}
 		else if ( Id > TAGDTC_MAX_ID ) {
 			switch ( Id ) {
@@ -184,7 +187,7 @@ error tagexp::tag_expander_::Expand(
 				Loop = false;
 				break;
 			case TAGDTC_UNKNOW:
-				Error = tagexp::rTag;
+				Status = tagexp::sUnknowTag;
 				break;
 			default:
 				ERRc();
@@ -192,14 +195,16 @@ error tagexp::tag_expander_::Expand(
 			}
 		}
 		else if ( Action == tagexp::aPrint )
-			Error = HandleReference_( Value( Id ), References.Natures( Id ), OFlow, ErrHandle );
+			Status = HandleReference_( Value( Id ), References.Natures( Id ), OFlow, ErrHandle );
 
 	}
 
-	if ( Error == tagexp::rFile )
+	if ( Status == tagexp::sUserDefined )
+		Status = (status)Id;
+	else if ( Status == tagexp::sBadFile )
 	 	File = Value();
 
-	return Error;
+	return Status;
 }
 
 

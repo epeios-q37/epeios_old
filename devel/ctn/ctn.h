@@ -72,7 +72,6 @@ extern class ttr_tutor &CTNTutor;
 
 namespace ctn {
 
-	//t The size of a container.
 	using tym::size__;
 
 

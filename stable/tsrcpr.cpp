@@ -1,7 +1,7 @@
 /*
-  'tsrcpr' library by Claude L. Simon (epeios@epeios.org)
+  'tsrcpr' library by Claude L. Simon (simon@epeios.org)
   Requires the 'tsrcpr' header file ('tsrcpr.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( TSRCPR_NAME )
 	{
 #ifdef TSRCPR_DBG
-		Version = TSRCPR_VERSION " (DBG)";
+		Version = TSRCPR_VERSION "\b\bD $";
 #else
 		Version = TSRCPR_VERSION;
 #endif
@@ -107,7 +108,7 @@ static void SauterLigne_( flo_entree_texte_fichier &Flot )
 */
 static void LireIdentificateur_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &String )
+	str::string_ &String )
 {
 	bso__char C = Flot.Get();
 
@@ -118,7 +119,7 @@ static void LireIdentificateur_(
 
 	if ( !Flot.EOX() ) {
 		if ( ( ( String.Amount() >= 6 )
-				 && !STRCompare( String, str_string( "signed" ), String.Amount() - 6 ) ) ) {
+				 && !str::Compare( String, str::string( "signed" ), String.Amount() - 6 ) ) ) {
 			String.Add( ' ' );
 
 			SauterBlancs_( Flot );
@@ -139,11 +140,11 @@ static void LireIdentificateur_(
 
 static void LireType_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &String )
+	str::string_ &String )
 {
 ERRProlog
 	bso__char C;
-	str_string Tampon;
+	str::string Tampon;
 ERRBegin
 	Tampon.Init();
 	
@@ -151,34 +152,34 @@ ERRBegin
 
 	LireIdentificateur_( Flot, Tampon );
 
-	if ( ( Tampon == str_string( "template" ) ) || ( Tampon == str_string( "inline" ) ) )
+	if ( ( Tampon == str::string( "template" ) ) || ( Tampon == str::string( "inline" ) ) )
 	{
 		String.Add( Tampon );
 		return;
 	}
 
-	if ( Tampon == str_string( "virtual" ) )
+	if ( Tampon == str::string( "virtual" ) )
 	{
 		Tampon.Init();
 		SauterBlancs_( Flot );
 		LireIdentificateur_( Flot, Tampon );
 	}
 
-	if ( Tampon == str_string( "typename" ) )
+	if ( Tampon == str::string( "typename" ) )
 	{
 		Tampon.Init();
 		SauterBlancs_( Flot );
 		LireIdentificateur_( Flot, Tampon );
 	}
 
-	if ( Tampon == str_string( "extern" ) )
+	if ( Tampon == str::string( "extern" ) )
 	{
 		Tampon.Init();
 		SauterBlancs_( Flot );
 		LireIdentificateur_( Flot, Tampon );
 	}
 
-	if ( Tampon == str_string( "const" ) )
+	if ( Tampon == str::string( "const" ) )
 	{
 		Tampon.Add( ' ' );
 
@@ -275,7 +276,7 @@ ERREpilog
 
 static void LireValeur_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &String )
+	str::string_ &String )
 {
 	int C = Flot.Get();
 
@@ -310,7 +311,7 @@ static void LireValeur_(
 
 void LireDocCourt_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &Commentaire )
+	str::string_ &Commentaire )
 // lit la doc. dans  'Flot' sachant qu'elle est inclue dans un commentaire court
 {
 	int C;
@@ -330,7 +331,7 @@ void LireDocCourt_(
 
 void LireDocLong_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &Commentaire )
+	str::string_ &Commentaire )
 // lit la doc. dans 'Flot' sachant qu'elle est inclue dans un commentaire long
 {
 	int C;
@@ -360,9 +361,9 @@ void LireDocLong_(
 	while ( C != '/' );
 }
 
-void ExtractCVSTag_( str_string_ &Tag )
+void ExtractCVSTag_( str::string_ &Tag )
 {
-	POSITION__ P;
+	tym::row__ P;
 
 	if ( ( ( P = Tag.Search( ':' ) ) != NONE ) && ( Tag.Amount() >= P + 2 ) ) {
 		Tag.Delete( 0, P + 2 );
@@ -375,7 +376,7 @@ void ExtractCVSTag_( str_string_ &Tag )
 
 void LireDocumentation_(
 	xtf::extended_text_iflow___ &Flot,
-	str_string_ &Documentation )
+	str::string_ &Documentation )
 {
 	LireDocCourt_( Flot, Documentation );
 
@@ -386,7 +387,7 @@ void LireDocumentation_(
 void LireDoc_(
 	xtf::extended_text_iflow___ &Flot,
 	bso__bool Long,
-	str_string_ &Commentaire )
+	str::string_ &Commentaire )
 // lit la doc. dans 'Flot' et la place dans 'Commentaire';
 // si 'Long', alors la doc est située dans un commentaire long (/**/),
 // sinon elle est située dans un commentaire court(//)
@@ -590,7 +591,7 @@ void tsrcpr::typedef_::Analyze(
 	bso__bool Long )
 {
 ERRProlog
-	str_string S;
+	str::string S;
 	bso__ubyte Level = 0;
 ERRBegin
 	LireDoc_( Flot, Long, Commentaire );
@@ -603,8 +604,8 @@ ERRBegin
 
 	SauterBlancs_( Flot );
 	
-	if ( S != str_string( "typedef" ) )
-		if ( S == str_string( "TYPEDEF" ) ) {
+	if ( S != str::string( "typedef" ) )
+		if ( S == str::string( "TYPEDEF" ) ) {
 			SauterBlancs_( Flot );
 			
 			if ( Flot.Get() != '(' )
@@ -671,7 +672,7 @@ void tsrcpr::define_::AnalyserArguments_( xtf::extended_text_iflow___ &Flot )
 {
 ERRProlog
 	volatile int C;
-	str_string S;
+	str::string S;
 ERRBegin
 
 	C = Flot.Get();
@@ -708,7 +709,7 @@ void tsrcpr::define_::Analyze(
 	bso__bool Long )
 {
 ERRProlog
-	str_string S;
+	str::string S;
 ERRBegin
 
 	LireDoc_( Flot, Long, Commentaire );
@@ -726,7 +727,7 @@ ERRBegin
 
 	SauterBlancs_( Flot );
 
-	if ( S != str_string( ( "define" ) ) )
+	if ( S != str::string( ( "define" ) ) )
 		ERRf();
 
 	LireIdentificateur_( Flot, Name );
@@ -753,7 +754,7 @@ void tsrcpr::methode_::Analyze(
 
 	LireType_( Flot, Type );
 
-	if ( Type == str_string( "inline" ) )
+	if ( Type == str::string( "inline" ) )
 	{
 		Type.Init();
 		LireType_( Flot, Type );
@@ -763,7 +764,7 @@ void tsrcpr::methode_::Analyze(
 
 	LireIdentificateur_( Flot, Name );
 
-	if ( Name == str_string( "operator" ) )
+	if ( Name == str::string( "operator" ) )
 	{
 		bso__bool Premier = true;
 
@@ -799,14 +800,14 @@ void tsrcpr::function_::Analyze(
 
 	LireType_( Flot, Type );
 
-	if( Type == str_string( "template" ) )
+	if( Type == str::string( "template" ) )
 	{
 		Template.Analyze( Flot );
 		Type.Init();
 		LireType_( Flot, Type );
 	}
 
-	if ( Type == str_string( "inline" ) )
+	if ( Type == str::string( "inline" ) )
 	{
 		Type.Init();
 		LireType_( Flot, Type );
@@ -816,7 +817,7 @@ void tsrcpr::function_::Analyze(
 
 	LireIdentificateur_( Flot, Name );
 
-	if ( Name == str_string( "operator" ) )
+	if ( Name == str::string( "operator" ) )
 	{
 		bso__bool Premier = true;
 
@@ -982,9 +983,9 @@ template <class t> void inline AnalyserItem_(
 	bso__bool Long )
 {
 ERRProlog
-	ITEM( t ) Element;
+	ctn::E_ITEM( t ) Element;
 ERRBegin
-	POSITION__ P = TI.New();
+	tym::row__ P = TI.New();
 
 	Element.Init( TI );
 
@@ -995,22 +996,18 @@ ERREnd
 ERREpilog
 }
 
-static void AdjustEndOfBase_( str_string_ &S )
+static void AdjustEndOfBase_( str::string_ &S )
 {
-	while( S( S.Last() ) == ' ' )
-		S.Delete( S.Last() );
+	bso__char C;
 
-	if ( S( S.Last() ) == ',' )
-		S.Delete( S.Last() );
-
-	while( S( S.Last() ) == ' ' )
-		S.Delete( S.Last() );
+	while( ( C = S( S.Last() ) == ' ' ) || ( C == ',' ) )
+		S.Truncate();
 }
 
 void tsrcpr::classe_::AnalyzeBases_( xtf::extended_text_iflow___ &Flot )
 {
 ERRProlog
-	str_string S;
+	str::string S;
 ERRBegin
 	Flot.Get();
 
@@ -1019,7 +1016,7 @@ ERRBegin
 		SauterBlancs_( Flot );
 		LireIdentificateur_( Flot, S );
 
-		if ( S == str_string( "public" ) ) {
+		if ( S == str::string( "public" ) ) {
 			S.Init();
 			SauterBlancs_( Flot );
 			Flot.GetLine( S );
@@ -1063,7 +1060,7 @@ void tsrcpr::enum_::Analyze(
 
 	LireIdentificateur_( Flot, Name );
 
-	if ( Name != str_string( "enum" ) )
+	if ( Name != str::string( "enum" ) )
 		ERRf();
 
 	Name.Init();
@@ -1110,7 +1107,7 @@ void tsrcpr::classe_::Analyze(
 
 	LireIdentificateur_( Flot, this->Type );
 
-	if ( this->Type == str_string( "template" ) )
+	if ( this->Type == str::string( "template" ) )
 	{
 		Template.Analyze( Flot );
 

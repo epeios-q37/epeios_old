@@ -26,9 +26,10 @@
 # $Id$
 
 name = gendoc
-copt = -DXXX_DBG
+#copt = -DXXX_DBG
 lopt = 
-libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil
+libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil\
+       txmtbl tagexp lst tagdtc
 
 epeios_os=$(EPEIOS_OS)
 epeios_src=$(EPEIOS_SRC)
@@ -50,9 +51,9 @@ ox = o
 cc = g++ 
 co = -c
 # Generates debugging data.
-co += -g
+#co += -g
 # General optimization.
-#co += -O
+co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)

@@ -76,16 +76,21 @@ namespace tagexp
 		//i A text.
 		nText,
 		//i A file.
-		nFile
+		nFile,
+		//i User-defined tag ; the expander gives the hand.
+		nUserDefined
 	};
-	//e Error which can happend dufing expanding.
-	enum error {
+	//e Status of the expander.
+	enum status {
 		//i No error
-		rOK,
+		sOK,
 		//i Unable to handle given file.
-		rFile,
+		sBadFile,
 		//i Unknow tag,
-		rTag
+		sUnknowTag,
+		/*i Value above this one is the value of a user-defined tag id,
+		this value is never returned, but the value of the tag instead. */
+		sUserDefined
 	};
 	//e Reserved tag ids.
 	enum tag_id {
@@ -279,8 +284,9 @@ namespace tagexp
 		}
 		/*f Write 'IFlow' to 'OFlow' with expanding tags delimited by 'Delimiter'.
 		If 'Action' = 'aSkip' then the contents isn't write to oflow until
-		encoutering the 'tPrint' or the 'tRaw' tag. */
-		tagexp::error Expand(
+		encoutering the 'tPrint' or the 'tRaw' tag. If retruned value > 'sUserDefined',
+		then it's the value of an user-defined tag. */
+		tagexp::status Expand(
 			xtf::extended_text_iflow___ &IFlow,
 			txf::text_oflow___ &OFlow,
 			bso__char Demlimiter,

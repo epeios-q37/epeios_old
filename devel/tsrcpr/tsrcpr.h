@@ -70,62 +70,66 @@ extern class ttr_tutor &TSRCPRTutor;
 
 namespace tsrcpr {
 
+	using idxque::queue_index_;
+	using ctn::multi_container_;
+
+
 	template <class t> class table_
-	: public idxque_queue_index_,
-	  public CONTAINER_( t )
+	: public queue_index_,
+	  public E_CONTAINER_( t )
 	{
 	public:
 		struct s
-		: public ::idxque_queue_index_::s,
-		  public ::CONTAINER_( t )::s
+		: public queue_index_::s,
+		  public E_CONTAINER_( t )::s
 		{};
 		table_( s &S )
-		: idxque_queue_index_( S ),
-		  CONTAINER_( t )( S ){}
+		: queue_index_( S ),
+		  E_CONTAINER_( t )( S ){}
 		void reset( bool P = true )
 		{
-			idxque_queue_index_::reset( P );
-			CONTAINER_( t )::reset( P );
+			queue_index_::reset( P );
+			E_CONTAINER_( t )::reset( P );
 		}
-		void plug( mmm_multimemory_ &MM )
+		void plug( mmm::multimemory_ &MM )
 		{
-			idxque_queue_index_::plug( MM );
-			CONTAINER_( t )::plug( MM );
+			queue_index_::plug( MM );
+			E_CONTAINER_( t )::plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
-			idxque_queue_index_::operator =( T );
-			CONTAINER_( t )::operator =( T );
+			queue_index_::operator =( T );
+			E_CONTAINER_( t )::operator =( T );
 
 			return *this;
 		}
 		void Init( void )
 		{
-			idxque_queue_index_::Init();
-			CONTAINER_( t )::Init();
+			queue_index_::Init();
+			E_CONTAINER_( t )::Init();
 		}
-		POSITION__ New( void )
+		tym::row__ New( void )
 		{
-			POSITION__ P = CONTAINER_( t )::New();
+			tym::row__ P = E_CONTAINER_( t )::New();
 
-			idxque_queue_index_::Allocate( CONTAINER_( t )::Extent() );
+			queue_index_::Allocate( E_CONTAINER_( t )::Extent() );
 
-			if ( idxque_queue_index_::Amount() )
-				idxque_queue_index_::BecomeNext( P, idxque_queue_index_::Last() );
+			if ( queue_index_::Amount() )
+				queue_index_::BecomeNext( P, queue_index_::Last() );
 			else
-				idxque_queue_index_::Create( P );
+				queue_index_::Create( P );
 
-			CONTAINER_( t )::operator()( P ).Init();
+			E_CONTAINER_( t )::operator()( P ).Init();
 
-			CONTAINER_( t )::Sync();
+			E_CONTAINER_( t )::Sync();
 
 			return P;
 		}
 		void Add( const t &Objet )
 		{
-			CONTAINER_( t )::Write( Objet, New() );
+			E_CONTAINER_( t )::Write( Objet, New() );
 		}
-		FNLPA( idxque_queue_index_:: )
+		NAV( queue_index_:: )
 	};
 
 	AUTO1( table )
@@ -134,7 +138,7 @@ namespace tsrcpr {
 		txf::text_iflow___ &Flot,
 		table_< t > &T )
 	{
-		return Flot >> *(idxque_queue_index_ *)&T;
+		return Flot >> *(queue_index_ *)&T;
 	}
 
 	//c An item.
@@ -142,12 +146,12 @@ namespace tsrcpr {
 	{
 	public:
 		//o Name of item.
-		str_string_ Name;
+		str::string_ Name;
 		//o Commentary.
-		str_string_ Commentary;
+		str::string_ Commentary;
 		struct s {
-			str_string_::s Name;
-			str_string_::s Commentary;
+			str::string_::s Name;
+			str::string_::s Commentary;
 		};
 		item_( s &S )
 		: Name( S.Name ),
@@ -158,7 +162,7 @@ namespace tsrcpr {
 			Name.reset( P );
 			Commentary.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Name.plug( M );
 			Commentary.plug( M );
@@ -189,14 +193,14 @@ namespace tsrcpr {
 		void AnalyzeItems_( xtf::extended_text_iflow___ &Flow );
 	public:
 		//o Enum name.
-		str_string_ Name;
+		str::string_ Name;
 		//o Associated commentary.
-		str_string_ Commentary;
+		str::string_ Commentary;
 		//o Items.
 		table_<item_> Items;
 		struct s {
-			str_string_::s Name;
-			str_string_::s Commentary;
+			str::string_::s Name;
+			str::string_::s Commentary;
 			table_<item_>::s Items;
 		};
 		enum_( s &S )
@@ -210,7 +214,7 @@ namespace tsrcpr {
 			Commentary.reset( P );
 			Items.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Name.plug( M );
 			Commentary.plug( M );
@@ -242,13 +246,13 @@ namespace tsrcpr {
 	{
 	public:
 		//o Le nom du type.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le commentaire associé.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		struct s
 		{
-			str_string_::s Name;
-			str_string_::s Commentaire;
+			str::string_::s Name;
+			str::string_::s Commentaire;
 		};
 		typedef_( s &S )
 		: Name( S.Name ),
@@ -258,7 +262,7 @@ namespace tsrcpr {
 			Name.reset( P );
 			Commentaire.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Name.plug( M );
 			Commentaire.plug( M );
@@ -311,16 +315,16 @@ namespace tsrcpr {
 		void AnalyserArguments_( xtf::extended_text_iflow___ &Flot );
 	public:
 		//o Le nom du define.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le commentaire associé.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		//o Les parametres.
-		table_<str_string_> Arguments;
+		table_<str::string_> Arguments;
 		struct s
 		{
-			str_string_::s Name;
-			str_string_::s Commentaire;
-			table_<str_string_>::s Arguments;
+			str::string_::s Name;
+			str::string_::s Commentaire;
+			table_<str::string_>::s Arguments;
 		};
 		define_( s &S )
 		: Name( S.Name ),
@@ -332,7 +336,7 @@ namespace tsrcpr {
 			Commentaire.reset( P );
 			Arguments.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Name.plug( M );
 			Commentaire.plug( M );
@@ -382,11 +386,11 @@ namespace tsrcpr {
 	{
 	public:
 		//o L'alias.
-		str_string_ Alias;
+		str::string_ Alias;
 		struct s
 		: public define_::s
 		{
-			str_string_::s Alias;
+			str::string_::s Alias;
 		};
 		shortcut_( s &S )
 		: define_( S ),
@@ -396,7 +400,7 @@ namespace tsrcpr {
 			define_::reset( P );
 			Alias.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			define_::plug( M );
 			Alias.plug( M );
@@ -439,17 +443,17 @@ namespace tsrcpr {
 	public:
 		struct s
 		{
-			str_string_::s
+			str::string_::s
 				Type,
 				Name,
 				Valeur;
 		};
 		//o Le type.
-		str_string_ Type;
+		str::string_ Type;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		//o La valeur par défaut.
-		str_string_ Valeur;
+		str::string_ Valeur;
 		parametre_( s &S )
 		: Type( S.Type ),
 		  Name( S.Name ),
@@ -478,7 +482,7 @@ namespace tsrcpr {
 		}
 		//f Analyse du ficher 'Stream'.
 		void Analyze( xtf::extended_text_iflow___ &Flot );
-		void plug( mmm_multimemory_ &Multimemoire )
+		void plug( mmm::multimemory_ &Multimemoire )
 		{
 			Type.plug( Multimemoire );
 			Name.plug( Multimemoire );
@@ -513,13 +517,13 @@ namespace tsrcpr {
 	{
 	public:
 		//o Le type ('class', 'int', 'long', ... ).
-		str_string_ Type;
+		str::string_ Type;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		struct s
 		{
-			str_string_::s Type;
-			str_string_::s Name;
+			str::string_::s Type;
+			str::string_::s Name;
 		};
 		argument_( s &S )
 		: Type( S.Type ),
@@ -529,7 +533,7 @@ namespace tsrcpr {
 			Type.reset( P );
 			Name.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Type.plug( M );
 			Name.plug( M );
@@ -587,7 +591,7 @@ namespace tsrcpr {
 		{
 			Arguments.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Arguments.plug( M );
 		}
@@ -624,7 +628,7 @@ namespace tsrcpr {
 		void AnalyserParametres_( xtf::extended_text_iflow___ &Flot );
 	public:
 		struct s {
-			str_string_::s
+			str::string_::s
 				Type,
 				Name,
 				Commentaire;
@@ -633,11 +637,11 @@ namespace tsrcpr {
 		//o Les paramètres.
 		table_<parametre_> Parametres;
 		//o Le type.
-		str_string_ Type;
+		str::string_ Type;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le commentaire.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		methode_( s &S )
 		: Parametres( S.Parametres ),
 		  Type( S.Type ),
@@ -663,7 +667,7 @@ namespace tsrcpr {
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
 			bso__bool Long );
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Type.plug( M );
 			Name.plug( M );
@@ -706,7 +710,7 @@ namespace tsrcpr {
 		void AnalyserParametres_( xtf::extended_text_iflow___ &Flot );
 	public:
 		struct s {
-			str_string_::s
+			str::string_::s
 				Type,
 				Name,
 				Commentaire;
@@ -718,11 +722,11 @@ namespace tsrcpr {
 		//o Les paramètres.
 		table_<parametre_> Parametres;
 		//o Le type.
-		str_string_ Type;
+		str::string_ Type;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le commentaire.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		function_( s &S )
 		: Template( S.Template ),
 		  Parametres( S.Parametres ),
@@ -751,7 +755,7 @@ namespace tsrcpr {
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
 			bso__bool Long );
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Template.plug( M );
 			Type.plug( M );
@@ -796,18 +800,18 @@ namespace tsrcpr {
 	public:
 		struct s
 		{
-			str_string_::s
+			str::string_::s
 				Type,
 				Name,
 				Commentaire;
 			friend objet_;
 		};
 		//o Le type.
-		str_string_ Type;
+		str::string_ Type;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le commentaire.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		objet_( s &S )
 		: Type( S.Type ),
 		  Name( S.Name ),
@@ -830,7 +834,7 @@ namespace tsrcpr {
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
 			bso__bool Long );
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Type.plug( M );
 			Name.plug( M );
@@ -877,10 +881,10 @@ namespace tsrcpr {
 			table_<methode_>::s Virtuels;
 			table_<objet_>::s Objets;
 			table_<objet_>::s Restreints;
-			table_<str_string_>::s Bases;
-			str_string_::s Commentaire;
-			str_string_::s Name;
-			str_string_::s Type;
+			table_<str::string_>::s Bases;
+			str::string_::s Commentaire;
+			str::string_::s Name;
+			str::string_::s Type;
 			template_::s Template;
 			friend classe_;
 		};
@@ -893,13 +897,13 @@ namespace tsrcpr {
 		//o Les objets à accés restreints.
 		table_<objet_> Restreints;
 		//o Bases classes.
-		table_<str_string_> Bases;
+		table_<str::string_> Bases;
 		//o Le commentaire.
-		str_string_ Commentaire;
+		str::string_ Commentaire;
 		//o Le nom.
-		str_string_ Name;
+		str::string_ Name;
 		//o Le type ('struct' ou  'class')
-		str_string_ Type;
+		str::string_ Type;
 		//o Les déclarations de templates.
 		template_ Template;
 		classe_( s &S )
@@ -943,7 +947,7 @@ namespace tsrcpr {
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
 			bso__bool Long );
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Methodes.plug( M );
 			Objets.plug( M );
@@ -1012,13 +1016,13 @@ namespace tsrcpr {
 		//o Enums.
 		table_<enum_> Enums;
 		//o Coordinators.
-		str_string_ Coordinators;
+		str::string_ Coordinators;
 		//o Version.
-		str_string_ Version;
+		str::string_ Version;
 		//o Short description.
-		str_string_ Description;
+		str::string_ Description;
 		//o Date & time of release.
-		str_string_ Release;
+		str::string_ Release;
 		struct s
 		{
 			table_<function_>::s Functions;
@@ -1028,10 +1032,10 @@ namespace tsrcpr {
 			table_<define_>::s Defines;
 			table_<shortcut_>::s Shortcuts;
 			table_<enum_>::s Enums;
-			str_string_::s Coordinators;
-			str_string_::s Version;
-			str_string_::s Description;
-			str_string_::s Release;
+			str::string_::s Coordinators;
+			str::string_::s Version;
+			str::string_::s Description;
+			str::string_::s Release;
 		};
 		library_( s &S )
 		: Functions( S.Functions ),
@@ -1076,7 +1080,7 @@ namespace tsrcpr {
 		}
 		//f Analyze 'Flot'.
 		void Analyze( xtf::extended_text_iflow___ &Flot );
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Functions.plug( M );
 			Objets.plug( M );

@@ -216,7 +216,7 @@ namespace bch {
 			if ( Amount > this->Amount() )
 				ERRu();
 	#endif
-			Allocate( this->Amoun() - Amount );
+			Allouer_( this->Amount() - Amount, false );
 		}
 		//f Add 'Set'. Return the position where added.
 		tym::row__ Add( const bunch_core_ &Set )

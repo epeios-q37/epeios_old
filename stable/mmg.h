@@ -115,7 +115,7 @@ namespace mmg
 		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
 		notamment, les caches */
 	public:
-		uym::basic_memory_ Memoire;
+		uym::untyped_memory_ Memoire;
 		void reset(
 			bool P = true,
 			bool Ecriture = true )
@@ -129,7 +129,7 @@ namespace mmg
 			E_MEMORY_DRIVER::reset( P );
 			Statique_ = NULL;
 		}
-		pilote_memoire( uym::basic_memory_::s &S )
+		pilote_memoire( uym::untyped_memory_::s &S )
 		: Memoire( S )
 		{
 			reset( false );
@@ -198,7 +198,7 @@ namespace mmg
 		mmm::multimemory_::s Memoire;
 		// A vrai si le contenu survit à l'objet.
 		st Object;
-		uym::basic_memory_::s Pilote_;
+		uym::untyped_memory_::s Pilote_;
 		mmg::state State;
 	};
 
@@ -224,7 +224,7 @@ namespace mmg
 		} *S_;
 	*/
 		struct s
-		: public mmg_s < st > {} &S_;
+		: public mmg::mmg_s < st > {} &S_;
 	private:
 		// Le pilote gèrant les particularités de cet objet
 		mmg::pilote_memoire < sizeof( mmg_s < st > ) > Pilote_;

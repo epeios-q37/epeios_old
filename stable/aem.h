@@ -277,7 +277,7 @@ namespace aem {
 
 	AUTO( amount_extent_manager )
 
-
+	//c Amount/extent manager.
 	template <int extent> class amount_extent_manager__
 	{
 	private:
