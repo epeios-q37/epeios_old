@@ -1,0 +1,125 @@
+
+<!-- $Id$ -->
+<content>
+  <chapter title="Name">
+    <section>
+      <para xml:space="preserve">
+        <raw>reveal</raw> - replaces tags in a file by text or file content.</para>
+    </section>
+  </chapter>
+  <chapter title="Synopsis">
+    <section>
+      <para>
+        <raw>reveal [-r|--reveal] [options] &lt;tags description file> [&lt;source file> [&lt;destination file>]]</raw>
+      </para>
+      <para>
+        <raw>reveal --help</raw>
+      </para>
+      <para>
+        <raw>reveal --version</raw>
+      </para>
+    </section>
+  </chapter>
+  <chapter title="Description">
+    <section>
+      <para xml:space="preserve">
+        <raw>reveal</raw> parses a file and replaces all tags in it with a text or the content of a file.
+</para>
+    </section>
+    <section>
+      <para>The tags description file is a file which contains the tag names and their values. There are 2 formats possible for this file.</para>
+      <para xml:space="preserve">In the first format, for each line, the first column contents the tag name, and then come, separated by one or more tabulation, the corresponding tag value. If the first character after the tabulation is a <raw>&amp;</raw>, the tag would be replaced by the following text. If it is a <raw>%</raw>, the following text is the name of the file which content will replace the tag.</para>
+      <para xml:space="preserve">In the second format, the first non-empty line contains the tag names, separated by one or more tabulations. The following lines contain the tag values. Each line must have as much tag values as tag names in the first line. For each line, the input file will be written to the output file with them tags replaced by the given value, following the same rule as before (<raw>&amp;</raw> for a text, <raw>%</raw> for a file).</para>
+      <para xml:space="preserve">If you put a <raw>#</raw> at the beginning of a line, or directly after a tabulation, this <raw>#</raw> and the rest of the line would be ignored.</para>
+    </section>
+    <section>
+      <para>The source file is the file where the tags are replaced before written to the ouput file. If none given, the standard input is used.</para>
+      <para xml:space="preserve">A tag is constituted by letters, digit and/or the <raw>_</raw> character, and is case sensitive. Each tag in the source file must have an entry in the tag description file, unless it's a special tag.</para>
+      <para>Here are this special tags :</para>
+      <para>
+        <list>
+          <item xml:space="preserve">
+            <raw>_SKIP_</raw> : from this tag, the input file isn't written to the output file, until encountering a <raw>_PRINT_</raw> or an <raw>_END_</raw> tag.</item>
+          <item xml:space="preserve">
+            <raw>_PRINT_</raw> : the input file is, from this point, written to the output file. This is usually used after a <raw>_SKIP_</raw> tag or when using the <raw>-s</raw> or <raw>--skip</raw> option.
+</item>
+          <item xml:space="preserve">
+            <raw>_END_</raw> : the rest of the input file isn't handled at all. 
+</item>
+          <item xml:space="preserve">
+            <raw>_RAW_</raw> : the rest of the input file is written as is, without replacing tags. 
+</item>
+          <item xml:space="preserve">
+            <raw>_DATE_</raw> : current date. 
+</item>
+          <item xml:space="preserve">
+            <raw>_TIME_</raw> : current tile. 
+</item>
+          <item xml:space="preserve">
+            <raw>_NAME_</raw> : name of the program. 
+</item>
+          <item xml:space="preserve">
+            <raw>_AUTHOR_</raw> : name of the author.</item>
+          <item xml:space="preserve">
+            <raw>_EMAIL_</raw> : e-mail of the author. 
+</item>
+          <item xml:space="preserve">
+            <raw>_LINK_</raw> : link to the Epeios project. 
+</item>
+        </list>
+      </para>
+    </section>
+    <section>
+      <para xml:space="preserve">In the tag description file, you can't define a tag beginning with the <raw>_</raw> character, except for the 4 first special tags listed before.</para>
+    </section>
+    <section>
+      <para>The destination file is the file in which the input file is written, with its tag replaced. If none given, then the standard output is used.</para>
+    </section>
+    <section>
+      <para>Options can take following values :</para>
+      <list>
+        <item xml:space="preserve">
+          <raw>-d</raw>, <raw>--delimiter CHAR</raw> : <raw>CHAR</raw> becomes the tag delimiter in the source file. <raw>$</raw> is the default one.
+</item>
+        <item xml:space="preserve">
+  <raw>-s</raw>, <raw>--skip</raw> : input file is not written to the output file until it encounters a <raw>_RAW_</raw>, or a <raw>_PRINT_</raw> tag. 
+</item>
+        <item xml:space="preserve">
+  <raw>-t</raw>, <raw>--text CHAR</raw> : <raw>CHAR</raw> becomes the text marker in the tags description file. <raw>&amp;</raw> is the default. 
+</item>
+        <item xml:space="preserve">
+  <raw>-f</raw>, <raw>--file CHAR</raw> : <raw>CHAR</raw> becomes the file marker in the tags description file. <raw>%</raw> is the default one. 
+</item>
+        <item xml:space="preserve">
+  <raw>-c</raw>, <raw>--comment CHAR</raw> : <raw>CHAR</raw> becomes the comment marker in the tags description file. <raw>#</raw> is the default one. 
+</item>
+      </list>
+    </section>
+  </chapter>
+  <chapter title="Return values">
+    <section>
+      <para xml:space="preserve">
+        <raw>reveal</raw> returns following values upon completion :<list>
+          <item>0 : completed successfully.</item>
+          <item>other value : an error occurs.</item>
+        </list></para>
+    </section>
+  </chapter>
+  <chapter title="Reporting bugs">
+    <para xml:space="preserve">Report bugs to <contact adress="csimon@webmails.com" type="long">Claude SIMON</contact>.</para>
+  </chapter>
+  <chapter title="Author">
+    <para xml:space="preserve">
+      <raw>reveal</raw> was developed by <contact adress="csimon@webmails.com" type="long">Claude SIMON</contact>.</para>
+  </chapter>
+  <chapter title="Standard conformance">
+    <para>
+      <list>
+        <item>
+          <link URL="http://epeios.org/" type="external" aspect="long">Epeios</link>.</item>
+        <item>
+          <link URL="http://www.gnu.org/" type="external" aspect="long">GNU</link>.</item>
+      </list>
+    </para>
+  </chapter>
+</content>

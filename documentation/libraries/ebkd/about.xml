@@ -4,7 +4,7 @@
   <section>
     <para>All interactive software, like those wich have a graphical interface, are consituted by 2 parts. One is the interface, the part which is used by the user to introduce commands and which displays the result of this commands, and the other is the treatment, the one which handles and transforms the data provided by the user. This 2 parts should be clearly separated, because this simplifies the coding and makes it easy to maintain and to improve software.</para>
     <para>As often, in the real life, things are not as they have to be. In this case, this is due by the fact that the interface and the treatment are often coded in the same language and using the same development tools. It seems so easy to develop both part together, especially when using the RAD technology. But so wrong !</para>
-    <para>I will not explain here why you have to develop interface and treatment separately ; if you are not convinced, ask someone which have coded an interactive software (as already written, almost all software with a graphical interface, even a WEB one, are interactive) of some importance.</para>
+    <para>I will not explain here why you should develop interface and treatment separately ; if you are not convinced, ask someone which have coded an interactive software (as already written, almost all software with a graphical interface, even a WEB one, are interactive) of some importance.</para>
   </section>
   <section>
     <para xml:space="preserve">OK, let's talk about the <raw>ebkd</raw> libraries.</para>
