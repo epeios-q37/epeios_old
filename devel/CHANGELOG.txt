@@ -1,5 +1,9 @@
 $Id$
 
+--------
+20040215
+--------
+
 GENERAL:
 - Adapting to Code Warrior for Windows and Macintosh.
 - Fixing g++ warning.

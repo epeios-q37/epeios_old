@@ -25,7 +25,7 @@
       <author>$AUTHOR$</author>
       <copyright>
         <owner>$OWNER$</owner>
-        <date>2001-2003</date>
+        <date>2001-2004</date>
       </copyright>
       <misc>
         <sourceforge group_id="$CORE_SF_ID$"/>
@@ -43,8 +43,8 @@
         <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of the Epeios libraries and software.</para>
       </section>
       <section>
-        <para>All document available on this web site are written by people for which English isn't the native language ; some people are working to correct the English errors, so, please, DON'T send any report about this errors.</para>
-        <para xml:space="preserve">Other remarks/questions/suggestions are welcome and can be send to <contact adress="csimon@epeios.org" type="long">Claude L. Simon</contact>.</para>
+        <para>This project was launch on 1999, but I'm probably the only one which uses the Epeios libraries. I think this is not due to the libraires themselves, but to this site. There are no enough informations available and/or they are not showed in the propre way. I created a <link URL="https://mail.gna.org/listinfo/epeios-evolution" aspect="long">mailing-list</link> on <link URL="http://www.gna.org">Gna!</link> to which you can subscribe if you want to discuss about this.</para>
+        <para xml:space="preserve">You can also contact me at <contact adress="csimon@epeios.org">csimon@epeios.org</contact>.</para>
       </section>
       <section>
         <list>
@@ -60,9 +60,6 @@
       </section>
       <section>
         <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/">XML</link>/<link URL="http://www.w3.org/Style/XSL/">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/">Sablotron</link>. The project is hosted by <link URL="http://sv.gnu.org">Savannah</link>.</para>
-      </section>
-      <section>
-        <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude L. Simon</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the more then 100 available Epeios libraries.</para>
       </section>
       <ignore>
         <section>
