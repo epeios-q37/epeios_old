@@ -337,20 +337,20 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Private WSA libraries.
-&wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
+&wsaabc		&pwsa		&2000-		&Web Site Agent ABCbourse.com
 
 #Private STX libraries.
-&stxcde		&estx		&2000-2002 ,\
+&stxcde		&pstx		&2000-2002 ,\
 	&STock eXchange CoDE
-&stxdbs		&estx		&2000-2002 ,\
+&stxdbs		&pstx		&2000-2002 ,\
 	&STock eXchange DataBaSe
-&stxdte		&estx		&2000-2002, \
+&stxdte		&pstx		&2000-2002, \
 	&STock eXchange DATe
-&stxstk		&estx		&2000-2002, \
+&stxstk		&pstx		&2000-2002, \
 	&STock eXchange SToK
-&stxqot		&estx		&2000-2002, \
+&stxqot		&pstx		&2000-2002, \
 	&STock eXchange QuOTes
-&stxvlm		&estx		&2000-2002, \
+&stxvlm		&pstx		&2000-2002, \
 	&STock eXchange VoLuMes
 
 
