@@ -1,0 +1,102 @@
+#
+# 'setd_lib' by Claude L. Simon (epeios@epeios.org)
+#
+# Create or update a library development directory under UNIX.
+#
+# Copyright (C) 2000 Claude L. Simon.
+#
+# This file is part of the Epeios project (http://www.epeios.org/).
+#
+# This script is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, go to http://www.fsf.org or write to the
+#  
+#                       Free Software Foundation, Inc.,
+#          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+# $Id$
+
+
+DIR=~/cvs
+TMP=/tmp
+SRC=/home/epeios/cvs/epeios/devel/xxx
+
+if [ -z "$1" ]; then
+	echo "Name of the library is required !";
+	echo "Usage: setd_lib <library name>"
+	return
+fi
+
+if grep -w -q $1 $SRC/epeios.lst; then
+	ID=epeios
+elif grep -w -q $1 $SRC/epgs.lst; then
+	ID=epgs
+elif grep -w -q $1 $SRC/eclz.lst; then
+	ID=eclz
+elif grep -w -q $1 $SRC/ehdb.lst; then
+	ID=ehdb
+elif grep -w -q $1 $SRC/ecdb.lst; then
+	ID=ecdb
+else
+	echo "Cannot identify library group.";
+	exit
+fi
+
+if [ ! -d $DIR/$ID ]; then
+	echo "Repository for " $DIR/$ID " doesn't exist !";
+	exit
+fi
+
+DST=$DIR/$ID/devel/$1
+
+if [ ! -d $DST ]; then
+	mkdir $DST;
+fi
+echo -e -n "XXX\t&" >$TMP/$1.crp;
+toupper $1 >>$TMP/$1.crp;
+echo -e -n "\nxxx\t&" >> $TMP/$1.crp;
+tolower $1 >>$TMP/$1.crp;
+echo -e "\nOWNER\t&the Epeios project (http://www.epeios.org/)" >>$TMP/$1.crp
+echo -e "\nCOORDINATOR\t&Claude L. SIMON " >>$TMP/$1.crp
+cat $SRC/$ID.crp >>$TMP/$1.crp
+
+if [ ! -f $DST/Makefile ]; then
+	reveal $TMP/$1.crp $SRC/LibMakefile $DST/Makefile;
+fi
+
+if [ ! -f $DST/$1_test.cpp ]; then
+	reveal $TMP/$1.crp $SRC/xxx_test.cpp $DST/$1_test.cpp;
+fi
+
+reveal $TMP/$1.crp $SRC/xxx.h $TMP/$1.h;
+reveal $TMP/$1.crp $SRC/xxx.cpp $TMP/$1.cpp;
+
+if [ -e $DST/$1.h ]; then
+	update $TMP/$1.h $DST/$1.h;
+else
+	cp $TMP/$1.h $DST/$1.h;
+fi
+
+if [ -e $DST/$1.cpp ]; then
+	update $TMP/$1.cpp $DST/$1.cpp;
+else
+	cp $TMP/$1.cpp $DST/$1.cpp;
+fi
+
+rm $TMP/$1.crp $TMP/$1.h $TMP/$1.cpp;
+
+cd $DST;
+
+chmod 664 *; 
+
+chmod 744 CVS;
+
