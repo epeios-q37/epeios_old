@@ -1,7 +1,7 @@
 /*
 	'$NAME$' by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
 	(description)
-	Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
+	Copyright (C) $COPYRIGHT_DATES$$COPYRIGHT_OWNER$.
 
 $NOTICE$
 */

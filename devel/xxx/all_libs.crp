@@ -2,9 +2,122 @@
 # $Id$
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
-&aem		&epeios		&2002-		&Amount/Extent managing
-&bch		&epeios		&2000-		&BunCH
-&bitbch		&epeios		&2000-		&BIT BunCH
+
+# Epeios core libraries.
+&aem		&epeios		&2001-\
+	&Amount/Extent managing
+&bch		&epeios		&2001-\
+	&BunCH
+&bitbch		&epeios		&2001-\
+	&BIT BunCH
+&bso		&epeios		&2000-\
+	&BaSic Objects
+&btf		&epeios		&\
+	&Binary Tree Filler
+&btr		&epeios		&2000-\
+	&Binary Tree
+&bts		&epeios		&\
+	&Binary Tree Seeker
+&cch		&epeios		&2001, \
+	&CaCHe
+&clnarg		&epeios		&2000, 2001, \
+	&Command LiNe ARGuments
+&clt		&epeios		&2000, 2001, \
+	&CLienT
+&cpe		&epeios		&2000, 2001, \
+	&ComPilation Enviroment
+&csm		&epeios		&2000, 2001, \
+	&Client/Server Manager
+&ctn		&epeios		&2000-\
+	&ConTaiNer (of dynamic objects)
+&cvm		&epeios		&2002, 2001, \
+	&ConVentional Memory
+&dbt		&epeios		&\
+	&Differentiated Binary Tree
+&dte		&epeios		&2001,\
+	&DaTE
+&dtfbsc		&epeios		&2000, 2001, \
+	&Data transFert BaSiC
+&dtflcf		&epeios		&2000, \
+	&Data TransFert LoCal Features
+&dtfrmf		&epeios		&2000, 2001, \
+	&Data TransFert ReMote Features
+&dtr		&epeios		&2000-\
+	&Dynamic TRee
+&dummy		&epeios		&2000-\
+	&DUMMY project for testing of the libraries handling.
+&epeios		&epeios		&2001, \
+	&EPEIOS often used features.
+&epsmsc		&epeios		&2000, \
+	&EPeioS MiSC
+&err		&epeios		&2000-\
+	&ERRor handling
+&fam		&epeios		&2000, 2001, \
+	&Fast Allocation Memory
+&fgm		&epeios		&2000, \
+	&Fragmented memory
+&fil		&epeios		&2000, 2001, \
+	&FILe
+&flm		&epeios		&2000-\
+	&FiLe Memory
+&flw		&epeios		&2000-\
+	&FLoW
+&flx		&epeios		&2000-\
+	&FLow eXtension
+&fnm		&epeios		&2000, 2001, \
+	&File Name Manager
+&gnumll		&epeios		&2000, 2001, \
+	&GNU MaiLing List
+&htp		&epeios		&2002, \
+	&Hypertext Transfert Protocol
+&ids		&epeios		&2002, \
+	&ID Store
+&idxbtq		&epeios		&2000-\
+	&InDeX Best of Tree and Queue
+&idxbtr		&epeios		&2000-\
+	&InDeX Binary TRee
+&idxque		&epeios		&2000-\
+	&InDeX QUEue
+&lgg		&epeios		&2000, 2002, \
+	&LanGuaGes
+&lgpmsc		&epeios		&\
+	&LoGiPlus (Logi+) MiSC
+&lst		&epeios		&2000-\
+	&LiST
+&lstbch		&epeios		&\
+	&LiST BunCH
+&lstctn		&epeios		&\
+	&LiST ConTaiNer
+&mdr		&epeios		&\
+	&Memory DRiver
+&mmg		&epeios		&2000-\
+	&Memory MerGer
+&mmi		&epeios		&2000-		&MultiMemory Index
+&mtk		&epeios		&2000, 2001, 	&MultiTasKing
+&mtx		&epeios		&2000, 		&MuTeX
+&pip		&epeios		&2000-		&PIPe
+&que		&epeios		&2000-		&QUEue
+&salcsm		&epeios		&2000		&Stand ALone Client/Server Manager
+&sbf		&epeios		&2000-		&Simplified Binary tree Filler
+&sbt		&epeios		&2000-		&Simplified Binary Tree
+&sck		&epeios		&2000-		&SoCKet
+&spp		&epeios		&2000-		&Shared PiPe
+&srv		&epeios		&2000, 2001, 	&SeRVer
+&ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
+&stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow
+&stk		&epeios		&2000-		&STacK
+&str		&epeios		&2000-		&STRing
+&tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
+&tol		&epeios		&2000-		&TOoL
+&tsrcpr		&epeios		&2000-		&Tagged SouRCe PaRser
+&ttr		&epeios		&2000-		&TuToR
+&txf		&epeios		&2000-		&TeXt Flow
+&txmpgh		&epeios		&2000, 2001, 	&TeXt Manager ParaGrapH
+&txmtbl		&epeios		&2000		&TeXt Manager TabBLe
+&tym		&epeios		&2000-		&TYped Memory
+&uym		&epeios		&2000-		&UnTyped Memory
+
+#Epeios BKD libraries.
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdcst		&ebkd		&2000-		&BacKenD CaSTs
 &bkddcb		&ebkd		&2000-		&BacKenD DesCriBer
@@ -13,18 +126,14 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
-&bso		&epeios		&2000-		&BaSic Objects
-&btf		&epeios		&		&Binary Tree Filler
-&btr		&epeios		&2000-		&Binary Tree
-&bts		&epeios		&		&Binary Tree Seeker
+
+#Epeios CGI libraries.
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
 &cgidat		&ecgi		&2002-		&CGI (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
-&clnarg		&epeios		&2000, 2001, 	&Command LiNe ARGuments
-&cpe		&epeios		&2000-		&ComPilation Enviroment
-&csm		&epeios		&2000		&Client/Server Manager
-&ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects)
+
+#Logi+ DBI libraries.
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
 &dbibsc		&ldbi		&2002-		&DataBase Interface BaSiCs
@@ -42,14 +151,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisrq		&ldbi		&2002-		&DataBase Interface Search ReQuest
 &dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
 &dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
-&dbt		&epeios		&		&Differentiated Binary Tree
-&dte		&epeios		&2000, 2001, 	&DaTE
-&dtr		&epeios		&2000-		&Dynamic TRee
-&err		&epeios		&2000-		&ERRor handling
-&fil		&epeios		&2000-		&FILe
-&flm		&epeios		&2000-		&FiLe Memory
-&flw		&epeios		&2000-		&FLoW
-&fnm		&epeios		&2000-		&File Name Manager
+
+#Logi+ GSB libraries.
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
 &gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
 &gsbcor		&lgsb		&		&GeSBib field CORe
@@ -66,49 +169,29 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
 &gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
-&ids		&epeios		&2002-		&ID Store
-&idxbtq		&epeios		&2000-		&InDeX Best of Tree and Queue
-&idxbtr		&epeios		&2000-		&InDeX Binary TRee
-&idxque		&epeios		&2000-		&InDeX QUEue
-&lgg		&epeios		&2000-		&LanGuaGes
-&lgpmsc		&epeios		&		&LoGiPlus (Logis+) MiSC
-&lst		&epeios		&2000-		&LiST
-&lstbch		&epeios		&2002-		&LiST BunCH
-&lstctn		&epeios		&2002-		&LiST ConTaiNer
-&mmi		&epeios		&2000-		&MultiMemory Index
+
+#Epeios MSC libraries.
 &mscmdf		&emsc		&2002-		&MuSiC MiDi File		
 &mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
 &mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
-&mtx		&epeios		&2000, 		&MuTeX
-&mtk		&epeios		&2000, 2001, 	&MultiTasKing
-&pip		&epeios		&2000-		&PIPe
-&que		&epeios		&2000-		&QUEue
-&salcsm		&epeios		&2000		&Stand ALone Client/Server Manager
-&sbt		&epeios		&2000-		&Simplified Binary Tree
-&sbf		&epeios		&2000-		&Simplified Binary tree Filler
-&sck		&epeios		&2000-		&SoCKet
-&spp		&epeios		&2000-		&Shared PiPe
-&srv		&epeios		&2000, 2001, 	&SeRVer
-&ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
-&stk		&epeios		&2000-		&STacK
-&stf		&epeios		&2000, 2001, 	&STream (or STandard) Flow
-&str		&epeios		&2000-		&STRing
-&tagdtc		&epeios		&2000,2001,	&TAG DeTeCtor
+
+#Epeios MTH libraries.
+&mthitg		&emth		&2000, 2001, 	&MaTH InTeGer
+&mthvct		&emth		&2000, 2001, 	&MaTH VeCTor
+
+#Epeios TMC libraries.
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
 &tmcset		&etmc		&2000-		&TiMeCode SET
 &tmcset_	&etmc		&2000-		&TiMeCode SET (for backend)
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
-&tol		&epeios		&2000-		&TOoL
-&tsrcpr		&epeios		&2000-		&Tagged SouRCe PaRser
-&ttr		&epeios		&2000-		&TuToR
-&txf		&epeios		&2000-		&TeXt Flow
-&tym		&epeios		&2000-		&TYped Memory
-&txmtbl		&epeios		&2000		&TeXt Manager TabBLe
-&txmpgh		&epeios		&2000, 2001, 	&TeXt Manager ParaGrapH
-&uym		&epeios		&2000-		&UnTyped Memory
+
+
+#Private WSA libraries.
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
+
+#Epeios XML libraries.
 &xmlbsc		&exml		&2000-		&XML BaSiC
 &xmlcor		&exml		&2000-		&XML CORe
 &xmldbs		&exml		&2000-		&XML DataBaSe

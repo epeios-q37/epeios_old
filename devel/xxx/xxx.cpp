@@ -1,10 +1,12 @@
 /*
 	'$xxx$' library by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
 	Requires the '$xxx$' header file ('$xxx$.h').
-	Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
-
+	Copyright (C) $$COPYRIGHT_DATES$$$COPYRIGHT_OWNER$.
+$$_RAW_$$
 $NOTICE$
 */
+
+
 
 //	$$Id$$
 

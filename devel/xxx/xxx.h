@@ -1,7 +1,7 @@
 /*
 	Header for the '$xxx$' library by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
-	Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
-
+	Copyright (C) $$COPYRIGHT_DATES$$$COPYRIGHT_OWNER$.
+$$_RAW_$$
 $NOTICE$
 */
 

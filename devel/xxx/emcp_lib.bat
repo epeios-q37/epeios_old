@@ -27,17 +27,31 @@ REM          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 REM $Id$
 
-@set DST=..\..\stable
+IF "%1" == "" GOTO error
+goto cont
+:error
+ECHO "Usage: emcp_lib <library name>"
+goto end
+:cont
 
-echo %DST%
+SET RTD=H:
+SET LNM=%1
+SET TMP=%RTD%\temp
+SET SRC=%RTD%\cvs\epeios\devel\xxx
+SET CRP=%TMP%\%LNM%.crp
+SET DST=..\..\stable
 
-@attrib %DST%\*.h -r
-@attrib %DST%\*.cpp -r
+attrib %DST%\%LNM%.h -r
+attrib %DST%\%LNM%.cpp -r
 
-@copy *.h %DST%
-@copy *.cpp %DST%
+reveal %SRC%\all_libs.crp %SRC%\gen_crp.bat %TMP%\gen_crp.bat
+call %TMP%\gen_crp.bat %LNM%
 
-@del %DST%\*_test.cpp
+reveal --text-marker + %CRP% %LNM%.h %DST%\%LNM%.h
+reveal --text-marker + %CRP% %LNM%.cpp %DST%\%LNM%.cpp
 
-@attrib %DST%\*.h +r
-@attrib %DST%\*.cpp +r
+attrib %DST%\%LNM%.h +r
+attrib %DST%\%LNM%.cpp +r
+
+:end
+echo on
