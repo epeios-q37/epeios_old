@@ -1,26 +1,25 @@
 /*
-  'lst' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'lst' header file ('lst.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+	'lst' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'lst' header file ('lst.h').
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -54,27 +53,13 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-// Retourne vrai si 'Element' existe dans la liste.
-bso::bool__ lst::Existe_(
-	epeios::row_t__ Position,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
-{
-	tym::row_t__ Nombre = Libres.Amount();
-	bso::bool__ Trouve = false;
-
-	while ( Nombre-- && !( Trouve = ( Libres( Nombre ) == Position ) ) );
-
-	return !Trouve;
-}
-
-
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 epeios::row_t__ lst::Successeur_(
 	epeios::row_t__ Element,
 	epeios::size__ Amount,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
+	const store_ &Libres )
 {
-	while( ( ++Element < Amount ) && !Existe_( Element, Libres ) );
+	while( ( ++Element < Amount ) && Libres.Exists( Element ) );
 
 	if ( Element >= Amount )
 		return NONE;
@@ -85,11 +70,11 @@ epeios::row_t__ lst::Successeur_(
 // Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 epeios::row_t__ lst::Predecesseur_(
 	tym::row_t__ Element,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
+	const store_ &Libres )
 {
 	bso::bool__ Trouve = false;
 
-	while( ( Element > 0 ) && !( Trouve = Existe_( --Element, Libres ) ) );
+	while( ( Element > 0 ) && !( Trouve = !Libres.Exists( --Element ) ) );
 
 	if ( Trouve )
 		return Element;

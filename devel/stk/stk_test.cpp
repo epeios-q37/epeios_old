@@ -44,7 +44,7 @@ ERREnd
 ERREpilog
 }
 
-stk::E_STACK( bso__ubyte ) Stack;
+stk::E_STACK( bso::ubyte__ ) Stack;
 
 int main( int argc, char *argv[] )
 {

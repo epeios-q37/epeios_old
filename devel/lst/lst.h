@@ -1,25 +1,24 @@
 /*
-  Header for the 'lst' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'lst' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define LST_NAME		"LST"
 
-#define	LST_VERSION	"$Revision$"	
+#define	LST_VERSION	"$Revision$"
 
-#define LST_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define LST_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &LSTTutor;
 
 #if defined( XXX_DBG ) && !defined( LST_NODBG )
-#define LST_DBG 
+#define LST_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,26 +53,29 @@ extern class ttr_tutor &LSTTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D LiST 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
 #include "bitbch.h"
-#include "stk.h"
+#include "ids.h"
 
 namespace lst {
 
-	bso::bool__ Existe_(
-		epeios::row_t__ Position,
-		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+	typedef ids::E_IDS_STORE_( epeios::row_t__ ) store_;
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
 		epeios::size__ Amount,
-		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+		const store_ &Libres );
 
 	epeios::row_t__ Predecesseur_(
 		tym::row_t__ Element,
-		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+		const store_ &Libres );
 
 
 	//c Handle a list of objects. Use 'LIST_' rather than directly this class.
@@ -85,69 +87,58 @@ namespace lst {
 		'Size' est la capacité allouée. Ne fait rien par défaut. */
 		virtual void LSTAllocate( epeios::size__ Size ) {}
 	private:
+		// Return the extent, based on 'Unused'.
+		epeios::row_t__ Extent_( void ) const
+		{
+			return Unused.GetFirstUnused();
+		}
 		epeios::row_t__ Nouveau_( void )
 		{
-			epeios::row_t__ Numero;
+			bso::bool__ Released = false;
 
-			if ( Libres.Amount() )
-				Numero = Libres.Pop();
-			else
-			{
-				epeios::size__ Size = ( Numero = S_.Extent ) + 1;
+			epeios::row_t__ New = Unused.New( Released );
 
-				LSTAllocate( Size );
-				
-				S_.Extent = Size;
-			}
-			
-			return Numero;
+			if ( !Released )
+				LSTAllocate( Extent_() );
+
+			return New;
 		}
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
 		{
-			return lst::Successeur_( Element, Extent(), Libres );
+			return lst::Successeur_( Element, Extent_(), Unused );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
 		{
-			return lst::Predecesseur_( Element, Libres );
-		}
-		// Retourne vrai si 'Element' existe dans la liste.
-		bso::bool__ Existe_( epeios::row_t__ Position ) const
-		{
-			return lst::Existe_( Position, Libres );
+			return lst::Predecesseur_( Element, Unused );
 		}
 	public:
-		//o Stack which contains the free locations.
-		stk::E_STACK_( epeios::row_t__ ) Libres;
+		//o Unused (or released) locations.
+		store_ Unused;
 		struct s
 		{
-			stk::E_STACK_( epeios::row_t__ )::s Libres;
-			// Amount of items, including the empty ones.
-			epeios::size__ Extent;
-		} &S_;
+			store_::s Unused;
+		};
 	// fonctions
 		list_( s &S )
-		: S_( S ),
-		  Libres( S.Libres )
+		: Unused( S.Unused )
 		{}
 		void reset( bool P = true )
 		{
-			S_.Extent = 0;
-			Libres.reset( P );
+			Unused.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
 		{
-			Libres.plug( M );
+			Unused.plug( M );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			Libres.plug( M );
+			Unused.plug( M );
 		}
-		list_ &operator =( const list_ &T )
+		list_ &operator =( const list_ &L )
 		{
-			S_.Extent = T.S_.Extent;
-			Libres = T.Libres;
+			Unused = L.Unused;
 
 			return *this;
 		}
@@ -166,13 +157,12 @@ namespace lst {
 	*/	//f Initialiration.
 		void Init( void )
 		{
-			S_.Extent = 0;
-			Libres.Init();
+			Unused.Init();
 		}
 		//f Remove 'Entry'.
 		void Remove( r Entry )
 		{
-			Libres.Push( *Entry );
+			Unused.Release( *Entry );
 		}
 		//f Return the position of a new entry.
 		r CreateEntry( void )
@@ -182,8 +172,8 @@ namespace lst {
 		//f Return the first entry if exists, 'NONE' if list empty.
 		r First( void ) const
 		{
-			if ( S_.Extent )
-				if ( Exists( 0 ) )
+			if ( Extent_() )
+				if ( !Unused.Exists( 0 ) )
 					return 0;
 				else
 					return Successeur_( 0 );
@@ -193,11 +183,11 @@ namespace lst {
 		//f Return the last entry, 'NONE' if list empty.
 		r Last( void ) const
 		{
-			if ( S_.Extent )
+			if ( Extent_() )
 			{
-				epeios::row_t__ P = S_.Extent - 1;
+				epeios::row_t__ P = Extent_() - 1;
 
-				if ( Existe_( P ) )
+				if ( !Unused.Exists( P ) )
 					return P;
 				else
 					return Predecesseur_( P );
@@ -213,8 +203,8 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next( r Entry ) const
 		{
-			if ( ++*Entry < S_.Extent )
-				if ( Libres.IsEmpty() || Existe_( *Entry ) )
+			if ( ++*Entry < Extent_() )
+				if ( !Unused.Exists( *Entry ) )
 					return Entry;
 				else
 					return Successeur_( *Entry );
@@ -225,7 +215,7 @@ namespace lst {
 		r Previous( r Entry ) const
 		{
 			if ( (*Entry)-- > 0 )
-				if ( Libres.IsEmpty() || Existe_( *Entry ) )
+				if ( !Unused.Exists( *Entry ) )
 					return Entry;
 				else
 					return Predecesseur_( *Entry );
@@ -235,22 +225,20 @@ namespace lst {
 		//f Amount of entries, NOT the extent of the list.
 		epeios::size__ Amount( void ) const
 		{
-			return S_.Extent - Libres.Amount();
+			return Extent_() - Unused.Amount();
 		}
 		//f Extent of list.
 		epeios::size__ Extent( void ) const
 		{
-			return S_.Extent;
+			return Extent_();
 		}
 		//f Return true if 'Entry' exists, false otherwise.
 		bso::bool__ Exists( r Entry ) const
 		{
-			if ( *Entry >= S_.Extent )
+			if ( *Entry >= Extent_() )
 				return false;
-			else if ( Libres.IsEmpty() )
-				return true;
 			else
-				return Existe_( *Entry );
+				return !Unused.Exists( *Entry );
 		}
 	};
 

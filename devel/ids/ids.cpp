@@ -1,7 +1,7 @@
 /*
-	'lst' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'lst' header file ('lst.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	'ids' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'ids' header file ('ids.h').
+	Copyright (C) 2002  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -25,26 +25,26 @@
 
 //	$Id$
 
-#define LST__COMPILATION
+#define IDS__COMPILATION
 
-#include "lst.h"
+#include "ids.h"
 
-class lsttutor
+class idstutor
 : public ttr_tutor
 {
 public:
-	lsttutor( void )
-	: ttr_tutor( LST_NAME )
+	idstutor( void )
+	: ttr_tutor( IDS_NAME )
 	{
-#ifdef LST_DBG
-		Version = LST_VERSION "\b\bD $";
+#ifdef IDS_DBG
+		Version = IDS_VERSION "\b\bD $";
 #else
-		Version = LST_VERSION;
+		Version = IDS_VERSION;
 #endif
-		Owner = LST_OWNER;
+		Owner = IDS_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~lsttutor( void ){}
+	virtual ~idstutor( void ){}
 };
 
 /******************************************************************************/
@@ -53,47 +53,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Successeur_(
-	epeios::row_t__ Element,
-	epeios::size__ Amount,
-	const store_ &Libres )
-{
-	while( ( ++Element < Amount ) && Libres.Exists( Element ) );
-
-	if ( Element >= Amount )
-		return NONE;
-	else
-		return Element;
-}
-
-// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Predecesseur_(
-	tym::row_t__ Element,
-	const store_ &Libres )
-{
-	bso::bool__ Trouve = false;
-
-	while( ( Element > 0 ) && !( Trouve = !Libres.Exists( --Element ) ) );
-
-	if ( Trouve )
-		return Element;
-	else
-		return NONE;
-}
+using namespace ids;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class lstpersonnalization
-: public lsttutor
+
+class idspersonnalization
+: public idstutor
 {
 public:
-	lstpersonnalization( void )
+	idspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~lstpersonnalization( void )
+	~idspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -109,6 +83,6 @@ public:
 
 // 'static' by GNU C++.
 
-static lstpersonnalization Tutor;
+static idspersonnalization Tutor;
 
-ttr_tutor &LSTTutor = Tutor;
+ttr_tutor &IDSTutor = Tutor;

@@ -22,14 +22,19 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
+&ids		&epeios		&		&ID Store
+&lst		&epeios		&2000-		&LiST
 &mscmdf		&emsc		&		&MuSiC MiDi File		
 &mscmdm		&emsc		&		&MuSiC MiDi Messages
 &mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&		&MuSiC VK (from Roland VK combo organ) XML
 &pip		&epeios		&2000-		&PIPe
 &spp		&epeios		&2000-		&Shared PiPe
+&stk		&epeios		&2000		&STacK
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
+&tym		&epeios		&2000-		&TYped Memory
+&uym		&epeios		&2000-		&UnTyped Memory
 &xmlbsc		&exml		&2000-		&XML BaSiC
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 &xmlcor		&exml		&2000-		&XML CORe
