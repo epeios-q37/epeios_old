@@ -1,8 +1,9 @@
 # $Id$
 
 ifeq ("$(EPEIOS_OS)","windows")
-templates = t:
+cvs = h:\cvs
 rootdir=/cvs/epeios
+templates = t:
 dest = /website
 copy = cp
 move = move
@@ -10,6 +11,7 @@ mkdir = c:\tools\mkdir
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
+cvs = /home/csimon/libs
 rootdir=/home/csimon/libs/epeios
 templates = $(rootdir)/workshop/web/templates
 dest = /home/csimon/website
