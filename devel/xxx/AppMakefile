@@ -35,7 +35,7 @@ copt += -DXXX_DBG
 # copt += -DCPE_MTK
 # Speed up thread andling (used with -DCPE_MTK).
 # copt += -DMTK_KEEP
-libs = ttr tol flw stf err fhd
+libs = ttr tol flw stf err flw
 
 $_RAW_$
 

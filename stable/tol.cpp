@@ -1,7 +1,7 @@
 /*
-  'tol' library by Claude L. Simon (epeios@epeios.org)
+  'tol' library by Claude L. Simon (simon@epeios.org)
   Requires the 'tol' header file ('tol.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -29,6 +30,10 @@
 
 #include "tol.h"
 
+#ifdef CPE__MT
+#	include "mtk.h"
+#endif
+
 class toltutor
 : public ttr_tutor
 {
@@ -37,7 +42,7 @@ public:
 	: ttr_tutor( TOL_NAME )
 	{
 #ifdef TOL_DBG
-		Version = TOL_VERSION " (DBG)";
+		Version = TOL_VERSION "\b\bD $";
 #else
 		Version = TOL_VERSION;
 #endif
@@ -278,6 +283,20 @@ void TOLYield( void )
 #endif
 }
 
+#ifdef CPE__MT
+namespace {
+	void WaitAndExit( void *UP )
+	{
+		TOLWait( (unsigned int)UP );
+		exit( EXIT_SUCCESS );
+	}
+}
+
+void TOLForceExit( unsigned int Seconds )
+{
+	mtk::Launch( WaitAndExit, (void *)Seconds );
+}
+#endif
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -29,7 +29,7 @@
 name = tol
 copt =
 # Epeios general debugging features
-copt += -DXXX_DBG
+copt += -DXXX_DBG -DCPE_MT
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 

@@ -401,6 +401,13 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 //f Tell the remainder to give hand to the next thread.
 void TOLYield( void );
 
+
+#ifdef CPE__MT
+/*f Force the program to exit after 'Seconds' second.
+Usefull to force a server to exit to obtain the profiling file. */
+void TOLForceExit( unsigned int Seconds );
+#endif
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

@@ -81,9 +81,8 @@ pip::amount__ pip::pipe___::Write(
 ERRProlog
 	bso__bool Locked = false;
 ERRBegin
-#ifdef PIP_DBG
 	WriteInProgress_ = true;
-	
+#ifdef PIP_DBG
 	if ( ( Pipe_[pip::eWrite] == INVALID_HANDLE_VALUE )
 		 || ( Pipe_[pip::eRead] == INVALID_HANDLE_VALUE ) )
 		 ERRu();

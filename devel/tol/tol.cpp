@@ -30,6 +30,10 @@
 
 #include "tol.h"
 
+#ifdef CPE__MT
+#	include "mtk.h"
+#endif
+
 class toltutor
 : public ttr_tutor
 {
@@ -279,6 +283,20 @@ void TOLYield( void )
 #endif
 }
 
+#ifdef CPE__MT
+namespace {
+	void WaitAndExit( void *UP )
+	{
+		TOLWait( (unsigned int)UP );
+		exit( EXIT_SUCCESS );
+	}
+}
+
+void TOLForceExit( unsigned int Seconds )
+{
+	mtk::Launch( WaitAndExit, (void *)Seconds );
+}
+#endif
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
