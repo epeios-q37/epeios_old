@@ -319,8 +319,8 @@ namespace bch {
 		{
 			Inserer_( Source, sh::SizeOf( Source ), *Row );
 		}
-		//f Delete 'Amount' objects at row 'Row'. The size of the set is reduced.
-		void Delete(
+		//f Remove 'Amount' objects at row 'Row'. The size of the set is reduced.
+		void Remove(
 			row Row,
 			epeios::size__ Amount = 1)
 		{

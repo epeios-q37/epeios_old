@@ -778,7 +778,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
-#if 0
+#if 1
 		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
@@ -795,7 +795,7 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:
