@@ -67,8 +67,10 @@ void xtf::extended_text_iflow___::GetLine( str::string_ &Line )
 		if ( ( C == '\r' ) || ( C == '\n' ) )
 			if ( EOL_ != 0 )
 				Cont = false;
-			else
+			else if ( !EOX() )
 				C = Get();
+			else
+				Cont = false;
 
 		while( Cont ) {
 

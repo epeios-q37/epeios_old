@@ -1,9 +1,14 @@
 $Id$
 
+20010505:
 - UPGRADING TO V1.1.6
 - Adapting to 'TXMPGH' modifications.
 - Adapting to 'CTN' modifications.
 - Some modification to avoid ICE with gcc 2.95.3.
+- Adapting to modifications in 'STF'.
+- Using 'CLNARG' new functions.
+- Adding '--license' command.
+- Adding CVS details printing.
 
 20010501:
 Creation.

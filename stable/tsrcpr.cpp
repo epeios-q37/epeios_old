@@ -734,6 +734,8 @@ ERRBegin
 
 	if ( Flot.View() == '(' )
 		AnalyserArguments_( Flot );
+
+	Flot.SkipLine();
 ERRErr
 ERREnd
 ERREpilog

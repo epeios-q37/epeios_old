@@ -131,17 +131,11 @@ namespace stf {
 	namespace {			
 		//c Internal use. Core of an input flow from an 'istream'.
 		class istream_iflow_core___
+		: public iflow___
 		{
 		private:
-			// Le texte à ajouter en fin de fichier.
-			const char *TFDF_;
-			// La taille du texte de fin de fichier.
-			flw::size__ Size_;
-			// Le nombre de carcatères du texte de fin de fichier déjà lus.
-			flw::size__ DejaLus_;
+			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 		protected:
-			// Le cache.
-			flw::data__ Cache_[100];
 			// Le stream en question.
 			istream &Stream_;
 			flw::amount__ HandleAmount_(
@@ -150,25 +144,12 @@ namespace stf {
 				flw::amount__ Desire,
 				flw::amount__ AmountRead )
 			{
-
 				if ( AmountRead < Minimum )
 				{
 					if ( !Stream_.eof() )
 						ERRd();
-					else if ( DejaLus_ < Size_ )
-					{
-						Desire -= AmountRead;
-
-						if ( ( Size_ - DejaLus_ ) < Desire )
-							Desire = Size_ - DejaLus_;
-
-						memcpy( Tampon, TFDF_ + DejaLus_, Desire );
-
-						DejaLus_ += Desire;
-						AmountRead += Desire;
-					}
 					else
-						ERRd();
+						AmountRead += iflow___::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
 
 					if ( AmountRead < Minimum )
 						ERRd();
@@ -179,12 +160,10 @@ namespace stf {
 		public:
 			void reset( bool = true )
 			{
-				TFDF_ = NULL;
-				Size_ = 0;
-				DejaLus_ = 0;
 			}
 			istream_iflow_core___( istream &Stream )
-			: Stream_( Stream )
+			: iflow___(),
+			  Stream_( Stream )
 			{
 				reset( false );
 			}
@@ -195,32 +174,15 @@ namespace stf {
 			//f Initialisation.
 			void Init( void )
 			{
-				TFDF_ = NULL;
-				Size_ = 0;
-				DejaLus_ = 0;
-			}
-			/*f 'Text' of size 'Size' becames the end of flow text. If 'Size' = 0, then the
-			text must be ending with a '\0'. */
-			void EOFT(
-				const char *Text,
-				flw::size__ Size = 0 )
-			{
-				if ( Size == 0 )
-					Size = strlen( Text );
-
-				TFDF_ = Text;
-				Size_ = Size;
+				iflow___::Init( Cache_, sizeof( Cache_ ) );
 			}
 		};
 	}
 
 	//c Internal use. File input flow from an 'istream'.
 	class istream_iflow___
-	: public istream_iflow_core___,
-	  public iflow___
+	: public istream_iflow_core___
 	{
-	private:
-			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
@@ -246,12 +208,10 @@ namespace stf {
 	public:
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
 			istream_iflow_core___::reset( P );
 		}
 		istream_iflow___( istream &Stream )
-		: istream_iflow_core___( Stream ),
-		  iflow___()
+		: istream_iflow_core___( Stream )
 		{
 			reset( false );
 		}
@@ -263,7 +223,6 @@ namespace stf {
 		void Init( void )
 		{
 			istream_iflow_core___::Init();
-			iflow___::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 
@@ -271,11 +230,8 @@ namespace stf {
 
 	//c Internal use. File input flow from an 'istream'.
 	class istream_iflow_line___
-	: public istream_iflow_core___,
-	  public iflow___
+	: public istream_iflow_core___
 	{
-	private:
-			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
@@ -300,12 +256,10 @@ namespace stf {
 	public:
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
 			istream_iflow_core___::reset( P );
 		}
 		istream_iflow_line___( istream &Stream )
-		: istream_iflow_core___( Stream ),
-		  iflow___()
+		: istream_iflow_core___( Stream )
 		{
 			reset( false );
 		}
@@ -317,7 +271,6 @@ namespace stf {
 		void Init( void )
 		{
 			istream_iflow_core___::Init();
-			iflow___::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 

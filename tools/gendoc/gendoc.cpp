@@ -1090,7 +1090,7 @@ ERRBegin
 
 	OuvrirFichierLibrary( Fichier, Name, Repertoire );
 
-	Fichier.EOFT( XTF_EOXT );
+	Fichier.EOFD( XTF_EOXT );
 
 	Entree.Init( Fichier );
 	S.Analyze( Entree );

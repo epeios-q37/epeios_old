@@ -116,11 +116,6 @@ namespace gnumll {
 	typedef ctn::E_XCONTAINER( general_section_ ) general_sections;
 	typedef ctn::E_XCONTAINER_( general_section_ ) general_sections_;
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const general_sections_ &S );
-
-
 	typedef ctn::E_XMCONTAINER_( str::string_ ) misc_;
 	typedef ctn::E_XMCONTAINER( str::string_ ) misc;
 
@@ -385,6 +380,10 @@ inline txf::text_oflow___ &operator <<(
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &F,
 	const gnumll::titles_ &S );
+
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::general_sections_ &S );
 
 inline txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &F,

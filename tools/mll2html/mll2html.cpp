@@ -21,6 +21,7 @@
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define CVS_DETAILS		("$Id$\b " + 5)
 
 #define	DELIMITER	'$'
 
@@ -48,6 +49,7 @@ enum command {
 	cHelp,
 	cVersion,
 	cConvert,
+	cLicense,
 };
 
 enum option {
@@ -571,7 +573,7 @@ ERRBegin
 		ERRu();
 	}
 
-	File.EOFT( XTF_EOXT );
+	File.EOFD( XTF_EOXT );
 	Flow.Init( File );
 
 	MLL.Init();
@@ -631,7 +633,7 @@ ERRBegin
 		ERRu();
 	}
 
-	File.EOFT( XTF_EOXT );
+	File.EOFD( XTF_EOXT );
 	Flow.Init( File );
 
 	MLL.Init();
@@ -687,19 +689,21 @@ ERREnd
 ERREpilog
 }
 
-void PrintUsage( void )
+void PrintUsage( const clnarg::description_ &Description )
 {
 	fout << "Usage: " << NAME << " [command] [options] source-file template-file [dest-file]" << txf::nl;
 	fout << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
 	fout << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
 	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	fout << "Command: " << txf::nl;
-	fout << txf::tab << "<none>, -c, --convert" << txf::nl << txf::tab << txf::tab << "convert mailinglists to HTML file." << txf::nl;
-	fout << txf::tab << "--version" << txf::nl << txf::tab << txf::tab << "print version of " NAME " components." << txf::nl;
-	fout << txf::tab << "--help" << txf::tab << "print this message." << txf::nl;
+	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists to HTML file.", false, true );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", false, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
 	fout << "Options:" << txf::nl;
-	fout << txf::tab << "-l, --lists-files FILE" << txf::nl << txf::tab << txf::tab << "name of the lists file for lists TOC links." << txf::nl;
-	fout << txf::tab << "-g, --general-files FILE" << txf::nl << txf::tab << txf::tab << "name of the general file for general TOC links." << txf::nl;
+	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.", false );
+	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.", false );
+//	clnarg::PrintOptionUsage( Description, o, "", false );
 }
 
 void PrintHeader( void )
@@ -708,6 +712,7 @@ void PrintHeader( void )
 	fout << " by "AUTHOR " (" AUTHOR_EMAIL ")" << txf::nl;
 	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << txf::nl;
 	fout << EPSMSC_GNU_TEXT << txf::nl;
+	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -824,6 +829,8 @@ ERRBegin
 	Description.AddCommand( 'c', "convert", cConvert );
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
+	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
+
 
 	Analyzer.Init( argc, argv, Description );
 
@@ -834,7 +841,11 @@ ERRBegin
 		ERRt();
 		break;
 	case cHelp:
-		PrintUsage();
+		PrintUsage( Description );
+		ERRt();
+		break;
+	case cLicense:
+		epsmsc::PrintLicense();
 		ERRt();
 		break;
 	case cConvert:
