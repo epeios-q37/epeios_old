@@ -56,6 +56,9 @@ FLW:
 - Adding length feature.
 - 'data__' type renamed in 'datum__'.
 
+FLX:
+- Adapting to vhanges in 'FLW'.
+
 IDXBTR:
 - Adding 'MarkAs...()' method.
 - Adapting to new 'AUTO(x)' macros.
@@ -97,6 +100,12 @@ MMM:
 QUE:
 - Adapting to the new 'AUTO(x)' macros.
 
+SALCSM:
+- Adapting to changes in 'FLW'.
+
+SCK:
+- Adapting to changes in 'FLW'.
+
 SSNMNG:
 - Adapting to modification made in 'IDXBTQ' library.
 
@@ -108,7 +117,7 @@ STK:
 
 STR:
 - Adding missing 'const' qualifier.
-- Addint 'ToLF()' method.
+- Adding 'ToLF()' method.
 
 TOL:
 - Fixing bug in the 'NAVt()' macro.
@@ -132,6 +141,11 @@ UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.
 - Fixing 'Fill()' compilation error.
 - Adding 'untyped_memory___' class.
+
+XTF:
+- Adapting to vhanges in 'FLW'.
+
+
 
 --------
 20011119

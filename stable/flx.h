@@ -1,8 +1,8 @@
 /*
-  Header for the 'flx' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'flx' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	FLX_VERSION	"$Revision$"	
 
-#define FLX_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define FLX_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &FLXTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -79,7 +79,7 @@ extern class ttr_tutor &FLXTutor;
 #endif
 
 namespace flx {
-	using flw::data__;
+	using flw::datum__;
 
 	using flw::iflow___;
 
@@ -89,11 +89,11 @@ namespace flx {
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
-		const flw::data__ *Tampon_;
+		const flw::datum__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
 		bso::bsize__ Taille_;
 		// The cache.
-		flw::data__ Cache_[FLX_BUFFER_BUFFER_SIZE];
+		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
 		//v Is called if there is asked for more data as availble.
 		virtual void FLXUnavailable( void )
@@ -102,7 +102,7 @@ namespace flx {
 		}
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted )
 		{
 			if ( !Taille_ )
@@ -147,7 +147,7 @@ namespace flx {
 		/*f Initialization with the buffer 'Buffer' of size 'Size'..'Size' is not
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
 			iflow___::Init( Cache_, sizeof( Cache_ ) );
@@ -165,14 +165,14 @@ namespace flx {
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
-		flw::data__ *Tampon_;
+		flw::datum__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
 		bso::bsize__ Taille_;
 		// The cache.
-		flw::data__ Cache_[FLX_BUFFER_BUFFER_SIZE];
+		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization )
@@ -205,7 +205,7 @@ namespace flx {
 		}
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			bso::bsize__ Size )
 		{
 			oflow___::Init( Cache_, sizeof( Cache_ ) );
@@ -217,9 +217,9 @@ namespace flx {
 
 
 
-	typedef bch::E_BUNCH( data__ ) bunch;
+	typedef bch::E_BUNCH( datum__ ) bunch;
 
-	typedef bch::E_BUNCH_( data__ ) bunch_;
+	typedef bch::E_BUNCH_( datum__ ) bunch_;
 
 	//c A bunch as input flow.driver.
 	class bunch_iflow___
@@ -228,7 +228,7 @@ namespace flx {
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted )
 		{
 			if ( Wanted > ( Set_->Amount() - Position_ ) )
@@ -251,7 +251,7 @@ namespace flx {
 		const bunch_ *Set_;
 		epeios::row_t__ Position_;
 		// The cache.
-		flw::data__ Cache_[FLX_SET_BUFFER_SIZE];
+		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_iflow___( void )
 		{
@@ -282,7 +282,7 @@ namespace flx {
 	{
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization )
@@ -294,7 +294,7 @@ namespace flx {
 	private:
 		bunch_ *Set_;
 		// The cache.
-		flw::data__ Cache_[FLX_SET_BUFFER_SIZE];
+		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_oflow___( void )
 		{
@@ -325,7 +325,7 @@ namespace flx {
 	{
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *,
+			const flw::datum__ *,
 			flw::amount__ Wanted,
 			flw::amount__,
 			bool )
@@ -334,7 +334,7 @@ namespace flx {
 		}
 	private:
 			// The cache.
-		flw::data__ Cache_[FLX_DUMP_BUFFER_SIZE];
+		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
 		void reset( bool P = true )
 		{

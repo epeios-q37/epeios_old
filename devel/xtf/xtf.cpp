@@ -1,9 +1,9 @@
 /*
-  'xtf' library by Claude L. Simon (simon@epeios.org)
+  'xtf' library by Claude SIMON (csimon@epeios.org)
   Requires the 'xtf' header file ('xtf.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or

@@ -1,9 +1,9 @@
 /*
-  'salcsm' library by Claude L. Simon (simon@epeios.org)
+  'salcsm' library by Claude SIMON (csimon@epeios.org)
   Requires the 'salcsm' header file ('salcsm.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -59,12 +59,12 @@ using namespace salcsm;
 using bch::bunch;
 
 bso::bsize__ salcsm::tampon::Ecrire(
-	const flw::data__ *Tampon,
+	const flw::datum__ *Tampon,
 	bso::bsize__ Taille )
 {
-	E_BUNCH(flw::data__)::Allocate( Ecriture_ + Taille );
+	E_BUNCH(flw::datum__)::Allocate( Ecriture_ + Taille );
 
-	E_BUNCH(flw::data__)::Write( Tampon, Taille, Ecriture_ );
+	E_BUNCH(flw::datum__)::Write( Tampon, Taille, Ecriture_ );
 
 	Ecriture_ += Taille;
 
@@ -73,7 +73,7 @@ bso::bsize__ salcsm::tampon::Ecrire(
 
 bso::bsize__ salcsm::tampon::Lire(
 	bso::bsize__ Minimum,
-	flw::data__ *Tampon,
+	flw::datum__ *Tampon,
 	bso::bsize__ Desire )
 {
 	if ( Desire > ( Ecriture_ - Lecture_ ) )
@@ -82,7 +82,7 @@ bso::bsize__ salcsm::tampon::Lire(
 	if ( Desire < Minimum )
 		ERRf();
 
-	E_BUNCH( flw::data__ )::Read( Lecture_, Desire, Tampon );
+	E_BUNCH( flw::datum__ )::Read( Lecture_, Desire, Tampon );
 
 	Lecture_ += Desire;
 
@@ -95,14 +95,14 @@ bso::bsize__ salcsm::tampon::Lire(
 
 flw::amount__ salcsm::flot::FLWGet(
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	return Lecture_->Lire( Minimum, Buffer, Wanted );
 }
 
 flw::amount__ salcsm::flot::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )
@@ -111,7 +111,7 @@ flw::amount__ salcsm::flot::FLWPut(
 }
 
 flw::amount__ salcsm::flot_serveur_actif::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )
@@ -132,7 +132,7 @@ flw::amount__ salcsm::flot_serveur_actif::FLWPut(
 }
 
 flw::amount__ salcsm::flot_client_actif::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )

@@ -1,8 +1,8 @@
 /*
-  Header for the 'sck' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'sck' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	SCK_VERSION	"$Revision$"	
 
-#define SCK_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define SCK_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &SCKTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -110,7 +110,7 @@ extern class ttr_tutor &SCKTutor;
 
 
 namespace sck {
-	using flw::data__;
+	using flw::datum__;
 #ifdef CPE__MS
 	typedef SOCKET socket__;
 	typedef char *	sck__cast;
@@ -265,14 +265,14 @@ namespace sck {
 	private:
 		socket__ Socket_;
 		duration__ TimeOut_;
-		flw::data__ Cache_[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization );

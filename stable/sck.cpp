@@ -1,9 +1,9 @@
 /*
-  'sck' library by Claude L. Simon (simon@epeios.org)
+  'sck' library by Claude SIMON (csimon@epeios.org)
   Requires the 'sck' header file ('sck.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -163,7 +163,7 @@ amount__ sck::Write(
 
 flw::amount__ sck::socket_ioflow___::FLWGet(
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	flw::amount__ Amount = 0;
@@ -191,7 +191,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 
 
 flw::amount__ sck::socket_ioflow___::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool )

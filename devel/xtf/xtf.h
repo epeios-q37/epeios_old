@@ -1,8 +1,8 @@
 /*
-  Header for the 'xtf' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'xtf' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	XTF_VERSION	"$Revision$"	
 
-#define XTF_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define XTF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &XTFTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -100,7 +100,7 @@ namespace xtf {
 		// L'entree de base.
 		flw::iflow___ *Entree_;
 		// Un petit cache. Taille doit être < 256.
-		flw::data__ Cache_[255];
+		flw::datum__ Cache_[255];
 		// Position dans le cache
 		bso::ubyte__ Position_;
 		// Nombre de caractères encore disponibles dans le cache.

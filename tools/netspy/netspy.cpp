@@ -213,7 +213,7 @@ struct data__ {
 void Server( void *UP )
 {
 	data__ &D = *(data__ *)UP;
-	flw::data__ Buffer[100];
+	flw::datum__ Buffer[100];
 	flw::size__ Size;
 	unsigned char C;
 	
@@ -242,7 +242,7 @@ void Server( void *UP )
 void Client( void *UP )
 {
 	data__ &D = *(data__ *)UP;
-	flw::data__ Buffer[100];
+	flw::datum__ Buffer[100];
 	flw::size__ Size;
 	unsigned char C;
 	

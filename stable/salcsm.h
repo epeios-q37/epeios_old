@@ -1,8 +1,8 @@
 /*
-  Header for the 'salcsm' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'salcsm' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	SALCSM_VERSION	"$Revision$"	
 
-#define SALCSM_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define SALCSM_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &SALCSMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -147,7 +147,7 @@ namespace salcsm {
 	};
 	
 	class tampon
-	: public bch::E_BUNCH( flw::data__ )
+	: public bch::E_BUNCH( flw::datum__ )
 	{
 	private:
 		// Position de la prochaine lecture.
@@ -160,11 +160,11 @@ namespace salcsm {
 			Lecture_ = Ecriture_ = 0;
 		}
 		bso::bsize__ Ecrire(
-			const flw::data__ *Tampon,
+			const flw::datum__ *Tampon,
 			bso::bsize__ Taille );
 		bso::bsize__ Lire(
 			bso::bsize__ Minimum,
-			flw::data__ *Tampon,
+			flw::datum__ *Tampon,
 			bso::bsize__ Desire );
 	};
 
@@ -174,14 +174,14 @@ namespace salcsm {
 	private:
 		tampon *Lecture_;
 		tampon *Ecriture_;
-		flw::data__ Cache_[SALCSM_BUFFER_SIZE];
+		flw::datum__ Cache_[SALCSM_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization );
@@ -220,7 +220,7 @@ namespace salcsm {
 		void *UP_;
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization );
@@ -273,7 +273,7 @@ namespace salcsm {
 		void *UP_;
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Wanted,
 			flw::amount__ Minimum,
 			bool Synchronization );
