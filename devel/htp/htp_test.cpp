@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << HTPTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << HTPTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -62,16 +62,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << HTPTutor.Name << " [/i]\n\n";
-		ERRt();
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << HTPTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << HTPTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << HTPTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
