@@ -165,10 +165,11 @@ namespace flf {
 
 		if ( !feof( File_ ) )
 		{
-			if ( fread( Tampon, 1, Desire, File_ ) != Desire )
-				ERRd();
+			if ( ( NombreLus = fread( Tampon, 1, Desire, File_ ) ) != Desire )
+				if ( NombreLus < Minimum )
+					ERRd();
 
-			return Desire;
+			return NombreLus;
 		}
 
 		return _HandleAmount( Minimum, Tampon, Desire, Desire );
