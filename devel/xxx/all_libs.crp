@@ -45,6 +45,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &flw		&epeios		&2000-		&FLoW
 &fnm		&epeios		&2000-		&File Name Manager
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
+&gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
 &gsbdtb		&lgsb		&		&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-		&GeSBib FieLDs
@@ -53,6 +54,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbrgl		&lgsb		&		&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTionnal field
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
+&gsbtfd_	&lgsb		&		&GeSBib Table Fields Definition (for backend)
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 &ids		&epeios		&2002-		&ID Store
 &idxbtq		&epeios		&2000-		&InDeX Best of Tree and Queue
