@@ -11,6 +11,7 @@ AEM:
 
 BCH:
 - Adding portable versions of classes.
+- Adding 'bunch___'.
 
 BSO:
 - Adding the 'sign__' type.
@@ -87,9 +88,13 @@ TSRCPR:
 TXMTBL:
 - Adding some helpful methods.
 
+TYM:
+- Adding 'memory___' class.
+
 UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.
 - Fixing 'Fill()' compilation error.
+- Adding 'untyped_memory___' class.
 
 --------
 20011119

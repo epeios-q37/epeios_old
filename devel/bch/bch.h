@@ -496,6 +496,41 @@ namespace bch {
 
 	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , epeios::row__ )
 
+	//c A set of static objects of type 'type'. Use 'BUNCH___( type )' rather then directly this class.
+	template <typename type, typename row, typename aem> class bunch_core___
+	: public bunch_kernel_< type, tym::E_MEMORYt___( type, row ), aem, row >
+	{
+	public:
+		struct s
+		: public bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::s {} S_;
+		bunch_core___( void ) 
+		: bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >( S_ ) {}
+		bunch_core___ &operator =( const bunch_core___ &S )
+		{
+			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::WriteAndAdjust( S, S.Amount_ );
+			Size_ = S.Amount_;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::Init();
+			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::SetStepValue( 0 );
+		}
+	};
+
+	template <typename type, typename row> class bunch___
+	: public bunch_core___< type, row, aem::amount_extent_manager_<row> >
+	{};
+
+
+	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
+	#define E_BUNCHt___( c, i, r )	bunch___<c, i, r>
+
+	#define E_BUNCH___( c, i )		E_BUNCHt___( c, i , epeios::row__ )
+
+
+
 	template <typename type, int size, typename row> class p_bunch__
 	: public bunch_core__< type, size, row, aem::p_amount_extent_manager_<row> >
 	{};

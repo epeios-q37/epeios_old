@@ -307,6 +307,24 @@ namespace tym {
 	//d A static set of 'amount' object of type 'Type'.
 	#define E_MEMORYt__( type, amount, r ) memory__< type, amount, sizeof( type ), r > 
 	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ), epeios::row__ > 
+
+	/*c A bunch of object of 'amount' objects of type 't' of size 'size' stored in conventional memory.
+	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
+	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
+	template <class t, int size, typename r> class memory___
+	: public memory_core_< t, uym::untyped_memory___, r >
+	{
+	private:
+		memory_core_<t, uym::untyped_memory___, r >::s Static_;
+	public:
+		memory___( memory_core_<t, uym::untyped_memory___, r >::s &S = *(memory_core_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'SET'.
+		: memory_core_<t, uym::untyped_memory___, r >( Static_ )
+		{}
+	};
+
+	//d A static set of 'amount' object of type 'Type'.
+	#define E_MEMORYt___( type, r ) memory___< type, sizeof( type ), r > 
+	#define E_MEMORY___( type ) memory___< type, sizeof( type ), epeios::row__ > 
 }
 
 /*$END$*/

@@ -38,6 +38,9 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	uym::untyped_memory M;
+	uym::untyped_memory__<3> M__;
+	uym::untyped_memory___ M___;
 ERRBegin
 ERRErr
 ERREnd

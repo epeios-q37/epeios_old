@@ -336,6 +336,12 @@ namespace uym {
 			size__ Size,
 			row__ Position = 0,
 			row__ Offset = 0 );
+		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+		void Write(
+			const class memory_core__ &Source,
+			size__ Size,
+			row__ Position = 0,
+			row__ Offset = 0 );
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Fill(
 			const data__ *Object,
@@ -394,18 +400,29 @@ namespace uym {
 		size__ Quantity );
 
 
-	//c Fixed-length memory core. Don't use; for internal use only.
+	//c Memory core. Don't use; for internal use only.
 	class memory_core__
 	{
 	private:
-		data__ *Data_;
+		data__ **Data_;
 	public:
-		memory_core__( data__ *Data )
+		void reset( bso::bool__ = true )
 		{
-			Data_ = Data;
+			Data_ = NULL;
+		}
+		memory_core__( void )
+		{
+			reset( false );
+		}
+		~memory_core__( void )
+		{
+			reset( true );
 		}
 		//f Initialization.
-		void Init( void ){}
+		void Init( data__ *&Data )
+		{
+			Data_ = &Data;
+		}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Read(
 			row__ Position,
@@ -425,14 +442,14 @@ namespace uym {
 		//f Return byte at 'Position'.
 		data__ Read( row__ Position ) const
 		{
-			return Data_[Position];
+			return (*Data_)[Position];
 		}
 		//f Write 'Byte' at 'Position'.
 		void Write(
 			data__ Byte,
 			row__ Position )
 		{
-			Data_[Position] = Byte;
+			(*Data_)[Position] = Byte;
 		}
 		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
 		void Read(
@@ -452,6 +469,15 @@ namespace uym {
 		{
 			memmove( Data_ + Offset, Source.Data_ + Position, Quantity ); 
 		}
+		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+		void Write(
+			const untyped_memory_ &Source,
+			size__ Quantity,
+			row__ Position = 0,
+			row__ Offset = 0 )
+		{
+			Source.Read( Position, Quantity, *Data_ + Offset );
+		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Fill(
 			const data__ *Object,
@@ -463,11 +489,26 @@ namespace uym {
 			const data__ *Objet,
 			bsize__ Size,
 			row__ Begin,
-			row__ End );
+			row__ End ) const;
+		//f Return the used buffer.
+		const data__ *Buffer( void ) const
+		{
+			return *Data_;
+		}
 	};
 
+	inline void untyped_memory_::Write(
+		const memory_core__ &Source,
+		size__ Size,
+		row__ Position,
+		row__ Offset )
+	{
+		Write( Source.Buffer() + Position, Size, Offset );
+	}
 
-	//c A memory with a size of 'size'.
+
+
+	//c A fixed-size memory of size 'size'.
 	template <int size> class untyped_memory__
 	: public memory_core__
 	{
@@ -476,12 +517,55 @@ namespace uym {
 	public:
 		struct s {};	// To simplify use in library 'SET'
 		untyped_memory__( s &S = *(s *)NULL )
-		: memory_core__( Data_ ) {}
+		: memory_core__() {}
 		// Simplifies the 'SET' library.
 		void Allocate( uym::size__ Size )
 		{
 			if ( Size > size )
 				ERRl();
+		}
+		void Init( void )
+		{
+			memory_core__::Init( Data_ );
+		}
+	};
+
+	//c A untyped memoru using conventional memory.
+	class untyped_memory___
+	: public memory_core__
+	{
+	private:
+		uym::data__ *Data_;
+	public:
+		struct s {};	// To simplify use in library 'SET'
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				tol::Free( Data_ );
+			}
+
+			Data_ = NULL;
+		}
+		untyped_memory___( s &S = *(s *)NULL )
+		: memory_core__()
+		{
+			reset( false );
+		}
+		~untyped_memory___( void )
+		{
+			reset( true );
+		}
+		//f Allocation of size 'Size'.
+		void Allocate( uym::size__ Size )
+		{
+			realloc( Data_, Size );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			tol::Free( Data_ );
+
+			memory_core__::Init( Data_ );
 		}
 	};
 }
