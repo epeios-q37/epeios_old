@@ -2,6 +2,10 @@
 NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
 &dbiapi	&ldbi	&		&DataBase Interface Adavanced Programmer Interface
+&mscmdf	&emsc	&		&MuSiC MiDi File		
+&mscmdm	&emsc	&		&MuSiC MiDi Messages
+&mscvkp	&emsc	&		&MuSiC VK (from Roland VK combo organ) Parameters.
+&mscvkx	&emsc	&		&MuSiC VK (from Roland VK combo organ) XML.
 &xmlbsc	&exml	&2000-		&XML BaSiC
 &xmlcor	&exml	&2000-		&XML CORe
 &xmldbs	&exml	&2000-		&XML DataBaSe
@@ -10,4 +14,8 @@ NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &xmltag	&exml	&2000-		&XML TAG
 &xmltol	&exml	&2000-		&XML TOoL
 &xmlval	&exml	&2000-		&XML VALue
+&mscmdf	&emsc	&		&MuSiC MiDi File		
+&mscmdm	&emsc	&		&MuSiC MiDi Messages
+&mscvkp	&emsc	&		&MuSiC VK (from Roland VK combo organ) Parameters.
+&mscvkx	&emsc	&		&MuSiC VK (from Roland VK combo organ) XML.
 

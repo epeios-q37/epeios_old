@@ -207,8 +207,8 @@
             <item xml:space="preserve">
         <link URL="epeios/">Core libraries</link> : the core libraries of the Epeios project. They are not dedicated to special tasks, but all the other libraries are based on them.</item>
             <item xml:space="preserve">
-        <link URL="ehos/" xml:space="preserve">
-          <raw>EHOS</raw> libraries</link> : libraries dedicated to the handling of herarchically organized structures (XML-like).</item>
+        <link URL="exml/" xml:space="preserve">
+          <raw>EXML</raw> libraries</link> : libraries dedicated to the handling of data in XML format.</item>
             <item xml:space="preserve">
         <link URL="emth/" xml:space="preserve">
           <raw>EMTH</raw> libraries</link> : libraries dedicated to mathematical libraries, for high-precision calculations.</item>
@@ -837,9 +837,9 @@
           </specific>$ECGI_QUICKDOC$</document>
       </dir>
     </dir>
-    <dir id="'ehos' libraries">
+    <dir id="'exml' libraries">
       <document id="homepage">
-        <general title="EHOS libraries homepage." abstract="The hierarchically organized structure libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos">
+        <general title="EXML libraries homepage." abstract="The hierarchically organized structure libraries (EHOS) from the Epeios project." keywords="Epeios, libraries, XML, ehos">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
@@ -1145,7 +1145,7 @@
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios timecode-related libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
-            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, are dedicated to timecodes, which are used vidéo-related domain. Timecodes are generallly constituted by hours, minutes, seconds and images.</para>
+            <para xml:space="preserve">This libraries, based on the <link URL="/epeios/">Epeios core libraries</link>, are dedicated to timecodes, which are used vid&#233;o-related domain. Timecodes are generallly constituted by hours, minutes, seconds and images.</para>
           </section>
           <section>
             <list xml:space="preserve">
