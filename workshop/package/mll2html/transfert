@@ -1,4 +1,2 @@
 # $Id$
-scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/epeios/
-rm -rf workdir
-
+../upload_pkg

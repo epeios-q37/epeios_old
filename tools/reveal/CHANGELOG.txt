@@ -1,6 +1,10 @@
 $Id$
 
-- UPGRADING TO 1.0.4
+--------
+20040216
+--------
+
+- UPGRADING TO 1.0.5
 - Changing '--help'/'--version' texts.
 
 --------

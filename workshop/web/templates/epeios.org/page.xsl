@@ -13,7 +13,7 @@
 					<xsl:attribute name="xmlns">http://www.w3.org/1999/xhtml</xsl:attribute>
 					<xsl:element name="head">
 						<xsl:element name="meta">
-							<xsl:attribute name="http-equiv">Content-type</xsl:attribute> 
+							<xsl:attribute name="http-equiv">Content-type</xsl:attribute>
 							<xsl:attribute name="content">text/html; charset=iso-8859-1</xsl:attribute>
 						</xsl:element>
 						<xsl:apply-templates select="specific/WEB" mode="head"/>
@@ -140,9 +140,7 @@
 					</xsl:element>
 					<xsl:element name="td">
 						<xsl:attribute name="align">right</xsl:attribute>
-						<xsl:text>CVS and download area</xsl:text>
-						<xsl:element name="br"/>
-						<xsl:text>hosted on </xsl:text>
+						<xsl:text>CVS hosted on </xsl:text>
 						<xsl:element name="a">
 							<xsl:attribute name="href">http://sv.gnu.org</xsl:attribute>
 							<xsl:text>Savannah</xsl:text>

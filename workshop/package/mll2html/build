@@ -2,9 +2,11 @@
 
 mkdir workdir
 cd workdir
-export DIR=mll2html-sources
+export DIR=mll2html
 mkdir $DIR
 GET=../../get_cvs
+
+mkdir -p $DIR
 
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp

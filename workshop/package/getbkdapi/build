@@ -1,8 +1,10 @@
 # $Id$
 mkdir workdir
 cd workdir
-export DIR=getbkdapi-sources
+export DIR=getbkdapi
 GET=../../get_cvs
+
+mkdir -p $DIR
 
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp

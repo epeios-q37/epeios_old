@@ -1,7 +1,7 @@
 # $Id$
 mkdir workdir
 cd workdir
-DIR=ecgi-sources
+DIR=ecgi
 GET=../../get_cvs
 
 mkdir -p $DIR

@@ -1,7 +1,7 @@
 # $Id$
 mkdir workdir
 cd workdir
-DIR=exml-sources
+DIR=exml
 GET=../../get_cvs
 
 mkdir -p $DIR

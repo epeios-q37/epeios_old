@@ -2,9 +2,11 @@
 
 mkdir workdir
 cd workdir
-export DIR=reveal-sources
+export DIR=reveal
 mkdir $DIR
 GET=../../get_cvs
+
+mkdir -p DIR
 
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
