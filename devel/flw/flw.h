@@ -92,8 +92,17 @@ namespace flw {
 		struct {
 			// The data.
 			const data__ *Data;
-			// Length of the data.
+			// Size of the data.
+			size__ Size;
+			// The length of the content of th flow.
 			size__ Length;
+			int
+				//At true if we are currently handling end of file data.
+				HandlingEOFD:		1,
+				// At true if we have to handle the length of the content of the data (in other word, 'Length' is significatif'.
+				HandleLength:	1,
+				// At true if we have to generate an error if not all awaited data re red. Only significant if 'HandleLenght' at true.
+				HandleToFew:	1;
 		} EOFD_;
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
@@ -102,7 +111,34 @@ namespace flw {
 			data__ *Buffer,
 			amount__ Wanted )
 		{
-			return FLWGet( Minimum, Buffer, Wanted );
+			amount__ Amount = 0;
+
+			if ( EOFD_.HandlingEOFD ) {
+				Amount = HandleEOFD( Buffer, Wanted );
+
+				if ( ( Amount < Minimum ) || !Amount )
+					ERRf();
+			} else if ( EOFD_.HandleLength ) {
+
+				if ( EOFD_.Length ) {
+					if ( Wanted > EOFD_.Length )
+						Wanted = EOFD_.Length;
+
+					Amount = FLWGet( Minimum, Buffer, Wanted );
+
+					if ( Amount < Minimum )
+						ERRf();	/* Because, if there is not enough data in the flow,
+								'FLWGet' already calls the 'HandleEOFD' function. */
+
+					EOFD_.Length -= Amount;
+				}
+
+				if ( !EOFD_.Length )
+					EOFD_.HandlingEOFD = true;
+			} else 
+					Amount = FLWGet( Minimum, Buffer, Wanted );
+
+			return Amount;
 		}
 #ifdef FLW_DBG
 		// Test if there is a cache available.
@@ -207,12 +243,17 @@ namespace flw {
 			data__ *Buffer,
 			size__ Size )
 		{
-			if ( Size > EOFD_.Length )
-				Size = EOFD_.Length;
+			EOFD_.HandlingEOFD = true;
+
+			if ( EOFD_.HandleToFew && EOFD_.Length )
+				ERRf();
+
+			if ( Size > EOFD_.Size )
+				Size = EOFD_.Size;
 				
 			if ( Size != 0 ) {
 				memcpy( Buffer, EOFD_.Data, Size );
-				EOFD_.Length -= Size;
+				EOFD_.Size -= Size;
 				EOFD_.Data += Size;
 			}
 			
@@ -224,7 +265,8 @@ namespace flw {
 			Cache_ = NULL;
 			Available_ = Position_ = Size_ = 0;
 			EOFD_.Data = NULL;
-			EOFD_.Length = 0;			
+			EOFD_.Size = EOFD_.Length = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleLength = EOFD_.HandleToFew = false;
 		}
 		iflow___( void )
 		{
@@ -244,7 +286,7 @@ namespace flw {
 			Cache_ = Cache;
 			Size_ = Size;
 			EOFD_.Data = NULL;
-			EOFD_.Length = 0;
+			EOFD_.Size = 0;
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
@@ -271,20 +313,28 @@ namespace flw {
 
 			return C;
 		}
-		/*f 'Data' of length 'Length' becomes the end of flow data.
-		'Data' is NOT duplicated and should not be modified. */
-		void EOFD(
-			const data__ *Data,
-			size__ Length )
-		{
-			EOFD_.Data = Data;
-			EOFD_.Length = Length;
-		}
-		/* 'Data' is a NUL NUL terminated string to use as end of flow data.
+		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. */
 		void EOFD( const char *Data )
 		{
-			EOFD( (const data__ *)Data, strlen( Data ) );
+			EOFD_.Data = (const data__ *)Data;
+			EOFD_.Size = strlen( Data );
+			EOFD_.HandleLength = false;
+		}
+		/* 'Data' is a NUL terminated string to use as end of flow data.
+		'Data' is NOT suplicated and should not be modified. This data will
+		be put in the flow after having read 'Length' bytes.*/
+		void EOFD(
+			const char *Data,
+			size__ Length )
+		{
+			if ( Available_ > Length )	// This means we have red too much data.
+				Available_ = Length;
+
+			EOFD( Data );
+			EOFD_.Length = Length - Available_;	// In case il we have already red data.
+			EOFD_.HandleLength = true;
+			EOFD_.HandleToFew = true;
 		}
 		
 	};

@@ -37,6 +37,7 @@ FLM:
 
 FLW:
 - Fixing bug which fills the cache even if there is asked for more then the cache can contain.
+- Adding length feature.
 
 IDXBTR:
 - Adding 'E_INDEX(_)'.
