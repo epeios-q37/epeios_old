@@ -2,6 +2,7 @@
 # $Id$
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
+&bch		&epeios		&2000-		&BunCH
 &bkdacc		&ebkd		&2000-		&BacKenD ACCess
 &bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
 &bkdlgg		&ebkd		&		&BacKenD LanGuaGes
@@ -14,6 +15,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbibsc_	&ldbi		&		&DataBase Interface BaSiCs (for backend)
 &dbidpd		&ldbi		&		&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
+&dbifld_	&ldbi		&		&Database Interface FieLDs (for backend)
 &dbimng		&ldbi		&		&Database Interface MaNaGer
 &dbimng_	&ldbi		&		&Database Interface MaNaGer (for backend)
 &dbimsc		&ldbi		&		&BataBase Interface MiSC
@@ -32,6 +34,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &ids		&epeios		&		&ID Store
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
+&lstbch		&epeios		&		&LiST BunCH
+&lstctn		&epeios		&		&LiST ConTaiNer
 &mscmdf		&emsc		&		&MuSiC MiDi File		
 &mscmdm		&emsc		&		&MuSiC MiDi Messages
 &mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters

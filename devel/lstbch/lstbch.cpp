@@ -1,6 +1,6 @@
 /*
-	'bch' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'bch' header file ('bch.h').
+	'lstbch' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'lstbch' header file ('lstbch.h').
 	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -25,26 +25,26 @@
 
 //	$Id$
 
-#define BCH__COMPILATION
+#define LSTBCH__COMPILATION
 
-#include "bch.h"
+#include "lstbch.h"
 
-class bchtutor
+class lstbchtutor
 : public ttr_tutor
 {
 public:
-	bchtutor( void )
-	: ttr_tutor( BCH_NAME )
+	lstbchtutor( void )
+	: ttr_tutor( LSTBCH_NAME )
 	{
-#ifdef BCH_DBG
-		Version = BCH_VERSION "\b\bD $";
+#ifdef LSTBCH_DBG
+		Version = LSTBCH_VERSION "\b\bD $";
 #else
-		Version = BCH_VERSION;
+		Version = LSTBCH_VERSION;
 #endif
-		Owner = BCH_OWNER;
+		Owner = LSTBCH_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~bchtutor( void ){}
+	virtual ~lstbchtutor( void ){}
 };
 
 /******************************************************************************/
@@ -53,22 +53,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-namespace bch {
-}
+using namespace lstbch;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class bchpersonnalization
-: public bchtutor
+class lstbchpersonnalization
+: public lstbchtutor
 {
 public:
-	bchpersonnalization( void )
+	lstbchpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~bchpersonnalization( void )
+	~lstbchpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -84,6 +83,6 @@ public:
 
 // 'static' by GNU C++.
 
-static bchpersonnalization Tutor;
+static lstbchpersonnalization Tutor;
 
-ttr_tutor &BCHTutor = Tutor;
+ttr_tutor &LSTBCHTutor = Tutor;
