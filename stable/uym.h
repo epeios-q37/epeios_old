@@ -64,7 +64,6 @@ extern class ttr_tutor &UYMTutor;
 //#include "flw.h"
 #include "mdr.h"
 #include "cvm.h"
-#include "fam.h"
 
 //d Value that a position can not have.
 #define UYM_UNREACHABLE_POSITION	((uym::row__)-1)
@@ -72,18 +71,8 @@ extern class ttr_tutor &UYMTutor;
 //d Maximal size of a memory.
 #define UYM_MAX_SIZE			UYM_UNREACHABLE_POSITION
 
-#ifndef UYM_MAX_BUFFER_SIZE
-//d Max. size max. of a copy buffer.
-	#define UYM_MAX_BUFFER_SIZE	10000
-#endif
-
-#ifndef UYM_MIN_BUFFER_SIZE
-//d Min. size of a copy buffer.
-	#define UYM_MIN_BUFFER_SIZE	10
-#endif
-
 #ifndef UYM_DEFAULT_E_MEMORY_DRIVER
-#define UYM_DEFAULT_E_MEMORY_DRIVER cvm::conventional_memory_driver
+#	define UYM_DEFAULT_E_MEMORY_DRIVER cvm::conventional_memory_driver
 #endif
 /*
 

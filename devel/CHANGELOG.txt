@@ -12,6 +12,7 @@ GENERAL:
 - (14/07/04) Adapting to changes in 'FLW' library.
 - (14/07/04) Adapting to changes in 'BSO' library.
 - (14/07/04) Removing apparently unused read/write methods.
+- (21/08/04) Obsoletes 'FAM' library, because not thread-safe.
 
 BCH:
 - (09/06/04) Adding 'relations(_)' type.

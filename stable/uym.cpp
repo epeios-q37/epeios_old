@@ -57,6 +57,12 @@ public:
 
 using namespace uym;
 
+#ifdef UYM_BUFFER_SIZE
+#	define BUFFER_SIZE	UYM_BUFFER_SIZE
+#else
+#	define BUFFER_SIZE	10000
+#endif
+
 bso::sign__ uym::Compare(
 	const untyped_memory_ &E1,
 	const untyped_memory_ &E2,
@@ -65,65 +71,36 @@ bso::sign__ uym::Compare(
 	size__ Nombre )
 {
 	bso::sign__ Resultat;
-ERRProlog
-	datum__ *Tampon = NULL;
-ERRBegin
+	datum__ Tampon[BUFFER_SIZE * 2];
+
 	if ( Nombre )
 	{
-		fam::size__ Taille = Nombre > 30000 ? 60000 : Nombre * 2;
-		Tampon = (datum__ *)fam::FAM.Allocate( Taille, 4 );
+		uym::size__ Taille = Nombre > BUFFER_SIZE ? BUFFER_SIZE : Nombre;
 
-		if ( !Tampon )
+		datum__ *T1 = Tampon;
+		datum__ *T2 = Tampon + BUFFER_SIZE;
+
+		do
 		{
-			DebutE1 += Nombre;
-			DebutE2 += Nombre;
+			if ( Taille > Nombre )
+				Taille = Nombre;
 
-			while( Nombre && ( E1.Get( DebutE1 - Nombre ) == E2.Get( DebutE2 - Nombre ) ) )
-				Nombre--;
+			E1.Recall( DebutE1, Taille, T1 );
+			E2.Recall( DebutE2, Taille, T2 );
 
-			if ( Nombre )
-				Resultat = ( ( E1.Get( DebutE1 - Nombre ) > E2.Get( DebutE2 - Nombre ) ) ? 1 : -1 );
-			else
-			{
-				datum__ C1 = E1.Get( 0 ),  C2 = E2.Get( 0 );
+			DebutE1 += Taille;
+			DebutE2 += Taille;
+			Nombre -= Taille;
 
-				Resultat = C1 == C2 ? 0 : C1 > C2 ? 1 : -1;
-			}
+			Resultat = memcmp( T1, T2, Taille );
 		}
-		else
-		{
-			datum__ *T1 = Tampon;
-			datum__ *T2 = Tampon + ( Taille /= 2 );
-
-
-			do
-			{
-				if ( Taille > Nombre )
-					Taille = Nombre;
-
-				E1.Recall( DebutE1, Taille, T1 );
-				E2.Recall( DebutE2, Taille, T2 );
-
-				DebutE1 += Taille;
-				DebutE2 += Taille;
-				Nombre -= Taille;
-
-				Resultat = memcmp( T1, T2, Taille );
-			}
-			while ( ( Resultat == 0 ) && ( Nombre != 0 ) );
-		}
+		while ( ( Resultat == 0 ) && ( Nombre != 0 ) );
 	}
-	else
-		Resultat =  0;
-ERRErr
-ERREnd
-	if ( Tampon )
-		fam::FAM.Free( Tampon );
-ERREpilog
+
 	return Resultat;
 }
 
-void uym::_Copy(
+inline void uym::_Copy(
 	const class untyped_memory_ &Source,
 	row__ PosSource,
 	class untyped_memory_ &Dest,
@@ -195,61 +172,38 @@ row__ untyped_memory_::Search(
 	row__ Debut,
 	row__ Fin ) const
 {
-	row__ Retour = NONE;
-ERRProlog
-	fam::size__ TailleTampon = Taille * ( ( Fin - Debut ) / Taille );
-	datum__ *Tampon = NULL;
+	if ( Taille > BUFFER_SIZE )
+		ERRl();
+
+	datum__ Tampon[BUFFER_SIZE];
 	bool Trouve = false;
-ERRBegin
+	size__ BufferSize = Taille * ( BUFFER_SIZE / Taille );
+	size_t BufferPosition = 0;
 
-	if ( ( Tampon = (datum__ *)fam::FAM.Allocate( TailleTampon, Taille ) ) != NULL )
+	while( !Trouve && ( Debut < Fin ) )
 	{
-		while( ( !Trouve ) && ( ( Debut + Taille ) <= Fin ) )
+		BufferPosition = 0;
+
+		if ( ( Debut + BufferSize ) > Fin )
+			BufferSize = Fin - Debut;
+
+		Recall( Debut, BufferSize, Tampon );
+
+		while( !Trouve && ( BufferPosition < BufferSize ) )
 		{
-			size_t PositionDansTampon = 0;
-
-			if ( ( Debut + TailleTampon ) > Fin )
-				TailleTampon = Taille * ( ( Fin - Debut ) / Taille );
-
-			Recall( Debut, TailleTampon, Tampon );
-
-			while( ( !Trouve ) && ( PositionDansTampon < TailleTampon ) )
-			{
-				Trouve = !memcmp( Objet, (char *)Tampon + PositionDansTampon, Taille );
-				PositionDansTampon += Taille;
-			}
-
-			Debut += PositionDansTampon;
+			Trouve = !memcmp( Objet, Tampon + BufferPosition, Taille );
+			BufferPosition += Taille;
 		}
 
-		Debut -= Taille;
+		Debut += BufferPosition;
 	}
-	else
-	{
-		while( ( !Trouve ) && ( ( Debut + Taille ) <= Fin ) )
-		{
-			size_t PositionRelative = 0;
 
-			while ( ( PositionRelative < Taille )
-					&& ( Get( Debut + PositionRelative )
-						 == Objet[PositionRelative] ) )
-			{};
-
-			if ( PositionRelative == Taille )
-				Trouve = true;
-			else
-				Debut += Taille;
-		}
-	}
+	Debut -= Taille;
 
 	if ( Trouve )
-		Retour = Debut;
-ERRErr
-ERREnd
-	if ( Tampon )
-		fam::FAM.Free( Tampon );
-ERREpilog
-	return Retour;
+		return Debut;
+	else
+		return NONE;
 }
 
 
@@ -259,34 +213,9 @@ void untyped_memory_::Store(
 	row__ Position,
 	row__ Offset )
 {
-ERRProlog
-	datum__ *Tampon = NULL;
-ERRBegin
+	datum__ Buffer[BUFFER_SIZE];
 
-	if ( Amount > UYM_MIN_BUFFER_SIZE )
-	{
-		fam::size__ Taille = ( Amount > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Amount );
-		Tampon = (datum__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
-
-		if ( Tampon )
-			_Copy( Source, Position, *this, Offset, Amount, Tampon, Taille );
-		else
-		{
-			datum__ Buffer[UYM_MIN_BUFFER_SIZE];
-			_Copy( Source, Position, *this, Offset, Amount, Buffer, sizeof( Buffer ) );
-		}
-
-	}
-	else
-	{
-		datum__ Buffer[UYM_MIN_BUFFER_SIZE];
-		_Copy( Source, Position, *this, Offset, Amount, Buffer, sizeof( Buffer ) );
-	}
-ERRErr
-ERREnd
-	if ( Tampon )
-		fam::FAM.Free( Tampon );
-ERREpilog
+	_Copy( Source, Position, *this, Offset, Amount, Buffer, BUFFER_SIZE );
 }
 
 #if 0
