@@ -158,7 +158,7 @@ namespace ids {
 		//f Return true' if 'ID' exists, false otherwize.
 		bso::bool__ Exists( id__ ID ) const
 		{
-			return Released.Exists( ID );
+			return Released.ObjectExists( ID );
 		}
 	};
 

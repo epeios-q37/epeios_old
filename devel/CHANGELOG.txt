@@ -8,10 +8,19 @@ AEM:
 - Adding 'Exists' method.
 
 CPE:
-- Adapting to Metrowerks Codewarrior
+- Adapting to Metrowerks Codewarrior.
+
+IDS:
+- Adapting to changes in 'STK' library.
+
+STK:
+- Renaming 'Exists()' method to 'ObjectExists()', due to modification of the 'tol::NAVt' macro.
 
 STR:
 - Adding 'Insert()' method.
+
+TOL:
+- Adding the 'Exists()' method to 'NAV(t)' macro.
 
 --------
 20030104

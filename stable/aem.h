@@ -289,7 +289,7 @@ namespace aem {
 			return Amount() == 0;
 		}
 		//f Return true if 'Row' exists, false otherwise.
-		bso::bool__ Exists( row Row )
+		bso::bool__ Exists( row Row ) const
 		{
 			return *Row < Amount();
 		}

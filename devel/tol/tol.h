@@ -505,6 +505,10 @@ namespace tol {
 	bso::bool__ IsEmpty( void ) const\
 	{\
 		return Object##IsEmpty();\
+	}\
+	bso::bool__ Exists( Type P ) const\
+	{\
+		return Object##Exists( P );\
 	}
 	
 #define NAV( Object )	NAVt( Object, epeios::row__ )

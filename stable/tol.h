@@ -441,7 +441,7 @@ namespace tol {
 
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'ckock()' only return how long
-	the application is usibg the processor.*/
+	the application is using the processor.*/
 	inline unsigned long Clock( void )
 	{
 		timeb T;
@@ -505,6 +505,10 @@ namespace tol {
 	bso::bool__ IsEmpty( void ) const\
 	{\
 		return Object##IsEmpty();\
+	}\
+	bso::bool__ Exists( Type P ) const\
+	{\
+		return Object##Exists( P );\
 	}
 	
 #define NAV( Object )	NAVt( Object, epeios::row__ )
