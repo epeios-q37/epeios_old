@@ -128,6 +128,8 @@ extern class ttr_tutor &CPETutor;
 #		endif
 #	elif defined( __BEOS__ )
 #		define CPE__BEOS
+#	else
+#		define CPE__UNIX
 #	endif
 #	if __GNUC__ == 3
 //d Defined if 'ios::nocreate' and 'ios::noreplace'.

@@ -37,7 +37,7 @@ libs = ttr tol flw stf err
 
 
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(EPEIOS_ENV)","windows")
 # object file extension
 ox = obj
 # compiler/linker binary
@@ -49,7 +49,7 @@ lo = -q -e$(name)
 ds = ;
 endif
 
-ifneq ($(findstring $(EPEIOS_OS),linuxcygwin),)
+ifeq ("$(EPEIOS_ENV)","gnu")
 ox = o
 cc = g++ 
 co = -c
@@ -65,7 +65,7 @@ lo = -o $(name)
 ds = :
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(EPEIOS_ENV)","beos")
 ox = o
 cc = g++
 co = -c -g
