@@ -1,7 +1,6 @@
 /*
-  'que' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'que' header file ('que.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Header for the 'epeios' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -26,27 +25,30 @@
 
 //	$Id$
 
-#define QUE__COMPILATION
+#ifndef EPEIOS__INC
+#define EPEIOS__INC
 
-#include "que.h"
+#define EPEIOS_NAME		"EPEIOS"
 
-class quetutor
-: public ttr_tutor
-{
-public:
-	quetutor( void )
-	: ttr_tutor( QUE_NAME )
-	{
-#ifdef QUE_DBG
-		Version = QUE_VERSION "\b\bD $";
-#else
-		Version = QUE_VERSION;
+#define	EPEIOS_VERSION	"$Revision$"	
+
+#define EPEIOS_OWNER		"the Epeios project (http://www.epeios.org/)"
+
+#include "ttr.h"
+
+extern class ttr_tutor &EPEIOSTutor;
+
+#if defined( XXX_DBG ) && !defined( EPEIOS_NODBG )
+#define EPEIOS_DBG 
 #endif
-		Owner = QUE_OWNER;
-		Date = "$Date$";
-	}
-	virtual ~quetutor( void ){}
-};
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (simon@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
@@ -54,36 +56,23 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void que::links_::Initialize(
-	epeios::row_t__ Begin,
-	epeios::row_t__ End )
-{
-	que::link__ L;
+/* Addendum to the automatic documentation generation part. */
+//D EPEIOS current features.
+/* End addendum to automatic documentation generation part. */
 
-	do {
-		Write( L, Begin );
-	} while( Begin++ < End );
+
+#include "err.h"
+#include "flw.h"
+#include "tol.h"
+#include "mdr.h"
+
+namespace epeios {
+	typedef mdr::row__	row_t__;
+	TYPEDEF( row_t__, row__ );
+	using mdr::size__;
+	using mdr::bsize__;
+	using mdr::data__;
 }
-
-
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-class quepersonnalization
-: public quetutor
-{
-public:
-	quepersonnalization( void )
-	{
-		/* place here the actions concerning this library
-		to be realized at the launching of the application  */
-	}
-	~quepersonnalization( void )
-	{
-		/* place here the actions concerning this library
-		to be realized at the ending of the application  */
-	}
-};
-
 
 /*$END$*/
 				  /********************************************/
@@ -91,8 +80,4 @@ public:
 				  /*			  unless specified		   	  */
 /******************************************************************************/
 
-// 'static' by GNU C++.
-
-static quepersonnalization Tutor;
-
-ttr_tutor &QUETutor = Tutor;
+#endif

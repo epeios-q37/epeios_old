@@ -1,6 +1,6 @@
 /*
-  'lst' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'lst' header file ('lst.h').
+  'epeios' library by Claude L. Simon (simon@epeios.org)
+  Requires the 'epeios' header file ('epeios.h').
   Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
@@ -26,26 +26,26 @@
 
 //	$Id$
 
-#define LST__COMPILATION
+#define EPEIOS__COMPILATION
 
-#include "lst.h"
+#include "epeios.h"
 
-class lsttutor
+class epeiostutor
 : public ttr_tutor
 {
 public:
-	lsttutor( void )
-	: ttr_tutor( LST_NAME )
+	epeiostutor( void )
+	: ttr_tutor( EPEIOS_NAME )
 	{
-#ifdef LST_DBG
-		Version = LST_VERSION "\b\bD $";
+#ifdef EPEIOS_DBG
+		Version = EPEIOS_VERSION "\b\bD $";
 #else
-		Version = LST_VERSION;
+		Version = EPEIOS_VERSION;
 #endif
-		Owner = LST_OWNER;
+		Owner = EPEIOS_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~lsttutor( void ){}
+	virtual ~epeiostutor( void ){}
 };
 
 /******************************************************************************/
@@ -54,61 +54,22 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-// Retourne vrai si 'Element' existe dans la liste.
-bso__bool lst::Existe_(
-	epeios::row_t__ Position,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
-{
-	tym::row_t__ Nombre = Libres.Amount();
-	bso__bool Trouve = false;
-
-	while ( Nombre-- && !( Trouve = ( Libres( Nombre ) == Position ) ) );
-
-	return !Trouve;
-}
-
-
-// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Successeur_(
-	epeios::row_t__ Element,
-	epeios::size__ Amount,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
-{
-	while( ( ++Element < Amount ) && !Existe_( Element, Libres ) );
-
-	if ( Element >= Amount )
-		return NONE;
-	else
-		return Element;
-}
-
-// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Predecesseur_(
-	tym::row_t__ Element,
-	const stk::E_STACK_( epeios::row_t__ ) &Libres )
-{
-	bso__bool Trouve = false;
-
-	while( ( Element > 0 ) && !( Trouve = Existe_( --Element, Libres ) ) );
-
-	if ( Trouve )
-		return Element;
-	else
-		return NONE;
+namespace epeios {
 }
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class lstpersonnalization
-: public lsttutor
+
+class epeiospersonnalization
+: public epeiostutor
 {
 public:
-	lstpersonnalization( void )
+	epeiospersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~lstpersonnalization( void )
+	~epeiospersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -124,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static lstpersonnalization Tutor;
+static epeiospersonnalization Tutor;
 
-ttr_tutor &LSTTutor = Tutor;
+ttr_tutor &EPEIOSTutor = Tutor;

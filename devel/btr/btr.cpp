@@ -54,44 +54,46 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void btr::binary_tree_::Liberer_(
-	tym::row__ Debut,
-	tym::row__ Fin )
+using namespace epeios;
+
+void btr::liens_::Liberer(
+	row_t__ Debut,
+	row_t__ Fin )
 {
 	do {
-		if ( APere_( Debut ) )
+		if ( APere( Debut ) )
 		{
 			if ( IsLeft( Debut ) )
-				InvaliderFils_( Liens( Debut ).Pere );
+				InvaliderFils( genealogies_::Read( Debut ).Pere );
 			else
-				InvaliderFille_( Liens( Debut ).Pere );
+				InvaliderFille( genealogies_::Read( Debut ).Pere );
 
-			InvaliderPere_( Debut );
+			InvaliderPere( Debut );
 		}
 
-		if ( AFils_( Debut ) )
+		if ( AFils( Debut ) )
 		{
-			InvaliderPere_( Liens( Debut ).Fils );
-			InvaliderFils_( Debut );
+			InvaliderPere( genealogies_::Read( Debut ).Fils );
+			InvaliderFils( Debut );
 		}
 
-		if ( AFille_( Debut ) )
+		if ( AFille( Debut ) )
 		{
-			InvaliderPere_( Liens( Debut ).Fille );
-			InvaliderFille_( Debut );
+			InvaliderPere( genealogies_::Read( Debut ).Fille );
+			InvaliderFille( Debut );
 		}
 	}
 	while( ++Debut <= Fin );
 }
 
-void btr::binary_tree_::Preparer_(
-	tym::row__ Debut,
-	tym::row__ Fin )
+void btr::liens_::Preparer(
+	row_t__ Debut,
+	row_t__ Fin )
 {
 	do {
-		InvaliderPere_( Debut );
-		InvaliderFille_( Debut );
-		InvaliderFils_( Debut );
+		InvaliderPere( Debut );
+		InvaliderFille( Debut );
+		InvaliderFils( Debut );
 	}
 	while( ++Debut <= Fin );
 }
@@ -205,13 +207,13 @@ static void AfficherBlancs_(
 }
 
 //f Affiche la structure de l'arbre dans 'Flot'. A des fins de deboggage.
-void btr::binary_tree_::PrintStructure(
-	tym::row__ Racine,
+void btr::liens_::PrintStructure(
+	row_t__ Racine,
 	txf::text_oflow___ &Flot ) const
 {
 	bso__ulong Niveau = 0;
 	bso__bool Fils = false, Fille = false;
-	tym::row__ Courant = Racine;
+	row_t__ Courant = Racine;
 
 	Flot << '*';
 
@@ -222,7 +224,7 @@ void btr::binary_tree_::PrintStructure(
 
 			if ( HasRight( Courant ) )
 			{
-				Courant = this->Right( Courant );
+				Courant = this->Fille( Courant );
 
 				Flot << txf::nl;
 				AfficherBlancs_( Flot, Niveau );
@@ -237,7 +239,7 @@ void btr::binary_tree_::PrintStructure(
 				else
 					Fille = true;
 
-				Courant = Parent( Courant );
+				Courant = Pere( Courant );
 				Niveau--;
 			}
 		}
@@ -250,19 +252,19 @@ void btr::binary_tree_::PrintStructure(
 			else
 				Fille = true;
 
-			Courant = Parent( Courant );
+			Courant = Pere( Courant );
 			Niveau--;
 		}
 		else if ( HasLeft( Courant ) )
 		{
-			Courant = this->Left( Courant );
+			Courant = this->Fils( Courant );
 
 			Flot << '*';
 			Niveau++;
 		}
 		else if ( HasRight( Courant ) )
 		{
-			Courant = this->Right( Courant );
+			Courant = this->Fille( Courant );
 			Flot << txf::nl;
 			AfficherBlancs_( Flot, Niveau );
 			Flot << '*';
@@ -270,13 +272,13 @@ void btr::binary_tree_::PrintStructure(
 		}
 		else if ( IsLeft( Courant ) )
 		{
-			Courant = Parent( Courant );
+			Courant = Pere( Courant );
 			Fils = true;
 			Niveau--;
 		}
 		else if ( IsRight( Courant ) )
 		{
-			Courant = Parent( Courant );
+			Courant = Pere( Courant );
 			Fille = true;
 			Niveau--;
 		}

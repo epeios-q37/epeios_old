@@ -62,57 +62,81 @@ extern class ttr_tutor &LSTTutor;
 #include "aem.h"
 
 namespace lst {
+	using aem::amount_extent_manager_;
+
+	bso__bool Existe_(
+		epeios::row_t__ Position,
+		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+
+	epeios::row_t__ Successeur_(
+		epeios::row_t__ Element,
+		epeios::size__ Amount,
+		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+
+	epeios::row_t__ Predecesseur_(
+		tym::row_t__ Element,
+		const stk::E_STACK_( epeios::row_t__ ) &Libres );
+
 
 	//c Handle a list of objects. Use 'LIST_' rather than directly this class.
-	class list_
-	: public aem::amount_extent_manager_
+	template <typename r> class list_
+	: public aem::amount_extent_manager_<r>
 	{
 	protected:
 		/*v Cette fonction est appelée lors d'allocations dans la liste;
 		permet de synchroniser la taille de la liste avec d'autres ensembles;
 		'Size' est la capacité allouée. Ne fait rien par défaut. */
-		virtual void LSTAllocate( tym::size__ Size ) {}
+		virtual void LSTAllocate( epeios::size__ Size ) {}
 	private:
-		tym::row__ Nouveau_( void )
+		epeios::row_t__ Nouveau_( void )
 		{
-			tym::row__ Numero;
+			epeios::row_t__ Numero;
 
 			if ( Libres.Amount() )
 				Numero = Libres.Pop();
 			else
 			{
-				tym::size__ Size = ( Numero = Amount() ) + 1;
+				epeios::size__ Size = ( Numero = Amount() ) + 1;
 
-				if ( amount_extent_manager_::AmountToAllocate( Size, aem::mDefault ) )
+				if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
 					LSTAllocate( Size );
 			}
 
 			return Numero;
 		}
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-		tym::row__ Successeur_( tym::row__ Element ) const;
+		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
+		{
+			return Successeur_( Element, Amount(), Libres );
+		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-		tym::row__ Predecesseur_( tym::row__ Element ) const;
+		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
+		{
+			return Predecesseur_( Element, Libres );
+		}
 		// Retourne vrai si 'Element' existe dans la liste.
-		bso__bool Existe_( tym::row__ Position ) const;
+		bso__bool Existe_( epeios::row_t__ Position ) const
+		{
+			return Existe_( Position; Lbres );
+		}
 	public:
 		//o Stack which contains the free locations.
-		stk::E_STACK_( tym::row__ ) Libres;
+		stk::E_STACK_( epeios::row_t__ ) Libres;
 		struct s
-		: public aem::amount_extent_manager_::s
+		: public aem::amount_extent_manager_<r>::s
 		{
-			stk::E_STACK_( tym::row__ )::s Libres;
+			stk::E_STACK_( epeios::row_t__ )::s Libres;
 			// La position du premier élément de la liste. N'a de sens que si 'Vide' = false.
 	//		tym::size__ Nombre;
 		};
 	// fonctions
 		list_( s &S )
 		: Libres( S.Libres ),
-		  amount_extent_manager_( S)
+		  amount_extent_manager_< r >( S )
 		{}
 		void reset( bool P = true )
 		{
-			amount_extent_manager_::reset( P );
+			amount_extent_manager_<r>::reset( P );
 			Libres.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
@@ -125,7 +149,7 @@ namespace lst {
 		}
 		list_ &operator =( const list_ &T )
 		{
-			amount_extent_manager_::Force( T.amount_extent_manager_::Amount() );
+			amount_extent_manager_<r>::Force( T.amount_extent_manager_<r>::Amount() );
 			Libres = T.Libres;
 
 			return *this;
@@ -145,23 +169,23 @@ namespace lst {
 	*/	//f Initialiration.
 		void Init( void )
 		{
-			amount_extent_manager_::Init();
+			amount_extent_manager_<r>::Init();
 			Libres.Init();
 		}
 		//f Remove 'Entry'.
-		void Remove( tym::row__ Entry )
+		void Remove( r Entry )
 		{
 			Libres.Push( Entry );
 		}
 		//f Return the position of a new entry.
-		tym::row__ CreateEntry( void )
+		r CreateEntry( void )
 		{
 			return Nouveau_();
 		}
 		//f Return the first entry if exists, 'NONE' if list empty.
-		tym::row__ First( void ) const
+		r First( void ) const
 		{
-			if ( amount_extent_manager_::Amount() )
+			if ( amount_extent_manager_<r>::Amount() )
 				if ( Exists( 0 ) )
 					return 0;
 				else
@@ -170,11 +194,11 @@ namespace lst {
 				return NONE;
 		}
 		//f Return the last entry, 'NONE' if list empty.
-		tym::row__ Last( void ) const
+		r Last( void ) const
 		{
-			if ( amount_extent_manager_::Amount() )
+			if ( amount_extent_manager_<r>::Amount() )
 			{
-				tym::row__ P = amount_extent_manager_::Amount() - 1;
+				epeios::row_t__ P = amount_extent_manager_<r>::Amount() - 1;
 
 				if ( Existe_( P ) )
 					return P;
@@ -190,9 +214,9 @@ namespace lst {
 			return Amount() == 0;
 		}
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
-		tym::row__ Next( tym::row__ Entry ) const
+		r Next( r Entry ) const
 		{
-			if ( ++Entry < amount_extent_manager_::Amount() )
+			if ( ++Entry < amount_extent_manager_<r>::Amount() )
 				if( Libres.IsEmpty() || Existe_( Entry ) )
 					return Entry;
 				else
@@ -201,7 +225,7 @@ namespace lst {
 				return NONE;
 		}
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
-		tym::row__ Previous( tym::row__ Entry ) const
+		r Previous( r Entry ) const
 		{
 			if ( Entry-- > 0 )
 				if( Libres.IsEmpty() || Existe_( Entry ) )
@@ -212,14 +236,14 @@ namespace lst {
 				return NONE;
 		}
 		//f Amount of entries, NOT the extent of the list.
-		tym::size__ Amount( void ) const
+		epeios::size__ Amount( void ) const
 		{
-			return amount_extent_manager_::Amount() - Libres.Amount();
+			return amount_extent_manager_<r>::Amount() - Libres.Amount();
 		}
 		//f Return true if 'Entry' exists, false otherwise.
-		bso__bool Exists( tym::row__ Entry ) const
+		bso__bool Exists( r Entry ) const
 		{
-			if ( Entry >= amount_extent_manager_::Amount() )
+			if ( Entry >= amount_extent_manager_<r>::Amount() )
 				return false;
 			else if ( Libres.IsEmpty() )
 				return true;
@@ -228,22 +252,24 @@ namespace lst {
 		}
 	};
 
-	AUTO( list )
+	AUTOt( list )
 
 	//d Handle a list of objects.
-	#define E_LIST			list
+	#define E_LISTt( r )	list<r>
+	#define E_LISTt_( r )	list_<r>
 
-	#define E_LIST_			list_
+	#define E_LIST	E_LISTt( epeios::row__ )
+	#define E_LIST_	E_LISTt_( epeios::row__ )
 
 
 	//c Handle a list with a maximum of 't' entries. Use 'LIST__' rather than directly this class.
-	template <int t> class list__
+	template <int t, typename r> class list__
 	{
 	private:
 		// Table de l'occupation de la liste.
-		bitbch::bit_bunch__<t> Occupation_;
+		bitbch::bit_bunch__<t, r> Occupation_;
 		// Nombre d'éléments dans la liste.
-		tym::size__ Nombre_;
+		epeios::size__ Nombre_;
 	public:
 		list__( void )
 		{
@@ -251,29 +277,29 @@ namespace lst {
 			Nombre_ = 0;
 		}
 		//f First entry, 'NONE' if no entries.
-		tym::row__ First( void ) const
+		r First( void ) const
 		{
 			return Occupation_.First( true );
 		}
 		//f LAsttry, 'NONE' if no entries.
-		tym::row__ Last( void ) const
+		r Last( void ) const
 		{
 			return Occupation_.Last( true );
 		}
 		//f Entry next to 'Entry', none if 'Entry' the last one.
-		tym::row__ Next( tym::row__ Entry ) const
+		r Next( r Entry ) const
 		{
 			return Occupation_.Next( Entry, true );
 		}
 		//f Previous entry from 'Entry', none if 'Entry' the first one.
-		tym::row__ Previous( tym::row__ Entry ) const
+		r Previous( r Entry ) const
 		{
 			return Occupation_.Previous( Entry, true );
 		}
 		//f Return the position of a new entry.
-		tym::row__ CreateEntry( err::handle Error = err::hUsual  )
+		r CreateEntry( err::handle Error = err::hUsual  )
 		{
-			tym::row__ Position = NONE;
+			epeios::row_t__ Position = NONE;
 
 			if ( Nombre_ == t ) 
 			{
@@ -292,14 +318,14 @@ namespace lst {
 			return Position;
 		}
 		//f Remove 'Entry', which MUST exists.
-		void Remove( tym::row__ Entry )
+		void Remove( r Entry )
 		{
 			Occupation_.Write( false, Entry );
 
 			Nombre_--;
 		}
 		//f Return true if 'Entry' exists, fals otherwise.
-		bso__bool Exists( tym::row__ Entry ) const
+		bso__bool Exists( r Entry ) const
 		{
 			return Occupation_.Read( Courant );
 		}

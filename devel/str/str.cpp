@@ -60,11 +60,11 @@ namespace str {
 		const string_ &String,
 		ostream &OStream )		// Can be optimized by using a buffer.
 	{
-		bch::size__ Amount = String.Amount();
+		epeios::size__ Amount = String.Amount();
 
 		if ( Amount != 0 )
 		{
-			bch::row__ P = 0;
+			epeios::row_t__ P = 0;
 
 			while ( P < Amount )
 				OStream.Put( String.Read( P++ ) );
@@ -109,7 +109,7 @@ namespace str {
 	// Convertit le contenu de 'String' en majuscule.
 	void ToUpper( string_ &String )
 	{
-		bch::row__ P = String.Amount();
+		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
 			String.Write( (char)toupper( String.Read( P ) ) , P );
@@ -118,7 +118,7 @@ namespace str {
 	// Convertit le contenu de 'String' en minuscule.
 	void ToLower( string_ &String )
 	{
-		bch::row__ P = String.Amount();
+		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
 			String.Write( (char)tolower( String.Read( P )) , P );
@@ -126,14 +126,14 @@ namespace str {
 
 	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
 	char *string_::Convert(
-		bch::row__ Position,
-		bch::size__ Quantity ) const
+		epeios::row__ Position,
+		epeios::size__ Quantity ) const
 	{
 		char *Pointeur = NULL;
 	ERRProlog
 	ERRBegin
-		if ( ( Quantity + Position ) > Amount() )
-			Quantity = Amount() - Position;
+		if ( ( Quantity + Position.V ) > Amount() )
+			Quantity = Amount() - Position.V;
 
 		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
 			ERRa();
@@ -152,7 +152,7 @@ namespace str {
 	// Could be easily optimized, would be when I have some time.
 	void string_::FilterOut( char Model )
 	{
-		bch::row__ Source, Dest = 0;
+		epeios::row_t__ Source, Dest = 0;
 		char Char;
 
 		for( Source = 0; Source < Amount(); Source++ ) {
@@ -168,7 +168,7 @@ namespace str {
 		char Old,
 		char New )
 	{
-		bch::row__ Source;
+		epeios::row_t__ Source;
 		char Char;
 
 		for( Source = 0; Source < Amount(); Source++ ) {
@@ -180,19 +180,19 @@ namespace str {
 	}
 
 
-	bch::row__ string_::Search(
+	epeios::row__ string_::Search(
 		const string_ &S,
-		bch::row__ Start ) const
+		epeios::row__ Start ) const
 	{
 		if ( S.Amount() <= Amount() ) {
-			bch::size__ Amount = S.Amount();
-			bch::row__ Limit = this->Amount() - Amount;
+			epeios::size__ Amount = S.Amount();
+			epeios::row_t__ Limit = this->Amount() - Amount;
 
-			while( ( Start <= Limit )
+			while( ( Start.V <= Limit )
 				&& Compare( S, *this, 0, Start, Amount ) )
-				Start++;
+				Start.V++;
 
-			if ( Start > Limit )
+			if ( Start.V > Limit )
 				return NONE;
 			else
 				return Start;
@@ -202,26 +202,26 @@ namespace str {
 		}
 	}
 
-	bch::row__ string_::Search(
+	epeios::row__ string_::Search(
 		char C,
-		bch::row__ Start ) const
+		epeios::row__ Start ) const
 	{
-		bch::row__ Limit = Amount();
+		epeios::row_t__ Limit = Amount();
 
-		while( ( Start < Limit )
+		while( ( Start.V < Limit )
 			&& ( Read( Start ) != C ) )
-			Start++;
+			Start.V++;
 
-		if ( Start >= Limit )
+		if ( Start.V >= Limit )
 			return NONE;
 		else
 			return Start;
 	}
 
-	bso__ulong string_::ToUL( bch::row__ &ErrP )
+	bso__ulong string_::ToUL( epeios::row__ &ErrP )
 	{
 		bso__ulong Result = 0;
-		bch::row__ P = First();
+		epeios::row__ P = First();
 		char C;
 
 		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {

@@ -105,7 +105,7 @@ ERRBegin
 			S2.Sync( 0 );
 //			S2 = Liste[0];
 
-	for ( tym::row__ i = 1; i < Liste.Amount(); i++ )
+		for ( epeios::row_t__ i = 1; i < Liste.Amount(); i++ )
 	{
 			S1 = S2();
 			S2.Sync( i );

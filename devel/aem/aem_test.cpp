@@ -44,7 +44,7 @@ ERREnd
 ERREpilog
 }
 
-aem::amount_extent_manager__< 5 > AEM;
+aem::amount_extent_manager__< 5, epeios::row__ > AEM;
 
 int main( int argc, char *argv[] )
 {

@@ -78,36 +78,35 @@ namespace dtr {
 	};
 
 	//c Browse structure.
-	struct browse__
+	template <typename r> struct browse__
 	{
 		browse Status;
-		tym::row__ P;
+		r P;
 		browse__( void )
 		{
 			Status = bUnknow;
 			P = NONE;
 		}
 		//f Initialization wih 'Root' as root'.
-		void Init( tym::row__ Root )
+		void Init( r Root )
 		{
 			Status = bRoot;
 			P = Root;
 		}
 	};
 
-
 	//c A dynamic tree.
-	class dynamic_tree_
+	template <typename r> class dynamic_tree_
 	{
 	public:
 		//r A binary tree.
-		btr::binary_tree_ Tree;
+		btr::E_BTREEt_( r ) Tree;
 		//r A queue
-		que::queue_ Queue;
+		que::E_QUEUEt_( r ) Queue;
 		struct s 
 		{
-			btr::binary_tree_::s Tree;
-			que::queue_::s Queue;
+			btr::E_BTREEt_( r )::s Tree;
+			que::E_QUEUEt_( r )::s Queue;
 		};
 		dynamic_tree_( s &S )
 		: Tree( S.Tree ),
@@ -146,8 +145,8 @@ namespace dtr {
 		}
 		//f 'First' becomes first of 'Node'.
 		void BecomeFirst( 
-			tym::row__ First,
-			tym::row__ Node )
+			r First,
+			r Node )
 		{
 			if ( Tree.Left( Node ) == NONE )
 				Tree.BecomeRight( First, Node );
@@ -158,8 +157,8 @@ namespace dtr {
 		}
 		//f 'Last' becomes last of 'Node'.
 		void BecomeLast( 
-			tym::row__ Last,
-			tym::row__ Node )
+			r Last,
+			r Node )
 		{
 			if ( Tree.Right( Node ) == NONE )
 				Tree.BecomeLeft( Last, Node );
@@ -170,10 +169,10 @@ namespace dtr {
 		}
 		//f 'Previous' becomes node previous to 'Node'.
 		void BecomePrevious(
-			tym::row__ Previous,
-			tym::row__ Node )
+			r Previous,
+			r Node )
 		{
-			tym::row__ Parent;
+			r Parent;
 
 			Queue.InsertItemBeforeNode( Previous, Node );
 
@@ -185,10 +184,10 @@ namespace dtr {
 		}
 		//f 'Next' becomes node next to 'Node'.
 		void BecomeNext(
-			tym::row__ Next,
-			tym::row__ Node )
+			r Next,
+			r Node )
 		{
-			tym::row__ Parent;
+			r Parent;
 
 			Queue.InsertItemAfterNode( Next, Node );
 
@@ -201,10 +200,10 @@ namespace dtr {
 	#if 0
 		// Swap 'Node1' and 'Node2'. Both nodes must be from the same queue.
 		void Swap(
-			tym::row__ Node1,
-			tym::row__ Node2 )
+			r Node1,
+			r Node2 )
 		{
-			tym::row__ Parent;
+			r Parent;
 
 			Queue.Swap( Node1, Node2 );
 
@@ -222,38 +221,38 @@ namespace dtr {
 		}
 	#endif
 		//f Return first node of 'Node'.
-		tym::row__ First( tym::row__ Node ) const
+		r First( r Node ) const
 		{
 			return Tree.Left( Node );
 		}
 		//f Return last node of 'Node'.
-		tym::row__ Last( tym::row__ Node ) const
+		r Last( r Node ) const
 		{
 			return Tree.Right( Node );
 		}
 		//f Return node previous to 'Node'.
-		tym::row__ Previous( tym::row__ Node ) const
+		r Previous( r Node ) const
 		{
 			return Queue.Previous( Node );
 		}
 		//f Return node next to 'Node'.
-		tym::row__ Next( tym::row__ Node ) const
+		r Next( r Node ) const
 		{
 			return Queue.Next( Node );
 		}
 		//f Return parent of 'Node'.
-		tym::row__ Parent( tym::row__ Node ) const
+		r Parent( r Node ) const
 		{
 			return Tree.Parent( Node );
 		}
 		/*f Return the first, then next node, or 'NONE' if no more,
 		using 'BrowseStruct'. In 'Status' is put the browse status
 		with the previous node.*/
-		tym::row__ Browse(
-			browse__ &BrowseStruct,
+		r Browse(
+			browse__<r> &BrowseStruct,
 			browse &BrowseStatus ) const
 		{
-			tym::row__ P = BrowseStruct.P;
+			r P = BrowseStruct.P;
 			BrowseStatus = BrowseStruct.Status;
 
 			if ( P != NONE ) {
@@ -277,7 +276,13 @@ namespace dtr {
 		}
 	};
 
-	AUTO( dynamic_tree )
+	AUTOt( dynamic_tree )
+
+	#define E_DTREEt( r )	dynamic_tree< r >
+	#define E_DTREEt_( r )	dynamic_tree_< r >
+
+	#define E_DTREE		E_DTREEt( epeios::row__ )
+	#define E_DTREE_	E_DTREEt_( epeios::row__ )
 	
 }
 

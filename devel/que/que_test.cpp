@@ -38,6 +38,7 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	que::E_QUEUE Queue;
 ERRBegin
 ERRErr
 ERREnd

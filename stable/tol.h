@@ -71,7 +71,7 @@ extern class ttr_tutor &TOLTutor;
 //d The default backup file extension.
 #define TOL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
 
-struct tol
+namespace tol
 {
 	//e Error code which can occurs during backup file operation.
 	enum rbf
@@ -123,33 +123,28 @@ public:
 #define TYPEDEF( type, alias )\
 struct alias\
 {\
-private:\
-	type Objet_;\
 public:\
+	type V;\
 	alias( void ) {}\
-	alias( type V )\
+	alias( type T )\
 	{\
-		Objet_ = V;\
-	}\
-	type &operator()( void ) const\
-	{\
-		return (type &)Objet_;\
+		V = T;\
 	}\
 	bool operator ==( alias A ) const\
 	{\
-		return Objet_ == A.Objet_;\
+		return V == A.V;\
 	}\
 	bool operator !=( alias A ) const\
 	{\
-		return Objet_ != A.Objet_;\
+		return V != A.V;\
 	}\
-	bool operator ==( type A ) const\
+	bool operator ==( type T ) const\
 	{\
-		return Objet_ == A;\
+		return V == T;\
 	}\
-	bool operator !=( type A ) const\
+	bool operator !=( type T ) const\
 	{\
-		return Objet_ != A;\
+		return V != T;\
 	}\
 }
 
@@ -159,6 +154,39 @@ a besoin de contenir une virgule, cette macro est là pour ça
 'TOL_2EN1( a, b )' donne 'a, b' */
 #define TOL_2EN1(a, b)	a, b
 #endif
+
+/*m Create the autonomous definition of the 'Name' object
+based on the 'Name'_ object and handling row of type 'r'. */
+#define AUTOt( Name )	\
+template <typename r> class Name\
+: public Name##_<r>\
+{\
+public:\
+	Name##_<r>::s static_;\
+	Name( void )\
+	: Name##_<r>( static_ )\
+	{\
+		reset( false );\
+	}\
+	~Name( void )\
+	{\
+		reset( true );\
+	}\
+	Name &operator =( const Name &S )\
+	{\
+		Name##_<r>::operator =( S );\
+\
+		return *this;\
+	}\
+	Name &operator =( const Name##_<r> &S )\
+	{\
+		Name##_<r>::operator =( S );\
+\
+		return *this;\
+	}\
+};
+
+
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
 #define AUTO( Name )	\
@@ -192,13 +220,13 @@ public:\
 
 //m Same as 'AUTO()' but with one template parameter of type 'TypeName'
 #define AUTO1t( Name, TypeName )	\
-template < TypeName t > class Name\
-: public Name##_<t>\
+template < TypeName t, typename r > class Name\
+: public Name##_<t,r>\
 {\
 public:\
-	Name##_<t>::s static_;\
+	Name##_<t,r>::s static_;\
 	Name ( void )\
-	: Name##_<t>( static_ )\
+	: Name##_<t,r>( static_ )\
 	{\
 		reset( false );\
 	}\
@@ -208,13 +236,13 @@ public:\
 	}\
 	Name &operator =( const Name &S )\
 	{\
-		Name##_<t>::operator =( S );\
+		Name##_<t,r>::operator =( S );\
 \
 		return *this;\
 	}\
-	Name &operator =( const Name##_<t> &S )\
+	Name &operator =( const Name##_<t,r> &S )\
 	{\
-		Name##_<t>::operator =( S );\
+		Name##_<t,r>::operator =( S );\
 \
 		return *this;\
 	}\
@@ -227,13 +255,13 @@ public:\
 
 //m Same as 'AUTO()' but with two template parameter.
 #define AUTO2( Name )	\
-template < class t, class st > class Name\
-: public Name##_<t,st>\
+template < class t, class st, typename r > class Name\
+: public Name##_<t,st,r>\
 {\
 public:\
-	Name##_<t,st>::s static_;\
+	Name##_<t,st,r>::s static_;\
 	Name ( void )\
-	: Name##_<t,st>( static_ )\
+	: Name##_<t,st,r>( static_ )\
 	{\
 		reset( false );\
 	}\
@@ -243,13 +271,13 @@ public:\
 	}\
 	Name &operator =( const Name &S )\
 	{\
-		Name##_<t,st>::operator =( S );\
+		Name##_<t,st,r>::operator =( S );\
 \
 		return *this;\
 	}\
-	Name &operator =( const Name##_<t,st> &S )\
+	Name &operator =( const Name##_<t,st,r> &S )\
 	{\
-		Name##_<t,st>::operator =( S );\
+		Name##_<t,st,r>::operator =( S );\
 \
 		return *this;\
 	}\
@@ -372,7 +400,7 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
-#define NAVt( Object, Type )\
+#define NAV( Object, Type )\
 	Type First( void ) const\
 	{\
 		return Object##First();\
@@ -402,9 +430,11 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 		return Object##IsEmpty();\
 	}
 
-	
+#if 0
+	// probably to delete	
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object'.
 #define NAV( Object )	NAVt( Object, tym::row__ )
+#endif
 
 //f Tell the remainder to give hand to the next thread.
 void TOLYield( void );
@@ -415,6 +445,54 @@ void TOLYield( void );
 Usefull to force a server to exit to obtain the profiling file. */
 void TOLForceExit( unsigned int Seconds );
 #endif
+
+namespace mmm {
+	class multimemory_;
+}
+
+namespace tol {
+
+	// A basic object 't' becomes a normal object.
+	template <class t, typename r = epeios::row__> class object_
+	{
+	public:
+		struct s
+		{
+			t Object;
+		} &S_;
+		object_( s &S )
+		: S_( S )
+		{}
+		void reset( bool = true )
+		{
+			// Pour des raisons de standardisation
+		}
+		void plug( class mmm::multimemory_ &)
+		{
+			// Pour des raisons de standardisation.
+		}
+		object_ &operator =( const object_ &O )
+		{
+			S_.Object = O.S_.Object;
+
+			return *this;
+		}
+		t &operator()( void )
+		{
+			return S_.Object;
+		}
+		const t &operator()( void ) const
+		{
+			return S_.Object;
+		}
+		operator t( void )
+		{
+			return S_.Object;
+		}
+	};
+
+	AUTO1( object )
+}
 
 /*$END$*/
 				  /********************************************/

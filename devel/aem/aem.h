@@ -87,14 +87,14 @@ namespace aem {
 	typedef bso__ushort step_size__;
 
 	//c A amount/extent manager.
-	class amount_extent_manager_
+	template <typename r> class amount_extent_manager_
 	{
 	private:
 		bso__bool OnlyGrowing_( void ) const
 		{
 			return ( S_.Misc & 0x80 ) != 0;
 		}
-		size__ Adjust_( size__ Size )
+		epeios::size__ Adjust_( epeios::size__ Size )
 		{
 			step_size__ Step = StepSize_();
 
@@ -103,7 +103,7 @@ namespace aem {
 
 			return S_.Misc & 0xffffff00;
 		}
-		size__ Extent_( void ) const
+		epeios::size__ Extent_( void ) const
 		{
 			if ( S_.Misc <= 0xff )
 				return S_.Amount;
@@ -118,7 +118,7 @@ namespace aem {
 		{
 			return StepValue_() * AEM_STEP_COEFFICIENT;
 		}
-		bso__bool Decrease_( size__ &Size )
+		bso__bool Decrease_( epeios::size__ &Size )
 		{
 			if ( Extent_() >= ( StepSize_() + Size ) ) {
 				Size = Adjust_( Size );
@@ -128,7 +128,7 @@ namespace aem {
 				return false;
 			}
 		}
-		bso__bool Increase_( size__ &Size )
+		bso__bool Increase_( epeios::size__ &Size )
 		{
 			Size = Adjust_( Size );
 
@@ -139,7 +139,7 @@ namespace aem {
 		the real size to allocate. If 'Mode' = 'mFit', 'Extent' is forced to be equal
 		to 'Size'. */
 		bso__bool AmountToAllocate(
-			size__ &Size,
+			epeios::size__ &Size,
 			mode Mode )
 		{
 			if ( Size == S_.Amount )
@@ -164,7 +164,7 @@ namespace aem {
 		}
 		/*f Force the amount and extent to exactly 'Size'.
 		Return true if the amount or the extent wasn't equal to 'Size'. */
-		bso__bool Force( size__ Size )
+		bso__bool Force( epeios::size__ Size )
 		{
 			bso__bool NotEqual = ( Extent() != Size ) || ( Amount() != Size );
 
@@ -180,8 +180,8 @@ namespace aem {
 		// Next seven bytes is the allocation step / 256.
 		// If the allocation step at 0, then the extent fits with the amount
 		// even in no decreasin state. */
-			size__ Misc;
-			size__ Amount;
+			epeios::size__ Misc;
+			epeios::size__ Amount;
 		} &S_;
 		amount_extent_manager_( s &S )
 		: S_( S )
@@ -209,12 +209,12 @@ namespace aem {
 			S_.Misc = 1;
 		}
 		//f Return the extent.
-		size__ Extent( void ) const
+		epeios::size__ Extent( void ) const
 		{
 			return Extent_();
 		}
 		//f Return the amount.
-		size__ Amount( void ) const
+		epeios::size__ Amount( void ) const
 		{
 			return S_.Amount;
 		}
@@ -248,7 +248,7 @@ namespace aem {
 			S_.Misc |= ( S_.Misc & 0xffffff3f ) | ( State ? 0x80 : 0 );
 		}
 		//f Return position of the last object of the set.
-		row__ Last( void ) const
+		r Last( void ) const
 		{
 			if ( Amount() )
 				return Amount() - 1;
@@ -256,7 +256,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return position of the first object of the set.
-		row__ First( void ) const
+		r First( void ) const
 		{
 			if ( Amount() )
 				return 0;
@@ -264,15 +264,15 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object after 'Current' (to the top).
-		row__ Next( row__ Current ) const
+		r Next( r Current ) const
 		{
-			if ( ++Current < Amount() )
+			if ( ++Current.V < Amount() )
 				return Current;
 			else
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
-		row__ Previous( row__ Current ) const
+		r Previous( r Current ) const
 		{
 			if ( Current )
 				return Current - 1 ;
@@ -286,17 +286,15 @@ namespace aem {
 		}
 	};
 
-	AUTO( amount_extent_manager )
-
 	//c Amount/extent manager for fixed size set of object.
-	template <int extent> class amount_extent_manager__
+	template <int extent, typename r> class amount_extent_manager__
 	{
 	private:
-		aem::size__ Amount_;
+		epeios::size__ Amount_;
 	protected:
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
-		bso__bool AmountToAllocate( aem::size__ &Size )
+		bso__bool AmountToAllocate( epeios::size__ &Size )
 		{
 			return false;
 		}
@@ -323,17 +321,17 @@ namespace aem {
 			Amount_ = 0;
 		}
 		//f Return the extent.
-		aem::size__ Extent( void ) const
+		epeios::size__ Extent( void ) const
 		{
 			return extent;
 		}
 		//f Return the amount.
-		aem::size__ Amount( void ) const
+		epeios::size__ Amount( void ) const
 		{
 			return Amount_;
 		}
 		//f Return position of the last object of the set.
-		aem::row__ Last( void ) const
+		r Last( void ) const
 		{
 			if ( Amount() )
 				return Amount() - 1;
@@ -341,7 +339,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return position of the first object of the set.
-		aem::row__ First( void ) const
+		r First( void ) const
 		{
 			if ( Amount() )
 				return 0;
@@ -349,7 +347,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object after 'Current' (to the top).
-		aem::row__ Next( aem::row__ Current ) const
+		r Next( r Current ) const
 		{
 			if ( ++Current < Amount() )
 				return Current;
@@ -357,7 +355,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
-		aem::row__ Previous( aem::row__ Current ) const
+		r Previous( r Current ) const
 		{
 			if ( Current )
 				return Current - 1 ;

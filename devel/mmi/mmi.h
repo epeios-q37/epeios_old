@@ -62,13 +62,15 @@ extern class ttr_tutor &MMITutor;
 
 namespace mmi {
 
+	using namespace epeios;
+
 	//t The type of an index in the indexed multimemory.
-	TYPEDEF( tym::row__, index__ );
+	TYPEDEF( epeios::row_t__, index__ );
 
 	struct descripteur__
 	{
 		mmm::descriptor__ Descripteur;
-		tym::size__ Capacite;
+		epeios::size__ Capacite;
 	};
 
 
@@ -78,56 +80,56 @@ namespace mmi {
 	private:
 	// fonctions
 		void AllouerPlus_(
-			tym::size__ CapaciteCourante,
-			tym::size__ NouvelleCapacite );
+			epeios::size__ CapaciteCourante,
+			epeios::size__ NouvelleCapacite );
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void AllouerMoins_(
-			tym::size__ CapaciteCourante,
-			tym::size__ NouvelleCapacite );
+			epeios::size__ CapaciteCourante,
+			epeios::size__ NouvelleCapacite );
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void Lire_(
 			index__ Index,
-			tym::row__ Position,
-			tym::bsize__ Taille,
-			tym::data__ *Tampon ) const
+			epeios::row_t__ Position,
+			epeios::bsize__ Taille,
+			epeios::data__ *Tampon ) const
 		{
-			Multimemoire.Read( Descripteurs(Index()).Descripteur, Position, Taille, Tampon );
+			Multimemoire.Read( Descripteurs(Index.V).Descripteur, Position, Taille, Tampon );
 		}
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
-			const tym::data__ *Tampon,
-			tym::bsize__ Taille,
+			const epeios::data__ *Tampon,
+			epeios::bsize__ Taille,
 			index__ Index,
-			tym::row__ Position )
+			epeios::row_t__ Position )
 		{
-			Multimemoire.Write( Tampon, Taille, Descripteurs(Index()).Descripteur, Position );
+			Multimemoire.Write( Tampon, Taille, Descripteurs(Index.V).Descripteur, Position );
 		}
 		// écrit à 'Position' de l'objet 'Index' 'Taille' octets de 'Tampon'
 		void Allouer_(
 			index__ Index,
-			tym::size__ Nombre )
+			epeios::size__ Nombre )
 		{
-			descripteur__ D = Descripteurs.Read( Index() );
+			descripteur__ D = Descripteurs.Read( Index.V );
 
 			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre );
 
 			D.Capacite = Nombre;
 
-			Descripteurs.Write( D, Index() );
+			Descripteurs.Write( D, Index.V );
 		}
 		// allocation pour 'Capacite' objets
 		void Liberer_( index__ Index )
 		{
-			descripteur__ D = Descripteurs.Read( Index() );
+			descripteur__ D = Descripteurs.Read( Index.V );
 
 			Multimemoire.Free( D.Descripteur );
 
 			D.Descripteur = 0;
 			D.Capacite = 0;
 
-			Descripteurs.Write( D, Index() );
+			Descripteurs.Write( D, Index.V );
 		}
 		// libère la mémoire d'index 'Index'
 	public:
@@ -163,7 +165,7 @@ namespace mmi {
 		}
 		void Copy(
 			const indexed_multimemory_ &O,
-			tym::size__ Size )
+			epeios::size__ Size )
 		{
 			Descripteurs.Allocate( Size );
 			Descripteurs.Write( O.Descripteurs, Size );
@@ -187,8 +189,8 @@ namespace mmi {
 		}
 		//f Allocate 'Capacity' memories in the indexed multimemory. 'ActualCapacity' is the actual capacity.
 		void Allocate(
-			tym::size__ Capacity,
-			tym::size__ ActualCapacity )
+			epeios::size__ Capacity,
+			epeios::size__ ActualCapacity )
 		{
 			if ( ActualCapacity > Capacity )
 				AllouerMoins_( ActualCapacity, Capacity );
@@ -198,25 +200,25 @@ namespace mmi {
 		//f Put 'Amount' bytes in 'Buffer' from the 'Index' memory at 'Position' .
 		void Read(
 			index__ Index,
-			tym::row__ Position,
-			tym::bsize__ Amount,
-			tym::data__ *Buffer ) const
+			epeios::row_t__ Position,
+			epeios::bsize__ Amount,
+			epeios::data__ *Buffer ) const
 		{
 			Lire_( Index, Position, Amount, Buffer );
 		}
 		//f Put 'Amount' bytes at 'Position' to the 'Index' memory from 'Buffer'.
 		void Write(
-			const tym::data__ *Buffer,
-			tym::bsize__ Amount,
+			const epeios::data__ *Buffer,
+			epeios::bsize__ Amount,
 			index__ Index,
-			tym::row__ Position )
+			epeios::row_t__ Position )
 		{
 			Ecrire_( Buffer, Amount, Index, Position );
 		}
 		//f Allocate 'Size' bytes in the 'Index' memory.
 		void Allocate(
 			index__ Index,
-			tym::size__ Size )
+			epeios::size__ Size )
 		{
 			Allouer_( Index, Size );
 		}
@@ -232,20 +234,20 @@ namespace mmi {
 			Multimemoire.Synchronize();
 		}
 		//f Return the size of the 'Index' memory.
-		tym::size__ Size( index__ Index ) const
+		epeios::size__ Size( index__ Index ) const
 		{
-			return Descripteurs( Index() ).Capacite;
+			return Descripteurs( Index.V ).Capacite;
 		}
 		void write(
 			flw::oflow___ &OFlow,
-			tym::size__ Size) const
+			epeios::size__ Size) const
 		{
 			Descripteurs.write( 0, Size, OFlow );
 			Multimemoire.write( OFlow );
 		}
 		void read(
 			flw::iflow___ &IFlow,
-			tym::size__ Size )
+			epeios::size__ Size )
 		{
 			Descripteurs.read( IFlow, 0, Size );
 			Multimemoire.read( IFlow );
@@ -271,7 +273,7 @@ namespace mmi {
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
 		virtual void MDRWrite(
-			const tym::data__ *Buffer,
+			const epeios::data__ *Buffer,
 			mdr::bsize__ Amount,
 			mdr::row__ Position )
 		{
@@ -323,7 +325,7 @@ namespace mmi {
 			return S_.Index;
 		}
 		//f Return the size of the memory.
-		tym::size__ Size( void )
+		epeios::size__ Size( void )
 		{
 			return Multimemoire_->Size( S_.Index );
 		}
@@ -397,7 +399,7 @@ namespace mmi {
 			return S_.Index;
 		}
 		//f Return the size of the memory.
-		tym::size__ Size( void )
+		epeios::size__ Size( void )
 		{
 			return Multimemoire_->Size( S_.Index );
 		}

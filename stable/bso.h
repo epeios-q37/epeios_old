@@ -359,67 +359,6 @@ typedef long double bso__lfloat;
 // Character
 typedef char bso__char;
 
-namespace mmm {
-	class multimemory_;
-}
-
-// A basic object 't' becomes a normal object.
-template <class t> class bso_object_
-{
-public:
-	struct s
-	{
-		t Object;
-	} &S_;
-	bso_object_( s &S )
-	: S_( S )
-	{}
-	void reset( bool = true )
-	{
-		// Pour des raisons de standardisation
-	}
-	void plug( class mmm::multimemory_ &)
-	{
-		// Pour des raisons de standardisation.
-	}
-	bso_object_ &operator =( const bso_object_ &O )
-	{
-		S_.Object = O.S_.Object;
-
-		return *this;
-	}
-	t &operator()( void )
-	{
-		return S_.Object;
-	}
-	const t &operator()( void ) const
-	{
-		return S_.Object;
-	}
-	operator t( void )
-	{
-		return S_.Object;
-	}
-};
-
-AUTO1( bso_object )
-
-
-template <class t> inline txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Stream,
-	const bso_object_<t> &O )
-{
-	return Stream << O();
-}
-
-template <class t> inline txf::text_iflow___ &operator >>(
-	txf::text_iflow___ &Stream,
-	bso_object_<t> &O )
-{
-	return Stream >> O();
-}
-
-
 
 /*$END$*/
 				  /********************************************/

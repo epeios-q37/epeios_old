@@ -66,13 +66,16 @@ extern class ttr_tutor &CTNTutor;
 
 
 #ifdef CPE__VC
-// VC++ had some difficulties with 'typename'.
-#define typename
+// VC++ had some difficulties with 'typenames'.
+#	define typename_
+#else
+#	define	typename_	typename
 #endif
 
 namespace ctn {
 
-	using tym::size__;
+	using epeios::size__;
+	using aem::amount_extent_manager_;
 
 
 	/* Remplit les parties statiques des objets 'Debut' à 'Fin' inclus
@@ -80,37 +83,37 @@ namespace ctn {
 	qui est de taille 'Taille' */
 	void Remplir_(
 		uym::untyped_memory_ &Memoire,
-		uym::row__ Debut,
-		uym::row__ Fin,
-		uym::data__ *Statique,
-		uym::bsize__ Taille );
+		epeios::row_t__ Debut,
+		epeios::row_t__ Fin,
+		epeios::data__ *Statique,
+		epeios::bsize__ Taille );
 
 
 	//c The base of a container. Internal use.
-	template <class st> class basic_container_
-	: public aem::amount_extent_manager_
+	template <class st, typename r> class basic_container_
+	: public aem::amount_extent_manager_<r>
 	{
 	public:
 		//r All the static parts.
-		tym::E_MEMORY_( st ) Statics;
+		tym::E_MEMORYt_( st, r ) Statics;
 		//r All the dynamic parts.
 		mmi::indexed_multimemory_ Dynamics;
 		struct s
-		: public aem::amount_extent_manager_::s
+		: public aem::amount_extent_manager_<r>::s
 		{
-			tym::E_MEMORY_( st )::s Statics;
+			tym::E_MEMORYt_( st, r )::s Statics;
 			mmi::indexed_multimemory_::s Dynamics;
 		};
 		basic_container_( s &S )
 		: Dynamics( S.Dynamics ),
 		  Statics( S.Statics ),
-		  amount_extent_manager_( S )
+		  amount_extent_manager_<r>( S )
 		{}
 		void reset( bool P = true )
 		{
 			Dynamics.reset( P );
 			Statics.reset( P );
-			amount_extent_manager_::reset( P );
+			amount_extent_manager_<r>::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
@@ -124,8 +127,8 @@ namespace ctn {
 			Statics.Allocate( O.Amount() );
 			Statics.Write( O.Statics, O.Amount() ); 
 
-			amount_extent_manager_::Force( O.Amount() );
-			amount_extent_manager_::operator =( O );
+			amount_extent_manager_<r>::Force( O.Amount() );
+			amount_extent_manager_<r>::operator =( O );
 
 			return *this;
 		}
@@ -144,21 +147,21 @@ namespace ctn {
 		{
 			Dynamics.Init();
 			Statics.Init();
-			amount_extent_manager_::Init();
-			amount_extent_manager_::SetStepValue( 0 );	//Preallocation not very usefull for containers.
+			this->amount_extent_manager_<r>::Init();
+			amount_extent_manager_<r>::SetStepValue( 0 );	//Preallocation not very usefull for containers.
 		}
 		//f Allocation room for 'Size' object of statical part 'ST'.
 		void Allocate(
-			uym::size__ Size,
+			epeios::size__ Size,
 			st &ST,
 			aem::mode Mode )
 		{
-			tym::size__ AncCap;
-			tym::size__ Extent = Size;
+			epeios::size__ AncCap;
+			epeios::size__ Extent = Size;
 
-			AncCap = amount_extent_manager_::Amount();
+			AncCap = amount_extent_manager_<r>::Amount();
 
-			if ( amount_extent_manager_::AmountToAllocate( Extent, Mode ) ) {
+			if ( amount_extent_manager_<r>::AmountToAllocate( Extent, Mode ) ) {
 				Dynamics.Allocate( Extent, AncCap );
 				Statics.Allocate( Extent );
 			}
@@ -166,7 +169,7 @@ namespace ctn {
 			if ( AncCap < Size )
 			{
 				if ( ( Size - AncCap ) > 1 )
-					Remplir_( this->Statics, AncCap, Size - 1, (uym::data__ *)&ST, sizeof( ST ) );
+					Remplir_( this->Statics, AncCap, Size - 1, (epeios::data__ *)&ST, sizeof( ST ) );
 				else
 					Statics.Write( ST, AncCap );
 			}
@@ -189,7 +192,7 @@ namespace ctn {
 		//f Adjust the extent/amount to 'Size'.
 		void Adjust( void )
 		{
-			tym::size__ Extent = this->Extent();
+			epeios::size__ Extent = this->Extent();
 
 			if ( amount_extent_manager_::Force( Size ) ) {
 				Dynamics.Allocate( Size, Extent );
@@ -200,7 +203,7 @@ namespace ctn {
 
 
 	//c The base of a volatile item. Internal use.
-	template <class st> class item_base_volatile__
+	template <class st, typename r> class item_base_volatile__
 	// La fonction 'Init()' est héritée de t
 	{
 	private:
@@ -215,7 +218,7 @@ namespace ctn {
 				if ( Conteneur_ == NULL )
 					ERRu();
 	#endif
-				Conteneur_->Statics.Write( ctn_S_, Pilote_.Index()() );
+				Conteneur_->Statics.Write( ctn_S_, Pilote_.Index().V );
 			}
 
 			Pilote_.Index( NONE );
@@ -223,7 +226,7 @@ namespace ctn {
 	protected:
 		// Conteneur auquel est rattaché l'élément.
 	//	ctn_conteneur_base_ < ctn_item_mono < t, st > :: s  > *Conteneur_;
-		basic_container_<st> *Conteneur_;
+		basic_container_<st, r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
 		mmi::indexed_multimemory_driver_ Pilote_;
@@ -263,14 +266,14 @@ namespace ctn {
 		}
 		// Rattache au conteneur 'Conteneur'.
 		void Init(
-			basic_container_<st> &Conteneur,
+			basic_container_<st, r> &Conteneur,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
 			Init( &Conteneur, Mode );
 		}
 		// Rattache au conteneur 'Conteneur'.
 		void Init(
-			basic_container_<st> *Conteneur,
+			basic_container_<st,r> *Conteneur,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
 			Conteneur_ = Conteneur;
@@ -278,13 +281,13 @@ namespace ctn {
 			Mode_ = Mode;
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
-		void Sync( tym::row__ Position )
+		void Sync( r Position )
 		{
-			if ( Pilote_.Index() != Position )
+			if ( Pilote_.Index() != Position.V )
 			{
 				Vider_();
 				Conteneur_->Statics.Read( Position, ctn_S_ );
-				Pilote_.Index( Position );
+				Pilote_.Index( Position.V );
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
@@ -303,7 +306,7 @@ namespace ctn {
 		}
 	};
 
-	template <class st> class item_base_const__
+	template <class st, typename r> class item_base_const__
 	// La fonction 'Init()' est héritée de t
 	{
 	private:
@@ -318,7 +321,7 @@ namespace ctn {
 	protected:
 		// Conteneur auquel est rattaché l'élément.
 	//	ctn_conteneur_base_ < ctn_item_mono < t, st > :: s  > *Conteneur_;
-		const basic_container_<st> *Conteneur_;
+		const basic_container_<st,r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
 		mmi::const_indexed_multimemory_driver_ Pilote_;
@@ -354,18 +357,18 @@ namespace ctn {
 			return Vide_();
 		}
 		// Rattache au conteneur 'Conteneur'.
-		void Init( const basic_container_<st> &Conteneur )
+		void Init( const basic_container_<st,r> &Conteneur )
 		{
 			Conteneur_ = &Conteneur;
 			Pilote_.Init( Conteneur.Dynamics );
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
-		void Caler(	tym::row__ Position )
+		void Caler(	r Position )
 		{
-			if ( Pilote_.Index() != Position )
+			if ( Pilote_.Index().V != Position.V )
 			{
 				Vider_();
-				Pilote_.Index( Position );
+				Pilote_.Index( Position.V );
 	#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
 					ERRu();
@@ -386,8 +389,8 @@ namespace ctn {
 
 	/*c To reach an object from a 'MCONTAINER_( t )'. Use 'MITEM( t )'
 	rather then directly this class. */
-	template <class t> class volatile_mono_item
-	: public item_base_volatile__< item_mono_statique__<typename t::s> >
+	template <class t, typename r> class volatile_mono_item
+	: public item_base_volatile__< item_mono_statique__<typename t::s>, r >
 	{
 	private:
 		t Objet_;
@@ -395,16 +398,16 @@ namespace ctn {
 		{
 			Objet_.reset( false );
 
-			Objet_.plug( item_base_volatile__< item_mono_statique__< typename t::s > >::Pilote_ );
+			Objet_.plug( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::Pilote_ );
 		}
 	public:
 		volatile_mono_item( void )
-		: Objet_( item_base_volatile__< item_mono_statique__< typename t::s > >::ctn_S_ )
+		: Objet_( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::ctn_S_ )
 		{
 			BaseConstructeur_();
 		}
 		// Remplace la fonction d'initialisation. 
-		volatile_mono_item( basic_container_< item_mono_statique__< typename t::s > > &Conteneur )
+		volatile_mono_item( basic_container_< item_mono_statique__< typename t::s >, r > &Conteneur )
 		: Objet_( item_base_volatile__< item_mono_statique__< typename t::s > >::ctn_S_ )
 		{
 			BaseConstructeur_();
@@ -421,7 +424,7 @@ namespace ctn {
 			ERRu();
 		}
 		//f Return the object at 'Position'.
-		t &operator()( tym::row__ Position )
+		t &operator()( r Position )
 		{
 			Sync( Position );
 			return Objet_;
@@ -435,18 +438,18 @@ namespace ctn {
 
 	/*c To reach an object of type from a 'MCONTAINER_( t )', but only for reading.
 	Use 'CMITEM( t )' rather then directly this class. */
-	template <class t> class const_mono_item
-	: public item_base_const__< item_mono_statique__< typename t::s > >
+	template <class t, typename r> class const_mono_item
+	: public item_base_const__< item_mono_statique__< typename t::s >, r >
 	{
 	private:
 		t Objet_;
 	public:
 		const_mono_item( void )
-		: Objet_( item_base_const__< item_mono_statique__< typename t::s > >::ctn_S_ )
+		: Objet_( item_base_const__< item_mono_statique__< typename_ t::s >, r >::ctn_S_ )
 		{
 			Objet_.reset( false );
 
-			Objet_.plug( item_base_const__< item_mono_statique__< typename t::s > >::Pilote_ );
+			Objet_.plug( item_base_const__< item_mono_statique__< typename_ t::s >, r >::Pilote_ );
 		}
 		virtual ~const_mono_item( void )
 		{
@@ -458,7 +461,7 @@ namespace ctn {
 			ERRu();
 		}
 		//f Return the object at 'Position'.
-		const t &operator()( tym::row__ Position )
+		const t &operator()( r Position )
 		{
 			Caler( Position );
 			return Objet_;
@@ -473,36 +476,38 @@ namespace ctn {
 
 
 	//s To reach an item from 'MCONTAINER_( Type )'.
-	#define E_MITEM( Type )	volatile_mono_item< Type >
+	#define E_MITEMt( Type, r )	volatile_mono_item< Type, r >
+	#define E_MITEM( Type )	E_MITEMt( Type, epeios::row__ )
 
 	//s To reach an item from 'MCONTAINER_( Type )' , but only for reading.
-	#define E_CMITEM( Type )	const_mono_item< Type >
+	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
+	#define E_CMITEM( Type )		E_CMITEMt( Type, epeios::row__ )
 
 	/*c Container for object of type 'Type', which need only one memory.
 	Use 'MCONTAINER_( Type )' rather then directly this class. */
-	template <class t> class mono_container_
-	: public basic_container_< item_mono_statique__<typename t::s> >
+	template <class t, typename r> class mono_container_
+	: public basic_container_< item_mono_statique__<typename t::s>, r >
 	{
 	private:
-		E_MITEM( t ) Ponctuel_;
+		E_MITEMt( t, r ) Ponctuel_;
 	public:
 		struct s
-		: public basic_container_< item_mono_statique__<typename t::s> >::s
+		: public basic_container_< item_mono_statique__<typename t::s>, r >::s
 		{};
 		mono_container_( s &S )
-		: basic_container_< item_mono_statique__<typename t::s> >( S )
+		: basic_container_< item_mono_statique__<typename_ t::s>, r >( S )
 		{
 			 Ponctuel_.Init( *this );
 		}
 		void reset( bool P = true )
 		{
 			Ponctuel_.Sync();
-			basic_container_< item_mono_statique__< typename t::s > >::reset( P );
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::reset( P );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Sync()' before. */
-		t &operator ()( tym::row__ Position )
+		t &operator ()( r Position )
 		{
 			return Ponctuel_( Position );
 		}
@@ -523,8 +528,8 @@ namespace ctn {
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
 		const t& operator()(
-			tym::row__ Position,
-			E_CMITEM( t ) &Item ) const
+			r Position,
+			E_CMITEMt( t, r ) &Item ) const
 		{
 			Item.Init( *this );
 
@@ -533,7 +538,7 @@ namespace ctn {
 		//f Write 'Object' at 'Position'.
 		void Write(
 			const t & Objet,
-			tym::row__ Position )
+			r Position )
 		{
 			operator()( Position ) = Objet;
 
@@ -541,10 +546,10 @@ namespace ctn {
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Read(
-			tym::row__ Position,
+			r Position,
 			t &Objet ) const
 		{
-			E_CMITEM( t ) Element;
+			E_CMITEMt( t, r ) Element;
 
 			Element.Init( *this );
 
@@ -552,23 +557,23 @@ namespace ctn {
 		}
 		//f Allocate room for 'Size' objects.
 		void Allocate(
-			tym::size__ Size,
-			aem::mode Mode = aem::mFast )
+			epeios::size__ Size,
+			aem::mode Mode = aem::mDefault )
 		{
-			E_MITEM( t ) E;
+			E_MITEMt( t, r ) E;
 
-			basic_container_< item_mono_statique__< typename t::s > >::Allocate( Size, E.ctn_S_, Mode );	// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::Allocate( Size, E.ctn_S_, Mode );	// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
 		}
 		mono_container_ &operator =( const mono_container_ &C )
 		{
-			basic_container_< item_mono_statique__< typename t::s > >::operator =( C );
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::operator =( C );
 
 			return *this;
 		}
 		//f Create a new object and return its position.
-		tym::row__ New( tym::size__ Size = 1 )
+		r New( epeios::size__ Size = 1 )
 		{
-			tym::row__ P = this->Amount();
+			epeios::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -579,71 +584,74 @@ namespace ctn {
 	AUTO1( mono_container )
 
 	//s Container of object of type 'Type', which need only one memory.
-	#define E_MCONTAINER_( Type ) mono_container_< Type >
-	#define E_MCONTAINER( Type ) mono_container< Type >
+	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
+	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
+
+	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, epeios::row__ )
+	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, epeios::row__ )
 
 	//c Same as mono_container_, but for use with object which have a 'Init()' function without parameters.
-	template <class t> class mono_extended_container_
-	: public mono_container_<t>
+	template <class t, typename r> class mono_extended_container_
+	: public mono_container_<t, r>
 	{
 	private:
 		// Create an initialized object. Return position of the created object.
-		tym::row__ Create_( void )
+		epeios::row_t__ Create_( void )
 		{
-			tym::row__ P = mono_container_<t>::New();
+			epeios::row_t__ P = mono_container_<t, r>::New();
 
-			mono_container_<t>::operator()( P ).Init();
+			mono_container_<t, r>::operator()( P ).Init();
 
 			return P;
 		}
 	public:
 		struct s
-		: public mono_container_<t>::s
+		: public mono_container_<t, r>::s
 		{};
 		mono_extended_container_( s &S )
-		: mono_container_<t>( S )
+		: mono_container_<t, r>( S )
 		{}
 		void reset( bool P = true )
 		{
-			mono_container_<t>::reset( P );
+			mono_container_<t, r>::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			mono_container_<t>::plug( M );
+			mono_container_<t, r>::plug( M );
 		}
 		mono_extended_container_ &operator =( const mono_extended_container_ &C )
 		{
-			mono_container_<t>::operator =( C );
+			mono_container_<t, r>::operator =( C );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			mono_container_<t>::Init();
+			mono_container_<t, r>::Init();
 		}
 		//f Create an initialized object. Return position of the created object.
-		tym::row__ Create( void )
+		r Create( void )
 		{
-			tym::row__ P = Create_();
+			epeios::row_t__ P = Create_();
 
-			mono_container_<t>::Sync();
+			mono_container_<t, r>::Sync();
 
 			return P;
 		}
 		//f Adding object 'Object'. Return position where added.
-		tym::row__ Add( const t &Object )
+		r Add( const t &Object )
 		{
-			tym::row__ P = Create_();
+			epeios::row_t__ P = Create_();
 
-			mono_container_<t>::operator()() = Object;
+			mono_container_<t, r>::operator()() = Object;
 
-			mono_container_<t>::Sync();
+			mono_container_<t, r>::Sync();
 
 			return P;
 		}
 		//f Remove 'Amount' objects from the end of the container.
-		void Truncate( tym::size__ Amount = 1 )
+		void Truncate( epeios::size__ Amount = 1 )
 		{
 	#ifdef CTN_DBG
 			if ( Amount > this->Amount() )
@@ -657,8 +665,12 @@ namespace ctn {
 	AUTO1( mono_extended_container )
 
 	//s Container of object of type 'Type', which need only one memory, and had a 'Init()' function without parameters.
-	#define E_XMCONTAINER_( Type ) mono_extended_container_< Type >
-	#define E_XMCONTAINER( Type ) mono_extended_container< Type >
+	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
+	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
+
+	#define E_XMCONTAINER_( Type )	E_XMCONTAINERt_( Type, epeios::row__ )
+	#define E_XMCONTAINER( Type )	E_XMCONTAINERt( Type, epeios::row__ )
+
 
 	template <class st> struct item_multi_statique__
 	: public st
@@ -668,8 +680,8 @@ namespace ctn {
 
 	/*c To reach an object from a 'CONTAINER_( t )'. Use 'ITEM( t )'
 	rather then directly this class. */
-	template <class t> class volatile_multi_item
-	: public item_base_volatile__< item_multi_statique__<typename t::s> >
+	template <class t, typename r> class volatile_multi_item
+	: public item_base_volatile__< item_multi_statique__<typename t::s>, r >
 	{
 	private:
 		t Objet_;
@@ -678,26 +690,26 @@ namespace ctn {
 			Objet_.reset( false );
 			Multimemoire.reset( false );
 
-			Multimemoire.plug( item_base_volatile__< item_multi_statique__< typename t::s > >::Pilote_ );
+			Multimemoire.plug( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
 			Objet_.plug( Multimemoire );
 		}
 	public:
 		mmm::multimemory_ Multimemoire;
 		volatile_multi_item( void )
-		: Objet_( item_base_volatile__< item_multi_statique__< typename t::s > >::ctn_S_ ),
-		  Multimemoire( item_base_volatile__< item_multi_statique__< typename t::s > >::ctn_S_.Multimemoire )
+		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
+		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
 		{
 			BaseConstructeur_();
 		}
 		// Remplace la fonction d'initialisation.
-		volatile_multi_item( basic_container_< item_multi_statique__< typename t::s > > &Conteneur )
-		: Objet_( item_base_volatile__< item_multi_statique__< typename t::s > >::ctn_S_ ),
-		  Multimemoire( item_base_volatile__< item_multi_statique__< typename t::s > >::ctn_S_.Multimemoire )
+		volatile_multi_item( basic_container_< item_multi_statique__< typename t::s >, r > &Conteneur )
+		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
+		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
 		{
 			BaseConstructeur_();
 
 			Multimemoire.Init();
-			item_base_volatile__< item_multi_statique__< typename t::s > >::Init( Conteneur );
+			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Conteneur );
 		}
 		~volatile_multi_item( void )
 		{
@@ -708,18 +720,18 @@ namespace ctn {
 		}
 		//f Initialize with container 'Container', in mode 'Mode'.
 		void Init(
-			basic_container_< item_multi_statique__< typename t::s > > &Container,
+			basic_container_< item_multi_statique__< typename t::s >, r > &Container,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
 			Multimemoire.Init();
-			item_base_volatile__< item_multi_statique__< typename t::s > >::Init( Container, Mode );
+			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container, Mode );
 		}
 		volatile_multi_item &operator =( const volatile_multi_item &O )
 		{
 			ERRu();
 		}
 		//f Return the object at 'Position'.
-		t &operator()( tym::row__ Position )
+		t &operator()( r Position )
 		{
 			Sync( Position );
 			return Objet_;
@@ -734,21 +746,21 @@ namespace ctn {
 
 	/*c To reach an item from a 'CONTAINER_( t )', but only in read-only mode.
 	Use 'CITEM( t )' rather then directly this class. */
-	template <class t> class const_multi_item
-	: public item_base_const__< item_multi_statique__<typename t::s> >
+	template <class t, typename r> class const_multi_item
+	: public item_base_const__< item_multi_statique__<typename t::s>, r >
 	{
 	private:
 		t Objet_;
 	public:
 		mmm::multimemory_ Multimemoire;
 		const_multi_item( void )
-		: Objet_( item_base_const__< item_multi_statique__< typename t::s > >::ctn_S_ ),
-		  Multimemoire( item_base_const__< item_multi_statique__< typename t::s > >::ctn_S_.Multimemoire )
+		: Objet_( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
+		  Multimemoire( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
 		{
 			Objet_.reset( false );
 			Multimemoire.reset( false );
 
-			Multimemoire.plug( item_base_const__< item_multi_statique__< typename t::s > >::Pilote_ );
+			Multimemoire.plug( item_base_const__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
 			Objet_.plug( Multimemoire );
 		}
 		virtual ~const_multi_item( void )
@@ -759,17 +771,17 @@ namespace ctn {
 			Multimemoire.reset( true );
 		}
 		//f Initializing with container 'Container'.
-		void Init( const basic_container_< item_multi_statique__<typename t::s> > &Container )
+		void Init( const basic_container_< item_multi_statique__<typename t::s>, r > &Container )
 		{
 			Multimemoire.Init();
-			item_base_const__< item_multi_statique__< typename t::s > >::Init( Container );
+			item_base_const__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
 		}
 		const_multi_item &operator =( const const_multi_item &O )
 		{
 			ERRu();
 		}
 		//f Return the object at 'Position'.
-		const t &operator()( tym::row__ Position )
+		const t &operator()( r Position )
 		{
 			Caler( Position );
 			return Objet_;
@@ -783,35 +795,37 @@ namespace ctn {
 
 
 	//s To reach an item from 'CONTAINER_( Type )'.
-	#define E_ITEM( Type )		volatile_multi_item< Type >
+	#define E_ITEMt( Type, r )		volatile_multi_item< Type, r >
+	#define E_ITEM( Type )			E_ITEMt( Type, epeios::row__ )
 
 	//s To reach an item from 'CONTAINER_( Type )', but only for reading.
-	#define E_CITEM( Type )	const_multi_item< Type >
+	#define E_CITEMt( Type,r  )		const_multi_item< Type,r  >
+	#define E_CITEM( Type )			E_CITEMt( Type, epeios::row__ )
 
 	/*c Container for objects 't', with static part 'st', which need more then one memory.
 	Use 'CONTAINER_( t )' rather then directly this class.*/
-	template <class t> class multi_container_
-	: public basic_container_< item_multi_statique__< typename t::s > >
+	template <class t, typename r> class multi_container_
+	: public basic_container_< item_multi_statique__< typename t::s >, r >
 	{
 	private:
-		E_ITEM( t ) Ponctuel_;
+		E_ITEMt( t, r ) Ponctuel_;
 	public:
 		struct s
-		: public basic_container_< item_multi_statique__< typename t::s > >::s {};
+		: public basic_container_< item_multi_statique__< typename t::s >, r >::s {};
 		multi_container_( s &S )
-		: basic_container_< item_multi_statique__< typename t::s > >( S )
+		: basic_container_< item_multi_statique__< typename_ t::s >, r >( S )
 		{
 			Ponctuel_.Init( *this );
 		}
 		void reset( bool P = true )
 		{
 			Ponctuel_.Sync();
-			basic_container_< item_multi_statique__< typename t::s > >::reset( P );
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::reset( P );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Sync()' before. */
-		t &operator ()( tym::row__ Position )
+		t &operator ()( r Position )
 		{
 			return Ponctuel_( Position );
 		}
@@ -832,8 +846,8 @@ namespace ctn {
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
 		const t& operator()(
-			tym::row__ Position,
-			E_CITEM( t ) &Item ) const
+			r Position,
+			E_CITEMt( t, r ) &Item ) const
 		{
 			Item.Init( *this );
 
@@ -842,7 +856,7 @@ namespace ctn {
 		//f Write 'Object' at 'Position'.
 		void Write(
 			const t & Object,
-			tym::row__ Position )
+			r Position )
 		{
 			operator()( Position ) = Object;
 
@@ -850,10 +864,10 @@ namespace ctn {
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Read(
-			tym::row__ Position,
+			r Position,
 			t &Objet ) const
 		{
-			E_CITEM( t ) Element;
+			E_CITEMt( t, r ) Element;
 
 			Element.Init( *this );
 
@@ -861,23 +875,23 @@ namespace ctn {
 		}
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
-			size__ Capacity,
-			aem::mode Mode = aem::mFast )
+			epeios::size__ Capacity,
+			aem::mode Mode = aem::mDefault )
 		{
-			E_ITEM( t ) E;
+			E_ITEMt( t, r ) E;
 
-			basic_container_< item_multi_statique__< typename t::s > >::Allocate( Capacity, E.ctn_S_, Mode );// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::Allocate( Capacity, E.ctn_S_, Mode );// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
 		}
 		multi_container_ &operator =( const multi_container_ &C )
 		{
-			basic_container_< item_multi_statique__< typename t::s > >::operator =( C );
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::operator =( C );
 
 			return *this;
 		}
 		//f Create a new object and return its position.
-		tym::row__ New( tym::size__ Size = 1 )
+		r New( epeios::size__ Size = 1 )
 		{
-			tym::row__ P = this->Amount();
+			epeios::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -888,71 +902,74 @@ namespace ctn {
 	AUTO1( multi_container )
 
 	//s Container of object of type 'Type', which need more then one memory.
-	#define E_CONTAINER_( Type ) multi_container_< Type >
-	#define E_CONTAINER( Type ) multi_container< Type >
+	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
+	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
+
+	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, epeios::row__ )
+	#define E_CONTAINER( Type )		E_CONTAINERt( Type, epeios::row__ )
 
 	//c Same as multi_container_, but for use with object which have a 'Init()' function without parameters.
-	template <class t> class multi_extended_container_
-	: public multi_container_< t >
+	template <class t, typename r> class multi_extended_container_
+	: public multi_container_< t, r >
 	{
 	private:
 		// Create an initialized object. Return position of the created object.
-		tym::row__ Create_( void )
+		r Create_( void )
 		{
-			tym::row__ P = multi_container_< t >::New();
+			r P = multi_container_< t, r >::New();
 
-			multi_container_< t >::operator()( P ).Init();
+			multi_container_< t, r >::operator()( P ).Init();
 
 			return P;
 		}
 	public:
 		struct s
-		: public multi_container_< t >::s
+		: public multi_container_< t, r >::s
 		{};
 		multi_extended_container_( s &S )
-		: multi_container_< t >( S )
+		: multi_container_< t, r >( S )
 		{}
 		void reset( bool P = true )
 		{
-			multi_container_< t >::reset( P );
+			multi_container_< t, r >::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			multi_container_< t >::plug( M );
+			multi_container_< t, r >::plug( M );
 		}
 		multi_extended_container_ &operator =( const multi_extended_container_ &C )
 		{
-			multi_container_< t >::operator =( C );
+			multi_container_< t, r >::operator =( C );
 			
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			multi_container_< t >::Init();
+			multi_container_< t, r >::Init();
 		}
 		//f Create an initialized object. Return position of the created object.
-		tym::row__ Create( void )
+		r Create( void )
 		{
-			tym::row__ P = Create_();
+			epeios::row_t__ P = Create_();
 
-			multi_container_< t >::Sync();
+			multi_container_< t, r >::Sync();
 
 			return P;
 		}
 		//f Adding object 'Object'. Return position where added.
-		tym::row__ Add( const t &Object )
+		r Add( const t &Object )
 		{
-			tym::row__ P = Create_();
+			r P = Create_();
 
-			multi_container_< t >::operator()() = Object;
+			multi_container_< t, r >::operator()() = Object;
 
-			multi_container_< t >::Sync();
+			multi_container_< t, r >::Sync();
 
 			return P;
 		}
 		//f Remove 'Amount' objects from the end of the container.
-		void Truncate( tym::size__ Amount = 1 )
+		void Truncate( epeios::size__ Amount = 1 )
 		{
 	#ifdef CTN_DBG
 			if ( Amount > this->Amount() )
@@ -966,14 +983,15 @@ namespace ctn {
 	AUTO1( multi_extended_container )
 
 	//s Container of object of type 'Type', and which have a 'Init()' function without parameters.
-	#define E_XCONTAINER_( Type ) multi_extended_container_< Type >
-	#define E_XCONTAINER( Type ) multi_extended_container< Type >
+	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >
+	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
+
+	#define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, epeios::row__ )
+	#define E_XCONTAINER( Type )	E_XCONTAINERt( Type, epeios::row__ )
+
 }
 
-#ifdef CPE__VC
-#undef typename
-#endif
-
+#undef typename_
 
 /*$END$*/
 				  /********************************************/

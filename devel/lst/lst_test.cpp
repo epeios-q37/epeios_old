@@ -37,6 +37,7 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	lst::E_LIST List;
 ERRBegin
 ERRErr
 ERREnd

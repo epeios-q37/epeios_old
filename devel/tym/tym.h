@@ -60,55 +60,56 @@ extern class ttr_tutor &TYMTutor;
 #include "flw.h"
 #include "uym.h"
 #include "mmm.h"
+#include "epeios.h"
 
 namespace tym {
-	using namespace uym;
+	using namespace epeios;
 
 	#define TYM_MAX_SIZE	UYM_MAX_SIZE
 
 	//c Typed memory core. Don't use; for internal use only.
-	template <typename t, typename b> class memory_core_
+	template <typename t, typename b, typename r> class memory_core_
 	: public b
 	{
 	private:
 		/* lit 'Quantite' objets à partir de 'Position' et les place dans 'Destination'
 		à la position 'Decalage' */
 		void Lire_(
-			tym::row__ Position,
-			tym::size__ Quantite,
+			epeios::row_t__ Position,
+			epeios::size__ Quantite,
 			memory_core_ &Destination,
-			tym::row__ Decalage ) const
+			epeios::row_t__ Decalage ) const
 		{
 			b::Read( ( Position * sizeof( t ) ), ( Quantite * sizeof( t ) ), Destination, ( Decalage * sizeof( t ) ) );
 		}
 		// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
 		void Lire_(
-			tym::row__ Position,
-			tym::bsize__ Nombre,
+			epeios::row_t__ Position,
+			epeios::bsize__ Nombre,
 			t *Tampon ) const
 		{
-			b::Read( Position * sizeof( t ), Nombre * sizeof( t ), (tym::data__ *)Tampon );
+			b::Read( Position * sizeof( t ), Nombre * sizeof( t ), (epeios::data__ *)Tampon );
 		}
 		// écrit 'Taille' objets de 'Tampon' à la position 'Position'
 		void Ecrire_(
 			const t *Tampon,
-			tym::bsize__ Nombre,
-			tym::row__ Position )
+			epeios::bsize__ Nombre,
+			epeios::row_t__ Position )
 		{
-			b::Write( (tym::data__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
+			b::Write( (epeios::data__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
 		}
 		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
 		à la position 'Decalage' */
 		void Ecrire_(
 			const memory_core_ &Source,
-			tym::size__ Quantite,
-			tym::row__ Position,
-			tym::row__ Decalage )
+			epeios::size__ Quantite,
+			epeios::row_t__ Position,
+			epeios::row_t__ Decalage )
 		{
 			b::Write( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
 		}
 		// allocation de 'Capacite' objets
-		void Allocate_( tym::size__ Size )
+		void Allocate_( epeios::size__ Size )
 		{
 			b::Allocate( ( Size * sizeof( t ) ) );
 		}
@@ -126,97 +127,97 @@ namespace tym {
 		}
 		//f Put 'Amount' objects at 'Position' to 'Buffer'.
 		void Read(
-			tym::row__ Position,
-			tym::bsize__ Amount,
+			r Position,
+			epeios::bsize__ Amount,
 			t *Buffer ) const
 		{
-			Lire_( Position, Amount, Buffer );
+			Lire_( Position.V, Amount, Buffer );
 		}
 		//f Put in 'Value' the object at 'Position'.
 		void Read(
-			tym::row__ Position,
+			r Position,
 			t &Value ) const
 		{
-			Lire_( Position, 1, &Value );
+			Lire_( Position.V, 1, &Value );
 		}
 		//f Put to 'Destination' at 'Offset' 'Quantity' objects at 'Position'.
 		void Read(
-			tym::row__ Position,
-			tym::size__ Quantity,
-			memory_core_<t,b> &Destination,
-			tym::row__ Offset = 0 ) const
+			r Position,
+			epeios::size__ Quantity,
+			memory_core_<t,b,r> &Destination,
+			r Offset = 0 ) const
 		{
-			Lire_( Position, Quantity, Destination, Offset );
+			Lire_( Position.V, Quantity, Destination, Offset.V );
 		}
 		//f Return the object at 'Position'.
-		t Read( tym::row__ Position ) const
+		t Read( r Position ) const
 		{
 			t V;
 
-			Lire_( Position, 1, &V );
+			Lire_( Position.V, 1, &V );
 
 			return V;
 		}
 		//f Write 'Amount' object from 'Buffer' at 'Position'.
 		void Write(
 			const t *Buffer,
-			tym::bsize__ Amount,
-			tym::row__ Position )
+			epeios::bsize__ Amount,
+			r Position )
 		{
-			Ecrire_( Buffer, Amount, Position );
+			Ecrire_( Buffer, Amount, Position.V );
 		}
 		//f Write 'Value' at 'Position'.
 		void Write(
 			const t &Valeur,
-			tym::row__ Position )
+			r Position )
 		{
-			Ecrire_( &Valeur, 1, Position );
+			Ecrire_( &Valeur, 1, Position.V );
 		}
 		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
 		void Write(
-			const memory_core_<t,b> &Source,
-			tym::size__ Quantity,
-			tym::row__ Position = 0,
-			tym::row__ Offset = 0 )
+			const memory_core_<t,b,r> &Source,
+			epeios::size__ Quantity,
+			r Position = 0,
+			r Offset = 0 )
 		{
-			Ecrire_( Source, Quantity, Position, Offset );
+			Ecrire_( Source, Quantity, Position.V, Offset.V );
 		}
 		//f Fill at 'Position' with 'Object' 'Count' times.
 		void Fill(
 			const t &Object,
-			tym::size__ Count,
-			tym::row__ Position = 0 )
+			epeios::size__ Count,
+			r Position = 0 )
 		{
-			b::Fill( (tym::data__ *)&Object, sizeof( t ), Count, Position * sizeof( t ) );
+			b::Fill( (data__ *)&Object, sizeof( t ), Count, Position.V * sizeof( t ) );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		tym::row__ Position(
+		r Position(
 			const t &Object,
-			tym::row__ Begin,
-			tym::row__ End )
+			r Begin,
+			r End )
 		{
-			tym::row__ Position;
+			row_t__ Position;
 
-			if ( ( Position = b::Position( (tym::data__ *)&Object, sizeof( t ), Begin * sizeof( t ), End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Position( (data__ *)&Object, sizeof( t ), Begin.V * sizeof( t ), End.V * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;
 		}
 		//f Allocate 'Size' objects.
-		void Allocate( tym::size__ Size )
+		void Allocate( epeios::size__ Size )
 		{
 			Allocate_( Size );
 		}
 		//f Return the object at 'Position'..
-		t operator ()( tym::row__ Position ) const
+		t operator ()( r Position ) const
 		{
 			return Read( Position );
 		}
 	};
 
 	/*c Memory of statical object of type 't'. */
-	template <typename t> class memory_
-	: public memory_core_< t, tym::untyped_memory_ >
+	template <typename t, typename r> class memory_
+		: public memory_core_< t, uym::untyped_memory_, r >
 	/* NOTA: See 'memory_core about' '::s'. */
 	{
 	private:
@@ -224,42 +225,42 @@ namespace tym {
 		mmm::multimemory_driver_ PiloteMultimemoire_;
 	public:
 		struct s
-		: public tym::memory_core_< t, tym::untyped_memory_ >::s
+		: public memory_core_< t, uym::untyped_memory_, r >::s
 		{
 			mmm::multimemory_driver_::s PiloteMultimemoire_;
 		};
 		memory_( s &S )
-		: memory_core_< t, tym::untyped_memory_ >( S ),
+		: memory_core_< t, uym::untyped_memory_, r >( S ),
 		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
 		{}
 		void reset( bool P = true )
 		{
-			memory_core_< t, tym::untyped_memory_ >::reset( P );
+			memory_core_< t, uym::untyped_memory_, r >::reset( P );
 			PiloteMultimemoire_.reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
 			PiloteMultimemoire_.Init( M );
-			memory_core_< t, tym::untyped_memory_ >::plug( PiloteMultimemoire_ );
+			memory_core_< t, uym::untyped_memory_, r >::plug( PiloteMultimemoire_ );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
 		{
 			PiloteMultimemoire_.reset();
-			memory_core_< t, tym::untyped_memory_ >::plug( Pilote );
+			memory_core_< t, uym::untyped_memory_, r >::plug( Pilote );
 		}
 		void write(
-			tym::row__ Position,
-			tym::size__ Quantity,
+			r Position,
+			epeios::size__ Quantity,
 			flw::oflow___ &OFlow ) const
 		{
-			memory_core_<t, tym::untyped_memory_ >::write( Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+			memory_core_<t, uym::untyped_memory_, r >::write( Position.V * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
 			flw::iflow___  &IFlow,
-			tym::row__ Position,
-			tym::size__ Quantite )
+			r Position,
+			epeios::size__ Quantite )
 		{
-			memory_core_<t, tym::untyped_memory_ >::read( IFlow, Position * sizeof( t ), Quantite * sizeof( t ) );
+			memory_core_<t, uym::untyped_memory_, r >::read( IFlow, Position.V * sizeof( t ), Quantite * sizeof( t ) );
 		}
 	};
 
@@ -272,36 +273,40 @@ namespace tym {
 	AUTO1( memory )
 
 	//m 'memory' would be often used, then create a special name.
-	#define E_MEMORY( t )	memory< t >
-	#define E_MEMORY_( t )	memory_< t >
+	#define E_MEMORYt( t, r )	memory< t, r >
+	#define E_MEMORYt_( t, r )	memory_< t, r >
+
+	#define E_MEMORY_( t )	E_MEMORYt_( t, epeios::row__ )
+	#define E_MEMORY( t )	E_MEMORYt( t, epeios::row__ )
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
-	template <class t> inline bso__sbyte Compare(
-		const E_MEMORY_( t ) &S1,
-		const E_MEMORY_( t ) &S2,
-		tym::row__ BeginS1,
-		tym::row__ BeginS2,
-		tym::size__ Quantity )
+	template <class t, typename r> inline bso__sbyte Compare(
+		const E_MEMORYt_( t, r ) &S1,
+		const E_MEMORYt_( t, r ) &S2,
+		r BeginS1,
+		r BeginS2,
+		epeios::size__ Quantity )
 	{
-		return uym::Compare( S1, S2, BeginS1 * sizeof( t ), BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
+		return uym::Compare( S1, S2, BeginS1.V * sizeof( t ), BeginS2.V * sizeof( t ), Quantity * sizeof( t ) );
 	}
 
 	/*c A static set of object of 'amount' objects of type 't' of size 'size'.
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
-	as template parameter. Use 'E_MEMORY__', it's easier. */
-	template <class t, int amount, int size> class memory__
-	: public memory_core_< t, uym::untyped_memory__< amount * size > >
+	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
+	template <class t, int amount, int size, typename r> class memory__
+	: public memory_core_< t, uym::untyped_memory__< amount * size >, r >
 	{
 	private:
-		memory_core_<t, uym::untyped_memory__< amount * size > >::s Static_;
+		memory_core_<t, uym::untyped_memory__< amount * size >, r >::s Static_;
 	public:
-		memory__( memory_core_<t, uym::untyped_memory__<  amount * size > >::s &S = *(memory_core_<t, uym::untyped_memory__<  amount * size > >::s *) NULL )	// To simplify use in 'SET'.
-		: memory_core_<t, uym::untyped_memory__< amount * size > >( Static_ )
+		memory__( memory_core_<t, uym::untyped_memory__<  amount * size >, r >::s &S = *(memory_core_<t, uym::untyped_memory__<  amount * size >, r >::s *) NULL )	// To simplify use in 'SET'.
+		: memory_core_<t, uym::untyped_memory__< amount * size >, r >( Static_ )
 		{}
 	};
 
 	//d A static set of 'amount' object of type 'Type'.
-	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ) > 
+	#define E_MEMORYt__( type, amount, r ) memory__< type, amount, sizeof( type ), r > 
+	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ), epeios::row__ > 
 }
 
 /*$END$*/

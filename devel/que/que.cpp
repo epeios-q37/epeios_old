@@ -54,15 +54,14 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-
-void que::queue_::Initialize_(
-	tym::row__ Begin,
-	tym::row__ End )
+void que::links_::Initialize(
+	epeios::row_t__ Begin,
+	epeios::row_t__ End )
 {
 	que::link__ L;
 
 	do {
-		Links.Write( L, Begin );
+		Write( L, Begin );
 	} while( Begin++ < End );
 }
 

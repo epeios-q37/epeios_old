@@ -74,6 +74,7 @@ des #define ci-dessous. */
 
 
 namespace bitbch {
+	using namespace epeios;
 
 	// Type du receptacle de bits.
 	typedef bso__ubyte		receptacle__;
@@ -82,24 +83,24 @@ namespace bitbch {
 	template <class t> class functions__
 	{
 	private:
-		static receptacle__ Offset_( tym::row__ Position )
+		static receptacle__ Offset_( row_t__ Position )
 		{
 			return (int)( Position % BITBCH_NB_BITS_RECEPTACLE );
 		}
 		// retourne l'offset correpondant à 'Position'
-		static tym::row__ Indice_( tym::row__ Position )
+		static row_t__ Indice_( row_t__ Position )
 		{
 			return Position / BITBCH_NB_BITS_RECEPTACLE;
 		}
 		// retourne l'indice correspondant à 'Position'
-		static bso__ubyte Masque_( tym::row__ Position )
+		static bso__ubyte Masque_( row_t__ Position )
 		{
 			return 1 << Offset_( Position );
 		}
 		// retourne le masque correspondant à 'Position'
 	public:
 		static bso__bool Lire(
-			tym::row__ Position,
+			row_t__ Position,
 			const t &Table )
 		{
 			return ( Table.Read( Indice_( Position ) ) & Masque_( Position ) ) != 0;
@@ -107,8 +108,8 @@ namespace bitbch {
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		static void Ecrire(
 			bso__bool Valeur,
-			tym::row__ Position,
-			t &Table )
+			row_t__ Position,
+			row_t__ &Table )
 		{
 			Table.Write( ( Table.Read(Indice_( Position )) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ), Indice_( Position ) );
 		}
@@ -117,22 +118,22 @@ namespace bitbch {
 
 	// N.B.: le contenu du tableau est inversé bit à bit
 	//c Bits set.
-	class bit_bunch_
-	: public aem::amount_extent_manager_
+	template <typename r> class bit_bunch_
+	: public aem::amount_extent_manager_<r>
 	{
 	private:
 		tym::size__ Convert_( tym::size__ Amount )
 		{
 			return Amount ? ( Amount - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 : 0;
 		}
-		bso__bool Lire_( tym::row__ Position ) const
+		bso__bool Lire_( row_t__ Position ) const
 		{
 			return functions__<tym::E_MEMORY_( receptacle__ )>::Lire( Position, Table );
 		}
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		void Ecrire_(
 			bso__bool Valeur,
-			tym::row__ Position )
+			row_t__ Position )
 		{
 			functions__<tym::E_MEMORY_( receptacle__ )>::Ecrire( Valeur, Position, Table );
 
@@ -186,19 +187,19 @@ namespace bitbch {
 		}
 	//	void Dup( bit_bunch &O );
 		//f Return the value at position 'Position'.
-		bso__bool Read( tym::row__ Position ) const
+		bso__bool Read( r Position ) const
 		{
 			return (int)Lire_( Position );
 		}
 		//f Return the value at position 'Position'.
-		bso__bool operator()( tym::row__ Position ) const
+		bso__bool operator()( r Position ) const
 		{
 			return Read( Position );
 		}
 		//f Write 'Value' at 'Position'.
 		void Write(
 			bso__bool Value,
-			tym::row__ Position )
+			r Position )
 		{
 			Ecrire_( Value, Position );
 		}
@@ -210,7 +211,7 @@ namespace bitbch {
 			Allouer_( Size, Mode );
 		}
 		//f Add 'Value' to the end of the set.
-		tym::row__ Add( bso__bool Value )
+		r Add( bso__bool Value )
 		{
 			Allouer_( Amount() + 1, aem::mDefault );
 
@@ -218,9 +219,9 @@ namespace bitbch {
 			return Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
-		tym::row__ New( tym::size__ Size = 1 )
+		r New( tym::size__ Size = 1 )
 		{
-			tym::row__ P = Amount();
+			row_t__ P = Amount();
 
 			Allocate( P + Size );
 
@@ -228,11 +229,12 @@ namespace bitbch {
 		}
 	};
 
-	AUTO( bit_bunch )
+	AUTOt( bit_bunch )
 
+#if 0	// Code in .cpp as deseapered ...
 	bso__bool ComparerBitABit_(
-		bit_bunch &E1,
-		bit_bunch &E2,
+		bit_bunch<r> &E1,
+		bit_bunch<r> &E2,
 		tym::size__ Nombre,
 		tym::row__ P1,
 		tym::row__ P2 );
@@ -301,17 +303,17 @@ namespace bitbch {
 	txf::text_iflow___ &operator >>(
 		txf::text_iflow___ &IStream,
 		bit_bunch &Set );
-
+#endif
 
 	//c A pairs of bits set.
-	class bibit_bunch_
+	template <typename r> class bibit_bunch_
 	{
 	public:
 		//o Les tableau des bits.
-		bit_bunch_ T1, T2;
+		bit_bunch_<r> T1, T2;
 		struct s
 		{
-			bit_bunch_::s T1, T2;
+			bit_bunch_<r>::s T1, T2;
 		};
 		bibit_bunch_( s &S )
 		: T1( S.T1 ),
@@ -343,18 +345,18 @@ namespace bitbch {
 		//f Write 'Value' tou 'Position'.
 		void Write(
 			receptacle__ Value,
-			tym::row__ Position )
+			r Position )
 		{
 			T1.Write(   Value & 1       , Position );
 			T2.Write( ( Value & 2 ) != 0, Position );	// to avoid warning on some compilers.
 		}
 		//f Return the value at 'Position'.
-		receptacle__ Read( tym::row__ Position ) const
+		receptacle__ Read( r Position ) const
 		{
 			return (int)T1.Read( Position ) | (int)( T2.Read( Position ) << 1 );
 		}
 		//f Return the value at position 'Position'.
-		receptacle__ operator()( tym::row__ Position ) const
+		receptacle__ operator()( r Position ) const
 		{
 			return Read( Position );
 		}
@@ -365,7 +367,7 @@ namespace bitbch {
 			T2.Allocate( Size );
 		}
 		//f Add 'Value'. Return position where added.
-		tym::row__ Add( receptacle__ Value )
+		r Add( receptacle__ Value )
 		{
 			T1.Add(   Value & 1 );
 			return T2.Add( ( Value & 2 ) != 0 );	// to avoid warning on some compilers.
@@ -373,7 +375,7 @@ namespace bitbch {
 	};
 
 
-	AUTO( bibit_bunch )
+	AUTOt( bibit_bunch )
 
 #if 0
 	/* Stocke dans 'D' 'O1' & 'O2', tous étant de taille 'Taille'.
@@ -430,13 +432,13 @@ namespace bitbch {
 	private:
 		receptacle__ Table_[t];
 	public:
-		receptacle__ Read( tym::row__ Position ) const
+		receptacle__ Read( row_t__ Position ) const
 		{
 			return Table_[Position];
 		}
 		void Write(
 			receptacle__ Value,
-			tym::row__ Position )
+			row_t__ Position )
 		{
 			Table_[Position] = Value;
 		}
@@ -452,15 +454,15 @@ namespace bitbch {
 		{
 			return t;
 		}
-		tym::row__ Suivant(
+		row_t__ Suivant(
 			bso__bool Value,
-			tym::row__ Courant ) const
+			row_t__ Courant ) const
 		{
 			return Suivant_( Table_, t, Value, Courant );
 		}
-		tym::row__ Precedent(
+		row_t__ Precedent(
 			bso__bool Value,
-			tym::row__ Courant ) const
+			row_t__ Courant ) const
 		{
 			return Precedent_( Table_, Value, Courant );
 		}
@@ -511,7 +513,7 @@ namespace bitbch {
 	}
 
 	//c A set of a maximum of 't' bits.
-	template <int t> class bit_bunch__
+	template <int t, typename r> class bit_bunch__
 	{
 	private:
 		receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> Table_;
@@ -521,19 +523,19 @@ namespace bitbch {
 			Reset();
 		}
 		//f Return the value at position 'Position'.
-		bso__bool Read( tym::row__ Position ) const
+		bso__bool Read( r Position ) const
 		{
 			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Lire( Position, Table_ );
 		}
 			//f Return the value at position 'Position'.
-		bso__bool operator()( tym::row__ Position )
+		bso__bool operator()( r Position )
 		{
 			return Read( Position );
 		}
 		//f Write 'Value' to 'Position'.
 		void Write(
 			bso__bool Value,
-			tym::row__ Position )
+			r Position )
 		{
 			functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Ecrire( Value, Position, Table_ );
 		}
@@ -546,8 +548,8 @@ namespace bitbch {
 				Table_.RAZ();
 		}
 		//f Return the position of the next bit after 'Current' at 'Value'.
-		tym::row__ Next(
-			tym::row__ Current,
+		r Next(
+			r Current,
 			bso__bool Value ) const
 		{
 			Current = Table_.Suivant( Value, Current );
@@ -558,14 +560,14 @@ namespace bitbch {
 			return Current;
 		}
 		//f Return the position of the previous bit after 'Current' at 'Value'.
-		tym::row__ Previous(
-			tym::row__ Courant,
+		r Previous(
+			r Courant,
 			bso__bool Value ) const
 		{
 			return Table_.Precedent( Value, Courant );
 		}
 		//f Return the first bit at 'Value'.
-		tym::row__ First( bso__bool Value ) const
+		r First( bso__bool Value ) const
 		{
 			if ( Read( 0 ) == Value )
 				return 0;
@@ -573,7 +575,7 @@ namespace bitbch {
 				return Next( 0, Value );
 		}
 		//f Return the last bit at 'Value'.
-		tym::row__ Last( bso__bool Value ) const
+		r Last( bso__bool Value ) const
 		{
 			if ( Lire( t - 1 ) == Value )
 				return t - 1;
@@ -586,17 +588,17 @@ namespace bitbch {
 			return t;
 		}
 		//f Return the position of the top of the set.
-		tym::row__ Top( void ) const
+		r Top( void ) const
 		{
 			return t - 1;
 		}
 		//f Return the position of the bottom of the set.
-		tym::row__ Bottom( void )
+		r Bottom( void )
 		{
 			return 0;
 		}
 		//f Return the position of the bit next to 'Current'.
-		tym::row__ Up( tym::row__ Current ) const
+		r Up( r Current ) const
 		{
 			if ( ++Current < t )
 				return Current;
@@ -604,7 +606,7 @@ namespace bitbch {
 				return NONE;
 		}
 		//f Return the position of the bit previous to 'Current'.
-		tym::row__ Down( tym::row__ Current ) const
+		r Down( r Current ) const
 		{
 			if ( Current )
 				return Current - 1 ;

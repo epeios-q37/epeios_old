@@ -63,25 +63,26 @@ extern class ttr_tutor &STKTutor;
 namespace stk {
 
 	using tym::memory_;
+	using aem::amount_extent_manager_;
 
 	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
-	template <class t> class stack_
+	template <class t, typename r> class stack_
 	: public tym::E_MEMORY_( t ),
-	  public aem::amount_extent_manager_
+	  public aem::amount_extent_manager_<r>
 	{
 	public:
 		struct s
 		: public tym::E_MEMORY_( t )::s,
-		  public aem::amount_extent_manager_::s
+		  public aem::amount_extent_manager_<r>::s
 		{};
 		stack_( s &S )
 		: tym::E_MEMORY_( t )( S ),
-		  aem::amount_extent_manager_( S )
+		  aem::amount_extent_manager_<r>( S )
 		{}
 		void reset( bool P = true )
 		{
 			E_MEMORY_( t )::reset( P );
-			amount_extent_manager_::reset( P );
+			amount_extent_manager_<r>::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
 		{
@@ -93,7 +94,7 @@ namespace stk {
 		}
 		stack_ &operator =( const stack_ &S )
 		{
-			amount_extent_manager_::operator =( S );
+			amount_extent_manager_<r>::operator =( S );
 			E_MEMORY_( t )::Allocate( S.Amount() );
 			E_MEMORY_( t )::Write( S, S.Amount() );
 
@@ -103,15 +104,15 @@ namespace stk {
 		void Init( void )
 		{
 			E_MEMORY_( t )::Init();
-			amount_extent_manager_::Init();
-			amount_extent_manager_::SetNoDecreasingState( true );
+			amount_extent_manager_<r>::Init();
+			amount_extent_manager_<r>::SetNoDecreasingState( true );
 		}
 		//f Place 'Object' at the top of the stack. Return the position where this object is put.
-		tym::row__ Push( t Object )
+		r Push( t Object )
 		{
 			tym::size__ Size = Amount() + 1;
 
-			if ( amount_extent_manager_::AmountToAllocate( Size, aem::mDefault ) )
+			if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
 				E_MEMORY_( t )::Allocate( Size );
 
 			E_MEMORY_( t )::Write( Object, Amount() - 1 );
@@ -126,7 +127,7 @@ namespace stk {
 
 			t Objet = E_MEMORY_( t )::Read( Size );
 
-			if ( amount_extent_manager_::AmountToAllocate( Size, Mode ) )
+			if ( amount_extent_manager_<r>::AmountToAllocate( Size, Mode ) )
 				E_MEMORY_( t )::Allocate( Size );
 
 			return Objet;
@@ -136,9 +137,12 @@ namespace stk {
 	AUTO1( stack )
 
 	//m A stack of static object of type 't'.
-	#define E_STACK_( t )	stack_< t >
+	#define E_STACKt_( t, r )	stack_< t, r >
+	#define E_STACKt( t, r )	stack< t, r >
 
-	#define E_STACK( t )	stack< t >
+	#define E_STACK( t )	E_STACKt( t, epeios::row__ )
+	#define E_STACK_( t )	E_STACKt_( t, epeios::row__ )
+
 }
 
 /*$END$*/

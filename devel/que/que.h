@@ -65,121 +65,119 @@ extern class ttr_tutor &QUETutor;
 namespace que {
 
 	using tym::memory_;
+	using namespace epeios;
 
-	namespace {
-		using tym::memory_;
-
-		// The link between queue nodes.
-		struct link__
+	// The link between queue nodes.
+	struct link__
+	{
+	public:
+		// Previous node.
+		row_t__ Previous;
+		// Next node.
+		row_t__ Next;
+		link__( void )
 		{
-		public:
-			// Previous node.
-			tym::row__ Previous;
-			// Next node.
-			tym::row__ Next;
-			link__( void )
-			{
-				Previous = Next = NONE;
-			}
-			// Return 'true' if node has next node, false otherwise.
-			bso__bool HasNext( void )
-			{
-				return Next != NONE;
-			}
-			// Return 'true' if node has previous node, false otherwise.
-			bso__bool HasPrevious( void )
-			{
-				return Previous != NONE;
-			}
-			// To help swapping. Replace all reference to 'Node1' by 'Node2'.
-			void Replace(
-				tym::row__ Node1,
-				tym::row__ Node2 )
-			{
-				if ( Previous == Node1 )
-					Previous = Node2;
-				else if ( Next == Node1 )
-					Next = Node2;
-			}
-		};
-
-
-		//c A set lof links.
-		class links_
-		: public E_MEMORY_( link__ ),
-		  public aem::amount_extent_manager_
+			Previous = Next = NONE;
+		}
+		// Return 'true' if node has next node, false otherwise.
+		bso__bool HasNext( void )
 		{
-		public:
-			struct s
-			: E_MEMORY_( link__ )::s,
-			aem::amount_extent_manager_::s
-			{};
-			links_( s &S )
-			: E_MEMORY_( link__ )( S ),
-			  amount_extent_manager_( S )
-			{}
-			void reset( bso__bool P = true )
-			{
-				amount_extent_manager_::reset( P );
-				E_MEMORY_( link__ )::reset( P );
-			}
-			links_ &operator =( const links_ &QL )
-			{
-				amount_extent_manager_::operator =( QL );
-				E_MEMORY_( link__ )::Allocate( QL.Amount() );
-				E_MEMORY_( link__ )::Write( QL, QL.Amount() );
+			return Next != NONE;
+		}
+		// Return 'true' if node has previous node, false otherwise.
+		bso__bool HasPrevious( void )
+		{
+			return Previous != NONE;
+		}
+		// To help swapping. Replace all reference to 'Node1' by 'Node2'.
+		void Replace(
+			row_t__ Node1,
+			row_t__ Node2 )
+		{
+			if ( Previous == Node1 )
+				Previous = Node2;
+			else if ( Next == Node1 )
+				Next = Node2;
+		}
+	};
 
-				return *this;
-			}
-			//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
-			void SetPrevious(
-				tym::row__ Item,
-				tym::row__ Value )
-			{
-				link__ L = E_MEMORY_( link__ )::Read( Item );
+	using namespace aem;
 
-				L.Previous = Value;
+	//c A set lof links.
+	class links_
+	: public E_MEMORY_( que::link__ ),
+	  public amount_extent_manager_<row__>
+	{
+	public:
+		struct s
+		: E_MEMORY_( que::link__ )::s,
+		amount_extent_manager_<row__>::s
+		{};
+		links_( s &S )
+		: E_MEMORY_( que::link__ )( S ),
+		amount_extent_manager_<row__>( S )
+		{}
+		void reset( bso__bool P = true )
+		{
+			amount_extent_manager_<row__>::reset( P );
+			E_MEMORY_( que::link__ )::reset( P );
+		}
+		links_ &operator =( const links_ &QL )
+		{
+			amount_extent_manager_<row__>::operator =( QL );
+			E_MEMORY_( que::link__ )::Allocate( QL.Amount() );
+			E_MEMORY_( que::link__ )::Write( QL, QL.Amount() );
 
-				E_MEMORY_( link__ )::Write( L, Item );
-			}
-			//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
-			void SetNext(
-				tym::row__ Item,
-				tym::row__ Value )
-			{
-				link__ L = E_MEMORY_( link__ )::Read( Item );
+			return *this;
+		}
+		//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
+		void SetPrevious(
+			row_t__ Item,
+			row_t__ Value )
+		{
+			que::link__ L = E_MEMORY_( que::link__ )::Read( Item );
 
-				L.Next = Value;
+			L.Previous = Value;
 
-				E_MEMORY_( link__ )::Write( L, Item );
-			}
-			//f Initialization.
-			void Init( void )
-			{
-				amount_extent_manager_::Init();
-				E_MEMORY_( link__ )::Init();
-			}
-			//f Allocate for 'Size'.
-			void Allocate(
-				tym::size__ Size,
-				aem::mode Mode = aem::mDefault )
-			{
-				if ( amount_extent_manager_::AmountToAllocate( Size, Mode ) )
-					E_MEMORY_( link__ )::Allocate( Size );
-			}
-		};
-	}
+			E_MEMORY_( que::link__ )::Write( L, Item );
+		}
+		//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
+		void SetNext(
+			row_t__ Item,
+			row_t__ Value )
+		{
+			que::link__ L = E_MEMORY_( que::link__ )::Read( Item );
+
+			L.Next = Value;
+
+			E_MEMORY_( que::link__ )::Write( L, Item );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			amount_extent_manager_<row__>::Init();
+			E_MEMORY_( que::link__ )::Init();
+		}
+		//f Allocate for 'Size'.
+		void Allocate(
+			tym::size__ Size,
+			aem::mode Mode = aem::mDefault )
+		{
+			if ( amount_extent_manager_<row__>::AmountToAllocate( Size, Mode ) )
+				E_MEMORY_( que::link__ )::Allocate( Size );
+		}
+		void Initialize(
+			row_t__ Begin,
+			row_t__ End );
+	};
 
 	//c A queue. Use 'QUEUE_' rather than directly this.
-	class queue_
+	template <typename r> class queue_
 	{
 	private:
-		void Initialize_(
-			tym::row__ Begin,
-			tym::row__ End );
 		void HandleNeighboursForSwap_(
-			link__ Link,
-			tym::row__ Node )
+			que::link__ Link,
+			epeios::row_t__ Node )
 		{
 			link__ L;
 
@@ -196,7 +194,7 @@ namespace que {
 			}
 		}
 	#ifdef QUE_DBG
-		void TestIfItem_( tym::row__ Item )
+		void TestIfItem_( epeios::row_t__ Item )
 		{
 			link__ L = Links( Item );
 
@@ -206,10 +204,10 @@ namespace que {
 	#endif
 	public:
 		//r Links between nodes.
-		links_ Links;
+		que::links_ Links;
 		struct s
 		{
-			links_::s Links;
+			que::links_::s Links;
 		};
 		queue_( s &S )
 		: Links( S.Links )
@@ -246,59 +244,59 @@ namespace que {
 			Links.Allocate( Size, Mode );
 
 			if ( Before < Size )
-				Initialize_( Before, Size - 1 );
+				Links.Initialize( Before, Size - 1 );
 		}
 		//f Return node next to 'Node'.
-		tym::row__ Next( tym::row__ Node ) const
+		r Next( r Node ) const
 		{
-			return Links( Node ).Next;
+			return Links( Node.V ).Next;
 		}
 		//f Return node previous to 'Node'.
-		tym::row__ Previous( tym::row__ Node ) const
+		r Previous( r Node ) const
 		{
-			return Links( Node ).Previous;
+			return Links( Node.V ).Previous;
 		}
 		//f Return true if 'Node' has next node.
-		bso__bool HasNext( tym::row__ Node ) const
+		bso__bool HasNext( r Node ) const
 		{
-			return Links( Node ).HasNext();
+			return Links( Node.V ).HasNext();
 		}
 		//f Return true if 'Node' has previous node.
-		bso__bool HasPrevious( tym::row__ Node ) const
+		bso__bool HasPrevious( r Node ) const
 		{
-			return Links( Node ).HasPrevious();
+			return Links( Node.V ).HasPrevious();
 		}
 		//f Insert 'Item' after 'Node'.
 		void InsertItemAfterNode(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 	#ifdef QUE_DBG
-			TestIfItem_( Item );
+			TestIfItem_( Item.V );
 	#endif
-			link__ LNode = Links( Node );
-			link__ LItem = Links( Item );
+			link__ LNode = Links( Node.V );
+			link__ LItem = Links( Item.V );
 
 			if ( LNode.HasNext() )
-				Links.SetPrevious( LNode.Next, Item );
+				Links.SetPrevious( LNode.Next, Item.V );
 
 			LItem.Next = LNode.Next;
-			LItem.Previous = Node;
-			LNode.Next = Item;
+			LItem.Previous = Node.V;
+			LNode.Next = Item.V;
 
-			Links.Write( LNode, Node );
-			Links.Write( LItem, Item );
+			Links.Write( LNode, Node.V );
+			Links.Write( LItem, Item.V );
 		}
 		//f Insert 'Item' before 'Node'.
 		void InsertItemBeforeNode(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 	#ifdef QUE_DBG
-			TestIfItem_( Item );
+			TestIfItem_( Item.V );
 	#endif
-			link__ LNode = Links( Node );
-			link__ LItem = Links( Item );
+			link__ LNode = Links( Node.V );
+			link__ LItem = Links( Item.V );
 
 			if ( LNode.HasPrevious() )
 				Links.SetNext( LNode.Previous, Item );
@@ -307,13 +305,13 @@ namespace que {
 			LItem.Next = Node;
 			LNode.Previous = Item;
 
-			Links.Write( LNode, Node );
-			Links.Write( LItem, Item );
+			Links.Write( LNode, Node.V );
+			Links.Write( LItem, Item.V );
 		}
 		//f Remove node 'Node'.
-		void Remove( tym::row__ Node )
+		void Remove( r Node )
 		{
-			link__ LNode = Links( Node );
+			link__ LNode = Links( Node.V );
 
 			if ( LNode.HasNext() )
 				Links.SetPrevious( LNode.Next, LNode.Previous );
@@ -323,7 +321,7 @@ namespace que {
 
 			LNode.Next = LNode.Previous = NONE;
 
-			Links.Write( LNode, Node );
+			Links.Write( LNode, Node.V );
 		}
 		//f Return the extent of the queue.
 		tym::size__ Extent( void ) const
@@ -337,11 +335,11 @@ namespace que {
 		}
 		//f Swap 'Node1' with 'Node2'.
 		void Swap(
-			tym::row__ Node1,
-			tym::row__ Node2 )
+			r Node1,
+			r Node2 )
 		{
-			link__ LNode1 = Links.Read( Node1 );
-			link__ LNode2 = Links.Read( Node2 );
+			link__ LNode1 = Links.Read( Node1.V );
+			link__ LNode2 = Links.Read( Node2.V );
 
 			HandleNeighboursForSwap_( LNode1, Node2 );
 			HandleNeighboursForSwap_( LNode2, Node1 );
@@ -349,25 +347,28 @@ namespace que {
 			LNode1.Replace( Node2, Node1 );
 			LNode2.Replace( Node1, Node2 );
 
-			Links.Write( LNode1, Node2 );
-			Links.Write( LNode2, Node1 );
+			Links.Write( LNode1, Node2.V );
+			Links.Write( LNode2, Node1.V );
 		}
 	};
 
-	AUTO( queue )
+	AUTOt( queue )
 
 	//d A queue.
-	#define E_QUEUE_	queue_
-	#define E_QUEUE	queue
+	#define E_QUEUEt_( r )		queue_< r >
+	#define E_QUEUEt(r )		queue< r >
+
+	#define E_QUEUE_	E_QUEUEt_( epeios::row__ )
+	#define E_QUEUE		E_QUEUEt( epeios::row__ )
 
 
 
 	//c A queue manager. The managed queue must be provided at each call ('Queue' parameter).
-	class queue_manager__
+	template <typename r> class queue_manager__
 	{
 	private:
-		tym::row__ Head_;
-		tym::row__ Tail_;
+		r Head_;
+		r Tail_;
 		tym::size__ Amount_;
 	#ifdef QUE_DBG
 		void Test_( void ) const
@@ -395,15 +396,15 @@ namespace que {
 			return *this;
 		}
 		//f Initialization with queue 'Queue'.
-		void Init( E_QUEUE_ & )
+		void Init( que::E_QUEUEt_( r ) & )
 		{
 			Head_ = Tail_ = NONE;
 			Amount_ = 0;
 		}
 		//f Create the queue with item 'Item'.
 		void Create(
-			tym::row__ Item,
-			E_QUEUE_ & )
+			r Item,
+			que::E_QUEUEt_(r) & )
 		{
 	#ifdef QUE_DBG
 			if ( ( Head_ != NONE ) || ( Tail_ != NONE ) )
@@ -415,8 +416,8 @@ namespace que {
 		}
 		//f Insert 'Item' after 'Node'.
 		void InsertItemAfterNode(
-			tym::row__ Item,
-			tym::row__ Node,
+			r Item,
+			r Node,
 			E_QUEUE_ &Queue )
 		{
 	#ifdef QUE_DBG
@@ -431,8 +432,8 @@ namespace que {
 		}
 		//f Insert 'Item' Before 'Node'.
 		void InsertItemBeforeNode(
-			tym::row__ Item,
-			tym::row__ Node ,
+			r Item,
+			r Node ,
 			E_QUEUE_ &Queue )
 		{
 	#ifdef QUE_DBG
@@ -447,7 +448,7 @@ namespace que {
 		}
 		//f Remove 'Node".
 		void Remove(
-			tym::row__ Node,
+			r Node,
 			E_QUEUE_ &Queue  )
 		{
 	#ifdef QUE_DBG
@@ -474,28 +475,28 @@ namespace que {
 			return !Amount_;
 		}
 		//f Return the head.
-		tym::row__ Head( const E_QUEUE_ & ) const
+		r Head( const E_QUEUE_ & ) const
 		{
 			return Head_;
 		}
 		//f Return first node.
-		tym::row__ First( const E_QUEUE_ & ) const
+		r First( const E_QUEUE_ & ) const
 		{
 			return Head_;
 		}
 		//f Return the tail.
-		tym::row__ Tail( const E_QUEUE_ & ) const
+		r Tail( const E_QUEUE_ & ) const
 		{
 			return Tail_;
 		}
 		//f Return last node.
-		tym::row__ Last( const E_QUEUE_ & ) const
+		r Last( const E_QUEUE_ & ) const
 		{
 			return Tail_;
 		}
 		//f Return node next to 'Node'.
-		tym::row__ Next(
-			tym::row__ Node,
+		r Next(
+			r Node,
 			const E_QUEUE_ &Queue )
 		{
 	#ifdef QUE_DBG
@@ -507,8 +508,8 @@ namespace que {
 			return Queue.Next( Node );
 		}
 		//f Return node previous to 'Node'.
-		tym::row__ Previous(
-			tym::row__ Node,
+		r Previous(
+			r Node,
 			const E_QUEUE_ &Queue ) const
 		{
 	#ifdef QUE_DBG
@@ -521,8 +522,8 @@ namespace que {
 		}
 		//f Swap 'Node1' and 'Node2'.
 		void Swap(
-			tym::row__ Node1,
-			tym::row__ Node2,
+			r Node1,
+			r Node2,
 			E_QUEUE_ &Queue  )
 		{
 	#ifdef QUE_DBG
@@ -544,12 +545,12 @@ namespace que {
 
 			
 	//c A managed queue (with head and tail). Use 'MQUEUE_' rather then directly this class.
-	class managed_queue_
+	template <typename r> class managed_queue_
 	{
 	public:
-		E_QUEUE_ Queue;
+		E_QUEUEt_( r ) Queue;
 		struct s {
-			E_QUEUE_::s Queue;
+			E_QUEUEt_( r )::s Queue;
 			queue_manager__ QueueManager;
 		} &S_;
 		void reset( bso__bool P = true )
@@ -590,26 +591,26 @@ namespace que {
 			Queue.Allocate( Size, Mode );
 		}
 		//f Create the queue with item 'Item'.
-		void Create( tym::row__ Item )
+		void Create( r Item )
 		{
 			S_.QueueManager.Create( Item, Queue );
 		}
 		//f Insert 'Item' after 'Node'.
 		void InsertItemAfterNode(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 			S_.QueueManager.InsertItemAfterNode( Item, Node, Queue );
 		}
 		//f Insert 'Item' Before 'Node'.
 		void InsertItemBeforeNode(
-			tym::row__ Item,
-			tym::row__ Node )
+			r Item,
+			r Node )
 		{
 			S_.QueueManager.InsertItemBeforeNode( Item, Node, Queue );
 		}
 		//f Remove 'Node".
-		void Remove( tym::row__ Node )
+		void Remove( r Node )
 		{
 			S_.QueueManager.Remove( Node, Queue );
 		}
@@ -629,45 +630,45 @@ namespace que {
 			return S_.QueueManager.IsEmpty();
 		}
 		//f Return the head.
-		tym::row__ Head( void ) const
+		r Head( void ) const
 		{
 			return S_.QueueManager.Head( Queue );
 		}
 		//f Return first node.
-		tym::row__ First( void ) const
+		r First( void ) const
 		{
 			return S_.QueueManager.First( Queue );
 		}
 		//f Return the tail.
-		tym::row__ Tail( void ) const
+		r Tail( void ) const
 		{
 			return S_.QueueManager.Tail( Queue );
 		}
 		//f Return last node.
-		tym::row__ Last( void ) const
+		r Last( void ) const
 		{
 			return S_.QueueManager.Last( Queue );;
 		}
 		//f Return node next to 'Node'.
-		tym::row__ Next( tym::row__ Node ) const
+		r Next( r Node ) const
 		{
 			return S_.QueueManager.Next( Node, Queue );
 		}
 		//f Return node previous to 'Node'.
-		tym::row__ Previous( tym::row__ Node ) const
+		r Previous( r Node ) const
 		{
 			return S_.QueueManager.Previous( Node, Queue );
 		}
 		//f Swap 'Node1' and 'Node2'.
 		void Swap(
-			tym::row__ Node1,
-			tym::row__ Node2 )
+			r Node1,
+			r Node2 )
 		{
 			S_.QueueManager.Swap( Node1, Node2, Queue );
 		}
 	};
 
-	AUTO( managed_queue )
+	AUTOt( managed_queue )
 
 	//d A managed queue.
 	#define E_MQUEUE_		managed_queue_

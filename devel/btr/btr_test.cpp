@@ -38,6 +38,7 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	btr::E_BTREE Tree;
 ERRBegin
 ERRErr
 ERREnd

@@ -54,36 +54,12 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-tym::row__ lst::list_::Successeur_( tym::row__ Element ) const
-{
-	tym::size__ Nombre = amount_extent_manager_::Amount();
-
-	while( ( ++Element < Nombre ) && !Existe_( Element ) );
-
-	if ( Element >= Nombre )
-		return NONE;
-	else
-		return Element;
-}
-
-// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-tym::row__ lst::list_::Predecesseur_( tym::row__ Element ) const
-{
-	bso__bool Trouve = false;
-
-	while( ( Element > 0 ) && !( Trouve = Existe_( --Element ) ) );
-
-	if ( Trouve )
-		return Element;
-	else
-		return NONE;
-}
-
 // Retourne vrai si 'Element' existe dans la liste.
-bso__bool lst::list_::Existe_( tym::row__ Position ) const
+bso__bool lst::Existe_(
+	epeios::row_t__ Position,
+	const stk::E_STACK_( epeios::row_t__ ) &Libres )
 {
-	tym::row__ Nombre = Libres.Amount();
+	tym::row_t__ Nombre = Libres.Amount();
 	bso__bool Trouve = false;
 
 	while ( Nombre-- && !( Trouve = ( Libres( Nombre ) == Position ) ) );
@@ -92,7 +68,34 @@ bso__bool lst::list_::Existe_( tym::row__ Position ) const
 }
 
 
+// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
+epeios::row_t__ lst::Successeur_(
+	epeios::row_t__ Element,
+	epeios::size__ Amount,
+	const stk::E_STACK_( epeios::row_t__ ) &Libres )
+{
+	while( ( ++Element < Amount ) && !Existe_( Element, Libres ) );
 
+	if ( Element >= Amount )
+		return NONE;
+	else
+		return Element;
+}
+
+// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
+epeios::row_t__ lst::Predecesseur_(
+	tym::row_t__ Element,
+	const stk::E_STACK_( epeios::row_t__ ) &Libres )
+{
+	bso__bool Trouve = false;
+
+	while( ( Element > 0 ) && !( Trouve = Existe_( --Element, Libres ) ) );
+
+	if ( Trouve )
+		return Element;
+	else
+		return NONE;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -109,15 +109,15 @@ namespace str {
 		//f Write 'String' at 'Position'.
 		void Write(
 			const char *String,
-			bch::row__ Position = 0 )
+			epeios::row__ Position = 0 )
 		{
 			E_BUNCH_( bso__char )::WriteAndAdjust( String, strlen( String ), Position );
 		}
 		//f Write 'Amount' char from 'String' at 'Position'.
 		void Write(
 			const char *Buffer,
-			bch::bsize__ Amount,
-			bch::row__ Position )
+			epeios::bsize__ Amount,
+			epeios::row__ Position )
 		{
 			E_BUNCH_( bso__char )::Write( Buffer, Amount, Position );
 		}
@@ -125,9 +125,9 @@ namespace str {
 		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
 		void Write(
 			const string_ &Source,
-			bch::size__ Quantity,
-			bch::row__ Position = 0,
-			bch::row__ Offset = 0 )
+			epeios::size__ Quantity,
+			epeios::row__ Position = 0,
+			epeios::row__ Offset = 0 )
 		{
 			E_BUNCH_( bso__char )::Write( Source, Quantity, Position, Offset );
 		}
@@ -135,36 +135,36 @@ namespace str {
 		//f Write 'C' at 'Position'.
 		void Write(
 			char C,
-			bch::row__ Position)
+			epeios::row__ Position)
 		{
 			E_BUNCH_( bso__char )::Write( C, Position );
 		}
 		//f Add 'String' and return position where added.
-		bch::row__ Add( const char *String )
+		epeios::row__ Add( const char *String )
 		{
 			return E_BUNCH_( bso__char )::Add( String, strlen( String ) );
 		}
 		//f Add 'Amount' char from 'String'. Return position wherer added.
-		bch::row__ Add(
+		epeios::row__ Add(
 			const char *String,
-			bch::bsize__ Amount )
+			epeios::bsize__ Amount )
 		{
 			return E_BUNCH_( bso__char )::Add( String, Amount );
 		}
 		//f Add 'C'. Return position where added.
-		bch::row__ Add( char C )
+		epeios::row__ Add( char C )
 		{
 			return E_BUNCH_( bso__char )::Add( C );
 		}
 		//f Add 'Sring'. Return position where added.
-		bch::row__ Add( const string_ &String )
+		epeios::row__ Add( const string_ &String )
 		{
 			return E_BUNCH_( bso__char )::Add( String );
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(
-			bch::row__ Position = 0,
-			bch::size__ Amount = TYM_MAX_SIZE ) const;
+			epeios::row__ Position = 0,
+			epeios::size__ Amount = TYM_MAX_SIZE ) const;
 		//f Filter out the 'Model' charactere.
 		void FilterOut( char Model );
 		//f Replace the 'Old' char with the 'New' one.
@@ -172,16 +172,16 @@ namespace str {
 			char Old,
 			char New );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
-		bch::row__ Search(
+		epeios::row__ Search(
 			const string_ &S,
-			bch::row__ Start = 0 ) const;
+			epeios::row__ Start = 0 ) const;
 		//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'NONE' if no occurence.
-		bch::row__ Search(
+		epeios::row__ Search(
 			char C,
-			bch::row__ Start = 0 ) const;
+			epeios::row__ Start = 0 ) const;
 		/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
-		bso__ulong ToUL( bch::row__ &ErrP = *(bch::row__ *)NULL );
+		bso__ulong ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL );
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.
@@ -203,22 +203,22 @@ namespace str {
 	inline bso__sbyte Compare(
 		const string_ &S1,
 		const string_ &S2,
-		bch::row__ BeginS1,
-		bch::row__ BeginS2,
-		bch::size__ Amount )
+		epeios::row__ BeginS1,
+		epeios::row__ BeginS2,
+		epeios::size__ Amount )
 	{
-		return bch::Compare( S1,S2, BeginS1 ,BeginS2 , Amount );
+		return bch::Compare( S1, S2, BeginS1 ,BeginS2 , Amount );
 	}
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2'.
 	inline bso__sbyte Compare(
 		const string_ &S1,
 		const string_ &S2,
-		bch::row__ BeginS1 = 0,
-		bch::row__ BeginS2 = 0 )
+		epeios::row__ BeginS1 = 0,
+		epeios::row__ BeginS2 = 0 )
 	{
 		bso__sbyte Resultat;
-		bch::size__ T1 = S1.Amount() - BeginS1, T2 = S2.Amount() - BeginS2;
+		epeios::size__ T1 = S1.Amount() - BeginS1.V, T2 = S2.Amount() - BeginS2.V;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;
