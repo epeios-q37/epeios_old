@@ -9,6 +9,7 @@ cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -
 cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/packages/getbkdapi/README.txt
 cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
 cvs -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd login
+cvs -z3 -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd export -l -D today -d $DIR stable/
 cvs -z3 -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd export -D today -d $DIR apps/getbkdapi
 cvs -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd logout
 cvs -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos login
