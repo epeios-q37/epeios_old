@@ -1,0 +1,256 @@
+{\rtf1\ansi\ansicpg1252\uc1 \deff0\deflang1033\deflangfe1036{\fonttbl{\f0\froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f1\fswiss\fcharset0\fprq2{\*\panose 020b0604020202020204}Arial;}
+{\f2\fmodern\fcharset0\fprq1{\*\panose 02070309020205020404}Courier New;}{\f3\froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol;}{\f4\froman\fcharset0\fprq2{\*\panose 00000000000000000000}Times{\*\falt Times New Roman};}
+{\f15\fswiss\fcharset0\fprq2{\*\panose 020b0604030504040204}Tahoma;}{\f16\froman\fcharset2\fprq2{\*\panose 05030102010509060703}Webdings;}{\f107\fswiss\fcharset238\fprq2 Tahoma CE;}{\f108\fswiss\fcharset204\fprq2 Tahoma Cyr;}
+{\f110\fswiss\fcharset161\fprq2 Tahoma Greek;}{\f111\fswiss\fcharset162\fprq2 Tahoma Tur;}{\f112\fswiss\fcharset186\fprq2 Tahoma Baltic;}}{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;
+\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;
+\red192\green192\blue192;}{\stylesheet{\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \snext0 Normal;}{\s1\sb480\sa360\nowidctlpar\widctlpar\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid \sbasedon0 \snext0 heading 1;}{
+\s2\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\i\f1\fs28\lang1036\cgrid \sbasedon0 \snext0 heading 2;}{\s3\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\f1\fs26\lang1036\cgrid \sbasedon0 \snext0 heading 3;}{
+\s4\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\fs28\lang1036\cgrid \sbasedon0 \snext0 heading 4;}{\s5\sb240\sa60\nowidctlpar\widctlpar\adjustright \b\i\fs26\lang1036\cgrid \sbasedon0 \snext0 heading 5;}{
+\s6\sb240\sa60\nowidctlpar\widctlpar\adjustright \b\fs22\lang1036\cgrid \sbasedon0 \snext0 heading 6;}{\s7\sb240\sa60\nowidctlpar\widctlpar\adjustright \lang1036\cgrid \sbasedon0 \snext0 heading 7;}{\s8\sb240\sa60\nowidctlpar\widctlpar\adjustright 
+\i\lang1036\cgrid \sbasedon0 \snext0 heading 8;}{\s9\sb240\sa60\nowidctlpar\widctlpar\adjustright \f1\fs22\lang1036\cgrid \sbasedon0 \snext0 heading 9;}{\*\cs10 \additive Default Paragraph Font;}{\s15\nowidctlpar\widctlpar\adjustright 
+\f1\fs20\lang1036\cgrid \sbasedon0 \snext15 Identification;}{\s16\fi-720\li-720\ri1440\sb60\sa120\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon26 \snext16 Etat civil;}{\s17\sl-250\slmult0\nowidctlpar\brdrl
+\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid \sbasedon79 \snext17 GTitre;}{\s18\sl-240\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid \sbasedon79 \snext18 GDate;}{\s19\qj\sl-250\slmult0
+\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid \sbasedon0 \snext19 DCorps;}{\s20\qj\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid \sbasedon19 \snext20 DTitre;}{\s21\nowidctlpar\widctlpar\adjustright \f1\fs18\lang1036\cgrid \sbasedon15 \snext21 
+En-t\'eate gauche;}{\s22\nowidctlpar\widctlpar\adjustright \f1\fs18\lang1036\cgrid \sbasedon21 \snext22 En-t\'eate droite;}{\s23\qc\sb100\nowidctlpar\widctlpar\box\brdrdb\brdrw15\brsp20 \adjustright \b\fs32\expnd4\expndtw22\lang1024\cgrid \snext23 
+Libel titre;}{\s24\qc\sa40\nowidctlpar\widctlpar\brdrt\brdrdb\brdrw15\brsp20 \brdrl\brdrdb\brdrw15\brsp80 \brdrb\brdrdb\brdrw15\brsp20 \brdrr\brdrdb\brdrw15\brsp80 \adjustright \b\fs28\expnd4\expndtw22\lang1024\cgrid \sbasedon23 \snext24 Corp titre;}{
+\s25\fi-720\li-720\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon26 \snext25 List;}{\s26\li-1080\sa120\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon0 \snext26 Body Text;}{
+\s27\nowidctlpar\widctlpar\tqc\tx2520\tqr\tx6480\adjustright \i\fs20\lang1036\cgrid \sbasedon0 \snext27 En-t\'eate (base);}{\s28\li-2160\sb120\sa260\keep\keepn\nowidctlpar\widctlpar\adjustright \caps\f1\fs28\expnd14\expndtw70\lang1036\cgrid 
+\sbasedon29 \snext0 Intitul\'e9 document;}{\s29\li-2160\sb120\keep\keepn\nowidctlpar\widctlpar\adjustright \b\expnd14\expndtw70\lang1036\cgrid \sbasedon0 \snext29 Titre (base);}{\s30\li-1080\ri3960\keep\nowidctlpar\widctlpar\adjustright 
+\fs20\lang1036\cgrid \sbasedon26 \snext30 Adresse;}{\s31\li-1440\sb120\sl-260\slmult0\keepn\nowidctlpar\widctlpar\adjustright \b\f1\fs20\lang1036\cgrid \sbasedon26 \snext31 Nom soci\'e9t\'e9;}{\s32\li-1080\nowidctlpar\widctlpar\adjustright 
+\b\i\fs32\lang1036\cgrid \sbasedon26 \snext32 Nom;}{\s33\li-1440\sb240\sa120\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon26 \snext33 Objectifs;}{\s34\ri65\sb60\sa120\sl-260\slmult0
+\keepn\nowidctlpar\widctlpar\pvpara\phmrg\posxr\posy86\absw4392\adjustright \i\f1\fs18\lang1036\cgrid \sbasedon26 \snext34 Date;}{\s35\li-1440\sl-260\slmult0\keepn\nowidctlpar\widctlpar\adjustright \f1\fs20\lang1036\cgrid \sbasedon26 \snext35 Ville/Dpt.;}
+{\s36\li-1440\sb120\sl-260\slmult0\keep\keepn\nowidctlpar\widctlpar\adjustright \b\f1\fs20\lang1036\cgrid \sbasedon29 \snext36 Organisation;}{\*\cs37 \additive \b\i Ital. gras;}{\s38\fi-720\li-720\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnfs20\pnstart1\pnindent187\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext38 \sautoupd List Bullet;}{\s39\nowidctlpar\widctlpar
+\tqc\tx2520\tqr\tx6480\adjustright \i\fs20\lang1036\cgrid \sbasedon27 \snext39 header;}{\s40\nowidctlpar\widctlpar\tqc\tx2520\tqr\tx6480\adjustright \i\fs20\lang1036\cgrid \sbasedon27 \snext40 footer;}{\s41\fi-720\li-720\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext41 List Number;}{\*\cs42 \additive \b Poste;}{
+\s43\fi-720\li-720\ri1440\sb120\sa60\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnfs20\pnstart1\pnindent187\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon38 \snext38 
+Liste puces (esp. avant);}{\s44\fi-720\li-720\ri1440\sb60\sa260\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnfs20\pnstart1\pnindent187\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid 
+\sbasedon38 \snext0 Liste puces (esp. apr\'e8s);}{\*\cs45 \additive \fs16 \sbasedon10 annotation reference;}{\s46\fi-720\li-720\ri1440\sb120\sa60\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang
+{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext41 Liste num. (esp. avant);}{\s47\fi-720\li-720\ri1440\sb60\sa260\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang
+{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext0 Liste num. (esp. apr\'e8s);}{\*\cs48 \additive \sbasedon10 page number;}{\s49\li-2160\sb120\sa60\keep\keepn\nowidctlpar\widctlpar\adjustright \b\fs20\lang1036\cgrid 
+\sbasedon50 \snext0 Sous-titre section;}{\s50\li-2160\sb260\sa120\keep\keepn\nowidctlpar\widctlpar\adjustright \b\expnd14\expndtw70\lang1036\cgrid \sbasedon29 \snext50 Titre section;}{\s51\li-1080\sa120\nowidctlpar\widctlpar\adjustright 
+\i\f2\fs20\lang1036\cgrid \sbasedon26 \snext51 macro;}{\s52\fi-720\li-720\ri1440\sb120\sa60\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext25 Liste (esp. avant);}{
+\s53\fi-720\li-720\ri1440\sb60\sa260\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext0 Liste (esp. apr\'e8s);}{\s54\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext54 
+Note de bas de p. (base);}{\s55\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon54 \snext55 annotation text;}{\s56\li-1080\sa120\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon26 \snext56 Image;}{\*\cs57 \additive \i 
+Ital;}{\s58\li-1080\sl-260\slmult0\keep\nowidctlpar\widctlpar\adjustright \i\f1\fs20\lang1036\cgrid \sbasedon36 \snext58 Accomplissement;}{\*\cs59 \additive \super Exposant;}{\s60\fi-360\li1800\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext60 List Number 5;}{\s61\fi-360\li1440\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext61 List Number 4;}{\s62\fi-360\li1080\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext62 List Number 3;}{\s63\fi-360\li720\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pndec\pnstart1\pnindent360\pnhang{\pntxta .}}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon41 \snext63 List Number 2;}{\s64\fi-360\li1800\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnstart1\pnindent360\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon38 \snext64 \sautoupd List Bullet 5;}{\s65\fi-360\li1440\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnstart1\pnindent360\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon38 \snext65 \sautoupd List Bullet 4;}{\s66\fi-360\li1080\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnstart1\pnindent360\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon38 \snext66 \sautoupd List Bullet 3;}{\s67\fi-360\li720\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl10\ls2047\pnrnot0\pnf4\pnstart1\pnindent360\pnhang{\pntxtb ?}}\ls2047\ilvl10\adjustright \i\fs20\lang1036\cgrid \sbasedon38 \snext67 \sautoupd List Bullet 2;}{\s68\fi-360\li1800\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext68 List 5;}{\s69\fi-360\li1440\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext69 List 4;}{
+\s70\fi-360\li1080\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext70 List 3;}{\s71\fi-360\li720\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid 
+\sbasedon25 \snext71 List 2;}{\s72\li-1440\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pnstart1\pnhang}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon25 \snext72 List Continue;}{
+\s73\li-1440\ri1440\sb60\sa60\sl-260\slmult0\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pnstart1\pnhang}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon72 \snext73 List Continue 2;}{\s74\li-1440\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pnstart1\pnhang}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon72 \snext74 List Continue 3;}{\s75\li-1440\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pnstart1\pnhang}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon72 \snext75 List Continue 4;}{\s76\li-1440\ri1440\sb60\sa60\sl-260\slmult0
+\nowidctlpar\widctlpar{\*\pn \pnlvlbody\ilvl11\ls2047\pnrnot0\pnstart1\pnhang}\ls2047\ilvl11\adjustright \i\fs20\lang1036\cgrid \sbasedon72 \snext76 List Continue 5;}{\s77\sb100\sa100\keepn\nowidctlpar\widctlpar\adjustright \b\fs36\lang1036\cgrid 
+\sbasedon0 \snext0 H2;}{\s78\nowidctlpar\widctlpar\adjustright \cbpat9 \f15\fs20\lang1036\cgrid \sbasedon0 \snext78 Document Map;}{\s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid \sbasedon19 \snext79 
+GCorps;}{\s80\fi709\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid \sbasedon79 \snext80 Divers;}{\s81\li1440\ri1440\sa120\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext81 Block Text;}{
+\s82\li283\sa120\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext82 Body Text 2;}{\s83\sa120\nowidctlpar\widctlpar\adjustright \fs16\lang1036\cgrid \sbasedon0 \snext83 Body Text 3;}{
+\s84\fi210\sa120\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon26 \snext84 Retrait 1\'e8re ligne;}{\s85\fi210\li283\sa120\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon82 \snext85 Retrait corps et 1\'e8re lig.;}{
+\s86\li283\sa120\sl480\slmult1\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext86 Body Text Indent 2;}{\s87\li283\sa120\nowidctlpar\widctlpar\adjustright \fs16\lang1036\cgrid \sbasedon0 \snext87 Body Text Indent 3;}{
+\s88\sb120\sa120\nowidctlpar\widctlpar\adjustright \b\fs20\lang1036\cgrid \sbasedon0 \snext0 caption;}{\s89\li4252\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext89 Closing;}{\s90\nowidctlpar\widctlpar\adjustright 
+\fs20\lang1036\cgrid \sbasedon0 \snext90 E-mail Signature;}{\s91\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext91 endnote text;}{
+\s92\li2880\nowidctlpar\widctlpar\phpg\posxc\posyb\absh-1980\absw7920\dxfrtext180\dfrmtxtx180\dfrmtxty0\adjustright \f1\lang1036\cgrid \sbasedon0 \snext92 envelope address;}{\s93\nowidctlpar\widctlpar\adjustright \f1\fs20\lang1036\cgrid 
+\sbasedon0 \snext93 envelope return;}{\s94\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext94 footnote text;}{\s95\nowidctlpar\widctlpar\adjustright \i\fs20\lang1036\cgrid \sbasedon0 \snext95 HTML Address;}{
+\s96\nowidctlpar\widctlpar\adjustright \f2\fs20\lang1036\cgrid \sbasedon0 \snext96 HTML Preformatted;}{\s97\fi-200\li200\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 1;}{
+\s98\fi-200\li400\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 2;}{\s99\fi-200\li600\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 3;}{
+\s100\fi-200\li800\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 4;}{\s101\fi-200\li1000\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 5;}{
+\s102\fi-200\li1200\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 6;}{\s103\fi-200\li1400\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 7;}{
+\s104\fi-200\li1600\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 8;}{\s105\fi-200\li1800\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd index 9;}{
+\s106\nowidctlpar\widctlpar\adjustright \b\f1\fs20\lang1036\cgrid \sbasedon0 \snext97 index heading;}{\s107\fi-1134\li1134\nowidctlpar\widctlpar\box\brdrs\brdrw15\brsp20 \adjustright \shading2000 \f1\lang1036\cgrid \sbasedon0 \snext107 Message Header;}{
+\s108\nowidctlpar\widctlpar\adjustright \lang1036\cgrid \sbasedon0 \snext108 Normal (Web);}{\s109\li708\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext109 Normal Indent;}{\s110\nowidctlpar\widctlpar\adjustright 
+\fs20\lang1036\cgrid \sbasedon0 \snext0 Titre de note;}{\s111\nowidctlpar\widctlpar\adjustright \f2\fs20\lang1036\cgrid \sbasedon0 \snext111 Plain Text;}{\s112\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 Salutation;}{
+\s113\li4252\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext113 Signature;}{\s114\qc\sa60\nowidctlpar\widctlpar\outlinelevel1\adjustright \f1\lang1036\cgrid \sbasedon0 \snext114 Subtitle;}{
+\s115\fi-200\li200\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 table of authorities;}{\s116\fi-400\li400\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 table of figures;}{
+\s117\qc\sb240\sa60\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\f1\fs32\lang1036\kerning28\cgrid \sbasedon0 \snext117 Title;}{\s118\sb120\nowidctlpar\widctlpar\adjustright \b\f1\lang1036\cgrid \sbasedon0 \snext0 toa heading;}{
+\s119\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 1;}{\s120\li200\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 2;}{\s121\li400\nowidctlpar\widctlpar\adjustright 
+\fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 3;}{\s122\li600\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 4;}{\s123\li800\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid 
+\sbasedon0 \snext0 \sautoupd toc 5;}{\s124\li1000\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 6;}{\s125\li1200\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 7;}{
+\s126\li1400\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 8;}{\s127\li1600\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid \sbasedon0 \snext0 \sautoupd toc 9;}}{\*\listtable{\list\listtemplateid80660524
+\listsimple{\listlevel\levelnfc0\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\s60\fi-360\li1492\jclisttab\tx1492 }{\listname ;}\listid-132}{\list\listtemplateid-1554055700\listsimple{\listlevel
+\levelnfc0\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\s61\fi-360\li1209\jclisttab\tx1209 }{\listname ;}\listid-131}{\list\listtemplateid-113355742\listsimple{\listlevel\levelnfc0\leveljc0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\s62\fi-360\li926\jclisttab\tx926 }{\listname ;}\listid-130}{\list\listtemplateid-1570470886\listsimple{\listlevel\levelnfc0\leveljc0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\s63\fi-360\li643\jclisttab\tx643 }{\listname ;}\listid-129}{\list\listtemplateid-1569013428\listsimple{\listlevel\levelnfc23\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'01\u-3913 ?;}{\levelnumbers;}\f3\fbias0 \s64\fi-360\li1492\jclisttab\tx1492 }{\listname ;}\listid-128}{\list\listtemplateid1924987724\listsimple{\listlevel\levelnfc23\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01\u-3913 ?;}{\levelnumbers;}\f3\fbias0 \s65\fi-360\li1209\jclisttab\tx1209 }{\listname ;}\listid-127}{\list\listtemplateid-1432343032\listsimple{\listlevel\levelnfc23\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01\u-3913 ?;}{\levelnumbers;}\f3\fbias0 \s66\fi-360\li926\jclisttab\tx926 }{\listname ;}\listid-126}{\list\listtemplateid2121269674\listsimple{\listlevel\levelnfc23\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01\u-3913 ?;}{\levelnumbers;}\f3\fbias0 \s67\fi-360\li643\jclisttab\tx643 }{\listname ;}\listid-125}{\list\listtemplateid-724283062\listsimple{\listlevel\levelnfc0\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'02\'00.;}{\levelnumbers\'01;}\s41\fi-360\li360\jclisttab\tx360 }{\listname ;}\listid-120}{\list\listtemplateid-621368568\listsimple{\listlevel\levelnfc23\leveljc0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01\u-3913 ?;}{\levelnumbers;}\f3\fbias0 \s38\fi-360\li360\jclisttab\tx360 }{\listname ;}\listid-119}}{\*\listoverridetable{\listoverride\listid-119\listoverridecount0\ls1}{\listoverride\listid-120\listoverridecount0\ls2}{\listoverride\listid-132
+\listoverridecount0\ls3}{\listoverride\listid-131\listoverridecount0\ls4}{\listoverride\listid-130\listoverridecount0\ls5}{\listoverride\listid-129\listoverridecount0\ls6}{\listoverride\listid-128\listoverridecount0\ls7}{\listoverride\listid-127
+\listoverridecount0\ls8}{\listoverride\listid-126\listoverridecount0\ls9}{\listoverride\listid-125\listoverridecount0\ls10}}{\info{\title Ethan Frome}{\author EW/LN/CB}{\keywords Ethan}{\operator Ipse}{\creatim\yr2001\mo10\dy2\hr10\min35}
+{\revtim\yr2001\mo10\dy2\hr15\min39}{\printim\yr2001\mo9\dy14\hr19\min6}{\version3}{\edmins2}{\nofpages2}{\nofwords842}{\nofchars4804}{\*\company A.U.E.}{\nofcharsws5899}{\vern73}}\paperw11907\paperh16840\margl992\margr992\margt454\margb970 
+\deftab709\widowctrl\ftnbj\aenddoc\hyphhotz425\makebackup\noxlattoyen\expshrtn\noultrlspc\dntblnsbdb\nospaceforul\lytprtmet\hyphcaps0\viewkind1\viewscale97\viewzk2\pgbrdrhead\pgbrdrfoot \fet0\sectd \linex0\headery0\footery964\cols2\colsx710\endnhere
+\colno1\colw4430\colsr2091\colno2\colw3402\pgbrdropt32\sectdefaultcl {\footer \pard\plain \s40\qc\nowidctlpar\widctlpar\tqc\tx2520\tqr\tx6480\adjustright \i\fs20\lang1036\cgrid {\field{\*\fldinst {\cs48  PAGE }}{\fldrslt {\cs48\lang1024 1}}}{\cs48 /}
+{\field{\*\fldinst {\cs48  NUMPAGES }}{\fldrslt {\cs48\lang1024 1}}}{
+\par }}{\*\pnseclvl1\pnucrm\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl2\pnucltr\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl3\pndec\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl4\pnlcltr\pnstart1\pnindent720\pnhang{\pntxta )}}
+{\*\pnseclvl5\pndec\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl6\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl7\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl8
+\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl9\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}\pard\plain \s21\nowidctlpar\widctlpar\outlinelevel0\adjustright \f1\fs18\lang1036\cgrid {\b\fs24 Claude SIMON}{\fs24 
+, 31 ans}{\fs22 
+\par }\pard \s21\nowidctlpar\widctlpar\adjustright {\fs22 Disponibilit\'e9\~: Strasbourg et environs.
+\par }{\column }{\fs22 URL\~: http://epeios.org/cv.doc
+\par }{\fs22 {\field{\*\fldinst SYMBOL 153 \\f "Webdings" \\s 11}{\fldrslt\f16\fs22}}}{\fs22  : simon.claude@epeios.org
+\par }\pard\plain \s16\fi-720\li-720\ri1440\sb60\sa120\sl-260\slmult0\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid {\fs22 
+\par }{\fs19 \sect }\sectd \sbknone\linex0\headery0\footery964\colsx710\endnhere\pgbrdropt32\sectdefaultcl \pard\plain \s23\qc\sb100\nowidctlpar\widctlpar\box\brdrsh\brdrdb\brdrw15\brsp20 \outlinelevel0\adjustright \b\fs32\expnd4\expndtw22\lang1024\cgrid {
+INGENIEUR DEVELOPPEUR
+\par }\pard \s23\qc\sb100\nowidctlpar\widctlpar\box\brdrsh\brdrdb\brdrw15\brsp20 \adjustright {\expnd1\expndtw6 Portabilit\'e9, multit\'e2che, r\'e9seau, syst\'e8me, programmation OO, \'85
+\par }\pard\plain \s1\sb480\sa360\sl-250\slmult0\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid {Exp\'e9riences
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {\fs17 \sect }\sectd \sbknone\linex0\headery0\footery964\cols2\colsx709\endnhere\colno1\colw2694\colsr567\colno2\colw6662\pgbrdropt32\sectdefaultcl \pard\plain 
+\s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {FSF / GNU }{\b0 (U.S.A.)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {\field\flddirty{\*\fldinst { HYPERLINK http://www.fsf.org/ }{\ul\cf2 {\*\datafield 
+00d0c9ea79f9bace118c8200aa004ba90b02000000170000001400000068007400740070003a002f002f007700770077002e006600730066002e006f00720067002f000000e0c9ea79f9bace118c8200aa004ba90b2800000068007400740070003a002f002f007700770077002e006600730066002e006f00720067002f00
+0000000000}}}{\fldrslt {http{\*\bkmkstart _Hlk470666277}://ww{\*\bkmkend _Hlk470666277}w.{\*\bkmkstart _Hlt522938785}f{\*\bkmkend _Hlt522938785}sf.org/}}}{
+\par http://www.gnu.org/
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {depuis mai 2001
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {IDEALX}{\b0  (Paris)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {http://www.idealx.com/
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {\b0 depuis juin 2000
+\par }{
+\par 
+\par 
+\par 
+\par Soleri }{\b0 (Ostwald)}{
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {http://www.soleri.com/
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {octobre 1999 \endash  juin 2000
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Logiciel Libre
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {\field\flddirty{\*\fldinst { HYPERLINK http://epeios.org/ }{\ul\cf2 {\*\datafield 
+00d0c9ea79f9bace118c8200aa004ba90b02000000170000001300000068007400740070003a002f002f0065007000650069006f0073002e006f00720067002f000000e0c9ea79f9bace118c8200aa004ba90b2600000068007400740070003a002f002f0065007000650069006f0073002e006f00720067002f00000000ee
+01}}}{\fldrslt {http://epeios.org/}}}{
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \outlinelevel0\adjustright \f1\fs20\lang1036\cgrid {depuis avril 1999
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Gunther Tools SA
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {(Soultz-sous-for\'eat)
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {du 19 oct. au 11 d\'e9c. 1998
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {(mission de travail temporaire)
+\par }{\expnd0\expndtw-2 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Personnel
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {\expnd-1\expndtw-8 f\'e9v. 1998 - sep. 1999 (20 mois)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {
+\par Personnel
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {depuis novembre 1996
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {http://epeios.org/about/
+\par 
+\par 
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 \column D\'e9veloppements pour le projet GNU de la FSF.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Suite \'e0 la demande de la FSF (}{\i Free Software Foundation}{, voir adresse ci-contre), mise en conformit\'e9 des logiciels et des biblioth\'e8
+ques du projet Epeios (voir plus bas) avec les standards GNU. Tous les logiciels et biblioth\'e8ques du projet Epeios seront dor\'e9navant int\'e9gr\'e9s au projet GNU.
+\par 
+\par }\pard\plain \s20\qj\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {D\'e9veloppements en C++, Perl et PHP.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Mise en \'9cuvre des biblioth\'e8ques Epeios (voir plus bas) dans le d\'e9veloppement de biblioth\'e8ques C++ de clust\'e9risation (module idx-clust, visible \'e0 }
+{\field\flddirty{\*\fldinst { HYPERLINK http://www.idealx.org/) }{{\*\datafield 
+00d0c9ea79f9bace118c8200aa004ba90b02000000170000001800000068007400740070003a002f002f007700770077002e0069006400650061006c0078002e006f00720067002f0029000000e0c9ea79f9bace118c8200aa004ba90b3000000068007400740070003a002f002f007700770077002e006900640065006100
+6c0078002e006f00720067002f0029000000006f00}}}{\fldrslt {http://www.idealx.org/{\*\bkmkstart _Hlt522957830}){\*\bkmkend _Hlt522957830}}}}{.
+\par D\'e9veloppement, en Perl et PHP, de la partie chiffrement et gestion de certificats d\rquote une infrastructure \'e0 clefs publiques (http://idx-pki.idealx.org/).
+\par }\pard\plain \s20\qj\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {
+\par D\'e9veloppement, en C++, d\rquote une interface WEB.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {D\'e9veloppement, en C++, de CGIs g\'e9rant l\rquote interface WEB d\rquote un logiciel de suivi de production industriel. En plus de l\rquote HTML, ces CGIs g\'e9n\'e8
+rent du Javascript, l\rquote ensemble \'e9tant compatible avec Internet Explorer et Netscape Navigator
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 Lancement, d\'e9veloppement et coordination du projet Epeios.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Lancement du projet Epeios (voir plus bas) destin\'e9 \'e0 diffuser l\rquote AGL d\'e9crit plus bas et \'e0 coordonner tous les efforts visant \'e0 son am\'e9
+lioration. Cr\'e9ation et maintenance d\rquote un site Internet d\'e9di\'e9 (voir adresse ci-contre). Administration du serveur de ce site.
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 Extension et mise \'e0 niveau du parc informatique.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Installation et configuration de machines nouvellement acquises (installation de Windows NT 4.0\~; mise en service et param\'e9trage du protocole TCP/IP\~
+; installation et configuration de logiciels relatifs \'e0 Internet, ainsi que de Client Access\~; \'85). Mise \'e0 niveau et harmonisation du parc machine existant.
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 
+\par Cr\'e9ation, d\'e9veloppement et administration d\rquote un site Internet.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Cr\'e9ation et maintenance d\rquote un site Internet sp\'e9cialis\'e9 dans les services on\_line. D\'e9veloppement de l\rquote ensemble des applications n\'e9cessit\'e9
+es par les diff\'e9rents services propos\'e9s, et ce, en utilisant l\rquote AGL Epeios (voir ci-dessous). Administration du serveur de ce site.
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 Elaboration et impl\'e9mentation en C++ d\rquote un AGL orient\'e9 objet.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Elaboration d\rquote un AGL, ult\'e9rieurement nomm\'e9 Epeios, s\rquote appuyant sur le C++ et bas\'e9 sur de nouveaux concepts de programmation objet, destin\'e9 \'e0
+ simplifier le d\'e9veloppement d\rquote applications, et facilitant leur implantation, notamment dans une architecture client/serveur. Sa description est visible \'e0 l\rquote adresse ci-contre.
+\par \sect }\sectd \linex0\headery0\footery964\colsx709\endnhere\colno1\colw9923\pgbrdropt32\sectdefaultcl \pard\plain \s1\sb480\sa360\sl-250\slmult0\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid 
+{Exp\'e9riences (suite)\sect }\sectd \sbknone\linex0\headery0\footery964\cols2\colsx709\endnhere\colno1\colw2694\colsr567\colno2\colw6662\pgbrdropt32\sectdefaultcl \pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright 
+\b\f1\fs20\lang1036\cgrid {SFMI (La Wantzenau)
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {\expnd-1\expndtw-8 d\'e9c. 1995 - oct. 1996 (11 mois)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Ecole Interarm\'e9es du Renseignement et des Etudes Linguistiques
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {\expnd-1\expndtw-8 ao\'fbt 1994 - mai 1995 (10 mois)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {(service national)
+\par 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Electricit\'e9 de Strasbourg
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {juillet 1994 (1 mois)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par 
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {Electricit\'e9 de Strasbourg
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {avril - sept. 1993 (6 mois)
+\par }\pard\plain \s79\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {
+\par 
+\par }{\b 
+\par }{
+\par 
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {S.N.C.F.
+\par }\pard\plain \s18\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {juin - juillet 1990 (2 mois)
+\par 
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\column }{\lang1036 D\'e9veloppement d\rquote une application sous SGBDR Progress.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {D\'e9veloppement d\rquote un logiciel de gestion d\rquote entrep\'f4ts sous environnement Progress.
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 Administration du parc informatique, assistance aux utilisateurs.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Administration du parc informatique de l\rquote \'e9cole, aide aux utilisateurs dans leur utilisation de l\rquote outil informatique.
+\par Mise en place d\rquote un r\'e9seau Windows NT\_AS, dans le cadre de l\rquote \'e9valuation d\rquote un prototype d\rquote atelier d\rquote E.A.O. de langue destin\'e9 \'e0 \'eatre employ\'e9 dans les \'e9coles militaires de la France enti\'e8re.
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 Optimisation d\rquote un processus de traitement de fichiers.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {Enrichissement, \'e0 l\rquote aide de macros et de routines \'e9crites en C++, des fonctionnalit\'e9s de l\rquote 
+application Excel. Ces macros permettent de faciliter et d\rquote acc\'e9l\'e9rer les manipulations de certains types de fichiers couramment utilis\'e9s.
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {
+\par Conception et d\'e9veloppement d\rquote un logiciel \'e0 haut degr\'e9 de fiabilit\'e9.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {R\'e9alisation, en C, d\rquote un logiciel de gestion d\rquote une baie charg\'e9e de la mise en forme et de l\rquote injection dans le r\'e9seau \'e9
+lectrique de signaux pilotant, entre autres, l\rquote allumage et l\rquote extinction de l\rquote \'e9clairage public.
+\par Cette application commande de nombreux p\'e9riph\'e9riques, et, par la fonction qu\rquote elle remplit, fonctionne 24h/24h, tout au long de l\rquote ann\'e9e.
+\par 
+\par }\pard\plain \s20\qj\sl-250\slmult0\nowidctlpar\adjustright \b\i\f1\fs20\lang1024\cgrid {\lang1036 D\'e9veloppement d\rquote un logiciel de pilotage d\rquote un banc d\rquote essai.
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {R\'e9alisation, en QuickBasic, d\rquote un logiciel de pilotage d\rquote un banc d\rquote essai d\rquote amortisseurs. Ce banc est utilis\'e9 notamment pour tester l
+\rquote ensemble des amortisseurs destin\'e9s au T.G.V.
+\par \sect }\sectd \sbknone\linex0\headery0\footery964\colsx710\endnhere\pgbrdropt32\sectdefaultcl \pard\plain \s1\sb480\sa360\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid {Comp\'e9tences\sect 
+}\sectd \sbknone\linex0\headery0\footery964\cols2\colsx710\endnhere\colno1\colw2127\colsr283\colno2\colw7513\pgbrdropt32\sectdefaultcl \pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \tldot\tx2127\adjustright 
+\b\f1\fs20\lang1036\cgrid {Langages\tab :
+\par Logiciels\tab :
+\par Formats, protocoles\tab :
+\par Environnements\tab :
+\par Langues\tab :
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {C++, C, JAVA, Javascript, PHP, Perl, Python, Visual Basic, Progress, \'85
+\par Bureautique (Microsoft Office, Sun StarOffice,\'85), musical (CakeWalk), ...
+\par HTML, HTTP, FTP, SMTP, POP, XML, XSL, XHTML,  \'85
+\par MS-DOS, Windows (NT, 3.x, 9x), Unix, Internet, CVS, AmigaDos, \'85
+\par Allemand courant et anglais technique.
+\par \sect }\sectd \sbknone\linex0\headery0\footery964\colsx710\endnhere\pgbrdropt32\sectdefaultcl \pard\plain \s1\sb480\sa360\sl-250\slmult0\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid {
+Formation}{\fs17 \sect }\sectd \sbknone\linex0\headery0\footery964\cols2\colsx710\endnhere\colno1\colw3261\colsr283\colno2\colw6379\pgbrdropt32\sectdefaultcl \pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \tx3119\adjustright 
+\b\f1\fs20\lang1036\cgrid {1992-1994 (E.S.I.G. Strasbourg)\tab :
+\par 1989-1991 (O.R.T. Strasbourg)\tab :
+\par 1987-1989 (O.R.T. Strasbourg)\tab :
+\par 1985-1987 (O.R.T. Strasbourg)\tab :
+\par }\pard\plain \s19\qj\sl-250\slmult0\nowidctlpar\adjustright \f1\fs20\lang1036\cgrid {\column Master en informatique approfondie.
+\par B.T.S. en informatique industrielle.
+\par Baccalaur\'e9at F3 (\'e9lectrotechnique).
+\par B.E.P. \'e9lectronique.
+\par C.A.P. \'e9lectronicien d\rquote \'e9quipement.
+\par \sect }\sectd \sbknone\linex0\headery0\footery964\colsx710\endnhere\pgbrdropt32\sectdefaultcl \pard\plain \s1\sb480\sa360\sl-250\slmult0\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\scaps\f1\fs28\ul\expnd4\expndtw20\lang1036\kerning28\cgrid {Divers
+
+\par }\pard\plain \s17\sl-250\slmult0\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \b\f1\fs20\lang1036\cgrid {\fs17 \sect }\sectd \sbknone\linex0\headery0\footery964\colsx710\endnhere\pgbrdropt32\sectdefaultcl \pard\plain \s80\qj\fi709\sl-250\slmult0
+\nowidctlpar\brdrl\brdrs\brdrw10\brsp20 \adjustright \f1\fs20\lang1036\cgrid {M\'e9lomane assidu, je m\rquote int\'e9resse \'e9galement \'e0 la musique en tant qu\rquote interpr\'e8te (bugle, trompette, tuba, orgue, piano et synth\'e9
+tiseur MIDI), notamment dans des orchestres d\rquote harmonie, et compositeur.
+\par }}
