@@ -2,7 +2,11 @@
 <!-- $Id$ -->
 <content>
   <section>
-    <para>The Epeios libraries are not dedicated to a special domain. Memory management, error handling and frontend/backend interaction are some of the features available. You can also handle sockets, multitasking, semaphores, pipes, etc., and various data structures like lists, stacks, queues, indexes, etc.</para>
+    <para>The Epeios core libraries are not dedicated to a special domain (unless some subproject which are based on this core libraries). Memory management, error handling and multitasking management are some of the features available. You can also handle various data structures like lists, stacks, queues, indexes, etc. and even sockets, multitasking, mutexes, pipes, etc.</para>
+    <para>For this last features, you probably not need to handle them directly. In fact, the libraries handling this items were written to be used by high-level libraries. For example, if you want to program a deamon, you haven't to deal with multitasking, mutexes or socket, because there is such a high-level library which handle all this item the proper way for a deamon program, and you have only to code what the deamon have to do.</para>
+    <para xml:space="preserve">In a glance, the Epeios libraries are nearly as easy to use as langages like <raw>JAVA</raw> or <raw>Python</raw>, but with all the power of the <raw>C++</raw>.</para>
+  </section>
+  <section>
     <para xml:space="preserve">A big part of the libraries are written using the standard C(++) libraries, so this part should be portable on any system with a standard C++ compiler. Some other libraries are not written using the C(++) standard libraries, because the standard libraries do not support the needed features (sockets, pipes, multitasking, ...). This part of the Epeios libraries are portable under <link URL="http://www.gnu.org/gnu/linux-and-gnu.html" type="external">GNU</link>/<link URL="http://www.kernel.org/" type="external">Linux</link> and <link URL="http://www.microsoft.com/windows/" type="external">Windows</link>, and they are written so they are easily portable on other systems.</para>
   </section>
   <section>
