@@ -68,7 +68,7 @@ ERRBegin
 */
 	M1.Init();
 	M1.Allocate( TAILLE_MEMOIRE );
-	M1.Fill( 0, 0, 0 );
+	M1.Store( 0, (epeios::row__)0, TAILLE_MEMOIRE );
 
 	M2.Init();
 	M2.Allocate( TAILLE_MEMOIRE );
@@ -78,26 +78,26 @@ ERRBegin
 	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
 	{
 		J = (mytype__)I + 1;
-		M1.Write( 60000 + J, I );
+		M1.Store( 60000 + J, I );
 	}
 
 
 	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
 	{
-		M1.Read( I, J );
-		fout << J << '\t' << txf::sync;
+		M1.Recall( I, J );
+		stf::cout << J << '\t' << txf::sync;
 	}
 
-	fout << txf::nl;
+	stf::cout << txf::nl;
 
-	M1.Read( 0, TAILLE_MEMOIRE, M2 );
+	M2.Store( M1, TAILLE_MEMOIRE );
 
 	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
 	{
-		fout << M2.Read( I ) << '\t' << txf::sync;
+		stf::cout << M2.Get( I ) << '\t' << txf::sync;
 	}
 
-	fout << '\n';
+	stf::cout << '\n';
 
 	M1.Swap( 1, 2 );
 
@@ -114,7 +114,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << TYMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << TYMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -128,16 +128,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << TYMTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << TYMTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << TYMTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << TYMTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

@@ -124,20 +124,20 @@ namespace mmm {
 	protected:
 		// fonction déportée
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRRead(
+		virtual void MDRRecall(
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer );
+			datum__ *Buffer );
 		// fonction déportée
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRWrite(
-			const data__ *Buffer,
+		virtual void MDRStore(
+			const datum__ *Buffer,
 			bsize__ Amount,
 			row__ Position );
 		// fonction déportée
 		// alloue 'Capacite' octets
 		virtual void MDRAllocate( size__ Size );
-		virtual void MDRSynchronize( void );
+		virtual void MDRFlush( void );
 	public:
 		struct s
 		: public E_MEMORY_DRIVER_::s
@@ -223,17 +223,17 @@ namespace mmm {
 		void MemoireLire_(
 			row__ Position,
 			bsize__ Nombre,
-			data__ *Tampon ) const
+			datum__ *Tampon ) const
 		{
-			Memoire_.Read( Position, Nombre, Tampon );
+			Memoire_.Recall( Position, Nombre, Tampon );
 		}
 		// écrit dans la mémoire.
 		void MemoireEcrire_(
-			const data__ *Tampon,
+			const datum__ *Tampon,
 			bsize__ Nombre,
 			row__ Position )
 		{
-			Memoire_.Write( Tampon, Nombre, Position );
+			Memoire_.Store( Tampon, Nombre, Position );
 		}
 		/* Remplace 'Nombre' octets à la position 'Destination avec autant d'octet de
 		la position 'Source'. */
@@ -242,7 +242,7 @@ namespace mmm {
 			row__ Source,
 			size__ Taille )
 		{
-			Memoire_.Write( Memoire_, Taille, Source, Destination );
+			Memoire_.Store( Memoire_, Taille, Source, Destination );
 		}
 		// Ajuste la taille de la mémoire principale en éliminant la portion de descripteur 'Descripteur'.
 		void AjusterMemoireAvantDescripteur_( descriptor__ Descripteur )
@@ -381,8 +381,8 @@ namespace mmm {
 			descriptor__ Descripteur,
 			indicateur__ Indicateur )
 		{
-			MemoireEcrire_( (data__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur - MMM_TAILLE_INDICATEUR );
-			MemoireEcrire_( (data__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur + NombreEnTaille_( Indicateur ) - MMM_TAILLE_INDICATEUR );
+			MemoireEcrire_( (datum__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur - MMM_TAILLE_INDICATEUR );
+			MemoireEcrire_( (datum__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur + NombreEnTaille_( Indicateur ) - MMM_TAILLE_INDICATEUR );
 
 			TesterEtAffecterLibre_( Descripteur );
 		}
@@ -395,7 +395,7 @@ namespace mmm {
 		{
 			indicateur__ Indicateur = Nombre | MMM_MASQUE_OCCUPATION | ( PredecesseurOccupe ? MMM_MASQUE_OCCUPATION_PREDECESSEUR : 0 );
 
-			MemoireEcrire_( (data__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur - MMM_TAILLE_INDICATEUR );
+			MemoireEcrire_( (datum__ *)&Indicateur, MMM_TAILLE_INDICATEUR, Descripteur - MMM_TAILLE_INDICATEUR );
 		}
 		/* Signale à la portion 'Descripteur' (occupée) qu'elle est précédée par une portion
 		occupée */
@@ -414,7 +414,7 @@ namespace mmm {
 		{
 			indicateur__ Indicateur;
 
-			MemoireLire_( Descripteur - MMM_TAILLE_INDICATEUR, MMM_TAILLE_INDICATEUR, (data__ *)&Indicateur );
+			MemoireLire_( Descripteur - MMM_TAILLE_INDICATEUR, MMM_TAILLE_INDICATEUR, (datum__ *)&Indicateur );
 
 			return Indicateur;
 		}
@@ -454,7 +454,7 @@ namespace mmm {
 		{
 			indicateur__ Indicateur;
 
-			MemoireLire_( Descripteur - 2 * MMM_TAILLE_INDICATEUR, MMM_TAILLE_INDICATEUR, (data__ *)&Indicateur );
+			MemoireLire_( Descripteur - 2 * MMM_TAILLE_INDICATEUR, MMM_TAILLE_INDICATEUR, (datum__ *)&Indicateur );
 
 			return Indicateur;
 		}
@@ -746,13 +746,13 @@ namespace mmm {
 			descriptor__ Descriptor,
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer ) const
+			datum__ *Buffer ) const
 		{
 			MemoireLire_( Descriptor + Position, Amount, Buffer );
 		}
 		//f Put 'Amount' bytes at 'Position' to the 'Descriptor' memory from 'Buffer'.
 		void Write(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			bsize__ Amount,
 			descriptor__ Descriptor,
 			row__ Position )
@@ -787,14 +787,14 @@ namespace mmm {
 
 			Memoire_.Allocate( Op.S_.Capacite );
 
-			Memoire_.Write( Op.Memoire_, Op.S_.Capacite );
+			Memoire_.Store( Op.Memoire_, Op.S_.Capacite, 0 );
 
 			return *this;
 		}
-		//f Flushes the cahces.
-		void Synchronize( void ) const
+		//f Flushes the caches.
+		void Flush( void ) const
 		{
-			Memoire_.Synchronize();
+			Memoire_.Flush();
 		}
 		//f Retourne la capacite de la portion de descripteur 'Descripteur'.
 		size__ Size( descriptor__ Descriptor ) const
@@ -819,16 +819,16 @@ namespace mmm {
 			Multimemoire_->Free( S_.Descripteur );
 	}
 
-	inline void multimemory_driver_::MDRRead(
+	inline void multimemory_driver_::MDRRecall(
 		row__ Position,
 		bsize__ Amount,
-		data__ *Buffer )
+		datum__ *Buffer )
 	{
 		Multimemoire_->Read( S_.Descripteur, Position, Amount, Buffer );
 	}
 	// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-	inline void multimemory_driver_::MDRWrite(
-		const data__ *Buffer,
+	inline void multimemory_driver_::MDRStore(
+		const datum__ *Buffer,
 		bsize__ Amount,
 		row__ Position )
 	{
@@ -841,10 +841,10 @@ namespace mmm {
 	}
 	// alloue 'Capacite' octets
 
-	inline void multimemory_driver_::MDRSynchronize( void )
+	inline void multimemory_driver_::MDRFlush( void )
 	{
 		if ( Multimemoire_ )
-			Multimemoire_->Synchronize();
+			Multimemoire_->Flush();
 	}
 }
 

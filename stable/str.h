@@ -119,88 +119,28 @@ namespace str {
 		string_ &operator =( const char *Chaine )
 		{
 			Init();
-			E_BUNCH_( bso::char__ )::WriteAndAdjust( Chaine, strlen( Chaine ) );
+			E_BUNCH_( bso::char__ )::StoreAndAdjust( Chaine, strlen( Chaine ) );
 
 			return *this;
 		}
-		//f Write 'String' at 'Position'.
-		void Write(
+		//f Store null-terminated string 'String' at 'Position'.
+		void StoreNTS(
 			const char *String,
 			epeios::row__ Position = 0 )
 		{
-			E_BUNCH_( bso::char__ )::WriteAndAdjust( String, strlen( String ), Position );
+			E_BUNCH_( bso::char__ )::StoreAndAdjust( String, strlen( String ), Position );
 		}
-		//f Write 'Amount' char from 'String' at 'Position'.
-		void Write(
-			const char *Buffer,
-			epeios::bsize__ Amount,
-			epeios::row__ Position )
-		{
-			E_BUNCH_( bso::char__ )::Write( Buffer, Amount, Position );
-		}
-
-		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
-		void Write(
-			const string_ &Source,
-			epeios::size__ Quantity,
-			epeios::row__ Position = 0,
-			epeios::row__ Offset = 0 )
-		{
-			E_BUNCH_( bso::char__ )::Write( Source, Quantity, Position, Offset );
-		}
-
-		//f Write 'C' at 'Position'.
-		void Write(
-			char C,
-			epeios::row__ Position)
-		{
-			E_BUNCH_( bso::char__ )::Write( C, Position );
-		}
-		//f Append 'String' and return position where put.
-		epeios::row__ Append( const char *String )
+		//f Append null-terminated string 'String' and return position where put.
+		epeios::row__ AppendNTS( const char *String )
 		{
 			return E_BUNCH_( bso::char__ )::Append( String, strlen( String ) );
 		}
-		//f Append 'Amount' char from 'String'. Return position where put.
-		epeios::row__ Append(
-			const char *String,
-			epeios::bsize__ Amount )
-		{
-			return E_BUNCH_( bso::char__ )::Append( String, Amount );
-		}
-		//f Append 'C'. Return position where put.
-		epeios::row__ Append( char C )
-		{
-			return E_BUNCH_( bso::char__ )::Append( C );
-		}
-		//f Append 'Amount' characters at 'Row' from 'String'. Return the position where the characters are put.
-		epeios::row__ Append(
-			const string_ &String,
-			epeios::size__ Amount,
-			epeios::row__ Row = 0 )
-		{
-			return E_BUNCH_( bso::char__ )::Append( String, Amount, Row );
-		}
-		//f Append all characters from 'String' beginning at 'Row'. Return the position where the characters are put.
-		epeios::row__ Append(
-			const string_ &String,
-			epeios::row__ Row = 0 )
-		{
-			return E_BUNCH_( bso::char__ )::Append( String, Row );
-		}
-		//f Insert 'String' at 'Position'.
-		void Insert(
+		//f Insert null-terminated string 'String' at 'Position'.
+		void InsertNTS(
 			const char *String,
 			epeios::row__ Position )
 		{
 			E_BUNCH_( bso::char__ )::Insert( String, strlen( String ), Position );
-		}
-		//f Insert 'String' at 'Position'.
-		void Insert(
-			const string_ &String,
-			epeios::row__ Position )
-		{
-			E_BUNCH_( bso::char__ )::Insert( String, Position );
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(
@@ -224,29 +164,61 @@ namespace str {
 		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
 		value can have. */
 		bso::ulong__ ToUL(
-			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			epeios::row__ *ErrP,
+			epeios::row__ Begin,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const;
+		//f Variation in parameters.
+		bso::ulong__ ToUL(
+			epeios::row__ *ErrP = NULL,
+			bso::ulong__ Limit = BSO_ULONG_MAX ) const
+		{
+			return ToUL( ErrP, 0, Limit );
+		}
 		/*f Convert to unsigned short. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
 		value can have. */
 		bso::ushort__ ToUS(
-			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			epeios::row__ *ErrP,
+			epeios::row__ Begin,
 			bso::ulong__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)ToUL( ErrP, Limit );
+			return (bso::ushort__)ToUL( ErrP, Begin, Limit );
+		}
+		//f Variation in parameters.
+		bso::ushort__ ToUS(
+			epeios::row__ *ErrP = NULL,
+			bso::ulong__ Limit = BSO_USHORT_MAX ) const
+		{
+			return ToUS( ErrP, 0, Limit );
 		}
 		/*f Convert to unsigned byte. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
 		value can have. */
 		bso::ubyte__ ToUB(
-			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			epeios::row__ *ErrP,
+			epeios::row__ Begin,
 			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)ToUL( ErrP, Limit );
+			return (bso::ubyte__)ToUL( ErrP, 0, Limit );
+		}
+		//f Variation in parameters.
+		bso::ubyte__ ToUB(
+			epeios::row__ *ErrP = NULL,
+			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
+		{
+			return ToUB( ErrP, 0, Limit );
 		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
-		bso::lfloat__ ToLF( epeios::row__ &ErrP = *(epeios::row__ *)NULL ) const;
+		bso::lfloat__ ToLF(
+			epeios::row__ *ErrP,
+			epeios::row__ Begin ) const;
+		//f Variation in parameters.
+		bso::lfloat__ ToLF( epeios::row__ *ErrP = NULL ) const
+		{
+			return ToLF( ErrP, 0 );
+		}
+
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.
@@ -349,7 +321,7 @@ namespace str {
 			reset( false );
 
 			string_::Init();
-			string_::Write( S );
+			string_::AppendNTS( S );
 		}
 		string(
 			const char *S,

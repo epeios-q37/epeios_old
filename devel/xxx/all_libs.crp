@@ -33,7 +33,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Client/Server Manager
 &ctn		&epeios		&2000-\
 	&ConTaiNer (of dynamic objects)
-&cvm		&epeios		&2002-2001, \
+&cvm		&epeios		&2000-2001, \
 	&ConVentional Memory
 &dbt		&epeios		&\
 	&Differentiated Binary Tree
@@ -91,7 +91,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&LiST BunCH
 &lstctn		&epeios		&\
 	&LiST ConTaiNer
-&mdr		&epeios		&\
+&mdr		&epeios		&2000-\
 	&Memory DRiver
 &mmg		&epeios		&2000-\
 	&Memory MerGer

@@ -50,7 +50,7 @@ ERRProlog
 	str::string	String;
 ERRBegin
 	String.Init( "4.62" );
-	fout << (100 * (long double)String.ToLF() / 100.0 ) << txf::nl;
+	stf::cout << (100 * (long double)String.ToLF() / 100.0 ) << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << STRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << STRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -75,16 +75,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << STRTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << STRTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << STRTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << STRTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

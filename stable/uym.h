@@ -190,7 +190,7 @@ namespace uym {
 		// Le pilote mémoire.
 		_memory_driver Pilote_;
 	#ifdef UYM_DBG
-		void Test_(
+		void _Test(
 			row__ Position,
 			bsize__ Nombre ) const
 		{
@@ -201,31 +201,29 @@ namespace uym {
 				ERRu();
 		}
 	#endif
-		void Lire_(
+		void _Recall(
 			row__ Position,
 			bsize__ Nombre, 
-			data__ *Tampon,
+			datum__ *Tampon,
 			bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore )
-				Test_( Position, Nombre );
+				_Test( Position, Nombre );
 	#endif
-			Pilote_->Read( Position, Nombre, Tampon );
+			Pilote_->Recall( Position, Nombre, Tampon );
 		}
-		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		void Ecrire_(
-			const data__ *Tampon,
+		void _Store(
+			const datum__ *Tampon,
 			bsize__ Nombre,
 			row__ Position )
 		{
 	#ifdef UYM_DBG
-			Test_( Position, Nombre );
+			_Test( Position, Nombre );
 	#endif
-			Pilote_->Write( Tampon, Nombre, Position );
+			Pilote_->Store( Tampon, Nombre, Position );
 		}
-		// écrit 'Nombre' octets à la position 'Position'
-		void Allouer_( size__ Size )
+		void _Allocate( size__ Size )
 		{
 	#ifdef UYM_DBG
 			S_.Size = Size;
@@ -235,11 +233,10 @@ namespace uym {
 	#endif
 			Pilote_->Allocate( Size );
 		}
-		// alloue 'Capacite' octets
-		void Synchroniser_( void ) const
+		void _Flush( void ) const
 		{
 			if ( Pilote_ )
-				Pilote_->Synchronize();
+				Pilote_->Flush();
 		}
 	public:
 		struct s {
@@ -286,75 +283,65 @@ namespace uym {
 		//f Allocates 'Capacity' bytes.
 		void Allocate( size__ Size )
 		{
-			Allouer_( Size );
+			_Allocate( Size );
 		}
-		/*f Put in 'Buffer' 'Amount' bytes at 'Position'.
+		/*f Recall 'Amount' bytes at 'Position' and put them in 'Buffer'.
 		Ignore is only for 'UYM_DBG' mode and for the 'MMG' library.
 		When 'true', it didn't make the test about the size. */
-		void Read(
+		void Recall(
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer,
+			datum__ *Buffer,
 			bso::bool__ Ignore = false ) const
 		{
-			Lire_( Position, Amount, Buffer, Ignore );
+			_Recall( Position, Amount, Buffer, Ignore );
 		}
-		//f Write to 'Position' 'Amount' bytes from 'Buffer'
-		void Write(
-			const data__ *Buffer,
+		//f Store 'Amount' bytes from 'Buffer' at 'Offset'.
+		void Store(
+			const datum__ *Buffer,
 			bsize__ Amount,
 			row__ Position )
 		{
-			Ecrire_( Buffer, Amount, Position );
+			_Store( Buffer, Amount, Position );
+		}
+		//f Put byte at 'Position' in 'Datum'.
+		void Recall(
+			row__ Position,
+			datum__ &Datum ) const
+		{
+			Recall( Position, 1, &Datum );
 		}
 		//f Return byte at 'Position'.
-		data__ Read( row__ Position ) const
+		datum__ Get( row__ Position ) const
 		{
-			data__ D;
+			datum__ D;
 
-			Lire_( Position, 1, &D );
+			Recall( Position, D );
 
 			return D;
 		}
 		//f Write 'Byte' at 'Position'.
-		void Write(
-			data__ Byte,
+		void Store(
+			datum__ Byte,
 			row__ Position )
 		{
-			Ecrire_( &Byte, 1, Position );
+			_Store( &Byte, 1, Position );
 		}
-		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
-		void Read(
-			row__ Position,
-			size__ Quantity,
-			untyped_memory_ &Destination,
-			row__ Offset = 0 ) const
-		{
-			Destination.Write( *this, Quantity, Position, Offset );
-		}
-		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-		void Write(
+		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
+		void Store(
 			const untyped_memory_ &Source,
-			size__ Size,
-			row__ Position = 0,
+			size__ Amount,
+			row__ Position,
 			row__ Offset = 0 );
-		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-#if 0
-		void Write(
-			const class _memory__ &Source,
-			size__ Size,
-			row__ Position = 0,
-			row__ Offset = 0 );
-#endif
-		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
-		void Fill(
-			const data__ *Object,
+		//f Store 'Count' 'Object's of size 'Size' at 'Position'.
+		void Store(
+			const datum__ *Object,
 			bsize__ Size,
-			size__ Count,
-			row__ Position = 0 );
-		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) or 'NONE' if non-existant.
-		row__ Position(
-			const data__ *Objet,
+			row__ Position,
+			size__ Count );
+		//f Locate 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
+		row__ Locate(
+			const datum__ *Objet,
 			bsize__ Size,
 			row__ Begin,
 			row__ End ) const;
@@ -364,9 +351,9 @@ namespace uym {
 			return Pilote_.Driver( Ignore );
 		}
 		//f Flushes all the caches.
-		void Synchronize( void ) const
+		void Flush( void ) const
 		{
-			Synchroniser_();
+			_Flush();
 		}
 	};
 
@@ -386,13 +373,13 @@ namespace uym {
 	//d A position take this value if an object cannot be find.
 	#define NONE	UYM_UNREACHABLE_POSITION
 
-	void Copy_(
+	void _Copy(
 		const class untyped_memory_ &Source,
 		row__ PosSource,
 		class untyped_memory_ &Dest,
 		row__ PosDest,
 		size__ Quantity,
-		data__ *Buffer,
+		datum__ *Buffer,
 		bsize__ BufferSize );
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
@@ -403,191 +390,19 @@ namespace uym {
 		row__ BeginM2,
 		size__ Quantity );
 
-#if 0
-	//c The core of a memory. Don't use; for internal use only.
-	class _memory__
-	{
-	private:
-		data__ **Data_;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			Data_ = NULL;
-		}
-		_memory__( data__ *&Data )
-		{
-			reset( false );
-
-			Data_ = &Data;
-		}
-		~_memory__( void )
-		{
-			reset( true );
-		}
-		//f Initialization.
-		void Init( void )
-		{}
-		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
-		void Read(
-			row__ Position,
-			bsize__ Amount,
-			data__ *Buffer ) const
-		{
-			memcpy( Buffer, Data_ + Position, Amount ); 
-		}
-		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
-		void Write(
-			const data__ *Buffer,
-			bsize__ Amount,
-			row__ Position )
-		{
-			memcpy( Data_ + Position, Buffer, Amount ); 
-		}
-		//f Return byte at 'Position'.
-		data__ Read( row__ Position ) const
-		{
-			return *Data_[Position];
-		}
-		//f Write 'Byte' at 'Position'.
-		void Write(
-			data__ Byte,
-			row__ Position )
-		{
-			*Data_[Position] = Byte;
-		}
-		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
-		void Read(
-			row__ Position,
-			size__ Quantity,
-			_memory__ &Destination,
-			row__ Offset = 0 ) const
-		{
-			memmove( Destination.Data_ + Position, Data_ + Position, Quantity );
-		}
-		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-		void Write(
-			const _memory__ &Source,
-			size__ Quantity,
-			row__ Position = 0,
-			row__ Offset = 0 )
-		{
-			memmove( Data_ + Offset, Source.Data_ + Position, Quantity ); 
-		}
-		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-		void Write(
-			const untyped_memory_ &Source,
-			size__ Quantity,
-			row__ Position = 0,
-			row__ Offset = 0 )
-		{
-			Source.Read( Position, Quantity, *Data_ + Offset );
-		}
-		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
-		void Fill(
-			const data__ *Object,
-			bsize__ Size,
-			size__ Count,
-			row__ Position = 0 );
-		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		row__ Position(
-			const data__ *Objet,
-			bsize__ Size,
-			row__ Begin,
-			row__ End ) const;
-		//f Return the used buffer.
-		const data__ *Buffer( void ) const
-		{
-			return *Data_;
-		}
-	};
-
-	inline void untyped_memory_::Write(
-		const _memory__ &Source,
-		size__ Size,
-		row__ Position,
-		row__ Offset )
-	{
-		Write( Source.Buffer() + Position, Size, Offset );
-	}
-
-
-	//c A fixed-size memory of size 'size'.
-	template <int size> class untyped_memory__
-	: public _memory__
-	{
-	private:
-		uym::data__ Data_[size];
-	public:
-		struct s {};	// To simplify use in library 'SET'
-		untyped_memory__( s &S = *(s *)NULL )
-			: _memory__( &Data_[0] ) {}
-		// Simplifies the 'SET' library.
-		void Allocate( uym::size__ Size )
-		{
-			if ( Size >= size )
-				ERRl();
-		}
-		void Init( void )
-		{
-			_memory__::Init();
-		}
-	};
-
-	typedef _memory__	_memory___;
-
-	//c A untyped memory using conventional memory.
-	class untyped_memory___
-	: public _memory___
-	{
-	private:
-		uym::data__ *Data_;
-	public:
-		struct s {};	// To simplify use in library 'SET'
-		void reset( bso::bool__ P = true )
-		{
-			if ( P ) {
-				tol::Free( Data_ );
-			}
-
-			Data_ = NULL;
-		}
-		untyped_memory___( s &S = *(s *)NULL )
-		: _memory___( Data_ )
-		{
-			reset( false );
-		}
-		~untyped_memory___( void )
-		{
-			reset( true );
-		}
-		//f Allocation of size 'Size'.
-		void Allocate( uym::size__ Size )
-		{
-			realloc( Data_, Size );
-		}
-		//f Initialization.
-		void Init( void )
-		{
-			tol::Free( Data_ );
-
-			_memory___::Init();
-		}
-	};
-#else
-
 	void _Fill(
-		const data__ *Object,
+		const datum__ *Object,
 		bsize__ Size,
 		size__ Count,
 		row__ Position,
-		data__ *Data );
+		datum__ *Data );
 
 	row__ _Position(
-		const data__ *Objet,
+		const datum__ *Objet,
 		bsize__ Size,
 		row__ Begin,
 		row__ End,
-		const data__ *Data );
+		const datum__ *Data );
 
 	template <typename m> class _memory__
 	: public m
@@ -613,44 +428,35 @@ namespace uym {
 		void Init( void )
 		{}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
-		void Read(
+		void Recall(
 			uym::row__ Position,
 			uym::bsize__ Amount,
-			uym::data__ *Buffer ) const
+			uym::datum__ *Buffer ) const
 		{
 			memcpy( Buffer, Data_ + Position, Amount ); 
 		}
 		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
-		void Write(
-			const uym::data__ *Buffer,
+		void Store(
+			const uym::datum__ *Buffer,
 			uym::bsize__ Amount,
 			uym::row__ Position )
 		{
 			memcpy( Data_ + Position, Buffer, Amount ); 
 		}
 		//f Return byte at 'Position'.
-		uym::data__ Read( uym::row__ Position ) const
+		uym::datum__ Get( uym::row__ Position ) const
 		{
 			return *Data_[Position];
 		}
 		//f Write 'Byte' at 'Position'.
-		void Write(
-			uym::data__ Byte,
+		void Store(
+			uym::datum__ Byte,
 			uym::row__ Position )
 		{
 			*Data_[Position] = Byte;
 		}
-		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
-		void Read(
-			uym::row__ Position,
-			uym::size__ Quantity,
-			_memory__ &Destination,
-			uym::row__ Offset = 0 ) const
-		{
-			memmove( Destination.Data_ + Position, Data_ + Position, Quantity );
-		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-		void Write(
+		void Store(
 			const _memory__ &Source,
 			uym::size__ Quantity,
 			uym::row__ Position = 0,
@@ -658,35 +464,35 @@ namespace uym {
 		{
 			memmove( Data_ + Offset, Source.Data_ + Position, Quantity ); 
 		}
-		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
-		void Write(
+		/*f Store to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+		void Store(
 			const untyped_memory_ &Source,
 			uym::size__ Quantity,
 			uym::row__ Position = 0,
 			uym::row__ Offset = 0 )
 		{
-			Source.Read( Position, Quantity, *Data_ + Offset );
+			Source.Recall( Position, Quantity, *Data_ + Offset );
 		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
-		void Fill(
-			const uym::data__ *Object,
+		void Store(
+			const uym::datum__ *Object,
 			uym::bsize__ Size,
-			uym::size__ Count,
-			uym::row__ Position = 0 )
+			uym::row__ Position,
+			uym::size__ Count )
 		{
-			_Fill( Object, Size, Count, Position, Data_ );
+			_Store( Object, Size, Count, Position, Data_ );
 		}
 		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		uym::row__ Position(
-			const uym::data__ *Objet,
+		uym::row__ Locate(
+			const uym::datum__ *Objet,
 			uym::bsize__ Size,
 			uym::row__ Begin,
 			uym::row__ End ) const
 		{
-			return _Position( Object, Size, Begin, End, Data_ );
+			return _Locate( Object, Size, Begin, End, Data_ );
 		}
 		//f Return the used buffer.
-		const uym::data__ *Buffer( void ) const
+		const uym::datum__ *Buffer( void ) const
 		{
 			return *Data_;
 		}
@@ -696,7 +502,7 @@ namespace uym {
 	template <int size> class _untyped_memory__
 	{
 	protected:
-		uym::data__ Data_[size];
+		uym::datum__ Data_[size];
 	public:
 		void reset( bso::bool__ = true )
 		{}
@@ -721,7 +527,7 @@ namespace uym {
 	class _untyped_memory___
 	{
 	protected:
-		uym::data__ *Data_;
+		uym::datum__ *Data_;
 	public:
 		struct s {};	// To simplify use in library 'BCH'
 		void reset( bso::bool__ P = true )
@@ -765,7 +571,6 @@ namespace uym {
 	};
 
 	typedef _memory__< _untyped_memory___>	untyped_memory___;
-#endif
 }
 /*$END$*/
 				  /********************************************/

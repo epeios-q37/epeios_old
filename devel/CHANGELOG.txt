@@ -5,6 +5,8 @@ GENERAL:
 - Fixing g++ warning.
 - Fixing CW warnings (all but 'unused argument').
 - Adapting to changes in 'TOL' library ('E_' prefix for macros).
+- Renaming 'Read', 'Write', 'Synchronize' adn 'data__' in
+  'Recall' 'Store', 'Flush' and 'datum__' in all memory-related libraries.
 
 AEM:
 - Bug fixing of the (p_)_amount_extent_manager__ and related classes.
@@ -39,6 +41,9 @@ CPE:
 - Adding detection of cygwin.
 - Disabling C++ warning C4786.
 - Adding multithreading detection for CodeWarrior.
+
+CVM:
+- Adapting to changes in 'MDR' library.
 
 DBT:
 - Adapting to changes in 'LST' library.
@@ -76,6 +81,10 @@ LSTCTN:
 - Adding missing 'Flush()' to 'Delete' method.
 - Renaming 'Create()' into 'New()' to avoid mistakes.
 
+MDR:
+- Using 'Store', 'Recall' and 'Flush' instead of 'Write', 'Read' and 'Synchronize'.
+- Renaming 'data__' in 'datum__'.
+
 MMI:
 - Adding some missing 'const' qualifier'.
 
@@ -108,6 +117,9 @@ STR:
 - Trying to convert an empty string to a number sets the error pointer to 0 (instead of 'NONE').
 - Renaming 'Add' to 'Append'.
 - Adapting to changes in 'BCH' library.
+- Adding the 'Begin' parameter to 'To...' Conversion method.
+- Changing the way the 'ErrP' parameter is passed in the 'To...' conversion method.
+- Adding 'To...' methods with variataion in the parameters.
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.

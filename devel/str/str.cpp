@@ -68,7 +68,7 @@ namespace str {
 			epeios::row_t__ P = 0;
 
 			while ( P < Amount )
-				OStream.Put( (flw::datum__)String.Read( P++ ) );
+				OStream.Put( (flw::datum__)String.Get( P++ ) );
 		}
 	}
 
@@ -113,7 +113,7 @@ namespace str {
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
-			String.Write( (char)toupper( String.Read( P ) ) , P );
+			String.Store( (char)toupper( String.Get( P ) ) , P );
 	}
 
 	// Convertit le contenu de 'String' en minuscule.
@@ -122,7 +122,7 @@ namespace str {
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
-			String.Write( (char)tolower( String.Read( P )) , P );
+			String.Store( (char)tolower( String.Get( P )) , P );
 	}
 
 	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
@@ -139,7 +139,7 @@ namespace str {
 		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
 			ERRa();
 
-		Read( Position, Quantity, Pointeur );
+		Recall( Position, Quantity, Pointeur );
 
 		Pointeur[Quantity] = 0;
 	ERRErr
@@ -157,8 +157,8 @@ namespace str {
 		char Char;
 
 		for( Source = 0; Source < Amount(); Source++ ) {
-			if ( ( Char = Read( Source ) ) != Model )
-				Write( Char, Dest++ );
+			if ( ( Char = Get( Source ) ) != Model )
+				Store( Char, Dest++ );
 		}
 
 		Allocate( Dest );
@@ -173,10 +173,10 @@ namespace str {
 		char Char;
 
 		for( Source = 0; Source < Amount(); Source++ ) {
-			if ( ( Char = Read( Source ) ) == Old )
-				Write( New, Source );
+			if ( ( Char = Get( Source ) ) == Old )
+				Store( New, Source );
 			else
-				Write( Char, Source );
+				Store( Char, Source );
 		}
 	}
 
@@ -210,7 +210,7 @@ namespace str {
 		epeios::row_t__ Limit = Amount();
 
 		while( ( *Start < Limit )
-			&& ( Read( Start ) != C ) )
+			&& ( Get( Start ) != C ) )
 			(*Start)++;
 
 		if ( *Start >= Limit )
@@ -220,53 +220,52 @@ namespace str {
 	}
 
 	bso::ulong__ string_::ToUL(
-		epeios::row__ &ErrP,
+		epeios::row__ *ErrP,
+		epeios::row__ Begin,
 		bso::ulong__ Limit ) const
 	{
 		bso::ulong__ Result = 0;
-		epeios::row__ P = First();
+		epeios::row__ &P = Begin;
 		char C;
 
-		if ( P == NONE )
-			P = 0;
-		else
+		if ( *P < Amount() )
 			while( ( P != NONE )
-				   && isdigit( C = Read( P ) )
+				   && isdigit( C = Get( P ) )
 				   && ( Result < ( Limit / 10 ) ) ) {
 				Result = Result * 10 + C - '0';
 				P = Next( P );
 			}
 
-		if ( &ErrP )
-			ErrP = P;
+		if ( ErrP )
+			*ErrP = P;
 
 		return Result;
 	}
 
-	bso::lfloat__ string_::ToLF( epeios::row__ &ErrP ) const
+	bso::lfloat__ string_::ToLF(
+		epeios::row__ *ErrP,
+		epeios::row__ Begin ) const
 	{
 		bso::bool__ Negate = false;
 		bso::lfloat__ Result = 0;
-		epeios::row__ P = First();
+		epeios::row__ &P = Begin;
 		char C;
 
-		if ( P == NONE )
-			P = 0;
-		else {
-			if ( ( P != NONE ) && ( Read( P ) == '-' ) ) {
+		if ( *P < Amount() ) {
+			if ( ( P != NONE ) && ( Get( P ) == '-' ) ) {
 				Negate = true;
 				P = Next( P );
 			}
 
-			while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+			while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
 				Result = Result * 10 + C - '0';
 				P = Next( P );
 			}
 
-			if ( ( P != NONE ) && ( Read( P ) == '.' ) ) {
+			if ( ( P != NONE ) && ( Get( P ) == '.' ) ) {
 				bso::lfloat__ Factor = .1;
 				P = Next( P );
-				while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+				while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
 					Result += ( C - '0' ) * Factor;
 					Factor /= 10;
 					P = Next( P );
@@ -274,8 +273,8 @@ namespace str {
 			}
 		}
 
-		if ( &ErrP )
-			ErrP = P;
+		if ( ErrP )
+			*ErrP = P;
 
 		if ( Negate )
 			return -Result;

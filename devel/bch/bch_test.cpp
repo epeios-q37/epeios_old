@@ -133,8 +133,8 @@ ERRBegin
 
 	for ( i = 0; i < NOMBRE; i++ )
 	{
-		E1.Write( i, i );
-		E2.Write( (bso::ulong__)( NOMBRE - i ), i );
+		E1.Store( i, i );
+		E2.Store( (bso::ulong__)( NOMBRE - i ), i );
 	}
 
 	for ( i = 0; i < E1.Amount(); i++ )

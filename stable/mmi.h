@@ -86,7 +86,17 @@ namespace mmi {
 	// fonctions
 		void AllouerPlus_(
 			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite );
+			epeios::size__ NouvelleCapacite )
+		{
+			descripteur__ D;
+
+			D.Descripteur = 0;
+			D.Capacite = 0;
+
+			Descripteurs.Allocate( NouvelleCapacite );
+
+			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
+		}
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void AllouerMoins_(
@@ -98,13 +108,13 @@ namespace mmi {
 			index__ Index,
 			epeios::row_t__ Position,
 			epeios::bsize__ Taille,
-			epeios::data__ *Tampon ) const
+			epeios::datum__ *Tampon ) const
 		{
 			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon );
 		}
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
-			const epeios::data__ *Tampon,
+			const epeios::datum__ *Tampon,
 			epeios::bsize__ Taille,
 			index__ Index,
 			epeios::row_t__ Position )
@@ -116,25 +126,25 @@ namespace mmi {
 			index__ Index,
 			epeios::size__ Nombre )
 		{
-			descripteur__ D = Descripteurs.Read( *Index );
+			descripteur__ D = Descripteurs.Get( *Index );
 
 			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre );
 
 			D.Capacite = Nombre;
 
-			Descripteurs.Write( D, *Index );
+			Descripteurs.Store( D, *Index );
 		}
 		// allocation pour 'Capacite' objets
 		void Liberer_( index__ Index )
 		{
-			descripteur__ D = Descripteurs.Read( *Index );
+			descripteur__ D = Descripteurs.Get( *Index );
 
 			Multimemoire.Free( D.Descripteur );
 
 			D.Descripteur = 0;
 			D.Capacite = 0;
 
-			Descripteurs.Write( D, *Index );
+			Descripteurs.Store( D, *Index );
 		}
 		// libère la mémoire d'index 'Index'
 	public:
@@ -173,7 +183,7 @@ namespace mmi {
 			epeios::size__ Size )
 		{
 			Descripteurs.Allocate( Size );
-			Descripteurs.Write( O.Descripteurs, Size );
+			Descripteurs.Store( O.Descripteurs, Size );
 			Multimemoire = O.Multimemoire;
 		}
 	/*	void ecrire( flo_sortie_ &F ) const
@@ -207,13 +217,13 @@ namespace mmi {
 			index__ Index,
 			epeios::row_t__ Position,
 			epeios::bsize__ Amount,
-			epeios::data__ *Buffer ) const
+			epeios::datum__ *Buffer ) const
 		{
 			Lire_( Index, Position, Amount, Buffer );
 		}
 		//f Put 'Amount' bytes at 'Position' to the 'Index' memory from 'Buffer'.
 		void Write(
-			const epeios::data__ *Buffer,
+			const epeios::datum__ *Buffer,
 			epeios::bsize__ Amount,
 			index__ Index,
 			epeios::row_t__ Position )
@@ -233,10 +243,10 @@ namespace mmi {
 			Liberer_( Index );
 		}
 		//f Flushes the memory.
-		void Synchronize( void )
+		void Flush( void )
 		{
-			Descripteurs.Synchronize();
-			Multimemoire.Synchronize();
+			Descripteurs.Flush();
+			Multimemoire.Flush();
 		}
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
@@ -278,16 +288,16 @@ namespace mmi {
 		indexed_multimemory_ *Multimemoire_;
 		// memoire à laquelle il a été affecté
 	protected:
-		virtual void MDRRead(
+		virtual void MDRRecall(
 			mdr::row__ Position,
 			mdr::bsize__ Amount,
-			mdr::data__ *Buffer )
+			mdr::datum__ *Buffer )
 		{
 			Multimemoire_->Read( S_.Index, Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRWrite(
-			const epeios::data__ *Buffer,
+		virtual void MDRStore(
+			const epeios::datum__ *Buffer,
 			mdr::bsize__ Amount,
 			mdr::row__ Position )
 		{
@@ -299,10 +309,10 @@ namespace mmi {
 			Multimemoire_->Allocate( S_.Index, Capacity );
 		}
 		// alloue 'Capacite' octets
-		virtual void MDRSynchronize( void )
+		virtual void MDRFlush( void )
 		{
 			if ( Multimemoire_ )
-				Multimemoire_->Synchronize();
+				Multimemoire_->Flush();
 		}
 	public:
 		struct s
@@ -353,16 +363,16 @@ namespace mmi {
 		const indexed_multimemory_ *Multimemoire_;
 		// memoire à laquelle il a été affecté
 	protected:
-		virtual void MDRRead(
+		virtual void MDRRecall(
 			mdr::row__ Position,
 			mdr::bsize__ Amount,
-			mdr::data__ *Buffer )
+			mdr::datum__ *Buffer )
 		{
 			Multimemoire_->Read( S_.Index, Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRWrite(
-			const mdr::data__ *Buffer,
+		virtual void MDRStore(
+			const mdr::datum__ *Buffer,
 			mdr::bsize__ Amount,
 			mdr::row__ Position )
 		{
@@ -374,7 +384,7 @@ namespace mmi {
 			ERRu();
 		}
 		// alloue 'Capacite' octets
-		virtual void MDRSynchronize( void )
+		virtual void MDRFlush( void )
 		{
 			ERRu();
 		}

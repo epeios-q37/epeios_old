@@ -454,16 +454,16 @@ namespace flm {
 	  public memoire_fichier_base_
 	{
 	protected:
-		virtual void MDRRead(
+		virtual void MDRRecall(
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
 			memoire_fichier_base_::Lire( (position__)Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
-		virtual void MDRWrite(
-			const data__ *Buffer,
+		virtual void MDRStore(
+			const datum__ *Buffer,
 			bsize__ Amount,
 			row__ Position )
 		{

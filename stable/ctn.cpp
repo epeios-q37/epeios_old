@@ -55,19 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void ctn::Remplir_(
-	uym::untyped_memory_ &Memoire,
-	uym::row__ Debut,
-	uym::row__ Fin,
-	uym::data__ *Statique,
-	uym::bsize__ Taille )
-{
-	while ( Debut <= Fin )
-		Memoire.Write( Statique, Taille, Debut++ * Taille );
-}
-
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class ctnpersonnalization

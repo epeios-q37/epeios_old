@@ -57,13 +57,13 @@ void Test(
 {
 	static unsigned long Compteur = 1;
 
-	fout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
+	stf::cout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
 	D = M.Reallocate( D, C );
-	fout << ( D / 4 )<< nl;
+	stf::cout << ( D / 4 )<< nl;
 
 	M.PrintStructure();
 
-	fout << nl;
+	stf::cout << nl;
 }
 
 
@@ -139,27 +139,27 @@ ERRBegin
 	while( i-- )
 	{
 		j = i + 300;
-		M1.Write( &j, 1, i );
-		M1.Read( i, 1, &j );
-		fout << j << '\t';
+		M1.Store( &j, 1, i );
+		M1.Recall( i, 1, &j );
+		stf::cout << j << '\t';
 	}
 
 	i = 0;
 
-	M1.Read( 0, 50, M2 );
+	M2.Store( M1, 50 );
 
-	M3.Write( M2, 50, 0 );
+	M3.Store( M2, 50, 0 );
 
 	while( i < 50  )
 	{
-		M1.Read( i, 1, &j );
-		fout << j << '\t';
+		M1.Recall( i, 1, &j );
+		stf::cout << j << '\t';
 
-		M2.Read( i, 1, &j );
-		fout << j << '\t';
+		M2.Recall( i, 1, &j );
+		stf::cout << j << '\t';
 
-		M3.Read( i, 1, &j );
-		fout << j << '\t';
+		M3.Recall( i, 1, &j );
+		stf::cout << j << '\t';
 
 		i++;
 	}
@@ -191,17 +191,17 @@ ERRBegin
 	for( int i = 0; i < sizeof( Descripteurs ) / sizeof( Descripteurs[0] ); i++ )
 	{
 		Descripteurs[i] = Multimemoire.Allocate( rand() % TAILLE_MAX + 4 );
-		fout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		stf::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
-	fout << nl;
+	stf::cout << nl;
 
 	for(;;)
 	{
 		i = rand() % 100;
 
 		Descripteurs[i] = Multimemoire.Reallocate( Descripteurs[i], Multimemoire.Size( Descripteurs[i] ) + rand() % TAILLE_MAX + 4 );
-		fout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		stf::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
 
@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -231,16 +231,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << MMMTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << MMMTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << MMMTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << MMMTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

@@ -1,25 +1,24 @@
 /*
-  Header for the 'mdr' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'mdr' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define MDR_NAME		"MDR"
 
-#define	MDR_VERSION	"$Revision$"	
+#define	MDR_VERSION	"$Revision$"
 
 #define MDR_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &MDRTutor;
 
 #if defined( XXX_DBG ) && !defined( MDR_NODBG )
-#define MDR_DBG 
+#define MDR_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &MDRTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D Memory DRiver 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 //D Memory DRiver.
@@ -80,8 +84,8 @@ namespace mdr {
 	//t The size of a buffer.
 	typedef bso::bsize__	bsize__;
 
-	//t The type of the data in a memory.
-	typedef bso::raw__	data__;
+	//t The type of the datum in a memory.
+	typedef bso::raw__	datum__;
 
 	//e Access mode to the memory.
 	enum mode
@@ -100,14 +104,14 @@ namespace mdr {
 	class memory_driver_
 	{
 	protected:
-		//v Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
-		virtual void MDRRead(
+		//v Recall 'Amount' at position 'Position' and put them in 'Buffer'.
+		virtual void MDRRecall(
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer ) = 0;
+			datum__ *Buffer ) = 0;
 		//v Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
-		virtual void MDRWrite(
-			const data__ *Buffer,
+		virtual void MDRStore(
+			const datum__ *Buffer,
 			bsize__ Amount,
 			row__ Position )
 		{
@@ -121,8 +125,9 @@ namespace mdr {
 			// For read-only memory.
 		}
 		//v Flush caches.
-		virtual void MDRSynchronize( void )
+		virtual void MDRFlush( void )
 		{
+			ERRu();
 			// for read-only memory.
 		}
 	public:
@@ -144,31 +149,31 @@ namespace mdr {
 		//f Initialization.
 		void Init( void )
 		{}
-		//f Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
-		void Read(
+		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
+		void Recall(
 			row__ Position,
 			bsize__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
-			MDRRead( Position, Amount, Buffer );
+			MDRRecall( Position, Amount, Buffer );
 		}
-		//f Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
-		void Write(
-			const data__ *Buffer,
+		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
+		void Store(
+			const datum__ *Buffer,
 			bsize__ Amount,
 			row__ Position )
 		{
-			MDRWrite( Buffer, Amount, Position );
+			MDRStore( Buffer, Amount, Position );
 		}
 		//f Allocate 'Size' bytes in memory.
 		void Allocate( size__ Size )
 		{
 			MDRAllocate( Size );
 		}
-		//f Flush caches.
-		void Synchronize( void )
+		//f Flush buffers.
+		void Flush( void )
 		{
-			MDRSynchronize();
+			MDRFlush();
 		}
 	};
 

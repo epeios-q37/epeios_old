@@ -76,41 +76,31 @@ namespace tym {
 	: public b
 	{
 	private:
-		/* lit 'Quantite' objets à partir de 'Position' et les place dans 'Destination'
-		à la position 'Decalage' */
-		void Lire_(
-			epeios::row_t__ Position,
-			epeios::size__ Quantite,
-			_memory_ &Destination,
-			epeios::row_t__ Decalage ) const
-		{
-			b::Read( ( Position * sizeof( t ) ), ( Quantite * sizeof( t ) ), Destination, ( Decalage * sizeof( t ) ) );
-		}
 		// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
-		void Lire_(
+		void _Recall(
 			epeios::row_t__ Position,
 			epeios::bsize__ Nombre,
 			t *Tampon ) const
 		{
-			b::Read( Position * sizeof( t ), Nombre * sizeof( t ), (epeios::data__ *)Tampon );
+			b::Recall( Position * sizeof( t ), Nombre * sizeof( t ), (epeios::datum__ *)Tampon );
 		}
 		// écrit 'Taille' objets de 'Tampon' à la position 'Position'
-		void Ecrire_(
+		void _Store(
 			const t *Tampon,
 			epeios::bsize__ Nombre,
 			epeios::row_t__ Position )
 		{
-			b::Write( (epeios::data__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
+			b::Store( (epeios::datum__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
 		}
 		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
 		à la position 'Decalage' */
-		void Ecrire_(
+		void _Store(
 			const _memory_ &Source,
 			epeios::size__ Quantite,
 			epeios::row_t__ Position,
 			epeios::row_t__ Decalage )
 		{
-			b::Write( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
+			b::Store( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
 		}
 		// allocation de 'Capacite' objets
 		void Allocate_( epeios::size__ Size )
@@ -129,62 +119,63 @@ namespace tym {
 		{
 			b::Init();
 		}
-		//f Put 'Amount' objects at 'Position' to 'Buffer'.
-		void Read(
+		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
+		void Recall(
 			r Position,
 			epeios::bsize__ Amount,
 			t *Buffer ) const
 		{
-			Lire_( *Position, Amount, Buffer );
+			_Recall( *Position, Amount, Buffer );
+		}
+		//f Put in 'Buffer' 'Amount' bytes at 'Position'. Return 'Buffer'.
+		t *Get(
+			r Position,
+			epeios::bsize__ Amount,
+			t *Buffer ) const
+		{
+			_Recall( *Position, Amount, Buffer );
+
+			return Buffer;
 		}
 		//f Put in 'Value' the object at 'Position'.
-		void Read(
+		void Recall(
 			r Position,
 			t &Value ) const
 		{
-			Lire_( *Position, 1, &Value );
-		}
-		//f Put to 'Destination' at 'Offset' 'Quantity' objects at 'Position'.
-		void Read(
-			r Position,
-			epeios::size__ Quantity,
-			_memory_<t,b,r> &Destination,
-			r Offset = 0 ) const
-		{
-			Lire_( *Position, Quantity, Destination, *Offset );
+			_Recall( *Position, 1, &Value );
 		}
 		//f Return the object at 'Position'.
-		const t Read( r Position ) const
+		const t Get( r Position ) const
 		{
 			t V;
 
-			Lire_( *Position, 1, &V );
+			_Recall( *Position, 1, &V );
 
 			return V;
 		}
-		//f Write 'Amount' object from 'Buffer' at 'Position'.
-		void Write(
+		//f Store 'Amount' object in 'Buffer' at 'Position'.
+		void Store(
 			const t *Buffer,
 			epeios::bsize__ Amount,
 			r Position )
 		{
-			Ecrire_( Buffer, Amount, *Position );
+			_Store( Buffer, Amount, *Position );
 		}
-		//f Write 'Value' at 'Position'.
-		void Write(
+		//f Store 'Value' at 'Position'.
+		void Store(
 			const t &Valeur,
 			r Position )
 		{
-			Ecrire_( &Valeur, 1, *Position );
+			_Store( &Valeur, 1, *Position );
 		}
-		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
-		void Write(
+		/*f Store 'Amount' objects at 'Position' in 'Source' at 'Offset'. */
+		void Store(
 			const _memory_<t,b,r> &Source,
-			epeios::size__ Quantity,
+			epeios::size__ Amount,
 			r Position = 0,
 			r Offset = 0 )
 		{
-			Ecrire_( Source, Quantity, *Position, *Offset );
+			_Store( Source, Amount, *Position, *Offset );
 		}
 		//f Swap objects at 'Position1' and 'Position2'.
 		void Swap(
@@ -193,27 +184,27 @@ namespace tym {
 		{
 			t O;
 
-			O = Read( Position1 );
-			Write( Read( Position2 ), Position1 );
-			Write( O, Position2 );
+			O = Get( Position1 );
+			Store( Get( Position2 ), Position1 );
+			Store( O, Position2 );
 		}
-		//f Fill at 'Position' with 'Object' 'Count' times.
-		void Fill(
+		//f Store at 'Position' 'Amount' objects.
+		void Store(
 			const t &Object,
-			epeios::size__ Count,
-			r Position = 0 )
+			r Position,
+			epeios::size__ Amount )
 		{
-			b::Fill( (uym::data__ *)&Object, sizeof( t ), Count, *Position * sizeof( t ) );
+			b::Store( (uym::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
 		}
-		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		r Position(
+		//f Return the position from 'Object' between 'Begin' and 'End' (both included) or 'NONE' if non-existant.
+		r Locate(
 			const t &Object,
 			r Begin,
 			r End ) const
 		{
 			epeios::row_t__ Position;
 
-			if ( ( Position = b::Position( (uym::data__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Locate( (uym::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;
@@ -226,7 +217,7 @@ namespace tym {
 		//f Return the object at 'Position'..
 		const t operator ()( r Position ) const
 		{
-			return Read( Position );
+			return Get( Position );
 		}
 	};
 

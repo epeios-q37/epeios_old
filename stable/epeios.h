@@ -75,7 +75,7 @@ namespace epeios {
 	E_TYPEDEF( row_t__, row__ );
 	using mdr::size__;
 	using mdr::bsize__;
-	using mdr::data__;
+	using mdr::datum__;
 }
 
 /*$END$*/

@@ -79,17 +79,6 @@ namespace ctn {
 	using aem::amount_extent_manager_;
 
 
-	/* Remplit les parties statiques des objets 'Debut' à 'Fin' inclus
-	contenus dans 'Memoire', sachant qu'ils doivent contenir 'Statique'
-	qui est de taille 'Taille' */
-	void Remplir_(
-		uym::untyped_memory_ &Memoire,
-		epeios::row_t__ Debut,
-		epeios::row_t__ Fin,
-		epeios::data__ *Statique,
-		epeios::bsize__ Taille );
-
-
 	//c The base of a container. Internal use.
 	template <class st, typename r> class basic_container_
 	: public aem::amount_extent_manager_<r>
@@ -126,7 +115,7 @@ namespace ctn {
 		{
 			Dynamics.Copy( O.Dynamics, O.Amount() );
 			Statics.Allocate( O.Amount() );
-			Statics.Write( O.Statics, O.Amount() ); 
+			Statics.Store( O.Statics, O.Amount() ); 
 
 			amount_extent_manager_<r>::Force( O.Amount() );
 			amount_extent_manager_<r>::operator =( O );
@@ -170,9 +159,9 @@ namespace ctn {
 			if ( AncCap < Size )
 			{
 				if ( ( Size - AncCap ) > 1 )
-					Remplir_( this->Statics, AncCap, Size - 1, (epeios::data__ *)&ST, sizeof( ST ) );
+					Statics.Store( ST, AncCap, Size - AncCap );
 				else
-					Statics.Write( ST, AncCap );
+					Statics.Store( ST, AncCap );
 			}
 		}
 		// Comme 'ecrire()', sauf pour la multimémoire, qui contient la partie dynamique.
@@ -210,7 +199,7 @@ namespace ctn {
 			epeios::size__ NewExtent = CurrentExtent - Amount;
 
 			Dynamics.DeleteWithoutReallocating( Position, CurrentExtent, Amount );
-			Statics.Write( Statics, NewExtent - *Position, *Position + Amount, Position );
+			Statics.Store( Statics, NewExtent - *Position, *Position + Amount, Position );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( NewExtent, Mode ) ) {
 				Dynamics.Allocate( NewExtent, CurrentExtent );
@@ -237,7 +226,7 @@ namespace ctn {
 				if ( Conteneur_ == NULL )
 					ERRu();
 	#endif
-				Conteneur_->Statics.Write( ctn_S_, *Pilote_.Index() );
+				Conteneur_->Statics.Store( ctn_S_, *Pilote_.Index() );
 			}
 
 			Pilote_.Index( NONE );
@@ -315,7 +304,7 @@ namespace ctn {
 			if ( Pilote_.Index() != *Position )
 			{
 				Vider_();
-				Conteneur_->Statics.Read( Position, ctn_S_ );
+				Conteneur_->Statics.Recall( Position, ctn_S_ );
 				Pilote_.Index( *Position );
 			}
 		}
@@ -416,7 +405,7 @@ namespace ctn {
 				if ( Conteneur_ == NULL )
 					ERRu();
 	#endif
-				Conteneur_->Statics.Read( Position, ctn_S_ );
+				Conteneur_->Statics.Recall( Position, ctn_S_ );
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
@@ -575,7 +564,7 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Flush()' before. */
-		t &Read( r Position )
+		t &Get( r Position )
 		{
 			return Ponctuel_( Position );
 		}
@@ -584,7 +573,7 @@ namespace ctn {
 		the function 'Flush()' before. */
 		t &operator ()( r Position )
 		{
-			return Read( Position );
+			return Get( Position );
 		}
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
@@ -607,7 +596,7 @@ namespace ctn {
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
-		const t& Read(
+		const t& Get(
 			r Position,
 			E_CMITEMt( t, r ) &Item ) const
 		{
@@ -625,10 +614,10 @@ namespace ctn {
 			r Position,
 			E_CMITEMt( t, r ) &Item ) const
 		{
-			return Read( Position, Item );
+			return Get( Position, Item );
 		}
-		//f Write 'Object' at 'Position'.
-		void Write(
+		//f Store 'Object' at 'Position'.
+		void Store(
 			const t & Objet,
 			r Position )
 		{
@@ -637,13 +626,13 @@ namespace ctn {
 			Flush();
 		}
 		//f Put in 'Object' the object at position 'Position'.
-		void Read(
+		void Recall(
 			r Position,
 			t &Objet ) const
 		{
 			E_CMITEMt( t, r ) Element;
 
-			Objet = Read( Position, Element );
+			Objet = Get( Position, Element );
 		}
 		//f Allocate room for 'Size' objects.
 		void Allocate(
@@ -938,7 +927,7 @@ namespace ctn {
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
 		the function 'Flush()' before. */
-		t &Read( r Position )
+		t &Get( r Position )
 		{
 			return Ponctuel_( Position );
 		}
@@ -947,7 +936,7 @@ namespace ctn {
 		the function 'Flush()' before. */
 		t &operator ()( r Position )
 		{
-			return Read( Position );
+			return Get( Position );
 		}
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
@@ -970,7 +959,7 @@ namespace ctn {
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
-		const t& Read(
+		const t& Get(
 			r Position,
 			E_CITEMt( t, r ) &Item ) const
 		{
@@ -988,10 +977,10 @@ namespace ctn {
 			r Position,
 			E_CITEMt( t, r ) &Item ) const
 		{
-			return Read( Position, Item );
+			return Get( Position, Item );
 		}
-		//f Write 'Object' at 'Position'.
-		void Write(
+		//f Store 'Object' at 'Position'.
+		void Store(
 			const t & Object,
 			r Position )
 		{
@@ -1000,13 +989,13 @@ namespace ctn {
 			Flush();
 		}
 		//f Put in 'Object' the object at position 'Position'.
-		void Read(
+		void Recall(
 			r Position,
 			t &Objet ) const
 		{
 			E_CITEMt( t, r ) Element;
 
-			Objet = Read( Position, Element );
+			Objet = Get( Position, Element );
 		}
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
