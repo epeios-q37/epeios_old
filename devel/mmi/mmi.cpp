@@ -54,52 +54,53 @@ public:
 /*$BEGIN$*/
 
 #define capacite				uym__size
-#define multimemoire_indexee	mmi_indexed_multimemory_
+#define multimemoire_indexee	indexed_multimemory_
 
-void multimemoire_indexee::AllouerPlus_(
-	capacite CapaciteCourante,
-	capacite CapaciteDemandee )
-{
-	mmi__descripteur D;
+namespace mmi {
 
-	D.Descripteur = 0;
-	D.Capacite = 0;
+	void multimemoire_indexee::AllouerPlus_(
+		capacite CapaciteCourante,
+		capacite CapaciteDemandee )
+	{
+		descripteur__ D;
 
-	Descripteurs.Allocate( CapaciteDemandee );
+		D.Descripteur = 0;
+		D.Capacite = 0;
 
-	while ( CapaciteDemandee-- > CapaciteCourante )
-		Descripteurs.Write( D, CapaciteDemandee );
+		Descripteurs.Allocate( CapaciteDemandee );
+
+		while ( CapaciteDemandee-- > CapaciteCourante )
+			Descripteurs.Write( D, CapaciteDemandee );
+	}
+
+	void multimemoire_indexee::AllouerMoins_(
+		capacite CapaciteCourante,
+		capacite CapaciteDemandee )
+	{
+		while ( CapaciteCourante-- > CapaciteDemandee )
+			Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
+
+		Descripteurs.Allocate( CapaciteDemandee );
+	}
 }
 
-void multimemoire_indexee::AllouerMoins_(
-	capacite CapaciteCourante,
-	capacite CapaciteDemandee )
-{
-	while ( CapaciteCourante-- > CapaciteDemandee )
-		Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
-
-	Descripteurs.Allocate( CapaciteDemandee );
-}
-
-
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-class mmipersonnalization
-: public mmitutor
-{
-public:
-	mmipersonnalization( void )
+	/* Although in theory this class is inaccessible to the different modules,
+	it is necessary to personalize it, or certain compiler would not work properly */
+	class mmipersonnalization
+	: public mmitutor
 	{
-		/* place here the actions concerning this library
-		to be realized at the launching of the application  */
-	}
-	~mmipersonnalization( void )
-	{
-		/* place here the actions concerning this library
-		to be realized at the ending of the application  */
-	}
-};
-
+	public:
+		mmipersonnalization( void )
+		{
+			/* place here the actions concerning this library
+			to be realized at the launching of the application  */
+		}
+		~mmipersonnalization( void )
+		{
+			/* place here the actions concerning this library
+			to be realized at the ending of the application  */
+		}
+	};
 
 /*$END$*/
 				  /********************************************/
