@@ -1,25 +1,24 @@
 /*
-  Header for the 'spp' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'spp' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define SPP_NAME		"SPP"
 
-#define	SPP_VERSION	"$Revision$"	
+#define	SPP_VERSION	"$Revision$"
 
-#define SPP_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define SPP_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &SPPTutor;
 
 #if defined( XXX_DBG ) && !defined( SPP_NODBG )
-#define SPP_DBG 
+#define SPP_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &SPPTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D Shared PiPe 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
@@ -67,7 +71,7 @@ extern class ttr_tutor &SPPTutor;
 
 namespace spp {
 
-	using pip::data__;
+	using pip::datum__;
 
 	using pip::amount__;
 
@@ -189,7 +193,7 @@ namespace spp {
 		}
 		//f Write 'Amount' bytes from 'Buffer'. If 'Synchronization' at true, a synchronization occurs.
 		amount__ Write(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount,
 			bso::bool__ Synchronization )
 		{
@@ -207,7 +211,7 @@ namespace spp {
 		//f Put 'Amount( bytes into 'Buffer'.
 		amount__ Read(
 			amount__ Amount,
-			data__ *Buffer )
+			datum__ *Buffer )
 		{
 			amount__ Count;
 
@@ -238,11 +242,11 @@ namespace spp {
 	{
 	private:
 		shared_pipe___ *Pipe_;
-		flw::data__ Cache_[SPP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[SPP_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 	public:
 		void reset( bool P =  true )
@@ -274,10 +278,10 @@ namespace spp {
 	{
 	private:
 		shared_pipe___ *Pipe_;
-		flw::data__ Cache_[SPP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[SPP_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
@@ -350,16 +354,16 @@ namespace spp {
 	{
 	private:
 		shared_bipipe___ *Bipipe_;
-		flw::data__ Cache_[2*SPP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[2*SPP_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 	public:
 		void reset( bso::bool__ P = true )
@@ -393,16 +397,16 @@ namespace spp {
 	{
 	private:
 		shared_bipipe___ *Bipipe_;
-		flw::data__ Cache_[2*SPP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[2*SPP_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 	public:
 		void reset( bso::bool__ P = true )

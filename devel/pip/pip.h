@@ -1,25 +1,24 @@
 /*
-  Header for the 'pip' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'pip' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define PIP_NAME		"PIP"
 
-#define	PIP_VERSION	"$Revision$"	
+#define	PIP_VERSION	"$Revision$"
 
-#define PIP_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define PIP_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &PIPTutor;
 
 #if defined( XXX_DBG ) && !defined( PIP_NODBG )
-#define PIP_DBG 
+#define PIP_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &PIPTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D PIPe 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
@@ -91,7 +95,7 @@ extern class ttr_tutor &PIPTutor;
 #define PIP_INVALID_BIPIPE_HANDLER	NULL
 
 namespace pip {
-	using flw::data__;
+	using flw::datum__;
 #ifdef CPE__MS
 //t Amount of data.
 	typedef DWORD amount__;
@@ -169,7 +173,7 @@ namespace pip {
 	//f Write 'Amount' data from 'Buffer' into 'Pipe'.
 	inline pip::amount__ Write(
 		base_pipe__ &Pipe,
-		const data__ *Buffer,
+		const datum__ *Buffer,
 		amount__ Amount )
 	{
 	#ifdef CPE__MS
@@ -196,7 +200,7 @@ namespace pip {
 	inline pip::amount__ Read(
 		base_pipe__ &Pipe,
 		amount__ Amount,
-		data__ *Buffer )
+		datum__ *Buffer )
 	{
 	#ifdef CPE__MS
 		DWORD NombreLus;
@@ -274,13 +278,13 @@ namespace pip {
 		}
 		void Vider( void );
 		amount__ Write(
-			const data__ *Buffer,
+			const datum__ *Buffer,
 			amount__ Amount,
 			bso::bool__ Synchronization );
 		//f Put up to 'Amount' bytes to 'Buffer'. Return the amount of bytes red.
 		amount__ Read(
 			amount__ Amount,
-			data__ *Buffer );
+			datum__ *Buffer );
 		//f Return true if all the data written until the last synchronization are read.
 		bool IsEmpty( void )
 		{
@@ -314,14 +318,14 @@ namespace pip {
 	{
 	private:
 		pipe___ Pipe_;
-		flw::data__ Cache_[PIP_FLOW_BUFFER_SIZE*2];
+		flw::datum__ Cache_[PIP_FLOW_BUFFER_SIZE*2];
 	protected:
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
@@ -356,16 +360,16 @@ namespace pip {
 	{
 	private:
 		bipipe___ *Bipipe_;
-		flw::data__ Cache_[2*PIP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[2*PIP_FLOW_BUFFER_SIZE];
 	protected:
 	virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 	public:
 		void reset( bso::bool__ P = true )
@@ -397,16 +401,16 @@ namespace pip {
 	{
 	private:
 		bipipe___ *Bipipe_;
-		flw::data__ Cache_[2*PIP_FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[2*PIP_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::amount__ FLWPut(
-			const flw::data__ *Buffer,
+			const flw::datum__ *Buffer,
 			flw::amount__ Amount,
 			flw::amount__ Minimum,
 			bool Synchronization );
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
-			flw::data__ *Buffer,
+			flw::datum__ *Buffer,
 			flw::amount__ Wanted );
 	public:
 		void reset( bso::bool__ P = true )

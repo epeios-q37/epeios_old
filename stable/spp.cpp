@@ -1,26 +1,25 @@
 /*
-  'spp' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'spp' header file ('spp.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+	'spp' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'spp' header file ('spp.h').
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -59,7 +58,7 @@ using namespace spp;
 static flw::amount__ Get_(
 	shared_pipe___ &Pipe,
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	flw::amount__ Amount = 0;
@@ -72,7 +71,7 @@ static flw::amount__ Get_(
 
 static flw::amount__ Put_(
 	shared_pipe___ &Pipe,
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bso::bool__ Synchronization )
@@ -87,14 +86,14 @@ static flw::amount__ Put_(
 
 flw::amount__ spp::shared_pipe_iflow___::FLWGet(
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	return ::Get_( *Pipe_, Minimum, Buffer, Wanted );
 }
 
 flw::amount__ spp::shared_pipe_oflow___::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )
@@ -104,14 +103,14 @@ flw::amount__ spp::shared_pipe_oflow___::FLWPut(
 
 flw::amount__ spp::master_shared_bipipe_ioflow___::FLWGet(
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	return ::Get_( Bipipe_->GetSlave(), Minimum, Buffer, Wanted );
 }
 
 flw::amount__ spp::master_shared_bipipe_ioflow___::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )
@@ -124,7 +123,7 @@ flw::amount__ spp::master_shared_bipipe_ioflow___::FLWPut(
 
 flw::amount__ spp::slave_shared_bipipe_ioflow___::FLWGet(
 	flw::amount__ Minimum,
-	flw::data__ *Buffer,
+	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
 	Bipipe_->GetSlave().LockWrite();
@@ -133,7 +132,7 @@ flw::amount__ spp::slave_shared_bipipe_ioflow___::FLWGet(
 }
 
 flw::amount__ spp::slave_shared_bipipe_ioflow___::FLWPut(
-	const flw::data__ *Buffer,
+	const flw::datum__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
 	bool Synchronization )
