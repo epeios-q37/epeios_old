@@ -154,16 +154,26 @@ namespace mtx {
 #endif
 	}
 
-	namespace {
 #ifndef MTX__USE_PTHREAD_MUTEX
-		// Wait until mutex unlocked.
-		inline void WaitUntilUnlocked_( mutex_handler__ Handler )
-		{
-			while( !TryToLock( Handler ) )
-				tol::Yield();
-		}
-#endif
+
+	// Wait until mutex unlocked.
+	inline void WaitUntilUnlocked_( mutex_handler__ Handler )
+	{
+		while( !TryToLock( Handler ) )
+#	ifdef CPE__VC
+#		ifdef Yield
+#			define TOL_VC_YIELD_MACRO_BACKUP	Yield
+#			undef	Yield
+#		endif
+#	endif
+			tol::Yield();
+#	ifdef CPE__VC
+#		ifdef TOL_VC_YIELD_MACRO_BACKUP	
+#			define Yield	TOL_VC_YIELD_MACRO_BACKUP
+#		endif
+#	endif
 	}
+#endif
 
 	//f Lock 'Handler'. Blocks until lock succeed.
 	inline void Lock( mutex_handler__ Handler )

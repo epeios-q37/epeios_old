@@ -416,10 +416,32 @@ namespace tol {
 	/*f Force the program to exit after 'Seconds' second.
 	Usefull to force a server to exit to obtain the profiling file. */
 	void ForceExit( unsigned int Seconds );
+
+#	ifdef CPE__VC
+#		ifdef Yield
+#			define TOL_VC_YIELD_MACRO_BACKUP	Yield
+#			undef	Yield
+#		endif
+#	endif
 	//f Tell the remainder to give hand to the next thread.
 	void Yield( void );
+#	ifdef CPE__VC
+#		ifdef TOL_VC_YIELD_MACRO_BACKUP	
+#			define Yield	TOL_VC_YIELD_MACRO_BACKUP
+#		endif
+#	endif
 }
+
+#if 0
+#	ifdef CPE__VC
+inline void TOLYield( void )
+{
+	tol::Yield();
+}
+#	endif
 #endif
+#endif
+
 
 namespace mmm {
 	class multimemory_;

@@ -281,6 +281,13 @@ namespace {
 	}
 }
 
+#	ifdef CPE__VC
+#		ifdef Yield
+#			undef	Yield
+#		endif
+#	endif
+
+
 void tol::Yield( void )
 {
 #ifdef CPE__MS

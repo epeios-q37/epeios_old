@@ -36,9 +36,11 @@ LST:
 
 MTX:
 - Adapting to changes in 'TOL'.
+- Coding VC++ 'Yield()' workaround.
 
 PIP:
 - Adapting to changes in 'TOL'.
+- Coding VC++ 'Yield()' workaround.
 
 SSNMNG:
 - adapting to changes in 'BSO'.
@@ -47,6 +49,7 @@ TOL:
 - Using namespace.
 - Deleting 'tol__manipulateur' class.
 - Adding 'TYPEDEF_'.
+- Coding VC++ 'Yield()' workaround.
 
 TXMPGH:
 - Introducing new 'line(s)(_)' type.
