@@ -2,6 +2,10 @@ $Id$
 
 - Codage bibliothèque LTF.
 
+02/04/05:
+- ERR:
+	- Amélioration de la gestion d'erreurs en cours de traitement d'erreur.
+
 28/03/05:
 - FLX :
 	- Adaptation à la nouvell norme des ojects de type '__'.
