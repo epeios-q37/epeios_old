@@ -1,6 +1,6 @@
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html"/>
+	<xsl:output method="xhtml" encoding="iso-8859-1" indent="yes" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
 	<xsl:param name="hierarchy"/>
 	<xsl:param name="name"/>
 	<xsl:template match="/">
@@ -9,9 +9,13 @@
 	<xsl:template match="document">
 		<xsl:if test="specific/WEB/@hierarchy=$hierarchy">
 			<xsl:if test="specific/WEB/@name=$name">
-				<xsl:text>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"></xsl:text>
 				<xsl:element name="html">
-	        		<xsl:element name="head">
+					<xsl:attribute name="xmlns">http://www.w3.org/1999/xhtml</xsl:attribute>
+					<xsl:element name="head">
+						<xsl:element name="meta">
+							<xsl:attribute name="http-equiv">Content-type</xsl:attribute> 
+							<xsl:attribute name="content">text/html; charset=iso-8859-1</xsl:attribute>
+						</xsl:element>
 						<xsl:apply-templates select="specific/WEB" mode="head"/>
 						<xsl:apply-templates select="general" mode="head"/>
 					</xsl:element>
@@ -80,28 +84,26 @@
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="document" mode="body">
-		<xsl:text>&lt;!-- </xsl:text>
-		<xsl:value-of select="general/@abstract"/>
-		<xsl:text> --></xsl:text>
+		<xsl:comment>
+			<xsl:value-of select="general/@abstract"/>
+		</xsl:comment>
 		<xsl:element name="table">
 			<xsl:attribute name="border">0</xsl:attribute>
 			<xsl:attribute name="cellpadding">0</xsl:attribute>
 			<xsl:attribute name="width">100%</xsl:attribute>
-			<xsl:attribute name="height">100%</xsl:attribute>
 			<xsl:element name="tbody">
 				<xsl:element name="tr">
 					<xsl:element name="td">
 						<xsl:attribute name="valign">top</xsl:attribute>
-						<xsl:attribute name="width">100%</xsl:attribute>
 						<xsl:apply-templates select="." mode="body_header"/>
 						<xsl:element name="hr"/>
 					</xsl:element>
 				</xsl:element>
 				<xsl:element name="tr">
 					<xsl:element name="td">
-						<xsl:attribute name="width">100%</xsl:attribute>
-						<xsl:element name="h1">
-							<xsl:element name="center">
+						<xsl:element name="div">
+							<xsl:attribute name="align">center</xsl:attribute>
+							<xsl:element name="h1">
 								<xsl:value-of select="general/@title"/>
 							</xsl:element>
 						</xsl:element>
@@ -113,7 +115,6 @@
 				<xsl:element name="tr">
 					<xsl:element name="td">
 						<xsl:attribute name="valign">bottom</xsl:attribute>
-						<xsl:attribute name="width">100%</xsl:attribute>
 						<xsl:element name="hr"/>
 						<xsl:apply-templates select="." mode="body_footer"/>
 					</xsl:element>
@@ -128,14 +129,12 @@
 			<xsl:element name="tbody">
 				<xsl:element name="tr">
 					<xsl:element name="td">
-						<xsl:attribute name="width">33%</xsl:attribute>
 						<xsl:element name="strong">
 							<xsl:text>The Epeios project</xsl:text>
 						</xsl:element>
 						<xsl:element name="br"/>
 						<xsl:element name="a">
 							<xsl:attribute name="href">http://epeios.org/</xsl:attribute>
-							<xsl:attribute name="target">_blank</xsl:attribute>
 							<xsl:element name="em">
 								<xsl:text>http://epeios.org/</xsl:text>
 							</xsl:element>
@@ -143,17 +142,14 @@
 					</xsl:element>
 					<xsl:element name="td">
 						<xsl:attribute name="align">center</xsl:attribute>
-						<xsl:attribute name="width">33%</xsl:attribute>
 						<xsl:apply-templates select="specific/WEB/@parent"/>
 					</xsl:element>
 					<xsl:element name="td">
 						<xsl:attribute name="align">right</xsl:attribute>
-						<xsl:attribute name="width">33%</xsl:attribute>
 						<xsl:text>Hosted on</xsl:text>
 						<xsl:element name="br"/>
 						<xsl:element name="a">
 							<xsl:attribute name="href">http://sv.gnu.org</xsl:attribute>
-							<xsl:attribute name="target">_blank</xsl:attribute>
 							<xsl:text>Savannah</xsl:text>
 						</xsl:element>
 					</xsl:element>
@@ -172,7 +168,7 @@
 							<xsl:attribute name="size">2</xsl:attribute>
 							<xsl:element name="em">
 								<xsl:text>Copyright </xsl:text>
-								<xsl:text>&amp;#169; </xsl:text>
+								<xsl:text>&#169; </xsl:text>
 								<xsl:value-of select="general/copyright/date"/>
 								<xsl:text> </xsl:text>
 								<xsl:element name="a">
@@ -190,7 +186,6 @@
 					</xsl:element>
 					<xsl:element name="td">
 						<xsl:attribute name="align">center</xsl:attribute>
-						<xsl:attribute name="width">33%</xsl:attribute>
 						<xsl:apply-templates select="specific/WEB/@parent"/>
 					</xsl:element>
 					<xsl:element name="td">

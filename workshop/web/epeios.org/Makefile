@@ -4,21 +4,12 @@ include Makefile.header
 
 filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/exml.xml i/emth.xml
 
-ifeq ("$(OSTYPE)","linux")
-sab_arg='$$os=$(OSTYPE)'
-endif
-
-ifeq ("$(OSTYPE)","cygwin")
-sab_arg='$$os=linux'
-endif
-
-
 all: $(filelist)
 	$(mkdir) -p i
 	sabcmd file://$(templates)/map.xsl site.xml i/map.xml
 	reveal $(crpfile) site.crp i/site.crp
 	reveal i/site.crp site.xml i/site.xml
-	sabcmd make.xsl site.xml i/Makefile $(sab_arg)
+	sabcmd make.xsl site.xml i/Makefile
 	make -f i/Makefile
 	make -f Makefile.data
 
