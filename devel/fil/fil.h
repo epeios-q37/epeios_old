@@ -63,8 +63,7 @@ extern class ttr_tutor &FILTutor;
 //D FILe. File management.
 
 #include "err.h"
-#include "stf.h"
-#include <fstream>
+#include "flf.h"
 
 namespace fil
 {
@@ -91,26 +90,28 @@ namespace fil
 		s_amount
 	};
 
-	using stf::istream_iflow___;
+	typedef flf::file_iflow__	_iflow__;
 
 	//c A file as standard input flow.
 	class file_iflow___
-	: public istream_iflow___
+	: public _iflow__
 	{
 	private:
-		std::ifstream Stream_;
+		FILE *File_;
 	public:
 		void reset( bool P = true )
 		{
-			istream_iflow___::reset( P );
+			_iflow__::reset( P );
 
-			if ( P )
-				Stream_.close();
+			if ( P ) {
+				if ( File_ != NULL )
+					fclose( File_ );
+			}
 
-			Stream_.clear();
+			File_ = NULL;
 		}
 		file_iflow___( void )
-		: istream_iflow___( Stream_ )
+		: _iflow__( File_ )
 		{
 			reset( false );
 		}
@@ -125,26 +126,28 @@ namespace fil
 			err::handle ErrHandle = err::hUsual );
 	};
 
-	using stf::ostream_oflow___;
+	typedef flf::file_oflow__	_oflow__;
 
 	//c A file as standard output flow.
 	class file_oflow___
-	: public ostream_oflow___
+	: public _oflow__
 	{
 	private:
-		std::ofstream Stream_;
+		FILE *File_;
 	public:
 		void reset( bool P = true )
 		{
-			ostream_oflow___::reset( P );
+			_oflow__::reset( P );
 
-			if ( P )
-				Stream_.close();
+			if ( P ) {
+				if ( File_ != NULL )
+				fclose( File_ );
+			}
 
-			Stream_.clear();
+			File_ = NULL;
 		}
 		file_oflow___( void )
-		: ostream_oflow___( Stream_ )
+		: _oflow__( File_ )
 		{
 			reset( false );
 		}
@@ -170,9 +173,6 @@ namespace fil
 			return Init( Nom, Mode, ErrHandle );
 		}
 	};
-
-
-
 }
 
 /*$END$*/

@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flf.h"
+
 #ifdef CPE__MS
 #	include <stdlib.h>
 #	include "windows.h"
@@ -64,8 +66,6 @@ public:
 #elif !defined( CPE__MAC )
 #	error "Unknown compilation enviroment"
 #endif
-
-#include "stf.h"
 
 #ifdef CPE__MT
 #include "mtk.h"
@@ -137,15 +137,15 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfSuppression:
-			stf::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			flf::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfDuplication:
-			stf::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			flf::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfRenaming:
-			stf::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			flf::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfOK:
@@ -196,13 +196,13 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfAllocation:
-			stf::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			flf::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
 			break;
 		case tol::rbfSuppression:
-			stf::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			flf::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfRenaming:
-			stf::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			flf::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfOK:
 			break;

@@ -1,5 +1,8 @@
 $Id$
 
+GENERAL:
+- (23/05/04) Creation of the 'FLF' library.
+
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
 - (03/05/04) disable thread-unsafe functions when working in multithreading.
@@ -21,6 +24,7 @@ EPSMSC:
 
 ERR:
 - Adding some minor features for the 'Intentional' error type.
+- (23/05/04) Usinf the 'flf' library instead of 'stf'.
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function
@@ -38,6 +42,10 @@ SSNMNG:
 TOL:
 - Adding the 'E_DISCLOSE' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
+- (23/05/04) Using 'flf' library instead of 'stf'.
+
+TTR:
+- (23/05/04) Using 'flf' library instead of 'stf'.
 
 --------
 20040215

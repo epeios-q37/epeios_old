@@ -9,7 +9,7 @@ $NOTICE$
 // $$Id$$
 
 #include "err.h"
-#include "stf.h"
+#include "flf.h"
 #include "epsmsc.h"
 #include "clnarg.h"
 
@@ -46,26 +46,26 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	stf::cout << DESCRIPTION << txf::nl;
-	stf::cout << NAME << " --version|--license|--help" << txf::nl;
+	flf::cout << DESCRIPTION << txf::nl;
+	flf::cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	stf::cout << NAME << " <command> [options] ..." << txf::nl;
+	flf::cout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
-	stf::cout << "command:" << txf::nl;
+	flf::cout << "command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	stf::cout << "options:" << txf::nl;
+	flf::cout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	stf::cout << COPYRIGHT << txf::nl;
-	stf::cout << INFO << txf::nl;
-	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	flf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	flf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	flf::cout << COPYRIGHT << txf::nl;
+	flf::cout << INFO << txf::nl;
+	flf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -83,8 +83,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		stf::cout << HELP << txf::nl;
+		flf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		flf::cout << HELP << txf::nl;
 		ERRi();
 	}
 
@@ -123,8 +123,8 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	default:
-		stf::cerr << "Too many arguments." << txf::nl;
-		stf::cout << HELP << txf::nl;
+		flf::cerr << "Too many arguments." << txf::nl;
+		flf::cout << HELP << txf::nl;
 		ERRi();
 		break;
 	}
@@ -228,7 +228,7 @@ ERRFErr
 
 ERRFEnd
 ERRFEpilog
-	stf::cout << txf::sync;
+	flf::cout << txf::sync;
 
 	return ExitValue;
 }

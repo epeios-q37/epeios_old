@@ -64,7 +64,7 @@ namespace err {
 	err_ ERR;
 }
 
-#include "stf.h"
+#include "flf.h"
 
 #ifdef ERR__THREAD_SAFE
 #	include "mtx.h"
@@ -219,8 +219,8 @@ void err::Final( void )
 {
 	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
 
-	stf::cout << txf::sync;
-	stf::cerr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;
+	flf::cout << txf::sync;
+	flf::cerr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;
 
 	ERRRst();
 }

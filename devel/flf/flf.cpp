@@ -1,8 +1,8 @@
 /*
-	'fil' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'fil' header file ('fil.h').
-	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
-
+	'flf' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'flf' header file ('flf.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define FIL__COMPILATION
+#define FLF__COMPILATION
 
-#include "fil.h"
+#include "flf.h"
 
-class filtutor
+class flftutor
 : public ttr_tutor
 {
 public:
-	filtutor( void )
-	: ttr_tutor( FIL_NAME )
+	flftutor( void )
+	: ttr_tutor( FLF_NAME )
 	{
-#ifdef FIL_DBG
-		Version = FIL_VERSION "\b\bD $";
+#ifdef FLF_DBG
+		Version = FLF_VERSION "\b\bD $";
 #else
-		Version = FIL_VERSION;
+		Version = FLF_VERSION;
 #endif
-		Owner = FIL_OWNER;
+		Owner = FLF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~filtutor( void ){}
+	virtual ~flftutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,77 +55,40 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cpe.h"
+using namespace flf;
 
-using namespace fil;
+static FILE *cin = stdin;
+static FILE *cout = stdout;
+static FILE *cerr = stderr;
 
-status fil::file_iflow___::Init(
-	const char *FileName,
-	err::handle ErrHandle )
-{
-	status Status = sSuccess;
-
-	reset();
-
-	if ( ( File_ = fopen( FileName, "rb" ) ) == NULL )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		Status = sFailure;
-	}
-
-	_iflow__::Init();
-
-	return Status;
-}
-
-
-status fil::file_oflow___::Init(
-	const char *FileName,
-	mode Mode,
-	err::handle ErrHandle )
-{
-	status Status = sSuccess;
-
-	reset();
-
-	if ( Mode == fil::mAppend )
-		File_ = fopen( FileName, "wb+"  );
-	else
-		File_ = fopen( FileName, "wb" );
-
-	if ( File_ == NULL )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		Status = sFailure;
-	}
-
-	_oflow__::Init();
-
-	return Status;
-}
-
+file_oflow__ flf::coutF( ::cout );
+file_oflow__ flf::cerrF( ::cerr );
+file_iflow__ flf::cinF( ::cin );
+txf::text_oflow___ flf::cout;
+txf::text_oflow___ flf::cerr;
+txf::text_iflow___ flf::cin;
 
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class filpersonnalization
-: public filtutor
+
+class flfpersonnalization
+: public flftutor
 {
 public:
-	filpersonnalization( void )
+	flfpersonnalization( void )
 	{
+		cinF.Init();
+		coutF.Init();
+		cerrF.Init();
+
+		flf::cin.Init( cinF );
+		flf::cout.Init( coutF );
+		flf::cerr.Init( cerrF );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~filpersonnalization( void )
+	~flfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -141,6 +104,6 @@ public:
 
 // 'static' by GNU C++.
 
-static filpersonnalization Tutor;
+static flfpersonnalization Tutor;
 
-ttr_tutor &FILTutor = Tutor;
+ttr_tutor &FLFTutor = Tutor;

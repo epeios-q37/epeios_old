@@ -1,8 +1,8 @@
 /*
 	'ttr' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'ttr' header file ('ttr.h').
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -53,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "stf.h"
+#include "flf.h"
 
 ttr_chief TTR;
 char ttr_tutor::Adv_[TTR_ADV_SIZE_MAX+1];
@@ -65,7 +67,7 @@ void ttr_chief::Advertise( void )
 
 	while( Current )
 	{
-		Current->Advertise( stf::cout );
+		Current->Advertise( flf::cout );
 		Current = Current->Next();
 	}
 }

@@ -55,7 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "fnm.h"
 #include "cpe.h"
 
 using namespace fil;
@@ -66,14 +65,9 @@ status fil::file_iflow___::Init(
 {
 	status Status = sSuccess;
 
-	Stream_.close();
-	Stream_.clear();
+	reset();
 
-	istream_iflow___::Init();
-
-	Stream_.open( FileName, std::ios::binary | std::ios::in );
-
-	if ( !Stream_ )
+	if ( ( File_ = fopen( FileName, "rb" ) ) == NULL )
 	{
 		if ( ErrHandle == err::hUsual )
 			ERRd();
@@ -82,6 +76,8 @@ status fil::file_iflow___::Init(
 
 		Status = sFailure;
 	}
+
+	_iflow__::Init();
 
 	return Status;
 }
@@ -94,17 +90,14 @@ status fil::file_oflow___::Init(
 {
 	status Status = sSuccess;
 
-	Stream_.close();
-	Stream_.clear();
-
-	ostream_oflow___::Init();
+	reset();
 
 	if ( Mode == fil::mAppend )
-		Stream_.open( FileName, std::ios::binary | std::ios::out | std::ios::app  );
+		File_ = fopen( FileName, "wb+"  );
 	else
-		Stream_.open( FileName, std::ios::binary | std::ios::out );
+		File_ = fopen( FileName, "wb" );
 
-	if ( Stream_.fail() )
+	if ( File_ == NULL )
 	{
 		if ( ErrHandle == err::hUsual )
 			ERRd();
@@ -113,6 +106,9 @@ status fil::file_oflow___::Init(
 
 		Status = sFailure;
 	}
+
+	_oflow__::Init();
+
 	return Status;
 }
 
