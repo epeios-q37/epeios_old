@@ -307,7 +307,7 @@ namespace str {
 			if ( ( P != NONE ) && ( Get( P ) == '.' ) ) {
 				bso::lfloat__ Factor = .1;
 				P = Next( P );
-				while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+				while( ( P != NONE ) && isdigit( C = Get( P ) ) ) {
 					Result += ( C - '0' ) * Factor;
 					Factor /= 10;
 					P = Next( P );

@@ -104,6 +104,9 @@ STF:
 - (24/05/04) Adating to changes in 'FLW' library.
 - (24/05/04) Renaming the objects ('stream...' instead'(i|o)stream...', removing one tailing '_')
 
+STR:
+- (16/08/04) Fixing bug in 'ToLF' function.
+
 TOL:
 - Adding the 'E_DISCLOSE_(_)' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
