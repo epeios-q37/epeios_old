@@ -56,7 +56,7 @@ public:
 
 using namespace txmtbl;
 
-static inline bso__char HandleEscape_(
+static inline bso__bool HandleEscape_(
 	xtf::extended_text_iflow___ &Flow,
 	separator__ Separator,
 	escape__ Escape,
@@ -219,26 +219,39 @@ ERREpilog
 	return !Flow.EOX();
 }
 
+void line_::Erase_( stack_ &Stack )
+{
+	while( Stack.Amount() != 0 )
+		cells_::Delete( Stack.Pop() );
+}
+
 amount__ line_::DeleteEmptyCells( void )
 {
-	ctn::E_CMITEM( cell_ ) Cell;
-	tym::row__ Temp, Current = First();
 	amount__ Amount = 0;
-
+ERRProlog
+	ctn::E_CMITEM( cell_ ) Cell;
+	tym::row__ Current = First();
+	stack Stack;
+ERRBegin
 	Cell.Init( *this );
+
+	Stack.Init();
 
 	while( Current != NONE )
 	{
-		Temp = Current;
-		Current = Next( Current );
-
-		if ( !Cell( Temp ).Amount() )
+		if ( !Cell( Current ).Amount() )
 		{
-			DeleteCell_( Temp );
+			Stack.Push( Current );
 			Amount++;
 		}
-	}
 
+		Current = Next( Current );
+	}
+	
+	Erase_( Stack );
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 }
 
@@ -270,8 +283,12 @@ tym::row__ line_::LastNonEmptyCell( void ) const
 
 amount__ line_::DeleteHeadingEmptyCells( void )
 {
-	tym::row__ Current = FirstNonEmptyCell(), Temp;
 	amount__ Amount = 0;
+ERRProlog
+	tym::row__ Current = FirstNonEmptyCell();
+	stack Stack;
+ERRBegin
+	Stack.Init();
 
 	if ( Current != NONE )
 	{
@@ -279,25 +296,32 @@ amount__ line_::DeleteHeadingEmptyCells( void )
 
 		while( Current != NONE )
 		{
-			Temp = Current;
-
-			Current = Previous( Current );
-
-			DeleteCell_( Temp );
+			Stack.Push( Current );
 
 			Amount++;
+
+			Current = Previous( Current );
 		}
+
+		Erase_( Stack );
 	}
 	else if ( this->Amount() )
 		DeleteAllCells();
-
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 }
 
 amount__ line_::DeleteTailingEmptyCells( void )
 {
-	tym::row__ Current = LastNonEmptyCell(), Temp;
 	amount__ Amount = 0;
+ERRProlog
+	tym::row__ Current = LastNonEmptyCell();
+	stack Stack;
+ERRBegin
+
+	Stack.Init();
 
 	if ( Current != NONE )
 	{
@@ -305,29 +329,35 @@ amount__ line_::DeleteTailingEmptyCells( void )
 
 		while( Current != NONE )
 		{
-			Temp = Current;
 
-			Current = Next( Current );
-
-			DeleteCell_( Temp );
+			Stack.Push( Current );
 
 			Amount++;
+
+			Current = Next( Current );
 		}
+
+		Erase_( Stack );
 	}
 	else if ( this->Amount() )
 		DeleteAllCells();
-
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 }
 
 amount__ line_::DeleteCentralEmptyCells( void )
 {
+	amount__ Amount = 0;
+ERRProlog
 	ctn::E_CMITEM( cell_ ) Cell;
 	tym::row__
 		Current = FirstNonEmptyCell(),
-		Last = LastNonEmptyCell(),
-		Temp;
-	amount__ Amount = 0;
+		Last = LastNonEmptyCell();
+	stack Stack;
+ERRBegin
+	Stack.Init();
 
 	Cell.Init( *this );
 
@@ -337,39 +367,46 @@ amount__ line_::DeleteCentralEmptyCells( void )
 
 		while( Current != Last )
 		{
-			Temp = Current;
-
-			Current = Next( Current );
-
-			if ( !Cell( Temp ).Amount() )
+			if ( !Cell( Current ).Amount() )
 			{
-				DeleteCell_( Temp );
+				Stack.Push( Current );
 				Amount++;
 			}
+
+			Current = Next( Current );
 		}
+
+		Erase_( Stack );
 	}
 	else if ( this->Amount() && ( Current == NONE ) )
 		DeleteAllCells();
-
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 }
 
 amount__ line_::DeleteCellsAt( tym::row__ Position )
 {
-	tym::row__ Temp;
 	amount__ Amount = 0;
+ERRProlog
+	stack Stack;
+ERRBegin
+	Stack.Init();
 
 	while( Position != NONE )
 	{
-		Temp = Position;
-
-		Position = Next( Position );
-
-		DeleteCell_( Temp );
+		Stack.Push( Position );
 
 		Amount++;
+
+		Position = Next( Position );
 	}
 
+	Erase_( Stack );
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 }
 
@@ -470,6 +507,12 @@ ERREnd
 ERREpilog
 }
 
+void table_::Erase_( stack_ &Stack )
+{
+	while( Stack.Amount() != 0 )
+		lines_::Delete( Stack.Pop() );
+}
+
 void table_::DeleteEmptyCells( void )
 {
 	tym::row__ Current = First();
@@ -542,25 +585,31 @@ void table_::DeleteCommentaries( bso__char Marker )
 
 amount__ table_::DeleteEmptyLines( void )
 {
-	ctn::E_CITEM( line_ ) Line;
-	tym::row__ Current = First(), Temp;
 	amount__ Amount = 0;
-
+ERRProlog
+	ctn::E_CITEM( line_ ) Line;
+	tym::row__ Current = First();
+	stack Stack;
+ERRBegin
 	Line.Init( *this );
+
+	Stack.Init();
 
 	while( Current != NONE )
 	{
-		Temp = Current;
-
-		Current = Next( Current );
-
-		if ( !Line( Temp).Amount() )
+		if ( !Line( Current ).Amount() )
 		{
-			DeleteLine_( Temp );
+			Stack.Push( Current );
 			Amount++;
 		}
+
+		Current = Next( Current );
 	}
 
+	Erase_( Stack );
+ERRErr
+ERREnd
+ERREpilog
 	return Amount;
 
 }

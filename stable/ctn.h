@@ -199,6 +199,24 @@ namespace ctn {
 				Statics.Allocate( Size );
 			}
 		}
+		//f Delete 'Amount' entries from 'Position'.
+		void Delete(
+			r Position,
+			epeios::size__ Amount = 1,
+			aem::mode Mode = aem::mDefault )
+		{
+			epeios::size__ CurrentExtent = amount_extent_manager_<r>::Extent();
+			epeios::size__ NewExtent = CurrentExtent - Amount;
+
+			Dynamics.DeleteWithoutReallocating( Position, CurrentExtent, Amount );
+			Statics.Write( Statics, NewExtent - Position.V, Position.V + Amount, Position );
+
+			if ( amount_extent_manager_<r>::AmountToAllocate( NewExtent, Mode ) ) {
+				Dynamics.Allocate( NewExtent, CurrentExtent );
+				Statics.Allocate( NewExtent );
+			}
+		}
+
 	};
 
 

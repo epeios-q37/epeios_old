@@ -148,7 +148,7 @@ ERRProlog
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS, ECD;
 	str::string Str;
-	int i;
+	epeios::row__ P;
 ERRBegin
 	F.Init();
 	F.Manuel();
@@ -201,8 +201,12 @@ ERRBegin
 	ECS(11).Init();
 	ECS(11)= Str;
 
-	for ( i = 0; i <= 11; i++ )
-		fout << ECS(i) << txf::tab;
+	P = CS.First();
+	
+	while( P != NONE ) {
+		fout << ECS(P) << txf::tab;
+		P = CS.Next( P );
+	}
 
 	fout << txf::nl;
 
@@ -223,8 +227,25 @@ ERRBegin
 	ECD.Init( CD );
 #endif
 
-	for ( i = 0; i <= 11; i++ )
-		fout << ECD(i) << txf::tab;
+	P = CD.First();
+	
+	while( P != NONE ) {
+		fout << ECD(P) << txf::tab;
+		P = CD.Next( P );
+	}
+
+	ECD.Sync();
+
+	fout << txf::nl;
+
+	CD.Delete( 3 );
+
+	P = CD.First();
+	
+	while( P != NONE ) {
+		fout << ECD(P) << txf::tab;
+		P = CD.Next( P );
+	}
 
 	fout << txf::nl;
 ERRErr
@@ -627,10 +648,12 @@ ERRFBegin
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		Essai( argc, argv );
+#if 1
 		fout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		fout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
+#endif
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

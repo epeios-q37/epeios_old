@@ -58,7 +58,7 @@ extern class ttr_tutor &MMITutor;
 #include "err.h"
 #include "flw.h"
 #include "mmm.h"
-#include "bch.h"
+#include "tym.h"
 
 namespace mmi {
 
@@ -66,7 +66,7 @@ namespace mmi {
 
 	//t The type of an index in the indexed multimemory.
 	TYPEDEF( epeios::row_t__, index__ );
-	
+
 	struct descripteur__
 	{
 		mmm::descriptor__ Descripteur;
@@ -133,13 +133,13 @@ namespace mmi {
 		}
 		// libère la mémoire d'index 'Index'
 	public:
-		bch::E_BUNCHt_( descripteur__, index__ ) Descripteurs;
+		tym::E_MEMORY_( descripteur__ ) Descripteurs;
 		// les différents descripteurs
 		mmm::multimemory_ Multimemoire;
 		// la memoire générale
 		struct s
 		{
-			bch::E_BUNCHt_( descripteur__, index__ )::s Descripteurs;
+			tym::E_MEMORY_( descripteur__ )::s Descripteurs;
 			mmm::multimemory_::s Multimemoire;
 		};
 		indexed_multimemory_( s &S )
@@ -227,10 +227,6 @@ namespace mmi {
 		{
 			Liberer_( Index );
 		}
-		//f Delete 'Amount' memories beginning at 'Index'.
-		void Delete(
-			index__ Index,
-			size__ Amount = 1 );
 		//f Flushes the memory.
 		void Synchronize( void )
 		{
@@ -240,9 +236,15 @@ namespace mmi {
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
-			return Descripteurs( Index ).Capacite;
+			return Descripteurs( Index.V ).Capacite;
 		}
-#if 0
+		/*f Delete 'Amount' entries from 'Position',
+		'ActualCapacity' is the actual capacity.
+		No reallocationg to gain place is made. */
+		void DeleteWithoutReallocating(
+			epeios::row__ Position,
+			epeios::size__ ActualCapacity,
+			epeios::size__ Amount );
 		void write(
 			flw::oflow___ &OFlow,
 			epeios::size__ Size) const
@@ -257,7 +259,6 @@ namespace mmi {
 			Descripteurs.read( IFlow, 0, Size );
 			Multimemoire.read( IFlow );
 		}
-#endif
 	};
 
 	AUTO( indexed_multimemory )

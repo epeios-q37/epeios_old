@@ -52,15 +52,20 @@ ERRProlog
 	xtf::extended_text_iflow___ IFlow;
 	txmtbl::table Table;
 ERRBegin
-	Flow.Init( "essai.txt" );
+//	Flow.Init( "essai.txt" );
+	Flow.Init( "20010312.txt" );
 	Flow.EOFT( XTF_EOXT );
 	IFlow.Init( Flow );
 	
 	Table.Init();
 	
-	GetTable( IFlow, Table );
+	txmtbl::GetTable( IFlow, Table, ';' );
 	
-	fout << Table << txf::nl;
+	fout << Table << txf::nl << "***************************" << txf::nl;
+
+	Table.DeleteCommentaries( '#' );
+
+	fout << Table << txf::nl << "***************************" << txf::nl;
 ERRErr
 ERREnd
 ERREpilog

@@ -80,7 +80,7 @@ namespace xtf {
 		// Remplit le tampon. Il est supposé vide.
 		void RemplirTampon_( unsigned char Offset )
 		{
-			Nombre_ = (unsigned char)Entree_->GetUpTo( sizeof( Cache_ ) - Offset, Cache_ + Offset, 1 );
+			Nombre_ = Entree_->GetUpTo( sizeof( Cache_ ) - Offset, Cache_ + Offset, 1 );
 
 			Position_ = Offset;
 		}
@@ -99,12 +99,12 @@ namespace xtf {
 		}
 		// L'entree de base.
 		flw::iflow___ *Entree_;
-		// Un petit cache.
-		char Cache_[10];
+		// Un petit cache. Taille doit être < 256.
+		flw::data__ Cache_[255];
 		// Position dans le cache
-		unsigned char Position_;
+		bso__ubyte Position_;
 		// Nombre de caractères encore disponibles dans le cache.
-		unsigned char Nombre_;
+		bso__ubyte Nombre_;
 		// Ligne sur laquelle se trouve le prochain caractère à lire.
 		location Ligne_;
 		// Colonne sur laquelle se situe le prochain caractère à lire.

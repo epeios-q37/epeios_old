@@ -166,7 +166,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 	flw::data__ *Buffer,
 	flw::amount__ Wanted )
 {
-	amount__ Amount = 0;
+	flw::amount__ Amount = 0;
 
 	if ( Minimum != 0 )
 	{
@@ -196,7 +196,7 @@ flw::amount__ sck::socket_ioflow___::FLWPut(
 	flw::amount__ Minimum,
 	bool )
 {
-	amount__ Amount = 0;
+	flw::amount__ Amount = 0;
 
 	if ( Minimum != 0 )
 	{

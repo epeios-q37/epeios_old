@@ -73,13 +73,25 @@
    <xsl:with-param name="item" select="Defines"/>
   </xsl:call-template>
   <xsl:apply-templates select="Defines"/>
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Shortcuts"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Shortcuts"/>
   <xsl:call-template name="lib-index-target">
    <xsl:with-param name="item" select="Enums"/>
   </xsl:call-template>
   <xsl:apply-templates select="Enums"/>
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Typedefs"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Typedefs"/>
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Classes"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Classes"/>
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Functions"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Functions"/>
  </xsl:template>
  

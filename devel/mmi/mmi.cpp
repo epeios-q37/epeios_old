@@ -53,66 +53,70 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#define capacite				epeios::size__
+#define capacite				tym::size__
 #define multimemoire_indexee	indexed_multimemory_
 
-using namespace mmi;
+namespace mmi {
 
-void multimemoire_indexee::AllouerPlus_(
-	capacite CapaciteCourante,
-	capacite CapaciteDemandee )
-{
-	descripteur__ D;
-
-	D.Descripteur = 0;
-	D.Capacite = 0;
-
-	Descripteurs.Allocate( CapaciteDemandee );
-
-	while ( CapaciteDemandee-- > CapaciteCourante )
-		Descripteurs.Write( D, CapaciteDemandee );
-}
-
-void multimemoire_indexee::AllouerMoins_(
-	capacite CapaciteCourante,
-	capacite CapaciteDemandee )
-{
-	while ( CapaciteCourante-- > CapaciteDemandee )
-		Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
-
-	Descripteurs.Allocate( CapaciteDemandee );
-}
-
-void multimemoire_indexee::Delete(
-	index__ Index,
-	size__ Amount )
-{
-	while( Amount-- ) {
-		Liberer_( Index );
-		Index = Descripteurs.Next( Index );
-	}
-	
-	Descripteurs.Delete( Index, Amount );
-}
-
-
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-class mmipersonnalization
-: public mmitutor
-{
-public:
-	mmipersonnalization( void )
+	void multimemoire_indexee::AllouerPlus_(
+		capacite CapaciteCourante,
+		capacite CapaciteDemandee )
 	{
-		/* place here the actions concerning this library
-		to be realized at the launching of the application  */
+		descripteur__ D;
+
+		D.Descripteur = 0;
+		D.Capacite = 0;
+
+		Descripteurs.Allocate( CapaciteDemandee );
+
+		while ( CapaciteDemandee-- > CapaciteCourante )
+			Descripteurs.Write( D, CapaciteDemandee );
 	}
-	~mmipersonnalization( void )
+
+	void multimemoire_indexee::AllouerMoins_(
+		capacite CapaciteCourante,
+		capacite CapaciteDemandee )
 	{
-		/* place here the actions concerning this library
-		to be realized at the ending of the application  */
+		while ( CapaciteCourante-- > CapaciteDemandee )
+			Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
+
+		Descripteurs.Allocate( CapaciteDemandee );
 	}
-};
+
+	void multimemoire_indexee::DeleteWithoutReallocating(
+		epeios::row__ Position,
+		epeios::size__ ActualCapacity,
+		epeios::size__ Amount )
+	{
+		epeios::size__ Counter = Amount;
+
+		while( Counter-- )
+			Multimemoire.Free( Descripteurs.Read( Position.V + Counter ).Descripteur );
+
+		Descripteurs.Write( Descripteurs, ActualCapacity - Position.V - Amount, Position.V + Amount, Position );
+
+		AllouerPlus_( ActualCapacity - Amount, ActualCapacity );
+	}
+
+}
+
+	/* Although in theory this class is inaccessible to the different modules,
+	it is necessary to personalize it, or certain compiler would not work properly */
+	class mmipersonnalization
+	: public mmitutor
+	{
+	public:
+		mmipersonnalization( void )
+		{
+			/* place here the actions concerning this library
+			to be realized at the launching of the application  */
+		}
+		~mmipersonnalization( void )
+		{
+			/* place here the actions concerning this library
+			to be realized at the ending of the application  */
+		}
+	};
 
 /*$END$*/
 				  /********************************************/

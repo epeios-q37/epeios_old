@@ -61,9 +61,9 @@ extern class ttr_tutor &TXMTBLTutor;
 #include "err.h"
 #include "flw.h"
 #include "str.h"
-#include "lst.h"
 #include "ctn.h"
 #include "xtf.h"
+#include "stk.h"
 
 namespace txmtbl {
 
@@ -169,56 +169,39 @@ namespace txmtbl {
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
-	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
-	typedef lst::E_LIST_ list_;
+	typedef stk::E_STACK_( epeios::row__ ) stack_;
+	typedef stk::E_STACK( epeios::row__ ) stack;
 
+	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
 
 	//c A line of cells
 	class line_
-	: public list_,
-	  public cells_
+	: public cells_
 	{
 	private:
-		// Supprimer la cellule à la position 'Position'.
-		void DeleteCell_( tym::row__ Position )
-		{
-			cells_::operator()( Position ).Allocate( 0 );
-			cells_::Sync();
-
-			list_::Remove( Position );
-		}
-	protected:
-		virtual void LSTAllocate( tym::size__ Size )
-		{
-			cells_::Allocate( Size );
-		}
+		void Erase_( stack_ &Stack );
 	public:
 		struct s
-		: public list_::s,
-		  public cells_::s
+		: public cells_::s
 		{
 			location__ Location;
 		} &S_;
 		line_( s &S )
 		: S_( S ),
-		  lst::E_LIST_( S ),
 		  ctn::E_MCONTAINER_( cell_ )( S )
 		{}
 		void reset( bool P = true )
 		{
-			list_::reset( P );
 			cells_::reset( P );
 
 			S_.Location = 0;
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			list_::plug( M );
 			cells_::plug( M );
 		}
 		line_ &operator =( const line_ &L )
 		{
-			list_::operator =( L );
 			cells_::operator =( L );
 
 			S_.Location = L.S_.Location;
@@ -228,7 +211,6 @@ namespace txmtbl {
 		//f Initialization.
 		void Init( void )
 		{
-			list_::Init();
 			cells_::Init();
 
 			S_.Location = 0;
@@ -249,7 +231,7 @@ namespace txmtbl {
 			const cell_ &Cell,
 			location__ Location )
 		{
-			tym::row__ P = list_::CreateEntry();
+			tym::row__ P = cells_::New();
 
 			Write( Cell, Location, P );
 
@@ -272,7 +254,7 @@ namespace txmtbl {
 		//f Delete all cells. Return amount of cells deleted.
 		amount__ DeleteAllCells( void )
 		{
-			tym::row__ P = list_::First();
+			tym::row__ P = cells_::First();
 
 			if ( P != NONE )
 				return DeleteCellsAt( P );
@@ -292,7 +274,7 @@ namespace txmtbl {
 		{
 			return S_.Location;
 		}
-		NAV( list_:: )
+		NAV( cells_:: )
 	};
 
 	AUTO( line )
@@ -318,45 +300,27 @@ namespace txmtbl {
 
 	//c A table.
 	class table_
-	: public list_,
-	  public lines_
+	: public lines_
 	{
 	private:
-		// Delete line at position 'Position'.
-		void DeleteLine_( tym::row__ Position )
-		{
-			lines_::operator ()(Position).DeleteAllCells();
-			lines_::Sync();
-
-			list_::Remove( Position );
-		}
-	protected:
-		virtual void LSTAllocate( tym::size__ Size )
-		{
-			lines_::Allocate( Size );
-		}
+		void Erase_( stack_ &Stack );
 	public:
 		struct s
-		: public list_::s,
-		  public lines_::s
+		: public lines_::s
 		{};
 		table_( s &S )
-		: list_( S ),
-		  lines_( S )
+		: lines_( S )
 		{}
 		void reset( bool P = true )
 		{
-			list_::reset( P );
 			lines_::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			list_::plug( M );
 			lines_::plug( M );
 		}
 		table_ &operator =( const table_ &T )
 		{
-			list_::operator =( T );
 			lines_::operator =( T );
 
 			return *this;
@@ -364,13 +328,12 @@ namespace txmtbl {
 		//f Initialization.
 		void Init( void )
 		{
-			list_::Init();
 			lines_::Init();
 		}
 		//f Add 'Line'. Return position where added.
 		tym::row__ AddLine(	const line_ &Line )
 		{
-			tym::row__ P = list_::CreateEntry();
+			tym::row__ P = lines_::New();
 
 			lines_::Write( Line, P );
 			lines_::Sync();
@@ -380,7 +343,7 @@ namespace txmtbl {
 		//f Delete the line at 'Position'.
 		void DeleteLine( tym::row__ Position )
 		{
-			DeleteLine_( Position );
+			lines_::Delete( Position );
 		}
 		//f Delete all emty lines. Return amount of lines deleted.
 		amount__ DeleteEmptyLines( void );
@@ -394,7 +357,7 @@ namespace txmtbl {
 		void DeleteCentralEmptyCells( void );
 		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
 		void DeleteCommentaries( bso__char Marker );
-		NAV( list_:: )
+		NAV( lines_:: )
 	};
 
 	AUTO( table )
