@@ -1,7 +1,7 @@
 /*
 	Header for the 'lgg' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -62,6 +62,7 @@ extern class ttr_tutor &LGGTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "bso.h"
 
 namespace lgg {
 	//e Languages.
@@ -74,14 +75,43 @@ namespace lgg {
 		lEnglish,
 		//i German
 		lGerman,
+		//i Not really a language : for testing purpose only.
+		lTest,
 		//i Amount of languages.
 		l_amount
 	};
 
 	extern const char *LanguageNames[lgg::l_amount];
+	extern const char *LanguageLabels[lgg::l_amount];
 
 	//f Return the ID of language named 'Name'.
-	language__ GetID( const char *Name );
+	language__ GetLanguageIDNamed( const char *Name );
+
+	//f Return the ID of language with label 'Label'.
+	language__ GetLanguageIDWithLabel( const char *Label );
+
+	inline bso::bool__ Test( language__ Language ) {
+		return ( ( Language != lUnknow ) && ( Language < l_amount ) );
+	}
+
+	inline const char *GetLanguageLabel( language__ Language )
+	{
+#ifdef LGG_DBG
+		if ( !Test( Language ) )
+			ERRu();
+#endif
+		return LanguageLabels[Language];
+	}
+
+	inline const char *GetLanguageName( language__ Language )
+	{
+#ifdef LGG_DBG
+		if ( !Test( Language ) )
+			ERRu();
+#endif
+
+		return LanguageNames[Language];
+	}
 
 }
 

@@ -105,6 +105,11 @@ IDS:
 - Adapting to changes in 'STK' library.
 - Fixing the 'operator =()' bug.
 
+LGG:
+- Adding 'Test' language for testing purpose.
+- Adding language labels.
+- Adding some features.
+
 LST:
 - Renaming 'CreateEntry' to 'New'.
 - Introducing feature to fix some cast problem.

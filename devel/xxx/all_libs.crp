@@ -81,7 +81,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&InDeX Binary TRee
 &idxque		&epeios		&2000-\
 	&InDeX QUEue
-&lgg		&epeios		&2000, 2002, \
+&lgg		&epeios		&2000, 2002-\
 	&LanGuaGes
 &lgpmsc		&epeios		&\
 	&LoGiPlus (Logi+) MiSC
@@ -149,7 +149,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&BacKenD CaSTs
 &bkddcb		&ebkd		&2001, \
 	&BacKenD DesCriBer
-&bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
+&bkdcmd		&ebkd		&2001-\
+	&BacKenD CoMmanDs
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2001-\
 	&BacKenD MaNaGer
