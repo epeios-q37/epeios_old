@@ -69,15 +69,17 @@ extern class ttr_tutor &DTETutor;
 #include "flw.h"
 #include "bso.h"
 
-//d An invalid date.
-#define DTE_INVALID_DATE	0
-
 //d An undefined date.
-#define DTE_UNDEFINED_DATE	1
+#define DTE_UNDEFINED_DATE	0
+
+//d An invalid date.
+#define DTE_INVALID_DATE	(raw_date__)-1
 
 /*d Decennia under which we consider we are in the XXI century,
 and over which we consider we are in the XX century. */
 #define DTE_LIMIT_DECENNIA	90
+
+#define DTE_SHIFT	5
 
 namespace dte {
 	//t Type of a raw date.
@@ -108,7 +110,7 @@ namespace dte {
 		{
 			RawDate_ = DTE_INVALID_DATE;
 		}
-		date__( bso::ulong__ Date = 0 )
+		date__( bso::ulong__ Date = DTE_UNDEFINED_DATE )
 		{
 			reset( false );
 			RawDate_ = Convert_( Date );
@@ -131,7 +133,7 @@ namespace dte {
 				else
 					Year += 2000;
 
-				RawDate_ = date__( Day + (bso::ulong__)Month * 100 + (bso::ulong__)Year * 10000UL ).RawDate_;
+				RawDate_ = date__( Year * 10000 + Month * 100 + Day );
 		}
 		//f Initialization with date 'Date'.
 		void Init( bso::ulong__ Date = DTE_UNDEFINED_DATE )
@@ -148,40 +150,28 @@ namespace dte {
 		//f Return the date in raw format ('yyyymmdd').
 		operator unsigned long( void ) const
 		{
-			return RawDate_;
+			return Year() * 10000 + Month() * 100 + Day();
 		}
-		year__ Year( bso::ulong__ Date )
+		year__ Year( bso::ulong__ Date = DTE_INVALID_DATE ) const
 		{
-			if ( !Date )
-				Date = RawDate_;
+			if ( Date == DTE_INVALID_DATE )
+				Date = *this;
 
-			return (year__)( Date / 10000L );
+			return (year__)( Date / 1000 );
 		}
-		month__ Month( bso::ulong__ Date )
+		month__ Month( bso::ulong__ Date = DTE_INVALID_DATE ) const
 		{
-			if ( !Date )
-				Date = RawDate_;
+			if ( Date == DTE_INVALID_DATE )
+				Date = *this;
 
-			return (month__)( ( Date % 10000L ) / 100L );
+			return (month__)( ( Date % 1000 ) /100 );
 		}
-		day__ Day( bso::ulong__ Date )
+		day__ Day( bso::ulong__ Date = DTE_INVALID_DATE ) const
 		{
-			if ( !Date )
-				Date = RawDate_;
+			if ( Date == DTE_INVALID_DATE )
+				Date = *this;
 
-			return (day__)( Date % 100L );
-		}
-		year__ Year( void ) const
-		{
-			return (year__)( RawDate_ / 10000L );
-		}
-		month__ Month( void ) const
-		{
-			return (month__)( ( RawDate_ % 10000L ) / 100L );
-		}
-		day__ Day( void ) const
-		{
-			return day__( RawDate_ % 100L );
+			return (day__)( Date % 100 );
 		}
 		//f Return the date in ASCII ('dd/mm/yyyy') and put in 'Result' if != 'NULL'.
 		const char *ASCII( char *Result = NULL ) const;
@@ -190,7 +180,7 @@ namespace dte {
 			month__ Month,
 			year__ Year )
 		{
-			RawDate_ = date__( Day, Month, Year ).RawDate_;
+			RawDate_ = date__( Day, Month, Year ).RawDate_ << DTE_SHIFT;
 		}
 		//f Add 'Amount' Month.
 		void AddMonth( bso::ulong__ Amount )

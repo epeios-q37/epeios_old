@@ -67,12 +67,12 @@ raw_date__ dte::date__::Convert_( bso::ulong__ Date )
 	Month = this->Month( Date );
 	Day = this->Day( Date );
 
-	if ( Year > 9999
-		 || ( Day < 1 ) || ( Day > 31 )
-		 || ( Month < 1 ) ||  ( Month > 12 ) )
-		return 0;
+	if ( Year > ( ( 2 << 14 ) - 1 )
+		 || ( Day > 31 )
+		 ||  ( Month > 12 ) )
+		return DTE_INVALID_DATE;
 	else
-		return Date;
+		return ( Year << 9 | Month << 5 | Day ) << DTE_SHIFT;
 }
 
 raw_date__ date__::Convert_( const char *Date )
@@ -82,29 +82,29 @@ raw_date__ date__::Convert_( const char *Date )
 	while( *Date && !isdigit( *Date ) )
 		Date++;
 
-	if ( !*Date )
-		return 0;
+	if ( *Date ) {
 
-	while( isdigit( *Date ) )
-		Jour = Jour * 10 + *Date++ - '0';
+		while( isdigit( *Date ) )
+			Jour = Jour * 10 + *Date++ - '0';
 
-	while( *Date && !isdigit( *Date ) )
-		Date++;
+		while( *Date && !isdigit( *Date ) )
+			Date++;
 
-	if ( !*Date )
-		return 0;
+		if ( *Date ) {
 
-	while( isdigit( *Date ) )
-		Mois = Mois * 10 + *Date++ - '0';
+			while( isdigit( *Date ) )
+				Mois = Mois * 10 + *Date++ - '0';
 
-	while( *Date && !isdigit( *Date ) )
-		Date++;
+			while( *Date && !isdigit( *Date ) )
+				Date++;
 
-	if ( !*Date )
-		return 0;
+			if ( !*Date ) {
 
-	while( isdigit( *Date ) )
-		Annee = Annee * 10 + *Date++ - '0';
+				while( isdigit( *Date ) )
+					Annee = Annee * 10 + *Date++ - '0';
+			}
+		}
+	}
 
 	if ( Annee < 100 )
 		if ( Annee >= DTE_LIMIT_DECENNIA )
@@ -112,7 +112,7 @@ raw_date__ date__::Convert_( const char *Date )
 		else
 			Annee += 2000;
 
-	return Convert_( (raw_date__)( Annee * 10000 + Mois * 100 + Jour ) );
+	return Convert_( (raw_date__)( ( Annee << 4 ) | Mois << 2 - Jour ) );
 }
 
 const char *date__::ASCII( char *Result ) const
@@ -122,7 +122,7 @@ const char *date__::ASCII( char *Result ) const
 	if ( !Result )
 		Result = Retour;
 
-	if ( !RawDate_ )
+	if ( RawDate_ == DTE_INVALID_DATE )
 		sprintf( Result, "invalid" );
 	else
 		sprintf( Result, "%02i/%02i/%i", (int)Day(), (int)Month(), (int)Year() );
