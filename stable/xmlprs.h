@@ -64,6 +64,7 @@ extern class ttr_tutor &XMLPRSTutor;
 #include "err.h"
 #include "flw.h"
 #include "xmldcm.h"
+#include "xmldbs.h"
 
 namespace xmlprs {
 	/*f Fill 'XMLD' with contents of 'Flow', with buffer
@@ -71,6 +72,13 @@ namespace xmlprs {
 	void ParseXML(
 		txf::text_iflow___ &Flow,
 		xmldcm::xml_document_ &XMLD,
+		int BufferLength );
+
+	/*f Fill 'XMLD' with contents of 'Flow', with buffer
+	of 'BufferLength' (expat issue). */
+	void ParseXML(
+		txf::text_iflow___ &Flow,
+		xmldbs::xml_database_ &XMLD,
 		int BufferLength );
 
 	void License( txf::text_oflow___ &OFlow );

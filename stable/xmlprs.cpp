@@ -57,70 +57,99 @@ public:
 #include "expat.h"
 
 using xmldcm::xml_document_filler__;
+using xmldbs::xml_database_filler__;
 
-static void HandleAttributes_(
-	xml_document_filler__ &XMLDF,
+template <typename xml_filler__> static void HandleAttributes_(
+	xml_filler__ &XMLF,
 	const XML_Char **Atts )
 {
 	int C = 0;
 	
 	while( Atts[C] != NULL ) {
-		XMLDF.PutAttribute( str::string( Atts[C] ), str::string( Atts[C+1] ) );
+		XMLF.PutAttribute( str::string( Atts[C] ), str::string( Atts[C+1] ) );
 		C +=2;
 	}
 }
-		
-static void StartElementHandler_(
+
+template <typename xml_filler__> static inline void StartElementHandler_(
+	xml_filler__ &XMLFiller,
+	const XML_Char *Name,
+	const XML_Char **Atts )
+{
+	XMLFiller.PushTag( str::string( Name ) );		
+	HandleAttributes_( XMLFiller, Atts );
+}
+
+static void DCMStartElementHandler_(
 	void *UserData,
 	const XML_Char *Name,
 	const XML_Char **Atts )
 {
-	xml_document_filler__ &XMLDF = *(xml_document_filler__ *)UserData;
-
-	XMLDF.PushTag( str::string( Name ) );		
-	HandleAttributes_( XMLDF, Atts );
+	StartElementHandler_( *(xml_document_filler__ *)UserData, Name, Atts );
 }
 
-static void EndElementHandler_(
+static void DBSStartElementHandler_(
 	void *UserData,
+	const XML_Char *Name,
+	const XML_Char **Atts )
+{
+	StartElementHandler_( *(xml_database_filler__ *)UserData, Name, Atts );
+}
+
+template <typename xml_filler__> static void EndElementHandler_(
+	xml_filler__ &XMLFiller,
 	const XML_Char * )
 {
-	xml_document_filler__ &XMLDF = *(xml_document_filler__ *)UserData;
-
-	XMLDF.PopTag();		
-
+	XMLFiller.PopTag();		
 }
 
-static void CharacterDataHandler_(
+static void DCMEndElementHandler_(
+	void *UserData,
+	const XML_Char *Name )
+{
+	EndElementHandler_( *(xml_document_filler__ *)UserData, Name );
+}
+
+static void DBSEndElementHandler_(
+	void *UserData,
+	const XML_Char *Name )
+{
+	EndElementHandler_( *(xml_database_filler__ *)UserData, Name );
+}
+
+template <typename xml_filler__> static void CharacterDataHandler_(
+	xml_filler__ &XMLFiller,
+	const XML_Char *S,
+	int Len )
+{
+	XMLFiller.PutValue( xmldcm::value( S, Len ) );
+}		
+
+static void DCMCharacterDataHandler_(
 	void *UserData,
 	const XML_Char *S,
 	int Len )
 {
-	xml_document_filler__ &XMLDF = *(xml_document_filler__ *)UserData;
-
-	XMLDF.PutValue( xmldcm::value( S, Len ) );
+	CharacterDataHandler_( *(xml_document_filler__ *)UserData, S, Len );
 }		
 
-void xmlprs::ParseXML(
+static void DBSCharacterDataHandler_(
+	void *UserData,
+	const XML_Char *S,
+	int Len )
+{
+	CharacterDataHandler_( *(xml_database_filler__ *)UserData, S, Len );
+}		
+
+static void ExpatParse_(
 	txf::text_iflow___ &Flow,
-	xmldcm::xml_document_ &XMLD,
+	XML_Parser &Parser,
 	int Length )
 {
 ERRProlog
-	XML_Parser Parser;
 	txf::data__ *Buffer;
 	txf::amount__ Amount;
-	xml_document_filler__ XMLDF;
 ERRBegin
-	XMLDF.Init( XMLD );
-
-	Parser = XML_ParserCreate( NULL );
-
-	XML_SetElementHandler( Parser, StartElementHandler_, EndElementHandler_ );
-	XML_SetCharacterDataHandler( Parser, CharacterDataHandler_ );
-
-	XML_SetUserData( Parser, &XMLDF );
-
 	if ( ( Buffer = (txf::data__ *)XML_GetBuffer( Parser, Length ) ) == NULL )
 		ERRm();
 
@@ -144,6 +173,55 @@ ERRBegin
 ERRErr
 ERREnd
 	XML_ParserFree( Parser );
+ERREpilog
+}
+
+
+void xmlprs::ParseXML(
+	txf::text_iflow___ &Flow,
+	xmldcm::xml_document_ &XMLD,
+	int Length )
+{
+ERRProlog
+	XML_Parser Parser;
+	xml_document_filler__ XMLDF;
+ERRBegin
+	XMLDF.Init( XMLD );
+
+	Parser = XML_ParserCreate( NULL );
+
+	XML_SetElementHandler( Parser, DCMStartElementHandler_, DCMEndElementHandler_ );
+	XML_SetCharacterDataHandler( Parser, DCMCharacterDataHandler_ );
+
+	XML_SetUserData( Parser, &XMLDF );
+
+	ExpatParse_( Flow, Parser, Length );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void xmlprs::ParseXML(
+	txf::text_iflow___ &Flow,
+	xmldbs::xml_database_ &XMLD,
+	int Length )
+{
+ERRProlog
+	XML_Parser Parser;
+	xml_database_filler__ XMLDF;
+ERRBegin
+	XMLDF.Init( XMLD );
+
+	Parser = XML_ParserCreate( NULL );
+
+	XML_SetElementHandler( Parser, DBSStartElementHandler_, DBSEndElementHandler_ );
+	XML_SetCharacterDataHandler( Parser, DBSCharacterDataHandler_ );
+
+	XML_SetUserData( Parser, &XMLDF );
+
+	ExpatParse_( Flow, Parser, Length );
+ERRErr
+ERREnd
 ERREpilog
 }
 

@@ -1,10 +1,10 @@
 # 'mll2html' Makefile by Claude L. Simon (csimon@webmails.com)
 # Builds executable for the 'mll2html' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 $COPYRIGHT$.
+# Copyright (C) 2000,2001 Claude SIMON (csimon@webmails.com).
 #
-# $ADDENDUM1$
-# $ADDENDUM2$
+# This file is part of the Epeios project (http://epeios.org/).
+# This file is also part of the GNU project (http://www.gnu.org/).
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -24,20 +24,17 @@
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-# $$Id$$
+# $Id$
 
 name = mll2html
 copt =
+# Epeios general debugging features
+copt += -DXXX_DBG
+# Required for multitasking
+#copt += -DCPE_MT
 lopt = 
-# To activate Epeios general debugging features.
-# copt += -DXXX_DBG
-# Needed by multitasking software.
-# copt += -DCPE_MT
-# Speed up thread andling (used with -DCPE_MTK).
-# copt += -DMTK_KEEP
 libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn str fil gnumll tagdtc\
        txmpgh xtf txf epeios tym
-
 
 ifndef EPEIOS_SRC
 	epeios_src=
@@ -51,46 +48,57 @@ else
 	epeios_os=$(EPEIOS_OS)
 endif
 
-
-ifeq ("$(epeios_os)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
+ifeq ("$(EPEIOS_OS)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
-ds = ;
 endif
 
-ifeq ("$(epeios_os)","linux")
-ox = o
-cc = g++ 
+ifeq ("$(EPEIOS_OS)","linux")
 co = -c
 # Generates debugging data.
-# co += -g
+co += -g
 # General optimization.
-co += -O
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
+#lo += -lpthread
 endif
 
-ifeq ("$(epeios_os)","beos")
-ox = o
-cc = g++
+ifeq ("$(EPEIOS_OS)","beos")
 co = -c -g
 lo = -o $(name)
-ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(epeios_src))
+#
 
-srcd = $(subst $(ds), ,$(epeios_src))
+ifeq ("$(EPEIOS_OS)","windows")
+ox = obj
+cc = bcc32
+ds = ;
+larg = $(lo) *.$(ox)	# Because Windows command size limited.
+endif
+
+ifeq ("$(EPEIOS_OS)","linux")
+ox = o
+cc = g++ 
+ds = :
+larg = $(lo) $(objs)
+endif
+
+ifeq ("$(EPEIOS_OS)","beos")
+ox = o
+cc = g++
+ds = :
+larg = $(lo) $(objs)
+endif
+
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
@@ -98,7 +106,7 @@ lo += $(EPEIOS_LOPT) $(lopt)
 objs = $(name).$(ox) $(libs:=.$(ox))
 
 $(name):  $(objs)
-	$(cc) $(lo) $(objs)
+	$(cc) $(larg)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
+	$(cc) $(co) $<

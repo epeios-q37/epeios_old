@@ -271,6 +271,16 @@ void TOLWait( unsigned int Secondes )
 #endif
 }
 
+
+#ifdef CPE__MT
+namespace {
+	void WaitAndExit( void *UP )
+	{
+		TOLWait( (unsigned int)UP );
+		exit( EXIT_SUCCESS );
+	}
+}
+
 void TOLYield( void )
 {
 #ifdef CPE__MS
@@ -281,15 +291,6 @@ void TOLYield( void )
 #else
 	#error "Unknown compilation enviroment"
 #endif
-}
-
-#ifdef CPE__MT
-namespace {
-	void WaitAndExit( void *UP )
-	{
-		TOLWait( (unsigned int)UP );
-		exit( EXIT_SUCCESS );
-	}
 }
 
 void TOLForceExit( unsigned int Seconds )

@@ -1,5 +1,8 @@
 $Id$
 
+- UPGRADING TO V1.1.8.
+- Adapting to BC++.
+
 20010505:
 - UPGRADING TO V1.1.6
 - Adapting to 'TXMPGH' modifications.

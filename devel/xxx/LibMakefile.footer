@@ -29,21 +29,21 @@ ifeq ("$(EPEIOS_OS)","windows")
 ox = obj
 cc = bcc32
 ds = ;
-lrfs = @LinkResponseFile
+larg = $(lo) *.$(ox)	# Because Windows command size limited.
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
 ox = o
 cc = g++ 
 ds = :
-lrfs = `cat LinkResponseFile`
+larg = $(lo) $(objs)
 endif
 
 ifeq ("$(EPEIOS_OS)","beos")
 ox = o
 cc = g++
 ds = :
-lrfs = `cat LinkResponseFile`
+larg = $(lo) $(objs)
 endif
 
 vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
@@ -55,11 +55,8 @@ lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
 
-$(name):  LinkResponseFile $(objs)
-	$(cc) $(lrfs)
+$(name):  $(objs)
+	$(cc) $(larg)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
-
-LinkResponseFile: $(objs)
-	echo $(lo) $(objs) >$@
+	$(cc) $(co) $<

@@ -438,14 +438,13 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 #define NAV( Object )	NAVt( Object, tym::row__ )
 #endif
 
-//f Tell the remainder to give hand to the next thread.
-void TOLYield( void );
-
 
 #ifdef CPE__MT
 /*f Force the program to exit after 'Seconds' second.
 Usefull to force a server to exit to obtain the profiling file. */
 void TOLForceExit( unsigned int Seconds );
+//f Tell the remainder to give hand to the next thread.
+void TOLYield( void );
 #endif
 
 namespace mmm {

@@ -28,14 +28,12 @@
 
 name = $xxx$
 copt =
-lopt = 
-# To activate Epeios general debugging features.
+# Epeios general debugging features
 copt += -DXXX_DBG
-# Needed by multitasking software.
-# copt += -DCPE_MT
-# Speed up thread andling (used with -DCPE_MTK).
-# copt += -DMTK_KEEP
-libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn
+# Required for multitasking
+#copt += -DCPE_MT
+lopt = 
+libs = ttr tol flw stf err
 
 $_RAW_$
 
@@ -51,22 +49,14 @@ else
 	epeios_os=$(EPEIOS_OS)
 endif
 
-
-ifeq ("$(epeios_os)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
+ifeq ("$(EPEIOS_OS)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
-ds = ;
 endif
 
-ifeq ("$(epeios_os)","linux")
-ox = o
-cc = g++ 
+ifeq ("$(EPEIOS_OS)","linux")
 co = -c
 # Generates debugging data.
 co += -g
@@ -76,21 +66,40 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
+#lo += -lpthread
 endif
 
-ifeq ("$(epeios_os)","beos")
-ox = o
-cc = g++
+ifeq ("$(EPEIOS_OS)","beos")
 co = -c -g
 lo = -o $(name)
-ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(epeios_src))
+#
 
-srcd = $(subst $(ds), ,$(epeios_src))
+ifeq ("$(EPEIOS_OS)","windows")
+ox = obj
+cc = bcc32
+ds = ;
+larg = $(lo) *.$(ox)	# Because Windows command size limited.
+endif
+
+ifeq ("$(EPEIOS_OS)","linux")
+ox = o
+cc = g++ 
+ds = :
+larg = $(lo) $(objs)
+endif
+
+ifeq ("$(EPEIOS_OS)","beos")
+ox = o
+cc = g++
+ds = :
+larg = $(lo) $(objs)
+endif
+
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
@@ -98,7 +107,7 @@ lo += $(EPEIOS_LOPT) $(lopt)
 objs = $(name).$(ox) $(libs:=.$(ox))
 
 $(name):  $(objs)
-	$(cc) $(lo) $(objs)
+	$(cc) $(larg)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
+	$(cc) $(co) $<

@@ -138,11 +138,7 @@ inline void Push(
 	tag_row__ &TagRow,
 	const char *TagName )
 {
-	if ( TagRow == NONE ) {
-		TagRow = XMLDF.PushTag( TagName );
-//		fout << txf::nl << "--------------------" << txf::nl;
-	} else
-		XMLDF.PushTag( TagRow );
+	XMLDF.PushTag( TagName, TagRow );
 }
 
 typedef ctn::E_XCONTAINER( librairie_ ) librairies;

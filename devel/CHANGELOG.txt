@@ -1,10 +1,10 @@
 $Id$
 
 General changes.
-- Due to the fact that I had difficulties with the 'broker::broker'
-object, due to the fact that class name and namespace are the same,
-(had the same problem with 'set::set', which becames 'bch::bunch'),
-all libraries related to 'broker' are renamed into 'backend'.
+- I had some difficulties with the 'broker::broker' object, due to
+the fact that class name and namespace are the same, (had the same
+problem with 'set::set', which becames 'bch::bunch'), all libraries
+related to 'broker' are renamed into 'backend'.
 - Removing all the 'BROKERx' libraries.
 - Adding the 'XMLxxx' libraries.
 
@@ -69,10 +69,13 @@ GNUMLL:
 - Move all 'operator <<' from inside namespace to outside, because I had trouble with linking.
 
 STF: 
-- Take away all the internal 'EOT' stuff. Using the standard 'EOD' instead.
+- Take away all the internal 'EOFT' stuff. Using the standard 'EOFD' stuff instead.
 
 TAGEXP:
 - Adapting to changes in 'STF'.
+
+TOL:
+- 'TOLYield' is now available only in a multitasking context.
 
 TSRCPR:
 - Fixing '#define' bogue.
@@ -85,6 +88,18 @@ TXMPGH:
 
 TXMTBL:
 - Changing 'commentary' label to 'comment'.
+
+XMLDBS:
+- Adding method which are faster by allowing the direct use of tag row
+  in addition of the tag name. 
+- Adding missing some missing methods regarding 'XMLDCM'.
+
+XMLDCM:
+- Adding method which are faster by allowing the direct use of tag row
+  in addition of the tag name. 
+
+XMLPRS:
+- Adding the parsing into a XML database.
 
 XTF:
 - Correct a bug due to a missing 'EOX()' in 'GetLine()'.

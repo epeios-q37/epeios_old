@@ -42,8 +42,10 @@ typedef gnumll::mailing_lists_		mailing_lists_;
 typedef gnumll::mailing_lists		mailing_lists;
 typedef gnumll::titles_				titles_;
 typedef gnumll::misc_				misc_;
-typedef str::string_				string_;
-typedef str::string					string;
+
+// To avoid ambiguiti between std::estring and str::estring.
+typedef str::string_				estring_;
+typedef str::string					estring;
 
 enum command {
 	cHelp,
@@ -59,28 +61,28 @@ enum option {
 };
 
 static inline void WriteEmail(
-	const string_ &S,
+	const estring_ &S,
 	oflow_ &Flow )
 {
 	Flow << "<A HREF=\"mailto:" << S << "\">" << S << "</A>";
 }
 
 static inline void WriteNews(
-	const string_ &S,
+	const estring_ &S,
 	oflow_ &Flow )
 {
 	Flow << "<A HREF=\"news://" << S << "\">" << S << "</A>";
 }
 
 static inline void WriteURL(
-	const string_ &S,
+	const estring_ &S,
 	oflow_ &Flow )
 {
 	Flow << "<A HREF=\"" << S << "\" target=_blank>" << S << "</A>";
 }
 
 
-static inline bso::bool__ IsEmailAdress( const string_ &S )
+static inline bso::bool__ IsEmailAdress( const estring_ &S )
 {
 	epeios::row__ PAt, PPoint;
 	bso::bool__ R = false;
@@ -93,17 +95,17 @@ static inline bso::bool__ IsEmailAdress( const string_ &S )
 	return R;
 }
 
-static inline bso::bool__ IsURL( const string_ &S )
+static inline bso::bool__ IsURL( const estring_ &S )
 {
-	return S.Search( string( "://" ) ) != NONE;
+	return S.Search( estring( "://" ) ) != NONE;
 }
 
 static void Write(
-	const string_ &S,
+	const estring_ &S,
 	oflow_ &F )
 {
 ERRProlog
-	string T;
+	estring T;
 	epeios::row__ P = 0;
 	epeios::size__ L = S.Amount();
 	char C;
@@ -162,7 +164,7 @@ static void Write(
 	oflow_ &F )
 {
 	epeios::row__ Position = P.First();
-	ctn::E_CMITEM( string_ ) Element;
+	ctn::E_CMITEM( estring_ ) Element;
 
 	Element.Init( P );
 
@@ -179,7 +181,7 @@ static void WriteTitles(
 {
 	bso::ushort__ Size = 3;
 	epeios::row__ P = Paragraph.First();
-	ctn::E_CMITEM( string_ ) Element;
+	ctn::E_CMITEM( estring_ ) Element;
 
 	Element.Init( Paragraph );
 
@@ -198,7 +200,7 @@ static void WriteSubTitles(
 	oflow_ &Flow )
 {
 	epeios::row__ P = Paragraph.First();
-	ctn::E_CMITEM( string_ ) Element;
+	ctn::E_CMITEM( estring_ ) Element;
 
 	Element.Init( Paragraph );
 
@@ -234,7 +236,7 @@ static void WriteHead(
 
 static void WriteTOCGenerals(
 	const generals_ &Generals,
-	const string_ &GeneralsFile,
+	const estring_ &GeneralsFile,
 	oflow_ &Flow )
 {
 	epeios::row__ P = Generals.First();
@@ -256,7 +258,7 @@ static void WriteTOCListHeaderMisc(
 	const misc_ &Misc,
 	oflow_ &Flow )
 {
-	ctn::E_CMITEM( string_ ) I;
+	ctn::E_CMITEM( estring_ ) I;
 	epeios::row__ P = Misc.First();
 
 	I.Init( Misc );
@@ -271,9 +273,9 @@ static inline void WriteTOCListHeader(
 	const header_ &Header,
 	oflow_ &Flow,
 	bso::ulong__ Ref,
-	const string_ &ListsFile )
+	const estring_ &ListsFile )
 {
-	ctn::E_CMITEM( string_ ) Title;
+	ctn::E_CMITEM( estring_ ) Title;
 	bso::bool__ Link = ( &ListsFile != NULL );
 
 	Flow << "<LI>";
@@ -370,7 +372,7 @@ static inline void WriteTOCListHeader(
 static void WriteTOCLists(
 	const lists_ &Lists,
 	oflow_ &Flow,
-	const string_ &ListsFile )
+	const estring_ &ListsFile )
 {
 	epeios::row__ P = Lists.First();
 	ctn::E_CITEM( list_ ) List;
@@ -387,16 +389,16 @@ static void WriteTOCLists(
 
 
 
-static inline bso::bool__ IsListItem( const string_ &Line )
+static inline bso::bool__ IsListItem( const estring_ &Line )
 {
 	return ( ( Line.Amount() > 2 )
 		      && ( Line( 0 ) == '\t' )
 			  && ( Line( 1 ) == '-' ) );
 }
 
-static const string_ &AsListItem( const string_ &Line )
+static const estring_ &AsListItem( const estring_ &Line )
 {
-	static ::string String;
+	static ::estring String;
 
 	String.Init();
 
@@ -417,7 +419,7 @@ static void WriteGeneralParagraph(
 	oflow_ &Flow )
 {
 	epeios::row__ P = Paragraph.First();
-	ctn::E_CMITEM( string_ ) Line;
+	ctn::E_CMITEM( estring_ ) Line;
 	bso::bool__ List = false;
 
 	Line.Init( Paragraph );
@@ -494,7 +496,7 @@ static void WriteListParagraph(
 	oflow_ &Flow )
 {
 	epeios::row__ P = Paragraph.First();
-	ctn::E_MITEM( string_ ) Line;
+	ctn::E_MITEM( estring_ ) Line;
 
 	while ( P != NONE ) {
 		Write( Line( P ), Flow );
@@ -526,7 +528,7 @@ static inline void WriteListHeader(
 {
 	Flow << "<H4><A NAME=\"" << Ref << "\">";
 
-	WriteTOCListHeader( Header, Flow, Ref, *(string_ *)NULL );
+	WriteTOCListHeader( Header, Flow, Ref, *(estring_ *)NULL );
 
 	Flow << "</H4>" << txf::nl;
 }
@@ -616,8 +618,8 @@ static inline void FillDetector( detector_ &Detector )
 static void Go(
 	const char *Source,
 	const char *Template,
-	const string_ &GeneralsFile,
-	const string_ &ListsFile,
+	const estring_ &GeneralsFile,
+	const estring_ &ListsFile,
 	oflow_ &Dest )
 {
 ERRProlog
@@ -717,8 +719,8 @@ void PrintHeader( void )
 
 static void AnalyzeOptions(
 	clnarg::analyzer___ &Analyzer,
-	string_ &ListsFileName,
-	string_ &GeneralsFileName )
+	estring_ &ListsFileName,
+	estring_ &GeneralsFileName )
 {
 ERRProlog
 	epeios::row__ P;
@@ -810,8 +812,8 @@ ERREpilog
 static void AnalyzeArgs(
 	int argc,
 	const char *argv[],
-	string_ &ListsFileName,
-	string_ &GeneralFileName,
+	estring_ &ListsFileName,
+	estring_ &GeneralFileName,
 	char *&Source,
 	char *&Template,
 	char *&Dest )
@@ -876,8 +878,8 @@ ERRProlog
 	char *Dest = NULL;
 	char *Source = NULL;
 	char *Template = NULL;
-	string ListsFileName;
-	string GeneralsFileName;
+	estring ListsFileName;
+	estring GeneralsFileName;
 ERRBegin
 
 	ListsFileName.Init();

@@ -39,7 +39,7 @@ $_RAW_$
 
 ifeq ("$(EPEIOS_OS)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
 endif

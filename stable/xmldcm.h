@@ -170,11 +170,39 @@ namespace xmldcm {
 
 			return xml_core_filler__::TagRow_;
 		}
-		/*f Tag with name 'TagName' becomes current tag and is created if needed.
-		Return the reference of this tag. */
-		tag_row__ PushTag( const char *TagName )
+		/*f If 'TagRow'!= NONE, 'TagRow' becomes the current tag. If 'TagRow' == NONE,
+		'Name' becomes current tag and is created if needed. The reference of this
+		tag is returned and put in 'TagRow'. */
+		tag_row__ PushTag(
+				const name_ &Name,
+				tag_row__ &TagRow )
 		{
-			return PushTag( name( TagName ) );
+			if ( TagRow == NONE )
+				TagRow = PushTag( Name );
+			else
+				PushTag( TagRow );
+
+			return TagRow;
+		}
+		/*f Tag with name 'Name' becomes current tag and is created if needed.
+		Return the reference of this tag. */
+		tag_row__ PushTag( const char *Name )
+		{
+			return PushTag( name( Name ) );
+		}
+		/*f If 'TagRow'!= NONE, 'TagRow' becomes the current tag. If 'TagRow' == NONE,
+		'Name' becomes current tag and is created if needed. The reference of this
+		tag is returned and put in 'TagRow'. */
+		tag_row__ PushTag(
+			const char *Name,
+			tag_row__ &TagRow )
+		{
+			if ( TagRow == NONE )
+				TagRow = PushTag( Name );
+			else
+				PushTag( TagRow );
+
+			return TagRow;
 		}
 		//f Parent tag becomes current tag, which reference is returned.
 		tag_row__ PopTag( void )
@@ -208,16 +236,27 @@ namespace xmldcm {
 			PutValue( Value );
 			PopTag();
 		}
-		//f Put 'Value' with tag name 'TagName'. Return corresponding tag row.
-		tag_row__ PutValue(
+		//f Put 'Value' with tag name 'TagName'.
+		void PutValue(
 			const value_ &Value,
 			const name_ &TagName )
 		{
 			tag_row__ TagRow = PushTag( TagName );
 			PutValue( Value );
 			PopTag();
-			
-			return TagRow;
+		}
+		/*f If 'TagRow' != NONE, 'Value' is put associated with 'TagRow'.
+		If 'TagRow' == NONE, 'Value' is associated with 'TagName', and the
+		row corresponding to 'TagName' is put into 'TagRow'.*/
+		void PutValue(
+			const value_ &Value,
+			const name_ &TagName,
+			tag_row__ &TagRow )
+		{
+			if ( TagRow == NONE )
+				PutValue( Value, TagName );
+			else
+				PutValue( Value, TagRow );
 		}
 		//f Put 'Value' with tag name 'TagName'.
 		void PutValue(
@@ -225,6 +264,16 @@ namespace xmldcm {
 			const char *TagName )
 		{
 			PutValue( Value, name( TagName ) );
+		}
+		/*f IF 'TagRow' != NONE, 'Value' is put associated with 'TagRow'.
+		If 'TagRow' == NONE, 'Value' is associated with 'TagName', and the
+		row corresponding to 'TagName' is put into 'TagRow'.*/
+		tag_row__ PutValue(
+			const value_ &Value,
+			const char *TagName,
+			tag_row__ &TagRow )
+		{
+			PutValue( Value, name( TagName ), TagRow );
 		}
 		/*f Put attribute of tag row 'TagRow' and value 'Value'.
 		Don't use this function if you are not sure of what you are doing. */
@@ -248,12 +297,38 @@ namespace xmldcm {
 		{
 			PutAttribute( GetOrCreateTag_( Name, tAttribute ), Value );
 		}
+		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
+		'TagRow', and value 'Value'. The tag row of the attribute is put
+		into 'TagRow'.*/
+		void PutAttribute(
+			const name_ &Name,
+			const value_ &Value,
+			tag_row__ &TagRow)
+		{
+			if ( TagRow != NONE )
+				PutAttribute( TagRow, Value );
+			else
+				PutAttribute( TagRow = GetOrCreateTag_( Name, tAttribute ), Value );
+		}
 		//f Put attribute of name 'Name' and value 'Value'.
 		void PutAttribute(
 			const char *Name,
 			const value_ &Value )
 		{
 			PutAttribute( name( Name), Value );
+		}
+		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
+		'TagRow', and value 'Value'. The tag row of the attribute is put
+		into 'TagRow'.*/
+		void PutAttribute(
+			const char *Name,
+			const value_ &Value,
+			tag_row__ &TagRow)
+		{
+			if ( TagRow != NONE )
+				PutAttribute( TagRow, Value );
+			else
+				PutAttribute( TagRow = GetOrCreateTag_( name( Name ), tAttribute ), Value );
 		}
 	};
 }

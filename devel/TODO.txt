@@ -2,10 +2,9 @@ $Id$
 
 Général:
 
-Rename roker/brk in backend/bkd
-
-Under Linux, use 'clone' as alternative to pthreads (library 'MTK').
-Under Linux, use 'sem_init' and consort (library 'SPH') and use them in 'MTX').
+- Under Linux, use 'clone' as alternative to pthreads (library 'MTK').
+- Under Linux, use 'sem_init' and consort (library 'SPH') and use them in 'MTX').
+- Under Windows, test with Borland C++.
 
 FAM:
 - Use namespace
