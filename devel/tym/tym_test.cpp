@@ -95,6 +95,8 @@ ERRBegin
 
 	fout << '\n';
 
+	M1.Swap( 1, 2 );
+
 ERRErr
 ERREnd
 ERREpilog

@@ -186,6 +186,17 @@ namespace tym {
 		{
 			Ecrire_( Source, Quantity, *Position, *Offset );
 		}
+		//f Swap objects at 'Position1' and 'Position2'.
+		void Swap(
+			r Position1,
+			r Position2 )
+		{
+			t O;
+
+			O = Read( Position1 );
+			Write( Read( Position2 ), Position1 );
+			Write( O, Position2 );
+		}
 		//f Fill at 'Position' with 'Object' 'Count' times.
 		void Fill(
 			const t &Object,

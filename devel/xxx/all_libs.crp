@@ -15,7 +15,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbibsc_	&ldbi		&		&DataBase Interface BaSiCs (for backend)
 &dbidpd		&ldbi		&		&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
-&dbifld_	&ldbi		&		&Database Interface FieLDs (for backend)
+&dbiifl_	&ldbi		&		&Database Interface Index FieLds (for backend)
 &dbimng		&ldbi		&		&Database Interface MaNaGer
 &dbimng_	&ldbi		&		&Database Interface MaNaGer (for backend)
 &dbimsc		&ldbi		&		&BataBase Interface MiSC
@@ -24,7 +24,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbipgs		&ldbi		&		&DataBAse Interface PostGreS
 &dbisql		&ldbi		&		&DataBase Interface SQL (from language)
 &dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
-&dbitbl_	&ldbi		&		&Database Inteface TaBLe (for backend)
+&dbitfl_	&ldbi		&		&Database Interface Table FieLds (for backend)
 &err		&epeios		&2000-		&ERRor handling
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
 &cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
