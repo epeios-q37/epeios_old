@@ -1,25 +1,24 @@
 /*
-  Header for the 'cpe' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'cpe' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define CPE_NAME		"CPE"
 
-#define	CPE_VERSION	"$Revision$"	
+#define	CPE_VERSION	"$Revision$"
 
-#define CPE_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define CPE_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &CPETutor;
 
 #if defined( XXX_DBG ) && !defined( CPE_NODBG )
-#define CPE_DBG 
+#define CPE_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &CPETutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D ComPilation Enviroment 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 //#include "err.h"
@@ -69,6 +73,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__DJGPP
 #undef CPE__UNIX
 #undef CPE__BEOS
+#undef XPE__CW
 
 #ifdef _MSC_VER
 	//d If defined, we are in the 'Microsoft Visual C++'.
@@ -123,6 +128,10 @@ extern class ttr_tutor &CPETutor;
 #	endif
 #endif
 
+#ifdef __MWERKS__
+#	define CPE__CW	// We are using MetroWerks Code Warrior.
+#endif
+
 #ifndef CPE__NO_IOS_EXTENSION
 //d Defined if 'ios::nocreate' and 'ios::replace' exists.
 #	define CPE__IOS_EXTENSION
@@ -140,6 +149,9 @@ extern class ttr_tutor &CPETutor;
 #	endif
 #	ifdef CPE__VC
 #		define CPE__USE_VC_WORKAROUND
+#	endif
+#	ifdef CPE__CW
+#		define CPE__USE_CW_WORKAROUND
 #	endif
 #endif	
 

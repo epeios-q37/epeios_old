@@ -67,7 +67,7 @@ extern class ttr_tutor &TOLTutor;
 
 #include "cpe.h"
 
-#if defined( CPE__MS ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
+#if defined( CPE__MS ) || defined( CPE__UNIX ) || defined( CPE__BEOS ) || defined( CPE__CW )
 #include <sys/timeb.h>
 #else
 #error "Unknown compilation enviroment"
@@ -441,7 +441,7 @@ namespace tol {
 
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'ckock()' only return how long
-	the application is usibg the processor.*/
+	the application is using the processor.*/
 	inline unsigned long Clock( void )
 	{
 		timeb T;

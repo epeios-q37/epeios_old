@@ -18,6 +18,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgidat		&ecgi		&2002-		&CGI (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
+&cpe		&epeios		&2000-		&ComPilation Enviroment
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects)
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)

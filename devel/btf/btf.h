@@ -132,6 +132,11 @@ namespace btf {
 #endif
 			return E_STACK_( r )::Read( E_STACK_( r )::First() );
 		}
+		//f Return true if a call to 'Join' is possible, false otherwise.
+		bso::bool__ IsJoinable( void )
+		{
+			return E_STACK_( r )::Amount() >= 2;
+		}
 	};
 
 	AUTO1( binary_tree_filler )

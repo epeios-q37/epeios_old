@@ -4,6 +4,9 @@ GENERAL:
 - Creating library 'BTS'.
 - Creating library 'BTF'.
 
+CPE:
+- Adapting to Metrowerks Codewarrior
+
 STR:
 - Adding 'Insert()' method.
 
