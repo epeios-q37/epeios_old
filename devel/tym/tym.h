@@ -188,7 +188,7 @@ namespace tym {
 			epeios::size__ Count,
 			r Position = 0 )
 		{
-			b::Fill( (data__ *)&Object, sizeof( t ), Count, *Position * sizeof( t ) );
+			b::Fill( (uym::data__ *)&Object, sizeof( t ), Count, *Position * sizeof( t ) );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
 		r Position(

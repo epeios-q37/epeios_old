@@ -51,7 +51,7 @@ void Essai( int argc, char *argv[] )
 {
 ERRProlog
 	ctn::E_XMCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
-	cch::E_RW_CACHES___( mytype__, test__, epeios::row__ ) RWCaches;
+	cch::E_RW_CACHES___( mytype__, test__ ) RWCaches;
 	int rnd, i, j;
 ERRBegin
 

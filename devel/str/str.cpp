@@ -234,6 +234,33 @@ namespace str {
 
 		return Result;
 	}
+
+	bso::lfloat__ string_::ToLF( epeios::row__ &ErrP ) const
+	{
+		bso::lfloat__ Result = 0;
+		epeios::row__ P = First();
+		char C;
+
+		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+			Result = Result * 10 + C - '0';
+			P = Next( P );
+		}
+
+		if ( ( P != NONE ) && ( Read( P ) == '.' ) ) {
+			bso::lfloat__ Factor = .1;
+			while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+				Result += ( C - '0' ) * Factor;
+				Factor /= 10;
+				P = Next( P );
+			}
+		}
+
+		if ( &ErrP )
+			ErrP = P;
+
+		return Result;
+	}
+
 }
 
 

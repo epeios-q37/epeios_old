@@ -34,11 +34,15 @@
 
 #include "err.h"
 #include "stf.h"
+#include "str.h"
+#include "ctn.h"
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	mmg::E_FILE_MEMORY_MERGER( ctn::E_XMCONTAINER_( str::string_ ) ) C;
 ERRBegin
+	C.Init( "test" );
 ERRErr
 ERREnd
 ERREpilog

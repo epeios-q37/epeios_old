@@ -362,9 +362,9 @@ namespace mmg
 			mdr::mode ObjectMode,
 			mdr::mode FileMode )
 		{	
-			bso__bool Test;
+			bso::bool__ Test;
 
-			Test = TOLFileExists( FileName );
+			Test = tol::FileExists( FileName );
 
 			PiloteFichier_.Init( FileName );
 			PiloteFichier_.Persistant();

@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
+#include <fstream.h>
 
 #include "tym.h"
 
@@ -45,7 +45,7 @@ ERREpilog
 }
 
 
-typedef bso__ushort	mytype__;
+typedef bso::ushort__	mytype__;
 
 #define TAILLE_MEMOIRE	100
 
@@ -56,7 +56,7 @@ ERRProlog
 	mfc_pilote_memoire_fichier R2;
 */	tym::E_MEMORY( mytype__ ) M1;
 	tym::E_MEMORY( mytype__ ) M2;
-	bso__ulong I;
+	bso::ulong__ I;
 	mytype__ J;
 	ifstream IN;
 	ofstream OUT;
@@ -66,6 +66,7 @@ ERRBegin
 */
 	M1.Init();
 	M1.Allocate( TAILLE_MEMOIRE );
+	M1.Fill( 0, 0, 0 );
 
 	M2.Init();
 	M2.Allocate( TAILLE_MEMOIRE );

@@ -30,18 +30,21 @@ QUE:
 
 MMG:
 - Fixing autonome declaration bug.
+- Adaptation to changes in underlying libraries.
 
 MMM:
 - Adding 'E_MULTIMEMORY(_)' #define.
 
 STR:
 - Adding missing 'const' qualifier.
+- Addint 'ToLF()' method.
 
 TOL:
 - Fixing bug in the 'NAVt()' macro.
 
 UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.
+- Fixing 'Fill()' compilation error.
 
 --------
 20011119
