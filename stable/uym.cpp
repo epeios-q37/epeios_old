@@ -219,10 +219,10 @@ ERRBegin
 				PositionDansTampon += Taille;
 			}
 
-			Debut += TailleTampon;
+			Debut += PositionDansTampon;
 		}
 
-		Debut -= TailleTampon;
+		Debut -= Taille;
 	}
 	else
 	{

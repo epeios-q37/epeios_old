@@ -168,6 +168,7 @@ TYM:
 UYM:
 - Fixing bug in 'untyped_memory__(_)'
 - Renaming 'Locate' into 'Search'.
+- Fixing 'Search()' bug.
 
 --------
 20030219

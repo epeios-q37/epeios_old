@@ -128,7 +128,6 @@ namespace err {
 	enum b
 	{
 		bGeneric,
-		bInexistentData	// The asked data does not exist.
 	};
 		// backend error
 	enum t
