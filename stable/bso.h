@@ -136,7 +136,7 @@ namespace bso {
 	: public p_short__<sshort__>
 	{
 	public:
-		p_sshort__( sshort__ Op )
+		p_sshort__( sshort__ Op = 0 )
 		: p_short__<sshort__>( Op )
 		{}
 	};
@@ -156,7 +156,7 @@ namespace bso {
 	: public p_short__<ushort__>
 	{
 	public:
-		p_ushort__( ushort__ Op )
+		p_ushort__( ushort__ Op = 0 )
 		: p_short__<ushort__>( Op )
 		{}
 	};
@@ -171,16 +171,16 @@ namespace bso {
 		{
 			raw__ *P = (raw__ *)&Op_;			
 
-			P[0] = Op & 0xff;
-			P[1] = ( Op >> 8 ) & 0xff;
-			P[2] = ( Op >> 16 ) & 0xff;
-			P[3] = ( Op >> 24 ) & 0xff;
+			P[0] = (raw__)( Op & 0xff );
+			P[1] = (raw__)( ( Op >> 8 ) & 0xff );
+			P[2] = (raw__)( ( Op >> 16 ) & 0xff );
+			P[3] = (raw__)( ( Op >> 24 ) & 0xff );
 		}
 		operator t( void )
 		{
 			raw__ *P = (raw__ *)&Op_;			
 
-			return P[0] | ( P[1] << 8 ) | ( P[2] << 16 ) | ( P[1] << 24 );
+			return P[0] | ( P[1] << 8 ) | ( P[2] << 16 ) | ( P[3] << 24 );
 		}
 	};
 
@@ -201,7 +201,7 @@ namespace bso {
 	: public p_long__<slong__>
 	{
 	public:
-		p_slong__( slong__ Op )
+		p_slong__( slong__ Op = 0 )
 		: p_long__<slong__>( Op )
 		{}
 	};
@@ -221,7 +221,7 @@ namespace bso {
 	: public p_long__<ulong__>
 	{
 	public:
-		p_ulong__( ulong__ Op )
+		p_ulong__( ulong__ Op = 0 )
 		: p_long__<ulong__>( Op )
 		{}
 	};
@@ -242,7 +242,7 @@ namespace bso {
 	: p_long__<bsize__>
 	{
 	public:
-		p_bsize__( bsize__ Op )
+		p_bsize__( bsize__ Op = 0 )
 			: p_long__<bsize__>( Op )
 		{}
 	};

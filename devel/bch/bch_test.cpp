@@ -57,10 +57,10 @@ void Essai( void )
 ERRProlog
 	flm::file_memory_driver F;
 	mmm::multimemory M;
-	E_BUNCH( bso::ulong__ ) E1, E2;
+	E_P_BUNCH( bso::ulong__ ) E1, E2;
 //	fch_flot_entree_fichier Entree;
 //	fch_flot_sortie_fichier Sortie;
-	E_BUNCH__( int, 3 ) G, H;
+	E_P_BUNCH__( int, 3 ) G, H;
 	bso::ulong__ i;
 	row_t__ P;
 ERRBegin

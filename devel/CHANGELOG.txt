@@ -2,7 +2,14 @@ $Id$
 
 GENERAL:
 - Adding 'CCH'.
-- Adding 'SMA'? to use in 'CCH'.
+- Adding 'SMA' to use in 'CCH'.
+- Adding portable data types.
+
+AEM:
+- Adding portable versions of classes.
+
+BCH:
+- Adding portable versions of classes.
 
 BSO:
 - Adding the 'sign__' type.
@@ -20,22 +27,24 @@ CTN:
 
 EPSMSC:
 - Removing IDEALX-related text.
-- Adding Epeios tewt.
+- Adding Epeios text.
 
 FLM:
 - Using now the UNIX system calls under UNIX instead of the C/C++ call (which seems bugged).
 - Using low-level io functions under Windows instead of the C/C++ call.
 - Adding a static part for standardization.
 
-IDXBTQ:
+IDXBTR:
 - Adding 'E_INDEX(_)'.
-- Adding 'E_IBTREEt()'.
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.
 
 IDXQUE:
 - Fixing bugs concerning row type.
+
+MDR:
+- Adding some features for portable data types.
 
 QUE:
 - Fixing bug from typed queue.
@@ -50,7 +59,7 @@ MMM:
 - Adding 'E_MULTIMEMORY(_)' #define.
 
 SSNMNG:
-- Adapting to modification made in 'idxbtq' library.
+- Adapting to modification made in 'IDXBTQ' library.
 
 STR:
 - Adding missing 'const' qualifier.

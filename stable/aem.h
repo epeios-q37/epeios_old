@@ -1,8 +1,8 @@
 /*
-  Header for the 'aem' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'aem' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	AEM_VERSION	"$Revision$"	
 
-#define AEM_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define AEM_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &AEMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -86,8 +86,8 @@ namespace aem {
 	//t Type of a step size.
 	typedef bso::ushort__ step_size__;
 
-	//c A amount/extent manager.
-	template <typename r> class amount_extent_manager_
+	//c Core amount/extent manager. Internal use.
+	template <typename row, typename size> class core_amount_extent_manager_
 	{
 	private:
 		bso::bool__ OnlyGrowing_( void ) const
@@ -169,7 +169,7 @@ namespace aem {
 			bso::bool__ NotEqual = ( Extent() != Size ) || ( Amount() != Size );
 
 			S_.Amount = Size;
-			S_.Misc &= 0xff;
+			S_.Misc = S_.Misc & 0xff;	// Avoid the '&=' notation due to possible portable type of 'S_.Misc'.
 
 			return NotEqual;
 		}
@@ -180,10 +180,10 @@ namespace aem {
 		// Next seven bytes is the allocation step / 256.
 		// If the allocation step at 0, then the extent fits with the amount
 		// even in no decreasin state. */
-			epeios::size__ Misc;
-			epeios::size__ Amount;
+			size Misc;
+			size Amount;
 		} &S_;
-		amount_extent_manager_( s &S )
+		core_amount_extent_manager_( s &S )
 		: S_( S )
 		{}
 		void reset( bso::bool__ = true )
@@ -191,14 +191,14 @@ namespace aem {
 			S_.Amount = 0;
 			S_.Misc = 0;
 		}
-		amount_extent_manager_ &operator =( const amount_extent_manager_ &AEM )
+		core_amount_extent_manager_ &operator =( const core_amount_extent_manager_ &AEM )
 		{
 			// Amount normally handled by calling function.
 
-			if ( AEM.StepValue_() != 0 )
-				S_.Misc = 0;	// AEM is a stand alone object.
-			else
-				S_.Misc &= 0xff;	// *this is a standalone object.
+			if ( AEM.StepValue_() != 0 )	// 'AEM' is a stand alone object.
+				S_.Misc = 0;	
+			else	// '*this' is a standalone object.
+				S_.Misc = S_.Misc & 0xff;	// Avoid the '&=' notation due to possible portable type of 'S_.Misc'.
 
 			return *this;
 		}
@@ -248,7 +248,7 @@ namespace aem {
 			S_.Misc |= ( S_.Misc & 0xffffff3f ) | ( State ? 0x80 : 0 );
 		}
 		//f Return position of the last object of the set.
-		r Last( void ) const
+		row Last( void ) const
 		{
 			if ( Amount() )
 				return Amount() - 1;
@@ -256,7 +256,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return position of the first object of the set.
-		r First( void ) const
+		row First( void ) const
 		{
 			if ( Amount() )
 				return 0;
@@ -264,7 +264,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object after 'Current' (to the top).
-		r Next( r Current ) const
+		row Next( row Current ) const
 		{
 			if ( ++*Current < Amount() )
 				return Current;
@@ -272,7 +272,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
-		r Previous( r Current ) const
+		row Previous( row Current ) const
 		{
 			if ( *Current != 0  )
 				return *Current - 1 ;
@@ -286,11 +286,39 @@ namespace aem {
 		}
 	};
 
-	//c Amount/extent manager for fixed size set of object.
-	template <int extent, typename r> class amount_extent_manager__
+
+	//c A amount/extent manager.
+	template <typename row> class amount_extent_manager_
+	: public core_amount_extent_manager_<row, mdr::size__>
+	{
+	public:
+		struct s
+		: core_amount_extent_manager_<row, mdr::size__>::s
+		{};
+		amount_extent_manager_( s &S )
+		: core_amount_extent_manager_<row, mdr::size__>( S )
+		{}
+	};
+
+	//c A portable amount/extent manager.
+	template <typename row> class p_amount_extent_manager_
+	: public core_amount_extent_manager_<row, mdr::p_size__>
+	{
+	public:
+		struct s
+		: core_amount_extent_manager_<row, mdr::p_size__>::s
+		{};
+		p_amount_extent_manager_( s &S )
+		: core_amount_extent_manager_<row, mdr::p_size__>( S )
+		{}
+	};
+
+
+	//c Core amount/extent manager for fixed size set of object. Internal use only.
+	template <int extent, typename row, typename size> class core_amount_extent_manager__
 	{
 	private:
-		epeios::size__ Amount_;
+		size Amount_;
 	protected:
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
@@ -299,8 +327,8 @@ namespace aem {
 			return false;
 		}
 	public:
-		struct s {};	// to simplify use in library 'SET'.
-		amount_extent_manager__( s &S = *(s *)NULL )
+		struct s {};	// to simplify use in library 'BCH'.
+		core_amount_extent_manager__( s &S = *(s *)NULL )
 		{
 			reset( false );
 		}
@@ -309,7 +337,7 @@ namespace aem {
 		{
 			Amount_ = 0;
 		}
-		amount_extent_manager__ &operator =( const amount_extent_manager__ &AEM )
+		core_amount_extent_manager__ &operator =( const core_amount_extent_manager__ &AEM )
 		{
 			// Amount normally already handled by calling function.
 
@@ -331,7 +359,7 @@ namespace aem {
 			return Amount_;
 		}
 		//f Return position of the last object of the set.
-		r Last( void ) const
+		row Last( void ) const
 		{
 			if ( Amount() )
 				return Amount() - 1;
@@ -339,7 +367,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return position of the first object of the set.
-		r First( void ) const
+		row First( void ) const
 		{
 			if ( Amount() )
 				return 0;
@@ -347,7 +375,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object after 'Current' (to the top).
-		r Next( r Current ) const
+		row Next( row Current ) const
 		{
 			if ( ++Current < Amount() )
 				return Current;
@@ -355,7 +383,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
-		r Previous( r Current ) const
+		row Previous( row Current ) const
 		{
 			if ( Current )
 				return Current - 1 ;
@@ -363,6 +391,19 @@ namespace aem {
 				return NONE;
 		}
 	};
+
+	//c Core amount/extent manager for fixed size set of object.
+	template <int extent, typename row> class amount_extent_manager__
+	: public core_amount_extent_manager__<extent, row, mdr::size__>
+	{};
+
+	//c Core amount/extent manager for fixed size set of object.
+	template <int extent, typename row> class p_amount_extent_manager__
+	: public core_amount_extent_manager__<extent, row, mdr::p_size__>
+	{};
+
+
+
 }
 
 /*$END$*/

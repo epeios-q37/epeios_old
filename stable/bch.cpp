@@ -1,7 +1,7 @@
 /*
-  'bch' library by Claude L. Simon (csimon@webmails.com)
+  'bch' library by Claude SIMON (csimon@epeios.org)
   Requires the 'bch' header file ('bch.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org).
 
   This file is part of the Epeios (http://epeios.org/) project.
   

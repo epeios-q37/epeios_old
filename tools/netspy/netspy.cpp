@@ -58,8 +58,8 @@ struct parameters {
 	const char *Target;
 	parameters( void )
 	{
-		PortToListen = "5433";
-		Target = "localhost:5432";
+		PortToListen = "80";
+		Target = "cotations.abcbourse.com:80";
 //		Target = "www.epeios.org:80";
 //		Target = "linuxfr.org:80";
 		
@@ -72,9 +72,9 @@ void PrintUsage( const clnarg::description_ &Description )
 	fout << "(description)" << txf::nl;
 	fout << "Command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", true, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vSplit, false );
 	fout << "Options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", false );
 }

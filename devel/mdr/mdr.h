@@ -74,6 +74,9 @@ namespace mdr {
 	//t The size of a memory.
 	typedef bso::ulong__	size__;
 
+	//t The portable version of a 'size__'.
+	typedef bso::p_ulong__	p_size__;
+
 	//t The size of a buffer.
 	typedef bso::bsize__	bsize__;
 
