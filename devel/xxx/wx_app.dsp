@@ -84,9 +84,12 @@ LINK32=link.exe
 !ENDIF 
 
 # Begin Target
-
 # Name "$NAME$ - Win32 Release"
 # Name "$NAME$ - Win32 Debug"
+# Begin Group "Source Files"
+
+# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+
 # Begin Source File
 
 SOURCE=..\..\stable\err.cpp
@@ -103,5 +106,10 @@ SOURCE=.\$NAME$.cpp
 
 SOURCE=..\..\stable\ttr.cpp
 # End Source File
+# End Group
+# Begin Group "Resource Files"
+
+# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# End Group
 # End Target
 # End Project
