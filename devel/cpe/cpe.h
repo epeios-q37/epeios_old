@@ -75,6 +75,14 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__BEOS
 #undef CPE__MAC
 #undef CPE__CW
+#undef CPE__CONSOLE
+#undef CPE__GUI
+
+#if defined( wxUSE_GUI ) || defined( CPE_GUI )
+#	define CPE__GUI
+#else
+#	define CPE__CONSOLE
+#endif
 
 #ifdef _MSC_VER
 #	pragma warning( disable: 4786 )

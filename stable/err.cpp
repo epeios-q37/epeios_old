@@ -56,15 +56,20 @@ public:
 /*$BEGIN$*/
 #include "fnm.h"
 
-#include <new>
-
 using namespace err;
 
 namespace err {
 	err_ ERR;
 }
 
-#include "cio.h"
+#ifdef CPE__CONSOLE
+#	include "cio.h"
+#endif
+
+#ifdef CPE__GUI
+#	include "wx/defs.h"
+#	include "wx/msgdlg.h"
+#endif
 
 #ifdef ERR__THREAD_SAFE
 #	include "mtx.h"
@@ -72,6 +77,8 @@ namespace err {
 static mtx::mutex_handler__ MutexHandler_ = MTX_INVALID_HANDLER;
 static mtk::thread_id__ ThreadID_;
 #endif
+
+#include "tol.h"
 
 /* fin du pré-sous-module */
 int err_::Line = 0;
@@ -115,8 +122,6 @@ const char *err::Message(
 	int Mineur )
 {
 	static char Message[150];
-
-	strcpy( Message, "{ " );
 
 	strcat( Message, tol::Date() );
 
@@ -173,7 +178,6 @@ const char *err::Message(
 	strcat( Message, fnm::GetFileName( Fichier ) );
 	strcat( Message, ", L: " );
 	sprintf( strchr( Message, 0 ), "%i", Ligne );
-	strcat( Message, " }\0" );
 
 	return Message;
 }
@@ -219,8 +223,14 @@ void err::Final( void )
 {
 	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
 
+#ifdef CPE__CONSOLE
 	cio::cout << txf::sync;
-	cio::cerr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;
+	cio::cerr << txf::nl << txf::tab << "{ " << Message << "} " << txf::nl /*<< '\a'*/;
+#endif
+
+#ifdef CPE__GUI
+	wxMessageBox( Message, "Epeios error manager message", wxICON_ERROR );
+#endif
 
 	ERRRst();
 }

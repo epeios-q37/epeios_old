@@ -25,67 +25,103 @@
 
 //	$Id$
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fstream.h>
+/*
+ * hworld.cpp
+ * Hello world sample by Robert Roebling
+ */
 
-#include "tst.h"
+#include "wx/wx.h" 
+#include "flx.h"
+#include "str.h"
 
-#include "err.h"
-#include "stf.h"
-
-
-void Generic( int argc, char *argv[] )
+class MyApp: public wxApp
 {
-ERRProlog
-ERRBegin
-ERRErr
-ERREnd
-ERREpilog
+    virtual bool OnInit();
+};
+
+class MyFrame: public wxFrame
+{
+public:
+
+    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+
+    void OnQuit(wxCommandEvent& event);
+    void OnAbout(wxCommandEvent& event);
+
+    DECLARE_EVENT_TABLE()
+};
+
+enum
+{
+    ID_Quit = 1,
+    ID_About,
+};
+
+BEGIN_EVENT_TABLE(MyFrame, wxFrame)
+    EVT_MENU(ID_Quit, MyFrame::OnQuit)
+    EVT_MENU(ID_About, MyFrame::OnAbout)
+END_EVENT_TABLE()
+
+IMPLEMENT_APP(MyApp)
+
+bool MyApp::OnInit()
+{
+    MyFrame *frame = new MyFrame( "Hello World", wxPoint(50,50), wxSize(450,340) );
+    frame->Show(TRUE);
+    SetTopWindow(frame);
+    return TRUE;
+} 
+
+MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
+: wxFrame((wxFrame *)NULL, -1, title, pos, size)
+{
+    wxMenu *menuFile = new wxMenu;
+
+    menuFile->Append( ID_About, "&About..." );
+    menuFile->AppendSeparator();
+    menuFile->Append( ID_Quit, "E&xit" );
+
+    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar->Append( menuFile, "&File" );
+
+    SetMenuBar( menuBar );
+
+    CreateStatusBar();
+    SetStatusText( "Welcome to wxWindows!" );
 }
 
-inline void TestReplacementNoCreate( void )
+void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
-	ifstream Stream;
-
-	Stream.open( "essai", ios::binary | ios::nocreate );
-
-	if ( Stream )
-		fout << "Succes !" << txf::nl;
-	else
-		fout << "Echec !" << txf::nl;
+    Close(TRUE);
 }
 
-int main( int argc, char *argv[] )
+void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
+	str::string String;
+	flx::bunch_oflow__<str::string_, bso::char__> Flow;
+	txf::text_oflow__ TFlow;
+	char *Buffer = NULL;
 ERRFBegin
-	fout << "Test of library " << TSTTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	String.Init();
+	Flow.Init( String );
+	TFlow.Init( Flow );
 
-	switch( argc ) {
-	case 1:
-		Generic( argc, argv );
-		TestReplacementNoCreate();
-		break;
-	case 2:
-		if ( !strcmp( argv[1], "/i" ) )
-		{
-			TTR.Advertise();
-			break;
-		}
-	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << TSTTutor.Name << " [/i]\n\n";
-		ERRt();
-	}
+	TTR.Advertise( TFlow );
+	TFlow.reset();
+	Flow.reset();
 
+//	ERRi();
+
+	Buffer = String.Convert();
+
+    wxMessageBox(Buffer,
+        "About Hello World", wxOK | wxICON_INFORMATION, this);
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << TSTTutor.Name << ".\n";
+	tol::Free( Buffer );
 ERRFEpilog
-	return ExitCode;
 }
+
+
+	

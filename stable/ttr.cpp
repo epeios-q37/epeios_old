@@ -55,19 +55,19 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cio.h"
+#include "txf.h"
 
 ttr_chief TTR;
 char ttr_tutor::Adv_[TTR_ADV_SIZE_MAX+1];
 char ttr_tutor::ChiefReady_ = false;
 
-void ttr_chief::Advertise( void )
+void ttr_chief::Advertise( txf::text_oflow__ &Flow )
 {
 	ttr_tutor *Current = First_;
 
 	while( Current )
 	{
-		Current->Advertise( cio::cout );
+		Current->Advertise( Flow );
 		Current = Current->Next();
 	}
 }

@@ -60,10 +60,13 @@ extern class ttr_tutor &TTRTutor;
 
 /*$BEGIN$*/
 
-#include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
 #define	TTR_ADV_SIZE_MAX	200
+
+namespace txf {
+	class text_oflow__;	// Pre-decleration, to avoid inclusion of 'tfx.h".
+}
 
 //c Chief off all tutors.
 class ttr_chief
@@ -88,14 +91,10 @@ public:
 		return First_;
 	}
 	//f Print advertise to the console.
-	void Advertise( void );	 // Would be modified.
+	void Advertise( txf::text_oflow__ &Flow );	 // Would be modified.
 };
 
 extern ttr_chief TTR;
-
-namespace txf {
-	class text_oflow__;	// Pre-decleration, to avoid inclusion of 'tfx.h".
-}
 
 //c A tutor for one library.
 class ttr_tutor

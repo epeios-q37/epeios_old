@@ -36,6 +36,7 @@ CCH:
 
 CPE:
 - (09/08/04) Introducing 'CPE_ST' to force single thread configuration even if the compiler is set to multithreading.
+- (28/08/04) Adding Console/GUI detection (with wxWidgets).
 
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
@@ -56,7 +57,8 @@ EPSMSC:
 
 ERR:
 - Adding some minor features for the 'Intentional' error type.
-- (24/05/04) Using the 'cio' library instead of 'stf'.
+- (24/05/04) Using the 'CIO' library instead of 'STF'.
+- (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
 
 FLW:
 - (24/05/04) Removing the a tailing '_' to the object name.
@@ -116,6 +118,7 @@ TOL:
 - (24/05/04) Using 'cio' library instead of 'stf'.
 - (24/06/04) Adding 'E_TTYPEDEF' macro.
 - (31/07/04) Adding 'Delay' function and 'Defer()' with delay parameter.
+- (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.
@@ -125,6 +128,8 @@ TTR:
 TXF:
 - (24/05/04) Adapting to changes in 'FLW' library.
 - (24/05/04) Removing tailing '_' in name objetcs.
+- (28/08/04) Removing references to the 'CIO' library in order to allowing
+			 the use of this library in a program with GUI.
 
 XTF:
 - (31/05/04) Removing a tailing '_' to object name.

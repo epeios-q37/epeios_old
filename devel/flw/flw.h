@@ -61,9 +61,7 @@ extern class ttr_tutor &FLWTutor;
 /*$BEGIN$*/
 
 
-#include "err.h"
-#include "tol.h"
-#include "limits.h"
+#include <string.h>
 #include "bso.h"
 
 #ifdef CPE__UNIX

@@ -30,7 +30,6 @@ $_RAW_$
 #define TOL__COMPILATION
 
 #include "tol.h"
-#include "cio.h"
 
 class toltutor
 : public ttr_tutor
@@ -86,6 +85,7 @@ bool tol::FileExists( const char *Nom )
 tol::rbf tol::CreateBackupFile(
 	const char *NomFichier,
 	tol::hbf Handle,
+	txf::text_oflow__ &Flow,
 	const char *Extension,
 	err::handle Error )
 {
@@ -136,15 +136,15 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfSuppression:
-			cio::cerr << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			Flow << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfDuplication:
-			cio::cerr << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			Flow << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfRenaming:
-			cio::cerr << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			Flow << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
 			ERRu();
 			break;
 		case tol::rbfOK:
@@ -167,6 +167,7 @@ ERREpilog
 
 tol::rbf tol::RecoverBackupFile(
 	const char *NomFichier,
+	txf::text_oflow__ &Flow,
 	const char *Extension,
 	err::handle Error )
 {
@@ -195,13 +196,13 @@ ERRBegin
 	{
 		switch( Etat ) {
 		case tol::rbfAllocation:
-			cio::cerr << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			Flow << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
 			break;
 		case tol::rbfSuppression:
-			cio::cerr << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			Flow << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfRenaming:
-			cio::cerr << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			Flow << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
 			break;
 		case tol::rbfOK:
 			break;

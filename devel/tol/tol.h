@@ -66,6 +66,11 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 
 #include "cpe.h"
+#include "txf.h"
+
+#ifdef CPE__CONSOLE
+#	include "cio.h"
+#endif
 
 #if defined( CPE__VC ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	include <sys/timeb.h>
@@ -468,12 +473,22 @@ namespace tol {
 	rbf CreateBackupFile(
 		const char *Name,
 		hbf Handle,
+#ifdef CPE__CONSOLE
+		txf::text_oflow__ &Flow = cio::cerr,
+#else
+		txf::text_oflow__ &Flow,
+#endif
 		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
 		err::handle = err::hUsual  );
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
 	rbf RecoverBackupFile(
 		const char *Name,
+#ifdef CPE__CONSOLE
+		txf::text_oflow__ &Flow = cio::cerr,
+#else
+		txf::text_oflow__ &Flow,
+#endif
 		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
 		err::handle = err::hUsual  );
 
