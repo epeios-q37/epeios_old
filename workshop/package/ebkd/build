@@ -1,8 +1,8 @@
 # $Id$
 mkdir workdir
 cd workdir
-GET=../../get_cvs
 export DIR=ebkd-sources
+GET=../../get_cvs
 
 $GET epeios $DIR stable/
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt

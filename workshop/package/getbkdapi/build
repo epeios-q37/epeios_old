@@ -1,23 +1,20 @@
 # $Id$
-
 mkdir workdir
 cd workdir
-export DIR=getbkdapi-sources_`date +%Y-%m-%d`
-cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios login
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR stable/
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/licenses/gnu_gpl.txt
-cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR documentation/packages/getbkdapi/README.txt
-cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
-cvs -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd login
-cvs -z3 -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd export -l -D today -d $DIR stable/
-cvs -z3 -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd export -D today -d $DIR apps/getbkdapi
-cvs -d:pserver:anonymous@cvs.ebkd.sourceforge.net:/cvsroot/ebkd logout
-cvs -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos login
-cvs -z3 -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos export -l -D today -d $DIR stable/
-cvs -d:pserver:anonymous@cvs.ehos.sourceforge.net:/cvsroot/ehos logout
+export DIR=getbkdapi-sources
+GET=../../get_cvs
+
+$GET epeios $DIR stable/
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/getbkdapi/README.txt
+
+$GET ebkd $DIR stable/
+$GET ebkd $DIR apps/getbkdapi
+
+$GET exml $DIR stable/
+
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-tar --gzip -cf $DIR.tar.gz $DIR
-tar -c $DIR | bzip2 >$DIR.tar.bz2
-zip -r -q $DIR.zip $DIR
+
+../../create_pkg $DIR
