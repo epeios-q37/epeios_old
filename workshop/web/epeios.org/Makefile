@@ -7,3 +7,6 @@ all:
 	make -C software -I .. -f Makefile
 	make -C libraries -I .. -f Makefile
 	make -C etmc -I .. -f Makefile
+	make -C ecgi -I .. -f Makefile
+	make -C ebkd -I .. -f Makefile
+	make -C epeios -I .. -f Makefile
