@@ -1305,7 +1305,7 @@ void AnalyserLibrary(
 {
 ERRProlog
 	fil::file_iflow___ Fichier;
-	xtf__extended_text_iflow_ Entree;
+	xtf::extended_text_iflow___ Entree;
 	library S;
 ERRBegin
 	S.Init();
