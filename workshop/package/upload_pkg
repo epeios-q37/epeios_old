@@ -1,0 +1,3 @@
+# $Id$
+scp -rp workdir/packages/* apache@download.epeios.org:download
+rm -rf workdir

@@ -16,7 +16,7 @@ all:
 	$(copy) $(cvs)/ebkd/devel/CHANGELOG.txt $(dest)/ebkd/CHANGELOG
 	$(copy) $(cvs)/exml/devel/CHANGELOG.txt $(dest)/exml/CHANGELOG
 	$(copy) $(cvs)/emth/devel/CHANGELOG.txt $(dest)/emth/CHANGELOG
-	$(copy) $(cvs)/ejava/libs/CHANGELOG.txt $(dest)/ejava/CHANGELOG
+#	$(copy) $(cvs)/ejava/libs/CHANGELOG.txt $(dest)/ejava/CHANGELOG
 	$(copy) $(cvs)/epeios/tools/reveal/CHANGELOG.txt $(dest)/reveal/CHANGELOG
 	$(copy) $(cvs)/epeios/tools/mll2html/CHANGELOG.txt $(dest)/mll2html/CHANGELOG
 	$(copy) $(cvs)/etmc/apps/backend/CHANGELOG.txt $(dest)/tmcde/backend/CHANGELOG

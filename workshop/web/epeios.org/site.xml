@@ -221,9 +221,11 @@
             <item xml:space="preserve">
         <link URL="etmc/" xml:space="preserve">
           <raw>ETMC</raw> libraries</link> : libraries dedicated to timecodes.</item>
+<!--
             <item xml:space="preserve">
         <link URL="ejava/" xml:space="preserve">
           <raw>EJAVA</raw> libraries</link> : JAVA implementation of the Epeios frontend/backend protocol.</item>
+-->
           </list>
         </section>
       </content>
@@ -1390,8 +1392,10 @@
         <link URL="mll2html/">mll2html</link> : GNU program, written for the <link URL="http://www.fsf.org/">FSF</link>, which which reformats a pure ASCII mailinglists file to a HTML formated mailinglists file.</item>
             <item xml:space="preserve">
         <link URL="reveal/" xml:space="default">reveal</link> : replaces tags in a file by text or file content.</item>
+<!--
             <item xml:space="preserve">
         <link URL="tmcde/" xml:space="default">tmcde</link> : interactive software for timecode calculation.</item>
+-->
             <item xml:space="preserve">
         <link URL="getbkdapi/" xml:space="default">getbkdapi</link> : software to generate the API of an Epeios backend.</item>
           </list>
@@ -1540,7 +1544,7 @@
           </general>
           <specific>
             <WEB hierarchy="tmcde/backend/download" name="index" bookmark="TMCDE backend download" robots="$ROBOTS$">
- 
+
 
             </WEB>
           </specific>
@@ -1667,7 +1671,7 @@
           </general>
           <specific>
             <WEB hierarchy="tmcde/CGID/download" name="index" bookmark="TMCDE CGID download" robots="$ROBOTS$">
- 
+
 
             </WEB>
           </specific>
