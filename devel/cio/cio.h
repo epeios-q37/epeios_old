@@ -63,7 +63,6 @@ extern class ttr_tutor &CIOTutor;
 #include "err.h"
 #include "iof.h"
 #include "txf.h"
-#include "ltf.h"
 
 namespace cio {
 
@@ -88,7 +87,8 @@ namespace cio {
 	//o Standard input as a text flow.
 	extern txf::text_iflow__ cin;
 
-	extern ltf::line_text_flow__<> lout;
+	//o All written in this object is erased.
+	extern txf::text_oflow__ nul;
 }
 
 /*$END$*/

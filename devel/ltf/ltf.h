@@ -67,7 +67,7 @@ extern class ttr_tutor &LTFTutor;
 namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
-	class _line_text_flow__
+	class _line_text_oflow__
 	: public flw::oflow__
 	{
 	private:
@@ -112,7 +112,7 @@ namespace ltf {
 			return Wanted;
 		}
 	public:
-		_line_text_flow__(
+		_line_text_oflow__(
 			txf::text_oflow__ &TFlow,
 			flw::datum__ *Data,
 			flw::size__ Size )
@@ -144,15 +144,15 @@ namespace ltf {
 	};
 
 
-	template <int size = 79> class line_text_flow__
+	template <int size = 79> class line_text_oflow__
 	: public txf::text_oflow__
 	{
 	private:
 		flw::datum__ Data_[size];
 	protected:
-		_line_text_flow__ Flow_;
+		_line_text_oflow__ Flow_;
 	public:
-		line_text_flow__( txf::text_oflow__ &TFlow )
+		line_text_oflow__( txf::text_oflow__ &TFlow )
 		: Flow_( TFlow, Data_, size ),
 		  txf::text_oflow__( Flow_ )
 		{}

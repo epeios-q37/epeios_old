@@ -343,24 +343,9 @@ namespace flx {
 			// The cache.
 		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
-		void reset( bool P = true )
-		{
-			oflow__::Synchronize();
-		}
 		dump_oflow__( void )
 		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
-		{
-			reset( false );
-		}
-		~dump_oflow__( void )
-		{
-			reset( true );
-		}
-		//f Initialization.
-		void Init( void )
-		{
-			reset();
-		}
+		{}
 	};
 }
 

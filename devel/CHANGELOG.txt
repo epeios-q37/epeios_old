@@ -2,6 +2,13 @@ $Id$
 
 - Codage bibliothèque LTF.
 
+28/03/05:
+- FLX :
+	- Adaptation à la nouvell norme des ojects de type '__'.
+- CIO :
+	- Suppression de l'objet 'lout'.
+	- Création de l'objet 'nul'.
+
 26/03/05:
 - FLW:
 	- Amélioration visant à pouvoir utiliser un flux de sortie sans cache.
