@@ -1,9 +1,9 @@
-# 'bch' Makefile by Claude L. Simon (simon@epeios.org)
+# 'bch' Makefile by Claude L. Simon (csimon@webmails.com)
 # Builds test executable for the 'bch' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+# Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 #
-# This file is part of the Epeios (http://www.epeios.org/) project.
+# This file is part of the Epeios (http://epeios.org/) project.
 # 
 #
 # This program is free software; you can redistribute it and/or
@@ -38,21 +38,13 @@ libs = ttr tol flw stf err uym fam
 
 
 ifeq ("$(EPEIOS_OS)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
 # compilation options
 co = -q -c -w-aus
 # linkage options
 lo = -q -e$(name)
-ds = ;
-rfs = @
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
-ox = o
-cc = g++ 
 co = -c
 # Generates debugging data.
 co += -g
@@ -62,33 +54,12 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
-rfs = -specs=
+#lo += -lpthread
 endif
 
 ifeq ("$(EPEIOS_OS)","beos")
-ox = o
-cc = g++
 co = -c -g
 lo = -o $(name)
-ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
-
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
-
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT) $(lopt)
-
-objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
-
-$(name):  response $(objs)
-	$(cc) $(rfs)response
-	
-%.$(ox): %.cpp
-	$(cc) $(co) $< 
-
-response: $(objs)
-	echo $(lo) $(objs) >$@
+include ../xxx/LibMakefile.footer

@@ -1,10 +1,8 @@
-# '$xxx$' Makefile by Claude L. Simon ($EMAIL$)
-# Builds test executable for the '$xxx$' library.
-# Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 $COPYRIGHT$.
+# 'LibMakefile.footer' by Claude L. Simon ($EMAIL$)
+# Common for the library Makefiles.
+# Copyright (C) 2001 Claude L. SIMON (csimon@webmails.com).
 #
-# $ADDENDUM1$
-# $ADDENDUM2$
+# This file is part of the Epeios (http://www.epeios.org/) project.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,40 +24,42 @@
 
 # $$Id$$
 
-name = $xxx$
-copt =
-# Epeios general debugging features
-copt += -DXXX_DBG
-# Required for multitasking
-#copt += -DCPE_MT
-lopt = 
-libs = ttr tol flw stf err
-
-$_RAW_$
 
 ifeq ("$(EPEIOS_OS)","windows")
-# compilation options
-co = -q -c -w-aus
-# linkage options
-lo = -q -e$(name)
+ox = obj
+cc = bcc32
+ds = ;
+lrfs = @LinkResponseFile
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
-co = -c
-# Generates debugging data.
-co += -g
-# General optimization.
-#co += -O
-# To use with gprof
-#co += -pg
-lo = -o $(name)
-# needed when pthread are used.
-#lo += -lpthread
+ox = o
+cc = g++ 
+ds = :
+lrfs = `cat LinkResponseFile`
 endif
 
 ifeq ("$(EPEIOS_OS)","beos")
-co = -c -g
-lo = -o $(name)
+ox = o
+cc = g++
+ds = :
+lrfs = `cat LinkResponseFile`
 endif
 
-include ../xxx/LibMakefile.footer
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+lo += $(EPEIOS_LOPT) $(lopt)
+
+objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
+
+$(name):  LinkResponseFile $(objs)
+	$(cc) $(lrfs)
+	
+%.$(ox): %.cpp
+	$(cc) $(co) $< 
+
+LinkResponseFile: $(objs)
+	echo $(lo) $(objs) >$@
