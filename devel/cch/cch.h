@@ -789,16 +789,12 @@ namespace cch {
 
 		}
 		//f Return data at 'Position'.
-		type__ Put(
+		void Put(
 			type__ Data,
 			rc PositionInContainer,
 			rb PositionInBunch )
 		{
-			type__ Data;
-
 			Write( &Data, 1, PositionInContainer, PositionInBunch );
-
-			return Data;
 		}
 		//f Return data at 'Position'.
 		rb Add(

@@ -134,6 +134,15 @@ extern class ttr_tutor &CPETutor;
 #	endif
 #endif
 
+#ifndef CPE_USE_NO_WORKAROUND
+#	ifdef CPE__GCC
+#		define CPE__USE_GCC_WORKAROUND
+#	endif
+#	ifdef CPE__VC
+#		define CPE__USE_VC_WORKAROUND
+#	endif
+#endif	
+
 #if defined( CPE_PROCESSES ) && !defined( CPE__MT )
 #	error "'CPE_PROCESSES' is defined, but current options doesn't allow multithreading."
 #endif

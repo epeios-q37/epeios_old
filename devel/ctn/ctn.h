@@ -65,8 +65,7 @@ extern class ttr_tutor &CTNTutor;
 #include "aem.h"
 
 
-#ifdef CPE__VC
-// VC++ had some difficulties with 'typenames'.
+#ifdef CPE__USE_VC_WORKAROUND
 #	define typename_
 #else
 #	define	typename_	typename
@@ -514,12 +513,17 @@ namespace ctn {
 
 
 	//s To reach an item from 'MCONTAINER_( Type )'.
-	#define E_MITEMt( Type, r )	volatile_mono_item< Type, r >
-	#define E_MITEM( Type )	E_MITEMt( Type, epeios::row__ )
-
-	//s To reach an item from 'MCONTAINER_( Type )' , but only for reading.
+	#define E_MITEMt( Type, r )		volatile_mono_item< Type, r >
 	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
-	#define E_CMITEM( Type )		E_CMITEMt( Type, epeios::row__ )
+
+#ifdef CPE__USE_GCC_WORKAROUND
+	#define E_MITEM( Type )		volatile_mono_item< Type, epeios::row__ >
+	#define E_CMITEM( Type )	const_mono_item< Type, epeios::row__ >
+#else
+	//s To reach an item from 'MCONTAINER_( Type )' , but only for reading.
+	#define E_MITEM( Type )		E_MITEMt( Type, epeios::row__ )
+	#define E_CMITEM( Type )	E_CMITEMt( Type, epeios::row__ )
+#endif
 
 	/*c Container for object of type 'Type', which need only one memory.
 	Use 'MCONTAINER_( Type )' rather then directly this class. */
@@ -640,8 +644,13 @@ namespace ctn {
 	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
 	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
 
+#ifdef CPE__USE_GCC_WORKAROUND
+	#define E_MCONTAINER_( Type )	mono_container_< Type, epeios::row__ >
+	#define E_MCONTAINER( Type )	mono_container_< Type, epeios::row__ >
+#else
 	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, epeios::row__ )
 	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, epeios::row__ )
+#endif
 
 	//c Same as mono_container_, but for use with object which have a 'Init()' function without parameters.
 	template <class t, typename r> class mono_extended_container_
@@ -721,8 +730,13 @@ namespace ctn {
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
 	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
 
+#ifdef CPE__USE_GCC_WORKAROUND
+	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, epeios::row__ >
+	#define E_XMCONTAINER( Type )	mono_extended_container< Type, epeios::row__ >
+#else
 	#define E_XMCONTAINER_( Type )	E_XMCONTAINERt_( Type, epeios::row__ )
 	#define E_XMCONTAINER( Type )	E_XMCONTAINERt( Type, epeios::row__ )
+#endif
 
 
 	template <class st> struct item_multi_statique__
@@ -857,13 +871,16 @@ namespace ctn {
 	};
 
 
-	//s To reach an item from 'CONTAINER_( Type )'.
 	#define E_ITEMt( Type, r )		volatile_multi_item< Type, r >
-	#define E_ITEM( Type )			E_ITEMt( Type, epeios::row__ )
+	#define E_CITEMt( Type,r  )		const_multi_item< Type, r  >
 
-	//s To reach an item from 'CONTAINER_( Type )', but only for reading.
-	#define E_CITEMt( Type,r  )		const_multi_item< Type,r  >
+#ifdef CPE__USE_GCC_WORKAROUND
+	#define E_ITEM( Type )			volatile_multi_item< Type, epeios::row__ >
+	#define E_CITEM( Type )			const_multi_item< Type, epeios::row__  >
+#else
+	#define E_ITEM( Type )			E_ITEMt( Type, epeios::row__ )
 	#define E_CITEM( Type )			E_CITEMt( Type, epeios::row__ )
+#endif
 
 	/*c Container for objects 't', with static part 'st', which need more then one memory.
 	Use 'CONTAINER_( t )' rather then directly this class.*/
@@ -983,8 +1000,13 @@ namespace ctn {
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
+#ifdef CPE__USE_GCC_WORKAROUND
+	#define E_CONTAINER_( Type )	multi_container_< Type, epeios::row__ >
+	#define E_CONTAINER( Type )		multi_container< Type, epeios::row__ >
+#else
 	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, epeios::row__ )
 	#define E_CONTAINER( Type )		E_CONTAINERt( Type, epeios::row__ )
+#endif
 
 	//c Same as multi_container_, but for use with object which have a 'Init()' function without parameters.
 	template <class t, typename r> class multi_extended_container_
@@ -1064,8 +1086,13 @@ namespace ctn {
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >
 	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
 
-	#define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, epeios::row__ )
-	#define E_XCONTAINER( Type )	E_XCONTAINERt( Type, epeios::row__ )
+#ifdef CPE__USE_GCC_WORKAROUND
+	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, epeios::row__ >
+	 #define E_XCONTAINER( Type )	multi_extended_container< Type, epeios::row__ >
+#else	
+	 #define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, epeios::row__ )
+	 #define E_XCONTAINER( Type )	E_XCONTAINERt( Type, epeios::row__ )
+#endif
 
 }
 

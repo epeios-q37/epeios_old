@@ -52,7 +52,7 @@ void Essai( int argc, char *argv[] )
 ERRProlog
 	ctn::E_XMCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
 	cch::E_RW_CACHES___( mytype__, test__, epeios::row__ ) RWCaches;
-	int rnd;
+	int rnd, i, j;
 ERRBegin
 
 	Container.Init();
@@ -61,8 +61,8 @@ ERRBegin
 
 	RWCaches.Init( Container, 80 );
 
-	for( int i = 0; i < 10; i++ ) {
-		for( int j = 0; j < 100;  j++ )
+	for( i = 0; i < 10; i++ ) {
+		for( j = 0; j < 100;  j++ )
 			RWCaches.Add( j + i * 100, i );
 	}
 
