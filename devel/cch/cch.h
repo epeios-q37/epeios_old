@@ -208,7 +208,8 @@ namespace cch {
 #ifdef CCH__USE_SMA_HEAP
 					Heap.Free( Cache_ );
 #else
-					tol::Free( Cache_ );
+					if ( Cache_ != NULL )
+						free( Cache_ );
 #endif
 			}
 

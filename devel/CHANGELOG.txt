@@ -3,6 +3,9 @@ $Id$
 BCH:
 - (10/01/05) Fixing type problem.
 
+CCH:
+- (24/04/05) Adapting to changes in 'TOL' library.
+
 TOL:
 - (20/01/05) Fixing empty 'pointer__' object copying problem.
 
