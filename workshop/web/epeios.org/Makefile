@@ -13,3 +13,4 @@ all:
 	make -C reveal -I .. -f Makefile
 	make -C mll2html -I .. -f Makefile
 	make -C tmcde -I .. -f Makefile
+	make -C getbkdapi -I .. -f Makefile
