@@ -239,7 +239,7 @@ namespace flx {
 
 			if ( Wanted )
 			{
-				Bunch_->Recall( Position_, (epeios::bsize__)Wanted, Buffer );
+				Bunch_->Recall( Position_, (epeios::bsize__)Wanted, (so__ *)Buffer );
 				Position_ += Wanted;
 			}
 
