@@ -153,15 +153,15 @@ namespace str {
 		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
 		value can have. */
 		bso::ulong__ ToUL(
-			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			epeios::row__ *ErrP,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const;
 		//f Variation in parameters.
 		bso::ulong__ ToUL(
 			epeios::row__ *ErrP = NULL,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const
 		{
-			return ToUL( ErrP, 0, Limit );
+			return ToUL( 0, ErrP, Limit );
 		}
 		/*f Convert to unsigned short. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
@@ -171,7 +171,7 @@ namespace str {
 			epeios::row__ Begin,
 			bso::ulong__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)ToUL( ErrP, Begin, Limit );
+			return (bso::ushort__)ToUL( Begin, ErrP, Limit );
 		}
 		//f Variation in parameters.
 		bso::ushort__ ToUS(
@@ -188,7 +188,7 @@ namespace str {
 			epeios::row__ Begin,
 			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)ToUL( ErrP, 0, Limit );
+			return (bso::ubyte__)ToUL( 0, ErrP, Limit );
 		}
 		//f Variation in parameters.
 		bso::ubyte__ ToUB(

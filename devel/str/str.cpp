@@ -232,8 +232,8 @@ namespace str {
 	}
 
 	bso::ulong__ string_::ToUL(
-		epeios::row__ *ErrP,
 		epeios::row__ Begin,
+		epeios::row__ *ErrP,
 		bso::ulong__ Limit ) const
 	{
 		bso::ulong__ Result = 0;
