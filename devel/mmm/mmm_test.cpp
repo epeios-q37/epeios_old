@@ -51,7 +51,7 @@ ERREpilog
 }
 
 void Test(
-	multimemory_ &M,
+	E_MULTIMEMORY_ &M,
 	descriptor__ &D,
 	size__ C )
 {
@@ -74,9 +74,9 @@ void EssaiBase( int argc, char *argv[] )
 {
 ERRProlog
 	flm::file_memory_driver M;
-	multimemory P;
+	E_MULTIMEMORY P;
 	descriptor__ D[NOMBRE];
-	bso__ushort C = 1;
+	bso::ushort__ C = 1;
 ERRBegin
 	M.Init( "coucou.tmp" );
 	M.Manuel();
@@ -109,11 +109,11 @@ void EssaiComplet( int argc, char *argv[] )
 {
 ERRProlog
 	flm::file_memory_driver Memoire;
-	multimemory P;
+	E_MULTIMEMORY P;
 	multimemory_driver U1, U2, U3;
-	bch::E_BUNCH( bso__ulong ) M1, M2, M3;
+	bch::E_BUNCH( bso::ulong__ ) M1, M2, M3;
 	int i = 50;
-	bso__ulong j;
+	bso::ulong__ j;
 	cvm::conventional_memory_driver M;
 //	int j;
 ERRBegin
@@ -180,7 +180,7 @@ void Essai( void )
 {
 ERRProlog
 	flm::file_memory_driver Memoire;
-	multimemory Multimemoire;
+	E_MULTIMEMORY Multimemoire;
 	descriptor__ Descripteurs[100];
 ERRBegin
 	Memoire.Init();

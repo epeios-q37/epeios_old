@@ -15,6 +15,12 @@ CTN:
 - Adding GCC workaround.
 - Adding VC++ workaround.
 
+IDXBTQ:
+- Adding 'E_INDEX(_)' #define.
+
+MMM:
+- Adding 'E_MULTIMEMORY(_)' #define.
+
 STR:
 - Adding missing 'const' qualifier.
 

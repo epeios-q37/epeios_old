@@ -842,7 +842,11 @@ namespace mmm {
 		if ( Multimemoire_ )
 			Multimemoire_->Synchronize();
 	}
-	}
+}
+
+//d A multimemory.
+#define E_MULTIMEMORY_	multimemory_
+#define E_MULTIMEMORY	multimemory
 
 /*$END$*/
 				  /********************************************/

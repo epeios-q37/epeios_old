@@ -1,8 +1,8 @@
 /*
-  Header for the 'idxbtq' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'idxbtq' library by Claude L. Simon (csimon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	IDXBTQ_VERSION	"$Revision$"	
 
-#define IDXBTQ_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define IDXBTQ_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &IDXBTQTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude L. SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -161,6 +161,11 @@ namespace idxbtq {
 
 	AUTO( tree_queue_index )
 }
+
+//d An index.
+#define E_INDEX_	tree_queue_index_
+
+#define E_INDEX		tree_queue_index
 
 
 /*$END$*/
