@@ -55,7 +55,7 @@ extern class ttr_tutor &FLXTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-//D FLow eXtension. Some class whoch extend the 'FLW' library.
+//D FLow eXtension. Some class which extend the 'FLW' library.
 
 #include "err.h"
 #include "flw.h"
@@ -63,15 +63,19 @@ extern class ttr_tutor &FLXTutor;
 #include "set.h"
 
 #ifndef FLX_BUFFER_BUFFER_SIZE
-//d Size of the buffer of a 'flx__buffer_xflow_'.
+//d Size of the buffer of a 'flx::buffer_flow___'.
 #define FLX_BUFFER_BUFFER_SIZE	100
 #endif
 
 #ifndef FLX_SET_BUFFER_SIZE
-//d Size of the buffer of a 'flx__buffer_xflow_'.
+//d Size of the buffer of a 'flx::set_flow___'.
 #define FLX_SET_BUFFER_SIZE		500
 #endif
 
+#ifndef FLX_DUMP_BUFFER_SIZE
+//d Size of the buffer of a 'flx::dump_oflow___'.
+#define FLX_DUMP_BUFFER_SIZE		500
+#endif
 
 namespace flx {
 
@@ -308,6 +312,44 @@ namespace flx {
 		{
 			oflow___::Init( Cache_, sizeof( Cache_ ) );
 			Set_ = &BufferSet;
+		}
+	};
+	
+	//c A output flow which write to nothing.
+	class dump_oflow___
+	: public flw::oflow___
+	{
+	protected:
+		virtual flw::amount__ FLWPut(
+			const flw::data__ *,
+			flw::amount__ Wanted,
+			flw::amount__,
+			bool )
+		{
+			return Wanted;
+		}
+	private:
+			// The cache.
+		flw::data__ Cache_[FLX_DUMP_BUFFER_SIZE];
+	public:
+		void reset( bool P = true )
+		{
+			oflow___::reset( P );
+		}
+		dump_oflow___( void )
+		{
+			reset( false );
+		}
+		~dump_oflow___( void )
+		{
+			reset( true );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			reset();
+			
+			oflow___::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 }

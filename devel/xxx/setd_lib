@@ -53,7 +53,7 @@ else
 	exit
 fi
 
-if [ ! -z "$ID" ]; then
+if [ -z "$ID" ]; then
 	echo "No repository defined for library"  $1
 	exit
 fi
