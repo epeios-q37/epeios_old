@@ -110,13 +110,11 @@ namespace flw {
 			const datum__ *Data;
 			// Size of the data.
 			size__ Size;
-			// The length of the content of th flow.
-			size__ Length;
 			int
 				//At true if we are currently handling end of file data.
 				HandlingEOFD:		1,
-				// At true if we have to handle the length of the content of the data (in other word, 'Length' is significatif'.
-				HandleLength:	1,
+				// At true if we have to handle the amount of data (in other word, EOFD are handled after 'AmountMax_' data red.
+				HandleAmount:	1,
 				// At true if we have to generate an error if not all awaited data re red. Only significant if 'HandleLenght' at true.
 				HandleToFew:	1;
 		} EOFD_;
@@ -134,23 +132,20 @@ namespace flw {
 
 				if ( ( Amount < Minimum ) || !Amount )
 					ERRf();
-			} else if ( EOFD_.HandleLength ) {
+			} else if ( EOFD_.HandleAmount ) {
 
-				if ( EOFD_.Length ) {
-					if ( Wanted > EOFD_.Length )
-						Wanted = EOFD_.Length;
+				if ( Wanted > ( AmountMax_ - Red_ ) )
+					Wanted = AmountMax_ - Red_;
 
-					Amount = _Read( Minimum, Buffer, Wanted );
+				Amount = _Read( Minimum, Buffer, Wanted );
 
-					if ( Amount < Minimum )
-						ERRf();	/* Because, if there is not enough data in the flow,
-								'FLWGet' already calls the 'HandleEOFD' function. */
+				if ( Amount < Minimum )
+					ERRf();	/* Because, if there is not enough data in the flow,
+							'FLWGet' already calls the 'HandleEOFD' function. */
 
-					EOFD_.Length -= Amount;
-				}
-
-				if ( !EOFD_.Length )
+				if ( Red_ == AmountMax_ )
 					EOFD_.HandlingEOFD = true;
+
 			} else 
 					Amount = _Read( Minimum, Buffer, Wanted );
 
@@ -276,7 +271,7 @@ namespace flw {
 		{
 			EOFD_.HandlingEOFD = true;
 
-			if ( EOFD_.HandleToFew && EOFD_.Length )
+			if ( EOFD_.HandleToFew && EOFD_.HandleAmount && ( Red_ < AmountMax_ ) )
 				ERRf();
 
 			if ( Size > EOFD_.Size )
@@ -296,8 +291,8 @@ namespace flw {
 			Cache_ = NULL;
 			Available_ = Position_ = Size_ = Red_ = AmountMax_ = 0;
 			EOFD_.Data = NULL;
-			EOFD_.Size = EOFD_.Length = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleLength = EOFD_.HandleToFew = false;
+			EOFD_.Size = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		iflow__( void )
 		{
@@ -365,25 +360,26 @@ namespace flw {
 
 			EOFD_.Data = (const datum__ *)Data;
 			EOFD_.Size = (size__)Length;
-			EOFD_.HandleLength = false;
+			EOFD_.HandleAmount = false;
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. This data will
-		be put in the flow after having read 'Length' bytes.*/
+		be put in the flow after having read 'Amount' bytes.*/
 		void EOFD(
 			const char *Data,
-			size__ Length )
+			amount__ Amount )
 		{
 			EOFD( Data );
 
-			if ( Available_ > Length )	// This means we have red too much data.
-				Available_ = Length;
+			if ( Available_ > Amount )	// This means we have red too much data.
+				Available_ = Amount;
 
-			EOFD_.HandleLength = true;
+			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
-			EOFD_.Length = Length - Available_;	// In case il we have already red data.
+			AmountMax_ = Amount;
+			Red_ = Available_;
 
-			if ( !Length )
+			if ( !Amount )
 				EOFD_.HandlingEOFD = true;
 		}
 		//f Set the counter of red data to 0.

@@ -261,6 +261,15 @@ namespace xtf {
 		//f Return the next character in the flow, but let it in the flow.
 		char View( void )
 		{
+
+			if ( EOL_ ) {
+				char C = Consulter_( 1 );
+
+				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
+					 || ( EOL_ == '\n' && ( C == '\r' ) ) )
+					Get();
+			}
+
 			return Consulter_( 1 );
 		}
 		//f True if at end of text.
