@@ -25,6 +25,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects).
 &ids		&epeios		&		&ID Store
+&lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
 &mscmdf		&emsc		&		&MuSiC MiDi File		
 &mscmdm		&emsc		&		&MuSiC MiDi Messages
