@@ -9,6 +9,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbibsc		&ldbi		&		&DataBase Interface BaSiCs
 &dbidpd		&ldbi		&		&Database DePenDences
 &dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
+&dbimsc		&ldbi		&		&BataBase Interface MiSC
 &dbimsq		&ldbi		&		&DataBase Interface MySQl (from MySQL database)
 &dbimsq_	&ldbi		&		&DataBase Interface MySQl (from MySQL database) (for backend)
 &dbipgs		&ldbi		&		&DataBAse Interface PostGreS
