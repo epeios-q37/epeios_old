@@ -156,7 +156,7 @@ namespace ssnmng {
 
 			Seeker.Init( Index );
 
-			if ( Search_( Index, Table, SessionID, Seeker ) != 0 )
+			if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
 				return Seeker.GetCurrent();
 			else
 				return NONE;
