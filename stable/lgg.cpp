@@ -57,7 +57,6 @@ using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
 	"_unknow_",
-	"Default",
 	"Français",
 	"English",
 	"Deutsch" };

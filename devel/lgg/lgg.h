@@ -68,8 +68,6 @@ namespace lgg {
 	enum language__ {
 		//i Unknow language,
 		lUnknow,
-		//i Default language.
-		lDefault,
 		//i French.
 		lFrench,
 		//i English.

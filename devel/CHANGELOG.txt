@@ -79,6 +79,9 @@ IDXQUE:
 - Adding 'MarkAs...()' method.
 - Adapting to new 'AUTO(x)' macros.
 
+LGG:
+- Removing the 'lDefault' "language".
+
 LST:
 - Adapting to the new 'AUTO(x)' macros.
 - Using new library 'IDS'.
