@@ -302,6 +302,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios MSC libraries.
+&mscmdd		&emsc		&\
+	&MuSiC MiDi Device
 &mscmdf		&emsc		&2002, \
 	&MuSiC MiDi File		
 &mscmdm		&emsc		&2002, \
