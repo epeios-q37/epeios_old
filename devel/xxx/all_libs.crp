@@ -54,6 +54,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &tol		&epeios		&2000-		&TOoL
+&ttr		&epeios		&2000-		&TuToR
 &tym		&epeios		&2000-		&TYped Memory
 &uym		&epeios		&2000-		&UnTyped Memory
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com

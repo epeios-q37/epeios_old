@@ -58,8 +58,6 @@ extern class ttr_tutor &CTNTutor;
 //D ConTaiNer (of dynamic objects). 
 /* End addendum to automatic documentation generation part. */
 
-jlkhkjhkjh
-
 #include "err.h"
 #include "flw.h"
 #include "mmi.h"
@@ -308,6 +306,10 @@ namespace ctn {
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
 		void Sync( r Position )
 		{
+#ifdef CTN_DBG
+			if ( Position == NONE )
+				ERRu();
+#endif
 			if ( Pilote_.Index() != *Position )
 			{
 				Vider_();
@@ -395,6 +397,10 @@ namespace ctn {
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
 		void Sync( r Position )
 		{
+#ifdef CTN_DBG
+			if ( Position == NONE )
+				ERRu();
+#endif
 			if ( *Pilote_.Index() != *Position )
 			{
 				Vider_();
