@@ -74,6 +74,10 @@ extern class ttr_tutor &MSGTutor;
 		Message = #m + p;\
 		break
 
+#ifdef CPE__USE_VC_WORKAROUND
+#	undef GetMessage
+#endif
+
 namespace msg {
 
 	struct buffer__
