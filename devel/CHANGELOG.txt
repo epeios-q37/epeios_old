@@ -19,6 +19,7 @@ GENERAL:
 
 AEM:
 - (06/09/04) Adding 'Exists()' and 'IsEmpty()' to the static version.
+- (05/10/04) Adding 'Previous/Next' with offset.
 
 BCH:
 - (09/06/04) Adding 'relations(_)' type.
@@ -88,6 +89,7 @@ FLW:
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
 - (01/08/04) Correcting little error.
+- (05/11/04) Adding 'E_STRING_(I|O)FLOW__'.
 
 HTP:
 - (18/07/04) Little improvements.

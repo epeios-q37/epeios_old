@@ -274,6 +274,8 @@ namespace flx {
 		}
 	};
 
+	#define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
+
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow__
 	: public flw::oflow__
@@ -314,7 +316,9 @@ namespace flx {
 			Bunch_ = &Bunch;
 		}
 	};
-	
+
+#define E_STRING_OFLOW__	bunch_oflow__<str::string_, bso::char__>
+
 	//c A output flow which write to nothing.
 	class dump_oflow__
 	: public flw::oflow__

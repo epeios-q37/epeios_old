@@ -267,21 +267,35 @@ namespace aem {
 			else
 				return NONE;
 		}
+		//f Return the position of 'Offset' next to 'Current'.
+		row Next(
+			row Current,
+			size__ Offset ) const
+		{
+			if ( ( *Current += Offset ) < Amount() )
+				return Current;
+			else
+				return NONE;
+		}
 		//f Return the position of the object after 'Current' (to the top).
 		row Next( row Current ) const
 		{
-			if ( ++*Current < Amount() )
-				return Current;
+			return Next( Current, 1 );
+		}
+		//f Return the position of 'Offset' previous to 'Current'.
+		row Previous(
+			row Current,
+			size__ Offset ) const
+		{
+			if ( *Current >= Offset )
+				return *Current - Offset;
 			else
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
 		row Previous( row Current ) const
 		{
-			if ( *Current != 0  )
-				return *Current - 1 ;
-			else
-				return NONE;
+			return Previous( Current, 1 );
 		}
 		//f Return true if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
@@ -386,21 +400,35 @@ namespace aem {
 			else
 				return NONE;
 		}
+		//f Return the position of 'Offset' next to 'Current'.
+		row Next(
+			row Current,
+			size__ Offset ) const
+		{
+			if ( ( Current += Offset ) < Amount() )
+				return Current;
+			else
+				return NONE;
+		}
 		//f Return the position of the object after 'Current' (to the top).
 		row Next( row Current ) const
 		{
-			if ( ++*Current < Amount() )
-				return Current;
+			return Next( Current, 1 );
+		}
+		//f Return the position of 'Offset' previous to 'Current'.
+		row Previous(
+			row Current,
+			size__ Offset ) const
+		{
+			if ( Current >= Offset )
+				return Current - Offset;
 			else
 				return NONE;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
 		row Previous( row Current ) const
 		{
-			if ( Current )
-				return Current - 1 ;
-			else
-				return NONE;
+			return Previous( Current, 1 );
 		}
 		//f Return true if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
