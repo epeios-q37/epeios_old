@@ -525,9 +525,9 @@ namespace bch {
 
 
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
-	#define E_BUNCHt___( c, i, r )	bunch___<c, i, r>
+	#define E_BUNCHt___( c, r )	bunch___<c, r>
 
-	#define E_BUNCH___( c, i )		E_BUNCHt___( c, i , epeios::row__ )
+	#define E_BUNCH___( c )		E_BUNCHt___( c, epeios::row__ )
 
 
 
