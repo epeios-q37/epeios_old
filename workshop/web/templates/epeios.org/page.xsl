@@ -107,7 +107,7 @@
             </a>
           </td>
           <td align="center" width="33%">
-            <xsl:apply-templates select="specific/WEB/back"/>
+            <xsl:apply-templates select="specific/WEB/parent"/>
           </td>
           <td align="right" width="33%">
             <!--		  <a href="http://sourceforge.net" target="_blank"><xsl:text disable-output-escaping="yes">&lt;</xsl:text>img src="http://sourceforge.net/sflogo.php?group_id=<xsl:value-of select="general/misc/sourceforge/group_id"/><xsl:text disable-output-escaping="yes">&amp;</xsl:text>type=1" alt="SourceForge Logo" border="0"></a>
@@ -132,7 +132,7 @@
             </font>
           </td>
           <td align="center" width="33%">
-            <xsl:apply-templates select="specific/WEB/back"/>
+            <xsl:apply-templates select="specific/WEB/parent"/>
           </td>
           <td align="right">
             <font size="2">

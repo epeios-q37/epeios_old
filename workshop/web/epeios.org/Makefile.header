@@ -22,3 +22,5 @@ crpfile = $(templates)/$(EPEIOS_OS).crp
 rootxsl = $(templates)/epeios.org/page.xsl
 doc = $(rootdir)/documentation
 xsl = $(templates)/*.xsl
+
+vpath %.xml $(doc)/project
