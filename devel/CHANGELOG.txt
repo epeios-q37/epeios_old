@@ -93,6 +93,9 @@ FLW:
 - (10/12/04) Improvements.
 - (12/12/04) Improving error handling.
 
+FLF:
+- (02/02/05) Amelioration, bug ficing about the EOF handling.
+
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
 - (01/08/04) Correcting little error.

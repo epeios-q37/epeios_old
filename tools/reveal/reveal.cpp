@@ -879,18 +879,11 @@ int main(
 	int argc,
 	const char *argv[] )
 {
-	int Retour = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	Main( argc, argv );
 ERRFErr
-	Retour = EXIT_FAILURE;
-
-	if ( ERRMajor == err::itn )
-		ERRRst();
 ERRFEnd
 ERRFEpilog
-	cout << txf::sync;
-
-	return Retour;
+	return ERRExitValue;
 }

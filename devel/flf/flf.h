@@ -164,11 +164,7 @@ namespace flf {
 		flw::amount__ NombreLus = 0;
 
 		if ( !feof( File_ ) )
-		{
-			if ( ( NombreLus = fread( Tampon, 1, Desire, File_ ) ) != Desire )
-				if ( NombreLus < Minimum )
-					ERRd();
-		}
+			NombreLus = fread( Tampon, 1, Desire, File_ );
 
 		return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
 	}
