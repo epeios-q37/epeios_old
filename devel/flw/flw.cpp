@@ -100,6 +100,9 @@ size__ flw::oflow__::_Write(
 	size__ Amount = 0;
 ERRProlog
 ERRBegin
+	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
+		ERRd();
+
 	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
 
 	if ( Synchronization && ( Amount == Wanted ) ) {
@@ -112,7 +115,7 @@ ERRBegin
 			ERRf();
 	}
 ERRErr
-	Free_ = Size_;	// If there is an error, the buffer is considered as empty, so subsequent reset deos not try to write to device.
+	Size_ = Free_ = 0;	// To avoid further writing in cache. Next wirting woll generate an error. 
 ERREnd
 ERREpilog
 	return Amount;
