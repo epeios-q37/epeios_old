@@ -70,6 +70,8 @@ grep -w -q %LNM% %SRC%\ehos.lst
 IF NOT ERRORLEVEL 1 SET ID=ehos
 grep -w -q %LNM% %SRC%\espf.lst
 IF NOT ERRORLEVEL 1 SET ID=espf
+grep -w -q %LNM% %SRC%\emsc.lst
+IF NOT ERRORLEVEL 1 SET ID=emsc
 
 IF NOT "%ID%"=="" goto repository_defined
 echo No repository defined for library %LNM%
