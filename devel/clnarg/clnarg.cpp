@@ -173,7 +173,7 @@ static inline void Add_(
 		Options.Add( Id );
 }
 
-const char *AddMulti_(
+static const char *AddMulti_(
 	const char *String,
 	const options_ &OptDesc,
 	const commands_ &CmdDesc,

@@ -1,5 +1,5 @@
 /*
-	Header for the 'dtfbsc' library by Claude SIMON (csimon@epeios.org)
+	Header for the 'dtflcf' library by Claude SIMON (csimon@epeios.org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef DTFBSC__INC
-#define DTFBSC__INC
+#ifndef DTFLCF__INC
+#define DTFLCF__INC
 
-#define DTFBSC_NAME		"DTFBSC"
+#define DTFLCF_NAME		"DTFLCF"
 
-#define	DTFBSC_VERSION	"$Revision$"
+#define	DTFLCF_VERSION	"$Revision$"
 
-#define DTFBSC_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define DTFLCF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &DTFBSCTutor;
+extern class ttr_tutor &DTFLCFTutor;
 
-#if defined( XXX_DBG ) && !defined( DTFBSC_NODBG )
-#define DTFBSC_DBG
+#if defined( XXX_DBG ) && !defined( DTFLCF_NODBG )
+#define DTFLCF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,49 +55,57 @@ extern class ttr_tutor &DTFBSCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Data transFert BaSiC 
+//D Data TransFert LoCal Features 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D Data transFer BaSiC.
+//D Data Transfer LoCal Fetures.
 /* End addendum to automatic documentation generation part. */
 
 
 #include "err.h"
 #include "flw.h"
-#include "bso.h"
+#include "dtfbsc.h"
 
-namespace dtfbsc {
-	// Internal use.	
-	template <typename generic> inline generic GenericGet_( flw::iflow___ &Flow )
-	{
-		return (generic)Flow.Get();
-	}
-	
-	// Internal use.	
-	template <typename generic> inline void GenericPut_(
-		generic Generic,
+namespace dtflcf {
+	using namespace dtfbsc;
+
+	//f Put 'Object', which is a pointer of type 'object', in 'Flow'.	
+	template <typename object> inline void PutPointer(
+		const object *Object,
 		flw::oflow___ &Flow )
 	{
-		bso::ubyte__ B = Generic;
-	
-		FLWPut( B, Flow );
+		flw::Put( Object, Flow );
 	}
-
-	//f Put 'Byte' in 'Flow'.
-	inline void PutByte(
-		bso::ubyte__ Byte,
+		
+	//f Get from 'Flow' a pointer to an object of type 'object'.
+	template <typename object> inline object *GetPointer( flw::iflow___ &Flow )
+	{
+		object *P;
+		
+		flw::Get( Flow, P );
+		
+		return P;
+	}
+	
+	//f Put 'Object' to 'Flow'.
+	template <typename object__> inline void Put(
+		object__ &Object,
 		flw::oflow___ &Flow )
 	{
-		flw::Put( Byte, Flow );
+		flw::Put( Object, Flow );
 	}
-
-	//f Return byte in 'Flow'.
-	inline bso::ubyte__ GetByte( flw::iflow___ &Flow )
+	
+	//f Return an object of type 'object__' from 'Flow'.
+	template <typename object__> inline object__ Get( flw::iflow___ &Flow )
 	{
-		return (bso::ubyte__)Flow.Get();
+		object__ O;
+		
+		flw::Get( Flow, O );
+		
+		return O;
 	}
 }
 

@@ -1,28 +1,29 @@
 /*
-  'clt' library by Claude L. Simon (csimon@webmails.com)
-  Requires the 'clt' header file ('clt.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+	'clt' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'clt' header file ('clt.h').
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -104,9 +105,9 @@ static inline bso::bool__ GetService_(
 	struct servent *Servent;
 
 	if ( ( Servent = getservbyname( Service, NULL ) ) != NULL )
-		Nom.sin_port = Servent->s_port;
+		Nom.sin_port = (u_short)Servent->s_port;
 	else
-		Nom.sin_port=htons( atoi( Service ) );
+		Nom.sin_port = htons( (u_short)atoi( Service ) );
 
 	return true;
 }

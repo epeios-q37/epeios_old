@@ -104,7 +104,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &pip		&epeios		&2000-		&PIPe
 &que		&epeios		&2000-\
 	&QUEue
-&salcsm		&epeios		&2000		&Stand ALone Client/Server Manager
+&salcsm		&epeios		&2000-\
+	&Stand ALone Client/Server Manager
 &sbf		&epeios		&2000-		&Simplified Binary tree Filler
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 &sck		&epeios		&2000-		&SoCKet
@@ -133,7 +134,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios BKD libraries.
-&bkdacc		&ebkd		&2000-		&BacKenD ACCess
+&bkdacc		&ebkd		&2001-\
+	&BacKenD ACCess
 &bkdcst		&ebkd		&2000-		&BacKenD CaSTs
 &bkddcb		&ebkd		&2000-		&BacKenD DesCriBer
 &bkdcmd		&ebkd		&2000-		&BacKenD CoMmanDs
@@ -152,7 +154,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CGI (Common Gateway Interface) ARGument
 &cgidat		&ecgi		&2002-\
 	&CGI (Common Gateway Interface) DATa
-&cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
+&cgimng		&ecgi		&2001,\
+	&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&2002-\
 	&CGI (Common Gateway Interface) TOoL
 

@@ -85,7 +85,7 @@ namespace ssnmng {
 		bso::sign__ Test;
 
 		while ( ( Seeker.GetState() == idxbtr::sFound )
-			    && ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) ) {
+			    && ( ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) != 0 ) ) {
 			switch( Test ) {
 			case 1:
 				Seeker.SearchGreater();
@@ -156,7 +156,7 @@ namespace ssnmng {
 
 			Seeker.Init( Index );
 
-			if ( !Search_( Index, Table, SessionID, Seeker ) )
+			if ( Search_( Index, Table, SessionID, Seeker ) != 0 )
 				return Seeker.GetCurrent();
 			else
 				return NONE;

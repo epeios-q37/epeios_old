@@ -1,6 +1,6 @@
 /*
-	'dtfbsc' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'dtfbsc' header file ('dtfbsc.h').
+	'dtflcf' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'dtflcf' header file ('dtflcf.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define DTFBSC__COMPILATION
+#define DTFLCF__COMPILATION
 
-#include "dtfbsc.h"
+#include "dtflcf.h"
 
-class dtfbsctutor
+class dtflcftutor
 : public ttr_tutor
 {
 public:
-	dtfbsctutor( void )
-	: ttr_tutor( DTFBSC_NAME )
+	dtflcftutor( void )
+	: ttr_tutor( DTFLCF_NAME )
 	{
-#ifdef DTFBSC_DBG
-		Version = DTFBSC_VERSION "\b\bD $";
+#ifdef DTFLCF_DBG
+		Version = DTFLCF_VERSION "\b\bD $";
 #else
-		Version = DTFBSC_VERSION;
+		Version = DTFLCF_VERSION;
 #endif
-		Owner = DTFBSC_OWNER;
+		Owner = DTFLCF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~dtfbsctutor( void ){}
+	virtual ~dtflcftutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,23 +55,23 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace dtfbsc;
+using namespace dtflcf;
 
 
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class dtfbscpersonnalization
-: public dtfbsctutor
+class dtflcfpersonnalization
+: public dtflcftutor
 {
 public:
-	dtfbscpersonnalization( void )
+	dtflcfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~dtfbscpersonnalization( void )
+	~dtflcfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -87,6 +87,6 @@ public:
 
 // 'static' by GNU C++.
 
-static dtfbscpersonnalization Tutor;
+static dtflcfpersonnalization Tutor;
 
-ttr_tutor &DTFBSCTutor = Tutor;
+ttr_tutor &DTFLCFTutor = Tutor;

@@ -1,7 +1,7 @@
 /*
 	'salcsm' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'salcsm' header file ('salcsm.h').
-	Copyright (C) 20002003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -97,7 +99,7 @@ flw::amount__ salcsm::flot::FLWGet(
 	flw::datum__ *Buffer,
 	flw::amount__ Wanted )
 {
-	return Lecture_->Lire( Minimum, Buffer, Wanted );
+	return (flw::amount__)Lecture_->Lire( (bso::bsize__)Minimum, Buffer, (bso::bsize__)Wanted );
 }
 
 flw::amount__ salcsm::flot::FLWPut(
@@ -106,7 +108,7 @@ flw::amount__ salcsm::flot::FLWPut(
 	flw::amount__ Minimum,
 	bool Synchronization )
 {
-	return Ecriture_->Ecrire( Buffer, Minimum );
+	return (flw::amount__)Ecriture_->Ecrire( Buffer, (bso::bsize__)Minimum );
 }
 
 flw::amount__ salcsm::flot_serveur_actif::FLWPut(

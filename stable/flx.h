@@ -117,12 +117,12 @@ namespace flx {
 			else
 			{
 				if ( Wanted > (flw::amount__)Taille_ )
-					Wanted = Taille_;
+					Wanted = (flw::amount__)Taille_;
 
 				if ( Wanted < Minimum )
 					FLXUnavailable();
 					
-				memcpy( Buffer, Tampon_, Wanted );
+				memcpy( Buffer, Tampon_, (size_t)Wanted );
 
 				Tampon_ += Wanted;
 
@@ -184,7 +184,7 @@ namespace flx {
 			if ( Wanted > (flw::amount__)Taille_ )
 				ERRu();
 
-			memcpy( Tampon_, Buffer, Wanted );
+			memcpy( Tampon_, Buffer, (size_t)Wanted );
 
 			Tampon_ += Wanted;
 			Taille_ -= Wanted;
@@ -237,7 +237,7 @@ namespace flx {
 		{
 			if ( Wanted > (flw::amount__)( Set_->Amount() - Position_ ) )
 			{
-				Wanted = Set_->Amount() - Position_;
+				Wanted = (flw::amount__)( Set_->Amount() - Position_ );
 
 				if ( Wanted < Minimum )
 					ERRf();
@@ -245,7 +245,7 @@ namespace flx {
 
 			if ( Wanted )
 			{
-				Set_->Read( Position_, Wanted, Buffer );
+				Set_->Read( Position_, (epeios::bsize__)Wanted, Buffer );
 				Position_ += Wanted;
 			}
 
@@ -291,7 +291,7 @@ namespace flx {
 			flw::amount__ Minimum,
 			bool Synchronization )
 		{
-			Set_->Add( Buffer, Wanted );
+			Set_->Add( Buffer, (epeios::bsize__)Wanted );
 
 			return Wanted;
 		}
