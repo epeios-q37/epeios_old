@@ -30,10 +30,10 @@
 #include "fnm.h"
 #include "flx.h"
 #include "txmtbl.h"
-#include "hdbtol.h"
-#include "hdbxml.h"
+#include "xmldcm.h"
 
-typedef hdbxml::hierarchical_database_filler__	hdbf__;
+typedef xmldcm::xml_document_filler__	xmldf__;
+using xmldcm::tag_row__;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
@@ -133,19 +133,32 @@ public:
 	}
 };
 
+inline void Push(
+	xmldf__ &XMLDF,
+	tag_row__ &TagRow,
+	const char *TagName )
+{
+	if ( TagRow == NONE ) {
+		TagRow = XMLDF.PushTag( TagName );
+		fout << txf::nl << "--------------------" << txf::nl;
+	} else
+		XMLDF.PushTag( TagRow );
+}
+
 typedef ctn::E_XCONTAINER( librairie_ ) librairies;
 typedef ctn::E_XCONTAINER_( librairie_ ) librairies_;
 
 // Procède à la mise en forme de commentaire.
 void PutComment(
 	const str::string_ &C,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	tag_row__ &CommentTagRow )
 {
 ERRProlog
 	str::string S;
 	bool Espace = true, Special = false;
 ERRBegin
-	HDBF.PushTag( "Comment" );
+	Push( XMLDF, CommentTagRow, "Comment" );
 
 	S.Init();
 
@@ -164,13 +177,13 @@ ERRBegin
 			{
 				if ( Special )
 				{
-					HDBF.PutValue( S, "Ref" );
+					XMLDF.PutValue( S, "Ref" );
 					S.Init();
 					Special = false;
 				}
 				else if ( Espace )
 				{
-					HDBF.PutValue( S );
+					XMLDF.PutValue( S );
 					S.Init();
 					Special = true;
 				}
@@ -185,9 +198,9 @@ ERRBegin
 	}
 	
 	S.Add( '\n' );
-	HDBF.PutValue( S );
+	XMLDF.PutValue( S );
 	
-	HDBF.PopTag();
+	XMLDF.PopTag();
 
 ERRErr
 ERREnd
@@ -221,14 +234,15 @@ const str::string_ &Filtrer( const str::string_ &S )
 
 inline void GenererDocumentationParametre(
 	const parametre_ &Parametre,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	tag_row__ &ParameterTagRow )
 {
-	HDBF.PushTag( "Parameter" );
+	Push( XMLDF, ParameterTagRow, "Parameter" );
 	if ( Parametre.Valeur.Amount() != 0 )
-		HDBF.PutValue( Parametre.Valeur, "Value" );
-	HDBF.PutValue( Parametre.Type, "Type" );
-	HDBF.PutValue( Parametre.Name, "Name" );
-	HDBF.PopTag();
+		XMLDF.PutValue( Parametre.Valeur, "Value" );
+	XMLDF.PutValue( Parametre.Type, "Type" );
+	XMLDF.PutValue( Parametre.Name, "Name" );
+	XMLDF.PopTag();
 }
 
 /*******************/
@@ -237,12 +251,14 @@ inline void GenererDocumentationParametre(
 
 void GenererDocumentationParametres(
 	const table_<parametre_> &Parametres,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	tag_row__ &ParametersTagRow,
+	tag_row__ &ParameterTagRow )
 {
 ERRProlog
 	ctn::E_CITEM( parametre_ ) Parametre;
 ERRBegin
-	HDBF.PushTag( "Parameters" );
+	Push( XMLDF, ParametersTagRow, "Parameters" );
 
 	Parametre.Init( Parametres );
 	
@@ -252,12 +268,12 @@ ERRBegin
 
 		while ( Courant != NONE )
 		{
-			GenererDocumentationParametre( Parametre( Courant ), HDBF );
+			GenererDocumentationParametre( Parametre( Courant ), XMLDF, ParameterTagRow );
 			Courant = Parametres.Next( Courant );
 		}
 	}
 	
-	HDBF.PopTag();
+	XMLDF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -271,38 +287,55 @@ ERREpilog
 
 inline void GenererCorpsItemClasse(
 	const objet_ &Item,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF, 
+	const char *Type,
+	tag_row__ &CommentTagRow,
+	tag_row__ &ObjectTagRow )
 {
-
-	HDBF.PushTag( "Object" );
-	HDBF.PutValue( Item.Name, "Name" );
-	HDBF.PutValue( Filtrer( Item.Type ), "Type" );
-	PutComment( Item.Commentaire, HDBF );
-	HDBF.PopTag();
+	Push( XMLDF, ObjectTagRow, "Object" );
+	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutValue( Item.Name, "Name" );
+	XMLDF.PutValue( Filtrer( Item.Type ), "Type" );
+	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
+	XMLDF.PopTag();
 }
 
 inline void GenererCorpsItemClasse(
 	const methode_ &Item,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char *Type,
+	tag_row__ &CommentTagRow,
+	tag_row__ &MethodTagRow )
 {
-	HDBF.PushTag( "Method" );
-	HDBF.PutValue( Item.Name, "Name" );
-	HDBF.PutValue( Item.Type, "Type" );
-	PutComment( Item.Commentaire, HDBF );
-	GenererDocumentationParametres( Item.Parametres, HDBF );
-	HDBF.PopTag();
+	static tag_row__ ParametersTagRow = NONE;
+	static tag_row__ ParameterTagRow = NONE;
+
+	Push( XMLDF, MethodTagRow, "Method" );
+	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutValue( Item.Name, "Name" );
+	XMLDF.PutValue( Item.Type, "Type" );
+	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
+	GenererDocumentationParametres( Item.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
+	XMLDF.PopTag();
 }
 
 inline void GenererCorpsItemClasse(
 	const function_ &Item,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char  *Type,
+	tag_row__ &CommentTagRow,
+	tag_row__ &FunctionTagRow )
 {
-	HDBF.PushTag( "Function" );
-	HDBF.PutValue( Filtrer( Item.Name ), "Name" );
-	HDBF.PutValue( Item.Type, "Type" );
-	PutComment( Item.Commentaire, HDBF );
-	GenererDocumentationParametres( Item.Parametres, HDBF );
-	HDBF.PopTag();
+	static tag_row__ ParametersTagRow = NONE;
+	static tag_row__ ParameterTagRow = NONE;
+
+	Push( XMLDF, FunctionTagRow, "Function" );
+	XMLDF.PutAttribute( xmldcm::tag_name( "Type" ), xmldcm::value( Type ) );
+	XMLDF.PutValue( Filtrer( Item.Name ), "Name" );
+	XMLDF.PutValue( Item.Type, "Type" );
+	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
+	GenererDocumentationParametres( Item.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
+	XMLDF.PopTag();
 }
 
 
@@ -312,22 +345,26 @@ inline void GenererCorpsItemClasse(
 
 template <class t> void GenererCorpsItemsClasse(
 	const char *Tag,
+	tag_row__ &TagTagRow,
 	t &Items,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char *Type,
+	tag_row__ &CommentTagRow,
+	tag_row__ &ItemTagRow )
 {
 	tym::row__ Courant = Items.First();
 
-	HDBF.PushTag( Tag );
+	Push( XMLDF, TagTagRow, Tag );
 
 	while ( Courant != NONE )
 	{
-		GenererCorpsItemClasse( Items( Courant ), HDBF );
+		GenererCorpsItemClasse( Items( Courant ), XMLDF, Type, CommentTagRow, ItemTagRow );
 		Courant = Items.Next( Courant );
 	}
 
 	Items.Sync();
 	
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 
@@ -337,7 +374,7 @@ template <class t> void GenererCorpsItemsClasse(
 
 void GenererDocumentationArgumentsTemplateClasse(
 	const table_<argument_> &Arguments,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
 	ctn::E_CITEM( argument_ ) Argument;
@@ -348,8 +385,8 @@ ERRBegin
 	
 	while ( Courant != NONE )
 	{
-		HDBF.PutValue( Argument( Courant ).Name, "Name" );
-		HDBF.PutValue( Argument( Courant ).Type, "Type" );
+		XMLDF.PutValue( Argument( Courant ).Name, "Name" );
+		XMLDF.PutValue( Argument( Courant ).Type, "Type" );
 	
 		Courant = Arguments.Next( Courant );
 	}
@@ -360,7 +397,7 @@ ERREpilog
 
 void GenererDocumentationArgumentsTemplateFonction(
 	const table_<argument_> &Arguments,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
 	ctn::E_CITEM( argument_ ) Argument;
@@ -371,8 +408,8 @@ ERRBegin
 	
 	while ( Courant != NONE )
 	{
-		HDBF.PutValue( Argument( Courant ).Name, "Name" );
-		HDBF.PutValue( Argument( Courant ).Type, "Type" );
+		XMLDF.PutValue( Argument( Courant ).Name, "Name" );
+		XMLDF.PutValue( Argument( Courant ).Type, "Type" );
 	
 		Courant = Arguments.Next( Courant );
 	}
@@ -384,16 +421,20 @@ ERREpilog
 
 template <class t> void GenererDocumentationItemsClasse(
 	const char *Tag,
+	tag_row__ &TagTagRow,
 	t &Items,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char *Type,
+	tag_row__ &CommentTagRow,
+	tag_row__ &ItemTagRow )
 {
 	if ( Items.Amount() )
-		GenererCorpsItemsClasse( Tag, Items, HDBF );
+		GenererCorpsItemsClasse( Tag, TagTagRow, Items, XMLDF, Type, CommentTagRow, ItemTagRow );
 }
 
 void GenererDocumentationBasesClasseItems(
 	const table_<str::string_> &Bases,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
 	ctn::E_CITEM( str::string_ ) Base;
@@ -402,7 +443,7 @@ ERRBegin
 	Base.Init( Bases );
 
 	while ( Courant != NONE ) {
-		HDBF.PutValue( Filtrer( Base( Courant ) ), "Name" );
+		XMLDF.PutValue( Filtrer( Base( Courant ) ), "Name" );
 		Courant = Bases.Next( Courant );
 	}
 ERRErr
@@ -416,27 +457,30 @@ ERREpilog
 
 void GenererDocumentationItemsEnum(
 	const table_<item_> &Items,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
-	 ctn::E_CITEM( item_ ) Item;
+	ctn::E_CITEM( item_ ) Item;
 	tym::row__ Courant = Items.First();
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ ItemsTagRow = NONE;
+	static tag_row__ ItemTagRow = NONE;
 ERRBegin
 	Item.Init( Items );
 	
-	HDBF.PushTag( "Items" );
+	Push( XMLDF, ItemsTagRow, "Items" );
 
 	while ( Courant != NONE )
 	{
-		HDBF.PushTag( "Item" );
-		HDBF.PutValue( Item( Courant ).Name, "Name" );
-		PutComment( Item( Courant ).Commentary, HDBF );
+		Push( XMLDF, ItemTagRow, "Item" );
+		XMLDF.PutValue( Item( Courant ).Name, "Name" );
+		PutComment( Item( Courant ).Commentary, XMLDF, CommentTagRow );
 		
 		Courant = Items.Next( Courant );
-		HDBF.PopTag();
+		XMLDF.PopTag();
 	}
 	
-	HDBF.PopTag();
+	XMLDF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -445,7 +489,7 @@ ERREpilog
 
 void GenererDocumentationArguments(
 	const table_<str::string_> &Arguments,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
 	ctn::E_CITEM( str::string_ ) Argument;
@@ -453,11 +497,17 @@ ERRProlog
 ERRBegin
 	Argument.Init( Arguments );
 	
+	XMLDF.PushTag( "Arguments" );
+	
 	while ( Courant != NONE )
 	{
-		HDBF.PutValue( Argument( Courant ), "Name" );
+		XMLDF.PushTag( "Argument" );
+		XMLDF.PutValue( Argument( Courant ), "Name" );
+		XMLDF.PopTag();
 		Courant = Arguments.Next( Courant );
 	}
+	
+	XMLDF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -466,51 +516,58 @@ ERREpilog
 
 void GenererDocumentationTemplateClasse(
 	const template_ &Template,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	if ( Template.Arguments.Amount() )
-		GenererDocumentationArgumentsTemplateClasse( Template.Arguments,HDBF );
+		GenererDocumentationArgumentsTemplateClasse( Template.Arguments,XMLDF );
 }
 
 void GenererDocumentationBasesClasse(
 	const table_<str::string_> &Bases,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PushTag( "Base_classes" );
-	GenererDocumentationBasesClasseItems( Bases, HDBF );
-	HDBF.PopTag();
+	XMLDF.PushTag( "Base_classes" );
+	GenererDocumentationBasesClasseItems( Bases, XMLDF );
+	XMLDF.PopTag();
 
 }
 
 void GenererDocumentationTemplateFonction(
 	const template_ &Template,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	if ( Template.Arguments.Amount() )
-		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, HDBF );
+		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, XMLDF );
 }
 
 void GenererDocumentationObjetsClasse(
 	classe_ &Classe,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ ObjectsTagRow = NONE;
+	static tag_row__ ObjectTagRow = NONE;
 
 	if ( Classe.Objets.Amount() )
-		GenererDocumentationItemsClasse( "Object", Classe.Objets, HDBF );
+		GenererDocumentationItemsClasse( "Objects", ObjectsTagRow, Classe.Objets, XMLDF, "Public", CommentTagRow, ObjectTagRow );
 
 	if ( Classe.Restreints.Amount() )
-		GenererDocumentationItemsClasse( "Restrict", Classe.Restreints, HDBF );
+		GenererDocumentationItemsClasse( "Objects", ObjectsTagRow, Classe.Restreints, XMLDF, "Restricted", CommentTagRow, ObjectTagRow );
 }
 
 void GenererDocumentationMethodesClasse(
 	classe_ &Classe,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ MethodsTagRow = NONE;
+	static tag_row__ MethodTagRow = NONE;
+
 	if ( Classe.Methodes.Amount() )
-		GenererDocumentationItemsClasse( "Methods", Classe.Methodes, HDBF );
+		GenererDocumentationItemsClasse( "Methods", MethodsTagRow, Classe.Methodes, XMLDF, "Callable", CommentTagRow, MethodTagRow );
 
 	if ( Classe.Virtuels.Amount() )
-		GenererDocumentationItemsClasse( "Vituals", Classe.Virtuels, HDBF );
+		GenererDocumentationItemsClasse( "Methods", MethodsTagRow, Classe.Virtuels, XMLDF, "Virtuals", CommentTagRow, MethodTagRow );
 }
 
 
@@ -521,82 +578,103 @@ void GenererDocumentationMethodesClasse(
 
 void GenererDocumentationDefine(
 	const define_ &Define,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
+	static tag_row__ CommentTagRow = NONE;
+	
+	XMLDF.PushTag( "Define" );
+	XMLDF.PutValue( Define.Name, "Name" );
+	PutComment( Define.Commentaire, XMLDF, CommentTagRow );
 	if ( Define.Arguments.Amount() )
-		GenererDocumentationArguments( Define.Arguments, HDBF );
+		GenererDocumentationArguments( Define.Arguments, XMLDF );
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationEnum(
 	const enum_ &Enum,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PushTag( "Enum" );
+	static tag_row__ CommentTagRow = NONE;
+	
+	XMLDF.PushTag( "Enum" );
 
-	HDBF.PutValue( Enum.Name, "Name" );
-	PutComment( Enum.Commentary, HDBF );
+	XMLDF.PutValue( Enum.Name, "Name" );
+	PutComment( Enum.Commentary, XMLDF, CommentTagRow );
 
 	if ( Enum.Items.Amount() )
-		GenererDocumentationItemsEnum( Enum.Items, HDBF );
+		GenererDocumentationItemsEnum( Enum.Items, XMLDF );
 		
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationShortcut(
 	const shortcut_ &Shortcut,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PutValue( Shortcut.Name, "Name" );
-	HDBF.PutValue( Shortcut.Alias, "Alias" );
-	PutComment( Shortcut.Commentaire, HDBF );
+	static tag_row__ CommentTagRow = NONE;
+	
+	XMLDF.PushTag( "Shortcut" );
+	XMLDF.PutValue( Shortcut.Name, "Name" );
+	XMLDF.PutValue( Shortcut.Alias, "Alias" );
+	PutComment( Shortcut.Commentaire, XMLDF, CommentTagRow );
+	if ( Shortcut.Arguments.Amount() )
+		GenererDocumentationArguments( Shortcut.Arguments, XMLDF );
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationTypedef(
 	const typedef_ &Typedef,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PushTag( "Typedef" );
-	HDBF.PutValue( Typedef.Name, "Name" );
-	PutComment( Typedef.Commentaire, HDBF );
-	HDBF.PopTag();
+	static tag_row__ CommentTagRow = NONE;
+	
+	XMLDF.PushTag( "Typedef" );
+	XMLDF.PutValue( Typedef.Name, "Name" );
+	PutComment( Typedef.Commentaire, XMLDF, CommentTagRow );
+	XMLDF.PopTag();
 }
 
 inline void GenererDocumentationClasse(
 	classe_ &Classe,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
+	static tag_row__ CommentTagRow = NONE;
+	
+	XMLDF.PushTag( "Classe" );
+	XMLDF.PutValue( Classe.Name, "Name" );
+	PutComment( Classe.Commentaire, XMLDF, CommentTagRow );
 
-	HDBF.PushTag( "Classe" );
-	HDBF.PutValue( Classe.Name, "Name" );
-	PutComment( Classe.Commentaire, HDBF );
-
-	GenererDocumentationTemplateClasse( Classe.Template, HDBF );
+	GenererDocumentationTemplateClasse( Classe.Template, XMLDF );
 
 	if ( Classe.Bases.Amount() )
-		GenererDocumentationBasesClasse( Classe.Bases, HDBF );
+		GenererDocumentationBasesClasse( Classe.Bases, XMLDF );
 
-	GenererDocumentationObjetsClasse( Classe, HDBF );
-	GenererDocumentationMethodesClasse( Classe, HDBF );
-	HDBF.PopTag();
+	GenererDocumentationObjetsClasse( Classe, XMLDF );
+	GenererDocumentationMethodesClasse( Classe, XMLDF );
+	XMLDF.PopTag();
 }
 
 
 inline void GenererDocumentationFonction(
 	const function_ &Fonction,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char * )
 {
-
-	HDBF.PutValue( Fonction.Name, "Name" );
-	HDBF.PutValue( Fonction.Type, "Type" );
-	PutComment( Fonction.Commentaire, HDBF );
-	GenererDocumentationParametres( Fonction.Parametres, HDBF );
-	GenererDocumentationTemplateFonction( Fonction.Template, HDBF );
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ ParametersTagRow = NONE;
+	static tag_row__ ParameterTagRow = NONE;
+	
+	XMLDF.PutValue( Fonction.Name, "Name" );
+	XMLDF.PutValue( Fonction.Type, "Type" );
+	PutComment( Fonction.Commentaire, XMLDF, CommentTagRow );
+	GenererDocumentationParametres( Fonction.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
+	GenererDocumentationTemplateFonction( Fonction.Template, XMLDF );
 
 }
 
 template <class t> void GenererItems(
 	const table_<t> &Items,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 ERRProlog
 	ctn::E_CITEM( t ) Item;
@@ -606,7 +684,7 @@ ERRBegin
 
 	while ( Courant != NONE )
 	{
-		HDBF.PutValue( Item( Courant ), "Item" );
+		XMLDF.PutValue( Item( Courant ), "Item" );
 		Courant = Items.Next( Courant );
 	}
 ERRErr
@@ -622,162 +700,172 @@ ERREpilog
 
 void GenererDocumentationDefines(
 	const table_<define_> &Defines,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	ctn::E_CITEM( define_ ) Define;
 	tym::row__ Courant = Defines.First();
 
 	Define.Init( Defines );
 
-	HDBF.PushTag( "Defines" );
+	XMLDF.PushTag( "Defines" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationDefine( Define( Courant ), HDBF );
+		GenererDocumentationDefine( Define( Courant ), XMLDF );
 		Courant = Defines.Next( Courant );
 	}
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationEnums(
 	const table_<enum_> &Enums,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	ctn::E_CITEM( enum_ ) Enum;
 	tym::row__ Courant = Enums.First();
 
 	Enum.Init( Enums );
 
-	HDBF.PushTag( "Enums" );
+	XMLDF.PushTag( "Enums" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationEnum( Enum( Courant ), HDBF );
+		GenererDocumentationEnum( Enum( Courant ), XMLDF );
 		Courant = Enums.Next( Courant );
 	}
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationShortcuts(
 	const table_<shortcut_> &Shortcuts,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	ctn::E_CITEM( shortcut_ ) Shortcut;
 	tym::row__ Courant = Shortcuts.First();
 
 	Shortcut.Init( Shortcuts );
 
-	HDBF.PushTag( "Shortcuts" );
+	XMLDF.PushTag( "Shortcuts" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationShortcut( Shortcut( Courant ), HDBF );
+		GenererDocumentationShortcut( Shortcut( Courant ), XMLDF );
 		Courant = Shortcuts.Next( Courant );
 	}
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationTypedefs(
 	const table_<typedef_> &Typedefs,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	ctn::E_CITEM( typedef_ ) Typedef;
 	tym::row__ Courant = Typedefs.First();
 
 	Typedef.Init( Typedefs );
 
-	HDBF.PushTag( "Typedefs" );
+	XMLDF.PushTag( "Typedefs" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationTypedef( Typedef( Courant ), HDBF );
+		GenererDocumentationTypedef( Typedef( Courant ), XMLDF );
 		Courant = Typedefs.Next( Courant );
 	}
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 
 void GenererDocumentationClasses(
 	table_<classe_> &Classes,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 	tym::row__ Courant = Classes.First();
 
-	HDBF.PushTag( "Classes" );
+	XMLDF.PushTag( "Classes" );
 
 	while ( Courant != NONE )
 	{
-		GenererDocumentationClasse( Classes( Courant ), HDBF );
+		GenererDocumentationClasse( Classes( Courant ), XMLDF );
 		Courant = Classes.Next( Courant );
 	}
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 	
 	Classes.Sync();
 }
 
 void GenererDocumentationFonctions(
 	table_<function_> &Fonctions,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char *Type )
 {
-	GenererDocumentationItemsClasse( "Functions", Fonctions, HDBF );
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ FunctionsTagRow = NONE;
+	static tag_row__ FunctionTagRow = NONE;
+
+	GenererDocumentationItemsClasse( "Functions", FunctionsTagRow, Fonctions, XMLDF, Type, CommentTagRow, FunctionTagRow );
 }
 
 void GenererDocumentationObjets(
 	table_<objet_> &Objets,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF,
+	const char *Type )
 {
-	GenererDocumentationItemsClasse( "Objects", Objets, HDBF );
+	static tag_row__ CommentTagRow = NONE;
+	static tag_row__ ObjectsTagRow = NONE;
+	static tag_row__ ObjectTagRow = NONE;
+
+	GenererDocumentationItemsClasse( "Objects", ObjectsTagRow, Objets, XMLDF, Type, CommentTagRow, ObjectTagRow );
 }
 
 
 
 void GenererGeneralites(
 	const str::string_ &Generalites,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PutValue( Generalites, "Généralités" );
+	XMLDF.PutValue( Generalites, "Généralités" );
 }
 
 void GenererVersions(
 	const table_<str::string_> &Versions,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
 
-	HDBF.PushTag( "Versions" );
+	XMLDF.PushTag( "Versions" );
 	
 	if ( Versions.Amount() )
-		GenererItems( Versions, HDBF );
+		GenererItems( Versions, XMLDF );
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererHistorique(
 	const table_<str::string_> &Historique,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PushTag( "Historique" );
+	XMLDF.PushTag( "Historique" );
 
 	if ( Historique.Amount() )
-		GenererItems( Historique, HDBF );
+		GenererItems( Historique, XMLDF );
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 void GenererRemarques(
 	const table_<str::string_> &Remarques,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PushTag( "Remarques" );
+	XMLDF.PushTag( "Remarques" );
 
 	if ( Remarques.Amount() )
-		GenererItems( Remarques, HDBF );
+		GenererItems( Remarques, XMLDF );
 
-	HDBF.PopTag();
+	XMLDF.PopTag();
 }
 
 
@@ -902,48 +990,53 @@ ERREpilog
 
 void GenererCorpsDocumentationTechnique(
 	library_ &Library,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
+	XMLDF.PutValue( Library.Description, "Description" );
+	XMLDF.PutValue( Library.Coordinators, "Coordinators" );
+	XMLDF.PutValue( Library.Version, "Version" );
+	XMLDF.PutValue( Library.Release, "Release" );
+
 	if ( Library.Defines.Amount() )
 	{
 		Classer( Library.Defines );
-		GenererDocumentationDefines( Library.Defines, HDBF );
+		GenererDocumentationDefines( Library.Defines, XMLDF );
 	}
 
 	if ( Library.Enums.Amount() )
 	{
 		Classer( Library.Enums );
-		GenererDocumentationEnums( Library.Enums, HDBF );
+		GenererDocumentationEnums( Library.Enums, XMLDF );
 	}
 
 	if ( Library.Shortcuts.Amount() )
 	{
 		Classer( Library.Shortcuts );
-		GenererDocumentationShortcuts( Library.Shortcuts, HDBF );
+		GenererDocumentationShortcuts( Library.Shortcuts, XMLDF );
 	}
 
 	if ( Library.Typedefs.Amount() )
 	{
 		Classer( Library.Typedefs );
-		GenererDocumentationTypedefs( Library.Typedefs, HDBF );
+		GenererDocumentationTypedefs( Library.Typedefs, XMLDF );
 	}
 
 	if ( Library.Classes.Amount() )
 	{
 		Classer( Library.Classes );
-		GenererDocumentationClasses( Library.Classes, HDBF );
+		GenererDocumentationClasses( Library.Classes, XMLDF );
 	}
 
 	if ( Library.Functions.Amount() )
 	{
 		Classer( Library.Functions );
-		GenererDocumentationFonctions( Library.Functions, HDBF );
+		GenererDocumentationFonctions( Library.Functions, XMLDF, "" );
 	}
 
 	if ( Library.Objets.Amount() )
 	{
 		Classer( Library.Objets );
-		GenererDocumentationObjets( Library.Objets, HDBF );
+		GenererDocumentationObjets( Library.Objets, XMLDF, "" );
 	}
 }
 
@@ -1024,10 +1117,10 @@ ERREpilog
 
 void GenererDocumentationTechnique(
 	librairie_ &Librairie,
-	hdbf__ &HDBF )
+	xmldf__ &XMLDF )
 {
-	HDBF.PutValue( Librairie.Name, "Name" );
- 	GenererCorpsDocumentationTechnique( Librairie.Library, HDBF );
+	XMLDF.PutValue( Librairie.Name, "Name" );
+ 	GenererCorpsDocumentationTechnique( Librairie.Library, XMLDF );
 }
 /*
 void GenererDocumentationDescriptive(
@@ -1147,14 +1240,14 @@ void Analyser(
 // Créer les documentation de la librairie 'Librairie' dans le repertoir 'Repertoire'.
 inline void GenererDocumentations(
 	librairie_ &Librairie,
-	hdbf__ &HDBF,
+	xmldf__ &XMLDF,
 	unsigned long Courant,
 	unsigned long Total )
 {
-	HDBF.PushTag( "Library" );
+	XMLDF.PushTag( "Library" );
 	fout << "Génération documentations librairie: en cours ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
-	GenererDocumentationTechnique( Librairie, HDBF );
-	HDBF.PopTag();
+	GenererDocumentationTechnique( Librairie, XMLDF );
+	XMLDF.PopTag();
 }
 
 /*******************/
@@ -1204,13 +1297,13 @@ ERREpilog
 // Créer la documentation des 'Librairies' dans le répertoire 'Repertoire'
 void GenererDocumentations(
 	 librairies &Librairies,
-	 hdbf__ &HDBF )
+	 xmldf__ &XMLDF )
 {
 ERRProlog
 	tym::row__ Courant;
 	int Compteur = 1;
 ERRBegin
-	HDBF.PushTag( "Documentation" );
+	XMLDF.PushTag( "Documentation" );
 
 	if ( Librairies.Amount() )
 	{
@@ -1218,14 +1311,14 @@ ERRBegin
 
 		while( Courant != NONE )
 		{
-			GenererDocumentations( Librairies( Courant ), HDBF, Compteur++, Librairies.Amount() );
+			GenererDocumentations( Librairies( Courant ), XMLDF, Compteur++, Librairies.Amount() );
 			Courant = Librairies.Next( Courant );
 		}
 	}
 
 	Librairies.Sync();
 	
-	HDBF.PopTag();
+	XMLDF.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -1246,11 +1339,10 @@ ERRFProlog
 	const char *&Liste = argv[1];
 	const char *&RepertoireLibrary = argv[2];
 	const char *&FichierDestination = argv[3];
-	hdbmnb::hierarchical_database HDB;
-	hdbxml::hierarchical_database_filler__ HDBF;
+	xmldcm::xml_document XMLD;
+	xmldcm::xml_document_filler__ XMLDF;
 	fil::file_oflow___ OFlow;
 	txf::text_oflow___ TFlow;
-
 ERRFBegin
 	if ( argc != 4 )
 		ERRt();
@@ -1258,16 +1350,16 @@ ERRFBegin
 	Librairies.Init();
 	Analyser( Liste, RepertoireLibrary, Librairies );
 	
-	HDB.Init();
-	HDBF.Init( HDB );
-	GenererDocumentations( Librairies, HDBF );
+	XMLD.Init();
+	XMLDF.Init( XMLD );
+	GenererDocumentations( Librairies, XMLDF );
 	
 	OFlow.Init( FichierDestination );
 	TFlow.Init( OFlow );
 	
 	GenererEnTeteFichierXML( TFlow );
 	
-	hdbxml::WriteXML( HDB, TFlow );
+	xmldcm::WriteXML( XMLD, TFlow );
 
 	fout << "Génération documentations librairie: achevée.                             " << nl;
 ERRFErr

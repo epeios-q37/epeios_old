@@ -48,6 +48,8 @@ elif grep -w -q $1 $SRC/ecdb.lst; then
 	ID=ecdb
 elif grep -w -q $1 $SRC/etmc.lst; then
 	ID=etmc
+elif grep -w -q $1 $SRC/exml.lst; then
+	ID=exml
 else
 	echo "Cannot identify library group.";
 	exit

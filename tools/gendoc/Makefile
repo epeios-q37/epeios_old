@@ -27,11 +27,11 @@
 
 name = gendoc
 copt = -DXXX_DBG
-copt += -DHDBXML_NO_PARSING
+# copt +=
 lopt = 
 libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil\
-       txmtbl tagexp lst tagdtc btr hdbtag hdbval hdbmnb hdbxml
-
+       txmtbl tagexp lst tagdtc btr xmldcm xmlval xmltag
+       
 epeios_os=$(EPEIOS_OS)
 epeios_src=$(EPEIOS_SRC)
 

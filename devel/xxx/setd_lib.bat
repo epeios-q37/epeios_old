@@ -54,6 +54,8 @@ grep -w -o -i %LNM% %SRC%\ehdb.lst
 IF NOT ERRORLEVEL 1 SET ID=ehdb
 grep -w -o -i %LNM% %SRC%\etmc.lst
 IF NOT ERRORLEVEL 1 SET ID=etmc
+grep -w -o -i %LNM% %SRC%\exml.lst
+IF NOT ERRORLEVEL 1 SET ID=exml
 
 IF NOT "%ID%"=="" goto repository_defined
 echo No repository defined for library %LNM%
