@@ -1,7 +1,7 @@
 /*
 	'bch' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'bch' header file ('bch.h').
-	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,8 +55,26 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-namespace bch {
+using namespace bch;
+
+void bch::_GetRelations(
+	const uym::untyped_memory_ &Sorted,
+	const uym::untyped_memory_ &Unsorted,
+	bsize__ Size,
+	uym::row__ Limit,
+	uym::datum__ *Buffer,
+	E_BUNCH_( epeios::row__ ) &Relations )
+{
+	uym::row__ Row = 0;
+
+	while ( Row < Limit ) {
+		Sorted.Recall( Row, Size, Buffer );
+		Relations.Append( Unsorted.Search( Buffer, Size, 0, Limit ) / Size );
+
+		Row += Size;
+	}
 }
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -18,6 +18,7 @@ BCH:
 - Renaming in 'Append' and rewriting 'Add' methods.
 - Renaming 'Row()' into 'Search()'.
 - Fixing bug in 'StoreAndAdjust()' method.
+- Adding 'GetRelations()' function.
 
 BITBCH:
 - Fixing bug.

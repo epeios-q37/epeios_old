@@ -1,6 +1,6 @@
 /*
 	Header for the 'bch' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -453,6 +453,29 @@ namespace bch {
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
 
+	void _GetRelations(
+		const uym::untyped_memory_ &Sorted,
+		const uym::untyped_memory_ &Unsorted,
+		bsize__ Size,
+		uym::row__ Limit,
+		uym::datum__ *Buffer,
+		E_BUNCH_( epeios::row__ ) &Relations );
+
+	template <typename t, typename r> inline void GetRelations(
+		const bch::E_BUNCHt_( t, r ) &Sorted,
+		const bch::E_BUNCHt_( t, r ) &Unsorted,
+		bch::E_BUNCH_( epeios::row__ ) &Relations )
+	{
+		uym::datum__ Buffer[sizeof( t )];
+#ifdef BCH_DBG
+		if ( Sorted.Amount() != Unsorted.Amount() )
+			ERRu();
+#endif
+		_GetRelations( Sorted, Unsorted, sizeof( t ), Sorted.Amount() * sizeof( t ), Buffer, Relations );
+	}
+
+
+
 
 	/*c A portable bunch of static object of type 'type'. Use 'E_PBUNCH_( type )' rather then directly this class. */
 	template <class type, typename row> class p_bunch_
@@ -597,6 +620,7 @@ namespace bch {
 	#define E_P_BUNCHt__( c, i, r )	p_bunch__<c, i, r>
 
 	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , epeios::row__ )
+
 
 
 }

@@ -7,7 +7,7 @@ Général:
 - Under Windows, test with Borland C++.
 - Make extensive tests and adapt libraries under OSes from the Sourceforge compile farm.
 - Use 'bso::sign__' instead of 'bso::sbyte__' where relevant.
-- Handle the preprocessor warning occuring, foe example, with the 'IDXBTQ' library, with g++ 3.x.
+- Handle the preprocessor warning occuring, for example, with the 'IDXBTQ' library, with g++ 3.x.
 - Add libraries which features a combinaison of a list and a container, and a list and a bunch.
 
 CTN:
@@ -28,4 +28,6 @@ XMLDBS:
 XMLDCM:
 - Add deleting of items.
 
-
+CSM:
+- Don't launch a server process ; this can be handled with mutexes (client process wiat of the server process, so it can
+ do what the server process does). All the pipe thing are then useless (SPP, PIP, ...).
