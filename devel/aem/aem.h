@@ -405,7 +405,7 @@ namespace aem {
 			row Current,
 			epeios::size__ Offset ) const
 		{
-			if ( ( Current += Offset ) < Amount() )
+			if ( ( *Current += Offset ) < Amount() )
 				return Current;
 			else
 				return NONE;
@@ -420,8 +420,8 @@ namespace aem {
 			row Current,
 			epeios::size__ Offset ) const
 		{
-			if ( Current >= Offset )
-				return Current - Offset;
+			if ( *Current >= Offset )
+				return *Current - Offset;
 			else
 				return NONE;
 		}

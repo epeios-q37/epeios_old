@@ -4,6 +4,9 @@ GENERAL:
 - (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
 - (02/02/05) Adding 'LLIO' and 'io' libraries.
 
+AEM:
+- (09/02/05) Fixing some compilation issue due to templates.
+
 BCH:
 - (10/01/05) Fixing type problem.
 
