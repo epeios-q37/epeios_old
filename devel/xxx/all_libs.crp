@@ -33,6 +33,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &err		&epeios		&2000-		&ERRor handling
 &flw		&epeios		&2000-		&FLoW
 &gsbbsc		&lgsb		&		&GeSBib BaSiC
+&gsbfld		&lgsb		&		&GeSBib FieLDs
 &gsbmlt		&lgsb		&		&GeSBib MuLTi
 &gsbrlt		&lgsb		&		&GeSBib ReLaTionnal
 &gsbtbl		&lgsb		&		&GeSBib TaBLe
