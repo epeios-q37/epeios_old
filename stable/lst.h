@@ -62,7 +62,7 @@ extern class ttr_tutor &LSTTutor;
 
 namespace lst {
 
-	bso__bool Existe_(
+	bso::bool__ Existe_(
 		epeios::row_t__ Position,
 		const stk::E_STACK_( epeios::row_t__ ) &Libres );
 
@@ -113,7 +113,7 @@ namespace lst {
 			return lst::Predecesseur_( Element, Libres );
 		}
 		// Retourne vrai si 'Element' existe dans la liste.
-		bso__bool Existe_( epeios::row_t__ Position ) const
+		bso::bool__ Existe_( epeios::row_t__ Position ) const
 		{
 			return lst::Existe_( Position, Libres );
 		}
@@ -206,7 +206,7 @@ namespace lst {
 				return NONE;
 		}
 		//f Return true if empty, false otherway.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return Amount() == 0;
 		}
@@ -243,7 +243,7 @@ namespace lst {
 			return S_.Extent;
 		}
 		//f Return true if 'Entry' exists, false otherwise.
-		bso__bool Exists( r Entry ) const
+		bso::bool__ Exists( r Entry ) const
 		{
 			if ( Entry.V >= S_.Extent )
 				return false;
@@ -327,12 +327,12 @@ namespace lst {
 			Nombre_--;
 		}
 		//f Return true if 'Entry' exists, fals otherwise.
-		bso__bool Exists( r Entry ) const
+		bso::bool__ Exists( r Entry ) const
 		{
 			return Occupation_.Read( Courant );
 		}
 		//f Return true if no entry, false otherwise.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return !Nombre_;
 		}
@@ -349,7 +349,7 @@ namespace lst {
 			Nombre_ = 0;
 		}
 		//f Return true if totally full, false otherwise.
-		bso__bool IsFull( void )
+		bso::bool__ IsFull( void )
 		{
 			return Nombre_ >= t;
 		}

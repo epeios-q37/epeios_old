@@ -152,7 +152,7 @@ id__ clnarg::analyzer___::GetCommand( void ) const
 	return Id;
 }
 
-static bso__bool Exists_(
+static bso::bool__ Exists_(
 	id__ Id,
 	const option_list_ &Options )
 {
@@ -178,8 +178,8 @@ const char *AddMulti_(
 	const commands_ &CmdDesc,
 	option_list_ &OptList )
 {
-	bso__bsize i = 0;
-	bso__bsize Limit = strlen( String );
+	bso::bsize__ i = 0;
+	bso::bsize__ Limit = strlen( String );
 	id__ Id = CLNARG_NONE;
 	const char *Return = NULL;
 	static char Unknow[] = "-o";
@@ -203,8 +203,8 @@ const char *AddMulti_(
 const char *clnarg::analyzer___::GetOptions( option_list_ &Options ) const
 {
 	id__ Id = CLNARG_NONE;
-	bso__bool End = false;
-	bso__bool Error = false;
+	bso::bool__ End = false;
+	bso::bool__ Error = false;
 	int i = 1;
 	const char *Return = NULL;
 
@@ -247,13 +247,13 @@ const char *clnarg::analyzer___::GetOptions( option_list_ &Options ) const
 
 }
 
-bso__bool clnarg::analyzer___::GetArgument_( 
+bso::bool__ clnarg::analyzer___::GetArgument_( 
 	int &i,
 	id__ Option,
 	argument_ &Argument )
 {
 	tym::row__ P = Search_( Option, Description_->Options );
-	bso__bool Cont = true;
+	bso::bool__ Cont = true;
 
 	switch( Analyze_( ArgV_[i], Flag_ ) ) {
 	case tLong:
@@ -328,7 +328,7 @@ ERREpilog
 void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 {
 	int i = 1;
-	bso__bool End = false;
+	bso::bool__ End = false;
 
 	while(  i < ArgC_ ){
 		switch( Analyze_( ArgV_[i], Flag_ ) ) {
@@ -413,8 +413,8 @@ void clnarg::PrintCommandUsage(
 	const description_ &Description,
 	int CommandId,
 	const char *Text,
-	bso__bool OneLine,
-	bso__bool Default )
+	bso::bool__ OneLine,
+	bso::bool__ Default )
 {
 	fout << txf::tab;
 		
@@ -435,7 +435,7 @@ void clnarg::PrintOptionUsage(
 	const description_ &Description,
 	int CommandId,
 	const char *Text,
-	bso__bool OneLine )
+	bso::bool__ OneLine )
 {
 	fout << txf::tab;
 		

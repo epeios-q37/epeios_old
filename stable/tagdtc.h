@@ -81,7 +81,7 @@ extern class ttr_tutor &TAGDTCTutor;
 
 namespace tagdtc {
 
-	typedef bso__ubyte	char__;
+	typedef bso::ubyte__	char__;
 	typedef epeios::row__	id__;
 	typedef epeios::row__	path__;
 
@@ -164,7 +164,7 @@ namespace tagdtc {
 		: Cards( S.Cards ),
 		  Ids( S.Ids )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			Cards.reset( P );
 			Ids.reset( P );

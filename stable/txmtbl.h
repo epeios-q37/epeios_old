@@ -93,10 +93,10 @@ namespace txmtbl {
 	typedef xtf::location	location__;
 
 	//t A separator char.
-	typedef bso__char	separator__;
+	typedef bso::char__	separator__;
 
 	//t A escape char.
-	typedef bso__char	escape__;
+	typedef bso::char__	escape__;
 
 	//c A cell.
 	class cell_
@@ -112,7 +112,7 @@ namespace txmtbl {
 		: S_( S ),
 		  str::string_( S )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			string_::reset( P );
 			S_.Location = 0;
@@ -263,7 +263,7 @@ namespace txmtbl {
 		}
 		/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
 		Return amount of cell deleted.*/
-		amount__ DeleteCommentary( bso__char Marker );
+		amount__ DeleteCommentary( bso::char__ Marker );
 		//f 'Location' becomes the location.
 		void Location( location__ Location )
 		{
@@ -281,7 +281,7 @@ namespace txmtbl {
 
 	/*f Put in 'Line' current line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
-	bso__bool GetLine(
+	bso::bool__ GetLine(
 		xtf::extended_text_iflow___ &Flow,
 		line_ &Line,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
@@ -289,7 +289,7 @@ namespace txmtbl {
 
 	/*f Put in 'Line' the first non-empty line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
-	bso__bool GetFirstNonEmptyLine(
+	bso::bool__ GetFirstNonEmptyLine(
 		xtf::extended_text_iflow___ &Flow,
 		line_ &Line,
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
@@ -356,7 +356,7 @@ namespace txmtbl {
 		//f Delete all empty cells between the first and last non-empty cells from all the lines.
 		void DeleteCentralEmptyCells( void );
 		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
-		void DeleteCommentaries( bso__char Marker );
+		void DeleteCommentaries( bso::char__ Marker );
 		NAV( lines_:: )
 	};
 

@@ -94,12 +94,12 @@ namespace que {
 			Previous = Next = NONE;
 		}
 		// Return 'true' if node has next node, false otherwise.
-		bso__bool HasNext( void )
+		bso::bool__ HasNext( void )
 		{
 			return Next != NONE;
 		}
 		// Return 'true' if node has previous node, false otherwise.
-		bso__bool HasPrevious( void )
+		bso::bool__ HasPrevious( void )
 		{
 			return Previous != NONE;
 		}
@@ -131,7 +131,7 @@ namespace que {
 		: E_MEMORY_( que::link__ )( S ),
 		amount_extent_manager_<row__>( S )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			amount_extent_manager_<row__>::reset( P );
 			E_MEMORY_( que::link__ )::reset( P );
@@ -226,7 +226,7 @@ namespace que {
 		queue_( s &S )
 		: Links( S.Links )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			Links.reset( P );
 		}
@@ -271,12 +271,12 @@ namespace que {
 			return Links( Node.V ).Previous;
 		}
 		//f Return true if 'Node' has next node.
-		bso__bool HasNext( r Node ) const
+		bso::bool__ HasNext( r Node ) const
 		{
 			return Links( Node.V ).HasNext();
 		}
 		//f Return true if 'Node' has previous node.
-		bso__bool HasPrevious( r Node ) const
+		bso::bool__ HasPrevious( r Node ) const
 		{
 			return Links( Node.V ).HasPrevious();
 		}
@@ -409,7 +409,7 @@ namespace que {
 		}
 	#endif
 	public:
-		void reset( bso__bool = true )
+		void reset( bso::bool__ = true )
 		{
 			Head_ = Tail_ = NONE;
 			Amount_ = 0;
@@ -501,7 +501,7 @@ namespace que {
 			return Amount_;
 		}
 		//f return 'true' if empty, false otherwise.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return !Amount_;
 		}
@@ -583,7 +583,7 @@ namespace que {
 			E_QUEUEt_( r )::s Queue;
 			queue_manager__<r> QueueManager;
 		} &S_;
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			Queue.reset( P );
 			S_.QueueManager.reset( P );
@@ -655,7 +655,7 @@ namespace que {
 			return Queue.Extent();
 		}
 		//f Return 'true' if empty, false otherwise.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return S_.QueueManager.IsEmpty();
 		}

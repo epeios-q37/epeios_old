@@ -68,41 +68,41 @@ namespace str {
 
 	//c A string.
 	class string_
-	: public E_BUNCH_( bso__char )
+		: public E_BUNCH_( bso::char__ )
 	{
 	private:
 	public:
 		struct s
-		: public E_BUNCH_( bso__char )::s {};
+		: public E_BUNCH_( bso::char__ )::s {};
 		string_( s &S )
-		: E_BUNCH_( bso__char )( S )
+		: E_BUNCH_( bso::char__ )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_BUNCH_( bso__char )::reset( P );
+			E_BUNCH_( bso::char__ )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &Driver )
 		{
-			E_BUNCH_( bso__char )::plug( Driver );
+			E_BUNCH_( bso::char__ )::plug( Driver );
 		}
 		void Init( void )
 		{
-			E_BUNCH_( bso__char )::Init();
+			E_BUNCH_( bso::char__ )::Init();
 		}
 		string_ &operator =( const string_ &O )
 		{
-			E_BUNCH_( bso__char )::operator =( O );
+			E_BUNCH_( bso::char__ )::operator =( O );
 
 			return *this;
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_BUNCH_( bso__char )::plug( M );
+			E_BUNCH_( bso::char__ )::plug( M );
 		}
 		string_ &operator =( const char *Chaine )
 		{
 			Init();
-			E_BUNCH_( bso__char )::WriteAndAdjust( Chaine, strlen( Chaine ) );
+			E_BUNCH_( bso::char__ )::WriteAndAdjust( Chaine, strlen( Chaine ) );
 
 			return *this;
 		}
@@ -111,7 +111,7 @@ namespace str {
 			const char *String,
 			epeios::row__ Position = 0 )
 		{
-			E_BUNCH_( bso__char )::WriteAndAdjust( String, strlen( String ), Position );
+			E_BUNCH_( bso::char__ )::WriteAndAdjust( String, strlen( String ), Position );
 		}
 		//f Write 'Amount' char from 'String' at 'Position'.
 		void Write(
@@ -119,7 +119,7 @@ namespace str {
 			epeios::bsize__ Amount,
 			epeios::row__ Position )
 		{
-			E_BUNCH_( bso__char )::Write( Buffer, Amount, Position );
+			E_BUNCH_( bso::char__ )::Write( Buffer, Amount, Position );
 		}
 
 		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
@@ -129,7 +129,7 @@ namespace str {
 			epeios::row__ Position = 0,
 			epeios::row__ Offset = 0 )
 		{
-			E_BUNCH_( bso__char )::Write( Source, Quantity, Position, Offset );
+			E_BUNCH_( bso::char__ )::Write( Source, Quantity, Position, Offset );
 		}
 
 		//f Write 'C' at 'Position'.
@@ -137,29 +137,29 @@ namespace str {
 			char C,
 			epeios::row__ Position)
 		{
-			E_BUNCH_( bso__char )::Write( C, Position );
+			E_BUNCH_( bso::char__ )::Write( C, Position );
 		}
 		//f Add 'String' and return position where added.
 		epeios::row__ Add( const char *String )
 		{
-			return E_BUNCH_( bso__char )::Add( String, strlen( String ) );
+			return E_BUNCH_( bso::char__ )::Add( String, strlen( String ) );
 		}
 		//f Add 'Amount' char from 'String'. Return position wherer added.
 		epeios::row__ Add(
 			const char *String,
 			epeios::bsize__ Amount )
 		{
-			return E_BUNCH_( bso__char )::Add( String, Amount );
+			return E_BUNCH_( bso::char__ )::Add( String, Amount );
 		}
 		//f Add 'C'. Return position where added.
 		epeios::row__ Add( char C )
 		{
-			return E_BUNCH_( bso__char )::Add( C );
+			return E_BUNCH_( bso::char__ )::Add( C );
 		}
 		//f Add 'Sring'. Return position where added.
 		epeios::row__ Add( const string_ &String )
 		{
-			return E_BUNCH_( bso__char )::Add( String );
+			return E_BUNCH_( bso::char__ )::Add( String );
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(
@@ -181,7 +181,7 @@ namespace str {
 			epeios::row__ Start = 0 ) const;
 		/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
-		bso__ulong ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL );
+		bso::ulong__ ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL );
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.
@@ -200,7 +200,7 @@ namespace str {
 		const string_ &String );
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2' and a length of 'Amount'.
-	inline bso__sbyte Compare(
+	inline bso::sbyte__ Compare(
 		const string_ &S1,
 		const string_ &S2,
 		epeios::row__ BeginS1,
@@ -211,13 +211,13 @@ namespace str {
 	}
 
 	//f Return 'S1' - 'S2' beginning at 'BeginS1' and 'BeginS2'.
-	inline bso__sbyte Compare(
+	inline bso::sbyte__ Compare(
 		const string_ &S1,
 		const string_ &S2,
 		epeios::row__ BeginS1 = 0,
 		epeios::row__ BeginS2 = 0 )
 	{
-		bso__sbyte Resultat;
+		bso::sbyte__ Resultat;
 		epeios::size__ T1 = S1.Amount() - BeginS1.V, T2 = S2.Amount() - BeginS2.V;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
@@ -226,42 +226,42 @@ namespace str {
 			return T1 == T2 ? 0 : T1 > T2 ? 1 : -1;
 	}
 
-	inline bso__bool operator ==(
+	inline bso::bool__ operator ==(
 		const string_ &S1,
 		const string_ &S2 )
 	{
 		return !Compare( S1, S2 );
 	}
 
-	inline bso__bool operator !=(
+	inline bso::bool__ operator !=(
 		const string_ &S1,
 		const string_ &S2 )
 	{
 		return Compare( S1, S2 ) != 0;
 	}
 
-	inline bso__bool operator <(
+	inline bso::bool__ operator <(
 		const string_ &S1,
 		const string_ &S2 )
 	{
 		return Compare( S1, S2 ) < 0;
 	}
 
-	inline bso__bool operator <=(
+	inline bso::bool__ operator <=(
 		const string_ &S1,
 		const string_ &S2 )
 	{
 		return Compare( S1, S2 ) <= 0;
 	}
 
-	inline bso__bool operator >(
+	inline bso::bool__ operator >(
 		const string_ &S1,
 		const string_ &S2 )
 	{
 		return Compare( S1, S2 ) > 0;
 	}
 
-	inline bso__bool operator >=(
+	inline bso::bool__ operator >=(
 		const string_ &S1,
 		const string_ &S2 )
 	{

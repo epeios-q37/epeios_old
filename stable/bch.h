@@ -127,7 +127,7 @@ namespace bch {
 		: mmr( S ),
 		  mng( S )
 		{}
-		void reset( bso__bool P )
+		void reset( bso::bool__ P )
 		{
 			mmr::reset( P );
 			mng::reset( P );
@@ -371,7 +371,7 @@ namespace bch {
 
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
-	template <class t, typename r> inline bso__sbyte Compare(
+	template <class t, typename r> inline bso::sbyte__ Compare(
 		const E_BUNCHt_( t, r ) &S1,
 		const E_BUNCHt_( t, r ) &S2,
 		r BeginS1 = 0,
@@ -387,7 +387,7 @@ namespace bch {
 	}
 
 	//f Return 'S1' - 'S2' which respectively begin at 'BeginS1' et 'Begins2' and have a length of 'Amount'.
-	template <class t, typename r> inline bso__sbyte Compare(
+	template <class t, typename r> inline bso::sbyte__ Compare(
 		const E_BUNCHt_( t, r ) &S1,
 		const E_BUNCHt_( t, r ) &S2,
 		r BeginS1,
@@ -398,14 +398,14 @@ namespace bch {
 	}
 
 
-	template <class t, typename r> inline bso__bool operator ==(
+	template <class t, typename r> inline bso::bool__ operator ==(
 		const E_BUNCHt_( t, r ) &S1,
 		const E_BUNCHt_( t, r ) &S2 )
 	{
 		return !Compare( S1, S2 );
 	}
 
-	template <class t, typename r> inline bso__bool operator !=(
+	template <class t, typename r> inline bso::bool__ operator !=(
 		const E_BUNCHt_( t, r ) &S1,
 		const E_BUNCHt_( t, r ) &S2 )
 	{

@@ -80,7 +80,7 @@ namespace mtx {
 
 #ifndef MTX__USE_PTHREAD_MUTEX
 	namespace {
-		typedef bso__ubyte counter__;
+		typedef bso::ubyte__ counter__;
 	};
 #endif
 
@@ -121,7 +121,7 @@ namespace mtx {
 	}
 
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
-	inline bso__bool TryToLock( mutex_handler__ Handler )
+	inline bso::bool__ TryToLock( mutex_handler__ Handler )
 	{
 #ifdef MTX__USE_PTHREAD_MUTEX
 		switch ( pthread_mutex_trylock( Handler ) ) {
@@ -233,7 +233,7 @@ namespace mtx {
 			mtx::Unlock( Handler_ );
 		}
 		//f Try to lock without blocking. Return true if success, false otherwise.
-		bso__bool TryToLock( void )
+		bso::bool__ TryToLock( void )
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX_INVALID_HANDLER )

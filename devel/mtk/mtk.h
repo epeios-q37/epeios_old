@@ -1,6 +1,6 @@
 /*
   Header for the 'mtk' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   

@@ -1,7 +1,7 @@
 /*
   'mtk' library by Claude L. Simon (simon@epeios.org)
   Requires the 'mtk' header file ('mtk.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -203,9 +203,9 @@ namespace {
 		mtx::mutex_handler__ Store;
 		// Lock to handle concurrent calls to 'LauncAndKeep()'.
 		mtx::mutex_handler__ Exclusion;
-		bso__bool Continue;
+		bso::bool__ Continue;
 		void *UP;
-		bso__ulong Amount;
+		bso::ulong__ Amount;
 		routine__ Routine;
 	} Common;
 	

@@ -167,43 +167,43 @@ namespace brktpm {
 
 	struct object_reference__
 	{
-		bso__ushort Type;
-		bso__ushort Identifier;
+		bso::ushort__ Type;
+		bso::ushort__ Identifier;
 	};
 
-	typedef bso__ushort	object_t__;
+	typedef bso::ushort__	object_t__;
 	TYPEDEF( object_t__, object__ );
-	typedef bso__bool boolean_t__;
+	typedef bso::bool__ boolean_t__;
 	typedef boolean_t__	boolean__;
-	typedef bso__ubyte id8_t__;
+	typedef bso::ubyte__ id8_t__;
 	TYPEDEF( id8_t__,	id8__ );
 	typedef bch::E_BUNCH_( id8__ ) ids8_;
 	typedef bch::E_BUNCH( id8__ ) ids8;
-	typedef bso__ushort id16_t__;
+	typedef bso::ushort__ id16_t__;
 	TYPEDEF( id16_t__,	id16__ );
 	typedef bch::E_BUNCH_( id16__ ) ids16_;
 	typedef bch::E_BUNCH( id16__ ) ids16;
-	typedef bso__ulong id32_t__;
+	typedef bso::ulong__ id32_t__;
 	TYPEDEF( id32_t__,	id32__ );
 	typedef bch::E_BUNCH_( id32__ ) ids32_;
 	typedef bch::E_BUNCH( id32__ ) ids32;
-	typedef bso__char char_t__;
+	typedef bso::char__ char_t__;
 	typedef char_t__	char__;
 	typedef str::string_	string_;
 	typedef str::string	string;
 	typedef ctn::E_XMCONTAINER_( string_ )	strings_;
 	typedef ctn::E_XMCONTAINER( string_ )	strings;
-	typedef bso__raw	byte_t__;
+	typedef bso::raw__	byte_t__;
 	typedef byte_t__	byte__;
-	typedef bch::E_BUNCH_( bso__raw ) binary_;
-	typedef bch::E_BUNCH( bso__raw )	binary;
+	typedef bch::E_BUNCH_( bso::raw__ ) binary_;
+	typedef bch::E_BUNCH( bso::raw__ )	binary;
 	typedef ctn::E_XMCONTAINER_( binary_ ) binaries_;
 	typedef ctn::E_XMCONTAINER( binary_ ) binaries;
-	BRKTPM_ITEM( bso__ubyte, item8 )
+	BRKTPM_ITEM( bso::ubyte__, item8 )
 	BRKTPM_ITEMS( item8, items8 )
-	BRKTPM_ITEM( bso__ushort, item16 )
+	BRKTPM_ITEM( bso::ushort__, item16 )
 	BRKTPM_ITEMS( item16, items16 )
-	BRKTPM_ITEM( bso__ulong, item32 )
+	BRKTPM_ITEM( bso::ulong__, item32 )
 	BRKTPM_ITEMS( item32, items32 )
 	/* Both below declaration are not part of the protocol. */
 	typedef brktpm::detail_<id8__, epeios::row__>	command_detail_	;

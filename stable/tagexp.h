@@ -233,7 +233,7 @@ namespace tagexp
 		: References( S.References ),
 		  Detector( S.Detector )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			References.reset( P );
 			Detector.reset( P );
@@ -293,7 +293,7 @@ namespace tagexp
 		tagexp::status Expand(
 			xtf::extended_text_iflow___ &IFlow,
 			txf::text_oflow___ &OFlow,
-			bso__char Demlimiter,
+			bso::char__ Demlimiter,
 			str::string_ &File,
 			tagexp::action Action = tagexp::aPrint,
 			err::handle ErrHandle = err::hUsual ) const;

@@ -183,7 +183,7 @@ namespace tsrcpr {
 		/*f Parse 'Flow' with long commentayr if 'Long' ar true */
 		void Analyze(
 			xtf::extended_text_iflow___ &IStream,
-			bso__bool Long );
+			bso::bool__ Long );
 	};
 
 	//c An enum.
@@ -238,7 +238,7 @@ namespace tsrcpr {
 		/*f Analyze 'Flow' with long commentary if 'Long' at true. */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flow,
-			bso__bool Long );
+			bso::bool__ Long );
 	};
 			
 	//c Une définition de type (typedef).
@@ -286,7 +286,7 @@ namespace tsrcpr {
 		si 'Long' est à vrai */
 		void Analyze(
 			xtf::extended_text_iflow___ &IStream,
-			bso__bool Long );
+			bso::bool__ Long );
 	};
 
 	inline txf::text_oflow___ &operator<<(
@@ -363,7 +363,7 @@ namespace tsrcpr {
 		si 'Long' est à vrai */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 	};
 
 	/*
@@ -424,7 +424,7 @@ namespace tsrcpr {
 		si 'Long' est à vrai */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 	};
 
 	inline txf::text_oflow___ &operator<<(
@@ -666,7 +666,7 @@ namespace tsrcpr {
 		si 'Long' == true. */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 		void plug( mmm::multimemory_ &M )
 		{
 			Type.plug( M );
@@ -754,7 +754,7 @@ namespace tsrcpr {
 		si 'Long' == true. */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 		void plug( mmm::multimemory_ &M )
 		{
 			Template.plug( M );
@@ -833,7 +833,7 @@ namespace tsrcpr {
 		par un commentaire long si 'Long', court sinon. */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 		void plug( mmm::multimemory_ &M )
 		{
 			Type.plug( M );
@@ -946,7 +946,7 @@ namespace tsrcpr {
 		si 'Long', court sinon. */
 		void Analyze(
 			xtf::extended_text_iflow___ &Flot,
-			bso__bool Long );
+			bso::bool__ Long );
 		void plug( mmm::multimemory_ &M )
 		{
 			Methodes.plug( M );

@@ -63,7 +63,7 @@ namespace srv {
 	using namespace sck;
 
 	//t The type of a service.
-	typedef bso__ushort	service__;
+	typedef bso::ushort__	service__;
 
 	//c User functions with socket.
 	class socket_functions__ {
@@ -117,13 +117,13 @@ namespace srv {
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		bso__bool Init(
+		bso::bool__ Init(
 			service__ Service,
 			int Amount,
 			err::handle ErrHandle = err::hUsual );
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		bso__bool Init(
+		bso::bool__ Init(
 			service__ Service,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
@@ -171,7 +171,7 @@ namespace srv {
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		bso__bool Init(
+		bso::bool__ Init(
 			service__ Service,
 			int Amount,
 			err::handle ErrHandle = err::hUsual )
@@ -180,7 +180,7 @@ namespace srv {
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		bso__bool Init(
+		bso::bool__ Init(
 			service__ Service,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )

@@ -77,7 +77,7 @@ void tagexp::tag_expander_::Init( void )
 	References.Init();
 	Detector.Init();
 
-	for( bso__ubyte i = 0; i < tagexp::t_amount; i++ )
+	for( bso::ubyte__ i = 0; i < tagexp::t_amount; i++ )
 		if ( Add( str::string( "" ), tagexp::nText, str::string( TagLabel( (tagexp::tag_id)i ) ) ) != i )
 			ERRc();
 }
@@ -143,12 +143,12 @@ static status HandleReference_(
 status tagexp::tag_expander_::Expand(
 	xtf::extended_text_iflow___ &IFlow,
 	txf::text_oflow___ &OFlow,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	str::string_ &File,
 	tagexp::action Action,
 	err::handle ErrHandle ) const
 {
-	bso__bool Loop = true;
+	bso::bool__ Loop = true;
 	id__ Id = TAGDTC_UNKNOW;
 	ctn::E_CMITEM( value_ ) Value;
 	tagexp::status Status = tagexp::sOK;

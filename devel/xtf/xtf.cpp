@@ -58,7 +58,7 @@ using namespace xtf;
 
 void xtf::extended_text_iflow___::GetLine( str::string_ &Line )
 {
-	bso__bool Cont = true;
+	bso::bool__ Cont = true;
 	char C;
 
 	if ( !EOX() ) {

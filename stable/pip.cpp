@@ -79,11 +79,11 @@ void pip::pipe___::Vider( void )
 pip::amount__ pip::pipe___::Write(
 	const data__ *Buffer,
 	amount__ Amount,
-	bso__bool Synchronization )
+	bso::bool__ Synchronization )
 {
 	pip::amount__ NombreEcrits;
 ERRProlog
-	bso__bool Locked = false;
+	bso::bool__ Locked = false;
 ERRBegin
 	WriteInProgress_ = true;
 #ifdef PIP_DBG
@@ -158,7 +158,7 @@ pip::amount__ pip::pipe___::Read(
 {
 	pip::amount__ NombreLus;
 ERRProlog
-	bso__bool Locked = false;
+	bso::bool__ Locked = false;
 ERRBegin
 	ReadInProgress_ = true;
 

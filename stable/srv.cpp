@@ -61,7 +61,7 @@ using namespace srv;
 #include "mtk.h"
 #endif
 
-bso__bool srv::listener___::Init(
+bso::bool__ srv::listener___::Init(
 	service__ Service,
 	int Amount,
 	err::handle ErrHandle)
@@ -103,7 +103,7 @@ socket__ srv::listener___::Interroger_( err::handle ErrHandle )
 {
 	fd_set fds;
 	int Reponse;
-	bso__bool Boucler = true;
+	bso::bool__ Boucler = true;
 	socket__ Socket;
 
 	while( Boucler )
@@ -152,7 +152,7 @@ static void Traiter_( void *PU )
 {
 	::data__ &Data = *(::data__ *)PU;
 ERRFProlog
-	bso__bool Close = true;
+	bso::bool__ Close = true;
 	socket_functions__ &Functions = *Data.Functions;
 	socket__ Socket = Data.Socket;
 ERRFBegin

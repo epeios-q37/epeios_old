@@ -199,7 +199,7 @@ mbs__position abb_arbre_binaire_::LireDeFlot( flo_entree_portable_ &Flot )
 
 static void AfficherBlancs_(
 	txf::text_oflow___ &Flot,
-	bso__ulong Nombre )
+	bso::ulong__ Nombre )
 {
 	do {
 		Flot.Put( '.' );
@@ -211,8 +211,8 @@ void btr::liens_::PrintStructure(
 	row_t__ Racine,
 	txf::text_oflow___ &Flot ) const
 {
-	bso__ulong Niveau = 0;
-	bso__bool Fils = false, Fille = false;
+	bso::ulong__ Niveau = 0;
+	bso::bool__ Fils = false, Fille = false;
 	row_t__ Courant = Racine;
 
 	Flot << '*';

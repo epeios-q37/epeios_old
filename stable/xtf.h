@@ -71,7 +71,7 @@ extern class ttr_tutor &XTFTutor;
 
 namespace xtf {
 	//t type of position in a text (line or column).
-	typedef bso__ulong location;
+	typedef bso::ulong__ location;
 
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow___
@@ -102,15 +102,15 @@ namespace xtf {
 		// Un petit cache. Taille doit être < 256.
 		flw::data__ Cache_[255];
 		// Position dans le cache
-		bso__ubyte Position_;
+		bso::ubyte__ Position_;
 		// Nombre de caractères encore disponibles dans le cache.
-		bso__ubyte Nombre_;
+		bso::ubyte__ Nombre_;
 		// Ligne sur laquelle se trouve le prochain caractère à lire.
 		location Ligne_;
 		// Colonne sur laquelle se situe le prochain caractère à lire.
 		location Colonne_;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
-		bso__char EOL_;
+		bso::char__ EOL_;
 		// Adjust cache counters after reading a char.
 		void CacheAdjust_( void )
 		{
@@ -245,7 +245,7 @@ namespace xtf {
 			return Consulter_( 1 );
 		}
 		//f True if at end of text.
-		bso__bool EOX( void )
+		bso::bool__ EOX( void )
 		{
 			return View() == XTF_EOXC;
 		}

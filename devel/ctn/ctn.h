@@ -278,7 +278,7 @@ namespace ctn {
 		}
 	*/	/* Retourne faux si l'élément est calé sur un élément du conteneur,
 		vrai sinon */
-		bso__bool EstVide( void )
+		bso::bool__ EstVide( void )
 		{
 			return Vide_();
 		}
@@ -370,7 +370,7 @@ namespace ctn {
 		}
 	*/	/* Retourne faux si l'élément est calé sur un élément du conteneur,
 		vrai sinon */
-		bso__bool EstVide( void )
+		bso::bool__ EstVide( void )
 		{
 			return Vide_();
 		}

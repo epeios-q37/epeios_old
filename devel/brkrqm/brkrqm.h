@@ -220,11 +220,11 @@ namespace brkrqm {
 		// Position in the Description_;
 		tym::row__ Position_;
 		// At true if all the answer be sent.
-		bso__bool Closed_;
+		bso::bool__ Closed_;
 		// Cast buffer.
 		cast Cast_;
 		// At true if the request parsed.
-		bso__bool Parsed_;
+		bso::bool__ Parsed_;
 		// The input/output channel for the request.
 		flw::ioflow___ *Channel_;
 		void Test_( cast Cast )

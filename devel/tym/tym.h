@@ -280,7 +280,7 @@ namespace tym {
 	#define E_MEMORY( t )	E_MEMORYt( t, epeios::row__ )
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
-	template <class t, typename r> inline bso__sbyte Compare(
+	template <class t, typename r> inline bso::sbyte__ Compare(
 		const E_MEMORYt_( t, r ) &S1,
 		const E_MEMORYt_( t, r ) &S2,
 		r BeginS1,

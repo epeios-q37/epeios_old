@@ -59,306 +59,308 @@ extern class ttr_tutor &BSOTutor;
 #include "err.h"
 #include "txf.h"
 
-// Basic data, without any basically signification.
-typedef unsigned char bso__raw;
 
-// Boolean.
-typedef bool bso__bool;
+namespace bso {
+	//t Basic data, without any basically signification.
+	typedef unsigned char raw__;
+
+	//t Boolean.
+	typedef bool bool__;
 
 #if 0 // to delete ?
-template <class T> class bso__pointeur
-{
-	T *Objet_;
-	// l'objet
-public:
-	bso__pointeur( T *Objet = NULL )
+	template <class T> class bso__pointeur
 	{
-		Objet_ = Objet;
-	}
-	operator T *( void ) const
-	{
-		return Objet_;
-	}
-	// conversion
-#pragma warning( disable: 4284 )
-	T *operator ->( void ) const
-	{
-		return Objet_;
-	}
-#pragma warning( default: 4284 )
-	T *Valeur( void ) const
-	{
-		return Objet_;
-	}
-};
+		T *Objet_;
+		// l'objet
+	public:
+		bso__pointeur( T *Objet = NULL )
+		{
+			Objet_ = Objet;
+		}
+		operator T *( void ) const
+		{
+			return Objet_;
+		}
+		// conversion
+	#pragma warning( disable: 4284 )
+		T *operator ->( void ) const
+		{
+			return Objet_;
+		}
+	#pragma warning( default: 4284 )
+		T *Valeur( void ) const
+		{
+			return Objet_;
+		}
+	};
 
-template <class t> acs_ascii_ostream_ &operator <<(
-	acs_ascii_ostream_ &OStream,
-	const bso__pointeur<t> &P )
-{
-	return OStream << *P;
-}
+	template <class t> acs_ascii_ostream_ &operator <<(
+		acs_ascii_ostream_ &OStream,
+		const bso__pointeur<t> &P )
+	{
+		return OStream << *P;
+	}
 
-template <class t> acs_ascii_istream_ &operator >>(
-	acs_ascii_istream_ &IStream,
-	bso__pointeur<t> &P )
-{
-	return IStream >> *P;
-}
+	template <class t> acs_ascii_istream_ &operator >>(
+		acs_ascii_istream_ &IStream,
+		bso__pointeur<t> &P )
+	{
+		return IStream >> *P;
+	}
 #endif
 
 
 #if 0	// to delete ?
-/*****************************************/
-/* COMPORTEMENT COMMUN A TOUT LES OBJETS */
-/*****************************************/
+	/*****************************************/
+	/* COMPORTEMENT COMMUN A TOUT LES OBJETS */
+	/*****************************************/
 
-template <class T> class bso__base
-{
-private:
-	T Objet_;
-	// l'objet proprement dit
-protected:
-	T &Objet( void )
+	template <class T> class bso__base
 	{
-		return Objet_;
-	}
-	// retourne l'objet
-	const T &Objet( void ) const
-	{
-		return Objet_;
-	}
-	// retourne l'objet
-	T &Objet( T Objet )
-	{
-		return Objet_ = Objet;
-	}
-	// initialise l'objet
-public:
-	bso__base( T Objet )
-	{
-		Objet_ = Objet;
-	}
-	// conversion
-/*	bso__base( T Valeur )
-	{
-		Objet_ = Valeur;
-	}
-*/	// constructeur
-	T operator +( void ) const
-	{
-		return Objet_;
-	}
-	// addition
-	T operator -( void ) const
-	{
-		return (T)-Objet_;
-	}
-	// soustraction
-	T operator ++( void )
-	{
-		return ++Objet_;
-	}
-	// incrémentation préfixée
-	T operator --( void )
-	{
-		return --Objet_;
-	}
-	// decrémentation préfixée
-	T operator ++( int )
-	{
-		return Objet_++;
-	}
-	/* incrémentation postfixée
-	si si, c'est bien comme ça que ca doit être déclaré! */
-	T operator --( int )
-	{
-		return Objet_--;
-	}
-	/* decrémentation postfixée
-	si si, c'est bien comme ça que ca doit être déclaré! */
-	T operator +=( T Valeur )
-	{
-		return Objet_ = Objet_ + Valeur;
-	}
-	// addition et affectation
-	T operator -=( T Valeur )
-	{
-		return Objet_ = Objet_ - Valeur;
-	}
-	// soustraction et affectation
-	T operator *=( T Valeur )
-	{
-		return Objet_ = Objet_ * Valeur;
-	}
-	// multiplication et affectation
-	T operator /=( T Valeur )
-	{
-		return Objet_ = Objet_ / Valeur;
-	}
-	// division et affectation
-/*	T operator !( void ) const
-	{
-		return !Objet_;
-	}
-	// inverseur
-	operator class bso__bool( void ) const
-	{
-		return Objet() != 0;
-	}
-	// convertit en booleen
-*/
-	operator T( void )
-	{
-		return Objet_;
-	}
-	T Valeur( void )
-	{
-		return Objet_;
-	}
-};
+	private:
+		T Objet_;
+		// l'objet proprement dit
+	protected:
+		T &Objet( void )
+		{
+			return Objet_;
+		}
+		// retourne l'objet
+		const T &Objet( void ) const
+		{
+			return Objet_;
+		}
+		// retourne l'objet
+		T &Objet( T Objet )
+		{
+			return Objet_ = Objet;
+		}
+		// initialise l'objet
+	public:
+		bso__base( T Objet )
+		{
+			Objet_ = Objet;
+		}
+		// conversion
+	/*	bso__base( T Valeur )
+		{
+			Objet_ = Valeur;
+		}
+	*/	// constructeur
+		T operator +( void ) const
+		{
+			return Objet_;
+		}
+		// addition
+		T operator -( void ) const
+		{
+			return (T)-Objet_;
+		}
+		// soustraction
+		T operator ++( void )
+		{
+			return ++Objet_;
+		}
+		// incrémentation préfixée
+		T operator --( void )
+		{
+			return --Objet_;
+		}
+		// decrémentation préfixée
+		T operator ++( int )
+		{
+			return Objet_++;
+		}
+		/* incrémentation postfixée
+		si si, c'est bien comme ça que ca doit être déclaré! */
+		T operator --( int )
+		{
+			return Objet_--;
+		}
+		/* decrémentation postfixée
+		si si, c'est bien comme ça que ca doit être déclaré! */
+		T operator +=( T Valeur )
+		{
+			return Objet_ = Objet_ + Valeur;
+		}
+		// addition et affectation
+		T operator -=( T Valeur )
+		{
+			return Objet_ = Objet_ - Valeur;
+		}
+		// soustraction et affectation
+		T operator *=( T Valeur )
+		{
+			return Objet_ = Objet_ * Valeur;
+		}
+		// multiplication et affectation
+		T operator /=( T Valeur )
+		{
+			return Objet_ = Objet_ / Valeur;
+		}
+		// division et affectation
+	/*	T operator !( void ) const
+		{
+			return !Objet_;
+		}
+		// inverseur
+		operator class bso__bool( void ) const
+		{
+			return Objet() != 0;
+		}
+		// convertit en booleen
+	*/
+		operator T( void )
+		{
+			return Objet_;
+		}
+		T Valeur( void )
+		{
+			return Objet_;
+		}
+	};
 
-/***********************************/
-/* COMPORTEMENT PROPRE AUX ENTIERS */
-/***********************************/
+	/***********************************/
+	/* COMPORTEMENT PROPRE AUX ENTIERS */
+	/***********************************/
 
-template <class T> class bso__base_entier
-: public bso__base<T>
-{
-public:
-	bso__base_entier( T Valeur ) : bso__base<T>( Valeur ) {}
-	// affectation
-	bso__base_entier( const bso__base_entier &Valeur ) : bso__base<T>( Valeur ) {}
-	// duplication
-	T operator %=( T Valeur )
+	template <class T> class bso__base_entier
+	: public bso__base<T>
 	{
-		return Objet( (T)( Objet() % Valeur ) );
-	}
-	// modulo et affectation
-	T operator &=( T Valeur )
-	{
-		return Objet( Objet() & Valeur );
-	}
-	// ET bit à bit ert affectation
-	T operator |=( T Valeur )
-	{
-		return Objet( Objet() | Valeur );
-	}
-	// OU bit à bit et affectation
-	T operator ^=( T Valeur )
-	{
-		return Objet( Objet() ^ Valeur );
-	}
-	// OU EXCLUSIF bit à bit et affectation
-	T operator <<=( T Valeur )
-	{
-		return Objet( (T)( Objet() << Valeur ) );
-	}
-	// decalage à gauche et affectation
-	T operator >>=( T Valeur )
-	{
-		return Objet( (T)( Objet() >> Valeur ) );
-	}
-	// decalage à droite et affectation
-	T operator ~( void ) const
-	{
-		return (T)~Objet();
-	}
-	// inversion bit à bit
-	friend inline acs_ascii_ostream_ &operator <<(
-		acs_ascii_ostream_ &Stream,
-		bso__base_entier O );
-	friend inline acs_ascii_istream_ &operator >>(
-		acs_ascii_istream_ &Stream,
-		bso__base_entier &O );
-};
+	public:
+		bso__base_entier( T Valeur ) : bso__base<T>( Valeur ) {}
+		// affectation
+		bso__base_entier( const bso__base_entier &Valeur ) : bso__base<T>( Valeur ) {}
+		// duplication
+		T operator %=( T Valeur )
+		{
+			return Objet( (T)( Objet() % Valeur ) );
+		}
+		// modulo et affectation
+		T operator &=( T Valeur )
+		{
+			return Objet( Objet() & Valeur );
+		}
+		// ET bit à bit ert affectation
+		T operator |=( T Valeur )
+		{
+			return Objet( Objet() | Valeur );
+		}
+		// OU bit à bit et affectation
+		T operator ^=( T Valeur )
+		{
+			return Objet( Objet() ^ Valeur );
+		}
+		// OU EXCLUSIF bit à bit et affectation
+		T operator <<=( T Valeur )
+		{
+			return Objet( (T)( Objet() << Valeur ) );
+		}
+		// decalage à gauche et affectation
+		T operator >>=( T Valeur )
+		{
+			return Objet( (T)( Objet() >> Valeur ) );
+		}
+		// decalage à droite et affectation
+		T operator ~( void ) const
+		{
+			return (T)~Objet();
+		}
+		// inversion bit à bit
+		friend inline acs_ascii_ostream_ &operator <<(
+			acs_ascii_ostream_ &Stream,
+			bso__base_entier O );
+		friend inline acs_ascii_istream_ &operator >>(
+			acs_ascii_istream_ &Stream,
+			bso__base_entier &O );
+	};
 
 #endif
 
-//d Maximal value of a 'bso__sbyte'.
-#define BSO_SBYTE_MAX		SCHAR_MAX
-//d Minimal value of a 'bso__sbyte'.
-#define BSO_SBYTE_MIN		SCHAR_MIN
-//d Size, in bit, of a 'sbyte'.
-#define BSO_NB_BITS_SBYTE	8
+	//d Maximal value of a 'sbyte__'.
+	#define BSO_SBYTE_MAX		SCHAR_MAX
+	//d Minimal value of a 'sbyte__'.
+	#define BSO_SBYTE_MIN		SCHAR_MIN
+	//d Size, in bit, of a 'sbyte__'.
+	#define BSO_NB_BITS_SBYTE	8
 
-// Signe byte.
-typedef signed char	bso__sbyte;
-
-
-//d Maximal value of a 'bso__ubyte'.
-#define BSO_UBYTE_MAX	UCHAR_MAX
-//d Minimal value of a 'bso__ubyte'.
-#define BSO_UBYTE_MIN	0
-//d Size, in bit, of a 'bso__ubyte'.
-#define BSO_NB_BITS_UBYTE	8
-
-// Unsigned byte.
-typedef unsigned char bso__ubyte;
-
-//d Maximal value of a 'bso__sshort'.
-#define BSO_SSHORT_MAX	SHRT_MAX
-//d Minimal value of a 'bso__sshort'.
-#define BSO_SSHORT_MIN	SHRT_MIN
-//d Size, in bit, of a 'bso__sshort'.
-#define BSO_NB_BITS_SSHORT	16
-
-// Signed short.
-typedef signed short bso__sshort;
+	//t Signed byte.
+	typedef signed char	sbyte__;
 
 
-//d Maximal value of a 'bso__ushort'.
-#define BSO_USHORT_MAX	USHRT_MAX
-//d Minimal value of a 'bso__ushort'.
-#define BSO_USHORT_MIN	0
-//d Size, in bit, of a 'bso__ushort'.
-#define BSO_NB_BITS_USHORT	16
+	//d Maximal value of a 'ubyte__'.
+	#define BSO_UBYTE_MAX	UCHAR_MAX
+	//d Minimal value of a 'ubyte__'.
+	#define BSO_UBYTE_MIN	0
+	//d Size, in bit, of a 'ubyte__'.
+	#define BSO_NB_BITS_UBYTE	8
 
-// Unsigned short
-typedef unsigned short bso__ushort;
+	//t Unsigned byte.
+	typedef unsigned char ubyte__;
+
+	//d Maximal value of a 'sshort__'.
+	#define BSO_SSHORT_MAX	SHRT_MAX
+	//d Minimal value of a 'sshort__'.
+	#define BSO_SSHORT_MIN	SHRT_MIN
+	//d Size, in bit, of a 'sshort__'.
+	#define BSO_NB_BITS_SSHORT	16
+
+	// Signed short.
+	typedef signed short sshort__;
 
 
-//d Maximal value of a 'bso__slong'.
-#define BSO_SLONG_MAX	LONG_MAX
-//d Minimal value of a 'bso__slong'.
-#define BSO_SLONG_MIN   LONG_MIN
-//d Size, in bit, of a 'bso__slong'.
-#define BSO_NB_BITS_SLONG	32
+	//d Maximal value of a 'ushort__'.
+	#define BSO_USHORT_MAX	USHRT_MAX
+	//d Minimal value of a 'ushort__'.
+	#define BSO_USHORT_MIN	0
+	//d Size, in bit, of a 'ushort__'.
+	#define BSO_NB_BITS_USHORT	16
 
-// Signed long.
-typedef signed long bso__slong;
+	//t Unsigned short
+	typedef unsigned short ushort__;
 
 
-//d Maximal value of a 'bso__ulong'.
-#define BSO_ULONG_MAX	ULONG_MAX
-//d Minimal value of a 'bso__ulong'.
-#define BSO_ULONG_MIN   0
-//d Size, in bit, of a 'bso__ulong'.
-#define BSO_NB_BITS_ULONG	32
+	//d Maximal value of a 'slong__'.
+	#define BSO_SLONG_MAX	LONG_MAX
+	//d Minimal value of a 'slong__'.
+	#define BSO_SLONG_MIN   LONG_MIN
+	//d Size, in bit, of a 'slong__'.
+	#define BSO_NB_BITS_SLONG	32
 
-// Unsigned long.
-typedef unsigned long bso__ulong;
+	//t Signed long.
+	typedef signed long slong__;
 
-//d Maximal value of a 'bso__size'.
-#define BSO_BSIZE_MAX	UINT_MAX
-//d Minimal value of a 'bso__size'.
-#define BSO_BSIZE_MIN	0
 
-// Size of a buffer.
-typedef size_t bso__bsize;
+	//d Maximal value of a 'ulong__'.
+	#define BSO_ULONG_MAX	ULONG_MAX
+	//d Minimal value of a 'ulong__'.
+	#define BSO_ULONG_MIN   0
+	//d Size, in bit, of a 'ulong__'.
+	#define BSO_NB_BITS_ULONG	32
 
-// Short-sized float.
-typedef float bso__sfloat;
+	//t Unsigned long.
+	typedef unsigned long ulong__;
 
-// Middle-sized float.
-typedef double bso__float;
+	//d Maximal value of a 'size__'.
+	#define BSO_BSIZE_MAX	UINT_MAX
+	//d Minimal value of a 'size__'.
+	#define BSO_BSIZE_MIN	0
 
-// Long sized float.
-typedef long double bso__lfloat;
+	//t Size of a buffer.
+	typedef size_t bsize__;
 
-// Character
-typedef char bso__char;
+	//t Short-sized float.
+	typedef float sfloat__;
 
+	//t Middle-sized float.
+	typedef double float__;
+
+	//t Long sized float.
+	typedef long double lfloat__;
+
+	// Character
+	typedef char char__;
+}
 
 /*$END$*/
 				  /********************************************/

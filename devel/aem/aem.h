@@ -81,16 +81,16 @@ namespace aem {
 	};
 
 	//t Type of a step value.
-	typedef bso__ubyte step_value__;
+	typedef bso::ubyte__ step_value__;
 
 	//t Type of a step size.
-	typedef bso__ushort step_size__;
+	typedef bso::ushort__ step_size__;
 
 	//c A amount/extent manager.
 	template <typename r> class amount_extent_manager_
 	{
 	private:
-		bso__bool OnlyGrowing_( void ) const
+		bso::bool__ OnlyGrowing_( void ) const
 		{
 			return ( S_.Misc & 0x80 ) != 0;
 		}
@@ -118,7 +118,7 @@ namespace aem {
 		{
 			return StepValue_() * AEM_STEP_COEFFICIENT;
 		}
-		bso__bool Decrease_( epeios::size__ &Size )
+		bso::bool__ Decrease_( epeios::size__ &Size )
 		{
 			if ( Extent_() >= ( StepSize_() + Size ) ) {
 				Size = Adjust_( Size );
@@ -128,7 +128,7 @@ namespace aem {
 				return false;
 			}
 		}
-		bso__bool Increase_( epeios::size__ &Size )
+		bso::bool__ Increase_( epeios::size__ &Size )
 		{
 			Size = Adjust_( Size );
 
@@ -138,7 +138,7 @@ namespace aem {
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. If 'Mode' = 'mFit', 'Extent' is forced to be equal
 		to 'Size'. */
-		bso__bool AmountToAllocate(
+		bso::bool__ AmountToAllocate(
 			epeios::size__ &Size,
 			mode Mode )
 		{
@@ -164,9 +164,9 @@ namespace aem {
 		}
 		/*f Force the amount and extent to exactly 'Size'.
 		Return true if the amount or the extent wasn't equal to 'Size'. */
-		bso__bool Force( epeios::size__ Size )
+		bso::bool__ Force( epeios::size__ Size )
 		{
-			bso__bool NotEqual = ( Extent() != Size ) || ( Amount() != Size );
+			bso::bool__ NotEqual = ( Extent() != Size ) || ( Amount() != Size );
 
 			S_.Amount = Size;
 			S_.Misc &= 0xff;
@@ -186,7 +186,7 @@ namespace aem {
 		amount_extent_manager_( s &S )
 		: S_( S )
 		{}
-		void reset( bso__bool = true )
+		void reset( bso::bool__ = true )
 		{
 			S_.Amount = 0;
 			S_.Misc = 0;
@@ -238,12 +238,12 @@ namespace aem {
 			return StepSize_();
 		}
 		//f Return true if it grows only.
-		bso__bool GetNoDecreasingState( void )
+		bso::bool__ GetNoDecreasingState( void )
 		{
 			return OnlyGrowing_();
 		}
 		//f If 'State' at true, never decrease.
-		void SetNoDecreasingState( bso__bool State )
+		void SetNoDecreasingState( bso::bool__ State )
 		{
 			S_.Misc |= ( S_.Misc & 0xffffff3f ) | ( State ? 0x80 : 0 );
 		}
@@ -280,7 +280,7 @@ namespace aem {
 				return NONE;
 		}
 		//f Return true if empty, false otherwise.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return Amount() == 0;
 		}
@@ -294,7 +294,7 @@ namespace aem {
 	protected:
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
-		bso__bool AmountToAllocate( epeios::size__ &Size )
+		bso::bool__ AmountToAllocate( epeios::size__ &Size )
 		{
 			return false;
 		}
@@ -305,7 +305,7 @@ namespace aem {
 			reset( false );
 		}
 		// Simplifies the 'SET' library.
-		void reset( bso__bool = true )
+		void reset( bso::bool__ = true )
 		{
 			Amount_ = 0;
 		}

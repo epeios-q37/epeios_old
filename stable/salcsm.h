@@ -159,13 +159,13 @@ namespace salcsm {
 		{
 			Lecture_ = Ecriture_ = 0;
 		}
-		bso__bsize Ecrire(
+		bso::bsize__ Ecrire(
 			const flw::data__ *Tampon,
-			bso__bsize Taille );
-		bso__bsize Lire(
-			bso__bsize Minimum,
+			bso::bsize__ Taille );
+		bso::bsize__ Lire(
+			bso::bsize__ Minimum,
 			flw::data__ *Tampon,
-			bso__bsize Desire );
+			bso::bsize__ Desire );
 	};
 
 	class flot

@@ -56,14 +56,14 @@ public:
 
 using namespace txmtbl;
 
-static inline bso__bool HandleEscape_(
+static inline bso::bool__ HandleEscape_(
 	xtf::extended_text_iflow___ &Flow,
 	separator__ Separator,
 	escape__ Escape,
-	bso__bool &EOX,
-	bso__char &C )
+	bso::bool__ &EOX,
+	bso::char__ &C )
 {
-	bso__bool Retry = false;
+	bso::bool__ Retry = false;
 
 	if ( Flow.EOX() )
 		ERRf();
@@ -107,14 +107,14 @@ static inline bso__bool HandleEscape_(
 	return Retry;
 }
 
-static inline bso__bool IsNotEndOfCell_(
+static inline bso::bool__ IsNotEndOfCell_(
 	xtf::extended_text_iflow___ &Flow,
 	separator__ Separator,
 	escape__ Escape,
-	bso__bool &EOX,
-	bso__char &C )
+	bso::bool__ &EOX,
+	bso::char__ &C )
 {
-	bso__bool Loop = false;
+	bso::bool__ Loop = false;
 
 	if ( !( EOX = Flow.EOX() ) )
 		do {		
@@ -130,8 +130,8 @@ static inline bso__bool IsNotEndOfCell_(
 static inline txmtbl::delimiter GetDelimiter_( 
 	xtf::extended_text_iflow___ &Flow,
 	separator__ Separator,
-	bso__bool EOX,
-	bso__char C )
+	bso::bool__ EOX,
+	bso::char__ C )
 {
 	if ( EOX )
 		return txmtbl::dEOF;
@@ -164,8 +164,8 @@ txmtbl::delimiter txmtbl::GetCell(
 	separator__ Separator,
 	escape__ Escape )
 {
-	bso__char C = 0;
-	bso__bool EOX = false;
+	bso::char__ C = 0;
+	bso::bool__ EOX = false;
 
 	Cell.Init();
 
@@ -182,15 +182,15 @@ txmtbl::delimiter txmtbl::SkipCell(
 	separator__ Separator,
 	escape__ Escape )
 {
-	bso__char C = 0;
-	bso__bool EOX = false;
+	bso::char__ C = 0;
+	bso::bool__ EOX = false;
 
 	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) );
 
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
 
-bso__bool txmtbl::GetLine(
+bso::bool__ txmtbl::GetLine(
 	xtf::extended_text_iflow___ &Flow,
 	line_ &Line,
 	separator__ Separator,
@@ -198,7 +198,7 @@ bso__bool txmtbl::GetLine(
 {
 ERRProlog
 	cell Cell;
-	bso__bool Loop;
+	bso::bool__ Loop;
 	location__ Location;
 ERRBegin
 	Cell.Init();
@@ -412,12 +412,12 @@ ERREpilog
 
 static inline bool IsCommentary_(
 	const cell_ &Cell,
-	bso__char Marker )
+	bso::char__ Marker )
 {
 	return Cell.Amount() && ( Cell( 0 ) == Marker );
 }
 
-amount__ line_::DeleteCommentary( bso__char Marker )
+amount__ line_::DeleteCommentary( bso::char__ Marker )
 {
 	tym::row__ Position = First();
 	ctn::E_CMITEM( cell_ ) Cell;
@@ -459,7 +459,7 @@ txf::text_oflow___ &operator <<(
 	return Flow;
 }
 
-bso__bool txmtbl::GetFirstNonEmptyLine(
+bso::bool__ txmtbl::GetFirstNonEmptyLine(
 	xtf::extended_text_iflow___ &Flow,
 	line_ &Line,
 	separator__ Separator,
@@ -569,7 +569,7 @@ void table_::DeleteCentralEmptyCells( void )
 	lines_::Sync();
 }
 
-void table_::DeleteCommentaries( bso__char Marker )
+void table_::DeleteCommentaries( bso::char__ Marker )
 {
 	tym::row__ Current = First();
 

@@ -109,7 +109,7 @@ namespace uym {
 		// Le pilote.
 		E_MEMORY_DRIVER_ *Pilote_;
 		// Indique si le pilote a été défini de manière interne ou non.
-		bso__bool Interne_;
+		bso::bool__ Interne_;
 	public:
 		void reset( bool P = true )
 		{
@@ -161,7 +161,7 @@ namespace uym {
 				}
 			}
 		}
-		E_MEMORY_DRIVER_ *Driver( bso__bool Ignore = false ) const
+		E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore && !Pilote_ )
@@ -202,7 +202,7 @@ namespace uym {
 			row__ Position,
 			bsize__ Nombre, 
 			data__ *Tampon,
-			bso__bool Ignore = false ) const
+			bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore )
@@ -292,7 +292,7 @@ namespace uym {
 			row__ Position,
 			bsize__ Amount,
 			data__ *Buffer,
-			bso__bool Ignore = false ) const
+			bso::bool__ Ignore = false ) const
 		{
 			Lire_( Position, Amount, Buffer, Ignore );
 		}
@@ -348,7 +348,7 @@ namespace uym {
 			row__ Begin,
 			row__ End );
 		//f Return the used memory driver. 'Ignore' is only for 'UYM_DBG' mode and for the 'MMG' library.
-		E_MEMORY_DRIVER_ *Driver( bso__bool Ignore = false )
+		E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false )
 		{
 			return Pilote_.Driver( Ignore );
 		}
@@ -385,7 +385,7 @@ namespace uym {
 		bsize__ BufferSize );
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
-	bso__sbyte Compare(
+	bso::sbyte__ Compare(
 		const untyped_memory_ &M1,
 		const untyped_memory_ &M2,
 		row__ BeginM1,

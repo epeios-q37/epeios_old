@@ -67,7 +67,7 @@ extern class ttr_tutor &CLNARGTutor;
 
 namespace clnarg {
 	//t An option/argument id.
-	typedef bso__ubyte id__;
+	typedef bso::ubyte__ id__;
 	// if modified, modify below.
 
 	//d Value the get an id when no value.
@@ -213,8 +213,8 @@ namespace clnarg {
 		int ArgC_;
 		const description_ *Description_;
 		char Flag_;
-		bso__ubyte ArgCount_;
-		bso__bool analyzer___::GetArgument_( 
+		bso::ubyte__ ArgCount_;
+		bso::bool__ analyzer___::GetArgument_( 
 			int &i,
 			id__ Option,
 			argument_ &Argument );
@@ -277,8 +277,8 @@ namespace clnarg {
 		const description_ &Description,
 		int CommandId,
 		const char *Text,
-		bso__bool OneLine,
-		bso__bool Default );
+		bso::bool__ OneLine,
+		bso::bool__ Default );
 		
 	/*f Print the usage text for option in 'Description' identified by 'OptionId'
 	using 'Text'. If 'OneLine' at false, text is print on 2 lines, other wise
@@ -287,7 +287,7 @@ namespace clnarg {
 		const description_ &Description,
 		int CommandId,
 		const char *Text,
-		bso__bool OneLine );
+		bso::bool__ OneLine );
 }
 
 /*$END$*/

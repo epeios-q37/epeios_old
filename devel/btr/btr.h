@@ -98,7 +98,7 @@ namespace btr {
 		liens_( s &S )
 		: genealogies_( S )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			genealogies_::reset( P );
 		}
@@ -140,17 +140,17 @@ namespace btr {
 			genealogies_::Write( Genealogie, (row_t__)Noeud );
 		}
 		// invalide la fille
-		bso__bool APere( row_t__ Element ) const
+		bso::bool__ APere( row_t__ Element ) const
 		{
 			return genealogies_::Read( Element ).Pere != NONE;
 		}
 		// retourne != 0 si 'Element' a un pere, 0 sinon
-		bso__bool AFils( row_t__ Element ) const
+		bso::bool__ AFils( row_t__ Element ) const
 		{
 			return genealogies_::Read( Element ).Fils != NONE;
 		}
 		// retourne != 0 si 'Element' a un fils, 0 sinon
-		bso__bool AFille( row_t__ Element ) const
+		bso::bool__ AFille( row_t__ Element ) const
 		{
 			return genealogies_::Read( Element ).Fille != NONE;
 		}
@@ -215,22 +215,22 @@ namespace btr {
 			return AncienPere;
 		}
 		//f Return true if 'Node' is a child.
-		bso__bool IsLeft( row_t__ Node ) const
+		bso::bool__ IsLeft( row_t__ Node ) const
 		{
 			return APere( Node ) && Fils( Pere( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is a right.
-		bso__bool IsRight( row_t__ Node ) const
+		bso::bool__ IsRight( row_t__ Node ) const
 		{
 			return APere( Node ) && Fille( Pere( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is child.
-		bso__bool IsChild( row_t__ Node ) const
+		bso::bool__ IsChild( row_t__ Node ) const
 		{
 			return APere( Node );
 		}
 		//f Return true if 'Node' is parent.
-		bso__bool IsParent( row_t__ Node ) const
+		bso::bool__ IsParent( row_t__ Node ) const
 		{
 			return AFils( Node ) || AFille( Node );
 		}
@@ -238,22 +238,22 @@ namespace btr {
 			row_t__ Racine,
 			txf::text_oflow___ &Flot ) const;
 		//f Return true if 'Node' has right.
-		bso__bool HasRight( row_t__ Node ) const
+		bso::bool__ HasRight( row_t__ Node ) const
 		{
 			return AFille( Node );
 		}
 		//f Return true if 'Node' has left.
-		bso__bool HasLeft( row_t__ Node ) const
+		bso::bool__ HasLeft( row_t__ Node ) const
 		{
 			return AFils( Node );
 		}
 		//f Return true if 'Node' has a child.
-		bso__bool HasChild( row_t__ Node ) const
+		bso::bool__ HasChild( row_t__ Node ) const
 		{
 			return AFille( Node ) || AFils( Node );
 		}
 		//f Return true if 'Node' has a parent.
-		bso__bool HasParent( row_t__ Node ) const
+		bso::bool__ HasParent( row_t__ Node ) const
 		{
 			return APere( Node );
 		}
@@ -299,17 +299,17 @@ namespace btr {
 			Liens.InvaliderFille( Noeud );
 		}
 		// invalide la fille
-		bso__bool APere_( epeios::row_t__ Element ) const
+		bso::bool__ APere_( epeios::row_t__ Element ) const
 		{
 			return Liens.APere( Element );
 		}
 		// retourne != 0 si 'Element' a un pere, 0 sinon
-		bso__bool AFils_( epeios::row_t__ Element ) const
+		bso::bool__ AFils_( epeios::row_t__ Element ) const
 		{
 			return Liens.AFils( Element );
 		}
 		// retourne != 0 si 'Element' a un fils, 0 sinon
-		bso__bool AFille_( epeios::row_t__ Element ) const
+		bso::bool__ AFille_( epeios::row_t__ Element ) const
 		{
 			return Liens.AFille( Element );
 		}
@@ -439,50 +439,50 @@ namespace btr {
 			InvaliderPere_( Node.V );
 		}
 		//f Return true if 'Child' is left of 'Parent'.
-		bso__bool IsLeft(
+		bso::bool__ IsLeft(
 			r Child,
 			r Parent ) const
 		{
 			return Fils_( Parent.V ) == Child;
 		}
 		//f Return true if 'Child' is right of 'Parent'.
-		bso__bool IsRight(
+		bso::bool__ IsRight(
 			r Child,
 			r Parent ) const
 		{
 			return Fille_( Parent.V ) == Child;
 		}
 		//f Return true if 'Child' is child of 'Parent'.
-		bso__bool IsChild(
+		bso::bool__ IsChild(
 			r Child,
 			r Parent ) const
 		{
 			return ( Fils_( Parent.V ) == Child ) || ( Fille_( Parent.V ) == Child );
 		}
 		//f Return true if 'Parent' is parent of 'Child'.
-		bso__bool IsParent(
+		bso::bool__ IsParent(
 			r Parent,
 			r Child ) const
 		{
 			return Pere_( Child.V ) == Parent;
 		}
 		//f Return true if 'Node' is a child.
-		bso__bool IsLeft( r Node ) const
+		bso::bool__ IsLeft( r Node ) const
 		{
 			return APere_( Node.V ) && Fils_( Pere_( Node.V ) ) == Node.V;
 		}
 		//f Return true if 'Node' is a right.
-		bso__bool IsRight( r Node ) const
+		bso::bool__ IsRight( r Node ) const
 		{
 			return APere_( Node.V ) && Fille_( Pere_( Node.V ) ) == Node.V;
 		}
 		//f Return true if 'Node' is child.
-		bso__bool IsChild( r Node ) const
+		bso::bool__ IsChild( r Node ) const
 		{
 			return APere_( Node.V );
 		}
 		//f Return true if 'Node' is parent.
-		bso__bool IsParent( r Node ) const
+		bso::bool__ IsParent( r Node ) const
 		{
 			return AFils_( Node.V ) || AFille_( Node.V );
 		}
@@ -533,22 +533,22 @@ namespace btr {
 			}
 		}
 		//f Return true if 'Node' has right.
-		bso__bool HasRight( r Node ) const
+		bso::bool__ HasRight( r Node ) const
 		{
 			return AFille_( Node.V );
 		}
 		//f Return true if 'Node' has left.
-		bso__bool HasLeft( r Node ) const
+		bso::bool__ HasLeft( r Node ) const
 		{
 			return AFils_( Node.V );
 		}
 		//f Return true if 'Node' has a child.
-		bso__bool HasChild( r Node ) const
+		bso::bool__ HasChild( r Node ) const
 		{
 			return AFille_( Node.V ) || AFils_( Node.V );
 		}
 		//f Return true if 'Node' has a parent.
-		bso__bool HasParent( r Node ) const
+		bso::bool__ HasParent( r Node ) const
 		{
 			return APere_( Node.V );
 		}

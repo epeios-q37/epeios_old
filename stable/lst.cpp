@@ -55,12 +55,12 @@ public:
 /*$BEGIN$*/
 
 // Retourne vrai si 'Element' existe dans la liste.
-bso__bool lst::Existe_(
+bso::bool__ lst::Existe_(
 	epeios::row_t__ Position,
 	const stk::E_STACK_( epeios::row_t__ ) &Libres )
 {
 	tym::row_t__ Nombre = Libres.Amount();
-	bso__bool Trouve = false;
+	bso::bool__ Trouve = false;
 
 	while ( Nombre-- && !( Trouve = ( Libres( Nombre ) == Position ) ) );
 
@@ -87,7 +87,7 @@ epeios::row_t__ lst::Predecesseur_(
 	tym::row_t__ Element,
 	const stk::E_STACK_( epeios::row_t__ ) &Libres )
 {
-	bso__bool Trouve = false;
+	bso::bool__ Trouve = false;
 
 	while( ( Element > 0 ) && !( Trouve = Existe_( --Element, Libres ) ) );
 

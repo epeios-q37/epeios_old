@@ -56,14 +56,14 @@ public:
 
 using namespace uym;
 
-bso__sbyte uym::Compare(
+bso::sbyte__ uym::Compare(
 	const untyped_memory_ &E1,
 	const untyped_memory_ &E2,
 	row__ DebutE1,
 	row__ DebutE2,
 	size__ Nombre )
 {
-	bso__sbyte Resultat;
+	bso::sbyte__ Resultat;
 ERRProlog
 	data__ *Tampon = NULL;
 ERRBegin

@@ -89,7 +89,7 @@ namespace flx {
 		// Pointeur sur le prochain caractère à lire.
 		const flw::data__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
-		bso__bsize Taille_;
+		bso::bsize__ Taille_;
 		// The cache.
 		flw::data__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
@@ -146,7 +146,7 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			flw::data__ *Buffer,
-			bso__bsize Size = BSO_BSIZE_MAX )
+			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
 			iflow___::Init( Cache_, sizeof( Cache_ ) );
 
@@ -165,7 +165,7 @@ namespace flx {
 		// Pointeur sur le prochain caractère à écrire.
 		flw::data__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
-		bso__bsize Taille_;
+		bso::bsize__ Taille_;
 		// The cache.
 		flw::data__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
@@ -204,7 +204,7 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			flw::data__ *Buffer,
-			bso__bsize Size )
+			bso::bsize__ Size )
 		{
 			oflow___::Init( Cache_, sizeof( Cache_ ) );
 

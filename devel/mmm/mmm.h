@@ -94,16 +94,16 @@ namespace mmm {
 	namespace {
 
 		// type d'un indicateur affecté à un bloc de la mutimémoire.
-		typedef bso__ulong		indicateur__;
+		typedef bso::ulong__		indicateur__;
 
 		//t Type of a descriptor of a memory in a multimemory.
 		typedef row__	descriptor__;
 
 		// type de l'indice d'un bloc
-		typedef bso__ulong		indice_bloc__;
+		typedef bso::ulong__		indice_bloc__;
 
 		// type du nombre de blos d'une sous-mémoire.
-		typedef bso__ulong 		nombre__;
+		typedef bso::ulong__ 		nombre__;
 	}
 
 	// Prédéclaration.
@@ -387,7 +387,7 @@ namespace mmm {
 		void EcrireIndicateurOccupe_(
 			descriptor__ Descripteur,
 			nombre__ Nombre,
-			bso__bool PredecesseurOccupe )
+			bso::bool__ PredecesseurOccupe )
 		{
 			indicateur__ Indicateur = Nombre | MMM_MASQUE_OCCUPATION | ( PredecesseurOccupe ? MMM_MASQUE_OCCUPATION_PREDECESSEUR : 0 );
 
@@ -425,22 +425,22 @@ namespace mmm {
 			return NombreEnTaille_( Nombre_( Descripteur ) );
 		}
 		// Retourne vrai si le bloc de descripteur 'Descripteur' est occupé.
-		bso__bool EstOccupe_( descriptor__ Descripteur ) const
+		bso::bool__ EstOccupe_( descriptor__ Descripteur ) const
 		{
 			return ( Indicateur_( Descripteur ) & MMM_MASQUE_OCCUPATION ) != 0;
 		}
 		// Retourne vrai si le bloc de descripteur 'Descripteur' est libre.
-		bso__bool EstLibre_( descriptor__ Descripteur ) const
+		bso::bool__ EstLibre_( descriptor__ Descripteur ) const
 		{
 			return !( Indicateur_( Descripteur ) & MMM_MASQUE_OCCUPATION );
 		}
 		// Retourne vrai si le bloc de descripteur 'Descritpeur' est occupé.
-		bso__bool PredecesseurEstOccupe_( descriptor__ Descripteur ) const
+		bso::bool__ PredecesseurEstOccupe_( descriptor__ Descripteur ) const
 		{
 			return ( Indicateur_( Descripteur ) & MMM_MASQUE_OCCUPATION_PREDECESSEUR ) != 0;
 		}
 		// Retourne vrai si le bloc de descripteur 'Descripteur' est libre.
-		bso__bool PredecesseurEstLibre_( descriptor__ Descripteur ) const
+		bso::bool__ PredecesseurEstLibre_( descriptor__ Descripteur ) const
 		{
 			return !( Indicateur_( Descripteur ) & MMM_MASQUE_OCCUPATION_PREDECESSEUR );
 		}
@@ -478,7 +478,7 @@ namespace mmm {
 			return sizeof( indicateur__ );
 		}
 		// retourne vrai si la portion de descripteur 'Descripteur' est la dernière de la multimémoire.
-		bso__bool EstDernier_( descriptor__ Descripteur ) const
+		bso::bool__ EstDernier_( descriptor__ Descripteur ) const
 		{
 			return HorsLimite_( Successeur_( Descripteur ) );
 		}
@@ -528,7 +528,7 @@ namespace mmm {
 			return Descripteur + Taille_( Descripteur ) + MMM_TAILLE_INDICATEUR;
 		}
 		// Retourne vrai si le descripteur 'Descripteur' pointe en dehors de la multimémoire.
-		bso__bool HorsLimite_( descriptor__ Descripteur ) const
+		bso::bool__ HorsLimite_( descriptor__ Descripteur ) const
 		{
 			return Descripteur >= S_.Capacite;
 		}
@@ -689,7 +689,7 @@ namespace mmm {
 			}
 			else if ( NombreDisponibles_( Descriptor ) >= Nombre )
 			{
-				bso__bool SuccesseurLibre = EstLibre_( Successeur_( Descriptor ) );
+				bso::bool__ SuccesseurLibre = EstLibre_( Successeur_( Descriptor ) );
 
 				if ( PredecesseurEstLibre_( Descriptor ) )
 				{
@@ -733,7 +733,7 @@ namespace mmm {
 				Liberer_( Descriptor );
 		}
 		//f Return true if the multimemory empty, false otherwise.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return !S_.Capacite;
 		}

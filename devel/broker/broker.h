@@ -105,7 +105,7 @@ namespace broker {
 		class untyped_module &Module,
 		command__ Command,
 		request_manager___ &Request,
-		bso__bool &,
+		bso::bool__ &,
 		void *UP );
 
 	//c An untyped module.
@@ -383,7 +383,7 @@ namespace broker {
 	{
 	private:
 		// Si vrai, une erreur arrête le thread, sinon celui-ci se poursuit.
-		bso__bool ErrorBreaking_;
+		bso::bool__ ErrorBreaking_;
 	protected:
 		virtual void Handle_(
 			index__ Index,
@@ -396,11 +396,11 @@ namespace broker {
 		}
 		// Initialisation avec rattachement à l'interface 'Broker'.
 		void Init( broker &Broker );
-		bso__bool ErrorBreaking( void  )
+		bso::bool__ ErrorBreaking( void  )
 		{
 			return ErrorBreaking_;
 		}
-		void ErrorBreaking( bso__bool Value )
+		void ErrorBreaking( bso::bool__ Value )
 		{
 			ErrorBreaking_ = Value;
 		}
@@ -513,7 +513,7 @@ namespace broker {
 		struct
 		{
 			// Nombre de langue supportée.
-			bso__ushort Nombre;
+			bso::ushort__ Nombre;
 			// Les identificateurs des langues supportées.
 			const lgg::language *Identificateurs;
 			// La langue courante.
@@ -547,7 +547,7 @@ namespace broker {
 		}
 		/*f Handle the request which come by 'Channel' and write the answer to 'Channel'.
 		If 'true' is returned, than the request contains a deconnection request. */
-		bso__bool Handle(
+		bso::bool__ Handle(
 			flw::ioflow___ &Channel,
 			void *PU = NULL );
 		/*f Return the command corresponding at request description 'Description' and
@@ -559,12 +559,12 @@ namespace broker {
 			return Module_( IdType ).Command( Description );
 		}
 		//f Return the error breaking status.
-		bso__bool ErrorBreaking( void  )
+		bso::bool__ ErrorBreaking( void  )
 		{
 			return Master_.ErrorBreaking();
 		}
 		//f Set to 'Value' the error breaking status.
-		void ErrorBreaking( bso__bool Value )
+		void ErrorBreaking( bso::bool__ Value )
 		{
 			Master_.ErrorBreaking( Value );
 		}
@@ -606,7 +606,7 @@ namespace broker {
 		/*f Tell that 'Amount' language indicated in 'Languages' are supported.
 		'Languages' is not copied and should NOT be modified. */
 		void Languages(
-			bso__ushort Amount,
+			bso::ushort__ Amount,
 			const lgg::language *Languages )
 		{
 			Langues_.Nombre = Amount;

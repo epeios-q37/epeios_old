@@ -138,7 +138,7 @@ namespace dtr {
 		: Tree( S.Tree ),
 		  Queue( S.Queue )
 		{}
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			Tree.reset( P );
 			Queue.reset( P );

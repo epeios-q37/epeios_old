@@ -1,7 +1,7 @@
 /*
   'spp' library by Claude L. Simon (simon@epeios.org)
   Requires the 'spp' header file ('spp.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -75,7 +75,7 @@ static flw::amount__ Put_(
 	const flw::data__ *Buffer,
 	flw::amount__ Wanted,
 	flw::amount__ Minimum,
-	bso__bool Synchronization )
+	bso::bool__ Synchronization )
 {
 	flw::amount__ Amount = 0;
 

@@ -226,9 +226,9 @@ namespace pip {
 		amount__ Available_;
 		bool Synchronization_;
 		mutex_handler__ Mutex_;
-		bso__bool WriteInProgress_, ReadInProgress_;
+		bso::bool__ WriteInProgress_, ReadInProgress_;
 	public:
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
 			
@@ -266,7 +266,7 @@ namespace pip {
 		amount__ Write(
 			const data__ *Buffer,
 			amount__ Amount,
-			bso__bool Synchronization );
+			bso::bool__ Synchronization );
 		//f Put up to 'Amount' bytes to 'Buffer'. Return the amount of bytes red.
 		amount__ Read(
 			amount__ Amount,
@@ -274,7 +274,7 @@ namespace pip {
 		//f Return true if all the data written until the last synchronization are read.
 		bool IsEmpty( void )
 		{
-			bso__bool Return = false;
+			bso::bool__ Return = false;
 
 			if ( Synchronization_ ) {
 				mtx::Lock( Mutex_ );
@@ -286,7 +286,7 @@ namespace pip {
 		}
 		/*f Flushes the pipe. If 'Force' at true, then force the flush EVEN if the
 		pipe already empty ; a write will be occurs. */
-		void Flush(	bso__bool Force = false )
+		void Flush(	bso::bool__ Force = false )
 		{
 			if ( !IsEmpty() || Force )
 				Vider();
@@ -358,7 +358,7 @@ namespace pip {
 			flw::data__ *Buffer,
 			flw::amount__ Wanted );
 	public:
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			ioflow___::reset( P );
 
@@ -399,7 +399,7 @@ namespace pip {
 			flw::data__ *Buffer,
 			flw::amount__ Wanted );
 	public:
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			ioflow___::reset( P );
 
@@ -430,7 +430,7 @@ namespace pip {
 		slave_bipipe_ioflow___ Slave_;
 		bipipe___ Bipipe_;
 	public:
-		void reset( bso__bool P = true )
+		void reset( bso::bool__ P = true )
 		{
 			Master_.reset( P );
 			Slave_.reset( P );

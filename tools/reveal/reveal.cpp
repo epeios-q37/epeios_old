@@ -93,10 +93,10 @@ id__ GetReservedTagId( const string_ &Tag )
 	return i;
 }
 
-bso__bool TestTag( const string_ &Tag )
+bso::bool__ TestTag( const string_ &Tag )
 {
 	tym::row__ P = Tag.First();
-	bso__char C;
+	bso::char__ C;
 
 	if ( Tag.Amount() != 0 )
 	{
@@ -116,10 +116,10 @@ bso__bool TestTag( const string_ &Tag )
 
 inline tagexp::nature TestAndFormTagValue(
 	string_ &Value,
-	bso__char Text,
-	bso__char File )
+	bso::char__ Text,
+	bso::char__ File )
 {
-	bso__char C;
+	bso::char__ C;
 
 	if ( Value.Amount() < 1 )
 		return tagexp::nUnknow;
@@ -141,8 +141,8 @@ inline tagexp::nature TestAndFormTagValue(
 inline void Add(
 	const line_ &Line,
 	expander_ &Expander,
-	bso__char Text,
-	bso__char File,
+	bso::char__ Text,
+	bso::char__ File,
 	cell_ &ValueBuffer )
 {
 	tym::row__ P;
@@ -202,9 +202,9 @@ inline void AdditionalTags(
 
 void FillExpander( 
 	const table_ &Table,
-	bso__char Delimiter,
-	bso__char Text,
-	bso__char File,
+	bso::char__ Delimiter,
+	bso::char__ Text,
+	bso::char__ File,
 	expander_ &Expander )
 {
 ERRProlog
@@ -228,7 +228,7 @@ ERREpilog
 
 void Expand(
 	const expander_ &Expander,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	tagexp::action Action,
 	xtf::extended_text_iflow___ &IFlow,
 	txf::text_oflow___ &OFlow )
@@ -260,10 +260,10 @@ ERREpilog
 	
 void HandleSingle( 
 	const table_ &Table,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	tagexp::action Action,
-	bso__char Text,
-	bso__char File,
+	bso::char__ Text,
+	bso::char__ File,
 	flw::iflow___ &IFlow,
 	txf::text_oflow___ &OFlow )
 {
@@ -286,7 +286,7 @@ ERREpilog
 void PrepareExpander(
 	expander_ &Expander,
 	ids_ &Ids,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	const line_ &Line )
 {
 	ctn::E_CMITEM( cell_ ) Tag;
@@ -327,7 +327,7 @@ void FillSet(
 	flw::iflow___ &IFlow )
 {
 ERRProlog
-	bso__char Buffer[BUFFER_SIZE];
+	bso::char__ Buffer[BUFFER_SIZE];
 	flw::amount__ Amount;
 	flx::bunch_oflow___ OFlow;
 ERRBegin
@@ -346,8 +346,8 @@ void CompleteExpander(
 	expander_ &Expander,
 	const ids_ &Ids,
 	const line_ &Line,
-	bso__char Text,
-	bso__char File )
+	bso::char__ Text,
+	bso::char__ File )
 {
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Value;
@@ -397,10 +397,10 @@ ERREpilog
 
 void HandleMulti( 
 	const table_ &Table,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	tagexp::action Action,
-	bso__char Text,
-	bso__char File,
+	bso::char__ Text,
+	bso::char__ File,
 	flw::iflow___ &IFlow,
 	txf::text_oflow___ &OFlow )
 {
@@ -449,18 +449,18 @@ ERREnd
 ERREpilog
 }
 
-inline bso__bool IsMulti(
+inline bso::bool__ IsMulti(
 	const cell_ &Cell,
-	bso__char Text,
-	bso__char File )
+	bso::char__ Text,
+	bso::char__ File )
 {
 	return ( Cell( 0 ) != Text ) && ( Cell( 0 ) != File );
 }
 
-inline bso__bool IsMulti(
+inline bso::bool__ IsMulti(
 	const line_ &Line,
-	bso__char Text,
-	bso__char File )
+	bso::char__ Text,
+	bso::char__ File )
 {
 	tym::row__ P;
 	ctn::E_CMITEM( cell_ ) Cell;
@@ -477,10 +477,10 @@ inline bso__bool IsMulti(
 	}
 }
 
-inline bso__bool IsMulti(
+inline bso::bool__ IsMulti(
 	const table_ &Table,
-	bso__char Text,
-	bso__char File )
+	bso::char__ Text,
+	bso::char__ File )
 {
 	tym::row__ P;
 	ctn::E_CITEM( line_ ) Line;
@@ -497,10 +497,10 @@ inline bso__bool IsMulti(
 
 void Go(
 	const table_ &Table,
-	bso__char Delimiter,
+	bso::char__ Delimiter,
 	tagexp::action Action,
-	bso__char Text,
-	bso__char File,
+	bso::char__ Text,
+	bso::char__ File,
 	flw::iflow___ &IFlow,
 	txf::text_oflow___ &OFlow )
 {
@@ -517,7 +517,7 @@ ERREpilog
 
 void GetTable(
 	xtf::extended_text_iflow___ &Desc,
-	bso__char Commentary,
+	bso::char__ Commentary,
 	table_ &Table )
 {
 	txmtbl::GetTable( Desc, Table );
@@ -760,7 +760,7 @@ ERRProlog
 	xtf::extended_text_iflow___ DText;
 	txf::text_oflow___ *OFlow = NULL;
 	flw::iflow___ *IFlow = NULL;
-	bso__bool Backup = false;
+	bso::bool__ Backup = false;
 	char *Desc = NULL;
 	char *Source = NULL;
 	char *Dest = NULL;

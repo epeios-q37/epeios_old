@@ -58,9 +58,9 @@ using namespace salcsm;
 
 using bch::bunch;
 
-bso__bsize salcsm::tampon::Ecrire(
+bso::bsize__ salcsm::tampon::Ecrire(
 	const flw::data__ *Tampon,
-	bso__bsize Taille )
+	bso::bsize__ Taille )
 {
 	E_BUNCH(flw::data__)::Allocate( Ecriture_ + Taille );
 
@@ -71,10 +71,10 @@ bso__bsize salcsm::tampon::Ecrire(
 	return Taille;
 }
 
-bso__bsize salcsm::tampon::Lire(
-	bso__bsize Minimum,
+bso::bsize__ salcsm::tampon::Lire(
+	bso::bsize__ Minimum,
 	flw::data__ *Tampon,
-	bso__bsize Desire )
+	bso::bsize__ Desire )
 {
 	if ( Desire > ( Ecriture_ - Lecture_ ) )
 		Desire = Ecriture_ - Lecture_;

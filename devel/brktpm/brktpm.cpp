@@ -62,7 +62,7 @@ using namespace brktpm;
 
 namespace {
 	inline void PutSize_(
-		bso__ulong Size,
+		bso::ulong__ Size,
 		flw::oflow___ &Flow )
 	{
 		if ( Size >= M1 )
@@ -93,9 +93,9 @@ namespace {
 		Flow.Put( (flw::data__)( Size & 255 ) );
 	}
 
-	inline bso__ulong GetSize_( flw::iflow___ &IFlow )
+	inline bso::ulong__ GetSize_( flw::iflow___ &IFlow )
 	{
-		bso__ulong Size = IFlow.Get();
+		bso::ulong__ Size = IFlow.Get();
 
 		if ( Size == M1 )
 		{
@@ -134,7 +134,7 @@ namespace {
 		s &S )
 	{
 		i I;
-		bso__ulong Size = GetSize_( IFlow );
+		bso::ulong__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			flw::Get( IFlow, I );
@@ -229,7 +229,7 @@ namespace {
 				flw::iflow___ &IFlow,
 				binary_ &Binary )
 			{
-				GetSet_<binary_, bso__raw>( IFlow, Binary );
+				GetSet_<binary_, bso::raw__>( IFlow, Binary );
 			}
 
 			inline void Put_(
@@ -287,7 +287,7 @@ namespace {
 		c &C )
 	{
 		i Item;
-		bso__ulong Size = GetSize_( IFlow );
+		bso::ulong__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			Item.Init();
@@ -323,7 +323,7 @@ void brktpm::GetBinary(
    flw::iflow___ &IFlow,
    binary_ &Binary )
 {
-	GetSet_<binary_, bso__raw>( IFlow, Binary );
+	GetSet_<binary_, bso::raw__>( IFlow, Binary );
 }
 
 void brktpm::PutBinaries(

@@ -110,7 +110,7 @@ static void LireIdentificateur_(
 	xtf::extended_text_iflow___ &Flot,
 	str::string_ &String )
 {
-	bso__char C = Flot.Get();
+	bso::char__ C = Flot.Get();
 
 	while ( !Flot.EOX() && isidcar( C ) ) {
 		String.Add( C );
@@ -143,7 +143,7 @@ static void LireType_(
 	str::string_ &String )
 {
 ERRProlog
-	bso__char C;
+	bso::char__ C;
 	str::string Tampon;
 ERRBegin
 	Tampon.Init();
@@ -386,7 +386,7 @@ void LireDocumentation_(
 
 void LireDoc_(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long,
+	bso::bool__ Long,
 	str::string_ &Commentaire )
 // lit la doc. dans 'Flot' et la place dans 'Commentaire';
 // si 'Long', alors la doc est située dans un commentaire long (/**/),
@@ -400,11 +400,11 @@ void LireDoc_(
 
 static type TrouverDoc_(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Classe )
+	bso::bool__ Classe )
 // positionne 'Flot' sur la doc, sachant que l'on est en train d'analyser une classe si 'Classe'
 {
 	static int Crochet = 0;
-	bso__bool Long;
+	bso::bool__ Long;
 	volatile int C;
 
 	do
@@ -588,11 +588,11 @@ void tsrcpr::parametre_::Analyze( xtf::extended_text_iflow___ &Flot )
 
 void tsrcpr::typedef_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 ERRProlog
 	str::string S;
-	bso__ubyte Level = 0;
+	bso::ubyte__ Level = 0;
 ERRBegin
 	LireDoc_( Flot, Long, Commentaire );
 
@@ -658,7 +658,7 @@ ERREpilog
 
 void tsrcpr::shortcut_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 
 	define_::Analyze( Flot, Long );
@@ -706,7 +706,7 @@ ERREpilog
 
 void tsrcpr::define_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 ERRProlog
 	str::string S;
@@ -742,7 +742,7 @@ ERREpilog
 
 void tsrcpr::methode_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 // lit une methode sachant que sa doc. est située
 //dans un commentaire long si 'Long', dans un commentaire court sinon
 {
@@ -766,7 +766,7 @@ void tsrcpr::methode_::Analyze(
 
 	if ( Name == str::string( "operator" ) )
 	{
-		bso__bool Premier = true;
+		bso::bool__ Premier = true;
 
 		Name.Add( ' ' );
 
@@ -788,7 +788,7 @@ void tsrcpr::methode_::Analyze(
 
 void tsrcpr::function_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 // lit une methode sachant que sa doc. est située
 //dans un commentaire long si 'Long', dans un commentaire court sinon
 {
@@ -819,7 +819,7 @@ void tsrcpr::function_::Analyze(
 
 	if ( Name == str::string( "operator" ) )
 	{
-		bso__bool Premier = true;
+		bso::bool__ Premier = true;
 
 		Name.Add( ' ' );
 
@@ -926,7 +926,7 @@ ERREpilog
 void tsrcpr::function_::AnalyserParametres_( xtf::extended_text_iflow___ &Flot )
 {
 ERRProlog
-	bso__char C;
+	bso::char__ C;
 	tsrcpr::parametre P;
 ERRBegin
 
@@ -960,7 +960,7 @@ ERREpilog
 
 void tsrcpr::objet_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 // lit une methode sachant que sa doc. est située
 //dans un commentaire long si 'Long', dans un commentaire court sinon
 {
@@ -980,7 +980,7 @@ void tsrcpr::objet_::Analyze(
 template <class t> void inline AnalyserItem_(
 	table_<t> &TI,
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 ERRProlog
 	ctn::E_ITEM( t ) Element;
@@ -998,7 +998,7 @@ ERREpilog
 
 static void AdjustEndOfBase_( str::string_ &S )
 {
-	bso__char C;
+	bso::char__ C;
 
 	while( ( C = S( S.Last() ) == ' ' ) || ( C == ',' ) )
 		S.Truncate();
@@ -1036,7 +1036,7 @@ ERREpilog
 
 void tsrcpr::item_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 	LireDoc_( Flot, Long, Commentary );
 
@@ -1049,7 +1049,7 @@ void tsrcpr::item_::Analyze(
 
 void tsrcpr::enum_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 {
 
 	type Type;
@@ -1095,7 +1095,7 @@ void tsrcpr::enum_::Analyze(
 
 void tsrcpr::classe_::Analyze(
 	xtf::extended_text_iflow___ &Flot,
-	bso__bool Long )
+	bso::bool__ Long )
 // lit une methode sachant que sa doc. est située
 //dans un commentaire long si 'Long', dans un commentaire court sinon
 {

@@ -65,7 +65,7 @@ struct server_data__
 	spp::shared_bipipe___ *Bipipe;
 	csm::manager___ *Manager;
 	mtx::mutex_handler__ Mutex;
-	volatile bso__bool Error;
+	volatile bso::bool__ Error;
 };
 
 struct client_data__
@@ -162,14 +162,14 @@ ERRFEnd
 ERRFEpilog
 }
 
-static bso__bool Listener_( void *P )
+static bso::bool__ Listener_( void *P )
 {
-	bso__bool Success = true;
+	bso::bool__ Success = true;
 ERRProlog
 	srv::server___ Server;
 	listener_data__ &LD = *(listener_data__ *)P;
 	internal_functions__ Functions;
-	bso__bool BindSucceed = false;
+	bso::bool__ BindSucceed = false;
 ERRBegin
 	Functions.ClientData = &LD.Client;
 

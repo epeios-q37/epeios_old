@@ -82,16 +82,16 @@ namespace mmm {
 namespace mdr {
 
 	//t The position in a memory.
-	typedef bso__ulong	row__;
+	typedef bso::ulong__	row__;
 
 	//t The size of a memory.
-	typedef bso__ulong	size__;
+	typedef bso::ulong__	size__;
 
 	//t The size of a buffer.
-	typedef bso__bsize	bsize__;
+	typedef bso::bsize__	bsize__;
 
 	//t The type of the data in a memory.
-	typedef bso__raw	data__;
+	typedef bso::raw__	data__;
 
 	//e Access mode to the memory.
 	enum mode

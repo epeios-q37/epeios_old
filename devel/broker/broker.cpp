@@ -77,7 +77,7 @@ namespace {
 }
 
 struct master_data__ {
-	bso__bool Deconnexion;
+	bso::bool__ Deconnexion;
 	void *UP;
 };
 
@@ -153,7 +153,7 @@ static void GetLanguagesIDAndName_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -167,7 +167,7 @@ ERRBegin
 	Item.Value = LGGLanguageName[lgg::lDefault];
 	Items.Add( Item );
 
-	for ( bso__ushort I = 0; I < Broker.Langues_.Nombre; I++ )
+	for ( bso::ushort__ I = 0; I < Broker.Langues_.Nombre; I++ )
 	{
 		Item.Init();
 		Item.ID( Broker.Langues_.Identificateurs[I] );
@@ -188,7 +188,7 @@ static void GetTypesIDAndName_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -272,7 +272,7 @@ static void GetCommandsIDAndName_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 	id16__ Type;
@@ -310,7 +310,7 @@ static void GetParameters_(
 	untyped_module &Module,
 	command__,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 	id16__ Type;
@@ -331,7 +331,7 @@ static void GetVersion_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 	Requete.PushString( string( Broker.Version_ ) );
@@ -344,13 +344,13 @@ static void SetErrorBreakingStatus_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
-	bso__bool Retour;
+	bso::bool__ Retour;
 	boolean__ O;
 
-	Retour = (bso__raw)Broker.ErrorBreaking();
+	Retour = (bso::raw__)Broker.ErrorBreaking();
 
 	Requete.PopBoolean( O );
 
@@ -367,12 +367,12 @@ static void GetErrorBreakingStatus_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
-	bso__bool Retour;
+	bso::bool__ Retour;
 
-	Retour = (bso__raw)Broker.ErrorBreaking();
+	Retour = (bso::raw__)Broker.ErrorBreaking();
 
 	Requete.PushBoolean( Retour );
 
@@ -385,7 +385,7 @@ static void GetNewObject_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 	object__ O;
@@ -415,7 +415,7 @@ static void GetType_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -445,7 +445,7 @@ static void RemoveObject_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 	object__ O;
@@ -501,7 +501,7 @@ static void GetTypeAndCommands_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -538,7 +538,7 @@ static void GetCommand_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -576,7 +576,7 @@ static void GetCommands_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &,
+	bso::bool__ &,
 	void * )
 {
 ERRProlog
@@ -607,7 +607,7 @@ static void Disconnect_(
 	untyped_module &Module,
 	command__ Command,
 	request_manager___ &Requete,
-	bso__bool &Deconnexion,
+	bso::bool__ &Deconnexion,
 	void * )
 {
 	Deconnexion = true;
@@ -680,7 +680,7 @@ namespace broker {
 		return (type_t__)C.V;
 	}
 
-	bso__bool broker_::Handle(
+	bso::bool__ broker_::Handle(
 		flw::ioflow___ &Channel,
 		void *PU )
 	{

@@ -425,7 +425,7 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	{\
 		return Object##Extent();\
 	}\
-	bso__bool IsEmpty( void ) const\
+	bso::bool__ IsEmpty( void ) const\
 	{\
 		return Object##IsEmpty();\
 	}

@@ -125,7 +125,7 @@ namespace sck {
 
 	typedef int	amount__;
 
-	typedef bso__ushort	duration__;
+	typedef bso::ushort__	duration__;
 
 	/* NOTA: Les deux déclarations ci-dessous ont été mise en place pour simplifier
 	l'usage des sockets sous Windows. En effet, ce dernier, et lui seul, ne réalise
@@ -204,7 +204,7 @@ namespace sck {
 	Not currently available under Be OS. */
 	inline void Blocking(
 		socket__ Socket,
-		bso__bool Value )
+		bso::bool__ Value )
 	{
 		unsigned long *V;
 

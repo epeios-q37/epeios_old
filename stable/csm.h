@@ -79,7 +79,7 @@ namespace csm {
 	: public functions__
 	{
 	public:
-		void reset( bso__bool = true )
+		void reset( bso::bool__ = true )
 		{}
 		manager___( void )
 		{

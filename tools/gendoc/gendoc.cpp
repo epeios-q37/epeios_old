@@ -1174,7 +1174,7 @@ ERREpilog
 void ClasserListe( ctn::E_CONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
-	bso__bool Swap = true;
+	bso::bool__ Swap = true;
 	str::string S1, S2;
 ERRBegin
 	S1.Init();
@@ -1252,7 +1252,7 @@ void Analyser(
 ERRProlog
 	// La liste des librairies.
 	ctn::E_CONTAINER (str::string_ ) Liste;
-	bso__ulong Compteur = 1;
+	bso::ulong__ Compteur = 1;
 	tym::row__ Courant, PListe;
 ERRBegin
 	Liste.Init();
