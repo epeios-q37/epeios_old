@@ -64,6 +64,12 @@ extern class ttr_tutor &MTXTutor;
 #include "cpe.h"
 #include "tol.h"
 
+#ifdef MTX_DEFAULT_DELAY
+#	define MTX__DEFAULT_DELAY	MTX_DEFAULT_DELAY
+#else
+#	define MTX__DEFAULT_DELAY	1
+#endif
+
 #ifndef CPE__MT
 #	error "This library only useful in multitasking context, in which you are not."
 #endif
@@ -170,43 +176,20 @@ namespace mtx {
 	}
 
 #ifdef MTX__USE_COUNTER
-	// Wait until mutex unlocked.
-	inline void WaitUntilUnlocked_( mutex_handler__ Handler )
-	{
-		while( !TryToLock( Handler ) )
-			tol::Defer();
-	}
-
 	// Wait until mutex unlocked, with 'Delay' millisecond between delays.
 	inline void WaitUntilUnlocked_(
 		mutex_handler__ Handler,
-		unsigned long Delay )
+		unsigned long Delay = MTX__DEFAULT_DELAY )
 	{
 		while( !TryToLock( Handler ) )
 			tol::Defer( Delay );
 	}
 #endif
 
-	//f Lock 'Handler'. Blocks until lock succeed.
-	inline void Lock( mutex_handler__ Handler )
-	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		if ( pthread_mutex_lock( Handler ) != 0 )
-			ERRs();
-#elif defined( MTX__USE_COUNTER )
-#	ifdef MTX__CONTROL
-		if ( *Handler == MTX_RELEASED_MUTEX )
-			ERRu();
-#	endif
-		if ( !TryToLock( Handler ) )
-			WaitUntilUnlocked_( Handler );
-#endif
-	}
-
 	//f Lock 'Handler'. Blocks until lock succeed with 'Delay' millisecond between tries.
 	inline void Lock(
 		mutex_handler__ Handler,
-		unsigned long Delay )
+		unsigned long Delay = MTX__DEFAULT_DELAY )
 	{
 #ifdef MTX__USE_PTHREAD_MUTEX
 		if ( pthread_mutex_lock( Handler ) != 0 )
@@ -239,18 +222,20 @@ namespace mtx {
 	}
 
 	//f Delete the mutex of handler 'Handler'.
-	inline void Delete( mutex_handler__ Handler )
+	inline void Delete(
+		mutex_handler__ Handler,
+		bso::bool__ EvenIfLocked = false )
 	{
 #ifdef MTX__USE_PTHREAD_MUTEX
 		if ( pthread_mutex_destroy( Handler ) != 0 ) {
 				ERRs();
 		}
-#endif
-#ifdef MTX__CONTROL
-		if ( *Handler != 0 )
+#else
+#	ifdef MTX__CONTROL
+		if ( ( *Handler != 0 ) && ( !EvenIfLocked ) )
 			ERRu();
 		*Handler = MTX_RELEASED_MUTEX;
-#else
+#	endif
 		free( Handler );
 #endif
 
@@ -282,17 +267,8 @@ namespace mtx {
 			
 			Handler_ = Handler;
 		}
-		//f Lock the semaphore. BLOCKING FUNCTION.
-		void Lock( void )
-		{
-#ifdef MTX_DBG
-			if ( Handler_ == MTX_INVALID_HANDLER )
-				ERRu();
-#endif
-			mtx::Lock( Handler_ );
-		}
 		//f Lock the semaphore.Waits 'Delay' millisecond between tries. BLOCKING FUNCTION.
-		void Lock( unsigned long Delay )
+		void Lock( unsigned long Delay = MTX__DEFAULT_DELAY )
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX_INVALID_HANDLER )

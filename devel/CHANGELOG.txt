@@ -1,5 +1,14 @@
 $Id$
 
+21/03/05:
+- FLX :
+	- Correction de bogue.
+
+17/03/05:
+- MTX:
+	- Correction bogue fonction 'Delete()'.
+	- Ajout paramètre 'EvenIfLocked' à la fonction 'Delete()'.
+
 16/03/05:
 - HTP:
 	- Ajout du champ 'Content-Type' dans l'objet 'header'.

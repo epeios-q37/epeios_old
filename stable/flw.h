@@ -387,7 +387,7 @@ namespace flw {
 
 
 	//c Basic output flow.
-	class oflow__	// Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
+	class oflow__	// Althought it has a destructor, it's a '__' version because it has to be inherited to be used.
 	{
 	private:
 		// The cache.
@@ -405,33 +405,17 @@ namespace flw {
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum,
-			bool Synchronization )
+			bool Synchronization );
+		void _DumpCache( bool Synchronization )
 		{
-			return _Write( Buffer, Wanted, Minimum, Synchronization );
-		}
-		/* Try to dump the cache. Return true if succeed, false otherwise.
-		'Synchronization' is at true if a synchonization is requested. */
-		bool _DumpCache( bool Synchronization )
-		{
-			size__ Stayed;
-			size__ AmountWritten;
+			size__ Stayed = Size_ - Free_;
 			
-			if ( ( Stayed = Size_ - Free_ ) != 0 ) {
-				AmountWritten = _DirectWrite( Cache_, Stayed, Stayed, Synchronization );
-				
-				if ( AmountWritten < Stayed )
-					memmove( Cache_, Cache_ + AmountWritten, (size_t)( Stayed - AmountWritten ) );
-					
-				Free_ += AmountWritten;
+			if ( ( Stayed != 0 ) || Synchronization ) {
+				_DirectWrite( Cache_, Stayed, Stayed, Synchronization );
+
+				Free_ = Size_;
 			}
-			
-			return Free_ == Size_;
 		}
-		/* Force the dumping of the cache. 'Synchronization' at true
-		if synchronization required. */
-		void _ForceDumpingOfCache( bool Synchronization );				
-		/* Write up to 'Amount' bytes from 'Buffer' into the cache.
-		Return amount of bytes written. */
 		size__ _WriteIntoCache(
 			const datum__ *Buffer,
 			size__ Amount )
@@ -447,7 +431,7 @@ namespace flw {
 		}
 		/* Put up to 'Amount' bytes from 'Buffer' directly or through the cache.
 		Return amount of bytes written. Cache MUST be EMPTY. */
-		size__ _WriteIntoCacheOrDirectly(
+		size__ _DirectWriteOrIntoCache(
 			const datum__ *Buffer,
 			size__ Amount )
 		{
@@ -456,20 +440,14 @@ namespace flw {
 				ERRc();
 #endif
 			if ( Amount > Size_ )
-				return _DirectWrite( Buffer, Amount - 1, Amount - 1, false );
-				// The '-1' is to be sure that at least 1 byte is in the cache when a 'Synchronize' occurs.
+				return _DirectWrite( Buffer, Amount, Amount, false );
 			else
 				return _WriteIntoCache( Buffer, Amount );
 		}
-		// Force writing of 'Amount( bytes of 'Buffer'.
-		void _ForceWriting(
-			const datum__ *Data,
-			size__ Amount );
 		// Synchronization.
 		void _Synchronize( void )
 		{
-			if ( !_DumpCache( true ) )
-				_ForceDumpingOfCache( true );
+			_DumpCache( true );
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		size__ _WriteUpTo(
@@ -478,12 +456,9 @@ namespace flw {
 		{
 			size__ AmountWritten = _WriteIntoCache( Buffer, Amount );
 
-			if ( ( AmountWritten == 0 )  && ( Amount != 0 ) )
-			{
-				if ( _DumpCache( false ) )
-					AmountWritten = _WriteIntoCacheOrDirectly( Buffer, Amount );
-				else
-					AmountWritten = _WriteIntoCache( Buffer, Amount );
+			if ( ( AmountWritten == 0 )  && ( Amount != 0 ) ) {
+				_DumpCache( false );
+				AmountWritten = _DirectWriteOrIntoCache( Buffer, Amount );
 			}
 
 			return AmountWritten;
@@ -491,30 +466,14 @@ namespace flw {
 		// Put 'Amount' data from 'Buffer'.
 		void _Write(
 			const datum__ *Buffer,
-			size__ Amount )
-		{
-			size__ AmountWritten = _WriteUpTo( Buffer, Amount );
-
-			if ( AmountWritten < Amount )
-				_ForceWriting( Buffer + AmountWritten, Amount - AmountWritten );
-		}
-		size__ _Write(
-			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum,
-			bool Synchronization );
+			size__ Amount );
 	protected:
-		/*v Called to put up to 'Wanted' and a minimum of 'Minimum' bytes from
-		'Buffer'. If 'Synchronization' is true, then this fonction is called
-		due to a synchronization operation. Return the amount of data written.
-		If 'Minimum' == 0, then the function must return as fast as
-		possible if no data can be written. */
 		virtual size__ FLWWrite(
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum,
 			bool Synchronization ) = 0;
-		virtual void FLWSynchronizing( void )
+		virtual void FLWSynchronizing( int )	// Obsolete ; rajout du paramètre 'int( pour détecter ceux qui l'utilisent.
 		{}
 	public:
 		oflow__(
@@ -556,7 +515,7 @@ namespace flw {
 		{
 			_Synchronize();
 		}
-		//f Return the amount of data red since last 'Synchronize()'.
+		//f Return the amount of data written since last 'Synchronize()'.
 		amount__ AmountWritten( void ) const
 		{
 			return Written_ + ( Size_ - Free_ );
@@ -589,7 +548,7 @@ namespace flw {
 	}
 
 	//c Basic input/output flow.
-	class ioflow__// Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
+	class ioflow__// Althought it has a destructor, it's a '__' version because it has to be inherited to be used.
 	: public iflow__,
 	  public oflow__
 	{

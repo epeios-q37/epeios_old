@@ -278,7 +278,7 @@ namespace flx {
 	#define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
 
 	//c A bunch as output flow.driver.
-	template < typename bunch_, typename so__> class bunch_oflow__
+	template < typename bunch_, typename so__> class bunch_oflow___
 	: public flw::oflow__
 	{
 	protected:
@@ -297,18 +297,22 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_oflow__( void )
+		bunch_oflow___( void )
 		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
-		~bunch_oflow__( void )
+		~bunch_oflow___( void )
 		{
 			reset( true );
 		}
 		void reset( bool P = true )
 		{
-			oflow__::Synchronize();
+			if ( P ) {
+				if ( Bunch_ != NULL ) 
+					oflow__::Synchronize();
+			}
+
 			Bunch_ = NULL;
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
@@ -320,7 +324,7 @@ namespace flx {
 		}
 	};
 
-#define E_STRING_OFLOW__	bunch_oflow__<str::string_, bso::char__>
+#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
 	//c A output flow which write to nothing.
 	class dump_oflow__

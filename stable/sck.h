@@ -289,11 +289,11 @@ namespace sck {
 	public:
 		void reset( bool P = true )
 		{
-			ioflow__::Synchronize();
-			
 			if ( P ) {
-				if ( Socket_ != SCK_INVALID_SOCKET ) 
+				if ( Socket_ != SCK_INVALID_SOCKET ) {
+					ioflow__::Synchronize();
 					Close( Socket_ );
+				}
 			}
 								
 			Socket_ = SCK_INVALID_SOCKET;

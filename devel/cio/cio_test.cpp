@@ -31,16 +31,25 @@
 #include "cio.h"
 
 #include "err.h"
-#include "flf.h"
 
-using flf::cin;
-using flf::cout;
-using flf::cerr;
+using cio::cin;
+using cio::cout;
+using cio::cerr;
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+	while ( 1 )
+		if ( rand() % 100000 )
+			if ( rand() % 60 )
+				cout << (char)( rand() % 26 + 'A' );
+			else
+				cout << txf::nl;
+		else
+			cout << txf::sync;
+
+
 ERRErr
 ERREnd
 ERREpilog
@@ -60,7 +69,7 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:

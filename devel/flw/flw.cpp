@@ -61,7 +61,7 @@ public:
 
 using namespace flw;
 
-void flw::oflow__::_ForceWriting(
+void flw::oflow__::_Write(
 	const datum__ *Buffer,
 	size__ Amount )
 {
@@ -70,12 +70,6 @@ void flw::oflow__::_ForceWriting(
 	while( AmountWritten < Amount )
 		AmountWritten += _WriteUpTo( Buffer + AmountWritten, Amount - AmountWritten );
 }
-
-void flw::oflow__::_ForceDumpingOfCache( bool Synchronisation )
-{
-	while( !_DumpCache( Synchronisation ) ) {};
-}
-
 
 bool flw::GetString(
 	iflow__ &Flot,
@@ -115,7 +109,7 @@ ERREpilog
 	return Amount;
 }
 
-size__ flw::oflow__::_Write(
+size__ flw::oflow__::_DirectWrite(
 	const datum__ *Buffer,
 	size__ Wanted,
 	size__ Minimum,
@@ -127,12 +121,28 @@ ERRBegin
 	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
+#ifdef FLW_DBG
+		if ( Wanted < Minimum )
+			ERRu();
+
+		if ( Synchronization )
+			if ( Minimum != Wanted )
+				ERRc();
+#endif
+
 	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
 
-	if ( Synchronization && ( Amount == Wanted ) ) {
+#ifdef FLW_DBG
+			if ( Amount > Wanted )
+				ERRu();
+
+			if ( Amount < Minimum )
+				ERRu();
+#endif
+
+	if ( Synchronization )
 		Written_ = 0;
-		FLWSynchronizing();
-	} else {
+	else {
 		Written_ += Amount;
 
 		if ( Written_ >= AmountMax_ )
