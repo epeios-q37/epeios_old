@@ -1,5 +1,9 @@
 $Id$
 
+--------
+20010513
+--------
+
 General changes.
 - I had some difficulties with the 'broker::broker' object, due to
 the fact that class name and namespace are the same, (had the same
@@ -104,6 +108,8 @@ XMLPRS:
 XTF:
 - Correct a bug due to a missing 'EOX()' in 'GetLine()'.
 
-
+--------
 20040501
+--------
+
 Creation
