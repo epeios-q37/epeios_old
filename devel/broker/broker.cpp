@@ -253,7 +253,10 @@ ERRBegin
 
 		Item.ID( Command );
 		Item.Value = Description( P ).Name;
-		Items.Add( Item );
+		
+		if ( Item.Value( 0 ) != '_' )
+			Items.Add( Item );
+			
 		P = Descriptions.Next( P );
 	}
 

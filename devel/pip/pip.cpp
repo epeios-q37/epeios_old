@@ -82,13 +82,25 @@ ERRProlog
 	bso__bool Locked = false;
 ERRBegin
 #ifdef PIP_DBG
+	WriteInProgress_ = true;
+	
 	if ( ( Pipe_[pip::eWrite] == INVALID_HANDLE_VALUE )
 		 || ( Pipe_[pip::eRead] == INVALID_HANDLE_VALUE ) )
 		 ERRu();
 #endif
 
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
+
 	mtx::Lock( Mutex_ );
 	Locked = true;
+	
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	Available_ += Amount;
 
@@ -97,10 +109,31 @@ ERRBegin
 	mtx::Unlock( Mutex_ );
 	Locked = false;
 
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
+
+#ifdef PIP_DBG
+	if ( Pipe_[0] == PIP_INVALID_PIPE )
+		Locked = false;
+		
+#endif
+
 	NombreEcrits = pip::Write( Pipe_, Buffer, Amount );
+
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	mtx::Lock( Mutex_ );
 	Locked = true;
+
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	Available_ -= Amount - NombreEcrits;
 
@@ -109,6 +142,9 @@ ERRErr
 ERREnd
 	if ( Locked )
 		mtx::Unlock( Mutex_ );
+		
+	WriteInProgress_ = false;
+
 ERREpilog
 	return NombreEcrits;
 }
@@ -121,6 +157,8 @@ pip::amount__ pip::pipe___::Read(
 ERRProlog
 	bso__bool Locked = false;
 ERRBegin
+	ReadInProgress_ = true;
+
 #ifdef PIP_DBG
 	if ( ( Pipe_[pip::eWrite] == INVALID_HANDLE_VALUE )
 		 || ( Pipe_[pip::eRead] == INVALID_HANDLE_VALUE ) )
@@ -143,6 +181,8 @@ ERRErr
 ERREnd
 	if ( Locked )
 		mtx::Unlock( Mutex_ );
+		
+	ReadInProgress_ = false;
 ERREpilog
 	return NombreLus;
 }

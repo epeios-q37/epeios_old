@@ -226,10 +226,15 @@ namespace pip {
 		amount__ Available_;
 		bool Synchronization_;
 		mutex_handler__ Mutex_;
+		bso__bool WriteInProgress_, ReadInProgress_;
 	public:
 		void reset( bso__bool P = true )
 		{
 			if ( P ) {
+			
+				while( WriteInProgress_ || ReadInProgress_ )
+					TOLYield();
+			
 				Delete( Pipe_ );
 
 				if ( Mutex_ != MTX_INVALID_HANDLER )
@@ -240,6 +245,7 @@ namespace pip {
 			Available_ = false;
 			Synchronization_ = false;
 			Mutex_ = MTX_INVALID_HANDLER;
+			WriteInProgress_ = ReadInProgress_ = false;
 		}
 		pipe___( void )
 		{

@@ -1,7 +1,7 @@
 /*
-  'pip' library by Claude L. Simon (epeios@epeios.org)
+  'pip' library by Claude L. Simon (simon@epeios.org)
   Requires the 'pip' header file ('pip.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( PIP_NAME )
 	{
 #ifdef PIP_DBG
-		Version = PIP_VERSION " (DBG)";
+		Version = PIP_VERSION "\b\bD $";
 #else
 		Version = PIP_VERSION;
 #endif
@@ -81,13 +82,25 @@ ERRProlog
 	bso__bool Locked = false;
 ERRBegin
 #ifdef PIP_DBG
+	WriteInProgress_ = true;
+	
 	if ( ( Pipe_[pip::eWrite] == INVALID_HANDLE_VALUE )
 		 || ( Pipe_[pip::eRead] == INVALID_HANDLE_VALUE ) )
 		 ERRu();
 #endif
 
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
+
 	mtx::Lock( Mutex_ );
 	Locked = true;
+	
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	Available_ += Amount;
 
@@ -96,10 +109,31 @@ ERRBegin
 	mtx::Unlock( Mutex_ );
 	Locked = false;
 
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
+
+#ifdef PIP_DBG
+	if ( Pipe_[0] == PIP_INVALID_PIPE )
+		Locked = false;
+		
+#endif
+
 	NombreEcrits = pip::Write( Pipe_, Buffer, Amount );
+
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	mtx::Lock( Mutex_ );
 	Locked = true;
+
+#ifdef PIP_DBG
+	if ( Mutex_ == NULL )
+		ERRc();
+#endif
 
 	Available_ -= Amount - NombreEcrits;
 
@@ -108,6 +142,9 @@ ERRErr
 ERREnd
 	if ( Locked )
 		mtx::Unlock( Mutex_ );
+		
+	WriteInProgress_ = false;
+
 ERREpilog
 	return NombreEcrits;
 }
@@ -120,6 +157,8 @@ pip::amount__ pip::pipe___::Read(
 ERRProlog
 	bso__bool Locked = false;
 ERRBegin
+	ReadInProgress_ = true;
+
 #ifdef PIP_DBG
 	if ( ( Pipe_[pip::eWrite] == INVALID_HANDLE_VALUE )
 		 || ( Pipe_[pip::eRead] == INVALID_HANDLE_VALUE ) )
@@ -142,6 +181,8 @@ ERRErr
 ERREnd
 	if ( Locked )
 		mtx::Unlock( Mutex_ );
+		
+	ReadInProgress_ = false;
 ERREpilog
 	return NombreLus;
 }
