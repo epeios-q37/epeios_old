@@ -1,10 +1,8 @@
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="Libraries">
-		<xsl:element name="center">
-			<xsl:element name="table">
-				<xsl:apply-templates select="Library" mode="index"/>
-			</xsl:element>
+		<xsl:element name="table">
+			<xsl:apply-templates select="Library" mode="index"/>
 		</xsl:element>
 		<xsl:apply-templates select="Library"/>
 	</xsl:template>
@@ -12,7 +10,7 @@
 		<xsl:element name="tr">
 			<xsl:element name="td">
 				<xsl:element name="tt">
-					<xsl:element name="A">
+					<xsl:element name="a">
 						<xsl:attribute name="href">
 							<xsl:text>#</xsl:text>
 							<xsl:value-of select="@Name"/>
@@ -44,18 +42,18 @@
 	</xsl:template>
 	<xsl:template match="Libraries/Library">
 		<xsl:element name="hr"/>
-			<xsl:element name="center">
+			<xsl:element name="div">
+				<xsl:attribute name="style">text-align:center;</xsl:attribute>
 				<xsl:element name="h2">
-					<xsl:element name="u">
-						<xsl:text>Library </xsl:text>
-						<xsl:element name="a">
-							<xsl:attribute name="name">
-								<xsl:value-of select="@Name"/>
-							</xsl:attribute>
-						</xsl:element>
-						<xsl:element name="em">
+					<xsl:attribute name="style">text-decoration: underline;</xsl:attribute>
+					<xsl:text>Library </xsl:text>
+					<xsl:element name="a">
+						<xsl:attribute name="name">
 							<xsl:value-of select="@Name"/>
-						</xsl:element>
+						</xsl:attribute>
+					</xsl:element>
+					<xsl:element name="em">
+						<xsl:value-of select="@Name"/>
 					</xsl:element>
 				</xsl:element>
 				<xsl:element name="em">

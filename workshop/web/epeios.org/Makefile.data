@@ -25,7 +25,7 @@ all:
 	$(copy) $(cvs)/etmc/apps/backend/API.xml $(dest)/getbkdapi
 	$(copy) $(cvs)/ebkd/stable/*.xsl $(dest)/getbkdapi
 	$(copy) $(cvs)/etmc/apps/cgid/tmcde.h $(dest)/getbkdapi
-ifeq ("$(EPEIOS_OS)","linux")
+ifeq ("$(EPEIOS_ENV)","gnu")
 	make -C $(dest)/epeios/quickdoc -f $(mkf)
 	make -C $(dest)/etmc/quickdoc -f $(mkf)
 	make -C $(dest)/ecgi/quickdoc -f $(mkf) 

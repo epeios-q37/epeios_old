@@ -25,20 +25,18 @@
 		<xsl:apply-templates select="link"/>
 	</xsl:template>
 	<xsl:template match="CVS/link">
-		<xsl:text>You can browse the CVS repository by following this</xsl:text>
+		<xsl:text>You can browse the CVS repository by following this </xsl:text>
 		<xsl:element name="a">
 			<xsl:attribute name="href">
 				<xsl:value-of select="@URL"/>
 			</xsl:attribute>
-			<xsl:attribute name="target">_blank</xsl:attribute>
 			<xsl:text>link</xsl:text>
 		</xsl:element>
-		<xsl:text>(</xsl:text>
+		<xsl:text> (</xsl:text>
 		<xsl:element name="a">
 			<xsl:attribute name="href">
 				<xsl:value-of select="@URL"/>
 			</xsl:attribute>
-			<xsl:attribute name="target">_blank</xsl:attribute>
 			<xsl:value-of select="@URL"/>
 		</xsl:element>
 		<xsl:text>).</xsl:text>

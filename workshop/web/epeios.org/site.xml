@@ -25,7 +25,7 @@
       <author>$AUTHOR$</author>
       <copyright>
         <owner>$OWNER$</owner>
-        <date>2001-2002</date>
+        <date>2001-2003</date>
       </copyright>
       <misc>
         <sourceforge group_id="$CORE_SF_ID$"/>
@@ -305,10 +305,11 @@
         </general>
         <specific>
           <WEB hierarchy="epeios/download" name="index" bookmark="Core libraries download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -540,10 +541,11 @@
         </general>
         <specific>
           <WEB hierarchy="ebkd/download" name="index" bookmark="EBKD download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -773,10 +775,11 @@
         </general>
         <specific>
           <WEB hierarchy="ecgi/download" name="index" bookmark="ECGI download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$ECGI_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$ECGI_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -916,10 +919,11 @@
         </general>
         <specific>
           <WEB hierarchy="exml/download" name="index" bookmark="EXML download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$EXML_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EXML_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -1059,10 +1063,11 @@
         </general>
         <specific>
           <WEB hierarchy="emth/download" name="index" bookmark="EMTH download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$EMTH_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EMTH_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -1200,10 +1205,11 @@
         </general>
         <specific>
           <WEB hierarchy="etmc/download" name="index" bookmark="ETMC download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+</download></content>
       </document>
       <dir id="quickdoc">
         <document id="homepage">
@@ -1337,10 +1343,11 @@
         </general>
         <specific>
           <WEB hierarchy="ejava/download" name="index" bookmark="EJAVA download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$EJAVA_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EJAVA_SV_ID$">
+</download></content>
       </document>
     </dir>
   </dir>
@@ -1533,10 +1540,12 @@
           </general>
           <specific>
             <WEB hierarchy="tmcde/backend/download" name="index" bookmark="TMCDE backend download" robots="$ROBOTS$">
-              <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$"/>
+ 
+
             </WEB>
           </specific>
-          <content/>
+          <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+</download></content>
         </document>
         <dir id="manual">
           <document id="homepage">
@@ -1640,7 +1649,7 @@
           </specific>
           <content>
             <CVS server="cvs.etmc.sf.net" root="/cvsroot/etmc" module="apps/CGID/">
-              <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/etmc/etmc/apps/CGID/"/>
+              <link URL="http://savannah.nongnu.org/cgi-bin/viewcvs/etmc/etmc/apps/cgid/"/>
             </CVS>
           </content>
         </document>
@@ -1658,10 +1667,12 @@
           </general>
           <specific>
             <WEB hierarchy="tmcde/CGID/download" name="index" bookmark="TMCDE CGID download" robots="$ROBOTS$">
-              <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$"/>
+ 
+
             </WEB>
           </specific>
-          <content/>
+          <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+</download></content>
         </document>
         <dir id="manual">
           <document id="homepage">
@@ -1808,10 +1819,11 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </general>
         <specific>
           <WEB hierarchy="mll2html/download" name="index" bookmark="'mll2html' download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+</download></content>
       </document>
       <dir id="manual">
         <document id="homepage">
@@ -1956,10 +1968,11 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </general>
         <specific>
           <WEB hierarchy="reveal/download" name="index" bookmark="'reveal' download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+</download></content>
       </document>
       <dir id="manual">
         <document id="homepage">
@@ -2107,10 +2120,11 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </general>
         <specific>
           <WEB hierarchy="getbkdapi/download" name="index" bookmark="'getbkdapi' download" robots="$ROBOTS$">
-            <redirection delay="5" URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$"/>
+
           </WEB>
         </specific>
-        <content/>
+        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$">
+</download></content>
       </document>
       <dir id="manual">
         <document id="homepage">

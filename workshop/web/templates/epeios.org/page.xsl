@@ -101,16 +101,14 @@
 				</xsl:element>
 				<xsl:element name="tr">
 					<xsl:element name="td">
-						<xsl:element name="div">
-							<xsl:attribute name="align">center</xsl:attribute>
-							<xsl:element name="h1">
-								<xsl:value-of select="general/@title"/>
-							</xsl:element>
+						<xsl:element name="h1">
+							<xsl:attribute name="style">text-align:center;</xsl:attribute>
+							<xsl:value-of select="general/@title"/>
 						</xsl:element>
 						<xsl:apply-templates select="content"/>
 						<xsl:apply-templates select="Libraries"/>
 						<xsl:apply-templates select="specific/WEB/redirection"/>
-					</xsl:element>
+						</xsl:element>
 				</xsl:element>
 				<xsl:element name="tr">
 					<xsl:element name="td">
@@ -141,13 +139,10 @@
 						</xsl:element>
 					</xsl:element>
 					<xsl:element name="td">
-						<xsl:attribute name="align">center</xsl:attribute>
-						<xsl:apply-templates select="specific/WEB/@parent"/>
-					</xsl:element>
-					<xsl:element name="td">
 						<xsl:attribute name="align">right</xsl:attribute>
-						<xsl:text>Hosted on</xsl:text>
+						<xsl:text>CVS and download area</xsl:text>
 						<xsl:element name="br"/>
+						<xsl:text>hosted on </xsl:text>
 						<xsl:element name="a">
 							<xsl:attribute name="href">http://sv.gnu.org</xsl:attribute>
 							<xsl:text>Savannah</xsl:text>
@@ -164,59 +159,38 @@
 			<xsl:element name="tbody">
 				<xsl:element name="tr">
 					<xsl:element name="td">
-						<xsl:element name="font">
-							<xsl:attribute name="size">2</xsl:attribute>
-							<xsl:element name="em">
-								<xsl:text>Copyright </xsl:text>
-								<xsl:text>&#169; </xsl:text>
-								<xsl:value-of select="general/copyright/date"/>
-								<xsl:text> </xsl:text>
-								<xsl:element name="a">
-									<xsl:attribute name="href">
-										<xsl:text>mailto:</xsl:text>
-										<xsl:value-of select="general/copyright/owner/email"/>
-									</xsl:attribute>
-									<xsl:value-of select="general/copyright/owner/name"/>
-								</xsl:element>
-								<xsl:text>.</xsl:text>
-								<xsl:element name="br"/>
-								<xsl:text> All rights reserved.</xsl:text>
+						<xsl:attribute name="style">font-size:90%;</xsl:attribute>
+						<xsl:element name="em">
+							<xsl:text>Copyright </xsl:text>
+							<xsl:text>&#169; </xsl:text>
+							<xsl:value-of select="general/copyright/date"/>
+							<xsl:text> </xsl:text>
+							<xsl:element name="a">
+								<xsl:attribute name="href">
+									<xsl:text>mailto:</xsl:text>
+									<xsl:value-of select="general/copyright/owner/email"/>
+								</xsl:attribute>
+								<xsl:value-of select="general/copyright/owner/name"/>
 							</xsl:element>
+							<xsl:text>.</xsl:text>
+							<xsl:element name="br"/>
+							<xsl:text> All rights reserved.</xsl:text>
 						</xsl:element>
 					</xsl:element>
 					<xsl:element name="td">
-						<xsl:attribute name="align">center</xsl:attribute>
-						<xsl:apply-templates select="specific/WEB/@parent"/>
-					</xsl:element>
-					<xsl:element name="td">
 						<xsl:attribute name="align">right</xsl:attribute>
-						<xsl:element name="font">
-							<xsl:attribute name="size">2</xsl:attribute>
-							<xsl:element name="em">
-								<xsl:text>Last modified : </xsl:text>
-								<xsl:value-of select="general/misc/stamp/@date"/>
-								<xsl:text> </xsl:text>
-								<xsl:value-of select="general/misc/stamp/@time"/>
-								<xsl:text> </xsl:text>
-								<xsl:value-of select="general/misc/generation/time"/>
-								<xsl:element name="br"/>
-								<xsl:text>by </xsl:text>
-								<xsl:element name="a">
-									<xsl:attribute name="href">
-										<xsl:text>mailto:</xsl:text>
-										<xsl:value-of select="general/author/email"/>
-									</xsl:attribute>
-									<xsl:value-of select="general/author/name"/>
-								</xsl:element>
-								<xsl:text> (</xsl:text>
-								<xsl:element name="a">
-									<xsl:attribute name="href">
-										<xsl:text>mailto:</xsl:text>
-										<xsl:value-of select="general/author/email"/>
-									</xsl:attribute>
-									<xsl:value-of select="general/author/email"/>
-								</xsl:element>
-								<xsl:text>).</xsl:text>
+						<xsl:attribute name="style">font-size:90%;</xsl:attribute>
+						<xsl:element name="em">
+							<xsl:text>Last modified : </xsl:text>
+							<xsl:value-of select="general/misc/stamp/@date"/>
+							<xsl:text> </xsl:text>
+							<xsl:value-of select="general/misc/stamp/@time"/>
+							<xsl:text> </xsl:text>
+							<xsl:value-of select="general/misc/generation/time"/>
+							<xsl:element name="br"/>
+							<xsl:element name="a">
+								<xsl:attribute name="href">http://validator.w3.org/check/referer</xsl:attribute>
+								XHTML 1.0 validation in progress.
 							</xsl:element>
 						</xsl:element>
 					</xsl:element>
@@ -251,4 +225,5 @@
 	<xsl:include href="../misc.xsl"/>
 	<xsl:include href="../libraries.xsl"/>
 	<xsl:include href="../cvs.xsl"/>
+	<xsl:include href="../download.xsl"/>
 </xsl:stylesheet>

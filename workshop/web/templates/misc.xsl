@@ -22,9 +22,6 @@
 			<xsl:attribute name="href">
 				<xsl:value-of select="@URL"/>
 			</xsl:attribute>
-			<xsl:if test="@type='external'">
-				<xsl:attribute name="target">_blank</xsl:attribute>
-			</xsl:if>
 			<xsl:apply-templates/>
 		</xsl:element>
 		<xsl:if test="@aspect='long'">
@@ -33,9 +30,6 @@
 				<xsl:attribute name="href">
 					<xsl:value-of select="@URL"/>
 				</xsl:attribute>
-				<xsl:if test="@type='external'">
-					<xsl:attribute name="target">_blank</xsl:attribute>
-				</xsl:if>
 				<xsl:value-of select="@URL"/>
 			</xsl:element>
 			<xsl:text>)</xsl:text>

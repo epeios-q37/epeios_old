@@ -16,12 +16,11 @@
 	</xsl:template>
 	<xsl:template match="chapter">
 		<xsl:element name="h2">
-			<xsl:element name="u">
-				<xsl:element name="a">
-					<xsl:attribute name="name">
-						<xsl:value-of select="generate-id()"/>
-					</xsl:attribute>
-				</xsl:element>
+			<xsl:attribute name="style">text-decoration: underline;</xsl:attribute>
+			<xsl:element name="a">
+				<xsl:attribute name="name">
+					<xsl:value-of select="generate-id()"/>
+				</xsl:attribute>
 			</xsl:element>
 			<xsl:value-of select="@title"/>
 		</xsl:element>
