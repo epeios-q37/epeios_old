@@ -175,6 +175,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
 &dbiifl_	&ldbi		&2002-		&Database Interface Index FieLds (for backend)
+&dbilvw		&ldbi		&\
+	&DataBase Interface Record List VieW
 &dbimng		&ldbi		&2002-\
 	&Database Interface MaNaGer
 &dbimng_	&ldbi		&2002-		&Database Interface MaNaGer (for backend)
