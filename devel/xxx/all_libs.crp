@@ -49,6 +49,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbbsc		&lgsb		&2002-		&GeSBib BaSiC
 &gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
 &gsbdbm		&lgsb		&		&GeSBib DataBase Manager
+&gsbdbm_	&lgsb		&		&GeSBib DataBase Manager (for backebnd).
 &gsbdtb		&lgsb		&		&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-		&GeSBib FieLDs
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
