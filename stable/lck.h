@@ -178,7 +178,7 @@ namespace lck {
 		}
 	};
 
-	template <typename object> class access_control__
+	template <typename object> class control__
 	{
 	private:
 		object *Object_;
@@ -193,11 +193,11 @@ namespace lck {
 			Locked_ = false;
 			Exclusive_ = false;
 		}
-		access_control__( void )
+		control__( void )
 		{
 			reset( false );
 		}
-		~access_control__( void )
+		~control__( void )
 		{
 			reset( true );
 		}
@@ -208,7 +208,7 @@ namespace lck {
 			Object_ = &Object;
 			Lock_ = &Lock;
 		}
-		const object &GetShared( void )
+		const object &Get_Shared( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -234,7 +234,7 @@ namespace lck {
 
 			Locked_ = false;
 		}
-		object &GetExclusive( void )
+		object &Get_Exclusive( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -247,11 +247,11 @@ namespace lck {
 
 			return *Object_;
 		}
-		object &GetWithoutLocking( void )
+		object &Get_WithoutLocking( void )
 		{
 			return *Object_;
 		}
-		const object &GetWithoutLocking( void ) const
+		const object &Get_WithoutLocking( void ) const
 		{
 			return *Object_;
 		}
@@ -280,7 +280,7 @@ namespace lck {
 		{
 			return !Exclusive_;
 		}
-		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
+		bso::bool__ Release_Lock( void )	// Return true if it was locked.
 		{
 			if ( IsLocked() ) {
 				if ( IsExclusive() ) 
@@ -292,6 +292,78 @@ namespace lck {
 				return false;
 		}
 	};
+
+	template <typename object> class shared_access___
+	{
+	private:
+		control__<object> *Control_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( Control_ != NULL )
+					Control_->ReleaseShared();
+
+			Control_ = NULL;
+		}
+		void Init( control__<object> &Control )
+		{
+			reset();
+
+			Control_ = &Control;
+
+			Control.Get_Shared();
+		}
+		const object &operator ()( void )
+		{
+			return Control_->Get_WithoutLocking();
+		}
+		bso::bool__ IsLocked( void ) const
+		{
+			if ( Control_ != NULL )
+				return Control_->IsLocked();
+			else
+				return false;
+		}
+	};
+
+	template <typename object> class exclusive_access___
+	{
+	private:
+		control__<object> *Control_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( Control_ != NULL )
+					Control_->ReleaseExclusive();
+
+			Control_ = NULL;
+		}
+		void Init( control__<object> &Control )
+		{
+			reset();
+
+			Control_ = &Control;
+
+			Control.Get_Exclusive();
+		}
+		object &operator ()( void )
+		{
+			return Control_->Get_WithoutLocking();
+		}
+		bso::bool__ IsLocked( void ) const
+		{
+			if ( Control_ != NULL )
+				return Control_->IsLocked();
+			else
+				return false;
+		}
+	};
+
+
+
+
 
 
 }

@@ -208,7 +208,7 @@ namespace lck {
 			Object_ = &Object;
 			Lock_ = &Lock;
 		}
-		const object &GetShared( void )
+		const object &Get_Shared( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -234,7 +234,7 @@ namespace lck {
 
 			Locked_ = false;
 		}
-		object &GetExclusive( void )
+		object &Get_Exclusive( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -247,11 +247,11 @@ namespace lck {
 
 			return *Object_;
 		}
-		object &GetWithoutLocking( void )
+		object &Get_WithoutLocking( void )
 		{
 			return *Object_;
 		}
-		const object &GetWithoutLocking( void ) const
+		const object &Get_WithoutLocking( void ) const
 		{
 			return *Object_;
 		}
@@ -280,7 +280,7 @@ namespace lck {
 		{
 			return !Exclusive_;
 		}
-		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
+		bso::bool__ Release_Lock( void )	// Return true if it was locked.
 		{
 			if ( IsLocked() ) {
 				if ( IsExclusive() ) 
@@ -302,9 +302,9 @@ namespace lck {
 		{
 			if ( P )
 				if ( Control_ != NULL )
-					Control_->ReleaseLock();
+					Control_->ReleaseShared();
 
-			Control_ = NULL.
+			Control_ = NULL;
 		}
 		void Init( control__<object> &Control )
 		{
@@ -312,15 +312,18 @@ namespace lck {
 
 			Control_ = &Control;
 
-			Control.GetShared();
+			Control.Get_Shared();
 		}
-		const object &operator *( void )
+		const object &operator ()( void )
 		{
-			return Control_->GetWithoutLock();
+			return Control_->Get_WithoutLocking();
 		}
-		const object &operator ->( void )
+		bso::bool__ IsLocked( void ) const
 		{
-			return Control_->GetWithoutLock();
+			if ( Control_ != NULL )
+				return Control_->IsLocked();
+			else
+				return false;
 		}
 	};
 
@@ -333,9 +336,9 @@ namespace lck {
 		{
 			if ( P )
 				if ( Control_ != NULL )
-					Control_->ReleaseLock();
+					Control_->ReleaseExclusive();
 
-			Control_ = NULL.
+			Control_ = NULL;
 		}
 		void Init( control__<object> &Control )
 		{
@@ -343,15 +346,18 @@ namespace lck {
 
 			Control_ = &Control;
 
-			Control.GetExclusive();
+			Control.Get_Exclusive();
 		}
-		const object &operator *( void )
+		object &operator ()( void )
 		{
-			return Control_->GetWithoutLock();
+			return Control_->Get_WithoutLocking();
 		}
-		const object &operator ->( void )
+		bso::bool__ IsLocked( void ) const
 		{
-			return Control_->GetWithoutLock();
+			if ( Control_ != NULL )
+				return Control_->IsLocked();
+			else
+				return false;
 		}
 	};
 
