@@ -10,3 +10,5 @@ all:
 	make -C ecgi -I .. -f Makefile
 	make -C ebkd -I .. -f Makefile
 	make -C epeios -I .. -f Makefile
+	make -C reveal -I .. -f Makefile
+	make -C mll2html -I .. -f Makefile
