@@ -182,10 +182,10 @@ namespace idxbtr {
 		r Next( r Item ) const
 		{
 			if ( E_BTREEt_( r )::HasRight( Item ) )
-				return NoeudSansFils_( E_BTREEt_( r )::GetRight( Item ) );
+				return NoeudSansFils_( E_BTREEt_( r )::Right( Item ) );
 			else
 				if ( E_BTREEt_( r )::IsLeft( Item ) )
-					return E_BTREEt_( r )::GetParent( Item );
+					return E_BTREEt_( r )::Parent( Item );
 				else if ( E_BTREEt_( r )::IsRight( Item ) )
 					return PereFilsEnRemontant_( Item );
 				else

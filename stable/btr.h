@@ -399,7 +399,7 @@ namespace btr {
 		{
 			epeios::row_t__ Parent = Parent_( *Node );
 
-			if ( HasLeft_( Parent ) && ( HasLeft_( Parent ) == *Node ) )
+			if ( HasLeft_( Parent ) && ( Left_( Parent ) == *Node ) )
 				ReleaseLeft_( Parent );
 			else
 				ReleaseRight_( Parent );

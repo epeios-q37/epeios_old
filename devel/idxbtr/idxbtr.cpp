@@ -71,7 +71,7 @@ namespace idxbtr {
 		epeios::row_t__ Position )
 	{
 		while( Tree.E_BTREE_::HasLeft( Position ) )
-			Position = *Tree.E_BTREE_::GetLeft( Position );
+			Position = *Tree.E_BTREE_::Left( Position );
 
 		return Position;
 	}
@@ -82,7 +82,7 @@ namespace idxbtr {
 		epeios::row_t__ Position )
 	{
 		while( Tree.E_BTREE_::HasRight( Position ) )
-			Position = *Tree.E_BTREE_::GetRight( Position );
+			Position = *Tree.E_BTREE_::Right( Position );
 
 		return Position;
 	}
@@ -94,10 +94,10 @@ namespace idxbtr {
 	{
 		while( !Tree.E_BTREE_::IsLeft( Position )
 			   && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::GetParent( Position );
+			Position = *Tree.E_BTREE_::Parent( Position );
 
 		if ( Tree.E_BTREE_::IsLeft( Position ) )
-			return *Tree.E_BTREE_::GetParent( Position );
+			return *Tree.E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
@@ -109,10 +109,10 @@ namespace idxbtr {
 	{
 		while( !Tree.E_BTREE_::IsRight( Position )
 			    && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::GetParent( Position );
+			Position = *Tree.E_BTREE_::Parent( Position );
 
 		if ( Tree.E_BTREE_::IsRight( Position ) )
-			return *Tree.E_BTREE_::GetParent( Position );
+			return *Tree.E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
