@@ -1,8 +1,8 @@
 /*
-  Header for the 'tsrcpr' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'tsrcpr' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	TSRCPR_VERSION	"$Revision$"	
 
-#define TSRCPR_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define TSRCPR_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &TSRCPRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -63,61 +63,61 @@ extern class ttr_tutor &TSRCPRTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "idxque.h"
+#include "que.h"
 #include "ctn.h"
 #include "str.h"
 #include "xtf.h"
 
 namespace tsrcpr {
 
-	using idxque::queue_index_;
+	using que::managed_queue_;
 	using ctn::multi_container_;
 
 
 	template <class t> class table_
-	: public E_IQUEUE_,
+	: public E_MQUEUE_,
 	  public E_CONTAINER_( t )
 	{
 	public:
 		struct s
-		: public E_IQUEUE_::s,
+		: public E_MQUEUE_::s,
 		  public E_CONTAINER_( t )::s
 		{};
 		table_( s &S )
-		: E_IQUEUE_( S ),
+		: E_MQUEUE_( S ),
 		  E_CONTAINER_( t )( S ){}
 		void reset( bool P = true )
 		{
-			E_IQUEUE_::reset( P );
+			E_MQUEUE_::reset( P );
 			E_CONTAINER_( t )::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			E_IQUEUE_::plug( MM );
+			E_MQUEUE_::plug( MM );
 			E_CONTAINER_( t )::plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
-			E_IQUEUE_::operator =( T );
+			E_MQUEUE_::operator =( T );
 			E_CONTAINER_( t )::operator =( T );
 
 			return *this;
 		}
 		void Init( void )
 		{
-			E_IQUEUE_::Init();
+			E_MQUEUE_::Init();
 			E_CONTAINER_( t )::Init();
 		}
 		tym::row__ New( void )
 		{
 			tym::row__ P = E_CONTAINER_( t )::New();
 
-			E_IQUEUE_::Allocate( E_CONTAINER_( t )::Extent() );
+			E_MQUEUE_::Allocate( E_CONTAINER_( t )::Extent() );
 
-			if ( E_IQUEUE_::Amount() )
-				E_IQUEUE_::BecomeNext( P, E_IQUEUE_::Last() );
+			if ( E_MQUEUE_::Amount() )
+				E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Last() );
 			else
-				E_IQUEUE_::Create( P );
+				E_MQUEUE_::Create( P );
 
 			E_CONTAINER_( t )::operator()( P ).Init();
 
@@ -129,7 +129,7 @@ namespace tsrcpr {
 		{
 			E_CONTAINER_( t )::Write( Objet, New() );
 		}
-		NAV( E_IQUEUE_:: )
+		NAV( E_MQUEUE_:: )
 	};
 
 	AUTOt( table )

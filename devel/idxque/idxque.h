@@ -121,21 +121,21 @@ namespace idxque {
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::InsertItemAfterNode( Item, Node );
+			E_MQUEUEt_( r )::BecomeNext( Item, Node );
 		}
 		//f Item is marked as lesser then 'Node'.
 		void MarkAsLesser(
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::InsertItemBeforeNode( Item, Node );
+			E_MQUEUEt_( r )::BecomePrevious( Item, Node );
 		}
 		//f Item is marked as same then 'Node'.
 		void MarkAsSame(
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::InsertItemBeforeNode( Item, Node );
+			E_MQUEUEt_( r )::BecomeNext( Item, Node );
 		}
 	};
 

@@ -137,7 +137,7 @@ namespace idxbtr {
 
 			while ( Current != NONE )
 			{
-				Queue.InsertItemAfterNode( Current, Temp );
+				Queue.BecomeNext( Current, Temp );
 
 				Temp = Current;
 

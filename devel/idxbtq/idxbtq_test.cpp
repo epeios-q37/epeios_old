@@ -39,7 +39,6 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	idxbtq::E_INDEX Index;
-	idxbtq::E_SEEKER__ Seeker;
 ERRBegin
 ERRErr
 ERREnd

@@ -1,9 +1,9 @@
 /*
-  'tsrcpr' library by Claude L. Simon (simon@epeios.org)
+  'tsrcpr' library by Claude SIMON (csimon@epeios.org)
   Requires the 'tsrcpr' header file ('tsrcpr.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or

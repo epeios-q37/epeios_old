@@ -1,8 +1,8 @@
 /*
-  Header for the 'dtr' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'dtr' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	DTR_VERSION	"$Revision$"	
 
-#define DTR_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define DTR_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &DTRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -177,7 +177,7 @@ namespace dtr {
 			if ( Tree.Left( Node ) == NONE )
 				Tree.BecomeRight( First, Node );
 			else
-				Queue.InsertItemBeforeNode( First, Tree.Left( Node ) );
+				Queue.BecomePrevious( First, Tree.Left( Node ) );
 
 			Tree.BecomeLeft( First, Node );
 		}
@@ -189,7 +189,7 @@ namespace dtr {
 			if ( Tree.Right( Node ) == NONE )
 				Tree.BecomeLeft( Last, Node );
 			else
-				Queue.InsertItemAfterNode( Last, Tree.Right( Node ) );
+				Queue.BecomeNext( Last, Tree.Right( Node ) );
 
 			Tree.BecomeRight( Last, Node );
 		}
@@ -200,7 +200,7 @@ namespace dtr {
 		{
 			r Parent;
 
-			Queue.InsertItemBeforeNode( Previous, Node );
+			Queue.BecomePrevious( Previous, Node );
 
 			if ( ( Parent = Tree.Parent( Node ) ) != NONE ) {
 				if ( Tree.Left( Parent ) == Node )
@@ -215,7 +215,7 @@ namespace dtr {
 		{
 			r Parent;
 
-			Queue.InsertItemAfterNode( Next, Node );
+			Queue.BecomeNext( Next, Node );
 
 			if ( ( Parent = Tree.Parent( Node ) ) != NONE ) {
 				if ( Tree.Right( Parent ) == Node )

@@ -75,24 +75,30 @@ namespace ssnmng {
 		return strcmp( S1, S2 );
 	}
 
-	static epeios::row__ Search_( 
+	static bso::sign__ Search_( 
 		const idxbtr::E_IBTREE_ &I,
 		const bch::E_BUNCH_( session_id__ ) &T,
 		const char *S,
-		bso::sign__ &Test )
+		idxbtr::E_TSEEKER__ &Seeker )
 	{
-		epeios::row__ P = I.Root();
-		bso::bool__ Cont = true;
+		bso::sign__ Test;
 
-		while ( Cont )
-			if ( ( Test = Test_( T( P ).Value(), S ) ) > 0 )
-				Cont = !I.NextAvailable( P );
-			else if ( Test < 0 )
-				Cont = !I.PreviousAvailable( P );
-			else
-				Cont = false;
+		while ( ( Seeker.GetState() == idxbtr::sFound )
+			    && ( Test = Test_( T( Seeker.GetCurrent() ).Value(), S ) ) ) {
+			switch( Test ) {
+			case 1:
+				Seeker.SearchGreater();
+				break;
+			case -1:
+				Seeker.SearchLesser();
+				break;
+			default:
+				ERRc();
+				break;
+			}
+		}
 
-		return P;
+		return Test;
 	}
 
 	epeios::row__ sessions_manager_::Open( void )
@@ -111,15 +117,21 @@ namespace ssnmng {
 			E_MQUEUE_::Create( P );
 			Index.Create( P );
 		} else {
-			bso::sign__ Test;
-			epeios::row__ PI = Search_( Index, Table, SessionID.Value(), Test );
+			idxbtr::E_TSEEKER__ Seeker;
 
-			if ( Test > 0 )
-				Index.BecomeNext( P, PI );
-			else if ( Test < 0 )
-				Index.BecomePrevious( P, PI );
-			else
+			Seeker.Init( Index );
+
+			switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
+			case 1:
+				Index.MarkAsGreater( P, Seeker.GetCurrent() );
+				break;
+			case -1:
+				Index.MarkAsLesser( P, Seeker.GetCurrent() );
+				break;
+			default:
 				ERRc();
+				break;
+			}
 
 			E_MQUEUE_::InsertItemAfterNode( P, E_MQUEUE_::Tail() );
 		}
@@ -138,18 +150,18 @@ namespace ssnmng {
 
 	epeios::row__ sessions_manager_::Position( const char *SessionID ) const
 	{
-		epeios::row__ P = NONE;
-
 		if ( !Index.IsEmpty() )	{
-			bso::sign__ Test;
+			idxbtr::E_TSEEKER__ Seeker;
 
-			P = Search_( Index, Table, SessionID, Test );
+			Seeker.Init( Index );
 
-			if ( Test )
-				P = NONE;
+			if ( !Search_( Index, Table, SessionID, Seeker ) )
+				return Seeker.GetCurrent();
+			else
+				return NONE;
 		}
 
-		return P;
+		return NONE;
 	}
 	epeios::row__ sessions_manager_::Position( const str::string_ &SessionID ) const
 	{

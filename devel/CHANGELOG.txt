@@ -16,6 +16,7 @@ BSO:
 - Adding the 'sign__' type.
 - Adding the portable ('p_...') types.
 - Removing old unused code.
+- Force 'sign__' to contain only -1,0,1.
 
 CPE:
 - Adding 'CPE__USE_[VC|GCC]_WORKAROUND'.
@@ -25,6 +26,9 @@ CTN:
 - Renaming to 'Sync' where needed.
 - Adding GCC workaround.
 - Adding VC++ workaround.
+
+DTR:
+- Adapting to changes in 'que'.
 
 EPSMSC:
 - Removing IDEALX-related text.
@@ -45,6 +49,7 @@ IDXBTR:
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.
+- Adding 'MarkAs...()' method.
 
 IDXQUE:
 - Fixing bugs concerning row type.
@@ -56,6 +61,7 @@ MDR:
 QUE:
 - Fixing bug from typed queue.
 - Fixing amount/size handling bug.
+- Replacing 'Insert...()' methods by 'Become...()' methods.
 
 MMG:
 - Fixing autonome declaration bug.
@@ -74,6 +80,9 @@ STR:
 
 TOL:
 - Fixing bug in the 'NAVt()' macro.
+
+TSRCPR:
+- Using 'que' rather then 'idxque'.
 
 TXMTBL:
 - Adding some helpful methods.

@@ -1,6 +1,6 @@
 /*
-  Header for the 'ssnmng' library by Claude L. Simon (csimon@webmails.com)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
+  Header for the 'ssnmng' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
   This file is part of the Epeios (http://epeios.org/) project.
   
@@ -32,7 +32,7 @@
 
 #define	SSNMNG_VERSION	"$Revision$"	
 
-#define SSNMNG_OWNER		"the Epeios project (http://epeios.org/)"
+#define SSNMNG_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &SSNMNGTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@webmails.com)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */

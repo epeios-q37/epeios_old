@@ -231,9 +231,6 @@ namespace bso {
 	//d Minimal value of a 'size__'.
 	#define BSO_BSIZE_MIN	0
 
-	//t A sign, for comparaison function.
-	typedef bso::sbyte__	sign__;
-
 	//t Size of a buffer.
 	typedef size_t bsize__;
 
@@ -266,8 +263,21 @@ namespace bso {
 	//t A portable character.
 	typedef char__ p_char__;
 
-	//t A sign ( -(1) +(1) 0 ).
-	typedef sbyte__ sign__;
+	//c A sign ( -(1) +(1) 0 ).
+	class sign__
+	{
+	private:
+		sbyte__ Sign_;
+	public:
+		sign__( sbyte__ Sign = 0 )
+		{
+			Sign_ = ( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
+		}
+		operator sbyte__( void )
+		{
+			return Sign_;
+		}
+	};
 
 	//t A portable sign.
 	typedef sign__ p_sign__;

@@ -1,8 +1,8 @@
 /*
-  Header for the 'que' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'que' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	QUE_VERSION	"$Revision$"	
 
-#define QUE_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define QUE_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &QUETutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -281,7 +281,7 @@ namespace que {
 			return Links( *Node ).HasPrevious();
 		}
 		//f Insert 'Item' after 'Node'.
-		void InsertItemAfterNode(
+		void BecomeNext(
 			r Item,
 			r Node )
 		{
@@ -302,7 +302,7 @@ namespace que {
 			Links.Write( LItem, *Item );
 		}
 		//f Insert 'Item' before 'Node'.
-		void InsertItemBeforeNode(
+		void BecomePrevious(
 			r Item,
 			r Node )
 		{
@@ -446,7 +446,7 @@ namespace que {
 			Amount_ = 1;
 		}
 		//f Insert 'Item' after 'Node'.
-		void InsertItemAfterNode(
+		void BecomeNext(
 			r Item,
 			r Node,
 			que::E_QUEUEt_(r) &Queue )
@@ -454,7 +454,7 @@ namespace que {
 	#ifdef QUE_DBG
 			Test_();
 	#endif
-			Queue.InsertItemAfterNode( Item, Node );
+			Queue.BecomeNext( Item, Node );
 
 			if ( Node == Tail_ )
 				Tail_ = Item;
@@ -462,7 +462,7 @@ namespace que {
 			Amount_++;
 		}
 		//f Insert 'Item' Before 'Node'.
-		void InsertItemBeforeNode(
+		void BecomePrevious(
 			r Item,
 			r Node ,
 			que::E_QUEUEt_(r) &Queue )
@@ -470,7 +470,7 @@ namespace que {
 	#ifdef QUE_DBG
 			Test_();
 	#endif
-			Queue.InsertItemBeforeNode( Item, Node );
+			Queue.BecomePrevious( Item, Node );
 
 			if ( Node == Head_ )
 				Head_ = Item;
@@ -626,18 +626,18 @@ namespace que {
 			S_.QueueManager.Create( Item, Queue );
 		}
 		//f Insert 'Item' after 'Node'.
-		void InsertItemAfterNode(
+		void BecomeNext(
 			r Item,
 			r Node )
 		{
-			S_.QueueManager.InsertItemAfterNode( Item, Node, Queue );
+			S_.QueueManager.BecomeNext( Item, Node, Queue );
 		}
 		//f Insert 'Item' Before 'Node'.
-		void InsertItemBeforeNode(
+		void BecomePrevious(
 			r Item,
 			r Node )
 		{
-			S_.QueueManager.InsertItemBeforeNode( Item, Node, Queue );
+			S_.QueueManager.BecomePrevious( Item, Node, Queue );
 		}
 		//f Remove 'Node".
 		void Remove( r Node )
