@@ -208,7 +208,7 @@ namespace lck {
 			Object_ = &Object;
 			Lock_ = &Lock;
 		}
-		const object &Get_Shared( void )
+		const object &GetShared( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -234,7 +234,7 @@ namespace lck {
 
 			Locked_ = false;
 		}
-		object &Get_Exclusive( void )
+		object &GetExclusive( void )
 		{
 #ifdef LCK__DBG
 			if ( Locked_ )
@@ -247,11 +247,11 @@ namespace lck {
 
 			return *Object_;
 		}
-		object &Get_WithoutLocking( void )
+		object &GetWithoutLocking( void )
 		{
 			return *Object_;
 		}
-		const object &Get_WithoutLocking( void ) const
+		const object &GetWithoutLocking( void ) const
 		{
 			return *Object_;
 		}
@@ -280,7 +280,7 @@ namespace lck {
 		{
 			return !Exclusive_;
 		}
-		bso::bool__ Release_Lock( void )	// Return true if it was locked.
+		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
 		{
 			if ( IsLocked() ) {
 				if ( IsExclusive() ) 
@@ -306,17 +306,25 @@ namespace lck {
 
 			Control_ = NULL;
 		}
+		shared_access___( void )
+		{
+			reset( false );
+		}
+		~shared_access___( void )
+		{
+			reset();
+		}
 		void Init( control__<object> &Control )
 		{
 			reset();
 
 			Control_ = &Control;
 
-			Control.Get_Shared();
+			Control.GetShared();
 		}
 		const object &operator ()( void )
 		{
-			return Control_->Get_WithoutLocking();
+			return Control_->GetWithoutLocking();
 		}
 		bso::bool__ IsLocked( void ) const
 		{
@@ -340,17 +348,25 @@ namespace lck {
 
 			Control_ = NULL;
 		}
+		exclusive_access___( void )
+		{
+			reset( false );
+		}
+		~exclusive_access___( void )
+		{
+			reset();
+		}
 		void Init( control__<object> &Control )
 		{
 			reset();
 
 			Control_ = &Control;
 
-			Control.Get_Exclusive();
+			Control.GetExclusive();
 		}
 		object &operator ()( void )
 		{
-			return Control_->Get_WithoutLocking();
+			return Control_->GetWithoutLocking();
 		}
 		bso::bool__ IsLocked( void ) const
 		{
