@@ -54,6 +54,8 @@ elif grep -w -q $1 $SRC/estx.lst; then
 	ID=estx
 elif grep -w -q $1 $SRC/ewsa.lst; then
 	ID=ewsa
+elif grep -w -q $1 $SRC/ebkd.lst; then
+	ID=ebkd
 else
 	echo "Cannot identify library group.";
 	exit
