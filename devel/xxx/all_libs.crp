@@ -328,8 +328,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 
 #Private STX libraries.
-&stxdte		&estx		&2000-\
+&stxcde		&estx		&2000-2002 ,\
+	&STock eXchange CoDE
+&stxdbs		&estx		&2000-2002 ,\
+	&STock eXchange DataBaSe
+&stxdte		&estx		&2000-2002, \
 	&STock eXchange DATe
+&stxstk		&estx		&2000-2002 ,\
+	&STock eXchange SToK
 
 #Epeios XML libraries.
 &xmlbsc		&exml		&2001-\

@@ -5,6 +5,8 @@ BSO:
 - (03/05/04) disable thread-unsafe functions when working in multithreading.
 -			 fixing the 'Allocate' bug.
 	
+CCH:
+- (20/05/04) Replacing the old 'Write', 'Fill' and 'Read' method.
 
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.

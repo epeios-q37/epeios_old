@@ -156,7 +156,7 @@ namespace cch {
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			CCHGetBunch().Read( Position, Amount, Buffer );
+			CCHGetBunch().Recall( Position, Amount, Buffer );
 		}
 		void FillCache_(
 			r Position,
@@ -278,7 +278,7 @@ namespace cch {
 			epeios::size__ Amount,
 			r Position )
 		{
-			CCHGetBunch().Write( Buffer, Amount, Position );
+			CCHGetBunch().Store( Buffer, Amount, Position );
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
@@ -693,7 +693,7 @@ namespace cch {
 			rc First,
 			rc Last )
 		{
-			Caches_.Fill( NULL, *Last - *First + 1, First );
+			Caches_.Store( NULL, *Last - *First + 1, First );
 		}
 		void Erase_(
 			rc First,
@@ -709,7 +709,7 @@ namespace cch {
 					Caches_( Current )->reset();
 					free( Caches_( Current ) );
 #endif
-					Caches_.Write( NULL, Current );
+					Caches_.Store( NULL, Current );
 				}
 		}
 		item_cache &GetCache_( rc P )
@@ -732,7 +732,7 @@ namespace cch {
 #endif
 
 				IC->Init( Item_, P, BufferSize_ );
-				Caches_.Write( IC, P );
+				Caches_.Store( IC, P );
 			}
 
 			return *Cache_.Get( P );
