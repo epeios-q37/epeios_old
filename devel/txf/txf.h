@@ -1,7 +1,7 @@
 /*
 	Header for the 'txf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -106,7 +106,7 @@ namespace txf {
 		}
 		text_iflow___ &operator >>( unsigned long &E )
 		{
-			char C[9];
+			datum__ C[9];
 			amount__ Pos;
 
 			if ( ( Pos = Lire_( 9, C ) ) > 8 )
@@ -117,7 +117,7 @@ namespace txf {
 
 			C[Pos] = 0;
 
-			sscanf( C, "%lx", &E );
+			sscanf( (const char *)C, "%lx", &E );
 
 			return *this;
 		}
@@ -251,7 +251,7 @@ namespace txf {
 			if ( Length > FLW_AMOUNT_MAX )
 				ERRl();
 
-			Ecrire_( C, (amount__)Length );
+			Ecrire_( (const datum__ *)C, (amount__)Length );
 
 			return *this;
 		}

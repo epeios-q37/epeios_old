@@ -1,7 +1,7 @@
 /*
 	Header for the 'flw' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -85,7 +85,7 @@ namespace flw {
 	#define FLW_SIZE_MAX	INT_MAX
 
 	//t Type of a datum.
-	typedef char			datum__;
+	typedef unsigned char		datum__;
 
 	//c Base input flow.
 	class iflow___
@@ -339,7 +339,7 @@ namespace flw {
 			if ( Length > FLW_SIZE_MAX )
 				ERRl();
 
-			EOFD_.Data = Data;
+			EOFD_.Data = (const datum__ *)Data;
 			EOFD_.Size = (size__)Length;
 			EOFD_.HandleLength = false;
 		}

@@ -79,6 +79,8 @@ ERR:
 
 FLW:
 - Changing some type definition to simplify castings.
+- Changing 'datum__' definition from 'char' to 'unsigned char' to avoid
+  problem when used as integer.
 
 FLX:
 - Adding some casting to avoid warning under VC++.
@@ -164,6 +166,9 @@ TSRCPR:
 
 TTR:
 - Adapting to changes in 'STF' library.
+
+TXF:
+- Adapting to changes in 'FLW'.
 
 TYM:
 - Fixing bug.

@@ -124,7 +124,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &tsrcpr		&epeios		&2000-\
 	&Tagged SouRCe PaRser
 &ttr		&epeios		&2000-		&TuToR
-&txf		&epeios		&2000-		&TeXt Flow
+&txf		&epeios		&2000-\
+	&TeXt Flow
 &txmpgh		&epeios		&2000-2001, 	&TeXt Manager ParaGrapH
 &txmtbl		&epeios		&2000		&TeXt Manager TabBLe
 &tym		&epeios		&2000-\
