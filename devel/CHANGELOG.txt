@@ -1,5 +1,11 @@
 $Id$
 
+24/03/05
+- TOL :
+	- Adaptation aux changements de la bibliothèque 'AEM'.
+- TXMTBL:
+	- Adaptation aux changements de la bibliothqèue 'TOL'.
+
 23/03/05:
 - AEM :
 	- Rajout des méthodes 'First()' et 'Last()' avec offset.

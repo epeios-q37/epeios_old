@@ -297,7 +297,7 @@ namespace txmtbl {
 
 			return true;
 		}
-		E_NAV( cells_:: )
+		E_XNAV( cells_:: )
 	};
 
 	E_AUTO( line )
