@@ -5,6 +5,7 @@ NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &dbidpd	&ldbi	&		&Database DePenDences
 &dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
 &dbimsq	&ldbi	&		&DataBase Interface MySQl (from MySQL database)
+&dbisql	&ldbi	&		&DataBase Interface SQL (from language)
 &dbisrq	&ldbi	&		&DataBase Interface Search ReQuest
 &err	&epeios	&2000-		&ERRor handling
 &mscmdf	&emsc	&		&MuSiC MiDi File		
