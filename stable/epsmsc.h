@@ -78,7 +78,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations."
 
 //d The author.
-#define EPSMSC_AUTHOR_NAME	"Claude L. SIMON"
+#define EPSMSC_AUTHOR_NAME	"Claude SIMON"
 
 //d Author e-mail
 #define EPSMSC_AUTHOR_EMAIL	"csimon@webmails.com"

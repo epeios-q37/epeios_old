@@ -233,7 +233,7 @@ namespace pip {
 			if ( P ) {
 			
 				while( WriteInProgress_ || ReadInProgress_ )
-					TOLYield();
+					tol::Yield();
 			
 				Delete( Pipe_ );
 

@@ -31,7 +31,13 @@ DTRRMF:
 IDXBTR:
 - adapting to changes in 'BSO'.
 
+LST:
+- Fixing bug of 'Next' function (list_::Successeur_).
+
 MTX:
+- Adapting to changes in 'TOL'.
+
+PIP:
 - Adapting to changes in 'TOL'.
 
 SSNMNG:

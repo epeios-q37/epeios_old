@@ -105,7 +105,7 @@ namespace lst {
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
 		{
-			return lst::Successeur_( Element, Amount(), Libres );
+			return lst::Successeur_( Element, Extent(), Libres );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
