@@ -102,10 +102,10 @@ namespace dbt {
 		: public E_LISTt_( row__ )::s,
 		  public E_BTREEt_( row__ )::s
 		{
-			lstbch::E_LBUNCHt_( int__, internal_row__ )::s Internals;
-			lstbch::E_LBUNCHt_( ext__, external_row__ )::s Externals;
-			bch::E_BUNCHt_( epeios::row_t__, row__ )::s Nodes; 
-			bitbch::bit_bunch_< row__ >::s Types;
+			typename lstbch::E_LBUNCHt_( int__, internal_row__ )::s Internals;
+			typename lstbch::E_LBUNCHt_( ext__, external_row__ )::s Externals;
+			typename bch::E_BUNCHt_( epeios::row_t__, row__ )::s Nodes; 
+			typename bitbch::bit_bunch_< row__ >::s Types;
 		};
 		lstbch::E_LBUNCHt_( int__, internal_row__ ) Internals;
 		lstbch::E_LBUNCHt_( ext__, external_row__ ) Externals;

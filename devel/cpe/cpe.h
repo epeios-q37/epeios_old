@@ -78,6 +78,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__CW
 
 #ifdef _MSC_VER
+#	pragma warning( disable: 4786 )
 	//d If defined, we are in the 'Microsoft Visual C++'.
 #	define CPE__VC	// Visual C++.
 	//d If defined, we are in an Microsoft enviroment (DOS, Windows).

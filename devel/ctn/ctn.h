@@ -71,8 +71,6 @@ extern class ttr_tutor &CTNTutor;
 #	define	typename_	typename
 #endif
 
-#pragma warning (disable : 4786)
-
 namespace ctn {
 
 	using epeios::size__;
@@ -1131,8 +1129,6 @@ namespace ctn {
 #endif
 
 }
-
-#pragma warning (default : 4786)
 
 #undef typename_
 

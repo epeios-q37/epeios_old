@@ -211,8 +211,29 @@ namespace str {
 			char C,
 			epeios::row__ Start = 0 ) const;
 		/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
-		an error or 'NONE' when no error. */
-		bso::ulong__ ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL ) const;
+		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
+		value can have. */
+		bso::ulong__ ToUL(
+			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			bso::ulong__ Limit = BSO_ULONG_MAX ) const;
+		/*f Convert to unsigned short. If 'ErrP' != NULL, put the character where is 
+		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
+		value can have. */
+		bso::ushort__ ToUS(
+			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			bso::ulong__ Limit = BSO_USHORT_MAX ) const
+		{
+			return (bso::ushort__)ToUL( ErrP, Limit );
+		}
+		/*f Convert to unsigned byte. If 'ErrP' != NULL, put the character where is 
+		an error or 'NONE' when no error. 'Limit' is the value max that the value returned
+		value can have. */
+		bso::ubyte__ ToUB(
+			epeios::row__ &ErrP = *(epeios::row__ *)NULL,
+			bso::ulong__ Limit = BSO_UBYTE_MAX ) const
+		{
+			return (bso::ubyte__)ToUL( ErrP, Limit );
+		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
 		bso::lfloat__ ToLF( epeios::row__ &ErrP = *(epeios::row__ *)NULL ) const;

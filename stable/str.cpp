@@ -217,13 +217,15 @@ namespace str {
 			return Start;
 	}
 
-	bso::ulong__ string_::ToUL( epeios::row__ &ErrP ) const
+	bso::ulong__ string_::ToUL(
+		epeios::row__ &ErrP,
+		bso::ulong__ Limit ) const
 	{
 		bso::ulong__ Result = 0;
 		epeios::row__ P = First();
 		char C;
 
-		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( Limit / 10 ) ) ) {
 			Result = Result * 10 + C - '0';
 			P = Next( P );
 		}

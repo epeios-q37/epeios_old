@@ -43,7 +43,7 @@ endif
 ifndef EPEIOS_ENV
 	env=gnu
 else
-	env=$(EPEIOS_OS)
+	env=$(EPEIOS_ENV)
 endif
 
 ifeq ("$(env)","windows")

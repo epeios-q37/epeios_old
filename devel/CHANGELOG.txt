@@ -16,6 +16,7 @@ CTN:
 
 CPE:
 - Adding detection of cygwin.
+- Disabling C++ warning C4786.
 
 DBT:
 - Adapting to changes in 'LST' library.
@@ -56,6 +57,9 @@ SSNMNG:
 
 STK:
 - Renaming 'ObjectExists' to 'Exists', to avoid some mistake risks.
+
+STR:
+- Adding 'ToU[S|B]()'.
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.

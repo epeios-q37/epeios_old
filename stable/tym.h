@@ -66,8 +66,6 @@ extern class ttr_tutor &TYMTutor;
 #include "mmm.h"
 #include "epeios.h"
 
-#pragma warning (disable : 4786)
-
 namespace tym {
 	using namespace epeios;
 
@@ -390,8 +388,6 @@ namespace tym {
 	#define E_MEMORYt___( type, r ) memory___< type, r > 
 	#define E_MEMORY___( type ) memory___< type, epeios::row__ > 
 }
-
-#pragma warning (default : 4786)
 
 /*$END$*/
 				  /********************************************/

@@ -130,6 +130,9 @@ namespace lstctn {
 	: public list_container_<container, row>
 	{
 	public:
+		struct s
+		: public list_container_<container, row>::s
+		{};
 		list_xcontainer_( s &S )
 		: list_container_<container, row>( S )
 		{}

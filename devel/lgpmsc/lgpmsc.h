@@ -91,7 +91,7 @@ extern class ttr_tutor &LGPMSCTutor;
 #define LGPMSC_LOGIPLUS_TEXT "\tThis program was developed for Logi+ (" LGPMSC_LOGIPLUS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Logi+.
-#define LGPMSC_COPYRIGHT( years )	"Copyright (c) " ## years ## " Logi+ (" LGPMSC_LOGIPLUS_URL ")."
+#define LGPMSC_COPYRIGHT( years )	"Copyright (c) " years " Logi+ (" LGPMSC_LOGIPLUS_URL ")."
 
 
 namespace lgpmsc {
