@@ -188,6 +188,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&DataBase Interface BaSiCs
 &dbibsc_	&ldbi		&2002-\
 	&DataBase Interface BaSiCs (for backend)
+&dbicch		&ldbi		&\
+	&DataBase Interface CaCHed
 &dbidpd		&ldbi		&2002-\
 	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs

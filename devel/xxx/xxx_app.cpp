@@ -223,7 +223,7 @@ ERRFBegin
 ERRFErr
 	ExitValue = EXIT_FAILURE;
 
-	if ( ERRMajor == err::thw )
+	if ( ERRMajor == err::itn )
 		ERRRst();
 
 ERRFEnd
