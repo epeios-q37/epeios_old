@@ -93,6 +93,7 @@ TOL:
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.
 - (24/05/04) Adapting to changes in 'TXF' library.
+- (27/07/04) Little improvement.
 
 TXF:
 - (24/05/04) Adapting to changes in 'FLW' library.
