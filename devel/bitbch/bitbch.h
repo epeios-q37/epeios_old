@@ -75,6 +75,7 @@ des #define ci-dessous. */
 
 namespace bitbch {
 	using namespace epeios;
+	using aem::amount_extent_manager_;
 
 	// Type du receptacle de bits.
 	typedef bso__ubyte		receptacle__;
@@ -144,7 +145,7 @@ namespace bitbch {
 			tym::size__ Nombre,
 			aem::mode Mode = aem::mDefault )
 		{
-			if ( amount_extent_manager_::AmountToAllocate( Nombre, Mode ) )
+			if ( amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
 				Table.Allocate( Convert_( Nombre ) );
 		}
 		// alloue 'Nombre' (>=1) bits
@@ -152,17 +153,17 @@ namespace bitbch {
 		// Tableau contenant les bits.
 		tym::E_MEMORY_(receptacle__) Table;
 		struct s
-		: public aem::amount_extent_manager_::s
+		: public aem::amount_extent_manager_<r>::s
 		{
 			tym::E_MEMORY_(receptacle__)::s Table;
 		};
 		bit_bunch_( s &S )
-		: amount_extent_manager_( S ),
+		: amount_extent_manager_<r>( S ),
 		  Table( S.Table ){}
 		void reset( bool P = true )
 		{
 			Table.reset( P );
-			amount_extent_manager_::reset( P );
+			amount_extent_manager_<r>::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
@@ -174,7 +175,7 @@ namespace bitbch {
 		}
 		bit_bunch_ &operator =( const bit_bunch_ &O )
 		{
-			amount_extent_manager_::operator =( O );
+			amount_extent_manager_<r>::operator =( O );
 			Table.Write( O.Table, Convert_( O.Amount() ) );
 
 			return *this;
@@ -182,7 +183,7 @@ namespace bitbch {
 		//f Initialization.
 		void Init( void )
 		{
-			amount_extent_manager_::Init();
+			amount_extent_manager_<r>::Init();
 			Table.Init();
 		}
 	//	void Dup( bit_bunch &O );

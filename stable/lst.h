@@ -117,7 +117,7 @@ namespace lst {
 		// Retourne vrai si 'Element' existe dans la liste.
 		bso__bool Existe_( epeios::row_t__ Position ) const
 		{
-			return Existe_( Position; Lbres );
+			return Existe_( Position, Libres );
 		}
 	public:
 		//o Stack which contains the free locations.

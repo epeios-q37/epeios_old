@@ -299,11 +299,11 @@ namespace que {
 			link__ LItem = Links( Item.V );
 
 			if ( LNode.HasPrevious() )
-				Links.SetNext( LNode.Previous, Item );
+				Links.SetNext( LNode.Previous, Item.V );
 
 			LItem.Previous = LNode.Previous;
-			LItem.Next = Node;
-			LNode.Previous = Item;
+			LItem.Next = Node.V;
+			LNode.Previous = Item.V;
 
 			Links.Write( LNode, Node.V );
 			Links.Write( LItem, Item.V );
@@ -551,7 +551,7 @@ namespace que {
 		E_QUEUEt_( r ) Queue;
 		struct s {
 			E_QUEUEt_( r )::s Queue;
-			queue_manager__ QueueManager;
+			queue_manager__<r> QueueManager;
 		} &S_;
 		void reset( bso__bool P = true )
 		{

@@ -423,15 +423,15 @@ namespace bch {
 		: bunch_core_<type, tym::E_MEMORYt__( type, size, r ), aem::amount_extent_manager__< size, r >, r >( S_ ) {}
 		bunch__ &operator =( const bunch__ &S )
 		{
-			set_bunch_core_<type, E_MEMORY__( type, size )>::WriteAndAdjust( S, S.Amount_ );
+			bunch_core_<type, tym::E_MEMORYt__( type, size, r ), aem::amount_extent_manager__< size, r >, r >::WriteAndAdjust( S, S.Amount_ );
 			Size_ = S.Amount_;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			bunch_core_<type, E_MEMORY__( type, size )>::Init();
-			bunch_core_<type, E_MEMORY__( type, size )>::SetStepValue( 0 );
+			bunch_core_<type, tym::E_MEMORYt__( type, size, r ), aem::amount_extent_manager__< size, r >, r >::Init();
+			bunch_core_<type, tym::E_MEMORYt__( type, size, r ), aem::amount_extent_manager__< size, r >, r >::SetStepValue( 0 );
 		}
 	};
 

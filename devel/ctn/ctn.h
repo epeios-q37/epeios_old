@@ -194,7 +194,7 @@ namespace ctn {
 		{
 			epeios::size__ Extent = this->Extent();
 
-			if ( amount_extent_manager_::Force( Size ) ) {
+			if ( amount_extent_manager_<r>::Force( Size ) ) {
 				Dynamics.Allocate( Size, Extent );
 				Statics.Allocate( Size );
 			}
@@ -408,11 +408,11 @@ namespace ctn {
 		}
 		// Remplace la fonction d'initialisation. 
 		volatile_mono_item( basic_container_< item_mono_statique__< typename t::s >, r > &Conteneur )
-		: Objet_( item_base_volatile__< item_mono_statique__< typename t::s > >::ctn_S_ )
+		: Objet_( item_base_volatile__< item_mono_statique__< typename t::s >, r >::ctn_S_ )
 		{
 			BaseConstructeur_();
 
-			item_base_volatile__< item_mono_statique__< typename t::s > >::Init( Conteneur );
+			item_base_volatile__< item_mono_statique__< typename t::s >, r >::Init( Conteneur );
 		}
 		virtual ~volatile_mono_item( void )
 		{

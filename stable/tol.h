@@ -450,6 +450,10 @@ namespace mmm {
 	class multimemory_;
 }
 
+namespace epeios {
+	struct row__;
+}
+
 namespace tol {
 
 	// A basic object 't' becomes a normal object.
