@@ -52,7 +52,9 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbtbl		&lgsb		&2002-		&GeSBib TaBLe
 &gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
 &ids		&epeios		&2002-		&ID Store
+&idxbtq		&epeios		&2000-		&InDeX Best of Tree and Queue
 &idxbtr		&epeios		&2000-		&InDeX Binary TRee
+&idxque		&epeios		&2000-		&InDeX QUEue
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
 &lstbch		&epeios		&2002-		&LiST BunCH
@@ -62,6 +64,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
 &pip		&epeios		&2000-		&PIPe
+&que		&epeios		&2000-		&QUEue
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
 &ssnmng		&epeios		&2000-		&SeSsioN MaNaGer
@@ -69,6 +72,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
+&tmcset		&etmc		&2000-		&TiMeCode SET
 &tmcset_	&etmc		&2000-		&TiMeCode SET (for backend)
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 &tol		&epeios		&2000-		&TOoL

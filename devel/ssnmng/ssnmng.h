@@ -204,7 +204,7 @@ namespace ssnmng {
 		{
 			Index.Remove( Position );
 			E_LIST_::Delete( Position );
-			E_MQUEUE_::Remove( Position );
+			E_MQUEUE_::Delete( Position );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
 		epeios::row__ Position( const session_id__ &SessionID ) const
@@ -236,7 +236,7 @@ namespace ssnmng {
 	#endif
 
 			if ( ( E_MQUEUE_::Amount() != 1 ) && ( E_MQUEUE_::Tail() != P ) ) {
-				E_MQUEUE_::Remove( P );
+				E_MQUEUE_::Delete( P );
 				E_MQUEUE_::BecomeNext( P, E_MQUEUE_::Tail() );
 			}
 		}

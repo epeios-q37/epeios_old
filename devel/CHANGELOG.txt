@@ -15,11 +15,20 @@ CPE:
 IDS:
 - Adapting to changes in 'STK' library.
 
+IDXBTQ:
+- Renaming 'Remove', to 'Delete' which seems more appropriate.
+
 LST:
-- Renaming 'Remove' to 'Delete' which seems more appropriate.
+- Renaming 'Remove', to 'Delete' which seems more appropriate.
+
+QUE:
+- Renaming 'Remove', to 'Delete' which seems more appropriate.
+- Adding 'Exists' method.
+- Using the 'BCH' library instead of 'AEM' and 'UYM'.
 
 SSNMNG:
 - Adapting to changes in 'LST' library.
+- Adapting to changes in 'QUE' library.
 
 STK:
 - Renaming 'Exists()' method to 'ObjectExists()', due to modification of the 'tol::NAVt' macro.
@@ -531,7 +540,7 @@ XTF:
 - Correct a bug due to a missing 'EOX()' in 'GetLine()'.
 
 --------
-20040501
+20000501
 --------
 
 Creation

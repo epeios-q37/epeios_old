@@ -1,25 +1,24 @@
 /*
-  Header for the 'que' library by Claude SIMON (csimon@epeios.org)
-  Copyright (C) 2000-2002 Claude SIMON (csimon@epeios.org) 
+	Header for the 'que' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,7 +29,7 @@
 
 #define QUE_NAME		"QUE"
 
-#define	QUE_VERSION	"$Revision$"	
+#define	QUE_VERSION	"$Revision$"
 
 #define QUE_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -39,7 +38,7 @@
 extern class ttr_tutor &QUETutor;
 
 #if defined( XXX_DBG ) && !defined( QUE_NODBG )
-#define QUE_DBG 
+#define QUE_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -54,13 +53,18 @@ extern class ttr_tutor &QUETutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D QUEue 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 //D QUeuE.
 
 #include "err.h"
 #include "flw.h"
 #include "tym.h"
-#include "aem.h"
+#include "bch.h"
 #include "stk.h"
 
 namespace que {
@@ -117,31 +121,26 @@ namespace que {
 
 	using namespace aem;
 
+	typedef bch::E_BUNCHt_( que::link__, row__ ) _bunch_;
+
 	//c A set lof links.
 	class links_
-	: public E_MEMORY_( que::link__ ),
-	  public amount_extent_manager_<row__>
+	: public _bunch_
 	{
 	public:
 		struct s
-		: E_MEMORY_( que::link__ )::s,
-		amount_extent_manager_<row__>::s
+		: _bunch_::s
 		{};
 		links_( s &S )
-		: E_MEMORY_( que::link__ )( S ),
-		amount_extent_manager_<row__>( S )
+		: _bunch_( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			amount_extent_manager_<row__>::reset( P );
-			E_MEMORY_( que::link__ )::reset( P );
+			_bunch_::reset( P );
 		}
 		links_ &operator =( const links_ &QL )
 		{
-			amount_extent_manager_<row__>::operator =( QL );
-			Allocate( QL.Amount() );
-			E_MEMORY_( que::link__ )::Write( QL, QL.Amount() );
-
+			_bunch_::operator =( QL );
 			return *this;
 		}
 		//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
@@ -149,36 +148,27 @@ namespace que {
 			row_t__ Item,
 			row_t__ Value )
 		{
-			que::link__ L = E_MEMORY_( que::link__ )::Read( Item );
+			que::link__ L = Read( Item );
 
 			L.Previous = Value;
 
-			E_MEMORY_( que::link__ )::Write( L, Item );
+			Write( L, Item );
 		}
 		//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
 		void SetNext(
 			row_t__ Item,
 			row_t__ Value )
 		{
-			que::link__ L = E_MEMORY_( que::link__ )::Read( Item );
+			que::link__ L = Read( Item );
 
 			L.Next = Value;
 
-			E_MEMORY_( que::link__ )::Write( L, Item );
+			Write( L, Item );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			amount_extent_manager_<row__>::Init();
-			E_MEMORY_( que::link__ )::Init();
-		}
-		//f Allocate for 'Size'.
-		void Allocate(
-			tym::size__ Size,
-			aem::mode Mode = aem::mDefault )
-		{
-			if ( amount_extent_manager_<row__>::AmountToAllocate( Size, Mode ) )
-				E_MEMORY_( que::link__ )::Allocate( Size );
+			_bunch_::Init();
 		}
 		void Initialize(
 			row_t__ Begin,
@@ -322,8 +312,8 @@ namespace que {
 			Links.Write( LNode, *Node );
 			Links.Write( LItem, *Item );
 		}
-		//f Remove node 'Node'.
-		void Remove( r Node )
+		//f Delete node 'Node'.
+		void Delete( r Node )
 		{
 			link__ LNode = Links( *Node );
 
@@ -363,6 +353,11 @@ namespace que {
 
 			Links.Write( LNode1, *Node2 );
 			Links.Write( LNode2, *Node1 );
+		}
+		//f Return true if 'Node' exists, false oterwise.
+		bso::bool__ Exists( r Node ) const
+		{
+			return Links.Exists( *Node );
 		}
 		void Dump(
 			stk::E_STACK_( r ) &Stack,
@@ -477,8 +472,8 @@ namespace que {
 
 			Amount_++;
 		}
-		//f Remove 'Node".
-		void Remove(
+		//f Delete 'Node'.
+		void Delete(
 			r Node,
 			que::E_QUEUEt_(r) &Queue  )
 		{
@@ -491,7 +486,7 @@ namespace que {
 			if ( Head_ == Node )
 				Head_ = Queue.Next( Node );
 
-			Queue.Remove( Node );
+			Queue.Delete( Node );
 
 			Amount_--;
 		}
@@ -499,6 +494,13 @@ namespace que {
 		tym::size__ Amount( const que::E_QUEUEt_(r) & ) const
 		{
 			return Amount_;
+		}
+		//f Return 'true' if 'Node' exists, false otherwise.
+		bso::bool__ Exists(
+			r Node,
+			const que::E_QUEUEt_(r) &Queue ) const
+		{
+			return Queue.Exists( Node );
 		}
 		//f return 'true' if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
@@ -639,10 +641,10 @@ namespace que {
 		{
 			S_.QueueManager.BecomePrevious( Item, Node, Queue );
 		}
-		//f Remove 'Node".
-		void Remove( r Node )
+		//f Delete 'Node'.
+		void Delete( r Node )
 		{
-			S_.QueueManager.Remove( Node, Queue );
+			S_.QueueManager.Delete( Node, Queue );
 		}
 		//f Return amount of node in the queue.
 		tym::size__ Amount( void ) const
@@ -653,6 +655,11 @@ namespace que {
 		tym::size__ Extent( void ) const
 		{
 			return Queue.Extent();
+		}
+		//f Return 'true' if 'Node' exists, false otherwise.
+		bso::bool__ Exists( r Node ) const
+		{
+			return S_.QueueManager.Exists( Node, Queue );
 		}
 		//f Return 'true' if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
