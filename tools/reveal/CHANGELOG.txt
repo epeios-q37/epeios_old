@@ -1,5 +1,8 @@
 $Id$
 
+- UPGRADINC TO 1.0.2
+- Adapting to BC++.
+
 20010507:
 - UPGRADING TO 1.0.0.
 - Adapting to changes in 'STF'.

@@ -1,9 +1,9 @@
-# 'reveal' Makefile by Claude L. Simon (epeios@epeios.org)
-# Builds executable for the '$xxx$' software.
+# 'reveal' Makefile by Claude L. Simon (csimon@webmails.com)
+# Builds executable for the 'reveal' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000 Claude L. Simon.
+# Copyright (C) 2000,2001 Claude SIMON (csimon@webmails.com).
 #
-# This file is part of the Epeios project (http://www.epeios.org/).
+# This file is part of the Epeios project (http://epeios.org/)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,8 +16,8 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, go to http://www.fsf.org or
-# write to the:
+# along with this program; if not, go to http://www.fsf.org/
+# or write to the:
 #
 #                       Free Software Foundation, Inc.,
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -26,7 +26,11 @@
 # $Id$
 
 name = reveal
-#copt = -DXXX_DBG
+copt =
+# Epeios general debugging features
+# copt += -DXXX_DBG
+# Required for multitasking
+#copt += -DCPE_MT
 lopt = 
 libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm epsmsc
 
@@ -42,46 +46,61 @@ else
 	epeios_os=$(EPEIOS_OS)
 endif
 
-
-ifeq ("$(epeios_os)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
+ifeq ("$(EPEIOS_OS)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
+# Optimization for size:
+# co += -O1
+# Optimization for speed:
+co += -O2
 # linkage options
 lo = -q -e$(name)
-ds = ;
 endif
 
-ifeq ("$(epeios_os)","linux")
-ox = o
-cc = g++ 
+ifeq ("$(EPEIOS_OS)","linux")
 co = -c
 # Generates debugging data.
-# co += -g
+co += -g
 # General optimization.
-co += -O2
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
+#lo += -lpthread
 endif
 
-ifeq ("$(epeios_os)","beos")
-ox = o
-cc = g++
+ifeq ("$(EPEIOS_OS)","beos")
 co = -c -g
 lo = -o $(name)
-ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(epeios_src))
+#
 
-srcd = $(subst $(ds), ,$(epeios_src))
+ifeq ("$(EPEIOS_OS)","windows")
+ox = obj
+cc = bcc32
+ds = ;
+larg = $(lo) *.$(ox)	# Because Windows command size limited.
+endif
+
+ifeq ("$(EPEIOS_OS)","linux")
+ox = o
+cc = g++ 
+ds = :
+larg = $(lo) $(objs)
+endif
+
+ifeq ("$(EPEIOS_OS)","beos")
+ox = o
+cc = g++
+ds = :
+larg = $(lo) $(objs)
+endif
+
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
@@ -89,7 +108,7 @@ lo += $(EPEIOS_LOPT) $(lopt)
 objs = $(name).$(ox) $(libs:=.$(ox))
 
 $(name):  $(objs)
-	$(cc) $(lo) $(objs)
+	$(cc) $(larg)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
+	$(cc) $(co) $<

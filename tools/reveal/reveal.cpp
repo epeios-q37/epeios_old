@@ -57,8 +57,9 @@
 
 using tagdtc::id__;
 
-using str::string;
-using str::string_;
+// This is needed by BC++, to avoid ambiguity between std::estring and str::estring ...
+typedef str::string		estring;
+typedef str::string_	estring_;
 
 using txmtbl::cell;
 using txmtbl::cell_;
@@ -92,17 +93,17 @@ enum option {
 	o_amount
 };
 
-id__ GetReservedTagId( const string_ &Tag )
+id__ GetReservedTagId( const estring_ &Tag )
 {
 	int i = 0;
 
-	while( ( i < tagexp::t_amount ) && ( Tag != string( tagexp::TagLabel( (tagexp::tag_id)i ) ) ) )
+	while( ( i < tagexp::t_amount ) && ( Tag != estring( tagexp::TagLabel( (tagexp::tag_id)i ) ) ) )
 		i++;
 
 	return i;
 }
 
-bso::bool__ TestTag( const string_ &Tag )
+bso::bool__ TestTag( const estring_ &Tag )
 {
 	tym::row__ P = Tag.First();
 	bso::char__ C;
@@ -124,7 +125,7 @@ bso::bool__ TestTag( const string_ &Tag )
 }
 
 inline tagexp::nature TestAndFormTagValue(
-	string_ &Value,
+	estring_ &Value,
 	bso::char__ Text,
 	bso::char__ File )
 {
@@ -198,14 +199,14 @@ inline void AdditionalTags(
 	expander_ &Expander,
 	char Delimiter )
 {
-	Expander.Add( string( Delimiter ), tagexp::nText, string( "" ) );
-	Expander.Add( string( TOLDate() ), tagexp::nText, string( "_DATE_" ) );
-	Expander.Add( string( TOLTime() ), tagexp::nText, string( "_TIME_" ) );
-	Expander.Add( string( NAME ), tagexp::nText, string( "_NAME_" ) );
-	Expander.Add( string( AUTHOR_NAME ), tagexp::nText, string( "_AUTHOR_" ) );
-	Expander.Add( string( AUTHOR_EMAIL ), tagexp::nText, string( "_EMAIL_" ) );
-	Expander.Add( string( EPSMSC_EPEIOS_URL ), tagexp::nText, string( "_LINK_" ) );
-	Expander.Add( string( VERSION ), tagexp::nText, string( "_VERSION_" ) );
+	Expander.Add( estring( Delimiter ), tagexp::nText, estring( "" ) );
+	Expander.Add( estring( TOLDate() ), tagexp::nText, estring( "_DATE_" ) );
+	Expander.Add( estring( TOLTime() ), tagexp::nText, estring( "_TIME_" ) );
+	Expander.Add( estring( NAME ), tagexp::nText, estring( "_NAME_" ) );
+	Expander.Add( estring( AUTHOR_NAME ), tagexp::nText, estring( "_AUTHOR_" ) );
+	Expander.Add( estring( AUTHOR_EMAIL ), tagexp::nText, estring( "_EMAIL_" ) );
+	Expander.Add( estring( EPSMSC_EPEIOS_URL ), tagexp::nText, estring( "_LINK_" ) );
+	Expander.Add( estring( VERSION ), tagexp::nText, estring( "_VERSION_" ) );
 }
 
 
@@ -243,7 +244,7 @@ void Expand(
 	txf::text_oflow___ &OFlow )
 {
 ERRProlog
-	string FileName;
+	estring FileName;
 ERRBegin
 	FileName.Init();
 
@@ -362,7 +363,7 @@ ERRProlog
 	ctn::E_CMITEM( cell_ ) Value;
 	tym::row__ P;
 	tym::row__ PV;
-	string TagValue;
+	estring TagValue;
 	tagexp::nature Nature;
 ERRBegin
 	Value.Init( Line );
