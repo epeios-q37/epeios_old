@@ -1,6 +1,6 @@
 /*
 	Header for the 'lgg' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2002-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000, 2002-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -67,18 +67,18 @@ extern class ttr_tutor &LGGTutor;
 namespace lgg {
 	//e Languages.
 	enum language__ {
-		//i Unknow language,
-		lUnknow,
+		//i Not really a language : for testing purpose only.
+		lTest,
 		//i English.
 		lEnglish,
 		//i French.
 		lFrench,
 		//i German
 		lGerman,
-		//i Not really a language : for testing purpose only.
-		lTest,
 		//i Amount of languages.
-		l_amount
+		l_amount,
+		//i undefined
+		l_undefined = l_amount
 	};
 
 	extern const char *LanguageNames[lgg::l_amount];
@@ -91,7 +91,7 @@ namespace lgg {
 	language__ GetLanguageIDWithLabel( const char *Label );
 
 	inline bso::bool__ Test( language__ Language ) {
-		return ( ( Language != lUnknow ) && ( Language < l_amount ) );
+		return ( Language < l_amount );
 	}
 
 	inline const char *GetLanguageLabel( language__ Language )

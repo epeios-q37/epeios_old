@@ -494,7 +494,7 @@ namespace uym {
 		//f Return the used buffer.
 		const uym::datum__ *Buffer( void ) const
 		{
-			return *Data_;
+			return Data_;
 		}
 	};
 

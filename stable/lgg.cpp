@@ -1,7 +1,7 @@
 /*
 	'lgg' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'lgg' header file ('lgg.h').
-	Copyright (C) 2000, 2002-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000, 2002-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -58,21 +58,17 @@ public:
 using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
-	"_unknow_",
 	"English",
 	"Français",
 	"Deutsch",
-
-	"_test_"
+	"test",
  };
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
-	"__",
+	"xx",
 	"en",
 	"fr",
 	"de",
-
-	"xx",
 };
 
 language__ lgg::GetLanguageIDNamed( const char *Name )
@@ -81,8 +77,8 @@ language__ lgg::GetLanguageIDNamed( const char *Name )
 
 	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) ) {};
 
-	if ( i == l_amount )
-		return lUnknow;
+	if ( i >= l_amount )
+		return l_undefined;
 	else
 		return (language__)i;
 }
@@ -93,8 +89,8 @@ language__ lgg::GetLanguageIDWithLabel( const char *Name )
 
 	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageLabels[i] ) ) ) {};
 
-	if ( i == l_amount )
-		return lUnknow;
+	if ( i >= l_amount )
+		return l_undefined;
 	else
 		return (language__)i;
 }

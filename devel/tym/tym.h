@@ -372,6 +372,10 @@ namespace tym {
 		memory___( typename _memory_<t, uym::untyped_memory___, r >::s &S = *( typename _memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'BCH'.
 		: _memory_<t, uym::untyped_memory___, r >( S )
 		{}
+		t *Buffer( void )
+		{
+			return _memory_< t, uym::untyped_memory___, r >::Buffer();
+		}
 	};
 
 

@@ -58,21 +58,17 @@ public:
 using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
-	"_unknow_",
 	"English",
 	"Français",
 	"Deutsch",
-
-	"_test_"
+	"test",
  };
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
-	"__",
+	"xx",
 	"en",
 	"fr",
 	"de",
-
-	"xx",
 };
 
 language__ lgg::GetLanguageIDNamed( const char *Name )
@@ -81,8 +77,8 @@ language__ lgg::GetLanguageIDNamed( const char *Name )
 
 	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) ) {};
 
-	if ( i == l_amount )
-		return lUnknow;
+	if ( i >= l_amount )
+		return l_undefined;
 	else
 		return (language__)i;
 }
@@ -93,8 +89,8 @@ language__ lgg::GetLanguageIDWithLabel( const char *Name )
 
 	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageLabels[i] ) ) ) {};
 
-	if ( i == l_amount )
-		return lUnknow;
+	if ( i >= l_amount )
+		return l_undefined;
 	else
 		return (language__)i;
 }
