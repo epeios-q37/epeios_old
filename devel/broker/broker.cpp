@@ -57,98 +57,6 @@ using namespace broker;
 
 static const char *PrimaryCommandName = brkcmd::CommandsNames[brkcmd::cGetCommand];
 
-#if 0
-POSITION__ descriptions_::Add(
-	const char *Name,
-	void *UP,
-	rqm::cast Cast,
-	... )
-{
-	POSITION__ Position = rqm_descriptions_::New();
-	va_list L;
-	rqm_description_ &Description = rqm_descriptions_::operator()( Position );
-
-	Description.Init();
-	Description.Name = Name;
-
-	Description.Add( Cast );
-
-	va_start( L, Cast );
-
-	while ( Cast != rqm::cEnd ) { 
-		Cast = va_arg( L, rqm::cast );
-		Description.Add( Cast );
-	}
-
-	while ( ( Cast = va_arg( L, rqm::cast ) ) != rqm::cEnd )
-		Description.Add( Cast );
-
-	va_end( L );
-
-	rqm_descriptions_::Sync();
-
-	if ( UPs.Add( UP ) != Position )
-		ERRc();
-
-	return Position;
-}
-
-POSITION__ descriptions_::Add(
-	const char *Name,
-	void *UP,
-	const rqm::cast *Casts )
-{
-	POSITION__ Position = rqm_descriptions_::New();
-	rqm_description_ &Description = rqm_descriptions_::operator()( Position );
-
-	Description.Init( Name, Casts );
-
-	rqm_descriptions_::Sync();
-
-	if ( UPs.Add( UP ) != Position )
-		ERRc();
-
-	return Position;
-}
-#endif
-
-#if 0
-POSITION__ broker::broker::Add(
-	const char *Name,
-	broker9__function FP,
-	rqm::cast Cast,
-	... )
-{
-	POSITION__ Position = Master_.Descriptions.New();
-	va_list L;
-	rqm_description_ &Description = Master_.Descriptions.operator()( Position );
-
-	Description.Init();
-	Description.Name = Name;
-
-	Description.Add( Cast );
-
-	va_start( L, Cast );
-
-	while ( Cast != rqm::cEnd ) {
-		Cast = va_arg( L, rqm::cast );
-		Description.Add( Cast );
-	}
-
-	while ( ( Cast = va_arg( L, rqm::cast ) ) != rqm::cEnd )
-		Description.Add( Cast );
-
-	va_end( L );
-
-	Master_.Descriptions.Sync();
-
-	if ( Master_.Descriptions.UPs.Add( (void *)FP ) != Position )
-		ERRc();
-
-	return Position;
-}
-#endif
-
 struct master_data__ {
 	bso__bool Deconnexion;
 	void *UP;
@@ -189,7 +97,7 @@ ERRBegin
 				while( ( Car = Requete.Input().Get() ) != 0 )
 					S.Add( Car );
 
-				Cast = rqm::IdCaste( S );
+				Cast = GetCast( S );
 
 				flw::Put( Cast, Requete.Output() );
 
@@ -236,18 +144,18 @@ ERRBegin
 	Requete.BeginArray();
 
 	IdLangue = lgg::lDefault;
-	Requete.AddValue( rqm::cId16, &IdLangue );
+	Requete.AddValue( cId16, &IdLangue );
 	
 	Name.Init();
 	Name = LGGLanguageName[IdLangue];
-	Requete.AddValue( rqm::cString, &Name );
+	Requete.AddValue( cString, &Name );
 
 	for ( bso__ushort I = 0; I < Broker.Langues_.Nombre; I++ )
 	{
 		IdLangue = Broker.Langues_.Identificateurs[I];
 		Name.Init();
 		Name = LGGLanguageName[IdLangue];
-		Requete.AddValue( rqm::cString, &Name );
+		Requete.AddValue( cString, &Name );
 	}
 
 	Requete.EndArray();
@@ -275,11 +183,11 @@ ERRBegin
 	while( P != NONE )
 	{
 		Type = (ttype__)P;
-		Requete.AddValue( rqm::cType, &Type );
+		Requete.AddValue( cType, &Type );
 		
 		Name.Init();
 		Name = Broker.Name( Type );
-		Requete.AddValue( rqm::cString, &Name );
+		Requete.AddValue( cString, &Name );
 		P = Broker.Modules.Next( P );
 	}
 
@@ -304,8 +212,8 @@ static void WriteCommandsIDAndName_(
 	while( P != NONE )
 	{
 		Command = (tcommand__)P;
-		Requete.AddValue( rqm::cCommand, &Command );
-		Requete.AddValue( rqm::cString, &Description( P ) );
+		Requete.AddValue( cCommand, &Command );
+		Requete.AddValue( cString, &Description( P ) );
 		P = Descriptions.Next( P );
 	}
 
@@ -323,7 +231,7 @@ static void GetCommandsIDAndName(
 {
 	type__ Type;
 
-	Requete.GetValue( rqm::cType, &Type );
+	Requete.GetValue( cType, &Type );
 
 	WriteCommandsIDAndName_( Broker.Module( Type ).Descriptions, Requete );
 }
@@ -332,7 +240,7 @@ static inline void WriteParameters_(
 	const description_ &Description,
 	request_manager___ &Requete )
 {
-	Requete.AddValue( rqm::cCasts, &Description.Casts );
+	Requete.AddValue( cCasts, &Description.Casts );
 }
 
 
@@ -360,8 +268,8 @@ static void GetParameters(
 	type__ Type;
 	command__ Command;
 
-	Requete.GetValue( rqm::cType, &Type );
-	Requete.GetValue( rqm::cCommand, &Command );
+	Requete.GetValue( cType, &Type );
+	Requete.GetValue( cCommand, &Command );
 
 	WriteParameters_( Broker.Module( Type ).Descriptions, Command, Requete );
 }
@@ -382,7 +290,7 @@ ERRBegin
 	Version.Init();
 	Version = Broker.Version_;
 
-	Requete.AddValue( rqm::cString, &Version );
+	Requete.AddValue( cString, &Version );
 ERRErr
 ERREnd
 ERREpilog
@@ -402,11 +310,11 @@ static void SetErrorBreakingStatus(
 
 	Retour = (bso__raw)Broker.ErrorBreaking();
 
-	Requete.GetValue( rqm::cBoolean, &O );
+	Requete.GetValue( cBoolean, &O );
 
 	Broker.ErrorBreaking( O != 0  );
 
-	Requete.AddValue( rqm::cBoolean, &Retour );
+	Requete.AddValue( cBoolean, &Retour );
 
 	Requete.Complete();
 }
@@ -424,7 +332,7 @@ static void GetErrorBreakingStatus(
 
 	Retour = (bso__raw)Broker.ErrorBreaking();
 
-	Requete.AddValue( rqm::cBoolean, &Retour );
+	Requete.AddValue( cBoolean, &Retour );
 
 	Requete.Complete();
 }
@@ -441,7 +349,7 @@ static void GetNewObject(
 	static object__ O;
 	type__ T;
 
-	Requete.GetValue( rqm::cType, &T );
+	Requete.GetValue( cType, &T );
 
 	if ( T() >= Broker.Modules.Amount() )
 		ERRb();
@@ -452,7 +360,7 @@ static void GetNewObject(
 	O = Broker.New( T );
 
 	if ( O() != BROKER_INVALID_TYPE )
-		Requete.AddValue( rqm::cObject, &O );
+		Requete.AddValue( cObject, &O );
 	else
 		Requete.SendExplanationMessage( "No such object type." );
 
@@ -474,12 +382,12 @@ ERRProlog
 ERRBegin
 	Type.Init();
 
-	Requete.GetValue( rqm::cString, &Type );
+	Requete.GetValue( cString, &Type );
 
 	T = Broker.Type( Type );
 
 	if ( ( T() != BROKER_INVALID_TYPE )  )
-		Requete.AddValue( rqm::cType, &T );
+		Requete.AddValue( cType, &T );
 	else
 		Requete.SendExplanationMessage( "No such object type name." );
 
@@ -500,7 +408,7 @@ static void RemoveObject(
 {
 	object__ O;
 
-	Requete.GetValue( rqm::cObject, &O );
+	Requete.GetValue( cObject, &O );
 
 /*	if ( !Broker.Valide( O ) )
 		ERRb();
@@ -519,16 +427,16 @@ ERRProlog
 ERRBegin
 	Description.Init();
 
-	if ( Manager.GetValue( rqm::cString, &Description.Name ) )
+	if ( !Manager.GetArrayValue( cString, &Description.Name ) )
 		ERRb();
 
-	while( !Manager.GetValue( rqm::cCasts, &Description.Casts ) )
+	while( Manager.GetArrayValue( cCasts, &Description.Casts ) )
 	{
 		Descriptions.Add( Description );
 
 		Description.Init();
 
-		if ( Manager.GetValue( rqm::cString, &Description.Name ) )
+		if ( !Manager.GetArrayValue( cString, &Description.Name ) )
 			ERRb();
 	}
 
@@ -558,7 +466,7 @@ ERRBegin
 		if ( ( Command = Broker.Command( Type, Description( Position ) ) ) == BROKER_INVALID_COMMAND )
 			ERRb();
 
-		Manager.AddValue( rqm::cCommand, &Command );
+		Manager.AddValue( cCommand, &Command );
 
 		Position = Descriptions.Next( Position );
 	}
@@ -590,14 +498,14 @@ ERRBegin
 	Descriptions.Init();
 	TypeName.Init();
 
-	Requete.GetValue( rqm::cString, &TypeName );
+	Requete.GetValue( cString, &TypeName );
 
 	if ( ( Type = Broker.Type( TypeName ) ) == BROKER_INVALID_TYPE )
 		ERRb();
 
 	GetDescriptions_( Requete, Descriptions );
 
-	Requete.AddValue( rqm::cType, &Type );
+	Requete.AddValue( cType, &Type );
 
 	SendCommandIDs_( Type, Broker, Descriptions, Requete );
 ERRErr
@@ -622,9 +530,9 @@ ERRProlog
 ERRBegin
 	Description.Init();
 
-	Requete.GetValue( rqm::cType, &T );
-	Requete.GetValue( rqm::cString, &Description.Name );
-	Requete.GetValue( rqm::cCasts, &Description.Casts );
+	Requete.GetValue( cType, &T );
+	Requete.GetValue( cString, &Description.Name );
+	Requete.GetValue( cCasts, &Description.Casts );
 
 /*	if ( !Broker.Valide( T ) )
 		if ( T() != BROKER9_TYPE_MAITRE )
@@ -633,7 +541,7 @@ ERRBegin
 	C = Broker.Command( T, Description );
 
 	if ( ( C() != BROKER_INVALID_COMMAND ) )
-		Requete.AddValue( rqm::cCommand, &C );
+		Requete.AddValue( cCommand, &C );
 	else
 		Requete.SendExplanationMessage( "No such command name or with such description" );
 
@@ -659,7 +567,7 @@ ERRProlog
 ERRBegin
 	Descriptions.Init();
 
-	Requete.GetValue( rqm::cType, &Type );
+	Requete.GetValue( cType, &Type );
 
 	GetDescriptions_( Requete, Descriptions );
 
@@ -733,56 +641,58 @@ void master_module::Init( broker_ &Broker )
 
 }
 
-type__ broker_::Type( str_string_ &Name )
-{
-	POSITION__ C = Modules.First();
+namespace broker {
 
-	while ( ( C != NONE ) && ( str_string( Modules(C)->Name() ) != Name )  )
-		C = Modules.Next( C );
+	type__ broker::Type( str_string_ &Name )
+	{
+		POSITION__ C = Modules.First();
 
-	if ( C == NONE )
-		C = BROKER_INVALID_TYPE;
-	else if ( C > BROKER_INVALID_TYPE )
-		ERRl();
+		while ( ( C != NONE ) && ( str_string( Modules(C)->Name() ) != Name )  )
+			C = Modules.Next( C );
 
-	return (ttype__)C;
+		if ( C == NONE )
+			C = BROKER_INVALID_TYPE;
+		else if ( C > BROKER_INVALID_TYPE )
+			ERRl();
+
+		return (ttype__)C;
+	}
+
+	bso__bool broker_::Handle(
+		flw::ioflow___ &Channel,
+		void *PU )
+	{
+		master_data__ MasterData;
+	ERRProlog
+		request_manager___ Requete;
+		object__ O;
+	ERRBegin
+		MasterData.Deconnexion = false;
+		MasterData.UP = PU;
+
+		Requete.Init( Channel );
+
+		flw::Get( Channel, O );
+
+		if ( ( O() >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
+			ERRb();
+
+		if ( O != BROKER_MASTER_OBJECT )
+			Module_( O ).Handle( Index_( O ), Requete, PU );
+		else
+			Master_.Handle( (index__)0, Requete, &MasterData );
+
+	ERRErr
+		Requete.SendExplanationMessage( ERRMessage() );
+
+		if ( !Master_.ErrorBreaking() )
+			ERRRst();
+	ERREnd
+		Requete.Complete();
+	ERREpilog
+		return !MasterData.Deconnexion;
+	}
 }
-
-bso__bool broker_::Handle(
-	flw::ioflow___ &Channel,
-	void *PU )
-{
-	master_data__ MasterData;
-ERRProlog
-	request_manager___ Requete;
-	object__ O;
-ERRBegin
-	MasterData.Deconnexion = false;
-	MasterData.UP = PU;
-
-	Requete.Init( Channel );
-
-	flw::Get( Channel, O );
-
-	if ( ( O() >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
-		ERRb();
-
-	if ( O != BROKER_MASTER_OBJECT )
-		Module_( O ).Handle( Index_( O ), Requete, PU );
-	else
-		Master_.Handle( (index__)0, Requete, &MasterData );
-
-ERRErr
-	Requete.SendExplanationMessage( ERRMessage() );
-
-	if ( !Master_.ErrorBreaking() )
-		ERRRst();
-ERREnd
-	Requete.Complete();
-ERREpilog
-	return !MasterData.Deconnexion;
-}
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

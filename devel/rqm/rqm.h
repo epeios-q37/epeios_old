@@ -55,7 +55,9 @@ extern class ttr_tutor &RQMTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-//D ReQuest Manager.
+//D ReQuest Manager. Osolete. Use 'BRKRQM' instead.
+
+#error Obsolete. Use 'BRKRQM' instead.
 
 #include <stdarg.h>
 
@@ -106,12 +108,22 @@ namespace rqm
 	//t Type
 	TYPEDEF( ttype__, type__ );
 
+	typedef bso__ubyte tcast__;
 	//t Cast
-	typedef bso__ubyte cast__;
+	TYPEDEF( tcast__, cast__ );
 
 	//c The description of a request.
 	class description_
 	{
+	private:
+		cast__ GetCast_( brkcst::cast Cast )
+		{
+#ifdef RQM_DBG
+			if ( S_.Casts == NULL )
+				ERRu();
+#endif
+			return S_.Casts[Cast];
+		}
 	public:
 		//o Name of the command.
 		str_string_ Name;
@@ -122,8 +134,8 @@ namespace rqm
 		{
 			str_string_::s Name;
 			SET_( cast__ )::s Casts;
-			// User pointer.
-			void *UP;
+			// Cast correspondance.
+			cast__ *Casts;
 		} &S_;
 		description_( s &S )
 		: S_( S ),
@@ -134,11 +146,13 @@ namespace rqm
 		{
 			Name.reset( P );
 			Casts.reset( P );
+			S_.Casts = NULL;
 		}
 		description_ &operator =( const description_ &D )
 		{
 			Name = D.Name;
 			Casts = D.Casts;
+			S_.Casts = D.S_.Casts;
 
 			return *this;
 		}
@@ -147,11 +161,14 @@ namespace rqm
 			Name.plug( M );
 			Casts.plug( M );
 		}
-		//f Initialization. The name ans casts are added one per one.
-		void Init( void )
+		/*f Initialization with casts values 'Casts', which must have a size of 'brkcst::c_amount'.
+		'Casts' is not copied, so it should not be modified. */
+		void Init( cast__ Casts )
 		{
 			Name.Init();
 			Casts.Init();
+
+			S_.Casts == Casts;
 		}
 #if 0
 		/*f Initializing with name 'Name' and a list of casts. The list must

@@ -87,11 +87,54 @@ ERREnd
 ERREpilog
 }
 
+void Print(	const parameters_ &Parameters )
+{
+	POSITION__ P = Parameters.First();
+
+	while( P != NONE ) {
+		fout << txf::tab << brkcst::CastsNames[Parameters( P )];
+		P = Parameters.Next( P );
+	}
+
+	fout << txf::nl;
+}
+
+void Print(	const commands_ &Commands )
+{
+	CITEM( command_ ) Command;
+	POSITION__ P = Commands.First();
+
+	Command.Init( Commands );
+
+	while( P != NONE ) {
+		fout << Command( P ).Identification.Value << " (" << Command( P ).Identification.ID() << "):" << txf::nl;
+		Print( Command( P ).Parameters );
+		P = Commands.Next( P );
+	}
+
+	fout << txf::nl;
+}
+
+void Print( types_ &Types )
+{
+	CITEM( type_ ) Type;
+	POSITION__ P = Types.First();
+
+	Type.Init( Types );
+
+	while( P != NONE ) {
+		fout << Type( P ).Identification.Value << " (" << Type( P ).Identification.ID() << "):" << txf::nl;
+		Print( Type( P ).Commands );
+		P = Types.Next( P );
+	}
+}
+
+
+
 void Essai( void )
 {
 ERRProlog
 	manager Manager;
-	frtend::data__ Data;
 	frtend::frontend___ Frontend;
 	types Types;
 //	sck::socket_ioflow___ Flow;
@@ -100,9 +143,11 @@ ERRBegin
 //	Flow.Init( clt::Connect( "localhost:1234" ) );
 //	Frontend.Init( Flow, Data );
 	Manager.Init();
-	Frontend.Init( Manager.Process(), Data );
+	Frontend.Init( Manager.Process() );
 	
 	Analyze( Frontend, Types );
+
+	Print( Types);
 ERRErr
 ERREnd
 ERREpilog

@@ -59,6 +59,8 @@ extern class ttr_tutor &BRKCSTTutor;
 //D BRoKer CaSTs.
 /* End addendum to automatic documentation generation part. */
 
+//d Version casts version.
+#define BRKCST_CASTS_VERSION	"1"
 
 #include "err.h"
 #include "flw.h"
@@ -66,15 +68,15 @@ extern class ttr_tutor &BRKCSTTutor;
 namespace brkcst {
 	//e casts.
 	enum cast {
-		//i End of request or end of parameters list. Value MUST be 0.
+		//i End of request or end of parameters list.
 		cEnd = 0,
-		//i Object ('rqm::object__')'.
+		//i Object ('bso::ushort__')'.
 		cObject,
-		//i Type ('rqm::type__').
+		//i Type ('bso::ushort__').
 		cType,
-		//i Set of casts ('SET_( rqm::cast__ )').
+		//i Set of casts ('SET_( bso::ubyte__ )').
 		cCasts,
-		//i Command ('rqm::command__').
+		//i Command ('bso::ushort__').
 		cCommand,
 		//i Boolean ('bso::bool__')
 		cBoolean,

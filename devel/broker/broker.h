@@ -62,23 +62,23 @@ extern class ttr_tutor &BROKERTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "rqm.h"
 #include "lst.h"
 #include "lgg.h"
 #include "brkcst.h"
 #include "brkcmd.h"
+#include "brkrqm.h"
 
 //d An invalid value for a command.
-#define BROKER_INVALID_COMMAND		RQM_INVALID_COMMAND
-#define BROKER_COMMAND_MAX			RQM_COMMAND_MAX
+#define BROKER_INVALID_COMMAND		BRKRQM_INVALID_COMMAND
+#define BROKER_COMMAND_MAX			BRKRQM_COMMAND_MAX
 
 //d An invalid value for a type.
-#define BROKER_INVALID_TYPE		RQM_INVALID_TYPE
-#define BROKER_TYPE_MAX			RQM_TYPE_MAX
+#define BROKER_INVALID_TYPE			BRKRQM_INVALID_TYPE
+#define BROKER_TYPE_MAX				BRKRQM_TYPE_MAX
 
 //d An invalid value for an object.
-#define BROKER_INVALID_OBJECT		RQM_INVALID_OBJECT
-#define BROKER_OBJECT_MAX			RQM_OBJECT_MAX
+#define BROKER_INVALID_OBJECT		BRKRQM_INVALID_OBJECT
+#define BROKER_OBJECT_MAX			BRKRQM_OBJECT_MAX
 
 #define BROKER_MASTER_OBJECT		BROKER_INVALID_OBJECT
 
@@ -91,88 +91,15 @@ namespace broker {
 
 	TYPEDEF( POSITION__, index__ );
 
-	using rqm::object__;
-	using rqm::tobject__;
-
-	using rqm::type__;
-	using rqm::ttype__;
-
-	using rqm::command__;
-	using rqm::tcommand__;
-
-	using rqm::cast__;
-
-	using rqm::description_;
-	using rqm::description;
-	using rqm::descriptions_;
-	using rqm::descriptions;
-	
-	using rqm::request_manager___;
+	using namespace brkrqm;
 
 	typedef void (* function__ )(
 		class broker &Broker,
 		class untyped_module &Module,
 		command__ Command,
-		rqm::request_manager___ &Request,
+		request_manager___ &Request,
 		bso__bool &,
 		void *UP );
-
-
-#if 0
-	class descriptions_
-	: public rqm::descriptions_
-	{
-	public:
-		SET_( void *) UPs;
-		struct s
-		: public rqm::descriptions_::s
-		{
-			SET_( void *)::s UPs;
-		};
-		descriptions_( s &S )
-		: descriptions_( S ),
-		  UPs( S.UPs )
-		{}
-		void reset( bool P = true )
-		{
-			rqm_descriptions_::reset( P );
-			UPs.reset( P );
-		}
-		void plug( mmm_multimemory &M )
-		{
-			rqm_descriptions_::plug( M );
-			UPs.plug( M );
-		}
-		descriptions_ &operator =( const descriptions_ &D )
-		{
-			rqm_descriptions_::operator =( D );
-			UPs = D.UPs;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			rqm_descriptions_::Init();
-			UPs.Init();
-		}
-		// Cast is only here to avoid ambiguity with the next function.
-		POSITION__ Add(
-			const char *Name,
-			void *UP,
-			rqm::cast Cast,
-			... );
-		POSITION__ Add(
-			const char *Name,
-			void *UP,
-			const rqm::cast *Casts );
-		void *UP( POSITION__ Position )
-		{
-			return UPs( Position );
-		}
-	};
-
-	AUTO( descriptions )
-#endif
 
 	//c An untyped module.
 	class untyped_module
@@ -256,7 +183,7 @@ namespace broker {
 		{
 			return Broker_;
 		}
-		//f Return the command which has 'Description' as description, or 'BROKER9_INVALID_COMMAND' if non-existant.
+		//f Return the command which has 'Description' as description, or 'BROKER_INVALID_COMMAND' if non-existant.
 		command__ Command( const description_ &Description ) const
 		{
 			POSITION__ P = Descriptions.Position( Description );
@@ -270,7 +197,7 @@ namespace broker {
 		}
 		POSITION__ Add(
 			const char *Name,
-			const rqm::cast *Casts,
+			const cast *Casts,
 			void * UP )
 		{
 			POSITION__ P = Descriptions.Add( Name, Casts );
@@ -333,7 +260,7 @@ namespace broker {
 		{
 			Objets.Allocate( Size );
 		}
-		virtual index__ BROKER9New( void )
+		virtual index__ BROKERNew( void )
 		{
 			st *S = NULL;
 			t *Pointeur = NULL;
@@ -353,12 +280,12 @@ namespace broker {
 
 			return Index;
 		}
-		virtual void BROKER9Remove( index__ Index )
+		virtual void BROKERRemove( index__ Index )
 		{
 			delete Objets( Index() );
 			LIST::Remove( Index() );
 		}
-		virtual void *BROKER9Object( index__ Index )
+		virtual void *BROKERObject( index__ Index )
 		{
 			if ( Index() >= Objets.Amount() )
 				ERRu();
@@ -607,7 +534,7 @@ namespace broker {
 			flw::ioflow___ &Channel,
 			void *PU = NULL );
 		/*f Return the command corresponding at request description 'Description' and
-		object type 'Type'. 'BROKER9_INVALID_COMMAND' is returned if command not found. */
+		object type 'Type'. 'BROKER_INVALID_COMMAND' is returned if command not found. */
 		command__ Command(
 			type__ IdType,
 			const description_ &Description )
@@ -694,24 +621,13 @@ namespace broker {
 		{
 			return Name( Type( Object ));
 		}
-#if 0
 		/*f Add a request descrption with name 'Name', function pointer 'FP'
-		and a list of casts. The list must contain 2 'rqm::cEnd', the first
-		at the end of the parameters casts,	and 1 of the end of returned values casts.
-		'Cast' exists only to avoid ambiguity with next function. */
-		POSITION__ Add(
-			const char *Name,
-			function__ FP,
-			rqm::cast Cast,
-			... );
-#endif
-		/*f Add a request descrption with name 'Name', function pointer 'FP'
-		and a list of casts 'Casts'. The list must contain 2 'rqm::cEnd', the first
+		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
 		POSITION__ Add(
 			const char *Name,
 			function__ FP,
-			const rqm::cast *Casts )
+			const cast *Casts )
 		{
 			return Master_.Add( Name, Casts, (void *)FP );
 		}

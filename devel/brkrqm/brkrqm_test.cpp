@@ -1,5 +1,5 @@
 /*
-  Test source for the 'broker' library by Claude L. Simon (epeios@epeios.org).
+  Test source for the 'brkrqm' library by Claude L. Simon (epeios@epeios.org).
   Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
@@ -29,52 +29,10 @@
 #include <string.h>
 #include <iostream.h>
 
-#include "broker.h"
-
-using namespace broker;
+#include "brkrqm.h"
 
 #include "err.h"
 #include "stf.h"
-#include "csm.h"
-
-class manager
-: public csm::manager___
-{
-protected:
-	//v Client process function.
-	virtual csm::behavior CSMCP(
-		flw::ioflow___ &Client,
-		flw::ioflow___ &Server,
-		void *UP )
-	{
-		::broker::broker &Broker = *(::broker::broker *)UP;
-		
-		Broker.Handle( Client ); 
-	
-		return csm::bContinue;
-	}
-	//v Client initialization function.
-	virtual void *CSMCI(
-		flw::ioflow___ &Client,
-		flw::ioflow___ &Server )
-	{
-		::broker::broker *Broker;
-		
-		if ( ( Broker = new ::broker::broker ) == NULL )
-			ERRa();
-			
-		Broker->Init();
-
-		return Broker;
-	}
-	//v Client ending functions.
-	virtual void CSMCE( void *UP )
-	{
-		if ( UP != NULL )
-			delete (::broker::broker *)UP;
-	
-	}
-};
 
 void Generic( int argc, char *argv[] )
 {
@@ -85,26 +43,16 @@ ERREnd
 ERREpilog
 }
 
-void Essai( void )
-{
-	manager Manager;
-	
-	Manager.Init();
-	
-	Manager.Process( 1234 );
-}
-
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << BROKERTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	fout << "Test of library " << BRKRQMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
-		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -115,14 +63,14 @@ ERRFBegin
 	default:
 		fout << txf::sync;
 		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << BROKERTutor.Name << " [/i]\n\n";
+		fout << "Usage: " << BRKRQMTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << BROKERTutor.Name << ".\n";
+	fout << "\nEnd of program " << BRKRQMTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

@@ -64,6 +64,9 @@ extern class ttr_tutor &BRKCMDTutor;
 #include "flw.h"
 #include "brkcst.h"
 
+//d Version of the commands.
+#define BRKCMD_COMMANDS_VERSION	"1"
+
 namespace brkcmd {
 	using namespace brkcst;
 

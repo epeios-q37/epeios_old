@@ -1,5 +1,5 @@
 /*
-  Header for the 'rqm' library by Claude L. Simon (epeios@epeios.org)
+  Header for the 'brkrqm' library by Claude L. Simon (epeios@epeios.org)
   Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef RQM__INC
-#define RQM__INC
+#ifndef BRKRQM__INC
+#define BRKRQM__INC
 
-#define RQM_NAME		"RQM"
+#define BRKRQM_NAME		"BRKRQM"
 
-#define	RQM_VERSION	"$Revision$"	
+#define	BRKRQM_VERSION	"$Revision$"	
 
-#define RQM_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define BRKRQM_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &RQMTutor;
+extern class ttr_tutor &BRKRQMTutor;
 
-#if defined( XXX_DBG ) && !defined( RQM_NODBG )
-#define RQM_DBG 
+#if defined( XXX_DBG ) && !defined( BRKRQM_NODBG )
+#define BRKRQM_DBG 
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,46 +55,30 @@ extern class ttr_tutor &RQMTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-//D ReQuest Manager. Osolete. Use 'BRKRQM' instead.
+/* Addendum to the automatic documentation generation part. */
+//D BRoKer ReQueqt Manager.
+/* End addendum to automatic documentation generation part. */
 
-#error Obsolete. Use 'BRKRQM' instead.
-
-#include <stdarg.h>
 
 #include "err.h"
+#include "flw.h"
+#include "brkcst.h"
 #include "bso.h"
-#include "set.h"
 #include "str.h"
 #include "ctn.h"
-#include "brkcst.h"
 
-#define RQM_INVALID_COMMAND		BSO_USHORT_MAX
-#define RQM_COMMAND_MAX			( RQM_INVALID_COMMAND - 1 )
+#define BRKRQM_INVALID_COMMAND		BSO_USHORT_MAX
+#define BRKRQM_COMMAND_MAX			( BRKRQM_INVALID_COMMAND - 1 )
 
-#define RQM_INVALID_TYPE		BSO_USHORT_MAX
-#define RQM_TYPE_MAX			( RQM_INVALID_TYPE - 1 )
+#define BRKRQM_INVALID_TYPE			BSO_USHORT_MAX
+#define BRKRQM_TYPE_MAX				( BRKRQM_INVALID_TYPE - 1 )
 
-#define RQM_INVALID_OBJECT		BSO_USHORT_MAX
-#define RQM_OBJECT_MAX			( RQM_INVALID_OBJECT - 1 )
+#define BRKRQM_INVALID_OBJECT		BSO_USHORT_MAX
+#define BRKRQM_OBJECT_MAX			( BRKRQM_INVALID_OBJECT - 1 )
 
 
-namespace rqm
-{
+namespace brkrqm {
 	using namespace brkcst;
-
-	//e Item kind.
-	enum kind {
-		//i Undefined value kind.
-		kUndefined,
-		//i Normal item.
-		kNormal,
-		//i Array item.
-		kArray,
-		//i LAst array item.
-		kArrayLast,
-		//i Amount ot item type
-		k_amount
-	};
 
 	typedef bso__ushort		tcommand__;
 	//t Command
@@ -108,22 +92,12 @@ namespace rqm
 	//t Type
 	TYPEDEF( ttype__, type__ );
 
-	typedef bso__ubyte tcast__;
 	//t Cast
-	TYPEDEF( tcast__, cast__ );
+	typedef bso__ubyte cast__;
 
 	//c The description of a request.
 	class description_
 	{
-	private:
-		cast__ GetCast_( brkcst::cast Cast )
-		{
-#ifdef RQM_DBG
-			if ( S_.Casts == NULL )
-				ERRu();
-#endif
-			return S_.Casts[Cast];
-		}
 	public:
 		//o Name of the command.
 		str_string_ Name;
@@ -134,8 +108,6 @@ namespace rqm
 		{
 			str_string_::s Name;
 			SET_( cast__ )::s Casts;
-			// Cast correspondance.
-			cast__ *Casts;
 		} &S_;
 		description_( s &S )
 		: S_( S ),
@@ -146,13 +118,11 @@ namespace rqm
 		{
 			Name.reset( P );
 			Casts.reset( P );
-			S_.Casts = NULL;
 		}
 		description_ &operator =( const description_ &D )
 		{
 			Name = D.Name;
 			Casts = D.Casts;
-			S_.Casts = D.S_.Casts;
 
 			return *this;
 		}
@@ -161,38 +131,18 @@ namespace rqm
 			Name.plug( M );
 			Casts.plug( M );
 		}
-		/*f Initialization with casts values 'Casts', which must have a size of 'brkcst::c_amount'.
-		'Casts' is not copied, so it should not be modified. */
-		void Init( cast__ Casts )
+		//f Initialization. The name ans casts are added one per one.
+		void Init( void )
 		{
 			Name.Init();
 			Casts.Init();
-
-			S_.Casts == Casts;
 		}
-#if 0
-		/*f Initializing with name 'Name' and a list of casts. The list must
-		contain 2 'cEnd', the first at the end of the parameters casts,
-		and 1 of the end of returned values casts. 'Cast' is only here to avoid 
-		ambiguity with the next function. */
-		void Init(
-			const char *Name,
-			cast Cast,
-			... );
-#endif
 		/*f Initializing with name 'Name' and a the list of casts 'Casts'. The list
 		must contain 2 'cEnd', the first at the end of the parameters casts,
 		and 1 of the end of returned values casts. */
 		void Init(
 			const char *Name,
 			const cast *Casts );
-#if 0
-		//f Adding the cast 'Cast'.
-		void Add( cast Cast )
-		{
-			Casts.Add( Cast );
-		}
-#endif
 		//f Return the amount of casts.
 		SIZE__ Amount( void ) const
 		{
@@ -207,12 +157,11 @@ namespace rqm
 
 	AUTO( description )
 
-	//c Request descriptions.
+	//c Requests descriptions.
 	class descriptions_
 	: public XCONTAINER_( description_ )
 	{
 	public:
-		//o The descriptions
 		struct s
 		: public XCONTAINER_( description_ )::s
 		{};
@@ -243,15 +192,6 @@ namespace rqm
 		{
 			return XCONTAINER_( description_ )::Add( Description );
 		}
-# if 0
-		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
-		return the position where request description added. 'Cast' is only here to avoid
-		ambihity with the n,ext function. */
-		POSITION__ Add(
-			const char *Name,
-			cast Cast,
-			... );
-#endif
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */
 		POSITION__ Add(
@@ -264,16 +204,8 @@ namespace rqm
 			
 			return Add( Description );
 		}
-		/*f Return the position of the description of the request named 'Name' or 
-		'NONE' if non-existant. */
-		POSITION__ Position( const char *Name ) const;
 		/*f Return the position of the description 'Description'. */
 		POSITION__ Position( const description_ &Description ) const;
-		//f Return the amount of descriptions.
-		SIZE__ Amount( void ) const
-		{
-			return XCONTAINER_( description_ )::Amount();
-		}
 	};
 
 	AUTO( descriptions )
@@ -320,8 +252,8 @@ namespace rqm
 		Request.Synchronize();
 	}
 
-	//f Return the id of the cast 'Cast', or 'cInvalid' if non-existent.
-	cast IdCaste( const str_string_ &Cast );
+	//f Return the cast of name 'CastName', or 'cInvalid' if non-existent.
+	cast GetCast( const str_string_ &CastName );
 
 
 	//c A request manager.
@@ -413,9 +345,13 @@ namespace rqm
 			Description_ = &Description;
 			Position_ = 0;
 		}
-		/*f Put to 'Value' the next return value which is of cast 'Cast'.
-		Return if the value red is the last item of an array. */
-		kind GetValue(
+		//f Put to 'Value' the next return value which is of cast 'Cast'.
+		void GetValue(
+			cast Cast,
+			void *Value );
+		/*f Put to 'Value' the next return value which is of cast 'Cast'
+		and belongs to an array. Return false if it is the last item of an array. */
+		bso__bool GetArrayValue(
 			cast Cast,
 			void *Value );
 		//f Tell that the request is complete (parsed and answered).
@@ -424,7 +360,7 @@ namespace rqm
 			if ( Closed_ )
 				return;
 
-			if ( Description_ ) /* If == 'NULL', it means that the request was handled
+			if ( Description_ != NULL ) /* If == 'NULL', it means that the request was handled
 								   by handling DIRECTLY the underlying flows. */
 			{
 				TestEndOfParsing_();
@@ -452,14 +388,18 @@ namespace rqm
 		{
 			TestEndOfParsing_();
 
-			if ( Array_ != NONE )
-				if ( ( Position_ >= Description_->Amount() )
-					|| ( Description_->Read( Position_ ) != Cast ) )
-					ERRu();
-				else
-					Position_++;
+			if ( Array_ != NONE ) {
+				if ( Description_->Read( Position_ ) == cEnd )
+					Position_ = Array_;
+			}
 
-				rqm::AddValue( Cast, Value, *Channel_ );
+			if ( ( Position_ >= Description_->Amount() )
+				|| ( Description_->Read( Position_ ) != Cast ) )
+				ERRu();
+			else
+				Position_++;
+
+			brkrqm::AddValue( Cast, Value, *Channel_ );
 		}
 		//f Signalize that a array session begins.
 		void BeginArray( void )
@@ -476,7 +416,7 @@ namespace rqm
 				Position_++;
 
 
-			rqm::AddCast( cArray, *Channel_) ;
+			brkrqm::AddCast( cArray, *Channel_) ;
 
 			Array_ = Position_;
 		}
@@ -485,6 +425,9 @@ namespace rqm
 		{
 			if ( Array_ == NONE )
 				ERRu();
+
+			if ( Description_->Read( Position_++ ) != cEnd )
+				ERRb();
 
 			AddCast( cEnd, *Channel_ ) ;
 
@@ -515,7 +458,8 @@ namespace rqm
 			return *Channel_;
 		}
 	};
-}
+};
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */
