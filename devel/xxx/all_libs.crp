@@ -269,10 +269,19 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios TMC libraries.
-&tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
+&tmcbsc	&etmc		&2000, \
+	&TiMeCode BaSiCs
+&tmcbsc_	&etmc		&2000-\
+	&TiMeCode BaSiCs (for backend)
+&tmcdrt		&etmc		&2000-2001, \
+	&TiMeCode DuRaTion
 &tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
-&tmcset		&etmc		&2000-		&TiMeCode SET
-&tmcset_	&etmc		&2000-		&TiMeCode SET (for backend)
+&tmcset		&etmc		&2000-\
+	&TiMeCode SET
+&tmcset_	&etmc		&2000-2001, \
+	&TiMeCode SET (for backend)
+&tmctmc		&etmc		&2000-2001, \
+	&TiMeCode TiMeCode
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 
 

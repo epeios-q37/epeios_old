@@ -1,15 +1,15 @@
-# 'gendoc' Makefile by Claude L. Simon (csimon@webmails.com)
-# Builds executable for the 'gendoc' software.
+# 'gendoc' Makefile by Claude L. Simon (csimon@epeios.org)
+# Builds executable for the 'reveal' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 Claude SIMON (csimon@webmail.com).
+# Copyright (C) 2000, 2001, 2003 Claude SIMON (csimon@epeios.org).
 #
-# This file is part of the Epeios project (http://epeios.org/).
+# This file is part of the Epeios project (http://epeios.org/)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,7 +28,7 @@
 name = gendoc
 copt =
 # Epeios general debugging features
-# copt += -DXXX_DBG
+copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
@@ -57,12 +57,12 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
-#co += -g
+co += -g
 # General optimization.
-co += -O
+#co += -O
 # To use with gprof
 #co += -pg
-lo = -o $(name).exe
+lo = -o $(name)
 # needed when pthread are used.
 #lo += -lpthread
 endif
@@ -75,32 +75,22 @@ endif
 ifeq ("$(env)","windows")
 ox = obj
 cc = bcc32
-dss = ;
-dst = :
-larg = $(lo) *.$(ox)	# Because Windows command size limited.
+ds = ;
+lrfs = @LinkResponseFile
 endif
 
 ifeq ("$(env)","gnu")
 ox = o
 cc = g++ 
-larg = $(lo) $(objs)
-dss = :
-endif
-
-ifeq ("$(EPEIOS_OS)","linux")
-dst = :
-endif
-
-ifeq ("$(EPEIOS_OS)","cygwin")
-dst = ;
+ds = :
+lrfs = `cat LinkResponseFile`
 endif
 
 ifeq ("$(env)","beos")
 ox = o
 cc = g++
-dss = :
-dst = :
-larg = $(lo) $(objs)
+ds = :
+lrfs = `cat LinkResponseFile`
 endif
 
 vpath %.cpp $(subst $(ds),:,$(src))
@@ -112,8 +102,11 @@ lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(libs:=.$(ox))
 
-$(name).exe: $(objs)
-	$(cc) $(larg)
+$(name):  LinkResponseFile $(objs)
+	$(cc) $(lrfs)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $<
+	$(cc) $(co) $< 
+
+LinkResponseFile: $(objs)
+	echo $(lo) $(objs) >$@

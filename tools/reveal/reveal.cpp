@@ -880,14 +880,11 @@ int main(
 ERRFProlog
 ERRFBegin
 	Main( argc, argv );
-	stf::cout << "coucou" << txf::nl;
 ERRFErr
 	Retour = EXIT_FAILURE;
 
 	if ( ERRMajor == err::thw )
 		ERRRst();
-
-
 ERRFEnd
 ERRFEpilog
 	stf::cout << txf::sync;
