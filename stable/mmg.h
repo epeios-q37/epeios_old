@@ -91,25 +91,25 @@ namespace mmg
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
-		uym::data__ *Statique_;
+		uym::datum__ *Statique_;
 		// Loi d'accés.
 		mdr::mode Mode_;
 	protected:
-		virtual void MDRRead(
+		virtual void MDRRecall(
 			mdr::row__ Position,
 			mdr::bsize__ Amount,
-			mdr::data__ *Buffer )
+			mdr::datum__ *Buffer )
 		// écrit 'Nombre' octets de 'Tampon' à la position 'Position'.
 		{
-			Memoire.Read( Position + Taille, Amount, Buffer );
+			Memoire.Recall( Position + Taille, Amount, Buffer );
 		}
-		virtual void MDRWrite(
-			const mdr::data__ *Buffer,
+		virtual void MDRStore(
+			const mdr::datum__ *Buffer,
 			mdr::bsize__ Amount,
 			mdr::row__ Position )
 		{
 			StockerStatique();
-			Memoire.Write( Buffer, Amount, Position + Taille );
+			Memoire.Store( Buffer, Amount, Position + Taille );
 		}
 		// Alloue 'Capacite' octets.
 		virtual void MDRAllocate( mdr::size__ Capacity )
@@ -143,7 +143,7 @@ namespace mmg
 			reset( true );
 		}
 		void Init(
-			uym::data__ *Statique,
+			uym::datum__ *Statique,
 			rule Regle,
 			mdr::mode Mode = mdr::mReadWrite )
 		{
@@ -171,7 +171,7 @@ namespace mmg
 		void StockerStatique( void )
 		{
 			if ( Statique_ && ( Mode_== mdr::mReadWrite ) )
-				Memoire.Write( Statique_, Taille, 0 );
+				Memoire.Store( Statique_, Taille, 0 );
 		}
 		void EcrireDansFlot( flw::oflow___ &Flot ) const
 		{
@@ -183,7 +183,7 @@ namespace mmg
 		}
 		void RecupererStatique( void )
 		{
-			Memoire.Read( 0, Taille, Statique_, true );
+			Memoire.Recall( 0, Taille, Statique_, true );
 		}
 		void Mode( mdr::mode Mode )
 		{
@@ -270,7 +270,7 @@ namespace mmg
 
 			Object.plug( Memoire );
 
-			Pilote_.Init( (uym::data__ *)&S_, Rule, Mode );
+			Pilote_.Init( (uym::datum__ *)&S_, Rule, Mode );
 
 			Memoire.plug( Pilote_ );
 
@@ -298,7 +298,7 @@ namespace mmg
 		//f Write to 'OFLow' as raw data.
 		void Write( flw::oflow___ &OFlow ) const
 		{
-			Memoire.Synchronize();
+			Memoire.Flush();
 			Pilote_.EcrireDansFlot( OFlow );
 			Memoire.write( OFlow );
 		}

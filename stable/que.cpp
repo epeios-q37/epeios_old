@@ -64,7 +64,7 @@ void que::links_::Initialize(
 	que::link__ L;
 
 	do {
-		Write( L, Begin );
+		Store( L, Begin );
 	} while( Begin++ < End );
 }
 

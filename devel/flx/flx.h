@@ -245,7 +245,7 @@ namespace flx {
 
 			if ( Wanted )
 			{
-				Set_->Read( Position_, (epeios::bsize__)Wanted, Buffer );
+				Set_->Recall( Position_, (epeios::bsize__)Wanted, Buffer );
 				Position_ += Wanted;
 			}
 

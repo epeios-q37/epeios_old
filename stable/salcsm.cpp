@@ -65,7 +65,7 @@ bso::bsize__ salcsm::tampon::Ecrire(
 {
 	E_BUNCH(flw::datum__)::Allocate( Ecriture_ + Taille );
 
-	E_BUNCH(flw::datum__)::Write( Tampon, Taille, Ecriture_ );
+	E_BUNCH(flw::datum__)::Store( Tampon, Taille, Ecriture_ );
 
 	Ecriture_ += Taille;
 
@@ -83,7 +83,7 @@ bso::bsize__ salcsm::tampon::Lire(
 	if ( Desire < Minimum )
 		ERRf();
 
-	E_BUNCH( flw::datum__ )::Read( Lecture_, Desire, Tampon );
+	E_BUNCH( flw::datum__ )::Recall( Lecture_, Desire, Tampon );
 
 	Lecture_ += Desire;
 

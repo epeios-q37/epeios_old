@@ -163,9 +163,9 @@ namespace dbt {
 		{
 			row__ Row = E_LISTt_( row__ )::New();
 
-			Types.Write( internal, Row );
+			Types.Store( internal, Row );
 
-			Nodes.Write( *Internals.Add( Internal ), Row );
+			Nodes.Store( *Internals.Add( Internal ), Row );
 
 			return Row;
 		}
@@ -174,21 +174,21 @@ namespace dbt {
 		{
 			row__ Row = E_LISTt_( row__ )::New();
 
-			Types.Write( external, Row );
+			Types.Store( external, Row );
 
-			Nodes.Write( *Externals.Add( External ), Row );
+			Nodes.Store( *Externals.Add( External ), Row );
 
 			return Row;
 		}
 		//f Return true if node 'Node' is an internal one.
 		bso::bool__ IsInternal( row__ Node ) const
 		{
-			return Types.Read( Node ) == internal;
+			return Types.Get( Node ) == internal;
 		}
 		//f Return true if node 'Node' is an external one.
 		bso::bool__ IsExternal( row__ Node ) const
 		{
-			return Types.Read( Node ) == external;
+			return Types.Get( Node ) == external;
 		}
 		//f Return the internal row corresponding to 'Node'.
 		internal_row__ GetInternalRow( row__ Node ) const

@@ -35,7 +35,7 @@
 #include "err.h"
 #include "stf.h"
 
-TYPEDEF( epeios::row_t__, dummy__ );
+E_TYPEDEF( epeios::row_t__, dummy__ );
 
 void Generic( int argc, char *argv[] )
 {

@@ -20,6 +20,7 @@ BCH:
 BITBCH:
 - Fixing bug.
 - Renaming 'Add' to 'Append'.
+- Adapting to changes in 'BCH' library.
 
 BTF:
 - Adding a dummy 'Exists()' method, due to changes in 'STK' library.
@@ -69,6 +70,7 @@ IDS:
 LST:
 - Renaming 'CreateEntry' to 'New'.
 - Introducing feature to fix some cast problem.
+- Renaming 'Store' object in 'Locations' to avoid some name conflicts.
 
 LSTBCH:
 - Fixing bug.
@@ -111,6 +113,7 @@ STK:
 - Adding 'Top()' method.
 - Using 'E_NAVt' macro.
 - Fixing the bug about the 'E_MEMORY_' used instead of 'E_MEMORYt_'.
+- Adapting to changes in 'BCH' library.
 
 STR:
 - Adding 'ToU[S|B]()'.

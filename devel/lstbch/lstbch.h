@@ -118,7 +118,7 @@ namespace lstbch {
 		{
 			row Row = list_<row, row_t>::New();
 
-			bunch_<type, row>::Write( Object, Row );
+			bunch_<type, row>::Store( Object, Row );
 
 			return Row;
 		}

@@ -70,44 +70,52 @@ namespace str {
 		using bch::bunch_;
 	}
 
+	class _string_size_handler {
+	public:
+		static epeios::size__ SizeOf( const char *S )
+		{
+			return strlen( S );
+		}
+	};
+
 	//c A string.
 	class string_
-	: public E_BUNCH_( bso::char__ )
+	: public E_BUNCHx_( bso::char__, _string_size_handler )
 	{
 	private:
 	public:
 		struct s
-		: public E_BUNCH_( bso::char__ )::s {};
+		: public E_BUNCHx_( bso::char__, _string_size_handler )::s {};
 		string_( s &S )
-		: E_BUNCH_( bso::char__ )( S )
+		: E_BUNCHx_( bso::char__, _string_size_handler )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_BUNCH_( bso::char__ )::reset( P );
+			E_BUNCHx_( bso::char__, _string_size_handler )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &Driver )
 		{
-			E_BUNCH_( bso::char__ )::plug( Driver );
+			E_BUNCHx_( bso::char__, _string_size_handler )::plug( Driver );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_BUNCH_( bso::char__ )::plug( M );
+			E_BUNCHx_( bso::char__, _string_size_handler )::plug( M );
 		}
 		string_ &operator =( const string_ &O )
 		{
-			E_BUNCH_( bso::char__ )::operator =( O );
+			E_BUNCHx_( bso::char__, _string_size_handler )::operator =( O );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_BUNCH_( bso::char__ )::Init();
+			E_BUNCHx_( bso::char__, _string_size_handler )::Init();
 		}
 		//f Initialization with 'Seed'.
 		void Init( const bso::char__ *Seed )
 		{
-			E_BUNCH_( bso::char__ )::Init( Seed, strlen( Seed ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, strlen( Seed ) );
 		}
 		//f Initialization with 'Seed'.
 		void Init( const str::string_ &Seed )
@@ -119,7 +127,7 @@ namespace str {
 		string_ &operator =( const char *Chaine )
 		{
 			Init();
-			E_BUNCH_( bso::char__ )::StoreAndAdjust( Chaine, strlen( Chaine ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, strlen( Chaine ) );
 
 			return *this;
 		}
@@ -128,19 +136,19 @@ namespace str {
 			const char *String,
 			epeios::row__ Position = 0 )
 		{
-			E_BUNCH_( bso::char__ )::StoreAndAdjust( String, strlen( String ), Position );
+			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( String, strlen( String ), Position );
 		}
 		//f Append null-terminated string 'String' and return position where put.
 		epeios::row__ AppendNTS( const char *String )
 		{
-			return E_BUNCH_( bso::char__ )::Append( String, strlen( String ) );
+			return E_BUNCHx_( bso::char__, _string_size_handler )::Append( String, strlen( String ) );
 		}
 		//f Insert null-terminated string 'String' at 'Position'.
 		void InsertNTS(
 			const char *String,
 			epeios::row__ Position )
 		{
-			E_BUNCH_( bso::char__ )::Insert( String, strlen( String ), Position );
+			E_BUNCHx_( bso::char__, _string_size_handler )::Insert( String, strlen( String ), Position );
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(

@@ -119,82 +119,82 @@ namespace btr {
 		//f Release father of 'Node'.
 		void ReleaseParent( row_t__ Node )
 		{
-			_node__ Buffer = _nodes_::Read( Node );
+			_node__ Buffer = _nodes_::Get( Node );
 
 			Buffer.Parent = NONE;
-			_nodes_::Write( Buffer, Node );
+			_nodes_::Store( Buffer, Node );
 		}
 		//f Release left child of 'Node'.
 		void ReleaseLeft( row_t__ Node )
 		{
-			_node__ Buffer = _nodes_::Read( Node );
+			_node__ Buffer = _nodes_::Get( Node );
 
 			Buffer.Left = NONE;
-			_nodes_::Write( Buffer, Node );
+			_nodes_::Store( Buffer, Node );
 		}
 		//f Release right child of 'Node'.
 		void ReleaseRight( row_t__ Node )
 		{
-			_node__ Buffer = _nodes_::Read( Node );
+			_node__ Buffer = _nodes_::Get( Node );
 
 			Buffer.Right = NONE;
-			_nodes_::Write( Buffer, Node );
+			_nodes_::Store( Buffer, Node );
 		}
 		//f Return true if 'Node' has a father.
 		bso::bool__ HasParent( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Parent != NONE;
+			return _nodes_::Get( Node ).Parent != NONE;
 		}
 		//f Return true if 'Node' has left chid.
 		bso::bool__ HasLeft( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Left != NONE;
+			return _nodes_::Get( Node ).Left != NONE;
 		}
 		//f Return true if 'Node' has right chid.
 		bso::bool__ HasRight( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Right != NONE;
+			return _nodes_::Get( Node ).Right != NONE;
 		}
 		//f Return father of 'Node', or 'NONE' if nonde.
 		row_t__ Parent( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Parent;
+			return _nodes_::Get( Node ).Parent;
 		}
 		//f Return left child of 'Node', or 'NONE' if nonde.
 		row_t__ Left( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Left;
+			return _nodes_::Get( Node ).Left;
 		}
 		//f Return right child of 'Node', or 'NONE' if nonde.
 		row_t__ Right( row_t__ Node ) const
 		{
-			return _nodes_::Read( Node ).Right;
+			return _nodes_::Get( Node ).Right;
 		}
 		//f 'Left' becomes left child of 'Parent'.
 		void BecomeLeft(
 			row_t__ Left,
 			row_t__ Parent )
 		{
-			_node__ GParent = _nodes_::Read( Parent ), GLeft = _nodes_::Read( Left );
+			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
 
 			GParent.Left = Left;
 			GLeft.Parent = Parent;
 
-			_nodes_::Write( GParent, Parent );
-			_nodes_::Write( GLeft, Left );
+			_nodes_::Store( GParent, Parent );
+			_nodes_::Store( GLeft, Left );
 		}
 		//f 'Right' becomes left child of 'Parent'.
 		void BecomeRight(
 			row_t__ Right,
 			row_t__ Parent )
 		{
-			_node__ GParent = _nodes_::Read( Parent ), GRight = _nodes_::Read( Right );
+			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
 
 			GParent.Right = Right;
 			GRight.Parent = Parent;
 
-			_nodes_::Write( GParent,Parent );
-			_nodes_::Write( GRight, Right );
+			_nodes_::Store( GParent,Parent );
+			_nodes_::Store( GRight, Right );
 		}
 /*		row_t__ TrouverAieulMaleAvecRight(
 			row_t__ Depart,
@@ -203,12 +203,12 @@ namespace btr {
 			row_t__ Node,
 			row_t__  Parent )
 		{
-			_node__ Lien = _nodes_::Read( Node );
+			_node__ Lien = _nodes_::Get( Node );
 			row_t__ AncienParent = Lien.Parent;
 
 			Lien.Parent = Parent;
 
-			_nodes_::Write( Lien, Node );
+			_nodes_::Store( Lien, Node );
 
 			return AncienParent;
 		}

@@ -223,12 +223,12 @@ namespace ssnmng {
 		//f Touche the session corresponding at position 'P'.
 		void Touch( epeios::row__ P )
 		{
-			chrono__ C = Chronos.Read( P );
+			chrono__ C = Chronos.Get( P );
 
 			if ( time( &C.Relative ) == -1 )
 				ERRs();
 
-			Chronos.Write( C, P );
+			Chronos.Store( C, P );
 
 	#ifdef SSNMNG_DBG
 			if ( E_MQUEUE_::Amount() == 0 )
@@ -243,7 +243,7 @@ namespace ssnmng {
 		//f Return true if session corresponding to 'P' is valid.
 		bso::bool__ IsValid( epeios::row__ P ) const
 		{
-			chrono__ C = Chronos.Read( P );
+			chrono__ C = Chronos.Get( P );
 
 			return ( difftime( time( NULL ), C.Absolute ) < S_.Absolute )
 				   && ( difftime( time( NULL ), C.Relative ) < S_.Relative );

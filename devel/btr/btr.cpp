@@ -65,22 +65,22 @@ void btr::_nodes_manager_::Release(
 		if ( HasParent( Start ) )
 		{
 			if ( IsLeft( Start ) )
-				ReleaseLeft( _nodes_::Read( Start ).Parent );
+				ReleaseLeft( _nodes_::Get( Start ).Parent );
 			else
-				ReleaseRight( _nodes_::Read( Start ).Parent );
+				ReleaseRight( _nodes_::Get( Start ).Parent );
 
 			ReleaseParent( Start );
 		}
 
 		if ( HasLeft( Start ) )
 		{
-			ReleaseParent( _nodes_::Read( Start ).Left );
+			ReleaseParent( _nodes_::Get( Start ).Left );
 			ReleaseLeft( Start );
 		}
 
 		if ( HasRight( Start ) )
 		{
-			ReleaseParent( _nodes_::Read( Start ).Right );
+			ReleaseParent( _nodes_::Get( Start ).Right );
 			ReleaseRight( Start );
 		}
 	}

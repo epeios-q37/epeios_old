@@ -100,7 +100,7 @@ namespace stk {
 		{
 			amount_extent_manager_<r>::operator =( S );
 			E_MEMORYt_( t, r )::Allocate( S.Amount() );
-			E_MEMORYt_( t, r )::Write( S, S.Amount() );
+			E_MEMORYt_( t, r )::Store( S, S.Amount() );
 
 			return *this;
 		}
@@ -119,7 +119,7 @@ namespace stk {
 			if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
 				E_MEMORYt_( t, r )::Allocate( Size );
 
-			E_MEMORYt_( t, r )::Write( Object, Amount() - 1 );
+			E_MEMORYt_( t, r )::Store( Object, Amount() - 1 );
 
 			return Amount() - 1;
 
@@ -129,7 +129,7 @@ namespace stk {
 		{
 			tym::size__ Size = Amount() - 1;
 
-			t Objet = E_MEMORYt_( t, r )::Read( Size );
+			t Objet = E_MEMORYt_( t, r )::Get( Size );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( Size, Mode ) )
 				E_MEMORYt_( t, r )::Allocate( Size );
@@ -140,7 +140,7 @@ namespace stk {
 		bso::bool__ Exists( t Object ) const
 		{
 			if ( Amount() )
-				return E_MEMORYt_( t, r )::Position( Object, 0, Amount() ) != NONE;
+				return E_MEMORYt_( t, r )::Locate( Object, 0, Amount() ) != NONE;
 			else
 				return false;
 		}
@@ -151,7 +151,7 @@ namespace stk {
 			if ( Amount() == 0 )
 				ERRl();
 #endif
-			return E_MEMORYt_( t, r )::Read( Last() );
+			return E_MEMORYt_( t, r )::Get( Last() );
 		}
 		E_NAVt( amount_extent_manager_<r>::, r ) 
 	};

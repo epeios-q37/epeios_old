@@ -103,7 +103,7 @@ namespace bitbch {
 			r Position,
 			const t &Table )
 		{
-			return ( Table.Read( Indice_( Position ) ) & Masque_( Position ) ) != 0;
+			return ( Table.Get( Indice_( Position ) ) & Masque_( Position ) ) != 0;
 		}
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		static void Ecrire(
@@ -111,7 +111,7 @@ namespace bitbch {
 			r Position,
 			t &Table )
 		{
-			Table.Write( (receptacle__)( ( Table.Read( Indice_( Position ) ) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ) ), Indice_( Position ) );
+			Table.Store( (receptacle__)( ( Table.Get( Indice_( Position ) ) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ) ), Indice_( Position ) );
 		}
 		// place un bit de valeur 'Valeur' à la position 'Position'
 	};
@@ -175,7 +175,7 @@ namespace bitbch {
 		bit_bunch_ &operator =( const bit_bunch_ &O )
 		{
 			amount_extent_manager_<r>::operator =( O );
-			Table.Write( O.Table, Convert_( O.Amount() ) );
+			Table.Store( O.Table, Convert_( O.Amount() ) );
 
 			return *this;
 		}
@@ -187,17 +187,17 @@ namespace bitbch {
 		}
 	//	void Dup( bit_bunch &O );
 		//f Return the value at position 'Position'.
-		bso::bool__ Read( r Position ) const
+		bso::bool__ Get( r Position ) const
 		{
 			return (bso::bool__)Lire_( Position );
 		}
 		//f Return the value at position 'Position'.
 		bso::bool__ operator()( r Position ) const
 		{
-			return Read( Position );
+			return Get( Position );
 		}
-		//f Write 'Value' at 'Position'.
-		void Write(
+		//f Store 'Value' at 'Position'.
+		void Store(
 			bso::bool__ Value,
 			r Position )
 		{
@@ -215,7 +215,7 @@ namespace bitbch {
 		{
 			Allouer_( Amount() + 1, aem::mDefault );
 
-			Write( Value, Amount() - 1 );
+			Store( Value, Amount() - 1 );
 			return Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
@@ -342,23 +342,23 @@ namespace bitbch {
 			T1.Init();
 			T2.Init();
 		}
-		//f Write 'Value' tou 'Position'.
-		void Write(
+		//f Store 'Value' tou 'Position'.
+		void Store(
 			receptacle__ Value,
 			r Position )
 		{
-			T1.Write(   Value & 1       , Position );
-			T2.Write( ( Value & 2 ) != 0, Position );	// to avoid warning on some compilers.
+			T1.Store(   Value & 1       , Position );
+			T2.Store( ( Value & 2 ) != 0, Position );	// to avoid warning on some compilers.
 		}
 		//f Return the value at 'Position'.
-		receptacle__ Read( r Position ) const
+		receptacle__ Get( r Position ) const
 		{
-			return (int)T1.Read( Position ) | (int)( T2.Read( Position ) << 1 );
+			return (int)T1.Get( Position ) | (int)( T2.Get( Position ) << 1 );
 		}
 		//f Return the value at position 'Position'.
 		receptacle__ operator()( r Position ) const
 		{
-			return Read( Position );
+			return Get( Position );
 		}
 		//f Allocate enough room to contain 'Size' pairs of bits.
 		void Allocate( tym::size__ Size )
@@ -432,11 +432,11 @@ namespace bitbch {
 	private:
 		receptacle__ Table_[t];
 	public:
-		receptacle__ Read( row_t__ Position ) const
+		receptacle__ Get( row_t__ Position ) const
 		{
 			return Table_[Position];
 		}
-		void Write(
+		void Store(
 			receptacle__ Value,
 			row_t__ Position )
 		{
@@ -523,17 +523,17 @@ namespace bitbch {
 			Reset();
 		}
 		//f Return the value at position 'Position'.
-		bso::bool__ Read( r Position ) const
+		bso::bool__ Get( r Position ) const
 		{
 			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1>, r >::Lire( Position, Table_ );
 		}
 			//f Return the value at position 'Position'.
 		bso::bool__ operator()( r Position )
 		{
-			return Read( Position );
+			return Get( Position );
 		}
-		//f Write 'Value' to 'Position'.
-		void Write(
+		//f Store 'Value' to 'Position'.
+		void Store(
 			bso::bool__ Value,
 			r Position )
 		{
@@ -569,7 +569,7 @@ namespace bitbch {
 		//f Return the first bit at 'Value'.
 		r First( bso::bool__ Value ) const
 		{
-			if ( Read( 0 ) == Value )
+			if ( Get( 0 ) == Value )
 				return 0;
 			else
 				return Next( 0, Value );

@@ -148,22 +148,22 @@ namespace que {
 			row_t__ Item,
 			row_t__ Value )
 		{
-			que::link__ L = Read( Item );
+			que::link__ L = Get( Item );
 
 			L.Previous = Value;
 
-			Write( L, Item );
+			Store( L, Item );
 		}
 		//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
 		void SetNext(
 			row_t__ Item,
 			row_t__ Value )
 		{
-			que::link__ L = Read( Item );
+			que::link__ L = Get( Item );
 
 			L.Next = Value;
 
-			Write( L, Item );
+			Store( L, Item );
 		}
 		//f Initialization.
 		void Init( void )
@@ -212,13 +212,13 @@ namespace que {
 			if ( Link.HasPrevious() ) {
 				L = Links( Link.Previous );
 				L.Next = Node;
-				Links.Write( L, Link.Previous );
+				Links.Store( L, Link.Previous );
 			}
 
 			if ( Link.HasNext() ) {
 				L = Links( Link.Next );
 				L.Previous = Node;
-				Links.Write( L, Link.Next );
+				Links.Store( L, Link.Next );
 			}
 		}
 	#ifdef QUE_DBG
@@ -312,8 +312,8 @@ namespace que {
 			LItem.Previous = *Node;
 			LNode.Next = *Item;
 
-			Links.Write( LNode, *Node );
-			Links.Write( LItem, *Item );
+			Links.Store( LNode, *Node );
+			Links.Store( LItem, *Item );
 		}
 		//f Insert 'Item' before 'Node'.
 		void BecomePrevious(
@@ -333,8 +333,8 @@ namespace que {
 			LItem.Next = *Node;
 			LNode.Previous = *Item;
 
-			Links.Write( LNode, *Node );
-			Links.Write( LItem, *Item );
+			Links.Store( LNode, *Node );
+			Links.Store( LItem, *Item );
 		}
 		//f Delete node 'Node'.
 		void Delete( r Node )
@@ -349,7 +349,7 @@ namespace que {
 
 			LNode.Next = LNode.Previous = NONE;
 
-			Links.Write( LNode, *Node );
+			Links.Store( LNode, *Node );
 		}
 		//f Return the extent of the queue.
 		tym::size__ Extent( void ) const
@@ -366,8 +366,8 @@ namespace que {
 			r Node1,
 			r Node2 )
 		{
-			link__ LNode1 = Links.Read( *Node1 );
-			link__ LNode2 = Links.Read( *Node2 );
+			link__ LNode1 = Links.Get( *Node1 );
+			link__ LNode2 = Links.Get( *Node2 );
 
 			HandleNeighboursForSwap_( LNode1, *Node2 );
 			HandleNeighboursForSwap_( LNode2, *Node1 );
@@ -375,8 +375,8 @@ namespace que {
 			LNode1.Replace( *Node2, *Node1 );
 			LNode2.Replace( *Node1, *Node2 );
 
-			Links.Write( LNode1, *Node2 );
-			Links.Write( LNode2, *Node1 );
+			Links.Store( LNode1, *Node2 );
+			Links.Store( LNode2, *Node1 );
 		}
 		//f Return true if 'Node' exists, false oterwise.
 		bso::bool__ Exists( r Node ) const

@@ -112,7 +112,7 @@ namespace ssnmng {
 			SessionID.New();
 		} while( Position( SessionID ) != NONE );
 
-		Table.Write( SessionID, P );
+		Table.Store( SessionID, P );
 
 		if ( Index.IsEmpty() ) {
 			E_MQUEUE_::Create( P );
@@ -144,7 +144,7 @@ namespace ssnmng {
 		if ( time( &C.Absolute ) == -1 )
 			ERRs();
 
-		Chronos.Write( C, P );
+		Chronos.Store( C, P );
 
 		return P;
 	}
@@ -171,7 +171,7 @@ namespace ssnmng {
 		if ( SessionID.Amount() != SSNMNG_SIZE )
 			return NONE;
 
-		SessionID.Read( 0, SSNMNG_SIZE, Buffer );
+		SessionID.Recall( 0, SSNMNG_SIZE, Buffer );
 
 		Buffer[SSNMNG_SIZE] = 0;
 

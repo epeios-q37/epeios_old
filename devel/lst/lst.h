@@ -87,16 +87,16 @@ namespace lst {
 		'Size' est la capacité allouée. Ne fait rien par défaut. */
 		virtual void LSTAllocate( epeios::size__ Size ) {}
 	private:
-		// Return the extent, based on 'Store'.
+		// Return the extent, based on 'Locations'.
 		epeios::row_t__ Extent_( void ) const
 		{
-			return Store.GetFirstAvailable();
+			return Locations.GetFirstAvailable();
 		}
 		epeios::row_t__ Nouveau_( void )
 		{
 			bso::bool__ Released = false;
 
-			epeios::row_t__ New = Store.New( Released );
+			epeios::row_t__ New = Locations.New( Released );
 
 			if ( !Released )
 				LSTAllocate( Extent_() );
@@ -106,39 +106,39 @@ namespace lst {
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
 		{
-			return lst::Successeur_( Element, Extent_(), Store );
+			return lst::Successeur_( Element, Extent_(), Locations );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
 		{
-			return lst::Predecesseur_( Element, Store );
+			return lst::Predecesseur_( Element, Locations );
 		}
 	public:
 		//o Store of locations.
-		store_ Store;
+		store_ Locations;
 		struct s
 		{
-			store_::s Store;
+			store_::s Locations;
 		};
 	// fonctions
 		list_( s &S )
-		: Store( S.Store )
+		: Locations( S.Locations )
 		{}
 		void reset( bool P = true )
 		{
-			Store.reset( P );
+			Locations.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
 		{
-			Store.plug( M );
+			Locations.plug( M );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			Store.plug( M );
+			Locations.plug( M );
 		}
 		list_ &operator =( const list_ &L )
 		{
-			Store = L.Store;
+			Locations = L.Locations;
 
 			return *this;
 		}
@@ -157,12 +157,12 @@ namespace lst {
 	*/	//f Initialiration.
 		void Init( void )
 		{
-			Store.Init();
+			Locations.Init();
 		}
 		//f Delete 'Entry'.
 		void Delete( r Entry )
 		{
-			Store.Release( *Entry );
+			Locations.Release( *Entry );
 		}
 		//f Return the position of a new entry.
 		r New( void )
@@ -173,7 +173,7 @@ namespace lst {
 		r First( void ) const
 		{
 			if ( Extent_() )
-				if ( !Store.IsAvailable( 0 ) )
+				if ( !Locations.IsAvailable( 0 ) )
 					return 0;
 				else
 					return Successeur_( 0 );
@@ -187,7 +187,7 @@ namespace lst {
 			{
 				epeios::row_t__ P = Extent_() - 1;
 
-				if ( !Store.IsAvailable( P ) )
+				if ( !Locations.IsAvailable( P ) )
 					return P;
 				else
 					return Predecesseur_( P );
@@ -204,7 +204,7 @@ namespace lst {
 		r Next( r Entry ) const
 		{
 			if ( ++*Entry < Extent_() )
-				if ( !Store.IsAvailable( *Entry ) )
+				if ( !Locations.IsAvailable( *Entry ) )
 					return Entry;
 				else
 					return Successeur_( *Entry );
@@ -215,7 +215,7 @@ namespace lst {
 		r Previous( r Entry ) const
 		{
 			if ( (*Entry)-- > 0 )
-				if ( !Store.IsAvailable( *Entry ) )
+				if ( !Locations.IsAvailable( *Entry ) )
 					return Entry;
 				else
 					return Predecesseur_( *Entry );
@@ -225,7 +225,7 @@ namespace lst {
 		//f Amount of entries, NOT the extent of the list.
 		epeios::size__ Amount( void ) const
 		{
-			return Extent_() - Store.Amount();
+			return Extent_() - Locations.Amount();
 		}
 		//f Extent of list.
 		epeios::size__ Extent( void ) const
@@ -238,7 +238,7 @@ namespace lst {
 			if ( *Entry >= Extent_() )
 				return false;
 			else
-				return !Store.IsAvailable( *Entry );
+				return !Locations.IsAvailable( *Entry );
 		}
 	};
 
