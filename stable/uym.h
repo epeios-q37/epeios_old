@@ -522,16 +522,12 @@ namespace uym {
 	class _untyped_memory___
 	{
 	protected:
-		uym::datum__ *Data_;
+		tol::E_POINTER___( uym::datum__ ) Data_;
 	public:
 		struct s {};	// To simplify use in library 'BCH'
 		void reset( bso::bool__ P = true )
 		{
-			if ( P ) {
-				tol::Free( Data_ );
-			}
-
-			Data_ = NULL;
+			Data_.reset( P );
 		}
 		_untyped_memory___( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
 		{
@@ -544,12 +540,12 @@ namespace uym {
 		//f Allocation of size 'Size'.
 		void Allocate( uym::size__ Size )
 		{
-			realloc( Data_, Size );
+			Data_ = realloc( Data_, Size );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			tol::Free( Data_ );
+			Data_.Init();
 		}
 	};
 

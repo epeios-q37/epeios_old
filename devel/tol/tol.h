@@ -689,6 +689,60 @@ namespace tol {
 
 	E_AUTO2( object )
 
+	template <typename t> class pointer___
+	{
+	private:
+		t *P_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( P_ != NULL )
+					free( P_ );
+
+			P_ = NULL;
+		}
+		pointer___( void )
+		{
+			reset( false );
+		}
+		~pointer___( void )
+		{
+			reset( true );
+		}
+		void Init( void )
+		{
+			reset();
+		}
+		t *operator =( t *P )
+		{
+			if ( P == NULL )
+				ERRa();
+
+			if ( P_ != NULL )
+				free( (void *)P_ );
+
+			P_ = P;
+
+			return P_;
+		}
+		t *operator =( void *P )
+		{
+			return operator =( (t *)P );
+		}
+		operator t *( void )
+		{
+			return P_;
+		}
+		operator const t *( void ) const
+		{
+			return P_;
+		}
+	};
+
+	#define E_POINTER___( t )	pointer___<t>
+
+#if 0
 	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.
 	template <typename t> inline void Free( t *&Pointer )
 	{
@@ -697,6 +751,7 @@ namespace tol {
 			Pointer = NULL;
 		}
 	}
+#endif
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
 #define E_RODISCLOSE_(type__, name )\
