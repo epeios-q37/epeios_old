@@ -151,6 +151,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&TeXt Manager TabBLe
 &tym		&epeios		&2000-\
 	&TYped Memory
+&uif		&epeios		&\
+	&User Interface Framework (based on wxWidgets).
 &uym		&epeios		&2000-\
 	&UnTyped Memory
 &xtf		&epeios		&2000-\

@@ -13,6 +13,7 @@ GENERAL:
 - (14/07/04) Adapting to changes in 'BSO' library.
 - (14/07/04) Removing apparently unused read/write methods.
 - (21/08/04) Obsoletes 'FAM' library, because not thread-safe.
+- (10/10/04) Adding 'UIF' library.
 
 AEM:
 - (06/09/04) Adding 'Exists()' and 'IsEmpty()' to the static version.
