@@ -1,0 +1,12 @@
+# $$Id$$
+
+BOOKMARK	&'mll2html' user manual.
+TITLE		&The 'mll2html' user manual.
+ABSTRACT	&The Epeios 'mll2html' user manual.
+KEYWORDS	&Epeios, software engineering, software, free software, free, linux, windows, C++, java, python, unix, open source, open software, GNU, GPL, FSF, BCC, borland, inprise, gcc, bcc, g++, copyleft, pipe, semaphore, multitasking, socket, client, server, mutex
+CONTENT		%$DOC$/software/mll2html/manual.xml
+SOURCEFORGE_GROUP_ID\
+		&93
+COPYRIGHT_DATES\
+		&2001
+WEB		&<back>..</back>

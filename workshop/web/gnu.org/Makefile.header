@@ -2,7 +2,7 @@
 
 ifeq ("$(EPEIOS_OS)","windows")
 rootdir=/cvs/epeios
-dest = h:\cvs/GNU
+dest = h:\cvs/software
 copy = cp
 move = move
 mkdir = c:\tools\mkdir
@@ -10,7 +10,7 @@ endif
 
 ifeq ("$(EPEIOS_OS)","linux")
 rootdir=/home/csimon/libs/epeios
-dest = /home/csimon/cvs/GNU
+dest = /home/csimon/cvs
 copy = cp
 move = mv
 mkdir = mkdir
