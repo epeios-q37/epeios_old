@@ -231,8 +231,10 @@ ERRProlog
 	char Buffer[50];
 ERRBegin
 	Album.Init( Disc.Content );
-
-	Flow << DiscID << FieldDelimiter << Disc.Name << FieldDelimiter << FieldDelimiter << LineDelimiter;
+	
+	sprintf( Buffer, "%c%.2i%c%.2i", AlbumMarker, 0, TitleMarker, 0 );
+	
+	Flow << DiscID << Buffer << FieldDelimiter << Disc.Name << FieldDelimiter << FieldDelimiter << LineDelimiter;
 	
 	P = Disc.Content.First();
 	
@@ -243,7 +245,8 @@ ERRBegin
 			
 		A++;
 		
-		sprintf( Buffer, "%c%.2i", AlbumMarker, A );
+		sprintf( Buffer, "%c%.2i%c%.2i", AlbumMarker, A, TitleMarker, 0 );
+
 		
 		Flow << DiscID << Buffer << FieldDelimiter << Disc.Name << FieldDelimiter << Album( P ).Name << FieldDelimiter << LineDelimiter;
 		
