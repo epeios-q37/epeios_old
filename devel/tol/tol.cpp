@@ -294,7 +294,7 @@ namespace {
 void tol::Defer( void )
 {
 #ifdef CPE__MS
-	Sleep( 1 );	// PAs 0, sinon l'usage CPU monte à 100%
+	Sleep( 0 );	// PAs 0, sinon l'usage CPU monte à 100%
 #elif defined( CPE__UNIX )
 	if( sched_yield() != 0 )
 		ERRs();

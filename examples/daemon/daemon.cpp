@@ -71,10 +71,10 @@ ERRBegin
 	Shared().Counter++;
 
 	if ( Odd ) {
-		mtx::Lock( Mutexes.Even );
+		mtx::Lock( Mutexes.Even, 1 );
 		mtx::Unlock( Mutexes.Odd );
 	} else {
-		mtx::Lock( Mutexes.Odd );
+		mtx::Lock( Mutexes.Odd, 1 );
 		mtx::Unlock( Mutexes.Even );
 	}
 
@@ -110,9 +110,9 @@ ERRBegin
 
 	while ( 1 ) {
 		if ( Odd ) {
-			mtx::Lock( Mutexes.Even );
+			mtx::Lock( Mutexes.Even, 1 );
 		} else {
-			mtx::Lock( Mutexes.Odd );
+			mtx::Lock( Mutexes.Odd, 1 );
 		}
 
 		_Other( TFlow );

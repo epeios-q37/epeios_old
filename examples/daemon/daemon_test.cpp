@@ -37,13 +37,15 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-void Generic( int argc, char *argv[] )
+#define PORT	2000
+
+void Main( int argc, char *argv[] )
 {
 ERRProlog
 	deamon::user_function__ UserFunction;
 	srv::server___ Server;
 ERRBegin
-	Server.Init( 2000, 5 );
+	Server.Init( PORT, 5 );
 
 	UserFunction.Init();
 
@@ -62,7 +64,7 @@ ERRFBegin
 
 	switch( argc ) {
 	case 1:
-		Generic( argc, argv );
+		Main( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
