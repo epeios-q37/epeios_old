@@ -31,7 +31,7 @@
 
 #define	EPSMSC_VERSION	"$Revision$"	
 
-#define EPSMSC_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define EPSMSC_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -64,9 +64,6 @@ extern class ttr_tutor &EPSMSCTutor;
 //d The gnu URL.
 #define EPSMSC_GNU_URL	"http://www.gnu.org/"
 
-//d The IDEALX URL.
-#define EPSMSC_IDEALX_URL	"http://www.IDEALX.org/"
-
 //d The hypertext link to the Epeios project.
 #define EPSMSC_EPEIOS_LINK	"<A HREF=\"" EPSMSC_EPEIOS_URL "\">Epeios project</A>"
 
@@ -87,11 +84,11 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"
 
 //d GNU (http://www.gnu.org) Text.
-#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ")."
+#define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ").\n\tIt uses Epeios (" EPSMSC_EPEIOS_URL ") technologies."
 
-//d IDEALX (http://www.idealx.org) text.
-#define EPSMSC_IDEALX_TEXT	"\tThis program is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
-							"\twhich uses Epeios (" EPSMSC_EPEIOS_URL ") technology."
+//d Epeios (http://epeios.org) Text.
+#define EPSMSC_EPEIOS_TEXT "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
+
 							
 namespace epsmsc {
 	//f Print information about GNU GPL license.

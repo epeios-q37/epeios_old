@@ -1,7 +1,7 @@
 /*
-  'reveal' by Claude L. Simon (epeios@epeios.org).
+  'reveal' by Claude SIMON (csimon@epeios.org).
   Replaces tags in a file by text or file content.
-  Copyright (C) 1999, 2000 Claude Simon.
+  Copyright (C) 1999-2002 Claude SIMON (csimon@epeios.org)
 
   This file is part of the Epeios project (http://www.epeios.org/).
 
@@ -34,10 +34,14 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"1.0.2"
-#define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
-#define AUTHOR_NAME			EPSMSC_AUTHOR_NAME
+#define VERSION			"1.0.4"
+#define COPYRIGHT_YEARS	"1999-2002"
+#define DESCRIPTION		"Replaces tags in a file by text or file content."
+#define INFO EPSMSC_EPEIOS_TEXT
+#define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define HELP			EPSMSC_HELP_INVITATION( NAME )
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define DEFAULT_TAG_DELIMITER_S		"$"
@@ -539,16 +543,18 @@ void GetTable(
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << "Usage: " << NAME << " [command] [options] desc-file [source-file [dest-file]]" << txf::nl;
-	fout << "desc-file:" << txf::tab << "tag description file." << txf::nl;
-	fout << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
-	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
-	fout << "Command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", clnarg::vSplit, true );
+	fout << DESCRIPTION << txf::nl;
+	fout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << "Options:" << txf::nl;
+	fout << NAME << " <command> [options] desc-file [source-file [dest-file]]" << txf::nl;
+	fout << txf::tab << "desc-file:" << txf::tab << "tag description file." << txf::nl;
+	fout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
+	fout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	fout << "command: " << txf::nl;
+	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", clnarg::vSplit, true );
+	fout << "options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", clnarg::vSplit );
@@ -560,7 +566,8 @@ void PrintHeader( void )
 {
 	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
 	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << txf::nl;
+	fout << COPYRIGHT << txf::nl;
+	fout << INFO << txf::nl;
 	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 

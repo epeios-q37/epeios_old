@@ -1,13 +1,28 @@
-/* Part of the Epeios Project */
-/* See http://www.epeios.org/ for more details. */
-
 /*
-	V1.1.4 (23/05/2000):	Adapting for BCC V5.5. Adapting to ERR V2.0.0.
-	V1.1.3 (20/04/2000):	Fixing bug in memory freeing.
-	V1.1.2 (18/12/1999):	Some little modification on options/command name.
-	V1.1.0 (23/10/1999):	GNUification and adding external hyperlink."
-	V? (?):					First release.
+  'mll2html' by Claude SIMON (csimon@epeios.org).
+  reformats, in HTML, a text file containing mailing lists descriptions.
+  Copyright (C) 1999-2002 Claude SIMON (csimon@epeios.org).
+
+  This file is part of the Epeios project (http://www.epeios.org/).
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org or write to the
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+// $Id$
 
 #include "tol.h"
 #include "gnumll.h"
@@ -17,10 +32,16 @@
 #include "epsmsc.h"
 
 #define NAME			"mll2html"
-#define VERSION			"V1.1.8"
-#define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
-#define AUTHOR			EPSMSC_AUTHOR_NAME
+#define VERSION			"1.1.10"
+#define COPYRIGHT_YEARS	"1999-2002"
+#define DESCRIPTION		"Reformats, in HTML, a text file containing mailing lists descriptions."
+#define INFO			EPSMSC_GNU_TEXT
+#define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
+#define AUHOR			EPSMSC_AUTHOR
+#define HELP			EPSMSC_HELP_INVITATION( NAME )
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define	DELIMITER	'$'
@@ -693,15 +714,17 @@ ERREpilog
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << "Usage: " << NAME << " [command] [options] source-file template-file [dest-file]" << txf::nl;
-	fout << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
-	fout << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
-	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	fout << DESCRIPTION << txf::nl;
+	fout << NAME << " --version|--license|--help" << txf::nl;
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
+	fout << NAME << " <command> [options] source-file template-file [dest-file]" << txf::nl;
+	fout << txf::tab << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
+	fout << txf::tab << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
+	fout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	fout << "Command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists to HTML file.", clnarg::vSplit, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.",  clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.",  clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.",  clnarg::vOneLine, false );
+	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists description to HTML file.", clnarg::vSplit, true );
 	fout << "Options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.",  clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.",  clnarg::vSplit );
@@ -710,10 +733,10 @@ void PrintUsage( const clnarg::description_ &Description )
 
 void PrintHeader( void )
 {
-	fout << NAME " " VERSION " "__DATE__ " " __TIME__;
-	fout << " by "AUTHOR " (" AUTHOR_EMAIL ")" << txf::nl;
-	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << txf::nl;
-	fout << EPSMSC_GNU_TEXT << txf::nl;
+	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	fout << COPYRIGHT << txf::nl;
+	fout << INFO << txf::nl;
 	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 

@@ -1,6 +1,6 @@
 /*
-  Header for the '$xxx$' library by Claude L. Simon ($EMAIL$)
-  Copyright (C) 2000,2001 $COPYRIGHT$ 
+  Header for the '$xxx$' library by Claude SIMON ($EMAIL$)
+  Copyright (C) 2001 $COPYRIGHT$ 
 
   $ADDENDUM1$
   $ADDENDUM2$

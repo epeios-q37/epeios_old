@@ -1,5 +1,6 @@
 /*
 	'$NAME$' by Claude L. SIMON ($EMAIL$)
+	(descrition)
 	Copyright (C) 2001 $COPYRIGHT$
 
 	$ADDENDUM1$
@@ -32,7 +33,9 @@
 
 #define NAME			"$NAME$"
 #define VERSION			"0.1.0"
-#define COPYRIGHT_YEARS	"2001"
+#define COPYRIGHT_YEARS	"2002"
+#define DESCRIPTION		"(description)"
+#define INFO EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -61,18 +64,17 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << "(description)" << txf::nl;
-	fout << "Usage:";
+	fout << DESCRIPTION << txf::nl;
 	fout << txf::tab << NAME << " --version|--license|--help" << txf::nl;
-	fout << txf::tab << NAME << " [command] [options] ..." << txf::nl;
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
+	fout << txf::tab << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
-	fout << "Command:" << txf::nl;
+	fout << "command:" << txf::nl;
 	// Free argument description.
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << "Options:" << txf::nl;
+	fout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
@@ -81,6 +83,7 @@ void PrintHeader( void )
 	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
 	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
 	fout << COPYRIGHT << txf::nl;
+	fout << INFO << txf::nl;
 	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 

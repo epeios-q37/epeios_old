@@ -11,10 +11,14 @@ CPE:
 - Adding 'CPE__USE_[VC|GCC]_WORKAROUND'.
 
 CTN:
-- Adding 'reset()' méthod to the item-related objects.
+- Adding 'reset()' method to the item-related objects.
 - Renaming to 'Sync' where needed.
 - Adding GCC workaround.
 - Adding VC++ workaround.
+
+EPSMSC:
+- Removing IDEALX-related text.
+- Adding Epeios tewt.
 
 FLM:
 - Using now the UNIX system calls under UNIX instead of the C++/C call (which seems bugged).
