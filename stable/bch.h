@@ -170,7 +170,7 @@ namespace bch {
 			Allouer_( Size, Mode );
 
 			if ( Size > PreviousSize )
-				Fill( Object, PreviousSize - Size, PreviousSize );
+				Store( Object, PreviousSize, Size - PreviousSize );
 		}
 		/*f Store at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
 		Adjust the size of the bunch. */
