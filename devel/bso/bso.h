@@ -234,7 +234,7 @@ namespace bso {
 	//t Size of a buffer.
 	typedef size_t bsize__;
 
-	//t The portable version of a buffer size.
+	//c The portable version of a buffer size.
 	class p_bsize__
 	: p_long__<bsize__>
 	{

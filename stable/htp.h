@@ -80,14 +80,13 @@ namespace htp {
 		sUnhandledCode,
 		//i Not HTTP protocol or bad version.
 		sUnknowProtocol,
-		//Total amount of status.
-		s_amount
+		//i Amount of status.
+		s_amount,
 	};
 
-
-
 	//c An http 1.1 header.
-	struct http_header__ {
+	class http_header__
+	{
 	public:
 		// The 'Content-Length' field.
 		bso::ulong__ ContentLength;
@@ -97,7 +96,7 @@ namespace htp {
 		}
 	};
 
-	//c Parse 'flow' and fill 'Header' with it. Return status. 'Header' is only fill when return value is 'sOK'.(
+	//f Parse 'flow' and fill 'Header' with it. Return status. 'Header' is only fill when return value is 'sOK'.(
 	status Parse(
 		flw::iflow___ &IFlow,
 		http_header__ &Header );

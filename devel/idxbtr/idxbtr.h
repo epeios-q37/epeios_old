@@ -383,7 +383,7 @@ namespace idxbtr {
 		s_amount
 	};
 
-	//s To seek in a tree index.
+	//c To seek in a tree index.
 	template <typename r> class tree_seeker__
 	{
 	private:
