@@ -9,6 +9,9 @@ GENERAL:
 - (31/05/04) Adapting to changes in 'FLW' library.
 - (31/05/04) Using 'CIO' library instaed of 'STF' for 'c(out|in|err)'.
 
+BCH:
+- (09/06/04) Adding 'relations(_)' type.
+
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
 - (03/05/04) disable thread-unsafe functions when working in multithreading.

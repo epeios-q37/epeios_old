@@ -453,6 +453,9 @@ namespace bch {
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
 
+	typedef E_BUNCH_( epeios::row__ ) relations_;
+	E_AUTO( relations )
+
 	void _GetRelations(
 		const uym::untyped_memory_ &Sorted,
 		const uym::untyped_memory_ &Unsorted,
@@ -461,9 +464,9 @@ namespace bch {
 		uym::datum__ *Buffer,
 		E_BUNCH_( epeios::row__ ) &Relations );
 
-	template <typename t, typename r> inline void GetRelations(
-		const bch::E_BUNCHt_( t, r ) &Sorted,
-		const bch::E_BUNCHt_( t, r ) &Unsorted,
+	template <typename t> inline void GetRelations(
+		const bch::E_BUNCH_( t ) &Sorted,
+		const bch::E_BUNCH_( t ) &Unsorted,
 		bch::E_BUNCH_( epeios::row__ ) &Relations )
 	{
 		uym::datum__ Buffer[sizeof( t )];
