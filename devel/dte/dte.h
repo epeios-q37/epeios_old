@@ -140,19 +140,34 @@ namespace dte {
 		{
 			return (day__)( _Core( RawDate ) & 0x1f );
 		}
+		// Return true if 'Date' is a simplified raw date (yyyymmdd).
+		bso::bool__ _IsSimplifiedRawDate( bso::ulong__ Date ) const
+		{
+			return ( Date != DTE_UNDEFINED_DATE ) && ( ( Date & ( 1 << 31 ) ) == 0 );
+		}
+		// Convert a simplified raw date (yyyymmyy) to raw date.
+		raw_date__ _Convert( bso::ulong__ Date ) const
+		{
+			if ( _IsSimplifiedRawDate( Date ) )
+				return _Convert( (day__)( Date % 100 ), (month__)( ( Date % 10000 ) / 100 ), (year__)( Date / 10000 ) );
+			else
+				return Date;
+		}
 	 public:
 		void reset( bso::bool__ = true )
 		{
 			RawDate_ = DTE_INVALID_DATE;
 		}
-		date__( raw_date__ Date = DTE_UNDEFINED_DATE )
+		date__( bso::ulong__ Date = DTE_UNDEFINED_DATE )
 		{
 			reset( false );
-			RawDate_ = Date;
+
+			RawDate_ = _Convert( Date );
 		}
 		date__( const char *Date )
 		{
 			reset( false );
+
 			RawDate_ = _Convert( Date );
 		}
 		date__(
@@ -165,15 +180,17 @@ namespace dte {
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Initialization with date 'Date'.
-		void Init( raw_date__ RawDate = DTE_UNDEFINED_DATE )
+		void Init( bso::ulong__ Date = DTE_UNDEFINED_DATE )
 		{
 			reset();
-			RawDate_ = RawDate;
+
+			RawDate_ = _Convert( Date );
 		}
 		//f Initialization with date 'Date'.
 		void Init( const char *Date  )
 		{
 			reset();
+
 			RawDate_ = _Convert( Date );
 		}
 		//f Initialization with 'Day', 'Month' and 'Year'.
@@ -182,6 +199,8 @@ namespace dte {
 			month__ Month,
 			year__ Year )
 		{
+			reset();
+
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Return the date in raw format.

@@ -689,11 +689,11 @@ namespace cch {
 		read_only_cache___<item_cache *, rc> Cache_;
 		item Item_;
 		bsize__ BufferSize_;
-		void Fill_(
+		void _Fill(
 			rc First,
 			rc Last )
 		{
-			Caches_.Store( NULL, *Last - *First + 1, First );
+			Caches_.Store( NULL, First, *Last - *First + 1 );
 		}
 		void Erase_(
 			rc First,
@@ -816,7 +816,7 @@ namespace cch {
 				Caches_.Allocate( Amount );
 			} else {
 				Caches_.Allocate( Amount );
-				Fill_( OldAmount, Amount - 1 );
+				_Fill( OldAmount, Amount - 1 );
 			}
 		}
 		/*f Return the amount of data contained in the bunch correspondinf to 'Position', 

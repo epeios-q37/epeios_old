@@ -77,6 +77,8 @@ public:
   28 - 30 (3)	: for future use.
   31	  (1)	: sign (0: before J.C., 1: after J.C.)
 
+  NOTE : date before J.C. are not supported yet.
+
 */			
 
 
