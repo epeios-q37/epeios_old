@@ -219,57 +219,60 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Logi+ GSB libraries.
 &gsbbsc		&lgsb		&2002-\
 	&GeSBib BaSiC
-&gsbbsc_	&lgsb		&\
+&gsbbsc_	&lgsb		&2003-\
 	&GeSBib BaSiC (for backend)
-&gsbcor		&lgsb		&\
+&gsbcor		&lgsb		&2003-\
 	&GeSBib field CORe
-&gsbdbm		&lgsb		&\
+&gsbdbm		&lgsb		&2003-\
 	&GeSBib DataBase Manager
-&gsbdbm_	&lgsb		&\
+&gsbdbm_	&lgsb		&2003-\
 	&GeSBib DataBase Manager (for backebnd)
-&gsbdrv		&lgsb		&\
+&gsbdrv		&lgsb		&2003-\
 	&GeSBib DeRiVed field
-&gsbdtb		&lgsb		&\
+&gsbdtb		&lgsb		&2003-\
 	&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-\
 	&GeSBib FieLDs
-&gsbflr		&lgsb		&		&GeSBib FieLd Repository
-&gsbimp		&lgsb		&\
+&gsbflr		&lgsb		&2003-\
+	&GeSBib FieLd Repository
+&gsbimp		&lgsb		&2003-\
 	&GeSBib IMportatioN
-&gsbmgr		&lgsb		&\
+&gsbmgr		&lgsb		&2003-\
 	&GeSBib MiGRation
 &gsbmlt		&lgsb		&2002-\
 	&GeSBib MuLTi field
 &gsbmno		&lgsb		&2002-\
 	&GeSBib MoNO field
-&gsbmta		&lgsb		&\
+&gsbmta		&lgsb		&2003-\
 	&GeSBib MeTA field
-&gsbntv		&lgsb		&\
+&gsbntv		&lgsb		&2003-\
 	&GeSBib NaTiVe field
-&gsbrgl		&lgsb		&\
+&gsbrgl		&lgsb		&2003-\
 	&GeSBib ReGuLar field
-&gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
-&gsbrmd		&lgsb		&\
+&gsbrlt		&lgsb		&2002\
+	&GeSBib ReLaTional field
+&gsbrmd		&lgsb		&2003-\
 	&GeSBib Record Multi Data
-&gsbrmd_	&lgsb		&\
+&gsbrmd_	&lgsb		&2003-\
 	&GeSBib Record Multi Data (for backend)
-&gsbsrb		&lgsb		&\
+&gsbsrb		&lgsb		&2003-\
 	&GeSBib Search Request Builder
-&gsbsrq		&lgsb		&\
+&gsbsrq		&lgsb		&2003-\
 	&GeSBib Search ReQuest
-&gsbsrq_	&lgsb		&\
+&gsbsrq_	&lgsb		&2003-\
 	&GeSBib Search ReQuest (for backend)
-&gsbtbl		&lgsb		&\
+&gsbtbl		&lgsb		&2003-\
 	&GeSBib TaBLe
-&gsbtfd		&lgsb		&\
+&gsbtfd		&lgsb		&2003-\
 	&GeSBib Table Fields Definition
-&gsbtfd_	&lgsb		&\
+&gsbtfd_	&lgsb		&2003-\
 	&GeSBib Table Fields Definition (for backend)
-&gsbv4f		&lgsb		&\
+&gsbv4f		&lgsb		&2003-\
 	&GeSBib Version 4 Files
-&gsbxpr		&lgsb		&\
+&gsbxpr		&lgsb		&2003-\
 	&GeSBib eXPoTation
-&gsbwrd		&lgsb		&2002-		&GeSBib WoRDs
+&gsbwrd		&lgsb		&2002-\
+	&GeSBib WoRDs
 
 
 
