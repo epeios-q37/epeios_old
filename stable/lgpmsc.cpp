@@ -60,7 +60,7 @@ using namespace txf;
 
 void lgpmsc::PrintLicense( void )
 {
-	stf::fout << "LICENSE A COMPLETER" << nl;
+	stf::cout << "LICENSE A COMPLETER" << nl;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -416,10 +416,10 @@ static void HandleView_( clnarg::view View )
 {
 	switch( View ) {
 	case clnarg::vOneLine:
-		stf::fout << txf::tab;
+		stf::cout << txf::tab;
 		break;
 	case clnarg::vSplit:
-		stf::fout << txf::nl << txf::tab << txf::tab;
+		stf::cout << txf::nl << txf::tab << txf::tab;
 		break;
 	default:
 		ERRu();
@@ -434,16 +434,16 @@ void clnarg::PrintCommandUsage(
 	clnarg::view View,
 	bso::bool__ Default )
 {
-	stf::fout << txf::tab;
+	stf::cout << txf::tab;
 		
 	if ( Default )
-		stf::fout << "<none>, ";
+		stf::cout << "<none>, ";
 			
-	stf::fout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	stf::cout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
 	
 	HandleView_( View );
 		
-	stf::fout << Text << txf::nl;
+	stf::cout << Text << txf::nl;
 }
 
 void clnarg::PrintOptionUsage(
@@ -453,19 +453,19 @@ void clnarg::PrintOptionUsage(
 	const char *Text,
 	clnarg::view View )
 {
-	stf::fout << txf::tab;
+	stf::cout << txf::tab;
 		
-	stf::fout << Description.GetOptionLabels( OptionId );
+	stf::cout << Description.GetOptionLabels( OptionId );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 
-		 stf::fout << ' ' << Parameter;
+		 stf::cout << ' ' << Parameter;
 
-	stf::fout << ':';
+	stf::cout << ':';
 		
 	HandleView_( View );
 		
-	stf::fout << Text << txf::nl;
+	stf::cout << Text << txf::nl;
 }
 
 	
