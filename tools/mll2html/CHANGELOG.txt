@@ -1,11 +1,18 @@
 $Id$
 
+--------
+20011119
+--------
+
 - UPGRADING TO V1.1.8.
 - Adapting to BC++.
 - Adapting to changes in 'TOL'.
 - Adapting to changes in 'CLNARG'.
 
-20010505:
+--------
+20010505
+--------
+
 - UPGRADING TO V1.1.6
 - Adapting to 'TXMPGH' modifications.
 - Adapting to 'CTN' modifications.
@@ -15,5 +22,8 @@ $Id$
 - Adding '--license' command.
 - Adding CVS details printing.
 
-20010501:
+--------
+20010501
+--------
+
 Creation.

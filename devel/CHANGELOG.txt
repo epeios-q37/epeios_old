@@ -1,5 +1,9 @@
 $Id$
 
+--------
+20011119
+--------
+
 CLNARG:
 - Adding a 's' to the 'Get<Option|Command>Label' function name.
 - Adding 'Separator' parameter to 'GetCommandLabels' method.

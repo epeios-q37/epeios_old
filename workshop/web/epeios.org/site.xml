@@ -1911,7 +1911,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </content>
       </document>
       <document id="download">
-        <general title="reveal' software download section." abstract="The download section of the 'reveal' software from the Epeios project." keywords="Epeios, software, reveal, download">
+        <general title="'reveal' software download section." abstract="The download section of the 'reveal' software from the Epeios project." keywords="Epeios, software, reveal, download">
           <author>$AUTHOR$</author>
           <copyright>
             <owner>$OWNER$</owner>
