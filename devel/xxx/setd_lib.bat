@@ -1,11 +1,11 @@
-ECHO OFF
+#ECHO OFF
 
 REM
 REM 'setd_lib.bat' by Claude L. Simon (epeios@epeios.org).
 REM
 REM Create or update a library development directory under DOS/Windows.
 REM
-REM Copyright (C) 2000 Claude L. Simon.
+REM Copyright (C) 2000,2002 Claude L. Simon.
 REM
 REM This file is part of the Epeios project (http://www.epeios.org/).
 REM
@@ -40,64 +40,24 @@ SET TMP=%RTD%\temp
 SET SRC=%RTD%\cvs\epeios\devel\xxx
 SET CRP=%TMP%\%LNM%.crp
 SET DIR=%RTD%\cvs
-SET ID=
 
-grep -w -q %LNM% %SRC%\ecdb.lst
-IF NOT ERRORLEVEL 1 SET ID=ecdb
-grep -w -q %LNM% %SRC%\eclz.lst
-IF NOT ERRORLEVEL 1 SET ID=eclz
-grep -w -q %LNM% %SRC%\epeios.lst
-IF NOT ERRORLEVEL 1 SET ID=epeios
-grep -w -q %LNM% %SRC%\epgs.lst
-IF NOT ERRORLEVEL 1 SET ID=epgs
-grep -w -q %LNM% %SRC%\ehdb.lst
-IF NOT ERRORLEVEL 1 SET ID=ehdb
-grep -w -q %LNM% %SRC%\etmc.lst
-IF NOT ERRORLEVEL 1 SET ID=etmc
-grep -w -q %LNM% %SRC%\ebkl.lst
-IF NOT ERRORLEVEL 1 SET ID=ebkl
-grep -w -q %LNM% %SRC%\ewsa.lst
-IF NOT ERRORLEVEL 1 SET ID=ewsa
-grep -w -q %LNM% %SRC%\estx.lst
-IF NOT ERRORLEVEL 1 SET ID=estx
-grep -w -q %LNM% %SRC%\ebkd.lst
-IF NOT ERRORLEVEL 1 SET ID=ebkd
-grep -w -q %LNM% %SRC%\ecgi.lst
-IF NOT ERRORLEVEL 1 SET ID=ecgi
-grep -w -q %LNM% %SRC%\emth.lst
-IF NOT ERRORLEVEL 1 SET ID=emth
-grep -w -q %LNM% %SRC%\ehos.lst
-IF NOT ERRORLEVEL 1 SET ID=ehos
-grep -w -q %LNM% %SRC%\espf.lst
-IF NOT ERRORLEVEL 1 SET ID=espf
-grep -w -q %LNM% %SRC%\emsc.lst
-IF NOT ERRORLEVEL 1 SET ID=emsc
+reveal %SRC%\all_lib.crp %SRC%\gen_crp.bat %TMP%\gen_crp.bat
+call %TMP%\gen_crp.bat %LNM%
 
-IF NOT "%ID%"=="" goto repository_defined
-echo No repository defined for library %LNM%
-goto end
+SET ID=%PROJECT%
 
-:repository_defined
 SET DST=%DIR%\%ID%\devel\%LNM%
 
 %RTD%
 IF NOT EXIST %DST% mkdir %DST%
 cd %DST%
-toupper "xxx	&%LNM%	" >%CRP%
-echo # >>%CRP%
-tolower "xxx	&%LNM%	" >>%CRP%
-echo # >>%CRP%
-toupper "COORDINATOR	&" >>%CRP%
-echo Claude SIMON >>%CRP%
-echo # >>%CRP%
-type %SRC%\%ID%.crp >>%CRP%
 
-IF NOT EXIST %DST%\Makefile reveal %CRP% %SRC%\LibMakefile %DST%\Makefile
-IF NOT EXIST %DST%\%LNM%_test.cpp reveal %CRP% %SRC%\xxx_test.cpp %DST%\%LNM%_test.cpp
-IF NOT EXIST %DST%\%LNM%.dsp reveal %CRP% %SRC%\xxx.dsp %DST%\%LNM%.dsp
+IF NOT EXIST %DST%\Makefile reveal --text-marker + %CRP% %SRC%\LibMakefile %DST%\Makefile
+IF NOT EXIST %DST%\%LNM%_test.cpp reveal --text-marker + %CRP% %SRC%\xxx_test.cpp %DST%\%LNM%_test.cpp
+IF NOT EXIST %DST%\%LNM%.dsp reveal --text-marker + %CRP% %SRC%\xxx.dsp %DST%\%LNM%.dsp
 
-reveal %CRP% %SRC%\xxx.cpp %TMP%\%LNM%.cpp
-reveal %CRP% %SRC%\xxx.h %TMP%\%LNM%.h
+reveal --text-marker + %CRP% %SRC%\xxx.cpp %TMP%\%LNM%.cpp
+reveal --text-marker + %CRP% %SRC%\xxx.h %TMP%\%LNM%.h
 
 IF EXIST %DST%\%LNM%.cpp GOTO cpp_exist
 copy %TMP%\%LNM%.cpp %DST%
@@ -117,5 +77,6 @@ del %CRP%
 del %TMP%\%LNM%.cpp
 del %TMP%\%LNM%.h
 
-echo on
 :end
+echo on
+

@@ -1,10 +1,7 @@
-# '$xxx$' Makefile by Claude L. Simon ($EMAIL$)
+# '$xxx$' Makefile by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
 # Builds executable for the '$xxx$' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 $COPYRIGHT$.
-#
-# $ADDENDUM1$
-# $ADDENDUM2$
+# Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

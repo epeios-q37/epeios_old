@@ -1,7 +1,9 @@
 # $Id$
 
-OWNER		&Claude SIMON (csimon@epeios.org)
-EMAIL		&csimon@epeios.org
-COPYRIGHT	&Claude SIMON (csimon@epeios.org)
-ADDENDUM1	&This file is part of the Epeios (http://epeios.org/) project.
-ADDENDUM2	&
+AUTHOR_NAME		+Claude SIMON
+AUTHOR_EMAIL		+csimon@epeios.org
+OWNER			+Claude SIMON (csimon@epeios.org)
+COPYRIGHT_OWNER		+Claude SIMON (csimon@epeios.org)
+NOTICE			%/cvs/epeios/devel/xxx/epeios.txt
+COORDINATOR_NAME	+Claude SIMON
+COORDINATOR_EMAIL	+csimon@epeios.org
