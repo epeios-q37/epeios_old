@@ -34,7 +34,7 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"1.0.4"
+#define VERSION			"1.0.5"
 #define COPYRIGHT_YEARS	"1999-2002"
 #define DESCRIPTION		"Replaces tags in a file by text or file content."
 #define INFO EPSMSC_EPEIOS_TEXT
