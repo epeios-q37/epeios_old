@@ -55,6 +55,42 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+static const char Table_[] = "AAAAAAãCEEEE¦-+¤DNUUUUOÎOUUUUYÌ¯aaaaaaµceeeeiiiionooooo¸°uuuuy¦y";
+
+static inline int GetAccentFree__( int C )
+{
+	if ( C >= 192 )
+		C = Table_[C - 192];
+
+	return ( C < 0 ? 256 - C : C );
+}
+
+
+static inline int GetAccentFree_( int C )
+{
+	if ( C < 0 ) {
+		C = GetAccentFree__( 256 + C );
+
+		if ( C >= 128 )
+			C = C - 256;
+
+		return C;
+	} else
+		return GetAccentFree__( C );
+}
+
+
+static inline int toxlower_( int C )
+{
+	return tolower( GetAccentFree_( C ) );
+}
+
+static inline int toxupper_( int C )
+{
+	return toupper( GetAccentFree_( C ) );
+}
+
+
 namespace str {
 
 	template <class ostream> static void Put_(
@@ -125,7 +161,7 @@ namespace str {
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
-			String.Store( (char)toupper( String.Get( P ) ) , P );
+			String.Store( (char)toxupper_( String.Get( P ) ) , P );
 
 		return String;
 	}
@@ -136,7 +172,7 @@ namespace str {
 		epeios::row_t__ P = String.Amount();
 
 		while ( P-- )
-			String.Store( (char)tolower( String.Get( P )) , P );
+			String.Store( (char)toxlower_( String.Get( P )) , P );
 
 		return String;
 	}
