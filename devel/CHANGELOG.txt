@@ -11,6 +11,7 @@ BTF:
 
 CTN:
 - Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
+- Fixing GNU GCC issues.
 
 DBT:
 - Adapting to changes in 'LST' library.

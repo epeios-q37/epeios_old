@@ -530,7 +530,7 @@ namespace ctn {
 			if ( !Container.IsFlushed() )
 				ERRu();
 #endif
-			item_base_const__< item_mono_statique__< t::s >, r >::Init( Container );
+			item_base_const__< item_mono_statique__< typename_ t::s >, r >::Init( Container );
 		}
 	};
 
