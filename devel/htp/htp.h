@@ -111,7 +111,7 @@ namespace htp {
 	void Post(
 		const str::string_ &URL,
 		const str::string_ &Host,
-		const str::string_ &UserAgent,
+		const str::string_ &Accept,
 		const str::string_ &ContentType,
 		const str::string_ &Content,
 		txf::text_oflow__ &Flow );

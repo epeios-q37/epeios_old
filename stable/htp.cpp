@@ -206,14 +206,14 @@ htp::status htp::Parse(
 void htp::Post(
 	const str::string_ &URL,
 	const str::string_ &Host,
-	const str::string_ &UserAgent,
+	const str::string_ &Accept,
 	const str::string_ &ContentType,
 	const str::string_ &Content,
 	txf::text_oflow__ &Flow )
 {
-	Flow << "POST " << URL << " HTTP/1.0" << NL;
+	Flow << "POST " << URL << " HTTP/1.1" << NL;
 	Flow << "Host: " << Host << NL;
-	Flow << "User-Agent: " << UserAgent << NL;
+	Flow << "Accept: " << Accept << NL;
 	Flow << "Content-Type: " << ContentType << NL;
 	Flow << "Content-Length: " << Content.Amount() << NL;
 	Flow << NL;
