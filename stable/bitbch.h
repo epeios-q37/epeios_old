@@ -237,7 +237,7 @@ namespace bitbch {
 			if ( Value )
 				Pattern = -1;
 
-			Table.Store( Pattern, Convert_( Amount() ) );
+			Table.Store( Pattern, Convert_( Amount() ), 0 );
 		}
 	};
 
