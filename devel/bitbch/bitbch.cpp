@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "txf.h"
+
 using namespace bitbch;
 
 void bitbch::And(

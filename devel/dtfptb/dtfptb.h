@@ -79,7 +79,7 @@ namespace dtfptb {
 	{
 		flw::datum__ Object[sizeof( short__ )];
 
-		Flow.Get( sizeof( Object ), Object );
+		Flow.Read( sizeof( Object ), Object );
 
 		return Object[0] | ( Object[1] << 8 );
 	}
@@ -127,7 +127,7 @@ namespace dtfptb {
 	{
 		flw::datum__ Object[sizeof( long__ )];
 
-		Flow.Get( sizeof( Object ), Object );
+		Flow.Read( sizeof( Object ), Object );
 
 		return (long__)( Object[0] | ( Object[1] << 8 ) | ( Object[2] << 16 ) | ( Object[3] << 24 ) );
 	}

@@ -1,6 +1,6 @@
 /*
 	Header for the 'mmm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -635,12 +635,13 @@ namespace mmm {
 			PiloteMultimemoire_.reset();
 			Memoire_.plug( Pilote );
 		}
-		void write( flw::oflow__ &OFlow ) const
+#if 0
+		void write( flw::oflow___ &OFlow ) const
 		{
 			flw::Put( S_.Capacite, OFlow );
 			Memoire_.write( 0, S_.Capacite, OFlow );
 		}
-		void read( flw::iflow__ &IFlow )
+		void read( flw::iflow___ &IFlow )
 		{
 			flw::Get( IFlow, S_.Capacite );
 
@@ -648,6 +649,7 @@ namespace mmm {
 
 			Memoire_.read( IFlow, 0, S_.Capacite );
 		}
+#endif
 		//f Initialization.
 		void Init( void )
 		{

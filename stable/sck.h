@@ -62,7 +62,7 @@ extern class ttr_tutor &SCKTutor;
 
 #include "err.h"
 #include "cpe.h"
-#include "bso.h"
+#include "flw.h"
 
 #if defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	define SCK__UNIX_LIKE
@@ -111,7 +111,8 @@ extern class ttr_tutor &SCKTutor;
 #define SCK_SOCKET_DEFAULT_TIMEOUT	( 5 * 60 )
 #endif
 
-
+//d Max data amount of concurrent write and read.
+#define SCK_AMOUNT_MAX	( 1024 * 1024 )
 
 namespace sck {
 	using flw::datum__;
@@ -126,8 +127,6 @@ namespace sck {
 #endif
 
 	typedef int error__;
-
-	typedef flw::size__	amount__;
 
 	typedef bso::ushort__	duration__;
 
@@ -231,19 +230,19 @@ namespace sck {
 	the amount effectively red. If 0 is returned, it means that the 'Timeout'
 	expired. If the connection no longer exists, then 'SCK_DISCONNECTED' is
 	returned. */
-	amount__ Read(
+	flw::size__ Read(
 		socket__ Socket,
-		amount__ Amount,
+		flw::size__ Amount,
 		void *Buffer,
 		duration__ TimeOut = SCK_INFINITE );
 
 	/*f Write up to 'Amount' bytes from 'Buffer' to the socket 'Socket'. Return
 	the amount effectively written. If 0 is returned, it means 'TimeOut' expired.
 	If connection no longer exists, then 'SCK_DISCONNECTED' is returned. */
-	amount__ Write(
+	flw::size__ Write(
 		socket__ Socket,
 		const void *Buffer,
-		amount__ Amount,
+		flw::size__ Amount,
 		duration__ TimeOut = SCK_INFINITE );
 
 	//f Close the socket 'Socket'.
@@ -272,14 +271,14 @@ namespace sck {
 		bso::bool__ Error_;
 		flw::datum__ Cache_[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	protected:
-		virtual flw::amount__ FLWGet(
-			flw::amount__ Minimum,
+		virtual flw::size__ FLWRead(
+			flw::size__ Minimum,
 			flw::datum__ *Buffer,
-			flw::amount__ Wanted );
-		virtual flw::amount__ FLWPut(
+			flw::size__ Wanted );
+		virtual flw::size__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::amount__ Wanted,
-			flw::amount__ Minimum,
+			flw::size__ Wanted,
+			flw::size__ Minimum,
 			bool Synchronization );
 	public:
 		void reset( bool P = true )
@@ -306,11 +305,12 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
+			flw::amount__ AmountMax = SCK_AMOUNT_MAX,
 			duration__ TimeOut = SCK_SOCKET_DEFAULT_TIMEOUT )
 		{
 			reset();
 		
-			ioflow__::Init( Cache_, sizeof( Cache_ ) );
+			ioflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
 
 			Socket_ = Socket;
 			TimeOut_ = TimeOut;

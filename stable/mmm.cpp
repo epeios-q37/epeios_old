@@ -1,7 +1,7 @@
 /*
 	'mmm' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'mmm' header file ('mmm.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,7 +55,9 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "stf.h"
+#include "cio.h"
+
+using cio::cout;
 
 using namespace mmm;
 
@@ -163,11 +165,11 @@ void multimemoire::AfficherStructure_( void ) const
 
 	while ( !HorsLimite_( Descripteur ) )
 	{
-		stf::cout << TailleEnNombre_( Descripteur ) << ": ";
+		cio::cout << TailleEnNombre_( Descripteur ) << ": ";
 
 		if ( EstLibre_( Descripteur ) )
 		{
-			stf::cout << '+';
+			cout << '+';
 
 			if ( !Nombre )
 			{
@@ -189,28 +191,28 @@ void multimemoire::AfficherStructure_( void ) const
 			Nombre++;
 		}
 		else
-			stf::cout << '-';
+			cout << '-';
 
-		stf::cout << Nombre_( Descripteur ) << txf::tab;
+		cout << Nombre_( Descripteur ) << txf::tab;
 
 		Descripteur = Successeur_( Descripteur );
 	}
 
-	stf::cout << txf::nl << TailleEnNombre_( Descripteur ) << ": hors limite ...";
+	cout << txf::nl << TailleEnNombre_( Descripteur ) << ": hors limite ...";
 
 	if ( Nombre )
 	{
-		stf::cout << txf::tab << "N:" << Nombre << txf::tab << "T: " << Total << txf::tab << "M: " << ( Total / Nombre ) << txf::nl
+		cout << txf::tab << "N:" << Nombre << txf::tab << "T: " << Total << txf::tab << "M: " << ( Total / Nombre ) << txf::nl
 			 << "P: " << TailleEnNombre_( P ) << ';' << Nombre_( P ) << txf::tab
 			 << "D: " << TailleEnNombre_( D ) << ';' << Nombre_( D ) << txf::tab
 			 << "m: " << TailleEnNombre_( m ) << ';' << Nombre_( m ) << txf::tab
 			 << "M: " << TailleEnNombre_( M ) << ';' << Nombre_( M );
 
 		if ( S_.Libre )
-			stf::cout << txf::tab << "L: " << TailleEnNombre_( S_.Libre ) << ';' << Nombre_( S_.Libre );
+			cout << txf::tab << "L: " << TailleEnNombre_( S_.Libre ) << ';' << Nombre_( S_.Libre );
 	}
 
-	stf::cout << txf::nl;
+	cout << txf::nl;
 }
 /*
 descripteur multimemoire::Descripteur_( indice_bloc IndiceBloc )

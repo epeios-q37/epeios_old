@@ -61,7 +61,7 @@ extern class ttr_tutor &UYMTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "flw.h"
+//#include "flw.h"
 #include "mdr.h"
 #include "cvm.h"
 #include "fam.h"
@@ -272,6 +272,7 @@ namespace uym {
 	#endif
 			Pilote_.Init();
 		}
+#if 0
 		void write(
 			row__ Position,
 			size__ Size,
@@ -280,6 +281,7 @@ namespace uym {
 			flw::iflow__  &IFlow,
 			row__ Position,
 			size__ Size );
+#endif
 		//f Allocates 'Capacity' bytes.
 		void Allocate( size__ Size )
 		{

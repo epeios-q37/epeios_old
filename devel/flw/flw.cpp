@@ -61,19 +61,19 @@ public:
 
 using namespace flw;
 
-void flw::oflow__::ForceWriting_(
+void flw::oflow__::_ForceWriting(
 	const datum__ *Buffer,
-	amount__ Amount )
+	size__ Amount )
 {
-	amount__ AmountWritten = PutUpTo( Buffer, Amount );
+	size__ AmountWritten = _WriteUpTo( Buffer, Amount );
 
 	while( AmountWritten < Amount )
-		AmountWritten += PutUpTo( Buffer + AmountWritten, Amount - AmountWritten );
+		AmountWritten += _WriteUpTo( Buffer + AmountWritten, Amount - AmountWritten );
 }
 
-void flw::oflow__::ForceDumpingOfCache_( bool Synchronisation )
+void flw::oflow__::_ForceDumpingOfCache( bool Synchronisation )
 {
-	while( !DumpCache_( Synchronisation ) ) {};
+	while( !_DumpCache( Synchronisation ) ) {};
 }
 
 

@@ -62,6 +62,7 @@ extern class ttr_tutor &MTXTutor;
 
 #include "bso.h"
 #include "cpe.h"
+#include "tol.h"
 
 #ifndef CPE__MT
 #	error "This library only useful in multitasking context, in which you are not."
@@ -90,8 +91,6 @@ extern class ttr_tutor &MTXTutor;
 #		error "'MTX_CONTROL' can be used only in debug modus!".
 #	endif
 #endif
-
-#include "stf.h"
 
 //d A invalid mutex handler.
 #define MTX_INVALID_HANDLER	NULL

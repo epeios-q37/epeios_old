@@ -84,10 +84,10 @@ namespace flf {
 		FILE *&File_;
 		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
 	protected:
-		virtual flw::amount__ FLWPut(
+		virtual flw::size__ FLWWrite(
 			const flw::datum__ *Tampon,
-			flw::amount__ Nombre,
-			flw::amount__,
+			flw::size__ Nombre,
+			flw::size__,
 			bool Synchronize )
 		{
 #ifdef STF_DBG
@@ -118,9 +118,9 @@ namespace flf {
 			reset( true );
 		}
 		//f Initialization.
-		void Init( void )
+		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
 		}
 	};
 
@@ -152,10 +152,10 @@ namespace flf {
 			return AmountRead;
 		}
 	protected:
-	virtual flw::amount__ FLWGet(
-		flw::amount__ Minimum,
+	virtual flw::size__ FLWRead(
+		flw::size__ Minimum,
 		flw::datum__ *Tampon,
-		flw::amount__ Desire )
+		flw::size__ Desire )
 	{
 #ifdef STF_DBG
 		if( Tampon == NULL )
@@ -188,9 +188,9 @@ namespace flf {
 			reset( true );
 		}
 		//f Initialisation.
-		void Init( void )
+		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
 		}
 	};
 }

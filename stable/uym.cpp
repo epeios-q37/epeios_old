@@ -289,7 +289,7 @@ ERREnd
 ERREpilog
 }
 
-
+#if 0
 void untyped_memory_::write(
 	row__ Position,
 	size__ Quantite,
@@ -322,7 +322,7 @@ ERRBegin
 	if ( Taille > FLW_AMOUNT_MAX )
 		ERRc(),
 #endif
-		OFlow.Put( Tampon, (flw::amount__)Taille );
+		OFlow.Write( Tampon, (flw::amount__)Taille );
 
 		Quantite -= Taille;
 		Position += Taille;
@@ -365,7 +365,7 @@ ERRBegin
 	if ( Taille > FLW_AMOUNT_MAX )
 		ERRc(),
 #endif
-		IFlow.Get( (flw::amount__)Taille, Tampon );
+		IFlow.Read( (flw::amount__)Taille, Tampon );
 
 		Store( Tampon, Taille, Position );
 
@@ -378,6 +378,7 @@ ERREnd
 		fam::FAM.Free( Tampon );
 ERREpilog
 }
+#endif
 
 void uym::_Fill(
 	const datum__ *Object,

@@ -84,7 +84,7 @@ namespace txf {
 			amount__ Nombre,
 			datum__ *Tampon )
 		{
-			return Flow_->GetUpTo( Nombre, Tampon );
+			return Flow_->ReadUpTo( Nombre, Tampon );
 		}
 	public:
 		void reset( bool = true )
@@ -211,7 +211,7 @@ namespace txf {
 			const datum__ *Tampon,
 			amount__ Nombre )
 		{
-			Flow_->Put( Tampon, Nombre );
+			Flow_->Write( Tampon, Nombre );
 		}
 		void Synchroniser_( void )
 		{

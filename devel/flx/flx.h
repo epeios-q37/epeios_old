@@ -104,10 +104,10 @@ namespace flx {
 		{
 			ERRf();
 		}
-		virtual flw::amount__ FLWGet(
-			flw::amount__ Minimum,
+		virtual flw::size__ FLWRead(
+			flw::size__ Minimum,
 			flw::datum__ *Buffer,
-			flw::amount__ Wanted )
+			flw::size__ Wanted )
 		{
 			if ( !Taille_ )
 				if ( Minimum )
@@ -154,7 +154,7 @@ namespace flx {
 			const flw::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ), Size );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -175,10 +175,10 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
-		virtual flw::amount__ FLWPut(
+		virtual flw::size__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::amount__ Wanted,
-			flw::amount__ Minimum,
+			flw::size__ Wanted,
+			flw::size__ Minimum,
 			bool Synchronization )
 		{
 			if ( Wanted > (flw::amount__)Taille_ )
@@ -212,7 +212,7 @@ namespace flx {
 			flw::datum__ *Buffer,
 			bso::bsize__ Size )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ), Size );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -230,10 +230,10 @@ namespace flx {
 	: public flw::iflow__
 	{ 
 	protected:
-		virtual flw::amount__ FLWGet(
-			flw::amount__ Minimum,
+		virtual flw::size__ FLWRead(
+			flw::size__ Minimum,
 			flw::datum__ *Buffer,
-			flw::amount__ Wanted )
+			flw::size__ Wanted )
 		{
 			if ( Wanted > (flw::amount__)( Set_->Amount() - Position_ ) )
 			{
@@ -274,7 +274,7 @@ namespace flx {
 		//f Initializing with the bunch buffer 'Set'.
 		void Init( const bunch_ &Set )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 			Set_ = &Set;
 			Position_ = 0;
 		}
@@ -285,10 +285,10 @@ namespace flx {
 	: public flw::oflow__
 	{
 	protected:
-		virtual flw::amount__ FLWPut(
+		virtual flw::size__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::amount__ Wanted,
-			flw::amount__ Minimum,
+			flw::size__ Wanted,
+			flw::size__ Minimum,
 			bool Synchronization )
 		{
 			Set_->Append( Buffer, (epeios::bsize__)Wanted );
@@ -318,7 +318,7 @@ namespace flx {
 		//f Initializing with the buffer bunch 'BufferSet'.
 		void Init( bunch_ &BufferSet )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 			Set_ = &BufferSet;
 		}
 	};
@@ -328,10 +328,10 @@ namespace flx {
 	: public flw::oflow__
 	{
 	protected:
-		virtual flw::amount__ FLWPut(
+		virtual flw::size__ FLWWrite(
 			const flw::datum__ *,
-			flw::amount__ Wanted,
-			flw::amount__,
+			flw::size__ Wanted,
+			flw::size__,
 			bool )
 		{
 			return Wanted;
@@ -357,7 +357,7 @@ namespace flx {
 		{
 			reset();
 			
-			oflow__::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 		}
 	};
 }

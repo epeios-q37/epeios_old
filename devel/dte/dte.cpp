@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include <ctype.h>
+
 /* Structure of a date.
 
   A date is stored in a 'raw_date__', which is 32 bits long.

@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "txf.h"
+
 using namespace epeios;
 
 void btr::_nodes_manager_::Release(

@@ -260,6 +260,7 @@ namespace mmi {
 			epeios::row__ Position,
 			epeios::size__ ActualCapacity,
 			epeios::size__ Amount );
+#if 0
 		void write(
 			flw::oflow__ &OFlow,
 			epeios::size__ Size) const
@@ -274,6 +275,7 @@ namespace mmi {
 			Descripteurs.read( IFlow, 0, Size );
 			Multimemoire.read( IFlow );
 		}
+#endif
 	};
 
 	E_AUTO( indexed_multimemory )

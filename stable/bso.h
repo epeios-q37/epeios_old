@@ -60,10 +60,10 @@ extern class ttr_tutor &BSOTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "txf.h"
-#include "cpe.h"
+#include <limits.h>
 
+#include "err.h"
+#include "cpe.h"
 
 namespace bso {
 	//t Basic data, without any basically signification.

@@ -635,6 +635,7 @@ namespace mmm {
 			PiloteMultimemoire_.reset();
 			Memoire_.plug( Pilote );
 		}
+#if 0
 		void write( flw::oflow___ &OFlow ) const
 		{
 			flw::Put( S_.Capacite, OFlow );
@@ -648,6 +649,7 @@ namespace mmm {
 
 			Memoire_.read( IFlow, 0, S_.Capacite );
 		}
+#endif
 		//f Initialization.
 		void Init( void )
 		{

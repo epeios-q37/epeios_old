@@ -9,6 +9,9 @@ GENERAL:
 - (31/05/04) Adapting to changes in 'FLW' library.
 - (31/05/04) Using 'CIO' library instaed of 'STF' for 'c(out|in|err)'.
 - (11/06/04) Adding the 'msg' library.
+- (14/07/04) Adapting to changes in 'FLW' library.
+- (14/07/04) Adapting to changes in 'BSO' library.
+- (14/07/04) Removing apparently unused read/write methods.
 
 BCH:
 - (09/06/04) Adding 'relations(_)' type.
@@ -22,6 +25,7 @@ BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
 - (03/05/04) disable thread-unsafe functions when working in multithreading.
 -			 fixing the 'Allocate' bug.
+- (14/07/04) Removing the unused 'TXF' header.
 	
 CCH:
 - (20/05/04) Replacing the old 'Write', 'Fill' and 'Read' method.
@@ -46,6 +50,8 @@ ERR:
 
 FLW:
 - (24/05/04) Removing the a tailing '_' to the object name.
+- (17/07/04) Adding amount of data red/written handling.
+-			 Renaming some methods.
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function
@@ -55,6 +61,9 @@ LCK:
 
 MDR:
 - (15/06/04) Adding some useful constants.
+
+MMM:
+- (14/07/04) Using the 'CIO' library instead of 'STF'.
 
 SSNMNG:
 - Using own row type for session id 'row__'.

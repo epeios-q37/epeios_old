@@ -102,19 +102,19 @@ bso::ulong__ dtfptb::GetSize( flw::iflow__ &IFlow )
 	{
 		flw::datum__ Data[4];
 
-		IFlow.Get( 2, Data );
+		IFlow.Read( 2, Data );
 
 		Size += ( Data[0] << 8 ) | Data[1];
 
 		if ( Size == ( M1 + M2 ) )
 		{
-			IFlow.Get( 3, Data );
+			IFlow.Read( 3, Data );
 
 			Size += ( Data[0] << 16 ) | ( Data[1] << 8 ) | Data[2];
 
 			if ( Size == ( M1 + M2 + M3 ) ) {
 
-				IFlow.Get( 4, Data );
+				IFlow.Read( 4, Data );
 
 				Size += ( Data[0] << 24 ) | ( Data[1] << 16 ) | ( Data[2] << 8 ) | Data[3];
 			}
