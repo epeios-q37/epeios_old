@@ -508,8 +508,15 @@ namespace tol {
 	}
 #endif
 
+	//f Suspend te current foe 'Delay' milliseconds.
+	void Suspend( unsigned long Delay );
+
 	//f Wait 'Seconds' seconds.
-	void Wait( unsigned int Seconds );
+	inline void Wait( unsigned int Seconds )
+	{
+		Suspend( Seconds * 1000 );
+	}
+
 
 	/*f Initialize the random generator using the date & time.
 	The used value is returned to be used with the following
@@ -574,6 +581,14 @@ namespace tol {
 
 	//f Tell the remainder to give hand to the next thread.
 	void Defer( void );
+
+	//f Tell the remainder to give hand to the next thread and wait 'Delay' millisecond.
+	inline void Defer( unsigned long Delay )
+	{
+		Defer();
+
+		Suspend( Delay );
+	}
 }
 
 namespace mmm {

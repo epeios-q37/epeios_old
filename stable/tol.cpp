@@ -263,15 +263,19 @@ const char *tol::DateAndTime( void )
    return str;
 }
 
-void tol::Wait( unsigned int Secondes )
+void tol::Suspend( unsigned long Delay )
 {
 #ifdef CPE__MS
-	Sleep( Secondes * 1000 );
+	Sleep( Delay );
 #elif defined( CPE__UNIX ) || defined( CPE__BEOS )
-	while( Secondes )		
-		Secondes = sleep( Secondes );
-	/* Because the 'sleep()' may be interrupted by an exiting child
-	in a multitasking program. (Is that a good idea ???)*/
+	struct timespec T;
+
+	T.tv_sec = Delay / 1000;
+	T.tv_nsec = ( Delay % 1000 ) * 1000000;
+
+	while ( nanosleep( &T, &T ) )
+		if ( errno != EINTR )
+			ERRs();
 #elif defined( CPE__MAC )
 	ERRl();
 #else

@@ -219,14 +219,8 @@ namespace flx {
 		}
 	};
 
-
-
-	typedef bch::E_BUNCH( datum__ ) bunch;
-
-	typedef bch::E_BUNCH_( datum__ ) bunch_;
-
 	//c A bunch as input flow.driver.
-	class bunch_iflow__
+	template < typename bunch_, typename so__> class bunch_iflow__
 	: public flw::iflow__
 	{ 
 	protected:
@@ -235,9 +229,9 @@ namespace flx {
 			flw::datum__ *Buffer,
 			flw::size__ Wanted )
 		{
-			if ( Wanted > (flw::amount__)( Set_->Amount() - Position_ ) )
+			if ( Wanted > (flw::amount__)( Bunch_->Amount() - Position_ ) )
 			{
-				Wanted = (flw::amount__)( Set_->Amount() - Position_ );
+				Wanted = (flw::amount__)( Bunch_->Amount() - Position_ );
 
 				if ( Wanted < Minimum )
 					ERRf();
@@ -245,14 +239,14 @@ namespace flx {
 
 			if ( Wanted )
 			{
-				Set_->Recall( Position_, (epeios::bsize__)Wanted, Buffer );
+				Bunch_->Recall( Position_, (epeios::bsize__)Wanted, Buffer );
 				Position_ += Wanted;
 			}
 
 			return Wanted;
 		}
 	private:
-		const bunch_ *Set_;
+		const bunch_ *Bunch_;
 		epeios::row_t__ Position_;
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
@@ -272,16 +266,16 @@ namespace flx {
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
-		void Init( const bunch_ &Set )
+		void Init( const bunch_ &Bunch )
 		{
 			iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
-			Set_ = &Set;
+			Bunch_ = &Bunch;
 			Position_ = 0;
 		}
 	};
 
 	//c A bunch as output flow.driver.
-	class bunch_oflow__
+	template < typename bunch_, typename so__> class bunch_oflow__
 	: public flw::oflow__
 	{
 	protected:
@@ -291,12 +285,12 @@ namespace flx {
 			flw::size__ Minimum,
 			bool Synchronization )
 		{
-			Set_->Append( Buffer, (epeios::bsize__)Wanted );
+			Bunch_->Append( (const so__ *)Buffer, (epeios::bsize__)Wanted );
 
 			return Wanted;
 		}
 	private:
-		bunch_ *Set_;
+		bunch_ *Bunch_;
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
@@ -306,20 +300,18 @@ namespace flx {
 		}
 		~bunch_oflow__( void )
 		{
-			oflow__::reset( true );
-
 			reset( true );
 		}
 		void reset( bool P = true )
 		{
 			oflow__::reset( P );
-			Set_ = NULL;
+			Bunch_ = NULL;
 		}
-		//f Initializing with the buffer bunch 'BufferSet'.
-		void Init( bunch_ &BufferSet )
+		//f Initializing with the buffer bunch 'Bunch'.
+		void Init( bunch_ &Bunch )
 		{
 			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
-			Set_ = &BufferSet;
+			Bunch_ = &Bunch;
 		}
 	};
 	

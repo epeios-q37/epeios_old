@@ -95,6 +95,16 @@ namespace dte {
 
 	//t Type of the day.
 	typedef bso::ubyte__ day__;
+
+
+	struct date_buffer__
+	{
+		char Data[11];
+		date_buffer__( void )
+		{
+			Data[0] = 0;
+		}
+	};
 	
 
 	//c A date.
@@ -192,7 +202,15 @@ namespace dte {
 			return _Day( Date == DTE_INVALID_DATE ? RawDate_ : Date );
 		}
 		//f Return the date in ASCII ('dd/mm/yyyy') and put in 'Result' if != 'NULL'.
-		const char *ASCII( char *Result = NULL ) const;
+		const char *ASCII( date_buffer__ &Buffer ) const;
+#ifndef CPE__MT
+		const char *ASCII( void )
+		{
+			static date_buffer__ Buffer;
+
+			return ASCII( Buffer );
+		}
+#endif
 		void Date(
 			day__ Day,
 			month__ Month,
@@ -293,7 +311,9 @@ namespace dte {
 		txf::text_oflow__ &Flow,
 		date__ Date )
 	{
-		return Flow << Date.ASCII();
+		date_buffer__ Buffer;
+
+		return Flow << Date.ASCII( Buffer );
 	}
 
 }

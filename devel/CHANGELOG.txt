@@ -38,6 +38,7 @@ CTN:
 
 DTE:
 - (15/04/04) Introducing the new structure.
+- (21/07/04) Improving some features about the thread-safeness of this library.
 
 EPEIOS:
 - (15/06/04) Adding some useful constants.
@@ -54,6 +55,9 @@ FLW:
 - (17/07/04) Adding amount of data red/written handling.
 -			 Renaming some methods.
 - (20/07/04) Improvements.
+
+FLX:
+- (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
 
 HTP:
 - (18/07/04) little improvements.
@@ -73,6 +77,9 @@ MMG:
 MMM:
 - (14/07/04) Using the 'CIO' library instead of 'STF'.
 
+MTX:
+- (31/07/04) Adding a 'Delay' parameter for locking functions.
+
 SSNMNG:
 - Using own row type for session id 'row__'.
 - Adding 'sessions_manager_::IsValid()' method.
@@ -89,7 +96,8 @@ TOL:
 - Adding the 'E_DISCLOSE_(_)' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
 - (24/05/04) Using 'cio' library instead of 'stf'.
-- (24/06/04) Addinf 'E_TTEMPLATE' macro.
+- (24/06/04) Adding 'E_TTYPEDEF' macro.
+- (31/07/04) Adding 'Delay' function and 'Defer()' with delay parameter.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.

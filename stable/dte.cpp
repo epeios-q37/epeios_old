@@ -96,7 +96,7 @@ raw_date__ dte::date__::_Convert(
 		return ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
 }
 
-raw_date__ date__::_Convert( const char *Date )
+raw_date__ dte::date__::_Convert( const char *Date )
 {
 	day__ Jour = 0;
 	month__ Mois = 0;
@@ -138,19 +138,14 @@ raw_date__ date__::_Convert( const char *Date )
 	return _Convert( Jour, Mois, Annee );
 }
 
-const char *date__::ASCII( char *Result ) const
+const char *dte::date__::ASCII( date_buffer__ &Buffer ) const
 {
-	static char Retour[11];
-
-	if ( !Result )
-		Result = Retour;
-
 	if ( RawDate_ == DTE_INVALID_DATE )
-		sprintf( Result, "invalid" );
+		sprintf( Buffer.Data, "invalid" );
 	else
-		sprintf( Result, "%02i/%02i/%i", (int)Day(), (int)Month(), (int)Year() );
+		sprintf( Buffer.Data, "%02i/%02i/%i", (int)Day(), (int)Month(), (int)Year() );
 
-	return Result;
+	return Buffer.Data;
 }
 
 

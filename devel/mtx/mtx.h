@@ -180,6 +180,15 @@ namespace mtx {
 		while( !TryToLock( Handler ) )
 			tol::Defer();
 	}
+
+	// Wait until mutex unlocked, with 'Delay' millisecond between delays.
+	inline void WaitUntilUnlocked_(
+		mutex_handler__ Handler,
+		unsigned long Delay )
+	{
+		while( !TryToLock( Handler ) )
+			tol::Defer( Delay );
+	}
 #endif
 
 	//f Lock 'Handler'. Blocks until lock succeed.
@@ -195,6 +204,24 @@ namespace mtx {
 #	endif
 		if ( !TryToLock( Handler ) )
 			WaitUntilUnlocked_( Handler );
+#endif
+	}
+
+	//f Lock 'Handler'. Blocks until lock succeed with 'Delay' millisecond between tries.
+	inline void Lock(
+		mutex_handler__ Handler,
+		unsigned long Delay )
+	{
+#ifdef MTX__USE_PTHREAD_MUTEX
+		if ( pthread_mutex_lock( Handler ) != 0 )
+			ERRs();
+#elif defined( MTX__USE_COUNTER )
+#	ifdef MTX__CONTROL
+		if ( *Handler == MTX_RELEASED_MUTEX )
+			ERRu();
+#	endif
+		if ( !TryToLock( Handler ) )
+			WaitUntilUnlocked_( Handler, Delay );
 #endif
 	}
 
@@ -267,6 +294,15 @@ namespace mtx {
 				ERRu();
 #endif
 			mtx::Lock( Handler_ );
+		}
+		//f Lock the semaphore.Waits 'Delay' millisecond between tries. BLOCKING FUNCTION.
+		void Lock( unsigned long Delay )
+		{
+#ifdef MTX_DBG
+			if ( Handler_ == MTX_INVALID_HANDLER )
+				ERRu();
+#endif
+			mtx::Lock( Handler_, Delay );
 		}
 		//f Unlock the semaphore.
 		void Unlock( void )
