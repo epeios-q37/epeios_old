@@ -73,11 +73,16 @@ extern class ttr_tutor &XTFTutor;
 //d The char marking the end of flow, but as text.
 #define XTF_EOXT	"\x1a"
 
+//d The default cell separator.
+#define XTF_DEFAULT_CELL_SEPARATOR	'\t'
+
 namespace xtf {
 	//t type of position in a text (line or column).
 	typedef bso::ulong__ location__;
 
 	typedef bso::ubyte__ _amount__;
+
+	using flw::amount__;
 
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow__
@@ -238,8 +243,16 @@ namespace xtf {
 		{
 			return Colonne_;
 		}
-		//f Put the rest of the current line in 'Line'.
-		void GetLine( str::string_ &Line );
+		/*f Put the rest of the current cell in 'Cell'. Return true if the celle is delimited by 'Separator',
+		false otherwise (cell delimited by a new line, for example). */
+		bso::bool__ GetCell(
+			str::string_ &Cell,
+			bso::char__ Separator = XTF_DEFAULT_CELL_SEPARATOR );
+		//f Put rest of the current line in 'Line'. Return true if line ended by a new line, false otherwise.
+		bso::bool__ GetLine( str::string_ &Line )
+		{
+			return !GetCell( Line, XTF_EOXC );
+		}
 		//f Skip the current line.
 		void SkipLine( void )
 		{
@@ -254,6 +267,11 @@ namespace xtf {
 		bso::bool__ EOX( void )
 		{
 			return View() == XTF_EOXC;
+		}
+		//f Return the amount of data red.
+		amount__ AmountRed( void ) const
+		{
+			return Entree_->AmountRed() - Nombre_;
 		}
 	};
 }

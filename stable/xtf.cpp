@@ -57,7 +57,9 @@ public:
 
 using namespace xtf;
 
-void xtf::extended_text_iflow__::GetLine( str::string_ &Line )
+bso::bool__  xtf::extended_text_iflow__::GetCell(
+	str::string_ &Line,
+	bso::char__ Separator )
 {
 	bso::bool__ Cont = true;
 	char C;
@@ -65,7 +67,9 @@ void xtf::extended_text_iflow__::GetLine( str::string_ &Line )
 	if ( !EOX() ) {
 		C = Get();
 
-		if ( ( C == '\r' ) || ( C == '\n' ) )
+		if ( C == Separator )
+			Cont = false;
+		else if ( ( C == '\r' ) || ( C == '\n' ) )
 			if ( EOL_ != 0 )
 				Cont = false;
 			else if ( !EOX() )
@@ -75,7 +79,9 @@ void xtf::extended_text_iflow__::GetLine( str::string_ &Line )
 
 		while( Cont ) {
 
-			if ( Column() == 1 )
+			if ( C == Separator )
+				Cont = false;
+			else if ( Column() == 1 )
 				Cont = false;
 			else if ( &Line != NULL )
 				Line.Append( C );
@@ -87,8 +93,9 @@ void xtf::extended_text_iflow__::GetLine( str::string_ &Line )
 				C = Get();
 		}
 	}
-}
 
+	return ( C == Separator );
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,

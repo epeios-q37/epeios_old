@@ -344,8 +344,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STock eXchange DataBaSe
 &stxdte		&estx		&2000-2002, \
 	&STock eXchange DATe
-&stxstk		&estx		&2000-2002 ,\
+&stxstk		&estx		&2000-2002, \
 	&STock eXchange SToK
+&stxqot		&estx		&2000-2002, \
+	&STock eXchange QuOTes
+&stxvlm		&estx		&2000-2002, \
+	&STock eXchange VoLuMes
+
 
 #Epeios XML libraries.
 &xmlbsc		&exml		&2001-\

@@ -389,11 +389,12 @@ namespace flw {
 		//f Set the counter of red data to 0.
 		void Reset( void )
 		{
-#ifdef FLW_DBG
-			if ( Available_ != 0 )
-				ERRf();
-#endif
-			Red_ = 0;
+			Red_ = Available_;
+		}
+		//f Return the amount of data red since last 'Reset()'.
+		amount__ AmountRed( void ) const
+		{
+			return Red_ - Available_;
 		}
 	};
 
@@ -616,6 +617,11 @@ namespace flw {
 		void Synchronize( void )
 		{
 			_Synchronize();
+		}
+		//f Return the amount of data red since last 'Synchronize()'.
+		amount__ AmountWritten( void ) const
+		{
+			return Written_ + ( Size_ - Free_ );
 		}
 	};
 

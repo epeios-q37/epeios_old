@@ -173,11 +173,11 @@ namespace mmg
 			if ( Statique_ && ( Mode_== mdr::mReadWrite ) )
 				Memoire.Store( Statique_, Taille, 0 );
 		}
-		void EcrireDansFlot( flw::oflow___ &Flot ) const
+		void EcrireDansFlot( flw::oflow__ &Flot ) const
 		{
 			Flot.Put( Statique_, Taille );
 		}
-		void LireDeFlot( flw::iflow___ &Flot )
+		void LireDeFlot( flw::iflow__ &Flot )
 		{
 			Flot.Get( Taille, Statique_ );
 		}
@@ -296,14 +296,14 @@ namespace mmg
 			Pilote_.Memoire.plug( PiloteMultimemoire_ );
 		}
 		//f Write to 'OFLow' as raw data.
-		void Write( flw::oflow___ &OFlow ) const
+		void Write( flw::oflow__ &OFlow ) const
 		{
 			Memoire.Flush();
 			Pilote_.EcrireDansFlot( OFlow );
 			Memoire.write( OFlow );
 		}
 		//f Read from 'IFLow' as raw data.
-		void Read( flw::iflow___ &IFlow )
+		void Read( flw::iflow__ &IFlow )
 		{
 			Pilote_.LireDeFlot( IFlow );
 			Memoire.read( IFlow );
