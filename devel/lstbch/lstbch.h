@@ -99,8 +99,8 @@ namespace lstbch {
 		}
 		list_bunch_ &operator =( const list_bunch_ &LB )
 		{
-			list_<row> operator =( LB );
-			bunch_<type, row> operator =( LB );
+			list_<row>::operator =( LB );
+			bunch_<type, row>::operator =( LB );
 
 			return *this;
 		}
@@ -128,6 +128,12 @@ namespace lstbch {
 	};
 
 	AUTO2( list_bunch )
+
+	#define E_LBUNCHt_( type, row )	list_bunch_<type, row>
+	#define E_LBUNCHt( type, row )	list_bunch<type, row>
+
+	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, epeios::row__ )
+	#define  E_LBUNCH( type )		E_LBUNCHt( type, epeios::row__ )
 }
 
 /*$END$*/

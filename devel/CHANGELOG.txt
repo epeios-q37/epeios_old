@@ -3,6 +3,8 @@ $Id$
 GENERAL:
 - Creating library 'BTS'.
 - Creating library 'BTF'.
+- Creating library 'LSTBCH'.
+- Creating library 'LSTCTN'.
 
 AEM:
 - Adding 'Exists' method.
@@ -21,6 +23,7 @@ STR:
 
 TOL:
 - Adding the 'Exists()' method to 'NAV(t)' macro.
+- Fixong bug in 'AUTO3' macro.
 
 --------
 20030104

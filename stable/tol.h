@@ -368,7 +368,7 @@ public:\
 \
 		return *this;\
 	}\
-	Name &operator =( const Name##_<t,r,u> &S )\
+	Name &operator =( const Name##_<t,u,v> &S )\
 	{\
 		Name##_<t,u,v>::operator =( S );\
 \
