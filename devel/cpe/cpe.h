@@ -1,7 +1,7 @@
 /*
 	Header for the 'cpe' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -87,8 +87,10 @@ extern class ttr_tutor &CPETutor;
 #	define CPE__32
 #	endif	
 #	ifdef _MT
+#		ifndef CPE_ST
 	//d If defined, we are in a multitasking enviroment.
-#		define CPE__MT
+#			define CPE__MT
+#		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
@@ -102,7 +104,9 @@ extern class ttr_tutor &CPETutor;
 #		define CPE__32
 #	endif
 #	ifdef __MT__
-#		define CPE__MT
+#		ifndef CPE_ST
+#			define CPE__MT
+#		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
@@ -140,7 +144,9 @@ extern class ttr_tutor &CPETutor;
 #ifdef __MWERKS__
 #	define CPE__CW	// We are using MetroWerks Code Warrior.
 #	ifdef _MT
-#		define CPE__MT
+#		ifndef CPE_ST
+#			define CPE__MT
+#		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
