@@ -42,24 +42,29 @@ enum state__ {
 
 static state__ GetFirstNonEmptyLine_(
 	xtf::extended_text_iflow__ &Flow,
-	str::string_ &Line )
+	str::string_ &Line,
+	bso::bool__ Last )
 {
 	state__ State = sUnknow;
 
 	while ( State == sUnknow ) {
 
-		if ( Flow.EOX() )
+		if ( Flow.EOX( true ) )
 			State = sEnd;
 		else {
 			Line.Init();
 
-			Flow.GetLine( Line );
+			if ( Last && ( Flow.View( true ) != '#' ) && ( Flow .View( true ) != '\t' ) )
+				State = sEnd;
+			else {
+				Flow.GetLine( Line );
 
-			if ( ( Line.Amount() != 0 ) && ( Line( 0 ) != '#' ) ) {
-				if ( Line( 0 ) == '\t' )
-					State = sTranslation;
-				else
-					State = sRaw;
+				if ( ( Line.Amount() != 0 ) && ( Line( 0 ) != '#' ) ) {
+					if ( Line( 0 ) == '\t' )
+						State = sTranslation;
+					else
+						State = sRaw;
+				}
 			}
 		}
 	}
@@ -87,13 +92,12 @@ ERRBegin
 	do {
 		Line.Init();
 
-		switch ( State = GetFirstNonEmptyLine_( Flow, Line ) ) {
+		switch ( State = GetFirstNonEmptyLine_( Flow, Line, Row == NONE ) ) {
 		case sEnd:
 			break;
 		case sRaw:
 			if ( ( Row == NONE ) || ( RawMessage( Row ) != Line ) ) {
 				State = sEnd;
-				Location = Flow.Line();
 			} else {
 				English.New();
 				French.New();

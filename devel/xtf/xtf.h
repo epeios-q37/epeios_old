@@ -259,15 +259,11 @@ namespace xtf {
 			GetLine( *(str::string_ *)NULL );
 		}
 		//f Return the next character in the flow, but let it in the flow.
-		char View( void )
+		char View( bso::bool__ HandleNL = false )
 		{
-			return Consulter_( 1 );
-		}
-		//f True if at end of text.
-		bso::bool__ EOX( bso::bool__ HandleNL = false)
-		{
+			char C = Consulter_( 1 );
+
 			if ( HandleNL && EOL_ ) {
-				char C = View();
 
 				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
 					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
@@ -282,11 +278,16 @@ namespace xtf {
 					 if ( Nombre_ < 2 )
 						 ERRf();
 
-					 return Cache_[Position_+1] == XTF_EOXC;
-				} else
-					return false;
-			} else
-				return View() == XTF_EOXC;
+					 C = Cache_[Position_+1];
+				}
+			}
+
+			return C;
+		}
+		//f True if at end of text.
+		bso::bool__ EOX( bso::bool__ HandleNL = false)
+		{
+			return View( HandleNL ) == XTF_EOXC;
 		}
 		//f Return the amount of data red.
 		amount__ AmountRed( void ) const

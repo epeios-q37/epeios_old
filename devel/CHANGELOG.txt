@@ -177,6 +177,7 @@ XTF:
 - (20/07/04) Fixing 'View()' bug.
 - (24/10/04) Removing previous correction. There is a conception problem.
 - (01/11/04) Adding NL handling possibility for 'EOX()'.
+- (09/11/04) Adding handling of NL in 'View()'
 
 --------
 20040215
