@@ -269,6 +269,8 @@ public:
 #ifdef ERR__THREAD_SAFE
 		MutexHandler_ = mtx::Create();
 #endif
+		ERR.Error = false;
+		ERR.Handling = false;
 	}
 	~errpersonnalization( void )
 	{

@@ -194,8 +194,10 @@ namespace err {
 		// where to jump
 		static jmp_buf *Jump;
 	#endif
-		// Report that an error occurs
-		int Error: 1;
+		
+		int
+			Error: 1,	// Report that an error occurs
+			Handling: 1;	// Erreur en cours de traitement (Entre un 'ERRErr' et un 'ERREnd'.
 		// Major code of error.
 		static err::type Major;
 		// Minor code of error
@@ -319,9 +321,9 @@ namespace err {
 // précède les déclarations
 #define ERRBegin	try {
 // précède les instructions proprement dites
-#define ERRErr		} catch ( err::err_ ) {
+#define ERRErr		} catch ( err::err_ ) { err::ERR.Handling = true;
 // précède les instructions à effectuer lors d'une erreur
-#define ERREnd		}
+#define ERREnd		err::ERR.Handling = false; }
 // précède les instructions à exécuter, erreur ou pas
 #define ERRCommonEpilog	}
 // boucle la partie de traitement d'erreur
@@ -329,9 +331,9 @@ namespace err {
 #endif
 
 #ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	err::ERR.Error && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
+#define ERRTestEpilog	err::ERR.Error && !err::ERR.Handling && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #else
-#define ERRTestEpilog	err::ERR.Error && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
+#define ERRTestEpilog	err::ERR.Error && !err::ERR.Handling && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #endif
 
 //d End of the error bloc.
