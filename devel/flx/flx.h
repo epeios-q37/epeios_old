@@ -81,9 +81,11 @@ extern class ttr_tutor &FLXTutor;
 namespace flx {
 	using flw::data__;
 
+	using flw::iflow___;
+
 	//c Buffer as a standard input flow.
 	class buffer_iflow___
-	: public flw::iflow___
+	: public iflow___
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
@@ -155,11 +157,11 @@ namespace flx {
 		}
 	};
 
-
+	using flw::oflow___;
 
 	//c Buffer as a standard ouput flow.driver
 	class buffer_oflow___
-	: public flw::oflow___
+	: public oflow___
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.

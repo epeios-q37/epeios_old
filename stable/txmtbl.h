@@ -98,13 +98,15 @@ namespace txmtbl {
 	//t A escape char.
 	typedef bso::char__	escape__;
 
+	using str::string_;
+
 	//c A cell.
 	class cell_
-	: public str::string_
+	: public string_
 	{
 	public:
 		struct s
-		: public str::string_::s
+		: public string_::s
 		{
 			location__ Location;
 		} &S_;
