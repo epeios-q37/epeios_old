@@ -177,6 +177,34 @@ namespace str {
 	}
 
 	// Could be easily optimized, would be when I have some time.
+	void string_::StripLeadingCharacter( char Model )
+	{
+		epeios::row__ Row = First();
+		epeios::size__ Amount = 0;
+
+		while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+			Amount++;
+			Row = Next( Row );
+		}
+
+		Delete( 0, Amount );
+	}
+
+	// Could be easily optimized, would be when I have some time.
+	void string_::StripTailingCharacter( char Model )
+	{
+		epeios::row__ Row = Last();
+		epeios::size__ Amount = 0;
+
+		while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+			Amount++;
+			Row = Previous( Row );
+		}
+
+		Truncate( Amount );
+	}
+
+	// Could be easily optimized, would be when I have some time.
 	void string_::Replace(
 		char Old,
 		char New )

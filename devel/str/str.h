@@ -137,6 +137,16 @@ namespace str {
 			epeios::size__ Amount = TYM_MAX_SIZE ) const;
 		//f Filter out the 'Model' charactere.
 		void FilterOut( char Model );
+		//f Remove characters 'Model' beginnig the string.
+		void StripLeadingCharacter( char Model );
+		//f Remove characters 'Model' at ending the string.
+		void StripTailingCharacter( char Model );
+		//f Remove characters 'Model' both beginning and ending the string.
+		void StripCharacter( char Model )
+		{
+			StripLeadingCharacter( Model );
+			StripTailingCharacter( Model );
+		}
 		//f Replace the 'Old' char with the 'New' one.
 		void Replace(
 			char Old,

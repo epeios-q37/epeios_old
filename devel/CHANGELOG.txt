@@ -175,6 +175,7 @@ STR:
 - Adding the 'Begin' parameter to 'To...' Conversion method.
 - Changing the way the 'ErrP' parameter is passed in the 'To...' conversion method.
 - Adding 'To...' methods with variataion in the parameters.
+- Adding stripping methods.
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.
