@@ -35,6 +35,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbbsc		&lgsb		&		&GeSBib BaSiC
 &gsbmlt		&lgsb		&		&GeSBib MuLTi
 &gsbrlt		&lgsb		&		&GeSBib ReLaTionnal
+&gsbtbl		&lgsb		&		&GeSBib TaBLe
 &gsbwrd		&lgsb		&		&GeSBib WoRDs
 &ids		&epeios		&		&ID Store
 &lgg		&epeios		&2000-		&LanGuaGes
