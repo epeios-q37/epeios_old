@@ -223,6 +223,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbfld		&lgsb		&2002-\
 	&GeSBib FieLDs
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
+&gsbmgr		&lgsb		&\
+	&GeSBib MiGRation
 &gsbmlt		&lgsb		&2002-\
 	&GeSBib MuLTi field
 &gsbmta		&lgsb		&\
