@@ -137,6 +137,34 @@ namespace mtx {
 		return Handler;
 	}
 
+	inline bso::bool__ IsLocked( mutex_handler__ Handler )
+	{
+#ifdef MTX__USE_PTHREAD_MUTEX
+		switch ( pthread_mutex_trylock( Handler ) ) {
+		case 0:
+			pthread_mutex_unlock( Handler );
+			return false;
+			break;
+		case EBUSY:
+			return true;
+			break;
+		default:
+			ERRs();
+			break;
+		}
+#elif defined( MTX__USE_COUNTER )
+#	ifdef MTX__CONTROL
+		if ( *Handler == MTX_RELEASED_MUTEX )
+			ERRu();
+#	endif
+		if ( *Handler != 0 )
+			return true;
+		else
+			return false;
+#endif
+	}
+
+
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
 	inline bso::bool__ TryToLock( mutex_handler__ Handler )
 	{
@@ -160,10 +188,8 @@ namespace mtx {
 		if ( *Handler != 0 )
 			return false;
 
-		if ( *Handler == MTX_MAX_COUNTER_VALUE )
+		if ( ++(*Handler) == MTX_MAX_COUNTER_VALUE )
 			ERRl();
-
-		(*Handler)++;
 
 		if ( *Handler > 1 )
 		{
@@ -293,6 +319,10 @@ namespace mtx {
 				ERRu();
 #endif
 			return mtx::TryToLock( Handler_ );
+		}
+		bso::bool__ IsLocked( void )
+		{
+			return mtx::IsLocked( Handler_ );
 		}
 	};
 }

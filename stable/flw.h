@@ -448,6 +448,8 @@ namespace flw {
 		void _Synchronize( void )
 		{
 			_DumpCache( true );
+
+			FLWSynchronizing();
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		size__ _WriteUpTo(
@@ -473,7 +475,7 @@ namespace flw {
 			size__ Wanted,
 			size__ Minimum,
 			bool Synchronization ) = 0;
-		virtual void FLWSynchronizing( int )	// Obsolete ; rajout du paramètre 'int( pour détecter ceux qui l'utilisent.
+		virtual void FLWSynchronizing( void )
 		{}
 	public:
 		oflow__(

@@ -176,6 +176,27 @@ namespace lck {
 
 			mtx::Unlock( WritingRequest );	// Another writing (an reading) can yet occurs.
 		}
+		bso::bool__ IsLockedForWriting( void ) const
+		{
+			return mtx::IsLocked( WritingPermission );
+		}
+		bso::bool__ IsLockedForReading( void ) const
+		{
+			bso::bool__ IsLocked;
+
+			mtx::Lock( ReadCounterProtection );	// Wait until read counter available,
+												// and avoid other to access them.
+
+			IsLocked = ReadCounter != 0;
+
+			mtx::Unlock( ReadCounterProtection );
+
+			return IsLocked;
+		}
+		bso::bool__ IsLocked( void ) const
+		{
+			return IsLockedForWriting() || IsLockedForReading();
+		}
 	};
 
 	template <typename object> class control___
@@ -323,6 +344,10 @@ namespace lck {
 
 			return WasLocked;
 		}
+		bso::bool__ IsLocked( void )
+		{
+			return Lock_.IsLocked();
+		}
 	};
 
 	template <typename object> class shared_access___
@@ -360,10 +385,7 @@ namespace lck {
 		}
 		bso::bool__ IsLocked( void ) const
 		{
-			if ( Control_ != NULL )
-				return Control_->IsLocked();
-			else
-				return false;
+			return Control_->IsLocked();
 		}
 	};
 
@@ -402,18 +424,9 @@ namespace lck {
 		}
 		bso::bool__ IsLocked( void ) const
 		{
-			if ( Control_ != NULL )
-				return Control_->IsLocked();
-			else
-				return false;
+			return Control_->IsLocked();
 		}
 	};
-
-
-
-
-
-
 }
 
 /*$END$*/

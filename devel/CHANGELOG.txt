@@ -3,6 +3,11 @@ $Id$
 21/03/05:
 - FLX :
 	- Correction de bogue.
+- LCK :
+	- Rajout méthode 'IsLocked...()'.
+- MTX :
+	- Ajout fonction/méthode 'IsLocked()'.
+	- Correction bogue.
 
 17/03/05:
 - MTX:
