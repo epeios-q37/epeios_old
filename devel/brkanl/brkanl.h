@@ -64,6 +64,9 @@ extern class ttr_tutor &BRKANLTutor;
 #include "brktpm.h"
 
 namespace brkanl {
+	//t Broker parameter.
+	typedef frtend::id8__	parameter__;
+
 	//t Broker parameters.
 	typedef frtend::ids8_ 	parameters_;
 	typedef frtend::ids8	parameters;
