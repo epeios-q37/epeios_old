@@ -1,6 +1,6 @@
 /*
 	Header for the 'ssnmng' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -82,6 +82,11 @@ namespace ssnmng {
 		char Raw_[SSNMNG_SIZE+1];
 	public:
 		session_id__( void )
+		{
+			Raw_[0] = 0;
+		}
+		//f Initialization.
+		void Init( void )
 		{
 			Raw_[0] = 0;
 		}

@@ -85,6 +85,11 @@ namespace ssnmng {
 		{
 			Raw_[0] = 0;
 		}
+		//f Initialization.
+		void Init( void )
+		{
+			Raw_[0] = 0;
+		}
 		//f Create a new session id.
 		void New( void );
 		//f Return the value of the session id.
