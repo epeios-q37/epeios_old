@@ -597,7 +597,7 @@ namespace tol {
 	template <typename t> inline void Free( t *&Pointer )
 	{
 		if ( Pointer != NULL ) {
-			free( Pointer );
+			free( (void *)Pointer );
 			Pointer = NULL;
 		}
 	}

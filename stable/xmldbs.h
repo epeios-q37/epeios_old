@@ -374,7 +374,7 @@ namespace xmldbs {
 			const name_ &Name,
 			const value_ &Value )
 		{
-			PutAttribute( GetOrCreateTag_( Name, tAttribute ), Value );
+			return PutAttribute( GetOrCreateTag_( Name, tAttribute ), Value );
 		}
 		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
 		'TagRow', and value 'Value'. The tag row of the attribute is put

@@ -1,5 +1,18 @@
 $Id$
 
+ITG:
+- moving it to the 'emth' subproject.
+
+XMLDBS:
+- Adding missing return value.
+
+TOL:
+- Fixing cast problem.
+
+--------
+20010804
+--------
+
 GENERAL:
 - moving backed-related libraries ('BKDEND', 'BKDxxx' & also 'FRTEND') to 'ebkd' sub-project.
 - moving cgi-related libraries and software ('FRTEND', 'URLARG' and 'getbkdapi') to 'ecgi' sub-project.

@@ -58,6 +58,8 @@ elif grep -w -q $1 $SRC/ebkd.lst; then
 	ID=ebkd
 elif grep -w -q $1 $SRC/ecgi.lst; then
 	ID=ecgi
+elif grep -w -q $1 $SRC/emth.lst; then
+	ID=emth
 else
 	echo "Cannot identify library group.";
 	exit
