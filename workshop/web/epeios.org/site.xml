@@ -65,7 +65,7 @@
         <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude SIMON</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the Epeios libraries. I wish I could spent more time on the Epeios project, because I think that it would probably take months or even years for me to write the documentation for the more then 80 available libraries.</para>
       </section>
       <section>
-        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). There is a  french version of my CV in <link URL="http://epeios.org/cv.pdf" aspect="long" type="external">Acrobat</link> format and in <link URL="http://epeios.org/cv.doc" aspect="long" type="external">WinWord</link> format.</para>
+        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). You will find <link URL="http://epeios.org/cv/" aspect="long">here</link> a french version of my CV.</para>
       </section>
     </content>
   </document>
@@ -87,6 +87,32 @@
     <content>
       <section>
         <para xml:space="preserve">By default, all the Epeios software and libraries are released under <link URL="http://www.gnu.org/copyleft/gpl.html" type="external">GNU General Public License</link>. Actually, I plan to release all coming Epeios software and libraries under this license too. However, if you want to use the Epeios software or libraries, but under conditions which are not allowed by the GNU GPL, write me your request. As the one and only who has written all the Epeios software and libraries, I can possibly authorize you to use them under other conditions as those specified by the GNU GPL.</para>
+      </section>
+    </content>
+  </document>
+  <document id="cv">
+    <general title="Curriculum vitae." abstract="CV of SIMON Claude" keywords="SIMON Claude, job, CV">
+      <author>$AUTHOR$</author>
+      <copyright>
+        <owner>$OWNER$</owner>
+        <date>2001</date>
+      </copyright>
+      <misc>
+        <sourceforge group_id="$CORE_SF_ID$"/>
+        <stamp date="$DATE$" time="$TIME$"/>
+      </misc>
+    </general>
+    <specific>
+      <WEB hierarchy="cv" name="index" bookmark="SIMON Claude - CV" parent=".." robots="$ROBOTS$"/>
+    </specific>
+    <content>
+      <section>
+        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). There is a french version of my CV in miscellaneous formats :<list>
+            <item>
+              <link URL="http://epeios.org/cv.pdf" aspect="long" type="external">cv.pdf</link> : Acrobat format.</item>
+            <item>
+              <link URL="http://epeios.org/cv.doc" aspect="long" type="external">cv.doc</link> : WinWord format.</item>
+          </list></para>
       </section>
     </content>
   </document>
