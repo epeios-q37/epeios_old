@@ -20,23 +20,8 @@
       <content/>
     </document>
   </template>
-  <document id="map">
-    <general title="Map of the Epeios WEB site" abstract="the Epeios WEB site map." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF, map">
-      <author>$AUTHOR$</author>
-      <copyright>
-        <owner>$OWNER$</owner>
-        <date>2001-2002</date>
-      </copyright>
-      <misc>
-        <sourceforge group_id="$CORE_SF_ID$"/>
-        <stamp date="$DATE$" time="$TIME$"/>
-      </misc>
-    </general>
-    <specific>
-      <WEB hierarchy="" name="map" robots="$ROBOTS$" bookmark="Map"/>
-    </specific>$MAP$</document>
   <document id="homepage">
-    <general title="Welcome to the Epeios project WEB site." abstract="The Epeios project, the ultimate programming resource." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF">
+    <general title="Welcome to the Epeios project WEB site." abstract="The Epeios project, the most simple and effective way to develop software." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF">
       <author>$AUTHOR$</author>
       <copyright>
         <owner>$OWNER$</owner>
@@ -107,35 +92,9 @@
       </section>
     </content>
   </document>
-  <document id="cv">
-    <general title="Curriculum vitae." abstract="CV of SIMON Claude" keywords="SIMON Claude, job, CV">
-      <author>$AUTHOR$</author>
-      <copyright>
-        <owner>$OWNER$</owner>
-        <date>2001</date>
-      </copyright>
-      <misc>
-        <sourceforge group_id="$CORE_SF_ID$"/>
-        <stamp date="$DATE$" time="$TIME$"/>
-      </misc>
-    </general>
-    <specific>
-      <WEB hierarchy="cv" name="index" bookmark="SIMON Claude - CV" parent=".." robots="$ROBOTS$"/>
-    </specific>
-    <content>
-      <section>
-        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). There is a french version of my CV in miscellaneous formats :<list>
-            <item>
-              <link URL="http://epeios.org/cv.pdf" aspect="long" type="external">cv.pdf</link> : Acrobat format.</item>
-            <item>
-              <link URL="http://epeios.org/cv.doc" aspect="long" type="external">cv.doc</link> : WinWord format.</item>
-          </list></para>
-      </section>
-    </content>
-  </document>
   <dir id="about">
     <document id="homepage">
-      <general title="About the Epeios project" keywords="Epeios, about" abstract="More about the Epeios project.">
+      <general title="About the Epeios project (homepage)" keywords="Epeios, about" abstract="Homepage of the about section from the Epeios project.">
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
@@ -180,7 +139,7 @@
   </dir>
   <dir id="general">
     <document>
-      <general title="General documentation on the Epeios concepts." abstract="The general documentation on the concepts on which the Epeios project is based." keywords="Epeios, documentation">
+      <general title="General documentation of the Epeios concepts (homepage)." abstract="Homepage of the general documentation from the Epeios project." keywords="Epeios, documentation">
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
@@ -208,7 +167,7 @@
       </content>
     </document>
     <document id="core">
-      <general title="General documentation" abstract="The general documentation of the Epeios project." keywords="Epeios, documentation">
+      <general title="General documentation of the Epeios concepts." abstract="The general documentation of the Epeios concepts." keywords="Epeios, documentation">
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
@@ -2201,4 +2160,45 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
       </dir>
     </dir>
   </dir>
+  <document id="cv">
+    <general title="Curriculum vitae." abstract="CV of SIMON Claude" keywords="SIMON Claude, job, CV">
+      <author>$AUTHOR$</author>
+      <copyright>
+        <owner>$OWNER$</owner>
+        <date>2001</date>
+      </copyright>
+      <misc>
+        <sourceforge group_id="$CORE_SF_ID$"/>
+        <stamp date="$DATE$" time="$TIME$"/>
+      </misc>
+    </general>
+    <specific>
+      <WEB hierarchy="cv" name="index" bookmark="SIMON Claude - CV" parent=".." robots="$ROBOTS$"/>
+    </specific>
+    <content>
+      <section>
+        <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). There is a french version of my CV in miscellaneous formats :<list>
+            <item>
+              <link URL="http://epeios.org/cv.pdf" aspect="long" type="external">cv.pdf</link> : Acrobat format.</item>
+            <item>
+              <link URL="http://epeios.org/cv.doc" aspect="long" type="external">cv.doc</link> : WinWord format.</item>
+          </list></para>
+      </section>
+    </content>
+  </document>
+  <document id="map">
+    <general title="Map of the Epeios WEB site" abstract="the Epeios WEB site map." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, unix, open source, open software, GNU, GPL, FSF, map">
+      <author>$AUTHOR$</author>
+      <copyright>
+        <owner>$OWNER$</owner>
+        <date>2001-2002</date>
+      </copyright>
+      <misc>
+        <sourceforge group_id="$CORE_SF_ID$"/>
+        <stamp date="$DATE$" time="$TIME$"/>
+      </misc>
+    </general>
+    <specific>
+      <WEB hierarchy="" name="map" robots="$ROBOTS$" bookmark="Map"/>
+    </specific>$MAP$</document>
 </site>

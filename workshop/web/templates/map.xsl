@@ -5,18 +5,17 @@
   <xsl:template match="/">
     <content>
       <list>
-        <xsl:apply-templates select="/site/document"/>
-        <xsl:apply-templates select="/site/dir"/>
+        <xsl:apply-templates select="site/*"/>
       </list>
     </content>
   </xsl:template>
   <xsl:template match="document">
     <item>
       <link>
-        <xsl:attribute name="URL">/<xsl:value-of select="specific/WEB/@hierarchy"/>/<xsl:value-of select="specific/WEB/@name"/>.html</xsl:attribute>
+        <xsl:attribute name="URL">
+          <xsl:value-of select="specific/WEB/@hierarchy"/>/<xsl:value-of select="specific/WEB/@name"/>.html</xsl:attribute>
         <xsl:value-of select="general/@title"/>
-      </link>
-    </item>
+      </link> : <xsl:value-of select="general/@abstract"/></item>
   </xsl:template>
   <xsl:template match="dir">
     <item>
@@ -27,4 +26,5 @@
       </list>
     </item>
   </xsl:template>
+  <xsl:template match="template"/>
 </xsl:stylesheet>
