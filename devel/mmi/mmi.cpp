@@ -59,22 +59,6 @@ public:
 #define multimemoire_indexee	indexed_multimemory_
 
 namespace mmi {
-#if 0
-	void multimemoire_indexee::AllouerPlus_(
-		capacite CapaciteCourante,
-		capacite CapaciteDemandee )
-	{
-		descripteur__ D;
-
-		D.Descripteur = 0;
-		D.Capacite = 0;
-
-		Descripteurs.Allocate( CapaciteDemandee );
-
-		while ( CapaciteDemandee-- > CapaciteCourante )
-			Descripteurs.Store( D, CapaciteDemandee );
-	}
-#endif
 	void multimemoire_indexee::AllouerMoins_(
 		capacite CapaciteCourante,
 		capacite CapaciteDemandee )
@@ -85,7 +69,7 @@ namespace mmi {
 		Descripteurs.Allocate( CapaciteDemandee );
 	}
 
-	void multimemoire_indexee::DeleteWithoutReallocating(
+	void multimemoire_indexee::RemoveWithoutReallocating(
 		epeios::row__ Position,
 		epeios::size__ ActualCapacity,
 		epeios::size__ Amount )
@@ -97,7 +81,7 @@ namespace mmi {
 
 		Descripteurs.Store( Descripteurs, ActualCapacity - *Position - Amount, *Position + Amount, Position );
 
-		AllouerPlus_( ActualCapacity - Amount, ActualCapacity );
+		Initialize_( ActualCapacity - Amount, ActualCapacity );
 	}
 
 }

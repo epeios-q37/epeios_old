@@ -214,8 +214,8 @@ namespace ctn {
 				Statics.Allocate( Size );
 			}
 		}
-		//f Delete 'Amount' entries from 'Position'.
-		void Delete(
+		//f Remove 'Amount' entries from 'Position'.
+		void Remove(
 			r Position,
 			epeios::size__ Amount,
 			aem::mode Mode )
@@ -226,7 +226,7 @@ namespace ctn {
 			epeios::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
 			epeios::size__ NewAmount = CurrentAmount - Amount;
 
-			Dynamics.DeleteWithoutReallocating( *Position, CurrentAmount, Amount );
+			Dynamics.RemoveWithoutReallocating( *Position, CurrentAmount, Amount );
 			Statics.Store( Statics, NewAmount - *Position, *Position + Amount, Position );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( NewAmount, Mode ) ) {
@@ -274,8 +274,6 @@ namespace ctn {
 		{
 			mmi::indexed_multimemory_driver_::s Pilote_;
 		} ctn_S_; //pour ne pas risquer d'ambigüité.
-		/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
-		si 'EstVide()' est à faux. */
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -300,12 +298,7 @@ namespace ctn {
 		{
 			return Pilote_.Index();
 		}
-	*/	/* Retourne faux si l'élément est calé sur un élément du conteneur,
-		vrai sinon */
-		bso::bool__ EstVide( void )
-		{
-			return Vide_();
-		}
+	*/
 		// Rattache au conteneur 'Conteneur'.
 		void Init(
 			basic_container_<st, r> &Conteneur,
@@ -349,6 +342,16 @@ namespace ctn {
 		{
 			return Vide_();
 		}
+		// Return true id empty, false otherwise.
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Vide_();
+		}
+		// Set as flushed, but without flushing the content.
+		void Erase( void )
+		{
+			Pilote_.Index( NONE );
+		}
 		// Bascule en mde 'Mode'.
 		void ChangeMode( mdr::mode Mode )
 		{
@@ -363,7 +366,7 @@ namespace ctn {
 	template <class st, typename r> class item_base_const__
 	{
 	private:
-		bool Vide_( void )
+		bool Vide_( void ) const
 		{
 			return Pilote_.Index() == NONE;
 		}
@@ -384,8 +387,6 @@ namespace ctn {
 		{
 			mmi::const_indexed_multimemory_driver_::s Pilote_;
 		} ctn_S_; //pour ne pas risquer d'ambigüité.
-		/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
-		si 'EstVide()' est à faux. */
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -409,13 +410,7 @@ namespace ctn {
 		{
 			return Pilote_.Index();
 		}
-	*/	/* Retourne faux si l'élément est calé sur un élément du conteneur,
-		vrai sinon */
-		bso::bool__ EstVide( void )
-		{
-			return Vide_();
-		}
-		// Rattache au conteneur 'Conteneur'.
+	*/	// Rattache au conteneur 'Conteneur'.
 		void Init( const basic_container_<st,r> &Conteneur )
 		{
 #ifdef CTN_DBG
@@ -446,6 +441,15 @@ namespace ctn {
 		void Flush( void )
 		{
 			Vider_();
+		}
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Vide_();
+		}
+		// Set as flushed, but without flushing the content.
+		void Erase( void )
+		{
+			Pilote_.Index( NONE );
 		}
 	};
 
@@ -500,7 +504,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( EstVide() )
+			if ( IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -551,7 +555,7 @@ namespace ctn {
 		const t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( EstVide() )
+			if ( IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
@@ -635,6 +639,11 @@ namespace ctn {
 		{
 			return Ponctuel_.IsFlushed();
 		}
+		// Return true id empty, false otherwise.
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Ponctuel_.IsEmpty();
+		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
 		const t& Get(
@@ -686,6 +695,8 @@ namespace ctn {
 		}
 		mono_container_ &operator =( const mono_container_ &C )
 		{
+			Ponctuel_.Erase();
+			
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::operator =( C );
 
 			return *this;
@@ -699,8 +710,8 @@ namespace ctn {
 
 			return P;
 		}
-		//f Delete 'Amount' entries from 'Position'.
-		void Delete(
+		//f Remove 'Amount' entries from 'Position'.
+		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
 			aem::mode Mode = aem::mDefault )
@@ -709,7 +720,7 @@ namespace ctn {
 			if ( !IsFlushed() )
 				ERRu();
 #endif
-			basic_container_< item_mono_statique__< typename_ t::s >, r >::Delete( Position, Amount, Mode );
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
 		}
 
 	};
@@ -889,7 +900,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( EstVide() )
+			if ( IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -953,7 +964,7 @@ namespace ctn {
 		const t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( EstVide() )
+			if ( IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
@@ -1025,6 +1036,11 @@ namespace ctn {
 		{
 			return Ponctuel_.IsFlushed();
 		}
+		// Return true id empty, false otherwise.
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Ponctuel_.IsEmpty();
+		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
 		const t& Get(
@@ -1076,6 +1092,8 @@ namespace ctn {
 		}
 		multi_container_ &operator =( const multi_container_ &C )
 		{
+			Ponctuel_.Erase();
+			
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::operator =( C );
 
 			return *this;
@@ -1089,8 +1107,8 @@ namespace ctn {
 
 			return P;
 		}
-		//f Delete 'Amount' entries from 'Position'.
-		void Delete(
+		//f Remove 'Amount' entries from 'Position'.
+		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
 			aem::mode Mode = aem::mDefault )
@@ -1099,7 +1117,7 @@ namespace ctn {
 			if ( !IsFlushed() )
 				ERRu();
 #endif
-			basic_container_< item_multi_statique__< typename_ t::s >, r >::Delete( Position, Amount, Mode );
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
 		}
 	};
 

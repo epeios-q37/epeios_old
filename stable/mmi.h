@@ -83,8 +83,7 @@ namespace mmi {
 	class indexed_multimemory_
 	{
 	private:
-	// fonctions
-		void AllouerPlus_(
+		void Initialize_(
 			epeios::size__ CapaciteCourante,
 			epeios::size__ NouvelleCapacite )
 		{
@@ -93,9 +92,16 @@ namespace mmi {
 			D.Descripteur = 0;
 			D.Capacite = 0;
 
+			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
+		}
+	// fonctions
+		void AllouerPlus_(
+			epeios::size__ CapaciteCourante,
+			epeios::size__ NouvelleCapacite )
+		{
 			Descripteurs.Allocate( NouvelleCapacite );
 
-			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
+			Initialize_( CapaciteCourante, NouvelleCapacite );
 		}
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
@@ -147,6 +153,13 @@ namespace mmi {
 			Descripteurs.Store( D, *Index );
 		}
 		// libère la mémoire d'index 'Index'
+		void Push_(
+			epeios::row__ Position,
+			epeios::size__ Amount,
+			epeios::size__ Size )	// Assuming allocation already done !
+		{
+			Descripteurs.Store( Descripteurs, Size - *Position - Amount, *Position, *Position + Amount );
+		}
 	public:
 		tym::E_MEMORY_( descripteur__ ) Descripteurs;
 		// les différents descripteurs
@@ -256,7 +269,7 @@ namespace mmi {
 		/*f Delete 'Amount' entries from 'Position',
 		'ActualCapacity' is the actual capacity.
 		No reallocationg to gain place is made. */
-		void DeleteWithoutReallocating(
+		void RemoveWithoutReallocating(
 			epeios::row__ Position,
 			epeios::size__ ActualCapacity,
 			epeios::size__ Amount );

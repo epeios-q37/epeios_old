@@ -295,8 +295,8 @@ namespace tagexp
 		encoutering the 'tPrint' or the 'tRaw' tag. If retruned value > 'sUserDefined',
 		then it's the value of an user-defined tag. */
 		tagexp::status Expand(
-			xtf::extended_text_iflow___ &IFlow,
-			txf::text_oflow___ &OFlow,
+			xtf::extended_text_iflow__ &IFlow,
+			txf::text_oflow__ &OFlow,
 			bso::char__ Demlimiter,
 			str::string_ &File,
 			tagexp::action Action = tagexp::aPrint,

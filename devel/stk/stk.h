@@ -112,7 +112,7 @@ namespace stk {
 			r Row,
 			aem::mode Mode = aem::mDefault )
 		{
-			E_BUNCHt_( t, r )::Delete( Row );
+			E_BUNCHt_( t, r )::Remove( Row );
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
 		t Pop( aem::mode Mode = aem::mDefault )

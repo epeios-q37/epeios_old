@@ -247,34 +247,34 @@ namespace txmtbl {
 		epeios::row__ FirstNonEmptyCell( void ) const;
 		//f Return the position of the last non-empty cell.
 		epeios::row__ LastNonEmptyCell( void ) const;
-		//f Delete all empty cells. Retunr amount of cells deleted.
-		amount__ DeleteEmptyCells( void );
-		//f Delete all heading empty cells. Return amount of cells deleted.
-		amount__ DeleteHeadingEmptyCells( void );
-		//f Delete all tailing empty cells. Return amount of cells deleted.
-		amount__ DeleteTailingEmptyCells( void );
-		//f Delete all empty cells between the first and last non-empty cells. Return amount of cells deleted.
-		amount__ DeleteCentralEmptyCells( void );
-		//f Delete all cells from 'Position'. Return amount of cells deleted.
-		amount__ DeleteCellsAt( epeios::row__ Position );
-		//f Delete all cells. Return amount of cells deleted.
-		amount__ DeleteAllCells( void )
+		//f Remove all empty cells. Retunr amount of cells removed.
+		amount__ RemoveEmptyCells( void );
+		//f Remove all heading empty cells. Return amount of cells removed.
+		amount__ RemoveHeadingEmptyCells( void );
+		//f Remove all tailing empty cells. Return amount of cells removed.
+		amount__ RemoveTailingEmptyCells( void );
+		//f Remove all empty cells between the first and last non-empty cells. Return amount of cells removed.
+		amount__ RemoveCentralEmptyCells( void );
+		//f Remove all cells from 'Position'. Return amount of cells removed.
+		amount__ RemoveCellsAt( epeios::row__ Position );
+		//f Remove all cells. Return amount of cells removed.
+		amount__ RemoveAllCells( void )
 		{
 			epeios::row__ P = cells_::First();
 
 			if ( P != NONE )
-				return DeleteCellsAt( P );
+				return RemoveCellsAt( P );
 			else
 				return 0;
 		}
-		/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
-		Return amount of cell deleted.*/
-		amount__ DeleteComment( bso::char__ Marker );
-		//f Delete all non-significant cells (empty and comment).
+		/*f Remove the cells beginnig with 'Marker' and all following cells from the same line.
+		Return amount of cell removed.*/
+		amount__ RemoveComment( bso::char__ Marker );
+		//f Remove all non-significant cells (empty and comment).
 		void Purge( bso::char__ CommentMarker )
 		{
-			DeleteComment( CommentMarker );
-			DeleteEmptyCells();
+			RemoveComment( CommentMarker );
+			RemoveEmptyCells();
 		}
 		//f 'Location' becomes the location.
 		void Location( location__ Location )
@@ -362,29 +362,29 @@ namespace txmtbl {
 
 			return P;
 		}
-		//f Delete the line at 'Position'.
-		void DeleteLine( epeios::row__ Position )
+		//f Remove the line at 'Position'.
+		void RemoveLine( epeios::row__ Position )
 		{
-			lines_::Delete( Position );
+			lines_::Remove( Position );
 		}
-		//f Delete all emty lines. Return amount of lines deleted.
-		amount__ DeleteEmptyLines( void );
-		//f Delete all empty cells from all lines.
-		void DeleteEmptyCells( void );
-		//f Delete all heading cells from all the lines.
-		void DeleteHeadingEmptyCells( void );
-		//f Delete all tailing cells from all lines.
-		void DeleteTailingEmptyCells( void );
-		//f Delete all empty cells between the first and last non-empty cells from all the lines.
-		void DeleteCentralEmptyCells( void );
-		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
-		void DeleteComments( bso::char__ Marker );
-		//f Delete all non-significant cells (empty and comment).
+		//f Remove all emty lines. Return amount of lines removed.
+		amount__ RemoveEmptyLines( void );
+		//f Remove all empty cells from all lines.
+		void RemoveEmptyCells( void );
+		//f Remove all heading cells from all the lines.
+		void RemoveHeadingEmptyCells( void );
+		//f Remove all tailing cells from all lines.
+		void RemoveTailingEmptyCells( void );
+		//f Remove all empty cells between the first and last non-empty cells from all the lines.
+		void RemoveCentralEmptyCells( void );
+		//f Remove, for each line, the cells beginning with 'Marker' and all following cells.
+		void RemoveComments( bso::char__ Marker );
+		//f Remove all non-significant cells (empty and comment).
 		void Purge( bso::char__ CommentMarker )
 		{
-			DeleteComments( CommentMarker );
-			DeleteEmptyCells();
-			DeleteEmptyLines();
+			RemoveComments( CommentMarker );
+			RemoveEmptyCells();
+			RemoveEmptyLines();
 		}
 		/*f Return the unique cell in line 'Row' in 'Cell'. Undefined result if there is no
 		or more than one cell. */

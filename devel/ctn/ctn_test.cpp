@@ -369,7 +369,7 @@ ERRBegin
 
 	cout << txf::nl;
 
-	CD.Delete( 3 );
+	CD.Remove( 3 );
 
 	P = CD.First();
 	

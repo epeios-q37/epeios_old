@@ -1,7 +1,7 @@
 /*
 	'tagexp' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tagexp' header file ('tagexp.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -85,14 +85,14 @@ void tagexp::tag_expander_::Init( void )
 
 static fil::status WriteFile_(
 	const str::string_ &FileName,
-	txf::text_oflow___ &OFlow,
+	txf::text_oflow__ &OFlow,
 	err::handle ErrHandle )
 {
 	fil::status Return = fil::sUnknow;
 ERRProlog
 	char *Name = NULL;
 	fil::file_iflow___ File;
-	xtf::extended_text_iflow___ IFlow;
+	xtf::extended_text_iflow__ IFlow;
 ERRBegin
 	Name = FileName.Convert();
 
@@ -117,7 +117,7 @@ ERREpilog
 static status HandleReference_(
 	const value_ &Value,
 	nature Nature,
-	txf::text_oflow___ &OFlow,
+	txf::text_oflow__ &OFlow,
 	err::handle ErrHandle )
 {
 	tagexp::status Status = tagexp::sOK;
@@ -142,8 +142,8 @@ static status HandleReference_(
 }
 
 status tagexp::tag_expander_::Expand(
-	xtf::extended_text_iflow___ &IFlow,
-	txf::text_oflow___ &OFlow,
+	xtf::extended_text_iflow__ &IFlow,
+	txf::text_oflow__ &OFlow,
 	bso::char__ Delimiter,
 	str::string_ &File,
 	tagexp::action Action,

@@ -121,8 +121,8 @@ void tagdtc::tag_detector_::Add(
 }
 
 epeios::row_t__ tagdtc::tag_detector_::Parse(
-	xtf::extended_text_iflow___ &IFlow,
-	txf::text_oflow___ &OFlow,
+	xtf::extended_text_iflow__ &IFlow,
+	txf::text_oflow__ &OFlow,
 	char Delimiter,
 	tagdtc::action Action,
 	err::handle ErrHandle ) const

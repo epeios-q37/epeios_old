@@ -1,7 +1,7 @@
 /*
 	'tagdtc' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tagdtc' header file ('tagdtc.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -121,8 +121,8 @@ void tagdtc::tag_detector_::Add(
 }
 
 epeios::row_t__ tagdtc::tag_detector_::Parse(
-	xtf::extended_text_iflow___ &IFlow,
-	txf::text_oflow___ &OFlow,
+	xtf::extended_text_iflow__ &IFlow,
+	txf::text_oflow__ &OFlow,
 	char Delimiter,
 	tagdtc::action Action,
 	err::handle ErrHandle ) const

@@ -32,6 +32,7 @@
 #include "epsmsc.h"
 #include "txmtbl.h"
 #include "flx.h"
+#include "cio.h"
 
 #define NAME			"reveal"
 #define VERSION			"1.0.5"
@@ -60,6 +61,10 @@
 #define UNKNOW_RESERVED_TAG			tagexp::t_amount
 
 using tagdtc::id__;
+
+using cio::cerr;
+using cio::cin;
+using cio::cout;
 
 // This is needed by BC++, to avoid ambiguity between std::string and str::string ...
 typedef str::string		estring;
@@ -140,7 +145,7 @@ inline tagexp::nature TestAndFormTagValue(
 	else {
 		C = Value( Value.First() );
 
-		Value.Delete( 0 );
+		Value.Remove( 0 );
 
 		if ( C == Text )
 			return tagexp::nText;
@@ -170,7 +175,7 @@ inline void Add(
 	Buffer.Init( Line );
 
 	if ( Line.Amount() != 2 ) {
-		stf::cerr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
+		cerr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
 		ERRi();
 	}
 
@@ -178,19 +183,19 @@ inline void Add(
 	Value = Buffer( Line.Next( P ) );
 
 	if ( !TestTag( Tag( P ) ) ) {
-		stf::cerr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
+		cerr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
 		ERRi();
 	}
 
 	Nature = TestAndFormTagValue( Value, Text, File );
 
 	if ( Nature == tagexp::nUnknow ) {
-		stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
+		cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
 		ERRi();
 	}
 	else if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 		if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-			stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+			cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRi();
 		}
 		else
@@ -244,8 +249,8 @@ void Expand(
 	const expander_ &Expander,
 	bso::char__ Delimiter,
 	tagexp::action Action,
-	xtf::extended_text_iflow___ &IFlow,
-	txf::text_oflow___ &OFlow )
+	xtf::extended_text_iflow__ &IFlow,
+	txf::text_oflow__ &OFlow )
 {
 ERRProlog
 	estring FileName;
@@ -256,11 +261,11 @@ ERRBegin
 	case tagexp::sOK:
 		break;
 	case tagexp::sBadFile:
-		stf::cerr << "Error with file '" << FileName << "'." << txf::nl;
+		cerr << "Error with file '" << FileName << "'." << txf::nl;
 		ERRi();
 		break;
 	case tagexp::sUnknowTag:
-		stf::cerr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
+		cerr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
 		ERRi();
 		break;
 	default:
@@ -278,12 +283,12 @@ void HandleSingle(
 	tagexp::action Action,
 	bso::char__ Text,
 	bso::char__ File,
-	flw::iflow___ &IFlow,
-	txf::text_oflow___ &OFlow )
+	flw::iflow__ &IFlow,
+	txf::text_oflow__ &OFlow )
 {
 ERRProlog
 	expander Expander;
-	xtf::extended_text_iflow___ TIFlow;
+	xtf::extended_text_iflow__ TIFlow;
 ERRBegin
 	Expander.Init();
 
@@ -315,13 +320,13 @@ void PrepareExpander(
 
 	while ( P != NONE ) {
 		if ( !TestTag( Tag( P ) ) ) {
-			stf::cerr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+			cerr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRi();
 		}
 
 		if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 			if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-				stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+				cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 				ERRi();
 			}
 			else
@@ -337,19 +342,19 @@ void PrepareExpander(
 
 
 void FillSet(
-	flx::bunch_ &Set,
-	flw::iflow___ &IFlow )
+	str::string_ &Set,
+	flw::iflow__ &IFlow )
 {
 ERRProlog
 	bso::char__ Buffer[BUFFER_SIZE];
 	flw::amount__ Amount;
-	flx::bunch_oflow___ OFlow;
+	flx::bunch_oflow__<str::string_, bso::char__> OFlow;
 ERRBegin
 	OFlow.Init( Set );
 
 	do {
-		Amount = IFlow.GetUpTo( BUFFER_SIZE, Buffer, 1 );
-		OFlow.Put( Buffer, Amount );
+		Amount = IFlow.ReadUpTo( BUFFER_SIZE, Buffer, 1 );
+		OFlow.Write( Buffer, Amount );
 	} while ( Buffer[Amount-1] != XTF_EOXC );
 ERRErr
 ERREnd
@@ -378,7 +383,7 @@ ERRBegin
 	while( PV != NONE ) {
 
 		if ( P == NONE ) {
-			stf::cerr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
+			cerr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
 			ERRi();
 		}
 
@@ -388,7 +393,7 @@ ERRBegin
 		Nature = TestAndFormTagValue( TagValue, Text, File );
 
 		if ( Nature == tagexp::nUnknow ) {
-			stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
+			cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
 			ERRi();
 		}
 		else
@@ -399,7 +404,7 @@ ERRBegin
 	}
 
 	if ( P != NONE ) {
-		stf::cerr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
+		cerr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
 		ERRi();
 	}
 ERRErr
@@ -415,17 +420,17 @@ void HandleMulti(
 	tagexp::action Action,
 	bso::char__ Text,
 	bso::char__ File,
-	flw::iflow___ &IFlow,
-	txf::text_oflow___ &OFlow )
+	flw::iflow__ &IFlow,
+	txf::text_oflow__ &OFlow )
 {
 ERRProlog
 	expander Expander;
-	flx::bunch Set;
-	flx::bunch_iflow___ ISFlow;
+	str::string Set;
+	flx::bunch_iflow__<str::string_, bso::char__> ISFlow;
 	ctn::E_CITEM( line_ ) Line;
 	tym::row__ P;
 	ids Ids;
-	xtf::extended_text_iflow___ TIFlow;
+	xtf::extended_text_iflow__ TIFlow;
 ERRBegin
 	Set.Init();
 
@@ -436,7 +441,7 @@ ERRBegin
 	P = Table.First();
 
 	if ( P == NONE ) {
-		stf::cerr << "Tag descriptor file contents no data." << txf::nl;
+		cerr << "Tag descriptor file contents no data." << txf::nl;
 		ERRi();
 	}
 
@@ -480,7 +485,7 @@ inline bso::bool__ IsMulti(
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	if ( Line.Amount() < 2 ) {
-		stf::cerr << "The content of the tag description file is incorrect." << txf::nl;
+		cerr << "The content of the tag description file is incorrect." << txf::nl;
 		ERRi();
 		return false;
 	}
@@ -515,8 +520,8 @@ void Go(
 	tagexp::action Action,
 	bso::char__ Text,
 	bso::char__ File,
-	flw::iflow___ &IFlow,
-	txf::text_oflow___ &OFlow )
+	flw::iflow__ &IFlow,
+	txf::text_oflow__ &OFlow )
 {
 ERRProlog
 ERRBegin
@@ -530,31 +535,29 @@ ERREpilog
 }
 
 void GetTable(
-	xtf::extended_text_iflow___ &Desc,
+	xtf::extended_text_iflow__ &Desc,
 	bso::char__ Comment,
 	table_ &Table )
 {
 	txmtbl::GetTable( Desc, Table );
 
-	Table.DeleteComments( Comment );
-	Table.DeleteEmptyCells();
-	Table.DeleteEmptyLines();
+	Table.Purge( Comment );
 }
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	stf::cout << DESCRIPTION << txf::nl;
-	stf::cout << NAME << " --version|--license|--help" << txf::nl;
+	cout << DESCRIPTION << txf::nl;
+	cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	stf::cout << NAME << " <command> [options] desc-file [source-file [dest-file]]" << txf::nl;
-	stf::cout << txf::tab << "desc-file:" << txf::tab << "tag description file." << txf::nl;
-	stf::cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
-	stf::cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
-	stf::cout << "command: " << txf::nl;
+	cout << NAME << " <command> [options] desc-file [source-file [dest-file]]" << txf::nl;
+	cout << txf::tab << "desc-file:" << txf::tab << "tag description file." << txf::nl;
+	cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
+	cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	cout << "command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", clnarg::vSplit, true );
-	stf::cout << "options:" << txf::nl;
+	cout << "options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", clnarg::vSplit );
@@ -564,11 +567,11 @@ void PrintUsage( const clnarg::description_ &Description )
 
 void PrintHeader( void )
 {
-	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	stf::cout << COPYRIGHT << txf::nl;
-	stf::cout << INFO << txf::nl;
-	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << COPYRIGHT << txf::nl;
+	cout << INFO << txf::nl;
+	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -589,8 +592,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		stf::cerr << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		cerr << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRi();
 	}
 
@@ -603,11 +606,11 @@ ERRBegin
 		case oTagDelimiter:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				stf::cerr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
+				cerr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
 				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				stf::cerr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
+				cerr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
 				ERRi();
 			}
 			else
@@ -616,11 +619,11 @@ ERRBegin
 		case oCommentMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				stf::cerr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
+				cerr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
 				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				stf::cerr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
+				cerr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
 				ERRi();
 			}
 			else
@@ -629,11 +632,11 @@ ERRBegin
 		case oTextMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				stf::cerr << "Option '-t,--text-marker' must have one argument." << txf::nl;
+				cerr << "Option '-t,--text-marker' must have one argument." << txf::nl;
 				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				stf::cerr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
+				cerr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
 				ERRi();
 			}
 			else
@@ -642,11 +645,11 @@ ERRBegin
 		case oFileMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				stf::cerr << "Option '-f,--file-marker' must have one argument." << txf::nl;
+				cerr << "Option '-f,--file-marker' must have one argument." << txf::nl;
 				ERRi();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				stf::cerr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
+				cerr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
 				ERRi();
 			}
 			else
@@ -694,13 +697,13 @@ ERRBegin
 		P = Free.Previous( P );
 		break;
 	case 0:
-		stf::cerr << "Too few arguments." << txf::nl;
-		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cerr << "Too few arguments." << txf::nl;
+		cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRi();
 		break;
 	default:
-		stf::cerr << "Too many arguments." << txf::nl;
-		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		cerr << "Too many arguments." << txf::nl;
+		cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRi();
 		break;
 	}
@@ -744,7 +747,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise();
+		TTR.Advertise( cout );
 		ERRi();
 		break;
 	case cHelp:
@@ -778,11 +781,11 @@ static inline void Main(
 ERRProlog
 	fil::file_iflow___ IFile;
 	fil::file_oflow___ OFile;
-	txf::text_oflow___ OText;
+	txf::text_oflow__ OText;
 	fil::file_iflow___ DFile;
-	xtf::extended_text_iflow___ DText;
-	txf::text_oflow___ *OFlow = NULL;
-	flw::iflow___ *IFlow = NULL;
+	xtf::extended_text_iflow__ DText;
+	txf::text_oflow__ *OFlow = NULL;
+	flw::iflow__ *IFlow = NULL;
 	bso::bool__ Backup = false;
 	char *Desc = NULL;
 	char *Source = NULL;
@@ -798,7 +801,7 @@ ERRBegin
 
 	if ( DFile.Init( Desc, err::hSkip ) != fil::sSuccess)
 	{
-		stf::cerr << "Error while opening '" << Desc << "' for reading." << txf::nl;
+		cerr << "Error while opening '" << Desc << "' for reading." << txf::nl;
 		ERRi();
 	}
 
@@ -814,7 +817,7 @@ ERRBegin
 
 		if ( IFile.Init( Source, err::hSkip ) != fil::sSuccess )
 		{
-			stf::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
+			cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
 			ERRi();
 		}
 
@@ -824,9 +827,9 @@ ERRBegin
 	}
 	else
 	{
-		stf::cinF.EOFD( XTF_EOXT );
+		cio::cinf.EOFD( XTF_EOXT );
 
-		IFlow = &stf::cinF;
+		IFlow = &cio::cinf;
 	}
 
 
@@ -837,7 +840,7 @@ ERRBegin
 
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
 		{
-			stf::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
+			cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
 			ERRi();
 		}
 
@@ -846,7 +849,7 @@ ERRBegin
 		OFlow = &OText;
 	}
 	else
-		OFlow = &stf::cout;
+		OFlow = &cout;
 
 	Go( Table, Delimiter, Action, Text, File, *IFlow, *OFlow );
 
@@ -887,7 +890,7 @@ ERRFErr
 		ERRRst();
 ERRFEnd
 ERRFEpilog
-	stf::cout << txf::sync;
+	cout << txf::sync;
 
 	return Retour;
 }

@@ -209,8 +209,8 @@ namespace tagdtc {
 		encounters a tag.between 2 'Delimiter' or 'EOX()'.
 		Return the tag id or an error code if error occurs */
 		epeios::row_t__ Parse(
-			xtf::extended_text_iflow___ &IFlow,
-			txf::text_oflow___ &Flow,
+			xtf::extended_text_iflow__ &IFlow,
+			txf::text_oflow__ &Flow,
 			char Delimiter,
 			tagdtc::action Action = tagdtc::aPrint,
 			err::handle ErrHandle = err::hUsual ) const;

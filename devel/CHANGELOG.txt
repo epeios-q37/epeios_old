@@ -14,6 +14,7 @@ GENERAL:
 - (14/07/04) Removing apparently unused read/write methods.
 - (21/08/04) Obsoletes 'FAM' library, because not thread-safe.
 - (10/10/04) Adding 'UIF' library.
+- (23/10/04) Replacing 'Delete' with 'Remove' or 'Erase'.
 
 AEM:
 - (06/09/04) Adding 'Exists()' and 'IsEmpty()' to the static version.
@@ -114,9 +115,6 @@ MDR:
 
 MMG:
 - (19/07/04) Adapting to changes in 'FLW' library.
-
-MMI:
-- (22/07/04) Using a 'E_BUNCH_' instead of a 'E_MEMORY_'.
 
 MMM:
 - (14/07/04) Using the 'CIO' library instead of 'STF'.

@@ -1,6 +1,6 @@
 /*
 	Header for the 'stk' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -112,7 +112,7 @@ namespace stk {
 			r Row,
 			aem::mode Mode = aem::mDefault )
 		{
-			E_BUNCHt_( t, r )::Delete( Row );
+			E_BUNCHt_( t, r )::Remove( Row );
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
 		t Pop( aem::mode Mode = aem::mDefault )

@@ -224,10 +224,10 @@ ERREpilog
 void line_::Erase_( stack_ &Stack )
 {
 	while( Stack.Amount() != 0 )
-		cells_::Delete( Stack.Pop() );
+		cells_::Remove( Stack.Pop() );
 }
 
-amount__ line_::DeleteEmptyCells( void )
+amount__ line_::RemoveEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -283,7 +283,7 @@ tym::row__ line_::LastNonEmptyCell( void ) const
 	return Current;
 }
 
-amount__ line_::DeleteHeadingEmptyCells( void )
+amount__ line_::RemoveHeadingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -308,14 +308,14 @@ ERRBegin
 		Erase_( Stack );
 	}
 	else if ( this->Amount() )
-		DeleteAllCells();
+		RemoveAllCells();
 ERRErr
 ERREnd
 ERREpilog
 	return Amount;
 }
 
-amount__ line_::DeleteTailingEmptyCells( void )
+amount__ line_::RemoveTailingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -342,14 +342,14 @@ ERRBegin
 		Erase_( Stack );
 	}
 	else if ( this->Amount() )
-		DeleteAllCells();
+		RemoveAllCells();
 ERRErr
 ERREnd
 ERREpilog
 	return Amount;
 }
 
-amount__ line_::DeleteCentralEmptyCells( void )
+amount__ line_::RemoveCentralEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -381,14 +381,14 @@ ERRBegin
 		Erase_( Stack );
 	}
 	else if ( this->Amount() && ( Current == NONE ) )
-		DeleteAllCells();
+		RemoveAllCells();
 ERRErr
 ERREnd
 ERREpilog
 	return Amount;
 }
 
-amount__ line_::DeleteCellsAt( tym::row__ Position )
+amount__ line_::RemoveCellsAt( tym::row__ Position )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -419,7 +419,7 @@ static inline bool IsCommentary_(
 	return Cell.Amount() && ( Cell( 0 ) == Marker );
 }
 
-amount__ line_::DeleteComment( bso::char__ Marker )
+amount__ line_::RemoveComment( bso::char__ Marker )
 {
 	tym::row__ Position = First();
 	ctn::E_CMITEM( cell_ ) Cell;
@@ -430,7 +430,7 @@ amount__ line_::DeleteComment( bso::char__ Marker )
 		Position = Next( Position );
 
 	if ( Position != NONE )
-		return DeleteCellsAt( Position );
+		return RemoveCellsAt( Position );
 	else
 		return 0;
 }
@@ -476,7 +476,7 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 			Line.Init();
 			GetLine( Flow, Line, Separator, Escape );
 
-			Line.DeleteEmptyCells();
+			Line.RemoveEmptyCells();
 
 		} while( !Line.Amount() && !Flow.EOX() );
 
@@ -512,16 +512,16 @@ ERREpilog
 void table_::Erase_( stack_ &Stack )
 {
 	while( Stack.Amount() != 0 )
-		lines_::Delete( Stack.Pop() );
+		lines_::Remove( Stack.Pop() );
 }
 
-void table_::DeleteEmptyCells( void )
+void table_::RemoveEmptyCells( void )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator ()( Current ).DeleteEmptyCells();
+		lines_::operator ()( Current ).RemoveEmptyCells();
 
 		Current = Next( Current );
 	}
@@ -529,13 +529,13 @@ void table_::DeleteEmptyCells( void )
 	lines_::Flush();
 }
 
-void table_::DeleteHeadingEmptyCells( void )
+void table_::RemoveHeadingEmptyCells( void )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator ()( Current ).DeleteHeadingEmptyCells();
+		lines_::operator ()( Current ).RemoveHeadingEmptyCells();
 
 		Current = Next( Current );
 	}
@@ -543,13 +543,13 @@ void table_::DeleteHeadingEmptyCells( void )
 	lines_::Flush();
 }
 
-void table_::DeleteTailingEmptyCells( void )
+void table_::RemoveTailingEmptyCells( void )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator ()( Current ).DeleteTailingEmptyCells();
+		lines_::operator ()( Current ).RemoveTailingEmptyCells();
 
 		Current = Next( Current );
 	}
@@ -557,13 +557,13 @@ void table_::DeleteTailingEmptyCells( void )
 	lines_::Flush();
 }
 
-void table_::DeleteCentralEmptyCells( void )
+void table_::RemoveCentralEmptyCells( void )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator()( Current ).DeleteCentralEmptyCells();
+		lines_::operator()( Current ).RemoveCentralEmptyCells();
 
 		Current = Next( Current );
 	}
@@ -571,13 +571,13 @@ void table_::DeleteCentralEmptyCells( void )
 	lines_::Flush();
 }
 
-void table_::DeleteComments( bso::char__ Marker )
+void table_::RemoveComments( bso::char__ Marker )
 {
 	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		lines_::operator()( Current ).DeleteComment( Marker );
+		lines_::operator()( Current ).RemoveComment( Marker );
 
 		Current = Next( Current );
 	}
@@ -585,7 +585,7 @@ void table_::DeleteComments( bso::char__ Marker )
 	lines_::Flush();
 }
 
-amount__ table_::DeleteEmptyLines( void )
+amount__ table_::RemoveEmptyLines( void )
 {
 	amount__ Amount = 0;
 ERRProlog

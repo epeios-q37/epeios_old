@@ -187,7 +187,7 @@ namespace str {
 			Row = Next( Row );
 		}
 
-		Delete( 0, Amount );
+		Remove( 0, Amount );
 	}
 
 	// Could be easily optimized, would be when I have some time.
