@@ -210,9 +210,6 @@ const char *msg::i18_messages_::GetMessage(
 		Message = _GetMessage( MessageId, Language, Buffer );
 
 		if ( Message[0] == 0 )
-			Message = _GetMessage( MessageId, lgg::lRaw, Buffer );
-
-		if ( Message[0] == 0 )
 			Message = _GetRawMessage( MessageId );
 	}
 
