@@ -265,7 +265,7 @@ namespace broker {
 	protected:
 		virtual void LSTAllocate( tym::size__ Size )
 		{
-			Objets.Allocate( Size );
+			Objets.Allocate( Size, aem::mFit );
 		}
 		virtual index__ BROKERNew( void )
 		{
@@ -322,7 +322,7 @@ namespace broker {
 		virtual void LSTAllocate( tym::size__ Size )
 		{
 			Element_.Sync();
-			Objets.Allocate( Size );
+			Objets.Allocate( Size, aem::mFit );
 		}
 		virtual index__ BROKERNew( void )
 		{
@@ -415,7 +415,7 @@ namespace broker {
 	protected:
 		void LSTAllocate( tym::size__ Size )
 		{
-			E_MEMORY( link__ )::Allocate( Size );
+			E_MEMORY( link__ )::Allocate( Size, aem::mFit );
 		}
 	public:
 		// Initialisation.

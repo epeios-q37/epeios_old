@@ -120,13 +120,13 @@ namespace stk {
 
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
-		t Pop( bso__bool Adjust = true )
+		t Pop( aem::mode Mode = aem::mFast )
 		{
 			tym::size__ Size = Amount() - 1;
 
 			t Objet = E_MEMORY_( t )::Read( Size );
 
-			if ( amount_extent_manager_::AmountToAllocate( Size, Adjust ) )
+			if ( amount_extent_manager_::AmountToAllocate( Size, Mode ) )
 				E_MEMORY_( t )::Allocate( Size );
 
 			return Objet;

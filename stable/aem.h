@@ -71,6 +71,16 @@ extern class ttr_tutor &AEMTutor;
 namespace aem {
 	using namespace tym;
 
+	//e Mode of the allocation.
+	enum mode {
+		//i Undefined.
+		mUndefined,
+		//i Fast,
+		mFast,
+		//i Extent fits with amount.
+		mFit,
+	};
+
 	//t Type of a step value.
 	typedef bso__ubyte step_value__;
 
@@ -90,7 +100,7 @@ namespace aem {
 			step_size__ Step = StepSize_();
 
 			S_.Amount = Size;
-			S_.Misc = ( ( ( Size / Step ) + 1 ) * Step ) | ( S_.Misc & 0xff );
+			S_.Misc = ( Size ? ( ( ( ( Size - 1 ) / Step ) + 1 ) * Step ) : 0 ) | ( S_.Misc & 0xff );
 
 			return S_.Misc & 0xffffff00;
 		}
@@ -127,15 +137,15 @@ namespace aem {
 		}
 	protected:
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
-		the real size to allocate. If 'Adjust' at true, 'Extent' is forced to be equal
-		to* 'Size'. */
+		the real size to allocate. If 'Mode' = 'mFit', 'Extent' is forced to be equal
+		to 'Size'. */
 		bso__bool AmountToAllocate(
 			size__ &Size,
-			bso__bool Adjust = false )
+			mode Mode = mFast )
 		{
 			if ( Size == S_.Amount )
 				return false;
-			else if ( Adjust || ( StepValue_() == 0 ) )
+			else if ( ( Mode == mFit ) || ( StepValue_() == 0 ) )
 				return Force( Size );
 			else if ( Size < S_.Amount ) {
 				if ( !OnlyGrowing_() )
@@ -277,7 +287,7 @@ namespace aem {
 
 	AUTO( amount_extent_manager )
 
-	//c Amount/extent manager.
+	//c Amount/extent manager for fixed size set of object.
 	template <int extent> class amount_extent_manager__
 	{
 	private:

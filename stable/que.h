@@ -162,9 +162,9 @@ namespace que {
 			//f Allocate for 'Size'.
 			void Allocate(
 				tym::size__ Size,
-				bso__bool Adjust = false )
+				aem::mode Mode = aem::mFast )
 			{
-				if ( amount_extent_manager_::AmountToAllocate( Size, Adjust ) )
+				if ( amount_extent_manager_::AmountToAllocate( Size, Mode ) )
 					E_MEMORY_( link__ )::Allocate( Size );
 			}
 		};
@@ -240,10 +240,10 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
 			tym::size__ Before = Links.Amount();
-			Links.Allocate( Size, Adjust );
+			Links.Allocate( Size, Mode );
 
 			if ( Before < Size )
 				Initialize_( Before, Size - 1 );
@@ -585,9 +585,9 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
-			Queue.Allocate( Size, Adjust );
+			Queue.Allocate( Size, Mode );
 		}
 		//f Create the queue with item 'Item'.
 		void Create( tym::row__ Item )

@@ -1,6 +1,6 @@
 /*
-  Header for the 'bso' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'bso' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,7 +45,7 @@ extern class ttr_tutor &BSOTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -358,6 +359,10 @@ typedef long double bso__lfloat;
 // Character
 typedef char bso__char;
 
+namespace mmm {
+	class multimemory_;
+}
+
 // A basic object 't' becomes a normal object.
 template <class t> class bso_object_
 {
@@ -373,7 +378,7 @@ public:
 	{
 		// Pour des raisons de standardisation
 	}
-	void plug( class mmm_multimemoire_ &)
+	void plug( class mmm::multimemory_ &)
 	{
 		// Pour des raisons de standardisation.
 	}

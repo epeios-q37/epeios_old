@@ -377,19 +377,19 @@ namespace btr {
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
 			if ( Size > Nombre_() )
 			{
 				tym::size__ PrecCapacite = Nombre_();
 
-				Liens.Allocate( Size, Adjust );
+				Liens.Allocate( Size, Mode );
 				Preparer_( PrecCapacite, Size - 1 );
 			}
 			else if ( Size < Nombre_() )
 			{
 				Liberer_( Size, Nombre_() - 1 );
-				Liens.Allocate( Size, Adjust );
+				Liens.Allocate( Size, Mode );
 			}
 		}
 		//f Return true if 'Node' has right.

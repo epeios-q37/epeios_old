@@ -151,14 +151,14 @@ namespace ctn {
 		void Allocate(
 			uym::size__ Size,
 			st &ST,
-			bso__bool Adjust )
+			aem::mode Mode )
 		{
 			tym::size__ AncCap;
 			tym::size__ Extent = Size;
 
 			AncCap = amount_extent_manager_::Amount();
 
-			if ( amount_extent_manager_::AmountToAllocate( Extent, Adjust ) ) {
+			if ( amount_extent_manager_::AmountToAllocate( Extent, Mode ) ) {
 				Dynamics.Allocate( Extent, AncCap );
 				Statics.Allocate( Extent );
 			}
@@ -553,11 +553,11 @@ namespace ctn {
 		//f Allocate room for 'Size' objects.
 		void Allocate(
 			tym::size__ Size,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
 			E_MITEM( t ) E;
 
-			basic_container_< item_mono_statique__< typename t::s > >::Allocate( Size, E.ctn_S_, Adjust );	// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
+			basic_container_< item_mono_statique__< typename t::s > >::Allocate( Size, E.ctn_S_, Mode );	// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
 		}
 		mono_container_ &operator =( const mono_container_ &C )
 		{
@@ -862,11 +862,11 @@ namespace ctn {
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
 			size__ Capacity,
-			bso__bool Adjust = false )
+			aem::mode Mode = aem::mFast )
 		{
 			E_ITEM( t ) E;
 
-			basic_container_< item_multi_statique__< typename t::s > >::Allocate( Capacity, E.ctn_S_, Adjust );// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
+			basic_container_< item_multi_statique__< typename t::s > >::Allocate( Capacity, E.ctn_S_, Mode );// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
 		}
 		multi_container_ &operator =( const multi_container_ &C )
 		{

@@ -302,7 +302,7 @@ namespace sck {
 	public:
 		void reset( bool P = true )
 		{
-			flw::ioflow___::reset( P );
+			ioflow___::reset( P );
 			
 			if ( P ) {
 				if ( Socket_ != SCK_INVALID_SOCKET ) 

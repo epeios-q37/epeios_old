@@ -359,6 +359,10 @@ typedef long double bso__lfloat;
 // Character
 typedef char bso__char;
 
+namespace mmm {
+	class multimemory_;
+}
+
 // A basic object 't' becomes a normal object.
 template <class t> class bso_object_
 {
@@ -374,7 +378,7 @@ public:
 	{
 		// Pour des raisons de standardisation
 	}
-	void plug( class mmm_multimemoire_ &)
+	void plug( class mmm::multimemory_ &)
 	{
 		// Pour des raisons de standardisation.
 	}
