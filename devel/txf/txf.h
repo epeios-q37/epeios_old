@@ -256,7 +256,7 @@ namespace txf {
 		}
 		text_oflow___ &operator <<( long double E )
 		{
-			char C[20];
+			char C[40];
 
 			sprintf( C, "%Lf", E );
 

@@ -69,10 +69,10 @@ extern class ttr_tutor &ITGTutor;
 #include "bch.h"
 
 //d Max size of an integer.
-#define ITG_MAX_SIZE	( 0xffffU >> 1 )
+#define ITG_MAX_SIZE	((base__)( 0xffffU >> 1 ))
 
-#define ITG_SIGN_POS	15
-#define ITG_SIGN_MASK	( 1U << ITG_SIGN_POS )
+#define ITG_SIGN_POS	((base__)15U)
+#define ITG_SIGN_MASK	((base__)( 1U << ITG_SIGN_POS ))
 
 namespace itg {
 	typedef bso__ushort	base__;
@@ -99,29 +99,29 @@ namespace itg {
 		}
 		size__ PutSign_( size__ Sign )
 		{
-			S_.Size = ( ( S_.Size & ITG_SIGN_MASK ) | ( Sign << ITG_SIGN_POS ) );
+			S_.Size = ( ( S_.Size & ~ITG_SIGN_MASK ) | ( Sign << ITG_SIGN_POS ) );
 			return GetSign_();
 		}
-		void Adjust_( void );
+		void Adjust_( aem::mode Mode = aem::mDefault );
 		void Dup_( const integer_ &Interger );
 		friend int Comp_(
 			const integer_ &Num,
 			const integer_ &Den );
-		friend integer_ Divide_(
+		friend integer Divide_(
 			const integer_ &Num,
 			const integer_ &Den,
 			integer_ &Rest );
-		friend integer_ Div_(
+		friend integer Div_(
 			const integer_ &Num,
 			const integer_ &Den,
 			integer_ &Rest );
-		friend integer_ Add_(
+		friend integer Add_(
 			const integer_ &Op1,
 			const integer_ &Op2 );
-		friend integer_ Sub_(
+		friend integer Sub_(
 			const integer_ &Op1,
 			const integer_ &Op2 );
-		friend integer_ Mul_(
+		friend integer Mul_(
 			const integer_ &Op1,
 			const integer_ &Op2 );
 		public:
@@ -138,7 +138,7 @@ namespace itg {
 			: S_( S ),
 			  Core( S.Core )
 			 {}
-			void reset( bso__bool P = false )
+			void reset( bso__bool P = true )
 			{
 				Core.reset( P );
 				S_.Size = 0;
@@ -164,51 +164,21 @@ namespace itg {
 				S_.Size = 0;
 				Core.Init();
 			}
-			friend flw::oflow___ operator <<(
+			friend flw::oflow___ &operator <<(
 				flw::oflow___ &Flow,
 				integer_ &Integer );
-			friend integer_ operator +(
-				const integer_ &Op1,
-				const integer_ &Op2 );
-			friend integer_ operator -(
-				const integer_ &Op1,
-				const integer_ &Op2 );
-			friend integer_ operator *(
-				const integer_ &Op1,
-				const integer_ &Op2 );
-			friend integer_ operator /(
-				const integer_ &Op1,
-				const integer_ &Op2 );
-			friend integer_ operator %(
-				const integer_ &Op1,
-				const integer_ &Op2 );
-			friend integer_ Abs( const integer_ &Integer );
-			integer_ operator -( void ) const;
+			integer Add( const integer_ &Op ) const;
+			integer Sub( const integer_ &Op ) const;
+			integer Mul( const integer_ &Op ) const;
+			integer Div( const integer_ &Op ) const;
+			integer Mod( const integer_ &Op ) const;
+			integer Abs( void ) const;
+			integer operator -( void ) const;
 			int operator !( void )
 			{
 				Adjust_();
 				
 				return !( ( GetSize_() != 1 ) || ( Core( 0 ) ) );
-			}
-			integer_ &operator +=( const integer_ &Integer )
-			{
-				return *this  = *this + Integer;
-			}
-			integer_ &operator -=( const integer_ &Integer )
-			{
-				return *this  = *this - Integer;
-			}
-			integer_ &operator *=( const integer_ &Integer )
-			{
-				return *this  = *this * Integer;
-			}
-			integer_ &operator /=( const integer_ &Integer )
-			{
-				return *this  = *this / Integer;
-			}
-			integer_ &operator %=( const integer_ &Integer )
-			{
-				return *this  = *this % Integer;
 			}
 			//f Return true if valid, fasle otherwise.
 			bso__bool IsValid( void )
@@ -234,61 +204,194 @@ namespace itg {
 		integer( void )
 		: integer_( S_ )
 		{
-			reset( true );
+			reset( false );
 		}
 		~integer( void )
 		{
-			reset( false );
+			reset( true );
 		}
 		integer( const integer_ &I )
 		: integer_( S_ )
 		{
-			reset( true );
+			reset( false );
 			
 			integer_::Init();
 			
 			integer_::operator =( I );
 		}
-		integer( unsigned long int Seed );
+		integer( const integer &I )
+		: integer_( S_ )
+		{
+			reset( false );
+			
+			integer_::Init();
+			
+			integer_::operator =( I );
+		}
+		integer( bso__slong Seed )
+		: integer_( S_ )
+		{
+			reset( false );
+
+			integer_::Init();
+
+			if ( Seed < 0 )
+			{
+				Seed = -Seed;
+				PutSign_( 1 );
+			}
+			else
+				PutSign_( 0 );
+
+			if ( Seed < 0x10000UL )
+			{
+				Core.Allocate( 1 );
+
+				Core.Write( (base__)Seed, 0 );
+				PutSize_( 1 );
+			}
+			else
+			{
+				Core.Allocate( 2 );
+
+				Core.Write( (base__)( Seed % 0x10000UL ), 0 );
+				Core.Write( (base__)( Seed >> 16 ), 1 );
+				PutSize_( 2 );
+			}
+		}
+
 	};		
 
-	inline int operator ==(
-		const integer_ &Op1,
-		const integer_ &Op2 )
+	inline integer integer_::operator -( void ) const 
 	{
-		return !Comp_( Op1, Op2 );
-	}	
-	inline int operator !=(
-		const integer_ &Op1,
-		const integer_ &Op2 )
+		integer R = *this;
+
+		R.PutSign_( !R.GetSign_() );
+
+		return R;
+	}
+
+	inline integer integer_::Abs( void ) const
 	{
-		return Comp_( Op1, Op2 );
-	}	
-	inline int operator >=(
-		const integer_ &Op1,
-		const integer_ &Op2 )
-	{
-		return Comp_( Op1, Op2 ) >= 0;
-	}	
-	inline int operator >(
-		const integer_ &Op1,
-		const integer_ &Op2 )
-	{
-		return Comp_( Op1, Op2 ) > 0;
-	}	
-	inline int operator <(
-		const integer_ &Op1,
-		const integer_ &Op2 )
-	{
-		return Comp_( Op1, Op2 ) < 0;
-	}	
-	inline int operator <=(
-		const integer_ &Op1,
-		const integer_ &Op2 )
-	{
-		return Comp_( Op1, Op2 ) <= 0;
-	}	
+		integer R = *this;
+		R.PutSign_( false );
+
+		return R;
+	}
 }
+
+inline itg::integer Abs( const itg::integer_ &I )
+{
+	return I.Abs();
+}
+
+inline itg::integer operator +(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return Op1.Add( Op2 );
+}
+
+inline itg::integer operator -(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return Op1.Sub( Op2 );
+}
+
+inline itg::integer operator *(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return Op1.Mul( Op2 );
+}
+
+inline itg::integer operator /(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return Op1.Div( Op2 );
+}
+
+inline itg::integer operator %(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return Op1.Mod( Op2 );
+}
+
+inline itg::integer operator +=(
+	 itg::integer_ &I1,
+	 const itg::integer_ &I2 )
+{
+	return I1  = I1 + I2;
+}
+
+inline itg::integer operator -=(
+	 itg::integer_ &I1,
+	 const itg::integer_ &I2 )
+{
+	return I1  = I1 - I2;
+}
+
+inline itg::integer operator *=(
+	 itg::integer_ &I1,
+	 const itg::integer_ &I2 )
+{
+	return I1  = I1 * I2;
+}
+
+inline itg::integer operator /=(
+	 itg::integer_ &I1,
+	 const itg::integer_ &I2 )
+{
+	return I1  = I1 / I2;
+}
+
+inline itg::integer operator %=(
+	 itg::integer_ &I1,
+	 const itg::integer_ &I2 )
+{
+	return I1  = I1 % I2;
+}
+
+inline int operator ==(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 ) == 0;
+}	
+inline int operator !=(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 );
+}	
+inline int operator >=(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 ) >= 0;
+}	
+inline int operator >(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 ) > 0;
+}	
+inline int operator <(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 ) < 0;
+}	
+inline int operator <=(
+	const itg::integer_ &Op1,
+	const itg::integer_ &Op2 )
+{
+	return itg::Comp_( Op1, Op2 ) <= 0;
+}	
+
 
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &OFlow,

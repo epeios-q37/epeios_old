@@ -54,18 +54,34 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "stf.h"
 #include <math.h>
 
+void Print( const itg::integer_ &I )
+{
+//	fout << I << txf::nl << txf::sync;
+}
+
+using namespace itg;
+
 namespace itg {
-	integer_ divide_(
+	integer Divide_(
 		const integer_ &Num,
 		const integer_ &Den,
 		integer_ &Res )
 	{
 		bso__ulong Inf = 0UL, Sup = 0x10000UL, Rep = 0x10000UL >> 1;
-		integer Inter, Comp = 0;
+		integer Inter, Comp;
+
+		Inter.Init();
+		Comp.Init();
+
+		Inter = 0;
+		Comp = 0;
 		
-		for (;;)
+		for (;;) {
+			Print( Inter );
+
 			if ( ( Inter = Num - Den * integer( Rep ) ) < Comp )
 			{
 				Sup = Rep;
@@ -75,14 +91,15 @@ namespace itg {
 			{
 				Inf = Rep;
 				Rep = Inf + ( ( Sup - Inf ) >> 1 );
-					// ( Sup + Inf ) << 1 ne marche pas (dépassement de capacité)
-					// ni ( Sup << 1 ) + ( Inf << 1 ) (perte de précision)
+					// ( Sup + Inf ) >> 1 ne marche pas (dépassement de capacité)
+					// ni ( Sup >> 1 ) + ( Inf >> 1 ) (perte de précision)
 			}
 			else
 			{
 				Res = Res * integer( 0x10000L ) + integer( Rep );
 				return Inter;
 			}
+		}
 	}
 	
 	int Comp_(
@@ -109,7 +126,7 @@ namespace itg {
 				Indice--;
 			}
 			while( ( Op1.Core( Indice )
-					 == Op2.Core( (bso__ulong)Indice ) )
+					 == Op2.Core( Indice ) )
 					&& Indice );
 
 			if ( Op1.Core( Indice ) != Op2.Core( Indice ) )
@@ -124,7 +141,7 @@ namespace itg {
 		return (int)( Op1.GetSign_() ? -Res : Res );
 	}		
 	
-	integer_ Add_(
+	integer Add_(
 		const integer_ &Op1,
 		const integer_ &Op2 )
 	{
@@ -152,7 +169,7 @@ namespace itg {
 				  + Min->Core( Indice )
 				  + Max->Core( Indice);
 
-			ResTemp.Core.Write( Retenue & 0xffff, Indice++ );
+			ResTemp.Core.Write( (base__)( Retenue & 0xffff ), Indice++ );
 		}
 
 		Limite = Max->GetSize_();
@@ -162,31 +179,28 @@ namespace itg {
 			Retenue = ( Retenue >> 16 )
 				  + Max->Core( Indice );
 
-			ResTemp.Core.Write( Retenue & 0xffff, Indice++ );
+			ResTemp.Core.Write( (base__)( Retenue & 0xffff ), Indice++ );
 		}
 
 		if ( Indice >= ITG_MAX_SIZE )
 			ERRl();
-			// ResTemp.reset();
-		else
-		{
-			ResTemp.Core.Write( Retenue >> 16, Indice++ );
-			ResTemp.PutSize_( Indice );
-			ResTemp.PutSign_( 0 );
-			ResTemp.Adjust_();
-		}
+
+		ResTemp.Core.Write( (base__)( Retenue >> 16 ), Indice++ );
+		ResTemp.PutSize_( Indice );
+		ResTemp.PutSign_( 0 );
+		ResTemp.Adjust_();
 
 		return ResTemp;
 	}
 		
-	integer_ Sub_(
+	integer Sub_(
 		const integer_ &Op1,
 		const integer_ &Op2 )
 	{
 		integer Res;
 		unsigned Indice = 0;
-		long Limite;
-		long Inter = 0;
+		size__ Limite;
+		bso__ulong Inter = 0;
 		const integer_ *Max = &Op1, *Min = &Op2;
 
 		Res.Init();
@@ -215,15 +229,15 @@ namespace itg {
 			if ( Max->Core( Indice ) < ( Inter += Min->Core( Indice ) ) )
 			{
 				Res.Core.Write(
-					( ( Max->Core( Indice ) | ( 1 << 16 ) )
-						- ( Inter & 0xffff ) ),
+					( (base__)( ( Max->Core( Indice ) | ( 1 << 16 ) )
+						- ( Inter & 0xffff ) ) ),
 					Indice );
 
 				Inter = 1;
 			}
 			else
 			{
-				Res.Core.Write( ( Max->Core(Indice) - ( Inter & 0xffff ) ), Indice );
+				Res.Core.Write( (base__)( Max->Core(Indice) - ( Inter & 0xffff ) ), Indice );
 
 				Inter = 0;
 			}
@@ -239,15 +253,15 @@ namespace itg {
 
 			{
 				Res.Core.Write(
-					( ( Max->Core( Indice ) | ( 1 << 16 ) )
-						- ( Inter & 0xffff ) ),
+					( (base__)( ( Max->Core( Indice ) | ( 1 << 16 ) )
+						- ( Inter & 0xffff ) ) ),
 						Indice );
 
 				Inter = 1;
 			}
 			else
 			{
-				Res.Core.Write( ( Max->Core( Indice ) - ( Inter & 0xffff ) ), Indice );
+				Res.Core.Write( (base__)( Max->Core( Indice ) - ( Inter & 0xffff ) ), Indice );
 
 				Inter = 0;
 			}
@@ -261,13 +275,13 @@ namespace itg {
 	}
 
 
-	integer_ Mul_(
+	integer Mul_(
 		const integer_ &Op1,
 		const integer_ &Op2 )
 	{
 		integer Inter, Res;
 		unsigned long Retenue;
-		short LimiteS, LimiteP, IndiceS = 0, IndiceP = 0;
+		size__ LimiteS, LimiteP, IndiceS = 0, IndiceP = 0;
 		const integer_ *Max = &Op1, *Min = &Op2;
 
 		Inter.Init();
@@ -304,17 +318,17 @@ namespace itg {
 				Retenue = ( Retenue >> 16 )
 					  + (unsigned long)Max->Core(IndiceP)
 						* (unsigned long)Min->Core(IndiceS);
-				Inter.Core.Write( Retenue & 0xffff, IndiceP+IndiceS );
+				Inter.Core.Write( (base__)( Retenue & 0xffff ), IndiceP+IndiceS );
 				IndiceP++;
 			}
 
-			Inter.Core.Write( Retenue >> 16, IndiceP+IndiceS );
+			Inter.Core.Write( (base__)( Retenue >> 16 ), IndiceP+IndiceS );
 			Inter.PutSize_( IndiceP + IndiceS + 1 );
 
 			Res += Inter;
 			IndiceS++;
 
-			for( unsigned long C = 0; C < LimiteS + LimiteP; C++ )
+			for( size__ C = 0; C < LimiteS + LimiteP; C++ )
 				Inter.Core.Write( 0, C );
 
 		}
@@ -325,9 +339,9 @@ namespace itg {
 	}
 	
 
-	integer_ Div_(
-		const integer_ &Den,
+	integer Div_(
 		const integer_ &Num,
+		const integer_ &Den,
 		integer_ &Reste )
 	{
 		integer Res;
@@ -353,7 +367,9 @@ namespace itg {
 		Reste.PutSize_( Den.GetSize_() );
 		Reste.PutSign_( 0 );
 
-		Reste.Core.Write( Num.Core, 0, ( sizeof( base__ ) * Den.GetSize_() ), ( I = Num.GetSize_() - Den.GetSize_() ) );
+		Reste.Core.Write( Num.Core, ( sizeof( base__ ) * Den.GetSize_() ), ( I = Num.GetSize_() - Den.GetSize_() ) );
+
+		Print( Reste );
 
 		while( I-- )
 		{
@@ -366,11 +382,10 @@ namespace itg {
 	}
 
 
-		
-	integer_ operator +(
-		const integer_ &Op1,
-		const integer_ &Op2 )
+	integer integer_::Add( const integer_ &Op2 ) const
 	{
+		const integer_ &Op1 = *this;
+
 		if ( Op1.GetSign_() && Op2.GetSign_() )
 			return -Add_( -Op1, -Op2 );
 		else if ( Op1.GetSign_() )
@@ -381,10 +396,10 @@ namespace itg {
 			return Add_( Op1, Op2 );
 	}
 
-	integer_ operator -(
-		const integer_ &Op1,
-		const integer_ &Op2 )
+	integer integer_::Sub( const integer_ &Op2 ) const
 	{
+		const integer_ &Op1 = *this;
+
 		if ( Op1.GetSign_() && Op2.GetSign_() )
 			return Sub_( -Op2, -Op1 );
 		else if ( Op1.GetSign_() )
@@ -394,11 +409,11 @@ namespace itg {
 		else
 			return Sub_( Op1, Op2 );
 	}
-	
-	integer_ operator *(
-		const integer_ &Op1,
-		const integer_ &Op2 )
+
+	integer integer_::Mul( const integer_ &Op2 ) const
 	{
+		const integer_ &Op1 = *this;
+
 		if ( Op1.GetSign_() && Op2.GetSign_() )
 			return Mul_( -Op2, -Op1 );
 		else if ( Op1.GetSign_() )
@@ -408,70 +423,113 @@ namespace itg {
 		else
 			return Mul_( Op1, Op2 );
 	}
-	
-	integer_ operator /(
-		const integer_ &Num,
-		const integer_ &Den )
+
+	integer integer_::Div( const integer_ &Den ) const
 	{
+		const integer_ &Num = *this;
 		integer Dummy;
+
+		Dummy.Init();
 		
 		if ( Num.GetSign_() != Den.GetSign_() )
-			return -Div_( Abs( Num ), Abs( Den ), Dummy );
+			return -Div_( ::Abs( Num ), ::Abs( Den ), Dummy );
 		else
-			return Div_( Abs( Num ), Abs( Den ), Dummy );
+			return Div_( ::Abs( Num ), ::Abs( Den ), Dummy );
 	}
-	
-	integer_ Exp(
-		const integer_ &X,
-		int Y )
+
+	integer integer_::Mod( const integer_ &Den ) const
 	{
-	ERRProlog
-		integer Res;
-	ERRBegin
-		Res.Init();
-		Res = 1;
+		const integer_ &Num = *this;
+		integer Result;
+
+		Result.Init();
+
+		Div_( Num, Den, Result );
+
+		return Result;
+	}
+
 		
-		while( Y-- )
-			Res *= X;
-			
-		return Res;
-	ERRErr
-	ERREnd
-	ERREpilog
-	}
-	
-	txf::text_oflow___ & operator <<(
-		txf::text_oflow___ &Flow,
-		const integer_ &Integer )
+	void integer_::Adjust_( aem::mode Mode )
 	{
-		int Compteur, Chiffre;
-		integer_ I = Integer;
+		size__ Limit = GetSize_();
 
-		if ( !I )
-			return Flow << 0UL;
-		else if ( I < integer( 0 ) )
+		while( --Limit && !Core( Limit ) );
+
+		if ( Limit < ( GetSize_() - 1 ) )
 		{
-			Flow << '-';
-			I = -I;
+			Core.Allocate( Limit + 1 );
+
+			PutSize_( Limit + 1 );
 		}
-
-		Compteur = (int)log10( I.GetLongFloat() );
-
-		while( Compteur )
-		{
-			Chiffre =  (int)( I.GetLongFloat() / pow( 10, Compteur ) );
-
-			Flow << (unsigned long)Chiffre;
-
-			I -= Exp( integer( 10 ), Compteur ) * integer( Chiffre );
-			Compteur--;
-		}
-
-		return Flow << I.GetLongFloat();
 	}
 
-	
+	bso__lfloat integer_::GetLongFloat( void ) const
+	{
+		bso__lfloat Resultat = 0;
+		size__ Compteur = GetSize_();
+
+		while( Compteur-- )
+			Resultat += Core(Compteur) * pow( 0x10000UL, Compteur );
+
+		if ( GetSign_() )
+			return -Resultat;
+		else
+			return Resultat;
+	}
 }
+
+
+
+integer Exp(
+	const integer_ &X,
+	int Y )
+{
+	integer Res;
+
+	Res.Init();
+	Res = 1;
+	
+	while( Y-- )
+		Res *= X;
+		
+	return Res;
+}
+
+txf::text_oflow___ & operator <<(
+	txf::text_oflow___ &Flow,
+	const integer_ &Integer )
+{
+	int Compteur, Chiffre;
+	integer I;
+
+	I.Init();
+
+	I = Integer;
+
+	if ( !I )
+		return Flow << 0UL;
+	else if ( I < integer( 0 ) )
+	{
+		Flow << '-';
+		I = -I;
+	}
+
+	Compteur = (int)log10( I.GetLongFloat() );
+
+	while( Compteur )
+	{
+		Chiffre =  (int)( I.GetLongFloat() / pow( 10, Compteur ) );
+
+		Flow << (unsigned long)Chiffre;
+
+		I -= Exp( integer( 10 ), Compteur ) * integer( Chiffre );
+		Compteur--;
+	}
+
+	return Flow << I.GetLongFloat();
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

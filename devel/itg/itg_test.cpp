@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>
+#include <math.h>
 
 #include "itg.h"
 
@@ -44,6 +45,229 @@ ERREnd
 ERREpilog
 }
 
+void EssaiSimple( void )
+{
+	itg::integer E1, E2, E3;
+
+	E1.Init();
+	E2.Init();
+	E3.Init();
+
+	E1 = 234567;
+	E2 = 345678;
+	E3 = 4567890;
+
+	fout << E1 << txf::tab << E2 << txf::tab << E3 << txf::nl << txf::sync;
+
+	E3 /= E1;
+	E2 *= E2;
+//	E2 = E3;
+
+	fout << E2 << txf::tab << E3 << txf::nl;
+}
+
+int unsigned long Rand( void )
+{
+	return ::rand() + 1UL;
+}
+
+#define LIMITE_RATIO	1.0E-15
+
+int Hasard( void )
+{
+ERRProlog
+	itg::integer E1, E2, E, A, M;
+	long double D, R, Diff, Ratio;
+	unsigned long Iter = 0, Echec = 0;
+	char C;
+ERRBegin
+	E1.Init();
+	E2.Init();
+	E.Init();
+	A.Init();
+	M.Init();
+
+	for(;;)
+	{
+		E1 = Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand();
+
+		fout << "Op. 1:\t" << E1.GetLongFloat() << '\t' << E1 << '\n';
+
+		E2 = Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			- Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand()
+			* Rand();
+
+
+		fout << "Op. 2:\t" << E2.GetLongFloat() << '\t' << E2 << '\n';
+	
+// Addition
+
+		D = E1.GetLongFloat() + E2.GetLongFloat();
+		Iter++;
+
+		R = ( A = E = E1 + E2 ).GetLongFloat();
+
+		fout << "** + **\tDifférence résultat:\t" << ( Diff = R - D ) << '\t';
+
+		if ( R != 0 )
+			fout << "Ratio:\t" << ( Ratio = fabs( Diff / R ) );
+
+		fout << "\n\tRésultat:\t" << D << '\t' << E << "\n";
+
+		if ( Ratio > LIMITE_RATIO )
+		{
+			Echec++;
+			fout << "\a\a*****************************************\n";
+		}
+
+// Soustraction
+
+		D = E1.GetLongFloat() - E2.GetLongFloat();
+		Iter++;
+
+		R = ( E = E1 - E2 ).GetLongFloat();
+
+		fout  << "** - **\tDifférence résultat:\t" << ( Diff = R - D ) << '\t';
+
+		if ( R != 0 )
+			fout << "Ratio:\t" << ( Ratio = fabs( Diff / R ) );
+
+		fout << "\n\tRésultat:\t" << D << '\t' << E << "\n";
+
+		if ( Ratio > LIMITE_RATIO )
+		{
+			fout << "\a\a*****************************************\n";
+			Echec++;
+		}
+
+// Multiplication
+
+		D = E1.GetLongFloat() * E2.GetLongFloat();
+		Iter++;
+
+		R = ( M = E = E1 * E2 ).GetLongFloat();
+
+		fout << "** * **\tDifférence résultat:\t" << ( Diff = ( R - D )) << '\t';
+
+		if ( R != 0 )
+			fout << "Ratio:\t" << ( Ratio = fabs( Diff / R ) );
+
+		fout << "\n\tRésultat:\t" << D << '\t' << E << "\n";
+
+		if ( Ratio > LIMITE_RATIO )
+		{
+			Echec++;
+			fout << "\a\a*****************************************\n";
+		}
+
+
+// Division
+
+		if ( E2.GetLongFloat() != 0.0 )
+		{
+			D = E1.GetLongFloat() / E2.GetLongFloat();
+			Iter++;
+
+			R = ( E = E1 / E2 ).GetLongFloat();
+
+			fout << "** / **\tDifférence résultat:\t" << ( Diff = R - D )<< '\t';
+
+			if ( R != 0 )
+				fout << "Ratio:\t" << ( Ratio = fabs( Diff / R ) );
+
+			fout << "\n\tRésultat:\t" << D << '\t' << E << "\n";
+
+			if ( Ratio > LIMITE_RATIO )
+			{
+				Echec++;
+				fout << "\a\a*****************************************\n";
+			}
+		}
+
+		fout << "$$$\n";
+
+		Iter++;
+		fout << A << '\t' << ( A - E1 ) << '\t' << E2 << '\n';
+
+		if ( ( A - E1 ) != E2 )
+		{
+			Echec++;
+			fout << "\a\a$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n";
+		}
+
+		fout << "$$$\n";
+
+		Iter++;
+
+		fout << M << '\t' << ( M / E1 ) << '\t' << E2 << '\t' << ( M % E1 ) << '\n';
+
+		if ( ( M / E1 ) != E2 )
+		{
+			Echec++;
+			fout << "\a\a$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n";
+		}
+
+		fout << "$$$$$\n";
+
+		fout << "\nCompte-rendu:\t" << "E: " << Echec << '\t' << "I: "
+			<< Iter << '\t' << "R: " << (bso__lfloat)( (double)Echec / double(Iter) ) << "\n\n";
+
+		fin >> C;
+	}
+ERRErr
+ERREnd
+ERREpilog
+
+	return ~0;
+}
+
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
@@ -54,6 +278,8 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		EssaiSimple();
+		Hasard();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

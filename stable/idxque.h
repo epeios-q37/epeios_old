@@ -66,6 +66,7 @@ extern class ttr_tutor &IDXQUETutor;
 
 namespace idxque {
 	using namespace que;
+	using que::managed_queue_;	// VC++ has problem without this, despite line above.
 
 	//c Queue-based index, fast browsing, but slow sorting.
 	template <typename r> class queue_index_
