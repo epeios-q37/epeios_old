@@ -26,14 +26,14 @@
 # $Id$
 
 
-DIR=~/cvs
+DIR=~/libs
 TMP=/tmp
-SRC=/home/epeios/cvs/epeios/devel/xxx
+SRC=$DIR/epeios/devel/xxx
 
 if [ -z "$1" ]; then
 	echo "Name of the library is required !";
 	echo "Usage: setd_lib <library name>"
-	return
+	exit
 fi
 
 if grep -w -q $1 $SRC/epeios.lst; then
@@ -46,7 +46,7 @@ elif grep -w -q $1 $SRC/ehdb.lst; then
 	ID=ehdb
 elif grep -w -q $1 $SRC/ecdb.lst; then
 	ID=ecdb
-elif grep -w -q $1 $SRC/ecdb.lst; then
+elif grep -w -q $1 $SRC/etmc.lst; then
 	ID=etmc
 else
 	echo "Cannot identify library group.";

@@ -66,7 +66,7 @@ extern class ttr_tutor &$XXX$Tutor;
 
 namespace $xxx$ {
 
-};
+}
 
 /*$$END$$*/
 				  /********************************************/
