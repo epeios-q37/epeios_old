@@ -291,11 +291,11 @@ namespace bso {
 	//t A portable sign.
 	typedef sign__ p_sign__;
 
-	//d Size of a string in order to contain an integer.
-	#define BSO_INTEGER_BUFFER_SIZE	12
+	//d Maximum size of an ASCII converted signed/unsigned integer.
+	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	11
 
 	struct integer_buffer__ {
-		char Datum[BSO_INTEGER_BUFFER_SIZE];
+		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
 	};
 
 	//f Return 'Value' as string in 'String'.
@@ -402,11 +402,11 @@ namespace bso {
 	}
 #endif
 
-	//d Size of a string in order to contain an integer.
-	#define BSO_FLOAT_BUFFER_SIZE	40
+	//d Maximum size of an ASCII converted float.
+	#define BSO_ASCII_CONVERTED_FLOAT_MAX_SIZE	40
 
 	struct float_buffer__ {
-		char Datum[BSO_FLOAT_BUFFER_SIZE];
+		char Datum[BSO_ASCII_CONVERTED_FLOAT_MAX_SIZE+1];	// '+1' to store terminal NUL character.
 	};
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
