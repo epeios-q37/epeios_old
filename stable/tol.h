@@ -1,6 +1,6 @@
 /*
 	Header for the 'tol' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -615,6 +615,18 @@ namespace tol {
 			Pointer = NULL;
 		}
 	}
+
+//d Make accessible the static member named 'name' of type 'type__'.
+#define E_DISCLOSE(type__, name )\
+	const type__ &name( void ) const\
+	{\
+		return S_.name;\
+	}\
+	type__ &name( void )\
+	{\
+		return S_.name;\
+	}
+
 }
 
 /*$END$*/

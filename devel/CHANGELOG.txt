@@ -18,6 +18,9 @@ SSNMNG:
 - Adding 'sessions_manager_::GetExpired()' methods.
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
 
+TOL:
+- Adding the 'E_DISCLOSE' macro.
+
 --------
 20040215
 --------
