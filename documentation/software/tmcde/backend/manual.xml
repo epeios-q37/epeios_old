@@ -10,7 +10,7 @@
   <chapter title="Synopsis">
     <section>
       <para>
-        <raw>tmcdesrv [-l|--launch] [options] &lt;tags port></raw>
+        <raw>tmcdesrv [-l|--launch] [options] &lt;port></raw>
       </para>
       <para>
         <raw>tmcdesrv --help</raw>
@@ -26,13 +26,13 @@
   <chapter title="Description">
     <section>
       <para xml:space="preserve">
-        <raw>tmcdesrv</raw> is the backend par of the <raw>tmcde</raw> server. It handles request from a <raw>tmcde</raw> frontend.<raw>port</raw> is the port to listen to, the one to which is used by the frontend for the connection to the backend.</para>
+        <raw>tmcdesrv</raw> is the backend par of the <raw>tmcde</raw> server. It handles request from a <raw>tmcde</raw> frontend. <raw>port</raw> is the port to listen to, the one which is used by the frontend for the connection to the backend.</para>
     </section>
   </chapter>
   <chapter title="Return values">
     <section>
       <para xml:space="preserve">
-        <raw>reveal</raw> returns following values upon completion :<list>
+        <raw>tmcdesrv</raw> returns following values upon completion :<list>
           <item>0 : completed successfully.</item>
           <item>other value : an error occurs.</item>
         </list></para>
