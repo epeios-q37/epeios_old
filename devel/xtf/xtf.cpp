@@ -1,10 +1,10 @@
 /*
-  '$xxx$' library by Claude L. Simon ($EMAIL$)
-  Requires the '$xxx$' header file ('$xxx$.h').
-  Copyright (C) 2000,2001 $COPYRIGHT$.
+  'xtf' library by Claude L. Simon (simon@epeios.org)
+  Requires the 'xtf' header file ('xtf.h').
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
-  $ADDENDUM1$
-  $ADDENDUM2$
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -24,52 +24,83 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-//	$$Id$$
+//	$Id$
 
-#define $XXX$__COMPILATION
+#define XTF__COMPILATION
 
-#include "$xxx$.h"
+#include "xtf.h"
 
-class $xxx$tutor
+class xtftutor
 : public ttr_tutor
 {
 public:
-	$xxx$tutor( void )
-	: ttr_tutor( $XXX$_NAME )
+	xtftutor( void )
+	: ttr_tutor( XTF_NAME )
 	{
-#ifdef $XXX$_DBG
-		Version = $XXX$_VERSION "\b\bD $$";
+#ifdef XTF_DBG
+		Version = XTF_VERSION "\b\bD $";
 #else
-		Version = $XXX$_VERSION;
+		Version = XTF_VERSION;
 #endif
-		Owner = $XXX$_OWNER;
-		Date = "$$Date$$";
+		Owner = XTF_OWNER;
+		Date = "$Date$";
 	}
-	virtual ~$xxx$tutor( void ){}
+	virtual ~xtftutor( void ){}
 };
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
-/*$$BEGIN$$*/
+/*$BEGIN$*/
 
-namespace $xxx$ {
+using namespace xtf;
+
+void xtf::extended_text_iflow___::GetLine( str_string_ &Line )
+{
+	bso__bool Cont = true;
+	char C;
+
+	if ( !EOX() ) {
+		C = Get();
+
+		if ( ( C == '\r' ) || ( C == '\n' ) )
+			if ( EOL_ != 0 )
+				Cont = false;
+			else
+				C = Get();
+
+		while( Cont ) {
+
+			if ( Column() == 1 )
+				Cont = false;
+			else if ( &Line != NULL )
+				Line.Add( C );
+
+			if ( EOX() )
+				Cont = false;
+
+			if ( Cont == true )	
+				C = Get();
+		}
+	}
 }
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class $xxx$personnalization
-: public $xxx$tutor
+class xtfpersonnalization
+: public xtftutor
 {
 public:
-	$xxx$personnalization( void )
+	xtfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~$xxx$personnalization( void )
+	~xtfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -77,7 +108,7 @@ public:
 };
 
 
-/*$$END$$*/
+/*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */
 				  /*			  unless specified		   	  */
@@ -85,6 +116,6 @@ public:
 
 // 'static' by GNU C++.
 
-static $xxx$personnalization Tutor;
+static xtfpersonnalization Tutor;
 
-ttr_tutor &$XXX$Tutor = Tutor;
+ttr_tutor &XTFTutor = Tutor;

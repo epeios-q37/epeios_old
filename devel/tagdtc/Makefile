@@ -1,10 +1,10 @@
-# '$xxx$' Makefile by Claude L. Simon ($EMAIL$)
-# Builds executable for the '$xxx$' software.
+# 'tagdtc' Makefile by Claude L. Simon (simon@epeios.org)
+# Builds test executable for the 'tagdtc' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 $COPYRIGHT$.
+# Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 #
-# $ADDENDUM1$
-# $ADDENDUM2$
+# This file is part of the Epeios (http://www.epeios.org/) project.
+# 
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -24,35 +24,20 @@
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-# $$Id$$
+# $Id$
 
-name = $xxx$
+name = tagdtc
 copt =
-lopt = 
-# To activate Epeios general debugging features.
+# Epeios general debugging features
 copt += -DXXX_DBG
-# Needed by multitasking software.
-# copt += -DCPE_MTK
-# Speed up thread andling (used with -DCPE_MTK).
-# copt += -DMTK_KEEP
-libs = ttr tol flw stf err flw
-
-$_RAW_$
-
-ifndef EPEIOS_SRC
-	epeios_src=
-else
-	epeios_src=$(EPEIOS_SRC)
-endif
-
-ifndef EPEIOS_OS
-	epeios_os=linux
-else
-	epeios_os=$(EPEIOS_OS)
-endif
+# Required for multitasking
+#copt += -DCPE_MT
+lopt = 
+libs = ttr tol flw stf err
 
 
-ifeq ("$(epeios_os)","windows")
+
+ifeq ("$(EPEIOS_OS)","windows")
 # object file extension
 ox = obj
 # compiler/linker binary
@@ -64,7 +49,7 @@ lo = -q -e$(name)
 ds = ;
 endif
 
-ifeq ("$(epeios_os)","linux")
+ifeq ("$(EPEIOS_OS)","linux")
 ox = o
 cc = g++ 
 co = -c
@@ -80,7 +65,7 @@ lo = -o $(name)
 ds = :
 endif
 
-ifeq ("$(epeios_os)","beos")
+ifeq ("$(EPEIOS_OS)","beos")
 ox = o
 cc = g++
 co = -c -g
@@ -88,14 +73,14 @@ lo = -o $(name)
 ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(epeios_src))
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
 
-srcd = $(subst $(ds), ,$(epeios_src))
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
 
-objs = $(name).$(ox) $(libs:=.$(ox))
+objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
 
 $(name):  $(objs)
 	$(cc) $(lo) $(objs)

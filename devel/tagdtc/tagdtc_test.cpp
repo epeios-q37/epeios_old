@@ -1,9 +1,9 @@
 /*
-  Test source for the '$xxx$' library by Claude L. Simon ($EMAIL$).
-  Copyright (C) 2000,2001 $COPYRIGHT$.
+  Test source for the 'tagdtc' library by Claude L. Simon (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
-  $ADDENDUM1$
-  $ADDENDUM2$
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -23,14 +23,14 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-//	$$Id$$
+//	$Id$
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>
 
-#include "$xxx$.h"
+#include "tagdtc.h"
 
 #include "err.h"
 #include "stf.h"
@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	fout << "Test of library " << TAGDTCTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -64,14 +64,14 @@ ERRFBegin
 	default:
 		fout << txf::sync;
 		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
+		fout << "Usage: " << TAGDTCTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << $XXX$Tutor.Name << ".\n";
+	fout << "\nEnd of program " << TAGDTCTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
