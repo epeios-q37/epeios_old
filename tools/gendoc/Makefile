@@ -33,7 +33,7 @@ copt =
 #copt += -DCPE_MT
 lopt = 
 libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str xmltag\
-       fil xmlval xmldcm
+       fil xmlval xmldcm xmlcor
 
 ifndef EPEIOS_SRC
 	epeios_src=
@@ -59,7 +59,7 @@ co = -c
 # Generates debugging data.
 #co += -g
 # General optimization.
-co += -O
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)

@@ -96,7 +96,7 @@ namespace txf {
 //c A tutor for one library.
 class ttr_tutor
 {
-	friend ttr_chief;
+	friend class ttr_chief;
 private:
 	// Pour le chaînage des différents tuteurs.
 	ttr_tutor *Next_;

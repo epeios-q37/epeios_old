@@ -804,7 +804,7 @@ namespace tsrcpr {
 				Type,
 				Name,
 				Commentaire;
-			friend objet_;
+			friend class objet_;
 		};
 		//o Le type.
 		str::string_ Type;
@@ -886,7 +886,7 @@ namespace tsrcpr {
 			str::string_::s Name;
 			str::string_::s Type;
 			template_::s Template;
-			friend classe_;
+			friend class classe_;
 		};
 		//o Les méthodes.
 		table_<methode_> Methodes;

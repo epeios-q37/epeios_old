@@ -126,37 +126,19 @@ value_row__ xml_database_::First(
 	return P;
 }
 
-static const str::string_ &Filter_( const str::string_ &String )
+static inline const str::string_  &Filter_( const str::string_ &String )
 {
-	static str::string S;
-	epeios::row__ Position = String.First();
-	bso::char__ C;
+	static str::string Result;
 	
-	S.Init();
+	Result.Init();
 	
-	while( Position != NONE ) {
-		switch ( C = String( Position ) ) {
-		case '<':
-			S.Add( "&lt;" );
-			break;
-		case '>':
-			S.Add( "&gt;" );
-			break;
-		case '&':
-			S.Add( "&amp;" );
-			break;
-		default:
-			S.Add( C );
-			break;
-		}
-		
-		Position = String.Next( Position );
-	}
+	Result = String;
 	
-	return S;
+	xmlcor::Convert( Result );
+	
+	return Result;
 }
-
-
+	
 static bso::bool__ WriteAttributes_(
 	const xml_database_ &XMLD,
 	value_row__ ValueRow,

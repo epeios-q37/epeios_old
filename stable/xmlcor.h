@@ -377,7 +377,10 @@ namespace xmlcor {
 	ERREpilog
 	}
 	
-
+	/*f Convert special characters contained in 'Target'.
+	For example, '<' becomes '&lt'. */
+	void Convert( str::string_ &Target );
+	
 
 }
 

@@ -144,6 +144,15 @@ namespace bch {
 			mmr::Init();
 			mng::Init();
 		}
+		//f Initialization with 'Seed' containing 'Size' objects.
+		void Init(
+			const type *Seed,
+			epeios::size__ Size )
+		{
+			this->Init();
+			
+			WriteAndAdjust( Seed, Size );
+		}
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
 			epeios::size__ Size,

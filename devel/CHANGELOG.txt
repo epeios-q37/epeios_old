@@ -3,6 +3,43 @@ $Id$
 GENERAL:
 - moving backed-related libraries ('BDKEND', 'BDKxxx' & also 'FRTEND') to 'ebkd' sub-project.
 - moving cgi-related libraries and software ('FRTEND', 'URLARG' and 'getbkdapi') to 'ecgi' sub-project.
+- Using the g++ 3.0 dur to an ICE by gcc 2.95.3
+
+BCH:
+- Adding the 'Init()' function with parameter.
+
+ERR:
+- Introducing 'err' namespace due to conflict with content of a g++ 3.0 header.
+
+FIL:
+- Make changes required by g++ 3.0.
+
+FLM:
+- Make changes required by g++ 3.0.
+
+STF:
+- Make changes required by g++ 3.0.
+
+STR:
+- Adding the 'Init()' function with parameter.
+
+TSRCPR:
+- Changes required by g++ 3.0.
+
+TTR:
+- Changes required by g++ 3.0.
+
+TOL:
+- Changes required by g++ 3.0.
+
+XMLCOR:
+- Adding the 'Convert()' function.
+
+XMLDBM:
+- Using the 'Convert()' from 'XMLCOR' in 'Filter_()'.
+
+XMLDCM:
+- Using the 'Convert()' from 'XMLCOR' in 'Filter_()'.
 
 --------
 20010618

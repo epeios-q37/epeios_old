@@ -58,6 +58,7 @@ extern class ttr_tutor &FLMTutor;
 //D FiLe Memory.
 
 #include <fstream.h>
+#include <iostream.h>
 
 #include "err.h"
 #include "flw.h"
@@ -112,7 +113,10 @@ namespace flm {
 		{
 			if ( !Temoin_.Ouvert )
 			{
-				Stream_.open( Nom_, ios::in | ( Temoin_.Mode == mdr::mReadOnly ? 0 : ios::out ) | ios::binary );
+				if ( Temoin_.Mode == mdr::mReadOnly )
+					Stream_.open( Nom_, ios::in | ios::binary );
+				else
+					Stream_.open( Nom_, ios::in | ios::out | ios::binary );
 
 				if ( Stream_.fail() )
 					ERRd();
@@ -163,7 +167,7 @@ namespace flm {
 			{
 				Ouvrir_();
 
-				if ( Stream_.seekp( Capacite - 1 ).fail() || Stream_.put( (char)0 ).fail() )
+				if ( Stream_.seekp( ( Capacite - (capacite__)1 ) ).fail() || Stream_.put( (char)0 ).fail() )
 				{
 					if ( !Temoin_.Manuel )
 						Liberer();

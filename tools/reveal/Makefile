@@ -52,7 +52,7 @@ co = -q -c -w-aus -w-inl
 # Optimization for size:
 # co += -O1
 # Optimization for speed:
-co += -O2
+# co += -O2
 # linkage options
 lo = -q -e$(name)
 endif

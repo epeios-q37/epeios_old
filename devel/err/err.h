@@ -69,7 +69,7 @@ extern class ttr_tutor &ERRTutor;
 #define ERR__THREAD_SAFE
 #endif
 
-struct err {
+namespace err {
 	enum handle {
 		hUsual,
 		hSkip };
@@ -154,45 +154,44 @@ struct err {
 		mGeneric
 	};
 		// memory error
-};
 
 #ifdef ERR__THREAD_SAFE
-// If an error occurs, test if the current thread is concerned.
-bool ERRConcerned( void );
-void ERRUnlock( void );
+	// If an error occurs, test if the current thread is concerned.
+	bool Concerned( void );
+	void Unlock( void );
 #endif
 
-struct err_ {
-	// line where the error occurs
-	static int Line;
-	// file where the error occurs
-	static const char *File;
-#ifdef ERR_JMPUSE
-	// where to jump
-	static jmp_buf *Jump;
-#endif
-	// Report that an error occurs
-	int Error: 1;
-	// Major code of error.
-	static err::type Major;
-	// Minor code of error
-	static int Minor;
-	// General handler.
-	void Handler(
-		const char *File = NULL,
-		int Line = 0,
-		err::type Major = Major,
-		int Minor = Minor);
-};
+	struct err_ {
+		// line where the error occurs
+		static int Line;
+		// file where the error occurs
+		static const char *File;
+	#ifdef ERR_JMPUSE
+		// where to jump
+		static jmp_buf *Jump;
+	#endif
+		// Report that an error occurs
+		int Error: 1;
+		// Major code of error.
+		static err::type Major;
+		// Minor code of error
+		static int Minor;
+		// General handler.
+		void Handler(
+			const char *File = NULL,
+			int Line = 0,
+			err::type Major = Major,
+			int Minor = Minor);
+	};
 
-void ERRFinal( void );
+	void Final( void );
 
 
 #ifndef ERR__COMPILATION
-extern err_ ERR;
+	extern err_ ERR;
 #endif
 
-#define ERRCommon( M, m )	ERR.Handler( __FILE__, __LINE__, M, err::m )
+#define ERRCommon( M, m )	err::ERR.Handler( __FILE__, __LINE__, M, err::m )
 
 #define	ERRA( m )		ERRCommon( err::alc, m )
 //m Throw an allocation error (only RAM).
@@ -240,33 +239,33 @@ extern err_ ERR;
 
 #ifdef ERR_JMPUSE
 //m Throw the handler.
-#define ERRR()		{longjmp( *ERR.Jump, 1 );}
+#define ERRR()		{longjmp( *err::ERR.Jump, 1 );}
 #else
-#define ERRR()		throw( ERR )
+#define ERRR()		throw( err::ERR )
 #endif
 
 #ifdef ERR__THREAD_SAFE
 //m Discard error; restore the default behavior of the programm
-#define ERRRst()	{ ERRUnlock(); }
+#define ERRRst()	{ err::Unlock(); }
 #else
-#define ERRRst()	{ ERR.Error = false; }
+#define ERRRst()	{ err::ERR.Error = false; }
 #endif
 
 //d Major code.
-#define ERRMajor		ERR.Major
+#define ERRMajor		err::ERR.Major
 
 //d Minor code.
-#define ERRMinor		ERR.Minor
+#define ERRMinor		err::ERR.Minor
 
 //d File in which the error was thrown.
-#define ERRFile			ERR.File
+#define ERRFile			err::ERR.File
 
 //d Line where the error was thrown.
-#define ERRLine			ERR.Line
+#define ERRLine			err::ERR.Line
 
 #ifdef ERR_JMPUSE
-#define ERRGetJ()		ERRFGetJ( ERR )
-#define ERRPutJ( J )	ERRFSetJ( ERR, J )
+#define ERRGetJ()		err::FGetJ( err::ERR )
+#define ERRPutJ( J )	err::FSetJ( err::ERR, J )
 #endif
 
 #ifdef ERR_JMPUSE
@@ -292,7 +291,7 @@ extern err_ ERR;
 // précède les déclarations
 #define ERRBegin	try {
 // précède les instructions proprement dites
-#define ERRErr		} catch ( err_ ) {
+#define ERRErr		} catch ( err::err_ ) {
 // précède les instructions à effectuer lors d'une erreur
 #define ERREnd		}
 // précède les instructions à exécuter, erreur ou pas
@@ -302,46 +301,47 @@ extern err_ ERR;
 #endif
 
 #ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	ERR.Error && ERRConcerned()
+#define ERRTestEpilog	err::ERR.Error && err::Concerned()
 #else
-#define ERRTestEpilog	ERR.Error
+#define ERRTestEpilog	err::ERR.Error
 #endif
 
 //d End of the error bloc.
 #define ERREpilog	ERRCommonEpilog if ( ERRTestEpilog ) ERRR();
-#define ERRFEpilog	ERRCommonEpilog if ( ERRTestEpilog ) ERRFinal();
+#define ERRFEpilog	ERRCommonEpilog if ( ERRTestEpilog ) err::Final();
 #define ERRFProlog	ERRProlog
 #define ERRFBegin	ERRBegin
 #define ERRFErr		ERRErr
 #define ERRFEnd		ERREnd
 
 #ifdef ERR_JMPUSE
-inline jmp_buf *ERRFGetJ( struct err_ &ERR_ )
-{
-	return ERR_.Jump;
-}
+	inline jmp_buf *FGetJ( struct err_ &ERR_ )
+	{
+		return ERR_.Jump;
+	}
 
-inline void ERRFSetJ(
-	struct err_ &ERR_,
-	jmp_buf *Jump )
-{
-	ERR_.Jump = Jump;
-}
+	inline void FSetJ(
+		struct err_ &ERR_,
+		jmp_buf *Jump )
+	{
+		ERR_.Jump = Jump;
+	}
 #endif
 
-//f Return the error message which goes along the given parameters
-const char *ERRMessage(
-	const char *File,
-	int Line,
-	err::type Major,
-	int Minor );
+	//f Return the error message which goes along the given parameters
+	const char *Message(
+		const char *File,
+		int Line,
+		err::type Major,
+		int Minor );
 
 #ifndef ERR__COMPILATION
-inline const char *ERRMessage( void )
-{
-	return ERRMessage( ERRFile, ERRLine, ERRMajor, ERRMinor );
-}
+	inline const char *Message( void )
+	{
+		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor );
+	}
 #endif
+}
 
 /*$END$*/
 				  /********************************************/

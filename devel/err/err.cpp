@@ -57,13 +57,17 @@ public:
 
 #include <new.h>
 
-err_ ERR;
+using namespace err;
+
+namespace err {
+	err_ ERR;
+}
 
 #include "stf.h"
 
 #ifdef ERR__THREAD_SAFE
-#include "mtx.h"
-#include "mtk.h"
+#	include "mtx.h"
+#	include "mtk.h"
 static mtx::mutex_handler__ MutexHandler_ = MTX_INVALID_HANDLER;
 static mtk::thread_id__ ThreadID_;
 #endif
@@ -79,15 +83,16 @@ int err_::Minor = 0;
 err::type ERRFilter = err::ok;
 
 #ifdef ERR__THREAD_SAFE
-bool ERRConcerned( void )
+bool err::Concerned( void )
 {
 	return ( ThreadID_ == MTKGetTID() );
 }
-void ERRUnlock( void )
+
+void err::Unlock( void )
 {
 #if 0
 #ifdef ERR_DBG	// Doesn't work (is ignored because there was necessary an error before ...
-	if ( !ERR.Error || !ERRConcerned() )
+	if ( !ERR.Error || !err::Concerned() )
 		ERRu();
 #endif
 #endif
@@ -102,7 +107,7 @@ void ERRUnlock( void )
 #endif
 
 // Retourne une chaîne ASCII contenant une brève description de ce qui est passé en paramètre.
-const char *ERRMessage(
+const char *err::Message(
 	const char *Fichier,
 	int Ligne,
 	err::type Majeur,
@@ -178,7 +183,7 @@ void err_::Handler(
 	int Mineur )
 {
 #ifdef ERR__THREAD_SAFE
-	if ( ( this->Error == false ) || !ERRConcerned() )
+	if ( ( this->Error == false ) || !err::Concerned() )
 	{
 		mtx::mutex___ M;
 
@@ -206,9 +211,9 @@ void err_::Handler(
 	'Ligne' le numéro de ligne, 'Type', le type de l'erreur */
 
 
-void ERRFinal( void )
+void err::Final( void )
 {
-	const char *Message = ERRMessage( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
+	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
 
 	fout << txf::sync;
 	ferr << txf::nl << txf::tab << Message << txf::nl /*<< '\a'*/;

@@ -60,13 +60,14 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 
 #include "cpe.h"
-#include "err.h"
 
 #if defined( CPE__MS ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
 #include <sys/timeb.h>
 #else
 #error "Unknown compilation enviroment"
 #endif
+
+#include "err.h"
 
 //d The default backup file extension.
 #define TOL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"

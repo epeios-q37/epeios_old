@@ -85,9 +85,15 @@ namespace str {
 		{
 			E_BUNCH_( bso::char__ )::plug( Driver );
 		}
+		//f Initialization.
 		void Init( void )
 		{
 			E_BUNCH_( bso::char__ )::Init();
+		}
+		//f Initialization with 'Seed'.
+		void Init( const bso::char__ *Seed )
+		{
+			E_BUNCH_( bso::char__ )::Init( Seed, strlen( Seed ) );
 		}
 		string_ &operator =( const string_ &O )
 		{

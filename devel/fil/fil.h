@@ -60,6 +60,7 @@ extern class ttr_tutor &FILTutor;
 
 #include "err.h"
 #include "stf.h"
+#include <fstream.h>
 
 namespace fil
 {

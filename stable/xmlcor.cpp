@@ -141,6 +141,45 @@ value_row__ xml_core_::First(
 	return P;
 }
 
+void xmlcor::Convert( str::string_ &Target )
+{
+ERRProlog
+	epeios::row__ Position = Target.First();
+	bso::char__ C;
+	str::string Buffer;
+ERRBegin
+	while( Position != NONE ) {
+		switch ( C = Target( Position ) ) {
+		case '"':
+			Buffer.Init( "&#34;" );
+			Target.Delete( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '<':
+			Buffer.Init( "&lt;" );
+			Target.Delete( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '>':
+			Buffer.Init( "&gt;" );
+			Target.Delete( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '&':
+			Buffer.Init( "&amp;" );
+			Target.Delete( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		default:
+			break;
+		}
+		
+		Position = Target.Next( Position );	// Could be dangerous, but actually works.
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,

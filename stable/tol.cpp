@@ -70,11 +70,13 @@ public:
 #include "mtk.h"
 #endif
 
+#include <fstream.h>
+
 bool tol::FileExists( const char *Nom )
 {
-	ifstream Stream( Nom, ifstream::binary | ifstream::nocreate );
+	ifstream Stream( Nom, ios::binary );
 
-	return !Stream.fail();
+	return Stream;
 }
 
 tol::rbf tol::CreateBackupFile(

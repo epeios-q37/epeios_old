@@ -69,7 +69,7 @@ status fil::file_iflow___::Init(
 
 	istream_iflow___::Init();
 
-	Stream_.open( FileName, ios::binary | ios::in | ios::nocreate );
+	Stream_.open( FileName, ios::binary | ios::in );
 
 	if ( Stream_.fail() )
 	{
@@ -97,7 +97,10 @@ status fil::file_oflow___::Init(
 
 	ostream_oflow___::Init();
 
-	Stream_.open( FileName, ios::binary | ios::out | ( ( Mode == fil::mAppend ) ? ios::app : 0 ) );
+	if ( Mode == fil::mAppend )
+		Stream_.open( FileName, ios::binary | ios::out | ios::app  );
+	else
+		Stream_.open( FileName, ios::binary | ios::out );
 
 	if ( Stream_.fail() )
 	{
@@ -106,7 +109,7 @@ status fil::file_oflow___::Init(
 		else if ( ErrHandle != err::hSkip )
 			ERRu();
 
-		Status = sFailure;;
+		Status = sFailure;
 	}
 	return Status;
 }

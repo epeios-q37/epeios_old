@@ -56,7 +56,8 @@ extern class ttr_tutor &STFTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include <fstream.h>
+//#include <fstream.h>
+#include <iostream.h>
 
 #include "err.h"
 #include "flw.h"
