@@ -4,4 +4,4 @@ $Id$
 
 - To list macro definition with g++, use '-E -dM' command line options.
 
-- The 'SMA' was created to use with Windows. It seems that, when you allocate a lot of little memory block (4000 K), as it happens with the 'CCH' library, Windows has problems. This happens with the 'stockdb' software'. When you fill the DB with the same history, it says that there is redefinition of values. This happens only under windows 98, but not Windows XP (software compiled under Windows 98), and not with Linux.
+- The 'SMA' was created to use with Windows. It seems that, when you allocate a lot of little memory block (4000 K), as it happens with the 'CCH' library, Windows has problems. This happens with the 'stockdb' software'. When you fill the DB with the same history, it says that there is redefinition of values. This happens only under windows 98, but not Windows XP (software compiled under Windows 98), and not with Linux. UPDATE : it was not a problem with allocation, but with hard drive. The programs works perfectly when the database was on another partition.
