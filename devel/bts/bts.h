@@ -119,10 +119,11 @@ namespace bts {
 		{
 			Current_ = Root_;
 
-			if ( Tree_->IsParent( Current_ ) )
-				Type_ = tForward;
-			else
-				Type_ = tRight;
+			if ( Current_ != NONE )
+				if ( Tree_->IsParent( Current_ ) )
+					Type_ = tForward;
+				else
+					Type_ = tRight;
 
 			return Current_;
 		}
@@ -131,10 +132,11 @@ namespace bts {
 		{
 			Current_ = Root_;
 
-			if ( Tree_->IsParent( Root_ ) )
-				Type_ = tBack;
-			else
-				Type_ = tRight;
+			if ( Current_ != NONE )
+				if ( Tree_->IsParent( Current_ ) )
+					Type_ = tBack;
+				else
+					Type_ = tRight;
 
 			return Current_;
 		}

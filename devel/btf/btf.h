@@ -128,16 +128,20 @@ namespace btf {
 		//f Return true if the tree is complete.
 		bso::bool__ IsComplete( void ) const
 		{
-			return E_STACKt_( r, row__ )::Amount() == 1;
+			return E_STACKt_( r, row__ )::Amount() <= 1;
 		}
 		//f Return the root of the tree. Significant only if 'IsComplete()' return true.
 		r GetRoot( void ) const
 		{
+			row__ Row = E_STACKt_( r, row__ )::First();
 #ifdef BTF_DBG
 			if ( !IsComplete() )
 				ERRu();
 #endif
-			return E_STACKt_( r, row__ )::Get( E_STACKt_( r, row__ )::First() );
+			if ( Row != NONE )
+				return E_STACKt_( r, row__ )::Get( Row );
+			else
+				return NONE;
 		}
 		//f Return true if a call to 'Join' is possible, false otherwise.
 		bso::bool__ IsJoinable( void )

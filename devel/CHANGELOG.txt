@@ -32,9 +32,11 @@ BSO:
 BTF:
 - Adding a dummy 'Exists()' method, and the 'row__' type due to changes in 'STK' library.
 - Adding 'Root' parameter to the 'Init' function.
+- Handling empty tree.
 
 BTS:
 - Adding 'tBack' and 'tForward' in replacement of 'tParent'.
+- Handling empty tree.
 
 CCH:
 - Renaming 'Add' to 'Append'.
