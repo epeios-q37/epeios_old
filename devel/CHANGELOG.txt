@@ -1,5 +1,11 @@
 $Id$
 
+CLNARG:
+- Adding a 's' to the 'Get<Option|Command>Label' function name.
+- Adding 'Separator' parameter to 'GetCommandLabels' method.
+- Adding 'CLNARG_<DETAIL|GENERAL>_SEPARATOR' defines.
+- Adding 'view' enum and modifying functions as needed.
+
 ITG:
 - moving it to the 'emth' subproject.
 
@@ -8,6 +14,10 @@ XMLDBS:
 
 TOL:
 - Fixing cast problem.
+- Removing incorrect comment which disturbs quickdoc generation.
+
+TXF:
+- Fixing long double printing bug.
 
 --------
 20010804

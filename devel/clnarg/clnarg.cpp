@@ -358,7 +358,8 @@ void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 
 static const char *GetLabel_(
 	const item__ &Item,
-	int Id )
+	int Id,
+	const char *Separator )
 {
 	static char Label[50];
 	
@@ -371,7 +372,7 @@ static const char *GetLabel_(
 		
 	if ( Item.Long != NULL ) {
 		if ( Label[0] != 0 )
-			strcat( Label, ", " );
+			strcat( Label, Separator );
 		
 		strcat( Label, "--" );
 		
@@ -386,7 +387,8 @@ static const char *GetLabel_(
 		
 static const char *GetLabel_(
 	const bch::E_BUNCH_( item__ ) &Items,
-	int Id )
+	int Id,
+	const char *Separator )
 {
 	tym::row__ P = Items.First();
 	
@@ -396,24 +398,41 @@ static const char *GetLabel_(
 	if ( P == NONE )
 		ERRu();
 		
-	return  GetLabel_( Items( P ), Id );
+	return  GetLabel_( Items( P ), Id, Separator );
 }
 	
-const char *description_::GetCommandLabel( int Id ) const
+const char *description_::GetCommandLabels(
+	int Id,
+	const char *Separator ) const
 {
-	return GetLabel_( Commands, Id );
+	return GetLabel_( Commands, Id, Separator );
 }
 	
-const char *description_::GetOptionLabel( int Id ) const
+const char *description_::GetOptionLabels( int Id ) const
 {
-	return GetLabel_( Options, Id );
+	return GetLabel_( Options, Id, CLNARG_DETAIL_SEPARATOR );
+}
+
+static void HandleView_( clnarg::view View )
+{
+	switch( View ) {
+	case clnarg::vOneLine:
+		fout << txf::tab;
+		break;
+	case clnarg::vSplit:
+		fout << txf::nl << txf::tab << txf::tab;
+		break;
+	default:
+		ERRu();
+		break;
+	}
 }
 
 void clnarg::PrintCommandUsage(
 	const description_ &Description,
 	int CommandId,
 	const char *Text,
-	bso::bool__ OneLine,
+	clnarg::view View,
 	bso::bool__ Default )
 {
 	fout << txf::tab;
@@ -421,12 +440,9 @@ void clnarg::PrintCommandUsage(
 	if ( Default )
 		fout << "<none>, ";
 			
-	fout << Description.GetCommandLabel( CommandId ) << ':';
-		
-	if ( OneLine )
-		fout << txf::tab;
-	else
-		fout << txf::nl << txf::tab << txf::tab;
+	fout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	
+	HandleView_( View );
 		
 	fout << Text << txf::nl;
 }
@@ -436,11 +452,11 @@ void clnarg::PrintOptionUsage(
 	int OptionId,
 	const char *Parameter,
 	const char *Text,
-	bso::bool__ OneLine )
+	clnarg::view View )
 {
 	fout << txf::tab;
 		
-	fout << Description.GetOptionLabel( OptionId );
+	fout << Description.GetOptionLabels( OptionId );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 
@@ -448,10 +464,7 @@ void clnarg::PrintOptionUsage(
 
 	fout << ':';
 		
-	if ( OneLine )
-		fout << txf::tab;
-	else
-		fout << txf::nl << txf::tab << txf::tab;
+	HandleView_( View );
 		
 	fout << Text << txf::nl;
 }

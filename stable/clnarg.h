@@ -63,7 +63,14 @@ extern class ttr_tutor &CLNARGTutor;
 #include "ctn.h"
 #include "str.h"
 
+
 #define CLNARG_DEFAULT_FLAG	'-'
+
+//d The command seperator for the general usage printing ('GetCommandLabels' method).
+#define CLNARG_GENERAL_SEPARATOR	"|"
+
+//d The command seperator for the detail usage printing ('GetCommandLabels' method).
+#define CLNARG_DETAIL_SEPARATOR	", "
 
 namespace clnarg {
 	//t An option/argument id.
@@ -79,6 +86,16 @@ namespace clnarg {
 
 	//d Value to gice if no long option/command.
 	#define CLNARG_NO_LONG	NULL
+
+	//e View mode
+	enum view {
+		//i All print on one line.
+		vOneLine = 10,	// Begins at 10 to detect old boolean usage.
+		//i Split in 2 lines.
+		vSplit,
+		//i Amount of view.
+		v_amount
+	};
 
 	class item__ {
 	public:
@@ -184,10 +201,12 @@ namespace clnarg {
 
 			AddOption( Option );
 		}
-		//f Return the command label corresponding to 'Id'.
-		const char *GetCommandLabel( int Id ) const;
+		//f Return the long and short command label corresponding to 'Id' using 'Separator' to seperate them.
+		const char *GetCommandLabels(
+			int Id,
+			const char *Separator = CLNARG_GENERAL_SEPARATOR ) const;
 		//f Return the option label corresponding to 'Id'.
-		const char *GetOptionLabel( int Id ) const;
+		const char *GetOptionLabels( int Id ) const;
 	};
 
 	AUTO( description )
@@ -271,35 +290,32 @@ namespace clnarg {
 	};
 	
 	/*f Print the usage text for command in 'Description' identified by 'CommandId'
-	using 'Text'. If 'OneLine' at false, text is print on 2 lines, other wise
-	on one line.. If 'Default' at true, the command is the default one. */
+	using 'Text' and 'View'. If 'Default' at true, the command is the default one. */
 	void PrintCommandUsage(
 		const description_ &Description,
 		int CommandId,
 		const char *Text,
-		bso::bool__ OneLine,
-		bso::bool__ Default );
+		clnarg::view View,
+		bso::bool__ Default = false );
 		
 	/*f Print the usage text for option, with parameter, in 'Description' identified
-	by 'OptionId' using 'Text'. 'Parameter' is the parameter of the option.
-	If 'OneLine' at false, text is print on 2 lines, otherwise on one line.*/
+	by 'OptionId' using 'Text' and 'View'. 'Parameter' is the parameter of the option.	*/
 	void PrintOptionUsage(
 		const description_ &Description,
 		int OptionId,
 		const char *Parameter,
 		const char *Text,
-		bso::bool__ OneLine );
+		clnarg::view View );
 
 	/*f Print the usage text for option, without parameter, in 'Description'
-	identified by 'OptionId' using 'Text'. If 'OneLine' at false,
-	text is print on 2 lines, other wise on one line.*/
+	identified by 'OptionId' using 'Text' and 'View'. */
 	inline void PrintOptionUsage(
 		const description_ &Description,
 		int OptionId,
 		const char *Text,
-		bso::bool__ OneLine )
+		clnarg::view View )
 	{
-		PrintOptionUsage( Description, OptionId, NULL, Text, OneLine );
+		PrintOptionUsage( Description, OptionId, NULL, Text, View );
 	}
 }
 

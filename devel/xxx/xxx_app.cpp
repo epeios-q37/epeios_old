@@ -32,11 +32,11 @@
 
 #define NAME			"$NAME$"
 #define VERSION			"0.1.0"
+#define COPYRIGHT_YEARS	"2001"
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-//#define COPYRIGHT		"Copyright (c) 2001 IDEALX (" EPSMSC_IDEALX_URL ")."
-//#define COPYRIGHT		"Copyright (c) 2001 Claude L. SIMON (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 /*$RAW$*/
@@ -60,22 +60,26 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << "Usage: " << NAME << " [command] [options] ..." << txf::nl;
 	fout << "(description)" << txf::nl;
+	fout << "Usage:";
+	fout << txf::tab << NAME << " --version|--license|--help" << txf::nl;
+	fout << txf::tab << NAME << " [command] [options] ..." << txf::nl;
+	// Free argument description.
 	fout << "Command:" << txf::nl;
+	// Free argument description.
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", true, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 	fout << "Options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", false );
 }
 
 void PrintHeader( void )
 {
-	fout << NAME " V" VERSION " ("__DATE__ " " __TIME__ ") by " AUTHOR_NAME " (" << AUTHOR_EMAIL << ") " << txf::nl << COPYRIGHT << txf::nl;
-//	fout << EPSMSC_IDEALX_TEXT <<txf::nl;
-//	fout << EPSMSC_EPEIOS_TEXT <<txf::nl;
+	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	fout << COPYRIGHT << txf::nl;
 	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 

@@ -381,7 +381,6 @@ public:\
 /* CLASSE DE GESTION DU POINTEUR UTILISATEUR */
 /*********************************************/
 
-//c Handle user pointer.
 namespace tol {
 	class UP__
 	{
