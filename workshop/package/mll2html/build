@@ -4,8 +4,12 @@ cd workdir
 export DIR=mll2html-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
-$GET epeios $DIR tools/mll2html
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET epeios $DIR tools/mll2html/*.h
+$GET epeios $DIR tools/mll2html/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/mll2html/README.txt
 

@@ -131,7 +131,7 @@ namespace tsrcpr {
 		}
 		void Add( const t &Objet )
 		{
-			E_CONTAINER_( t )::Write( Objet, New() );
+			E_CONTAINER_( t )::Store( Objet, New() );
 		}
 		E_NAV( E_MQUEUE_:: )
 	};

@@ -4,11 +4,15 @@ cd workdir
 export DIR=ebkd-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/ebkd/README.txt
 
-$GET ebkd $DIR stable/
+$GET ebkd $DIR stable/*.h
+$GET ebkd $DIR stable/*.cpp
+
 $GET ebkd $DIR devel/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG

@@ -1,8 +1,8 @@
 /*
 	'txmpgh' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'txmpgh' header file ('txmpgh.h').
-	Copyright (C) 2000, 2001,2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -66,7 +68,7 @@ ERRBegin
 		Flow.GetLine( Line );
 
 		if ( Line.Amount() )
-			Add( Line );
+			Append( Line );
 		else
 			Cont = false;
 
@@ -86,13 +88,13 @@ void txmpgh::paragraph_::Merge( line_ &Line ) const
 	Part.Init( *this );
 
 	if ( P != NONE ) {
-		Line.Add( Part( P ) );
+		Line.Append( Part( P ) );
 		P = lines_::Next( P );
 	}
 
 	while( P != NONE ) {
-		Line.Add( ' ' );
-		Line.Add( Part( P ) );
+		Line.Append( ' ' );
+		Line.Append( Part( P ) );
 		P = lines_::Next( P );
 	}
 }

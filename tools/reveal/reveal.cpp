@@ -61,7 +61,7 @@
 
 using tagdtc::id__;
 
-// This is needed by BC++, to avoid ambiguity between std::estring and str::estring ...
+// This is needed by BC++, to avoid ambiguity between std::string and str::string ...
 typedef str::string		estring;
 typedef str::string_	estring_;
 
@@ -170,7 +170,7 @@ inline void Add(
 	Buffer.Init( Line );
 
 	if ( Line.Amount() != 2 ) {
-		ferr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
+		stf::cerr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
 		ERRt();
 	}
 
@@ -178,19 +178,19 @@ inline void Add(
 	Value = Buffer( Line.Next( P ) );
 
 	if ( !TestTag( Tag( P ) ) ) {
-		ferr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
+		stf::cerr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 
 	Nature = TestAndFormTagValue( Value, Text, File );
 
 	if ( Nature == tagexp::nUnknow ) {
-		ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
+		stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 	else if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 		if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-			ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+			stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRt();
 		}
 		else
@@ -256,11 +256,11 @@ ERRBegin
 	case tagexp::sOK:
 		break;
 	case tagexp::sBadFile:
-		ferr << "Error with file '" << FileName << "'." << txf::nl;
+		stf::cerr << "Error with file '" << FileName << "'." << txf::nl;
 		ERRt();
 		break;
 	case tagexp::sUnknowTag:
-		ferr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
+		stf::cerr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
 		ERRt();
 		break;
 	default:
@@ -315,18 +315,18 @@ void PrepareExpander(
 
 	while ( P != NONE ) {
 		if ( !TestTag( Tag( P ) ) ) {
-			ferr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+			stf::cerr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRt();
 		}
 
 		if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 			if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-				ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
+				stf::cerr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 				ERRt();
 			}
 			else
-				Ids.Write( Id, PV );
-		else Ids.Write( Expander.Create( Tag() ), PV );
+				Ids.Store( Id, PV );
+		else Ids.Store( Expander.Create( Tag() ), PV );
 
 		P = Line.Next( P );
 		PV = Ids.Next( PV );
@@ -378,7 +378,7 @@ ERRBegin
 	while( PV != NONE ) {
 
 		if ( P == NONE ) {
-			ferr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
+			stf::cerr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
 			ERRt();
 		}
 
@@ -388,7 +388,7 @@ ERRBegin
 		Nature = TestAndFormTagValue( TagValue, Text, File );
 
 		if ( Nature == tagexp::nUnknow ) {
-			ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
+			stf::cerr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
 			ERRt();
 		}
 		else
@@ -399,7 +399,7 @@ ERRBegin
 	}
 
 	if ( P != NONE ) {
-		ferr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
+		stf::cerr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 ERRErr
@@ -436,7 +436,7 @@ ERRBegin
 	P = Table.First();
 
 	if ( P == NONE ) {
-		ferr << "Tag descriptor file contents no data." << txf::nl;
+		stf::cerr << "Tag descriptor file contents no data." << txf::nl;
 		ERRt();
 	}
 
@@ -480,7 +480,7 @@ inline bso::bool__ IsMulti(
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	if ( Line.Amount() < 2 ) {
-		ferr << "The content of the tag description file is incorrect." << txf::nl;
+		stf::cerr << "The content of the tag description file is incorrect." << txf::nl;
 		ERRt();
 		return false;
 	}
@@ -543,18 +543,18 @@ void GetTable(
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << DESCRIPTION << txf::nl;
-	fout << NAME << " --version|--license|--help" << txf::nl;
+	stf::cout << DESCRIPTION << txf::nl;
+	stf::cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << NAME << " <command> [options] desc-file [source-file [dest-file]]" << txf::nl;
-	fout << txf::tab << "desc-file:" << txf::tab << "tag description file." << txf::nl;
-	fout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
-	fout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
-	fout << "command: " << txf::nl;
+	stf::cout << NAME << " <command> [options] desc-file [source-file [dest-file]]" << txf::nl;
+	stf::cout << txf::tab << "desc-file:" << txf::tab << "tag description file." << txf::nl;
+	stf::cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
+	stf::cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	stf::cout << "command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", clnarg::vSplit, true );
-	fout << "options:" << txf::nl;
+	stf::cout << "options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", clnarg::vSplit );
@@ -564,11 +564,11 @@ void PrintUsage( const clnarg::description_ &Description )
 
 void PrintHeader( void )
 {
-	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	fout << COPYRIGHT << txf::nl;
-	fout << INFO << txf::nl;
-	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	stf::cout << COPYRIGHT << txf::nl;
+	stf::cout << INFO << txf::nl;
+	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -589,8 +589,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		ferr << '\'' << Unknow << "': unknow option." << txf::nl;
-		ferr << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		stf::cerr << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 	}
 
@@ -603,11 +603,11 @@ ERRBegin
 		case oTagDelimiter:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
+				stf::cerr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
+				stf::cerr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -616,11 +616,11 @@ ERRBegin
 		case oCommentMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
+				stf::cerr << "Option '-c,--comment-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
+				stf::cerr << "Argument of option '-c,--comment-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -629,11 +629,11 @@ ERRBegin
 		case oTextMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-t,--text-marker' must have one argument." << txf::nl;
+				stf::cerr << "Option '-t,--text-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
+				stf::cerr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -642,11 +642,11 @@ ERRBegin
 		case oFileMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-f,--file-marker' must have one argument." << txf::nl;
+				stf::cerr << "Option '-f,--file-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
+				stf::cerr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -694,13 +694,13 @@ ERRBegin
 		P = Free.Previous( P );
 		break;
 	case 0:
-		ferr << "Too few arguments." << txf::nl;
-		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << "Too few arguments." << txf::nl;
+		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 		break;
 	default:
-		ferr << "Too many arguments." << txf::nl;
-		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << "Too many arguments." << txf::nl;
+		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 		break;
 	}
@@ -798,7 +798,7 @@ ERRBegin
 
 	if ( DFile.Init( Desc, err::hSkip ) != fil::sSuccess)
 	{
-		ferr << "Error while opening '" << Desc << "' for reading." << txf::nl;
+		stf::cerr << "Error while opening '" << Desc << "' for reading." << txf::nl;
 		ERRt();
 	}
 
@@ -814,7 +814,7 @@ ERRBegin
 
 		if ( IFile.Init( Source, err::hSkip ) != fil::sSuccess )
 		{
-			ferr << "Error while opening '" << Source << "' for reading." << txf::nl;
+			stf::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
 			ERRt();
 		}
 
@@ -824,9 +824,9 @@ ERRBegin
 	}
 	else
 	{
-		stf::finF.EOFD( XTF_EOXT );
+		stf::cinF.EOFD( XTF_EOXT );
 
-		IFlow = &stf::finF;
+		IFlow = &stf::cinF;
 	}
 
 
@@ -837,7 +837,7 @@ ERRBegin
 
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
 		{
-			ferr << "Error while opening '" << Dest << "' for writing." << txf::nl;
+			stf::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
 			ERRt();
 		}
 
@@ -846,7 +846,7 @@ ERRBegin
 		OFlow = &OText;
 	}
 	else
-		OFlow = &fout;
+		OFlow = &stf::cout;
 
 	Go( Table, Delimiter, Action, Text, File, *IFlow, *OFlow );
 
@@ -888,7 +888,7 @@ ERRFErr
 
 ERRFEnd
 ERRFEpilog
-	fout << txf::sync;
+	stf::cout << txf::sync;
 
 	return Retour;
 }

@@ -1,7 +1,7 @@
 /*
 	'tagdtc' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tagdtc' header file ('tagdtc.h').
-	Copyright (C) 2000,2001,2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -102,7 +104,7 @@ void tagdtc::tag_detector_::Add(
 	for( size_t P = 0; P < Limite; P++ )
 		Path = GetNext_( Path, Tag[P] );
 
-	Ids.Write( Id, Path );
+	Ids.Store( Id, Path );
 }
 
 void tagdtc::tag_detector_::Add(
@@ -115,7 +117,7 @@ void tagdtc::tag_detector_::Add(
 	for( epeios::row_t__ P = 0; P < Limite; P++ )
 		Path = GetNext_( Path, Tag( P ) );
 
-	Ids.Write( Id, Path );
+	Ids.Store( Id, Path );
 }
 
 epeios::row_t__ tagdtc::tag_detector_::Parse(
@@ -140,10 +142,10 @@ epeios::row_t__ tagdtc::tag_detector_::Parse(
 		while( !IFlow.EOX()
 			   && ( ( C = IFlow.Get() ) != Delimiter )
 			   && ( ( C = Table[C] ) != NO )
-			   && ( ( P = Cards.Read( P )[C] ) != TAGDTC_UNKNOW ) );
+			   && ( ( P = Cards.Get( P )[C] ) != TAGDTC_UNKNOW ) );
 
 		if ( C == Delimiter )
-			Return = Ids.Read( P );
+			Return = Ids.Get( P );
 
 		if ( ( Return == TAGDTC_UNKNOW )
 			  && ( ErrHandle == err::hUsual ) )

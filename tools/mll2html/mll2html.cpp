@@ -33,7 +33,7 @@
 
 #define NAME			"mll2html"
 #define VERSION			"1.1.10"
-#define COPYRIGHT_YEARS	"1999-2002"
+#define COPYRIGHT_YEARS	"1999-2003"
 #define DESCRIPTION		"Reformats, in HTML, a text file containing mailing lists descriptions."
 #define INFO			EPSMSC_GNU_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -136,11 +136,11 @@ ERRBegin
 		T.Init();
 		while( ( *P < L ) && !isspace( C = ( S( P ) ) ) ) {
 			if ( C == '<' )
-				T.Add( "&lt;" );
+				T.Append( "&lt;" );
 			else if ( C == '>' )
-				T.Add( "&gt;" );
+				T.Append( "&gt;" );
 			else
-				T.Add( C );
+				T.Append( C );
 			(*P)++;
 		}
 
@@ -428,7 +428,7 @@ static const estring_ &AsListItem( const estring_ &Line )
 	
 	String.Delete( 0, 2 );
 #else
-	String.WriteAndAdjust( Line, Line.Amount() - 2, 2 );
+	String.StoreAndAdjust( Line, Line.Amount() - 2, 2 );
 #endif
 
 	return String;
@@ -592,7 +592,7 @@ ERRProlog
 ERRBegin
 	if ( !File.Init( Source, err::hSkip ) )
 	{
-		ferr << "Error while opening '" << Source << "' for reading." << txf::nl;
+		stf::cerr << "Error while opening '" << Source << "' for reading." << txf::nl;
 		ERRu();
 	}
 
@@ -652,7 +652,7 @@ ERRProlog
 ERRBegin
 	if ( !File.Init( Template, err::hSkip ) )
 	{
-		ferr << "Error while opening '" << Template << "' for reading." << txf::nl;
+		stf::cerr << "Error while opening '" << Template << "' for reading." << txf::nl;
 		ERRu();
 	}
 
@@ -714,18 +714,18 @@ ERREpilog
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << DESCRIPTION << txf::nl;
-	fout << NAME << " --version|--license|--help" << txf::nl;
+	stf::cout << DESCRIPTION << txf::nl;
+	stf::cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	fout << NAME << " <command> [options] source-file template-file [dest-file]" << txf::nl;
-	fout << txf::tab << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
-	fout << txf::tab << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
-	fout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
-	fout << "Command: " << txf::nl;
+	stf::cout << NAME << " <command> [options] source-file template-file [dest-file]" << txf::nl;
+	stf::cout << txf::tab << "source-file:" << txf::tab << "mailinglists source file." << txf::nl;
+	stf::cout << txf::tab << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
+	stf::cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	stf::cout << "Command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists description to HTML file.", clnarg::vSplit, true );
-	fout << "Options:" << txf::nl;
+	stf::cout << "Options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.",  clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.",  clnarg::vSplit );
 //	clnarg::PrintOptionUsage( Description, o, "", false );
@@ -733,11 +733,11 @@ void PrintUsage( const clnarg::description_ &Description )
 
 void PrintHeader( void )
 {
-	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
-	fout << COPYRIGHT << txf::nl;
-	fout << INFO << txf::nl;
-	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	stf::cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	stf::cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	stf::cout << COPYRIGHT << txf::nl;
+	stf::cout << INFO << txf::nl;
+	stf::cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -754,8 +754,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		ferr << '\'' << Unknow << ": unknow option." << txf::nl;
-		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << '\'' << Unknow << ": unknow option." << txf::nl;
+		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRu();
 	}
 
@@ -766,14 +766,14 @@ ERRBegin
 		case oListsFile:
 			Analyzer.GetArgument( Option, ListsFileName );
 			if( ListsFileName.Amount() == 0 ) {
-				ferr << "Option '-l' must have one argument." << txf::nl;
+				stf::cerr << "Option '-l' must have one argument." << txf::nl;
 				ERRu();
 			}
 			break;
 		case oGeneralFile:
 			Analyzer.GetArgument( Option, GeneralsFileName );
 			if( GeneralsFileName.Amount() == 0 ) {
-				ferr << "Option '-g' must have one argument." << txf::nl;
+				stf::cerr << "Option '-g' must have one argument." << txf::nl;
 				ERRu();
 			}
 			break;
@@ -817,12 +817,12 @@ ERRBegin
 		break;
 	case 1:
 	case 0:
-		ferr << "Too few arguments." << txf::nl;
-		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << "Too few arguments." << txf::nl;
+		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 	default:
-		ferr << "Too many arguments." << txf::nl;
-		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
+		stf::cerr << "Too many arguments." << txf::nl;
+		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 		break;
 	}
@@ -917,7 +917,7 @@ ERRBegin
 
 		if ( !File.Init( Dest, err::hSkip ) )
 		{
-			ferr << "Error while opening '" << Dest << "' for writing." << txf::nl;
+			stf::cerr << "Error while opening '" << Dest << "' for writing." << txf::nl;
 			ERRu();
 		}
 
@@ -925,7 +925,7 @@ ERRBegin
 
 		Go( Source, Template, GeneralsFileName, ListsFileName, Flow );
 	}else
-		Go( Source, Template, GeneralsFileName, ListsFileName, fout );
+		Go( Source, Template, GeneralsFileName, ListsFileName, stf::cout );
 ERRErr
 	Flow.reset();
 	File.reset();

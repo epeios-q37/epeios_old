@@ -4,11 +4,15 @@ cd workdir
 export DIR=etmc-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/etmc/README.txt
 
-$GET etmc $DIR stable/
+$GET etmc $DIR stable/*.h
+$GET etmc $DIR stable/*.cpp
+
 $GET etmc $DIR devel/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG

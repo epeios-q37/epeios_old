@@ -1,6 +1,6 @@
 /*
 	Header for the 'txmpgh' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2001,2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001,2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -134,7 +134,7 @@ namespace txmpgh {
 		void Merge( line_ &Line ) const;
 	};
 
-	AUTO( paragraph )
+	E_AUTO( paragraph )
 }
 
 txf::text_oflow___ &operator <<(

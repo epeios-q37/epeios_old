@@ -603,7 +603,7 @@ void tsrcpr::parametre_::Analyze( xtf::extended_text_iflow___ &Flot )
 		if ( Flot.Get() != '.' )
 			ERRu();
 
-		Name.Write( "..." );
+		Name.StoreAndAdjust( "..." );
 	}
 }
 

@@ -1,28 +1,29 @@
 /*
-  'gnumll' library by Claude L. Simon (csimon@webmails.com)
-  Requires the 'gnumll' header file ('gnumll.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+	'gnumll' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'gnumll' header file ('gnumll.h').
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -107,7 +108,7 @@ static const str::string_ &FilterTitlePrefix_( const str::string_ &Title )
 	if ( ( *P < Title.Amount() ) && ( Title( P ) == ' ' ) )
 		(*P)++;
 
-	String.WriteAndAdjust( Title, Title.Amount() - *P, *P );
+	String.StoreAndAdjust( Title, Title.Amount() - *P, *P );
 
 	return String;
 }
@@ -145,7 +146,7 @@ static void GetSection_(
 		Item.Init( Paragraph );
 
 		if ( ( Paragraph.Amount() ) && ( Item( Paragraph.First() )( 0 ) != '*' ) )
-			Section.Add( Paragraph );
+			Section.Append( Paragraph );
 		else
 			Cont = false;
 	} while ( Cont );
@@ -165,11 +166,11 @@ static void GetHead_(
 		Paragraph.Parse( Flow, txmpgh::sSplit );
 
 		if ( ( Paragraph.Amount() ) && ( Paragraph( Paragraph.First() )( 0 ) != '*' ) )
-			Head.Add( Paragraph );
+			Head.Append( Paragraph );
 		else
 			Cont = false;
 
-		Paragraph.Sync();
+		Paragraph.Flush();
 
 	} while ( Cont );
 
@@ -190,7 +191,7 @@ ERRBegin
 
 		GetSection_( Paragraph, General.Section, Flow );
 
-		Generals.Add( General );
+		Generals.Append( General );
 	} while ( Paragraph.Amount() == 1 );
 ERRErr
 ERREnd
@@ -214,7 +215,7 @@ ERRBegin
 		GetSection_( Paragraph, List.Section, Flow );
 
 		if ( List.Section.Amount() )
-			Lists.Add( List );
+			Lists.Append( List );
 	} while ( !Flow.EOX() );
 ERRErr
 ERREnd
@@ -233,7 +234,7 @@ static inline void WriteEnd_(
 	epeios::row__ P,
 	bso::bsize__ S )
 {
-	Dest.WriteAndAdjust( Source, Source.Amount() - ( *P + S ), *P + S );
+	Dest.StoreAndAdjust( Source, Source.Amount() - ( *P + S ), *P + S );
 }
 
 static bso::bool__ Test_( const str::string_ &S )
@@ -278,7 +279,7 @@ ERRBegin
 
 	while( ( *P < L ) && ( !isspace( C = T( P ) ) ) )
 	{
-		NG.Add( C );
+		NG.Append( C );
 		(*P)++;
 	}
 
@@ -293,7 +294,7 @@ ERRBegin
 		if ( P != L )
 			while( *P < L )
 				{
-					NGC.Add( T( P ) );
+					NGC.Append( T( P ) );
 					(*P)++;
 				}
 	}
@@ -312,7 +313,7 @@ void gnumll::section_header_::Parse( const str::string_ &L )
 	case tEmailAndName:
 		WriteEnd_( L, Name, P, S );
 	case tEmailOnly:
-		Email.WriteAndAdjust( L, *P, 0 );
+		Email.StoreAndAdjust( L, *P, 0 );
 		break;
 	case tNewsgroup:
 		HandleNewsgroup_( L, P, S, Newsgroup, NewsgroupComment );
@@ -327,11 +328,11 @@ void gnumll::section_header_::Parse( const str::string_ &L )
 		WriteEnd_( L, FAQ_URL, P, S );
 		break;
 	case tOtherEmail:
-		TextOtherEmail.WriteAndAdjust( L, *P + S );
+		TextOtherEmail.StoreAndAdjust( L, *P + S );
 		WriteEnd_( L, OtherEmail, P, S );
 		break;
 	case tUnknow:
-		Misc.Add( L );
+		Misc.Append( L );
 		break;
 	default:
 		ERRc();
@@ -355,7 +356,7 @@ ERRBegin
 	if ( Lists.Amount() )
 	{
 		Correct_( Lists( Lists.Last() ).Section );
-		Lists.Sync();
+		Lists.Flush();
 	}
 ERRErr
 ERREnd

@@ -4,11 +4,15 @@ cd workdir
 export DIR=exml-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/exml/README.txt
 
-$GET exml $DIR stable/
+$GET exml $DIR stable/*.h
+$GET exml $DIR stable/*.cpp
+
 $GET exml $DIR devel/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG

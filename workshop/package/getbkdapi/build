@@ -4,14 +4,20 @@ cd workdir
 export DIR=getbkdapi-sources
 GET=../../get_cvs
 
-$GET epeios $DIR stable/
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/getbkdapi/README.txt
 
-$GET ebkd $DIR stable/
-$GET ebkd $DIR apps/getbkdapi
+$GET ebkd $DIR stable/*.h
+$GET ebkd $DIR stable/*.cpp
 
-$GET exml $DIR stable/
+$GET ebkd $DIR apps/getbkdapi/*.h
+$GET ebkd $DIR apps/getbkdapi/*.cpp
+
+$GET exml $DIR stable/*.h
+$GET exml $DIR stable/*.cpp
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE

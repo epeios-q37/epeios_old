@@ -195,7 +195,7 @@ namespace bch {
 			const type *Buffer,
 			row Offset = 0 )
 		{
-			Allocate( Amount + *Offset );
+			Allocate( sh::SizeOf( Buffer ) + *Offset );
 
 			mmr::Store( Buffer, sh::SizeOf( Buffer ), Offset );
 		}

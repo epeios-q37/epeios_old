@@ -160,16 +160,16 @@ ERRBegin
 
 	for ( epeios::row_t__ Compteur = 0; Compteur < C.Amount(); Compteur++ )
 	{
-		if ( C.Read( Compteur ) == ' ' )
+		if ( C.Get( Compteur ) == ' ' )
 		{
 			Espace = true;
-			S.Add( ' ' );
+			S.Append( ' ' );
 		}
-		else if ( C.Read( Compteur ) == '\r' ) {}
-		else if ( C.Read( Compteur ) == '\n' ) {}
+		else if ( C.Get( Compteur ) == '\r' ) {}
+		else if ( C.Get( Compteur ) == '\n' ) {}
 		else
 		{
-			if ( C.Read( Compteur ) == '\'' )
+			if ( C.Get( Compteur ) == '\'' )
 			{
 				if ( Special )
 				{
@@ -184,16 +184,16 @@ ERRBegin
 					Special = true;
 				}
 				else
-					S.Add( '\'' );
+					S.Append( '\'' );
 			}
 			else
-				S.Add( C.Read( Compteur ) );
+				S.Append( C.Get( Compteur ) );
 
 			Espace = false;
 		}
 	}
 	
-	S.Add( '\n' );
+	S.Append( '\n' );
 	XMLDF.PutValue( S );
 	
 	XMLDF.PopTag();
@@ -892,12 +892,12 @@ ERRProlog
 ERRBegin
 	NameFichier.Init();
 
-	NameFichier.Write( Repertoire );
+	NameFichier.StoreAndAdjust( Repertoire );
 
 	if ( !strchr( SS ":", NameFichier( NameFichier.Amount() - 1 ) ) )
-		NameFichier.Add( SC );
+		NameFichier.Append( SC );
 
-	NameFichier.Add( Name );
+	NameFichier.Append( Name );
 
 /*	NameFichier.Add( ".h" );
 
@@ -906,7 +906,7 @@ ERRBegin
 	RelaisNameFichier = NameFichier.Convert();
 
 	if ( Stream.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )	{
-	stf::fout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
+	stf::cout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
 		ERRt();
 	}
 ERRErr
@@ -995,7 +995,7 @@ ERRBegin
 
 	Library = S;
 ERRErr
-	stf::fout << nl << ">>>>> ERREUR <<<<< " << Entree.Line() << tab << Entree.Column() << nl;
+	stf::cout << nl << ">>>>> ERREUR <<<<< " << Entree.Line() << tab << Entree.Column() << nl;
 ERREnd
 ERREpilog
 }
@@ -1021,7 +1021,7 @@ ERRProlog
 	xtf::extended_text_iflow___ Text;
 ERRBegin
 	if ( !File.Init( NameList, err::hSkip ) ) {
-		stf::ferr << "Unable to open file '" << NameList << "'." << txf::nl;
+		stf::cerr << "Unable to open file '" << NameList << "'." << txf::nl;
 		ERRt();
 	}
 
@@ -1053,7 +1053,7 @@ ERRBegin
 
 	while( Row != NONE ) {
 		Table.GetUniqueCell( Row, Cell );
-		List.Add( Cell );
+		List.Append( Cell );
 
 		Row = Table.Next( Row );
 	}
@@ -1131,7 +1131,7 @@ void Analyser(
 	const char *Repertoire )
 {
 	Librairie.Name.Allocate( Name.Amount() -  2 );
-	Librairie.Name.Write( Name, Name.Amount() -  2 );
+	Librairie.Name.Store( Name, Name.Amount() -  2 );
 //	AnalyserDocumentation( Librairie.Documentation, Name, Repertoire );
 	AnalyserLibrary( Librairie.Library, Name, Repertoire );
 }
@@ -1145,7 +1145,7 @@ inline void GenererDocumentations(
 	unsigned long Total )
 {
 	XMLDF.PushTag( "Library" );
-	stf::fout << "Documentation generation : in progress ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
+	stf::cout << "Documentation generation : in progress ... ('" << Librairie.Name << "' " << Courant << '/' << Total << ")        " << sync << rfl;
 	GenererDocumentationTechnique( Librairie, XMLDF );
 	XMLDF.PopTag();
 }
@@ -1175,9 +1175,9 @@ ERRBegin
 
 	while( PListe != NONE )
 	{
-		stf::fout << "Library parsing : in progress ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
+		stf::cout << "Library parsing : in progress ... ('" << Liste(PListe) << "' " << ( Compteur++ ) << '/' << Liste.Amount() << ")            " << rfl;
 
-		Courant = Librairies.Create();
+		Courant = Librairies.New();
 		Librairies( Courant ).Init();
 		Analyser( Librairies( Courant ), Liste( PListe ), Repertoire );
 		Librairies.Flush();
@@ -1187,7 +1187,7 @@ ERRBegin
 
 	Liste.Flush();
 
-	stf::fout << "Library parsing : terminated.                             " << nl;
+	stf::cout << "Library parsing : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1220,7 +1220,7 @@ ERRBegin
 	
 	XMLDF.PopTag();
 
-	stf::fout << "Documentation generation : terminated.                             " << nl;
+	stf::cout << "Documentation generation : terminated.                             " << nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -1261,11 +1261,11 @@ ERRFBegin
 	
 //	GenererEnTeteFichierXML( TFlow );
 
-	stf::fout << "File writing : in progress ... " << rfl << sync;
+	stf::cout << "File writing : in progress ... " << rfl << sync;
 
 	xmldcm::WriteXML( XMLD, TFlow );
 
-	stf::fout << "File writing : terminated.     " << sync << nl;
+	stf::cout << "File writing : terminated.     " << sync << nl;
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd

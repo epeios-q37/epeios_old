@@ -1,6 +1,6 @@
 /*
 	Header for the 'tagdtc' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000,2001,2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -130,12 +130,12 @@ namespace tagdtc {
 			card__ Card;
 			path__ Path = Cards.New();
 
-			Cards.Write( Card, Path );
+			Cards.Store( Card, Path );
 
 			if ( Ids.New() != Path )
 				ERRc();
 
-			Ids.Write( TAGDTC_UNKNOW, Path );
+			Ids.Store( TAGDTC_UNKNOW, Path );
 
 			return Path;
 		}
@@ -155,7 +155,7 @@ namespace tagdtc {
 			if ( Card[C] == TAGDTC_UNKNOW )
 			{
 				Card[C] = GetBlankCardAndValue_();
-				Cards.Write( Card, Path );
+				Cards.Store( Card, Path );
 			}
 
 			return Card[C];
@@ -216,7 +216,7 @@ namespace tagdtc {
 			err::handle ErrHandle = err::hUsual ) const;
 	};
 
-	AUTO( tag_detector )
+	E_AUTO( tag_detector )
 };
 
 /*$END$*/

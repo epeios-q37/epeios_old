@@ -162,8 +162,10 @@ namespace stk {
 	#define E_STACKt_( t, r )	stack_< t, r >
 	#define E_STACKt( t, r )	stack< t, r >
 
-	#define E_STACK( t )	E_STACKt( t, epeios::row__ )
-	#define E_STACK_( t )	E_STACKt_( t, epeios::row__ )
+	E_ROW( row__ );
+
+	#define E_STACK( t )	E_STACKt( t, stk::row__ )
+	#define E_STACK_( t )	E_STACKt_( t, stk::row__ )
 
 }
 

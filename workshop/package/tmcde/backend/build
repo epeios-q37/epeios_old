@@ -4,15 +4,25 @@ cd workdir
 export DIR=tmcde-backend-sources
 GET=../../../get_cvs
 
-$GET epeios $DIR stable/
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/tmcde/backend/README.txt
 
-$GET ebkd $DIR stable/
+$GET ebkd $DIR stable/*.h
+$GET ebkd $DIR stable/*.cpp
 
-$GET etmc $DIR stable/
-$GET etmc $DIR apps/backend/
-$GET etmc $DIR apps/backend/program/
+
+$GET etmc $DIR stable/*.h
+$GET etmc $DIR stable/*.cpp
+
+$GET etmc $DIR apps/backend/*.h
+$GET etmc $DIR apps/backend/*.cpp
+
+$GET etmc $DIR apps/backend/program/*.h
+$GET etmc $DIR apps/backend/program/*.cpp
+
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE

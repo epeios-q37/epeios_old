@@ -17,6 +17,7 @@ BCH:
 - Rewriting 'WriteAndAdjust()' methods.
 - Renaming in 'Append' and rewriting 'Add' methods.
 - Renaming 'Row()' into 'Search()'.
+- Fixing bug in 'StoreAndAdjust()' method.
 
 BITBCH:
 - Fixing bug.
@@ -88,6 +89,12 @@ FLX:
 - Adding some casting to avoid warning under VC++.
 - Adapting to changes in 'BCH' library.
 
+GNUMLL:
+- Adapting to changes in 'TOL' library.
+- Adapting to changes in 'BCH' library.
+- Adapting to changes in 'CTN' library.
+
+
 IDS:
 - Adapting to changes in 'STK' library.
 
@@ -142,6 +149,7 @@ STK:
 - Using 'E_NAVt' macro.
 - Fixing the bug about the 'E_MEMORY_' used instead of 'E_MEMORYt_'.
 - Adapting to changes in 'BCH' library.
+- Introducing the 'Row' type to avoid conflict with default 'epeios::row__' type.
 
 STR:
 - Adding 'ToU[S|B]()'.
@@ -154,6 +162,9 @@ STR:
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.
+
+TAGEXP:
+- Adapting to changes in 'TOL' and 'BCH' libraries.
 
 TOL:
 - Correcting the problem in 'NAVt()' for which the gcc 3.x preprocessor issued a warning.
@@ -171,6 +182,15 @@ TTR:
 
 TXF:
 - Adapting to changes in 'FLW' library.
+
+TXMPGH:
+- Adapting to changes in 'TOL' library.
+- Adapting to changes in 'BCH' library.
+
+TXMTBL:
+- Adapting to changes in 'XTF' library.
+- Adapting to changes in 'TOL' library.
+- Adapting to changes in 'CTN' library.
 
 TYM:
 - Fixing bug.

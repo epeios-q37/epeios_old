@@ -118,7 +118,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STacK
 &str		&epeios		&2000-\
 	&STRing
-&tagdtc		&epeios		&2000-2001,	&TAG DeTeCtor
+&tagdtc		&epeios		&2000-2001, \
+	&TAG DeTeCtor
+&tagexp		&epeios		&2000-2001, \
+	&TAG EXPander
 &tol		&epeios		&2000-\
 	&TOoL
 &tsrcpr		&epeios		&2000-\
@@ -126,8 +129,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &ttr		&epeios		&2000-		&TuToR
 &txf		&epeios		&2000-\
 	&TeXt Flow
-&txmpgh		&epeios		&2000-2001, 	&TeXt Manager ParaGrapH
-&txmtbl		&epeios		&2000		&TeXt Manager TabBLe
+&txmpgh		&epeios		&2000-2001,\
+	&TeXt Manager ParaGrapH
+&txmtbl		&epeios		&2000-\
+	&TeXt Manager TabBLe
 &tym		&epeios		&2000-\
 	&TYped Memory
 &uym		&epeios		&2000-\
@@ -263,7 +268,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Private WSA libraries.
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com
 
-
+#Private STX libraries.
+&stxdte		&estx		&2000-\
+	&STock eXchange DATe
 
 #Epeios XML libraries.
 &xmlbsc		&exml		&2001-\
@@ -272,7 +279,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&XML CORe
 &xmldbs		&exml		&20001\
 	&XML DataBaSe
-&xmldcm		&exml		&2000-		&XML DoCuMent
+&xmldcm		&exml		&2001-\
+	&XML DoCuMent
 &xmlprs		&exml		&2000-		&XML PaRSer
 &xmltag		&exml		&2000-		&XML TAG
 &xmltol		&exml		&2000-		&XML TOoL

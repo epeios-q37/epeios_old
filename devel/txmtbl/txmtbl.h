@@ -1,7 +1,7 @@
 /*
 	Header for the 'txmtbl' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 20002003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ namespace txmtbl {
 	#define TXMTBL_DEFAULT_ESCAPE_CHARACTER	'\\'
 
 	//t A location (line or column).
-	typedef xtf::location	location__;
+	typedef xtf::location__	location__;
 
 	//t A separator char.
 	typedef bso::char__	separator__;
@@ -158,7 +158,7 @@ namespace txmtbl {
 		}
 	};
 
-	AUTO( cell )
+	E_AUTO( cell )
 
 	/*f Put in 'Cell' the next cell in flow 'Flow'. 'Separator' delimits the celles.
 	Return the delimiter of the cell. */
@@ -227,7 +227,7 @@ namespace txmtbl {
 			location__ Location,
 			epeios::row__ Position )
 		{
-			cells_::Write( Cell, Position );
+			cells_::Store( Cell, Position );
 			cells_::Flush();
 
 			S_.Location = Location;
@@ -294,12 +294,12 @@ namespace txmtbl {
 			if ( Amount() != 1 )
 				ERRu();
 #endif
-			Read( First(), Cell );
+			Recall( First(), Cell );
 		}
-		NAV( cells_:: )
+		E_NAV( cells_:: )
 	};
 
-	AUTO( line )
+	E_AUTO( line )
 
 	/*f Put in 'Line' current line in 'Flow' and return true, or false if there is no
 	more line. Cells are separated by 'Separator'.*/
@@ -357,7 +357,7 @@ namespace txmtbl {
 		{
 			epeios::row__ P = lines_::New();
 
-			lines_::Write( Line, P );
+			lines_::Store( Line, P );
 			lines_::Flush();
 
 			return P;
@@ -399,10 +399,10 @@ namespace txmtbl {
 			Line( Row ).GetUniqueCell( Cell );
 		}
 
-		NAV( lines_:: )
+		E_NAV( lines_:: )
 	};
 
-	AUTO( table )
+	E_AUTO( table )
 
 	//f Put in 'Table' the line contained in 'Flow'. Cells are separated by 'Separator'.
 	void GetTable(
