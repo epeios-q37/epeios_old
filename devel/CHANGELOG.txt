@@ -41,6 +41,9 @@ MSG:
 SCK:
 - (03/02/05) Adapting to changes in 'FLW'.
 
+SSNMNG:
+- (04/03/05) Removing default values in 'Init()' function.
+
 TAGECP:
 - (03/02/05) Adapting to changes in 'FIL' library.
 

@@ -196,8 +196,8 @@ namespace ssnmng {
 		}
 		//f Initialization with 'Relative' and 'Absolute' amonut of second.
 		void Init(
-			bso::ushort__ Relative = BSO_USHORT_MAX,
-			bso::ushort__ Absolute = BSO_USHORT_MAX )
+			bso::ushort__ Relative,
+			bso::ushort__ Absolute  )
 		{
 			_list_::Init();
 			Table.Init();
