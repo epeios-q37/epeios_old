@@ -797,7 +797,7 @@ ERRFBegin
 		stf::cout << txf::sync;
 		stf::cerr << "\nBad arguments.\n";
 		stf::cout << "Usage: " << CTNTutor.Name << " [/i]\n\n";
-		ERRt();
+		ERRi();
 	}
 
 ERRFErr

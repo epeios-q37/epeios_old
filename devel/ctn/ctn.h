@@ -499,6 +499,10 @@ namespace ctn {
 		//f Return the object at current position.
 		t &operator()( void )
 		{
+#ifdef CTN_DBG
+			if ( EstVide() )
+				ERRu();
+#endif
 			return Objet_;
 		}
 	};
@@ -546,6 +550,10 @@ namespace ctn {
 		//f Return the object at current position.
 		const t &operator()( void )
 		{
+#ifdef CTN_DBG
+			if ( EstVide() )
+				ERRu();
+#endif
 			return Objet_;
 		}
 		//f Initialization with container 'Container'.
@@ -880,6 +888,10 @@ namespace ctn {
 		//f Return the object at current position.
 		t &operator()( void )
 		{
+#ifdef CTN_DBG
+			if ( EstVide() )
+				ERRu();
+#endif
 			return Objet_;
 		}
 	};
@@ -940,6 +952,10 @@ namespace ctn {
 		//f Return the object at current position.
 		const t &operator()( void )
 		{
+#ifdef CTN_DBG
+			if ( EstVide() )
+				ERRu();
+#endif
 			return Objet_;
 		}
 	};

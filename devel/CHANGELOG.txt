@@ -6,6 +6,7 @@ BSO:
 
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
+- (23/04/04) Adding a test in debug mode to avoid retrieving of an undefined item.
 
 DTE:
 - (15/04/04) Introducing the new structure.
