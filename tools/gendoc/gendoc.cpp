@@ -30,10 +30,10 @@
 #include "fnm.h"
 #include "flx.h"
 #include "txmtbl.h"
-#include "xmldcm.h"
+#include "hosdcm.h"
 
-typedef xmldcm::xml_document_filler__	xmldf__;
-using xmldcm::tag_row__;
+typedef hosdcm::document_filler__	xmldf__;
+using hosdcm::tag_row__;
 
 
 #define NOM_FICHIER_INDEX		"index.html"
@@ -325,7 +325,7 @@ template <class t> void GenererCorpsItemsClasse(
 
 	Push( XMLDF, TagTagRow, Tag );
 	
-	XMLDF.PutAttribute( "Type", xmldcm::value( Type ) );
+	XMLDF.PutAttribute( "Type", hosdcm::value( Type ) );
 
 	while ( Courant != NONE )
 	{
@@ -1347,8 +1347,8 @@ ERRFProlog
 	const char *&Liste = argv[1];
 	const char *&RepertoireLibrary = argv[2];
 	const char *&FichierDestination = argv[3];
-	xmldcm::xml_document XMLD;
-	xmldcm::xml_document_filler__ XMLDF;
+	hosdcm::document XMLD;
+	hosdcm::document_filler__ XMLDF;
 	fil::file_oflow___ OFlow;
 	txf::text_oflow___ TFlow;
 ERRFBegin
@@ -1369,7 +1369,7 @@ ERRFBegin
 
 	fout << "File writing : in progress ... " << rfl << sync;
 
-	xmldcm::WriteXML( XMLD, TFlow );
+	hosdcm::WriteXML( XMLD, TFlow );
 
 	fout << "File writing : terminated.     " << sync << nl;
 ERRFErr

@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLDBSTutor;
 //D eXtended Markup Language DataBaSe
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSDBS' instead."
 
 #include "err.h"
 #include "flw.h"

@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLBSCTutor;
 //D eXtended Markup Langage BaSiCs
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSBSC' instead."
 
 #include "err.h"
 #include "flw.h"

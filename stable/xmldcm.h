@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLDCMTutor;
 //D eXtended Markup Language DoCuMent
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSDCM' instead."
 
 #include "err.h"
 #include "flw.h"

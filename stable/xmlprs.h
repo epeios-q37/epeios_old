@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLPRSTutor;
 //D eXtended Markup Langage PaRSer
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSPRS' instead."
 
 #include "err.h"
 #include "flw.h"

@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLTAGTutor;
 //D eXtended Markup Langage TAG.
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSTAG' instead."
 
 #include "err.h"
 #include "flw.h"

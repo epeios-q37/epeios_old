@@ -9,6 +9,9 @@ CLNARG:
 ITG:
 - moving it to the 'emth' subproject.
 
+XMLxxx:
+- Renamed to 'HOSxxx' and moved to their own project ('ehos').
+
 XMLDBS:
 - Adding missing return value.
 

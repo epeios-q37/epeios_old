@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLCORTutor;
 //D eXtended Markup Language CORe
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSCOR' instead."
 
 #include "err.h"
 #include "flw.h"

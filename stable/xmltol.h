@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLTOLTutor;
 //D eXtended Markup Language TOoLs
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSTOL' instead."
 
 #include "err.h"
 #include "flw.h"

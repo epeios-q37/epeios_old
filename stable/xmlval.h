@@ -60,6 +60,7 @@ extern class ttr_tutor &XMLVALTutor;
 //D eXtended Markup Langage VALue.
 /* End addendum to automatic documentation generation part. */
 
+#error "Obsolete. Use library 'HOSVAL' instead."
 
 #include "err.h"
 #include "flw.h"
