@@ -385,6 +385,16 @@ namespace xmldbs {
 			else
 				PutAttribute( TagRow = GetOrCreateTag_( name( Name ), tAttribute ), Value );
 		}
+		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
+		'TagRow', and value 'Value'. The tag row of the attribute is put
+		into 'TagRow'.*/
+		void PutAttribute(
+			const char *Name,
+			const char *Value,
+			tag_row__ &TagRow)
+		{
+			PutAttribute( Name, xmldbs::value( Value ), TagRow );
+		}
 	};
 
 

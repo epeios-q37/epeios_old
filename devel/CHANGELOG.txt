@@ -1,5 +1,8 @@
 $Id$
 
+GENERAL:
+- Adding 'DTE'.
+
 ERR:
 - adapting to changes in 'TOL'.
 
@@ -18,9 +21,14 @@ DTRRMF:
 TOL:
 - Using namespace.
 - Deleting 'tol__manipulateur' class.
+- Adding 'TYPEDEF_'.
 
 TXMPGH:
 - Introducing new 'line(s)(_)' type.
+
+XMLDBS:
+- Correcting XML writing bug (attribute as ending tag).
+- Add a 'PushTag' function to accept same input parameter with different type.
 
 UYM:
 - Adapting to changed in 'FAM'.

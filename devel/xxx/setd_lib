@@ -48,8 +48,8 @@ elif grep -w -q $1 $SRC/ecdb.lst; then
 	ID=ecdb
 elif grep -w -q $1 $SRC/etmc.lst; then
 	ID=etmc
-elif grep -w -q $1 $SRC/exml.lst; then
-	ID=exml
+elif grep -w -q $1 $SRC/ebkl.lst; then
+	ID=ebkl
 elif grep -w -q $1 $SRC/estx.lst; then
 	ID=estx
 elif grep -w -q $1 $SRC/ewsa.lst; then

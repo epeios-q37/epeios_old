@@ -12,3 +12,9 @@ CTN:
 
 TXMPGH:
 - Introduce an alias to 'str::string_' when used as a line (txmpgh::line ?).
+
+XMLDBS:
+- Add deleting of items.
+
+XMLDCM:
+- Add deleting of items.

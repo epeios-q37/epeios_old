@@ -98,7 +98,8 @@ namespace tol
 };
 
 
-//m Same as 'typedef type alias', but 2 'alias' whit same 'type' are not interchangeable.
+/*m Same as 'typedef type alias', but 2 'alias' with same 'type' are not interchangeable.
+This is only for static objects. Use 'TYPEDEF_( type, alias )' for dynamic objects. */
 #define TYPEDEF( type, alias )\
 struct alias\
 {\
@@ -126,6 +127,19 @@ public:\
 		return V != T;\
 	}\
 }
+
+/*m Same as 'TYPEDEF( type, alias ), but for dynamic objects
+('_' version of the object ; for the instanciable version, use 'AUTO()'. */
+#define TYPEDEF_( type, alias )\
+class alias\
+: public type\
+{\
+public:\
+	alias( s &S )\
+	: type( S )\
+	{}\
+};
+
 
 #if 0	// to delete ?
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
@@ -305,14 +319,14 @@ namespace tol {
 	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
 	If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
 	If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
-	rbf tol::CreateBackupFile(
+	rbf CreateBackupFile(
 		const char *Name,
 		hbf Handle,
 		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
 		err::handle = err::hUsual  );
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
-	rbf tol::RecoverBackupFile(
+	rbf RecoverBackupFile(
 		const char *Name,
 		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
 		err::handle = err::hUsual  );

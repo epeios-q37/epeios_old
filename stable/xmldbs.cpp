@@ -215,7 +215,8 @@ ERRBegin
 				break;			
 		case dtr::bParent:
 		case dtr::bLast:
-			Flow << "</" << Tag( TaggedValue( Browser.Position() ).TagRow() ).Name << '>';
+			if ( !Tag( TaggedValue( Browser.Position() ).TagRow() ).IsAttribute() )
+				Flow << "</" << Tag( TaggedValue( Browser.Position() ).TagRow() ).Name << '>';
 			break;
 		default:
 			ERRc();

@@ -54,8 +54,8 @@ grep -w -o -i %LNM% %SRC%\ehdb.lst
 IF NOT ERRORLEVEL 1 SET ID=ehdb
 grep -w -o -i %LNM% %SRC%\etmc.lst
 IF NOT ERRORLEVEL 1 SET ID=etmc
-grep -w -o -i %LNM% %SRC%\exml.lst
-IF NOT ERRORLEVEL 1 SET ID=exml
+grep -w -o -i %LNM% %SRC%\ebkl.lst
+IF NOT ERRORLEVEL 1 SET ID=ebkl
 grep -w -o -i %LNM% %SRC%\ewsa.lst
 IF NOT ERRORLEVEL 1 SET ID=ewsa
 grep -w -o -i %LNM% %SRC%\estx.lst
