@@ -328,13 +328,17 @@ namespace flw {
 			const char *Data,
 			size__ Length )
 		{
+			EOFD( Data );
+
 			if ( Available_ > Length )	// This means we have red too much data.
 				Available_ = Length;
 
-			EOFD( Data );
-			EOFD_.Length = Length - Available_;	// In case il we have already red data.
 			EOFD_.HandleLength = true;
 			EOFD_.HandleToFew = true;
+			EOFD_.Length = Length - Available_;	// In case il we have already red data.
+
+			if ( !Length )
+				EOFD_.HandlingEOFD = true;
 		}
 		
 	};
