@@ -10,14 +10,30 @@ BCH:
 CCH:
 - (24/01/05) Adapting to changes in 'TOL' library.
 
+CIO:
+- (03/02/05) Use now 'IOF' library.
+
 FIL:
 - (02/02/05) Use now 'IOF' library.
 
 FLM:
 - (02/02/05) Use now 'IOF' library.
+- (02/02/05) Adapting to changes in 'IOF' library.
+
+FLW:
+- (03/02/05) No more 'Init()', 'reset()', ... method (new rules for '__' objects).
+
+FLX:
+- (03/02/05) Adapting to changes in 'FLW' library.
 
 MSG:
 - (26/01/05) Coding workaround for the silly 'GetMessage' problem for cygwin too.
+
+SCK:
+- (03/02/05) Adapting to changes in 'FLW'.
+
+TAGECP:
+- (03/02/05) Adapting to changes in 'FIL' library.
 
 TOL:
 - (20/01/05) Fixing empty 'pointer__' object copying problem.

@@ -56,60 +56,136 @@ public:
 /*$BEGIN$*/
 
 #include "cpe.h"
+#include "iof.h"
 
 using namespace fil;
 
-status fil::file_iflow___::Init(
-	const char *FileName,
-	err::handle ErrHandle )
+#ifdef IOF__USE_STANDARD_IO
+static inline iof::descriptor__ _Open(
+	const char *Nom,
+	mode__ Mode )
 {
-	status Status = sSuccess;
+	char Flags[4]="";
 
-	reset();
-
-	if ( ( File_.Init( FileName, iof::mReadOnly ) ) == sFailure )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		Status = sFailure;
+	switch ( Mode ) {
+	case mRemove:
+		strcat( Flags, "w+" );
+		break;
+	case mAppend:
+		strcat( Flags, "a+" );
+		break;
+	case mReadWrite:
+		strcat( Flags, "r+" );
+		break;
+	case mReadOnly:
+		strcat( Flags, "r" );
+		break;
+	default:
+		ERRu();
+		break;
 	}
 
-	_iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
+	strcat( Flags, "b" );
 
-	return Status;
+	return fopen( Nom, Flags );
+}
+
+static void _Close( iof::descriptor__ D )
+{
+	if ( fclose( D ) != 0 )
+		ERRd();
+}
+
+#elif defined( IOF__USE_LOWLEVEL_IO )
+#	ifdef CPE__MS
+
+static inline iof::descriptor__ _Open(
+	const char *Nom,
+	mode__ Mode )
+{
+	int Flags = _O_BINARY;
+
+	switch ( Mode ) {
+	case mRemove:
+		Flags |= _O_TRUNC | _O_CREAT |_O_RDWR;
+		break;
+	case mAppend:
+		Flags |= _O_APPEND | _O_RDWR;
+		break;
+	case mReadWrite:
+		Flags |= _O_RDWR;
+		break;
+	case mReadOnly:
+		Flags |= _O_RDONLY;
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	return _open( Nom, Flags );
+}
+
+static void _Close( iof::descriptor__ D )
+{
+	if ( _close( D ) != 0 )
+		ERRd();
+}
+
+#	elif defined( CPE__UNIX )
+static inline iof::descriptor__ _Open(
+	const char *Nom,
+	mode__ Mode )
+{
+	int Flags = O_BINARY;
+
+	switch ( Mode ) {
+	case mRemove:
+		Flags |= O_TRUNC | O_CREAT | O_RDWR;
+		break;
+	case mAppend:
+		Flags |= O_APPEND | O_RDWR;
+		break;
+	case mReadWrite:
+		Flags |= O_RDWR;
+		break;
+	case mReadOnly:
+		Flags |= O_RDONLY;
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	return open( Nom, Flags );
+}
+
+static void _Close( iof::descriptor__ D )
+{
+	if ( close( D ) != 0 )
+		ERRd();
 }
 
 
-status fil::file_oflow___::Init(
-	const char *FileName,
-	mode Mode,
-	err::handle ErrHandle )
+#	elif defined( CPE__MAC )
+#		error "MAC not implemented yet !"
+#	else
+#		error "Unknow complation enviroment !"
+#	endif
+#else
+#	error "Unknow IO enviroment !"
+#endif
+
+iof::descriptor__ fil::_Open(
+	const char *Nom,
+	mode__ Mode )
 {
-	iof::status__ Status = iof::sSuccess;
+	return ::_Open( Nom, Mode );
+}
 
-	reset();
-
-	if ( Mode == fil::mAppend )
-		Status = File_.Init( FileName, iof::mAppend  );
-	else
-		Status = File_.Init( FileName, iof::mRemove );
-
-	if ( Status == iof::sFailure )
-	{
-		if ( ErrHandle == err::hUsual )
-			ERRd();
-		else if ( ErrHandle != err::hSkip )
-			ERRu();
-
-		return sFailure;
-	}
-
-	_oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
-
-	return sSuccess;
+void fil::_Close( iof::descriptor__ D )
+{
+	::_Close( D );
 }
 
 

@@ -75,8 +75,10 @@ extern class ttr_tutor &LLIOTutor;
 namespace llio {
 #ifdef CPE__MS
 	using namespace wllio;
+#	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
 #elif defined( CPE__UNIX )
 	using namespace pllio;
+#	define LLIO_UNDEFINED_DESCRIPTOR	PLLIO_UNDEFINED_DESCRIPTOR
 #elif defined( CPE__MAC )
 	using namespace mllio;
 #endif

@@ -61,53 +61,106 @@ extern class ttr_tutor &CSLIOTutor;
 /*$BEGIN$*/
 
 #include "iodef.h"
+#include "err.h"
+#include "bso.h"
 #include <stdio.h>
-#include "flf.h"
-
-#ifdef CPE__MS
-#	undef EOF
-#endif
 
 namespace cslio {
 	using namespace iodef;
 
 	typedef size_t	amount__;
 
-	class standard_io__
-	{
-	private:
-		FILE *&FD_;
+	typedef FILE *descriptor__;
+
+#define CSLIO_UNDEFINED_DESCRIPTOR	NULL
+
+	class io_core__ {
+	protected:
+		descriptor__ D_;
+		void _Test( void ) const
+		{
+#ifdef CSLIO_DBG
+			if ( D_ == CSLIO_UNDEFINED_DESCRIPTOR )
+				ERRu();
+#endif
+		}
 	public:
-		standard_io__( FILE *&FD )
-		: FD_( FD )
+		io_core__( descriptor__ D )
+		: D_( D )
+		{}
+		void Seek( long Offset )
+		{
+			_Test();
+
+			if ( fseek( D_, Offset, SEEK_SET ) != Offset )
+				ERRx();
+		}
+		void operator()( descriptor__ D )
+		{
+			D_ = D;
+		}
+	};
+
+
+	class standard_input__
+	: public virtual io_core__
+	{
+	public:
+		standard_input__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
+		: io_core__( D )
 		{}
 		size_t Read(
 			amount__ Amount,
 			void *Buffer )
 		{
-			return fread( Buffer, 1, Amount, FD_ );
+			_Test();
+
+			return fread( Buffer, 1, Amount, D_ );
 		}
+		bso::bool__ OnEOF( void )
+		{
+			_Test();
+
+			return feof( D_ ) != 0;
+		}
+	};
+
+	class standard_output__
+	: public virtual io_core__
+	{
+	public:
+		standard_output__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
+		: io_core__( D )
+		{}
 		size_t Write(
 			const void *Buffer,
 			amount__ Amount )
 		{
-			return fwrite( Buffer, 1, Amount, FD_ );
-		}
-		void Seek( long Offset )
-		{
-			if ( fseek( FD_, Offset, SEEK_SET ) != Offset )
-				ERRx();
+			_Test();
+
+			return fwrite( Buffer, 1, Amount, D_ );
 		}
 		void Flush( void )
 		{
-			fflush( FD_ );
-		}
-		bool EOF( void )
-		{
-			return feof( FD_ ) != 0;
+			_Test();
+
+			fflush( D_ );
 		}
 	};
 
+	class standard_io__
+	: public standard_output__,
+	  public standard_input__
+	{
+	public:
+		standard_io__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
+		: standard_output__( D ),
+		  standard_input__( D ),
+		  io_core__( D )
+		{}
+	};
+
+#if 0
 	class file_standard_io___
 	: public standard_io__
 	{
@@ -165,7 +218,7 @@ namespace cslio {
 				return sSuccess;
 		}
 	};
-
+#endif
 
 }
 

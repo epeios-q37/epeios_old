@@ -83,12 +83,12 @@ void tagexp::tag_expander_::Init( void )
 			ERRc();
 }
 
-static fil::status WriteFile_(
+static fil::status__ WriteFile_(
 	const str::string_ &FileName,
 	txf::text_oflow__ &OFlow,
 	err::handle ErrHandle )
 {
-	fil::status Return = fil::sUnknow;
+	fil::status__ Return = fil::s_Unknow;
 ERRProlog
 	char *Name = NULL;
 	fil::file_iflow___ File;

@@ -87,7 +87,7 @@ namespace flw {
 	typedef unsigned char		datum__;
 
 	//c Base input flow.
-	class iflow__
+	class iflow__ // Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
 	{
 	private:
 		// The cache.
@@ -274,35 +274,16 @@ namespace flw {
 			return Size;
 		}
 	public:
-		void reset( bool = true )
-		{
-			Cache_ = NULL;
-			Available_ = Position_ = Size_ = Red_ = AmountMax_ = 0;
-			EOFD_.Data = NULL;
-			EOFD_.Size = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
-		}
-		iflow__( void )
-		{
-			reset( false );
-		}
-		virtual ~iflow__( void )
-		{
-			reset( true );
-		}
-		/*f Initialization with 'Cache' of size 'Size' (>=2) as cache,
-		ant 'AmountMax' as allowed amount of data between 2 reset. */
-		void Init(
+		iflow__(
 			datum__ *Cache,
 			size__ Size,
 			amount__ AmountMax )
 		{
-			reset();
-			
 			Cache_ = Cache;
 			Size_ = Size;
 			Red_ = 0;
 			AmountMax_ = AmountMax;
+			Available_ = Position_ = 0;
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 		}
@@ -380,6 +361,10 @@ namespace flw {
 		{
 			return Red_ - Available_;
 		}
+		void SetAmountMax( amount__ AmountMax )
+		{
+			AmountMax_ = AmountMax;
+		}
 	};
 
 	//f Get 'StaticObject' from 'InputFlow'.
@@ -401,7 +386,7 @@ namespace flw {
 
 
 	//c Basic output flow.
-	class oflow__
+	class oflow__	// Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
 	{
 	private:
 		// The cache.
@@ -531,37 +516,20 @@ namespace flw {
 		virtual void FLWSynchronizing( void )
 		{}
 	public:
-		void reset( bool P = true )
-		{
-			if ( P ) {
-				if ( Size_ != Free_ )
-					_Synchronize();
-			}
-			
-			Cache_ = NULL;
-			
-			Free_ = Size_ = Written_ = AmountMax_ = 0;
-		}
-		oflow__( void )
-		{
-			reset( false );
-		}
-		virtual ~oflow__( void )
-		{
-			reset( true );
-		}
-		//f Initialization with 'Cache' of size 'Size' as cache.
-		void Init(
+		oflow__(
 			datum__ *Cache,
 			size__ Size,
 			amount__ AmountMax )
 		{
-			reset();
-			
 			Cache_ = Cache;
 			Size_ = Free_ = Size;
 			AmountMax_ = AmountMax;
 			Written_ = 0;
+		}
+		virtual ~oflow__( void )
+		{
+			if ( Size_ != Free_ )
+				_Synchronize();
 		}
 		//f Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		size__ WriteUpTo(
@@ -592,6 +560,10 @@ namespace flw {
 		{
 			return Written_ + ( Size_ - Free_ );
 		}
+		void SetAmountMax( amount__ AmountMax )
+		{
+			AmountMax_ = AmountMax;
+		}
 	};
 
 	//f Write to 'OutputFlow' 'StaticObject'.
@@ -616,7 +588,7 @@ namespace flw {
 	}
 
 	//c Basic input/output flow.
-	class ioflow__
+	class ioflow__// Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
 	: public iflow__,
 	  public oflow__
 	{
@@ -626,40 +598,33 @@ namespace flw {
 			iflow__::Reset();
 		}
 	public:
-		void reset( bool P = true )
-		{
-			iflow__::reset( P );
-			oflow__::reset( P );
-		}
-		ioflow__( void )
-		{
-			reset( false );
-		}
-		virtual ~ioflow__( void )
-		{
-			reset( true );
-		}
-		/*f Initialization with 'ICache' of size 'ISize' and 'OCache' of size
-		'OSize' as, respectively, cache and size of this cache for the input flow
-		and output flow. */
-		void Init(
+		ioflow__(
 			datum__ *ICache,
 			size__ ISize,
 			amount__ ReadAmountMax,
 			datum__ *OCache,
 			size__ OSize,
 			amount__ WriteAmountMax )
-		{
-			iflow__::Init( ICache, ISize, ReadAmountMax );
-			oflow__::Init( OCache, OSize, WriteAmountMax );
-		}
-		//f Initialisation with cache 'Cache' of size 'Size'.
-		void Init(
+			: iflow__( ICache, ISize, ReadAmountMax ),
+			  oflow__( OCache, OSize, WriteAmountMax )
+		{}
+		ioflow__(
 			datum__ *Cache,
 			size__ Size,
 			amount__ AmountMax )
+			: iflow__( Cache, Size / 2, AmountMax ),
+			  oflow__( Cache + Size / 2, Size / 2, AmountMax )
+		{}
+		void SetAmountMax(
+			amount__ ReadAmountMax,
+			amount__ WriteAmountMax )
 		{
-			Init( Cache, Size / 2, AmountMax, Cache + Size / 2, Size / 2, AmountMax );
+			iflow__::SetAmountMax( ReadAmountMax );
+			oflow__::SetAmountMax( WriteAmountMax );
+		}
+		void SetAmountMax( amount__ AmountMax )
+		{
+			SetAmountMax( AmountMax, AmountMax );
 		}
 	};
 }

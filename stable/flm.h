@@ -66,7 +66,7 @@ extern class ttr_tutor &FLMTutor;
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"
-#include "iof.h"
+#include "fil.h"
 
 namespace flm {
 	using namespace mdr;
@@ -92,7 +92,7 @@ namespace flm {
 	class memoire_fichier_base_
 	{
 	private:
-		iof::file_io___ File_;
+		fil::file___ File_;
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
@@ -117,10 +117,10 @@ namespace flm {
 			if ( !Temoin_.Ouvert )
 			{
 				if ( Temoin_.Mode == mdr::mReadOnly ) {
-					if ( File_.Init( Nom_, iof::mReadOnly ) == iof::sFailure )
+					if ( File_.Init( Nom_, fil::mReadOnly ) == iof::sFailure )
 						ERRd();
 				} else {
-					if ( File_.Init( Nom_, iof::mReadWrite ) == iof::sFailure )
+					if ( File_.Init( Nom_, fil::mReadWrite ) == iof::sFailure )
 						ERRd();
 				}
 				Temoin_.Ouvert = 1;

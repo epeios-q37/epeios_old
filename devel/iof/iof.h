@@ -55,20 +55,27 @@ extern class ttr_tutor &IOFTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Input/Output and Files 
+//D Input/Output Flows 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 #include "cpe.h"
+#include "flw.h"
 
-#ifdef IOF__USE_STANDARD_IO
+#ifdef IOF_BUFFER_SIZE
+#	define IOF__BUFFER_SIZE	IOF_BUFFER_SIZE
+#else
+#	define IOF__BUFFER_SIZE	1024
+#endif
+
+#ifdef IOF_USE_STANDARD_IO
 #	define IOF__USE_STANDARD_IO
 #elif defined( CPE__MS )
 #	define IOF__USE_LOWLEVEL_IO
 #elif defined( CPE__UNIX )
 #	define IOF__USE_LOWLEVEL_IO
-#elif defined( CPE__UNIX )
+#elif defined( CPE__MAC )
 //#	define IO__USE_LOWLEVEL_IO	// Because not implemented yet for Mac.
 #	define	IOF__USE_STANDARD_IO
 #else
@@ -85,13 +92,19 @@ extern class ttr_tutor &IOFTutor;
 
 namespace iof {
 #ifdef IOF__USE_LOWLEVEL_IO
-	typedef llio::lowlevel_io__		io__;
-	typedef llio::file_lowlevel_io___	file_io___;
+	typedef llio::lowlevel_input__		input__;
+	typedef llio::lowlevel_output__		output__;
+	typedef llio::lowlevel_io__			io__;
+	using llio::descriptor__;
 	using llio::amount__;
+#	define IOF_UNDEFINED_DESCRIPTOR	LLIO_UNDEFINED_DESCRIPTOR
 #elif defined( IOF__USE_STANDARD_IO )
-	typedef sclio::standard_io__		io__;
-	typedef sclio::file_standard_io___	file_io___;
-	using sclio::amount__;
+	typedef cslio::standard_input__		input__;
+	typedef cslio::standard_output__		output__;
+	typedef cslio::standard_io__			io__;
+	using cslio::descriptor__;
+	using cslio::amount__;
+#	define IOF_UNDEFINED_DESCRIPTOR	CSLIO_UNDEFINED_DESCRIPTOR
 #else
 #	error "Undefined I/O enviroment !"
 #endif
@@ -100,63 +113,52 @@ namespace iof {
 
 	using flw::oflow__;
 	using flw::iflow__;
-	
-	//c A stream output flow driver.
-	class file_oflow__
-	: public oflow__
+	using flw::ioflow__;
+
+	class io_oflow__
+	: public output__,
+	  public oflow__
 	{
 	private:
-		io__ IO_;
-		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
+		flw::datum__ Cache_[IOF__BUFFER_SIZE];
 	protected:
-		virtual flw::size__ FLWWrite(
+		flw::size__ FLWWrite(
 			const flw::datum__ *Tampon,
-			flw::size__ Nombre,
-			flw::size__,
+			flw::size__ Minimum,
+			flw::size__ Demande,
 			bool Synchronize )
 		{
-#ifdef STF_DBG
-			if ( ( Tampon == NULL ) && Nombre )
+#ifdef IOF_DBG
+			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			if ( fwrite( Tampon, 1, Nombre, File_ ) < Nombre )
-				ERRd();
+			flw::size__ Written = 0;
+
+			while ( Written < Minimum )
+				Written += output__::Write( Tampon, Demande - Written );
 
 			if ( Synchronize )
-				fflush( File_ );
+				Flush();
 
-			return Nombre;
+			return Written;
 		}
 	public:
-		void reset( bool P = true )
-		{
-			oflow__::reset( P );
-		}
-		file_oflow__( FILE *&File )
-		: oflow__(),
-		  File_( File )
-		{
-			reset( false );
-		}
-		virtual ~file_oflow__( void )
-		{
-			reset( true );
-		}
-		//f Initialization.
-		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
-		{
-			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
-		}
+		io_oflow__(
+			descriptor__ D = IOF_UNDEFINED_DESCRIPTOR,
+			amount__ AmountMax = FLW_AMOUNT_MAX )
+		: output__( D ),
+		  oflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  io_core__( D )
+		{}
 	};
 
-
-	class file_iflow__
-	: public iflow__
+	class io_iflow__
+	: public input__,
+	  public iflow__
 	{
 	private:
-		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
-		// Le stream en question.
-		FILE *&File_;
+		flw::datum__ Cache_[IOF__BUFFER_SIZE];
+	private:
 		flw::amount__ _HandleAmount(
 			flw::amount__ Minimum,
 			flw::datum__ *Tampon,
@@ -165,7 +167,7 @@ namespace iof {
 		{
 			if ( AmountRead < Minimum )
 			{
-				if ( !feof( File_ ) )
+				if ( !OnEOF() )
 					ERRd();
 				else
 					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
@@ -177,44 +179,104 @@ namespace iof {
 			return AmountRead;
 		}
 	protected:
-	virtual flw::size__ FLWRead(
-		flw::size__ Minimum,
-		flw::datum__ *Tampon,
-		flw::size__ Desire )
-	{
-#ifdef STF_DBG
-		if( Tampon == NULL )
-			ERRu();
-#endif
-		flw::amount__ NombreLus = 0;
+		flw::size__ FLWRead(
+			flw::size__ Minimum,
+			flw::datum__ *Tampon,
+			flw::size__ Desire )
+		{
+	#ifdef STF_DBG
+			if( Tampon == NULL )
+				ERRu();
+	#endif
+			flw::amount__ NombreLus = 0;
 
-		if ( !feof( File_ ) )
-			NombreLus = fread( Tampon, 1, Desire, File_ );
+			while ( !OnEOF() && ( NombreLus < Minimum ) )
+				NombreLus += input__::Read( Desire - NombreLus, Tampon );
 
-		return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
-	}
+			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+		}
 	public:
-		void reset( bool P = true )
-		{
-			iflow__::reset( P );
-		}
-		file_iflow__( FILE *&File )
-		: iflow__(),
-		  File_( File )
-		{
-			reset( false );
-		}
-		virtual ~file_iflow__( void )
-		{
-			reset( true );
-		}
-		//f Initialisation.
-		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
-		{
-			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
-		}
+		io_iflow__(
+			descriptor__ D =IOF_UNDEFINED_DESCRIPTOR,
+			amount__ AmountMax = FLW_AMOUNT_MAX )
+		: input__( D ),
+		  iflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  io_core__( D )
+		{}
 	};
 
+	class io_ioflow__
+	: public io__,
+	  public ioflow__
+	{
+	private:
+		flw::datum__ Cache_[2 * IOF__BUFFER_SIZE];
+	private:
+		flw::amount__ _HandleAmount(
+			flw::amount__ Minimum,
+			flw::datum__ *Tampon,
+			flw::amount__ Desire,
+			flw::amount__ AmountRead )
+		{
+			if ( AmountRead < Minimum )
+			{
+				if ( !OnEOF() )
+					ERRd();
+				else
+					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
+
+				if ( AmountRead < Minimum )
+					ERRd();
+			}
+
+			return AmountRead;
+		}
+	protected:
+		flw::size__ FLWRead(
+			flw::size__ Minimum,
+			flw::datum__ *Tampon,
+			flw::size__ Desire )
+		{
+	#ifdef STF_DBG
+			if( Tampon == NULL )
+				ERRu();
+	#endif
+			flw::amount__ NombreLus = 0;
+
+			while ( !OnEOF() && ( NombreLus < Minimum ) )
+				NombreLus += input__::Read( Desire - NombreLus, Tampon );
+
+			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+		}
+		flw::size__ FLWWrite(
+			const flw::datum__ *Tampon,
+			flw::size__ Minimum,
+			flw::size__ Demande,
+			bool Synchronize )
+		{
+#ifdef IOF_DBG
+			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
+				ERRu();
+#endif
+			flw::size__ Written = 0;
+
+			while ( Written < Minimum )
+				Written += output__::Write( Tampon, Demande - Written );
+
+			if ( Synchronize )
+				Flush();
+
+			return Written;
+		}
+	public:
+		io_ioflow__(
+			descriptor__ D = IOF_UNDEFINED_DESCRIPTOR,
+			amount__ AmountMax = FLW_AMOUNT_MAX )
+		: io__( D ),
+		  ioflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  io_core__( D )
+		{}
+	};
 }
 
 /*$END$*/

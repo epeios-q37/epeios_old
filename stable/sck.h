@@ -289,7 +289,7 @@ namespace sck {
 	public:
 		void reset( bool P = true )
 		{
-			ioflow__::reset( P );
+			ioflow__::Synchronize();
 			
 			if ( P ) {
 				if ( Socket_ != SCK_INVALID_SOCKET ) 
@@ -301,6 +301,7 @@ namespace sck {
 			Error_ = false;
 		}
 		socket_ioflow___( void )
+		: ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -316,7 +317,7 @@ namespace sck {
 		{
 			reset();
 		
-			ioflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
+			ioflow__::SetAmountMax( AmountMax );
 
 			Socket_ = Socket;
 			TimeOut_ = TimeOut;

@@ -55,26 +55,29 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef CPE__MS
+#if defined( CPE__MS )
 #	include <io.h>
 #	include <fcntl.h>
 #endif
 
 using namespace cio;
 
-#ifdef CIO__USE_STREAM
-stf::stream_oflow__ cio::coutf( std::cout ), cio::cerrf( std::cerr );
-stf::stream_iflow__ cio::cinf( std::cin );
+#ifdef IOF__USE_LOWLEVEL_IO
+#	if defined( CPE__MS ) || defined( CPE__UNIX )
+static iof::descriptor__ cin_ = 0, cout_ = 1, cerr_ = 2;
+#	elif defined( CPE__MAC )
+#		error "Not implemented yet ! "
+#	else
+#		error "Unknow compilation enviroment !"
+#	endif
+#elif defined( IOF__USE_STANDARD_IO )
+static iof::descriptor__ cin_ = stdin, cout_ = stdout, cerr_ = stderr;
+#else
+#	error "Unkonw I/O enviroment !"
 #endif
 
-#ifdef CIO__USE_FILE
-static FILE *cin = stdin;
-static FILE *cout = stdout;
-static FILE *cerr = stderr;
-
-_oflow__ cio::coutf( ::cout ), cio::cerrf( ::cerr );
-_iflow__ cio::cinf( ::cin );
-#endif
+_oflow__ cio::coutf( ::cout_ ), cio::cerrf( ::cerr_ );
+_iflow__ cio::cinf( ::cin_ );
 
 txf::text_oflow__ cio::cout, cio::cerr;
 txf::text_iflow__ cio::cin;
@@ -89,7 +92,7 @@ class ciopersonnalization
 public:
 	ciopersonnalization( void )
 	{
-#ifdef CPE__MS
+#if defined( CPE__MS )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
 
@@ -99,10 +102,6 @@ public:
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::cinf.Init();
-		cio::coutf.Init();
-		cio::cerrf.Init();
-
 		cio::cin.Init( cio::cinf );
 		cio::cout.Init( cio::coutf );
 		cio::cerr.Init( cio::cerrf );

@@ -65,8 +65,6 @@ extern class ttr_tutor &CSLIOTutor;
 #include "bso.h"
 #include <stdio.h>
 
-#undef EOF
-
 namespace cslio {
 	using namespace iodef;
 
@@ -74,17 +72,32 @@ namespace cslio {
 
 	typedef FILE *descriptor__;
 
+#define CSLIO_UNDEFINED_DESCRIPTOR	NULL
+
 	class io_core__ {
 	protected:
-		descriptor__ &D_;
+		descriptor__ D_;
+		void _Test( void ) const
+		{
+#ifdef CSLIO_DBG
+			if ( D_ == CSLIO_UNDEFINED_DESCRIPTOR )
+				ERRu();
+#endif
+		}
 	public:
-		io_core__( descriptor__ &D )
+		io_core__( descriptor__ D )
 		: D_( D )
 		{}
 		void Seek( long Offset )
 		{
+			_Test();
+
 			if ( fseek( D_, Offset, SEEK_SET ) != Offset )
 				ERRx();
+		}
+		void operator()( descriptor__ D )
+		{
+			D_ = D;
 		}
 	};
 
@@ -93,17 +106,21 @@ namespace cslio {
 	: public virtual io_core__
 	{
 	public:
-		standard_input__( descriptor__ &D )
+		standard_input__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
 		: io_core__( D )
 		{}
 		size_t Read(
 			amount__ Amount,
 			void *Buffer )
 		{
+			_Test();
+
 			return fread( Buffer, 1, Amount, D_ );
 		}
-		bso::bool__ EOF( void )
+		bso::bool__ OnEOF( void )
 		{
+			_Test();
+
 			return feof( D_ ) != 0;
 		}
 	};
@@ -112,17 +129,21 @@ namespace cslio {
 	: public virtual io_core__
 	{
 	public:
-		standard_output__( descriptor__ &D )
+		standard_output__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
 		: io_core__( D )
 		{}
 		size_t Write(
 			const void *Buffer,
 			amount__ Amount )
 		{
+			_Test();
+
 			return fwrite( Buffer, 1, Amount, D_ );
 		}
 		void Flush( void )
 		{
+			_Test();
+
 			fflush( D_ );
 		}
 	};
@@ -132,7 +153,7 @@ namespace cslio {
 	  public standard_input__
 	{
 	public:
-		standard_io__( descriptor__ D )
+		standard_io__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
 		: standard_output__( D ),
 		  standard_input__( D ),
 		  io_core__( D )

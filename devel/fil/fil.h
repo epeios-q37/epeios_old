@@ -64,6 +64,7 @@ extern class ttr_tutor &FILTutor;
 
 #include "iof.h"
 #include "flw.h"
+#include "iodef.h"
 
 #ifdef FIL_FLOW_BUFFER_SIZE
 #	define FIL__FLOW_BUFFER_SIZE FIL_FLOW_BUFFER_SIZE
@@ -73,81 +74,114 @@ extern class ttr_tutor &FILTutor;
 
 namespace fil
 {
-	//e Open mode.
-	enum mode {
+	enum mode__ {
 		//i Unknow.
 		mUnknow,
 		//i Ecrase le contenu du fichier.
 		mRemove,
 		//i Ajoute à la fin du fichier.
 		mAppend,
+		//i Ouvre le fichier ne lecture/écriture.
+		mReadWrite,
+		//i Ouvre le fichier en lecture seule.
+		mReadOnly,
 		//i Amount of mode.
 		m_amount
 	};
  	//e Status.
-	enum status {
-		//i Unknow,
-		sUnknow,
+	enum status__ {
+		//i Failure.
+		sFailure = 0,
 		//i Success.
 		sSuccess,
-		//i Failure.
-		sFailure,
+		//i Unknow,
+		s_Unknow,
 		//i Amount of status.
 		s_amount
 	};
 
+	iof::descriptor__ _Open(
+		const char *Nom,
+		mode__ Mode );
+
+	void _Close( iof::descriptor__ D );
+
 	typedef flw::iflow__	_iflow__;
+	typedef iof::io__		_io__;
+
+	class file___
+	: public _io__
+	{
+	private:
+		iof::descriptor__ D_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+					_Close( D_ );
+			}
+
+			D_ = IOF_UNDEFINED_DESCRIPTOR;
+		}
+		file___( void )
+		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
+		{
+			reset( false );
+		}
+		~file___( void )
+		{
+			reset();
+		}
+		status__ Init(
+			const char *FileName,
+			mode__ Mode,
+			err::handle ErrHandle = err::hUsual )
+		{
+			reset();
+
+			D_ = _Open( FileName, Mode );
+
+			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+				switch ( ErrHandle ) {
+				case err::hSkip:
+					return sFailure;
+					break;
+				case err::hUsual:
+					ERRd();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			}
+
+			io_core__::operator()( D_ );
+
+			return sSuccess;
+		}
+	};
+
+	typedef iof::io_iflow__		_io_iflow__;
 
 	//c A file as standard input flow.
 	class file_iflow___
-	: public _iflow__
+	: public _io_iflow__
 	{
 	private:
-		flw::datum__ Cache_[FIL__FLOW_BUFFER_SIZE];
-		iof::file_io___ File_;
-		flw::amount__ _HandleAmount(
-			flw::amount__ Minimum,
-			flw::datum__ *Tampon,
-			flw::amount__ Desire,
-			flw::amount__ AmountRead )
-		{
-			if ( AmountRead < Minimum )
-			{
-				if ( !File_.EOF() )
-					ERRd();
-				else
-					AmountRead += _iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
-
-				if ( AmountRead < Minimum )
-					ERRd();
-			}
-
-			return AmountRead;
-		}
-	protected:
-		virtual flw::size__ FLWRead(
-			flw::size__ Minimum,
-			flw::datum__ *Tampon,
-			flw::size__ Desire )
-		{
-#ifdef FIL_DBG
-			if( Tampon == NULL )
-				ERRu();
-#endif
-			flw::amount__ NombreLus = 0;
-
-			if ( !File_.EOF() )
-				NombreLus = File_.Read( Desire, Tampon );
-
-			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
-		}
-public:
+		iof::descriptor__ D_;
+	public:
 		void reset( bool P = true )
 		{
-			_iflow__::reset( P );
-			File_.reset( P );
+			if ( P ) {
+				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+					_Close( D_ );
+			}
+
+			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file_iflow___( void )
+		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{
 			reset( false );
 		}
@@ -155,49 +189,62 @@ public:
 		{
 			reset( true );
 		}
-		/*f Initialization with the file named 'FileName'. Correct the '/' or '\' if 'Handle' = 'hCorrect'.
-		Return 'sFailure' if initialization failes, and 'ErrHandle' set to 'err::hUsual', 'sSuccess' otherwise. */
-		status Init(
+		status__ Init(
 			const char *FileName,
-			err::handle ErrHandle = err::hUsual );
+			mode__ Mode = mReadOnly,
+			err::handle ErrHandle = err::hUsual )
+		{
+			reset();
+
+			D_ = _Open( FileName, Mode );
+
+			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+				switch ( ErrHandle ) {
+				case err::hSkip:
+					return sFailure;
+					break;
+				case err::hUsual:
+					ERRd();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			}
+
+			io_core__::operator()( D_ );
+
+			return sSuccess;
+		}
+		status__ Init(
+			const char *FileName,
+			err::handle ErrHandle,
+			mode__ Mode = mReadOnly )
+		{
+			return Init( FileName, Mode, ErrHandle );
+		}
 	};
 
-	typedef flw::oflow__	_oflow__;
+	typedef iof::io_oflow__		_io_oflow__;
 
-	//c A file as standard output flow.
+	//c A file as standard input flow.
 	class file_oflow___
-	: public _oflow__
+	: public _io_oflow__
 	{
 	private:
-		iof::file_io___ File_;
-		flw::datum__ Cache_[FIL__FLOW_BUFFER_SIZE];
-	protected:
-		virtual flw::size__ FLWWrite(
-			const flw::datum__ *Tampon,
-			flw::size__ Nombre,
-			flw::size__,
-			bool Synchronize )
-		{
-#ifdef STF_DBG
-			if ( ( Tampon == NULL ) && Nombre )
-				ERRu();
-#endif
-			if ( (flw::size__)File_.Write( Tampon, Nombre ) < Nombre )
-				ERRd();
-
-			if ( Synchronize )
-				File_.Flush();
-
-			return Nombre;
-		}
+		iof::descriptor__ D_;
 	public:
 		void reset( bool P = true )
 		{
-			_oflow__::reset( P );
-			File_.reset( P );
+			if ( P ) {
+				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+					_Close( D_ );
+			}
 
+			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file_oflow___( void )
+		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{
 			reset( false );
 		}
@@ -205,22 +252,39 @@ public:
 		{
 			reset( true );
 		}
-		/*f Initialization with the file named 'FileName'. If this file already exists, 'Mode' is was happen with it.
-		If 'Handle' = 'hCorrect', corrects the '\' or '/' in file name.
-		Return 'sFailure' if initialization failes, and 'ErrHandle' set to 'err::hUsual', 'sSuccess' otherwise. */
-		status Init(
+		status__ Init(
 			const char *FileName,
-			fil::mode Mode = fil::mRemove,
-			err::handle ErrHandle = err::hUsual );
-		/*f Initialization with the file named 'FileName'. If this file already exists, 'Mode' is was happen with it.
-		If 'Handle' = 'hCorrect', corrects the '\' or '/' in file name.
-		Return 'sFailure' if initialization failes, and 'ErrHandle' set to 'err::hUsual', 'sSuccess' otherwise. */
-		status Init(
-			const char *Nom,
-			err::handle ErrHandle,
-			mode Mode = fil::mRemove )
+			mode__ Mode = mRemove,
+			err::handle ErrHandle = err::hUsual )
 		{
-			return Init( Nom, Mode, ErrHandle );
+			reset();
+
+			D_ = _Open( FileName, Mode );
+
+			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+				switch ( ErrHandle ) {
+				case err::hSkip:
+					return sFailure;
+					break;
+				case err::hUsual:
+					ERRd();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			}
+
+			io_core__::operator()( D_ );
+
+			return sSuccess;
+		}
+		status__ Init(
+			const char *FileName,
+			err::handle ErrHandle,
+			mode__ Mode = mRemove )
+		{
+			return Init( FileName, Mode, ErrHandle );
 		}
 	};
 }

@@ -66,55 +66,68 @@ extern class ttr_tutor &WLLIOTutor;
 #include <io.h>
 #include <fcntl.h>
 
-#undef EOF
-
 namespace wllio {
 
 	using namespace iodef;
 
 	typedef int amount__;
 
-	class lowlevel_io__
+	typedef int descriptor__;
+
+#define WLLIO_UNDEFINED_DESCRIPTOR	-1
+
+	class io_core__
 	{
-	private:
-		int FD_;
-	public:
-		lowlevel_io__( int FD = -1 )
-		: FD_( FD )
+	protected:
+		descriptor__ D_;
+		void _Test( void ) const
 		{
-			FD_ = FD;
+#ifdef WLLIO_DBG
+			if ( D_ == WLLIO_UNDEFINED_DESCRIPTOR )
+				ERRu();
+#endif
 		}
+	public:
+		io_core__( descriptor__ D )
+		{
+			D_ = D;
+		}
+		void Seek( long Offset )
+		{
+			_Test();
+
+			if ( _lseek( D_, Offset, SEEK_SET ) != Offset )
+				ERRd();
+		}
+		void operator()( descriptor__ D )
+		{
+			D_ = D;
+		}
+	};
+
+	class lowlevel_input__
+	: public virtual io_core__
+	{
+	public:
+		lowlevel_input__( descriptor__ D = WLLIO_UNDEFINED_DESCRIPTOR )
+		: io_core__( D )
+		{}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
 		{
-			if ( ( Amount = _read( FD_, Buffer, Amount ) ) == -1 )
+			_Test();
+
+			if ( ( Amount = _read( D_, Buffer, Amount ) ) == -1 )
 				ERRd();
 
 			return Amount;
 		}
-		int Write(
-			const void *Buffer,
-			amount__ Amount )
+		bso::bool__ OnEOF( void )
 		{
-			if ( ( Amount = _write( FD_, Buffer, Amount ) ) == -1 )
-				ERRd();
+			_Test();
 
-			return Amount;
-		}
-		void Seek( long Offset )
-		{
-			if ( _lseek( FD_, Offset, SEEK_SET ) != Offset )
-				ERRd();
-		}
-		void Flush( void )
-		{
-			if ( _commit( FD_ ) != 0 )
-				ERRd();
-		}
-		bso::bool__ EOF( void )
-		{
-			switch( _eof( FD_ ) ) {
+			switch( _eof( D_ ) ) {
 			case 1:
 				return true;
 				break;
@@ -123,16 +136,51 @@ namespace wllio {
 				break;
 			default:
 				ERRd();
-				return 1;
+				return true;	// To avoid a warning.
 				break;
 			}
 		}
-		void operator()( int FD )
+	};
+
+	class lowlevel_output__
+	: public virtual io_core__
+	{
+	public:
+		lowlevel_output__( descriptor__ D = WLLIO_UNDEFINED_DESCRIPTOR )
+		: io_core__( D )
+		{}
+		int Write(
+			const void *Buffer,
+			amount__ Amount )
 		{
-			FD_ = FD;
+			if ( ( Amount = _write( D_, Buffer, Amount ) ) == -1 )
+				ERRd();
+
+			return Amount;
+		}
+		void Flush( void )
+		{
+/*
+			if ( _commit( D_ ) != 0 )
+				ERRd();
+*/
+			// No flushing, as data are not buffered.
 		}
 	};
 
+	class lowlevel_io__
+	: public lowlevel_output__,
+	  public lowlevel_input__
+	{
+	public:
+		lowlevel_io__( descriptor__ D = WLLIO_UNDEFINED_DESCRIPTOR )
+		: lowlevel_output__( D ),
+		  lowlevel_input__( D ),
+		  io_core__( D )
+		{}
+	};
+
+#if 0
 	class file_lowlevel_io___
 	: public lowlevel_io__
 	{
@@ -191,6 +239,7 @@ namespace wllio {
 			}
 		}
 	};
+#endif
 }
 
 /*$END$*/

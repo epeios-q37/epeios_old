@@ -135,12 +135,11 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			iflow__::reset( P );
-
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
 		buffer_iflow__( void )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -154,7 +153,7 @@ namespace flx {
 			const flw::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ), Size );
+			iflow__::SetAmountMax( Size );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -194,12 +193,13 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow__::reset( P );
+			oflow__::Synchronize();
 
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
 		buffer_oflow__( void )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -212,7 +212,9 @@ namespace flx {
 			flw::datum__ *Buffer,
 			bso::bsize__ Size )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ), Size );
+			reset();
+
+			oflow__::SetAmountMax( Size );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -252,6 +254,7 @@ namespace flx {
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_iflow__( void )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -261,14 +264,12 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			iflow__::reset( P );
 			Bunch_ = NULL;
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init( const bunch_ &Bunch )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 			Bunch_ = &Bunch;
 			Position_ = 0;
 		}
@@ -297,6 +298,7 @@ namespace flx {
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_oflow__( void )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -306,13 +308,14 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			oflow__::reset( P );
+			oflow__::Synchronize();
 			Bunch_ = NULL;
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
 		void Init( bunch_ &Bunch )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
+			reset();
+
 			Bunch_ = &Bunch;
 		}
 	};
@@ -338,9 +341,10 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow__::reset( P );
+			oflow__::Synchronize();
 		}
 		dump_oflow__( void )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -352,8 +356,6 @@ namespace flx {
 		void Init( void )
 		{
 			reset();
-			
-			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX );
 		}
 	};
 }

@@ -67,8 +67,6 @@ extern class ttr_tutor &PLLIOTutor;
 #include <unistd.h>
 #include <sys/stat.h>
 
-#undef EOF
-
 namespace pllio {
 
 	using namespace iodef;
@@ -77,50 +75,64 @@ namespace pllio {
 
 	typedef int	descriptor__;
 
-	class lowlevel_io__
+#define	PLLIO_UNDEFINED_DESCRIPTOR	-1
+
+	class io_core__
 	{
-	private:
+	protected:
 		descriptor__ D_;
+		void _Test( void ) const
+		{
+#ifdef PLLIO_DBG
+			if ( D_ == PLLIO_UNDEFINED_DESCRIPTOR )
+				ERRu();
+#endif
+		}
 	public:
-		lowlevel_io__( descriptor__ D = -1 )
+		io_core__( descriptor__ D )
 		{
 			D_ = D;
 		}
+		void Seek( long Offset )
+		{
+			_Test();
+
+			if ( lseek( D_, Offset, SEEK_SET ) != Offset )
+				ERRd();
+		}
+		void operator()( descriptor__ D )
+		{
+			D_ = D;
+		}
+	};
+
+	class lowlevel_input__
+	: public virtual io_core__
+	{
+	public:
+		lowlevel_input__( descriptor__ D )
+		: io_core__( D )
+		{}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
 		{
+			_Test();
+
+			if ( Amount > SSIZE_MAX )
+				Amount = SSIZE_MAX;
+
 			if ( ( Amount = read( D_, Buffer, Amount ) ) == -1 )
 				ERRd();
 
 			return Amount;
 		}
-		int Write(
-			const void *Buffer,
-			amount__ Amount )
-		{
-			if ( Amount = write( D_, Buffer, Amount ) == -1 )
-				ERRd();
-
-			return Amount;
-		}
-		void Seek( long Offset )
-		{
-			if ( lseek( D_, Offset, SEEK_SET ) != Offset )
-				ERRd();
-		}
-		void Flush( void )
-		{
-#ifdef CPE__CYGWIN
-			fsync( D_ );
-#else
-			fdatasync( D_ );
-#endif
-		}
-		bso::bool__ EOF( void )
+		bso::bool__ OnEOF( void )
 		{
 			struct stat Stat;
 			off_t Position;
+
+			_Test();
 
 			if ( fstat( D_, &Stat ) != 0 )
 				ERRd();
@@ -130,71 +142,52 @@ namespace pllio {
 
 			return Position >= Stat.st_size;
 		}
-		void operator()( int D )
-		{
-			D_ = D;
-		}
-
 	};
 
-	class file_lowlevel_io___
-	: public lowlevel_io__
+	class lowlevel_output__
+	: public virtual io_core__
 	{
-	private:
-		int FD_;
 	public:
-		void reset( bso::bool__ P = true )
+		lowlevel_output__( descriptor__ D )
+		: io_core__( D )
+		{}
+		int Write(
+			const void *Buffer,
+			amount__ Amount )
 		{
-			if ( P ) {
-				if ( FD_ != -1 )
-					if ( close( FD_ ) != 0 )
-						ERRx();
-			}
+			_Test();
 
-			FD_ = -1;
+			if ( Amount > SSIZE_MAX )
+				Amount = SSIZE_MAX;
+
+			if ( ( Amount = write( D_, Buffer, Amount ) ) == -1 )
+				ERRd();
+
+			return Amount;
 		}
-		file_lowlevel_io___( void )
-		: lowlevel_io__( FD_ )
+		void Flush( void )
 		{
-			reset( false );
+			_Test();
+/*
+#ifdef CPE__CYGWIN
+			fsync( D_ );
+#else
+			fdatasync( D_ );
+#endif
+			*/
 		}
-		~file_lowlevel_io___( void )
-		{
-			reset();
-		}
-		status__ Init(
-			const char *FileName,
-			mode__ Mode )
-		{
-			int Flags = O_BINARY;
+	};
 
-			reset();
-
-			switch ( Mode ) {
-			case mRemove:
-				Flags |= O_TRUNC | O_CREAT | O_RDWR;
-				break;
-			case mAppend:
-				Flags |= O_APPEND | O_RDWR;
-				break;
-			case mReadWrite:
-				Flags |= O_RDWR;
-				break;
-			case mReadOnly:
-				Flags |= O_RDONLY;
-				break;
-			default:
-				ERRu();
-				break;
-			}
-
-			if ( ( FD_ = ( FileName, Flags ) ) ==  -1 )
-				return sFailure;
-			else {
-				lowlevel_io__::operator()( FD_ );
-				return sSuccess;
-			}
-		}
+	class lowlevel_io__
+	: public lowlevel_output__,
+	  public lowlevel_input__
+	{
+	public:
+		lowlevel_io__( descriptor__ D = PLLIO_UNDEFINED_DESCRIPTOR )
+		: lowlevel_output__( D ),
+		  lowlevel_input__( D ),
+		  io_core__( D )
+		{}
 	};
 }
 

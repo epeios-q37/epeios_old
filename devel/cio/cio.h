@@ -61,36 +61,12 @@ extern class ttr_tutor &CIOTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "flw.h"
-
-#ifdef CIO_USE_FILE
-#	define CIO__USE_FILE
-#elif defined( CIO_USE_STREAM )
-#	define CIO__USE_STREAM
-#else
-#	define CIO__USE_FILE
-#endif
-
-#ifdef CIO__USE_FILE
-#	include "flf.h"
-#endif
-
-#ifdef CIO__USE_STREAM
-#	include "stf.h"
-#endif
-
+#include "iof.h"
 #include "txf.h"
 
 namespace cio {
-#ifdef CIO__USE_FILE
-	typedef flf::file_oflow__	_oflow__;
-	typedef flf::file_iflow__	_iflow__;
-#endif
-
-#ifdef CIO__USE_STREAM
-	typedef stf::stream_oflow__	_oflow__;
-	typedef stf::stream_iflow__	_iflow__;
-#endif
+	typedef iof::io_oflow__	_oflow__;
+	typedef iof::io_iflow__	_iflow__;
 
 	//o Standard output as a pure flow (not a text flow).
 	extern _oflow__ coutf;
