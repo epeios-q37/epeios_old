@@ -113,7 +113,7 @@ static inline iof::descriptor__ _Open(
 		PMode |= _S_IWRITE;
 		break;
 	case mAppend:
-		Flags |= _O_APPEND | _O_RDWR;
+		Flags |= _O_CREAT | _O_APPEND | _O_RDWR;
 		break;
 	case mReadWrite:
 		Flags |= _O_CREAT | _O_RDWR;

@@ -176,67 +176,6 @@ namespace wllio {
 		  io_core__( D )
 		{}
 	};
-
-#if 0
-	class file_lowlevel_io___
-	: public lowlevel_io__
-	{
-	private:
-		int FD_;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			if ( P ) {
-				if ( FD_ != -1 )
-					if ( _close( FD_ ) != 0 )
-						ERRx();
-			}
-
-			FD_ = -1;
-		}
-		file_lowlevel_io___( void )
-		{
-			reset( false );
-		}
-		~file_lowlevel_io___( void )
-		{
-			reset();
-		}
-		status__ Init(
-			const char *FileName,
-			mode__ Mode )
-		{
-			int Flags = _O_BINARY;
-
-			reset();
-
-			switch ( Mode ) {
-			case mRemove:
-				Flags |= _O_TRUNC | _O_CREAT |_O_RDWR;
-				break;
-			case mAppend:
-				Flags |= _O_APPEND | _O_RDWR;
-				break;
-			case mReadWrite:
-				Flags |= _O_RDWR;
-				break;
-			case mReadOnly:
-				Flags |= _O_RDONLY;
-				break;
-			default:
-				ERRu();
-				break;
-			}
-
-			if ( ( FD_ = _open( FileName, Flags ) ) ==  -1 )
-				return sFailure;
-			else {
-				lowlevel_io__::operator()( FD_ );
-				return sSuccess;
-			}
-		}
-	};
-#endif
 }
 
 /*$END$*/

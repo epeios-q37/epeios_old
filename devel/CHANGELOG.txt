@@ -1,12 +1,15 @@
 $Id$
 
-- Codage bibliothèque LTF.
+04/04/05
+- FIL:
+	- Correction de bogues.
 
 02/04/05:
 - ERR:
 	- Amélioration de la gestion d'erreurs en cours de traitement d'erreur.
 
 28/03/05:
+- Codage bibliothèque LTF.
 - FLX :
 	- Adaptation à la nouvell norme des ojects de type '__'.
 - CIO :
