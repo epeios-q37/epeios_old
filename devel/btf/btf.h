@@ -68,35 +68,37 @@ extern class ttr_tutor &BTFTutor;
 namespace btf {
 	using stk::stack_;
 
+	E_ROW( row__ );
+
 	//c Binary tree_filler.
 	template <typename r> class binary_tree_filler_
-	: public E_STACK_( r )
+	: public E_STACKt_( r, row__ )
 	{
 	private:
 		btr::E_BTREEt_( r ) *Tree_;
 	public:
 		struct s
-		: E_STACK_( r )::s
+		: E_STACKt_( r, row__ )::s
 		{};
 		binary_tree_filler_( s &S )
-		: E_STACK_( r )( S )
+		: E_STACKt_( r, row__ )( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Tree_ = NULL;
-			E_STACK_( r )::reset( P );
+			E_STACKt_( r, row__ )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			E_STACK_( r )::plug( MD );
+			E_STACKt_( r, row__ )::plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			E_STACK_( r )::plug( MM );
+			E_STACKt_( r, row__ )::plug( MM );
 		}
 		binary_tree_filler_ &operator =( const binary_tree_filler_ &BTF )
 		{
-			E_STACK_( r )::operator =( BTF );
+			E_STACKt_( r, row__ )::operator =( BTF );
 
 			return *this;
 		}
@@ -106,27 +108,27 @@ namespace btf {
 			r Root )
 		{
 			Tree_ = &Tree;
-			E_STACK_( r )::Init();
+			E_STACKt_( r, row__ )::Init();
 
 			if ( Root != NONE )
-				E_STACK_( r )::Push( Root );
+				E_STACKt_( r, row__ )::Push( Root );
 		}
 		//f Join the 2 nodes at bottom of stack with 'Node', which is pushed in stack.
 		void Join( r Node )
 		{
 #ifdef BTF_DBG
-			if ( E_STACK_( r )::Amount() < 2 )
+			if ( E_STACKt_( r, row__ )::Amount() < 2 )
 				ERRu();
 #endif
-			Tree_->BecomeRight( E_STACK_( r )::Pop(), Node );
-			Tree_->BecomeLeft( E_STACK_( r )::Pop(), Node );
+			Tree_->BecomeRight( E_STACKt_( r, row__ )::Pop(), Node );
+			Tree_->BecomeLeft( E_STACKt_( r, row__ )::Pop(), Node );
 
-			E_STACK_( r )::Push( Node );
+			E_STACKt_( r, row__ )::Push( Node );
 		}
 		//f Return true if the tree is complete.
 		bso::bool__ IsComplete( void ) const
 		{
-			return E_STACK_( r )::Amount() == 1;
+			return E_STACKt_( r, row__ )::Amount() == 1;
 		}
 		//f Return the root of the tree. Significant only if 'IsComplete()' return true.
 		r GetRoot( void ) const
@@ -135,15 +137,15 @@ namespace btf {
 			if ( !IsComplete() )
 				ERRu();
 #endif
-			return E_STACK_( r )::Get( E_STACK_( r )::First() );
+			return E_STACKt_( r, row__ )::Get( E_STACKt_( r, row__ )::First() );
 		}
 		//f Return true if a call to 'Join' is possible, false otherwise.
 		bso::bool__ IsJoinable( void )
 		{
-			return E_STACK_( r )::Amount() >= 2;
+			return E_STACKt_( r, row__ )::Amount() >= 2;
 		}
 		//f Only for the 'NAVt()' macro from 'TOL' library. Don't use.
-		bso::bool__ Exists( epeios::row__ ) const
+		bso::bool__ Exists( row__ ) const
 		{
 			ERRu();
 

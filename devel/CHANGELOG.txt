@@ -27,7 +27,7 @@ BITBCH:
 - Fixing 'operator =' bug.
 
 BTF:
-- Adding a dummy 'Exists()' method, due to changes in 'STK' library.
+- Adding a dummy 'Exists()' method, and the 'row__' type due to changes in 'STK' library.
 - Adding 'Root' parameter to the 'Init' function.
 
 BTS:
@@ -62,7 +62,7 @@ DBT:
 - Adapting to changes in 'LSTBCH' library.
 - Adding the virtual 'DBTAllocate' method.
 - Using 'E_NAVt' macro.
-- Adapting to changes in 'DBT' library.
+- Adapting to changes in 'BTF' library.
 
 DTFBSC:
 - Adding 'byte__', 'short__' and 'long__' type.

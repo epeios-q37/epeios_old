@@ -70,6 +70,8 @@ extern class ttr_tutor &DBTTutor;
 #include "btf.h"
 
 namespace dbt {
+	using btf::row__;
+
 	//t Row type for an internal node.
 	E_TYPEDEF( epeios::row_t__, internal_row__ );	// Node with childrens (always 2).
 
