@@ -1,6 +1,7 @@
 # $Id$
 
 ifeq ("$(EPEIOS_OS)","windows")
+templates = t:
 rootdir=/cvs/epeios
 dest = /website
 copy = cp
@@ -10,15 +11,16 @@ endif
 
 ifeq ("$(EPEIOS_OS)","linux")
 rootdir=/home/csimon/libs/epeios
+templates = $(rootdir)/workshop/web/templates
 dest = /home/csimon/website
 copy = cp
 move = mv
 mkdir = mkdir
 endif
 
-templates = $(rootdir)/workshop/web/templates
 crpfile = $(templates)/$(EPEIOS_OS).crp
 rootxsl = $(templates)/epeios.org/page.xsl
 doc = $(rootdir)/documentation
 xsl = $(templates)/*.xsl
 
+#subst k: h:\cvs\epeios\workshop\web\templates
