@@ -151,6 +151,7 @@ ERRProlog
 	epeios::row__ P;
 ERRBegin
 	F.Init();
+	F.Automatique();
 	M.plug( F );
 	M.Init();
 	CS.plug( M );

@@ -139,8 +139,7 @@ namespace flm {
 #endif
 				else
 #ifdef CPE__UNIX
-					if ( ( FD_ = open( Nom_, O_RDWR ) ) == -1 )
-						FD_ = creat( Nom_, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH );
+					FD_ = open( Nom_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH );
 #else
 					Stream_.open( Nom_, ios::in | ios::out | ios::binary );
 #endif
@@ -165,7 +164,7 @@ namespace flm {
 #ifdef CPE__UNIX
 			ssize_t Amount;
 
-			if ( lseek( FD_, Position, SEEK_SET ) == -1 )
+			if ( lseek( FD_, Position, SEEK_SET ) != Position )
 				ERRd();
 				
 			while( Nombre > 0 ) {
@@ -203,7 +202,7 @@ namespace flm {
 #ifdef CPE__UNIX
 			ssize_t Amount;
 
-			if ( lseek( FD_, Position, SEEK_SET ) == -1 )
+			if ( lseek( FD_, Position, SEEK_SET ) != Position )
 				ERRd();
 
 			while( Nombre > 0 ) {
