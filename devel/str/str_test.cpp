@@ -44,6 +44,18 @@ ERREnd
 ERREpilog
 }
 
+void Test( int argc, char *argv[] )
+{
+ERRProlog
+	str::string	String;
+ERRBegin
+	String.Init( "4.62" );
+	fout << (100 * (long double)String.ToLF() / 100.0 ) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
@@ -54,6 +66,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Test( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

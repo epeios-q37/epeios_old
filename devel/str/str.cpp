@@ -237,9 +237,15 @@ namespace str {
 
 	bso::lfloat__ string_::ToLF( epeios::row__ &ErrP ) const
 	{
+		bso::bool__ Negate = false;
 		bso::lfloat__ Result = 0;
 		epeios::row__ P = First();
 		char C;
+
+		if ( ( P != NONE ) && ( Read( P ) == '-' ) ) {
+			Negate = true;
+			P = Next( P );
+		}
 
 		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
 			Result = Result * 10 + C - '0';
@@ -248,6 +254,7 @@ namespace str {
 
 		if ( ( P != NONE ) && ( Read( P ) == '.' ) ) {
 			bso::lfloat__ Factor = .1;
+			P = Next( P );
 			while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
 				Result += ( C - '0' ) * Factor;
 				Factor /= 10;
@@ -258,7 +265,10 @@ namespace str {
 		if ( &ErrP )
 			ErrP = P;
 
-		return Result;
+		if ( Negate )
+			return -Result;
+		else
+			return Result;
 	}
 
 }

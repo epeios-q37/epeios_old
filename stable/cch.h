@@ -585,7 +585,7 @@ namespace cch {
 				Synchronize();
 			}
 
-			core_read_only_cache___<type__, r>::reset( P );
+			core_read_only_cache___<type__, rb>::reset( P );
 
 			PositionInContainer_ = NONE;
 		}
