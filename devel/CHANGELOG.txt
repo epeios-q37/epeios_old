@@ -79,6 +79,7 @@ ERR:
 - (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
 - (03/09/04) Adding some facilities.
 - (06/09/04) Adding some other facilities.
+- (12/12/04) Improvement error handling when flow ('FLW' library) involved.
 
 FLW:
 - (24/05/04) Removing the a tailing '_' to the object name.
@@ -87,6 +88,7 @@ FLW:
 - (20/07/04) Improvements.
 - (31/07/04) Fixing bug concerning the 'Reset()' function.
 - (10/12/04) Improvements.
+- (12/12/04) Improving error handling.
 
 FLX:
 - (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.

@@ -55,6 +55,11 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#ifdef CPE__MS
+#	include <io.h>
+#	include <fcntl.h>
+#endif
+
 using namespace cio;
 
 #ifdef CIO__USE_STREAM
@@ -84,6 +89,16 @@ class ciopersonnalization
 public:
 	ciopersonnalization( void )
 	{
+#ifdef CPE__MS
+		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
+			ERRd();
+
+		if ( _setmode( _fileno( stdout ), _O_BINARY ) == -1 )
+			ERRd();
+
+		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
+			ERRd();
+#endif
 		cio::cinf.Init();
 		cio::coutf.Init();
 		cio::cerrf.Init();

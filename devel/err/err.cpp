@@ -241,6 +241,8 @@ void err::Final( void )
 		if ( ERR.ExitValue == EXIT_SUCCESS )
 			ERR.ExitValue = EXIT_FAILURE;
 
+		ERRRst();
+
 #ifdef CPE__CONSOLE
 		cio::cout << txf::sync;
 		cio::cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;

@@ -91,6 +91,30 @@ bool flw::GetString(
 }
 
 
+size__ flw::iflow__::_Read(
+	size__ Minimum,
+	datum__ *Buffer,
+	size__ Wanted )
+{
+	size__ Amount = 0;
+ERRProlog
+ERRBegin
+	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
+		ERRd();
+
+	Amount = FLWRead( Minimum, Buffer, Wanted );
+
+	Red_ += Amount;
+
+	if ( Red_ > AmountMax_ )
+		ERRf();
+ERRErr
+	Size_ = Available_ = 0;	// To avoid further reading from cache. Next reading will generate an error. 
+ERREnd
+ERREpilog
+	return Amount;
+}
+
 size__ flw::oflow__::_Write(
 	const datum__ *Buffer,
 	size__ Wanted,
@@ -115,7 +139,7 @@ ERRBegin
 			ERRf();
 	}
 ERRErr
-	Size_ = Free_ = 0;	// To avoid further writing in cache. Next wirting woll generate an error. 
+	Size_ = Free_ = 0;	// To avoid further writing in cache. Next writing will generate an error. 
 ERREnd
 ERREpilog
 	return Amount;

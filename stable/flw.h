@@ -241,17 +241,7 @@ namespace flw {
 		size__ _Read(
 			size__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
-		{
-			size__ Amount = FLWRead( Minimum, Buffer, Wanted );
-
-			Red_ += Amount;
-
-			if ( Red_ > AmountMax_ )
-				ERRf();
-
-			return Amount;
-		}
+			size__ Wanted );
 	protected:
 		/*v Called to place up to 'Wanted' bytes in 'Buffer', and not less than
 		'Minimum'. Returns how many bytes red. If 'Minimum' == 0, then the function
