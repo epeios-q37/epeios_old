@@ -114,13 +114,12 @@ row__ ssnmng::sessions_manager_::Open( void )
 
 	Table.Store( SessionID, P );
 
-	if ( Index.IsEmpty() ) {
-		_queue_::Create( P );
-		Index.Create( P );
-	} else {
+	if ( S_.Root == NONE )
+		S_.Root = P;
+	else {
 		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
-		Seeker.Init( Index );
+		Seeker.Init( Index, S_.Root );
 
 		switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
 		case 1:
@@ -151,10 +150,10 @@ row__ ssnmng::sessions_manager_::Open( void )
 
 row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
 {
-	if ( !Index.IsEmpty() )	{
+	if ( S_.Root != NONE )	{
 		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
-		Seeker.Init( Index );
+		Seeker.Init( Index, S_.Root );
 
 		if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
 			return Seeker.GetCurrent();

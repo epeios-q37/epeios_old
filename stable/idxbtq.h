@@ -1,6 +1,6 @@
 /*
 	Header for the 'idxbtq' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -122,7 +122,7 @@ namespace idxbtq {
 			E_IBTREEt_( r )::Init();
 			E_IQUEUEt_( r )::Init();
 		}
-		E_NAVt( E_IQUEUEt_( r )::, r )
+//		E_NAVt( E_IQUEUEt_( r )::, r )
 		//f 'Item' becomes the first item of the index, if empty.
 		void Create( r Item )
 		{
@@ -187,10 +187,11 @@ namespace idxbtq {
 			E_IBTREEt_( r )::Delete( Item );
 		}
 		//f Balances the tree of the index.
-		void Balance( mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+		r Balance(
+			r Root,
+			mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
 		{
-			if ( E_IQUEUEt_( r )::Amount() )
-				E_IBTREEt_( r )::Fill( E_IQUEUEt_( r )::Queue, E_IQUEUEt_( r )::First(), MD );
+			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
 		}
 	};
 

@@ -81,12 +81,17 @@ FLX:
 HTP:
 - (18/07/04) little improvements.
 
+IDXQUE:
+- (16/09/04) Using the core queue and no more the manage queue, to fit with 'IDXBTR'.
+
 IDXBTQ:
 - (15/09/04) Adapting to changes in 'IDXBTR'.
+- (16/09/04) Adapting to changes in 'IDXBTR'.
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function.
-- (15/09/04) The rot is no more stored in the index, so an index can, in fact, contains several indexes.
+- (15/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
+- (16/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
 
 LCK:
 - Adding 'GetUnlocked()' method.
@@ -115,6 +120,7 @@ SSNMNG:
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
 - (22/03/04) Fixing bug in session id creation.
 - (15/09/04) Adapting to changes in 'IDXBTQ' library.
+- (16/09/04) Adapting to changes in 'IDXBTQ' library.
 
 STF:
 - (24/05/04) Removing the console stuff (they are put in 'CIO' library).

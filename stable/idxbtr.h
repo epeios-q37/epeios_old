@@ -222,7 +222,7 @@ namespace idxbtr {
 					return Fils;
 				}
 				else
-					return = Fille;
+					return Fille;
 			}
 
 			return Root;

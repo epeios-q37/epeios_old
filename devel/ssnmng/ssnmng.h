@@ -268,7 +268,8 @@ namespace ssnmng {
 		//f Balance the index. 
 		void Balance( void )
 		{
-			Index.Balance();
+			if ( S_.Root != NONE )
+				S_.Root = Index.Balance( S_.Root );
 		}
 		//f Return the expired sessions. Only valid until next call.
 		const bch::E_BUNCH_( row__ ) &GetExpired( void ) const;

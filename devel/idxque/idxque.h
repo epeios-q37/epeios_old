@@ -75,7 +75,7 @@ extern class ttr_tutor &IDXQUETutor;
 
 namespace idxque {
 	using namespace que;
-//	using que::queue_;	// VC++ has problem without this, despite line above.
+	using que::queue_;	// VC++ has problem without this, despite line above.
 
 	//c Queue-based index, fast browsing, but slow sorting.
 	template <typename r> class queue_index_
@@ -125,7 +125,7 @@ namespace idxque {
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::BecomeNext( Item, Node );
+			E_QUEUEt_( r )::BecomeNext( Item, Node );
 		}
 		//f Item is marked as lesser then 'Node'.
 		void MarkAsLesser(

@@ -145,6 +145,7 @@ namespace ssnmng {
 			bch::E_BUNCHt_( chrono__, row__ )::s Chronos;
 			bso::ushort__ Absolute;
 			bso::ushort__ Relative;
+			row__ Root;
 		} &S_;
 		//o The table of session ids.
 		bch::E_BUNCHt_( session_id__, row__ ) Table;
@@ -163,6 +164,7 @@ namespace ssnmng {
 		void reset( bool P = true )
 		{
 			S_.Absolute = S_.Relative = 0;
+			S_.Root = NONE;
 
 			_list_::reset( P );
 			Table.reset( P );
@@ -188,6 +190,7 @@ namespace ssnmng {
 
 			S_.Relative = S.S_.Relative;
 			S_.Absolute = S.S_.Absolute;
+			S_.Root = S.S_.Root;
 
 			return *this;
 		}
@@ -204,13 +207,14 @@ namespace ssnmng {
 
 			S_.Relative = Relative;
 			S_.Absolute = Absolute;
+			S_.Root = NONE;
 		}
 		//f Return the position of a mandatory new session.
 		row__ Open( void );
 		//f Remove the session id at position 'Position'.
 		void Close( row__ Position )
 		{
-			Index.Remove( Position );
+			Index.Remove( Position, S_.Root );
 			_list_::Delete( Position );
 			_queue_::Delete( Position );
 		}
@@ -264,7 +268,8 @@ namespace ssnmng {
 		//f Balance the index. 
 		void Balance( void )
 		{
-			Index.Balance();
+			if ( S_.Root != NONE )
+				S_.Root = Index.Balance( S_.Root );
 		}
 		//f Return the expired sessions. Only valid until next call.
 		const bch::E_BUNCH_( row__ ) &GetExpired( void ) const;
