@@ -1,6 +1,6 @@
 /*
 	Header for the 'tol' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -522,19 +522,8 @@ namespace tol {
 	Usefull to force a server to exit to obtain the profiling file. */
 	void ForceExit( unsigned int Seconds );
 
-#	ifdef CPE__VC
-#		ifdef Yield
-#			define TOL_VC_YIELD_MACRO_BACKUP	Yield
-#			undef	Yield
-#		endif
-#	endif
 	//f Tell the remainder to give hand to the next thread.
-	void Yield( void );
-#	ifdef CPE__VC
-#		ifdef TOL_VC_YIELD_MACRO_BACKUP	
-#			define Yield	TOL_VC_YIELD_MACRO_BACKUP
-#		endif
-#	endif
+	void Defer( void );
 }
 
 #if 0

@@ -17,6 +17,7 @@ CTN:
 CPE:
 - Adding detection of cygwin.
 - Disabling C++ warning C4786.
+- Adding multithreading detection for CodeWarrior.
 
 DBT:
 - Adapting to changes in 'LST' library.
@@ -48,7 +49,12 @@ MMI:
 - Adding some missing 'const' qualifier'.
 
 MTX:
-- Using counter undes cygwin due to problems with pthread mutexes .
+- Using counter under cygwin due to problems with pthread mutexes .
+- Adding of testing if we are in a multitasking context.
+- Adapting to changes in 'TOL' library.
+
+PIP:
+- Adapting to changes in 'TOL' library.
 
 QUE:
 - Adding some missing 'const' qualifier.
@@ -71,6 +77,8 @@ TAGDTC:
 TOL:
 - Correcting the problem in 'NAVt()' for which the gcc 3.x preprocessor issued a warning.
 - Adapting to changes in 'STF' library.
+- Adapting to CodeWarrior.
+- Renaming 'Yield()' to 'Defer()' due to the silly 'Yield()' definition under Windows.
 
 TTR:
 - Adapting to changes in 'STF' library.

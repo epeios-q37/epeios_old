@@ -68,7 +68,6 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__32
 #undef CPE__MT
 #undef CPE__BC
-#undef CPE__MS
 #undef CPE__GCC
 #undef CPE__DJGPP
 #undef CPE__CYGWIN
@@ -140,6 +139,11 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef __MWERKS__
 #	define CPE__CW	// We are using MetroWerks Code Warrior.
+#	ifdef _MT
+#		define CPE__MT
+#	elif defined( CPE_MT )
+#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
+#	endif
 #	ifdef macintosh
 #		define CPE__MAC	// We are under Macintosh.
 #	else

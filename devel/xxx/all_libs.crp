@@ -23,6 +23,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
 &clnarg		&epeios		&2000, 2001, 	&Command LiNe ARGuments
 &cpe		&epeios		&2000-		&ComPilation Enviroment
+&csm		&epeios		&2000		&Client/Server Manager
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects)
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)

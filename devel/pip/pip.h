@@ -237,18 +237,8 @@ namespace pip {
 			if ( P ) {
 			
 				while( WriteInProgress_ || ReadInProgress_ )
-#	ifdef CPE__VC
-#		ifdef Yield
-#			define TOL_VC_YIELD_MACRO_BACKUP	Yield
-#			undef	Yield
-#		endif
-#	endif
-					tol::Yield();
-#	ifdef CPE__VC
-#		ifdef TOL_VC_YIELD_MACRO_BACKUP	
-#			define Yield	TOL_VC_YIELD_MACRO_BACKUP
-#		endif
-#	endif
+					tol::Defer();
+
 				Delete( Pipe_ );
 
 				if ( Mutex_ != MTX_INVALID_HANDLER )

@@ -1,7 +1,7 @@
 /*
 	'tol' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tol' header file ('tol.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -288,14 +288,7 @@ namespace {
 	}
 }
 
-#	ifdef CPE__VC
-#		ifdef Yield
-#			undef	Yield
-#		endif
-#	endif
-
-
-void tol::Yield( void )
+void tol::Defer( void )
 {
 #ifdef CPE__MS
 	Sleep( 0 );

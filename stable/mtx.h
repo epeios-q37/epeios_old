@@ -67,6 +67,10 @@ extern class ttr_tutor &MTXTutor;
 #include "bso.h"
 #include "cpe.h"
 
+#ifndef CPE__MT
+#	error "This library only useful in multitasking context, in which you are not."
+#endif
+
 #if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER ) && !defined( CPE__CYGWIN )
 #	define MTX__USE_PTHREAD_MUTEX
 #	include <pthread.h>
@@ -175,23 +179,11 @@ namespace mtx {
 	}
 
 #ifdef MTX__USE_COUNTER
-
 	// Wait until mutex unlocked.
 	inline void WaitUntilUnlocked_( mutex_handler__ Handler )
 	{
 		while( !TryToLock( Handler ) )
-#	ifdef CPE__VC
-#		ifdef Yield
-#			define TOL_VC_YIELD_MACRO_BACKUP	Yield
-#			undef	Yield
-#		endif
-#	endif
-			tol::Yield();
-#	ifdef CPE__VC
-#		ifdef TOL_VC_YIELD_MACRO_BACKUP	
-#			define Yield	TOL_VC_YIELD_MACRO_BACKUP
-#		endif
-#	endif
+			tol::Defer();
 	}
 #endif
 
