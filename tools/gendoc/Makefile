@@ -30,7 +30,7 @@ copt = -DXXX_DBG
 # copt +=
 lopt = 
 libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil\
-       txmtbl tagexp lst tagdtc btr xmldcm xmlval xmltag
+       txmtbl lst btr xmldcm xmlval xmltag
        
 epeios_os=$(EPEIOS_OS)
 epeios_src=$(EPEIOS_SRC)

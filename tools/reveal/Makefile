@@ -28,7 +28,7 @@
 name = reveal
 #copt = -DXXX_DBG
 lopt = 
-libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm
+libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm epsmsc
 
 ifndef EPEIOS_SRC
 	epeios_src=
