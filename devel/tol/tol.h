@@ -677,7 +677,11 @@ namespace tol {
 	type__ &name( void )\
 	{\
 		return S_.name;\
-	}
+	}\
+	void name( const type__ &V )\
+	{\
+		S_.name = V;\
+	}\
 
 //d Make accessible the member, of a static object, named 'name' of type 'type__'.
 #define E_DISCLOSE__(type__, name )\
