@@ -1,5 +1,9 @@
 $Id$
 
+BSO:
+- (12/03/04) Adding 'Convert()' function with 'String' parameter.
+	
+
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
 

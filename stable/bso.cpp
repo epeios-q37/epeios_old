@@ -1,7 +1,7 @@
 /*
 	'bso' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'bso' header file ('bso.h').
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 

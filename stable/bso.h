@@ -1,6 +1,6 @@
 /*
 	Header for the 'bso' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -290,14 +290,33 @@ namespace bso {
 	//t A portable sign.
 	typedef sign__ p_sign__;
 
+	//d Size of a string in order to contain an integer.
+	#define BSO_INTEGER_STRING_SIZE	12
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::ulong__ Value,
+		char *String )
+	{
+		sprintf( String, "%lu", Value );
+	}
+
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ulong__ Value )
 	{
-		static char Buffer[20];
+		static char String[BSO_INTEGER_STRING_SIZE];
 
-		sprintf( Buffer, "%lu", Value );
+		Convert( Value, String );
 
-		return Buffer;
+		return String;
+	}
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::ushort__ Value,
+		char *String )
+	{
+		Convert( (bso::ulong__)Value, String );
 	}
 
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
@@ -306,20 +325,44 @@ namespace bso {
 		return Convert( (bso::ulong__)Value );
 	}
 
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::ubyte__ Value,
+		char *String )
+	{
+		Convert( (bso::ulong__)Value, String );
+	}
+
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ubyte__ Value )
 	{
 		return Convert( (bso::ulong__)Value );
 	}
 
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::slong__ Value,
+		char *String )
+	{
+		sprintf( String, "%li", Value );
+	}
+
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::slong__ Value )
 	{
-		static char Buffer[20];
+		static char String[BSO_INTEGER_STRING_SIZE];
 
-		sprintf( Buffer, "%li", Value );
+		Convert( Value, String );
 
-		return Buffer;
+		return String;
+	}
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::sshort__ Value,
+		char *String )
+	{
+		Convert( (bso::slong__)Value, String );
 	}
 
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
@@ -328,26 +371,61 @@ namespace bso {
 		return Convert( (bso::slong__)Value );
 	}
 
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		bso::sbyte__ Value,
+		char * String )
+	{
+		Convert( (bso::slong__)Value, String );
+	}
+
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::sbyte__ Value )
 	{
 		return Convert( (bso::slong__)Value );
 	}
 
+	//d Size of a string in order to contain an integer.
+	#define BSO_FLOAT_STRING_SIZE	40
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		lfloat__ Value,
+		char *String )
+	{
+		sprintf( String, "%Lf", Value );
+	}
+
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( lfloat__ Value )
 	{
-		static char Buffer[40];
+		static char String[BSO_FLOAT_STRING_SIZE];
 
-		sprintf( Buffer, "%Lf", Value );
+		Convert( Value, String );
 
-		return Buffer;
+		return String;
+	}
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		float__ Value,
+		char *String )
+	{
+		Convert( (lfloat__)Value, String );
 	}
 
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( float__ Value )
 	{
 		return Convert( (lfloat__)Value );
+	}
+
+	//f Return 'Value' as string in 'String'.
+	inline void Convert(
+		sfloat__ Value,
+		char *String )
+	{
+		Convert( (lfloat__)Value, String );
 	}
 
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
