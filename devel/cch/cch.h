@@ -415,7 +415,7 @@ namespace cch {
 			if ( IsInsideBuffer_( Position, Amount ) )
 				WriteIntoBuffer_( Buffer, Amount, Position );
 			else {
-				DumpCache_();
+				DumpCache_( false );
 
 				if ( Amount > Size_ ) {
 					WriteDirectlyIntoBunch_( Buffer, Amount, Position );
@@ -454,6 +454,16 @@ namespace cch {
 
 			return Position;
 		}
+		/*f Return the amount of data contained in the underlying bunch, 
+		considering data added in the cache. */
+		epeios::size__ Amount( void )
+		{
+			if ( AddMode_ )
+				return Position_ + Amount_;
+			else
+				return BunchAmount_();
+		}
+
 		//f Synchronize the content of the cache and the content of the bunch.
 		void Synchronize( void )
 		{
@@ -589,7 +599,7 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			ctn::E_CMITEM( bch::E_BUNCHt_( type__, rb ) ) &Item,
+			ctn::E_CMITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
 			bsize__ Size )
 		{
@@ -631,7 +641,7 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			ctn::E_MITEM( bch::E_BUNCHt_( type__, rb ) ) &Item,
+			ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
 			bsize__ Size )
 		{
@@ -649,6 +659,7 @@ namespace cch {
 	{
 	protected:
 		bch::E_BUNCHt( item_cache *, rc ) Caches_;
+		read_only_cache___<item_cache *, rc> Cache_;
 		item Item_;
 		bsize__ BufferSize_;
 		void Fill_(
@@ -675,7 +686,8 @@ namespace cch {
 			if ( *P >= Caches_.Amount() )
 				ERRu();
 #endif
-			if ( Caches_( P ) == NULL ) {
+			if ( Cache_.Get( P ) == NULL ) {
+				Cache_.Synchronize();
 				item_cache *IC;
 				
 				if ( ( IC = new item_cache ) == NULL )
@@ -685,7 +697,7 @@ namespace cch {
 				Caches_.Write( IC, P );
 			}
 
-			return *Caches_( P );
+			return *Cache_.Get( P );
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -714,7 +726,8 @@ namespace cch {
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			const ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
-			bsize__ Size )
+			bsize__ Size,
+			bsize__ IntermediateSize )
 		{
 			reset();
 
@@ -725,6 +738,8 @@ namespace cch {
 			Caches_.Init();
 
 			Allocate( Container.Amount() );
+
+			Cache_.Init( Caches_, IntermediateSize );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Read(
@@ -756,6 +771,8 @@ namespace cch {
 		{
 			epeios::size__ OldAmount = Caches_.Amount();
 
+			Cache_.Synchronize();
+
 			if ( OldAmount > Amount ) {
 				Erase_( OldAmount - 1, Amount );
 				Caches_.Allocate( Amount );
@@ -763,6 +780,12 @@ namespace cch {
 				Caches_.Allocate( Amount );
 				Fill_( OldAmount, Amount - 1 );
 			}
+		}
+		/*f Return the amount of data contained in the bunch correspondinf to 'Position', 
+		considering data added in the cache. */
+		epeios::size__ Amount( rc Position )
+		{
+			return GetCache_( Position ).Amount();
 		}
 		//f Synchronizing with the underlying container.
 		void Synchronize( void )
@@ -772,7 +795,7 @@ namespace cch {
 			rc R = Caches_.First();
 
 			while( R != NONE ) {
-				IC = Caches_( R );
+				IC = &GetCache_( R );
 
 				if ( IC != NULL )
 					IC->Synchronize();
@@ -804,7 +827,8 @@ namespace cch {
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
-			bsize__ Size )
+			bsize__ Size,
+			bsize__ IntermediateSize )
 		{
 			reset();
 
@@ -815,6 +839,8 @@ namespace cch {
 			Caches_.Init();
 
 			Allocate( Container.Amount() );
+
+			Cache_.Init( Caches_, IntermediateSize );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Write(
@@ -823,11 +849,7 @@ namespace cch {
 			rc PositionInContainer,
 			rb PositionInBunch )
 		{
-#ifdef CCH_DBG
-			if ( *PositionInContainer >= Amount_ )
-				ERRu();
-#endif
-			Caches_[*PositionInContainer].Write( Buffer, Amount, PositionInBunch );
+			GetCache_( PositionInContainer ).Write( Buffer, Amount, PositionInBunch );
 
 		}
 		//f Return data at 'Position'.

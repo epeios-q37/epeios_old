@@ -35,7 +35,8 @@
 #include "err.h"
 #include "stf.h"
 
-TYPEDEF( epeios::row_t__, test__ );
+TYPEDEF( epeios::row_t__, brow__ );
+TYPEDEF( epeios::row_t__, crow__ );
 typedef bso::ushort__	mytype__;
 
 void Generic( int argc, char *argv[] )
@@ -50,8 +51,8 @@ ERREpilog
 void Essai( int argc, char *argv[] )
 {
 ERRProlog
-	ctn::E_XMCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
-	cch::E_RW_CACHES___( mytype__, test__ ) RWCaches;
+	ctn::E_XMCONTAINERt( bch::E_BUNCHt_( mytype__, brow__ ), crow__ ) Container;
+	cch::E_RW_CACHESt___( mytype__, brow__, crow__ ) RWCaches;
 	int rnd, i, j;
 ERRBegin
 
@@ -59,11 +60,12 @@ ERRBegin
 
 	Container.Allocate( 10 );
 
-	RWCaches.Init( Container, 80 );
+	RWCaches.Init( Container, 80, 2 );
 
 	for( i = 0; i < 10; i++ ) {
 		for( j = 0; j < 100;  j++ )
 			RWCaches.Add( j + i * 100, i );
+			RWCaches.Put( j + i * 100, i, i );
 	}
 
 	Container.Sync();
@@ -74,6 +76,8 @@ ERRBegin
 
 		fout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
+
+	RWCaches.Amount( i );
 ERRErr
 ERREnd
 ERREpilog
@@ -82,9 +86,9 @@ ERREpilog
 void Test( int argc, char *argv[] )
 {
 ERRProlog
-	bch::E_BUNCHt( mytype__, test__ ) Bunch;
-	cch::E_RW_CACHEt___( mytype__, test__ ) RWCache;
-	cch::E_RO_CACHEt___( mytype__, test__ ) ROCache;
+	bch::E_BUNCHt( mytype__, brow__ ) Bunch;
+	cch::E_RW_CACHEt___( mytype__, brow__ ) RWCache;
+	cch::E_RO_CACHEt___( mytype__, brow__ ) ROCache;
 	int i;
 	int rnd;
 ERRBegin
@@ -113,6 +117,8 @@ ERRBegin
 
 		fout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
 	}
+
+	RWCache.Amount();
 
 ERRErr
 ERREnd
