@@ -169,13 +169,13 @@ namespace ctn {
 			FlushTest();
 #endif
 			epeios::size__ AncCap;
-			epeios::size__ Extent = Size;
+			epeios::size__ Amount = Size;
 
 			AncCap = amount_extent_manager_<r>::Amount();
 
-			if ( amount_extent_manager_<r>::AmountToAllocate( Extent, Mode ) ) {
-				Dynamics.Allocate( Extent, AncCap );
-				Statics.Allocate( Extent );
+			if ( amount_extent_manager_<r>::AmountToAllocate( Amount, Mode ) ) {
+				Dynamics.Allocate( Amount, AncCap );
+				Statics.Allocate( Amount );
 			}
 
 			if ( AncCap < Size )
@@ -223,15 +223,15 @@ namespace ctn {
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			epeios::size__ CurrentExtent = amount_extent_manager_<r>::Extent();
-			epeios::size__ NewExtent = CurrentExtent - Amount;
+			epeios::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
+			epeios::size__ NewAmount = CurrentAmount - Amount;
 
-			Dynamics.DeleteWithoutReallocating( *Position, CurrentExtent, Amount );
-			Statics.Store( Statics, NewExtent - *Position, *Position + Amount, Position );
+			Dynamics.DeleteWithoutReallocating( *Position, CurrentAmount, Amount );
+			Statics.Store( Statics, NewAmount - *Position, *Position + Amount, Position );
 
-			if ( amount_extent_manager_<r>::AmountToAllocate( NewExtent, Mode ) ) {
-				Dynamics.Allocate( NewExtent, CurrentExtent );
-				Statics.Allocate( NewExtent );
+			if ( amount_extent_manager_<r>::AmountToAllocate( NewAmount, Mode ) ) {
+				Dynamics.Allocate( NewAmount, CurrentAmount );
+				Statics.Allocate( NewAmount );
 			}
 		}
 
