@@ -31,6 +31,7 @@
 #include "cio.h"
 
 #include "err.h"
+#include "tol.h"
 
 using cio::cin;
 using cio::cout;
@@ -39,15 +40,15 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	cio::line_console__<> LC( cout );
 ERRBegin
 	while ( 1 )
-		if ( rand() % 100000 )
-			if ( rand() % 60 )
-				cout << (char)( rand() % 26 + 'A' );
-			else
-				cout << txf::nl;
-		else
-			cout << txf::sync;
+		if ( rand() % 60 ) {
+			LC << (char)( rand() % 26 + 'A' ) << txf::sync;
+			tol::Suspend( 100 );
+		}else {
+			LC.nl();
+		}
 
 
 ERRErr

@@ -1,5 +1,9 @@
 $Id$
 
+26/03/05:
+- FLW:
+	- Amélioration visant à pouvoir utiliser un flux de sortie sans cache.
+
 24/03/05
 - TOL :
 	- Adaptation aux changements de la bibliothèque 'AEM'.

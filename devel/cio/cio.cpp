@@ -79,8 +79,8 @@ static iof::descriptor__ cin_ = stdin, cout_ = stdout, cerr_ = stderr;
 _oflow__ cio::coutf( ::cout_ ), cio::cerrf( ::cerr_ );
 _iflow__ cio::cinf( ::cin_ );
 
-txf::text_oflow__ cio::cout, cio::cerr;
-txf::text_iflow__ cio::cin;
+txf::text_oflow__ cio::cout( cio::coutf ), cio::cerr( cerrf );
+txf::text_iflow__ cio::cin( cio::cinf );
 
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -102,9 +102,6 @@ public:
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::cin.Init( cio::cinf );
-		cio::cout.Init( cio::coutf );
-		cio::cerr.Init( cio::cerrf );
 	/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

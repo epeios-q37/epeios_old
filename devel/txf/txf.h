@@ -75,29 +75,21 @@ namespace txf {
 	{
 	private:
 		// Flow from which data are red.
-		flw::iflow__ *Flow_;
+		flw::iflow__ &Flow_;
 		datum__ Lire_( void )
 		{
-			return Flow_->Get();
+			return Flow_.Get();
 		}
 		amount__ Lire_(
 			amount__ Nombre,
 			datum__ *Tampon )
 		{
-			return Flow_->GetUpTo( Nombre, Tampon );
+			return Flow_.ReadUpTo( Nombre, Tampon );
 		}
 	public:
-		void reset( bool = true )
-		{
-			Flow_ = NULL;
-		}
-		//f Initialization with the input flow 'Flow'.
-		void Init( flw::iflow__ &Flow )
-		{
-			reset();
-
-			Flow_ = &Flow;
-		}
+		text_iflow__( flw::iflow__ &Flow )
+		: Flow_( Flow )
+		{}
 		text_iflow__ &operator >>( char &C )
 		{
 			C = (char)Lire_();
@@ -181,19 +173,6 @@ namespace txf {
 		{
 			return Lire_();
 		}
-	/*	//f Return the used flow.
-		flw__iflow_ &IFlow( void )
-		{
-			return *Flow_;
-		}
-	*/	text_iflow__( void )
-		{
-			reset( false );
-		}
-		~text_iflow__( void )
-		{
-			reset( true );
-		}
 	};
 
 
@@ -202,38 +181,25 @@ namespace txf {
 	{
 	private:
 		// Flow to write into.
-		flw::oflow__ *Flow_;
+		flw::oflow__ &Flow_;
 		void Ecrire_( datum__ C )
 		{
-			Flow_->Put( C );
+			Flow_.Put( C );
 		}
 		void Ecrire_(
 			const datum__ *Tampon,
 			amount__ Nombre )
 		{
-			Flow_->Put( Tampon, Nombre );
+			Flow_.Write( Tampon, Nombre );
 		}
 		void Synchroniser_( void )
 		{
-			Flow_->Synchronize();
+			Flow_.Synchronize();
 		}
 	public:
-		void reset( bool P = true )
-		{
-			if ( P ) {
-				if ( Flow_ != NULL )
-					Synchroniser_();
-			}
-
-			Flow_ = NULL;
-		}
-		//f Initializing with 'Flow' as output flow.
-		void Init( flw::oflow__ &Flow )
-		{
-			reset();
-
-			Flow_ = &Flow;
-		}
+		text_oflow__( flw::oflow__ &Flow )
+		: Flow_( Flow )
+		{}
 		text_oflow__ &operator <<( text_oflow__ &(* Function )( text_oflow__ &Flot ) )
 		{
 			return Function( *this );
@@ -303,19 +269,6 @@ namespace txf {
 		void Synchronize( void )
 		{
 			Synchroniser_();
-		}
-/*		//f Return the used flow.
-		flw__oflow_ &OFlow( void )
-		{
-			return *Flow_;
-		}
-*/		text_oflow__( void )
-		{
-			reset( false );
-		}
-		~text_oflow__( void )
-		{
-			reset( true );
 		}
 	};
 

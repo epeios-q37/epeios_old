@@ -118,7 +118,7 @@ size__ flw::oflow__::_DirectWrite(
 	size__ Amount = 0;
 ERRProlog
 ERRBegin
-	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
+	if ( ( Size_ == 0 ) && ( Cache_ != NULL ) )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
 #ifdef FLW_DBG

@@ -65,6 +65,7 @@ extern class ttr_tutor &CIOTutor;
 #include "txf.h"
 
 namespace cio {
+
 	typedef iof::io_oflow__	_oflow__;
 	typedef iof::io_iflow__	_iflow__;
 
@@ -85,6 +86,87 @@ namespace cio {
 
 	//o Standard input as a text flow.
 	extern txf::text_iflow__ cin;
+
+	template <int limit = 80> class _line_console__
+	: public flw::oflow__
+	{
+	private:
+		flw::datum__ Data_[limit+1];
+		bso::ubyte__ Length_;
+		txf::text_oflow__ &TFlow_;
+	protected:
+		virtual flw::size__ FLWWrite(
+			const flw::datum__ *Buffer,
+			flw::size__ Wanted,
+			flw::size__ Minimum,
+			bso::bool__ Synchronization )
+		{
+			if ( Length_ == 0 )
+				TFlow_ << txf::rfl << (char *)Data_ << txf::rfl;
+
+			if ( ( Length_ + Wanted ) > limit ) {
+				if ( Wanted >= limit ) {
+					memcpy( Data_, Buffer + ( limit - Wanted ), limit );
+				} else {
+					memcpy( Data_, Data_ + Wanted, limit - Wanted );
+					memcpy( Data_ + limit - Wanted, Buffer, Wanted );
+				}
+
+				Length_ = limit + 1;
+			} else {
+				memcpy( Data_ + Length_, Buffer, Wanted );
+				Length_ += Wanted;
+			}
+
+			if ( Length_ < limit ) {
+				TFlow_.Put( Buffer, Wanted );
+			} else if ( Length_ > limit )
+				Data_[0] = '<';
+
+			if ( Synchronization ) {
+				if ( Length_ > limit )
+					TFlow_ << txf::rfl << (char *)Data_;
+				TFlow_ << txf::sync;
+			}
+
+			return Wanted;
+		}
+	public:
+		_line_console__( txf::text_oflow__ &TFlow )
+		: TFlow_( TFlow ),
+		  flw::oflow__( NULL, 0, BSO_ULONG_MAX )
+		{
+			if ( limit > BSO_UBYTE_MAX )
+				ERRl();
+
+			memset( Data_, ' ', limit );
+			Data_[limit] = 0;
+			Length_ = 0;
+		}
+		void nl( void )
+		{
+			TFlow_ << txf::rfl << (char *)Data_ << txf::sync;
+			Length_ = 0;
+			memset( Data_, ' ', limit );
+		}
+	};
+
+	template <int limit = 79> class line_console__
+	: public txf::text_oflow__
+	{
+	private:
+		_line_console__<limit> Line_;
+	public:
+		line_console__( txf::text_oflow__ &TFlow )
+		: Line_( TFlow ),
+		  txf::text_oflow__( Line_ )
+		{}
+		void nl( void )
+		{
+			Line_.nl();
+		}
+	};
+
 
 }
 
