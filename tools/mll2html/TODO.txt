@@ -1,0 +1,3 @@
+$Id$
+
+Generate an XML file instead of HTML. With XSLT, allows better HTML design.

@@ -59,7 +59,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #include "flw.h"
 
 //d The epeios site URL.
-#define EPSMSC_EPEIOS_URL	"http://www.epeios.org/"
+#define EPSMSC_EPEIOS_URL	"http://epeios.org/"
 
 //d The gnu URL.
 #define EPSMSC_GNU_URL	"http://www.gnu.org/"
@@ -81,7 +81,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_AUTHOR_NAME	"Claude L. SIMON"
 
 //d Author e-mail
-#define EPSMSC_AUTHOR_EMAIL	"simon@epeios.org"
+#define EPSMSC_AUTHOR_EMAIL	"csimon@webmails.com"
 
 //d Author mail hypertext link.
 #define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"

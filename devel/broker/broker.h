@@ -263,11 +263,13 @@ namespace broker {
 			t::NOTIFY( *this );
 		}
 	};
+	
+	typedef lst::E_LIST	list;
 
 	//c A module with object stored in RAM.
 	template <class t, class st> class ram_module
 	: public module<t>,
-	  private lst::E_LIST
+	  private list
 	{
 	protected:
 		virtual void LSTAllocate( tym::size__ Size )

@@ -1,0 +1,4 @@
+$Id$
+
+- Add printing of source file ('reveal.cpp') CVS informations.
+- Add '--license' command.

@@ -1,0 +1,26 @@
+$Id$
+
+BCH:
+- fixing 'WriteAndAdjust' bug.
+
+BROKER:
+- adapting to 'LST' modifications.
+
+EPSMSC:
+- Update.
+
+GNUMLL:
+- Adapting to 'CTN', 'MMM', 'BSO', 'TXMPGH' modifications.
+- Using 'EPEIOS' stuff.
+- Move all 'operator <<' from inside namespace to outside, because I had trouble with linking.
+
+TXMPGH:
+- Introducing namespace.
+- Adapting to namespace use in 'CTN', 'STR' and 'BSO'.
+- Using 'EPEIOS' stuff.
+
+	
+
+
+20040501
+Creation

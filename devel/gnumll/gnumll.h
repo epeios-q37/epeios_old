@@ -64,11 +64,6 @@ namespace gnumll {
 	typedef ctn::E_XCONTAINER_( txmpgh::paragraph_ )	section_;
 	typedef ctn::E_XCONTAINER( txmpgh::paragraph_ )		section;
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const gnumll::section_ &S );
-
-
 	//t The before section
 	typedef section_ head_section_;
 	typedef section	head_section;
@@ -116,12 +111,6 @@ namespace gnumll {
 
 	AUTO( general_section )
 
-	inline txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const general_section_ &S )
-	{
-		return F << "-----> Title: " << S.Title << txf::nl << S.Section << txf::nl;
-	}
 
 
 	typedef ctn::E_XCONTAINER( general_section_ ) general_sections;
@@ -134,10 +123,6 @@ namespace gnumll {
 
 	typedef ctn::E_XMCONTAINER_( str::string_ ) misc_;
 	typedef ctn::E_XMCONTAINER( str::string_ ) misc;
-
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const misc_ &S );
 
 	//c Section header.
 	class section_header_
@@ -247,7 +232,7 @@ namespace gnumll {
 	};
 
 	// internal use.
-	inline void GNUMLLPrint_(
+	inline void Print_(
 		const str::string_ &S,
 		const char *L,
 		txf::text_oflow___ &F )
@@ -256,34 +241,8 @@ namespace gnumll {
 			F << txf::tab << L << ": >" << S << '<' << txf::nl;
 	}
 
-	inline txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const section_header_ &S )
-	{
-		GNUMLLPrint_( S.Name, "Name", F );
-		GNUMLLPrint_( S.Email, "E-mail", F );
-		GNUMLLPrint_( S.OtherEmail, "Other e-mail", F );
-		GNUMLLPrint_( S.TextOtherEmail, "Text other e-mail", F );
-		GNUMLLPrint_( S.Newsgroup, "Newsgroup", F );
-		GNUMLLPrint_( S.NewsgroupComment, "Newsgroup comment", F );
-		GNUMLLPrint_( S.Contribution, "Contribution", F );
-		GNUMLLPrint_( S.FAQ_URL, "FAQ URL", F );
-		GNUMLLPrint_( S.Announcement, "Announcement", F );
-
-		if ( S.Misc.Amount() )
-			F << txf::nl << "Misc:" << txf::nl << S.Misc << txf::nl;
-
-		return F;
-	}
-
-
-
 	typedef ctn::E_XMCONTAINER_( str::string_ ) titles_;
 	typedef ctn::E_XMCONTAINER( str::string_ ) titles;
-
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const titles_ &S );
 
 
 	//c A list section.
@@ -329,20 +288,9 @@ namespace gnumll {
 
 	AUTO( list_section );
 
-	inline txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const list_section_ &S )
-	{
-		F << "---> Header:" << txf::nl << S.Header << txf::nl;
-		return F << S.Section << txf::nl;
-	}
-
 	typedef ctn::E_XCONTAINER_( list_section_ ) list_sections_;
 	typedef ctn::E_XCONTAINER( list_section_ )	list_sections;
 
-	txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const list_sections_ &S );
 
 
 	//c A GNU mailing lists.
@@ -397,18 +345,69 @@ namespace gnumll {
 	};
 
 	AUTO( mailing_lists )
-
-	inline txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &F,
-		const mailing_lists_ &L )
-	{
-		F << "----- HEAD -----" << txf::nl << L.Head << txf::nl;
-		F << "----- GENERAL -----" << txf::nl << L.Generals << txf::nl;
-		F << "----- LISTS -----" << txf::nl << L.Lists << txf::nl;
-		return F;
-	}
 }
 
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::section_ &S );
+	
+inline txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::general_section_ &S )
+{
+	return F << "-----> Title: " << S.Title << txf::nl << S.Section << txf::nl;
+}
+
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::misc_ &S );
+
+inline txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::section_header_ &S )
+{
+	gnumll::Print_( S.Name, "Name", F );
+	gnumll::Print_( S.Email, "E-mail", F );
+	gnumll::Print_( S.OtherEmail, "Other e-mail", F );
+	gnumll::Print_( S.TextOtherEmail, "Text other e-mail", F );
+	gnumll::Print_( S.Newsgroup, "Newsgroup", F );
+	gnumll::Print_( S.NewsgroupComment, "Newsgroup comment", F );
+	gnumll::Print_( S.Contribution, "Contribution", F );
+	gnumll::Print_( S.FAQ_URL, "FAQ URL", F );
+	gnumll::Print_( S.Announcement, "Announcement", F );
+
+	if ( S.Misc.Amount() )
+		F << txf::nl << "Misc:" << txf::nl << S.Misc << txf::nl;
+
+	return F;
+}
+	
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::titles_ &S );
+
+inline txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::list_section_ &S )
+{
+	F << "---> Header:" << txf::nl << S.Header << txf::nl;
+	return F << S.Section << txf::nl;
+}
+
+txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::list_sections_ &S );
+
+
+inline txf::text_oflow___ &operator <<(
+	txf::text_oflow___ &F,
+	const gnumll::mailing_lists_ &L )
+{
+	F << "----- HEAD -----" << txf::nl << L.Head << txf::nl;
+	F << "----- GENERAL -----" << txf::nl << L.Generals << txf::nl;
+	F << "----- LISTS -----" << txf::nl << L.Lists << txf::nl;
+	return F;
+}
 
 /*$END$*/
 				  /********************************************/

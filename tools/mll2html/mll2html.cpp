@@ -17,7 +17,7 @@
 #include "epsmsc.h"
 
 #define NAME			"mll2html"
-#define VERSION			"V1.1.4"
+#define VERSION			"V1.1.6"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
@@ -120,7 +120,7 @@ ERRBegin
 		}
 
 		if ( IsEmailAdress( T ) ) { 
-			if ( !isalnum( C = T( T.Amount() - 1 ) ) )
+			if ( !isalnum( C = T( T.Last() ) ) )
 				T.Delete( T.Amount() - 1 );
 
 			WriteEmail( T, F );
@@ -129,8 +129,12 @@ ERRBegin
 				F << C;
 		}
 		else if ( IsURL( T ) ) {
-			if ( ispunct( C = T( T.Amount() - 1 ) ) )
-				T.Delete( T.Amount() - 1 );
+			if ( ispunct( C = T( T.Last() ) ) )
+#ifdef CPE__GCC
+				T.Truncate( 1 );
+#else	// Below line causes an ICE with g++ 2.95.3.
+				T.Truncate();
+#endif
 
 			WriteURL( T, F );
 
@@ -394,7 +398,13 @@ static const string_ &AsListItem( const string_ &Line )
 
 	String.Init();
 
+#ifdef CPE__GCC	// Due to an ICE on GCC V2.95.3
+	String = Line;
+	
+	String.Delete( 0, 2 );
+#else
 	String.WriteAndAdjust( Line, Line.Amount() - 2, 2 );
+#endif
 
 	return String;
 }

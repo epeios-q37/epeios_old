@@ -26,7 +26,7 @@
 # $Id$
 
 name = reveal
-copt = -DXXX_DBG
+#copt = -DXXX_DBG
 lopt = 
 libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm
 
@@ -60,9 +60,9 @@ ox = o
 cc = g++ 
 co = -c
 # Generates debugging data.
-co += -g
+# co += -g
 # General optimization.
-#co += -O
+co += -O2
 # To use with gprof
 #co += -pg
 lo = -o $(name)

@@ -1,0 +1,9 @@
+$Id$
+
+- UPGRADING TO V1.1.6
+- Adapting to 'TXMPGH' modifications.
+- Adapting to 'CTN' modifications.
+- Some modification to avoid ICE with gcc 2.95.3.
+
+20010501:
+Creation.
