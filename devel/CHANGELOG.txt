@@ -16,6 +16,9 @@ CCH:
 CIO:
 - (03/02/05) Use now 'IOF' library.
 
+CPE:
+- (02/03/05) 'CPE__CONSOLE' n'est plus défini par défaut, ce qui posait problème avec des DLL sous Windows.
+
 ERR:
 - (26/02/05) Add 'uTest' and 'bTest' items to 'usr' and 'bkd' error type.
 

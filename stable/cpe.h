@@ -80,7 +80,7 @@ extern class ttr_tutor &CPETutor;
 
 #if defined( wxUSE_GUI ) || defined( CPE_GUI )
 #	define CPE__GUI
-#else
+#elif !defined( _USRDLL )	// Windows only.
 #	define CPE__CONSOLE
 #endif
 
