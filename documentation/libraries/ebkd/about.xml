@@ -1,0 +1,25 @@
+
+<?xml version="1.0"?>
+<content>
+  <chapter title="&#34;Introduction&#34;">
+    <section>
+      <para>All interactive software, like those wihch have a graphical interface, are consituted by 2 parts. One is the interface, the part which is used by the uer to introduce commands and which displays the result of this command, and the other is the treatment, the one which handles and transforms the data given by the user. This 2 parts should be clearly separated, because this simplifies the coding and also the maintenaibility and the improvement of the application.</para>
+      <para>As often, in the real life, things are not as they have to be. In this case, this is due because the interface and the treatment are often coded in the same language and, using the same development tools. It's so fast and easy to develop both part together, especially when using the RAD technology ! But so wrong !</para>
+      <para>I will not explain here why you have to develop interface and treatment separately ; if you are not convinced, ask domeone which have coded a interactive software (as already written, almost all software with a graphical interface, even a WEB one, are interactive) of some importance.</para>
+    </section>
+    <section>
+      <para>OK, let's talk about the 'ebkd' libraries.</para>
+    </section>
+    <section>
+      <para>The 'ebkd' libraries are designed for the development of the backend part of a software, i.e. the treatment, in opposite of the frontend, which is the interface. Backend and frontend communicates using a dedicated protocol. They can communicates via socket, pipes, and other channel (they use the 'flow' object form the Epeios 'FLW' core library)..</para>
+      <para>The backend can be used as a deamon, in a muti-user mode (yes, the same backend can be used by more the one frontend simultaneously), or in a mono-tasking, mono-user mode, like most of the interactive software. The best in this story is that, when you coding the backend, you haven't to matter in which mode you will use it, because you have only to change one line in your source to switch from one mode to the other. If you plan to use your backend as a deamon, the fact that you can switch it in a mono-user/mono-tasking mode will make the debogging of the backend much much easier.</para>
+    </section>
+    <section>
+      <para xml:space="preserve">Concerning the frontend, the API will be generated automagically. There is a software, called <raw>getbkdapi</raw>, which connects to the backend and retrieve all the available objects and their methods. then, it generates a XML file wich describes all this object and methods.</para>
+      <para xml:space="preserve">For a given language, there is only to write the libraries which implements the Epeios protocol, and the XSL file which will transform the XML file from the <raw>getbkdapi</raw> software to the correct file. For one language, this library and the XSL file have only to be written once, and can then be used to generate the API in this language each new backend. the library and the XSL file are already written for the <raw>C++</raw>, and I plan to wrote them for <raw>JAVA</raw> and <raw>Python</raw>.</para>
+    </section>
+    <section>
+      <para>In order for the backend to deal with, you encapsulates each of your object in a object provided by the 'ebkd' library. Then, you wrote all the method of each object as a function which has, among other, a parameter pointing on an instance of one of you object. This function are then named and attach to the correct object, and each object are tne also named and declared to the backend manager of the 'ebkd' library. You can also declare function which are not attached to an object (they are called<raw>orphan</raw>).</para>
+    </section>
+  </chapter>
+</content>
