@@ -426,7 +426,7 @@ namespace ctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			item_base_volatile__< item_mono_statique__<t::s>, r >::reset( P );
+			item_base_volatile__< item_mono_statique__<typename_ t::s>, r >::reset( P );
 				
 			Objet_.reset( false );
 
@@ -443,7 +443,7 @@ namespace ctn {
 		{
 			reset( false );
 
-			item_base_volatile__< item_mono_statique__<t::s >, r >::Init( Conteneur );
+			item_base_volatile__< item_mono_statique__<typename_ t::s >, r >::Init( Conteneur );
 		}
 		virtual ~volatile_mono_item( void )
 		{
@@ -480,7 +480,7 @@ namespace ctn {
 				Sync();
 			}
 
-			item_base_const__< item_mono_statique__<t::s >, r >::reset( P );
+			item_base_const__< item_mono_statique__<typename_ t::s >, r >::reset( P );
 			Objet_.reset( false );
 
 			Objet_.plug( item_base_const__< item_mono_statique__< typename_ t::s >, r >::Pilote_ );
@@ -746,7 +746,7 @@ namespace ctn {
 				Sync();
 			}
 
-			item_base_volatile__< item_multi_statique__<t::s>, r >::reset( P );
+			item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::reset( P );
 
 			Objet_.reset( false );
 			Multimemoire.reset( false );
@@ -815,7 +815,7 @@ namespace ctn {
 				Sync();
 			}
 
-			item_base_const__< item_multi_statique__<t::s>, r >::reset(  P) ;
+			item_base_const__< item_multi_statique__<typename_ t::s>, r >::reset(  P) ;
 
 			Objet_.reset( false );
 			Multimemoire.reset( P );
