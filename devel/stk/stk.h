@@ -57,134 +57,89 @@ extern class ttr_tutor &STKTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "set.h"
+#include "tym.h"
+#include "aem.h"
 
-//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
-template <class t> class stk_stack_
-: public SET_( t )
-{
-public:
-	struct s
-	: public SET_( t )::s
-	{
-		SIZE__ Taille;
-	} &S_;
-	stk_stack_( s &S )
-	: S_( S ),
-	  SET_( t )( S ){}
-	void reset( bool P = true )
-	{
-		S_.Taille = 0;
-		SET_( t )::reset( P );
-	}
-/*	void ecrire( flo_sortie_ &Flot )
-	{
-		FLOEcrire( S_.Taille, Flot );
+namespace stk {
 
-		SET_( t )::ecrire( Flot );
-	}
-	void lire( flo_entree_ &Flot )
-	{
-		FLOLire( Flot, S_.Taille );
+	using tym::memory_;
 
-		SET_( t )::lire( Flot );
-	}
-*/	void plug( MEMORY_DRIVER_ &MDriver )
+	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
+	template <class t> class stack_
+	: public tym::E_MEMORY_( t ),
+	  public aem::amount_extent_manager_
 	{
-		SET_( t )::plug( MDriver );
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		SET_( t )::plug( M );
-	}
-	stk_stack_ &operator =( const stk_stack_ &S )
-	{
-		SET_( t )::operator =( S );
-		S_.Taille = S.S_.Taille;
+	public:
+		struct s
+		: public tym::E_MEMORY_( t )::s,
+		  public aem::amount_extent_manager_::s
+		{};
+		stack_( s &S )
+		: tym::E_MEMORY_( t )( S ),
+		  aem::amount_extent_manager_( S )
+		{}
+		void reset( bool P = true )
+		{
+			E_MEMORY_( t )::reset( P );
+			amount_extent_manager_::reset( P );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
+		{
+			E_MEMORY_( t )::plug( MDriver );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			E_MEMORY_( t )::plug( M );
+		}
+		stack_ &operator =( const stack_ &S )
+		{
+			amount_extent_manager_::operator =( S );
+			E_MEMORY_( t )::Allocate( S.Amount() );
+			E_MEMORY_( t )::Write( S, S.Amount() );
 
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		S_.Taille = 0;
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			E_MEMORY_( t )::Init();
+			amount_extent_manager_::Init();
+			amount_extent_manager_::SetNoDecreasingState( true );
+		}
+		//f Place 'Object' at the top of the stack. Return the position where this object is put.
+		tym::row__ Push( t Object )
+		{
+			tym::size__ Size = Amount() + 1;
 
-		SET_( t )::Init();
-	}
-	//f Place 'Object' at the top of the stack. Return the position where this object is put.
-	POSITION__ Push( t Object )
-	{
-		if ( SET_( t )::Extent() <= S_.Taille )
-			SET_( t )::Allocate( S_.Taille + 1 );
+			if ( amount_extent_manager_::AmountToAllocate( Size ) )
+				E_MEMORY_( t )::Allocate( Size );
 
-		SET_( t )::Write( Object, S_.Taille );
+			E_MEMORY_( t )::Write( Object, Amount() - 1 );
 
-		return S_.Taille++;
-	}
-	//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
-	t Pop( bso__bool Adjust = true )
-	{
-		t Objet = SET_( t )::Read( S_.Taille - 1 );
+			return Amount() - 1;
 
-		S_.Taille--;
+		}
+		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
+		t Pop( bso__bool Adjust = true )
+		{
+			tym::size__ Size = Amount() - 1;
 
-		if ( Adjust )
-			SET_( t )::Allocate( S_.Taille );
+			t Objet = E_MEMORY_( t )::Read( Size );
 
-		return Objet;
-	}
-	//f Amount of object in the stack, NOT the size of the stack.
-	SIZE__ Amount( void ) const
-	{
-		return S_.Taille;
-	}
-	//f Return 'true' if stack is empty.
-	bso__bool IsEmpty( void ) const
-	{
-		return S_.Taille == 0;
-	}
-		//f Return the first element pushed in the stack.
-	POSITION__ First( void ) const
-	{
-		if ( S_.Taille )
-			return 0;
-		else
-			return NONE;
-	}
-	//f Return the last element in the stack, the one which is return by the 'pop()' function. 
-	POSITION__ Last( void ) const
-	{
-		if ( S_.Taille )
-			return S_.Taille - 1;
-		else
-			return NONE;
-	}
-	//f Return the next element in the pile (get closer to the top of the pile).
-	POSITION__ Next( POSITION__ Current ) const
-	{
-		if ( ++Current < S_.Taille )
-			return Current;
-		else
-			return NONE;
-	}
-	/*f Return previous element. */
-	POSITION__ Previous( POSITION__ Current ) const
-	{
-		if ( Current )
-			return Current - 1;
-		else
-			return NONE;
-	}
+			if ( amount_extent_manager_::AmountToAllocate( Size, Adjust ) )
+				E_MEMORY_( t )::Allocate( Size );
 
-};
+			return Objet;
+		}
+	};
 
-AUTO1( stk_stack )
+	AUTO1( stack )
 
-//m A stack of static object of type 't'.
-#define STACK_( t )	stk_stack_< t >
+	//m A stack of static object of type 't'.
+	#define E_STACK_( t )	stack_< t >
 
-#define STACK( t )	stk_stack< t >
-
+	#define E_STACK( t )	stack< t >
+}
 
 /*$END$*/
 				  /********************************************/

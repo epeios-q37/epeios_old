@@ -54,12 +54,12 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void CTNRemplir_(
-	uym_basic_memory_ &Memoire,
-	uym__position Debut,
-	uym__position Fin,
-	uym__data *Statique,
-	uym__bsize Taille )
+void ctn::Remplir_(
+	uym::basic_memory_ &Memoire,
+	uym::row__ Debut,
+	uym::row__ Fin,
+	uym::data__ *Statique,
+	uym::bsize__ Taille )
 {
 	while ( Debut <= Fin )
 		Memoire.Write( Statique, Taille, Debut++ * Taille );

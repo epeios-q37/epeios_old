@@ -1,7 +1,7 @@
 /*
-  'str' library by Claude L. Simon (epeios@epeios.org)
+  'str' library by Claude L. Simon (simon@epeios.org)
   Requires the 'str' header file ('str.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( STR_NAME )
 	{
 #ifdef STR_DBG
-		Version = STR_VERSION " (DBG)";
+		Version = STR_VERSION "\b\bD $";
 #else
 		Version = STR_VERSION;
 #endif
@@ -53,182 +54,188 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-template <class ostream> static void Put_(
-	const str_string_ &String,
-	ostream &OStream )		// Can be optimized by using a buffer.
-{
-	SIZE__ Amount = String.Amount();
+namespace str {
 
-	if ( Amount != 0 )
+	template <class ostream> static void Put_(
+		const string_ &String,
+		ostream &OStream )		// Can be optimized by using a buffer.
 	{
-		POSITION__ P = 0;
+		bch::size__ Amount = String.Amount();
 
-		while ( P < Amount )
-			OStream << String.Read( P++ );
-	}
-}
+		if ( Amount != 0 )
+		{
+			bch::row__ P = 0;
 
-
-flw::oflow___ &operator <<(
-	flw::oflow___ &OStream,
-	const str_string_ &String )
-{
-	Put_( String, OStream );
-
-	return OStream << (char)0;
-}
-
-
-flw::iflow___ &operator >>(
-	flw::iflow___ &IStream,
-	str_string_ &S )
-{
-	char C;
-
-	while( ( C = IStream.Get() ) != 0 )
-		S.Add( C );
-
-	return IStream;
-}
-	
-
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &OStream,
-	const str_string_ &String )
-{
-	Put_( String, OStream );
-
-	return OStream;
-}
-
-// Convertit le contenu de 'String' en majuscule.
-void STRToUpper( str_string_ &String )
-{
-	POSITION__ P = String.Amount();
-
-	while ( P-- )
-		String.Write( (char)toupper( String.Read( P ) ) , P );
-}
-
-// Convertit le contenu de 'String' en minuscule.
-void STRToLower( str_string_ &String )
-{
-	POSITION__ P = String.Amount();
-
-	while ( P-- )
-		String.Write( (char)tolower( String.Read( P )) , P );
-}
-
-// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
-char *str_string_::Convert(
-	POSITION__ Position,
-	SIZE__ Quantity ) const
-{
-	char *Pointeur = NULL;
-ERRProlog
-ERRBegin
-	if ( ( Quantity + Position ) > Amount() )
-		Quantity = Amount() - Position;
-
-	if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
-		ERRa();
-
-	Read( Position, Quantity, Pointeur );
-
-	Pointeur[Quantity] = 0;
-ERRErr
-	if ( Pointeur )
-		free( Pointeur );
-ERREnd
-ERREpilog
-	return Pointeur;
-}
-
-// Could be easily optimized, would be when I have some time.
-void str_string_::FilterOut( char Model )
-{
-	POSITION__ Source, Dest = 0;
-	char Char;
-
-	for( Source = 0; Source < Amount(); Source++ ) {
-		if ( ( Char = Read( Source ) ) != Model )
-			Write( Char, Dest++ );
+			while ( P < Amount )
+				OStream.Put( String.Read( P++ ) );
+		}
 	}
 
-	Allocate( Dest );
-}
 
-// Could be easily optimized, would be when I have some time.
-void str_string_::Replace(
-	char Old,
-	char New )
-{
-	POSITION__ Source;
-	char Char;
+	flw::oflow___ &operator <<(
+		flw::oflow___ &OStream,
+		const string_ &String )
+	{
+		Put_( String, OStream );
 
-	for( Source = 0; Source < Amount(); Source++ ) {
-		if ( ( Char = Read( Source ) ) == Old )
-			Write( New, Source );
-		else
-			Write( Char, Source );
+		OStream.Put( 0 );
+
+		return OStream;
 	}
-}
 
 
-POSITION__ str_string_::Search(
-	const str_string_ &S,
-	POSITION__ Start ) const
-{
-	if ( S.Amount() <= Amount() ) {
-		SIZE__ Amount = S.Amount();
-		POSITION__ Limit = this->Amount() - Amount;
+	flw::iflow___ &operator >>(
+		flw::iflow___ &IStream,
+		string_ &S )
+	{
+		char C;
 
-		while( ( Start <= Limit )
-			&& STRCompare( S, *this, 0, Start, Amount ) )
+		while( ( C = IStream.Get() ) != 0 )
+			S.Add( C );
+
+		return IStream;
+	}
+		
+
+	txf::text_oflow___ &operator <<(
+		txf::text_oflow___ &OStream,
+		const string_ &String )
+	{
+		Put_( String, OStream );
+
+		return OStream;
+	}
+
+	// Convertit le contenu de 'String' en majuscule.
+	void ToUpper( string_ &String )
+	{
+		bch::row__ P = String.Amount();
+
+		while ( P-- )
+			String.Write( (char)toupper( String.Read( P ) ) , P );
+	}
+
+	// Convertit le contenu de 'String' en minuscule.
+	void ToLower( string_ &String )
+	{
+		bch::row__ P = String.Amount();
+
+		while ( P-- )
+			String.Write( (char)tolower( String.Read( P )) , P );
+	}
+
+	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
+	char *string_::Convert(
+		bch::row__ Position,
+		bch::size__ Quantity ) const
+	{
+		char *Pointeur = NULL;
+	ERRProlog
+	ERRBegin
+		if ( ( Quantity + Position ) > Amount() )
+			Quantity = Amount() - Position;
+
+		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
+			ERRa();
+
+		Read( Position, Quantity, Pointeur );
+
+		Pointeur[Quantity] = 0;
+	ERRErr
+		if ( Pointeur )
+			free( Pointeur );
+	ERREnd
+	ERREpilog
+		return Pointeur;
+	}
+
+	// Could be easily optimized, would be when I have some time.
+	void string_::FilterOut( char Model )
+	{
+		bch::row__ Source, Dest = 0;
+		char Char;
+
+		for( Source = 0; Source < Amount(); Source++ ) {
+			if ( ( Char = Read( Source ) ) != Model )
+				Write( Char, Dest++ );
+		}
+
+		Allocate( Dest );
+	}
+
+	// Could be easily optimized, would be when I have some time.
+	void string_::Replace(
+		char Old,
+		char New )
+	{
+		bch::row__ Source;
+		char Char;
+
+		for( Source = 0; Source < Amount(); Source++ ) {
+			if ( ( Char = Read( Source ) ) == Old )
+				Write( New, Source );
+			else
+				Write( Char, Source );
+		}
+	}
+
+
+	bch::row__ string_::Search(
+		const string_ &S,
+		bch::row__ Start ) const
+	{
+		if ( S.Amount() <= Amount() ) {
+			bch::size__ Amount = S.Amount();
+			bch::row__ Limit = this->Amount() - Amount;
+
+			while( ( Start <= Limit )
+				&& Compare( S, *this, 0, Start, Amount ) )
+				Start++;
+
+			if ( Start > Limit )
+				return NONE;
+			else
+				return Start;
+		}
+		else {
+			return NONE;
+		}
+	}
+
+	bch::row__ string_::Search(
+		char C,
+		bch::row__ Start ) const
+	{
+		bch::row__ Limit = Amount();
+
+		while( ( Start < Limit )
+			&& ( Read( Start ) != C ) )
 			Start++;
 
-		if ( Start > Limit )
+		if ( Start >= Limit )
 			return NONE;
 		else
 			return Start;
 	}
-	else {
-		return NONE;
+
+	bso__ulong string_::ToUL( bch::row__ &ErrP )
+	{
+		bso__ulong Result = 0;
+		bch::row__ P = First();
+		char C;
+
+		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+			Result = Result * 10 + C - '0';
+			P = Next( P );
+		}
+
+		if ( &ErrP )
+			ErrP = P;
+
+		return Result;
 	}
 }
 
-POSITION__ str_string_::Search(
-	char C,
-	POSITION__ Start ) const
-{
-	POSITION__ Limit = Amount();
-
-	while( ( Start < Limit )
-		&& ( Read( Start ) != C ) )
-		Start++;
-
-	if ( Start >= Limit )
-		return NONE;
-	else
-		return Start;
-}
-
-bso__ulong str_string_::ToUL( POSITION__ &ErrP )
-{
-	bso__ulong Result = 0;
-	POSITION__ P = First();
-	char C;
-
-	while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
-		Result = Result * 10 + C - '0';
-		P = Next( P );
-	}
-
-	if ( &ErrP )
-		ErrP = P;
-
-	return Result;
-}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

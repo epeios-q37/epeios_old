@@ -69,131 +69,138 @@ extern class ttr_tutor &MDRTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+//D Memory DRiver.
+
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
 
-//t The position in a memory.
-typedef bso__ulong	mdr__position;
+namespace mmm {
+	class multimemory_;
+}
 
-//t The size of a memory.
-typedef bso__ulong	mdr__size;
+namespace mdr {
 
-//t The size of a buffer.
-typedef bso__bsize	mdr__bsize;
+	//t The position in a memory.
+	typedef bso__ulong	row__;
 
-//t The type of the data in a memory.
-typedef bso__raw	mdr__data;
+	//t The size of a memory.
+	typedef bso__ulong	size__;
 
-struct mdr
-{
-	// How the memory is used.
+	//t The size of a buffer.
+	typedef bso__bsize	bsize__;
+
+	//t The type of the data in a memory.
+	typedef bso__raw	data__;
+
+	//e Access mode to the memory.
 	enum mode
 	{
-		// Read only
+		//i Undefined.
+		mUndefined,
+		//i Read only.
 		mReadOnly,
-		// Read/write
-		mReadWrite
+		//i Read/write
+		mReadWrite,
+		//i amount of mode.
+		m_amount
 	};
-};
 
+	//c Basic memory driver. Use 'MEMORY_DRIVER_' instead directly this class.
+	class basic_memory_driver_
+	{
+	protected:
+		//v Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
+		virtual void MDRRead(
+			row__ Position,
+			bsize__ Amount,
+			data__ *Buffer ) = 0;
+		//v Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
+		virtual void MDRWrite(
+			const data__ *Buffer,
+			bsize__ Amount,
+			row__ Position )
+		{
+			ERRu();
+			// For read-only memory.
+		}
+		//v Allocate 'Capacity' bytes in memory.
+		virtual void MDRAllocate( size__ Size )
+		{
+			ERRu();
+			// For read-only memory.
+		}
+		//v Flush caches.
+		virtual void MDRSynchronize( void )
+		{
+			// for read-only memory.
+		}
+	public:
+		struct s {};
+		basic_memory_driver_( s &S )
+		{
+			reset( true );
+		}
+		virtual ~basic_memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
+		{
+			reset( false );
+		}
+		void reset( bool = true )
+		{}
+		void plug( class mmm::multimemory_ & )
+		{
+			// For standardization.
+		}
+		//f Initialization.
+		void Init( void )
+		{}
+		//f Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
+		void Read(
+			row__ Position,
+			bsize__ Amount,
+			data__ *Buffer )
+		{
+			MDRRead( Position, Amount, Buffer );
+		}
+		//f Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
+		void Write(
+			const data__ *Buffer,
+			bsize__ Amount,
+			row__ Position )
+		{
+			MDRWrite( Buffer, Amount, Position );
+		}
+		//f Allocate 'Size' bytes in memory.
+		void Allocate( size__ Size )
+		{
+			MDRAllocate( Size );
+		}
+		//f Flush caches.
+		void Synchronize( void )
+		{
+			MDRSynchronize();
+		}
+	};
 
-//c Basic memory driver. Use 'MEMORY_DRIVER_' instead directly this class.
-class mdr_basic_memory_driver_
-{
-protected:
-	//v Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
-	virtual void MDRRead(
-		mdr__position Position,
-		mdr__bsize Amount,
-		mdr__data *Buffer ) = 0;
-	//v Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
-	virtual void MDRWrite(
-		const mdr__data *Buffer,
-		mdr__bsize Amount,
-		mdr__position Position )
+	class basic_memory_driver
+	: public basic_memory_driver_
 	{
-		ERRu();
-		// For read-only memory.
-	}
-	//v Allocate 'Capacity' bytes in memory.
-	virtual void MDRAllocate( mdr__size Size )
-	{
-		ERRu();
-		// For read-only memory.
-	}
-	//v Flush caches.
-	virtual void MDRSynchronize( void )
-	{
-		// for read-only memory.
-	}
-public:
-	struct s {};
-	mdr_basic_memory_driver_( s &S )
-	{
-		reset( true );
-	}
-	virtual ~mdr_basic_memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
-	{
-		reset( false );
-	}
-	void reset( bool = true )
-	{}
-	void plug( class mmm_multimemory_ & )
-	{
-		// For standardization.
-	}
-	//f Initialization.
-	void Init( void )
-	{}
-	//f Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
-	void Read(
-		mdr__position Position,
-		mdr__bsize Amount,
-		mdr__data *Buffer )
-	{
-		MDRRead( Position, Amount, Buffer );
-	}
-	//f Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
-	void Write(
-		const mdr__data *Buffer,
-		mdr__bsize Amount,
-		mdr__position Position )
-	{
-		MDRWrite( Buffer, Amount, Position );
-	}
-	//f Allocate 'Size' bytes in memory.
-	void Allocate( mdr__size Size )
-	{
-		MDRAllocate( Size );
-	}
-	//f Flush caches.
-	void Synchronize( void )
-	{
-		MDRSynchronize();
-	}
-};
+	public:
+		basic_memory_driver_::s static_;
+		basic_memory_driver( void )
+		: basic_memory_driver_( static_ )
+		{
+			basic_memory_driver_::reset( false );
+		}
+		virtual ~basic_memory_driver( void )
+		{
+			basic_memory_driver_::reset( true );
+		}
+	};
 
-class mdr_basic_memory_driver
-: public mdr_basic_memory_driver_
-{
-public:
-	mdr_basic_memory_driver_::s static_;
-	mdr_basic_memory_driver( void )
-	: mdr_basic_memory_driver_( static_ )
-	{
-		mdr_basic_memory_driver_::reset( false );
-	}
-	virtual ~mdr_basic_memory_driver( void )
-	{
-		mdr_basic_memory_driver_::reset( true );
-	}
-};
-
-
-//d Because it is often used in the Epeios project, this is a shorter name for 'mdr_basic_memory_driver_'.
-#define MEMORY_DRIVER_	mdr_basic_memory_driver_
-#define MEMORY_DRIVER	mdr_basic_memory_driver
+	#define E_MEMORY_DRIVER_	basic_memory_driver_
+	#define E_MEMORY_DRIVER		basic_memory_driver
+}
 
 /*$END$*/
 				  /********************************************/

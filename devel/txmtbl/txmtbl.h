@@ -65,8 +65,8 @@ extern class ttr_tutor &TXMTBLTutor;
 #include "ctn.h"
 #include "xtf.h"
 
-struct txmtbl
-{
+namespace txmtbl {
+
 	//e The different delimiter.
 	enum delimiter
 	{
@@ -79,326 +79,331 @@ struct txmtbl
 		//i Unknow delimiter.
 		dUnknow
 	};
-};
 
-//t An amount of cell or of line.
-typedef SIZE__	txmtbl__amount;
+	//t An amount of cell or of line.
+	typedef tym::size__	amount__;
 
-//d The default cell separator.
-#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
+	//d The default cell separator.
+	#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
 
-//t A location (line or column).
-typedef xtf::location	txmtbl__location;
+	//t A location (line or column).
+	typedef xtf::location	location__;
 
-//t A separator.
-typedef bso__char	txmtbl__separator;
+	//t A separator.
+	typedef bso__char	separator__;
 
-//c A cell.
-class txmtbl_cell_
-: public str_string_
-{
-public:
-	struct s
-	: public str_string_::s
+	//c A cell.
+	class cell_
+	: public str::string_
 	{
-		txmtbl__location Location;
-	} &S_;
-	txmtbl_cell_( s &S )
-	: S_( S ),
-	  str_string_( S )
-	{}
-	void reset( bso__bool P = true )
-	{
-		str_string_::reset( P );
-		S_.Location = 0;
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		str_string_::plug( M );
-	}
-	void plug( MEMORY_DRIVER_ &MD )
-	{
-		str_string_::plug( MD );
-	}
-	txmtbl_cell_ &operator =( const txmtbl_cell_ &C )
-	{
-		str_string_::operator =( C );
+	public:
+		struct s
+		: public str::string_::s
+		{
+			location__ Location;
+		} &S_;
+		cell_( s &S )
+		: S_( S ),
+		  str::string_( S )
+		{}
+		void reset( bso__bool P = true )
+		{
+			string_::reset( P );
+			S_.Location = 0;
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			string_::plug( M );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			string_::plug( MD );
+		}
+		cell_ &operator =( const cell_ &C )
+		{
+			string_::operator =( C );
 
-		S_.Location = C.S_.Location;
+			S_.Location = C.S_.Location;
 
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			string_::Init();
+
+			S_.Location = 0;
+		}
+		//f 'Location' becomes the location.
+		void Location( location__ Location )
+		{
+			S_.Location = Location;
+		}
+		//f Return location of the cell.
+		location__ Location( void ) const
+		{
+			return S_.Location;
+		}
+	};
+
+	AUTO( cell )
+
+	/*f Put in 'Cell' the next cell in flow 'Flow'. 'Separator' delimits the celles.
+	Return the delimiter of the cell. */
+	txmtbl::delimiter GetCell(
+		xtf::extended_text_iflow___ &Flow,
+		cell_ &Cell,
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+
+	/*f Skip next cell in flow 'Flow'. 'Separator' delimits the cells.
+	Return the delimiter of the cell. */
+	txmtbl::delimiter SkipCell(
+		xtf::extended_text_iflow___ &Flow,
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+
+	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
+	typedef lst::E_LIST_ list_;
+
+
+	//c A line of cells
+	class line_
+	: public list_,
+	  public cells_
 	{
-		str_string_::Init();
+	private:
+		// Supprimer la cellule à la position 'Position'.
+		void DeleteCell_( tym::row__ Position )
+		{
+			cells_::operator()( Position ).Allocate( 0 );
+			cells_::Sync();
 
-		S_.Location = 0;
-	}
-	//f 'Location' becomes the location.
-	void Location( txmtbl__location Location )
+			list_::Remove( Position );
+		}
+	protected:
+		virtual void LSTAllocate( tym::size__ Size )
+		{
+			cells_::Allocate( Size,true );
+		}
+	public:
+		struct s
+		: public list_::s,
+		  public cells_::s
+		{
+			location__ Location;
+		} &S_;
+		line_( s &S )
+		: S_( S ),
+		  lst::E_LIST_( S ),
+		  ctn::E_MCONTAINER_( cell_ )( S )
+		{}
+		void reset( bool P = true )
+		{
+			list_::reset( P );
+			cells_::reset( P );
+
+			S_.Location = 0;
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			list_::plug( M );
+			cells_::plug( M );
+		}
+		line_ &operator =( const line_ &L )
+		{
+			list_::operator =( L );
+			cells_::operator =( L );
+
+			S_.Location = L.S_.Location;
+
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			list_::Init();
+			cells_::Init();
+
+			S_.Location = 0;
+		}
+		//f Write 'Cell' and 'Location' at 'Position'.
+		void Write(
+			const cell_ &Cell,
+			location__ Location,
+			tym::row__ Position )
+		{
+			cells_::Write( Cell, Position );
+			cells_::Sync();
+
+			S_.Location = Location;
+		}
+		//f Add 'Cell' and 'Location'. Return position where added.
+		tym::row__ Add(
+			const cell_ &Cell,
+			location__ Location )
+		{
+			tym::row__ P = list_::CreateEntry();
+
+			Write( Cell, Location, P );
+
+			return P;
+		}
+		//f Return the position of the first non-empty cell.
+		tym::row__ FirstNonEmptyCell( void ) const;
+		//f Return the position of the last non-empty cell.
+		tym::row__ LastNonEmptyCell( void ) const;
+		//f Delete all empty cells. Retunr amount of cells deleted.
+		amount__ DeleteEmptyCells( void );
+		//f Delete all heading empty cells. Return amount of cells deleted.
+		amount__ DeleteHeadingEmptyCells( void );
+		//f Delete all tailing empty cells. Return amount of cells deleted.
+		amount__ DeleteTailingEmptyCells( void );
+		//f Delete all empty cells between the first and last non-empty cells. Return amount of cells deleted.
+		amount__ DeleteCentralEmptyCells( void );
+		//f Delete all cells from 'Position'. Return amount of cells deleted.
+		amount__ DeleteCellsAt( tym::row__ Position );
+		//f Delete all cells. Return amount of cells deleted.
+		amount__ DeleteAllCells( void )
+		{
+			tym::row__ P = list_::First();
+
+			if ( P != NONE )
+				return DeleteCellsAt( P );
+			else
+				return 0;
+		}
+		/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
+		Return amount of cell deleted.*/
+		amount__ DeleteCommentary( bso__char Marker );
+		//f 'Location' becomes the location.
+		void Location( location__ Location )
+		{
+			S_.Location = Location;
+		}
+		//f Return location of the line.
+		location__ Location( void ) const
+		{
+			return S_.Location;
+		}
+		NAV( list_:: )
+	};
+
+	AUTO( line )
+
+	/*f Put in 'Line' current line in 'Flow' and return true, or false if there is no
+	more line. Cells are separated by 'Separator'.*/
+	bso__bool GetLine(
+		xtf::extended_text_iflow___ &Flow,
+		line_ &Line,
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+
+	/*f Put in 'Line' the first non-empty line in 'Flow' and return true, or false if there is no
+	more line. Cells are separated by 'Separator'.*/
+	bso__bool GetFirstNonEmptyLine(
+		xtf::extended_text_iflow___ &Flow,
+		line_ &Line,
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+
+
+	typedef ctn::E_CONTAINER_( line_ ) lines_;
+
+	//c A table.
+	class table_
+	: public list_,
+	  public lines_
 	{
-		S_.Location = Location;
-	}
-	//f Return location of the cell.
-	txmtbl__location Location( void ) const
-	{
-		return S_.Location;
-	}
-};
+	private:
+		// Delete line at position 'Position'.
+		void DeleteLine_( tym::row__ Position )
+		{
+			lines_::operator ()(Position).DeleteAllCells();
+			lines_::Sync();
 
-AUTO( txmtbl_cell )
+			list_::Remove( Position );
+		}
+	protected:
+		virtual void LSTAllocate( tym::size__ Size )
+		{
+			lines_::Allocate( Size );
+		}
+	public:
+		struct s
+		: public list_::s,
+		  public lines_::s
+		{};
+		table_( s &S )
+		: list_( S ),
+		  lines_( S )
+		{}
+		void reset( bool P = true )
+		{
+			list_::reset( P );
+			lines_::reset( P );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			list_::plug( M );
+			lines_::plug( M );
+		}
+		table_ &operator =( const table_ &T )
+		{
+			list_::operator =( T );
+			lines_::operator =( T );
 
-/*f Put in 'Cell' the next cell in flow 'Flow'. 'Separator' delimits the celles.
-Return the delimiter of the cell. */
-txmtbl::delimiter TXMTBLGetCell(
-	xtf::extended_text_iflow___ &Flow,
-	txmtbl_cell_ &Cell,
-	txmtbl__separator Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			list_::Init();
+			lines_::Init();
+		}
+		//f Add 'Line'. Return position where added.
+		tym::row__ AddLine(	const line_ &Line )
+		{
+			tym::row__ P = list_::CreateEntry();
 
-/*f Skip next cell in flow 'Flow'. 'Separator' delimits the cells.
-Return the delimiter of the cell. */
-txmtbl::delimiter TXMTBLSkipCell(
-	xtf::extended_text_iflow___ &Flow,
-	txmtbl__separator Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+			lines_::Write( Line, P );
+			lines_::Sync();
 
+			return P;
+		}
+		//f Delete the line at 'Position'.
+		void DeleteLine( tym::row__ Position )
+		{
+			DeleteLine_( Position );
+		}
+		//f Delete all emty lines. Return amount of lines deleted.
+		amount__ DeleteEmptyLines( void );
+		//f Delete all empty cells from all lines.
+		void DeleteEmptyCells( void );
+		//f Delete all heading cells from all the lines.
+		void DeleteHeadingEmptyCells( void );
+		//f Delete all tailing cells from all lines.
+		void DeleteTailingEmptyCells( void );
+		//f Delete all empty cells between the first and last non-empty cells from all the lines.
+		void DeleteCentralEmptyCells( void );
+		//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
+		void DeleteCommentaries( bso__char Marker );
+		NAV( list_:: )
+	};
 
-//c A line of cells
-class txmtbl_line_
-: public LIST_,
-  public MCONTAINER_( txmtbl_cell_ )
-{
-private:
-	// Supprimer la cellule à la position 'Position'.
-	void DeleteCell_( POSITION__ Position )
-	{
-		MCONTAINER_( txmtbl_cell_ )::operator()( Position ).Allocate( 0 );
-		MCONTAINER_( txmtbl_cell_ )::Sync();
+	txf::text_oflow___ &operator <<(
+		txf::text_oflow___ &Flot,
+		const table_ &Table );
 
-		LIST_::Remove( Position );
-	}
-protected:
-	virtual void LSTAllocate( SIZE__ Size )
-	{
-		MCONTAINER_( txmtbl_cell_ )::Allocate( Size );
-	}
-public:
-	struct s
-	: public ::LIST_::s,
-	  public MCONTAINER_( txmtbl_cell_ )::s
-	{
-		txmtbl__location Location;
-	} &S_;
-	txmtbl_line_( s &S )
-	: S_( S ),
-	  LIST_( S ),
-	  MCONTAINER_( txmtbl_cell_ )( S )
-	{}
-	void reset( bool P = true )
-	{
-		LIST_::reset( P );
-		MCONTAINER_( txmtbl_cell_ )::reset( P );
+	AUTO( table )
 
-		S_.Location = 0;
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		LIST_::plug( M );
-		MCONTAINER_( txmtbl_cell_ )::plug( M );
-	}
-	txmtbl_line_ &operator =( const txmtbl_line_ &L )
-	{
-		LIST_::operator =( L );
-		MCONTAINER_( txmtbl_cell_ )::operator =( L );
-
-		S_.Location = L.S_.Location;
-
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		LIST_::Init();
-		MCONTAINER_( txmtbl_cell_ )::Init();
-
-		S_.Location = 0;
-	}
-	//f Write 'Cell' and 'Location' at 'Position'.
-	void Write(
-		const txmtbl_cell_ &Cell,
-		txmtbl__location Location,
-		POSITION__ Position )
-	{
-		MCONTAINER_( txmtbl_cell_ )::Write( Cell, Position );
-		MCONTAINER_( txmtbl_cell_ )::Sync();
-
-		S_.Location = Location;
-	}
-	//f Add 'Cell' and 'Location'. Return position where added.
-	POSITION__ Add(
-		const txmtbl_cell_ &Cell,
-		txmtbl__location Location )
-	{
-		POSITION__ P = LIST_::CreateEntry();
-
-		Write( Cell, Location, P );
-
-		return P;
-	}
-	//f Return the position of the first non-empty cell.
-	POSITION__ FirstNonEmptyCell( void ) const;
-	//f Return the position of the last non-empty cell.
-	POSITION__ LastNonEmptyCell( void ) const;
-	//f Delete all empty cells. Retunr amount of cells deleted.
-	txmtbl__amount DeleteEmptyCells( void );
-	//f Delete all heading empty cells. Return amount of cells deleted.
-	txmtbl__amount DeleteHeadingEmptyCells( void );
-	//f Delete all tailing empty cells. Return amount of cells deleted.
-	txmtbl__amount DeleteTailingEmptyCells( void );
-	//f Delete all empty cells between the first and last non-empty cells. Return amount of cells deleted.
-	txmtbl__amount DeleteCentralEmptyCells( void );
-	//f Delete all cells from 'Position'. Return amount of cells deleted.
-	txmtbl__amount DeleteCellsAt( POSITION__ Position );
-	//f Delete all cells. Return amount of cells deleted.
-	txmtbl__amount DeleteAllCells( void )
-	{
-		POSITION__ P = LIST_::First();
-
-		if ( P != NONE )
-			return DeleteCellsAt( P );
-		else
-			return 0;
-	}
-	/*f Delete the cells beginnig with 'Marker' and all following cells from the same line.
-	Return amount of cell deleted.*/
-	txmtbl__amount DeleteCommentary( bso__char Marker );
-	//f 'Location' becomes the location.
-	void Location( txmtbl__location Location )
-	{
-		S_.Location = Location;
-	}
-	//f Return location of the line.
-	txmtbl__location Location( void ) const
-	{
-		return S_.Location;
-	}
-	FNLPA( LIST_:: )
-};
+	//f Put in 'Table' the line contained in 'Flow'. Cells are separated by 'Separator'.
+	void GetTable(
+		xtf::extended_text_iflow___ &Flow,
+		table_ &Table,
+		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
+}
 
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &Flow,
-	const txmtbl_line_ &Line );
+	const txmtbl::line_ &Line );
 
-AUTO( txmtbl_line )
-
-/*f Put in 'Line' current line in 'Flow' and return true, or false if there is no
-more line. Cells are separated by 'Separator'.*/
-bso__bool TXMTBLGetLine(
-	xtf::extended_text_iflow___ &Flow,
-	txmtbl_line_ &Line,
-	txmtbl__separator Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
-
-/*f Put in 'Line' the first non-empty line in 'Flow' and return true, or false if there is no
-more line. Cells are separated by 'Separator'.*/
-bso__bool TXMTBLGetFirstNonEmptyLine(
-	xtf::extended_text_iflow___ &Flow,
-	txmtbl_line_ &Line,
-	txmtbl__separator Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
-
-
-
-//c A table.
-class txmtbl_table_
-: public LIST_,
-  public CONTAINER_( txmtbl_line_ )
-{
-private:
-	// Delete line at position 'Position'.
-	void DeleteLine_( POSITION__ Position )
-	{
-		CONTAINER_( txmtbl_line_ )::operator ()(Position).DeleteAllCells();
-		CONTAINER_( txmtbl_line_ )::Sync();
-
-		LIST_::Remove( Position );
-	}
-protected:
-	virtual void LSTAllocate( SIZE__ Size )
-	{
-		CONTAINER_( txmtbl_line_ )::Allocate( Size );
-	}
-public:
-	struct s
-	: public ::LIST_::s,
-	  public CONTAINER_( txmtbl_line_ )::s
-	{};
-	txmtbl_table_( s &S )
-	: LIST_( S ),
-	  CONTAINER_( txmtbl_line_ )( S )
-	{}
-	void reset( bool P = true )
-	{
-		LIST_::reset( P );
-		CONTAINER_( txmtbl_line_ )::reset( P );
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		LIST_::plug( M );
-		CONTAINER_( txmtbl_line_ )::plug( M );
-	}
-	txmtbl_table_ &operator =( const txmtbl_table_ &T )
-	{
-		LIST_::operator =( T );
-		CONTAINER_( txmtbl_line_ )::operator =( T );
-
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		LIST_::Init();
-		CONTAINER_( txmtbl_line_ )::Init();
-	}
-	//f Add 'Line'. Return position where added.
-	POSITION__ AddLine(	const txmtbl_line_ &Line )
-	{
-		POSITION__ P = LIST_::CreateEntry();
-
-		CONTAINER_( txmtbl_line_ )::Write( Line, P );
-		CONTAINER_( txmtbl_line_ )::Sync();
-
-		return P;
-	}
-	//f Delete the line at 'Position'.
-	void DeleteLine( POSITION__ Position )
-	{
-		DeleteLine_( Position );
-	}
-	//f Delete all emty lines. Return amount of lines deleted.
-	txmtbl__amount DeleteEmptyLines( void );
-	//f Delete all empty cells from all lines.
-	void DeleteEmptyCells( void );
-	//f Delete all heading cells from all the lines.
-	void DeleteHeadingEmptyCells( void );
-	//f Delete all tailing cells from all lines.
-	void DeleteTailingEmptyCells( void );
-	//f Delete all empty cells between the first and last non-empty cells from all the lines.
-	void DeleteCentralEmptyCells( void );
-	//f Delete, for each line, the cells beginning with 'Marker' and all following cells.
-	void DeleteCommentaries( bso__char Marker );
-	FNLPA( LIST_:: )
-};
-
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flot,
-	const txmtbl_table_ &Table );
-
-AUTO( txmtbl_table )
-
-//f Put in 'Table' the line contained in 'Flow'. Cells are separated by 'Separator'.
-void TXMTBLGetTable(
-	xtf::extended_text_iflow___ &Flow,
-	txmtbl_table_ &Table,
-	txmtbl__separator Separator = TXMTBL_DEFAULT_CELL_SEPARATOR );
 
 /*$END$*/
 				  /********************************************/

@@ -55,11 +55,11 @@ public:
 /*$BEGIN$*/
 
 
-void que_queue_::Initialize_(
-	POSITION__ Begin,
-	POSITION__ End )
+void que::queue_::Initialize_(
+	tym::row__ Begin,
+	tym::row__ End )
 {
-	que__link L;
+	que::link__ L;
 
 	do {
 		Links.Write( L, Begin );

@@ -36,9 +36,10 @@
 #include "stf.h"
 #include "tym.h"
 #include "flm.h"
-#include "set.h"
+#include "bch.h"
 
 using namespace txf;
+using namespace mmm;
 
 void Generic( int argc, char *argv[] )
 {
@@ -50,9 +51,9 @@ ERREpilog
 }
 
 void Test(
-	mmm_multimemory_ &M,
-	mmm__descriptor &D,
-	SIZE__ C )
+	multimemory_ &M,
+	descriptor__ &D,
+	size__ C )
 {
 	static unsigned long Compteur = 1;
 
@@ -72,9 +73,9 @@ void Test(
 void EssaiBase( int argc, char *argv[] )
 {
 ERRProlog
-	flm_file_memory_driver M;
-	mmm_multimemory P;
-	mmm__descriptor D[NOMBRE];
+	flm::file_memory_driver M;
+	multimemory P;
+	descriptor__ D[NOMBRE];
 	bso__ushort C = 1;
 ERRBegin
 	M.Init( "coucou.tmp" );
@@ -107,13 +108,13 @@ ERREpilog
 void EssaiComplet( int argc, char *argv[] )
 {
 ERRProlog
-	flm_file_memory_driver Memoire;
-	mmm_multimemory P;
-	mmm_multimemory_driver U1, U2, U3;
-	set::SET( bso__ulong ) M1, M2, M3;
+	flm::file_memory_driver Memoire;
+	multimemory P;
+	multimemory_driver U1, U2, U3;
+	bch::E_BUNCH( bso__ulong ) M1, M2, M3;
 	int i = 50;
 	bso__ulong j;
-	cvm_conventional_memory_driver M;
+	cvm::conventional_memory_driver M;
 //	int j;
 ERRBegin
 	Memoire.Init();
@@ -178,9 +179,9 @@ ERREpilog
 void Essai( void )
 {
 ERRProlog
-	flm_file_memory_driver Memoire;
-	mmm_multimemory Multimemoire;
-	mmm__descriptor Descripteurs[100];
+	flm::file_memory_driver Memoire;
+	multimemory Multimemoire;
+	descriptor__ Descripteurs[100];
 ERRBegin
 	Memoire.Init();
 	Memoire.Manuel();

@@ -59,234 +59,250 @@ extern class ttr_tutor &TYMTutor;
 #include "err.h"
 #include "flw.h"
 #include "uym.h"
+#include "mmm.h"
 
-typedef uym__position	tym__position;
+namespace tym {
+	using namespace uym;
 
-typedef uym__size		tym__size;
+	#define TYM_MAX_SIZE	UYM_MAX_SIZE
 
-typedef uym__bsize		tym__bsize;
+	//c Typed memory core. Don't use; for internal use only.
+	template <typename t, typename b> class memory_core_
+	: public b
+	{
+	private:
+		/* lit 'Quantite' objets à partir de 'Position' et les place dans 'Destination'
+		à la position 'Decalage' */
+		void Lire_(
+			tym::row__ Position,
+			tym::size__ Quantite,
+			memory_core_ &Destination,
+			tym::row__ Decalage ) const
+		{
+			b::Read( ( Position * sizeof( t ) ), ( Quantite * sizeof( t ) ), Destination, ( Decalage * sizeof( t ) ) );
+		}
+		// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
+		void Lire_(
+			tym::row__ Position,
+			tym::bsize__ Nombre,
+			t *Tampon ) const
+		{
+			b::Read( Position * sizeof( t ), Nombre * sizeof( t ), (tym::data__ *)Tampon );
+		}
+		// écrit 'Taille' objets de 'Tampon' à la position 'Position'
+		void Ecrire_(
+			const t *Tampon,
+			tym::bsize__ Nombre,
+			tym::row__ Position )
+		{
+			b::Write( (tym::data__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
+		}
+		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
+		à la position 'Decalage' */
+		void Ecrire_(
+			const memory_core_ &Source,
+			tym::size__ Quantite,
+			tym::row__ Position,
+			tym::row__ Decalage )
+		{
+			b::Write( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
+		}
+		// allocation de 'Capacite' objets
+		void Allocate_( tym::size__ Size )
+		{
+			b::Allocate( ( Size * sizeof( t ) ) );
+		}
+	public:
+		struct s
+		: public b::s
+		{};
+		memory_core_( s &S )
+		: b( S )
+		{}
+		//f Initialization.
+		void Init( void )
+		{
+			b::Init();
+		}
+		//f Put 'Amount' objects at 'Position' to 'Buffer'.
+		void Read(
+			tym::row__ Position,
+			tym::bsize__ Amount,
+			t *Buffer ) const
+		{
+			Lire_( Position, Amount, Buffer );
+		}
+		//f Put in 'Value' the object at 'Position'.
+		void Read(
+			tym::row__ Position,
+			t &Value ) const
+		{
+			Lire_( Position, 1, &Value );
+		}
+		//f Put to 'Destination' at 'Offset' 'Quantity' objects at 'Position'.
+		void Read(
+			tym::row__ Position,
+			tym::size__ Quantity,
+			memory_core_<t,b> &Destination,
+			tym::row__ Offset = 0 ) const
+		{
+			Lire_( Position, Quantity, Destination, Offset );
+		}
+		//f Return the object at 'Position'.
+		t Read( tym::row__ Position ) const
+		{
+			t V;
 
-#define TYM_MAX_SIZE	UYM_MAX_SIZE
+			Lire_( Position, 1, &V );
 
-//c Typed memory core. Don't use; for internal use only.
-template <typename t, typename b> class tym_memory_core_
-: public b
-{
-private:
-	/* lit 'Quantite' objets à partir de 'Position' et les place dans 'Destination'
-	à la position 'Decalage' */
-	void Lire_(
-		tym__position Position,
-		tym__size Quantite,
-		tym_memory_core_ &Destination,
-		tym__position Decalage ) const
+			return V;
+		}
+		//f Write 'Amount' object from 'Buffer' at 'Position'.
+		void Write(
+			const t *Buffer,
+			tym::bsize__ Amount,
+			tym::row__ Position )
+		{
+			Ecrire_( Buffer, Amount, Position );
+		}
+		//f Write 'Value' at 'Position'.
+		void Write(
+			const t &Valeur,
+			tym::row__ Position )
+		{
+			Ecrire_( &Valeur, 1, Position );
+		}
+		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
+		void Write(
+			const memory_core_<t,b> &Source,
+			tym::size__ Quantity,
+			tym::row__ Position = 0,
+			tym::row__ Offset = 0 )
+		{
+			Ecrire_( Source, Quantity, Position, Offset );
+		}
+		//f Fill at 'Position' with 'Object' 'Count' times.
+		void Fill(
+			const t &Object,
+			tym::size__ Count,
+			tym::row__ Position = 0 )
+		{
+			b::Fill( (uym__data *)&Object, sizeof( t ), Count, Position * sizeof( t ) );
+		}
+		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
+		tym::row__ Position(
+			const t &Object,
+			tym::row__ Begin,
+			tym::row__ End )
+		{
+			tym::row__ Position;
+
+			if ( ( Position = b::Position( (uym__data *)&Object, sizeof( t ), Begin * sizeof( t ), End * sizeof( t ) ) ) != NONE )
+				Position /= sizeof( t );
+
+			return Position;
+		}
+		//f Allocate 'Size' objects.
+		void Allocate( tym::size__ Size )
+		{
+			Allocate_( Size );
+		}
+		//f Return the object at 'Position'..
+		t operator ()( tym::row__ Position ) const
+		{
+			return Read( Position );
+		}
+	};
+
+	/*c Memory of statical object of type 't'. */
+	template <typename t> class memory_
+	: public memory_core_< t, tym::basic_memory_ >
+	/* NOTA: See 'memory_core about' '::s'. */
 	{
-		b::Read( ( Position * sizeof( t ) ), ( Quantite * sizeof( t ) ), Destination, ( Decalage * sizeof( t ) ) );
-	}
-	// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
-	void Lire_(
-		tym__position Position,
-		tym__bsize Nombre,
-		t *Tampon ) const
-	{
-		b::Read( Position * sizeof( t ), Nombre * sizeof( t ), (uym__data *)Tampon );
-	}
-	// écrit 'Taille' objets de 'Tampon' à la position 'Position'
-	void Ecrire_(
-		const t *Tampon,
-		tym__bsize Nombre,
-		tym__position Position )
-	{
-		b::Write( (uym__data *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
-	}
-	/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
-	à la position 'Decalage' */
-	void Ecrire_(
-		const tym_memory_core_ &Source,
-		tym__size Quantite,
-		tym__position Position,
-		tym__position Decalage )
-	{
-		b::Write( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
-	}
-	// allocation de 'Capacite' objets
-	void Allocate_( tym__size Size )
-	{
-		b::Allocate( ( Size * sizeof( t ) ) );
-	}
-public:
-	struct s
-	: public b::s
+	private:
+		// l'éventuel pilote de la multimemoire
+		mmm::multimemory_driver_ PiloteMultimemoire_;
+	public:
+		struct s
+		: public tym::memory_core_< t, tym::basic_memory_ >::s
+		{
+			mmm::multimemory_driver_::s PiloteMultimemoire_;
+		};
+		memory_( s &S )
+		: memory_core_< t, tym::basic_memory_ >( S ),
+		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
+		{}
+		void reset( bool P = true )
+		{
+			memory_core_< t, tym::basic_memory_ >::reset( P );
+			PiloteMultimemoire_.reset( P );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			PiloteMultimemoire_.Init( M );
+			memory_core_< t, tym::basic_memory_ >::plug( PiloteMultimemoire_ );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
+		{
+			PiloteMultimemoire_.reset();
+			memory_core_< t, tym::basic_memory_ >::plug( Pilote );
+		}
+		void write(
+			tym::row__ Position,
+			tym::size__ Quantity,
+			flw::oflow___ &OFlow ) const
+		{
+			memory_core_<t, tym::basic_memory_ >::write( Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+		}
+		void read(
+			flw::iflow___  &IFlow,
+			tym::row__ Position,
+			tym::size__ Quantite )
+		{
+			memory_core_<t, tym::basic_memory_ >::read( IFlow, Position * sizeof( t ), Quantite * sizeof( t ) );
+		}
+	};
+
+	/*
+	template <class t> class memory
+	: public memory_<t>
 	{};
-	tym_memory_core_( s &S )
-	: b( S )
-	{}
-	//f Initialization.
-	void Init( void )
-	{
-		b::Init();
-	}
-	//f Put 'Amount' objects at 'Position' to 'Buffer'.
-	void Read(
-		tym__position Position,
-		tym__bsize Amount,
-		t *Buffer ) const
-	{
-		Lire_( Position, Amount, Buffer );
-	}
-	//f Put in 'Value' the object at 'Position'.
-	void Read(
-		tym__position Position,
-		t &Value ) const
-	{
-		Lire_( Position, 1, &Value );
-	}
-	//f Put to 'Destination' at 'Offset' 'Quantity' objects at 'Position'.
-	void Read(
-		tym__position Position,
-		tym__size Quantity,
-		tym_memory_core_<t,b> &Destination,
-		tym__position Offset = 0 ) const
-	{
-		Lire_( Position, Quantity, Destination, Offset );
-	}
-	//f Return the object at 'Position'.
-	t Read( tym__position Position ) const
-	{
-		t V;
+	*/
 
-		Lire_( Position, 1, &V );
+	AUTO1( memory )
 
-		return V;
-	}
-	//f Write 'Amount' object from 'Buffer' at 'Position'.
-	void Write(
-		const t *Buffer,
-		tym__bsize Amount,
-		tym__position Position )
+	//m 'memory' would be often used, then create a special name.
+	#define E_MEMORY( t )	memory< t >
+	#define E_MEMORY_( t )	memory_< t >
+
+	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
+	template <class t> inline bso__sbyte Compare(
+		const E_MEMORY_( t ) &S1,
+		const E_MEMORY_( t ) &S2,
+		tym::row__ BeginS1,
+		tym::row__ BeginS2,
+		tym::size__ Quantity )
 	{
-		Ecrire_( Buffer, Amount, Position );
+		return uym::Compare( S1, S2, BeginS1 * sizeof( t ), BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
 	}
-	//f Write 'Value' at 'Position'.
-	void Write(
-		const t &Valeur,
-		tym__position Position )
+
+	/*c A static set of object of 'amount' objects of type 't' of size 'size'.
+	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
+	as template parameter. Use 'E_MEMORY__', it's easier. */
+	template <class t, int amount, int size> class memory__
+	: public memory_core_< t, uym::basic_memory__< amount * size > >
 	{
-		Ecrire_( &Valeur, 1, Position );
-	}
-	/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
-	void Write(
-		const tym_memory_core_<t,b> &Source,
-		tym__size Quantity,
-		tym__position Position = 0,
-		tym__position Offset = 0 )
-	{
-		Ecrire_( Source, Quantity, Position, Offset );
-	}
-	//f Fill at 'Position' with 'Object' 'Count' times.
-	void Fill(
-		const t &Object,
-		tym__size Count,
-		tym__position Position = 0 )
-	{
-		b::Fill( (uym__data *)&Object, sizeof( t ), Count, Position * sizeof( t ) );
-	}
-	//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-	tym__position Position(
-		const t &Object,
-		tym__position Begin,
-		tym__position End )
-	{
-		tym__position Position;
+	private:
+		memory_core_<t, uym::basic_memory__< amount * size > >::s Static_;
+	public:
+		memory__( memory_core_<t, uym::basic_memory__<  amount * size > >::s &S = *(memory_core_<t, uym::basic_memory__<  amount * size > >::s *) NULL )	// To simplify use in 'SET'.
+		: memory_core_<t, uym::basic_memory__< amount * size > >( Static_ )
+		{}
+	};
 
-		if ( ( Position = b::Position( (uym__data *)&Object, sizeof( t ), Begin * sizeof( t ), End * sizeof( t ) ) ) != NONE )
-			Position /= sizeof( t );
-
-		return Position;
-	}
-	//f Allocate 'Size' objects.
-	void Allocate( tym__size Size )
-	{
-		Allocate_( Size );
-	}
-};
-
-/*c Memory of statical object of type 't'. */
-template <typename t> class tym_memory_
-: public tym_memory_core_< t, uym_basic_memory_ >
-/* NOTA: See 'tym_memory_core about' '::s'. */
-{
-public:
-	struct s
-	: public tym_memory_core_< t, uym_basic_memory_ >::s
-	{};
-	tym_memory_( tym_memory_core_<t, uym_basic_memory_ >::s &S )
-	: tym_memory_core_< t, uym_basic_memory_ >( S ) 
-	{}
-	void write(
-		uym__position Position,
-		uym__size Quantity,
-		flw::oflow___ &OFlow ) const
-	{
-		tym_memory_core_<t, uym_basic_memory_ >::write( Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
-	}
-	void read(
-		flw::iflow___  &IFlow,
-		uym__position Position,
-		uym__size Quantite )
-	{
-		tym_memory_core_<t, uym_basic_memory_ >::read( IFlow, Position * sizeof( t ), Quantite * sizeof( t ) );
-	}
-};
-
-/*
-template <class t> class tym_memory
-: public tym_memory_<t>
-{};
-*/
-
-AUTO1( tym_memory )
-
-//m 'tym_memory' would be often used, then create a special name.
-#define MEMORY( t )		tym_memory< t >
-#define MEMORY_( t )	tym_memory_< t >
-
-//d 'tym__position' would be often used in other libraries, so give him a special name.
-#define POSITION__	tym__position
-
-//d 'tym__size' would be often used in other libraries, so give him a special name.
-#define SIZE__	tym__size
-
-//d 'tym__bsize' would be often used in other libraries, so give him a special name.
-#define BSIZE__	tym__bsize
-
-//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
-template <class t> inline bso__sbyte TYMCompare(
-	const MEMORY_( t ) &S1,
-	const MEMORY_( t ) &S2,
-	POSITION__ BeginS1,
-	POSITION__ BeginS2,
-	tym__size Quantity )
-{
-	return UYMCompare( S1, S2, BeginS1 * sizeof( t ), BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
+	//d A static set of 'amount' object of type 'Type'.
+	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ) > 
 }
-
-/*c A static set of object of 'amount' objects of type 't' of size 'size'.
-The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
-as template parameter. Use 'MEMORY__', it's easier. */
-template <class t, int amount, int size> class tym__memory_
-: public tym_memory_core_< t, uym__basic_memory_< amount * size > >
-{
-private:
-	tym_memory_core_<t, uym__basic_memory_< amount * size > >::s Static_;
-public:
-	tym__memory_( tym_memory_core_<t, uym__basic_memory_<  amount * size > >::s &S = *(tym_memory_core_<t, uym__basic_memory_<  amount * size > >::s *) NULL )	// To simplify use in 'SET'.
-	: tym_memory_core_<t, uym__basic_memory_< amount * size > >( Static_ )
-	{}
-};
-
-//d A static set of 'amount' object of type 'Type'.
-#define MEMORY__( type, amount ) tym__memory_< type, amount, sizeof( type ) > 
 
 /*$END$*/
 				  /********************************************/

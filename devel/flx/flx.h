@@ -1,6 +1,6 @@
 /*
-  Header for the 'flx' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'flx' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,7 +45,7 @@ extern class ttr_tutor &FLXTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -60,7 +61,7 @@ extern class ttr_tutor &FLXTutor;
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
-#include "set.h"
+#include "bch.h"
 
 #ifndef FLX_BUFFER_BUFFER_SIZE
 //d Size of the buffer of a 'flx::buffer_flow___'.
@@ -68,7 +69,7 @@ extern class ttr_tutor &FLXTutor;
 #endif
 
 #ifndef FLX_SET_BUFFER_SIZE
-//d Size of the buffer of a 'flx::set_flow___'.
+//d Size of the buffer of a 'flx::bunch_flow___'.
 #define FLX_SET_BUFFER_SIZE		500
 #endif
 
@@ -213,12 +214,12 @@ namespace flx {
 
 
 
-	typedef SET( flw::data__ ) set;
+	typedef bch::E_BUNCH( flw::data__ ) bunch;
 
-	typedef SET_( flw::data__ ) set_;
+	typedef bch::E_BUNCH_( flw::data__ ) bunch_;
 
-	//c A set as input flow.driver.
-	class set_iflow___
+	//c A bunch as input flow.driver.
+	class bunch_iflow___
 	: public flw::iflow___
 	{ 
 	protected:
@@ -244,16 +245,16 @@ namespace flx {
 			return Wanted;
 		}
 	private:
-		const set_ *Set_;
-		POSITION__ Position_;
+		const bunch_ *Set_;
+		tym::row__ Position_;
 		// The cache.
 		flw::data__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		set_iflow___( void )
+		bunch_iflow___( void )
 		{
 			reset( false );
 		}
-		~set_iflow___( void )
+		~bunch_iflow___( void )
 		{
 			reset( true );
 		}
@@ -263,8 +264,8 @@ namespace flx {
 			Set_ = NULL;
 			Position_ = 0;
 		}
-		//f Initializing with the set buffer 'Set'.
-		void Init( const set_ &Set )
+		//f Initializing with the bunch buffer 'Set'.
+		void Init( const bunch_ &Set )
 		{
 			iflow___::Init( Cache_, sizeof( Cache_ ) );
 			Set_ = &Set;
@@ -272,8 +273,8 @@ namespace flx {
 		}
 	};
 
-	//c A set as output flow.driver.
-	class set_oflow___
+	//c A bunch as output flow.driver.
+	class bunch_oflow___
 	: public flw::oflow___
 	{
 	protected:
@@ -288,15 +289,15 @@ namespace flx {
 			return Wanted;
 		}
 	private:
-		set_ *Set_;
+		bunch_ *Set_;
 		// The cache.
 		flw::data__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		set_oflow___( void )
+		bunch_oflow___( void )
 		{
 			reset( false );
 		}
-		~set_oflow___( void )
+		~bunch_oflow___( void )
 		{
 			oflow___::reset( true );
 
@@ -307,8 +308,8 @@ namespace flx {
 			oflow___::reset( P );
 			Set_ = NULL;
 		}
-		//f Initializing with the buffer set 'BufferSet'.
-		void Init( set_ &BufferSet )
+		//f Initializing with the buffer bunch 'BufferSet'.
+		void Init( bunch_ &BufferSet )
 		{
 			oflow___::Init( Cache_, sizeof( Cache_ ) );
 			Set_ = &BufferSet;

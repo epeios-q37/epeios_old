@@ -54,21 +54,23 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-bso__sbyte UYMCompare(
-	const uym_basic_memory_ &E1,
-	const uym_basic_memory_ &E2,
-	uym__position DebutE1,
-	uym__position DebutE2,
-	uym__size Nombre )
+using namespace uym;
+
+bso__sbyte uym::Compare(
+	const basic_memory_ &E1,
+	const basic_memory_ &E2,
+	row__ DebutE1,
+	row__ DebutE2,
+	size__ Nombre )
 {
 	bso__sbyte Resultat;
 ERRProlog
-	uym__data *Tampon = NULL;
+	data__ *Tampon = NULL;
 ERRBegin
 	if ( Nombre )
 	{
 		fam__size Taille = Nombre > 30000 ? 60000 : Nombre * 2;
-		Tampon = (uym__data *)FAM.Allocate( Taille, 4 );
+		Tampon = (data__ *)FAM.Allocate( Taille, 4 );
 
 		if ( !Tampon )
 		{
@@ -82,15 +84,15 @@ ERRBegin
 				Resultat = ( E1.Read( DebutE1 - Nombre ) > E2.Read( DebutE2 - Nombre ) ) ? 1 : -1;
 			else
 			{
-				uym__data C1 = E1.Read( 0 ),  C2 = E2.Read( 0 );
+				data__ C1 = E1.Read( 0 ),  C2 = E2.Read( 0 );
 
 				Resultat = (  C1 == C2 ? 0 : C1 > C2 ? 1 : -1 );
 			}
 		}
 		else
 		{
-			uym__data *T1 = Tampon;
-			uym__data *T2 = Tampon + ( Taille /= 2 );
+			data__ *T1 = Tampon;
+			data__ *T2 = Tampon + ( Taille /= 2 );
 
 
 			do
@@ -120,14 +122,14 @@ ERREpilog
 	return Resultat;
 }
 
-void UYMCopy_(
-	const class uym_basic_memory_ &Source,
-	uym__position PosSource,
-	class uym_basic_memory_ &Dest,
-	uym__position PosDest,
-	uym__size Nombre,
-	uym__data *Tampon,
-	uym__bsize TailleTampon )
+void uym::Copy_(
+	const class basic_memory_ &Source,
+	row__ PosSource,
+	class basic_memory_ &Dest,
+	row__ PosDest,
+	size__ Nombre,
+	data__ *Tampon,
+	bsize__ TailleTampon )
 {
 	if ( PosSource >= PosDest )
 	{
@@ -173,11 +175,11 @@ void UYMCopy_(
 
 /* Duplique 'Objet' 'Nombre' fois à partir de 'Position'
 sachant qu'il est de taille 'Taille'. */
-void uym_basic_memory_::Fill(
-	const uym__data *Objet,
-	uym__bsize Taille,
-	uym__size Nombre,
-	uym__position Position )
+void basic_memory_::Fill(
+	const data__ *Objet,
+	bsize__ Taille,
+	size__ Nombre,
+	row__ Position )
 {
 	while ( Nombre-- )
 	{
@@ -186,20 +188,20 @@ void uym_basic_memory_::Fill(
 	}
 }
 
-uym__position uym_basic_memory_::Position(
-	const uym__data *Objet,
+row__ basic_memory_::Position(
+	const data__ *Objet,
 	size_t Taille,
-	uym__position Debut,
-	uym__position Fin )
+	row__ Debut,
+	row__ Fin )
 {
-	uym__position Retour = NONE;
+	row__ Retour = NONE;
 ERRProlog
 	fam__size TailleTampon = Taille * ( ( Fin - Debut ) / Taille );
-	uym__data *Tampon = NULL;
+	data__ *Tampon = NULL;
 	bool Trouve = false;
 ERRBegin
 
-	if ( ( Tampon = (uym__data *)FAM.Allocate( TailleTampon, Taille ) ) != NULL )
+	if ( ( Tampon = (data__ *)FAM.Allocate( TailleTampon, Taille ) ) != NULL )
 	{
 		while( ( !Trouve ) && ( ( Debut + Taille ) <= Fin ) )
 		{
@@ -249,34 +251,34 @@ ERREpilog
 }
 
 
-void uym_basic_memory_::Write(
-	const uym_basic_memory_ &Source,
-	uym__size Quantity,
-	uym__position Position,
-	uym__position Offset )
+void basic_memory_::Write(
+	const basic_memory_ &Source,
+	size__ Quantity,
+	row__ Position,
+	row__ Offset )
 {
 ERRProlog
-	uym__data *Tampon = NULL;
+	data__ *Tampon = NULL;
 ERRBegin
 
 	if ( Quantity > UYM_MIN_BUFFER_SIZE )
 	{
 		fam__size Taille = ( Quantity > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantity );
-		Tampon = (uym__data *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( Tampon )
-			UYMCopy_( Source, Position, *this, Offset, Quantity, Tampon, Taille );
+			Copy_( Source, Position, *this, Offset, Quantity, Tampon, Taille );
 		else
 		{
-			uym__data Buffer[UYM_MIN_BUFFER_SIZE];
-			UYMCopy_( Source, Position, *this, Offset, Quantity, Buffer, sizeof( Buffer ) );
+			data__ Buffer[UYM_MIN_BUFFER_SIZE];
+			Copy_( Source, Position, *this, Offset, Quantity, Buffer, sizeof( Buffer ) );
 		}
 
 	}
 	else
 	{
-		uym__data Buffer[UYM_MIN_BUFFER_SIZE];
-		UYMCopy_( Source, Position, *this, Offset, Quantity, Buffer, sizeof( Buffer ) );
+		data__ Buffer[UYM_MIN_BUFFER_SIZE];
+		Copy_( Source, Position, *this, Offset, Quantity, Buffer, sizeof( Buffer ) );
 	}
 ERRErr
 ERREnd
@@ -286,20 +288,20 @@ ERREpilog
 }
 
 
-void uym_basic_memory_::write(
-	uym__position Position,
-	uym__size Quantite,
+void basic_memory_::write(
+	row__ Position,
+	size__ Quantite,
 	flw::oflow___ &OFlow ) const
 {
 ERRProlog
-	uym__data TamponSecurite[UYM_MIN_BUFFER_SIZE];
-	uym__data *Tampon = TamponSecurite;
+	data__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
+	data__ *Tampon = TamponSecurite;
 	size_t Taille = sizeof( TamponSecurite );
 ERRBegin
 	if ( Quantite > UYM_MIN_BUFFER_SIZE )
 	{
 		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (uym__data *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( !Tampon )
 		{
@@ -326,20 +328,20 @@ ERREnd
 ERREpilog
 }
 
-void uym_basic_memory_::read(
+void basic_memory_::read(
 	flw::iflow___ &IFlow,
-	uym__position Position,
-	uym__size Quantite )
+	row__ Position,
+	size__ Quantite )
 {
 ERRProlog
-	uym__data TamponSecurite[UYM_MIN_BUFFER_SIZE];
-	uym__data *Tampon = TamponSecurite;
+	data__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
+	data__ *Tampon = TamponSecurite;
 	size_t Taille = sizeof( TamponSecurite );
 ERRBegin
 	if ( Quantite > UYM_MIN_BUFFER_SIZE )
 	{
 		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (uym__data *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( !Tampon )
 		{
@@ -368,22 +370,22 @@ ERREpilog
 }
 
 //f Duplicate 'Count' times 'Object' of size 'Size' to 'Position'.
-void uym__memory_core_::Fill(
-	const uym__data *Object,
-	uym__bsize Size,
-	uym__size Count,
-	uym__position Position )
+void uym::memory_core__::Fill(
+	const data__ *Object,
+	bsize__ Size,
+	size__ Count,
+	row__ Position )
 {
 	while( Count )
 		memcpy( Data_ + Size * Count + Position, Object, Size );
 }
 
 //f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) o 'NONE' if non-existant.
-uym__position uym__memory_core_::Position(
-	const uym__data *Objet,
-	uym__bsize Size,
-	uym__position Begin,
-	uym__position End )
+row__ uym::memory_core__::Position(
+	const data__ *Objet,
+	bsize__ Size,
+	row__ Begin,
+	row__ End )
 {
 	while( ( Begin < End ) && ( memcmp( Data_ + Begin, Objet, Size ) ) )
 		Begin += Size;

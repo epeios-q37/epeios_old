@@ -44,6 +44,64 @@ ERREnd
 ERREpilog
 }
 
+
+typedef bso__ushort	mytype__;
+
+#define TAILLE_MEMOIRE	100
+
+void Essai( void )
+{
+ERRProlog
+/*	mfc_pilote_memoire_fichier R1;
+	mfc_pilote_memoire_fichier R2;
+*/	tym::E_MEMORY( mytype__ ) M1;
+	tym::E_MEMORY( mytype__ ) M2;
+	bso__ulong I;
+	mytype__ J;
+	ifstream IN;
+	ofstream OUT;
+ERRBegin
+/*	R1.Init();
+	R2.Init();
+*/
+	M1.Init();
+	M1.Allocate( TAILLE_MEMOIRE );
+
+	M2.Init();
+	M2.Allocate( TAILLE_MEMOIRE );
+
+	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
+	{
+		J = (mytype__)I + 1;
+		M1.Write( 60000 + J, I );
+	}
+
+
+	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
+	{
+		M1.Read( I, J );
+		fout << J << '\t' << txf::sync;
+	}
+
+	fout << txf::nl;
+
+	M1.Read( 0, TAILLE_MEMOIRE, M2 );
+
+	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
+	{
+		fout << M2.Read( I ) << '\t' << txf::sync;
+	}
+
+	fout << '\n';
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
@@ -54,6 +112,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

@@ -40,11 +40,11 @@ using namespace broker;
 
 // To test templates.
 class string
-: public str_string_
+: public str::string_
 {
 public:
 	string( s &S )
-	: str_string_( S ) {}
+	: str::string_( S ) {}
 	void HANDLE(
 		::broker::broker &Broker,
 		untyped_module &Module,
@@ -54,6 +54,8 @@ public:
 	static void NOTIFY( untyped_module &Module ){}
 	static const char *NAME;
 };
+
+const char *string::NAME = "string";
 
 
 BROKER_RAM_MODULE( ::string ) Ram;
@@ -88,6 +90,10 @@ protected:
 			ERRa();
 			
 		Broker->Init();
+
+		Ram.Init();
+
+		Broker->Add( Ram );
 
 		return Broker;
 	}

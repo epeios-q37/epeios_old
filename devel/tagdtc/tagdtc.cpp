@@ -107,13 +107,13 @@ void tagdtc::tag_detector_::Add(
 }
 
 void tagdtc::tag_detector_::Add(
-	const str_string_ &Tag,
+	const str::string_ &Tag,
 	id__ Id )
 {
-	POSITION__ Limite = Tag.Amount();
+	tym::row__ Limite = Tag.Amount();
 	path__ Path = Start_;
 
-	for( POSITION__ P = 0; P < Limite; P++ )
+	for( tym::row__ P = 0; P < Limite; P++ )
 		Path = GetNext_( Path, Tag( P ) );
 
 	Ids.Write( Id, Path );
@@ -136,7 +136,7 @@ id__ tagdtc::tag_detector_::Parse(
 		while( !IFlow.EOX() && ( ( C = IFlow.Get() ) != Delimiter ) );
 
 	if ( !IFlow.EOX() ) {
-		POSITION__ P = Start_;
+		tym::row__ P = Start_;
 
 		while( !IFlow.EOX()
 			   && ( ( C = IFlow.Get() ) != Delimiter )

@@ -1,26 +1,34 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  'idxque' library by Claude L. Simon (simon@epeios.org)
+  Requires the 'idxque' header file ('idxque.h').
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
-			http://www.epeios.org/
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-/* end of 'entete.txt' template file */
-/* begin of 'xxx.cpp' template file V2.3 */
-/* 
-	Pour plus de détails, consultez le fichier 'idxque.h'.
-	See the 'idxque.h' file  for more details.
-*/
+
+//	$Id$
 
 #define IDXQUE__COMPILATION
 
 #include "idxque.h"
-
-#ifdef IDXQUE__LINE
-#line 13
-#endif
 
 class idxquetutor
 : public ttr_tutor
@@ -29,14 +37,17 @@ public:
 	idxquetutor( void )
 	: ttr_tutor( IDXQUE_NAME )
 	{
+#ifdef IDXQUE_DBG
+		Version = IDXQUE_VERSION "\b\bD $";
+#else
 		Version = IDXQUE_VERSION;
+#endif
 		Owner = IDXQUE_OWNER;
-		Date = "26/04/2000";
+		Date = "$Date$";
 	}
 	virtual ~idxquetutor( void ){}
 };
 
-//  	Substitution is not applied to the rest.
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
@@ -46,9 +57,9 @@ public:
 
 /* Remplit la pile 'Pile' avec la file à partir de 'Debut' dans le
 sens 'Sens'. */
-void idxque_queue_index_::Dump(
-	stk_stack_<POSITION__> &Pile,
-	POSITION__ Debut,
+void idxque::queue_index_::Dump(
+	stk::stack_<tym::row__> &Pile,
+	tym::row__ Debut,
 	idxque::direction Direction )
 {
 	if ( Direction == idxque::dAscending )
@@ -94,8 +105,7 @@ public:
 /******************************************************************************/
 
 // 'static' by GNU C++.
+
 static idxquepersonnalization Tutor;
 
 ttr_tutor &IDXQUETutor = Tutor;
-
-/* end of 'xxx.cpp' template file */

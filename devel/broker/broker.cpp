@@ -58,7 +58,7 @@ using namespace broker;
 static const char *PrimaryCommandName = brkcmd::CommandsNames[brkcmd::cGetCommand];
 
 namespace {
-	cast GetCastID_( const str_string_ &Name )
+	cast GetCastID_( const str::string_ &Name )
 	{
 		cast C = cInvalid;
 	ERRProlog
@@ -104,7 +104,7 @@ void master_module::Handle_(
 		{
 ERRProlog
 			cast__ Cast;
-			str_string S;
+			str::string S;
 ERRBegin
 			Requete.Output().Put( 0 );	// No explanation message;
 
@@ -127,10 +127,10 @@ ERREpilog
 		}
 		else
 		{
-			POSITION__ P = Descriptions.First();
+			tym::row__ P = Descriptions.First();
 			command__ C = BROKER_INVALID_COMMAND;
 
-			while ( ( P != NONE ) && ( Descriptions( P ).Name != str_string( PrimaryCommandName ) ) )
+			while ( ( P != NONE ) && ( Descriptions( P ).Name != str::string( PrimaryCommandName ) ) )
 				P = Descriptions.Next( P );
 
 			if ( P != NONE )
@@ -194,7 +194,7 @@ static void GetTypesIDAndName_(
 ERRProlog
 	items16 Items;
 	item16 Item;
-	POSITION__ P;
+	tym::row__ P;
 	type__ Type;
 ERRBegin
 	Items.Init();
@@ -209,10 +209,10 @@ ERRBegin
 		if ( P > BROKER_TYPE_MAX )
 			ERRc();
 #endif
-		Type = (type__)P;
+		Type = (type_t__)P;
 
-		Item.ID( Type );
-		Item.Value = Broker.ModuleFromType( Type ).Name();
+		Item.ID( Type() );
+		Item.Value = Broker.Module( Type ).Name();
 		Items.Add( Item );
 		P = Broker.Modules.Next( P );
 	}
@@ -231,8 +231,8 @@ static void WriteCommandsIDAndName_(
 ERRProlog
 	items16 Items;
 	item16 Item;
-	CITEM( description_ ) Description;
-	POSITION__ P;
+	ctn::E_CITEM( description_ ) Description;
+	tym::row__ P;
 	command__ Command;
 ERRBegin
 	Items.Init();
@@ -279,7 +279,7 @@ static void GetCommandsIDAndName_(
 
 	Requete.PopId16( Type );
 
-	WriteCommandsIDAndName_( Broker.ModuleFromType( Type ).Descriptions, Requete );
+	WriteCommandsIDAndName_( Broker.Module( (type__)Type() ).Descriptions, Requete );
 
 	Requete.Complete();
 }
@@ -297,7 +297,7 @@ static void WriteParameters_(
 	command__ Command,
 	request_manager___ &Requete )
 {
-	CITEM( description_ ) Description;
+	ctn::E_CITEM( description_ ) Description;
 
 	Description.Init( Descriptions );
 
@@ -313,13 +313,13 @@ static void GetParameters_(
 	bso__bool &,
 	void * )
 {
-	type__ Type;
-	command__ Command;
+	id16__ Type;
+	id16__ Command;
 
 	Requete.PopId16( Type );
 	Requete.PopId16( Command );
 
-	WriteParameters_( Broker.ModuleFromType( Type ).Descriptions, Command, Requete );
+	WriteParameters_( Broker.Module( (type__)Type() ).Descriptions, Command(), Requete );
 
 	Requete.Complete();
 }
@@ -348,7 +348,7 @@ static void SetErrorBreakingStatus_(
 	void * )
 {
 	bso__bool Retour;
-	bso__bool O;
+	boolean__ O;
 
 	Retour = (bso__raw)Broker.ErrorBreaking();
 
@@ -389,17 +389,17 @@ static void GetNewObject_(
 	void * )
 {
 	object__ O;
-	type__ T;
+	id16__ T;
 
 	Requete.PopId16( T );
 
-	if ( T >= Broker.Modules.Amount() )
+	if ( T() >= Broker.Modules.Amount() )
 		ERRb();
 
 	if ( T == BROKER_INVALID_TYPE )
 		ERRb();
 
-	O = Broker.New( T );
+	O = Broker.New( (type__)T() )();
 
 	if ( O != BROKER_INVALID_TYPE )
 		Requete.PushObject( O );
@@ -419,7 +419,7 @@ static void GetType_(
 	void * )
 {
 ERRProlog
-	str_string Type;
+	str::string Type;
 	type__ T;
 ERRBegin
 	Type.Init();
@@ -429,7 +429,7 @@ ERRBegin
 	T = Broker.Type( Type );
 
 	if ( ( T != BROKER_INVALID_TYPE )  )
-		Requete.PushId16( T );
+		Requete.PushId16( T() );
 	else
 		Requete.SendExplanationMessage( "No such object type name." );
 
@@ -468,8 +468,8 @@ static void FillCommands_(
 {
 ERRProlog
 	id16__ Command;
-	POSITION__ Position = CommandsDetails.First();
-	CITEM( command_detail_ ) CommandDetail;
+	tym::row__ Position = CommandsDetails.First();
+	ctn::E_CITEM( command_detail_ ) CommandDetail;
 	description Description;
 ERRBegin
 	CommandDetail.Init( CommandsDetails );
@@ -507,7 +507,7 @@ static void GetTypeAndCommands_(
 ERRProlog
 	string Name;
 	commands_details CommandsDetails;
-	id16__ Type;
+	type__ Type;
 	ids16 Commands;
 ERRBegin
 	Name.Init();
@@ -523,7 +523,7 @@ ERRBegin
 
 	FillCommands_( Broker, Type, CommandsDetails, Commands );
 
-	Requete.PushId16( Type );
+	Requete.PushId16( Type() );
 	Requete.PushIds16( Commands );
 	Requete.Complete();
 ERRErr
@@ -556,7 +556,7 @@ ERRBegin
 		if ( T() != BROKER9_TYPE_MAITRE )
 			ERRb();
 */
-	Command = Broker.Command( Type, Description );
+	Command = Broker.Command( Type(), Description );
 
 	if ( ( Command != BROKER_INVALID_COMMAND ) )
 		Requete.PushId16( Command );
@@ -580,7 +580,7 @@ static void GetCommands_(
 	void * )
 {
 ERRProlog
-	type__ Type;
+	id16__ Type;
 	commands_details CommandsDetails;
 	ids16 Commands;
 ERRBegin
@@ -591,7 +591,7 @@ ERRBegin
 
 	Commands.Init();
 
-	FillCommands_( Broker, Type, CommandsDetails, Commands );
+	FillCommands_( Broker, Type(), CommandsDetails, Commands );
 
 	Requete.PushIds16( Commands );
 	Requete.Complete();
@@ -665,11 +665,11 @@ namespace broker {
 
 	}
 
-	type__ broker::Type( str_string_ &Name )
+	type__ broker::Type( str::string_ &Name )
 	{
-		POSITION__ C = Modules.First();
+		tym::row__ C = Modules.First();
 
-		while ( ( C != NONE ) && ( str_string( Modules(C)->Name() ) != Name )  )
+		while ( ( C != NONE ) && ( str::string( Modules(C)->Name() ) != Name )  )
 			C = Modules.Next( C );
 
 		if ( C == NONE )
@@ -677,7 +677,7 @@ namespace broker {
 		else if ( C > BROKER_INVALID_TYPE )
 			ERRl();
 
-		return (type__)C;
+		return (type_t__)C;
 	}
 
 	bso__bool broker_::Handle(
@@ -696,11 +696,11 @@ namespace broker {
 
 		flw::Get( Channel, O );
 
-		if ( ( O >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
+		if ( ( O() >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
 			ERRb();
 
 		if ( O != BROKER_MASTER_OBJECT )
-			ModuleFromObject_( O ).Handle( Index_( O ), Requete, PU );
+			Module_( O ).Handle( Index_( O ), Requete, PU );
 		else
 			Master_.Handle( (index__)0, Requete, &MasterData );
 

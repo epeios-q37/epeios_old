@@ -1,7 +1,7 @@
 /*
-  'bst' library by Claude L. Simon (epeios@epeios.org)
+  'bst' library by Claude L. Simon (simon@epeios.org)
   Requires the 'bst' header file ('bst.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( BST_NAME )
 	{
 #ifdef BST_DBG
-		Version = BST_VERSION " (DBG)";
+		Version = BST_VERSION "\b\bD $";
 #else
 		Version = BST_VERSION;
 #endif
@@ -53,161 +54,163 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-bso__bool ComparerBitABit_(
-	bst_bits_set_ &E1,
-	bst_bits_set_ &E2,
-	BSIZE__ Nombre,
-	POSITION__ P1,
-	POSITION__ P2 )
-{
-	bso__bool Resultat = true;
+namespace bst {
 
-	while ( Resultat && Nombre-- )
-		Resultat = ( E1.Read( Nombre + P1 ) == E2.Read( Nombre + P2 ) );
-
-	return Resultat;
-}
-
-/*
-void bst_bits_::Dup( bst_bits_ &O )
-{
-	POSITION__ Position = O.S_->Capacite;
-
-	Allouer( Position );
-
-	while( Position-- )
-		Ecrire( O.Lire( Position ), Position );
-}
-*/
-/* Stocke dans 'D' 'O1' & 'O2', tous étant de taille 'Taille'.
-'D' peut être 'O1' ou 'O2'. Usage interne. */
-void BSTEt_(
-	const bst__receptacle *O1,
-	const bst__receptacle *O2,
-	bst__receptacle *D,
-	BSIZE__ Taille )
-{
-	while( Taille-- )
-		D[Taille] = O1[Taille] & O2[Taille];
-}
-
-/* Stocke dans 'D' 'O1' | 'O2', tous étant de taille 'Taille'.
-'D' peut être 'O1' ou 'O2'. Usage interne. */
-void BSTOu_(
-	const bst__receptacle *O1,
-	const bst__receptacle *O2,
-	bst__receptacle *D,
-	BSIZE__ Taille )
-{
-	while( Taille-- )
-		D[Taille] = O1[Taille] | O2[Taille];
-}
-
-
-/* Stocke dans 'D' ~'O' tou deux de taille 'Taille'. 'O' peut être 'D'.
-Usage interne. */
-void BSTNon_(
-	const bst__receptacle *O,
-	bst__receptacle *D,
-	BSIZE__ Taille )
-{
-	while( Taille-- )
-		D[Taille] = ~O[Taille];
-}
-
-/* Stocke dans 'D' 'O1' ^ 'O2', tous étant de taille 'Taille'.
-'D' peut être 'O1' ou 'O2'. Usage interne. */
-void BSTDff_(
-	const bst__receptacle *O1,
-	const bst__receptacle *O2,
-	bst__receptacle *D,
-	BSIZE__ Taille )
-{
-	while( Taille-- )
-		D[Taille] = O1[Taille] ^ O2[Taille];
-}
-
-BSIZE__ BSTCompter_(
-	const bst__receptacle *O,
-	BSIZE__ Taille )
-{
-	BSIZE__ Nombre = 0;
-
-	while ( Taille-- )
-		if ( O[Taille] )
-			for( int i = 0; i < BST_NB_BITS_RECEPTACLE; i++ )
-				if ( O[Taille] & ( 1 << i ) )
-					Nombre++;
-
-	return Nombre;
-}
-
-
-struct pointeur
-{
-	const bst__receptacle *&Pointeur;
-	bst__receptacle Read( POSITION__ Position ) const
+	bso__bool ComparerBitABit_(
+		bits_set_ &E1,
+		bits_set_ &E2,
+		BSIZE__ Nombre,
+		POSITION__ P1,
+		POSITION__ P2 )
 	{
-		return Pointeur[Position];
+		bso__bool Resultat = true;
+
+		while ( Resultat && Nombre-- )
+			Resultat = ( E1.Read( Nombre + P1 ) == E2.Read( Nombre + P2 ) );
+
+		return Resultat;
 	}
-	void Write(
-		const bst__receptacle &,
-		POSITION__ )
+
+	/*
+	void bst_bits_::Dup( bst_bits_ &O )
 	{
-		ERRu();
+		POSITION__ Position = O.S_->Capacite;
+
+		Allouer( Position );
+
+		while( Position-- )
+			Ecrire( O.Lire( Position ), Position );
 	}
-	pointeur( const bst__receptacle *&P )
-	: Pointeur( P ){}
-};
+	*/
+	/* Stocke dans 'D' 'O1' & 'O2', tous étant de taille 'Taille'.
+	'D' peut être 'O1' ou 'O2'. Usage interne. */
+	void Et_(
+		const receptacle__ *O1,
+		const receptacle__ *O2,
+		receptacle__ *D,
+		BSIZE__ Taille )
+	{
+		while( Taille-- )
+			D[Taille] = O1[Taille] & O2[Taille];
+	}
+
+	/* Stocke dans 'D' 'O1' | 'O2', tous étant de taille 'Taille'.
+	'D' peut être 'O1' ou 'O2'. Usage interne. */
+	void Ou_(
+		const receptacle__ *O1,
+		const receptacle__ *O2,
+		receptacle__ *D,
+		BSIZE__ Taille )
+	{
+		while( Taille-- )
+			D[Taille] = O1[Taille] | O2[Taille];
+	}
 
 
-POSITION__ BSTSuivant_(
-	const bst__receptacle *O,
-	BSIZE__ Taille,
-	bso__bool Valeur,
-	POSITION__ Courant )
-{
-	POSITION__ Limite = Taille * BST_NB_BITS_RECEPTACLE;
-	pointeur P( O );
+	/* Stocke dans 'D' ~'O' tou deux de taille 'Taille'. 'O' peut être 'D'.
+	Usage interne. */
+	void Non_(
+		const receptacle__ *O,
+		receptacle__ *D,
+		BSIZE__ Taille )
+	{
+		while( Taille-- )
+			D[Taille] = ~O[Taille];
+	}
 
-	while( ( ++Courant < Limite )
-			 && ( bst__fonctions<pointeur>::Lire( Courant, P ) != Valeur ) );
+	/* Stocke dans 'D' 'O1' ^ 'O2', tous étant de taille 'Taille'.
+	'D' peut être 'O1' ou 'O2'. Usage interne. */
+	void Dff_(
+		const receptacle__ *O1,
+		const receptacle__ *O2,
+		receptacle__ *D,
+		BSIZE__ Taille )
+	{
+		while( Taille-- )
+			D[Taille] = O1[Taille] ^ O2[Taille];
+	}
+
+	BSIZE__ Compter_(
+		const receptacle__ *O,
+		BSIZE__ Taille )
+	{
+		BSIZE__ Nombre = 0;
+
+		while ( Taille-- )
+			if ( O[Taille] )
+				for( int i = 0; i < BST_NB_BITS_RECEPTACLE; i++ )
+					if ( O[Taille] & ( 1 << i ) )
+						Nombre++;
+
+		return Nombre;
+	}
 
 
-	if ( Courant == Limite )
-		return NONE;
-	else
-		return Courant;
-}
+	struct pointeur
+	{
+		const receptacle__ *&Pointeur;
+		receptacle__ Read( POSITION__ Position ) const
+		{
+			return Pointeur[Position];
+		}
+		void Write(
+			const receptacle__ &,
+			POSITION__ )
+		{
+			ERRu();
+		}
+		pointeur( const receptacle__ *&P )
+		: Pointeur( P ){}
+	};
 
-POSITION__ BSTPrecedent_(
-	const bst__receptacle *O,
-	bso__bool Valeur,
-	POSITION__ Courant )
-{
-	pointeur P( O );
 
-	while( ( bst__fonctions<pointeur>::Lire( --Courant, P ) != Valeur ) && Courant );
+	POSITION__ Suivant_(
+		const receptacle__ *O,
+		BSIZE__ Taille,
+		bso__bool Valeur,
+		POSITION__ Courant )
+	{
+		POSITION__ Limite = Taille * BST_NB_BITS_RECEPTACLE;
+		pointeur P( O );
 
-	if ( !Courant && bst__fonctions<pointeur>::Lire( 0, P ) != Valeur )
-		return NONE;
-	else
-		return Courant;
-}
+		while( ( ++Courant < Limite )
+				 && ( functions__<pointeur>::Lire( Courant, P ) != Valeur ) );
 
-txf::text_oflow___ &operator <<(
-	txf::text_oflow___ &Flot,
-	bst_bits_set_ &M )
-{
-	for( POSITION__ P = 0; P < M.Size(); P++ )
-		if ( M.Read( P ) )
-			Flot << '*';
+
+		if ( Courant == Limite )
+			return NONE;
 		else
-			Flot << '-';
+			return Courant;
+	}
 
-	return Flot;
+	POSITION__ Precedent_(
+		const receptacle__ *O,
+		bso__bool Valeur,
+		POSITION__ Courant )
+	{
+		pointeur P( O );
+
+		while( ( functions__<pointeur>::Lire( --Courant, P ) != Valeur ) && Courant );
+
+		if ( !Courant && functions__<pointeur>::Lire( 0, P ) != Valeur )
+			return NONE;
+		else
+			return Courant;
+	}
+
+	txf::text_oflow___ &operator <<(
+		txf::text_oflow___ &Flot,
+		bits_set_ &M )
+	{
+		for( POSITION__ P = 0; P < M.Size(); P++ )
+			if ( M.Read( P ) )
+				Flot << '*';
+			else
+				Flot << '-';
+
+		return Flot;
+	}
 }
-
 
 
 /* Although in theory this class is inaccessible to the different modules,

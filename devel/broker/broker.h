@@ -88,13 +88,17 @@ extern class ttr_tutor &BROKERTutor;
 
 
 namespace broker {
-
-
 	using namespace brkrqm;
+	using tym::memory;
 
-	typedef POSITION__ index__;
-	typedef brktpm::id16__	command__;
-	typedef brktpm::id16__	type__;
+	typedef tym::row__ index__;
+	typedef brktpm::id16_t__	command__;
+
+	typedef brktpm::id16_t__	type_t__;
+	TYPEDEF( type_t__, type__ );
+
+	using brktpm::object_t__;
+	using brktpm::object__;
 
 	typedef void (* function__ )(
 		class broker &Broker,
@@ -139,7 +143,7 @@ namespace broker {
 		//r The description of the request.
 		descriptions Descriptions;
 		//r User pointers.
-		SET( void *) UPs;
+		bch::E_BUNCH( void *) UPs;
 		untyped_module( void )
 		{
 			Name_ = NULL;
@@ -189,7 +193,7 @@ namespace broker {
 		//f Return the command which has 'Description' as description, or 'BROKER_INVALID_COMMAND' if non-existant.
 		command__ Command( const description_ &Description ) const
 		{
-			POSITION__ P = Descriptions.Position( Description );
+			tym::row__ P = Descriptions.Position( Description );
 
 			if ( P == NONE )
 				P = BROKER_INVALID_COMMAND;
@@ -198,12 +202,12 @@ namespace broker {
 
 			return (command__)P;
 		}
-		POSITION__ Add(
+		tym::row__ Add(
 			const char *Name,
 			const cast *Casts,
 			void * UP )
 		{
-			POSITION__ P = Descriptions.Add( Name, Casts );
+			tym::row__ P = Descriptions.Add( Name, Casts );
 			
 			if ( UPs.Add( UP ) != P )
 				ERRc();
@@ -256,10 +260,10 @@ namespace broker {
 	//c A module with object stored in RAM.
 	template <class t, class st> class ram_module
 	: public module<t>,
-	  private LIST
+	  private lst::E_LIST
 	{
 	protected:
-		virtual void LSTAllocate( SIZE__ Size )
+		virtual void LSTAllocate( tym::size__ Size )
 		{
 			Objets.Allocate( Size );
 		}
@@ -277,7 +281,7 @@ namespace broker {
 				ERRm();
 			}
 
-			index__ Index = LIST::CreateEntry();
+			index__ Index = E_LIST::CreateEntry();
 
 			Objets.Write( Pointeur, Index );
 
@@ -286,7 +290,7 @@ namespace broker {
 		virtual void BROKERRemove( index__ Index )
 		{
 			delete Objets( Index );
-			LIST::Remove( Index );
+			E_LIST::Remove( Index );
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
@@ -297,11 +301,11 @@ namespace broker {
 		}
 	public:
 		//r The pointer object.
-		SET( t * ) Objets;
+		bch::E_BUNCH( t * ) Objets;
 		//f Initialization.
 		void Init( void )
 		{
-			LIST::Init();
+			E_LIST::Init();
 			Objets.Init();
 			module<t>::Init();
 		}
@@ -310,12 +314,12 @@ namespace broker {
 	//c A module with object stored in standard memory.
 	template <class t, class st> class standard_module
 	: public module<t>,
-	  private LIST
+	  private lst::E_LIST
 	{
 	private:
-		ITEM( t ) Element_;
+		ctn::E_ITEM( t ) Element_;
 	protected:
-		virtual void LSTAllocate( SIZE__ Size )
+		virtual void LSTAllocate( tym::size__ Size )
 		{
 			Element_.Sync();
 			Objets.Allocate( Size );
@@ -323,12 +327,12 @@ namespace broker {
 		virtual index__ BROKERNew( void )
 		{
 			Element_.Sync();
-			return LIST::CreateEntry();
+			return E_LIST::CreateEntry();
 		}
 		virtual void BROKERRemove( index__ Index )
 		{
 			Element_( Index ).reset();
-			LIST::Remove( Index );
+			E_LIST::Remove( Index );
 			Element_.Sync();
 		}
 		virtual void *BROKERObject( index__ Index )
@@ -340,12 +344,12 @@ namespace broker {
 		}
 	public:
 		//r Contient les objets.
-		CONTAINER( t ) Objets;
+		ctn::E_CONTAINER( t ) Objets;
 		void reset( bool P = true )
 		{
 			Element_.Sync();
 			Objets.reset( P );
-			LIST::reset( P );
+			E_LIST::reset( P );
 		}
 		standard_module( void )
 		{
@@ -358,7 +362,7 @@ namespace broker {
 		// Initialisation.
 		void Init( void )
 		{
-			LIST::Init();
+			E_LIST::Init();
 			Objets.Init();
 			Element_.Init( Objets );
 			untyped_module::Init( t::NAME );
@@ -405,20 +409,20 @@ namespace broker {
 
 	// Classe de gestion des liens entre module et objets.
 	class links
-	: private SET( link__ ),
-	  private LIST
+	: private tym::E_MEMORY( link__ ),
+	  private lst::E_LIST
 	{
 	protected:
-		void LSTAllocate( SIZE__ Size )
+		void LSTAllocate( tym::size__ Size )
 		{
-			SET( link__ )::Allocate( Size );
+			E_MEMORY( link__ )::Allocate( Size );
 		}
 	public:
 		// Initialisation.
 		void Init( void )
 		{
-			LIST::Init();
-			SET( link__ )::Init();
+			E_LIST::Init();
+			E_MEMORY( link__ )::Init();
 		}
 		object__ New(
 			type__ IdType,
@@ -426,37 +430,37 @@ namespace broker {
 		{
 			link__ Lien;
 			object__ IdObjet;
-			POSITION__ P;
+			tym::row__ P;
 			
-			P = LIST::CreateEntry();
+			P = E_LIST::CreateEntry();
 
 			if ( P > BROKER_TYPE_MAX )
 				ERRl();
 
-			IdObjet = (type__)P;
+			IdObjet = (object_t__)P;
 
 			Lien.Type = IdType;
 			Lien.Index = Index;
 
-			SET( link__ )::Write( Lien, IdObjet );
+			E_MEMORY( link__ )::Write( Lien, IdObjet() );
 
 			return IdObjet;
 		}
 		void Remove( object__ IdObjet )
 		{
-			LIST::Remove( IdObjet );
+			E_LIST::Remove( IdObjet() );
 		}
 		type__ Type( object__ IdObjet ) const
 		{
-			return SET( link__ )::Read( IdObjet ).Type;
+			return E_MEMORY( link__ )::Read( IdObjet() ).Type;
 		}
 		index__ Index( object__ IdObjet ) const
 		{
-			return SET( link__ )::Read( IdObjet ).Index;
+			return E_MEMORY( link__ )::Read( IdObjet() ).Index;
 		}
-		SIZE__ Amount( void ) const
+		tym::size__ Amount( void )
 		{
-			return LIST::Amount();
+			return E_LIST::Amount();
 		}
 	};
 
@@ -467,18 +471,18 @@ namespace broker {
 	private:
 		master_module Master_;
 		// Retourne le module correspondant à 'IdType'.
-		untyped_module &ModuleFromType_( type__ IdType ) const
+		untyped_module &Module_( type__ IdType ) const
 		{
 			if ( IdType != BROKER_MASTER_TYPE )
-				return *Modules( IdType );
+				return *Modules( IdType() );
 			else
 				return (untyped_module &)Master_;	// Not very happy about this conversion, 
 		}
 		// Retourne le module correspondant à 'IdObjet'.
-		untyped_module &ModuleFromObject_( object__ IdObjet ) const
+		untyped_module &Module_( object__ IdObjet ) const
 		{
 			if ( IdObjet != BROKER_MASTER_OBJECT )
-				return ModuleFromType_( Type_( IdObjet ) );
+				return Module_( Type_( IdObjet ) );
 			else
 				return (untyped_module &)Master_; // Not very happy about this conversion, 
 		}
@@ -506,7 +510,7 @@ namespace broker {
 			lgg::language Courante;
 		} Langues_;
 		//o The different modules.
-		SET( untyped_module * ) Modules;
+		bch::E_BUNCH( untyped_module * ) Modules;
 		//o The relation between modules an index.
 		links Links;
 		broker( void )
@@ -542,7 +546,7 @@ namespace broker {
 			type__ IdType,
 			const description_ &Description )
 		{
-			return ModuleFromType_( IdType ).Command( Description );
+			return Module_( IdType ).Command( Description );
 		}
 		//f Return the error breaking status.
 		bso__bool ErrorBreaking( void  )
@@ -555,19 +559,19 @@ namespace broker {
 			Master_.ErrorBreaking( Value );
 		}
 		//f Give the module for the object of type 'Type'.
-		const untyped_module &ModuleFromType( type__ Type ) const
+		const untyped_module &Module( type__ Type ) const
 		{
-			return ModuleFromType_( Type );
+			return Module_( Type );
 		}
 		//f Give the module for object 'Object'.
-		const untyped_module &ModuleFromObject( object__ Object ) const
+		const untyped_module &Module( object__ Object ) const
 		{
-			return ModuleFromObject_( Object );
+			return Module_( Object );
 		}
 		//f Return a pointer to the 'Object' object.
 		const void *Object( object__ Object )
 		{
-			return ModuleFromObject_( Object ).Object( Links.Index( Object ) );
+			return Module_( Object ).Object( Links.Index( Object ) );
 		}
 		//f Give a new object.
 		object__ New( type__ Type )
@@ -575,7 +579,7 @@ namespace broker {
 			if ( (unsigned long)Links.Amount() >= (unsigned long)BROKER_TYPE_MAX )
 				ERRl();
 
-			return Links.New( Type, ModuleFromType_( Type ).New() );
+			return Links.New( Type, Module_( Type ).New() );
 		}
 		//f Give the type of the object 'Object'.
 		type__ Type( object__ Object)
@@ -583,11 +587,11 @@ namespace broker {
 			return Type_( Object );
 		}
 		//f Give the type of a nobject named 'Name'.
-		type__ Type( str_string_ &Name );
+		type__ Type( str::string_ &Name );
 		//f Remove object 'Object'.
 		void Remove( object__ Object )
 		{
-			ModuleFromObject_( Object ).Remove( Links.Index( Object ) );
+			Module_( Object ).Remove( Links.Index( Object ) );
 		}
 		/*f Tell that 'Amount' language indicated in 'Languages' are supported.
 		'Languages' is not copied and should NOT be modified. */
@@ -617,7 +621,7 @@ namespace broker {
 		/*f Add a request descrption with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
-		POSITION__ Add(
+		tym::row__ Add(
 			const char *Name,
 			function__ FP,
 			const cast *Casts )

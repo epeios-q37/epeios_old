@@ -34,7 +34,7 @@
 #include "err.h"
 #include "stf.h"
 
-void Generic( int argc, char *argv[] )
+void Generic( int argc, const char *argv[] )
 {
 ERRProlog
 ERRBegin
@@ -43,16 +43,124 @@ ERREnd
 ERREpilog
 }
 
-int main( int argc, char *argv[] )
+enum command {
+	cA,
+	cB,
+	cC,
+	cVersion,
+	c_amount
+};
+
+enum option {
+	oA,
+	oB,
+	oC,
+	o_amount
+};
+
+void Print( const clnarg::arguments_ &Arguments )
+{
+	tym::row__ P = Arguments.First();
+	ctn::E_CMITEM( clnarg::argument_ ) Item;
+
+	while( P != NONE ) {
+		fout << txf::tab << Arguments( P, Item );
+		P = Arguments.Next( P );
+	}
+}
+
+
+void Print( 
+	clnarg::analyzer___ &A,
+	clnarg::id__ Id )
+{
+ERRProlog
+	clnarg::arguments Arguments;
+ERRBegin
+	Arguments.Init();
+
+	if ( Id != CLNARG_NONE )
+		A.GetArguments( Id, Arguments );
+	else
+		A.GetArguments( Arguments );
+
+	Print( Arguments );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Print(
+	const clnarg::option_list &List,
+	clnarg::analyzer___ &A )
+{
+	tym::row__ P = List.First();
+
+	while( P != NONE ) {
+		fout << (unsigned long)List( P ) << ": ";
+		Print( A, List( P ) );
+		fout << txf::nl;
+		P = List.Next( P ); 
+	}
+
+	Print( A, CLNARG_NONE );
+}
+
+void Essai( int argc, const char *argv[] )
+{
+ERRProlog
+	clnarg::description Description;
+	clnarg::analyzer___ Analyzer;
+	clnarg::option_list List;
+	const char *UnknowOption;
+	int C;
+ERRBegin
+	Description.Init();
+
+	Description.AddCommand( 'B', "BLong", cB );
+	Description.AddCommand( 'A', "ALong", cA );
+	Description.AddCommand( 'v', "version", cVersion );
+	Description.AddCommand( 'C', "CLong", cC );
+
+	Description.AddOption( 'b', "bLong", oB );
+	Description.AddOption( 'c', "cLong", oC );
+	Description.AddOption( 'a', "aLong", oA );
+
+	Analyzer.Init( argv, argc, Description );
+
+	fout <<(unsigned long)( C = Analyzer.GetCommand() ) << txf::nl;
+
+	if ( C == cVersion )
+		TTR.Advertise();
+
+	List.Init();
+
+	if ( ( UnknowOption = Analyzer.GetOptions( List ) ) != NULL ) {
+		ferr << '\'' << UnknowOption << "': Unknow command/option." << txf::nl;
+		ERRu();
+	}
+
+	Print( List, Analyzer );
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+int main( int argc, const char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	fout << "Test of library " << CLNARGTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
+	Essai( argc, argv );
+/*
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -66,6 +174,7 @@ ERRFBegin
 		fout << "Usage: " << CLNARGTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
+*/
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;

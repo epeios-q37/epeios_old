@@ -37,6 +37,8 @@
 #include "str.h"
 #include "flm.h"
 
+using namespace ctn;
+
 void Generic( int argc, const char *argv[] )
 {
 ERRProlog
@@ -49,8 +51,8 @@ ERREpilog
 void EssaiBasic( void )
 {
 ERRProlog
-	XCONTAINER( str_string_ ) C;
-//	MITEM( str_string_ ) E;
+	E_XCONTAINER( str::string_ ) C;
+//	MITEM( str::string_ ) E;
 ERRBegin
 	C.Init();
 	C.Allocate( 2 );
@@ -76,13 +78,13 @@ ERREpilog
 #define Lm	'z'
 #define LC	'9'
 
-void Classer( MCONTAINER_( str_string_ ) &Liste )
+void Classer( E_MCONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
 	bso__bool Swap = true;
-	str_string S1;
-	MITEM( str_string_ ) S2;
-	MITEM( str_string_ ) EListe;
+	str::string S1;
+	E_MITEM( str::string_ ) S2;
+	E_MITEM( str::string_ ) EListe;
 ERRBegin
 	S1.Init();
 	S2.Init( Liste );
@@ -96,7 +98,7 @@ ERRBegin
 			S2.Sync( 0 );
 //			S2 = Liste[0];
 
-	for ( POSITION__ i = 1; i < Liste.Amount(); i++ )
+	for ( tym::row__ i = 1; i < Liste.Amount(); i++ )
 	{
 			S1 = S2();
 			S2.Sync( i );
@@ -119,7 +121,7 @@ ERRErr
 ERREnd
 ERREpilog
 }
-void Remplir( str_string_ &S )
+void Remplir( str::string_ &S )
 {
 	int i = 10UL * rand() / RAND_MAX + 1;
 
@@ -132,13 +134,13 @@ void Remplir( str_string_ &S )
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory M;
-	XMCONTAINER( str_string_ ) CS, CD;
+	flm::file_memory_driver F;
+	mmm::multimemory M;
+	E_XMCONTAINER( str::string_ ) CS, CD;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
-*/	MITEM( str_string_ ) ECS, ECD;
-	str_string Str;
+*/	E_MITEM( str::string_ ) ECS, ECD;
+	str::string Str;
 	int i;
 ERRBegin
 	F.Init();
@@ -229,17 +231,17 @@ ERREpilog
 void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory Mm;
-	XCONTAINER( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) CM;
-	XCONTAINER( XMCONTAINER_( str_string_ ) ) Cm;
-	XMCONTAINER( str_string_ ) CC;
-	str_string S;
+	flm::file_memory_driver F;
+	mmm::multimemory Mm;
+	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
+	E_XMCONTAINER( str::string_ ) CC;
+	str::string S;
 /*	fch_flot_sortie_fichier FO;
 	fch_flot_entree_fichier FI;
-*/	ITEM( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) ECM;
-//	ITEM( MCONTAINER_( str_string_ ) ) ECm;
-	MITEM( str_string_ ) ECC;
+*/	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) ECM;
+//	ITEM( MCONTAINER_( str::string_ ) ) ECm;
+	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
 	F.Init("a.tmp");
@@ -266,6 +268,7 @@ ERRBegin
 			for ( C = '0'; C <= LC; C++ )
 			{
 				S.Init();
+//				S.SetStepValue( 0 );
 
 				S.Add( M );
 				S.Add( m );
@@ -340,22 +343,26 @@ ERREpilog
 }
 
 void SP2(
-	XMCONTAINER_( str_string_ ) &O,
+	E_XMCONTAINER_( str::string_ ) &O,
 	char M,
 	char m )
 {
 ERRProlog
-	MITEM( str_string_ ) E;
+	E_MITEM( str::string_ ) E;
 ERRBegin
 	E.Init( O );
 
 	for ( char C = '0'; C <= LC; C++ )
 	{
 		E(C - '0').Init();
+//		E(C - '0').SetStepValue( 0 );
+
 
 		E(C - '0').Add( M );
 		E(C - '0').Add( m );
 		E(C - '0').Add( C );
+
+//		E(C - '0').Adjust();
 
 		fout << E(C - '0') << " " << txf::sync;
 	}
@@ -366,11 +373,11 @@ ERREpilog
 
 
 void SP1(
-	XCONTAINER_( XMCONTAINER_( str_string_ ) ) &O,
+	E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) &O,
 	char M)
 {
 ERRProlog
-	ITEM( XMCONTAINER_( str_string_ ) ) E;
+	E_ITEM( E_XMCONTAINER_( str::string_ ) ) E;
 ERRBegin
 	E.Init( O );
 
@@ -389,12 +396,12 @@ ERREpilog
 }
 
 void SSP2(
-	const MCONTAINER_( str_string_ ) &O,
+	const E_MCONTAINER_( str::string_ ) &O,
 	char M,
 	char m )
 {
 ERRProlog
-	CMITEM( str_string_ ) E;
+	E_CMITEM( str::string_ ) E;
 ERRBegin
 	E.Init( O );
 
@@ -409,11 +416,11 @@ ERREpilog
 
 
 void SSP1(
-	const XCONTAINER_( XMCONTAINER_( str_string_ ) ) &O,
+	const E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) &O,
 	char M)
 {
 ERRProlog
-	CITEM( XMCONTAINER_( str_string_ ) ) E;
+	E_CITEM( E_XMCONTAINER_( str::string_ ) ) E;
 ERRBegin
 	E.Init( O );
 
@@ -433,18 +440,18 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory Mm;
-//	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str_string_, str_string_::s ) > ) ) GC;
-	XCONTAINER( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) GC;
-	ITEM( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) EGC;
+	flm::file_memory_driver F;
+	mmm::multimemory Mm;
+//	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
+	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) GC;
+	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) EGC;
 	char M;
 ERRBegin
 	F.Init("b.tmp");
 	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
-	GC.plug( Mm );
+//	GC.plug( Mm );
 	GC.Init();
 	GC.Allocate( LM - 'A' + 1 );
 
@@ -484,10 +491,10 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory M;
-	XMCONTAINER( str_string_ ) C;
-	MITEM( str_string_ ) E;
+	flm::file_memory_driver F;
+	mmm::multimemory M;
+	E_XMCONTAINER( str::string_ ) C;
+	E_MITEM( str::string_ ) E;
 ERRBegin
 	F.Init( "coucou.tmp" );
 	M.plug( F );
@@ -498,9 +505,9 @@ ERRBegin
 	E.Init( C );
 
 	E(0).Init();
-	E(0) = str_string( "a" );
+	E(0) = str::string( "a" );
 	E(1).Init();
-	E(1)= str_string( "b" );
+	E(1)= str::string( "b" );
 	fout << E(0) << txf::tab;
 	fout << E(1) << txf::nl;
 ERRErr
@@ -511,10 +518,10 @@ ERREpilog
 void EssaiSimpleMulti( void )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory M;
-	CONTAINER( str_string_ ) C;
-	ITEM( str_string_ ) E;
+	flm::file_memory_driver F;
+	mmm::multimemory M;
+	E_CONTAINER( str::string_ ) C;
+	E_ITEM( str::string_ ) E;
 ERRBegin
 	F.Init( "coucou.tmp" );
 	M.plug( F );
@@ -525,9 +532,9 @@ ERRBegin
 	E.Init( C );
 
 	E(0).Init();
-	E(0) = str_string( "a" );
+	E(0) = str::string( "a" );
 	E(1).Init();
-	E(1)= str_string( "b" );
+	E(1)= str::string( "b" );
 	fout << E(0) << txf::tab;
 	fout << E(1) << txf::nl;
 ERRErr
@@ -538,12 +545,12 @@ ERREpilog
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
-	flm_file_memory_driver F;
-	mmm_multimemory M;
-	XMCONTAINER( str_string_ ) CS;
-	XCONTAINER( XMCONTAINER_( str_string_ ) ) CC;
-//	ITEM( str_string_ ) ECS;
-//	ITEM( CONTENEUR_( str_string_ ) ) ECC;
+	flm::file_memory_driver F;
+	mmm::multimemory M;
+	E_XMCONTAINER( str::string_ ) CS;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) CC;
+//	ITEM( str::string_ ) ECS;
+//	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
 	F.Init( "temp.tmp" );
 	M.plug( F );

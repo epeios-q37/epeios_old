@@ -34,9 +34,9 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"0.1.4"
+#define VERSION			"0.1.6"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
-#define AUTHOR			EPSMSC_AUTHOR
+#define AUTHOR_NAME			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
 
 #define DEFAULT_TAG_DELIMITER		'$'
@@ -47,25 +47,25 @@
 #define RESERVED_TAG_PREFIX			'_'
 #define UNKNOW_RESERVED_TAG			tagexp::t_amount
 
-typedef tagdtc::id__	id__;
+using tagdtc::id__;
 
-typedef str_string		string;
-typedef str_string_		string_;
+using str::string;
+using str::string_;
 
-typedef txmtbl_cell		cell;
-typedef txmtbl_cell_	cell_;
+using txmtbl::cell;
+using txmtbl::cell_;
 
-typedef txmtbl_table	table;
-typedef txmtbl_table_	table_;
+using txmtbl::table;
+using txmtbl::table_;
 
-typedef txmtbl_line		line;
-typedef txmtbl_line_	line_;
+using txmtbl::line;
+using txmtbl::line_;
 
 typedef tagexp::tag_expander_	expander_;
 typedef tagexp::tag_expander	expander;
 
-typedef SET_( id__ )	ids_;
-typedef SET( id__ )		ids;
+typedef bch::E_BUNCH_( id__ )	ids_;
+typedef bch::E_BUNCH( id__ )		ids;
 
 
 enum command {
@@ -83,11 +83,11 @@ enum option {
 	o_amount
 };
 
-id__ GetReservedTagId( const str_string_ &Tag )
+id__ GetReservedTagId( const string_ &Tag )
 {
 	int i = 0;
 
-	while( ( i < tagexp::t_amount ) && ( Tag != str_string( tagexp::TagLabel( (tagexp::tag_id)i ) ) ) )
+	while( ( i < tagexp::t_amount ) && ( Tag != string( tagexp::TagLabel( (tagexp::tag_id)i ) ) ) )
 		i++;
 
 	return i;
@@ -95,7 +95,7 @@ id__ GetReservedTagId( const str_string_ &Tag )
 
 bso__bool TestTag( const string_ &Tag )
 {
-	POSITION__ P = Tag.First();
+	tym::row__ P = Tag.First();
 	bso__char C;
 
 	if ( Tag.Amount() != 0 )
@@ -145,8 +145,8 @@ inline void Add(
 	bso__char File,
 	cell_ &ValueBuffer )
 {
-	POSITION__ P;
-	CMITEM( cell_ ) Tag, &Buffer = Tag;
+	tym::row__ P;
+	ctn::E_CMITEM( cell_ ) Tag, &Buffer = Tag;
 	cell_ &Value = ValueBuffer;
 	id__ Id;
 	tagexp::nature Nature;
@@ -156,7 +156,7 @@ inline void Add(
 	Buffer.Init( Line );
 
 	if ( Line.Amount() != 2 ) {
-		ferr << "Error on line " << Line.Location() << " in the tag description flow." << nl;
+		ferr << "Error on line " << Line.Location() << " in the tag description flow." << txf::nl;
 		ERRt();
 	}
 
@@ -164,19 +164,19 @@ inline void Add(
 	Value = Buffer( Line.Next( P ) );
 
 	if ( !TestTag( Tag( P ) ) ) {
-		ferr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << nl;
+		ferr << "Incorrect tag at line " << Line.Location() << " column " << Tag().Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 
 	Nature = TestAndFormTagValue( Value, Text, File );
 
 	if ( Nature == tagexp::nUnknow ) {
-		ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << nl;
+		ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value.Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 	else if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 		if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-			ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << nl;
+			ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRt();
 		}
 		else
@@ -189,14 +189,14 @@ inline void AdditionalTags(
 	expander_ &Expander,
 	char Delimiter )
 {
-	Expander.Add( str_string( Delimiter ), tagexp::nText, str_string( "" ) );
-	Expander.Add( str_string( TOLDate() ), tagexp::nText, str_string( "_DATE_" ) );
-	Expander.Add( str_string( TOLTime() ), tagexp::nText, str_string( "_TIME_" ) );
-	Expander.Add( str_string( NAME ), tagexp::nText, str_string( "_NAME_" ) );
-	Expander.Add( str_string( AUTHOR ), tagexp::nText, str_string( "_AUTHOR_" ) );
-	Expander.Add( str_string( AUTHOR_EMAIL ), tagexp::nText, str_string( "_EMAIL_" ) );
-	Expander.Add( str_string( EPSMSC_EPEIOS_URL ), tagexp::nText, str_string( "_LINK_" ) );
-	Expander.Add( str_string( VERSION ), tagexp::nText, str_string( "_VERSION_" ) );
+	Expander.Add( string( Delimiter ), tagexp::nText, string( "" ) );
+	Expander.Add( string( TOLDate() ), tagexp::nText, string( "_DATE_" ) );
+	Expander.Add( string( TOLTime() ), tagexp::nText, string( "_TIME_" ) );
+	Expander.Add( string( NAME ), tagexp::nText, string( "_NAME_" ) );
+	Expander.Add( string( AUTHOR_NAME ), tagexp::nText, string( "_AUTHOR_" ) );
+	Expander.Add( string( AUTHOR_EMAIL ), tagexp::nText, string( "_EMAIL_" ) );
+	Expander.Add( string( EPSMSC_EPEIOS_URL ), tagexp::nText, string( "_LINK_" ) );
+	Expander.Add( string( VERSION ), tagexp::nText, string( "_VERSION_" ) );
 }
 
 
@@ -209,8 +209,8 @@ void FillExpander(
 {
 ERRProlog
 	cell ValueBuffer;
-	CITEM( line_ ) Line;
-	POSITION__ P = Table.First();
+	ctn::E_CITEM( line_ ) Line;
+	tym::row__ P = Table.First();
 ERRBegin
 	ValueBuffer.Init();
 	Line.Init( Table );
@@ -231,10 +231,10 @@ void Expand(
 	bso__char Delimiter,
 	tagexp::action Action,
 	xtf::extended_text_iflow___ &IFlow,
-	txf__text_oflow_ &OFlow )
+	txf::text_oflow___ &OFlow )
 {
 ERRProlog
-	str_string FileName;
+	string FileName;
 ERRBegin
 	FileName.Init();
 
@@ -242,11 +242,11 @@ ERRBegin
 	case tagexp::rOK:
 		break;
 	case tagexp::rFile:
-		ferr << "Error with file '" << FileName << "'." << nl;
+		ferr << "Error with file '" << FileName << "'." << txf::nl;
 		ERRt();
 		break;
 	case tagexp::rTag:
-		ferr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << nl;
+		ferr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
 		ERRt();
 		break;
 	default:
@@ -264,8 +264,8 @@ void HandleSingle(
 	tagexp::action Action,
 	bso__char Text,
 	bso__char File,
-	flw__iflow_ &IFlow,
-	txf__text_oflow_ &OFlow )
+	flw::iflow___ &IFlow,
+	txf::text_oflow___ &OFlow )
 {
 ERRProlog
 	expander Expander;
@@ -289,9 +289,9 @@ void PrepareExpander(
 	bso__char Delimiter,
 	const line_ &Line )
 {
-	CMITEM( cell_ ) Tag;
-	POSITION__ P = Line.First();
-	POSITION__ PV;
+	ctn::E_CMITEM( cell_ ) Tag;
+	tym::row__ P = Line.First();
+	tym::row__ PV;
 	id__ Id;
 
 	Tag.Init( Line );
@@ -301,13 +301,13 @@ void PrepareExpander(
 
 	while ( P != NONE ) {
 		if ( !TestTag( Tag( P ) ) ) {
-			ferr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << nl;
+			ferr << "Incorrect tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 			ERRt();
 		}
 
 		if ( Tag()( 0 ) == RESERVED_TAG_PREFIX )
 			if ( ( Id = GetReservedTagId( Tag() ) ) == UNKNOW_RESERVED_TAG ) {
-				ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << nl;
+				ferr << "Incorrect reserved tag at line " << Line.Location() <<  " column " << Tag().Location() << " in the description flow." << txf::nl;
 				ERRt();
 			}
 			else
@@ -323,13 +323,13 @@ void PrepareExpander(
 
 
 void FillSet(
-	flx_set_ &Set,
-	flw__iflow_ &IFlow )
+	flx::bunch_ &Set,
+	flw::iflow___ &IFlow )
 {
 ERRProlog
 	bso__char Buffer[BUFFER_SIZE];
-	flw__amount Amount;
-	flx__set_oflow_ OFlow;
+	flw::amount__ Amount;
+	flx::bunch_oflow___ OFlow;
 ERRBegin
 	OFlow.Init( Set );
 
@@ -350,10 +350,10 @@ void CompleteExpander(
 	bso__char File )
 {
 ERRProlog
-	CMITEM( cell_ ) Value;
-	POSITION__ P;
-	POSITION__ PV;
-	str_string TagValue;
+	ctn::E_CMITEM( cell_ ) Value;
+	tym::row__ P;
+	tym::row__ PV;
+	string TagValue;
 	tagexp::nature Nature;
 ERRBegin
 	Value.Init( Line );
@@ -364,7 +364,7 @@ ERRBegin
 	while( PV != NONE ) {
 
 		if ( P == NONE ) {
-			ferr << "Not enough tag value at line " << Line.Location() << " in tag description file." << nl;
+			ferr << "Not enough tag value at line " << Line.Location() << " in tag description file." << txf::nl;
 			ERRt();
 		}
 
@@ -374,7 +374,7 @@ ERRBegin
 		Nature = TestAndFormTagValue( TagValue, Text, File );
 
 		if ( Nature == tagexp::nUnknow ) {
-			ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << nl;
+			ferr << "Incorrect tag value at line " << Line.Location() << " column " << Value().Location() << " in the tag descriptor flow." << txf::nl;
 			ERRt();
 		}
 		else
@@ -385,7 +385,7 @@ ERRBegin
 	}
 
 	if ( P != NONE ) {
-		ferr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << nl;
+		ferr << "Unassigned tag value at line " << Line.Location() << " column " << Value( P ).Location() << " in the tag descriptor flow." << txf::nl;
 		ERRt();
 	}
 ERRErr
@@ -401,15 +401,15 @@ void HandleMulti(
 	tagexp::action Action,
 	bso__char Text,
 	bso__char File,
-	flw__iflow_ &IFlow,
-	txf__text_oflow_ &OFlow )
+	flw::iflow___ &IFlow,
+	txf::text_oflow___ &OFlow )
 {
 ERRProlog
 	expander Expander;
-	flx_set Set;
-	flx__set_iflow_ ISFlow;
-	CITEM( line_ ) Line;
-	POSITION__ P;
+	flx::bunch Set;
+	flx::bunch_iflow___ ISFlow;
+	ctn::E_CITEM( line_ ) Line;
+	tym::row__ P;
 	ids Ids;
 	xtf::extended_text_iflow___ TIFlow;
 ERRBegin
@@ -422,7 +422,7 @@ ERRBegin
 	P = Table.First();
 
 	if ( P == NONE ) {
-		ferr << "Tag descriptor file contents no data." << nl;
+		ferr << "Tag descriptor file contents no data." << txf::nl;
 		ERRt();
 	}
 
@@ -462,11 +462,11 @@ inline bso__bool IsMulti(
 	bso__char Text,
 	bso__char File )
 {
-	POSITION__ P;
-	CMITEM( cell_ ) Cell;
+	tym::row__ P;
+	ctn::E_CMITEM( cell_ ) Cell;
 
 	if ( Line.Amount() < 2 ) {
-		ferr << "The content of the tag description file is incorrect." << nl;
+		ferr << "The content of the tag description file is incorrect." << txf::nl;
 		ERRt();
 		return false;
 	}
@@ -482,8 +482,8 @@ inline bso__bool IsMulti(
 	bso__char Text,
 	bso__char File )
 {
-	POSITION__ P;
-	CITEM( line_ ) Line;
+	tym::row__ P;
+	ctn::E_CITEM( line_ ) Line;
 
 	if ( Table.IsEmpty() )
 		return false;
@@ -501,8 +501,8 @@ void Go(
 	tagexp::action Action,
 	bso__char Text,
 	bso__char File,
-	flw__iflow_ &IFlow,
-	txf__text_oflow_ &OFlow )
+	flw::iflow___ &IFlow,
+	txf::text_oflow___ &OFlow )
 {
 ERRProlog
 ERRBegin
@@ -520,7 +520,7 @@ void GetTable(
 	bso__char Commentary,
 	table_ &Table )
 {
-	TXMTBLGetTable( Desc, Table );
+	txmtbl::GetTable( Desc, Table );
 
 	Table.DeleteCommentaries( Commentary );
 	Table.DeleteEmptyCells();
@@ -529,32 +529,32 @@ void GetTable(
 
 void PrintUsage( void )
 {
-	fout << "Usage: " << NAME << " [command] [options] desc-file [source-file [dest-file]]" << nl;
-	fout << "desc-file:" << tab << "tag description file." << nl;
-	fout << "source-file:" << tab << "source file; stdin if none." << nl;
-	fout << "dest-file:" << tab << "destination file; stdout if none." << nl;
-	fout << "Command: " << nl;
-	fout << tab << "<none>, -r, --reveal:" << nl << tab << tab << "write source file to destination file revealing tags" << nl << tab << tab << "according to tag description file." << nl;
-	fout << tab << "--version:" << nl << tab << tab << "print version of " NAME " components." << nl;
-	fout << tab << "--help:" << tab << "print this message." << nl;
-	fout << "Options:" << nl;
-	fout << tab << "-d, --tag-delimiter CHAR:" << nl << tab << tab << "CHAR becomes the tag delimiter ('" << DEFAULT_TAG_DELIMITER << "' by default)." << nl;
-	fout  << tab << "-s, --skip:" << nl << tab << tab << "don't write to output before next 'print' or 'raw' tag." << nl;
-	fout << tab << "-c, --commentary-marker CHAR:" << nl << tab << tab << "CHAR becomes the marker for commentary ('" << DEFAULT_COMMENTARY_MARKER << "' by default)." << nl;
-	fout << tab << "-t, --text-marker CHAR:" << nl << tab << tab << "CHAR becomes the marker for text ('" << DEFAULT_TEXT_MARKER << "' by default)." << nl;
-	fout << tab << "-f, --file-marker CHAR:" << nl << tab << tab << "CHAR becomes the marker for file ('" << DEFAULT_FILE_MARKER << "' by default)." << nl;
+	fout << "Usage: " << NAME << " [command] [options] desc-file [source-file [dest-file]]" << txf::nl;
+	fout << "desc-file:" << txf::tab << "tag description file." << txf::nl;
+	fout << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
+	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	fout << "Command: " << txf::nl;
+	fout << txf::tab << "<none>, -r, --reveal:" << txf::nl << txf::tab << txf::tab << "write source file to destination file revealing tags" << txf::nl << txf::tab << txf::tab << "according to tag description file." << txf::nl;
+	fout << txf::tab << "--version:" << txf::nl << txf::tab << txf::tab << "print version of " NAME " components." << txf::nl;
+	fout << txf::tab << "--help:" << txf::tab << "print this message." << txf::nl;
+	fout << "Options:" << txf::nl;
+	fout << txf::tab << "-d, --tag-delimiter CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the tag delimiter ('" << DEFAULT_TAG_DELIMITER << "' by default)." << txf::nl;
+	fout  << txf::tab << "-s, --skip:" << txf::nl << txf::tab << txf::tab << "don't write to output before next 'print' or 'raw' tag." << txf::nl;
+	fout << txf::tab << "-c, --commentary-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for commentary ('" << DEFAULT_COMMENTARY_MARKER << "' by default)." << txf::nl;
+	fout << txf::tab << "-t, --text-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for text ('" << DEFAULT_TEXT_MARKER << "' by default)." << txf::nl;
+	fout << txf::tab << "-f, --file-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for file ('" << DEFAULT_FILE_MARKER << "' by default)." << txf::nl;
 }
 
 void PrintHeader( void )
 {
 	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	fout << " by "AUTHOR " (" AUTHOR_EMAIL ")" << nl;
-	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << nl;
-//	fout << EPSMSC_GNU_TEXT << nl;
+	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << txf::nl;
+//	fout << EPSMSC_GNU_TEXT << txf::nl;
 }
 
 static void AnalyzeOptions(
-	clnarg__analyzer_ &Analyzer,
+	clnarg::analyzer___ &Analyzer,
 	tagexp::action &Action,
 	char &Delimiter,
 	char &Commentary,
@@ -562,17 +562,17 @@ static void AnalyzeOptions(
 	char &File )
 {
 ERRProlog
-	POSITION__ P;
-	clnarg_option_list Options;
-	clnarg__id Option;
+	tym::row__ P;
+	clnarg::option_list Options;
+	clnarg::id__ Option;
 	const char *Unknow = NULL;
-	clnarg_argument Argument;
+	clnarg::argument Argument;
 ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		ferr << '\'' << Unknow << "': unknow option." << nl;
-		ferr << "Try '" NAME " --help' to get more informations." << nl;
+		ferr << '\'' << Unknow << "': unknow option." << txf::nl;
+		ferr << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 	}
 
@@ -585,11 +585,11 @@ ERRBegin
 		case oTagDelimiter:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-d,--tag-delimiter' must have one argument." << nl;
+				ferr << "Option '-d,--tag-delimiter' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-d,--tag-delimiter' must be a character." << nl;
+				ferr << "Argument of option '-d,--tag-delimiter' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -598,11 +598,11 @@ ERRBegin
 		case oCommentaryMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-c,--commentary-marker' must have one argument." << nl;
+				ferr << "Option '-c,--commentary-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-c,--commentary-marker' must be a character." << nl;
+				ferr << "Argument of option '-c,--commentary-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -611,11 +611,11 @@ ERRBegin
 		case oTextMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-t,--text-marker' must have one argument." << nl;
+				ferr << "Option '-t,--text-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-t,--text-marker' must be a character." << nl;
+				ferr << "Argument of option '-t,--text-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -624,11 +624,11 @@ ERRBegin
 		case oFileMarker:
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
-				ferr << "Option '-f,--file-marker' must have one argument." << nl;
+				ferr << "Option '-f,--file-marker' must have one argument." << txf::nl;
 				ERRt();
 			}
 			else if ( Argument.Amount() > 1 ) {
-				ferr << "Argument of option '-f,--file-marker' must be a character." << nl;
+				ferr << "Argument of option '-f,--file-marker' must be a character." << txf::nl;
 				ERRt();
 			}
 			else
@@ -649,14 +649,14 @@ ERREpilog
 }
 
 static void AnalyzeFreeArguments(
-	clnarg__analyzer_ &Analyzer,
+	clnarg::analyzer___ &Analyzer,
 	char *&Desc,
 	char *&Source,
 	char *&Dest )
 {
 ERRProlog
-	clnarg_arguments Free;
-	POSITION__ P;
+	clnarg::arguments Free;
+	tym::row__ P;
 ERRBegin
 	Free.Init();
 
@@ -676,13 +676,13 @@ ERRBegin
 		P = Free.Previous( P );
 		break;
 	case 0:
-		ferr << "Too few arguments." << nl;
-		fout << "Try '" NAME " --help' to get more informations." << nl;
+		ferr << "Too few arguments." << txf::nl;
+		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 		break;
 	default:
-		ferr << "Too many arguments." << nl;
-		fout << "Try '" NAME " --help' to get more informations." << nl;
+		ferr << "Too many arguments." << txf::nl;
+		fout << "Try '" NAME " --help' to get more informations." << txf::nl;
 		ERRt();
 		break;
 	}
@@ -705,8 +705,8 @@ static void AnalyzeArgs(
 	char &File )
 {
 ERRProlog
-	clnarg_description Description;
-	clnarg__analyzer_ Analyzer;
+	clnarg::description Description;
+	clnarg::analyzer___ Analyzer;
 ERRBegin
 	Description.Init();
 
@@ -755,11 +755,11 @@ static inline void Main(
 ERRProlog
 	fil::file_iflow___ IFile;
 	fil::file_oflow___ OFile;
-	txf__text_oflow_ OText;
+	txf::text_oflow___ OText;
 	fil::file_iflow___ DFile;
 	xtf::extended_text_iflow___ DText;
-	txf__text_oflow_ *OFlow = NULL;
-	flw__iflow_ *IFlow = NULL;
+	txf::text_oflow___ *OFlow = NULL;
+	flw::iflow___ *IFlow = NULL;
 	bso__bool Backup = false;
 	char *Desc = NULL;
 	char *Source = NULL;
@@ -775,7 +775,7 @@ ERRBegin
 
 	if ( DFile.Init( Desc, err::hSkip ) != fil::sSuccess)
 	{
-		ferr << "Error while opening '" << Desc << "' for reading." << nl;
+		ferr << "Error while opening '" << Desc << "' for reading." << txf::nl;
 		ERRt();
 	}
 
@@ -791,7 +791,7 @@ ERRBegin
 
 		if ( IFile.Init( Source, err::hSkip ) != fil::sSuccess )
 		{
-			ferr << "Error while opening '" << Source << "' for reading." << nl;
+			ferr << "Error while opening '" << Source << "' for reading." << txf::nl;
 			ERRt();
 		}
 
@@ -801,9 +801,9 @@ ERRBegin
 	}
 	else
 	{
-		STFfin.EOFT( XTF_EOXT );
+		stf::finF.EOFT( XTF_EOXT );
 
-		IFlow = &STFfin;
+		IFlow = &stf::finF;
 	}
 
 
@@ -814,7 +814,7 @@ ERRBegin
 
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
 		{
-			ferr << "Error while opening '" << Dest << "' for writing." << nl;
+			ferr << "Error while opening '" << Dest << "' for writing." << txf::nl;
 			ERRt();
 		}
 
@@ -865,7 +865,7 @@ ERRFErr
 
 ERRFEnd
 ERRFEpilog
-	fout << sync;
+	fout << txf::sync;
 
 	return Retour;
 }

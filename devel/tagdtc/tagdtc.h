@@ -55,12 +55,12 @@ extern class ttr_tutor &TAGDTCTutor;
 				  /*			  unless specified			 */
 				  /*******************************************/
 /*$BEGIN$*/
+//D TAG DeTeCtor.
 
 #include "err.h"
-#include "set.h"
 #include "bso.h"
 #include "str.h"
-#include "bst.h"
+#include "bch.h"
 #include "xtf.h"
 
 
@@ -82,8 +82,8 @@ extern class ttr_tutor &TAGDTCTutor;
 namespace tagdtc {
 
 	typedef bso__ubyte	char__;
-	typedef POSITION__	id__;
-	typedef POSITION__	path__;
+	typedef tym::row__	id__;
+	typedef tym::row__	path__;
 
 	extern const char__ Table[];
 
@@ -153,12 +153,12 @@ namespace tagdtc {
 			return Card[C];
 		}
 	public:
-		SET_( card__ ) Cards;
-		SET_( id__ ) Ids;
+		bch::E_BUNCH_( card__ ) Cards;
+		bch::E_BUNCH_( id__ ) Ids;
 		struct s 
 		{
-			SET_( card__ )::s Cards;
-			SET_( id__ )::s Ids;
+			bch::E_BUNCH_( card__ )::s Cards;
+			bch::E_BUNCH_( id__ )::s Ids;
 		};
 		tag_detector_( s &S )
 		: Cards( S.Cards ),
@@ -169,7 +169,7 @@ namespace tagdtc {
 			Cards.reset( P );
 			Ids.reset( P );
 		}
-		void plug( mmm_multimemory_ & M)
+		void plug( mmm::multimemory_ & M)
 		{
 			Cards.plug( M );
 			Ids.plug( M );
@@ -195,7 +195,7 @@ namespace tagdtc {
 			id__ Id );
 		//f Add 'Tag' and affect it 'Id'.
 		void Add(
-			const str_string_ &Tag,
+			const str::string_ &Tag,
 			id__ Id );
 		/*f Parse 'IFlow' and write it to 'OFLow' until it
 		encounters a tag.between 2 'Delimiter' or 'EOX()'.

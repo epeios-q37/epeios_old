@@ -64,74 +64,74 @@ extern class ttr_tutor &IDXQUETutor;
 //d The end of the queue.
 #define IDXQUE_END	NONE
 
-struct idxque
-{
+namespace idxque {
+	using que::E_MQUEUE_;
+
 	enum direction
 	{
 		dAscending = false,
 		dDescending = true
 	};
-};
 
-//c Queue-based index, fast browsing, but slow sorting.
-class idxque_queue_index_
-: public MQUEUE_
-{
-public:
-	struct s
-	: public MQUEUE_::s
-	{};
-// fonctions
-	idxque_queue_index_( s &S )
-	: MQUEUE_( S )
-	{}
-	void reset( bool P = true )
+	//c Queue-based index, fast browsing, but slow sorting.
+	class queue_index_
+	: public E_MQUEUE_
 	{
-		MQUEUE_::reset( P );
-	}
-	void plug( mmm_multimemory_ &MM )
-	{
-		MQUEUE_::plug( MM );
-	}
-	void plug( MEMORY_DRIVER_ &MD )
-	{
-		MQUEUE_::plug( MD );
-	}
-	idxque_queue_index_ &operator =( const idxque_queue_index_ &T )
-	{
-		MQUEUE_::operator =( T );
+	public:
+		struct s
+		: public E_MQUEUE_::s
+		{};
+	// fonctions
+		queue_index_( s &S )
+		: E_MQUEUE_( S )
+		{}
+		void reset( bool P = true )
+		{
+			E_MQUEUE_::reset( P );
+		}
+		void plug( mmm::multimemory_ &MM )
+		{
+			E_MQUEUE_::plug( MM );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			E_MQUEUE_::plug( MD );
+		}
+		queue_index_ &operator =( const queue_index_ &T )
+		{
+			E_MQUEUE_::operator =( T );
 
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		MQUEUE_::Init();
-	}
-	/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
-	void Dump(
-		stk_stack_<POSITION__> &Stack,
-		POSITION__ Begin,
-		idxque::direction Direction );
-	//f Item becomes node next to 'Node'.
-	void BecomeNext(
-		POSITION__ Item,
-		POSITION__ Node )
-	{
-		MQUEUE_::InsertItemAfterNode( Item, Node );
-	}
-	//f Item becomes node previous to 'Node'.
-	void BecomePrevious(
-		POSITION__ Item,
-		POSITION__ Node )
-	{
-		MQUEUE_::InsertItemBeforeNode( Item, Node );
-	}
-};
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			E_MQUEUE_::Init();
+		}
+		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
+		void Dump(
+			stk::stack_<tym::row__> &Stack,
+			tym::row__ Begin,
+			idxque::direction Direction );
+		//f Item becomes node next to 'Node'.
+		void BecomeNext(
+			tym::row__ Item,
+			tym::row__ Node )
+		{
+			E_MQUEUE_::InsertItemAfterNode( Item, Node );
+		}
+		//f Item becomes node previous to 'Node'.
+		void BecomePrevious(
+			tym::row__ Item,
+			tym::row__ Node )
+		{
+			E_MQUEUE_::InsertItemBeforeNode( Item, Node );
+		}
+	};
 
 
-AUTO( idxque_queue_index )
-
+	AUTO( queue_index )
+}
 
 /*$END$*/
 				  /********************************************/

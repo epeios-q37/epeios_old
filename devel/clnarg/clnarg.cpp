@@ -1,7 +1,7 @@
 /*
-  'clnarg' library by Claude L. Simon (epeios@epeios.org)
+  'clnarg' library by Claude L. Simon (simon@epeios.org)
   Requires the 'clnarg' header file ('clnarg.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( CLNARG_NAME )
 	{
 #ifdef CLNARG_DBG
-		Version = CLNARG_VERSION " (DBG)";
+		Version = CLNARG_VERSION "\b\bD $";
 #else
 		Version = CLNARG_VERSION;
 #endif
@@ -53,6 +54,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace clnarg;
+
 enum type {
 	tUnknow,
 	tMulti,
@@ -62,46 +65,46 @@ enum type {
 	tNone
 };
 
-template <typename t> static POSITION__ Search_(
-	clnarg__id Id,
-	const SET_( t ) &Set )
+template <typename t> static tym::row__ Search_(
+	id__ Id,
+	const bch::E_BUNCH_( t ) &Bunch )
 {
-	POSITION__ P = Set.First();
+	tym::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( Set( P ).Id != Id ) )
-		P = Set.Next( P );
+	while( ( P != NONE ) && ( Bunch( P ).Id != Id ) )
+		P = Bunch.Next( P );
 
 	return P;
 }
 
-template <typename t> static clnarg__id Search_(
+template <typename t> static id__ Search_(
 	char C,
-	const SET_( t ) &Set )
+	const bch::E_BUNCH_( t ) &Bunch )
 {
-	POSITION__ P = Set.First();
+	tym::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( Set( P ).Short != C ) )
-		P = Set.Next( P );
+	while( ( P != NONE ) && ( Bunch( P ).Short != C ) )
+		P = Bunch.Next( P );
 
 	if ( P == NONE )
 		return CLNARG_NONE;
 	else
-		return Set( P ).Id;
+		return Bunch( P ).Id;
 }
 
-template <typename t> static clnarg__id Search_(
+template <typename t> static id__ Search_(
 	const char *String,
-	const SET_( t ) &Set )
+	const bch::E_BUNCH_( t ) &Bunch )
 {
-	POSITION__ P = Set.First();
+	tym::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( strcmp( Set( P ).Long, String ) ) )
-		P = Set.Next( P );
+	while( ( P != NONE ) && ( strcmp( Bunch( P ).Long, String ) ) )
+		P = Bunch.Next( P );
 
 	if ( P == NONE )
 		return CLNARG_NONE;
 	else
-		return Set( P ).Id;
+		return Bunch( P ).Id;
 }
 
 static inline type Analyze_(
@@ -129,9 +132,9 @@ static inline type Analyze_(
 	return Type;
 }
 
-clnarg__id clnarg__analyzer_::GetCommand( void ) const
+id__ clnarg::analyzer___::GetCommand( void ) const
 {
-	clnarg__id Id = CLNARG_NONE;
+	id__ Id = CLNARG_NONE;
 
 	if ( ArgC_ > 1 )
 		switch( Analyze_( ArgV_[1], Flag_ ) ) {
@@ -148,10 +151,10 @@ clnarg__id clnarg__analyzer_::GetCommand( void ) const
 }
 
 static bso__bool Exists_(
-	clnarg__id Id,
-	const clnarg_option_list_ &Options )
+	id__ Id,
+	const option_list_ &Options )
 {
-	POSITION__ P = Options.First();
+	tym::row__ P = Options.First();
 
 	while( ( P != NONE ) && ( Options( P ) != Id ) )
 		P = Options.Next( P );
@@ -160,8 +163,8 @@ static bso__bool Exists_(
 }
 
 static inline void Add_(
-	clnarg__id Id,
-	clnarg_option_list_ &Options )
+	id__ Id,
+	option_list_ &Options )
 {
 	if ( !Exists_( Id, Options ) )
 		Options.Add( Id );
@@ -169,13 +172,13 @@ static inline void Add_(
 
 const char *AddMulti_(
 	const char *String,
-	const clnarg_options_ &OptDesc,
-	const clnarg_commands_ &CmdDesc,
-	clnarg_option_list_ &OptList )
+	const options_ &OptDesc,
+	const commands_ &CmdDesc,
+	option_list_ &OptList )
 {
 	bso__bsize i = 0;
 	bso__bsize Limit = strlen( String );
-	clnarg__id Id = CLNARG_NONE;
+	id__ Id = CLNARG_NONE;
 	const char *Return = NULL;
 	static char Unknow[] = "-o";
 
@@ -195,9 +198,9 @@ const char *AddMulti_(
 	return Return;
 }
 
-const char *clnarg__analyzer_::GetOptions( clnarg_option_list_ &Options ) const
+const char *clnarg::analyzer___::GetOptions( option_list_ &Options ) const
 {
-	clnarg__id Id = CLNARG_NONE;
+	id__ Id = CLNARG_NONE;
 	bso__bool End = false;
 	bso__bool Error = false;
 	int i = 1;
@@ -242,12 +245,12 @@ const char *clnarg__analyzer_::GetOptions( clnarg_option_list_ &Options ) const
 
 }
 
-bso__bool clnarg__analyzer_::GetArgument_( 
+bso__bool clnarg::analyzer___::GetArgument_( 
 	int &i,
-	clnarg__id Option,
-	clnarg_argument_ &Argument )
+	id__ Option,
+	argument_ &Argument )
 {
-	POSITION__ P = Search_( Option, Description_->Options );
+	tym::row__ P = Search_( Option, Description_->Options );
 	bso__bool Cont = true;
 
 	switch( Analyze_( ArgV_[i], Flag_ ) ) {
@@ -292,22 +295,22 @@ bso__bool clnarg__analyzer_::GetArgument_(
 
 
 
-void clnarg__analyzer_::GetArgument( 
+void clnarg::analyzer___::GetArgument( 
 	int Option,
-	clnarg_argument_ &Argument )
+	argument_ &Argument )
 {
 	int i = 1;
 
 	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, Option, Argument ) );
 }
 
-void clnarg__analyzer_::GetArguments( 
+void clnarg::analyzer___::GetArguments( 
 	int Option,
-	clnarg_arguments_ &Arguments )
+	arguments_ &Arguments )
 {
 ERRProlog
 	int i = 1;
-	str_string Argument;
+	str::string Argument;
 ERRBegin
 	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, Option, Argument ) ) {
 		if ( Argument.Amount() )
@@ -320,7 +323,7 @@ ERREnd
 ERREpilog
 }
 
-void clnarg__analyzer_::GetArguments( clnarg_arguments_ &Arguments )
+void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 {
 	int i = 1;
 	bso__bool End = false;
@@ -331,13 +334,13 @@ void clnarg__analyzer_::GetArguments( clnarg_arguments_ &Arguments )
 			if ( ArgCount_ )
 				ArgCount_--;
 			else
-				Arguments.Add( str_string( ArgV_[i] ) );
+				Arguments.Add( str::string( ArgV_[i] ) );
 			break;
 		case tMulti:
 		case tLong:
 		case tShort:
 			if ( End )
-				Arguments.Add( str_string( ArgV_[i] ) );
+				Arguments.Add( str::string( ArgV_[i] ) );
 			break;
 		case tEnd:
 			End = true;

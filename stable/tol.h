@@ -1,6 +1,6 @@
 /*
   Header for the 'tol' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -371,8 +371,8 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	srand( Seed );
 }
 
-//m Define the 'First', 'Next', Last', Previous', 'Amount',  using 'Object' and 'Type'.
-#define FNLPAt( Object, Type )\
+//m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
+#define NAVt( Object, Type )\
 	Type First( void ) const\
 	{\
 		return Object##First();\
@@ -381,7 +381,7 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	{\
 		return Object##Last();\
 	}\
-	Type Previous( POSITION__ P ) const\
+	Type Previous( tym::row__ P ) const\
 	{\
 		return Object##Previous( P );\
 	}\
@@ -389,14 +389,22 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	{\
 		return Object##Next( P );\
 	}\
-	SIZE__ Amount( void ) const\
+	tym::size__ Amount( void ) const\
 	{\
 		return Object##Amount();\
+	}\
+	tym::size__ Extent( void ) const\
+	{\
+		return Object##Extent();\
+	}\
+	bso__bool IsEmpty( void ) const\
+	{\
+		return Object##IsEmpty();\
 	}
 
 	
-//m Define the 'First', 'Next', Last', Previous', 'Amount',  using 'Object'.
-#define FNLPA( Object )	FNLPAt( Object, POSITION__ )
+//m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object'.
+#define NAV( Object )	NAVt( Object, tym::row__ )
 
 //f Tell the remainder to give hand to the next thread.
 void TOLYield( void );

@@ -233,11 +233,11 @@ namespace xtf {
 			return Colonne_;
 		}
 		//f Put the rest of the current line in 'Line'.
-		void GetLine( str_string_ &Line );
+		void GetLine( str::string_ &Line );
 		//f Skip the current line.
 		void SkipLine( void )
 		{
-			GetLine( *(str_string_ *)NULL );
+			GetLine( *(str::string_ *)NULL );
 		}
 		//f Return the next character in the flow, but let it in the flow.
 		char View( void )

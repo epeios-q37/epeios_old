@@ -119,7 +119,7 @@ namespace {
 		const s &S,
 		flw::oflow___ &OFlow )
 	{
-		POSITION__ P = S.First();
+		tym::row__ P = S.First();
 
 		PutSize_( S.Amount(), OFlow );
 
@@ -205,7 +205,7 @@ namespace {
 			}
 
 			inline void Put_(
-				const str_string_ &String,
+				const str::string_ &String,
 				flw::oflow___ &OFlow )
 			{
 				OFlow << String;
@@ -245,7 +245,7 @@ namespace {
 				command_detail_ &CD )
 			{
 				IFlow >> CD.Name;
-				GetSet_<SET_( bso__ubyte ), bso__ubyte>( IFlow, CD.Casts );
+				GetSet_<bch::E_BUNCH_( id8__ ), id8__>( IFlow, CD.Casts );
 			}
 
 		}
@@ -255,7 +255,7 @@ namespace {
 			flw::oflow___ &OFlow )
 		{
 			i Item;
-			POSITION__ P = C.First();
+			tym::row__ P = C.First();
 
 			Item.Init( C );
 
@@ -272,14 +272,14 @@ namespace {
 		const c &C,
 		flw::oflow___ &OFlow )
 	{
-		GenericPutContainer_<c, CITEM( i )>( C, OFlow );
+		GenericPutContainer_<c, ctn::E_CITEM( i )>( C, OFlow );
 	}
 
 	template <typename c, typename i> inline void PutMContainer_(
 		const c &C,
 		flw::oflow___ &OFlow )
 	{
-		GenericPutContainer_<c, CMITEM( i )>( C, OFlow );
+		GenericPutContainer_<c, ctn::E_CMITEM( i )>( C, OFlow );
 	}
 
 	template <typename c, typename i> inline void GetContainer_(
@@ -382,20 +382,6 @@ void brktpm::GetItems32(
 	GetContainer_<items32_, item32>( IFlow, Items32 );
 }
 
-void brktpm::PutCommandsDetails(
-	const commands_details_ &CommandsDetails,
-	flw::oflow___ &OFlow )
-{
-	PutContainer_<commands_details_, command_detail_>( CommandsDetails, OFlow );
-}
-
-void brktpm::GetCommandsDetails(
-	flw::iflow___ &IFlow,
-	commands_details_ &CommandsDetails )
-{
-	GetContainer_<commands_details_, command_detail>( IFlow, CommandsDetails );
-}
-
 void brktpm::PutObjectsReferences(
 	const objects_references_ &ObjectsReferences,
 	flw::oflow___ &OFlow )
@@ -408,6 +394,20 @@ void brktpm::GetObjectsReferences(
 	objects_references_ &ObjectsReferences )
 {
 	GetSet_<objects_references_, object_reference__>( IFlow, ObjectsReferences );
+}
+
+void brktpm::PutCommandsDetails(
+	const commands_details_ &CommandsDetails,
+	flw::oflow___ &OFlow )
+{
+	PutContainer_<commands_details_, command_detail_ >( CommandsDetails, OFlow );
+}
+
+void brktpm::GetCommandsDetails(
+	flw::iflow___ &IFlow,
+	commands_details_ &CommandsDetails )
+{
+	GetContainer_<commands_details_, command_detail >( IFlow, CommandsDetails );
 }
 
 

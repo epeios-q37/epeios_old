@@ -53,7 +53,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#define capacite				uym__size
+#define capacite				tym::size__
 #define multimemoire_indexee	indexed_multimemory_
 
 namespace mmi {

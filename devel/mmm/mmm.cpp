@@ -56,12 +56,13 @@ public:
 
 #include "stf.h"
 
-#define	multimemoire	mmm_multimemory_
-#define capacite		mbs__capacite
-#define nombre			mmm__nombre
-#define descripteur		mmm__descriptor
-#define indice_bloc		mmm__indice_bloc
-#define taille			mmm__taille
+using namespace mmm;
+
+#define	multimemoire	multimemory_
+#define nombre			nombre__
+#define descripteur		descriptor__
+#define indice_bloc		indice_bloc__
+#define taille			taille__
 
 /*
 void multimemoire::Liberer_(
@@ -157,7 +158,7 @@ void multimemoire::AfficherStructure_( void ) const
 {
 	descripteur Descripteur = PremierDescripteur_();
 	descripteur P, D, M, m;
-	uym__size Nombre = 0, Total;
+	size__ Nombre = 0, Total;
 
 	while ( !HorsLimite_( Descripteur ) )
 	{

@@ -1,59 +1,38 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  Header for the 'stk' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
-			http://www.epeios.org/
-*/
-/* end of 'entete.txt' template file */
-/* begin of 'entete.h' template file V1.3 */
-/*
-Version:
-	1.0.6 24/05/2000 10:49:52
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
-Instigators:
-	Claude SIMON
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-Authors:
-	Claude SIMON
-
-Contributors:
-	/
-
-Coordinator:
-	Claude SIMON
-
-Description:
-	STacK
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/* Begin of automatic documentation generation part. */
-
-//V 1.0.6
-//C Claude SIMON
-//D STacK
-//R 24/05/2000 10:49:52
-
-/* End of automatic documentation generation part. */
-
-/* end of 'entete.h' template file */
-/* begin of 'xxx.h' template file V2.6 */
+//	$Id$
 
 #ifndef STK__INC
 #define STK__INC
 
 #define STK_NAME		"STK"
 
-#define	STK_VERSION		"1.0.6"	
-#define STK_OWNER		"The Epeios Project (www.epeios.org)"	
+#define	STK_VERSION	"$Revision$"	
 
-//  	Substitution is not applied to the rest when emancipated
-
-#ifdef STK__LINE
-#line 14
-#endif
+#define STK_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
@@ -63,6 +42,14 @@ extern class ttr_tutor &STKTutor;
 #define STK_DBG 
 #endif
 
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (simon@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
+
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
@@ -70,134 +57,89 @@ extern class ttr_tutor &STKTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "set.h"
+#include "tym.h"
+#include "aem.h"
 
-//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
-template <class t> class stk_stack_
-: public SET_( t )
-{
-public:
-	struct s
-	: public SET_( t )::s
-	{
-		SIZE__ Taille;
-	} &S_;
-	stk_stack_( s &S )
-	: S_( S ),
-	  SET_( t )( S ){}
-	void reset( bool P = true )
-	{
-		S_.Taille = 0;
-		SET_( t )::reset( P );
-	}
-/*	void ecrire( flo_sortie_ &Flot )
-	{
-		FLOEcrire( S_.Taille, Flot );
+namespace stk {
 
-		SET_( t )::ecrire( Flot );
-	}
-	void lire( flo_entree_ &Flot )
-	{
-		FLOLire( Flot, S_.Taille );
+	using tym::memory_;
 
-		SET_( t )::lire( Flot );
-	}
-*/	void plug( MEMORY_DRIVER_ &MDriver )
+	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
+	template <class t> class stack_
+	: public tym::E_MEMORY_( t ),
+	  public aem::amount_extent_manager_
 	{
-		SET_( t )::plug( MDriver );
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		SET_( t )::plug( M );
-	}
-	stk_stack_ &operator =( const stk_stack_ &S )
-	{
-		SET_( t )::operator =( S );
-		S_.Taille = S.S_.Taille;
+	public:
+		struct s
+		: public tym::E_MEMORY_( t )::s,
+		  public aem::amount_extent_manager_::s
+		{};
+		stack_( s &S )
+		: tym::E_MEMORY_( t )( S ),
+		  aem::amount_extent_manager_( S )
+		{}
+		void reset( bool P = true )
+		{
+			E_MEMORY_( t )::reset( P );
+			amount_extent_manager_::reset( P );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
+		{
+			E_MEMORY_( t )::plug( MDriver );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			E_MEMORY_( t )::plug( M );
+		}
+		stack_ &operator =( const stack_ &S )
+		{
+			amount_extent_manager_::operator =( S );
+			E_MEMORY_( t )::Allocate( S.Amount() );
+			E_MEMORY_( t )::Write( S, S.Amount() );
 
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		S_.Taille = 0;
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			E_MEMORY_( t )::Init();
+			amount_extent_manager_::Init();
+			amount_extent_manager_::SetNoDecreasingState( true );
+		}
+		//f Place 'Object' at the top of the stack. Return the position where this object is put.
+		tym::row__ Push( t Object )
+		{
+			tym::size__ Size = Amount() + 1;
 
-		SET_( t )::Init();
-	}
-	//f Place 'Object' at the top of the stack. Return the position where this object is put.
-	POSITION__ Push( t Object )
-	{
-		if ( SET_( t )::Extent() <= S_.Taille )
-			SET_( t )::Allocate( S_.Taille + 1 );
+			if ( amount_extent_manager_::AmountToAllocate( Size ) )
+				E_MEMORY_( t )::Allocate( Size );
 
-		SET_( t )::Write( Object, S_.Taille );
+			E_MEMORY_( t )::Write( Object, Amount() - 1 );
 
-		return S_.Taille++;
-	}
-	//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
-	t Pop( bso__bool Adjust = true )
-	{
-		t Objet = SET_( t )::Read( S_.Taille - 1 );
+			return Amount() - 1;
 
-		S_.Taille--;
+		}
+		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
+		t Pop( bso__bool Adjust = true )
+		{
+			tym::size__ Size = Amount() - 1;
 
-		if ( Adjust )
-			SET_( t )::Allocate( S_.Taille );
+			t Objet = E_MEMORY_( t )::Read( Size );
 
-		return Objet;
-	}
-	//f Amount of object in the stack, NOT the size of the stack.
-	SIZE__ Amount( void ) const
-	{
-		return S_.Taille;
-	}
-	//f Return 'true' if stack is empty.
-	bso__bool IsEmpty( void ) const
-	{
-		return S_.Taille == 0;
-	}
-		//f Return the first element pushed in the stack.
-	POSITION__ First( void ) const
-	{
-		if ( S_.Taille )
-			return 0;
-		else
-			return NONE;
-	}
-	//f Return the last element in the stack, the one which is return by the 'pop()' function. 
-	POSITION__ Last( void ) const
-	{
-		if ( S_.Taille )
-			return S_.Taille - 1;
-		else
-			return NONE;
-	}
-	//f Return the next element in the pile (get closer to the top of the pile).
-	POSITION__ Next( POSITION__ Current ) const
-	{
-		if ( ++Current < S_.Taille )
-			return Current;
-		else
-			return NONE;
-	}
-	/*f Return previous element. */
-	POSITION__ Previous( POSITION__ Current ) const
-	{
-		if ( Current )
-			return Current - 1;
-		else
-			return NONE;
-	}
+			if ( amount_extent_manager_::AmountToAllocate( Size, Adjust ) )
+				E_MEMORY_( t )::Allocate( Size );
 
-};
+			return Objet;
+		}
+	};
 
-AUTO1( stk_stack )
+	AUTO1( stack )
 
-//m A stack of static object of type 't'.
-#define STACK_( t )	stk_stack_< t >
+	//m A stack of static object of type 't'.
+	#define E_STACK_( t )	stack_< t >
 
-#define STACK( t )	stk_stack< t >
-
+	#define E_STACK( t )	stack< t >
+}
 
 /*$END$*/
 				  /********************************************/
@@ -206,4 +148,3 @@ AUTO1( stk_stack )
 /******************************************************************************/
 
 #endif
-/* end of 'xxx.h' template file */

@@ -56,6 +56,8 @@ extern class ttr_tutor &SETTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+#error Oboslete. Use library 'BCH' instead.
+
 #include "err.h"
 #include "flw.h"
 #include "mmm.h"
@@ -76,7 +78,7 @@ namespace set {
 			POSITION__ Position,
 			SIZE__ Quantite )
 		{
-			Allouer_( Amount() + Quantite );
+			Allouer_( Amount() + Quantite, false );
 			memory::Write( *this, Amount() - Position - Quantite, Position, Position + Quantite);
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
@@ -93,22 +95,25 @@ namespace set {
 		void Inserer_(
 			const type *Objets,
 			SIZE__ Quantite,
-			POSITION__ Position )
+			POSITION__ Position,
+			bso__bool Adjust )
 		{
 			Pousser_( Position, Quantite );
 			memory::Write( Objets, Quantite, Position );
 		}
 		// Allocation de la place nécessaire à 'Taille' objets.
-		void Allouer_( SIZE__ Taille )
+		void Allouer_(
+			SIZE__ Taille,
+			bso__bool Adjust )
 		{
-			if ( manager::AmountToAllocate( Taille ) )
+			if ( manager::AmountToAllocate( Taille, Adjust ) )
 				memory::Allocate( Taille );
 		}
 		// allocate if the set not big enough.
 		void AllocateIfNecessary_( SIZE__ Quantity )
 		{
 			if ( Quantity > Amount() )
-				Allouer_( Quantity );
+				Allouer_( Quantity, false );
 		}
 	public:
 		struct s
@@ -136,10 +141,12 @@ namespace set {
 			memory::Init();
 			manager::Init();
 		}
-		//f Allocate 'Size' objects.
-		void Allocate( SIZE__ Size )
+		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Adjust' at true.
+		void Allocate(
+			SIZE__ Size,
+			bso__bool Adjust = false)
 		{
-			Allouer_( Size );
+			Allouer_( Size, Adjust );
 		}
 		//f Same as 'Write()', but allocate additionnaly memory if needed.
 		void WriteAndAdjust(
@@ -167,7 +174,7 @@ namespace set {
 		{
 			SIZE__ Amount = this->Amount();
 
-			Allouer_( Amount + 1 );
+			Allouer_( Amount + 1, false );
 
 			memory::Write( Object , Amount );
 
@@ -180,7 +187,7 @@ namespace set {
 		{
 			POSITION__ Retour = this->Amount();
 
-			Allouer_( Retour + Amount );
+			Allouer_( Retour + Amount, false );
 
 			memory::Write( Buffer, Amount, Retour );
 
@@ -251,51 +258,7 @@ namespace set {
 		{
 			memory::Write( *this, this->Amount() - ( Amount + Position ), Position + Amount, Position );
 
-			Allouer_( this->Amount() - Amount );
-		}
-		//f Return the object at 'Position'..
-		type operator ()( POSITION__ Position ) const
-		{
-			return Read( Position );
-		}
-		//f Put 'Object' at 'Position'.
-		void operator ()(
-			POSITION__ Position,
-			type &Object ) const
-		{
-			Read( Position, Object );
-		}
-		//f Return position of the last object of the set.
-		POSITION__ Last( void ) const
-		{
-			if ( Amount() )
-				return Amount() - 1;
-			else
-				return NONE;
-		}
-		//f Return position of the first object of the set.
-		POSITION__ First( void ) const
-		{
-			if ( Amount() )
-				return 0;
-			else
-				return NONE;
-		}
-		//f Return the position of the object after 'Current' (to the top).
-		POSITION__ Next( POSITION__ Current ) const
-		{
-			if ( ++Current < Amount() )
-				return Current;
-			else
-				return NONE;
-		}
-		//f Return the position of the object before 'Current' (to the bottom).
-		POSITION__ Previous( POSITION__ Current ) const
-		{
-			if ( Current )
-				return Current - 1 ;
-			else
-				return NONE;
+			Allouer_( this->Amount() - Amount, false );
 		}
 		//f Return the position of the first of 'Amount' new object.
 		POSITION__ New( SIZE__ Amount = 1 )
@@ -312,7 +275,7 @@ namespace set {
 			POSITION__ Begin,
 			POSITION__ End ) const
 		{
-			if ( Size_ )
+			if ( Amount() )
 				return memory::Position( Object, Begin, End );
 		}
 		//f Return position of 'Object' beginning at 'Begin' (included), or 'NONE' if not found.
@@ -344,44 +307,25 @@ namespace set {
 	template <class type> class set_
 	: public set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>
 	{
-	private:
-		// l'éventuel pilote de la multimemoire
-		mmm_multimemory_driver_ PiloteMultimemoire_;
-		/* Pousse (décalge vers la fin de l'ensemble) les objets à la position
-		'Position' de 'Quantite' positions */
 	public:
 		struct s
 		: public set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::s
-		{
-			mmm_multimemory_driver_::s PiloteMultimemoire_;
-		};
+		{};
 		set_( s &S )
-		: set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>( S ),
-		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
+		: set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>( S )
 		{};
 		void reset( bool P = true )
 		{
 			set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::reset( P );
-			PiloteMultimemoire_.reset( P );
 			MEMORY_( type )::reset( P );
-		}
-		void plug( mmm_multimemory_ &M )
-		{
-			PiloteMultimemoire_.Init( M );
-			MEMORY_( type )::plug( PiloteMultimemoire_ );
-		}
-		void plug( MEMORY_DRIVER_ &Pilote )
-		{
-			PiloteMultimemoire_.reset();
-			MEMORY_( type )::plug( Pilote );
 		}
 		set_ &operator =( const set_ &Op )
 		{
+			set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::operator =( Op );
+
 			Allocate( Op.Amount() );
 
 			MEMORY_( type )::Write( Op, Op.Amount() );
-
-			set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::operator =( Op );
 
 			return *this;
 		}
@@ -398,6 +342,12 @@ namespace set {
 			set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::Allocate( Amount );
 			MEMORY_( type )::read( IFlow, 0, set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::Amount() );
 
+		}
+		//f Adjust the extent to amount.
+		void Adjust( void )
+		{
+			if ( set_core_<type, MEMORY_( type ), aem::amount_extent_manager_>::Force( Amount() ) )
+				MEMORY_( type )::Allocate( Amount() );
 		}
 	};
 
@@ -441,14 +391,14 @@ namespace set {
 		const SET_( t ) &S1,
 		const SET_( t ) &S2 )
 	{
-		return !SETCompare( S1, S2 );
+		return !Compare( S1, S2 );
 	}
 
 	template <class t> inline bso__bool operator !=(
 		const SET_( t ) &S1,
 		const SET_( t ) &S2 )
 	{
-		return SETCompare( S1, S2 ) != 0;
+		return Compare( S1, S2 ) != 0;
 	}
 
 	//c A set of maximum 'size' static objects of type 'type'. Use 'SET__( type, size )' rather then directly this class.

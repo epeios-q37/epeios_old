@@ -44,6 +44,8 @@ ERREnd
 ERREpilog
 }
 
+stk::E_STACK( bso__ubyte ) Stack;
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;

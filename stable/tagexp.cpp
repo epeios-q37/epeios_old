@@ -1,7 +1,7 @@
 /*
-  'tagexp' library by Claude L. Simon (epeios@epeios.org)
+  'tagexp' library by Claude L. Simon (simon@epeios.org)
   Requires the 'tagexp' header file ('tagexp.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( TAGEXP_NAME )
 	{
 #ifdef TAGEXP_DBG
-		Version = TAGEXP_VERSION " (DBG)";
+		Version = TAGEXP_VERSION "\b\bD $";
 #else
 		Version = TAGEXP_VERSION;
 #endif
@@ -77,12 +78,12 @@ void tagexp::tag_expander_::Init( void )
 	Detector.Init();
 
 	for( bso__ubyte i = 0; i < tagexp::t_amount; i++ )
-		if ( Add( str_string( "" ), tagexp::nText, str_string( TagLabel( (tagexp::tag_id)i ) ) ) != i )
+		if ( Add( str::string( "" ), tagexp::nText, str::string( TagLabel( (tagexp::tag_id)i ) ) ) != i )
 			ERRc();
 }
 
 static fil::status WriteFile_(
-	const str_string_ &FileName,
+	const str::string_ &FileName,
 	txf::text_oflow___ &OFlow,
 	err::handle ErrHandle )
 {
@@ -140,13 +141,13 @@ error tagexp::tag_expander_::Expand(
 	xtf::extended_text_iflow___ &IFlow,
 	txf::text_oflow___ &OFlow,
 	bso__char Delimiter,
-	str_string_ &File,
+	str::string_ &File,
 	tagexp::action Action,
 	err::handle ErrHandle ) const
 {
 	bso__bool Loop = true;
 	id__ Id = TAGDTC_UNKNOW;
-	CMITEM( value_ ) Value;
+	ctn::E_CMITEM( value_ ) Value;
 	tagexp::error Error = tagexp::rOK;
 
 	Value.Init( References.Values );

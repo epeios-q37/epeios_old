@@ -1,7 +1,7 @@
 /*
-  'lst' library by Claude L. Simon (epeios@epeios.org)
+  'lst' library by Claude L. Simon (simon@epeios.org)
   Requires the 'lst' header file ('lst.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( LST_NAME )
 	{
 #ifdef LST_DBG
-		Version = LST_VERSION " (DBG)";
+		Version = LST_VERSION "\b\bD $";
 #else
 		Version = LST_VERSION;
 #endif
@@ -54,9 +55,9 @@ public:
 /*$BEGIN$*/
 
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-POSITION__ lst_list_::Successeur_( POSITION__ Element ) const
+tym::row__ lst::list_::Successeur_( tym::row__ Element ) const
 {
-	SIZE__ Nombre = Capacite_();
+	tym::size__ Nombre = amount_extent_manager_::Amount();
 
 	while( ( ++Element < Nombre ) && !Existe_( Element ) );
 
@@ -67,7 +68,7 @@ POSITION__ lst_list_::Successeur_( POSITION__ Element ) const
 }
 
 // Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-POSITION__ lst_list_::Predecesseur_( POSITION__ Element ) const
+tym::row__ lst::list_::Predecesseur_( tym::row__ Element ) const
 {
 	bso__bool Trouve = false;
 
@@ -80,9 +81,9 @@ POSITION__ lst_list_::Predecesseur_( POSITION__ Element ) const
 }
 
 // Retourne vrai si 'Element' existe dans la liste.
-bso__bool lst_list_::Existe_( POSITION__ Position ) const
+bso__bool lst::list_::Existe_( tym::row__ Position ) const
 {
-	POSITION__ Nombre = Libres.Amount();
+	tym::row__ Nombre = Libres.Amount();
 	bso__bool Trouve = false;
 
 	while ( Nombre-- && !( Trouve = ( Libres( Nombre ) == Position ) ) );

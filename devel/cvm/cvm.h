@@ -60,143 +60,138 @@ extern class ttr_tutor &CVMTutor;
 #include "flw.h"
 #include "mdr.h"
 
-//t Position.
-typedef size_t cvm__position;
+namespace cvm {
 
-//t Type of data.
-typedef mdr__data cvm__data;
-
-//t Size.
-typedef size_t cvm__size;
-
-//c Basic conventional memory.
-class cvm_basic_conventional_memory
-{
-	char *Tampon_;
-		// le contenu de la mémoire
-#ifdef CVM_DBG
-	void Test_( void )
-	{
-		if ( Tampon_ == NULL )
-			ERRu();
+	namespace {
+		using namespace mdr;
 	}
-#endif
-protected:
-	// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
-	void Read(
-		cvm__position Position,
-		cvm__size Amount,
-		cvm__data *Buffer )
-	{
-#ifdef CVM_DBG
-		if ( Amount )
-			Test_();
-#endif
-		memcpy( Buffer, Tampon_ + Position, Amount );
-	}
-	// écrit 'Nombre' octets à partir de 'Position' dans 'Tampon'
-	void Write(
-		const cvm__data *Buffer,
-		cvm__size Amount,
-		cvm__position Position )
-	{
-#ifdef CVM_DBG
-		if (Amount ) 
-			Test_();
-#endif
-		memcpy( Tampon_ + Position, Buffer, Amount );
-	}
-	// alloue 'Nombre' octets
-	void Allocate( cvm__size Size )
-	{
-		char *Tampon;
 
-		Tampon = (char *)realloc( Tampon_, Size );
-
-		if ( !Tampon && Size )
-			ERRa();
-
-		Tampon_ = Tampon;
-	}
-public:
-	void reset( bool P = true )
+	//c Basic conventional memory.
+	class basic_conventional_memory
 	{
-		if ( P )
+		char *Tampon_;
+			// le contenu de la mémoire
+	#ifdef CVM_DBG
+		void Test_( void )
 		{
-			if ( Tampon_ )
-				free( Tampon_ );
+			if ( Tampon_ == NULL )
+				ERRu();
 		}
+	#endif
+	protected:
+		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
+		void Read(
+			row__ Position,
+			size__ Amount,
+			data__ *Buffer )
+		{
+	#ifdef CVM_DBG
+			if ( Amount )
+				Test_();
+	#endif
+			memcpy( Buffer, Tampon_ + Position, Amount );
+		}
+		// écrit 'Nombre' octets à partir de 'Position' dans 'Tampon'
+		void Write(
+			const data__ *Buffer,
+			size__ Amount,
+			row__ Position )
+		{
+	#ifdef CVM_DBG
+			if (Amount ) 
+				Test_();
+	#endif
+			memcpy( Tampon_ + Position, Buffer, Amount );
+		}
+		// alloue 'Nombre' octets
+		void Allocate( size__ Size )
+		{
+			char *Tampon;
 
-		Tampon_ = NULL;
-	}
-	void plug( class mmm_multimemory_ & ){}	// stadardization
-	cvm_basic_conventional_memory( void )
-	{
-		reset( false );
-	}
-	virtual ~cvm_basic_conventional_memory( void )
-	{
-		reset( true );
-	}
-	//f Initialization.
-	void Init( void ){}
-};
+			Tampon = (char *)realloc( Tampon_, Size );
 
-//c Conventional memory driver.
-class cvm_conventional_memory_driver
-: public MEMORY_DRIVER,
-  public cvm_basic_conventional_memory
-{
-protected:
-	virtual void MDRRead(
-		mdr__position Position,
-		mdr__bsize Amount,
-		mdr__data *Buffer )
-	{
-		cvm_basic_conventional_memory::Read( Position, Amount, Buffer );
-	}
-	// écrit 'Nombre' octets à la position 'Position'
-	virtual void MDRWrite(
-		const mdr__data *Buffer,
-		mdr__bsize Nombre,
-		mdr__position Position )
-	{
-		cvm_basic_conventional_memory::Write( Buffer, Nombre, Position );
-	}
-	// alloue 'Taille' octets
-	virtual void MDRAllocate( mdr__size Size )
-	{
-		cvm_basic_conventional_memory::Allocate( Size );
-	}
-public:
-	void reset( bool P = true )
-	{
-		cvm_basic_conventional_memory::reset( P );
-		MEMORY_DRIVER::reset( P );
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		cvm_basic_conventional_memory::plug( M );
-		MEMORY_DRIVER::plug( M );
-	}
-	cvm_conventional_memory_driver( void )
-	{
-		reset( false );
-	}
-	virtual ~cvm_conventional_memory_driver( void )
-	{
-		reset( true );
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		cvm_basic_conventional_memory::Init();
-		MEMORY_DRIVER::Init();
-	}
-};
+			if ( !Tampon && Size )
+				ERRa();
 
+			Tampon_ = Tampon;
+		}
+	public:
+		void reset( bool P = true )
+		{
+			if ( P )
+			{
+				if ( Tampon_ )
+					free( Tampon_ );
+			}
 
+			Tampon_ = NULL;
+		}
+		void plug( class mmm::multimemory_ & ){}	// standardization
+		basic_conventional_memory( void )
+		{
+			reset( false );
+		}
+		virtual ~basic_conventional_memory( void )
+		{
+			reset( true );
+		}
+		//f Initialization.
+		void Init( void ){}
+	};
 
+	//c Conventional memory driver.
+	class conventional_memory_driver
+	: public mdr::E_MEMORY_DRIVER,
+	  public basic_conventional_memory
+	{
+	protected:
+		virtual void MDRRead(
+			row__ Position,
+			bsize__ Amount,
+			data__ *Buffer )
+		{
+			basic_conventional_memory::Read( Position, Amount, Buffer );
+		}
+		// écrit 'Nombre' octets à la position 'Position'
+		virtual void MDRWrite(
+			const data__ *Buffer,
+			bsize__ Nombre,
+			row__ Position )
+		{
+			basic_conventional_memory::Write( Buffer, Nombre, Position );
+		}
+		// alloue 'Taille' octets
+		virtual void MDRAllocate( size__ Size )
+		{
+			basic_conventional_memory::Allocate( Size );
+		}
+	public:
+		void reset( bool P = true )
+		{
+			basic_conventional_memory::reset( P );
+			E_MEMORY_DRIVER::reset( P );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			basic_conventional_memory::plug( M );
+			E_MEMORY_DRIVER::plug( M );
+		}
+		conventional_memory_driver( void )
+		{
+			reset( false );
+		}
+		virtual ~conventional_memory_driver( void )
+		{
+			reset( true );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			basic_conventional_memory::Init();
+			E_MEMORY_DRIVER::Init();
+		}
+	};
+}
 
 /*$END$*/
 				  /********************************************/

@@ -1,7 +1,7 @@
 /*
-  'xtf' library by Claude L. Simon (epeios@epeios.org)
+  'xtf' library by Claude L. Simon (simon@epeios.org)
   Requires the 'xtf' header file ('xtf.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( XTF_NAME )
 	{
 #ifdef XTF_DBG
-		Version = XTF_VERSION " (DBG)";
+		Version = XTF_VERSION "\b\bD $";
 #else
 		Version = XTF_VERSION;
 #endif
@@ -55,7 +56,7 @@ public:
 
 using namespace xtf;
 
-void xtf::extended_text_iflow___::GetLine( str_string_ &Line )
+void xtf::extended_text_iflow___::GetLine( str::string_ &Line )
 {
 	bso__bool Cont = true;
 	char C;

@@ -1,6 +1,6 @@
 /*
-  Header for the 'brkrqm' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'brkrqm' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,7 +45,7 @@ extern class ttr_tutor &BRKRQMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -84,6 +85,7 @@ extern class ttr_tutor &BRKRQMTutor;
 namespace brkrqm {
 	namespace {
 		using namespace brkcst;
+		using namespace ctn;
 	}
 
 	using namespace brktpm;
@@ -96,13 +98,13 @@ namespace brkrqm {
 	{
 	public:
 		//o Name of the command.
-		str_string_ Name;
+		str::string_ Name;
 		/*o Parameters and return value types. Separated by 'cEnd'. The 'cEnd'
 		to signalize the end of the request must NOT be put. */
 		ids8_ Casts;
 		struct s
 		{
-			str_string_::s Name;
+			str::string_::s Name;
 			ids8_::s Casts;
 		} &S_;
 		description_( s &S )
@@ -122,7 +124,7 @@ namespace brkrqm {
 
 			return *this;
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Name.plug( M );
 			Casts.plug( M );
@@ -145,42 +147,42 @@ namespace brkrqm {
 
 	//c Requests descriptions.
 	class descriptions_
-	: public XCONTAINER_( description_ )
+	: public E_XCONTAINER_( description_ )
 	{
 	public:
 		struct s
-		: public XCONTAINER_( description_ )::s
+		: public E_XCONTAINER_( description_ )::s
 		{};
 		descriptions_( s &S )
-		: XCONTAINER_( description_ )( S )
+		: ctn::E_XCONTAINER_( description_ )( S )
 		{}
 		void reset( bool P = true )
 		{
-			XCONTAINER_( description_ )::reset( P );
+			E_XCONTAINER_( description_ )::reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
-			XCONTAINER_( description_ )::plug( M );
+			E_XCONTAINER_( description_ )::plug( M );
 		}
 		descriptions_ &operator =( const descriptions_ &D )
 		{
-			XCONTAINER_( description_ )::operator =( D );
+			E_XCONTAINER_( description_ )::operator =( D );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			XCONTAINER_( description_ )::Init();
+			E_XCONTAINER_( description_ )::Init();
 		}
 		//f Adding 'Description'. Return the position where added.
-		POSITION__ Add( const description_ &Description )
+		tym::row__ Add( const description_ &Description )
 		{
-			return XCONTAINER_( description_ )::Add( Description );
+			return E_XCONTAINER_( description_ )::Add( Description );
 		}
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */
-		POSITION__ Add(
+		tym::row__ Add(
 			const char *Name,
 			const cast *Casts )
 		{
@@ -191,7 +193,7 @@ namespace brkrqm {
 			return Add( Description );
 		}
 		/*f Return the position of the description 'Description'. */
-		POSITION__ Position( const description_ &Description ) const;
+		tym::row__ Position( const description_ &Description ) const;
 	};
 
 	AUTO( descriptions )
@@ -203,7 +205,7 @@ namespace brkrqm {
 		// The corresponding request description.
 		const description_ *Description_;
 		// Position in the Description_;
-		POSITION__ Position_;
+		tym::row__ Position_;
 		// At true if all the answer be sent.
 		bso__bool Closed_;
 		// Cast buffer.
@@ -388,7 +390,7 @@ namespace brkrqm {
 			brktpm::GetCommandsDetails( *Channel_, CommandsDetails );
 		}
 		//f Get 'ObjectsReferences'.
-		void PopObjectsreferences( objects_references_ &ObjectsReferences )
+		void PopObjectsReferences( objects_references_ &ObjectsReferences )
 		{
 			TestInput_( cObjectsReferences );
 			brktpm::GetObjectsReferences( *Channel_, ObjectsReferences );

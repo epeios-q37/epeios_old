@@ -61,7 +61,7 @@ extern class ttr_tutor &TAGEXPTutor;
 #include "err.h"
 #include "flw.h"
 #include "tagdtc.h"
-#include "bst.h"
+#include "bitbch.h"
 #include "ctn.h"
 #include "xtf.h"
 #include "fil.h"
@@ -104,9 +104,9 @@ namespace tagexp
 	};
 
 	//t Value of a tag referrnce.
-	typedef str_string_ value_;
+	typedef str::string_ value_;
 
-	typedef str_string value;
+	typedef str::string value;
 
 
 	//f Return the label of the reserved tag of id 'Id'.
@@ -114,18 +114,18 @@ namespace tagexp
 
 	//c Natures of the tag references.
 	class natures_ 
-	: public bst_2bits_set_
+		: public bitbch::bibit_bunch_
 	{
 	public:
 		struct s
-		: public bst_2bits_set_::s {};
+		: public bitbch::bibit_bunch::s {};
 		natures_( s &S )
-		: bst_2bits_set_( S )
+		: bibit_bunch_( S )
 		{}
 		//f Return the value at 'Position'.
-		nature operator()( POSITION__ Position ) const
+		nature operator()( tym::row__ Position ) const
 		{
-			return (tagexp::nature)bst_2bits_set_::Read( Position );
+			return (tagexp::nature)bibit_bunch_::Read( Position );
 		}
 	};
 
@@ -135,12 +135,12 @@ namespace tagexp
 	{
 	public:
 		//o The value of the tag references
-		XMCONTAINER_( value_ ) Values;
+		ctn::E_XMCONTAINER_( value_ ) Values;
 		//o The nature of the tag reference
 		natures_ Natures;
 		struct s
 		{
-			XMCONTAINER_( value_ )::s Values;
+			ctn::E_XMCONTAINER_( value_ )::s Values;
 			natures_::s Natures;
 		};
 		references_( s &S )
@@ -152,7 +152,7 @@ namespace tagexp
 			Values.reset( P );
 			Natures.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Values.plug( M );
 			Natures.plug( M );
@@ -173,7 +173,7 @@ namespace tagexp
 		//f Return the position of a new tag reference of nature 'Nature', which should be completed later.
 		id__ Create( void )
 		{
-			POSITION__ P = Values.Create();
+			tym::row__ P = Values.Create();
 
 			if ( Natures.Add( tagexp::nUnknow ) != P )
 					ERRc();
@@ -229,7 +229,7 @@ namespace tagexp
 			References.reset( P );
 			Detector.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			References.plug( M );
 			Detector.plug( M );
@@ -244,7 +244,7 @@ namespace tagexp
 		//f Initialization.
 		void Init( void );
 		//f Create tag 'Tag' which should be completed later. Return its id.
-		id__ Create( const str_string_ &Tag )
+		id__ Create( const str::string_ &Tag )
 		{
 			id__ P;
 
@@ -257,9 +257,9 @@ namespace tagexp
 		/*f Add tag 'Tag' with reference 'Reference' of nature 'Nature'.
 		Return its id. */
 		id__ Add(
-			const str_string_ &Value,
+			const str::string_ &Value,
 			tagexp::nature Nature,
-			const str_string_ &Tag )
+			const str::string_ &Tag )
 		{
 			id__ P;
 
@@ -271,7 +271,7 @@ namespace tagexp
 		}
 		//f Change to value 'Value' of nature 'Nature' the reference of the tag of id 'Id'.
 		void Assign(
-			const str_string_ &Reference,
+			const str::string_ &Reference,
 			nature Nature,
 			id__ Id )
 		{
@@ -284,7 +284,7 @@ namespace tagexp
 			xtf::extended_text_iflow___ &IFlow,
 			txf::text_oflow___ &OFlow,
 			bso__char Demlimiter,
-			str_string_ &File,
+			str::string_ &File,
 			tagexp::action Action = tagexp::aPrint,
 			err::handle ErrHandle = err::hUsual ) const;
 	};

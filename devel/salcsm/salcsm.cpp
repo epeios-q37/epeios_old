@@ -1,7 +1,7 @@
 /*
-  'salcsm' library by Claude L. Simon (epeios@epeios.org)
+  'salcsm' library by Claude L. Simon (simon@epeios.org)
   Requires the 'salcsm' header file ('salcsm.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( SALCSM_NAME )
 	{
 #ifdef SALCSM_DBG
-		Version = SALCSM_VERSION " (DBG)";
+		Version = SALCSM_VERSION "\b\bD $";
 #else
 		Version = SALCSM_VERSION;
 #endif
@@ -55,15 +56,15 @@ public:
 
 using namespace salcsm;
 
-#include "set.h"
+using bch::bunch;
 
 bso__bsize salcsm::tampon::Ecrire(
 	const flw::data__ *Tampon,
 	bso__bsize Taille )
 {
-	SET(flw::data__)::Allocate( Ecriture_ + Taille );
+	E_BUNCH(flw::data__)::Allocate( Ecriture_ + Taille );
 
-	SET(flw::data__)::Write( Tampon, Taille, Ecriture_ );
+	E_BUNCH(flw::data__)::Write( Tampon, Taille, Ecriture_ );
 
 	Ecriture_ += Taille;
 
@@ -81,7 +82,7 @@ bso__bsize salcsm::tampon::Lire(
 	if ( Desire < Minimum )
 		ERRf();
 
-	SET( flw::data__ )::Read( Lecture_, Desire, Tampon );
+	E_BUNCH( flw::data__ )::Read( Lecture_, Desire, Tampon );
 
 	Lecture_ += Desire;
 

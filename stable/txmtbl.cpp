@@ -1,7 +1,7 @@
 /*
-  'txmtbl' library by Claude L. Simon (epeios@epeios.org)
+  'txmtbl' library by Claude L. Simon (simon@epeios.org)
   Requires the 'txmtbl' header file ('txmtbl.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( TXMTBL_NAME )
 	{
 #ifdef TXMTBL_DBG
-		Version = TXMTBL_VERSION " (DBG)";
+		Version = TXMTBL_VERSION "\b\bD $";
 #else
 		Version = TXMTBL_VERSION;
 #endif
@@ -53,9 +54,11 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace txmtbl;
+
 static inline bso__bool IsNotEndOfCell_(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl__separator Separator,
+	separator__ Separator,
 	bso__bool &EOX,
 	bso__char &C )
 {
@@ -64,7 +67,7 @@ static inline bso__bool IsNotEndOfCell_(
 
 static inline txmtbl::delimiter GetDelimiter_( 
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl__separator Separator,
+	separator__ Separator,
 	bso__bool EOX,
 	bso__char C )
 {
@@ -93,10 +96,10 @@ static inline txmtbl::delimiter GetDelimiter_(
 	}
 }
 
-txmtbl::delimiter TXMTBLGetCell(
+txmtbl::delimiter txmtbl::GetCell(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl_cell_ &Cell,
-	txmtbl__separator Separator )
+	cell_ &Cell,
+	separator__ Separator )
 {
 	bso__char C = 0;
 	bso__bool EOX = false;
@@ -111,9 +114,9 @@ txmtbl::delimiter TXMTBLGetCell(
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
 
-txmtbl::delimiter TXMTBLSkipCell(
+txmtbl::delimiter txmtbl::SkipCell(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl__separator Separator )
+	separator__ Separator )
 {
 	bso__char C = 0;
 	bso__bool EOX = false;
@@ -123,22 +126,22 @@ txmtbl::delimiter TXMTBLSkipCell(
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
 
-bso__bool TXMTBLGetLine(
+bso__bool txmtbl::GetLine(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl_line_ &Line,
-	txmtbl__separator Separator )
+	line_ &Line,
+	separator__ Separator )
 {
 ERRProlog
-	txmtbl_cell Cell;
+	cell Cell;
 	bso__bool Loop;
-	txmtbl__location Location;
+	location__ Location;
 ERRBegin
 	Cell.Init();
 
 	do {
 		Location = Flow.Line();
 
-		Loop = ( TXMTBLGetCell( Flow, Cell, Separator ) == txmtbl::dSeparator ) && !Flow.EOX();
+		Loop = ( GetCell( Flow, Cell, Separator ) == txmtbl::dSeparator ) && !Flow.EOX();
 
 		if ( Loop || Cell.Amount() || Line.Amount() )
 			Line.Add( Cell, Location );
@@ -151,11 +154,11 @@ ERREpilog
 	return !Flow.EOX();
 }
 
-txmtbl__amount txmtbl_line_::DeleteEmptyCells( void )
+amount__ line_::DeleteEmptyCells( void )
 {
-	CMITEM( txmtbl_cell_ ) Cell;
-	POSITION__ Temp, Current = First();
-	txmtbl__amount Amount = 0;
+	ctn::E_CMITEM( cell_ ) Cell;
+	tym::row__ Temp, Current = First();
+	amount__ Amount = 0;
 
 	Cell.Init( *this );
 
@@ -174,10 +177,10 @@ txmtbl__amount txmtbl_line_::DeleteEmptyCells( void )
 	return Amount;
 }
 
-POSITION__ txmtbl_line_::FirstNonEmptyCell( void ) const
+tym::row__ line_::FirstNonEmptyCell( void ) const
 {
-	CMITEM( txmtbl_cell_ ) Cell;
-	POSITION__ Current = First();
+	ctn::E_CMITEM( cell_ ) Cell;
+	tym::row__ Current = First();
 
 	Cell.Init( *this );
 
@@ -187,10 +190,10 @@ POSITION__ txmtbl_line_::FirstNonEmptyCell( void ) const
 	return Current;
 }
 
-POSITION__ txmtbl_line_::LastNonEmptyCell( void ) const
+tym::row__ line_::LastNonEmptyCell( void ) const
 {
-	CMITEM( txmtbl_cell_ ) Cell;
-	POSITION__ Current = Last();
+	ctn::E_CMITEM( cell_ ) Cell;
+	tym::row__ Current = Last();
 
 	Cell.Init( *this );
 
@@ -200,10 +203,10 @@ POSITION__ txmtbl_line_::LastNonEmptyCell( void ) const
 	return Current;
 }
 
-txmtbl__amount txmtbl_line_::DeleteHeadingEmptyCells( void )
+amount__ line_::DeleteHeadingEmptyCells( void )
 {
-	POSITION__ Current = FirstNonEmptyCell(), Temp;
-	txmtbl__amount Amount = 0;
+	tym::row__ Current = FirstNonEmptyCell(), Temp;
+	amount__ Amount = 0;
 
 	if ( Current != NONE )
 	{
@@ -226,10 +229,10 @@ txmtbl__amount txmtbl_line_::DeleteHeadingEmptyCells( void )
 	return Amount;
 }
 
-txmtbl__amount txmtbl_line_::DeleteTailingEmptyCells( void )
+amount__ line_::DeleteTailingEmptyCells( void )
 {
-	POSITION__ Current = LastNonEmptyCell(), Temp;
-	txmtbl__amount Amount = 0;
+	tym::row__ Current = LastNonEmptyCell(), Temp;
+	amount__ Amount = 0;
 
 	if ( Current != NONE )
 	{
@@ -252,14 +255,14 @@ txmtbl__amount txmtbl_line_::DeleteTailingEmptyCells( void )
 	return Amount;
 }
 
-txmtbl__amount txmtbl_line_::DeleteCentralEmptyCells( void )
+amount__ line_::DeleteCentralEmptyCells( void )
 {
-	CMITEM( txmtbl_cell_ ) Cell;
-	POSITION__
+	ctn::E_CMITEM( cell_ ) Cell;
+	tym::row__
 		Current = FirstNonEmptyCell(),
 		Last = LastNonEmptyCell(),
 		Temp;
-	txmtbl__amount Amount = 0;
+	amount__ Amount = 0;
 
 	Cell.Init( *this );
 
@@ -286,10 +289,10 @@ txmtbl__amount txmtbl_line_::DeleteCentralEmptyCells( void )
 	return Amount;
 }
 
-txmtbl__amount txmtbl_line_::DeleteCellsAt( POSITION__ Position )
+amount__ line_::DeleteCellsAt( tym::row__ Position )
 {
-	POSITION__ Temp;
-	txmtbl__amount Amount = 0;
+	tym::row__ Temp;
+	amount__ Amount = 0;
 
 	while( Position != NONE )
 	{
@@ -306,16 +309,16 @@ txmtbl__amount txmtbl_line_::DeleteCellsAt( POSITION__ Position )
 }
 
 static inline bool IsCommentary_(
-	const txmtbl_cell_ &Cell,
+	const cell_ &Cell,
 	bso__char Marker )
 {
 	return Cell.Amount() && ( Cell( 0 ) == Marker );
 }
 
-txmtbl__amount txmtbl_line_::DeleteCommentary( bso__char Marker )
+amount__ line_::DeleteCommentary( bso__char Marker )
 {
-	POSITION__ Position = First();
-	CMITEM( txmtbl_cell_ ) Cell;
+	tym::row__ Position = First();
+	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( *this );
 
@@ -330,10 +333,10 @@ txmtbl__amount txmtbl_line_::DeleteCommentary( bso__char Marker )
 
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &Flow,
-	const txmtbl_line_ &Line )
+	const line_ &Line )
 {
-	POSITION__ Current;
-	CMITEM( txmtbl_cell_ ) Cell;
+	tym::row__ Current;
+	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( Line );
 
@@ -354,10 +357,10 @@ txf::text_oflow___ &operator <<(
 	return Flow;
 }
 
-bso__bool TXMTBLGetFirstNonEmptyLine(
+bso__bool txmtbl::GetFirstNonEmptyLine(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl_line_ &Line,
-	txmtbl__separator Separator )
+	line_ &Line,
+	separator__ Separator )
 {
 	if ( Flow.EOX() )
 		return false;
@@ -366,7 +369,7 @@ bso__bool TXMTBLGetFirstNonEmptyLine(
 		do
 		{
 			Line.Init();
-			TXMTBLGetLine( Flow, Line );
+			GetLine( Flow, Line );
 
 			Line.DeleteEmptyCells();
 
@@ -377,13 +380,13 @@ bso__bool TXMTBLGetFirstNonEmptyLine(
 }
 
 
-void TXMTBLGetTable(
+void txmtbl::GetTable(
 	xtf::extended_text_iflow___ &Flow,
-	txmtbl_table_ &Table,
-	txmtbl__separator Separator )
+	table_ &Table,
+	separator__ Separator )
 {
 ERRProlog
-	txmtbl_line Line;
+	line Line;
 ERRBegin
 	while( !Flow.EOX() )
 	{
@@ -391,7 +394,7 @@ ERRBegin
 
 		Line.Location( Flow.Line() );
 
-		TXMTBLGetLine( Flow, Line, Separator );
+		GetLine( Flow, Line, Separator );
 
 		Table.AddLine( Line );
 	}
@@ -400,81 +403,81 @@ ERREnd
 ERREpilog
 }
 
-void txmtbl_table_::DeleteEmptyCells( void )
+void table_::DeleteEmptyCells( void )
 {
-	POSITION__ Current = First();
+	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		CONTAINER_( txmtbl_line_ )::operator ()( Current ).DeleteEmptyCells();
+		lines_::operator ()( Current ).DeleteEmptyCells();
 
 		Current = Next( Current );
 	}
 
-	CONTAINER_( txmtbl_line_ )::Sync();
+	lines_::Sync();
 }
 
-void txmtbl_table_::DeleteHeadingEmptyCells( void )
+void table_::DeleteHeadingEmptyCells( void )
 {
-	POSITION__ Current = First();
+	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		CONTAINER_( txmtbl_line_ )::operator ()( Current ).DeleteHeadingEmptyCells();
+		lines_::operator ()( Current ).DeleteHeadingEmptyCells();
 
 		Current = Next( Current );
 	}
 
-	CONTAINER_( txmtbl_line_ )::Sync();
+	lines_::Sync();
 }
 
-void txmtbl_table_::DeleteTailingEmptyCells( void )
+void table_::DeleteTailingEmptyCells( void )
 {
-	POSITION__ Current = First();
+	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		CONTAINER_( txmtbl_line_ )::operator ()( Current ).DeleteTailingEmptyCells();
+		lines_::operator ()( Current ).DeleteTailingEmptyCells();
 
 		Current = Next( Current );
 	}
 
-	CONTAINER_( txmtbl_line_ )::Sync();
+	lines_::Sync();
 }
 
-void txmtbl_table_::DeleteCentralEmptyCells( void )
+void table_::DeleteCentralEmptyCells( void )
 {
-	POSITION__ Current = First();
+	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		CONTAINER_( txmtbl_line_ )::operator()( Current ).DeleteCentralEmptyCells();
+		lines_::operator()( Current ).DeleteCentralEmptyCells();
 
 		Current = Next( Current );
 	}
 
-	CONTAINER_( txmtbl_line_ )::Sync();
+	lines_::Sync();
 }
 
-void txmtbl_table_::DeleteCommentaries( bso__char Marker )
+void table_::DeleteCommentaries( bso__char Marker )
 {
-	POSITION__ Current = First();
+	tym::row__ Current = First();
 
 	while( Current != NONE )
 	{
-		CONTAINER_( txmtbl_line_ )::operator()( Current ).DeleteCommentary( Marker );
+		lines_::operator()( Current ).DeleteCommentary( Marker );
 
 		Current = Next( Current );
 	}
 
-	CONTAINER_( txmtbl_line_ )::Sync();
+	lines_::Sync();
 }
 
-txmtbl__amount txmtbl_table_::DeleteEmptyLines( void )
+amount__ table_::DeleteEmptyLines( void )
 {
-	CITEM( txmtbl_line_ ) Line;
-	POSITION__ Current = First(), Temp;
-	txmtbl__amount Amount = 0;
+	ctn::E_CITEM( line_ ) Line;
+	tym::row__ Current = First(), Temp;
+	amount__ Amount = 0;
 
 	Line.Init( *this );
 
@@ -497,10 +500,10 @@ txmtbl__amount txmtbl_table_::DeleteEmptyLines( void )
 
 txf::text_oflow___ &operator <<(
 	txf::text_oflow___ &Flow,
-	const txmtbl_table_ &Table )
+	const table_ &Table )
 {
-	CITEM( txmtbl_line_ ) Line;
-	POSITION__ Current;
+	ctn::E_CITEM( line_ ) Line;
+	tym::row__ Current;
 
 	Line.Init( Table );
 

@@ -38,7 +38,15 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	brktpm::commands_details CD;
+	brktpm::objects_references OR;
+	flw::iflow___ &IFlow = *(flw::iflow___ *)NULL;
+	flw::oflow___ &OFlow = *(flw::oflow___ *)NULL;
 ERRBegin
+	brktpm::GetCommandsDetails( IFlow, CD );
+	brktpm::PutCommandsDetails( CD, OFlow );
+	brktpm::GetObjectsReferences( IFlow, OR );
+	brktpm::PutObjectsReferences( OR, OFlow );
 ERRErr
 ERREnd
 ERREpilog

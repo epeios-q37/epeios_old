@@ -1,59 +1,38 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  Header for the 'idxque' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
-			http://www.epeios.org/
-*/
-/* end of 'entete.txt' template file */
-/* begin of 'entete.h' template file V1.3 */
-/*
-Version:
-	1.2.0 26/04/2000 07:03:51
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
-Instigators:
-	Claude SIMON
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-Authors:
-	Claude SIMON
-
-Contributors:
-	/
-
-Coordinator:
-	Claude SIMON
-
-Description:
-	InDeX QUEue
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/* Begin of automatic documentation generation part. */
-
-//V 1.2.0
-//C Claude SIMON
-//D InDeX QUEue
-//R 26/04/2000 07:03:51
-
-/* End of automatic documentation generation part. */
-
-/* end of 'entete.h' template file */
-/* begin of 'xxx.h' template file V2.4 */
+//	$Id$
 
 #ifndef IDXQUE__INC
 #define IDXQUE__INC
 
 #define IDXQUE_NAME		"IDXQUE"
 
-#define	IDXQUE_VERSION		"1.2.0"	
-#define IDXQUE_OWNER		"The Epeios Project (www.epeios.org)"	
+#define	IDXQUE_VERSION	"$Revision$"	
 
-//  	Substitution is not applied to the rest when emancipated
-
-#ifdef IDXQUE__LINE
-#line 14
-#endif
+#define IDXQUE_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
@@ -62,6 +41,14 @@ extern class ttr_tutor &IDXQUETutor;
 #if defined( XXX_DBG ) && !defined( IDXQUE_NODBG )
 #define IDXQUE_DBG 
 #endif
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (simon@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
@@ -77,74 +64,74 @@ extern class ttr_tutor &IDXQUETutor;
 //d The end of the queue.
 #define IDXQUE_END	NONE
 
-struct idxque
-{
+namespace idxque {
+	using que::E_MQUEUE_;
+
 	enum direction
 	{
 		dAscending = false,
 		dDescending = true
 	};
-};
 
-//c Queue-based index, fast browsing, but slow sorting.
-class idxque_queue_index_
-: public MQUEUE_
-{
-public:
-	struct s
-	: public MQUEUE_::s
-	{};
-// fonctions
-	idxque_queue_index_( s &S )
-	: MQUEUE_( S )
-	{}
-	void reset( bool P = true )
+	//c Queue-based index, fast browsing, but slow sorting.
+	class queue_index_
+	: public E_MQUEUE_
 	{
-		MQUEUE_::reset( P );
-	}
-	void plug( mmm_multimemory_ &MM )
-	{
-		MQUEUE_::plug( MM );
-	}
-	void plug( MEMORY_DRIVER_ &MD )
-	{
-		MQUEUE_::plug( MD );
-	}
-	idxque_queue_index_ &operator =( const idxque_queue_index_ &T )
-	{
-		MQUEUE_::operator =( T );
+	public:
+		struct s
+		: public E_MQUEUE_::s
+		{};
+	// fonctions
+		queue_index_( s &S )
+		: E_MQUEUE_( S )
+		{}
+		void reset( bool P = true )
+		{
+			E_MQUEUE_::reset( P );
+		}
+		void plug( mmm::multimemory_ &MM )
+		{
+			E_MQUEUE_::plug( MM );
+		}
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			E_MQUEUE_::plug( MD );
+		}
+		queue_index_ &operator =( const queue_index_ &T )
+		{
+			E_MQUEUE_::operator =( T );
 
-		return *this;
-	}
-	//f Initialization.
-	void Init( void )
-	{
-		MQUEUE_::Init();
-	}
-	/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
-	void Dump(
-		stk_stack_<POSITION__> &Stack,
-		POSITION__ Begin,
-		idxque::direction Direction );
-	//f Item becomes node next to 'Node'.
-	void BecomeNext(
-		POSITION__ Item,
-		POSITION__ Node )
-	{
-		MQUEUE_::InsertItemAfterNode( Item, Node );
-	}
-	//f Item becomes node previous to 'Node'.
-	void BecomePrevious(
-		POSITION__ Item,
-		POSITION__ Node )
-	{
-		MQUEUE_::InsertItemBeforeNode( Item, Node );
-	}
-};
+			return *this;
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			E_MQUEUE_::Init();
+		}
+		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
+		void Dump(
+			stk::stack_<tym::row__> &Stack,
+			tym::row__ Begin,
+			idxque::direction Direction );
+		//f Item becomes node next to 'Node'.
+		void BecomeNext(
+			tym::row__ Item,
+			tym::row__ Node )
+		{
+			E_MQUEUE_::InsertItemAfterNode( Item, Node );
+		}
+		//f Item becomes node previous to 'Node'.
+		void BecomePrevious(
+			tym::row__ Item,
+			tym::row__ Node )
+		{
+			E_MQUEUE_::InsertItemBeforeNode( Item, Node );
+		}
+	};
 
 
-AUTO( idxque_queue_index )
-
+	AUTO( queue_index )
+}
 
 /*$END$*/
 				  /********************************************/
@@ -153,4 +140,3 @@ AUTO( idxque_queue_index )
 /******************************************************************************/
 
 #endif
-/* end of 'xxx.h' template file */

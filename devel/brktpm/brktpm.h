@@ -71,7 +71,7 @@ extern class ttr_tutor &BRKTPMTutor;
 	AUTO( name )
 
 #define BRKTPM_ITEMS( item, name )\
-	typedef XMCONTAINER_( item##_ )	name##_;\
+	typedef ctn::E_XMCONTAINER_( item##_ )	name##_;\
 	AUTO( name )
 
 namespace brktpm {
@@ -79,10 +79,10 @@ namespace brktpm {
 	template <class id> class item_
 	{
 	public:
-		str_string_ Value;
+		str::string_ Value;
 		struct s
 		{
-			str_string_::s Value;
+			str::string_::s Value;
 			id ID;
 		} &S_;
 		item_( s &S )
@@ -93,11 +93,11 @@ namespace brktpm {
 		{
 			Value.reset( P );
 		}
-		void plug( mdr_basic_memory_driver_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
 			Value.plug( MD );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Value.plug( M );
 		}
@@ -125,45 +125,47 @@ namespace brktpm {
 		}
 	};
 
-	class command_detail_
-	{
-	public:
-		str_string_ Name;
-		SET_( bso__ubyte ) Casts;
-		struct s {
-			str_string_::s Name;
-			SET_( bso__ubyte )::s Casts;
+	namespace {
+		template <class t> class detail_
+		{
+		public:
+			str::string_ Name;
+			bch::E_BUNCH_( t ) Casts;
+			struct s {
+				str::string_::s Name;
+				bch::E_BUNCH_( t )::s Casts;
+			};
+			detail_( s &S )
+			: Name( S.Name ),
+			  Casts( S.Casts )
+			{}
+			void reset( bool P = true )
+			{
+				Name.reset( P );
+				Casts.reset( P );
+			}
+			void plug( mmm::multimemory_ &M )
+			{
+				Name.plug( M );
+				Casts.plug( M );
+			}
+			detail_ &operator =( const detail_ &CI )
+			{
+				Name = CI.Name;
+				Casts = CI.Casts;
+
+				return *this;
+			}
+			// Initialization.
+			void Init( void )
+			{
+				Name.Init();
+				Casts.Init();
+			}
 		};
-		command_detail_( s &S )
-		: Name( S.Name ),
-		  Casts( S.Casts )
-		{}
-		void reset( bool P = true )
-		{
-			Name.reset( P );
-			Casts.reset( P );
-		}
-		void plug( mmm_multimemory_ &M )
-		{
-			Name.plug( M );
-			Casts.plug( M );
-		}
-		command_detail_ &operator =( const command_detail_ &CI )
-		{
-			Name = CI.Name;
-			Casts = CI.Casts;
 
-			return *this;
-		}
-		// Initialization.
-		void Init( void )
-		{
-			Name.Init();
-			Casts.Init();
-		}
-	};
-
-	AUTO( command_detail )
+		AUTO1( detail )
+	}
 
 	struct object_reference__
 	{
@@ -171,37 +173,48 @@ namespace brktpm {
 		bso__ushort Identifier;
 	};
 
-	typedef bso__ushort	object__;
-	typedef bso__bool	boolean__;
-	typedef bso__ubyte	id8__;
-	typedef SET_( id8__ ) ids8_;
-	typedef SET( id8__ ) ids8;
-	typedef bso__ushort	id16__;
-	typedef SET_( id16__ ) ids16_;
-	typedef SET( id16__ ) ids16;
-	typedef bso__ulong	id32__;
-	typedef SET_( id32__ ) ids32_;
-	typedef SET( id32__ ) ids32;
-	typedef bso__char	char__;
-	typedef str_string_	string_;
-	typedef str_string	string;
-	typedef XMCONTAINER_( string_ )	strings_;
-	typedef XMCONTAINER( string_ )	strings;
-	typedef bso__raw	byte__;
-	typedef SET_( bso__raw ) binary_;
-	typedef SET( bso__raw )	binary;
-	typedef XMCONTAINER_( binary_ ) binaries_;
-	typedef XMCONTAINER( binary_ ) binaries;
+	typedef bso__ushort	object_t__;
+	TYPEDEF( object_t__, object__ );
+	typedef bso__bool boolean_t__;
+	TYPEDEF( boolean_t__,	boolean__ );
+	typedef bso__ubyte id8_t__;
+	TYPEDEF( id8_t__,	id8__ );
+	typedef bch::E_BUNCH_( id8__ ) ids8_;
+	typedef bch::E_BUNCH( id8__ ) ids8;
+	typedef bso__ushort id16_t__;
+	TYPEDEF( id16_t__,	id16__ );
+	typedef bch::E_BUNCH_( id16__ ) ids16_;
+	typedef bch::E_BUNCH( id16__ ) ids16;
+	typedef bso__ulong id32_t__;
+	TYPEDEF( id32_t__,	id32__ );
+	typedef bch::E_BUNCH_( id32__ ) ids32_;
+	typedef bch::E_BUNCH( id32__ ) ids32;
+	typedef bso__char char_t__;
+	TYPEDEF( char_t__,	char__ );
+	typedef str::string_	string_;
+	typedef str::string	string;
+	typedef ctn::E_XMCONTAINER_( string_ )	strings_;
+	typedef ctn::E_XMCONTAINER( string_ )	strings;
+	typedef bso__raw	byte_t__;
+	TYPEDEF( byte_t__,	byte__ );
+	typedef bch::E_BUNCH_( bso__raw ) binary_;
+	typedef bch::E_BUNCH( bso__raw )	binary;
+	typedef ctn::E_XMCONTAINER_( binary_ ) binaries_;
+	typedef ctn::E_XMCONTAINER( binary_ ) binaries;
 	BRKTPM_ITEM( bso__ubyte, item8 )
 	BRKTPM_ITEMS( item8, items8 )
 	BRKTPM_ITEM( bso__ushort, item16 )
 	BRKTPM_ITEMS( item16, items16 )
 	BRKTPM_ITEM( bso__ulong, item32 )
 	BRKTPM_ITEMS( item32, items32 )
-	typedef XCONTAINER_( command_detail_ ) commands_details_;
-	typedef XCONTAINER( command_detail_ ) commands_details;
-	typedef SET_( object_reference__ ) objects_references_;
-	typedef SET( object_reference__ ) objects_references;
+	/* Both below declaration are not part of the protocol. */
+	typedef detail_<id8__>	command_detail_	;
+	typedef detail<id8__>	command_detail	;
+	/**/
+	typedef ctn::E_XCONTAINER_( command_detail_ ) commands_details_;
+	typedef ctn::E_XCONTAINER( command_detail_ ) commands_details;
+	typedef bch::E_BUNCH_( object_reference__ ) objects_references_;
+	typedef bch::E_BUNCH( object_reference__ ) objects_references;
 
 	//f Put 'Object' into 'OFlow'.
 	inline void PutObject(

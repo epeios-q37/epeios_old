@@ -1,7 +1,7 @@
 /*
   'tol' library by Claude L. Simon (simon@epeios.org)
   Requires the 'tol' header file ('tol.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -29,10 +29,6 @@
 #define TOL__COMPILATION
 
 #include "tol.h"
-
-#ifdef CPE__MT
-#	include "mtk.h"
-#endif
 
 class toltutor
 : public ttr_tutor
@@ -69,6 +65,10 @@ public:
 #endif
 
 #include "stf.h"
+
+#ifdef CPE__MT
+#include "mtk.h"
+#endif
 
 bool TOLFileExists( const char *Nom )
 {

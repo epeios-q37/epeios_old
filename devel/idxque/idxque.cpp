@@ -57,9 +57,9 @@ public:
 
 /* Remplit la pile 'Pile' avec la file à partir de 'Debut' dans le
 sens 'Sens'. */
-void idxque_queue_index_::Dump(
-	stk_stack_<POSITION__> &Pile,
-	POSITION__ Debut,
+void idxque::queue_index_::Dump(
+	stk::stack_<tym::row__> &Pile,
+	tym::row__ Debut,
 	idxque::direction Direction )
 {
 	if ( Direction == idxque::dAscending )
