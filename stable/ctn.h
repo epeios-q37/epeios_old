@@ -224,7 +224,7 @@ namespace ctn {
 	// La fonction 'Init()' est héritée de t
 	{
 	private:
-		bool Vide_( void )
+		bool Vide_( void ) const
 		{
 			return Pilote_.Index() == NONE;
 		}
@@ -260,7 +260,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Flush();
 			}
 
 			Pilote_.reset( P );
@@ -304,7 +304,7 @@ namespace ctn {
 			Mode_ = Mode;
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
-		void Sync( r Position )
+		void Set( r Position )
 		{
 #ifdef CTN_DBG
 			if ( Position == NONE )
@@ -318,9 +318,14 @@ namespace ctn {
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
-		void Sync( void )
+		void Flush( void )
 		{
 			Vider_();
+		}
+		// Return true if item synchronized with its container, false otherwise.
+		bso::bool__ IsFlushed( void ) const
+		{
+			return Vide_();
 		}
 		// Bascule en mde 'Mode'.
 		void ChangeMode( mdr::mode Mode )
@@ -362,7 +367,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Flush();
 			}
 
 			Pilote_.reset( P );
@@ -395,7 +400,7 @@ namespace ctn {
 			Pilote_.Init( Conteneur.Dynamics );
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
-		void Sync( r Position )
+		void Set( r Position )
 		{
 #ifdef CTN_DBG
 			if ( Position == NONE )
@@ -413,7 +418,7 @@ namespace ctn {
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
-		void Sync( void )
+		void Flush( void )
 		{
 			Vider_();
 		}
@@ -463,7 +468,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
 		{
-			Sync( Position );
+			Set( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
@@ -472,6 +477,8 @@ namespace ctn {
 			return Objet_;
 		}
 	};
+
+	template <class t, typename r> class mono_container_;
 
 	/*c To reach an object of type from a 'MCONTAINER_( t )', but only for reading.
 	Use 'CMITEM( t )' rather then directly this class. */
@@ -484,7 +491,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Flush();
 			}
 
 			item_base_const__< item_mono_statique__<typename_ t::s >, r >::reset( P );
@@ -508,13 +515,22 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Sync( Position );
+			Set( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
 		const t &operator()( void )
 		{
 			return Objet_;
+		}
+		//f Initialization with container 'Container'.
+		void Init(const mono_container_< t , r > &Container )
+		{
+#ifdef CTN_DBG
+			if ( !Container.IsFlushed() )
+				ERRu();
+#endif
+			item_base_const__< item_mono_statique__< t::s >, r >::Init( Container );
 		}
 	};
 
@@ -524,7 +540,7 @@ namespace ctn {
 	#define E_MITEMt( Type, r )		volatile_mono_item< Type, r >
 	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_MITEM( Type )		volatile_mono_item< Type, epeios::row__ >
 	#define E_CMITEM( Type )	const_mono_item< Type, epeios::row__ >
 #else
@@ -551,19 +567,19 @@ namespace ctn {
 		}
 		void reset( bool P = true )
 		{
-			Ponctuel_.Sync();
+			Ponctuel_.Flush();
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::reset( P );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
-		the function 'Sync()' before. */
+		the function 'Flush()' before. */
 		t &Read( r Position )
 		{
 			return Ponctuel_( Position );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
-		the function 'Sync()' before. */
+		the function 'Flush()' before. */
 		t &operator ()( r Position )
 		{
 			return Read( Position );
@@ -571,16 +587,21 @@ namespace ctn {
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the previous,
-		you MUST call the function 'Sync()' before. */
+		you MUST call the function 'Flush()' before. */
 		t &operator ()( void )
 		{
 			return Ponctuel_();
 		}
 		/*f Call this function after calling one of the two previous function
 		and before calling another function. */
-		void Sync( void )
+		void Flush( void )
 		{
-			Ponctuel_.Sync();
+			Ponctuel_.Flush();
+		}
+		//f Return true if the container with its item, false otherwise.
+		bso::bool__ IsFlushed( void ) const
+		{
+			return Ponctuel_.IsFlushed();
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
@@ -607,7 +628,7 @@ namespace ctn {
 		{
 			operator()( Position ) = Objet;
 
-			Sync();
+			Flush();
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Read(
@@ -652,7 +673,7 @@ namespace ctn {
 	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
 	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_MCONTAINER_( Type )	mono_container_< Type, epeios::row__ >
 	#define E_MCONTAINER( Type )	mono_container_< Type, epeios::row__ >
 #else
@@ -705,7 +726,7 @@ namespace ctn {
 		{
 			epeios::row__ P = Create_();
 
-			mono_container_<t, r>::Sync();
+			mono_container_<t, r>::Flush();
 
 			return P;
 		}
@@ -716,7 +737,7 @@ namespace ctn {
 
 			mono_container_<t, r>::operator()() = Object;	// Positionned by 'Create_'.
 
-			mono_container_<t, r>::Sync();
+			mono_container_<t, r>::Flush();
 
 			return P;
 		}
@@ -738,7 +759,7 @@ namespace ctn {
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
 	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, epeios::row__ >
 	#define E_XMCONTAINER( Type )	mono_extended_container< Type, epeios::row__ >
 #else
@@ -765,7 +786,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Flush();
 			}
 
 			item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::reset( P );
@@ -811,7 +832,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
 		{
-			Sync( Position );
+			Set( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
@@ -834,7 +855,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Flush();
 			}
 
 			item_base_const__< item_multi_statique__<typename_ t::s>, r >::reset(  P) ;
@@ -868,7 +889,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Sync( Position );
+			Set( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
@@ -882,7 +903,7 @@ namespace ctn {
 	#define E_ITEMt( Type, r )		volatile_multi_item< Type, r >
 	#define E_CITEMt( Type,r  )		const_multi_item< Type, r  >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_ITEM( Type )			volatile_multi_item< Type, epeios::row__ >
 	#define E_CITEM( Type )			const_multi_item< Type, epeios::row__  >
 #else
@@ -907,19 +928,19 @@ namespace ctn {
 		}
 		void reset( bool P = true )
 		{
-			Ponctuel_.Sync();
+			Ponctuel_.Flush();
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::reset( P );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
-		the function 'Sync()' before. */
+		the function 'Flush()' before. */
 		t &Read( r Position )
 		{
 			return Ponctuel_( Position );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
-		the function 'Sync()' before. */
+		the function 'Flush()' before. */
 		t &operator ()( r Position )
 		{
 			return Read( Position );
@@ -927,16 +948,21 @@ namespace ctn {
 		/*f Return the object at current position. This position is the position you
 		gave to the previous function. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the previous,
-		you MUST call the function 'Sync()' before. */
+		you MUST call the function 'Flush()' before. */
 		t &operator ()( void )
 		{
 			return Ponctuel_();
 		}
 		/*f Always call this function after calling one of the two previous function
 		and before calling another function. */
-		void Sync( void )
+		void Flush( void )
 		{
-			Ponctuel_.Sync();
+			Ponctuel_.Flush();
+		}
+		//f Return true if the container with its item, false otherwise.
+		bso::bool__ IsFlushed( void ) const
+		{
+			return Ponctuel_.IsFlushed();
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
@@ -963,7 +989,7 @@ namespace ctn {
 		{
 			operator()( Position ) = Object;
 
-			Sync();
+			Flush();
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Read(
@@ -1008,7 +1034,7 @@ namespace ctn {
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
-#ifdef CPE__USE_GCC_WORKAROUND
+#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_CONTAINER_( Type )	multi_container_< Type, epeios::row__ >
 	#define E_CONTAINER( Type )		multi_container< Type, epeios::row__ >
 #else
@@ -1061,7 +1087,7 @@ namespace ctn {
 		{
 			r P = Create_();
 
-			multi_container_< t, r >::Sync();
+			multi_container_< t, r >::Flush();
 
 			return P;
 		}
@@ -1072,7 +1098,7 @@ namespace ctn {
 
 			multi_container_< t, r >::operator()() = Object;	// Positionned by 'Create_'.
 
-			multi_container_< t, r >::Sync();
+			multi_container_< t, r >::Flush();
 
 			return P;
 		}

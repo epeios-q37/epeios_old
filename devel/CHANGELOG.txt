@@ -6,6 +6,9 @@ GENERAL:
 BITBCH:
 - Fixing bug.
 
+CTN:
+- Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
+
 DBT:
 - Adapting to changes in 'LST' library.
 
@@ -21,6 +24,13 @@ LSTBCH:
 
 LSTCTN:
 - Fixing bug.
+- Adapting to changes in 'LST' library.
+- Adapting to changes in 'CTN' library.
+
+MMI:
+- Adding some missing 'const' qualifier'.
+
+SSNMNG:
 - Adapting to changes in 'LST' library.
 
 TYM:

@@ -70,6 +70,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &lst		&epeios		&2000-		&LiST
 &lstbch		&epeios		&2002-		&LiST BunCH
 &lstctn		&epeios		&2002-		&LiST ConTaiNer
+&mmi		&epeios		&2000-		&MultiMemory Index
 &mscmdf		&emsc		&2002-		&MuSiC MiDi File		
 &mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
 &mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters

@@ -104,13 +104,13 @@ ERRBegin
 		Swap = false;
 
 		if ( Liste.Amount() )
-			S2.Sync( 0 );
+			S2.Set( 0 );
 //			S2 = Liste[0];
 
 		for ( epeios::row_t__ i = 1; i < Liste.Amount(); i++ )
 	{
 			S1 = S2();
-			S2.Sync( i );
+			S2.Set( i );
 //			S2 = Liste[i];
 
 			if ( S1 < S2() )
@@ -236,7 +236,7 @@ ERRBegin
 		P = CD.Next( P );
 	}
 
-	ECD.Sync();
+	ECD.Flush();
 
 	fout << txf::nl;
 
@@ -315,7 +315,7 @@ ERRBegin
 
 			}
 
-			ECC.Sync();
+			ECC.Flush();
 
 			fout << '\t';
 /*
@@ -327,8 +327,8 @@ ERRBegin
 
 		}
 
-//		ECm.Sync();
-		Cm.Sync();
+//		ECm.Flush();
+		Cm.Flush();
 
 		fout << txf::nl;
 		ECM(M - 'A').Init();
@@ -604,33 +604,33 @@ ERRBegin
 
 	CS(0).Init();
 	CS() = "coucou";
-	CS.Sync();
+	CS.Flush();
 
 	CC(0).Init();
 	CC() = CS;
-	CC.Sync();
+	CC.Flush();
 
 	fout << CS( 0 ) << txf::tab;
 
 	CS(0).Init();
 	CS() = "hello";
-	CS.Sync();
+	CS.Flush();
 
 	CC(1).Init();
 	CC() = CS;
-	CC.Sync();
+	CC.Flush();
 
 	fout << CS( 0 ) << txf::tab;
 
 	CS = CC( 0 );
-	CC.Sync();
+	CC.Flush();
 	fout << CS( 0 ) << txf::tab;
 
 	CS = CC( 1 );
-	CC.Sync();
+	CC.Flush();
 	fout << CS( 0 ) << txf::nl;
 
-	CS.Sync();
+	CS.Flush();
 ERRErr
 ERREnd
 ERREpilog

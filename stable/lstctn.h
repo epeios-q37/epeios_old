@@ -146,7 +146,7 @@ namespace lstctn {
 
 			list_container_<container, row>::operator()( Row ).operator =( Object );
 
-			list_container_<container, row>::Sync();
+			list_container_<container, row>::Flush();
 
 			return Row;
 		}

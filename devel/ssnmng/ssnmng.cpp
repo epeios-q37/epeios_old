@@ -102,7 +102,7 @@ namespace ssnmng {
 
 	epeios::row__ sessions_manager_::Open( void )
 	{
-		epeios::row__ P = E_LIST_::CreateEntry();
+		epeios::row__ P = E_LIST_::New();
 		session_id__ SessionID;
 		chrono__ C;
 
