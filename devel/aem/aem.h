@@ -402,6 +402,16 @@ namespace aem {
 			else
 				return NONE;
 		}
+		//f Return true if empty, false otherwise.
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Amount() == 0;
+		}
+		//f Return true if 'Row' exists, false otherwise.
+		bso::bool__ Exists( row Row ) const
+		{
+			return *Row < Amount();
+		}
 	};
 
 	//c Core amount/extent manager for fixed size set of object.

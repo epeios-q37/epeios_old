@@ -272,6 +272,15 @@ namespace bch {
 	#endif
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
+		//f Remove objects all objects beginning at 'Row'.
+		void Truncate( row Row )
+		{
+#ifdef BCH_DBG
+			if ( !Exists( Row ) )
+				ERRu();
+#endif
+			Truncate ( Amount() - *Row );
+		}
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
 			const _bunch &Source,

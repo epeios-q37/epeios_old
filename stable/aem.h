@@ -1,6 +1,6 @@
 /*
 	Header for the 'aem' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -401,6 +401,16 @@ namespace aem {
 				return Current - 1 ;
 			else
 				return NONE;
+		}
+		//f Return true if empty, false otherwise.
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Amount() == 0;
+		}
+		//f Return true if 'Row' exists, false otherwise.
+		bso::bool__ Exists( row Row ) const
+		{
+			return *Row < Amount();
 		}
 	};
 
