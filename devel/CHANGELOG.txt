@@ -38,6 +38,7 @@ BSO:
 CCH:
 - (20/05/04) Replacing the old 'Write', 'Fill' and 'Read' method.
 - (25/09/04) Optimizing dumping ot the write cache.
+- (09/10/04) Bug fixing.
 
 CPE:
 - (09/08/04) Introducing 'CPE_ST' to force single thread configuration even if the compiler is set to multithreading.

@@ -241,10 +241,10 @@ namespace cch {
 
 			switch( FirstCacheJustification ) {
 			case fcjLeft:
-				Position_ = CCH_ROW_MAX;
+				Position_ = 0;
 				break;
 			case fcjRight:
-				Position_ = 0;
+				Position_ = CCH_ROW_MAX;
 				break;
 			case fcjCentered:
 				Position_ = NONE;
