@@ -1,6 +1,6 @@
 /*
 	Header for the 'str' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -72,7 +72,7 @@ namespace str {
 
 	//c A string.
 	class string_
-		: public E_BUNCH_( bso::char__ )
+	: public E_BUNCH_( bso::char__ )
 	{
 	private:
 	public:
@@ -173,10 +173,17 @@ namespace str {
 		{
 			return E_BUNCH_( bso::char__ )::Add( C );
 		}
-		//f Add 'Sring'. Return position where added.
+		//f Add 'String'. Return position where added.
 		epeios::row__ Add( const string_ &String )
 		{
 			return E_BUNCH_( bso::char__ )::Add( String );
+		}
+		//f Insert 'String' at 'Position'.
+		void Insert(
+			const char *String,
+			epeios::row__ Position )
+		{
+			E_BUNCH_( bso::char__ )::Insert( String, strlen( String ), Position );
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(

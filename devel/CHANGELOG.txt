@@ -1,6 +1,16 @@
 $Id$
 
 GENERAL:
+- Creating library 'BTS'.
+
+STR:
+- Adding 'Insert()' method.
+
+--------
+20030104
+--------
+
+GENERAL:
 - Adding 'CCH'.
 - Adding 'SMA' to use in 'CCH'.
 - Adding portable data types.
