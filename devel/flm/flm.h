@@ -1,8 +1,8 @@
 /*
-  Header for the 'flm' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000-2002 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'flm' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ extern class ttr_tutor &FLMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
