@@ -695,7 +695,7 @@ namespace cch {
 		{
 			reset( true );
 		}
-		/*i Initialization with 'Container' and, for e&ch item,
+		/*f Initialization with 'Container' and, for e&ch item,
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			const ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
