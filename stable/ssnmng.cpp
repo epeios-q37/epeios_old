@@ -1,9 +1,9 @@
 /*
-  'ssnmng' library by Claude L. Simon (simon@epeios.org)
+  'ssnmng' library by Claude L. Simon (csimon@webmails.com)
   Requires the 'ssnmng' header file ('ssnmng.h').
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -68,7 +68,7 @@ namespace ssnmng {
 		Raw_[i] = 0;
 	}
 
-	static inline bso__sbyte Test_(
+	static inline bso::sign__ Test_(
 		const char *S1,
 		const char *S2 )
 	{
@@ -79,10 +79,10 @@ namespace ssnmng {
 		const idxbtr::tree_index_ &I,
 		const bch::E_BUNCH_( session_id__ ) &T,
 		const char *S,
-		bso__sbyte &Test )
+		bso::sign__ &Test )
 	{
 		tym::row__ P = I.Root();
-		bso__bool Cont = true;
+		bso::bool__ Cont = true;
 
 		while ( Cont )
 			if ( ( Test = Test_( T( P ).Value(), S ) ) > 0 )
@@ -111,7 +111,7 @@ namespace ssnmng {
 			E_MQUEUE_::Create( P );
 			Index.Create( P );
 		} else {
-			bso__sbyte Test;
+			bso::sign__ Test;
 			tym::row__ PI = Search_( Index, Table, SessionID.Value(), Test );
 
 			if ( Test > 0 )
@@ -141,7 +141,7 @@ namespace ssnmng {
 		tym::row__ P = NONE;
 
 		if ( !Index.IsEmpty() )	{
-			bso__sbyte Test;
+			bso::sign__ Test;
 
 			P = Search_( Index, Table, SessionID, Test );
 

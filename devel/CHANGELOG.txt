@@ -3,6 +3,16 @@ $Id$
 GENERAL:
 - Adding 'DTE'.
 
+BSO:
+- using namespace.
+- adding 'bso::sign__' type.
+
+BTR:
+- Correcting a namespace lack due to (VC++ ?) template issue.
+
+CGIFRT:
+- adapting to changes in 'BSO'.
+
 ERR:
 - adapting to changes in 'TOL'.
 
@@ -16,6 +26,15 @@ DTFBSC:
 - adapting to changes in 'BSO'.
 
 DTRRMF:
+- adapting to changes in 'BSO'.
+
+IDXBTR:
+- adapting to changes in 'BSO'.
+
+MTX:
+- Adapting to changes in 'TOL'.
+
+SSNMNG:
 - adapting to changes in 'BSO'.
 
 TOL:

@@ -1,9 +1,9 @@
 /*
-  'idxbtr' library by Claude L. Simon (simon@epeios.org)
+  'idxbtr' library by Claude L. Simon (csimon@webmails.com)
   Requires the 'idxbtr' header file ('idxbtr.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -154,7 +154,7 @@ namespace idxbtr {
 		stk::E_STACK( desc__ ) Pile;
 		tym::size__ Niveau = 0;
 		desc__ Sommet;
-		bso__bool Boucler = true;
+		bso::bool__ Boucler = true;
 	ERRBegin
 
 		if ( &Pilote )

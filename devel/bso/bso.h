@@ -346,6 +346,9 @@ namespace bso {
 	//d Minimal value of a 'size__'.
 	#define BSO_BSIZE_MIN	0
 
+	//t A sign, for comparaison function.
+	typedef bso::sbyte__	sign__;
+
 	//t Size of a buffer.
 	typedef size_t bsize__;
 

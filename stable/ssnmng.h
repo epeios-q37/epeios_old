@@ -1,8 +1,8 @@
 /*
-  Header for the 'ssnmng' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'ssnmng' library by Claude L. Simon (csimon@webmails.com)
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	SSNMNG_VERSION	"$Revision$"	
 
-#define SSNMNG_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define SSNMNG_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &SSNMNGTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude L. SIMON (csimon@webmails.com)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -94,7 +94,7 @@ namespace ssnmng {
 			Raw_[0] = 0;
 		}
 		//f Return true if empty.
-		bso__bool IsEmpty( void ) const
+		bso::bool__ IsEmpty( void ) const
 		{
 			return Raw_[0] == 0;
 		}
@@ -131,8 +131,8 @@ namespace ssnmng {
 			bch::E_BUNCH_( session_id__ )::s Table;
 			idxbtq::tree_queue_index_::s Index;
 			bch::E_BUNCH_( chrono__ )::s Chronos;
-			bso__ushort Absolute;
-			bso__ushort Relative;
+			bso::ushort__ Absolute;
+			bso::ushort__ Relative;
 		} &S_;
 		//o The table of session ids.
 		bch::E_BUNCH_( session_id__ ) Table;
@@ -181,8 +181,8 @@ namespace ssnmng {
 		}
 		//f Initialization with 'Relative' and 'Absolute' amonut of second.
 		void Init(
-			bso__ushort Relative = BSO_USHORT_MAX,
-			bso__ushort Absolute = BSO_USHORT_MAX )
+			bso::ushort__ Relative = BSO_USHORT_MAX,
+			bso::ushort__ Absolute = BSO_USHORT_MAX )
 		{
 			E_LIST_::Init();
 			Table.Init();
@@ -237,7 +237,7 @@ namespace ssnmng {
 			}
 		}
 		//f Return true if session corresponding to 'P' is valid.
-		bso__bool IsValid( tym::row__ P ) const
+		bso::bool__ IsValid( tym::row__ P ) const
 		{
 			chrono__ C = Chronos.Read( P );
 

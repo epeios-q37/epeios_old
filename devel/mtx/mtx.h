@@ -160,7 +160,7 @@ namespace mtx {
 		inline void WaitUntilUnlocked_( mutex_handler__ Handler )
 		{
 			while( !TryToLock( Handler ) )
-				TOLYield();
+				tol::Yield();
 		}
 #endif
 	}
