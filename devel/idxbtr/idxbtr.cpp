@@ -119,7 +119,9 @@ namespace idxbtr {
 			return NONE;
 	}
 
-	void idxbtr::Balance_( E_IBTREE_ &Tree )
+	epeios::row_t__ idxbtr::Balance_(
+		E_IBTREE_ &Tree,
+		epeios::row_t__ Root )
 	{
 	ERRProlog
 		tym::row__ Current, Head, Temp;
@@ -128,29 +130,27 @@ namespace idxbtr {
 		Queue.Init();
 		Queue.Allocate( Tree.Extent() );
 
-		Current = Tree.First();
+		Current = Tree.First( Root );
 
-		if ( Current != NONE )
+		Head = Temp = Current;
+
+		Current = Tree.Next( Temp );
+
+		while ( Current != NONE )
 		{
-			Head = Temp = Current;
+			Queue.BecomeNext( Current, Temp );
+
+			Temp = Current;
 
 			Current = Tree.Next( Temp );
-
-			while ( Current != NONE )
-			{
-				Queue.BecomeNext( Current, Temp );
-
-				Temp = Current;
-
-				Current = Tree.Next( Temp );
-			}
-
-			Tree.Fill( Queue, Head );
 		}
+
+		Root = *Tree.Fill( Queue, Head );
 
 	ERRErr
 	ERREnd
 	ERREpilog
+		return Root;
 	}
 
 	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par

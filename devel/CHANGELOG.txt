@@ -81,8 +81,12 @@ FLX:
 HTP:
 - (18/07/04) little improvements.
 
+IDXBTQ:
+- (15/09/04) Adapting to changes in 'IDXBTR'.
+
 IDXBTR
-- Fixing bug in the 'tree_index_::Remove()' function
+- Fixing bug in the 'tree_index_::Remove()' function.
+- (15/09/04) The rot is no more stored in the index, so an index can, in fact, contains several indexes.
 
 LCK:
 - Adding 'GetUnlocked()' method.
@@ -110,6 +114,7 @@ SSNMNG:
 - Adding 'sessions_manager_::GetExpired()' methods.
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
 - (22/03/04) Fixing bug in session id creation.
+- (15/09/04) Adapting to changes in 'IDXBTQ' library.
 
 STF:
 - (24/05/04) Removing the console stuff (they are put in 'CIO' library).

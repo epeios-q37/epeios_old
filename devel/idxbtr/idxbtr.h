@@ -97,19 +97,13 @@ namespace idxbtr {
 	public:
 		struct s
 		: public E_BTREEt_( r )::s
-		{
-			// La racine de l'arbre.
-			r Racine;
-		} &S_;
+		{};
 		tree_index_( s &S )
-		: S_( S ),
-		  E_BTREEt_( r )( S )
+		: E_BTREEt_( r )( S )
 		{}
 		void reset( bool P = true )
 		{
 			E_BTREEt_( r )::reset( P );
-
-			S_.Racine = NONE;
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
@@ -122,8 +116,6 @@ namespace idxbtr {
 		tree_index_ &operator =( const tree_index_ &I )
 		{
 			E_BTREEt_( r )::operator =( I );
-
-			S_.Racine = I.S_.Racine;
 
 			return *this;
 		}
@@ -140,43 +132,17 @@ namespace idxbtr {
 	*/	//f Initialization.
 		void Init( void )
 		{
-			S_.Racine = NONE;
-
 			E_BTREEt_( r) ::Init();
 		}
-		//f Return the root of the tree. To use as the first node for the 'NextAvailable()' and 'PreviousAvailablbe()' functions.
-		r Root( void ) const
-		{
-			return S_.Racine;
-		}
-		//f Return true if index empty, false otherwise.
-		bso::bool__ IsEmpty( void ) const
-		{
-			return S_.Racine == NONE;
-		}
-		//f 'Item' becomes the first item of the index, which must be empty.
-		void Create( r Item )
-		{
-			if ( !IsEmpty() )
-				ERRu();
-
-			S_.Racine = Item;
-		}
 		//f Return the first item of the index.
-		r First( void ) const
+		r First( r Root ) const
 		{
-			if ( S_.Racine == NONE )
-				return NONE;
-			else
-				return NoeudSansFils_( S_.Racine );
+			return NoeudSansFils_( Root );
 		}
 		//f Return the last item of the index.
-		r Last( void ) const
+		r Last( r Root ) const
 		{
-			if ( S_.Racine == NONE )
-				return NONE;
-			else
-				return NoeudSansFille_( S_.Racine );
+				return NoeudSansFille_( Root );
 		}
 		//f Return the item next to 'Item'.
 		r Next( r Item ) const
@@ -204,8 +170,10 @@ namespace idxbtr {
 				else
 					return NONE;
 		}
-		//f Remove 'Item'.
-		void Remove( r Item )
+		//f Remove 'Item'. Return the new root.
+		r Remove(
+			r Item,
+			r Root )
 		{
 			r Fils = E_BTREEt_( r )::Left( Item );
 			r Fille = E_BTREEt_( r )::Right( Item );
@@ -251,11 +219,13 @@ namespace idxbtr {
 				{
 					E_BTREEt_( r )::BecomeRight( Fille, NoeudSansFille_( Fils ) );
 
-					S_.Racine = Fils;
+					return Fils;
 				}
 				else
-					S_.Racine = Fille;
+					return = Fille;
 			}
+
+			return Root;
 		}
 		//f Mark 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
 		void MarkAsGreater(
@@ -289,10 +259,10 @@ namespace idxbtr {
 			else
 				BecomeRight( Row, NoeudSansFille_( Current ) );
 		}
-		//f Balances the tree which underlies the index.
-		void Balance( void );
-		//f Fill the index with the items in 'Queue' beginning at 'Head', using 'MD' as memory driver if != 'NULL'.
-		void Fill(
+		//f Balances the tree which underlies the index. Return the new root.
+		r Balance( r Root );
+		//f Fill the index with the items in 'Queue' beginning at 'Head', using 'MD' as memory driver if != 'NULL'. Return the new root.
+		r Fill(
 			que::E_QUEUEt_( r ) &Queue,
 			r Head,
 			mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
@@ -301,12 +271,14 @@ namespace idxbtr {
 
 			Allocate( Queue.Amount() );
 
-			S_.Racine = Equilibrer_( Queue, Head, MD );
+			return Equilibrer_( Queue, Head, MD );
 		}
 		//f Print the tree structure of the index.
-		void PrintStructure( txf::text_oflow__ &OStream ) const
+		void PrintStructure(
+			txf::text_oflow__ &OStream,
+			r Root ) const
 		{
-			E_BTREEt_( r )::PrintStructure( S_.Racine, OStream );
+			E_BTREEt_( r )::PrintStructure( Root, OStream );
 		}
 	};
 
@@ -334,7 +306,9 @@ namespace idxbtr {
 		const E_IBTREE_ &Tree,
 		epeios::row_t__ Position );
 
-	void Balance_( E_IBTREE_ &Tree );
+	epeios::row_t__ Balance_(
+		E_IBTREE_ &Tree,
+		epeios::row_t__ Root );
 
 	epeios::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
@@ -370,9 +344,9 @@ namespace idxbtr {
 		return idxbtr::Equilibrer_( *(E_IBTREE_ *)this, *(que::E_QUEUE_ *)&Index, *Premier, Pilote );
 	}
 
-	template <typename r> inline void tree_index_<r>::Balance( void )
+	template <typename r> inline r tree_index_<r>::Balance( r Root )
 	{
-		idxbtr::Balance_( *(E_IBTREE_ *)this );
+		return idxbtr::Balance_( *(E_IBTREE_ *)this, *Root );
 	}
 
 	//e Search state.
@@ -430,17 +404,15 @@ namespace idxbtr {
 			reset( true );
 		}
 		//f Initialisation with index 'Index'. 'Index' must not be empty.
-		void Init( const tree_index_<r> &Index )
+		void Init(
+			const tree_index_<r> &Index,
+			r Root )
 		{
 			reset( true );
 
 			Index_ = &Index;
 
-#ifdef IDXBTR_DBG
-			if ( Index_->IsEmpty() )
-				ERRu();
-#endif
-			Current_ = Index.Root();
+			Current_ = Root;
 			State_ = sFound;
 		}
 		//f Try to find an element greater then the current.

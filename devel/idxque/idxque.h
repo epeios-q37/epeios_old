@@ -75,42 +75,42 @@ extern class ttr_tutor &IDXQUETutor;
 
 namespace idxque {
 	using namespace que;
-	using que::managed_queue_;	// VC++ has problem without this, despite line above.
+//	using que::queue_;	// VC++ has problem without this, despite line above.
 
 	//c Queue-based index, fast browsing, but slow sorting.
 	template <typename r> class queue_index_
-	: public E_MQUEUEt_( r )
+	: public E_QUEUEt_( r )
 	{
 	public:
 		struct s
-		: public E_MQUEUEt_( r )::s
+		: public E_QUEUEt_( r )::s
 		{};
 	// fonctions
 		queue_index_( s &S )
-		: E_MQUEUEt_( r )( S )
+		: E_QUEUEt_( r )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_MQUEUEt_( r )::reset( P );
+			E_QUEUEt_( r )::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			E_MQUEUEt_( r )::plug( MM );
+			E_QUEUEt_( r )::plug( MM );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			E_MQUEUEt_( r )::plug( MD );
+			E_QUEUEt_( r )::plug( MD );
 		}
 		queue_index_ &operator =( const queue_index_ &T )
 		{
-			E_MQUEUEt_( r )::operator =( T );
+			E_QUEUEt_( r )::operator =( T );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_MQUEUEt_( r )::Init();
+			E_QUEUEt_( r )::Init();
 		}
 		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
 		void Dump(
@@ -118,7 +118,7 @@ namespace idxque {
 			r Begin,
 			idxque::direction Direction )
 		{
-			E_MQUEUEt_( r )::Dump( Stack, Begin, Direction );
+			E_QUEUEt_( r )::Dump( Stack, Begin, Direction );
 		}
 		//f Item is marked as greater then 'Node'.
 		void MarkAsGreater(
@@ -132,14 +132,14 @@ namespace idxque {
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::BecomePrevious( Item, Node );
+			E_QUEUEt_( r )::BecomePrevious( Item, Node );
 		}
 		//f Item is marked as same then 'Node'.
 		void MarkAsSame(
 			r Item,
 			r Node )
 		{
-			E_MQUEUEt_( r )::BecomeNext( Item, Node );
+			E_QUEUEt_( r )::BecomeNext( Item, Node );
 		}
 	};
 

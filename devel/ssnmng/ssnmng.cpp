@@ -120,7 +120,7 @@ row__ ssnmng::sessions_manager_::Open( void )
 	} else {
 		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
-		Seeker.Init( Index );
+		Seeker.Init( Index, S_.Root );
 
 		switch ( Search_( Index, Table, SessionID.Value(), Seeker ) ) {
 		case 1:
@@ -154,7 +154,7 @@ row__ ssnmng::sessions_manager_::Position( const char *SessionID ) const
 	if ( !Index.IsEmpty() )	{
 		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
-		Seeker.Init( Index );
+		Seeker.Init( Index, S_.Root );
 
 		if ( Search_( Index, Table, SessionID, Seeker ) == 0 )
 			return Seeker.GetCurrent();
