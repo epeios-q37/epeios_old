@@ -236,8 +236,10 @@ namespace fil
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+				if ( D_ != IOF_UNDEFINED_DESCRIPTOR ) {
+					_io_oflow__::Synchronize();
 					_Close( D_ );
+				}
 			}
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
