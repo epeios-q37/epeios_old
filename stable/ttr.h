@@ -1,8 +1,8 @@
 /*
-  Header for the 'ttr' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. Simon 
+  Header for the 'ttr' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios (http://www.epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -31,7 +32,7 @@
 
 #define	TTR_VERSION	"$Revision$"	
 
-#define TTR_OWNER		"the Epeios project (http://www.epeios.org/) "
+#define TTR_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
@@ -44,7 +45,7 @@ extern class ttr_tutor &TTRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org) 
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -129,7 +130,7 @@ public:
 		return Next_;
 	}
 	//f Print advertising of the library.
-	const char *Advertise( void )	// Should be mofified.
+	const char *Advertise( void )	// Should be modified.
 	{
 		char Format[30];
 	
@@ -137,7 +138,7 @@ public:
 			sprintf( Adv_, "%-7s V%-6s %s (c) %s\n",
 				Name, Version, Date, Owner );
 		else {
-			sprintf( Format, "%s%i%s", "%-7s V%-6.",
+			sprintf( Format, "%s%i%s", "%-7s V%-7.",
 			                  		   strlen( Version ) - 13,
 							  		   "s %.10s (c) %s\n" );
 			sprintf( Adv_, Format,

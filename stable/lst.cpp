@@ -1,26 +1,33 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  'lst' library by Claude L. Simon (epeios@epeios.org)
+  Requires the 'lst' header file ('lst.h').
+  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
 
-			http://www.epeios.org/
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-/* end of 'entete.txt' template file */
-/* begin of 'xxx.cpp' template file V2.3 */
-/* 
-	Pour plus de détails, consultez le fichier 'lst.h'.
-	See the 'lst.h' file  for more details.
-*/
+
+//	$Id$
 
 #define LST__COMPILATION
 
 #include "lst.h"
-
-#ifdef LST__LINE
-#line 13
-#endif
 
 class lsttutor
 : public ttr_tutor
@@ -29,14 +36,17 @@ public:
 	lsttutor( void )
 	: ttr_tutor( LST_NAME )
 	{
+#ifdef LST_DBG
+		Version = LST_VERSION " (DBG)";
+#else
 		Version = LST_VERSION;
+#endif
 		Owner = LST_OWNER;
-		Date = "24/05/2000";
+		Date = "$Date$";
 	}
 	virtual ~lsttutor( void ){}
 };
 
-//  	Substitution is not applied to the rest.
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
@@ -109,8 +119,7 @@ public:
 /******************************************************************************/
 
 // 'static' by GNU C++.
+
 static lstpersonnalization Tutor;
 
 ttr_tutor &LSTTutor = Tutor;
-
-/* end of 'xxx.cpp' template file */

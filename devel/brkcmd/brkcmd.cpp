@@ -150,6 +150,7 @@ static const cast GetCommandsIDAndName[] = {
 		cType,		// Type of objects from which you want the commands name.
 	cEnd,
 		cArray,	// The names of the commands.
+			cCommand,	// command id.
 			cString,	// The name.
 		cEnd,
 	cEnd };

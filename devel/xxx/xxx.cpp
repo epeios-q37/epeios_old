@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( $XXX$_NAME )
 	{
 #ifdef $XXX$_DBG
-		Version = $XXX$_VERSION " (DBG)";
+		Version = $XXX$_VERSION "\b\bD $$";
 #else
 		Version = $XXX$_VERSION;
 #endif

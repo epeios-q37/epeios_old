@@ -78,10 +78,20 @@ namespace csm {
 	: public functions__
 	{
 	public:
+		void reset( bso__bool = true )
+		{}
+		manager___( void )
+		{
+			reset( false );
+		}
+		~manager___( void )			
+		{
+			reset( true );
+		}
 		//f Initialization.
 		void Init( void )
 		{
-			// For standardization.
+			reset();
 		}
 		//f Process.
 		void Process(

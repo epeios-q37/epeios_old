@@ -59,6 +59,12 @@ extern class ttr_tutor &FLWTutor;
 #include "err.h"
 #include "tol.h"
 
+#ifdef CPE__UNIX
+#	ifndef FLW_LET_SIGPIPE
+#		define FLW__IGNORE_SIGPIPE
+#	endif
+#endif
+
 namespace flw {
 	//t Amount of data.
 	typedef size_t			amount__;

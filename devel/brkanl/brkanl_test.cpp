@@ -134,8 +134,8 @@ void Print( types_ &Types )
 void Essai( void )
 {
 ERRProlog
-	manager Manager;
 	frtend::frontend___ Frontend;
+	manager Manager;
 	types Types;
 //	sck::socket_ioflow___ Flow;
 ERRBegin

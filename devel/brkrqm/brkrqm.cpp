@@ -432,6 +432,18 @@ bso__bool brkrqm::request_manager___::GetArrayValue(
 	return NotLast;
 }
 
+POSITION__ brkrqm::request_manager___::FindEndOfArray_( POSITION__ P )
+{
+	while( ( P != NONE ) && ( Description_->Casts.Read( P ) != cEnd ) )
+		P = Description_->Casts.Next( P );
+		
+#ifdef BRKRQM_DBG
+	if ( P == NONE )
+		ERRc();
+#endif
+
+	return P;
+}
 
 namespace {
 	struct a_ {

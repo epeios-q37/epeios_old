@@ -143,16 +143,6 @@ namespace brkrqm {
 		void Init(
 			const char *Name,
 			const cast *Casts );
-		//f Return the amount of casts.
-		SIZE__ Amount( void ) const
-		{
-			return Casts.Amount();
-		}
-		//f Return the cas at position 'Position'.
-		cast Read( POSITION__ Position ) const
-		{
-			return (cast)Casts( Position );
-		}
 	};
 
 	AUTO( description )
@@ -286,11 +276,13 @@ namespace brkrqm {
 
 				if ( ( Array_ != NONE )
 					  && ( Cast != cEnd )
-					  && ( Description_->Read( Position_ ) == cEnd ) )
+					  && ( Description_->Casts.Read( Position_ ) == cEnd ) )
 						Position_ = Array_;
 
-				if ( Cast != Description_->Read( Position_++ ) )
+				if ( Cast != Description_->Casts.Read( Position_ ) )
 					ERRu();
+					
+				Position_ = Description_->Casts.Next( Position_ );
 			}
 
 			return (cast)Cast;
@@ -308,7 +300,7 @@ namespace brkrqm {
 
 			Parsed_ = true;
 		}
-
+		POSITION__ FindEndOfArray_( POSITION__ P );
 	public:
 		void reset( bool = true )
 		{
@@ -343,7 +335,7 @@ namespace brkrqm {
 		void SetDescription( const description_ &Description )
 		{
 			Description_ = &Description;
-			Position_ = 0;
+			Position_ = Description_->Casts.First();
 		}
 		//f Put to 'Value' the next return value which is of cast 'Cast'.
 		void GetValue(
@@ -365,7 +357,7 @@ namespace brkrqm {
 			{
 				TestEndOfParsing_();
 
-				if ( Position_ != Description_->Amount() )
+				if ( Position_ != NONE )
 					ERRu();
 
 				if ( Array_ != NONE )
@@ -389,15 +381,15 @@ namespace brkrqm {
 			TestEndOfParsing_();
 
 			if ( Array_ != NONE ) {
-				if ( Description_->Read( Position_ ) == cEnd )
+				if ( Description_->Casts.Read( Position_ ) == cEnd )
 					Position_ = Array_;
 			}
 
-			if ( ( Position_ >= Description_->Amount() )
-				|| ( Description_->Read( Position_ ) != Cast ) )
+			if ( ( Position_ == NONE )
+				|| ( Description_->Casts.Read( Position_ ) != Cast ) )
 				ERRu();
 			else
-				Position_++;
+				Position_ = Description_->Casts.Next( Position_ );
 
 			brkrqm::AddValue( Cast, Value, *Channel_ );
 		}
@@ -409,16 +401,15 @@ namespace brkrqm {
 			if ( Array_ != NONE )
 				ERRu();
 
-			if ( ( Position_ >= Description_->Amount() )
-				  || ( Description_->Read( Position_ ) != cArray ) )
+			if ( ( Position_ == NONE )
+				  || ( Description_->Casts.Read( Position_ ) != cArray ) )
 				ERRu();
-			else
-				Position_++;
+				
+			Array_ = Description_->Casts.Next( Position_ );
+			Position_ = FindEndOfArray_( Position_ );
 
 
 			brkrqm::AddCast( cArray, *Channel_) ;
-
-			Array_ = Position_;
 		}
 		//f Signalize the end of a array session.
 		void EndArray( void )
@@ -426,8 +417,10 @@ namespace brkrqm {
 			if ( Array_ == NONE )
 				ERRu();
 
-			if ( Description_->Read( Position_++ ) != cEnd )
+			if ( Description_->Casts.Read( Position_ ) != cEnd )
 				ERRb();
+				
+			Position_ = Description_->Casts.Next( Position_ );
 
 			AddCast( cEnd, *Channel_ ) ;
 

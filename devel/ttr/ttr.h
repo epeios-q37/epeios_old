@@ -130,7 +130,7 @@ public:
 		return Next_;
 	}
 	//f Print advertising of the library.
-	const char *Advertise( void )	// Should be mofified.
+	const char *Advertise( void )	// Should be modified.
 	{
 		char Format[30];
 	
@@ -138,7 +138,7 @@ public:
 			sprintf( Adv_, "%-7s V%-6s %s (c) %s\n",
 				Name, Version, Date, Owner );
 		else {
-			sprintf( Format, "%s%i%s", "%-7s V%-6.",
+			sprintf( Format, "%s%i%s", "%-7s V%-7.",
 			                  		   strlen( Version ) - 13,
 							  		   "s %.10s (c) %s\n" );
 			sprintf( Adv_, Format,

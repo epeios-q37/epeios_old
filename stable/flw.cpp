@@ -53,6 +53,10 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#ifdef FLW__IGNORE_SIGPIPE
+#	include <signal.h>
+#endif
+
 using namespace flw;
 
 void flw::oflow___::ForceWriting_(
@@ -95,6 +99,9 @@ class flwpersonnalization
 public:
 	flwpersonnalization( void )
 	{
+#ifdef FLW__IGNORE_SIGPIPE
+		signal( SIGPIPE, SIG_IGN );	// Witout this, an 'broken pipe' would terminate the program.
+#endif	
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

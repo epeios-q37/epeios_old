@@ -90,7 +90,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ")."
 
 //d IDEALX (http://www.idealx.org) text.
-#define EPSMSC_IDEALX_TEXT	"\tThis file is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
+#define EPSMSC_IDEALX_TEXT	"\tThis program is part of an IDEALX (" EPSMSC_IDEALX_URL ") project\n"\
 							"\twhich uses Epeios (" EPSMSC_EPEIOS_URL ") technology."
 
 /*$END$*/

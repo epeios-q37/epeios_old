@@ -38,7 +38,7 @@ public:
 	: ttr_tutor( TTR_NAME )
 	{
 #ifdef TTR_DBG
-		Version = TTR_VERSION "\b\b\b (DBG)";
+		Version = TTR_VERSION "\b\bD $";
 #else
 		Version = TTR_VERSION;
 #endif

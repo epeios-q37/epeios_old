@@ -1,59 +1,37 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  Header for the 'lst' library by Claude L. Simon (epeios@epeios.org)
+  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
 
-			http://www.epeios.org/
-*/
-/* end of 'entete.txt' template file */
-/* begin of 'entete.h' template file V1.3 */
-/*
-Version:
-	1.0.6 24/05/2000 10:47:24
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
 
-Instigators:
-	Claude SIMON
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-Authors:
-	Claude SIMON
-
-Contributors:
-	/
-
-Coordinator:
-	Claude SIMON
-
-Description:
-	LiST
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org or write to the
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/* Begin of automatic documentation generation part. */
-
-//V 1.0.6
-//C Claude SIMON
-//D LiST
-//R 24/05/2000 10:47:24
-
-/* End of automatic documentation generation part. */
-
-/* end of 'entete.h' template file */
-/* begin of 'xxx.h' template file V2.4 */
+//	$Id$
 
 #ifndef LST__INC
 #define LST__INC
 
 #define LST_NAME		"LST"
 
-#define	LST_VERSION		"1.0.6"	
-#define LST_OWNER		"The Epeios Project (www.epeios.org)"	
+#define	LST_VERSION	"$Revision$"	
 
-//  	Substitution is not applied to the rest when emancipated
-
-#ifdef LST__LINE
-#line 14
-#endif
+#define LST_OWNER		"the Epeios project (http://www.epeios.org/)"
 
 #include "ttr.h"
 
@@ -62,6 +40,14 @@ extern class ttr_tutor &LSTTutor;
 #if defined( XXX_DBG ) && !defined( LST_NODBG )
 #define LST_DBG 
 #endif
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude L. SIMON (epeios@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
@@ -366,4 +352,3 @@ public:
 /******************************************************************************/
 
 #endif
-/* end of 'xxx.h' template file */
