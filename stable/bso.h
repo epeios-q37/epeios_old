@@ -339,7 +339,7 @@ namespace bso {
 	{
 		static char Buffer[40];
 
-		sprintf( Buffer, "%lf", Value );
+		sprintf( Buffer, "%Lf", Value );
 
 		return Buffer;
 	}

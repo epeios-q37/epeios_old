@@ -48,7 +48,7 @@ CTN:
 - Fixing GNU GCC issues.
 - Renaming 'Create()' into 'New()' to avoid mistakes.
 - Renaming 'Add' to 'Append'.
-- Adding features to avoid problems which appears when some 'Flush' call are missed.
+- Adding features to avoid problems which appears when some 'Flush' call are missing.
 - Fixing mistake in 'Delete' method.
 - Adding some tests about flushing in debug context.
 

@@ -137,7 +137,8 @@ namespace ctn {
 			Statics.read( IFlow );
 		}
 #ifdef CTN_DBG
-		void test( void ) const
+		//f Debug feature. If the container is not flushed, throw an error.
+		void FlushTest( void ) const
 		{
 			if ( !IsFlushed() )
 				ERRu();
@@ -147,7 +148,7 @@ namespace ctn {
 		void Init( void )
 		{
 #ifdef CTN_DBG
-			test();
+			FlushTest();
 #endif
 			Dynamics.Init();
 			Statics.Init();
@@ -161,7 +162,7 @@ namespace ctn {
 			aem::mode Mode )
 		{
 #ifdef CTN_DBG
-			test();
+			FlushTest();
 #endif
 			epeios::size__ AncCap;
 			epeios::size__ Extent = Size;
@@ -200,7 +201,7 @@ namespace ctn {
 		void Adjust( void )
 		{
 #ifdef CTN_DBG
-			test();
+			FlusTest();
 #endif
 			epeios::size__ Extent = this->Extent();
 
@@ -216,7 +217,7 @@ namespace ctn {
 			aem::mode Mode )
 		{
 #ifdef CTN_DBG
-			test();
+			FlushTest();
 #endif
 			epeios::size__ CurrentExtent = amount_extent_manager_<r>::Extent();
 			epeios::size__ NewExtent = CurrentExtent - Amount;
@@ -314,7 +315,7 @@ namespace ctn {
 			mdr::mode Mode = mdr::mReadWrite )
 		{
 #ifdef CTN_DBG
-			Conteneur->test();
+			Conteneur->FlushTest();
 #endif
 			Conteneur_ = Conteneur;
 			Pilote_.Init( Conteneur->Dynamics );
@@ -414,7 +415,7 @@ namespace ctn {
 		void Init( const basic_container_<st,r> &Conteneur )
 		{
 #ifdef CTN_DBG
-			Conteneur.test();
+			Conteneur.FlushTest();
 #endif
 			Conteneur_ = &Conteneur;
 			Pilote_.Init( Conteneur.Dynamics );
@@ -547,7 +548,7 @@ namespace ctn {
 		void Init(const mono_container_< t , r > &Container )
 		{
 #ifdef CTN_DBG
-			Container.test();
+			Container.FlushTest();
 #endif
 			item_base_const__< item_mono_statique__< typename_ t::s >, r >::Init( Container );
 		}
@@ -857,7 +858,7 @@ namespace ctn {
 			mdr::mode Mode = mdr::mReadWrite )
 		{
 #ifdef CTN_DBG
-			Container.test();
+			Container.FlushTest();
 #endif
 			Multimemoire.Init();
 			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container, Mode );
@@ -917,7 +918,7 @@ namespace ctn {
 		void Init( const basic_container_< item_multi_statique__<typename t::s>, r > &Container )
 		{
 #ifdef CTN_DBG
-			Container.test();
+			Container.FlushTest();
 #endif
 			Multimemoire.Init();
 			item_base_const__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
