@@ -1,9 +1,9 @@
 /*
-  'gnumll' library by Claude L. Simon (simon@epeios.org)
+  'gnumll' library by Claude L. Simon (csimon@webmails.com)
   Requires the 'gnumll' header file ('gnumll.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -101,13 +101,13 @@ static const str::string_ &FilterTitlePrefix_( const str::string_ &Title )
 
 	String.Init();
 
-	while( ( P.V < Title.Amount() ) && ( Title( P ) == '*' ) )
-		P.V++;
+	while( ( *P < Title.Amount() ) && ( Title( P ) == '*' ) )
+		(*P)++;
 
-	if ( ( P.V < Title.Amount() ) && ( Title( P ) == ' ' ) )
-		P.V++;
+	if ( ( *P < Title.Amount() ) && ( Title( P ) == ' ' ) )
+		(*P)++;
 
-	String.WriteAndAdjust( Title, Title.Amount() - P.V, P.V );
+	String.WriteAndAdjust( Title, Title.Amount() - *P, *P );
 
 	return String;
 }
@@ -233,7 +233,7 @@ static inline void WriteEnd_(
 	epeios::row__ P,
 	bso::bsize__ S )
 {
-	Dest.WriteAndAdjust( Source, Source.Amount() - ( P.V + S ), P.V + S );
+	Dest.WriteAndAdjust( Source, Source.Amount() - ( *P + S ), *P + S );
 }
 
 static bso::bool__ Test_( const str::string_ &S )
@@ -276,10 +276,10 @@ ERRBegin
 
 	L = T.Amount();
 
-	while( ( P.V < L ) && ( !isspace( C = T( P ) ) ) )
+	while( ( *P < L ) && ( !isspace( C = T( P ) ) ) )
 	{
 		NG.Add( C );
-		P.V++;
+		(*P)++;
 	}
 
 	if ( Test_( NG ) ) {
@@ -287,14 +287,14 @@ ERRBegin
 		NGC = T;
 	}
 	else if ( P != L ) {
-		while( ( P.V < L ) && ( isspace( T( P ) ) ) )
-			P.V++;
+		while( ( *P < L ) && ( isspace( T( P ) ) ) )
+			(*P)++;
 
 		if ( P != L )
-			while( P.V < L )
+			while( *P < L )
 				{
 					NGC.Add( T( P ) );
-					P.V++;
+					(*P)++;
 				}
 	}
 ERRErr
@@ -312,7 +312,7 @@ void gnumll::section_header_::Parse( const str::string_ &L )
 	case tEmailAndName:
 		WriteEnd_( L, Name, P, S );
 	case tEmailOnly:
-		Email.WriteAndAdjust( L, P.V, 0 );
+		Email.WriteAndAdjust( L, *P, 0 );
 		break;
 	case tNewsgroup:
 		HandleNewsgroup_( L, P, S, Newsgroup, NewsgroupComment );
@@ -327,7 +327,7 @@ void gnumll::section_header_::Parse( const str::string_ &L )
 		WriteEnd_( L, FAQ_URL, P, S );
 		break;
 	case tOtherEmail:
-		TextOtherEmail.WriteAndAdjust( L, P.V + S );
+		TextOtherEmail.WriteAndAdjust( L, *P + S );
 		WriteEnd_( L, OtherEmail, P, S );
 		break;
 	case tUnknow:

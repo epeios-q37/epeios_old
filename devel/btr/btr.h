@@ -412,107 +412,107 @@ namespace btr {
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
 		{
-			return Pere_( Node.V );
+			return Pere_( *Node );
 		}
 		//f Return left of 'Node'..
 		r Left( r Node ) const
 		{
-			return Fils_( Node.V ) ;
+			return Fils_( *Node ) ;
 		}
 		//f Return right of 'Node'..
 		r Right( r Node ) const
 		{
-			return Fille_( Node.V );
+			return Fille_( *Node );
 		}
 		/* Elague 'Noeud'; 'Noeud' devient la racine de l'arbre
 		et perd donc son père. */
 		//f Cut 'Node'. 'Node' becomes a root.
 		void Cut( r Node )
 		{
-			epeios::row_t__ Pere = Pere_( Node.V );
+			epeios::row_t__ Pere = Pere_( *Node );
 
-			if ( AFils_( Pere ) && ( Fils_( Pere ) == Node.V ) )
+			if ( AFils_( Pere ) && ( Fils_( Pere ) == *Node ) )
 				InvaliderFils_( Pere );
 			else
 				InvaliderFille_( Pere );
 
-			InvaliderPere_( Node.V );
+			InvaliderPere_( *Node );
 		}
 		//f Return true if 'Child' is left of 'Parent'.
 		bso::bool__ IsLeft(
 			r Child,
 			r Parent ) const
 		{
-			return Fils_( Parent.V ) == Child;
+			return Fils_( *Parent ) == Child;
 		}
 		//f Return true if 'Child' is right of 'Parent'.
 		bso::bool__ IsRight(
 			r Child,
 			r Parent ) const
 		{
-			return Fille_( Parent.V ) == Child;
+			return Fille_( *Parent ) == Child;
 		}
 		//f Return true if 'Child' is child of 'Parent'.
 		bso::bool__ IsChild(
 			r Child,
 			r Parent ) const
 		{
-			return ( Fils_( Parent.V ) == Child ) || ( Fille_( Parent.V ) == Child );
+			return ( Fils_( *Parent ) == Child ) || ( Fille_( *Parent ) == Child );
 		}
 		//f Return true if 'Parent' is parent of 'Child'.
 		bso::bool__ IsParent(
 			r Parent,
 			r Child ) const
 		{
-			return Pere_( Child.V ) == Parent;
+			return Pere_( *Child ) == Parent;
 		}
 		//f Return true if 'Node' is a child.
 		bso::bool__ IsLeft( r Node ) const
 		{
-			return APere_( Node.V ) && Fils_( Pere_( Node.V ) ) == Node.V;
+			return APere_( *Node ) && Fils_( Pere_( *Node ) ) == *Node;
 		}
 		//f Return true if 'Node' is a right.
 		bso::bool__ IsRight( r Node ) const
 		{
-			return APere_( Node.V ) && Fille_( Pere_( Node.V ) ) == Node.V;
+			return APere_( *Node ) && Fille_( Pere_( *Node ) ) == *Node;
 		}
 		//f Return true if 'Node' is child.
 		bso::bool__ IsChild( r Node ) const
 		{
-			return APere_( Node.V );
+			return APere_( *Node );
 		}
 		//f Return true if 'Node' is parent.
 		bso::bool__ IsParent( r Node ) const
 		{
-			return AFils_( Node.V ) || AFille_( Node.V );
+			return AFils_( *Node ) || AFille_( *Node );
 		}
 		//f 'Parent' take 'Child' as left.
 		void TakeLeft(
 			r Parent,
 			r Child )
 		{
-			AdopterFils_( Parent.V, Child.V );
+			AdopterFils_( *Parent, *Child );
 		}
 		//f 'Parent' take 'Child' as right.
 		void TakeRight(
 			r Parent,
 			r Child )
 		{
-			AdopterFille_( Parent.V, Child.V );
+			AdopterFille_( *Parent, *Child );
 		}
 		//f 'Child' becomes left of 'Parent'.
 		void BecomeLeft(
 			r Child,
 			r Parent )
 		{
-			AdopterFils_( Parent.V, Child.V );
+			AdopterFils_( *Parent, *Child );
 		}
 		//f 'Child' becomes right of 'Parent'.
 		void BecomeRight(
 			r Child,
 			r Parent )
 		{
-			AdopterFille_( Parent.V, Child.V );
+			AdopterFille_( *Parent, *Child );
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
@@ -535,29 +535,29 @@ namespace btr {
 		//f Return true if 'Node' has right.
 		bso::bool__ HasRight( r Node ) const
 		{
-			return AFille_( Node.V );
+			return AFille_( *Node );
 		}
 		//f Return true if 'Node' has left.
 		bso::bool__ HasLeft( r Node ) const
 		{
-			return AFils_( Node.V );
+			return AFils_( *Node );
 		}
 		//f Return true if 'Node' has a child.
 		bso::bool__ HasChild( r Node ) const
 		{
-			return AFille_( Node.V ) || AFils_( Node.V );
+			return AFille_( *Node ) || AFils_( *Node );
 		}
 		//f Return true if 'Node' has a parent.
 		bso::bool__ HasParent( r Node ) const
 		{
-			return APere_( Node.V );
+			return APere_( *Node );
 		}
 		//f Force the parent from 'Node' to 'Parent'. Return the previous parent.
 		r ForceParent(
 			r Node,
 			r Parent )
 		{
-			return ForceParent_( Node.V, Parent.V );
+			return ForceParent_( *Node, *Parent );
 		}
 	/*	// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
 		void EcrireDansFlot(
@@ -571,7 +571,7 @@ namespace btr {
 			r Root,
 			txf::text_oflow___ &OFlow ) const
 		{
-			Liens.PrintStructure( Root.V, OFlow );
+			Liens.PrintStructure( *Root, OFlow );
 		}
 		// Sert à parcourir l'arbre de racine 'Racine'. Retourne le noeud aprés 'Position'.
 	/*	r Suivant(

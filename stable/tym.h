@@ -131,14 +131,14 @@ namespace tym {
 			epeios::bsize__ Amount,
 			t *Buffer ) const
 		{
-			Lire_( Position.V, Amount, Buffer );
+			Lire_( *Position, Amount, Buffer );
 		}
 		//f Put in 'Value' the object at 'Position'.
 		void Read(
 			r Position,
 			t &Value ) const
 		{
-			Lire_( Position.V, 1, &Value );
+			Lire_( *Position, 1, &Value );
 		}
 		//f Put to 'Destination' at 'Offset' 'Quantity' objects at 'Position'.
 		void Read(
@@ -147,14 +147,14 @@ namespace tym {
 			memory_core_<t,b,r> &Destination,
 			r Offset = 0 ) const
 		{
-			Lire_( Position.V, Quantity, Destination, Offset.V );
+			Lire_( *Position, Quantity, Destination, *Offset );
 		}
 		//f Return the object at 'Position'.
 		t Read( r Position ) const
 		{
 			t V;
 
-			Lire_( Position.V, 1, &V );
+			Lire_( *Position, 1, &V );
 
 			return V;
 		}
@@ -164,14 +164,14 @@ namespace tym {
 			epeios::bsize__ Amount,
 			r Position )
 		{
-			Ecrire_( Buffer, Amount, Position.V );
+			Ecrire_( Buffer, Amount, *Position );
 		}
 		//f Write 'Value' at 'Position'.
 		void Write(
 			const t &Valeur,
 			r Position )
 		{
-			Ecrire_( &Valeur, 1, Position.V );
+			Ecrire_( &Valeur, 1, *Position );
 		}
 		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
 		void Write(
@@ -180,7 +180,7 @@ namespace tym {
 			r Position = 0,
 			r Offset = 0 )
 		{
-			Ecrire_( Source, Quantity, Position.V, Offset.V );
+			Ecrire_( Source, Quantity, *Position, *Offset );
 		}
 		//f Fill at 'Position' with 'Object' 'Count' times.
 		void Fill(
@@ -188,7 +188,7 @@ namespace tym {
 			epeios::size__ Count,
 			r Position = 0 )
 		{
-			b::Fill( (data__ *)&Object, sizeof( t ), Count, Position.V * sizeof( t ) );
+			b::Fill( (data__ *)&Object, sizeof( t ), Count, *Position * sizeof( t ) );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
 		r Position(
@@ -198,7 +198,7 @@ namespace tym {
 		{
 			row_t__ Position;
 
-			if ( ( Position = b::Position( (data__ *)&Object, sizeof( t ), Begin.V * sizeof( t ), End.V * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Position( (data__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;
@@ -253,14 +253,14 @@ namespace tym {
 			epeios::size__ Quantity,
 			flw::oflow___ &OFlow ) const
 		{
-			memory_core_<t, uym::untyped_memory_, r >::write( Position.V * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+			memory_core_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
 			flw::iflow___  &IFlow,
 			r Position,
 			epeios::size__ Quantite )
 		{
-			memory_core_<t, uym::untyped_memory_, r >::read( IFlow, Position.V * sizeof( t ), Quantite * sizeof( t ) );
+			memory_core_<t, uym::untyped_memory_, r >::read( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
 		}
 	};
 
@@ -287,7 +287,7 @@ namespace tym {
 		r BeginS2,
 		epeios::size__ Quantity )
 	{
-		return uym::Compare( S1, S2, BeginS1.V * sizeof( t ), BeginS2.V * sizeof( t ), Quantity * sizeof( t ) );
+		return uym::Compare( S1, S2, *BeginS1 * sizeof( t ), *BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
 	}
 
 	/*c A static set of object of 'amount' objects of type 't' of size 'size'.

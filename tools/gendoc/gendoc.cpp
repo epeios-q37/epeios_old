@@ -385,8 +385,10 @@ ERRBegin
 	
 	while ( Courant != NONE )
 	{
+		XMLDF.PushTag( "Template" );
 		XMLDF.PutAttribute( "Name", Argument( Courant ).Name );
 		XMLDF.PutValue( Argument( Courant ).Type, "Type" );
+		XMLDF.PopTag();
 	
 		Courant = Arguments.Next( Courant );
 	}
@@ -520,7 +522,11 @@ void GenererDocumentationTemplateFonction(
 	xmldf__ &XMLDF )
 {
 	if ( Template.Arguments.Amount() )
+	{
+		XMLDF.PushTag( "Templates" );
 		GenererDocumentationArgumentsTemplateFonction( Template.Arguments, XMLDF );
+		XMLDF.PopTag();
+	}
 }
 
 void GenererDocumentationObjetsClasse(
@@ -640,18 +646,21 @@ inline void GenererDocumentationClasse(
 
 inline void GenererDocumentationFonction(
 	const function_ &Fonction,
-	xmldf__ &XMLDF,
-	const char * )
+	xmldf__ &XMLDF )
 {
 	static tag_row__ CommentTagRow = NONE;
 	static tag_row__ ParametersTagRow = NONE;
 	static tag_row__ ParameterTagRow = NONE;
+
+	XMLDF.PushTag( "Function" );
 	
 	XMLDF.PutAttribute( "Name", Fonction.Name );
 	XMLDF.PutValue( Fonction.Type, "Type" );
 	PutComment( Fonction.Commentaire, XMLDF, CommentTagRow );
 	GenererDocumentationParametres( Fonction.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
 	GenererDocumentationTemplateFonction( Fonction.Template, XMLDF );
+
+	XMLDF.PopTag();
 
 }
 
@@ -782,15 +791,28 @@ void GenererDocumentationClasses(
 }
 
 void GenererDocumentationFonctions(
-	table_<function_> &Fonctions,
+	const table_<function_> &Fonctions,
 	xmldf__ &XMLDF,
 	const char *Type )
 {
 	static tag_row__ CommentTagRow = NONE;
 	static tag_row__ FunctionsTagRow = NONE;
 	static tag_row__ FunctionTagRow = NONE;
+	epeios::row__ Row = NONE;
+	ctn::E_CITEM( function_ ) Function;
 
-	GenererDocumentationItemsClasse( "Functions", FunctionsTagRow, Fonctions, XMLDF, Type, CommentTagRow, FunctionTagRow );
+	XMLDF.PushTag( "Functions" );
+
+	Function.Init( Fonctions );
+
+	Row = Fonctions.First();
+
+	while( Row != NONE ) {
+		GenererDocumentationFonction( Function( Row ), XMLDF ); 
+		Row = Fonctions.Next( Row );
+	}
+
+	XMLDF.PopTag();
 }
 
 void GenererDocumentationObjets(

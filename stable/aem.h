@@ -266,7 +266,7 @@ namespace aem {
 		//f Return the position of the object after 'Current' (to the top).
 		r Next( r Current ) const
 		{
-			if ( ++Current.V < Amount() )
+			if ( ++*Current < Amount() )
 				return Current;
 			else
 				return NONE;
@@ -274,8 +274,8 @@ namespace aem {
 		//f Return the position of the object before 'Current' (to the bottom).
 		r Previous( r Current ) const
 		{
-			if ( Current.V != 0  )
-				return Current.V - 1 ;
+			if ( *Current != 0  )
+				return *Current - 1 ;
 			else
 				return NONE;
 		}

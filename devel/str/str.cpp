@@ -132,8 +132,8 @@ namespace str {
 		char *Pointeur = NULL;
 	ERRProlog
 	ERRBegin
-		if ( ( Quantity + Position.V ) > Amount() )
-			Quantity = Amount() - Position.V;
+		if ( ( Quantity + *Position ) > Amount() )
+			Quantity = Amount() - *Position;
 
 		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
 			ERRa();
@@ -188,11 +188,11 @@ namespace str {
 			epeios::size__ Amount = S.Amount();
 			epeios::row_t__ Limit = this->Amount() - Amount;
 
-			while( ( Start.V <= Limit )
+			while( ( *Start <= Limit )
 				&& Compare( S, *this, 0, Start, Amount ) )
-				Start.V++;
+				(*Start)++;
 
-			if ( Start.V > Limit )
+			if ( *Start > Limit )
 				return NONE;
 			else
 				return Start;
@@ -208,11 +208,11 @@ namespace str {
 	{
 		epeios::row_t__ Limit = Amount();
 
-		while( ( Start.V < Limit )
+		while( ( *Start < Limit )
 			&& ( Read( Start ) != C ) )
-			Start.V++;
+			(*Start)++;
 
-		if ( Start.V >= Limit )
+		if ( *Start >= Limit )
 			return NONE;
 		else
 			return Start;

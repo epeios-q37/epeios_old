@@ -1,8 +1,8 @@
 /*
-  Header for the 'bch' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'bch' library by Claude L. Simon (csimon@webmails.com)
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	BCH_VERSION	"$Revision$"	
 
-#define BCH_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define BCH_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &BCHTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude L. SIMON (csimon@webmails.com)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -158,7 +158,7 @@ namespace bch {
 			r Position = 0,
 			r Offset = 0 )
 		{
-			AllocateIfNecessary_( Amount + Offset.V );
+			AllocateIfNecessary_( Amount + *Offset );
 
 			mmr::Write( Set, Amount, Position, Offset );
 		}
@@ -168,7 +168,7 @@ namespace bch {
 			epeios::size__ Amount,
 			r Position = 0 )
 		{
-			AllocateIfNecessary_( Amount + Position.V );
+			AllocateIfNecessary_( Amount + *Position );
 
 			mmr::Write( Buffer, Amount, Position );
 		}
@@ -237,14 +237,14 @@ namespace bch {
 			const bunch_core_ &Set,
 			r Position )
 		{
-			Inserer_( Set, Set.Amount(), 0, Position.V );
+			Inserer_( Set, Set.Amount(), 0, *Position );
 		}
 		//f Insert 'Object' at 'Position'
 		void Insert(
 			const type &Object,
 			r Position )
 		{
-			Inserer_( &Object, 1, Position.V );
+			Inserer_( &Object, 1, *Position );
 		}
 		//f Insert at 'Position' 'Amount' objects from 'Source'.
 		void Insert(
@@ -252,14 +252,14 @@ namespace bch {
 			epeios::size__ Amount,
 			r Position )
 		{
-			Inserer_( Source, Amount, Position.V );
+			Inserer_( Source, Amount, *Position );
 		}
 		//f Delete 'Amount' objects at position 'Position'. The size of the set is reduced.
 		void Delete(
 			r Position,
 			epeios::size__ Amount = 1)
 		{
-			mmr::Write( *this, this->Amount() - ( Amount + Position.V ), Position.V + Amount, Position );
+			mmr::Write( *this, this->Amount() - ( Amount + *Position ), *Position + Amount, Position );
 
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
@@ -377,13 +377,13 @@ namespace bch {
 		r BeginS1 = 0,
 		r BeginS2 = 0 )
 	{
-		if ( ( S1.Amount() - BeginS1.V ) != ( S2.Amount() - BeginS2.V ) )
-			if ( ( S1.Amount() - BeginS1.V ) > ( S2.Amount() - BeginS2.V ) )
+		if ( ( S1.Amount() - *BeginS1 ) != ( S2.Amount() - *BeginS2 ) )
+			if ( ( S1.Amount() - *BeginS1 ) > ( S2.Amount() - *BeginS2 ) )
 				return 1;
 			else
 				return -1;
 		else
-			return tym::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - BeginS1.V );
+			return tym::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - *BeginS1 );
 	}
 
 	//f Return 'S1' - 'S2' which respectively begin at 'BeginS1' et 'Begins2' and have a length of 'Amount'.

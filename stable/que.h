@@ -263,22 +263,22 @@ namespace que {
 		//f Return node next to 'Node'.
 		r Next( r Node ) const
 		{
-			return Links( Node.V ).Next;
+			return Links( *Node ).Next;
 		}
 		//f Return node previous to 'Node'.
 		r Previous( r Node ) const
 		{
-			return Links( Node.V ).Previous;
+			return Links( *Node ).Previous;
 		}
 		//f Return true if 'Node' has next node.
 		bso::bool__ HasNext( r Node ) const
 		{
-			return Links( Node.V ).HasNext();
+			return Links( *Node ).HasNext();
 		}
 		//f Return true if 'Node' has previous node.
 		bso::bool__ HasPrevious( r Node ) const
 		{
-			return Links( Node.V ).HasPrevious();
+			return Links( *Node ).HasPrevious();
 		}
 		//f Insert 'Item' after 'Node'.
 		void InsertItemAfterNode(
@@ -286,20 +286,20 @@ namespace que {
 			r Node )
 		{
 	#ifdef QUE_DBG
-			TestIfItem_( Item.V );
+			TestIfItem_( *Item );
 	#endif
-			link__ LNode = Links( Node.V );
-			link__ LItem = Links( Item.V );
+			link__ LNode = Links( *Node );
+			link__ LItem = Links( *Item );
 
 			if ( LNode.HasNext() )
-				Links.SetPrevious( LNode.Next, Item.V );
+				Links.SetPrevious( LNode.Next, *Item );
 
 			LItem.Next = LNode.Next;
-			LItem.Previous = Node.V;
-			LNode.Next = Item.V;
+			LItem.Previous = *Node;
+			LNode.Next = *Item;
 
-			Links.Write( LNode, Node.V );
-			Links.Write( LItem, Item.V );
+			Links.Write( LNode, *Node );
+			Links.Write( LItem, *Item );
 		}
 		//f Insert 'Item' before 'Node'.
 		void InsertItemBeforeNode(
@@ -307,25 +307,25 @@ namespace que {
 			r Node )
 		{
 	#ifdef QUE_DBG
-			TestIfItem_( Item.V );
+			TestIfItem_( *Item );
 	#endif
-			link__ LNode = Links( Node.V );
-			link__ LItem = Links( Item.V );
+			link__ LNode = Links( *Node );
+			link__ LItem = Links( *Item );
 
 			if ( LNode.HasPrevious() )
-				Links.SetNext( LNode.Previous, Item.V );
+				Links.SetNext( LNode.Previous, *Item );
 
 			LItem.Previous = LNode.Previous;
-			LItem.Next = Node.V;
-			LNode.Previous = Item.V;
+			LItem.Next = *Node;
+			LNode.Previous = *Item;
 
-			Links.Write( LNode, Node.V );
-			Links.Write( LItem, Item.V );
+			Links.Write( LNode, *Node );
+			Links.Write( LItem, *Item );
 		}
 		//f Remove node 'Node'.
 		void Remove( r Node )
 		{
-			link__ LNode = Links( Node.V );
+			link__ LNode = Links( *Node );
 
 			if ( LNode.HasNext() )
 				Links.SetPrevious( LNode.Next, LNode.Previous );
@@ -335,7 +335,7 @@ namespace que {
 
 			LNode.Next = LNode.Previous = NONE;
 
-			Links.Write( LNode, Node.V );
+			Links.Write( LNode, *Node );
 		}
 		//f Return the extent of the queue.
 		tym::size__ Extent( void ) const
@@ -352,17 +352,17 @@ namespace que {
 			r Node1,
 			r Node2 )
 		{
-			link__ LNode1 = Links.Read( Node1.V );
-			link__ LNode2 = Links.Read( Node2.V );
+			link__ LNode1 = Links.Read( *Node1 );
+			link__ LNode2 = Links.Read( *Node2 );
 
-			HandleNeighboursForSwap_( LNode1, Node2.V );
-			HandleNeighboursForSwap_( LNode2, Node1.V );
+			HandleNeighboursForSwap_( LNode1, *Node2 );
+			HandleNeighboursForSwap_( LNode2, *Node1 );
 
-			LNode1.Replace( Node2.V, Node1.V );
-			LNode2.Replace( Node1.V, Node2.V );
+			LNode1.Replace( *Node2, *Node1 );
+			LNode2.Replace( *Node1, *Node2 );
 
-			Links.Write( LNode1, Node2.V );
-			Links.Write( LNode2, Node1.V );
+			Links.Write( LNode1, *Node2 );
+			Links.Write( LNode2, *Node1 );
 		}
 		void Dump(
 			stk::E_STACK_( r ) &Stack,

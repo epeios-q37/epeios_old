@@ -91,9 +91,9 @@ namespace mmi {
 		epeios::size__ Counter = Amount;
 
 		while( Counter-- )
-			Multimemoire.Free( Descripteurs.Read( Position.V + Counter ).Descripteur );
+			Multimemoire.Free( Descripteurs.Read( *Position + Counter ).Descripteur );
 
-		Descripteurs.Write( Descripteurs, ActualCapacity - Position.V - Amount, Position.V + Amount, Position );
+		Descripteurs.Write( Descripteurs, ActualCapacity - *Position - Amount, *Position + Amount, Position );
 
 		AllouerPlus_( ActualCapacity - Amount, ActualCapacity );
 	}

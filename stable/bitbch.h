@@ -86,12 +86,12 @@ namespace bitbch {
 	private:
 		static receptacle__ Offset_( r Position )
 		{
-			return (int)( Position.V % BITBCH_NB_BITS_RECEPTACLE );
+			return (int)( *Position % BITBCH_NB_BITS_RECEPTACLE );
 		}
 		// retourne l'offset correpondant à 'Position'
 		static r Indice_( r Position )
 		{
-			return Position.V / BITBCH_NB_BITS_RECEPTACLE;
+			return *Position / BITBCH_NB_BITS_RECEPTACLE;
 		}
 		// retourne l'indice correspondant à 'Position'
 		static bso::ubyte__ Masque_( r Position )

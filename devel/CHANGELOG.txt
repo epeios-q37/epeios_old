@@ -1,7 +1,72 @@
 $Id$
 
+AEM:
+- Adapting to changes in 'TOL'.
+
+BCH:
+- Adapting to changes in 'TOL'.
+
+BCKEND:
+- Adapting to changes in 'TOL'.
+
+BITBCH
+- Adapting to changes in 'TOL'.
+
+BTR:
+- Adapting to changes in 'TOL'.
+
+CTN:
+- Adapting to changes in 'TOL'.
+
+GNUMLL:
+- Adapting to changes in 'TOL'.
+
+MMI:
+- Adapting to changes in 'TOL'.
+
+QUE:
+- Adapting to changes in 'TOL'.
+
+LST:
+- Adapting to changes in 'TOL'.
+
+STR:
+- Adapting to changes in 'TOL'.
+
+TAGDTC:
+- Adapting to changes in 'TOL'.
+
+TAGEXP:
+- Adapting to changes in 'TOL'.
+
+TOL:
+- Adding 'TYPEDEF__()'
+- Using operator '->' for 'TYPEDEF()' and 'TYPEDEF__()'
+- Disable VC++ warning issue due to 'TYPDEF()'.
+- 'TYPEDEF_()' makes now automatically 'AUTO()'.
+- Adding 'operator =()' to 'TYPEDEF_()'.
+
+
+TSRCPR:
+- Adapting to changes in 'TOL'.
+
+TYM:
+- Adapting to changes in 'TOL'.
+
 XMLCOR:
 - Adding 'quick_tag...'.
+
+XMLDBS:
+- Methods of filler which handles tag/attribute value returns now a value row.
+- Adding the 'GetDatabase()' method.
+
+XMLDCM:
+- Methods of filler which handles tag/attribute value returns now a value row.
+- Adding the 'GetDocument()' method.
+
+XMLTAG
+- Adapting to changes in 'TOL'.
+
 
 
 --------

@@ -158,8 +158,8 @@ status tagexp::tag_expander_::Expand(
 	while( Loop && ( Status == tagexp::sOK ) ) {
 		Id = Detector.Parse( IFlow, OFlow, Delimiter, Action, ErrHandle );
 
-		if ( Id.V < tagexp::t_amount ) {
-			switch( Id.V ) {
+		if ( *Id < tagexp::t_amount ) {
+			switch( *Id ) {
 			case tagexp::tPrint:
 				Action = tagexp::aPrint;
 				break;
@@ -181,8 +181,8 @@ status tagexp::tag_expander_::Expand(
 			if ( Action == tagexp::aPrint )
 				Status = HandleReference_( Value( Id ), References.Natures( Id ), OFlow, ErrHandle );
 		}
-		else if ( Id.V > TAGDTC_MAX_ID ) {
-			switch ( Id.V ) {
+		else if ( *Id > TAGDTC_MAX_ID ) {
+			switch ( *Id ) {
 			case TAGDTC_EOF:
 				Loop = false;
 				break;
@@ -200,7 +200,7 @@ status tagexp::tag_expander_::Expand(
 	}
 
 	if ( Status == tagexp::sUserDefined )
-		Status = (status)Id.V;
+		Status = (status)*Id;
 	else if ( Status == tagexp::sBadFile )
 	 	File = Value();
 

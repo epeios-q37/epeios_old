@@ -172,7 +172,7 @@ namespace lst {
 		//f Remove 'Entry'.
 		void Remove( r Entry )
 		{
-			Libres.Push( Entry.V );
+			Libres.Push( *Entry );
 		}
 		//f Return the position of a new entry.
 		r CreateEntry( void )
@@ -213,22 +213,22 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next( r Entry ) const
 		{
-			if ( ++Entry.V < S_.Extent )
-				if ( Libres.IsEmpty() || Existe_( Entry.V ) )
+			if ( ++*Entry < S_.Extent )
+				if ( Libres.IsEmpty() || Existe_( *Entry ) )
 					return Entry;
 				else
-					return Successeur_( Entry.V );
+					return Successeur_( *Entry );
 			else
 				return NONE;
 		}
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
 		r Previous( r Entry ) const
 		{
-			if ( Entry.V-- > 0 )
-				if ( Libres.IsEmpty() || Existe_( Entry.V ) )
+			if ( (*Entry)-- > 0 )
+				if ( Libres.IsEmpty() || Existe_( *Entry ) )
 					return Entry;
 				else
-					return Predecesseur_( Entry.V );
+					return Predecesseur_( *Entry );
 			else
 				return NONE;
 		}
@@ -245,12 +245,12 @@ namespace lst {
 		//f Return true if 'Entry' exists, false otherwise.
 		bso::bool__ Exists( r Entry ) const
 		{
-			if ( Entry.V >= S_.Extent )
+			if ( *Entry >= S_.Extent )
 				return false;
 			else if ( Libres.IsEmpty() )
 				return true;
 			else
-				return Existe_( Entry.V );
+				return Existe_( *Entry );
 		}
 	};
 

@@ -64,8 +64,15 @@ namespace mmi {
 
 	using namespace epeios;
 
+#ifdef CPE__VC
+#	pragma warning( push )
+#	pragma warning( disable : 4284 )
+#endif
 	//t The type of an index in the indexed multimemory.
 	TYPEDEF( epeios::row_t__, index__ );
+#ifdef CPE__VC
+#	pragma warning( pop )
+#endif
 
 	struct descripteur__
 	{
@@ -95,7 +102,7 @@ namespace mmi {
 			epeios::bsize__ Taille,
 			epeios::data__ *Tampon ) const
 		{
-			Multimemoire.Read( Descripteurs(Index.V).Descripteur, Position, Taille, Tampon );
+			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon );
 		}
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
@@ -104,32 +111,32 @@ namespace mmi {
 			index__ Index,
 			epeios::row_t__ Position )
 		{
-			Multimemoire.Write( Tampon, Taille, Descripteurs(Index.V).Descripteur, Position );
+			Multimemoire.Write( Tampon, Taille, Descripteurs(*Index).Descripteur, Position );
 		}
 		// écrit à 'Position' de l'objet 'Index' 'Taille' octets de 'Tampon'
 		void Allouer_(
 			index__ Index,
 			epeios::size__ Nombre )
 		{
-			descripteur__ D = Descripteurs.Read( Index.V );
+			descripteur__ D = Descripteurs.Read( *Index );
 
 			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre );
 
 			D.Capacite = Nombre;
 
-			Descripteurs.Write( D, Index.V );
+			Descripteurs.Write( D, *Index );
 		}
 		// allocation pour 'Capacite' objets
 		void Liberer_( index__ Index )
 		{
-			descripteur__ D = Descripteurs.Read( Index.V );
+			descripteur__ D = Descripteurs.Read( *Index );
 
 			Multimemoire.Free( D.Descripteur );
 
 			D.Descripteur = 0;
 			D.Capacite = 0;
 
-			Descripteurs.Write( D, Index.V );
+			Descripteurs.Write( D, *Index );
 		}
 		// libère la mémoire d'index 'Index'
 	public:
@@ -236,7 +243,7 @@ namespace mmi {
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
-			return Descripteurs( Index.V ).Capacite;
+			return Descripteurs( *Index ).Capacite;
 		}
 		/*f Delete 'Amount' entries from 'Position',
 		'ActualCapacity' is the actual capacity.

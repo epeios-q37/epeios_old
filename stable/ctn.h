@@ -209,7 +209,7 @@ namespace ctn {
 			epeios::size__ NewExtent = CurrentExtent - Amount;
 
 			Dynamics.DeleteWithoutReallocating( Position, CurrentExtent, Amount );
-			Statics.Write( Statics, NewExtent - Position.V, Position.V + Amount, Position );
+			Statics.Write( Statics, NewExtent - *Position, *Position + Amount, Position );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( NewExtent, Mode ) ) {
 				Dynamics.Allocate( NewExtent, CurrentExtent );
@@ -236,7 +236,7 @@ namespace ctn {
 				if ( Conteneur_ == NULL )
 					ERRu();
 	#endif
-				Conteneur_->Statics.Write( ctn_S_, Pilote_.Index().V );
+				Conteneur_->Statics.Write( ctn_S_, *Pilote_.Index() );
 			}
 
 			Pilote_.Index( NONE );
@@ -301,11 +301,11 @@ namespace ctn {
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
 		void Sync( r Position )
 		{
-			if ( Pilote_.Index() != Position.V )
+			if ( Pilote_.Index() != *Position )
 			{
 				Vider_();
 				Conteneur_->Statics.Read( Position, ctn_S_ );
-				Pilote_.Index( Position.V );
+				Pilote_.Index( *Position );
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
@@ -383,10 +383,10 @@ namespace ctn {
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
 		void Caler(	r Position )
 		{
-			if ( Pilote_.Index().V != Position.V )
+			if ( *Pilote_.Index() != *Position )
 			{
 				Vider_();
-				Pilote_.Index( Position.V );
+				Pilote_.Index( *Position );
 	#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
 					ERRu();

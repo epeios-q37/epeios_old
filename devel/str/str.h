@@ -218,7 +218,7 @@ namespace str {
 		epeios::row__ BeginS2 = 0 )
 	{
 		bso::sbyte__ Resultat;
-		epeios::size__ T1 = S1.Amount() - BeginS1.V, T2 = S2.Amount() - BeginS2.V;
+		epeios::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;

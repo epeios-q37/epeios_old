@@ -154,7 +154,7 @@ epeios::row_t__ tagdtc::tag_detector_::Parse(
 	else if ( C != Delimiter )
 		Return = TAGDTC_EOF;
 
-	return Return.V;
+	return *Return;
 }
 
 

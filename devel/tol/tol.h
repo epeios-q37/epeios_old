@@ -98,47 +98,145 @@ namespace tol
 };
 
 
+#ifdef CPE__VC
+#	pragma warning( disable : 4284 )
+#endif
+
+
 /*m Same as 'typedef type alias', but 2 'alias' with same 'type' are not interchangeable.
 This is only for static objects. Use 'TYPEDEF_( type, alias )' for dynamic objects. */
 #define TYPEDEF( type, alias )\
 struct alias\
 {\
+private:\
+	type V_;\
 public:\
-	type V;\
 	alias( void ) {}\
 	alias( type T )\
 	{\
-		V = T;\
+		V_ = T;\
+	}\
+	type *operator ->( void )\
+	{\
+		return &V_;\
+	}\
+	const type *operator ->( void ) const\
+	{\
+		return &V_;\
+	}\
+	type &operator *( void )\
+	{\
+		return V_;\
+	}\
+	const type &operator *( void ) const\
+	{\
+		return V_;\
 	}\
 	bool operator ==( alias A ) const\
 	{\
-		return V == A.V;\
+		return V_ == A.V_;\
 	}\
 	bool operator !=( alias A ) const\
 	{\
-		return V != A.V;\
+		return V_ != A.V_;\
 	}\
 	bool operator ==( type T ) const\
 	{\
-		return V == T;\
+		return V_ == T;\
 	}\
 	bool operator !=( type T ) const\
 	{\
-		return V != T;\
+		return V_ != T;\
 	}\
 }
 
 /*m Same as 'TYPEDEF( type, alias ), but for dynamic objects
-('_' version of the object ; for the instanciable version, use 'AUTO()'. */
+Both '_' version and instanciable version are created. */
 #define TYPEDEF_( type, alias )\
-class alias\
-: public type\
+class alias##_\
+: public type##_\
 {\
 public:\
-	alias( s &S )\
-	: type( S )\
+	alias##_( s &S )\
+	: type##_( S )\
 	{}\
+	alias##_ &operator =( const alias##_ &S )\
+	{\
+		((type##_ *)this)->operator =( S );\
+\
+		return *this;\
+	}\
+	alias##_ &operator =( const type##_ &T )\
+	{\
+		((type##_ *)this)->operator =( T );\
+		\
+		return *this;\
+	}\
+};\
+\
+class alias\
+: public alias##_\
+{\
+public:\
+	alias##_::s static_;\
+	alias( void )\
+	: alias##_( static_ )\
+	{\
+		reset( false );\
+	}\
+	~alias( void )\
+	{\
+		reset( true );\
+	}\
+	alias &operator =( const alias &S )\
+	{\
+		alias##_::operator =( S );\
+\
+		return *this;\
+	}\
+	alias &operator =( const alias##_ &S )\
+	{\
+		alias##_::operator =( S );\
+\
+		return *this;\
+	}\
+	alias &operator =( const type##_ &T )\
+	{\
+		((type##_ *)this)->operator =( T );\
+		\
+		return *this;\
+	}\
 };
+
+//m Same as 'TYPEDEF( type, alias ), but light version, without comparison operators.
+#define TYPEDEF__( type, alias )\
+struct alias\
+{\
+private:\
+	type V_;\
+public:\
+	alias( void ) {}\
+	alias( type T )\
+	{\
+		V_ = T;\
+	}\
+	type *operator ->( void )\
+	{\
+		return &V_;\
+	}\
+	const type *operator ->( void ) const\
+	{\
+		return &V_;\
+	}\
+	type &operator *( void )\
+	{\
+		return V_;\
+	}\
+	const type &operator *( void ) const\
+	{\
+		return V_;\
+	}\
+}
 
 
 #if 0	// to delete ?

@@ -200,6 +200,11 @@ namespace xmldbs {
 		{
 			xml_core_filler__::Init( XMLD );
 		}
+		//f Return the XML database affected to this filler.
+		xml_database_ &GetDatabase( void )
+		{
+			return *(xml_database_ *)XMLC_;
+		}
 		/*f 'TagRow' becomes current tag. Don't use this function if you are
 		not absolutely sure of what you do. */
 		void PushTag( tag_row__ TagRow )
@@ -274,79 +279,98 @@ namespace xmldbs {
 		{
 			return PutValue( xmldbs::value( Value ) );
 		}
-		/*f Put 'Value' with tag 'TagRow'. Do not use this function if you are not
-		absolutely sure of what you do. */
-		void PutValue(
+		/*f Put 'Value' with tag 'TagRow'. Return corresponding value row.
+		Do not use this function if you are not absolutely sure of what you do. */
+		value_row__ PutValue(
 			const value_ &Value,
 			const tag_row__ TagRow )
 		{
+			value_row__ ValueRow;
+
 			PushTag( TagRow );
-			PutValue( Value );
+			ValueRow = PutValue( Value );
 			PopTag();
+
+			return ValueRow;
 		}
-		//f Put 'Value' with tag name 'TagName'.
-		void PutValue(
+		//f Put 'Value' with tag name 'TagName'. Return its value row.
+		value_row__ PutValue(
 			const value_ &Value,
 			const name_ &TagName )
 		{
+			value_row__ ValueRow;
+
 			PushTag( TagName );
-			PutValue( Value );
+			ValueRow = PutValue( Value );
 			PopTag();
+
+			return ValueRow;
 		}
-		//f Put 'Value' with tag name 'TagName'.
-		void PutValue(
+		//f Put 'Value' with tag name 'TagName'. Return its value row.
+		value_row__ PutValue(
 			const value_ &Value,
 			const char *TagName )
 		{
-			PutValue( Value, name( TagName ) );
+			return PutValue( Value, name( TagName ) );
 		}
 		/*f If 'TagRow' != NONE, 'Value' is put associated with 'TagRow'.
+		REturn its value row.
 		If 'TagRow' == NONE, 'Value' is associated with 'TagName', and the
 		row corresponding to 'TagName' is put into 'TagRow'.*/
-		void PutValue(
+		value_row__ PutValue(
 			const value_ &Value,
 			const name_ &TagName,
 			tag_row__ &TagRow )
 		{
-			if ( TagRow == NONE )
-				PutValue( Value, TagName );
-			else
-				PutValue( Value, TagRow );
+			value_row__ ValueRow;
+
+			if ( TagRow == NONE ) {
+				TagRow = PushTag( TagName );
+				ValueRow = PutValue( Value );
+				PopTag();
+			} else
+				ValueRow = PutValue( Value, TagRow );
+
+			return ValueRow;
 		}
-		//f Put 'Value' with tag name 'TagName'.
-		void PutValue(
+		//f Put 'Value' with tag name 'TagName'. Return its value row.
+		value_row__ PutValue(
 			const char *Value,
 			const char *TagName )
 		{
-			PutValue( value( Value ), name( TagName ) );
+			return PutValue( value( Value ), name( TagName ) );
 		}
 		/*f IF 'TagRow' != NONE, 'Value' is put associated with 'TagRow'.
+		Return corresponding value row.
 		If 'TagRow' == NONE, 'Value' is associated with 'TagName', and the
 		row corresponding to 'TagName' is put into 'TagRow'.*/
-		tag_row__ PutValue(
+		value_row__ PutValue(
 			const value_ &Value,
 			const char *TagName,
 			tag_row__ &TagRow )
 		{
-			PutValue( Value, name( TagName ), TagRow );
+			return PutValue( Value, name( TagName ), TagRow );
 		}
 		/*f Put attribute of tag row 'TagRow' and value 'Value'.
+		Return its value row.
 		Don't use this function if you are not sure of what you are doing. */
-		void PutAttribute(
+		value_row__ PutAttribute(
 			const tag_row__ TagRow,
 			const value_ &Value )
 		{
+			value_row__ ValueRow;
 		ERRProlog
 			tagged_value TaggedValue;
 		ERRBegin
 			TaggedValue.Init( Value, TagRow );
-			XMLC_->BecomeLast( TaggedValue, ValueRow_ );
+			ValueRow = XMLC_->BecomeLast( TaggedValue, ValueRow_ );
 		ERRErr
 		ERREnd
 		ERREpilog
+			return ValueRow;
 		}
-		//f Put attribute of name 'Name' and value 'Value'.
-		void PutAttribute(
+		//f Put attribute of name 'Name' and value 'Value'. Return its value row.
+		value_row__ PutAttribute(
 			const name_ &Name,
 			const value_ &Value )
 		{
@@ -354,46 +378,46 @@ namespace xmldbs {
 		}
 		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
 		'TagRow', and value 'Value'. The tag row of the attribute is put
-		into 'TagRow'.*/
-		void PutAttribute(
+		into 'TagRow'. Return its value row.*/
+		value_row__ PutAttribute(
 			const name_ &Name,
 			const value_ &Value,
 			tag_row__ &TagRow)
 		{
 			if ( TagRow != NONE )
-				PutAttribute( TagRow, Value );
+				return PutAttribute( TagRow, Value );
 			else
-				PutAttribute( TagRow = GetOrCreateTag_( Name, tAttribute ), Value );
+				return PutAttribute( TagRow = GetOrCreateTag_( Name, tAttribute ), Value );
 		}
-		//f Put attribute of name 'Name' and value 'Value'.
-		void PutAttribute(
+		//f Put attribute of name 'Name' and value 'Value'. Return its value row.
+		value_row__ PutAttribute(
 			const char *Name,
 			const value_ &Value )
 		{
-			PutAttribute( name( Name), Value );
+			return PutAttribute( name( Name), Value );
 		}
 		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
 		'TagRow', and value 'Value'. The tag row of the attribute is put
-		into 'TagRow'.*/
-		void PutAttribute(
+		into 'TagRow'. Return its value row.*/
+		value_row__ PutAttribute(
 			const char *Name,
 			const value_ &Value,
 			tag_row__ &TagRow)
 		{
 			if ( TagRow != NONE )
-				PutAttribute( TagRow, Value );
+				return PutAttribute( TagRow, Value );
 			else
-				PutAttribute( TagRow = GetOrCreateTag_( name( Name ), tAttribute ), Value );
+				return PutAttribute( TagRow = GetOrCreateTag_( name( Name ), tAttribute ), Value );
 		}
 		/*f Put attribute of name 'Name' if 'TagRow' == NONE or use
 		'TagRow', and value 'Value'. The tag row of the attribute is put
-		into 'TagRow'.*/
-		void PutAttribute(
+		into 'TagRow'. Return its value row.*/
+		value_row__ PutAttribute(
 			const char *Name,
 			const char *Value,
 			tag_row__ &TagRow)
 		{
-			PutAttribute( Name, xmldbs::value( Value ), TagRow );
+			return PutAttribute( Name, xmldbs::value( Value ), TagRow );
 		}
 	};
 

@@ -1,8 +1,8 @@
 /*
-  Header for the 'gnumll' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'gnumll' library by Claude L. Simon (csimon@webmails.com)
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	GNUMLL_VERSION	"$Revision$"	
 
-#define GNUMLL_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define GNUMLL_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &GNUMLLTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude L. SIMON (csimon@webmails.com)
 //R $Date$
 
 /* End of automatic documentation generation part. */

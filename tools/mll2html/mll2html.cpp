@@ -89,7 +89,7 @@ static inline bso::bool__ IsEmailAdress( const estring_ &S )
 
 	if ( ( PAt = S.Search( '@' ) ) != NONE )
 		if ( ( PPoint = S.Search( '.' ) ) != NONE )
-			if ( ( S.Search( '*' ) == NONE ) && ( PAt.V < PPoint.V ) )
+			if ( ( S.Search( '*' ) == NONE ) && ( *PAt < *PPoint ) )
 				R = true;
 
 	return R;
@@ -111,16 +111,16 @@ ERRProlog
 	char C;
 ERRBegin
 
-	while( P.V < L) {
+	while( *P < L) {
 		T.Init();
-		while( ( P.V < L ) && !isspace( C = ( S( P ) ) ) ) {
+		while( ( *P < L ) && !isspace( C = ( S( P ) ) ) ) {
 			if ( C == '<' )
 				T.Add( "&lt;" );
 			else if ( C == '>' )
 				T.Add( "&gt;" );
 			else
 				T.Add( C );
-			P.V++;
+			(*P)++;
 		}
 
 		if ( IsEmailAdress( T ) ) { 
@@ -148,9 +148,9 @@ ERRBegin
 		else
 			F << T;
 
-		while( ( P.V < L ) && isspace( C = ( S( P ) ) ) ) {
+		while( ( *P < L ) && isspace( C = ( S( P ) ) ) ) {
 			F << C;
-			P.V++;
+			(*P)++;
 		}
 	}
 ERRErr
@@ -381,7 +381,7 @@ static void WriteTOCLists(
 
 	while( P != NONE ) {
 		Flow << "<UL>";
-		WriteTOCListHeader( List( P ).Header, Flow, P.V, ListsFile );
+		WriteTOCListHeader( List( P ).Header, Flow, *P, ListsFile );
 		Flow << "</UL>" << txf::nl;
 		P = Lists.Next( P );
 	}
@@ -554,7 +554,7 @@ static void WriteLists(
 	List.Init( Lists );
 
 	while( P != NONE ) {
-		WriteList( List( P ), Flow, P.V  );
+		WriteList( List( P ), Flow, *P  );
 		P = Lists.Next( P );
 	}
 }

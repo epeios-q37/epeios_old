@@ -182,7 +182,7 @@ namespace tagexp
 		//f Return the position of a new tag reference of nature 'Nature', which should be completed later.
 		id__ Create( void )
 		{
-			epeios::row_t__ P = Values.Create().V;
+			epeios::row_t__ P = *Values.Create();
 
 			if ( Natures.Add( tagexp::nUnknow ) != P )
 					ERRc();
