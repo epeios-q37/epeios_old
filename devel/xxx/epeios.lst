@@ -1,4 +1,7 @@
 brkanl
+brkcst
+brkcmd
+broker
 broker0
 broker1
 broker8
@@ -21,7 +24,6 @@ epsmsc
 err
 fam
 fgm
-fhd.cpp
 fhd
 fil
 flm
@@ -42,7 +44,6 @@ mmm
 mtk
 mtx
 pip
-prshct.cpp
 prshct
 que
 rqm
@@ -50,9 +51,7 @@ salcsm
 saljni
 sck
 set
-shm.cpp
 shm
-sph.cpp
 sph
 spp
 srv
@@ -62,15 +61,12 @@ stk
 str
 tagdtc
 tagexp
-thrstr.cpp
 thrstr
 tol
 tsrcpr
 ttr
 txf
-txmhch.cpp
 txmhch
-txmpgh.cpp
 txmpgh
 txmtbl
 tym

@@ -55,11 +55,16 @@ extern class ttr_tutor &BROKER1Tutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+#error Obsolete. Use library 'BRKCMD' instead.
+
 #include "err.h"
 #include "flw.h"
 #include "broker0.h"
 
-struct broker1 {
+namespace broker1 {
+
+	using namespace broker0;
+
 	enum command {
 		cSetErrorBreakingStatus,
 		cGetErrorBreakingStatus,
@@ -75,14 +80,15 @@ struct broker1 {
 		cGetTypesIDAndName,
 		cGetCommandsIDAndName,
 		cGetParameters,
-		c_amount };
-};
+		c_amount
+	};
 
-//o Commands names.
-extern const char *BROKER1CommandsNames[broker1::c_amount];
+	//o Commands names.
+	extern const char *CommandsNames[broker1::c_amount];
 
-//o Commands parameters.
-extern const broker0::cast *BROKER1CommandsParameters[broker1::c_amount];
+	//o Commands parameters.
+	extern const cast *CommandsParameters[broker1::c_amount];
+}
 		
 /*$END$*/
 				  /********************************************/

@@ -58,7 +58,7 @@ using namespace broker0;
 // MUST reflect 'broker0::cast'
 const char *broker0::CastsNames[c_amount] = {
 	"_end_", "Object", "Type", "Casts", "Command", "Boolean", "Id.8", "Id.16", "Id.32", 
-	"Char.", "String", "Byte", "Binary", "Pointer", "Multi." };
+	"Char.", "String", "Byte", "Binary", "Pointer", "Array" };
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

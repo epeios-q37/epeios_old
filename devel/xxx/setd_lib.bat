@@ -28,41 +28,43 @@ REM          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 REM $Id$
 
 IF "%1" == "" GOTO error
-IF "%2" == "" GOTO error
 goto cont
 :error
-ECHO "Usage: setd_lib <library name> <e|i>"
-ECHO "e:epeios i:idealx"
+ECHO "Usage: setd_lib <library name>"
 goto end
 :cont
 
 SET RTD=H:
-SET EDIR=%RTD%\cvs\epeios\devel\cpp
-SET IDIR=%RTD%\cvs\idealx\ctrb-epeios\devel\cpp
-
-IF "%2"=="i" GOTO i
-IF "%2"=="e" GOTO e
-ECHO "Usage: setd_lib <library name> <e|i>"
-ECHO "e:epeios i:idealx"
-goto end
-:i
-SET DIR=%IDIR%
-goto go
-:e
-SET DIR=%EDIR%
-:go
-
 SET LNM=%1
 SET TMP=%RTD%\temp
-SET SRC=%EDIR%\xxx
-SET DST=%DIR%\%LNM%
+SET SRC=%RTD%\cvs\epeios\devel\xxx
 SET CRP=%TMP%\%LNM%.crp
+SET DIR=%RTD%\cvs
+SET ID=
 
+grep -w -o -i %LNM% %SRC%\ecdb.lst
+IF NOT ERRORLEVEL 1 SET ID=ecdb
+grep -w -o -i %LNM% %SRC%\eclz.lst
+IF NOT ERRORLEVEL 1 SET ID=eclz
+grep -w -o -i %LNM% %SRC%\epeios.lst
+IF NOT ERRORLEVEL 1 SET ID=epeios
+grep -w -o -i %LNM% %SRC%\epgs.lst
+IF NOT ERRORLEVEL 1 SET ID=epgs
+grep -w -o -i %LNM% %SRC%\ehdb.lst
+IF NOT ERRORLEVEL 1 SET ID=ehdb
+grep -w -o -i %LNM% %SRC%\etmc.lst
+IF NOT ERRORLEVEL 1 SET ID=etmc
+
+IF NOT "%ID%"=="" goto repository_defined
+echo No repository defined for library %LNM%
+goto end
+
+:repository_defined
+SET DST=%DIR%\%ID%\devel\%LNM%
 
 %RTD%
-cd %DIR%
-mkdir %LNM%
-cd %LNM%
+IF NOT EXIST %DST% mkdir %DST%
+cd %DST%
 toupper "xxx	&%LNM%	" >%CRP%
 echo # >>%CRP%
 tolower "xxx	&%LNM%	" >>%CRP%
@@ -70,13 +72,7 @@ echo # >>%CRP%
 toupper "COORDINATOR	" >>%CRP%
 echo &Claude L. SIMON >>%CRP%
 echo # >>%CRP%
-grep -w -o -i %LNM% %SRC%\idealx.lst
-IF NOT ERRORLEVEL 1 goto crp_idealx
-type %SRC%\epeios.crp >>%CRP%
-goto crp_end
-:crp_idealx
-type %SRC%\idealx.crp >>%CRP%
-:crp_end
+type %SRC%\%ID%.crp >>%CRP%
 
 IF NOT EXIST %DST%\Makefile reveal %CRP% %SRC%\LibMakefile %DST%\Makefile
 IF NOT EXIST %DST%\%LNM%_test.cpp reveal %CRP% %SRC%\xxx_test.cpp %DST%\%LNM%_test.cpp

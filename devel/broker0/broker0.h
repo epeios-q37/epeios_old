@@ -55,6 +55,8 @@ extern class ttr_tutor &BROKER0Tutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
+#error Obsolete. Use library 'BRKCST' instead.
+
 #include "err.h"
 #include "flw.h"
 
@@ -90,8 +92,8 @@ namespace broker0 {
 		cBinary,
 		//i Pointer ('void *').
 		cPointer,
-		//i Multiple casts, set of a casts, ending with 'agr::cEnd'.
-		cMulti,
+		//i An array of casts ending with 'broker0::cEnd'.
+		cArray,
 		//i Amount of casts.
 		c_amount,
 		//i Not a cast, but signalize an invalid cast.

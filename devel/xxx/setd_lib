@@ -46,13 +46,15 @@ elif grep -w -q $1 $SRC/ehdb.lst; then
 	ID=ehdb
 elif grep -w -q $1 $SRC/ecdb.lst; then
 	ID=ecdb
+elif grep -w -q $1 $SRC/ecdb.lst; then
+	ID=etmc
 else
 	echo "Cannot identify library group.";
 	exit
 fi
 
-if [ ! -d $DIR/$ID ]; then
-	echo "Repository for " $DIR/$ID " doesn't exist !";
+if [ ! -z "$ID" ]; then
+	echo "No repository defined for library"  $1
 	exit
 fi
 

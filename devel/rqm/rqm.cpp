@@ -53,16 +53,18 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace rqm;
+
 #include <fstream.h>
 
-const char *(&RQMCastsNames)[rqm::c_amount] = broker0::CastsNames;
-
-void rqm_description_::Init(
+#if 0
+void rqm::description_::Init(
 	const char *Name,
-	rqm::cast Cast,
+	cast Cast,
 	... )
 {
 	va_list L;
+	level__ ArrayLevel = 0;
 
 	this->Name.Init();
 	Casts.Init();
@@ -73,23 +75,50 @@ void rqm_description_::Init(
 
 	va_start( L, Cast );
 
-	while ( Cast != rqm::cEnd ) {
+	while ( ( MultiLevel != 0 ) || ( Cast != cEnd ) ) {
+		if ( Cast == cMulti ) {
+			if ( MultiLevel == _LEVEL_MAX )
+				ERRl();
+			MultiLevel++;
+		} else if ( Cat == rqm::cEnd )
+			MultiLevel--;
+
 		Cast = va_arg( L, rqm::cast );
 		Casts.Add( Cast );
 	}
 
-	while ( ( Cast = va_arg( L, rqm::cast ) ) != rqm::cEnd )
+#ifdef RQM_DBG
+	if ( MultiLevel != 0 )
+		ERRC();
+#endif
+
+	while ( ( Cast = va_arg( L, rqm::cast ) ) != rqm::cEnd ) {
+		if ( Cast == rqm::cMulti ) {
+			if ( MultiLevel == RQM_LEVEL_MAX )
+				ERRl();
+			MultiLevel++;
+		} else if ( Cat == rqm::cEnd )
+			MultiLevel--;
+
 		Casts.Add( Cast );
+	}
+
+#ifdef RQM_DBG
+	if ( MultiLevel != 0 )
+		ERRC();
+#endif
 
 	va_end( L );
 }
+#endif
 
-void rqm_description_::Init(
+void rqm::description_::Init(
 	const char *Name,
-	const rqm::cast *Casts )
+	const cast *Casts )
 {
 	int i = 0;
-	rqm::cast Caste;
+	cast Cast = cInvalid;
+	bso__bool Array = false;
 
 	this->Name.Init();
 	this->Casts.Init();
@@ -98,23 +127,48 @@ void rqm_description_::Init(
 
 	do
 	{
-		Caste = Casts[i++];
-		this->Casts.Add( Caste );
-	} while ( Caste != rqm::cEnd );
+		if ( Cast == cArray ) {
+			if ( Array )
+				ERRu();
+			Array = true;
+		} else if ( Cast == cEnd )
+			Array = false;
+		Cast = Casts[i++];
+		this->Casts.Add( Cast );
+	} while ( Array || ( Cast != cEnd ) );
 
-	while ( ( Caste = Casts[i++] ) != rqm::cEnd )
-		this->Casts.Add( Caste );
+#ifdef RQM_DBG
+	if ( Array )
+		ERRc();
+#endif
+
+	while ( Array || ( Cast = Casts[i++] ) != cEnd ) {
+		if ( Cast == cArray ) {
+			if ( Array )
+				ERRu();
+			Array = true;
+		} else if ( Cast == cEnd )
+			Array = false;
+
+		this->Casts.Add( Cast );
+	}
+
+#ifdef RQM_DBG
+	if ( Array != 0 )
+		ERRc();
+#endif
+
 }
 
-
-POSITION__ rqm_descriptions_::Add(
+#if 0
+POSITION__ rqm::descriptions_::Add(
 	const char *Name,
-	rqm::cast Cast,
+	cast Cast,
 	... )
 {
-	POSITION__ Position = CONTAINER_( rqm_description_ )::New();
+	POSITION__ Position = CONTAINER_( description_ )::New();
 	va_list L;
-	rqm_description_ &Description = CONTAINER_( rqm_description_ )::operator()( Position );
+	description_ &Description = CONTAINER_( description_ )::operator()( Position );
 
 	Description.Init();
 	Description.Name = Name;
@@ -123,43 +177,44 @@ POSITION__ rqm_descriptions_::Add(
 
 	va_start( L, Cast );
 
-	while ( Cast != rqm::cEnd ) {
-		Cast = va_arg( L, rqm::cast );
+	while ( Cast != cEnd ) {
+		Cast = va_arg( L, cast );
 		Description.Add( Cast );
 	}
 
-	while ( ( Cast = va_arg( L, rqm::cast ) ) != rqm::cEnd )
+	while ( ( Cast = va_arg( L, cast ) ) != cEnd )
 		Description.Add( Cast );
 
 	va_end( L );
 
-	CONTAINER_( rqm_description_ )::Sync();
+	CONTAINER_( description_ )::Sync();
 
 	return Position;
 }
 
-POSITION__ rqm_descriptions_::Position( const char *Name ) const
+POSITION__ rqm::descriptions_::Position( const char *Name ) const
 {
-	POSITION__ Position = CONTAINER_( rqm_description_ )::First();
+	POSITION__ Position = CONTAINER_( description_ )::First();
 ERRProlog
-	CITEM( rqm_description_ ) Description;
+	CITEM( description_ ) Description;
 ERRBegin
 
 	Description.Init( *this );
 
 	while( ( Position != NONE ) && ( Description( Position ).Name != str_string( Name ) ) )
-		Position = CONTAINER_( rqm_description_ )::Next( Position );
+		Position = CONTAINER_( description_ )::Next( Position );
 ERRErr
 ERREnd
 ERREpilog
 	return Position;
 }
+#endif
 
-POSITION__ rqm_descriptions_::Position( const rqm_description_ &Description ) const
+POSITION__ rqm::descriptions_::Position( const description_ &Description ) const
 {
-	POSITION__ Position = CONTAINER_( rqm_description_ )::First();
+	POSITION__ Position = CONTAINER_( description_ )::First();
 ERRProlog
-	CITEM( rqm_description_ ) D;
+	CITEM( description_ ) D;
 ERRBegin
 
 	D.Init( *this );
@@ -167,26 +222,26 @@ ERRBegin
 	while( ( Position != NONE )
 		    && ( ( D( Position ).Name != Description.Name )
 		         || ( D( Position ).Casts != Description.Casts ) ) )
-		Position = CONTAINER_( rqm_description_ )::Next( Position );
+		Position = CONTAINER_( description_ )::Next( Position );
 ERRErr
 ERREnd
 ERREpilog
 	return Position;
 }
 
-// Return the id of the cast 'Cast', or 'agr::cInvalid' if non-existent.
-rqm::cast RQMIdCaste( const str_string_ &Caste )
+// Return the id of the cast 'Cast', or 'cInvalid' if non-existent.
+rqm::cast rqm::IdCaste( const str_string_ &Caste )
 {
-	rqm::cast Retour = rqm::cEnd;
+	cast Retour = cEnd;
 ERRProlog
-	rqm__cast Id = rqm::c_amount;
+	int Id = c_amount;
 	str_string S;
 ERRBegin
 	S.Init();
 
-	while( --Id && ( S = RQMCastsNames[Id], S != Caste ) );
+	while( --Id && ( S = CastsNames[Id], S != Caste ) );
 
-	Retour = (rqm::cast)(int)Id;
+	Retour = (cast)Id;
 ERRErr
 ERREnd
 ERREpilog
@@ -194,25 +249,25 @@ ERREpilog
 }
 
 // Ajoute dans 'Flot' le paramètre 'Valeur' de caste 'Caste'.
-void RQMAddValue(
-	rqm::cast Caste,
+void rqm::AddValue(
+	cast Cast,
 	const void *Valeur,
 	flw::oflow___ &Flot )
 {
-	RQMAddCast( Caste, Flot );
+	rqm::AddCast( Cast, Flot );
 
-	switch( Caste ) {
-	case rqm::cObject:
-		Flot.Put( Valeur, sizeof( rqm__object ) );
+	switch( Cast ) {
+	case cObject:
+		Flot.Put( Valeur, sizeof( object__ ) );
 		break;
-	case rqm::cType:
-		Flot.Put( Valeur, sizeof( rqm__type ) );
+	case cType:
+		Flot.Put( Valeur, sizeof( type__ ) );
 		break;
-	case rqm::cCasts:
+	case cCasts:
 	{
-		const SET_( rqm__cast ) &Castes = *( const SET_( rqm__cast ) * )Valeur;
+		const SET_( cast ) &Castes = *( const SET_( cast ) * )Valeur;
 		POSITION__ Position = 0;
-		rqm__cast C;
+		cast C;
 
 		while ( Position < Castes.Amount() )
 		{
@@ -223,25 +278,25 @@ void RQMAddValue(
 		Flot.Put( 0 );
 		break;
 	}
-	case rqm::cCommand:
-		Flot.Put( Valeur, sizeof( rqm__command ) );
+	case cCommand:
+		Flot.Put( Valeur, sizeof( command__ ) );
 		break;
-	case rqm::cBoolean:
+	case cBoolean:
 		Flot.Put( Valeur, sizeof( bso__bool ) );
 		break;
-	case rqm::cId8:
+	case cId8:
 		Flot.Put( Valeur, sizeof( bso__ubyte ) );
 		break;
-	case rqm::cId16:
+	case cId16:
 		Flot.Put( Valeur, sizeof( bso__ushort ) );
 		break;
-	case rqm::cId32:
+	case cId32:
 		Flot.Put( Valeur, sizeof( bso__ulong ) );
 		break;
-	case rqm::cByte:
+	case cByte:
 		Flot.Put( Valeur, sizeof( bso__raw ) );
 		break;
-	case rqm::cBinary:
+	case cBinary:
 	{
 		const SET_( bso__raw ) &D = *(const SET_( bso__raw ) *)Valeur;
 		SIZE__ Nombre = D.Amount();
@@ -278,10 +333,10 @@ void RQMAddValue(
 
 		break;
 	}
-	case rqm::cChar:
+	case cChar:
 		Flot.Put( Valeur, sizeof( bso__char ) );
 		break;
-	case rqm::cString:
+	case cString:
 	{
 		const str_string_ &S =*(const str_string_ *)Valeur;
 		POSITION__ Position = 0;
@@ -292,7 +347,7 @@ void RQMAddValue(
 		Flot.Put( 0 );
 		break;
 	}
-	case rqm::cPointer:
+	case cPointer:
 		Flot.Put( &Valeur, sizeof( void * ) );
 		break;
 	default:
@@ -301,87 +356,87 @@ void RQMAddValue(
 	}
 }
 
-void rqm__request_manager_::GetValue_(
-	  rqm::cast Caste,
+void rqm::request_manager___::GetValue_(
+	  cast Cast,
 	  void *Valeur )
 {
-	switch ( Caste ) {
-	case rqm::cObject:
+	switch ( Cast ) {
+	case cObject:
 	{
-		Entree_->Get( sizeof( rqm__object ), Valeur );
+		Channel_->Get( sizeof( object__ ), Valeur );
 		break;
 	}
-	case rqm::cType:
+	case cType:
 	{
-		Entree_->Get( sizeof( rqm__type ), Valeur );
+		Channel_->Get( sizeof( type__ ), Valeur );
 		break;
 	}
-	case rqm::cCasts:
+	case cCasts:
 	{
-		rqm__cast Caste;
-		SET_( rqm__cast ) &Castes = *( SET_( rqm__cast ) *)Valeur;
+		cast Caste;
+		SET_( cast ) &Castes = *( SET_( cast ) *)Valeur;
 		bso__bool Fin = false;
 
-		flw::Get( *Entree_, Caste );
+		flw::Get( *Channel_, Caste );
 
 		do
 		{
-			if ( Caste == rqm::cEnd )
+			if ( Caste == cEnd )
 				Fin = true;
 
 			Castes.Add( Caste );
-			flw::Get( *Entree_, Caste );
+			flw::Get( *Channel_, Caste );
 		}
-		while( ( Caste != rqm::cEnd ) || !Fin );
+		while( ( Caste != cEnd ) || !Fin );
 
 		break;
 	}
-	case rqm::cCommand:
+	case cCommand:
 	{
-		Entree_->Get( sizeof( rqm__command ), Valeur );
+		Channel_->Get( sizeof( command__ ), Valeur );
 		break;
 	}
-	case rqm::cBoolean:
+	case cBoolean:
 	{
-		Entree_->Get( sizeof( bso__bool ), Valeur );
+		Channel_->Get( sizeof( bso__bool ), Valeur );
 		break;
 	}
-	case rqm::cId8:
+	case cId8:
 	{
-		Entree_->Get( sizeof( bso__ubyte ), Valeur );
+		Channel_->Get( sizeof( bso__ubyte ), Valeur );
 		break;
 	}
-	case rqm::cId16:
+	case cId16:
 	{
-		Entree_->Get( sizeof( bso__ushort ), Valeur );
+		Channel_->Get( sizeof( bso__ushort ), Valeur );
 		break;
 	}
-	case rqm::cId32:
+	case cId32:
 	{
-		Entree_->Get( sizeof( bso__ulong ), Valeur );
+		Channel_->Get( sizeof( bso__ulong ), Valeur );
 		break;
 	}
-	case rqm::cByte:
+	case cByte:
 	{
-		Entree_->Get( sizeof( bso__raw ), Valeur );
+		Channel_->Get( sizeof( bso__raw ), Valeur );
 		break;
 	}
-	case rqm::cBinary:
+	case cBinary:
 	{
 		SET_( bso__raw ) &Binaire = *(SET_( bso__raw ) *)Valeur;
-		bso__ulong Nombre = Entree_->Get();
+		bso__ulong Nombre = Channel_->Get();
 
 		if ( Nombre == 255 )
 		{
-			Nombre += ( Entree_->Get() << 8 ) | Entree_->Get();
+			Nombre += ( Channel_->Get() << 8 ) | Channel_->Get();
 
 			if ( Nombre == 65790 )
 			{
-				Nombre += ( Entree_->Get() << 16 ) | ( Entree_->Get() << 8 ) | Entree_->Get();
+				Nombre += ( Channel_->Get() << 16 ) | ( Channel_->Get() << 8 ) | Channel_->Get();
 
 				if ( Nombre == 16843005 )
 				{
-					Nombre += ( Entree_->Get() << 24 ) | ( Entree_->Get() << 16 ) | ( Entree_->Get() << 8 ) | Entree_->Get();
+					Nombre += ( Channel_->Get() << 24 ) | ( Channel_->Get() << 16 ) | ( Channel_->Get() << 8 ) | Channel_->Get();
 
 					if ( Nombre < 16843005 )
 						ERRu();
@@ -390,28 +445,28 @@ void rqm__request_manager_::GetValue_(
 		}
 
 		while( Nombre-- )
-			Binaire.Add( Entree_->Get() );
+			Binaire.Add( Channel_->Get() );
 
 		break;
 	}
-	case rqm::cChar:
+	case cChar:
 	{
-		Entree_->Get( sizeof( bso__char ), Valeur );
+		Channel_->Get( sizeof( bso__char ), Valeur );
 		break;
 	}
-	case rqm::cString:
+	case cString:
 	{
 			str_string_ &Chaine = *( str_string_ *)Valeur;
 			bso__char C;
 
-		while ( C = Entree_->Get() )
+		while ( C = Channel_->Get() )
 			Chaine.Add( C );
 
 		break;
 	}
-	case rqm::cPointer:
+	case cPointer:
 	{
-		Entree_->Get( sizeof( void * ), Valeur );
+		Channel_->Get( sizeof( void * ), Valeur );
 		break;
 	}
 	default:
@@ -422,35 +477,38 @@ void rqm__request_manager_::GetValue_(
 
 /*f Place dans 'Valeur' le contenu du prochain paramètre contenu dans la requête
 sachant qu'il est de caste 'Caste'. Un contrôle est fait sur la caste.*/
-bso__bool rqm__request_manager_::GetValue(
-	rqm::cast Caste,
+kind rqm::request_manager___::GetValue(
+	cast Cast,
 	void *Valeur )
 {
-	bso__bool Return = false;
+	kind Kind = kUndefined;
 
-	if ( GetCast_() != Caste )
+	if ( GetCast_() != Cast )
 		ERRu();
 
-	GetValue_( Caste, Valeur );
+	GetValue_( Cast, Valeur );
 
-	if ( Multi_ )
+	if ( Array_ != NONE )
 	{
-		if ( ( Caste_ = GetCast_() ) == rqm::cEnd )
+		if ( ( Cast_ = GetCast_() ) == cEnd )
 		{
-			Multi_ = false;
-			Caste_ = rqm::cInvalid;
+			Array_ = NONE;
+			Cast_ = cInvalid;
 
-			Return = true;
-		}
-	}
+			Kind = kArrayLast;
+		} else 
+			Kind = kArray;
 
-	if ( ( Caste_ = GetCast_() ) == rqm::cMulti )
+	} else
+		Kind = kNormal;
+
+	if ( ( Cast_ = GetCast_() ) == cArray )
 	{
-		Multi_ = true;
-		Caste_ = rqm::cInvalid;
+		Array_ = Position_;
+		Cast_ = cInvalid;
 	}
 
-	return Return;
+	return Kind;
 }
 
 
@@ -485,14 +543,14 @@ ERRProlog
 ERRBegin
 
 	Test_( B );
-	#if !defined( CPE__VC )
+#if !defined( CPE__VC )
 	/* 'VC++' is the only compiler I know which doesn't pass the following test.
 	For this compiler, it doesn't matter.
 	If another compiler doesn't pass this test, that's very few chance that this
 	library doesn't work properly, but it can happen. If so, tell me.
 	*/
 	Test_( BV );
-	#endif
+#endif
 ERRErr
 ERREnd
 ERREpilog

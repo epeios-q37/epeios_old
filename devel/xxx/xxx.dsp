@@ -85,23 +85,23 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=\cvs\epeios\stable\CPP\err.cpp
+SOURCE=\cvs\epeios\stable\err.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=\cvs\epeios\stable\CPP\flw.cpp
+SOURCE=\cvs\epeios\stable\flw.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=\cvs\epeios\stable\CPP\stf.cpp
+SOURCE=\cvs\epeios\stable\stf.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=\cvs\epeios\stable\CPP\ttr.cpp
+SOURCE=\cvs\epeios\stable\ttr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=\cvs\epeios\stable\CPP\tol.cpp
+SOURCE=\cvs\epeios\stable\tol.cpp
 # End Source File
 # Begin Source File
 

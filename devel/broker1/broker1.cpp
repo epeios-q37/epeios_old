@@ -53,6 +53,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace broker1;
+
 const char *BROKER1CommandsNames[broker1::c_amount] = {
 	"_SetErrorBreakingStatus$1",
 	"_GetErrorBreakingStatus$1",
@@ -70,77 +72,77 @@ const char *BROKER1CommandsNames[broker1::c_amount] = {
 	"_GetParameters$1",
 };
 
-static const broker0::cast SetErrorBreakingStatus[] = {
-	broker0::cBoolean,	// Boolean of the new error modus.
-	broker0::cEnd,
-	broker0::cBoolean,	// Boolean of the old error modus.
-	broker0::cEnd };
-static const broker0::cast GetErrorBreakingStatus[] = {
-	broker0::cEnd,
-	broker0::cBoolean,	// Boolean of the old error modus.
-	broker0::cEnd };
-static const broker0::cast GetNewObject[] = {
-	broker0::cType,		// The type of the new object.
-	broker0::cEnd,
-	broker0::cObject,	// The asked object.
-	broker0::cEnd };
-static const broker0::cast GetType[] = {
-	broker0::cString,	// The name of the type.
-	broker0::cEnd,
-	broker0::cType,		// The type asked.
-	broker0::cEnd };
-static const broker0::cast GetCommand[] = {
-	broker0::cType,		// The object type.
-	broker0::cString,	// The command name.
-	broker0::cCasts,	// The casts of the command.
-	broker0::cEnd,
-	broker0::cCommand,	// The asked command.
-	broker0::cEnd };
-static const broker0::cast GetCommands[] = {
-	broker0::cType,		// The object type.
-	broker0::cMulti,	// The name and casts of the asked commands.
-	broker0::cEnd,
-	broker0::cMulti,	// The asked commands.
-	broker0::cEnd };
-static const broker0::cast GetTypeAndCommands[] = {
-	broker0::cString,	// The name of the type.
-	broker0::cMulti,	// Name and casts of the commands.
-	broker0::cEnd,
-	broker0::cType,		// The asked type.
-	broker0::cMulti,	// The asked commands.
-	broker0::cEnd };
-static const broker0::cast RemoveObject[] = {
-	broker0::cObject,	// The object to remove.
-	broker0::cEnd,
-	broker0::cEnd };
-static const broker0::cast GetLanguagesIDAndName[] = {
-	broker0::cEnd,
-	broker0::cMulti,	// The language IDs ('Id.16') and name ('String').
-	broker0::cEnd };
-static const broker0::cast GetVersion[] = {
-	broker0::cEnd,
-	broker0::cString,	// String containing the version.
-	broker0::cEnd };
-static const broker0::cast Disconnect[] = {
-	broker0::cEnd,
-	broker0::cEnd };
-static const broker0::cast GetTypesIDAndName[] = {
-	broker0::cEnd,
-	broker0::cMulti,	// The types ID and name ('String').
-	broker0::cEnd };
-static const broker0::cast GetCommandsIDAndName[] = {
-	broker0::cType,		// Type of objects from which you want the commands name.
-	broker0::cEnd,
-	broker0::cMulti,	// The names of the commands.
-	broker0::cEnd };
-static const broker0::cast GetParameters[] = {
-	broker0::cType,		// Type of objects from which you want the parameters.
-	broker0::cCommand,	// Command of objects from which you want the parameters.
-	broker0::cEnd,
-	broker0::cCasts,	// The parameters of the commands.
-	broker0::cEnd };
+static const cast SetErrorBreakingStatus[] = {
+	cBoolean,	// Boolean of the new error modus.
+	cEnd,
+	cBoolean,	// Boolean of the old error modus.
+	cEnd };
+static const cast GetErrorBreakingStatus[] = {
+	cEnd,
+	cBoolean,	// Boolean of the old error modus.
+	cEnd };
+static const cast GetNewObject[] = {
+	cType,		// The type of the new object.
+	cEnd,
+	cObject,	// The asked object.
+	cEnd };
+static const cast GetType[] = {
+	cString,	// The name of the type.
+	cEnd,
+	cType,		// The type asked.
+	cEnd };
+static const cast GetCommand[] = {
+	cType,		// The object type.
+	cString,	// The command name.
+	cCasts,	// The casts of the command.
+	cEnd,
+	cCommand,	// The asked command.
+	cEnd };
+static const cast GetCommands[] = {
+	cType,		// The object type.
+	cArray,	// The name and casts of the asked commands.
+	cEnd,
+	cArray,	// The asked commands.
+	cEnd };
+static const cast GetTypeAndCommands[] = {
+	cString,	// The name of the type.
+	cArray,	// Name and casts of the commands.
+	cEnd,
+	cType,		// The asked type.
+	cArray,	// The asked commands.
+	cEnd };
+static const cast RemoveObject[] = {
+	cObject,	// The object to remove.
+	cEnd,
+	cEnd };
+static const cast GetLanguagesIDAndName[] = {
+	cEnd,
+	cArray,	// The language IDs ('Id.16') and name ('String').
+	cEnd };
+static const cast GetVersion[] = {
+	cEnd,
+	cString,	// String containing the version.
+	cEnd };
+static const cast Disconnect[] = {
+	cEnd,
+	cEnd };
+static const cast GetTypesIDAndName[] = {
+	cEnd,
+	cArray,	// The types ID and name ('String').
+	cEnd };
+static const cast GetCommandsIDAndName[] = {
+	cType,		// Type of objects from which you want the commands name.
+	cEnd,
+	cArray,	// The names of the commands.
+	cEnd };
+static const cast GetParameters[] = {
+	cType,		// Type of objects from which you want the parameters.
+	cCommand,	// Command of objects from which you want the parameters.
+	cEnd,
+	cCasts,	// The parameters of the commands.
+	cEnd };
 
-const broker0::cast *BROKER1CommandsParameters[broker1::c_amount] = {
+const cast *BROKER1CommandsParameters[broker1::c_amount] = {
 	SetErrorBreakingStatus,
 	GetErrorBreakingStatus,
 	GetNewObject,

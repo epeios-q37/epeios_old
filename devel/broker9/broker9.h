@@ -56,6 +56,8 @@ extern class ttr_tutor &BROKER9Tutor;
 /*$BEGIN$*/
 //D BROKER part 9.
 
+#error Obsolete. Use library 'BROKER' instead.
+
 #include "err.h"
 #include "flw.h"
 #include "rqm.h"
