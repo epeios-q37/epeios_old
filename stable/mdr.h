@@ -74,6 +74,8 @@ namespace mdr {
 
 	//t The position in a memory.
 	typedef bso::ulong__	row__;
+	#define MDR_ROW_MAX		( BSO_ULONG_MAX - 1 )	// 'BSO_ULONG_MAX' is 'NONE'.
+
 
 	//t The size of a memory.
 	typedef bso::ulong__	size__;

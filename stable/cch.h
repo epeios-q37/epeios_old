@@ -82,16 +82,19 @@ extern class ttr_tutor &CCHTutor;
 #endif
 
 namespace cch {
-	//t Size of a buffer.
-	typedef bso::bsize__ bsize__;
+	//t Size of a cache.
+	typedef bso::bsize__ csize__;
+
+	using bso::bsize__;
 
 	//t Position in the buffer.
 	typedef bso::bsize__ position__;
 
-#define CCH_POSITION_MAX	BSO_BSIZE_MAX
+	#define CCH_POSITION_MAX	BSO_BSIZE_MAX
+	#define CCH_ROW_MAX		EPEIOS_ROW_MAX
 
 	//t Amount of data in a buffer.
-	typedef bso::bsize__ amount__;
+	typedef csize__ amount__;
 
 	template <class type__, typename r> class const_bunch_caller__
 	{
@@ -105,38 +108,47 @@ namespace cch {
 		virtual bch::E_BUNCHt_( type__, r ) &CCHGetBunch( void ) = 0;
 	};
 
+	//e How the cache is filled for the first time.
+	enum first_cache_justification__ {
+		fcjLeft,
+		fcjRight,
+		fcjCentered,
+		fcj_amount,
+		fcj_Undefined
+	};
+
 	// The core of a cache of static objects of type 'type'.
 	template <class type__, typename r, class bunch_caller__> class const_bunch_cache___
 	: public bunch_caller__
 	{
 	protected:
 		// The buffer which acts as cache.
-		type__ *Buffer_;
-		// At true if 'Buffer' was created internally.
+		type__ *Cache_;
+		// At true if 'Cache' was created internally.
 		bso::bool__ Internal_;
-		// Size of 'Buffer'.
-		bsize__ Size_;
-		// Amount of data in 'Buffer'
+		// Size of 'Cache'.
+		csize__ Size_;
+		// Amount of data in 'Cache'
 		amount__ Amount_;
 		// Position of the first data of the cache in the bunch.
 		epeios::row_t__ Position_;
-		bso::bool__ IsInsideBuffer_(
+		bso::bool__ IsInsideCache_(
 			r Position,
 			epeios::size__ Amount )
 		{
 			return ( *Position >= Position_ )
 				     && ( ( *Position + Amount ) <= ( Position_ + Amount_ ) );
 		}
-		void ReadFromBuffer_(
+		void ReadFromCache_(
 			r Position,
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
 #ifdef CCH_DBG
-			if ( !IsInsideBuffer_( Position, Amount ) )
+			if ( !IsInsideCache_( Position, Amount ) )
 				ERRc();
 #endif
-			memcpy( Buffer, *Position - Position_ + Buffer_, Amount * sizeof( type__ ) );
+			memcpy( Buffer, *Position - Position_ + Cache_, Amount * sizeof( type__ ) );
 		}
 		epeios::size__ BunchAmount_( void )
 		{
@@ -184,7 +196,7 @@ namespace cch {
 			}
 
 			if ( Amount_ != 0 )
-				ReadDirectlyFromBunch_( Position_, Amount_, Buffer_ );
+				ReadDirectlyFromBunch_( Position_, Amount_, Cache_ );
 			else
 				Position_ = NONE;
 		}
@@ -194,13 +206,13 @@ namespace cch {
 			if ( P ) {
 				if ( Internal_ )
 #ifdef CCH__USE_SMA_HEAP
-					Heap.Free( Buffer_ );
+					Heap.Free( Cache_ );
 #else
-					tol::Free( Buffer_ );
+					tol::Free( Cache_ );
 #endif
 			}
 
-			Buffer_ = NULL;
+			Cache_ = NULL;
 			Internal_ = false;
 			Size_ = 0;
 			Amount_ = 0;
@@ -219,15 +231,33 @@ namespace cch {
 		//f Initialisation with 'Buffer' of size 'Size'.
 		void Init(
 			type__ *Buffer,
-			bsize__ Size )
+			epeios::bsize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
 			reset();
 
-			Buffer_ = Buffer;
+			Cache_ = Buffer;
 			Size_ = Size;
+
+			switch( FirstCacheJustification ) {
+			case fcjLeft:
+				Position_ = CCH_ROW_MAX;
+				break;
+			case fcjRight:
+				Position_ = 0;
+				break;
+			case fcjCentered:
+				Position_ = NONE;
+				break;
+			default:
+				ERRu();
+				break;
+			}
 		}
 		//f Initialisation and creation of a buffer of size 'Size'.
-		void Init( bsize__ Size )
+		void Init(
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
 #ifdef CCH__USE_SMA_HEAP
 			type__ *Buffer = (type__ *)Heap.Allocate( Size * sizeof( type__ ) );
@@ -238,7 +268,7 @@ namespace cch {
 			if ( Buffer == NULL )
 				ERRa();
 
-			Init( Buffer, Size );
+			Init( Buffer, Size, FirstCacheJustification );
 
 			Internal_ = true;
 		}
@@ -257,7 +287,7 @@ namespace cch {
 		{
 			CCHGetBunch().Allocate( Size );
 		}
-		void WriteIntoBuffer_(
+		void WriteIntoCache_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
@@ -265,7 +295,7 @@ namespace cch {
 			position__ First = *Position - Position_;
 			position__ Last = First + Amount - 1;
 #ifdef CCH_DBG
-			if ( !IsInsideBuffer_( Position, Amount ) )
+			if ( !IsInsideCache_( Position, Amount ) )
 				ERRc();
 #endif
 			if ( First < First_ )
@@ -274,7 +304,7 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( Buffer_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
@@ -293,7 +323,7 @@ namespace cch {
 					if ( ( Position_ + Amount_ ) > BunchAmount_() )
 						ERRc();
 #endif
-					WriteDirectlyIntoBunch_( Buffer_ + First_, Last_ - First_ + 1, Position_ );
+					WriteDirectlyIntoBunch_( Cache_ + First_, Last_ - First_ + 1, Position_ );
 				}
 
 			Amount_ = 0;
@@ -344,8 +374,8 @@ namespace cch {
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			if ( IsInsideBuffer_( Position, Amount ) )
-				ReadFromBuffer_( Position, Amount, Buffer );
+			if ( IsInsideCache_( Position, Amount ) )
+				ReadFromCache_( Position, Amount, Buffer );
 			else {
 				Amount_ = 0;
 				Position_ = NONE;
@@ -354,7 +384,7 @@ namespace cch {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
-					ReadFromBuffer_( Position, Amount, Buffer );
+					ReadFromCache_( Position, Amount, Buffer );
 				}
 			}
 		}
@@ -401,14 +431,17 @@ namespace cch {
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
 			type__ *Buffer,
-			bsize__ Size )
+			epeios::bsize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Buffer, Size );
+			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Buffer, Size, FirstCacheJustification );
 		}
 		//f Initialisation and creation of a buffer of size 'Size'.
-		void Init( bsize__ Size )
+		void Init(
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Size );
+			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Size, FirstCacheJustification );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Read(
@@ -416,8 +449,8 @@ namespace cch {
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			if ( IsInsideBuffer_( Position, Amount ) )
-				ReadFromBuffer_( Position, Amount, Buffer );
+			if ( IsInsideCache_( Position, Amount ) )
+				ReadFromCache_( Position, Amount, Buffer );
 			else {
 				DumpCache_( AppendMode_ );
 				AppendMode_ = false;
@@ -426,7 +459,7 @@ namespace cch {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
-					ReadFromBuffer_( Position, Amount, Buffer );
+					ReadFromCache_( Position, Amount, Buffer );
 				}
 			}
 		}
@@ -445,8 +478,8 @@ namespace cch {
 			epeios::size__ Amount,
 			r Position )
 		{
-			if ( IsInsideBuffer_( Position, Amount ) )
-				WriteIntoBuffer_( Buffer, Amount, Position );
+			if ( IsInsideCache_( Position, Amount ) )
+				WriteIntoCache_( Buffer, Amount, Position );
 			else {
 				DumpCache_( false );
 
@@ -454,7 +487,7 @@ namespace cch {
 					WriteDirectlyIntoBunch_( Buffer, Amount, Position );
 				} else {
 					FillCache_( Position, Amount );
-					WriteIntoBuffer_( Buffer, Amount, Position );
+					WriteIntoCache_( Buffer, Amount, Position );
 				}
 			}
 		}
@@ -483,7 +516,7 @@ namespace cch {
 				AppendMode_ = true;
 			}
 
-			WriteIntoBuffer_( &Data, 1, Position = Position_ + Amount_++ );
+			WriteIntoCache_( &Data, 1, Position = Position_ + Amount_++ );
 
 			return Position;
 		}
@@ -535,18 +568,20 @@ namespace cch {
 		void Init(
 			const bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			bsize__ Size )
+			epeios::bsize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_only_cache___<type__, r>::Init( Buffer, Size );
+			core_read_only_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
 		//f Initialisation and creation of a buffer of size 'Size'.
 		void Init( 
 			const bch::bunch_<type__, r> &Bunch,
-			bsize__ Size )
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_only_cache___<type__, r>::Init( Size );
+			core_read_only_cache___<type__, r>::Init( Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
@@ -582,18 +617,20 @@ namespace cch {
 		void Init(
 			bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			bsize__ Size )
+			epeios::bsize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_write_cache___<type__, r>::Init( Buffer, Size );
+			core_read_write_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
 		//f Initialisation with bunch 'Bunch', and creation of a buffer of size 'Size'.
 		void Init(
 			bch::bunch_<type__, r> &Bunch,
-			bsize__ Size )
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_write_cache___<type__, r>::Init( Size );
+			core_read_write_cache___<type__, r>::Init( Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
@@ -634,9 +671,10 @@ namespace cch {
 		void Init(
 			ctn::E_CMITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
-			bsize__ Size )
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_only_cache___<type__, rb>::Init( Size );
+			core_read_only_cache___<type__, rb>::Init( Size, FirstCacheJustification );
 
 			PositionInContainer_ = PositionInContainer;
 			Item_ = &Item;
@@ -677,9 +715,10 @@ namespace cch {
 		void Init(
 			ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
-			bsize__ Size )
+			csize__ Size,
+			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_write_cache___<type__, rb>::Init( Size );
+			core_read_write_cache___<type__, rb>::Init( Size, FirstCacheJustification );
 
 			PositionInContainer_ = PositionInContainer;
 			Item_ = &Item;
@@ -695,7 +734,8 @@ namespace cch {
 		bch::E_BUNCHt( item_cache *, rc ) Caches_;
 		read_only_cache___<item_cache *, rc> Cache_;
 		item Item_;
-		bsize__ BufferSize_;
+		csize__ CacheSize_;
+		first_cache_justification__ FirstCacheJustification_;
 		void _Fill(
 			rc First,
 			rc Last )
@@ -738,7 +778,7 @@ namespace cch {
 				IC->reset( false );
 #endif
 
-				IC->Init( Item_, P, BufferSize_ );
+				IC->Init( Item_, P, CacheSize_, FirstCacheJustification_ );
 				Caches_.Store( IC, P );
 			}
 
@@ -756,7 +796,8 @@ namespace cch {
 			Item_.reset( P );
 
 			Caches_.reset( P );
-			BufferSize_ = 0;
+			CacheSize_ = 0;
+			FirstCacheJustification_ = fcj_Undefined;
 
 		}
 		read_only_caches___( void )
@@ -771,12 +812,15 @@ namespace cch {
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			const ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
-			bsize__ Size,
-			bsize__ IntermediateSize )
+			csize__ Size,
+			csize__ IntermediateSize,
+			first_cache_justification__ FirstCacheJustification )
 		{
 			reset();
 
-			BufferSize_ = Size;
+			CacheSize_ = Size;
+
+			FirstCacheJustification_ = FirstCacheJustification;
 
 			Item_.Init( Container );
 
@@ -784,7 +828,7 @@ namespace cch {
 
 			Allocate( Container.Amount() );
 
-			Cache_.Init( Caches_, IntermediateSize );
+			Cache_.Init( Caches_, IntermediateSize, fcjCentered );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Read(
@@ -872,12 +916,15 @@ namespace cch {
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
-			bsize__ Size,
-			bsize__ IntermediateSize )
+			csize__ Size,
+			csize__ IntermediateSize,
+			first_cache_justification__ FirstCacheJustification )
 		{
 			reset();
 
-			BufferSize_ = Size;
+			CacheSize_ = Size;
+
+			FirstCacheJustification_ = FirstCacheJustification;
 
 			Item_.Init( Container );
 
@@ -885,7 +932,7 @@ namespace cch {
 
 			Allocate( Container.Amount() );
 
-			Cache_.Init( Caches_, IntermediateSize );
+			Cache_.Init( Caches_, IntermediateSize, fcjCentered );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Write(

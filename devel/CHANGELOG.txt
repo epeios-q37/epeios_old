@@ -57,6 +57,7 @@ DTE:
 
 EPEIOS:
 - (15/06/04) Adding some useful constants.
+- (26/09/04) Adding 'EPEIOS_ROW_MAX'.
 
 EPSMSC:
 - Adding 'EPSMSC_COPYRIGHT()' macro.
@@ -103,6 +104,7 @@ LCK:
 
 MDR:
 - (15/06/04) Adding some useful constants.
+- (26/09/04) Adding 'MDR_ROW_MAX'.
 
 MMG:
 - (19/07/04) Adapting to changes in 'FLW' library.

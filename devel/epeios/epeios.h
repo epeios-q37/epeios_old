@@ -73,6 +73,10 @@ extern class ttr_tutor &EPEIOSTutor;
 namespace epeios {
 	typedef mdr::row__	row_t__;
 	E_TYPEDEF( row_t__, row__ );
+
+	#define EPEIOS_ROW_MAX	MDR_ROW_MAX
+
+
 	using mdr::size__;
 	#define EPEIOS_SIZE_MAX	MDR_SIZE_MAX
 
