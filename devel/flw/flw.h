@@ -325,7 +325,7 @@ namespace flw {
 			return C;
 		}
 		//f Skip 'Amount' bytes.
-		void Skip( amount__ Amount )
+		void Skip( amount__ Amount = 1 )
 		{
 			while ( Amount-- )
 				Get();
