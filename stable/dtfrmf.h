@@ -73,7 +73,7 @@ extern class ttr_tutor &DTFRMFTutor;
 namespace dtfrmf {
 	using namespace dtfbsc;
 	
-		//f Put 'Short' in 'Flow'.
+	//f Put 'Short' in 'Flow'.
 	inline void PutShort(
 		short__ Short,
 		flw::oflow___ &Flow )
@@ -116,7 +116,15 @@ namespace dtfrmf {
 		// return (long__)( (long__)GetShort( Flow ) | (long__)( (long__)GetShort( Flow ) << 16 ) );
 		// Don't work with CW : in 'a + b', seems to evaluate 'b' before 'a'.
 	}
+
+	//f Write 'Size' into 'Flow'.
+	void PutSize(
+		bso::ulong__ Size,
+		flw::oflow___ &Flow );
 	
+	//f Return size stored in 'Flow'.
+	bso::ulong__ GetSize( flw::iflow___ &Flow );
+
 	//f Encapsulates 'Data' in flow (put size and then the contents of data as is).
 	void Encapsulate(
 		const flx::bunch_ &Data,

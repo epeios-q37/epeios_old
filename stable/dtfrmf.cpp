@@ -57,6 +57,73 @@ public:
 
 using namespace dtfrmf;
 
+
+#define M1	255
+#define M2	65535
+#define M3	16777215
+
+void dtfrmf::PutSize(
+	bso::ulong__ Size,
+	flw::oflow___ &Flow )
+{
+	if ( Size >= M1 )
+	{
+		Flow.Put( (flw::datum__)M1 );
+		Size -= M1;
+
+		if ( Size >= M2 )
+		{
+			Flow.Put( (flw::datum__)M1 );
+			Flow.Put( (flw::datum__)M1 );
+			Size -= M2;
+
+			if ( Size >= M3 )
+			{
+				Flow.Put( (flw::datum__)M1 );
+				Flow.Put( (flw::datum__)M1 );
+				Flow.Put( (flw::datum__)M1 );
+
+				Size -= M3;
+
+				Flow.Put( (flw::datum__)( ( Size & ( 255 << 24 ) ) >> 24 ) );
+			}
+			Flow.Put( (flw::datum__)( ( Size & ( 255 << 16 ) ) >> 16 ) );
+		}
+		Flow.Put( (flw::datum__)( ( Size & ( 255 << 8 ) ) >> 8 ) );
+	}
+	Flow.Put( (flw::datum__)( Size & 255 ) );
+}
+
+bso::ulong__ dtfrmf::GetSize( flw::iflow___ &IFlow )
+{
+	bso::ulong__ Size = (bso::ubyte__)IFlow.Get();
+
+	if ( Size == M1 )
+	{
+		flw::datum__ Data[4];
+
+		IFlow.Get( 2, Data );
+
+		Size += ( Data[0] << 8 ) | Data[1];
+
+		if ( Size == ( M1 + M2 ) )
+		{
+			IFlow.Get( 3, Data );
+
+			Size += ( Data[0] << 16 ) | ( Data[1] << 8 ) | Data[2];
+
+			if ( Size == ( M1 + M2 + M3 ) ) {
+
+				IFlow.Get( 4, Data );
+
+				Size += ( Data[0] << 24 ) | ( Data[1] << 16 ) | ( Data[2] << 8 ) | Data[3];
+			}
+		}
+	}
+
+	return Size;
+}
+
 void dtfrmf::Encapsulate(
 	const flx::bunch_ &Data,
 	flw::oflow___ &Flow )
@@ -69,7 +136,7 @@ ERRBegin
 	
 	Size = Data.Amount();
 	
-	PutLong( Size, Flow );
+	PutSize( Size, Flow );
 
 	while( Size-- )	// Should be optimized by using a buffer.
 		Flow.Put( IFlow.Get() );
@@ -88,7 +155,7 @@ ERRProlog
 ERRBegin
 	OFlow.Init( Data );
 
-	Size = GetLong( Flow );
+	Size = GetSize( Flow );
 
 	while( Size-- )	// Should be optimized by using a buffer.
 		OFlow.Put( Flow.Get() );
