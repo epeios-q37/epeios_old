@@ -68,6 +68,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 &tol		&epeios		&2000-		&TOoL
 &ttr		&epeios		&2000-		&TuToR
+&txf		&epeios		&2000-		&TeXt Flow
 &tym		&epeios		&2000-		&TYped Memory
 &uym		&epeios		&2000-		&UnTyped Memory
 &wsaabc		&ewsa		&2000-		&Web Site Agent ABCbourse.com

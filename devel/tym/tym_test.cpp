@@ -56,6 +56,7 @@ ERRProlog
 	mfc_pilote_memoire_fichier R2;
 */	tym::E_MEMORY( mytype__ ) M1;
 	tym::E_MEMORY( mytype__ ) M2;
+	tym::E_MEMORY__( mytype__, 3 ) M3;
 	bso::ulong__ I;
 	mytype__ J;
 	ifstream IN;
@@ -70,6 +71,8 @@ ERRBegin
 
 	M2.Init();
 	M2.Allocate( TAILLE_MEMOIRE );
+
+	M3.Init();
 
 	for ( I = 0; I < TAILLE_MEMOIRE; I++ )
 	{

@@ -67,10 +67,10 @@ extern class ttr_tutor &TOLTutor;
 
 #include "cpe.h"
 
-#if defined( CPE__MS ) || defined( CPE__UNIX ) || defined( CPE__BEOS ) || defined( CPE__CW )
-#include <sys/timeb.h>
-#else
-#error "Unknown compilation enviroment"
+#if defined( CPE__VC ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
+#	include <sys/timeb.h>
+#elif !defined( CPE__CW )
+#	error "Unknown compilation enviroment"
 #endif
 
 #include "err.h"
@@ -439,6 +439,7 @@ namespace tol {
 	//f Return current date é time.
 	const char *DateAndTime( void );
 
+#ifndef CPE__CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'ckock()' only return how long
 	the application is using the processor.*/
@@ -453,6 +454,7 @@ namespace tol {
 
 		return T.time * 1000UL + T.millitm;
 	}
+#endif
 
 	//f Wait 'Seconds' seconds.
 	void Wait( unsigned int Seconds );
