@@ -121,7 +121,7 @@ raw_date__ date__::_Convert( const char *Date )
 			while( *Date && !isdigit( *Date ) )
 				Date++;
 
-			if ( !*Date ) {
+			if ( *Date ) {
 
 				while( isdigit( *Date ) )
 					Annee = Annee * 10 + *Date++ - '0';

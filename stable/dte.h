@@ -201,7 +201,7 @@ namespace dte {
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Add 'Amount' Month.
-		void AddMonth( bso::ulong__ Amount )
+		void AddMonth( bso::ulong__ Amount = 1 )
 		{
 			bso::ulong__ Month = this->Month() + Amount - 1; 
 
@@ -211,6 +211,73 @@ namespace dte {
 		bso::bool__ IsValid( void ) const
 		{
 			return RawDate_ != DTE_INVALID_DATE;
+		}
+		//f Return true if date is in a leap year, false otherwise.
+		bso::bool__ IsLeapYear( year__ Year = 0 ) const
+		{
+			if ( Year == 0 )
+				Year = this->Year();
+		    return ( ( ( Year % 4 ) == 0 )
+					   && ( ( Year % 100 ) != 0 ) )
+					 || ( ( Year % 400 ) == 0 );
+		}
+		day__ GetAmountOfDaysInMonth(
+			month__ Month = 0,
+			year__ Year = 0 ) const
+		{
+			if ( Month == 0 )
+				Month = this->Month();
+
+			if ( Year == 0 )
+				Year = this->Year();
+
+			switch ( Month ) {
+			case 2: // Februrary
+				if ( IsLeapYear( Year ) )
+					return 29;
+				else
+					return 28;
+				break;
+			case 4: // April Falls Through
+			case 6: // June
+			case 9: // September
+			case 11: // November
+				return 30;
+				break;
+			default:
+				return 31;
+			}
+	    } 
+		void AddDay( void )
+		{
+			if ( Day() == GetAmountOfDaysInMonth() ) {
+				Date( 1, Month(), Year() );
+				AddMonth();
+			} else
+				Date( Day() + 1, Month(), Year() );
+		}
+		// Sunday == 0.
+		day__ GetDayInWeek(
+			day__ Day = 0,
+			month__ Month = 0,
+			year__ Year = 0 )
+		{
+			if ( Day == 0 )
+				Day = this->Day();
+
+			if ( Month == 0 )
+				Month = this->Month();
+
+			if ( Year == 0 )
+				Year = this->Year();
+
+			if ( Month < 3 ) {
+				Month += 12;
+				Year -= 1;
+			}
+			return ( ( Day + 1 + ( Month * 2 ) + ( int )( ( Month + 1 ) * 3 / 5 )
+				       + Year + (int)( Year / 4 ) - (int)( Year / 100)
+					   + (int) ( Year / 400 ) ) % 7 );
 		}
 	};
 
