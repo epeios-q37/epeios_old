@@ -72,7 +72,7 @@ namespace ids {
 		// Return true if 'Id' available, false otherwise.
 		bso::bool__ IsAvailable_( id__ ID ) const
 		{
-			return Released.Exists( ID ) || ( ID >= S_.FirstUnused );
+			return Released.Exists( ID ) || ( *ID >= *S_.FirstUnused );
 		}
 	public:
 		struct s
@@ -123,7 +123,7 @@ namespace ids {
 				ID = this->Released.Pop();
 				Released = true;
 			} else {
-				ID = S_.FirstUnused++;
+				ID = (*S_.FirstUnused)++;
 
 				if ( S_.FirstUnused == 0 )
 					ERRl();
@@ -143,8 +143,8 @@ namespace ids {
 		//f Mark 'ID' as used. Return true if 'ID' out of range. For restoration purpose only.
 		bso::bool__ RestorationNew( id__ ID )
 		{
-			if ( ID >= S_.FirstUnused ) {
-				S_.FirstUnused = ID + 1;
+			if ( *ID >= *S_.FirstUnused ) {
+				S_.FirstUnused = *ID + 1;
 				return true;
 			} else {
 #ifdef IDS_DBG
@@ -172,8 +172,8 @@ namespace ids {
 			if ( IsAvailable( ID ) )
 				ERRu();
 #endif
-			if ( ID >= S_.FirstUnused )
-				S_.FirstUnused = ID + 1;
+			if ( *ID >= *S_.FirstUnused )
+				S_.FirstUnused = *ID + 1;
 
 			Release( ID );
 		}

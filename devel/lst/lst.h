@@ -66,7 +66,7 @@ extern class ttr_tutor &LSTTutor;
 
 namespace lst {
 
-	typedef ids::E_IDS_STORE_( epeios::row_t__ ) store_;
+	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
@@ -100,13 +100,13 @@ namespace lst {
 		// Return the extent, based on 'Locations'.
 		epeios::row_t__ Extent_( void ) const
 		{
-			return Locations.GetFirstAvailable();
+			return *Locations.GetFirstAvailable();
 		}
 		epeios::row_t__ Nouveau_( void )
 		{
 			bso::bool__ Released = false;
 
-			epeios::row_t__ New = Locations.New( Released );
+			epeios::row_t__ New = *Locations.New( Released );
 
 			if ( !Released )
 				LSTAllocate( Extent_() );
@@ -183,7 +183,7 @@ namespace lst {
 		r New( r Row )
 		{
 			if ( Row != NONE ) {
-				r FirstAvailable = Locations.GetFirstAvailable();
+				r FirstAvailable = *Locations.GetFirstAvailable();
 
 				if ( Locations.RestorationNew( *Row ) )
 					MarkAsReleased_( *FirstAvailable, *Row - 1, Locations );
