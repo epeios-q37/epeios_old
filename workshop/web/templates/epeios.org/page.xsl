@@ -9,7 +9,7 @@
 	<xsl:template match="document">
 		<xsl:if test="specific/WEB/@hierarchy=$hierarchy">
 			<xsl:if test="specific/WEB/@name=$name">
-				<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"></xsl:text>
+				<xsl:text>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"></xsl:text>
 				<xsl:element name="html">
 	        		<xsl:element name="head">
 						<xsl:apply-templates select="specific/WEB" mode="head"/>
@@ -80,9 +80,9 @@
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="document" mode="body">
-		<xsl:text disable-output-escaping="yes">&lt;!-- </xsl:text>
+		<xsl:text>&lt;!-- </xsl:text>
 		<xsl:value-of select="general/@abstract"/>
-		<xsl:text disable-output-escaping="yes"> --></xsl:text>
+		<xsl:text> --></xsl:text>
 		<xsl:element name="table">
 			<xsl:attribute name="border">0</xsl:attribute>
 			<xsl:attribute name="cellpadding">0</xsl:attribute>
@@ -172,7 +172,7 @@
 							<xsl:attribute name="size">2</xsl:attribute>
 							<xsl:element name="em">
 								<xsl:text>Copyright </xsl:text>
-								<xsl:text disable-output-escaping="yes">&amp;#169; </xsl:text>
+								<xsl:text>&amp;#169; </xsl:text>
 								<xsl:value-of select="general/copyright/date"/>
 								<xsl:text> </xsl:text>
 								<xsl:element name="a">

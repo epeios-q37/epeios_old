@@ -1,42 +1,54 @@
-
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="chapter" mode="index">
-    <LI>
-      <a href="#{generate-id()}">
-        <xsl:value-of select="@title"/>
-      </a>
-      <OL>
-        <xsl:apply-templates select="chapter" mode="index"/>
-        <xsl:text>
-          <!-- To avoid <OL/>-->
-        </xsl:text>
-      </OL>
-    </LI>
-  </xsl:template>
-  <xsl:template match="chapter">
-    <H2>
-      <U>
-        <a name="{generate-id()}"/>
-        <xsl:value-of select="@title"/>
-      </U>
-    </H2>
-    <xsl:apply-templates/>
-  </xsl:template>
-  <xsl:template match="chapter/chapter">
-    <H3>
-      <a name="{generate-id()}"/>
-      <xsl:value-of select="@title"/>
-    </H3>
-    <xsl:apply-templates/>
-  </xsl:template>
-  <xsl:template match="chapter/chapter/chapter">
-    <H4>
-      <blockquote>
-        <a name="{generate-id()}"/>
-        <xsl:value-of select="@title"/>
-      </blockquote>
-    </H4>
-    <xsl:apply-templates/>
-  </xsl:template>
+	<xsl:template match="chapter" mode="index">
+		<xsl:element name="li">
+			<xsl:element name="a">
+				<xsl:attribute name="href">
+					<xsl:text>#</xsl:text>
+					<xsl:value-of select="generate-id()"/>
+				</xsl:attribute>
+				<xsl:value-of select="@title"/>
+			</xsl:element>
+			<xsl:element name="ol">
+				<xsl:apply-templates select="chapter" mode="index"/>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="chapter">
+		<xsl:element name="h2">
+			<xsl:element name="u">
+				<xsl:element name="a">
+					<xsl:attribute name="name">
+						<xsl:value-of select="generate-id()"/>
+					</xsl:attribute>
+				</xsl:element>
+			</xsl:element>
+			<xsl:value-of select="@title"/>
+		</xsl:element>
+		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="chapter/chapter">
+		<xsl:element name="h3">
+			<xsl:element name="a">
+				<xsl:attribute name="name">
+					<xsl:value-of select="generate-id()"/>
+				</xsl:attribute>
+			</xsl:element>
+			<xsl:value-of select="@title"/>
+		</xsl:element>
+		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="chapter/chapter/chapter">
+		<xsl:element name="h4">
+			<xsl:element name="blockquote">
+				<xsl:element name="a">
+					<xsl:attribute name="name">
+						<xsl:value-of select="generate-id()"/>
+					</xsl:attribute>
+				</xsl:element>
+				<xsl:value-of select="@title"/>
+			</xsl:element>
+		</xsl:element>
+		<xsl:apply-templates/>
+	</xsl:template>
 </xsl:stylesheet>

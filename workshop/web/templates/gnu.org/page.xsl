@@ -3,7 +3,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:template match="/">
-    <xsl:text disable-output-escaping="yes">&lt;DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN"></xsl:text>
+    <xsl:text>&lt;DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN"></xsl:text>
     <HTML>
       <HEAD>
         <xsl:apply-templates select="document/specific/WEB" mode="head"/>
