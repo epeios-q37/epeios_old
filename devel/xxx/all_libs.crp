@@ -1,3 +1,12 @@
 # Details for each library.
 NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
+&xmlbsc	&exml	&2000-		&XML BaSiC
+&xmlcor	&exml	&2000-		&XML CORe
+&xmldbs	&exml	&2000-		&XML DataBaSe
+&xmldcm	&exml	&2000-		&XML DoCuMent
+&xmlprs	&exml	&2000-		&XML PaRSer
+&xmltag	&exml	&2000-		&XML TAG
+&xmltol	&exml	&2000-		&XML TOoL
+&xmlval	&exml	&2000-		&XML VALue
+
