@@ -3,7 +3,8 @@ $Id$
 GENERAL:
 - moving backed-related libraries ('BDKEND', 'BDKxxx' & also 'FRTEND') to 'ebkd' sub-project.
 - moving cgi-related libraries and software ('FRTEND', 'URLARG' and 'getbkdapi') to 'ecgi' sub-project.
-- Using the g++ 3.0 dur to an ICE by gcc 2.95.3
+- Using the g++ 3.0 due to an ICE by gcc 2.95.3
+- Removing the obolete 'BRK*' and 'BROKER' libraries. You may use the libraries from the 'ebkd' sub-project.
 
 BCH:
 - Adding the 'Init()' function with parameter.

@@ -1,4 +1,4 @@
 # $Id$
-export DIR=workdir/epeios-c++-libraries_`date +%Y-%m-%d`
+export DIR=workdir/epeios-sources_`date +%Y-%m-%d`
 ncftpput -v download.sourceforge.net /incoming $DIR.tar.gz $DIR.tar.bz2 $DIR.zip
 rm -rf workdir

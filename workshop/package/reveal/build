@@ -2,7 +2,7 @@
 
 mkdir workdir
 cd workdir
-export DIR=reveal_`date +%Y-%m-%d`
+export DIR=reveal-sources_`date +%Y-%m-%d`
 cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios login
 cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -l -D today -d $DIR stable/
 cvs -z3 -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios export -D today -d $DIR tools/reveal

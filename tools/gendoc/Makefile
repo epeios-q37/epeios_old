@@ -59,7 +59,7 @@ co = -c
 # Generates debugging data.
 #co += -g
 # General optimization.
-#co += -O
+co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)

@@ -17,7 +17,7 @@ mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
 rm $DIR/cgi.php
-cp ~/website/libraries/ebkd/documentation/quickdoc/quickdoc.html $DIR
+cp ~/website/libraries/ebkd/quickdoc/quickdoc.html $DIR
 tar --gzip -cf $DIR.tar.gz $DIR
 tar -c $DIR | bzip2 >$DIR.tar.bz2
 zip -r -q $DIR.zip $DIR
