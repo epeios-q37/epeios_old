@@ -1,7 +1,7 @@
 /*
 	'uym' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'uym' header file ('uym.h').
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -145,7 +147,7 @@ void uym::Copy_(
 		if ( Nombre )
 		{
 			Source.Read( PosSource, Nombre, Tampon );
-			Dest.Write( Tampon, Nombre, PosDest );
+			Dest.Write( Tampon, (bsize__)Nombre, PosDest );
 		}
 	}
 	else
@@ -166,7 +168,7 @@ void uym::Copy_(
 		if ( Nombre )
 		{
 			Source.Read( PosSource - Nombre, Nombre, Tampon );
-			Dest.Write( Tampon, Nombre, PosDest - Nombre );
+			Dest.Write( Tampon, (bsize__)Nombre, PosDest - Nombre );
 		}
 	}
 }

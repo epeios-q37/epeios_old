@@ -1,6 +1,6 @@
 /*
 	Header for the 'uym' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -406,25 +406,25 @@ namespace uym {
 	class _memory__
 	{
 	private:
-		data__ *Data_;
+		data__ **Data_;
 	public:
 		void reset( bso::bool__ = true )
 		{
 			Data_ = NULL;
 		}
-		_memory__( void )
+		_memory__( data__ *&Data )
 		{
 			reset( false );
+
+			Data_ = &Data;
 		}
 		~_memory__( void )
 		{
 			reset( true );
 		}
 		//f Initialization.
-		void Init( data__ *Data )
-		{
-			Data_ = Data;
-		}
+		void Init( void )
+		{}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Read(
 			row__ Position,
@@ -444,14 +444,14 @@ namespace uym {
 		//f Return byte at 'Position'.
 		data__ Read( row__ Position ) const
 		{
-			return Data_[Position];
+			return *Data_[Position];
 		}
 		//f Write 'Byte' at 'Position'.
 		void Write(
 			data__ Byte,
 			row__ Position )
 		{
-			Data_[Position] = Byte;
+			*Data_[Position] = Byte;
 		}
 		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
 		void Read(
@@ -478,7 +478,7 @@ namespace uym {
 			row__ Position = 0,
 			row__ Offset = 0 )
 		{
-			Source.Read( Position, Quantity, Data_ + Offset );
+			Source.Read( Position, Quantity, *Data_ + Offset );
 		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Fill(
@@ -495,7 +495,7 @@ namespace uym {
 		//f Return the used buffer.
 		const data__ *Buffer( void ) const
 		{
-			return Data_;
+			return *Data_;
 		}
 	};
 
@@ -518,7 +518,7 @@ namespace uym {
 	public:
 		struct s {};	// To simplify use in library 'SET'
 		untyped_memory__( s &S = *(s *)NULL )
-		: _memory__() {}
+			: _memory__( &Data_[0] ) {}
 		// Simplifies the 'SET' library.
 		void Allocate( uym::size__ Size )
 		{
@@ -527,7 +527,7 @@ namespace uym {
 		}
 		void Init( void )
 		{
-			_memory__::Init( Data_ );
+			_memory__::Init();
 		}
 	};
 
@@ -550,7 +550,7 @@ namespace uym {
 			Data_ = NULL;
 		}
 		untyped_memory___( s &S = *(s *)NULL )
-		: _memory___()
+		: _memory___( Data_ )
 		{
 			reset( false );
 		}
@@ -568,7 +568,7 @@ namespace uym {
 		{
 			tol::Free( Data_ );
 
-			_memory___::Init( Data_ );
+			_memory___::Init();
 		}
 	};
 }

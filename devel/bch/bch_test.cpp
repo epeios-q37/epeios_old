@@ -52,6 +52,58 @@ ERREpilog
 using namespace txf;
 using namespace bch;
 
+typedef int my__;
+typedef bch::E_BUNCH__( my__, 20 ) mys__;
+typedef bch::E_BUNCH_( mys__ ) mys_;
+E_AUTO( mys )
+
+
+void Dump( my__ M )
+{
+	stf::cout << (unsigned long)M << ' ';
+}
+
+template <typename t> void Dump( const t &Mys )
+{
+	epeios::row__ R = Mys.First();
+
+	while( R != NONE ) {
+		Dump( Mys( R ) );
+		R = Mys.Next( R );
+	}
+
+	stf::cout << txf::nl;
+}
+
+
+void Test( void )
+{
+ERRProlog
+	mys__ Mys__;
+	mys Mys;
+ERRBegin
+	Mys__ .Init();
+	Mys.Init();
+
+	for( int i = 0; i < 10 ; i++ ) {
+		Mys__.Init();
+		for( int j = i; j < i + 10 ; j++ )
+			Mys__.Add( j );
+
+		Mys.Add( Mys__ );
+	}
+
+	Dump( Mys );
+
+	stf::cout << txf::nl << txf::sync;
+
+
+ERRErr
+ERREnd
+ERREpilog
+}
+	
+
 void Essai( void )
 {
 ERRProlog
@@ -84,31 +136,31 @@ ERRBegin
 	}
 
 	for ( i = 0; i < E1.Amount(); i++ )
-		fout << E1(i) << tab << E2(i) << tab;
+		stf::cout << E1(i) << tab << E2(i) << tab;
 
-	fout << nl;
+	stf::cout << nl;
 
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+	stf::cout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
 
 	E1.Insert( E2, NOMBRE / 2 );
 
 	for ( P = 0; P < E1.Amount(); P++ )
-		fout << E1( P ) << tab;
+		stf::cout << E1( P ) << tab;
 
-	fout << nl;
+	stf::cout << nl;
 
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+	stf::cout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
 
 	for ( P = 0; P < E2.Amount(); P++ )
-		fout << E2( P ) << tab;
+		stf::cout << E2( P ) << tab;
 
-	fout << nl;
+	stf::cout << nl;
 
 	E1 = E2;
 
-	fout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
+	stf::cout << ">>>>>>>>> Comparaison: "<< (long)Compare( E1, E2 ) << nl;
 
-	E1.write( stf::foutF );
+	E1.write( stf::coutF );
 
 ERRErr
 	// instructions à exécuter si erreur
@@ -123,12 +175,13 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << BCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << BCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
 		Essai();
+		Test();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -137,16 +190,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << BCHTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << BCHTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << BCHTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << BCHTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
