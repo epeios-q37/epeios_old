@@ -207,27 +207,6 @@ ERREnd
 ERREpilog
 }
 
-/* fournit une référence sur un 'str::string_' dont les caractères '<' et '>' ont
-été remplacé par les symboles adéquats pour qu'un navigateur Internet ne les
-prennent pas pour des délimiteurs de tags */
-const str::string_ &Filtrer( const str::string_ &S )
-{
-	static str::string R;
-
-	R.Init();
-
-	for ( epeios::row_t__ i = 0; i < S.Amount(); i++ )
-		if ( S.Read( i ) == '<' )
-			R.Add( "&lt;" );
-		else if ( S.Read( i ) == '>' )
-			R.Add( "&gt;" );
-		else
-			R.Add( S.Read( i ) );
-
-	return R;
-}
-
-	
 /********************/
 /**** NIVEAU XII ****/
 /********************/
@@ -288,14 +267,12 @@ ERREpilog
 inline void GenererCorpsItemClasse(
 	const objet_ &Item,
 	xmldf__ &XMLDF, 
-	const char *Type,
 	tag_row__ &CommentTagRow,
 	tag_row__ &ObjectTagRow )
 {
 	Push( XMLDF, ObjectTagRow, "Object" );
-	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
 	XMLDF.PutValue( Item.Name, "Name" );
-	XMLDF.PutValue( Filtrer( Item.Type ), "Type" );
+	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
 	XMLDF.PopTag();
 }
@@ -303,15 +280,13 @@ inline void GenererCorpsItemClasse(
 inline void GenererCorpsItemClasse(
 	const methode_ &Item,
 	xmldf__ &XMLDF,
-	const char *Type,
 	tag_row__ &CommentTagRow,
 	tag_row__ &MethodTagRow )
 {
 	static tag_row__ ParametersTagRow = NONE;
 	static tag_row__ ParameterTagRow = NONE;
 
-	Push( XMLDF, MethodTagRow, "Method" );
-	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
+	Push( XMLDF, MethodTagRow, "Function" );
 	XMLDF.PutValue( Item.Name, "Name" );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
@@ -322,7 +297,6 @@ inline void GenererCorpsItemClasse(
 inline void GenererCorpsItemClasse(
 	const function_ &Item,
 	xmldf__ &XMLDF,
-	const char  *Type,
 	tag_row__ &CommentTagRow,
 	tag_row__ &FunctionTagRow )
 {
@@ -330,8 +304,7 @@ inline void GenererCorpsItemClasse(
 	static tag_row__ ParameterTagRow = NONE;
 
 	Push( XMLDF, FunctionTagRow, "Function" );
-	XMLDF.PutAttribute( xmldcm::name( "Type" ), xmldcm::value( Type ) );
-	XMLDF.PutValue( Filtrer( Item.Name ), "Name" );
+	XMLDF.PutValue( Item.Name, "Name" );
 	XMLDF.PutValue( Item.Type, "Type" );
 	PutComment( Item.Commentaire, XMLDF, CommentTagRow );
 	GenererDocumentationParametres( Item.Parametres, XMLDF, ParametersTagRow, ParameterTagRow );
@@ -355,10 +328,12 @@ template <class t> void GenererCorpsItemsClasse(
 	tym::row__ Courant = Items.First();
 
 	Push( XMLDF, TagTagRow, Tag );
+	
+	XMLDF.PutAttribute( "Type", xmldcm::value( Type ) );
 
 	while ( Courant != NONE )
 	{
-		GenererCorpsItemClasse( Items( Courant ), XMLDF, Type, CommentTagRow, ItemTagRow );
+		GenererCorpsItemClasse( Items( Courant ), XMLDF, CommentTagRow, ItemTagRow );
 		Courant = Items.Next( Courant );
 	}
 
@@ -443,7 +418,7 @@ ERRBegin
 	Base.Init( Bases );
 
 	while ( Courant != NONE ) {
-		XMLDF.PutValue( Filtrer( Base( Courant ) ), "Name" );
+		XMLDF.PutValue( Base( Courant ), "Name" );
 		Courant = Bases.Next( Courant );
 	}
 ERRErr
@@ -564,10 +539,10 @@ void GenererDocumentationMethodesClasse(
 	static tag_row__ MethodTagRow = NONE;
 
 	if ( Classe.Methodes.Amount() )
-		GenererDocumentationItemsClasse( "Methods", MethodsTagRow, Classe.Methodes, XMLDF, "Callable", CommentTagRow, MethodTagRow );
+		GenererDocumentationItemsClasse( "Functions", MethodsTagRow, Classe.Methodes, XMLDF, "Methods", CommentTagRow, MethodTagRow );
 
 	if ( Classe.Virtuels.Amount() )
-		GenererDocumentationItemsClasse( "Methods", MethodsTagRow, Classe.Virtuels, XMLDF, "Virtuals", CommentTagRow, MethodTagRow );
+		GenererDocumentationItemsClasse( "Functions", MethodsTagRow, Classe.Virtuels, XMLDF, "Handlers", CommentTagRow, MethodTagRow );
 }
 
 
@@ -1231,7 +1206,8 @@ void Analyser(
 	const str::string_ &Name,
 	const char *Repertoire )
 {
-	Librairie.Name = Name;
+	Librairie.Name.Allocate( Name.Amount() -  2 );
+	Librairie.Name.Write( Name, Name.Amount() -  2 );
 //	AnalyserDocumentation( Librairie.Documentation, Name, Repertoire );
 	AnalyserLibrary( Librairie.Library, Name, Repertoire );
 }

@@ -1,4 +1,5 @@
 <xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'> 
+<xsl:output method="html"/>
  <xsl:template match="/">
   <html>
    <body>
@@ -24,7 +25,7 @@
 	(<xsl:value-of select="Release"/>) :
    </TT></TD>
    <TD><TT>
-	<em><xsl:value-of select="Description"/></em>
+	<EM><xsl:value-of select="Description"/></EM>
    </TT></TD>
   </TR>
  </xsl:template>
@@ -39,7 +40,7 @@
    <H1><U>
     <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
 	<xsl:value-of select="Name"/>
-	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+	<xsl:text disable-output-escaping="yes">"/&gt;</xsl:text>
     Library <EM><xsl:value-of select="Name"/></EM>
    </U></H1>
   </CENTER>
@@ -49,25 +50,89 @@
 	<LI><B>Coordinators : <EM><xsl:value-of select="Coordinators"/></EM></B></LI>
 	</UL>
 
+  <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Defines"/>
+  </xsl:call-template>
+    <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Shortcuts"/>
+  </xsl:call-template>
+  <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Enums"/>
+  </xsl:call-template>
+  <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Typedefs"/>
+  </xsl:call-template>
+  <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Classes"/>
+  </xsl:call-template>
+  <xsl:call-template name="lib-index">
+   <xsl:with-param name="item" select="Functions"/>
+  </xsl:call-template>
+  
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Defines"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Defines"/>
   <xsl:apply-templates select="Shortcuts"/>
+  <xsl:call-template name="lib-index-target">
+   <xsl:with-param name="item" select="Enums"/>
+  </xsl:call-template>
   <xsl:apply-templates select="Enums"/>
   <xsl:apply-templates select="Typedefs"/>
   <xsl:apply-templates select="Classes"/>
   <xsl:apply-templates select="Functions"/>
  </xsl:template>
  
+ <xsl:template name="lib-index">
+  <xsl:param name="item"/>
+  <xsl:text disable-output-escaping="yes">&lt;A HREF="#</xsl:text>
+  <xsl:value-of select="$item/parent::*/Name"/>
+  <xsl:text disable-output-escaping="yes">.</xsl:text>
+  <xsl:value-of select="name($item)"/>
+  <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+  <xsl:value-of select="name($item)"/>
+  <xsl:text disable-output-escaping="yes">&lt;/A&gt; </xsl:text>
+ </xsl:template>
+ 
+ <xsl:template name="lib-index-target">
+  <xsl:param name="item"/>
+    <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
+  <xsl:value-of select="$item/parent::*/Name"/>
+  <xsl:text disable-output-escaping="yes">.</xsl:text>
+  <xsl:value-of select="name($item)"/>
+	<xsl:text disable-output-escaping="yes">"/&gt;</xsl:text>
+ </xsl:template>
+ 
+ <xsl:template match="Documentation/Library/Defines" mode="index">
+  <xsl:text disable-output-escaping="yes">&lt;A HREF="#</xsl:text>
+  <xsl:value-of select="parent::*/Name"/>
+  <xsl:text disable-output-escaping="yes">.</xsl:text>
+  <xsl:value-of select="name(.)"/>
+  <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+  <xsl:value-of select="name(.)"/>
+  <xsl:text disable-output-escaping="yes">&lt;/A&gt; </xsl:text>
+ </xsl:template>
+ 
  <xsl:template match="Documentation/Library/Defines">
   <H1>
    Defines
   </H1>
+   <xsl:apply-templates mode="index"/>
   <UL>
    <xsl:apply-templates/>
   </UL>
  </xsl:template>
  
+ <xsl:template match="Documentation/Library/Defines/Define" mode="index" >
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>      </xsl:call-template>
+ </xsl:template>
+ 
  <xsl:template match="Documentation/Library/Defines/Define">
   <LI>
+   <xsl:call-template name="index-target">
+    <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+   </xsl:call-template>
    <TT><xsl:value-of select="Name"/></TT> 
    <xsl:apply-templates select="Arguments"/> : 
    <EM><xsl:apply-templates select="Comment"/></EM> 
@@ -86,17 +151,26 @@
   <H1>
    Shortcuts
   </H1>
+   <xsl:apply-templates mode="index"/>
   <UL>
    <xsl:apply-templates/>
   </UL>
  </xsl:template>
  
+ <xsl:template match="Documentation/Library/Shortcuts/Shortcut" mode="index" >
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>        </xsl:call-template>
+ </xsl:template>
+ 
  <xsl:template match="Documentation/Library/Shortcuts/Shortcut">
   <LI>
+   <xsl:call-template name="index-target">
+    <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+   </xsl:call-template>
    <TT><xsl:value-of select="Name"/> 
    <xsl:apply-templates select="Arguments"/> : 
    <xsl:apply-templates select="Alias"/>
-   </TT><BR/>
+   </TT><br/>
    <EM><xsl:apply-templates select="Comment"/></EM> 
   </LI>
  </xsl:template>
@@ -113,19 +187,28 @@
   <H1>
    Enums
   </H1>
+   <xsl:apply-templates mode="index"/>
   <UL>
    <xsl:apply-templates select="Enum"/>
   </UL>
  </xsl:template>
  
+ <xsl:template match="Enum" mode="index" >
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>        </xsl:call-template>
+ </xsl:template>
+ 
  <xsl:template match="Enum">
-  <li>
+  <LI>
+   <xsl:call-template name="index-target">
+    <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+   </xsl:call-template>
    <TT><xsl:value-of select="Name"/></TT> : 
    <EM>
     <xsl:value-of select="Comment"/> 
    </EM>
     <xsl:apply-templates select="Items"/>
-  </li>
+  </LI>
   <xsl:apply-templates select="Enums"/>
  </xsl:template>
  
@@ -136,117 +219,173 @@
  </xsl:template>
 
  <xsl:template match="/Documentation/Library/Enums/Enum/Items/Item">
-  <li>
+  <LI>
    <B><TT>
     <xsl:value-of select="Name"/>
    </TT></B> : 
    <xsl:apply-templates select="Comment"/>
-  </li>
+  </LI>
  </xsl:template>
 
  <xsl:template match="/Documentation/Library/Typedefs">
   <H1>
    Typedefs
   </H1>
+   <xsl:apply-templates select="Typedef" mode="index"/>
   <UL>
-   <xsl:apply-templates/>
+   <xsl:apply-templates select="Typedef"/>
   </UL>
  </xsl:template>
  
+ <xsl:template match="/Documentation/Library/Typedefs/Typedef" mode="index">
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
+ </xsl:template>
+ 
  <xsl:template match="/Documentation/Library/Typedefs/Typedef">
-  <li>
+  <LI>
+  <xsl:call-template name="index-target">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
    <TT><xsl:value-of select="Name"/></TT> : 
    <EM>
     <xsl:apply-templates select="Comment"/>
    </EM>
-  </li>
- </xsl:template>
-  
- <xsl:template match="/Documentation/Library/Classes/Classe">
-   <H2>
-    <xsl:value-of select="Name"/>
-   </H2>
-   <EM>
-    <xsl:apply-templates select="Comment"/>
-   </EM>
-     <xsl:apply-templates select="Methods"/>
-</xsl:template>
- 
- <xsl:template match="/Documentation/Library/Classes/Classe/Methods">
-  <H3>
-   Functions
-  </H3>
-  <UL>
-   <xsl:apply-templates/>
-  </UL>
- </xsl:template>
- 
- <xsl:template match="/Documentation/Library/Classes/Classe/Methods/Method">
-  <li>
-   <TT>
-    <B>
-     <xsl:value-of select="Name"/> : 
-    </B>
-     <xsl:value-of select="Type"/> 
-    <xsl:apply-templates select="Parameters"/>
-   </TT>	
-    <em>
-     <xsl:apply-templates select="Comment"/>
-    </em>
-  </li>
- </xsl:template>
- 
- <xsl:template match="/Documentation/Library/Classes/Classe/Methods/Method/Parameters">
-  <UL>
-   <xsl:apply-templates/>
-  </UL>
- </xsl:template>
- 
- <xsl:template match="/Documentation/Library/Classes/Classe/Methods/Method/Parameters/Parameter">
-  <LI>
-     <xsl:value-of select="Type"/>
-     <B><xsl:text disable-output-escaping="yes"> </xsl:text>
-      <xsl:value-of select="Name"/>
-     </B>
-    <xsl:apply-templates select="Value"/>
   </LI>
  </xsl:template>
  
- <xsl:template match="/Documentation/Library/Classes/Classe/Methods/Method/Parameters/Parameter/Value">
-  = <xsl:value-of select="."/>
+  <xsl:template match="/Documentation/Library/Classes">
+  <H1>
+   Classes
+  </H1>
+   <xsl:apply-templates select="Classe" mode="index"/>
+   <xsl:apply-templates select="Classe"/>
+ </xsl:template>
+ 
+ <xsl:template match="/Documentation/Library/Classes/Classe" mode="index">
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
  </xsl:template>
 
- <xsl:template match="/Documentation/Library/Functions">
-  <H1>
-   Functions
-  </H1>
+ 
+ <xsl:template match="/Documentation/Library/Classes/Classe">
+  <xsl:call-template name="index-target">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
+   <H2>
+    <xsl:value-of select="Name"/>
+   </H2>
+     <xsl:apply-templates select="Base_classes"/>
+   <EM>
+    <xsl:apply-templates select="Comment"/>
+   </EM>
+     <xsl:apply-templates select="Objects"/>
+     <xsl:apply-templates select="Functions"/>
+</xsl:template>
+ 
+ <xsl:template match="/Documentation/Library/Classes/Classe/Functions[@Type='Methods']">
+  <H3>
+   Methods
+  </H3>
+   <xsl:apply-templates select="Function" mode="index"/>
   <UL>
    <xsl:apply-templates select="Function"/>
   </UL>
  </xsl:template>
  
- <xsl:template match="/Documentation/Library/Functions/Function">
-  <li>
+ <xsl:template match="/Documentation/Library/Classes/Classe/Functions[@Type='Handlers']">
+  <H3>
+   Handlers
+  </H3>
+   <xsl:apply-templates select="Function" mode="index"/>
+  <UL>
+   <xsl:apply-templates select="Function"/>
+  </UL>
+ </xsl:template>
+ 
+
+ <xsl:template match="/Documentation/Library/Functions">
+  <H1>
+   Functions
+  </H1>
+   <xsl:apply-templates select="Function" mode="index"/>
+  <UL>
+   <xsl:apply-templates select="Function"/>
+  </UL>
+ </xsl:template>
+ 
+  <xsl:template match="/Documentation/Library/Classes/Classe/Base_classes">
+  <UL>
+   <xsl:apply-templates select="Name"/>
+  </UL>
+ </xsl:template>
+ 
+  <xsl:template match="/Documentation/Library/Classes/Classe/Objects">
+  <H3>
+   Objects
+  </H3>
+  <UL>
+   <xsl:apply-templates select="Object"/>
+  </UL>
+ </xsl:template>
+ 
+ <xsl:template match="/Documentation/Library/Classes/Classe/Base_classes/Name">
+  <LI>
+   <TT>
+     <xsl:value-of select="."/>
+   </TT>	
+  </LI>
+ </xsl:template>
+ 
+ <xsl:template match="/Documentation/Library/Classes/Classe/Objects/Object">
+  <LI>
+   <TT>
+     <xsl:value-of select="Type"/>
+	 <xsl:text disable-output-escaping="yes"> </xsl:text>
+    <B>
+     <xsl:value-of select="Name"/> : 
+    </B>
+   </TT>	
+    <EM>
+     <xsl:apply-templates select="Comment"/>
+    </EM>
+  </LI>
+ </xsl:template>
+ 
+ <xsl:template match="Function" mode="index">
+  <xsl:call-template name="index">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
+ </xsl:template>
+
+
+ <xsl:template match="Function">
+  <LI>
+  <xsl:call-template name="index-target">
+   <xsl:with-param name="discriminator" select="parent::*/parent::*/Name"/>
+  </xsl:call-template>
    <TT>
     <B>
      <xsl:value-of select="Name"/> : 
     </B>
      <xsl:value-of select="Type"/> 
 	 <xsl:apply-templates select="Parameters"/>
-    <em>
+    <EM>
      <xsl:apply-templates select="Comment"/>
-    </em>
+    </EM>
    </TT>	
-  </li>
+  </LI>
  </xsl:template>
  
- <xsl:template match="/Documentation/Library/Functions/Function/Parameters">
+ <xsl:template match="Function/Parameters">
   <UL>
    <xsl:apply-templates/>
   </UL>
  </xsl:template>
  
- <xsl:template match="/Documentation/Library/Functions/Function/Parameters/Parameter">
+ <xsl:template match="Function/Parameters/Parameter">
   <LI>
    <TT>
     <EM>
@@ -255,33 +394,34 @@
       <xsl:value-of select="Name"/>
      </B>
     </EM>
-    <xsl:apply-templates/>
    </TT>
   </LI>
  </xsl:template>
  
- <xsl:template match="/Documentation/Library/Functions/Function/Parameters/Parameter/Value">
+ <xsl:template match="Function/Parameters/Parameter/Value">
   = <xsl:value-of select="."/>
  </xsl:template>
 
- <xsl:template match="/Documentation/Library/Classes">
-  <H1>
-   Classes
-  </H1>
-   <xsl:apply-templates/>
+ <xsl:template name="index">
+  <xsl:param name="discriminator"/>
+  <xsl:text disable-output-escaping="yes">&lt;A HREF="#</xsl:text>
+  <xsl:value-of select="$discriminator"/>
+  <xsl:text disable-output-escaping="yes">.</xsl:text>
+  <xsl:value-of select="Name"/>
+  <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+  <xsl:value-of select="Name"/>
+  <xsl:text disable-output-escaping="yes">&lt;/A&gt; </xsl:text>
+ </xsl:template>
+ 
+ 
+ <xsl:template name="index-target">
+  <xsl:param name="discriminator"/>
+    <xsl:text disable-output-escaping="yes">&lt;A NAME="</xsl:text>
+  <xsl:value-of select="$discriminator"/>
+  <xsl:text disable-output-escaping="yes">.</xsl:text>
+	<xsl:value-of select="Name"/>
+	<xsl:text disable-output-escaping="yes">"/&gt;</xsl:text>
  </xsl:template>
 
- <xsl:template match="Name"/> 
- <xsl:template match="Type"/> 
- <xsl:template match="Typedefs"/> 
- <xsl:template match="Defines"/> 
- <xsl:template match="Shortcuts"/> 
- <xsl:template match="Functions"/> 
- <xsl:template match="Classes"/> 
- <xsl:template match="Objects"/> 
- <xsl:template match="Description"/>
- <xsl:template match="Coordinators"/>
- <xsl:template match="Version"/>
- <xsl:template match="Release"/>
 
 </xsl:stylesheet> 

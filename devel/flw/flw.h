@@ -88,6 +88,13 @@ namespace flw {
 		amount__ Available_;
 		// Position of the available data.
 		size__ Position_;
+		// Data for the end of flow (EOFD).
+		struct {
+			// The data.
+			const data__ *Data;
+			// Length of the data.
+			size__ Length;
+		} EOFD_;
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
 		amount__ DirectGet_(
@@ -193,11 +200,31 @@ namespace flw {
 			amount__ Minimum,
 			data__ *Buffer,
 			amount__ Wanted ) = 0;
+		/*f Handle EOFD. To call when no more data available in the medium.
+		Return amount of data written. If 0 is returned, then there is no
+		more end of flow data available, and an error should be launched. */
+		size__ HandleEOFD(
+			data__ *Buffer,
+			size__ Size )
+		{
+			if ( Size > EOFD_.Length )
+				Size = EOFD_.Length;
+				
+			if ( Size != 0 ) {
+				memcpy( Buffer, EOFD_.Data, Size );
+				EOFD_.Length -= Size;
+				EOFD_.Data += Size;
+			}
+			
+			return Size;
+		}
 	public:
 		void reset( bool = true )
 		{
 			Cache_ = NULL;
 			Available_ = Position_ = Size_ = 0;
+			EOFD_.Data = NULL;
+			EOFD_.Length = 0;			
 		}
 		iflow___( void )
 		{
@@ -216,6 +243,8 @@ namespace flw {
 			
 			Cache_ = Cache;
 			Size_ = Size;
+			EOFD_.Data = NULL;
+			EOFD_.Length = 0;
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
@@ -242,6 +271,22 @@ namespace flw {
 
 			return C;
 		}
+		/*f 'Data' of length 'Length' becomes the end of flow data.
+		'Data' is NOT duplicated and should not be modified. */
+		void EOFD(
+			const data__ *Data,
+			size__ Length )
+		{
+			EOFD_.Data = Data;
+			EOFD_.Length = Length;
+		}
+		/* 'Data' is a NUL NUL terminated string to use as end of flow data.
+		'Data' is NOT suplicated and should not be modified. */
+		void EOFD( const char *Data )
+		{
+			EOFD( (const data__ *)Data, strlen( Data ) );
+		}
+		
 	};
 
 	//f Get 'StaticObject' from 'InputFlow'.

@@ -53,54 +53,66 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#define capacite				tym::size__
+#define capacite				epeios::size__
 #define multimemoire_indexee	indexed_multimemory_
 
-namespace mmi {
+using namespace mmi;
 
-	void multimemoire_indexee::AllouerPlus_(
-		capacite CapaciteCourante,
-		capacite CapaciteDemandee )
-	{
-		descripteur__ D;
+void multimemoire_indexee::AllouerPlus_(
+	capacite CapaciteCourante,
+	capacite CapaciteDemandee )
+{
+	descripteur__ D;
 
-		D.Descripteur = 0;
-		D.Capacite = 0;
+	D.Descripteur = 0;
+	D.Capacite = 0;
 
-		Descripteurs.Allocate( CapaciteDemandee );
+	Descripteurs.Allocate( CapaciteDemandee );
 
-		while ( CapaciteDemandee-- > CapaciteCourante )
-			Descripteurs.Write( D, CapaciteDemandee );
-	}
-
-	void multimemoire_indexee::AllouerMoins_(
-		capacite CapaciteCourante,
-		capacite CapaciteDemandee )
-	{
-		while ( CapaciteCourante-- > CapaciteDemandee )
-			Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
-
-		Descripteurs.Allocate( CapaciteDemandee );
-	}
+	while ( CapaciteDemandee-- > CapaciteCourante )
+		Descripteurs.Write( D, CapaciteDemandee );
 }
 
-	/* Although in theory this class is inaccessible to the different modules,
-	it is necessary to personalize it, or certain compiler would not work properly */
-	class mmipersonnalization
-	: public mmitutor
+void multimemoire_indexee::AllouerMoins_(
+	capacite CapaciteCourante,
+	capacite CapaciteDemandee )
+{
+	while ( CapaciteCourante-- > CapaciteDemandee )
+		Multimemoire.Free( Descripteurs.Read( CapaciteCourante ).Descripteur );
+
+	Descripteurs.Allocate( CapaciteDemandee );
+}
+
+void multimemoire_indexee::Delete(
+	index__ Index,
+	size__ Amount )
+{
+	while( Amount-- ) {
+		Liberer_( Index );
+		Index = Descripteurs.Next( Index );
+	}
+	
+	Descripteurs.Delete( Index, Amount );
+}
+
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
+class mmipersonnalization
+: public mmitutor
+{
+public:
+	mmipersonnalization( void )
 	{
-	public:
-		mmipersonnalization( void )
-		{
-			/* place here the actions concerning this library
-			to be realized at the launching of the application  */
-		}
-		~mmipersonnalization( void )
-		{
-			/* place here the actions concerning this library
-			to be realized at the ending of the application  */
-		}
-	};
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
+	}
+	~mmipersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
 
 /*$END$*/
 				  /********************************************/

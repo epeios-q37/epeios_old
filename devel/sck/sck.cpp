@@ -161,12 +161,10 @@ amount__ sck::Write(
 }
 
 
-amount__ sck::Get_(
-	socket__ Socket,
-	amount__ Minimum,
-	data__ *Buffer,
-	amount__ Wanted,
-	duration__ TimeOut )
+flw::amount__ sck::socket_ioflow___::FLWGet(
+	flw::amount__ Minimum,
+	flw::data__ *Buffer,
+	flw::amount__ Wanted )
 {
 	amount__ Amount = 0;
 
@@ -175,28 +173,28 @@ amount__ sck::Get_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Read( Socket, Wanted - Amount, Buffer + Amount, TimeOut ) ) == SCK_DISCONNECTED )
-				ERRd();
+			if ( ( Result = Read( Socket_, Wanted - Amount, Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
+				if ( ( Result = iflow___::HandleEOFD( Buffer, Wanted - Amount ) ) == 0 )
+					ERRd();
 			Amount += Result;
 		}
 	}
 	else
-		Amount = Read( Socket, Wanted, Buffer, 0 );
+		Amount = Read( Socket_, Wanted, Buffer, 0 );
 
 	if ( Amount == SCK_DISCONNECTED )
-		ERRd();
+		if ( ( Amount = iflow___::HandleEOFD( Buffer, Wanted ) ) == 0 )
+			ERRd();
 
 	return Amount;
 }
 
 
-amount__ sck::Put_(
-	socket__ Socket,
-	const data__ *Buffer,
-	amount__ Wanted,
-	amount__ Minimum,
-	bool,
-	duration__ TimeOut )
+flw::amount__ sck::socket_ioflow___::FLWPut(
+	const flw::data__ *Buffer,
+	flw::amount__ Wanted,
+	flw::amount__ Minimum,
+	bool )
 {
 	amount__ Amount = 0;
 
@@ -205,13 +203,13 @@ amount__ sck::Put_(
 		amount__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = Write( Socket, Buffer + Amount, Wanted - Amount, TimeOut ) ) == SCK_DISCONNECTED )
+			if ( ( Result = Write( Socket_, Buffer + Amount, Wanted - Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
 				ERRd();
 			Amount += Result;
 		}
 	}
 	else
-		Amount = Write( Socket, Buffer, Wanted, 0 );
+		Amount = Write( Socket_, Buffer, Wanted, 0 );
 
 	if ( Amount == SCK_DISCONNECTED )
 		ERRd();

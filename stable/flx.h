@@ -79,6 +79,7 @@ extern class ttr_tutor &FLXTutor;
 #endif
 
 namespace flx {
+	using flw::data__;
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow___
@@ -214,9 +215,9 @@ namespace flx {
 
 
 
-	typedef bch::E_BUNCH( flw::data__ ) bunch;
+	typedef bch::E_BUNCH( data__ ) bunch;
 
-	typedef bch::E_BUNCH_( flw::data__ ) bunch_;
+	typedef bch::E_BUNCH_( data__ ) bunch_;
 
 	//c A bunch as input flow.driver.
 	class bunch_iflow___

@@ -58,7 +58,7 @@ extern class ttr_tutor &MMITutor;
 #include "err.h"
 #include "flw.h"
 #include "mmm.h"
-#include "tym.h"
+#include "bch.h"
 
 namespace mmi {
 
@@ -66,7 +66,7 @@ namespace mmi {
 
 	//t The type of an index in the indexed multimemory.
 	TYPEDEF( epeios::row_t__, index__ );
-
+	
 	struct descripteur__
 	{
 		mmm::descriptor__ Descripteur;
@@ -133,13 +133,13 @@ namespace mmi {
 		}
 		// libère la mémoire d'index 'Index'
 	public:
-		tym::E_MEMORY_( descripteur__ ) Descripteurs;
+		bch::E_BUNCHt_( descripteur__, index__ ) Descripteurs;
 		// les différents descripteurs
 		mmm::multimemory_ Multimemoire;
 		// la memoire générale
 		struct s
 		{
-			tym::E_MEMORY_( descripteur__ )::s Descripteurs;
+			bch::E_BUNCHt_( descripteur__, index__ )::s Descripteurs;
 			mmm::multimemory_::s Multimemoire;
 		};
 		indexed_multimemory_( s &S )
@@ -227,6 +227,10 @@ namespace mmi {
 		{
 			Liberer_( Index );
 		}
+		//f Delete 'Amount' memories beginning at 'Index'.
+		void Delete(
+			index__ Index,
+			size__ Amount = 1 );
 		//f Flushes the memory.
 		void Synchronize( void )
 		{
@@ -236,8 +240,9 @@ namespace mmi {
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
-			return Descripteurs( Index.V ).Capacite;
+			return Descripteurs( Index ).Capacite;
 		}
+#if 0
 		void write(
 			flw::oflow___ &OFlow,
 			epeios::size__ Size) const
@@ -252,6 +257,7 @@ namespace mmi {
 			Descripteurs.read( IFlow, 0, Size );
 			Multimemoire.read( IFlow );
 		}
+#endif
 	};
 
 	AUTO( indexed_multimemory )

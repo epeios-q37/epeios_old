@@ -258,23 +258,6 @@ namespace sck {
 	#endif
 	}
 
-	// Internal use
-	amount__ Get_(
-		socket__ Socket,
-		amount__ Minimum,
-		data__ *Buffer,
-		amount__ Wanted,
-		duration__ TimeOut );
-
-	// Internal use.
-	amount__ Put_(
-		socket__ Socket,
-		const data__ *Buffer,
-		amount__ Wanted,
-		amount__ Minimum,
-		bool Synchronization,
-		duration__ TimeOut );
-
 	//c Socket as input/output flow driver.
 	class socket_ioflow___
 	: public flw::ioflow___
@@ -287,18 +270,12 @@ namespace sck {
 		virtual flw::amount__ FLWGet(
 			flw::amount__ Minimum,
 			flw::data__ *Buffer,
-			flw::amount__ Wanted )
-		{
-			return sck::Get_( Socket_, Minimum, Buffer, Wanted, TimeOut_ );
-		}
+			flw::amount__ Wanted );
 		virtual flw::amount__ FLWPut(
 			const flw::data__ *Buffer,
-			flw::amount__ Amount,
+			flw::amount__ Wanted,
 			flw::amount__ Minimum,
-			bool Synchronization )
-		{
-			return sck::Put_( Socket_, Buffer, Amount, Minimum, Synchronization, TimeOut_ );
-		}
+			bool Synchronization );
 	public:
 		void reset( bool P = true )
 		{

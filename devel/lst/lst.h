@@ -59,10 +59,8 @@ extern class ttr_tutor &LSTTutor;
 #include "err.h"
 #include "bitbch.h"
 #include "stk.h"
-#include "aem.h"
 
 namespace lst {
-	using aem::amount_extent_manager_;
 
 	bso__bool Existe_(
 		epeios::row_t__ Position,
@@ -80,7 +78,6 @@ namespace lst {
 
 	//c Handle a list of objects. Use 'LIST_' rather than directly this class.
 	template <typename r> class list_
-	: public aem::amount_extent_manager_<r>
 	{
 	protected:
 		/*v Cette fonction est appelée lors d'allocations dans la liste;
@@ -96,12 +93,13 @@ namespace lst {
 				Numero = Libres.Pop();
 			else
 			{
-				epeios::size__ Size = ( Numero = Amount() ) + 1;
+				epeios::size__ Size = ( Numero = S_.Extent ) + 1;
 
-				if ( amount_extent_manager_<r>::AmountToAllocate( Size, aem::mDefault ) )
-					LSTAllocate( Size );
+				LSTAllocate( Size );
+				
+				S_.Extent = Size;
 			}
-
+			
 			return Numero;
 		}
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
@@ -123,20 +121,19 @@ namespace lst {
 		//o Stack which contains the free locations.
 		stk::E_STACK_( epeios::row_t__ ) Libres;
 		struct s
-		: public aem::amount_extent_manager_<r>::s
 		{
 			stk::E_STACK_( epeios::row_t__ )::s Libres;
-			// La position du premier élément de la liste. N'a de sens que si 'Vide' = false.
-	//		tym::size__ Nombre;
-		};
+			// Amount of items, including the empty ones.
+			epeios::size__ Extent;
+		} &S_;
 	// fonctions
 		list_( s &S )
-		: Libres( S.Libres ),
-		  amount_extent_manager_< r >( S )
+		: S_( S ),
+		  Libres( S.Libres )
 		{}
 		void reset( bool P = true )
 		{
-			amount_extent_manager_<r>::reset( P );
+			S_.Extent = 0;
 			Libres.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
@@ -149,7 +146,7 @@ namespace lst {
 		}
 		list_ &operator =( const list_ &T )
 		{
-			amount_extent_manager_<r>::Force( T.amount_extent_manager_<r>::Amount() );
+			S_.Extent = T.S_.Extent;
 			Libres = T.Libres;
 
 			return *this;
@@ -169,7 +166,7 @@ namespace lst {
 	*/	//f Initialiration.
 		void Init( void )
 		{
-			amount_extent_manager_<r>::Init();
+			S_.Extent = 0;
 			Libres.Init();
 		}
 		//f Remove 'Entry'.
@@ -185,7 +182,7 @@ namespace lst {
 		//f Return the first entry if exists, 'NONE' if list empty.
 		r First( void ) const
 		{
-			if ( amount_extent_manager_<r>::Amount() )
+			if ( S_.Extent )
 				if ( Exists( 0 ) )
 					return 0;
 				else
@@ -196,9 +193,9 @@ namespace lst {
 		//f Return the last entry, 'NONE' if list empty.
 		r Last( void ) const
 		{
-			if ( amount_extent_manager_<r>::Amount() )
+			if ( S_.Extent )
 			{
-				epeios::row_t__ P = amount_extent_manager_<r>::Amount() - 1;
+				epeios::row_t__ P = S_.Extent - 1;
 
 				if ( Existe_( P ) )
 					return P;
@@ -216,7 +213,7 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next( r Entry ) const
 		{
-			if ( ++Entry.V < amount_extent_manager_<r>::Amount() )
+			if ( ++Entry.V < S_.Extent )
 				if ( Libres.IsEmpty() || Existe_( Entry.V ) )
 					return Entry;
 				else
@@ -238,12 +235,17 @@ namespace lst {
 		//f Amount of entries, NOT the extent of the list.
 		epeios::size__ Amount( void ) const
 		{
-			return amount_extent_manager_<r>::Amount() - Libres.Amount();
+			return S_.Extent - Libres.Amount();
+		}
+		//f Extent of list.
+		epeios::size__ Extent( void ) const
+		{
+			return S_.Extent;
 		}
 		//f Return true if 'Entry' exists, false otherwise.
 		bso__bool Exists( r Entry ) const
 		{
-			if ( Entry.V >= amount_extent_manager_<r>::Amount() )
+			if ( Entry.V >= S_.Extent )
 				return false;
 			else if ( Libres.IsEmpty() )
 				return true;
@@ -353,7 +355,7 @@ namespace lst {
 		}
 
 		//m Handle a list with a maximum of 'n' entries.
-		#define E_LIST__( n )		llist< n >
+		#define E_LIST__( n )		list__< n >
 	};
 
 }
