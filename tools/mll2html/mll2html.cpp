@@ -819,11 +819,11 @@ ERRBegin
 	case 0:
 		stf::cerr << "Too few arguments." << txf::nl;
 		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
-		ERRt();
+		ERRi();
 	default:
 		stf::cerr << "Too many arguments." << txf::nl;
 		stf::cout << "Try '" NAME " --help' to get more informations." << txf::nl;
-		ERRt();
+		ERRi();
 		break;
 	}
 
@@ -863,15 +863,15 @@ ERRBegin
 	case cVersion:
 		PrintHeader();
 		TTR.Advertise();
-		ERRt();
+		ERRi();
 		break;
 	case cHelp:
 		PrintUsage( Description );
-		ERRt();
+		ERRi();
 		break;
 	case cLicense:
 		epsmsc::PrintLicense();
-		ERRt();
+		ERRi();
 		break;
 	case cConvert:
 	case CLNARG_NONE:
@@ -933,7 +933,7 @@ ERRErr
 	if ( Backup )
 		tol::RecoverBackupFile( Dest );
 
-	if ( ERRMajor == err::thw )
+	if ( ERRMajor == err::itn )
 		ERRRst();
 ERREnd
 	if ( Dest != NULL )
