@@ -138,7 +138,7 @@ namespace tsrcpr {
 		txf::text_iflow___ &Flot,
 		table_< t > &T )
 	{
-		return Flot >> *(E_IQUEUE_ *)&T;
+		return Flot >> *(E_MQUEUE_ *)&T;
 	}
 
 	//c An item.

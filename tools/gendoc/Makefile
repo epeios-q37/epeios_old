@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,9 +31,9 @@ copt =
 # copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
-lopt = 
-libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str hostag\
-       fil hosval hosdcm hoscor
+lopt =
+libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str xmltag\
+       fil xmlval xmldcm xmlcor txmtbl
 
 ifndef EPEIOS_SRC
 	epeios_src=
