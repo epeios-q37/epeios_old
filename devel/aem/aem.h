@@ -270,7 +270,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			size__ Offset ) const
+			epeios::size__ Offset ) const
 		{
 			if ( ( *Current += Offset ) < Amount() )
 				return Current;
@@ -285,7 +285,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			size__ Offset ) const
+			epeios::size__ Offset ) const
 		{
 			if ( *Current >= Offset )
 				return *Current - Offset;
@@ -403,7 +403,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			size__ Offset ) const
+			epeios::size__ Offset ) const
 		{
 			if ( ( Current += Offset ) < Amount() )
 				return Current;
@@ -418,7 +418,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			size__ Offset ) const
+			epeios::size__ Offset ) const
 		{
 			if ( Current >= Offset )
 				return Current - Offset;
