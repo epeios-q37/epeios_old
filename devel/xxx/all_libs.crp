@@ -6,6 +6,7 @@ NAME	PROJECT	COPYRIGHT_DATES	DESCRIPTION
 &dbidtp	&ldbi	&		&DataBase Interface Data TyPEs
 &dbimsq	&ldbi	&		&DataBase Interface MySQl (from MySQL database)
 &dbisrq	&ldbi	&		&DataBase Interface Search ReQuest
+&err	&epeios	&2000-		&ERRor handling
 &mscmdf	&emsc	&		&MuSiC MiDi File		
 &mscmdm	&emsc	&		&MuSiC MiDi Messages
 &mscvkp	&emsc	&		&MuSiC VK (from Roland VK combo organ) Parameters

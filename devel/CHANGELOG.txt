@@ -46,6 +46,9 @@ EPSMSC:
 - Removing IDEALX-related text.
 - Adding Epeios text.
 
+ERR:
+- Adding external error (ERRX, ext).
+
 FLM:
 - Using now the UNIX system calls under UNIX instead of the C/C++ call (which seems bugged).
 - Using low-level io functions under Windows instead of the C/C++ call.
