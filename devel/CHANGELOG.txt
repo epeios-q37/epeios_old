@@ -3,6 +3,10 @@ $Id$
 04/04/05
 - FIL:
 	- Correction de bogues.
+- FLW:
+	- Améliorations.
+- IOF:
+	- Améliorations.
 
 02/04/05:
 - ERR:

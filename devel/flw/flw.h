@@ -288,6 +288,14 @@ namespace flw {
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
+		void operator()( void )
+		{
+			Red_ = 0;
+			Available_ = Position_ = 0;
+			EOFD_.Data = NULL;
+			EOFD_.Size = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
+		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
 		size__ ReadUpTo(
@@ -488,6 +496,11 @@ namespace flw {
 			AmountMax_ = AmountMax;
 			Written_ = 0;
 		}
+		void operator()( void )
+		{
+			Free_ = Size_;
+			Written_ = 0;
+		}
 		virtual ~oflow__( void )
 		{
 			if ( Size_ != Free_ )
@@ -570,6 +583,11 @@ namespace flw {
 			: iflow__( ICache, ISize, ReadAmountMax ),
 			  oflow__( OCache, OSize, WriteAmountMax )
 		{}
+		void operator()( void )
+		{
+			iflow__::operator ()();
+			oflow__::operator ()();
+		}
 		ioflow__(
 			datum__ *Cache,
 			size__ Size,

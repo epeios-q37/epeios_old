@@ -147,6 +147,10 @@ namespace iof {
 		  oflow__( Cache_, sizeof( Cache_ ), AmountMax ),
 		  io_core__( D )
 		{}
+		void operator()( void )
+		{
+			oflow__::operator()();
+		}
 	};
 
 	class io_iflow__
@@ -200,6 +204,11 @@ namespace iof {
 		  iflow__( Cache_, sizeof( Cache_ ), AmountMax ),
 		  io_core__( D )
 		{}
+		void operator()( void )
+		{
+			iflow__::operator()();
+		}
+
 	};
 
 	class io_ioflow__
@@ -273,6 +282,10 @@ namespace iof {
 		  ioflow__( Cache_, sizeof( Cache_ ), AmountMax ),
 		  io_core__( D )
 		{}
+		void operator()( void )
+		{
+			oflow__::operator()();
+		}
 	};
 }
 

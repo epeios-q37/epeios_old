@@ -177,6 +177,8 @@ namespace fil
 					_Close( D_ );
 			}
 
+			_io_iflow__::operator()();
+
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file_iflow___( void )
@@ -241,6 +243,8 @@ namespace fil
 					_Close( D_ );
 				}
 			}
+
+			_io_oflow__::operator()();
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
