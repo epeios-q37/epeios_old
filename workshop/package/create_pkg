@@ -3,7 +3,7 @@
 NAME=$1
 DATE=`date +%Y-%m-%d`
 PKG_NAME=$NAME"_"$DATE
-PKG_DIR=packages/$NAME.pkg/$DATE
+PKG_DIR=packages/$NAME/$DATE
 PKG=$PKG_DIR/$PKG_NAME
 
 mv $NAME $PKG_NAME

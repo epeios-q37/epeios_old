@@ -12,6 +12,6 @@ $GET epeios $DIR documentation/packages/epeios/README.txt
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-cp ~/web/epeios/quickdoc/quickdoc.html $DIR
+cp /web/epeios/quickdoc/quickdoc.html $DIR
 
 ../../create_pkg $DIR

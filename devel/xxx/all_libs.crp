@@ -221,12 +221,16 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib BaSiC
 &gsbbsc_	&lgsb		&2003-\
 	&GeSBib BaSiC (for backend)
+&gsbbsk		&lgsb		&\
+	&GeSBib BaSKet
+&gsbbsk_		&lgsb		&\
+	&GeSBib BaSKet (for backend).
 &gsbcor		&lgsb		&2003-\
 	&GeSBib field CORe
 &gsbdbm		&lgsb		&2003-\
 	&GeSBib DataBase Manager
 &gsbdbm_	&lgsb		&2003-\
-	&GeSBib DataBase Manager (for backebnd)
+	&GeSBib DataBase Manager (for backend)
 &gsbdrv		&lgsb		&2003-\
 	&GeSBib DeRiVed field
 &gsbdtb		&lgsb		&2003-\

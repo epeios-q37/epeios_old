@@ -1,3 +1,4 @@
 # $Id$
-scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/epeios/
+#scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/epeios/
+scp -r workdir/packages/* csimon@gna.org:/var/ftp/epeios/epeios/
 rm -rf workdir
