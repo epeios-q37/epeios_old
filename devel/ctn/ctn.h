@@ -157,7 +157,7 @@ namespace ctn {
 			Dynamics.Init();
 			Statics.Init();
 			this->amount_extent_manager_<r>::Init();
-			amount_extent_manager_<r>::SetStepValue( 0 );	//Preallocation not very usefull for containers.
+//			amount_extent_manager_<r>::SetStepValue( 0 );	//Preallocation not very usefull for containers.
 		}
 		//f Allocation room for 'Size' object of statical part 'ST'.
 		void Allocate(
