@@ -96,8 +96,8 @@ namespace mdr {
 		m_amount
 	};
 
-	//c Basic memory driver. Use 'MEMORY_DRIVER_' instead directly this class.
-	class basic_memory_driver_
+	//c Abstract memory driver. Use 'E_MEMORY_DRIVER_' instead directly this class.
+	class memory_driver_
 	{
 	protected:
 		//v Place 'Amount' bytes in 'Buffer' from the memory at position 'Position'.
@@ -127,11 +127,11 @@ namespace mdr {
 		}
 	public:
 		struct s {};
-		basic_memory_driver_( s &S )
+		memory_driver_( s &S )
 		{
 			reset( true );
 		}
-		virtual ~basic_memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
+		virtual ~memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
 		{
 			reset( false );
 		}
@@ -172,24 +172,24 @@ namespace mdr {
 		}
 	};
 
-	class basic_memory_driver
-	: public basic_memory_driver_
+	class memory_driver
+	: public memory_driver_
 	{
 	public:
-		basic_memory_driver_::s static_;
-		basic_memory_driver( void )
-		: basic_memory_driver_( static_ )
+		memory_driver_::s static_;
+		memory_driver( void )
+		: memory_driver_( static_ )
 		{
-			basic_memory_driver_::reset( false );
+			memory_driver_::reset( false );
 		}
-		virtual ~basic_memory_driver( void )
+		virtual ~memory_driver( void )
 		{
-			basic_memory_driver_::reset( true );
+			memory_driver_::reset( true );
 		}
 	};
 
-	#define E_MEMORY_DRIVER_	basic_memory_driver_
-	#define E_MEMORY_DRIVER		basic_memory_driver
+	#define E_MEMORY_DRIVER_	memory_driver_
+	#define E_MEMORY_DRIVER		memory_driver
 }
 
 /*$END$*/

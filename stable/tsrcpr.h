@@ -132,7 +132,7 @@ namespace tsrcpr {
 		NAV( E_MQUEUE_:: )
 	};
 
-	AUTOt( table )
+	AUTO1( table )
 
 	template <class t> inline txf::text_iflow___ &operator >>(
 		txf::text_iflow___ &Flot,

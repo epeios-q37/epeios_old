@@ -370,7 +370,7 @@ namespace que {
 			que::direction Direction ) const;
 	};
 
-	AUTOt( queue )
+	AUTO1( queue )
 
 	//d A queue.
 	#define E_QUEUEt_( r )		queue_< r >
@@ -705,7 +705,7 @@ namespace que {
 		}
 	};
 
-	AUTOt( managed_queue )
+	AUTO1( managed_queue )
 
 	//d A managed queue.
 	#define E_MQUEUEt_( r )		managed_queue_< r >

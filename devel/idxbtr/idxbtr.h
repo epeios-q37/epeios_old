@@ -306,7 +306,7 @@ namespace idxbtr {
 		}
 	};
 
-	AUTOt( tree_index )
+	AUTO1( tree_index )
 
 	#define E_IBTREEt( r )	tree_index< r >
 	#define E_IBTREEt_( r )	tree_index_< r >

@@ -249,38 +249,6 @@ a besoin de contenir une virgule, cette macro est là pour ça
 #define TOL_2EN1(a, b)	a, b
 #endif
 
-/*m Create the autonomous definition of the 'Name' object
-based on the 'Name'_ object and handling row of type 'r'. */
-#define AUTOt( Name )	\
-template <typename r> class Name\
-: public Name##_<r>\
-{\
-public:\
-	Name##_<r>::s static_;\
-	Name( void )\
-	: Name##_<r>( static_ )\
-	{\
-		reset( false );\
-	}\
-	~Name( void )\
-	{\
-		reset( true );\
-	}\
-	Name &operator =( const Name &S )\
-	{\
-		Name##_<r>::operator =( S );\
-\
-		return *this;\
-	}\
-	Name &operator =( const Name##_<r> &S )\
-	{\
-		Name##_<r>::operator =( S );\
-\
-		return *this;\
-	}\
-};
-
-
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
 #define AUTO( Name )	\
@@ -312,15 +280,16 @@ public:\
 	}\
 };
 
+
 //m Same as 'AUTO()' but with one template parameter of type 'TypeName'
-#define AUTO1t( Name, TypeName )	\
-template < TypeName t, typename r > class Name\
-: public Name##_<t,r>\
+#define AUTO1( Name )	\
+template < typename t > class Name\
+: public Name##_<t>\
 {\
 public:\
-	Name##_<t,r>::s static_;\
+	Name##_<t>::s static_;\
 	Name ( void )\
-	: Name##_<t,r>( static_ )\
+	: Name##_<t>( static_ )\
 	{\
 		reset( false );\
 	}\
@@ -330,32 +299,28 @@ public:\
 	}\
 	Name &operator =( const Name &S )\
 	{\
-		Name##_<t,r>::operator =( S );\
+		Name##_<t>::operator =( S );\
 \
 		return *this;\
 	}\
-	Name &operator =( const Name##_<t,r> &S )\
+	Name &operator =( const Name##_<t> &S )\
 	{\
-		Name##_<t,r>::operator =( S );\
+		Name##_<t>::operator =( S );\
 \
 		return *this;\
 	}\
 };
 
 
-//m Same as 'AUTO()' but with one template parameter.
-#define AUTO1( Name )	AUTO1t( Name, class )
-
-
 //m Same as 'AUTO()' but with two template parameter.
 #define AUTO2( Name )	\
-template < class t, class st, typename r > class Name\
-: public Name##_<t,st,r>\
+template < typename t, typename u > class Name\
+: public Name##_<t,u>\
 {\
 public:\
-	Name##_<t,st,r>::s static_;\
+	Name##_<t,u>::s static_;\
 	Name ( void )\
-	: Name##_<t,st,r>( static_ )\
+	: Name##_<t,u>( static_ )\
 	{\
 		reset( false );\
 	}\
@@ -365,13 +330,43 @@ public:\
 	}\
 	Name &operator =( const Name &S )\
 	{\
-		Name##_<t,st,r>::operator =( S );\
+		Name##_<t,u>::operator =( S );\
 \
 		return *this;\
 	}\
-	Name &operator =( const Name##_<t,st,r> &S )\
+	Name &operator =( const Name##_<t,u> &S )\
 	{\
-		Name##_<t,st,r>::operator =( S );\
+		Name##_<t,u>::operator =( S );\
+\
+		return *this;\
+	}\
+};
+
+//m Same as 'AUTO()' but with three template parameter.
+#define AUTO3( Name )	\
+template < typename t, typename u, typename v > class Name\
+: public Name##_<t,u,v>\
+{\
+public:\
+	Name##_<t,u,v>::s static_;\
+	Name ( void )\
+	: Name##_<t,u,v>( static_ )\
+	{\
+		reset( false );\
+	}\
+	~Name ( void )\
+	{\
+		reset( true );\
+	}\
+	Name &operator =( const Name &S )\
+	{\
+		Name##_<t,u,v>::operator =( S );\
+\
+		return *this;\
+	}\
+	Name &operator =( const Name##_<t,r,u> &S )\
+	{\
+		Name##_<t,u,v>::operator =( S );\
 \
 		return *this;\
 	}\
@@ -592,7 +587,7 @@ namespace tol {
 		}
 	};
 
-	AUTO1( object )
+	AUTO2( object )
 
 	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.
 	template <typename t> inline void Free( t *&Pointer )

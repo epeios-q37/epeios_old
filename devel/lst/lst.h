@@ -254,7 +254,7 @@ namespace lst {
 		}
 	};
 
-	AUTOt( list )
+	AUTO1( list )
 
 	//d Handle a list of objects.
 	#define E_LISTt( r )	list<r>

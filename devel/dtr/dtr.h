@@ -317,7 +317,7 @@ namespace dtr {
 		}
 	};
 
-	AUTOt( dynamic_tree )
+	AUTO1( dynamic_tree )
 
 	#define E_DTREEt( r )	dynamic_tree< r >
 	#define E_DTREEt_( r )	dynamic_tree_< r >

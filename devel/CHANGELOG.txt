@@ -5,6 +5,7 @@ GENERAL:
 - Adding 'SMA' to use in 'CCH'.
 - Adding portable data types.
 - Adding 'HTP' library.
+- Introducing '_' prefix for internal/intermediate classes.
 
 AEM:
 - Adding portable versions of classes.
@@ -12,12 +13,20 @@ AEM:
 BCH:
 - Adding portable versions of classes.
 - Adding 'bunch___'.
+- Adapting to the new 'AUTO(x)' macros.
+- Fixing spelling error.
+
+BITBCH:
+- Adapting to the new 'AUTO(x)' macros.
 
 BSO:
 - Adding the 'sign__' type.
 - Adding the portable ('p_...') types.
 - Removing old unused code.
 - Force 'sign__' to contain only -1,0,1.
+
+BTR:
+- Adapting to the new 'AUTO(x)' macros.
 
 CPE:
 - Adding 'CPE__USE_[VC|GCC]_WORKAROUND'.
@@ -27,9 +36,11 @@ CTN:
 - Renaming to 'Sync' where needed.
 - Adding GCC workaround.
 - Adding VC++ workaround.
+- Adapting to the new 'AUTO(x)' macros.
 
 DTR:
 - Adapting to changes in 'que'.
+- Adapting to the new 'AUTO(x)' macros.
 
 EPSMSC:
 - Removing IDEALX-related text.
@@ -45,19 +56,29 @@ FLW:
 - Adding length feature.
 
 IDXBTR:
-- Adding 'E_INDEX(_)'.
 - Adding 'MarkAs...()' method.
+- Adapting to new 'AUTO(x)' macros.
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.
 - Adding 'MarkAs...()' method.
+- Adding 'E_INDEX(_)'.
+- Adapting to new 'AUTO(x)' macros.
 
 IDXQUE:
 - Fixing bugs concerning row type.
 - Adding 'MarkAs...()' method.
+- Adapting to new 'AUTO(x)' macros.
+
+LST:
+- Adapting to the new 'AUTO(x)' macros.
 
 MDR:
 - Adding some features for portable data types.
+- Removing 'basic_' prefix.
+
+MMG:
+- Adapting to new 'AUTO(x)' macros.
 
 QUE:
 - Fixing bug from typed queue.
@@ -72,8 +93,14 @@ MMG:
 MMM:
 - Adding 'E_MULTIMEMORY(_)' #define.
 
+QUE:
+- Adapting to the new 'AUTO(x)' macros.
+
 SSNMNG:
 - Adapting to modification made in 'IDXBTQ' library.
+
+STK:
+- Adapting to the new 'AUTO(x)' macros.
 
 STR:
 - Adding missing 'const' qualifier.
@@ -81,15 +108,18 @@ STR:
 
 TOL:
 - Fixing bug in the 'NAVt()' macro.
+- Rewriting of the 'AUTO(x)' macros.
 
 TSRCPR:
-- Using 'que' rather then 'idxque'.
+- Using 'que' instead of 'idxque'.
+- Adapting to the new 'AUTO(x)' macros.
 
 TXMTBL:
 - Adding some helpful methods.
 
 TYM:
 - Adding 'memory___' class.
+- Adapting to the new 'AUTO(x)' macros.
 
 UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.

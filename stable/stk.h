@@ -134,7 +134,7 @@ namespace stk {
 		}
 	};
 
-	AUTO1( stack )
+	AUTO2( stack )
 
 	//m A stack of static object of type 't'.
 	#define E_STACKt_( t, r )	stack_< t, r >

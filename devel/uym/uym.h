@@ -103,7 +103,7 @@ namespace uym {
 	using namespace mdr;
 
 	// Pilote mémoire.
-	class memory_driver
+	class _memory_driver
 	{
 	private:
 		// Le pilote.
@@ -127,11 +127,11 @@ namespace uym {
 				Interne_ = false;
 			}
 		}
-		memory_driver( void )
+		_memory_driver( void )
 		{
 			reset( false );
 		}
-		virtual ~memory_driver( void )
+		virtual ~_memory_driver( void )
 		{
 			reset( true );
 		}
@@ -181,12 +181,12 @@ namespace uym {
 		}
 	};
 
-	//c Untyped memory core. Don't use; for internal use only.
+	//c Untyped memory.
 	class untyped_memory_
 	{
 	private:
 		// Le pilote mémoire.
-		memory_driver Pilote_;
+		_memory_driver Pilote_;
 	#ifdef UYM_DBG
 		void Test_(
 			row__ Position,
@@ -297,7 +297,7 @@ namespace uym {
 		{
 			Lire_( Position, Amount, Buffer, Ignore );
 		}
-		//f Wrtie to 'Position' 'Amount' bytes from 'Buffer'
+		//f Write to 'Position' 'Amount' bytes from 'Buffer'
 		void Write(
 			const data__ *Buffer,
 			bsize__ Amount,
@@ -338,7 +338,7 @@ namespace uym {
 			row__ Offset = 0 );
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Write(
-			const class memory_core__ &Source,
+			const class _memory__ &Source,
 			size__ Size,
 			row__ Position = 0,
 			row__ Offset = 0 );
@@ -366,7 +366,7 @@ namespace uym {
 		}
 	};
 
-	//c Untyped memory core. Don't use; for internal use only.
+	//c Untyped memory. 
 	class untyped_memory
 	: public untyped_memory_
 	{
@@ -400,8 +400,8 @@ namespace uym {
 		size__ Quantity );
 
 
-	//c Memory core. Don't use; for internal use only.
-	class memory_core__
+	//c The core of a memory. Don't use; for internal use only.
+	class _memory__
 	{
 	private:
 		data__ **Data_;
@@ -410,11 +410,11 @@ namespace uym {
 		{
 			Data_ = NULL;
 		}
-		memory_core__( void )
+		_memory__( void )
 		{
 			reset( false );
 		}
-		~memory_core__( void )
+		~_memory__( void )
 		{
 			reset( true );
 		}
@@ -455,14 +455,14 @@ namespace uym {
 		void Read(
 			row__ Position,
 			size__ Quantity,
-			memory_core__ &Destination,
+			_memory__ &Destination,
 			row__ Offset = 0 ) const
 		{
 			memmove( Destination.Data_ + Position, Data_ + Position, Quantity );
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Write(
-			const memory_core__ &Source,
+			const _memory__ &Source,
 			size__ Quantity,
 			row__ Position = 0,
 			row__ Offset = 0 )
@@ -498,7 +498,7 @@ namespace uym {
 	};
 
 	inline void untyped_memory_::Write(
-		const memory_core__ &Source,
+		const _memory__ &Source,
 		size__ Size,
 		row__ Position,
 		row__ Offset )
@@ -507,17 +507,16 @@ namespace uym {
 	}
 
 
-
 	//c A fixed-size memory of size 'size'.
 	template <int size> class untyped_memory__
-	: public memory_core__
+	: public _memory__
 	{
 	private:
 		uym::data__ Data_[size];
 	public:
 		struct s {};	// To simplify use in library 'SET'
 		untyped_memory__( s &S = *(s *)NULL )
-		: memory_core__() {}
+		: memory_core___() {}
 		// Simplifies the 'SET' library.
 		void Allocate( uym::size__ Size )
 		{
@@ -530,9 +529,11 @@ namespace uym {
 		}
 	};
 
-	//c A untyped memoru using conventional memory.
+	typedef _memory__	_memory___;
+
+	//c A untyped memory using conventional memory.
 	class untyped_memory___
-	: public memory_core__
+	: public _memory___
 	{
 	private:
 		uym::data__ *Data_;
@@ -547,7 +548,7 @@ namespace uym {
 			Data_ = NULL;
 		}
 		untyped_memory___( s &S = *(s *)NULL )
-		: memory_core__()
+		: _memory___()
 		{
 			reset( false );
 		}
@@ -565,7 +566,7 @@ namespace uym {
 		{
 			tol::Free( Data_ );
 
-			memory_core__::Init( Data_ );
+			_memory___::Init( Data_ );
 		}
 	};
 }

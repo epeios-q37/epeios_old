@@ -1,8 +1,8 @@
 /*
-  Header for the 'ctn' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'ctn' library by Claude SIMON (csimon@epeios.org)
+  Copyright (C) 2002 Claude SIMON (csimon@epeios.org) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://epeios.org/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	CTN_VERSION	"$Revision$"	
 
-#define CTN_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define CTN_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &CTNTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -638,7 +638,7 @@ namespace ctn {
 		}
 	};
 
-	AUTO1( mono_container )
+	AUTO2( mono_container )
 
 	//s Container of object of type 'Type', which need only one memory.
 	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
@@ -724,7 +724,7 @@ namespace ctn {
 	};
 
 
-	AUTO1( mono_extended_container )
+	AUTO2( mono_extended_container )
 
 	//s Container of object of type 'Type', which need only one memory, and had a 'Init()' function without parameters.
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
@@ -994,7 +994,7 @@ namespace ctn {
 		}
 	};
 
-	AUTO1( multi_container )
+	AUTO2( multi_container )
 
 	//s Container of object of type 'Type', which need more then one memory.
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
@@ -1080,7 +1080,7 @@ namespace ctn {
 	};
 
 
-	AUTO1( multi_extended_container )
+	AUTO2( multi_extended_container )
 
 	//s Container of object of type 'Type', and which have a 'Init()' function without parameters.
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >

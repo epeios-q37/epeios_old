@@ -190,7 +190,7 @@ namespace idxbtq {
 		}
 	};
 
-	AUTOt( tree_queue_index )
+	AUTO1( tree_queue_index )
 }
 
 //d An index.

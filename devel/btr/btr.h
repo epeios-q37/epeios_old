@@ -592,7 +592,7 @@ namespace btr {
 	*/
 	};
 
-	AUTOt( binary_tree )
+	AUTO1( binary_tree )
 
 	#define E_BTREEt_( r )	binary_tree_<r>
 	#define E_BTREEt( r )	binary_tree<r>

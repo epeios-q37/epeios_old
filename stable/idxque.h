@@ -139,7 +139,7 @@ namespace idxque {
 		}
 	};
 
-	AUTOt( queue_index )
+	AUTO1( queue_index )
 	
 	#define E_IQUEUEt_( r )	queue_index_<r>
 	#define E_IQUEUEt( r )	queue_index<r>

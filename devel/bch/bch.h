@@ -71,7 +71,7 @@ namespace bch {
 	using namespace epeios;
 
 	//c The kernel of a bunch. For internal use only.
-	template <class type, class mmr, class mng, typename row> class bunch_kernel_
+	template <class type, class mmr, class mng, typename row> class _bunch
 	: public mmr,
 	  public mng
 	{
@@ -87,7 +87,7 @@ namespace bch {
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
-			const bunch_kernel_ &Source,
+			const _bunch &Source,
 			epeios::size__ Quantite,
 			epeios::row_t__ PosSource,
 			epeios::row_t__ PosDest )
@@ -123,7 +123,7 @@ namespace bch {
 		: public mmr::s,
 		  public mng::s
 		{};
-		bunch_kernel_( s &S )
+		_bunch( s &S )
 		: mmr( S ),
 		  mng( S )
 		{}
@@ -132,7 +132,7 @@ namespace bch {
 			mmr::reset( P );
 			mng::reset( P );
 		}
-		bunch_kernel_ &operator =( const bunch_kernel_ &SC )
+		_bunch &operator =( const _bunch &SC )
 		{
 			mng::operator =( SC );
 
@@ -162,14 +162,14 @@ namespace bch {
 		}
 		//f Same as 'Write()', but allocate additionnaly mmr if needed.
 		void WriteAndAdjust(
-			const bunch_kernel_ &Bunch,
+			const _bunch &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
 			AllocateIfNecessary_( Amount + *Offset );
 
-			mmr::Write( Set, Amount, Row, Offset );
+			mmr::Write( Bunch, Amount, Row, Offset );
 		}
 		//f Same as 'Write()', but allocate additionnaly mmr if needed.
 		void WriteAndAdjust(
@@ -207,7 +207,7 @@ namespace bch {
 		}
 		//f Adding 'Amount' object from 'Set'. Return the row of the first object added.
 		row Add(
-			const bunch_kernel_ &Set,
+			const _bunch &Set,
 			epeios::size__ Amount )
 		{
 			epeios::row_t__ Retour = this->Amount();
@@ -228,13 +228,13 @@ namespace bch {
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
 		//f Add 'Set'. Return the row where added.
-		row Add( const bunch_kernel_ &Set )
+		row Add( const _bunch &Set )
 		{
 			return Add( Set, Set.Amount() );
 		}
 		//f Insert at 'PosDest' 'Amount' objects from 'Source' at 'PosSource'.
 		void Insert(
-			const bunch_kernel_ &Source,
+			const _bunch &Source,
 			epeios::size__ Amount,
 			row RowSource,
 			row RowDest )
@@ -243,7 +243,7 @@ namespace bch {
 		}
 		//f Insert 'Set' at 'Row'.
 		void Insert(
-			const bunch_kernel_ &Set,
+			const _bunch &Set,
 			row Row )
 		{
 			Inserer_( Set, Set.Amount(), 0, *Row );
@@ -326,24 +326,24 @@ namespace bch {
 
 
 	/*c The core set of static object of type 'type'. Internal use only. */
-	template <class type, typename row, typename aem> class bunch_core_
-	: public bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >
+	template <class type, typename row, typename aem> class _bunch_
+	: public _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >
 	{
 	public:
 		struct s
-		: public bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::s
+		: public _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::s
 		{};
-		bunch_core_( s &S )
-		: bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >( S )
+		_bunch_( s &S )
+		: _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >( S )
 		{};
 		void reset( bool P = true )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::reset( P );
+			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::reset( P );
 			Memory().reset( P );
 		}
-		bunch_core_ &operator =( const bunch_core_ &Op )
+		_bunch_ &operator =( const _bunch_ &Op )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::operator =( Op );
+			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::operator =( Op );
 
 			Allocate( Op.Amount() );
 
@@ -354,39 +354,39 @@ namespace bch {
 		void write( flw::oflow___ &OFlow ) const
 		{
 			flw::Put( Amount(), OFlow );
-			Memory().write( 0, bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::Amount(), OFlow );
+			Memory().write( 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::Amount(), OFlow );
 		}
 		void read( flw::iflow___ &IFlow )
 		{
 			size__ Amount;
 
 			flw::Get( IFlow, Amount );
-			bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::Allocate( Amount );
-			Memory().read( IFlow, 0, bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::Amount() );
+			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::Allocate( Amount );
+			Memory().read( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::Amount() );
 
 		}
 		//f Adjust the extent to amount.
 		void Adjust( void )
 		{
-			if ( bunch_kernel_<type, tym::E_MEMORYt_( type, row ), aem, row >::Force( Amount() ) )
+			if ( _bunch<type, tym::E_MEMORYt_( type, row ), aem, row >::Force( Amount() ) )
 				Memory().Allocate( Amount() );
 		}
 	};
 
 	/*c A bunch of static object of type 'type'. Use 'E_BUNCH_( type )' rather then directly this class. */
 	template <class type, typename row> class bunch_
-	: public bunch_core_<type, row, aem::amount_extent_manager_< row > >
+	: public _bunch_<type, row, aem::amount_extent_manager_< row > >
 	{
 	public:
 		struct s
-		: public bunch_core_<type, row, aem::amount_extent_manager_< row > >::s
+		: public _bunch_<type, row, aem::amount_extent_manager_< row > >::s
 		{};
 		bunch_( s &S )
-		: bunch_core_<type, row, aem::amount_extent_manager_< row > >( S )
+		: _bunch_<type, row, aem::amount_extent_manager_< row > >( S )
 		{};
 	};
 
-	AUTO1( bunch )
+	AUTO2( bunch )
 
 	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
 	#define E_BUNCHt_( Type, r )		bunch_< Type, r >
@@ -399,18 +399,18 @@ namespace bch {
 
 	/*c A portable bunch of static object of type 'type'. Use 'E_PBUNCH_( type )' rather then directly this class. */
 	template <class type, typename row> class p_bunch_
-	: public bunch_core_<type, row, aem::p_amount_extent_manager_< row > >
+	: public _bunch_<type, row, aem::p_amount_extent_manager_< row > >
 	{
 	public:
 		struct s
-		: public bunch_core_<type, row, aem::p_amount_extent_manager_< row > >::s
+		: public _bunch_<type, row, aem::p_amount_extent_manager_< row > >::s
 		{};
 		p_bunch_( s &S )
-		: bunch_core_<type, row, aem::p_amount_extent_manager_< row > >( S )
+		: _bunch_<type, row, aem::p_amount_extent_manager_< row > >( S )
 		{};
 	};
 
-	AUTO1( p_bunch )
+	AUTO2( p_bunch )
 
 	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
 	#define E_P_BUNCHt_( Type, r )		p_bunch_< Type, r >
@@ -422,8 +422,8 @@ namespace bch {
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
 	template <class t, typename r, typename m> inline bso::sbyte__ Compare(
-		const bunch_core_<t, r, m> &S1,
-		const bunch_core_<t, r, m> &S2,
+		const _bunch_<t, r, m> &S1,
+		const _bunch_<t, r, m> &S2,
 		r BeginS1 = 0,
 		r BeginS2 = 0 )
 	{
@@ -464,30 +464,30 @@ namespace bch {
 	}
 
 	//c A set of maximum 'size' static objects of type 'type'. Use 'SET__( type, size )' rather then directly this class.
-	template <typename type, int size, typename row, typename aem> class bunch_core__
-	: public bunch_kernel_< type, tym::E_MEMORYt__( type, size, row ), aem, row >
+	template <typename type, int size, typename row, typename aem> class _bunch__
+	: public _bunch< type, tym::E_MEMORYt__( type, size, row ), aem, row >
 	{
 	public:
 		struct s
-		: public bunch_kernel_<type, tym::E_MEMORYt__( type, size, row ), aem, row >::s {} S_;
-		bunch_core__( void ) 
-		: bunch_kernel_<type, tym::E_MEMORYt__( type, size, row ), aem, row >( S_ ) {}
-		bunch_core__ &operator =( const bunch_core__ &S )
+		: public _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::s {} S_;
+		_bunch__( void ) 
+		: _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >( S_ ) {}
+		_bunch__ &operator =( const _bunch__ &S )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt__( type, size, row ), aem, row >::WriteAndAdjust( S, S.Amount_ );
+			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::WriteAndAdjust( S, S.Amount_ );
 			Size_ = S.Amount_;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt__( type, size, row ), aem, row >::Init();
-			bunch_kernel_<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
+			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::Init();
+			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
 		}
 	};
 
 	template <typename type, int size, typename row> class bunch__
-	: public bunch_core__< type, size, row, aem::amount_extent_manager_<row> >
+	: public _bunch__< type, size, row, aem::amount_extent_manager_<row> >
 	{};
 
 
@@ -497,30 +497,30 @@ namespace bch {
 	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , epeios::row__ )
 
 	//c A set of static objects of type 'type'. Use 'BUNCH___( type )' rather then directly this class.
-	template <typename type, typename row, typename aem> class bunch_core___
-	: public bunch_kernel_< type, tym::E_MEMORYt___( type, row ), aem, row >
+	template <typename type, typename row, typename aem> class _bunch___
+	: public _bunch< type, tym::E_MEMORYt___( type, row ), aem, row >
 	{
 	public:
 		struct s
-		: public bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::s {} S_;
-		bunch_core___( void ) 
-		: bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >( S_ ) {}
-		bunch_core___ &operator =( const bunch_core___ &S )
+		: public _bunch<type, tym::E_MEMORYt___( type, row ), aem, row >::s {} S_;
+		_bunch___( void ) 
+		: _bunch<type, tym::E_MEMORYt___( type, row ), aem, row >( S_ ) {}
+		_bunch___ &operator =( const _bunch___ &S )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::WriteAndAdjust( S, S.Amount_ );
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row >::WriteAndAdjust( S, S.Amount_ );
 			Size_ = S.Amount_;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::Init();
-			bunch_kernel_<type, tym::E_MEMORYt___( type, row ), aem, row >::SetStepValue( 0 );
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row >::Init();
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row >::SetStepValue( 0 );
 		}
 	};
 
 	template <typename type, typename row> class bunch___
-	: public bunch_core___< type, row, aem::amount_extent_manager_<row> >
+	: public _bunch___< type, row, aem::amount_extent_manager_<row> >
 	{};
 
 
@@ -532,7 +532,7 @@ namespace bch {
 
 
 	template <typename type, int size, typename row> class p_bunch__
-	: public bunch_core__< type, size, row, aem::p_amount_extent_manager_<row> >
+	: public _bunch__< type, size, row, aem::p_amount_extent_manager_<row> >
 	{};
 
 

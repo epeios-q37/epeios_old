@@ -230,7 +230,7 @@ namespace bitbch {
 		}
 	};
 
-	AUTOt( bit_bunch )
+	AUTO1( bit_bunch )
 
 #if 0	// Code in .cpp as deseapered ...
 	bso::bool__ ComparerBitABit_(
@@ -376,7 +376,7 @@ namespace bitbch {
 	};
 
 
-	AUTOt( bibit_bunch )
+	AUTO1( bibit_bunch )
 
 #if 0
 	/* Stocke dans 'D' 'O1' & 'O2', tous étant de taille 'Taille'.

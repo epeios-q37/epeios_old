@@ -68,7 +68,7 @@ namespace tym {
 	#define TYM_MAX_SIZE	UYM_MAX_SIZE
 
 	//c Typed memory core. Don't use; for internal use only.
-	template <typename t, typename b, typename r> class memory_core_
+	template <typename t, typename b, typename r> class _memory_
 	: public b
 	{
 	private:
@@ -77,7 +77,7 @@ namespace tym {
 		void Lire_(
 			epeios::row_t__ Position,
 			epeios::size__ Quantite,
-			memory_core_ &Destination,
+			_memory_ &Destination,
 			epeios::row_t__ Decalage ) const
 		{
 			b::Read( ( Position * sizeof( t ) ), ( Quantite * sizeof( t ) ), Destination, ( Decalage * sizeof( t ) ) );
@@ -101,7 +101,7 @@ namespace tym {
 		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
 		à la position 'Decalage' */
 		void Ecrire_(
-			const memory_core_ &Source,
+			const _memory_ &Source,
 			epeios::size__ Quantite,
 			epeios::row_t__ Position,
 			epeios::row_t__ Decalage )
@@ -117,7 +117,7 @@ namespace tym {
 		struct s
 		: public b::s
 		{};
-		memory_core_( s &S )
+		_memory_( s &S )
 		: b( S )
 		{}
 		//f Initialization.
@@ -144,7 +144,7 @@ namespace tym {
 		void Read(
 			r Position,
 			epeios::size__ Quantity,
-			memory_core_<t,b,r> &Destination,
+			_memory_<t,b,r> &Destination,
 			r Offset = 0 ) const
 		{
 			Lire_( *Position, Quantity, Destination, *Offset );
@@ -175,16 +175,7 @@ namespace tym {
 		}
 		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
 		void Write(
-			const memory_core_<t,b,r> &Source,
-			epeios::size__ Quantity,
-			r Position = 0,
-			r Offset = 0 )
-		{
-			Ecrire_( Source, Quantity, *Position, *Offset );
-		}
-		/*f Write 'Quantity' objects at 'Position' from 'Source' at 'Offset'. */
-		void Write(
-			const memory_core_<t,b,r> &Source,
+			const _memory_<t,b,r> &Source,
 			epeios::size__ Quantity,
 			r Position = 0,
 			r Offset = 0 )
@@ -226,7 +217,7 @@ namespace tym {
 
 	/*c Memory of statical object of type 't'. */
 	template <typename t, typename r> class memory_
-		: public memory_core_< t, uym::untyped_memory_, r >
+		: public _memory_< t, uym::untyped_memory_, r >
 	/* NOTA: See 'memory_core about' '::s'. */
 	{
 	private:
@@ -234,42 +225,42 @@ namespace tym {
 		mmm::multimemory_driver_ PiloteMultimemoire_;
 	public:
 		struct s
-		: public memory_core_< t, uym::untyped_memory_, r >::s
+		: public _memory_< t, uym::untyped_memory_, r >::s
 		{
 			mmm::multimemory_driver_::s PiloteMultimemoire_;
 		};
 		memory_( s &S )
-		: memory_core_< t, uym::untyped_memory_, r >( S ),
+		: _memory_< t, uym::untyped_memory_, r >( S ),
 		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
 		{}
 		void reset( bool P = true )
 		{
-			memory_core_< t, uym::untyped_memory_, r >::reset( P );
+			_memory_< t, uym::untyped_memory_, r >::reset( P );
 			PiloteMultimemoire_.reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
 			PiloteMultimemoire_.Init( M );
-			memory_core_< t, uym::untyped_memory_, r >::plug( PiloteMultimemoire_ );
+			_memory_< t, uym::untyped_memory_, r >::plug( PiloteMultimemoire_ );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
 		{
 			PiloteMultimemoire_.reset();
-			memory_core_< t, uym::untyped_memory_, r >::plug( Pilote );
+			_memory_< t, uym::untyped_memory_, r >::plug( Pilote );
 		}
 		void write(
 			r Position,
 			epeios::size__ Quantity,
 			flw::oflow___ &OFlow ) const
 		{
-			memory_core_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+			_memory_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
 			flw::iflow___  &IFlow,
 			r Position,
 			epeios::size__ Quantite )
 		{
-			memory_core_<t, uym::untyped_memory_, r >::read( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
+			_memory_<t, uym::untyped_memory_, r >::read( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
 		}
 	};
 
@@ -279,7 +270,7 @@ namespace tym {
 	{};
 	*/
 
-	AUTO1( memory )
+	AUTO2( memory )
 
 	//m 'memory' would be often used, then create a special name.
 	#define E_MEMORYt( t, r )	memory< t, r >
@@ -303,13 +294,13 @@ namespace tym {
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
 	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
 	template <class t, int amount, int size, typename r> class memory__
-	: public memory_core_< t, uym::untyped_memory__< amount * size >, r >
+	: public _memory_< t, uym::untyped_memory__< amount * size >, r >
 	{
 	private:
-		memory_core_<t, uym::untyped_memory__< amount * size >, r >::s Static_;
+		_memory_<t, uym::untyped_memory__< amount * size >, r >::s Static_;
 	public:
-		memory__( memory_core_<t, uym::untyped_memory__<  amount * size >, r >::s &S = *(memory_core_<t, uym::untyped_memory__<  amount * size >, r >::s *) NULL )	// To simplify use in 'SET'.
-		: memory_core_<t, uym::untyped_memory__< amount * size >, r >( Static_ )
+		memory__( _memory_<t, uym::untyped_memory__<  amount * size >, r >::s &S = *(_memory_<t, uym::untyped_memory__<  amount * size >, r >::s *) NULL )	// To simplify use in 'SET'.
+		: _memory_<t, uym::untyped_memory__< amount * size >, r >( Static_ )
 		{}
 	};
 
@@ -321,13 +312,13 @@ namespace tym {
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
 	as template parameter. Use 'E_MEMORY(t)__', it's easier. */
 	template <class t, int size, typename r> class memory___
-	: public memory_core_< t, uym::untyped_memory___, r >
+	: public _memory_< t, uym::untyped_memory___, r >
 	{
 	private:
-		memory_core_<t, uym::untyped_memory___, r >::s Static_;
+		_memory_<t, uym::untyped_memory___, r >::s Static_;
 	public:
-		memory___( memory_core_<t, uym::untyped_memory___, r >::s &S = *(memory_core_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'SET'.
-		: memory_core_<t, uym::untyped_memory___, r >( Static_ )
+		memory___( _memory_<t, uym::untyped_memory___, r >::s &S = *(_memory_<t, uym::untyped_memory___, r >::s *) NULL )	// To simplify use in 'SET'.
+		: _memory_<t, uym::untyped_memory___, r >( Static_ )
 		{}
 	};
 

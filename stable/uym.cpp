@@ -370,7 +370,7 @@ ERREpilog
 }
 
 //f Duplicate 'Count' times 'Object' of size 'Size' to 'Position'.
-void uym::memory_core__::Fill(
+void uym::_memory__::Fill(
 	const data__ *Object,
 	bsize__ Size,
 	size__ Count,
@@ -381,11 +381,11 @@ void uym::memory_core__::Fill(
 }
 
 //f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) o 'NONE' if non-existant.
-row__ uym::memory_core__::Position(
+row__ uym::_memory__::Position(
 	const data__ *Objet,
 	bsize__ Size,
 	row__ Begin,
-	row__ End )
+	row__ End ) const
 {
 	while( ( Begin < End ) && ( memcmp( Data_ + Begin, Objet, Size ) ) )
 		Begin += Size;

@@ -638,7 +638,7 @@ namespace ctn {
 		}
 	};
 
-	AUTO1( mono_container )
+	AUTO2( mono_container )
 
 	//s Container of object of type 'Type', which need only one memory.
 	#define E_MCONTAINERt_( Type, r )	mono_container_< Type, r >
@@ -724,7 +724,7 @@ namespace ctn {
 	};
 
 
-	AUTO1( mono_extended_container )
+	AUTO2( mono_extended_container )
 
 	//s Container of object of type 'Type', which need only one memory, and had a 'Init()' function without parameters.
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
@@ -994,7 +994,7 @@ namespace ctn {
 		}
 	};
 
-	AUTO1( multi_container )
+	AUTO2( multi_container )
 
 	//s Container of object of type 'Type', which need more then one memory.
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
@@ -1080,7 +1080,7 @@ namespace ctn {
 	};
 
 
-	AUTO1( multi_extended_container )
+	AUTO2( multi_extended_container )
 
 	//s Container of object of type 'Type', and which have a 'Init()' function without parameters.
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >

@@ -337,7 +337,7 @@ namespace mmg
 		}
 	};
 
-	AUTO1( memory_merger )
+	AUTO2( memory_merger )
 
 	//m Merge all the memory, including the statical part, of a 't' type object in one memory.
 	#define E_MEMORY_MERGER_( t )	memory_merger_<t, t::s>
