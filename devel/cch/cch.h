@@ -1,25 +1,24 @@
 /*
-  Header for the 'cch' library by Claude L. Simon (csimon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org) 
+	Header for the 'cch' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define CCH_NAME		"CCH"
 
-#define	CCH_VERSION	"$Revision$"	
+#define	CCH_VERSION	"$Revision$"
 
-#define CCH_OWNER		"the Epeios project (http://epeios.org/)"
+#define CCH_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &CCHTutor;
 
 #if defined( XXX_DBG ) && !defined( CCH_NODBG )
-#define CCH_DBG 
+#define CCH_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,12 +53,12 @@ extern class ttr_tutor &CCHTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
-/*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D CaCHe.
+//D CaCHe 
 /* End addendum to automatic documentation generation part. */
 
+/*$BEGIN$*/
 
 #include "err.h"
 #include "flw.h"
@@ -375,14 +374,14 @@ namespace cch {
 	: public volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >
 	{
 	protected:
-		// At true if you add data.
-		bso::bool__ AddMode_;
+		// At true if you append data.
+		bso::bool__ AppendMode_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::reset( P );
 
-			AddMode_ = false;
+			AppendMode_ = false;
 		}
 		core_read_write_cache___( void )
 		{
@@ -413,8 +412,8 @@ namespace cch {
 			if ( IsInsideBuffer_( Position, Amount ) )
 				ReadFromBuffer_( Position, Amount, Buffer );
 			else {
-				DumpCache_( AddMode_ );
-				AddMode_ = false;
+				DumpCache_( AppendMode_ );
+				AppendMode_ = false;
 
 				if ( Amount > Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
@@ -459,22 +458,22 @@ namespace cch {
 		{
 			Write( &Data, 1, Position );
 		}
-		//f Add 'Data' at 'Position'.
-		r Add( type__ Data )
+		//f Append 'Data'.
+		r Append( type__ Data )
 		{
 			r Position;
 
-			if ( AddMode_ && ( Amount_ == Size_ ) )
+			if ( AppendMode_ && ( Amount_ == Size_ ) )
 			{
 				Synchronize();
-				AddMode_ = false;
+				AppendMode_ = false;
 			}
 
-			if ( !AddMode_ ) {
+			if ( !AppendMode_ ) {
 				Synchronize();
 				Position_ = BunchAmount_();
 				Amount_ = 0;
-				AddMode_ = true;
+				AppendMode_ = true;
 			}
 
 			WriteIntoBuffer_( &Data, 1, Position = Position_ + Amount_++ );
@@ -482,10 +481,10 @@ namespace cch {
 			return Position;
 		}
 		/*f Return the amount of data contained in the underlying bunch, 
-		considering data added in the cache. */
+		considering data put in the cache. */
 		epeios::size__ Amount( void )
 		{
-			if ( AddMode_ )
+			if ( AppendMode_ )
 				return Position_ + Amount_;
 			else
 				return BunchAmount_();
@@ -494,8 +493,8 @@ namespace cch {
 		//f Synchronize the content of the cache and the content of the bunch.
 		void Synchronize( void )
 		{
-			DumpCache_( AddMode_ );
-			AddMode_ = false;
+			DumpCache_( AppendMode_ );
+			AppendMode_ = false;
 		}
 	};
 
@@ -821,7 +820,7 @@ namespace cch {
 			}
 		}
 		/*f Return the amount of data contained in the bunch correspondinf to 'Position', 
-		considering data added in the cache. */
+		considering data put in the cache. */
 		epeios::size__ Amount( rc Position )
 		{
 			return GetCache_( Position ).Amount();
@@ -842,7 +841,7 @@ namespace cch {
 				R = Caches_.Next( R );
 			}
 
-			Item_.Sync();
+			Item_.Flush();
 		}
 	};
 
@@ -899,12 +898,12 @@ namespace cch {
 		{
 			Write( &Data, 1, PositionInContainer, PositionInBunch );
 		}
-		//f Return data at 'Position'.
-		rb Add(
+		//f Append 'Data' for container 'P"ositionInContainer'.
+		rb Append(
 			type__ Data,
 			rc PositionInContainer )
 		{
-			return GetCache_( PositionInContainer ).Add( Data );
+			return GetCache_( PositionInContainer ).Append( Data );
 		}
 	};
 

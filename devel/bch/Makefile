@@ -1,10 +1,7 @@
-# 'bch' Makefile by Claude L. Simon (csimon@webmails.com)
+# 'bch' Makefile by Claude SIMON (csimon@epeios.org)
 # Builds test executable for the 'bch' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
-#
-# This file is part of the Epeios (http://epeios.org/) project.
-# 
+# Copyright (C) 2001-2003  Claude SIMON (csimon@epeios.org).
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -33,18 +30,18 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err uym fam
+libs = ttr tol flw stf err
 
 
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(EPEIOS_ENV)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifeq ("$(EPEIOS_ENV)","gnu")
 co = -c
 # Generates debugging data.
 co += -g
@@ -57,7 +54,7 @@ lo = -o $(name)
 #lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(EPEIOS_ENV)","beos")
 co = -c -g
 lo = -o $(name)
 endif

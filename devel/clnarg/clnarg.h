@@ -164,7 +164,7 @@ namespace clnarg {
 		//f Add command 'Command'.
 		void AddCommand( const command__ &Command )
 		{
-			Commands.Add( Command );
+			Commands.Append( Command );
 		}
 		//f Add command with short name, 'Short', long name 'Long' and description 'Description' and id 'Id'.
 		void AddCommand(
@@ -186,7 +186,7 @@ namespace clnarg {
 		//f Add option 'Option'.
 		void AddOption( const option__ &Option )
 		{
-			Options.Add( Option );
+			Options.Append( Option );
 		}
 		//f Add option with long name 'Long', short name 'Short', description 'Description', and amount 'Amount' and id 'Id'.
 		void AddOption(

@@ -170,7 +170,7 @@ static inline void Add_(
 	option_list_ &Options )
 {
 	if ( !Exists_( Id, Options ) )
-		Options.Add( Id );
+		Options.Append( Id );
 }
 
 static const char *AddMulti_(
@@ -317,7 +317,7 @@ ERRProlog
 ERRBegin
 	while( ( i < ( ArgC_ - 1 ) ) && GetArgument_( i, (id__)Option, Argument ) ) {
 		if ( Argument.Amount() )
-			Arguments.Add( Argument );
+			Arguments.Append( Argument );
 		Argument.Init();
 	}
 
@@ -337,13 +337,13 @@ void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 			if ( ArgCount_ )
 				ArgCount_--;
 			else
-				Arguments.Add( str::string( ArgV_[i] ) );
+				Arguments.Append( str::string( ArgV_[i] ) );
 			break;
 		case tMulti:
 		case tLong:
 		case tShort:
 			if ( End )
-				Arguments.Add( str::string( ArgV_[i] ) );
+				Arguments.Append( str::string( ArgV_[i] ) );
 			break;
 		case tEnd:
 			End = true;

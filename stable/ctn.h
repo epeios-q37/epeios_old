@@ -734,8 +734,8 @@ namespace ctn {
 
 			return P;
 		}
-		//f Adding object 'Object'. Return position where added.
-		r Add( const t &Object )
+		//f Append object 'Object'. Return position where put.
+		r Append( const t &Object )
 		{
 			r P = Create_();
 
@@ -1097,8 +1097,8 @@ namespace ctn {
 
 			return P;
 		}
-		//f Adding object 'Object'. Return position where added.
-		r Add( const t &Object )
+		//f Append object 'Object'. Return position where put.
+		r Append( const t &Object )
 		{
 			r P = Create_();
 

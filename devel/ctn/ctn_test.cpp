@@ -68,9 +68,9 @@ ERRBegin
 	C( 1 ).Init();
 	C( 1 ) = "hello";
 #else
-	C.Add( str::string( "coucou" ) );
+	C.Append( str::string( "coucou" ) );
 
-	C.Add( str::string( "hello" ) );
+	C.Append( str::string( "hello" ) );
 #endif
 
 	stf::cout << C( 0 ) << txf::tab;
@@ -135,7 +135,7 @@ void Remplir( str::string_ &S )
 	int i = 10UL * rand() / RAND_MAX + 1;
 
 	while ( i-- )
-		S.Add( (char)( 'a' + ( 'z' - 'a' ) * rand() / RAND_MAX ) );
+		S.Append( (char)( 'a' + ( 'z' - 'a' ) * rand() / RAND_MAX ) );
 }
 
 
@@ -304,9 +304,9 @@ ERRBegin
 				S.Init();
 //				S.SetStepValue( 0 );
 
-				S.Add( M );
-				S.Add( m );
-				S.Add( C );
+				S.Append( M );
+				S.Append( m );
+				S.Append( C );
 
 				ECC( C - '0' ).Init();
 				ECC() = S;
@@ -392,9 +392,9 @@ ERRBegin
 //		E(C - '0').SetStepValue( 0 );
 
 
-		E(C - '0').Add( M );
-		E(C - '0').Add( m );
-		E(C - '0').Add( C );
+		E(C - '0').Append( M );
+		E(C - '0').Append( m );
+		E(C - '0').Append( C );
 
 //		E(C - '0').Adjust();
 

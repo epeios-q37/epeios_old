@@ -88,9 +88,9 @@ ERRBegin
 	for( int i = 0; i < 10 ; i++ ) {
 		Mys__.Init();
 		for( int j = i; j < 10 ; j++ )
-			Mys__.Add( j );
+			Mys__.Append( j );
 
-		Mys.Add( Mys__ );
+		Mys.Append( Mys__ );
 	}
 
 	stf::cout << txf::nl;

@@ -132,6 +132,11 @@ namespace lstbch {
 		{
 			return list_<row, row_t>::New();
 		}
+		// To avoid the use of herited 'Append' methods.
+		void Append( void ) const
+		{
+			ERRu();
+		}
 	};
 
 	E_AUTO3( list_bunch )

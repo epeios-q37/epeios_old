@@ -1,7 +1,7 @@
 /*
 	'tsrcpr' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tsrcpr' header file ('tsrcpr.h').
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -112,21 +114,21 @@ static void LireIdentificateur_(
 	bso::char__ C = Flot.Get();
 
 	while ( !Flot.EOX() && isidcar( C ) ) {
-		String.Add( C );
+		String.Append( C );
 		C = Flot.Get();
 	}
 
 	if ( !Flot.EOX() ) {
 		if ( ( ( String.Amount() >= 6 )
 				 && !str::Compare( String, str::string( "signed" ), String.Amount() - 6 ) ) ) {
-			String.Add( ' ' );
+			String.Append( ' ' );
 
 			SauterBlancs_( Flot );
 
 			C = Flot.Get();
 
 			while ( isidcar( C ) ) {
-				String.Add( C );
+				String.Append( C );
 				C = Flot.Get();
 			}
 		}
@@ -134,7 +136,7 @@ static void LireIdentificateur_(
 		Flot.Unget( C );
 	}
 	else
-		String.Add( C );
+		String.Append( C );
 }
 
 static void LireType_(
@@ -153,7 +155,7 @@ ERRBegin
 
 	if ( ( Tampon == str::string( "template" ) ) || ( Tampon == str::string( "inline" ) ) )
 	{
-		String.Add( Tampon );
+		String.Append( Tampon );
 		return;
 	}
 
@@ -180,14 +182,14 @@ ERRBegin
 
 	if ( Tampon == str::string( "const" ) )
 	{
-		Tampon.Add( ' ' );
+		Tampon.Append( ' ' );
 
 		SauterBlancs_( Flot );
 
 		LireIdentificateur_( Flot, Tampon );
 	}
 
-	String.Add( Tampon );
+	String.Append( Tampon );
 
 	SauterBlancs_( Flot );
 
@@ -201,8 +203,8 @@ ERRBegin
 
 			if ( C == ':' )
 			{
-				String.Add( ':' );
-				String.Add( ':' );
+				String.Append( ':' );
+				String.Append( ':' );
 				LireIdentificateur_( Flot, String );
 			}
 			else
@@ -211,7 +213,7 @@ ERRBegin
 		}
 		else if ( C == '<' )
 		{
-			String.Add( '<' );
+			String.Append( '<' );
 			do
 			{
 				SauterBlancs_( Flot );
@@ -221,18 +223,18 @@ ERRBegin
 				C = Flot.Get();
 
 				if ( C == ',' )
-					String.Add( ", " );
+					String.Append( ", " );
 			}
 			while ( C ==',' );
 
 			if ( C != '>' )
 				ERRu();
 
-			String.Add('>');
+			String.Append('>');
 		}
 		else if ( C == '(' )
 		{
-			String.Add( '(' );
+			String.Append( '(' );
 			do
 			{
 				SauterBlancs_( Flot );
@@ -247,7 +249,7 @@ ERRBegin
 			if ( C != ')' )
 				ERRu();
 
-			String.Add(')');
+			String.Append(')');
 		}
 		else
 			ERRu();
@@ -263,8 +265,8 @@ ERRBegin
 
 	if ( ( C == '&' ) || ( C == '*' ) )
 	{
-		String.Add( ' ' );
-		String.Add( C );
+		String.Append( ' ' );
+		String.Append( C );
 	}
 	else
 		Flot.Unget( C );
@@ -291,7 +293,7 @@ static void LireValeur_(
 				  || ( C !=')' ) )
 				&& ( C != ',' ) )
 		{
-			String.Add( C );
+			String.Append( C );
 
 			if ( C == '(' )
 				P++;
@@ -322,7 +324,7 @@ void LireDocCourt_(
 
 	while ( Flot.Column() != 1 )
 	{
-		Commentaire.Add( C );
+		Commentaire.Append( C );
 		C = Flot.Get();
 	}
 }
@@ -350,12 +352,12 @@ void LireDocLong_(
 				C = ' ';
 			}
 
-			Commentaire.Add( C );
+			Commentaire.Append( C );
 			C = Flot.Get();
 		}
 
 		if ( ( C = Flot.Get() ) != '/' )
-			Commentaire.Add( '*' );
+			Commentaire.Append( '*' );
 	}
 	while ( C != '/' );
 }
@@ -579,7 +581,7 @@ void tsrcpr::parametre_::Analyze( xtf::extended_text_iflow___ &Flot )
 
 		if ( ( C = Flot.Get() ) == '[' )
 			if ( Flot.Get() == ']' ) {
-				Type.Add( " []" );
+				Type.Append( " []" );
 				SauterBlancs_( Flot );
 			} else
 				ERRf();
@@ -790,13 +792,13 @@ void tsrcpr::methode_::Analyze(
 	{
 		bso::bool__ Premier = true;
 
-		Name.Add( ' ' );
+		Name.Append( ' ' );
 
 		SauterBlancs_( Flot );
 
 		while ( !isspace( C = Flot.Get() ) && ( ( C != '(' ) || Premier ) )
 		{
-			Name.Add( C );
+			Name.Append( C );
 			Premier = false;
 		}
 
@@ -843,13 +845,13 @@ void tsrcpr::function_::Analyze(
 	{
 		bso::bool__ Premier = true;
 
-		Name.Add( ' ' );
+		Name.Append( ' ' );
 
 		SauterBlancs_( Flot );
 
 		while ( !isspace( C = Flot.Get() ) && ( ( C != '(' ) || Premier ) )
 		{
-			Name.Add( C );
+			Name.Append( C );
 			Premier = false;
 		}
 

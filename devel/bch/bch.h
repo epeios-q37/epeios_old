@@ -159,65 +159,73 @@ namespace bch {
 		{
 			Allouer_( Size, Mode );
 		}
-		//f Same as 'Write()', but allocate additionnaly mmr if needed.
+		/*f Write at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
+		Adjust the size of the bunch. */
 		void WriteAndAdjust(
 			const _bunch &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
-			AllocateIfNecessary_( Amount + *Offset );
+			Allocate( Amount + *Offset );
 
 			mmr::Write( Bunch, Amount, Row, Offset );
 		}
-		//f Same as 'Write()', but allocate additionnaly mmr if needed.
+		/*f Write at 'Offset' the content of 'Bunch' from position 'Row' to the end.
+		Adjust the size of the bunch. */
+		void WriteAndAdjust(
+			const _bunch &Bunch,
+			row Row,
+			row Offset = 0 )
+		{
+			WriteAndAdjust( Bunch, Bunch.Amount() - Row, Row, Offset );
+		}
+		//f Write at 'Offset' 'Amount' objects from 'Buffer'.
 		void WriteAndAdjust(
 			const type *Buffer,
 			epeios::size__ Amount,
-			row Row = 0 )
+			row Offset = 0 )
 		{
-			AllocateIfNecessary_( Amount + *Row );
+			Allocate( Amount + *Offset );
 
-			mmr::Write( Buffer, Amount, Row );
+			mmr::Write( Buffer, Amount, Offset );
 		}
-		//f Add the object 'Object'. Return the row where object added.
-		row Add( const type &Object )
-		{
-			epeios::size__ Amount = this->Amount();
-
-			Allouer_( Amount + 1, aem::mDefault );
-
-			mmr::Write( Object , Amount );
-
-			return Amount;
-		}
-		//f Adding 'Amount' object from 'Buffer'. Return the row of the first object added.
-		row Add(
+		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
+		row Append(
 			const type *Buffer,
 			epeios::size__ Amount )
 		{
-			epeios::row_t__ Retour = this->Amount();
+			row Position = this->Amount();
 
-			Allouer_( Retour + Amount, aem::mDefault );
+			WriteAndAdjust( Buffer, Amount, Position );
 
-			mmr::Write( Buffer, Amount, Retour );
-
-			return Retour;
+			return Position;
 		}
-		//f Adding 'Amount' object from 'Set'. Return the row of the first object added.
-		row Add(
-			const _bunch &Set,
-			epeios::size__ Amount )
+		//f Append the object 'Object'. Return the position where the object is put.
+		row Append( const type &Object )
 		{
-			epeios::row_t__ Retour = this->Amount();
-
-			Allouer_( Retour + Amount, aem::mDefault );
-
-			mmr::Write( Set, Amount, 0, Retour );
-
-			return Retour;
+			return Append( &Object, 1 );
 		}
-		//f Remove 'Amount' objects from the end of the set.
+		//f Append 'Amount' objects at 'Row' from 'Bunch'. Return the position where the object are put.
+		row Append(
+			const _bunch &Bunch,
+			epeios::size__ Amount,
+			row Row = 0 )
+		{
+			row Position = this->Amount();
+
+			WriteAndAdjust( Bunch, Amount - *Row, Row, Position );
+
+			return Position;
+		}
+		//f Append all the objects from 'Bunch' beginning at 'Row'. Return the position where the objects are put.
+		row Append(
+			const _bunch &Bunch,
+			row Row = 0 )
+		{
+			return Append( Bunch, Bunch.Amount() - *Row, Row );
+		}
+		//f Remove 'Amount' objects from the end of the bunch.
 		void Truncate( epeios::size__ Amount = 1 )
 		{
 	#ifdef SET_DBG
@@ -226,12 +234,7 @@ namespace bch {
 	#endif
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
-		//f Add 'Set'. Return the row where added.
-		row Add( const _bunch &Set )
-		{
-			return Add( Set, Set.Amount() );
-		}
-		//f Insert at 'PosDest' 'Amount' objects from 'Source' at 'PosSource'.
+		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
 			const _bunch &Source,
 			epeios::size__ Amount,
@@ -240,12 +243,12 @@ namespace bch {
 		{
 			Inserer_( Source, Amount, PosSource, PosDest );
 		}
-		//f Insert 'Set' at 'Row'.
+		//f Insert 'Bunch' at 'Row'.
 		void Insert(
-			const _bunch &Set,
+			const _bunch &Bunch,
 			row Row )
 		{
-			Inserer_( Set, Set.Amount(), 0, *Row );
+			Inserer_( Bunch, Bunch.Amount(), 0, *Row );
 		}
 		//f Insert 'Object' at 'Row'
 		void Insert(

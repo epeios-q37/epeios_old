@@ -1,6 +1,6 @@
 /*
 	Header for the 'tsrcpr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -133,10 +133,10 @@ namespace tsrcpr {
 		{
 			E_CONTAINER_( t )::Write( Objet, New() );
 		}
-		NAV( E_MQUEUE_:: )
+		E_NAV( E_MQUEUE_:: )
 	};
 
-	AUTO1( table )
+	E_AUTO1( table )
 
 	template <class t> inline txf::text_iflow___ &operator >>(
 		txf::text_iflow___ &Flot,
@@ -494,7 +494,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( parametre );
+	E_AUTO( parametre );
 
 	//f Operateur de sortie pour 'P'.
 	inline txf::text_oflow___ &operator <<(
@@ -559,7 +559,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( argument )
+	E_AUTO( argument )
 
 	inline txf::text_oflow___ &operator <<(
 		txf::text_oflow___ &Flot,
@@ -689,7 +689,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( methode )
+	E_AUTO( methode )
 
 
 	/*
@@ -779,7 +779,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( function )
+	E_AUTO( function )
 
 
 	/*
@@ -854,7 +854,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( objet )
+	E_AUTO( objet )
 
 	inline txf::text_oflow___ &operator <<(
 		txf::text_oflow___ &Flot,
@@ -980,7 +980,7 @@ namespace tsrcpr {
 		}
 	};
 
-	AUTO( classe )
+	E_AUTO( classe )
 
 	/*
 	//f Operateur d"entrée pour 'C'.
@@ -1133,12 +1133,8 @@ namespace tsrcpr {
 	}
 	*/
 
-	AUTO( library )
-
-
-
-
-};
+	E_AUTO( library )
+}
 
 /*$END$*/
 				  /********************************************/

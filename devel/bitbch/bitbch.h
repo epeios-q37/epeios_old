@@ -55,15 +55,10 @@ extern class ttr_tutor &BITBCHTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D BIT BunCH 
+//D BInary digiT BunCH 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-/* Addendum to the automatic documentation generation part. */
-//D BInary digitT BunCH.
-/* End addendum to automatic documentation generation part. */
-
 
 #include "err.h"
 #include "flw.h"
@@ -215,8 +210,8 @@ namespace bitbch {
 		{
 			Allouer_( Size, Mode );
 		}
-		//f Add 'Value' to the end of the set.
-		r Add( bso::bool__ Value )
+		//f Append 'Value' to the end of the set.
+		r Append( bso::bool__ Value )
 		{
 			Allouer_( Amount() + 1, aem::mDefault );
 
@@ -371,11 +366,11 @@ namespace bitbch {
 			T1.Allocate( Size );
 			T2.Allocate( Size );
 		}
-		//f Add 'Value'. Return position where added.
-		r Add( receptacle__ Value )
+		//f Append 'Value'. Return position where put.
+		r Append( receptacle__ Value )
 		{
-			T1.Add(   Value & 1 );
-			return T2.Add( ( Value & 2 ) != 0 );	// to avoid warning on some compilers.
+			T1.Append(   Value & 1 );
+			return T2.Append( ( Value & 2 ) != 0 );	// to avoid warning on some compilers.
 		}
 	};
 

@@ -291,7 +291,7 @@ namespace flx {
 			flw::amount__ Minimum,
 			bool Synchronization )
 		{
-			Set_->Add( Buffer, (epeios::bsize__)Wanted );
+			Set_->Append( Buffer, (epeios::bsize__)Wanted );
 
 			return Wanted;
 		}

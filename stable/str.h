@@ -1,6 +1,6 @@
 /*
 	Header for the 'str' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -156,27 +156,37 @@ namespace str {
 		{
 			E_BUNCH_( bso::char__ )::Write( C, Position );
 		}
-		//f Add 'String' and return position where added.
-		epeios::row__ Add( const char *String )
+		//f Append 'String' and return position where put.
+		epeios::row__ Append( const char *String )
 		{
-			return E_BUNCH_( bso::char__ )::Add( String, strlen( String ) );
+			return E_BUNCH_( bso::char__ )::Append( String, strlen( String ) );
 		}
-		//f Add 'Amount' char from 'String'. Return position wherer added.
-		epeios::row__ Add(
+		//f Append 'Amount' char from 'String'. Return position where put.
+		epeios::row__ Append(
 			const char *String,
 			epeios::bsize__ Amount )
 		{
-			return E_BUNCH_( bso::char__ )::Add( String, Amount );
+			return E_BUNCH_( bso::char__ )::Append( String, Amount );
 		}
-		//f Add 'C'. Return position where added.
-		epeios::row__ Add( char C )
+		//f Append 'C'. Return position where put.
+		epeios::row__ Append( char C )
 		{
-			return E_BUNCH_( bso::char__ )::Add( C );
+			return E_BUNCH_( bso::char__ )::Append( C );
 		}
-		//f Add 'String'. Return position where added.
-		epeios::row__ Add( const string_ &String )
+		//f Append 'Amount' characters at 'Row' from 'String'. Return the position where the characters are put.
+		epeios::row__ Append(
+			const string_ &String,
+			epeios::size__ Amount,
+			epeios::row__ Row = 0 )
 		{
-			return E_BUNCH_( bso::char__ )::Add( String );
+			return E_BUNCH_( bso::char__ )::Append( String, Amount, Row );
+		}
+		//f Append all characters from 'String' beginning at 'Row'. Return the position where the characters are put.
+		epeios::row__ Append(
+			const string_ &String,
+			epeios::row__ Row = 0 )
+		{
+			return E_BUNCH_( bso::char__ )::Append( String, Row );
 		}
 		//f Insert 'String' at 'Position'.
 		void Insert(
@@ -349,7 +359,7 @@ namespace str {
 			reset( false );
 
 			string_::Init();
-			string_::Add( S, Length );
+			string_::Append( S, Length );
 		}
 		string( char C )
 		: string_( static_ )
@@ -357,7 +367,7 @@ namespace str {
 			reset( false );
 
 			string_::Init();
-			string_::Add( C );
+			string_::Append( C );
 		}
 		~string( void )
 		{

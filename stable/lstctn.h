@@ -162,6 +162,11 @@ namespace lstctn {
 
 			return Row;
 		}
+		// To avoid the use of herited 'Append' methods.
+		void Append( void )
+		{
+			ERRu();
+		}
 	};
 
 	E_AUTO4( list_xcontainer )

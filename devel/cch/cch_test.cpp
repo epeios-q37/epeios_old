@@ -35,8 +35,8 @@
 #include "err.h"
 #include "stf.h"
 
-TYPEDEF( epeios::row_t__, brow__ );
-TYPEDEF( epeios::row_t__, crow__ );
+E_TYPEDEF( epeios::row_t__, brow__ );
+E_TYPEDEF( epeios::row_t__, crow__ );
 typedef bso::ushort__	mytype__;
 
 void Generic( int argc, char *argv[] )
@@ -64,16 +64,16 @@ ERRBegin
 
 	for( i = 0; i < 10; i++ ) {
 		for( j = 0; j < 100;  j++ )
-			RWCaches.Add( j + i * 100, i );
+			RWCaches.Append( j + i * 100, i );
 	}
 
-	Container.Sync();
+	Container.Flush();
 
 
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 1000;
 
-		fout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
+		stf::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -94,25 +94,25 @@ ERRBegin
 	RWCache.Init( Bunch, 10 );
 
 	for( i = 0; i <= 100; i++ )
-		RWCache.Add( i );
+		RWCache.Append( i );
 
 	for( i = 0; i <= 100; i++ )
-		fout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
+		stf::cout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
 
-	fout << txf::nl;
+	stf::cout << txf::nl;
 
 	ROCache.Init( Bunch, 10 );
 
 	for( i = 100; i >= 0; i-- )
-		fout << (unsigned long)i << ": " << (unsigned long)ROCache.Get( i ) << txf::tab;
+		stf::cout << (unsigned long)i << ": " << (unsigned long)ROCache.Get( i ) << txf::tab;
 
-	fout << txf::nl;
+	stf::cout << txf::nl;
 
 
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 101;
 
-		fout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
+		stf::cout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
 	}
 
 	RWCache.Amount();
@@ -128,13 +128,13 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << CCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::cout << "Test of library " << CCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
 		Test( argc, argv );
-		fout << txf::nl << "-------------------------------------------" << txf::nl;
+		stf::cout << txf::nl << "-------------------------------------------" << txf::nl;
 		Essai( argc, argv );
 		break;
 	case 2:
@@ -144,16 +144,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << CCHTutor.Name << " [/i]\n\n";
+		stf::cout << txf::sync;
+		stf::cerr << "\nBad arguments.\n";
+		stf::cout << "Usage: " << CCHTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << CCHTutor.Name << ".\n";
+	stf::cout << "\nEnd of program " << CCHTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

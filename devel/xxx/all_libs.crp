@@ -12,7 +12,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &bch		&epeios		&2001-\
 	&BunCH
 &bitbch		&epeios		&2001-\
-	&BIT BunCH
+	&BInary digiT BunCH
 &bso		&epeios		&2000-\
 	&BaSic Objects
 &btf		&epeios		&\
@@ -116,11 +116,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &stf		&epeios		&2000-2001, 	&STream (or STandard) Flow
 &stk		&epeios		&2000-\
 	&STacK
-&str		&epeios		&2000-		&STRing
+&str		&epeios		&2000-\
+	&STRing
 &tagdtc		&epeios		&2000-2001,	&TAG DeTeCtor
 &tol		&epeios		&2000-\
 	&TOoL
-&tsrcpr		&epeios		&2000-		&Tagged SouRCe PaRser
+&tsrcpr		&epeios		&2000-\
+	&Tagged SouRCe PaRser
 &ttr		&epeios		&2000-		&TuToR
 &txf		&epeios		&2000-		&TeXt Flow
 &txmpgh		&epeios		&2000-2001, 	&TeXt Manager ParaGrapH
@@ -167,7 +169,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
 &dbibsc		&ldbi		&2002-\
 	&DataBase Interface BaSiCs
-&dbibsc_	&ldbi		&2002-		&DataBase Interface BaSiCs (for backend)
+&dbibsc_	&ldbi		&2002-\
+	&DataBase Interface BaSiCs (for backend)
 &dbidpd		&ldbi		&2002-\
 	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
@@ -192,11 +195,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Logi+ GSB libraries.
 &gsbbsc		&lgsb		&2002-\
 	&GeSBib BaSiC
-&gsbbsc_	&lgsb		&		&GeSBib BaSiC (for backend)
+&gsbbsc_	&lgsb		&\
+	&GeSBib BaSiC (for backend)
 &gsbcor		&lgsb		&\
 	&GeSBib field CORe
-&gsbdbm		&lgsb		&		&GeSBib DataBase Manager
-&gsbdbm_	&lgsb		&		&GeSBib DataBase Manager (for backebnd).
+&gsbdbm		&lgsb		&\
+	&GeSBib DataBase Manager
+&gsbdbm_	&lgsb		&\
+	&GeSBib DataBase Manager (for backebnd).
 &gsbdtb		&lgsb		&\
 	&GeSBib DaTaBase
 &gsbfld		&lgsb		&2002-\

@@ -1,8 +1,8 @@
 /*
 	'str' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'str' header file ('str.h').
-	Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -90,7 +92,7 @@ namespace str {
 		char C;
 
 		while( ( C = IStream.Get() ) != 0 )
-			S.Add( C );
+			S.Append( C );
 
 		return IStream;
 	}
@@ -225,10 +227,15 @@ namespace str {
 		epeios::row__ P = First();
 		char C;
 
-		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( Limit / 10 ) ) ) {
-			Result = Result * 10 + C - '0';
-			P = Next( P );
-		}
+		if ( P == NONE )
+			P = 0;
+		else
+			while( ( P != NONE )
+				   && isdigit( C = Read( P ) )
+				   && ( Result < ( Limit / 10 ) ) ) {
+				Result = Result * 10 + C - '0';
+				P = Next( P );
+			}
 
 		if ( &ErrP )
 			ErrP = P;
@@ -243,23 +250,27 @@ namespace str {
 		epeios::row__ P = First();
 		char C;
 
-		if ( ( P != NONE ) && ( Read( P ) == '-' ) ) {
-			Negate = true;
-			P = Next( P );
-		}
-
-		while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
-			Result = Result * 10 + C - '0';
-			P = Next( P );
-		}
-
-		if ( ( P != NONE ) && ( Read( P ) == '.' ) ) {
-			bso::lfloat__ Factor = .1;
-			P = Next( P );
-			while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
-				Result += ( C - '0' ) * Factor;
-				Factor /= 10;
+		if ( P == NONE )
+			P = 0;
+		else {
+			if ( ( P != NONE ) && ( Read( P ) == '-' ) ) {
+				Negate = true;
 				P = Next( P );
+			}
+
+			while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+				Result = Result * 10 + C - '0';
+				P = Next( P );
+			}
+
+			if ( ( P != NONE ) && ( Read( P ) == '.' ) ) {
+				bso::lfloat__ Factor = .1;
+				P = Next( P );
+				while( ( P != NONE ) && isdigit( C = Read( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+					Result += ( C - '0' ) * Factor;
+					Factor /= 10;
+					P = Next( P );
+				}
 			}
 		}
 

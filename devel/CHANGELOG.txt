@@ -12,17 +12,28 @@ AEM:
 
 BCH:
 - Bug fixing of the E_BUNCHt__(_) and related classes.
+- Rewriting 'WriteAndAdjust()' methods.
+- Renaming in 'Append' and rewriting 'Add' methods.
 
 BITBCH:
 - Fixing bug.
+- Renaming 'Add' to 'Append'.
 
 BTF:
 - Adding a dummy 'Exists()' method, due to changes in 'STK' library.
+
+CCH:
+- Renaming 'Add' to 'Append'.
+
+CLNARG:
+- Adapting to changes in 'BCH' library.
+- Adaptinf to changes in 'CTN' library.
 
 CTN:
 - Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
 - Fixing GNU GCC issues.
 - Renaming 'Create()' into 'New()' to avoid mistakes.
+- Renaming 'Add' to 'Append'.
 
 CPE:
 - Adding detection of cygwin.
@@ -31,6 +42,7 @@ CPE:
 
 DBT:
 - Adapting to changes in 'LST' library.
+- Adapting to changes in 'LSTBCH' library.
 
 DTR:
 - Fixing call to an iexistent method;
@@ -42,8 +54,9 @@ ERR:
 FLW:
 - Changing some type definition to simplify castings.
 
-FLW:
+FLX:
 - Adding some casting to avoid warning under VC++.
+- Adapting to changes in 'BCH' library.
 
 IDS:
 - Adapting to changes in 'STK' library.
@@ -92,6 +105,9 @@ STK:
 
 STR:
 - Adding 'ToU[S|B]()'.
+- Trying to convert an empty string to a number sets the error pointer to 0 (instead of 'NONE').
+- Renaming 'Add' to 'Append'.
+- Adapting to changes in 'BCH' library.
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.
@@ -102,6 +118,10 @@ TOL:
 - Adapting to CodeWarrior.
 - Renaming 'Yield()' to 'Defer()' due to the silly 'Yield()' definition under Windows.
 - Adding 'AUTO4()' macro.
+
+TSRCPR:
+- Adapting to changes in 'TOL' library.
+- Adapting to changes in 'STR' library.
 
 TTR:
 - Adapting to changes in 'STF' library.
