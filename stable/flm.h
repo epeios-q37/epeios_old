@@ -1,6 +1,6 @@
 /*
   Header for the 'flm' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Copyright (C) 2000-2002 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -32,7 +32,7 @@
 
 #define	FLM_VERSION	"$Revision$"	
 
-#define FLM_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define FLM_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
@@ -78,7 +78,7 @@ extern class ttr_tutor &FLMTutor;
 #ifdef FLM__UNIX_LIKE
 #	include <unistd.h>
 #	include <fcntl.h>
-#elif defined( FLM_MS_LOWLEVEL_IO )
+#elif defined( FLM__MS_LOWLEVEL_IO )
 #	include <io.h>
 #	include <fcntl.h>
 #	include <sys/stat.h>
