@@ -114,9 +114,10 @@ row__ ssnmng::sessions_manager_::Open( void )
 
 	Table.Store( SessionID, P );
 
-	if ( S_.Root == NONE )
+	if ( S_.Root == NONE ) {
 		S_.Root = P;
-	else {
+		_queue_::Create( P );
+	} else {
 		idxbtr::E_TSEEKERt__( row__ ) Seeker;
 
 		Seeker.Init( Index, S_.Root );
