@@ -2,7 +2,9 @@
 
 include Makefile.header
 
-filelist = i/epeios.xml i/ebkd.xml i/ecgi.xml i/etmc.xml i/exml.xml i/emth.xml i/emsc.xml
+filelist = i/epeios_blog.xml i/epeios.xml i/ebkd.xml i/ecgi.xml\
+i/etmc.xml i/exml.xml i/emth.xml i/emsc.xml
+
 
 all: $(filelist)
 	$(mkdir) -p i
@@ -12,6 +14,10 @@ all: $(filelist)
 	sabcmd make.xsl site.xml i/Makefile
 	make -f i/Makefile
 	make -f Makefile.data
+	
+i/epeios_blog.xml: i
+	wget -O $@.raw http://www.livejournal.com/users/epeios/data/rss/
+	tail -n+2 $@.raw >$@
 
 i/%.xml: i i/%.lst
 	gendoc i/$*.lst $(cvs)/$*/stable $@

@@ -57,7 +57,9 @@ EMTH_QUICKDOC	%i/emth.xml
 ECGI_QUICKDOC	%i/ecgi.xml
 EMSC_QUICKDOC	%i/emsc.xml
 
-MAP		%i/map.xml
+MAP				%i/map.xml
+EPEIOS_BLOG		%i/epeios_blog.xml
+
 
 TMCDE_BACKEND_MANUAL	%$DOC$/software/tmcde/backend/manual.xml
 TMCDE_CGID_MANUAL	%$DOC$/software/tmcde/cgid/manual.xml

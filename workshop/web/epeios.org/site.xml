@@ -46,6 +46,9 @@
        	<para xml:space="preserve">Remarks/questions/suggestions are welcome and can be sent to <contact adress="csimon@epeios.org">csimon@epeios.org</contact>.</para>
       </section>
       <section>
+      	<para>$EPEIOS_BLOG$</para>
+      </section>
+      <section>
         <list>
           <item xml:space="preserve">
         <link URL="about/">About the Epeios project</link> : more about the Epeios project.</item>

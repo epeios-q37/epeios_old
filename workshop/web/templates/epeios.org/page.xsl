@@ -255,4 +255,5 @@
 	<xsl:include href="../libraries.xsl"/>
 	<xsl:include href="../cvs.xsl"/>
 	<xsl:include href="../download.xsl"/>
+	<xsl:include href="../rss.xsl"/>
 </xsl:stylesheet>
