@@ -9,6 +9,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
 &bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
 &bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
+&btr		&epeios		&2000-		&Binary Tree
 &cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
 &cgidat		&ecgi		&		&CGI  (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
@@ -30,6 +31,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisql		&ldbi		&		&DataBase Interface SQL (from language)
 &dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
 &dbitfl_	&ldbi		&		&Database Interface Table FieLds (for backend)
+&dtr		&epeios		&2000-		&Dynamic TRee
 &err		&epeios		&2000-		&ERRor handling
 &flw		&epeios		&2000-		&FLoW
 &gsbbsc		&lgsb		&		&GeSBib BaSiC
@@ -39,6 +41,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &gsbtbl		&lgsb		&		&GeSBib TaBLe
 &gsbwrd		&lgsb		&		&GeSBib WoRDs
 &ids		&epeios		&		&ID Store
+&idxbtr		&epeios		&2000-		&InDeX Binary TRee
 &lgg		&epeios		&2000-		&LanGuaGes
 &lst		&epeios		&2000-		&LiST
 &lstbch		&epeios		&		&LiST BunCH

@@ -1,25 +1,24 @@
 /*
-  Header for the 'btr' library by Claude L. Simon (csimon@webmails.com)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
+	Header for the 'btr' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define BTR_NAME		"BTR"
 
-#define	BTR_VERSION	"$Revision$"	
+#define	BTR_VERSION	"$Revision$"
 
-#define BTR_OWNER		"the Epeios project (http://epeios.org/)"
+#define BTR_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &BTRTutor;
 
 #if defined( XXX_DBG ) && !defined( BTR_NODBG )
-#define BTR_DBG 
+#define BTR_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@webmails.com)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &BTRTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D Binary Tree 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 #include "err.h"
@@ -63,199 +67,178 @@ extern class ttr_tutor &BTRTutor;
 namespace btr {
 	using namespace epeios;
 
-	// La généalogie d'un noeud.
-	class genealogie__
+	//c Node. Internal use.
+	class _node__
 	{
 	public:
 		row_t__
-			Pere,
-			// reference du pere
-			Fils,
-			// reference du fils (fils droit)
-			Fille;
-			// reference de la fille (fils gauche)
-		void reset( bool = true )
+			// Parent of the node.
+			Parent,
+			// Left children.
+			Left,
+			// Right children.
+			Right;
+		void reset( bso::bool__ = true )
 		{
-			Pere = Fils = Fille = NONE;
+			Parent = Left = Right = NONE;
 		}
-		// virginisation
-		genealogie__( void )
+		_node__( void )
 		{
 			reset( false );
 		}
-		// constructeur
 	};
 
-	typedef bch::E_BUNCH_( genealogie__ ) genealogies_;
+	//t Nodes. Internal use.
+	typedef bch::E_BUNCH_( _node__ ) _nodes_;
 
-	class liens_
-	: public genealogies_
+	class _nodes_manager_
+	: public _nodes_
 	{
 	public:
 		struct s
-		: public genealogies_::s
+		: public _nodes_::s
 		{};
-		liens_( s &S )
-		: genealogies_( S )
+		_nodes_manager_( s &S )
+		: _nodes_( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			genealogies_::reset( P );
+			_nodes_::reset( P );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			genealogies_::Init();
+			_nodes_::Init();
 		}
-		// retourne le nombre de liens
-		void Preparer(
-			row_t__ Debut,
-			row_t__ Fin );
-		// prépare les liens de 'Debut' à 'Fin'
-		void Liberer(
-			row_t__ Debut,
-			row_t__ Fin );
-		// libère les liens de 'Debut' à 'Fin'
-		void InvaliderPere( row_t__ Noeud )
+		void Prepare(
+			row_t__ Start,
+			row_t__ End );
+		void Release(
+			row_t__ Start,
+			row_t__ End );
+		//f Release father of 'Node'.
+		void ReleaseParent( row_t__ Node )
 		{
-			genealogie__ Genealogie = genealogies_::Read( Noeud );
+			_node__ Buffer = _nodes_::Read( Node );
 
-			Genealogie.Pere = NONE;
-			genealogies_::Write( Genealogie, Noeud );
+			Buffer.Parent = NONE;
+			_nodes_::Write( Buffer, Node );
 		}
-		// invalide le pere
-		void InvaliderFils( row_t__ Noeud )
+		//f Release left child of 'Node'.
+		void ReleaseLeft( row_t__ Node )
 		{
-			genealogie__ Genealogie = genealogies_::Read( Noeud );
+			_node__ Buffer = _nodes_::Read( Node );
 
-			Genealogie.Fils = NONE;
-			genealogies_::Write( Genealogie, Noeud );
+			Buffer.Left = NONE;
+			_nodes_::Write( Buffer, Node );
 		}
-		// invalide le fils
-		void InvaliderFille( row_t__ Noeud )
+		//f Release right child of 'Node'.
+		void ReleaseRight( row_t__ Node )
 		{
-			genealogie__ Genealogie = genealogies_::Read( Noeud );
+			_node__ Buffer = _nodes_::Read( Node );
 
-			Genealogie.Fille = NONE;
-			genealogies_::Write( Genealogie, (row_t__)Noeud );
+			Buffer.Right = NONE;
+			_nodes_::Write( Buffer, Node );
 		}
-		// invalide la fille
-		bso::bool__ APere( row_t__ Element ) const
+		//f Return true if 'Node' has a father.
+		bso::bool__ HasParent( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Pere != NONE;
+			return _nodes_::Read( Node ).Parent != NONE;
 		}
-		// retourne != 0 si 'Element' a un pere, 0 sinon
-		bso::bool__ AFils( row_t__ Element ) const
+		//f Return true if 'Node' has left chid.
+		bso::bool__ HasLeft( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Fils != NONE;
+			return _nodes_::Read( Node ).Left != NONE;
 		}
-		// retourne != 0 si 'Element' a un fils, 0 sinon
-		bso::bool__ AFille( row_t__ Element ) const
+		//f Return true if 'Node' has right chid.
+		bso::bool__ HasRight( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Fille != NONE;
+			return _nodes_::Read( Node ).Right != NONE;
 		}
-		// retourne != 0 si 'Element' a une fille, 0 sinon
-		row_t__ Pere( row_t__ Element ) const
+		//f Return father of 'Node', or 'NONE' if nonde.
+		row_t__ Parent( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Pere;
+			return _nodes_::Read( Node ).Parent;
 		}
-		// retourne le pere de 'Element'
-		row_t__ Fils( row_t__ Element ) const
+		//f Return left child of 'Node', or 'NONE' if nonde.
+		row_t__ Left( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Fils;
+			return _nodes_::Read( Node ).Left;
 		}
-		// retourne le fils de 'Element'
-		row_t__ Fille( row_t__ Element ) const
+		//f Return right child of 'Node', or 'NONE' if nonde.
+		row_t__ Right( row_t__ Node ) const
 		{
-			return genealogies_::Read( Element ).Fille;
+			return _nodes_::Read( Node ).Right;
 		}
-		// retourne la fille de 'Element'
-		void AdopterFils(
-			row_t__ Pere,
-			row_t__ Fils )
+		//f 'Left' becomes left child of 'Parent'.
+		void BecomeLeft(
+			row_t__ Left,
+			row_t__ Parent )
 		{
-			genealogie__ GPere = genealogies_::Read( Pere ), GFils = genealogies_::Read( Fils );
+			_node__ GParent = _nodes_::Read( Parent ), GLeft = _nodes_::Read( Left );
 
-			GPere.Fils = Fils;
-			GFils.Pere = Pere;
+			GParent.Left = Left;
+			GLeft.Parent = Parent;
 
-			genealogies_::Write( GPere, Pere );
-			genealogies_::Write( GFils, Fils );
+			_nodes_::Write( GParent, Parent );
+			_nodes_::Write( GLeft, Left );
 		}
-		// 'Fils' devient fils de 'Pere'
-		void AdopterFille(
-			row_t__ Pere,
-			row_t__ Fille )
+		//f 'Right' becomes left child of 'Parent'.
+		void BecomeRight(
+			row_t__ Right,
+			row_t__ Parent )
 		{
-			genealogie__ GPere = genealogies_::Read( Pere ), GFille = genealogies_::Read( Fille );
+			_node__ GParent = _nodes_::Read( Parent ), GRight = _nodes_::Read( Right );
 
-			GPere.Fille = Fille;
-			GFille.Pere = Pere;
+			GParent.Right = Right;
+			GRight.Parent = Parent;
 
-			genealogies_::Write( GPere,Pere );
-			genealogies_::Write( GFille, Fille );
+			_nodes_::Write( GParent,Parent );
+			_nodes_::Write( GRight, Right );
 		}
-		// 'Fille' devient fille de 'Pere'
-		/* Remonte l'arbre 'Racine' à partir de 'Depart', dont la présence d'une fille
-		n'est pas testée, jusqu'à trouver un aieul mâle avec une fille. */
-		row_t__ TrouverAieulMaleAvecFille(
+/*		row_t__ TrouverAieulMaleAvecRight(
 			row_t__ Depart,
 			row_t__ Racine ) const;
-		row_t__ ForceParent(
+*/		row_t__ ForceParent(
 			row_t__ Node,
 			row_t__  Parent )
 		{
-			genealogie__ Lien = genealogies_::Read( Node );
-			row_t__ AncienPere = Lien.Pere;
+			_node__ Lien = _nodes_::Read( Node );
+			row_t__ AncienParent = Lien.Parent;
 
-			Lien.Pere = Parent;
+			Lien.Parent = Parent;
 
-			genealogies_::Write( Lien, Node );
+			_nodes_::Write( Lien, Node );
 
-			return AncienPere;
+			return AncienParent;
 		}
-		//f Return true if 'Node' is a child.
+		//f Return true if 'Node' is a left child.
 		bso::bool__ IsLeft( row_t__ Node ) const
 		{
-			return APere( Node ) && Fils( Pere( Node ) ) == Node;
+			return HasParent( Node ) && Left( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is a right.
 		bso::bool__ IsRight( row_t__ Node ) const
 		{
-			return APere( Node ) && Fille( Pere( Node ) ) == Node;
+			return HasParent( Node ) && Right( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is child.
 		bso::bool__ IsChild( row_t__ Node ) const
 		{
-			return APere( Node );
+			return HasParent( Node );
 		}
 		//f Return true if 'Node' is parent.
 		bso::bool__ IsParent( row_t__ Node ) const
 		{
-			return AFils( Node ) || AFille( Node );
+			return HasLeft( Node ) || HasRight( Node );
 		}
 		void PrintStructure(
 			row_t__ Racine,
 			txf::text_oflow___ &Flot ) const;
-		//f Return true if 'Node' has right.
-		bso::bool__ HasRight( row_t__ Node ) const
-		{
-			return AFille( Node );
-		}
-		//f Return true if 'Node' has left.
-		bso::bool__ HasLeft( row_t__ Node ) const
-		{
-			return AFils( Node );
-		}
 		//f Return true if 'Node' has a child.
 		bso::bool__ HasChild( row_t__ Node ) const
 		{
-			return AFille( Node ) || AFils( Node );
-		}
-		//f Return true if 'Node' has a parent.
-		bso::bool__ HasParent( row_t__ Node ) const
-		{
-			return APere( Node );
+			return HasRight( Node ) || HasLeft( Node );
 		}
 	};
 
@@ -269,289 +252,275 @@ namespace btr {
 	template <typename r> class binary_tree_
 	{
 	private:
-		// retourne le nombre de liens
-		void Preparer_(
-			epeios::row_t__ Debut,
-			epeios::row_t__ Fin )
+		void Prepare_(
+			epeios::row_t__ Start,
+			epeios::row_t__ End )
 		{
-			Liens.Preparer( Debut, Fin );
+			Nodes.Prepare( Start, End );
 		}
-		// prépare les liens de 'Debut' à 'Fin'
-		void Liberer_(
-			epeios::row_t__ Debut,
-			epeios::row_t__ Fin )
+		void Release_(
+			epeios::row_t__ Start,
+			epeios::row_t__ End )
 		{
-			Liens.Liberer( Debut, Fin );
+			Nodes.Release( Start, End );
 		}
-		// libère les liens de 'Debut' à 'Fin'
-		void InvaliderPere_( epeios::row_t__ Noeud )
+		void ReleaseParent_( epeios::row_t__ Node )
 		{
-			Liens.InvaliderPere( Noeud );
+			Nodes.ReleaseParent( Node );
 		}
-		// invalide le pere
-		void InvaliderFils_( epeios::row_t__ Noeud )
+		void ReleaseLeft_( epeios::row_t__ Node )
 		{
-			Liens.InvaliderFils( Noeud );
+			Nodes.ReleaseLeft( Node );
 		}
-		// invalide le fils
-		void InvaliderFille_( epeios::row_t__ Noeud )
+		void ReleaseRight_( epeios::row_t__ Node )
 		{
-			Liens.InvaliderFille( Noeud );
+			Nodes.ReleaseRight( Node );
 		}
-		// invalide la fille
-		bso::bool__ APere_( epeios::row_t__ Element ) const
+		bso::bool__ HasParent_( epeios::row_t__ Node ) const
 		{
-			return Liens.APere( Element );
+			return Nodes.HasParent( Node );
 		}
-		// retourne != 0 si 'Element' a un pere, 0 sinon
-		bso::bool__ AFils_( epeios::row_t__ Element ) const
+		bso::bool__ HasLeft_( epeios::row_t__ Node ) const
 		{
-			return Liens.AFils( Element );
+			return Nodes.HasLeft( Node );
 		}
-		// retourne != 0 si 'Element' a un fils, 0 sinon
-		bso::bool__ AFille_( epeios::row_t__ Element ) const
+		bso::bool__ HasRight_( epeios::row_t__ Node ) const
 		{
-			return Liens.AFille( Element );
+			return Nodes.HasRight( Node );
 		}
-		// retourne != 0 si 'Element' a une fille, 0 sinon
-		epeios::row_t__ Pere_( epeios::row_t__ Element ) const
+		epeios::row_t__ Parent_( epeios::row_t__ Node ) const
 		{
-			return Liens.Pere( Element );
+			return Nodes.Parent( Node );
 		}
-		// retourne le pere de 'Element'
-		epeios::row_t__ Fils_( epeios::row_t__ Element ) const
+		epeios::row_t__ Left_( epeios::row_t__ Node ) const
 		{
-			return Liens.Fils( Element );
+			return Nodes.Left( Node );
 		}
-		// retourne le fils de 'Element'
-		epeios::row_t__ Fille_( epeios::row_t__ Element ) const
+		epeios::row_t__ Right_( epeios::row_t__ Node ) const
 		{
-			return Liens.Fille( Element );
+			return Nodes.Right( Node );
 		}
-		// retourne la fille de 'Element'
-		void AdopterFils_(
-			epeios::row_t__ Pere,
-			epeios::row_t__ Fils )
+		void BecomeLeft_(
+			epeios::row_t__ Left,
+			epeios::row_t__ Parent )
 		{
-			Liens.AdopterFils( Pere, Fils );
+			Nodes.BecomeLeft( Left, Parent );
 		}
-		// 'Fils' devient fils de 'Pere'
-		void AdopterFille_(
-			epeios::row_t__ Pere,
-			epeios::row_t__ Fille )
+		void BecomeRight_(
+			epeios::row_t__ Right,
+			epeios::row_t__ Parent )
 		{
-			Liens.AdopterFille( Pere, Fille );
+			Nodes.BecomeRight( Right, Parent );
 		}
-		// 'Fille' devient fille de 'Pere'
-		/* Remonte l'arbre 'Racine' à partir de 'Depart', dont la présence d'une fille
-		n'est pas testée, jusqu'à trouver un aieul mâle avec une fille. */
-		epeios::row_t__ TrouverAieulMaleAvecFille_(
+/*
+		epeios::row_t__ TrouverAieulMaleAvecRight_(
 			epeios::row_t__ Depart,
 			epeios::row_t__ Racine ) const
 		{
-			return Liens.TrouverAieulMaleAvecFille( Depart, Racine );
+			return Nodes.TrouverAieulMaleAvecRight( Depart, Racine );
 		}
-		epeios::row_t__ ForceParent_(
+*/		epeios::row_t__ ForceParent_(
 			epeios::row_t__ Node,
 			epeios::row_t__  Parent )
 		{
-			return Liens.ForceParent( Node, Parent );
+			return Nodes.ForceParent( Node, Parent );
 		}
 	public:
 		struct s
 		{
-			liens_::s Liens;
+			_nodes_manager_::s Nodes;
 		};
 		// La table des liens.
-		liens_ Liens;
+		_nodes_manager_ Nodes;
 		binary_tree_( s &S )
-		: Liens( S.Liens )
+		: Nodes( S.Nodes )
 		{}
 		void reset( bool P = true )
 		{
-			Liens.reset( P );
+			Nodes.reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			Liens.plug( M );
+			Nodes.plug( M );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
 		{
-			Liens.plug( M );
+			Nodes.plug( M );
 		}
 		// Operateur d'affectation.
 		binary_tree_ &operator =( const binary_tree_ &O )
 		{
-			Liens = O.Liens;
+			Nodes = O.Nodes;
 
 			return *this;
 		}
 	/*	void ecrire( flo_sortie_ &F ) const
 		{
-			Liens.ecrire( F );
+			Nodes.ecrire( F );
 		}
 		void lire( flo_entree_ &F )
 		{
-			Liens.lire( F );
+			Nodes.lire( F );
 		}
 	*/	//f Initialization.
 		void Init( void )
 		{
-			Liens.Init();
+			Nodes.Init();
 		}
 		//f Extent of the tree.
 		epeios::size__ Extent( void ) const
 		{
-			return Liens.Extent();
+			return Nodes.Extent();
 		}
 		//f Amount of node in the tree.
 		epeios::size__ Amount( void ) const
 		{
-			return Liens.Amount();
+			return Nodes.Amount();
 		}
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
 		{
-			return Pere_( *Node );
+			return Parent_( *Node );
 		}
 		//f Return left of 'Node'..
 		r Left( r Node ) const
 		{
-			return Fils_( *Node ) ;
+			return Left_( *Node ) ;
 		}
 		//f Return right of 'Node'..
 		r Right( r Node ) const
 		{
-			return Fille_( *Node );
+			return Right_( *Node );
 		}
-		/* Elague 'Noeud'; 'Noeud' devient la racine de l'arbre
+		/* Elague 'Node'; 'Node' devient la racine de l'arbre
 		et perd donc son père. */
 		//f Cut 'Node'. 'Node' becomes a root.
 		void Cut( r Node )
 		{
-			epeios::row_t__ Pere = Pere_( *Node );
+			epeios::row_t__ Parent = Parent_( *Node );
 
-			if ( AFils_( Pere ) && ( Fils_( Pere ) == *Node ) )
-				InvaliderFils_( Pere );
+			if ( HasLeft_( Parent ) && ( HasLeft_( Parent ) == *Node ) )
+				ReleaseLeft_( Parent );
 			else
-				InvaliderFille_( Pere );
+				ReleaseRight_( Parent );
 
-			InvaliderPere_( *Node );
+			ReleaseParent_( *Node );
 		}
 		//f Return true if 'Child' is left of 'Parent'.
 		bso::bool__ IsLeft(
 			r Child,
 			r Parent ) const
 		{
-			return Fils_( *Parent ) == Child;
+			return Left_( *Parent ) == Child;
 		}
 		//f Return true if 'Child' is right of 'Parent'.
 		bso::bool__ IsRight(
 			r Child,
 			r Parent ) const
 		{
-			return Fille_( *Parent ) == Child;
+			return Right_( *Parent ) == Child;
 		}
 		//f Return true if 'Child' is child of 'Parent'.
 		bso::bool__ IsChild(
 			r Child,
 			r Parent ) const
 		{
-			return ( Fils_( *Parent ) == Child ) || ( Fille_( *Parent ) == Child );
+			return ( Left_( *Parent ) == Child ) || ( Right_( *Parent ) == Child );
 		}
 		//f Return true if 'Parent' is parent of 'Child'.
 		bso::bool__ IsParent(
 			r Parent,
 			r Child ) const
 		{
-			return Pere_( *Child ) == Parent;
+			return Parent_( *Child ) == Parent;
 		}
 		//f Return true if 'Node' is a child.
 		bso::bool__ IsLeft( r Node ) const
 		{
-			return APere_( *Node ) && Fils_( Pere_( *Node ) ) == *Node;
+			return HasParent_( *Node ) && Left_( Parent_( *Node ) ) == *Node;
 		}
 		//f Return true if 'Node' is a right.
 		bso::bool__ IsRight( r Node ) const
 		{
-			return APere_( *Node ) && Fille_( Pere_( *Node ) ) == *Node;
+			return HasParent_( *Node ) && Right_( Parent_( *Node ) ) == *Node;
 		}
 		//f Return true if 'Node' is child.
 		bso::bool__ IsChild( r Node ) const
 		{
-			return APere_( *Node );
+			return HasParent_( *Node );
 		}
 		//f Return true if 'Node' is parent.
 		bso::bool__ IsParent( r Node ) const
 		{
-			return AFils_( *Node ) || AFille_( *Node );
+			return HasLeft_( *Node ) || HasRight_( *Node );
 		}
 		//f 'Parent' take 'Child' as left.
 		void TakeLeft(
 			r Parent,
 			r Child )
 		{
-			AdopterFils_( *Parent, *Child );
+			BecomeLeft_( *Child, *Parent );
 		}
 		//f 'Parent' take 'Child' as right.
 		void TakeRight(
 			r Parent,
 			r Child )
 		{
-			AdopterFille_( *Parent, *Child );
+			BecomeRight_( *Child, *Parent );
 		}
 		//f 'Child' becomes left of 'Parent'.
 		void BecomeLeft(
 			r Child,
 			r Parent )
 		{
-			AdopterFils_( *Parent, *Child );
+			BecomeLeft_( *Child, *Parent );
 		}
 		//f 'Child' becomes right of 'Parent'.
 		void BecomeRight(
 			r Child,
 			r Parent )
 		{
-			AdopterFille_( *Parent, *Child );
+			BecomeRight_( *Child, *Parent );
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
 			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
-			if ( Size > Liens.Amount() )
+			if ( Size > Nodes.Amount() )
 			{
-				epeios::size__ PrecCapacite = Liens.Amount();
+				epeios::size__ PrecCapacite = Nodes.Amount();
 
-				Liens.Allocate( Size, Mode );
-				Preparer_( PrecCapacite, Size - 1 );
+				Nodes.Allocate( Size, Mode );
+				Prepare_( PrecCapacite, Size - 1 );
 			}
-			else if ( Size < Liens.Amount() )
+			else if ( Size < Nodes.Amount() )
 			{
-				Liberer_( Size, Liens.Amount() - 1 );
-				Liens.Allocate( Size, Mode );
+				Release_( Size, Nodes.Amount() - 1 );
+				Nodes.Allocate( Size, Mode );
 			}
 		}
 		//f Return true if 'Node' has right.
 		bso::bool__ HasRight( r Node ) const
 		{
-			return AFille_( *Node );
+			return HasRight_( *Node );
 		}
 		//f Return true if 'Node' has left.
 		bso::bool__ HasLeft( r Node ) const
 		{
-			return AFils_( *Node );
+			return HasLeft_( *Node );
 		}
 		//f Return true if 'Node' has a child.
 		bso::bool__ HasChild( r Node ) const
 		{
-			return AFille_( *Node ) || AFils_( *Node );
+			return HasChild_( *Node ) || ALeft_( *Node );
 		}
 		//f Return true if 'Node' has a parent.
 		bso::bool__ HasParent( r Node ) const
 		{
-			return APere_( *Node );
+			return HasParent_( *Node );
 		}
+
 		//f Force the parent from 'Node' to 'Parent'. Return the previous parent.
 		r ForceParent(
 			r Node,
@@ -559,6 +528,7 @@ namespace btr {
 		{
 			return ForceParent_( *Node, *Parent );
 		}
+
 	/*	// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
 		void EcrireDansFlot(
 			flo_sortie_portable_ &Flot,
@@ -571,7 +541,7 @@ namespace btr {
 			r Root,
 			txf::text_oflow___ &OFlow ) const
 		{
-			Liens.PrintStructure( *Root, OFlow );
+			Nodes.PrintStructure( *Root, OFlow );
 		}
 		// Sert à parcourir l'arbre de racine 'Racine'. Retourne le noeud aprés 'Position'.
 	/*	r Suivant(
@@ -580,12 +550,12 @@ namespace btr {
 		{
 			row_t__ &Temp = Racine;
 
-			if ( AFils( Courant ) )
-				Courant = Fils( Courant );
-			else if ( AFille( Courant ) )
-				Courant = Fille( Courant );
-			else if ( ( Courant = TrouverAieulMaleAvecFille_( Courant, Racine ) ) != BTR_INEXISTANT )
-					Courant = Fille( Courant );
+			if ( ALeft( Courant ) )
+				Courant = Left( Courant );
+			else if ( ARight( Courant ) )
+				Courant = Right( Courant );
+			else if ( ( Courant = TrouverAieulMaleAvecRight_( Courant, Racine ) ) != BTR_INEXISTANT )
+					Courant = Right( Courant );
 
 			return Courant;
 		}

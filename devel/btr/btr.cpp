@@ -1,26 +1,25 @@
 /*
-  'btr' library by Claude L. Simon (csimon@webmails.com)
-  Requires the 'btr' header file ('btr.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+	'btr' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'btr' header file ('btr.h').
+	Copyright (C) 2000-2002  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -56,46 +55,46 @@ public:
 
 using namespace epeios;
 
-void btr::liens_::Liberer(
-	row_t__ Debut,
-	row_t__ Fin )
+void btr::_nodes_manager_::Release(
+	row_t__ Start,
+	row_t__ End )
 {
 	do {
-		if ( APere( Debut ) )
+		if ( HasParent( Start ) )
 		{
-			if ( IsLeft( Debut ) )
-				InvaliderFils( genealogies_::Read( Debut ).Pere );
+			if ( IsLeft( Start ) )
+				ReleaseLeft( _nodes_::Read( Start ).Parent );
 			else
-				InvaliderFille( genealogies_::Read( Debut ).Pere );
+				ReleaseRight( _nodes_::Read( Start ).Parent );
 
-			InvaliderPere( Debut );
+			ReleaseParent( Start );
 		}
 
-		if ( AFils( Debut ) )
+		if ( HasLeft( Start ) )
 		{
-			InvaliderPere( genealogies_::Read( Debut ).Fils );
-			InvaliderFils( Debut );
+			ReleaseParent( _nodes_::Read( Start ).Left );
+			ReleaseLeft( Start );
 		}
 
-		if ( AFille( Debut ) )
+		if ( HasRight( Start ) )
 		{
-			InvaliderPere( genealogies_::Read( Debut ).Fille );
-			InvaliderFille( Debut );
+			ReleaseParent( _nodes_::Read( Start ).Right );
+			ReleaseRight( Start );
 		}
 	}
-	while( ++Debut <= Fin );
+	while( ++Start <= End );
 }
 
-void btr::liens_::Preparer(
-	row_t__ Debut,
-	row_t__ Fin )
+void btr::_nodes_manager_::Prepare(
+	row_t__ Start,
+	row_t__ End )
 {
 	do {
-		InvaliderPere( Debut );
-		InvaliderFille( Debut );
-		InvaliderFils( Debut );
+		ReleaseParent( Start );
+		ReleaseRight( Start );
+		ReleaseLeft( Start );
 	}
-	while( ++Debut <= Fin );
+	while( ++Start <= End );
 }
 
 
@@ -106,7 +105,7 @@ void arbre_binaire::EcrireDansFlot(
 	mbs__position Position ) const
 {
 	mbs__position_ Courant = Position();
-	fdm__bool DoitBoucler = true, RemonteeFille = false, RemonteeFils = false;
+	fdm__bool DoitBoucler = true, RemonteeRight = false, RemonteeLeft = false;
 
 	Flot << begin << tag << 'R' << data;
 
@@ -114,35 +113,35 @@ void arbre_binaire::EcrireDansFlot(
 
 	while ( DoitBoucler )
 	{
-		if ( !RemonteeFille && !RemonteeFils && AFille( Courant ) )
+		if ( !RemonteeRight && !RemonteeLeft && HasRight( Courant ) )
 		{
-			Courant = Fille_( Courant );
+			Courant = Right_( Courant );
 			Flot << tag << 'f' << data;
 			ABBEcrire( Flot, Courant );
 		}
-		else if ( !RemonteeFils && AFils( Courant ) )
+		else if ( !RemonteeLeft && HasLeft( Courant ) )
 		{
-			RemonteeFille = 0;
+			RemonteeRight = 0;
 
-			Courant = Fils_( Courant );
+			Courant = Left_( Courant );
 
 			Flot << tag << 'F' << data;
 			ABBEcrire( Flot, Courant );
 		}
 		else if ( Courant != Position() )
 		{
-			if ( EstFille( Courant ) )
+			if ( EstRight( Courant ) )
 			{
-				RemonteeFils = 0;
-				RemonteeFille = 1;
+				RemonteeLeft = 0;
+				RemonteeRight = 1;
 			}
 			else
 			{
-				RemonteeFils = 1;
-				RemonteeFille = 0;
+				RemonteeLeft = 1;
+				RemonteeRight = 0;
 			}
 
-			Courant = Pere_( Courant );
+			Courant = Parent_( Courant );
 
 			Flot << tag << 'P' << data << nothing;
 		}
@@ -175,19 +174,19 @@ mbs__position abb_arbre_binaire_::LireDeFlot( flo_entree_portable_ &Flot )
 
 		if ( *Flot.LastTag() == 'P' )
 		{
-			Courant = Pere_( Courant );
+			Courant = Parent_( Courant );
 			Flot >> nothing;
 		}
 		else if ( *Flot.LastTag() == 'F' )
 		{
 			Nouveau = ABBLire( Flot )();
-			AdopterFils( Courant, Nouveau );
+			AdopterLeft( Courant, Nouveau );
 			Courant = Nouveau;
 		}
 		else if ( *Flot.LastTag() == 'f' )
 		{
 			Nouveau = ABBLire( Flot )();
-			AdopterFille( Courant, Nouveau );
+			AdopterRight( Courant, Nouveau );
 			Courant = Nouveau;
 		}
 	}
@@ -207,24 +206,24 @@ static void AfficherBlancs_(
 }
 
 //f Affiche la structure de l'arbre dans 'Flot'. A des fins de deboggage.
-void btr::liens_::PrintStructure(
+void btr::_nodes_manager_::PrintStructure(
 	row_t__ Racine,
 	txf::text_oflow___ &Flot ) const
 {
 	bso::ulong__ Niveau = 0;
-	bso::bool__ Fils = false, Fille = false;
+	bso::bool__ Left = false, Right = false;
 	row_t__ Courant = Racine;
 
 	Flot << '*';
 
 	do {
-		if ( Fils )
+		if ( Left )
 		{
-			Fils = Fille = false;
+			Left = Right = false;
 
 			if ( HasRight( Courant ) )
 			{
-				Courant = this->Fille( Courant );
+				Courant = this->Right( Courant );
 
 				Flot << txf::nl;
 				AfficherBlancs_( Flot, Niveau );
@@ -235,36 +234,36 @@ void btr::liens_::PrintStructure(
 			else
 			{
 				if ( IsLeft( Courant ) )
-					Fils = true;
+					Left = true;
 				else
-					Fille = true;
+					Right = true;
 
-				Courant = Pere( Courant );
+				Courant = Parent( Courant );
 				Niveau--;
 			}
 		}
-		else if ( Fille )
+		else if ( Right )
 		{
-			Fils = Fille = false;
+			Left = Right = false;
 
 			if ( IsLeft( Courant ) )
-				Fils = true;
+				Left = true;
 			else
-				Fille = true;
+				Right = true;
 
-			Courant = Pere( Courant );
+			Courant = Parent( Courant );
 			Niveau--;
 		}
 		else if ( HasLeft( Courant ) )
 		{
-			Courant = this->Fils( Courant );
+			Courant = this->Left( Courant );
 
 			Flot << '*';
 			Niveau++;
 		}
 		else if ( HasRight( Courant ) )
 		{
-			Courant = this->Fille( Courant );
+			Courant = this->Right( Courant );
 			Flot << txf::nl;
 			AfficherBlancs_( Flot, Niveau );
 			Flot << '*';
@@ -272,17 +271,17 @@ void btr::liens_::PrintStructure(
 		}
 		else if ( IsLeft( Courant ) )
 		{
-			Courant = Pere( Courant );
-			Fils = true;
+			Courant = Parent( Courant );
+			Left = true;
 			Niveau--;
 		}
 		else if ( IsRight( Courant ) )
 		{
-			Courant = Pere( Courant );
-			Fille = true;
+			Courant = Parent( Courant );
+			Right = true;
 			Niveau--;
 		}
-	} while ( Niveau || Fils );
+	} while ( Niveau || Left );
 
 	Flot << txf::nl << txf::sync;
 }
@@ -290,26 +289,25 @@ void btr::liens_::PrintStructure(
 /* Remonte l'arbre 'Racine' à partir de 'Depart', dont la présence d'une fille
 n'est pas testée, jusqu'à trouver un aieul avec une fille. */
 /*
-mbs__position abb_arbre_binaire_::TrouverAieulMaleAvecFille_(
+mbs__position abb_arbre_binaire_::TrouverAieulMaleAvecRight_(
 	mbs__position Depart,
 	mbs__position Racine ) const
 {
 	mbs__position &Courant = Depart;
-	fdm__bool EtaitFille = false;
+	fdm__bool EtaitRight = false;
 
 	do {
-		EtaitFille = EstFille( Courant );
-		Courant = Pere( Courant );
-	} while( ( EtaitFille || !AFille( Courant ) )
+		EtaitRight = EstRight( Courant );
+		Courant = Parent( Courant );
+	} while( ( EtaitRight || !HasRight( Courant ) )
 			 && ( Courant != Racine ) );
 
-	if ( ( Courant == Racine ) && EtaitFille ) 
+	if ( ( Courant == Racine ) && EtaitRight ) 
 		Courant = ABB_INEXISTANT;
 
 	return Courant;
 }
 */
-
 
 
 

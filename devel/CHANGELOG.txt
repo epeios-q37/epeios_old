@@ -28,6 +28,7 @@ BSO:
 
 BTR:
 - Adapting to the new 'AUTO(x)' macros.
+- Renaming of classes and methods.
 
 CPE:
 - Adding 'CPE__USE_[VC|GCC]_WORKAROUND'.
@@ -42,6 +43,7 @@ CTN:
 DTR:
 - Adapting to changes in 'que'.
 - Adapting to the new 'AUTO(x)' macros.
+- Adapting to changes in 'BTR' library.
 
 EPSMSC:
 - Removing IDEALX-related text.
@@ -72,6 +74,7 @@ FLX:
 IDXBTR:
 - Adding 'MarkAs...()' method.
 - Adapting to new 'AUTO(x)' macros.
+- Adapting to changes in 'BTR' library.
 
 IDXBTQ:
 - Adding 'E_IBTREEt()'.
