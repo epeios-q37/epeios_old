@@ -1,7 +1,7 @@
 /*
-  '$xxx$' library by Claude L. Simon ($EMAIL$)
+  '$xxx$' library by Claude SIMON ($EMAIL$)
   Requires the '$xxx$' header file ('$xxx$.h').
-  Copyright (C) 2000,2001 $COPYRIGHT$.
+  Copyright (C) 2002 $COPYRIGHT$.
 
   $ADDENDUM1$
   $ADDENDUM2$

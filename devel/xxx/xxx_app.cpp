@@ -1,7 +1,7 @@
 /*
-	'$NAME$' by Claude L. SIMON ($EMAIL$)
+	'$NAME$' by Claude SIMON ($EMAIL$)
 	(descrition)
-	Copyright (C) 2001 $COPYRIGHT$
+	Copyright (C) 2002 $COPYRIGHT$
 
 	$ADDENDUM1$
 	$ADDENDUM$

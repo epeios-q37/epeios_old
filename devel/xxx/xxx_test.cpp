@@ -1,6 +1,6 @@
 /*
-  Test source for the '$xxx$' library by Claude L. Simon ($EMAIL$).
-  Copyright (C) 2000,2001 $COPYRIGHT$.
+  Test source for the '$xxx$' library by Claude SIMON ($EMAIL$).
+  Copyright (C) 2002 $COPYRIGHT$.
 
   $ADDENDUM1$
   $ADDENDUM2$
