@@ -347,7 +347,7 @@ ERRBegin
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
 		ferr << '\'' << Unknow << "': unknow option." << nl;
 		ferr << "Try '" NAME " --help' to get more informations." << nl;
-		ERRt();
+		ERRu();
 	}
 
 	P = Options.First();
@@ -360,11 +360,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				ferr << "Option '-l,--line-delimiter' must have one argument." << nl;
-				ERRt();
+				ERRu();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				ferr << "Argument of option '-l,--line-delimiter' must be a character." << nl;
-				ERRt();
+				ERRu();
 			}
 			else
 				LineDelimiter = Argument( 0 );
@@ -373,11 +373,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				ferr << "Option '-f,--field-delimiter' must have one argument." << nl;
-				ERRt();
+				ERRu();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				ferr << "Argument of option '-f,--field-delimiter' must be a character." << nl;
-				ERRt();
+				ERRu();
 			}
 			else
 				FieldDelimiter = Argument( 0 );
@@ -386,11 +386,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				ferr << "Option '-a,--album-marker' must have one argument." << nl;
-				ERRt();
+				ERRu();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				ferr << "Argument of option '-a,--album-marker' must be a character." << nl;
-				ERRt();
+				ERRu();
 			}
 			else
 				AlbumMarker = Argument( 0 );
@@ -398,11 +398,11 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				ferr << "Option '-t,--title-marker' must have one argument." << nl;
-				ERRt();
+				ERRu();
 			}
 			else if ( Argument.Amount() > 1 ) {
 				ferr << "Argument of option '-t,--title-marker' must be a character." << nl;
-				ERRt();
+				ERRu();
 			}
 			else
 				TitleMarker = Argument( 0 );
@@ -411,7 +411,7 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 			if( Argument.Amount() == 0 ) {
 				ferr << "Option '-n,--disc-name' must have one argument." << nl;
-				ERRt();
+				ERRu();
 			}
 			else
 				DiscName = Argument;
@@ -457,12 +457,12 @@ ERRBegin
 	case 0:
 		ferr << "Too few arguments." << nl;
 		fout << "Try '" NAME " --help' to get more informations." << nl;
-		ERRt();
+		ERRu();
 		break;
 	default:
 		ferr << "Too many arguments." << nl;
 		fout << "Try '" NAME " --help' to get more informations." << nl;
-		ERRt();
+		ERRu();
 		break;
 	}
 
@@ -592,11 +592,15 @@ ERRFProlog
 ERRFBegin
 	Main( argc, argv );
 ERRFErr
-	ExitValue = EXIT_FAILURE;
-	
 	if ( ERRMajor == err::thw )
-		ERRRst();
+		ERRRst()
+	else if ( ERRMajor == err::usr ) {
+		ExitValue = EXIT_FAILURE;
+		ERRRst()
+	} else
+		ExitValue = EXIT_FAILURE;
 
 ERRFEnd
 ERRFEpilog
+	return ExitValue;
 }
