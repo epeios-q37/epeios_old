@@ -64,7 +64,7 @@ void Print( const clnarg::arguments_ &Arguments )
 	ctn::E_CMITEM( clnarg::argument_ ) Item;
 
 	while( P != NONE ) {
-		fout << txf::tab << Arguments( P, Item );
+		stf::fout << txf::tab << Arguments( P, Item );
 		P = Arguments.Next( P );
 	}
 }
@@ -97,9 +97,9 @@ void Print(
 	tym::row__ P = List.First();
 
 	while( P != NONE ) {
-		fout << (unsigned long)List( P ) << ": ";
+		stf::fout << (unsigned long)List( P ) << ": ";
 		Print( A, List( P ) );
-		fout << txf::nl;
+		stf::fout << txf::nl;
 		P = List.Next( P ); 
 	}
 
@@ -128,7 +128,7 @@ ERRBegin
 
 	Analyzer.Init( argv, argc, Description );
 
-	fout <<(unsigned long)( C = Analyzer.GetCommand() ) << txf::nl;
+	stf::fout <<(unsigned long)( C = Analyzer.GetCommand() ) << txf::nl;
 
 	if ( C == cVersion )
 		TTR.Advertise();
@@ -136,7 +136,7 @@ ERRBegin
 	List.Init();
 
 	if ( ( UnknowOption = Analyzer.GetOptions( List ) ) != NULL ) {
-		ferr << '\'' << UnknowOption << "': Unknow command/option." << txf::nl;
+		stf::ferr << '\'' << UnknowOption << "': Unknow command/option." << txf::nl;
 		ERRu();
 	}
 
@@ -153,7 +153,7 @@ int main( int argc, const char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << CLNARGTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+stf::fout << "Test of library " << CLNARGTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	Essai( argc, argv );
 /*
@@ -179,7 +179,7 @@ ERRFBegin
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << CLNARGTutor.Name << ".\n";
+	stf::fout << "\nEnd of program " << CLNARGTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

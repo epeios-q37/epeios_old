@@ -1,25 +1,24 @@
 /*
-  Header for the 'mtx' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (simon@epeios.org) 
+	Header for the 'mtx' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2000, 2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define MTX_NAME		"MTX"
 
-#define	MTX_VERSION	"$Revision$"	
+#define	MTX_VERSION	"$Revision$"
 
-#define MTX_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define MTX_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
 extern class ttr_tutor &MTXTutor;
 
 #if defined( XXX_DBG ) && !defined( MTX_NODBG )
-#define MTX_DBG 
+#define MTX_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,6 +53,11 @@ extern class ttr_tutor &MTXTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D MuTeX 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
@@ -107,17 +111,6 @@ namespace mtx {
 #endif
 
 		return Handler;
-	}
-
-	//f Delete the mutex of handler 'Handler'.
-	inline void Delete( mutex_handler__ Handler )
-	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-//		pthread_mutex_destroy( Handler );
-		if ( pthread_mutex_destroy( Handler ) != 0 )
-			ERRs();
-#endif
-		free( Handler );
 	}
 
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
@@ -196,6 +189,20 @@ namespace mtx {
 #else
 		(*Handler)--;
 #endif
+	}
+
+	//f Delete the mutex of handler 'Handler'.
+	inline void Delete( mutex_handler__ Handler )
+	{
+#ifdef MTX__USE_PTHREAD_MUTEX
+//		pthread_mutex_destroy( Handler );
+		mtx::Lock( Handler );
+		mtx::Unlock( Handler );
+		if ( pthread_mutex_destroy( Handler ) != 0 ) {
+				ERRs();
+		}
+#endif
+		free( Handler );
 	}
 
 	//c A mutex.

@@ -1,26 +1,25 @@
 /*
-  'clnarg' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'clnarg' header file ('clnarg.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+	'clnarg' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'clnarg' header file ('clnarg.h').
+	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
-  
+	This file is part of the Epeios (http://epeios.org/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -417,10 +416,10 @@ static void HandleView_( clnarg::view View )
 {
 	switch( View ) {
 	case clnarg::vOneLine:
-		fout << txf::tab;
+		stf::fout << txf::tab;
 		break;
 	case clnarg::vSplit:
-		fout << txf::nl << txf::tab << txf::tab;
+		stf::fout << txf::nl << txf::tab << txf::tab;
 		break;
 	default:
 		ERRu();
@@ -435,16 +434,16 @@ void clnarg::PrintCommandUsage(
 	clnarg::view View,
 	bso::bool__ Default )
 {
-	fout << txf::tab;
+	stf::fout << txf::tab;
 		
 	if ( Default )
-		fout << "<none>, ";
+		stf::fout << "<none>, ";
 			
-	fout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	stf::fout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
 	
 	HandleView_( View );
 		
-	fout << Text << txf::nl;
+	stf::fout << Text << txf::nl;
 }
 
 void clnarg::PrintOptionUsage(
@@ -454,19 +453,19 @@ void clnarg::PrintOptionUsage(
 	const char *Text,
 	clnarg::view View )
 {
-	fout << txf::tab;
+	stf::fout << txf::tab;
 		
-	fout << Description.GetOptionLabels( OptionId );
+	stf::fout << Description.GetOptionLabels( OptionId );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 
-		fout << ' ' << Parameter;
+		 stf::fout << ' ' << Parameter;
 
-	fout << ':';
+	stf::fout << ':';
 		
 	HandleView_( View );
 		
-	fout << Text << txf::nl;
+	stf::fout << Text << txf::nl;
 }
 
 	

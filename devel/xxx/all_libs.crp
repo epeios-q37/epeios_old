@@ -21,6 +21,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &cgidat		&ecgi		&2002-		&CGI (Common Gateway Interface) DATa
 &cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&2002-		&CGI (Common Gateway Interface) TOoL
+&clnarg		&epeios		&2000, 2001, 	&Command LiNe ARGuments
 &cpe		&epeios		&2000-		&ComPilation Enviroment
 &ctn		&epeios		&2000-		&ConTaiNer (of dynamic objects)
 &dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
@@ -77,6 +78,8 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
 &mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
 &mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
+&mtx		&epeios		&2000, 		&MuTeX
+&mtk		&epeios		&2000, 2001, 	&MultiTasKing
 &pip		&epeios		&2000-		&PIPe
 &que		&epeios		&2000-		&QUEue
 &sbt		&epeios		&2000-		&Simplified Binary Tree

@@ -48,7 +48,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << LGPMSCTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::fout << "Test of library " << LGPMSCTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -61,16 +61,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << LGPMSCTutor.Name << " [/i]\n\n";
+		stf::fout << txf::sync;
+		stf::ferr << "\nBad arguments.\n";
+		stf::fout << "Usage: " << LGPMSCTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << LGPMSCTutor.Name << ".\n";
+	stf::fout << "\nEnd of program " << LGPMSCTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

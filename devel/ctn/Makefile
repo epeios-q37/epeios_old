@@ -30,18 +30,18 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err uym fam str mmi
+libs = ttr tol flw stf err uym fam mmi str
 
 
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(EPEIOS_ENV)","windows")
 # compilation options
 co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
 endif
 
-ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
+ifeq ("$(EPEIOS_ENV)","gnu")
 co = -c
 # Generates debugging data.
 co += -g
@@ -54,7 +54,7 @@ lo = -o $(name)
 #lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(EPEIOS_ENV)","beos")
 co = -c -g
 lo = -o $(name)
 endif

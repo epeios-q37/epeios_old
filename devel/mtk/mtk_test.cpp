@@ -44,16 +44,29 @@ ERREnd
 ERREpilog
 }
 
+void f( void *UP)
+{
+	stf::fout << (char *)UP << txf::nl;
+}
+
+void Test( void )
+{
+	mtk::Launch( f, (char *)"Hello, world" );
+
+	tol::Wait( 5 );
+}
+
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << MTKTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::fout << "Test of library " << MTKTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Test();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -62,16 +75,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << MTKTutor.Name << " [/i]\n\n";
+		stf::fout << txf::sync;
+		stf::ferr << "\nBad arguments.\n";
+		stf::fout << "Usage: " << MTKTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << MTKTutor.Name << ".\n";
+	stf::fout << "\nEnd of program " << MTKTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

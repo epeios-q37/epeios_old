@@ -25,40 +25,30 @@
 # $$Id$$
 
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(EPEIOS_ENV)","windows")
 ox = obj
 cc = bcc32
-dss = ;
-dst = :
+ds = ;
 larg = $(lo) *.$(ox)	# Because Windows command size limited.
 endif
 
-ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
+ifeq ("$(EPEIOS_ENV)","gnu")
 ox = o
 cc = g++ 
 larg = $(lo) $(objs)
-dss = :
+ds = :
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
-dst = :
-endif
-
-ifeq ("$(EPEIOS_OS)","cygwin")
-dst = ;
-endif
-
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(EPEIOS_ENV)","beos")
 ox = o
 cc = g++
-dss = :
-dst = :
+ds = :
 larg = $(lo) $(objs)
 endif
 
-vpath %.cpp $(subst $(dss),$(dst),$(EPEIOS_SRC))
+vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
 
-srcd = $(subst $(dss), ,$(EPEIOS_SRC))
+srcd = $(subst $(ds), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)

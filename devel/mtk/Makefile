@@ -1,10 +1,7 @@
-# 'mtk' Makefile by Claude L. Simon (simon@epeios.org)
+# 'mtk' Makefile by Claude SIMON (csimon@epeios.org)
 # Builds test executable for the 'mtk' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000 Claude L. SIMON (simon@epeios.org).
-#
-# This file is part of the Epeios (http://www.epeios.org/) project.
-# 
+# Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -31,27 +28,20 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+copt += -DCPE_MT -DMTX_USE_COUNTER
 lopt = 
 libs = ttr tol flw stf err
 
 
 
-ifeq ("$(EPEIOS_OS)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
+ifeq ("$(EPEIOS_ENV)","windows")
 # compilation options
-co = -q -c -w-aus
+co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
-ds = ;
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
-ox = o
-cc = g++ 
+ifeq ("$(EPEIOS_ENV)","gnu")
 co = -c
 # Generates debugging data.
 co += -g
@@ -61,29 +51,12 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
+#lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
-ox = o
-cc = g++
+ifeq ("$(EPEIOS_ENV)","beos")
 co = -c -g
 lo = -o $(name)
-ds = :
 endif
 
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
-
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
-
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT) $(lopt)
-
-objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
-
-$(name):  $(objs)
-	$(cc) $(lo) $(objs)
-	
-%.$(ox): %.cpp
-	$(cc) $(co) $< 
+include ../xxx/LibMakefile.footer

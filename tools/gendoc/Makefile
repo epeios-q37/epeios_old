@@ -31,30 +31,30 @@ copt =
 # copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
-lopt =
+lopt = 
 libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str xmltag\
        fil xmlval xmldcm xmlcor txmtbl
 
 ifndef EPEIOS_SRC
-	epeios_src=
+	src=
 else
-	epeios_src=$(EPEIOS_SRC)
+	src=$(EPEIOS_SRC)
 endif
 
-ifndef EPEIOS_OS
-	epeios_os=linux
+ifndef EPEIOS_ENV
+	env=gnu
 else
-	epeios_os=$(EPEIOS_OS)
+	env=$(EPEIOS_ENV)
 endif
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(env)","windows")
 # compilation options
 co = -q -c -w-aus -w-inl
 # linkage options
 lo = -q -e$(name)
 endif
 
-ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
+ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
 #co += -g
@@ -67,7 +67,12 @@ lo = -o $(name).exe
 #lo += -lpthread
 endif
 
-ifeq ("$(EPEIOS_OS)","windows")
+ifeq ("$(env)","beos")
+co = -c -g
+lo = -o $(name)
+endif
+
+ifeq ("$(env)","windows")
 ox = obj
 cc = bcc32
 dss = ;
@@ -75,7 +80,7 @@ dst = :
 larg = $(lo) *.$(ox)	# Because Windows command size limited.
 endif
 
-ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
+ifeq ("$(env)","gnu")
 ox = o
 cc = g++ 
 larg = $(lo) $(objs)
@@ -90,7 +95,7 @@ ifeq ("$(EPEIOS_OS)","cygwin")
 dst = ;
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(env)","beos")
 ox = o
 cc = g++
 dss = :
@@ -98,9 +103,9 @@ dst = :
 larg = $(lo) $(objs)
 endif
 
-vpath %.cpp $(subst $(dss),$(dst),$(EPEIOS_SRC))
+vpath %.cpp $(subst $(ds),:,$(src))
 
-srcd = $(subst $(dss), ,$(EPEIOS_SRC))
+srcd = $(subst $(ds), ,$(src))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)

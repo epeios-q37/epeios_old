@@ -28,12 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "mtx.h"
 
 #include "err.h"
 #include "stf.h"
+#include "mtk.h"
+#include "tol.h"
 
 void Generic( int argc, char *argv[] )
 {
@@ -44,16 +45,108 @@ ERREnd
 ERREpilog
 }
 
+#if 1
+
+void f( void *UP )
+{
+	mtx::mutex_handler__ &Mutex = *(mtx::mutex_handler__ *)UP;
+
+	stf::fout << "- Waiting ..." << txf::nl;
+
+	tol::Wait( 5 );
+
+	stf::fout << "- Unlocking ..." << txf::nl;
+
+	tol::Wait( 1 );
+
+	mtx::Unlock( Mutex );
+}
+
+void Test( void )
+{
+ERRProlog
+	mtx::mutex_handler__ Mutex = MTX_INVALID_HANDLER;
+ERRBegin
+	Mutex = mtx::Create();
+
+	stf::fout << "+ Locking ..." << txf::nl;
+
+	mtx::Lock( Mutex );
+
+	stf::fout << "+ Locked ..." << txf::nl;
+
+	mtk::Launch( f, &Mutex );
+
+	tol::Wait( 1 );
+
+	stf::fout << "+ Locking ..." << txf::nl;
+
+	mtx::Lock( Mutex );
+
+	stf::fout << "+ Locked ..." << txf::nl;
+ERRErr
+ERREnd
+	if ( Mutex != MTX_INVALID_HANDLER )
+		mtx::Delete( Mutex );
+ERREpilog
+}
+
+#else
+
+void Test( void )
+{
+ERRProlog
+	mtx::mutex_handler__ Mutex = MTX_INVALID_HANDLER;
+ERRBegin
+	Mutex = mtx::Create();
+
+	stf::fout << "Locking ..." << txf::nl;
+
+	mtx::Lock( Mutex );
+
+	stf::fout << "Locked ..." << txf::nl;
+
+	if ( !mtx::TryToLock( Mutex ) )
+		stf::fout << "Locking failed ..." << txf::nl;
+	else
+		stf::fout << "Locking succeed ..." << txf::nl;
+
+	stf::fout << "Unlocking ..." << txf::nl;
+
+	mtx::Unlock( Mutex );
+
+	stf::fout << "Unlocked ..." << txf::nl;
+
+	stf::fout << "Locking ..." << txf::nl;
+
+	mtx::Lock( Mutex );
+
+	stf::fout << "Locked ..." << txf::nl;
+
+	stf::fout << "Unlocking ..." << txf::nl;
+
+	mtx::Unlock( Mutex );
+
+	stf::fout << "Unlocked ..." << txf::nl;
+ERRErr
+ERREnd
+	if ( Mutex != MTX_INVALID_HANDLER )
+		mtx::Delete( Mutex );
+ERREpilog
+}
+
+#endif
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << MTXTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	stf::fout << "Test of library " << MTXTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Test();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -62,16 +155,16 @@ ERRFBegin
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << MTXTutor.Name << " [/i]\n\n";
+		stf::fout << txf::sync;
+		stf::ferr << "\nBad arguments.\n";
+		stf::fout << "Usage: " << MTXTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << MTXTutor.Name << ".\n";
+	stf::fout << "\nEnd of program " << MTXTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }
