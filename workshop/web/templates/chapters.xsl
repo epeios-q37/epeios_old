@@ -9,9 +9,11 @@
 				</xsl:attribute>
 				<xsl:value-of select="@title"/>
 			</xsl:element>
-			<xsl:element name="ol">
-				<xsl:apply-templates select="chapter" mode="index"/>
-			</xsl:element>
+			<xsl:if test="./*=chapter">
+				<xsl:element name="ol">
+					<xsl:apply-templates select="chapter" mode="index"/>
+				</xsl:element>
+			</xsl:if>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="chapter">
