@@ -612,56 +612,55 @@ static void Disconnect_(
 
 #define ADD( I )	Broker.Add( brkcmd::CommandsNames[brkcmd::c##I##], ::I##_, brkcmd::CommandsParameters[brkcmd::c##I] )
 
-// Initialisation avec rattachement à l'interface 'Frontend'.
-void ::broker::master_module::Init( ::broker::broker_ &Broker )
-{
-	untyped_module::Init( NULL );
-	untyped_module::Broker_ = &Broker;
-
-	// Get and configure the error modus.
-	ADD( SetErrorBreakingStatus );
-
-	ADD( GetErrorBreakingStatus );
-
-	// Create a new object.
-	ADD( GetNewObject );
-
-	// Give the type corresponding to the given name.
-	ADD( GetType );
-
-	// Give the command of the given object type and command name.
-	ADD( GetCommand );
-
-	// Give the commands of the given object type and command names.
-	ADD( GetCommands );
-
-	// Give the type and the commands of the given type name, commands names and cats.
-	ADD( GetTypeAndCommands );
-
-	// Remove the given object.
-	ADD( RemoveObject );
-
-	// The id and name of the languages supported.
-	ADD( GetLanguagesIDAndName );
-
-	// The string of the interface version.
-	ADD( GetVersion );
-
-	// Disconnection.
-	ADD( Disconnect );
-
-	// The id and name of the supported object types.
-	ADD( GetTypesIDAndName );
-
-	// The id and name of the commands of an object type.
-	ADD( GetCommandsIDAndName );
-
-	// The parameters (cast) of a command of an object type.
-	ADD( GetParameters );
-
-}
-
 namespace broker {
+	// Initialisation avec rattachement à l'interface 'Frontend'.
+	void master_module::Init( ::broker::broker_ &Broker )
+	{
+		untyped_module::Init( NULL );
+		Broker_ = &Broker;
+
+		// Get and configure the error modus.
+		ADD( SetErrorBreakingStatus );
+
+		ADD( GetErrorBreakingStatus );
+
+		// Create a new object.
+		ADD( GetNewObject );
+
+		// Give the type corresponding to the given name.
+		ADD( GetType );
+
+		// Give the command of the given object type and command name.
+		ADD( GetCommand );
+
+		// Give the commands of the given object type and command names.
+		ADD( GetCommands );
+
+		// Give the type and the commands of the given type name, commands names and cats.
+		ADD( GetTypeAndCommands );
+
+		// Remove the given object.
+		ADD( RemoveObject );
+
+		// The id and name of the languages supported.
+		ADD( GetLanguagesIDAndName );
+
+		// The string of the interface version.
+		ADD( GetVersion );
+
+		// Disconnection.
+		ADD( Disconnect );
+
+		// The id and name of the supported object types.
+		ADD( GetTypesIDAndName );
+
+		// The id and name of the commands of an object type.
+		ADD( GetCommandsIDAndName );
+
+		// The parameters (cast) of a command of an object type.
+		ADD( GetParameters );
+
+	}
 
 	type__ broker::Type( str_string_ &Name )
 	{
