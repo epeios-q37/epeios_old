@@ -698,13 +698,13 @@ void PrintUsage( const clnarg::description_ &Description )
 	fout << "template-file:" << txf::tab << "HTML template source file." << txf::nl;
 	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	fout << "Command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists to HTML file.", false, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", false, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
+	clnarg::PrintCommandUsage( Description, cConvert, "convert mailinglists to HTML file.", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.",  clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.",  clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.",  clnarg::vOneLine, false );
 	fout << "Options:" << txf::nl;
-	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.", false );
-	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.", false );
+	clnarg::PrintOptionUsage( Description, oListsFile, "name of the lists file for lists TOC links.",  clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oGeneralFile, "name of the general file for general TOC links.",  clnarg::vSplit );
 //	clnarg::PrintOptionUsage( Description, o, "", false );
 }
 

@@ -544,16 +544,16 @@ void PrintUsage( const clnarg::description_ &Description )
 	fout << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
 	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	fout << "Command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", false, true );
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", false, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
+	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 	fout << "Options:" << txf::nl;
-	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", false );
-	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", false );
-	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", false );
-	clnarg::PrintOptionUsage( Description, oTextMarker, "CHAR", "CHAR becomes the marker for text ('" DEFAULT_TEXT_MARKER_S "' by default).", false );
-	clnarg::PrintOptionUsage( Description, oFileMarker, "CHAR",  "CHAR becomes the marker for file ('" DEFAULT_FILE_MARKER_S "' by default).", false );
+	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oCommentMarker, "CHAR", "CHAR becomes the marker for comment ('" DEFAULT_COMMENT_MARKER_S "' by default).", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oTextMarker, "CHAR", "CHAR becomes the marker for text ('" DEFAULT_TEXT_MARKER_S "' by default).", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oFileMarker, "CHAR",  "CHAR becomes the marker for file ('" DEFAULT_FILE_MARKER_S "' by default).", clnarg::vSplit );
 }
 
 void PrintHeader( void )
