@@ -424,7 +424,7 @@ ERRProlog
 ERRBegin
 	Type.Init();
 
-	Requete.PopId16( T );
+	Requete.PopString( Type );
 
 	T = Broker.Type( Type );
 

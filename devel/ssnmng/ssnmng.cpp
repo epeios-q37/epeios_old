@@ -54,105 +54,121 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-
 #define DIGITS "azertyuiopmlkjhgfdsqwxcvbnNBVCXWQSDFGHJKLMPOIUYTREZA9876543210"
 
-void ssnmng__session_id::New( void )
-{
-	int i;
+namespace ssnmng {
 
-	for( i = 0; i < SSNMNG_SIZE; i++ )
-		Raw_[i] = DIGITS[rand() % sizeof( DIGITS )];
+	void session_id__::New( void )
+	{
+		int i;
 
-	Raw_[i] = 0;
-}
+		for( i = 0; i < SSNMNG_SIZE; i++ )
+			Raw_[i] = DIGITS[rand() % sizeof( DIGITS )];
 
-static inline bso__sbyte Test_(
-	const char *S1,
-	const char *S2 )
-{
-	return strcmp( S1, S2 );
-}
-
-static POSITION__ Search_( 
-	const idxbtr_tree_index_ &I,
-	const SET_( ssnmng__session_id ) &T,
-	const char *S,
-	bso__sbyte &Test )
-{
-	POSITION__ P = I.Root();
-	bso__bool Cont = true;
-
-	while ( Cont )
-		if ( ( Test = Test_( T( P ).Value(), S ) ) > 0 )
-			Cont = !I.NextAvailable( P );
-		else if ( Test < 0 )
-			Cont = !I.PreviousAvailable( P );
-		else
-			Cont = false;
-
-	return P;
-}
-
-POSITION__ ssnmng_sessions_manager_::Open( void )
-{
-	POSITION__ P = LIST_::CreateEntry();
-	ssnmng__session_id SessionID;
-	ssnmng__chrono C;
-
-	do {
-		SessionID.New();
-	} while( Position( SessionID ) != NONE );
-
-	Table.Write( SessionID, P );
-
-	if ( Index.IsEmpty() ) {
-		MQUEUE_::Create( P );
-		Index.Create( P );
-	} else {
-		bso__sbyte Test;
-		POSITION__ PI = Search_( Index, Table, SessionID.Value(), Test );
-
-		if ( Test > 0 )
-			Index.BecomeNext( P, PI );
-		else if ( Test < 0 )
-			Index.BecomePrevious( P, PI );
-		else
-			ERRc();
-
-		MQUEUE_::InsertItemAfterNode( P, MQUEUE_::Tail() );
+		Raw_[i] = 0;
 	}
 
-
-	if ( time( &C.Relative ) == -1 )
-		ERRs();
-
-	if ( time( &C.Absolute ) == -1 )
-		ERRs();
-
-	Chronos.Write( C, P );
-
-	return P;
-}
-
-POSITION__ ssnmng_sessions_manager_::Position( const char *SessionID ) const
-{
-	POSITION__ P = NONE;
-
-	if ( !Index.IsEmpty() )	{
-		bso__sbyte Test;
-
-		P = Search_( Index, Table, SessionID, Test );
-
-		if ( Test )
-			P = NONE;
+	static inline bso__sbyte Test_(
+		const char *S1,
+		const char *S2 )
+	{
+		return strcmp( S1, S2 );
 	}
 
-	return P;
+	static POSITION__ Search_( 
+		const idxbtr_tree_index_ &I,
+		const SET_( session_id__ ) &T,
+		const char *S,
+		bso__sbyte &Test )
+	{
+		POSITION__ P = I.Root();
+		bso__bool Cont = true;
+
+		while ( Cont )
+			if ( ( Test = Test_( T( P ).Value(), S ) ) > 0 )
+				Cont = !I.NextAvailable( P );
+			else if ( Test < 0 )
+				Cont = !I.PreviousAvailable( P );
+			else
+				Cont = false;
+
+		return P;
+	}
+
+	POSITION__ sessions_manager_::Open( void )
+	{
+		POSITION__ P = LIST_::CreateEntry();
+		session_id__ SessionID;
+		chrono__ C;
+
+		do {
+			SessionID.New();
+		} while( Position( SessionID ) != NONE );
+
+		Table.Write( SessionID, P );
+
+		if ( Index.IsEmpty() ) {
+			MQUEUE_::Create( P );
+			Index.Create( P );
+		} else {
+			bso__sbyte Test;
+			POSITION__ PI = Search_( Index, Table, SessionID.Value(), Test );
+
+			if ( Test > 0 )
+				Index.BecomeNext( P, PI );
+			else if ( Test < 0 )
+				Index.BecomePrevious( P, PI );
+			else
+				ERRc();
+
+			MQUEUE_::InsertItemAfterNode( P, MQUEUE_::Tail() );
+		}
+
+
+		if ( time( &C.Relative ) == -1 )
+			ERRs();
+
+		if ( time( &C.Absolute ) == -1 )
+			ERRs();
+
+		Chronos.Write( C, P );
+
+		return P;
+	}
+
+	POSITION__ sessions_manager_::Position( const char *SessionID ) const
+	{
+		POSITION__ P = NONE;
+
+		if ( !Index.IsEmpty() )	{
+			bso__sbyte Test;
+
+			P = Search_( Index, Table, SessionID, Test );
+
+			if ( Test )
+				P = NONE;
+		}
+
+		return P;
+	}
+	POSITION__ sessions_manager_::Position( const str_string_ &SessionID ) const
+	{
+		char Buffer[SSNMNG_SIZE+1];
+
+		if ( SessionID.Amount() != SSNMNG_SIZE )
+			return NONE;
+
+		SessionID.Read( 0, SSNMNG_SIZE, Buffer );
+
+		Buffer[SSNMNG_SIZE] = 0;
+
+		return Position( Buffer );
+	}
 }
 
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 class ssnmngpersonnalization
 : public ssnmngtutor
 {
