@@ -1,0 +1,3 @@
+# $Id$
+scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/exml/
+rm -rf workdir

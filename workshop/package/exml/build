@@ -1,17 +1,20 @@
 # $Id$
 mkdir workdir
 cd workdir
-DIR=epeios-sources
+export DIR=exml-sources
 GET=../../get_cvs
 
 $GET epeios $DIR stable/
-$GET epeios $DIR devel/CHANGELOG.txt
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
-$GET epeios $DIR documentation/packages/epeios/README.txt
+$GET epeios $DIR documentation/packages/exml/README.txt
+
+$GET exml $DIR stable/
+$GET exml $DIR devel/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-cp ~/web/epeios/quickdoc/quickdoc.html $DIR
+
+cp ~/web/exml/quickdoc/quickdoc.html $DIR
 
 ../../create_pkg $DIR
