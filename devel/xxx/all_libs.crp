@@ -225,6 +225,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &gsbflr		&lgsb		&		&GeSBib FieLd Repository
 &gsbmlt		&lgsb		&2002-\
 	&GeSBib MuLTi field
+&gsbmta		&lgsb		&\
+	&GeSBib MeTA field
 &gsbrgl		&lgsb		&\
 	&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002-		&GeSBib ReLaTional field
