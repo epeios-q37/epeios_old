@@ -182,6 +182,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dbidpd		&ldbi		&2002-\
 	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
+&dbiibp		&ldbi		&\
+	&DataBase Interface IBPhoenix (FireBird)
 &dbiifl_	&ldbi		&2002-		&Database Interface Index FieLds (for backend)
 &dbilvw		&ldbi		&\
 	&DataBase Interface List VieWer
