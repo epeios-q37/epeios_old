@@ -133,7 +133,8 @@ namespace err {
 	enum i
 	{
 		iGeneric,
-		iReturn	// To return from a function, but with taking care of the error handling.
+		iError,		// To signal an error (generally a user error, as incoorect eror in command line).
+		iNoError	// To quickly exit, without an error.
 	};
 		// throw error
 	enum c
