@@ -5,23 +5,28 @@
 		<xsl:element name="p"/>
 	</xsl:template>
 	<xsl:template match="para">
-		<xsl:choose>
-			<xsl:when test="@type='remark'">
-				<xsl:element name="em">
+		<xsl:element name="p">
+			<xsl:attribute name="style">text-indent: 5%; text-align: justify; margin: 0px;</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="@type='remark'">
+					<xsl:element name="em">
+						<xsl:apply-templates/>
+					</xsl:element>
+				</xsl:when>
+				<xsl:otherwise>
 					<xsl:apply-templates/>
-				</xsl:element>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:apply-templates/>
-			</xsl:otherwise>
-		</xsl:choose>
-		<xsl:element name="br"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>
 	</xsl:template>
 	<xsl:template match="link">
 		<xsl:element name="a">
 			<xsl:attribute name="href">
 				<xsl:value-of select="@URL"/>
 			</xsl:attribute>
+			<xsl:if test="@type='external'">
+				<xsl:attribute name="target">_blank</xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates/>
 		</xsl:element>
 		<xsl:if test="@aspect='long'">
@@ -30,6 +35,9 @@
 				<xsl:attribute name="href">
 					<xsl:value-of select="@URL"/>
 				</xsl:attribute>
+				<xsl:if test="@type='external'">
+					<xsl:attribute name="target">_blank</xsl:attribute>
+				</xsl:if>
 				<xsl:value-of select="@URL"/>
 			</xsl:element>
 			<xsl:text>)</xsl:text>

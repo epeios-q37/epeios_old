@@ -40,7 +40,7 @@
         <para>This is the official web site of the Epeios project, which goal is to find the most simple and effective way to develop software.</para>
       </section>
       <section>
-        <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of the Epeios libraries and software.</para>
+        <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of the Epeios libraries and software.</para>
       </section>
       <section>
         <para>All document available on this web site are written by people for which English isn't the native language ; some people are working to correct the English errors, so, please, DON'T send any report about this errors.</para>
@@ -59,7 +59,7 @@
         </list>
       </section>
       <section>
-        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/" type="external">XML</link>/<link URL="http://www.w3.org/Style/XSL/" type="external">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/" type="external">Sablotron</link>. The project is hosted by <link URL="http://sv.gnu.org" type="external">Savannah</link>.</para>
+        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/">XML</link>/<link URL="http://www.w3.org/Style/XSL/">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/">Sablotron</link>. The project is hosted by <link URL="http://sv.gnu.org">Savannah</link>.</para>
       </section>
       <section>
         <para xml:space="preserve">I, <contact adress="csimon@epeios.org">Claude L. Simon</contact>, live in France and I am the webmaster of this site, the maintainer of the Epeios project and the developer of all the software and libraries. I make all this during my spare time, essentially writing and maintaining the libraries in order to keep them of high quality. So, I have only very few time to write the documentation which would make it easy for other to use the more then 100 available Epeios libraries.</para>
@@ -88,7 +88,7 @@
     </specific>
     <content>
       <section>
-        <para xml:space="preserve">By default, all the Epeios software and libraries are released under <link URL="http://www.gnu.org/copyleft/gpl.html" type="external">GNU General Public License</link>. Actually, I plan to release all coming Epeios software and libraries under this license too. However, if you want to use the Epeios software or libraries, but under conditions which are not allowed by the GNU GPL, write me your request. As the one and only who has written all the Epeios software and libraries, I can possibly authorize you to use them under other conditions as those specified by the GNU GPL.</para>
+        <para xml:space="preserve">By default, all the Epeios software and libraries are released under <link URL="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</link>. Actually, I plan to release all coming Epeios software and libraries under this license too. However, if you want to use the Epeios software or libraries, but under conditions which are not allowed by the GNU GPL, write me your request. As the one and only who has written all the Epeios software and libraries, I can possibly authorize you to use them under other conditions as those specified by the GNU GPL.</para>
       </section>
     </content>
   </document>
@@ -246,7 +246,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios core libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -261,9 +261,9 @@
       <item>
         <link URL="user/">User documentation</link> : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -433,7 +433,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios backend-related libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -452,9 +452,9 @@
         <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -669,7 +669,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios backed-related libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -686,9 +686,9 @@
       <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -858,7 +858,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios libraries to handle structures organized in a hierarchical way. Data in XML format are organized in such a way. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -875,9 +875,9 @@
       <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -1002,7 +1002,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios mathmetical libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -1019,9 +1019,9 @@
       <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -1146,7 +1146,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios timecode-related libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -1161,9 +1161,9 @@
       <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -1288,20 +1288,20 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">See <link URL="/licenses.html" type="external">licenses statement</link> for the conditions of use of this libraries.</para>
+            <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of this libraries.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios JAVA libraries. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
-            <para xml:space="preserve">This libraries are the JAVA implementation of the Epeios frontend/backend protocol (see the <link URL="/ebkd/" type="external">EBKD libraries</link>).</para>
+            <para xml:space="preserve">This libraries are the JAVA implementation of the Epeios frontend/backend protocol (see the <link URL="/ebkd/">EBKD libraries</link>).</para>
           </section>
           <section>
             <list xml:space="preserve">
               <item>
         User documentation (not available yet) : how to use the libraries.</item>
       <item>
-        <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+        <link URL="CHANGELOG">Changelog</link>.</item>
       <item>
-        <link URL="download/" type="external">Download</link> : the download section.</item>
+        <link URL="download/">Download</link> : the download section.</item>
       <item>
         <link URL="cvs/">CVS</link> : the CVS-related section.</item>
     </list>
@@ -1376,8 +1376,8 @@
           <para>As part of the Epeios project, all the software work under Windows too. You have to compile it, but, because Windows compiler don't all work the same way, as far as I know, there is no standard procedure to doing that.</para>
         </section>
         <section>
-          <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html" type="external">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports" type="external">here</link> for miscelleanous port). To work, the enviroment variable <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows.</para>
-          <para xml:space="preserve">Under GNU/Linux, the software were tested with <link URL="http://gcc.gnu.org" type="external">GNU GCC</link> V$GCC_VERSION$. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/" type="external">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
+          <para xml:space="preserve">The <raw>Makefile</raw>s are designed for <link URL="http://www.gnu.org/gnulist/production/make.html">GNU Make</link> (check <link URL="http://www.fsf.org/links/links.html#Ports">here</link> for miscelleanous port). To work, the enviroment variable <raw>EPEIOS_OS</raw>, must be set to <raw>linux</raw> under GNU/Linux and <raw>windows</raw> under Windows.</para>
+          <para xml:space="preserve">Under GNU/Linux, the software were tested with <link URL="http://gcc.gnu.org">GNU GCC</link> V$GCC_VERSION$. Under Windows, <link URL="http://www.borland.com/bcppbuilder/freecompiler/">BC++</link> can be used, but, due the limitation of the length of a command line under some Windows version, some Makefile don't work properly on linking. Both compiler are available for free.</para>
         </section>
         <section>
           <para>The packages found under the download section of each software didn't contain the software version in its name as usual, but the date of its release. This is due to the particular way the Epeios software are made.</para>
@@ -1387,7 +1387,7 @@
         <section>
           <list>
             <item xml:space="preserve">
-        <link URL="mll2html/">mll2html</link> : GNU program, written for the <link URL="http://www.fsf.org/" type="external">FSF</link>, which which reformats a pure ASCII mailinglists file to a HTML formated mailinglists file.</item>
+        <link URL="mll2html/">mll2html</link> : GNU program, written for the <link URL="http://www.fsf.org/">FSF</link>, which which reformats a pure ASCII mailinglists file to a HTML formated mailinglists file.</item>
             <item xml:space="preserve">
         <link URL="reveal/" xml:space="default">reveal</link> : replaces tags in a file by text or file content.</item>
             <item xml:space="preserve">
@@ -1416,7 +1416,7 @@
         </specific>
         <content>
           <section>
-            <para type="remark" xml:space="preserve">All the pieces of this software are placed under <link URL="http://www.gnu.org/copyleft/gpl.html" type="external">GNU General Public License</link>.</para>
+            <para type="remark" xml:space="preserve">All the pieces of this software are placed under <link URL="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</link>.</para>
           </section>
           <section>
             <para xml:space="preserve">You will find here all that concern the Epeios timecode manager software. To learn more about the Epeios project, follow this <link URL="/">link</link>.</para>
@@ -1424,7 +1424,7 @@
           <section>
             <para xml:space="preserve">This software allows calculation with timecodes (usually expressed in hours, minutes, second and frames). This software, like all interactive Epeios software, is divided in 2 parts. One is the backend, which is the treatment part of the software, and the other is the frontend, which is the user interface.</para>
             <para xml:space="preserve">Actually, the backend is a daemon, which is multitasking and multi user. But, in the future, this backend would also be available as a dynamic library, for using in a monotasking, mono user context.</para>
-            <para xml:space="preserve">There is only one frontend actually available, and this is the WEB one. This frontend works only with the daemon version of the backend. It acts like a CGI, so you need an http server, like <link URL="http://httpd.apache.org/" type="external" aspect="long">Apache</link>. </para>
+            <para xml:space="preserve">There is only one frontend actually available, and this is the WEB one. This frontend works only with the daemon version of the backend. It acts like a CGI, so you need an http server, like <link URL="http://httpd.apache.org/" aspect="long">Apache</link>. </para>
             <para xml:space="preserve">A <raw>Java</raw>-based frontend is also planed, which would be usable with the yet available backend daemon, and with the comming dynamic library version of the daemon.</para>
           </section>
           <section>
@@ -1495,9 +1495,9 @@
                   <item>
                     <link URL="manual/">User manual</link>.</item>
                   <item>
-                    <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                    <link URL="CHANGELOG">Changelog</link>.</item>
                   <item>
-                    <link URL="download/" type="external">Download</link>.</item>
+                    <link URL="download/">Download</link>.</item>
                   <item>
                     <link URL="cvs/">CVS access</link>.</item>
                 </list>
@@ -1622,9 +1622,9 @@
                   <item>
                     <link URL="manual/">User manual</link>.</item>
                   <item>
-                    <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                    <link URL="CHANGELOG">Changelog</link>.</item>
                   <item>
-                    <link URL="download/" type="external">Download</link>.</item>
+                    <link URL="download/">Download</link>.</item>
                   <item>
                     <link URL="cvs/">CVS access</link>.</item>
                 </list>
@@ -1740,7 +1740,7 @@
         </specific>
         <content>
           <section>
-            <para xml:space="preserve">The <raw>mll2html</raw> software was written for the <link URL="http://www.fsf.org/" type="external">FSF</link>. It's a GNU program which reformats a mailinglists text file (like <link URL="mailinglists.txt" type="external">this</link>) to a HTML mailinglists file (like <link URL="mailinglists.html" type="external">this</link>).</para>
+            <para xml:space="preserve">The <raw>mll2html</raw> software was written for the <link URL="http://www.fsf.org/">FSF</link>. It's a GNU program which reformats a mailinglists text file (like <link URL="mailinglists.txt">this</link>) to a HTML mailinglists file (like <link URL="mailinglists.html">this</link>).</para>
             <para xml:space="preserve">
 Go to <link URL="../software.html">Epeios software main page</link> to know how to obtain the binary.</para>
           </section>
@@ -1749,9 +1749,9 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
               <item>
                 <link URL="manual/">User manual</link>.</item>
               <item>
-                <link URL="download/" type="external">Download</link>.</item>
+                <link URL="download/">Download</link>.</item>
               <item>
-                <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                <link URL="CHANGELOG">Changelog</link>.</item>
               <item>
                 <link URL="example.html">Example</link>.</item>
               <item>
@@ -1898,9 +1898,9 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
                 <item>
                   <link URL="manual/">User manual</link>.</item>
                 <item>
-                  <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                  <link URL="CHANGELOG">Changelog</link>.</item>
                 <item>
-                  <link URL="download/" type="external">Download</link>.</item>
+                  <link URL="download/">Download</link>.</item>
                 <item>
                   <link URL="example.html">Example</link>.</item>
                 <item>
@@ -2039,7 +2039,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <section>
-            <para xml:space="preserve">The <raw>getbkdapi</raw> connects to an Epeios backend (i.e. which uses the <link URL="/ebkd/" type="external">EBKD libraries</link>), and generates, in XML format, the description of all the objects and their methods which are handled by this backend. With the appropriate XSL file, an API for this backend can be generated in all langages. Actually, the XSL file is available for C++ and JAVA. Go to <link URL="../software.html">Epeios software main page</link> to know how to obtain the binary.</para>
+            <para xml:space="preserve">The <raw>getbkdapi</raw> connects to an Epeios backend (i.e. which uses the <link URL="/ebkd/">EBKD libraries</link>), and generates, in XML format, the description of all the objects and their methods which are handled by this backend. With the appropriate XSL file, an API for this backend can be generated in all langages. Actually, the XSL file is available for C++ and JAVA. Go to <link URL="../software.html">Epeios software main page</link> to know how to obtain the binary.</para>
           </section>
           <section>
             <para>
@@ -2047,9 +2047,9 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
                 <item>
                   <link URL="manual/">User manual</link>.</item>
                 <item>
-                  <link URL="CHANGELOG" type="external">Changelog</link>.</item>
+                  <link URL="CHANGELOG">Changelog</link>.</item>
                 <item>
-                  <link URL="download/" type="external">Download</link>.</item>
+                  <link URL="download/">Download</link>.</item>
                 <item>
                   <link URL="example.html">Example</link>.</item>
                 <item>
@@ -2076,11 +2076,11 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
         </specific>
         <content>
           <section>
-            <para xml:space="preserve">Click <link URL="API.xml" type="external">here</link> to see the content of the file which is generated by the <raw>getbkdapi</raw> software for the <raw>
-                <link URL="/tmcde/backend/" type="external">tmcde backend</link></raw>, as you can try by yourself, if you are connected to internet, by launching <raw>getbkdapi cgi.epeios.org:1025</raw>.
+            <para xml:space="preserve">Click <link URL="API.xml">here</link> to see the content of the file which is generated by the <raw>getbkdapi</raw> software for the <raw>
+                <link URL="/tmcde/backend/">tmcde backend</link></raw>, as you can try by yourself, if you are connected to internet, by launching <raw>getbkdapi cgi.epeios.org:1025</raw>.
               </para>
-            <para xml:space="preserve">When you apply <link URL="bkd4cpp.xsl" type="external">this</link> file to the XML file, you obtain a C++ header file like <link URL="tmcde.h" type="external">this</link>, which is used for the <raw>
-                <link URL="/tmcde/CGID/" type="external">tmcde WEB frontend</link>
+            <para xml:space="preserve">When you apply <link URL="bkd4cpp.xsl">this</link> file to the XML file, you obtain a C++ header file like <link URL="tmcde.h">this</link>, which is used for the <raw>
+                <link URL="/tmcde/CGID/">tmcde WEB frontend</link>
               </raw>.</para>
           </section>
         </content>
@@ -2193,9 +2193,9 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
       <section>
         <para xml:space="preserve">I'm currently looking for a job, in France, near Strasbourg (Alsace/Bas-Rhin). There is a french version of my CV in miscellaneous formats :<list>
             <item>
-              <link URL="http://epeios.org/cv.pdf" aspect="long" type="external">cv.pdf</link> : Acrobat format.</item>
+              <link URL="http://epeios.org/cv.pdf" aspect="long">cv.pdf</link> : Acrobat format.</item>
             <item>
-              <link URL="http://epeios.org/cv.doc" aspect="long" type="external">cv.doc</link> : WinWord format.</item>
+              <link URL="http://epeios.org/cv.doc" aspect="long">cv.doc</link> : WinWord format.</item>
           </list></para>
       </section>
     </content>
