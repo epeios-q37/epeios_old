@@ -11,13 +11,13 @@ cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
 
 cvs -d:pserver:anonymous@cvs.etmc.sourceforge.net:/cvsroot/etmc login
 cvs -z3 -d:pserver:anonymous@cvs.etmc.sourceforge.net:/cvsroot/etmc export -l -D today -d $DIR stable/
-cvs -z3 -d:pserver:anonymous@cvs.etmc.sourceforge.net:/cvsroot/emtc export -l -D today -d $DIR devel/CHANGELOG.txt
+cvs -z3 -d:pserver:anonymous@cvs.etmc.sourceforge.net:/cvsroot/etmc export -l -D today -d $DIR devel/CHANGELOG.txt
 cvs -d:pserver:anonymous@cvs.etmc.sourceforge.net:/cvsroot/etmc logout
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-cp ~/website/libraries/quickdoc/quickdoc.html $DIR
-rm $DIR/*_.*
+cp ~/website/etmc/quickdoc/quickdoc.html $DIR
+#rm $DIR/*_.*
 tar --gzip -cf $DIR.tar.gz $DIR
 tar -c $DIR | bzip2 >$DIR.tar.bz2
 zip -r -q $DIR.zip $DIR
