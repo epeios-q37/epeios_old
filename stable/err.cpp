@@ -158,6 +158,9 @@ const char *err::Message(
 	case err::mem:
 		strcat( Message, "MEM" );
 		break;
+	case err::ext:
+		strcat( Message, "EXT" );
+		break;
 	default:
 		strcat( Message, "unknow" );
 		break;
