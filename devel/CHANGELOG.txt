@@ -1,5 +1,8 @@
 $Id$
 
+EPSMSC:
+- Adding 'EPSMSC_COPYRIGHT()' macro.
+
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function
 

@@ -94,6 +94,9 @@ extern class ttr_tutor &EPSMSCTutor;
 //d Epeios (http://epeios.org) Text.
 #define EPSMSC_EPEIOS_TEXT "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
 
+//m Copyright text with yers 'Years' (string) for Epeios.
+#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+
 							
 namespace epsmsc {
 	//f Print information about GNU GPL license.

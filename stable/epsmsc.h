@@ -1,6 +1,6 @@
 /*
 	Header for the 'epsmsc' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -93,6 +93,9 @@ extern class ttr_tutor &EPSMSCTutor;
 
 //d Epeios (http://epeios.org) Text.
 #define EPSMSC_EPEIOS_TEXT "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
+
+//m Copyright text with yers 'Years' (string) for Epeios.
+#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 
 							
 namespace epsmsc {
