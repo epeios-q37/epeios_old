@@ -2,6 +2,7 @@ $Id$
 
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
+- (03/05/04) disable thread-unsafe functions when working in multithreading.
 	
 
 CTN:

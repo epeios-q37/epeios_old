@@ -62,6 +62,7 @@ extern class ttr_tutor &BSOTutor;
 
 #include "err.h"
 #include "txf.h"
+#include "cpe.h"
 
 
 namespace bso {
@@ -291,148 +292,173 @@ namespace bso {
 	typedef sign__ p_sign__;
 
 	//d Size of a string in order to contain an integer.
-	#define BSO_INTEGER_STRING_SIZE	12
+	#define BSO_INTEGER_BUFFER_SIZE	12
+
+	struct integer_buffer__ {
+		char Datum[BSO_INTEGER_BUFFER_SIZE];
+	};
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::ulong__ Value,
-		char *String )
+		integer_buffer__ &Buffer )
 	{
-		sprintf( String, "%lu", Value );
+		sprintf( Buffer.Datum, "%lu", Value );
+
+		return Buffer.Datum;
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ulong__ Value )
 	{
-		static char String[BSO_INTEGER_STRING_SIZE];
+		static integer_buffer__ Buffer;
 
-		Convert( Value, String );
-
-		return String;
+		return Convert( Value, Buffer );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::ushort__ Value,
-		char *String )
+		integer_buffer__ &Buffer )
 	{
-		Convert( (bso::ulong__)Value, String );
+		return Convert( (bso::ulong__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ushort__ Value )
 	{
 		return Convert( (bso::ulong__)Value );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::ubyte__ Value,
-		char *String )
+		integer_buffer__ &Buffer )
 	{
-		Convert( (bso::ulong__)Value, String );
+		return Convert( (bso::ulong__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ubyte__ Value )
 	{
 		return Convert( (bso::ulong__)Value );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::slong__ Value,
-		char *String )
+		integer_buffer__ &Buffer )
 	{
-		sprintf( String, "%li", Value );
+		sprintf( Buffer.Datum, "%li", Value );
+
+		return Buffer.Datum;
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::slong__ Value )
 	{
-		static char String[BSO_INTEGER_STRING_SIZE];
+		static integer_buffer__ Buffer;
 
-		Convert( Value, String );
-
-		return String;
+		return Convert( Value, Buffer );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::sshort__ Value,
-		char *String )
+		integer_buffer__ &Buffer )
 	{
-		Convert( (bso::slong__)Value, String );
+		return Convert( (bso::slong__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::sshort__ Value )
 	{
 		return Convert( (bso::slong__)Value );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		bso::sbyte__ Value,
-		char * String )
+		integer_buffer__ &Buffer )
 	{
-		Convert( (bso::slong__)Value, String );
+		return Convert( (bso::slong__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::sbyte__ Value )
 	{
 		return Convert( (bso::slong__)Value );
 	}
+#endif
 
 	//d Size of a string in order to contain an integer.
-	#define BSO_FLOAT_STRING_SIZE	40
+	#define BSO_FLOAT_BUFFER_SIZE	40
 
+	struct float_buffer__ {
+		char Datum[BSO_FLOAT_BUFFER_SIZE];
+	};
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		lfloat__ Value,
-		char *String )
+		float_buffer__ &Buffer )
 	{
-		sprintf( String, "%Lg", Value );
+		sprintf( Buffer.Datum, "%Lg", Value );
+
+		return Buffer.Datum;
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( lfloat__ Value )
 	{
-		static char String[BSO_FLOAT_STRING_SIZE];
+		static float_buffer__ Buffer;
 
-		Convert( Value, String );
-
-		return String;
+		return Convert( Value, Buffer );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		float__ Value,
-		char *String )
+		float_buffer__ &Buffer )
 	{
-		Convert( (lfloat__)Value, String );
+		return Convert( (lfloat__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( float__ Value )
 	{
 		return Convert( (lfloat__)Value );
 	}
+#endif
 
 	//f Return 'Value' as string in 'String'.
-	inline void Convert(
+	inline const char *Convert(
 		sfloat__ Value,
-		char *String )
+		float_buffer__ &Buffer )
 	{
-		Convert( (lfloat__)Value, String );
+		return Convert( (lfloat__)Value, Buffer );
 	}
 
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( sfloat__ Value )
 	{
 		return Convert( (lfloat__)Value );
 	}
+#endif
 
 }
 
