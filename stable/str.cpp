@@ -240,10 +240,12 @@ namespace str {
 		epeios::row__ &P = Begin;
 		char C;
 
+		Limit /= 10;
+
 		if ( *P < Amount() )
 			while( ( P != NONE )
 				   && isdigit( C = Get( P ) )
-				   && ( Result < ( Limit / 10 ) ) ) {
+				   && ( Result <= Limit ) ) {
 				Result = Result * 10 + C - '0';
 				P = Next( P );
 			}
