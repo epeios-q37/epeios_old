@@ -119,67 +119,68 @@ const char *err::Message(
 	const char *Fichier,
 	int Ligne,
 	err::type Majeur,
-	int Mineur )
+	int Mineur,
+	buffer__ &Buffer )
 {
-	static char Message[150];
+	tol::buffer__ TOLBuffer;
 
-	strcat( Message, tol::Date() );
+	strcpy( Buffer, tol::Date( TOLBuffer ) );
 
-	strcat( Message, " " );
+	strcat( Buffer, " " );
 
-	strcat( Message, tol::Time() );
+	strcat( Buffer, tol::Time( TOLBuffer ) );
 
-	strcat( Message, " Error " );
+	strcat( Buffer, " Error " );
 
 	switch( Majeur ) {
 	case err::alc:
-		strcat( Message, "ALC" );
+		strcat( Buffer, "ALC" );
 		break;
 	case err::dvc:
-		strcat( Message, "DVC" );
+		strcat( Buffer, "DVC" );
 		break;
 	case err::sys:
-		strcat( Message, "SYS" );
+		strcat( Buffer, "SYS" );
 		break;
 	case err::usr:
-		strcat( Message, "USR" );
+		strcat( Buffer, "USR" );
 		break;
 	case err::bkd:
-		strcat( Message, "BKD" );
+		strcat( Buffer, "BKD" );
 		break;
 	case err::itn:
-		strcat( Message, "ITN" );
+		strcat( Buffer, "ITN" );
 		break;
 	case err::ccp:
-		strcat( Message, "CCP" );
+		strcat( Buffer, "CCP" );
 		break;
 	case err::frm:
-		strcat( Message, "FRM" );
+		strcat( Buffer, "FRM" );
 		break;
 	case err::phb:
-		strcat( Message, "PHB" );
+		strcat( Buffer, "PHB" );
 		break;
 	case err::lmt:
-		strcat( Message, "LMT" );
+		strcat( Buffer, "LMT" );
 		break;
 	case err::mem:
-		strcat( Message, "MEM" );
+		strcat( Buffer, "MEM" );
 		break;
 	case err::ext:
-		strcat( Message, "EXT" );
+		strcat( Buffer, "EXT" );
 		break;
 	default:
-		strcat( Message, "unknow" );
+		strcat( Buffer, "unknow" );
 		break;
 	}
 
-	sprintf( strchr( Message, 0 ), "(%i)", Mineur );
-	strcat( Message, "; F: " );
-	strcat( Message, fnm::GetFileName( Fichier ) );
-	strcat( Message, ", L: " );
-	sprintf( strchr( Message, 0 ), "%i", Ligne );
+	sprintf( strchr( Buffer, 0 ), "(%i)", Mineur );
+	strcat( Buffer, "; F: " );
+	strcat( Buffer, fnm::GetFileName( Fichier ) );
+	strcat( Buffer, ", L: " );
+	sprintf( strchr( Buffer, 0 ), "%i", Ligne );
 
-	return Message;
+	return Buffer;
 }
 
 
@@ -221,11 +222,13 @@ void err_::Handler(
 
 void err::Final( void )
 {
-	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor );
+	buffer__ Buffer;
+
+	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor, Buffer );
 
 #ifdef CPE__CONSOLE
 	cio::cout << txf::sync;
-	cio::cerr << txf::nl << txf::tab << "{ " << Message << "} " << txf::nl /*<< '\a'*/;
+	cio::cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
 #endif
 
 #ifdef CPE__GUI

@@ -85,6 +85,8 @@ extern class ttr_tutor &TOLTutor;
 
 namespace tol
 {
+	typedef char buffer__[20];
+
 	//e Error code which can occurs during backup file operation.
 	enum rbf
 	{
@@ -493,13 +495,13 @@ namespace tol {
 		err::handle = err::hUsual  );
 
 	//f Return the current date.
-	const char *Date( void );
+	const char *Date( buffer__ &Buffer );
 
 	//f Return current time.
-	const char *Time( void );
+	const char *Time( buffer__ &Buffer );
 
 	//f Return current date é time.
-	const char *DateAndTime( void );
+	const char *DateAndTime( buffer__ &Buffer );
 
 #ifndef CPE__CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.

@@ -119,6 +119,7 @@ TOL:
 - (24/06/04) Adding 'E_TTYPEDEF' macro.
 - (31/07/04) Adding 'Delay' function and 'Defer()' with delay parameter.
 - (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
+- (29/09/04) MAde it more thread-safe.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.

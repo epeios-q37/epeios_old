@@ -73,10 +73,15 @@ extern class ttr_tutor &ERRTutor;
 #define ERR__THREAD_SAFE
 #endif
 
+
 namespace err {
+
+	typedef char buffer__[150];
+
 	enum handle {
 		hUsual,
 		hSkip };
+
 	enum type {
 		ok = 0,
 		// no error
@@ -105,6 +110,7 @@ namespace err {
 		ext = 2048,
 		// external error; third part error.
 	};
+
 	enum a
 	{
 		aGeneric
@@ -350,12 +356,13 @@ namespace err {
 		const char *File,
 		int Line,
 		err::type Major,
-		int Minor );
+		int Minor,
+		buffer__ &Buffer );
 
 #ifndef ERR__COMPILATION
-	inline const char *Message( void )
+	inline const char *Message( buffer__ &Buffer )
 	{
-		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor );
+		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor, Buffer );
 	}
 #endif
 }

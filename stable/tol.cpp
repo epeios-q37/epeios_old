@@ -219,49 +219,46 @@ ERREpilog
 	return Etat;
 }
 
-const char *tol::Date( void )
+const char *tol::Date( buffer__ &Buffer )
 {
    struct tm *time_now;
    time_t secs_now;
-   static char str[20];
 
    time(&secs_now);
    time_now = localtime(&secs_now);
 
-   if ( !strftime(str, sizeof( str ), "%d/%m/%Y", time_now) )
+   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y", time_now) )
 	ERRl();
 
-   return str;
+   return Buffer;
 }
 
-const char *tol::Time( void )
+const char *tol::Time( buffer__ &Buffer )
 {
    struct tm *time_now;
    time_t secs_now;
-   static char str[20];
 
    time(&secs_now);
    time_now = localtime(&secs_now);
 
-   if ( !strftime(str, sizeof( str ), "%H:%M:%S", time_now) )
+   if ( !strftime( Buffer, sizeof( Buffer ), "%H:%M:%S", time_now) )
 	ERRl();
 
-   return str;
+   return Buffer;
 }
 
-const char *tol::DateAndTime( void )
+const char *tol::DateAndTime( buffer__ &Buffer )
 {
    struct tm *time_now;
    time_t secs_now;
-   static char str[20];
 
    time(&secs_now);
    time_now = localtime(&secs_now);
 
-   if ( !strftime(str, sizeof( str ), "%d/%m/%Y %H:%M:%S", time_now) )
+   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y %H:%M:%S", time_now) )
 	ERRl();
 
-   return str;
+   return Buffer;
 }
 
 void tol::Suspend( unsigned long Delay )
