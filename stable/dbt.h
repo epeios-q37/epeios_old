@@ -1,6 +1,6 @@
 /*
 	Header for the 'dbt' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -100,7 +100,7 @@ namespace dbt {
 			E_BTREEt_( row__ )::Allocate( Size );
 			DBTAllocate( Size );
 		}
-		//c To synchronize size of this tree with other bunch/container. Do nothing by default.
+		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
 		virtual void DBTAllocate( epeios::size__ Size )
 		{}
 	public:

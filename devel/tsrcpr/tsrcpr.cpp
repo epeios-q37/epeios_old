@@ -627,7 +627,7 @@ ERRBegin
 	SauterBlancs_( Flot );
 	
 	if ( S != str::string( "typedef" ) )
-		if ( S == str::string( "TYPEDEF" ) ) {
+		if ( S == str::string( "E_TYPEDEF" ) ) {
 			SauterBlancs_( Flot );
 			
 			if ( Flot.Get() != '(' )

@@ -1,6 +1,6 @@
 /*
 	Header for the 'lck' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -123,56 +123,164 @@ namespace lck {
 		}
 		void WaitUntilReadingAllowed( void )
 		{
-			mtx::Lock( WritingRequest ); // Locked if there is a write request.
-			mtx::Unlock( WritingRequest );
+			mtx::Lock( WritingRequest );	// Wait until there is no
+			mtx::Unlock( WritingRequest );	// more write request pending.
 
-			mtx::Lock( ReadCounterProtection );
+			mtx::Lock( ReadCounterProtection );	// Wait until read counter available,
+												// and avoid other to access them.
 	
-			while ( ReadCounter == LCK_MAX_CONCURRENT_READ ) {
-				mtx::Unlock( ReadCounterProtection );
-				mtx::Lock( OverflowProtection );
-				mtx::Lock( WritingRequest ); // Locked if there is a write request.
-				mtx::Unlock( WritingRequest );
-				mtx::Lock( ReadCounterProtection );
+			while ( ReadCounter == LCK_MAX_CONCURRENT_READ ) { // While there is too more reading pending.
+				mtx::Unlock( ReadCounterProtection );	// Release the read counter.
+				mtx::Lock( OverflowProtection );	// Wait until there is lesser reading pending.
+				mtx::Lock( WritingRequest );	// Wait until there is no
+				mtx::Unlock( WritingRequest );	// more write request pending.
+				mtx::Lock( ReadCounterProtection );	// Wait until read counter available,
+													// and avoid other to access them.
 			}
 
-			ReadCounter++;
+			// There is not too much reading and no writing.
 
-			if ( ReadCounter == 1 )
-				mtx::Lock( WritingPermission );
-			
-			if ( ReadCounter == LCK_MAX_CONCURRENT_READ )
-				mtx::Lock( OverflowProtection );
+			ReadCounter++;	// To tell that there is one more reading pending.
 
-			mtx::Unlock( ReadCounterProtection );
+			if ( ReadCounter == 1 )	// If there was no reading before.
+				mtx::Lock( WritingPermission );	// Wait that there is no more writing
+												// and forbid all comming writing request.
+			else if ( ReadCounter == LCK_MAX_CONCURRENT_READ )	// If there is to much reading.
+				mtx::Lock( OverflowProtection );	// Forbid more reading.
+
+			mtx::Unlock( ReadCounterProtection );	// Read counter released.
 		}
 		void ReadingAchieved( void )
 		{
-			mtx::Lock( ReadCounterProtection );
+			mtx::Lock( ReadCounterProtection );	// Wait until read counter available,
+												// and avoid other to access them.
 
-			if ( ReadCounter == 1 )
-				mtx::Unlock( WritingPermission );
-			
-			if ( ReadCounter == LCK_MAX_CONCURRENT_READ )
-				mtx::Unlock( OverflowProtection );
+			if ( ReadCounter == 1 )	// If this was the last reading,
+				mtx::Unlock( WritingPermission );	// Allow comming writing.
+			else if ( ReadCounter == LCK_MAX_CONCURRENT_READ )	// If there was too much reading.
+				mtx::Unlock( OverflowProtection );	// Allox yet more reading.
 
-			ReadCounter--;
+			ReadCounter--;	// One less reading.
 
-			mtx::Unlock( ReadCounterProtection );
+			mtx::Unlock( ReadCounterProtection );	// Read counter released.
 		}
 		void WaitUntilWritingAllowed( void )
 		{
 			mtx::Lock( WritingRequest );	// To lock all coming read (and write) request;
 
-			mtx::Lock( WritingPermission );
+			mtx::Lock( WritingPermission );	// To ensure that writing is allowed.
 		}
 		void WritingAchieved( void )
 		{
-			mtx::Unlock( WritingPermission );
+			mtx::Unlock( WritingPermission );	// Reading request can yet forbid all incoming writing.
 
-			mtx::Unlock( WritingRequest );
+			mtx::Unlock( WritingRequest );	// Another writing (an reading) can yet occurs.
 		}
 	};
+
+	template <typename object> class access_control__
+	{
+	private:
+		object *Object_;
+		lck::read_write_lock___ *Lock_;
+		bso::bool__ Locked_;
+		bso::bool__ Writing_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			Object_ = NULL;
+			Lock_ = NULL;
+			Locked_ = false;
+			Writing_ = false;
+		}
+		access_control__( void )
+		{
+			reset( false );
+		}
+		~access_control__( void )
+		{
+			reset( true );
+		}
+		void Init(
+			object &Object,
+			lck::read_write_lock___ &Lock )
+		{
+			Object_ = &Object;
+			Lock_ = &Lock;
+		}
+		const object &GetForReading( void )
+		{
+#ifdef LCK__DBG
+			if ( Locked_ )
+				ERRu();
+#endif
+			Lock_->WaitUntilReadingAllowed();
+
+			Locked_ = true;
+			Writing_ = false;
+
+			return *Object_;
+		}
+		void ReleaseReading( void )
+		{
+#ifdef LCK__DBG
+			if ( !Locked_ )
+				ERRu();
+
+			if ( Writing_ )
+				ERRu();
+#endif
+			Lock_->ReadingAchieved();
+
+			Locked_ = false;
+		}
+		object &GetForWriting( void )
+		{
+#ifdef LCK__DBG
+			if ( Locked_ )
+				ERRu();
+#endif
+			Lock_->WaitUntilWritingAllowed();
+
+			Locked_ = true;
+			Writing_ = true;
+
+			return *Object_;
+		}
+		void ReleaseWriting( void )
+		{
+#ifdef LCK__DBG
+			if ( !Locked_ )
+				ERRu();
+
+			if ( !Writing_ )
+				ERRu();
+#endif
+			Lock_->WritingAchieved();
+
+			Locked_ = false;
+		}
+		bso::bool__ IsLocked( void ) const
+		{
+			return Locked_;
+		}
+		bso::bool__ IsWriting( void ) const
+		{
+			return Writing_;
+		}
+		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
+		{
+			if ( IsLocked() ) {
+				if ( IsWriting() ) 
+					ReleaseWriting();
+				else
+					ReleaseReading();
+				return true;
+			} else
+				return false;
+		}
+	};
+
 
 }
 

@@ -17,7 +17,7 @@ i/%.xml: i i/%.lst
 	gendoc i/$*.lst $(cvs)/$*/stable $@
 	
 i/%.lst: i
-	ls $(cvs)/$*/stable | grep "\.h" >$@
+	ls $(cvs)/$*/stable | grep -v ".bak" | grep "\.h" >$@
 
 i:
 	$(mkdir) -p $@

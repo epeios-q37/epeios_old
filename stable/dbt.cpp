@@ -1,7 +1,7 @@
 /*
 	'dbt' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'dbt' header file ('dbt.h').
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 

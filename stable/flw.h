@@ -1,6 +1,6 @@
 /*
 	Header for the 'flw' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -75,14 +75,14 @@ namespace flw {
 	//t Amount of data.
 	typedef size_t			amount__;
 
-	//t The max value for a amount.
-	#define FLW_AMOUNT_MAX	INT_MAX
+	//d The max value for a amount.
+#	define FLW_AMOUNT_MAX	INT_MAX
 
 	//t Size (of a cache, for example).
 	typedef size_t			size__;
 
-	//t The max value for a size.
-	#define FLW_SIZE_MAX	INT_MAX
+	//d The max value for a size.
+#	define FLW_SIZE_MAX	INT_MAX
 
 	//t Type of a datum.
 	typedef unsigned char		datum__;

@@ -98,19 +98,19 @@ namespace rqm
 
 	typedef bso__ushort		tcommand__;
 	//t Command
-	TYPEDEF( tcommand__, command__ );
+	E_TYPEDEF( tcommand__, command__ );
 
 	typedef bso__ushort		tobject__;
 	//t Object
-	TYPEDEF( bso__ushort, object__ );
+	E_TYPEDEF( bso__ushort, object__ );
 
 	typedef bso__ushort		ttype__;
 	//t Type
-	TYPEDEF( ttype__, type__ );
+	E_TYPEDEF( ttype__, type__ );
 
 	typedef bso__ubyte tcast__;
 	//t Cast
-	TYPEDEF( tcast__, cast__ );
+	E_TYPEDEF( tcast__, cast__ );
 
 	//c The description of a request.
 	class description_

@@ -1,6 +1,6 @@
 /*
 	Header for the 'tsrcpr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -59,10 +59,6 @@ extern class ttr_tutor &TSRCPRTutor;
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-/* Addendum to the automatic documentation generation part. */
-//D Tagged SouRCe ParseR. Parse a tagged C++ source.
-/* End addendum to automatic documentation generation part. */
 
 
 #include "err.h"

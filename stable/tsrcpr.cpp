@@ -1,7 +1,7 @@
 /*
 	'tsrcpr' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'tsrcpr' header file ('tsrcpr.h').
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -627,7 +627,7 @@ ERRBegin
 	SauterBlancs_( Flot );
 	
 	if ( S != str::string( "typedef" ) )
-		if ( S == str::string( "TYPEDEF" ) ) {
+		if ( S == str::string( "E_TYPEDEF" ) ) {
 			SauterBlancs_( Flot );
 			
 			if ( Flot.Get() != '(' )

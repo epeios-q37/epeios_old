@@ -60,10 +60,6 @@ extern class ttr_tutor &TSRCPRTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D Tagged SouRCe ParseR. Parse a tagged C++ source.
-/* End addendum to automatic documentation generation part. */
-
 
 #include "err.h"
 #include "flw.h"

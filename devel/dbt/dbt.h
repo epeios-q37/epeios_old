@@ -100,7 +100,7 @@ namespace dbt {
 			E_BTREEt_( row__ )::Allocate( Size );
 			DBTAllocate( Size );
 		}
-		//c To synchronize size of this tree with other bunch/container. Do nothing by default.
+		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
 		virtual void DBTAllocate( epeios::size__ Size )
 		{}
 	public:

@@ -907,7 +907,7 @@ ERRBegin
 
 	if ( Stream.Init( RelaisNameFichier, err::hSkip ) != fil::sSuccess )	{
 	stf::cout << "Impossible d'ouvrir le fichier '" << NameFichier << "'." << nl;
-		ERRt();
+		ERRi();
 	}
 ERRErr
 ERREnd
@@ -1022,7 +1022,7 @@ ERRProlog
 ERRBegin
 	if ( !File.Init( NameList, err::hSkip ) ) {
 		stf::cerr << "Unable to open file '" << NameList << "'." << txf::nl;
-		ERRt();
+		ERRi();
 	}
 
 	File.EOFD( XTF_EOXT );
@@ -1247,7 +1247,7 @@ ERRFProlog
 	txf::text_oflow___ TFlow;
 ERRFBegin
 	if ( argc != 4 )
-		ERRt();
+		ERRi();
 		
 	Librairies.Init();
 	Analyser( Liste, RepertoireLibrary, Librairies );
