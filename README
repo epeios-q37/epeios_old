@@ -1,0 +1,6 @@
+$Id$
+
+The 'stable' library contains the stacle version of the various Epeios libraries.
+The 'devel' contains development version of the various Epeios libraries.
+The 'tools' directory contains tools which are used for an using libraries from Epeios project.
+The 'web' directory is only useful for the webmaster of the Epeios web site 'http://epeios.sourceforge.net/'.
