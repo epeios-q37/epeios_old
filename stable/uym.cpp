@@ -57,8 +57,8 @@ public:
 using namespace uym;
 
 bso__sbyte uym::Compare(
-	const basic_memory_ &E1,
-	const basic_memory_ &E2,
+	const untyped_memory_ &E1,
+	const untyped_memory_ &E2,
 	row__ DebutE1,
 	row__ DebutE2,
 	size__ Nombre )
@@ -123,9 +123,9 @@ ERREpilog
 }
 
 void uym::Copy_(
-	const class basic_memory_ &Source,
+	const class untyped_memory_ &Source,
 	row__ PosSource,
-	class basic_memory_ &Dest,
+	class untyped_memory_ &Dest,
 	row__ PosDest,
 	size__ Nombre,
 	data__ *Tampon,
@@ -175,7 +175,7 @@ void uym::Copy_(
 
 /* Duplique 'Objet' 'Nombre' fois à partir de 'Position'
 sachant qu'il est de taille 'Taille'. */
-void basic_memory_::Fill(
+void untyped_memory_::Fill(
 	const data__ *Objet,
 	bsize__ Taille,
 	size__ Nombre,
@@ -188,7 +188,7 @@ void basic_memory_::Fill(
 	}
 }
 
-row__ basic_memory_::Position(
+row__ untyped_memory_::Position(
 	const data__ *Objet,
 	size_t Taille,
 	row__ Debut,
@@ -251,8 +251,8 @@ ERREpilog
 }
 
 
-void basic_memory_::Write(
-	const basic_memory_ &Source,
+void untyped_memory_::Write(
+	const untyped_memory_ &Source,
 	size__ Quantity,
 	row__ Position,
 	row__ Offset )
@@ -288,7 +288,7 @@ ERREpilog
 }
 
 
-void basic_memory_::write(
+void untyped_memory_::write(
 	row__ Position,
 	size__ Quantite,
 	flw::oflow___ &OFlow ) const
@@ -328,7 +328,7 @@ ERREnd
 ERREpilog
 }
 
-void basic_memory_::read(
+void untyped_memory_::read(
 	flw::iflow___ &IFlow,
 	row__ Position,
 	size__ Quantite )

@@ -1,6 +1,6 @@
 /*
-  'ctn' library by Claude L. Simon (simon@epeios.org)
-  Requires the 'ctn' header file ('ctn.h').
+  'stf' library by Claude L. Simon (simon@epeios.org)
+  Requires the 'stf' header file ('stf.h').
   Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
@@ -26,26 +26,26 @@
 
 //	$Id$
 
-#define CTN__COMPILATION
+#define STF__COMPILATION
 
-#include "ctn.h"
+#include "stf.h"
 
-class ctntutor
+class stftutor
 : public ttr_tutor
 {
 public:
-	ctntutor( void )
-	: ttr_tutor( CTN_NAME )
+	stftutor( void )
+	: ttr_tutor( STF_NAME )
 	{
-#ifdef CTN_DBG
-		Version = CTN_VERSION "\b\bD $";
+#ifdef STF_DBG
+		Version = STF_VERSION "\b\bD $";
 #else
-		Version = CTN_VERSION;
+		Version = STF_VERSION;
 #endif
-		Owner = CTN_OWNER;
+		Owner = STF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~ctntutor( void ){}
+	virtual ~stftutor( void ){}
 };
 
 /******************************************************************************/
@@ -54,31 +54,39 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-void ctn::Remplir_(
-	uym::untyped_memory_ &Memoire,
-	uym::row__ Debut,
-	uym::row__ Fin,
-	uym::data__ *Statique,
-	uym::bsize__ Taille )
-{
-	while ( Debut <= Fin )
-		Memoire.Write( Statique, Taille, Debut++ * Taille );
-}
+using namespace stf;
 
+stf::ostream_oflow___ stf::foutF( cout ), stf::ferrF( cerr );
+stf::istream_iflow___ stf::finF( cin );
+stf::istream_iflow_line___ stf::finLF( cin );
 
+txf::text_oflow___ stf::fout, stf::ferr;
+txf::text_iflow___ stf::fin;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class ctnpersonnalization
-: public ctntutor
+
+class stfpersonnalization
+: public stftutor
 {
 public:
-	ctnpersonnalization( void )
+	stfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+		foutF.Init();
+		fout.Init( foutF );
+
+		finF.Init();
+		fin.Init( finF );
+
+		ferrF.Init();
+		ferr.Init( ferrF );
+
+		finLF.Init();
+
 	}
-	~ctnpersonnalization( void )
+	~stfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -94,6 +102,6 @@ public:
 
 // 'static' by GNU C++.
 
-static ctnpersonnalization Tutor;
+static stfpersonnalization Tutor;
 
-ttr_tutor &CTNTutor = Tutor;
+ttr_tutor &STFTutor = Tutor;

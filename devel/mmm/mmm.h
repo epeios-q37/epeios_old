@@ -194,7 +194,7 @@ namespace mmm {
 		// L'éventuel pilote multimémoire.
 		multimemory_driver_ PiloteMultimemoire_;
 		// memoire décomposee en plusieurs
-		basic_memory_ Memoire_;
+		untyped_memory_ Memoire_;
 	// fonctions
 		// Convertit un nombre en taille.
 		size__ NombreEnTaille_( nombre__ Nombre ) const
@@ -600,7 +600,7 @@ namespace mmm {
 		struct s 
 		{
 			multimemory_driver_::s PiloteMultimemoire_;
-			basic_memory_::s Memoire_;
+			untyped_memory_::s Memoire_;
 			size__ Capacite;
 				// Descripteur à essayer lorsque l'on a besoin d'un emplacement libre.
 			descriptor__ Libre;

@@ -80,7 +80,7 @@ namespace ctn {
 	contenus dans 'Memoire', sachant qu'ils doivent contenir 'Statique'
 	qui est de taille 'Taille' */
 	void Remplir_(
-		uym::basic_memory_ &Memoire,
+		uym::untyped_memory_ &Memoire,
 		uym::row__ Debut,
 		uym::row__ Fin,
 		uym::data__ *Statique,

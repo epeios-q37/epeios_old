@@ -185,7 +185,7 @@ namespace srv {
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
 		{
-			listener___::Init( Service, Amount, ErrHandle );
+			return listener___::Init( Service, Amount, ErrHandle );
 		}
 		/*f Handle each new connection using 'Functions'. */
 		void Process(

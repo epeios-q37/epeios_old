@@ -216,7 +216,7 @@ namespace tym {
 
 	/*c Memory of statical object of type 't'. */
 	template <typename t> class memory_
-	: public memory_core_< t, tym::basic_memory_ >
+	: public memory_core_< t, tym::untyped_memory_ >
 	/* NOTA: See 'memory_core about' '::s'. */
 	{
 	private:
@@ -224,42 +224,42 @@ namespace tym {
 		mmm::multimemory_driver_ PiloteMultimemoire_;
 	public:
 		struct s
-		: public tym::memory_core_< t, tym::basic_memory_ >::s
+		: public tym::memory_core_< t, tym::untyped_memory_ >::s
 		{
 			mmm::multimemory_driver_::s PiloteMultimemoire_;
 		};
 		memory_( s &S )
-		: memory_core_< t, tym::basic_memory_ >( S ),
+		: memory_core_< t, tym::untyped_memory_ >( S ),
 		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
 		{}
 		void reset( bool P = true )
 		{
-			memory_core_< t, tym::basic_memory_ >::reset( P );
+			memory_core_< t, tym::untyped_memory_ >::reset( P );
 			PiloteMultimemoire_.reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
 			PiloteMultimemoire_.Init( M );
-			memory_core_< t, tym::basic_memory_ >::plug( PiloteMultimemoire_ );
+			memory_core_< t, tym::untyped_memory_ >::plug( PiloteMultimemoire_ );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
 		{
 			PiloteMultimemoire_.reset();
-			memory_core_< t, tym::basic_memory_ >::plug( Pilote );
+			memory_core_< t, tym::untyped_memory_ >::plug( Pilote );
 		}
 		void write(
 			tym::row__ Position,
 			tym::size__ Quantity,
 			flw::oflow___ &OFlow ) const
 		{
-			memory_core_<t, tym::basic_memory_ >::write( Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+			memory_core_<t, tym::untyped_memory_ >::write( Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
 		void read(
 			flw::iflow___  &IFlow,
 			tym::row__ Position,
 			tym::size__ Quantite )
 		{
-			memory_core_<t, tym::basic_memory_ >::read( IFlow, Position * sizeof( t ), Quantite * sizeof( t ) );
+			memory_core_<t, tym::untyped_memory_ >::read( IFlow, Position * sizeof( t ), Quantite * sizeof( t ) );
 		}
 	};
 
@@ -290,13 +290,13 @@ namespace tym {
 	The size parameter was added due to a bug of Borland C++, which doesn't like a 'sizeof'
 	as template parameter. Use 'E_MEMORY__', it's easier. */
 	template <class t, int amount, int size> class memory__
-	: public memory_core_< t, uym::basic_memory__< amount * size > >
+	: public memory_core_< t, uym::untyped_memory__< amount * size > >
 	{
 	private:
-		memory_core_<t, uym::basic_memory__< amount * size > >::s Static_;
+		memory_core_<t, uym::untyped_memory__< amount * size > >::s Static_;
 	public:
-		memory__( memory_core_<t, uym::basic_memory__<  amount * size > >::s &S = *(memory_core_<t, uym::basic_memory__<  amount * size > >::s *) NULL )	// To simplify use in 'SET'.
-		: memory_core_<t, uym::basic_memory__< amount * size > >( Static_ )
+		memory__( memory_core_<t, uym::untyped_memory__<  amount * size > >::s &S = *(memory_core_<t, uym::untyped_memory__<  amount * size > >::s *) NULL )	// To simplify use in 'SET'.
+		: memory_core_<t, uym::untyped_memory__< amount * size > >( Static_ )
 		{}
 	};
 

@@ -181,7 +181,7 @@ namespace uym {
 	};
 
 	//c Untyped memory core. Don't use; for internal use only.
-	class basic_memory_
+	class untyped_memory_
 	{
 	private:
 		// Le pilote mémoire.
@@ -253,7 +253,7 @@ namespace uym {
 			S_.Size = 0;
 	#endif
 		}
-		basic_memory_( s &S )
+		untyped_memory_( s &S )
 	#ifdef UYM_DBG
 		: S_( S )
 	#endif
@@ -324,14 +324,14 @@ namespace uym {
 		void Read(
 			row__ Position,
 			size__ Quantity,
-			basic_memory_ &Destination,
+			untyped_memory_ &Destination,
 			row__ Offset = 0 ) const
 		{
 			Destination.Write( *this, Quantity, Position, Offset );
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Write(
-			const basic_memory_ &Source,
+			const untyped_memory_ &Source,
 			size__ Size,
 			row__ Position = 0,
 			row__ Offset = 0 );
@@ -360,14 +360,14 @@ namespace uym {
 	};
 
 	//c Untyped memory core. Don't use; for internal use only.
-	class basic_memory
-	: public basic_memory_
+	class untyped_memory
+	: public untyped_memory_
 	{
 	private:
-		basic_memory_::s S_;
+		untyped_memory_::s S_;
 	public:
-		basic_memory( void )
-		: basic_memory_( S_ )
+		untyped_memory( void )
+		: untyped_memory_( S_ )
 		{}
 	};
 
@@ -376,9 +376,9 @@ namespace uym {
 	#define NONE	UYM_UNREACHABLE_POSITION
 
 	void Copy_(
-		const class basic_memory_ &Source,
+		const class untyped_memory_ &Source,
 		row__ PosSource,
-		class basic_memory_ &Dest,
+		class untyped_memory_ &Dest,
 		row__ PosDest,
 		size__ Quantity,
 		data__ *Buffer,
@@ -386,8 +386,8 @@ namespace uym {
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
 	bso__sbyte Compare(
-		const basic_memory_ &M1,
-		const basic_memory_ &M2,
+		const untyped_memory_ &M1,
+		const untyped_memory_ &M2,
 		row__ BeginM1,
 		row__ BeginM2,
 		size__ Quantity );
@@ -467,14 +467,14 @@ namespace uym {
 
 
 	//c A memory with a size of 'size'.
-	template <int size> class basic_memory__
+	template <int size> class untyped_memory__
 	: public memory_core__
 	{
 	private:
 		uym::data__ Data_[size];
 	public:
 		struct s {};	// To simplify use in library 'SET'
-		basic_memory__( s &S = *(s *)NULL )
+		untyped_memory__( s &S = *(s *)NULL )
 		: memory_core__( Data_ ) {}
 		// Simplifies the 'SET' library.
 		void Allocate( uym::size__ Size )
