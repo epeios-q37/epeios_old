@@ -53,28 +53,13 @@ enum command {
 enum option {
 };
 
-const char *Text =
-"POST http://194.51.246.50/asp/cotation/cotations_walmaster_histo.asp HTTP/1.0
-Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, */*
-Referer: http://194.51.246.50/asp/cotation/walmaster_histo.asp
-Accept-Language: fr
-Content-Type: application/x-www-form-urlencoded
-Proxy-Connection: Keep-Alive
-User-Agent: Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)
-Host: 194.51.246.50
-Content-Length: 128
-Pragma: no-cache
-
-jour_debut=1&mois_debut=3&annee_debut=2001&jour_fin=2&mois_fin=3&annee_fin=2001&KID=32647&D4C8D9D2CCDB=PM&code_sicovam=&x=31&y=6"
-;
-
 struct parameters {
 	const char *PortToListen;
 	const char *Target;
 	parameters( void )
 	{
-		PortToListen = "8080";
-		Target = "194.51.246.50:80";
+		PortToListen = "80";
+		Target = "212.95.72.27:80";
 //		Target = "www.epeios.org:80";
 //		Target = "linuxfr.org:80";
 		
