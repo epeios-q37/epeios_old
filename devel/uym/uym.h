@@ -339,11 +339,13 @@ namespace uym {
 			row__ Position = 0,
 			row__ Offset = 0 );
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+#if 0
 		void Write(
 			const class _memory__ &Source,
 			size__ Size,
 			row__ Position = 0,
 			row__ Offset = 0 );
+#endif
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Fill(
 			const data__ *Object,
@@ -401,7 +403,7 @@ namespace uym {
 		row__ BeginM2,
 		size__ Quantity );
 
-
+#if 0
 	//c The core of a memory. Don't use; for internal use only.
 	class _memory__
 	{
@@ -571,9 +573,200 @@ namespace uym {
 			_memory___::Init();
 		}
 	};
+#else
+
+	void _Fill(
+		const data__ *Object,
+		bsize__ Size,
+		size__ Count,
+		row__ Position,
+		data__ *Data );
+
+	row__ _Position(
+		const data__ *Objet,
+		bsize__ Size,
+		row__ Begin,
+		row__ End,
+		const data__ *Data );
+
+	template <typename m> class _memory__
+	: public m
+	{
+	public:
+		struct s
+		: public m::s
+		{};
+		void reset( bso::bool__ P = true )
+		{
+			m::reset( P );
+		}
+		_memory__( s &S = *(s *)NULL )
+		: m( S )
+		{
+			reset( false );
+		}
+		~_memory__( void )
+		{
+			reset( true );
+		}
+		//f Initialization.
+		void Init( void )
+		{}
+		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
+		void Read(
+			uym::row__ Position,
+			uym::bsize__ Amount,
+			uym::data__ *Buffer ) const
+		{
+			memcpy( Buffer, Data_ + Position, Amount ); 
+		}
+		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
+		void Write(
+			const uym::data__ *Buffer,
+			uym::bsize__ Amount,
+			uym::row__ Position )
+		{
+			memcpy( Data_ + Position, Buffer, Amount ); 
+		}
+		//f Return byte at 'Position'.
+		uym::data__ Read( uym::row__ Position ) const
+		{
+			return *Data_[Position];
+		}
+		//f Write 'Byte' at 'Position'.
+		void Write(
+			uym::data__ Byte,
+			uym::row__ Position )
+		{
+			*Data_[Position] = Byte;
+		}
+		/*f Write at 'Offset' in 'Destination' 'Quantity' bytes at 'Position'. */
+		void Read(
+			uym::row__ Position,
+			uym::size__ Quantity,
+			_memory__ &Destination,
+			uym::row__ Offset = 0 ) const
+		{
+			memmove( Destination.Data_ + Position, Data_ + Position, Quantity );
+		}
+		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+		void Write(
+			const _memory__ &Source,
+			uym::size__ Quantity,
+			uym::row__ Position = 0,
+			uym::row__ Offset = 0 )
+		{
+			memmove( Data_ + Offset, Source.Data_ + Position, Quantity ); 
+		}
+		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
+		void Write(
+			const untyped_memory_ &Source,
+			uym::size__ Quantity,
+			uym::row__ Position = 0,
+			uym::row__ Offset = 0 )
+		{
+			Source.Read( Position, Quantity, *Data_ + Offset );
+		}
+		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
+		void Fill(
+			const uym::data__ *Object,
+			uym::bsize__ Size,
+			uym::size__ Count,
+			uym::row__ Position = 0 )
+		{
+			_Fill( Object, Size, Count, Position, Data_ );
+		}
+		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
+		uym::row__ Position(
+			const uym::data__ *Objet,
+			uym::bsize__ Size,
+			uym::row__ Begin,
+			uym::row__ End ) const
+		{
+			return _Position( Object, Size, Begin, End, Data_ );
+		}
+		//f Return the used buffer.
+		const uym::data__ *Buffer( void ) const
+		{
+			return *Data_;
+		}
+	};
+
+	//c A fixed-size memory of size 'size'.
+	template <int size> class _untyped_memory__
+	{
+	protected:
+		uym::data__ Data_[size];
+	public:
+		void reset( bso::bool__ = true )
+		{}
+		struct s {};	// To simplify use in library 'BCH'
+		_untyped_memory__( s &S = *(s *)NULL )
+		{
+			reset( false );
+		}
+		~_untyped_memory__( void )
+		{
+			reset();
+		}
+		// Simplifies the 'SET' library.
+		void Allocate( uym::size__ Size )
+		{
+			if ( Size >= size )
+				ERRl();
+		}
+	};
+
+	//c A untyped memory using conventional memory.
+	class _untyped_memory___
+	{
+	protected:
+		uym::data__ *Data_;
+	public:
+		struct s {};	// To simplify use in library 'BCH'
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				tol::Free( Data_ );
+			}
+
+			Data_ = NULL;
+		}
+		_untyped_memory___( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
+		{
+			reset( false );
+		}
+		~_untyped_memory___( void )
+		{
+			reset( true );
+		}
+		//f Allocation of size 'Size'.
+		void Allocate( uym::size__ Size )
+		{
+			realloc( Data_, Size );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			tol::Free( Data_ );
+		}
+	};
+
+	template <int size> class untyped_memory__
+	: public _memory__< _untyped_memory__< size > >
+	{
+	public:
+		struct s
+		: _memory__< _untyped_memory__< size > >::s
+		{};
+		untyped_memory__( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
+		: _memory__< _untyped_memory__< size > >( S )
+		{}
+	};
+
+	typedef _memory__< _untyped_memory___>	untyped_memory___;
+#endif
 }
-
-
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

@@ -104,6 +104,9 @@ TYM:
 - Revert to version before adaptation to CW.
 - Adding 'const' qualifier to return value to avoid smoe problems.
 
+UYM:
+- Fixing bug in 'untyped_memory__(_)'
+
 --------
 20030219
 --------

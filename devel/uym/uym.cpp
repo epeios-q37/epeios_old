@@ -379,25 +379,25 @@ ERREnd
 ERREpilog
 }
 
-//f Duplicate 'Count' times 'Object' of size 'Size' to 'Position'.
-void uym::_memory__::Fill(
+void uym::_Fill(
 	const data__ *Object,
 	bsize__ Size,
 	size__ Count,
-	row__ Position )
+	row__ Position,
+	data__ *Data )
 {
 	while( Count )
-		memcpy( Data_ + Size * Count + Position, Object, Size );
+		memcpy( Data + Size * Count + Position, Object, Size );
 }
 
-//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) o 'NONE' if non-existant.
-row__ uym::_memory__::Position(
+row__ uym::_Position(
 	const data__ *Objet,
 	bsize__ Size,
 	row__ Begin,
-	row__ End ) const
+	row__ End,
+	const data__ *Data )
 {
-	while( ( Begin < End ) && ( memcmp( Data_ + Begin, Objet, Size ) ) )
+	while( ( Begin < End ) && ( memcmp( Data + Begin, Objet, Size ) ) )
 		Begin += Size;
 
 	if ( Begin > End )

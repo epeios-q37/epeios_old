@@ -93,6 +93,8 @@ ERRBegin
 		Mys.Add( Mys__ );
 	}
 
+	stf::cout << txf::nl;
+
 	Dump( Mys );
 
 	stf::cout << txf::nl << txf::sync;
