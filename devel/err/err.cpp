@@ -232,16 +232,16 @@ not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
 
 void err::Final( void )
 {
-	buffer__ Buffer;
-
-	const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor, Buffer );
 
 	if ( ERR.Major != err::itn ) {
+		buffer__ Buffer;
+
+		const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor, Buffer );
 
 		if ( ERR.ExitValue == EXIT_SUCCESS )
 			ERR.ExitValue = EXIT_FAILURE;
 
-		ERRRst();
+		ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
 
 #ifdef CPE__CONSOLE
 		cio::cout << txf::sync;
@@ -251,10 +251,8 @@ void err::Final( void )
 #ifdef CPE__GUI
 		wxMessageBox( Message, "Epeios error manager message", wxICON_ERROR );
 #endif
-	}
-
-
-	ERRRst();
+	} else
+		ERRRst();
 }
 
 

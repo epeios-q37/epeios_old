@@ -55,6 +55,7 @@ CTN:
 - (23/04/04) Adding a test in debug mode to avoid retrieving of an undefined item.
 - (10/05/04) Fixing 'Delete()' bug.
 - (24/10/04) Removing 'EstVide', replaced by 'IsEmpty'.
+- (13/12/04) 'Store' methods now return position where where object is stored.
 
 DTE:
 - (15/04/04) Introducing the new structure.
@@ -168,6 +169,7 @@ TOL:
 - (29/09/04) Made it more thread-safe.
 - (27/10/04) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
 - (27/11/04) Removing 'Free(...)', replaced with 'E_POINTER___'.
+- (13/12/04) Improving 'E_RODISCLOSE()'.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.

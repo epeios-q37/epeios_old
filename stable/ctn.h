@@ -662,13 +662,15 @@ namespace ctn {
 			return Get( Position, Item );
 		}
 		//f Store 'Object' at 'Position'.
-		void Store(
+		r Store(
 			const t & Objet,
 			r Position )
 		{
 			operator()( Position ) = Objet;
 
 			Flush();
+
+			return Position;
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Recall(
@@ -1054,13 +1056,15 @@ namespace ctn {
 			return Get( Position, Item );
 		}
 		//f Store 'Object' at 'Position'.
-		void Store(
+		r Store(
 			const t & Object,
 			r Position )
 		{
 			operator()( Position ) = Object;
 
 			Flush();
+
+			return Position;
 		}
 		//f Put in 'Object' the object at position 'Position'.
 		void Recall(

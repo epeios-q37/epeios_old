@@ -758,6 +758,10 @@ namespace tol {
 	const type__ Get##name( void ) const\
 	{\
 		return S_.name;\
+	}\
+	const type__ &name( void ) const\
+	{\
+		return S_.name;\
 	}
 
 //d Make accessible the static member, for read-write access, of a dynamic object, named 'name' of type 'type__'.
@@ -775,6 +779,10 @@ namespace tol {
 //d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
 #define E_RODISCLOSE__(type__, name )\
 	const type__ Get##name( void ) const\
+	{\
+		return name##_;\
+	}\
+	const type__ &name( void ) const\
 	{\
 		return name##_;\
 	}
