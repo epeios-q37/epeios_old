@@ -186,7 +186,8 @@ txmtbl::delimiter txmtbl::SkipCell(
 	bso::char__ C = 0;
 	bso::bool__ EOX = false;
 
-	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) );
+	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) )
+	{}	// To avoid a warning.
 
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }

@@ -1,7 +1,7 @@
 /*
 	'txmtbl' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'txmtbl' header file ('txmtbl.h').
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -186,7 +186,8 @@ txmtbl::delimiter txmtbl::SkipCell(
 	bso::char__ C = 0;
 	bso::bool__ EOX = false;
 
-	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) );
+	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) )
+	{}	// To avoid a warning.
 
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
