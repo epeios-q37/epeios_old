@@ -66,6 +66,8 @@ extern class ttr_tutor &LGGTutor;
 namespace lgg {
 	//e Languages.
 	enum language__ {
+		//i Unknow language,
+		lUnknow,
 		//i Default language.
 		lDefault,
 		//i French.
@@ -79,6 +81,9 @@ namespace lgg {
 	};
 
 	extern const char *LanguageNames[lgg::l_amount];
+
+	//f Return the ID of language named 'Name'.
+	language__ GetID( const char *Name );
 
 }
 

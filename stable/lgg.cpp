@@ -56,10 +56,25 @@ public:
 using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
+	"_unknow_",
 	"Default",
 	"Français",
 	"English",
 	"Deutsch" };
+
+language__ lgg::GetID( const char *Name )
+{
+	int i = 0;
+
+	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) );
+
+	if ( i == l_amount )
+		return lUnknow;
+	else
+		return (language__)i;
+}
+
+
 
 
 
