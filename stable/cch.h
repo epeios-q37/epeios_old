@@ -57,7 +57,7 @@ extern class ttr_tutor &CCHTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D CaCHe
+//D CaCHe.
 /* End addendum to automatic documentation generation part. */
 
 
@@ -65,6 +65,22 @@ extern class ttr_tutor &CCHTutor;
 #include "flw.h"
 #include "bch.h"
 #include "ctn.h"
+
+#ifdef CCH_USE_SMA_HEAP
+#	define CCH__USE_SMA_HEAP
+#endif
+
+#ifdef CCH__USE_SMA_HEAP
+#	include "sma.h"
+#endif
+
+#ifdef CCH__USE_SMA_HEAP
+#	ifdef CCH_SMA_HEAP_SIZE
+#		define CCH__SMA_HEAP_SIZE	CCH_SMA_HEAP_SIZE
+#	else
+#		define CCH__SMA_HEAP_SIZE	1000000
+#	endif
+#endif
 
 namespace cch {
 	//t Size of a buffer.
@@ -187,7 +203,11 @@ namespace cch {
 		{
 			if ( P ) {
 				if ( Internal_ )
+#ifdef CCH__USE_SMA_HEAP
+					Heap.Free( Buffer_ );
+#else
 					tol::Free( Buffer_ );
+#endif
 			}
 
 			Buffer_ = NULL;
@@ -219,7 +239,11 @@ namespace cch {
 		//f Initialisation and creation of a buffer of size 'Size'.
 		void Init( bsize__ Size )
 		{
+#ifdef CCH__USE_SMA_HEAP
+			type__ *Buffer = (type__ *)Heap.Allocate( Size * sizeof( type__ ) );
+#else
 			type__ *Buffer = (type__ *)malloc( Size * sizeof( type__ ) );
+#endif
 
 			if ( Buffer == NULL )
 				ERRa();
@@ -632,6 +656,7 @@ namespace cch {
 				Synchronize();
 			}
 
+			Item_ = NULL;
 			core_read_write_cache___<type__, rb>::reset( P );
 		}
 		item_read_write_cache___( void )
@@ -679,7 +704,12 @@ namespace cch {
 
 			for( ;Current <= *Last; Current++ )
 				if ( Caches_( Current ) != NULL ) {
+#if	1
 					delete Caches_( Current );
+#else
+					Caches_( Current )->reset();
+					free( Caches_( Current ) );
+#endif
 					Caches_.Write( NULL, Current );
 				}
 		}
@@ -692,9 +722,15 @@ namespace cch {
 			if ( Cache_.Get( P ) == NULL ) {
 				Cache_.Synchronize();
 				item_cache *IC;
-				
+#if 1				
 				if ( ( IC = new item_cache ) == NULL )
 					ERRa();
+#else
+				if ( ( IC = (item_cache *)malloc( sizeof( item_cache ) ) ) == NULL )
+					ERRa();
+
+				IC->reset( false );
+#endif
 
 				IC->Init( Item_, P, BufferSize_ );
 				Caches_.Write( IC, P );
@@ -826,7 +862,7 @@ namespace cch {
 		{
 			reset( true );
 		}
-		/*f Initialization with 'Container' and, for e&ch item,
+		/*f Initialization with 'Container' and, for each item,
 		creation of a buffer of size 'Size'. */
 		void Init( 
 			ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
@@ -871,6 +907,10 @@ namespace cch {
 			return GetCache_( PositionInContainer ).Add( Data );
 		}
 	};
+
+#ifdef CCH__USE_SMA_HEAP
+	extern sma::memory_heap___ Heap;
+#endif
 
 }
 

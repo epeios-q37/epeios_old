@@ -1,6 +1,6 @@
 /*
-  'cch' library by Claude L. Simon (csimon@epeios.org)
-  Requires the 'cch' header file ('cch.h').
+  'sma' library by Claude L. Simon (csimon@epeios.org)
+  Requires the 'sma' header file ('sma.h').
   Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org).
 
   This file is part of the Epeios (http://epeios.org/) project.
@@ -26,26 +26,26 @@
 
 //	$Id$
 
-#define CCH__COMPILATION
+#define SMA__COMPILATION
 
-#include "cch.h"
+#include "sma.h"
 
-class cchtutor
+class smatutor
 : public ttr_tutor
 {
 public:
-	cchtutor( void )
-	: ttr_tutor( CCH_NAME )
+	smatutor( void )
+	: ttr_tutor( SMA_NAME )
 	{
-#ifdef CCH_DBG
-		Version = CCH_VERSION "\b\bD $";
+#ifdef SMA_DBG
+		Version = SMA_VERSION "\b\bD $";
 #else
-		Version = CCH_VERSION;
+		Version = SMA_VERSION;
 #endif
-		Owner = CCH_OWNER;
+		Owner = SMA_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~cchtutor( void ){}
+	virtual ~smatutor( void ){}
 };
 
 /******************************************************************************/
@@ -54,28 +54,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace cch;
-
-#ifdef CCH__USE_SMA_HEAP
-sma::memory_heap___ cch::Heap;
-#endif
+using namespace sma;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class cchpersonnalization
-: public cchtutor
+class smapersonnalization
+: public smatutor
 {
 public:
-	cchpersonnalization( void )
+	smapersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-#ifdef CCH__USE_SMA_HEAP
-		cch::Heap.Init( CCH__SMA_HEAP_SIZE );
-#endif
 	}
-	~cchpersonnalization( void )
+	~smapersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -91,6 +84,6 @@ public:
 
 // 'static' by GNU C++.
 
-static cchpersonnalization Tutor;
+static smapersonnalization Tutor;
 
-ttr_tutor &CCHTutor = Tutor;
+ttr_tutor &SMATutor = Tutor;

@@ -2,6 +2,7 @@ $Id$
 
 GENERAL:
 - Adding 'CCH'.
+- Adding 'SMA'? to use in 'CCH'.
 
 BSO:
 - Adding the 'sign__' type.

@@ -65,7 +65,6 @@ ERRBegin
 	for( i = 0; i < 10; i++ ) {
 		for( j = 0; j < 100;  j++ )
 			RWCaches.Add( j + i * 100, i );
-			RWCaches.Put( j + i * 100, i, i );
 	}
 
 	Container.Sync();
@@ -76,8 +75,6 @@ ERRBegin
 
 		fout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
-
-	RWCaches.Amount( i );
 ERRErr
 ERREnd
 ERREpilog

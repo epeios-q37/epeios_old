@@ -3,3 +3,5 @@ $Id$
 - Since version 3, g++ has not the 'ios::replace' nor the 'ios::nocreate' ios extension. Along with the C++ book from Stroustrup, an open of an 'ifstream' fails if the file does not exist. But this is not true with some compiler with the 'ios' extension, which requires the 'ios::nocreate' for an 'open' to fail. So, if a compiler has this extension, the would be used, athought they are not standard, but there is no other choice.
 
 - To list macro definition with g++, use '-E -dM' command line options.
+
+- The 'SMA' was created to use with Windows. It seems that, when you allocate a lot of little memory block (4000 K), as it happens with the 'CCH' library, Windows has problems. This happens with the 'stockdb' software'. When you fill the DB with the same history, it says that there is redefinition of values. This happens only under windows 98, but not Windows XP (software compiled under Windows 98), and not with Linux.

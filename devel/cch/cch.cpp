@@ -56,6 +56,10 @@ public:
 
 using namespace cch;
 
+#ifdef CCH__USE_SMA_HEAP
+sma::memory_heap___ cch::Heap;
+#endif
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -67,6 +71,9 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+#ifdef CCH__USE_SMA_HEAP
+		cch::Heap.Init( CCH__SMA_HEAP_SIZE );
+#endif
 	}
 	~cchpersonnalization( void )
 	{
