@@ -55,18 +55,25 @@ ERRProlog
 //	MITEM( str::string_ ) E;
 ERRBegin
 	C.Init();
+#if 0
 	C.Allocate( 2 );
 
-//	E.Init( C );
+	E.Init( C );
 
 	C( 0 ).Init();
 	C( 0 ) = "coucou";
 
 	C( 1 ).Init();
 	C( 1 ) = "hello";
+#else
+	C.Add( str::string( "coucou" ) );
+
+	C.Add( str::string( "hello" ) );
+#endif
 
 	fout << C( 0 ) << txf::tab;
 	fout << C( 1 ) << txf::nl;
+	
 ERRErr
 ERREnd
 ERREpilog

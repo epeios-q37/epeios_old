@@ -125,7 +125,7 @@ namespace lst {
 		}
 		list_ &operator =( const list_ &T )
 		{
-			amount_extent_manager_::operator =( T );
+			amount_extent_manager_::Force( T.amount_extent_manager_::Amount() );
 			Libres = T.Libres;
 
 			return *this;
@@ -237,15 +237,15 @@ namespace lst {
 
 
 	//c Handle a list with a maximum of 't' entries. Use 'LIST__' rather than directly this class.
-	template <int t> class lst__list
+	template <int t> class list__
 	{
 	private:
 		// Table de l'occupation de la liste.
-		bitbch::bit_bunch__ Occupation_;
+		bitbch::bit_bunch__<t> Occupation_;
 		// Nombre d'éléments dans la liste.
 		tym::size__ Nombre_;
 	public:
-		lst__list( void )
+		list__( void )
 		{
 			Occupation_.Reset( false );
 			Nombre_ = 0;

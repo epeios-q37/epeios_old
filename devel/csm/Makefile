@@ -32,9 +32,9 @@ copt =
 copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT
+copt += -DMTK_KEEP
 lopt = 
-libs = ttr tol flw stf err
-
+libs = ttr tol flw stf err mtk spp pip srv sck
 
 
 ifeq ("$(EPEIOS_OS)","windows")
@@ -56,12 +56,12 @@ co = -c
 # Generates debugging data.
 co += -g
 # General optimization.
-#co += -O
+co += -O0
 # To use with gprof
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lglib -lgthread
+lo += -lglib -lgthread
 ds = :
 endif
 

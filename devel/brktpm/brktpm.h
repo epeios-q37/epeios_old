@@ -125,47 +125,45 @@ namespace brktpm {
 		}
 	};
 
-	namespace {
-		template <class t> class detail_
-		{
-		public:
-			str::string_ Name;
-			bch::E_BUNCH_( t ) Casts;
-			struct s {
-				str::string_::s Name;
-				bch::E_BUNCH_( t )::s Casts;
-			};
-			detail_( s &S )
-			: Name( S.Name ),
-			  Casts( S.Casts )
-			{}
-			void reset( bool P = true )
-			{
-				Name.reset( P );
-				Casts.reset( P );
-			}
-			void plug( mmm::multimemory_ &M )
-			{
-				Name.plug( M );
-				Casts.plug( M );
-			}
-			detail_ &operator =( const detail_ &CI )
-			{
-				Name = CI.Name;
-				Casts = CI.Casts;
-
-				return *this;
-			}
-			// Initialization.
-			void Init( void )
-			{
-				Name.Init();
-				Casts.Init();
-			}
+	template <class t> class detail_
+	{
+	public:
+		str::string_ Name;
+		bch::E_BUNCH_( t ) Casts;
+		struct s {
+			str::string_::s Name;
+			bch::E_BUNCH_( t )::s Casts;
 		};
+		detail_( s &S )
+		: Name( S.Name ),
+		  Casts( S.Casts )
+		{}
+		void reset( bool P = true )
+		{
+			Name.reset( P );
+			Casts.reset( P );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			Name.plug( M );
+			Casts.plug( M );
+		}
+		detail_ &operator =( const detail_ &CI )
+		{
+			Name = CI.Name;
+			Casts = CI.Casts;
 
-		AUTO1( detail )
-	}
+			return *this;
+		}
+		// Initialization.
+		void Init( void )
+		{
+			Name.Init();
+			Casts.Init();
+		}
+	};
+
+	AUTO1( detail )
 
 	struct object_reference__
 	{
@@ -208,8 +206,8 @@ namespace brktpm {
 	BRKTPM_ITEM( bso__ulong, item32 )
 	BRKTPM_ITEMS( item32, items32 )
 	/* Both below declaration are not part of the protocol. */
-	typedef detail_<id8__>	command_detail_	;
-	typedef detail<id8__>	command_detail	;
+	typedef brktpm::detail_<id8__>	command_detail_	;
+	typedef brktpm::detail<id8__>	command_detail;
 	/**/
 	typedef ctn::E_XCONTAINER_( command_detail_ ) commands_details_;
 	typedef ctn::E_XCONTAINER( command_detail_ ) commands_details;

@@ -39,11 +39,11 @@ using namespace broker;
 
 
 // To test templates.
-class string
+class myobject
 : public str::string_
 {
 public:
-	string( s &S )
+	myobject( s &S )
 	: str::string_( S ) {}
 	void HANDLE(
 		::broker::broker &Broker,
@@ -55,11 +55,11 @@ public:
 	static const char *NAME;
 };
 
-const char *string::NAME = "string";
+const char *myobject::NAME = "string";
 
 
-BROKER_RAM_MODULE( ::string ) Ram;
-BROKER_STANDARD_MODULE( ::string ) Standard;
+BROKER_RAM_MODULE( myobject ) Ram;
+BROKER_STANDARD_MODULE( myobject ) Standard;
 /****************/
 
 

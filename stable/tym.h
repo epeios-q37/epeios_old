@@ -187,7 +187,7 @@ namespace tym {
 			tym::size__ Count,
 			tym::row__ Position = 0 )
 		{
-			b::Fill( (uym__data *)&Object, sizeof( t ), Count, Position * sizeof( t ) );
+			b::Fill( (tym::data__ *)&Object, sizeof( t ), Count, Position * sizeof( t ) );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
 		tym::row__ Position(
@@ -197,7 +197,7 @@ namespace tym {
 		{
 			tym::row__ Position;
 
-			if ( ( Position = b::Position( (uym__data *)&Object, sizeof( t ), Begin * sizeof( t ), End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Position( (tym::data__ *)&Object, sizeof( t ), Begin * sizeof( t ), End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;

@@ -1,25 +1,34 @@
-/* begin of 'entete.txt' template file V1.1 */
-/* Best viewed with a tab size of 4 */
 /*
-	This file is part of the Epeios project. For all information
-	concerning the Epeios project, this file and its conditions of use,
-	consult the site: 
+  'dtr' library by Claude L. Simon (simon@epeios.org)
+  Requires the 'dtr' header file ('dtr.h').
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
-			http://www.epeios.org/
+  This file is part of the Epeios (http://www.epeios.org/) project.
+  
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-/* end of 'entete.txt' template file */
-/* begin of 'xxx.cpp' template file V2.8 */
-/* 
-	See the 'dtr.h' file  for more details.
-*/
+
+//	$Id$
 
 #define DTR__COMPILATION
 
 #include "dtr.h"
-
-#ifdef DTR__LINE
-#line 12
-#endif
 
 class dtrtutor
 : public ttr_tutor
@@ -29,17 +38,16 @@ public:
 	: ttr_tutor( DTR_NAME )
 	{
 #ifdef DTR_DBG
-		Version = DTR_VERSION " (DBG)";
+		Version = DTR_VERSION "\b\bD $";
 #else
 		Version = DTR_VERSION;
 #endif
 		Owner = DTR_OWNER;
-		Date = "09/07/2000";
+		Date = "$Date$";
 	}
 	virtual ~dtrtutor( void ){}
 };
 
-//  	Substitution is not applied to the rest.
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
@@ -77,5 +85,3 @@ public:
 static dtrpersonnalization Tutor;
 
 ttr_tutor &DTRTutor = Tutor;
-
-/* end of 'xxx.cpp' template file */

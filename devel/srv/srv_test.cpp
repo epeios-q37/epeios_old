@@ -35,6 +35,30 @@
 #include "err.h"
 #include "stf.h"
 
+class functions__
+: public srv::flow_functions__
+{
+protected:
+	virtual void SRVProcess( flw::ioflow___ & )
+	{
+		fout << "Coucou" << txf::nl;
+	}
+};
+
+void Essai( void )
+{
+ERRProlog
+	srv::server___ Server;
+	functions__ Functions;
+ERRBegin
+	Server.Init( 1234 );
+	Server.Process( Functions );
+ERRErr
+ERREnd
+ERREpilog
+}
+	
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
@@ -54,6 +78,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

@@ -100,13 +100,13 @@ namespace dtfrmf {
 	
 	//f Encapsulates 'Data' in flow (put size and then the contents of data as is).
 	void Encapsulate(
-		const flx::set_ &Data,
+		const flx::bunch_ &Data,
 		flw::oflow___ &Flow );
 		
 	//f Decapsulate what in 'Flow' into 'Data'.
 	void Decapsulate(
 		flw::iflow___ &Flow,
-		flx::set_ &Data );
+		flx::bunch_ &Data );
 		
 		
 };

@@ -61,9 +61,10 @@ using namespace srv;
 #include "mtk.h"
 #endif
 
-void srv::listener___::Init(
+bso__bool srv::listener___::Init(
 	service__ Service,
-	int Nombre )
+	int Amount,
+	err::handle ErrHandle)
 {
 	sockaddr_in nom;
 
@@ -78,11 +79,24 @@ void srv::listener___::Init(
 	nom.sin_addr.s_addr=INADDR_ANY;
 	nom.sin_family=AF_INET;
 
-	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
-		ERRs();
+#ifdef CPE__UNIX
+	int Val = ~0;
 
-	if ( listen( Socket_, Nombre ) )
+	if ( setsockopt( Socket_, SOL_SOCKET, SO_REUSEADDR, &Val, sizeof( Val ) ) != 
+0 )
 		ERRs();
+#endif
+
+	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
+		if ( ErrHandle == err::hUsual )
+			ERRs();
+		else
+			return false;
+
+	if ( listen( Socket_, Amount ) )
+		ERRs();
+		
+	return true;
 }
 
 socket__ srv::listener___::Interroger_( err::handle ErrHandle )

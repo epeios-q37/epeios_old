@@ -1,6 +1,6 @@
 /*
-  Test source for the 'csm' library by Claude L. Simon (epeios@epeios.org).
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Test source for the 'btr' library by Claude L. Simon (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -29,49 +30,10 @@
 #include <string.h>
 #include <iostream.h>
 
-#include "csm.h"
+#include "btr.h"
 
 #include "err.h"
 #include "stf.h"
-
-class manager___
-: public csm::manager___
-{
-protected:
-	//v Client process function.
-	virtual csm::behavior CSMCP(
-		flw::ioflow___ &Client,
-		flw::ioflow___ &Server,
-		void *UP )
-	{
-		return csm::bStop;
-	}
-	//v Client initialization function.
-	virtual void *CSMCI(
-		flw::ioflow___ &Client,
-		flw::ioflow___ &Server )
-	{
-		return NULL;
-	}
-	//v Client ending functions.
-	virtual void CSMCE( void *UP )
-	{}
-	//v Server process function.
-	virtual csm::behavior CSMSP(
-		flw::ioflow___ &Client,
-		void *UP )
-	{
-		return csm::bStop;
-	}
-	//v Server initialization function.
-	virtual void *CSMSI( void )
-	{
-		return NULL;
-	}
-	//v Server ending function.
-	virtual void CSMSE( void *UP )
-	{}
-};
 
 void Generic( int argc, char *argv[] )
 {
@@ -82,32 +44,16 @@ ERREnd
 ERREpilog
 }
 
-void Essai( void )
-{
-ERRProlog
-	manager___ Manager;
-ERRBegin
-	Manager.Init();
-	Manager.Process( 1234 );
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
-
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << CSMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	fout << "Test of library " << BTRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
-		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
@@ -118,14 +64,14 @@ ERRFBegin
 	default:
 		fout << txf::sync;
 		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << CSMTutor.Name << " [/i]\n\n";
+		fout << "Usage: " << BTRTutor.Name << " [/i]\n\n";
 		ERRt();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << CSMTutor.Name << ".\n";
+	fout << "\nEnd of program " << BTRTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

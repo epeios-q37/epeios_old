@@ -62,7 +62,7 @@ extern class ttr_tutor &MMGTutor;
 #include "mmm.h"
 #include "flm.h"
 
-struct mmg
+namespace mmg
 {
 	//e Rule about how the object is handle.
 	enum rule
@@ -80,356 +80,355 @@ struct mmg
 		//i Mortal.
 		sMortal,
 	};
-};
 
-// Pilote mémoire à usage interne.
-template <size_t Taille> class mmg_pilote_memoire
-: public MEMORY_DRIVER
-{
-private:
-	// Pointeur sur la partie statique de l'objet à sauver.
-	uym__data *Statique_;
-	// Loi d'accés.
-	mdr::mode Mode_;
-protected:
-	virtual void MDRRead(
-		mdr__position Position,
-		mdr__bsize Amount,
-		mdr__data *Buffer )
-	// écrit 'Nombre' octets de 'Tampon' à la position 'Position'.
+	// Pilote mémoire à usage interne.
+	template <size_t Taille> class pilote_memoire
+	: public mdr::E_MEMORY_DRIVER
 	{
-		Memoire.Read( Position + Taille, Amount, Buffer );
-	}
-	virtual void MDRWrite(
-		const mdr__data *Buffer,
-		mdr__bsize Amount,
-		mdr__position Position )
-	{
-		StockerStatique();
-		Memoire.Write( Buffer, Amount, Position + Taille );
-	}
-	// Alloue 'Capacite' octets.
-	virtual void MDRAllocate( mdr__size Capacity )
-	{
-		Memoire.Allocate( Capacity + Taille );
-	}
-	/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
-	notamment, les caches */
-public:
-	uym_basic_memory_ Memoire;
-	void reset(
-		bool P = true,
-		bool Ecriture = true )
-	{
-		if ( P )
+	private:
+		// Pointeur sur la partie statique de l'objet à sauver.
+		uym::data__ *Statique_;
+		// Loi d'accés.
+		mdr::mode Mode_;
+	protected:
+		virtual void MDRRead(
+			mdr::row__ Position,
+			mdr::bsize__ Amount,
+			mdr::data__ *Buffer )
+		// écrit 'Nombre' octets de 'Tampon' à la position 'Position'.
 		{
-			if ( Ecriture )
-				StockerStatique();
+			Memoire.Read( Position + Taille, Amount, Buffer );
 		}
-
-		MEMORY_DRIVER::reset( P );
-		Statique_ = NULL;
-	}
-	mmg_pilote_memoire( uym_basic_memory_::s &S )
-	: Memoire( S )
-	{
-		reset( false );
-	}
-	~mmg_pilote_memoire( void )
-	{
-		reset( true );
-	}
-	void Init(
-		uym__data *Statique,
-		mmg::rule Regle,
-		mdr::mode Mode = mdr::mReadWrite )
-	{
-		reset();
-
-		Statique_ = Statique;
-		MEMORY_DRIVER::Init();
-		Memoire.Init();
-
-		if ( Regle == mmg::rCreation )
+		virtual void MDRWrite(
+			const mdr::data__ *Buffer,
+			mdr::bsize__ Amount,
+			mdr::row__ Position )
 		{
-			if ( Mode == mdr::mReadOnly )
-				ERRu();
-
-			Memoire.Allocate( Taille );
 			StockerStatique();
+			Memoire.Write( Buffer, Amount, Position + Taille );
 		}
-		else if ( Regle == mmg::rRecovery )
-			RecupererStatique();
-		else
-			ERRc();
+		// Alloue 'Capacite' octets.
+		virtual void MDRAllocate( mdr::size__ Capacity )
+		{
+			Memoire.Allocate( Capacity + Taille );
+		}
+		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
+		notamment, les caches */
+	public:
+		uym::basic_memory_ Memoire;
+		void reset(
+			bool P = true,
+			bool Ecriture = true )
+		{
+			if ( P )
+			{
+				if ( Ecriture )
+					StockerStatique();
+			}
 
-		Mode_ = Mode;
-	}
-	void StockerStatique( void )
-	{
-		if ( Statique_ && ( Mode_== mdr::mReadWrite ) )
-			Memoire.Write( Statique_, Taille, 0 );
-	}
-	void EcrireDansFlot( flw::oflow___ &Flot ) const
-	{
-		Flot.Put( Statique_, Taille );
-	}
-	void LireDeFlot( flw::iflow___ &Flot )
-	{
-		Flot.Get( Taille, Statique_ );
-	}
-	void RecupererStatique( void )
-	{
-		Memoire.Read( 0, Taille, Statique_, true );
-	}
-	void Mode( mdr::mode Mode )
-	{
-		Mode_ = Mode;
-	}
-	mdr::mode Mode( void )
-	{
-		return Mode_;
-	}
-};
+			E_MEMORY_DRIVER::reset( P );
+			Statique_ = NULL;
+		}
+		pilote_memoire( uym::basic_memory_::s &S )
+		: Memoire( S )
+		{
+			reset( false );
+		}
+		~pilote_memoire( void )
+		{
+			reset( true );
+		}
+		void Init(
+			uym::data__ *Statique,
+			rule Regle,
+			mdr::mode Mode = mdr::mReadWrite )
+		{
+			reset();
 
-// Pour VC++, qui ne comprend rien sinon.
-template <class st> struct mmg_s
-: public st
-{
-	mmm_multimemory_::s Memoire;
-	// A vrai si le contenu survit à l'objet.
-	st Object;
-	uym_basic_memory_::s Pilote_;
-	mmg::state State;
-};
+			Statique_ = Statique;
+			E_MEMORY_DRIVER::Init();
+			Memoire.Init();
 
-/*c Merge all the memory of an object of type 't', including the statical
-part, in one memory. Use 'MMG_MEMORY_MERGER_( t )' rather then directly this class. */
-template <class t, class st> class mmg_memory_merger_
-{
-private:
-	// l'éventuel pilote de la multimemoire
-	mmm_multimemory_driver PiloteMultimemoire_;
-	t Object;
-public:
-	// La mémoire qui contient la partie dynamique de l'objet.
-	mmm_multimemory_ Memoire;
-	// La partie statique de l'objet à persister.
-/*	struct s
+			if ( Regle == mmg::rCreation )
+			{
+				if ( Mode == mdr::mReadOnly )
+					ERRu();
+
+				Memoire.Allocate( Taille );
+				StockerStatique();
+			}
+			else if ( Regle == mmg::rRecovery )
+				RecupererStatique();
+			else
+				ERRc();
+
+			Mode_ = Mode;
+		}
+		void StockerStatique( void )
+		{
+			if ( Statique_ && ( Mode_== mdr::mReadWrite ) )
+				Memoire.Write( Statique_, Taille, 0 );
+		}
+		void EcrireDansFlot( flw::oflow___ &Flot ) const
+		{
+			Flot.Put( Statique_, Taille );
+		}
+		void LireDeFlot( flw::iflow___ &Flot )
+		{
+			Flot.Get( Taille, Statique_ );
+		}
+		void RecupererStatique( void )
+		{
+			Memoire.Read( 0, Taille, Statique_, true );
+		}
+		void Mode( mdr::mode Mode )
+		{
+			Mode_ = Mode;
+		}
+		mdr::mode Mode( void )
+		{
+			return Mode_;
+		}
+	};
+
+	// Pour VC++, qui ne comprend rien sinon.
+	template <class st> struct mmg_s
 	: public st
 	{
-		mmm_multimemoire_::s Memoire;
+		mmm::multimemory_::s Memoire;
 		// A vrai si le contenu survit à l'objet.
-		fdm__bool Persistant;
-		friend mmg_centralisateur_memoire_;
-	} *S_;
-*/
-	struct s
-	: public mmg_s < st > {} &S_;
-private:
-	// Le pilote gèrant les particularités de cet objet
-	mmg_pilote_memoire < sizeof( mmg_s < st > ) > Pilote_;
-public:
-	mmg_memory_merger_( s &S )
-	: S_( S ),
-	  Object( S.Object ),
-	  Memoire( S.Memoire ),
-	  Pilote_( S.Pilote_ )
-	{}
-	void reset( bool P = true )
-	{
-		if ( P )
-		{
-			if ( S_.State == mmg::sImmortal )
-				Immortalize();
+		st Object;
+		uym::basic_memory_::s Pilote_;
+		mmg::state State;
+	};
 
-			if ( Pilote_.Memoire.Driver( true ) )	// Test si immortalisation ...
+	/*c Merge all the memory of an object of type 't', including the statical
+	part, in one memory. Use 'MMG_MEMORY_MERGER_( t )' rather then directly this class. */
+	template <class t, class st> class memory_merger_
+	{
+	private:
+		// l'éventuel pilote de la multimemoire
+		mmm::multimemory_driver PiloteMultimemoire_;
+		t Object;
+	public:
+		// La mémoire qui contient la partie dynamique de l'objet.
+		mmm::multimemory_ Memoire;
+		// La partie statique de l'objet à persister.
+	/*	struct s
+		: public st
+		{
+			mmm_multimemoire_::s Memoire;
+			// A vrai si le contenu survit à l'objet.
+			fdm__bool Persistant;
+			friend mmg_centralisateur_memoire_;
+		} *S_;
+	*/
+		struct s
+		: public mmg_s < st > {} &S_;
+	private:
+		// Le pilote gèrant les particularités de cet objet
+		mmg::pilote_memoire < sizeof( mmg_s < st > ) > Pilote_;
+	public:
+		memory_merger_( s &S )
+		: S_( S ),
+		  Object( S.Object ),
+		  Memoire( S.Memoire ),
+		  Pilote_( S.Pilote_ )
+		{}
+		void reset( bool P = true )
+		{
+			if ( P )
 			{
-				Object.reset( true );
-				Memoire.reset( true );
-				Pilote_.reset( true );
+				if ( S_.State == mmg::sImmortal )
+					Immortalize();
+
+				if ( Pilote_.Memoire.Driver( true ) )	// Test si immortalisation ...
+				{
+					Object.reset( true );
+					Memoire.reset( true );
+					Pilote_.reset( true );
+				}
 			}
+
+			S_.State = mmg::sMortal;
+
+			Pilote_.reset( false );
+			Memoire.reset( false );
+
+			Object.reset( false );
 		}
-
-		S_.State = mmg::sMortal;
-
-		Pilote_.reset( false );
-		Memoire.reset( false );
-
-		Object.reset( false );
-	}
-	//f Initialization with rule 'Rule' and mode 'Mode'.
-	void Init(
-		mmg::rule Rule,
-		mdr::mode Mode = mdr::mReadWrite)
-	{
-		reset();
-
-		Object.plug( Memoire );
-
-		Pilote_.Init( (uym__data *)&S_, Rule, Mode );
-
-		Memoire.plug( Pilote_ );
-
-		if ( Rule == mmg::rCreation )
-			Memoire.Init();
-	}
-	//f Utilisation de 'Pilote' comme pilote mémoire.
-	void plug( MEMORY_DRIVER_ &MD )
-	{
-		Pilote_.Memoire.plug( MD );
-	}
-	//f The memory is unpluged and can be used by an other object.
-	void Immortalize( void )
-	{
-		Pilote_.StockerStatique();
-		Pilote_.Memoire.plug( *(MEMORY_DRIVER_ *)NULL );
-	}
-	void plug( mmm_multimemory_ &M )
-	{
-		Memoire.Synchronize();
-
-		PiloteMultimemoire_.plug( M );
-		Pilote_.Memoire.plug( PiloteMultimemoire_ );
-	}
-	//f Write to 'OFLow' as raw data.
-	void Write( flw::oflow___ &OFlow ) const
-	{
-		Memoire.Synchronize();
-		Pilote_.EcrireDansFlot( OFlow );
-		Memoire.write( OFlow );
-	}
-	//f Read from 'IFLow' as raw data.
-	void Read( flw::iflow___ &IFlow )
-	{
-		Pilote_.LireDeFlot( IFlow );
-		Memoire.read( IFlow );
-	}
-	mmg_memory_merger_ &operator =( const mmg_memory_merger_ & )
-	{
-		ERRu();
-
-		return *this;	// Only to avoid a warning.
-	}
-	//f The object would be immortalized or destructed depend of the value of 'State'.
-	void State( mmg::state State )
-	{
-		S_.State = State;
-	}
-	//f The mode of the object decames 'Mode'.
-	void Mode( mdr::mode Mode )
-	{
-		Pilote_.Mode( Mode );
-	}
-	//f Return the mode of the object.
-	mdr::mode Mode( void ) const
-	{
-		return Pilote_.Mode();
-	}
-	//f Return the object which is handled by.
-	t &operator()( void )
-	{
-		return Object;
-	}
-};
-
-AUTO2( mmg_memory_merger )
-
-//m Merge all the memory, including the statical part, of a 't' type object in one memory.
-#define MMG_MEMORY_MERGER_( t )	mmg_memory_merger_<t, t::s>
-
-#define MMG_MEMORY_MERGER( t )	mmg_memory_merger<t, t::s>
-
-/*c File memory merger. Same as mmg_memory_merger_<t, t::s>, but use a file as memory.
-Use 'MMG_FILE_MEMORY_MERGER( t )' rather then directly this class. */
-template <class t, class st> class mmg_file_memory_merger
-: public mmg_memory_merger<t, st>
-{
-private:
-	flm_file_memory_driver PiloteFichier_;
-public:
-	void reset( bool P = true )
-	{
-		mmg_memory_merger<t, st>::reset( P );
-
-		PiloteFichier_.reset( P );
-	}
-	/*f Initialization with file named 'FileName'. The object is placed
-	in 'ObjectMode', and the file in 'FileMode'. Return a value which depends
-	on whether exists or not. If the file doesn't already exist,
-	both 'ObjectMode' and 'FileMode' are forced for to 'mdr::mReadWrite'. */
-	mmg::rule Init(
-		const char *FileName,
-		mdr::mode ObjectMode,
-		mdr::mode FileMode )
-	{	
-		bso__bool Test;
-
-		Test = TOLFileExists( FileName );
-
-		PiloteFichier_.Init( FileName );
-		PiloteFichier_.Persistant();
-		PiloteFichier_.Manuel();
-
-		mmg_memory_merger<t, st>::plug( PiloteFichier_ );
-
-		if ( Test )
+		//f Initialization with rule 'Rule' and mode 'Mode'.
+		void Init(
+			mmg::rule Rule,
+			mdr::mode Mode = mdr::mReadWrite)
 		{
-			mmg_memory_merger<t, st>::Init( mmg::rRecovery, ObjectMode );
+			reset();
+
+			Object.plug( Memoire );
+
+			Pilote_.Init( (uym::data__ *)&S_, Rule, Mode );
+
+			Memoire.plug( Pilote_ );
+
+			if ( Rule == mmg::rCreation )
+				Memoire.Init();
+		}
+		//f Utilisation de 'Pilote' comme pilote mémoire.
+		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		{
+			Pilote_.Memoire.plug( MD );
+		}
+		//f The memory is unpluged and can be used by an other object.
+		void Immortalize( void )
+		{
+			Pilote_.StockerStatique();
+			Pilote_.Memoire.plug( *(mdr::E_MEMORY_DRIVER_ *)NULL );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			Memoire.Synchronize();
+
+			PiloteMultimemoire_.plug( M );
+			Pilote_.Memoire.plug( PiloteMultimemoire_ );
+		}
+		//f Write to 'OFLow' as raw data.
+		void Write( flw::oflow___ &OFlow ) const
+		{
+			Memoire.Synchronize();
+			Pilote_.EcrireDansFlot( OFlow );
+			Memoire.write( OFlow );
+		}
+		//f Read from 'IFLow' as raw data.
+		void Read( flw::iflow___ &IFlow )
+		{
+			Pilote_.LireDeFlot( IFlow );
+			Memoire.read( IFlow );
+		}
+		memory_merger_ &operator =( const memory_merger_ & )
+		{
+			ERRu();
+
+			return *this;	// Only to avoid a warning.
+		}
+		//f The object would be immortalized or destructed depend of the value of 'State'.
+		void State( mmg::state State )
+		{
+			S_.State = State;
+		}
+		//f The mode of the object decames 'Mode'.
+		void Mode( mdr::mode Mode )
+		{
+			Pilote_.Mode( Mode );
+		}
+		//f Return the mode of the object.
+		mdr::mode Mode( void ) const
+		{
+			return Pilote_.Mode();
+		}
+		//f Return the object which is handled by.
+		t &operator()( void )
+		{
+			return Object;
+		}
+	};
+
+	AUTO2( memory_merger )
+
+	//m Merge all the memory, including the statical part, of a 't' type object in one memory.
+	#define E_MEMORY_MERGER_( t )	memory_merger_<t, t::s>
+
+	#define E_MEMORY_MERGER( t )	memory_merger<t, t::s>
+
+	/*c File memory merger. Same as mmg_memory_merger_<t, t::s>, but use a file as memory.
+	Use 'MMG_FILE_MEMORY_MERGER( t )' rather then directly this class. */
+	template <class t, class st> class file_memory_merger
+	: public memory_merger<t, st>
+	{
+	private:
+		flm::file_memory_driver PiloteFichier_;
+	public:
+		void reset( bool P = true )
+		{
+			memory_merger<t, st>::reset( P );
+
+			PiloteFichier_.reset( P );
+		}
+		/*f Initialization with file named 'FileName'. The object is placed
+		in 'ObjectMode', and the file in 'FileMode'. Return a value which depends
+		on whether exists or not. If the file doesn't already exist,
+		both 'ObjectMode' and 'FileMode' are forced for to 'mdr::mReadWrite'. */
+		mmg::rule Init(
+			const char *FileName,
+			mdr::mode ObjectMode,
+			mdr::mode FileMode )
+		{	
+			bso__bool Test;
+
+			Test = TOLFileExists( FileName );
+
+			PiloteFichier_.Init( FileName );
+			PiloteFichier_.Persistant();
+			PiloteFichier_.Manuel();
+
+			memory_merger<t, st>::plug( PiloteFichier_ );
+
+			if ( Test )
+			{
+				memory_merger<t, st>::Init( mmg::rRecovery, ObjectMode );
+				PiloteFichier_.Mode( FileMode );
+			}
+			else
+			{
+				memory_merger<t, st>::Init( mmg::rCreation, mdr::mReadWrite );
+				PiloteFichier_.Mode( mdr::mReadWrite );
+			}
+
+			memory_merger<t, st>::State( mmg::sImmortal );
+
+			return ( Test ? mmg::rRecovery : mmg::rCreation );
+		}
+		/*f Initialization with the file named 'FileName'. If the file is create,
+		'Mode' is forced to 'mdr::mReadWrite'.  Return a value which depends
+		on whether exists or not. If the file doesn't already exist, 'Mode' is forced to
+		'mdr::mReadWrite'. */
+		mmg::rule Init(
+			const char *NomFichier,
+			mdr::mode Mode = mdr::mReadOnly )
+		{
+			return Init( NomFichier, Mode, Mode );
+		}
+		//f The object is placed in 'ObjectMode', the file in 'FileMode'.
+		void Mode(
+			mdr::mode ObjectMode,
+			mdr::mode FileMode  )
+		{
+			memory_merger<t, st>::Mode( ObjectMode );
 			PiloteFichier_.Mode( FileMode );
 		}
-		else
+		//f Fila and object are placed in 'Mode' mode.
+		void Mode( mdr::mode Mode )
 		{
-			mmg_memory_merger<t, st>::Init( mmg::rCreation, mdr::mReadWrite );
-			PiloteFichier_.Mode( mdr::mReadWrite );
+			this->Mode( Mode, Mode );
 		}
+		// To change the default destruction order, which cuases error.
+		~file_memory_merger( void )
+		{
+			memory_merger<t, st>::reset();
+			PiloteFichier_.reset();
+		}
+		void plug( mdr::E_MEMORY_DRIVER & )
+		{
+			ERRu();
+		}
+		void State( mmg::state )
+		{
+			ERRu();
+		}
+	};
 
-		mmg_memory_merger<t, st>::State( mmg::sImmortal );
-
-		return ( Test ? mmg::rRecovery : mmg::rCreation );
-	}
-	/*f Initialization with the file named 'FileName'. If the file is create,
-	'Mode' is forced to 'mdr::mReadWrite'.  Return a value which depends
-	on whether exists or not. If the file doesn't already exist, 'Mode' is forced to
-	'mdr::mReadWrite'. */
-	mmg::rule Init(
-		const char *NomFichier,
-		mdr::mode Mode = mdr::mReadOnly )
-	{
-		return Init( NomFichier, Mode, Mode );
-	}
-	//f The object is placed in 'ObjectMode', the file in 'FileMode'.
-	void Mode(
-		mdr::mode ObjectMode,
-		mdr::mode FileMode  )
-	{
-		mmg_memory_merger<t, st>::Mode( ObjectMode );
-		PiloteFichier_.Mode( FileMode );
-	}
-	//f Fila and object are placed in 'Mode' mode.
-	void Mode( mdr::mode Mode )
-	{
-		this->Mode( Mode, Mode );
-	}
-	// To change the default destruction order, which cuases error.
-	~mmg_file_memory_merger( void )
-	{
-		mmg_memory_merger<t, st>::reset();
-		PiloteFichier_.reset();
-	}
-	void plug( MEMORY_DRIVER & )
-	{
-		ERRu();
-	}
-	void State( mmg::state )
-	{
-		ERRu();
-	}
-};
-
-//m Same as 'MMG_MEMORY_MERGER( t )', but use a file as memory.
-#define MMG_FILE_MEMORY_MERGER( t )		mmg_file_memory_merger<t, t::s>
-
+	//m Same as 'MMG_MEMORY_MERGER( t )', but use a file as memory.
+	#define E_FILE_MEMORY_MERGER( t )		file_memory_merger<t, t::s>
+}
 
 /*$END$*/
 				  /********************************************/

@@ -397,7 +397,7 @@ void brktpm::GetObjectsReferences(
 }
 
 void brktpm::PutCommandsDetails(
-	const commands_details_ &CommandsDetails,
+	const brktpm::commands_details_ &CommandsDetails,
 	flw::oflow___ &OFlow )
 {
 	PutContainer_<commands_details_, command_detail_ >( CommandsDetails, OFlow );
@@ -405,7 +405,7 @@ void brktpm::PutCommandsDetails(
 
 void brktpm::GetCommandsDetails(
 	flw::iflow___ &IFlow,
-	commands_details_ &CommandsDetails )
+	brktpm::commands_details_ &CommandsDetails )
 {
 	GetContainer_<commands_details_, command_detail >( IFlow, CommandsDetails );
 }

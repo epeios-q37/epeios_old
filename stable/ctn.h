@@ -545,7 +545,7 @@ namespace ctn {
 			tym::row__ Position,
 			t &Objet ) const
 		{
-			CMITEM( t ) Element;
+			E_CMITEM( t ) Element;
 
 			Element.Init( *this );
 
@@ -854,7 +854,7 @@ namespace ctn {
 			tym::row__ Position,
 			t &Objet ) const
 		{
-			CITEM( t ) Element;
+			E_CITEM( t ) Element;
 
 			Element.Init( *this );
 

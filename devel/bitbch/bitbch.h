@@ -523,7 +523,7 @@ namespace bitbch {
 		//f Return the value at position 'Position'.
 		bso__bool Read( tym::row__ Position ) const
 		{
-			return (int)functions__< receptacle__s<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Lire( Position, Table_ );
+			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Lire( Position, Table_ );
 		}
 			//f Return the value at position 'Position'.
 		bso__bool operator()( tym::row__ Position )
@@ -535,7 +535,7 @@ namespace bitbch {
 			bso__bool Value,
 			tym::row__ Position )
 		{
-			functions__< receptacle__s<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Ecrire( Value, Position, Table_ );
+			functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Ecrire( Value, Position, Table_ );
 		}
 		//f Set all the bits to 'Value'.
 		void Reset( bso__bool Value = false )

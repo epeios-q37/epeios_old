@@ -56,12 +56,12 @@ public:
 using namespace dtfrmf;
 
 void dtfrmf::Encapsulate(
-	const flx::set_ &Data,
+	const flx::bunch_ &Data,
 	flw::oflow___ &Flow )
 {
 ERRProlog
-	flx::set_iflow___ IFlow;
-	SIZE__ Size;
+	flx::bunch_iflow___ IFlow;
+	tym::size__ Size;
 ERRBegin
 	IFlow.Init( Data );
 	
@@ -78,11 +78,11 @@ ERREpilog
 
 void dtfrmf::Decapsulate(
 	flw::iflow___ &Flow,
-	flx::set_ &Data )
+	flx::bunch_ &Data )
 {
 ERRProlog
-	flx::set_oflow___ OFlow;
-	SIZE__ Size;
+	flx::bunch_oflow___ OFlow;
+	tym::size__ Size;
 ERRBegin
 	OFlow.Init( Data );
 

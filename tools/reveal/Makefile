@@ -30,40 +30,66 @@ copt = -DXXX_DBG
 lopt = 
 libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm
 
-ifeq ("$(EPEIOS_OS)","windows")
-ox = obj
-cc = bcc32
-co = -q -c -w-aus
-lo = -q -e$(name)
+ifndef EPEIOS_SRC
+	epeios_src=
+else
+	epeios_src=$(EPEIOS_SRC)
 endif
 
-ifeq ("$(EPEIOS_OS)","linux")
+ifndef EPEIOS_OS
+	epeios_os=linux
+else
+	epeios_os=$(EPEIOS_OS)
+endif
+
+
+ifeq ("$(epeios_os)","windows")
+# object file extension
+ox = obj
+# compiler/linker binary
+cc = bcc32
+# compilation options
+co = -q -c -w-aus
+# linkage options
+lo = -q -e$(name)
+ds = ;
+endif
+
+ifeq ("$(epeios_os)","linux")
 ox = o
 cc = g++ 
-co = -c -g
+co = -c
+# Generates debugging data.
+co += -g
+# General optimization.
+#co += -O
+# To use with gprof
+#co += -pg
 lo = -o $(name)
+# needed when pthread are used.
+#lo += -lglib -lgthread
+ds = :
 endif
 
-ifeq ("$(EPEIOS_OS)","beos")
+ifeq ("$(epeios_os)","beos")
 ox = o
 cc = g++
-co = -c
+co = -c -g
 lo = -o $(name)
+ds = :
 endif
 
-co += -I$(EPEIOS_SRC) -I$(EPEIOS__SRC) $(EPEIOS_COPT) $(copt)
+vpath %.cpp $(subst $(ds),:,$(epeios_src))
+
+srcd = $(subst $(ds), ,$(epeios_src))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(libs:=.$(ox))
 
 $(name):  $(objs)
-	$(cc) $(lo) *.$(ox)
+	$(cc) $(lo) $(objs)
 	
 %.$(ox): %.cpp
 	$(cc) $(co) $< 
-
-%.$(ox): $(EPEIOS_SRC)/%.cpp
-	$(cc) $(co) $<
-
-%.$(ox): $(EPEIOS__SRC)/%.cpp
-	$(cc) $(co) $<

@@ -1,7 +1,7 @@
 /*
-  'srv' library by Claude L. Simon (epeios@epeios.org)
+  'srv' library by Claude L. Simon (simon@epeios.org)
   Requires the 'srv' header file ('srv.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( SRV_NAME )
 	{
 #ifdef SRV_DBG
-		Version = SRV_VERSION " (DBG)";
+		Version = SRV_VERSION "\b\bD $";
 #else
 		Version = SRV_VERSION;
 #endif
@@ -60,9 +61,10 @@ using namespace srv;
 #include "mtk.h"
 #endif
 
-void srv::listener___::Init(
+bso__bool srv::listener___::Init(
 	service__ Service,
-	int Nombre )
+	int Amount,
+	err::handle ErrHandle)
 {
 	sockaddr_in nom;
 
@@ -77,11 +79,24 @@ void srv::listener___::Init(
 	nom.sin_addr.s_addr=INADDR_ANY;
 	nom.sin_family=AF_INET;
 
-	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
-		ERRs();
+#ifdef CPE__UNIX
+	int Val = ~0;
 
-	if ( listen( Socket_, Nombre ) )
+	if ( setsockopt( Socket_, SOL_SOCKET, SO_REUSEADDR, &Val, sizeof( Val ) ) != 
+0 )
 		ERRs();
+#endif
+
+	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
+		if ( ErrHandle == err::hUsual )
+			ERRs();
+		else
+			return false;
+
+	if ( listen( Socket_, Amount ) )
+		ERRs();
+		
+	return true;
 }
 
 socket__ srv::listener___::Interroger_( err::handle ErrHandle )

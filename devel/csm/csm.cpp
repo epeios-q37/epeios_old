@@ -65,6 +65,7 @@ struct server_data__
 	spp::shared_bipipe___ *Bipipe;
 	csm::manager___ *Manager;
 	mtx::mutex_handler__ Mutex;
+	volatile bso__bool Error;
 };
 
 struct client_data__
@@ -126,8 +127,8 @@ namespace {
 static void Server_( void *P )
 {
 ERRFProlog
-	server_data__ SD = *(server_data__ *)P;
-	void *PUS;
+	server_data__ &SD = *(server_data__ *)P;
+	void *PUS = NULL;
 	spp::slave_shared_bipipe_ioflow___ Pipe;
 ERRFBegin
 	mtx::Lock( SD.Mutex );
@@ -135,41 +136,53 @@ ERRFBegin
 	
 	mtx::Unlock( SD.Mutex );
 	mtx::Delete( SD.Mutex );
-	SD.Mutex = MTX_INVALID_HANDLER;
+	
+	if ( !SD.Error ) {
+		SD.Mutex = MTX_INVALID_HANDLER;
 
-	Pipe.Init( *SD.Bipipe );
+		Pipe.Init( *SD.Bipipe );
 
-#ifdef CSM_DBG
-	if ( SD.Manager == NULL )
-		ERRc();
-#endif
+	#ifdef CSM_DBG
+		if ( SD.Manager == NULL )
+			ERRc();
+	#endif
 
-	PUS = SD.Manager->SI();
+		PUS = SD.Manager->SI();
 
-	while ( SD.Manager->SP( Pipe, PUS ) == bContinue);
+		while ( SD.Manager->SP( Pipe, PUS ) == bContinue);
+	} 
+		
+		
 ERRFErr
 ERRFEnd
-	SD.Manager->SE( PUS );
+	if ( SD.Error )
+		SD.Error = false;
+	else
+		SD.Manager->SE( PUS );
 ERRFEpilog
 }
 
-static void Listener_( void *P )
+static bso__bool Listener_( void *P )
 {
+	bso__bool Success = true;
 ERRProlog
 	srv::server___ Server;
 	listener_data__ &LD = *(listener_data__ *)P;
 	internal_functions__ Functions;
+	bso__bool BindSucceed = false;
 ERRBegin
 	Functions.ClientData = &LD.Client;
 
-	Server.Init( LD.Service );
-	
-	mtx::Unlock( LD.Mutex );
+	if ( Server.Init( LD.Service, err::hSkip ) ) {
+		mtx::Unlock( LD.Mutex );
 
-	Server.Process( Functions, LD.Handler );
+		Server.Process( Functions, LD.Handler );
+	} else
+		Success = false;
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
 
@@ -183,7 +196,7 @@ void csm::manager___::Process(
 {
 ERRProlog
 	spp::shared_bipipe___ SharedBipipe;
-	server_data__ SD = { NULL, NULL, MTX_INVALID_HANDLER };
+	server_data__ SD = { NULL, NULL, MTX_INVALID_HANDLER, false };
 	listener_data__ LD = {0, err::hUsual, { NULL, NULL }, MTX_INVALID_HANDLER };
 ERRBegin
 	SharedBipipe.Init();
@@ -203,10 +216,14 @@ ERRBegin
 
 	MTKLaunch( Server_, &SD );
 
-	Listener_( &LD );
-
-
-/* Ce qui est écrit ci-dessous est faux. */
+	if ( !Listener_( &LD ) ) {
+		SD.Error = true;
+		mtx::Unlock( SD.Mutex );
+		while( SD.Error );
+		ERRs();
+	}
+		
+	/* Ce qui est écrit ci-dessous est faux. */
 
 	// Sous Windows, on ne passe jamais par là.
 

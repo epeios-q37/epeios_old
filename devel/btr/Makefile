@@ -1,5 +1,5 @@
-# 'srv' Makefile by Claude L. Simon (simon@epeios.org)
-# Builds test executable for the 'srv' library.
+# 'btr' Makefile by Claude L. Simon (simon@epeios.org)
+# Builds test executable for the 'btr' library.
 # Requires GNU make (http://www.gnu.org/).
 # Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 #
@@ -26,14 +26,14 @@
 
 # $Id$
 
-name = srv
+name = btr
 copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+#copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err mtk sck
+libs = ttr tol flw stf err
 
 
 
@@ -61,7 +61,7 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-lo += -lglib -lgthread
+#lo += -lglib -lgthread
 ds = :
 endif
 

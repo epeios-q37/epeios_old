@@ -117,9 +117,19 @@ namespace srv {
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		void Init(
+		bso__bool Init(
 			service__ Service,
-			int Nombre = 5 );
+			int Amount,
+			err::handle ErrHandle = err::hUsual );
+		/*f Initialzation with 'Service' as port to listen.
+		A maximum of 'Amount' are accepted in the waiting queue. */
+		bso__bool Init(
+			service__ Service,
+			err::handle ErrHandle = err::hUsual,
+			int Amount = 5 )
+		{
+			return Init( Service, Amount, ErrHandle );
+		}
 		//f Return the first available connection. BLOCKING FUNCTION.
 		socket__ GetConnection( err::handle ErrHandle = err::hUsual )
 		{
@@ -161,11 +171,21 @@ namespace srv {
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
-		void Init(
+		bso__bool Init(
 			service__ Service,
-			int Nombre = 5 )
+			int Amount,
+			err::handle ErrHandle = err::hUsual )
 		{
-			listener___::Init( Service, Nombre );
+			listener___::Init( Service, Amount, ErrHandle );
+		}
+		/*f Initialzation with 'Service' as port to listen.
+		A maximum of 'Amount' are accepted in the waiting queue. */
+		bso__bool Init(
+			service__ Service,
+			err::handle ErrHandle = err::hUsual,
+			int Amount = 5 )
+		{
+			listener___::Init( Service, Amount, ErrHandle );
 		}
 		/*f Handle each new connection using 'Functions'. */
 		void Process(

@@ -66,8 +66,8 @@ namespace {
 		commands_ &Commands )
 	{
 	ERRProlog
-		CMITEM( command_item_ ) Item;
-		POSITION__ P =NONE;
+		ctn::E_CMITEM( command_item_ ) Item;
+		tym::row__ P =NONE;
 		command Command;
 	ERRBegin
 		Item.Init( Items );
@@ -111,8 +111,8 @@ namespace {
 		types_ &Types )
 	{
 	ERRProlog
-		CMITEM( type_item_ ) Item;
-		POSITION__ P = NONE;
+		ctn::E_CMITEM( type_item_ ) Item;
+		tym::row__ P = NONE;
 		type Type;
 	ERRBegin
 		Item.Init( Items );

@@ -94,7 +94,7 @@ namespace brkanl {
 	 		Identification.reset( P );
 			Parameters.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Identification .plug( M );
 			Parameters.plug( M );
@@ -117,8 +117,8 @@ namespace brkanl {
 	AUTO( command )
 
 	//t Broker commands.
-	typedef XCONTAINER_( command_ ) commands_;
-	typedef XCONTAINER( command_ ) commands;
+	typedef ctn::E_XCONTAINER_( command_ ) commands_;
+	typedef ctn::E_XCONTAINER( command_ ) commands;
 
 	//c A broker object type.
 	class type_
@@ -141,7 +141,7 @@ namespace brkanl {
 			Identification.reset( P );
 			Commands.reset( P );
 		}
-		void plug( mmm_multimemory_ &M )
+		void plug( mmm::multimemory_ &M )
 		{
 			Identification.plug( M );
 			Commands.plug( M );
@@ -164,8 +164,8 @@ namespace brkanl {
 	AUTO( type )
 
 	//t Broker types.
-	typedef XCONTAINER_( type_ ) types_;
-	typedef XCONTAINER( type_ ) types;
+	typedef ctn::E_XCONTAINER_( type_ ) types_;
+	typedef ctn::E_XCONTAINER( type_ ) types;
 
 	//f Fill 'Types' with contents of 'Broker'.
 	void Analyze(
