@@ -1,5 +1,5 @@
 /*
-  'gendoc' by Claude L. Simon (epeios@epeios.org).
+  'gendoc' by Claude L. Simon (csimon@epeios.org).
   Generates library documentation by parsing header files.
   Copyright (C) 2000 Claude Simon.
 
