@@ -53,6 +53,21 @@ enum command {
 enum option {
 };
 
+const char *Text =
+"POST http://194.51.246.50/asp/cotation/cotations_walmaster_histo.asp HTTP/1.0
+Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, */*
+Referer: http://194.51.246.50/asp/cotation/walmaster_histo.asp
+Accept-Language: fr
+Content-Type: application/x-www-form-urlencoded
+Proxy-Connection: Keep-Alive
+User-Agent: Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)
+Host: 194.51.246.50
+Content-Length: 128
+Pragma: no-cache
+
+jour_debut=1&mois_debut=3&annee_debut=2001&jour_fin=2&mois_fin=3&annee_fin=2001&KID=32647&D4C8D9D2CCDB=PM&code_sicovam=&x=31&y=6"
+;
+
 struct parameters {
 	const char *PortToListen;
 	const char *Target;
@@ -215,7 +230,6 @@ void Server( void *UP )
 	data__ &D = *(data__ *)UP;
 	flw::data__ Buffer[100];
 	flw::size__ Size;
-	unsigned char C;
 	
 	for(;;) {
 		Size = D.Server->GetUpTo( sizeof( Buffer ), Buffer );
@@ -223,13 +237,6 @@ void Server( void *UP )
 		fout << txf::sync;
 		D.Client->Put( Buffer, Size );
 		D.Client->Synchronize();
-
-/*		C = D.Server->Get();
-		fout.Put( C );
-		fout << txf::sync;
-		D.Client->Put( C );
-*/
-
 	}
 }
 	
@@ -237,19 +244,13 @@ void Client( void *UP )
 {
 	data__ &D = *(data__ *)UP;
 	flw::data__ Buffer[100];
-	unsigned char C;
 	flw::size__ Size;
 	
 	for(;;) {
-/*		Size = D.Client->GetUpTo( sizeof( Buffer ), Buffer );
+		Size = D.Client->GetUpTo( sizeof( Buffer ), Buffer );
 		fout.Put( Buffer, Size );
 		fout << txf::sync;
 		D.Server->Put( Buffer, Size );
-*/
-		C = D.Client->Get();
-		fout.Put( C );
-		fout << txf::sync;
-		D.Server->Put( C );
 		D.Server->Synchronize();
 	}
 }
