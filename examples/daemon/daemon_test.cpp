@@ -40,7 +40,7 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	daemon::user_function__ UserFunction;
+	deamon::user_function__ UserFunction;
 	srv::server___ Server;
 ERRBegin
 	Server.Init( 2000, 5 );

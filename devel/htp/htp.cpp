@@ -64,7 +64,9 @@ using namespace htp;
 it is necessary to personalize it, or certain compiler would not work properly */
 
 #define CONTENT_LENGTH_STRING	"Content-Length: "
+#define LOCATION_STRING			"Location: "
 #define HTTP_SIGNATURE			"HTTP/1.1 "
+#define NL	"\r\n"
 
 static bso::bool__ TestHTTPVersion_( flw::iflow__ &IFlow )
 {
@@ -120,11 +122,11 @@ static void GetHeader_(
 
 static void GetContentLengthValue_(
 	const str::string_ &RawHeader,
-	http_header__ &Header )
+	header_ &Header )
 {
 	epeios::row__ P = NONE;
 
-	Header.ContentLength = 0;
+	Header.S_.ContentLength = 0;
 
 	P = *RawHeader.Search( str::string( CONTENT_LENGTH_STRING ) );
 
@@ -134,7 +136,7 @@ static void GetContentLengthValue_(
 	*P += sizeof( CONTENT_LENGTH_STRING ) - 1;
 	
 	while ( ( P != NONE ) && ( isdigit( RawHeader( P ) ) ) ) {
-		Header.ContentLength = Header.ContentLength * 10 + RawHeader( P ) - '0';
+		Header.S_.ContentLength = Header.S_.ContentLength * 10 + RawHeader( P ) - '0';
 		P = RawHeader.Next( P );
 	}
 	
@@ -142,9 +144,30 @@ static void GetContentLengthValue_(
 		ERRf();
 }
 
+static void GetLocationValue_(
+	const str::string_ &RawHeader,
+	header_ &Header )
+{
+	epeios::row__ P = NONE;
+
+	P = *RawHeader.Search( str::string( LOCATION_STRING ) );
+
+	if ( P != NONE ) {
+		*P += sizeof( LOCATION_STRING ) - 1;
+		
+		while ( ( P != NONE ) && ( RawHeader( P ) != NL[0] ) ) {
+			Header.Location.Append( RawHeader( P ) );
+			P = RawHeader.Next( P );
+		}
+		
+		if ( P == NONE )
+			ERRf();
+	}
+}
+
 static void FillField_(
 	flw::iflow__ &IFlow,
-	http_header__ &Header )
+	header_ &Header )
 {
 ERRProlog
 	str::string RawHeader;
@@ -154,6 +177,8 @@ ERRBegin
 	GetHeader_( IFlow, RawHeader );
 
 	GetContentLengthValue_(	RawHeader, Header );
+
+	GetLocationValue_( RawHeader, Header );
 ERRErr
 ERREnd
 ERREpilog
@@ -173,11 +198,11 @@ ERREpilog
 }
 
 
-htp::status htp::Parse(
+htp::status__ htp::Parse(
 	flw::iflow__ &IFlow,
-	http_header__ &Header )
+	header_ &Header )
 {
-	htp::status Status = htp::s_unknow;
+	htp::status__ Status = htp::s_unknow;
 
 	if ( TestHTTPVersion_( IFlow ) ) {
 		switch( GetHTTPResponseCode_( IFlow ) ) {
@@ -187,6 +212,10 @@ htp::status htp::Parse(
 			break;
 		case 200:
 			Status = htp::sOK;
+			FillField_( IFlow, Header );
+			break;
+		case 302:
+			Status = htp::sFound;
 			FillField_( IFlow, Header );
 			break;
 		case 404:
@@ -201,8 +230,6 @@ htp::status htp::Parse(
 
 	return Status;
 }
-
-#define NL	"\r\n";
 
 static inline const char *GetFieldLabel_( field_name__ Name )
 {

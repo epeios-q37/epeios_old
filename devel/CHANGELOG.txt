@@ -1,5 +1,11 @@
 $Id$
 
+13/03/05:
+- HTP:
+	- Ajout du traitement du code '302' ('Found').
+	- Ajout du champ 'Location' dans la classe 'header_'.
+	- Quelques modification cosmétiques.
+
 12/03/05
 - LCK:
 	- Amélioration de l'ergonomie.

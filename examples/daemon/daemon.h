@@ -67,7 +67,7 @@ extern class ttr_tutor &DAEMONTutor;
 #include "lck.h"
 #include "srv.h"
 
-namespace daemon {
+namespace deamon {	// 'daemon' (inversion du 'e' et du 'a') pose problème avec un ficheir d'entête de gcc.
 	struct shared__	// Les ressources partagées.
 	{
 		bso::ulong__ Counter;	// Le compteur de client.

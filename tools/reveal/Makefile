@@ -33,7 +33,7 @@ copt += -DXXX_DBG
 #copt += -DCPE_MT
 lopt = 
 libs = ttr tol flw cio err uym mmi fil tagdtc clnarg\
-epsmsc str txmtbl tagexp
+	   epsmsc str txmtbl tagexp
 
 ifndef EPEIOS_SRC
 	src=

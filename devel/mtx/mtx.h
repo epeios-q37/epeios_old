@@ -80,15 +80,11 @@ extern class ttr_tutor &MTXTutor;
 #	error "Don't know what mutex type to use."
 #endif
 
-#ifdef MTX_CONTROL
+#ifndef MTX_NO_CONTROL
 #	ifdef MTX_DBG
-#		ifdef MTX__USE_PTHREAD_MUTEX
-#			error "'MTX_CONTROL' can not be using pthread mutexes."
-#		else
+#		ifndef MTX__USE_PTHREAD_MUTEX
 #			define MTX__CONTROL
 #		endif
-#	else
-#		error "'MTX_CONTROL' can be used only in debug modus!".
 #	endif
 #endif
 

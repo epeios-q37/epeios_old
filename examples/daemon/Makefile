@@ -1,5 +1,5 @@
-# '$xxx$' Makefile by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
-# Builds executable for the '$xxx$' software.
+# 'daemon' Makefile by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
+# Builds executable for the 'daemon' software.
 # Requires GNU make (http://www.gnu.org/).
 # Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
 #
@@ -21,19 +21,17 @@
 #          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-# $$Id$$
+# $Id$
 
-name = $xxx$
+name = daemon
 copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
+copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err
-
-$_RAW_$
-
+libs = daemon_test ttr tol flw cio err mtk srv sck
+ 
 ifndef EPEIOS_SRC
 	src=
 else

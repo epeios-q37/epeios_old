@@ -74,12 +74,14 @@ extern class ttr_tutor &HTPTutor;
 
 namespace htp {
 	//e Status of the parsing.
-	enum status {
+	enum status__ {
 		//i OK (HTTP code 200).
 		sOK,
 		//i Continue (HTTP code 100)
 		sContinue,
 		//i NotFound (HTTP code 404).
+		sFound,
+		//i Found (HTTP code 302).
 		sNotFound,
 		//i Unhandle HTTP response code.
 		sUnhandledCode,
@@ -163,28 +165,52 @@ namespace htp {
 	E_AUTO( fields )
 
 
-
+	typedef bso::ulong__ content_length__;
 
 	//c An http 1.1 header.
-	class http_header__
+	class header_
 	{
 	public:
-		// The 'Content-Length' field.
-		bso::ulong__ ContentLength;
-		http_header__( void )
+		struct s
 		{
-			ContentLength = 0;
+			content_length__ ContentLength;
+			str::string_::s Location;
+		} &S_;
+		header_( s &S )
+		: S_( S ),
+		  Location ( S.Location )
+		{}
+		str::string_ Location;
+		void reset( bso::bool__ P = true )
+		{
+			S_.ContentLength = 0;
+			Location.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Location.plug( MM );
+		}
+		header_ &operator =( const header_ &H )
+		{
+			S_.ContentLength = H.S_.ContentLength;
+			Location = H.Location;
+
+			return *this;
 		}
 		void Init( void )
 		{
-			ContentLength = 0;
+			S_.ContentLength = 0;
+			Location.Init();
 		}
+		E_RODISCLOSE_( content_length__, ContentLength );
 	};
 
+	E_AUTO( header )
+
 	//f Parse 'flow' and fill 'Header' with it. Return status. 'Header' is only fill when return value is 'sOK'.
-	status Parse(
+	status__ Parse(
 		flw::iflow__ &IFlow,
-		http_header__ &Header );
+		header_ &Header );
 
 	void Post( 
 		const str::string_ &URL,

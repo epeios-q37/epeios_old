@@ -55,9 +55,9 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace daemon;
+using namespace deamon;
 
-bso::bool__ daemon::user_function__::_Start( txf::text_oflow__ &Flow )
+bso::bool__ deamon::user_function__::_Start( txf::text_oflow__ &Flow )
 {
 	bso::bool__ Odd = false;
 ERRProlog
@@ -84,7 +84,7 @@ ERREpilog
 	return Odd;
 }
 
-void daemon::user_function__::_Other( txf::text_oflow__ &Flow )
+void deamon::user_function__::_Other( txf::text_oflow__ &Flow )
 {
 ERRProlog
 	lck::shared_access___<shared__> Shared;
@@ -98,7 +98,7 @@ ERREnd
 ERREpilog
 }
 
-void daemon::user_function__::SRVProcess( flw::ioflow__ &Flow )
+void deamon::user_function__::SRVProcess( flw::ioflow__ &Flow )
 {
 ERRProlog
 	txf::text_oflow__ TFlow;
