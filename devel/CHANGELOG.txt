@@ -142,6 +142,8 @@ UYM:
 - Fixing bug which have as result the loss of the memory pilote when calling 'reset()'.
 - Fixing 'Fill()' compilation error.
 - Adding 'untyped_memory___' class.
+- Renaming some classes.
+- Fixing buf in overflow detection in 'untyped_memory__' class.
 
 XTF:
 - Adapting to vhanges in 'FLW'.

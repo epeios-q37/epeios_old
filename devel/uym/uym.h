@@ -419,9 +419,9 @@ namespace uym {
 			reset( true );
 		}
 		//f Initialization.
-		void Init( data__ *&Data )
+		void Init( data__ **Data )
 		{
-			Data_ = &Data;
+			Data_ = Data;
 		}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Read(
@@ -516,16 +516,16 @@ namespace uym {
 	public:
 		struct s {};	// To simplify use in library 'SET'
 		untyped_memory__( s &S = *(s *)NULL )
-		: memory_core___() {}
+		: _memory__() {}
 		// Simplifies the 'SET' library.
 		void Allocate( uym::size__ Size )
 		{
-			if ( Size > size )
+			if ( Size >= size )
 				ERRl();
 		}
 		void Init( void )
 		{
-			memory_core__::Init( Data_ );
+			_memory__::Init( (uym::data__ **)&Data_ );
 		}
 	};
 
@@ -566,7 +566,7 @@ namespace uym {
 		{
 			tol::Free( Data_ );
 
-			_memory___::Init( Data_ );
+			_memory___::Init( &Data_ );
 		}
 	};
 }
