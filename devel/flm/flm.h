@@ -78,7 +78,7 @@ extern class ttr_tutor &FLMTutor;
 #ifdef FLM__UNIX_LIKE
 #	include <unistd.h>
 #	include <fcntl.h>
-#else FLM__MS_LOWLEVEL_IO
+#elif defined( FLM_MS_LOWLEVEL_IO )
 #	include <io.h>
 #	include <fcntl.h>
 #	include <sys/stat.h>
