@@ -12,3 +12,4 @@ all:
 	make -C epeios -I .. -f Makefile
 	make -C reveal -I .. -f Makefile
 	make -C mll2html -I .. -f Makefile
+	make -C tmcde -I .. -f Makefile
