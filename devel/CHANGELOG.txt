@@ -1,5 +1,9 @@
 $Id$
 
+--------
+20010618
+--------
+
 AEM:
 - Adapting to changes in 'TOL'.
 
@@ -42,7 +46,7 @@ TAGEXP:
 TOL:
 - Adding 'TYPEDEF__()'
 - Using operator '->' for 'TYPEDEF()' and 'TYPEDEF__()'
-- Disable VC++ warning issue due to 'TYPDEF()'.
+- Disable VC++ warning issue due to 'TYPEDEF()'.
 - 'TYPEDEF_()' makes now automatically 'AUTO()'.
 - Adding 'operator =()' to 'TYPEDEF_()'.
 
@@ -64,7 +68,7 @@ XMLDCM:
 - Methods of filler which handles tag/attribute value returns now a value row.
 - Adding the 'GetDocument()' method.
 
-XMLTAG
+XMLTAG:
 - Adapting to changes in 'TOL'.
 
 
