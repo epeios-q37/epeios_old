@@ -131,25 +131,6 @@ namespace str {
 
 			return *this;
 		}
-		//f Store null-terminated string 'String' at 'Position'.
-		void StoreNTS(
-			const char *String,
-			epeios::row__ Position = 0 )
-		{
-			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( String, strlen( String ), Position );
-		}
-		//f Append null-terminated string 'String' and return position where put.
-		epeios::row__ AppendNTS( const char *String )
-		{
-			return E_BUNCHx_( bso::char__, _string_size_handler )::Append( String, strlen( String ) );
-		}
-		//f Insert null-terminated string 'String' at 'Position'.
-		void InsertNTS(
-			const char *String,
-			epeios::row__ Position )
-		{
-			E_BUNCHx_( bso::char__, _string_size_handler )::Insert( String, strlen( String ), Position );
-		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
 		char *Convert(
 			epeios::row__ Position = 0,
@@ -329,7 +310,7 @@ namespace str {
 			reset( false );
 
 			string_::Init();
-			string_::AppendNTS( S );
+			string_::Append( S );
 		}
 		string(
 			const char *S,

@@ -246,9 +246,13 @@ public:\
 }
 
 
+//d Create a new type for a row named 'Type'.
+#define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )
+
+
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
-'E_SHIELD2( a, b )' donne 'a, b' */
+'E_COVER2( a, b )' donne 'a, b' */
 #define E_COVER2(a, b)	a, b
 
 

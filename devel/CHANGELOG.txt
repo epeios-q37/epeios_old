@@ -71,6 +71,7 @@ LST:
 - Renaming 'CreateEntry' to 'New'.
 - Introducing feature to fix some cast problem.
 - Renaming 'Store' object in 'Locations' to avoid some name conflicts.
+- Creation of the 'E_ROW' macro.
 
 LSTBCH:
 - Fixing bug.
