@@ -130,6 +130,155 @@ void Print( types_ &Types )
 	}
 }
 
+void GenAPI(
+	brkcst::cast Cast,
+	bso__bool In,
+	bso__ulong Indice,
+	txf::text_oflow___ &Flow)
+{
+	Flow << txf::tab << txf::tab << txf::tab;
+
+	if ( In ) 
+		Flow << "const ";
+
+	Flow << brkcst::CastsNames[Cast] << " &";
+
+	if ( In )
+		Flow << "In";
+	else
+		Flow << "Out";
+
+	Flow << Indice;
+}
+
+
+void GenAPIDeclaration(
+	const parameters_ &Parameters,
+	txf::text_oflow___ &Flow)
+{
+	POSITION__ P = Parameters.First();
+	bso__bool In = true;
+	brkcst::cast Cast;
+	bso__ulong Indice = 1;
+
+	if ( (brkcst::cast)Parameters( P ) == brkcst::cEnd ) {
+		In = false;
+		P = Parameters.Next( P );
+	}
+
+	if ( P == NONE )
+		Flow << " void";
+	else {
+		GenAPI( (brkcst::cast)Parameters( P ), In, Indice++, Flow );
+		P = Parameters.Next( P );
+	}
+
+	while( P != NONE ) {
+		if ( ( Cast = (brkcst::cast)Parameters( P) ) == brkcst::cEnd ) {
+			In = false;
+			Indice = 1;
+		} else {
+			Flow << ',' << txf::nl;
+
+			GenAPI( Cast, In, Indice++, Flow );
+		}
+
+		P = Parameters.Next( P );
+	}
+
+	fout << " )" << txf::nl;
+}
+
+
+void GenAPIBody(
+	const parameters_ &Parameters,
+	txf::text_oflow___ &Flow)
+{
+	POSITION__ P = Parameters.First();
+	bso__bool In = true;
+	brkcst::cast Cast;
+	bso__ulong Indice = 1;
+
+	while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P) ) != brkcst::cEnd ) ) {
+		Flow << txf::tab << txf::tab << txf::tab << "Broker->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
+		P = Parameters.Next( P );
+	}
+
+	if ( P == NONE )
+		ERRf();
+
+	Flow << txf::tab << txf::tab << txf::tab
+		<< "if ( ( Return = Broker_->Send() ) ) {" << txf::nl;
+
+	Indice = 0;
+
+	P = Parameters.Next( P );
+
+	while( P != NONE ) {
+		Flow << txf::tab << txf::tab << txf::tab << txf::tab
+			 << "Broker->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
+		P = Parameters.Next( P );
+	}
+
+	Flow << txf::tab << txf::tab << txf::tab << "}" << txf::nl;
+	Flow << txf::nl;
+	Flow << txf::tab << txf::tab << txf::tab << "return Return;" << txf::nl;
+	Flow << txf::tab << txf::tab << "}" << txf::nl;
+}
+
+
+void GenAPI(
+	const commands_ &Commands,
+	txf::text_oflow___ &Flow)
+{
+	CITEM( command_ ) Command;
+	POSITION__ P = Commands.First();
+
+	Command.Init( Commands );
+
+	while( P != NONE ) {
+		Flow << txf::tab << txf::tab << "command__ " << Command( P ).Identification.Value << "_;" << txf::nl;
+//		Print( Command( P ).Parameters );
+		P = Commands.Next( P );
+	}
+
+	P = Commands.First();
+
+	while( P != NONE ) {
+		Flow << txf::tab << txf::tab << "bso__bool " << Command( P ).Identification.Value << "(" << txf::nl;
+		GenAPIDeclaration( Command( P ).Parameters, Flow );
+		Flow << txf::tab << txf::tab << "{" << txf::nl;
+		Flow << txf::tab << txf::tab << txf::tab << "Broker->PushHeader( ID_, " << Command( P ).Identification.Value << ");" << txf::nl;
+		GenAPIBody( Command( P ).Parameters, Flow );
+		P = Commands.Next( P );
+	}
+
+	fout << txf::nl;
+}
+
+
+
+void GenAPI(
+	const types &Types,
+	txf::text_oflow___ &Flow )
+{
+	Flow << "#include \"frtend.h\"" << txf::nl << txf::nl;
+	Flow << "namespace epeios {" << txf::nl;
+
+	CITEM( type_ ) Type;
+	POSITION__ P = Types.First();
+
+	Type.Init( Types );
+
+	while( P != NONE ) {
+		Flow << txf::tab << "class " << Type( P ).Identification.Value << " {" << txf::nl;
+		GenAPI( Type( P ).Commands, Flow );
+		Flow << txf::tab << "};" << txf::nl << txf::nl;
+		P = Types.Next( P );
+	}
+}
+
+
 
 
 void Essai( void )
@@ -151,7 +300,9 @@ ERRBegin
 	
 	Analyze( Frontend, Types );
 
-	Print( Types);
+//	Print( Types);
+
+	GenAPI( Types, fout );
 ERRErr
 ERREnd
 ERREpilog

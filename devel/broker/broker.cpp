@@ -212,7 +212,7 @@ ERRBegin
 		Type = (type__)P;
 
 		Item.ID( Type );
-		Item.Value = Broker.Name( Type );
+		Item.Value = Broker.ModuleFromType( Type ).Name();
 		Items.Add( Item );
 		P = Broker.Modules.Next( P );
 	}

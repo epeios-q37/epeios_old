@@ -37,6 +37,30 @@ using namespace broker;
 #include "stf.h"
 #include "csm.h"
 
+
+// To test templates.
+class string
+: public str_string_
+{
+public:
+	string( s &S )
+	: str_string_( S ) {}
+	void HANDLE(
+		::broker::broker &Broker,
+		untyped_module &Module,
+		command__ Command,
+		request_manager___ &Request,
+		void *UP ){}
+	static void NOTIFY( untyped_module &Module ){}
+	static const char *NAME;
+};
+
+
+BROKER_RAM_MODULE( ::string ) Ram;
+BROKER_STANDARD_MODULE( ::string ) Standard;
+/****************/
+
+
 class manager
 : public csm::manager___
 {

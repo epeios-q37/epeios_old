@@ -221,24 +221,24 @@ namespace broker {
 	private:
 		void Traiter_(
 			t &Objet,
-			request_manager___ &Requete,
+			brkrqm::request_manager___ &Requete,
 			void *PU )
 		{
 			command__ C;
 
-			FLWGet( Requete.Input(), C );
+			flw::Get( Requete.Input(), C );
 
-			if ( C() > Descriptions.Amount() )
+			if ( C > Descriptions.Amount() )
 				ERRu();
 
-			Requete.SetDescription( Descriptions( C() ) );
+			Requete.SetDescription( Descriptions( C ) );
 
 			Objet.HANDLE( *Broker(), *this, C, Requete, PU );
 		}
 	protected:
 		virtual void Handle_(
 			index__ Index,
-			request_manager___ &Requete,
+			brkrqm::request_manager___ &Requete,
 			void *PU )
 		{
 			Traiter_( *(t *)untyped_module::Object( Index ), Requete, PU );
@@ -249,7 +249,7 @@ namespace broker {
 		{
 			untyped_module::Init( t::NAME );
 
-			t::NOTIFY( untyped_module::Descriptions );
+			t::NOTIFY( *this );
 		}
 	};
 
@@ -279,21 +279,21 @@ namespace broker {
 
 			index__ Index = LIST::CreateEntry();
 
-			Objets.Write( Pointeur, Index() );
+			Objets.Write( Pointeur, Index );
 
 			return Index;
 		}
 		virtual void BROKERRemove( index__ Index )
 		{
-			delete Objets( Index() );
-			LIST::Remove( Index() );
+			delete Objets( Index );
+			LIST::Remove( Index );
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
-			if ( Index() >= Objets.Amount() )
+			if ( Index >= Objets.Amount() )
 				ERRu();
 
-			return (void *)Objets( Index() );
+			return (void *)Objets( Index );
 		}
 	public:
 		//r The pointer object.
@@ -306,7 +306,7 @@ namespace broker {
 			module<t>::Init();
 		}
 	};
-
+	
 	//c A module with object stored in standard memory.
 	template <class t, class st> class standard_module
 	: public module<t>,
@@ -327,16 +327,16 @@ namespace broker {
 		}
 		virtual void BROKERRemove( index__ Index )
 		{
-			Element_( Index() ).reset();
-			LIST::Remove( Index() );
+			Element_( Index ).reset();
+			LIST::Remove( Index );
 			Element_.Sync();
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
-			if ( Index() >= Objets.Amount() )
+			if ( Index >= Objets.Amount() )
 				ERRu();
 
-			return (void *)&Element_( Index() );
+			return (void *)&Element_( Index );
 		}
 	public:
 		//r Contient les objets.
@@ -614,16 +614,6 @@ namespace broker {
 		{
 			Langues_.Courante = Langue;
 		}
-		//f Return the name of objects of type 'Type'.
-		const char *Name( type__ IdType ) const
-		{
-			return ModuleFromType( IdType ).Name();
-		}
-		//f Return the name of the object 'Object'.
-		const char *Name( object__ Object )
-		{
-			return Name( Type( Object ));
-		}
 		/*f Add a request descrption with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
@@ -640,6 +630,13 @@ namespace broker {
 	typedef broker broker_;
 
 };
+
+//d A ram module of an object of type 't'.
+#define BROKER_RAM_MODULE( t )	::broker::ram_module<t, t::s>	
+
+//d A standard module of an object of type 't'.
+#define BROKER_STANDARD_MODULE( t )	::broker::standard_module<t, t::s>	
+
 
 /*$END$*/
 				  /********************************************/
