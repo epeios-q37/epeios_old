@@ -58,10 +58,10 @@ public:
 using namespace lgg;
 
 const char *lgg::LanguageNames[lgg::l_amount] = {
+	"test",
 	"English",
 	"Français",
 	"Deutsch",
-	"test",
  };
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
@@ -75,7 +75,8 @@ language__ lgg::GetLanguageIDNamed( const char *Name )
 {
 	int i = 0;
 
-	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) ) {};
+	while( ( i < l_amount ) && ( strcmp( Name, LanguageNames[i] ) ) )
+		i++;
 
 	if ( i >= l_amount )
 		return l_undefined;
@@ -87,7 +88,8 @@ language__ lgg::GetLanguageIDWithLabel( const char *Name )
 {
 	int i = 0;
 
-	while( ( ++i < l_amount ) && ( strcmp( Name, LanguageLabels[i] ) ) ) {};
+	while( ( i < l_amount ) && ( strcmp( Name, LanguageLabels[i] ) ) )
+		i++;
 
 	if ( i >= l_amount )
 		return l_undefined;

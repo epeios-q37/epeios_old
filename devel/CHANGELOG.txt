@@ -69,7 +69,7 @@ STF:
 - (24/05/04) Renaming the objects ('stream...' instead'(i|o)stream...', removing one tailing '_')
 
 TOL:
-- Adding the 'E_DISCLOSE' macro.
+- Adding the 'E_DISCLOSE_(_)' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
 - (24/05/04) Using 'cio' library instead of 'stf'.
 - (24/06/04) Addinf 'E_TTEMPLATE' macro.

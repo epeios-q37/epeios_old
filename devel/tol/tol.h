@@ -636,8 +636,8 @@ namespace tol {
 		}
 	}
 
-//d Make accessible the static member named 'name' of type 'type__'.
-#define E_DISCLOSE(type__, name )\
+//d Make accessible the static member, of a dynamic object, named 'name' of type 'type__'.
+#define E_DISCLOSE_(type__, name )\
 	const type__ &name( void ) const\
 	{\
 		return S_.name;\
@@ -645,6 +645,17 @@ namespace tol {
 	type__ &name( void )\
 	{\
 		return S_.name;\
+	}
+
+//d Make accessible the member, of a static object, named 'name' of type 'type__'.
+#define E_DISCLOSE__(type__, name )\
+	const type__ &name( void ) const\
+	{\
+		return name##_;\
+	}\
+	type__ &name( void )\
+	{\
+		return name##_;\
 	}
 
 }

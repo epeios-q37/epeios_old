@@ -78,7 +78,7 @@ namespace lgg {
 		//i Amount of languages.
 		l_amount,
 		//i undefined
-		l_undefined = l_amount
+		l_undefined
 	};
 
 	extern const char *LanguageNames[lgg::l_amount];
