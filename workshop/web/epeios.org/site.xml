@@ -43,7 +43,7 @@
         <para type="remark" xml:space="preserve">See <link URL="/licenses.html">licenses statement</link> for the conditions of use of the Epeios libraries and software.</para>
       </section>
       <section>
-        <para>This project was launch on 1999, but I'm probably the only one which uses the Epeios libraries. I think this is not due to the libraires themselves, but to this site. There are no enough informations available and/or they are not showed in the propre way. I created a <link URL="https://mail.gna.org/listinfo/epeios-evolution" aspect="long">mailing-list</link> on <link URL="http://www.gna.org">Gna!</link> to which you can subscribe if you want to discuss about this.</para>
+        <para>This project was launch on 1999, but I'm probably the only one which uses the Epeios libraries. I think this is not due to the libraires themselves, but to this site. There are no enough informations available and/or they are not showed in the propre way. I've created a <link URL="https://mail.gna.org/listinfo/epeios-evolution" aspect="long">mailing-list</link> on <link URL="http://www.gna.org">Gna!</link> to which you can write and/or subscribe if you want to discuss about this.</para>
         <para xml:space="preserve">You can also contact me at <contact adress="csimon@epeios.org">csimon@epeios.org</contact>.</para>
       </section>
       <section>
@@ -59,7 +59,7 @@
         </list>
       </section>
       <section>
-        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/">XML</link>/<link URL="http://www.w3.org/Style/XSL/">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/">Sablotron</link>. The project is hosted by <link URL="http://sv.gnu.org">Savannah</link>.</para>
+        <para xml:space="preserve">This site is entirely made using <link URL="http://www.w3.org/XML/">XML</link>/<link URL="http://www.w3.org/Style/XSL/">XSL</link> and some Epeios tools. The XSLT transformation is made using <link URL="http://www.gingerall.com/">Sablotron</link>.</para>
       </section>
       <ignore>
         <section>
@@ -168,7 +168,7 @@
         <author>$AUTHOR$</author>
         <copyright>
           <owner>$OWNER$</owner>
-          <date>2001</date>
+          <date>2001, 2004</date>
         </copyright>
         <misc>
           <sourceforge group_id="$CORE_SF_ID$"/>
@@ -218,11 +218,11 @@
             <item xml:space="preserve">
         <link URL="etmc/" xml:space="preserve">
           <raw>ETMC</raw> libraries</link> : libraries dedicated to timecodes.</item>
-<!--
+				<ignore>
             <item xml:space="preserve">
         <link URL="ejava/" xml:space="preserve">
           <raw>EJAVA</raw> libraries</link> : JAVA implementation of the Epeios frontend/backend protocol.</item>
--->
+				</ignore>
           </list>
         </section>
       </content>
@@ -307,7 +307,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+        <content><download URL="http://download.epeios.org/epeios/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -543,7 +543,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$">
+        <content><download URL="http://download.epeios.org/ebkd/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -777,7 +777,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$ECGI_SV_ID$">
+        <content><download URL="http://download.epeios.org/ecgi/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -921,7 +921,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EXML_SV_ID$">
+        <content><download URL="http://download.epeios.org/exml/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -1065,7 +1065,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EMTH_SV_ID$">
+        <content><download URL="http://download.epeios.org/emth/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -1207,7 +1207,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+        <content><download URL="http://download.epeios.org/etmc/">
 </download></content>
       </document>
       <dir id="quickdoc">
@@ -1345,7 +1345,7 @@
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EJAVA_SV_ID$">
+        <content><download URL="http://download.epeios.org/ejava/">
 </download></content>
       </document>
     </dir>
@@ -1389,10 +1389,10 @@
         <link URL="mll2html/">mll2html</link> : GNU program, written for the <link URL="http://www.fsf.org/">FSF</link>, which which reformats a pure ASCII mailinglists file to a HTML formated mailinglists file.</item>
             <item xml:space="preserve">
         <link URL="reveal/" xml:space="default">reveal</link> : replaces tags in a file by text or file content.</item>
-<!--
+				<ignore>
             <item xml:space="preserve">
         <link URL="tmcde/" xml:space="default">tmcde</link> : interactive software for timecode calculation.</item>
--->
+				</ignore>
             <item xml:space="preserve">
         <link URL="getbkdapi/" xml:space="default">getbkdapi</link> : software to generate the API of an Epeios backend.</item>
           </list>
@@ -1545,7 +1545,7 @@
 
             </WEB>
           </specific>
-          <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+          <content><download URL="http://download.epeios.org/etmc/">
 </download></content>
         </document>
         <dir id="manual">
@@ -1672,7 +1672,7 @@
 
             </WEB>
           </specific>
-          <content><download URL="http://savannah.nongnu.org/files/?group_id=$ETMC_SV_ID$">
+          <content><download URL="http://download.epeios.org/etmc/">
 </download></content>
         </document>
         <dir id="manual">
@@ -1823,7 +1823,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+        <content><download URL="http://download.epeios.org/mll2html/">
 </download></content>
       </document>
       <dir id="manual">
@@ -1972,7 +1972,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$CORE_SV_ID$">
+        <content><download URL="http://download.epeios.org/reveal/">
 </download></content>
       </document>
       <dir id="manual">
@@ -2124,7 +2124,7 @@ Go to <link URL="../software.html">Epeios software main page</link> to know how 
 
           </WEB>
         </specific>
-        <content><download URL="http://savannah.nongnu.org/files/?group_id=$EBKD_SV_ID$">
+        <content><download URL="http://download.epeios.org/getbkdapi/">
 </download></content>
       </document>
       <dir id="manual">

@@ -47,7 +47,7 @@
     <chapter title="Fundamental objects.">
       <para>A fundamental object is an object of fixed size. Object stemming directly from a language (integer, float, character...) are generally fundamental objects. Any object exclusively constituted by fundamental objects is a fundamental object.</para>
       <para>These objects constitute generally the static part of a not fundamental object. Due to their characteristics, they are easy and fast to manipulate. They are the implementation and the extension of the mathematical branch, and it is what makes them a category on it own.</para>
-      <para>Any dynamic part of an object is, basically, constituted by a set, of variable size, of fundamental objects.</para>
+      <para>Any dynamic part of an object is, basically, constituted by a bunch, of variable size, of fundamental objects.</para>
     </chapter>
     <chapter title="Untyped memory.">
       <para>This object is the abstraction of the RAM. Any object stores its dynamic part (when it has one) in this object. Functions for allocation, reading and writing, as well as functions allowing the copy of all or part of an untyped memory in another one.</para>
@@ -56,22 +56,22 @@
     <chapter title="The typed memory.">
       <para>The untyped memory allows to store bytes, the typed memory, fundamental objects. The same functions are available, but the copy between 2 typed memory is only possible if the 2 typed memory store fundamental objects of the same type.</para>
     </chapter>
-    <chapter title="The 'set of fundamental objects' object (SFO).">
+    <chapter title="The 'bunch of fundamental objects' object (BFO).">
       <para>This object is a typed memory which knows its size. So, operations like adding or removing objects are easily handled by this object.</para>
     </chapter>
-    <chapter title="The 'set of bits' object.">
-      <para>This object is, conceptually, a SFO wich stores bits. However, because the byte is the basic data unit, at least 1 byte is needed to store 1 bit.</para>
-      <para>To avoid the waste too much place, this special object was created. Based on a SFO of bytes, each byte is used to store 8 bits, so you waste no more as 7 bits.</para>
-      <para>This object has the same behaviour as a SFO.</para>
+    <chapter title="The 'bunch of bits' object.">
+      <para>This object is, conceptually, a BFO wich stores bits. However, because the byte is the basic data unit, at least 1 byte is needed to store 1 bit.</para>
+      <para>To avoid the waste too much place, this special object was created. Based on a BFO of bytes, each byte is used to store 8 bits, so you waste no more as 7 bits.</para>
+      <para>This object has the same behaviour as a BFO.</para>
     </chapter>
     <chapter title="The 'container' object.">
-      <para>The container is to not fundamental objects what the SFO is to fundamental objects. This object allows to manage a set of not fundamental objects.</para>
-      <para>A container is an object too, so a container can also contain a set of containers.</para>
+      <para>The container is to not fundamental objects what the BFO is to fundamental objects. This object allows to manage a bunch of not fundamental objects.</para>
+      <para>A container is an object too, so a container can also contain a bunch of containers.</para>
     </chapter>
     <chapter title="Summary.">
-      <para>Any object, whatever how complex it is, is constituted only by fundamental objects, by SFOs (including the special object 'set of bits'), and\or by containers.</para>
-      <para>When the object does not contain dynamic part, it contains only fundamental objects and is so, by definition, a fundamental object. To store a set of fundamental objects, you may use SFOs. To stores a set of SFOs, you may use containers. To store a set of containers, you may also use a container. And so on.</para>
-      <para>The distinction among SFO and containers is due to the nature of the elements which they contain. Such a distinction is unusual. However, if you keep in mind the 2 branches detailed in the previous chapters, the use of these objects becomes intuitive.</para>
+      <para>Any object, whatever how complex it is, is constituted only by fundamental objects, by BFOs (including the special object 'bunch of bits'), and\or by containers.</para>
+      <para>When the object does not contain dynamic part, it contains only fundamental objects and is so, by definition, a fundamental object. To store a bunch of fundamental objects, you may use BFOs. To stores a bunch of BFOs, you may use containers. To store a bunch of containers, you may also use a container. And so on.</para>
+      <para>The distinction among BFO and containers is due to the nature of the elements which they contain. Such a distinction is unusual. However, if you keep in mind the 2 branches detailed in the previous chapters, the use of these objects becomes intuitive.</para>
     </chapter>
   </chapter>
   <chapter title="The other objects.">
@@ -81,17 +81,17 @@
       <para>Flows allow, for example, the communication between two processes, or the saving of an object in a file for a later reading, or the communication between two computers, ...</para>
     </chapter>
     <chapter title="The ordering objects.">
-      <para>Arrays of objects (SFOs, containers) store objects in a linear way. Such a data organization is not suitable to organize data in a more complex manner (as in a tree, for example), or can be very expensive in time (if used as a queue, in which you often add/remove objects, for example).</para>
-      <para>Each object in a array is identified by a row value (which is similar as a RAM pointer). You can so create an object consituted by row values and, because row values are fundamental objects, store them in a SFO (then called 'ordering SFO'). Informations about an object in a array with a given row value can be found in the ordering SFO at the same row value.</para>
-      <para>For example, if you want to store your data in a binary tree, you store the data in a container or a SFO, depending of the nature of the object, without taking care about the order in which they are stored. Once stored in the array, each object have a unique row value. For each object, create an object containing the row value for the parent, and one for each child, and store this object in a SFO, which so becames a binary tree ordering object, at the same row value as the concerned object.</para>
-      <para>As you can see, this is very easy, and you can organize the same data simultaneously in several ways, creating as much ordering SFOs as you want. Take notice that ordering SFOs, like all SFOs, can be stored in containers.</para>
+      <para>Arrays of objects (BFOs, containers) store objects in a linear way. Such a data organization is not suitable to organize data in a more complex manner (as in a tree, for example), or can be very expensive in time (if used as a queue, in which you often add/remove objects, for example).</para>
+      <para>Each object in a array is identified by a row value (which is similar as a RAM pointer). You can so create an object consituted by row values and, because row values are fundamental objects, store them in a BFO (then called 'ordering BFO'). Informations about an object in a array with a given row value can be found in the ordering BFO at the same row value.</para>
+      <para>For example, if you want to store your data in a binary tree, you store the data in a container or a BFO, depending of the nature of the object, without taking care about the order in which they are stored. Once stored in the array, each object have a unique row value. For each object, create an object containing the row value for the parent, and one for each child, and store this object in a BFO, which so becames a binary tree ordering object, at the same row value as the concerned object.</para>
+      <para>As you can see, this is very easy, and you can organize the same data simultaneously in several ways, creating as much ordering BFOs as you want. Take notice that ordering BFOs, like all BFOs, can be stored in containers.</para>
       <para>Following this model, you can handle binary trees, dynamic trees, queues, stacks, indexes,...</para>
     </chapter>
     <chapter title="Database like objects.">
       <para>Database is considred as a special domain. What is designed for databases can not be used in another field and vice-versa ; each domain have their own specific tools.</para>
       <para>Although database tools are almost indispensable in some cases, they are often use in case where only some of their features are needed. Thanks the way Epeios object are designed, you can use them instead databases in many cases. You are then no longer limited by the few predefined data types usually available with database, but you can store the objects you want, without limitations.</para>
       <para>You need no special objects. Database like object are containers with the only difference that, thanks to the Epeios memory handling, instead using RAM to store its contents, you tell it to use files. This is done before the initialization of the container, and, once the object initialized, you handle them the same way as if the objects where stored in RAM.</para>
-      <para>The indexes are based on ordering SFO, and even objects to handle locks and transactions are easily implemented as and using classical Epeios objects.</para>
+      <para>The indexes are based on ordering BFO, and even objects to handle locks and transactions are easily implemented as and using classical Epeios objects.</para>
     </chapter>
   </chapter>
   <chapter title="The user interface.">
