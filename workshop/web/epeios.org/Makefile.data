@@ -1,0 +1,25 @@
+# $Id$
+
+include Makefile.header
+
+filelist = 
+
+all:
+	$(copy) $(doc)/personnal/cv.pdf $(dest)
+	$(copy) $(doc)/personnal/cv.doc $(dest)
+	$(copy) data/mll2html/mailinglists.txt data/mll2html/mailinglists.html $(dest)/mll2html
+	$(copy) $(cvs)/epeios/devel/CHANGELOG.txt $(dest)/epeios/CHANGELOG
+	$(copy) $(cvs)/ecgi/devel/CHANGELOG.txt $(dest)/ecgi/CHANGELOG
+	$(copy) $(cvs)/etmc/devel/CHANGELOG.txt $(dest)/etmc/CHANGELOG
+	$(copy) $(cvs)/ebkd/devel/CHANGELOG.txt $(dest)/ebkd/CHANGELOG
+	$(copy) $(cvs)/epeios/tools/reveal/CHANGELOG.txt $(dest)/reveal/CHANGELOG
+	$(copy) $(cvs)/epeios/tools/mll2html/CHANGELOG.txt $(dest)/mll2html/CHANGELOG
+	$(copy) $(cvs)/etmc/apps/backend/CHANGELOG.txt $(dest)/tmcde/backend/CHANGELOG
+	$(copy) $(cvs)/etmc/apps/CGID/CHANGELOG.txt $(dest)/tmcde/CGID/CHANGELOG
+ifeq ("$(EPEIOS_OS)","linux")
+	make -C $(dest)/epeios -f Makefile.compress
+	make -C $(dest)/etmc -f Makefile.compress
+	make -C $(dest)/ecgi -f Makefile.compress
+	make -C $(dest)/ebkd -f Makefile.compress
+endif
+

@@ -1,0 +1,4 @@
+all:
+	gzip quickdoc.html quickdoc.html.gz
+	bzip2 quickdoc.html quickdoc.html.bz2
+	zip -q -j quickdoc.html.zip quickdoc.html

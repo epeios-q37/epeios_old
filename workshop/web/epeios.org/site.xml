@@ -118,7 +118,7 @@
         </section>
       </content>
     </document>
-    <document id="one HTML page">
+    <document id="core">
       <general title="About the Epeios project" keywords="Epeios, about" abstract="More about the Epeios project.">
         <author>$AUTHOR$</author>
         <copyright>
@@ -165,7 +165,7 @@
         </section>
       </content>
     </document>
-    <document id="one HTML page">
+    <document id="core">
       <general title="General documentation" abstract="The general documentation of the Epeios project." keywords="Epeios, documentation">
         <author>$AUTHOR$</author>
         <copyright>
@@ -344,7 +344,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="Epeios core libraries quickdoc." abstract="Quickdoc for the Epeios core libraries." keywords="Epeios, libraries, core, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
@@ -391,7 +391,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="User documentation of the core libraries." abstract="The user documentation of the core libraries from the Epeios project." keywords="Epeios, libraries, core, user documentation.">
             <author>$AUTHOR$</author>
             <copyright>
@@ -485,7 +485,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="About the EBKD libraries." abstract="More about the EBKD libraries from the Epeios project." keywords="Epeios, backend, ebkd, about">
             <author>$AUTHOR$</author>
             <copyright>
@@ -585,7 +585,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="EBKD quickdoc." abstract="Quickdoc for the backend-related libraries (EBKD) from the Epeios project." keywords="Epeios, libraries, backend, ebkd, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
@@ -632,7 +632,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="User documentation of the core libraries." abstract="How Epeios core libraries works and how to use them." keywords="Epeios, software engineering, software, free software, free, linux, windows, C++, java, python, unix, open source, open software, GNU, GPL, FSF, BCC, borland, inprise, gcc, bcc, g++, copyleft, pipe, semaphore, multitasking, socket, client, server, mutex">
             <author>$AUTHOR$</author>
             <copyright>
@@ -724,7 +724,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="About the ECGI libraries." abstract="More about the ECGI libraries from the Epeios project." keywords="Epeios, CGI, ecgi, about">
             <author>$AUTHOR$</author>
             <copyright>
@@ -824,7 +824,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="ECGI quickdoc." abstract="Quickdoc of the CGI-related libraries (ECGI) from the Epeios project." keywords="Epeios, libraries, CGI, ecgi, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
@@ -967,7 +967,7 @@
             </section>
           </content>
         </document>
-        <document id="one HTML page">
+        <document id="core">
           <general title="ETMC quickdoc." abstract="Quickdoc of the timcode-related libraries (ETMC) from the Epeios project." keywords="Epeios, libraries, timecode, etmc, quickdoc">
             <author>$AUTHOR$</author>
             <copyright>
@@ -1179,7 +1179,7 @@
               </section>
             </content>
           </document>
-          <document id="one HTML page">
+          <document id="core">
             <general title="TMCDE backend user manual." abstract="The user manual of the backend part of the TMCDE software from the Epeios project." keywords="Epeios, software, tmcde, backend, user manual">
               <author>$AUTHOR$</author>
               <copyright>
@@ -1306,7 +1306,7 @@
               </section>
             </content>
           </document>
-          <document id="one HTML page">
+          <document id="core">
             <general title="TMCDE CGID user manual." abstract="The user manual of the CGID frontend of the TMCDE software from the Epeios project." keywords="Epeios, software, tmcde, CGID, frontend, user manual">
               <author>$AUTHOR$</author>
               <copyright>
