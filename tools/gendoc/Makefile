@@ -28,7 +28,7 @@
 name = gendoc
 copt = -DXXX_DBG
 lopt = 
-libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que
+libs = ttr tol flw stf err uym fam ctn mmi str tsrcpr xtf que fil
 
 ifeq ("$(EPEIOS_OS)","windows")
 ox = obj
