@@ -57,6 +57,9 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &stk		&epeios		&2000-		&STacK
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
+&tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
+&tmcset_	&etmc		&2000-		&TiMeCode SET (for backend)
+&tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 &tol		&epeios		&2000-		&TOoL
 &ttr		&epeios		&2000-		&TuToR
 &tym		&epeios		&2000-		&TYped Memory
