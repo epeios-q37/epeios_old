@@ -1,4 +1,4 @@
-Epeios 'etmc' libraries README by Claude SIMON (csimon@webmails.com).
+Epeios 'etmc' libraries README by Claude SIMON (csimon@epeios.org).
 ---------------------------------------------------------------------
 
 $Id$

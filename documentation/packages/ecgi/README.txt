@@ -1,4 +1,4 @@
-Epeios 'ecgi' libraries README by Claude SIMON (csimon@webmails.com).
+Epeios 'ecgi' libraries README by Claude SIMON (csimon@epeios.org).
 ---------------------------------------------------------------------
 
 $Id$

@@ -1,4 +1,4 @@
-'tmcdecgi' README by Claude SIMON (csimon@webmails.com).
+'tmcdecgi' README by Claude SIMON (csimon@epeios.org).
 ------------------------------------------------------
 
 $Id$

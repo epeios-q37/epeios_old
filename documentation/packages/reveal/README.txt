@@ -1,4 +1,4 @@
-'reveal' README by claude SIMON (csimon@webmails.com).
+'reveal' README by claude SIMON (csimon@epeios.org).
 ------------------------------------------------------
 
 $Id$

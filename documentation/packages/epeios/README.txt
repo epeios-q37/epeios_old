@@ -1,4 +1,4 @@
-Epeios libraries README by Claude SIMON (csimon@webmails.com).
+Epeios libraries README by Claude SIMON (csimon@epeios.org).
 --------------------------------------------------------------
 
 $Id$

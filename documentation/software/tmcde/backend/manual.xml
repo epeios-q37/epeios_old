@@ -39,11 +39,11 @@
     </section>
   </chapter>
   <chapter title="Reporting bugs">
-    <para xml:space="preserve">Report bugs to <contact adress="csimon@webmails.com" type="long">Claude SIMON</contact>.</para>
+    <para xml:space="preserve">Report bugs to <contact adress="csimon@epeios.org" type="long">Claude SIMON</contact>.</para>
   </chapter>
   <chapter title="Author">
     <para xml:space="preserve">
-      <raw>tmcdesrv</raw> was developed by <contact adress="csimon@webmails.com" type="long">Claude SIMON</contact>.</para>
+      <raw>tmcdesrv</raw> was developed by <contact adress="csimon@epeios.org" type="long">Claude SIMON</contact>.</para>
   </chapter>
   <chapter title="Standard conformance">
     <para>

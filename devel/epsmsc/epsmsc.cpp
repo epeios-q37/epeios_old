@@ -1,7 +1,7 @@
 /*
-  'epsmsc' library by Claude L. Simon (simon@epeios.org)
+  'epsmsc' library by Claude L. Simon (csimon@epeios.org)
   Requires the 'epsmsc' header file ('epsmsc.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   

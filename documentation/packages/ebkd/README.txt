@@ -1,4 +1,4 @@
-Epeios 'ebkd' libraries README by Claude SIMON (csimon@webmails.com).
+Epeios 'ebkd' libraries README by Claude SIMON (csimon@epeios.org.
 ---------------------------------------------------------------------
 
 $Id$

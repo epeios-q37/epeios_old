@@ -1,6 +1,6 @@
 /*
-  Header for the 'epsmsc' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'epsmsc' library by Claude L. Simon (csimon@epeios.org)
+  Copyright (C) 2000 Claude L. SIMON (csimon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -44,7 +44,7 @@ extern class ttr_tutor &EPSMSCTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude L. SIMON (csimon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -81,7 +81,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_AUTHOR_NAME	"Claude SIMON"
 
 //d Author e-mail
-#define EPSMSC_AUTHOR_EMAIL	"csimon@webmails.com"
+#define EPSMSC_AUTHOR_EMAIL	"csimon@epeios.org"
 
 //d Author mail hypertext link.
 #define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"

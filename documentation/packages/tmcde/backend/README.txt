@@ -1,4 +1,4 @@
-'tmcde backend' README by claude SIMON (csimon@webmails.com).
+'tmcde backend' README by claude SIMON (csimon@epeios.org).
 ------------------------------------------------------
 
 $Id$
