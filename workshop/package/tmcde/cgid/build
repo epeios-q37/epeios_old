@@ -25,7 +25,7 @@ cvs -d:pserver:anonymous@cvs.etmc.sf.net:/cvsroot/etmc logout
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-rm $DIR/bkd2cpp.xsl
+rm $DIR/bkd4cpp.xsl
 tar --gzip -cf $DIR.tar.gz $DIR
 tar -c $DIR | bzip2 >$DIR.tar.bz2
 zip -r -q $DIR.zip $DIR
