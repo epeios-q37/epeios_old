@@ -3,10 +3,12 @@
 
 NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &bkdmng		&ebkd		&2000-		&BacKenD MaNaGer
-&bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager 
+&bkdrqm		&ebkd		&2000-		&BacKenD ReQuest Manager
+&bkdtpm		&ebkd		&2000-		&BacKenD TyPes Manager
 &dbiapi		&ldbi		&		&DataBase Interface Adavanced Programmer Interface
 &dbiapi_	&ldbi		&		&DataBase Interface Adavanced Programmer Interface (for backend)
 &dbibsc		&ldbi		&		&DataBase Interface BaSiCs
+&dbibsc_	&ldbi		&		&DataBase Interface BaSiCs (for backend)
 &dbidpd		&ldbi		&		&Database DePenDences
 &dbidtp		&ldbi		&		&DataBase Interface Data TyPEs
 &dbimsc		&ldbi		&		&BataBase Interface MiSC
@@ -23,6 +25,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &pip		&epeios		&2000-		&PIPe
 &spp		&epeios		&2000-		&Shared PiPe
 &str		&epeios		&2000-		&STRing
+&tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
 &xmlbsc		&exml		&2000-		&XML BaSiC
 &xmlcor		&exml		&2000-		&XML CORe
 &xmldbs		&exml		&2000-		&XML DataBaSe
