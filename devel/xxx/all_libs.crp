@@ -355,7 +355,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Private WSA libraries.
-&wsaabc		&pwsa		&2000-		&Web Site Agent ABCbourse.com
+&wsaabc		&pwsa		&2000-\
+	&Web Site Agent ABCbourse.com
+&wsaern		&pwsa		&\
+	&Web Site Agent EuRoNext.com
 
 #Private STX libraries.
 &stxcde		&pstx		&2000-2002 ,\

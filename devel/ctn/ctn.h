@@ -639,11 +639,6 @@ namespace ctn {
 		{
 			return Ponctuel_.IsFlushed();
 		}
-		// Return true id empty, false otherwise.
-		bso::bool__ IsEmpty( void ) const
-		{
-			return Ponctuel_.IsEmpty();
-		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */
 		const t& Get(
@@ -1035,11 +1030,6 @@ namespace ctn {
 		bso::bool__ IsFlushed( void ) const
 		{
 			return Ponctuel_.IsFlushed();
-		}
-		// Return true id empty, false otherwise.
-		bso::bool__ IsEmpty( void ) const
-		{
-			return Ponctuel_.IsEmpty();
 		}
 		/*f Return the object at 'Position' using 'Item'.
 		Valid only until next modification of 'Item'. */

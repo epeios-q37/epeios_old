@@ -51,6 +51,7 @@ CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
 - (23/04/04) Adding a test in debug mode to avoid retrieving of an undefined item.
 - (10/05/04) Fixing 'Delete()' bug.
+- (24/10/04) Removing 'EstVide', replaced by 'IsEmpty'.
 
 DTE:
 - (15/04/04) Introducing the new structure.
@@ -169,6 +170,7 @@ TXF:
 XTF:
 - (31/05/04) Removing a tailing '_' to object name.
 - (20/07/04) Fixing 'View()' bug.
+- (24/10/04) Removing previous correction. There is a conception problem.
 
 --------
 20040215

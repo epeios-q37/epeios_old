@@ -261,21 +261,34 @@ namespace xtf {
 		//f Return the next character in the flow, but let it in the flow.
 		char View( void )
 		{
-
-			if ( EOL_ ) {
-				char C = Consulter_( 1 );
-
-				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
-					 || ( EOL_ == '\n' && ( C == '\r' ) ) )
-					Get();
-			}
-
 			return Consulter_( 1 );
 		}
 		//f True if at end of text.
 		bso::bool__ EOX( void )
 		{
-			return View() == XTF_EOXC;
+#if 0
+			if ( EOL_ ) {
+				char C = View();
+
+				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
+					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
+
+					 if ( Nombre_ == 1 ) {
+						 RemplirTampon_( 2 );
+						 Nombre_++;
+						 Position_--;
+						 Cache_[Position_] = C;
+					 }
+
+					 if ( Nombre_ < 2 )
+						 ERRf();
+
+					 return Cache_[Position_+1] == XTF_EOXC;
+				} else
+					return false;
+			} else
+#endif
+				return View() == XTF_EOXC;
 		}
 		//f Return the amount of data red.
 		amount__ AmountRed( void ) const
