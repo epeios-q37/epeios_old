@@ -18,6 +18,9 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &dbisql		&ldbi		&		&DataBase Interface SQL (from language)
 &dbisrq		&ldbi		&		&DataBase Interface Search ReQuest
 &err		&epeios		&2000-		&ERRor handling
+&cgiarg		&ecgi		&2000-		&CGI (Common Gateway Interface) ARGument
+&cgimng		&ecgi		&2000-		&CGI (Common Gateway Interface) MaNaGer
+&cgitol		&ecgi		&		&CGI (Common Gateway Interface) TOoL
 &mscmdf		&emsc		&		&MuSiC MiDi File		
 &mscmdm		&emsc		&		&MuSiC MiDi Messages
 &mscvkp		&emsc		&		&MuSiC VK (from Roland VK combo organ) Parameters
