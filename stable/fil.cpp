@@ -98,22 +98,26 @@ static void _Close( iof::descriptor__ D )
 
 #elif defined( IOF__USE_LOWLEVEL_IO )
 #	ifdef CPE__MS
+#include "sys/stat.h"
 
 static inline iof::descriptor__ _Open(
 	const char *Nom,
 	mode__ Mode )
 {
 	int Flags = _O_BINARY;
+	int PMode = 0;
 
 	switch ( Mode ) {
 	case mRemove:
 		Flags |= _O_TRUNC | _O_CREAT |_O_RDWR;
+		PMode |= _S_IWRITE;
 		break;
 	case mAppend:
 		Flags |= _O_APPEND | _O_RDWR;
 		break;
 	case mReadWrite:
-		Flags |= _O_RDWR;
+		Flags |= _O_CREAT | _O_RDWR;
+		PMode |= _S_IWRITE;
 		break;
 	case mReadOnly:
 		Flags |= _O_RDONLY;
@@ -123,7 +127,7 @@ static inline iof::descriptor__ _Open(
 		break;
 	}
 
-	return _open( Nom, Flags );
+	return _open( Nom, Flags, PMode );
 }
 
 static void _Close( iof::descriptor__ D )

@@ -1,6 +1,6 @@
 /*
 	Header for the 'lstctn' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -126,6 +126,16 @@ namespace lstctn {
 		row New( row Row )
 		{
 			return list_<row, row_t>::New( Row );
+		}
+		// To avoid the use of herited 'Append' methods.
+		void Append( void ) const
+		{
+			ERRu();
+		}
+		// To avoid the use of herited 'Remove' methods.
+		void Remove( void ) const
+		{
+			ERRu();
 		}
 	};
 

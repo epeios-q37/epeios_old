@@ -142,6 +142,11 @@ namespace lstbch {
 		{
 			ERRu();
 		}
+		// To avoid the use of herited 'Remove' methods.
+		void Remove( void ) const
+		{
+			ERRu();
+		}
 	};
 
 	E_AUTO3( list_bunch )

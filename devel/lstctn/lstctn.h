@@ -127,6 +127,16 @@ namespace lstctn {
 		{
 			return list_<row, row_t>::New( Row );
 		}
+		// To avoid the use of herited 'Append' methods.
+		void Append( void ) const
+		{
+			ERRu();
+		}
+		// To avoid the use of herited 'Remove' methods.
+		void Remove( void ) const
+		{
+			ERRu();
+		}
 	};
 
 	E_AUTO3( list_container )

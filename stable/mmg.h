@@ -375,7 +375,7 @@ namespace mmg
 
 			Test = tol::FileExists( FileName );
 
-			PiloteFichier_.Init( FileName );
+			PiloteFichier_.Init( FileName, FileMode );
 			PiloteFichier_.Persistant();
 			PiloteFichier_.Manuel();
 

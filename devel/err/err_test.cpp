@@ -38,7 +38,7 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
-	ERRi();
+	ERRx();
 ERRErr
 ERREnd
 ERREpilog
@@ -46,7 +46,6 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	cio::cout << "Test of library " << ERRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
@@ -69,9 +68,8 @@ ERRFBegin
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
 	cio::cout << "\nEnd of program " << ERRTutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }
