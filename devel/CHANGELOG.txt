@@ -15,7 +15,6 @@ CIO:
 
 FIL:
 - (02/02/05) Use now 'IOF' library.
-- (05/02/05) Fixing file open bug in Windows mode.
 
 FLM:
 - (02/02/05) Use now 'IOF' library.
@@ -26,15 +25,6 @@ FLW:
 
 FLX:
 - (03/02/05) Adapting to changes in 'FLW' library.
-
-LSTBCH:
-- (05/02/05) Adding dome method to avoid use of the inherited ones.
-
-LSTCTN:
-- (05/02/05) Adding dome method to avoid use of the inherited ones.
-
-MMG:
-- (05/02/05) Fixing missing file open mode bug.
 
 MSG:
 - (26/01/05) Coding workaround for the silly 'GetMessage' problem for cygwin too.
