@@ -57,8 +57,10 @@ extern class ttr_tutor &BRKTPMTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D BRoKer TyPe Manager.
+//D Obsolete. Use 'BKDTPM' instead.
 /* End addendum to automatic documentation generation part. */
+
+#error Obsolete. Use 'BKDTPM' instead.
 
 
 #include "err.h"

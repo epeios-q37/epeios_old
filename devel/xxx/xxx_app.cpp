@@ -1,5 +1,5 @@
 /*
-	'$NAME$' by Claude L. SIMON (simon@epeios.org)
+	'$NAME$' by Claude L. SIMON ($EMAIL$)
 	Copyright (C) 2001 $COPYRIGHT$
 
 	$ADDENDUM1$

@@ -1,5 +1,5 @@
 /*
-  Header for the 'brkcmd' library by Claude L. Simon (csimon@webmails.com)
+  Header for the 'xmlprs' library by Claude L. Simon (csimon@webmails.com)
   Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
 
   This file is part of the Epeios (http://epeios.org/) project.
@@ -25,21 +25,21 @@
 
 //	$Id$
 
-#ifndef BRKCMD__INC
-#define BRKCMD__INC
+#ifndef XMLPRS__INC
+#define XMLPRS__INC
 
-#define BRKCMD_NAME		"BRKCMD"
+#define XMLPRS_NAME		"XMLPRS"
 
-#define	BRKCMD_VERSION	"$Revision$"	
+#define	XMLPRS_VERSION	"$Revision$"	
 
-#define BRKCMD_OWNER		"the Epeios project (http://epeios.org/)"
+#define XMLPRS_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &BRKCMDTutor;
+extern class ttr_tutor &XMLPRSTutor;
 
-#if defined( XXX_DBG ) && !defined( BRKCMD_NODBG )
-#define BRKCMD_DBG 
+#if defined( XXX_DBG ) && !defined( XMLPRS_NODBG )
+#define XMLPRS_DBG 
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -57,46 +57,24 @@ extern class ttr_tutor &BRKCMDTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D Obsolete. Use 'BKDCMD' instead.
+//D eXtended Markup Langage PaRSer
 /* End addendum to automatic documentation generation part. */
 
-#error Obolete. Use 'BKDCMD' instead.
 
 #include "err.h"
 #include "flw.h"
-#include "brkcst.h"
+#include "xmldcm.h"
 
-//d Version of the commands.
-#define BRKCMD_COMMANDS_VERSION	"1"
+namespace xmlprs {
+	/*f Fill 'XMLD' with contents of 'Flow', with buffer
+	of 'BufferLength' (expat issue). */
+	void ParseXML(
+		txf::text_iflow___ &Flow,
+		xmldcm::xml_document_ &XMLD,
+		int BufferLength );
 
-namespace brkcmd {
-	using namespace brkcst;
-
-	enum command {
-		cSetErrorBreakingStatus,
-		cGetErrorBreakingStatus,
-		cGetNewObject,
-		cGetType,
-		cGetCommand,
-		cGetCommands,
-		cGetTypeAndCommands,
-		cRemoveObject,
-		cGetLanguagesIDAndName,
-		cGetVersion,
-		cDisconnect,
-		cGetTypesIDAndName,
-		cGetCommandsIDAndName,
-		cGetParameters,
-		c_amount
-	};
-
-	//o Commands names.
-	extern const char *CommandsNames[brkcmd::c_amount];
-
-	//o Commands parameters.
-	extern const cast *CommandsParameters[brkcmd::c_amount];
-
-};
+	void License( txf::text_oflow___ &OFlow );
+}
 
 /*$END$*/
 				  /********************************************/

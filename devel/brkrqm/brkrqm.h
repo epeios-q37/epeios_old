@@ -57,9 +57,10 @@ extern class ttr_tutor &BRKRQMTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D BRoKer ReQueqt Manager.
+//D Obsolete. Use 'BKDRQM' instead.
 /* End addendum to automatic documentation generation part. */
 
+#error Obsolete. Use 'BKDRQM' instead.
 
 #include "err.h"
 #include "flw.h"

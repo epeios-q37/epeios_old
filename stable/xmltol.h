@@ -1,5 +1,5 @@
 /*
-  Header for the 'brkcmd' library by Claude L. Simon (csimon@webmails.com)
+  Header for the 'xmltol' library by Claude L. Simon (csimon@webmails.com)
   Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
 
   This file is part of the Epeios (http://epeios.org/) project.
@@ -25,21 +25,21 @@
 
 //	$Id$
 
-#ifndef BRKCMD__INC
-#define BRKCMD__INC
+#ifndef XMLTOL__INC
+#define XMLTOL__INC
 
-#define BRKCMD_NAME		"BRKCMD"
+#define XMLTOL_NAME		"XMLTOL"
 
-#define	BRKCMD_VERSION	"$Revision$"	
+#define	XMLTOL_VERSION	"$Revision$"	
 
-#define BRKCMD_OWNER		"the Epeios project (http://epeios.org/)"
+#define XMLTOL_OWNER		"the Epeios project (http://epeios.org/)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &BRKCMDTutor;
+extern class ttr_tutor &XMLTOLTutor;
 
-#if defined( XXX_DBG ) && !defined( BRKCMD_NODBG )
-#define BRKCMD_DBG 
+#if defined( XXX_DBG ) && !defined( XMLTOL_NODBG )
+#define XMLTOL_DBG 
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -57,46 +57,30 @@ extern class ttr_tutor &BRKCMDTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D Obsolete. Use 'BKDCMD' instead.
+//D eXtended Markup Language TOoLs
 /* End addendum to automatic documentation generation part. */
 
-#error Obolete. Use 'BKDCMD' instead.
 
 #include "err.h"
 #include "flw.h"
-#include "brkcst.h"
+#include "xmldcm.h"
+#include "xmldbs.h"
 
-//d Version of the commands.
-#define BRKCMD_COMMANDS_VERSION	"1"
+namespace xmltol {
+	using namespace xmldcm;
+	using namespace xmldbs;
 
-namespace brkcmd {
-	using namespace brkcst;
+	//f Convert 'XMLDCM' into 'XMLDBS'.
+	void Convert(
+		const xml_document_ &XMLDCM,
+		xml_database_ &XMLDBS );
+		
+	//f Replace all tag name from 'Tags' by 'NewTags'.
+	void Replace(
+		tags_ &Tags,
+		const xml_database_ &NewTags );
 
-	enum command {
-		cSetErrorBreakingStatus,
-		cGetErrorBreakingStatus,
-		cGetNewObject,
-		cGetType,
-		cGetCommand,
-		cGetCommands,
-		cGetTypeAndCommands,
-		cRemoveObject,
-		cGetLanguagesIDAndName,
-		cGetVersion,
-		cDisconnect,
-		cGetTypesIDAndName,
-		cGetCommandsIDAndName,
-		cGetParameters,
-		c_amount
-	};
-
-	//o Commands names.
-	extern const char *CommandsNames[brkcmd::c_amount];
-
-	//o Commands parameters.
-	extern const cast *CommandsParameters[brkcmd::c_amount];
-
-};
+}
 
 /*$END$*/
 				  /********************************************/

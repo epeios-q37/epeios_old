@@ -55,7 +55,9 @@ extern class ttr_tutor &BRKANLTutor;
 				  /*******************************************/
 /*$BEGIN$*/
 
-//D BRoKer ANaLyzer. Analyze the contents of a broker.
+//D Obsolete. Use 'BKDDCB' instead.
+
+#error Obsolete. Use 'BKDDCB' instead.
 
 #include "err.h"
 #include "flw.h"

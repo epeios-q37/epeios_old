@@ -406,6 +406,7 @@ static type TrouverDoc_(
 	static int Crochet = 0;
 	bso::bool__ Long;
 	volatile int C;
+	bso::bool__ TaggedCommentFound = false;
 
 	do
 	{
@@ -475,7 +476,27 @@ static type TrouverDoc_(
 
 		C = Flot.Get();
 
-	} while ( !strchr( "eifcvdrtosVDCR", C ) );
+		if ( ( strchr( "eifcvdrtosVDCR", C ) == NULL )
+			|| ( Flot.View() != ' ' ) ) {
+			if ( Long ) {
+				do {
+					do {
+						if ( Flot.EOX() )
+							ERRf();
+	
+					} while ( Flot.Get() != '*' );
+
+					if ( Flot.EOX() )
+						ERRf();
+
+				} while( Flot.View() != '/' );
+
+				Flot.Get();
+			} else
+				Flot.SkipLine();
+		} else 
+			TaggedCommentFound = true;
+	} while ( !TaggedCommentFound );
 
 	if ( C == 'f' )
 		if ( Long )

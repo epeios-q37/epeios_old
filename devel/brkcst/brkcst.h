@@ -57,8 +57,10 @@ extern class ttr_tutor &BRKCSTTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D BRoKer CaSTs.
+//D Obsolete. Use 'BKDCST' instead.
 /* End addendum to automatic documentation generation part. */
+
+#error Obsolete. Use 'BKDCST' instead.
 
 //d Version casts version.
 #define BRKCST_CASTS_VERSION	"1"

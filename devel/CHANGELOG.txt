@@ -1,7 +1,51 @@
 $Id$
 
+General changes.
+- Due to the fact that I had difficulties with the 'broker::broker'
+object, due to the fact that class name and namespace are the same,
+(had the same problem with 'set::set', which becames 'bch::bunch'),
+all libraries related to 'broker' are renamed into 'backend'.
+- Removing all the 'BROKERx' libraries.
+- Adding the 'XMLxxx' libraries.
+
 BCH:
 - fixing 'WriteAndAdjust' bug.
+
+BCKEND:
+- Created from 'BROKER'.
+
+BKDCST:
+- Created from 'BRKCST'.
+
+BKDDCB:
+- Created from 'BRKANL'.
+
+BKDCMD:
+- Created from 'BRKCMD'.
+
+BKDRQM:
+- Created from 'BRKRQM'.
+
+BKDTPM:
+- Created from 'BRKTPM'.
+
+BRKANL:
+- Replaced by 'BKDDCB'.
+
+BRKCST:
+- Replaced by 'BKDCST'.
+
+BRKCMD:
+- Replaced by 'BKDCMD'.
+
+BRKRQM:
+- Replaced by 'BKDRQM'.
+
+BRKTPM:
+- Replaced by 'BKDTPM'.
+
+BROKER:
+- Replaced by 'BCKEND'.
 
 BROKER:
 - adapting to 'LST' modifications.
@@ -9,8 +53,15 @@ BROKER:
 CLNARG:
 - Adding the 'Parameter' parameter to 'PrintOptionUsage'.
 
+CLT:
+- Adapting to 'BSO' modifications.
+
 EPSMSC:
 - Update.
+
+FRTEND:
+- Adapting to the new 'BKDxxx' libraries.
+- Adapting to modifications in 'BSO'.
 
 GNUMLL:
 - Adapting to 'CTN', 'MMM', 'BSO', 'TXMPGH' modifications.
@@ -24,7 +75,8 @@ TAGEXP:
 - Adapting to changes in 'STF'.
 
 TSRCPR:
-- Correcting '#define' bogue.
+- Fixing '#define' bogue.
+- Fixing tagged comment in comment bug.
 
 TXMPGH:
 - Introducing namespace.

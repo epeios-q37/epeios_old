@@ -355,7 +355,11 @@ namespace bso {
 	//t Middle-sized float.
 	typedef double float__;
 
+#if 0	// Just a workaround to a 'gendoc' bug.
 	//t Long sized float.
+	typedef dummy lfloat__;
+#endif
+
 	typedef long double lfloat__;
 
 	// Character

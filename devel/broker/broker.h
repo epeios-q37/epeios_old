@@ -56,9 +56,10 @@ extern class ttr_tutor &BROKERTutor;
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D BRoKer.
+//D Obsolete. Use 'BCKEND' instead.
 /* End addendum to automatic documentation generation part. */
 
+#error Obsolete. Use 'BCKEND' instead.
 
 #include "err.h"
 #include "flw.h"

@@ -124,5 +124,14 @@ SOURCE=.\$xxx$.h
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
+
+# Begin Source File
+
+SOURCE=..\CHANGELOG.txt
+# End Source File
+# Begin Source File
+
+SOURCE=..\TODO.txt
+# End Source File
 # End Target
 # End Project
