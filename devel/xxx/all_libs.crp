@@ -208,6 +208,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&DataBase Interface MySQl (from MySQL database)
 &dbimsq_	&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
 &dbipgs		&ldbi		&2002-		&DataBase Interface PostGreS
+&dbiscb		&ldbi		&\
+	&DataBase Interface Sequiter CodeBase
 &dbisql		&ldbi		&2002-\
 	&DataBase Interface SQL (from language)
 &dbisrq		&ldbi		&2002-\
