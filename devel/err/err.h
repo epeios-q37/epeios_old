@@ -375,6 +375,8 @@ namespace err {
 
 // Jump to 'ERRErr' and reset the reset the err::itn/iNoError' error.
 #define	ERRReturn		ERRI( iReturn );
+
+#define ERRExitValue	err::ERR.ExitValue
 }
 
 /*$END$*/
