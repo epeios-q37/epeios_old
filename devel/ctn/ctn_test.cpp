@@ -34,8 +34,10 @@
 
 #include "err.h"
 #include "stf.h"
+#include "str.h"
+#include "flm.h"
 
-void Generic( int argc, char *argv[] )
+void Generic( int argc, const char *argv[] )
 {
 ERRProlog
 ERRBegin
@@ -44,7 +46,559 @@ ERREnd
 ERREpilog
 }
 
-int main( int argc, char *argv[] )
+void EssaiBasic( void )
+{
+ERRProlog
+	XCONTAINER( str_string_ ) C;
+//	MITEM( str_string_ ) E;
+ERRBegin
+	C.Init();
+	C.Allocate( 2 );
+
+//	E.Init( C );
+
+	C( 0 ).Init();
+	C( 0 ) = "coucou";
+
+	C( 1 ).Init();
+	C( 1 ) = "hello";
+
+	fout << C( 0 ) << txf::tab;
+	fout << C( 1 ) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+#define LM	'Z'
+#define Lm	'z'
+#define LC	'9'
+
+void Classer( MCONTAINER_( str_string_ ) &Liste )
+{
+ERRProlog
+	bso__bool Swap = true;
+	str_string S1;
+	MITEM( str_string_ ) S2;
+	MITEM( str_string_ ) EListe;
+ERRBegin
+	S1.Init();
+	S2.Init( Liste );
+	EListe.Init( Liste );
+
+	while ( Swap )
+	{
+		Swap = false;
+
+		if ( Liste.Amount() )
+			S2.Sync( 0 );
+//			S2 = Liste[0];
+
+	for ( POSITION__ i = 1; i < Liste.Amount(); i++ )
+	{
+			S1 = S2();
+			S2.Sync( i );
+//			S2 = Liste[i];
+
+			if ( S1 < S2() )
+			{
+//				Liste.Dynamique.Multimemoire()->AfficherStructure();
+
+				Swap = true;
+
+				EListe(i-1) = S2();
+				S2() = S1;
+
+//				Liste.Dynamique.Multimemoire()->AfficherStructure();
+			}
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+void Remplir( str_string_ &S )
+{
+	int i = 10UL * rand() / RAND_MAX + 1;
+
+	while ( i-- )
+		S.Add( (char)( 'a' + ( 'z' - 'a' ) * rand() / RAND_MAX ) );
+}
+
+
+
+void Essai( int argc, const char *argv[] )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory M;
+	XMCONTAINER( str_string_ ) CS, CD;
+/*	fch_flot_sortie_fichier S;
+	fch_flot_entree_fichier E;
+*/	MITEM( str_string_ ) ECS, ECD;
+	str_string Str;
+	int i;
+ERRBegin
+	F.Init();
+	F.Manuel();
+	M.plug( F );
+	M.Init();
+	CS.plug( M );
+	CS.Init();
+	CS.Allocate( 12 );
+	ECS.Init( CS );
+	ECD.Init( CD );
+
+	Str.Init();
+
+	Str = "a";
+
+	ECS(5).Init();
+	Str = "a";
+	ECS(5)= Str;
+	ECS(4).Init();
+	Str = "bc";
+	ECS(4)= Str;
+	ECS(3).Init();
+	Str = "def";
+	ECS(3)= Str;
+	ECS(2).Init();
+	Str = "ghij";
+	ECS(2)= Str;
+	ECS(1).Init();
+	Str = "qlmno";
+	ECS(1)= Str;
+	ECS(0).Init();
+	Str = "parstu";
+	ECS(0)= Str;
+	ECS(6).Init();
+	Str = "c";
+	ECS(6)= Str;
+	Str = "co";
+	ECS(7).Init();
+	ECS(7)= Str;
+	Str = "cou";
+	ECS(8).Init();
+	ECS(8)= Str;
+	Str = "couc";
+	ECS(9).Init();
+	ECS(9)= Str;
+	Str = "couco";
+	ECS(10).Init();
+	ECS(10)= Str;
+	Str = "coucou";
+	ECS(11).Init();
+	ECS(11)= Str;
+
+	for ( i = 0; i <= 11; i++ )
+		fout << ECS(i) << txf::tab;
+
+	fout << txf::nl;
+
+	Classer( CS );
+#if 0
+	S.Init( "Essai.txt" );
+	S << CS;
+	S.prg();
+
+	E.Init( "Essai.txt" );
+	CD.Init();
+	E >> CD;
+	E.prg();
+#else
+	CD.Init();
+
+	CD = CS;
+	ECD.Init( CD );
+#endif
+
+	for ( i = 0; i <= 11; i++ )
+		fout << ECD(i) << txf::tab;
+
+	fout << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+
+}
+
+
+
+void EssaiCopie( int argc, const char *argv[] )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory Mm;
+	XCONTAINER( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) CM;
+	XCONTAINER( XMCONTAINER_( str_string_ ) ) Cm;
+	XMCONTAINER( str_string_ ) CC;
+	str_string S;
+/*	fch_flot_sortie_fichier FO;
+	fch_flot_entree_fichier FI;
+*/	ITEM( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) ECM;
+//	ITEM( MCONTAINER_( str_string_ ) ) ECm;
+	MITEM( str_string_ ) ECC;
+	char M, m, C;
+ERRBegin
+	F.Init("a.tmp");
+//	F.Manuel();
+	Mm.plug( F );
+	Mm.Init();
+	CM.plug( Mm );
+	CM.Init();
+	Cm.Init();
+	CC.Init();
+
+	CM.Allocate( LM - 'A' + 1 );
+	Cm.Allocate( Lm - 'a' + 1 );
+	CC.Allocate( LC - '0' + 1 );
+
+	ECC.Init( CC );
+//	ECm.Init( Cm );
+	ECM.Init( CM );
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		for ( m = 'a'; m <= Lm; m++ )
+		{
+			for ( C = '0'; C <= LC; C++ )
+			{
+				S.Init();
+
+				S.Add( M );
+				S.Add( m );
+				S.Add( C );
+
+				ECC( C - '0' ).Init();
+				ECC() = S;
+//				fout << S << " ";
+				fout << ECC(C - '0') << " ";
+
+			}
+
+			ECC.Sync();
+
+			fout << '\t';
+/*
+			ECm( m - 'a' ).Init();
+			ECm() = CC;
+*/
+			Cm( m - 'a' ).Init();
+			Cm() = CC;
+
+		}
+
+//		ECm.Sync();
+		Cm.Sync();
+
+		fout << txf::nl;
+		ECM(M - 'A').Init();
+		ECM() = Cm;
+	}
+
+	fout << "--------------" << txf::nl;
+
+	ECM.ChangeMode( mdr::mReadOnly );
+//	ECm.ChangeMode( mdr::mReadOnly );
+	ECC.ChangeMode( mdr::mReadOnly );
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		Cm = ECM(M - 'A');
+
+		for ( m ='a'; m <= Lm; m++ )
+		{
+//			CC = ECm(m - 'a');
+			CC = Cm(m - 'a');
+
+			for ( C = '0'; C <= LC; C++ )
+			{
+				S = ECC(C - '0');
+
+				fout << S << ' ' << txf::sync;
+			}
+
+			fout << '\t';
+
+		}
+
+		fout << txf::nl;
+	}
+/*
+	CMS.Mode( plm::mModification );
+	F.Mode( plm::mModification );
+*/
+	// Pour que l'objet puisse se détruire.
+
+ERRErr
+	// instructions à exécuter si erreur
+ERREnd
+	// instructions à exécuter, erreur ou non
+ERREpilog
+}
+
+void SP2(
+	XMCONTAINER_( str_string_ ) &O,
+	char M,
+	char m )
+{
+ERRProlog
+	MITEM( str_string_ ) E;
+ERRBegin
+	E.Init( O );
+
+	for ( char C = '0'; C <= LC; C++ )
+	{
+		E(C - '0').Init();
+
+		E(C - '0').Add( M );
+		E(C - '0').Add( m );
+		E(C - '0').Add( C );
+
+		fout << E(C - '0') << " " << txf::sync;
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void SP1(
+	XCONTAINER_( XMCONTAINER_( str_string_ ) ) &O,
+	char M)
+{
+ERRProlog
+	ITEM( XMCONTAINER_( str_string_ ) ) E;
+ERRBegin
+	E.Init( O );
+
+	for ( char m = 'a'; m <= Lm; m++ )
+	{
+		E(m - 'a').Init();
+		E(m - 'a').Allocate( LC - '0' + 1 );
+
+		SP2( E( m - 'a' ), M, m );
+
+		fout << '\t';
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void SSP2(
+	const MCONTAINER_( str_string_ ) &O,
+	char M,
+	char m )
+{
+ERRProlog
+	CMITEM( str_string_ ) E;
+ERRBegin
+	E.Init( O );
+
+	for ( char C = '0'; C <= LC; C++ )
+	{
+		fout << E(C - '0') << ' ';
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void SSP1(
+	const XCONTAINER_( XMCONTAINER_( str_string_ ) ) &O,
+	char M)
+{
+ERRProlog
+	CITEM( XMCONTAINER_( str_string_ ) ) E;
+ERRBegin
+	E.Init( O );
+
+	for ( char m = 'a'; m <= Lm; m++ )
+	{
+		SSP2( E(m - 'a'), M, m );
+
+		fout << '\t';
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+void EssaiDirect( int argc, const char *argv[] )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory Mm;
+//	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str_string_, str_string_::s ) > ) ) GC;
+	XCONTAINER( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) GC;
+	ITEM( XCONTAINER_( XMCONTAINER_( str_string_ ) ) ) EGC;
+	char M;
+ERRBegin
+	F.Init("b.tmp");
+	F.Manuel();
+	Mm.plug( F );
+	Mm.Init();
+//	GC.plug( Mm );
+	GC.Init();
+	GC.Allocate( LM - 'A' + 1 );
+
+	EGC.Init( GC );
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		EGC(M - 'A').Init();
+//		GC[M - 'A'].Multimemoire.Optimisation( mmm::Temps );
+		EGC(M - 'A').Allocate( Lm - 'a' + 1 );
+
+		SP1( EGC(M - 'A' ), M );
+
+		fout << txf::nl;
+
+	}
+
+	fout << "--------------" << txf::nl;
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		SSP1( EGC(M - 'A'), M );
+
+		fout << txf::nl;
+
+	}
+
+
+
+ERRErr
+	// instructions à exécuter si erreur
+ERREnd
+	// instructions à exécuter, erreur ou non
+ERREpilog
+}
+
+void EssaiSimpleMono( void )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory M;
+	XMCONTAINER( str_string_ ) C;
+	MITEM( str_string_ ) E;
+ERRBegin
+	F.Init( "coucou.tmp" );
+	M.plug( F );
+	M.Init();
+	C.plug( M );
+	C.Init();
+	C.Allocate( 2 );
+	E.Init( C );
+
+	E(0).Init();
+	E(0) = str_string( "a" );
+	E(1).Init();
+	E(1)= str_string( "b" );
+	fout << E(0) << txf::tab;
+	fout << E(1) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void EssaiSimpleMulti( void )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory M;
+	CONTAINER( str_string_ ) C;
+	ITEM( str_string_ ) E;
+ERRBegin
+	F.Init( "coucou.tmp" );
+	M.plug( F );
+	M.Init();
+	C.plug( M );
+	C.Init();
+	C.Allocate( 2 );
+	E.Init( C );
+
+	E(0).Init();
+	E(0) = str_string( "a" );
+	E(1).Init();
+	E(1)= str_string( "b" );
+	fout << E(0) << txf::tab;
+	fout << E(1) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void EssaiConteneurDansConteneur( void )
+{
+ERRProlog
+	flm_file_memory_driver F;
+	mmm_multimemory M;
+	XMCONTAINER( str_string_ ) CS;
+	XCONTAINER( XMCONTAINER_( str_string_ ) ) CC;
+//	ITEM( str_string_ ) ECS;
+//	ITEM( CONTENEUR_( str_string_ ) ) ECC;
+ERRBegin
+	F.Init( "temp.tmp" );
+	M.plug( F );
+	M.Init();
+
+//	CS.plug( M );
+	CS.Init();
+
+//	CC.plug( M );
+	CC.Init();
+
+//	ECS.Init( CS );
+//	ECC.Init( CC );
+
+	CS.Allocate( 1 );
+	CC.Allocate( 2 );
+
+	CS(0).Init();
+	CS() = "coucou";
+	CS.Sync();
+
+	CC(0).Init();
+	CC() = CS;
+	CC.Sync();
+
+	fout << CS( 0 ) << txf::tab;
+
+	CS(0).Init();
+	CS() = "hello";
+	CS.Sync();
+
+	CC(1).Init();
+	CC() = CS;
+	CC.Sync();
+
+	fout << CS( 0 ) << txf::tab;
+
+	CS = CC( 0 );
+	CC.Sync();
+	fout << CS( 0 ) << txf::tab;
+
+	CS = CC( 1 );
+	CC.Sync();
+	fout << CS( 0 ) << txf::nl;
+
+	CS.Sync();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+
+int main( int argc, const char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
@@ -54,6 +608,15 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		EssaiBasic();
+		EssaiConteneurDansConteneur();
+		EssaiSimpleMono();
+		EssaiSimpleMulti();
+		Essai( argc, argv );
+		fout << "********************************************************" << txf::nl;
+		EssaiDirect( argc, argv );
+		fout << "********************************************************" << txf::nl;
+		EssaiCopie( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

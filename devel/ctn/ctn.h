@@ -87,13 +87,13 @@ template <class st> class ctn_basic_container_
 {
 public:
 	//r All the static parts.
-	SET_( st ) Statics;
+	set::SET_( st ) Statics;
 	//r All the dynamic parts.
-	mmi_indexed_multimemory_ Dynamics;
+	mmi::indexed_multimemory_ Dynamics;
 	struct s
 	{
-		SET_( st )::s Statics;
-		mmi_indexed_multimemory_::s Dynamics;
+		set::SET_( st )::s Statics;
+		mmi::indexed_multimemory_::s Dynamics;
 	};
 	ctn_basic_container_( s &S )
 	: Dynamics( S.Dynamics ),
@@ -141,7 +141,7 @@ public:
 
 		Dynamics.Allocate( Size );
 
-		AncCap = Statics.Extent();
+		AncCap = Statics.Amount();
 
 		Statics.Allocate( Size );
 
@@ -153,11 +153,13 @@ public:
 				Statics.Write( ST, AncCap );
 		}
 	}
+#if 0
 	//f Extent of the container.
 	ctn__size Extent( void ) const
 	{
 		return Statics.Extent();
 	}
+#endif
 	// Comme 'ecrire()', sauf pour la multimémoire, qui contient la partie dynamique.
 /*	void EcrireToutDansFlotSaufPartiesDynamiques( flo_sortie_ &Flot ) const
 	{
@@ -204,14 +206,14 @@ protected:
 	ctn_basic_container_<st> *Conteneur_;
 	/* Pilote permettant l'accés à la partie dynamique des objets contenus
 	dans le conteneur auquel cet élément est rattaché. */
-	mmi_indexed_multimemory_driver_ Pilote_;
+	mmi::indexed_multimemory_driver_ Pilote_;
 	// Mode d'accés
 	mdr::mode Mode_;
 public:
 	struct s
 	: public st
 	{
-		mmi_indexed_multimemory_driver_::s Pilote_;
+		mmi::indexed_multimemory_driver_::s Pilote_;
 	} ctn_S_; //pour ne pas risquer d'ambigüité.
 	/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
 	si 'EstVide()' est à faux. */
@@ -299,12 +301,12 @@ protected:
 	const ctn_basic_container_<st> *Conteneur_;
 	/* Pilote permettant l'accés à la partie dynamique des objets contenus
 	dans le conteneur auquel cet élément est rattaché. */
-	mmi_const_indexed_multimemory_driver_ Pilote_;
+	mmi::const_indexed_multimemory_driver_ Pilote_;
 public:
 	struct s
 	: public st
 	{
-		mmi_const_indexed_multimemory_driver_::s Pilote_;
+		mmi::const_indexed_multimemory_driver_::s Pilote_;
 	} ctn_S_; //pour ne pas risquer d'ambigüité.
 	/* Retourne l'index dans le conteneur de l'élément courant. N'a de sens que
 	si 'EstVide()' est à faux. */
