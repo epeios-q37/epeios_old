@@ -266,10 +266,10 @@ namespace bch {
 		//f Remove 'Amount' objects from the end of the bunch.
 		void Truncate( epeios::size__ Amount = 1 )
 		{
-	#ifdef SET_DBG
+#ifdef BCH_DBG
 			if ( Amount > this->Amount() )
 				ERRu();
-	#endif
+#endif
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
 		//f Remove objects all objects beginning at 'Row'.
