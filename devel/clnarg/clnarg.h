@@ -280,14 +280,27 @@ namespace clnarg {
 		bso::bool__ OneLine,
 		bso::bool__ Default );
 		
-	/*f Print the usage text for option in 'Description' identified by 'OptionId'
-	using 'Text'. If 'OneLine' at false, text is print on 2 lines, other wise
-	on one line.. If 'Default' at true, the command is the default one. */
+	/*f Print the usage text for option, with parameter, in 'Description' identified
+	by 'OptionId' using 'Text'. 'Parameter' is the parameter of the option.
+	If 'OneLine' at false, text is print on 2 lines, otherwise on one line.*/
 	void PrintOptionUsage(
 		const description_ &Description,
-		int CommandId,
+		int OptionId,
+		const char *Parameter,
 		const char *Text,
 		bso::bool__ OneLine );
+
+	/*f Print the usage text for option, without parameter, in 'Description'
+	identified by 'OptionId' using 'Text'. If 'OneLine' at false,
+	text is print on 2 lines, other wise on one line.*/
+	inline void PrintOptionUsage(
+		const description_ &Description,
+		int OptionId,
+		const char *Text,
+		bso::bool__ OneLine )
+	{
+		PrintOptionUsage( Description, OptionId, NULL, Text, OneLine );
+	}
 }
 
 /*$END$*/

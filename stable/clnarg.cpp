@@ -433,13 +433,20 @@ void clnarg::PrintCommandUsage(
 
 void clnarg::PrintOptionUsage(
 	const description_ &Description,
-	int CommandId,
+	int OptionId,
+	const char *Parameter,
 	const char *Text,
 	bso::bool__ OneLine )
 {
 	fout << txf::tab;
 		
-	fout << Description.GetOptionLabel( CommandId ) << ':';
+	fout << Description.GetOptionLabel( OptionId );
+	
+	if ( ( Parameter != NULL )
+		 && ( Parameter[0] != 0 ) ) 
+		fout << ' ' << Parameter;
+
+	fout << ':';
 		
 	if ( OneLine )
 		fout << txf::tab;

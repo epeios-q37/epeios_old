@@ -1,4 +1,3 @@
 $Id$
 
-- Add printing of source file ('reveal.cpp') CVS informations.
-- Add '--license' command.
+- Allow different characters to delimit the begin and the end of a tag.

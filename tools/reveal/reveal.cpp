@@ -34,17 +34,25 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"0.1.6"
+#define VERSION			"1.0.0"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR_NAME			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define CVS_DETAILS		("$Id$\b " + 5)
 
-#define DEFAULT_TAG_DELIMITER		'$'
-#define DEFAULT_COMMENTARY_MARKER	'#'
-#define DEFAULT_TEXT_MARKER			'&'
-#define DEFAULT_FILE_MARKER			'%'
+#define DEFAULT_TAG_DELIMITER_S		"$"
+#define DEFAULT_COMMENTARY_MARKER_S	"#"
+#define DEFAULT_TEXT_MARKER_S		"&"
+#define DEFAULT_FILE_MARKER_S		"%"
+#define RESERVED_TAG_PREFIX_S		"_"
+#define UNKNOW_RESERVED_TAG			tagexp::t_amount
+
+#define DEFAULT_TAG_DELIMITER		DEFAULT_TAG_DELIMITER_S[0]
+#define DEFAULT_COMMENTARY_MARKER	DEFAULT_COMMENTARY_MARKER_S[0]
+#define DEFAULT_TEXT_MARKER			DEFAULT_TEXT_MARKER_S[0]
+#define DEFAULT_FILE_MARKER			DEFAULT_FILE_MARKER_S[0]
 #define BUFFER_SIZE					100
-#define RESERVED_TAG_PREFIX			'_'
+#define RESERVED_TAG_PREFIX			RESERVED_TAG_PREFIX_S[0]
 #define UNKNOW_RESERVED_TAG			tagexp::t_amount
 
 using tagdtc::id__;
@@ -72,6 +80,7 @@ enum command {
 	cHelp,
 	cVersion,
 	cReveal,
+	cLicense,
 };
 
 enum option {
@@ -527,22 +536,23 @@ void GetTable(
 	Table.DeleteEmptyLines();
 }
 
-void PrintUsage( void )
+void PrintUsage( const clnarg::description_ &Description )
 {
 	fout << "Usage: " << NAME << " [command] [options] desc-file [source-file [dest-file]]" << txf::nl;
 	fout << "desc-file:" << txf::tab << "tag description file." << txf::nl;
 	fout << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
 	fout << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	fout << "Command: " << txf::nl;
-	fout << txf::tab << "<none>, -r, --reveal:" << txf::nl << txf::tab << txf::tab << "write source file to destination file revealing tags" << txf::nl << txf::tab << txf::tab << "according to tag description file." << txf::nl;
-	fout << txf::tab << "--version:" << txf::nl << txf::tab << txf::tab << "print version of " NAME " components." << txf::nl;
-	fout << txf::tab << "--help:" << txf::tab << "print this message." << txf::nl;
+	clnarg::PrintCommandUsage( Description, cReveal, "write source file to destination file revealing tags.", false, true );
+	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", false, false );
+	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", false, false );
+	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", true, false );
 	fout << "Options:" << txf::nl;
-	fout << txf::tab << "-d, --tag-delimiter CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the tag delimiter ('" << DEFAULT_TAG_DELIMITER << "' by default)." << txf::nl;
-	fout  << txf::tab << "-s, --skip:" << txf::nl << txf::tab << txf::tab << "don't write to output before next 'print' or 'raw' tag." << txf::nl;
-	fout << txf::tab << "-c, --commentary-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for commentary ('" << DEFAULT_COMMENTARY_MARKER << "' by default)." << txf::nl;
-	fout << txf::tab << "-t, --text-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for text ('" << DEFAULT_TEXT_MARKER << "' by default)." << txf::nl;
-	fout << txf::tab << "-f, --file-marker CHAR:" << txf::nl << txf::tab << txf::tab << "CHAR becomes the marker for file ('" << DEFAULT_FILE_MARKER << "' by default)." << txf::nl;
+	clnarg::PrintOptionUsage( Description, oTagDelimiter, "CHAR", "CHAR becomes the tag delimiter ('" DEFAULT_TAG_DELIMITER_S "' by default).", false );
+	clnarg::PrintOptionUsage( Description, oSkip, "don't write to output before next 'print' or 'raw' tag.", false );
+	clnarg::PrintOptionUsage( Description, oCommentaryMarker, "CHAR", "CHAR becomes the marker for commentary ('" DEFAULT_COMMENTARY_MARKER_S "' by default).", false );
+	clnarg::PrintOptionUsage( Description, oTextMarker, "CHAR", "CHAR becomes the marker for text ('" DEFAULT_TEXT_MARKER_S "' by default).", false );
+	clnarg::PrintOptionUsage( Description, oFileMarker, "CHAR",  "CHAR becomes the marker for file ('" DEFAULT_FILE_MARKER_S "' by default).", false );
 }
 
 void PrintHeader( void )
@@ -550,7 +560,7 @@ void PrintHeader( void )
 	fout << NAME " V" VERSION " "__DATE__ " " __TIME__;
 	fout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
 	fout << "Copyright the Epeios project (" EPSMSC_EPEIOS_URL "). " << txf::nl;
-//	fout << EPSMSC_GNU_TEXT << txf::nl;
+	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -719,6 +729,7 @@ ERRBegin
 	Description.AddCommand( 'r', "reveal", cReveal );
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
+	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 
 	Analyzer.Init( argc, argv, Description );
 
@@ -729,7 +740,11 @@ ERRBegin
 		ERRt();
 		break;
 	case cHelp:
-		PrintUsage();
+		PrintUsage( Description );
+		ERRt();
+		break;
+	case cLicense:
+		epsmsc::PrintLicense();
 		ERRt();
 		break;
 	case cReveal:
