@@ -26,6 +26,7 @@ LSTCTN:
 - Fixing bug.
 - Adapting to changes in 'LST' library.
 - Adapting to changes in 'CTN' library.
+- Adding missing 'Flush()' to 'Delete' method.
 
 MMI:
 - Adding some missing 'const' qualifier'.

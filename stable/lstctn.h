@@ -114,6 +114,7 @@ namespace lstctn {
 		void Delete( row Row )
 		{
 			container::operator()( Row ).reset();
+			container::Flush();
 			list_<row>::Delete( Row );
 		}
 		//f Create new entry.
