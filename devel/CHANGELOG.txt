@@ -70,6 +70,7 @@ TOL:
 - Adding the 'E_DISCLOSE' macro.
 - (05/05/04) Adding a 'Clock()' temporary workaround for CW.
 - (24/05/04) Using 'cio' library instead of 'stf'.
+- (24/06/04) Addinf 'E_TTEMPLATE' macro.
 
 TTR:
 - (23/05/04) Using 'CIO' library instead of 'STF'.
