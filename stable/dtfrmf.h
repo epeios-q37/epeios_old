@@ -70,7 +70,7 @@ namespace dtfrmf {
 	
 		//f Put 'Short' in 'Flow'.
 	inline void PutShort(
-		bso__ushort Short,
+		bso::ushort__ Short,
 		flw::oflow___ &Flow )
 	{
 		PutByte( Short & 0xff, Flow );
@@ -78,22 +78,22 @@ namespace dtfrmf {
 	}
 
 	//f Return short in 'Flow'
-	inline bso__ushort GetShort( flw::iflow___ &Flow )
+	inline bso::ushort__ GetShort( flw::iflow___ &Flow )
 	{
 		return GetByte( Flow ) + ( GetByte( Flow ) << 8 );
 	}
 
 	//f Put 'Long' in 'Flow'.
 	inline void PutLong(
-		bso__ulong Long,
+		bso::ulong__ Long,
 		flw::oflow___ &Flow )
 	{
-		PutShort( (bso__ushort)( Long & 0xffff ), Flow );
-		PutShort( (bso__ushort)( Long >> 16 ), Flow );
+		PutShort( (bso::ushort__)( Long & 0xffff ), Flow );
+		PutShort( (bso::ushort__)( Long >> 16 ), Flow );
 	}
 
 	//f Return long in 'Flow'
-	inline bso__ulong GetLong( flw::iflow___ &Flow )
+	inline bso::ulong__ GetLong( flw::iflow___ &Flow )
 	{
 		return GetShort( Flow ) + ( GetShort( Flow ) << 16 );
 	}

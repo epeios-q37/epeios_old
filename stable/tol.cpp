@@ -70,14 +70,14 @@ public:
 #include "mtk.h"
 #endif
 
-bool TOLFileExists( const char *Nom )
+bool tol::FileExists( const char *Nom )
 {
 	ifstream Stream( Nom, ifstream::binary | ifstream::nocreate );
 
 	return !Stream.fail();
 }
 
-tol::rbf TOLCreateBackupFile(
+tol::rbf tol::CreateBackupFile(
 	const char *NomFichier,
 	tol::hbf Handle,
 	const char *Extension,
@@ -87,14 +87,14 @@ tol::rbf TOLCreateBackupFile(
 ERRProlog
 	char *NomFichierSecurite = NULL;
 ERRBegin
-	if ( TOLFileExists( NomFichier ) )
+	if ( tol::FileExists( NomFichier ) )
 	{
 		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
 			ERRa();
 
 		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
 
-		if ( TOLFileExists( NomFichierSecurite ) )
+		if ( tol::FileExists( NomFichierSecurite ) )
 			if ( remove( NomFichierSecurite ) )
 				Etat = tol::rbfSuppression;
 
@@ -159,7 +159,7 @@ ERREpilog
 
 
 
-tol::rbf TOLRecoverBackupFile(
+tol::rbf tol::RecoverBackupFile(
 	const char *NomFichier,
 	const char *Extension,
 	err::handle Error )
@@ -168,7 +168,7 @@ tol::rbf TOLRecoverBackupFile(
 ERRProlog
 	char *NomFichierSecurite = NULL;
 ERRBegin
-	if ( TOLFileExists( NomFichier ) )
+	if ( tol::FileExists( NomFichier ) )
 		if ( remove( NomFichier ) )
 			Etat = tol::rbfSuppression;
 
@@ -180,7 +180,7 @@ ERRBegin
 	{
 		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
 
-		if ( TOLFileExists( NomFichierSecurite ) )
+		if ( tol::FileExists( NomFichierSecurite ) )
 			if ( rename( NomFichierSecurite, NomFichier ) )
 				Etat = tol::rbfRenaming;
 	}
@@ -212,7 +212,7 @@ ERREpilog
 	return Etat;
 }
 
-const char *TOLDate( void )
+const char *tol::Date( void )
 {
    struct tm *time_now;
    time_t secs_now;
@@ -227,7 +227,7 @@ const char *TOLDate( void )
    return str;
 }
 
-const char *TOLTime( void )
+const char *tol::Time( void )
 {
    struct tm *time_now;
    time_t secs_now;
@@ -242,7 +242,7 @@ const char *TOLTime( void )
    return str;
 }
 
-const char *TOLDateAndTime( void )
+const char *tol::DateAndTime( void )
 {
    struct tm *time_now;
    time_t secs_now;
@@ -257,7 +257,7 @@ const char *TOLDateAndTime( void )
    return str;
 }
 
-void TOLWait( unsigned int Secondes )
+void tol::Wait( unsigned int Secondes )
 {
 #ifdef CPE__MS
 	Sleep( Secondes * 1000 );
@@ -276,12 +276,12 @@ void TOLWait( unsigned int Secondes )
 namespace {
 	void WaitAndExit( void *UP )
 	{
-		TOLWait( (unsigned int)UP );
+		tol::Wait( (unsigned int)UP );
 		exit( EXIT_SUCCESS );
 	}
 }
 
-void TOLYield( void )
+void tol::Yield( void )
 {
 #ifdef CPE__MS
 	Sleep( 0 );
@@ -293,7 +293,7 @@ void TOLYield( void )
 #endif
 }
 
-void TOLForceExit( unsigned int Seconds )
+void tol::ForceExit( unsigned int Seconds )
 {
 	mtk::Launch( WaitAndExit, (void *)Seconds );
 }

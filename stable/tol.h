@@ -98,27 +98,6 @@ namespace tol
 };
 
 
-#if 0 // to delete ?
-template <class t> class tol__manipulateur
-{
-private:
-	t M_;
-public:
-	tol__manipulateur( t M = 0 )
-	{
-		M_ = M;
-	}
-	operator t( void )
-	{
-		return M_;
-	}
-	t &operator()( void )
-	{
-		return M_;
-	}
-};
-#endif
-
 //m Same as 'typedef type alias', but 2 'alias' whit same 'type' are not interchangeable.
 #define TYPEDEF( type, alias )\
 struct alias\
@@ -290,113 +269,98 @@ public:\
 /*********************************************/
 
 //c Handle user pointer.
-class tol__UP_
-{
-protected:
-	void *UP_;
-public:
-	tol__UP_( void )
+namespace tol {
+	class UP__
 	{
-		reset( false );
-	}
-	~tol__UP_( void )
+	protected:
+		void *UP_;
+	public:
+		UP__( void )
+		{
+			reset( false );
+		}
+		~UP__( void )
+		{
+			reset( true );
+		}
+		void reset( bool = true )
+		{
+			UP_ = NULL;
+		}
+		//f Return the current user pointer
+		void *UP( void ) const
+		{
+			return UP_;
+		}
+		//f 'UP' becomes the new user pointer
+		void UP( void *UP )
+		{
+			UP_ = UP;
+		}
+	};
+
+	//f Return true if the file 'Name' exists, false otherwise.
+	bool FileExists( const char *Nom );
+
+	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
+	If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
+	If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
+	rbf tol::CreateBackupFile(
+		const char *Name,
+		hbf Handle,
+		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
+		err::handle = err::hUsual  );
+
+	//f Recover the backup file 'Name' with 'Extension' as extension.
+	rbf tol::RecoverBackupFile(
+		const char *Name,
+		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
+		err::handle = err::hUsual  );
+
+	//f Return the current date.
+	const char *Date( void );
+
+	//f Return current time.
+	const char *Time( void );
+
+	//f Return current date é time.
+	const char *DateAndTime( void );
+
+	/*f Return a time in ms. Only usefull by susbstracting 2 value.
+	Is different from 'clock()' because 'ckock()' only return how long
+	the application is usibg the processor.*/
+	inline unsigned long Clock( void )
 	{
-		reset( true );
+		timeb T;
+
+		::ftime( &T );
+		// Attention: pas standard, mais présent sur toutes les plateformes utilisées.
+		/* Cependant, la valeur de retour diffère selon les plateformes, mais ne signale
+		jamais une erreur. */
+
+		return T.time * 1000UL + T.millitm;
 	}
-	void reset( bool = true )
+
+	//f Wait 'Seconds' seconds.
+	void Wait( unsigned int Seconds );
+
+	/*f Initialize the random generator using the date & time.
+	The used value is returned to be used with the following
+	function to make the random generator always start with the same value. */
+	inline unsigned int InitializeRandomGenerator( void )
 	{
-		UP_ = NULL;
+		unsigned int Seed = (unsigned int)time( NULL );
+	
+		srand( Seed );
+
+		return Seed;
 	}
-	//f Return the current user pointer
-	void *UP( void ) const
+
+	//f Initialize the random generator with 'Seed'.
+	inline void InitializeRandomGenerator( unsigned int Seed )
 	{
-		return UP_;
+		srand( Seed );
 	}
-	//f 'UP' becomes the new user pointer
-	void UP( void *UP )
-	{
-		UP_ = UP;
-	}
-};
-
-
-
-#if 0	// to delete ?
-/**************************************************************/
-/* CLASSE DE GESTION DIRECTE DE LA PARTIE STATIQUE D'UN OBJET */
-/**************************************************************/
-
-template <class T> class tol_D_
-{
-public:
-	T *operator ->( void )
-	{
-		return this;
-	}
-};
-#endif
-
-//f Return true if the file 'Name' exists, false otherwise.
-bool TOLFileExists( const char *Nom );
-
-/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
-If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
-If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
-tol::rbf TOLCreateBackupFile(
-	const char *Name,
-	tol::hbf Handle,
-	const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
-	err::handle = err::hUsual  );
-
-//f Recover the backup file 'Name' with 'Extension' as extension.
-tol::rbf TOLRecoverBackupFile(
-	const char *Name,
-	const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
-	err::handle = err::hUsual  );
-
-//f Return the current date.
-const char *TOLDate( void );
-
-//f Return current time.
-const char *TOLTime( void );
-
-//f Return current date é time.
-const char *TOLDateAndTime( void );
-
-/*f Return a time in ms. Only usefull by susbstracting 2 value.
-Is different from 'clock()' because 'ckock()' only return how long
-the application is usibg the processor.*/
-inline unsigned long TOLClock( void )
-{
-	timeb T;
-
-	::ftime( &T );
-	// Attention: pas standard, mais présent sur toutes les plateformes utilisées.
-	/* Cependant, la valeur de retour diffère selon les plateformes, mais ne signale
-	jamais une erreur. */
-
-	return T.time * 1000UL + T.millitm;
-}
-
-//f Wait 'Seconds' seconds.
-void TOLWait( unsigned int Seconds );
-
-/*f Initialize the random generator using the date & time.
-The used value is returned to be used with the following
-function to make the random generator always start with the same value. */
-inline unsigned int TOLInitializeRandomGenerator( void )
-{
-	unsigned int Seed = (unsigned int)time( NULL );
-
-	srand( Seed );
-
-	return Seed;
-}
-
-//f Initialize the random generator with 'Seed'.
-inline void TOLInitializeRandomGenerator( unsigned int Seed )
-{
-	srand( Seed );
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
@@ -432,19 +396,15 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	
 #define NAV( Object )	NAVt( Object, epeios::row__ )
 
-#if 0
-	// probably to delete	
-//m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object'.
-#define NAV( Object )	NAVt( Object, tym::row__ )
-#endif
-
 
 #ifdef CPE__MT
-/*f Force the program to exit after 'Seconds' second.
-Usefull to force a server to exit to obtain the profiling file. */
-void TOLForceExit( unsigned int Seconds );
-//f Tell the remainder to give hand to the next thread.
-void TOLYield( void );
+namespace tol {
+	/*f Force the program to exit after 'Seconds' second.
+	Usefull to force a server to exit to obtain the profiling file. */
+	void ForceExit( unsigned int Seconds );
+	//f Tell the remainder to give hand to the next thread.
+	void Yield( void );
+}
 #endif
 
 namespace mmm {

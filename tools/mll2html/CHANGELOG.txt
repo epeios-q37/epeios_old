@@ -2,6 +2,7 @@ $Id$
 
 - UPGRADING TO V1.1.8.
 - Adapting to BC++.
+- Adapting to changes in 'TOL'.
 
 20010505:
 - UPGRADING TO V1.1.6

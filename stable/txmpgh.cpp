@@ -57,17 +57,17 @@ public:
 void txmpgh::paragraph_::GetSplitParagraph_( xtf::extended_text_iflow___ &Flow )
 {
 ERRProlog
-	str::string String;
+	line Line;
 	bso::bool__ Cont = true;
 ERRBegin
 
 	do {
-		String.Init();
+		Line.Init();
 
-		Flow.GetLine( String );
+		Flow.GetLine( Line );
 
-		if ( String.Amount() )
-			Add( String );
+		if ( Line.Amount() )
+			Add( Line );
 		else
 			Cont = false;
 
@@ -79,22 +79,22 @@ ERREnd
 ERREpilog
 }
 
-void txmpgh::paragraph_::Merge( str::string_ &Line ) const
+void txmpgh::paragraph_::Merge( line_ &Line ) const
 {
-	epeios::row__ P = strings_::First();
-	ctn::E_CMITEM( str::string_ ) Part;
+	epeios::row__ P = lines_::First();
+	ctn::E_CMITEM( line_ ) Part;
 
 	Part.Init( *this );
 
 	if ( P != NONE ) {
 		Line.Add( Part( P ) );
-		P = strings_::Next( P );
+		P = lines_::Next( P );
 	}
 
 	while( P != NONE ) {
 		Line.Add( ' ' );
 		Line.Add( Part( P ) );
-		P = strings_::Next( P );
+		P = lines_::Next( P );
 	}
 }
 

@@ -1,7 +1,9 @@
 $Id$
 
+
 - UPGRADINC TO 1.0.2
 - Adapting to BC++.
+- Adapting to 'TOL' modifications.
 
 20010507:
 - UPGRADING TO 1.0.0.

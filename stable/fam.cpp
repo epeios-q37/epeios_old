@@ -54,7 +54,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-fam_fast_allocation_memory FAM;
+fam::fast_allocation_memory fam::FAM;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

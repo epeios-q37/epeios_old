@@ -34,7 +34,7 @@
 #include "flx.h"
 
 #define NAME			"reveal"
-#define VERSION			"1.0.0"
+#define VERSION			"1.0.2"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR_NAME			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
@@ -200,8 +200,8 @@ inline void AdditionalTags(
 	char Delimiter )
 {
 	Expander.Add( estring( Delimiter ), tagexp::nText, estring( "" ) );
-	Expander.Add( estring( TOLDate() ), tagexp::nText, estring( "_DATE_" ) );
-	Expander.Add( estring( TOLTime() ), tagexp::nText, estring( "_TIME_" ) );
+	Expander.Add( estring( tol::Date() ), tagexp::nText, estring( "_DATE_" ) );
+	Expander.Add( estring( tol::Time() ), tagexp::nText, estring( "_TIME_" ) );
 	Expander.Add( estring( NAME ), tagexp::nText, estring( "_NAME_" ) );
 	Expander.Add( estring( AUTHOR_NAME ), tagexp::nText, estring( "_AUTHOR_" ) );
 	Expander.Add( estring( AUTHOR_EMAIL ), tagexp::nText, estring( "_EMAIL_" ) );
@@ -825,7 +825,7 @@ ERRBegin
 
 	if ( Dest ) {
 
-		TOLCreateBackupFile( Dest, tol::hbfRename );
+		tol::CreateBackupFile( Dest, tol::hbfRename );
 		Backup = true;
 
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
@@ -852,7 +852,7 @@ ERRErr
 	DFile.reset();
 
 	if ( Backup )
-		TOLRecoverBackupFile( Dest );
+		tol::RecoverBackupFile( Dest );
 ERREnd
 	if ( Desc != NULL )
 		free( Desc );

@@ -5,10 +5,7 @@ Général:
 - Under Linux, use 'clone' as alternative to pthreads (library 'MTK').
 - Under Linux, use 'sem_init' and consort (library 'SPH') and use them in 'MTX').
 - Under Windows, test with Borland C++.
-- Make extensive tests and adapt libraries under OSes form the Sourceforge compile farm.
-
-FAM:
-- Use namespace
+- Make extensive tests and adapt libraries under OSes from the Sourceforge compile farm.
 
 CTN:
 - Test and use if working 'mutable'.

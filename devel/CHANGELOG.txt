@@ -1,5 +1,31 @@
 $Id$
 
+ERR:
+- adapting to changes in 'TOL'.
+
+FAM:
+- using namespace.
+
+FNM:
+- adapting to changes in 'TOL'.
+
+DTFBSC:
+- adapting to changes in 'BSO'.
+
+DTRRMF:
+- adapting to changes in 'BSO'.
+
+TOL:
+- Using namespace.
+- Deleting 'tol__manipulateur' class.
+
+TXMPGH:
+- Introducing new 'line(s)(_)' type.
+
+UYM:
+- Adapting to changed in 'FAM'.
+
+
 --------
 20010513
 --------

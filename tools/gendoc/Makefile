@@ -28,11 +28,12 @@
 name = gendoc
 copt =
 # Epeios general debugging features
-copt += -DXXX_DBG
+# copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err
+libs = ttr tol flw stf err ctn mmi btr uym fam que tsrcpr xtf str xmltag\
+       fil xmlval xmldcm
 
 ifndef EPEIOS_SRC
 	epeios_src=
@@ -56,9 +57,9 @@ endif
 ifeq ("$(EPEIOS_OS)","linux")
 co = -c
 # Generates debugging data.
-co += -g
+#co += -g
 # General optimization.
-#co += -O
+co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)

@@ -69,8 +69,8 @@ ERRProlog
 ERRBegin
 	if ( Nombre )
 	{
-		fam__size Taille = Nombre > 30000 ? 60000 : Nombre * 2;
-		Tampon = (data__ *)FAM.Allocate( Taille, 4 );
+		fam::size__ Taille = Nombre > 30000 ? 60000 : Nombre * 2;
+		Tampon = (data__ *)fam::FAM.Allocate( Taille, 4 );
 
 		if ( !Tampon )
 		{
@@ -117,7 +117,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( Tampon )
-		FAM.Free( Tampon );
+		fam::FAM.Free( Tampon );
 ERREpilog
 	return Resultat;
 }
@@ -196,12 +196,12 @@ row__ untyped_memory_::Position(
 {
 	row__ Retour = NONE;
 ERRProlog
-	fam__size TailleTampon = Taille * ( ( Fin - Debut ) / Taille );
+	fam::size__ TailleTampon = Taille * ( ( Fin - Debut ) / Taille );
 	data__ *Tampon = NULL;
 	bool Trouve = false;
 ERRBegin
 
-	if ( ( Tampon = (data__ *)FAM.Allocate( TailleTampon, Taille ) ) != NULL )
+	if ( ( Tampon = (data__ *)fam::FAM.Allocate( TailleTampon, Taille ) ) != NULL )
 	{
 		while( ( !Trouve ) && ( ( Debut + Taille ) <= Fin ) )
 		{
@@ -245,7 +245,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( Tampon )
-		FAM.Free( Tampon );
+		fam::FAM.Free( Tampon );
 ERREpilog
 	return Retour;
 }
@@ -263,8 +263,8 @@ ERRBegin
 
 	if ( Quantity > UYM_MIN_BUFFER_SIZE )
 	{
-		fam__size Taille = ( Quantity > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantity );
-		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		fam::size__ Taille = ( Quantity > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantity );
+		Tampon = (data__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( Tampon )
 			Copy_( Source, Position, *this, Offset, Quantity, Tampon, Taille );
@@ -283,7 +283,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( Tampon )
-		FAM.Free( Tampon );
+		fam::FAM.Free( Tampon );
 ERREpilog
 }
 
@@ -301,7 +301,7 @@ ERRBegin
 	if ( Quantite > UYM_MIN_BUFFER_SIZE )
 	{
 		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Tampon = (data__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( !Tampon )
 		{
@@ -324,7 +324,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( ( Tampon != TamponSecurite ) && ( Tampon != NULL ) )
-		FAM.Free( Tampon );
+		fam::FAM.Free( Tampon );
 ERREpilog
 }
 
@@ -341,7 +341,7 @@ ERRBegin
 	if ( Quantite > UYM_MIN_BUFFER_SIZE )
 	{
 		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (data__ *)FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Tampon = (data__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
 
 		if ( !Tampon )
 		{
@@ -365,7 +365,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( ( Tampon != TamponSecurite ) && ( Tampon != NULL ) )
-		FAM.Free( Tampon );
+		fam::FAM.Free( Tampon );
 ERREpilog
 }
 

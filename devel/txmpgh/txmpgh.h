@@ -72,40 +72,45 @@ namespace txmpgh {
 		sSplit
 	};
 
-	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
+	//t A line.
+	typedef str::string_ line_;
+	typedef str::string line;
+	
+	//t Lines.
+	typedef ctn::E_XMCONTAINER_( line_ ) lines_;
 
 	//c A paragraph manager.
 	class paragraph_
-	: public strings_
+	: public lines_
 	{
 	private:
 		// Get a split paragraph from 'Flow'.
 		void GetSplitParagraph_( xtf::extended_text_iflow___ &Flow );
 	public:
 		struct s 
-		: strings_::s
+		: lines_::s
 		{};
 		paragraph_( s &S )
-		: strings_( S )
+		: lines_( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			strings_::reset( P );
+			lines_::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			strings_::plug( M );
+			lines_::plug( M );
 		}
 		paragraph_ &operator =( const paragraph_ &P )
 		{
-			strings_::operator =( P );
+			lines_::operator =( P );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			strings_::Init();
+			lines_::Init();
 		}
 		//f Parse the 'Flow' flow. Extract one line for it, 'State' is the paragraph state.
 		void Parse(
@@ -114,15 +119,15 @@ namespace txmpgh {
 		{
 			if ( State == txmpgh::sIntegral )
 			{
-				strings_::Allocate( 1 );
-				Flow.GetLine( strings_::operator()( 0 ) );
-				strings_::Sync();
+				lines_::Allocate( 1 );
+				Flow.GetLine( lines_::operator()( 0 ) );
+				lines_::Sync();
 			}
 			else
 				GetSplitParagraph_( Flow );
 		}
 		//f Merge the contain of the paragraph and put into 'Line'. Paragraph remains unmodified.
-		void Merge( str::string_ &Line ) const;
+		void Merge( line_ &Line ) const;
 	};
 
 	AUTO( paragraph )

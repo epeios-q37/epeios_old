@@ -227,7 +227,7 @@ ERRBegin
 			MakeFileName_( Parametres, Occurence ),
 			Extension );
 
-		if ( !TOLFileExists( Nom ) || FNMMatch( Nom ) )
+		if ( !tol::FileExists( Nom ) || FNMMatch( Nom ) )
 			break;
 
 		free( (void *)Nom );

@@ -17,7 +17,7 @@
 #include "epsmsc.h"
 
 #define NAME			"mll2html"
-#define VERSION			"V1.1.6"
+#define VERSION			"V1.1.8"
 #define AUTHOR_LINK		EPSMSC_AUTHOR_LINK
 #define AUTHOR			EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
@@ -669,7 +669,7 @@ ERRBegin
 			Dest << "Copyright © 1999 the " EPSMSC_EPEIOS_LINK;
 			break;
 		case tUpdate:
-			Dest << TOLDateAndTime();
+			Dest << tol::DateAndTime();
 			break;
 		case tName:
 			Dest << EPSMSC_APP_LINK( NAME ) " " VERSION;
@@ -889,7 +889,7 @@ ERRBegin
 
 	if ( Dest ) {
 
-		TOLCreateBackupFile( Dest, tol::hbfRename );
+		tol::CreateBackupFile( Dest, tol::hbfRename );
 		Backup = true;
 
 		if ( !File.Init( Dest, err::hSkip ) )
@@ -908,7 +908,7 @@ ERRErr
 	File.reset();
 
 	if ( Backup )
-		TOLRecoverBackupFile( Dest );
+		tol::RecoverBackupFile( Dest );
 
 	if ( ERRMajor == err::thw )
 		ERRRst();

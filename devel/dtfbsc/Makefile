@@ -1,9 +1,10 @@
-# 'reveal' Makefile by Claude L. Simon (csimon@webmails.com)
-# Builds executable for the 'reveal' software.
+# 'dtfbsc' Makefile by Claude L. Simon (csimon@webmails.com)
+# Builds test executable for the 'dtfbsc' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000,2001 Claude SIMON (csimon@webmails.com).
+# Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 #
-# This file is part of the Epeios project (http://epeios.org/)
+# This file is part of the Epeios (http://epeios.org/) project.
+# 
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -25,34 +26,20 @@
 
 # $Id$
 
-name = reveal
+name = dtfbsc
 copt =
 # Epeios general debugging features
-# copt += -DXXX_DBG
+copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err tagexp tagdtc str lst fil uym fam txmtbl ctn clnarg mmi fnm epsmsc
+libs = ttr tol flw stf err
 
-ifndef EPEIOS_SRC
-	epeios_src=
-else
-	epeios_src=$(EPEIOS_SRC)
-endif
 
-ifndef EPEIOS_OS
-	epeios_os=linux
-else
-	epeios_os=$(EPEIOS_OS)
-endif
 
 ifeq ("$(EPEIOS_OS)","windows")
 # compilation options
 co = -q -c -w-aus -w-inl
-# Optimization for size:
-# co += -O1
-# Optimization for speed:
-co += -O2
 # linkage options
 lo = -q -e$(name)
 endif
@@ -60,9 +47,9 @@ endif
 ifeq ("$(EPEIOS_OS)","linux")
 co = -c
 # Generates debugging data.
-# co += -g
+co += -g
 # General optimization.
-co += -O
+#co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
@@ -75,40 +62,4 @@ co = -c -g
 lo = -o $(name)
 endif
 
-#
-
-ifeq ("$(EPEIOS_OS)","windows")
-ox = obj
-cc = bcc32
-ds = ;
-larg = $(lo) *.$(ox)	# Because Windows command size limited.
-endif
-
-ifeq ("$(EPEIOS_OS)","linux")
-ox = o
-cc = g++ 
-ds = :
-larg = $(lo) $(objs)
-endif
-
-ifeq ("$(EPEIOS_OS)","beos")
-ox = o
-cc = g++
-ds = :
-larg = $(lo) $(objs)
-endif
-
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
-
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
-
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT) $(lopt)
-
-objs = $(name).$(ox) $(libs:=.$(ox))
-
-$(name):  $(objs)
-	$(cc) $(larg)
-	
-%.$(ox): %.cpp
-	$(cc) $(co) $<
+include ../xxx/LibMakefile.footer
