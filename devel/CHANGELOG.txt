@@ -6,14 +6,22 @@ GENERAL:
 BITBCH:
 - Fixing bug.
 
+DBT:
+- Adapting to changes in 'LST' library.
+
 ERR:
-- Addind the tReturn item.
+- Adding the 'tReturn' item.
+
+LST:
+- Renaming 'CreateEntry' to 'New'.
 
 LSTBCH:
 - Fixing bug.
+- Adapting to changes in 'LST' library.
 
 LSTCTN:
 - Fixing bug.
+- Adapting to changes in 'LST' library.
 
 TYM:
 - Fixing bug.

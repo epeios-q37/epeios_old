@@ -161,7 +161,7 @@ namespace dbt {
 		//f Create internal node with value 'Internal'. Returns its row.
 		row__ CreateInternal( const int__ &Internal )
 		{
-			row__ Row = E_LISTt_( row__ )::CreateEntry();
+			row__ Row = E_LISTt_( row__ )::New();
 
 			Types.Write( internal, Row );
 
@@ -172,7 +172,7 @@ namespace dbt {
 		//f Create external node with value 'External'. Returns its row.
 		row__ CreateExternal( const ext__ &External )
 		{
-			row__ Row = E_LISTt_( row__ )::CreateEntry();
+			row__ Row = E_LISTt_( row__ )::New();
 
 			Types.Write( external, Row );
 

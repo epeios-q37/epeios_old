@@ -116,7 +116,7 @@ namespace lstbch {
 		//f Add 'Object' and return its row.
 		row Add( const type &Object )
 		{
-			row Row = list_<row>::CreateEntry();
+			row Row = list_<row>::New();
 
 			bunch_<type, row>::Write( Object, Row );
 
@@ -126,6 +126,11 @@ namespace lstbch {
 		void Delete( row Row )
 		{
 			list_<row>::Delete( Row );
+		}
+		//f Create new entry and return its row.
+		row New( void )
+		{
+			return list_<row>::New();
 		}
 	};
 

@@ -119,7 +119,7 @@ namespace lstctn {
 		//f Create new entry.
 		row New( void )
 		{
-			return list_<row>::CreateEntry();
+			return list_<row>::New();
 		}
 	};
 

@@ -165,7 +165,7 @@ namespace lst {
 			Unused.Release( *Entry );
 		}
 		//f Return the position of a new entry.
-		r CreateEntry( void )
+		r New( void )
 		{
 			return Nouveau_();
 		}
