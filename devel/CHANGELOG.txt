@@ -94,6 +94,7 @@ FLW:
 FLX:
 - Adding some casting to avoid warning under VC++.
 - Adapting to changes in 'BCH' library.
+- Adding missing 'const' qualifier.
 
 GNUMLL:
 - Adapting to changes in 'TOL' library.

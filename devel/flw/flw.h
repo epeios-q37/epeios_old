@@ -73,13 +73,13 @@ extern class ttr_tutor &FLWTutor;
 
 namespace flw {
 	//t Amount of data.
-	typedef int			amount__;
+	typedef size_t			amount__;
 
 	//t The max value for a amount.
 	#define FLW_AMOUNT_MAX	INT_MAX
 
 	//t Size (of a cache, for example).
-	typedef int			size__;
+	typedef size_t			size__;
 
 	//t The max value for a size.
 	#define FLW_SIZE_MAX	INT_MAX

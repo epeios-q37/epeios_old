@@ -116,8 +116,8 @@ namespace flx {
 					Wanted = 0;
 			else
 			{
-				if ( Wanted > (flw::amount__)Taille_ )
-					Wanted = (flw::amount__)Taille_;
+				if ( Wanted > Taille_ )
+					Wanted = Taille_;
 
 				if ( Wanted < Minimum )
 					FLXUnavailable();
@@ -151,7 +151,7 @@ namespace flx {
 		/*f Initialization with the buffer 'Buffer' of size 'Size'..'Size' is not
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
-			flw::datum__ *Buffer,
+			const flw::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
 			iflow___::Init( Cache_, sizeof( Cache_ ) );
