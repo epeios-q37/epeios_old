@@ -133,7 +133,8 @@ namespace err {
 		// backend error
 	enum t
 	{
-		tGeneric
+		tGeneric,
+		tReturn	// To return from a function, but with taking care of the error handling.
 	};
 		// throw error
 	enum c
