@@ -289,6 +289,73 @@ namespace bso {
 
 	//t A portable sign.
 	typedef sign__ p_sign__;
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::ulong__ Value )
+	{
+		static char Buffer[20];
+
+		sprintf( Buffer, "%lu", Value );
+
+		return Buffer;
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::ushort__ Value )
+	{
+		return Convert( (bso::ulong__)Value );
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::ubyte__ Value )
+	{
+		return Convert( (bso::ulong__)Value );
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::slong__ Value )
+	{
+		static char Buffer[20];
+
+		sprintf( Buffer, "%li", Value );
+
+		return Buffer;
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::sshort__ Value )
+	{
+		return Convert( (bso::slong__)Value );
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( bso::sbyte__ Value )
+	{
+		return Convert( (bso::slong__)Value );
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( lfloat__ Value )
+	{
+		static char Buffer[40];
+
+		sprintf( Buffer, "%LG", Value );
+
+		return Buffer;
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( float__ Value )
+	{
+		return Convert( (lfloat__)Value );
+	}
+
+	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
+	inline const char *Convert( sfloat__ Value )
+	{
+		return Convert( (lfloat__)Value );
+	}
+
 }
 
 /*$END$*/

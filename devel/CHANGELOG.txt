@@ -26,6 +26,9 @@ BITBCH:
 - Adding 'E_BIT_BUNCH(t)(_) macros.
 - Fixing 'operator =' bug.
 
+BSO:
+- Adding the 'Convert(...)' functions.
+
 BTF:
 - Adding a dummy 'Exists()' method, and the 'row__' type due to changes in 'STK' library.
 - Adding 'Root' parameter to the 'Init' function.
@@ -63,6 +66,9 @@ DBT:
 - Adding the virtual 'DBTAllocate' method.
 - Using 'E_NAVt' macro.
 - Adapting to changes in 'BTF' library.
+
+DTE:
+- Adding the 'IsValid'()' method.
 
 DTFBSC:
 - Adding 'byte__', 'short__' and 'long__' type.

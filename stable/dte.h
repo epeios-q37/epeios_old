@@ -1,6 +1,6 @@
 /*
 	Header for the 'dte' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001,2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -199,6 +199,11 @@ namespace dte {
 
 			Date( this->Day(), (month__)( Month % 12 + 1 ), (year__)( Year() + Month / 12 ) );
 		}
+		//f Return true if the date is valid, false potherwise.
+		bso::bool__ IsValid( void ) const
+		{
+			return RawDate_ != DTE_INVALID_DATE;
+		}
 	};
 
 	//f Return sign of 'Date1' - 'Date2'.
@@ -206,7 +211,7 @@ namespace dte {
 		const date__ &Date1,
 		const date__ &Date2 )
 	{
-		return (bso::sign__)( Date1 - Date2 );
+		return (bso::sign__)(bso::sbyte__)( Date1 - Date2 );
 	}
 
 	inline txf::text_oflow___ &operator <<(
