@@ -65,7 +65,7 @@ extern class ttr_tutor &BTSTutor;
 #include "btr.h"
 
 namespace bts {
-	//r Node types.
+	//e Node types.
 	enum type__ {
 		//i Unknow type.
 		tUnknow,
@@ -77,7 +77,7 @@ namespace bts {
 		tLeft,
 		//i Right node.
 		tRight,
-		// Amount node types.
+		//i Amount node types.
 		t_amount
 	};
 
