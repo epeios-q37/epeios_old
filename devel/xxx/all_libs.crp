@@ -292,6 +292,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib IMportatioN
 &gsbkrn		&lgsb		&\
 	&GeSBib KeRNel
+&gsblst		&lgsb		&\
+	&GeSBib LiST
+&gsblst_	&lgsb		&\
+	&GeSBib LiST (for backend)
 &gsbmgr		&lgsb		&2003-\
 	&GeSBib MiGRation
 &gsbmlt		&lgsb		&2002-\
