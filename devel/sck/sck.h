@@ -264,7 +264,7 @@ namespace sck {
 
 	//c Socket as input/output flow driver.
 	class socket_ioflow___
-	: public flw::ioflow___
+	: public flw::ioflow__
 	{
 	private:
 		socket__ Socket_;
@@ -284,7 +284,7 @@ namespace sck {
 	public:
 		void reset( bool P = true )
 		{
-			ioflow___::reset( P );
+			ioflow__::reset( P );
 			
 			if ( P ) {
 				if ( Socket_ != SCK_INVALID_SOCKET ) 
@@ -310,7 +310,7 @@ namespace sck {
 		{
 			reset();
 		
-			ioflow___::Init( Cache_, sizeof( Cache_ ) );
+			ioflow__::Init( Cache_, sizeof( Cache_ ) );
 
 			Socket_ = Socket;
 			TimeOut_ = TimeOut;

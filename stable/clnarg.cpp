@@ -1,7 +1,7 @@
 /*
 	'clnarg' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'clnarg' header file ('clnarg.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,7 +55,10 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "stf.h"
+#include "cio.h"
+
+using cio::cerr;
+using cio::cout;
 
 using namespace clnarg;
 
@@ -418,10 +421,10 @@ static void HandleView_( clnarg::view View )
 {
 	switch( View ) {
 	case clnarg::vOneLine:
-		stf::cout << txf::tab;
+		cout << txf::tab;
 		break;
 	case clnarg::vSplit:
-		stf::cout << txf::nl << txf::tab << txf::tab;
+		cout << txf::nl << txf::tab << txf::tab;
 		break;
 	default:
 		ERRu();
@@ -436,16 +439,16 @@ void clnarg::PrintCommandUsage(
 	clnarg::view View,
 	bso::bool__ Default )
 {
-	stf::cout << txf::tab;
+	cout << txf::tab;
 		
 	if ( Default )
-		stf::cout << "<none>, ";
+		cout << "<none>, ";
 			
-	stf::cout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	cout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
 	
 	HandleView_( View );
 		
-	stf::cout << Text << txf::nl;
+	cout << Text << txf::nl;
 }
 
 void clnarg::PrintOptionUsage(
@@ -455,19 +458,19 @@ void clnarg::PrintOptionUsage(
 	const char *Text,
 	clnarg::view View )
 {
-	stf::cout << txf::tab;
+	cout << txf::tab;
 		
-	stf::cout << Description.GetOptionLabels( OptionId );
+	cout << Description.GetOptionLabels( OptionId );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 
-		 stf::cout << ' ' << Parameter;
+		 cout << ' ' << Parameter;
 
-	stf::cout << ':';
+	cout << ':';
 		
 	HandleView_( View );
 		
-	stf::cout << Text << txf::nl;
+	cout << Text << txf::nl;
 }
 
 	

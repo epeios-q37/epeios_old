@@ -222,8 +222,8 @@ namespace dte {
 		return (bso::sign__)(bso::sbyte__)( Date1 - Date2 );
 	}
 
-	inline txf::text_oflow___ &operator <<(
-		txf::text_oflow___ &Flow,
+	inline txf::text_oflow__ &operator <<(
+		txf::text_oflow__ &Flow,
 		date__ Date )
 	{
 		return Flow << Date.ASCII();

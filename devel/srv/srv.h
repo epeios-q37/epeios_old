@@ -1,7 +1,7 @@
 /*
 	Header for the 'srv' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2001, 2003  Claude SIMON (csimon@epeios.org).
-
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -83,9 +83,9 @@ namespace srv {
 	//c User functions with flow handler.
 	class flow_functions__ {
 	protected:
-		virtual void SRVProcess( flw::ioflow___ &Flow ) = 0;
+		virtual void SRVProcess( flw::ioflow__ &Flow ) = 0;
 	public:
-		void Process( flw::ioflow___ &Flow )
+		void Process( flw::ioflow__ &Flow )
 		{
 			SRVProcess( Flow );
 		}

@@ -104,7 +104,7 @@ namespace htp {
 
 	//f Parse 'flow' and fill 'Header' with it. Return status. 'Header' is only fill when return value is 'sOK'.
 	status Parse(
-		flw::iflow___ &IFlow,
+		flw::iflow__ &IFlow,
 		http_header__ &Header );
 
 	//f Post
@@ -114,7 +114,7 @@ namespace htp {
 		const str::string_ &UserAgent,
 		const str::string_ &ContentType,
 		const str::string_ &Content,
-		txf::text_oflow___ &Flow );
+		txf::text_oflow__ &Flow );
 
 
 

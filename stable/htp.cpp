@@ -65,7 +65,7 @@ it is necessary to personalize it, or certain compiler would not work properly *
 #define CONTENT_LENGTH_STRING	"Content-Length: "
 #define HTTP_SIGNATURE			"HTTP/1.1 "
 
-static bso::bool__ TestHTTPVersion_( flw::iflow___ &IFlow )
+static bso::bool__ TestHTTPVersion_( flw::iflow__ &IFlow )
 {
 	int Pos = 0;
 	const char *Signature = HTTP_SIGNATURE;
@@ -76,7 +76,7 @@ static bso::bool__ TestHTTPVersion_( flw::iflow___ &IFlow )
 	return !Signature[Pos];
 }
 
-static bso::ushort__ GetHTTPResponseCode_( flw::iflow___ &IFlow )
+static bso::ushort__ GetHTTPResponseCode_( flw::iflow__ &IFlow )
 {
 	bso::char__ C;
 	bso::ushort__ Code = 0;
@@ -88,7 +88,7 @@ static bso::ushort__ GetHTTPResponseCode_( flw::iflow___ &IFlow )
 }
 
 static void GetHeader_(
-	flw::iflow___ &IFlow,
+	flw::iflow__ &IFlow,
 	str::string_ &Header )
 {
 	bso::bool__ Continue = true;
@@ -142,7 +142,7 @@ static void GetContentLengthValue_(
 }
 
 static void FillField_(
-	flw::iflow___ &IFlow,
+	flw::iflow__ &IFlow,
 	http_header__ &Header )
 {
 ERRProlog
@@ -158,7 +158,7 @@ ERREnd
 ERREpilog
 }
 
-static void StripHeader_( flw::iflow___ &IFlow )
+static void StripHeader_( flw::iflow__ &IFlow )
 {
 ERRProlog
 	str::string RawHeader;
@@ -173,7 +173,7 @@ ERREpilog
 
 
 htp::status htp::Parse(
-	flw::iflow___ &IFlow,
+	flw::iflow__ &IFlow,
 	http_header__ &Header )
 {
 	htp::status Status = htp::sUnknow;
@@ -209,7 +209,7 @@ void htp::Post(
 	const str::string_ &UserAgent,
 	const str::string_ &ContentType,
 	const str::string_ &Content,
-	txf::text_oflow___ &Flow )
+	txf::text_oflow__ &Flow )
 {
 	Flow << "POST " << URL << " HTTP/1.0" << NL;
 	Flow << "Host: " << Host << NL;

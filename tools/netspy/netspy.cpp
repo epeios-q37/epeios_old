@@ -25,13 +25,16 @@
 // $Id$
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
 #include "epsmsc.h"
 #include "clnarg.h"
 #include "sck.h"
 #include "srv.h"
 #include "clt.h"
 #include "mtk.h"
+
+using cio::cerr;
+using cio::cout;
 
 #define NAME			"netspy"
 #define VERSION			"0.1.0"
@@ -59,7 +62,8 @@ struct parameters {
 	parameters( void )
 	{
 		PortToListen = "80";
-		Target = "cotations.abcbourse.com:80";
+		Target = "194.51.246.46:80";
+//		Target = "download.abcbourse.com:80";
 //		Target = "www.epeios.org:80";
 //		Target = "linuxfr.org:80";
 		
@@ -68,23 +72,23 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	fout << "Usage: " << NAME << " [command] [options] ..." << txf::nl;
-	fout << "(description)" << txf::nl;
-	fout << "Command:" << txf::nl;
+	cout << "Usage: " << NAME << " [command] [options] ..." << txf::nl;
+	cout << "(description)" << txf::nl;
+	cout << "Command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vSplit, false );
-	fout << "Options:" << txf::nl;
+	cout << "Options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", false );
 }
 
 void PrintHeader( void )
 {
-	fout << NAME " V" VERSION " ("__DATE__ " " __TIME__ ") by " AUTHOR_NAME " (" << AUTHOR_EMAIL << ") " << txf::nl << COPYRIGHT << txf::nl;
-//	fout << EPSMSC_IDEALX_TEXT <<txf::nl;
-//	fout << EPSMSC_EPEIOS_TEXT <<txf::nl;
-	fout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cout << NAME " V" VERSION " ("__DATE__ " " __TIME__ ") by " AUTHOR_NAME " (" << AUTHOR_EMAIL << ") " << txf::nl << COPYRIGHT << txf::nl;
+//	cout << EPSMSC_IDEALX_TEXT <<txf::nl;
+//	cout << EPSMSC_EPEIOS_TEXT <<txf::nl;
+	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -102,9 +106,9 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		ferr << '\'' << Unknow << "': unknow option." << txf::nl;
-		fout << HELP << txf::nl;
-		ERRt();
+		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
+		cout << HELP << txf::nl;
+		ERRi();
 	}
 
 	P = Options.First();
@@ -144,9 +148,9 @@ ERRBegin
 	case 0:
 		break;
 	default:
-		ferr << "Too many arguments." << txf::nl;
-		fout << HELP << txf::nl;
-		ERRt();
+		cerr << "Too many arguments." << txf::nl;
+		cout << HELP << txf::nl;
+		ERRi();
 		break;
 	}
 
@@ -178,15 +182,15 @@ ERRBegin
 	case cVersion:
 		PrintHeader();
 		TTR.Advertise();
-		ERRt();
+		ERRi();
 		break;
 	case cHelp:
 		PrintUsage( Description );
-		ERRt();
+		ERRi();
 		break;
 	case cLicense:
 		epsmsc::PrintLicense();
-		ERRt();
+		ERRi();
 		break;
 //	case c:
 	case CLNARG_NONE:
@@ -219,8 +223,8 @@ void Server( void *UP )
 	
 /*	for(;;) {
 		Size = D.Server->GetUpTo( sizeof( Buffer ), Buffer );
-		fout.Put( Buffer, Size );
-		fout << txf::sync;
+		cout.Put( Buffer, Size );
+		cout << txf::sync;
 		D.Client->Put( Buffer, Size );
 		D.Client->Synchronize();
 	}
@@ -228,11 +232,11 @@ void Server( void *UP )
 		C = D.Server->Get();
 		
 		if ( isprint( C ) )
-			fout << (char)C;
+			cout << (char)C;
 		else
-			fout << '>' << (unsigned long)C << '<';
+			cout << '>' << (unsigned long)C << '<';
 	
-		fout << txf::sync;
+		cout << txf::sync;
 		
 		D.Client->Put( C );
 		D.Client->Synchronize();
@@ -248,8 +252,8 @@ void Client( void *UP )
 	
 /*	for(;;) {
 		Size = D.Client->GetUpTo( sizeof( Buffer ), Buffer );
-		fout.Put( Buffer, Size );
-		fout << txf::sync;
+		cout.Put( Buffer, Size );
+		cout << txf::sync;
 		D.Server->Put( Buffer, Size );
 		D.Server->Synchronize();
 	}
@@ -258,11 +262,11 @@ void Client( void *UP )
 		C = D.Client->Get();
 		
 /*		if ( isprint( C ) )
-			fout << (char)C;
+			cout << (char)C;
 		else
-			fout << '>' << (unsigned long)C << '<';
+			cout << '>' << (unsigned long)C << '<';
 */	
-		fout << txf::sync;
+		cout << txf::sync;
 		
 		D.Server->Put( C );
 		D.Server->Synchronize();
@@ -281,7 +285,7 @@ protected:
 		sck::socket_ioflow___ Server, Client;
 		data__ Data;
 	ERRBegin
-		fout << "Connection ..." << txf::nl;
+		cout << "Connection ..." << txf::nl;
 		
 		Server.Init( Socket );
 		Client.Init( clt::Connect( Target_ ) );
@@ -345,12 +349,12 @@ ERRFBegin
 ERRFErr
 	ExitValue = EXIT_FAILURE;
 
-	if ( ERRMajor == err::thw )
+	if ( ERRMajor == err::itn )
 		ERRRst();
 
 ERRFEnd
 ERRFEpilog
-	fout << txf::sync;
+	cout << txf::sync;
 
 	return ExitValue;
 }

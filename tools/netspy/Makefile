@@ -34,7 +34,7 @@ copt += -DCPE_MT
 copt += -DXXX_DBG
 # Speed up thread andling (used with -DCPE_MTK).
 # copt += -DMTK_KEEP
-libs = ttr tol flw stf err uym fam clnarg epsmsc mmi ctn srv sck clt mtk
+libs = ttr tol flw cio err uym fam clnarg epsmsc mmi ctn srv sck clt mtk
 
 ifndef EPEIOS_SRC
 	epeios_src=
@@ -73,7 +73,7 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-lo += -lglib -lgthread
+lo += -lpthread
 ds = :
 endif
 

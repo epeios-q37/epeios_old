@@ -175,7 +175,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		
 		while( Minimum > Amount ) {
 			if ( ( Result = Read( Socket_, (amount__)( Wanted - Amount ), Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
-				if ( ( Result = (amount__)iflow___::HandleEOFD( Buffer, (flw::size__)( Wanted - Amount ) ) ) == 0 ) {
+				if ( ( Result = (amount__)iflow__::HandleEOFD( Buffer, (flw::size__)( Wanted - Amount ) ) ) == 0 ) {
 					Socket_ = SCK_INVALID_SOCKET;
 					Error_ = true;
 					ERRd();
@@ -187,7 +187,7 @@ flw::amount__ sck::socket_ioflow___::FLWGet(
 		Amount = Read( Socket_, Wanted, Buffer, 0 );
 
 	if ( Amount == SCK_DISCONNECTED )
-		if ( ( Amount = iflow___::HandleEOFD( Buffer, Wanted ) ) == 0 ) {
+		if ( ( Amount = iflow__::HandleEOFD( Buffer, Wanted ) ) == 0 ) {
 				Socket_ = SCK_INVALID_SOCKET;
 				Error_ = true;
 				ERRd();

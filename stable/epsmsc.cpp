@@ -55,14 +55,17 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "stf.h"
+#include "cio.h"
+
+using cio::cout;
+using cio::cerr;
 
 using namespace epsmsc;
 using namespace txf;
 
 void epsmsc::PrintLicense( void )
 {
-	stf::cout 
+	cout 
 	<< "        This program is free software; you can redistribute it and/or" << nl
 	<< "        modify it under the terms of the GNU General Public License" << nl
 	<< "        as published by the Free Software Foundation; either version 2" << nl

@@ -85,11 +85,11 @@ extern class ttr_tutor &FLXTutor;
 namespace flx {
 	using flw::datum__;
 
-	using flw::iflow___;
+	using flw::iflow__;
 
 	//c Buffer as a standard input flow.
-	class buffer_iflow___
-	: public iflow___
+	class buffer_iflow__
+	: public iflow__
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
@@ -135,16 +135,16 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
+			iflow__::reset( P );
 
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
-		buffer_iflow___( void )
+		buffer_iflow__( void )
 		{
 			reset( false );
 		}
-		~buffer_iflow___( void )
+		~buffer_iflow__( void )
 		{
 			reset( true );
 		}
@@ -154,18 +154,18 @@ namespace flx {
 			const flw::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
-			iflow___::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ) );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
 		}
 	};
 
-	using flw::oflow___;
+	using flw::oflow__;
 
 	//c Buffer as a standard ouput flow.driver
-	class buffer_oflow___
-	: public oflow___
+	class buffer_oflow__
+	: public oflow__
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
@@ -194,16 +194,16 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow___::reset( P );
+			oflow__::reset( P );
 
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
-		buffer_oflow___( void )
+		buffer_oflow__( void )
 		{
 			reset( false );
 		}
-		~buffer_oflow___( void )
+		~buffer_oflow__( void )
 		{
 			reset( true );
 		}
@@ -212,7 +212,7 @@ namespace flx {
 			flw::datum__ *Buffer,
 			bso::bsize__ Size )
 		{
-			oflow___::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ) );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -226,8 +226,8 @@ namespace flx {
 	typedef bch::E_BUNCH_( datum__ ) bunch_;
 
 	//c A bunch as input flow.driver.
-	class bunch_iflow___
-	: public flw::iflow___
+	class bunch_iflow__
+	: public flw::iflow__
 	{ 
 	protected:
 		virtual flw::amount__ FLWGet(
@@ -257,32 +257,32 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_iflow___( void )
+		bunch_iflow__( void )
 		{
 			reset( false );
 		}
-		~bunch_iflow___( void )
+		~bunch_iflow__( void )
 		{
 			reset( true );
 		}
 		void reset( bool P = true )
 		{
-			iflow___::reset( P );
+			iflow__::reset( P );
 			Set_ = NULL;
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init( const bunch_ &Set )
 		{
-			iflow___::Init( Cache_, sizeof( Cache_ ) );
+			iflow__::Init( Cache_, sizeof( Cache_ ) );
 			Set_ = &Set;
 			Position_ = 0;
 		}
 	};
 
 	//c A bunch as output flow.driver.
-	class bunch_oflow___
-	: public flw::oflow___
+	class bunch_oflow__
+	: public flw::oflow__
 	{
 	protected:
 		virtual flw::amount__ FLWPut(
@@ -300,32 +300,32 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_oflow___( void )
+		bunch_oflow__( void )
 		{
 			reset( false );
 		}
-		~bunch_oflow___( void )
+		~bunch_oflow__( void )
 		{
-			oflow___::reset( true );
+			oflow__::reset( true );
 
 			reset( true );
 		}
 		void reset( bool P = true )
 		{
-			oflow___::reset( P );
+			oflow__::reset( P );
 			Set_ = NULL;
 		}
 		//f Initializing with the buffer bunch 'BufferSet'.
 		void Init( bunch_ &BufferSet )
 		{
-			oflow___::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ) );
 			Set_ = &BufferSet;
 		}
 	};
 	
 	//c A output flow which write to nothing.
-	class dump_oflow___
-	: public flw::oflow___
+	class dump_oflow__
+	: public flw::oflow__
 	{
 	protected:
 		virtual flw::amount__ FLWPut(
@@ -342,13 +342,13 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow___::reset( P );
+			oflow__::reset( P );
 		}
-		dump_oflow___( void )
+		dump_oflow__( void )
 		{
 			reset( false );
 		}
-		~dump_oflow___( void )
+		~dump_oflow__( void )
 		{
 			reset( true );
 		}
@@ -357,7 +357,7 @@ namespace flx {
 		{
 			reset();
 			
-			oflow___::Init( Cache_, sizeof( Cache_ ) );
+			oflow__::Init( Cache_, sizeof( Cache_ ) );
 		}
 	};
 }
