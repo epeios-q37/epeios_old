@@ -137,7 +137,7 @@ namespace stk {
 			return Objet;
 		}
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
-		bso::bool__ ObjectExists( t Object ) const
+		bso::bool__ Exists( t Object ) const
 		{
 			if ( Amount() )
 				return E_MEMORY_( t )::Position( Object, 0, Amount() ) != NONE;

@@ -68,6 +68,11 @@ namespace ids {
 	//c Store of ids of type 'id__'. Use 'ID_STORE' rather than directly this class.
 	template <typename id__> class ids_store_ 
 	{
+		// Return true if 'Id' available, false otherwise.
+		bso::bool__ IsAvailable_( id__ ID ) const
+		{
+			return Released.Exists( ID ) || ( ID >= S_.FirstUnused );
+		}
 	public:
 		struct s
 		{
@@ -138,15 +143,13 @@ namespace ids {
 		void Release( id__ ID )
 		{
 #ifdef IDS_DBG
-			if ( Released.Exists( ID ) )
-				ERRu();
-			if ( ID >= S_.FirstUnused )
+			if ( IsAvailable_( ID ) )
 				ERRu();
 #endif
 			Released.Push( ID );
 		}
-		//f Return the first unused id.
-		id__ GetFirstUnused( void ) const
+		//f Return the first available id.
+		id__ GetFirstAvailable( void ) const
 		{
 			return S_.FirstUnused;
 		}
@@ -155,10 +158,10 @@ namespace ids {
 		{
 			return Released.Amount();
 		}
-		//f Return true' if 'ID' exists, false otherwize.
-		bso::bool__ Exists( id__ ID ) const
+		//f Return true' if 'ID' is available, false otherwize.
+		bso::bool__ IsAvailable( id__ ID ) const
 		{
-			return Released.ObjectExists( ID );
+			return IsAvailable_( ID );
 		}
 	};
 

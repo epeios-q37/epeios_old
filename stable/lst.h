@@ -87,16 +87,16 @@ namespace lst {
 		'Size' est la capacité allouée. Ne fait rien par défaut. */
 		virtual void LSTAllocate( epeios::size__ Size ) {}
 	private:
-		// Return the extent, based on 'Unused'.
+		// Return the extent, based on 'Store'.
 		epeios::row_t__ Extent_( void ) const
 		{
-			return Unused.GetFirstUnused();
+			return Store.GetFirstAvailable();
 		}
 		epeios::row_t__ Nouveau_( void )
 		{
 			bso::bool__ Released = false;
 
-			epeios::row_t__ New = Unused.New( Released );
+			epeios::row_t__ New = Store.New( Released );
 
 			if ( !Released )
 				LSTAllocate( Extent_() );
@@ -106,39 +106,39 @@ namespace lst {
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
 		{
-			return lst::Successeur_( Element, Extent_(), Unused );
+			return lst::Successeur_( Element, Extent_(), Store );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
 		{
-			return lst::Predecesseur_( Element, Unused );
+			return lst::Predecesseur_( Element, Store );
 		}
 	public:
-		//o Unused (or released) locations.
-		store_ Unused;
+		//o Store of locations.
+		store_ Store;
 		struct s
 		{
-			store_::s Unused;
+			store_::s Store;
 		};
 	// fonctions
 		list_( s &S )
-		: Unused( S.Unused )
+		: Store( S.Store )
 		{}
 		void reset( bool P = true )
 		{
-			Unused.reset( P );
+			Store.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &M )
 		{
-			Unused.plug( M );
+			Store.plug( M );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			Unused.plug( M );
+			Store.plug( M );
 		}
 		list_ &operator =( const list_ &L )
 		{
-			Unused = L.Unused;
+			Store = L.Store;
 
 			return *this;
 		}
@@ -157,12 +157,12 @@ namespace lst {
 	*/	//f Initialiration.
 		void Init( void )
 		{
-			Unused.Init();
+			Store.Init();
 		}
 		//f Delete 'Entry'.
 		void Delete( r Entry )
 		{
-			Unused.Release( *Entry );
+			Store.Release( *Entry );
 		}
 		//f Return the position of a new entry.
 		r New( void )
@@ -173,7 +173,7 @@ namespace lst {
 		r First( void ) const
 		{
 			if ( Extent_() )
-				if ( !Unused.Exists( 0 ) )
+				if ( !Store.IsAvailable( 0 ) )
 					return 0;
 				else
 					return Successeur_( 0 );
@@ -187,7 +187,7 @@ namespace lst {
 			{
 				epeios::row_t__ P = Extent_() - 1;
 
-				if ( !Unused.Exists( P ) )
+				if ( !Store.IsAvailable( P ) )
 					return P;
 				else
 					return Predecesseur_( P );
@@ -204,7 +204,7 @@ namespace lst {
 		r Next( r Entry ) const
 		{
 			if ( ++*Entry < Extent_() )
-				if ( !Unused.Exists( *Entry ) )
+				if ( !Store.IsAvailable( *Entry ) )
 					return Entry;
 				else
 					return Successeur_( *Entry );
@@ -215,7 +215,7 @@ namespace lst {
 		r Previous( r Entry ) const
 		{
 			if ( (*Entry)-- > 0 )
-				if ( !Unused.Exists( *Entry ) )
+				if ( !Store.IsAvailable( *Entry ) )
 					return Entry;
 				else
 					return Predecesseur_( *Entry );
@@ -225,7 +225,7 @@ namespace lst {
 		//f Amount of entries, NOT the extent of the list.
 		epeios::size__ Amount( void ) const
 		{
-			return Extent_() - Unused.Amount();
+			return Extent_() - Store.Amount();
 		}
 		//f Extent of list.
 		epeios::size__ Extent( void ) const
@@ -238,7 +238,7 @@ namespace lst {
 			if ( *Entry >= Extent_() )
 				return false;
 			else
-				return !Unused.Exists( *Entry );
+				return !Store.IsAvailable( *Entry );
 		}
 	};
 

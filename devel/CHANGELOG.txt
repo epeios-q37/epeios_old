@@ -6,6 +6,9 @@ GENERAL:
 BITBCH:
 - Fixing bug.
 
+BTF:
+- Adding a dummy 'Exists()' method, due to changes in 'STK' library.
+
 CTN:
 - Renaming the 'Sync()' method in 'Set()' and 'Flush()'.
 
@@ -14,6 +17,9 @@ DBT:
 
 ERR:
 - Adding the 'tReturn' item.
+
+IDS:
+- Adapting to changes in 'STK' library.
 
 LST:
 - Renaming 'CreateEntry' to 'New'.
@@ -36,6 +42,9 @@ QUE:
 
 SSNMNG:
 - Adapting to changes in 'LST' library.
+
+STK:
+- Renaming 'ObjectExists' to 'Exists', to avoid some mistake risks.
 
 TAGDTC:
 - Adapting to changes in 'TYM' library.

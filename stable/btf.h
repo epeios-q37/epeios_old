@@ -137,6 +137,13 @@ namespace btf {
 		{
 			return E_STACK_( r )::Amount() >= 2;
 		}
+		//f Only for the 'NAVt()' macro from 'TOL' library. Don't use.
+		bso::bool__ Exists( epeios::row__ ) const
+		{
+			ERRu();
+
+			return false;	// Only to avoid a warning.
+		}
 	};
 
 	AUTO1( binary_tree_filler )
