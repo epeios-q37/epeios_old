@@ -12,6 +12,10 @@ GENERAL:
 BCH:
 - (09/06/04) Adding 'relations(_)' type.
 
+BITBCH:
+- (23/06/04) Adding the 'And', 'Or' and 'XOr' methods.
+- (23/06/04) Fixing some template problems.
+
 BSO:
 - (12/03/04) Adding 'Convert()' function with 'String' parameter.
 - (03/05/04) disable thread-unsafe functions when working in multithreading.

@@ -1,7 +1,7 @@
 /*
 	'bitbch' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'bitbch' header file ('bitbch.h').
-	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -55,8 +55,88 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-namespace bitbch {
+void bitbch::And(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	epeios::row__ Row = O1.First();
+
+	while ( Row != NONE ) {
+		R.Store( O1( Row ) & O2( Row ), Row );
+
+		Row = O1.Next( Row );
+	}
 }
+
+void bitbch::Or(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	epeios::row__ Row = O1.First();
+
+	while ( Row != NONE ) {
+		R.Store( O1( Row ) | O2( Row ), Row );
+
+		Row = O1.Next( Row );
+	}
+}
+
+void bitbch::XOr(
+	const E_BIT_BUNCH_ &O1,
+	const E_BIT_BUNCH_ &O2,
+	E_BIT_BUNCH_ &R )
+{
+#ifdef BITBCH_DBG
+	if ( O1.Amount() != O2.Amount() )
+		ERRu();
+#endif
+
+	if ( R.Amount() < O1.Amount() )
+		R.Allocate( O1.Amount() );
+
+	epeios::row__ Row = O1.First();
+
+	while ( Row != NONE ) {
+		R.Store( O1( Row ) != O2( Row ), Row );
+
+		Row = O1.Next( Row );
+	}
+}
+
+void bitbch::Not(
+	const E_BIT_BUNCH_ &O,
+	E_BIT_BUNCH_ &R )
+{
+	if ( R.Amount() < O.Amount() )
+		R.Allocate( O.Amount() );
+
+	epeios::row__ Row = O.First();
+
+	while ( Row != NONE ) {
+		R.Store( !O( Row ), Row );
+
+		Row = O.Next( Row );
+	}
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -1,6 +1,6 @@
 /*
 	Header for the 'bitbch' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2001-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2001-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -229,6 +229,16 @@ namespace bitbch {
 
 			return P;
 		}
+		//f Set all the content to valu.
+		void Reset( bso::bool__ Value = false )
+		{
+			receptacle__ Pattern = 0;
+
+			if ( Value )
+				Pattern = -1;
+
+			Table.Store( Pattern, Convert_( Amount() ) );
+		}
 	};
 
 	E_AUTO1( bit_bunch )
@@ -238,6 +248,57 @@ namespace bitbch {
 
 	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( epeios::row__ )
 	#define E_BIT_BUNCH		E_BIT_BUNCHt( epeios::row__ )
+
+	void And(
+		const E_BIT_BUNCH_ &O1,
+		const E_BIT_BUNCH_ &O2,
+		E_BIT_BUNCH_ &R );
+
+	void Or(
+		const E_BIT_BUNCH_ &O1,
+		const E_BIT_BUNCH_ &O2,
+		E_BIT_BUNCH_ &R );
+
+	void XOr(
+		const E_BIT_BUNCH_ &O1,
+		const E_BIT_BUNCH_ &O2,
+		E_BIT_BUNCH_ &R );
+
+	void Not(
+		const E_BIT_BUNCH_ &O,
+		E_BIT_BUNCH_ &R );
+
+	template <typename r__> inline void And(
+		const E_BIT_BUNCHt_(r__) &O1,
+		const E_BIT_BUNCHt_(r__) &O2,
+		E_BIT_BUNCHt_(r__) &R )
+	{
+		And( *(const E_BIT_BUNCH_ *)&O1, *(const E_BIT_BUNCH_ *)&O2, *(E_BIT_BUNCH_ *)&R );
+	}
+
+	template <typename r__> inline void Or(
+		const E_BIT_BUNCHt_(r__) &O1,
+		const E_BIT_BUNCHt_(r__) &O2,
+		E_BIT_BUNCHt_(r__) &R )
+	{
+		Or( *(const E_BIT_BUNCH_ *)&O1, *(const E_BIT_BUNCH_ *)&O2, *(E_BIT_BUNCH_ *)&R );
+	}
+
+	template <typename r__> inline void XOr(
+		const E_BIT_BUNCHt_(r__) &O1,
+		const E_BIT_BUNCHt_(r__) &O2,
+		E_BIT_BUNCHt_(r__) &R )
+	{
+		XOr( *(const E_BIT_BUNCH_ *)&O1, *(const E_BIT_BUNCH_ *)&O2, *(E_BIT_BUNCH_ *)&R );
+	}
+
+	template <typename r__> inline void Not(
+		const E_BIT_BUNCHt_(r__) &O,
+		E_BIT_BUNCHt_(r__) &R )
+	{
+		Not( *(const E_BIT_BUNCH_ *)&O, *(E_BIT_BUNCH_ *)&R );
+	}
+
 
 #if 0	// Code in .cpp as deseapered ...
 	bso::bool__ ComparerBitABit_(
@@ -475,7 +536,7 @@ namespace bitbch {
 			return Precedent_( Table_, Value, Courant );
 		}
 	};
-
+#if 0
 	/* Place dans 'D', 'O1' & 'O2'. 'D' peut être le même objet que 'O1' ou 'O2'.
 	Usage interne. */
 	template <class t> inline void Et_(
@@ -519,7 +580,7 @@ namespace bitbch {
 	{
 		return Compter_( O.Table_, O.Taille() );
 	}
-
+#endif
 	//c A set of a maximum of 't' bits.
 	template <int t, typename r> class bit_bunch__
 	{
@@ -622,14 +683,14 @@ namespace bitbch {
 				return NONE;
 		}
 	};
-
+#if 0
 	//f 'D' = 'O1' AND 'O2'.
 	template <class t> inline void And(
 		const t &O1,
 		const t &O2,
 		t &D )
 	{
-		BSTEt_( O1.Table_, O2.Table_, D.Table_ );
+		Et_( O1.Table_, O2.Table_, D.Table_ );
 	}
 
 	//f 'D' = 'O1' OR 'O2'.
@@ -638,7 +699,7 @@ namespace bitbch {
 		const t &O2,
 		t &D )
 	{
-		BSTOu_( O1.Table_, O2.Table_, D.Table_ );
+		Ou_( O1.Table_, O2.Table_, D.Table_ );
 	}
 
 	//f 'D' = NOT 'O'.
@@ -646,7 +707,7 @@ namespace bitbch {
 		const t &O,
 		t &D )
 	{
-		BSTNon_( O.Table_, D.Table_ );
+		Non_( O.Table_, D.Table_ );
 	}
 
 	//f 'D' = 'O1' XOR 'O2'.
@@ -655,14 +716,15 @@ namespace bitbch {
 		const t &O2,
 		t &D )
 	{
-		BSTDff_( O1.Table_, O2.Table_, D.Table_ );
+		Dff_( O1.Table_, O2.Table_, D.Table_ );
 	}
 
 	//f Return the count of bit at true in 'O'.
 	template <class t> inline tym::bsize__ Count( const t &O )
 	{
-		return BSTCompter_( O.Table_ );
+		return BSTCompter_( O.Table );
 	}
+#endif
 }
 
 /*$END$*/
