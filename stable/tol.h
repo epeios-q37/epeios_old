@@ -400,7 +400,7 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
-#define NAV( Object, Type )\
+#define NAVt( Object, Type )\
 	Type First( void ) const\
 	{\
 		return Object##First();\
@@ -417,11 +417,11 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	{\
 		return Object##Next( P );\
 	}\
-	tym::size__ Amount( void ) const\
+	epeios::size__ Amount( void ) const\
 	{\
 		return Object##Amount();\
 	}\
-	tym::size__ Extent( void ) const\
+	epeios::size__ Extent( void ) const\
 	{\
 		return Object##Extent();\
 	}\
@@ -429,6 +429,8 @@ inline void TOLInitializeRandomGenerator( unsigned int Seed )
 	{\
 		return Object##IsEmpty();\
 	}
+	
+#define NAV( Object )	NAVt( Object, epeios::row__ )
 
 #if 0
 	// probably to delete	

@@ -66,32 +66,32 @@ namespace idxbtq {
 
 	//c Index using a tree-based index and a queue-based index. Fast browsing and sorting.
 	class tree_queue_index_
-	: public tree_index_,
-	  public queue_index_
+	: public E_IBTREE_,
+	  public E_IQUEUE_
 	{
 	public:
 		struct s
-		: public tree_index_::s,
-		  public queue_index_::s
+		: public E_IBTREE_::s,
+		  public E_IQUEUE_::s
 		{};
 		tree_queue_index_( s &S )
-		: tree_index_( S ),
-		  queue_index_( S )
+		: E_IBTREE_( S ),
+		  E_IQUEUE_( S )
 		{}
 		void reset( bool P = true )
 		{
-			tree_index_::reset( P );
-			queue_index_::reset( P );
+			E_IBTREE_::reset( P );
+			E_IQUEUE_::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			tree_index_::plug( MM );
-			queue_index_::plug( MM );
+			E_IBTREE_::plug( MM );
+			E_IQUEUE_::plug( MM );
 		}
 		tree_queue_index_ &operator =( const tree_queue_index_ &I )
 		{
-			tree_index_::operator =( I );
-			queue_index_::operator =( I );
+			E_IBTREE_::operator =( I );
+			E_IQUEUE_::operator =( I );
 
 			return *this;
 		}
@@ -108,54 +108,54 @@ namespace idxbtq {
 	*/	//f Initializtion.
 		void Init( void )
 		{
-			tree_index_::Init();
-			queue_index_::Init();
+			E_IBTREE_::Init();
+			E_IQUEUE_::Init();
 		}
-		NAV( queue_index_:: )
+		NAV( E_IQUEUE_:: )
 		//f 'Item' becomes the first item of the index, if empty.
 		void Create( tym::row__ Item )
 		{
 			if ( !IsEmpty() )
 				ERRu();
 
-			tree_index_::Create( Item );
-			queue_index_::Create( Item );
+			E_IBTREE_::Create( Item );
+			E_IQUEUE_::Create( Item );
 		}
 		//f Allocate enough room to contain 'Size' items.
-		void Allocate( tym::size__ Size )
+		void Allocate( epeios::size__ Size )
 		{
-			tree_index_::Allocate( Size );
-			queue_index_::Allocate( Size );
+			E_IBTREE_::Allocate( Size );
+			E_IQUEUE_::Allocate( Size );
 		}
 		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
 		return true to use this function. */
 		void BecomeNext(
-			tym::row__ New,
-			tym::row__ Item )
+			epeios::row__ New,
+			epeios::row__ Item )
 		{
-			tree_index_::BecomeNext( New, Item );
-			queue_index_::BecomeNext( New, Item );
+			E_IBTREE_::BecomeNext( New, Item );
+			E_IQUEUE_::BecomeNext( New, Item );
 		}
 		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
 		return true to use this function. */
 		void BecomePrevious(
-			tym::row__ New,
-			tym::row__ Item )
+			epeios::row__ New,
+			epeios::row__ Item )
 		{
-			tree_index_::BecomePrevious( New, Item );
-			queue_index_::BecomePrevious( New, Item );
+			E_IBTREE_::BecomePrevious( New, Item );
+			E_IQUEUE_::BecomePrevious( New, Item );
 		}
 		//f Remove 'Item'.
 		void Remove( tym::row__ Item )
 		{
-			queue_index_::Remove( Item );
-			tree_index_::Remove( Item );
+			E_IQUEUE_::Remove( Item );
+			E_IBTREE_::Remove( Item );
 		}
 		//f Balances the tree of the index.
 		void Balance( mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
 		{
-			if ( queue_index_::Amount() )
-				tree_index_::Fill( queue_index_::Queue, queue_index_::First(), MD );
+			if ( E_IQUEUE_::Amount() )
+				E_IBTREE_::Fill( E_IQUEUE_::Queue, E_IQUEUE_::First(), MD );
 		}
 	};
 

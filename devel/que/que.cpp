@@ -54,6 +54,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace que;
+
 void que::links_::Initialize(
 	epeios::row_t__ Begin,
 	epeios::row_t__ End )
@@ -65,6 +67,28 @@ void que::links_::Initialize(
 	} while( Begin++ < End );
 }
 
+
+void Dump_(
+		const E_QUEUE_ &Queue,
+		stk::E_STACK_( epeios::row__ ) &Stack,
+		epeios::row__ Begin,
+		direction Direction )
+{
+	if ( Direction == que::dAscending )
+		do
+		{
+			Stack.Push( Begin );
+			Begin = Queue.Next( Begin );
+		}
+		while ( Begin != NONE );
+	else
+		do
+		{
+			Stack.Push( Begin );
+			Begin = Queue.Previous( Begin );
+		}
+		while ( Begin != NONE );
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -117,7 +117,7 @@ namespace lst {
 		// Retourne vrai si 'Element' existe dans la liste.
 		bso__bool Existe_( epeios::row_t__ Position ) const
 		{
-			return Existe_( Position, Libres );
+			return lst::Existe_( Position, Libres );
 		}
 	public:
 		//o Stack which contains the free locations.
@@ -175,7 +175,7 @@ namespace lst {
 		//f Remove 'Entry'.
 		void Remove( r Entry )
 		{
-			Libres.Push( Entry );
+			Libres.Push( Entry.V );
 		}
 		//f Return the position of a new entry.
 		r CreateEntry( void )
@@ -243,12 +243,12 @@ namespace lst {
 		//f Return true if 'Entry' exists, false otherwise.
 		bso__bool Exists( r Entry ) const
 		{
-			if ( Entry >= amount_extent_manager_<r>::Amount() )
+			if ( Entry.V >= amount_extent_manager_<r>::Amount() )
 				return false;
 			else if ( Libres.IsEmpty() )
 				return true;
 			else
-				return Existe_( Entry );
+				return Existe_( Entry.V );
 		}
 	};
 

@@ -69,8 +69,8 @@ extern class ttr_tutor &SSNMNGTutor;
 
 namespace ssnmng {
 
-	using lst::E_LIST_;
-	using que::E_MQUEUE_;
+	using lst::list_;
+	using que::managed_queue_;
 
 	//c A session id.
 	class session_id__

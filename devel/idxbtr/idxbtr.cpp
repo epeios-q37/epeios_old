@@ -69,8 +69,8 @@ namespace idxbtr {
 	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
 	tym::row__ tree_index_::NoeudSansFils_( tym::row__ Position ) const
 	{
-		while( binary_tree_::HasLeft( Position ) )
-			Position = binary_tree_::Left( Position );
+		while( E_BTREE_::HasLeft( Position ) )
+			Position = E_BTREE_::Left( Position );
 
 		return Position;
 	}
@@ -78,8 +78,8 @@ namespace idxbtr {
 	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
 	tym::row__ tree_index_::NoeudSansFille_( tym::row__ Position ) const
 	{
-		while( binary_tree_::HasRight( Position ) )
-			Position = binary_tree_::Right( Position );
+		while( E_BTREE_::HasRight( Position ) )
+			Position = E_BTREE_::Right( Position );
 
 		return Position;
 	}
@@ -87,11 +87,11 @@ namespace idxbtr {
 	// Retourne le premier noeud qui est fils en remontant.
 	tym::row__ tree_index_::PereFilsEnRemontant_( tym::row__ Position ) const
 	{
-		while( !binary_tree_::IsLeft( Position ) && binary_tree_::HasParent( Position ) )
-			Position = binary_tree_::Parent( Position );
+		while( !E_BTREE_::IsLeft( Position ) && E_BTREE_::HasParent( Position ) )
+			Position = E_BTREE_::Parent( Position );
 
-		if ( binary_tree_::IsLeft( Position ) )
-			return binary_tree_::Parent( Position );
+		if ( E_BTREE_::IsLeft( Position ) )
+			return E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
@@ -99,11 +99,11 @@ namespace idxbtr {
 	// Retourne le premier noeud qui est fille en remontant.
 	tym::row__ tree_index_::PereFilleEnRemontant_( tym::row__ Position ) const
 	{
-		while( !binary_tree_::IsRight( Position ) && binary_tree_::HasParent( Position ) )
-			Position = binary_tree_::Parent( Position );
+		while( !E_BTREE_::IsRight( Position ) && E_BTREE_::HasParent( Position ) )
+			Position = E_BTREE_::Parent( Position );
 
-		if ( binary_tree_::IsRight( Position ) )
-			return binary_tree_::Parent( Position );
+		if ( E_BTREE_::IsRight( Position ) )
+			return E_BTREE_::Parent( Position );
 		else
 			return NONE;
 	}
@@ -171,7 +171,7 @@ namespace idxbtr {
 				Sommet = Pile.Pop();
 
 				Niveau = Sommet.Niveau + 1;
-				binary_tree_::BecomeRight( Racine, Sommet.Racine );
+				E_BTREE_::BecomeRight( Racine, Sommet.Racine );
 
 				Racine = Sommet.Racine;
 			}
@@ -182,7 +182,7 @@ namespace idxbtr {
 			{
 				if ( File.HasNext( Courant ) )
 				{
-					binary_tree_::BecomeLeft( Racine, Courant );
+					E_BTREE_::BecomeLeft( Racine, Courant );
 
 					Sommet.Racine = Courant;
 					Sommet.Niveau = Niveau;
@@ -194,7 +194,7 @@ namespace idxbtr {
 				else
 				{
 					Boucler = false;
-					binary_tree_::BecomeRight( Courant, NoeudSansFille_( Racine ) );
+					E_BTREE_::BecomeRight( Courant, NoeudSansFille_( Racine ) );
 				}
 			}
 			else
@@ -211,7 +211,7 @@ namespace idxbtr {
 		{
 			Sommet = Pile.Pop();
 
-			binary_tree_::BecomeRight( Racine, Sommet.Racine );
+			E_BTREE_::BecomeRight( Racine, Sommet.Racine );
 
 			Racine = Sommet.Racine;
 		}

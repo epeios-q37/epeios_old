@@ -596,9 +596,9 @@ namespace ctn {
 	{
 	private:
 		// Create an initialized object. Return position of the created object.
-		epeios::row_t__ Create_( void )
+		r Create_( void )
 		{
-			epeios::row_t__ P = mono_container_<t, r>::New();
+			r P = mono_container_<t, r>::New();
 
 			mono_container_<t, r>::operator()( P ).Init();
 
@@ -642,9 +642,9 @@ namespace ctn {
 		//f Adding object 'Object'. Return position where added.
 		r Add( const t &Object )
 		{
-			epeios::row_t__ P = Create_();
+			r P = Create_();
 
-			mono_container_<t, r>::operator()() = Object;
+			mono_container_<t, r>::operator()() = Object;	// Positionned by 'Create_'.
 
 			mono_container_<t, r>::Sync();
 
@@ -951,7 +951,7 @@ namespace ctn {
 		//f Create an initialized object. Return position of the created object.
 		r Create( void )
 		{
-			epeios::row_t__ P = Create_();
+			r P = Create_();
 
 			multi_container_< t, r >::Sync();
 
@@ -962,7 +962,7 @@ namespace ctn {
 		{
 			r P = Create_();
 
-			multi_container_< t, r >::operator()() = Object;
+			multi_container_< t, r >::operator()() = Object;	// Positionned by 'Create_'.
 
 			multi_container_< t, r >::Sync();
 

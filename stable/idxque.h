@@ -65,21 +65,15 @@ extern class ttr_tutor &IDXQUETutor;
 #define IDXQUE_END	NONE
 
 namespace idxque {
-	using que::E_MQUEUE_;
-
-	enum direction
-	{
-		dAscending = false,
-		dDescending = true
-	};
+	using namespace que;
 
 	//c Queue-based index, fast browsing, but slow sorting.
-	class queue_index_
-	: public E_MQUEUE_
+	template <typename r> class queue_index_
+	: public E_MQUEUEt_( r )
 	{
 	public:
 		struct s
-		: public E_MQUEUE_::s
+		: public E_MQUEUEt_( r )::s
 		{};
 	// fonctions
 		queue_index_( s &S )
@@ -87,50 +81,58 @@ namespace idxque {
 		{}
 		void reset( bool P = true )
 		{
-			E_MQUEUE_::reset( P );
+			E_MQUEUEt_( r )::reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			E_MQUEUE_::plug( MM );
+			E_MQUEUEt_( r )::plug( MM );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			E_MQUEUE_::plug( MD );
+			E_MQUEUEt_( r )::plug( MD );
 		}
 		queue_index_ &operator =( const queue_index_ &T )
 		{
-			E_MQUEUE_::operator =( T );
+			E_MQUEUEt_( r )::operator =( T );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_MQUEUE_::Init();
+			E_MQUEUEt_( r )::Init();
 		}
 		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
 		void Dump(
-			stk::stack_<tym::row__> &Stack,
+			stk::E_STACK_( r ) &Stack,
 			tym::row__ Begin,
-			idxque::direction Direction );
+			idxque::direction Direction )
+		{
+			E_MQUEUEt_( r )::Dump( Stack, Begin, Direction );
+		}
 		//f Item becomes node next to 'Node'.
 		void BecomeNext(
 			tym::row__ Item,
 			tym::row__ Node )
 		{
-			E_MQUEUE_::InsertItemAfterNode( Item, Node );
+			E_MQUEUEt_( r )::InsertItemAfterNode( Item, Node );
 		}
 		//f Item becomes node previous to 'Node'.
 		void BecomePrevious(
 			tym::row__ Item,
 			tym::row__ Node )
 		{
-			E_MQUEUE_::InsertItemBeforeNode( Item, Node );
+			E_MQUEUEt_( r )::InsertItemBeforeNode( Item, Node );
 		}
 	};
 
-
-	AUTO( queue_index )
+	AUTOt( queue_index )
+	
+	#define E_IQUEUEt_( r )	queue_index_<r>
+	#define E_IQUEUEt( r )	queue_index<r>
+	
+	#define E_IQUEUE_	E_IQUEUEt_( epeios::row__ )
+	#define E_IQUEUE	E_IQUEUEt( epeios::row__ )
 }
 
 /*$END$*/

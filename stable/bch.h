@@ -266,7 +266,7 @@ namespace bch {
 		//f Return the position of the first of 'Amount' new object.
 		r New( epeios::size__ Amount = 1 )
 		{
-			r P = this->Amount();
+			epeios::row_t__ P = this->Amount();
 
 			Allouer_( P + Amount, aem::mDefault );
 

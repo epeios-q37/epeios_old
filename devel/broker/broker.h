@@ -197,10 +197,10 @@ namespace broker {
 
 			if ( P == NONE )
 				P = BROKER_INVALID_COMMAND;
-			else if ( P > BROKER_COMMAND_MAX )
+			else if ( P.V > BROKER_COMMAND_MAX )
 				ERRl();
 
-			return (command__)P;
+			return (command__)P.V;
 		}
 		tym::row__ Add(
 			const char *Name,
@@ -288,7 +288,7 @@ namespace broker {
 				ERRm();
 			}
 
-			index__ Index = E_LIST::CreateEntry();
+			index__ Index = lst::E_LIST::CreateEntry();
 
 			Objets.Write( Pointeur, Index );
 
@@ -297,11 +297,11 @@ namespace broker {
 		virtual void BROKERRemove( index__ Index )
 		{
 			delete Objets( Index );
-			E_LIST::Remove( Index );
+			lst::E_LIST::Remove( Index );
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
-			if ( Index >= Objets.Amount() )
+			if ( Index.V >= Objets.Amount() )
 				ERRu();
 
 			return (void *)Objets( Index );
@@ -312,7 +312,7 @@ namespace broker {
 		//f Initialization.
 		void Init( void )
 		{
-			E_LIST::Init();
+			lst::E_LIST::Init();
 			Objets.Init();
 			module<t>::Init();
 		}
@@ -334,17 +334,17 @@ namespace broker {
 		virtual index__ BROKERNew( void )
 		{
 			Element_.Sync();
-			return E_LIST::CreateEntry();
+			return lst::E_LIST::CreateEntry();
 		}
 		virtual void BROKERRemove( index__ Index )
 		{
 			Element_( Index ).reset();
-			E_LIST::Remove( Index );
+			lst::E_LIST::Remove( Index );
 			Element_.Sync();
 		}
 		virtual void *BROKERObject( index__ Index )
 		{
-			if ( Index >= Objets.Amount() )
+			if ( Index.V >= Objets.Amount() )
 				ERRu();
 
 			return (void *)&Element_( Index );
@@ -356,7 +356,7 @@ namespace broker {
 		{
 			Element_.Sync();
 			Objets.reset( P );
-			E_LIST::reset( P );
+			lst::E_LIST::reset( P );
 		}
 		standard_module( void )
 		{
@@ -369,7 +369,7 @@ namespace broker {
 		// Initialisation.
 		void Init( void )
 		{
-			E_LIST::Init();
+			lst::E_LIST::Init();
 			Objets.Init();
 			Element_.Init( Objets );
 			untyped_module::Init( t::NAME );
@@ -428,7 +428,7 @@ namespace broker {
 		// Initialisation.
 		void Init( void )
 		{
-			E_LIST::Init();
+			lst::E_LIST::Init();
 			E_MEMORY( link__ )::Init();
 		}
 		object__ New(
@@ -439,35 +439,35 @@ namespace broker {
 			object__ IdObjet;
 			tym::row__ P;
 			
-			P = E_LIST::CreateEntry();
+			P = lst::E_LIST::CreateEntry();
 
-			if ( P > BROKER_TYPE_MAX )
+			if ( P.V > BROKER_TYPE_MAX )
 				ERRl();
 
-			IdObjet = (object_t__)P;
+			IdObjet = (object_t__)P.V;
 
 			Lien.Type = IdType;
 			Lien.Index = Index;
 
-			E_MEMORY( link__ )::Write( Lien, IdObjet() );
+			E_MEMORY( link__ )::Write( Lien, IdObjet.V );
 
 			return IdObjet;
 		}
 		void Remove( object__ IdObjet )
 		{
-			E_LIST::Remove( IdObjet() );
+			lst::E_LIST::Remove( IdObjet.V );
 		}
 		type__ Type( object__ IdObjet ) const
 		{
-			return E_MEMORY( link__ )::Read( IdObjet() ).Type;
+			return E_MEMORY( link__ )::Read( IdObjet.V ).Type;
 		}
 		index__ Index( object__ IdObjet ) const
 		{
-			return E_MEMORY( link__ )::Read( IdObjet() ).Index;
+			return E_MEMORY( link__ )::Read( IdObjet.V ).Index;
 		}
 		tym::size__ Amount( void )
 		{
-			return E_LIST::Amount();
+			return lst::E_LIST::Amount();
 		}
 	};
 
@@ -481,7 +481,7 @@ namespace broker {
 		untyped_module &Module_( type__ IdType ) const
 		{
 			if ( IdType != BROKER_MASTER_TYPE )
-				return *Modules( IdType() );
+				return *Modules( IdType.V );
 			else
 				return (untyped_module &)Master_;	// Not very happy about this conversion, 
 		}

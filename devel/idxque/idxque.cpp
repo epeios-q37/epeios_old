@@ -55,30 +55,6 @@ public:
 /*$BEGIN$*/
 
 
-/* Remplit la pile 'Pile' avec la file à partir de 'Debut' dans le
-sens 'Sens'. */
-void idxque::queue_index_::Dump(
-	stk::stack_<tym::row__> &Pile,
-	tym::row__ Debut,
-	idxque::direction Direction )
-{
-	if ( Direction == idxque::dAscending )
-		do
-		{
-			Pile.Push( Debut );
-			Debut = Next( Debut );
-		}
-		while ( Debut != NONE );
-	else
-		do
-		{
-			Pile.Push( Debut );
-			Debut = Previous( Debut );
-		}
-		while ( Debut != NONE );
-}
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class idxquepersonnalization

@@ -67,7 +67,7 @@ namespace idxbtr {
 
 	//c Tree-based index, fast sorting, but slow browsing.
 	class tree_index_
-	: public binary_tree_
+	: public E_BTREE_
 	{
 	private:
 		// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
@@ -87,32 +87,32 @@ namespace idxbtr {
 			mdr::E_MEMORY_DRIVER_ &Pilote );
 	public:
 		struct s
-		: public binary_tree_::s
+		: public E_BTREE_::s
 		{
 			// La racine de l'arbre.
 			tym::row__ Racine;
 		} &S_;
 		tree_index_( s &S )
 		: S_( S ),
-		  binary_tree_( S )
+		  E_BTREE_( S )
 		{}
 		void reset( bool P = true )
 		{
-			binary_tree_::reset( P );
+			E_BTREE_::reset( P );
 
 			S_.Racine = NONE;
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			binary_tree_::plug( MM );
+			E_BTREE_::plug( MM );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			binary_tree_::plug( MD );
+			E_BTREE_::plug( MD );
 		}
 		tree_index_ &operator =( const tree_index_ &I )
 		{
-			binary_tree_::operator =( I );
+			E_BTREE_::operator =( I );
 
 			S_.Racine = I.S_.Racine;
 
@@ -133,7 +133,7 @@ namespace idxbtr {
 		{
 			S_.Racine = NONE;
 
-			binary_tree_::Init();
+			E_BTREE_::Init();
 		}
 		//f Return the root of the tree. To use as the first node for the 'NextAvailable()' and 'PreviousAvailablbe()' functions.
 		tym::row__ Root( void ) const
@@ -172,12 +172,12 @@ namespace idxbtr {
 		//f Return the item next to 'Item'.
 		tym::row__ Next( tym::row__ Item ) const
 		{
-			if ( binary_tree_::HasRight( Item ) )
-				return NoeudSansFils_( binary_tree_::Right( Item ) );
+			if ( E_BTREE_::HasRight( Item ) )
+				return NoeudSansFils_( E_BTREE_::Right( Item ) );
 			else
-				if ( binary_tree_::IsLeft( Item ) )
-					return binary_tree_::Parent( Item );
-				else if ( binary_tree_::IsRight( Item ) )
+				if ( E_BTREE_::IsLeft( Item ) )
+					return E_BTREE_::Parent( Item );
+				else if ( E_BTREE_::IsRight( Item ) )
 					return PereFilsEnRemontant_( Item );
 				else
 					return NONE;
@@ -185,12 +185,12 @@ namespace idxbtr {
 		//f Return the item previous to 'Item'.
 		tym::row__ Previous( tym::row__ Position ) const
 		{
-			if ( binary_tree_::HasLeft( Position ) )
-				return NoeudSansFille_( binary_tree_::Left( Position ) );
+			if ( E_BTREE_::HasLeft( Position ) )
+				return NoeudSansFille_( E_BTREE_::Left( Position ) );
 			else
-				if ( binary_tree_::IsRight( Position ) )
-					return binary_tree_::Parent( Position );
-				else if ( binary_tree_::IsLeft( Position ) )
+				if ( E_BTREE_::IsRight( Position ) )
+					return E_BTREE_::Parent( Position );
+				else if ( E_BTREE_::IsLeft( Position ) )
 					return PereFilleEnRemontant_( Position );
 				else
 					return NONE;
@@ -198,49 +198,49 @@ namespace idxbtr {
 		//f Remove 'Item'.
 		void Remove( tym::row__ Item )
 		{
-			tym::row__ Fils = binary_tree_::Left( Item );
-			tym::row__ Fille = binary_tree_::Right( Item );
-			tym::row__ Pere = binary_tree_::Parent( Item );
+			epeios::row__ Fils = E_BTREE_::Left( Item );
+			epeios::row__ Fille = E_BTREE_::Right( Item );
+			epeios::row__ Pere = E_BTREE_::Parent( Item );
 
 			if ( Fils != NONE )
-				binary_tree_::Cut( Fils );
+				E_BTREE_::Cut( Fils );
 
 			if ( Fille != NONE )
-				binary_tree_::Cut( Fille );
+				E_BTREE_::Cut( Fille );
 
-			if ( binary_tree_::IsLeft( Item ) )
+			if ( E_BTREE_::IsLeft( Item ) )
 			{
-				binary_tree_::Cut( Item );
+				E_BTREE_::Cut( Item );
 
 				if ( Fils != NONE )
 				{
-					binary_tree_::BecomeLeft( Fils, Pere );
+					E_BTREE_::BecomeLeft( Fils, Pere );
 
 					if ( Fille != NONE )
-						binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+						E_BTREE_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
 				}
 				else if ( Fille != NONE )
-					binary_tree_::BecomeLeft( Fille, Pere );
+					E_BTREE_::BecomeLeft( Fille, Pere );
 			}
-			else if ( binary_tree_::IsRight( Item ) )
+			else if ( E_BTREE_::IsRight( Item ) )
 			{
-				binary_tree_::Cut( Item );
+				E_BTREE_::Cut( Item );
 
 				if ( Fille != NONE )
 				{
-					binary_tree_::BecomeRight( Fille, Pere );
+					E_BTREE_::BecomeRight( Fille, Pere );
 
 					if ( Fils != NONE )
-						binary_tree_::BecomeLeft( Fils, NoeudSansFils_( Fille ) );
+						E_BTREE_::BecomeLeft( Fils, NoeudSansFils_( Fille ) );
 				}
 				else if ( Fils != NONE )
-					binary_tree_::BecomeRight( Fils, Pere );
+					E_BTREE_::BecomeRight( Fils, Pere );
 			}
 			else
 			{
 				if ( Fils != NONE )
 				{
-					binary_tree_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
+					E_BTREE_::BecomeRight( Fille, NoeudSansFille_( Fils ) );
 
 					S_.Racine = Fils;
 				}
@@ -252,7 +252,7 @@ namespace idxbtr {
 		true and let 'Item' unchanged if 'Item' next node is free. */
 		bso__bool NextAvailable( tym::row__ &Item ) const
 		{
-			if ( binary_tree_::HasRight( Item ) )
+			if ( E_BTREE_::HasRight( Item ) )
 			{
 				Item = Right( Item );
 				return false;
@@ -264,7 +264,7 @@ namespace idxbtr {
 		true and let 'Item' unchanged if 'Item' next node is free. */
 		bso__bool PreviousAvailable( tym::row__ &Item ) const
 		{
-			if ( binary_tree_::HasLeft( Item ) )
+			if ( E_BTREE_::HasLeft( Item ) )
 			{
 				Item = Left( Item );
 				return false;
@@ -278,7 +278,7 @@ namespace idxbtr {
 			tym::row__ New,
 			tym::row__ Item )
 		{
-			binary_tree_::BecomeRight( New, Item );
+			E_BTREE_::BecomeRight( New, Item );
 		}
 		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
 		return true to use this function. */
@@ -286,7 +286,7 @@ namespace idxbtr {
 			tym::row__ New,
 			tym::row__ Item )
 		{
-			binary_tree_::BecomeLeft( New, Item );
+			E_BTREE_::BecomeLeft( New, Item );
 		}
 		//f Balances the tree which underlies the index.
 		void Balance( void );
@@ -305,11 +305,14 @@ namespace idxbtr {
 		//f Print the tree structure of the index.
 		void PrintStructure( txf::text_oflow___ &OStream ) const
 		{
-			binary_tree_::PrintStructure( S_.Racine, OStream );
+			E_BTREE_::PrintStructure( S_.Racine, OStream );
 		}
 	};
 
 	AUTO( tree_index )
+	
+	#define E_IBTREE	tree_index
+	#define E_IBTREE_	tree_index_
 }
 
 

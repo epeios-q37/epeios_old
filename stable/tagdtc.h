@@ -82,8 +82,8 @@ extern class ttr_tutor &TAGDTCTutor;
 namespace tagdtc {
 
 	typedef bso__ubyte	char__;
-	typedef tym::row__	id__;
-	typedef tym::row__	path__;
+	typedef epeios::row__	id__;
+	typedef epeios::row__	path__;
 
 	extern const char__ Table[];
 
@@ -200,7 +200,7 @@ namespace tagdtc {
 		/*f Parse 'IFlow' and write it to 'OFLow' until it
 		encounters a tag.between 2 'Delimiter' or 'EOX()'.
 		Return the tag id or an error code if error occurs */
-		id__ Parse(
+		epeios::row_t__ Parse(
 			xtf::extended_text_iflow___ &IFlow,
 			txf::text_oflow___ &Flow,
 			char Delimiter,

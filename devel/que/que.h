@@ -61,12 +61,26 @@ extern class ttr_tutor &QUETutor;
 #include "flw.h"
 #include "tym.h"
 #include "aem.h"
+#include "stk.h"
 
 namespace que {
 
 	using tym::memory_;
 	using namespace epeios;
 
+	//e dump direction.	
+	enum direction
+	{
+		//i Unknow direction.
+		dUnknow,
+		//i Ascending.
+		dAscending,
+		//i Descending.
+		dDescending,
+		//i amount of directyon item.
+		d_amount
+	};
+	
 	// The link between queue nodes.
 	struct link__
 	{
@@ -170,7 +184,7 @@ namespace que {
 			row_t__ Begin,
 			row_t__ End );
 	};
-
+	
 	//c A queue. Use 'QUEUE_' rather than directly this.
 	template <typename r> class queue_
 	{
@@ -341,15 +355,19 @@ namespace que {
 			link__ LNode1 = Links.Read( Node1.V );
 			link__ LNode2 = Links.Read( Node2.V );
 
-			HandleNeighboursForSwap_( LNode1, Node2 );
-			HandleNeighboursForSwap_( LNode2, Node1 );
+			HandleNeighboursForSwap_( LNode1, Node2.V );
+			HandleNeighboursForSwap_( LNode2, Node1.V );
 
-			LNode1.Replace( Node2, Node1 );
-			LNode2.Replace( Node1, Node2 );
+			LNode1.Replace( Node2.V, Node1.V );
+			LNode2.Replace( Node1.V, Node2.V );
 
 			Links.Write( LNode1, Node2.V );
 			Links.Write( LNode2, Node1.V );
 		}
+		void Dump(
+			stk::E_STACK_( r ) &Stack,
+			r Begin,
+			que::direction Direction ) const;
 	};
 
 	AUTOt( queue )
@@ -361,6 +379,19 @@ namespace que {
 	#define E_QUEUE_	E_QUEUEt_( epeios::row__ )
 	#define E_QUEUE		E_QUEUEt( epeios::row__ )
 
+	void Dump_(
+		const E_QUEUE_ &Queue,
+		stk::E_STACK_( epeios::row__ ) &Stack,
+		epeios::row__ Begin,
+		direction Direction );
+
+	template <typename r> inline void queue_<r>::Dump(
+		stk::E_STACK_( r ) &Stack,
+		r Begin,
+		que::direction Direction ) const
+	{
+		Dump( this, Begin, Direction );
+	}
 
 
 	//c A queue manager. The managed queue must be provided at each call ('Queue' parameter).
@@ -542,7 +573,6 @@ namespace que {
 			Queue.Swap( Node1, Node2 );
 		}
 	};
-
 			
 	//c A managed queue (with head and tail). Use 'MQUEUE_' rather then directly this class.
 	template <typename r> class managed_queue_
@@ -666,13 +696,23 @@ namespace que {
 		{
 			S_.QueueManager.Swap( Node1, Node2, Queue );
 		}
+		void Dump(
+			stk::E_STACK_( r ) &Stack,
+			r Begin,
+			que::direction Direction ) const
+		{
+			Queue.Dump( Stack, Begin, Direction );
+		}
 	};
 
 	AUTOt( managed_queue )
 
 	//d A managed queue.
-	#define E_MQUEUE_		managed_queue_
-	#define E_MQUEUE		managed_queue
+	#define E_MQUEUEt_( r )		managed_queue_< r >
+	#define E_MQUEUEt( r )		managed_queue<r>
+	
+	#define E_MQUEUE_	E_MQUEUEt_( epeios::row__ )
+	#define E_MQUEUE	E_MQUEUEt( epeios::row__ )
 }
 
 /*$END$*/

@@ -134,7 +134,7 @@ ERREpilog
 				P = Descriptions.Next( P );
 
 			if ( P != NONE )
-				C = (command__)P;
+				C = (command__)P.V;
 
 			Requete.Output().Put( 0 );	// No explanation message;
 
@@ -209,9 +209,9 @@ ERRBegin
 		if ( P > BROKER_TYPE_MAX )
 			ERRc();
 #endif
-		Type = (type_t__)P;
+		Type = (type_t__)P.V;
 
-		Item.ID( Type() );
+		Item.ID( Type.V );
 		Item.Value = Broker.Module( Type ).Name();
 		Items.Add( Item );
 		P = Broker.Modules.Next( P );
@@ -249,7 +249,7 @@ ERRBegin
 		if ( P > BROKER_COMMAND_MAX )
 			ERRC();
 #endif
-		Command = (command__)P;
+		Command = (command__)P.V;
 
 		Item.ID( Command );
 		Item.Value = Description( P ).Name;
@@ -279,7 +279,7 @@ static void GetCommandsIDAndName_(
 
 	Requete.PopId16( Type );
 
-	WriteCommandsIDAndName_( Broker.Module( (type__)Type() ).Descriptions, Requete );
+	WriteCommandsIDAndName_( Broker.Module( (type__)Type.V ).Descriptions, Requete );
 
 	Requete.Complete();
 }
@@ -319,7 +319,7 @@ static void GetParameters_(
 	Requete.PopId16( Type );
 	Requete.PopId16( Command );
 
-	WriteParameters_( Broker.Module( (type__)Type() ).Descriptions, Command(), Requete );
+	WriteParameters_( Broker.Module( (type__)Type.V ).Descriptions, Command.V, Requete );
 
 	Requete.Complete();
 }
@@ -393,13 +393,13 @@ static void GetNewObject_(
 
 	Requete.PopId16( T );
 
-	if ( T() >= Broker.Modules.Amount() )
+	if ( T.V >= Broker.Modules.Amount() )
 		ERRb();
 
 	if ( T == BROKER_INVALID_TYPE )
 		ERRb();
 
-	O = Broker.New( (type__)T() )();
+	O = Broker.New( (type__)T.V );
 
 	if ( O != BROKER_INVALID_TYPE )
 		Requete.PushObject( O );
@@ -429,7 +429,7 @@ ERRBegin
 	T = Broker.Type( Type );
 
 	if ( ( T != BROKER_INVALID_TYPE )  )
-		Requete.PushId16( T() );
+		Requete.PushId16( T.V );
 	else
 		Requete.SendExplanationMessage( "No such object type name." );
 
@@ -523,7 +523,7 @@ ERRBegin
 
 	FillCommands_( Broker, Type, CommandsDetails, Commands );
 
-	Requete.PushId16( Type() );
+	Requete.PushId16( Type.V );
 	Requete.PushIds16( Commands );
 	Requete.Complete();
 ERRErr
@@ -556,7 +556,7 @@ ERRBegin
 		if ( T() != BROKER9_TYPE_MAITRE )
 			ERRb();
 */
-	Command = Broker.Command( Type(), Description );
+	Command = Broker.Command( Type.V, Description );
 
 	if ( ( Command != BROKER_INVALID_COMMAND ) )
 		Requete.PushId16( Command );
@@ -591,7 +591,7 @@ ERRBegin
 
 	Commands.Init();
 
-	FillCommands_( Broker, Type(), CommandsDetails, Commands );
+	FillCommands_( Broker, Type.V, CommandsDetails, Commands );
 
 	Requete.PushIds16( Commands );
 	Requete.Complete();
@@ -674,10 +674,10 @@ namespace broker {
 
 		if ( C == NONE )
 			C = BROKER_INVALID_TYPE;
-		else if ( C > BROKER_INVALID_TYPE )
+		else if ( C.V > BROKER_INVALID_TYPE )
 			ERRl();
 
-		return (type_t__)C;
+		return (type_t__)C.V;
 	}
 
 	bso__bool broker_::Handle(
@@ -696,7 +696,7 @@ namespace broker {
 
 		flw::Get( Channel, O );
 
-		if ( ( O() >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
+		if ( ( O.V >= Links.Amount() ) && ( O != BROKER_MASTER_OBJECT ) )
 			ERRb();
 
 		if ( O != BROKER_MASTER_OBJECT )

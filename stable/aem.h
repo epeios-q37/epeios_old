@@ -274,8 +274,8 @@ namespace aem {
 		//f Return the position of the object before 'Current' (to the bottom).
 		r Previous( r Current ) const
 		{
-			if ( Current )
-				return Current - 1 ;
+			if ( Current.V != 0  )
+				return Current.V - 1 ;
 			else
 				return NONE;
 		}

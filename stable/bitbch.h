@@ -81,27 +81,27 @@ namespace bitbch {
 	typedef bso__ubyte		receptacle__;
 
 	// Classes regroupant des fonctions agissant sur un objet de type 't'. Usage interne.
-	template <class t> class functions__
+	template <class t, typename r> class functions__
 	{
 	private:
-		static receptacle__ Offset_( row_t__ Position )
+		static receptacle__ Offset_( r Position )
 		{
-			return (int)( Position % BITBCH_NB_BITS_RECEPTACLE );
+			return (int)( Position.V % BITBCH_NB_BITS_RECEPTACLE );
 		}
 		// retourne l'offset correpondant à 'Position'
-		static row_t__ Indice_( row_t__ Position )
+		static r Indice_( r Position )
 		{
-			return Position / BITBCH_NB_BITS_RECEPTACLE;
+			return Position.V / BITBCH_NB_BITS_RECEPTACLE;
 		}
 		// retourne l'indice correspondant à 'Position'
-		static bso__ubyte Masque_( row_t__ Position )
+		static bso__ubyte Masque_( r Position )
 		{
 			return 1 << Offset_( Position );
 		}
 		// retourne le masque correspondant à 'Position'
 	public:
 		static bso__bool Lire(
-			row_t__ Position,
+			r Position,
 			const t &Table )
 		{
 			return ( Table.Read( Indice_( Position ) ) & Masque_( Position ) ) != 0;
@@ -109,8 +109,8 @@ namespace bitbch {
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		static void Ecrire(
 			bso__bool Valeur,
-			row_t__ Position,
-			row_t__ &Table )
+			r Position,
+			t &Table )
 		{
 			Table.Write( ( Table.Read(Indice_( Position )) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ), Indice_( Position ) );
 		}
@@ -127,16 +127,16 @@ namespace bitbch {
 		{
 			return Amount ? ( Amount - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 : 0;
 		}
-		bso__bool Lire_( row_t__ Position ) const
+		bso__bool Lire_( r Position ) const
 		{
-			return functions__<tym::E_MEMORY_( receptacle__ )>::Lire( Position, Table );
+			return functions__<tym::E_MEMORYt_( receptacle__, r ), r>::Lire( Position, Table );
 		}
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		void Ecrire_(
 			bso__bool Valeur,
-			row_t__ Position )
+			r Position )
 		{
-			functions__<tym::E_MEMORY_( receptacle__ )>::Ecrire( Valeur, Position, Table );
+			functions__<tym::E_MEMORYt_( receptacle__, r ), r>::Ecrire( Valeur, Position, Table );
 
 	//		Table.Ecrire( Indice, (receptacle__)( ( Table.Objet(Indice) & (receptacle__)~( (receptacle__)1 << Offset ) ) | ( !Valeur << Offset ) ) );
 		}
@@ -526,7 +526,7 @@ namespace bitbch {
 		//f Return the value at position 'Position'.
 		bso__bool Read( r Position ) const
 		{
-			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Lire( Position, Table_ );
+			return (int)functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1>, r >::Lire( Position, Table_ );
 		}
 			//f Return the value at position 'Position'.
 		bso__bool operator()( r Position )
@@ -538,7 +538,7 @@ namespace bitbch {
 			bso__bool Value,
 			r Position )
 		{
-			functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1> >::Ecrire( Value, Position, Table_ );
+			functions__< receptacles__<((t - 1)/BITBCH_NB_BITS_RECEPTACLE)+1>, r >::Ecrire( Value, Position, Table_ );
 		}
 		//f Set all the bits to 'Value'.
 		void Reset( bso__bool Value = false )

@@ -110,16 +110,16 @@ void tagdtc::tag_detector_::Add(
 	const str::string_ &Tag,
 	id__ Id )
 {
-	tym::row__ Limite = Tag.Amount();
+	tym::row_t__ Limite = Tag.Amount();
 	path__ Path = Start_;
 
-	for( tym::row__ P = 0; P < Limite; P++ )
+	for( epeios::row_t__ P = 0; P < Limite; P++ )
 		Path = GetNext_( Path, Tag( P ) );
 
 	Ids.Write( Id, Path );
 }
 
-id__ tagdtc::tag_detector_::Parse(
+epeios::row_t__ tagdtc::tag_detector_::Parse(
 	xtf::extended_text_iflow___ &IFlow,
 	txf::text_oflow___ &OFlow,
 	char Delimiter,
@@ -154,7 +154,7 @@ id__ tagdtc::tag_detector_::Parse(
 	else if ( C != Delimiter )
 		Return = TAGDTC_EOF;
 
-	return Return;
+	return Return.V;
 }
 
 

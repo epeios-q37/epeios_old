@@ -246,7 +246,7 @@ namespace flx {
 		}
 	private:
 		const bunch_ *Set_;
-		tym::row__ Position_;
+		epeios::row_t__ Position_;
 		// The cache.
 		flw::data__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:

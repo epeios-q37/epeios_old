@@ -431,10 +431,10 @@ namespace btr {
 		{
 			row_t__ Pere = Pere_( Node.V );
 
-			if ( AFils_( Pere.V ) && ( Fils_( Pere.V ) == Node ) )
-				InvaliderFils_( Pere.V );
+			if ( AFils_( Pere ) && ( Fils_( Pere ) == Node.V ) )
+				InvaliderFils_( Pere );
 			else
-				InvaliderFille_( Pere.V );
+				InvaliderFille_( Pere );
 
 			InvaliderPere_( Node.V );
 		}
@@ -469,12 +469,12 @@ namespace btr {
 		//f Return true if 'Node' is a child.
 		bso__bool IsLeft( r Node ) const
 		{
-			return APere_( Node.V ) && Fils_( Pere_( Node.V ) ) == Node;
+			return APere_( Node.V ) && Fils_( Pere_( Node.V ) ) == Node.V;
 		}
 		//f Return true if 'Node' is a right.
 		bso__bool IsRight( r Node ) const
 		{
-			return APere_( Node.V ) && Fille_( Pere_( Node.V ) ) == Node;
+			return APere_( Node.V ) && Fille_( Pere_( Node.V ) ) == Node.V;
 		}
 		//f Return true if 'Node' is child.
 		bso__bool IsChild( r Node ) const
@@ -571,7 +571,7 @@ namespace btr {
 			r Root,
 			txf::text_oflow___ &OFlow ) const
 		{
-			Liens.PrintStructure( Root, OFlow );
+			Liens.PrintStructure( Root.V, OFlow );
 		}
 		// Sert à parcourir l'arbre de racine 'Racine'. Retourne le noeud aprés 'Position'.
 	/*	r Suivant(

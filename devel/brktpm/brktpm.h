@@ -125,14 +125,14 @@ namespace brktpm {
 		}
 	};
 
-	template <class t> class detail_
+	template <class t, typename r> class detail_
 	{
 	public:
 		str::string_ Name;
-		bch::E_BUNCH_( t ) Casts;
+		bch::E_BUNCHt_( t, r ) Casts;
 		struct s {
 			str::string_::s Name;
-			bch::E_BUNCH_( t )::s Casts;
+			bch::E_BUNCHt_( t, r )::s Casts;
 		};
 		detail_( s &S )
 		: Name( S.Name ),
@@ -206,8 +206,8 @@ namespace brktpm {
 	BRKTPM_ITEM( bso__ulong, item32 )
 	BRKTPM_ITEMS( item32, items32 )
 	/* Both below declaration are not part of the protocol. */
-	typedef brktpm::detail_<id8__>	command_detail_	;
-	typedef brktpm::detail<id8__>	command_detail;
+	typedef brktpm::detail_<id8__, epeios::row__>	command_detail_	;
+	typedef brktpm::detail<id8__, epeios::row__>	command_detail;
 	/**/
 	typedef ctn::E_XCONTAINER_( command_detail_ ) commands_details_;
 	typedef ctn::E_XCONTAINER( command_detail_ ) commands_details;
