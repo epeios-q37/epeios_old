@@ -36,6 +36,7 @@
 #include "stf.h"
 
 TYPEDEF( epeios::row_t__, test__ );
+typedef bso::ushort__	mytype__;
 
 void Generic( int argc, char *argv[] )
 {
@@ -46,29 +47,64 @@ ERREnd
 ERREpilog
 }
 
+void Essai( int argc, char *argv[] )
+{
+ERRProlog
+	ctn::E_MCONTAINER( bch::E_BUNCHt_( mytype__, test__ ) ) Container;
+	cch::E_RO_CACHES___( mytype__, test__, epeios::row__ ) ROCaches;
+	int rnd;
+ERRBegin
+
+	Container.Init();
+
+	Container.Allocate( 10 );
+
+	for( int i = 0; i < 10; i++ ) {
+		Container( i ).Allocate( 100 );
+		for( int j = 0; j < 100;  j++ )
+			Container( i ).Write( j + i * 100, j );
+	}
+
+	Container.Sync();
+
+	ROCaches.Init( Container, 80 );
+
+	for( i = 0; i <= 100; i++ ) {
+		rnd = rand() % 1000;
+
+		fout << (unsigned long)rnd << ": " << (unsigned long)ROCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void Test( int argc, char *argv[] )
 {
 ERRProlog
-	bch::E_BUNCHt( bso::ubyte__, test__ ) Bunch;
-	cch::E_RW_CACHEt___( bso::ubyte__, test__ ) Cache;
+	bch::E_BUNCHt( mytype__, test__ ) Bunch;
+	cch::E_RW_CACHEt___( mytype__, test__ ) RWCache;
+	cch::E_RO_CACHEt___( mytype__, test__ ) ROCache;
 	int i;
 	int rnd;
 ERRBegin
 	Bunch.Init();
 	Bunch.Allocate( 101 );
 
-	Cache.Init( Bunch, 10 );
+	RWCache.Init( Bunch, 10 );
 
 	for( i = 0; i <= 100; i++ )
-		Cache.Put( i, i );
+		RWCache.Put( i, i );
 
 	for( i = 0; i <= 100; i++ )
-		fout << (unsigned long)i << ": " << (unsigned long)Cache.Get( i ) << txf::tab;
+		fout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
 
 	fout << txf::nl;
 
+	ROCache.Init( Bunch, 10 );
+
 	for( i = 100; i >= 0; i-- )
-		fout << (unsigned long)i << ": " << (unsigned long)Cache.Get( i ) << txf::tab;
+		fout << (unsigned long)i << ": " << (unsigned long)ROCache.Get( i ) << txf::tab;
 
 	fout << txf::nl;
 
@@ -76,7 +112,7 @@ ERRBegin
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 101;
 
-		fout << (unsigned long)rnd << ": " << (unsigned long)Cache.Get( rnd ) << txf::tab;
+		fout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
 	}
 
 ERRErr
@@ -96,6 +132,8 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 		Test( argc, argv );
+		fout << txf::nl << "-------------------------------------------" << txf::nl;
+		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
