@@ -436,6 +436,7 @@ namespace idxbtr {
 			if ( Index_->IsEmpty() )
 				ERRu();
 #endif
+			Current_ = Index.Root();
 			State_ = sFound;
 		}
 		//f Try to find an element greater then the current.
