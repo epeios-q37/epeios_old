@@ -21,6 +21,7 @@ BITBCH:
 - Fixing bug.
 - Renaming 'Add' to 'Append'.
 - Adapting to changes in 'BCH' library.
+- Adding 'E_BIT_BUNCH(t)(_) macros.
 
 BTF:
 - Adding a dummy 'Exists()' method, due to changes in 'STK' library.
@@ -49,6 +50,7 @@ CVM:
 DBT:
 - Adapting to changes in 'LST' library.
 - Adapting to changes in 'LSTBCH' library.
+- Adding the virtual 'DBTAllocate' method.
 
 DTR:
 - Fixing call to an iexistent method;

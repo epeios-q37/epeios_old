@@ -231,6 +231,12 @@ namespace bitbch {
 
 	E_AUTO1( bit_bunch )
 
+	#define E_BIT_BUNCHt_( row )	bit_bunch_< row >
+	#define E_BIT_BUNCHt( row )		bit_bunch< row >
+
+	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( epeios::row_ )
+	#define E_BIT_BUNCH		E_BIT_BUNCHt( epeios::row_ )
+
 #if 0	// Code in .cpp as deseapered ...
 	bso::bool__ ComparerBitABit_(
 		bit_bunch<r> &E1,

@@ -96,7 +96,11 @@ namespace dbt {
 			Nodes.Allocate( Size );
 			Types.Allocate( Size );
 			E_BTREEt_( row__ )::Allocate( Size );
+			DBTAllocate( Size );
 		}
+		//c To synchronize size of this tree with other bunch/container. Do nothing by default.
+		virtual void DBTAllocate( epeios::size__ Size )
+		{}
 	public:
 		struct s
 		: public E_LISTt_( row__ )::s,
@@ -303,17 +307,23 @@ namespace dbt {
 			Tree_ = &Tree;
 			E_BTREE_FILLERt_( row__ )::Init( Tree );
 		}
-		//f Push external node 'External'.
-		void Push( const ext__ &External )
+		//f Push external node 'External'. Return row where the new element is added.
+		row__ Push( const ext__ &External )
 		{
-			E_BTREE_FILLERt_( row__ )::Push( Tree_->CreateExternal( External ) );
+			row__ Row = Tree_->CreateExternal( External );
+
+			E_BTREE_FILLERt_( row__ )::Push( Row );
+
+			return Row;
 		}
-		//f Join the 2 last pending node with internal node 'Internal'.
-		void Join( const int__ &Internal )
+		//f Join the 2 last pending node with internal node 'Internal'. Return row where the new element is added.
+		row__ Join( const int__ &Internal )
 		{
 			row__ Row = Tree_->CreateInternal( Internal );
 
 			E_BTREE_FILLERt_( row__ )::Join( Row );
+
+			return Row;
 		}
 	};
 
