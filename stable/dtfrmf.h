@@ -85,7 +85,14 @@ namespace dtfrmf {
 	//f Return short in 'Flow'
 	inline short__ GetShort( flw::iflow___ &Flow )
 	{
-		return (short__)( GetByte( Flow ) + ( GetByte( Flow ) << 8 ) );
+		flw::datum__ Data[2];
+
+		Flow.Get(2, Data );
+
+		return (short__)( (short__)Data[0] | (short__)( (short__)Data[1] << 8 ) );
+
+		// return (short__)( (short__)Data[0] + (short__)( (short__)Data[1] << 8 ) );
+		// Don't work with CW : in 'a + b', seems to evaluate 'b' before 'a'.
 	}
 
 	//f Put 'Long' in 'Flow'.
@@ -100,7 +107,14 @@ namespace dtfrmf {
 	//f Return long in 'Flow'
 	inline long__ GetLong( flw::iflow___ &Flow )
 	{
-		return (long__)( GetShort( Flow ) + ( GetShort( Flow ) << 16 ) );
+		flw::datum__ Data[4];
+
+		Flow.Get( 4, Data );
+
+		return (long__)Data[0] | ( (long__)Data[1] << 8 ) | ( (long__)Data[2] << 16 ) | ( (long__)Data[3] << 24 );
+
+		// return (long__)( (long__)GetShort( Flow ) | (long__)( (long__)GetShort( Flow ) << 16 ) );
+		// Don't work with CW : in 'a + b', seems to evaluate 'b' before 'a'.
 	}
 	
 	//f Encapsulates 'Data' in flow (put size and then the contents of data as is).
