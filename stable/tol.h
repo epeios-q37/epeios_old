@@ -482,35 +482,35 @@ namespace tol {
 #define NAVt( Object, Type )\
 	Type First( void ) const\
 	{\
-		return Object##First();\
+		return Object  First();\
 	}\
 	Type Last( void ) const\
 	{\
-		return Object##Last();\
+		return Object Last();\
 	}\
 	Type Previous( Type P ) const\
 	{\
-		return Object##Previous( P );\
+		return Object Previous( P );\
 	}\
 	Type Next( Type P ) const\
 	{\
-		return Object##Next( P );\
+		return Object Next( P );\
 	}\
 	epeios::size__ Amount( void ) const\
 	{\
-		return Object##Amount();\
+		return Object Amount();\
 	}\
 	epeios::size__ Extent( void ) const\
 	{\
-		return Object##Extent();\
+		return Object Extent();\
 	}\
 	bso::bool__ IsEmpty( void ) const\
 	{\
-		return Object##IsEmpty();\
+		return Object IsEmpty();\
 	}\
 	bso::bool__ Exists( Type P ) const\
 	{\
-		return Object##Exists( P );\
+		return Object Exists( P );\
 	}
 	
 #define NAV( Object )	NAVt( Object, epeios::row__ )

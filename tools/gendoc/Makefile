@@ -62,51 +62,53 @@ co = -c
 co += -O
 # To use with gprof
 #co += -pg
-lo = -o $(name)
+lo = -o $(name).exe
 # needed when pthread are used.
 #lo += -lpthread
-endif
-
-ifeq ("$(EPEIOS_OS)","beos")
-co = -c -g
-lo = -o $(name)
 endif
 
 ifeq ("$(EPEIOS_OS)","windows")
 ox = obj
 cc = bcc32
-ds = ;
-lrfs = @LinkResponseFile
+dss = ;
+dst = :
+larg = $(lo) *.$(ox)	# Because Windows command size limited.
 endif
 
 ifneq ($(findstring $(EPEIOS_OS),linux cygwin),)
 ox = o
 cc = g++ 
-ds = :
-lrfs = `cat LinkResponseFile`
+larg = $(lo) $(objs)
+dss = :
+endif
+
+ifeq ("$(EPEIOS_OS)","linux")
+dst = :
+endif
+
+ifeq ("$(EPEIOS_OS)","cygwin")
+dst = ;
 endif
 
 ifeq ("$(EPEIOS_OS)","beos")
 ox = o
 cc = g++
-ds = :
-lrfs = `cat LinkResponseFile`
+dss = :
+dst = :
+larg = $(lo) $(objs)
 endif
 
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+vpath %.cpp $(subst $(dss),$(dst),$(EPEIOS_SRC))
 
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
+srcd = $(subst $(dss), ,$(EPEIOS_SRC))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(libs:=.$(ox))
 
-$(name):  LinkResponseFile $(objs)
-	$(cc) $(lrfs)
+$(name).exe: $(objs)
+	$(cc) $(larg)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
-
-LinkResponseFile: $(objs)
-	echo $(lo) $(objs) >$@
+	$(cc) $(co) $<

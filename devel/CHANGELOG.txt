@@ -54,6 +54,9 @@ STK:
 TAGDTC:
 - Adapting to changes in 'TYM' library.
 
+TOL:
+- Correcting the problem in 'NAVt()' for which the gcc 3.x preprocessor issued a warning.
+
 TYM:
 - Fixing bug.
 - Revert to version before adaptation to CW.
