@@ -41,7 +41,7 @@ SET SRC=%RTD%\cvs\epeios\devel\xxx
 SET CRP=%TMP%\%LNM%.crp
 SET DIR=%RTD%\cvs
 
-reveal %SRC%\all_lib.crp %SRC%\gen_crp.bat %TMP%\gen_crp.bat
+reveal %SRC%\all_libs.crp %SRC%\gen_crp.bat %TMP%\gen_crp.bat
 call %TMP%\gen_crp.bat %LNM%
 
 SET ID=%PROJECT%
