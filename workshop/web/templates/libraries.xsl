@@ -1,7 +1,15 @@
 
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="Libraries/Library" mode="index">
+  <xsl:template match="Libraries">
+   <center>
+     <table>
+       <xsl:apply-templates select="Library" mode="index"/>
+     </table>
+   </center>
+   <xsl:apply-templates select="Library"/>
+ </xsl:template>
+ <xsl:template match="Libraries/Library" mode="index">
     <TR>
       <TD>
         <TT>

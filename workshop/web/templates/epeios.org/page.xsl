@@ -144,21 +144,6 @@
       </TBODY>
     </table>
   </xsl:template>
-  <xsl:template match="content">
-    <xsl:apply-templates select="warning" mode="warning"/>
-    <OL>
-      <xsl:apply-templates select="chapter" mode="index"/>
-    </OL>
-    <xsl:apply-templates/>
-  </xsl:template>
-  <xsl:template match="Libraries">
-    <center>
-      <table>
-        <xsl:apply-templates select="Library" mode="index"/>
-      </table>
-    </center>
-    <xsl:apply-templates select="Library"/>
-  </xsl:template>
   <xsl:template match="specific/WEB/redirection" xml:space="preserve">You will be automatically redirected to <a>
                 <xsl:attribute name="href">
                   <xsl:value-of select="@URL"/>
@@ -173,20 +158,7 @@
   </xsl:template>
   <xsl:template match="warning"/>
   <xsl:include href="../chapters.xsl"/>
-  <xsl:template match="section">
-    <xsl:apply-templates/>
-    <P/>
-  </xsl:template>
-  <xsl:template match="para">
-    <xsl:if test="@type='remark'">
-      <xsl:text disable-output-escaping="yes">&lt;em></xsl:text>
-    </xsl:if>
-    <xsl:apply-templates/>
-    <xsl:if test="@type='remark'">
-      <xsl:text disable-output-escaping="yes">&lt;/em></xsl:text>
-    </xsl:if>
-    <br/>
-  </xsl:template>
+  <xsl:include href="../content.xsl"/>
   <xsl:include href="../list.xsl"/>
   <xsl:include href="../misc.xsl"/>
   <xsl:include href="../libraries.xsl"/>

@@ -1,0 +1,4 @@
+# $Id$
+export DIR=workdir/ecgi_libraries_`date +%Y-%m-%d`
+ncftpput -v download.sourceforge.net /incoming $DIR.tar.gz $DIR.tar.bz2 $DIR.zip
+rm -rf workdir

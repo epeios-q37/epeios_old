@@ -1,7 +1,21 @@
 
 <!--$Id$-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="link">
+  <xsl:template match="section">
+    <xsl:apply-templates/>
+    <P/>
+  </xsl:template>
+  <xsl:template match="para">
+    <xsl:if test="@type='remark'">
+      <xsl:text disable-output-escaping="yes">&lt;em></xsl:text>
+    </xsl:if>
+    <xsl:apply-templates/>
+    <xsl:if test="@type='remark'">
+      <xsl:text disable-output-escaping="yes">&lt;/em></xsl:text>
+    </xsl:if>
+    <br/>
+  </xsl:template>
+ <xsl:template match="link">
     <a href="{@URL}">
       <xsl:if test="@type='external'">
         <xsl:attribute name="target">_blank</xsl:attribute>

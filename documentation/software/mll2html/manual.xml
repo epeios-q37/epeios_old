@@ -108,6 +108,15 @@ The <raw>mll2html</raw> purpose is to reformat a text file, containing descripti
         </list></para>
     </section>
   </chapter>
+  <chapter title="Links">
+    <section>
+      <para xml:space="preserve">
+        <list>
+          <item><link URL="http://epeios.org/software/mll2html/" type="external" aspect="long"><raw>mll2html</raw> homepage</link>.</item>
+          <item><link URL="http://epeios.org/" type="external" aspect="long">The Epeios project homepage</link>, on which libraries <raw>mll2html</raw> is based.</item>
+        </list></para>
+    </section>
+  </chapter>
   <chapter title="Reporting bugs">
     <para xml:space="preserve">Report bugs to <contact adress="csimon@webmails.com" type="long">Claude SIMON</contact>.</para>
   </chapter>
