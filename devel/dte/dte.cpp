@@ -95,7 +95,7 @@ raw_date__ dte::date__::_Convert(
 		 ||  ( Month > 12 ) )
 		return DTE_INVALID_DATE;
 	else
-		return ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
+		return DTE_SIGN_MASK | ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
 }
 
 raw_date__ dte::date__::_Convert( const char *Date )
@@ -132,7 +132,7 @@ raw_date__ dte::date__::_Convert( const char *Date )
 	}
 
 	if ( Annee < 100 )
-		if ( Annee >= DTE_LIMIT_DECENNIA )
+		if ( Annee >= DTE_DEFAULT_DECENNIA_LIMIT )
 			Annee += 1900;
 		else
 			Annee += 2000;

@@ -40,6 +40,7 @@ DTE:
 - (15/04/04) Introducing the new structure.
 - (21/07/04) Improving some features about the thread-safeness of this library.
 - (31/07/04) Adding the 'GetSimplifiedRawDate()' function.
+- (09/08/04) Fixing sign bug.
 
 EPEIOS:
 - (15/06/04) Adding some useful constants.

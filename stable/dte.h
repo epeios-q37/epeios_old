@@ -77,11 +77,16 @@ extern class ttr_tutor &DTETutor;
 
 /*d Decennia under which we consider we are in the XXI century,
 and over which we consider we are in the XX century. */
-#define DTE_LIMIT_DECENNIA	90
+#define DTE_DEFAULT_DECENNIA_LIMIT	90
 
 #define DTE_CORE_SHIFT	5
 
-#define DTE_CORE_MASK	0xFFFFFE0
+#define DTE_SIGN_BIT_POSITION	31
+
+#define DTE_SIGN_MASK	( 1 << DTE_SIGN_BIT_POSITION )
+
+#define DTE_CORE_MASK	( ( ~0 << DTE_CORE_SHIFT ) & ( ~DTE_SIGN_MASK ) )
+
 
 namespace dte {
 	//t Type of a raw date.
@@ -143,7 +148,7 @@ namespace dte {
 		// Return true if 'Date' is a simplified raw date (yyyymmdd).
 		bso::bool__ _IsSimplifiedRawDate( bso::ulong__ Date ) const
 		{
-			return ( Date != DTE_UNDEFINED_DATE ) && ( ( Date & ( 1 << 31 ) ) == 0 );
+			return ( Date != DTE_UNDEFINED_DATE ) && ( ( Date & DTE_SIGN_MASK ) == 0 );
 		}
 		// Convert a simplified raw date (yyyymmyy) to raw date.
 		raw_date__ _Convert( bso::ulong__ Date ) const
