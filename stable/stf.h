@@ -1,6 +1,6 @@
 /*
-  Header for the 'stf' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'stf' library by Claude L. Simon (simon@epeios.org)
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -16,7 +16,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,7 +45,7 @@ extern class ttr_tutor &STFTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude L. SIMON (simon@epeios.org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -68,10 +69,12 @@ extern class ttr_tutor &STFTutor;
 
 
 namespace stf {
+	using flw::oflow___;
+	using flw::iflow___;
 	
 	//c A stream output flow driver.
 	class ostream_oflow___
-	: public flw::oflow___
+	: public oflow___
 	{
 	private:
 		ostream &Stream_;
@@ -214,7 +217,7 @@ namespace stf {
 	//c Internal use. File input flow from an 'istream'.
 	class istream_iflow___
 	: public istream_iflow_core___,
-	  public flw::iflow___
+	  public iflow___
 	{
 	private:
 			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];
@@ -269,7 +272,7 @@ namespace stf {
 	//c Internal use. File input flow from an 'istream'.
 	class istream_iflow_line___
 	: public istream_iflow_core___,
-	  public flw::iflow___
+	  public iflow___
 	{
 	private:
 			flw::data__ Cache_[STF_STREAM_FLOW_BUFFER_SIZE];

@@ -83,7 +83,7 @@ namespace lst {
 			{
 				tym::size__ Size = ( Numero = Amount() ) + 1;
 
-				if ( amount_extent_manager_::AmountToAllocate( Size ) )
+				if ( amount_extent_manager_::AmountToAllocate( Size, aem::mDefault ) )
 					LSTAllocate( Size );
 			}
 

@@ -1,7 +1,7 @@
 /*
-  'flw' library by Claude L. Simon (epeios@epeios.org)
+  'flw' library by Claude L. Simon (simon@epeios.org)
   Requires the 'flw' header file ('flw.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
 
   This file is part of the Epeios (http://www.epeios.org/) project.
   
@@ -17,7 +17,8 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the:
+  along with this program; if not, go to http://www.fsf.org/
+  or write to the:
   
                         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +38,7 @@ public:
 	: ttr_tutor( FLW_NAME )
 	{
 #ifdef FLW_DBG
-		Version = FLW_VERSION " (DBG)";
+		Version = FLW_VERSION "\b\bD $";
 #else
 		Version = FLW_VERSION;
 #endif

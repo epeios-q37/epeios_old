@@ -81,7 +81,7 @@ namespace bch {
 			tym::row__ Position,
 			tym::size__ Quantite )
 		{
-			Allouer_( Amount() + Quantite, aem::mFast );
+			Allouer_( Amount() + Quantite, aem::mDefault );
 			mmr::Write( *this, Amount() - Position - Quantite, Position, Position + Quantite);
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
@@ -98,8 +98,7 @@ namespace bch {
 		void Inserer_(
 			const type *Objets,
 			tym::size__ Quantite,
-			tym::row__ Position,
-			bso__bool Adjust )
+			tym::row__ Position )
 		{
 			Pousser_( Position, Quantite );
 			mmr::Write( Objets, Quantite, Position );
@@ -116,7 +115,7 @@ namespace bch {
 		void AllocateIfNecessary_( tym::size__ Quantity )
 		{
 			if ( Quantity > Amount() )
-				Allouer_( Quantity, aem::mFast );
+				Allouer_( Quantity, aem::mDefault );
 		}
 	public:
 		struct s
@@ -147,7 +146,7 @@ namespace bch {
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast)
+			aem::mode Mode = aem::mDefault )
 		{
 			Allouer_( Size, Mode );
 		}
@@ -177,7 +176,7 @@ namespace bch {
 		{
 			tym::size__ Amount = this->Amount();
 
-			Allouer_( Amount + 1, aem::mFast );
+			Allouer_( Amount + 1, aem::mDefault );
 
 			mmr::Write( Object , Amount );
 
@@ -190,7 +189,7 @@ namespace bch {
 		{
 			tym::row__ Retour = this->Amount();
 
-			Allouer_( Retour + Amount, aem::mFast );
+			Allouer_( Retour + Amount, aem::mDefault );
 
 			mmr::Write( Buffer, Amount, Retour );
 
@@ -203,7 +202,7 @@ namespace bch {
 		{
 			tym::row__ Retour = this->Amount();
 
-			Allocate( Retour + Amount );
+			Allouer_( Retour + Amount, aem::mDefault );
 
 			mmr::Write( Set, Amount, 0, Retour );
 
@@ -216,7 +215,7 @@ namespace bch {
 			if ( Amount > this->Amount() )
 				ERRu();
 	#endif
-			Allocate( this->Amoun() - Amount );
+			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
 		//f Add 'Set'. Return the position where added.
 		tym::row__ Add( const bunch_core_ &Set )
@@ -261,14 +260,14 @@ namespace bch {
 		{
 			mmr::Write( *this, this->Amount() - ( Amount + Position ), Position + Amount, Position );
 
-			Allouer_( this->Amount() - Amount, aem::mFast );
+			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
 		//f Return the position of the first of 'Amount' new object.
 		tym::row__ New( tym::size__ Amount = 1 )
 		{
 			tym::row__ P = this->Amount();
 
-			Allocate( P + Amount );
+			Allouer_( P + Amount, aem::mDefault );
 
 			return P;
 		}

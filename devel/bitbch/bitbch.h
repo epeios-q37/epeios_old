@@ -141,7 +141,7 @@ namespace bitbch {
 		// place un bit de valeur 'Valeur' à la position 'Position'
 		void Allouer_(
 			tym::size__ Nombre,
-			aem::mode Mode = aem::mFast )
+			aem::mode Mode = aem::mDefault )
 		{
 			if ( amount_extent_manager_::AmountToAllocate( Nombre, Mode ) )
 				Table.Allocate( Convert_( Nombre ) );
@@ -205,14 +205,14 @@ namespace bitbch {
 		//f Allocate enough room to contain 'Size' bits.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast )
+			aem::mode Mode = aem::mDefault )
 		{
 			Allouer_( Size, Mode );
 		}
 		//f Add 'Value' to the end of the set.
 		tym::row__ Add( bso__bool Value )
 		{
-			Allouer_( Amount() + 1, aem::mFast );
+			Allouer_( Amount() + 1, aem::mDefault );
 
 			Write( Value, Amount() - 1 );
 			return Amount() - 1;

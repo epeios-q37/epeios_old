@@ -60,7 +60,6 @@ extern class ttr_tutor &AEMTutor;
 //D Amount/Extent managing.
 /* End addendum to automatic documentation generation part. */
 
-
 #include "err.h"
 #include "flw.h"
 #include "tym.h"
@@ -75,8 +74,8 @@ namespace aem {
 	enum mode {
 		//i Undefined.
 		mUndefined,
-		//i Fast,
-		mFast,
+		//i Extent is handled using step value.
+		mDefault,
 		//i Extent fits with amount.
 		mFit,
 	};
@@ -141,7 +140,7 @@ namespace aem {
 		to 'Size'. */
 		bso__bool AmountToAllocate(
 			size__ &Size,
-			mode Mode = mFast )
+			mode Mode )
 		{
 			if ( Size == S_.Amount )
 				return false;
@@ -179,6 +178,8 @@ namespace aem {
 		// First 3 bytes are the extent / 256.
 		// Next first bit is at 1 if the we don't have to reallocate when size decrease.
 		// Next seven bytes is the allocation step / 256.
+		// If the allocation step at 0, then the extent fits with the amount
+		// even in no decreasin state. */
 			size__ Misc;
 			size__ Amount;
 		} &S_;

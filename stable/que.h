@@ -162,7 +162,7 @@ namespace que {
 			//f Allocate for 'Size'.
 			void Allocate(
 				tym::size__ Size,
-				aem::mode Mode = aem::mFast )
+				aem::mode Mode = aem::mDefault )
 			{
 				if ( amount_extent_manager_::AmountToAllocate( Size, Mode ) )
 					E_MEMORY_( link__ )::Allocate( Size );
@@ -240,7 +240,7 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast )
+			aem::mode Mode = aem::mDefault )
 		{
 			tym::size__ Before = Links.Amount();
 			Links.Allocate( Size, Mode );
@@ -585,7 +585,7 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast )
+			aem::mode Mode = aem::mDefault )
 		{
 			Queue.Allocate( Size, Mode );
 		}

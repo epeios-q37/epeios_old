@@ -111,7 +111,7 @@ namespace stk {
 		{
 			tym::size__ Size = Amount() + 1;
 
-			if ( amount_extent_manager_::AmountToAllocate( Size ) )
+			if ( amount_extent_manager_::AmountToAllocate( Size, aem::mDefault ) )
 				E_MEMORY_( t )::Allocate( Size );
 
 			E_MEMORY_( t )::Write( Object, Amount() - 1 );
@@ -120,7 +120,7 @@ namespace stk {
 
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
-		t Pop( aem::mode Mode = aem::mFast )
+		t Pop( aem::mode Mode = aem::mDefault )
 		{
 			tym::size__ Size = Amount() - 1;
 

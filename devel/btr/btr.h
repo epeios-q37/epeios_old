@@ -377,7 +377,7 @@ namespace btr {
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
 			tym::size__ Size,
-			aem::mode Mode = aem::mFast )
+			aem::mode Mode = aem::mDefault )
 		{
 			if ( Size > Nombre_() )
 			{
