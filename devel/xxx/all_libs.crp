@@ -151,12 +151,12 @@ NAME		PROJECT		COPYRIGHT_DATES\
 #Epeios BKD libraries.
 &bkdacc		&ebkd		&2001-\
 	&BacKenD ACCess
-&bkdcst		&ebkd		&2001, \
-	&BacKenD CaSTs
-&bkddcb		&ebkd		&2001, \
-	&BacKenD DesCriBer
 &bkdcmd		&ebkd		&2001-\
 	&BacKenD CoMmanDs
+&bkdcst		&ebkd		&2001, 2003-\
+	&BacKenD CaSTs
+&bkddcb		&ebkd		&2001, 2003-\
+	&BacKenD DesCriBer
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdmng		&ebkd		&2001-\
 	&BacKenD MaNaGer
@@ -172,7 +172,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CGI (Common Gateway Interface) ARGument
 &cgidat		&ecgi		&2002-\
 	&CGI (Common Gateway Interface) DATa
-&cgimng		&ecgi		&2001,\
+&cgimng		&ecgi		&2001,2003-\
 	&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&ecgi		&2002-\
 	&CGI (Common Gateway Interface) TOoL
@@ -273,10 +273,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios MSC libraries.
-&mscmdf		&emsc		&2002-		&MuSiC MiDi File		
-&mscmdm		&emsc		&2002-		&MuSiC MiDi Messages
-&mscvkp		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) Parameters
-&mscvkx		&emsc		&2002-		&MuSiC VK (from Roland VK combo organ) XML
+&mscmdf		&emsc		&2002, \
+	&MuSiC MiDi File		
+&mscmdm		&emsc		&2002, \
+	&MuSiC MiDi Messages
+&mscvkp		&emsc		&2002-\
+	&MuSiC VK (from Roland VK combo organ) Parameters
+&mscvkx		&emsc		&2002, \
+	&MuSiC VK (from Roland VK combo organ) XML
 
 
 
@@ -291,14 +295,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&TiMeCode BaSiCs
 &tmcbsc_	&etmc		&2000-\
 	&TiMeCode BaSiCs (for backend)
-&tmcdrt		&etmc		&2000-2001, \
+&tmcdrt		&etmc		&2000-2001, 2003-\
 	&TiMeCode DuRaTion
 &tmcdrt_	&etmc		&2000-		&TiMeCode DuRaTion (for backend)
 &tmcset		&etmc		&2000-\
 	&TiMeCode SET
-&tmcset_	&etmc		&2000-2001, \
+&tmcset_	&etmc		&2000-2001, 2003-\
 	&TiMeCode SET (for backend)
-&tmctmc		&etmc		&2000-2001, \
+&tmctmc		&etmc		&2000-2001, 2003-\
 	&TiMeCode TiMeCode
 &tmctmc_	&etmc		&2000-		&TiMeCode TiMeCode (for backend)
 
@@ -317,12 +321,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&XML BaSiC
 &xmlcor		&exml		&2001-\
 	&XML CORe
-&xmldbs		&exml		&20001\
+&xmldbs		&exml		&2001\
 	&XML DataBaSe
 &xmldcm		&exml		&2001-\
 	&XML DoCuMent
-&xmlprs		&exml		&2000-		&XML PaRSer
-&xmltag		&exml		&2000-		&XML TAG
+&xmlprs		&exml		&2000-\		&XML PaRSer
+&xmltag		&exml		&2000-\
+	&XML TAG
 &xmltol		&exml		&2000-		&XML TOoL
 &xmlval		&exml		&2001-\
 	&XML VALue
