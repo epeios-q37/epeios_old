@@ -11,8 +11,8 @@ mkdir = c:\tools\mkdir
 endif
 
 ifeq ("$(EPEIOS_OS)","linux")
-cvs = /home/csimon/libs
-rootdir=/home/csimon/libs/epeios
+cvs = /home/csimon/cvs
+rootdir=$(cvs)/epeios
 templates = $(rootdir)/workshop/web/templates
 dest = /home/csimon/website
 copy = cp
