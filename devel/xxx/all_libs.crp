@@ -238,6 +238,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Logi+ GSB libraries.
+&gsbbld		&lgsb		&\
+	&GeSBib BuiLDing
 &gsbbsc		&lgsb		&2002-\
 	&GeSBib BaSiC
 &gsbbsc_	&lgsb		&2003-\
@@ -256,6 +258,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib DeRiVed field
 &gsbdtb		&lgsb		&2003-\
 	&GeSBib DaTaBase
+&gsbfil		&lgsb		&\
+	&GeSBib FILler
 &gsbfld		&lgsb		&2002-\
 	&GeSBib FieLDs
 &gsbflr		&lgsb		&2003-\
