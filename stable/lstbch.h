@@ -96,6 +96,8 @@ namespace lstbch {
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
+			list_<row>::plug( MM );
+			bunch_<type, row>::plug( MM );
 		}
 		list_bunch_ &operator =( const list_bunch_ &LB )
 		{
