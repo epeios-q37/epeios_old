@@ -11,7 +11,6 @@ cvs -d:pserver:anonymous@cvs.epeios.org:/cvsroot/epeios logout
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
-rm $DIR/cgi.php
 cp ~/website/libraries/epeios/quickdoc/quickdoc.html $DIR
 tar --gzip -cf $DIR.tar.gz $DIR
 tar -c $DIR | bzip2 >$DIR.tar.bz2
