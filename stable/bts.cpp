@@ -1,7 +1,7 @@
 /*
 	'bts' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'bts' header file ('bts.h').
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -22,6 +22,8 @@
          	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -55,6 +57,7 @@ public:
 
 using namespace bts;
 
+#if 0
 _row__ _binary_tree_seeker__::NodeWithoutLeft_( _row__ Node )
 {
 	while( Tree_->HasLeft( Node ) )
@@ -72,7 +75,7 @@ _row__ _binary_tree_seeker__::First_( _row__ Node )
 
 	return Node;
 }
-
+#endif
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

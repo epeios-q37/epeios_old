@@ -26,6 +26,9 @@ BITBCH:
 BTF:
 - Adding a dummy 'Exists()' method, due to changes in 'STK' library.
 
+BTS:
+- Adding 'tBack' and 'tForward' in replacement of 'tParent'.
+
 CCH:
 - Renaming 'Add' to 'Append'.
 

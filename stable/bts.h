@@ -1,6 +1,6 @@
 /*
 	Header for the 'bts' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -71,8 +71,10 @@ namespace bts {
 		tUnknow,
 		//i Root node.
 		tRoot,
-		//i Parent node.
-		tParent,
+		//i Parent node when going forward.
+		tForward,
+		//i Parent node when returning.
+		tBack,
 		//i Left node.
 		tLeft,
 		//i Right node.
@@ -90,10 +92,6 @@ namespace bts {
 		const btr::E_BTREE_ *Tree_;
 		_row__ Root_, Current_;
 		type__ Type_;
-		// Return the first node, starting at 'Node' and following the left childs, which have no left child.
-		_row__ NodeWithoutLeft_( _row__ Node );
-		// Return the first node starting at 'Node'.
-		_row__ First_( _row__ Node );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -119,12 +117,12 @@ namespace bts {
 		//f Return first node.
 		_row__ First( void )
 		{
-			Current_ = First_( Root_ );
+			Current_ = Root_;
 
-			if ( Tree_->IsLeft( Current_ ) )
-				Type_ = tLeft;
+			if ( Tree_->IsParent( Current_ ) )
+				Type_ = tForward;
 			else
-				Type_ = tRight;	// Even if 'Current_' is the root node.
+				Type_ = tRight;
 
 			return Current_;
 		}
@@ -134,9 +132,9 @@ namespace bts {
 			Current_ = Root_;
 
 			if ( Tree_->IsParent( Root_ ) )
-				Type_ = tParent;
+				Type_ = tBack;
 			else
-				Type_ = tLeft;
+				Type_ = tRight;
 
 			return Current_;
 		}
@@ -147,33 +145,46 @@ namespace bts {
 
 			switch ( Type_ ) {
 			case tRoot:
-				Candidate = First();
+				Candidate = First();	// Type set by 'First()'.
 				break;
-			case tParent:
+			case tBack:
 				if ( !Tree_->HasParent( Current_ ) ) {
 					Candidate = NONE;
 					break;
 				} else if ( Tree_->IsRight( Current_ ) ) {
 					Candidate = *Tree_->Parent( Current_ );
-					Type_ = tParent;
+					Type_ = tBack;
 					break;
 				}
 			case tLeft:
 				Candidate = *Tree_->Parent( Current_ );
 
 				if ( Tree_->HasRight( Candidate ) ) {
-					Candidate = First_( *Tree_->Right( Candidate ) );
+					Candidate = *Tree_->Right( Candidate );
 
-					if ( Tree_->IsRight( Candidate ) )
-						Type_ = tRight;
+					if ( Tree_->IsParent( Candidate ) )
+						Type_ = tForward;
 					else
-						Type_ = tLeft;
+						Type_ = tRight;
 				} else
-					Type_ = tParent;
+					Type_ = tBack;
 				break;
 			case tRight:
 				Candidate = *Tree_->Parent( Current_ );
-				Type_ = tParent;
+				Type_ = tBack;
+				break;
+			case tForward:
+				if ( Tree_->HasLeft( Current_ ) ) {
+					Type_ = tLeft;
+					Candidate = *Tree_->Left( Current_ );
+				} else if ( Tree_->HasRight( Current_ ) ) {
+					Type_ = tRight;
+					Candidate = *Tree_->Right( Current_ );
+				}
+
+				if ( Tree_->IsParent( Candidate ) )
+					Type_ = tForward;
+
 				break;
 			default:
 				ERRc();
