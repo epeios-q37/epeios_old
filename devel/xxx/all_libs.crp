@@ -45,6 +45,7 @@ NAME		PROJECT		COPYRIGHT_DATES	DESCRIPTION
 &stk		&epeios		&2000		&STacK
 &str		&epeios		&2000-		&STRing
 &tmcbsc_	&etmc		&2000-		&TiMeCode BaSiCs (for backend)
+&tol		&epeios		&2000-		&TOoL
 &tym		&epeios		&2000-		&TYped Memory
 &uym		&epeios		&2000-		&UnTyped Memory
 &xmlbsc		&exml		&2000-		&XML BaSiC
