@@ -473,7 +473,7 @@ namespace tol {
 
 #ifndef CPE__CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
-	Is different from 'clock()' because 'ckock()' only return how long
+	Is different from 'clock()' because 'clock()' only return how long
 	the application is using the processor.*/
 	inline unsigned long Clock( void )
 	{
@@ -485,6 +485,11 @@ namespace tol {
 		jamais une erreur. */
 
 		return T.time * 1000UL + T.millitm;
+	}
+#else	// CW temporary workaround.
+	inline unsigned long Clock( void )
+	{
+		return 1000UL * ::clock() / CLOCKS_PER_SEC;
 	}
 #endif
 
