@@ -50,6 +50,7 @@ enum command {
 };
 
 enum option {
+	// o
 };
 
 struct parameters {
@@ -72,7 +73,7 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cLicense, "print text about the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 	fout << "Options:" << txf::nl;
-//	clnarg::PrintOptionUsage( Description, o, "", false );
+//	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )

@@ -218,7 +218,7 @@ namespace str {
 			return Start;
 	}
 
-	bso::ulong__ string_::ToUL( epeios::row__ &ErrP )
+	bso::ulong__ string_::ToUL( epeios::row__ &ErrP ) const
 	{
 		bso::ulong__ Result = 0;
 		epeios::row__ P = First();

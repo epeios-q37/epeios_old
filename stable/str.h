@@ -187,7 +187,7 @@ namespace str {
 			epeios::row__ Start = 0 ) const;
 		/*f Convert to unsigned long. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
-		bso::ulong__ ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL );
+		bso::ulong__ ToUL( epeios::row__ &ErrP = *(epeios::row__ *)NULL ) const;
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.

@@ -3,6 +3,9 @@ $Id$
 BSO:
 - adding the 'sign__' type.
 
+STR:
+- adding missing 'const' qualifier.
+
 --------
 20011119
 --------
