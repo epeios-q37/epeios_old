@@ -7,6 +7,6 @@
 all:
 <xsl:apply-templates select="//document/specific/WEB"/></xsl:template>
   <xsl:template match="document/specific/WEB" xml:space="preserve">	$(mkdir) -p $(dest)/<xsl:value-of select="@hierarchy"/>
-	sabcmd file://t:/epeios.org/page.xsl i/site.xml $(dest)/<xsl:value-of select="@hierarchy"/>/<xsl:value-of select="@name"/>.html $$hierarchy=<xsl:value-of select="@hierarchy"/> $$name=<xsl:value-of select="@name"/><xsl:text>
+	sabcmd file://$(templates)/epeios.org/page.xsl i/site.xml $(dest)/<xsl:value-of select="@hierarchy"/>/<xsl:value-of select="@name"/>.html "$$hierarchy=<xsl:value-of select="@hierarchy"/> $$name=<xsl:value-of select="@name"/>"<xsl:text>
 </xsl:text></xsl:template>
 </xsl:stylesheet>

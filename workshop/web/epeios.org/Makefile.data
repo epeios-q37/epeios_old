@@ -2,6 +2,8 @@
 
 include Makefile.header
 
+mkf = ~/cvs/epeios/workshop/web/epeios.org/Makefile.compress
+
 filelist = 
 
 all:
@@ -17,9 +19,9 @@ all:
 	$(copy) $(cvs)/etmc/apps/backend/CHANGELOG.txt $(dest)/tmcde/backend/CHANGELOG
 	$(copy) $(cvs)/etmc/apps/CGID/CHANGELOG.txt $(dest)/tmcde/CGID/CHANGELOG
 ifeq ("$(EPEIOS_OS)","linux")
-	make -C $(dest)/epeios -f Makefile.compress
-	make -C $(dest)/etmc -f Makefile.compress
-	make -C $(dest)/ecgi -f Makefile.compress
-	make -C $(dest)/ebkd -f Makefile.compress
+	make -C $(dest)/epeios/quickdoc -f $(mkf)
+	make -C $(dest)/etmc/quickdoc -f $(mkf)
+	make -C $(dest)/ecgi/quickdoc -f $(mkf) 
+	make -C $(dest)/ebkd/quickdoc -f $(mkf)
 endif
 
