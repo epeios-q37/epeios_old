@@ -1,10 +1,13 @@
 $Id$
 
+GENERAL:
+- Adding 'CCH'
+
 BSO:
-- adding the 'sign__' type.
+- Adding the 'sign__' type.
 
 STR:
-- adding missing 'const' qualifier.
+- Adding missing 'const' qualifier.
 
 --------
 20011119
