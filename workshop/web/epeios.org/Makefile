@@ -6,3 +6,4 @@ all:
 	make -C general -I .. -f Makefile
 	make -C software -I .. -f Makefile
 	make -C libraries -I .. -f Makefile
+	make -C etmc -I .. -f Makefile
