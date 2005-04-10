@@ -344,7 +344,8 @@ namespace str {
 				P = Next( P );
 			}
 
-			if ( ( P != NONE ) && ( Get( P ) == '.' ) ) {
+			if ( ( P != NONE )
+				  && ( ( ( C = Get( P ) ) == '.' ) || ( C == ',' ) ) ) {
 				bso::lfloat__ Factor = .1;
 				P = Next( P );
 				while( ( P != NONE ) && isdigit( C = Get( P ) ) ) {

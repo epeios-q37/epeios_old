@@ -1,5 +1,9 @@
 $Id$
 
+10/04/05:
+- STR:
+	- La virgule est, en plus du point, reconnu comme séparateur décimal par la méthode 'ToLF()'.
+
 04/04/05
 - FIL:
 	- Correction de bogues.
