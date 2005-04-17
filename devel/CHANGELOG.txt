@@ -1,5 +1,9 @@
 $Id$
 
+17/04/05:
+- TOL:
+	- Adaptation des macros '...DISCLOSE...' au nouveau standard concernant les variables privées.
+
 10/04/05:
 - STR:
 	- La virgule est, en plus du point, reconnu comme séparateur décimal par la méthode 'ToLF()'.

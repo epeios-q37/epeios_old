@@ -422,3 +422,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &xmltol		&exml		&2000-		&XML TOoL
 &xmlval		&exml		&2001-\
 	&XML VALue
+
+#Private librarise.
+&prvlsc		&pdvl		&\
+	&PRiVate Last Square Curve

@@ -848,7 +848,7 @@ namespace tol {
 #define E_RRODISCLOSE__(type__, name )\
 	const type__ Get##name( void ) const\
 	{\
-		return name##_;\
+		return _##name;\
 	}
 
 //d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
@@ -856,20 +856,20 @@ namespace tol {
 	E_RRODISCLOSE__( type__, name )\
 	const type__ &name( void ) const\
 	{\
-		return name##_;\
+		return _##name;\
 	}
 
 #define E_RWODISCLOSE__(type__, name )\
 	void Set##name( const type__ &V )\
 	{\
-		name##_ = V;\
+		_##name = V;\
 	}
 
 #define E_WODISCLOSE__(type__, name )\
 	E_RWODISCLOSE__( type__, name )\
 	type__ &name( void )\
 	{\
-		return name##_;\
+		return _##name;\
 	}
 
 #define E_RRWDISCLOSE__(type__, name )\
