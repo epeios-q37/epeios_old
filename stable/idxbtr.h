@@ -354,7 +354,7 @@ namespace idxbtr {
 	template <typename r> class tree_seeker__
 	{
 	private:
-		r Current_;
+		r _Current;
 		const tree_index_<r> *Index_;
 #ifdef IDXBTR_DBG
 		void _Test( void ) const
@@ -362,21 +362,21 @@ namespace idxbtr {
 			if ( Index_== NULL )
 				ERRu();
 
-			if ( Current_ == NONE )
+			if ( _Current == NONE )
 				ERRu();
 		}
 #endif
 		r _Handle( r Row )
 		{
 			if ( Row != NONE )
-				Current_ = Row;
+				_Current = Row;
 
 			return Row;
 		}
 	public:
 		void reset( bso::bool__ = true )
 		{
-			Current_ = NONE;
+			_Current = NONE;
 			Index_ = NULL;
 		}
 		tree_seeker__( void )
@@ -396,7 +396,7 @@ namespace idxbtr {
 
 			Index_ = &Index;
 
-			Current_ = Root;
+			_Current = Root;
 		}
 		//f Try to find an element greater then the current.
 		r SearchGreater( void )
@@ -404,7 +404,7 @@ namespace idxbtr {
 #ifdef IDXBTR_DBG
 			_Test();
 #endif
-			return _Handle( Index_->Right( Current_ ) );
+			return _Handle( Index_->Right( _Current ) );
 		}
 		//f Try to find an element lesser then the current.
 		r SearchLesser( void )
@@ -412,7 +412,7 @@ namespace idxbtr {
 #ifdef IDXBTR_DBG
 			_Test();
 #endif
-			return _Handle( Index_->Left( Current_ ) );
+			return _Handle( Index_->Left( _Current ) );
 		}
 		E_RODISCLOSE__( r, Current )
 	};

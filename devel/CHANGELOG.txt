@@ -1,5 +1,9 @@
 $Id$
 
+18/04/05:
+- GENERAL:
+	- Adaptation aux changements de la bibliothèque 'TOL'.
+
 17/04/05:
 - TOL:
 	- Adaptation des macros '...DISCLOSE...' au nouveau standard concernant les variables privées.
