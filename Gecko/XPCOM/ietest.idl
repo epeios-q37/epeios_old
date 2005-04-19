@@ -1,0 +1,12 @@
+// $Id$
+
+#include "nsISupports.idl"
+
+
+[scriptable, uuid(CA2C7CF2-D7B2-4419-9410-F8AAC6832552)]
+  interface ietest : nsISupports
+{
+  string Test();	
+  string XPCOM();
+  string GetErrorMessage();
+};
