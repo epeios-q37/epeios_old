@@ -12,6 +12,10 @@ $Id$
 - STR:
 	- La virgule est, en plus du point, reconnu comme séparateur décimal par la méthode 'ToLF()'.
 
+21/04/05
+- ERR:
+	- Correction du bogue concernant les fonctions appelées lors du traitement d'erreur.
+
 04/04/05
 - FIL:
 	- Correction de bogues.

@@ -196,8 +196,7 @@ namespace err {
 	#endif
 		
 		int
-			Error: 1,	// Report that an error occurs
-			Handling: 1;	// Erreur en cours de traitement (Entre un 'ERRErr' et un 'ERREnd'.
+			Error: 1;	// Erreur en cours de traitement (Entre un 'ERRErr' et un 'ERREnd'.
 		// Major code of error.
 		static err::type Major;
 		// Minor code of error
@@ -301,14 +300,14 @@ namespace err {
 #ifdef ERR_JMPUSE
 
 //d Put the declaration after this.
-#define ERRProlog	{ jmp_buf ERRJmp, *ERROJmp = ERRGetJ();\
-					ERRPutJ( &ERRJmp );
+#define ERRProlog	bso::bool__ ERRNoError = true; { jmp_buf ERRJmp, *ERROJmp = ERRGetJ();\
+	ERRPutJ( &ERRJmp );
 
 //d Put the instructions to survey after this.
 #define ERRBegin	if ( !setjmp( ERRJmp ) ) {
 
 //d Put the instruction to launch if an error occurs.
-#define ERRErr		} else { ERRPutJ( ERROJmp );
+#define ERRErr		} else { ERRPutJ( ERROJmp ); ERRNoError = false;
 
 //d Put the instruction to launch, error or not.
 #define ERREnd		}
@@ -317,13 +316,13 @@ namespace err {
 
 #else
 
-#define ERRProlog	{
+#define ERRProlog	bso::bool__ ERRNoError = true; {
 // précède les déclarations
 #define ERRBegin	try {
 // précède les instructions proprement dites
-#define ERRErr		} catch ( err::err_ ) { err::ERR.Handling = true;
+#define ERRErr		} catch ( err::err_ ) { ERRNoError = false;
 // précède les instructions à effectuer lors d'une erreur
-#define ERREnd		err::ERR.Handling = false; }
+#define ERREnd		}
 // précède les instructions à exécuter, erreur ou pas
 #define ERRCommonEpilog	}
 // boucle la partie de traitement d'erreur
@@ -331,9 +330,9 @@ namespace err {
 #endif
 
 #ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	err::ERR.Error && !err::ERR.Handling && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
+#define ERRTestEpilog	err::ERR.Error && !ERRNoError && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #else
-#define ERRTestEpilog	err::ERR.Error && !err::ERR.Handling && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
+#define ERRTestEpilog	err::ERR.Error && !ERRNoError && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
 #endif
 
 //d End of the error bloc.

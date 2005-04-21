@@ -270,7 +270,6 @@ public:
 		MutexHandler_ = mtx::Create();
 #endif
 		ERR.Error = false;
-		ERR.Handling = false;
 	}
 	~errpersonnalization( void )
 	{
