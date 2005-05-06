@@ -1,5 +1,13 @@
 $Id$
 
+06/05/05:
+	- CLT :
+		- Modifications pour rendre cette biliothèque 'thread-safe'.
+
+04/05/05:
+	- GENERAL :
+		- Modifications pour rendre les biliothèques 'thread-safe'.
+
 18/04/05:
 - GENERAL:
 	- Adaptation aux changements de la bibliothèque 'TOL'.

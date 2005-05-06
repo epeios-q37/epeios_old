@@ -1,7 +1,7 @@
 /*
 	'clt' library by Claude SIMON (csimon@epeios.org)
 	Requires the 'clt' header file ('clt.h').
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -57,22 +57,23 @@ public:
 
 using namespace clt;
 
-const char *clt::Host( const char *HostService )
+const char *clt::Host(
+	const char *HostService,
+	buffer__ Buffer )
 {
-	static char Adresse[50];
 	char *P;
 
-	if ( strlen( HostService ) >= sizeof( Adresse ) )
+	if ( strlen( HostService ) >= CLT_ADDRESS_SIZE_MAX )
 		ERRl();
 
-	strcpy( Adresse, HostService );
+	strcpy( Buffer, HostService );
 
-	P = strchr( Adresse, ':' );
+	P = strchr( Buffer, ':' );
 
 	if ( P )
 		*P = 0;
 
-	return Adresse;
+	return Buffer;
 }
 
 #ifdef CPE__BEOS

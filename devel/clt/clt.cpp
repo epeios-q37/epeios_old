@@ -57,22 +57,23 @@ public:
 
 using namespace clt;
 
-const char *clt::Host( const char *HostService )
+const char *clt::Host(
+	const char *HostService,
+	buffer__ Buffer )
 {
-	static char Adresse[50];
 	char *P;
 
-	if ( strlen( HostService ) >= sizeof( Adresse ) )
+	if ( strlen( HostService ) >= CLT_ADDRESS_SIZE_MAX )
 		ERRl();
 
-	strcpy( Adresse, HostService );
+	strcpy( Buffer, HostService );
 
-	P = strchr( Adresse, ':' );
+	P = strchr( Buffer, ':' );
 
 	if ( P )
 		*P = 0;
 
-	return Adresse;
+	return Buffer;
 }
 
 #ifdef CPE__BEOS

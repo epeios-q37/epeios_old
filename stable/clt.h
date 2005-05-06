@@ -1,6 +1,6 @@
 /*
 	Header for the 'clt' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001, 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -76,11 +76,26 @@ extern class ttr_tutor &CLTTutor;
 #	error "Unknow compiler enviroment"
 #endif
 
+#define CLT_ADDRESS_SIZE_MAX	100
+
 namespace clt {
 	using namespace sck;
 
+	typedef bso::char__	buffer__[CLT_ADDRESS_SIZE_MAX+1];
+
 	//f Return the host name contained in 'HostService'.
-	const char *Host( const char *HostService );
+	const char *Host(
+		const char *HostService,
+		buffer__ Buffer );
+
+#ifndef CPE__MT
+	const char *Host( const char *HostService )
+	{
+		static buffer__ Buffer;
+
+		return Host( HostService, Buffer );
+	}
+#endif
 
 	//f Return the Service contained in 'HostService'.
 	inline const char *Service( const char *HostService )
@@ -127,7 +142,9 @@ namespace clt {
 		socket__ Desc = SCK_INVALID_SOCKET,
 		err::handle ErrHandle = err::hUsual )
 	{
-		return Connect( Host( HostService ), Service( HostService ), Desc, ErrHandle );
+		buffer__ Buffer;
+
+		return Connect( Host( HostService, Buffer ), Service( HostService ), Desc, ErrHandle );
 	} 
 
 	/*f Return a descriptot to a socket connected to 'HostService'.

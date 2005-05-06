@@ -129,8 +129,10 @@ namespace fnm
 	// Return a string contaiinig the location only. Returned pointermust be freed.
 	char *GetLocation( const char *Name );
 
+#ifndef CPE__MT
 	//f Return the file name of 'Name' without localization and extension.
 	const char *GetFileNameRoot( const char *Nom );
+#endif
 
 	/************************************************/
 	/* GESTION DE LA GENERATION D'UN NOM DE FICHIER */
@@ -142,11 +144,13 @@ namespace fnm
 	//: public utl_PU
 	{
 	private:
+#ifndef CPE__MT
 		/* Return a 8 characters long file name using the 'Base' string (any length)
 		with 'Occurence' (>=0 <=36) the present occurence of a 'Base' based file name */
 		const char *MakeFileName_(
 			const char *base,
 			int Occurence = 0 );
+#endif
 	protected:
 		//v Must return 'true' if the file named 'Name' is the searched file..
 		virtual bool FNMMatch(	const char *Name ) = 0;
