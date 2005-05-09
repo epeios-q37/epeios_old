@@ -1,5 +1,9 @@
 $Id$
 
+09/05/05
+	- CLT:
+		- Ajout d'un 'inline' manquant.
+
 06/05/05:
 	- CLT :
 		- Modifications pour rendre cette biliothèque 'thread-safe'.

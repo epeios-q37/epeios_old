@@ -212,7 +212,6 @@ const char *fnm::file_name_manager::MakeFileName_(
 
 	return Resultat;
 }
-#endif
 
 char *fnm::file_name_manager::SearchFileName(
 	const char *Repertoire,
@@ -246,7 +245,6 @@ ERREpilog
 	return Nom;
 }
 
-#ifndef CPE__MT
 const char *fnm::GetFileNameRoot( const char *Nom )
 {
 	const char *Repere;
