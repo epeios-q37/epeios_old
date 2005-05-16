@@ -12,6 +12,17 @@ function Test()
 	alert( etest.XPCOM() );
 //	document.getElementById('Test').value = "Ce qui va devenir le texte C++";
 }
-	
 
-	
+function ArraySetting( array )
+{
+	alert( array.arr );
+	array.arr =  "ab,bc,ca".split();
+	alert( array.arr );
+}
+
+function ArrayTest()
+{
+	var o = new Object();
+	ArraySetting( o );
+	alert( o.arr );
+}

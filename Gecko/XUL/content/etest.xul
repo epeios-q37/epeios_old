@@ -9,4 +9,5 @@
    <button label="Message" oncommand="alert(etest.GetErrorMessage())"/>
    <button label="Test C++ XPCom" oncommand="Test();"/>
    <textbox id="Test"/>
+   <button label="Test Array" oncommand="ArrayTest();"/>
 </window>
