@@ -270,8 +270,18 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::ConvertAndMerge(
-	const bkdacc::ids32_ &Ids,
+inline static const char *Convert_(
+	bso::ulong__ Value,
+	bso::integer_buffer__ &Buffer )
+{
+	if ( Value == NONE )
+		return "";
+	else
+		return bso::Convert( Value, Buffer );
+}
+
+template<typename id__> static inline void ConvertAndMerge_(
+	const bch::E_BUNCH_( id__ ) &Ids,
 	string_ &Merged,
 	bso::char__ Separator )
 {
@@ -279,15 +289,40 @@ void nsxpcm::ConvertAndMerge(
 	bso::integer_buffer__ Buffer;
 
 	if ( Row != NONE ) {
-		Merged.Append( bso::Convert( *Ids( Row ), Buffer ) );
+		Merged.Append( Convert_( *Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 
 	while ( Row != NONE ) {
 		Merged.Append( Separator );
-		Merged.Append( bso::Convert( *Ids( Row ), Buffer ) );
+		Merged.Append( Convert_( *Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
+}
+
+
+void nsxpcm::ConvertAndMerge(
+	const bkdacc::ids8_ &Ids,
+	string_ &Merged,
+	bso::char__ Separator )
+{
+	ConvertAndMerge_( Ids, Merged, Separator );
+}
+
+void nsxpcm::ConvertAndMerge(
+	const bkdacc::ids16_ &Ids,
+	string_ &Merged,
+	bso::char__ Separator )
+{
+	ConvertAndMerge_( Ids, Merged, Separator );
+}
+
+void nsxpcm::ConvertAndMerge(
+	const bkdacc::ids32_ &Ids,
+	string_ &Merged,
+	bso::char__ Separator )
+{
+	ConvertAndMerge_( Ids, Merged, Separator );
 }
 #endif
 

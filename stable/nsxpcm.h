@@ -147,6 +147,16 @@ namespace nsxpcm {
 		bso::char__ Separator );
 
 	void ConvertAndMerge(
+		const bkdacc::ids8_ &Ids,
+		string_ &Merged,
+		bso::char__ Separator );
+
+	void ConvertAndMerge(
+		const bkdacc::ids16_ &Ids,
+		string_ &Merged,
+		bso::char__ Separator );
+
+	void ConvertAndMerge(
 		const bkdacc::ids32_ &Ids,
 		string_ &Merged,
 		bso::char__ Separator );
