@@ -1,16 +1,20 @@
 $Id$
 
+25/05/05
+- GENERAL
+	- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
+
 09/05/05
-	- CLT:
-		- Ajout d'un 'inline' manquant.
+- CLT:
+	- Ajout d'un 'inline' manquant.
 
 06/05/05:
-	- CLT :
-		- Modifications pour rendre cette biliothèque 'thread-safe'.
+- CLT :
+	- Modifications pour rendre cette biliothèque 'thread-safe'.
 
 04/05/05:
-	- GENERAL :
-		- Modifications pour rendre les biliothèques 'thread-safe'.
+- GENERAL :
+	- Modifications pour rendre les biliothèques 'thread-safe'.
 
 18/04/05:
 - GENERAL:

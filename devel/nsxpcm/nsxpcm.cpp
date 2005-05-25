@@ -63,7 +63,7 @@ using namespace nsxpcm;
 it is necessary to personalize it, or certain compiler would not work properly */
 
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const char *CString,
 	epeios::size__ Size,
 	char **JString )
@@ -77,28 +77,28 @@ void nsxpcm::Convert(
 		ERRa();
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const char *CString,
 	char **JString )
 {
-	Convert( CString, strlen( CString ) + 1, JString );
+	Transform( CString, strlen( CString ) + 1, JString );
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const nsEmbedCString &ECString,
 	nsEmbedString &EString )
 {
 	NS_CStringToUTF16(ECString, NS_CSTRING_ENCODING_ASCII, EString );
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const nsEmbedString &EString,
 	nsEmbedCString &ECString )
 {
 	NS_UTF16ToCString( EString, NS_CSTRING_ENCODING_ASCII, ECString );
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const nsEmbedString &EString,
 	char **JString )
 {
@@ -107,14 +107,14 @@ ERRProlog
 ERRBegin
 	String.Init();
 
-	Convert( EString, String );
-	Convert( String, JString );
+	Transform( EString, String );
+	Transform( String, JString );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const str::string_ &EString,
 	char **JString )
 {
@@ -123,20 +123,20 @@ ERRProlog
 ERRBegin
 	Buffer = EString.Convert();
 
-	Convert( Buffer, EString.Amount() + 1, JString );
+	Transform( Buffer, EString.Amount() + 1, JString );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const char *String,
 	nsEmbedString &EString )
 {
-	Convert( nsEmbedCString( String ), EString );
+	Transform( nsEmbedCString( String ), EString );
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const str::string_ &String,
 	nsEmbedString &EString )
 {
@@ -145,27 +145,27 @@ ERRProlog
 ERRBegin
 	Buffer = String.Convert();
 
-	Convert( Buffer, EString );
+	Transform( Buffer, EString );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::Convert(
+void nsxpcm::Transform(
 	const nsEmbedString &EString,
 	str::string_ &String )
 {
 	nsEmbedCString ECString;
 
-	Convert( EString, ECString );
+	Transform( EString, ECString );
 
 	String.Append( ECString.get() );
 }
 
 void nsxpcm::Split( 
-	const string_ &Merged,
-	strings_ &Splitted,
-	bso::char__ Separator )
+	const string_ &Joined,
+	bso::char__ Separator,
+	strings_ &Splitted )
 {
 ERRProlog
 	epeios::row__ Row = NONE;
@@ -173,17 +173,17 @@ ERRProlog
 ERRBegin
 	Item.Init();
 
-	Row = Merged.First();
+	Row = Joined.First();
 
 	while ( Row != NONE ) {
-		if ( Merged( Row ) != Separator )
-			Item.Append( Merged( Row ) );
+		if ( Joined( Row ) != Separator )
+			Item.Append( Joined( Row ) );
 		else {
 			Splitted.Append( Item );
 			Item.Init();
 		}
 
-		Row = Merged.Next( Row );
+		Row = Joined.Next( Row );
 	}
 
 	if ( Item.Amount() != 0 )
@@ -194,25 +194,25 @@ ERREpilog
 }
 
 void nsxpcm::Split(
-	const char *Merged,
-	strings_ &Splitted,
-	bso::char__ Separator )
+	const char *Joined,
+	bso::char__ Separator,
+	strings_ &Splitted )
 {
 ERRProlog
-	string SMerged;
+	string SJoined;
 ERRBegin
-	SMerged.Init( Merged );
+	SJoined.Init( Joined );
 
-	Split( SMerged, Splitted, Separator );
+	Split( SJoined, Separator, Splitted );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::Merge(
+void nsxpcm::Join(
 	const strings_ &Splitted,
-	string_ &Merged,
-	bso::char__ Separator )
+	bso::char__ Separator,
+	string_ &Joined )
 {
 	epeios::row__ Row = Splitted.First();
 	ctn::E_CMITEM( string_ ) Item;
@@ -220,15 +220,33 @@ void nsxpcm::Merge(
 	Item.Init( Splitted );
 
 	if ( Row != NONE ) {
-		Merged.Append( Item( Row ) );
+		Joined.Append( Item( Row ) );
 		Row = Splitted.Next( Row );
 	}
 
 	while ( Row != NONE ) {
-		Merged.Append( Separator );
-		Merged.Append( Item( Row ) );
+		Joined.Append( Separator );
+		Joined.Append( Item( Row ) );
 		Row = Splitted.Next( Row );
 	}
+}
+
+void nsxpcm::JoinAndTransform(
+	const strings_ &Splitted,
+	bso::char__ Separator,
+	char **JString )
+{
+ERRProlog
+	string Joined;
+ERRBegin
+	Joined.Init();
+	
+	Join( Splitted, Separator, Joined );
+
+	Transform( Joined, JString );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 #ifdef NSXPCM__BKD
@@ -253,16 +271,16 @@ void nsxpcm::Convert(
 }
 
 void nsxpcm::SplitAndConvert(
-	const char *Merged,
-	bkdacc::ids32_ &Ids,
-	bso::char__ Separator )
+	const char *Joined,
+	bso::char__ Separator,
+	bkdacc::ids32_ &Ids )
 {
 ERRProlog
 	strings Splitted;
 ERRBegin
 	Splitted.Init();
 
-	Split( Merged, Splitted, Separator );
+	Split( Joined, Separator, Splitted );
 
 	Convert( Splitted, Ids );
 ERRErr
@@ -280,50 +298,94 @@ inline static const char *Convert_(
 		return bso::Convert( Value, Buffer );
 }
 
-template<typename id__> static inline void ConvertAndMerge_(
+template<typename id__> static inline void ConvertAndJoin_(
 	const bch::E_BUNCH_( id__ ) &Ids,
-	string_ &Merged,
-	bso::char__ Separator )
+	bso::char__ Separator,
+	string_ &Joined )
 {
 	epeios::row__ Row = Ids.First();
 	bso::integer_buffer__ Buffer;
 
 	if ( Row != NONE ) {
-		Merged.Append( Convert_( *Ids( Row ), Buffer ) );
+		Joined.Append( Convert_( *Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 
 	while ( Row != NONE ) {
-		Merged.Append( Separator );
-		Merged.Append( Convert_( *Ids( Row ), Buffer ) );
+		Joined.Append( Separator );
+		Joined.Append( Convert_( *Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 }
 
+template<typename id__> static inline void ConvertJoinAndTransform_(
+	const bch::E_BUNCH_( id__ ) &Ids,
+	bso::char__ Separator,
+	char **JString )
+{
+ERRProlog
+	string Joined;
+ERRBegin
+	Joined.Init();
 
-void nsxpcm::ConvertAndMerge(
+	ConvertAndJoin( Ids, Separator, Joined );
+
+	Transform( Joined, JString );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void nsxpcm::ConvertAndJoin(
 	const bkdacc::ids8_ &Ids,
-	string_ &Merged,
-	bso::char__ Separator )
+	bso::char__ Separator,
+	string_ &Joined )
 {
-	ConvertAndMerge_( Ids, Merged, Separator );
+	ConvertAndJoin_( Ids, Separator, Joined );
 }
 
-void nsxpcm::ConvertAndMerge(
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::ids8_ &Ids,
+	bso::char__ Separator,
+	char **JString )
+{
+	ConvertJoinAndTransform_( Ids, Separator, JString );
+}
+
+void nsxpcm::ConvertAndJoin(
 	const bkdacc::ids16_ &Ids,
-	string_ &Merged,
-	bso::char__ Separator )
+	bso::char__ Separator,
+	string_ &Joined )
 {
-	ConvertAndMerge_( Ids, Merged, Separator );
+	ConvertAndJoin_( Ids, Separator, Joined );
 }
 
-void nsxpcm::ConvertAndMerge(
-	const bkdacc::ids32_ &Ids,
-	string_ &Merged,
-	bso::char__ Separator )
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::ids16_ &Ids,
+	bso::char__ Separator,
+	char **JString )
 {
-	ConvertAndMerge_( Ids, Merged, Separator );
+	ConvertJoinAndTransform_( Ids, Separator, JString );
 }
+
+void nsxpcm::ConvertAndJoin(
+	const bkdacc::ids32_ &Ids,
+	bso::char__ Separator,
+	string_ &Joined )
+{
+	ConvertAndJoin_( Ids, Separator, Joined );
+}
+
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::ids32_ &Ids,
+	bso::char__ Separator,
+	char **JString )
+{
+	ConvertJoinAndTransform_( Ids, Separator, JString );
+}
+
+
 #endif
 
 

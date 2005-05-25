@@ -84,57 +84,62 @@ namespace nsxpcm {
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
 
-	void Convert(
+	void Transform(
 		const char *CString,
 		epeios::size__ Size,
 		char **JString );
 
-	void Convert(
+	void Transform(
 		const char *CString,
 		char **JString );
 
-	void Convert(
+	void Transform(
 		const nsEmbedCString &ECString,
 		nsEmbedString &EString );
 
-	void Convert( 
+	void Transform( 
 		const char *String,
 		nsEmbedString &EString );
 
-	void Convert(
+	void Transform(
 		const nsEmbedString &EString,
 		nsEmbedCString &ECString );
 
-	void Convert( 
+	void Transform( 
 		const nsEmbedString &EString,
 		char **JString );
 
-	void Convert(
+	void Transform(
 		const str::string_ &EString,
 		char **JString );
 
-	void Convert(
+	void Transform(
 		const str::string_ &String,
 		nsEmbedString &EString );
 
-	void Convert( 
+	void Transform( 
 		const nsEmbedString &EString,
 		str::string_ &String );
 
 	void Split( 
-		const string_ &Merged,
-		strings_ &Splitted,
-		bso::char__ Separator );
+		const string_ &Joined,
+		bso::char__ Seaparator,
+		strings_ &Splitted );
 
 	void Split(
-		const char *Merged,
-		nsxpcm::strings_ &Splitted,
-		bso::char__ Separator );
+		const char *Joined,
+		bso::char__ Separator,
+		nsxpcm::strings_ &Splitted );
 
-	void Merge(
+	void Join(
 		const strings_ &Splitted,
-		str::string_ &Merged,
-		bso::char__ Separator );
+		bso::char__ Separator,
+		str::string_ &Joined );
+
+	void JoinAndTransform(
+		const strings_ &Splitted,
+		bso::char__ Separator,
+		char **JString );
 
 #ifdef NSXPCM__BKD
 	void Convert(
@@ -142,24 +147,40 @@ namespace nsxpcm {
 		bkdacc::ids32_ &Ids );
 
 	void SplitAndConvert(
-		const char *Merged,
-		bkdacc::ids32_ &Ids,
-		bso::char__ Separator );
+		const char *Joined,
+		bso::char__ Separator,
+		bkdacc::ids32_ &Ids );
 
-	void ConvertAndMerge(
+	void ConvertAndJoin(
 		const bkdacc::ids8_ &Ids,
-		string_ &Merged,
-		bso::char__ Separator );
+		bso::char__ Separator,
+		string_ &Joined );
 
-	void ConvertAndMerge(
+	void ConvertJoinAndTransform(
+		const bkdacc::ids8_ &Ids,
+		bso::char__ Separator,
+		char **JString );
+
+	void ConvertAndJoin(
 		const bkdacc::ids16_ &Ids,
-		string_ &Merged,
-		bso::char__ Separator );
+		bso::char__ Separator,
+		string_ &Joined );
 
-	void ConvertAndMerge(
+	void ConvertJoinAndTransform(
+		const bkdacc::ids16_ &Ids,
+		bso::char__ Separator,
+		char **JString );
+
+	void ConvertAndJoin(
 		const bkdacc::ids32_ &Ids,
-		string_ &Merged,
-		bso::char__ Separator );
+		bso::char__ Separator,
+		string_ &Joined );
+
+	void ConvertJoinAndTransform(
+		const bkdacc::ids32_ &Ids,
+		bso::char__ Separator,
+		char **JString );
+
 #endif
 }
 
