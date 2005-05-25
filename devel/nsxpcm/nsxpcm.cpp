@@ -336,7 +336,6 @@ ERREnd
 ERREpilog
 }
 
-
 void nsxpcm::ConvertAndJoin(
 	const bkdacc::ids8_ &Ids,
 	bso::char__ Separator,
@@ -385,6 +384,43 @@ void nsxpcm::ConvertJoinAndTransform(
 	ConvertJoinAndTransform_( Ids, Separator, JString );
 }
 
+
+void nsxpcm::ConvertAndJoin(
+	const bkdacc::booleans_ &Booleans,
+	bso::char__ Separator,
+	string_ &Joined )
+{
+	epeios::row__ Row = Booleans.First();
+
+	if ( Row != NONE ) {
+		Joined.Append( Booleans( Row ) ? "1" : "0" );
+		Row = Booleans.Next( Row );
+	}
+
+	while ( Row != NONE ) {
+		Joined.Append( Separator );
+		Joined.Append( Booleans( Row ) ? "1" : "0" );
+		Row = Booleans.Next( Row );
+	}
+}
+
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::booleans_ &Booleans,
+	bso::char__ Separator,
+	char **JString )
+{
+ERRProlog
+	string Joined;
+ERRBegin
+	Joined.Init();
+
+	ConvertAndJoin( Booleans, Separator, Joined );
+
+	Transform( Joined, JString );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 #endif
 

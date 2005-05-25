@@ -181,6 +181,16 @@ namespace nsxpcm {
 		bso::char__ Separator,
 		char **JString );
 
+	void ConvertAndJoin(
+		const bkdacc::booleans_ &Booleans,
+		bso::char__ Separator,
+		string_ &Joined );
+
+	void ConvertJoinAndTransform(
+		const bkdacc::booleans_ &Booleans,
+		bso::char__ Separator,
+		char **JString );
+
 #endif
 }
 
