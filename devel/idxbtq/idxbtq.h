@@ -199,6 +199,10 @@ namespace idxbtq {
 		{
 			return E_IQUEUEt_( r )::Previous( Current );
 		}
+		epeios::size__ Amount( void ) 
+		{
+			return E_IBTREEt_( r )::Amount();
+		}
 	};
 
 	E_AUTO1( tree_queue_index )
