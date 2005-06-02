@@ -270,10 +270,86 @@ void nsxpcm::Convert(
 		ERRu();
 }
 
+void nsxpcm::Convert(
+	const strings_ &Items,
+	bkdacc::ids16_ &Ids )
+{
+	epeios::row__ Row = Items.First();
+	epeios::row__ Error = NONE;
+	ctn::E_CMITEM( string_ ) Item;
+
+	Item.Init( Items );
+
+	while( Row != NONE ) {
+		Ids.Append( Item( Row ).ToUS( &Error ) );
+
+		Row = Items.Next( Row );
+	}
+
+	if ( Error != NONE )
+		ERRu();
+}
+
+void nsxpcm::Convert(
+	const strings_ &Items,
+	bkdacc::ids8_ &Ids )
+{
+	epeios::row__ Row = Items.First();
+	epeios::row__ Error = NONE;
+	ctn::E_CMITEM( string_ ) Item;
+
+	Item.Init( Items );
+
+	while( Row != NONE ) {
+		Ids.Append( Item( Row ).ToUB( &Error ) );
+
+		Row = Items.Next( Row );
+	}
+
+	if ( Error != NONE )
+		ERRu();
+}
+
 void nsxpcm::SplitAndConvert(
 	const char *Joined,
 	bso::char__ Separator,
 	bkdacc::ids32_ &Ids )
+{
+ERRProlog
+	strings Splitted;
+ERRBegin
+	Splitted.Init();
+
+	Split( Joined, Separator, Splitted );
+
+	Convert( Splitted, Ids );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void nsxpcm::SplitAndConvert(
+	const char *Joined,
+	bso::char__ Separator,
+	bkdacc::ids16_ &Ids )
+{
+ERRProlog
+	strings Splitted;
+ERRBegin
+	Splitted.Init();
+
+	Split( Joined, Separator, Splitted );
+
+	Convert( Splitted, Ids );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void nsxpcm::SplitAndConvert(
+	const char *Joined,
+	bso::char__ Separator,
+	bkdacc::ids8_ &Ids )
 {
 ERRProlog
 	strings Splitted;

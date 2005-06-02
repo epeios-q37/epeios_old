@@ -146,10 +146,28 @@ namespace nsxpcm {
 		const strings_ &Items,
 		bkdacc::ids32_ &Ids );
 
+	void Convert(
+		const strings_ &Items,
+		bkdacc::ids16_ &Ids );
+
+	void Convert(
+		const strings_ &Items,
+		bkdacc::ids8_ &Ids );
+
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
 		bkdacc::ids32_ &Ids );
+
+	void SplitAndConvert(
+		const char *Joined,
+		bso::char__ Separator,
+		bkdacc::ids16_ &Ids );
+
+	void SplitAndConvert(
+		const char *Joined,
+		bso::char__ Separator,
+		bkdacc::ids8_ &Ids );
 
 	void ConvertAndJoin(
 		const bkdacc::ids8_ &Ids,

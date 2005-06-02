@@ -1,5 +1,9 @@
 $Id$
 
+01/06/05
+- NSXPCM :
+	- Completion.
+
 25/05/05
 - GENERAL
 	- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
