@@ -423,6 +423,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &xmldcm		&exml		&2001-\
 	&XML DoCuMent
 &xmlprs		&exml		&2000-\		&XML PaRSer
+&xmllpr		&exml		&\
+	&XML Light PaRser
 &xmltag		&exml		&2000-\
 	&XML TAG
 &xmltol		&exml		&2000-		&XML TOoL
