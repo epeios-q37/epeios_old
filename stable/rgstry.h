@@ -65,6 +65,7 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "str.h"
 #include "lstbch.h"
 #include "lstctn.h"
+#include "xtf.h"
 
 namespace rgstry {
 
@@ -82,11 +83,7 @@ namespace rgstry {
 	typedef lstctn::E_LXMCONTAINERt_( content_, crow__ )	contents_;
 	E_AUTO( contents )
 
-	typedef ctn::E_CMITEMt( content_, crow__ )	content_buffer;
-
-	typedef content_buffer	name_buffer;
-	typedef content_buffer	value_buffer;
-
+	typedef ctn::E_CMITEMt( content_, crow__ )	buffer;
 
 	struct entry__ {
 		crow__ NameRow;
@@ -116,51 +113,55 @@ namespace rgstry {
 	class node_ {
 	public:
 		struct s {
+			nrow__ Parent;
 			crow__ NameRow;
+			crow__ ValueRow;
 			erows_::s Attributes;
-			erows_::s Keys;
 			nrows_::s Children;
 		} &S_;
 		erows_ Attributes;
-		erows_ Keys;
 		nrows_ Children;
 		node_( s &S )
 		: S_( S ),
 		  Attributes( S.Attributes ),
-		  Keys( S.Keys ),
 		  Children( S.Children )
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			S_.Parent = NONE;
 			S_.NameRow = NONE;
+			S_.ValueRow = NONE;
 
 			Attributes.reset( P );
-			Keys.reset( P );
 			Children.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Attributes.plug( MM );
-			Keys.plug( MM );
 			Children.plug( MM );
 		}
 		node_ &operator =( const node_ &N )
 		{
+			S_.Parent = N.S_.Parent;
 			S_.NameRow = N.S_.NameRow;
+			S_.ValueRow = N.S_.ValueRow;
 
 			Attributes = N.Attributes;
-			Keys = N.Keys;
 			Children = N.Children;
 		}
-		void Init( void )
+		void Init(
+			crow__ NameRow = NONE,
+			nrow__ Parent = NONE )
 		{
-			S_.NameRow = NONE;
+			S_.Parent = Parent;
+			S_.NameRow = NameRow;
 
 			Attributes.Init();
-			Keys.Init();
 			Children.Init();
 		}
 		E_RODISCLOSE_( crow__, NameRow )
+		E_RWDISCLOSE_( crow__, ValueRow )
+		E_RWDISCLOSE_( nrow__, Parent )
 	};
 
 	typedef lstctn::E_LXCONTAINERt_( node_, nrow__ ) nodes_;
@@ -184,31 +185,31 @@ namespace rgstry {
 		}
 		const content_ &_GetContent(
 			crow__ ContentRow,
-			content_buffer &Buffer ) const
+			buffer &Buffer ) const
 		{
 			return Buffer( ContentRow );
 		}
 		const name_ &_GetName(
 			const entry__ &Entry,
-			name_buffer &Buffer ) const
+			buffer &Buffer ) const
 		{
 			return _GetContent( Entry.NameRow, Buffer );
 		}
 		const name_ &_GetValue(
 			const entry__ &Entry,
-			name_buffer &Buffer ) const
+			buffer &Buffer ) const
 		{
 			return _GetContent( Entry.ValueRow, Buffer );
 		}
 		const name_ &_GetName(
 			erow__ EntryRow,
-			name_buffer &Buffer ) const
+			buffer &Buffer ) const
 		{
 			return _GetName( Entries( EntryRow ), Buffer );
 		}
 		const name_ &_GetValue(
 			erow__ EntryRow,
-			name_buffer &Buffer ) const
+			buffer &Buffer ) const
 		{
 			return _GetValue( Entries( EntryRow ), Buffer );
 		}
@@ -223,7 +224,7 @@ namespace rgstry {
 			erow__ EntryRow = _SearchEntry( Name, EntryRows );
 
 			if ( EntryRow != NONE ) {
-				value_buffer Buffer;
+				buffer Buffer;
 
 				if ( _GetValue( EntryRow, Buffer ) != Value )
 					EntryRow = NONE;
@@ -250,10 +251,17 @@ namespace rgstry {
 		}
 		const name_ &_GetName(
 			nrow__ NodeRow,
-			name_buffer &NameBuffer,
+			buffer &NameBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
 			return NameBuffer( _GetNode( NodeRow, NodeBuffer ).GetNameRow() );
+		}
+		const name_ &_GetValue(
+			nrow__ NodeRow,
+			buffer &ValueBuffer,
+			node_buffer &NodeBuffer ) const
+		{	
+			return ValueBuffer( _GetNode( NodeRow, NodeBuffer ).GetValueRow() );
 		}
 		nrow__ _SearchNode(
 			const name_ &Name,
@@ -316,15 +324,42 @@ namespace rgstry {
 			Entries.Init();
 			Nodes.Init();
 		}
-		nrow__ GetNewNode( void )
+		nrow__ CreateNode( const content_ &Content )
 		{
-			return Nodes.New();
+			nrow__ Row = Nodes.New();
+
+			Nodes( Row ).Init( Contents.Add( Content ) );
+
+			Nodes.Flush();
+
+			return Row;
 		}
 		void AddChild(
 			nrow__ ChildRow,
 			nrow__ ParentRow )
 		{
 			Nodes( ParentRow ).Children.Append( ChildRow );
+#ifdef RGISTRY_DBG
+			if ( Nodes( ChildRow ).Parent != NONE )
+				ERRu();
+#endif
+			Nodes( ChildRow ).Parent() = ParentRow;
+
+			Nodes.Flush();
+		}
+		nrow__ AddChild(
+			const content_ &Name,
+			nrow__ ParentRow )
+		{
+			nrow__ Row = Nodes.New();
+
+			Nodes( Row ).Init( Contents.Add( Name ), ParentRow );
+
+			Nodes( ParentRow ).Children.Append( Row );
+
+			Nodes.Flush();
+
+			return Row;
 		}
 		void AddAttribute(
 			const name_ &Name,
@@ -332,23 +367,81 @@ namespace rgstry {
 			nrow__ NodeRow )
 		{
 			_AddEntry( Name, Value, Nodes( NodeRow ).Attributes );
+
+			Nodes.Flush();
 		}
-		void AddKey(
-			const name_ &Name,
+		void SetValue(
 			const value_ &Value,
 			nrow__ NodeRow )
 		{
-			_AddEntry( Name, Value, Nodes( NodeRow ).Keys );
+			crow__ ValueRow = Nodes( NodeRow ).ValueRow();
+
+			if ( ValueRow == NONE )
+				ValueRow = Contents.New();
+
+			Contents( ValueRow ) = Value;
+
+			Nodes( NodeRow ).ValueRow() = ValueRow;
+
+			Contents.Flush();
+			Nodes.Flush();
+
 		}
-		nrow__ SearchNode(
+		nrow__ SearchChild(
 			const name_ &Name,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const
 		{
 			return _SearchNode( Name, ParentNodeRow, Cursor );
 		}
+		nrow__ SearchChild(
+			const name_ &Name,
+			nrow__ ParentNodeRow ) const
+		{
+			epeios::row__ Cursor = NONE;
 
+			return _SearchNode( Name, ParentNodeRow, Cursor );
+		}
+		nrow__ GetParent( nrow__ NodeRow ) const
+		{
+			node_buffer NodeBuffer;
+
+			NodeBuffer.Init( Nodes );
+
+			return _GetNode( NodeRow, NodeBuffer ).Parent();
+		}
+		const content_ &GetName(
+			nrow__ NodeRow,
+			buffer &Buffer ) const
+		{
+			node_buffer NodeBuffer;
+
+			Buffer.Init( Contents );
+			NodeBuffer.Init( Nodes );
+
+			return _GetName( NodeRow, Buffer, NodeBuffer );
+		}
+		const content_ &GetValue(
+			nrow__ NodeRow,
+			buffer &Buffer ) const
+		{
+			node_buffer NodeBuffer;
+
+			Buffer.Init( Contents );
+			NodeBuffer.Init( Nodes );
+
+			return _GetValue( NodeRow, Buffer, NodeBuffer );
+		}
+		const content_ &GetCompleteName(
+			nrow__ NodeRow,
+			content_ &Content ) const;
 	};
+
+	E_AUTO( registry )
+
+	nrow__ Parse(
+		xtf::extended_text_iflow__ &Flow,
+		registry_ &Registry );
 }
 
 /*$END$*/

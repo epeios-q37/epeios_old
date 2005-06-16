@@ -32,15 +32,47 @@
 
 #include "err.h"
 #include "cio.h"
+#include "fil.h"
+#include "xtf.h"
 
 using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+void Consult(
+	const rgstry::registry_ &Registry,
+	rgstry::nrow__ Root )
+{
+	rgstry::nrow__ Row;
+	epeios::row__ Cursor = NONE;
+	rgstry::buffer Buffer;
+
+	Row = Registry.SearchChild( str::string( "port" ), Root, Cursor );
+	cout << "Port : " << Registry.GetValue( Row, Buffer ) << txf::nl;
+
+	Row = Registry.SearchNode( str::string( "repository" ), Root, Cursor );
+	cout << "Repository : " << Registry.GetValue( Row, Buffer ) << txf::nl;
+
+
+}
+
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	fil::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
+	rgstry::registry Registry;
+	rgstry::nrow__ Root;
 ERRBegin
+	FFlow.Init( "essai.xml" );
+	FFlow.EOFD( XTF_EOXT );
+
+	XFlow.Init( FFlow );
+
+	Registry.Init();
+
+	Consult( Registry, rgstry::Parse( XFlow, Registry ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -48,10 +80,9 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	cout << "Test of library " << RGSTRYTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cout << "Test of library " << RGSTRYTutor.Name << ' ' << __DATE__" "__TIME__"\n" << txf::sync;
 
 	switch( argc ) {
 	case 1:
@@ -71,9 +102,7 @@ ERRFBegin
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cout << "\nEnd of program " << RGSTRYTutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }

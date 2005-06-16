@@ -55,13 +55,15 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "xmllpr.h"
+
 using namespace rgstry;
 
 erow__ rgstry::registry_::_SearchEntry(
 	const name_ &Name,
 	const erows_ &EntryRows ) const
 {
-	content_buffer Buffer;
+	buffer Buffer;
 	epeios::row__ Row = EntryRows.First();
 
 	Buffer.Init( Contents );
@@ -81,7 +83,7 @@ nrow__ rgstry::registry_::_SearchNode(
 	epeios::row__ &Cursor ) const
 {
 	node_buffer NodeBuffer;
-	name_buffer NameBuffer;
+	buffer NameBuffer;
 
 	epeios::row__ &Row = Cursor;
 	
@@ -117,6 +119,110 @@ nrow__ rgstry::registry_::_SearchNode(
 
 	return NodeRow;
 }
+
+const content_ &rgstry::registry_::GetCompleteName(
+	nrow__ NodeRow,
+	content_ &Content ) const
+{
+	buffer Buffer;
+	node_buffer NodeBuffer;
+
+	Buffer.Init( Contents );
+	NodeBuffer.Init( Nodes );
+
+	if ( NodeRow != NONE ) {
+		Content.Append( _GetName( NodeRow, Buffer, NodeBuffer ) );
+		NodeRow = GetParent( NodeRow );
+	}
+
+	while ( NodeRow != NONE ) {
+		Content.Insert( "::", 0 );
+		Content.Insert( _GetName( NodeRow, Buffer, NodeBuffer ), 0 );
+
+		NodeRow = GetParent( NodeRow );
+	}
+
+	return Content;
+}
+
+
+class callback__
+: public xmllpr::callback__
+{
+private:
+	registry_ &Registry_;
+	nrow__ Root_;
+	nrow__ Current_;
+protected:
+	virtual void XMLLPRTag(
+		const str::string_ &Prefix,
+		const str::string_ &Name )
+	{
+		if ( Current_ == NONE ) {
+			if ( Root_ != NONE )
+				ERRf();
+
+			Root_ = Current_ = Registry_.CreateNode( Name );
+		} else
+			Current_ = Registry_.AddChild( Name, Current_ );
+	}
+	virtual void XMLLPRValue( const str::string_ &Value )
+	{
+		Registry_.SetValue( Value, Current_ );
+	}
+	virtual void XMLLPRAttribute(
+		const str::string_ &Prefix,
+		const str::string_ &Name,
+		const str::string_ &Value )
+	{
+		Registry_.AddAttribute( Name, Value, Current_ );
+	}
+	virtual void XMLLPRTagClosed( void )
+	{
+		Current_ = Registry_.GetParent( Current_ );
+	}
+	virtual void XMLLPRError(
+		xmllpr::location__ Line,
+		xmllpr::location__ Column )
+	{
+		ERRf();
+	}
+public:
+	callback__( registry_ &Registry )
+	: Registry_( Registry )
+	{
+		Current_ = NONE;
+		Root_ = NONE;
+	}
+	nrow__ GetRoot( void ) const
+	{
+		if ( ( Current_ != NONE ) )
+			ERRf();
+
+		return Root_;
+	}
+};
+
+nrow__ rgstry::Parse(
+	xtf::extended_text_iflow__ &Flow,
+	registry_ &Registry )
+{
+	nrow__ Root = NONE;
+ERRProlog
+	callback__ Callback( Registry );
+	xmllpr::parser Parser;	
+ERRBegin
+	Parser.Init();
+
+	Parser.Parse( Flow, Callback );
+
+	Root = Callback.GetRoot();
+ERRErr
+ERREnd
+ERREpilog
+	return Root;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,
