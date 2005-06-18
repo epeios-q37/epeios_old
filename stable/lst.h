@@ -371,7 +371,7 @@ namespace lst {
 		//f Return true if 'Entry' exists, fals otherwise.
 		bso::bool__ Exists( r Entry ) const
 		{
-			return Occupation_.Read( Courant );
+			return Occupation_.Read( Entry );
 		}
 		//f Return true if no entry, false otherwise.
 		bso::bool__ IsEmpty( void ) const

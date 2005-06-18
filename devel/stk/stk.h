@@ -69,14 +69,14 @@ namespace stk {
 
 	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
 	template <class t, typename r> class stack_
-	: public bch::E_BUNCHt_( t, r )
+	: public E_BUNCHt_( t, r )
 	{
 	public:
 		struct s
-		: public bch::E_BUNCHt_( t, r )::s
+		: public E_BUNCHt_( t, r )::s
 		{};
 		stack_( s &S )
-		: bch::E_BUNCHt_( t, r )( S )
+		: E_BUNCHt_( t, r )( S )
 		{}
 		void reset( bool P = true )
 		{
@@ -126,7 +126,7 @@ namespace stk {
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
 		bso::bool__ Exists( t Object ) const
 		{
-			return E_BUNCHt_( t, r )::Search( Object, 0, Amount() ) != NONE;
+			return E_BUNCHt_( t, r )::Search( Object, 0, E_BUNCHt_( t, r )::Amount() ) != NONE;
 		}
 		//f Return true if an entry exists for row 'Row'.
 		bso::bool__ Exists( r Row ) const
@@ -137,10 +137,10 @@ namespace stk {
 		t Top( void ) const
 		{
 #ifdef STK_DBG
-			if ( Amount() == 0 )
+			if ( E_BUNCHt_( t, r )::Amount() == 0 )
 				ERRl();
 #endif
-			return E_BUNCHt_( t, r )::Get( Last() );
+			return E_BUNCHt_( t, r )::Get( E_BUNCHt_( t, r )::Last() );
 		}
 	};
 

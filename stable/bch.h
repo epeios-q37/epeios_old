@@ -81,8 +81,8 @@ namespace bch {
 			epeios::row_t__ Position,
 			epeios::size__ Quantite )
 		{
-			Allouer_( Amount() + Quantite, aem::mDefault );
-			mmr::Store( *this, Amount() - Position - Quantite, Position, Position + Quantite);
+			Allouer_( mng::Amount() + Quantite, aem::mDefault );
+			mmr::Store( *this, mng::Amount() - Position - Quantite, Position, Position + Quantite);
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
@@ -114,7 +114,7 @@ namespace bch {
 		// allocate if the set not big enough.
 		void AllocateIfNecessary_( epeios::size__ Quantity )
 		{
-			if ( Quantity > Amount() )
+			if ( Quantity > mng::Amount() )
 				Allouer_( Quantity, aem::mDefault );
 		}
 	public:
@@ -165,7 +165,7 @@ namespace bch {
 			const type &Object,
 			aem::mode Mode = aem::mDefault )
 		{
-			epeios::size__ PreviousSize = Amount();
+			epeios::size__ PreviousSize = mng::Amount();
 
 			Allouer_( Size, Mode );
 
@@ -279,7 +279,7 @@ namespace bch {
 			if ( !Exists( Row ) )
 				ERRu();
 #endif
-			Truncate ( Amount() - *Row );
+			Truncate ( mng::Amount() - *Row );
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
@@ -308,7 +308,7 @@ namespace bch {
 			row RowSource,
 			row RowDest )
 		{
-			Inserer_( Source, Amount, PosSource, PosDest );
+			Inserer_( Source, Amount, RowSource, RowDest );
 		}
 		//f Insert 'Bunch' at 'Row'.
 		void Insert(
@@ -370,7 +370,7 @@ namespace bch {
 			const type &Object,
 			row Begin = 0 ) const
 		{
-			return Search( Object, Begin, Amount() );
+			return Search( Object, Begin, mng::Amount() );
 		}
 		//f Store 'Count' 'Object' at 'Row'. Adjust the size of the bunch.
 		void StoreAndAdjust(
@@ -409,7 +409,7 @@ namespace bch {
 		void reset( bool P = true )
 		{
 			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::reset( P );
-			Memory().reset( P );
+			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Memory().reset( P );
 		}
 		_bunch_ &operator =( const _bunch_ &Op )
 		{
@@ -417,14 +417,14 @@ namespace bch {
 
 			Allocate( Op.Amount() );
 
-			Memory().Store( Op, Op.Amount() );
+			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Memory().Store( Op, Op.Amount() );
 
 			return *this;
 		}
 		void write( flw::oflow__ &OFlow ) const
 		{
-			flw::Put( Amount(), OFlow );
-			Memory().write( 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount(), OFlow );
+			flw::Put( aem::Amount(), OFlow );
+			tym::E_MEMORYt_( type, row )::Memory().write( 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount(), OFlow );
 		}
 		void read( flw::iflow__ &IFlow )
 		{
@@ -432,14 +432,14 @@ namespace bch {
 
 			flw::Get( IFlow, Amount );
 			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Allocate( Amount );
-			Memory().read( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount() );
+			tym::E_MEMORYt_( type, row )::Memory().read( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount() );
 
 		}
 		//f Adjust the extent to amount.
 		void Adjust( void )
 		{
-			if ( _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Force( Amount() ) )
-				Memory().Allocate( Amount() );
+			if ( _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Force( aem::Amount() ) )
+				tym::E_MEMORYt_( type, row )::Memory().Allocate( aem::Amount() );
 		}
 	};
 
@@ -587,7 +587,6 @@ namespace bch {
 		_bunch__ &operator =( const _bunch__ &S )
 		{
 			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >::StoreAndAdjust( S, S.Amount_ );
-			Size_ = S.Amount_;
 
 			return *this;
 		}
@@ -620,8 +619,7 @@ namespace bch {
 		_bunch___ &operator =( const _bunch___ &S )
 		{
 			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >::StoreAndAdjust( S, S.Amount_ );
-			Size_ = S.Amount_;
-
+	
 			return *this;
 		}
 		void Init( void )

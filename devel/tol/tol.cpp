@@ -61,6 +61,7 @@ public:
 #elif defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	include <unistd.h>
 #	include <sched.h>
+#	include <errno.h>
 #elif !defined( CPE__MAC )
 #	error "Unknown compilation enviroment"
 #endif

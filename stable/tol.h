@@ -325,11 +325,11 @@ public:\
 	Name ( void )\
 	: Name##_<t>( static_ )\
 	{\
-		reset( false );\
+		Name##_<t>::reset( false );\
 	}\
 	~Name ( void )\
 	{\
-		reset( true );\
+		Name##_<t>::reset( true );\
 	}\
 	Name &operator =( const Name &S )\
 	{\
@@ -356,11 +356,11 @@ public:\
 	Name ( void )\
 	: Name##_<t,u>( static_ )\
 	{\
-		reset( false );\
+		Name##_<t,u>::reset( false );\
 	}\
 	~Name ( void )\
 	{\
-		reset( true );\
+		Name##_<t,u>::reset( true );\
 	}\
 	Name &operator =( const Name &S )\
 	{\
@@ -386,11 +386,11 @@ public:\
 	Name ( void )\
 	: Name##_<t,u,v>( static_ )\
 	{\
-		reset( false );\
+		Name##_<t,u,v>::reset( false );\
 	}\
 	~Name ( void )\
 	{\
-		reset( true );\
+		Name##_<t,u,v>::reset( true );\
 	}\
 	Name &operator =( const Name &S )\
 	{\
@@ -416,11 +416,11 @@ public:\
 	Name ( void )\
 	: Name##_<t,u,v,w>( static_ )\
 	{\
-		reset( false );\
+		Name##_<t,u,v,w>::reset( false );\
 	}\
 	~Name ( void )\
 	{\
-		reset( true );\
+		Name##_<t,u,v,w>::reset( true );\
 	}\
 	Name &operator =( const Name &S )\
 	{\

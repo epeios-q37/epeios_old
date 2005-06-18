@@ -399,6 +399,7 @@ namespace uym {
 		row__ End,
 		const datum__ *Data );
 #endif
+
 	template <typename m> class _memory__
 	: public m
 	{
@@ -428,7 +429,7 @@ namespace uym {
 			uym::bsize__ Amount,
 			uym::datum__ *Buffer ) const
 		{
-			memcpy( Buffer, Data_ + Position, Amount ); 
+			memcpy( Buffer, m::Data_ + Position, Amount ); 
 		}
 		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
 		void Store(
@@ -436,19 +437,19 @@ namespace uym {
 			uym::bsize__ Amount,
 			uym::row__ Position )
 		{
-			memcpy( Data_ + Position, Buffer, Amount ); 
+			memcpy( m::Data_ + Position, Buffer, Amount ); 
 		}
 		//f Return byte at 'Position'.
 		uym::datum__ Get( uym::row__ Position ) const
 		{
-			return *Data_[Position];
+			return *m::Data_[Position];
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
 			uym::datum__ Byte,
 			uym::row__ Position )
 		{
-			*Data_[Position] = Byte;
+			*m::Data_[Position] = Byte;
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
@@ -457,7 +458,7 @@ namespace uym {
 			uym::row__ Position = 0,
 			uym::row__ Offset = 0 )
 		{
-			memmove( Data_ + Offset, Source.Data_ + Position, Quantity ); 
+			memmove( m::Data_ + Offset, Source.m::Data_ + Position, Quantity ); 
 		}
 		/*f Store to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
@@ -466,7 +467,7 @@ namespace uym {
 			uym::row__ Position = 0,
 			uym::row__ Offset = 0 )
 		{
-			Source.Recall( Position, Quantity, *Data_ + Offset );
+			Source.Recall( Position, Quantity, *m::Data_ + Offset );
 		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Store(
@@ -475,21 +476,21 @@ namespace uym {
 			uym::row__ Position,
 			uym::size__ Count )
 		{
-			_Store( Object, Size, Count, Position, Data_ );
+			_Store( Object, Size, Count, Position, m::Data_ );
 		}
 		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
 		uym::row__ Search(
-			const uym::datum__ *Objet,
+			const uym::datum__ *Object,
 			uym::bsize__ Size,
 			uym::row__ Begin,
 			uym::row__ End ) const
 		{
-			return _Search( Object, Size, Begin, End, Data_ );
+			return _Search( Object, Size, Begin, End, m::Data_ );
 		}
 		//f Return the used buffer.
 		const uym::datum__ *Buffer( void ) const
 		{
-			return Data_;
+			return m::Data_;
 		}
 	};
 

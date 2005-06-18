@@ -121,7 +121,7 @@ namespace bitbch {
 	// N.B.: le contenu du tableau est inversé bit à bit
 	//c Bits set.
 	template <typename r> class bit_bunch_
-	: public aem::amount_extent_manager_<r>
+	: public amount_extent_manager_<r>
 	{
 	private:
 		tym::size__ Convert_( tym::size__ Amount )
@@ -217,15 +217,15 @@ namespace bitbch {
 		//f Append 'Value' to the end of the set.
 		r Append( bso::bool__ Value )
 		{
-			Allouer_( Amount() + 1, aem::mDefault );
+			Allouer_( amount_extent_manager_<r>::Amount() + 1, aem::mDefault );
 
-			Store( Value, Amount() - 1 );
-			return Amount() - 1;
+			Store( Value, amount_extent_manager_<r>::Amount() - 1 );
+			return amount_extent_manager_<r>::Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
 		r New( tym::size__ Size = 1 )
 		{
-			row_t__ P = Amount();
+			row_t__ P = amount_extent_manager_<r>::Amount();
 
 			Allocate( P + Size );
 
@@ -239,7 +239,7 @@ namespace bitbch {
 			if ( Value )
 				Pattern = -1;
 
-			Table.Store( Pattern, 0, Convert_( Amount() ) );
+			Table.Store( Pattern, 0, Convert_( amount_extent_manager_<r>::Amount() ) );
 		}
 	};
 
@@ -519,7 +519,7 @@ namespace bitbch {
 		}
 		void MAU( void )
 		{
-			memset( Table_, BITBCH_VALEUR_MAX_RECEPTACLE, t * sizeof( receptacle__ ) );
+			memset( Table_, BITBCH__RECEPTACLE_VALUE_MAX, t * sizeof( receptacle__ ) );
 		}
 		tym::bsize__ Taille( void ) const
 		{
@@ -583,6 +583,7 @@ namespace bitbch {
 		return Compter_( O.Table_, O.Taille() );
 	}
 #endif
+
 	//c A set of a maximum of 't' bits.
 	template <int t, typename r> class bit_bunch__
 	{
@@ -648,10 +649,10 @@ namespace bitbch {
 		//f Return the last bit at 'Value'.
 		r Last( bso::bool__ Value ) const
 		{
-			if ( Lire( t - 1 ) == Value )
+			if ( Get( t - 1 ) == Value )
 				return t - 1;
 			else
-				return Prev( t - 1, Value );
+				return Previous( t - 1, Value );
 		}
 		//f Return the size.
 		tym::size__ Size( void ) const

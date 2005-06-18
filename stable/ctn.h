@@ -81,7 +81,7 @@ namespace ctn {
 
 	//c The base of a container. Internal use.
 	template <class st, typename r> class basic_container_
-	: public aem::amount_extent_manager_<r>
+	: public amount_extent_manager_<r>
 	{
 #ifdef CTN_DBG
 	protected:
@@ -130,6 +130,7 @@ namespace ctn {
 
 			return *this;
 		}
+#if 0
 		void write( flw::oflow__ &OFlow ) const
 		{
 			Dynamics.write( OFlow );
@@ -140,6 +141,7 @@ namespace ctn {
 			Dynamics.read( IFlow );
 			Statics.read( IFlow );
 		}
+#endif
 #ifdef CTN_DBG
 		//f Debug feature. If the container is not flushed, throw an error.
 		void FlushTest( void ) const
@@ -216,10 +218,11 @@ namespace ctn {
 		}
 	*/
 		//f Adjust the extent/amount to 'Size'.
+#if 0
 		void Adjust( void )
 		{
 #ifdef CTN_DBG
-			FlusTest();
+			FlushTest();
 #endif
 			epeios::size__ Extent = this->Extent();
 
@@ -228,6 +231,7 @@ namespace ctn {
 				Statics.Allocate( Size );
 			}
 		}
+#endif
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
@@ -268,7 +272,7 @@ namespace ctn {
 			if ( !Exists( Row ) )
 				ERRu();
 #endif
-			Truncate ( Amount() - *Row, Mode );
+			DecreaseTo( amount_extent_manager_<r>::Amount() - *Row, Mode );
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
@@ -570,7 +574,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( IsFlushed() )
+			if ( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -578,7 +582,7 @@ namespace ctn {
 		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
-			if ( IsFlushed() )
+			if ( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -598,7 +602,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Flush();
+				item_base_const__< item_mono_statique__< typename_ t::s >, r >::Flush();
 			}
 
 			item_base_const__< item_mono_statique__<typename_ t::s >, r >::reset( P );
@@ -628,7 +632,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( IsEmpty() )
+			if ( item_base_const__< item_mono_statique__< typename_ t::s >, r >::IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
@@ -637,7 +641,7 @@ namespace ctn {
 		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
-			if ( IsEmpty() )
+			if ( item_base_const__< item_mono_statique__< typename_ t::s >, r >::IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
@@ -922,7 +926,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Flush();
+				item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::Flush();
 			}
 
 			item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::reset( P );
@@ -977,7 +981,7 @@ namespace ctn {
 		t &operator()( void )
 		{
 #ifdef CTN_DBG
-			if ( IsFlushed() )
+			if ( item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -985,7 +989,7 @@ namespace ctn {
 		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
-			if ( IsFlushed() )
+			if ( item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::IsFlushed() )
 				ERRu();
 #endif
 			return Objet_;
@@ -1005,7 +1009,7 @@ namespace ctn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Flush();
+				item_base_const__< item_multi_statique__<typename_ t::s>, r >::Flush();
 			}
 
 			item_base_const__< item_multi_statique__<typename_ t::s>, r >::reset(  P) ;
@@ -1048,7 +1052,7 @@ namespace ctn {
 		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
-			if ( IsEmpty() )
+			if ( item_base_const__< item_multi_statique__<typename t::s>, r >::IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
