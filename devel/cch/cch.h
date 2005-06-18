@@ -152,14 +152,14 @@ namespace cch {
 		}
 		epeios::size__ BunchAmount_( void )
 		{
-			return CCHGetBunch().Amount();
+			return bunch_caller__::CCHGetBunch().Amount();
 		}
 		void ReadDirectlyFromBunch_(
 			r Position,
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			CCHGetBunch().Recall( Position, Amount, Buffer );
+			bunch_caller__::CCHGetBunch().Recall( Position, Amount, Buffer );
 		}
 		void FillCache_(
 			r Position,
@@ -275,6 +275,7 @@ namespace cch {
 		}
 	};
 
+#if 0
 	// The core of a cache of static objects of type 'type'.
 	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
 	: public const_bunch_cache___< type__, r, bunch_caller__>
@@ -286,14 +287,14 @@ namespace cch {
 	protected:
 		void Allocate_( epeios::size__ Size )
 		{
-			CCHGetBunch().Allocate( Size );
+			bunch_caller__::CCHGetBunch().Allocate( Size );
 		}
 		void WriteIntoCache_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			position__ First = *Position - Position_;
+			position__ First = *Position - First_;
 			position__ Last = First + Amount - 1;
 #ifdef CCH_DBG
 			if ( !IsInsideCache_( Position, Amount ) )
@@ -305,14 +306,14 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( Cache_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( bunch_caller__::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			CCHGetBunch().Store( Buffer, Amount, Position );
+			bunch_caller__::CCHGetBunch().Store( Buffer, Amount, Position );
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
@@ -539,6 +540,7 @@ namespace cch {
 		}
 	};
 
+
 	//c A read-only cache of static object of type 't'.
 	template <class type__, typename r> class read_only_cache___
 	: public core_read_only_cache___<type__, r>
@@ -587,6 +589,7 @@ namespace cch {
 			Bunch_ = &Bunch;
 		}
 	};
+
 
 	//c A read-only cache of static object of type 't'.
 	template <class type__, typename r> class read_write_cache___
@@ -637,7 +640,7 @@ namespace cch {
 		}
 	};
 
-		//c A read-only cache of object 't' using an item (in 'CTN4 library meaning).
+	//c A read-only cache of object 't' using an item (in 'CTN4 library meaning).
 	template <class type__, typename rb, typename rc> class item_read_only_cache___
 	: public core_read_only_cache___<type__, rb>
 	{
@@ -961,6 +964,7 @@ namespace cch {
 			return GetCache_( PositionInContainer ).Append( Data );
 		}
 	};
+#endif
 
 #ifdef CCH__USE_SMA_HEAP
 	extern sma::memory_heap___ Heap;

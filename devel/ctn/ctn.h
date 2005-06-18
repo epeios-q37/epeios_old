@@ -1052,7 +1052,7 @@ namespace ctn {
 		const t &operator()( void ) const
 		{
 #ifdef CTN_DBG
-			if ( item_base_const__< item_multi_statique__<typename t::s>, r >::IsEmpty() )
+			if ( item_base_const__< item_multi_statique__<typename_ t::s>, r >::IsEmpty() )
 				ERRu();
 #endif
 			return Objet_;
