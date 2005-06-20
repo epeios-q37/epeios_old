@@ -1,5 +1,9 @@
 $Id$
 
+20/06/05
+- IDXBTQ :
+	- Ajout 'const' manquant.
+
 18/06/05
 - GENERAL:
 	- Adapting to G++ 3.4.4

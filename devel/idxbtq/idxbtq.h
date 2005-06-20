@@ -199,7 +199,7 @@ namespace idxbtq {
 		{
 			return E_IQUEUEt_( r )::Previous( Current );
 		}
-		epeios::size__ Amount( void ) 
+		epeios::size__ Amount( void ) const
 		{
 			return E_IBTREEt_( r )::Amount();
 		}
