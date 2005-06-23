@@ -19,6 +19,7 @@ $GET lgsb $DIR stable/*.cpp
 $GET lgsb $DIR apps/gesbib/backend/*.h
 $GET lgsb $DIR apps/gesbib/backend/*.cpp
 $GET lgsb $DIR apps/gesbib/backend/program/*.cpp
+$GET lgsb $DIR apps/gesbib/backend/program/*.h
 $GET lgsb $DIR apps/gesbib/backend/program/Makefile
 
 #../../../create_pkg $DIR

@@ -129,6 +129,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MuTeX
 &ltf		&epeios		&\
 	&Line Text Flow.
+&lxmlpr		&epeios		&\
+	&Light XML PaRser
 &nsxpcm	&epeios		&\
 	&from nsXPCOM
 &pip		&epeios		&2000-		&PIPe

@@ -1,5 +1,8 @@
 $Id$
 
+23/06/05
+	- Ajout de la bibliothèque 'LXMLPR'.
+
 20/06/05
 - IDXBTQ :
 	- Ajout 'const' manquant.

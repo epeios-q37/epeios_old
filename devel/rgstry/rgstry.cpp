@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "xmllpr.h"
+#include "lxmlpr.h"
 
 using namespace rgstry;
 
@@ -147,14 +147,14 @@ const content_ &rgstry::registry_::GetCompleteName(
 
 
 class callback__
-: public xmllpr::callback__
+: public lxmlpr::callback__
 {
 private:
 	registry_ &Registry_;
 	nrow__ Root_;
 	nrow__ Current_;
 protected:
-	virtual void XMLLPRTag(
+	virtual void LXMLPRTag(
 		const str::string_ &Prefix,
 		const str::string_ &Name )
 	{
@@ -166,24 +166,24 @@ protected:
 		} else
 			Current_ = Registry_.AddChild( Name, Current_ );
 	}
-	virtual void XMLLPRValue( const str::string_ &Value )
+	virtual void LXMLPRValue( const str::string_ &Value )
 	{
 		Registry_.SetValue( Value, Current_ );
 	}
-	virtual void XMLLPRAttribute(
+	virtual void LXMLPRAttribute(
 		const str::string_ &Prefix,
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
 		Registry_.AddAttribute( Name, Value, Current_ );
 	}
-	virtual void XMLLPRTagClosed( void )
+	virtual void LXMLPRTagClosed( void )
 	{
 		Current_ = Registry_.GetParent( Current_ );
 	}
-	virtual void XMLLPRError(
-		xmllpr::location__ Line,
-		xmllpr::location__ Column )
+	virtual void LXMLPRError(
+		lxmlpr::location__ Line,
+		lxmlpr::location__ Column )
 	{
 		ERRf();
 	}
@@ -210,7 +210,7 @@ nrow__ rgstry::Parse(
 	nrow__ Root = NONE;
 ERRProlog
 	callback__ Callback( Registry );
-	xmllpr::parser Parser;	
+	lxmlpr::parser Parser;	
 ERRBegin
 	Parser.Init();
 
