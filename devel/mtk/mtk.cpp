@@ -159,8 +159,16 @@ ERRBegin
 	
 	mtx::Lock( TS.MH );	// Unlocked by 'ThreadFunction'.
 
-	if ( pthread_create( &TID, NULL, ThreadFunction_, &TS ) )
-		ERRs();
+	switch ( pthread_create( &TID, NULL, ThreadFunction_, &TS ) ) {
+	case 0:
+		break;
+	case EAGAIN:
+		ERRS( sPThreadCreateEAGAIN );
+		break;
+	default:
+		ERRS( sPThreadCreateEOther );
+		break;
+	}
 
 	mtx::Lock( TS.MH );
 	mtx::Unlock( TS.MH );

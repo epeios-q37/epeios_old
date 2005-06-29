@@ -62,6 +62,7 @@ extern class ttr_tutor &MTKTutor;
 
 #include "err.h"
 #include "cpe.h"
+#include "errno.h"
 
 #if defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	define MTK__UNIX_LIKE

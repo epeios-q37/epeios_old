@@ -123,7 +123,9 @@ namespace err {
 		// device error
 	enum s
 	{
-		sGeneric
+		sGeneric,
+		sPThreadCreateEAGAIN,
+		sPThreadCreateEOther
 	};
 		// system error
 	enum u

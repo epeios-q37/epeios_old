@@ -206,7 +206,7 @@ void err_::Handler(
 #endif
 	if ( Fichier && !this->Error )
 	{
-		this->Major = Majeur; 
+		this->Major = Majeur;
 		this->Minor = Mineur;
 		this->File = Fichier;
 		this->Line = Ligne;
