@@ -1,5 +1,11 @@
 $Id$
 
+30/06/05
+	- SCK :
+		- Ajout méthode 'GetSocket()'
+	- SRV :
+		- Découpage des fonctions utilisateurs.
+
 23/06/05
 	- Ajout de la bibliothèque 'LXMLPR'.
 

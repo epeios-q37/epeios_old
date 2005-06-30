@@ -178,22 +178,22 @@ flw::size__ sck::socket_ioflow___::FLWRead(
 		flw::size__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = sck::Read( Socket_, (flw::size__)( Wanted - Amount ), Buffer + Amount, TimeOut_ ) ) == SCK_DISCONNECTED )
+			if ( ( Result = sck::Read( _Socket, (flw::size__)( Wanted - Amount ), Buffer + Amount, _TimeOut ) ) == SCK_DISCONNECTED )
 				if ( ( Result = (flw::size__)iflow__::HandleEOFD( Buffer, (flw::size__)( Wanted - Amount ) ) ) == 0 ) {
-					Socket_ = SCK_INVALID_SOCKET;
-					Error_ = true;
+					_Socket = SCK_INVALID_SOCKET;
+					_Error = true;
 					ERRd();
 				}
 			Amount += Result;
 		}
 	}
 	else
-		Amount = sck::Read( Socket_, Wanted, Buffer, 0 );
+		Amount = sck::Read( _Socket, Wanted, Buffer, 0 );
 
 	if ( Amount == SCK_DISCONNECTED )
 		if ( ( Amount = iflow__::HandleEOFD( Buffer, Wanted ) ) == 0 ) {
-				Socket_ = SCK_INVALID_SOCKET;
-				Error_ = true;
+				_Socket = SCK_INVALID_SOCKET;
+				_Error = true;
 				ERRd();
 			}
 
@@ -209,7 +209,7 @@ flw::size__ sck::socket_ioflow___::FLWWrite(
 {
 	flw::size__ Amount = 0;
 
-	if ( Error_ )
+	if ( _Error )
 		ERRd();
 
 	if ( Minimum != 0 )
@@ -217,20 +217,20 @@ flw::size__ sck::socket_ioflow___::FLWWrite(
 		flw::size__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = sck::Write( Socket_, Buffer + Amount, Wanted - Amount, TimeOut_ ) ) == SCK_DISCONNECTED ) {
-				Socket_ = SCK_INVALID_SOCKET;
-				Error_ = true;
+			if ( ( Result = sck::Write( _Socket, Buffer + Amount, Wanted - Amount, _TimeOut ) ) == SCK_DISCONNECTED ) {
+				_Socket = SCK_INVALID_SOCKET;
+				_Error = true;
 				ERRd();
 			}
 			Amount += Result;
 		}
 	}
 	else
-		Amount = sck::Write( Socket_, Buffer, Wanted, 0 );
+		Amount = sck::Write( _Socket, Buffer, Wanted, 0 );
 
 	if ( Amount == SCK_DISCONNECTED ) {
-		Socket_ = SCK_INVALID_SOCKET;
-		Error_ = true;
+		_Socket = SCK_INVALID_SOCKET;
+		_Error = true;
 		ERRd();
 	}
 

@@ -63,6 +63,7 @@ extern class ttr_tutor &SCKTutor;
 #include "err.h"
 #include "cpe.h"
 #include "flw.h"
+#include "tol.h"
 
 #if defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	define SCK__UNIX_LIKE
@@ -272,10 +273,10 @@ namespace sck {
 	: public flw::ioflow__
 	{
 	private:
-		socket__ Socket_;
-		duration__ TimeOut_;
-		bso::bool__ Error_;
-		flw::datum__ Cache_[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
+		socket__ _Socket;
+		duration__ _TimeOut;
+		bso::bool__ _Error;
+		flw::datum__ _Cache[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	protected:
 		virtual flw::size__ FLWRead(
 			flw::size__ Minimum,
@@ -290,18 +291,18 @@ namespace sck {
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( Socket_ != SCK_INVALID_SOCKET ) {
+				if ( _Socket != SCK_INVALID_SOCKET ) {
 					ioflow__::Synchronize();
-					Close( Socket_ );
+					Close( _Socket );
 				}
 			}
 								
-			Socket_ = SCK_INVALID_SOCKET;
-			TimeOut_ = SCK_INFINITE;
-			Error_ = false;
+			_Socket = SCK_INVALID_SOCKET;
+			_TimeOut = SCK_INFINITE;
+			_Error = false;
 		}
 		socket_ioflow___( void )
-		: ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
@@ -319,8 +320,8 @@ namespace sck {
 		
 			ioflow__::SetAmountMax( AmountMax );
 
-			Socket_ = Socket;
-			TimeOut_ = TimeOut;
+			_Socket = Socket;
+			_TimeOut = TimeOut;
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
@@ -329,6 +330,7 @@ namespace sck {
 		{
 			Init( Socket, SCK__DEFAULT_AMOUNT, TimeOut );
 		}
+		E_RODISCLOSE__( socket__, Socket )
 	};
 
 }

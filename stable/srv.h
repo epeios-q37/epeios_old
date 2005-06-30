@@ -71,25 +71,62 @@ namespace srv {
 	//t The type of a service.
 	typedef bso::ushort__	service__;
 
+	enum action__ {
+		aContinue,
+		aStop,
+		a_amount,
+		a_Undefined
+	};
+
+
+
 	//c User functions with socket.
 	class socket_functions__ {
 	protected:
-		virtual void SRVProcess( sck::socket__ Socket ) = 0;
+		virtual void *SRVPreProcess( sck::socket__ Socket ) = 0;
+		virtual action__ SRVProcess(
+			sck::socket__ Socket,
+			void *UP ) = 0;
+		virtual void SRVPostProcess( void *UP ) = 0;
 	public:
-		void Process( sck::socket__ Socket )
+		void *PreProcess( sck::socket__ Socket )
 		{
-			SRVProcess( Socket );
+			return SRVPreProcess( Socket );
+		}
+		action__ Process(
+			sck::socket__ Socket,
+			void *UP )
+		{
+			return SRVProcess( Socket, UP );
+		}
+		void PostProcess( void *UP )
+		{
+			SRVPostProcess( UP );
 		}
 	};
 
 	//c User functions with flow handler.
 	class flow_functions__ {
 	protected:
-		virtual void SRVProcess( flw::ioflow__ &Flow ) = 0;
+		virtual void *SRVPreProcess( flw::ioflow__ &Flow ) = 0;
+		virtual action__ SRVProcess(
+			flw::ioflow__ &Flow,
+			void *UP ) = 0;
+		virtual void SRVPostProcess( void *UP ) = 0;
 	public:
-		void Process( flw::ioflow__ &Flow )
+		void *PreProcess( flw::ioflow__ &Flow )
 		{
-			SRVProcess( Flow );
+			return SRVPreProcess( Flow );
+		}
+		action__ Process(
+			flw::ioflow__ &Flow,
+			void *UP )
+		{
+			return SRVProcess( Flow, UP );
+		}
+		void PostProcess( void *UP )
+		{
+			SRVPostProcess( UP );
 		}
 	};
 
@@ -151,10 +188,7 @@ namespace srv {
 		//f Handle new connection using 'Functions'. BLOCKING FUNCTION.
 		void Process(
 			socket_functions__ &Functions,
-			err::handle ErrHandle = err::hUsual )
-		{
-			Functions.Process( Interroger_( ErrHandle ) );
-		}
+			err::handle ErrHandle = err::hUsual );
 	};
 
 #ifdef CPE__MT

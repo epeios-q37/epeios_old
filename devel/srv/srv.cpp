@@ -141,8 +141,41 @@ ERREpilog
 	return Socket;
 }
 
+void srv::listener___::Process(
+	socket_functions__ &Functions,
+	err::handle ErrHandle )
+{
+ERRProlog
+	void *UP = NULL;
+	sck::socket__ Socket = SCK_INVALID_SOCKET;
+	action__ Action = a_Undefined;
+ERRBegin
+	Socket = Interroger_( ErrHandle );
+
+	UP = Functions.PreProcess( Socket );
+
+	while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
+
+	switch( Action ) {
+	case aContinue:
+		ERRc();
+		break;
+	case aStop:
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+ERRErr
+ERREnd
+	if ( UP != NULL )
+		Functions.PostProcess( UP );
+ERREpilog
+}
+
 #ifdef CPE__MT
-struct data__
+struct socket_data__
 {
 	socket_functions__ *Functions;
 	sck::socket__ Socket;
@@ -151,19 +184,25 @@ struct data__
 
 static void Traiter_( void *PU )
 {
-	::data__ &Data = *(::data__ *)PU;
+	::socket_data__ &Data = *(::socket_data__ *)PU;
 ERRFProlog
 	bso::bool__ Close = true;
 	socket_functions__ &Functions = *Data.Functions;
 	socket__ Socket = Data.Socket;
+	void *UP = NULL;
+	action__ Action = a_Undefined;
 ERRFBegin
 	mtx::Unlock( Data.Mutex );
 
 	ERRProlog
 	ERRBegin
-		Functions.Process( Socket );
+		UP = Functions.PreProcess( Socket );
+
+		while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
 	ERRErr
 	ERREnd
+		if ( UP != NULL )
+			Functions.PostProcess( UP );
 	ERREpilog
 ERRFErr
 ERRFEnd
@@ -176,7 +215,7 @@ void server___::Process(
 {
 ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
-	::data__ Data = {NULL, SCK_INVALID_SOCKET, MTX_INVALID_HANDLER};
+	::socket_data__ Data = {NULL, SCK_INVALID_SOCKET, MTX_INVALID_HANDLER};
 ERRBegin
 
 	Socket = listener___::GetConnection( ErrHandle );
@@ -213,21 +252,55 @@ ERREnd
 ERREpilog
 }
 
+
 namespace {
+	struct flow_data__ {
+		sck::socket_ioflow___ Flow;
+		void *UP;
+	};
+
 	class internal_functions__
 	: public socket_functions__
 	{
 	protected:
-		virtual void SRVProcess( socket__ Socket )
+		virtual void *SRVPreProcess( socket__ Socket )
 		{
+			flow_data__ *Data = NULL;
 		ERRProlog
-			sck::socket_ioflow___ SocketFlow;
 		ERRBegin
-			SocketFlow.Init( Socket, TimeOut );
-			Functions->Process( SocketFlow );
+			Data = new flow_data__;
+
+			if ( Data == NULL )
+				ERRa();
+
+			Data->Flow.Init( Socket );
+			Data->UP = Functions->PreProcess( Data->Flow );
 		ERRErr
+			if ( Data != NULL )
+				delete Data;
+			Data = NULL;
 		ERREnd
 		ERREpilog
+			return Data;
+		}
+		virtual action__ SRVProcess(
+			socket__ Socket,
+			void *UP )
+		{
+			flow_data__ &Data = *(flow_data__ *)UP;
+#ifdef SRV_DBG
+			if ( Data.Flow.GetSocket() != Socket )
+				ERRc();
+#endif
+
+			return Functions->Process( Data.Flow, Data.UP );
+		}
+		virtual void SRVPostProcess( void *UP )
+		{
+			if ( UP == NULL )
+				ERRc();
+
+			delete (flow_data__ *)UP;
 		}
 	public:
 		flow_functions__ *Functions;
