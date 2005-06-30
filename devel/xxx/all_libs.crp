@@ -29,6 +29,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Command LiNe ARGuments
 &clt		&epeios		&2000-2001, \
 	&CLienT
+&clthvy		&epeios		&\
+	&CLienT for HeaVY operations.
 &cpe		&epeios		&2000-2001, \
 	&ComPilation Enviroment
 &cslio		&epeios		&\
@@ -147,6 +149,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
 &srv		&epeios		&2000-2001, 	&SeRVer
+&srvhvy		&epeios		&\
+	&SeRCer fo HeaVY operations.
 &ssnmng		&epeios		&2000-\
 	&SeSsioN MaNaGer
 &stf		&epeios		&2000-2001, 	&STream (or STandard) Flow

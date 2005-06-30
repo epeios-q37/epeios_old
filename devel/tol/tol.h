@@ -713,9 +713,9 @@ namespace tol {
 
 	E_AUTO2( object )
 
-	template <typename t> class pointer___
+	template <typename t> class core_pointer___	// Classe de base de gestion d'un pointeur.
 	{
-	private:
+	protected:
 		t *P_;
 	public:
 		void reset( bso::bool__ P = true )
@@ -726,11 +726,11 @@ namespace tol {
 
 			P_ = NULL;
 		}
-		pointer___( void )
+		core_pointer___( void )
 		{
 			reset( false );
 		}
-		~pointer___( void )
+		~core_pointer___( void )
 		{
 			reset( true );
 		}
@@ -738,7 +738,7 @@ namespace tol {
 		{
 			reset();
 		}
-		pointer___ &operator =( const pointer___ &Pointer )
+		core_pointer___ &operator =( const core_pointer___ &Pointer )
 		{
 			ERRu();	// Otherwise the same ressource is used twice ; which delete them ?
 
@@ -791,7 +791,53 @@ namespace tol {
 		}
 	};
 
-	#define E_POINTER___( t )	pointer___<t>
+	template <typename t> class free_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'free'.
+	: public core_pointer___<t>
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( P_ != NULL )
+					free( P_ );
+
+			P_ = NULL;
+		}
+		t *operator =( t *P )
+		{
+			return core_pointer___<t>::operator =( P );
+		}
+		t *operator =( void *P )
+		{
+			return core_pointer___<t>::operator =( P );
+		}
+	};
+
+	#define E_FPOINTER___( t )	free_pointer___<t>
+
+	template <typename t> class delete_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'delete'.
+	: public core_pointer___<t>
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( P_ != NULL )
+					delete P_;
+
+			P_ = NULL;
+		}
+		t *operator =( t *P )
+		{
+			return core_pointer___<t>::operator =( P );
+		}
+		t *operator =( void *P )
+		{
+			return core_pointer___<t>::operator =( P );
+		}
+	};
+
+	#define E_DPOINTER___( t )	delete_pointer___<t>
 
 #if 0
 	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.

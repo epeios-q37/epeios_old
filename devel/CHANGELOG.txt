@@ -1,10 +1,14 @@
 $Id$
 
 30/06/05
+	- FLW :
+		- Ajout de la focntionnalite 'Dismiss()'.
 	- SCK :
 		- Ajout méthode 'GetSocket()'
 	- SRV :
 		- Découpage des fonctions utilisateurs.
+	- TOL:
+		- Ajout de la gesion d'un pointeur gèré par 'new'/'delete'.
 
 23/06/05
 	- Ajout de la bibliothèque 'LXMLPR'.

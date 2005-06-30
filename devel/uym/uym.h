@@ -523,7 +523,7 @@ namespace uym {
 	class _untyped_memory___
 	{
 	protected:
-		tol::E_POINTER___( uym::datum__ ) Data_;
+		tol::E_FPOINTER___( uym::datum__ ) Data_;
 	public:
 		struct s {};	// To simplify use in library 'BCH'
 		void reset( bso::bool__ P = true )
