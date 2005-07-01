@@ -68,7 +68,8 @@ extern class ttr_tutor &CLTHVYTutor;
 #include "mtx.h"
 #include "bso.h"
 
-#define CLTHVY_UNDEFINED	BSO_USHORT_MAX
+#define CLTHVY_UNDEFINED			BSO_USHORT_MAX
+#define CLTHVY_DEFAULT_CACHE_SIZE	100
 
 namespace clthvy {
 	typedef sck::socket_ioflow___ _flow___;
@@ -80,8 +81,8 @@ namespace clthvy {
 		void _DeleteFlows( void );
 	public:
 		struct s {
-			tol::E_FPOINTER___( char *) Host;
-			tol::E_FPOINTER___( char *) Service;
+			tol::E_FPOINTER___( char ) Host;
+			tol::E_FPOINTER___( char ) Service;
 			mtx::mutex_handler__ Mutex;
 			flows_::s Flows;
 		} &S_;
@@ -126,10 +127,14 @@ namespace clthvy {
 			if ( S_.Host == NULL )
 				ERRa();
 
+			strcpy( S_.Host, Host );
+
 			S_.Service = malloc( strlen( Service ) + 1 );
 
 			if ( S_.Service == NULL )
 				ERRa();
+
+			strcpy( S_.Service, Service );
 
 			S_.Mutex = mtx::Create();
 		}
@@ -146,6 +151,8 @@ namespace clthvy {
 
 				if ( Flow == NULL )
 					ERRa();
+
+				Flow->Init( clt::Connect( S_.Host, S_.Service ) );
 			}
 
 			mtx::Unlock( S_.Mutex );
@@ -165,17 +172,19 @@ namespace clthvy {
 	E_AUTO( core );
 
 	class client_flow___
+	: public flw::ioflow__
 	{
 	private:
 		_flow___ *_Flow;
-		core_ &_Core;
+		core_ *_Core;
 		bso::ushort__ _Id;
+		flw::datum__ _Cache[CLTHVY_DEFAULT_CACHE_SIZE];
 		bso::bool__ _Prepare( void )	// Return true if has already a flow, false otherwise.
 		{
 			bso::bool__ Created = _Flow == NULL;
 
 			if ( Created ) {
-				_Flow = _Core.Get();
+				_Flow = _Core->Get();
 
 				_Flow->Write( &_Id, sizeof( _Id ) );
 			}
@@ -212,6 +221,8 @@ namespace clthvy {
 			while ( Amount < Minimum ) {
 				Amount += _Flow->WriteUpTo( Buffer + Amount, Wanted - Amount );
 			}
+
+			return Amount;
 		}
 		virtual void FLWSynchronizing( void )
 		{
@@ -233,11 +244,13 @@ namespace clthvy {
 			while ( Amount < Minimum ) {
 				Amount += _Flow->ReadUpTo( Wanted - Amount, Buffer + Amount );
 			}
+
+			return Amount;
 		}
 		virtual void FLWDismiss( void )
 		{
 			if ( _Flow != NULL )
-				_Core.Release( _Flow );
+				_Core->Release( _Flow );
 
 			_Flow->Dismiss();
 
@@ -253,28 +266,19 @@ namespace clthvy {
 
 			_Flow = NULL;
 			_Id = CLTHVY_UNDEFINED;
+			_Core = NULL;
 		}
-		client_flow___( core_ &Core )
-		: _Core( Core )
+		client_flow___( void )
+		: flw::ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX )
 		{
 			reset( false );
 		}
-		void Init( void )
+		void Init( core_ &Core )
 		{
 			reset();
 
-			_Flow = _Core.Get();
+			_Core = &Core;
 
-			_Flow->Write( &_Id, sizeof( _Id ) );
-
-			_Flow->Synchronize();
-
-
-			_Flow->Dismiss();
-
-			_Core.Release( _Flow );
-
-			_Flow = NULL;
 		}
 	};
 

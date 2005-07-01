@@ -62,8 +62,127 @@ extern class ttr_tutor &SRVHVYTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "srv.h"
+#include "lstbch.h"
 
 namespace srvhvy {
+
+	using srv::action__;
+	using srv::aContinue;
+	using srv::aStop;
+	using srv::service__;
+
+	typedef bso::ushort__ id__;
+
+#define SRVHVY_UNDEFINED	BSO_USHORT_MAX
+
+	typedef void *_user_pointer__;
+
+	typedef lstbch::E_LBUNCH_( _user_pointer__ ) user_pointers_;
+
+	class core_
+	{
+	public:
+		struct s
+		{
+			user_pointers_::s UPs;
+		};
+		user_pointers_ UPs;
+		core_ ( s &S )
+		: UPs( S.UPs )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			UPs.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			UPs.plug( MM );
+		}
+		core_ &operator =( const core_ &C )
+		{
+			ERRu();
+
+			return *this;
+		}
+		void Init( void )
+		{
+			UPs.Init();
+		}
+		id__ New( void )
+		{
+			epeios::row__ Row = UPs.New();
+
+			if ( *Row >= BSO_USHORT_MAX )
+				ERRl();
+
+			return (id__)*Row;
+		}
+		void Store(
+			_user_pointer__ UP,
+			id__ Id )
+		{
+#ifdef SRVHVY_DBG
+			if ( Id == SRVHVY_UNDEFINED )
+				ERRu();
+#endif
+			UPs.Store( UP, Id );
+		}
+		bso::bool__ Exists( id__ Id ) const
+		{
+			return UPs.Exists( Id );
+		}
+		_user_pointer__ Get( id__ Id ) const
+		{
+#ifdef SRVHVY_DBG
+			if ( !Exists( Id ) )
+				ERRu();
+#endif
+			return UPs( Id );
+		}
+	};
+
+	E_AUTO( core)
+
+
+	class user_functions__
+	{
+	protected:
+		virtual void *SRVHVYPreProcess( flw::ioflow__ &Flow ) = 0;
+		virtual action__ SRVHVYProcess(
+			flw::ioflow__ &Flow,
+			void *UP ) = 0;
+		virtual void SRVHVYPostProcess( void *UP ) = 0;
+	public:
+		void *PreProcess( flw::ioflow__ &Flow )
+		{
+			return SRVHVYPreProcess( Flow );
+		}
+		action__ Process(
+			flw::ioflow__ &Flow,
+			void *UP )
+		{
+			return SRVHVYProcess( Flow, UP );
+		}
+		void PostProcess( void *UP )
+		{
+			SRVHVYPostProcess( UP );
+		}
+	};
+
+	class server___
+	{
+	private:
+		srv::server___ _Server;
+	public:
+		void Init( void )
+		{}
+		void Process(
+			service__ Service,
+			user_functions__ &Functiosn,
+			core_ &Core );
+	};
+
 
 }
 
