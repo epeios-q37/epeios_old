@@ -137,6 +137,8 @@ namespace clthvy {
 			strcpy( S_.Service, Service );
 
 			S_.Mutex = mtx::Create();
+
+			Flows.Init();
 		}
 		_flow___ *Get( void )
 		{

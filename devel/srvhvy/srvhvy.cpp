@@ -90,6 +90,7 @@ namespace {
 				Flow.Write( &Id, sizeof( Id ) );
 				UP = _Functions->PreProcess( Flow );
 				_Core->Store( UP, Id );
+				_Functions->Process( Flow, UP );
 			} else {
 				if ( !_Core->Exists( Id ) ) {
 					Flow.Put( -1 );
