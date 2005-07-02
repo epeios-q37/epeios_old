@@ -1,6 +1,5 @@
 /*
-	'lgpmsc' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'lgpmsc' header file ('lgpmsc.h').
+	Header for the 'tsf' library by Claude SIMON (csimon@epeios.org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -23,67 +22,50 @@ $_RAW_$
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-
-
 //	$Id$
 
-#define LGPMSC__COMPILATION
+#ifndef TSF__INC
+#define TSF__INC
 
-#include "lgpmsc.h"
+#define TSF_NAME		"TSF"
 
-class lgpmsctutor
-: public ttr_tutor
-{
-public:
-	lgpmsctutor( void )
-	: ttr_tutor( LGPMSC_NAME )
-	{
-#ifdef LGPMSC_DBG
-		Version = LGPMSC_VERSION "\b\bD $";
-#else
-		Version = LGPMSC_VERSION;
+#define	TSF_VERSION	"$Revision$"
+
+#define TSF_OWNER		"Claude SIMON (csimon@epeios.org)"
+
+#include "ttr.h"
+
+extern class ttr_tutor &TSFTutor;
+
+#if defined( XXX_DBG ) && !defined( TSF_NODBG )
+#define TSF_DBG
 #endif
-		Owner = LGPMSC_OWNER;
-		Date = "$Date$";
-	}
-	virtual ~lgpmsctutor( void ){}
-};
+
+/* Begin of automatic documentation generation part. */
+
+//V $Revision$
+//C Claude SIMON (csimon@epeios.org)
+//R $Date$
+
+/* End of automatic documentation generation part. */
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D Time-Stamped Flow. 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
-#include "cio.h"
+#include "err.h"
+#include "flw.h"
 
-using namespace lgpmsc;
-using namespace txf;
+namespace tsf {
 
-void lgpmsc::PrintLicense( txf::text_oflow__ &Flow )
-{
-	Flow << "LICENSE A COMPLETER" << nl;
 }
-
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-
-class lgpmscpersonnalization
-: public lgpmsctutor
-{
-public:
-	lgpmscpersonnalization( void )
-	{
-		/* place here the actions concerning this library
-		to be realized at the launching of the application  */
-	}
-	~lgpmscpersonnalization( void )
-	{
-		/* place here the actions concerning this library
-		to be realized at the ending of the application  */
-	}
-};
-
 
 /*$END$*/
 				  /********************************************/
@@ -91,8 +73,4 @@ public:
 				  /*			  unless specified		   	  */
 /******************************************************************************/
 
-// 'static' by GNU C++.
-
-static lgpmscpersonnalization Tutor;
-
-ttr_tutor &LGPMSCTutor = Tutor;
+#endif

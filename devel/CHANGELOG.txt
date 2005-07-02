@@ -1,5 +1,12 @@
 $Id$
 
+02/07/05 :
+	- GENERAL :
+		- Adaptation aux modification de la bibliothèque 'FLW'.
+	- FLW :
+		- Ajout des méthodes '<Write|Read>Relay(...)'.
+		- Possibilité de rendre les flots 'thread-safe'.
+
 30/06/05
 	- FLW :
 		- Ajout de la focntionnalite 'Dismiss()'.

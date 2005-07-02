@@ -138,8 +138,8 @@ namespace flx {
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
-		buffer_iflow__( void )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		buffer_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -198,8 +198,8 @@ namespace flx {
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
-		buffer_oflow__( void )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		buffer_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -253,8 +253,8 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_iflow__( void )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		bunch_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -297,8 +297,8 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_oflow___( void )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		bunch_oflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -343,8 +343,8 @@ namespace flx {
 			// The cache.
 		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
-		dump_oflow__( void )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX )
+		dump_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
 		{}
 	};
 }

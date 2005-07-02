@@ -60,9 +60,9 @@ public:
 using namespace lgpmsc;
 using namespace txf;
 
-void lgpmsc::PrintLicense( void )
+void lgpmsc::PrintLicense( txf::text_oflow__ &Flow )
 {
-	cio::cout << "LICENSE A COMPLETER" << nl;
+	Flow << "LICENSE A COMPLETER" << nl;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

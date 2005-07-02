@@ -164,6 +164,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&TAG EXPander
 &tol		&epeios		&2000-\
 	&TOoL
+&tsf		&epeios		&\
+	&Time-Stamped Flow.
 &tsrcpr		&epeios		&2000-\
 	&Tagged SouRCe PaRser
 &tst		&epeios		&NA\

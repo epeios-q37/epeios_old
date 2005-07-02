@@ -1,5 +1,5 @@
 /*
-	Header for the 'lgpmsc' library by Claude SIMON (csimon@epeios.org)
+	Header for the 'tsf' library by Claude SIMON (csimon@epeios.org)
 	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef LGPMSC__INC
-#define LGPMSC__INC
+#ifndef TSF__INC
+#define TSF__INC
 
-#define LGPMSC_NAME		"LGPMSC"
+#define TSF_NAME		"TSF"
 
-#define	LGPMSC_VERSION	"$Revision$"
+#define	TSF_VERSION	"$Revision$"
 
-#define LGPMSC_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define TSF_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &LGPMSCTutor;
+extern class ttr_tutor &TSFTutor;
 
-#if defined( XXX_DBG ) && !defined( LGPMSC_NODBG )
-#define LGPMSC_DBG
+#if defined( XXX_DBG ) && !defined( TSF_NODBG )
+#define TSF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,53 +55,71 @@ extern class ttr_tutor &LGPMSCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D LoGiPlus (Logi+) MiSC 
+//D Thread-Safe Flow. 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 #include "err.h"
 #include "flw.h"
+#include "mtx.h"
 
-//d The logiplus site URL.
-#define LGPMSC_LOGIPLUS_URL	"http://logiplus.fr/"
+namespace tsf {
 
-//d The hypertext link to the logiplus web site..
-#define LGPMSC_LOGIPLUS_LINK	"<A HREF=\"" LGPMSC_LOGIPLUS_URL "\">Logi+</A>"
+	class thread_safe_oflow__
+	: public flw::oflow__
+	{
+	private:
+		flw::oflow__ *_Flow;
+		mtx::mutex_handler__ _Mutex;
+		bso::bool__ _Owner;
+	protected:
+		virtual flw::size__ FLWWrite(
+			const flw::datum__ *Buffer,
+			flw::size__ Wanted,
+			flw::size__ Minimum,
+			bool Synchronization )
+		{
+			if ( !_Owner ) {
+				mtx::Lock( _Mutex );
+				_Owner = true;
+			}
 
-//m The hypertext link to the software named 'Name'.
-#if 0
-#define LGPMSC_APP_LINK( Name )\
-	"<A HREF=\"" LGPMSC_EPEIOS_URL "en/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
-#endif
+			return _Flow->WriteRelay( Buffer, Wanted, Minimum, Synchronization );
+		}
+		virtual void FLWSynchronizing( void )
+		{
+			if ( _Owner ) {
+				_Owner = false;
+				mtx::Unlock( _Mutex );
+			}
+		}
 
-//m The invitation to consult the help text for application named 'Name'.
-#define LGPMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations."
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( _Flow != NULL )
+					Synchronize();
+			}
 
-//d The author.
-#define LGPMSC_AUTHOR_NAME	"Claude SIMON"
+			_Flow = NULL;
+			_Mutex = MTX_INVALID_HANDLER;
+			_Owner = false;
+		}
+		void Init(
+			flw::oflow__ &Flow,
+			mtx::mutex_handler__ Mutex )
+		{
+			reset();
 
-//d Author e-mail
-#define LGPMSC_AUTHOR_EMAIL	"develop@logiplus.fr"
-
-//d Author mail hypertext link.
-#define LGPMSC_AUTHOR_LINK	"<A HREF=\"mailto://" LGPMSC_AUTHOR_EMAIL "\">" LGPMSC_AUTHOR_NAME "</A>"
-
-//d Logiplus (http://epeios.org) Text.
-#define LGPMSC_LOGIPLUS_TEXT "\tThis program was developed for Logi+ (" LGPMSC_LOGIPLUS_URL ")." 
-
-//m Copyright text with yers 'Years' (string) for Logi+.
-#define LGPMSC_COPYRIGHT( years )	"Copyright (c) " years " Logi+ (" LGPMSC_LOGIPLUS_URL ")."
+			_Flow = &Flow;
+			_Mutex = Mutex;
+		}
+	};
 
 
-namespace lgpmsc {
-	//f Print information about GNU GPL license.
-	void PrintLicense(
-#ifdef CPE__MT
-		txf::text_oflow__ &Flow );
-#else
-	txf::text_oflow__ &Flow = cio::cout );
-#endif
+
 }
 
 /*$END$*/

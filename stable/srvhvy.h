@@ -64,6 +64,7 @@ extern class ttr_tutor &SRVHVYTutor;
 #include "flw.h"
 #include "srv.h"
 #include "lstbch.h"
+#include "mtx.h"
 
 namespace srvhvy {
 
@@ -82,18 +83,32 @@ namespace srvhvy {
 
 	class core_
 	{
+	private:
+		bso::bool__ _Exists( id__ Id ) const
+		{
+			return UPs.Exists( Id );
+		}
 	public:
 		struct s
 		{
 			user_pointers_::s UPs;
-		};
+			mtx::mutex_handler__ Mutex;
+		} &S_;
 		user_pointers_ UPs;
 		core_ ( s &S )
-		: UPs( S.UPs )
+		: S_( S ),
+		  UPs( S.UPs )
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				if ( S_.Mutex != MTX_INVALID_HANDLER )
+					mtx::Delete( S_.Mutex );
+			}
+
 			UPs.reset( P );
+			S_.Mutex = MTX_INVALID_HANDLER;
+
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -107,15 +122,20 @@ namespace srvhvy {
 		}
 		void Init( void )
 		{
+			reset();
+
 			UPs.Init();
+			S_.Mutex = mtx::Create();
 		}
 		id__ New( void )
 		{
+			mtx::Lock( S_.Mutex );
 			epeios::row__ Row = UPs.New();
 
 			if ( *Row >= BSO_USHORT_MAX )
 				ERRl();
 
+			mtx::Unlock( S_.Mutex );
 			return (id__)*Row;
 		}
 		void Store(
@@ -126,19 +146,38 @@ namespace srvhvy {
 			if ( Id == SRVHVY_UNDEFINED )
 				ERRu();
 #endif
+			mtx::Lock( S_.Mutex );
 			UPs.Store( UP, Id );
+			mtx::Unlock( S_.Mutex );
 		}
 		bso::bool__ Exists( id__ Id ) const
 		{
-			return UPs.Exists( Id );
+			bso::bool__ Result;
+
+			mtx::Lock( S_.Mutex );
+
+			Result =  _Exists( Id );
+
+			mtx::Unlock( S_.Mutex );
+
+			return Result;
 		}
-		_user_pointer__ Get( id__ Id ) const
+		bso::bool__ TestAndGet(
+			id__ Id,
+			void *&UP ) const
 		{
-#ifdef SRVHVY_DBG
-			if ( !Exists( Id ) )
-				ERRu();
-#endif
-			return UPs( Id );
+			bso::bool__ Result;
+
+			mtx::Lock( S_.Mutex );
+
+			Result = _Exists( Id );
+
+			if ( Result )
+				UP = UPs( Id );
+
+			mtx::Unlock( S_.Mutex );
+
+			return Result;
 		}
 	};
 

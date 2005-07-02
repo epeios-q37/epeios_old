@@ -57,6 +57,8 @@ public:
 
 #include "cpe.h"
 #include "iof.h"
+#include <fstream>
+#include <stdlib.h>
 
 using namespace fil;
 
@@ -197,6 +199,142 @@ void fil::_Close( iof::descriptor__ D )
 	::_Close( D );
 }
 
+rbf fil::CreateBackupFile(
+	const char *NomFichier,
+	hbf Handle,
+	txf::text_oflow__ &Flow,
+	const char *Extension,
+	err::handle Error )
+{
+	rbf Etat = rbfOK;
+ERRProlog
+	char *NomFichierSecurite = NULL;
+ERRBegin
+	if ( tol::FileExists( NomFichier ) )
+	{
+		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
+			ERRa();
+
+		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
+
+		if ( tol::FileExists( NomFichierSecurite ) )
+			if ( remove( NomFichierSecurite ) )
+				Etat = rbfSuppression;
+
+		if ( Etat == rbfOK )
+			if ( Handle == hbfDuplicate )
+			{
+				std::ofstream Out( NomFichierSecurite );
+				std::ifstream In( NomFichier );
+				int C;
+
+				while( Out && In && ( ( C = In.get() ) != EOF ) )
+					Out.put( (char)C );
+
+				Out.close();
+				In.close();
+
+				if ( C != EOF )
+				{
+					Etat = rbfDuplication;
+					remove( NomFichierSecurite );
+				}
+			}
+			else if ( Handle == hbfRename )
+			{
+				if ( rename( NomFichier, NomFichierSecurite ) )
+					Etat = rbfRenaming;
+			}
+			else
+				ERRu();
+	}
+
+	if ( Error == err::hUsual )
+	{
+		switch( Etat ) {
+		case rbfSuppression:
+			Flow << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
+			ERRu();
+			break;
+		case rbfDuplication:
+			Flow << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
+			ERRu();
+			break;
+		case rbfRenaming:
+			Flow << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
+			ERRu();
+			break;
+		case rbfOK:
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+ERRErr
+ERREnd
+	if ( NomFichierSecurite )
+		free( NomFichierSecurite );
+ERREpilog
+	return Etat;
+}
+
+
+
+rbf fil::RecoverBackupFile(
+	const char *NomFichier,
+	txf::text_oflow__ &Flow,
+	const char *Extension,
+	err::handle Error )
+{
+	rbf Etat = rbfOK;
+ERRProlog
+	char *NomFichierSecurite = NULL;
+ERRBegin
+	if ( tol::FileExists( NomFichier ) )
+		if ( remove( NomFichier ) )
+			Etat = rbfSuppression;
+
+	if ( Etat == rbfOK )
+		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
+			Etat = rbfAllocation;
+
+	if ( Etat == rbfOK )
+	{
+		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
+
+		if ( tol::FileExists( NomFichierSecurite ) )
+			if ( rename( NomFichierSecurite, NomFichier ) )
+				Etat = rbfRenaming;
+	}
+
+	if ( Error == err::hUsual )
+	{
+		switch( Etat ) {
+		case rbfAllocation:
+			Flow << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
+			break;
+		case rbfSuppression:
+			Flow << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
+			break;
+		case rbfRenaming:
+			Flow << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
+			break;
+		case rbfOK:
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+	if ( NomFichierSecurite )
+		free( NomFichierSecurite );
+ERREpilog
+	return Etat;
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,

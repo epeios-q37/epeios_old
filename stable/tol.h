@@ -66,11 +66,7 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 
 #include "cpe.h"
-#include "txf.h"
-
-#ifdef CPE__CONSOLE
-#	include "cio.h"
-#endif
+#include "bso.h"
 
 #if defined( CPE__VC ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
 #	include <sys/timeb.h>
@@ -80,35 +76,9 @@ extern class ttr_tutor &TOLTutor;
 
 #include "err.h"
 
-//d The default backup file extension.
-#define TOL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
-
 namespace tol
 {
 	typedef char buffer__[20];
-
-	//e Error code which can occurs during backup file operation.
-	enum rbf
-	{
-		//i No error.
-		rbfOK,
-		//i error by renaming.
-		rbfRenaming,
-		//i Error by duplication. Occurs only with 'TOLCreateBackupFile()'.
-		rbfDuplication,
-		//i Error by suppression. 
-		rbfSuppression,
-		//i Erreur by allocation. Occurs only with 'TOLRecoverBackupFile()'.
-		rbfAllocation
-	};
-	//e How handle the backuped file.
-	enum hbf
-	{
-		//i Rename it.
-		hbfRename,
-		//i Duplicate it.
-		hbfDuplicate
-	};
 }
 
 
@@ -475,31 +445,6 @@ namespace tol {
 	//f Return true if the file 'Name' exists, false otherwise.
 	bool FileExists( const char *Nom );
 
-	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
-	If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
-	If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
-	rbf CreateBackupFile(
-		const char *Name,
-		hbf Handle,
-#ifdef CPE__CONSOLE
-		txf::text_oflow__ &Flow = cio::cerr,
-#else
-		txf::text_oflow__ &Flow,
-#endif
-		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
-		err::handle = err::hUsual  );
-
-	//f Recover the backup file 'Name' with 'Extension' as extension.
-	rbf RecoverBackupFile(
-		const char *Name,
-#ifdef CPE__CONSOLE
-		txf::text_oflow__ &Flow = cio::cerr,
-#else
-		txf::text_oflow__ &Flow,
-#endif
-		const char *Extension = TOL_DEFAULT_BACKUP_FILE_EXTENSION,
-		err::handle = err::hUsual  );
-
 	//f Return the current date.
 	const char *Date( buffer__ &Buffer );
 
@@ -798,10 +743,10 @@ namespace tol {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( P_ != NULL )
-					free( P_ );
+				if ( core_pointer___<t>::P_ != NULL )
+					free( core_pointer___<t>::P_ );
 
-			P_ = NULL;
+				core_pointer___<t>::P_ = NULL;
 		}
 		t *operator =( t *P )
 		{
@@ -822,10 +767,10 @@ namespace tol {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( P_ != NULL )
-					delete P_;
+				if ( core_pointer___<t>::P_ != NULL )
+					delete core_pointer___<t>::P_;
 
-			P_ = NULL;
+				core_pointer___<t>::P_ = NULL;
 		}
 		t *operator =( t *P )
 		{

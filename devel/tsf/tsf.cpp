@@ -1,6 +1,6 @@
 /*
-	'lgpmsc' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'lgpmsc' header file ('lgpmsc.h').
+	'tsf' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'tsf' header file ('tsf.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define LGPMSC__COMPILATION
+#define TSF__COMPILATION
 
-#include "lgpmsc.h"
+#include "tsf.h"
 
-class lgpmsctutor
+class tsftutor
 : public ttr_tutor
 {
 public:
-	lgpmsctutor( void )
-	: ttr_tutor( LGPMSC_NAME )
+	tsftutor( void )
+	: ttr_tutor( TSF_NAME )
 	{
-#ifdef LGPMSC_DBG
-		Version = LGPMSC_VERSION "\b\bD $";
+#ifdef TSF_DBG
+		Version = TSF_VERSION "\b\bD $";
 #else
-		Version = LGPMSC_VERSION;
+		Version = TSF_VERSION;
 #endif
-		Owner = LGPMSC_OWNER;
+		Owner = TSF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~lgpmsctutor( void ){}
+	virtual ~tsftutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,29 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cio.h"
-
-using namespace lgpmsc;
-using namespace txf;
-
-void lgpmsc::PrintLicense( txf::text_oflow__ &Flow )
-{
-	Flow << "LICENSE A COMPLETER" << nl;
-}
+using namespace tsf;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class lgpmscpersonnalization
-: public lgpmsctutor
+class tsfpersonnalization
+: public tsftutor
 {
 public:
-	lgpmscpersonnalization( void )
+	tsfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~lgpmscpersonnalization( void )
+	~tsfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -93,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static lgpmscpersonnalization Tutor;
+static tsfpersonnalization Tutor;
 
-ttr_tutor &LGPMSCTutor = Tutor;
+ttr_tutor &TSFTutor = Tutor;

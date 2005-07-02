@@ -64,6 +64,12 @@ extern class ttr_tutor &FILTutor;
 
 #include "iof.h"
 #include "flw.h"
+#include "txf.h"
+#include "cio.h"
+#include "tol.h"
+
+//d The default backup file extension.
+#define FIL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
 
 #ifdef FIL_FLOW_BUFFER_SIZE
 #	define FIL__FLOW_BUFFER_SIZE FIL_FLOW_BUFFER_SIZE
@@ -292,6 +298,54 @@ namespace fil
 			return Init( FileName, Mode, ErrHandle );
 		}
 	};
+	//e Error code which can occurs during backup file operation.
+	enum rbf
+	{
+		//i No error.
+		rbfOK,
+		//i error by renaming.
+		rbfRenaming,
+		//i Error by duplication. Occurs only with 'TOLCreateBackupFile()'.
+		rbfDuplication,
+		//i Error by suppression. 
+		rbfSuppression,
+		//i Erreur by allocation. Occurs only with 'TOLRecoverBackupFile()'.
+		rbfAllocation
+	};
+	//e How handle the backuped file.
+	enum hbf
+	{
+		//i Rename it.
+		hbfRename,
+		//i Duplicate it.
+		hbfDuplicate
+	};
+
+
+	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
+	If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
+	If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
+	rbf CreateBackupFile(
+		const char *Name,
+		hbf Handle,
+#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+		txf::text_oflow__ &Flow = cio::cerr,
+#else
+		txf::text_oflow__ &Flow,
+#endif
+		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
+		err::handle = err::hUsual  );
+
+	//f Recover the backup file 'Name' with 'Extension' as extension.
+	rbf RecoverBackupFile(
+		const char *Name,
+#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+		txf::text_oflow__ &Flow = cio::cerr,
+#else
+		txf::text_oflow__ &Flow,
+#endif
+		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
+		err::handle = err::hUsual  );
 }
 
 /*$END$*/

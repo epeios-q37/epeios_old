@@ -244,8 +244,20 @@ void err::Final( void )
 		ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
 
 #ifdef CPE__CONSOLE
-		cio::cout << txf::sync;
-		cio::cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
+ERRProlog
+#	ifdef CPE__MT
+	cio::safe_cout___ cout;
+	cio::safe_cout___ cerr;
+#	else
+	txf::text_oflow__ &cout = cio::cout;
+	txf::text_oflow__ &cerr = cio::cerr;
+#	endif
+ERRBegin
+		cout << txf::sync;
+		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
+ERRErr
+ERREnd
+ERREpilog
 #endif
 
 #ifdef CPE__GUI

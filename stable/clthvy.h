@@ -218,13 +218,7 @@ namespace clthvy {
 
 			_Prepare();
 
-			Amount = _Flow->WriteUpTo( Buffer, Wanted );
-
-			while ( Amount < Minimum ) {
-				Amount += _Flow->WriteUpTo( Buffer + Amount, Wanted - Amount );
-			}
-
-			return Amount;
+			return _Flow->WriteRelay( Buffer, Wanted, Minimum, Synchronization );
 		}
 		virtual void FLWSynchronizing( void )
 		{
@@ -270,8 +264,8 @@ namespace clthvy {
 			_Id = CLTHVY_UNDEFINED;
 			_Core = NULL;
 		}
-		client_flow___( void )
-		: flw::ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX )
+		client_flow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX, Mutex, Mutex )
 		{
 			reset( false );
 		}

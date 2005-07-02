@@ -96,7 +96,12 @@ extern class ttr_tutor &LGPMSCTutor;
 
 namespace lgpmsc {
 	//f Print information about GNU GPL license.
-	void PrintLicense( void );
+	void PrintLicense(
+#ifdef CPE__MT
+		txf::text_oflow__ &Flow );
+#else
+	txf::text_oflow__ &Flow = cio::cout );
+#endif
 }
 
 /*$END$*/

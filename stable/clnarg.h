@@ -300,7 +300,27 @@ namespace clnarg {
 		int CommandId,
 		const char *Text,
 		clnarg::view View,
+#ifdef CPT__MT
+		txf::text_oflow__ &Flow = cout,
+#else
+		txf::text_oflow__ &Flow,
+#endif
 		bso::bool__ Default = false );
+
+	inline void PrintCommandUsage(
+		const description_ &Description,
+		int CommandId,
+		const char *Text,
+		clnarg::view View,
+		bso::bool__ Default,
+#ifdef CPT__MT
+		txf::text_oflow__ &Flow = cout )
+#else
+		txf::text_oflow__ &Flow )
+#endif
+	{
+		PrintCommandUsage( Description, CommandId, Text, View, Flow, Default );
+	}
 		
 	/*f Print the usage text for option, with parameter, in 'Description' identified
 	by 'OptionId' using 'Text' and 'View'. 'Parameter' is the parameter of the option.	*/
@@ -309,7 +329,12 @@ namespace clnarg {
 		int OptionId,
 		const char *Parameter,
 		const char *Text,
-		clnarg::view View );
+		clnarg::view View,
+#ifdef CPT__MT
+		txf::text_oflow__ &Flow = cout );
+#else
+		txf::text_oflow__ &Flow );
+#endif
 
 	/*f Print the usage text for option, without parameter, in 'Description'
 	identified by 'OptionId' using 'Text' and 'View'. */
@@ -317,9 +342,14 @@ namespace clnarg {
 		const description_ &Description,
 		int OptionId,
 		const char *Text,
-		clnarg::view View )
+		clnarg::view View,
+#ifdef CPT__MT
+		txf::text_oflow__ &Flow = cout )
+#else
+		txf::text_oflow__ &Flow )
+#endif
 	{
-		PrintOptionUsage( Description, OptionId, NULL, Text, View );
+		PrintOptionUsage( Description, OptionId, NULL, Text, View, Flow );
 	}
 }
 

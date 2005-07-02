@@ -92,13 +92,13 @@ namespace {
 				_Core->Store( UP, Id );
 				_Functions->Process( Flow, UP );
 			} else {
-				if ( !_Core->Exists( Id ) ) {
+				if ( !_Core->TestAndGet( Id, UP ) ) {
 					Flow.Put( -1 );
 					Flow.Synchronize();
 					Action = aStop;
 				} else {
 					Flow.Put( 0 );
-					Action = _Functions->Process( Flow, UP = _Core->Get( Id ) );
+					Action = _Functions->Process( Flow, UP );
 				}
 
 				switch ( Action ) {

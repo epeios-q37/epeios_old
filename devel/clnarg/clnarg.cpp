@@ -57,9 +57,6 @@ public:
 
 #include "cio.h"
 
-using cio::cerr;
-using cio::cout;
-
 using namespace clnarg;
 
 enum type {
@@ -417,14 +414,16 @@ const char *description_::GetOptionLabels( int Id ) const
 	return GetLabel_( Options, Id, CLNARG_DETAIL_SEPARATOR );
 }
 
-static void HandleView_( clnarg::view View )
+static void HandleView_(
+	clnarg::view View,
+	txf::text_oflow__ &Flow )
 {
 	switch( View ) {
 	case clnarg::vOneLine:
-		cout << txf::tab;
+		Flow << txf::tab;
 		break;
 	case clnarg::vSplit:
-		cout << txf::nl << txf::tab << txf::tab;
+		Flow << txf::nl << txf::tab << txf::tab;
 		break;
 	default:
 		ERRu();
@@ -437,18 +436,19 @@ void clnarg::PrintCommandUsage(
 	int CommandId,
 	const char *Text,
 	clnarg::view View,
+	txf::text_oflow__ &Flow,
 	bso::bool__ Default )
 {
-	cout << txf::tab;
+	Flow << txf::tab;
 		
 	if ( Default )
-		cout << "<none>, ";
+		Flow << "<none>, ";
 			
-	cout << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	Flow << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
 	
-	HandleView_( View );
+	HandleView_( View, Flow );
 		
-	cout << Text << txf::nl;
+	Flow << Text << txf::nl;
 }
 
 void clnarg::PrintOptionUsage(
@@ -456,21 +456,22 @@ void clnarg::PrintOptionUsage(
 	int OptionId,
 	const char *Parameter,
 	const char *Text,
-	clnarg::view View )
+	clnarg::view View,
+	txf::text_oflow__ &Flow )
 {
-	cout << txf::tab;
+	Flow << txf::tab;
 		
-	cout << Description.GetOptionLabels( OptionId );
+	Flow << Description.GetOptionLabels( OptionId );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 
-		 cout << ' ' << Parameter;
+		 Flow << ' ' << Parameter;
 
-	cout << ':';
+	Flow << ':';
 		
-	HandleView_( View );
+	HandleView_( View, Flow );
 		
-	cout << Text << txf::nl;
+	Flow << Text << txf::nl;
 }
 
 	

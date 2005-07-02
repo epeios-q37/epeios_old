@@ -140,11 +140,32 @@ namespace iof {
 			return Written;
 		}
 	public:
+		io_oflow__(void )
+		: output__( IOF_UNDEFINED_DESCRIPTOR ),
+		  oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX ),
+		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
+		{}
 		io_oflow__(
-			descriptor__ D = IOF_UNDEFINED_DESCRIPTOR,
-			amount__ AmountMax = FLW_AMOUNT_MAX )
+			descriptor__ D,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
 		: output__( D ),
-		  oflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex ),
+		  io_core__( D )
+		{}
+		io_oflow__(
+			descriptor__ D,
+			amount__ AmountMax,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
+		: output__( D ),
+		  oflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex ),
 		  io_core__( D )
 		{}
 		void operator()( void )
@@ -197,11 +218,32 @@ namespace iof {
 			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
 		}
 	public:
+		io_iflow__(void )
+		: input__( IOF_UNDEFINED_DESCRIPTOR ),
+		  iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX ),
+		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
+		{}
 		io_iflow__(
-			descriptor__ D =IOF_UNDEFINED_DESCRIPTOR,
-			amount__ AmountMax = FLW_AMOUNT_MAX )
+			descriptor__ D,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
 		: input__( D ),
-		  iflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex ),
+		  io_core__( D )
+		{}
+		io_iflow__(
+			descriptor__ D,
+			amount__ AmountMax,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
+		: input__( D ),
+		  iflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex ),
 		  io_core__( D )
 		{}
 		void operator()( void )
@@ -275,11 +317,32 @@ namespace iof {
 			return Written;
 		}
 	public:
+		io_ioflow__(void )
+		: io__( IOF_UNDEFINED_DESCRIPTOR ),
+		  ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ),
+		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
+		{}
 		io_ioflow__(
-			descriptor__ D = IOF_UNDEFINED_DESCRIPTOR,
-			amount__ AmountMax = FLW_AMOUNT_MAX )
+			descriptor__ D,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
 		: io__( D ),
-		  ioflow__( Cache_, sizeof( Cache_ ), AmountMax ),
+		  ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex, Mutex ),
+		  io_core__( D )
+		{}
+		io_ioflow__(
+			descriptor__ D,
+			amount__ AmountMax,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
+		: io__( D ),
+		  ioflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex, Mutex ),
 		  io_core__( D )
 		{}
 		void operator()( void )

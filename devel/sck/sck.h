@@ -301,8 +301,8 @@ namespace sck {
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
 		}
-		socket_ioflow___( void )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX )
+		socket_ioflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX, Mutex, Mutex )
 		{
 			reset( false );
 		}

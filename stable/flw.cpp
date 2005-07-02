@@ -96,6 +96,8 @@ ERRBegin
 	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
+	_TestAndLock();
+
 	Amount = FLWRead( Minimum, Buffer, Wanted );
 
 	Red_ += Amount;
@@ -129,6 +131,8 @@ ERRBegin
 			if ( Minimum != Wanted )
 				ERRc();
 #endif
+
+	_TestAndLock();
 
 	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
 
