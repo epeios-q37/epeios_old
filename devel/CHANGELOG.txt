@@ -1,5 +1,9 @@
 $Id$
 
+04/07/05 :
+	- FLW :
+		- Correction bogue.
+
 02/07/05 :
 	- GENERAL :
 		- Adaptation aux modification de la bibliothèque 'FLW'.

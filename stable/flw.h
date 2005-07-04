@@ -300,7 +300,7 @@ namespace flw {
 			if ( Available_ != 0 )
 				ERRf();
 #endif
-			if ( !_ThreadHandling.Owner ) {
+			if ( _ThreadHandling.Owner ) {
 				Red_ = 0;
 
 				FLWDismiss();
