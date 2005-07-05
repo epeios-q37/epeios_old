@@ -73,11 +73,38 @@ namespace srvhvy {
 	using srv::aStop;
 	using srv::service__;
 
+	enum log__ {
+		lNew,
+		lStore,
+		lTestAndGet,
+		lDelete,
+		l_amount,
+		l_Undefined
+	};
+
+	const char *GetLogLabel( log__ Log );
+
 	typedef bso::ushort__ id__;
 
 #define SRVHVY_UNDEFINED	BSO_USHORT_MAX
 
 	typedef void *_user_pointer__;
+
+	class log_functions__ {
+	protected:
+		virtual void SRVHVYLog(
+			log__ Log,
+			id__ Id,
+			void *UP ) = 0;
+	public:
+		void Log(
+			log__ Log,
+			id__ Id,
+			_user_pointer__ UP )
+		{
+			SRVHVYLog( Log, Id, UP );
+		}
+	};
 
 	typedef lstbch::E_LBUNCH_( _user_pointer__ ) user_pointers_;
 
@@ -88,11 +115,20 @@ namespace srvhvy {
 		{
 			return UPs.Exists( Id );
 		}
+		void _Log(
+			log__ Log,
+			id__ Id,
+			void *UP ) const
+		{
+			if ( S_.LogFunctions != NULL )
+				S_.LogFunctions->Log( Log ,Id, UP );
+		}
 	public:
 		struct s
 		{
 			user_pointers_::s UPs;
 			mtx::mutex_handler__ Mutex;
+			log_functions__ *LogFunctions;
 		} &S_;
 		user_pointers_ UPs;
 		core_ ( s &S )
@@ -108,6 +144,7 @@ namespace srvhvy {
 
 			UPs.reset( P );
 			S_.Mutex = MTX_INVALID_HANDLER;
+			S_.LogFunctions = NULL;
 
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -120,20 +157,24 @@ namespace srvhvy {
 
 			return *this;
 		}
-		void Init( void )
+		void Init( log_functions__ &LogFunctions )
 		{
 			reset();
 
 			UPs.Init();
 			S_.Mutex = mtx::Create();
+			S_.LogFunctions = &LogFunctions;
 		}
 		id__ New( void )
 		{
 			mtx::Lock( S_.Mutex );
+
 			epeios::row__ Row = UPs.New();
 
 			if ( *Row >= BSO_USHORT_MAX )
 				ERRl();
+
+			_Log( lNew, (id__)*Row, NULL );
 
 			mtx::Unlock( S_.Mutex );
 			return (id__)*Row;
@@ -148,6 +189,7 @@ namespace srvhvy {
 #endif
 			mtx::Lock( S_.Mutex );
 			UPs.Store( UP, Id );
+			_Log( lStore, Id, UP );
 			mtx::Unlock( S_.Mutex );
 		}
 		bso::bool__ Exists( id__ Id ) const
@@ -166,7 +208,7 @@ namespace srvhvy {
 			id__ Id,
 			void *&UP ) const
 		{
-			bso::bool__ Result;
+			bso::bool__ Result = false;
 
 			mtx::Lock( S_.Mutex );
 
@@ -175,10 +217,29 @@ namespace srvhvy {
 			if ( Result )
 				UP = UPs( Id );
 
+			_Log( lTestAndGet, Id, UP );
+
 			mtx::Unlock( S_.Mutex );
 
 			return Result;
 		}
+		bso::bool__ Delete( id__ Id )
+		{
+			bso::bool__ Result = false;
+
+			mtx::Lock( S_.Mutex );
+
+			Result = _Exists( Id );
+
+			if ( Result )
+				UPs.Delete( Id );
+
+			_Log( lDelete, Id, NULL );
+			mtx::Unlock( S_.Mutex );
+
+			return Result;
+		}
+
 	};
 
 	E_AUTO( core)

@@ -105,11 +105,11 @@ namespace cio {
 #else
 	extern flw::mutex__ cinm, coutm, cerrm;
 
-	class safe_coutf___
+	class aware_coutf___
 	: public _oflow__
 	{
 	public:
-		safe_coutf___( void )
+		aware_coutf___( void )
 		: _oflow__( coutd, coutm )
 #ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( coutd )
@@ -117,23 +117,23 @@ namespace cio {
 		{}
 	};
 
-	class safe_cout___
+	class aware_cout___
 	: public txf::text_oflow__
 	{
 	private:
-		safe_coutf___ _CoutF;
+		aware_coutf___ _CoutF;
 	public:
-		safe_cout___( void )
+		aware_cout___( void )
 		: text_oflow__( _CoutF )
 		{}
 	};
 
 
-	class safe_cerrf___
+	class aware_cerrf___
 	: public _oflow__
 	{
 	public:
-		safe_cerrf___( void )
+		aware_cerrf___( void )
 		: _oflow__( cerrd, cerrm )
 #ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( cerrd )
@@ -141,22 +141,22 @@ namespace cio {
 		{}
 	};
 
-	class safe_cerr___
+	class aware_cerr___
 	: public txf::text_oflow__
 	{
 	private:
-		safe_cerrf___ _CerrF;
+		aware_cerrf___ _CerrF;
 	public:
-		safe_cerr___( void )
+		aware_cerr___( void )
 		: text_oflow__( _CerrF )
 		{}
 	};
 
-	class safe_cinf___
+	class aware_cinf___
 	: public _iflow__
 	{
 	public:
-		safe_cinf___( void )
+		aware_cinf___( void )
 		: _iflow__( cind, cinm )
 #ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( cind )
@@ -164,13 +164,13 @@ namespace cio {
 		{}
 	};
 
-	class safe_cin___
+	class aware_cin___
 	: public txf::text_iflow__
 	{
 	private:
-		safe_cinf___ _CinF;
+		aware_cinf___ _CinF;
 	public:
-		safe_cin___( void )
+		aware_cin___( void )
 		: text_iflow__( _CinF )
 		{}
 	};

@@ -57,6 +57,26 @@ public:
 
 using namespace srvhvy;
 
+#define CASE( n )\
+	case l##n:\
+		return #n;\
+		break
+
+
+const char *srvhvy::GetLogLabel( log__ Log )
+{
+	switch ( Log ) {
+		CASE( New );
+		CASE( Store );
+		CASE( TestAndGet );
+		CASE( Delete );
+	default:
+		ERRu();
+		return NULL;	// Pour éviter un 'warning'.
+		break;
+	}
+}
+
 namespace {
 
 	class functions__

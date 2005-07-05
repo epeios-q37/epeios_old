@@ -508,23 +508,23 @@ namespace flw {
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
 		struct {
 			mutex__ Mutex;	// Mutex pour protèger la ressource.
-			bso::bool__ Owner;	// Si à 'true', alors on est l'actuel posseseur du 'flow'.
+			bso::bool__ Owning;	// Si à 'true', alors on est l'actuel posseseur du 'flow'.
 		} _ThreadHandling;	// Gestion du multitâche.
 		void _TestAndLock( void )
 		{
-			if ( !_ThreadHandling.Owner ) {
+			if ( !_ThreadHandling.Owning ) {
 				_Lock( _ThreadHandling.Mutex );
-				_ThreadHandling.Owner = true;
+				_ThreadHandling.Owning = true;
 			}
 		}
 		void _Unlock( void )
 		{
 #ifdef FLW_DBG
-			if ( !_ThreadHandling.Owner )
+			if ( !_ThreadHandling.Owning )
 				ERRu();
 #endif
 			if ( _ThreadHandling.Mutex != FLW_NO_MUTEX ) {
-				_ThreadHandling.Owner = false;
+				_ThreadHandling.Owning = false;
 				flw::_Unlock( _ThreadHandling.Mutex );
 			}
 		}
@@ -574,13 +574,11 @@ namespace flw {
 		// Synchronization.
 		void _Synchronize( void )
 		{
-			if ( _ThreadHandling.Owner ) {	// Si à 'false', alors la chache est vide ...
-				_DumpCache( true );
+			_DumpCache( true );
 
-				FLWSynchronizing();
+			FLWSynchronizing();
 
-				_Unlock();
-			}
+			_Unlock();
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		size__ _WriteUpTo(
@@ -627,9 +625,9 @@ namespace flw {
 			_ThreadHandling.Mutex = Mutex;
 
 			if ( Mutex == FLW_NO_MUTEX )
-				_ThreadHandling.Owner = true;
+				_ThreadHandling.Owning = true;
 			else
-				_ThreadHandling.Owner = false;
+				_ThreadHandling.Owning = false;
 		}
 		void operator()( void )
 		{
@@ -717,11 +715,6 @@ namespace flw {
 	: public iflow__,
 	  public oflow__
 	{
-	protected:
-		virtual void FLWSynchronizing( void )
-		{
-			iflow__::Dismiss();
-		}
 	public:
 		ioflow__(
 			datum__ *ICache,
