@@ -226,6 +226,8 @@ namespace rgstry {
 			if ( EntryRow != NONE ) {
 				buffer Buffer;
 
+				Buffer.Init( Contents );
+
 				if ( _GetValue( EntryRow, Buffer ) != Value )
 					EntryRow = NONE;
 			}
@@ -401,6 +403,25 @@ namespace rgstry {
 			epeios::row__ Cursor = NONE;
 
 			return _SearchNode( Name, ParentNodeRow, Cursor );
+		}
+		nrow__ SearchChild(
+			const name_ &NodeName,
+			const name_ &AttributeName,
+			const value_ &AttributeValue,
+			nrow__ ParentNodeRow,
+			epeios::row__ &Cursor ) const
+		{
+			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
+		}
+		nrow__ SearchChild(
+			const name_ &NodeName,
+			const name_ &AttributeName,
+			const value_ &AttributeValue,
+			nrow__ ParentNodeRow ) const
+		{
+			epeios::row__ Cursor = NONE;
+
+			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
 		}
 		nrow__ GetParent( nrow__ NodeRow ) const
 		{

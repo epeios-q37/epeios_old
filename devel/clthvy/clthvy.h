@@ -76,14 +76,60 @@ namespace clthvy {
 
 	typedef stk::E_STACK_( _flow___ * )	flows_;
 
+	enum log__ {
+		lCreation,
+		lRetrieval,
+		lRelease,
+		l_amount,
+		l_Undefined
+	};
+
+	const char *GetLogLabel( log__ Log );
+
+	class log_functions__
+	{
+	protected:
+		virtual void CLTHVYLog(
+			log__ Log,
+			const void *Flow,
+			epeios::size__ Amount ) = 0;
+	public:
+		void Log(
+			log__ Log,
+			const void *Flow,
+			epeios::size__ Amount )
+		{
+			CLTHVYLog( Log ,Flow, Amount );
+		}
+	};
+
 	class core_ {
 	private:
 		void _DeleteFlows( void );
+		void _Log(
+			log__ Log,
+			const _flow___ *Flow )
+		{
+			if ( S_.Log.Functions != NULL ) {
+ERRProlog
+ERRBegin
+				mtx::Lock( S_.Log.Mutex );
+				S_.Log.Functions->Log( Log, Flow, Flows.Amount() );
+ERRErr
+ERREnd
+				mtx::Unlock( S_.Log.Mutex );
+ERREpilog
+			}
+		}
 	public:
 		struct s {
 			tol::E_FPOINTER___( char ) Host;
 			tol::E_FPOINTER___( char ) Service;
 			mtx::mutex_handler__ Mutex;
+			struct log__ {
+				log_functions__ *Functions;
+				mtx::mutex_handler__ Mutex;
+			} Log;
 			flows_::s Flows;
 		} &S_;
 		flows_ Flows;
@@ -96,11 +142,15 @@ namespace clthvy {
 			if ( P ) {
 				if ( S_.Mutex != MTX_INVALID_HANDLER )
 					mtx::Delete( S_.Mutex );
+				if ( S_.Log.Mutex != MTX_INVALID_HANDLER )
+					mtx::Delete( S_.Log.Mutex );
 			}
 
 			S_.Host.reset( P );
 			S_.Service.reset( P );
 			S_.Mutex = MTX_INVALID_HANDLER;
+			S_.Log.Mutex = MTX_INVALID_HANDLER;
+			S_.Log.Functions = NULL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
@@ -118,7 +168,8 @@ namespace clthvy {
 		}
 		void Init( 
 			const char *Host,
-			const char *Service )
+			const char *Service,
+			log_functions__ &LogFunctions )
 		{
 			reset();
 
@@ -137,6 +188,8 @@ namespace clthvy {
 			strcpy( S_.Service, Service );
 
 			S_.Mutex = mtx::Create();
+			S_.Log.Mutex = mtx::Create();
+			S_.Log.Functions = &LogFunctions;
 
 			Flows.Init();
 		}
@@ -145,19 +198,25 @@ namespace clthvy {
 			_flow___ *Flow = NULL;
 
 			mtx::Lock( S_.Mutex );
+			log__ Log = l_Undefined;
 
-			if ( Flows.Amount() )
+			if ( Flows.Amount() ) {
 				Flow = Flows.Pop();
-			else {
+				Log = lRetrieval;
+			} else {
 				Flow = new _flow___;
 
 				if ( Flow == NULL )
 					ERRa();
 
 				Flow->Init( clt::Connect( S_.Host, S_.Service ) );
+
+				Log = lCreation;
 			}
 
 			mtx::Unlock( S_.Mutex );
+
+			_Log( Log, Flow );
 
 			return Flow;
 		}
@@ -168,6 +227,8 @@ namespace clthvy {
 			Flows.Push( Flow );
 
 			mtx::Unlock( S_.Mutex );
+
+			_Log( lRelease, Flow );
 		}
 	};
 

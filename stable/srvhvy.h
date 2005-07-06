@@ -95,14 +95,16 @@ namespace srvhvy {
 		virtual void SRVHVYLog(
 			log__ Log,
 			id__ Id,
-			void *UP ) = 0;
+			void *UP,
+			epeios::size__ Amount ) = 0;
 	public:
 		void Log(
 			log__ Log,
 			id__ Id,
-			_user_pointer__ UP )
+			_user_pointer__ UP,
+			epeios::size__ Amount )
 		{
-			SRVHVYLog( Log, Id, UP );
+			SRVHVYLog( Log, Id, UP, Amount );
 		}
 	};
 
@@ -120,15 +122,26 @@ namespace srvhvy {
 			id__ Id,
 			void *UP ) const
 		{
-			if ( S_.LogFunctions != NULL )
-				S_.LogFunctions->Log( Log ,Id, UP );
+			if ( S_.Log.Functions != NULL ) {
+ERRProlog
+ERRBegin
+				mtx::Lock( S_.Log.Mutex );
+				S_.Log.Functions->Log( Log, Id, UP, UPs.Amount() );
+ERRErr
+ERREnd
+				mtx::Unlock( S_.Log.Mutex );
+ERREpilog
+			}
 		}
 	public:
 		struct s
 		{
 			user_pointers_::s UPs;
 			mtx::mutex_handler__ Mutex;
-			log_functions__ *LogFunctions;
+			struct log__ {
+				log_functions__ *Functions;
+				mtx::mutex_handler__ Mutex;
+			} Log;
 		} &S_;
 		user_pointers_ UPs;
 		core_ ( s &S )
@@ -144,7 +157,8 @@ namespace srvhvy {
 
 			UPs.reset( P );
 			S_.Mutex = MTX_INVALID_HANDLER;
-			S_.LogFunctions = NULL;
+			S_.Log.Mutex = MTX_INVALID_HANDLER;
+			S_.Log.Functions = NULL;
 
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -163,7 +177,8 @@ namespace srvhvy {
 
 			UPs.Init();
 			S_.Mutex = mtx::Create();
-			S_.LogFunctions = &LogFunctions;
+			S_.Log.Mutex = mtx::Create();
+			S_.Log.Functions = &LogFunctions;
 		}
 		id__ New( void )
 		{
@@ -174,9 +189,10 @@ namespace srvhvy {
 			if ( *Row >= BSO_USHORT_MAX )
 				ERRl();
 
+			mtx::Unlock( S_.Mutex );
+
 			_Log( lNew, (id__)*Row, NULL );
 
-			mtx::Unlock( S_.Mutex );
 			return (id__)*Row;
 		}
 		void Store(
@@ -189,8 +205,9 @@ namespace srvhvy {
 #endif
 			mtx::Lock( S_.Mutex );
 			UPs.Store( UP, Id );
-			_Log( lStore, Id, UP );
 			mtx::Unlock( S_.Mutex );
+
+			_Log( lStore, Id, UP );
 		}
 		bso::bool__ Exists( id__ Id ) const
 		{
@@ -217,9 +234,9 @@ namespace srvhvy {
 			if ( Result )
 				UP = UPs( Id );
 
-			_Log( lTestAndGet, Id, UP );
-
 			mtx::Unlock( S_.Mutex );
+
+			_Log( lTestAndGet, Id, UP );
 
 			return Result;
 		}
@@ -234,8 +251,9 @@ namespace srvhvy {
 			if ( Result )
 				UPs.Delete( Id );
 
-			_Log( lDelete, Id, NULL );
 			mtx::Unlock( S_.Mutex );
+
+			_Log( lDelete, Id, NULL );
 
 			return Result;
 		}

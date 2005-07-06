@@ -1,5 +1,9 @@
 $Id$
 
+05/07/05 :
+	- RGSTRY :
+		- Complétion.
+
 04/07/05 :
 	- FLW :
 		- Correction bogue.

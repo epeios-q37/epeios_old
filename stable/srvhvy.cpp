@@ -127,6 +127,8 @@ namespace {
 				case aStop:
 					if ( UP != NULL )
 						_Functions->PostProcess( UP );
+					if ( Id != SRVHVY_UNDEFINED )
+						_Core->Delete( Id );
 					break;
 				default:
 					ERRu();
@@ -134,7 +136,7 @@ namespace {
 				}
 			}
 
-			return Action;
+			return aContinue;
 		}
 		virtual void SRVPostProcess( void *UP )
 		{

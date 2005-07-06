@@ -253,6 +253,14 @@ namespace txf {
 		{
 			return operator <<( (signed long) E );
 		}
+		text_oflow__ &operator <<( const void *P )
+		{
+			char Buffer[sizeof( P ) * 2 + 2 + 1];	// Deux lettres pour chaque octet + le '0x' devant + le 'nul' final.
+
+			sprintf( Buffer, "0x%p", P );
+
+			return operator <<( Buffer );
+		}
 		//f Write 'C';
 		void Put( datum__ C )
 		{

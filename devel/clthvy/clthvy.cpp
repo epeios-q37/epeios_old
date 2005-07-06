@@ -57,6 +57,28 @@ public:
 
 using namespace clthvy;
 
+
+#define CASE( n )\
+	case l##n:\
+		return #n;\
+		break
+
+
+const char *clthvy::GetLogLabel( log__ Log )
+{
+	switch ( Log ) {
+		CASE( Creation );
+		CASE( Retrieval );
+		CASE( Release );
+	default:
+		ERRu();
+		return NULL;	// Pour éviter un 'warning'.
+		break;
+	}
+}
+
+
+
 void clthvy::core_::_DeleteFlows( void )
 {
 	while ( Flows.Amount() != 0 )
