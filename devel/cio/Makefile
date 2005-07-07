@@ -28,7 +28,7 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
+copt += -DCPE_MT
 lopt = 
 libs = ttr tol flw flf err
 

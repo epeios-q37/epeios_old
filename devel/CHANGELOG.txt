@@ -1,5 +1,9 @@
 $Id$
 
+07/07/05 :
+	- SSNMNG :
+		- Ajout de la caractéristique 'AlwaysValid'.
+
 05/07/05 :
 	- RGSTRY :
 		- Complétion.

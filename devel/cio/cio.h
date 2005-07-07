@@ -111,9 +111,7 @@ namespace cio {
 	public:
 		aware_coutf___( void )
 		: _oflow__( coutd, coutm )
-#ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( coutd )
-#endif
 		{}
 	};
 
@@ -135,9 +133,7 @@ namespace cio {
 	public:
 		aware_cerrf___( void )
 		: _oflow__( cerrd, cerrm )
-#ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( cerrd )
-#endif
 		{}
 	};
 
@@ -158,9 +154,7 @@ namespace cio {
 	public:
 		aware_cinf___( void )
 		: _iflow__( cind, cinm )
-#ifdef CPE__USE_VC_WORKAROUND
 		  ,io_core__( cind )
-#endif
 		{}
 	};
 

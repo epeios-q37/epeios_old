@@ -116,6 +116,7 @@ namespace ssnmng {
 	struct chrono__ {
 		time_t Relative;
 		time_t Absolute;
+		bso::bool__ AlwaysValid;	// A vrai si la session est toujours considèré comme valide, quel que soit sa durée d'existence.
 	};
 
 	typedef lst::E_LISTt_( row__ )	_list_;
@@ -132,12 +133,14 @@ namespace ssnmng {
 			Table.Allocate( Size );
 			Index.Allocate( Size );
 			Chronos.Allocate( Size );
+			_Allocate( Size );
 			SSNMNGAllocate( Size );
 			_queue_::Allocate( Size );
 			
 		}
 		//v Permit to make an allocation with a affected structure.
 		virtual void SSNMNGAllocate( epeios::size__ Size ){}
+		virtual void _Allocate( epeios::size__ Size ) = 0;
 	public:
 		struct s
 		: public _list_::s,
@@ -235,7 +238,7 @@ namespace ssnmng {
 		{
 			return Table( Position );
 		}
-		//f Touche the session corresponding at position 'P'.
+		//f Touch the session corresponding at position 'P'.
 		void Touch( row__ P )
 		{
 			chrono__ C = Chronos.Get( P );
@@ -244,6 +247,8 @@ namespace ssnmng {
 				ERRs();
 
 			Chronos.Store( C, P );
+
+			C.AlwaysValid = false;
 
 	#ifdef SSNMNG_DBG
 			if ( _queue_::Amount() == 0 )
@@ -255,13 +260,23 @@ namespace ssnmng {
 				_queue_::BecomeNext( P, _queue_::Tail() );
 			}
 		}
+		//f La session concernée est toujours considèrée comme valide, jusqu'au prochain 'Touch()',
+		void MarkAsAlwaysValid( row__ P )
+		{
+			chrono__ C = Chronos.Get( P );
+
+			C.AlwaysValid = true;
+
+			Chronos.Store( C, P );
+		}
 		//f Return true if session corresponding to 'P' is valid.
 		bso::bool__ IsValid( row__ P ) const
 		{
 			chrono__ C = Chronos.Get( P );
 
-			return ( difftime( time( NULL ), C.Absolute ) < S_.Absolute )
-				   && ( difftime( time( NULL ), C.Relative ) < S_.Relative );
+			return ( C.AlwaysValid
+				     || ( ( difftime( time( NULL ), C.Absolute ) < S_.Absolute )
+				          && ( difftime( time( NULL ), C.Relative ) < S_.Relative ) ) );
 		}
 		//f Return true if session (which must exists) corresponding to row 'Row' is expired, false otherwise.
 		bso::bool__ IsExpired( row__ Row ) const
@@ -301,7 +316,7 @@ namespace ssnmng {
 	  public pointers_
 	{
 	private:
-		void SSNMNGAllocate( tym::size__ Size )
+		void _Allocate( tym::size__ Size )
 		{
 			pointers_::Allocate( Size );
 		}

@@ -144,6 +144,8 @@ row__ ssnmng::base_sessions_manager_::Open( void )
 	if ( time( &C.Absolute ) == -1 )
 		ERRs();
 
+	C.AlwaysValid = false;
+
 	Chronos.Store( C, P );
 
 	return P;
