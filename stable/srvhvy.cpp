@@ -113,7 +113,7 @@ namespace {
 				_Functions->Process( Flow, UP );
 			} else {
 				if ( !_Core->TestAndGet( Id, UP ) ) {
-					Flow.Put( -1 );
+					Flow.Put( (flw::datum__)-1 );
 					Flow.Synchronize();
 					Action = aStop;
 				} else {
