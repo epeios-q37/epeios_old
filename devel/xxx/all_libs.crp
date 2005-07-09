@@ -202,12 +202,16 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &bkddsc		&ebkd		&2001, 2003-\
 	&BacKenD DeSCriptions
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
+&bkdlrm		&ebkd		&\
+	&BacKenD Local Request Manager.
 &bkdmng		&ebkd		&2001-\
 	&BacKenD MaNaGer
 &bkdprp		&ebkd		&2004\
 	&BackEnD Parameter RePository.
 &bkdrqm		&ebkd		&2001-\
 	&BacKenD ReQuest Manager
+&bkdrrm		&ebkd		&\
+	&BacKenD Remote Request Manager.
 &bkdtpm		&ebkd		&2001-\
 	&BacKenD TyPes Manager
 
