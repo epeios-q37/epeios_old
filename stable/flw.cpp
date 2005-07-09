@@ -119,6 +119,7 @@ size__ flw::oflow__::_DirectWrite(
 {
 	size__ Amount = 0;
 ERRProlog
+	bso::bool__ Locked = false;
 ERRBegin
 	if ( ( Size_ == 0 ) && ( Cache_ != NULL ) )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
@@ -133,6 +134,8 @@ ERRBegin
 #endif
 
 	_TestAndLock();
+
+	Locked = true;
 
 	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
 
@@ -154,6 +157,8 @@ ERRBegin
 	}
 ERRErr
 	Size_ = Free_ = 0;	// To avoid further writing in cache. Next writing will generate an error. 
+	if ( Locked )
+		_Unlock();
 ERREnd
 ERREpilog
 	return Amount;

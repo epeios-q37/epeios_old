@@ -196,9 +196,12 @@ ERREpilog
 		_flow___ *Get( void )
 		{
 			_flow___ *Flow = NULL;
-
-			mtx::Lock( S_.Mutex );
+		ERRProlog
 			log__ Log = l_Undefined;
+			bso::bool__ Locked = false;
+		ERRBegin
+			mtx::Lock( S_.Mutex );
+			Locked = true;
 
 			if ( Flows.Amount() ) {
 				Flow = Flows.Pop();
@@ -215,8 +218,14 @@ ERREpilog
 			}
 
 			mtx::Unlock( S_.Mutex );
+			Locked = false;
 
 			_Log( Log, Flow );
+		ERRErr
+		ERREnd
+			if ( Locked )
+				mtx::Unlock( S_.Mutex );
+		ERREpilog
 
 			return Flow;
 		}

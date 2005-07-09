@@ -3,6 +3,8 @@ $Id$
 07/07/05 :
 	- SSNMNG :
 		- Ajout de la caractéristique 'AlwaysValid'.
+	- FLW :
+		- Correction bogue deadlock lorsque problème sur flot de lecture.
 
 05/07/05 :
 	- RGSTRY :
