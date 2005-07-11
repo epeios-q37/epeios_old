@@ -95,13 +95,13 @@ namespace cio {
 	extern txf::text_oflow__ unsafe_nul;
 
 #ifndef CPE__MT
-	_oflow__ &coutf = unsafe_coutf;
-	_oflow__ &cerrf = unsafe_cerrf;
-	_iflow__ &cinf  = unsafe_cinf;
+#	define coutf	unsafe_coutf
+#	define cerrf	unsafe_cerrf
+#	define cinf		unsafe_cinf
 
-	txf::text_oflow__ &cout = unsafe_cout;
-	txf::text_oflow__ &cerr = unsafe_cerr;
-	txf::text_iflow__ &cin  = unsafe_cin;
+#	define 	cout	unsafe_cout
+#	define	cerr	unsafe_cerr
+#	define	cin		unsafe_cin
 #else
 	extern flw::mutex__ cinm, coutm, cerrm;
 

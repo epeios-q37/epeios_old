@@ -65,13 +65,53 @@ extern class ttr_tutor &CLTHVYTutor;
 #include "sck.h"
 #include "stk.h"
 #include "clt.h"
-#include "mtx.h"
+#ifdef CPE__MT
+#	include "mtx.h"
+#endif
 #include "bso.h"
 
 #define CLTHVY_UNDEFINED			BSO_USHORT_MAX
 #define CLTHVY_DEFAULT_CACHE_SIZE	100
 
 namespace clthvy {
+#ifdef CPE__MT
+	typedef mtx::mutex_handler__	mutex__;
+#	define CLTHVY_NO_MUTEX			MTX_INVALID_HANDLER
+#else
+	typedef void *mutex__;
+#	define CLTHVY_NO_MUTEX			NULL
+#endif
+
+	inline void _Lock( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		mtx::Lock( Mutex );
+#endif
+	}
+
+	inline void _Unlock( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		mtx::Unlock( Mutex );
+#endif
+	}
+
+	inline void _Delete( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		mtx::Delete( Mutex );
+#endif
+	}
+
+	inline mutex__ _Create( void )
+	{
+#ifdef CPE__MT
+		return mtx::Create();
+#else
+		return CLTHVY_NO_MUTEX;
+#endif
+	}
+
 	typedef sck::socket_ioflow___ _flow___;
 
 	typedef stk::E_STACK_( _flow___ * )	flows_;
@@ -113,11 +153,11 @@ namespace clthvy {
 			if ( S_.Log.Functions != NULL ) {
 ERRProlog
 ERRBegin
-				mtx::Lock( S_.Log.Mutex );
+				_Lock( S_.Log.Mutex );
 				S_.Log.Functions->Log( Log, Flow, Flows.Amount() );
 ERRErr
 ERREnd
-				mtx::Unlock( S_.Log.Mutex );
+				_Unlock( S_.Log.Mutex );
 ERREpilog
 			}
 		}
@@ -125,10 +165,10 @@ ERREpilog
 		struct s {
 			tol::E_FPOINTER___( char ) Host;
 			tol::E_FPOINTER___( char ) Service;
-			mtx::mutex_handler__ Mutex;
+			mutex__ Mutex;
 			struct log__ {
 				log_functions__ *Functions;
-				mtx::mutex_handler__ Mutex;
+				mutex__ Mutex;
 			} Log;
 			flows_::s Flows;
 		} &S_;
@@ -140,16 +180,16 @@ ERREpilog
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( S_.Mutex != MTX_INVALID_HANDLER )
-					mtx::Delete( S_.Mutex );
-				if ( S_.Log.Mutex != MTX_INVALID_HANDLER )
-					mtx::Delete( S_.Log.Mutex );
+				if ( S_.Mutex != CLTHVY_NO_MUTEX )
+					_Delete( S_.Mutex );
+				if ( S_.Log.Mutex != CLTHVY_NO_MUTEX )
+					_Delete( S_.Log.Mutex );
 			}
 
 			S_.Host.reset( P );
 			S_.Service.reset( P );
-			S_.Mutex = MTX_INVALID_HANDLER;
-			S_.Log.Mutex = MTX_INVALID_HANDLER;
+			S_.Mutex = CLTHVY_NO_MUTEX;
+			S_.Log.Mutex = CLTHVY_NO_MUTEX;
 			S_.Log.Functions = NULL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
@@ -187,8 +227,8 @@ ERREpilog
 
 			strcpy( S_.Service, Service );
 
-			S_.Mutex = mtx::Create();
-			S_.Log.Mutex = mtx::Create();
+			S_.Mutex = _Create();
+			S_.Log.Mutex = _Create();
 			S_.Log.Functions = &LogFunctions;
 
 			Flows.Init();
@@ -200,7 +240,7 @@ ERREpilog
 			log__ Log = l_Undefined;
 			bso::bool__ Locked = false;
 		ERRBegin
-			mtx::Lock( S_.Mutex );
+			_Lock( S_.Mutex );
 			Locked = true;
 
 			if ( Flows.Amount() ) {
@@ -217,25 +257,25 @@ ERREpilog
 				Log = lCreation;
 			}
 
-			mtx::Unlock( S_.Mutex );
+			_Unlock( S_.Mutex );
 			Locked = false;
 
 			_Log( Log, Flow );
 		ERRErr
 		ERREnd
 			if ( Locked )
-				mtx::Unlock( S_.Mutex );
+				_Unlock( S_.Mutex );
 		ERREpilog
 
 			return Flow;
 		}
 		void Release( _flow___ *Flow )
 		{
-			mtx::Lock( S_.Mutex );
+			_Lock( S_.Mutex );
 
 			Flows.Push( Flow );
 
-			mtx::Unlock( S_.Mutex );
+			_Unlock( S_.Mutex );
 
 			_Log( lRelease, Flow );
 		}
