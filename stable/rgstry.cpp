@@ -60,13 +60,13 @@ public:
 using namespace rgstry;
 
 erow__ rgstry::registry_::_SearchEntry(
-	const name_ &Name,
+	const term_ &Name,
 	const erows_ &EntryRows ) const
 {
 	buffer Buffer;
 	epeios::row__ Row = EntryRows.First();
 
-	Buffer.Init( Contents );
+	Buffer.Init( Terms );
 
 	while ( ( Row != NONE ) && ( _GetName( EntryRows( Row ), Buffer ) != Name ) )
 		Row = EntryRows.Next( Row );
@@ -78,7 +78,7 @@ erow__ rgstry::registry_::_SearchEntry(
 }
 
 nrow__ rgstry::registry_::_SearchNode(
-	const name_ &Name,
+	const term_ &Name,
 	const nrows_ &NodeRows,
 	epeios::row__ &Cursor ) const
 {
@@ -93,7 +93,7 @@ nrow__ rgstry::registry_::_SearchNode(
 		Row = NodeRows.Next( Row );
 
 	NodeBuffer.Init( Nodes );
-	NameBuffer.Init( Contents );
+	NameBuffer.Init( Terms );
 
 	while ( ( Row != NONE ) && ( _GetName( NodeRows( Row ), NameBuffer, NodeBuffer ) != Name ) )
 		Row = NodeRows.Next( Row );
@@ -106,9 +106,9 @@ nrow__ rgstry::registry_::_SearchNode(
 }
 
 nrow__ rgstry::registry_::_SearchNode(
-	const name_ &NodeName,
-	const name_ &AttributeName,
-	const value_ &AttributeValue,
+	const term_ &NodeName,
+	const term_ &AttributeName,
+	const term_ &AttributeValue,
 	nrow__ ParentNodeRow,
 	epeios::row__ &Cursor ) const
 {
@@ -120,30 +120,197 @@ nrow__ rgstry::registry_::_SearchNode(
 	return NodeRow;
 }
 
-const content_ &rgstry::registry_::GetCompleteName(
+const term_ &rgstry::registry_::GetCompleteName(
 	nrow__ NodeRow,
-	content_ &Content ) const
+	term_ &Term ) const
 {
 	buffer Buffer;
 	node_buffer NodeBuffer;
 
-	Buffer.Init( Contents );
+	Buffer.Init( Terms );
 	NodeBuffer.Init( Nodes );
 
 	if ( NodeRow != NONE ) {
-		Content.Append( _GetName( NodeRow, Buffer, NodeBuffer ) );
+		Term.Append( _GetName( NodeRow, Buffer, NodeBuffer ) );
 		NodeRow = GetParent( NodeRow );
 	}
 
 	while ( NodeRow != NONE ) {
-		Content.Insert( "::", 0 );
-		Content.Insert( _GetName( NodeRow, Buffer, NodeBuffer ), 0 );
+		Term.Insert( "::", 0 );
+		Term.Insert( _GetName( NodeRow, Buffer, NodeBuffer ), 0 );
 
 		NodeRow = GetParent( NodeRow );
 	}
 
-	return Content;
+	return Term;
 }
+
+enum state__ {
+	sTagName,
+	sAttributeName,
+	sAttributeValue,
+	s_amount,
+	s_Undefined
+};
+
+epeios::row__ rgstry::BuildPath(
+	const term_ &Term,
+	path_ &Path )
+{
+	epeios::row__ TermRow = NONE;
+ERRProlog
+	bso::bool__ Continue = true;
+	state__ State = s_Undefined;
+	bso::char__ C;
+	path_item Item;
+ERRBegin
+	TermRow = Term.First();
+
+	Item.Init();
+
+	Continue = TermRow != NONE;
+
+	State = sTagName;
+
+	while ( Continue ) {
+		C = Term( TermRow );
+		switch ( State ) {
+		case sTagName:
+			switch ( C ) {
+			case '=':
+			case '"':
+				Continue = false;
+				break;
+			case '[':
+				if ( Item.TagName.Amount() == 0 )
+					Continue = false;
+				State = sAttributeName;
+				Item.AttributeName.Init();
+				break;
+			case '/':
+				if ( Item.TagName.Amount() == 0 )
+					Continue = false;
+				else
+					Path.Append( Item );
+				Item.Init();
+				break;
+			default:
+				Item.TagName.Append( C );
+				break;
+			}
+			break;
+			case sAttributeName:
+				switch ( C ) {
+				case ']':
+					Continue = false;
+					break;
+				case '"':
+					Continue = false;
+					break;
+				case '=':
+					if ( Item.AttributeName.Amount() == 0 )
+						Continue = false;
+					State = sAttributeValue;
+					Item.AttributeValue.Init();
+					if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+						Continue = false;
+					else if ( Term( TermRow ) != '"' )
+						Continue = false;
+					break;
+				default:
+					Item.AttributeName.Append( C );
+					break;
+				}
+				break;
+			case sAttributeValue:
+				switch ( C ) {
+				case '[':
+				case ']':
+				case '/':
+					Continue = false;
+					break;
+				case '"':
+					if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+						Continue = false;
+					else if ( Term( TermRow ) != ']' )
+						Continue = false;
+					Path.Append( Item );
+					Item.Init();
+					State = sTagName;
+					break;
+				default:
+					Item.AttributeValue.Append( C );
+					break;
+				}
+				break;
+			default:
+				ERRc();
+				break;
+		}
+
+		if ( Continue )
+			TermRow = Term.Next( TermRow );
+
+		if ( TermRow == NONE )
+			Continue = false;
+	}
+
+	if ( Item.TagName.Amount() != 0 )
+		Path.Append( Item );
+ERRErr
+ERREnd
+ERREpilog
+	return TermRow;
+}
+
+nrow__ rgstry::registry_::SearchPath(
+	const path_ &Path,
+	nrow__ Row ) const
+{
+	ctn::E_CITEM( path_item_ ) Item;
+	epeios::row__ PathRow = Path.First();
+
+	Item.Init( Path );
+
+	while ( ( PathRow != NONE ) && ( Row != NONE ) ) {
+		if ( Item( PathRow ).AttributeName.Amount() == 0 )
+			Row = SearchChild( Item().TagName, Row );
+		else
+			Row = SearchChild( Item().TagName, Item().AttributeName, Item().AttributeValue, Row );
+
+		PathRow = Path.Next( PathRow );
+	}
+
+	return Row;
+}
+
+
+
+nrow__ rgstry::registry_::SearchPath(
+	const term_ &Term,
+	nrow__ Row,
+	epeios::row__ &PathErrorRow ) const
+{
+ERRProlog
+	epeios::row__ PathRow = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	PathRow = BuildPath( Term, Path );
+
+	if ( PathRow != NONE ) {
+		Row = NONE;
+		PathErrorRow = PathRow;
+	} else
+		Row = SearchPath( Path, Row );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
+
 
 
 class callback__

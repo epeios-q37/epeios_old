@@ -69,25 +69,67 @@ extern class ttr_tutor &RGSTRYTutor;
 
 namespace rgstry {
 
-	typedef str::string_	content_;
-	typedef str::string		content;
+	typedef str::string_	term_;
+	typedef str::string		term;
 
-	typedef content_		name_;
-	typedef content			name;
+	class path_item_ {
+	public:
+		struct s {
+			term_::s TagName, AttributeName, AttributeValue;
+		};
+		term_ TagName, AttributeName, AttributeValue;
+		path_item_( s &S )
+		: TagName( S.TagName ),
+		  AttributeName( S.AttributeName ),
+		  AttributeValue( S.AttributeValue )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			TagName.reset( P );
+			AttributeName.reset( P );
+			AttributeValue.reset( P);
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			TagName.plug( MM );
+			AttributeName.plug( MM );
+			AttributeValue.plug( MM );
+		}
+		path_item_ &operator =( const path_item_ &PI )
+		{
+			TagName = PI.TagName;
+			AttributeName = PI.AttributeName;
+			AttributeValue = PI.AttributeValue;
 
-	typedef content_		value_;
-	typedef content_		value;
+			return *this;
+		}
+		void Init( void )
+		{
+			TagName.Init();
+			AttributeName.Init();
+			AttributeValue.Init();
+		}
+	};
 
-	E_ROW( crow__ );		// content row.
+	E_AUTO( path_item );
 
-	typedef lstctn::E_LXMCONTAINERt_( content_, crow__ )	contents_;
-	E_AUTO( contents )
+	typedef ctn::E_XCONTAINER_( path_item_ )	path_;
+	E_AUTO( path )
 
-	typedef ctn::E_CMITEMt( content_, crow__ )	buffer;
+	epeios::row__ BuildPath(
+		const term_ &Term,
+		path_ &Path );
+
+	E_ROW( trow__ );		// term row.
+
+	typedef lstctn::E_LXMCONTAINERt_( term_, trow__ )	terms_;
+	E_AUTO( terms )
+
+	typedef ctn::E_CMITEMt( term_, trow__ )	buffer;
 
 	struct entry__ {
-		crow__ NameRow;
-		crow__ ValueRow;
+		trow__ NameRow;
+		trow__ ValueRow;
 		void operator()( void )
 		{
 			NameRow = NONE;
@@ -114,8 +156,8 @@ namespace rgstry {
 	public:
 		struct s {
 			nrow__ Parent;
-			crow__ NameRow;
-			crow__ ValueRow;
+			trow__ NameRow;
+			trow__ ValueRow;
 			erows_::s Attributes;
 			nrows_::s Children;
 		} &S_;
@@ -150,7 +192,7 @@ namespace rgstry {
 			Children = N.Children;
 		}
 		void Init(
-			crow__ NameRow = NONE,
+			trow__ NameRow = NONE,
 			nrow__ Parent = NONE )
 		{
 			S_.Parent = Parent;
@@ -159,8 +201,8 @@ namespace rgstry {
 			Attributes.Init();
 			Children.Init();
 		}
-		E_RODISCLOSE_( crow__, NameRow )
-		E_RWDISCLOSE_( crow__, ValueRow )
+		E_RODISCLOSE_( trow__, NameRow )
+		E_RWDISCLOSE_( trow__, ValueRow )
 		E_RWDISCLOSE_( nrow__, Parent )
 	};
 
@@ -172,53 +214,53 @@ namespace rgstry {
 	class registry_ {
 	private:
 		void _AddEntry(
-			const name_ &Name,
-			const value_ &Value,
+			const term_ &Name,
+			const term_ &Value,
 			erows_ &EntryRows )
 		{
 			entry__ Entry;
 
-			Entry.NameRow = Contents.Add( Name );
-			Entry.ValueRow = Contents.Add( Value );
+			Entry.NameRow = Terms.Add( Name );
+			Entry.ValueRow = Terms.Add( Value );
 
 			EntryRows.Append( Entries.Add( Entry ) );
 		}
-		const content_ &_GetContent(
-			crow__ ContentRow,
+		const term_ &_GetTerm(
+			trow__ TermRow,
 			buffer &Buffer ) const
 		{
-			return Buffer( ContentRow );
+			return Buffer( TermRow );
 		}
-		const name_ &_GetName(
+		const term_ &_GetName(
 			const entry__ &Entry,
 			buffer &Buffer ) const
 		{
-			return _GetContent( Entry.NameRow, Buffer );
+			return _GetTerm( Entry.NameRow, Buffer );
 		}
-		const name_ &_GetValue(
+		const term_ &_GetValue(
 			const entry__ &Entry,
 			buffer &Buffer ) const
 		{
-			return _GetContent( Entry.ValueRow, Buffer );
+			return _GetTerm( Entry.ValueRow, Buffer );
 		}
-		const name_ &_GetName(
+		const term_ &_GetName(
 			erow__ EntryRow,
 			buffer &Buffer ) const
 		{
 			return _GetName( Entries( EntryRow ), Buffer );
 		}
-		const name_ &_GetValue(
+		const term_ &_GetValue(
 			erow__ EntryRow,
 			buffer &Buffer ) const
 		{
 			return _GetValue( Entries( EntryRow ), Buffer );
 		}
 		erow__ _SearchEntry(
-			const name_ &Name,
+			const term_ &Name,
 			const erows_ &EntryRows ) const;
 		erow__ _SearchEntry(
-			const name_ &Name,
-			const value_ &Value,
+			const term_ &Name,
+			const term_ &Value,
 			const erows_ &EntryRows ) const
 		{
 			erow__ EntryRow = _SearchEntry( Name, EntryRows );
@@ -226,7 +268,7 @@ namespace rgstry {
 			if ( EntryRow != NONE ) {
 				buffer Buffer;
 
-				Buffer.Init( Contents );
+				Buffer.Init( Terms );
 
 				if ( _GetValue( EntryRow, Buffer ) != Value )
 					EntryRow = NONE;
@@ -235,8 +277,8 @@ namespace rgstry {
 			return EntryRow;
 		}
 		bso::bool__ _AttributeExists(
-			const name_ &Name,
-			const value_ &Value,
+			const term_ &Name,
+			const term_ &Value,
 			nrow__ NodeRow ) const
 		{
 			node_buffer Buffer;
@@ -251,14 +293,14 @@ namespace rgstry {
 		{
 			return Buffer( NodeRow );
 		}
-		const name_ &_GetName(
+		const term_ &_GetName(
 			nrow__ NodeRow,
 			buffer &NameBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
 			return NameBuffer( _GetNode( NodeRow, NodeBuffer ).GetNameRow() );
 		}
-		const name_ &_GetValue(
+		const term_ &_GetValue(
 			nrow__ NodeRow,
 			buffer &ValueBuffer,
 			node_buffer &NodeBuffer ) const
@@ -266,11 +308,11 @@ namespace rgstry {
 			return ValueBuffer( _GetNode( NodeRow, NodeBuffer ).GetValueRow() );
 		}
 		nrow__ _SearchNode(
-			const name_ &Name,
+			const term_ &Name,
 			const nrows_ &NodeRows,
 			epeios::row__ &Cursor ) const;
 		nrow__ _SearchNode(
-			const name_ &Name,
+			const term_ &Name,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const
 		{
@@ -281,40 +323,40 @@ namespace rgstry {
 			return _SearchNode( Name, Buffer( ParentNodeRow ).Children, Cursor );
 		}
 		nrow__ _SearchNode(
-			const name_ &NodeName,
-			const name_ &AttributeName,
-			const value_ &AttributeValue,
+			const term_ &NodeName,
+			const term_ &AttributeName,
+			const term_ &AttributeValue,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const;
 	public:
 		struct s {
-			contents_::s Contents;
+			terms_::s Terms;
 			entries_::s Entries;
 			nodes_::s Nodes;
 		};
-		contents_ Contents;
+		terms_ Terms;
 		entries_ Entries;
 		nodes_ Nodes;
 		registry_( s &S )
-		: Contents( S.Contents ),
+		: Terms( S.Terms ),
 		  Entries( S.Entries ),
 		  Nodes( S.Nodes )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			Contents.Init();
+			Terms.Init();
 			Entries.reset( P );
 			Nodes.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			Contents.plug( MM );
+			Terms.plug( MM );
 			Entries.plug( MM );
 			Nodes.plug( MM );
 		}
 		registry_ &operator =( const registry_ &R )
 		{
-			Contents = R.Contents;
+			Terms = R.Terms;
 			Entries = R.Entries;
 			Nodes = R.Nodes;
 
@@ -322,15 +364,15 @@ namespace rgstry {
 		}
 		void Init( void )
 		{
-			Contents.Init();
+			Terms.Init();
 			Entries.Init();
 			Nodes.Init();
 		}
-		nrow__ CreateNode( const content_ &Content )
+		nrow__ CreateNode( const term_ &Term )
 		{
 			nrow__ Row = Nodes.New();
 
-			Nodes( Row ).Init( Contents.Add( Content ) );
+			Nodes( Row ).Init( Terms.Add( Term ) );
 
 			Nodes.Flush();
 
@@ -350,12 +392,12 @@ namespace rgstry {
 			Nodes.Flush();
 		}
 		nrow__ AddChild(
-			const content_ &Name,
+			const term_ &Name,
 			nrow__ ParentRow )
 		{
 			nrow__ Row = Nodes.New();
 
-			Nodes( Row ).Init( Contents.Add( Name ), ParentRow );
+			Nodes( Row ).Init( Terms.Add( Name ), ParentRow );
 
 			Nodes( ParentRow ).Children.Append( Row );
 
@@ -364,8 +406,8 @@ namespace rgstry {
 			return Row;
 		}
 		void AddAttribute(
-			const name_ &Name,
-			const value_ &Value,
+			const term_ &Name,
+			const term_ &Value,
 			nrow__ NodeRow )
 		{
 			_AddEntry( Name, Value, Nodes( NodeRow ).Attributes );
@@ -373,31 +415,31 @@ namespace rgstry {
 			Nodes.Flush();
 		}
 		void SetValue(
-			const value_ &Value,
+			const term_ &Value,
 			nrow__ NodeRow )
 		{
-			crow__ ValueRow = Nodes( NodeRow ).ValueRow();
+			trow__ ValueRow = Nodes( NodeRow ).ValueRow();
 
 			if ( ValueRow == NONE )
-				ValueRow = Contents.New();
+				ValueRow = Terms.New();
 
-			Contents( ValueRow ) = Value;
+			Terms( ValueRow ) = Value;
 
 			Nodes( NodeRow ).ValueRow() = ValueRow;
 
-			Contents.Flush();
+			Terms.Flush();
 			Nodes.Flush();
 
 		}
 		nrow__ SearchChild(
-			const name_ &Name,
+			const term_ &Name,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const
 		{
 			return _SearchNode( Name, ParentNodeRow, Cursor );
 		}
 		nrow__ SearchChild(
-			const name_ &Name,
+			const term_ &Name,
 			nrow__ ParentNodeRow ) const
 		{
 			epeios::row__ Cursor = NONE;
@@ -405,24 +447,31 @@ namespace rgstry {
 			return _SearchNode( Name, ParentNodeRow, Cursor );
 		}
 		nrow__ SearchChild(
-			const name_ &NodeName,
-			const name_ &AttributeName,
-			const value_ &AttributeValue,
+			const term_ &NodeName,
+			const term_ &AttributeName,
+			const term_ &AttributeValue,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const
 		{
 			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
 		}
 		nrow__ SearchChild(
-			const name_ &NodeName,
-			const name_ &AttributeName,
-			const value_ &AttributeValue,
+			const term_ &NodeName,
+			const term_ &AttributeName,
+			const term_ &AttributeValue,
 			nrow__ ParentNodeRow ) const
 		{
 			epeios::row__ Cursor = NONE;
 
 			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
 		}
+		nrow__ SearchPath(
+			const path_ &Path,
+			nrow__ ParentRow ) const;
+		nrow__ SearchPath(
+			const term_ &Term,
+			nrow__ ParentRow,
+			epeios::row__ &PathRow ) const;
 		nrow__ GetParent( nrow__ NodeRow ) const
 		{
 			node_buffer NodeBuffer;
@@ -431,31 +480,31 @@ namespace rgstry {
 
 			return _GetNode( NodeRow, NodeBuffer ).Parent();
 		}
-		const content_ &GetName(
+		const term_ &GetName(
 			nrow__ NodeRow,
 			buffer &Buffer ) const
 		{
 			node_buffer NodeBuffer;
 
-			Buffer.Init( Contents );
+			Buffer.Init( Terms );
 			NodeBuffer.Init( Nodes );
 
 			return _GetName( NodeRow, Buffer, NodeBuffer );
 		}
-		const content_ &GetValue(
+		const term_ &GetValue(
 			nrow__ NodeRow,
 			buffer &Buffer ) const
 		{
 			node_buffer NodeBuffer;
 
-			Buffer.Init( Contents );
+			Buffer.Init( Terms );
 			NodeBuffer.Init( Nodes );
 
 			return _GetValue( NodeRow, Buffer, NodeBuffer );
 		}
-		const content_ &GetCompleteName(
+		const term_ &GetCompleteName(
 			nrow__ NodeRow,
-			content_ &Content ) const;
+			term_ &Term ) const;
 	};
 
 	E_AUTO( registry )
