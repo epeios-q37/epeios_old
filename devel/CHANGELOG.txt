@@ -1,5 +1,9 @@
 $Id$
 
+11/07/05
+	- ERR :
+		- Correction affichage message d'erreur sur la mauvaise console.
+
 07/07/05 :
 	- SSNMNG :
 		- Ajout de la caractéristique 'AlwaysValid'.
