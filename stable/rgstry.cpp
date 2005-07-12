@@ -273,10 +273,7 @@ nrow__ rgstry::registry_::SearchPath(
 	Item.Init( Path );
 
 	while ( ( PathRow != NONE ) && ( Row != NONE ) ) {
-		if ( Item( PathRow ).AttributeName.Amount() == 0 )
-			Row = SearchChild( Item().TagName, Row );
-		else
-			Row = SearchChild( Item().TagName, Item().AttributeName, Item().AttributeValue, Row );
+		Row = _SearchChild( Item( PathRow ), Row );
 
 		PathRow = Path.Next( PathRow );
 	}
@@ -311,7 +308,90 @@ ERREpilog
 	return Row;
 }
 
+nrow__ rgstry::registry_::CreatePath(
+	const path_ &Path,
+	nrow__ Row )
+{
+	bso::bool__ Exists = true;
+	ctn::E_CITEM( path_item_ ) Item;
+	epeios::row__ PathRow = Path.First();
+	nrow__ Candidate = NONE;
 
+	Item.Init( Path );
+
+	while ( ( PathRow != NONE ) && Exists ) {
+		Candidate = _SearchChild( Item( PathRow ), Row );
+
+		if ( Candidate == NONE ) {
+			Exists = false;
+
+			Row = _CreateChild( Item( PathRow ), Row );
+		} else
+			Row = Candidate;
+
+		PathRow = Path.Next( PathRow );
+	}
+
+	while ( PathRow != NONE ) {
+		Row = _CreateChild( Item( PathRow ), Row );
+
+		PathRow = Path.Next( PathRow );
+	}
+
+	return Row;
+}
+
+nrow__ rgstry::registry_::CreatePath(
+	const term_ &Term,
+	nrow__ Row,
+	epeios::row__ &PathErrorRow )
+{
+ERRProlog
+	epeios::row__ PathRow = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	PathRow = BuildPath( Term, Path );
+
+	if ( PathRow != NONE ) {
+		Row = NONE;
+		PathErrorRow = PathRow;
+	} else
+		Row = CreatePath( Path, Row );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
+
+
+nrow__ rgstry::registry_::SetPathValue(
+	const term_ &Term,
+	const term_ &Value,
+	nrow__ Row,
+	epeios::row__ &PathErrorRow )
+{
+ERRProlog
+	epeios::row__ PathRow = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	PathRow = BuildPath( Term, Path );
+
+	if ( PathRow != NONE ) {
+		Row = NONE;
+		PathErrorRow = PathRow;
+	} else
+		Row = SetPathValue( Path, Value, Row );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
 
 class callback__
 : public lxmlpr::callback__

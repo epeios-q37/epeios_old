@@ -328,6 +328,26 @@ namespace rgstry {
 			const term_ &AttributeValue,
 			nrow__ ParentNodeRow,
 			epeios::row__ &Cursor ) const;
+		nrow__ _SearchChild(
+			const path_item_ &Item,
+			nrow__ ParentRow ) const
+		{
+			if ( Item.AttributeName.Amount() != 0 )
+				return SearchChild( Item.TagName, Item.AttributeName, Item.AttributeValue, ParentRow );
+			else
+				return SearchChild( Item.TagName, ParentRow );
+		}
+		nrow__ _CreateChild(
+			const path_item_ &Item,
+			nrow__ Row )
+		{
+			Row = AddChild( Item.TagName, Row );
+
+			if ( Item.AttributeName.Amount() != 0 )
+				AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
+
+			return Row;
+		}
 	public:
 		struct s {
 			terms_::s Terms;
@@ -472,6 +492,29 @@ namespace rgstry {
 			const term_ &Term,
 			nrow__ ParentRow,
 			epeios::row__ &PathRow ) const;
+		nrow__ CreatePath(
+			const path_ &Path,
+			nrow__ ParentRow );
+		nrow__ CreatePath(
+			const term_ &Term,
+			nrow__ ParentRow,
+			epeios::row__ &PathRow );
+		nrow__ SetPathValue(
+			const path_ &Path,
+			const term_ &Value,
+			nrow__ ParentRow )
+		{
+			ParentRow = CreatePath( Path, ParentRow );
+
+			SetValue( Value, ParentRow );
+
+			return ParentRow;
+		}
+		nrow__ SetPathValue(
+			const term_ &Path,
+			const term_ &Value,
+			nrow__ ParentRow,
+			epeios::row__ &PathRow );
 		nrow__ GetParent( nrow__ NodeRow ) const
 		{
 			node_buffer NodeBuffer;
