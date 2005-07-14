@@ -1,7 +1,7 @@
 /*
-	Header for the 'srvhvy' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
-
+	Header for the 'csdsns' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef SRVHVY__INC
-#define SRVHVY__INC
+#ifndef CSDSNS__INC
+#define CSDSNS__INC
 
-#define SRVHVY_NAME		"SRVHVY"
+#define CSDSNS_NAME		"CSDSNS"
 
-#define	SRVHVY_VERSION	"$Revision$"
+#define	CSDSNS_VERSION	"$Revision$"
 
-#define SRVHVY_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDSNS_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &SRVHVYTutor;
+extern class ttr_tutor &CSDSNSTutor;
 
-#if defined( XXX_DBG ) && !defined( SRVHVY_NODBG )
-#define SRVHVY_DBG
+#if defined( XXX_DBG ) && !defined( CSDSNS_NODBG )
+#define CSDSNS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,25 +55,22 @@ extern class ttr_tutor &SRVHVYTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D SeRCer fo HeaVY operations. 
+//D Client-Server Standard Network Client 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete. Use 'CSDSNS' library instead."
-
 #include "err.h"
 #include "flw.h"
-#include "srv.h"
+#include "csdscm.h"
+#include "csdbns.h"
 #include "lstbch.h"
 #include "mtx.h"
 
-namespace srvhvy {
+namespace csdsns {
 
-	using srv::action__;
-	using srv::aContinue;
-	using srv::aStop;
-	using srv::service__;
+	using namespace csdscm;
+	using csdbns::service__;
 
 	enum log__ {
 		lNew,
@@ -88,13 +85,13 @@ namespace srvhvy {
 
 	typedef bso::ushort__ id__;
 
-#define SRVHVY_UNDEFINED	BSO_USHORT_MAX
+#define CSDSNS_UNDEFINED	BSO_USHORT_MAX
 
 	typedef void *_user_pointer__;
 
 	class log_functions__ {
 	protected:
-		virtual void SRVHVYLog(
+		virtual void CSDSNSLog(
 			log__ Log,
 			id__ Id,
 			void *UP,
@@ -106,7 +103,7 @@ namespace srvhvy {
 			_user_pointer__ UP,
 			epeios::size__ Amount )
 		{
-			SRVHVYLog( Log, Id, UP, Amount );
+			CSDSNSLog( Log, Id, UP, Amount );
 		}
 	};
 
@@ -201,8 +198,8 @@ ERREpilog
 			_user_pointer__ UP,
 			id__ Id )
 		{
-#ifdef SRVHVY_DBG
-			if ( Id == SRVHVY_UNDEFINED )
+#ifdef CSDSNS_DBG
+			if ( Id == CSDSNS_UNDEFINED )
 				ERRu();
 #endif
 			mtx::Lock( S_.Mutex );
@@ -264,36 +261,10 @@ ERREpilog
 
 	E_AUTO( core)
 
-
-	class user_functions__
-	{
-	protected:
-		virtual void *SRVHVYPreProcess( flw::ioflow__ &Flow ) = 0;
-		virtual action__ SRVHVYProcess(
-			flw::ioflow__ &Flow,
-			void *UP ) = 0;
-		virtual void SRVHVYPostProcess( void *UP ) = 0;
-	public:
-		void *PreProcess( flw::ioflow__ &Flow )
-		{
-			return SRVHVYPreProcess( Flow );
-		}
-		action__ Process(
-			flw::ioflow__ &Flow,
-			void *UP )
-		{
-			return SRVHVYProcess( Flow, UP );
-		}
-		void PostProcess( void *UP )
-		{
-			SRVHVYPostProcess( UP );
-		}
-	};
-
 	class server___
 	{
 	private:
-		srv::server___ _Server;
+		csdbns::server___ _Server;
 	public:
 		void Init( void )
 		{}
@@ -305,6 +276,7 @@ ERREpilog
 
 
 }
+
 
 /*$END$*/
 				  /********************************************/

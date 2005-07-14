@@ -60,6 +60,8 @@ extern class ttr_tutor &CLTHVYTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete. Use 'CSDSNC' library instead."
+
 #include "err.h"
 #include "flw.h"
 #include "sck.h"

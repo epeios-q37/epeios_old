@@ -33,6 +33,19 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CLienT for HeaVY operations.
 &cpe		&epeios		&2000-2001, \
 	&ComPilation Enviroment
+	
+&csdbnc		&epeios	&\
+	&Client-Server Base Network Client
+&csdbns		&epeios	&\
+	&Client-Server Base Network Server
+&csdscm		&epeios		&\
+	&Client-Server Devices Server CoMmon
+&csdsnc		&epeios	&\
+	&Client-Server Standard Network Client
+&csdsns		&epeios	&\
+	&Client-Server Standard Network Client
+	
+	
 &cslio		&epeios		&\
 	&C Standard Library Input/Output
 &csm		&epeios		&2000-2001, \
@@ -59,6 +72,12 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Dynamic TRee
 &dummy		&epeios		&2000-\
 	&DUMMY project for testings.
+&ecsclt		&epeios		&\
+	&Embed Client-Server Client 
+&ecscor		&epeios		&\
+	&Embed Client-Server CORe
+&ecssrv		&epeios		&\
+	&Embed Client-Server SeRVer
 &epeios		&epeios		&2001, \
 	&EPEIOS often used features.
 &epsmsc		&epeios		&2000, \
@@ -201,6 +220,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&BacKenD DesCriBer
 &bkddsc		&ebkd		&2001, 2003-\
 	&BacKenD DeSCriptions
+&bkdlac		&ebkd		&\
+	&BacKenD Local ACcess
 &bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
 &bkdlrm		&ebkd		&\
 	&BacKenD Local Request Manager.

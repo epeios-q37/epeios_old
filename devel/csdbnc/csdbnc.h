@@ -1,7 +1,7 @@
 /*
-	Header for the 'clt' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
-
+	Header for the 'csdbnc' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef CLT__INC
-#define CLT__INC
+#ifndef CSDBNC__INC
+#define CSDBNC__INC
 
-#define CLT_NAME		"CLT"
+#define CSDBNC_NAME		"CSDBNC"
 
-#define	CLT_VERSION	"$Revision$"
+#define	CSDBNC_VERSION	"$Revision$"
 
-#define CLT_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDBNC_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CLTTutor;
+extern class ttr_tutor &CSDBNCTutor;
 
-#if defined( XXX_DBG ) && !defined( CLT_NODBG )
-#define CLT_DBG
+#if defined( XXX_DBG ) && !defined( CSDBNC_NODBG )
+#define CSDBNC_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,21 +55,20 @@ extern class ttr_tutor &CLTTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D CLienT 
+//D Client-Server Base Network Client 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete. Use 'CSDBNC' library instead."
-
 #include "err.h"
+#include "flw.h"
 #include "sck.h"
 
 #if defined( CPE__UNIX ) || defined( CPE__BEOS )
-#	define CLT__UNIX_LIKE
+#	define CSDBNC__UNIX_LIKE
 #endif
 
-#if defined( CLT__UNIX_LIKE )
+#if defined( CSDBNC__UNIX_LIKE )
 #	include <sys/socket.h>
 #	include <netinet/in.h>
 #	include <arpa/inet.h>
@@ -78,12 +77,12 @@ extern class ttr_tutor &CLTTutor;
 #	error "Unknow compiler enviroment"
 #endif
 
-#define CLT_ADDRESS_SIZE_MAX	100
+#define CSDBNC_ADDRESS_SIZE_MAX	100
 
-namespace clt {
+namespace csdbnc {
 	using namespace sck;
 
-	typedef bso::char__	buffer__[CLT_ADDRESS_SIZE_MAX+1];
+	typedef bso::char__	buffer__[CSDBNC_ADDRESS_SIZE_MAX+1];
 
 	//f Return the host name contained in 'HostService'.
 	const char *Host(

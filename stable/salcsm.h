@@ -1,6 +1,6 @@
 /*
 	Header for the 'salcsm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -66,6 +66,8 @@ extern class ttr_tutor &SALCSMTutor;
 #include "flw.h"
 #include "bso.h"
 #include "bch.h"
+
+#error "Obsolete. Use 'CSD...' libraries instead."
 
 #define SALCSM_BUFFER_SIZE 1000
 

@@ -60,6 +60,8 @@ extern class ttr_tutor &CLTTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete. Use 'CSDBNC' library instead."
+
 #include "err.h"
 #include "sck.h"
 

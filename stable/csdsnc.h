@@ -1,7 +1,7 @@
 /*
-	Header for the 'clthvy' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	Header for the 'csdsnc' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef CLTHVY__INC
-#define CLTHVY__INC
+#ifndef CSDSNC__INC
+#define CSDSNC__INC
 
-#define CLTHVY_NAME		"CLTHVY"
+#define CSDSNC_NAME		"CSDSNC"
 
-#define	CLTHVY_VERSION	"$Revision$"
+#define	CSDSNC_VERSION	"$Revision$"
 
-#define CLTHVY_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDSNC_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CLTHVYTutor;
+extern class ttr_tutor &CSDSNCTutor;
 
-#if defined( XXX_DBG ) && !defined( CLTHVY_NODBG )
-#define CLTHVY_DBG
+#if defined( XXX_DBG ) && !defined( CSDSNC_NODBG )
+#define CSDSNC_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,33 +55,31 @@ extern class ttr_tutor &CLTHVYTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D CLienT for HeaVY operations. 
+//D Client-Server Standard Network Client 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-#error "Obsolete. Use 'CSDSNC' library instead."
 
 #include "err.h"
 #include "flw.h"
 #include "sck.h"
 #include "stk.h"
-#include "clt.h"
+#include "csdbnc.h"
 #ifdef CPE__MT
 #	include "mtx.h"
 #endif
 #include "bso.h"
 
-#define CLTHVY_UNDEFINED			BSO_USHORT_MAX
-#define CLTHVY_DEFAULT_CACHE_SIZE	100
+#define CSDSNC_UNDEFINED			BSO_USHORT_MAX
+#define CSDSNC_DEFAULT_CACHE_SIZE	100
 
-namespace clthvy {
+namespace csdsnc {
 #ifdef CPE__MT
 	typedef mtx::mutex_handler__	mutex__;
-#	define CLTHVY_NO_MUTEX			MTX_INVALID_HANDLER
+#	define CSDSNC_NO_MUTEX			MTX_INVALID_HANDLER
 #else
 	typedef void *mutex__;
-#	define CLTHVY_NO_MUTEX			NULL
+#	define CSDSNC_NO_MUTEX			NULL
 #endif
 
 	inline void _Lock( mutex__ Mutex )
@@ -110,7 +108,7 @@ namespace clthvy {
 #ifdef CPE__MT
 		return mtx::Create();
 #else
-		return CLTHVY_NO_MUTEX;
+		return CSDSNC_NO_MUTEX;
 #endif
 	}
 
@@ -131,7 +129,7 @@ namespace clthvy {
 	class log_functions__
 	{
 	protected:
-		virtual void CLTHVYLog(
+		virtual void CSDSNCLog(
 			log__ Log,
 			const void *Flow,
 			epeios::size__ Amount ) = 0;
@@ -141,7 +139,7 @@ namespace clthvy {
 			const void *Flow,
 			epeios::size__ Amount )
 		{
-			CLTHVYLog( Log ,Flow, Amount );
+			CSDSNCLog( Log ,Flow, Amount );
 		}
 	};
 
@@ -182,16 +180,16 @@ ERREpilog
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( S_.Mutex != CLTHVY_NO_MUTEX )
+				if ( S_.Mutex != CSDSNC_NO_MUTEX )
 					_Delete( S_.Mutex );
-				if ( S_.Log.Mutex != CLTHVY_NO_MUTEX )
+				if ( S_.Log.Mutex != CSDSNC_NO_MUTEX )
 					_Delete( S_.Log.Mutex );
 			}
 
 			S_.Host.reset( P );
 			S_.Service.reset( P );
-			S_.Mutex = CLTHVY_NO_MUTEX;
-			S_.Log.Mutex = CLTHVY_NO_MUTEX;
+			S_.Mutex = CSDSNC_NO_MUTEX;
+			S_.Log.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Functions = NULL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
@@ -254,7 +252,7 @@ ERREpilog
 				if ( Flow == NULL )
 					ERRa();
 
-				Flow->Init( clt::Connect( S_.Host, S_.Service ) );
+				Flow->Init( csdbnc::Connect( S_.Host, S_.Service ) );
 
 				Log = lCreation;
 			}
@@ -292,7 +290,7 @@ ERREpilog
 		_flow___ *_Flow;
 		core_ *_Core;
 		bso::ushort__ _Id;
-		flw::datum__ _Cache[CLTHVY_DEFAULT_CACHE_SIZE];
+		flw::datum__ _Cache[CSDSNC_DEFAULT_CACHE_SIZE];
 		bso::bool__ _Prepare( void )	// Return true if has already a flow, false otherwise.
 		{
 			bso::bool__ Created = _Flow == NULL;
@@ -307,14 +305,14 @@ ERREpilog
 		}
 		void _Synchronize( void )
 		{
-#ifdef CLTHVY_DBG
+#ifdef CSDSNC_DBG
 			if ( _Flow == NULL )
 				ERRu();
 #endif
 
 			_Flow->Synchronize();
 
-			if ( _Id == CLTHVY_UNDEFINED )
+			if ( _Id == CSDSNC_UNDEFINED )
 				_Flow->Read( sizeof( _Id ), &_Id );
 			else if ( _Flow->Get() != 0 )
 				ERRf();
@@ -373,7 +371,7 @@ ERREpilog
 			}
 
 			_Flow = NULL;
-			_Id = CLTHVY_UNDEFINED;
+			_Id = CSDSNC_UNDEFINED;
 			_Core = NULL;
 		}
 		client_flow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
@@ -389,7 +387,6 @@ ERREpilog
 
 		}
 	};
-
 }
 
 /*$END$*/

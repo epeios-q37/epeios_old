@@ -1,7 +1,7 @@
 /*
-	Header for the 'srv' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	Header for the 'csdbns' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef SRV__INC
-#define SRV__INC
+#ifndef CSDBNS__INC
+#define CSDBNS__INC
 
-#define SRV_NAME		"SRV"
+#define CSDBNS_NAME		"CSDBNS"
 
-#define	SRV_VERSION	"$Revision$"
+#define	CSDBNS_VERSION	"$Revision$"
 
-#define SRV_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDBNS_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &SRVTutor;
+extern class ttr_tutor &CSDBNSTutor;
 
-#if defined( XXX_DBG ) && !defined( SRV_NODBG )
-#define SRV_DBG
+#if defined( XXX_DBG ) && !defined( CSDBNS_NODBG )
+#define CSDBNS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,80 +55,46 @@ extern class ttr_tutor &SRVTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D SeRVer 
+//D Client-Server Base Network Server 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete. Use 'CSDBNS' library instead."
-
 #include "err.h"
 #include "sck.h"
+#include "csdscm.h"
 
-#define SRV__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
+#define CSDNBS__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
 
-namespace srv {
+namespace csdbns {
 	using namespace sck;
+	using namespace csdscm;
 
 	//t The type of a service.
 	typedef bso::ushort__	service__;
 
-	enum action__ {
-		aContinue,
-		aStop,
-		a_amount,
-		a_Undefined
-	};
-
-
-
 	//c User functions with socket.
-	class socket_functions__ {
+	class socket_user_functions__ {
 	protected:
-		virtual void *SRVPreProcess( sck::socket__ Socket ) = 0;
-		virtual action__ SRVProcess(
+		virtual void *CSDNBSPreProcess( sck::socket__ Socket ) = 0;
+		virtual action__ CSDNBSProcess(
 			sck::socket__ Socket,
 			void *UP ) = 0;
-		virtual void SRVPostProcess( void *UP ) = 0;
+		virtual void CSDNBSPostProcess( void *UP ) = 0;
 	public:
 		void *PreProcess( sck::socket__ Socket )
 		{
-			return SRVPreProcess( Socket );
+			return CSDNBSPreProcess( Socket );
 		}
 		action__ Process(
 			sck::socket__ Socket,
 			void *UP )
 		{
-			return SRVProcess( Socket, UP );
+			return CSDNBSProcess( Socket, UP );
 		}
 		void PostProcess( void *UP )
 		{
-			SRVPostProcess( UP );
-		}
-	};
-
-	//c User functions with flow handler.
-	class flow_functions__ {
-	protected:
-		virtual void *SRVPreProcess( flw::ioflow__ &Flow ) = 0;
-		virtual action__ SRVProcess(
-			flw::ioflow__ &Flow,
-			void *UP ) = 0;
-		virtual void SRVPostProcess( void *UP ) = 0;
-	public:
-		void *PreProcess( flw::ioflow__ &Flow )
-		{
-			return SRVPreProcess( Flow );
-		}
-		action__ Process(
-			flw::ioflow__ &Flow,
-			void *UP )
-		{
-			return SRVProcess( Flow, UP );
-		}
-		void PostProcess( void *UP )
-		{
-			SRVPostProcess( UP );
+			CSDNBSPostProcess( UP );
 		}
 	};
 
@@ -189,7 +155,7 @@ namespace srv {
 		}
 		//f Handle new connection using 'Functions'. BLOCKING FUNCTION.
 		void Process(
-			socket_functions__ &Functions,
+			socket_user_functions__ &Functions,
 			err::handle ErrHandle = err::hUsual );
 	};
 
@@ -231,17 +197,18 @@ namespace srv {
 		}
 		/*f Handle each new connection using 'Functions'. */
 		void Process(
-			socket_functions__ &Functions,
+			socket_user_functions__ &Functions,
 			err::handle ErrHandle = err::hUsual );
 		/*f Handle each new connection using 'Functions'. */
 		void Process(
-			flow_functions__ &Functions,
-			sck::duration__ TimeOut = SRV__DEFAULT_TIMEOUT,
+			user_functions__ &Functions,
+			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
 			err::handle ErrHandle = err::hUsual );
 	};
 
 #endif
 }
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

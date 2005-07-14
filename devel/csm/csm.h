@@ -60,6 +60,8 @@ extern class ttr_tutor &CSMTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete. Use 'CSD...' libraries instead."
+
 #include "salcsm.h"
 #include "srv.h"
 

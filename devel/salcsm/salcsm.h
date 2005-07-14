@@ -67,6 +67,8 @@ extern class ttr_tutor &SALCSMTutor;
 #include "bso.h"
 #include "bch.h"
 
+#error "Obsolete. Use 'CSD...' libraries instead."
+
 #define SALCSM_BUFFER_SIZE 1000
 
 namespace salcsm {

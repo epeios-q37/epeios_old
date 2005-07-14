@@ -1,7 +1,7 @@
 /*
-	Header for the 'csm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2001, 2004 Claude SIMON (csimon@epeios.org).
-
+	Header for the 'csdscm' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef CSM__INC
-#define CSM__INC
+#ifndef CSDSCM__INC
+#define CSDSCM__INC
 
-#define CSM_NAME		"CSM"
+#define CSDSCM_NAME		"CSDSCM"
 
-#define	CSM_VERSION	"$Revision$"
+#define	CSDSCM_VERSION	"$Revision$"
 
-#define CSM_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDSCM_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CSMTutor;
+extern class ttr_tutor &CSDSCMTutor;
 
-#if defined( XXX_DBG ) && !defined( CSM_NODBG )
-#define CSM_DBG
+#if defined( XXX_DBG ) && !defined( CSDSCM_NODBG )
+#define CSDSCM_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,58 +55,47 @@ extern class ttr_tutor &CSMTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client/Server Manager 
+//D Client-Server Devices Server CoMmon 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete. Use 'CSD...' libraries instead."
+#include "err.h"
+#include "flw.h"
 
-#include "salcsm.h"
-#include "srv.h"
-
-//d An alias for the user client process function.
-#define CSMCP	SALCSMCP
-//d An alias for the user client initialization function.
-#define CSMCI	SALCSMCI
-//d An alias for the user client ending function.
-#define CSMCE	SALCSMCE
-//d An alias for the user server process function.
-#define CSMSP	SALCSMSP
-//d An alias for the user server initialization function.
-#define CSMSI	SALCSMSI
-//d An alias for the user server endinf function.
-#define CSMSE	SALCSMSE
-
-namespace csm {
-	using namespace salcsm;
-	//c To manage client/server operations.
-	class manager___
-	: public functions__
-	{
-	public:
-		void reset( bso::bool__ = true )
-		{}
-		manager___( void )
-		{
-			reset( false );
-		}
-		~manager___( void )			
-		{
-			reset( true );
-		}
-		//f Initialization.
-		void Init( void )
-		{
-			reset();
-		}
-		//f Process.
-		void Process(
-			srv::service__ Service,
-			err::handle Handle = err::hUsual );
+namespace csdscm {
+	enum action__ {
+		aContinue,
+		aStop,
+		a_amount,
+		a_Undefined
 	};
-}
 
+	class user_functions__ {
+	protected:
+		virtual void *CSDPreProcess( flw::ioflow__ &Flow ) = 0;
+		virtual action__ CSDProcess(
+			flw::ioflow__ &Flow,
+			void *UP ) = 0;
+		virtual void CSDPostProcess( void *UP ) = 0;
+	public:
+		void *PreProcess( flw::ioflow__ &Flow )
+		{
+			return CSDPreProcess( Flow );
+		}
+		action__ Process(
+			flw::ioflow__ &Flow,
+			void *UP )
+		{
+			return CSDProcess( Flow, UP );
+		}
+		void PostProcess( void *UP )
+		{
+			CSDPostProcess( UP );
+		}
+	};
+
+}
 
 /*$END$*/
 				  /********************************************/

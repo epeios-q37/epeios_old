@@ -60,6 +60,8 @@ extern class ttr_tutor &SRVTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete. Use 'CSDBNS' library instead."
+
 #include "err.h"
 #include "sck.h"
 
