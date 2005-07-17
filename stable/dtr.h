@@ -1,6 +1,6 @@
 /*
 	Header for the 'dtr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000-2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -167,7 +167,7 @@ namespace dtr {
 		}
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
-			tym::size__ Size,
+			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
 			Tree.Allocate( Size, Mode );

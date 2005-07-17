@@ -232,7 +232,7 @@ namespace cch {
 		//f Initialisation with 'Buffer' of size 'Size'.
 		void Init(
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			reset();

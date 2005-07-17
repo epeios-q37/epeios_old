@@ -66,7 +66,7 @@ extern class ttr_tutor &UYMTutor;
 #include "cvm.h"
 
 //d Value that a position can not have.
-#define UYM_UNREACHABLE_POSITION	((uym::row__)-1)
+#define UYM_UNREACHABLE_POSITION	((mdr::row_t__)-1)
 
 //d Maximal size of a memory.
 #define UYM_MAX_SIZE			UYM_UNREACHABLE_POSITION
@@ -91,14 +91,12 @@ extern class ttr_tutor &UYMTutor;
 */
 
 namespace uym {
-	using namespace mdr;
-
 	// Pilote mémoire.
 	class _memory_driver
 	{
 	private:
 		// Le pilote.
-		E_MEMORY_DRIVER_ *Pilote_;
+		mdr::E_MEMORY_DRIVER_ *Pilote_;
 		// Indique si le pilote a été défini de manière interne ou non.
 		bso::bool__ Interne_;
 	public:
@@ -126,7 +124,7 @@ namespace uym {
 		{
 			reset( true );
 		}
-		void plug( E_MEMORY_DRIVER_ &Pilote )
+		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
 		{
 			if ( &Pilote != NULL )
 			{
@@ -153,7 +151,7 @@ namespace uym {
 				}
 			}
 		}
-		E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false ) const
+		mdr::E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore && !Pilote_ )
@@ -162,7 +160,7 @@ namespace uym {
 			return Pilote_;
 		}
 		// Operateur d'indirection.
-		E_MEMORY_DRIVER_ *operator ->( void ) const
+		mdr::E_MEMORY_DRIVER_ *operator ->( void ) const
 		{
 			return Driver();
 		}
@@ -180,8 +178,8 @@ namespace uym {
 		_memory_driver Pilote_;
 	#ifdef UYM_DBG
 		void _Test(
-			row__ Position,
-			bsize__ Nombre ) const
+			mdr::row_t__ Position,
+			mdr::size__ Nombre ) const
 		{
 			if ( !Pilote_ )
 				ERRu();
@@ -195,9 +193,9 @@ namespace uym {
 		}
 	#endif
 		void _Recall(
-			row__ Position,
-			bsize__ Nombre, 
-			datum__ *Tampon,
+			mdr::row_t__ Position,
+			mdr::size__ Nombre, 
+			mdr::datum__ *Tampon,
 			bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
@@ -207,16 +205,16 @@ namespace uym {
 			Pilote_->Recall( Position, Nombre, Tampon );
 		}
 		void _Store(
-			const datum__ *Tampon,
-			bsize__ Nombre,
-			row__ Position )
+			const mdr::datum__ *Tampon,
+			mdr::size__ Nombre,
+			mdr::row_t__ Position )
 		{
 	#ifdef UYM_DBG
 			_Test( Position, Nombre );
 	#endif
 			Pilote_->Store( Tampon, Nombre, Position );
 		}
-		void _Allocate( size__ Size )
+		void _Allocate( mdr::size__ Size )
 		{
 	#ifdef UYM_DBG
 			S_.Size = Size;
@@ -234,7 +232,7 @@ namespace uym {
 	public:
 		struct s {
 	#ifdef UYM_DBG
-			size__ Size;
+			mdr::size__ Size;
 		} &S_;
 	#else
 		};
@@ -253,7 +251,7 @@ namespace uym {
 		{
 			reset( false );
 		}
-		void plug( E_MEMORY_DRIVER_ &Driver = *(E_MEMORY_DRIVER_ *)NULL )
+		void plug( mdr::E_MEMORY_DRIVER_ &Driver = *(mdr::E_MEMORY_DRIVER_ *)NULL )
 		{
 			Pilote_.plug( Driver );
 		}
@@ -276,7 +274,7 @@ namespace uym {
 			size__ Size );
 #endif
 		//f Allocates 'Capacity' bytes.
-		void Allocate( size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			_Allocate( Size );
 		}
@@ -284,32 +282,32 @@ namespace uym {
 		Ignore is only for 'UYM_DBG' mode and for the 'MMG' library.
 		When 'true', it didn't make the test about the size. */
 		void Recall(
-			row__ Position,
-			bsize__ Amount,
-			datum__ *Buffer,
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer,
 			bso::bool__ Ignore = false ) const
 		{
 			_Recall( Position, Amount, Buffer, Ignore );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at 'Offset'.
 		void Store(
-			const datum__ *Buffer,
-			bsize__ Amount,
-			row__ Position )
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 			_Store( Buffer, Amount, Position );
 		}
 		//f Put byte at 'Position' in 'Datum'.
 		void Recall(
-			row__ Position,
-			datum__ &Datum ) const
+			mdr::row_t__ Position,
+			mdr::datum__ &Datum ) const
 		{
 			Recall( Position, 1, &Datum );
 		}
 		//f Return byte at 'Position'.
-		datum__ Get( row__ Position ) const
+		mdr::datum__ Get( mdr::row_t__ Position ) const
 		{
-			datum__ D;
+			mdr::datum__ D;
 
 			Recall( Position, D );
 
@@ -317,31 +315,31 @@ namespace uym {
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			datum__ Byte,
-			row__ Position )
+			mdr::datum__ Byte,
+			mdr::row_t__ Position )
 		{
 			_Store( &Byte, 1, Position );
 		}
 		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
 		void Store(
 			const untyped_memory_ &Source,
-			size__ Amount,
-			row__ Position,
-			row__ Offset = 0 );
+			mdr::size__ Amount,
+			mdr::row_t__ Position,
+			mdr::row_t__ Offset = 0 );
 		//f Store 'Count' 'Object's of size 'Size' at 'Position'.
 		void Store(
-			const datum__ *Object,
-			bsize__ Size,
-			row__ Position,
-			size__ Count );
+			const mdr::datum__ *Object,
+			mdr::size__ Size,
+			mdr::row_t__ Position,
+			mdr::size__ Count );
 		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
-		row__ Search(
-			const datum__ *Objet,
-			bsize__ Size,
-			row__ Begin,
-			row__ End ) const;
+		mdr::row_t__ Search(
+			const mdr::datum__ *Objet,
+			mdr::size__ Size,
+			mdr::row_t__ Begin,
+			mdr::row_t__ End ) const;
 		//f Return the used memory driver. 'Ignore' is only for 'UYM_DBG' mode and for the 'MMG' library.
-		E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false )
+		mdr::E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false )
 		{
 			return Pilote_.Driver( Ignore );
 		}
@@ -370,31 +368,31 @@ namespace uym {
 
 	void _Copy(
 		const class untyped_memory_ &Source,
-		row__ PosSource,
+		mdr::row_t__ PosSource,
 		class untyped_memory_ &Dest,
-		row__ PosDest,
-		size__ Quantity,
-		datum__ *Buffer,
-		bsize__ BufferSize );
+		mdr::row_t__ PosDest,
+		mdr::size__ Quantity,
+		mdr::datum__ *Buffer,
+		mdr::size__ BufferSize );
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
 	bso::sign__ Compare(
 		const untyped_memory_ &M1,
 		const untyped_memory_ &M2,
-		row__ BeginM1,
-		row__ BeginM2,
-		size__ Quantity );
+		mdr::row_t__ BeginM1,
+		mdr::row_t__ BeginM2,
+		mdr::size__ Quantity );
 
 	void _Fill(
-		const datum__ *Object,
-		bsize__ Size,
-		size__ Count,
-		row__ Position,
-		datum__ *Data );
+		const mdr::datum__ *Object,
+		mdr::size__ Size,
+		mdr::size__ Count,
+		mdr::row_t__ Position,
+		mdr::datum__ *Data );
 #if 0
 	row__ _Position(
 		const datum__ *Objet,
-		bsize__ Size,
+		size__ Size,
 		row__ Begin,
 		row__ End,
 		const datum__ *Data );
@@ -425,70 +423,70 @@ namespace uym {
 		{}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Recall(
-			uym::row__ Position,
-			uym::bsize__ Amount,
-			uym::datum__ *Buffer ) const
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer ) const
 		{
 			memcpy( Buffer, m::Data_ + Position, Amount ); 
 		}
 		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
 		void Store(
-			const uym::datum__ *Buffer,
-			uym::bsize__ Amount,
-			uym::row__ Position )
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 			memcpy( m::Data_ + Position, Buffer, Amount ); 
 		}
 		//f Return byte at 'Position'.
-		uym::datum__ Get( uym::row__ Position ) const
+		mdr::datum__ Get( mdr::row_t__ Position ) const
 		{
 			return *m::Data_[Position];
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			uym::datum__ Byte,
-			uym::row__ Position )
+			mdr::datum__ Byte,
+			mdr::row_t__ Position )
 		{
 			*m::Data_[Position] = Byte;
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
 			const _memory__ &Source,
-			uym::size__ Quantity,
-			uym::row__ Position = 0,
-			uym::row__ Offset = 0 )
+			mdr::size__ Quantity,
+			mdr::row_t__ Position = 0,
+			mdr::row_t__ Offset = 0 )
 		{
 			memmove( m::Data_ + Offset, Source.m::Data_ + Position, Quantity ); 
 		}
 		/*f Store to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
 			const untyped_memory_ &Source,
-			uym::size__ Quantity,
-			uym::row__ Position = 0,
-			uym::row__ Offset = 0 )
+			mdr::size__ Quantity,
+			mdr::row_t__ Position = 0,
+			mdr::row_t__ Offset = 0 )
 		{
 			Source.Recall( Position, Quantity, *m::Data_ + Offset );
 		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Store(
-			const uym::datum__ *Object,
-			uym::bsize__ Size,
-			uym::row__ Position,
-			uym::size__ Count )
+			const mdr::datum__ *Object,
+			mdr::size__ Size,
+			mdr::row_t__ Position,
+			mdr::size__ Count )
 		{
 			_Store( Object, Size, Count, Position, m::Data_ );
 		}
 		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		uym::row__ Search(
-			const uym::datum__ *Object,
-			uym::bsize__ Size,
-			uym::row__ Begin,
-			uym::row__ End ) const
+		mdr::row_t__ Search(
+			const mdr::datum__ *Object,
+			mdr::size__ Size,
+			mdr::row_t__ Begin,
+			mdr::row_t__ End ) const
 		{
 			return _Search( Object, Size, Begin, End, m::Data_ );
 		}
 		//f Return the used buffer.
-		const uym::datum__ *Buffer( void ) const
+		const mdr::datum__ *Buffer( void ) const
 		{
 			return m::Data_;
 		}
@@ -498,7 +496,7 @@ namespace uym {
 	template <int size> class _untyped_memory__
 	{
 	protected:
-		uym::datum__ Data_[size];
+		mdr::datum__ Data_[size];
 	public:
 		void reset( bso::bool__ = true )
 		{}
@@ -512,7 +510,7 @@ namespace uym {
 			reset();
 		}
 		// Simplifies the 'SET' library.
-		void Allocate( uym::size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			if ( Size >= size )
 				ERRl();
@@ -523,7 +521,7 @@ namespace uym {
 	class _untyped_memory___
 	{
 	protected:
-		tol::E_FPOINTER___( uym::datum__ ) Data_;
+		tol::E_FPOINTER___( mdr::datum__ ) Data_;
 	public:
 		struct s {};	// To simplify use in library 'BCH'
 		void reset( bso::bool__ P = true )
@@ -539,7 +537,7 @@ namespace uym {
 			reset( true );
 		}
 		//f Allocation of size 'Size'.
-		void Allocate( uym::size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			Data_ = realloc( Data_, Size );
 		}

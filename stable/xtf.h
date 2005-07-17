@@ -82,8 +82,6 @@ namespace xtf {
 
 	typedef bso::ubyte__ _amount__;
 
-	using flw::amount__;
-
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow__
 	{
@@ -290,7 +288,7 @@ namespace xtf {
 			return View( HandleNL ) == XTF_EOXC;
 		}
 		//f Return the amount of data red.
-		amount__ AmountRed( void ) const
+		flw::size__ AmountRed( void ) const
 		{
 			return Entree_->AmountRed() - Nombre_;
 		}

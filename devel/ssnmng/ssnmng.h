@@ -316,7 +316,7 @@ namespace ssnmng {
 	  public pointers_
 	{
 	private:
-		void _Allocate( tym::size__ Size )
+		void _Allocate( epeios::size__ Size )
 		{
 			pointers_::Allocate( Size );
 		}

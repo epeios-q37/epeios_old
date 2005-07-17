@@ -80,16 +80,16 @@ extern class ttr_tutor &FLWTutor;
 
 namespace flw {
 	//t Amount of data.
-	typedef bso::ulong__		amount__;
+	typedef bso::msize__		size__;
 
 	//d The max value for a amount.
-#	define FLW_AMOUNT_MAX	BSO_ULONG_MAX
+#	define FLW_SIZE_MAX			BSO_MSIZE_MAX
 
 	//t Size (of a cache, for example).
-	typedef size_t			size__;
+	typedef bso::bsize__		bsize__;
 
 	//d The max value for a size.
-#	define FLW_SIZE_MAX	INT_MAX
+#	define FLW_BSIZE_MAX		BSO_BSIZE_MAX
 
 	//t Type of a datum.
 	typedef unsigned char		datum__;
@@ -123,21 +123,21 @@ namespace flw {
 		// The cache.
 		datum__ *Cache_;
 		// Size of the cache.
-		size__ Size_;
+		bsize__ Size_;
 		// Amount of data available in the cache.
-		size__ Available_;
+		bsize__ Available_;
 		// Position of the available data.
-		size__ Position_;
+		bsize__ Position_;
 		// Amount of data red since the last reset.
-		amount__ Red_;
+		size__ Red_;
 		// Max amount of data alllowed between 2 reset.
-		amount__ AmountMax_;
+		size__ AmountMax_;
 		// Data for the end of flow (EOFD).
 		struct {
 			// The data.
 			const datum__ *Data;
 			// Size of the data.
-			size__ Size;
+			bsize__ Size;
 			int
 				//At true if we are currently handling end of file data.
 				HandlingEOFD:		1,
@@ -170,12 +170,12 @@ namespace flw {
 		}
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
-		size__ _DirectRead(
-			size__ Minimum,
+		bsize__ _DirectRead(
+			bsize__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
+			bsize__ Wanted )
 		{
-			size__ Amount = 0;
+			bsize__ Amount = 0;
 
 			if ( EOFD_.HandlingEOFD ) {
 				Amount = HandleEOFD( Buffer, Wanted );
@@ -184,8 +184,8 @@ namespace flw {
 					ERRf();
 			} else if ( EOFD_.HandleAmount ) {
 
-				if ( Wanted > ( AmountMax_ - Red_ ) )
-					Wanted = AmountMax_ - Red_;
+				if ( (size__)Wanted > ( AmountMax_ - Red_ ) )
+					Wanted = (bsize__)( AmountMax_ - Red_ );
 
 				Amount = _Read( Minimum, Buffer, Wanted );
 
@@ -213,7 +213,7 @@ namespace flw {
 		}				
 #endif		
 		// Fill the cache with a minimum of 'Minimum' bytes. The cache must be empty.
-		void _FillCache( size__ Minimum )
+		void _FillCache( bsize__ Minimum )
 		{
 #ifdef FLW_DBG
 			_Test();
@@ -226,8 +226,8 @@ namespace flw {
 		}
 		/* Read from cache up to 'Amount' bytes and place them to 'Buffer'.
 		Return amount of data red. */
-		size__ _ReadFromCache(
-			size__ Amount,
+		bsize__ _ReadFromCache(
+			bsize__ Amount,
 			datum__ *Buffer )
 		{
 #ifdef FLW_DBG
@@ -248,10 +248,10 @@ namespace flw {
 		/* Put a minimum of 'Minimum' and up to 'Wanted' bytes in 'Buffer',
 		directly or through the cache. Return amount of byte red.
 		The cache must be empty. */
-		size__ _ReadFromCacheOrDirectly(
-			size__ Minimum,
+		bsize__ _ReadFromCacheOrDirectly(
+			bsize__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
+			bsize__ Wanted )
 		{
 #ifdef FLW_DBG
 			_Test();
@@ -267,12 +267,12 @@ namespace flw {
 		}
 		/* Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return number of bytes red. */
-		size__ _ReadUpTo(
-			size__ Amount,
+		bsize__ _ReadUpTo(
+			bsize__ Amount,
 			datum__ *Buffer,
-			size__ Minimum )
+			bsize__ Minimum )
 		{
-			size__ Available = _ReadFromCache( Amount, Buffer );
+			bsize__ Available = _ReadFromCache( Amount, Buffer );
 
 			if ( ( Available < Minimum ) || ( Available == 0 ) )
 				Available += _ReadFromCacheOrDirectly( Minimum - Available, Buffer + Available, Amount  - Available );
@@ -281,19 +281,19 @@ namespace flw {
 		}
 		// Place 'Amount' bytes in 'Buffer'.
 		void _Read(
-			size__ Amount,
+			bsize__ Amount,
 			datum__ *Buffer )
 		{
-			size__ Available = _ReadFromCache( Amount, Buffer );
+			bsize__ Available = _ReadFromCache( Amount, Buffer );
 
 			if ( Amount > Available )
 				Available += _ReadFromCacheOrDirectly( Amount - Available, Buffer + Available, Amount - Available );
 		}
 		// Generic read.
-		size__ _Read(
-			size__ Minimum,
+		bsize__ _Read(
+			bsize__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted );
+			bsize__ Wanted );
 		void _Dismiss( void )
 		{
 #ifdef FLW_DBG
@@ -312,18 +312,18 @@ namespace flw {
 		/*v Called to place up to 'Wanted' bytes in 'Buffer', and not less than
 		'Minimum'. Returns how many bytes red. If 'Minimum' == 0, then the function
 		must return	as fast as possible if there is no data to read. */
-		virtual size__ FLWRead(
-			size__ Minimum,
+		virtual bsize__ FLWRead(
+			bsize__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted ) = 0;
+			bsize__ Wanted ) = 0;
 		virtual void FLWDismiss( void )
 		{}
 		/*f Handle EOFD. To call when no more data available in the medium.
 		Return amount of data written. If 0 is returned, then there is no
 		more end of flow data available, and an error should be launched. */
-		size__ HandleEOFD(
+		bsize__ HandleEOFD(
 			datum__ *Buffer,
-			size__ Size )
+			bsize__ Size )
 		{
 			EOFD_.HandlingEOFD = true;
 
@@ -347,8 +347,8 @@ namespace flw {
 	public:
 		iflow__(
 			datum__ *Cache,
-			size__ Size,
-			amount__ AmountMax,
+			bsize__ Size,
+			size__ AmountMax,
 #ifdef CPE__MT
 			mutex__ Mutex )
 #else
@@ -381,16 +381,16 @@ namespace flw {
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
-		size__ ReadUpTo(
-			size__ Amount,
+		bsize__ ReadUpTo(
+			bsize__ Amount,
 			void *Buffer,
-			size__ Minimum = 1 )
+			bsize__ Minimum = 1 )
 		{
 			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum );
 		}
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Read(
-			size__ Amount,
+			bsize__ Amount,
 			void *Buffer )
 		{
 			_Read( Amount, (datum__ *)Buffer );
@@ -405,7 +405,7 @@ namespace flw {
 			return C;
 		}
 		//f Skip 'Amount' bytes.
-		void Skip( amount__ Amount = 1 )
+		void Skip( size__ Amount = 1 )
 		{
 			while ( Amount-- )
 				Get();
@@ -416,11 +416,11 @@ namespace flw {
 		{
 			size_t Length = strlen( Data );
 
-			if ( Length > FLW_SIZE_MAX )
+			if ( Length > FLW_BSIZE_MAX )
 				ERRl();
 
 			EOFD_.Data = (const datum__ *)Data;
-			EOFD_.Size = (size__)Length;
+			EOFD_.Size = (bsize__)Length;
 			EOFD_.HandleAmount = false;
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
@@ -428,7 +428,7 @@ namespace flw {
 		be put in the flow after having read 'Amount' bytes.*/
 		void EOFD(
 			const char *Data,
-			amount__ Amount )
+			bsize__ Amount )
 		{
 			EOFD( Data );
 
@@ -445,11 +445,11 @@ namespace flw {
 				EOFD_.HandlingEOFD = true;
 		}
 		//f Return the amount of data red since last 'Reset()'.
-		amount__ AmountRed( void ) const
+		size__ AmountRed( void ) const
 		{
 			return Red_ - Available_;
 		}
-		void SetAmountMax( amount__ AmountMax )
+		void SetAmountMax( size__ AmountMax )
 		{
 			AmountMax_ = AmountMax;
 		}
@@ -457,12 +457,12 @@ namespace flw {
 		{
 			_Dismiss();
 		}
-		size__ ReadRelay(
-			size__ Minimum,
+		bsize__ ReadRelay(
+			bsize__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
+			bsize__ Wanted )
 		{
-			size__ Amount = 0;
+			bsize__ Amount = 0;
 
 			Amount = ReadUpTo( Wanted, Buffer );
 
@@ -498,13 +498,13 @@ namespace flw {
 		// The cache.
 		datum__ *Cache_;
 		// The size of the cache.
-		size__ Size_;
+		bsize__ Size_;
 		// The amount of bytes yet free.
-		size__ Free_;
+		bsize__ Free_;
 		// Amount of data written since the last synchronizing.
-		amount__ Written_;
+		size__ Written_;
 		// Max amount of data between 2 synchronizing.
-		amount__ AmountMax_;
+		size__ AmountMax_;
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
 		struct {
 			mutex__ Mutex;	// Mutex pour protèger la ressource.
@@ -528,14 +528,14 @@ namespace flw {
 				flw::_Unlock( _ThreadHandling.Mutex );
 			}
 		}
-		size__ _DirectWrite(
+		bsize__ _DirectWrite(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum,
+			bsize__ Wanted,
+			bsize__ Minimum,
 			bool Synchronization );
 		void _DumpCache( bool Synchronization )
 		{
-			size__ Stayed = Size_ - Free_;
+			bsize__ Stayed = Size_ - Free_;
 			
 			if ( ( Stayed != 0 ) || Synchronization ) {
 				_DirectWrite( Cache_, Stayed, Stayed, Synchronization );
@@ -543,9 +543,9 @@ namespace flw {
 				Free_ = Size_;
 			}
 		}
-		size__ _WriteIntoCache(
+		bsize__ _WriteIntoCache(
 			const datum__ *Buffer,
-			size__ Amount )
+			bsize__ Amount )
 		{
 			if ( Free_ < Amount )
 				Amount = Free_;
@@ -558,9 +558,9 @@ namespace flw {
 		}
 		/* Put up to 'Amount' bytes from 'Buffer' directly or through the cache.
 		Return amount of bytes written. Cache MUST be EMPTY. */
-		size__ _DirectWriteOrIntoCache(
+		bsize__ _DirectWriteOrIntoCache(
 			const datum__ *Buffer,
-			size__ Amount )
+			bsize__ Amount )
 		{
 #ifdef FLW_DBG
 			if ( Size_ != Free_ )
@@ -581,11 +581,11 @@ namespace flw {
 			_Unlock();
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
-		size__ _WriteUpTo(
+		bsize__ _WriteUpTo(
 			const datum__ *Buffer,
-			size__ Amount )
+			bsize__ Amount )
 		{
-			size__ AmountWritten = _WriteIntoCache( Buffer, Amount );
+			bsize__ AmountWritten = _WriteIntoCache( Buffer, Amount );
 
 			if ( ( AmountWritten == 0 )  && ( Amount != 0 ) ) {
 				_DumpCache( false );
@@ -597,20 +597,20 @@ namespace flw {
 		// Put 'Amount' data from 'Buffer'.
 		void _Write(
 			const datum__ *Buffer,
-			size__ Amount );
+			bsize__ Amount );
 	protected:
-		virtual size__ FLWWrite(
+		virtual bsize__ FLWWrite(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum,
+			bsize__ Wanted,
+			bsize__ Minimum,
 			bool Synchronization ) = 0;
 		virtual void FLWSynchronizing( void )
 		{}
 	public:
 		oflow__(
 			datum__ *Cache,
-			size__ Size,
-			amount__ AmountMax,
+			bsize__ Size,
+			size__ AmountMax,
 #ifdef CPE__MT
 			mutex__ Mutex )
 #else
@@ -640,16 +640,16 @@ namespace flw {
 				_Synchronize();
 		}
 		//f Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
-		size__ WriteUpTo(
+		bsize__ WriteUpTo(
 			const void *Buffer,
-			size__ Amount )
+			bsize__ Amount )
 		{
 			return _WriteUpTo( (datum__ *)Buffer, Amount );
 		}
 		//f Put 'Amount' data from 'Buffer'.
 		void Write(
 			const void *Buffer,
-			size__ Amount )
+			bsize__ Amount )
 		{
 			_Write( (const datum__ *)Buffer, Amount );
 		}
@@ -664,21 +664,21 @@ namespace flw {
 			_Synchronize();
 		}
 		//f Return the amount of data written since last 'Synchronize()'.
-		amount__ AmountWritten( void ) const
+		size__ AmountWritten( void ) const
 		{
 			return Written_ + ( Size_ - Free_ );
 		}
-		void SetAmountMax( amount__ AmountMax )
+		void SetAmountMax( size__ AmountMax )
 		{
 			AmountMax_ = AmountMax;
 		}
-		size__ WriteRelay(
+		bsize__ WriteRelay(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum,
+			bsize__ Wanted,
+			bsize__ Minimum,
 			bool Synchronization )
 		{
-			size__ Amount = 0;
+			bsize__ Amount = 0;
 
 			Amount = WriteUpTo( Buffer, Wanted );
 
@@ -704,10 +704,10 @@ namespace flw {
 	{
 		size_t Length = strlen( String );
 
-		if ( Length >= FLW_AMOUNT_MAX )
+		if ( Length >= FLW_BSIZE_MAX )
 			ERRl();
 
-		OutputFlow.Write( String, (size__)( Length + 1 ) );
+		OutputFlow.Write( String, (bsize__)( Length + 1 ) );
 	}
 
 	//c Basic input/output flow.
@@ -718,11 +718,11 @@ namespace flw {
 	public:
 		ioflow__(
 			datum__ *ICache,
-			size__ ISize,
-			amount__ ReadAmountMax,
+			bsize__ ISize,
+			size__ ReadAmountMax,
 			datum__ *OCache,
-			size__ OSize,
-			amount__ WriteAmountMax,
+			bsize__ OSize,
+			size__ WriteAmountMax,
 #ifdef CPE__MT
 			mutex__ IMutex,
 			mutex__ OMutex )
@@ -740,8 +740,8 @@ namespace flw {
 		}
 		ioflow__(
 			datum__ *Cache,
-			size__ Size,
-			amount__ AmountMax,
+			bsize__ Size,
+			size__ AmountMax,
 #ifdef CPE__MT
 			mutex__ IMutex,
 			mutex__ OMutex )
@@ -753,13 +753,13 @@ namespace flw {
 			  oflow__( Cache + Size / 2, Size / 2, AmountMax, OMutex )
 		{}
 		void SetAmountMax(
-			amount__ ReadAmountMax,
-			amount__ WriteAmountMax )
+			size__ ReadAmountMax,
+			size__ WriteAmountMax )
 		{
 			iflow__::SetAmountMax( ReadAmountMax );
 			oflow__::SetAmountMax( WriteAmountMax );
 		}
-		void SetAmountMax( amount__ AmountMax )
+		void SetAmountMax( size__ AmountMax )
 		{
 			SetAmountMax( AmountMax, AmountMax );
 		}
@@ -772,10 +772,10 @@ inline flw::oflow__ &operator <<(
 {
 	size_t Length = strlen( String );
 
-	if ( Length > FLW_AMOUNT_MAX )
+	if ( Length > FLW_BSIZE_MAX )
 		ERRl();
 
-	OFlow.Write( String, (flw::size__)Length );
+	OFlow.Write( String, (flw::bsize__)Length );
 
 	return OFlow;
 }

@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;XXX_DBG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -173,11 +173,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\stable\cio.cpp"
+				RelativePath="..\..\..\epeios\stable\cio.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\stable\err.cpp"
+				RelativePath="..\..\..\epeios\stable\err.cpp"
 				>
 			</File>
 			<File
@@ -189,15 +189,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\stable\flw.cpp"
+				RelativePath="..\..\..\epeios\stable\flw.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\stable\tol.cpp"
+				RelativePath="..\..\..\epeios\stable\tol.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\stable\ttr.cpp"
+				RelativePath="..\..\..\epeios\stable\ttr.cpp"
 				>
 			</File>
 		</Filter>

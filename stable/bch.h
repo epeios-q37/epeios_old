@@ -67,7 +67,6 @@ extern class ttr_tutor &BCHTutor;
 #include "epeios.h"
 
 namespace bch {
-	using namespace epeios;
 
 	//c The kernel of a bunch. For internal use only. The 'sh' template parameter is to simplify the use of the 'STR' library.
 	template <class type, class mmr, class mng, typename row, typename sh> class _bunch
@@ -428,7 +427,7 @@ namespace bch {
 		}
 		void read( flw::iflow__ &IFlow )
 		{
-			size__ Amount;
+			epeios::size__ Amount;
 
 			flw::Get( IFlow, Amount );
 			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Allocate( Amount );
@@ -488,9 +487,9 @@ namespace bch {
 	void _GetRelations(
 		const uym::untyped_memory_ &Sorted,
 		const uym::untyped_memory_ &Unsorted,
-		bsize__ Size,
-		uym::row__ Limit,
-		uym::datum__ *Buffer,
+		epeios::size__ Size,
+		epeios::row_t__ Limit,
+		epeios::datum__ *Buffer,
 		E_BUNCH_( epeios::row__ ) &Relations );
 
 	template <typename t> inline void GetRelations(
@@ -498,7 +497,7 @@ namespace bch {
 		const bch::E_BUNCH_( t ) &Unsorted,
 		bch::E_BUNCH_( epeios::row__ ) &Relations )
 	{
-		uym::datum__ Buffer[sizeof( t )];
+		epeios::datum__ Buffer[sizeof( t )];
 #ifdef BCH_DBG
 		if ( Sorted.Amount() != Unsorted.Amount() )
 			ERRu();

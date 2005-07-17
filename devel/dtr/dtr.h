@@ -167,7 +167,7 @@ namespace dtr {
 		}
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
-			tym::size__ Size,
+			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
 			Tree.Allocate( Size, Mode );

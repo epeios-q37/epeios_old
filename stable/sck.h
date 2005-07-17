@@ -237,19 +237,19 @@ namespace sck {
 	the amount effectively red. If 0 is returned, it means that the 'Timeout'
 	expired. If the connection no longer exists, then 'SCK_DISCONNECTED' is
 	returned. */
-	flw::size__ Read(
+	flw::bsize__ Read(
 		socket__ Socket,
-		flw::size__ Amount,
+		flw::bsize__ Amount,
 		void *Buffer,
 		duration__ TimeOut = SCK_INFINITE );
 
 	/*f Write up to 'Amount' bytes from 'Buffer' to the socket 'Socket'. Return
 	the amount effectively written. If 0 is returned, it means 'TimeOut' expired.
 	If connection no longer exists, then 'SCK_DISCONNECTED' is returned. */
-	flw::size__ Write(
+	flw::bsize__ Write(
 		socket__ Socket,
 		const void *Buffer,
-		flw::size__ Amount,
+		flw::bsize__ Amount,
 		duration__ TimeOut = SCK_INFINITE );
 
 	//f Close the socket 'Socket'.
@@ -278,14 +278,14 @@ namespace sck {
 		bso::bool__ _Error;
 		flw::datum__ _Cache[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	protected:
-		virtual flw::size__ FLWRead(
-			flw::size__ Minimum,
+		virtual flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Buffer,
-			flw::size__ Wanted );
-		virtual flw::size__ FLWWrite(
+			flw::bsize__ Wanted );
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::size__ Wanted,
-			flw::size__ Minimum,
+			flw::bsize__ Wanted,
+			flw::bsize__ Minimum,
 			bool Synchronization );
 	public:
 		void reset( bool P = true )
@@ -302,7 +302,7 @@ namespace sck {
 			_Error = false;
 		}
 		socket_ioflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX, Mutex, Mutex )
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex )
 		{
 			reset( false );
 		}
@@ -313,7 +313,7 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
-			flw::amount__ AmountMax,
+			flw::size__ AmountMax,
 			duration__ TimeOut )
 		{
 			reset();

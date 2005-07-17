@@ -67,7 +67,10 @@ public:
 		to be realized at the launching of the application  */
 
 		if ( sizeof( bso::bsize__ ) != 4 )
-			ERRc(); //If this error occurs, then the definition of 'p_bsize__' must be modified.
+			ERRc(); //If this error occurs, then the definition of 'p_msize__' must be modified.
+
+		if ( sizeof( bso::bsize__ ) != sizeof(int ) )
+			ERRc();
 	}
 	~bsopersonnalization( void )
 	{

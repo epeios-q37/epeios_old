@@ -73,21 +73,17 @@ namespace mmm {
 namespace mdr {
 
 	//t The position in a memory.
-	typedef bso::ulong__	row__;
-	#define MDR_ROW_MAX		( BSO_ULONG_MAX - 1 )	// 'BSO_ULONG_MAX' is 'NONE'.
+	typedef bso::msize__	row_t__;
+	#define MDR_ROW_T_MAX		( BSO_MSIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
 
 	//t The size of a memory.
-	typedef bso::ulong__	size__;
-	#define MDR_SIZE_MAX	BSO_ULONG_MAX
+	typedef bso::msize__	size__;
+	#define MDR_SIZE_MAX	BSO_MSIZE_MAX
 
 	//t The portable version of a 'size__'.
-	typedef bso::p_ulong__	p_size__;
-	#define MDR_P_SIZE_MAX	BSO_P_ULONG_MAX
-
-	//t The size of a buffer.
-	typedef bso::bsize__	bsize__;
-	#define MDR_BSIZE_MAX	BSO_BSIZE_MAX
+	typedef bso::p_msize__	p_size__;
+	#define MDR_P_SIZE_MAX	BSO_P_MSIZE_MAX
 
 	//t The type of the datum in a memory.
 	typedef bso::raw__	datum__;
@@ -111,14 +107,14 @@ namespace mdr {
 	protected:
 		//v Recall 'Amount' at position 'Position' and put them in 'Buffer'.
 		virtual void MDRRecall(
-			row__ Position,
-			bsize__ Amount,
+			row_t__ Position,
+			size__ Amount,
 			datum__ *Buffer ) = 0;
 		//v Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
 		virtual void MDRStore(
 			const datum__ *Buffer,
-			bsize__ Amount,
-			row__ Position )
+			size__ Amount,
+			row_t__ Position )
 		{
 			ERRu();
 			// For read-only memory.
@@ -156,8 +152,8 @@ namespace mdr {
 		{}
 		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
 		void Recall(
-			row__ Position,
-			bsize__ Amount,
+			row_t__ Position,
+			size__ Amount,
 			datum__ *Buffer )
 		{
 			MDRRecall( Position, Amount, Buffer );
@@ -165,8 +161,8 @@ namespace mdr {
 		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
 		void Store(
 			const datum__ *Buffer,
-			bsize__ Amount,
-			row__ Position )
+			size__ Amount,
+			row_t__ Position )
 		{
 			MDRStore( Buffer, Amount, Position );
 		}

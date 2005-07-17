@@ -482,7 +482,7 @@ namespace tol {
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'clock()' only return how long
 	the application is using the processor.*/
-	inline unsigned long Clock( void )
+	inline time_t Clock( void )
 	{
 		timeb T;
 
@@ -504,7 +504,7 @@ namespace tol {
 	void Suspend( unsigned long Delay );
 
 	//f Wait 'Seconds' seconds.
-	inline void Wait( unsigned int Seconds )
+	inline void Wait( unsigned long Seconds )
 	{
 		Suspend( Seconds * 1000 );
 	}
@@ -593,7 +593,7 @@ namespace tol {
 namespace tol {
 	/*f Force the program to exit after 'Seconds' second.
 	Usefull to force a server to exit to obtain the profiling file. */
-	void ForceExit( unsigned int Seconds );
+	void ForceExit( unsigned long Seconds );
 
 	//f Tell the remainder to give hand to the next thread.
 	void Defer( void );

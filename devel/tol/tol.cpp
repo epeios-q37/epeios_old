@@ -146,11 +146,12 @@ void tol::Suspend( unsigned long Delay )
 }
 
 
+
 #ifdef CPE__MT
 namespace {
 	void WaitAndExit( void *UP )
 	{
-		tol::Wait( (unsigned int)UP );
+		tol::Wait( (unsigned long)(intptr_t)UP );
 		exit( EXIT_SUCCESS );
 	}
 }
@@ -167,9 +168,9 @@ void tol::Defer( void )
 #endif
 }
 
-void tol::ForceExit( unsigned int Seconds )
+void tol::ForceExit( unsigned long Seconds )
 {
-	mtk::Launch( WaitAndExit, (void *)Seconds );
+	mtk::Launch( WaitAndExit, (void *)(intptr_t)Seconds );
 }
 #endif
 

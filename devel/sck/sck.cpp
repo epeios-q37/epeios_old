@@ -69,9 +69,9 @@ bool sck::Ready_ = true;
 #	error "Unknow compiler enviroment"
 #endif
 
-flw::size__ sck::Read(
+flw::bsize__ sck::Read(
 	socket__ Socket,
-	flw::size__ Amount,
+	flw::bsize__ Amount,
 	void *Buffer,
 	duration__ TimeOut )
 {
@@ -114,13 +114,13 @@ flw::size__ sck::Read(
 	else
 		ERRs();
 
-	return (flw::size__)Result;
+	return Result;
 }
 
-flw::size__ sck::Write(
+flw::bsize__ sck::Write(
 	socket__ Socket,
 	const void *Buffer,
-	flw::size__ Amount,
+	flw::bsize__ Amount,
 	duration__ TimeOut )
 {
 	fd_set fds;
@@ -162,24 +162,24 @@ flw::size__ sck::Write(
 	else
 		ERRs();
 
-	return (flw::size__)Result;
+	return Result;
 }
 
 
-flw::size__ sck::socket_ioflow___::FLWRead(
-	flw::size__ Minimum,
+flw::bsize__ sck::socket_ioflow___::FLWRead(
+	flw::bsize__ Minimum,
 	flw::datum__ *Buffer,
-	flw::size__ Wanted )
+	flw::bsize__ Wanted )
 {
-	flw::size__ Amount = 0;
+	flw::bsize__ Amount = 0;
 
 	if ( Minimum != 0 )
 	{
-		flw::size__ Result;
+		flw::bsize__ Result;
 		
 		while( Minimum > Amount ) {
-			if ( ( Result = sck::Read( _Socket, (flw::size__)( Wanted - Amount ), Buffer + Amount, _TimeOut ) ) == SCK_DISCONNECTED )
-				if ( ( Result = (flw::size__)iflow__::HandleEOFD( Buffer, (flw::size__)( Wanted - Amount ) ) ) == 0 ) {
+			if ( ( Result = sck::Read( _Socket, ( Wanted - Amount ), Buffer + Amount, _TimeOut ) ) == SCK_DISCONNECTED )
+				if ( ( Result = iflow__::HandleEOFD( Buffer, ( Wanted - Amount ) ) ) == 0 ) {
 					_Socket = SCK_INVALID_SOCKET;
 					_Error = true;
 					ERRd();
@@ -201,20 +201,20 @@ flw::size__ sck::socket_ioflow___::FLWRead(
 }
 
 
-flw::size__ sck::socket_ioflow___::FLWWrite(
+flw::bsize__ sck::socket_ioflow___::FLWWrite(
 	const flw::datum__ *Buffer,
-	flw::size__ Wanted,
-	flw::size__ Minimum,
+	flw::bsize__ Wanted,
+	flw::bsize__ Minimum,
 	bool Synchronization )
 {
-	flw::size__ Amount = 0;
+	flw::bsize__ Amount = 0;
 
 	if ( _Error )
 		ERRd();
 
 	if ( Minimum != 0 )
 	{
-		flw::size__ Result;
+		flw::bsize__ Result;
 		
 		while( Minimum > Amount ) {
 			if ( ( Result = sck::Write( _Socket, Buffer + Amount, Wanted - Amount, _TimeOut ) ) == SCK_DISCONNECTED ) {

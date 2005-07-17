@@ -1,6 +1,10 @@
 $Id$
 
-11/07/05
+16/07/05 :
+	- General :
+		- Adaptation à VC8.
+
+11/07/05 :
 	- ERR :
 		- Correction affichage message d'erreur sur la mauvaise console.
 

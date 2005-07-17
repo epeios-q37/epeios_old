@@ -104,10 +104,10 @@ namespace flx {
 		{
 			ERRf();
 		}
-		virtual flw::size__ FLWRead(
-			flw::size__ Minimum,
+		virtual flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Buffer,
-			flw::size__ Wanted )
+			flw::bsize__ Wanted )
 		{
 			if ( !Taille_ )
 				if ( Minimum )
@@ -139,7 +139,7 @@ namespace flx {
 			Tampon_ = NULL;
 		}
 		buffer_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -174,16 +174,16 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
-		virtual flw::size__ FLWWrite(
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::size__ Wanted,
-			flw::size__ Minimum,
+			flw::bsize__ Wanted,
+			flw::bsize__ Minimum,
 			bool Synchronization )
 		{
-			if ( Wanted > (flw::amount__)Taille_ )
+			if ( Wanted > Taille_ )
 				ERRu();
 
-			memcpy( Tampon_, Buffer, (size_t)Wanted );
+			memcpy( Tampon_, Buffer, Wanted );
 
 			Tampon_ += Wanted;
 			Taille_ -= Wanted;
@@ -199,7 +199,7 @@ namespace flx {
 			Taille_ = 0;
 		}
 		buffer_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -226,14 +226,14 @@ namespace flx {
 	: public flw::iflow__
 	{ 
 	protected:
-		virtual flw::size__ FLWRead(
-			flw::size__ Minimum,
+		virtual flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Buffer,
-			flw::size__ Wanted )
+			flw::bsize__ Wanted )
 		{
-			if ( Wanted > (flw::amount__)( Bunch_->Amount() - Position_ ) )
+			if ( (flw::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
 			{
-				Wanted = (flw::amount__)( Bunch_->Amount() - Position_ );
+				Wanted = ( Bunch_->Amount() - Position_ );
 
 				if ( Wanted < Minimum )
 					ERRf();
@@ -241,7 +241,7 @@ namespace flx {
 
 			if ( Wanted )
 			{
-				Bunch_->Recall( Position_, (epeios::bsize__)Wanted, (so__ *)Buffer );
+				Bunch_->Recall( Position_, Wanted, (so__ *)Buffer );
 				Position_ += Wanted;
 			}
 
@@ -254,7 +254,7 @@ namespace flx {
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
+		: iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -282,13 +282,13 @@ namespace flx {
 	: public flw::oflow__
 	{
 	protected:
-		virtual flw::size__ FLWWrite(
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::size__ Wanted,
-			flw::size__ Minimum,
+			flw::bsize__ Wanted,
+			flw::bsize__ Minimum,
 			bool Synchronization )
 		{
-			Bunch_->Append( (const so__ *)Buffer, (epeios::bsize__)Wanted );
+			Bunch_->Append( (const so__ *)Buffer, Wanted );
 
 			return Wanted;
 		}
@@ -298,7 +298,7 @@ namespace flx {
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_oflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
 		{
 			reset( false );
 		}
@@ -331,10 +331,10 @@ namespace flx {
 	: public flw::oflow__
 	{
 	protected:
-		virtual flw::size__ FLWWrite(
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *,
-			flw::size__ Wanted,
-			flw::size__,
+			flw::bsize__ Wanted,
+			flw::bsize__,
 			bool )
 		{
 			return Wanted;
@@ -344,7 +344,7 @@ namespace flx {
 		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
 		dump_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex )
+		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
 		{}
 	};
 }

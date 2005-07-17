@@ -74,7 +74,11 @@ namespace str {
 	public:
 		static epeios::size__ SizeOf( const char *S )
 		{
-			return strlen( S );
+#ifdef STR_DBG
+			if ( strlen( S ) > EPEIOS_SIZE_MAX )
+				ERRu();
+#endif
+			return (epeios::size__)strlen( S );
 		}
 	};
 
@@ -115,7 +119,11 @@ namespace str {
 		//f Initialization with 'Seed'.
 		void Init( const bso::char__ *Seed )
 		{
-			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, strlen( Seed ) );
+#ifdef STR_DBG
+			if ( strlen( Seed ) > EPEIOS_SIZE_MAX )
+				ERRu();
+#endif
+			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, (epeios::size__)strlen( Seed ) );
 		}
 		//f Initialization with 'Seed'.
 		void Init( const str::string_ &Seed )
@@ -126,8 +134,12 @@ namespace str {
 		}
 		string_ &operator =( const char *Chaine )
 		{
+#ifdef STR_DBG
+			if ( strlen( Chaine ) > EPEIOS_SIZE_MAX )
+				ERRu();
+#endif
 			Init();
-			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, strlen( Chaine ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, (epeios::size__)strlen( Chaine ) );
 
 			return *this;
 		}
@@ -376,7 +388,7 @@ namespace str {
 		}
 		string(
 			const char *S,
-			size_t Length )
+			epeios::size__ Length )
 		: string_( static_ )
 		{
 			reset( false );

@@ -318,10 +318,10 @@ ERREpilog
 				ERRf();
 		}
 	protected:
-		virtual flw::size__ FLWWrite(
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::size__ Wanted,
-			flw::size__ Minimum,
+			flw::bsize__ Wanted,
+			flw::bsize__ Minimum,
 			bool Synchronization )
 		{
 			flw::size__ Amount = 0;
@@ -334,12 +334,12 @@ ERREpilog
 		{
 			_Synchronize();
 		}
-		virtual flw::size__ FLWRead(
-			flw::size__ Minimum,
+		virtual flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Buffer,
-			flw::size__ Wanted )
+			flw::bsize__ Wanted )
 		{
-			flw::size__ Amount = 0;
+			flw::bsize__ Amount = 0;
 
 			if ( !_Prepare() )
 				_Synchronize();
@@ -375,7 +375,7 @@ ERREpilog
 			_Core = NULL;
 		}
 		client_flow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX, Mutex, Mutex )
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex )
 		{
 			reset( false );
 		}

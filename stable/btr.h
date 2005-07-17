@@ -65,13 +65,11 @@ extern class ttr_tutor &BTRTutor;
 #include "bch.h"
 
 namespace btr {
-	using namespace epeios;
-
 	//c Node. Internal use.
 	class _node__
 	{
 	public:
-		row_t__
+		epeios::row_t__
 			// Parent of the node.
 			Parent,
 			// Left children.
@@ -111,13 +109,13 @@ namespace btr {
 			_nodes_::Init();
 		}
 		void Prepare(
-			row_t__ Start,
-			row_t__ End );
+			epeios::row_t__ Start,
+			epeios::row_t__ End );
 		void Release(
-			row_t__ Start,
-			row_t__ End );
+			epeios::row_t__ Start,
+			epeios::row_t__ End );
 		//f Release father of 'Node'.
-		void ReleaseParent( row_t__ Node )
+		void ReleaseParent( epeios::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -125,7 +123,7 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Release left child of 'Node'.
-		void ReleaseLeft( row_t__ Node )
+		void ReleaseLeft( epeios::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -133,7 +131,7 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Release right child of 'Node'.
-		void ReleaseRight( row_t__ Node )
+		void ReleaseRight( epeios::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -141,39 +139,39 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Return true if 'Node' has a father.
-		bso::bool__ HasParent( row_t__ Node ) const
+		bso::bool__ HasParent( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Parent != NONE;
 		}
 		//f Return true if 'Node' has left chid.
-		bso::bool__ HasLeft( row_t__ Node ) const
+		bso::bool__ HasLeft( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Left != NONE;
 		}
 		//f Return true if 'Node' has right chid.
-		bso::bool__ HasRight( row_t__ Node ) const
+		bso::bool__ HasRight( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Right != NONE;
 		}
 		//f Return father of 'Node', or 'NONE' if nonde.
-		row_t__ Parent( row_t__ Node ) const
+		epeios::row_t__ Parent( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Parent;
 		}
 		//f Return left child of 'Node', or 'NONE' if nonde.
-		row_t__ Left( row_t__ Node ) const
+		epeios::row_t__ Left( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Left;
 		}
 		//f Return right child of 'Node', or 'NONE' if nonde.
-		row_t__ Right( row_t__ Node ) const
+		epeios::row_t__ Right( epeios::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Right;
 		}
 		//f 'Left' becomes left child of 'Parent'.
 		void BecomeLeft(
-			row_t__ Left,
-			row_t__ Parent )
+			epeios::row_t__ Left,
+			epeios::row_t__ Parent )
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
 
@@ -185,8 +183,8 @@ namespace btr {
 		}
 		//f 'Right' becomes left child of 'Parent'.
 		void BecomeRight(
-			row_t__ Right,
-			row_t__ Parent )
+			epeios::row_t__ Right,
+			epeios::row_t__ Parent )
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
 
@@ -199,12 +197,12 @@ namespace btr {
 /*		row_t__ TrouverAieulMaleAvecRight(
 			row_t__ Depart,
 			row_t__ Racine ) const;
-*/		row_t__ ForceParent(
-			row_t__ Node,
-			row_t__  Parent )
+*/		epeios::row_t__ ForceParent(
+			epeios::row_t__ Node,
+			epeios::row_t__  Parent )
 		{
 			_node__ Lien = _nodes_::Get( Node );
-			row_t__ AncienParent = Lien.Parent;
+			epeios::row_t__ AncienParent = Lien.Parent;
 
 			Lien.Parent = Parent;
 
@@ -213,30 +211,30 @@ namespace btr {
 			return AncienParent;
 		}
 		//f Return true if 'Node' is a left child.
-		bso::bool__ IsLeft( row_t__ Node ) const
+		bso::bool__ IsLeft( epeios::row_t__ Node ) const
 		{
 			return HasParent( Node ) && Left( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is a right.
-		bso::bool__ IsRight( row_t__ Node ) const
+		bso::bool__ IsRight( epeios::row_t__ Node ) const
 		{
 			return HasParent( Node ) && Right( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is child.
-		bso::bool__ IsChild( row_t__ Node ) const
+		bso::bool__ IsChild( epeios::row_t__ Node ) const
 		{
 			return HasParent( Node );
 		}
 		//f Return true if 'Node' is parent.
-		bso::bool__ IsParent( row_t__ Node ) const
+		bso::bool__ IsParent( epeios::row_t__ Node ) const
 		{
 			return HasLeft( Node ) || HasRight( Node );
 		}
 		void PrintStructure(
-			row_t__ Racine,
+			epeios::row_t__ Racine,
 			txf::text_oflow__ &Flot ) const;
 		//f Return true if 'Node' has a child.
-		bso::bool__ HasChild( row_t__ Node ) const
+		bso::bool__ HasChild( epeios::row_t__ Node ) const
 		{
 			return HasRight( Node ) || HasLeft( Node );
 		}

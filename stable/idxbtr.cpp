@@ -62,9 +62,9 @@ namespace idxbtr {
 	struct desc__
 	{
 		// Racine de l'arbre. N'a pas de fils droit. L'arbre de fils gauche est complet.
-		tym::row__ Racine;
+		epeios::row__ Racine;
 		// Niveau de l'arbre.
-		tym::size__ Niveau;
+		epeios::size__ Niveau;
 	};
 
 	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
@@ -124,7 +124,7 @@ namespace idxbtr {
 		epeios::row_t__ Root )
 	{
 	ERRProlog
-		tym::row__ Current, Head, Temp;
+		epeios::row__ Current, Head, Temp;
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
@@ -161,10 +161,10 @@ namespace idxbtr {
 		epeios::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER_ &Pilote )
 	{
-		tym::row_t__ Racine, &Courant = Premier;
+		epeios::row_t__ Racine, &Courant = Premier;
 	ERRProlog
 		stk::E_STACK( desc__ ) Pile;
-		tym::size__ Niveau = 0;
+		epeios::size__ Niveau = 0;
 		desc__ Sommet;
 		bso::bool__ Boucler = true;
 	ERRBegin

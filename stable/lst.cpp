@@ -71,7 +71,7 @@ epeios::row_t__ lst::Successeur_(
 
 // Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
 epeios::row_t__ lst::Predecesseur_(
-	tym::row_t__ Element,
+	epeios::row_t__ Element,
 	const store_ &Libres )
 {
 	bso::bool__ Trouve = false;

@@ -68,10 +68,6 @@ extern class ttr_tutor &QUETutor;
 #include "stk.h"
 
 namespace que {
-
-	using tym::memory_;
-	using namespace epeios;
-
 	//e dump direction.	
 	enum direction
 	{
@@ -90,9 +86,9 @@ namespace que {
 	{
 	public:
 		// Previous node.
-		row_t__ Previous;
+		epeios::row_t__ Previous;
 		// Next node.
-		row_t__ Next;
+		epeios::row_t__ Next;
 		link__( void )
 		{
 			Previous = Next = NONE;
@@ -109,8 +105,8 @@ namespace que {
 		}
 		// To help swapping. Replace all reference to 'Node1' by 'Node2'.
 		void Replace(
-			row_t__ Node1,
-			row_t__ Node2 )
+			epeios::row_t__ Node1,
+			epeios::row_t__ Node2 )
 		{
 			if ( Previous == Node1 )
 				Previous = Node2;
@@ -121,7 +117,7 @@ namespace que {
 
 	using namespace aem;
 
-	typedef bch::E_BUNCHt_( que::link__, row__ ) _lbunch_;
+	typedef bch::E_BUNCHt_( que::link__, epeios::row__ ) _lbunch_;
 
 	//c A set lof links.
 	class links_
@@ -145,8 +141,8 @@ namespace que {
 		}
 		//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
 		void SetPrevious(
-			row_t__ Item,
-			row_t__ Value )
+			epeios::row_t__ Item,
+			epeios::row_t__ Value )
 		{
 			que::link__ L = Get( Item );
 
@@ -156,8 +152,8 @@ namespace que {
 		}
 		//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
 		void SetNext(
-			row_t__ Item,
-			row_t__ Value )
+			epeios::row_t__ Item,
+			epeios::row_t__ Value )
 		{
 			que::link__ L = Get( Item );
 
@@ -171,8 +167,8 @@ namespace que {
 			_lbunch_::Init();
 		}
 		void Initialize(
-			row_t__ Begin,
-			row_t__ End );
+			epeios::row_t__ Begin,
+			epeios::row_t__ End );
 	};
 	
 	E_AUTO( links )
@@ -265,10 +261,10 @@ namespace que {
 		}
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
-			tym::size__ Size,
+			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
-			tym::size__ Before = Links.Amount();
+			epeios::size__ Before = Links.Amount();
 			Links.Allocate( Size, Mode );
 
 			if ( Before < Size )
@@ -352,12 +348,12 @@ namespace que {
 			Links.Store( LNode, *Node );
 		}
 		//f Return the extent of the queue.
-		tym::size__ Extent( void ) const
+		epeios::size__ Extent( void ) const
 		{
 			return Links.Extent();
 		}
 		//f Return the amount of node in the queue.
-		tym::size__ Amount( void ) const
+		epeios::size__ Amount( void ) const
 		{
 			return Links.Amount();
 		}
@@ -419,7 +415,7 @@ namespace que {
 	private:
 		r Head_;
 		r Tail_;
-		tym::size__ Amount_;
+		epeios::size__ Amount_;
 	#ifdef QUE_DBG
 		void Test_( void ) const
 		{
@@ -515,7 +511,7 @@ namespace que {
 			Amount_--;
 		}
 		//f Return amount of node in the queue.
-		tym::size__ Amount( const que::E_QUEUEt_(r) & ) const
+		epeios::size__ Amount( const que::E_QUEUEt_(r) & ) const
 		{
 			return Amount_;
 		}
@@ -641,7 +637,7 @@ namespace que {
 		}
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
-			tym::size__ Size,
+			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
 			Queue.Allocate( Size, Mode );
@@ -671,12 +667,12 @@ namespace que {
 			S_.QueueManager.Delete( Node, Queue );
 		}
 		//f Return amount of node in the queue.
-		tym::size__ Amount( void ) const
+		epeios::size__ Amount( void ) const
 		{
 			return S_.QueueManager.Amount( Queue );
 		}
 		//f Return extent of node in the queue.
-		tym::size__ Extent( void ) const
+		epeios::size__ Extent( void ) const
 		{
 			return Queue.Extent();
 		}

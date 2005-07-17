@@ -69,8 +69,6 @@ extern class ttr_tutor &FLMTutor;
 #include "fil.h"
 
 namespace flm {
-	using namespace mdr;
-
 	using iof::amount__;
 
 	typedef amount__ position__;
@@ -318,24 +316,32 @@ namespace flm {
 
 	//c The standard memory driver which handle a file as memory.
 	class file_memory_driver_
-	: public E_MEMORY_DRIVER_,
+	: public mdr::E_MEMORY_DRIVER_,
 	  public memoire_fichier_base_
 	{
 	protected:
 		virtual void MDRRecall(
-			row__ Position,
-			mdr::bsize__ Amount,
-			datum__ *Buffer )
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer )
 		{
-			memoire_fichier_base_::Lire( (position__)Position, Amount, Buffer );
+#ifdef FLM_DBG
+			if ( Amount > UINT_MAX )
+				ERRl();
+#endif
+			memoire_fichier_base_::Lire( (position__)Position, (unsigned int)Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRStore(
-			const datum__ *Buffer,
-			mdr::bsize__ Amount,
-			row__ Position )
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
-			memoire_fichier_base_::Ecrire( Buffer, Amount, (position__)Position );
+#ifdef FLM_DBG
+			if ( Amount > UINT_MAX )
+				ERRl();
+#endif
+			memoire_fichier_base_::Ecrire( Buffer, (unsigned int)Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( mdr::size__ Size )

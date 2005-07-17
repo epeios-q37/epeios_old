@@ -67,8 +67,6 @@ extern class ttr_tutor &TYMTutor;
 #include "epeios.h"
 
 namespace tym {
-	using namespace epeios;
-
 	#define TYM_MAX_SIZE	UYM_MAX_SIZE
 
 	//c Typed memory core. Don't use; for internal use only.
@@ -79,7 +77,7 @@ namespace tym {
 		// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
 		void _Recall(
 			epeios::row_t__ Position,
-			epeios::bsize__ Nombre,
+			epeios::size__ Nombre,
 			t *Tampon ) const
 		{
 			b::Recall( Position * sizeof( t ), Nombre * sizeof( t ), (epeios::datum__ *)Tampon );
@@ -87,7 +85,7 @@ namespace tym {
 		// écrit 'Taille' objets de 'Tampon' à la position 'Position'
 		void _Store(
 			const t *Tampon,
-			epeios::bsize__ Nombre,
+			epeios::size__ Nombre,
 			epeios::row_t__ Position )
 		{
 			b::Store( (epeios::datum__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
@@ -122,7 +120,7 @@ namespace tym {
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Recall(
 			r Position,
-			epeios::bsize__ Amount,
+			epeios::size__ Amount,
 			t *Buffer ) const
 		{
 			_Recall( *Position, Amount, Buffer );
@@ -130,7 +128,7 @@ namespace tym {
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'. Return 'Buffer'.
 		t *Get(
 			r Position,
-			epeios::bsize__ Amount,
+			epeios::size__ Amount,
 			t *Buffer ) const
 		{
 			_Recall( *Position, Amount, Buffer );
@@ -156,7 +154,7 @@ namespace tym {
 		//f Store 'Amount' object in 'Buffer' at 'Position'.
 		void Store(
 			const t *Buffer,
-			epeios::bsize__ Amount,
+			epeios::size__ Amount,
 			r Position )
 		{
 			_Store( Buffer, Amount, *Position );
@@ -194,7 +192,7 @@ namespace tym {
 			r Position,
 			epeios::size__ Amount )
 		{
-			b::Store( (uym::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
+			b::Store( (mdr::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
 		}
 		//f Return the position from 'Object' between 'Begin' and 'End' (both included) or 'NONE' if non-existant.
 		r Search(
@@ -204,7 +202,7 @@ namespace tym {
 		{
 			epeios::row_t__ Position;
 
-			if ( ( Position = b::Search( (uym::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Search( (mdr::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
 
 			return Position;

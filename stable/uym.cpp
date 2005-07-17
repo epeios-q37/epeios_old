@@ -63,11 +63,13 @@ using namespace uym;
 #	define BUFFER_SIZE	10000
 #endif
 
+using namespace mdr;
+
 bso::sign__ uym::Compare(
 	const untyped_memory_ &E1,
 	const untyped_memory_ &E2,
-	row__ DebutE1,
-	row__ DebutE2,
+	row_t__ DebutE1,
+	row_t__ DebutE2,
 	size__ Nombre )
 {
 	bso::sign__ Resultat;
@@ -75,7 +77,7 @@ bso::sign__ uym::Compare(
 
 	if ( Nombre )
 	{
-		uym::size__ Taille = Nombre > BUFFER_SIZE ? BUFFER_SIZE : Nombre;
+		size__ Taille = Nombre > BUFFER_SIZE ? BUFFER_SIZE : Nombre;
 
 		datum__ *T1 = Tampon;
 		datum__ *T2 = Tampon + BUFFER_SIZE;
@@ -102,12 +104,12 @@ bso::sign__ uym::Compare(
 
 inline void uym::_Copy(
 	const class untyped_memory_ &Source,
-	row__ PosSource,
+	row_t__ PosSource,
 	class untyped_memory_ &Dest,
-	row__ PosDest,
+	row_t__ PosDest,
 	size__ Nombre,
 	datum__ *Tampon,
-	bsize__ TailleTampon )
+	size__ TailleTampon )
 {
 	if ( PosSource >= PosDest )
 	{
@@ -124,7 +126,7 @@ inline void uym::_Copy(
 		if ( Nombre )
 		{
 			Source.Recall( PosSource, Nombre, Tampon );
-			Dest.Store( Tampon, (bsize__)Nombre, PosDest );
+			Dest.Store( Tampon, Nombre, PosDest );
 		}
 	}
 	else
@@ -145,7 +147,7 @@ inline void uym::_Copy(
 		if ( Nombre )
 		{
 			Source.Recall( PosSource - Nombre, Nombre, Tampon );
-			Dest.Store( Tampon, (bsize__)Nombre, PosDest - Nombre );
+			Dest.Store( Tampon, Nombre, PosDest - Nombre );
 		}
 	}
 }
@@ -155,8 +157,8 @@ inline void uym::_Copy(
 sachant qu'il est de taille 'Taille'. */
 void untyped_memory_::Store(
 	const datum__ *Objet,
-	bsize__ Taille,
-	row__ Position,
+	size__ Taille,
+	row_t__ Position,
 	size__ Nombre )
 {
 	while ( Nombre-- )
@@ -166,11 +168,11 @@ void untyped_memory_::Store(
 	}
 }
 
-row__ untyped_memory_::Search(
+row_t__ untyped_memory_::Search(
 	const datum__ *Objet,
-	size_t Taille,
-	row__ Debut,
-	row__ Fin ) const
+	size__ Taille,
+	row_t__ Debut,
+	row_t__ Fin ) const
 {
 	if ( Taille > BUFFER_SIZE )
 		ERRl();
@@ -210,8 +212,8 @@ row__ untyped_memory_::Search(
 void untyped_memory_::Store(
 	const untyped_memory_ &Source,
 	size__ Amount,
-	row__ Position,
-	row__ Offset )
+	row_t__ Position,
+	row_t__ Offset )
 {
 	datum__ Buffer[BUFFER_SIZE];
 
@@ -311,9 +313,9 @@ ERREpilog
 
 void uym::_Fill(
 	const datum__ *Object,
-	bsize__ Size,
+	size__ Size,
 	size__ Count,
-	row__ Position,
+	row_t__ Position,
 	datum__ *Data )
 {
 	while( Count )
@@ -323,7 +325,7 @@ void uym::_Fill(
 #if 0
 row__ uym::_Position(
 	const datum__ *Objet,
-	bsize__ Size,
+	size__ Size,
 	row__ Begin,
 	row__ End,
 	const datum__ *Data )

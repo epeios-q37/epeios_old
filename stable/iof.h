@@ -119,17 +119,17 @@ namespace iof {
 	private:
 		flw::datum__ Cache_[IOF__BUFFER_SIZE];
 	protected:
-		flw::size__ FLWWrite(
+		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
-			flw::size__ Minimum,
-			flw::size__ Demande,
+			flw::bsize__ Minimum,
+			flw::bsize__ Demande,
 			bool Synchronize )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			flw::size__ Written = 0;
+			flw::bsize__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
@@ -142,7 +142,7 @@ namespace iof {
 	public:
 		io_oflow__(void )
 		: output__( IOF_UNDEFINED_DESCRIPTOR ),
-		  oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX ),
+		  oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX ),
 		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{}
 		io_oflow__(
@@ -153,7 +153,7 @@ namespace iof {
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
 		: output__( D ),
-		  oflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex ),
+		  oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex ),
 		  io_core__( D )
 		{}
 		io_oflow__(
@@ -181,11 +181,11 @@ namespace iof {
 	private:
 		flw::datum__ Cache_[IOF__BUFFER_SIZE];
 	private:
-		flw::amount__ _HandleAmount(
-			flw::amount__ Minimum,
+		flw::bsize__ _HandleAmount(
+			flw::bsize__ Minimum,
 			flw::datum__ *Tampon,
-			flw::amount__ Desire,
-			flw::amount__ AmountRead )
+			flw::bsize__ Desire,
+			flw::bsize__ AmountRead )
 		{
 			if ( AmountRead < Minimum )
 			{
@@ -201,16 +201,16 @@ namespace iof {
 			return AmountRead;
 		}
 	protected:
-		flw::size__ FLWRead(
-			flw::size__ Minimum,
+		flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Tampon,
-			flw::size__ Desire )
+			flw::bsize__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			flw::amount__ NombreLus = 0;
+			flw::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += input__::Read( Desire - NombreLus, Tampon );
@@ -220,7 +220,7 @@ namespace iof {
 	public:
 		io_iflow__(void )
 		: input__( IOF_UNDEFINED_DESCRIPTOR ),
-		  iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX ),
+		  iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX ),
 		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{}
 		io_iflow__(
@@ -231,7 +231,7 @@ namespace iof {
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
 		: input__( D ),
-		  iflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex ),
+		  iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex ),
 		  io_core__( D )
 		{}
 		io_iflow__(
@@ -260,11 +260,11 @@ namespace iof {
 	private:
 		flw::datum__ Cache_[2 * IOF__BUFFER_SIZE];
 	private:
-		flw::amount__ _HandleAmount(
-			flw::amount__ Minimum,
+		flw::bsize__ _HandleAmount(
+			flw::bsize__ Minimum,
 			flw::datum__ *Tampon,
-			flw::amount__ Desire,
-			flw::amount__ AmountRead )
+			flw::bsize__ Desire,
+			flw::bsize__ AmountRead )
 		{
 			if ( AmountRead < Minimum )
 			{
@@ -280,33 +280,33 @@ namespace iof {
 			return AmountRead;
 		}
 	protected:
-		flw::size__ FLWRead(
-			flw::size__ Minimum,
+		flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
 			flw::datum__ *Tampon,
-			flw::size__ Desire )
+			flw::bsize__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			flw::amount__ NombreLus = 0;
+			flw::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += input__::Read( Desire - NombreLus, Tampon );
 
 			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
 		}
-		flw::size__ FLWWrite(
+		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
-			flw::size__ Minimum,
-			flw::size__ Demande,
+			flw::bsize__ Minimum,
+			flw::bsize__ Demande,
 			bool Synchronize )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			flw::size__ Written = 0;
+			flw::bsize__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
@@ -319,7 +319,7 @@ namespace iof {
 	public:
 		io_ioflow__(void )
 		: io__( IOF_UNDEFINED_DESCRIPTOR ),
-		  ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ),
+		  ioflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ),
 		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{}
 		io_ioflow__(
@@ -330,7 +330,7 @@ namespace iof {
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
 		: io__( D ),
-		  ioflow__( Cache_, sizeof( Cache_ ), FLW_AMOUNT_MAX, Mutex, Mutex ),
+		  ioflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex, Mutex ),
 		  io_core__( D )
 		{}
 		io_ioflow__(

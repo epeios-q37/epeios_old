@@ -66,9 +66,6 @@ extern class ttr_tutor &MMITutor;
 #include "tym.h"
 
 namespace mmi {
-
-	using namespace epeios;
-
 	//t The type of an index in the indexed multimemory.
 	E_TYPEDEF( epeios::row_t__, index__ );
 
@@ -113,7 +110,7 @@ namespace mmi {
 		void Lire_(
 			index__ Index,
 			epeios::row_t__ Position,
-			epeios::bsize__ Taille,
+			epeios::size__ Taille,
 			epeios::datum__ *Tampon ) const
 		{
 			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon );
@@ -121,7 +118,7 @@ namespace mmi {
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
 			const epeios::datum__ *Tampon,
-			epeios::bsize__ Taille,
+			epeios::size__ Taille,
 			index__ Index,
 			epeios::row_t__ Position )
 		{
@@ -229,7 +226,7 @@ namespace mmi {
 		void Read(
 			index__ Index,
 			epeios::row_t__ Position,
-			epeios::bsize__ Amount,
+			epeios::size__ Amount,
 			epeios::datum__ *Buffer ) const
 		{
 			Lire_( Index, Position, Amount, Buffer );
@@ -237,7 +234,7 @@ namespace mmi {
 		//f Put 'Amount' bytes at 'Position' to the 'Index' memory from 'Buffer'.
 		void Write(
 			const epeios::datum__ *Buffer,
-			epeios::bsize__ Amount,
+			epeios::size__ Amount,
 			index__ Index,
 			epeios::row_t__ Position )
 		{
@@ -304,8 +301,8 @@ namespace mmi {
 		// memoire à laquelle il a été affecté
 	protected:
 		virtual void MDRRecall(
-			mdr::row__ Position,
-			mdr::bsize__ Amount,
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
 		{
 			Multimemoire_->Read( S_.Index, Position, Amount, Buffer );
@@ -313,8 +310,8 @@ namespace mmi {
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
 		virtual void MDRStore(
 			const epeios::datum__ *Buffer,
-			mdr::bsize__ Amount,
-			mdr::row__ Position )
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 			Multimemoire_->Write( Buffer, Amount, S_.Index, Position );
 		}
@@ -379,8 +376,8 @@ namespace mmi {
 		// memoire à laquelle il a été affecté
 	protected:
 		virtual void MDRRecall(
-			mdr::row__ Position,
-			mdr::bsize__ Amount,
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
 		{
 			Multimemoire_->Read( S_.Index, Position, Amount, Buffer );
@@ -388,8 +385,8 @@ namespace mmi {
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
 		virtual void MDRStore(
 			const mdr::datum__ *Buffer,
-			mdr::bsize__ Amount,
-			mdr::row__ Position )
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 			ERRu();
 		}

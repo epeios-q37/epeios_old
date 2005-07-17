@@ -65,9 +65,6 @@ extern class ttr_tutor &CVMTutor;
 #include "mdr.h"
 
 namespace cvm {
-
-	using namespace mdr;
-
 	//c Basic conventional memory.
 	class basic_conventional_memory
 	{
@@ -83,9 +80,9 @@ namespace cvm {
 	protected:
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		void Recall(
-			row__ Position,
-			size__ Amount,
-			datum__ *Buffer )
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer )
 		{
 	#ifdef CVM_DBG
 			if ( Amount )
@@ -95,9 +92,9 @@ namespace cvm {
 		}
 		// écrit 'Nombre' octets à partir de 'Position' dans 'Tampon'
 		void Store(
-			const datum__ *Buffer,
-			size__ Amount,
-			row__ Position )
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 	#ifdef CVM_DBG
 			if (Amount ) 
@@ -106,7 +103,7 @@ namespace cvm {
 			memcpy( Tampon_ + Position, Buffer, Amount );
 		}
 		// alloue 'Nombre' octets
-		void Allocate( size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			char *Tampon;
 
@@ -148,22 +145,22 @@ namespace cvm {
 	{
 	protected:
 		virtual void MDRRecall(
-			row__ Position,
-			bsize__ Amount,
-			datum__ *Buffer )
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer )
 		{
 			basic_conventional_memory::Recall( Position, Amount, Buffer );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRStore(
-			const datum__ *Buffer,
-			bsize__ Nombre,
-			row__ Position )
+			const mdr::datum__ *Buffer,
+			mdr::size__ Nombre,
+			mdr::row_t__ Position )
 		{
 			basic_conventional_memory::Store( Buffer, Nombre, Position );
 		}
 		// alloue 'Taille' octets
-		virtual void MDRAllocate( size__ Size )
+		virtual void MDRAllocate( mdr::size__ Size )
 		{
 			basic_conventional_memory::Allocate( Size );
 		}

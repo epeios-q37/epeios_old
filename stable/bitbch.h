@@ -75,9 +75,6 @@ des #define ci-dessous. */
 
 
 namespace bitbch {
-	using namespace epeios;
-	using aem::amount_extent_manager_;
-
 	// Type du receptacle de bits.
 	typedef bso::ubyte__		receptacle__;
 
@@ -121,10 +118,10 @@ namespace bitbch {
 	// N.B.: le contenu du tableau est inversé bit à bit
 	//c Bits set.
 	template <typename r> class bit_bunch_
-	: public amount_extent_manager_<r>
+		: public aem::amount_extent_manager_<r>
 	{
 	private:
-		tym::size__ Convert_( tym::size__ Amount )
+		epeios::size__ Convert_( epeios::size__ Amount )
 		{
 			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 : 0;
 		}
@@ -143,10 +140,10 @@ namespace bitbch {
 		}
 		// place un bit de valeur 'Valeur' à la position 'Position'
 		void Allouer_(
-			tym::size__ Nombre,
+			epeios::size__ Nombre,
 			aem::mode Mode = aem::mDefault )
 		{
-			if ( amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
+			if ( aem::amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
 				Table.Allocate( Convert_( Nombre ) );
 		}
 		// alloue 'Nombre' (>=1) bits
@@ -159,12 +156,12 @@ namespace bitbch {
 			typename tym::E_MEMORYt_(receptacle__, r )::s Table;
 		};
 		bit_bunch_( s &S )
-		: amount_extent_manager_<r>( S ),
+		: aem::amount_extent_manager_<r>( S ),
 		  Table( S.Table ){}
 		void reset( bool P = true )
 		{
 			Table.reset( P );
-			amount_extent_manager_<r>::reset( P );
+			aem::amount_extent_manager_<r>::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
@@ -176,7 +173,7 @@ namespace bitbch {
 		}
 		bit_bunch_ &operator =( const bit_bunch_ &O )
 		{
-			amount_extent_manager_<r>::operator =( O );
+			aem::amount_extent_manager_<r>::operator =( O );
 
 			Allocate( O.Amount() );
 			Table.Store( O.Table, Convert_( O.Amount() ) );
@@ -186,7 +183,7 @@ namespace bitbch {
 		//f Initialization.
 		void Init( void )
 		{
-			amount_extent_manager_<r>::Init();
+			aem::amount_extent_manager_<r>::Init();
 			Table.Init();
 		}
 	//	void Dup( bit_bunch &O );
@@ -209,7 +206,7 @@ namespace bitbch {
 		}
 		//f Allocate enough room to contain 'Size' bits.
 		void Allocate(
-			tym::size__ Size,
+			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
 			Allouer_( Size, Mode );
@@ -217,15 +214,15 @@ namespace bitbch {
 		//f Append 'Value' to the end of the set.
 		r Append( bso::bool__ Value )
 		{
-			Allouer_( amount_extent_manager_<r>::Amount() + 1, aem::mDefault );
+			Allouer_( aem::amount_extent_manager_<r>::Amount() + 1, aem::mDefault );
 
-			Store( Value, amount_extent_manager_<r>::Amount() - 1 );
-			return amount_extent_manager_<r>::Amount() - 1;
+			Store( Value, aem::amount_extent_manager_<r>::Amount() - 1 );
+			return aem::amount_extent_manager_<r>::Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
-		r New( tym::size__ Size = 1 )
+		r New( epeios::size__ Size = 1 )
 		{
-			row_t__ P = amount_extent_manager_<r>::Amount();
+			epeios::row_t__ P = aem::amount_extent_manager_<r>::Amount();
 
 			Allocate( P + Size );
 
@@ -239,7 +236,7 @@ namespace bitbch {
 			if ( Value )
 				Pattern = -1;
 
-			Table.Store( Pattern, 0, Convert_( amount_extent_manager_<r>::Amount() ) );
+			Table.Store( Pattern, 0, Convert_( aem::amount_extent_manager_<r>::Amount() ) );
 		}
 	};
 
@@ -432,7 +429,7 @@ namespace bitbch {
 			return Get( Position );
 		}
 		//f Allocate enough room to contain 'Size' pairs of bits.
-		void Allocate( tym::size__ Size )
+		void Allocate( epeios::size__ Size )
 		{
 			T1.Allocate( Size );
 			T2.Allocate( Size );
@@ -455,7 +452,7 @@ namespace bitbch {
 		const receptacle__ *O1,
 		const receptacle__ *O2,
 		receptacle__ *D,
-		tym::bsize__ Taille );
+		tym::size__ Taille );
 
 	/* Stocke dans 'D' 'O1' | 'O2', tous étant de taille 'Taille'.
 	'D' peut être 'O1' ou 'O2'. Usage interne. */
@@ -463,14 +460,14 @@ namespace bitbch {
 		const receptacle__ *O1,
 		const receptacle__ *O2,
 		receptacle__ *D,
-		tym::bsize__ Taille );
+		tym::size__ Taille );
 
 	/* Stocke dans 'D' ~'O' tou deux de taille 'Taille'. 'O' peut être 'D'.
 	Usage interne. */
 	void Non_(
 		const receptacle__ *O,              
 		receptacle__ *D,
-		tym::bsize__ Taille );
+		tym::size__ Taille );
 
 	/* Stocke dans 'D' la comparaison bit à bit de 'O1' et 'O2', tous 2 de taille 'Taille'.
 	Usage interne. */
@@ -478,16 +475,16 @@ namespace bitbch {
 		const receptacle__ *O1,
 		const receptacle__ *O2,
 		receptacle__ *D,
-		tym::bsize__ Taille );
+		tym::size__ Taille );
 
 	// Retourne le nombre de bits à un dans 'O4.
-	tym::bsize__ Compter_(
+	tym::size__ Compter_(
 		const receptacle__ *O,
-		tym::bsize__ Taille );
+		tym::size__ Taille );
 
 	tym::row__ Suivant_(
 		const receptacle__ *O,
-		tym::bsize__ Taille,
+		tym::size__ Taille,
 		bso::bool__ Valeur,
 		tym::row__ Courant );
 
@@ -503,13 +500,13 @@ namespace bitbch {
 	private:
 		receptacle__ Table_[t];
 	public:
-		receptacle__ Get( row_t__ Position ) const
+		receptacle__ Get( epeios::row_t__ Position ) const
 		{
 			return Table_[Position];
 		}
 		void Store(
 			receptacle__ Value,
-			row_t__ Position )
+			epeios::row_t__ Position )
 		{
 			Table_[Position] = Value;
 		}
@@ -521,19 +518,19 @@ namespace bitbch {
 		{
 			memset( Table_, BITBCH__RECEPTACLE_VALUE_MAX, t * sizeof( receptacle__ ) );
 		}
-		tym::bsize__ Taille( void ) const
+		epeios::size__ Taille( void ) const
 		{
 			return t;
 		}
-		row_t__ Suivant(
+		epeios::row_t__ Suivant(
 			bso::bool__ Value,
-			row_t__ Courant ) const
+			epeios::row_t__ Courant ) const
 		{
 			return Suivant_( Table_, t, Value, Courant );
 		}
-		row_t__ Precedent(
+		epeios::row_t__ Precedent(
 			bso::bool__ Value,
-			row_t__ Courant ) const
+			epeios::row_t__ Courant ) const
 		{
 			return Precedent_( Table_, Value, Courant );
 		}
@@ -578,7 +575,7 @@ namespace bitbch {
 	}
 
 	// Retourne le nombre de bits à un dans 'O'.
-	template <class t> inline tym::bsize__ Compter_( const t &O )
+	template <class t> inline tym::size__ Compter_( const t &O )
 	{
 		return Compter_( O.Table_, O.Taille() );
 	}
@@ -655,7 +652,7 @@ namespace bitbch {
 				return Previous( t - 1, Value );
 		}
 		//f Return the size.
-		tym::size__ Size( void ) const
+		epeios::size__ Size( void ) const
 		{
 			return t;
 		}
@@ -723,7 +720,7 @@ namespace bitbch {
 	}
 
 	//f Return the count of bit at true in 'O'.
-	template <class t> inline tym::bsize__ Count( const t &O )
+	template <class t> inline tym::size__ Count( const t &O )
 	{
 		return BSTCompter_( O.Table );
 	}

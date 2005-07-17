@@ -57,8 +57,6 @@ public:
 
 #include "cio.h"
 
-using cio::cout;
-
 using namespace mmm;
 
 #define	multimemoire	multimemory_
@@ -157,19 +155,19 @@ descripteur multimemoire::Allouer_( capacite Capacite )
 }
 */
 
-void multimemoire::AfficherStructure_( void ) const
+void multimemoire::AfficherStructure_( txf::text_oflow__ &Flow ) const
 {
 	descripteur Descripteur = PremierDescripteur_();
 	descripteur P, D, M, m;
-	size__ Nombre = 0, Total;
+	mdr::size__ Nombre = 0, Total;
 
 	while ( !HorsLimite_( Descripteur ) )
 	{
-		cio::cout << TailleEnNombre_( Descripteur ) << ": ";
+		Flow << (unsigned long)TailleEnNombre_( Descripteur ) << ": ";
 
 		if ( EstLibre_( Descripteur ) )
 		{
-			cout << '+';
+			Flow << '+';
 
 			if ( !Nombre )
 			{
@@ -191,28 +189,28 @@ void multimemoire::AfficherStructure_( void ) const
 			Nombre++;
 		}
 		else
-			cout << '-';
+			Flow << '-';
 
-		cout << Nombre_( Descripteur ) << txf::tab;
+		Flow << (unsigned long)Nombre_( Descripteur ) << txf::tab;
 
 		Descripteur = Successeur_( Descripteur );
 	}
 
-	cout << txf::nl << TailleEnNombre_( Descripteur ) << ": hors limite ...";
+	Flow << txf::nl << (unsigned long)TailleEnNombre_( Descripteur ) << ": hors limite ...";
 
 	if ( Nombre )
 	{
-		cout << txf::tab << "N:" << Nombre << txf::tab << "T: " << Total << txf::tab << "M: " << ( Total / Nombre ) << txf::nl
-			 << "P: " << TailleEnNombre_( P ) << ';' << Nombre_( P ) << txf::tab
-			 << "D: " << TailleEnNombre_( D ) << ';' << Nombre_( D ) << txf::tab
-			 << "m: " << TailleEnNombre_( m ) << ';' << Nombre_( m ) << txf::tab
-			 << "M: " << TailleEnNombre_( M ) << ';' << Nombre_( M );
+		Flow << txf::tab << "N:" << (unsigned long)Nombre << txf::tab << "T: " << (unsigned long)Total << txf::tab << "M: " << (unsigned long)( Total / Nombre ) << txf::nl
+			 << "P: " << (unsigned long)TailleEnNombre_( P ) << ';' << (unsigned long)Nombre_( P ) << txf::tab
+			 << "D: " << (unsigned long)TailleEnNombre_( D ) << ';' << (unsigned long)Nombre_( D ) << txf::tab
+			 << "m: " << (unsigned long)TailleEnNombre_( m ) << ';' << (unsigned long)Nombre_( m ) << txf::tab
+			 << "M: " << (unsigned long)TailleEnNombre_( M ) << ';' << (unsigned long)Nombre_( M );
 
 		if ( S_.Libre )
-			cout << txf::tab << "L: " << TailleEnNombre_( S_.Libre ) << ';' << Nombre_( S_.Libre );
+			Flow << txf::tab << "L: " << (unsigned long)TailleEnNombre_( S_.Libre ) << ';' << (unsigned long)Nombre_( S_.Libre );
 	}
 
-	cout << txf::nl;
+	Flow << txf::nl;
 }
 /*
 descripteur multimemoire::Descripteur_( indice_bloc IndiceBloc )

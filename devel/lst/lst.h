@@ -74,7 +74,7 @@ namespace lst {
 		const store_ &Libres );
 
 	epeios::row_t__ Predecesseur_(
-		tym::row_t__ Element,
+		epeios::row_t__ Element,
 		const store_ &Libres );
 
 	void Insert_(

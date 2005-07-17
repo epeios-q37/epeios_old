@@ -60,12 +60,12 @@ using namespace bch;
 void bch::_GetRelations(
 	const uym::untyped_memory_ &Sorted,
 	const uym::untyped_memory_ &Unsorted,
-	bsize__ Size,
-	uym::row__ Limit,
-	uym::datum__ *Buffer,
+	epeios::size__ Size,
+	epeios::row_t__ Limit,
+	epeios::datum__ *Buffer,
 	E_BUNCH_( epeios::row__ ) &Relations )
 {
-	uym::row__ Row = 0;
+	epeios::row_t__ Row = 0;
 
 	while ( Row < Limit ) {
 		Sorted.Recall( Row, Size, Buffer );
