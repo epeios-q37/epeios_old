@@ -145,6 +145,9 @@ void tol::Suspend( unsigned long Delay )
 #endif
 }
 
+#if _MSC_VER != 1400
+typedef unsigned long	intptr_t;
+#endif
 
 
 #ifdef CPE__MT

@@ -61,8 +61,8 @@ extern class ttr_tutor &LSTTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "bitbch.h"
 #include "ids.h"
+#include "bitbch.h"
 
 namespace lst {
 
