@@ -38,6 +38,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Client-Server Base Network Client
 &csdbns		&epeios	&\
 	&Client-Server Base Network Server
+&csdebd		&epeios	&\
+	&Client-Server EmBeD
 &csdscm		&epeios		&\
 	&Client-Server Devices Server CoMmon
 &csdsnc		&epeios	&\
@@ -72,12 +74,6 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Dynamic TRee
 &dummy		&epeios		&2000-\
 	&DUMMY project for testings.
-&ecsclt		&epeios		&\
-	&Embed Client-Server Client 
-&ecscor		&epeios		&\
-	&Embed Client-Server CORe
-&ecssrv		&epeios		&\
-	&Embed Client-Server SeRVer
 &epeios		&epeios		&2001, \
 	&EPEIOS often used features.
 &epsmsc		&epeios		&2000, \
