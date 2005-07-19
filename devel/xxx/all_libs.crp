@@ -38,14 +38,23 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Client-Server Base Network Client
 &csdbns		&epeios	&\
 	&Client-Server Base Network Server
+	
+&csddlc		&epeios		&\
+	&Client-Server Devices Dynamic Library Client
+&csddls		&epeios		&\
+	&Client-Server Devices Dynamic Library Server
+	
 &csdebd		&epeios	&\
 	&Client-Server EmBeD
 &csdscm		&epeios		&\
 	&Client-Server Devices Server CoMmon
-&csdsnc		&epeios	&\
+&csdsnc		&epeios		&\
 	&Client-Server Standard Network Client
-&csdsns		&epeios	&\
+&csdsns		&epeios		&\
 	&Client-Server Standard Network Client
+	
+&csducl		&epeios		&\
+	&Client-Server Devices Universal CLient
 	
 	
 &cslio		&epeios		&\

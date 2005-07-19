@@ -121,12 +121,14 @@ namespace csdebd {
 			bool Synchronization )
 		{
 			_Write.Append( Buffer, Wanted );
+
+			return Wanted;
 		}
 	public:
 		_generic__(
 			data_ &Read,
 			data_ &Write )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX ) ,
+		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ) ,
 		  _Read( Read ),
 		  _Write( Write )
 		{

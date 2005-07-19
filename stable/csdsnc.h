@@ -163,8 +163,7 @@ ERREpilog
 		}
 	public:
 		struct s {
-			tol::E_FPOINTER___( char ) Host;
-			tol::E_FPOINTER___( char ) Service;
+			const char* HostService;
 			mutex__ Mutex;
 			struct log__ {
 				log_functions__ *Functions;
@@ -186,8 +185,7 @@ ERREpilog
 					_Delete( S_.Log.Mutex );
 			}
 
-			S_.Host.reset( P );
-			S_.Service.reset( P );
+			S_.HostService = NULL;
 			S_.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Functions = NULL;
@@ -207,26 +205,12 @@ ERREpilog
 			return *this;
 		}
 		void Init( 
-			const char *Host,
-			const char *Service,
+			const char *HostService,
 			log_functions__ &LogFunctions )
 		{
 			reset();
 
-			S_.Host = malloc( strlen( Host ) + 1 );
-
-			if ( S_.Host == NULL )
-				ERRa();
-
-			strcpy( S_.Host, Host );
-
-			S_.Service = malloc( strlen( Service ) + 1 );
-
-			if ( S_.Service == NULL )
-				ERRa();
-
-			strcpy( S_.Service, Service );
-
+			S_.HostService = HostService;
 			S_.Mutex = _Create();
 			S_.Log.Mutex = _Create();
 			S_.Log.Functions = &LogFunctions;
@@ -252,7 +236,7 @@ ERREpilog
 				if ( Flow == NULL )
 					ERRa();
 
-				Flow->Init( csdbnc::Connect( S_.Host, S_.Service ) );
+				Flow->Init( csdbnc::Connect( S_.HostService ) );
 
 				Log = lCreation;
 			}
