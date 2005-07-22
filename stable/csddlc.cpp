@@ -59,7 +59,7 @@ public:
 
 using namespace csddlc;
 
-typedef csdscm::user_functions__ *(WINAPI *f)( void );
+typedef csdscm::user_functions__ *(*f)( void *);
 
 void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 {
@@ -73,20 +73,27 @@ void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 }
 
 
-void csddlc::dynamic_library_client_core::Init( const char *LibraryName )
+void csddlc::dynamic_library_client_core::Init(
+	const char *LibraryName,
+	void *UP )
 {
 ERRProlog
 	f CSDDLGet;
 ERRBegin
 	reset();
 
+#if 1
 	if ( ( _DLLHandler = LoadLibrary( LibraryName ) ) == NULL )
 		ERRu();
+#else
+	if ( ( _DLLHandler = GetModuleHandle( LibraryName ) ) == NULL )
+		ERRu();
+#endif
 
-	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_DLLHandler, "CSDDLGet" ) ) == NULL )
+	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_DLLHandler, "CSDDLEntry" ) ) == NULL )
 		ERRu();
 
-	_UserFunctions = CSDDLGet();
+	_UserFunctions = CSDDLGet( UP );
 ERRErr
 	reset();
 ERREnd

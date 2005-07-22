@@ -65,9 +65,6 @@ extern class ttr_tutor &CSDDLCTutor;
 #include "csdscm.h"
 #include "csdebd.h"
 
-extern "C" csdscm::user_functions__ *(__stdcall *CSDDLGet)( void );
-
-
 namespace csddlc {
 
 	class dynamic_library_client;
@@ -87,7 +84,9 @@ namespace csddlc {
 		{
 			reset();
 		}
-		void Init( const char *LibraryName );
+		void Init(
+			const char *LibraryName,
+			void *UP );
 		friend dynamic_library_client;
 	};
 

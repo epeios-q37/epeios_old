@@ -64,10 +64,10 @@ extern class ttr_tutor &CSDDLSTutor;
 #include "flw.h"
 #include "csdscm.h"
 
-extern "C" __declspec(dllexport) csdscm::user_functions__ *CSDDLGet( void );
+extern "C" __declspec(dllexport) csdscm::user_functions__ *CSDDLEntry( void *UP );
 
 namespace csddls {
-	csdscm::user_functions__ &CSDDLSInit( void );	// A surcharger.
+	csdscm::user_functions__ &CSDDLSCallback( void *UP );	// A surcharger.
 }		
 
 /*$END$*/

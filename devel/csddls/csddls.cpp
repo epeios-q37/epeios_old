@@ -57,9 +57,7 @@ public:
 
 using namespace csddls;
 
-#include "windows.h"
-
-static csdscm::user_functions__ *UF = NULL;
+#include <windows.h>
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -69,18 +67,22 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     switch (ul_reason_for_call)
 	{
 		case DLL_PROCESS_ATTACH:
-			UF = &csddls::CSDDLSInit();
+			break;
 		case DLL_THREAD_ATTACH:
+			break;
 		case DLL_THREAD_DETACH:
+			break;
 		case DLL_PROCESS_DETACH:
+			break;
+		default:
 			break;
     }
     return TRUE;
 }
 
-csdscm::user_functions__ *CSDDLGet( void )
+csdscm::user_functions__ *CSDDLEntry( void *UP )
 {
-	return UF;
+	return &csddls::CSDDLSCallback( UP );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

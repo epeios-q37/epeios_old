@@ -86,6 +86,7 @@ namespace csducl {
 	public:
 		void Init(
 			const char *Backend,
+			void *UP,
 			csdsnc::log_functions__ &Log,
 			type__ Type )
 		{
@@ -94,7 +95,7 @@ namespace csducl {
 				_Shared.Init( Backend, Log );
 				break;
 			case tLibrary:
-				_LibraryName.Init( Backend );
+				_LibraryName.Init( Backend, UP );
 				break;
 			default:
 				ERRu();

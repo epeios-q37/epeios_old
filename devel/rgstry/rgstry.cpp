@@ -235,6 +235,10 @@ ERRBegin
 						Continue = false;
 					else if ( Term( TermRow ) != ']' )
 						Continue = false;
+					else if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+						Continue = false;
+					else if ( Term( TermRow ) != '/' )
+						Continue = false;
 					Path.Append( Item );
 					Item.Init();
 					State = sTagName;
