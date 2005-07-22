@@ -59,18 +59,40 @@ public:
 
 using namespace csddlc;
 
-csdscm::user_functions__ *csddlc::dynamic_library_client::_UserFunctions = NULL;
+typedef csdscm::user_functions__ *(WINAPI *f)( void );
 
-void csddlc::Init( const char *LibraryName )
+void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 {
-	HMODULE hDLL;
+	if ( P ) {
+		if ( _DLLHandler != NULL )
+			FreeLibrary( (HMODULE)_DLLHandler );
+	}
 
-	if ( ( hDLL = LoadLibrary( LibraryName ) ) == NULL )
-		ERRu();
-
-	if ( ( csddlc::dynamic_library_client::_UserFunctions = (csdscm::user_functions__ *)GetProcAddress( hDLL, "CSDDLUF" ) ) == NULL )
-		ERRu();
+	_UserFunctions = NULL;
+	_DLLHandler = NULL;
 }
+
+
+void csddlc::dynamic_library_client_core::Init( const char *LibraryName )
+{
+ERRProlog
+	f CSDDLGet;
+ERRBegin
+	reset();
+
+	if ( ( _DLLHandler = LoadLibrary( LibraryName ) ) == NULL )
+		ERRu();
+
+	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_DLLHandler, "CSDDLGet" ) ) == NULL )
+		ERRu();
+
+	_UserFunctions = CSDDLGet();
+ERRErr
+	reset();
+ERREnd
+ERREpilog
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

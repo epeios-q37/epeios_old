@@ -122,7 +122,8 @@ nrow__ rgstry::registry_::_SearchNode(
 
 const term_ &rgstry::registry_::GetCompleteName(
 	nrow__ NodeRow,
-	term_ &Term ) const
+	term_ &Term,
+	const char *Separator ) const
 {
 	buffer Buffer;
 	node_buffer NodeBuffer;
@@ -136,7 +137,7 @@ const term_ &rgstry::registry_::GetCompleteName(
 	}
 
 	while ( NodeRow != NONE ) {
-		Term.Insert( "::", 0 );
+		Term.Insert( Separator, 0 );
 		Term.Insert( _GetName( NodeRow, Buffer, NodeBuffer ), 0 );
 
 		NodeRow = GetParent( NodeRow );

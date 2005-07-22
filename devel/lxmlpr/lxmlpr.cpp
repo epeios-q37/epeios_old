@@ -301,6 +301,7 @@ ERRBegin
 				} else
 					ERRI( iBeam );
 			} else if ( Flow.View() == '>' ) {
+				Flow.Get();
 				if ( Flow.View() != '<' ) {
 					Value.Init();
 					if ( GetTagValue_( Flow, Value ) )

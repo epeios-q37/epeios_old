@@ -66,6 +66,11 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "lstbch.h"
 #include "lstctn.h"
 #include "xtf.h"
+#include "cpe.h"
+
+#ifdef CPE__USE_VC_WORKAROUND
+#	undef SearchPath
+#endif
 
 namespace rgstry {
 
@@ -348,6 +353,17 @@ namespace rgstry {
 
 			return Row;
 		}
+		erow__ _GetAttribute(
+			const term_ &Name,
+			nrow__ NodeRow ) const
+		{
+			node_buffer Buffer;
+
+			Buffer.Init( Nodes );
+
+			return _SearchEntry( Name, _GetNode( NodeRow, Buffer ).Attributes );
+		}
+
 	public:
 		struct s {
 			terms_::s Terms;
@@ -547,7 +563,53 @@ namespace rgstry {
 		}
 		const term_ &GetCompleteName(
 			nrow__ NodeRow,
-			term_ &Term ) const;
+			term_ &Term,
+			const char *Separator = ":" ) const;
+		erow__ GetAttribute( 
+			const term_ &Name,
+			nrow__ NodeRow ) const
+		{
+			return _GetAttribute( Name, NodeRow );
+		}
+		bso::bool__ AttributeExists(
+			const term_ &Name,
+			nrow__ NodeRow ) const
+		{
+			node_buffer Buffer;
+
+			return _GetAttribute( Name, NodeRow ) != NONE;
+		}
+		const term_ &GetName(
+			erow__ EntryRow,
+			buffer &Buffer ) const
+		{
+			Buffer.Init( Terms );
+
+			return _GetName( EntryRow, Buffer );
+		}
+		const term_ &GetValue(
+			erow__ EntryRow,
+			buffer &Buffer ) const
+		{
+			Buffer.Init( Terms );
+
+			return _GetValue( EntryRow, Buffer );
+		}
+		const term_ &GetAttributeValue(
+			const term_ &Name,
+			nrow__ NodeRow,
+			buffer &Buffer ) const
+		{
+			erow__ EntryRow = GetAttribute( Name, NodeRow );
+
+#ifdef RGSTRY_DBG
+			if ( EntryRow == NONE )
+				ERRu();
+#endif
+			Buffer.Init( Terms );
+
+			return _GetValue( EntryRow, Buffer );
+		}
 	};
 
 	E_AUTO( registry )
@@ -556,6 +618,7 @@ namespace rgstry {
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry );
 }
+
 
 /*$END$*/
 				  /********************************************/

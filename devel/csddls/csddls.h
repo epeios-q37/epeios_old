@@ -64,9 +64,7 @@ extern class ttr_tutor &CSDDLSTutor;
 #include "flw.h"
 #include "csdscm.h"
 
-extern "C" {
-	extern __declspec(dllexport) csdscm::user_functions__ *CSDDLUF;
-}
+extern "C" __declspec(dllexport) csdscm::user_functions__ *CSDDLGet( void );
 
 namespace csddls {
 	csdscm::user_functions__ &CSDDLSInit( void );	// A surcharger.

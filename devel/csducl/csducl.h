@@ -82,18 +82,19 @@ namespace csducl {
 	private:
 		type__ _Type;
 		csdsnc::core _Shared;
+		csddlc::dynamic_library_client_core _LibraryName;
 	public:
 		void Init(
-			const char *Server,
+			const char *Backend,
 			csdsnc::log_functions__ &Log,
 			type__ Type )
 		{
 			switch ( Type ) {
 			case tShared:
-				_Shared.Init( Server, Log );
+				_Shared.Init( Backend, Log );
 				break;
 			case tLibrary:
-				csddlc::Init( Server );
+				_LibraryName.Init( Backend );
 				break;
 			default:
 				ERRu();
@@ -167,7 +168,7 @@ namespace csducl {
 				_Shared.Init( Core._Shared );
 				break;
 			case tLibrary:
-				_Library.Init();
+				_Library.Init( Core._LibraryName );
 				break;
 			default:
 				ERRu();

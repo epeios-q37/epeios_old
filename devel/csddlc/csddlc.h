@@ -65,18 +65,40 @@ extern class ttr_tutor &CSDDLCTutor;
 #include "csdscm.h"
 #include "csdebd.h"
 
-namespace csddlc {
-	void Init( const char *LibraryName );
+extern "C" csdscm::user_functions__ *(__stdcall *CSDDLGet)( void );
 
+
+namespace csddlc {
+
+	class dynamic_library_client;
+
+	class dynamic_library_client_core
+	{
+	private:
+		csdscm::user_functions__ *_UserFunctions;
+		void *_DLLHandler;
+	public:
+		void reset( bso::bool__ P = true );
+		dynamic_library_client_core( void )
+		{
+			reset( false );
+		}
+		~dynamic_library_client_core( void )
+		{
+			reset();
+		}
+		void Init( const char *LibraryName );
+		friend dynamic_library_client;
+	};
+
+	
 	class dynamic_library_client
 	: public csdebd::embed_client_server
 	{
-	private:
-		static csdscm::user_functions__ *_UserFunctions;
 	public:
-		void Init( void )
+		void Init( dynamic_library_client_core &Core )
 		{
-			embed_client_server::Init( *_UserFunctions );
+			embed_client_server::Init( *Core._UserFunctions );
 		}
 	};
 }
