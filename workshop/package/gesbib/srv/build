@@ -1,0 +1,27 @@
+# $Id$
+mkdir workdir
+cd workdir
+export DIR=gesbib-srv-sources
+mkdir $DIR
+GET=../../../get_cvs
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET ebkd $DIR stable/*.h
+$GET ebkd $DIR stable/*.cpp
+
+$GET ldbi $DIR stable/*.h
+$GET ldbi $DIR stable/*.cpp
+
+$GET lgsb $DIR stable/*.h
+$GET lgsb $DIR stable/*.cpp
+$GET lgsb $DIR apps/gesbib/backend/*.h
+$GET lgsb $DIR apps/gesbib/backend/*.cpp
+$GET lgsb $DIR apps/gesbib/backend/program/*.cpp
+$GET lgsb $DIR apps/gesbib/backend/program/*.h
+$GET lgsb $DIR apps/gesbib/backend/program/Makefile
+
+#../../../create_pkg $DIR
+tar --gzip -cf $DIR.tar.gz $DIR
+

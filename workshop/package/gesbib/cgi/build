@@ -1,7 +1,7 @@
 # $Id$
 mkdir workdir
 cd workdir
-export DIR=gesbib-cgid-sources
+export DIR=gesbib-cgi-sources
 mkdir $DIR
 GET=../../../get_cvs
 
