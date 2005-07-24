@@ -102,6 +102,10 @@ namespace csducl {
 
 			_Type = Type;
 		}
+		type__ GetType( void ) const
+		{
+			return _Type;
+		}
 		friend class universal_client;
 	};
 
