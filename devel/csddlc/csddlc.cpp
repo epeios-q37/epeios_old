@@ -55,7 +55,18 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "windows.h"
+#include "cpe.h"
+
+#define FUNCTION_NAME	"CSDDLEntry"
+
+#ifdef CPE__MS
+#	include <windows.h>
+#elif defined ( CPE__UNIX )
+#	include <dlfcn.h>
+#else
+#	error "OS not supported yet."
+#endif
+
 
 using namespace csddlc;
 
@@ -64,12 +75,18 @@ typedef csdscm::user_functions__ *(*f)( void *);
 void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 {
 	if ( P ) {
-		if ( _DLLHandler != NULL )
-			FreeLibrary( (HMODULE)_DLLHandler );
+		if ( _LibraryHandler != NULL )
+#ifdef CPE__MS
+			if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
+				ERRs();
+#elif defined( CPE__UNIX )
+			if ( dlclose( _LibraryHandler ) == -1 )
+				ERRs();
+#endif
 	}
 
 	_UserFunctions = NULL;
-	_DLLHandler = NULL;
+	_LibraryHandler = NULL;
 }
 
 
@@ -82,16 +99,21 @@ ERRProlog
 ERRBegin
 	reset();
 
-#if 1
-	if ( ( _DLLHandler = LoadLibrary( LibraryName ) ) == NULL )
+#ifdef CPE__MS
+	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
 		ERRu();
-#else
-	if ( ( _DLLHandler = GetModuleHandle( LibraryName ) ) == NULL )
-		ERRu();
-#endif
 
-	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_DLLHandler, "CSDDLEntry" ) ) == NULL )
+	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_LibraryHandler, FUNCTION_NAME ) ) == NULL )
+		ERRs();
+#elif defined( CPE__UNIX )
+	if ( ( _LibraryHandler = dlopen( LibraryName, RTLD_LAZY ) ) == NULL )
 		ERRu();
+
+	CSDDLGet = (f)dlsym( _LibraryHandler, FUNCTION_NAME );
+
+	if ( dlerror() != NULL )
+		ERRs();
+#endif
 
 	_UserFunctions = CSDDLGet( UP );
 ERRErr

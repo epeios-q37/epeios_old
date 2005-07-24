@@ -122,6 +122,45 @@ namespace bitbch {
 		}
 	};
 
+
+	// Classes regroupant des fonctions agissant sur un objet de type 't'. Usage interne.
+	template <class t, typename r> class functions__
+	{
+	private:
+		static receptacle__ Offset_( r Position )
+		{
+			return (receptacle__)( *Position % BITBCH__RECEPTACLE_SIZE_IN_BITS );
+		}
+		// retourne l'offset correpondant à 'Position'
+		static r Indice_( r Position )
+		{
+			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BITS;
+		}
+		// retourne l'indice correspondant à 'Position'
+		static bso::ubyte__ Masque_( r Position )
+		{
+			return (bso::ubyte__)( 1 << Offset_( Position ) );
+		}
+		// retourne le masque correspondant à 'Position'
+	public:
+		static bso::bool__ Lire(
+			r Position,
+			const t &Table )
+		{
+			return ( Table.Get( Indice_( Position ) ) & Masque_( Position ) ) != 0;
+		}
+		// retourne la valeur du bit à la position 'Position' (>=0)
+		static void Ecrire(
+			bso::bool__ Valeur,
+			r Position,
+			t &Table )
+		{
+			Table.Store( (receptacle__)( ( Table.Get( Indice_( Position ) ) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ) ), Indice_( Position ) );
+		}
+		// place un bit de valeur 'Valeur' à la position 'Position'
+	};
+
+
 	//c A set of a maximum of 't' bits.
 	template <int t, typename r> class bit_bunch__
 	{
@@ -223,43 +262,6 @@ namespace bitbch {
 			else
 				return NONE;
 		}
-	};
-
-	// Classes regroupant des fonctions agissant sur un objet de type 't'. Usage interne.
-	template <class t, typename r> class functions__
-	{
-	private:
-		static receptacle__ Offset_( r Position )
-		{
-			return (receptacle__)( *Position % BITBCH__RECEPTACLE_SIZE_IN_BITS );
-		}
-		// retourne l'offset correpondant à 'Position'
-		static r Indice_( r Position )
-		{
-			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BITS;
-		}
-		// retourne l'indice correspondant à 'Position'
-		static bso::ubyte__ Masque_( r Position )
-		{
-			return (bso::ubyte__)( 1 << Offset_( Position ) );
-		}
-		// retourne le masque correspondant à 'Position'
-	public:
-		static bso::bool__ Lire(
-			r Position,
-			const t &Table )
-		{
-			return ( Table.Get( Indice_( Position ) ) & Masque_( Position ) ) != 0;
-		}
-		// retourne la valeur du bit à la position 'Position' (>=0)
-		static void Ecrire(
-			bso::bool__ Valeur,
-			r Position,
-			t &Table )
-		{
-			Table.Store( (receptacle__)( ( Table.Get( Indice_( Position ) ) & ~Masque_( Position ) ) | ( ( Valeur ? 1 << Offset_( Position ) : 0 ) ) ), Indice_( Position ) );
-		}
-		// place un bit de valeur 'Valeur' à la position 'Position'
 	};
 
 	// N.B.: le contenu du tableau est inversé bit à bit

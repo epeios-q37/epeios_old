@@ -63,8 +63,17 @@ extern class ttr_tutor &CSDDLSTutor;
 #include "err.h"
 #include "flw.h"
 #include "csdscm.h"
+#include "cpe.h"
 
-extern "C" __declspec(dllexport) csdscm::user_functions__ *CSDDLEntry( void *UP );
+#ifdef CPE__MS
+#	define CSDDSL__FUNCTION_SPEC	__declspec(dllexport)
+#elif defined( CPE__UNIX )
+#	define CSDDSL__FUNCTION_SPEC
+#else
+#	error "OS not supported yet."
+#endif
+
+extern "C" CSDDSL__FUNCTION_SPEC csdscm::user_functions__ *CSDDLEntry( void *UP );
 
 namespace csddls {
 	csdscm::user_functions__ &CSDDLSCallback( void *UP );	// A surcharger.

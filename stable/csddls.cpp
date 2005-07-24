@@ -57,7 +57,9 @@ public:
 
 using namespace csddls;
 
-#include <windows.h>
+#ifdef CPE__MS
+
+#	include <windows.h>
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -79,6 +81,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     }
     return TRUE;
 }
+#endif
 
 csdscm::user_functions__ *CSDDLEntry( void *UP )
 {

@@ -67,13 +67,11 @@ extern class ttr_tutor &CSDDLCTutor;
 
 namespace csddlc {
 
-	class dynamic_library_client;
-
 	class dynamic_library_client_core
 	{
 	private:
 		csdscm::user_functions__ *_UserFunctions;
-		void *_DLLHandler;
+		void *_LibraryHandler;
 	public:
 		void reset( bso::bool__ P = true );
 		dynamic_library_client_core( void )
@@ -87,7 +85,7 @@ namespace csddlc {
 		void Init(
 			const char *LibraryName,
 			void *UP );
-		friend dynamic_library_client;
+		friend class dynamic_library_client;
 	};
 
 	

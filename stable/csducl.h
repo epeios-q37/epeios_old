@@ -75,8 +75,6 @@ namespace csducl {
 		t_Undefined
 	};
 
-	class universal_client;
-
 	class universal_client_core
 	{
 	private:
@@ -104,7 +102,7 @@ namespace csducl {
 
 			_Type = Type;
 		}
-		friend universal_client;
+		friend class universal_client;
 	};
 
 	class universal_client
