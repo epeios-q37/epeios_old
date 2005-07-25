@@ -119,7 +119,7 @@ void nsxpcm::Transform(
 	char **JString )
 {
 ERRProlog
-	tol::E_POINTER___( char ) Buffer;
+	tol::E_FPOINTER___( char ) Buffer;
 ERRBegin
 	Buffer = EString.Convert();
 
@@ -141,7 +141,7 @@ void nsxpcm::Transform(
 	nsEmbedString &EString )
 {
 ERRProlog
-	tol::E_POINTER___( char ) Buffer;
+	tol::E_FPOINTER___( char ) Buffer;
 ERRBegin
 	Buffer = String.Convert();
 
