@@ -77,6 +77,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__CW
 #undef CPE__CONSOLE
 #undef CPE__GUI
+#undef CPE__LIBRARY
 
 #if defined( wxUSE_GUI ) || defined( CPE_GUI )
 #	define CPE__GUI
@@ -204,6 +205,14 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef CPE_THREADS_REMAINS
 #	define CPE__THREADS_REMAINS
+#endif
+
+#ifdef CPE_LIBRARY
+#	define CPE__LIBRARY
+#elif defined( CPE__MS )
+#	if defined(_USRDLL )
+#		define CPE__LIBRARY
+#	endif
 #endif
 
 /*$END$*/
