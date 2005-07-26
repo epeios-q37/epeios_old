@@ -76,11 +76,11 @@ namespace ltf {
 		bso::ubyte__ Amount_;
 		txf::text_oflow__ &TFlow_;
 	protected:
-		virtual flw::size__ FLWWrite(
+		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
-			flw::size__ Wanted,
-			flw::size__ Minimum,
-			bso::bool__ Synchronization )
+			flw::bsize__ Wanted,
+			flw::bsize__ Minimum,
+			bool Synchronization )
 		{
 			if ( ( Amount_ + Wanted ) > Size_ ) {
 				if ( Wanted >= Size_ ) {
@@ -115,15 +115,16 @@ namespace ltf {
 		_line_text_oflow__(
 			txf::text_oflow__ &TFlow,
 			flw::datum__ *Data,
-			flw::size__ Size )
+			flw::size__ Size,
+			flw::mutex__ Mutex )
 		: TFlow_( TFlow ),
-		  flw::oflow__( NULL, 0, BSO_ULONG_MAX )
+		  flw::oflow__( NULL, 0, BSO_ULONG_MAX, Mutex )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
 			Data_ = Data;
-			Size_ = Size;
+			Size_ = (bso::ubyte__)Size;
 
 			memset( Data_, ' ', Size_ );
 			Data_[Size_] = 0;
@@ -152,8 +153,10 @@ namespace ltf {
 	protected:
 		_line_text_oflow__ Flow_;
 	public:
-		line_text_oflow__( txf::text_oflow__ &TFlow )
-		: Flow_( TFlow, Data_, size ),
+		line_text_oflow__(
+			txf::text_oflow__ &TFlow,
+			flw::mutex__ Mutex )
+		: Flow_( TFlow, Data_, size, Mutex ),
 		  txf::text_oflow__( Flow_ )
 		{}
 		void CR( void )
