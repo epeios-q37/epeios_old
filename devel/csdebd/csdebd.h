@@ -104,6 +104,14 @@ namespace csdebd {
 
 			_Row = _Read.Next( _Row, Wanted );
 
+/* Concernant GESBIB, si l'on enlève le bloc ci-dessous, le logiciel est susceptible de se planter lorsque l'on manipule
+une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme si le 'Dismiss()' n'était pas lancer correctement. */
+// Début bloc.
+			if ( _Row == NONE )
+				_Read.Init();
+// Fin bloc.
+
+
 			return Wanted;
 		}
 		virtual void FLWDismiss( void )
@@ -120,6 +128,10 @@ namespace csdebd {
 			flw::bsize__ Minimum,
 			bool Synchronization )
 		{
+#ifdef CSDEBD_DBG
+			if ( _Read.Amount() != 0 )
+				Synchronization = false;	// Juste pour avoir un point d'arrêt.
+#endif
 			_Write.Append( Buffer, Wanted );
 
 			return Wanted;

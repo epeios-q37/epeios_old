@@ -68,7 +68,6 @@ extern class ttr_tutor &MTKTutor;
 #	define MTK__UNIX_LIKE
 #endif
 
-
 #ifdef CPE__MS
 #	include <process.h>
 #	include <windows.h>

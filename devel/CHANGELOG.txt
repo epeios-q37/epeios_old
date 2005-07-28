@@ -1,5 +1,7 @@
 $Id$
 
+28/07/05 :
+
 16/07/05 :
 	- General :
 		- Adaptation à VC8.

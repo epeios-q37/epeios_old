@@ -617,6 +617,70 @@ namespace rgstry {
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry );
+
+
+	class overloaded_registry_
+	{
+	public:
+		struct s {
+			const registry_ *Base;
+			struct root__ {
+				nrow__ Base, Local;
+			} Root;
+			registry_::s Local;
+		} &S_;
+		registry_ Local;
+		overloaded_registry_( s &S )
+		: S_( S ),
+		  Local( S.Local )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Local.reset( P );
+
+			S_.Base = NULL;
+			S_.Root.Base = S_.Root.Local = NONE;
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Local.plug( MM );
+		}
+		const overloaded_registry_ &operator =( const overloaded_registry_ &OR )
+		{
+			S_.Base = OR.S_.Base;
+			S_.Root = OR.S_.Root;
+
+			Local = OR.Local;
+
+			return *this;
+		}
+		void Init(
+			const registry_ &Base,
+			nrow__ Root )
+		{
+			Local.Init();
+
+			S_.Base = &Base;
+			S_.Root.Base = Root;
+			S_.Root.Local = NONE;
+		}
+		const term_ &GetPathValue(
+			const term_ &Path,
+			bso::bool__ &Exists,
+			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
+
+	};
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
