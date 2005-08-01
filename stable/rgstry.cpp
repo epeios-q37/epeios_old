@@ -475,7 +475,35 @@ ERREpilog
 	return Root;
 }
 
+const term_ &rgstry::overloaded_registry_::GetPathValue(
+	const term_ &PathString,
+	bso::bool__ &Exists,
+	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
+{
+	static term Empty;
+	const term_ *Result = 0;
+ERRProlog
+	nrow__ Row = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+	Empty.Init();
 
+	BuildPath( PathString, Path );
+
+	if ( ( Row = Local.SearchPath( Path, S_.Root.Local ) ) != NONE )
+		Result = &Local.GetValue( Row, Buffer );
+	else if ( ( Row = S_.Base->SearchPath( Path, S_.Root.Base ) ) != NONE )
+		Result = &S_.Base->GetValue( Row, Buffer );
+	else {
+		Exists = false;
+		Result = &Empty;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return *Result;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

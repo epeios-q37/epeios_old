@@ -363,7 +363,19 @@ namespace rgstry {
 
 			return _SearchEntry( Name, _GetNode( NodeRow, Buffer ).Attributes );
 		}
+		void _Delete( erow__ Row )
+		{
+			entry__ Entry = Entries( Row );
 
+			if ( Entry.NameRow != NONE )
+				Terms.Delete( Entry.NameRow );
+
+			if ( Entry.ValueRow != NONE )
+				Terms.Delete( Entry.ValueRow );
+		}
+		void _Delete( const erows_ &Rows );
+		void _Delete( nrow__ Row );
+		void _Delete( const nrows_ &Rows );
 	public:
 		struct s {
 			terms_::s Terms;
@@ -610,6 +622,10 @@ namespace rgstry {
 
 			return _GetValue( EntryRow, Buffer );
 		}
+		void Delete( nrow__ Row )
+		{
+			_Delete( Row );
+		}
 	};
 
 	E_AUTO( registry )
@@ -619,56 +635,68 @@ namespace rgstry {
 		registry_ &Registry );
 
 
-	class overloaded_registry_
+	class overloaded_registry___
 	{
 	public:
-		struct s {
-			const registry_ *Base;
-			struct root__ {
-				nrow__ Base, Local;
-			} Root;
-			registry_::s Local;
-		} &S_;
-		registry_ Local;
-		overloaded_registry_( s &S )
-		: S_( S ),
-		  Local( S.Local )
-		{}
+		struct global {
+			const registry_ *Registry;
+			nrow__ Root;
+		} Global;
+		struct local {
+			registry_ *Registry;
+			nrow__ Root;
+		} Local;
 		void reset( bso::bool__ P = true )
 		{
-			Local.reset( P );
+			Global.Registry = NULL;
+			Global.Root = NONE;
 
-			S_.Base = NULL;
-			S_.Root.Base = S_.Root.Local = NONE;
+			Local.Registry = NULL;
+			Local.Root = NONE;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		overloaded_registry___( void )
 		{
-			Local.plug( MM );
+			reset( false );
 		}
-		const overloaded_registry_ &operator =( const overloaded_registry_ &OR )
+		~overloaded_registry___( void )
 		{
-			S_.Base = OR.S_.Base;
-			S_.Root = OR.S_.Root;
-
-			Local = OR.Local;
-
-			return *this;
+			reset();
 		}
 		void Init(
-			const registry_ &Base,
-			nrow__ Root )
+			const registry_ &Global,
+			nrow__ Root,
+			registry &Local )	// 'Base' et 'Local' peuvent être identiques.
 		{
-			Local.Init();
+			buffer Buffer;
 
-			S_.Base = &Base;
-			S_.Root.Base = Root;
-			S_.Root.Local = NONE;
+			this->Global.Registry = &Global;
+			this->Global.Root = Root;
+
+			this->Local.Registry = &Local;
+			this->Local.Root = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
 		}
 		const term_ &GetPathValue(
 			const term_ &Path,
 			bso::bool__ &Exists,
 			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
+		void SetPathValue(
+			const term_ &Path,
+			const term_ &Value,
+			epeios::row__ &PathRow )
+		{
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
+		}
+		void SetPathValue(
+			const term_ &Path,
+			const term_ &Value )
+		{	
+			epeios::row__ PathRow = NONE;
 
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
+
+			if ( PathRow != NONE )
+				ERRu();
+		}
 	};
 
 

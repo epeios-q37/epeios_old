@@ -455,6 +455,46 @@ public:
 	}
 };
 
+void rgstry::registry_::_Delete( const erows_ &Rows )
+{
+	epeios::row__ Row = Rows.First();
+
+	while ( Row != NONE ) {
+		_Delete( Rows( Row ) );
+
+		Row = Rows.Next( Row );
+	}
+}
+
+void rgstry::registry_::_Delete( nrow__ Row )
+{
+	const node_ &Node = Nodes( Row );
+
+	_Delete( Node.Attributes );
+
+	if ( Node.NameRow() != NONE )
+		Terms.Delete( Node.NameRow() );
+
+	if ( Node.ValueRow() != NONE )
+		Terms.Delete( Node.ValueRow() );
+
+	_Delete( Node.Children );
+
+	Nodes.Delete( Row );
+}
+
+
+void rgstry::registry_::_Delete( const nrows_ &Rows )
+{
+	epeios::row__ Row = Rows.First();
+
+	while ( Row != NONE ) {
+		_Delete( Rows( Row ) );
+
+		Row = Rows.Next( Row );
+	}
+}
+
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	registry_ &Registry )
@@ -475,31 +515,35 @@ ERREpilog
 	return Root;
 }
 
-const term_ &rgstry::overloaded_registry_::GetPathValue(
-	const term_ &Path,
+const term_ &rgstry::overloaded_registry___::GetPathValue(
+	const term_ &PathString,
 	bso::bool__ &Exists,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
 {
+	static term Empty;
+	const term_ *Result = 0;
 ERRProlog
 	nrow__ Row = NONE;
 	path Path;
 ERRBegin
 	Path.Init();
+	Empty.Init();
 
-	BuildPath( Term, Path );
+	BuildPath( PathString, Path );
 
-	if ( ( S_.Root.Local != NONE ) && ( ( Row = Local.SearchPath( Path, S_.Root.Local ) ) != NONE ) )
-		return Local.GetValue( Row, Buffer );
-	else if ( ( Row = S_.Base->SearchPath( Path ) ) != NONE )
-		return S_.Path.GetValue( Row, Buffer );
+	if ( ( Row = Local.Registry->SearchPath( Path, Local.Root ) ) != NONE )
+		Result = &Local.Registry->GetValue( Row, Buffer );
+	else if ( ( Row = Global.Registry->SearchPath( Path, Global.Root ) ) != NONE )
+		Result = &Global.Registry->GetValue( Row, Buffer );
 	else {
 		Exists = false;
-		return Buffer;
+		Result = &Empty;
 	}
 ERRErr
 ERREnd
 ERREpilog
-
+	return *Result;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
