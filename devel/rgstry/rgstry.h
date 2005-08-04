@@ -118,7 +118,40 @@ namespace rgstry {
 
 	E_AUTO( path_item );
 
-	typedef ctn::E_XCONTAINER_( path_item_ )	path_;
+	typedef ctn::E_XCONTAINER_( path_item_ ) _path_items_;
+
+	class path_
+	: public _path_items_
+	{
+	public:
+		struct s
+		: _path_items_::s
+		{};
+		path_( s &S )
+		: _path_items_( S )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_path_items_::reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			_path_items_::plug( MM );
+		}
+		_path_items_ &operator =( const _path_items_ &PI )
+		{
+			_path_items_::operator =( PI );
+
+			return *this;
+		}
+		void Init( void )
+		{
+			_path_items_::Init();
+		}
+	};
+
+
+
 	E_AUTO( path )
 
 	epeios::row__ BuildPath(
@@ -310,7 +343,15 @@ namespace rgstry {
 			buffer &ValueBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
-			return ValueBuffer( _GetNode( NodeRow, NodeBuffer ).GetValueRow() );
+			static term Empty;
+			trow__ Row = _GetNode( NodeRow, NodeBuffer ).GetValueRow();
+
+			if ( Row != NONE )
+				return ValueBuffer( Row );
+			else {
+				Empty.Init();
+				return Empty;
+			}
 		}
 		nrow__ _SearchNode(
 			const term_ &Name,
@@ -626,13 +667,18 @@ namespace rgstry {
 		{
 			_Delete( Row );
 		}
+		nrow__ CreateNewRegistry( const term_ &Name )
+		{
+			return CreateNode( Name );
+		}
 	};
 
 	E_AUTO( registry )
 
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
-		registry_ &Registry );
+		registry_ &Registry,
+		nrow__ Root );	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'regsitry' est créee.
 
 
 	class overloaded_registry___

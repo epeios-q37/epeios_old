@@ -412,9 +412,9 @@ protected:
 	{
 		if ( Current_ == NONE ) {
 			if ( Root_ != NONE )
-				ERRf();
-
-			Root_ = Current_ = Registry_.CreateNode( Name );
+				Root_ = Current_ = Registry_.AddChild( Name, Root_ );
+			else
+				Root_ = Current_ = Registry_.CreateNode( Name );
 		} else
 			Current_ = Registry_.AddChild( Name, Current_ );
 	}
@@ -440,28 +440,70 @@ protected:
 		ERRf();
 	}
 public:
-	callback__( registry_ &Registry )
+	callback__(
+		registry_ &Registry,
+		nrow__ Root )
 	: Registry_( Registry )
 	{
 		Current_ = NONE;
-		Root_ = NONE;
+		Root_ = Root;
 	}
 	nrow__ GetRoot( void ) const
 	{
-		if ( ( Current_ != NONE ) )
+		if ( Current_ != Registry_.GetParent( Root_ ) )
 			ERRf();
 
 		return Root_;
 	}
 };
 
+void rgstry::registry_::_Delete( const erows_ &Rows )
+{
+	epeios::row__ Row = Rows.First();
+
+	while ( Row != NONE ) {
+		_Delete( Rows( Row ) );
+
+		Row = Rows.Next( Row );
+	}
+}
+
+void rgstry::registry_::_Delete( nrow__ Row )
+{
+	const node_ &Node = Nodes( Row );
+
+	_Delete( Node.Attributes );
+
+	if ( Node.NameRow() != NONE )
+		Terms.Delete( Node.NameRow() );
+
+	if ( Node.ValueRow() != NONE )
+		Terms.Delete( Node.ValueRow() );
+
+	_Delete( Node.Children );
+
+	Nodes.Delete( Row );
+}
+
+
+void rgstry::registry_::_Delete( const nrows_ &Rows )
+{
+	epeios::row__ Row = Rows.First();
+
+	while ( Row != NONE ) {
+		_Delete( Rows( Row ) );
+
+		Row = Rows.Next( Row );
+	}
+}
+
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
-	registry_ &Registry )
+	registry_ &Registry,
+	nrow__ Root )
 {
-	nrow__ Root = NONE;
 ERRProlog
-	callback__ Callback( Registry );
+	callback__ Callback( Registry, Root );
 	lxmlpr::parser Parser;	
 ERRBegin
 	Parser.Init();
@@ -475,7 +517,7 @@ ERREpilog
 	return Root;
 }
 
-const term_ &rgstry::overloaded_registry_::GetPathValue(
+const term_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
 	bso::bool__ &Exists,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
@@ -491,10 +533,10 @@ ERRBegin
 
 	BuildPath( PathString, Path );
 
-	if ( ( Row = Local.SearchPath( Path, S_.Root.Local ) ) != NONE )
-		Result = &Local.GetValue( Row, Buffer );
-	else if ( ( Row = S_.Base->SearchPath( Path, S_.Root.Base ) ) != NONE )
-		Result = &S_.Base->GetValue( Row, Buffer );
+	if ( ( Row = Local.Registry->SearchPath( Path, Local.Root ) ) != NONE )
+		Result = &Local.Registry->GetValue( Row, Buffer );
+	else if ( ( Row = Global.Registry->SearchPath( Path, Global.Root ) ) != NONE )
+		Result = &Global.Registry->GetValue( Row, Buffer );
 	else {
 		Exists = false;
 		Result = &Empty;

@@ -412,9 +412,9 @@ protected:
 	{
 		if ( Current_ == NONE ) {
 			if ( Root_ != NONE )
-				ERRf();
-
-			Root_ = Current_ = Registry_.CreateNode( Name );
+				Root_ = Current_ = Registry_.AddChild( Name, Root_ );
+			else
+				Root_ = Current_ = Registry_.CreateNode( Name );
 		} else
 			Current_ = Registry_.AddChild( Name, Current_ );
 	}
@@ -440,15 +440,17 @@ protected:
 		ERRf();
 	}
 public:
-	callback__( registry_ &Registry )
+	callback__(
+		registry_ &Registry,
+		nrow__ Root )
 	: Registry_( Registry )
 	{
 		Current_ = NONE;
-		Root_ = NONE;
+		Root_ = Root;
 	}
 	nrow__ GetRoot( void ) const
 	{
-		if ( ( Current_ != NONE ) )
+		if ( Current_ != Registry_.GetParent( Root_ ) )
 			ERRf();
 
 		return Root_;
@@ -497,11 +499,11 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
-	registry_ &Registry )
+	registry_ &Registry,
+	nrow__ Root )
 {
-	nrow__ Root = NONE;
 ERRProlog
-	callback__ Callback( Registry );
+	callback__ Callback( Registry, Root );
 	lxmlpr::parser Parser;	
 ERRBegin
 	Parser.Init();

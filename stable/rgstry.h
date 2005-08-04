@@ -118,7 +118,40 @@ namespace rgstry {
 
 	E_AUTO( path_item );
 
-	typedef ctn::E_XCONTAINER_( path_item_ )	path_;
+	typedef ctn::E_XCONTAINER_( path_item_ ) _path_items_;
+
+	class path_
+	: public _path_items_
+	{
+	public:
+		struct s
+		: _path_items_::s
+		{};
+		path_( s &S )
+		: _path_items_( S )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_path_items_::reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			_path_items_::plug( MM );
+		}
+		_path_items_ &operator =( const _path_items_ &PI )
+		{
+			_path_items_::operator =( PI );
+
+			return *this;
+		}
+		void Init( void )
+		{
+			_path_items_::Init();
+		}
+	};
+
+
+
 	E_AUTO( path )
 
 	epeios::row__ BuildPath(
@@ -310,7 +343,15 @@ namespace rgstry {
 			buffer &ValueBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
-			return ValueBuffer( _GetNode( NodeRow, NodeBuffer ).GetValueRow() );
+			static term Empty;
+			trow__ Row = _GetNode( NodeRow, NodeBuffer ).GetValueRow();
+
+			if ( Row != NONE )
+				return ValueBuffer( Row );
+			else {
+				Empty.Init();
+				return Empty;
+			}
 		}
 		nrow__ _SearchNode(
 			const term_ &Name,
@@ -363,7 +404,19 @@ namespace rgstry {
 
 			return _SearchEntry( Name, _GetNode( NodeRow, Buffer ).Attributes );
 		}
+		void _Delete( erow__ Row )
+		{
+			entry__ Entry = Entries( Row );
 
+			if ( Entry.NameRow != NONE )
+				Terms.Delete( Entry.NameRow );
+
+			if ( Entry.ValueRow != NONE )
+				Terms.Delete( Entry.ValueRow );
+		}
+		void _Delete( const erows_ &Rows );
+		void _Delete( nrow__ Row );
+		void _Delete( const nrows_ &Rows );
 	public:
 		struct s {
 			terms_::s Terms;
@@ -610,61 +663,63 @@ namespace rgstry {
 
 			return _GetValue( EntryRow, Buffer );
 		}
+		void Delete( nrow__ Row )
+		{
+			_Delete( Row );
+		}
+		nrow__ CreateNewRegistry( const term_ &Name )
+		{
+			return CreateNode( Name );
+		}
 	};
 
 	E_AUTO( registry )
 
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
-		registry_ &Registry );
+		registry_ &Registry,
+		nrow__ Root );	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'regsitry' est créee.
 
 
-	class overloaded_registry_
+	class overloaded_registry___
 	{
 	public:
-		struct s {
-			const registry_ *Base;
-			struct root__ {
-				nrow__ Base, Local;
-			} Root;
-			registry_::s Local;
-		} &S_;
-		registry_ Local;
-		overloaded_registry_( s &S )
-		: S_( S ),
-		  Local( S.Local )
-		{}
+		struct global {
+			const registry_ *Registry;
+			nrow__ Root;
+		} Global;
+		struct local {
+			registry_ *Registry;
+			nrow__ Root;
+		} Local;
 		void reset( bso::bool__ P = true )
 		{
-			Local.reset( P );
+			Global.Registry = NULL;
+			Global.Root = NONE;
 
-			S_.Base = NULL;
-			S_.Root.Base = S_.Root.Local = NONE;
+			Local.Registry = NULL;
+			Local.Root = NONE;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		overloaded_registry___( void )
 		{
-			Local.plug( MM );
+			reset( false );
 		}
-		const overloaded_registry_ &operator =( const overloaded_registry_ &OR )
+		~overloaded_registry___( void )
 		{
-			S_.Base = OR.S_.Base;
-			S_.Root = OR.S_.Root;
-
-			Local = OR.Local;
-
-			return *this;
+			reset();
 		}
 		void Init(
-			const registry_ &Base,
-			nrow__ Root )
+			const registry_ &Global,
+			nrow__ Root,
+			registry &Local )	// 'Base' et 'Local' peuvent être identiques.
 		{
 			buffer Buffer;
 
-			Local.Init();
+			this->Global.Registry = &Global;
+			this->Global.Root = Root;
 
-			S_.Base = &Base;
-			S_.Root.Base = Root;
-			S_.Root.Local = Local.CreateNode( Base.GetName( Root, Buffer ) );
+			this->Local.Registry = &Local;
+			this->Local.Root = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
 		}
 		const term_ &GetPathValue(
 			const term_ &Path,
@@ -675,7 +730,7 @@ namespace rgstry {
 			const term_ &Value,
 			epeios::row__ &PathRow )
 		{
-			Local.SetPathValue( Path, Value, S_.Root.Local, PathRow );
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
 		}
 		void SetPathValue(
 			const term_ &Path,
@@ -683,7 +738,7 @@ namespace rgstry {
 		{	
 			epeios::row__ PathRow = NONE;
 
-			Local.SetPathValue( Path, Value, S_.Root.Local, PathRow );
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
 
 			if ( PathRow != NONE )
 				ERRu();
