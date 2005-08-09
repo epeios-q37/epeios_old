@@ -104,13 +104,19 @@ raw_date__ dte::date__::_Convert( const char *Date )
 	month__ Mois = 0;
 	year__ Annee = 0;
 
+	if( !*Date || !isdigit( *Date ) )
+		return DTE_INVALID_DATE;
+
+	while( isdigit( *Date ) )
+		Jour = Jour * 10 + *Date++ - '0';
+
 	while( *Date && !isdigit( *Date ) )
 		Date++;
 
 	if ( *Date ) {
 
 		while( isdigit( *Date ) )
-			Jour = Jour * 10 + *Date++ - '0';
+			Mois = Mois * 10 + *Date++ - '0';
 
 		while( *Date && !isdigit( *Date ) )
 			Date++;
@@ -118,16 +124,7 @@ raw_date__ dte::date__::_Convert( const char *Date )
 		if ( *Date ) {
 
 			while( isdigit( *Date ) )
-				Mois = Mois * 10 + *Date++ - '0';
-
-			while( *Date && !isdigit( *Date ) )
-				Date++;
-
-			if ( *Date ) {
-
-				while( isdigit( *Date ) )
-					Annee = Annee * 10 + *Date++ - '0';
-			}
+				Annee = Annee * 10 + *Date++ - '0';
 		}
 	}
 
