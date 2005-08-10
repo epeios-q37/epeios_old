@@ -708,10 +708,10 @@ namespace rgstry {
 		{
 			reset();
 		}
-		void Init(
+		nrow__ Init(
 			const registry_ &Global,
 			nrow__ Root,
-			registry &Local )	// 'Base' et 'Local' peuvent être identiques.
+			registry_ &Local )	// 'Base' et 'Local' peuvent être identiques.
 		{
 			buffer Buffer;
 
@@ -719,7 +719,7 @@ namespace rgstry {
 			this->Global.Root = Root;
 
 			this->Local.Registry = &Local;
-			this->Local.Root = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
+			return this->Local.Root = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
 		}
 		const term_ &GetPathValue(
 			const term_ &Path,
@@ -743,18 +743,45 @@ namespace rgstry {
 			if ( PathRow != NONE )
 				ERRu();
 		}
+		void Delete( nrow__ Row )
+		{
+			Local.Registry->Delete( Row );
+		}
 	};
 
+	class overloaded_unique_registry___	// La base de registre de base et locale sont la même.
+	: public overloaded_registry___
+	{
+	private:
+		nrow__ _LocalRoot;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( _LocalRoot != NONE )
+					overloaded_registry___::Delete( _LocalRoot );
+			}
 
+			overloaded_registry___::reset( P );
+			_LocalRoot = NONE;
+		}
+		overloaded_unique_registry___( void )
+		{
+			reset( false );
+		}
+		virtual ~overloaded_unique_registry___( void )
+		{
+			reset();
+		}
+		void Init(
+			registry_ &Global,
+			nrow__ Root )
+		{
+			reset();
 
-
-
-
-
-
-
-
-
+			_LocalRoot = overloaded_registry___::Init( Global, Root, Global );
+		}
+	};
 }
 
 
