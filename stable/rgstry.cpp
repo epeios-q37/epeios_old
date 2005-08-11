@@ -485,6 +485,26 @@ void rgstry::registry_::_Delete( nrow__ Row )
 	Nodes.Delete( Row );
 }
 
+bso::bool__ rgstry::registry_::PathExists(
+	const term_ &PathString,
+	nrow__ ParentRow,
+	epeios::row__ &PathRow ) const
+{
+	bso::bool__ Result = false;
+ERRProlog
+	path Path;
+ERRBegin
+	Path.Init();
+
+	PathRow = BuildPath( PathString, Path );
+
+	if ( PathRow != NONE )
+		Result = PathExists( Path, ParentRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
 
 void rgstry::registry_::_Delete( const nrows_ &Rows )
 {
@@ -520,7 +540,7 @@ ERREpilog
 const term_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
 	bso::bool__ &Exists,
-	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
+	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static term Empty;
 	const term_ *Result = 0;
@@ -546,6 +566,27 @@ ERREnd
 ERREpilog
 	return *Result;
 }
+
+bso::bool__ rgstry::overloaded_registry___::PathExists(
+	const rgstry::term_ &PathString,
+	epeios::row__ &PathRow ) const
+{
+	bso::bool__ Result = false;
+ERRProlog
+	path Path;
+ERRBegin
+	Path.Init();
+
+	PathRow = BuildPath( PathString, Path );
+
+	if ( PathRow != NONE )
+		Result = Local.Registry->PathExists( Path, Local.Root ) || Global.Registry->PathExists( Path, Global.Root );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

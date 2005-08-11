@@ -671,6 +671,16 @@ namespace rgstry {
 		{
 			return CreateNode( Name );
 		}
+		bso::bool__ PathExists(
+			const path_ &Path,
+			nrow__ ParentRow ) const
+		{
+			return SearchPath( Path, ParentRow ) != NONE;
+		}
+		bso::bool__ PathExists(
+			const term_ &Path,
+			nrow__ ParentRow,
+			epeios::row__ &PathRow ) const;
 	};
 
 	E_AUTO( registry )
@@ -724,7 +734,7 @@ namespace rgstry {
 		const term_ &GetPathValue(
 			const term_ &Path,
 			bso::bool__ &Exists,
-			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'true' que lorque 'Path' n'existe pas.
+			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		void SetPathValue(
 			const term_ &Path,
 			const term_ &Value,
@@ -747,7 +757,21 @@ namespace rgstry {
 		{
 			Local.Registry->Delete( Row );
 		}
-	};
+		bso::bool__ PathExists(
+			const rgstry::term_ &Path,
+			epeios::row__ &PathRow ) const;
+		bso::bool__ PathExists( const rgstry::term_ &Path ) const
+		{
+			epeios::row__ PathRow = NONE;
+
+			bso::bool__ Result = PathExists( Path, PathRow );
+
+			if ( PathRow != NONE )
+				ERRu();
+
+			return Result;
+		}
+ 	};
 
 	class overloaded_unique_registry___	// La base de registre de base et locale sont la même.
 	: public overloaded_registry___
