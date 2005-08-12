@@ -179,12 +179,6 @@ namespace err {
 	};
 		// external error
 
-#ifdef ERR__THREAD_SAFE
-	// If an error occurs, test if the current thread is concerned.
-	bool Concerned( void );
-	void Unlock( void );
-#endif
-
 	struct err_ {
 		// The exit value of the software.
 		static int ExitValue;
@@ -214,9 +208,25 @@ namespace err {
 	void Final( void );
 
 
-#ifndef ERR__COMPILATION
+//#ifndef ERR__COMPILATION
 	extern err_ ERR;
+//#endif
+
+#ifdef ERR__THREAD_SAFE
+	// If an error occurs, test if the current thread is concerned.
+	bool Concerned( void );
+	void Unlock( void );
+#else
+	bool Concerned( void )
+	{
+		return true;
+	}
+	void Unlock( void )
+	{
+		err::ERR.Error = false;
+	}
 #endif
+
 
 #define ERRCommon( M, m )	err::ERR.Handler( __FILE__, __LINE__, M, err::m )
 
@@ -275,12 +285,7 @@ namespace err {
 #define ERRR()		throw( err::ERR )
 #endif
 
-#ifdef ERR__THREAD_SAFE
-//m Discard error; restore the default behavior of the programm
 #define ERRRst()	{ err::Unlock(); }
-#else
-#define ERRRst()	{ err::ERR.Error = false; }
-#endif
 
 //d Major code.
 #define ERRMajor		err::ERR.Major
@@ -331,15 +336,13 @@ namespace err {
 
 #endif
 
-#ifdef ERR__THREAD_SAFE
-#define ERRTestEpilog	err::ERR.Error && !ERRNoError && err::Concerned() && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
-#else
-#define ERRTestEpilog	err::ERR.Error && !ERRNoError && ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iReturn ) )
-#endif
+#define ERRTestEpilog	if ( err::ERR.Error && !ERRNoError && err::Concerned() )\
+							if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iReturn ) )\
+								ERRRst()
 
 //d End of the error bloc.
-#define ERREpilog	ERRCommonEpilog if ( ERRTestEpilog ) ERRR();
-#define ERRFEpilog	ERRCommonEpilog if ( ERRTestEpilog ) err::Final();
+#define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRR();
+#define ERRFEpilog	ERRCommonEpilog ERRTestEpilog else err::Final();
 #define ERRFProlog	ERRProlog
 #define ERRFBegin	ERRBegin
 #define ERRFErr		ERRErr
