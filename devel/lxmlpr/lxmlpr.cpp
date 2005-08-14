@@ -201,10 +201,13 @@ enum state__ {
 	Attribute
 };
 	
-void lxmlpr::parser_::Parse(
+bso::bool__ lxmlpr::parser_::Parse(
 	xtf::extended_text_iflow__ &Flow,
-	callback__ &Callback )
+	callback__ &Callback,
+	xtf::location__ &ErrorLine,
+	xtf::location__ &ErrorColumn )
 {
+	bso::bool__ Success = true;
 ERRProlog
 	state__ State = TagExpected;
 	str::string Name, Prefix, Value;
@@ -345,11 +348,14 @@ ERRBegin
 		ERRI( iBeam );
 ERRErr
 	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iBeam ) ) {
-			Callback.LXMLPRError( Flow.Line(), Flow.Column() );
-			ERRRst();
+		Success = false;
+		ErrorLine = Flow.Line();
+		ErrorColumn = Flow.Column();
+		ERRRst();
 	}
 ERREnd
 ERREpilog
+	return Success;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

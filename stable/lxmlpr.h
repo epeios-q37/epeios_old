@@ -91,10 +91,6 @@ namespace lxmlpr {
 			const str::string_ &Name,
 			const str::string_ &Value ) = 0;
 		virtual void LXMLPRTagClosed( void ) = 0;
-		virtual void LXMLPRError(
-			location__ Line,
-			location__ Column ) = 0;
-
 	};
 
 	class parser_ {
@@ -131,9 +127,11 @@ namespace lxmlpr {
 			Strings.Init();
 			Tags.Init();
 		}
-		void Parse(
+		bso::bool__ Parse(
 			xtf::extended_text_iflow__ &Flow,
-			callback__ &Callback );
+			callback__ &Callback,
+			xtf::location__ &ErrorLine,
+			xtf::location__ &ErrorColumn );
 	};
 
 	E_AUTO( parser )

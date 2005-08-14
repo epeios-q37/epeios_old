@@ -688,7 +688,9 @@ namespace rgstry {
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry,
-		nrow__ Root );	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'regsitry' est créee.
+		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'regsitry' est créee.
+		xtf::location__ &ErrorLine,
+		xtf::location__ &ErrorColumn );
 
 
 	class overloaded_registry___

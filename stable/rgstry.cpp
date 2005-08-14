@@ -433,12 +433,6 @@ protected:
 	{
 		Current_ = Registry_.GetParent( Current_ );
 	}
-	virtual void LXMLPRError(
-		lxmlpr::location__ Line,
-		lxmlpr::location__ Column )
-	{
-		ERRf();
-	}
 public:
 	callback__(
 		registry_ &Registry,
@@ -520,7 +514,9 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	registry_ &Registry,
-	nrow__ Root )
+	nrow__ Root,
+	xtf::location__ &ErrorLine,
+	xtf::location__ &ErrorColumn )
 {
 ERRProlog
 	callback__ Callback( Registry, Root );
@@ -528,9 +524,10 @@ ERRProlog
 ERRBegin
 	Parser.Init();
 
-	Parser.Parse( Flow, Callback );
-
-	Root = Callback.GetRoot();
+	if ( Parser.Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
+		Root = Callback.GetRoot();
+	else
+		Root = NONE;
 ERRErr
 ERREnd
 ERREpilog
