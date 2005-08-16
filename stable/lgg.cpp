@@ -62,6 +62,7 @@ const char *lgg::LanguageNames[lgg::l_amount] = {
 	"English",
 	"Français",
 	"Deutsch",
+	"Español",
  };
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
@@ -69,6 +70,7 @@ const char *lgg::LanguageLabels[lgg::l_amount] = {
 	"en",
 	"fr",
 	"de",
+	"es",
 };
 
 language__ lgg::GetLanguageIDNamed( const char *Name )

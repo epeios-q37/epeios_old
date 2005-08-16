@@ -102,6 +102,7 @@ ERRBegin
 				English.New();
 				French.New();
 				German.New();
+				Spanish.New();
 				Language = 1;
 				Row = RawMessages.Next( Row );
 			}
@@ -121,6 +122,10 @@ ERRBegin
 			case lgg::lGerman:
 				German( German.Last() ) = Line;
 				German.Flush();
+				break;
+			case lgg::lSpanish:
+				Spanish( Spanish.Last() ) = Line;
+				Spanish.Flush();
 				break;
 			default:
 				State = sEnd;
@@ -168,6 +173,9 @@ const messages_ &msg::i18_messages_::_GetMessages( lgg::language__ Language ) co
 		break;
 	case lgg::lGerman:
 		return German;
+		break;
+	case lgg::lSpanish:
+		return Spanish;
 		break;
 	default:
 		ERRc();

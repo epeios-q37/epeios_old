@@ -213,6 +213,9 @@ ERRProlog
 	str::string Name, Prefix, Value;
 	tag__ Tag;
 ERRBegin
+	Strings.Init();
+	Tags.Init();
+
 	SkipSpaces_( Flow );
 
 	while ( !Flow.EOX() ) {
@@ -257,6 +260,9 @@ ERRBegin
 				SkipSpaces_( Flow );
 
 				if ( Flow.Get() != '>' )
+					ERRI( iBeam );
+
+				if ( Tags.IsEmpty() )
 					ERRI( iBeam );
 
 				Tags.Pop();

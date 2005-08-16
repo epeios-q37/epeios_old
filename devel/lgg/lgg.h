@@ -75,6 +75,8 @@ namespace lgg {
 		lFrench,
 		//i German
 		lGerman,
+		//i Spanish,
+		lSpanish,
 		//i Amount of languages.
 		l_amount,
 		//i undefined

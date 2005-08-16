@@ -115,23 +115,27 @@ namespace msg {
 			buffer__ &Buffer ) const;
 	public:
 		struct s {
-			messages_::s French, English, German;
+			messages_::s French, English, German, Spanish;
 			bso::ubyte__ Amount;
 		} &S_;
 		messages_ French;
 		messages_ English;
 		messages_ German;
+		messages_ Spanish;
 		i18_messages_( s &S )
 		: S_( S ),
 		  French( S.French ),
 		  English( S.English ),
-		  German( S.German )
+		  German( S.German ),
+		  Spanish( S.Spanish )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			French.reset( P );
 			English.reset( P );
 			German.reset( P );
+			Spanish.reset( P );
+
 			S_.Amount = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -139,6 +143,7 @@ namespace msg {
 			French.plug( MM );
 			English.plug( MM );
 			German.plug( MM );
+			Spanish.plug( MM );
 		}
 		i18_messages_ &operator =( const i18_messages_ &IM )
 		{
@@ -147,6 +152,7 @@ namespace msg {
 			French = IM.French;
 			English = IM.English;
 			German = IM.German;
+			Spanish = IM.Spanish;
 
 			return *this;
 		}
@@ -158,6 +164,8 @@ namespace msg {
 			French.Init();
 			English.Init();
 			German.Init();
+			Spanish.Init();
+
 		}
 		xtf::location__ LoadMessages( xtf::extended_text_iflow__ &Flow );
 		const char *GetMessage(
