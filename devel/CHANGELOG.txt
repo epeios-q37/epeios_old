@@ -1,5 +1,9 @@
 $Id$
 
+17/08/05:
+	- BCH :
+		- Ajout d'une variante de la méthode 'Append'.
+
 14/08/05:
 	- LXMLPR :
 		- Lors d'une erreur lors de l'analyse, la ligne et la colonne incriminées sont disponibles.

@@ -255,6 +255,18 @@ namespace bch {
 
 			return Position;
 		}
+		// Ajoute le contenu de 'Bunch' de la position 'First' à la position 'Last', toute deux incluses.
+		row Append(
+			const _bunch &Bunch,
+			row First,
+			row Last )
+		{
+#ifdef BCH_DBG
+			if ( *First > *Last )
+				ERRu();
+#endif
+			return Append( Bunch, *First, *Last - *First );
+		}
 		//f Append all the objects from 'Bunch' beginning at 'Position'. Return the position where the objects are put.
 		row Append(
 			const _bunch &Bunch,
