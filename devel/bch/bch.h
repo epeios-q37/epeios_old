@@ -251,7 +251,7 @@ namespace bch {
 		{
 			row Offset = this->Amount();
 
-			StoreAndAdjust( Bunch, Amount - *Position, Position, Offset );
+			StoreAndAdjust( Bunch, Amount, Position, Offset );
 
 			return Position;
 		}
@@ -265,7 +265,7 @@ namespace bch {
 			if ( *First > *Last )
 				ERRu();
 #endif
-			return Append( Bunch, *First, *Last - *First );
+			return Append( Bunch, *Last - *First + 1, *First );
 		}
 		//f Append all the objects from 'Bunch' beginning at 'Position'. Return the position where the objects are put.
 		row Append(
