@@ -217,11 +217,11 @@ namespace err {
 	bool Concerned( void );
 	void Unlock( void );
 #else
-	bool Concerned( void )
+	inline bool Concerned( void )
 	{
 		return true;
 	}
-	void Unlock( void )
+	inline void Unlock( void )
 	{
 		err::ERR.Error = false;
 	}
