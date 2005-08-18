@@ -520,11 +520,8 @@ nrow__ rgstry::Parse(
 {
 ERRProlog
 	callback__ Callback( Registry, Root );
-	lxmlpr::parser Parser;	
 ERRBegin
-	Parser.Init();
-
-	if ( Parser.Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
+	if ( lxmlpr::Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
 		Root = Callback.GetRoot();
 	else
 		Root = NONE;

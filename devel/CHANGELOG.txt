@@ -4,6 +4,12 @@ $Id$
 18/08/05
 	- ERR :
 		- Correction d'un problème apparaissant lors de l'édition de liens.
+	- LSTCTN :
+		- Correction erreur macros.
+	- LXMLPR :
+		- Remplacement de la méthhde par une fonction.
+	- RGSTRY :
+		- Adaptation aux modifications de la bibliothèque 'LXMLPR'.
 
 17/08/05:
 	- BCH :

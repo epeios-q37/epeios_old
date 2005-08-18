@@ -66,20 +66,6 @@ extern class ttr_tutor &LXMLPRTutor;
 #include "lstctn.h"
 
 namespace lxmlpr {
-
-	using xtf::location__;
-
-	E_ROW( srow__ );
-
-	typedef lstctn::E_LXMCONTAINERt_( str::string_, srow__ ) strings_;
-
-	struct tag__ {
-		srow__ Prefix;
-		srow__ Name;
-	};
-
-	typedef stk::E_STACK_( tag__ ) tags_;
-
 	struct callback__
 	{
 		virtual void LXMLPRTag(
@@ -93,49 +79,11 @@ namespace lxmlpr {
 		virtual void LXMLPRTagClosed( void ) = 0;
 	};
 
-	class parser_ {
-	public:
-		struct s {
-			strings_ ::s Strings;
-			tags_::s Tags;
-		};
-		strings_  Strings;
-		tags_ Tags;
-		parser_( s &S )
-		: Strings( S.Strings ),
-		  Tags( S.Tags )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			Strings.reset( P );
-			Tags.reset( P );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Strings.plug( MM );
-			Tags.plug( MM );
-		}
-		parser_ &operator =( const parser_ &P )
-		{
-			Strings = P.Strings;
-			Tags = P.Tags;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			Strings.Init();
-			Tags.Init();
-		}
-		bso::bool__ Parse(
-			xtf::extended_text_iflow__ &Flow,
-			callback__ &Callback,
-			xtf::location__ &ErrorLine,
-			xtf::location__ &ErrorColumn );
-	};
-
-	E_AUTO( parser )
-
+	bso::bool__ Parse(
+		xtf::extended_text_iflow__ &Flow,
+		callback__ &Callback,
+		xtf::location__ &ErrorLine,
+		xtf::location__ &ErrorColumn );
 
 
 

@@ -200,8 +200,17 @@ enum state__ {
 	ClosingTag,
 	Attribute
 };
-	
-bso::bool__ lxmlpr::parser_::Parse(
+
+using xtf::location__;
+
+E_ROW( srow__ );
+
+struct tag__ {
+	srow__ Prefix;
+	srow__ Name;
+};
+
+bso::bool__ lxmlpr::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	callback__ &Callback,
 	xtf::location__ &ErrorLine,
@@ -212,7 +221,12 @@ ERRProlog
 	state__ State = TagExpected;
 	str::string Name, Prefix, Value;
 	tag__ Tag;
+	lstctn::E_LXMCONTAINERt( str::string_, srow__ ) Strings;
+	stk::E_STACK( tag__ ) Tags;
 ERRBegin
+	Strings.Init();
+	Tags.Init();
+
 	SkipSpaces_( Flow );
 
 	while ( !Flow.EOX() ) {
@@ -257,6 +271,9 @@ ERRBegin
 				SkipSpaces_( Flow );
 
 				if ( Flow.Get() != '>' )
+					ERRI( iBeam );
+
+				if ( Tags.IsEmpty() )
 					ERRI( iBeam );
 
 				Tags.Pop();
