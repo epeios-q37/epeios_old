@@ -31,7 +31,6 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	cout << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
@@ -54,9 +53,7 @@ ERRFBegin
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cout << "\nEnd of program " << $XXX$Tutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }
