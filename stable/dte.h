@@ -108,6 +108,12 @@ namespace dte {
 		}
 	};
 	
+	enum format__ {
+		fDDMMYYYY,	// à la française ('25/11/2003').
+		fMMDDYYYY,	// à l'anglaise ('11/25/2003').
+		f_amount,
+		f_Undefined
+	};
 
 	//c A date.
 	class date__ {
@@ -228,13 +234,15 @@ namespace dte {
 			return _Day( Date == DTE_INVALID_DATE ? RawDate_ : Date );
 		}
 		//f Return the date in ASCII ('dd/mm/yyyy') and put in 'Result' if != 'NULL'.
-		const char *ASCII( date_buffer__ &Buffer ) const;
+		const char *ASCII(
+			format__ Format,
+			date_buffer__ &Buffer ) const;
 #ifndef CPE__MT
-		const char *ASCII( void ) const
+		const char *ASCII( format__ Format ) const
 		{
 			static date_buffer__ Buffer;
 
-			return ASCII( Buffer );
+			return ASCII( Format, Buffer );
 		}
 #endif
 		void Date(
@@ -339,7 +347,7 @@ namespace dte {
 	{
 		date_buffer__ Buffer;
 
-		return Flow << Date.ASCII( Buffer );
+		return Flow << Date.ASCII( fDDMMYYYY, Buffer );
 	}
 
 }
