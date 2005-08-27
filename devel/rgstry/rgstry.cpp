@@ -164,6 +164,7 @@ ERRProlog
 	state__ State = s_Undefined;
 	bso::char__ C;
 	path_item Item;
+	bso::bool__ TagNameAsAttribute = false;
 ERRBegin
 	TermRow = Term.First();
 
@@ -183,17 +184,27 @@ ERRBegin
 				Continue = false;
 				break;
 			case '[':
-				if ( Item.TagName.Amount() == 0 )
+				if ( TagNameAsAttribute )
+					Continue = false;
+				else if ( Item.TagName.Amount() == 0 )
 					Continue = false;
 				State = sAttributeName;
 				Item.AttributeName.Init();
 				break;
 			case '/':
-				if ( Item.TagName.Amount() == 0 )
+				if ( TagNameAsAttribute )
+					Continue = false;
+				else if ( Item.TagName.Amount() == 0 )
 					Continue = false;
 				else
 					Path.Append( Item );
 				Item.Init();
+				break;
+			case '@':
+				if ( Item.TagName.Amount() != 0 )
+					Continue = false;
+				else
+					TagNameAsAttribute = true;
 				break;
 			default:
 				Item.TagName.Append( C );
@@ -260,8 +271,14 @@ ERRBegin
 			Continue = false;
 	}
 
-	if ( Item.TagName.Amount() != 0 )
+	if ( Item.TagName.Amount() != 0 ) {
+		if ( TagNameAsAttribute ) {
+			Item.AttributeName = Item.TagName;
+			Item.TagName.Init();
+		}
+
 		Path.Append( Item );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -545,7 +562,10 @@ ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	BuildPath( PathString, Path );
+	if ( BuildPath( PathString, Path ) != NONE ) {
+		Exists = false;
+		ERRReturn;
+	}
 
 	if ( ( Row = Local.Registry->SearchPath( Path, Local.Root ) ) != NONE )
 		Result = &Local.Registry->GetValue( Row, Buffer );
