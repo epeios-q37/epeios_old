@@ -1,5 +1,11 @@
 $Id$
 
+27/08/05
+	- LXMLPR :
+		- Amélioration de la détection d"erreurs du flux d'entrée.
+	- RGSTRY :
+		- Amélioration de la détection d'erreurs.
+		- Gestion des 'path' se terminant par un attribut ('.../@Nom').
 
 18/08/05
 	- ERR :

@@ -313,7 +313,12 @@ ERRBegin
 				SkipSpaces_( Flow );
 
 				if ( Flow.View() == '>' ) {
+
+					if ( Tags.IsEmpty() )
+						ERRI( iBeam );
+
 					Tags.Pop();
+
 					Callback.LXMLPRTagClosed();
 					State = TagExpected;
 					Flow.Get();
@@ -345,6 +350,9 @@ ERRBegin
 				ERRI( iBeam );
 
 			Callback.LXMLPRTagClosed();
+
+			if ( Tags.IsEmpty() )
+				ERRI( iBeam );
 
 			Tags.Pop();
 

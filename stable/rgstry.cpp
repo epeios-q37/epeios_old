@@ -164,6 +164,7 @@ ERRProlog
 	state__ State = s_Undefined;
 	bso::char__ C;
 	path_item Item;
+	bso::bool__ TagNameAsAttribute = false;
 ERRBegin
 	TermRow = Term.First();
 
@@ -183,17 +184,27 @@ ERRBegin
 				Continue = false;
 				break;
 			case '[':
-				if ( Item.TagName.Amount() == 0 )
+				if ( TagNameAsAttribute )
+					Continue = false;
+				else if ( Item.TagName.Amount() == 0 )
 					Continue = false;
 				State = sAttributeName;
 				Item.AttributeName.Init();
 				break;
 			case '/':
-				if ( Item.TagName.Amount() == 0 )
+				if ( TagNameAsAttribute )
+					Continue = false;
+				else if ( Item.TagName.Amount() == 0 )
 					Continue = false;
 				else
 					Path.Append( Item );
 				Item.Init();
+				break;
+			case '@':
+				if ( Item.TagName.Amount() != 0 )
+					Continue = false;
+				else
+					TagNameAsAttribute = true;
 				break;
 			default:
 				Item.TagName.Append( C );
@@ -260,8 +271,14 @@ ERRBegin
 			Continue = false;
 	}
 
-	if ( Item.TagName.Amount() != 0 )
+	if ( Item.TagName.Amount() != 0 ) {
+		if ( TagNameAsAttribute ) {
+			Item.AttributeName = Item.TagName;
+			Item.TagName.Init();
+		}
+
 		Path.Append( Item );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -270,17 +287,28 @@ ERREpilog
 
 nrow__ rgstry::registry_::SearchPath(
 	const path_ &Path,
-	nrow__ Row ) const
+	nrow__ Row,
+	erow__ &AttributeEntryRow ) const
 {
 	ctn::E_CITEM( path_item_ ) Item;
 	epeios::row__ PathRow = Path.First();
 
+	AttributeEntryRow = NONE;
+
 	Item.Init( Path );
 
 	while ( ( PathRow != NONE ) && ( Row != NONE ) ) {
-		Row = _SearchChild( Item( PathRow ), Row );
+		if ( Item( PathRow ).TagName.Amount() != 0 )// '.../Name.../...'
+			Row = _SearchChild( Item( PathRow ), Row );	
+		else if ( ( AttributeEntryRow = _GetAttribute( Item( PathRow ).AttributeName, Row ) ) == NONE ) // '.../@Name'
+			Row = NONE;
 
 		PathRow = Path.Next( PathRow );
+
+#ifdef RGSTRY_DBG
+			if ( ( AttributeEntryRow != NONE ) && ( PathRow != NONE ) )
+				ERRu();
+#endif
 	}
 
 	return Row;
@@ -291,6 +319,7 @@ nrow__ rgstry::registry_::SearchPath(
 nrow__ rgstry::registry_::SearchPath(
 	const term_ &Term,
 	nrow__ Row,
+	erow__ &AttributeEntryRow,
 	epeios::row__ &PathErrorRow ) const
 {
 ERRProlog
@@ -305,7 +334,7 @@ ERRBegin
 		Row = NONE;
 		PathErrorRow = PathRow;
 	} else
-		Row = SearchPath( Path, Row );
+		Row = SearchPath( Path, Row, AttributeEntryRow );
 
 ERRErr
 ERREnd
@@ -511,6 +540,63 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 	}
 }
 
+const term_ &rgstry::registry_::GetPathValue(
+	const path_ &Path,
+	nrow__ ParentRow,
+	bso::bool__ &Exists,
+	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+{
+	static term Empty;
+	const term_ *Result = &Empty;
+ERRProlog
+	nrow__ Row = NONE;
+	erow__ AttributeEntryRow = NONE;
+ERRBegin
+	Empty.Init();
+
+	if ( ( Row = SearchPath( Path, ParentRow, AttributeEntryRow ) ) != NONE )
+		if ( AttributeEntryRow == NONE )
+			Result = &GetValue( Row, Buffer );
+		else
+			Result = &GetValue( AttributeEntryRow, Buffer );
+	else {
+		Exists = false;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return *Result;
+}
+
+const term_ &rgstry::registry_::GetPathValue(
+	const term_ &PathString,
+	nrow__ ParentRow,
+	bso::bool__ &Exists,
+	epeios::row__ &PathErrorRow,
+	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+{
+	static term Empty;
+	const term_ *Result = &Empty;
+ERRProlog
+	nrow__ Row = NONE;
+	path Path;
+	erow__ AttributeEntryRow = NONE;
+ERRBegin
+	Path.Init();
+	Empty.Init();
+
+	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
+		Exists = false;
+		ERRReturn;
+	}
+
+	Result = &GetPathValue( Path, ParentRow, Exists, Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return *Result;
+}
+
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	registry_ &Registry,
@@ -534,6 +620,7 @@ ERREpilog
 const term_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
 	bso::bool__ &Exists,
+	epeios::row__ &PathErrorRow,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static term Empty;
@@ -541,20 +628,21 @@ const term_ &rgstry::overloaded_registry___::GetPathValue(
 ERRProlog
 	nrow__ Row = NONE;
 	path Path;
+	erow__ AttributeEntryRow = NONE;
+	bso::bool__ LocalExists = true;
 ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	BuildPath( PathString, Path );
-
-	if ( ( Row = Local.Registry->SearchPath( Path, Local.Root ) ) != NONE )
-		Result = &Local.Registry->GetValue( Row, Buffer );
-	else if ( ( Row = Global.Registry->SearchPath( Path, Global.Root ) ) != NONE )
-		Result = &Global.Registry->GetValue( Row, Buffer );
-	else {
+	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
 		Exists = false;
-		Result = &Empty;
+		ERRReturn;
 	}
+
+	Result = &Local.Registry->GetPathValue( Path, Local.Root, LocalExists, Buffer );
+
+	if ( !LocalExists )
+		Result = &Global.Registry->GetPathValue( Path, Global.Root, Exists, Buffer );
 ERRErr
 ERREnd
 ERREpilog

@@ -556,18 +556,31 @@ namespace rgstry {
 		}
 		nrow__ SearchPath(
 			const path_ &Path,
-			nrow__ ParentRow ) const;
+			nrow__ ParentRow,
+			erow__ &AttributeEntryRow ) const;
 		nrow__ SearchPath(
 			const term_ &Term,
 			nrow__ ParentRow,
-			epeios::row__ &PathRow ) const;
+			erow__ &AttributeEntryRow,
+			epeios::row__ &PathErrorRow ) const;
 		nrow__ CreatePath(
 			const path_ &Path,
 			nrow__ ParentRow );
 		nrow__ CreatePath(
 			const term_ &Term,
 			nrow__ ParentRow,
-			epeios::row__ &PathRow );
+			epeios::row__ &PathErrorRow );
+		const term_ &GetPathValue(
+			const path_ &Path,
+			nrow__ ParentRow,
+			bso::bool__ &Exists,
+			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		const term_ &GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			bso::bool__ &Exists,
+			epeios::row__ &PathErrorRow,
+			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		nrow__ SetPathValue(
 			const path_ &Path,
 			const term_ &Value,
@@ -583,7 +596,7 @@ namespace rgstry {
 			const term_ &Path,
 			const term_ &Value,
 			nrow__ ParentRow,
-			epeios::row__ &PathRow );
+			epeios::row__ &PathErrorRow );
 		nrow__ GetParent( nrow__ NodeRow ) const
 		{
 			node_buffer NodeBuffer;
@@ -675,12 +688,14 @@ namespace rgstry {
 			const path_ &Path,
 			nrow__ ParentRow ) const
 		{
-			return SearchPath( Path, ParentRow ) != NONE;
+			erow__ AttributeEntryRow = NONE;
+
+			return SearchPath( Path, ParentRow, AttributeEntryRow ) != NONE;
 		}
 		bso::bool__ PathExists(
 			const term_ &Path,
 			nrow__ ParentRow,
-			epeios::row__ &PathRow ) const;
+			epeios::row__ &PathErrorRow ) const;
 	};
 
 	E_AUTO( registry )
@@ -736,23 +751,38 @@ namespace rgstry {
 		const term_ &GetPathValue(
 			const term_ &Path,
 			bso::bool__ &Exists,
+			epeios::row__ &PathErrorRow,
 			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		const term_ &GetPathValue(
+			const term_ &Path,
+			bso::bool__ &Exists,
+			buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		{
+			epeios::row__ PathErrorRow = NONE;
+
+			const term_ &Value = GetPathValue( Path, Exists, PathErrorRow, Buffer );
+
+			if ( PathErrorRow != NONE )
+				ERRu();
+
+			return Value;
+		}
 		void SetPathValue(
 			const term_ &Path,
 			const term_ &Value,
-			epeios::row__ &PathRow )
+			epeios::row__ &PathErrorRow )
 		{
-			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathErrorRow );
 		}
 		void SetPathValue(
 			const term_ &Path,
 			const term_ &Value )
 		{	
-			epeios::row__ PathRow = NONE;
+			epeios::row__ PathErrorRow = NONE;
 
-			Local.Registry->SetPathValue( Path, Value, Local.Root, PathRow );
+			Local.Registry->SetPathValue( Path, Value, Local.Root, PathErrorRow );
 
-			if ( PathRow != NONE )
+			if ( PathErrorRow != NONE )
 				ERRu();
 		}
 		void Delete( nrow__ Row )
@@ -761,14 +791,14 @@ namespace rgstry {
 		}
 		bso::bool__ PathExists(
 			const rgstry::term_ &Path,
-			epeios::row__ &PathRow ) const;
+			epeios::row__ &PathErrorRow ) const;
 		bso::bool__ PathExists( const rgstry::term_ &Path ) const
 		{
-			epeios::row__ PathRow = NONE;
+			epeios::row__ PathErrorRow = NONE;
 
-			bso::bool__ Result = PathExists( Path, PathRow );
+			bso::bool__ Result = PathExists( Path, PathErrorRow );
 
-			if ( PathRow != NONE )
+			if ( PathErrorRow != NONE )
 				ERRu();
 
 			return Result;
