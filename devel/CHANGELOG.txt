@@ -1,5 +1,9 @@
 $Id$
 
+29/08/05 :
+	- FLX :
+		- Ajout du paramètre 'Position' lors de l'initialisation d'un 'bunch_iflow__'.
+
 27/08/05
 	- LXMLPR :
 		- Amélioration de la détection d"erreurs du flux d'entrée.

@@ -268,10 +268,12 @@ namespace flx {
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
-		void Init( const bunch_ &Bunch )
+		void Init(
+			const bunch_ &Bunch,
+			epeios::row_t__ Position = 0 )
 		{
 			Bunch_ = &Bunch;
-			Position_ = 0;
+			Position_ = Position;
 		}
 	};
 
@@ -324,7 +326,7 @@ namespace flx {
 		}
 	};
 
-#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
+	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
 	//c A output flow which write to nothing.
 	class dump_oflow__
