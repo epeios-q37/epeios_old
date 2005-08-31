@@ -62,6 +62,9 @@ extern class ttr_tutor &LGPMSCTutor;
 
 #include "err.h"
 #include "flw.h"
+#ifndef CPE__MT
+#	include "cio.h"
+#endif
 
 //d The logiplus site URL.
 #define LGPMSC_LOGIPLUS_URL	"http://logiplus.fr/"

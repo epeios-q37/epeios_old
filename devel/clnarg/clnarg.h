@@ -66,6 +66,9 @@ extern class ttr_tutor &CLNARGTutor;
 #include "bch.h"
 #include "ctn.h"
 #include "str.h"
+#ifndef CPE__MT
+#	include "cio.h"
+#endif
 
 
 #define CLNARG_DEFAULT_FLAG	'-'
@@ -300,8 +303,8 @@ namespace clnarg {
 		int CommandId,
 		const char *Text,
 		clnarg::view View,
-#ifdef CPT__MT
-		txf::text_oflow__ &Flow = cout,
+#ifndef CPT__MT
+		txf::text_oflow__ &Flow = cio::cout,
 #else
 		txf::text_oflow__ &Flow,
 #endif
@@ -313,8 +316,8 @@ namespace clnarg {
 		const char *Text,
 		clnarg::view View,
 		bso::bool__ Default,
-#ifdef CPT__MT
-		txf::text_oflow__ &Flow = cout )
+#ifndef CPT__MT
+		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )
 #endif
@@ -330,8 +333,8 @@ namespace clnarg {
 		const char *Parameter,
 		const char *Text,
 		clnarg::view View,
-#ifdef CPT__MT
-		txf::text_oflow__ &Flow = cout );
+#ifndef CPT__MT
+		txf::text_oflow__ &Flow = cio::cout );
 #else
 		txf::text_oflow__ &Flow );
 #endif
@@ -343,8 +346,8 @@ namespace clnarg {
 		int OptionId,
 		const char *Text,
 		clnarg::view View,
-#ifdef CPT__MT
-		txf::text_oflow__ &Flow = cout )
+#ifndef CPT__MT
+		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )
 #endif
