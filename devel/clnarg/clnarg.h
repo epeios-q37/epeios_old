@@ -303,7 +303,7 @@ namespace clnarg {
 		int CommandId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPT__MT
+#ifndef CPE__MT
 		txf::text_oflow__ &Flow = cio::cout,
 #else
 		txf::text_oflow__ &Flow,
@@ -316,7 +316,7 @@ namespace clnarg {
 		const char *Text,
 		clnarg::view View,
 		bso::bool__ Default,
-#ifndef CPT__MT
+#ifndef CPE__MT
 		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )
@@ -333,7 +333,7 @@ namespace clnarg {
 		const char *Parameter,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPT__MT
+#ifndef CPE__MT
 		txf::text_oflow__ &Flow = cio::cout );
 #else
 		txf::text_oflow__ &Flow );
@@ -346,7 +346,7 @@ namespace clnarg {
 		int OptionId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPT__MT
+#ifndef CPE__MT
 		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )
