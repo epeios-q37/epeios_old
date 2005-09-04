@@ -1,5 +1,9 @@
 $Id$
 
+03/09/05:
+	- TOL :
+		- Ajout de la directive préprocesseur '__LOC__'.
+
 29/08/05 :
 	- FLX :
 		- Ajout du paramètre 'Position' lors de l'initialisation d'un 'bunch_iflow__'.
