@@ -76,7 +76,7 @@ extern class ttr_tutor &CSDDLSTutor;
 extern "C" CSDDSL__FUNCTION_SPEC csdscm::user_functions__ *CSDDLEntry( void *UP );
 
 namespace csddls {
-	csdscm::user_functions__ &CSDDLSCallback( void *UP );	// A surcharger.
+	csdscm::user_functions__ *CSDDLSCallback( void *UP );	// A surcharger.
 }		
 
 /*$END$*/

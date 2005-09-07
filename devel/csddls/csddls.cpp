@@ -85,7 +85,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 csdscm::user_functions__ *CSDDLEntry( void *UP )
 {
-	return &csddls::CSDDLSCallback( UP );
+	return csddls::CSDDLSCallback( UP );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

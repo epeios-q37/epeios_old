@@ -82,18 +82,20 @@ namespace csducl {
 		csdsnc::core _Shared;
 		csddlc::dynamic_library_client_core _LibraryName;
 	public:
-		void Init(
+		bso::bool__ Init(
 			const char *Backend,
 			void *UP,
 			csdsnc::log_functions__ &Log,
 			type__ Type )
 		{
+			bso::bool__ Success = false;
+
 			switch ( Type ) {
 			case tShared:
-				_Shared.Init( Backend, Log );
+				Success = _Shared.Init( Backend, Log );
 				break;
 			case tLibrary:
-				_LibraryName.Init( Backend, UP );
+				Success = _LibraryName.Init( Backend, UP );
 				break;
 			default:
 				ERRu();
@@ -101,6 +103,8 @@ namespace csducl {
 			}
 
 			_Type = Type;
+
+			return Success;
 		}
 		type__ GetType( void ) const
 		{

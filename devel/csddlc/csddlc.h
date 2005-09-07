@@ -82,7 +82,7 @@ namespace csddlc {
 		{
 			reset();
 		}
-		void Init(
+		bso::bool__ Init(
 			const char *LibraryName,
 			void *UP );
 		friend class dynamic_library_client;
@@ -95,6 +95,9 @@ namespace csddlc {
 	public:
 		void Init( dynamic_library_client_core &Core )
 		{
+			if ( Core._UserFunctions == NULL )
+				ERRu();
+
 			embed_client_server::Init( *Core._UserFunctions );
 		}
 	};

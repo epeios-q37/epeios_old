@@ -1,5 +1,17 @@
 $Id$
 
+07/09/05:
+	- CSDDLC:
+		- Mise en place de la gestion d'un code de retour signalant une erreur.
+	- CSDDLS : 
+		- Retourne maintemant un pointeur sur les fonctions utilisateurs, et non plus une référence,
+			pour faciliter la mise en place d'un code de retour signalant une erreur ('NULL').
+	- CSDULC :
+		- Mise en place d'un code de retour lors de l'initialisation pour signaler une erreur.
+	- CSDSNC :
+		- Mise en place d'un code de retour lors de l'initialisation pour signaler une erreur.
+	
+
 03/09/05:
 	- TOL :
 		- Ajout de la directive préprocesseur '__LOC__'.

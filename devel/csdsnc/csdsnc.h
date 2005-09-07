@@ -204,7 +204,7 @@ ERREpilog
 
 			return *this;
 		}
-		void Init( 
+		bso::bool__ Init( 
 			const char *HostService,
 			log_functions__ &LogFunctions )
 		{
@@ -216,6 +216,8 @@ ERREpilog
 			S_.Log.Functions = &LogFunctions;
 
 			Flows.Init();
+
+			return true;
 		}
 		_flow___ *Get( void )
 		{

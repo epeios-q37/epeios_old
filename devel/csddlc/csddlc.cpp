@@ -90,10 +90,11 @@ void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 }
 
 
-void csddlc::dynamic_library_client_core::Init(
+bso::bool__ csddlc::dynamic_library_client_core::Init(
 	const char *LibraryName,
 	void *UP )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	f CSDDLGet;
 ERRBegin
@@ -115,11 +116,13 @@ ERRBegin
 		ERRs();
 #endif
 
-	_UserFunctions = CSDDLGet( UP );
+	Success = ( _UserFunctions = CSDDLGet( UP ) ) != NULL;
 ERRErr
-	reset();
 ERREnd
+	if ( !Success )
+		reset();
 ERREpilog
+	return Success;
 }
 
 
