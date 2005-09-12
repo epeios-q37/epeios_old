@@ -464,8 +464,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&XML CORe
 &xmldbs		&exml		&2001\
 	&XML DataBaSe
+&xmldoc		&exml		&\
+	&XML DOCument
 &xmldcm		&exml		&2001-\
 	&XML DoCuMent
+&xmlelm		&exml		&\
+	&XML ELeMent
+&xmlflr		&exml		&\
+	&XML FiLleR
 &xmlprs		&exml		&2000-\		&XML PaRSer
 &xmllpr		&exml		&\
 	&XML Light PaRser

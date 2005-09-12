@@ -1,5 +1,10 @@
 $Id$
 
+10/09/05:
+	- DTR :
+		- Simplification du parcour de l'arbre (objet 'browser__').
+		- Mise à niveau (nouveau standards).
+	 
 07/09/05:
 	- CSDDLC:
 		- Mise en place de la gestion d'un code de retour signalant une erreur.

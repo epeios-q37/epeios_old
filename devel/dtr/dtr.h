@@ -68,20 +68,12 @@ extern class ttr_tutor &DTRTutor;
 
 namespace dtr {
 	//e Browse status;
-	enum browse {
-		//i Undefined status.
-		bUndefined,
-		//i First element (always the root node).
-		bFirst,
-		/*i Last element, unless given root node have no child. So don't trust
-		this item to stop browsing. */
-		bLast,
-		//i Is child
-		bChild,
-		//i Is brother.
-		bBrother,
-		//i Is parent (already handled).
-		bParent
+	enum kinship__ {
+		kChild,
+		kSibling,
+		kParent,
+		k_amount,
+		k_Undefined,
 	};
 	
 	template <typename r> class dynamic_tree_;	// Predeclaration.
@@ -91,37 +83,25 @@ namespace dtr {
 	template <typename r> struct browser__
 	{
 	private:
-		browse Status_;
-		r Position_;
-		r Root_;
+		kinship__ _Kinship;
+		r _Position;
+		r _Root;
 	public:
 		browser__( void )
 		{
-			Status_ = bUndefined;
-			Position_ = NONE;
-			Root_ = NONE;
+			_Kinship = k_Undefined;
+			_Position = NONE;
+			_Root = NONE;
 		}
 		//f Initialization wih 'Root' as root.
 		void Init( r Root )
 		{
-			Status_ = bFirst;
-			Position_ = Root_ = Root;
+			_Kinship = k_Undefined;
+			_Position = _Root = Root;
 		}
-		//f Return current position.
-		r Position( void )
-		{
-			return Position_;
-		}
-		//r Return root.
-		r Root( void )
-		{
-			return Root_;
-		}
-		//f Return status.
-		browse Status( void )
-		{
-			return Status_;
-		}
+		E_RODISCLOSE__( kinship__, Kinship )
+		E_RODISCLOSE__( r, Position )
+		E_RODISCLOSE__( r, Root )
 		friend class dynamic_tree_<r>;
 	};
 
@@ -255,25 +235,45 @@ namespace dtr {
 		{
 			return Tree.Left( Node );
 		}
+		bso::bool__ HasFirst( r Node ) const
+		{
+			return First( Node ) != NONE;
+		}
 		//f Return last node of 'Node'.
 		r Last( r Node ) const
 		{
 			return Tree.Right( Node );
+		}
+		bso::bool__ HasLast( r Node ) const
+		{
+			return Last( Node ) != NONE;
 		}
 		//f Return node previous to 'Node'.
 		r Previous( r Node ) const
 		{
 			return Queue.Previous( Node );
 		}
+		bso::bool__ HasPrevious( r Node ) const
+		{
+			return Previous( Node ) != NONE;
+		}
 		//f Return node next to 'Node'.
 		r Next( r Node ) const
 		{
 			return Queue.Next( Node );
 		}
+		bso::bool__ HasNext( r Node ) const
+		{
+			return Next( Node ) != NONE;
+		}
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
 		{
 			return Tree.Parent( Node );
+		}
+		bso::bool__ HasParent( r Node ) const
+		{
+			return Parent( Node ) != NONE;
 		}
 		//f Return amount of nodes.
 		epeios::size__ Amount( void ) const
@@ -284,40 +284,61 @@ namespace dtr {
 		using 'BrowseStruct'. */
 		r Browse( browser__<r> &Browser ) const
 		{
-			r P = Browser.Position_;
-			
-			if ( Browser.Status_ == dtr::bUndefined )
-				Browser.Position_ = NONE;
-			else if ( ( Browser.Status_ == dtr::bLast )
-			 	       && ( Browser.Root_ == NONE ) ) {
-				Browser.Position_ = NONE;
-				Browser.Status_ = dtr::bUndefined;
-			} else if ( P != NONE ) {
-				if ( ( Browser.Status_ != dtr::bParent ) )
-					if ( First( P ) != NONE ) {
-						Browser.Status_ = dtr::bChild;
-						Browser.Position_ = First( P );
-					}
+			kinship__ &Kinship = Browser._Kinship;
+			r &Position = Browser._Position, &Root = Browser._Root;
 
-				if ( P == Browser.Position_ )
-					if ( P != Browser.Root_ ) {
-						if ( Next( P ) != NONE ) {
-							Browser.Status_ = dtr::bBrother;
-							Browser.Position_ = Next( P );
-						} else  if ( ( Browser.Position_ = Parent( P ) ) != Browser.Root_ )
-							Browser.Status_ = dtr::bParent;
-						else {
-							Browser.Status_ = dtr::bLast;
-							Browser.Root_ = NONE;
-						}
-					} else {
-						Browser.Root_ = NONE;
-						Browser.Position_ = NONE;
-						Browser.Status_ = dtr::bUndefined;
-					}
+			switch ( Kinship ) {
+			case k_Undefined:
+				if ( Root == NONE )
+					ERRu();
+
+				if ( HasFirst( Position ) ) {
+					Position = First( Position );
+					Kinship = kChild;
+				}
+				break;
+			case kChild:
+			case kSibling:
+				if ( HasFirst( Position ) ) {
+					Position = First( Position );
+					Kinship = kChild;
+				} else if ( HasNext( Position ) ) {
+					Position = Next( Position );
+					Kinship = kSibling;
+#ifdef DTR_DBG
+				} else if ( !HasParent( Position ) ) {
+					ERRc();
+#endif
+				} else {
+					Position = Parent( Position );
+					Kinship = kParent;
+				}
+				break;
+			case kParent:
+				if ( HasNext( Position ) ) {
+					Position = Next( Position );
+					Kinship = kSibling;
+#ifdef DTR_DBG
+				} else if ( !HasParent( Position ) ) {
+					ERRc();
+#endif
+				} else {
+					Position = Parent( Position );
+					Kinship = kParent;
+				}
+				break;
+			default:
+				ERRu();
+				break;
 			}
 
-			return Browser.Position_;
+			if ( Position == Root ) {
+				Position = NONE;
+				Kinship = k_Undefined;
+			}
+
+
+			return Position;
 		}
 	};
 
