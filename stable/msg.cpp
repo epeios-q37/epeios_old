@@ -108,6 +108,11 @@ ERRBegin
 			}
 			break;
 		case sTranslation:
+#ifdef MSG_DBG
+			if ( Line.Amount() < 1 )
+				ERRc();
+#endif
+			Line.Remove( Line.First() );
 			if ( Line.Amount() > MSG_MESSAGE_LENGTH_MAX )
 				ERRl();
 			switch ( Language ) {
