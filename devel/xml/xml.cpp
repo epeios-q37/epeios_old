@@ -1,8 +1,8 @@
 /*
-	'lxmlpr' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'lxmlpr' header file ('lxmlpr.h').
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
-
+	'xml' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'xml' header file ('xml.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define LXMLPR__COMPILATION
+#define XML__COMPILATION
 
-#include "lxmlpr.h"
+#include "xml.h"
 
-class lxmlprtutor
+class xmltutor
 : public ttr_tutor
 {
 public:
-	lxmlprtutor( void )
-	: ttr_tutor( LXMLPR_NAME )
+	xmltutor( void )
+	: ttr_tutor( XML_NAME )
 	{
-#ifdef LXMLPR_DBG
-		Version = LXMLPR_VERSION "\b\bD $";
+#ifdef XML_DBG
+		Version = XML_VERSION "\b\bD $";
 #else
-		Version = LXMLPR_VERSION;
+		Version = XML_VERSION;
 #endif
-		Owner = LXMLPR_OWNER;
+		Owner = XML_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~lxmlprtutor( void ){}
+	virtual ~xmltutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,7 +55,9 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace lxmlpr;
+#include "lstctn.h"
+
+using namespace xml;
 
 static void SkipSpaces_( xtf::extended_text_iflow__ &Flow )
 {
@@ -210,7 +212,7 @@ struct tag__ {
 	srow__ Name;
 };
 
-bso::bool__ lxmlpr::Parse(
+bso::bool__ xml::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	callback__ &Callback,
 	xtf::location__ &ErrorLine,
@@ -383,7 +385,7 @@ ERREpilog
 	return Success;
 }
 
-void lxmlpr::Transform( str::string_ &Target )
+void xml::Transform( str::string_ &Target )
 {
 ERRProlog
 	epeios::row__ Position = Target.First();
@@ -423,14 +425,14 @@ ERREnd
 ERREpilog
 }
 
-void lxmlpr::writer_::_CloseAllTags( void )
+void xml::writer_::_CloseAllTags( void )
 {
 	while ( Tags.Amount() != 0 )
 		PopTag();
 }
 
 
-void lxmlpr::writer_::PutValue( const value_ &Value )
+void xml::writer_::PutValue( const value_ &Value )
 {
 ERRProlog
 	value TransformedValue;
@@ -452,7 +454,7 @@ ERREpilog
 }
 
 
-void lxmlpr::writer_::PopTag( void )
+void xml::writer_::PopTag( void )
 {
 ERRProlog
 	name Name;
@@ -476,19 +478,20 @@ ERREpilog
 }
 
 
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class lxmlprpersonnalization
-: public lxmlprtutor
+class xmlpersonnalization
+: public xmltutor
 {
 public:
-	lxmlprpersonnalization( void )
+	xmlpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~lxmlprpersonnalization( void )
+	~xmlpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -504,6 +507,6 @@ public:
 
 // 'static' by GNU C++.
 
-static lxmlprpersonnalization Tutor;
+static xmlpersonnalization Tutor;
 
-ttr_tutor &LXMLPRTutor = Tutor;
+ttr_tutor &XMLTutor = Tutor;

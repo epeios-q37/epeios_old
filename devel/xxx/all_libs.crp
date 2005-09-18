@@ -209,6 +209,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&UnTyped Memory
 &wllio		&epeios		&\
 	&Windows Low-Level Input/Output
+&xml		&epeios		&\
+	&Extensible Markup Language
 &xtf		&epeios		&2000-\
 	&eXtended Text Flow.
 

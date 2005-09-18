@@ -3,6 +3,8 @@ $Id$
 18/09/05
 	- GENERAL:
 		- Adaptation aux changememnts de la bibliothèque 'STK'.
+		- Nouvelle bibliothèque 'XML' à la place de 'LXMLPR'.
+		- Mise en oeuvre de la bibliothèque 'XML'.
 	- STK :
 		- Mise en place d'une pile basée sur un 'BUNCH' et d'une autre sur un '(X)(M)CONTAINER'.
 

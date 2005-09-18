@@ -60,10 +60,13 @@ extern class ttr_tutor &LXMLPRTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'XML' library instead."
+
 #include "err.h"
 #include "flw.h"
 #include "xtf.h"
 #include "lstctn.h"
+#include "txf.h"
 
 namespace lxmlpr {
 	struct callback__
@@ -85,8 +88,134 @@ namespace lxmlpr {
 		xtf::location__ &ErrorLine,
 		xtf::location__ &ErrorColumn );
 
+	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
+
+	inline void Convert(
+		const str::string_ &Source,
+		str::string_ &Target )	// Conversion des caractères spéciaux, comm '<' qui devient '&lt;'.
+	{
+		Target = Source;
+
+		Transform( Target );
+	}
 
 
+	typedef str::string_	name_;
+	typedef str::string		name;
+
+	typedef str::string_	value_;
+	typedef str::string		value;
+
+	class writer_
+	{
+	private:
+		void _CloseAllTags( void );
+	public:
+		struct s {
+			stk::E_XMCSTACK_( name_ )::s Tags;
+			txf::text_oflow__ *Flow;
+			bso::bool__ TagNameInProgress;
+		} &S_;
+		stk::E_XMCSTACK_( name_ ) Tags;
+		writer_( s &S )
+		: S_( S ),
+		  Tags( S.Tags )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				_CloseAllTags();
+
+			S_.TagNameInProgress = false;
+
+			Tags.reset( P );
+			S_.Flow = NULL;
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Tags.plug( MM );
+		}
+		writer_ &operator =( const writer_ &W )
+		{
+			Tags = W.Tags;
+
+			S_.TagNameInProgress = W.S_.TagNameInProgress;
+			S_.Flow = W.S_.Flow;
+
+			return *this;
+		}
+		void Init( txf::text_oflow__ &Flow )
+		{
+			reset();
+
+			Tags.Init();
+			S_.Flow = &Flow;
+		}
+		void PushTag( const name_ &Name )
+		{
+			if ( S_.TagNameInProgress )
+				*S_.Flow << '>';
+
+			*S_.Flow << '<' << Name;
+			Tags.Push( Name );
+			S_.TagNameInProgress = true;
+		}
+		void PushTag( const char *Name )
+		{
+			PushTag( name( Name ) );
+		}
+		void PutValue( const value_ &Value );
+		void PutValue( const char *Value )
+		{
+			PutValue( value( Value ) );
+		}
+		void PutValue(
+			const value_ &Value,
+			const name_ &Name )
+		{
+			PushTag( Name );
+
+			PutValue( Value );
+
+			PopTag();
+		}
+		void PutValue(
+			const value_ &Value,
+			const char *Name )
+		{
+			PutValue( Value, name( Name ) );
+		}
+		void PutValue(
+			const char *Value,
+			const char *Name )
+		{
+			PutValue( value( Value ), name( Name ) );
+		}
+		void PutAttribute(
+			const name_ &Name,
+			const value_ &Value )
+		{
+			if ( !S_.TagNameInProgress )
+				ERRu();
+
+			*S_.Flow << ' ' << Name << "=\"" << Value << '"';
+		}
+		void PutAttribute(
+			const char *Name,
+			const char *Value )
+		{
+			PutAttribute( name( Name ), value( Value ) );
+		}
+		void PutAttribute(
+			const char *Name,
+			const value_ &Value )
+		{
+			PutAttribute( name( Name ), Value );
+		}
+		void PopTag( void );
+	};
+
+	E_AUTO( writer )
 }
 
 /*$END$*/

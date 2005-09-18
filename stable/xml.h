@@ -1,7 +1,7 @@
 /*
-	Header for the 'lxmlpr' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	Header for the 'xml' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef LXMLPR__INC
-#define LXMLPR__INC
+#ifndef XML__INC
+#define XML__INC
 
-#define LXMLPR_NAME		"LXMLPR"
+#define XML_NAME		"XML"
 
-#define	LXMLPR_VERSION	"$Revision$"
+#define	XML_VERSION	"$Revision$"
 
-#define LXMLPR_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define XML_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &LXMLPRTutor;
+extern class ttr_tutor &XMLTutor;
 
-#if defined( XXX_DBG ) && !defined( LXMLPR_NODBG )
-#define LXMLPR_DBG
+#if defined( XXX_DBG ) && !defined( XML_NODBG )
+#define XML_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,20 +55,18 @@ extern class ttr_tutor &LXMLPRTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Light XML PaRser 
+//D Extensible Markup Language 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete ! Use 'XML' library instead."
-
 #include "err.h"
 #include "flw.h"
+#include "str.h"
 #include "xtf.h"
-#include "lstctn.h"
-#include "txf.h"
+#include "stk.h"
 
-namespace lxmlpr {
+namespace xml {
 	struct callback__
 	{
 		virtual void LXMLPRTag(
@@ -216,6 +214,14 @@ namespace lxmlpr {
 	};
 
 	E_AUTO( writer )
+
+
+	inline void WriteXMLHeader( txf::text_oflow__ &OFlow )
+	{
+		OFlow << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+	}
+
+
 }
 
 /*$END$*/

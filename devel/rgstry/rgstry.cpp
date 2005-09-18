@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "lxmlpr.h"
+#include "xml.h"
 
 using namespace rgstry;
 
@@ -428,7 +428,7 @@ ERREpilog
 }
 
 class callback__
-: public lxmlpr::callback__
+: public xml::callback__
 {
 private:
 	registry_ &Registry_;
@@ -607,7 +607,7 @@ nrow__ rgstry::Parse(
 ERRProlog
 	callback__ Callback( Registry, Root );
 ERRBegin
-	if ( lxmlpr::Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
+	if ( xml::Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
 		Root = Callback.GetRoot();
 	else
 		Root = NONE;

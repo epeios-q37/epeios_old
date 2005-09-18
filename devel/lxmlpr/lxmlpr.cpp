@@ -383,6 +383,99 @@ ERREpilog
 	return Success;
 }
 
+void lxmlpr::Transform( str::string_ &Target )
+{
+ERRProlog
+	epeios::row__ Position = Target.First();
+	bso::char__ C;
+	str::string Buffer;
+ERRBegin
+	while( Position != NONE ) {
+		switch ( C = Target( Position ) ) {
+		case '"':
+			Buffer.Init( "&#34;" );
+			Target.Remove( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '<':
+			Buffer.Init( "&lt;" );
+			Target.Remove( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '>':
+			Buffer.Init( "&gt;" );
+			Target.Remove( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		case '&':
+			Buffer.Init( "&amp;" );
+			Target.Remove( Position );
+			Target.Insert( Buffer, Position );
+			break;
+		default:
+			break;
+		}
+
+		Position = Target.Next( Position );	// Could be dangerous, but actually works.
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void lxmlpr::writer_::_CloseAllTags( void )
+{
+	while ( Tags.Amount() != 0 )
+		PopTag();
+}
+
+
+void lxmlpr::writer_::PutValue( const value_ &Value )
+{
+ERRProlog
+	value TransformedValue;
+ERRBegin
+	TransformedValue.Init();
+
+	Convert( Value, TransformedValue );
+
+
+	if ( S_.TagNameInProgress ) {
+		*S_.Flow << '>';
+		S_.TagNameInProgress = false;
+	}
+
+	*S_.Flow << TransformedValue;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void lxmlpr::writer_::PopTag( void )
+{
+ERRProlog
+	name Name;
+ERRBegin
+	if ( Tags.IsEmpty() )
+		ERRu();
+
+	Name.Init();
+
+	Tags.Pop( Name );
+
+	if ( S_.TagNameInProgress )
+		*S_.Flow << "/>";
+	else
+		*S_.Flow << "</" << Name << ">";
+
+	S_.TagNameInProgress = false;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
