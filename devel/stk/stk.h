@@ -62,98 +62,139 @@ extern class ttr_tutor &STKTutor;
 
 #include "err.h"
 #include "bch.h"
+#include "ctn.h"
 
 namespace stk {
 
-	using bch::bunch_;
-
 	//c Stack of static objects of type 't'. Use 'STACK_( t )' rather then directly this class.
-	template <class t, typename r> class stack_
-	: public E_BUNCHt_( t, r )
+	template <typename structure, typename item, typename row> class stack_
+	: public structure
 	{
 	public:
 		struct s
-		: public E_BUNCHt_( t, r )::s
+		: public structure::s
 		{};
 		stack_( s &S )
-		: E_BUNCHt_( t, r )( S )
+		: structure( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_BUNCHt_( t, r )::reset( P );
+			structure::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
 		{
-			E_BUNCHt_( t, r )::plug( MDriver );
+			structure::plug( MDriver );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_BUNCHt_( t, r )::plug( M );
+			structure::plug( M );
 		}
 		stack_ &operator =( const stack_ &S )
 		{
-			E_BUNCHt_( t, r )::operator =( S );
+			structure::operator =( S );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_BUNCHt_( t, r )::Init();
-			E_BUNCHt_( t, r )::SetNoDecreasingState( true );
+			structure::Init();
+			structure::SetNoDecreasingState( true );
 		}
 		//f Place 'Object' at the top of the stack. Return the position where this object is put.
-		r Push( t Object )
+		row Push( const item &Object )
 		{
-			return E_BUNCHt_( t, r )::Append( Object );
+			return structure::Append( Object );
 		}
 		//f Remove the object at row 'R'. If 'Adjust' at 'true', than adjust the size of the stack.
 		void Remove(
-			r Row,
+			row Row,
 			aem::mode Mode = aem::mDefault )
 		{
-			E_BUNCHt_( t, r )::Remove( Row );
+			structure::Remove( Row );
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
-		t Pop( aem::mode Mode = aem::mDefault )
+		void Pop( item &Item )
 		{
-			t Objet = E_BUNCHt_( t, r )::Get( E_BUNCHt_( t, r )::Last() );
+			structure::Recall( structure::Last(), Item );
 
-			Remove( E_BUNCHt_( t, r )::Last() );
-		
-			return Objet;
+			Remove( structure::Last() );
 		}
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
-		bso::bool__ Exists( t Object ) const
+		bso::bool__ Exists( const item &Object ) const
 		{
-			return E_BUNCHt_( t, r )::Search( Object, 0, E_BUNCHt_( t, r )::Amount() ) != NONE;
+			return structure::Search( Object, 0, structure::Amount() ) != NONE;
 		}
 		//f Return true if an entry exists for row 'Row'.
-		bso::bool__ Exists( r Row ) const
+		bso::bool__ Exists( row Row ) const
 		{
-			return E_BUNCHt_( t, r )::Exists( Row );
+			return structure::Exists( Row );
 		}
 		//f Return the value stord on top of the stack.
-		t Top( void ) const
+		void Top( item &Item ) const
 		{
 #ifdef STK_DBG
-			if ( E_BUNCHt_( t, r )::Amount() == 0 )
+			if ( structure::Amount() == 0 )
 				ERRl();
 #endif
-			return E_BUNCHt_( t, r )::Get( E_BUNCHt_( t, r )::Last() );
+			structure::Recall( structure::Last(), Item );
 		}
 	};
 
-	E_AUTO2( stack )
+	E_AUTO3( stack )
+
+	template <typename item, typename row> class bstack_
+	: public stack_< bch::bunch_< item, row >, item, row >
+	{
+	public:
+		struct s
+		: public stack_< bch::bunch_< item, row >, item, row >::s
+		{};
+		bstack_( s &S )
+		: stack_< bch::bunch_< item, row >, item, row >( S )
+		{}
+		void Pop( item &Item )
+		{
+			stack_< bch::bunch_< item, row >, item, row >::	Pop( Item );
+		}
+		item Pop( void )
+		{
+			item Item;
+
+			Pop( Item );
+
+			return Item;
+		}
+		void Top( item &Item ) const
+		{
+			stack_< bch::bunch_< item, row >, item, row >::Top( Item );
+		}
+		item Top( void ) const
+		{
+			item Item;
+
+			Top( Item );
+
+			return Item;
+		}
+	};
+
+	E_AUTO2( bstack )
 
 	//m A stack of static object of type 't'.
-	#define E_STACKt_( t, r )	stack_< t, r >
-	#define E_STACKt( t, r )	stack< t, r >
+	#define E_BSTACKt_( item, row )	bstack_< item, row >
+	#define E_BSTACKt( item, row )	bstack< item, row >
 
 	E_ROW( row__ );
 
-	#define E_STACK( t )	E_STACKt( t, stk::row__ )
-	#define E_STACK_( t )	E_STACKt_( t, stk::row__ )
+	#define E_BSTACK_( item )	E_BSTACKt_( item, stk::row__ )
+	#define E_BSTACK( item )	E_BSTACKt( item, stk::row__ )
+
+	#define E_XMCSTACKt_( item, row )	stack_< ctn::E_XMCONTAINERt_( item, row ), item, row >
+	#define E_XMCSTACKt( item, row )	stack< ctn::E_XMCONTAINERt_( item, row ), item, row >
+
+	#define E_XMCSTACK_( item )		E_XMCSTACKt_( item, stk::row__ )
+	#define E_XMCSTACK( item )		E_XMCSTACKt( item, stk::row__ )
 
 }
 

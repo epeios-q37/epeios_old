@@ -1,6 +1,6 @@
 /*
 	Header for the 'btf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2003 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -66,39 +66,40 @@ extern class ttr_tutor &BTFTutor;
 #include "stk.h"
 
 namespace btf {
-	using stk::stack_;
+
+	using stk::bstack_;
 
 	E_ROW( row__ );
 
 	//c Binary tree_filler.
 	template <typename r> class binary_tree_filler_
-	: public E_STACKt_( r, row__ )
+	: public E_BSTACKt_( r, row__ )
 	{
 	private:
 		btr::E_BTREEt_( r ) *Tree_;
 	public:
 		struct s
-		: E_STACKt_( r, row__ )::s
+		: E_BSTACKt_( r, row__ )::s
 		{};
 		binary_tree_filler_( s &S )
-		: E_STACKt_( r, row__ )( S )
+		: E_BSTACKt_( r, row__ )( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Tree_ = NULL;
-			E_STACKt_( r, row__ )::reset( P );
+			E_BSTACKt_( r, row__ )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			E_STACKt_( r, row__ )::plug( MD );
+			E_BSTACKt_( r, row__ )::plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			E_STACKt_( r, row__ )::plug( MM );
+			E_BSTACKt_( r, row__ )::plug( MM );
 		}
 		binary_tree_filler_ &operator =( const binary_tree_filler_ &BTF )
 		{
-			E_STACKt_( r, row__ )::operator =( BTF );
+			E_BSTACKt_( r, row__ )::operator =( BTF );
 
 			return *this;
 		}
@@ -108,45 +109,45 @@ namespace btf {
 			r Root )
 		{
 			Tree_ = &Tree;
-			E_STACKt_( r, row__ )::Init();
+			E_BSTACKt_( r, row__ )::Init();
 
 			if ( Root != NONE )
-				E_STACKt_( r, row__ )::Push( Root );
+				E_BSTACKt_( r, row__ )::Push( Root );
 		}
 		//f Join the 2 nodes at bottom of stack with 'Node', which is pushed in stack.
 		void Join( r Node )
 		{
 #ifdef BTF_DBG
-			if ( E_STACKt_( r, row__ )::Amount() < 2 )
+			if ( E_BSTACKt_( r, row__ )::Amount() < 2 )
 				ERRu();
 #endif
-			Tree_->BecomeRight( E_STACKt_( r, row__ )::Pop(), Node );
-			Tree_->BecomeLeft( E_STACKt_( r, row__ )::Pop(), Node );
+			Tree_->BecomeRight( E_BSTACKt_( r, row__ )::Pop(), Node );
+			Tree_->BecomeLeft( E_BSTACKt_( r, row__ )::Pop(), Node );
 
-			E_STACKt_( r, row__ )::Push( Node );
+			E_BSTACKt_( r, row__ )::Push( Node );
 		}
 		//f Return true if the tree is complete.
 		bso::bool__ IsComplete( void ) const
 		{
-			return E_STACKt_( r, row__ )::Amount() <= 1;
+			return E_BSTACKt_( r, row__ )::Amount() <= 1;
 		}
 		//f Return the root of the tree. Significant only if 'IsComplete()' return true.
 		r GetRoot( void ) const
 		{
-			row__ Row = E_STACKt_( r, row__ )::First();
+			row__ Row = E_BSTACKt_( r, row__ )::First();
 #ifdef BTF_DBG
 			if ( !IsComplete() )
 				ERRu();
 #endif
 			if ( Row != NONE )
-				return E_STACKt_( r, row__ )::Get( Row );
+				return E_BSTACKt_( r, row__ )::Get( Row );
 			else
 				return NONE;
 		}
 		//f Return true if a call to 'Join' is possible, false otherwise.
 		bso::bool__ IsJoinable( void )
 		{
-			return E_STACKt_( r, row__ )::Amount() >= 2;
+			return E_BSTACKt_( r, row__ )::Amount() >= 2;
 		}
 		//f Only for the 'NAVt()' macro from 'TOL' library. Don't use.
 		bso::bool__ Exists( row__ ) const

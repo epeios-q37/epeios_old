@@ -173,26 +173,27 @@ namespace que {
 	
 	E_AUTO( links )
 
+/*
 	E_TYPEDEF( epeios::row_t__, _stack_item_row__ );
 
 	// simulates :
 	// 	template<typename r> typedef stk::stack_<r, _stack_item_row__> _stack_;
 	template <typename r> class _stack_
-	: public stk::stack_<r, _stack_item_row__>
+	: public stk::E_BSTACK_( r )
 	{
 	public:
 		struct s
-		: stk::stack_<r, _stack_item_row__>::s
+		stk::E_BSTACK_( r )::s
 		{};
 		_stack_( s &S )
-		: stk::stack_<r, _stack_item_row__>( S )
+		: stk::E_BSTACK_( r )( S )
 		{}
 	};
 
 	E_AUTO1( _stack )
-
-	#define E_QSTACK_( r ) _stack_<r>
-	#define E_QSTACK( r ) _stack<r>
+*/
+	#define E_QSTACK_( r ) stk::E_BSTACK_( r )
+	#define E_QSTACK( r ) stk::E_BSTACK( r )
 
 	
 	//c A queue. Use 'QUEUE_' rather than directly this.
@@ -724,7 +725,7 @@ namespace que {
 			S_.QueueManager.Swap( Node1, Node2, Queue );
 		}
 		void Dump(
-			stk::E_STACK_( r ) &Stack,
+			E_QSTACK_( r ) &Stack,
 			r Begin,
 			que::direction Direction ) const
 		{

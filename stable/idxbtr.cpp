@@ -163,7 +163,7 @@ namespace idxbtr {
 	{
 		epeios::row_t__ Racine, &Courant = Premier;
 	ERRProlog
-		stk::E_STACK( desc__ ) Pile;
+		stk::E_BSTACK( desc__ ) Pile;
 		epeios::size__ Niveau = 0;
 		desc__ Sommet;
 		bso::bool__ Boucler = true;

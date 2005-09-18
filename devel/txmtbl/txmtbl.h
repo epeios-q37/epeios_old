@@ -175,8 +175,8 @@ namespace txmtbl {
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
-	typedef stk::E_STACK_( epeios::row__ ) stack_;
-	typedef stk::E_STACK( epeios::row__ ) stack;
+	typedef stk::E_BSTACK_( epeios::row__ ) stack_;
+	typedef stk::E_BSTACK( epeios::row__ ) stack;
 
 	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
 

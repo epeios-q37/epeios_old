@@ -77,12 +77,12 @@ namespace ids {
 	public:
 		struct s
 		{
-			typename stk::E_STACK_( id__ )::s Released;
+			typename stk::E_BSTACK_( id__ )::s Released;
 			//r First unused ID.
 			id__ FirstUnused;
 		} &S_;
 		//o Released IDs
-		stk::E_STACK_( id__ ) Released;
+		stk::E_BSTACK_( id__ ) Released;
 		ids_store_( s &S )
 		: S_( S ),
 		  Released( S.Released )

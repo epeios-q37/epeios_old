@@ -114,7 +114,7 @@ namespace idxque {
 		}
 		/*f Dump to the stack 'Stack' the queue beginning at 'Begin' and in the 'Direction ' direction.. */
 		void Dump(
-			stk::E_STACK_( r ) &Stack,
+			stk::E_BSTACK_( r ) &Stack,
 			r Begin,
 			idxque::direction Direction )
 		{

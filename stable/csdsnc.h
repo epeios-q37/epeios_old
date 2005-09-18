@@ -114,7 +114,7 @@ namespace csdsnc {
 
 	typedef sck::socket_ioflow___ _flow___;
 
-	typedef stk::E_STACK_( _flow___ * )	flows_;
+	typedef stk::E_BSTACK_( _flow___ * )	flows_;
 
 	enum log__ {
 		lCreation,

@@ -1,5 +1,11 @@
 $Id$
 
+18/09/05
+	- GENERAL:
+		- Adaptation aux changememnts de la bibliothèque 'STK'.
+	- STK :
+		- Mise en place d'une pile basée sur un 'BUNCH' et d'une autre sur un '(X)(M)CONTAINER'.
+
 10/09/05:
 	- DTR :
 		- Simplification du parcour de l'arbre (objet 'browser__').

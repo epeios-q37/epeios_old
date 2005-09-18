@@ -222,7 +222,7 @@ ERRProlog
 	str::string Name, Prefix, Value;
 	tag__ Tag;
 	lstctn::E_LXMCONTAINERt( str::string_, srow__ ) Strings;
-	stk::E_STACK( tag__ ) Tags;
+	stk::E_BSTACK( tag__ ) Tags;
 ERRBegin
 	Strings.Init();
 	Tags.Init();
