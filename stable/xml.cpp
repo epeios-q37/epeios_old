@@ -431,6 +431,11 @@ void xml::writer_::_CloseAllTags( void )
 		PopTag();
 }
 
+void xml::writer_::_WriteTabs( bso::ulong__ Amount ) const
+{
+	while ( Amount-- )
+		*S_.Flow << txf::tab;
+}
 
 void xml::writer_::PutValue( const value_ &Value )
 {
@@ -448,6 +453,8 @@ ERRBegin
 	}
 
 	*S_.Flow << TransformedValue;
+
+	S_.TagValueInProgress = true;
 ERRErr
 ERREnd
 ERREpilog
@@ -468,10 +475,16 @@ ERRBegin
 
 	if ( S_.TagNameInProgress )
 		*S_.Flow << "/>";
-	else
+	else {
+		if ( !S_.TagValueInProgress )
+			_WriteTabs( Tags.Amount() );
 		*S_.Flow << "</" << Name << ">";
+	}
+
+	*S_.Flow << txf::nl;
 
 	S_.TagNameInProgress = false;
+	S_.TagValueInProgress = false;
 ERRErr
 ERREnd
 ERREpilog

@@ -108,11 +108,13 @@ namespace xml {
 	{
 	private:
 		void _CloseAllTags( void );
+		void _WriteTabs( bso::ulong__ Amount ) const;
 	public:
 		struct s {
 			stk::E_XMCSTACK_( name_ )::s Tags;
 			txf::text_oflow__ *Flow;
 			bso::bool__ TagNameInProgress;
+			bso::bool__ TagValueInProgress;
 		} &S_;
 		stk::E_XMCSTACK_( name_ ) Tags;
 		writer_( s &S )
@@ -125,6 +127,7 @@ namespace xml {
 				_CloseAllTags();
 
 			S_.TagNameInProgress = false;
+			S_.TagValueInProgress = false;
 
 			Tags.reset( P );
 			S_.Flow = NULL;
@@ -138,6 +141,7 @@ namespace xml {
 			Tags = W.Tags;
 
 			S_.TagNameInProgress = W.S_.TagNameInProgress;
+			S_.TagValueInProgress = W.S_.TagValueInProgress;
 			S_.Flow = W.S_.Flow;
 
 			return *this;
@@ -152,11 +156,14 @@ namespace xml {
 		void PushTag( const name_ &Name )
 		{
 			if ( S_.TagNameInProgress )
-				*S_.Flow << '>';
+				*S_.Flow << '>' << txf::nl;
+
+			_WriteTabs( Tags.Amount() );
 
 			*S_.Flow << '<' << Name;
 			Tags.Push( Name );
 			S_.TagNameInProgress = true;
+			S_.TagValueInProgress = false;
 		}
 		void PushTag( const char *Name )
 		{
