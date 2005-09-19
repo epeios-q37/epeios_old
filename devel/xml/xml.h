@@ -218,6 +218,10 @@ namespace xml {
 			PutAttribute( name( Name ), Value );
 		}
 		void PopTag( void );
+		txf::text_oflow__ &GetFlow( void )
+		{
+			return *S_.Flow;
+		}
 	};
 
 	E_AUTO( writer )
