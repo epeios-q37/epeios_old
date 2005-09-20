@@ -435,9 +435,7 @@ private:
 	nrow__ Root_;
 	nrow__ Current_;
 protected:
-	virtual void LXMLPRTag(
-		const str::string_ &Prefix,
-		const str::string_ &Name )
+	virtual void LXMLPRTag( const str::string_ &Name )
 	{
 		if ( Current_ == NONE ) {
 			if ( Root_ != NONE )
@@ -452,13 +450,12 @@ protected:
 		Registry_.SetValue( Value, Current_ );
 	}
 	virtual void LXMLPRAttribute(
-		const str::string_ &Prefix,
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
 		Registry_.AddAttribute( Name, Value, Current_ );
 	}
-	virtual void LXMLPRTagClosed( void )
+	virtual void LXMLPRTagClosed( const str::string_ & )
 	{
 		Current_ = Registry_.GetParent( Current_ );
 	}

@@ -72,32 +72,15 @@ static void GetId_(
 	xtf::extended_text_iflow__ &Flow,
 	str::string_ &Id )
 {
-	while ( !Flow.EOX() && isalnum( Flow.View() ) )
+	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) )
 		Id.Append( Flow.Get() );
 }
 
-static void GetPrefixAndName_( 
+static inline void GetName_( 
 	xtf::extended_text_iflow__ &Flow,
-	str::string_ &Prefix,
 	str::string_ &Name )
 {
-ERRProlog
-	str::string Id;
-ERRBegin
-	Id.Init();
-
-	GetId_( Flow, Id );
-
-	if ( !Flow.EOX() )
-		if ( Flow.View() == ':' ) {
-			Prefix = Id;
-			Flow.Get();
-			GetId_( Flow, Name );
-		} else
-			Name = Id;
-ERRErr
-ERREnd
-ERREpilog
+	GetId_( Flow, Name );
 }
 
 static bso::bool__ GetValue_(
@@ -135,11 +118,10 @@ inline static void GetAttributeValue_(
 
 static void GetAttribute_(
 	xtf::extended_text_iflow__ &Flow,
-	str::string_ &Prefix,
 	str::string_ &Name,
 	str::string_ &Value )
 {
-	GetPrefixAndName_( Flow, Prefix, Name );
+	GetName_( Flow, Name );
 
 	SkipSpaces_( Flow );
 
@@ -207,11 +189,6 @@ using xtf::location__;
 
 E_ROW( srow__ );
 
-struct tag__ {
-	srow__ Prefix;
-	srow__ Name;
-};
-
 bso::bool__ xml::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	callback__ &Callback,
@@ -221,12 +198,9 @@ bso::bool__ xml::Parse(
 	bso::bool__ Success = true;
 ERRProlog
 	state__ State = TagExpected;
-	str::string Name, Prefix, Value;
-	tag__ Tag;
-	lstctn::E_LXMCONTAINERt( str::string_, srow__ ) Strings;
-	stk::E_BSTACK( tag__ ) Tags;
+	str::string Name, Value, Tag;
+	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 ERRBegin
-	Strings.Init();
 	Tags.Init();
 
 	SkipSpaces_( Flow );
@@ -253,17 +227,13 @@ ERRBegin
 				break;
 			}
 
-			Prefix.Init();
 			Name.Init();
 
-			GetPrefixAndName_( Flow, Prefix, Name );
+			GetName_( Flow, Name );
 
-			Tag.Prefix = Strings.Add( Prefix );
-			Tag.Name = Strings.Add( Name );
+			Tags.Push( Name );
 
-			Callback.LXMLPRTag( Prefix, Name );
-
-			Tags.Push( Tag );
+			Callback.LXMLPRTag( Name );
 
 			SkipSpaces_( Flow );
 
@@ -278,8 +248,10 @@ ERRBegin
 				if ( Tags.IsEmpty() )
 					ERRI( iBeam );
 
-				Tags.Pop();
-				Callback.LXMLPRTagClosed();
+				Tag.Init();
+
+				Tags.Pop( Tag );
+				Callback.LXMLPRTagClosed( Name );
 				State = TagExpected;
 				SkipSpaces_( Flow );
 				break;
@@ -298,13 +270,12 @@ ERRBegin
 			}
 			break;
 		case Attribute:
-			Prefix.Init();
 			Name.Init();
 			Value.Init();
 
-			GetAttribute_( Flow, Prefix, Name, Value );
+			GetAttribute_( Flow, Name, Value );
 
-			Callback.LXMLPRAttribute( Prefix, Name, Value );
+			Callback.LXMLPRAttribute( Name, Value );
 
 			SkipSpaces_( Flow );
 
@@ -319,9 +290,11 @@ ERRBegin
 					if ( Tags.IsEmpty() )
 						ERRI( iBeam );
 
-					Tags.Pop();
+					Tag.Init();
 
-					Callback.LXMLPRTagClosed();
+					Tags.Pop( Tag );
+
+					Callback.LXMLPRTagClosed( Tag );
 					State = TagExpected;
 					Flow.Get();
 					SkipSpaces_( Flow );
@@ -341,22 +314,26 @@ ERRBegin
 		case ClosingTag:
 			SkipSpaces_( Flow );
 
-			Prefix.Init();
 			Name.Init();
 
-			GetPrefixAndName_( Flow, Prefix, Name );
+			GetName_( Flow, Name );
 
 			SkipSpaces_( Flow );
 
 			if ( Flow.Get() != '>' )
 				ERRI( iBeam );
 
-			Callback.LXMLPRTagClosed();
-
 			if ( Tags.IsEmpty() )
 				ERRI( iBeam );
 
-			Tags.Pop();
+			Tag.Init();
+
+			Tags.Pop( Tag );
+
+			if ( Tag != Name )
+				ERRI( iBeam );
+
+			Callback.LXMLPRTagClosed( Tag );
 
 			if ( Flow.View() != '<' ) {
 				Value.Init();
@@ -455,6 +432,26 @@ ERRBegin
 	*S_.Flow << TransformedValue;
 
 	S_.TagValueInProgress = true;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void xml::writer_::PutAttribute(
+	const name_ &Name,
+	const value_ &Value )
+{
+ERRProlog
+	value TransformedValue;
+ERRBegin
+	TransformedValue.Init();
+
+	Convert( Value, TransformedValue );
+
+	if ( !S_.TagNameInProgress )
+		ERRu();
+
+	*S_.Flow << ' ' << Name << "=\"" << TransformedValue << '"';
 ERRErr
 ERREnd
 ERREpilog

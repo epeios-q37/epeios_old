@@ -1,5 +1,12 @@
 $Id$
 
+20/09/05:
+	- XML :
+		- Suppression de la gestion de suffixes.
+		- Ajout correspondance balise fermante.
+	- RGSTRY:
+		- Adaptation modification bibliothèque 'XML'.
+
 18/09/05
 	- GENERAL:
 		- Adaptation aux changememnts de la bibliothèque 'STK'.
