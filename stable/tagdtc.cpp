@@ -111,7 +111,7 @@ void tagdtc::tag_detector_::Add(
 	const str::string_ &Tag,
 	id__ Id )
 {
-	tym::row_t__ Limite = Tag.Amount();
+	epeios::row_t__ Limite = Tag.Amount();
 	path__ Path = Start_;
 
 	for( epeios::row_t__ P = 0; P < Limite; P++ )
@@ -137,7 +137,7 @@ epeios::row_t__ tagdtc::tag_detector_::Parse(
 		while( !IFlow.EOX() && ( ( C = IFlow.Get() ) != Delimiter ) );
 
 	if ( !IFlow.EOX() ) {
-		tym::row__ P = Start_;
+		epeios::row__ P = Start_;
 
 		while( !IFlow.EOX()
 			   && ( ( C = IFlow.Get() ) != Delimiter )

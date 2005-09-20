@@ -136,7 +136,7 @@ namespace tagexp
 		: base_natures_( S )
 		{}
 		//f Return the value at 'Position'.
-		nature operator()( tym::row__ Position ) const
+		nature operator()( epeios::row__ Position ) const
 		{
 			return (tagexp::nature)base_natures_::Get( Position );
 		}

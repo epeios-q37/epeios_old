@@ -114,7 +114,7 @@ id__ GetReservedTagId( const estring_ &Tag )
 
 bso::bool__ TestTag( const estring_ &Tag )
 {
-	tym::row__ P = Tag.First();
+	epeios::row__ P = Tag.First();
 	bso::char__ C;
 
 	if ( Tag.Amount() != 0 )
@@ -164,7 +164,7 @@ inline void Add(
 	bso::char__ File,
 	cell_ &ValueBuffer )
 {
-	tym::row__ P;
+	epeios::row__ P;
 	ctn::E_CMITEM( cell_ ) Tag, &Buffer = Tag;
 	cell_ &Value = ValueBuffer;
 	id__ Id;
@@ -229,7 +229,7 @@ void FillExpander(
 ERRProlog
 	cell ValueBuffer;
 	ctn::E_CITEM( line_ ) Line;
-	tym::row__ P = Table.First();
+	epeios::row__ P = Table.First();
 ERRBegin
 	ValueBuffer.Init();
 	Line.Init( Table );
@@ -309,8 +309,8 @@ void PrepareExpander(
 	const line_ &Line )
 {
 	ctn::E_CMITEM( cell_ ) Tag;
-	tym::row__ P = Line.First();
-	tym::row__ PV;
+	epeios::row__ P = Line.First();
+	epeios::row__ PV;
 	id__ Id;
 
 	Tag.Init( Line );
@@ -347,8 +347,8 @@ void FillSet(
 {
 ERRProlog
 	bso::char__ Buffer[BUFFER_SIZE];
-	flw::amount__ Amount;
-	flx::bunch_oflow__<str::string_, bso::char__> OFlow;
+	epeios::size__ Amount;
+	flx::bunch_oflow___<str::string_, bso::char__> OFlow;
 ERRBegin
 	OFlow.Init( Set );
 
@@ -370,8 +370,8 @@ void CompleteExpander(
 {
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Value;
-	tym::row__ P;
-	tym::row__ PV;
+	epeios::row__ P;
+	epeios::row__ PV;
 	estring TagValue;
 	tagexp::nature Nature;
 ERRBegin
@@ -428,7 +428,7 @@ ERRProlog
 	str::string Set;
 	flx::bunch_iflow__<str::string_, bso::char__> ISFlow;
 	ctn::E_CITEM( line_ ) Line;
-	tym::row__ P;
+	epeios::row__ P;
 	ids Ids;
 	xtf::extended_text_iflow__ TIFlow;
 ERRBegin
@@ -481,7 +481,7 @@ inline bso::bool__ IsMulti(
 	bso::char__ Text,
 	bso::char__ File )
 {
-	tym::row__ P;
+	epeios::row__ P;
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	if ( Line.Amount() < 2 ) {
@@ -501,7 +501,7 @@ inline bso::bool__ IsMulti(
 	bso::char__ Text,
 	bso::char__ File )
 {
-	tym::row__ P;
+	epeios::row__ P;
 	ctn::E_CITEM( line_ ) Line;
 
 	if ( Table.IsEmpty() )
@@ -583,7 +583,7 @@ static void AnalyzeOptions(
 	char &File )
 {
 ERRProlog
-	tym::row__ P;
+	epeios::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
 	const char *Unknow = NULL;
@@ -677,7 +677,7 @@ static void AnalyzeFreeArguments(
 {
 ERRProlog
 	clnarg::arguments Free;
-	tym::row__ P;
+	epeios::row__ P;
 ERRBegin
 	Free.Init();
 
