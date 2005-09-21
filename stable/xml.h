@@ -69,12 +69,15 @@ extern class ttr_tutor &XMLTutor;
 namespace xml {
 	struct callback__
 	{
-		virtual void LXMLPRTag(	const str::string_ &Name ) = 0;
-		virtual void LXMLPRValue( const str::string_ &Value ) = 0;
-		virtual void LXMLPRAttribute(
+		virtual bso::bool__ XMLTag(	const str::string_ &Name ) = 0;
+		virtual bso::bool__ XMLValue(
+			const str::string_ &TagName,
+			const str::string_ &Value ) = 0;
+		virtual bso::bool__ XMLAttribute(
+			const str::string_ &TagName,
 			const str::string_ &Name,
 			const str::string_ &Value ) = 0;
-		virtual void LXMLPRTagClosed( const str::string_ &Name ) = 0;
+		virtual bso::bool__ XMLTagClosed( const str::string_ &Name ) = 0;
 	};
 
 	bso::bool__ Parse(

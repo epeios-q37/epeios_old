@@ -1,5 +1,13 @@
 $Id$
 
+21/09/05 :
+	- XML :
+		- Renommage méthodes classe 'callback__'.
+		- Ajout et gestion code d'erreur méthodes classe 'callback__'.
+		- Ajout du nom de la balise en cours à toutes les méthodes de la classe 'callback__'.
+	- RGSTRY:
+		- Adaptation modification bibliothèque 'XML'.
+
 20/09/05:
 	- XML :
 		- Suppression de la gestion de suffixes.

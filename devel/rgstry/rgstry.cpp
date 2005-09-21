@@ -435,7 +435,7 @@ private:
 	nrow__ Root_;
 	nrow__ Current_;
 protected:
-	virtual void LXMLPRTag( const str::string_ &Name )
+	virtual bso::bool__ XMLTag( const str::string_ &Name )
 	{
 		if ( Current_ == NONE ) {
 			if ( Root_ != NONE )
@@ -444,20 +444,32 @@ protected:
 				Root_ = Current_ = Registry_.CreateNode( Name );
 		} else
 			Current_ = Registry_.AddChild( Name, Current_ );
+
+		return true;
 	}
-	virtual void LXMLPRValue( const str::string_ &Value )
+	virtual bso::bool__ XMLValue(
+		const str::string_ &TagName,
+		const str::string_ &Value )
 	{
 		Registry_.SetValue( Value, Current_ );
+
+		return true;
+
 	}
-	virtual void LXMLPRAttribute(
+	virtual bso::bool__ XMLAttribute(
+		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
 		Registry_.AddAttribute( Name, Value, Current_ );
+
+		return true;
 	}
-	virtual void LXMLPRTagClosed( const str::string_ & )
+	virtual bso::bool__ XMLTagClosed( const str::string_ & )
 	{
 		Current_ = Registry_.GetParent( Current_ );
+
+		return true;
 	}
 public:
 	callback__(

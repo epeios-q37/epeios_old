@@ -360,6 +360,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib MeTA field
 &gsbntv		&lgsb		&2003-\
 	&GeSBib NaTiVe field
+&gsbrdc		&lgsb		&\
+	&GeSBib Repository DesCription
 &gsbrgl		&lgsb		&2003-\
 	&GeSBib ReGuLar field
 &gsbrlt		&lgsb		&2002\

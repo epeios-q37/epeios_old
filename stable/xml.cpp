@@ -233,7 +233,8 @@ ERRBegin
 
 			Tags.Push( Name );
 
-			Callback.LXMLPRTag( Name );
+			if ( !Callback.XMLTag( Name ) )
+				ERRI( iBeam );
 
 			SkipSpaces_( Flow );
 
@@ -251,7 +252,10 @@ ERRBegin
 				Tag.Init();
 
 				Tags.Pop( Tag );
-				Callback.LXMLPRTagClosed( Name );
+
+				if ( !Callback.XMLTagClosed( Name ) )
+					ERRI( iBeam );
+
 				State = TagExpected;
 				SkipSpaces_( Flow );
 				break;
@@ -259,9 +263,18 @@ ERRBegin
 				Flow.Get();
 				if ( Flow.View() != '<' ) {
 					Value.Init();
-					if ( GetTagValue_( Flow, Value ) )
-						Callback.LXMLPRValue( Value );
-				}
+					if ( GetTagValue_( Flow, Value ) ) {
+						if ( Tags.IsEmpty() )
+							ERRI( iBeam );
+
+						Tag.Init();
+
+						Tags.Top( Tag );
+
+						if ( !Callback.XMLValue( Tag, Value ) )
+							ERRI( iBeam );
+					}
+			}
 				State = TagExpected;
 				break;
 			default:
@@ -275,7 +288,15 @@ ERRBegin
 
 			GetAttribute_( Flow, Name, Value );
 
-			Callback.LXMLPRAttribute( Name, Value );
+			if ( Tags.IsEmpty() )
+				ERRI( iBeam );
+
+			Tag.Init();
+
+			Tags.Top( Tag );
+
+			if ( !Callback.XMLAttribute( Tag, Name, Value ) )
+					ERRI( iBeam );
 
 			SkipSpaces_( Flow );
 
@@ -294,7 +315,9 @@ ERRBegin
 
 					Tags.Pop( Tag );
 
-					Callback.LXMLPRTagClosed( Tag );
+					if ( !Callback.XMLTagClosed( Tag ) )
+						ERRI( iBeam );
+
 					State = TagExpected;
 					Flow.Get();
 					SkipSpaces_( Flow );
@@ -304,8 +327,18 @@ ERRBegin
 				Flow.Get();
 				if ( Flow.View() != '<' ) {
 					Value.Init();
-					if ( GetTagValue_( Flow, Value ) )
-						Callback.LXMLPRValue( Value );
+					if ( GetTagValue_( Flow, Value ) ) {
+
+						if ( Tags.IsEmpty() )
+							ERRI( iBeam );
+
+						Tag.Init();
+
+						Tags.Top( Tag );
+
+						if ( !Callback.XMLValue( Tag, Value ) )
+							ERRI( iBeam );
+					}
 				}
 				State = TagExpected;
 			}
@@ -333,12 +366,23 @@ ERRBegin
 			if ( Tag != Name )
 				ERRI( iBeam );
 
-			Callback.LXMLPRTagClosed( Tag );
+			if ( !Callback.XMLTagClosed( Tag ) )
+				ERRI( iBeam );
 
 			if ( Flow.View() != '<' ) {
 				Value.Init();
-				if ( GetTagValue_( Flow, Value ) )
-					Callback.LXMLPRValue( Value );
+				if ( GetTagValue_( Flow, Value ) ) {
+
+					if ( Tags.IsEmpty() )
+						ERRI( iBeam );
+
+					Tag.Init();
+
+					Tags.Top( Tag );
+
+					if ( !Callback.XMLValue( Tag, Value ) )
+						ERRI( iBeam );
+				}
 			}
 			State = TagExpected;
 			break;
