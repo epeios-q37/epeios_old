@@ -168,17 +168,31 @@ static void SkipComment_( xtf::extended_text_iflow__ &Flow )
 		if ( Flow.EOX() )
 			ERRI( iBeam );
 
-		if ( Flow.Get() == '-' ) {
-			if ( Flow.EOX() )
-				ERRI( iBeam );
+		if ( Flow.Get() != '-' )
+			ERRI( iBeam );
 
-			if ( Flow.Get() == '>' )
-				Continue = false;
-		}
+		if ( Flow.EOX() )
+			ERRI( iBeam );
+
+		if ( Flow.Get() == '>' )
+			Continue = false;
 	}
 }
 
+static void SkipHeader_( xtf::extended_text_iflow__ &Flow )
+{
+	if ( Flow.Get() != '?' )
+		ERRI( iBeam );
+
+	while ( !Flow.EOX() && ( Flow.Get() != '>' ) );
+
+	if ( Flow.EOX() )
+		ERRI( iBeam );
+}
+
+
 enum state__ {
+	HeaderExpected,
 	TagExpected,
 	OpeningTag,
 	ClosingTag,
@@ -197,7 +211,7 @@ bso::bool__ xml::Parse(
 {
 	bso::bool__ Success = true;
 ERRProlog
-	state__ State = TagExpected;
+	state__ State = HeaderExpected;
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 ERRBegin
@@ -207,6 +221,15 @@ ERRBegin
 
 	while ( !Flow.EOX() ) {
 		switch ( State ) {
+		case HeaderExpected:
+			if ( Flow.Get() != '<' )
+				ERRI( iBeam );
+
+			if ( Flow.View() == '?' ) {
+				SkipHeader_( Flow );
+				SkipSpaces_( Flow );
+			} else
+				Flow.Unget( '<' );
 		case TagExpected:
 			if ( Flow.Get() != '<' )
 				ERRI( iBeam );

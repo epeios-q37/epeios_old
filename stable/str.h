@@ -436,6 +436,48 @@ namespace str {
 		}
 	};
 
+	inline bso::bool__ operator ==(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 == str::string( Op2 );
+	}
+
+	inline bso::bool__ operator !=(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 != str::string( Op2 );
+	}
+
+	inline bso::bool__ operator <(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 < str::string( Op2 );
+	}
+
+	inline bso::bool__ operator <=(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 <= str::string( Op2 );
+	}
+
+	inline bso::bool__ operator >=(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 >= str::string( Op2 );
+	}
+
+	inline bso::bool__ operator >(
+		const str::string_ &Op1,
+		const char *Op2 )
+	{
+		return Op1 > str::string( Op2 );
+	}
+
 	//f Convert 'String' to upper case. Returns cnverted 'String'.
 	string_ &ToUpper( string_ &String );
 

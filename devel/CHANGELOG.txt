@@ -1,5 +1,9 @@
 $Id$
 
+22/09/05 :
+	- STR :
+		- Ajout des opérateurs de comparaisons entre un 'const string_ &' et un 'const char *'
+
 21/09/05 :
 	- XML :
 		- Renommage méthodes classe 'callback__'.
