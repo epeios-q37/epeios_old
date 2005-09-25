@@ -271,6 +271,29 @@ namespace dtr {
 		{
 			return Tree.Parent( Node );
 		}
+		r Cut( r Node )
+		{
+			r P = Tree.Parent( Node );
+			r L = Queue.Previous( Node ), R = Queue.Next( Node );
+
+			Tree.Cut( Node );
+
+			if ( P != NONE ) {
+				if ( L == NONE ) {
+					if ( R != NONE )
+						Tree.BecomeLeft( R, P );
+				}
+
+				if ( R == NONE ) {
+					if ( L != NONE )
+						Tree.BecomeRight( L, P );
+				}
+			}
+
+			Queue.Delete( Node );
+
+			return Node;
+		}
 		bso::bool__ HasParent( r Node ) const
 		{
 			return Parent( Node ) != NONE;

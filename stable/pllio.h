@@ -85,9 +85,17 @@ namespace pllio {
 #endif
 		}
 	public:
-		io_core__( descriptor__ D )
+		void reset( bso::bool__ = true )
 		{
-			D_ = D;
+			_D = PLLIO_UNDEFINED_DESCRIPTOR;
+		}
+		io_core__( void )
+		{
+			reset( false );
+		}
+		virtual ~io_core__( void )
+		{
+			reset();
 		}
 		void Seek( long Offset )
 		{
@@ -106,9 +114,22 @@ namespace pllio {
 	: public virtual io_core__
 	{
 	public:
-		lowlevel_input__( descriptor__ D )
-		: io_core__( D )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+			io_core__::reset( P );
+		}
+		lowlevel_input__( void )
+		{
+			reset( false );
+		}
+		~lowlevel_input__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			io_core__::Init( D );
+		}
 		unsigned int Read(
 			amount__ Amount,
 			void *Buffer )
@@ -144,9 +165,22 @@ namespace pllio {
 	: public virtual io_core__
 	{
 	public:
-		lowlevel_output__( descriptor__ D )
-		: io_core__( D )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+			io_core__::reset( P );
+		}
+		lowlevel_output__( void )
+		{
+			reset( false );
+		}
+		~lowlevel_output__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			io_core__::Init( D );
+		}
 		int Write(
 			const void *Buffer,
 			amount__ Amount )
@@ -179,11 +213,24 @@ namespace pllio {
 	  public lowlevel_input__
 	{
 	public:
-		lowlevel_io__( descriptor__ D = PLLIO_UNDEFINED_DESCRIPTOR )
-		: lowlevel_output__( D ),
-		  lowlevel_input__( D ),
-		  io_core__( D )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+			lowlevel_output__::reset( P );
+			lowlevel_input__::reset( P );
+		}
+		lowlevel_io__( void )
+		{
+			reset( false );
+		}
+		~lowlevel_io__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			lowlevel_output__::Init( D );
+			lowlevel_input__::Init( D );
+		}
 	};
 }
 

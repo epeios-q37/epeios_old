@@ -1,5 +1,15 @@
 $Id$
 
+25/09/05 :
+	- GENERAL :
+		- Adaptations aux modifications de la bibliothèque 'FLW'.
+
+24/09/05 :
+	- CSLIO::
+		- Adaptation aux chnagements de la bibliothèque 'FLW'.
+	- FLW :
+		- Remise en place méthode 'reset(...)' et 'Init(...)' en lieu et place du contructeur avec argument et de l'opérateur '()'.
+
 22/09/05 :
 	- STR :
 		- Ajout des opérateurs de comparaisons entre un 'const string_ &' et un 'const char *'
@@ -18,6 +28,10 @@ $Id$
 		- Ajout correspondance balise fermante.
 	- RGSTRY:
 		- Adaptation modification bibliothèque 'XML'.
+	- TAGDTC : 
+		- Adaptation changements différentes bibliothèques.
+	- TAGEXP : 
+		- Adaptation changements différentes bibliothèques.
 
 18/09/05
 	- GENERAL:

@@ -162,13 +162,11 @@ namespace csducl {
 			_Get().Synchronize();
 		}
 	public:
-		universal_client( void )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX )
-		{}
-
 		void Init( universal_client_core &Core )
 		{
 			_Core = &Core;
+
+			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX );
 
 			switch ( Core._Type ) {
 			case tShared:

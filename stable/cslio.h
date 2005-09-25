@@ -73,28 +73,39 @@ namespace cslio {
 
 	class io_core__ {
 	protected:
-		descriptor__ D_;
+		descriptor__ _D;
 		void _Test( void ) const
 		{
 #ifdef CSLIO_DBG
-			if ( D_ == CSLIO_UNDEFINED_DESCRIPTOR )
+			if ( _D == CSLIO_UNDEFINED_DESCRIPTOR )
 				ERRu();
 #endif
 		}
 	public:
-		io_core__( descriptor__ D )
-		: D_( D )
-		{}
+		void reset( bso::bool__ = true )
+		{
+			_D = CSLIO_UNDEFINED_DESCRIPTOR;
+		}
+		io_core__( void )
+		{
+			reset( false );
+		}
+		virtual ~io_core__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			reset();
+
+			_D = D;
+		}
 		void Seek( long Offset )
 		{
 			_Test();
 
-			if ( fseek( D_, Offset, SEEK_SET ) != Offset )
+			if ( fseek( _D, Offset, SEEK_SET ) != Offset )
 				ERRx();
-		}
-		void operator()( descriptor__ D )
-		{
-			D_ = D;
 		}
 	};
 
@@ -103,22 +114,35 @@ namespace cslio {
 	: public virtual io_core__
 	{
 	public:
-		standard_input__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
-		: io_core__( D )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+			io_core__::reset( P );
+		}
+		standard_input__( void )
+		{
+			reset( false );
+		}
+		virtual ~standard_input__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			io_core__:: Init( D );
+		}
 		size_t Read(
 			amount__ Amount,
 			void *Buffer )
 		{
 			_Test();
 
-			return fread( Buffer, 1, Amount, D_ );
+			return fread( Buffer, 1, Amount, _D );
 		}
 		bso::bool__ OnEOF( void )
 		{
 			_Test();
 
-			return feof( D_ ) != 0;
+			return feof( _D ) != 0;
 		}
 	};
 
@@ -126,22 +150,35 @@ namespace cslio {
 	: public virtual io_core__
 	{
 	public:
-		standard_output__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
-		: io_core__( D )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+			io_core__::reset( P );
+		}
+		standard_output__( void )
+		{
+			reset( false );
+		}
+		virtual ~standard_output__( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			io_core__:: Init( D );
+		}
 		size_t Write(
 			const void *Buffer,
 			amount__ Amount )
 		{
 			_Test();
 
-			return fwrite( Buffer, 1, Amount, D_ );
+			return fwrite( Buffer, 1, Amount, _D );
 		}
 		void Flush( void )
 		{
 			_Test();
 
-			fflush( D_ );
+			fflush( _D );
 		}
 	};
 
@@ -150,73 +187,25 @@ namespace cslio {
 	  public standard_input__
 	{
 	public:
-		standard_io__( descriptor__ D = CSLIO_UNDEFINED_DESCRIPTOR )
-		: standard_output__( D ),
-		  standard_input__( D ),
-		  io_core__( D )
-		{}
-	};
-
-#if 0
-	class file_standard_io___
-	: public standard_io__
-	{
-	private:
-		FILE *FD_;
-	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P ) {
-				if ( FD_ != NULL )
-					if ( fclose( FD_ ) != 0 )
-						ERRx();
-			}
-
-			FD_ = NULL;
+			standard_output__::reset( P );
+			standard_input__::reset( P );
 		}
-		file_standard_io___( void )
-		: standard_io__( FD_ )
+		standard_io__( void )
 		{
 			reset( false );
 		}
-		~file_standard_io___( void )
+		virtual ~standard_io__( void )
 		{
 			reset();
 		}
-		status__ Init(
-			const char *FileName,
-			mode__ Mode )
+		void Init( descriptor__ D )
 		{
-			char Flags[4]="b";
-
-			reset();
-
-			switch ( Mode ) {
-			case mRemove:
-				strcat( Flags, "w+" );
-				break;
-			case mAppend:
-				strcat( Flags, "a+" );
-				break;
-			case mReadWrite:
-				strcat( Flags, "r+" );
-				break;
-			case mReadOnly:
-				strcat( Flags, "r" );
-				break;
-			default:
-				ERRu();
-				break;
-			}
-
-			if ( ( FD_ = fopen( FileName, Flags ) ) ==  NULL )
-				return sFailure;
-			else
-				return sSuccess;
+			standard_output__::Init( D );
+			standard_input__::Init( D );
 		}
 	};
-#endif
-
 }
 
 /*$END$*/

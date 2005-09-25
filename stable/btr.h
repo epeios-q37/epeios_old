@@ -399,7 +399,8 @@ namespace btr {
 
 			if ( HasLeft_( Parent ) && ( Left_( Parent ) == *Node ) )
 				ReleaseLeft_( Parent );
-			else
+			
+			if ( HasRight_( Parent ) && ( Right_( Parent ) == *Node ) )
 				ReleaseRight_( Parent );
 
 			ReleaseParent_( *Node );

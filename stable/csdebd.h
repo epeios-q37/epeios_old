@@ -137,14 +137,29 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			return Wanted;
 		}
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			ioflow__::reset( P );
+
+			_Row = NONE;
+		}
 		_generic__(
 			data_ &Read,
 			data_ &Write )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ) ,
-		  _Read( Read ),
+		: _Read( Read ),
 		  _Write( Write )
 		{
-			_Row = NONE;
+			reset( false );
+		}
+		~_generic__( void )
+		{
+			reset();
+		}
+		void Init(void )
+		{
+			reset();
+			
+			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX );
 		}
 	};
 

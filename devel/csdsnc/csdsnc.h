@@ -360,17 +360,18 @@ ERREpilog
 			_Id = CSDSNC_UNDEFINED;
 			_Core = NULL;
 		}
-		client_flow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex )
+		client_flow___(  )
 		{
 			reset( false );
 		}
-		void Init( core_ &Core )
+		void Init(
+			core_ &Core,
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
 		{
 			reset();
 
+			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
 			_Core = &Core;
-
 		}
 	};
 }

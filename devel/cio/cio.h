@@ -110,9 +110,9 @@ namespace cio {
 	{
 	public:
 		aware_coutf___( void )
-		: _oflow__( coutd, coutm )
-		  ,io_core__( coutd )
-		{}
+		{
+			_oflow__::Init(  coutd, coutm );
+		}
 	};
 
 	class aware_cout___
@@ -132,9 +132,9 @@ namespace cio {
 	{
 	public:
 		aware_cerrf___( void )
-		: _oflow__( cerrd, cerrm )
-		  ,io_core__( cerrd )
-		{}
+		{
+			_oflow__::Init( cerrd, cerrm );
+		}
 	};
 
 	class aware_cerr___
@@ -153,9 +153,9 @@ namespace cio {
 	{
 	public:
 		aware_cinf___( void )
-		: _iflow__( cind, cinm )
-		  ,io_core__( cind )
-		{}
+		{
+			_iflow__::Init( cind, cinm );
+		}
 	};
 
 	class aware_cin___

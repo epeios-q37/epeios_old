@@ -60,8 +60,6 @@ extern class ttr_tutor &MLLIOTutor;
 
 /*$BEGIN$*/
 
-#include "iodef.h"
-
 #error "Not implemented yet."
 
 namespace mllio {

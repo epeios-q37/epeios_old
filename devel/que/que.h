@@ -384,6 +384,26 @@ namespace que {
 			E_QSTACK_( r ) &Stack,
 			r Begin,
 			que::direction Direction ) const;
+		r Cut( r Node )
+		{
+			r P = Previous( Node );
+
+			link__ L = Links.Get( *Node );
+
+			L.Previous = NONE;
+
+			Links.Store( L, *Node );
+
+			if ( P != NONE ) {
+				L = Links.Get( *P );
+
+				L.Next = NONE;
+
+				Links.Store( L, *P );
+			}
+
+			return Node;
+		}
 	};
 
 	E_AUTO1( queue )

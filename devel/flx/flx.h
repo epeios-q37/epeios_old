@@ -138,8 +138,7 @@ namespace flx {
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
-		buffer_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
+		buffer_iflow__( void )
 		{
 			reset( false );
 		}
@@ -151,9 +150,10 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const flw::datum__ *Buffer,
-			bso::bsize__ Size = BSO_BSIZE_MAX )
+			bso::bsize__ Size = BSO_BSIZE_MAX,
+			flw::mutex__ Mutex = FLW_NO_MUTEX			)
 		{
-			iflow__::SetAmountMax( Size );
+			iflow__::Init( Cache_, sizeof( Cache_ ), Size, Mutex );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -193,13 +193,13 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow__::Synchronize();
+			if ( P )
+				oflow__::Synchronize();
 
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
-		buffer_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
+		buffer_oflow__(  )
 		{
 			reset( false );
 		}
@@ -210,11 +210,12 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			flw::datum__ *Buffer,
-			bso::bsize__ Size )
+			bso::bsize__ Size,
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
 		{
 			reset();
 
-			oflow__::SetAmountMax( Size );
+			oflow__::Init( Cache_, sizeof( Cache_ ), Size, Mutex );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -253,8 +254,7 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_iflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
+		bunch_iflow__( void )
 		{
 			reset( false );
 		}
@@ -270,10 +270,13 @@ namespace flx {
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
-			epeios::row_t__ Position = 0 )
+			epeios::row_t__ Position = 0,
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
 		{
 			Bunch_ = &Bunch;
 			Position_ = Position;
+
+			iflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
 		}
 	};
 
@@ -299,8 +302,7 @@ namespace flx {
 		// The cache.
 		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_oflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
+		bunch_oflow___( void )
 		{
 			reset( false );
 		}
@@ -318,11 +320,15 @@ namespace flx {
 			Bunch_ = NULL;
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
-		void Init( bunch_ &Bunch )
+		void Init(
+			bunch_ &Bunch,
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
 		{
 			reset();
 
 			Bunch_ = &Bunch;
+
+			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
 		}
 	};
 
@@ -345,9 +351,11 @@ namespace flx {
 			// The cache.
 		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
-		dump_oflow__( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex )
-		{}
+		void Init( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		{
+			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
+		}
+
 	};
 }
 

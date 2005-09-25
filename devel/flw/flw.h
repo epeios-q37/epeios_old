@@ -345,7 +345,30 @@ namespace flw {
 			return Size;
 		}
 	public:
-		iflow__(
+		void reset( bso::bool__ = true ) 
+		{
+			Cache_ = 0;
+			Size_ = 0;
+			Red_ = 0;
+			AmountMax_ = 0;
+			Available_ = Position_ = 0;
+			EOFD_.Data = NULL;
+			EOFD_.Size = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
+
+			_ThreadHandling.Mutex = FLW_NO_MUTEX;
+
+			_ThreadHandling.Owner = true;
+		}
+		iflow__( void )
+		{
+			reset( false );
+		}
+		virtual ~iflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax,
@@ -355,14 +378,11 @@ namespace flw {
 			mutex__ Mutex = FLW_NO_MUTEX )
 #endif
 		{
+			reset();
+
 			Cache_ = Cache;
 			Size_ = Size;
-			Red_ = 0;
 			AmountMax_ = AmountMax;
-			Available_ = Position_ = 0;
-			EOFD_.Data = NULL;
-			EOFD_.Size = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 
 			_ThreadHandling.Mutex = Mutex;
 
@@ -370,14 +390,6 @@ namespace flw {
 				_ThreadHandling.Owner = true;
 			else
 				_ThreadHandling.Owner = false;
-		}
-		void operator()( void )
-		{
-			Red_ = 0;
-			Available_ = Position_ = 0;
-			EOFD_.Data = NULL;
-			EOFD_.Size = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
@@ -607,7 +619,26 @@ namespace flw {
 		virtual void FLWSynchronizing( void )
 		{}
 	public:
-		oflow__(
+		void reset( bso::bool__ = true )
+		{
+			Cache_ = NULL;
+			Size_ = Free_ = 0;
+			AmountMax_ = 0;
+			Written_ = 0;
+
+			_ThreadHandling.Mutex = FLW_NO_MUTEX;
+
+			_ThreadHandling.Owning = true;
+		}
+		oflow__( void )
+		{
+			reset( false );
+		}
+		virtual ~oflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax,
@@ -617,10 +648,11 @@ namespace flw {
 			mutex__ Mutex = FLW_NO_MUTEX )
 #endif
 		{
+			reset();
+
 			Cache_ = Cache;
 			Size_ = Free_ = Size;
 			AmountMax_ = AmountMax;
-			Written_ = 0;
 
 			_ThreadHandling.Mutex = Mutex;
 
@@ -629,16 +661,13 @@ namespace flw {
 			else
 				_ThreadHandling.Owning = false;
 		}
-		void operator()( void )
-		{
-			Free_ = Size_;
-			Written_ = 0;
-		}
+/*
 		virtual ~oflow__( void )
 		{
 			if ( Size_ != Free_ )
 				_Synchronize();
 		}
+*/
 		//f Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ WriteUpTo(
 			const void *Buffer,
@@ -716,7 +745,20 @@ namespace flw {
 	  public oflow__
 	{
 	public:
-		ioflow__(
+		void reset( bso::bool__ P = true )
+		{
+			iflow__::reset( P );
+			oflow__::reset( P );
+		}
+		ioflow__( void )
+		{
+			reset( false );
+		}
+		~ioflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			datum__ *ICache,
 			bsize__ ISize,
 			size__ ReadAmountMax,
@@ -730,15 +772,12 @@ namespace flw {
 			mutex__ IMutex = FLW_NO_MUTEX,
 			mutex__ OMutex = FLW_NO_MUTEX )
 #endif
-			: iflow__( ICache, ISize, ReadAmountMax, IMutex ),
-			  oflow__( OCache, OSize, WriteAmountMax, OMutex )
-		{}
-		void operator()( void )
 		{
-			iflow__::operator ()();
-			oflow__::operator ()();
+			iflow__::Init( ICache, ISize, ReadAmountMax, IMutex );
+			oflow__::Init( OCache, OSize, WriteAmountMax, OMutex );
+
 		}
-		ioflow__(
+		void Init(
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax,
@@ -749,9 +788,10 @@ namespace flw {
 			mutex__ IMutex = FLW_NO_MUTEX,
 			mutex__ OMutex = FLW_NO_MUTEX )
 #endif
-			: iflow__( Cache, Size / 2, AmountMax, IMutex ),
-			  oflow__( Cache + Size / 2, Size / 2, AmountMax, OMutex )
-		{}
+		{
+			iflow__::Init( Cache, Size / 2, AmountMax, IMutex );
+			oflow__::Init( Cache + Size / 2, Size / 2, AmountMax, OMutex );
+		}
 		void SetAmountMax(
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )

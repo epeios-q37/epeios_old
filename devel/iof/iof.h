@@ -140,23 +140,20 @@ namespace iof {
 			return Written;
 		}
 	public:
-		io_oflow__(void )
-		: output__( IOF_UNDEFINED_DESCRIPTOR ),
-		  oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX ),
-		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
-		{}
-		io_oflow__(
-			descriptor__ D,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
-		: output__( D ),
-		  oflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex ),
-		  io_core__( D )
-		{}
-		io_oflow__(
+		void reset( bso::bool__ P = true )
+		{
+			output__::reset( P );
+			oflow__::reset( P );
+		}
+		io_oflow__( void )
+		{
+			reset( false );
+		}
+		virtual ~io_oflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			descriptor__ D,
 			amount__ AmountMax,
 #ifdef CPE__MT
@@ -164,13 +161,21 @@ namespace iof {
 #else
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
-		: output__( D ),
-		  oflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex ),
-		  io_core__( D )
-		{}
-		void operator()( void )
 		{
-			oflow__::operator()();
+
+			output__::Init( D );
+			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex );
+		}
+		void Init(
+			descriptor__ D,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
+		{
+
+			Init( D, FLW_SIZE_MAX, Mutex );
 		}
 	};
 
@@ -218,23 +223,20 @@ namespace iof {
 			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
 		}
 	public:
-		io_iflow__(void )
-		: input__( IOF_UNDEFINED_DESCRIPTOR ),
-		  iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX ),
-		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
-		{}
-		io_iflow__(
-			descriptor__ D,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
-		: input__( D ),
-		  iflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex ),
-		  io_core__( D )
-		{}
-		io_iflow__(
+		void reset( bso::bool__ P = true )
+		{
+			input__::reset( P );
+			iflow__::reset( P );
+		}
+		io_iflow__( void )
+		{
+			reset( false );
+		}
+		virtual ~io_iflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			descriptor__ D,
 			amount__ AmountMax,
 #ifdef CPE__MT
@@ -242,18 +244,25 @@ namespace iof {
 #else
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
-		: input__( D ),
-		  iflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex ),
-		  io_core__( D )
-		{}
-		void operator()( void )
 		{
-			iflow__::operator()();
-		}
 
+			input__::Init( D );
+			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex );
+		}
+		void Init(
+			descriptor__ D,
+#ifdef CPE__MT
+			flw::mutex__ Mutex )
+#else
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
+#endif
+		{
+
+			Init( D, FLW_SIZE_MAX, Mutex );
+		}
 	};
 
-	class io_ioflow__
+	class io_flow__
 	: public io__,
 	  public ioflow__
 	{
@@ -317,23 +326,20 @@ namespace iof {
 			return Written;
 		}
 	public:
-		io_ioflow__(void )
-		: io__( IOF_UNDEFINED_DESCRIPTOR ),
-		  ioflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX ),
-		  io_core__( IOF_UNDEFINED_DESCRIPTOR )
-		{}
-		io_ioflow__(
-			descriptor__ D,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
-		: io__( D ),
-		  ioflow__( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex, Mutex ),
-		  io_core__( D )
-		{}
-		io_ioflow__(
+		void reset( bso::bool__ P = true )
+		{
+			io__::reset( P );
+			ioflow__::reset( P );
+		}
+		io_flow__( void )
+		{
+			reset( false );
+		}
+		virtual ~io_flow__( void )
+		{
+			reset();
+		}
+		void Init(
 			descriptor__ D,
 			amount__ AmountMax,
 #ifdef CPE__MT
@@ -341,13 +347,9 @@ namespace iof {
 #else
 			flw::mutex__ Mutex = FLW_NO_MUTEX )
 #endif
-		: io__( D ),
-		  ioflow__( Cache_, sizeof( Cache_ ), AmountMax, Mutex, Mutex ),
-		  io_core__( D )
-		{}
-		void operator()( void )
 		{
-			oflow__::operator()();
+			io__::Init( D );
+			ioflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex, Mutex );
 		}
 	};
 }

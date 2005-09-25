@@ -296,28 +296,31 @@ namespace sck {
 					Close( _Socket );
 				}
 			}
+
+			ioflow__::reset( P );
 								
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
 		}
-		socket_ioflow___( flw::mutex__ Mutex = FLW_NO_MUTEX )
-		: ioflow__( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex )
+		socket_ioflow___( void )
 		{
 			reset( false );
 		}
 		virtual ~socket_ioflow___( void )
 		{
-			reset( true );
+			reset();
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
 			flw::size__ AmountMax,
-			duration__ TimeOut )
+			duration__ TimeOut,
+			flw::mutex__ Mutex = FLW_NO_MUTEX )
 		{
 			reset();
 		
+			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
 			ioflow__::SetAmountMax( AmountMax );
 
 			_Socket = Socket;

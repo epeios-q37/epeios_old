@@ -130,7 +130,6 @@ namespace fil
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file___( void )
-		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{
 			reset( false );
 		}
@@ -161,7 +160,7 @@ namespace fil
 				}
 			}
 
-			io_core__::operator()( D_ );
+			_io__::Init( D_ );
 
 			return sSuccess;
 		}
@@ -183,12 +182,11 @@ namespace fil
 					_Close( D_ );
 			}
 
-			_io_iflow__::operator()();
+			_io_iflow__::reset( P );
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file_iflow___( void )
-		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{
 			reset( false );
 		}
@@ -219,7 +217,7 @@ namespace fil
 				}
 			}
 
-			io_core__::operator()( D_ );
+			_io_iflow__::Init( D_, FLW_NO_MUTEX );
 
 			return sSuccess;
 		}
@@ -250,12 +248,11 @@ namespace fil
 				}
 			}
 
-			_io_oflow__::operator()();
+			_io_oflow__::reset( P );
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
 		file_oflow___( void )
-		: io_core__( IOF_UNDEFINED_DESCRIPTOR )
 		{
 			reset( false );
 		}
@@ -286,7 +283,7 @@ namespace fil
 				}
 			}
 
-			io_core__::operator()( D_ );
+			io_oflow__::Init( D_, FLW_NO_MUTEX );
 
 			return sSuccess;
 		}
