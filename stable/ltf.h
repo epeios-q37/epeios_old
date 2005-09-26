@@ -112,18 +112,31 @@ namespace ltf {
 			return Wanted;
 		}
 	public:
-		_line_text_oflow__(
-			txf::text_oflow__ &TFlow,
+		void reset( bso::bool__ P = true )
+		{
+			oflow__::reset( P );
+		}
+		_line_text_oflow__( txf::text_oflow__ &TFlow )
+		: TFlow_( TFlow )
+		{
+			reset( false );
+		}
+		virtual ~_line_text_oflow__( void )
+		{
+			reset();
+		}
+		void Init(
 			flw::datum__ *Data,
 			flw::size__ Size,
 			flw::mutex__ Mutex )
-		: TFlow_( TFlow ),
-		  flw::oflow__( NULL, 0, BSO_ULONG_MAX, Mutex )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
+			oflow__::Init( NULL, 0, BSO_ULONG_MAX, Mutex );
+			
 			Data_ = Data;
+
 			Size_ = (bso::ubyte__)Size;
 
 			memset( Data_, ' ', Size_ );
@@ -153,12 +166,26 @@ namespace ltf {
 	protected:
 		_line_text_oflow__ Flow_;
 	public:
-		line_text_oflow__(
-			txf::text_oflow__ &TFlow,
-			flw::mutex__ Mutex )
-		: Flow_( TFlow, Data_, size, Mutex ),
-		  txf::text_oflow__( Flow_ )
-		{}
+		void reset( bso::bool__ P = true )
+		{
+//			text_oflow__::operator()();
+			Flow_.reset( P );
+		}
+		line_text_oflow__( txf::text_oflow__ &TFlow )
+		: Flow_( TFlow ),
+		  text_oflow__( Flow_ )
+		{
+			reset( false );
+		}
+		virtual ~line_text_oflow__( void )
+		{
+			reset();
+		}
+		void Init( flw::mutex__ Mutex )
+		{
+			Flow_.Init( Data_, size, Mutex );
+//			txf::text_oflow__::Init( Flow_ );
+		}
 		void CR( void )
 		{
 			Flow_.CR();

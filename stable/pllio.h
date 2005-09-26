@@ -76,11 +76,11 @@ namespace pllio {
 	class io_core__
 	{
 	protected:
-		descriptor__ D_;
+		descriptor__ _D;
 		void _Test( void ) const
 		{
 #ifdef PLLIO_DBG
-			if ( D_ == PLLIO_UNDEFINED_DESCRIPTOR )
+			if ( _D == PLLIO_UNDEFINED_DESCRIPTOR )
 				ERRu();
 #endif
 		}
@@ -101,12 +101,12 @@ namespace pllio {
 		{
 			_Test();
 
-			if ( lseek( D_, Offset, SEEK_SET ) != Offset )
+			if ( lseek( _D, Offset, SEEK_SET ) != Offset )
 				ERRd();
 		}
-		void operator()( descriptor__ D )
+		void Init( descriptor__ D )
 		{
-			D_ = D;
+			_D = D;
 		}
 	};
 
@@ -139,7 +139,7 @@ namespace pllio {
 			if ( Amount > SSIZE_MAX )
 				Amount = SSIZE_MAX;
 
-			if ( ( Amount = read( D_, Buffer, Amount ) ) == -1 )
+			if ( ( Amount = read( _D, Buffer, Amount ) ) == -1 )
 				ERRd();
 
 			return Amount;
@@ -151,10 +151,10 @@ namespace pllio {
 
 			_Test();
 
-			if ( fstat( D_, &Stat ) != 0 )
+			if ( fstat( _D, &Stat ) != 0 )
 				ERRd();
 
-			if ( ( Position = lseek( D_, 0, SEEK_CUR ) ) == -1 )
+			if ( ( Position = lseek( _D, 0, SEEK_CUR ) ) == -1 )
 				ERRd();
 
 			return Position >= Stat.st_size;
@@ -190,7 +190,7 @@ namespace pllio {
 			if ( Amount > SSIZE_MAX )
 				Amount = SSIZE_MAX;
 
-			if ( ( Amount = write( D_, Buffer, Amount ) ) == -1 )
+			if ( ( Amount = write( _D, Buffer, Amount ) ) == -1 )
 				ERRd();
 
 			return Amount;
@@ -200,9 +200,9 @@ namespace pllio {
 			_Test();
 /*
 #ifdef CPE__CYGWIN
-			fsync( D_ );
+			fsync( _D );
 #else
-			fdatasync( D_ );
+			fdatasync( _D );
 #endif
 			*/
 		}
