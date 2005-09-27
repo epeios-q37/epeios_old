@@ -209,6 +209,11 @@ namespace nsxpcm {
 		bso::char__ Separator,
 		char **JString );
 
+	void Split(
+		const char *Joined,
+		const char *Amounts,
+		bso::char__ Separator,
+		bkdacc::xstrings_ &Strings );
 #endif
 }
 

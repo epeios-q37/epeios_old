@@ -498,6 +498,64 @@ ERREnd
 ERREpilog
 }
 
+void GetData_(
+	bso::ulong__ Amount,
+	const strings_ &Splitted,
+	strings_ &Data,
+	epeios::row__ &Row )
+{
+	ctn::E_CMITEM( str::string_ ) Item;
+
+	Item.Init( Splitted );
+
+	while ( Amount-- ) {
+#ifdef NSXPCM_DBG
+		if ( Row == NONE )
+			ERRu();
+#endif
+		Data.Append( Item( Row ) );
+
+		Row = Splitted.Next( Row );
+	}
+}
+
+void nsxpcm::Split(
+	const char *Joined,
+	const char *JAmounts,
+	bso::char__ Separator,
+	bkdacc::xstrings_ &DataCluster )
+{
+ERRProlog
+	nsxpcm::strings Amounts;
+	nsxpcm::strings Splitted;
+	epeios::row__ Error = NONE;
+	epeios::row__ ARow = NONE, SRow = NONE;
+	strings Data;
+ERRBegin
+	Splitted.Init();
+	Split( Joined, Separator, Splitted );
+
+	Amounts.Init();
+	Split( JAmounts, Separator, Amounts );
+
+	ARow = Amounts.First();
+
+	SRow = Splitted.First();
+
+	while ( ARow != NONE )
+	{
+		Data.Init();
+
+		GetData_( Amounts( ARow ).ToUL( &Error ), Splitted, Data, SRow );
+
+		ARow = Amounts.Next( ARow );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 #endif
 
 

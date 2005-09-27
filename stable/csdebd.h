@@ -212,6 +212,9 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset();
 
+			_generic__::Init();
+			_Backend.Init();
+
 			_UserFunctions = &UserFunctions;
 
 			_Master.Init();
