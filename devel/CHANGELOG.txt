@@ -1,5 +1,9 @@
 $Id$
 
+29/09/05 :
+	- DTE :
+		- Ajout fonction 'Now()'.
+
 25/09/05 :
 	- GENERAL :
 		- Adaptations aux modifications de la bibliothèque 'FLW'.

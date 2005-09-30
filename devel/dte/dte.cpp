@@ -56,6 +56,8 @@ public:
 /*$BEGIN$*/
 
 #include <ctype.h>
+#include <time.h>
+
 
 /* Structure of a date.
 
@@ -159,6 +161,19 @@ const char *dte::date__::ASCII(
 	return Buffer.Data;
 }
 
+date__ dte::Now( void )
+{
+   struct tm *time_now;
+   time_t secs_now;
+   date__ Date;
+
+   time(&secs_now);
+   time_now = localtime(&secs_now);
+
+   Date.Init( time_now->tm_mday, time_now->tm_mon + 1, time_now->tm_year + 1900 );
+
+   return Date;
+}
 
 
 

@@ -350,6 +350,7 @@ namespace dte {
 		return Flow << Date.ASCII( fDDMMYYYY, Buffer );
 	}
 
+	date__ Now( void );
 }
 
 /*$END$*/
