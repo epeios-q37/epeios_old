@@ -186,8 +186,7 @@ ERRBegin
 		Row = Joined.Next( Row );
 	}
 
-	if ( Item.Amount() != 0 )
-		Splitted.Append( Item );
+	Splitted.Append( Item );
 ERRErr
 ERREnd
 ERREpilog
