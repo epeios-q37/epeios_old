@@ -433,7 +433,7 @@ namespace rgstry {
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			Terms.Init();
+			Terms.reset( P );
 			Entries.reset( P );
 			Nodes.reset( P );
 		}

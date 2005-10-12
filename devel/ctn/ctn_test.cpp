@@ -61,7 +61,7 @@ typedef str::string		datum;
 
 
 
-typedef ctn::E_XCONTAINER_( datum_ ) data_;
+typedef ctn::E_XMCONTAINER_( datum_ ) data_;
 E_AUTO( data )
 
 typedef ctn::E_XCONTAINER_( data_ ) data_cluster_;
@@ -70,7 +70,7 @@ E_AUTO( data_cluster )
 void Print( const data_ &Data )
 {
 	epeios::row__ Row = NONE;
-	ctn::E_CITEM( datum_ ) Datum;
+	ctn::E_CMITEM( datum_ ) Datum;
 
 	Datum.Init( Data );
 
@@ -182,7 +182,7 @@ ERREpilog
 void EssaiBasic( void )
 {
 ERRProlog
-	E_XCONTAINER( str::string_ ) C;
+	E_XMCONTAINER( str::string_ ) C;
 //	MITEM( str::string_ ) E;
 ERRBegin
 	C.Init();
@@ -683,8 +683,8 @@ void EssaiSimpleMulti( void )
 ERRProlog
 	flm::file_memory_driver F;
 	mmm::multimemory M;
-	E_CONTAINER( str::string_ ) C;
-	E_ITEM( str::string_ ) E;
+	E_MCONTAINER( str::string_ ) C;
+	E_MITEM( str::string_ ) E;
 ERRBegin
 	F.Init( "coucou.tmp" );
 	M.plug( F );

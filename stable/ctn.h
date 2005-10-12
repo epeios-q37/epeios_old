@@ -684,13 +684,12 @@ namespace ctn {
 		{};
 		mono_container_( s &S )
 		: basic_container_< item_mono_statique__<typename_ t::s>, r >( S )
-		{
-			 Ponctuel_.Init( *this );
-		}
+		{}
 		void reset( bool P = true )
 		{
-			Ponctuel_.Flush();
+			Ponctuel_.reset( P );
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::reset( P );
+			Ponctuel_.Init( *this );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
@@ -824,7 +823,7 @@ namespace ctn {
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_MCONTAINER_( Type )	mono_container_< Type, epeios::row__ >
-	#define E_MCONTAINER( Type )	mono_container_< Type, epeios::row__ >
+	#define E_MCONTAINER( Type )	mono_container< Type, epeios::row__ >
 #else
 	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, epeios::row__ )
 	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, epeios::row__ )
@@ -1080,16 +1079,16 @@ namespace ctn {
 		E_ITEMt( t, r ) Ponctuel_;
 	public:
 		struct s
-		: public basic_container_< item_multi_statique__< typename t::s >, r >::s {};
+		: public basic_container_< item_multi_statique__< typename t::s >, r >::s
+		{};
 		multi_container_( s &S )
 		: basic_container_< item_multi_statique__< typename_ t::s >, r >( S )
-		{
-			Ponctuel_.Init( *this );
-		}
+		{}
 		void reset( bool P = true )
 		{
-			Ponctuel_.Flush();
+			Ponctuel_.reset( P );
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::reset( P );
+			Ponctuel_.Init( *this );
 		}
 		/*f Return the object at position 'Position'. BE CAREFUL: after calling this fonction
 		and if you want to call another fonction as this fonction or the next, you MUST call
