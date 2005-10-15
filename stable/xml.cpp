@@ -68,6 +68,159 @@ static void SkipSpaces_( xtf::extended_text_iflow__ &Flow )
 		ERRI( iBeam );
 }
 
+// Entitée reconnue : '&lt;', '&gt;', '&amp;', '&apos;', '&quot;'.
+
+enum entity_state__ {
+	sStart,
+	sL,
+	sLT,
+	sG,
+	sGT,
+	sA,
+	sAM,
+	sAMP,
+	sAP,
+	sAPO,
+	sAPOS,
+	sQ,
+	sQU,
+	sQUO,
+	sQUOT,
+	s_amount,
+	s_Undefined
+};
+
+
+static char HandleEntity_( xtf::extended_text_iflow__ &Flow )
+{
+	entity_state__ State = sStart;
+
+	while ( !Flow.EOX() ) {
+
+		switch ( State ) {
+		case sStart:
+			switch( Flow.Get() ) {
+			case 'l':
+				State = sL;
+				break;
+			case 'g':
+				State = sG;
+				break;
+			case 'a':
+				State = sA;
+				break;
+			case 'q':
+				State = sQ;
+				break;
+			default:
+				ERRI( iBeam );
+				break;
+			}
+			break;
+		case sL:
+			if ( Flow.Get() != 't' )
+				ERRI( iBeam );
+
+			State = sLT;
+			break;
+		case sLT:
+			if ( Flow.Get() != ';' )
+				ERRI( iBeam );
+
+			return '<';
+			break;
+		case sG:
+			if ( Flow.Get() != 't' )
+				ERRI( iBeam );
+
+			State = sGT;
+			break;
+		case sGT:
+			if ( Flow.Get() != ';' )
+				ERRI( iBeam );
+
+			return '>';
+			break;
+		case sA:
+			switch ( Flow.Get() ) {
+			case 'm':
+				State = sAM;
+				break;
+			case 'p':
+				State = sAP;
+				break;
+			default:
+				ERRI( iBeam );
+				break;
+			}
+			break;
+		case sAM:
+			if ( Flow.Get() != 'p' )
+				ERRI( iBeam );
+
+			State = sAMP;
+			break;
+		case sAMP:
+			if ( Flow.Get() != ';' )
+				ERRI( iBeam );
+
+			return '&';
+			break;
+		case sAP:
+			if ( Flow.Get() != 'o' )
+				ERRI( iBeam );
+
+			State = sAPO;
+			break;
+		case sAPO:
+			if ( Flow.Get() != 's' )
+				ERRI( iBeam );
+
+			State = sAPOS;
+			break;
+		case sAPOS:
+			if ( Flow.Get() != ';' )
+				ERRI( iBeam );
+
+			return '\'';
+			break;
+		case sQ:
+			if ( Flow.Get() != 'u' )
+				ERRI( iBeam );
+
+			State = sQU;
+			break;
+		case sQU:
+			if ( Flow.Get() != 'o' )
+				ERRI( iBeam );
+
+			State = sQUO;
+		case sQUO:
+			if ( Flow.Get() != 't' )
+				ERRI( iBeam );
+
+			State = sQUOT;
+		case sQUOT:
+			if ( Flow.Get() != ';' )
+				ERRI( iBeam );
+
+			return '"';
+			break;
+		default:
+			ERRI( iBeam );
+			break;
+		}
+	}
+
+	ERRI( iBeam );
+
+	return 0;	// Juste pour éviter un 'Warning'.
+}
+
+
+
+
+
 static void GetId_(
 	xtf::extended_text_iflow__ &Flow,
 	str::string_ &Id )
@@ -96,7 +249,10 @@ static bso::bool__ GetValue_(
 		if ( !isspace( C = Flow.Get() ) )
 			IsSpace = false;
 
-		Value.Append( C );
+		if ( C == '&' )
+			Value.Append( HandleEntity_( Flow ) );
+		else
+			Value.Append( C );
 	}
 
 	return !IsSpace;
@@ -438,8 +594,13 @@ ERRProlog
 ERRBegin
 	while( Position != NONE ) {
 		switch ( C = Target( Position ) ) {
+		case '\'':
+			Buffer.Init( "&apos;" );
+			Target.Remove( Position );
+			Target.Insert( Buffer, Position );
+			break;
 		case '"':
-			Buffer.Init( "&#34;" );
+			Buffer.Init( "&quot;" );
 			Target.Remove( Position );
 			Target.Insert( Buffer, Position );
 			break;
