@@ -135,11 +135,11 @@ namespace mdr {
 		struct s {};
 		memory_driver_( s &S )
 		{
-			reset( true );
+			reset( false );
 		}
 		virtual ~memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
 		{
-			reset( false );
+			reset( true );
 		}
 		void reset( bool = true )
 		{}

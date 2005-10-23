@@ -131,6 +131,8 @@ void PrintV( data_cluster_ &DataCluster )
 	}
 
 	cout << "V >>>" << txf::nl << txf::sync;
+
+	DataCluster.Flush();
 }
 
 void PrintC( const data_cluster_ &DataCluster )

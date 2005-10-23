@@ -684,7 +684,9 @@ namespace ctn {
 		{};
 		mono_container_( s &S )
 		: basic_container_< item_mono_statique__<typename_ t::s>, r >( S )
-		{}
+		{
+			Ponctuel_.Init( *this );
+		}
 		void reset( bool P = true )
 		{
 			Ponctuel_.reset( P );
@@ -1083,7 +1085,9 @@ namespace ctn {
 		{};
 		multi_container_( s &S )
 		: basic_container_< item_multi_statique__< typename_ t::s >, r >( S )
-		{}
+		{
+			Ponctuel_.Init( *this );
+		}
 		void reset( bool P = true )
 		{
 			Ponctuel_.reset( P );

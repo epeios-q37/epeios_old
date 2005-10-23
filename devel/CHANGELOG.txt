@@ -1,5 +1,11 @@
 $Id$
 
+23/10/05 :
+	- CTN :
+		- Correction d'un bogue sur les constructeurs.
+	- MDR :
+		- Correction constructeur/destructeur.
+
 29/09/05 :
 	- DTE :
 		- Ajout fonction 'Now()'.
