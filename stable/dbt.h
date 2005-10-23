@@ -238,9 +238,9 @@ namespace dbt {
 		void Delete( row__ Node )
 		{
 			if ( IsExternal( Node ) )
-				Externals.Delete( GetExternal( Node ) );
+				Externals.Delete( GetExternalRow( Node ) );
 			else if ( IsInternal( Node ) )
-				Internals.Delete( GetInternal( Node ) );
+				Internals.Delete( GetInternalRow( Node ) );
 			else
 				ERRc();
 
