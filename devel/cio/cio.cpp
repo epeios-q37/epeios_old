@@ -84,9 +84,6 @@ _iflow__ cio::unsafe_cinf;;
 txf::text_oflow__ cio::unsafe_cout( cio::unsafe_coutf ), cio::unsafe_cerr( unsafe_cerrf );
 txf::text_iflow__ cio::unsafe_cin( cio::unsafe_cinf );
 
-static flx::dump_oflow__ nul;
-txf::text_oflow__ cio::unsafe_nul( ::nul );
-
 #ifdef CPE__MT
 flw::mutex__
 	cio::cinm = FLW_NO_MUTEX,
@@ -123,7 +120,6 @@ public:
 	unsafe_cerrf.Init( cerrd, FLW_NO_MUTEX );
 	unsafe_cinf.Init( cind, FLW_NO_MUTEX );
 
-	nul.Init( FLW_NO_MUTEX );
 	/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

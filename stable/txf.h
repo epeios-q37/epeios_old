@@ -314,6 +314,11 @@ namespace txf {
 	{
 		return Flow << '\r' << sync;
 	}
+
+	//o All written in this object is erased.
+	extern text_oflow__ nul;
+
+
 }
 
 /*$END$*/

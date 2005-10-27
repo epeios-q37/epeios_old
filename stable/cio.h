@@ -91,9 +91,6 @@ namespace cio {
 	//o Standard input as a text flow.
 	extern txf::text_iflow__ unsafe_cin;
 
-	//o All written in this object is erased.
-	extern txf::text_oflow__ unsafe_nul;
-
 #ifndef CPE__MT
 #	define coutf	unsafe_coutf
 #	define cerrf	unsafe_cerrf

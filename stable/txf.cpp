@@ -58,12 +58,18 @@ public:
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
+#include "flx.h"
+
+static flx::dump_oflow__ nul;
+txf::text_oflow__ txf::nul( ::nul );
+
 class txfpersonnalization
 : public txftutor
 {
 public:
 	txfpersonnalization( void )
 	{
+		nul.Init( FLW_NO_MUTEX );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
