@@ -2,12 +2,13 @@
 <!-- $Id$ -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <window
-	id="Gesbib" title="Gesbib"
+	id="ETest" title="Epeios test"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-   <script src="chrome:etest.js"/>        
-   <button label="Message" oncommand="alert(etest.GetErrorMessage())"/>
-   <button label="Test C++ XPCom" oncommand="Test();"/>
-   <textbox id="Test"/>
-   <button label="Test Array" oncommand="ArrayTest();"/>
+	<script src="chrome:etest.js"/>        
+	<button label="Test HTML dynamique" oncommand="Test();"/>
+	<textbox id="Test"/>
+	<html:body id="body">
+		<h2>Coucou</h2>
+	</html:body>
 </window>

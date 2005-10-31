@@ -1,28 +1,9 @@
-try {
-	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-	etest = Components.classes["@epeios.org/etest;1"].createInstance().QueryInterface(Components.interfaces.ietest);
-} catch (err) {
-	alert(err);
-}
-
 function Test()
 {
-	document.getElementById('Test').value = "Texte javascript";
-//	alert( document.firstChild.lastChild.nodeName );
-	alert( etest.XPCOM() );
-//	document.getElementById('Test').value = "Ce qui va devenir le texte C++";
+	Body = document.getElementById('body');
+	
+	H = document.createElementNS( "http://www.w3.org/1999/xhtml", "h2" );
+	H.appendChild( document.createTextNode( "Hello the world !" ) );
+	Body.appendChild( H );
 }
 
-function ArraySetting( array )
-{
-	alert( array.arr );
-	array.arr =  "ab,bc,ca".split();
-	alert( array.arr );
-}
-
-function ArrayTest()
-{
-	var o = new Object();
-	ArraySetting( o );
-	alert( o.arr );
-}
