@@ -7,8 +7,8 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script src="chrome:etest.js"/>        
 	<button label="Test HTML dynamique" oncommand="Test();"/>
+	<button label="Test XSLT" oncommand="TestXSLT();"/>
 	<textbox id="Test"/>
-	<html:body id="body">
-		<h2>Coucou</h2>
-	</html:body>
+	<html:body id="body"/>
+<vbox id="example"/>
 </window>
