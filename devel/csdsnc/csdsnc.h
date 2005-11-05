@@ -163,7 +163,7 @@ ERREpilog
 		}
 	public:
 		struct s {
-			const char* HostService;
+			char *HostService;
 			mutex__ Mutex;
 			struct log__ {
 				log_functions__ *Functions;
@@ -179,6 +179,8 @@ ERREpilog
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
+				if ( S_.HostService != NULL )
+					free( S_.HostService );
 				if ( S_.Mutex != CSDSNC_NO_MUTEX )
 					_Delete( S_.Mutex );
 				if ( S_.Log.Mutex != CSDSNC_NO_MUTEX )
@@ -210,7 +212,11 @@ ERREpilog
 		{
 			reset();
 
-			S_.HostService = HostService;
+			if ( ( S_.HostService = (char *)malloc( strlen( HostService ) + 1 ) ) == NULL )
+				ERRa();
+
+			strcpy( S_.HostService, HostService );
+
 			S_.Mutex = _Create();
 			S_.Log.Mutex = _Create();
 			S_.Log.Functions = &LogFunctions;

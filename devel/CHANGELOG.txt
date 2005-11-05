@@ -1,5 +1,9 @@
 $Id$
 
+05/11/05 :
+	- CSDSNC :
+		- Le paramètre 'HostService' passé à l'initialisation de l'objet 'core_' voit son contenu stocké, et non plus seulement son pointeur.
+
 27/10/05
 	- CIO : 
 		- Déplacement de l'objet '(unsafe_)nul' vers la bibliothèque 'TXF'.
