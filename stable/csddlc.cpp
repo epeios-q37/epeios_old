@@ -101,8 +101,11 @@ ERRBegin
 	reset();
 
 #ifdef CPE__MS
-	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
+	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL ) {
+		int Error = GetLastError();
 		ERRu();
+	}
+
 
 	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_LibraryHandler, FUNCTION_NAME ) ) == NULL )
 		ERRs();

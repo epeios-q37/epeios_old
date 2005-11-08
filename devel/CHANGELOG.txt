@@ -1,5 +1,11 @@
 $Id$
 
+08/11/05 :
+	- CIO :
+		- Ajout du message d'erreur lors de l'utilisation dans un contexte de bibliothèque (DLL, '.so'. ...).
+	- FIL :
+		- Adpatation aux changements dans la bibliothèque 'CIO'.
+
 05/11/05 :
 	- CSDSNC :
 		- Le paramètre 'HostService' passé à l'initialisation de l'objet 'core_' voit son contenu stocké, et non plus seulement son pointeur.

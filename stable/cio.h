@@ -66,6 +66,10 @@ extern class ttr_tutor &CIOTutor;
 #include "cio.h"
 #include "cpe.h"
 
+#ifdef CPE__LIBRARY
+#	error "Cannot be used in a library !"
+#endif
+
 namespace cio {
 
 	extern iof::descriptor__ cind, coutd, cerrd;

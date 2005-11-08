@@ -65,8 +65,18 @@ extern class ttr_tutor &FILTutor;
 #include "iof.h"
 #include "flw.h"
 #include "txf.h"
-#include "cio.h"
 #include "tol.h"
+#include "cpe.h"
+
+#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+#	define FIL__USE_CIO
+#endif
+
+#ifdef FIL__USE_CIO
+#	include "cio.h"
+#endif
+
+
 
 //d The default backup file extension.
 #define FIL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
@@ -325,7 +335,7 @@ namespace fil
 	rbf CreateBackupFile(
 		const char *Name,
 		hbf Handle,
-#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+#ifdef FIL__USE_CIO
 		txf::text_oflow__ &Flow = cio::cerr,
 #else
 		txf::text_oflow__ &Flow,
@@ -336,7 +346,7 @@ namespace fil
 	//f Recover the backup file 'Name' with 'Extension' as extension.
 	rbf RecoverBackupFile(
 		const char *Name,
-#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+#ifdef FIL__USE_CIO
 		txf::text_oflow__ &Flow = cio::cerr,
 #else
 		txf::text_oflow__ &Flow,
