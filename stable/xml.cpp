@@ -701,12 +701,13 @@ ERRBegin
 	if ( S_.TagNameInProgress )
 		*S_.Flow << "/>";
 	else {
-		if ( !S_.TagValueInProgress )
+		if ( !S_.TagValueInProgress && S_.Indent )
 			_WriteTabs( Tags.Amount() );
 		*S_.Flow << "</" << Name << ">";
 	}
 
-	*S_.Flow << txf::nl;
+	if ( S_.Indent )
+		*S_.Flow << txf::nl;
 
 	S_.TagNameInProgress = false;
 	S_.TagValueInProgress = false;

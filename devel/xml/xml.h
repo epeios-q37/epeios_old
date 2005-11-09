@@ -115,6 +115,7 @@ namespace xml {
 			txf::text_oflow__ *Flow;
 			bso::bool__ TagNameInProgress;
 			bso::bool__ TagValueInProgress;
+			bso::bool__ Indent;
 		} &S_;
 		stk::E_XMCSTACK_( name_ ) Tags;
 		writer_( s &S )
@@ -131,6 +132,7 @@ namespace xml {
 
 			Tags.reset( P );
 			S_.Flow = NULL;
+			bso::bool__ Indent = false;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -143,22 +145,31 @@ namespace xml {
 			S_.TagNameInProgress = W.S_.TagNameInProgress;
 			S_.TagValueInProgress = W.S_.TagValueInProgress;
 			S_.Flow = W.S_.Flow;
+			S_.Indent = W.S_.Indent;
 
 			return *this;
 		}
-		void Init( txf::text_oflow__ &Flow )
+		void Init(
+			txf::text_oflow__ &Flow,
+			bso::bool__ Indent = true )
 		{
 			reset();
 
 			Tags.Init();
 			S_.Flow = &Flow;
+			S_.Indent = Indent;
 		}
 		void PushTag( const name_ &Name )
 		{
-			if ( S_.TagNameInProgress )
-				*S_.Flow << '>' << txf::nl;
+			if ( S_.TagNameInProgress ) {
+				*S_.Flow << '>';
 
-			_WriteTabs( Tags.Amount() );
+				if ( S_.Indent )
+					*S_.Flow << txf::nl;
+			}
+
+			if ( S_.Indent )
+				_WriteTabs( Tags.Amount() );
 
 			*S_.Flow << '<' << Name;
 			Tags.Push( Name );

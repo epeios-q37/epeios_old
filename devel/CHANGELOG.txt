@@ -1,5 +1,9 @@
 $Id$
 
+09/11/05 :
+	- XML :
+		- Ajout de la possibilité de génèrer du XML sans présentation.
+
 08/11/05 :
 	- CIO :
 		- Ajout du message d'erreur lors de l'utilisation dans un contexte de bibliothèque (DLL, '.so'. ...).
