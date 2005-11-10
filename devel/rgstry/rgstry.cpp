@@ -108,7 +108,7 @@ nrow__ rgstry::registry_::_SearchNode(
 nrow__ rgstry::registry_::_SearchNode(
 	const term_ &NodeName,
 	const term_ &AttributeName,
-	const term_ &AttributeValue,
+	const value_ &AttributeValue,
 	nrow__ ParentNodeRow,
 	epeios::row__ &Cursor ) const
 {
@@ -285,28 +285,36 @@ ERREpilog
 	return TermRow;
 }
 
-nrow__ rgstry::registry_::SearchPath(
+nrow__ rgstry::registry_::_SearchPath(
 	const path_ &Path,
-	nrow__ Row,
-	erow__ &AttributeEntryRow ) const
+	nrow__ &ForkRow,
+	erow__ &AttributeEntryRow,
+	epeios::row__ &PathRow,
+	epeios::row__ &Cursor ) const
 {
 	ctn::E_CITEM( path_item_ ) Item;
-	epeios::row__ PathRow = Path.First();
+	nrow__ Row = ForkRow;
+	bso::bool__ ResetCursor = Cursor == NONE;
+	epeios::row__ LocalPathRow = ( PathRow == NONE ? Path.First() : PathRow );
 
 	AttributeEntryRow = NONE;
 
 	Item.Init( Path );
 
-	while ( ( PathRow != NONE ) && ( Row != NONE ) ) {
-		if ( Item( PathRow ).TagName.Amount() != 0 )// '.../Name.../...'
-			Row = _SearchChild( Item( PathRow ), Row );	
-		else if ( ( AttributeEntryRow = _GetAttribute( Item( PathRow ).AttributeName, Row ) ) == NONE ) // '.../@Name'
+	while ( ( LocalPathRow != NONE ) && ( Row != NONE ) ) {
+		if ( Item( LocalPathRow ).TagName.Amount() != 0 ) {// '.../Name[@AttributeName='AttributeValue']/...'
+			ForkRow = Row;
+			PathRow = LocalPathRow;
+			if ( ResetCursor )
+				Cursor = NONE;
+			Row = _SearchChild( Item( LocalPathRow ), Row, Cursor );	
+		} else if ( ( AttributeEntryRow = _GetAttribute( Item( LocalPathRow ).AttributeName, Row ) ) == NONE ) // '.../@Name'
 			Row = NONE;
 
-		PathRow = Path.Next( PathRow );
+		LocalPathRow = Path.Next( LocalPathRow );
 
 #ifdef RGSTRY_DBG
-			if ( ( AttributeEntryRow != NONE ) && ( PathRow != NONE ) )
+			if ( ( AttributeEntryRow != NONE ) && ( LocalPathRow != NONE ) )
 				ERRu();
 #endif
 	}
@@ -314,9 +322,17 @@ nrow__ rgstry::registry_::SearchPath(
 	return Row;
 }
 
+nrow__ rgstry::registry_::_SearchPath(
+	const path_ &Path,
+	nrow__ Row,
+	erow__ &AttributeEntryRow ) const
+{
+	epeios::row__ PathRow = NONE, Cursor = NONE;
 
+	return _SearchPath( Path, Row, AttributeEntryRow, PathRow, Cursor );
+}
 
-nrow__ rgstry::registry_::SearchPath(
+nrow__ rgstry::registry_::_SearchPath(
 	const term_ &Term,
 	nrow__ Row,
 	erow__ &AttributeEntryRow,
@@ -334,7 +350,7 @@ ERRBegin
 		Row = NONE;
 		PathErrorRow = PathRow;
 	} else
-		Row = SearchPath( Path, Row, AttributeEntryRow );
+		Row = _SearchPath( Path, Row, AttributeEntryRow );
 
 ERRErr
 ERREnd
@@ -403,7 +419,7 @@ ERREpilog
 
 nrow__ rgstry::registry_::SetPathValue(
 	const term_ &Term,
-	const term_ &Value,
+	const value_ &Value,
 	nrow__ Row,
 	epeios::row__ &PathErrorRow )
 {
@@ -549,21 +565,21 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 	}
 }
 
-const term_ &rgstry::registry_::GetPathValue(
+const value_ &rgstry::registry_::GetPathValue(
 	const path_ &Path,
 	nrow__ ParentRow,
 	bso::bool__ &Exists,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
-	static term Empty;
-	const term_ *Result = &Empty;
+	static value Empty;
+	const value_ *Result = &Empty;
 ERRProlog
 	nrow__ Row = NONE;
 	erow__ AttributeEntryRow = NONE;
 ERRBegin
 	Empty.Init();
 
-	if ( ( Row = SearchPath( Path, ParentRow, AttributeEntryRow ) ) != NONE )
+	if ( ( Row = _SearchPath( Path, ParentRow, AttributeEntryRow ) ) != NONE )
 		if ( AttributeEntryRow == NONE )
 			Result = &GetValue( Row, Buffer );
 		else
@@ -577,15 +593,15 @@ ERREpilog
 	return *Result;
 }
 
-const term_ &rgstry::registry_::GetPathValue(
+const value_ &rgstry::registry_::GetPathValue(
 	const term_ &PathString,
 	nrow__ ParentRow,
 	bso::bool__ &Exists,
 	epeios::row__ &PathErrorRow,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
-	static term Empty;
-	const term_ *Result = &Empty;
+	static value Empty;
+	const value_ *Result = &Empty;
 ERRProlog
 	nrow__ Row = NONE;
 	path Path;
@@ -605,6 +621,54 @@ ERREnd
 ERREpilog
 	return *Result;
 }
+
+bso::bool__ rgstry::registry_::GetPathValues(
+	const path_ &Path,
+	nrow__ ParentRow,
+	values_ &Values ) const
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	nrow__ Row = NONE;
+	erow__ AttributeEntryRow = NONE;
+	epeios::row__ PathRow = NONE, Cursor = NONE;
+	buffer Buffer;
+ERRBegin
+	while ( ( Row = _SearchPath( Path, ParentRow, AttributeEntryRow, PathRow, Cursor ) ) != NONE ) {
+		if ( AttributeEntryRow == NONE )
+			Values.Append( GetValue( Row, Buffer ) );
+		else
+			Values.Append( GetValue( AttributeEntryRow, Buffer ) );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+bso::bool__ rgstry::registry_::GetPathValues(
+	const term_ &PathString,
+	nrow__ ParentRow,
+	epeios::row__ &PathErrorRow,
+	values_ &Values ) const
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+		ERRReturn;
+
+	Exists = GetPathValues( Path, ParentRow, Values );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+
 
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
@@ -626,14 +690,14 @@ ERREpilog
 	return Root;
 }
 
-const term_ &rgstry::overloaded_registry___::GetPathValue(
+const value_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
 	bso::bool__ &Exists,
 	epeios::row__ &PathErrorRow,
 	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
-	static term Empty;
-	const term_ *Result = 0;
+	static value Empty;
+	const value_ *Result = 0;
 ERRProlog
 	nrow__ Row = NONE;
 	path Path;
@@ -656,6 +720,30 @@ ERRErr
 ERREnd
 ERREpilog
 	return *Result;
+}
+
+bso::bool__ rgstry::overloaded_registry___::GetPathValues(
+	const term_ &PathString,
+	epeios::row__ &PathErrorRow,
+	values_ &Values ) const
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	path Path;
+	erow__ AttributeEntryRow = NONE;
+ERRBegin
+	Path.Init();
+
+	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+		ERRReturn;
+
+	Exists = Global.Registry->GetPathValues( Path, Global.Root, Values );
+	Exists |= Local.Registry->GetPathValues( Path, Local.Root, Values );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
 }
 
 bso::bool__ rgstry::overloaded_registry___::PathExists(

@@ -1,5 +1,9 @@
 $Id$
 
+10/11/05 :
+	- RGSTRY :
+		- Ajout méthodes 'GetPathValues(...)'.
+
 09/11/05 :
 	- XML :
 		- Ajout de la possibilité de génèrer du XML sans présentation.
