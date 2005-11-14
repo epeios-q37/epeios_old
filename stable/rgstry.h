@@ -67,6 +67,7 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "lstctn.h"
 #include "xtf.h"
 #include "cpe.h"
+#include "xml.h"
 
 #ifdef CPE__USE_VC_WORKAROUND
 #	undef SearchPath
@@ -172,7 +173,7 @@ namespace rgstry {
 	E_AUTO( values )
 
 
-	typedef ctn::E_CMITEMt( term_, trow__ )	buffer;
+	typedef ctn::E_CMITEMt( term_, trow__ )	term_buffer;
 
 	struct entry__ {
 		trow__ NameRow;
@@ -274,31 +275,31 @@ namespace rgstry {
 		}
 		const term_ &_GetTerm(
 			trow__ TermRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			return Buffer( TermRow );
 		}
 		const term_ &_GetName(
 			const entry__ &Entry,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			return _GetTerm( Entry.NameRow, Buffer );
 		}
 		const value_ &_GetValue(
 			const entry__ &Entry,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			return _GetTerm( Entry.ValueRow, Buffer );
 		}
 		const term_ &_GetName(
 			erow__ EntryRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			return _GetName( Entries( EntryRow ), Buffer );
 		}
 		const value_ &_GetValue(
 			erow__ EntryRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			return _GetValue( Entries( EntryRow ), Buffer );
 		}
@@ -313,7 +314,7 @@ namespace rgstry {
 			erow__ EntryRow = _SearchEntry( Name, EntryRows );
 
 			if ( EntryRow != NONE ) {
-				buffer Buffer;
+				term_buffer Buffer;
 
 				Buffer.Init( Terms );
 
@@ -342,14 +343,14 @@ namespace rgstry {
 		}
 		const term_ &_GetName(
 			nrow__ NodeRow,
-			buffer &NameBuffer,
+			term_buffer &NameBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
 			return NameBuffer( _GetNode( NodeRow, NodeBuffer ).GetNameRow() );
 		}
 		const value_ &_GetValue(
 			nrow__ NodeRow,
-			buffer &ValueBuffer,
+			term_buffer &ValueBuffer,
 			node_buffer &NodeBuffer ) const
 		{	
 			static term Empty;
@@ -450,6 +451,30 @@ namespace rgstry {
 		void _Delete( const erows_ &Rows );
 		void _Delete( nrow__ Row );
 		void _Delete( const nrows_ &Rows );
+		void _DumpAttributes(
+			const erows_ &Rows,
+			xml::writer_ &Writer ) const;
+		void _DumpNode(
+			nrow__ NodeRow,
+			xml::writer_ &Writer,
+			term_buffer &TermBuffer,
+			node_buffer &NodeBuffer ) const
+		{
+			Writer.PushTag( _GetName( NodeRow, TermBuffer, NodeBuffer ) );	// 'PopTag' correspondant fait par méthode appelante.
+			_DumpAttributes( _GetNode( NodeRow, NodeBuffer ).Attributes, Writer );
+
+			const term_ &Value = _GetValue( NodeRow, TermBuffer, NodeBuffer );
+
+			if ( Value.Amount() != 0 )
+				Writer.PutValue( Value );
+
+		}
+		void _Dump(
+			nrow__ Root,
+			bso::bool__ RootToo,
+			xml::writer_ &Writer,
+			term_buffer &TermBuffer,
+			node_buffer &NodeBuffer ) const;
 	public:
 		struct s {
 			terms_::s Terms;
@@ -588,12 +613,12 @@ namespace rgstry {
 			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
 		}
 		nrow__ SearchPath(
-			const term_ &Term,
+			const term_ &PathString,
 			nrow__ ParentRow,
 			erow__ &AttributeEntryRow,
 			epeios::row__ &PathErrorRow ) const
 		{
-			return _SearchPath( Term, ParentRow, AttributeEntryRow, PathErrorRow );
+			return _SearchPath( PathString, ParentRow, AttributeEntryRow, PathErrorRow );
 		}
 		nrow__ CreatePath(
 			const path_ &Path,
@@ -606,13 +631,42 @@ namespace rgstry {
 			const path_ &Path,
 			nrow__ ParentRow,
 			bso::bool__ &Exists,
-			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
 			bso::bool__ &Exists,
 			epeios::row__ &PathErrorRow,
-			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		const value_ &GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			bso::bool__ &Exists,
+			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		{
+			epeios::row__ PathErrorRow = NONE;
+
+			const value_ &Value = GetPathValue( Path, ParentRow, Exists, PathErrorRow, Buffer );
+
+			if ( PathErrorRow != NONE )
+				ERRu();
+
+			return Value;
+		}
+		const value_ &GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		{
+			bso::bool__ Exists = true;
+
+			const value_ &Value = GetPathValue( Path, ParentRow, Exists, Buffer );
+
+			if ( !Exists )
+				ERRu();
+
+			return Value;
+		}
 		bso::bool__ GetPathValues(
 			const path_ &Path,
 			nrow__ ParentRow,
@@ -648,7 +702,7 @@ namespace rgstry {
 		}
 		const term_ &GetName(
 			nrow__ NodeRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			node_buffer NodeBuffer;
 
@@ -659,7 +713,7 @@ namespace rgstry {
 		}
 		const value_ &GetValue(
 			nrow__ NodeRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			node_buffer NodeBuffer;
 
@@ -688,7 +742,7 @@ namespace rgstry {
 		}
 		const term_ &GetName(
 			erow__ EntryRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			Buffer.Init( Terms );
 
@@ -696,7 +750,7 @@ namespace rgstry {
 		}
 		const value_ &GetValue(
 			erow__ EntryRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			Buffer.Init( Terms );
 
@@ -705,7 +759,7 @@ namespace rgstry {
 		const value_ &GetAttributeValue(
 			const term_ &Name,
 			nrow__ NodeRow,
-			buffer &Buffer ) const
+			term_buffer &Buffer ) const
 		{
 			erow__ EntryRow = GetAttribute( Name, NodeRow );
 
@@ -737,6 +791,11 @@ namespace rgstry {
 			const term_ &Path,
 			nrow__ ParentRow,
 			epeios::row__ &PathErrorRow ) const;
+		void Dump(
+			nrow__ Root,
+			bso::bool__ RootToo,
+			bso::bool__ Indent,
+			txf::text_oflow__ &Flow ) const;
 	};
 
 	E_AUTO( registry )
@@ -781,7 +840,7 @@ namespace rgstry {
 			nrow__ Root,
 			registry_ &Local )	// 'Global' et 'Local' peuvent être identiques.
 		{
-			buffer Buffer;
+			term_buffer Buffer;
 
 			this->Global.Registry = &Global;
 			this->Global.Root = Root;
@@ -793,11 +852,11 @@ namespace rgstry {
 			const term_ &Path,
 			bso::bool__ &Exists,
 			epeios::row__ &PathErrorRow,
-			buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		const value_ &GetPathValue(
 			const term_ &Path,
 			bso::bool__ &Exists,
-			buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		{
 			epeios::row__ PathErrorRow = NONE;
 

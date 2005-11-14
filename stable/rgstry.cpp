@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "xml.h"
+#include "flx.h"
 
 using namespace rgstry;
 
@@ -63,7 +63,7 @@ erow__ rgstry::registry_::_SearchEntry(
 	const term_ &Name,
 	const erows_ &EntryRows ) const
 {
-	buffer Buffer;
+	term_buffer Buffer;
 	epeios::row__ Row = EntryRows.First();
 
 	Buffer.Init( Terms );
@@ -83,7 +83,7 @@ nrow__ rgstry::registry_::_SearchNode(
 	epeios::row__ &Cursor ) const
 {
 	node_buffer NodeBuffer;
-	buffer NameBuffer;
+	term_buffer NameBuffer;
 
 	epeios::row__ &Row = Cursor;
 	
@@ -125,20 +125,20 @@ const term_ &rgstry::registry_::GetCompleteName(
 	term_ &Term,
 	const char *Separator ) const
 {
-	buffer Buffer;
+	term_buffer TermBuffer;
 	node_buffer NodeBuffer;
 
-	Buffer.Init( Terms );
+	TermBuffer.Init( Terms );
 	NodeBuffer.Init( Nodes );
 
 	if ( NodeRow != NONE ) {
-		Term.Append( _GetName( NodeRow, Buffer, NodeBuffer ) );
+		Term.Append( _GetName( NodeRow, TermBuffer, NodeBuffer ) );
 		NodeRow = GetParent( NodeRow );
 	}
 
 	while ( NodeRow != NONE ) {
 		Term.Insert( Separator, 0 );
-		Term.Insert( _GetName( NodeRow, Buffer, NodeBuffer ), 0 );
+		Term.Insert( _GetName( NodeRow, TermBuffer, NodeBuffer ), 0 );
 
 		NodeRow = GetParent( NodeRow );
 	}
@@ -443,23 +443,235 @@ ERREpilog
 	return Row;
 }
 
-class callback__
+struct kernel__ {
+	registry_ &Registry;
+	nrow__ Root;
+	nrow__ Current;
+	kernel__(
+		registry_ &Registry,
+		nrow__ Root )
+	: Registry( Registry )
+	{
+		this->Root = Current = Root;
+	}
+};
+
+enum mode__ {
+	mRegular,	// mode normale.
+	mDefineDeclaration,	// mode définition d'un  bloc, partie déclration ('<exml:define ...>')
+	mDefineDefinition,	// mode définition d'un  bloc, partie définition ('<exml:define name="test">...')
+	mExpandInRegular,	// mode déploiement d'un bloc en mode 'Regular'.
+	mExpandInDefine,	// mode déploiement d'un bloc en mode 'Define'.
+	m_amount,
+	m_Undefined,
+};
+
+#define NAMESPACE	"exml"
+#define PREFIX		NAMESPACE ":"
+#define DEFINE_TAG	PREFIX "define"
+#define EXPAND_TAG		PREFIX "expand"
+#define DEFINE_ATTRIBUTE	"name"
+#define EXPAND_ATTRIBUTE	"select"
+
+class callback___
 : public xml::callback__
 {
 private:
-	registry_ &Registry_;
-	nrow__ Root_;
-	nrow__ Current_;
-protected:
-	virtual bso::bool__ XMLTag( const str::string_ &Name )
+	registry _ManagerRegistry;
+	kernel__ _User, _Manager;
+	mode__ _Mode;
+	term _ExpandName;
+	static struct node {
+		term TagName;
+		term AttributeName;
+	} _Define, _Expand;
+	static term _Prefix;
+	kernel__ &_Kernel( void )
 	{
-		if ( Current_ == NONE ) {
-			if ( Root_ != NONE )
-				Root_ = Current_ = Registry_.AddChild( Name, Root_ );
-			else
-				Root_ = Current_ = Registry_.CreateNode( Name );
-		} else
-			Current_ = Registry_.AddChild( Name, Current_ );
+		switch ( _Mode ) {
+		case mDefineDeclaration:
+		case mDefineDefinition:
+		case mExpandInDefine:
+			return _Manager;
+			break;
+		case mExpandInRegular:
+		case mRegular:
+			return _User;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		ERRc();
+
+		return *(kernel__ *)NULL;	// Pour éviter un 'warning'.
+	}
+	registry_ &_Registry( void )
+	{
+		return _Kernel().Registry;
+	}
+	nrow__ &_Root( void )
+	{
+		return _Kernel().Root;
+	}
+	nrow__ &_Current( void )
+	{
+		return _Kernel().Current;
+	}
+	bso::bool__ _BelongsToNamespace( const str::string_ &TagName )
+	{
+		return str::Compare( TagName, _Prefix, TagName.First(), _Prefix.First(), _Prefix.Amount() ) == 0;
+	}
+	bso::bool__ _IsDefineTagName( const str::string_ &TagName )
+	{
+		return str::Compare( TagName, _Define.TagName, TagName.First(), _Define.TagName.First() ) == 0;
+	}
+	bso::bool__ _IsDefineTagAttributeName( const str::string_ &AttributeName )
+	{
+		return str::Compare( AttributeName, _Define.AttributeName, AttributeName.First(), _Define.AttributeName.First() ) == 0;
+	}
+	bso::bool__ _IsExpandTagName( const str::string_ &TagName )
+	{
+		return str::Compare( TagName, _Expand.TagName, TagName.First(), _Expand.TagName.First() ) == 0;
+	}
+	bso::bool__ _IsExpandTagAttributeName( const str::string_ &AttributeName )
+	{
+		return str::Compare( AttributeName, _Expand.AttributeName, AttributeName.First(), _Expand.AttributeName.First() ) == 0;
+	}
+	void _Dump(
+		registry_ &Registry,
+		nrow__ Root,
+		str::string_ &Result )
+	{
+	ERRProlog
+		flx::E_STRING_OFLOW___ Flow;
+		txf::text_oflow__ TFlow( Flow );
+	ERRBegin
+		Flow.Init( Result );
+//		TFlow.Init( Flow );
+
+		Registry.Dump( Root, false, false, TFlow );
+	ERRErr
+	ERREnd
+	ERREpilog
+	}
+	void _Import(
+		const str::string_ &Buffer,
+		registry_ &Registry,
+		nrow__ Root )
+	{
+	ERRProlog
+		flx::E_STRING_IFLOW__ Flow;
+		xtf::extended_text_iflow__ TFlow;
+		xtf::location__ Error;
+	ERRBegin
+		Flow.Init( Buffer );
+		TFlow.Init( Flow );
+
+		if ( Parse( TFlow, Registry, Root, Error, Error ) == NONE )
+			ERRc();
+	ERRErr
+	ERREnd
+	ERREpilog
+	}
+	bso::bool__ _ExpandNode( const term_ &Name )
+	{
+		bso::bool__ Success = false;
+	ERRProlog
+		str::string Buffer;
+		nrow__ Root = NONE;
+		term Path;
+		erow__ AttributeEntryRow = NONE;
+		epeios::row__ PathErrorRow = NONE;
+	ERRBegin
+		Path.Init();
+
+		Path.Append( DEFINE_TAG "[" DEFINE_ATTRIBUTE "=\"" );
+		Path.Append( Name );
+		Path.Append( "\"]" );
+
+		Root = _Manager.Registry.SearchPath( Path, _Manager.Root, AttributeEntryRow, PathErrorRow );
+
+		if ( PathErrorRow != NONE )
+			ERRc();
+
+		if ( AttributeEntryRow != NONE )
+			ERRc();
+
+		if ( Root == NONE )
+			ERRReturn;
+
+		Buffer.Init();
+
+		_Dump( _Manager.Registry, Root, Buffer );
+
+		Buffer.Append( XTF_EOXC );
+
+		_Import( Buffer, _Registry(), _Current() );
+
+		Success = true;
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Success;
+	}
+protected:
+	virtual bso::bool__ XMLTag( const str::string_ &TagName )
+	{
+		bso::bool__ Ignore = false;
+
+		if ( _BelongsToNamespace( TagName ) ) {
+			if ( _IsDefineTagName( TagName ) ) {
+				switch ( _Mode ) {
+				case mDefineDeclaration:
+					return false;
+				case mDefineDefinition:
+				case mExpandInRegular:
+				case mExpandInDefine:
+					return false;
+					break;
+				case mRegular:
+					_Mode = mDefineDeclaration;
+					break;
+				default:
+					ERRc();
+					break;
+				}
+			} else if ( _IsExpandTagName( TagName ) ) {
+				Ignore = true;
+
+				switch ( _Mode ) {
+				case mDefineDeclaration:
+					return false;
+					break;
+				case mDefineDefinition:
+					_Mode = mExpandInDefine;
+					break;
+				case mRegular:
+					_Mode = mExpandInRegular;
+					break;
+				case mExpandInRegular:
+				case mExpandInDefine:
+					return false;
+					break;
+				default:
+					ERRc();
+					break;
+				}
+			} else
+				return false;
+		}
+
+		if ( !Ignore ) {
+			if ( _Current() == NONE ) {
+				if ( _Root() == NONE )
+					_Root() = _Current() = _Registry().CreateNode( TagName );
+				else
+					return false;
+			} else
+				_Current() = _Registry().AddChild( TagName, _Current() );
+		}
 
 		return true;
 	}
@@ -467,43 +679,144 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Value )
 	{
-		Registry_.SetValue( Value, Current_ );
+		switch ( _Mode ) {
+		case mDefineDeclaration:
+			return false;
+			break;
+		case mDefineDefinition:
+		case mRegular:
+			break;
+		case mExpandInRegular:
+		case mExpandInDefine:
+			return false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		_Registry().SetValue( Value, _Current() );
 
 		return true;
-
 	}
 	virtual bso::bool__ XMLAttribute(
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
-		Registry_.AddAttribute( Name, Value, Current_ );
+		switch ( _Mode ) {
+		case mDefineDeclaration:
+			if ( _IsDefineTagAttributeName( Name ) ) {
+				_Registry().AddAttribute( Name, Value, _Current() );
+				_Mode = mDefineDefinition;
+			} else
+				return false;
+			break;
+		case mDefineDefinition:
+		case mRegular:
+			_Registry().AddAttribute( Name, Value, _Current() );
+			break;
+		case mExpandInRegular:
+		case mExpandInDefine:
+#ifdef RGSTRY_DBG
+			if ( !_IsExpandTagName( TagName ) )
+				ERRc();
+#endif
+			if ( !_IsExpandTagAttributeName( Name ) )
+				return false;
+
+			_ExpandName.Init( Value );
+			break;
+		default:
+			ERRc();
+			break;
+		}
 
 		return true;
 	}
-	virtual bso::bool__ XMLTagClosed( const str::string_ & )
+	virtual bso::bool__ XMLTagClosed( const str::string_ &TagName )
 	{
-		Current_ = Registry_.GetParent( Current_ );
+		switch ( _Mode ) {
+		case mDefineDeclaration:
+		case mDefineDefinition:
+		case mRegular:
+			_Current() = _Registry().GetParent( _Current() );
+			break;
+		case mExpandInRegular:
+#ifdef RGSTRY_DBG
+			if ( !_IsExpandTagName( TagName ) )
+				ERRc();
+#endif
+			if ( !_ExpandNode( _ExpandName ) )
+				return false;
+
+//			_Current() = _Registry().GetParent( _Current() );
+
+			_Mode = mRegular;
+			break;
+		case mExpandInDefine:
+#ifdef RGSTRY_DBG
+			if ( !_IsExpandTagName( TagName ) )
+				ERRc();
+#endif
+			if ( !_ExpandNode( _ExpandName ) )
+				return false;
+
+//			_Current() = _Registry().GetParent( _Current() );
+
+			_Mode = mDefineDefinition;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		if ( ( _Current() == NONE ) && ( _Root() == NONE ) )
+			return false;
+
+		if ( _BelongsToNamespace( TagName ) )
+			if ( _IsDefineTagName( TagName ) )
+				_Mode = mRegular;
+		/* Pas de test extensif, puisque que l'on est sûr que le nom de la balise est correct,
+		sinon cela aurait été déteté lors de l'ouverture de cette balise. */
 
 		return true;
 	}
 public:
-	callback__(
+	callback___(
 		registry_ &Registry,
 		nrow__ Root )
-	: Registry_( Registry )
+	: _User( Registry, Root ),
+	  _Manager( _ManagerRegistry, NONE )
 	{
-		Current_ = NONE;
-		Root_ = Root;
+		_ManagerRegistry.Init();
+		_Manager.Root = _Manager.Current = _Manager.Registry.CreateNode( term( "_internal_" ) );
+		_ExpandName.Init();
+		_Mode = mRegular;
 	}
 	nrow__ GetRoot( void ) const
 	{
-		if ( Current_ != Registry_.GetParent( Root_ ) )
-			ERRf();
-
-		return Root_;
+		if ( _User.Current != NONE )
+			return _User.Current;
+		else
+			return _User.Root;
 	}
+	~callback___( void )
+	{
+/*
+		_Manager.Registry.Dump( _Manager.Root, true, true, cio::cout );
+		cio::cout << txf::nl;
+		_User.Registry.Dump( _User.Root, true, true, cio::cout );
+		cio::cout << txf::nl;
+*/
+	}
+
+	friend class rgstrypersonnalization;
 };
+
+callback___::node callback___::_Define;
+callback___::node callback___::_Expand;
+term callback___::_Prefix;
 
 void rgstry::registry_::_Delete( const erows_ &Rows )
 {
@@ -554,6 +867,81 @@ ERREpilog
 	return Result;
 }
 
+void rgstry::registry_::_DumpAttributes(
+	const erows_ &Rows,
+	xml::writer_ &Writer ) const
+{
+	epeios::row__ Row = Rows.First();
+	term_buffer Name, Value;
+
+	Name.Init( Terms );
+	Value.Init( Terms );
+
+	while ( Row != NONE ){
+		Writer.PutAttribute( _GetName( Rows( Row ), Name ), _GetValue( Rows( Row ), Value ) );
+
+		Row = Rows.Next( Row );
+	}
+
+}
+
+void rgstry::registry_::_Dump(
+	nrow__ Root,
+	bso::bool__ RootToo,
+	xml::writer_ &Writer,
+	term_buffer &TermBuffer,
+	node_buffer &NodeBuffer ) const
+{
+ERRProlog
+	nrows Children;
+epeios::row__ Row = NONE;
+ERRBegin
+	Children.Init();
+	Children = _GetNode( Root, NodeBuffer ).Children;
+
+	if ( RootToo ) {
+		_DumpNode( Root, Writer, TermBuffer, NodeBuffer );
+	}
+
+	Row = Children.First();
+
+	while ( Row != NONE ) {
+		_Dump( Children( Row ), true, Writer, TermBuffer, NodeBuffer );
+
+		Row = Children.Next( Row );
+	}
+
+	if ( RootToo )
+		Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void rgstry::registry_::Dump(
+	nrow__ Root,
+	bso::bool__ RootToo,
+	bso::bool__ Indent,
+	txf::text_oflow__ &Flow ) const
+{
+ERRProlog
+	xml::writer Writer;
+	term_buffer TermBuffer;
+	node_buffer NodeBuffer;
+ERRBegin
+	TermBuffer.Init( Terms );
+	NodeBuffer.Init( Nodes );
+
+	Writer.Init( Flow, Indent );
+
+	_Dump( Root, RootToo, Writer, TermBuffer, NodeBuffer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void rgstry::registry_::_Delete( const nrows_ &Rows )
 {
 	epeios::row__ Row = Rows.First();
@@ -569,7 +957,7 @@ const value_ &rgstry::registry_::GetPathValue(
 	const path_ &Path,
 	nrow__ ParentRow,
 	bso::bool__ &Exists,
-	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -598,7 +986,7 @@ const value_ &rgstry::registry_::GetPathValue(
 	nrow__ ParentRow,
 	bso::bool__ &Exists,
 	epeios::row__ &PathErrorRow,
-	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -632,7 +1020,7 @@ ERRProlog
 	nrow__ Row = NONE;
 	erow__ AttributeEntryRow = NONE;
 	epeios::row__ PathRow = NONE, Cursor = NONE;
-	buffer Buffer;
+	term_buffer Buffer;
 ERRBegin
 	while ( ( Row = _SearchPath( Path, ParentRow, AttributeEntryRow, PathRow, Cursor ) ) != NONE ) {
 		if ( AttributeEntryRow == NONE )
@@ -678,7 +1066,7 @@ nrow__ rgstry::Parse(
 	xtf::location__ &ErrorColumn )
 {
 ERRProlog
-	callback__ Callback( Registry, Root );
+	callback___ Callback( Registry, Root );
 ERRBegin
 	if ( xml::Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
 		Root = Callback.GetRoot();
@@ -694,7 +1082,7 @@ const value_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
 	bso::bool__ &Exists,
 	epeios::row__ &PathErrorRow,
-	buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = 0;
@@ -778,6 +1166,14 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+		callback___::_Define.TagName.Init( DEFINE_TAG );
+		callback___::_Define.AttributeName.Init( DEFINE_ATTRIBUTE );
+
+		callback___::_Expand.TagName.Init( EXPAND_TAG );
+		callback___::_Expand.AttributeName.Init( EXPAND_ATTRIBUTE );
+
+		callback___::_Prefix.Init( PREFIX );
+
 	}
 	~rgstrypersonnalization( void )
 	{

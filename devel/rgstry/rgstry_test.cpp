@@ -43,17 +43,12 @@ void Consult(
 	const rgstry::registry_ &Registry,
 	rgstry::nrow__ Root )
 {
-	rgstry::nrow__ Row;
 	epeios::row__ Cursor = NONE;
-	rgstry::buffer Buffer;
+	rgstry::term_buffer Buffer;
 
-	Row = Registry.SearchChild( str::string( "port" ), Root, Cursor );
-	cout << "Port : " << Registry.GetValue( Row, Buffer ) << txf::nl;
+	cout << "Host : " << Registry.GetPathValue( str::string( "Backend/Host" ), Root, Buffer ) << txf::nl;
 
-	Row = Registry.SearchNode( str::string( "repository" ), Root, Cursor );
-	cout << "Repository : " << Registry.GetValue( Row, Buffer ) << txf::nl;
-
-
+	cout << "Service : " << Registry.GetPathValue( str::string( "Backend/Service" ), Root, Buffer ) << txf::nl;
 }
 
 
@@ -64,6 +59,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Registry;
 	rgstry::nrow__ Root;
+	xtf::location__ Line, Column;
 ERRBegin
 	FFlow.Init( "essai.xml" );
 	FFlow.EOFD( XTF_EOXT );
@@ -72,7 +68,14 @@ ERRBegin
 
 	Registry.Init();
 
-	Consult( Registry, rgstry::Parse( XFlow, Registry ) );
+	Root = rgstry::Parse( XFlow, Registry, NONE, Line, Column );
+
+	if ( Root == NONE ) {
+	 cerr << "Erreur ligne " << Line << " colomne " << Column << txf::nl;
+	 ERRu();
+	}
+
+	Consult( Registry, Root );
 ERRErr
 ERREnd
 ERREpilog

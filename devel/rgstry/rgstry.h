@@ -460,13 +460,14 @@ namespace rgstry {
 			term_buffer &TermBuffer,
 			node_buffer &NodeBuffer ) const
 		{
-			Writer.PushTag( _GetName( NodeRow, TermBuffer, NodeBuffer ) );
+			Writer.PushTag( _GetName( NodeRow, TermBuffer, NodeBuffer ) );	// 'PopTag' correspondant fait par méthode appelante.
 			_DumpAttributes( _GetNode( NodeRow, NodeBuffer ).Attributes, Writer );
 
 			const term_ &Value = _GetValue( NodeRow, TermBuffer, NodeBuffer );
 
 			if ( Value.Amount() != 0 )
 				Writer.PutValue( Value );
+
 		}
 		void _Dump(
 			nrow__ Root,
@@ -612,12 +613,12 @@ namespace rgstry {
 			return _SearchNode( NodeName, AttributeName, AttributeValue, ParentNodeRow, Cursor );
 		}
 		nrow__ SearchPath(
-			const term_ &Term,
+			const term_ &PathString,
 			nrow__ ParentRow,
 			erow__ &AttributeEntryRow,
 			epeios::row__ &PathErrorRow ) const
 		{
-			return _SearchPath( Term, ParentRow, AttributeEntryRow, PathErrorRow );
+			return _SearchPath( PathString, ParentRow, AttributeEntryRow, PathErrorRow );
 		}
 		nrow__ CreatePath(
 			const path_ &Path,
@@ -637,6 +638,35 @@ namespace rgstry {
 			bso::bool__ &Exists,
 			epeios::row__ &PathErrorRow,
 			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		const value_ &GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			bso::bool__ &Exists,
+			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		{
+			epeios::row__ PathErrorRow = NONE;
+
+			const value_ &Value = GetPathValue( Path, ParentRow, Exists, PathErrorRow, Buffer );
+
+			if ( PathErrorRow != NONE )
+				ERRu();
+
+			return Value;
+		}
+		const value_ &GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+		{
+			bso::bool__ Exists = true;
+
+			const value_ &Value = GetPathValue( Path, ParentRow, Exists, Buffer );
+
+			if ( !Exists )
+				ERRu();
+
+			return Value;
+		}
 		bso::bool__ GetPathValues(
 			const path_ &Path,
 			nrow__ ParentRow,
@@ -762,10 +792,10 @@ namespace rgstry {
 			nrow__ ParentRow,
 			epeios::row__ &PathErrorRow ) const;
 		void Dump(
-			txf::text_oflow__ &Flow,
 			nrow__ Root,
 			bso::bool__ RootToo,
-			bso::bool__ Indent ) const;
+			bso::bool__ Indent,
+			txf::text_oflow__ &Flow ) const;
 	};
 
 	E_AUTO( registry )

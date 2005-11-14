@@ -1,5 +1,12 @@
 $Id$
 
+14/11/05 :
+	- RGSTRY :
+		- Correction bogue parsing dans un arbre existant.
+		- Ajout gestion 'exml:define' et 'exml:expand'.
+	- XML :
+		- Correction bogue avec flux content un seul tag.
+
 10/11/05 :
 	- RGSTRY :
 		- Ajout méthodes 'GetPathValues(...)'.

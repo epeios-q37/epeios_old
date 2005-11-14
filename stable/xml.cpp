@@ -59,12 +59,14 @@ public:
 
 using namespace xml;
 
-static void SkipSpaces_( xtf::extended_text_iflow__ &Flow )
+static void SkipSpaces_(
+	xtf::extended_text_iflow__ &Flow,
+	bso::bool__ ErrorIfEOF = true )
 {
 	while ( !Flow.EOX() && isspace( Flow.View() ) )
 		Flow.Get();
 
-	if ( Flow.EOX() )
+	if ( Flow.EOX() && ErrorIfEOF )
 		ERRI( iBeam );
 }
 
@@ -436,7 +438,7 @@ ERRBegin
 					ERRI( iBeam );
 
 				State = TagExpected;
-				SkipSpaces_( Flow );
+				SkipSpaces_( Flow, false );
 				break;
 			case '>':
 				Flow.Get();
