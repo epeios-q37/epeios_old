@@ -402,12 +402,18 @@ namespace rgstry {
 
 			return _SearchChild( Item, ParentRow, Cursor );
 		}
+		nrow__ _SearchChild(
+			const path_item_ &Item,
+			nrow__ Root,
+			erow__ &AttributeEntryRow,
+			epeios::row__ &Cursor ) const;
 		nrow__ _SearchPath(
 			const path_ &Path,
-			nrow__ &ForkRow,	// 'Row' parent pour trouver le premier.
+			epeios::row__ PathRow,
+			nrow__ Row,
 			erow__ &AttributeEntryRow,
-			epeios::row__ &PathRow,	// Mettre à 'NONE' pour le premier.
-			epeios::row__ &Cursor )	const; //Mettre à 'NONE' pour le premier.
+			nrows_ &ResultTags,
+			erows_ &ResultAttributes ) const;
 		nrow__ _SearchPath(
 			const path_ &Path,
 			nrow__ ParentRow,
