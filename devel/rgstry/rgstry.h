@@ -698,6 +698,20 @@ namespace rgstry {
 			const value_ &Value,
 			nrow__ ParentRow,
 			epeios::row__ &PathErrorRow );
+		nrow__ SetPathValue(
+			const term_ &Path,
+			const value_ &Value,
+			nrow__ ParentRow )
+		{
+			epeios::row__ PathErrorRow = NONE;
+
+			nrow__ Result = SetPathValue( Path, Value, ParentRow, PathErrorRow );
+
+			if ( PathErrorRow != NONE )
+				ERRu();
+
+			return Result;
+		}
 		nrow__ GetParent( nrow__ NodeRow ) const
 		{
 			node_buffer NodeBuffer;
@@ -780,6 +794,37 @@ namespace rgstry {
 		void Delete( nrow__ Row )
 		{
 			_Delete( Row );
+		}
+		bso::bool__ DeletePath(
+			const path_ &Path,
+			nrow__ ParentRow )
+		{
+			erow__ AttributeRow = NONE;
+
+			nrow__ Result = _SearchPath( Path, ParentRow, AttributeRow );
+
+			if ( AttributeRow != NONE )
+				_Delete( AttributeRow );
+			else if ( Result != NONE )
+				_Delete( Result );
+
+			return Result != NONE;
+		}
+		bso::bool__ DeletePath(
+			const term_ &PathString,
+			nrow__ ParentRow,
+			epeios::row__ &PathErrorRow );
+		bso::bool__ DeletePath(
+			const term_ &PathString,
+			nrow__ ParentRow )
+		{
+			epeios::row__ PathErrorRow = NONE;
+			bso::bool__ Result = DeletePath( PathString, ParentRow, PathErrorRow );
+
+			if ( PathErrorRow != NONE )
+				ERRu();
+
+			return Result;
 		}
 		nrow__ CreateNewRegistry( const term_ &Name )
 		{

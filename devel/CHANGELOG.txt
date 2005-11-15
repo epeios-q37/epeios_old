@@ -1,5 +1,10 @@
 $Id$
 
+15/11/05 :
+	- RGSTRY :
+		- Ajout méthodes avec variation sur nombre de paramètres.
+
+
 14/11/05 :
 	- RGSTRY :
 		- Correction bogue parsing dans un arbre existant.

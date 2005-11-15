@@ -1134,6 +1134,28 @@ ERREpilog
 	return Exists;
 }
 
+bso::bool__ rgstry::registry_::DeletePath(
+	const term_ &PathString,
+	nrow__ ParentRow,
+	epeios::row__ &PathErrorRow )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+		ERRReturn;
+
+	Exists = DeletePath( Path, ParentRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+
 
 
 nrow__ rgstry::Parse(
