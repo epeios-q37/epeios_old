@@ -1,5 +1,9 @@
 $Id$
 
+17/11/05 :
+	- RGSTRY :
+		- Correction bogue 'GetPAthValues()'.
+
 15/11/05 :
 	- RGSTRY :
 		- Ajout méthodes avec variation sur nombre de paramètres.

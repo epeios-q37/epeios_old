@@ -374,9 +374,15 @@ nrow__ rgstry::registry_::_SearchPath(
 				ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
 		}
 
-	} else if ( ( Result != NONE ) && All ) {
-		ResultTags.Append( Result );
-		ResultAttributes.Append( AttributeEntryRow );
+	} else if ( All ) {
+
+		while ( ChildRow != NONE ) {
+			ResultTags.Append( ChildRow );
+			ResultAttributes.Append( AttributeEntryRow );
+
+			ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
+		}
+
 	}
 
 	return Result;
@@ -1096,15 +1102,18 @@ ERRBegin
 		ERRc();
 #endif
 
-	Row = TagRows.First();
+	if ( TagRows.Amount() != 0 ) {
+		Exists = true;
+		Row = TagRows.First();
 
-	while ( Row != NONE ) {
-		if ( AttributeRows( Row ) == NONE )
-			Values.Append( GetValue( TagRows( Row ), Buffer ) );
-		else
-			Values.Append( GetValue( AttributeRows( Row ), Buffer ) );
+		while ( Row != NONE ) {
+			if ( AttributeRows( Row ) == NONE )
+				Values.Append( GetValue( TagRows( Row ), Buffer ) );
+			else
+				Values.Append( GetValue( AttributeRows( Row ), Buffer ) );
 
-		Row = AttributeRows.Next( Row );
+			Row = AttributeRows.Next( Row );
+		}
 	}
 ERRErr
 ERREnd
@@ -1225,9 +1234,7 @@ ERRBegin
 	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
 		ERRReturn;
 
-	Exists = Global.Registry->GetPathValues( Path, Global.Root, Values );
-	Exists |= Local.Registry->GetPathValues( Path, Local.Root, Values );
-
+	Exists = Local.Registry->GetPathValues( Path, Local.Root, Values ) || Global.Registry->GetPathValues( Path, Global.Root, Values );
 ERRErr
 ERREnd
 ERREpilog
