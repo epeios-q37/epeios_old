@@ -1,8 +1,12 @@
 $Id$
 
+18/11/05 :
+	- RGSTRY :
+		- Correction bogue 'SearchChild()'".
+
 17/11/05 :
 	- RGSTRY :
-		- Correction bogue 'GetPAthValues()'.
+		- Correction bogue 'GetPathValues()'.
 
 15/11/05 :
 	- RGSTRY :

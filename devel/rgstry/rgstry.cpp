@@ -332,8 +332,11 @@ nrow__ rgstry::registry_::_SearchChild(
 {
 	if ( Item.TagName.Amount() != 0 )
 		Row = _SearchChild( Item, Row, Cursor );	// '.../TagName[@AttributeName='AttributeValue']/...'
-	else
+	else if ( Cursor == NONE ) {
 		AttributeEntryRow = _GetAttribute( Item.AttributeName, Row );	// '.../@AttributeName'
+		Cursor = *Row;	// Peu importe la valuer, pourvue que ce soit différent de 'NON4.
+	} else
+		Row = NONE;
 
 	return Row;
 }
