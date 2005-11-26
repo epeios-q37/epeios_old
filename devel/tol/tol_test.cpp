@@ -32,7 +32,37 @@
 #include "tol.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
+
+typedef int a;
+
+void fa( a A );
+
+typedef a b;
+typedef a c;
+
+void fb( b A );
+
+E_TYPEDEF( a, d );
+E_TYPEDEF( a, e );
+
+void fd( d D );
+
+void test( void )
+{
+	b B;
+	c C;
+
+	fa( B );	// Passe la compilation.
+	fb( C );	// Passe la compilation.
+
+	d D;
+	e E;
+
+	fa( D );	// Ne passe _pas_ la compilation !
+	fd( E );	// Ne passe _pas_ la compilation !
+}
+
 
 void Generic( int argc, char *argv[] )
 {
@@ -48,7 +78,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	stf::cout << "Test of library " << TOLTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << TOLTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -57,20 +87,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cio::cout);
 			break;
 		}
 	default:
-		stf::cout << txf::sync;
-		stf::cerr << "\nBad arguments.\n";
-		stf::cout << "Usage: " << TOLTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << TOLTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	stf::cout << "\nEnd of program " << TOLTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << TOLTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

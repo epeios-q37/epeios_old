@@ -144,6 +144,9 @@ public:\
 	alias##_( s &S )\
 	: type##_( S )\
 	{}\
+	struct s\
+	: public type##_::s\
+	{};\
 	alias##_ &operator =( const alias##_ &S )\
 	{\
 		((type##_ *)this)->operator =( S );\

@@ -1,5 +1,12 @@
 $Id$
 
+20/11/05 :
+	- General :
+		- Création de la bibliothèque 'DIR', de gestion des répertoires.
+	- TOL : 
+		- Correction bogue marco 'E_TYPEDEF_'.
+		
+
 18/11/05 :
 	- RGSTRY :
 		- Correction bogue 'SearchChild()'".
