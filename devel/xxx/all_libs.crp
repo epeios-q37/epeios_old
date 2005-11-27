@@ -384,6 +384,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib Table Fields Definition
 &gsbtfd_	&lgsb		&2003-\
 	&GeSBib Table Fields Definition (for backend)
+&gsbtol		&lgsb		&\
+	&GeSBib TOoLs
 &gsbv4f		&lgsb		&2003-\
 	&GeSBib Version 4 Files
 &gsbv4m		&lgsb		&\
