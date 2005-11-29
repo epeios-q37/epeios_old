@@ -55,8 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cio.h"
-
 using namespace clnarg;
 
 enum type {

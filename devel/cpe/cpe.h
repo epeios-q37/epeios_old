@@ -79,12 +79,6 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__GUI
 #undef CPE__LIBRARY
 
-#if defined( wxUSE_GUI ) || defined( CPE_GUI )
-#	define CPE__GUI
-#elif !defined( _USRDLL )	// Windows only.
-#	define CPE__CONSOLE
-#endif
-
 #ifdef _MSC_VER
 #	pragma warning( disable: 4786 )
 	//d If defined, we are in the 'Microsoft Visual C++'.
@@ -214,6 +208,14 @@ extern class ttr_tutor &CPETutor;
 #		define CPE__LIBRARY
 #	endif
 #endif
+
+#if defined( wxUSE_GUI ) || defined( CPE_GUI )
+#	define CPE__GUI
+#elif !defined( _USRDLL ) && !defined( CPE__LIBRARY )
+#	define CPE__CONSOLE
+#endif
+
+
 
 /*$END$*/
 				  /********************************************/
