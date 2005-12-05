@@ -72,7 +72,7 @@ bso::sign__ uym::Compare(
 	row_t__ DebutE2,
 	size__ Nombre )
 {
-	bso::sign__ Resultat;
+	bso::sign__ Resultat = 0;
 	datum__ Tampon[BUFFER_SIZE * 2];
 
 	if ( Nombre )

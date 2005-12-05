@@ -1,5 +1,9 @@
 $Id$
 
+05/12/05 :
+	- UYM :
+		- Correction bogue comparaison.
+
 29/11/05 :
 	- CPE :
 		- Adaptation aux particularités de la compilation d'une bibliothèque sous Unix.
