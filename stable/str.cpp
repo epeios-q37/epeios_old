@@ -156,23 +156,35 @@ namespace str {
 	}
 
 	// Convertit le contenu de 'String' en majuscule.
-	string_ &ToUpper( string_ &String )
+	string_ &ToUpper(
+		string_ &String,
+		bso::bool__ DontHandleAccent )
 	{
 		epeios::row_t__ P = String.Amount();
 
-		while ( P-- )
-			String.Store( (char)toxupper_( String.Get( P ) ) , P );
+		if ( DontHandleAccent )
+			while ( P-- )
+				String.Store( (char)toupper( String.Get( P ) ) , P );
+		else
+			while ( P-- )
+				String.Store( (char)toxupper_( String.Get( P ) ) , P );
 
 		return String;
 	}
 
 	// Convertit le contenu de 'String' en minuscule.
-	string_ &ToLower( string_ &String )
+	string_ &ToLower(
+		string_ &String,
+		bso::bool__ DontHandleAccent )
 	{
 		epeios::row_t__ P = String.Amount();
 
-		while ( P-- )
-			String.Store( (char)toxlower_( String.Get( P )) , P );
+		if ( DontHandleAccent )
+			while ( P-- )
+				String.Store( (char)tolower( String.Get( P )) , P );
+		else
+			while ( P-- )
+				String.Store( (char)toxlower_( String.Get( P )) , P );
 
 		return String;
 	}

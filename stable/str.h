@@ -479,10 +479,14 @@ namespace str {
 	}
 
 	//f Convert 'String' to upper case. Returns cnverted 'String'.
-	string_ &ToUpper( string_ &String );
+	string_ &ToUpper(
+		string_ &String,
+		bso::bool__ DontHandleAccent = false );
 
 	//f Convert 'String' to lower case. Returns converted 'String'.
-	string_ & ToLower( string_ &String );
+	string_ &ToLower(
+		string_ &String,
+		bso::bool__ dontHandleAccent = false );
 }
 
 /*$END$*/
