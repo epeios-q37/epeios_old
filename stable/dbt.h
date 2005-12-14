@@ -70,6 +70,7 @@ extern class ttr_tutor &DBTTutor;
 #include "btf.h"
 
 namespace dbt {
+
 	using btf::row__;
 
 	//t Row type for an internal node.
@@ -88,16 +89,16 @@ namespace dbt {
 	using btf::binary_tree_filler_;
 
 	//c Differenciated binary tree.
-	template <typename int__, typename ext__, typename row__ > class differentiated_binary_tree_
-	: public E_LISTt_( row__ ),
-	  public E_BTREEt_( row__ )
+	template <typename int__, typename ext__, typename irow__ > class differentiated_binary_tree_
+	: public E_LISTt_( irow__ ),
+	  public E_BTREEt_( irow__ )
 	{
 	protected:
 		void LSTAllocate( epeios::size__ Size )
 		{
 			Nodes.Allocate( Size );
 			Types.Allocate( Size );
-			E_BTREEt_( row__ )::Allocate( Size );
+			E_BTREEt_( irow__ )::Allocate( Size );
 			DBTAllocate( Size );
 		}
 		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
@@ -105,21 +106,21 @@ namespace dbt {
 		{}
 	public:
 		struct s
-		: public E_LISTt_( row__ )::s,
-		  public E_BTREEt_( row__ )::s
+		: public E_LISTt_( irow__ )::s,
+		  public E_BTREEt_( irow__ )::s
 		{
 			typename lstbch::E_LBUNCHt_( int__, internal_row__ )::s Internals;
 			typename lstbch::E_LBUNCHt_( ext__, external_row__ )::s Externals;
-			typename bch::E_BUNCHt_( epeios::row_t__, row__ )::s Nodes; 
-			typename bitbch::bit_bunch_< row__ >::s Types;
+			typename bch::E_BUNCHt_( epeios::row_t__, irow__ )::s Nodes; 
+			typename bitbch::bit_bunch_< irow__ >::s Types;
 		};
 		lstbch::E_LBUNCHt_( int__, internal_row__ ) Internals;
 		lstbch::E_LBUNCHt_( ext__, external_row__ ) Externals;
-		bch::E_BUNCHt_( epeios::row_t__, row__ ) Nodes;
-		bitbch::bit_bunch_< row__ > Types;
+		bch::E_BUNCHt_( epeios::row_t__, irow__ ) Nodes;
+		bitbch::bit_bunch_< irow__ > Types;
 		differentiated_binary_tree_( s &S )
-		: E_LISTt_( row__ )( S ),
-		  E_BTREEt_( row__ )( S ),
+		: E_LISTt_( irow__ )( S ),
+		  E_BTREEt_( irow__ )( S ),
 		  Internals( S.Internals ),
 		  Externals( S.Externals ),
 		  Nodes( S.Nodes ),
@@ -127,8 +128,8 @@ namespace dbt {
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			E_LISTt_( row__ )::reset( P );
-			E_BTREEt_( row__ )::reset( P );
+			E_LISTt_( irow__ )::reset( P );
+			E_BTREEt_( irow__ )::reset( P );
 			Internals.reset( P );
 			Externals.reset( P );
 			Nodes.reset( P );
@@ -136,8 +137,8 @@ namespace dbt {
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			E_LISTt_( row__ )::plug( MM );
-			E_BTREEt_( row__ )::plug( MM );
+			E_LISTt_( irow__ )::plug( MM );
+			E_BTREEt_( irow__ )::plug( MM );
 			Internals.plug( MM );
 			Externals.plug( MM );
 			Nodes.plug( MM );
@@ -145,8 +146,8 @@ namespace dbt {
 		}
 		const differentiated_binary_tree_ &operator=( const differentiated_binary_tree_ &T )
 		{
-			E_LISTt_( row__ )::operator=( T );
-			E_BTREEt_( row__ )::operator =( T );
+			E_LISTt_( irow__ )::operator=( T );
+			E_BTREEt_( irow__ )::operator =( T );
 			Internals = T.Internals;
 			Externals = T.Externals;
 			Nodes = T.Nodes;
@@ -157,17 +158,17 @@ namespace dbt {
 		//f Initialization.
 		void Init( void )
 		{
-			E_LISTt_( row__ )::Init();
-			E_BTREEt_( row__ )::Init();
+			E_LISTt_( irow__ )::Init();
+			E_BTREEt_( irow__ )::Init();
 			Internals.Init();
 			Externals.Init();
 			Nodes.Init();
 			Types.Init();
 		}
 		//f Create internal node with value 'Internal'. Returns its row.
-		row__ CreateInternal( const int__ &Internal )
+		irow__ CreateInternal( const int__ &Internal )
 		{
-			row__ Row = E_LISTt_( row__ )::New();
+			irow__ Row = E_LISTt_( irow__ )::New();
 
 			Types.Store( internal, Row );
 
@@ -176,9 +177,9 @@ namespace dbt {
 			return Row;
 		}
 		//f Create external node with value 'External'. Returns its row.
-		row__ CreateExternal( const ext__ &External )
+		irow__ CreateExternal( const ext__ &External )
 		{
-			row__ Row = E_LISTt_( row__ )::New();
+			irow__ Row = E_LISTt_( irow__ )::New();
 
 			Types.Store( external, Row );
 
@@ -187,17 +188,17 @@ namespace dbt {
 			return Row;
 		}
 		//f Return true if node 'Node' is an internal one.
-		bso::bool__ IsInternal( row__ Node ) const
+		bso::bool__ IsInternal( irow__ Node ) const
 		{
 			return Types.Get( Node ) == internal;
 		}
 		//f Return true if node 'Node' is an external one.
-		bso::bool__ IsExternal( row__ Node ) const
+		bso::bool__ IsExternal( irow__ Node ) const
 		{
 			return Types.Get( Node ) == external;
 		}
 		//f Return the internal row corresponding to 'Node'.
-		internal_row__ GetInternalRow( row__ Node ) const
+		internal_row__ GetInternalRow( irow__ Node ) const
 		{
 #ifdef DBT_DBG
 			if ( !IsInternal( Node ) )
@@ -206,7 +207,7 @@ namespace dbt {
 			return Nodes( Node );
 		}
 		//f Return the external row corresponding to 'Node'.
-		external_row__ GetExternalRow( row__ Node ) const
+		external_row__ GetExternalRow( irow__ Node ) const
 		{
 #ifdef DBT_DBG
 			if ( !IsExternal( Node ) )
@@ -235,7 +236,7 @@ namespace dbt {
 			return Externals;
 		}
 		//f Delete node 'Node'.
-		void Delete( row__ Node )
+		void Delete( irow__ Node )
 		{
 			if ( IsExternal( Node ) )
 				Externals.Delete( GetExternalRow( Node ) );
@@ -244,19 +245,19 @@ namespace dbt {
 			else
 				ERRc();
 
-			E_LISTt_( row__ )::Delete( Node );
+			E_LISTt_( irow__ )::Delete( Node );
 		}
 		//f Return the internal corresponding to 'Node'.
-		int__ GetInternal( row__ Node ) const
+		int__ GetInternal( irow__ Node ) const
 		{
 			return Internals( GetInternalRow( Node ) );
 		}
 		//f Return the external corresponding to 'Node'.
-		ext__ GetExternal( row__ Node ) const
+		ext__ GetExternal( irow__ Node ) const
 		{
 			return Externals( GetExternalRow( Node ) );
 		}
-		E_NAVt( E_LISTt_( row__ )::, row__ )
+		E_NAVt( E_LISTt_( irow__ )::, irow__ )
 	};
 
 	E_AUTO3( differentiated_binary_tree )
@@ -268,60 +269,60 @@ namespace dbt {
 	#define E_DBTREE( internal, external )	E_DBTREEt( internal, external, epeios::row__ )
 
 	//c differentiated bianry tree filler.
-	template <typename int__, typename ext__, typename row__> class differentiated_binary_tree_filler_
-	: public E_BTREE_FILLERt_( row__ )
+	template <typename int__, typename ext__, typename irow__> class differentiated_binary_tree_filler_
+	: public E_BTREE_FILLERt_( irow__ )
 	{
 	private:
-		E_DBTREEt_( int__, ext__, row__ ) *Tree_;
+		E_DBTREEt_( int__, ext__, irow__ ) *Tree_;
 	public:
 		struct s
-		: public E_BTREE_FILLERt_( row__ )::s
+		: public E_BTREE_FILLERt_( irow__ )::s
 		{};
 		differentiated_binary_tree_filler_( s &S )
-		: E_BTREE_FILLERt_( row__ )( S )
+		: E_BTREE_FILLERt_( irow__ )( S )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Tree_ = NULL;
-			E_BTREE_FILLERt_( row__ )::reset( P );
+			E_BTREE_FILLERt_( irow__ )::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER_ &MD )
 		{
-			E_BTREE_FILLERt_( row__ )::plug( MD );
+			E_BTREE_FILLERt_( irow__ )::plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			E_BTREE_FILLERt_( row__ )::plug( MM );
+			E_BTREE_FILLERt_( irow__ )::plug( MM );
 		}
 		differentiated_binary_tree_filler_ &operator =( const differentiated_binary_tree_filler_ &DBTF )
 		{
-			E_BTREE_FILLERt_( row__ )::operator =( DBTF );
+			E_BTREE_FILLERt_( irow__ )::operator =( DBTF );
 
 			return *this;
 		}
 		//f Initialization with tree 'Tree' of root 'Root' (if not empty).
 		void Init(
-			E_DBTREEt_( int__, ext__, row__ ) &Tree,
-			row__ Root )
+			E_DBTREEt_( int__, ext__, irow__ ) &Tree,
+			irow__ Root )
 		{
 			Tree_ = &Tree;
-			E_BTREE_FILLERt_( row__ )::Init( Tree, Root );
+			E_BTREE_FILLERt_( irow__ )::Init( Tree, Root );
 		}
 		//f Push external node 'External'. Return row where the new element is added.
-		row__ Push( const ext__ &External )
+		irow__ Push( const ext__ &External )
 		{
-			row__ Row = Tree_->CreateExternal( External );
+			irow__ Row = Tree_->CreateExternal( External );
 
-			E_BTREE_FILLERt_( row__ )::Push( Row );
+			E_BTREE_FILLERt_( irow__ )::Push( Row );
 
 			return Row;
 		}
 		//f Join the 2 last pending node with internal node 'Internal'. Return row where the new element is added.
-		row__ Join( const int__ &Internal )
+		irow__ Join( const int__ &Internal )
 		{
-			row__ Row = Tree_->CreateInternal( Internal );
+			irow__ Row = Tree_->CreateInternal( Internal );
 
-			E_BTREE_FILLERt_( row__ )::Join( Row );
+			E_BTREE_FILLERt_( irow__ )::Join( Row );
 
 			return Row;
 		}

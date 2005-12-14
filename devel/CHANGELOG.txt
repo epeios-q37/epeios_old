@@ -1,5 +1,11 @@
 $Id$
 
+14/12/05 :
+	- DBT :
+		- Correction confusion type 'row__'.
+	- NSXPCM :
+		- Correction bogue 'Split()'.
+
 05/12/05 :
 	- UYM :
 		- Correction bogue comparaison.

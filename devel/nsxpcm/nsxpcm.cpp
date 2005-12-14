@@ -171,22 +171,25 @@ ERRProlog
 	epeios::row__ Row = NONE;
 	string Item;
 ERRBegin
-	Item.Init();
+	if ( Joined.Amount() != 0 ) {	
 
-	Row = Joined.First();
+		Item.Init();
 
-	while ( Row != NONE ) {
-		if ( Joined( Row ) != Separator )
-			Item.Append( Joined( Row ) );
-		else {
-			Splitted.Append( Item );
-			Item.Init();
+		Row = Joined.First();
+
+		while ( Row != NONE ) {
+			if ( Joined( Row ) != Separator )
+				Item.Append( Joined( Row ) );
+			else {
+				Splitted.Append( Item );
+				Item.Init();
+			}
+
+			Row = Joined.Next( Row );
 		}
 
-		Row = Joined.Next( Row );
+		Splitted.Append( Item );
 	}
-
-	Splitted.Append( Item );
 ERRErr
 ERREnd
 ERREpilog
