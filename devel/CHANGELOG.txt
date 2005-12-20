@@ -1,5 +1,9 @@
 $Id$
 
+20/12/05 :
+	- BSO :
+		- Ajout de l'initialisation par un flottant pour 'bso::sign__'.
+
 14/12/05 :
 	- DBT :
 		- Correction confusion type 'row__'.

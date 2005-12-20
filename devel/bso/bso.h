@@ -300,6 +300,10 @@ namespace bso {
 		{
 			Sign_ = (sbyte__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
 		}
+		sign__( long double Sign )
+		{
+			Sign_ = (sbyte__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
+		}
 		operator sbyte__( void )
 		{
 			return Sign_;
