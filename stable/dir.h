@@ -131,6 +131,54 @@ namespace dir {
 
 		return s_Undefined;	// Pour éviter un 'warning'.
 	}
+
+	inline state__ DropDir( const char *Path )
+	{
+#pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
+#ifdef CPE__MS
+		switch ( _rmdir( Path ) ) {
+#elif defined( CPE__UNIX )
+		switch ( rmdir( Path ) ) {
+#else
+#	error
+#endif
+		case 0:
+			return sOK;
+			break;
+		case -1:
+			switch ( errno ) {
+			case EEXIST:
+				return sExists;
+				break;
+			case ENOENT:
+#ifdef CPE__UNIX
+			case EPERM:
+			case EACCES:
+			case ENOTDIR:
+			case EROFS:
+			case ELOOP:
+#endif
+				return sIncorrectPath;
+				break;
+#ifdef CPE__UNIX
+			case ENAMETOOLONG:
+				return sBadPath;
+				break;
+			case EFAULT:
+				ERRu();
+				break;
+#endif
+			default:
+				ERRs();
+				break;
+			}
+		default:
+			ERRs();
+			break;
+		}
+
+		return s_Undefined;	// Pour éviter un 'warning'.
+	}
 }
 
 /*$END$*/
