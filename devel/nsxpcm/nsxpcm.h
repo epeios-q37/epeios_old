@@ -69,6 +69,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsEmbedString.h"
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
+#include "nsIDOMHTMLInputElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -199,6 +200,49 @@ namespace nsxpcm {
 		Element->SetAttribute( EName, EValue );
 	}
 
+	inline void SetValue(
+		nsIDOMHTMLInputElement *Element,
+		const char *Value )
+	{
+		nsEmbedString EValue;
+
+		Transform( Value, EValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		Element->SetValue( EValue );
+	}
+
+	inline const str::string_ &GetAttribute(
+		nsIDOMElement *Element,
+		const char *Name,
+		str::string_ &Value )
+	{
+		nsEmbedString EName, EValue;
+		Transform( Name, EName );
+
+		Element->GetAttribute( EName, EValue );
+
+		Transform( EValue, Value );
+
+		return Value;
+	}
+
+	inline const str::string_ &GetValue(
+		nsIDOMHTMLInputElement *Element,
+		str::string_ &Value )
+	{
+		nsEmbedString EValue;
+		Element->GetValue( EValue );
+
+		Transform( EValue, Value );
+
+		return Value;
+	}
+
 	inline void SetAttribute(
 		nsIDOMElement *Element,
 		const char *Name,
@@ -216,6 +260,24 @@ namespace nsxpcm {
 		
 		Element->SetAttribute( EName, EValue );
 	}
+
+	inline void SetValue(
+		nsIDOMHTMLInputElement *Element,
+		const str::string_ &Value )
+	{
+		nsEmbedString EValue;
+
+		Transform( Value, EValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		Element->SetValue( EValue );
+	}
+
+	
 
 	inline void AppendChild(
 		nsIDOMNode *Node,
@@ -262,6 +324,20 @@ namespace nsxpcm {
 		return Child;
 	}
 
+	inline nsIDOMNode *GetParentNode( nsIDOMNode *Node )
+	{
+		nsIDOMNode *Parent = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->GetParentNode( &Parent );
+
+		return Parent;
+	}
+
 	inline void RemoveChild(
 		nsIDOMNode *Node,
 		nsIDOMNode *Child )
@@ -289,6 +365,19 @@ namespace nsxpcm {
 			RemoveChild( Node, GetLastChild( Node ) );
 	}
 
+	inline const str::string_ &GetNodeName(
+		nsIDOMNode *Node,
+		str::string_ &Name )
+	{
+		nsEmbedString EName;
+
+		Node->GetNodeName( EName );
+
+		Transform( EName, Name );
+
+		return Name;
+
+	}
 
 #ifdef NSXPCM__BKD
 	void Convert(
