@@ -67,6 +67,8 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "ctn.h"
 
 #include "nsEmbedString.h"
+#include "nsiDOMDocument.h"
+#include "nsiDOMElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -140,6 +142,153 @@ namespace nsxpcm {
 		const strings_ &Splitted,
 		bso::char__ Separator,
 		char **JString );
+
+	inline nsIDOMElement *GetElementById(
+		nsIDOMDocument *Document,
+		const char *Name )
+	{
+		nsIDOMElement *Element = NULL;
+		nsEmbedString EName;
+
+		Transform( Name, EName );
+
+		Document->GetElementById( EName, &Element );
+
+		return Element;
+	}
+
+
+	inline nsIDOMElement *CreateElement(
+		nsIDOMDocument *Document,
+		const char *Name )
+	{
+		nsIDOMElement *Element;
+		nsEmbedString EName;
+
+		Transform( Name, EName );
+
+#ifdef NSXPCM_DBG
+		if ( Document == NULL )
+			ERRu();
+#endif
+
+		Document->CreateElement( EName, &Element );
+
+		if ( Element == NULL )
+			ERRs();
+
+		return Element;
+
+	}
+
+	inline void SetAttribute(
+		nsIDOMElement *Element,
+		const char *Name,
+		const char *Value )
+	{
+		nsEmbedString EName, EValue;
+
+		Transform( Name, EName );
+		Transform( Value, EValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		Element->SetAttribute( EName, EValue );
+	}
+
+	inline void SetAttribute(
+		nsIDOMElement *Element,
+		const char *Name,
+		const str::string_ &Value )
+	{
+		nsEmbedString EName, EValue;
+
+		Transform( Name, EName );
+		Transform( Value, EValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		Element->SetAttribute( EName, EValue );
+	}
+
+	inline void AppendChild(
+		nsIDOMNode *Node,
+		nsIDOMNode *Child )
+	{
+		nsIDOMNode *Dummy = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+
+		if ( Child == NULL )
+			ERRu();
+#endif
+		Node->AppendChild( Child, &Dummy );
+
+	}
+
+	inline nsIDOMNode *GetFirstChild( nsIDOMNode *Node )
+	{
+		nsIDOMNode *Child = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->GetFirstChild( &Child );
+
+		return Child;
+	}
+
+	inline nsIDOMNode *GetLastChild( nsIDOMNode *Node )
+	{
+		nsIDOMNode *Child = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->GetLastChild( &Child );
+
+		return Child;
+	}
+
+	inline void RemoveChild(
+		nsIDOMNode *Node,
+		nsIDOMNode *Child )
+	{
+		nsIDOMNode *Dummy = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+
+		if ( Child == NULL )
+			ERRu();
+#endif
+		Node->RemoveChild( Child, &Dummy );
+	}
+
+	inline void RemoveChildren( nsIDOMNode *Node )
+	{
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		while ( GetLastChild( Node ) != NULL )
+			RemoveChild( Node, GetLastChild( Node ) );
+	}
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
