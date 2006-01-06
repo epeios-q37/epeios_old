@@ -200,6 +200,22 @@ namespace nsxpcm {
 		Element->SetAttribute( EName, EValue );
 	}
 
+	inline void RemoveAttribute(
+		nsIDOMElement *Element,
+		const char *Name )
+	{
+		nsEmbedString EName;
+
+		Transform( Name, EName );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		Element->RemoveAttribute( EName );
+	}
+
 	inline void SetValue(
 		nsIDOMHTMLInputElement *Element,
 		const char *Value )
