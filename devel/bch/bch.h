@@ -211,6 +211,13 @@ namespace bch {
 
 			mmr::Store( Buffer, sh::SizeOf( Buffer ), Offset );
 		}
+		// Remplit tout le conteneur avec 'object' à partir de la position 'offset'.
+		void Set(
+			const type &Object,
+			row Offset = 0 )
+		{
+			Store( Object, Offset, Amount() - *Offset );
+		}
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
 			const type *Buffer,
