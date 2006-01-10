@@ -1,5 +1,9 @@
 $Id$
 
+10/01/06 :
+	- BCH :
+		- Ajout méthode 'Pop()'.
+
 09/01/06 :
 	- BCH :
 		- Ajout méthode 'Set()'.

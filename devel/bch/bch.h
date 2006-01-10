@@ -281,6 +281,14 @@ namespace bch {
 		{
 			return Append( Bunch, Bunch.Amount() - *Position, Position );
 		}
+		type Pop( void )
+		{
+			type Object = Get( Last() );
+
+			Truncate();
+
+			return Object;
+		}
 		//f Remove 'Amount' objects from the end of the bunch.
 		void Truncate( epeios::size__ Amount = 1 )
 		{
