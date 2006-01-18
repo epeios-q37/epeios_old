@@ -216,7 +216,7 @@ namespace bch {
 			const type &Object,
 			row Offset = 0 )
 		{
-			Store( Object, Offset, Amount() - *Offset );
+			Store( Object, Offset, this->Amount() - *Offset );
 		}
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
@@ -283,7 +283,7 @@ namespace bch {
 		}
 		type Pop( void )
 		{
-			type Object = Get( Last() );
+			type Object = Get( this->Last() );
 
 			Truncate();
 

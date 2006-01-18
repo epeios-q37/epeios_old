@@ -69,7 +69,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsEmbedString.h"
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
-#include "nsIDOMHTMLInputElement.h"
+//#include "nsIDOMHTMLInputElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -216,8 +216,8 @@ namespace nsxpcm {
 		Element->RemoveAttribute( EName );
 	}
 
-	inline void SetValue(
-		nsIDOMHTMLInputElement *Element,
+	template <typename t> inline void SetValue(
+		t *Element,
 		const char *Value )
 	{
 		nsEmbedString EValue;
@@ -247,8 +247,8 @@ namespace nsxpcm {
 		return Value;
 	}
 
-	inline const str::string_ &GetValue(
-		nsIDOMHTMLInputElement *Element,
+	template <typename t> inline const str::string_ &GetValue(
+		t *Element,
 		str::string_ &Value )
 	{
 		nsEmbedString EValue;
@@ -277,8 +277,8 @@ namespace nsxpcm {
 		Element->SetAttribute( EName, EValue );
 	}
 
-	inline void SetValue(
-		nsIDOMHTMLInputElement *Element,
+	template <typename t> inline void SetValue(
+		t *Element,
 		const str::string_ &Value )
 	{
 		nsEmbedString EValue;

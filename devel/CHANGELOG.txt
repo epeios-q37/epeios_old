@@ -1,5 +1,11 @@
 $Id$
 
+18/01/06 :
+	- BCH :
+		- Mise en place modifications requises par g++ v3.4.4.
+	- NSXPCM :
+		- Mise en oeuvre de 'templates'.
+
 10/01/06 :
 	- BCH :
 		- Ajout méthode 'Pop()'.
