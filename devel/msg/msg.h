@@ -87,6 +87,10 @@ namespace msg {
 	struct buffer__
 	{
 		char Data[MSG_MESSAGE_LENGTH_MAX+1];
+		buffer__( void )
+		{
+			Data[0] = 0;
+		}
 	};
 
 	typedef str::string_	message_;
