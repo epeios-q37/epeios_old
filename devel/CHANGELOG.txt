@@ -1,5 +1,14 @@
 $Id$
 
+23/01/06 :
+	- RGSTRY :
+		- Rajout d'une méthode 'GetPathValue(...)'.
+		- Toutes les variables booléenes 'Exists' sont maintenant passé par pointeur et non plus par référence,
+		  pour mettre en évidence le fait qu'elle n'est jamais mise à vrai, mais seulement à faux, le cas échéant
+		  (pour pouvoir appeler plusieurs méthodes à la suite sans avoir à tester et à réinitialiser cette variable
+		  à chaque appel).
+
+
 18/01/06 :
 	- BCH :
 		- Mise en place modifications requises par g++ v3.4.4.

@@ -1028,7 +1028,7 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 const value_ &rgstry::registry_::GetPathValue(
 	const path_ &Path,
 	nrow__ ParentRow,
-	bso::bool__ &Exists,
+	bso::bool__ *Exists,
 	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
@@ -1045,7 +1045,7 @@ ERRBegin
 		else
 			Result = &GetValue( AttributeEntryRow, Buffer );
 	else {
-		Exists = false;
+		*Exists = false;
 	}
 ERRErr
 ERREnd
@@ -1056,7 +1056,7 @@ ERREpilog
 const value_ &rgstry::registry_::GetPathValue(
 	const term_ &PathString,
 	nrow__ ParentRow,
-	bso::bool__ &Exists,
+	bso::bool__ *Exists,
 	epeios::row__ &PathErrorRow,
 	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
@@ -1071,7 +1071,7 @@ ERRBegin
 	Empty.Init();
 
 	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
-		Exists = false;
+		*Exists = false;
 		ERRReturn;
 	}
 
@@ -1192,7 +1192,7 @@ ERREpilog
 
 const value_ &rgstry::overloaded_registry___::GetPathValue(
 	const term_ &PathString,
-	bso::bool__ &Exists,
+	bso::bool__ *Exists,
 	epeios::row__ &PathErrorRow,
 	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
@@ -1212,7 +1212,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Result = &Local.Registry->GetPathValue( Path, Local.Root, LocalExists, Buffer );
+	Result = &Local.Registry->GetPathValue( Path, Local.Root, &LocalExists, Buffer );
 
 	if ( !LocalExists )
 		Result = &Global.Registry->GetPathValue( Path, Global.Root, Exists, Buffer );

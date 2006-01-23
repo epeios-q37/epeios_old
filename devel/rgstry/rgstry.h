@@ -636,18 +636,18 @@ namespace rgstry {
 		const value_ &GetPathValue(
 			const path_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ &Exists,
+			bso::bool__ *Exists,
 			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ &Exists,
+			bso::bool__ *Exists,
 			epeios::row__ &PathErrorRow,
 			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ &Exists,
+			bso::bool__ *Exists,
 			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		{
 			epeios::row__ PathErrorRow = NONE;
@@ -666,7 +666,7 @@ namespace rgstry {
 		{
 			bso::bool__ Exists = true;
 
-			const value_ &Value = GetPathValue( Path, ParentRow, Exists, Buffer );
+			const value_ &Value = GetPathValue( Path, ParentRow, &Exists, Buffer );
 
 			if ( !Exists )
 				ERRu();
@@ -854,7 +854,7 @@ namespace rgstry {
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry,
-		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'regsitry' est créee.
+		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 		xtf::location__ &ErrorLine,
 		xtf::location__ &ErrorColumn );
 
@@ -889,7 +889,8 @@ namespace rgstry {
 		nrow__ Init(
 			const registry_ &Global,
 			nrow__ Root,
-			registry_ &Local )	// 'Global' et 'Local' peuvent être identiques.
+			registry_ &Local,	// 'Global' et 'Local' peuvent être identiques.
+			nrow__ LocalRoot )	// Si égal à NONE, est crée et retourné.
 		{
 			term_buffer Buffer;
 
@@ -897,16 +898,21 @@ namespace rgstry {
 			this->Global.Root = Root;
 
 			this->Local.Registry = &Local;
-			return this->Local.Root = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
+
+			if ( LocalRoot == NONE )
+				LocalRoot = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
+
+			return this->Local.Root = LocalRoot;
+
 		}
 		const value_ &GetPathValue(
 			const term_ &Path,
-			bso::bool__ &Exists,
+			bso::bool__ *Exists,
 			epeios::row__ &PathErrorRow,
 			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		const value_ &GetPathValue(
 			const term_ &Path,
-			bso::bool__ &Exists,
+			bso::bool__ *Exists,
 			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		{
 			epeios::row__ PathErrorRow = NONE;
@@ -917,6 +923,17 @@ namespace rgstry {
 				ERRu();
 
 			return Value;
+		}
+		bso::bool__ GetPathValue(
+			const term_ &Path,
+			value_ &Value ) const
+		{
+			term_buffer Buffer;
+			bso::bool__ Exists = true;
+
+			Value = GetPathValue( Path, &Exists, Buffer );
+
+			return Exists;
 		}
 		bso::bool__ GetPathValues(
 			const term_ &PathString,
@@ -999,11 +1016,12 @@ namespace rgstry {
 		}
 		void Init(
 			registry_ &Global,
-			nrow__ Root )
+			nrow__ Root,
+			nrow__ LocalRoot ) // Si égal à NONE, est crée et retourné.
 		{
 			reset();
 
-			_LocalRoot = overloaded_registry___::Init( Global, Root, Global );
+			_LocalRoot = overloaded_registry___::Init( Global, Root, Global, LocalRoot );
 		}
 	};
 }
