@@ -659,6 +659,18 @@ namespace rgstry {
 
 			return Value;
 		}
+		bso::bool__ GetPathValue(
+			const term_ &Path,
+			nrow__ ParentRow,
+			value_ &Value ) const
+		{
+			bso::bool__ Exists = true;
+			term_buffer Buffer;
+
+			Value = GetPathValue( Path, ParentRow, &Exists, Buffer );
+
+			return Exists;
+		}
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
