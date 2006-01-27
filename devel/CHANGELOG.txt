@@ -1,5 +1,9 @@
 $Id$
 
+27/01/06
+	- NSXPDM :
+		- Rajout d'une fonction 'GetElementById()...' avec variation sur le type des paramètres.
+
 23/01/06 :
 	- RGSTRY :
 		- Rajout d'une méthode 'GetPathValue(...)'.

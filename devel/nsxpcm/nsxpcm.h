@@ -146,14 +146,28 @@ namespace nsxpcm {
 
 	inline nsIDOMElement *GetElementById(
 		nsIDOMDocument *Document,
-		const char *Name )
+		const char *Id )
 	{
 		nsIDOMElement *Element = NULL;
-		nsEmbedString EName;
+		nsEmbedString EId;
 
-		Transform( Name, EName );
+		Transform( Id, EId );
 
-		Document->GetElementById( EName, &Element );
+		Document->GetElementById( EId, &Element );
+
+		return Element;
+	}
+
+	inline nsIDOMElement *GetElementById(
+		nsIDOMDocument *Document,
+		const str::string_ &Id )
+	{
+		nsIDOMElement *Element = NULL;
+		nsEmbedString EId;
+
+		Transform( Id, EId );
+
+		Document->GetElementById( EId, &Element );
 
 		return Element;
 	}
