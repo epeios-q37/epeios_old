@@ -62,6 +62,7 @@ extern class ttr_tutor &MTXTutor;
 
 #include "bso.h"
 #include "cpe.h"
+#include "tht.h"
 #include "tol.h"
 
 #ifdef MTX_DEFAULT_DELAY
@@ -74,23 +75,9 @@ extern class ttr_tutor &MTXTutor;
 #	error "This library only useful in multitasking context, in which you are not."
 #endif
 
-#if defined( CPE__UNIX ) && !defined( MTX_USE_COUNTER ) && !defined( CPE__CYGWIN )
-#	define MTX__USE_PTHREAD_MUTEX
-#	include <pthread.h>
-#	include <errno.h>
-#else
-#	define MTX__USE_COUNTER
-#endif
-
-#if !defined( MTX__USE_PTHREAD_MUTEX ) && !defined( MTX__USE_COUNTER )
-#	error "Don't know what mutex type to use."
-#endif
-
 #ifndef MTX_NO_CONTROL
 #	ifdef MTX_DBG
-#		ifndef MTX__USE_PTHREAD_MUTEX
-#			define MTX__CONTROL
-#		endif
+#		define MTX__CONTROL
 #	endif
 #endif
 
@@ -102,149 +89,187 @@ extern class ttr_tutor &MTXTutor;
 
 namespace mtx {
 
-#ifdef MTX__USE_COUNTER
+	enum mode__ {
+		mFree,	// Le mutex n'a pas de propriétaire. N'importe quel 'thread' peut le déverouiiler.
+		mOwned,	// Le thread propriétaire peut le vérouiiler autant de fois qu'il le veut sans être bloqué.
+				// En mode 'debug', une erreur est génèrée si le mutex est déverouiiler pas una utre threéd que le 
+				// propriétaire.
+		m_amount,
+		m_Undefined
+	};
+
 	namespace {
 		typedef bso::ubyte__ counter__;
 	}
-#endif
 
 #ifdef MTX__CONTROL
-#	define MTX_RELEASED_MUTEX	BSO_UBYTE_MAX
+#	define MTX_RELEASED_MUTEX_VALUE	BSO_UBYTE_MAX
 #endif
 
-#ifdef MTX__USE_PTHREAD_MUTEX
-	typedef pthread_mutex_t *mutex_handler__;
-#elif defined( MTX__USE_COUNTER )
 	//t A mutex handler.
-	typedef counter__ *mutex_handler__;
+	typedef struct mutex__ {
+		counter__ Counter;
+		mode__ Mode;
+		tht::thread_id__ Owner;
+#ifdef MTX__CONTROL
+		void Release( void )
+		{
+			Counter = MTX_RELEASED_MUTEX_VALUE;
+		}
+		bso::bool__ IsReleased( void ) const
+		{
+			return Counter == MTX_RELEASED_MUTEX_VALUE;
+		}
 #endif
+		bso::bool__ IsLocked( void ) const
+		{
+#ifdef MTX__CONTROL
+			if ( IsReleased() )
+				ERRu();
+#endif
+			return Counter != 0;
+		}
+		bso::bool__ TryToLock( void )
+		{
+#ifdef MTX__CONTROL
+				if ( IsReleased() )
+					ERRu();
+#endif
+			if ( IsLocked() )
+				switch ( Mode ) {
+				case mFree:
+					return false;
+					break;
+				case mOwned:
+					return tht::GetTID() == Owner;
+					break;
+				default:
+					ERRu();
+					break;
+				}
+
+			if ( ++Counter == MTX_MAX_COUNTER_VALUE )
+				ERRl();
+
+			if ( Counter > 1 )
+			{
+				Counter--;
+				return false;
+			}
+			else {
+				Owner = tht::GetTID();
+				return true;
+			}
+		}
+		void Unlock( void )
+		{
+#ifdef XXX_DBG
+			if ( !IsLocked() )
+				ERRu();
+
+			switch ( Mode ) {
+			case mFree:
+				break;
+			case mOwned:
+				if ( Owner != tht::GetTID() )
+					ERRu();
+				break;
+			default:
+				ERRu();
+				break;
+			}
+#endif
+			Counter--;
+			Owner = THT_UNDEFINED_THREAD_ID;
+		}
+		mutex__( mode__ Mode )
+		{
+			Counter = 0;
+			this->Mode = Mode;
+			Owner = THT_UNDEFINED_THREAD_ID;
+
+#ifdef MTX_DBG
+			switch( this->Mode ) {
+			case mFree:
+			case mOwned:
+				break;
+			default:
+				ERRu();
+				break;
+			}
+#endif
+
+		}
+		~mutex__( void )
+		{
+#ifdef MTX__CONTROL
+			Release();
+#endif
+		}
+	} *mutex_handler__;
+
 
 	//f Return a new mutex handler.
-	inline mutex_handler__ Create( void )
+	inline mutex_handler__ Create( mode__ Mode )
 	{
 		mutex_handler__ Handler;
 		
-		if ( ( Handler = (mutex_handler__)malloc( sizeof( *Handler ) ) ) == NULL )
+		if ( ( Handler = new mutex__( Mode ) ) == NULL )
 			ERRa();
-
-#ifdef MTX__USE_PTHREAD_MUTEX
-		if ( pthread_mutex_init( Handler, NULL ) != 0 )
-			ERRs();
-#elif defined( MTX__USE_COUNTER )
-		*Handler = 0;
-#endif
 
 		return Handler;
 	}
 
 	inline bso::bool__ IsLocked( mutex_handler__ Handler )
 	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		switch ( pthread_mutex_trylock( Handler ) ) {
-		case 0:
-			pthread_mutex_unlock( Handler );
-			return false;
-			break;
-		case EBUSY:
-			return true;
-			break;
-		default:
-			ERRs();
-			break;
-		}
-#elif defined( MTX__USE_COUNTER )
-#	ifdef MTX__CONTROL
-		if ( *Handler == MTX_RELEASED_MUTEX )
+#ifdef MTX_DBG
+		if ( Handler == NULL )
 			ERRu();
-#	endif
-		if ( *Handler != 0 )
-			return true;
-		else
-			return false;
 #endif
+		return Handler->IsLocked();
 	}
 
 
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
 	inline bso::bool__ TryToLock( mutex_handler__ Handler )
 	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		switch ( pthread_mutex_trylock( Handler ) ) {
-		case 0:
-			return true;
-			break;
-		case EBUSY:
-			return false;
-			break;
-		default:
-			ERRs();
-			break;
-		}
-#elif defined( MTX__USE_COUNTER )
-#	ifdef MTX__CONTROL
-		if ( *Handler == MTX_RELEASED_MUTEX )
+#ifdef MTX_DBG
+		if ( Handler == NULL )
 			ERRu();
-#	endif
-		if ( *Handler != 0 )
-			return false;
-
-		if ( ++(*Handler) == MTX_MAX_COUNTER_VALUE )
-			ERRl();
-
-		if ( *Handler > 1 )
-		{
-			(*Handler)--;
-			return false;
-		}
-		else
-			return true;
 #endif
+		return Handler->TryToLock();
 	}
 
-#ifdef MTX__USE_COUNTER
 	// Wait until mutex unlocked, with 'Delay' millisecond between delays.
 	inline void WaitUntilUnlocked_(
 		mutex_handler__ Handler,
 		unsigned long Delay = MTX__DEFAULT_DELAY )
 	{
 		while( !TryToLock( Handler ) )
-			tol::Defer( Delay );
+			tht::Defer( Delay );
 	}
-#endif
 
 	//f Lock 'Handler'. Blocks until lock succeed with 'Delay' millisecond between tries.
 	inline void Lock(
 		mutex_handler__ Handler,
 		unsigned long Delay = MTX__DEFAULT_DELAY )
 	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		if ( pthread_mutex_lock( Handler ) != 0 )
-			ERRs();
-#elif defined( MTX__USE_COUNTER )
-#	ifdef MTX__CONTROL
-		if ( *Handler == MTX_RELEASED_MUTEX )
+#ifdef MTX_DBG
+		if ( Handler == NULL )
 			ERRu();
-#	endif
+#endif
 		if ( !TryToLock( Handler ) )
 			WaitUntilUnlocked_( Handler, Delay );
-#endif
 	}
 
 	//f Unlock 'Handler'.
 	inline void Unlock( mutex_handler__ Handler )
 	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		if ( pthread_mutex_unlock( Handler ) != 0 )
-			ERRs();
-#elif defined( MTX__USE_COUNTER )
-#	ifdef MTX__CONTROL
-		if ( *Handler == MTX_RELEASED_MUTEX )
+#ifdef MTX_DBG
+		if ( Handler == NULL )
 			ERRu();
-		if ( *Handler == 0 )
-			ERRu();
-#	endif
-		(*Handler)--;
 #endif
+		Handler->Unlock();
 	}
 
 	//f Delete the mutex of handler 'Handler'.
@@ -252,19 +277,14 @@ namespace mtx {
 		mutex_handler__ Handler,
 		bso::bool__ EvenIfLocked = false )
 	{
-#ifdef MTX__USE_PTHREAD_MUTEX
-		if ( pthread_mutex_destroy( Handler ) != 0 ) {
-				ERRs();
-		}
-#else
-#	ifdef MTX__CONTROL
-		if ( ( *Handler != 0 ) && ( !EvenIfLocked ) )
+#ifdef MTX_DBG
+		if ( Handler == NULL )
 			ERRu();
-		*Handler = MTX_RELEASED_MUTEX;
-#	endif
-		free( Handler );
-#endif
 
+		if ( Handler->IsLocked() && !EvenIfLocked )
+			ERRu();
+#endif
+		delete Handler;
 	}
 
 	//c A mutex.

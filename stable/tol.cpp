@@ -55,20 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef CPE__MS
-#	include <stdlib.h>
-#	include "windows.h"
-#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
-#	include <unistd.h>
-#	include <sched.h>
-#	include <errno.h>
-#elif !defined( CPE__MAC )
-#	error "Unknown compilation enviroment"
-#endif
-
-#ifdef CPE__MT
-#include "mtk.h"
-#endif
 
 #include <fstream>
 
@@ -124,60 +110,6 @@ const char *tol::DateAndTime( buffer__ &Buffer )
 
    return Buffer;
 }
-
-void tol::Suspend( unsigned long Delay )
-{
-#ifdef CPE__MS
-	Sleep( Delay );
-#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
-	struct timespec T;
-
-	T.tv_sec = Delay / 1000;
-	T.tv_nsec = ( Delay % 1000 ) * 1000000;
-
-	while ( nanosleep( &T, &T ) )
-		if ( errno != EINTR )
-			ERRs();
-#elif defined( CPE__MAC )
-	ERRl();
-#else
-#	error "Unknown compilation enviroment"
-#endif
-}
-
-#ifdef CPE__MS
-#	if _MSC_VER != 1400
-typedef unsigned long	intptr_t;
-#	endif
-#endif
-
-
-#ifdef CPE__MT
-namespace {
-	void WaitAndExit( void *UP )
-	{
-		tol::Wait( (unsigned long)(intptr_t)UP );
-		exit( EXIT_SUCCESS );
-	}
-}
-
-void tol::Defer( void )
-{
-#ifdef CPE__MS
-	Sleep( 0 );	// PAs 0, sinon l'usage CPU monte à 100%
-#elif defined( CPE__UNIX )
-	if( sched_yield() != 0 )
-		ERRs();
-#else
-	#error "Unknown compilation enviroment"
-#endif
-}
-
-void tol::ForceExit( unsigned long Seconds )
-{
-	mtk::Launch( WaitAndExit, (void *)(intptr_t)Seconds );
-}
-#endif
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

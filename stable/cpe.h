@@ -78,6 +78,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__CONSOLE
 #undef CPE__GUI
 #undef CPE__LIBRARY
+#undef CPE__UNIX_LIKE
 
 #ifdef _MSC_VER
 #	pragma warning( disable: 4786 )
@@ -197,10 +198,6 @@ extern class ttr_tutor &CPETutor;
 #	define CPE__PROCESSES
 #endif 
 
-#ifdef CPE_THREADS_REMAINS
-#	define CPE__THREADS_REMAINS
-#endif
-
 #ifdef CPE_LIBRARY
 #	define CPE__LIBRARY
 #elif defined( CPE__MS )
@@ -213,6 +210,10 @@ extern class ttr_tutor &CPETutor;
 #	define CPE__GUI
 #elif !defined( _USRDLL ) && !defined( CPE__LIBRARY )
 #	define CPE__CONSOLE
+#endif
+
+#if defined ( CPE__UNIX ) || defined ( CPE__BEOS )
+#	define CPE__UNIX_LIKE
 #endif
 
 

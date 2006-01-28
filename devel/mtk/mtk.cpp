@@ -59,7 +59,7 @@ public:
 
 using namespace mtk;
 
-#ifdef MTK__UNIX_LIKE
+#ifdef CPE__UNIX_LIKE
 
 namespace {
 	struct thread_struct__
@@ -155,7 +155,7 @@ ERRProlog
 ERRBegin
 	TS.R = Routine;
 	TS.UP = UP;
-	TS.MH = mtx::Create();
+	TS.MH = mtx::Create( mtx::mFree );
 	
 	mtx::Lock( TS.MH );	// Unlocked by 'ThreadFunction'.
 
@@ -192,7 +192,7 @@ ERRBegin
 #ifdef CPE__MS
 	if ( _beginthread( Routine, 4096, UP ) == (unsigned long)-1 )
 		ERRs();
-#elif defined( MTK__UNIX_LIKE )
+#elif defined( CPE__UNIX_LIKE )
 	LaunchThread_( Routine, UP );
 #else
 #error "Unknow compilation enviroment"
@@ -229,10 +229,10 @@ namespace {
 		Common.UP = NULL;
 		Common.Amount = 0;
 		Common.Routine = NULL;
-		Common.Data = mtx::Create();
-		Common.Thread = mtx::Create();
-		Common.Store = mtx::Create();
-		Common.Exclusion = mtx::Create();
+		Common.Data = mtx::Create( mtx::mFree );
+		Common.Thread = mtx::Create( mtx::mFree );
+		Common.Store = mtx::Create( mtx::mFree );
+		Common.Exclusion = mtx::Create( mtx::mFree );
 
 		mtx::Lock( Common.Thread );
 
@@ -356,6 +356,22 @@ void mtk::LaunchAndKeep(
 	mtx::Unlock( Common.Exclusion );
 }
 
+#ifdef CPE__MS
+#	if _MSC_VER != 1400
+typedef unsigned long	intptr_t;
+#	endif
+#endif
+
+static void WaitAndExit_( void *UP )
+{
+	tht::Wait( (unsigned long)(intptr_t)UP );
+	exit( EXIT_SUCCESS );
+}
+
+void mtk::ForceExit( unsigned long Seconds )
+{
+	Launch( WaitAndExit_, (void *)(intptr_t)Seconds );
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,

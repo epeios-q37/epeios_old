@@ -503,14 +503,6 @@ namespace tol {
 	}
 #endif
 
-	//f Suspend te current foe 'Delay' milliseconds.
-	void Suspend( unsigned long Delay );
-
-	//f Wait 'Seconds' seconds.
-	inline void Wait( unsigned long Seconds )
-	{
-		Suspend( Seconds * 1000 );
-	}
 
 
 	/*f Initialize the random generator using the date & time.
@@ -592,23 +584,6 @@ namespace tol {
 
 #define E_NAV( Object )	E_NAVt( Object, epeios::row__ )
 #define E_XNAV( Object )	E_XNAVt( Object, epeios::row__ )
-
-namespace tol {
-	/*f Force the program to exit after 'Seconds' second.
-	Usefull to force a server to exit to obtain the profiling file. */
-	void ForceExit( unsigned long Seconds );
-
-	//f Tell the remainder to give hand to the next thread.
-	void Defer( void );
-
-	//f Tell the remainder to give hand to the next thread and wait 'Delay' millisecond.
-	inline void Defer( unsigned long Delay )
-	{
-		Defer();
-
-		Suspend( Delay );
-	}
-}
 
 namespace mmm {
 	class multimemory_;

@@ -1,7 +1,7 @@
 /*
-	Header for the 'mtk' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	Header for the 'tht' library by Claude SIMON (csimon@epeios.org)
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef MTK__INC
-#define MTK__INC
+#ifndef THT__INC
+#define THT__INC
 
-#define MTK_NAME		"MTK"
+#define THT_NAME		"THT"
 
-#define	MTK_VERSION	"$Revision$"
+#define	THT_VERSION	"$Revision$"
 
-#define MTK_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define THT_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &MTKTutor;
+extern class ttr_tutor &THTTutor;
 
-#if defined( XXX_DBG ) && !defined( MTK_NODBG )
-#define MTK_DBG
+#if defined( XXX_DBG ) && !defined( THT_NODBG )
+#define THT_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,15 +55,12 @@ extern class ttr_tutor &MTKTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D MultiTasKing 
+//D THread Tools 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 #include "err.h"
-#include "cpe.h"
-#include "errno.h"
-#include "tht.h"
 
 #ifdef CPE__MS
 #	include <process.h>
@@ -74,71 +71,74 @@ extern class ttr_tutor &MTKTutor;
 #	elif defined( CPE__UNIX )
 #		include <pthread.h>
 #	else
-#		error "Unknow unix-like compilation enviroment"
+#		error "Unknow unix-like enviroment !"
 #	endif
 #	include <unistd.h>
 #	include <stdlib.h>
 #	include <signal.h>
 #else
+#	error "Unknow compilation enviroment !"
+#endif
+
+#define THT_UNDEFINED_THREAD_ID	0	// Totalement arbitraire, à priori, correspond au thread système, donc ne peut être renvoyé par la focntion 'GetTID()'.
+
+
+namespace tht {
+#ifdef CPE__MS
+	//t The type of a thread ID.
+	typedef DWORD	thread_id__;
+#elif defined( CPE__UNIX_LIKE )
+#	ifdef CPE__BEOS
+	typedef thread_id	thread_id__;
+#	else
+	typedef pthread_t	thread_id__;
+#	endif
+#else
 #	error "Unknow compilation enviroment"
 #endif
 
-#ifndef CPE__MT
-#	error "Multitasking required, but compilation options don't allow this."
-#endif
-
-typedef void (* mtk__routine)(void *);
-
-#ifdef MTK_KILL
-#	ifdef MTK_KEEP
-#		error "Both 'MTK_KILL' and 'MTK_KEEP' cannot be defined together."
-#	else
-#		define MTK__KILL
-#	endif
-#elif defined( MTK_KEEP )
-#	define MTK__KEEP
-#else
-#	define MTK__KILL
-#endif
-
-namespace mtk {
-	typedef void (* routine__)(void *);
-	
-	/*f Launch a new thread executing 'Routine', with 'UP' as user pointer.
-	Thread is killed when returning from 'Routine'. */
-	void LaunchAndKill(
-		routine__ Routine,
-		void *UP );
-		
-	/*f Launch a new thread executing 'Routine', with 'UP' as user pointer.
-	Thread is NOI killed when returning from 'Routine', and reused if available
-	at next call of this function. */
-	void LaunchAndKeep(
-		routine__ Routine,
-		void *UP );
-
-
-	//f Launch a new thread executing 'Routine', with 'UP' as user pointer.
-	inline void Launch(
-		routine__ Routine,
-		void *UP )
+	//f Return an unique ID for the current thread.
+	inline thread_id__ GetTID( void )
 	{
-#ifdef MTK__KILL
-		LaunchAndKill( Routine, UP );
-#elif defined( MTK__KEEP )
-		LaunchAndKeep( Routine, UP );
+#ifdef CPE__MS
+		return GetCurrentThreadId();
+#elif defined( CPE__UNIX_LIKE )
+#	ifdef CPE__BEOS 
+		thread_id ID = find_thread( NULL );
+		
+		if ( ID == B_NAME_NOT_FOUND )
+			ERRs();
+#	elif defined( CPE__UNIX )
+		thread_id__ ID = pthread_self();
+#	else
+#		error "Unknow unix-like enviroment !"
+#	endif
+		return ID;
 #else
-#	error "None of 'MTK_KEEP' or 'MTK_KILL' are defined."
+#	error "Unknow compilation enviroment"
 #endif
 	}
 
-	/*f Force the program to exit after 'Seconds' second.
-	Usefull to force a server to exit to obtain the profiling file. */
-	void ForceExit( unsigned long Seconds );
 
-	using tht::thread_id__;
-	using tht::GetTID;
+	//f Suspend te current foe 'Delay' milliseconds.
+	void Suspend( unsigned long Delay );
 
+	//f Wait 'Seconds' seconds.
+	inline void Wait( unsigned long Seconds )
+	{
+		Suspend( Seconds * 1000 );
+	}
+
+	//f Tell the remainder to give hand to the next thread.
+	void Defer( void );
+
+	//f Tell the remainder to give hand to the next thread and wait 'Delay' millisecond.
+	inline void Defer( unsigned long Delay )
+	{
+		Defer();
+
+		Suspend( Delay );
+	}
 }
 
 /*$END$*/

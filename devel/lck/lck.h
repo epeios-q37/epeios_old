@@ -116,10 +116,10 @@ namespace lck {
 		{
 			reset();
 
-			ReadCounterProtection = mtx::Create();
-			WritingRequest = mtx::Create();
-			WritingPermission = mtx::Create();
-			OverflowProtection = mtx::Create();
+			ReadCounterProtection = mtx::Create( mtx::mFree );
+			WritingRequest = mtx::Create( mtx::mFree );
+			WritingPermission = mtx::Create( mtx::mFree );
+			OverflowProtection = mtx::Create( mtx::mFree );
 		}
 		void WaitUntilReadingAllowed( void )
 		{
@@ -270,7 +270,7 @@ namespace lck {
 
 			Object_ = &Object;
 			Lock_.Init();
-			Mutex_ = mtx::Create();
+			Mutex_ = mtx::Create( mtx::mFree );
 		}
 		const object &GetShared( void )
 		{

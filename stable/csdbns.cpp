@@ -221,7 +221,7 @@ ERRBegin
 	Socket = listener___::GetConnection( ErrHandle );
 
 	Data.Functions = &Functions;
-	Data.Mutex = mtx::Create();
+	Data.Mutex = mtx::Create( mtx::mFree );
 
 	mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 

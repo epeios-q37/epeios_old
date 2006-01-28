@@ -63,19 +63,18 @@ extern class ttr_tutor &MTKTutor;
 #include "err.h"
 #include "cpe.h"
 #include "errno.h"
-
-#if defined( CPE__UNIX ) || defined( CPE__BEOS )
-#	define MTK__UNIX_LIKE
-#endif
+#include "tht.h"
 
 #ifdef CPE__MS
 #	include <process.h>
 #	include <windows.h>
-#elif defined( MTK__UNIX_LIKE )
+#elif defined( CPE__UNIX_LIKE )
 #	ifdef CPE__BEOS
 #		include <be/kernel/OS.h>
-#	else
+#	elif defined( CPE__UNIX )
 #		include <pthread.h>
+#	else
+#		error "Unknow unix-like compilation enviroment"
 #	endif
 #	include <unistd.h>
 #	include <stdlib.h>
@@ -85,7 +84,7 @@ extern class ttr_tutor &MTKTutor;
 #endif
 
 #ifndef CPE__MT
-#error "Multitasking required, but compilation options don't allow this."
+#	error "Multitasking required, but compilation options don't allow this."
 #endif
 
 typedef void (* mtk__routine)(void *);
@@ -133,39 +132,13 @@ namespace mtk {
 #endif
 	}
 
+	/*f Force the program to exit after 'Seconds' second.
+	Usefull to force a server to exit to obtain the profiling file. */
+	void ForceExit( unsigned long Seconds );
 
-#ifdef CPE__MS
-	//t The type of a thread ID.
-	typedef DWORD	thread_id__;
-#elif defined( MTK__UNIX_LIKE )
-#	ifdef CPE__BEOS
-	typedef thread_id	thread_id__;
-#	else
-	typedef pthread_t	thread_id__;
-#	endif
-#else
-#	error "Unknow compilation enviroment"
-#endif
+	using tht::thread_id__;
+	using tht::GetTID;
 
-	//f Return an unique ID for the current thread.
-	inline thread_id__ GetTID( void )
-	{
-#ifdef CPE__MS
-		return GetCurrentThreadId();
-#elif defined( MTK__UNIX_LIKE )
-#	ifdef CPE__BEOS 
-		thread_id ID = find_thread( NULL );
-		
-		if ( ID == B_NAME_NOT_FOUND )
-			ERRs();
-#	else
-		thread_id__ ID = pthread_self();
-#	endif
-		return ID;
-#else
-#error "Unknow compilation enviroment"
-#endif
-	}
 }
 
 /*$END$*/

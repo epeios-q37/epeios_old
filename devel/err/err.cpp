@@ -279,7 +279,7 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 #ifdef ERR__THREAD_SAFE
-		MutexHandler_ = mtx::Create();
+		MutexHandler_ = mtx::Create( mtx::mFree );
 #endif
 		ERR.Error = false;
 	}

@@ -1,8 +1,8 @@
 /*
-	'tol' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'tol' header file ('tol.h').
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	'tht' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'tht' header file ('tht.h').
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define TOL__COMPILATION
+#define THT__COMPILATION
 
-#include "tol.h"
+#include "tht.h"
 
-class toltutor
+class thttutor
 : public ttr_tutor
 {
 public:
-	toltutor( void )
-	: ttr_tutor( TOL_NAME )
+	thttutor( void )
+	: ttr_tutor( THT_NAME )
 	{
-#ifdef TOL_DBG
-		Version = TOL_VERSION "\b\bD $";
+#ifdef THT_DBG
+		Version = THT_VERSION "\b\bD $";
 #else
-		Version = TOL_VERSION;
+		Version = THT_VERSION;
 #endif
-		Owner = TOL_OWNER;
+		Owner = THT_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~toltutor( void ){}
+	virtual ~thttutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,74 +55,67 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace tht;
 
-#include <fstream>
+#ifdef CPE__MS
+#	include <stdlib.h>
+#	include "windows.h"
+#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
+#	include <unistd.h>
+#	include <sched.h>
+#	include <errno.h>
+#elif !defined( CPE__MAC )
+#	error "Unknown compilation enviroment"
+#endif
 
-bool tol::FileExists( const char *Nom )
+
+
+void tht::Suspend( unsigned long Delay )
 {
-	std::ifstream Stream( Nom, std::ios::binary );
+#ifdef CPE__MS
+	Sleep( Delay );
+#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
+	struct timespec T;
 
-#ifdef CPE__VC
-	return Stream != NULL;
+	T.tv_sec = Delay / 1000;
+	T.tv_nsec = ( Delay % 1000 ) * 1000000;
+
+	while ( nanosleep( &T, &T ) )
+		if ( errno != EINTR )
+			ERRs();
+#elif defined( CPE__MAC )
+	ERRl();
 #else
-	return Stream;
+#	error "Unknown compilation enviroment"
 #endif
 }
 
-const char *tol::Date( buffer__ &Buffer )
+
+void tht::Defer( void )
 {
-   struct tm *time_now;
-   time_t secs_now;
-
-   time(&secs_now);
-   time_now = localtime(&secs_now);
-
-   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y", time_now) )
-	ERRl();
-
-   return Buffer;
-}
-
-const char *tol::Time( buffer__ &Buffer )
-{
-   struct tm *time_now;
-   time_t secs_now;
-
-   time(&secs_now);
-   time_now = localtime(&secs_now);
-
-   if ( !strftime( Buffer, sizeof( Buffer ), "%H:%M:%S", time_now) )
-	ERRl();
-
-   return Buffer;
-}
-
-const char *tol::DateAndTime( buffer__ &Buffer )
-{
-   struct tm *time_now;
-   time_t secs_now;
-
-   time(&secs_now);
-   time_now = localtime(&secs_now);
-
-   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y %H:%M:%S", time_now) )
-	ERRl();
-
-   return Buffer;
+#ifdef CPE__MS
+	Sleep( 0 );	// PAs 0, sinon l'usage CPU monte à 100%
+#elif defined( CPE__UNIX )
+	if( sched_yield() != 0 )
+		ERRs();
+#else
+	#error "Unknown compilation enviroment"
+#endif
 }
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
-class tolpersonnalization
-: public toltutor
+
+class thtpersonnalization
+: public thttutor
 {
 public:
-	tolpersonnalization( void )
+	thtpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~tolpersonnalization( void )
+	~thtpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -138,6 +131,6 @@ public:
 
 // 'static' by GNU C++.
 
-static tolpersonnalization Tutor;
+static thtpersonnalization Tutor;
 
-ttr_tutor &TOLTutor = Tutor;
+ttr_tutor &THTTutor = Tutor;

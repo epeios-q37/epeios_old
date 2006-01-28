@@ -175,8 +175,8 @@ ERREpilog
 			reset();
 
 			UPs.Init();
-			S_.Mutex = mtx::Create();
-			S_.Log.Mutex = mtx::Create();
+			S_.Mutex = mtx::Create( mtx::mFree );
+			S_.Log.Mutex = mtx::Create( mtx::mFree );
 			S_.Log.Functions = &LogFunctions;
 		}
 		id__ New( void )

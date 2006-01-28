@@ -112,9 +112,9 @@ public:
 			ERRd();
 #endif
 #ifdef CPE__MT
-		cinm = mtx::Create();
-		coutm = mtx::Create();
-		cerrm = mtx::Create();
+		cinm = mtx::Create( mtx::mOwned );
+		coutm = mtx::Create( mtx::mOwned );
+		cerrm = mtx::Create( mtx::mOwned );
 #endif
 	unsafe_coutf.Init( coutd, FLW_NO_MUTEX );
 	unsafe_cerrf.Init( cerrd, FLW_NO_MUTEX );
