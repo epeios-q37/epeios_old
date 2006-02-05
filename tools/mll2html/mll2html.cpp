@@ -33,7 +33,7 @@
 
 #define NAME			"mll2html"
 #define VERSION			"1.1.10"
-#define COPYRIGHT_YEARS	"1999-2003"
+#define COPYRIGHT_YEARS	"1999-2003, 2006"
 #define DESCRIPTION		"Reformats, in HTML, a text file containing mailing lists descriptions."
 #define INFO			EPSMSC_GNU_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -890,7 +890,7 @@ static void Main(
 {
 ERRProlog
 	fil::file_oflow___ File;
-	oflow_ Flow;
+	txf::text_oflow__ Flow( File );
 	bso::bool__ Backup = false;
 	char *Dest = NULL;
 	char *Source = NULL;
@@ -906,7 +906,7 @@ ERRBegin
 
 	if ( Dest ) {
 
-		tol::CreateBackupFile( Dest, tol::hbfRename );
+		fil::CreateBackupFile( Dest, fil::hbfRename );
 		Backup = true;
 
 		if ( !File.Init( Dest, err::hSkip ) )
@@ -915,17 +915,15 @@ ERRBegin
 			ERRu();
 		}
 
-		Flow.Init( File );
-
 		Go( Source, Template, GeneralsFileName, ListsFileName, Flow );
 	}else
 		Go( Source, Template, GeneralsFileName, ListsFileName, cio::cout );
 ERRErr
-	Flow.reset();
+	Flow.Synchronize();
 	File.reset();
 
 	if ( Backup )
-		tol::RecoverBackupFile( Dest );
+		fil::RecoverBackupFile( Dest );
 
 	if ( ERRMajor == err::itn )
 		ERRRst();

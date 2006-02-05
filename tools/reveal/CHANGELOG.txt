@@ -1,5 +1,8 @@
 $Id$
 
+04/02/06 :
+	- Adaptations aux changements dans les différentes bibliothèques.
+
 --------
 20050109
 --------

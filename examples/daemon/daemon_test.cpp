@@ -33,17 +33,13 @@
 #include "err.h"
 #include "cio.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
-
 #define PORT	2000
 
 void Main( int argc, char *argv[] )
 {
 ERRProlog
 	deamon::user_function__ UserFunction;
-	srv::server___ Server;
+	csdbns::server___ Server;
 ERRBegin
 	Server.Init( PORT, 5 );
 
@@ -59,6 +55,8 @@ int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
+	cio::aware_cout___ cout;
+	cio::aware_cerr___ cerr;
 ERRFBegin
 	cout << "Test of library " << DAEMONTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 

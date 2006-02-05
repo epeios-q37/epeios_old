@@ -1,8 +1,10 @@
-'reveal' README by claude SIMON (csimon@epeios.org).
+'reveal' README by Claude SIMON (epeios@zeusw.org).
 ------------------------------------------------------
 
 $Id$
 
-The reveal software replaces tags in a file by text or file content.
+'reveal' remplace les balises d'un fichier par du texte ou le contenu d'un fichier.
 
-To learn more about this software, go to 'http://epeios.org/reveal/'.
+Voir 'http://zeusw.org/epeios/'.
+
+

@@ -1,5 +1,22 @@
 $Id$
 
+28/01/06 :
+	- General :
+		- Création de la bibliothèque 'THT' (void 'MTK' et 'TOL' ).
+		- Adaptation aux changements de la bibliothèque 'MTX'.
+	- MTX :
+		- Suppression de l'utilisation des mutex 'pthread' pour Linux.
+		- Mise en place d'un mode de fonctionnement.
+	- CPE :
+		- Suppression 'CPE__THREADS_REMAIN'.
+		- Ajout 'CPE__UNIX_LIKE'
+	- MTK :
+		- Déplacement de la fonction 'GetTID()' vers la bibliothèques 'THT'.
+		- Voir 'TOL'.
+	- TOL :
+		- Déplacement des fonctions 'Defer(...)' et 'Wait' vers la bibliothèque 'THT'.
+		- Déplacement de la fonction 'ForceExit(...)' vers bibloithèque 'MTK'.
+
 27/01/06
 	- NSXPDM :
 		- Rajout d'une fonction 'GetElementById()...' avec variation sur le type des paramètres.

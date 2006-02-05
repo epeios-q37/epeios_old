@@ -36,7 +36,7 @@
 
 #define NAME			"reveal"
 #define VERSION			"1.0.5"
-#define COPYRIGHT_YEARS	"1999-2004"
+#define COPYRIGHT_YEARS	"1999-2004, 2006"
 #define DESCRIPTION		"Replaces tags in a file by text or file content."
 #define INFO EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -781,7 +781,7 @@ static inline void Main(
 ERRProlog
 	fil::file_iflow___ IFile;
 	fil::file_oflow___ OFile;
-	txf::text_oflow__ OText;
+	txf::text_oflow__ OText( OFile );
 	fil::file_iflow___ DFile;
 	xtf::extended_text_iflow__ DText;
 	txf::text_oflow__ *OFlow = NULL;
@@ -835,7 +835,7 @@ ERRBegin
 
 	if ( Dest ) {
 
-		tol::CreateBackupFile( Dest, tol::hbfRename );
+		fil::CreateBackupFile( Dest, fil::hbfRename );
 		Backup = true;
 
 		if ( OFile.Init( Dest, err::hSkip ) != fil::sSuccess )
@@ -844,7 +844,7 @@ ERRBegin
 			ERRi();
 		}
 
-		OText.Init( OFile );
+//		OText.Init( OFile );
 
 		OFlow = &OText;
 	}
@@ -854,7 +854,7 @@ ERRBegin
 	Go( Table, Delimiter, Action, Text, File, *IFlow, *OFlow );
 
 ERRErr
-	OText.reset();
+	OText.Synchronize();
 	DText.reset();
 
 	IFile.reset();
@@ -862,7 +862,7 @@ ERRErr
 	DFile.reset();
 
 	if ( Backup )
-		tol::RecoverBackupFile( Dest );
+		fil::RecoverBackupFile( Dest );
 ERREnd
 	if ( Desc != NULL )
 		free( Desc );

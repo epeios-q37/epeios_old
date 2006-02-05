@@ -65,7 +65,7 @@ extern class ttr_tutor &DAEMONTutor;
 
 #include "mtx.h"
 #include "lck.h"
-#include "srv.h"
+#include "csdbns.h"
 
 namespace deamon {	// 'daemon' (inversion du 'e' et du 'a') pose problème avec un ficheir d'entête de gcc.
 	struct shared__	// Les ressources partagées.
@@ -85,13 +85,13 @@ namespace deamon {	// 'daemon' (inversion du 'e' et du 'a') pose problème avec u
 			Odd;		// Le verrou pour les valeurs impaires;
 		void Init( void )
 		{
-			Even = mtx::Create();
-			Odd = mtx::Create();
+			Even = mtx::Create( mtx::mFree );
+			Odd = mtx::Create( mtx::mFree );
 		}
 	};
 
 	class user_function__
-	: public srv::flow_functions__
+	: public csdscm::user_functions__
 	{
 	private:
 		shared__ Shared;
@@ -100,7 +100,11 @@ namespace deamon {	// 'daemon' (inversion du 'e' et du 'a') pose problème avec u
 		bso::bool__ _Start( txf::text_oflow__ &Flow );
 		void _Other( txf::text_oflow__ &Flow );
 	protected:
-		virtual void SRVProcess( flw::ioflow__ &Flow );
+		virtual void *CSDPreProcess( flw::ioflow__ & ){ return NULL; }
+		virtual csdscm::action__ CSDProcess(
+			flw::ioflow__ &Flow,
+			void *UP );
+		virtual void CSDPostProcess( void * ){}
 	public:
 		void Init( void )
 		{

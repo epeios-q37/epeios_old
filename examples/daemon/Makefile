@@ -30,7 +30,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT
 lopt = 
-libs = daemon_test ttr tol flw cio err mtk srv sck
+libs = daemon_test ttr tol flw cio err mtk csdbns sck tht uym
  
 ifndef EPEIOS_SRC
 	src=

@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "txf.h"
+
 using namespace deamon;
 
 bso::bool__ deamon::user_function__::_Start( txf::text_oflow__ &Flow )
@@ -98,13 +100,15 @@ ERREnd
 ERREpilog
 }
 
-void deamon::user_function__::SRVProcess( flw::ioflow__ &Flow )
+csdscm::action__ deamon::user_function__::CSDProcess(
+	flw::ioflow__ &Flow,
+	void *UP )
 {
 ERRProlog
-	txf::text_oflow__ TFlow;
+	txf::text_oflow__ TFlow( Flow );
 	bso::bool__ Odd = false;
 ERRBegin
-	TFlow.Init( Flow );
+//	TFlow.Init( Flow );
 
 	Odd = _Start( TFlow );
 
@@ -126,11 +130,10 @@ ERRBegin
 		Odd = !Odd;
 
 	}
-
-
 ERRErr
 ERREnd
 ERREpilog
+	return csdscm::aStop;
 }
 
 /* Although in theory this class is inaccessible to the different modules,
