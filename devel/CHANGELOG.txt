@@ -1,5 +1,9 @@
 $Id$
 
+17/02/06
+	- MTX :
+		- Renommage '...RELEASED...' en '...DELETED...'.
+
 28/01/06 :
 	- General :
 		- Création de la bibliothèque 'THT' (void 'MTK' et 'TOL' ).

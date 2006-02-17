@@ -103,7 +103,7 @@ namespace mtx {
 	}
 
 #ifdef MTX__CONTROL
-#	define MTX_RELEASED_MUTEX_VALUE	BSO_UBYTE_MAX
+#	define MTX_DELETED_MUTEX_VALUE	BSO_UBYTE_MAX
 #endif
 
 	//t A mutex handler.
@@ -114,11 +114,11 @@ namespace mtx {
 #ifdef MTX__CONTROL
 		void Release( void )
 		{
-			Counter = MTX_RELEASED_MUTEX_VALUE;
+			Counter = MTX_DELETED_MUTEX_VALUE;
 		}
 		bso::bool__ IsReleased( void ) const
 		{
-			return Counter == MTX_RELEASED_MUTEX_VALUE;
+			return Counter == MTX_DELETED_MUTEX_VALUE;
 		}
 #endif
 		bso::bool__ IsLocked( void ) const
@@ -181,6 +181,10 @@ namespace mtx {
 #endif
 			Counter--;
 			Owner = THT_UNDEFINED_THREAD_ID;
+		}
+		bso::bool__ IsOwner( void ) const
+		{
+			return Owner == tht::GetTID();
 		}
 		mutex__( mode__ Mode )
 		{
@@ -272,6 +276,11 @@ namespace mtx {
 		Handler->Unlock();
 	}
 
+	inline bso::bool__ IsOwner( mutex_handler__ Handler )
+	{
+		return Handler->IsOwner();
+	}
+
 	//f Delete the mutex of handler 'Handler'.
 	inline void Delete(
 		mutex_handler__ Handler,
@@ -343,6 +352,10 @@ namespace mtx {
 		bso::bool__ IsLocked( void )
 		{
 			return mtx::IsLocked( Handler_ );
+		}
+		bso::bool__ IsOwner( void ) const
+		{
+			return mtx::IsOwner( Handler_ );
 		}
 	};
 }
