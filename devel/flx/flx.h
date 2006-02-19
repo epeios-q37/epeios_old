@@ -83,21 +83,16 @@ extern class ttr_tutor &FLXTutor;
 #endif
 
 namespace flx {
-	using flw::datum__;
-
-	using flw::iflow__;
 
 	//c Buffer as a standard input flow.
-	class buffer_iflow__
-	: public iflow__
+	class buffer_iflow_functions___
+	: public flw::iflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
 		const flw::datum__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
 		bso::bsize__ Taille_;
-		// The cache.
-		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
 		//v Is called if there is asked for more data as availble.
 		virtual void FLXUnavailable( void )
@@ -135,14 +130,53 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
+			iflow_functions___::reset( P );
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
-		buffer_iflow__( void )
+		buffer_iflow_functions___( void )
 		{
 			reset( false );
 		}
-		~buffer_iflow__( void )
+		~buffer_iflow_functions___( void )
+		{
+			reset();
+		}
+		/*f Initialization with the buffer 'Buffer' of size 'Size'..'Size' is not
+		needed if you are sure that you don't exceed the buffer size. */
+		void Init(
+			const flw::datum__ *Buffer,
+			bso::bsize__ Size = BSO_BSIZE_MAX )
+		{
+			reset();
+
+			iflow_functions___::Init();
+
+			Tampon_ = Buffer;
+			Taille_ = Size;
+		}
+	};
+
+	//c Buffer as a standard input flow.
+	class buffer_iflow___
+		: public flw::iflow__
+	{
+	private:
+		buffer_iflow_functions___ _Functions;
+		// The cache.
+		flw::datum__ _Cache[FLX_BUFFER_BUFFER_SIZE];
+	public:
+		void reset( bool P = true )
+		{
+			_Functions.reset( P );
+			iflow__::reset( P );
+		}
+		buffer_iflow___( flw::size__ AmountMax )
+		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax ) 
+		{
+			reset( false );
+		}
+		~buffer_iflow___( void )
 		{
 			reset( true );
 		}
@@ -150,29 +184,21 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const flw::datum__ *Buffer,
-			bso::bsize__ Size = BSO_BSIZE_MAX,
-			flw::mutex__ Mutex = FLW_NO_MUTEX			)
+			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ), Size, Mutex );
-
-			Tampon_ = Buffer;
-			Taille_ = Size;
+			_Functions.Init( Buffer, Size );
 		}
 	};
 
-	using flw::oflow__;
-
 	//c Buffer as a standard ouput flow.driver
-	class buffer_oflow__
-	: public oflow__
+	class buffer_oflow_functions___
+		: public flw::oflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
 		flw::datum__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
 		bso::bsize__ Taille_;
-		// The cache.
-		flw::datum__ Cache_[FLX_BUFFER_BUFFER_SIZE];
 	protected:
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
@@ -193,38 +219,69 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			if ( P )
-				oflow__::Synchronize();
+			oflow_functions___::reset( P );
 
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
-		buffer_oflow__(  )
+		buffer_oflow_functions___( void )
 		{
 			reset( false );
 		}
-		~buffer_oflow__( void )
+		~buffer_oflow_functions___( void )
 		{
 			reset( true );
 		}
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			flw::datum__ *Buffer,
-			bso::bsize__ Size,
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
+			bso::bsize__ Size )
 		{
 			reset();
 
-			oflow__::Init( Cache_, sizeof( Cache_ ), Size, Mutex );
+			oflow_functions___::Init();
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
 		}
 	};
 
+	//c Buffer as a standard ouput flow.driver
+	class buffer_oflow___
+	: public flw::oflow__
+	{
+	private:
+		buffer_oflow_functions___ _Functions;
+		// The cache.
+		flw::datum__ _Cache[FLX_BUFFER_BUFFER_SIZE];
+	public:
+		void reset( bool P = true )
+		{
+			_Functions.reset( P );
+		}
+		buffer_oflow___( flw::size__ AmountMax )
+		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{
+			reset( false );
+		}
+		~buffer_oflow___( void )
+		{
+			reset( true );
+		}
+		//f Initialization with 'Buffer' of size 'Size'.
+		void Init(
+			flw::datum__ *Buffer,
+			bso::bsize__ Size )
+		{
+			reset();
+
+			_Functions.Init( Buffer, Size );
+		}
+	};
+
 	//c A bunch as input flow.driver.
-	template < typename bunch_, typename so__> class bunch_iflow__
-	: public flw::iflow__
+	template < typename bunch_, typename so__> class bunch_iflow_functions___
+	: public flw::iflow_functions___
 	{ 
 	protected:
 		virtual flw::bsize__ FLWRead(
@@ -251,10 +308,46 @@ namespace flx {
 	private:
 		const bunch_ *Bunch_;
 		epeios::row_t__ Position_;
-		// The cache.
-		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_iflow__( void )
+		bunch_iflow_functions___( void )
+		{
+			reset( false );
+		}
+		~bunch_iflow_functions___( void )
+		{
+			reset( true );
+		}
+		void reset( bool P = true )
+		{
+			iflow_functions___::reset( P );
+			Bunch_ = NULL;
+			Position_ = 0;
+		}
+		//f Initializing with the bunch buffer 'Set'.
+		void Init(
+			const bunch_ &Bunch,
+			epeios::row_t__ Position = 0 )
+		{
+			reset();
+
+			Bunch_ = &Bunch;
+			Position_ = Position;
+
+			iflow_functions___::Init();
+		}
+	};
+
+	//c A bunch as input flow.driver.
+	template < typename bunch_, typename so__> class bunch_iflow__
+	: public flw::iflow__
+	{ 
+	private:
+		bunch_iflow_functions___<bunch_, so__> _Functions;
+		// The cache.
+		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
+	public:
+		bunch_iflow__( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
 		}
@@ -264,27 +357,24 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			Bunch_ = NULL;
-			Position_ = 0;
+			_Functions.reset( P );
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
-			epeios::row_t__ Position = 0,
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
+			epeios::row_t__ Position = 0 )
 		{
-			Bunch_ = &Bunch;
-			Position_ = Position;
+			reset();
 
-			iflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
+			_Functions.Init( Bunch, Position );
 		}
 	};
 
 	#define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
 
 	//c A bunch as output flow.driver.
-	template < typename bunch_, typename so__> class bunch_oflow___
-	: public flw::oflow__
+	template < typename bunch_, typename so__> class bunch_oflow_functions___
+	: public flw::oflow_functions___
 	{
 	protected:
 		virtual flw::bsize__ FLWWrite(
@@ -293,16 +383,47 @@ namespace flx {
 			flw::bsize__ Minimum,
 			bool Synchronization )
 		{
-			Bunch_->Append( (const so__ *)Buffer, Wanted );
+			_Bunch->Append( (const so__ *)Buffer, Wanted );
 
 			return Wanted;
 		}
 	private:
-		bunch_ *Bunch_;
-		// The cache.
-		flw::datum__ Cache_[FLX_SET_BUFFER_SIZE];
+		bunch_ *_Bunch;
 	public:
-		bunch_oflow___( void )
+		bunch_oflow_functions___( void )
+		{
+			reset( false );
+
+			_Bunch = NULL;
+		}
+		~bunch_oflow_functions___( void )
+		{
+			reset();
+		}
+		void reset( bool P = true )
+		{
+			oflow_functions___::reset( P );
+
+			_Bunch = NULL;
+		}
+		//f Initializing with the buffer bunch 'Bunch'.
+		void Init( bunch_ &Bunch )
+		{
+			reset();
+
+			_Bunch = &Bunch;
+		}
+	};
+	//c A bunch as output flow.driver.
+	template < typename bunch_, typename so__> class bunch_oflow___
+	: public flw::oflow__
+	{
+	private:
+		bunch_oflow_functions___<bunch_, so__> _Functions;
+		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
+	public:
+		bunch_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
 		}
@@ -312,31 +433,22 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			if ( P ) {
-				if ( Bunch_ != NULL ) 
-					oflow__::Synchronize();
-			}
-
-			Bunch_ = NULL;
+			_Functions.reset( P );
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
-		void Init(
-			bunch_ &Bunch,
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
+		void Init( bunch_ &Bunch )
 		{
 			reset();
 
-			Bunch_ = &Bunch;
-
-			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
+			_Functions.Init( Bunch );
 		}
 	};
 
 	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
 	//c A output flow which write to nothing.
-	class dump_oflow__
-	: public flw::oflow__
+	class dump_oflow_functions___
+	: public flw::oflow_functions___
 	{
 	protected:
 		virtual flw::bsize__ FLWWrite(
@@ -347,13 +459,29 @@ namespace flx {
 		{
 			return Wanted;
 		}
-	private:
-			// The cache.
-		flw::datum__ Cache_[FLX_DUMP_BUFFER_SIZE];
 	public:
-		void Init( flw::mutex__ Mutex = FLW_NO_MUTEX )
+		void Init( void )
 		{
-			oflow__::Init( Cache_, sizeof( Cache_ ), FLW_SIZE_MAX, Mutex );
+			oflow_functions___::Init();
+		}
+
+	};
+
+	//c A output flow which write to nothing.
+	class dump_oflow__
+	: public flw::oflow__
+	{
+	private:
+		dump_oflow_functions___ _Functions;
+			// The cache.
+		flw::datum__ _Cache[FLX_DUMP_BUFFER_SIZE];
+	public:
+		dump_oflow__( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{}
+		void Init( void )
+		{
+			_Functions.Init();
 		}
 
 	};

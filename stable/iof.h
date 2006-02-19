@@ -108,16 +108,11 @@ namespace iof {
 #else
 #	error "Undefined I/O enviroment !"
 #endif
-	using flw::oflow__;
-	using flw::iflow__;
-	using flw::ioflow__;
 
-	class io_oflow__
+	class io_oflow_functions___
 	: public output__,
-	  public oflow__
+	  public flw::oflow_functions___
 	{
-	private:
-		flw::datum__ Cache_[IOF__BUFFER_SIZE];
 	protected:
 		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
@@ -143,48 +138,53 @@ namespace iof {
 		void reset( bso::bool__ P = true )
 		{
 			output__::reset( P );
-			oflow__::reset( P );
+			oflow_functions___::reset( P );
 		}
-		io_oflow__( void )
+		io_oflow_functions___( void )
 		{
 			reset( false );
 		}
-		virtual ~io_oflow__( void )
+		virtual ~io_oflow_functions___( void )
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			amount__ AmountMax,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
+		void Init( descriptor__ D )
 		{
-
 			output__::Init( D );
-			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex );
-		}
-		void Init(
-			descriptor__ D,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
-		{
-
-			Init( D, FLW_SIZE_MAX, Mutex );
+			oflow_functions___::Init();
 		}
 	};
 
-	class io_iflow__
-	: public input__,
-	  public iflow__
+	class io_oflow___
+	: public flw::oflow__
 	{
 	private:
-		flw::datum__ Cache_[IOF__BUFFER_SIZE];
+		io_oflow_functions___ _Functions;
+		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			oflow__::reset( P );
+		}
+		io_oflow___( amount__ AmountMax )
+		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{
+			reset( false );
+		}
+		virtual ~io_oflow___( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			_Functions.Init( D );
+		}
+	};
+
+	class io_iflow_functions___
+	: public input__,
+	  public flw::iflow_functions___
+	{
 	private:
 		flw::bsize__ _HandleAmount(
 			flw::bsize__ Minimum,
@@ -195,11 +195,6 @@ namespace iof {
 			if ( AmountRead < Minimum )
 			{
 				if ( !OnEOF() )
-					ERRd();
-				else
-					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
-
-				if ( AmountRead < Minimum )
 					ERRd();
 			}
 
@@ -226,48 +221,55 @@ namespace iof {
 		void reset( bso::bool__ P = true )
 		{
 			input__::reset( P );
-			iflow__::reset( P );
+			iflow_functions___::reset( P );
 		}
-		io_iflow__( void )
+		io_iflow_functions___( void )
 		{
 			reset( false );
 		}
-		virtual ~io_iflow__( void )
+		virtual ~io_iflow_functions___( void )
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			amount__ AmountMax,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
+		void Init( descriptor__ D )
 		{
-
 			input__::Init( D );
-			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex );
-		}
-		void Init(
-			descriptor__ D,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
-		{
-
-			Init( D, FLW_SIZE_MAX, Mutex );
+			iflow_functions___::Init();
 		}
 	};
 
-	class io_flow__
-	: public io__,
-	  public ioflow__
+	class io_iflow___
+	: public flw::iflow__
 	{
 	private:
-		flw::datum__ Cache_[2 * IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		io_iflow_functions___ _Functions;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Functions.reset( P );
+			iflow__::reset( P );
+		}
+		io_iflow___( amount__ AmountMax )
+		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{
+			reset( false );
+		}
+		virtual ~io_iflow___( void )
+		{
+			reset();
+		}
+		void Init( descriptor__ D )
+		{
+			_Functions.Init( D );
+		}
+	};
+
+	class io_flow_functions___
+	: public output__,
+	  public input__,
+	  public flw::ioflow_functions___
+	{
 	private:
 		flw::bsize__ _HandleAmount(
 			flw::bsize__ Minimum,
@@ -279,32 +281,11 @@ namespace iof {
 			{
 				if ( !OnEOF() )
 					ERRd();
-				else
-					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
-
-				if ( AmountRead < Minimum )
-					ERRd();
 			}
 
 			return AmountRead;
 		}
 	protected:
-		flw::bsize__ FLWRead(
-			flw::bsize__ Minimum,
-			flw::datum__ *Tampon,
-			flw::bsize__ Desire )
-		{
-	#ifdef STF_DBG
-			if( Tampon == NULL )
-				ERRu();
-	#endif
-			flw::bsize__ NombreLus = 0;
-
-			while ( !OnEOF() && ( NombreLus < Minimum ) )
-				NombreLus += input__::Read( Desire - NombreLus, Tampon );
-
-			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
-		}
 		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
 			flw::bsize__ Minimum,
@@ -325,31 +306,59 @@ namespace iof {
 
 			return Written;
 		}
+		flw::bsize__ FLWRead(
+			flw::bsize__ Minimum,
+			flw::datum__ *Tampon,
+			flw::bsize__ Desire )
+		{
+	#ifdef STF_DBG
+			if( Tampon == NULL )
+				ERRu();
+	#endif
+			flw::bsize__ NombreLus = 0;
+
+			while ( !OnEOF() && ( NombreLus < Minimum ) )
+				NombreLus += input__::Read( Desire - NombreLus, Tampon );
+
+			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+		}
+	public:
+		void Init(  descriptor__ D  )
+		{
+			input__::Init( D );
+			output__::Init( D );
+		}
+
+	};
+
+	class io_flow___
+	: public io__,
+	  public flw::ioflow__
+	{
+	private:
+		io_flow_functions___ _Functions;
+		flw::datum__ _Cache[2 * IOF__BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			io__::reset( P );
 			ioflow__::reset( P );
 		}
-		io_flow__( void )
+		io_flow___( amount__ AmountMax )
+		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
 		}
-		virtual ~io_flow__( void )
+		virtual ~io_flow___( void )
 		{
 			reset();
 		}
 		void Init(
 			descriptor__ D,
-			amount__ AmountMax,
-#ifdef CPE__MT
-			flw::mutex__ Mutex )
-#else
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-#endif
+			amount__ AmountMax )
 		{
 			io__::Init( D );
-			ioflow__::Init( Cache_, sizeof( Cache_ ), AmountMax, Mutex, Mutex );
+			_Functions.Init( D );
 		}
 	};
 }

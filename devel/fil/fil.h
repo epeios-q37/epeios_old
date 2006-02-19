@@ -176,11 +176,11 @@ namespace fil
 		}
 	};
 
-	typedef iof::io_iflow__		_io_iflow__;
+	typedef iof::io_iflow___		_io_iflow___;
 
 	//c A file as standard input flow.
 	class file_iflow___
-	: public _io_iflow__
+	: public _io_iflow___
 	{
 	private:
 		iof::descriptor__ D_;
@@ -192,11 +192,12 @@ namespace fil
 					_Close( D_ );
 			}
 
-			_io_iflow__::reset( P );
+			_io_iflow___::reset( P );
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
-		file_iflow___( void )
+		file_iflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: _io_iflow___( AmountMax )
 		{
 			reset( false );
 		}
@@ -227,7 +228,7 @@ namespace fil
 				}
 			}
 
-			_io_iflow__::Init( D_, FLW_NO_MUTEX );
+			_io_iflow___::Init( D_ );
 
 			return sSuccess;
 		}
@@ -240,11 +241,11 @@ namespace fil
 		}
 	};
 
-	typedef iof::io_oflow__		_io_oflow__;
+	typedef iof::io_oflow___		_io_oflow___;
 
 	//c A file as standard input flow.
 	class file_oflow___
-	: public _io_oflow__
+	: public _io_oflow___
 	{
 	private:
 		iof::descriptor__ D_;
@@ -253,16 +254,17 @@ namespace fil
 		{
 			if ( P ) {
 				if ( D_ != IOF_UNDEFINED_DESCRIPTOR ) {
-					_io_oflow__::Synchronize();
+					_io_oflow___::Synchronize();
 					_Close( D_ );
 				}
 			}
 
-			_io_oflow__::reset( P );
+			_io_oflow___::reset( P );
 
 			D_ = IOF_UNDEFINED_DESCRIPTOR;
 		}
-		file_oflow___( void )
+		file_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: _io_oflow___( AmountMax )
 		{
 			reset( false );
 		}
@@ -293,7 +295,7 @@ namespace fil
 				}
 			}
 
-			io_oflow__::Init( D_, FLW_NO_MUTEX );
+			io_oflow___::Init( D_ );
 
 			return sSuccess;
 		}

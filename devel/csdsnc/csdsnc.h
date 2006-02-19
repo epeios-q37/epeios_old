@@ -65,9 +65,6 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "sck.h"
 #include "stk.h"
 #include "csdbnc.h"
-#ifdef CPE__MT
-#	include "mtx.h"
-#endif
 #include "bso.h"
 
 #define CSDSNC_UNDEFINED			BSO_USHORT_MAX
@@ -112,7 +109,7 @@ namespace csdsnc {
 #endif
 	}
 
-	typedef sck::socket_ioflow___ _flow___;
+	typedef sck::unsafe_socket_ioflow___ _flow___;
 
 	typedef stk::E_BSTACK_( _flow___ * )	flows_;
 
@@ -275,14 +272,13 @@ ERREpilog
 
 	E_AUTO( core );
 
-	class client_flow___
-	: public flw::ioflow__
+	class _functions___
+	: public flw::ioflow_functions___
 	{
 	private:
 		_flow___ *_Flow;
 		core_ *_Core;
 		bso::ushort__ _Id;
-		flw::datum__ _Cache[CSDSNC_DEFAULT_CACHE_SIZE];
 		bso::bool__ _Prepare( void )	// Return true if has already a flow, false otherwise.
 		{
 			bso::bool__ Created = _Flow == NULL;
@@ -354,9 +350,9 @@ ERREpilog
 
 			_Flow = NULL;
 		}
-	public:
-		void reset( bso::bool__ P = true )
-		{
+		public:
+			void reset( bso::bool__ P = true )
+			{
 			if ( P ) {
 				if ( _Flow != NULL )
 					delete _Flow;
@@ -365,19 +361,48 @@ ERREpilog
 			_Flow = NULL;
 			_Id = CSDSNC_UNDEFINED;
 			_Core = NULL;
+			}
+			_functions___( void )
+			{
+				reset( false );
+			}
+			~_functions___( void )
+			{
+				reset();
+			}
+			void Init( core_ &Core )
+			{
+				reset();
+
+				ioflow_functions___::Init();
+				_Core = &Core;
+			}
+	};
+
+	class client_flow___
+	: public flw::ioflow__
+	{
+	private:
+		_functions___ _Functions;
+		flw::datum__ _Cache[CSDSNC_DEFAULT_CACHE_SIZE];
+	public:
+		void reset( bso::bool__ P = true )
+		{
+//			flw::ioflow__::reset( P );
+			_Functions.reset( P );
 		}
-		client_flow___(  )
+		client_flow___( void )
+		: ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX )
 		{
 			reset( false );
 		}
-		void Init(
-			core_ &Core,
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
+		void Init( core_ &Core )
 		{
 			reset();
 
-			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
-			_Core = &Core;
+			_Functions.Init( Core );
+
+			// ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
 		}
 	};
 }

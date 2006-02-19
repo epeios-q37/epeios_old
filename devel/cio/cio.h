@@ -74,46 +74,26 @@ namespace cio {
 
 	extern iof::descriptor__ cind, coutd, cerrd;
 
-	typedef iof::io_oflow__	_oflow__;
-	typedef iof::io_iflow__	_iflow__;
-
 	//o Standard output as a pure flow (not a text flow).
-	extern _oflow__ unsafe_coutf;
+	extern iof::io_oflow_functions___ _coutf;
 
 	//o Error output as a pure flow (not a text flow).
-	extern _oflow__ unsafe_cerrf;
+	extern iof::io_oflow_functions___ _cerrf;
 
 	//o Standard input as a pure flow (not a text flow).
-	extern _iflow__ unsafe_cinf;
-
-	//o Standard output as a text flow.
-	extern txf::text_oflow__ unsafe_cout;
-
-	//o Error output as a text flow.
-	extern txf::text_oflow__ unsafe_cerr;
-
-	//o Standard input as a text flow.
-	extern txf::text_iflow__ unsafe_cin;
-
-#ifndef CPE__MT
-#	define coutf	unsafe_coutf
-#	define cerrf	unsafe_cerrf
-#	define cinf		unsafe_cinf
-
-#	define 	cout	unsafe_cout
-#	define	cerr	unsafe_cerr
-#	define	cin		unsafe_cin
-#else
-	extern flw::mutex__ cinm, coutm, cerrm;
+	extern iof::io_iflow_functions___ _cinf;
 
 	class aware_coutf___
-	: public _oflow__
+	: public flw::oflow__
 	{
+	private:
+		flw::datum__ _Cache[IOF__BUFFER_SIZE];
 	public:
-		aware_coutf___( void )
-		{
-			_oflow__::Init(  coutd, coutm );
-		}
+		aware_coutf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: oflow__( _coutf, _Cache, sizeof( _Cache ), AmountMax ) 
+		{}
+		void Init( void )
+		{}
 	};
 
 	class aware_cout___
@@ -129,13 +109,16 @@ namespace cio {
 
 
 	class aware_cerrf___
-	: public _oflow__
+	: public flw::oflow__
 	{
+	private:
+		flw::datum__ _Cache[IOF__BUFFER_SIZE];
 	public:
-		aware_cerrf___( void )
-		{
-			_oflow__::Init( cerrd, cerrm );
-		}
+		aware_cerrf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: oflow__( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) 
+		{}
+		void Init( void )
+		{}
 	};
 
 	class aware_cerr___
@@ -150,13 +133,16 @@ namespace cio {
 	};
 
 	class aware_cinf___
-	: public _iflow__
+	: public flw::iflow__
 	{
+	private:
+		flw::datum__ _Cache[IOF__BUFFER_SIZE];
 	public:
-		aware_cinf___( void )
-		{
-			_iflow__::Init( cind, cinm );
-		}
+		aware_cinf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: iflow__( _cinf, _Cache, sizeof( _Cache ), AmountMax ) 
+		{}
+		void Init( void )
+		{}
 	};
 
 	class aware_cin___
@@ -169,6 +155,15 @@ namespace cio {
 		: text_iflow__( _CinF )
 		{}
 	};
+
+#ifndef CPE__MT
+	extern aware_coutf___ coutf;
+	extern aware_cerrf___ cerrf;
+	extern aware_cinf___ cinf;
+
+	extern aware_cout___ cout;
+	extern aware_cerr___ cerr;
+	extern aware_cin___ cin;
 #endif
 }
 

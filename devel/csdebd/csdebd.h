@@ -73,11 +73,10 @@ namespace csdebd {
 	typedef bch::E_BUNCH_( flw::datum__ ) data_;
 	E_AUTO( data )
 
-	class _generic__
-	: public flw::ioflow__
+	class _generic_functions___
+	: public flw::ioflow_functions___
 	{
 	private:
-		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
 		data_ &_Read;
 		data_ &_Write;
 		epeios::row__ _Row;
@@ -105,7 +104,7 @@ namespace csdebd {
 			_Row = _Read.Next( _Row, Wanted );
 
 /* Concernant GESBIB, si l'on enlève le bloc ci-dessous, le logiciel est susceptible de se planter lorsque l'on manipule
-une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme si le 'Dismiss()' n'était pas lancer correctement. */
+une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme si le 'Dismiss()' n'était pas lancé correctement. */
 // Début bloc.
 			if ( _Row == NONE )
 				_Read.Init();
@@ -139,11 +138,11 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			ioflow__::reset( P );
+			ioflow_functions___::reset( P );
 
 			_Row = NONE;
 		}
-		_generic__(
+		_generic_functions___(
 			data_ &Read,
 			data_ &Write )
 		: _Read( Read ),
@@ -151,7 +150,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset( false );
 		}
-		~_generic__( void )
+		~_generic_functions___( void )
 		{
 			reset();
 		}
@@ -159,21 +158,34 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset();
 			
-			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX );
+			ioflow_functions___::Init();
 		}
 	};
 
 	class embed_client_server
-	: public _generic__
+	: public flw::ioflow__
 	{
 	private:
-		_generic__ _Backend;
+		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
+		_generic_functions___ _Functions;
 		csdscm::user_functions__ *_UserFunctions;
 		void *_UP;
 		data _Master, _Slave;
+		struct backend {
+			flw::datum__ Cache[CSDEBD_CACHE_SIZE];
+			_generic_functions___ Functions;
+			flw::ioflow__ Flow;
+			backend(
+				data_ &Read,
+				data_ &Write )
+			: Functions( Read, Write ),
+			  Flow( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX )
+			  
+			{}
+		} _Backend;
 		void _Create( void )
 		{
-			_UP = _UserFunctions->PreProcess( _Backend );
+			_UP = _UserFunctions->PreProcess( _Backend.Flow );
 		}
 		void _Delete( void )
 		{
@@ -183,11 +195,12 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	protected:
 		virtual void FLWSynchronizing( void )
 		{
-			_UserFunctions->Process( _Backend, _UP );
+			_UserFunctions->Process( _Backend.Flow, _UP );
 		}
 	public:
 		embed_client_server( void )
-		: _generic__( _Master, _Slave ),
+		: _Functions( _Master, _Slave ),
+		  ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX ),
 		  _Backend( _Slave ,_Master )
 		{
 			reset( false );
@@ -211,10 +224,10 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		void Init( csdscm::user_functions__ &UserFunctions)
 		{
 			reset();
-
-			_generic__::Init();
+/*
+			ioflow__::Init();
 			_Backend.Init();
-
+*/
 			_UserFunctions = &UserFunctions;
 
 			_Master.Init();

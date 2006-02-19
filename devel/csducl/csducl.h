@@ -110,14 +110,13 @@ namespace csducl {
 		{
 			return _Type;
 		}
-		friend class universal_client;
+		friend class universal_client_ioflow_functions___;
 	};
 
-	class universal_client
-	: public flw::ioflow__
+	class universal_client_ioflow_functions___
+	: public flw::ioflow_functions___
 	{
 	private:
-		flw::datum__ _Cache[CSDUCL_CACHE_SIZE];
 		csdsnc::client_flow___ _Shared;
 		csddlc::dynamic_library_client _Library;
 		universal_client_core *_Core;
@@ -166,7 +165,7 @@ namespace csducl {
 		{
 			_Core = &Core;
 
-			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, FLW_NO_MUTEX, FLW_NO_MUTEX );
+			ioflow_functions___::Init();
 
 			switch ( Core._Type ) {
 			case tShared:
@@ -179,6 +178,22 @@ namespace csducl {
 				ERRu();
 				break;
 			}
+		}
+	};
+
+	class universal_client
+	: public flw::ioflow__
+	{
+	private:
+		universal_client_ioflow_functions___ _Functions;
+		flw::datum__ _Cache[CSDUCL_CACHE_SIZE];
+	public:
+		universal_client( flw::size__ AmountMax = FLW_SIZE_MAX )
+		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{}
+		void Init( universal_client_core &Core )
+		{
+			_Functions.Init( Core );
 		}
 	};
 }

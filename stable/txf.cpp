@@ -69,7 +69,7 @@ class txfpersonnalization
 public:
 	txfpersonnalization( void )
 	{
-		nul.Init( FLW_NO_MUTEX );
+		nul.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

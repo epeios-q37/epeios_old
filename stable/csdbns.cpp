@@ -255,7 +255,7 @@ ERREpilog
 
 namespace {
 	struct flow_data__ {
-		sck::socket_ioflow___ Flow;
+		sck::unsafe_socket_ioflow___ Flow;
 		void *UP;
 	};
 

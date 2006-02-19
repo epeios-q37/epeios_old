@@ -60,16 +60,35 @@ extern class ttr_tutor &FLWTutor;
 
 /*$BEGIN$*/
 
-
 #include <string.h>
 #include "bso.h"
 #include "cpe.h"
 
+#ifndef FLW_CACHE_SIZE
+#	define FLW__CACHE_SIZE	1024
+#else
+#	define FLW__CACHE_SIZE	FLW_CACHE_SIZE
+#endif
+
+#ifndef FLW_ICACHE_SIZE
+#	define FLW__ICACHE_SIZE	FLW__CACHE_SIZE
+#else
+#	define FLW__ICACHE_SIZE	FLW_iCACHE_SIZE
+#endif
+
+#ifndef FLW_OCACHE_SIZE
+#	define FLW__OCACHE_SIZE	FLW__CACHE_SIZE
+#else
+#	define FLW__OCACHE_SIZE	FLW_OCACHE_SIZE
+#endif
+
 #ifdef CPE__MT
 #	include "mtx.h"
 #	define FLW_NO_MUTEX	MTX_INVALID_HANDLER
+	typedef mtx::mutex_handler__ mutex__;
 #else
-#	define FLW_NO_MUTEX	(flw::mutex__)NULL
+	typedef void *mutex__;
+#	define FLW_NO_MUTEX	NULL
 #endif
 
 #ifdef CPE__UNIX
@@ -95,43 +114,158 @@ namespace flw {
 	typedef unsigned char		datum__;
 
 #ifdef CPE__MT
-	typedef mtx::mutex_handler__ mutex__;
+	inline void Test_( mutex__ Mutex )
+	{
+		if ( Mutex != FLW_NO_MUTEX )
+			ERRc();
+	}
+#endif
+
+	inline mutex__ Create_( void )
+	{
+#ifdef CPE__MT
+		return mtx::Create( mtx::mOwned );
 #else
-	typedef void *	mutex__;
-#endif
-
-	inline void _Lock( mutex__ Mutex ) {
-#ifdef CPE__MT
-		if ( Mutex != FLW_NO_MUTEX )
-			mtx::Lock( Mutex );
-#endif
-	}
-
-	inline void _Unlock( mutex__ Mutex ) {
-#ifdef CPE__MT
-		if ( Mutex != FLW_NO_MUTEX )
-			mtx::Unlock( Mutex );
+		return FLW_NO_MUTEX;
 #endif
 	}
 
 
+	inline void Delete_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Delete( Mutex );
+#endif
+	}
 
-	//c Base input flow.
-	class iflow__ // Althought it has a destructor, it's a '--' version because it has to be inherited to be used.
+	inline void Lock_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Lock( Mutex );
+#endif
+	}
+
+	inline void Unlock_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Unlock( Mutex );
+#endif
+	}
+
+	inline bso::bool__ IsLocked_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		return mtx::IsLocked( Mutex );
+#endif
+		return false;
+	}
+
+	inline bso::bool__ IsOwner_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		return mtx::IsOwner( Mutex );
+#endif
+		return false;
+	}
+
+		//c Base input flow.
+	class iflow_functions___
 	{
 	private:
+		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		void _Lock( void )
+		{
+			Lock_( _Mutex );
+		}
+		void _Unlock( void )
+		{
+			if ( IsLocked_( _Mutex ) ) {
+#ifdef FLW_DBG
+				if ( !IsOwner_( _Mutex ) )
+					ERRu();
+#endif
+				Unlock_( _Mutex );
+			}
+		}
+	protected:
+		/* Place un minimum de 'Miimum' octets et jusqu'à 'Wanted' octets dans 'Buffer'. Retourne le nombre d'octets
+		effectivement place dans 'Buffer'. Cette value peut être infèrieure à 'Minimum' uniquement si toutes les données 
+		ont été lues du périphérique sous-jacent. */
+		virtual bsize__ FLWRead(
+			bsize__ Minimum,
+			datum__ *Buffer,
+			bsize__ Wanted ) = 0;
+		virtual void FLWDismiss( void )
+		{}
+	public:
+		void reset( bso::bool__ P = true ) 
+		{
+			if ( P ) {
+				Dismiss();
+
+				if ( _Mutex != FLW_NO_MUTEX )
+					Delete_( _Mutex );
+			}
+
+			_Mutex = FLW_NO_MUTEX;
+		}
+		iflow_functions___( void )
+		{
+			reset( false );
+		}
+		virtual ~iflow_functions___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			reset();
+
+			_Mutex = Create_();
+		}
+		void Dismiss( void )
+		{
+			FLWDismiss();
+
+			_Unlock();
+		}
+		bsize__ Read(
+			bsize__ Minimum,
+			datum__ *Buffer,
+			bsize__ Wanted )
+		{
+#ifdef FLW_DBG
+			if ( Minimum < 1 )
+				ERRu();
+#endif
+			_Lock();
+
+			return FLWRead( Minimum, Buffer, Wanted );
+		}
+	};
+
+	//c Base input flow.
+	class iflow__ // Bien qu'il y ai un destructeur, cette class est de la forme '__' car elle ne peut être instancié seule.
+	{
+	private:
+		iflow_functions___ &_Functions;
 		// The cache.
-		datum__ *Cache_;
+		datum__ *_Cache;
 		// Size of the cache.
-		bsize__ Size_;
+		bsize__ _Size;
 		// Amount of data available in the cache.
-		bsize__ Available_;
+		bsize__ _Available;
 		// Position of the available data.
-		bsize__ Position_;
+		bsize__ _Position;
 		// Amount of data red since the last reset.
-		size__ Red_;
+		size__ _Red;
 		// Max amount of data alllowed between 2 reset.
-		size__ AmountMax_;
+		size__ _AmountMax;
 		// Data for the end of flow (EOFD).
 		struct {
 			// The data.
@@ -146,28 +280,6 @@ namespace flw {
 				// At true if we have to generate an error if not all awaited data are red. Only significant if 'HandleAmount' at true.
 				HandleToFew:	1;
 		} EOFD_;
-		struct {
-			mutex__ Mutex;	// Mutex pour protèger la ressource.
-			bso::bool__ Owner;	// Si à 'true', alors on est l'actuel posseseur du 'flow'.
-		} _ThreadHandling;	// Gestion du multitâche.
-		void _TestAndLock( void )
-		{
-			if ( !_ThreadHandling.Owner ) {
-				_Lock( _ThreadHandling.Mutex );
-				_ThreadHandling.Owner = true;
-			}
-		}
-		void _Unlock( void )
-		{
-#ifdef FLW_DBG
-			if ( !_ThreadHandling.Owner )
-				ERRu();
-#endif
-			if ( _ThreadHandling.Mutex != FLW_NO_MUTEX ) {
-				_ThreadHandling.Owner = false;
-				flw::_Unlock( _ThreadHandling.Mutex );
-			}
-		}
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
 		bsize__ _DirectRead(
@@ -175,29 +287,40 @@ namespace flw {
 			datum__ *Buffer,
 			bsize__ Wanted )
 		{
+#ifdef FLW_DBG
+			if ( Minimum < 1 )
+				ERRu();
+#endif
 			bsize__ Amount = 0;
 
 			if ( EOFD_.HandlingEOFD ) {
 				Amount = HandleEOFD( Buffer, Wanted );
-
-				if ( ( Amount < Minimum ) || !Amount )
-					ERRf();
 			} else if ( EOFD_.HandleAmount ) {
 
-				if ( (size__)Wanted > ( AmountMax_ - Red_ ) )
-					Wanted = (bsize__)( AmountMax_ - Red_ );
+				bsize__ ToRead = Wanted;
 
-				Amount = _Read( Minimum, Buffer, Wanted );
+				if ( (size__)ToRead > ( _AmountMax - _Red ) )
+					ToRead = (bsize__)( _AmountMax - _Red );
+
+				// 'ToRead' ne peut être < 1, car on ne serait pas ici sinon.
+
+				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead );
+
+				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
+				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
+				est dans le cas où retourne les données 'EOFD', car le nombre d'octets lus correspond
+				à celui demandé ('_AmountMax' atteind). */
 
 				if ( Amount < Minimum )
-					ERRf();	/* Because, if there is not enough data in the flow,
-							'FLWRead' already calls the 'HandleEOFD' function. */
-
-				if ( Red_ == AmountMax_ )
+					Amount += HandleEOFD( Buffer, Wanted - Amount );
+				else  if ( _Red == _AmountMax )
 					EOFD_.HandlingEOFD = true;
 
 			} else 
 				Amount = _Read( Minimum, Buffer, Wanted );
+
+			if ( Amount < Minimum  )
+				ERRf();
 
 			return Amount;
 		}
@@ -205,10 +328,10 @@ namespace flw {
 		// Test if there is a cache available.
 		void _Test( void )
 		{
-			if ( ( Cache_ == NULL ) )
+			if ( ( _Cache == NULL ) )
 				ERRu();
 				
-			if ( Size_ == 0 )
+			if ( _Size == 0 )
 				ERRu();
 		}				
 #endif		
@@ -218,11 +341,11 @@ namespace flw {
 #ifdef FLW_DBG
 			_Test();
 
-			if ( Available_ != 0 )				
+			if ( _Available != 0 )				
 				ERRc();
 #endif
-			Available_ = _DirectRead( Minimum, Cache_, Size_ );
-			Position_ = 0;
+			_Available = _DirectRead( Minimum, _Cache, _Size );
+			_Position = 0;
 		}
 		/* Read from cache up to 'Amount' bytes and place them to 'Buffer'.
 		Return amount of data red. */
@@ -233,14 +356,14 @@ namespace flw {
 #ifdef FLW_DBG
 			_Test();
 #endif
-			if ( Available_ < Amount )
-				Amount = Available_;
+			if ( _Available < Amount )
+				Amount = _Available;
 				
 			if ( Amount != 0 ) {
-				memcpy( Buffer, Cache_ + Position_, (size_t)Amount );
+				memcpy( Buffer, _Cache + _Position, (size_t)Amount );
 				
-				Position_ += Amount;
-				Available_ -= Amount;
+				_Position += Amount;
+				_Available -= Amount;
 			}
 			
 			return Amount;
@@ -256,10 +379,10 @@ namespace flw {
 #ifdef FLW_DBG
 			_Test();
 
-			if ( Available_ != 0 )				
+			if ( _Available != 0 )				
 				ERRc();
 #endif
-			if ( Size_ > Wanted ) {
+			if ( _Size > Wanted ) {
 				_FillCache( Minimum );
 				return _ReadFromCache( Wanted, Buffer );
 			} else
@@ -284,10 +407,7 @@ namespace flw {
 			bsize__ Amount,
 			datum__ *Buffer )
 		{
-			bsize__ Available = _ReadFromCache( Amount, Buffer );
-
-			if ( Amount > Available )
-				Available += _ReadFromCacheOrDirectly( Amount - Available, Buffer + Available, Amount - Available );
+			_ReadUpTo( Amount, Buffer, Amount );
 		}
 		// Generic read.
 		bsize__ _Read(
@@ -296,28 +416,8 @@ namespace flw {
 			bsize__ Wanted );
 		void _Dismiss( void )
 		{
-#ifdef FLW_DBG
-			if ( Available_ != 0 )
-				ERRf();
-#endif
-			if ( _ThreadHandling.Owner ) {
-				Red_ = 0;
-
-				FLWDismiss();
-
-				_Unlock();
-			}
+			_Functions.Dismiss();
 		}
-	protected:
-		/*v Called to place up to 'Wanted' bytes in 'Buffer', and not less than
-		'Minimum'. Returns how many bytes red. If 'Minimum' == 0, then the function
-		must return	as fast as possible if there is no data to read. */
-		virtual bsize__ FLWRead(
-			bsize__ Minimum,
-			datum__ *Buffer,
-			bsize__ Wanted ) = 0;
-		virtual void FLWDismiss( void )
-		{}
 		/*f Handle EOFD. To call when no more data available in the medium.
 		Return amount of data written. If 0 is returned, then there is no
 		more end of flow data available, and an error should be launched. */
@@ -327,7 +427,7 @@ namespace flw {
 		{
 			EOFD_.HandlingEOFD = true;
 
-			if ( EOFD_.HandleToFew && EOFD_.HandleAmount && ( Red_ < AmountMax_ ) )
+			if ( EOFD_.HandleToFew && EOFD_.HandleAmount && ( _Red < _AmountMax ) )
 				ERRf();
 
 			if ( Size > EOFD_.Size )
@@ -345,51 +445,33 @@ namespace flw {
 			return Size;
 		}
 	public:
-		void reset( bso::bool__ = true ) 
+		void reset( bso::bool__ P = true )
 		{
-			Cache_ = 0;
-			Size_ = 0;
-			Red_ = 0;
-			AmountMax_ = 0;
-			Available_ = Position_ = 0;
+			if ( P )
+				Dismiss();
+
+			_Red = 0;
+			_Available = _Position = 0;
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
-
-			_ThreadHandling.Mutex = FLW_NO_MUTEX;
-
-			_ThreadHandling.Owner = true;
 		}
-		iflow__( void )
-		{
-			reset( false );
-		}
-		virtual ~iflow__( void )
-		{
-			reset();
-		}
-		void Init(
+		iflow__(
+			iflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
-			size__ AmountMax,
-#ifdef CPE__MT
-			mutex__ Mutex )
-#else
-			mutex__ Mutex = FLW_NO_MUTEX )
-#endif
+			size__ AmountMax )
+		: _Functions( Functions )
+		{
+			reset( false );
+
+			_Cache = Cache;
+			_Size = Size;
+			_AmountMax = AmountMax;
+		}
+		~iflow__( void )
 		{
 			reset();
-
-			Cache_ = Cache;
-			Size_ = Size;
-			AmountMax_ = AmountMax;
-
-			_ThreadHandling.Mutex = Mutex;
-
-			if ( Mutex == FLW_NO_MUTEX )
-				_ThreadHandling.Owner = true;
-			else
-				_ThreadHandling.Owner = false;
 		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
@@ -444,26 +526,26 @@ namespace flw {
 		{
 			EOFD( Data );
 
-			if ( Available_ > Amount )	// This means we have red too much data.
+			if ( _Available > Amount )	// This means we have red too much data.
 				ERRf();
 
 			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
-			AmountMax_ = Amount;
+			_AmountMax = Amount;
 
-			Red_ = Available_;
+			_Red = _Available;
 
-			if ( Red_ == AmountMax_ )
+			if ( _Red == _AmountMax )
 				EOFD_.HandlingEOFD = true;
 		}
 		//f Return the amount of data red since last 'Reset()'.
 		size__ AmountRed( void ) const
 		{
-			return Red_ - Available_;
+			return _Red - _Available;
 		}
 		void SetAmountMax( size__ AmountMax )
 		{
-			AmountMax_ = AmountMax;
+			_AmountMax = AmountMax;
 		}
 		void Dismiss( void )
 		{
@@ -485,6 +567,26 @@ namespace flw {
 		}
 	};
 
+
+	class unsafe_iflow___	// Classe non thread-safe.
+	: public iflow__
+	{
+	private:
+		flw::datum__ _Cache[FLW__ICACHE_SIZE];
+	public:
+		unsafe_iflow___(
+			iflow_functions___ &Functions,
+			size__ AmountMax )
+			: iflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{}
+	};
+
+
+#ifndef CPE__MT
+	typedef unsafe_iflow___	iflow___;
+#endif
+
+
 	//f Get 'StaticObject' from 'InputFlow'.
 	template <class t> inline void Get(
 		iflow__ &InputFlow,
@@ -504,9 +606,80 @@ namespace flw {
 
 
 	//c Basic output flow.
+	class oflow_functions___
+	{
+	private:
+		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		void _Lock( void )
+		{
+			Lock_( _Mutex );
+		}
+		void _Unlock( void )
+		{
+			if ( IsLocked_( _Mutex ) ) {
+#ifdef FLW_DBG
+				if ( !IsOwner_( _Mutex ) )
+					ERRu();
+#endif
+				Unlock_( _Mutex );
+			}
+		}
+	protected:
+		virtual bsize__ FLWWrite(
+			const datum__ *Buffer,
+			bsize__ Wanted,
+			bsize__ Minimum,
+			bool Synchronization ) = 0;
+		virtual void FLWSynchronize( void )
+		{}
+	public:
+		void reset( bso::bool__ P = true ) 
+		{
+			if ( P ) {
+				Synchronize();
+
+				if ( _Mutex != FLW_NO_MUTEX )
+					Delete_( _Mutex );
+			}
+
+			_Mutex = FLW_NO_MUTEX;
+		}
+		oflow_functions___( void )
+		{
+			reset( false );
+		}
+		virtual ~oflow_functions___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			reset();
+
+			_Mutex = Create_();
+		}
+		void Synchronize( void )
+		{
+			FLWSynchronize();
+
+			_Unlock();
+		}
+		bsize__ Write(
+			const datum__ *Buffer,
+			bsize__ Wanted,
+			bsize__ Minimum,
+			bool Synchronization )
+		{
+			_Lock();
+			return FLWWrite( Buffer, Wanted, Minimum, Synchronization );
+		}
+	};
+
+	//c Basic output flow.
 	class oflow__	// Althought it has a destructor, it's a '__' version because it has to be inherited to be used.
 	{
 	private:
+		oflow_functions___ &_Functions;
 		// The cache.
 		datum__ *Cache_;
 		// The size of the cache.
@@ -518,28 +691,6 @@ namespace flw {
 		// Max amount of data between 2 synchronizing.
 		size__ AmountMax_;
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
-		struct {
-			mutex__ Mutex;	// Mutex pour protèger la ressource.
-			bso::bool__ Owning;	// Si à 'true', alors on est l'actuel posseseur du 'flow'.
-		} _ThreadHandling;	// Gestion du multitâche.
-		void _TestAndLock( void )
-		{
-			if ( !_ThreadHandling.Owning ) {
-				_Lock( _ThreadHandling.Mutex );
-				_ThreadHandling.Owning = true;
-			}
-		}
-		void _Unlock( void )
-		{
-#ifdef FLW_DBG
-			if ( !_ThreadHandling.Owning )
-				ERRu();
-#endif
-			if ( _ThreadHandling.Mutex != FLW_NO_MUTEX ) {
-				_ThreadHandling.Owning = false;
-				flw::_Unlock( _ThreadHandling.Mutex );
-			}
-		}
 		bsize__ _DirectWrite(
 			const datum__ *Buffer,
 			bsize__ Wanted,
@@ -588,9 +739,7 @@ namespace flw {
 		{
 			_DumpCache( true );
 
-			FLWSynchronizing();
-
-			_Unlock();
+			_Functions.Synchronize();
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ _WriteUpTo(
@@ -610,64 +759,32 @@ namespace flw {
 		void _Write(
 			const datum__ *Buffer,
 			bsize__ Amount );
-	protected:
-		virtual bsize__ FLWWrite(
-			const datum__ *Buffer,
-			bsize__ Wanted,
-			bsize__ Minimum,
-			bool Synchronization ) = 0;
-		virtual void FLWSynchronizing( void )
-		{}
 	public:
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
-			Cache_ = NULL;
-			Size_ = Free_ = 0;
-			AmountMax_ = 0;
+			if ( P )
+				Synchronize();
+
 			Written_ = 0;
-
-			_ThreadHandling.Mutex = FLW_NO_MUTEX;
-
-			_ThreadHandling.Owning = true;
 		}
-		oflow__( void )
-		{
-			reset( false );
-		}
-		virtual ~oflow__( void )
-		{
-			reset();
-		}
-		void Init(
+		oflow__(
+			oflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
-			size__ AmountMax,
-#ifdef CPE__MT
-			mutex__ Mutex )
-#else
-			mutex__ Mutex = FLW_NO_MUTEX )
-#endif
+			size__ AmountMax )
+		: _Functions( Functions )
 		{
-			reset();
-
 			Cache_ = Cache;
 			Size_ = Free_ = Size;
 			AmountMax_ = AmountMax;
 
-			_ThreadHandling.Mutex = Mutex;
+			reset( false );
 
-			if ( Mutex == FLW_NO_MUTEX )
-				_ThreadHandling.Owning = true;
-			else
-				_ThreadHandling.Owning = false;
 		}
-/*
-		virtual ~oflow__( void )
+		~oflow__( void )
 		{
-			if ( Size_ != Free_ )
-				_Synchronize();
+			reset();
 		}
-*/
 		//f Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ WriteUpTo(
 			const void *Buffer,
@@ -718,6 +835,26 @@ namespace flw {
 		}
 	};
 
+	class unsafe_oflow___	// Classe non thread-safe.
+	: public oflow__
+	{
+	private:
+		flw::datum__ _Cache[FLW__OCACHE_SIZE];
+	public:
+		unsafe_oflow___(
+			oflow_functions___ &Functions,
+			size__ AmountMax )
+			: oflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{}
+	};
+
+
+#ifndef CPE__MT
+	typedef unsafe_iflow___	iflow___;
+#endif
+
+
+
 	//f Write to 'OutputFlow' 'StaticObject'.
 	template <class t> inline void Put(
 		const t &StaticObjet,
@@ -739,8 +876,25 @@ namespace flw {
 		OutputFlow.Write( String, (bsize__)( Length + 1 ) );
 	}
 
+	class ioflow_functions___
+	: public iflow_functions___,
+	  public oflow_functions___
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			iflow_functions___::reset( P );
+			oflow_functions___::reset( P );
+		}
+		void Init( void )
+		{
+			iflow_functions___::Init();
+			oflow_functions___::Init();;
+		}
+	};
+
 	//c Basic input/output flow.
-	class ioflow__// Althought it has a destructor, it's a '__' version because it has to be inherited to be used.
+	class ioflow__
 	: public iflow__,
 	  public oflow__
 	{
@@ -750,47 +904,28 @@ namespace flw {
 			iflow__::reset( P );
 			oflow__::reset( P );
 		}
-		ioflow__( void )
-		{
-			reset( false );
-		}
-		~ioflow__( void )
-		{
-			reset();
-		}
-		void Init(
+		ioflow__(
+			ioflow_functions___ &Functions,
 			datum__ *ICache,
 			bsize__ ISize,
 			size__ ReadAmountMax,
 			datum__ *OCache,
 			bsize__ OSize,
-			size__ WriteAmountMax,
-#ifdef CPE__MT
-			mutex__ IMutex,
-			mutex__ OMutex )
-#else
-			mutex__ IMutex = FLW_NO_MUTEX,
-			mutex__ OMutex = FLW_NO_MUTEX )
-#endif
+			size__ WriteAmountMax )
+			: iflow__( Functions, ICache, ISize, ReadAmountMax ),
+			  oflow__( Functions, OCache, OSize, WriteAmountMax )
 		{
-			iflow__::Init( ICache, ISize, ReadAmountMax, IMutex );
-			oflow__::Init( OCache, OSize, WriteAmountMax, OMutex );
-
+			reset( false );
 		}
-		void Init(
+		ioflow__(
+			ioflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
-			size__ AmountMax,
-#ifdef CPE__MT
-			mutex__ IMutex,
-			mutex__ OMutex )
-#else
-			mutex__ IMutex = FLW_NO_MUTEX,
-			mutex__ OMutex = FLW_NO_MUTEX )
-#endif
+			size__ AmountMax )
+			: iflow__( Functions, Cache, Size / 2, AmountMax ),
+			  oflow__( Functions, Cache + Size / 2, Size / 2, AmountMax )
 		{
-			iflow__::Init( Cache, Size / 2, AmountMax, IMutex );
-			oflow__::Init( Cache + Size / 2, Size / 2, AmountMax, OMutex );
+			reset();
 		}
 		void SetAmountMax(
 			size__ ReadAmountMax,
@@ -804,6 +939,33 @@ namespace flw {
 			SetAmountMax( AmountMax, AmountMax );
 		}
 	};
+
+
+	class unsafe_ioflow___	// Classe non thread-safe.
+	: public ioflow__
+	{
+	private:
+		flw::datum__ _ICache[FLW__ICACHE_SIZE];
+		flw::datum__ _OCache[FLW__OCACHE_SIZE];
+	public:
+		unsafe_ioflow___(
+			ioflow_functions___ &Functions,
+			size__ ReadAmountMax,
+			size__ WriteAmountMax )
+			: ioflow__( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax )
+		{}
+		unsafe_ioflow___(
+			ioflow_functions___ &Functions,
+			size__ AmountMax )
+			: ioflow__( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax )
+		{}
+	};
+
+
+#ifndef CPE__MT
+	typedef unsafe_ioflow___	ioflow___;
+#endif
+
 }
 
 inline flw::oflow__ &operator <<(

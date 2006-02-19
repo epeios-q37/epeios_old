@@ -269,8 +269,8 @@ namespace sck {
 	}
 
 	//c Socket as input/output flow driver.
-	class socket_ioflow___
-	: public flw::ioflow__
+	class socket_ioflow_functions___
+	: public flw::ioflow_functions___
 	{
 	private:
 		socket__ _Socket;
@@ -292,48 +292,75 @@ namespace sck {
 		{
 			if ( P ) {
 				if ( _Socket != SCK_INVALID_SOCKET ) {
-					ioflow__::Synchronize();
+					ioflow_functions___::Synchronize();
 					Close( _Socket );
 				}
 			}
 
-			ioflow__::reset( P );
+			ioflow_functions___::reset( P );
 								
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
 		}
-		socket_ioflow___( void )
+		socket_ioflow_functions___( void )
 		{
 			reset( false );
 		}
-		virtual ~socket_ioflow___( void )
+		virtual ~socket_ioflow_functions___( void )
 		{
 			reset();
-		}
-		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
-		void Init(
-			socket__ Socket,
-			flw::size__ AmountMax,
-			duration__ TimeOut,
-			flw::mutex__ Mutex = FLW_NO_MUTEX )
-		{
-			reset();
-		
-			ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
-			ioflow__::SetAmountMax( AmountMax );
-
-			_Socket = Socket;
-			_TimeOut = TimeOut;
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
 			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )
 		{
-			Init( Socket, SCK__DEFAULT_AMOUNT, TimeOut );
+			reset();
+		
+			ioflow_functions___::Init();
+
+			_Socket = Socket;
+			_TimeOut = TimeOut;
 		}
 		E_RODISCLOSE__( socket__, Socket )
+	};
+
+	//c Socket as input/output flow driver.
+	class unsafe_socket_ioflow___
+	: public flw::ioflow__
+	{
+	private:
+		socket_ioflow_functions___ _Functions;
+		flw::datum__ _Cache[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
+	public:
+		void reset( bool P = true )
+		{
+			ioflow__::reset( P );
+			_Functions.reset( P );
+		}
+		unsafe_socket_ioflow___( flw::size__ AmountMax = SCK__DEFAULT_AMOUNT )
+		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		{
+			reset( false );
+		}
+		virtual ~unsafe_socket_ioflow___( void )
+		{
+			reset();
+		}
+		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
+		void Init(
+			socket__ Socket,
+			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )
+		{
+			reset();
+
+			_Functions.Init( Socket, TimeOut );
+		}
+		socket__ Socket( void ) const
+		{
+			return _Functions.Socket();
+		}
 	};
 
 }

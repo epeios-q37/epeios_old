@@ -78,19 +78,19 @@ iof::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
 #	error "Unkonw I/O enviroment !"
 #endif
 
-_oflow__ cio::unsafe_coutf, cio::unsafe_cerrf;
-_iflow__ cio::unsafe_cinf;;
+iof::io_oflow_functions___ cio::_coutf;
+iof::io_oflow_functions___ cio::_cerrf;
+iof::io_iflow_functions___ cio::_cinf;
 
-txf::text_oflow__ cio::unsafe_cout( cio::unsafe_coutf ), cio::unsafe_cerr( unsafe_cerrf );
-txf::text_iflow__ cio::unsafe_cin( cio::unsafe_cinf );
+#ifndef CPE__MT
+	aware_coutf___ coutf;
+	aware_cerrf___ cerrf;
+	aware_cinf___ cinf;
 
-#ifdef CPE__MT
-flw::mutex__
-	cio::cinm = FLW_NO_MUTEX,
-	cio::coutm = FLW_NO_MUTEX,
-	cio::cerrm = FLW_NO_MUTEX;
+	aware_cout___ cout;
+	aware_cerr___ cerr;
+	aware_cin___ cin;
 #endif
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
@@ -111,25 +111,15 @@ public:
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-#ifdef CPE__MT
-		cinm = mtx::Create( mtx::mOwned );
-		coutm = mtx::Create( mtx::mOwned );
-		cerrm = mtx::Create( mtx::mOwned );
-#endif
-	unsafe_coutf.Init( coutd, FLW_NO_MUTEX );
-	unsafe_cerrf.Init( cerrd, FLW_NO_MUTEX );
-	unsafe_cinf.Init( cind, FLW_NO_MUTEX );
+		cio::_coutf.Init( coutd );
+		cio::_cinf.Init( cind );
+		cio::_cerrf.Init( cerrd );
 
 	/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
 	~ciopersonnalization( void )
 	{
-#ifdef CPE__MT
-		mtx::Delete( cinm );
-		mtx::Delete( coutm );
-		mtx::Delete( cerrm );
-#endif
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

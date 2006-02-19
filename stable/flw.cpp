@@ -93,19 +93,17 @@ bsize__ flw::iflow__::_Read(
 	bsize__ Amount = 0;
 ERRProlog
 ERRBegin
-	if ( Size_ == 0 )	// There was an error before. See below, in 'ERRErr'.
+	if ( _Size == 0 )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
-	_TestAndLock();
+	Amount = _Functions.Read( Minimum, Buffer, Wanted );
 
-	Amount = FLWRead( Minimum, Buffer, Wanted );
+	_Red += Amount;
 
-	Red_ += Amount;
-
-	if ( Red_ > AmountMax_ )
+	if ( _Red > _AmountMax )
 		ERRf();
 ERRErr
-	Size_ = Available_ = 0;	// To avoid further reading from cache. Next reading will generate an error. 
+	_Size = _Available = 0;	// To avoid further reading from cache. Next reading will generate an error. 
 ERREnd
 ERREpilog
 	return Amount;
@@ -119,7 +117,6 @@ bsize__ flw::oflow__::_DirectWrite(
 {
 	bsize__ Amount = 0;
 ERRProlog
-	bso::bool__ Locked = false;
 ERRBegin
 	if ( ( Size_ == 0 ) && ( Cache_ != NULL ) )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
@@ -133,18 +130,14 @@ ERRBegin
 				ERRc();
 #endif
 
-	_TestAndLock();
-
-	Locked = true;
-
-	Amount = FLWWrite( Buffer, Wanted, Minimum, Synchronization );
+	Amount = _Functions.Write( Buffer, Wanted, Minimum, Synchronization );
 
 #ifdef FLW_DBG
-			if ( Amount > Wanted )
-				ERRu();
+		if ( Amount > Wanted )
+			ERRu();
 
-			if ( Amount < Minimum )
-				ERRu();
+		if ( Amount < Minimum )
+			ERRu();
 #endif
 
 	if ( Synchronization )
@@ -157,8 +150,7 @@ ERRBegin
 	}
 ERRErr
 	Size_ = Free_ = 0;	// To avoid further writing in cache. Next writing will generate an error. 
-	if ( Locked )
-		_Unlock();
+	Synchronize();	// N'écrit rien (à priori) ; juste pour déverouiiler.
 ERREnd
 ERREpilog
 	return Amount;
