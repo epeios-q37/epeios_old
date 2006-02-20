@@ -171,7 +171,7 @@ namespace flx {
 			_Functions.reset( P );
 			iflow__::reset( P );
 		}
-		buffer_iflow___( flw::size__ AmountMax )
+		buffer_iflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax ) 
 		{
 			reset( false );
@@ -259,7 +259,7 @@ namespace flx {
 		{
 			_Functions.reset( P );
 		}
-		buffer_oflow___( flw::size__ AmountMax )
+		buffer_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
@@ -412,6 +412,8 @@ namespace flx {
 			reset();
 
 			_Bunch = &Bunch;
+
+			oflow_functions___::Init();
 		}
 	};
 	//c A bunch as output flow.driver.
@@ -433,6 +435,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
+			oflow__::reset( P );
 			_Functions.reset( P );
 		}
 		//f Initializing with the buffer bunch 'Bunch'.

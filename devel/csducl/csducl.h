@@ -156,7 +156,7 @@ namespace csducl {
 		{
 			return _Get().WriteRelay( Buffer, Wanted, Minimum, Synchronization );
 		}
-		virtual void FLWSynchronizing( void )
+		virtual void FLWSynchronize( void )
 		{
 			_Get().Synchronize();
 		}

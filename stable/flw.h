@@ -73,7 +73,7 @@ extern class ttr_tutor &FLWTutor;
 #ifndef FLW_ICACHE_SIZE
 #	define FLW__ICACHE_SIZE	FLW__CACHE_SIZE
 #else
-#	define FLW__ICACHE_SIZE	FLW_iCACHE_SIZE
+#	define FLW__ICACHE_SIZE	FLW_ICACHE_SIZE
 #endif
 
 #ifndef FLW_OCACHE_SIZE
@@ -116,7 +116,7 @@ namespace flw {
 #ifdef CPE__MT
 	inline void Test_( mutex__ Mutex )
 	{
-		if ( Mutex != FLW_NO_MUTEX )
+		if ( Mutex == FLW_NO_MUTEX )
 			ERRc();
 	}
 #endif
@@ -126,7 +126,7 @@ namespace flw {
 #ifdef CPE__MT
 		return mtx::Create( mtx::mOwned );
 #else
-		return FLW_NO_MUTEX;
+		return !FLW_NO_MUTEX;	// Peur importe la valeur, pour peu qu'elle soit nulle.
 #endif
 	}
 
@@ -206,10 +206,10 @@ namespace flw {
 		void reset( bso::bool__ P = true ) 
 		{
 			if ( P ) {
-				Dismiss();
-
-				if ( _Mutex != FLW_NO_MUTEX )
+				if ( _Mutex != FLW_NO_MUTEX ) {
+					Dismiss();
 					Delete_( _Mutex );
+				}
 			}
 
 			_Mutex = FLW_NO_MUTEX;
@@ -230,9 +230,11 @@ namespace flw {
 		}
 		void Dismiss( void )
 		{
-			FLWDismiss();
+			if ( _Mutex != FLW_NO_MUTEX ) {
+				FLWDismiss();
 
-			_Unlock();
+				_Unlock();
+			}
 		}
 		bsize__ Read(
 			bsize__ Minimum,
@@ -316,8 +318,13 @@ namespace flw {
 				else  if ( _Red == _AmountMax )
 					EOFD_.HandlingEOFD = true;
 
-			} else 
+			} else {
 				Amount = _Read( Minimum, Buffer, Wanted );
+
+				if ( Amount < Minimum ) {
+					Amount += HandleEOFD( Buffer, Wanted - Amount );
+				}
+			}
 
 			if ( Amount < Minimum  )
 				ERRf();
@@ -636,10 +643,10 @@ namespace flw {
 		void reset( bso::bool__ P = true ) 
 		{
 			if ( P ) {
-				Synchronize();
-
-				if ( _Mutex != FLW_NO_MUTEX )
+				if ( _Mutex != FLW_NO_MUTEX ) {
+					Synchronize();
 					Delete_( _Mutex );
+				}
 			}
 
 			_Mutex = FLW_NO_MUTEX;
@@ -660,9 +667,10 @@ namespace flw {
 		}
 		void Synchronize( void )
 		{
-			FLWSynchronize();
-
-			_Unlock();
+			if ( _Mutex != FLW_NO_MUTEX ) {
+				FLWSynchronize();
+				_Unlock();
+			}
 		}
 		bsize__ Write(
 			const datum__ *Buffer,
@@ -700,11 +708,12 @@ namespace flw {
 		{
 			bsize__ Stayed = Size_ - Free_;
 			
-			if ( ( Stayed != 0 ) || Synchronization ) {
+			if ( Stayed != 0 ) {
 				_DirectWrite( Cache_, Stayed, Stayed, Synchronization );
 
 				Free_ = Size_;
-			}
+			} else if ( Synchronization )
+				_Functions.Synchronize();
 		}
 		bsize__ _WriteIntoCache(
 			const datum__ *Buffer,
@@ -738,8 +747,6 @@ namespace flw {
 		void _Synchronize( void )
 		{
 			_DumpCache( true );
-
-			_Functions.Synchronize();
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ _WriteUpTo(
@@ -824,12 +831,22 @@ namespace flw {
 			bsize__ Minimum,
 			bool Synchronization )
 		{
+			//NOTA : Si 'Synchronization' à vrai, normalement 'Wanted' == 'Minimum'.
+
+#ifdef FLW_DBG
+			if ( Synchronization )
+				if ( Wanted != Minimum )
+					ERRu();
+#endif
 			bsize__ Amount = 0;
 
 			Amount = WriteUpTo( Buffer, Wanted );
 
 			while ( Amount < Minimum )
 				Amount += WriteUpTo( Buffer + Amount, Wanted - Amount);
+
+			if ( Synchronization )
+				_Synchronize();
 
 			return Amount;
 		}
@@ -925,7 +942,7 @@ namespace flw {
 			: iflow__( Functions, Cache, Size / 2, AmountMax ),
 			  oflow__( Functions, Cache + Size / 2, Size / 2, AmountMax )
 		{
-			reset();
+			reset( false );
 		}
 		void SetAmountMax(
 			size__ ReadAmountMax,

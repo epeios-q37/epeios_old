@@ -318,7 +318,7 @@ ERREpilog
 
 			return _Flow->WriteRelay( Buffer, Wanted, Minimum, Synchronization );
 		}
-		virtual void FLWSynchronizing( void )
+		virtual void FLWSynchronize( void )
 		{
 			_Synchronize();
 		}

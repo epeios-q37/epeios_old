@@ -67,8 +67,8 @@ extern class ttr_tutor &LTFTutor;
 namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
-	class _line_text_oflow__
-	: public flw::oflow__
+	class _line_text_oflow_functions___
+	: public flw::oflow_functions___
 	{
 	private:
 		flw::datum__ *Data_;
@@ -114,26 +114,25 @@ namespace ltf {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			oflow__::reset( P );
+			oflow_functions___::reset( P );
 		}
-		_line_text_oflow__( txf::text_oflow__ &TFlow )
+		_line_text_oflow_functions___( txf::text_oflow__ &TFlow )
 		: TFlow_( TFlow )
 		{
 			reset( false );
 		}
-		virtual ~_line_text_oflow__( void )
+		virtual ~_line_text_oflow_functions___( void )
 		{
 			reset();
 		}
 		void Init(
 			flw::datum__ *Data,
-			flw::size__ Size,
-			flw::mutex__ Mutex )
+			flw::size__ Size )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
-			oflow__::Init( NULL, 0, BSO_ULONG_MAX, Mutex );
+			oflow_functions___::Init();
 			
 			Data_ = Data;
 
@@ -158,32 +157,71 @@ namespace ltf {
 	};
 
 
-	template <int size = 79> class line_text_oflow__
+
+
+	class _line_text_oflow___
+	: public flw::oflow__
+	{
+	private:
+		_line_text_oflow_functions___ _Functions;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Functions.reset( P );
+		}
+		_line_text_oflow___( txf::text_oflow__ &TFlow )
+		: _Functions( TFlow ),
+		 oflow__( _Functions, NULL, 0, FLW_SIZE_MAX )
+		{
+			reset( false );
+		}
+		virtual ~_line_text_oflow___( void )
+		{
+			reset();
+		}
+		void Init(
+			flw::datum__ *Data,
+			flw::size__ Size )
+		{
+			_Functions.Init( Data, Size );
+		}
+		void Clear( void )
+		{
+			_Functions.Clear();
+		}
+		void CR( void )
+		{
+			_Functions.CR();
+		}
+	};
+
+
+	template <int size = 79> class line_text_oflow___
 	: public txf::text_oflow__
 	{
 	private:
 		flw::datum__ Data_[size];
 	protected:
-		_line_text_oflow__ Flow_;
+		_line_text_oflow___ Flow_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 //			text_oflow__::operator()();
 			Flow_.reset( P );
 		}
-		line_text_oflow__( txf::text_oflow__ &TFlow )
+		line_text_oflow___( txf::text_oflow__ &TFlow )
 		: Flow_( TFlow ),
 		  text_oflow__( Flow_ )
 		{
 			reset( false );
 		}
-		virtual ~line_text_oflow__( void )
+		virtual ~line_text_oflow___( void )
 		{
 			reset();
 		}
-		void Init( flw::mutex__ Mutex )
+		void Init()
 		{
-			Flow_.Init( Data_, size, Mutex );
+			Flow_.Init( Data_ );
 //			txf::text_oflow__::Init( Flow_ );
 		}
 		void CR( void )
