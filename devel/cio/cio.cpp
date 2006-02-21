@@ -83,13 +83,13 @@ iof::io_oflow_functions___ cio::_cerrf;
 iof::io_iflow_functions___ cio::_cinf;
 
 #ifndef CPE__MT
-	aware_coutf___ coutf;
-	aware_cerrf___ cerrf;
-	aware_cinf___ cinf;
+	aware_coutf___ cio::coutf;
+	aware_cerrf___ cio::cerrf;
+	aware_cinf___ cio::cinf;
 
-	aware_cout___ cout;
-	aware_cerr___ cerr;
-	aware_cin___ cin;
+	aware_cout___ cio::cout;
+	aware_cerr___ cio::cerr;
+	aware_cin___ cio::cin;
 #endif
 
 /* Although in theory this class is inaccessible to the different modules,

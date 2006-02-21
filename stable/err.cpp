@@ -249,8 +249,8 @@ ERRProlog
 	cio::aware_cout___ cout;
 	cio::aware_cerr___ cerr;
 #	else
-	txf::text_oflow__ &cout = cio::cout;
-	txf::text_oflow__ &cerr = cio::cerr;
+	static txf::text_oflow__ &cout = cio::cout;
+	static txf::text_oflow__ &cerr = cio::cerr;
 #	endif
 ERRBegin
 		cout << txf::sync;
