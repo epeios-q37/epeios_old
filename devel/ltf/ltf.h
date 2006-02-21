@@ -221,7 +221,7 @@ namespace ltf {
 		}
 		void Init()
 		{
-			Flow_.Init( Data_ );
+			Flow_.Init( Data_, sizeof( Data_ ) );
 //			txf::text_oflow__::Init( Flow_ );
 		}
 		void CR( void )
