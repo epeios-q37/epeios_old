@@ -151,10 +151,9 @@ namespace csducl {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
-			return _Get().WriteRelay( Buffer, Wanted, Minimum, Synchronization );
+			return _Get().WriteRelay( Buffer, Wanted, Minimum );
 		}
 		virtual void FLWSynchronize( void )
 		{

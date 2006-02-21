@@ -117,8 +117,7 @@ namespace iof {
 		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
 			flw::bsize__ Minimum,
-			flw::bsize__ Demande,
-			bool Synchronize )
+			flw::bsize__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
@@ -129,10 +128,11 @@ namespace iof {
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
 
-			if ( Synchronize )
-				Flush();
-
 			return Written;
+		}
+		void FLWSynchronize( void )
+		{
+			Flush();
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -289,8 +289,7 @@ namespace iof {
 		flw::bsize__ FLWWrite(
 			const flw::datum__ *Tampon,
 			flw::bsize__ Minimum,
-			flw::bsize__ Demande,
-			bool Synchronize )
+			flw::bsize__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
@@ -301,10 +300,11 @@ namespace iof {
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
 
-			if ( Synchronize )
-				Flush();
-
 			return Written;
+		}
+		void FLWSynchronize( void )
+		{
+			Flush();
 		}
 		flw::bsize__ FLWRead(
 			flw::bsize__ Minimum,

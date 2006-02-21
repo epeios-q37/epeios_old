@@ -187,8 +187,7 @@ flw::bsize__ sck::socket_ioflow_functions___::FLWRead(
 flw::bsize__ sck::socket_ioflow_functions___::FLWWrite(
 	const flw::datum__ *Buffer,
 	flw::bsize__ Wanted,
-	flw::bsize__ Minimum,
-	bool Synchronization )
+	flw::bsize__ Minimum )
 {
 	flw::bsize__ Amount = 0;
 

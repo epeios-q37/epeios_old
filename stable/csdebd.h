@@ -73,7 +73,7 @@ namespace csdebd {
 	typedef bch::E_BUNCH_( flw::datum__ ) data_;
 	E_AUTO( data )
 
-	class _generic_functions___
+	class _passive_generic_functions___
 	: public flw::ioflow_functions___
 	{
 	private:
@@ -124,12 +124,11 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Read.Amount() != 0 )
-				Synchronization = false;	// Juste pour avoir un point d'arrêt.
+				Minimum = Wanted;	// Juste pour avoir un point d'arrêt.
 #endif
 			_Write.Append( Buffer, Wanted );
 
@@ -142,7 +141,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			_Row = NONE;
 		}
-		_generic_functions___(
+		_passive_generic_functions___(
 			data_ &Read,
 			data_ &Write )
 		: _Read( Read ),
@@ -150,7 +149,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset( false );
 		}
-		~_generic_functions___( void )
+		~_passive_generic_functions___( void )
 		{
 			reset();
 		}
@@ -162,30 +161,16 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 	};
 
-	class embed_client_server
-	: public flw::ioflow__
+	class _active_generic_functions___
+	: public _passive_generic_functions___
 	{
 	private:
-		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
-		_generic_functions___ _Functions;
 		csdscm::user_functions__ *_UserFunctions;
 		void *_UP;
-		data _Master, _Slave;
-		struct backend {
-			flw::datum__ Cache[CSDEBD_CACHE_SIZE];
-			_generic_functions___ Functions;
-			flw::ioflow__ Flow;
-			backend(
-				data_ &Read,
-				data_ &Write )
-			: Functions( Read, Write ),
-			  Flow( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX )
-			  
-			{}
-		} _Backend;
+		flw::ioflow__ *_Flow;
 		void _Create( void )
 		{
-			_UP = _UserFunctions->PreProcess( _Backend.Flow );
+			_UP = _UserFunctions->PreProcess( *_Flow );
 		}
 		void _Delete( void )
 		{
@@ -193,10 +178,81 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_UserFunctions->PostProcess( _UP );
 		}
 	protected:
-		virtual void FLWSynchronizing( void )
+		virtual void FLWSynchronize( void )
 		{
-			_UserFunctions->Process( _Backend.Flow, _UP );
+			_UserFunctions->Process( *_Flow, _UP );
 		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_passive_generic_functions___::reset( P );
+
+			if ( P )
+				_Delete();
+
+			_UserFunctions = NULL;
+			_UP = NULL;
+			_Flow = NULL;
+		}
+		_active_generic_functions___(
+			data_ &Read,
+			data_ &Write )
+		: _passive_generic_functions___( Read, Write )
+		{
+			reset( false );
+		}
+		~_active_generic_functions___( void )
+		{
+			reset();
+		}
+		void Init(
+			csdscm::user_functions__ &UserFunctions,
+			flw::ioflow__ &Flow )
+		{
+			reset();
+
+			_UserFunctions = &UserFunctions;
+			_Flow = &Flow;
+
+			_passive_generic_functions___::Init();
+
+			_Create();
+		}
+	};
+
+
+	class embed_client_server
+	: public flw::ioflow__
+	{
+	private:
+		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
+		_active_generic_functions___ _Functions;
+		data _Master, _Slave;
+		struct backend {
+			flw::datum__ Cache[CSDEBD_CACHE_SIZE];
+			_passive_generic_functions___ Functions;
+			flw::ioflow__ Flow;
+			void reset( bso::bool__ P = true )
+			{
+				Functions.reset( P );
+			}
+			backend(
+				data_ &Read,
+				data_ &Write )
+			: Functions( Read, Write ),
+			  Flow( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX )
+			{
+				reset( false );
+			}
+			~backend( void )
+			{
+				reset();
+			}
+			void Init( void )
+			{
+				Functions.Init();
+			}
+		} _Backend;
 	public:
 		embed_client_server( void )
 		: _Functions( _Master, _Slave ),
@@ -211,12 +267,9 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		void reset( bso::bool__ P = true )
 		{
-			if ( P ) {
-				_Delete();
-			}
+			_Backend.reset( P );
 
-			_UserFunctions = NULL;
-			_UP = NULL;
+			_Functions.reset( P );
 
 			_Master.reset( P );
 			_Slave.reset( P );
@@ -228,12 +281,12 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			ioflow__::Init();
 			_Backend.Init();
 */
-			_UserFunctions = &UserFunctions;
-
 			_Master.Init();
 			_Slave.Init();
 
-			_Create();
+			_Backend.Init();
+
+			_Functions.Init( UserFunctions, _Backend.Flow );
 		}
 	};
 }

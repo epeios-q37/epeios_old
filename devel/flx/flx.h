@@ -203,8 +203,7 @@ namespace flx {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
 			if ( Wanted > Taille_ )
 				ERRu();
@@ -380,8 +379,7 @@ namespace flx {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
 			_Bunch->Append( (const so__ *)Buffer, Wanted );
 
@@ -457,8 +455,7 @@ namespace flx {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *,
 			flw::bsize__ Wanted,
-			flw::bsize__,
-			bool )
+			flw::bsize__ )
 		{
 			return Wanted;
 		}

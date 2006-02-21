@@ -1,5 +1,11 @@
 $Id$
 
+21/02/06 :
+	- GENERAL :
+		- Adaptation aux changements de la bibliothèque 'FLW'.
+	- FLW :
+		- Retrait paramètre 'Synchronization' de la méthode 'FLWWrite(...)'.
+
 20/02/06 :
 	- GENERAL :
 		- Adaptation aux changements de la bibliothèque 'FLW'.

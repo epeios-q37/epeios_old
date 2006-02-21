@@ -112,8 +112,7 @@ ERREpilog
 bsize__ flw::oflow__::_DirectWrite(
 	const datum__ *Buffer,
 	bsize__ Wanted,
-	bsize__ Minimum,
-	bool Synchronization )
+	bsize__ Minimum )
 {
 	bsize__ Amount = 0;
 ERRProlog
@@ -124,13 +123,9 @@ ERRBegin
 #ifdef FLW_DBG
 		if ( Wanted < Minimum )
 			ERRu();
-
-		if ( Synchronization )
-			if ( Minimum != Wanted )
-				ERRc();
 #endif
 
-	Amount = _Functions.Write( Buffer, Wanted, Minimum, Synchronization );
+	Amount = _Functions.Write( Buffer, Wanted, Minimum );
 
 #ifdef FLW_DBG
 		if ( Amount > Wanted )
@@ -140,14 +135,10 @@ ERRBegin
 			ERRu();
 #endif
 
-	if ( Synchronization )
-		Written_ = 0;
-	else {
-		Written_ += Amount;
+	Written_ += Amount;
 
-		if ( Written_ >= AmountMax_ )
-			ERRf();
-	}
+	if ( Written_ >= AmountMax_ )
+		ERRf();
 ERRErr
 	Size_ = Free_ = 0;	// To avoid further writing in cache. Next writing will generate an error. 
 	Synchronize();	// N'écrit rien (à priori) ; juste pour déverouiiler.

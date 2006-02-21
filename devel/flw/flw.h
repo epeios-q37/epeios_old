@@ -424,6 +424,7 @@ namespace flw {
 		void _Dismiss( void )
 		{
 			_Functions.Dismiss();
+			_Red = 0;
 		}
 		/*f Handle EOFD. To call when no more data available in the medium.
 		Return amount of data written. If 0 is returned, then there is no
@@ -635,8 +636,7 @@ namespace flw {
 		virtual bsize__ FLWWrite(
 			const datum__ *Buffer,
 			bsize__ Wanted,
-			bsize__ Minimum,
-			bool Synchronization ) = 0;
+			bsize__ Minimum ) = 0;
 		virtual void FLWSynchronize( void )
 		{}
 	public:
@@ -675,11 +675,10 @@ namespace flw {
 		bsize__ Write(
 			const datum__ *Buffer,
 			bsize__ Wanted,
-			bsize__ Minimum,
-			bool Synchronization )
+			bsize__ Minimum )
 		{
 			_Lock();
-			return FLWWrite( Buffer, Wanted, Minimum, Synchronization );
+			return FLWWrite( Buffer, Wanted, Minimum );
 		}
 	};
 
@@ -702,18 +701,16 @@ namespace flw {
 		bsize__ _DirectWrite(
 			const datum__ *Buffer,
 			bsize__ Wanted,
-			bsize__ Minimum,
-			bool Synchronization );
-		void _DumpCache( bool Synchronization )
+			bsize__ Minimum );
+		void _DumpCache( void )
 		{
 			bsize__ Stayed = Size_ - Free_;
 			
 			if ( Stayed != 0 ) {
-				_DirectWrite( Cache_, Stayed, Stayed, Synchronization );
+				_DirectWrite( Cache_, Stayed, Stayed );
 
 				Free_ = Size_;
-			} else if ( Synchronization )
-				_Functions.Synchronize();
+			}
 		}
 		bsize__ _WriteIntoCache(
 			const datum__ *Buffer,
@@ -739,14 +736,17 @@ namespace flw {
 				ERRc();
 #endif
 			if ( Amount > Size_ )
-				return _DirectWrite( Buffer, Amount, Amount, false );
+				return _DirectWrite( Buffer, Amount, Amount );
 			else
 				return _WriteIntoCache( Buffer, Amount );
 		}
 		// Synchronization.
 		void _Synchronize( void )
 		{
-			_DumpCache( true );
+			_DumpCache();
+			_Functions.Synchronize();
+
+			Written_ = 0;
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ _WriteUpTo(
@@ -756,7 +756,7 @@ namespace flw {
 			bsize__ AmountWritten = _WriteIntoCache( Buffer, Amount );
 
 			if ( ( AmountWritten == 0 )  && ( Amount != 0 ) ) {
-				_DumpCache( false );
+				_DumpCache();
 				AmountWritten = _DirectWriteOrIntoCache( Buffer, Amount );
 			}
 
@@ -828,25 +828,14 @@ namespace flw {
 		bsize__ WriteRelay(
 			const datum__ *Buffer,
 			bsize__ Wanted,
-			bsize__ Minimum,
-			bool Synchronization )
+			bsize__ Minimum )
 		{
-			//NOTA : Si 'Synchronization' à vrai, normalement 'Wanted' == 'Minimum'.
-
-#ifdef FLW_DBG
-			if ( Synchronization )
-				if ( Wanted != Minimum )
-					ERRu();
-#endif
 			bsize__ Amount = 0;
 
 			Amount = WriteUpTo( Buffer, Wanted );
 
 			while ( Amount < Minimum )
 				Amount += WriteUpTo( Buffer + Amount, Wanted - Amount);
-
-			if ( Synchronization )
-				_Synchronize();
 
 			return Amount;
 		}

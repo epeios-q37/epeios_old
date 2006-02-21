@@ -285,8 +285,7 @@ namespace sck {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization );
+			flw::bsize__ Minimum );
 	public:
 		void reset( bool P = true )
 		{

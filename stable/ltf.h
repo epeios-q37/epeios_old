@@ -79,8 +79,7 @@ namespace ltf {
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
 			if ( ( Amount_ + Wanted ) > Size_ ) {
 				if ( Wanted >= Size_ ) {
@@ -101,15 +100,16 @@ namespace ltf {
 			} else if ( Amount_ > Size_ )
 				Data_[0] = '<';
 
-			if ( Synchronization ) {
-				if ( Amount_ > Size_ ) {
-					TFlow_ << txf::rfl;
-					TFlow_.Put( Data_, Size_ );
-				}
-				TFlow_ << txf::sync;
+			return Wanted;
+		}
+		virtual void FLWSynchronize( void )
+		{
+			if ( Amount_ > Size_ ) {
+				TFlow_ << txf::rfl;
+				TFlow_.Put( Data_, Size_ );
 			}
 
-			return Wanted;
+			TFlow_ << txf::sync;
 		}
 	public:
 		void reset( bso::bool__ P = true )

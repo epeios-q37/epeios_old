@@ -309,14 +309,13 @@ ERREpilog
 		virtual flw::bsize__ FLWWrite(
 			const flw::datum__ *Buffer,
 			flw::bsize__ Wanted,
-			flw::bsize__ Minimum,
-			bool Synchronization )
+			flw::bsize__ Minimum )
 		{
 			flw::size__ Amount = 0;
 
 			_Prepare();
 
-			return _Flow->WriteRelay( Buffer, Wanted, Minimum, Synchronization );
+			return _Flow->WriteRelay( Buffer, Wanted, Minimum );
 		}
 		virtual void FLWSynchronize( void )
 		{
