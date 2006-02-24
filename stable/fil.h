@@ -109,10 +109,10 @@ namespace fil
 		sFailure = 0,
 		//i Success.
 		sSuccess,
-		//i Unknow,
-		s_Unknow,
 		//i Amount of status.
-		s_amount
+		s_amount,
+		//i Unknow,
+		s_Undefined,
 	};
 
 	iof::descriptor__ _Open(
@@ -176,6 +176,69 @@ namespace fil
 		}
 	};
 
+	class file_iflow_functions___
+	: public iof::io_iflow_functions___
+	{
+	private:
+		iof::descriptor__ _D;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			io_iflow_functions___::reset( P );
+
+			if ( P ) {
+				if ( _D != IOF_UNDEFINED_DESCRIPTOR )
+					_Close( _D );
+			}
+
+			_D = IOF_UNDEFINED_DESCRIPTOR;
+		}
+		file_iflow_functions___( void )
+		{
+			reset( false );
+		}
+		~file_iflow_functions___( void )
+		{
+			reset();
+		}
+		status__ Init(
+			const char *FileName,
+			mode__ Mode = mReadOnly,
+			err::handle ErrHandling = err::hUsual )
+		{
+			reset();
+
+			status__ Status = s_Undefined;
+			_D = _Open( FileName, Mode );
+
+			if ( _D == IOF_UNDEFINED_DESCRIPTOR ) {
+				Status = sFailure;
+				switch ( ErrHandling ) {
+				case err::hSkip:
+					break;
+				case err::hUsual:
+					ERRf();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			} else {
+				Status = sSuccess;
+				io_iflow_functions___::Init( _D );
+			}
+
+			return Status;
+		}
+		status__ Init(
+			const char *FileName,
+			err::handle ErrHandle,
+			mode__ Mode = mReadOnly )
+		{
+			return Init( FileName, Mode, ErrHandle );
+		}
+	};
+
 	typedef iof::io_iflow___		_io_iflow___;
 
 	//c A file as standard input flow.
@@ -236,6 +299,69 @@ namespace fil
 			const char *FileName,
 			err::handle ErrHandle,
 			mode__ Mode = mReadOnly )
+		{
+			return Init( FileName, Mode, ErrHandle );
+		}
+	};
+
+	class file_oflow_functions___
+	: public iof::io_oflow_functions___
+	{
+	private:
+		iof::descriptor__ _D;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			io_oflow_functions___::reset( P );
+
+			if ( P ) {
+				if ( _D != IOF_UNDEFINED_DESCRIPTOR )
+					_Close( _D );
+			}
+
+			_D = IOF_UNDEFINED_DESCRIPTOR;
+		}
+		file_oflow_functions___( void )
+		{
+			reset( false );
+		}
+		~file_oflow_functions___( void )
+		{
+			reset();
+		}
+		status__ Init(
+			const char *FileName,
+			mode__ Mode = mRemove,
+			err::handle ErrHandling = err::hUsual )
+		{
+			reset();
+
+			status__ Status = s_Undefined;
+			_D = _Open( FileName, Mode );
+
+			if ( _D == IOF_UNDEFINED_DESCRIPTOR ) {
+				Status = sFailure;
+				switch ( ErrHandling ) {
+				case err::hSkip:
+					break;
+				case err::hUsual:
+					ERRf();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			} else {
+				Status = sSuccess;
+				io_oflow_functions___::Init( _D );
+			}
+
+			return Status;
+		}
+		status__ Init(
+			const char *FileName,
+			err::handle ErrHandle,
+			mode__ Mode = mRemove )
 		{
 			return Init( FileName, Mode, ErrHandle );
 		}
@@ -307,6 +433,7 @@ namespace fil
 			return Init( FileName, Mode, ErrHandle );
 		}
 	};
+
 	//e Error code which can occurs during backup file operation.
 	enum rbf
 	{
@@ -321,6 +448,7 @@ namespace fil
 		//i Erreur by allocation. Occurs only with 'TOLRecoverBackupFile()'.
 		rbfAllocation
 	};
+
 	//e How handle the backuped file.
 	enum hbf
 	{

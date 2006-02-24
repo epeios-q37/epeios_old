@@ -1,5 +1,11 @@
 $Id$
 
+24/02/06 :
+	- FIL :
+		- Ajout classe 'file_(i|o)flow_functions___'.
+	- FLX :
+		- Ajout objet 'dump'.
+
 21/02/06 :
 	- GENERAL :
 		- Adaptation aux changements de la bibliothèque 'FLW'.

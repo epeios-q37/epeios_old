@@ -55,6 +55,9 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+flx::dump_oflow_functions___ flx::dump;
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class flxpersonnalization
@@ -63,6 +66,7 @@ class flxpersonnalization
 public:
 	flxpersonnalization( void )
 	{
+		flx::dump.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

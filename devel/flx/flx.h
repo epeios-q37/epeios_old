@@ -467,6 +467,8 @@ namespace flx {
 
 	};
 
+	extern dump_oflow_functions___ dump;
+
 	//c A output flow which write to nothing.
 	class dump_oflow__
 	: public flw::oflow__
