@@ -1,5 +1,9 @@
 $Id$
 
+25/02/06 :
+	- RGSTRY :
+		- Correction bogue balise sans attribut.
+
 24/02/06 :
 	- FIL :
 		- Ajout classe 'file_(i|o)flow_functions___'.

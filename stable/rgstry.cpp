@@ -334,7 +334,12 @@ nrow__ rgstry::registry_::_SearchChild(
 		Row = _SearchChild( Item, Row, Cursor );	// '.../TagName[@AttributeName='AttributeValue']/...'
 	else if ( Cursor == NONE ) {
 		AttributeEntryRow = _GetAttribute( Item.AttributeName, Row );	// '.../@AttributeName'
-		Cursor = *Row;	// Peu importe la valuer, pourvue que ce soit différent de 'NON4.
+		if ( AttributeEntryRow == NONE ) {
+			AttributeEntryRow = *Row;	// Peu importe la valeur, pourvu qu'elle ce soit différente de 'NONE'.
+			Row = NONE;	// Pour signaler que l'on n'a pas trouvé.
+			// 'Row' == 'NONE 'et 'AttributeEntryRow' != 'NONE' signale que l'on a trouvé le tag, mais pas l'attribut.
+		}
+		Cursor = *Row;	// Peu importe la valeur, pourvu qu'elle ce soit différente de 'NONE'.
 	} else
 		Row = NONE;
 
@@ -373,8 +378,10 @@ nrow__ rgstry::registry_::_SearchPath(
 					ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
 				} else
 					ChildRow = NONE;
-			} else
+			} else if ( AttributeEntryRow == NONE )	// Voir '_SearchChild()'.
 				ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
+			else
+				ChildRow = NONE;	// pour sortir de la boucle.
 		}
 
 	} else if ( All ) {
