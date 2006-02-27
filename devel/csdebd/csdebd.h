@@ -267,9 +267,9 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		void reset( bso::bool__ P = true )
 		{
-			_Backend.reset( P );
-
 			_Functions.reset( P );
+
+			_Backend.reset( P );
 
 			_Master.reset( P );
 			_Slave.reset( P );
