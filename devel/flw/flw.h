@@ -207,7 +207,8 @@ namespace flw {
 		{
 			if ( P ) {
 				if ( _Mutex != FLW_NO_MUTEX ) {
-					Dismiss();
+						if ( IsOwner_( _Mutex ) )
+							Dismiss();
 					Delete_( _Mutex );
 				}
 			}
@@ -644,7 +645,8 @@ namespace flw {
 		{
 			if ( P ) {
 				if ( _Mutex != FLW_NO_MUTEX ) {
-					Synchronize();
+					if ( IsOwner_( _Mutex ) )
+						Synchronize();
 					Delete_( _Mutex );
 				}
 			}
