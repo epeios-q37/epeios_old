@@ -1,5 +1,9 @@
 $Id$
 
+02/03/06 :
+	- FLW :
+		- Correction bogue lorsque tentative de lire 0 octet.
+
 25/02/06 :
 	- RGSTRY :
 		- Correction bogue balise sans attribut.

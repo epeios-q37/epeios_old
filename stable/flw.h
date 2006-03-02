@@ -405,7 +405,7 @@ namespace flw {
 		{
 			bsize__ Available = _ReadFromCache( Amount, Buffer );
 
-			if ( ( Available < Minimum ) || ( Available == 0 ) )
+			if ( ( Available < Minimum ) || ( ( Available == 0 ) && ( Minimum != 0 ) ) )
 				Available += _ReadFromCacheOrDirectly( Minimum - Available, Buffer + Available, Amount  - Available );
 
 			return Available;
