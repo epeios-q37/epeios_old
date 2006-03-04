@@ -79,6 +79,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__GUI
 #undef CPE__LIBRARY
 #undef CPE__UNIX_LIKE
+#undef CPE__LINUX
 
 #ifdef _MSC_VER
 #	pragma warning( disable: 4786 )
@@ -129,15 +130,17 @@ extern class ttr_tutor &CPETutor;
 #		endif
 #	elif defined( __CYGWIN__ )
 #		define CPE__CYGWIN
-#		ifdef __MSDOS__
-#			define CPE__MS
-#		elif defined( __unix__ )
+#		define CPE__MS
+#		if defined( __unix__ )
 #			define CPE__UNIX
 #		endif
 #	elif defined( __BEOS__ )
 #		define CPE__BEOS
 #	else
 #		define CPE__UNIX
+#		ifdef __linux__
+#			define CPE__LINUX
+#		endif
 #	endif
 #	if __GNUC__ == 3
 //d Defined if 'ios::nocreate' and 'ios::noreplace'.

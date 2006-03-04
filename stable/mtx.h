@@ -71,6 +71,22 @@ extern class ttr_tutor &MTXTutor;
 #	define MTX__DEFAULT_DELAY	1
 #endif
 
+#ifndef MTX_NO_ATOMIC_OPERATIONS
+#	define MTX__USE_ATOMIC_OPERATIONS
+#endif
+
+#ifdef MTX__USE_ATOMIC_OPERATIONS
+#	ifdef CPE__MS
+#		define MTX__USE_MS_ATOMIC_OPERATIONS
+#	elif defined (CPE__LINUX )
+#		define MTX__USE_LINUX_ATOMIC_OPERATIONS
+#	else
+#		error "No atomic operations available for this compiling enviroment'
+#	endif
+#else
+#	define MTX__NO_ATOMIC_OPERATIONS
+#endif 
+
 #ifndef CPE__MT
 #	error "This library only useful in multitasking context, in which you are not."
 #endif
@@ -99,7 +115,13 @@ namespace mtx {
 	};
 
 	namespace {
-		typedef bso::ubyte__ counter__;
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		typedef LONG counter__;
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		typedef volatile atomic_t	counter__;
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		typedef volatile bso::ubyte__ counter__;
+#endif
 	}
 
 #ifdef MTX__CONTROL
@@ -148,12 +170,26 @@ namespace mtx {
 					break;
 				}
 
-			if ( ++Counter == MTX_MAX_COUNTER_VALUE )
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+			InterlockedIncrement( &Counter );
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+			atomic_inc( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+			Counter++;
+#endif
+
+			if ( Counter == MTX_MAX_COUNTER_VALUE )
 				ERRl();
 
 			if ( Counter > 1 )
 			{
-				Counter--;
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+			InterlockedDecrement( &Counter );
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+			atomic_dec( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+			Counter--;
+#endif
 				return false;
 			}
 			else {
@@ -179,7 +215,13 @@ namespace mtx {
 				break;
 			}
 #endif
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+			InterlockedDecrement( &Counter );
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+			atomic_dec( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
 			Counter--;
+#endif
 			Owner = THT_UNDEFINED_THREAD_ID;
 		}
 		bso::bool__ IsOwner( void ) const

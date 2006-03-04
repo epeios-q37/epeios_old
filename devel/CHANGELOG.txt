@@ -1,5 +1,12 @@
 $Id$
 
+04/03/06 :
+	- CPE :
+		- Ajout macro 'CPE__LINUX'.
+		- Correction bogue 'CPE__MS' dans CYGWIN.
+	- MTX :
+		- Mise en oeuvre d'opérateur atomiques.
+
 02/03/06 :
 	- FLW :
 		- Correction bogue lorsque tentative de lire 0 octet.
