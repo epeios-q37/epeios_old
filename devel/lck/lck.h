@@ -205,7 +205,7 @@ namespace lck {
 		object *Object_;
 		lck::lock___ Lock_;
 		bso::bool__ Locked_;
-		bso::bool__ Exclusive_;
+		bso::bool__ ReadWrite_;
 		mtx::mutex_handler__ Mutex_;
 		void _Lock( void )
 		{
@@ -215,26 +215,26 @@ namespace lck {
 		{
 			mtx::Unlock( Mutex_ );
 		}
-		void _ReleaseShared( void )
+		void _ReleaseReadOnly( void )
 		{
 #ifdef LCK__DBG
 			if ( !Locked_ )
 				ERRu();
 
-			if ( Exclusive_ )
+			if ( ReadWrite_ )
 				ERRu();
 #endif
 			Lock_.ReadingAchieved();
 
 			Locked_ = false;
 		}
-		void _ReleaseExclusive( void )
+		void _ReleaseReadWrite( void )
 		{
 #ifdef LCK__DBG
 			if ( !Locked_ )
 				ERRu();
 
-			if ( !Exclusive_ )
+			if ( !ReadWrite_ )
 				ERRu();
 #endif
 			Lock_.WritingAchieved();
@@ -253,7 +253,7 @@ namespace lck {
 			Object_ = NULL;
 			Lock_.reset( P );
 			Locked_ = false;
-			Exclusive_ = false;
+			ReadWrite_ = false;
 			Mutex_ = MTX_INVALID_HANDLER;
 		}
 		control___( void )
@@ -272,7 +272,7 @@ namespace lck {
 			Lock_.Init();
 			Mutex_ = mtx::Create( mtx::mFree );
 		}
-		const object &GetShared( void )
+		const object &GetReadOnly( void )
 		{
 #ifdef LCK__DBG
 			_Lock();
@@ -284,18 +284,18 @@ namespace lck {
 
 			_Lock();
 			Locked_ = true;
-			Exclusive_ = false;
+			ReadWrite_ = false;
 			_Unlock();
 
 			return *Object_;
 		}
-		void ReleaseShared( void )
+		void ReleaseReadOnly( void )
 		{
 			_Lock();
-			_ReleaseShared();
+			_ReleaseReadOnly();
 			_Unlock();
 		}
-		object &GetExclusive( void )
+		object &GetReadWrite( void )
 		{
 #ifdef LCK__DBG
 			_Lock();
@@ -307,7 +307,7 @@ namespace lck {
 
 			_Lock();
 			Locked_ = true;
-			Exclusive_ = true;
+			ReadWrite_ = true;
 			_Unlock();
 
 			return *Object_;
@@ -320,10 +320,10 @@ namespace lck {
 		{
 			return *Object_;
 		}
-		void ReleaseExclusive( void )
+		void ReleaseReadWrite( void )
 		{
 			_Lock();
-			_ReleaseExclusive();
+			_ReleaseReadWrite();
 			_Unlock();
 		}
 		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
@@ -333,10 +333,10 @@ namespace lck {
 			_Lock();
 
 			if ( Locked_ ) {
-				if ( Exclusive_ ) 
-					ReleaseExclusive();
+				if ( ReadWrite_ ) 
+					ReleaseReadWrite();
 				else
-					ReleaseShared();
+					ReleaseReadOnly();
 				WasLocked =true;
 			}
 
@@ -350,24 +350,28 @@ namespace lck {
 		}
 	};
 
-	template <typename object> class shared_access___
+	template <typename object> class read_only_access___
 	{
 	private:
 		control___<object> *Control_;
+		bso::bool__ _Locked;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( Control_ != NULL )
-					Control_->ReleaseShared();
+				if ( Control_ != NULL ) {
+					if ( _Locked )
+						Control_->ReleaseReadOnly();
+				}
 
 			Control_ = NULL;
+			_Locked = false;
 		}
-		shared_access___( void )
+		read_only_access___( void )
 		{
 			reset( false );
 		}
-		~shared_access___( void )
+		~read_only_access___( void )
 		{
 			reset();
 		}
@@ -376,37 +380,54 @@ namespace lck {
 			reset();
 
 			Control_ = &Control;
-
-			Control.GetShared();
 		}
 		const object &operator ()( void )
 		{
+			if ( !_Locked ) {
+				Control_->GetReadOnly();
+				_Locked = true;
+			}
+
 			return Control_->GetWithoutLocking();
 		}
 		bso::bool__ IsLocked( void ) const
 		{
-			return Control_->IsLocked();
+			return _Locked;
+		}
+		bso::bool__ Release( bso::bool__ ErrorIfNotLocked = true )
+		{
+			if ( _Locked ) {
+				Control->ReleaseReadOnly();
+				_Locked = false;
+				return true;
+			} else if ( ErrorIfNotLocked )
+				ERRu();
+
+			return false;
 		}
 	};
 
-	template <typename object> class exclusive_access___
+	template <typename object> class read_write_access___
 	{
 	private:
 		control___<object> *Control_;
+		bso::bool__ _Locked;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
 				if ( Control_ != NULL )
-					Control_->ReleaseExclusive();
+					if ( _Locked )
+						Control_->ReleaseReadWrite();
 
 			Control_ = NULL;
+			_Locked = false;
 		}
-		exclusive_access___( void )
+		read_write_access___( void )
 		{
 			reset( false );
 		}
-		~exclusive_access___( void )
+		~read_write_access___( void )
 		{
 			reset();
 		}
@@ -415,16 +436,30 @@ namespace lck {
 			reset();
 
 			Control_ = &Control;
-
-			Control.GetExclusive();
 		}
 		object &operator ()( void )
 		{
+			if ( !_Locked ) {
+				Control_->GetReadWrite();
+				_Locked = true;
+			}
+
 			return Control_->GetWithoutLocking();
 		}
 		bso::bool__ IsLocked( void ) const
 		{
-			return Control_->IsLocked();
+			return _Locked;
+		}
+		bso::bool__ Release( bso::bool__ ErrorIfNotLocked = true )
+		{
+			if ( _Locked ) {
+				Control->ReleaseReadWrite();
+				_Locked = false;
+				return true;
+			} else if ( ErrorIfNotLocked )
+				ERRu();
+
+			return false;
 		}
 	};
 }
