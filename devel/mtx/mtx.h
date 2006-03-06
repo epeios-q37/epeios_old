@@ -81,11 +81,15 @@ extern class ttr_tutor &MTXTutor;
 #	elif defined (CPE__LINUX )
 #		define MTX__USE_LINUX_ATOMIC_OPERATIONS
 #	else
-#		error "No atomic operations available for this compiling enviroment'
+#		error "No atomic operations available for this compiling enviroment"
 #	endif
 #else
 #	define MTX__NO_ATOMIC_OPERATIONS
-#endif 
+#endif
+
+#ifdef MTX__USE_LINUX_ATOMIC_OPERATIONS
+#	include "asm/atomic.h"
+#endif
 
 #ifndef CPE__MT
 #	error "This library only useful in multitasking context, in which you are not."
@@ -98,17 +102,18 @@ extern class ttr_tutor &MTXTutor;
 #endif
 
 //d A invalid mutex handler.
-#define MTX_INVALID_HANDLER	NULL
+#define MTX__INVALID_HANDLER	NULL	// Utilisation interne.
+#define MTX_INVALID_HANDLER		MTX__INVALID_HANDLER	// Pour les utilisateurs.
 
 
-#define MTX_MAX_COUNTER_VALUE	BSO_UBYTE_MAX
+#define MTX__COUNTER_OVERFLOW_VALUE	BSO_SBYTE_MIN
 
 namespace mtx {
 
 	enum mode__ {
 		mFree,	// Le mutex n'a pas de propriétaire. N'importe quel 'thread' peut le déverouiiler.
-		mOwned,	// Le thread propriétaire peut le vérouiiler autant de fois qu'il le veut sans être bloqué.
-				// En mode 'debug', une erreur est génèrée si le mutex est déverouiiler pas una utre threéd que le 
+		mOwned,	// Le thread propriétaire peut le verrouiller autant de fois qu'il le veut sans être bloqué.
+				// En mode 'debug', une erreur est génèrée si le mutex est déverouiller pas una autre threéd que le 
 				// propriétaire.
 		m_amount,
 		m_Undefined
@@ -118,15 +123,75 @@ namespace mtx {
 #ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
 		typedef LONG counter__;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
-		typedef volatile atomic_t	counter__;
+		typedef atomic_t	counter__;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
-		typedef volatile bso::ubyte__ counter__;
+		typedef volatile bso::sbyte__ counter__;
 #endif
 	}
 
 #ifdef MTX__CONTROL
-#	define MTX_DELETED_MUTEX_VALUE	BSO_UBYTE_MAX
+#	define MTX__RELEASED_MUTEX_VALUE	2
 #endif
+
+#define MTX__UNLOCKED_MUTEX_COUNTER_VALUE	1
+#define MTX__UNLOCKED_MUTEX_COUNTER_SIGN	MTX__UNLOCKED_MUTEX_COUNTER_VALUE
+
+	inline void _Set(
+		counter__ &Counter,
+		int Value )	// Retourne le signe de 'Counter'.
+	{
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		Counter = Value;
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		atomic_set( &Counter, Value );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		Counter = Value;
+#endif
+	}
+
+	inline bso::sign__ _GetSign( counter__ &Counter )	// Retourne le signe de 'Counter'.
+	{
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		return Counter;
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		return atomic_read( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		return Counter;
+#endif
+	}
+
+	inline int _GetValue( counter__ &Counter )	// Retourne le signe de 'Counter'.
+	{
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		return Counter;
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		return atomic_read( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		return Counter;
+#endif
+	}
+
+	inline void _Inc( counter__ &Counter )	// Incrémente 'Counter'.
+	{
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		InterlockedIncrement( &Counter );
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		atomic_inc( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		++Counter;
+#endif
+	}
+
+	inline bso::bool__ _DecAndTest( counter__ &Counter )	// Décrémente 'Counter'.et retourne 'true' si à zéro.
+	{
+#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+		return InterlockedDecrement( &Counter ) == 0;
+#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
+		return atomic_dec_and_test( &Counter );
+#elif defined( MTX__NO_ATOMIC_OPERATIONS )
+		return --Counter == 0;
+#endif
+	}
 
 	//t A mutex handler.
 	typedef struct mutex__ {
@@ -136,20 +201,20 @@ namespace mtx {
 #ifdef MTX__CONTROL
 		void Release( void )
 		{
-			Counter = MTX_DELETED_MUTEX_VALUE;
+			_Set( Counter, MTX__RELEASED_MUTEX_VALUE );
 		}
-		bso::bool__ IsReleased( void ) const
+		bso::bool__ IsReleased( void )
 		{
-			return Counter == MTX_DELETED_MUTEX_VALUE;
+			return _GetValue( Counter ) == MTX__RELEASED_MUTEX_VALUE;
 		}
 #endif
-		bso::bool__ IsLocked( void ) const
+		bso::bool__ IsLocked( void )
 		{
 #ifdef MTX__CONTROL
 			if ( IsReleased() )
 				ERRu();
 #endif
-			return Counter != 0;
+			return _GetSign( Counter ) != MTX__UNLOCKED_MUTEX_COUNTER_SIGN;
 		}
 		bso::bool__ TryToLock( void )
 		{
@@ -170,31 +235,15 @@ namespace mtx {
 					break;
 				}
 
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
-			InterlockedIncrement( &Counter );
-#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
-			atomic_inc( &Counter );
-#elif defined( MTX__NO_ATOMIC_OPERATIONS )
-			Counter++;
-#endif
-
-			if ( Counter == MTX_MAX_COUNTER_VALUE )
+			if ( _GetValue( Counter ) == MTX__COUNTER_OVERFLOW_VALUE )
 				ERRl();
 
-			if ( Counter > 1 )
-			{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
-			InterlockedDecrement( &Counter );
-#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
-			atomic_dec( &Counter );
-#elif defined( MTX__NO_ATOMIC_OPERATIONS )
-			Counter--;
-#endif
-				return false;
-			}
-			else {
+			if ( _DecAndTest( Counter ) ) {
 				Owner = tht::GetTID();
 				return true;
+			} else {
+				_Inc( Counter );
+				return false;
 			}
 		}
 		void Unlock( void )
@@ -215,13 +264,8 @@ namespace mtx {
 				break;
 			}
 #endif
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
-			InterlockedDecrement( &Counter );
-#elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
-			atomic_dec( &Counter );
-#elif defined( MTX__NO_ATOMIC_OPERATIONS )
-			Counter--;
-#endif
+			_Inc( Counter );
+
 			Owner = THT_UNDEFINED_THREAD_ID;
 		}
 		bso::bool__ IsOwner( void ) const
@@ -230,7 +274,7 @@ namespace mtx {
 		}
 		mutex__( mode__ Mode )
 		{
-			Counter = 0;
+			_Set( Counter, MTX__UNLOCKED_MUTEX_COUNTER_VALUE );
 			this->Mode = Mode;
 			Owner = THT_UNDEFINED_THREAD_ID;
 
@@ -347,7 +391,7 @@ namespace mtx {
 	public:
 		void reset( bool P = true )
 		{
-			Handler_ = MTX_INVALID_HANDLER;
+			Handler_ = MTX__INVALID_HANDLER;
 		}
 		mutex___( void )
 		{
@@ -368,7 +412,7 @@ namespace mtx {
 		void Lock( unsigned long Delay = MTX__DEFAULT_DELAY )
 		{
 #ifdef MTX_DBG
-			if ( Handler_ == MTX_INVALID_HANDLER )
+			if ( Handler_ == MTX__INVALID_HANDLER )
 				ERRu();
 #endif
 			mtx::Lock( Handler_, Delay );
@@ -377,7 +421,7 @@ namespace mtx {
 		void Unlock( void )
 		{
 #ifdef MTX_DBG
-			if ( Handler_ == MTX_INVALID_HANDLER )
+			if ( Handler_ == MTX__INVALID_HANDLER )
 				ERRu();
 #endif
 			mtx::Unlock( Handler_ );
@@ -386,7 +430,7 @@ namespace mtx {
 		bso::bool__ TryToLock( void )
 		{
 #ifdef MTX_DBG
-			if ( Handler_ == MTX_INVALID_HANDLER )
+			if ( Handler_ == MTX__INVALID_HANDLER )
 				ERRu();
 #endif
 			return mtx::TryToLock( Handler_ );
