@@ -371,6 +371,7 @@ nrow__ rgstry::registry_::_SearchPath(
 			ERRc();
 #endif
 		while ( ChildRow != NONE )  {
+			AttributeEntryRow = NONE;
 			Result = _SearchPath( Path, Path.Next( PathRow ), ChildRow, AttributeEntryRow, ResultTags, ResultAttributes );
 
 			if ( Result != NONE ) {

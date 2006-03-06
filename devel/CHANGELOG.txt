@@ -1,5 +1,9 @@
 $Id$
 
+06/03/06 :
+	- RGSTRY :
+		- Correction bogue recherche valeurs multiples.
+
 04/03/06 :
 	- CPE :
 		- Ajout macro 'CPE__LINUX'.
