@@ -106,14 +106,14 @@ extern class ttr_tutor &MTXTutor;
 #define MTX_INVALID_HANDLER		MTX__INVALID_HANDLER	// Pour les utilisateurs.
 
 
-#define MTX__COUNTER_OVERFLOW_VALUE	BSO_SBYTE_MIN
+#define MTX__COUNTER_OVERFLOW_VALUE	BSO_SSHORT_MIN
 
 namespace mtx {
 
 	enum mode__ {
-		mFree,	// Le mutex n'a pas de propriétaire. N'importe quel 'thread' peut le déverouiiler.
+		mFree,	// Le mutex n'a pas de propriétaire. N'importe quel 'thread' peut le déverrouiller.
 		mOwned,	// Le thread propriétaire peut le verrouiller autant de fois qu'il le veut sans être bloqué.
-				// En mode 'debug', une erreur est génèrée si le mutex est déverouiller pas una autre threéd que le 
+				// En mode 'debug', une erreur est génèrée si le mutex est déverrouiller pas un thread autre que le 
 				// propriétaire.
 		m_amount,
 		m_Undefined
@@ -125,12 +125,12 @@ namespace mtx {
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		typedef atomic_t	counter__;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
-		typedef volatile bso::sbyte__ counter__;
+		typedef volatile bso::sshort__ counter__;
 #endif
 	}
 
 #ifdef MTX__CONTROL
-#	define MTX__RELEASED_MUTEX_VALUE	2
+#	define MTX__RELEASED_MUTEX_COUNTER_VALUE	2
 #endif
 
 #define MTX__UNLOCKED_MUTEX_COUNTER_VALUE	1
@@ -160,7 +160,7 @@ namespace mtx {
 #endif
 	}
 
-	inline int _GetValue( counter__ &Counter )	// Retourne le signe de 'Counter'.
+	inline int _GetValue( counter__ &Counter )	// Retourne la valeur de 'Counter'.
 	{
 #ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
 		return Counter;
@@ -201,11 +201,11 @@ namespace mtx {
 #ifdef MTX__CONTROL
 		void Release( void )
 		{
-			_Set( Counter, MTX__RELEASED_MUTEX_VALUE );
+			_Set( Counter, MTX__RELEASED_MUTEX_COUNTER_VALUE );
 		}
 		bso::bool__ IsReleased( void )
 		{
-			return _GetValue( Counter ) == MTX__RELEASED_MUTEX_VALUE;
+			return _GetValue( Counter ) == MTX__RELEASED_MUTEX_COUNTER_VALUE;
 		}
 #endif
 		bso::bool__ IsLocked( void )
@@ -275,6 +275,7 @@ namespace mtx {
 		mutex__( mode__ Mode )
 		{
 			_Set( Counter, MTX__UNLOCKED_MUTEX_COUNTER_VALUE );
+
 			this->Mode = Mode;
 			Owner = THT_UNDEFINED_THREAD_ID;
 
