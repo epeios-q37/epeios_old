@@ -126,7 +126,8 @@ namespace flw {
 #ifdef CPE__MT
 		return mtx::Create( mtx::mOwned );
 #else
-		return !FLW_NO_MUTEX;	// Peur importe la valeur, pour peu qu'elle soit nulle.
+		static int A;
+		return &A;	// Peur importe la valeur, pour peu qu'elle ne soit pas nulle.
 #endif
 	}
 

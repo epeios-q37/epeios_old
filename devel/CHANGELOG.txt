@@ -1,5 +1,11 @@
 $Id$
 
+12/06/06 :
+	- FLW :
+		- Modification pour éviter supprimer des 'warning' de g++.
+	- TAGEXP :
+		- Adaptation au modifications bibliothèque 'FIL'.
+
 06/03/06 :
 	- RGSTRY :
 		- Correction bogue recherche valeurs multiples.

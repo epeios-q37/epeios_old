@@ -49,7 +49,7 @@ endif
 
 ifeq ("$(env)","windows")
 # compilation options
-co = -q -c -w-aus -w-inl
+co = -q -c -w-aus -w-inl -WAll
 # linkage options
 lo = -q -e$(name)
 endif

@@ -88,7 +88,7 @@ static fil::status__ WriteFile_(
 	txf::text_oflow__ &OFlow,
 	err::handle ErrHandle )
 {
-	fil::status__ Return = fil::s_Unknow;
+	fil::status__ Return = fil::s_Undefined;
 ERRProlog
 	char *Name = NULL;
 	fil::file_iflow___ File;

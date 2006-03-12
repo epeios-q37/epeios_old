@@ -60,9 +60,14 @@ extern class ttr_tutor &WLLIOTutor;
 
 /*$BEGIN$*/
 
+#include "cpe.h"
 #include "err.h"
 #include "bso.h"
-#include <io.h>
+#ifdef CPE__CYGWIN
+#	include <mingw/io.h>
+#else
+#	include <io.h>
+#endif
 #include <fcntl.h>
 
 namespace wllio {
