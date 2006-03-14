@@ -289,6 +289,10 @@ namespace bch {
 
 			return Object;
 		}
+		type Top( void )
+		{
+			return Get( this->Last() );
+		}
 		//f Remove 'Amount' objects from the end of the bunch.
 		void Truncate( epeios::size__ Amount = 1 )
 		{
