@@ -1,5 +1,9 @@
 $Id$
 
+15/03/06 :
+	- DTE :
+		- Le test de la validité d'une date est maintenant correcte !
+
 14/03/06 :
 	- BCH :
 		- Ajout méthode 'Top()' (pour aller avec la méthode 'Pop()').
