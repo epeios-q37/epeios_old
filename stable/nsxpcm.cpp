@@ -366,8 +366,8 @@ ERREnd
 ERREpilog
 }
 
-inline static const char *Convert_(
-	bso::ulong__ Value,
+template< typename t> inline static const char *Convert_(
+	t Value,
 	bso::integer_buffer__ &Buffer )
 {
 	if ( Value == NONE )
@@ -376,27 +376,28 @@ inline static const char *Convert_(
 		return bso::Convert( Value, Buffer );
 }
 
-template<typename id__> static inline void ConvertAndJoin_(
-	const bch::E_BUNCH_( id__ ) &Ids,
+template<typename id__, typename id_t__> static inline void ConvertAndJoin_(
+	const bch::E_BUNCH_( id__ ) &RawIds,
 	bso::char__ Separator,
 	string_ &Joined )
 {
+	const bch::E_BUNCH_( id_t__ ) &Ids = *(const bch::E_BUNCH_( id_t__ ) *)&RawIds;
 	epeios::row__ Row = Ids.First();
 	bso::integer_buffer__ Buffer;
 
 	if ( Row != NONE ) {
-		Joined.Append( Convert_( *Ids( Row ), Buffer ) );
+		Joined.Append( Convert_( Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 
 	while ( Row != NONE ) {
 		Joined.Append( Separator );
-		Joined.Append( Convert_( *Ids( Row ), Buffer ) );
+		Joined.Append( Convert_( Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 }
 
-template<typename id__> static inline void ConvertJoinAndTransform_(
+template<typename id__, typename id_t__> static inline void ConvertJoinAndTransform_(
 	const bch::E_BUNCH_( id__ ) &Ids,
 	bso::char__ Separator,
 	char **JString )
@@ -406,7 +407,7 @@ ERRProlog
 ERRBegin
 	Joined.Init();
 
-	ConvertAndJoin( Ids, Separator, Joined );
+	ConvertAndJoin_<id__, id_t__>( Ids, Separator, Joined );
 
 	Transform( Joined, JString );
 ERRErr
@@ -419,7 +420,7 @@ void nsxpcm::ConvertAndJoin(
 	bso::char__ Separator,
 	string_ &Joined )
 {
-	ConvertAndJoin_( Ids, Separator, Joined );
+	ConvertAndJoin_<bkdacc::id8__, bkdacc::id8_t__>( Ids, Separator, Joined );
 }
 
 void nsxpcm::ConvertJoinAndTransform(
@@ -427,7 +428,7 @@ void nsxpcm::ConvertJoinAndTransform(
 	bso::char__ Separator,
 	char **JString )
 {
-	ConvertJoinAndTransform_( Ids, Separator, JString );
+	ConvertJoinAndTransform_<bkdacc::id8__, bkdacc::id8_t__>( Ids, Separator, JString );
 }
 
 void nsxpcm::ConvertAndJoin(
@@ -435,7 +436,7 @@ void nsxpcm::ConvertAndJoin(
 	bso::char__ Separator,
 	string_ &Joined )
 {
-	ConvertAndJoin_( Ids, Separator, Joined );
+	ConvertAndJoin_<bkdacc::id16__, bkdacc::id16_t__>( Ids, Separator, Joined );
 }
 
 void nsxpcm::ConvertJoinAndTransform(
@@ -443,7 +444,7 @@ void nsxpcm::ConvertJoinAndTransform(
 	bso::char__ Separator,
 	char **JString )
 {
-	ConvertJoinAndTransform_( Ids, Separator, JString );
+	ConvertJoinAndTransform_<bkdacc::id16__, bkdacc::id16_t__>( Ids, Separator, JString );
 }
 
 void nsxpcm::ConvertAndJoin(
@@ -451,7 +452,7 @@ void nsxpcm::ConvertAndJoin(
 	bso::char__ Separator,
 	string_ &Joined )
 {
-	ConvertAndJoin_( Ids, Separator, Joined );
+	ConvertAndJoin_<bkdacc::id32__, bkdacc::id32_t__>( Ids, Separator, Joined );
 }
 
 void nsxpcm::ConvertJoinAndTransform(
@@ -459,7 +460,39 @@ void nsxpcm::ConvertJoinAndTransform(
 	bso::char__ Separator,
 	char **JString )
 {
-	ConvertJoinAndTransform_( Ids, Separator, JString );
+	ConvertJoinAndTransform_<bkdacc::id32__, bkdacc::id32_t__>( Ids, Separator, JString );
+}
+
+void nsxpcm::ConvertAndJoin(
+	const bkdacc::slongs_ &Ids,
+	bso::char__ Separator,
+	string_ &Joined )
+{
+	ConvertAndJoin_<bkdacc::slong__, bkdacc::slong__>( Ids, Separator, Joined );
+}
+
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::slongs_ &Ids,
+	bso::char__ Separator,
+	char **JString )
+{
+	ConvertJoinAndTransform_<bkdacc::slong__, bkdacc::slong__>( Ids, Separator, JString );
+}
+
+void nsxpcm::ConvertAndJoin(
+	const bkdacc::ulongs_ &Ids,
+	bso::char__ Separator,
+	string_ &Joined )
+{
+	ConvertAndJoin_<bkdacc::ulong__, bkdacc::ulong__>( Ids, Separator, Joined );
+}
+
+void nsxpcm::ConvertJoinAndTransform(
+	const bkdacc::ulongs_ &Ids,
+	bso::char__ Separator,
+	char **JString )
+{
+	ConvertJoinAndTransform_<bkdacc::ulong__, bkdacc::ulong__>( Ids, Separator, JString );
 }
 
 

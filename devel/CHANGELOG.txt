@@ -1,5 +1,9 @@
 $Id$
 
+27/03/06 :
+	- NSXPCM :
+		- Ajout gestion des types 'ulongs' et 'slongs'.
+
 15/03/06 :
 	- DTE :
 		- Le test de la validité d'une date est maintenant correcte !

@@ -468,6 +468,26 @@ namespace nsxpcm {
 		char **JString );
 
 	void ConvertAndJoin(
+		const bkdacc::slongs_ &Ids,
+		bso::char__ Separator,
+		string_ &Joined );
+
+	void ConvertJoinAndTransform(
+		const bkdacc::slongs_ &Ids,
+		bso::char__ Separator,
+		char **JString );
+
+	void ConvertAndJoin(
+		const bkdacc::ulongs_ &Ids,
+		bso::char__ Separator,
+		string_ &Joined );
+
+	void ConvertJoinAndTransform(
+		const bkdacc::ulongs_ &Ids,
+		bso::char__ Separator,
+		char **JString );
+
+	void ConvertAndJoin(
 		const bkdacc::booleans_ &Booleans,
 		bso::char__ Separator,
 		string_ &Joined );
