@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "flx.h"
 
 #include "xml.h"
 
@@ -37,10 +38,88 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+struct callback__
+: public xml::callback__
+{
+	int ident;
+	void Ident_( void )
+	{
+		int Counter = ident;
+
+		while ( Counter-- )
+			cout << txf::tab;
+	}
+	virtual bso::bool__ XMLTag(	const str::string_ &Name )
+	{
+		Ident_();
+		cout << "Tag : '" << Name << '\'' << txf::nl;
+
+		ident++;
+
+		return true;
+	}
+	virtual bso::bool__ XMLValue(
+		const str::string_ &TagName,
+		const str::string_ &Value )
+	{
+		Ident_();
+
+		cout << "Value : '" << Value << "' (" << TagName << ')' << txf::nl;
+
+		return true;
+	}
+	virtual bso::bool__ XMLAttribute(
+		const str::string_ &TagName,
+		const str::string_ &Name,
+		const str::string_ &Value )
+	{
+		Ident_();
+
+		cout << "Attribute : '" << Name << "', '" << Value << "' (" << TagName << ')' << txf::nl;
+
+		return true;
+	}
+	virtual bso::bool__ XMLTagClosed( const str::string_ &Name )
+	{
+		ident--;
+
+		Ident_();
+
+		cout << "Tag closed : '" << Name << '\'' << txf::nl;
+
+		return true;
+	}
+	callback__( void )
+	{
+		ident = 0;
+	}
+};
+
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	str::string	Example;
+	callback__ Callback;
+	flx::E_STRING_IFLOW__ Flow;
+	xtf::extended_text_iflow__ XTFlow;
+	xml::location__ Line, Column;
 ERRBegin
+	Example.Init( "<Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root>" );
+	Flow.Init( Example );
+
+	Flow.EOFD( XTF_EOXT );
+
+	XTFlow.Init( Flow );
+
+	if ( !xml::Parse( XTFlow, Callback, Line, Column ) ) {
+		cout << txf::sync;
+		cerr << txf::nl << "Error at line " << Line << ", Column " << Column << txf::nl;
+	}
+
+	
+	cout << txf::nl << txf::sync;
+
 ERRErr
 ERREnd
 ERREpilog

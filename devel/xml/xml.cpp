@@ -437,6 +437,19 @@ ERRBegin
 				if ( !Callback.XMLTagClosed( Name ) )
 					ERRI( iBeam );
 
+				Value.Init();
+				if ( GetTagValue_( Flow, Value ) ) {
+					if ( Tags.IsEmpty() )
+						ERRI( iBeam );
+
+					Tag.Init();
+
+					Tags.Top( Tag );
+
+					if ( !Callback.XMLValue( Tag, Value ) )
+						ERRI( iBeam );
+				}
+
 				State = TagExpected;
 				SkipSpaces_( Flow, false );
 				break;
@@ -455,7 +468,7 @@ ERRBegin
 						if ( !Callback.XMLValue( Tag, Value ) )
 							ERRI( iBeam );
 					}
-			}
+				}
 				State = TagExpected;
 				break;
 			default:

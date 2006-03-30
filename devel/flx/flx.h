@@ -289,12 +289,7 @@ namespace flx {
 			flw::bsize__ Wanted )
 		{
 			if ( (flw::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
-			{
 				Wanted = ( Bunch_->Amount() - Position_ );
-
-				if ( Wanted < Minimum )
-					ERRf();
-			}
 
 			if ( Wanted )
 			{

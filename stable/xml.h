@@ -67,6 +67,8 @@ extern class ttr_tutor &XMLTutor;
 #include "stk.h"
 
 namespace xml {
+	using xtf::location__;
+
 	struct callback__
 	{
 		virtual bso::bool__ XMLTag(	const str::string_ &Name ) = 0;

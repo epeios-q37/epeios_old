@@ -1,5 +1,12 @@
 $Id$
 
+30/03/06 :
+	- FLX :
+		- Correction bogue suite aux modifications bibliothèque 'FLW'.
+	- XML :
+		- Correction bogue apparaissant avec l'arbre XML suivant :
+		"<A><B/>Valeur</A>" (balise vide syntaxe '<.../>' suivi d'une valeur).
+
 27/03/06 :
 	- NSXPCM :
 		- Ajout gestion des types 'ulongs' et 'slongs'.
