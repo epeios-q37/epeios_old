@@ -74,6 +74,7 @@ extern class ttr_tutor &RGSTRYTutor;
 #endif
 
 namespace rgstry {
+	using xml::location__;
 
 	typedef str::string_	term_;
 	typedef str::string		term;
@@ -867,9 +868,18 @@ namespace rgstry {
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry,
 		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
-		xtf::location__ &ErrorLine,
-		xtf::location__ &ErrorColumn );
+		location__ &ErrorLine,
+		location__ &ErrorColumn );
 
+	inline nrow__ Parse(
+		xtf::extended_text_iflow__ &Flow,
+		registry_ &Registry,
+		nrow__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
+	{
+		location__ Dummy;
+
+		return Parse( Flow, Registry, Root, Dummy, Dummy );
+	}
 
 	class overloaded_registry___
 	{

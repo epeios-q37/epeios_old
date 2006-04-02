@@ -981,7 +981,13 @@ ERRBegin
 
 	if ( RootToo ) {
 		_DumpNode( Root, Writer, TermBuffer, NodeBuffer );
+	} else {
+		const term_ &Value = _GetValue( Root, TermBuffer, NodeBuffer );
+
+		if ( Value.Amount() != 0 )
+			Writer.PutValue( Value );
 	}
+
 
 	Row = Children.First();
 

@@ -354,7 +354,8 @@ enum state__ {
 	TagExpected,
 	OpeningTag,
 	ClosingTag,
-	Attribute
+	Attribute,
+	ValueExpected,
 };
 
 using xtf::location__;
@@ -380,14 +381,16 @@ ERRBegin
 	while ( !Flow.EOX() ) {
 		switch ( State ) {
 		case HeaderExpected:
-			if ( Flow.Get() != '<' )
+			if ( Flow.View() != '<' )
 				ERRI( iBeam );
-
-			if ( Flow.View() == '?' ) {
-				SkipHeader_( Flow );
-				SkipSpaces_( Flow );
-			} else
-				Flow.Unget( '<' );
+			else {
+				Flow.Get();
+				if ( Flow.View() == '?' ) {
+					SkipHeader_( Flow );
+					SkipSpaces_( Flow );
+				} else
+					Flow.Unget( '<' );
+			}
 		case TagExpected:
 			if ( Flow.Get() != '<' )
 				ERRI( iBeam );
@@ -437,39 +440,11 @@ ERRBegin
 				if ( !Callback.XMLTagClosed( Name ) )
 					ERRI( iBeam );
 
-				Value.Init();
-				if ( GetTagValue_( Flow, Value ) ) {
-					if ( Tags.IsEmpty() )
-						ERRI( iBeam );
-
-					Tag.Init();
-
-					Tags.Top( Tag );
-
-					if ( !Callback.XMLValue( Tag, Value ) )
-						ERRI( iBeam );
-				}
-
-				State = TagExpected;
-				SkipSpaces_( Flow, false );
+				State = ValueExpected;
 				break;
 			case '>':
 				Flow.Get();
-				if ( Flow.View() != '<' ) {
-					Value.Init();
-					if ( GetTagValue_( Flow, Value ) ) {
-						if ( Tags.IsEmpty() )
-							ERRI( iBeam );
-
-						Tag.Init();
-
-						Tags.Top( Tag );
-
-						if ( !Callback.XMLValue( Tag, Value ) )
-							ERRI( iBeam );
-					}
-				}
-				State = TagExpected;
+				State = ValueExpected;
 				break;
 			default:
 				State = Attribute;
@@ -519,22 +494,7 @@ ERRBegin
 					ERRI( iBeam );
 			} else if ( Flow.View() == '>' ) {
 				Flow.Get();
-				if ( Flow.View() != '<' ) {
-					Value.Init();
-					if ( GetTagValue_( Flow, Value ) ) {
-
-						if ( Tags.IsEmpty() )
-							ERRI( iBeam );
-
-						Tag.Init();
-
-						Tags.Top( Tag );
-
-						if ( !Callback.XMLValue( Tag, Value ) )
-							ERRI( iBeam );
-					}
-				}
-				State = TagExpected;
+				State = ValueExpected;
 			}
 
 			break;
@@ -563,16 +523,19 @@ ERRBegin
 			if ( !Callback.XMLTagClosed( Tag ) )
 				ERRI( iBeam );
 
+			State = ValueExpected;
+			break;
+		case ValueExpected:
 			if ( Flow.View() != '<' ) {
 				Value.Init();
 				if ( GetTagValue_( Flow, Value ) ) {
 
-					if ( Tags.IsEmpty() )
-						ERRI( iBeam );
-
 					Tag.Init();
 
-					Tags.Top( Tag );
+					if ( Tags.IsEmpty() )
+							ERRI( iBeam );
+					else
+						Tags.Top( Tag );
 
 					if ( !Callback.XMLValue( Tag, Value ) )
 						ERRI( iBeam );

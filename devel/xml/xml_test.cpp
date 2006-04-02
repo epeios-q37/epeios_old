@@ -105,7 +105,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XTFlow;
 	xml::location__ Line, Column;
 ERRBegin
-	Example.Init( "<Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root>" );
+	Example.Init( "Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root>" );
 	Flow.Init( Example );
 
 	Flow.EOFD( XTF_EOXT );

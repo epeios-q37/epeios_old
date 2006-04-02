@@ -60,6 +60,7 @@ ERRProlog
 	rgstry::registry Registry;
 	rgstry::nrow__ Root;
 	xtf::location__ Line, Column;
+	str::string FileName;
 ERRBegin
 	FFlow.Init( "essai.xml" );
 	FFlow.EOFD( XTF_EOXT );
@@ -68,10 +69,18 @@ ERRBegin
 
 	Registry.Init();
 
-	Root = rgstry::Parse( XFlow, Registry, NONE, Line, Column );
+	FileName.Init();
+
+	Root = rgstry::Parse( XFlow, Registry, NONE, FileName, Line, Column );
 
 	if ( Root == NONE ) {
-	 cerr << "Erreur ligne " << Line << " colomne " << Column << txf::nl;
+	 cerr << "Erreur";
+
+	 if ( FileName.Amount() )
+		 cerr << " fichier '" << FileName << '\'';
+	 
+	 cerr << " ligne " << Line << " colomne " << Column << txf::nl;
+
 	 ERRu();
 	}
 

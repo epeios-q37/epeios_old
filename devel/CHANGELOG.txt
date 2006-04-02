@@ -1,5 +1,15 @@
 $Id$
 
+02/04/06 :
+	- RGSTRY :
+		- Utilisation du namespace 'xcf' (XML-based configuration file) à la place de 'exml'.
+		- Introduction de 'xcf:bloc".
+		- '<xcf:define>' et '<xcf:expand> (en combinaison avec 'xml:bloc') peuvent maintenant
+		être utilisé avec un simple texte, et non plus simplement avec un arbre XML.
+		- 'xcf:expand' se voit attribuer un nouvel attribut ('href') en plus de 'select' déjà existant,
+		permettant d'inclure un fichier.
+		- Remaniement assez conséquent pour implanter toutes ces fonctionnalités.
+		
 30/03/06 :
 	- FLX :
 		- Correction bogue suite aux modifications bibliothèque 'FLW'.
