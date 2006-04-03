@@ -577,7 +577,7 @@ namespace rgstry {
 			if ( ValueRow == NONE )
 				ValueRow = Terms.New();
 
-			Terms( ValueRow ) = Value;
+			Terms( ValueRow ).Append( Value );
 
 			Nodes( NodeRow ).ValueRow() = ValueRow;
 
@@ -868,6 +868,7 @@ namespace rgstry {
 		xtf::extended_text_iflow__ &Flow,
 		registry_ &Registry,
 		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
+		str::string_ &ErrorFile,	// Peut être 'NULL' si pas interessé.
 		location__ &ErrorLine,
 		location__ &ErrorColumn );
 
@@ -878,7 +879,7 @@ namespace rgstry {
 	{
 		location__ Dummy;
 
-		return Parse( Flow, Registry, Root, Dummy, Dummy );
+		return Parse( Flow, Registry, Root, *(str::string_ *)NULL, Dummy, Dummy );
 	}
 
 	class overloaded_registry___

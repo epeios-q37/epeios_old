@@ -56,6 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "flx.h"
+#include "fil.h"
 
 using namespace rgstry;
 
@@ -538,20 +539,27 @@ struct kernel__ {
 
 enum mode__ {
 	mRegular,	// mode normale.
-	mDefineDeclaration,	// mode définition d'un  bloc, partie déclration ('<exml:define ...>')
-	mDefineDefinition,	// mode définition d'un  bloc, partie définition ('<exml:define name="test">...')
-	mExpandInRegular,	// mode déploiement d'un bloc en mode 'Regular'.
-	mExpandInDefine,	// mode déploiement d'un bloc en mode 'Define'.
+	mDefineDeclaration,	// mode définition d'un  bloc, partie déclration ('<xcf:define ...>')
+	mDefineDefinition,	// mode définition d'un  bloc, partie définition ('<xcf:define name="test">...')
+	mExpandInRegular,	// mode déploiement d'un bloc ou inclusion d'un fichier en mode 'Regular'.
+	mExpandInDefine,	// mode déploiement d'un bloc ou inclusion d'un fichier en mode 'Define'.
 	m_amount,
 	m_Undefined,
 };
 
-#define NAMESPACE	"exml"
-#define PREFIX		NAMESPACE ":"
-#define DEFINE_TAG	PREFIX "define"
-#define EXPAND_TAG		PREFIX "expand"
-#define DEFINE_ATTRIBUTE	"name"
-#define EXPAND_ATTRIBUTE	"select"
+#define NAMESPACE			"xcf"
+#define PREFIX				NAMESPACE ":"
+
+#define DEFINE_TAG			PREFIX "define"
+#define EXPAND_TAG			PREFIX "expand"
+
+#define DEFINE_ATTRIBUTE			"name"
+#define EXPAND_EXPLODE_ATTRIBUTE	"select"
+#define EXPAND_INCLUDE_ATTRIBUTE	"href"
+
+#define BLOC_TAG			PREFIX "bloc"
+#define BLOC_ATTRIBUTE		""	// Pas d'attribut.
+
 
 class callback___
 : public xml::callback__
@@ -560,11 +568,21 @@ private:
 	registry _ManagerRegistry;
 	kernel__ _User, _Manager;
 	mode__ _Mode;
-	term _ExpandName;
-	static struct node {
+	term _ExpandTagAttributeValue;
+	bso::bool__ _ExpandIsInclude;
+	location__ _IncludeErrorLine, _IncludeErrorColumn;
+	static struct define {
 		term TagName;
 		term AttributeName;
-	} _Define, _Expand;
+	} _Define;
+	static struct expand {
+		term TagName;
+		term ExplodeAttributeName;
+		term IncludeAttributeName;
+	} _Expand;
+	static struct bloc {
+		term TagName;
+	} _Bloc;
 	static term _Prefix;
 	kernel__ &_Kernel( void )
 	{
@@ -615,9 +633,17 @@ private:
 	{
 		return str::Compare( TagName, _Expand.TagName, TagName.First(), _Expand.TagName.First() ) == 0;
 	}
-	bso::bool__ _IsExpandTagAttributeName( const str::string_ &AttributeName )
+	bso::bool__ _IsExpandTagExplodeAttributeName( const str::string_ &AttributeName )
 	{
-		return str::Compare( AttributeName, _Expand.AttributeName, AttributeName.First(), _Expand.AttributeName.First() ) == 0;
+		return str::Compare( AttributeName, _Expand.ExplodeAttributeName, AttributeName.First(), _Expand.ExplodeAttributeName.First() ) == 0;
+	}
+	bso::bool__ _IsExpandTagIncludeAttributeName( const str::string_ &AttributeName )
+	{
+		return str::Compare( AttributeName, _Expand.IncludeAttributeName, AttributeName.First(), _Expand.IncludeAttributeName.First() ) == 0;
+	}
+	bso::bool__ _IsBlocTagName( const str::string_ &TagName )
+	{
+		return str::Compare( TagName, _Bloc.TagName, TagName.First(), _Bloc.TagName.First() ) == 0;
 	}
 	void _Dump(
 		registry_ &Registry,
@@ -649,13 +675,13 @@ private:
 		Flow.Init( Buffer );
 		TFlow.Init( Flow );
 
-		if ( Parse( TFlow, Registry, Root, Error, Error ) == NONE )
-			ERRc();
+		if ( Parse( TFlow, Registry, Root, *(str::string_ *)NULL, Error, Error ) == NONE )
+			ERRc();	// Normalement, toutes les erreurs ont été détectées lors du 'define'.
 	ERRErr
 	ERREnd
 	ERREpilog
 	}
-	bso::bool__ _ExpandNode( const term_ &Name )
+	bso::bool__ _ExplodeNode( void )
 	{
 		bso::bool__ Success = false;
 	ERRProlog
@@ -668,8 +694,10 @@ private:
 		Path.Init();
 
 		Path.Append( DEFINE_TAG "[" DEFINE_ATTRIBUTE "=\"" );
-		Path.Append( Name );
+		Path.Append( _ExpandTagAttributeValue );
 		Path.Append( "\"]" );
+
+		_ExpandTagAttributeValue.Init();
 
 		Root = _Manager.Registry.SearchPath( Path, _Manager.Root, AttributeEntryRow, PathErrorRow );
 
@@ -695,6 +723,48 @@ private:
 	ERREnd
 	ERREpilog
 		return Success;
+	}
+	bso::bool__ _IncludeFile( void )
+	{
+		bso::bool__ Success = false;
+	ERRProlog
+		fil::file_iflow___ FFlow;
+		xtf::extended_text_iflow__ XFlow;
+		tol::E_FPOINTER___( bso::char__ ) Buffer;
+		location__ ErrorLine, ErrorColumn;
+	ERRBegin
+		Buffer = _ExpandTagAttributeValue.Convert();
+
+		_ExpandTagAttributeValue.Init();
+
+		if ( !FFlow.Init( Buffer, err::hSkip ) )
+			ERRReturn;
+
+		FFlow.EOFD( XTF_EOXT );
+
+		XFlow.Init( FFlow );
+
+		if ( !xml::Parse( XFlow, *this, ErrorLine, ErrorColumn ) )  {
+			if ( _ExpandTagAttributeValue.Amount() == 0 ) {	// Si pas == 0, alors l'erreur se trouve dans un sous-fcihier.
+				_ExpandTagAttributeValue.Init( Buffer );	// Pour indiquer que l'erreur se situe dans un fichier et lequel.
+				_IncludeErrorLine = ErrorLine;
+				_IncludeErrorColumn = ErrorColumn;
+			}
+			ERRReturn;
+		}
+
+		Success = true;
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Success;
+	}
+	bso::bool__ _ExpandNode( void )
+	{
+		if ( _ExpandIsInclude )
+			return _IncludeFile();
+		else
+			return _ExplodeNode();
 	}
 protected:
 	virtual bso::bool__ XMLTag( const str::string_ &TagName )
@@ -739,7 +809,10 @@ protected:
 					ERRc();
 					break;
 				}
-			} else
+			} else if ( _IsBlocTagName( TagName ) ) {
+				if ( _Mode == mRegular )
+					Ignore = true;
+			} else 
 				return false;
 		}
 
@@ -764,11 +837,12 @@ protected:
 			return false;
 			break;
 		case mDefineDefinition:
+			if ( _IsDefineTagName( TagName ) )
+				return false;
 		case mRegular:
 			break;
 		case mExpandInRegular:
 		case mExpandInDefine:
-			return false;
 			break;
 		default:
 			ERRc();
@@ -802,10 +876,14 @@ protected:
 			if ( !_IsExpandTagName( TagName ) )
 				ERRc();
 #endif
-			if ( !_IsExpandTagAttributeName( Name ) )
+			if ( _IsExpandTagExplodeAttributeName( Name ) )
+				_ExpandIsInclude = false;
+			else if ( _IsExpandTagIncludeAttributeName( Name ) )
+				_ExpandIsInclude = true;
+			else
 				return false;
 
-			_ExpandName.Init( Value );
+			_ExpandTagAttributeValue.Init( Value );
 			break;
 		default:
 			ERRc();
@@ -817,9 +895,11 @@ protected:
 	virtual bso::bool__ XMLTagClosed( const str::string_ &TagName )
 	{
 		switch ( _Mode ) {
+		case mRegular:
+			if ( _IsBlocTagName( TagName ) )
+				return true;
 		case mDefineDeclaration:
 		case mDefineDefinition:
-		case mRegular:
 			_Current() = _Registry().GetParent( _Current() );
 			break;
 		case mExpandInRegular:
@@ -827,19 +907,20 @@ protected:
 			if ( !_IsExpandTagName( TagName ) )
 				ERRc();
 #endif
-			if ( !_ExpandNode( _ExpandName ) )
+			_Mode = mRegular;
+
+			if ( !_ExpandNode() )
 				return false;
 
 //			_Current() = _Registry().GetParent( _Current() );
 
-			_Mode = mRegular;
 			break;
 		case mExpandInDefine:
 #ifdef RGSTRY_DBG
 			if ( !_IsExpandTagName( TagName ) )
 				ERRc();
 #endif
-			if ( !_ExpandNode( _ExpandName ) )
+			if ( !_ExpandNode() )
 				return false;
 
 //			_Current() = _Registry().GetParent( _Current() );
@@ -871,8 +952,9 @@ public:
 	{
 		_ManagerRegistry.Init();
 		_Manager.Root = _Manager.Current = _Manager.Registry.CreateNode( term( "_internal_" ) );
-		_ExpandName.Init();
+		_ExpandTagAttributeValue.Init();
 		_Mode = mRegular;
+		_IncludeErrorLine = _IncludeErrorColumn = 0;
 	}
 	nrow__ GetRoot( void ) const
 	{
@@ -890,12 +972,19 @@ public:
 		cio::cout << txf::nl;
 */
 	}
+	const str::string_ &IncludeErrorFileName( void )
+	{
+		return _ExpandTagAttributeValue;
+	}
+	E_RODISCLOSE__( location__, IncludeErrorLine )
+	E_RODISCLOSE__( location__, IncludeErrorColumn )
 
 	friend class rgstrypersonnalization;
 };
 
-callback___::node callback___::_Define;
-callback___::node callback___::_Expand;
+callback___::define callback___::_Define;
+callback___::expand callback___::_Expand;
+callback___::bloc callback___::_Bloc;
 term callback___::_Prefix;
 
 void rgstry::registry_::_Delete( const erows_ &Rows )
@@ -979,16 +1068,9 @@ ERRBegin
 	Children.Init();
 	Children = _GetNode( Root, NodeBuffer ).Children;
 
-	if ( RootToo ) {
+	if ( RootToo )
 		_DumpNode( Root, Writer, TermBuffer, NodeBuffer );
-	} else {
-		const term_ &Value = _GetValue( Root, TermBuffer, NodeBuffer );
-
-		if ( Value.Amount() != 0 )
-			Writer.PutValue( Value );
-	}
-
-
+	
 	Row = Children.First();
 
 	while ( Row != NONE ) {
@@ -1188,6 +1270,7 @@ nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	registry_ &Registry,
 	nrow__ Root,
+	str::string_ &ErrorFileName,
 	xtf::location__ &ErrorLine,
 	xtf::location__ &ErrorColumn )
 {
@@ -1198,6 +1281,14 @@ ERRBegin
 		Root = Callback.GetRoot();
 	else
 		Root = NONE;
+
+	if ( ( &ErrorFileName != NULL ) && ( Callback.IncludeErrorFileName().Amount() != 0 ) ) {
+		ErrorFileName = Callback.IncludeErrorFileName();
+
+		ErrorLine = Callback.IncludeErrorLine();
+		ErrorColumn = Callback.IncludeErrorColumn();
+	}
+
 ERRErr
 ERREnd
 ERREpilog
@@ -1294,7 +1385,10 @@ public:
 		callback___::_Define.AttributeName.Init( DEFINE_ATTRIBUTE );
 
 		callback___::_Expand.TagName.Init( EXPAND_TAG );
-		callback___::_Expand.AttributeName.Init( EXPAND_ATTRIBUTE );
+		callback___::_Expand.ExplodeAttributeName.Init( EXPAND_EXPLODE_ATTRIBUTE );
+		callback___::_Expand.IncludeAttributeName.Init( EXPAND_INCLUDE_ATTRIBUTE );
+
+		callback___::_Bloc.TagName.Init( BLOC_TAG );
 
 		callback___::_Prefix.Init( PREFIX );
 
