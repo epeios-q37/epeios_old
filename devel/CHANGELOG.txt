@@ -1,5 +1,9 @@
 $Id$
 
+12/04/06 :
+	- RGSTRY :
+		- Ajout du booléen 'Append' pour la méthode 'SetValue()'.
+
 02/04/06 :
 	- RGSTRY :
 		- Utilisation du namespace 'xcf' (XML-based configuration file) à la place de 'exml'.

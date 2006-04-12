@@ -570,14 +570,19 @@ namespace rgstry {
 		}
 		void SetValue(
 			const value_ &Value,
-			nrow__ NodeRow )
+			nrow__ NodeRow,
+			bso::bool__ Append )
 		{
 			trow__ ValueRow = Nodes( NodeRow ).ValueRow();
 
 			if ( ValueRow == NONE )
 				ValueRow = Terms.New();
 
-			Terms( ValueRow ).Append( Value );
+			if ( Append )
+				Terms( ValueRow ).Append( Value );
+			else
+				Terms( ValueRow ).Init( Value );
+
 
 			Nodes( NodeRow ).ValueRow() = ValueRow;
 
@@ -702,7 +707,7 @@ namespace rgstry {
 		{
 			ParentRow = CreatePath( Path, ParentRow );
 
-			SetValue( Value, ParentRow );
+			SetValue( Value, ParentRow, false );
 
 			return ParentRow;
 		}
