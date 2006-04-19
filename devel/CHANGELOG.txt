@@ -1,5 +1,9 @@
 $Id$
 
+19/04/2006
+	- RGSTRY :
+		- Correction bogue.
+
 12/04/06 :
 	- RGSTRY :
 		- Ajout du booléen 'Append' pour la méthode 'SetValue()'.
