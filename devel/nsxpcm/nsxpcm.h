@@ -326,6 +326,29 @@ namespace nsxpcm {
 
 	}
 
+	inline void InsertBefore(
+		nsIDOMNode *Node,
+		nsIDOMNode *Sibling )
+	{
+		nsIDOMNode *Parent = NULL;
+		nsIDOMNode *&Dummy = Parent;
+
+		Node->GetParentNode( &Parent );
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+
+		if ( Sibling == NULL )
+			ERRu();
+
+		if ( Parent == NULL )
+			ERRu();
+#endif
+		Parent->InsertBefore( Sibling, Node, &Dummy );
+
+	}
+
 	inline nsIDOMNode *GetFirstChild( nsIDOMNode *Node )
 	{
 		nsIDOMNode *Child = NULL;
