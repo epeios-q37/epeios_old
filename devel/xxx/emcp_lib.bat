@@ -54,4 +54,5 @@ attrib %DST%\%LNM%.h +r
 attrib %DST%\%LNM%.cpp +r
 
 :end
+echo Finished.
 echo on
