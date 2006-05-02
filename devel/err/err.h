@@ -165,7 +165,8 @@ namespace err {
 		// prohibition error
 	enum l
 	{
-		lGeneric
+		lGeneric,
+		lNotImplemented,	// Non implémenté.
 	};
 		// limit overflow error
 	enum m
