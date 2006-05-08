@@ -25,6 +25,7 @@
 
 //	$Id$
 
+#if 0
 /*
  * hworld.cpp
  * Hello world sample by Robert Roebling
@@ -122,6 +123,62 @@ ERRFEnd
 	tol::Free( Buffer );
 ERRFEpilog
 }
+#endif
 
+namespace dbibsc {
+	//e Field types.
+	enum field_type__ {
+		//i Unknow type.
+		ftUnknow,
+		//i Record id (used by slave tables).
+		ftRecordId,
+		//i Boolean,
+		ftLogical,
+		//i Signed integer type (32bits)
+		ftInteger,
+		//i Float type.
+		ftFloat,
+		//i Alphanumeric, indexed but not dynamic.
+		ftIndexedText,
+		//i Alphanumeric, dynamic but not indexed.
+		ftDynamicText,
+		//i Date.
+		ftDate,
+		//i Composite field, for indexation.
+		ftComposite,
+		// amount of field type.
+		ft_amount
+	};
+}
 
-	
+namespace gsbbsc {	
+	//e Field types.
+	enum field_type__ {
+		ft_first,
+		//i Numeric.
+		ftNumeric = ft_first,
+		//i Date.
+		ftDate,
+		//i Text.
+		ftText,
+		//i Relational,
+		ftRelational,
+		ft_last = ftRelational,
+		//i Relational to itself.
+		ft_amount,
+		//i Unknown field type.
+		ft_Undefined,
+	};
+
+	dbibsc::field_type__ Convert( field_type__ Type );
+}
+
+using namespace gsbbsc;
+
+void Test( void )
+{
+	field_type__ FieldType = ft_Undefined;
+	dbibsc::field_type__ RawFieldType;
+
+	RawFieldType = gsbbsc::Convert( FieldType );
+}
