@@ -151,6 +151,10 @@ namespace dbibsc {
 	};
 }
 
+namespace dbimng {
+	using dbibsc::field_type__;
+}
+
 namespace gsbbsc {	
 	//e Field types.
 	enum field_type__ {
@@ -170,15 +174,12 @@ namespace gsbbsc {
 		ft_Undefined,
 	};
 
-	dbibsc::field_type__ Convert( field_type__ Type );
+//	dbibsc::field_type__ Convert( field_type__ Type );
 }
 
 using namespace gsbbsc;
 
 void Test( void )
 {
-	field_type__ FieldType = ft_Undefined;
-	dbibsc::field_type__ RawFieldType;
-
-	RawFieldType = gsbbsc::Convert( FieldType );
+	field_type__ FieldType = ft_amount;
 }
