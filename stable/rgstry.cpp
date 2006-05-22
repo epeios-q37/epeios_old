@@ -849,7 +849,7 @@ protected:
 			break;
 		}
 
-		_Registry().SetValue( Value, _Current(), false );
+		_Registry().SetValue( Value, _Current(), true );
 
 		return true;
 	}
