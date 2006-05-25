@@ -74,17 +74,17 @@ namespace csdebd {
 	E_AUTO( data )
 
 	class _passive_generic_functions___
-	: public flw::ioflow_functions___
+	: public flf::ioflow_functions___
 	{
 	private:
 		data_ &_Read;
 		data_ &_Write;
 		epeios::row__ _Row;
 	protected:
-		virtual flw::bsize__ FLWRead(
-			flw::bsize__ Minimum,
-			flw::datum__ *Buffer,
-			flw::bsize__ Wanted )
+		virtual flf::bsize__ FLFRead(
+			flf::bsize__ Minimum,
+			flf::datum__ *Buffer,
+			flf::bsize__ Wanted )
 		{
 			if ( _Row == NONE )
 				_Row = _Read.First();
@@ -113,7 +113,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			return Wanted;
 		}
-		virtual void FLWDismiss( void )
+		virtual void FLFDismiss( void )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Row != NONE )
@@ -121,10 +121,10 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 #endif
 			_Read.Init();
 		}
-		virtual flw::bsize__ FLWWrite(
-			const flw::datum__ *Buffer,
-			flw::bsize__ Wanted,
-			flw::bsize__ Minimum )
+		virtual flf::bsize__ FLFWrite(
+			const flf::datum__ *Buffer,
+			flf::bsize__ Wanted,
+			flf::bsize__ Minimum )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Read.Amount() != 0 )

@@ -55,142 +55,269 @@ extern class ttr_tutor &FLFTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D FiLe Flow 
+//D FLow Functions 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete !"
-
+#include "cpe.h"
 #include "err.h"
-#include "flw.h"
-#include <stdio.h>
+#include "bso.h"
 
-#ifdef FLF_FLOW_BUFFER_SIZE
-//d Buffer size for a stream output flow. 100 by default.
-#	define FLF__FLOW_BUFFER_SIZE FLF_FLOW_BUFFER_SIZE
+#ifdef CPE__MT
+#	include "mtx.h"
+#	define FLF_NO_MUTEX	MTX_INVALID_HANDLER
+	typedef mtx::mutex_handler__ mutex__;
 #else
-#	define FLF__FLOW_BUFFER_SIZE	100
+	typedef void *mutex__;
+#	define FLF_NO_MUTEX	NULL
 #endif
-
 
 namespace flf {
-	using flw::oflow__;
-	using flw::iflow__;
-	
-	//c A stream output flow driver.
-	class file_oflow__
-	: public oflow__
+
+		//t Amount of data.
+	typedef bso::msize__		size__;
+
+	//d The max value for a amount.
+#	define FLF_SIZE_MAX			BSO_MSIZE_MAX
+
+	//t Size (of a cache, for example).
+	typedef bso::bsize__		bsize__;
+
+	//d The max value for a size.
+#	define FLF_BSIZE_MAX		BSO_BSIZE_MAX
+
+	//t Type of a datum.
+	typedef unsigned char		datum__;
+
+#ifdef CPE__MT
+	inline void Test_( mutex__ Mutex )
 	{
-	private:
-		FILE *&File_;
-		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
-	protected:
-		virtual flw::size__ FLWWrite(
-			const flw::datum__ *Tampon,
-			flw::size__ Nombre,
-			flw::size__,
-			bool Synchronize )
-		{
-#ifdef STF_DBG
-			if ( ( Tampon == NULL ) && Nombre )
-				ERRu();
+		if ( Mutex == FLF_NO_MUTEX )
+			ERRc();
+	}
 #endif
-			if ( fwrite( Tampon, 1, Nombre, File_ ) < Nombre )
-				ERRd();
 
-			if ( Synchronize )
-				fflush( File_ );
-
-			return Nombre;
-		}
-	public:
-		void reset( bool P = true )
-		{
-			oflow__::reset( P );
-		}
-		file_oflow__( FILE *&File )
-		: oflow__(),
-		  File_( File )
-		{
-			reset( false );
-		}
-		virtual ~file_oflow__( void )
-		{
-			reset( true );
-		}
-		//f Initialization.
-		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
-		{
-			oflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
-		}
-	};
+	inline mutex__ Create_( void )
+	{
+#ifdef CPE__MT
+		return mtx::Create( mtx::mOwned );
+#else
+		static int A;
+		return &A;	// Peur importe la valeur, pour peu qu'elle ne soit pas nulle.
+#endif
+	}
 
 
-	class file_iflow__
-	: public iflow__
+	inline void Delete_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Delete( Mutex );
+#endif
+	}
+
+	inline void Lock_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Lock( Mutex );
+#endif
+	}
+
+	inline void Unlock_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		mtx::Unlock( Mutex );
+#endif
+	}
+
+	inline bso::bool__ IsLocked_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		return mtx::IsLocked( Mutex );
+#endif
+		return false;
+	}
+
+	inline bso::bool__ IsOwner_( mutex__ Mutex )
+	{
+#ifdef CPE__MT
+		Test_( Mutex );
+		return mtx::IsOwner( Mutex );
+#endif
+		return false;
+	}
+
+		//c Base input flow.
+	class iflow_functions___
 	{
 	private:
-		flw::datum__ Cache_[FLF__FLOW_BUFFER_SIZE];
-		// Le stream en question.
-		FILE *&File_;
-		flw::amount__ _HandleAmount(
-			flw::amount__ Minimum,
-			flw::datum__ *Tampon,
-			flw::amount__ Desire,
-			flw::amount__ AmountRead )
+		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		void _Lock( void )
 		{
-			if ( AmountRead < Minimum )
-			{
-				if ( !feof( File_ ) )
-					ERRd();
-				else
-					AmountRead += iflow__::HandleEOFD( Tampon + AmountRead, Desire - AmountRead );
-
-				if ( AmountRead < Minimum )
-					ERRd();
+			Lock_( _Mutex );
+		}
+		void _Unlock( void )
+		{
+			if ( IsLocked_( _Mutex ) ) {
+#ifdef FLF_DBG
+				if ( !IsOwner_( _Mutex ) )
+					ERRu();
+#endif
+				Unlock_( _Mutex );
+			}
+		}
+	protected:
+		/* Place un minimum de 'Miimum' octets et jusqu'à 'Wanted' octets dans 'Buffer'. Retourne le nombre d'octets
+		effectivement place dans 'Buffer'. Cette value peut être infèrieure à 'Minimum' uniquement si toutes les données 
+		ont été lues du périphérique sous-jacent. */
+		virtual bsize__ FLFRead(
+			bsize__ Minimum,
+			datum__ *Buffer,
+			bsize__ Wanted ) = 0;
+		virtual void FLFDismiss( void )
+		{}
+	public:
+		void reset( bso::bool__ P = true ) 
+		{
+			if ( P ) {
+				if ( _Mutex != FLF_NO_MUTEX ) {
+						if ( IsOwner_( _Mutex ) )
+							Dismiss();
+					Delete_( _Mutex );
+				}
 			}
 
-			return AmountRead;
+			_Mutex = FLF_NO_MUTEX;
 		}
-	protected:
-	virtual flw::size__ FLWRead(
-		flw::size__ Minimum,
-		flw::datum__ *Tampon,
-		flw::size__ Desire )
-	{
-#ifdef STF_DBG
-		if( Tampon == NULL )
-			ERRu();
-#endif
-		flw::amount__ NombreLus = 0;
-
-		if ( !feof( File_ ) )
-			NombreLus = fread( Tampon, 1, Desire, File_ );
-
-		return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
-	}
-	public:
-		void reset( bool P = true )
-		{
-			iflow__::reset( P );
-		}
-		file_iflow__( FILE *&File )
-		: iflow__(),
-		  File_( File )
+		iflow_functions___( void )
 		{
 			reset( false );
 		}
-		virtual ~file_iflow__( void )
+		virtual ~iflow_functions___( void )
 		{
-			reset( true );
+			reset();
 		}
-		//f Initialisation.
-		void Init( flw::amount__ AmountMax = FLW_AMOUNT_MAX )
+		void Init( void )
 		{
-			iflow__::Init( Cache_, sizeof( Cache_ ), AmountMax );
+			reset();
+
+			_Mutex = Create_();
+		}
+		void Dismiss( void )
+		{
+			if ( _Mutex != FLF_NO_MUTEX ) {
+				FLFDismiss();
+
+				_Unlock();
+			}
+		}
+		bsize__ Read(
+			bsize__ Minimum,
+			datum__ *Buffer,
+			bsize__ Wanted )
+		{
+#ifdef FLF_DBG
+			if ( Minimum < 1 )
+				ERRu();
+#endif
+			_Lock();
+
+			return FLFRead( Minimum, Buffer, Wanted );
 		}
 	};
+
+	//c Basic output flow.
+	class oflow_functions___
+	{
+	private:
+		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		void _Lock( void )
+		{
+			Lock_( _Mutex );
+		}
+		void _Unlock( void )
+		{
+			if ( IsLocked_( _Mutex ) ) {
+#ifdef FLF_DBG
+				if ( !IsOwner_( _Mutex ) )
+					ERRu();
+#endif
+				Unlock_( _Mutex );
+			}
+		}
+	protected:
+		virtual bsize__ FLFWrite(
+			const datum__ *Buffer,
+			bsize__ Wanted,
+			bsize__ Minimum ) = 0;
+		virtual void FLFSynchronize( void )
+		{}
+	public:
+		void reset( bso::bool__ P = true ) 
+		{
+			if ( P ) {
+				if ( _Mutex != FLF_NO_MUTEX ) {
+					if ( IsOwner_( _Mutex ) )
+						Synchronize();
+					Delete_( _Mutex );
+				}
+			}
+
+			_Mutex = FLF_NO_MUTEX;
+		}
+		oflow_functions___( void )
+		{
+			reset( false );
+		}
+		virtual ~oflow_functions___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			reset();
+
+			_Mutex = Create_();
+		}
+		void Synchronize( void )
+		{
+			if ( _Mutex != FLF_NO_MUTEX ) {
+				FLFSynchronize();
+				_Unlock();
+			}
+		}
+		bsize__ Write(
+			const datum__ *Buffer,
+			bsize__ Wanted,
+			bsize__ Minimum )
+		{
+			_Lock();
+			return FLFWrite( Buffer, Wanted, Minimum );
+		}
+	};
+
+	class ioflow_functions___
+	: public iflow_functions___,
+	  public oflow_functions___
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			iflow_functions___::reset( P );
+			oflow_functions___::reset( P );
+		}
+		void Init( void )
+		{
+			iflow_functions___::Init();
+			oflow_functions___::Init();;
+		}
+	};
+
+
 }
 
 /*$END$*/

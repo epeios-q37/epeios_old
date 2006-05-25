@@ -63,6 +63,7 @@ extern class ttr_tutor &FLWTutor;
 #include <string.h>
 #include "bso.h"
 #include "cpe.h"
+#include "flf.h"
 
 #ifndef FLW_CACHE_SIZE
 #	define FLW__CACHE_SIZE	1024
@@ -82,182 +83,28 @@ extern class ttr_tutor &FLWTutor;
 #	define FLW__OCACHE_SIZE	FLW_OCACHE_SIZE
 #endif
 
-#ifdef CPE__MT
-#	include "mtx.h"
-#	define FLW_NO_MUTEX	MTX_INVALID_HANDLER
-	typedef mtx::mutex_handler__ mutex__;
-#else
-	typedef void *mutex__;
-#	define FLW_NO_MUTEX	NULL
-#endif
-
 #ifdef CPE__UNIX
 #	ifndef FLW_LET_SIGPIPE
 #		define FLW__IGNORE_SIGPIPE
 #	endif
 #endif
 
+#define FLW_BSIZE_MAX	FLF_BSIZE_MAX
+#define FLW_SIZE_MAX	FLF_SIZE_MAX
+
 namespace flw {
-	//t Amount of data.
-	typedef bso::msize__		size__;
-
-	//d The max value for a amount.
-#	define FLW_SIZE_MAX			BSO_MSIZE_MAX
-
-	//t Size (of a cache, for example).
-	typedef bso::bsize__		bsize__;
-
-	//d The max value for a size.
-#	define FLW_BSIZE_MAX		BSO_BSIZE_MAX
-
-	//t Type of a datum.
-	typedef unsigned char		datum__;
-
-#ifdef CPE__MT
-	inline void Test_( mutex__ Mutex )
-	{
-		if ( Mutex == FLW_NO_MUTEX )
-			ERRc();
-	}
-#endif
-
-	inline mutex__ Create_( void )
-	{
-#ifdef CPE__MT
-		return mtx::Create( mtx::mOwned );
-#else
-		static int A;
-		return &A;	// Peur importe la valeur, pour peu qu'elle ne soit pas nulle.
-#endif
-	}
-
-
-	inline void Delete_( mutex__ Mutex )
-	{
-#ifdef CPE__MT
-		Test_( Mutex );
-		mtx::Delete( Mutex );
-#endif
-	}
-
-	inline void Lock_( mutex__ Mutex )
-	{
-#ifdef CPE__MT
-		Test_( Mutex );
-		mtx::Lock( Mutex );
-#endif
-	}
-
-	inline void Unlock_( mutex__ Mutex )
-	{
-#ifdef CPE__MT
-		Test_( Mutex );
-		mtx::Unlock( Mutex );
-#endif
-	}
-
-	inline bso::bool__ IsLocked_( mutex__ Mutex )
-	{
-#ifdef CPE__MT
-		Test_( Mutex );
-		return mtx::IsLocked( Mutex );
-#endif
-		return false;
-	}
-
-	inline bso::bool__ IsOwner_( mutex__ Mutex )
-	{
-#ifdef CPE__MT
-		Test_( Mutex );
-		return mtx::IsOwner( Mutex );
-#endif
-		return false;
-	}
-
-		//c Base input flow.
-	class iflow_functions___
-	{
-	private:
-		mutex__ _Mutex;	// Mutex pour protèger la ressource.
-		void _Lock( void )
-		{
-			Lock_( _Mutex );
-		}
-		void _Unlock( void )
-		{
-			if ( IsLocked_( _Mutex ) ) {
-#ifdef FLW_DBG
-				if ( !IsOwner_( _Mutex ) )
-					ERRu();
-#endif
-				Unlock_( _Mutex );
-			}
-		}
-	protected:
-		/* Place un minimum de 'Miimum' octets et jusqu'à 'Wanted' octets dans 'Buffer'. Retourne le nombre d'octets
-		effectivement place dans 'Buffer'. Cette value peut être infèrieure à 'Minimum' uniquement si toutes les données 
-		ont été lues du périphérique sous-jacent. */
-		virtual bsize__ FLWRead(
-			bsize__ Minimum,
-			datum__ *Buffer,
-			bsize__ Wanted ) = 0;
-		virtual void FLWDismiss( void )
-		{}
-	public:
-		void reset( bso::bool__ P = true ) 
-		{
-			if ( P ) {
-				if ( _Mutex != FLW_NO_MUTEX ) {
-						if ( IsOwner_( _Mutex ) )
-							Dismiss();
-					Delete_( _Mutex );
-				}
-			}
-
-			_Mutex = FLW_NO_MUTEX;
-		}
-		iflow_functions___( void )
-		{
-			reset( false );
-		}
-		virtual ~iflow_functions___( void )
-		{
-			reset();
-		}
-		void Init( void )
-		{
-			reset();
-
-			_Mutex = Create_();
-		}
-		void Dismiss( void )
-		{
-			if ( _Mutex != FLW_NO_MUTEX ) {
-				FLWDismiss();
-
-				_Unlock();
-			}
-		}
-		bsize__ Read(
-			bsize__ Minimum,
-			datum__ *Buffer,
-			bsize__ Wanted )
-		{
-#ifdef FLW_DBG
-			if ( Minimum < 1 )
-				ERRu();
-#endif
-			_Lock();
-
-			return FLWRead( Minimum, Buffer, Wanted );
-		}
-	};
+	using flf::datum__;
+	using flf::size__;
+	using flf::bsize__;
 
 	//c Base input flow.
-	class iflow__ // Bien qu'il y ai un destructeur, cette class est de la forme '__' car elle ne peut être instancié seule.
+	class iflow__	/* Bien que cette classe ai un destructeur, elle est suffixée par '__', d'une part pour simplifier
+					son utilisation (comme déclaration de paramètre d'une fonction) et, d'autre part,
+					parce qu'elle ne sera jamais instanciée telle quelle, mais toujours héritée (bien que ce ne
+					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		iflow_functions___ &_Functions;
+		flf::iflow_functions___ &_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// Size of the cache.
@@ -313,7 +160,7 @@ namespace flw {
 				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
 				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
 				est dans le cas où retourne les données 'EOFD', car le nombre d'octets lus correspond
-				à celui demandé ('_AmountMax' atteind). */
+				à celui demandé ('_AmountMax' atteint). */
 
 				if ( Amount < Minimum )
 					Amount += HandleEOFD( Buffer, Wanted - Amount );
@@ -467,7 +314,7 @@ namespace flw {
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		iflow__(
-			iflow_functions___ &Functions,
+			flf::iflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -585,7 +432,7 @@ namespace flw {
 		flw::datum__ _Cache[FLW__ICACHE_SIZE];
 	public:
 		unsafe_iflow___(
-			iflow_functions___ &Functions,
+			flf::iflow_functions___ &Functions,
 			size__ AmountMax )
 			: iflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
@@ -616,80 +463,13 @@ namespace flw {
 
 
 	//c Basic output flow.
-	class oflow_functions___
+	class oflow__	/* Bien que cette classe ai un destructeur, elle est suffixée par '__', d'une part pour simplifier
+					son utilisation (comme déclaration de paramètre d'une fonction) et, d'autre part,
+					parce qu'elle ne sera jamais instanciée telle quelle, mais toujours héritée (bien que ce ne
+					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		mutex__ _Mutex;	// Mutex pour protèger la ressource.
-		void _Lock( void )
-		{
-			Lock_( _Mutex );
-		}
-		void _Unlock( void )
-		{
-			if ( IsLocked_( _Mutex ) ) {
-#ifdef FLW_DBG
-				if ( !IsOwner_( _Mutex ) )
-					ERRu();
-#endif
-				Unlock_( _Mutex );
-			}
-		}
-	protected:
-		virtual bsize__ FLWWrite(
-			const datum__ *Buffer,
-			bsize__ Wanted,
-			bsize__ Minimum ) = 0;
-		virtual void FLWSynchronize( void )
-		{}
-	public:
-		void reset( bso::bool__ P = true ) 
-		{
-			if ( P ) {
-				if ( _Mutex != FLW_NO_MUTEX ) {
-					if ( IsOwner_( _Mutex ) )
-						Synchronize();
-					Delete_( _Mutex );
-				}
-			}
-
-			_Mutex = FLW_NO_MUTEX;
-		}
-		oflow_functions___( void )
-		{
-			reset( false );
-		}
-		virtual ~oflow_functions___( void )
-		{
-			reset();
-		}
-		void Init( void )
-		{
-			reset();
-
-			_Mutex = Create_();
-		}
-		void Synchronize( void )
-		{
-			if ( _Mutex != FLW_NO_MUTEX ) {
-				FLWSynchronize();
-				_Unlock();
-			}
-		}
-		bsize__ Write(
-			const datum__ *Buffer,
-			bsize__ Wanted,
-			bsize__ Minimum )
-		{
-			_Lock();
-			return FLWWrite( Buffer, Wanted, Minimum );
-		}
-	};
-
-	//c Basic output flow.
-	class oflow__	// Althought it has a destructor, it's a '__' version because it has to be inherited to be used.
-	{
-	private:
-		oflow_functions___ &_Functions;
+		flf::oflow_functions___ &_Functions;
 		// The cache.
 		datum__ *Cache_;
 		// The size of the cache.
@@ -778,7 +558,7 @@ namespace flw {
 			Written_ = 0;
 		}
 		oflow__(
-			oflow_functions___ &Functions,
+			flf::oflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -791,7 +571,7 @@ namespace flw {
 			reset( false );
 
 		}
-		~oflow__( void )
+		virtual ~oflow__( void )
 		{
 			reset();
 		}
@@ -851,7 +631,7 @@ namespace flw {
 		flw::datum__ _Cache[FLW__OCACHE_SIZE];
 	public:
 		unsafe_oflow___(
-			oflow_functions___ &Functions,
+			flf::oflow_functions___ &Functions,
 			size__ AmountMax )
 			: oflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
@@ -885,22 +665,6 @@ namespace flw {
 		OutputFlow.Write( String, (bsize__)( Length + 1 ) );
 	}
 
-	class ioflow_functions___
-	: public iflow_functions___,
-	  public oflow_functions___
-	{
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			iflow_functions___::reset( P );
-			oflow_functions___::reset( P );
-		}
-		void Init( void )
-		{
-			iflow_functions___::Init();
-			oflow_functions___::Init();;
-		}
-	};
 
 	//c Basic input/output flow.
 	class ioflow__
@@ -914,7 +678,7 @@ namespace flw {
 			oflow__::reset( P );
 		}
 		ioflow__(
-			ioflow_functions___ &Functions,
+			flf::ioflow_functions___ &Functions,
 			datum__ *ICache,
 			bsize__ ISize,
 			size__ ReadAmountMax,
@@ -927,7 +691,7 @@ namespace flw {
 			reset( false );
 		}
 		ioflow__(
-			ioflow_functions___ &Functions,
+			flf::ioflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -958,13 +722,13 @@ namespace flw {
 		flw::datum__ _OCache[FLW__OCACHE_SIZE];
 	public:
 		unsafe_ioflow___(
-			ioflow_functions___ &Functions,
+			flf::ioflow_functions___ &Functions,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax )
 		{}
 		unsafe_ioflow___(
-			ioflow_functions___ &Functions,
+			flf::ioflow_functions___ &Functions,
 			size__ AmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax )
 		{}

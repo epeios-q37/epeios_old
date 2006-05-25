@@ -61,6 +61,7 @@ extern class ttr_tutor &IOFTutor;
 /*$BEGIN$*/
 
 #include "cpe.h"
+#include "flf.h"
 #include "flw.h"
 
 #ifdef IOF_BUFFER_SIZE
@@ -111,26 +112,26 @@ namespace iof {
 
 	class io_oflow_functions___
 	: public output__,
-	  public flw::oflow_functions___
+	  public flf::oflow_functions___
 	{
 	protected:
-		flw::bsize__ FLWWrite(
-			const flw::datum__ *Tampon,
-			flw::bsize__ Minimum,
-			flw::bsize__ Demande )
+		flf::bsize__ FLFWrite(
+			const flf::datum__ *Tampon,
+			flf::bsize__ Minimum,
+			flf::bsize__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			flw::bsize__ Written = 0;
+			flf::bsize__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
 
 			return Written;
 		}
-		void FLWSynchronize( void )
+		void FLFSynchronize( void )
 		{
 			Flush();
 		}
@@ -183,39 +184,24 @@ namespace iof {
 
 	class io_iflow_functions___
 	: public input__,
-	  public flw::iflow_functions___
+	  public flf::iflow_functions___
 	{
-	private:
-		flw::bsize__ _HandleAmount(
-			flw::bsize__ Minimum,
-			flw::datum__ *Tampon,
-			flw::bsize__ Desire,
-			flw::bsize__ AmountRead )
-		{
-			if ( AmountRead < Minimum )
-			{
-				if ( !OnEOF() )
-					ERRd();
-			}
-
-			return AmountRead;
-		}
 	protected:
-		flw::bsize__ FLWRead(
-			flw::bsize__ Minimum,
-			flw::datum__ *Tampon,
-			flw::bsize__ Desire )
+		flf::bsize__ FLFRead(
+			flf::bsize__ Minimum,
+			flf::datum__ *Tampon,
+			flf::bsize__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			flw::bsize__ NombreLus = 0;
+			flf::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += input__::Read( Desire - NombreLus, Tampon );
 
-			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+			return NombreLus;
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -268,59 +254,44 @@ namespace iof {
 	class io_flow_functions___
 	: public output__,
 	  public input__,
-	  public flw::ioflow_functions___
+	  public flf::ioflow_functions___
 	{
-	private:
-		flw::bsize__ _HandleAmount(
-			flw::bsize__ Minimum,
-			flw::datum__ *Tampon,
-			flw::bsize__ Desire,
-			flw::bsize__ AmountRead )
-		{
-			if ( AmountRead < Minimum )
-			{
-				if ( !OnEOF() )
-					ERRd();
-			}
-
-			return AmountRead;
-		}
 	protected:
-		flw::bsize__ FLWWrite(
-			const flw::datum__ *Tampon,
-			flw::bsize__ Minimum,
-			flw::bsize__ Demande )
+		flf::bsize__ FLFWrite(
+			const flf::datum__ *Tampon,
+			flf::bsize__ Minimum,
+			flf::bsize__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			flw::bsize__ Written = 0;
+			flf::bsize__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += output__::Write( Tampon, Demande - Written );
 
 			return Written;
 		}
-		void FLWSynchronize( void )
+		void FLFSynchronize( void )
 		{
 			Flush();
 		}
-		flw::bsize__ FLWRead(
-			flw::bsize__ Minimum,
-			flw::datum__ *Tampon,
-			flw::bsize__ Desire )
+		flf::bsize__ FLFRead(
+			flf::bsize__ Minimum,
+			flf::datum__ *Tampon,
+			flf::bsize__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			flw::bsize__ NombreLus = 0;
+			flf::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += input__::Read( Desire - NombreLus, Tampon );
 
-			return _HandleAmount( Minimum, Tampon, Desire, NombreLus );
+			return NombreLus;
 		}
 	public:
 		void Init(  descriptor__ D  )

@@ -1,5 +1,13 @@
 $Id$
 
+25/05/06 :
+	- GENERAL :
+		- Adaptations aux changements dans 'FLW'.
+	- FLF :
+		- Création (voir 'FLW').
+	- FLW :
+		- Déportation des classes '...flow_functions___' vers 'LFL'.
+
 22/05/06 :
 	- RGSTRY :
 		- Correction bogue 'xcf:bloc' successifs.

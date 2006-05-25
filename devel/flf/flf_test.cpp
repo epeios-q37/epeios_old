@@ -29,11 +29,13 @@
 #include <string.h>
 
 #include "flf.h"
-#include "err.h"
 
-using flf::cin;
-using flf::cout;
-using flf::cerr;
+#include "err.h"
+#include "cio.h"
+
+using cio::cin;
+using cio::cout;
+using cio::cerr;
 
 void Generic( int argc, char *argv[] )
 {
@@ -46,7 +48,6 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
 	cout << "Test of library " << FLFTutor.Name << ' ' << __DATE__" "__TIME__"\n";
@@ -58,7 +59,7 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:
@@ -69,9 +70,7 @@ ERRFBegin
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cout << "\nEnd of program " << FLFTutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }

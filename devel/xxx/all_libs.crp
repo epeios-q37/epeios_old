@@ -11,6 +11,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Amount/Extent managing
 &bch		&epeios		&2001-\
 	&BunCH
+&bfl		&epeios		&\
+	&Bit FLow
 &bitbch		&epeios		&2001-\
 	&BInary digiT BunCH
 &bso		&epeios		&2000-\
@@ -98,7 +100,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &fil		&epeios		&2000-2001, \
 	&FILe
 &flf		&epeios		&\
-	&FiLe Flow
+	&FLow Functions
 &flm		&epeios		&2000-\
 	&FiLe Memory
 &flw		&epeios		&2000-\

@@ -61,6 +61,7 @@ extern class ttr_tutor &LTFTutor;
 /*$BEGIN$*/
 
 #include "err.h"
+#include "flf.h"
 #include "flw.h"
 #include "txf.h"
 
@@ -68,18 +69,18 @@ namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
 	class _line_text_oflow_functions___
-	: public flw::oflow_functions___
+	: public flf::oflow_functions___
 	{
 	private:
-		flw::datum__ *Data_;
+		flf::datum__ *Data_;
 		bso::ubyte__ Size_;
 		bso::ubyte__ Amount_;
 		txf::text_oflow__ &TFlow_;
 	protected:
-		virtual flw::bsize__ FLWWrite(
-			const flw::datum__ *Buffer,
-			flw::bsize__ Wanted,
-			flw::bsize__ Minimum )
+		virtual flf::bsize__ FLFWrite(
+			const flf::datum__ *Buffer,
+			flf::bsize__ Wanted,
+			flf::bsize__ Minimum )
 		{
 			if ( ( Amount_ + Wanted ) > Size_ ) {
 				if ( Wanted >= Size_ ) {
@@ -102,7 +103,7 @@ namespace ltf {
 
 			return Wanted;
 		}
-		virtual void FLWSynchronize( void )
+		virtual void FLFSynchronize( void )
 		{
 			if ( Amount_ > Size_ ) {
 				TFlow_ << txf::rfl;
@@ -126,8 +127,8 @@ namespace ltf {
 			reset();
 		}
 		void Init(
-			flw::datum__ *Data,
-			flw::size__ Size )
+			flf::datum__ *Data,
+			flf::size__ Size )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
