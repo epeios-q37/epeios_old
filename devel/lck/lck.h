@@ -397,7 +397,7 @@ namespace lck {
 		bso::bool__ Release( bso::bool__ ErrorIfNotLocked = true )
 		{
 			if ( _Locked ) {
-				Control->ReleaseReadOnly();
+				Control_->ReleaseReadOnly();
 				_Locked = false;
 				return true;
 			} else if ( ErrorIfNotLocked )
@@ -453,7 +453,7 @@ namespace lck {
 		bso::bool__ Release( bso::bool__ ErrorIfNotLocked = true )
 		{
 			if ( _Locked ) {
-				Control->ReleaseReadWrite();
+				Control_->ReleaseReadWrite();
 				_Locked = false;
 				return true;
 			} else if ( ErrorIfNotLocked )

@@ -1,5 +1,11 @@
 $Id$
 
+26/05/06 :
+	- BSO :
+		- Simplification de la classe 'bso::sign__' pour éviter des ambiguïtés..
+	- LCK :
+		- Correction erreurs typographiques.
+
 25/05/06 :
 	- GENERAL :
 		- Adaptations aux changements dans 'FLW'.
