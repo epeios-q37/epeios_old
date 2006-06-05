@@ -117,7 +117,7 @@ bsize__ flw::oflow__::_DirectWrite(
 	bsize__ Amount = 0;
 ERRProlog
 ERRBegin
-	if ( ( Size_ == 0 ) && ( Cache_ != NULL ) )	// There was an error before. See below, in 'ERRErr'.
+	if ( ( _Size == 0 ) && ( _Cache != NULL ) )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
 #ifdef FLW_DBG
@@ -135,12 +135,12 @@ ERRBegin
 			ERRu();
 #endif
 
-	Written_ += Amount;
+	_Written += Amount;
 
-	if ( Written_ >= AmountMax_ )
+	if ( _Written >= _AmountMax )
 		ERRf();
 ERRErr
-	Size_ = Free_ = 0;	// To avoid further writing in cache. Next writing will generate an error. 
+	_Size = _Free = 0;	// Pour éviter toute nouvelle écriture dans le cache. La prochaine tentative génèrera une erreur.
 	Synchronize();	// N'écrit rien (à priori) ; juste pour déverouiiler.
 ERREnd
 ERREpilog

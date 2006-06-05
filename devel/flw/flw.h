@@ -422,6 +422,21 @@ namespace flw {
 
 			return Amount;
 		}
+		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+
+		{
+			if ( _Available == 0 )
+				_FillCache( 1 );
+
+			if ( _Available == 0 )
+				ERRf();
+
+			if ( MarkAsUsed ) {
+				_Available--;
+				return _Cache + _Position++;
+			} else
+				return _Cache + _Position;
+		}
 	};
 
 
@@ -471,15 +486,15 @@ namespace flw {
 	private:
 		flf::oflow_functions___ &_Functions;
 		// The cache.
-		datum__ *Cache_;
+		datum__ *_Cache;
 		// The size of the cache.
-		bsize__ Size_;
+		bsize__ _Size;
 		// The amount of bytes yet free.
-		bsize__ Free_;
+		bsize__ _Free;
 		// Amount of data written since the last synchronizing.
-		size__ Written_;
+		size__ _Written;
 		// Max amount of data between 2 synchronizing.
-		size__ AmountMax_;
+		size__ _AmountMax;
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
 		bsize__ _DirectWrite(
 			const datum__ *Buffer,
@@ -487,24 +502,24 @@ namespace flw {
 			bsize__ Minimum );
 		void _DumpCache( void )
 		{
-			bsize__ Stayed = Size_ - Free_;
+			bsize__ Stayed = _Size - _Free;
 			
 			if ( Stayed != 0 ) {
-				_DirectWrite( Cache_, Stayed, Stayed );
+				_DirectWrite( _Cache, Stayed, Stayed );
 
-				Free_ = Size_;
+				_Free = _Size;
 			}
 		}
 		bsize__ _WriteIntoCache(
 			const datum__ *Buffer,
 			bsize__ Amount )
 		{
-			if ( Free_ < Amount )
-				Amount = Free_;
+			if ( _Free < Amount )
+				Amount = _Free;
 				
-			memcpy( Cache_ + Size_ - Free_, Buffer, (size_t)Amount );
+			memcpy( _Cache + _Size - _Free, Buffer, (size_t)Amount );
 			
-			Free_ -= Amount;
+			_Free -= Amount;
 			
 			return Amount;
 		}
@@ -515,10 +530,10 @@ namespace flw {
 			bsize__ Amount )
 		{
 #ifdef FLW_DBG
-			if ( Size_ != Free_ )
+			if ( _Size != _Free )
 				ERRc();
 #endif
-			if ( Amount > Size_ )
+			if ( Amount > _Size )
 				return _DirectWrite( Buffer, Amount, Amount );
 			else
 				return _WriteIntoCache( Buffer, Amount );
@@ -529,7 +544,7 @@ namespace flw {
 			_DumpCache();
 			_Functions.Synchronize();
 
-			Written_ = 0;
+			_Written = 0;
 		}
 		// Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		bsize__ _WriteUpTo(
@@ -555,7 +570,7 @@ namespace flw {
 			if ( P )
 				Synchronize();
 
-			Written_ = 0;
+			_Written = 0;
 		}
 		oflow__(
 			flf::oflow_functions___ &Functions,
@@ -564,9 +579,9 @@ namespace flw {
 			size__ AmountMax )
 		: _Functions( Functions )
 		{
-			Cache_ = Cache;
-			Size_ = Free_ = Size;
-			AmountMax_ = AmountMax;
+			_Cache = Cache;
+			_Size = _Free = Size;
+			_AmountMax = AmountMax;
 
 			reset( false );
 
@@ -602,11 +617,11 @@ namespace flw {
 		//f Return the amount of data written since last 'Synchronize()'.
 		size__ AmountWritten( void ) const
 		{
-			return Written_ + ( Size_ - Free_ );
+			return _Written + ( _Size - _Free );
 		}
 		void SetAmountMax( size__ AmountMax )
 		{
-			AmountMax_ = AmountMax;
+			_AmountMax = AmountMax;
 		}
 		bsize__ WriteRelay(
 			const datum__ *Buffer,
@@ -621,6 +636,19 @@ namespace flw {
 				Amount += WriteUpTo( Buffer + Amount, Wanted - Amount);
 
 			return Amount;
+		}
+		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+		{
+			if ( _Free == 0 )
+				_DumpCache();
+
+			if ( _Free == 0 )
+				ERRf();
+
+			if ( MarkAsUsed )
+				return _Cache + _Size - _Free--;
+			else
+				return _Cache + _Size - _Free;
 		}
 	};
 

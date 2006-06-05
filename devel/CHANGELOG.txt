@@ -1,5 +1,12 @@
 $Id$
 
+05/06/06 :
+	- GENERAL :
+		- Création bibliothèque 'BFL' (Bit FLow) de lecture/écriture par bit.
+	- FLW :
+		- Rajout méthode 'GetCurrentCacheDatum'.
+		- Renommage des variables de la classe 'oflow__' pour la rendre conforme à la norme.
+
 26/05/06 :
 	- BSO :
 		- Simplification de la classe 'bso::sign__' pour éviter des ambiguïtés..
