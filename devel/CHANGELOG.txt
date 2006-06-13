@@ -1,8 +1,12 @@
 $Id$
 
 13/06/06
+	- GENERAL :
+		- Adaptation aux modifications dans 'FLF'.
 	- TOL :
 		- Ajout fonction 'SignalExits()'.
+	- FLF :
+		- Toutes les méthodes virtuelles doivent maintenant être surchargées.
 
 05/06/06 :
 	- GENERAL :

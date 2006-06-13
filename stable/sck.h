@@ -286,6 +286,10 @@ namespace sck {
 			const flf::datum__ *Buffer,
 			flf::bsize__ Wanted,
 			flf::bsize__ Minimum );
+		virtual void FLFDismiss( void )
+		{}
+		virtual void FLFSynchronize( void )
+		{}
 	public:
 		void reset( bool P = true )
 		{

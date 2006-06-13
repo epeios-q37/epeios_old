@@ -203,6 +203,8 @@ namespace iof {
 
 			return NombreLus;
 		}
+		void FLFDismiss( void )
+		{}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -293,6 +295,8 @@ namespace iof {
 
 			return NombreLus;
 		}
+		void FLFDismiss( void )
+		{}
 	public:
 		void Init(  descriptor__ D  )
 		{

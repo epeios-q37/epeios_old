@@ -178,8 +178,7 @@ namespace flf {
 			bsize__ Minimum,
 			datum__ *Buffer,
 			bsize__ Wanted ) = 0;
-		virtual void FLFDismiss( void )
-		{}
+		virtual void FLFDismiss( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
 		{
@@ -254,8 +253,7 @@ namespace flf {
 			const datum__ *Buffer,
 			bsize__ Wanted,
 			bsize__ Minimum ) = 0;
-		virtual void FLFSynchronize( void )
-		{}
+		virtual void FLFSynchronize( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
 		{

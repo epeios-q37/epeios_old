@@ -128,6 +128,8 @@ namespace flx {
 
 			return Wanted;
 		}
+		virtual void FLFDismiss( void )
+		{}
 	public:
 		void reset( bool P = true )
 		{
@@ -216,6 +218,8 @@ namespace flx {
 
 			return Wanted;
 		}
+		virtual void FLFSynchronize( void )
+		{}
 	public:
 		void reset( bool P = true )
 		{
@@ -300,6 +304,8 @@ namespace flx {
 
 			return Wanted;
 		}
+		virtual void FLFDismiss( void )
+		{}
 	private:
 		const bunch_ *Bunch_;
 		epeios::row_t__ Position_;
@@ -381,6 +387,8 @@ namespace flx {
 
 			return Wanted;
 		}
+		virtual void FLFSynchronize()
+		{}
 	private:
 		bunch_ *_Bunch;
 	public:
@@ -455,6 +463,8 @@ namespace flx {
 		{
 			return Wanted;
 		}
+		virtual void FLFSynchronize()
+		{}
 	public:
 		void Init( void )
 		{
