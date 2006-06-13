@@ -1,5 +1,9 @@
 $Id$
 
+13/06/06
+	- TOL :
+		- Ajout fonction 'SignalExits()'.
+
 05/06/06 :
 	- GENERAL :
 		- Création bibliothèque 'BFL' (Bit FLow) de lecture/écriture par bit.

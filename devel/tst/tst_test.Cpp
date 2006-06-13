@@ -125,6 +125,8 @@ ERRFEpilog
 }
 #endif
 
+#if 0
+
 namespace dbibsc {
 	//e Field types.
 	enum field_type__ {
@@ -183,3 +185,60 @@ void Test( void )
 {
 	field_type__ FieldType = ft_amount;
 }
+
+#endif
+
+#if 1
+
+#include "tht.h"
+
+#include "signal.h"
+#include "cio.h"
+#include "tol.h"
+
+/*
+void f_signal(int s)
+{
+	cio::cout << "Fonction associée à 'signal()' : " << (bso::ulong__)s << txf::nl << txf::sync;
+	exit( EXIT_SUCCESS );
+}
+*/
+
+void f_atexit1( void )
+{
+	cio::cout << "Fonction associée à 'atexit()' 1" << txf::nl << txf::sync;
+	tht::Wait( 2 );
+}
+
+void f_atexit2( void )
+{
+	cio::cout << "Fonction associée à 'atexit()' 2" << txf::nl << txf::sync;
+	tht::Wait( 2 );
+}
+
+
+int main( int argc, const char **argv )
+{
+ERRFProlog
+ERRFBegin
+/*
+	signal( SIGBREAK, f_signal );
+	signal( SIGTERM, f_signal );
+	signal( SIGABRT, f_signal );
+	signal( SIGINT, f_signal );
+*/
+	tol::SignalExits();
+
+	atexit( f_atexit1 );
+	atexit( f_atexit2 );
+
+	for(;;)
+		tht::Defer( 10 );
+ERRFErr
+ERRFEnd
+	cio::cout << "Passe par le destructeur. " << txf::nl << txf::sync;
+ERRFEpilog
+	return EXIT_SUCCESS;
+}
+
+#endif

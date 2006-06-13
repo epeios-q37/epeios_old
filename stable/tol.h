@@ -64,6 +64,7 @@ extern class ttr_tutor &TOLTutor;
 #include <string.h>
 #include <stddef.h>
 #include <time.h>
+#include <signal.h>
 
 #include "cpe.h"
 #include "bso.h"
@@ -849,15 +850,30 @@ namespace tol {
 	E_RODISCLOSE__( type__, name )\
 	E_WODISCLOSE__( type__, name )
 
+	inline void _signal( int s )
+	{
+		exit( EXIT_SUCCESS );
+	}
+
+	inline void SignalExits( void )
+	{
+		signal( SIGBREAK, _signal );
+		signal( SIGTERM, _signal );
+		signal( SIGABRT, _signal );
+		signal( SIGINT, _signal );
+	}
+
 }
 
-// Inspiré du site mscn.microsoft.com.
+// Inspiré du site msdn.microsoft.com.
 #define __STR2__(x) #x
 #define __STR1__(x) __STR2__(x)
 #define __LOC__ __FILE__ "("__STR1__(__LINE__)") : "
 
 // Utilisation :
 // #pragma message(__LOC__"Message")
+
+
 
 
 /*$END$*/
