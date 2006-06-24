@@ -273,7 +273,7 @@ ERREpilog
 	E_AUTO( core );
 
 	class _functions___
-	: public flf::ioflow_functions___
+	: public fwf::ioflow_functions___
 	{
 	private:
 		_flow___ *_Flow;
@@ -306,27 +306,27 @@ ERREpilog
 				ERRf();
 		}
 	protected:
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum )
 		{
-			flf::size__ Amount = 0;
+			fwf::size__ Amount = 0;
 
 			_Prepare();
 
 			return _Flow->WriteRelay( Buffer, Wanted, Minimum );
 		}
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{
 			_Synchronize();
 		}
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted )
 		{
-			flf::bsize__ Amount = 0;
+			fwf::bsize__ Amount = 0;
 
 			if ( !_Prepare() )
 				_Synchronize();
@@ -340,7 +340,7 @@ ERREpilog
 
 			return Amount;
 		}
-		virtual void FLFDismiss( void )
+		virtual void FWFDismiss( void )
 		{
 			if ( _Flow != NULL )
 				_Core->Release( _Flow );

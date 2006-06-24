@@ -166,13 +166,13 @@ flw::bsize__ sck::Write(
 }
 
 
-flf::bsize__ sck::socket_ioflow_functions___::FLFRead(
-	flf::bsize__ Minimum,
-	flf::datum__ *Buffer,
-	flf::bsize__ Wanted )
+fwf::bsize__ sck::socket_ioflow_functions___::FWFRead(
+	fwf::bsize__ Minimum,
+	fwf::datum__ *Buffer,
+	fwf::bsize__ Wanted )
 {
-	flf::bsize__ Amount = 0;
-	flf::bsize__ Result;
+	fwf::bsize__ Amount = 0;
+	fwf::bsize__ Result;
 		
 	while( Minimum > Amount ) {
 		if ( ( Result = sck::Read( _Socket, ( Wanted - Amount ), Buffer + Amount, _TimeOut ) ) == SCK_DISCONNECTED )
@@ -184,19 +184,19 @@ flf::bsize__ sck::socket_ioflow_functions___::FLFRead(
 }
 
 
-flf::bsize__ sck::socket_ioflow_functions___::FLFWrite(
-	const flf::datum__ *Buffer,
-	flf::bsize__ Wanted,
-	flf::bsize__ Minimum )
+fwf::bsize__ sck::socket_ioflow_functions___::FWFWrite(
+	const fwf::datum__ *Buffer,
+	fwf::bsize__ Wanted,
+	fwf::bsize__ Minimum )
 {
-	flf::bsize__ Amount = 0;
+	fwf::bsize__ Amount = 0;
 
 	if ( _Error )
 		ERRd();
 
 	if ( Minimum != 0 )
 	{
-		flf::bsize__ Result;
+		fwf::bsize__ Result;
 		
 		while( Minimum > Amount ) {
 			if ( ( Result = sck::Write( _Socket, Buffer + Amount, Wanted - Amount, _TimeOut ) ) == SCK_DISCONNECTED ) {

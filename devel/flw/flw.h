@@ -63,7 +63,7 @@ extern class ttr_tutor &FLWTutor;
 #include <string.h>
 #include "bso.h"
 #include "cpe.h"
-#include "flf.h"
+#include "fwf.h"
 
 #ifndef FLW_CACHE_SIZE
 #	define FLW__CACHE_SIZE	1024
@@ -89,13 +89,13 @@ extern class ttr_tutor &FLWTutor;
 #	endif
 #endif
 
-#define FLW_BSIZE_MAX	FLF_BSIZE_MAX
-#define FLW_SIZE_MAX	FLF_SIZE_MAX
+#define FLW_BSIZE_MAX	FWF_BSIZE_MAX
+#define FLW_SIZE_MAX	FWF_SIZE_MAX
 
 namespace flw {
-	using flf::datum__;
-	using flf::size__;
-	using flf::bsize__;
+	using fwf::datum__;
+	using fwf::size__;
+	using fwf::bsize__;
 
 	//c Base input flow.
 	class iflow__	/* Bien que cette classe ai un destructeur, elle est suffixée par '__', d'une part pour simplifier
@@ -104,7 +104,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		flf::iflow_functions___ &_Functions;
+		fwf::iflow_functions___ &_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// Size of the cache.
@@ -314,7 +314,7 @@ namespace flw {
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		iflow__(
-			flf::iflow_functions___ &Functions,
+			fwf::iflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -447,7 +447,7 @@ namespace flw {
 		flw::datum__ _Cache[FLW__ICACHE_SIZE];
 	public:
 		unsafe_iflow___(
-			flf::iflow_functions___ &Functions,
+			fwf::iflow_functions___ &Functions,
 			size__ AmountMax )
 			: iflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
@@ -484,7 +484,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		flf::oflow_functions___ &_Functions;
+		fwf::oflow_functions___ &_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// The size of the cache.
@@ -573,7 +573,7 @@ namespace flw {
 			_Written = 0;
 		}
 		oflow__(
-			flf::oflow_functions___ &Functions,
+			fwf::oflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -659,7 +659,7 @@ namespace flw {
 		flw::datum__ _Cache[FLW__OCACHE_SIZE];
 	public:
 		unsafe_oflow___(
-			flf::oflow_functions___ &Functions,
+			fwf::oflow_functions___ &Functions,
 			size__ AmountMax )
 			: oflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
@@ -706,7 +706,7 @@ namespace flw {
 			oflow__::reset( P );
 		}
 		ioflow__(
-			flf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions___ &Functions,
 			datum__ *ICache,
 			bsize__ ISize,
 			size__ ReadAmountMax,
@@ -719,7 +719,7 @@ namespace flw {
 			reset( false );
 		}
 		ioflow__(
-			flf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions___ &Functions,
 			datum__ *Cache,
 			bsize__ Size,
 			size__ AmountMax )
@@ -750,13 +750,13 @@ namespace flw {
 		flw::datum__ _OCache[FLW__OCACHE_SIZE];
 	public:
 		unsafe_ioflow___(
-			flf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions___ &Functions,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax )
 		{}
 		unsafe_ioflow___(
-			flf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions___ &Functions,
 			size__ AmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax )
 		{}

@@ -63,7 +63,7 @@ extern class ttr_tutor &FLXTutor;
 //D FLow eXtension. Some class which extend the 'FLW' library.
 
 #include "err.h"
-#include "flf.h"
+#include "fwf.h"
 #include "flw.h"
 #include "bso.h"
 #include "bch.h"
@@ -87,11 +87,11 @@ namespace flx {
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow_functions___
-	: public flf::iflow_functions___
+	: public fwf::iflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
-		const flf::datum__ *Tampon_;
+		const fwf::datum__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
 		bso::bsize__ Taille_;
 	protected:
@@ -100,10 +100,10 @@ namespace flx {
 		{
 			ERRf();
 		}
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted )
 		{
 			if ( !Taille_ )
 				if ( Minimum )
@@ -128,7 +128,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FLFDismiss( void )
+		virtual void FWFDismiss( void )
 		{}
 	public:
 		void reset( bool P = true )
@@ -148,7 +148,7 @@ namespace flx {
 		/*f Initialization with the buffer 'Buffer' of size 'Size'..'Size' is not
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
-			const flf::datum__ *Buffer,
+			const fwf::datum__ *Buffer,
 			bso::bsize__ Size = BSO_BSIZE_MAX )
 		{
 			reset();
@@ -195,18 +195,18 @@ namespace flx {
 
 	//c Buffer as a standard ouput flow.driver
 	class buffer_oflow_functions___
-		: public flf::oflow_functions___
+		: public fwf::oflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
-		flf::datum__ *Tampon_;
+		fwf::datum__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
 		bso::bsize__ Taille_;
 	protected:
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum )
 		{
 			if ( Wanted > Taille_ )
 				ERRu();
@@ -218,7 +218,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{}
 	public:
 		void reset( bool P = true )
@@ -238,7 +238,7 @@ namespace flx {
 		}
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
-			flf::datum__ *Buffer,
+			fwf::datum__ *Buffer,
 			bso::bsize__ Size )
 		{
 			reset();
@@ -285,15 +285,15 @@ namespace flx {
 
 	//c A bunch as input flow.driver.
 	template < typename bunch_, typename so__> class bunch_iflow_functions___
-	: public flf::iflow_functions___
+	: public fwf::iflow_functions___
 	{ 
 	protected:
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted )
 		{
-			if ( (flf::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
+			if ( (fwf::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
 				Wanted = ( Bunch_->Amount() - Position_ );
 
 			if ( Wanted )
@@ -304,7 +304,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FLFDismiss( void )
+		virtual void FWFDismiss( void )
 		{}
 	private:
 		const bunch_ *Bunch_;
@@ -375,19 +375,19 @@ namespace flx {
 
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow_functions___
-	: public flf::oflow_functions___
+	: public fwf::oflow_functions___
 	{
 	protected:
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum )
 		{
 			_Bunch->Append( (const so__ *)Buffer, Wanted );
 
 			return Wanted;
 		}
-		virtual void FLFSynchronize()
+		virtual void FWFSynchronize()
 		{}
 	private:
 		bunch_ *_Bunch;
@@ -453,17 +453,17 @@ namespace flx {
 
 	//c A output flow which write to nothing.
 	class dump_oflow_functions___
-	: public flf::oflow_functions___
+	: public fwf::oflow_functions___
 	{
 	protected:
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *,
-			flf::bsize__ Wanted,
-			flf::bsize__ )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ )
 		{
 			return Wanted;
 		}
-		virtual void FLFSynchronize()
+		virtual void FWFSynchronize()
 		{}
 	public:
 		void Init( void )

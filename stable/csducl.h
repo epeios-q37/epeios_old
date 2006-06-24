@@ -114,7 +114,7 @@ namespace csducl {
 	};
 
 	class universal_client_ioflow_functions___
-	: public flf::ioflow_functions___
+	: public fwf::ioflow_functions___
 	{
 	private:
 		csdsnc::client_flow___ _Shared;
@@ -137,25 +137,25 @@ namespace csducl {
 			return *(flw::ioflow__ *)NULL;	// Pour éviter un 'warning'.
 		}
 	protected:
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted )
 		{
 			return _Get().ReadRelay( Minimum, Buffer, Wanted );
 		}
-		virtual void FLFDismiss( void )
+		virtual void FWFDismiss( void )
 		{
 			_Get().Dismiss();
 		}
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum )
 		{
 			return _Get().WriteRelay( Buffer, Wanted, Minimum );
 		}
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{
 			_Get().Synchronize();
 		}

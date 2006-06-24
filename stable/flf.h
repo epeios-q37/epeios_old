@@ -64,6 +64,8 @@ extern class ttr_tutor &FLFTutor;
 #include "err.h"
 #include "bso.h"
 
+#error
+
 #ifdef CPE__MT
 #	include "mtx.h"
 #	define FLF_NO_MUTEX	MTX_INVALID_HANDLER

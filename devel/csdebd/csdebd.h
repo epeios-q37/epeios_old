@@ -74,17 +74,17 @@ namespace csdebd {
 	E_AUTO( data )
 
 	class _passive_generic_functions___
-	: public flf::ioflow_functions___
+	: public fwf::ioflow_functions___
 	{
 	private:
 		data_ &_Read;
 		data_ &_Write;
 		epeios::row__ _Row;
 	protected:
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted )
 		{
 			if ( _Row == NONE )
 				_Row = _Read.First();
@@ -113,7 +113,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			return Wanted;
 		}
-		virtual void FLFDismiss( void )
+		virtual void FWFDismiss( void )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Row != NONE )
@@ -121,10 +121,10 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 #endif
 			_Read.Init();
 		}
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum )
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Read.Amount() != 0 )
@@ -134,7 +134,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			return Wanted;
 		}
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -180,7 +180,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_UserFunctions->PostProcess( _UP );
 		}
 	protected:
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{
 			_UserFunctions->Process( *_Flow, _UP );
 		}

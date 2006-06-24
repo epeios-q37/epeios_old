@@ -62,7 +62,7 @@ extern class ttr_tutor &SCKTutor;
 
 #include "err.h"
 #include "cpe.h"
-#include "flf.h"
+#include "fwf.h"
 #include "flw.h"
 #include "tol.h"
 
@@ -271,24 +271,24 @@ namespace sck {
 
 	//c Socket as input/output flow driver.
 	class socket_ioflow_functions___
-	: public flf::ioflow_functions___
+	: public fwf::ioflow_functions___
 	{
 	private:
 		socket__ _Socket;
 		duration__ _TimeOut;
 		bso::bool__ _Error;
 	protected:
-		virtual flf::bsize__ FLFRead(
-			flf::bsize__ Minimum,
-			flf::datum__ *Buffer,
-			flf::bsize__ Wanted );
-		virtual flf::bsize__ FLFWrite(
-			const flf::datum__ *Buffer,
-			flf::bsize__ Wanted,
-			flf::bsize__ Minimum );
-		virtual void FLFDismiss( void )
+		virtual fwf::bsize__ FWFRead(
+			fwf::bsize__ Minimum,
+			fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted );
+		virtual fwf::bsize__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::bsize__ Wanted,
+			fwf::bsize__ Minimum );
+		virtual void FWFDismiss( void )
 		{}
-		virtual void FLFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{}
 	public:
 		void reset( bool P = true )

@@ -1,5 +1,12 @@
 $Id$
 
+24/06/06 :
+	- GENERAL :
+		- Création 'FWF' pour remplacer 'FLF'.
+		- Adaptation au déplacement 'FLF' -> 'FWF'.
+	- FLF :
+		- Ne gère plus les focntions 'flow' (déplacé dans 'FWF'), mais les flows basés sur des fichiers.
+
 13/06/06
 	- GENERAL :
 		- Adaptation aux modifications dans 'FLF'.
