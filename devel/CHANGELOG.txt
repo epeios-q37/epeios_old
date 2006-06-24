@@ -3,9 +3,16 @@ $Id$
 24/06/06 :
 	- GENERAL :
 		- Création 'FWF' pour remplacer 'FLF'.
-		- Adaptation au déplacement 'FLF' -> 'FWF'.
+		- Adaptation aux modifications des différents bibliothèques.
+	- FIL :
+		- Déportation de ce qui concerne les 'flow's dans 'FLF'.
+		- Déportation de 'file___' vers 'FLM'
 	- FLF :
-		- Ne gère plus les focntions 'flow' (déplacé dans 'FWF'), mais les flows basés sur des fichiers.
+		- Déportation de ce qui concerne les 'flow functions' dans 'FWF'.
+		- Importation de ce qui concerne les 'flow's de 'FIL'.
+	- FLM :
+		- Importation d'une partie de 'FIL'.
+
 
 13/06/06
 	- GENERAL :

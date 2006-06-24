@@ -63,7 +63,7 @@ public:
 using namespace fil;
 
 #ifdef IOF__USE_STANDARD_IO
-static inline iof::descriptor__ _Open(
+static inline iof::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
 {
@@ -92,7 +92,7 @@ static inline iof::descriptor__ _Open(
 	return fopen( Nom, Flags );
 }
 
-static void _Close( iof::descriptor__ D )
+static void Close_( iof::descriptor__ D )
 {
 	if ( fclose( D ) != 0 )
 		ERRd();
@@ -102,7 +102,7 @@ static void _Close( iof::descriptor__ D )
 #	ifdef CPE__MS
 #include "sys/stat.h"
 
-static inline iof::descriptor__ _Open(
+static inline iof::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
 {
@@ -133,14 +133,14 @@ static inline iof::descriptor__ _Open(
 	return _open( Nom, Flags, PMode );
 }
 
-static void _Close( iof::descriptor__ D )
+static void Close_( iof::descriptor__ D )
 {
 	if ( _close( D ) != 0 )
 		ERRd();
 }
 
 #	elif defined( CPE__UNIX )
-static inline iof::descriptor__ _Open(
+static inline iof::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
 {
@@ -171,7 +171,7 @@ static inline iof::descriptor__ _Open(
 	return open( Nom, Flags );
 }
 
-static void _Close( iof::descriptor__ D )
+static void Close_( iof::descriptor__ D )
 {
 	if ( close( D ) != 0 )
 		ERRd();
@@ -187,16 +187,16 @@ static void _Close( iof::descriptor__ D )
 #	error "Unknow IO enviroment !"
 #endif
 
-iof::descriptor__ fil::_Open(
+iof::descriptor__ fil::Open(
 	const char *Nom,
 	mode__ Mode )
 {
-	return ::_Open( Nom, Mode );
+	return ::Open_( Nom, Mode );
 }
 
-void fil::_Close( iof::descriptor__ D )
+void fil::Close( iof::descriptor__ D )
 {
-	::_Close( D );
+	::Close_( D );
 }
 
 rbf fil::CreateBackupFile(

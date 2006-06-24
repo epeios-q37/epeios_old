@@ -56,7 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "flx.h"
-#include "fil.h"
+#include "flf.h"
 
 using namespace rgstry;
 
@@ -728,7 +728,7 @@ private:
 	{
 		bso::bool__ Success = false;
 	ERRProlog
-		fil::file_iflow___ FFlow;
+		flf::file_iflow___ FFlow;
 		xtf::extended_text_iflow__ XFlow;
 		tol::E_FPOINTER___( bso::char__ ) Buffer;
 		location__ ErrorLine, ErrorColumn;

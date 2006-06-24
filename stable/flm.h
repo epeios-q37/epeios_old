@@ -87,10 +87,65 @@ namespace flm {
 		};
 	};
 
+	typedef iof::io__		_io__;
+
+	class _file___
+	: public _io__
+	{
+	private:
+		iof::descriptor__ D_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+					fil::Close( D_ );
+			}
+
+			D_ = IOF_UNDEFINED_DESCRIPTOR;
+		}
+		_file___( void )
+		{
+			reset( false );
+		}
+		~_file___( void )
+		{
+			reset();
+		}
+		fil::status__ Init(
+			const char *FileName,
+			fil::mode__ Mode,
+			err::handle ErrHandle = err::hUsual )
+		{
+			reset();
+
+			D_ = fil::Open( FileName, Mode );
+
+			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+				switch ( ErrHandle ) {
+				case err::hSkip:
+					return fil::sFailure;
+					break;
+				case err::hUsual:
+					ERRd();
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			}
+
+			_io__::Init( D_ );
+
+			return fil::sSuccess;
+		}
+	};
+
+
 	class memoire_fichier_base_
 	{
 	private:
-		fil::file___ File_;
+		_file___ File_;
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
