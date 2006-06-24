@@ -64,16 +64,16 @@ public:
 
 using namespace cio;
 
-#ifdef IOF__USE_LOWLEVEL_IO
+#ifdef IOP__USE_LOWLEVEL_IO
 #	if defined( CPE__MS ) || defined( CPE__UNIX )
-iof::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
+iop::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
 #	elif defined( CPE__MAC )
 #		error "Not implemented yet ! "
 #	else
 #		error "Unknow compilation enviroment !"
 #	endif
-#elif defined( IOF__USE_STANDARD_IO )
-iof::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
+#elif defined( IOP__USE_STANDARD_IO )
+iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
 #else
 #	error "Unkonw I/O enviroment !"
 #endif

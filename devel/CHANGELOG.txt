@@ -3,6 +3,7 @@ $Id$
 24/06/06 :
 	- GENERAL :
 		- Création 'FWF' pour remplacer 'FLF'.
+		- Création 'IOP'.
 		- Adaptation aux modifications des différents bibliothèques.
 	- FIL :
 		- Déportation de ce qui concerne les 'flow's dans 'FLF'.

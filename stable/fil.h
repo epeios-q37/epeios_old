@@ -62,7 +62,7 @@ extern class ttr_tutor &FILTutor;
 
 //D FILe. File management.
 
-#include "iof.h"
+#include "iop.h"
 #include "flw.h"
 #include "txf.h"
 #include "tol.h"
@@ -115,11 +115,11 @@ namespace fil
 		s_Undefined,
 	};
 
-	iof::descriptor__ Open(
+	iop::descriptor__ Open(
 		const char *Nom,
 		mode__ Mode );
 
-	void Close( iof::descriptor__ D );
+	void Close( iop::descriptor__ D );
 
 	//e Error code which can occurs during backup file operation.
 	enum rbf

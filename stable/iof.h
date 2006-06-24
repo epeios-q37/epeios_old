@@ -63,55 +63,15 @@ extern class ttr_tutor &IOFTutor;
 #include "cpe.h"
 #include "fwf.h"
 #include "flw.h"
-
-#ifdef IOF_BUFFER_SIZE
-#	define IOF__BUFFER_SIZE	IOF_BUFFER_SIZE
-#else
-#	define IOF__BUFFER_SIZE	1024
-#endif
-
-#ifdef IOF_USE_STANDARD_IO
-#	define IOF__USE_STANDARD_IO
-#elif defined( CPE__MS )
-#	define IOF__USE_LOWLEVEL_IO
-#elif defined( CPE__UNIX )
-#	define IOF__USE_LOWLEVEL_IO
-#elif defined( CPE__MAC )
-//#	define IO__USE_LOWLEVEL_IO	// Because not implemented yet for Mac.
-#	define	IOF__USE_STANDARD_IO
-#else
-#	define	IOF__USE_STANDARD_IO
-#endif
-
-#ifdef IOF__USE_STANDARD_IO
-#	include "cslio.h"
-#elif defined( IOF__USE_LOWLEVEL_IO )
-#	include "llio.h"
-#else
-#	error "Undefined I/O enviroment !"
-#endif
+#include "iop.h"
 
 namespace iof {
-#ifdef IOF__USE_LOWLEVEL_IO
-	typedef llio::lowlevel_input__		input__;
-	typedef llio::lowlevel_output__		output__;
-	typedef llio::lowlevel_io__			io__;
-	using llio::descriptor__;
-	using llio::amount__;
-#	define IOF_UNDEFINED_DESCRIPTOR	LLIO_UNDEFINED_DESCRIPTOR
-#elif defined( IOF__USE_STANDARD_IO )
-	typedef cslio::standard_input__		input__;
-	typedef cslio::standard_output__		output__;
-	typedef cslio::standard_io__			io__;
-	using cslio::descriptor__;
-	using cslio::amount__;
-#	define IOF_UNDEFINED_DESCRIPTOR	CSLIO_UNDEFINED_DESCRIPTOR
-#else
-#	error "Undefined I/O enviroment !"
-#endif
+	typedef iop::input__		_input__;
+	typedef iop::output__		_output__;
+	typedef iop::io__			_io__;
 
 	class io_oflow_functions___
-	: public output__,
+	: public _output__,
 	  public fwf::oflow_functions___
 	{
 	protected:
@@ -127,7 +87,7 @@ namespace iof {
 			fwf::bsize__ Written = 0;
 
 			while ( Written < Minimum )
-				Written += output__::Write( Tampon, Demande - Written );
+				Written += _output__::Write( Tampon, Demande - Written );
 
 			return Written;
 		}
@@ -138,7 +98,7 @@ namespace iof {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			output__::reset( P );
+			_output__::reset( P );
 			oflow_functions___::reset( P );
 		}
 		io_oflow_functions___( void )
@@ -149,9 +109,9 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init( iop::descriptor__ D )
 		{
-			output__::Init( D );
+			_output__::Init( D );
 			oflow_functions___::Init();
 		}
 	};
@@ -161,13 +121,13 @@ namespace iof {
 	{
 	private:
 		io_oflow_functions___ _Functions;
-		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			oflow__::reset( P );
 		}
-		io_oflow___( amount__ AmountMax )
+		io_oflow___( iop::amount__ AmountMax )
 		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
@@ -176,14 +136,14 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init( iop::descriptor__ D )
 		{
 			_Functions.Init( D );
 		}
 	};
 
 	class io_iflow_functions___
-	: public input__,
+	: public _input__,
 	  public fwf::iflow_functions___
 	{
 	protected:
@@ -199,7 +159,7 @@ namespace iof {
 			fwf::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
-				NombreLus += input__::Read( Desire - NombreLus, Tampon );
+				NombreLus += _input__::Read( Desire - NombreLus, Tampon );
 
 			return NombreLus;
 		}
@@ -208,7 +168,7 @@ namespace iof {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			input__::reset( P );
+			_input__::reset( P );
 			iflow_functions___::reset( P );
 		}
 		io_iflow_functions___( void )
@@ -219,9 +179,9 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init( iop::descriptor__ D )
 		{
-			input__::Init( D );
+			_input__::Init( D );
 			iflow_functions___::Init();
 		}
 	};
@@ -230,7 +190,7 @@ namespace iof {
 	: public flw::iflow__
 	{
 	private:
-		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 		io_iflow_functions___ _Functions;
 	public:
 		void reset( bso::bool__ P = true )
@@ -238,7 +198,7 @@ namespace iof {
 			_Functions.reset( P );
 			iflow__::reset( P );
 		}
-		io_iflow___( amount__ AmountMax )
+		io_iflow___( iop::amount__ AmountMax )
 		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
@@ -247,15 +207,15 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init( iop::descriptor__ D )
 		{
 			_Functions.Init( D );
 		}
 	};
 
 	class io_flow_functions___
-	: public output__,
-	  public input__,
+	: public _output__,
+	  public _input__,
 	  public fwf::ioflow_functions___
 	{
 	protected:
@@ -271,7 +231,7 @@ namespace iof {
 			fwf::bsize__ Written = 0;
 
 			while ( Written < Minimum )
-				Written += output__::Write( Tampon, Demande - Written );
+				Written += _output__::Write( Tampon, Demande - Written );
 
 			return Written;
 		}
@@ -291,35 +251,35 @@ namespace iof {
 			fwf::bsize__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
-				NombreLus += input__::Read( Desire - NombreLus, Tampon );
+				NombreLus += _input__::Read( Desire - NombreLus, Tampon );
 
 			return NombreLus;
 		}
 		void FWFDismiss( void )
 		{}
 	public:
-		void Init(  descriptor__ D  )
+		void Init( iop::descriptor__ D  )
 		{
-			input__::Init( D );
-			output__::Init( D );
+			_input__::Init( D );
+			_output__::Init( D );
 		}
 
 	};
 
 	class io_flow___
-	: public io__,
+	: public _io__,
 	  public flw::ioflow__
 	{
 	private:
 		io_flow_functions___ _Functions;
-		flw::datum__ _Cache[2 * IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[2 * IOP__BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			io__::reset( P );
+			_io__::reset( P );
 			ioflow__::reset( P );
 		}
-		io_flow___( amount__ AmountMax )
+		io_flow___( iop::amount__ AmountMax )
 		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
@@ -329,10 +289,10 @@ namespace iof {
 			reset();
 		}
 		void Init(
-			descriptor__ D,
-			amount__ AmountMax )
+			iop::descriptor__ D,
+			iop::amount__ AmountMax )
 		{
-			io__::Init( D );
+			_io__::Init( D );
 			_Functions.Init( D );
 		}
 	};

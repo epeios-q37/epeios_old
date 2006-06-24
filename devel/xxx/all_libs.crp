@@ -129,6 +129,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Input/Output Flows
 &iodef		&epeios		&\
 	&Input/Output DEFinitions.
+&iop		&epeios		&\
+	&Input/Output Picker
 &lck		&epeios		&\
 	&LoCKs
 &lgg		&epeios		&2000, 2002-\

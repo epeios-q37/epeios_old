@@ -72,7 +72,7 @@ extern class ttr_tutor &CIOTutor;
 
 namespace cio {
 
-	extern iof::descriptor__ cind, coutd, cerrd;
+	extern iop::descriptor__ cind, coutd, cerrd;
 
 	//o Standard output as a pure flow (not a text flow).
 	extern iof::io_oflow_functions___ _coutf;
@@ -87,7 +87,7 @@ namespace cio {
 	: public flw::oflow__
 	{
 	private:
-		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		aware_coutf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: oflow__( _coutf, _Cache, sizeof( _Cache ), AmountMax ) 
@@ -112,7 +112,7 @@ namespace cio {
 	: public flw::oflow__
 	{
 	private:
-		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		aware_cerrf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: oflow__( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) 
@@ -136,7 +136,7 @@ namespace cio {
 	: public flw::iflow__
 	{
 	private:
-		flw::datum__ _Cache[IOF__BUFFER_SIZE];
+		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		aware_cinf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: iflow__( _cinf, _Cache, sizeof( _Cache ), AmountMax ) 

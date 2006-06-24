@@ -66,12 +66,11 @@ extern class ttr_tutor &FLMTutor;
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"
+#include "iop.h"
 #include "fil.h"
 
 namespace flm {
-	using iof::amount__;
-
-	typedef amount__ position__;
+	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire
 
 	/*******************************************************************/
@@ -87,22 +86,22 @@ namespace flm {
 		};
 	};
 
-	typedef iof::io__		_io__;
+	typedef iop::io__		_io__;
 
 	class _file___
 	: public _io__
 	{
 	private:
-		iof::descriptor__ D_;
+		iop::descriptor__ D_;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+				if ( D_ != IOP_UNDEFINED_DESCRIPTOR )
 					fil::Close( D_ );
 			}
 
-			D_ = IOF_UNDEFINED_DESCRIPTOR;
+			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}
 		_file___( void )
 		{
@@ -121,7 +120,7 @@ namespace flm {
 
 			D_ = fil::Open( FileName, Mode );
 
-			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
 				switch ( ErrHandle ) {
 				case err::hSkip:
 					return fil::sFailure;
@@ -149,7 +148,7 @@ namespace flm {
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
-		amount__ TailleFichier_;
+		iop::amount__ TailleFichier_;
 		// différents témoins
 		struct {
 			int
@@ -187,7 +186,7 @@ namespace flm {
 		{
 			Ouvrir_();
 
-			amount__ Amount;
+			iop::amount__ Amount;
 
 			File_.Seek( Position );
 				
@@ -214,7 +213,7 @@ namespace flm {
 		{
 			Ouvrir_();
 
-			amount__ Amount;
+			iop::amount__ Amount;
 
 			File_.Seek( Position );
 
@@ -231,13 +230,13 @@ namespace flm {
 		}
 			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
 			agrandit la mémoire si nécessaire */
-		void Allouer( amount__ Capacite )
+		void Allouer( iop::amount__ Capacite )
 		{
 			if ( Capacite > TailleFichier_ )
 			{
 				Ouvrir_();
 				
-				File_.Seek( Capacite - (amount__)1 );
+				File_.Seek( Capacite - (iop::amount__)1 );
 
 				if ( File_.Write( &Capacite, 1 ) != 1 )
 				{
@@ -401,7 +400,7 @@ namespace flm {
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			memoire_fichier_base_::Allouer( (amount__)Size );
+			memoire_fichier_base_::Allouer( (iop::amount__)Size );
 		}
 		// alloue 'Taille' octets
 	public:

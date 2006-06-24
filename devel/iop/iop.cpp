@@ -1,8 +1,8 @@
 /*
-	'cio' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'cio' header file ('cio.h').
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
-
+	'iop' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'iop' header file ('iop.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+$_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define CIO__COMPILATION
+#define IOP__COMPILATION
 
-#include "cio.h"
+#include "iop.h"
 
-class ciotutor
+class ioptutor
 : public ttr_tutor
 {
 public:
-	ciotutor( void )
-	: ttr_tutor( CIO_NAME )
+	ioptutor( void )
+	: ttr_tutor( IOP_NAME )
 	{
-#ifdef CIO_DBG
-		Version = CIO_VERSION "\b\bD $";
+#ifdef IOP_DBG
+		Version = IOP_VERSION "\b\bD $";
 #else
-		Version = CIO_VERSION;
+		Version = IOP_VERSION;
 #endif
-		Owner = CIO_OWNER;
+		Owner = IOP_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~ciotutor( void ){}
+	virtual ~ioptutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,70 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "flx.h"
-
-#if defined( CPE__MS )
-#	include <io.h>
-#	include <fcntl.h>
-#endif
-
-using namespace cio;
-
-#ifdef IOP__USE_LOWLEVEL_IO
-#	if defined( CPE__MS ) || defined( CPE__UNIX )
-iop::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
-#	elif defined( CPE__MAC )
-#		error "Not implemented yet ! "
-#	else
-#		error "Unknow compilation enviroment !"
-#	endif
-#elif defined( IOP__USE_STANDARD_IO )
-iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
-#else
-#	error "Unkonw I/O enviroment !"
-#endif
-
-iof::io_oflow_functions___ cio::_coutf;
-iof::io_oflow_functions___ cio::_cerrf;
-iof::io_iflow_functions___ cio::_cinf;
-
-#ifndef CPE__MT
-	aware_coutf___ cio::coutf;
-	aware_cerrf___ cio::cerrf;
-	aware_cinf___ cio::cinf;
-
-	aware_cout___ cio::cout;
-	aware_cerr___ cio::cerr;
-	aware_cin___ cio::cin;
-#endif
+using namespace iop;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class ciopersonnalization
-: public ciotutor
+class ioppersonnalization
+: public ioptutor
 {
 public:
-	ciopersonnalization( void )
+	ioppersonnalization( void )
 	{
-#if defined( CPE__MS )
-		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
-			ERRd();
-
-		if ( _setmode( _fileno( stdout ), _O_BINARY ) == -1 )
-			ERRd();
-
-		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
-			ERRd();
-#endif
-		cio::_coutf.Init( coutd );
-		cio::_cinf.Init( cind );
-		cio::_cerrf.Init( cerrd );
-
-	/* place here the actions concerning this library
+		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~ciopersonnalization( void )
+	~ioppersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -134,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static ciopersonnalization Tutor;
+static ioppersonnalization Tutor;
 
-ttr_tutor &CIOTutor = Tutor;
+ttr_tutor &IOPTutor = Tutor;

@@ -63,26 +63,26 @@ extern class ttr_tutor &FLFTutor;
 #include "cpe.h"
 #include "err.h"
 #include "bso.h"
-
 #include "fil.h"
+#include "iof.h"
 
 namespace flf {
 	class file_iflow_functions___
 	: public iof::io_iflow_functions___
 	{
 	private:
-		iof::descriptor__ _D;
+		iop::descriptor__ _D;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			io_iflow_functions___::reset( P );
 
 			if ( P ) {
-				if ( _D != IOF_UNDEFINED_DESCRIPTOR )
+				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
 					fil::Close( _D );
 			}
 
-			_D = IOF_UNDEFINED_DESCRIPTOR;
+			_D = IOP_UNDEFINED_DESCRIPTOR;
 		}
 		file_iflow_functions___( void )
 		{
@@ -102,7 +102,7 @@ namespace flf {
 			fil::status__ Status = fil::s_Undefined;
 			_D = fil::Open( FileName, Mode );
 
-			if ( _D == IOF_UNDEFINED_DESCRIPTOR ) {
+			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
 				Status = fil::sFailure;
 				switch ( ErrHandling ) {
 				case err::hSkip:
@@ -137,18 +137,18 @@ namespace flf {
 	: public _io_iflow___
 	{
 	private:
-		iof::descriptor__ D_;
+		iop::descriptor__ D_;
 	public:
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( D_ != IOF_UNDEFINED_DESCRIPTOR )
+				if ( D_ != IOP_UNDEFINED_DESCRIPTOR )
 					fil::Close( D_ );
 			}
 
 			_io_iflow___::reset( P );
 
-			D_ = IOF_UNDEFINED_DESCRIPTOR;
+			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}
 		file_iflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: _io_iflow___( AmountMax )
@@ -168,7 +168,7 @@ namespace flf {
 
 			D_ = fil::Open( FileName, Mode );
 
-			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
 				switch ( ErrHandle ) {
 				case err::hSkip:
 					return fil::sFailure;
@@ -199,18 +199,18 @@ namespace flf {
 	: public iof::io_oflow_functions___
 	{
 	private:
-		iof::descriptor__ _D;
+		iop::descriptor__ _D;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			io_oflow_functions___::reset( P );
 
 			if ( P ) {
-				if ( _D != IOF_UNDEFINED_DESCRIPTOR )
+				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
 					fil::Close( _D );
 			}
 
-			_D = IOF_UNDEFINED_DESCRIPTOR;
+			_D = IOP_UNDEFINED_DESCRIPTOR;
 		}
 		file_oflow_functions___( void )
 		{
@@ -230,7 +230,7 @@ namespace flf {
 			fil::status__ Status = fil::s_Undefined;
 			_D = fil::Open( FileName, Mode );
 
-			if ( _D == IOF_UNDEFINED_DESCRIPTOR ) {
+			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
 				Status = fil::sFailure;
 				switch ( ErrHandling ) {
 				case err::hSkip:
@@ -265,12 +265,12 @@ namespace flf {
 	: public _io_oflow___
 	{
 	private:
-		iof::descriptor__ D_;
+		iop::descriptor__ D_;
 	public:
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( D_ != IOF_UNDEFINED_DESCRIPTOR ) {
+				if ( D_ != IOP_UNDEFINED_DESCRIPTOR ) {
 					_io_oflow___::Synchronize();
 					fil::Close( D_ );
 				}
@@ -278,7 +278,7 @@ namespace flf {
 
 			_io_oflow___::reset( P );
 
-			D_ = IOF_UNDEFINED_DESCRIPTOR;
+			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}
 		file_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: _io_oflow___( AmountMax )
@@ -298,7 +298,7 @@ namespace flf {
 
 			D_ = fil::Open( FileName, Mode );
 
-			if ( D_ == IOF_UNDEFINED_DESCRIPTOR ) {
+			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
 				switch ( ErrHandle ) {
 				case err::hSkip:
 					return fil::sFailure;
