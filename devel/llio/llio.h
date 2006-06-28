@@ -62,7 +62,7 @@ extern class ttr_tutor &LLIOTutor;
 
 #include "cpe.h"
 
-#ifdef CPE__MS
+#ifdef CPE__VC
 #	include "wllio.h"
 #elif defined( CPE__UNIX )
 #	include "pllio.h"
@@ -73,7 +73,7 @@ extern class ttr_tutor &LLIOTutor;
 #endif
 
 namespace llio {
-#ifdef CPE__MS
+#ifdef CPE__VC
 	using namespace wllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
 #elif defined( CPE__UNIX )

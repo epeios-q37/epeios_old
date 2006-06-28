@@ -70,7 +70,7 @@ extern class ttr_tutor &SCKTutor;
 #	define SCK__UNIX_LIKE
 #endif
 
-#ifdef CPE__MS
+#ifdef CPE__VC
 #	include <winsock.h>
 //d Invalid value for a socket descriptor ( 'socket__' ).
 #	define SCK_INVALID_SOCKET		INVALID_SOCKET
@@ -124,7 +124,7 @@ extern class ttr_tutor &SCKTutor;
 
 namespace sck {
 	using flw::datum__;
-#ifdef CPE__MS
+#ifdef CPE__VC
 	typedef SOCKET socket__;
 	typedef char *	cast__;
 #elif defined( SCK__UNIX_LIKE )
@@ -155,7 +155,7 @@ namespace sck {
 	{
 		if ( !Ready_ )
 		{
-	#ifdef CPE__MS
+	#ifdef CPE__VC
 			WORD wVersionRequested;
 			WSADATA wsaData;
 
@@ -189,7 +189,7 @@ namespace sck {
 	//f 'Error' becomes the error value returned by 'SCKError()'.
 	inline void Error( error__ Error )
 	{
-	#ifdef CPE__MS
+	#ifdef CPE__VC
 		WSASetLastError( Error );
 	#elif defined( SCK__UNIX_LIKE )
 		errno = Error;
@@ -201,7 +201,7 @@ namespace sck {
 	//f Return the last error.
 	inline error__ Error( void )
 	{
-	#ifdef CPE__MS
+	#ifdef CPE__VC
 		return WSAGetLastError();
 	#elif defined( SCK__UNIX_LIKE )
 		return errno;
@@ -224,7 +224,7 @@ namespace sck {
 		else
 			V = (unsigned long *)"1111";
 
-	#	ifdef CPE__MS
+	#	ifdef CPE__VC
 		ioctlsocket( Socket, FIONBIO, V );
 	#	elif defined( SCK__UNIX_LIKE )
 		ioctl( Socket, FIONBIO, V );
@@ -256,7 +256,7 @@ namespace sck {
 	//f Close the socket 'Socket'.
 	inline void Close( socket__ Socket )
 	{
-	#ifdef CPE__MS
+	#ifdef CPE__VC
 	//	shutdown( Socket, 2 );
 		if ( closesocket( Socket ) == SCK_SOCKET_ERROR )
 			ERRd();

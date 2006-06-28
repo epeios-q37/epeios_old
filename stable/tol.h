@@ -857,7 +857,12 @@ namespace tol {
 
 	inline void SignalExits( void )
 	{
+#ifdef CPE__UNIX_LIKE
+		signal( SIGHUP, _signal );
+#endif
+#ifdef CPE__VC
 		signal( SIGBREAK, _signal );
+#endif
 		signal( SIGTERM, _signal );
 		signal( SIGABRT, _signal );
 		signal( SIGINT, _signal );
