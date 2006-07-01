@@ -1,5 +1,9 @@
 $Id$
 
+30/06/06 :
+	- CPE :
+		- Simplification.
+
 24/06/06 :
 	- GENERAL :
 		- Création 'FWF' pour remplacer 'FLF'.

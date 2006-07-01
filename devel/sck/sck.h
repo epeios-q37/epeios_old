@@ -66,20 +66,23 @@ extern class ttr_tutor &SCKTutor;
 #include "flw.h"
 #include "tol.h"
 
-#if defined( CPE__UNIX ) || defined( CPE__BEOS )
-#	define SCK__UNIX_LIKE
+#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN )
+#	define SCK__POSIX
+#elif defined( CPE__T_MS )
+#	define SCK__MS
+#else
+#	error "Uknown target !"
 #endif
 
-#ifdef CPE__VC
+#ifdef SCK__MS
 #	include <winsock.h>
-//d Invalid value for a socket descriptor ( 'socket__' ).
 #	define SCK_INVALID_SOCKET		INVALID_SOCKET
 #	define SCK_SOCKET_ERROR			SOCKET_ERROR
 #	define SCK_ECONNRESET			WSAECONNRESET
 #	define SCK_EWOULDBLOCK			WSAEWOULDBLOCK
 #	define SCK_EINTR				WSAEINTR
 #	define SCK_ENOTSOCK				WSAENOTSOCK
-#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 #	include <sys/time.h>
 #	include <sys/types.h>
 #	include <sys/socket.h>
@@ -94,7 +97,7 @@ extern class ttr_tutor &SCKTutor;
 #	define SCK_EINTR				EINTR
 #	define SCK_ENOTSOCK				ENOTSOCK
 #else
-#	error "Unknow compiler enviroment"
+#	error
 #endif
 
 //d Value to give to the 'TimeOut' parameter to indicate waiting forever.
@@ -124,14 +127,14 @@ extern class ttr_tutor &SCKTutor;
 
 namespace sck {
 	using flw::datum__;
-#ifdef CPE__VC
+#ifdef SCK__MS
 	typedef SOCKET socket__;
 	typedef char *	cast__;
-#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 	typedef int	socket__;
 	typedef void * cast__;
 #else
-#	error "Unknow compiler enviroment"
+#	error
 #endif
 
 	typedef int error__;
@@ -155,7 +158,7 @@ namespace sck {
 	{
 		if ( !Ready_ )
 		{
-	#ifdef CPE__VC
+#ifdef SCK__MS
 			WORD wVersionRequested;
 			WSADATA wsaData;
 
@@ -163,11 +166,11 @@ namespace sck {
 
 			if ( WSAStartup( wVersionRequested, &wsaData ) )
 				ERRd();
-	#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 			Ready_ = true;
-	#else
-	#	error "Unknow compiler enviroment"
-	#endif
+#else
+#	error
+#endif
 
 		}
 	}
@@ -175,7 +178,7 @@ namespace sck {
 	//f Create a socket. Only used in some particular multitasking program.
 	inline socket__ CreateSocket( err::handle ErrHandle = err::hUsual )
 	{
-	#ifdef CPE__BEOS
+	#ifdef CPE__T_BEOS
 		socket__ Desc = socket( AF_INET, SOCK_STREAM, 0 );
 	#else
 		socket__ Desc = socket( PF_INET, SOCK_STREAM, 0 );
@@ -189,28 +192,28 @@ namespace sck {
 	//f 'Error' becomes the error value returned by 'SCKError()'.
 	inline void Error( error__ Error )
 	{
-	#ifdef CPE__VC
+#ifdef SCK__MS
 		WSASetLastError( Error );
-	#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 		errno = Error;
-	#else
-	#	error "Unknow compiler enviroment"
-	#endif
+#else
+#	error
+#endif
 	}
 
 	//f Return the last error.
 	inline error__ Error( void )
 	{
-	#ifdef CPE__VC
+#ifdef SCK__MS
 		return WSAGetLastError();
-	#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 		return errno;
-	#else
-	#	error "Unknow compiler enviroment"
-	#endif
+#else
+#	error
+#endif
 	}
 
-	#ifndef CPE__BEOS
+#ifndef CPE__T_BEOS
 	/*f The socket 'Socket' becomes blocking or not, depend on the value of 'Value'.
 	Not currently available under Be OS. */
 	inline void Blocking(
@@ -224,15 +227,15 @@ namespace sck {
 		else
 			V = (unsigned long *)"1111";
 
-	#	ifdef CPE__VC
+#	ifdef SCK__MS
 		ioctlsocket( Socket, FIONBIO, V );
-	#	elif defined( SCK__UNIX_LIKE )
+#	elif defined( SCK__POSIX )
 		ioctl( Socket, FIONBIO, V );
-	#	else
-	#		error "Unknow compiler enviroment"
-	#	endif
+#	else
+#		error
+#	endif
 	}
-	#endif
+#endif
 
 	/*f Put in 'Buffer' up to 'Amount' bytes for the 'Socket' socket. Return
 	the amount effectively red. If 0 is returned, it means that the 'Timeout'
@@ -256,17 +259,17 @@ namespace sck {
 	//f Close the socket 'Socket'.
 	inline void Close( socket__ Socket )
 	{
-	#ifdef CPE__VC
+#ifdef SCK__MS
 	//	shutdown( Socket, 2 );
 		if ( closesocket( Socket ) == SCK_SOCKET_ERROR )
 			ERRd();
-	#elif defined( SCK__UNIX_LIKE )
+#elif defined( SCK__POSIX )
 	//	shutdown( Socket, 2 );
 		if ( close( Socket ) == SCK_SOCKET_ERROR )
 			ERRd();
-	#else
-	#	error "Unknow compiler enviroment"
-	#endif
+#else
+#	error
+#endif
 	}
 
 	//c Socket as input/output flow driver.

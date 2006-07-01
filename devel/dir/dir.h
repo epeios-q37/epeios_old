@@ -62,15 +62,24 @@ extern class ttr_tutor &DIRTutor;
 
 #include "err.h"
 #include "flw.h"
-
 #include "cpe.h"
+#include "tol.h"
 
-#ifdef CPE__MS
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS )
+#	define DIR__POSIX
+#elif defined( CPE__T_MS )
+#	define DIR__MS
+#else
+#	error "Unknown target !"
+#endif
+
+
+#ifdef DIR__MS
 #	include <direct.h>
-#elif defined( CPE__UNIX )
+#elif defined( DIR__POSIX )
 #	include <sys/stat.h>
 #else
-#	error "Not an implemented compilation plateform !"
+#	error
 #endif
 
 #include <errno.h>
@@ -87,9 +96,9 @@ namespace dir {
 
 	inline state__ CreateDir( const char *Path )
 	{
-#ifdef CPE__MS
+#ifdef DIR__MS
 		switch ( _mkdir( Path ) ) {
-#elif defined( CPE__UNIX )
+#elif defined( DIR__POSIX )
 		switch ( mkdir( Path, 0777 ) ) {
 #else
 #	error
@@ -103,7 +112,7 @@ namespace dir {
 				return sExists;
 				break;
 			case ENOENT:
-#ifdef CPE__UNIX
+#ifdef DIR__POSIX
 			case EPERM:
 			case EACCES:
 			case ENOTDIR:
@@ -112,7 +121,7 @@ namespace dir {
 #endif
 				return sIncorrectPath;
 				break;
-#ifdef CPE__UNIX
+#ifdef DIR__POSIX
 			case ENAMETOOLONG:
 				return sBadPath;
 				break;
@@ -135,9 +144,9 @@ namespace dir {
 	inline state__ DropDir( const char *Path )
 	{
 #pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
-#ifdef CPE__MS
+#ifdef DIR__MS
 		switch ( _rmdir( Path ) ) {
-#elif defined( CPE__UNIX )
+#elif defined( DIR__POSIX )
 		switch ( rmdir( Path ) ) {
 #else
 #	error
@@ -151,7 +160,7 @@ namespace dir {
 				return sExists;
 				break;
 			case ENOENT:
-#ifdef CPE__UNIX
+#ifdef DIR__POSIX
 			case EPERM:
 			case EACCES:
 			case ENOTDIR:
@@ -160,7 +169,7 @@ namespace dir {
 #endif
 				return sIncorrectPath;
 				break;
-#ifdef CPE__UNIX
+#ifdef DIR__POSIX
 			case ENAMETOOLONG:
 				return sBadPath;
 				break;

@@ -59,7 +59,7 @@ public:
 
 using namespace mtk;
 
-#ifdef CPE__UNIX_LIKE
+#ifdef MTK__POSIX
 
 namespace {
 	struct thread_struct__
@@ -76,7 +76,7 @@ namespace {
 	};
 };
 
-#	ifdef CPE__BEOS
+#	ifdef CPE__T_BEOS
 
 #	include <be/kernel/scheduler.h>
 
@@ -135,7 +135,7 @@ ERRFProlog
 ERRFBegin
 	mtx::Unlock( TS.MH );
 	TS.R( TS.UP );
-#ifdef CPE__THREADS_REMAINS
+#ifdef MTK__THREADS_REMAIN
 	for(;;)
 		TOLYield();
 #endif
@@ -189,13 +189,13 @@ void mtk::LaunchAndKill(
 {
 ERRProlog
 ERRBegin
-#ifdef CPE__MS
+#ifdef MTK__MS
 	if ( _beginthread( Routine, 4096, UP ) == (unsigned long)-1 )
 		ERRs();
-#elif defined( CPE__UNIX_LIKE )
+#elif defined( MTK__POSIX )
 	LaunchThread_( Routine, UP );
 #else
-#error "Unknow compilation enviroment"
+#	error
 #endif
 ERRErr
 ERREnd
@@ -356,11 +356,11 @@ void mtk::LaunchAndKeep(
 	mtx::Unlock( Common.Exclusion );
 }
 
-#ifdef CPE__MS
-#	if _MSC_VER != 1400
+
+#ifdef CPE__C_VC6
 typedef unsigned long	intptr_t;
-#	endif
 #endif
+
 
 static void WaitAndExit_( void *UP )
 {

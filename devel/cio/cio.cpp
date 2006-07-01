@@ -82,7 +82,7 @@ iof::io_oflow_functions___ cio::_coutf;
 iof::io_oflow_functions___ cio::_cerrf;
 iof::io_iflow_functions___ cio::_cinf;
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	aware_coutf___ cio::coutf;
 	aware_cerrf___ cio::cerrf;
 	aware_cinf___ cio::cinf;

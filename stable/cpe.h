@@ -63,54 +63,37 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-#undef CPE__VC
-#undef CPE__MS
-#undef CPE__32
-#undef CPE__MT
-#undef CPE__BC
-#undef CPE__GCC
-#undef CPE__DJGPP
-#undef CPE__CYGWIN
-#undef CPE__UNIX
-#undef CPE__BEOS
-#undef CPE__MAC
-#undef CPE__CW
-#undef CPE__CONSOLE
-#undef CPE__GUI
-#undef CPE__LIBRARY
-#undef CPE__UNIX_LIKE
-#undef CPE__LINUX
+#undef CPE__P_MS		// Plateforme Microsoft.
+#undef CPE__P_BEOS		// Plateforme BeOS.
+#undef CPE__P_MAC		// Plateforme MAC.
+#undef CPE__P_CYGWIN	// Plateforme CYGWIN.
+#undef CPE__P_LINUX		// Platform Linux
+
+#undef CPE__C_VC		// Compilateur VC++
+#undef CPE__C_VC6		// Compilateur VC++ V6.0
+#undef CPE__C_GCC		// Compilateur GNU C++.
+#undef CPE__C_GCC3		// Compilateur GNU C++ V3.x
+#undef CPE__C_CW		// Compilateur CodeWarrior
+#undef CPE__C_VER		// Version du compilateur.
+
+#undef CPE__T_MS		// Cible Microsoft (DOS, Windows, ...).
+#undef CPE__T_LINUX		// Cible Linux
+#undef CPE__T_CYGWIN	// Cible CYGWIN
+#undef CPE__T_32		// Cible 32 bits.
+#undef CPE__T_MT		// Cible multitâche.
+#undef CPE__T_CONSOLE	// Cible console.
+#undef CPE__T_GUI		// Cible GUI
+#undef CPE__T_LIBRARY	// Cible bibliothèque (SLL, .so, ...)
 
 #ifdef _MSC_VER
-#	pragma warning( disable: 4786 )
-	//d If defined, we are in the 'Microsoft Visual C++'.
-#	define CPE__VC	// Visual C++.
-	//d If defined, we are in an Microsoft enviroment (DOS, Windows).
-#	define CPE__MS
+#	define CPE__P_MS
+#	define CPE__C_VC
 #	ifdef _WIN32
-	//d If defined, we are in a Windows 32 bits enviroment (Window 9x, 2000, NT, ...).
-#	define CPE__32
+#		define CPE__T_32
 #	endif	
 #	ifdef _MT
 #		ifndef CPE_ST
-	//d If defined, we are in a multitasking enviroment.
-#			define CPE__MT
-#		endif
-#	elif defined( CPE_MT )
-#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
-#	endif
-#endif
-
-#ifdef __BORLANDC__
-	//d If defined, we are in the 'Borland C++'.
-#	define CPE__BC
-#	define CPE__MS
-#	ifdef __WIN32__
-#		define CPE__32
-#	endif
-#	ifdef __MT__
-#		ifndef CPE_ST
-#			define CPE__MT
+#			define CPE__T_MT
 #		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
@@ -118,107 +101,89 @@ extern class ttr_tutor &CPETutor;
 #endif
 
 #ifdef __GNUC__
-	//d If defined, we are using 'GCC'.
-#	define CPE__GCC
-#	ifdef __DJGPP__
-		//d If defined, we are using 'DJGPP'.
-#		define CPE__DJGPP
-#		ifdef __MSDOS__
-#			define CPE__MS
-#		elif defined( __unix__ )
-#			define CPE__UNIX
-#		endif
-#	elif defined( __CYGWIN__ )
-#		define CPE__CYGWIN
-#		define CPE__MS
-#		if defined( __unix__ )
-#			define CPE__UNIX
-#		endif
+#	define CPE__C_GCC
+#	ifdef __CYGWIN__
+#		define CPE__P_CYGWIN
 #	elif defined( __BEOS__ )
-#		define CPE__BEOS
-#	else
-#		define CPE__UNIX
-#		ifdef __linux__
-#			define CPE__LINUX
-#		endif
-#	endif
-#	if __GNUC__ == 3
-//d Defined if 'ios::nocreate' and 'ios::noreplace'.
-#		define CPE__NO_IOS_EXTENSION
+#		define CPE__P_BEOS
+#	elif defined( __linux__ )
+#		define CPE__P_LINUX
 #	endif
 #endif
 
 #ifdef __MWERKS__
-#	define CPE__CW	// We are using MetroWerks Code Warrior.
+#	define CPE__C_CW
 #	ifdef _MT
 #		ifndef CPE_ST
-#			define CPE__MT
+#			define CPE__T_MT
 #		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
 #	ifdef macintosh
-#		define CPE__MAC	// We are under Macintosh.
+#		define CPE__P_MAC	// We are under Macintosh.
 #	else
-#		define CPE__MS	// We are also under Microsoft OS
+#		define CPE__P_MS	// We are under Microsoft OS
 #	endif
-#	define CPE__NO_IOS_EXTENSION
 #endif
 
-#ifndef CPE__NO_IOS_EXTENSION
-//d Defined if 'ios::nocreate' and 'ios::replace' exists.
-#	define CPE__IOS_EXTENSION
-#endif
-
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 #	ifdef CPE_MT 
-#		define CPE__MT
+#		define CPE__T_MT
 #	endif
 #endif
 
-#ifndef CPE_USE_NO_WORKAROUND
-#	ifdef CPE__GCC
-#		define CPE__USE_GCC_WORKAROUND
-#	endif
-#	ifdef CPE__VC
-#		define CPE__USE_VC_WORKAROUND
-#	endif
-#	ifdef CPE__CW
-#		define CPE__USE_CW_WORKAROUND
-#	endif
+#ifndef CPE_USE_NO_WORKAROUNDS
+#	define CPE__USE_WORKAROUNDS
 #endif	
 
-#if defined( CPE_PROCESSES ) && !defined( CPE__MT )
-#	error "'CPE_PROCESSES' is defined, but current options doesn't allow multithreading."
-#endif
-
-
-#if defined( CPE__MS ) && defined( CPE__PROCESSES )
-#	error "Processes are not allowed with MS compiler."
-#endif
-
-#ifdef CPE_PROCESSES
-#	define CPE__PROCESSES
-#endif 
-
 #ifdef CPE_LIBRARY
-#	define CPE__LIBRARY
+#	define CPE__T_LIBRARY
 #elif defined( CPE__MS )
 #	if defined(_USRDLL )
-#		define CPE__LIBRARY
+#		define CPE__T_LIBRARY
 #	endif
 #endif
 
 #if defined( wxUSE_GUI ) || defined( CPE_GUI )
-#	define CPE__GUI
-#elif !defined( _USRDLL ) && !defined( CPE__LIBRARY )
-#	define CPE__CONSOLE
+#	define CPE__T_GUI
+#elif !defined( _USRDLL ) && !defined( CPE__T_LIBRARY )
+#	define CPE__T_CONSOLE
 #endif
 
-#if defined ( CPE__UNIX ) || defined ( CPE__BEOS )
-#	define CPE__UNIX_LIKE
+#ifndef CPE_DISABLE_WARNINNG_SUPPRESSION
+#	define CPE__WARNING_SUPPRESSION_ENABLED
 #endif
 
+
+
+#ifdef CPE__C_VC
+#	ifdef CPE__WARNING_SUPPRESSION_ENABLED
+#		pragma warning( disable: 4786 )	// 'The identifier string exceeded the maximum allowable length and was truncated.'.
+#	endif
+#	if _MSC_VER == 1200
+#		define CPE__C_VC6
+#	endif
+#endif
+
+#ifdef CPE__C_GCC
+#	if __GNUC__ == 3
+#		define CPE__C_GCC3
+#	endif
+#endif
+
+#ifdef CPE__P_MS
+#	define CPE__T_MS
+#endif
+
+#ifdef CPE__P_CYGWIN
+#	define CPE__T_CYGWIN
+#	define CPE__T_MT 
+#endif
+
+#ifdef CPE__P_LINUX
+#	define CPE__T_LINUX
+#endif
 
 
 /*$END$*/

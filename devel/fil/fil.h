@@ -68,7 +68,7 @@ extern class ttr_tutor &FILTutor;
 #include "tol.h"
 #include "cpe.h"
 
-#if defined( CPE__CONSOLE ) && !defined( CPE__MT )
+#if defined( CPE__T_CONSOLE ) && !defined( CPE__T_MT )
 #	define FIL__USE_CIO
 #endif
 

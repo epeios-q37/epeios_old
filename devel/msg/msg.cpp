@@ -31,6 +31,30 @@ $_RAW_$
 
 #include "msg.h"
 
+class msgtutor
+: public ttr_tutor
+{
+public:
+	msgtutor( void )
+	: ttr_tutor( MSG_NAME )
+	{
+#ifdef MSG_DBG
+		Version = MSG_VERSION "\b\bD $";
+#else
+		Version = MSG_VERSION;
+#endif
+		Owner = MSG_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~msgtutor( void ){}
+};
+
+/******************************************************************************/
+				  /* do not modify anything above this limit */
+				  /*			  unless specified			 */
+				  /*******************************************/
+/*$BEGIN$*/
+
 using namespace msg;
 
 enum state__ {
@@ -244,34 +268,6 @@ void msg::i18_messages_::DumpRawMessages( messages_ &Messages ) const
 	for ( int i = 0; i < S_.Amount ; i++ )
 		Messages.Append( message( _GetRawMessage( i ) ) );
 }
-
-
-
-class msgtutor
-: public ttr_tutor
-{
-public:
-	msgtutor( void )
-	: ttr_tutor( MSG_NAME )
-	{
-#ifdef MSG_DBG
-		Version = MSG_VERSION "\b\bD $";
-#else
-		Version = MSG_VERSION;
-#endif
-		Owner = MSG_OWNER;
-		Date = "$Date$";
-	}
-	virtual ~msgtutor( void ){}
-};
-
-/******************************************************************************/
-				  /* do not modify anything above this limit */
-				  /*			  unless specified			 */
-				  /*******************************************/
-/*$BEGIN$*/
-
-using namespace msg;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -69,9 +69,9 @@ extern class ttr_tutor &TOLTutor;
 #include "cpe.h"
 #include "bso.h"
 
-#if defined( CPE__VC ) || defined( CPE__UNIX ) || defined( CPE__BEOS )
+#if defined( CPE__C_VC ) || defined( CPE__C_GCC )
 #	include <sys/timeb.h>
-#elif !defined( CPE__CW )
+#elif !defined( CPE__C_CW )
 #	error "Unknown compilation enviroment"
 #endif
 
@@ -83,8 +83,10 @@ namespace tol
 }
 
 
-#ifdef CPE__VC
-#	pragma warning( disable : 4284 )
+#ifdef CPE__C_VC
+#	ifdef CPE__WARNING_SUPPRESSION_ENABLED
+#		pragma warning( disable : 4284 )
+#	endif
 #endif
 
 
@@ -459,7 +461,7 @@ namespace tol {
 	const char *DateAndTime( buffer__ &Buffer );
 
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	inline const char *Date( void )
 	{
 		static buffer__ Buffer;
@@ -482,7 +484,7 @@ namespace tol {
 	}
 #endif
 
-#ifndef CPE__CW
+#ifndef CPE__T_CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'clock()' only return how long
 	the application is using the processor.*/
@@ -849,24 +851,6 @@ namespace tol {
 #define E_RWDISCLOSE__(type__, name )\
 	E_RODISCLOSE__( type__, name )\
 	E_WODISCLOSE__( type__, name )
-
-	inline void _signal( int s )
-	{
-		exit( EXIT_SUCCESS );
-	}
-
-	inline void SignalExits( void )
-	{
-#ifdef CPE__UNIX_LIKE
-		signal( SIGHUP, _signal );
-#endif
-#ifdef CPE__VC
-		signal( SIGBREAK, _signal );
-#endif
-		signal( SIGTERM, _signal );
-		signal( SIGABRT, _signal );
-		signal( SIGINT, _signal );
-	}
 
 }
 

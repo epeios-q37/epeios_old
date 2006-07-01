@@ -55,18 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef CPE__UNIX
+#ifdef CPE__T_LINUX
+#	define SCK__IGNORE_SIGPIPE
+#endif
+
+
+#ifdef SCK__IGNORE_SIGPIPE
 #	include <signal.h>
 #endif
 
 using namespace sck;
 
-#ifdef CPE__MS
+#ifdef CPE__T_MS
 bool sck::Ready_ = false;
-#elif defined( SCK__UNIX_LIKE )
-bool sck::Ready_ = true;
 #else
-#	error "Unknow compiler enviroment"
+bool sck::Ready_ = true;
 #endif
 
 flw::bsize__ sck::Read(
@@ -232,7 +235,7 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-#ifdef CPE__UNIX
+#ifdef SCK__IGNORE_SIGPIPE
 	signal( SIGPIPE, SIG_IGN );
 #endif
 	}

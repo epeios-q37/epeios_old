@@ -66,7 +66,7 @@ extern class ttr_tutor &CLNARGTutor;
 #include "bch.h"
 #include "ctn.h"
 #include "str.h"
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 #	include "cio.h"
 #endif
 
@@ -303,7 +303,7 @@ namespace clnarg {
 		int CommandId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 		txf::text_oflow__ &Flow = cio::cout,
 #else
 		txf::text_oflow__ &Flow,
@@ -316,7 +316,7 @@ namespace clnarg {
 		const char *Text,
 		clnarg::view View,
 		bso::bool__ Default,
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )
@@ -333,7 +333,7 @@ namespace clnarg {
 		const char *Parameter,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 		txf::text_oflow__ &Flow = cio::cout );
 #else
 		txf::text_oflow__ &Flow );
@@ -346,7 +346,7 @@ namespace clnarg {
 		int OptionId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 		txf::text_oflow__ &Flow = cio::cout )
 #else
 		txf::text_oflow__ &Flow )

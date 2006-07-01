@@ -67,8 +67,10 @@ extern class ttr_tutor &CTNTutor;
 #include "aem.h"
 
 
-#ifdef CPE__USE_VC_WORKAROUND
-#	define typename_
+#ifdef CPE__C_VC
+#	ifdef CPE__USE_WORKAROUNDS
+#		define typename_
+#	endif
 #else
 #	define	typename_	typename
 #endif

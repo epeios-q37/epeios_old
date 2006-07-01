@@ -156,7 +156,7 @@ namespace cio {
 		{}
 	};
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	extern aware_coutf___ coutf;
 	extern aware_cerrf___ cerrf;
 	extern aware_cinf___ cinf;

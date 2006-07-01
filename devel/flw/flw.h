@@ -454,7 +454,7 @@ namespace flw {
 	};
 
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	typedef unsafe_iflow___	iflow___;
 #endif
 
@@ -666,7 +666,7 @@ namespace flw {
 	};
 
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	typedef unsafe_iflow___	iflow___;
 #endif
 
@@ -763,7 +763,7 @@ namespace flw {
 	};
 
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	typedef unsafe_ioflow___	ioflow___;
 #endif
 

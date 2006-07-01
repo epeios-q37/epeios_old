@@ -1,7 +1,7 @@
 # 'mtx' Makefile by Claude SIMON (csimon@epeios.org)
 # Builds test executable for the 'mtx' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000, 2003  Claude SIMON (csimon@epeios.org).
+# Copyright (C) 2000, 2003-2004  Claude SIMON (csimon@epeios.org).
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -28,9 +28,13 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT #-DMTX_CONTROL -DMTX_USE_COUNTER
+#copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw stf err mtk
+libs = ttr tol flw cio err
+
+ifeq ("$(OSTYPE)","cygwin")
+copt += -DMTX_NO_ATOMIC_OPERATIONS
+endif
 
 
 
@@ -51,7 +55,7 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-lo += -lpthread
+#lo += -lpthread
 endif
 
 ifeq ("$(EPEIOS_ENV)","beos")

@@ -57,14 +57,14 @@ public:
 
 using namespace tht;
 
-#ifdef CPE__MS
+#ifdef THT__MS
 #	include <stdlib.h>
 #	include "windows.h"
-#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
+#elif defined( THT__POSIX )
 #	include <unistd.h>
 #	include <sched.h>
 #	include <errno.h>
-#elif !defined( CPE__MAC )
+#else
 #	error "Unknown compilation enviroment"
 #endif
 
@@ -72,9 +72,9 @@ using namespace tht;
 
 void tht::Suspend( unsigned long Delay )
 {
-#ifdef CPE__MS
+#ifdef THT__MS
 	Sleep( Delay );
-#elif defined( CPE__UNIX ) || defined( CPE__BEOS )
+#elif defined( THT__POSIX )
 	struct timespec T;
 
 	T.tv_sec = Delay / 1000;
@@ -83,23 +83,21 @@ void tht::Suspend( unsigned long Delay )
 	while ( nanosleep( &T, &T ) )
 		if ( errno != EINTR )
 			ERRs();
-#elif defined( CPE__MAC )
-	ERRl();
 #else
-#	error "Unknown compilation enviroment"
+#	error
 #endif
 }
 
 
 void tht::Defer( void )
 {
-#ifdef CPE__MS
+#ifdef THT__MS
 	Sleep( 0 );	// PAs 0, sinon l'usage CPU monte à 100%
-#elif defined( CPE__UNIX )
+#elif defined( THT__POSIX )
 	if( sched_yield() != 0 )
 		ERRs();
 #else
-	#error "Unknown compilation enviroment"
+	#error
 #endif
 }
 

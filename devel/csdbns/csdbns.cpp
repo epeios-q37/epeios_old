@@ -57,7 +57,7 @@ public:
 
 using namespace csdbns;
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 #include "mtx.h"
 #include "mtk.h"
 #endif
@@ -80,7 +80,7 @@ bso::bool__ csdbns::listener___::Init(
 	nom.sin_addr.s_addr=INADDR_ANY;
 	nom.sin_family=AF_INET;
 
-#ifdef CPE__UNIX
+#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN )
 	int Val = ~0;
 
 	if ( setsockopt( Socket_, SOL_SOCKET, SO_REUSEADDR, &Val, sizeof( Val ) ) != 
@@ -174,7 +174,7 @@ ERREnd
 ERREpilog
 }
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 struct socket_data__
 {
 	socket_user_functions__ *Functions;

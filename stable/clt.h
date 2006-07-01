@@ -90,7 +90,7 @@ namespace clt {
 		const char *HostService,
 		buffer__ Buffer );
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	inline const char *Host( const char *HostService )
 	{
 		static buffer__ Buffer;

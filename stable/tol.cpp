@@ -62,7 +62,7 @@ bool tol::FileExists( const char *Nom )
 {
 	std::ifstream Stream( Nom, std::ios::binary );
 
-#ifdef CPE__VC
+#ifdef CPE__C_VC
 	return Stream != NULL;
 #else
 	return Stream;
@@ -111,6 +111,26 @@ const char *tol::DateAndTime( buffer__ &Buffer )
    return Buffer;
 }
 
+static inline void signal_( int s )
+{
+	exit( EXIT_SUCCESS );
+}
+
+static inline void ExitOnSignal_( void )
+{
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+	signal( SIGHUP, signal_ );
+#elif defined( CPE__T_MS )
+	signal( SIGBREAK, signal_ );
+#else
+#	error "Undefined target !"
+#endif
+
+	signal( SIGTERM, signal_ );
+	signal( SIGABRT, signal_ );
+	signal( SIGINT, signal_ );
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class tolpersonnalization
@@ -121,6 +141,7 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+		ExitOnSignal_();
 	}
 	~tolpersonnalization( void )
 	{

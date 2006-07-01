@@ -57,7 +57,7 @@ public:
 
 using namespace srv;
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 #include "mtx.h"
 #include "mtk.h"
 #endif
@@ -174,7 +174,7 @@ ERREnd
 ERREpilog
 }
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 struct socket_data__
 {
 	socket_functions__ *Functions;

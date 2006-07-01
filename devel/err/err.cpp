@@ -245,7 +245,7 @@ void err::Final( void )
 
 #ifdef CPE__CONSOLE
 ERRProlog
-#	ifdef CPE__MT
+#	ifdef CPE__T_MT
 	cio::aware_cout___ cout;
 	cio::aware_cerr___ cerr;
 #	else

@@ -62,7 +62,7 @@ extern class ttr_tutor &LGPMSCTutor;
 
 #include "err.h"
 #include "flw.h"
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 #	include "cio.h"
 #endif
 
@@ -100,7 +100,7 @@ extern class ttr_tutor &LGPMSCTutor;
 namespace lgpmsc {
 	//f Print information about GNU GPL license.
 	void PrintLicense(
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		txf::text_oflow__ &Flow );
 #else
 	txf::text_oflow__ &Flow = cio::cout );

@@ -65,12 +65,15 @@ extern class ttr_tutor &FNMTutor;
 #include <string.h>
 #include "cpe.h"
 
-#if defined( CPE__UNIX ) || defined( CPE__BEOS )
-#	define FNM__UNIX_LIKE
-#elif defined( CPE__MAC  )
-#	define FNM__MAC
+#if defined( CPE__T_UNIX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
+#	define FNM__POSIX
+#elif defined( CPE__T_MS )
+#	define FNM__MS
+#elif defined( CPE__T_MAC )
+#	define FNM__MC
+#else
+#	error "Unknown target !"
 #endif
-
 
 namespace fnm
 {
@@ -129,7 +132,7 @@ namespace fnm
 	// Return a string contaiinig the location only. Returned pointermust be freed.
 	char *GetLocation( const char *Name );
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 	//f Return the file name of 'Name' without localization and extension.
 	const char *GetFileNameRoot( const char *Nom );
 #endif
@@ -144,7 +147,7 @@ namespace fnm
 	//: public utl_PU
 	{
 	private:
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 		/* Return a 8 characters long file name using the 'Base' string (any length)
 		with 'Occurence' (>=0 <=36) the present occurence of a 'Base' based file name */
 		const char *MakeFileName_(
@@ -172,17 +175,17 @@ namespace fnm
 	};
 }
 
-#ifdef CPE__MS
+#ifdef FNM__MS
 #	define FNM_DIRECTORY_SEPARATOR_STRING	"\\"
 #	define FNM_DIRECTORY_SEPARATOR_CHARACTER	'\\'
-#elif defined( FNM__UNIX_LIKE )
+#elif defined( FNM__POSIX )
 #	define FNM_DIRECTORY_SEPARATOR_STRING	"/"
 #	define FNM_DIRECTORY_SEPARATOR_CHARACTER	'/'
 #elif defined( FNM__MAC )
 #	define FNM_DIRECTORY_SEPARATOR_STRING	":"
 #	define FNM_DIRECTORY_SEPARATOR_CHARACTER	':'
 #else
-#	error "Unknow compiler enviroment."
+#	error
 #endif
 
 

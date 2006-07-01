@@ -62,60 +62,45 @@ extern class ttr_tutor &THTTutor;
 
 #include "err.h"
 
-#ifdef CPE__MS
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#	define THT__POSIX
+#elif defined ( CPE__T_MS )
+#	define THT__MS
+#else
+#	error "Unknown target !"
+#endif
+
+#ifdef THT__MS
 #	include <process.h>
 #	include <windows.h>
-#elif defined( CPE__UNIX_LIKE )
-#	ifdef CPE__BEOS
-#		include <be/kernel/OS.h>
-#	elif defined( CPE__UNIX )
-#		include <pthread.h>
-#	else
-#		error "Unknow unix-like enviroment !"
-#	endif
+#elif defined( THT__POSIX )
+#	include <pthread.h>
 #	include <unistd.h>
 #	include <stdlib.h>
 #	include <signal.h>
 #else
-#	error "Unknow compilation enviroment !"
+#	error 
 #endif
 
 #define THT_UNDEFINED_THREAD_ID	0	// Totalement arbitraire, à priori, correspond au thread système, donc ne peut être renvoyé par la focntion 'GetTID()'.
 
 
 namespace tht {
-#ifdef CPE__MS
-	//t The type of a thread ID.
+#ifdef THT__MS
 	typedef DWORD	thread_id__;
-#elif defined( CPE__UNIX_LIKE )
-#	ifdef CPE__BEOS
-	typedef thread_id	thread_id__;
-#	else
+#elif defined( THT__POSIX )
 	typedef pthread_t	thread_id__;
-#	endif
-#else
-#	error "Unknow compilation enviroment"
 #endif
 
 	//f Return an unique ID for the current thread.
 	inline thread_id__ GetTID( void )
 	{
-#ifdef CPE__MS
+#ifdef THT__MS
 		return GetCurrentThreadId();
-#elif defined( CPE__UNIX_LIKE )
-#	ifdef CPE__BEOS 
-		thread_id ID = find_thread( NULL );
-		
-		if ( ID == B_NAME_NOT_FOUND )
-			ERRs();
-#	elif defined( CPE__UNIX )
-		thread_id__ ID = pthread_self();
-#	else
-#		error "Unknow unix-like enviroment !"
-#	endif
-		return ID;
+#elif defined( THT__POSIX )
+		return pthread_self();
 #else
-#	error "Unknow compilation enviroment"
+#	error
 #endif
 	}
 

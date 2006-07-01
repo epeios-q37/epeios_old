@@ -294,13 +294,13 @@ namespace txf {
 	// Place une fin de ligne sur le txft.
 	TXF_DFS( nl )
 	{
-	#ifdef CPE__MS
+#if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
 		return Flow << "\r\n" << sync;
-	#elif defined( CPE__UNIX ) || defined( CPE__BEOS ) || defined( CPE__MAC ) 
+#elif defined CPE__T_LINUX
 		return Flow << '\n' << sync;
-	#else
-		#error "Unknow compiler enviroment."
-	#endif
+#else
+#	error "Unknow target !"
+#endif
 	}
 
 	// Place une tabulation sur le txft.

@@ -33,7 +33,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT
 lopt = 
-libs = ttr flw stf err
+libs = ttr flw err
 
 
 

@@ -65,25 +65,36 @@ extern class ttr_tutor &MTKTutor;
 #include "errno.h"
 #include "tht.h"
 
-#ifdef CPE__MS
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS )
+#	define MTK__POSIX
+#elif defined( CPE__T_MS )
+#	define MTK__MS
+#else
+#	error "Unknown target !"
+#endif
+
+#ifdef MTK_THREADS_REMAIN
+#	define MTK__THREADS_REMAIN
+#endif
+
+
+#ifdef MTK__MS
 #	include <process.h>
 #	include <windows.h>
-#elif defined( CPE__UNIX_LIKE )
-#	ifdef CPE__BEOS
+#elif defined( MTK__POSIX )
+#	ifdef CPE__T_BEOS
 #		include <be/kernel/OS.h>
-#	elif defined( CPE__UNIX )
-#		include <pthread.h>
 #	else
-#		error "Unknow unix-like compilation enviroment"
+#		include <pthread.h>
 #	endif
 #	include <unistd.h>
 #	include <stdlib.h>
 #	include <signal.h>
 #else
-#	error "Unknow compilation enviroment"
+#	error
 #endif
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 #	error "Multitasking required, but compilation options don't allow this."
 #endif
 
@@ -98,7 +109,11 @@ typedef void (* mtk__routine)(void *);
 #elif defined( MTK_KEEP )
 #	define MTK__KEEP
 #else
-#	define MTK__KILL
+#	ifdef MTK__T_LINUX
+#		define MTK__KEEP
+#	else
+#		define MTK__KILL
+#	endif
 #endif
 
 namespace mtk {

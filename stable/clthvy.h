@@ -67,7 +67,7 @@ extern class ttr_tutor &CLTHVYTutor;
 #include "sck.h"
 #include "stk.h"
 #include "clt.h"
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 #	include "mtx.h"
 #endif
 #include "bso.h"
@@ -76,7 +76,7 @@ extern class ttr_tutor &CLTHVYTutor;
 #define CLTHVY_DEFAULT_CACHE_SIZE	100
 
 namespace clthvy {
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	typedef mtx::mutex_handler__	mutex__;
 #	define CLTHVY_NO_MUTEX			MTX_INVALID_HANDLER
 #else
@@ -86,28 +86,28 @@ namespace clthvy {
 
 	inline void _Lock( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		mtx::Lock( Mutex );
 #endif
 	}
 
 	inline void _Unlock( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		mtx::Unlock( Mutex );
 #endif
 	}
 
 	inline void _Delete( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		mtx::Delete( Mutex );
 #endif
 	}
 
 	inline mutex__ _Create( void )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		return mtx::Create();
 #else
 		return CLTHVY_NO_MUTEX;

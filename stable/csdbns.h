@@ -159,7 +159,7 @@ namespace csdbns {
 			err::handle ErrHandle = err::hUsual );
 	};
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	/*c Handling a server, with process duplication for each client. */
 	class server___
 	: public listener___

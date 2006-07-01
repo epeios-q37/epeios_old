@@ -65,12 +65,10 @@ extern class ttr_tutor &CSDDLSTutor;
 #include "csdscm.h"
 #include "cpe.h"
 
-#ifdef CPE__MS
+#ifdef CPE__T_MS
 #	define CSDDSL__FUNCTION_SPEC	__declspec(dllexport)
-#elif defined( CPE__UNIX )
-#	define CSDDSL__FUNCTION_SPEC
 #else
-#	error "OS not supported yet."
+#	define CSDDSL__FUNCTION_SPEC
 #endif
 
 extern "C" CSDDSL__FUNCTION_SPEC csdscm::user_functions__ *CSDDLEntry( void *UP );

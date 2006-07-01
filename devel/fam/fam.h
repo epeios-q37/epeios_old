@@ -105,7 +105,7 @@ namespace fam {
 			size__ Minimum )
 		{
 			void *Resultat;
-	#ifdef CPE__MT
+	#ifdef CPE__T_MT
 			size__ Taille = 0;
 	#else
 			size__ Taille = Taille_( Optimal, Minimum );

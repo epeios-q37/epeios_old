@@ -63,7 +63,7 @@ extern class ttr_tutor &FWFTutor;
 #include "err.h"
 #include "bso.h"
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 #	include "mtx.h"
 #	define FWF_NO_MUTEX	MTX_INVALID_HANDLER
 	typedef mtx::mutex_handler__ mutex__;
@@ -89,7 +89,7 @@ namespace fwf {
 	//t Type of a datum.
 	typedef unsigned char		datum__;
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	inline void Test_( mutex__ Mutex )
 	{
 		if ( Mutex == FWF_NO_MUTEX )
@@ -99,7 +99,7 @@ namespace fwf {
 
 	inline mutex__ Create_( void )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		return mtx::Create( mtx::mOwned );
 #else
 		static int A;
@@ -110,7 +110,7 @@ namespace fwf {
 
 	inline void Delete_( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		Test_( Mutex );
 		mtx::Delete( Mutex );
 #endif
@@ -118,7 +118,7 @@ namespace fwf {
 
 	inline void Lock_( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		Test_( Mutex );
 		mtx::Lock( Mutex );
 #endif
@@ -126,7 +126,7 @@ namespace fwf {
 
 	inline void Unlock_( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		Test_( Mutex );
 		mtx::Unlock( Mutex );
 #endif
@@ -134,7 +134,7 @@ namespace fwf {
 
 	inline bso::bool__ IsLocked_( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		Test_( Mutex );
 		return mtx::IsLocked( Mutex );
 #endif
@@ -143,7 +143,7 @@ namespace fwf {
 
 	inline bso::bool__ IsOwner_( mutex__ Mutex )
 	{
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		Test_( Mutex );
 		return mtx::IsOwner( Mutex );
 #endif

@@ -71,14 +71,14 @@ extern class ttr_tutor &MTXTutor;
 #	define MTX__DEFAULT_DELAY	1
 #endif
 
-#ifndef MTX_NO_ATOMIC_OPERATIONS
+#if !defined( MTX_NO_ATOMIC_OPERATIONS ) && !defined( CPE__T_CYGWIN )
 #	define MTX__USE_ATOMIC_OPERATIONS
 #endif
 
 #ifdef MTX__USE_ATOMIC_OPERATIONS
-#	ifdef CPE__MS
+#	if defined( CPE__T_MS )
 #		define MTX__USE_MS_ATOMIC_OPERATIONS
-#	elif defined (CPE__LINUX )
+#	elif defined (CPE__T_LINUX )
 #		define MTX__USE_LINUX_ATOMIC_OPERATIONS
 #	else
 #		error "No atomic operations available for this compiling enviroment"
@@ -87,11 +87,21 @@ extern class ttr_tutor &MTXTutor;
 #	define MTX__NO_ATOMIC_OPERATIONS
 #endif
 
+#ifndef MTX__USE_ATOMIC_OPERATIONS
+#	ifndef MTX_SUPPRESS_NO_ATOMIC_OPERATIONS_WARNING
+#		ifdef CPE__C_VC
+#			pragma message( "BE CAREFUL : Mutexes does not use atomic operations !" )
+#		elif defined( CPE__C_GCC )
+#			warning "BE CAREFUL : Mutexes does not use atomic operations !"
+#		endif
+#	endif
+#endif
+
 #ifdef MTX__USE_LINUX_ATOMIC_OPERATIONS
 #	include "asm/atomic.h"
 #endif
 
-#ifndef CPE__MT
+#ifndef CPE__T_MT
 #	error "This library only useful in multitasking context, in which you are not."
 #endif
 

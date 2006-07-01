@@ -59,13 +59,22 @@ public:
 
 #define FUNCTION_NAME	"CSDDLEntry"
 
-#ifdef CPE__MS
+#if defined( CPE__T_UNIX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
+#	define CSDDLC__POSIX
+#elif defined( CPE__T_MS )
+#	define CSDDLC__MS
+#else
+#	error "Unknown target !"
+#endif
+
+#ifdef CSDDLC__MS
 #	include <windows.h>
-#elif defined ( CPE__UNIX )
+#elif defined ( CSDDLC__POSIX )
 #	include <dlfcn.h>
 #else
-#	error "OS not supported yet."
+#	error
 #endif
+
 
 
 using namespace csddlc;
@@ -76,12 +85,14 @@ void csddlc::dynamic_library_client_core::reset( bso::bool__ P )
 {
 	if ( P ) {
 		if ( _LibraryHandler != NULL )
-#ifdef CPE__MS
+#ifdef CSDDLC__MS
 			if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
 				ERRs();
-#elif defined( CPE__UNIX )
+#elif defined( CSDDLC__POSIX )
 			if ( dlclose( _LibraryHandler ) == -1 )
 				ERRs();
+#else
+#	error
 #endif
 	}
 
@@ -100,16 +111,13 @@ ERRProlog
 ERRBegin
 	reset();
 
-#ifdef CPE__MS
-	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL ) {
-		int Error = GetLastError();
+#ifdef CSDDLC__MS
+	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
 		ERRu();
-	}
-
 
 	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_LibraryHandler, FUNCTION_NAME ) ) == NULL )
 		ERRs();
-#elif defined( CPE__UNIX )
+#elif defined( CSDDLC__POSIX )
 	if ( ( _LibraryHandler = dlopen( LibraryName, RTLD_LAZY ) ) == NULL )
 		ERRu();
 
@@ -117,6 +125,8 @@ ERRBegin
 
 	if ( dlerror() != NULL )
 		ERRs();
+#else
+#	error
 #endif
 
 	Success = ( _UserFunctions = CSDDLGet( UP ) ) != NULL;

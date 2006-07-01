@@ -74,12 +74,13 @@ extern class ttr_tutor &MSGTutor;
 		Message = #m + p;\
 		break
 
-#ifdef CPE__USE_VC_WORKAROUND
-#	undef GetMessage
-#endif
-
-#ifdef CPE__CYGWIN
-#	undef GetMessage
+#ifdef CPE__USE_WORKAROUNDS
+#	ifdef CPE__C_VC6
+#		undef GetMessage
+#	endif
+#	ifdef CPE__P_CYGWIN
+#		undef GetMessage
+#	endif
 #endif
 
 namespace msg {

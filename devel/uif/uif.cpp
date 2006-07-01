@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 #	include "mtx.h"
 #endif
 
@@ -67,20 +67,20 @@ E_TYPEDEF( int, id__ );
 
 static ids::ids_store<id__> Ids_;
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 static mtx::mutex_handler__ Mutex_;
 #endif
 
 id__ GetId_( void )
 {
 	id__ Id;
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	mtx::Lock( ::Mutex_ );
 #endif
 
 	Id = Ids_.New();
 
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	mtx::Unlock( ::Mutex_ );
 #endif
 
@@ -89,11 +89,11 @@ id__ GetId_( void )
 
 static void ReleaseId_( int Id )
 {
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	mtx::Lock( ::Mutex_ );
 #endif
 	Ids_.Release( Id );
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 	mtx::Unlock( ::Mutex_ );
 #endif
 }
@@ -121,7 +121,7 @@ public:
 		to be realized at the launching of the application  */
 
 		Ids_.Init();
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		::Mutex_ = mtx::Create();
 #endif
 	}
@@ -129,7 +129,7 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
-#ifdef CPE__MT
+#ifdef CPE__T_MT
 		mtx::Delete( ::Mutex_ );
 #endif
 	}
