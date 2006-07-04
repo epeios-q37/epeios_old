@@ -1,5 +1,9 @@
 $Id$
 
+04/04/06 :
+	- NSXPCM :
+		- Ajout fonctions 'CloneNode()', 'GetPreviousSibling()' et 'GetNextSibling()'
+
 30/06/06 :
 	- CPE :
 		- Simplification.

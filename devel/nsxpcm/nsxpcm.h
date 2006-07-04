@@ -307,7 +307,13 @@ namespace nsxpcm {
 		Element->SetValue( EValue );
 	}
 
-	
+	inline void CloneNode(
+		nsIDOMNode *Node,
+		bso::bool__ Deep,
+		nsIDOMNode **Clone )
+	{
+		Node->CloneNode( Deep, Clone );
+	}
 
 	inline void AppendChild(
 		nsIDOMNode *Node,
@@ -373,6 +379,34 @@ namespace nsxpcm {
 #endif
 
 		Node->GetLastChild( &Child );
+
+		return Child;
+	}
+
+	inline nsIDOMNode *GetPreviousSibling( nsIDOMNode *Node )
+	{
+		nsIDOMNode *Child = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->GetPreviousSibling( &Child );
+
+		return Child;
+	}
+
+	inline nsIDOMNode *GetNextSibling( nsIDOMNode *Node )
+	{
+		nsIDOMNode *Child = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->GetNextSibling( &Child );
 
 		return Child;
 	}
