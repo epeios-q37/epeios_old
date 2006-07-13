@@ -62,7 +62,7 @@ namespace err {
 	err_ ERR;
 }
 
-#ifdef CPE__CONSOLE
+#ifdef CPE__T_CONSOLE
 #	include "cio.h"
 #endif
 
@@ -243,7 +243,7 @@ void err::Final( void )
 
 		ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
 
-#ifdef CPE__CONSOLE
+#ifdef CPE__T_CONSOLE
 ERRProlog
 #	ifdef CPE__T_MT
 	cio::aware_cout___ cout;

@@ -427,7 +427,7 @@ namespace bso {
 		lfloat__ Value,
 		float_buffer__ &Buffer )
 	{
-		sprintf( Buffer.Datum, "%Lg", Value );
+		sprintf( Buffer.Datum, "%Lf", Value );
 
 		return Buffer.Datum;
 	}

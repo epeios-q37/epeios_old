@@ -1,6 +1,12 @@
 $Id$
 
-04/04/06 :
+13/07/06 :
+	- BSO :
+		- LA conversion d'un '...float__' n'utilise plus la notation exponentielle.
+	- ERR :
+		- Adaptation aux modifications 'CPE' (voir 30/06/06).
+
+04/07/06 :
 	- NSXPCM :
 		- Ajout fonctions 'CloneNode()', 'GetPreviousSibling()' et 'GetNextSibling()'
 
