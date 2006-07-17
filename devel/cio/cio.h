@@ -66,7 +66,7 @@ extern class ttr_tutor &CIOTutor;
 #include "cio.h"
 #include "cpe.h"
 
-#ifdef CPE__LIBRARY
+#ifdef CPE__T_LIBRARY
 #	error "Cannot be used in a library !"
 #endif
 

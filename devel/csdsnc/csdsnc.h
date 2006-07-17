@@ -66,13 +66,21 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "stk.h"
 #include "csdbnc.h"
 #include "bso.h"
-#include "mtx.h"
+#include "cpe.h"
+
+#ifdef CPE__T_MT
+#	define CSDSNC__MT
+#endif
+
+#ifdef CSDSNC__MT
+#	include "mtx.h"
+#endif
 
 #define CSDSNC_UNDEFINED			BSO_USHORT_MAX
 #define CSDSNC_DEFAULT_CACHE_SIZE	100
 
 namespace csdsnc {
-#ifdef CPE__T_MT
+#ifdef CSDSNC__MT
 	typedef mtx::mutex_handler__	mutex__;
 #	define CSDSNC_NO_MUTEX			MTX_INVALID_HANDLER
 #else
@@ -82,28 +90,28 @@ namespace csdsnc {
 
 	inline void _Lock( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
+#ifdef CSDSNC__MT
 		mtx::Lock( Mutex );
 #endif
 	}
 
 	inline void _Unlock( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
+#ifdef CSDSNC__MT
 		mtx::Unlock( Mutex );
 #endif
 	}
 
 	inline void _Delete( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
+#ifdef CSDSNC__MT
 		mtx::Delete( Mutex );
 #endif
 	}
 
 	inline mutex__ _Create( void )
 	{
-#ifdef CPE__T_MT
+#ifdef CSDSNC__MT
 		return mtx::Create( mtx::mFree );
 #else
 		return CSDSNC_NO_MUTEX;

@@ -1,5 +1,11 @@
 $Id$
 
+17/07/06
+	- CIO :
+		- Adaptation aux modifications de la bibliothèque 'CPE'.
+	- CSDSNC :
+		- Correction pb utilisation bibliothèque 'MTX' même si pas en contexte multitâche.
+
 13/07/06 :
 	- BSO :
 		- LA conversion d'un '...float__' n'utilise plus la notation exponentielle.
