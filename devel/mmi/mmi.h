@@ -290,89 +290,14 @@ namespace mmi {
 
 	E_AUTO( indexed_multimemory )
 
-	using mdr::E_MEMORY_DRIVER_;
-
-	//c This class is the standard memory driver for the indexed multimemory.
-	class indexed_multimemory_driver_
-	: public mdr::E_MEMORY_DRIVER_
-	{
-	private:
-		indexed_multimemory_ *Multimemoire_;
-		// memoire à laquelle il a été affecté
-	protected:
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
-		{
-			Multimemoire_->Read( S_.Index, Position, Amount, Buffer );
-		}
-		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRStore(
-			const epeios::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
-		{
-			Multimemoire_->Write( Buffer, Amount, S_.Index, Position );
-		}
-		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRAllocate( mdr::size__ Capacity )
-		{
-			Multimemoire_->Allocate( S_.Index, Capacity );
-		}
-		// alloue 'Capacite' octets
-		virtual void MDRFlush( void )
-		{
-			if ( Multimemoire_ )
-				Multimemoire_->Flush();
-		}
-	public:
-		struct s
-			: public mdr::E_MEMORY_DRIVER_::s
-		{
-			index__ Index;
-		} &S_;
-		indexed_multimemory_driver_( s &S )
-		: S_( S ),
-		  mdr::E_MEMORY_DRIVER_( S ) {}
-		void reset( bool P = true )
-		{
-			E_MEMORY_DRIVER_::reset( P );
-
-			S_.Index = NONE;
-			Multimemoire_ = NULL;
-		}
-		//f Initialize with the 'Multimemory' multimemory.
-		void Init( indexed_multimemory_ &Multimemory )
-		{
-			E_MEMORY_DRIVER_::Init();
-
-			S_.Index = NONE;
-			Multimemoire_ = &Multimemory;
-		}
-		//f The 'Index' memory becomes the memory handled by this driver.
-		void Index( index__ Index )
-		{
-			S_.Index = Index;
-		}
-		//f Return the index of the current memory.
-		index__ Index( void ) const
-		{
-			return S_.Index;
-		}
-		//f Return the size of the memory.
-		epeios::size__ Size( void ) const
-		{
-			return Multimemoire_->Size( S_.Index );
-		}
-	};
+//	using mdr::E_MEMORY_DRIVER__;
 
 	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.
-	class const_indexed_multimemory_driver_
-		: public mdr::E_MEMORY_DRIVER_
+	class _base_indexed_multimemory_driver_
+	: public mdr::E_MEMORY_DRIVER__
 	{
 	private:
-		const indexed_multimemory_ *Multimemoire_;
+		const indexed_multimemory_ *&Multimemoire_;
 		// memoire à laquelle il a été affecté
 	protected:
 		virtual void MDRRecall(
@@ -402,32 +327,42 @@ namespace mmi {
 		}
 	public:
 		struct s
-		: public E_MEMORY_DRIVER_::s
 		{
 			index__ Index;
 		} &S_;
-		const_indexed_multimemory_driver_( s &S )
+		_base_indexed_multimemory_driver_(
+			s &S,
+			const indexed_multimemory_ *&Multimemoire )
 		: S_( S ),
-		  E_MEMORY_DRIVER_( S ) {}
+		  Multimemoire_( Multimemoire )
+		{}
 		void reset( bool P = true )
 		{
-			E_MEMORY_DRIVER_::reset( P );
+			E_MEMORY_DRIVER__::reset( P );
 
 			S_.Index = NONE;
 			Multimemoire_ = NULL;
 		}
 		//f Initialize with 'Multimemory' multimemory.
-		void Init( const indexed_multimemory_ &Multimemory )
+		void Init( void )
 		{
-			E_MEMORY_DRIVER_::Init();
+			E_MEMORY_DRIVER__::Init( 0 );
 
 			S_.Index = NONE;
-			Multimemoire_ = &Multimemory;
 		}
 		//f The 'Index' memory becomes the memory handled by this memory driver.
 		void Index( index__ Index )
 		{
+#ifdef MDR_DBG
+			if ( Index != NONE )
+				if ( Multimemoire_->Size( Index ) != Extent() )
+					ERRc();
+#endif
 			S_.Index = Index;
+#ifdef MDR_DBG
+			if ( Index != NONE )
+				Extent( Multimemoire_->Size( Index ) );
+#endif
 		}
 		//f Return the index of the current memory.
 		index__ Index( void ) const
@@ -441,6 +376,77 @@ namespace mmi {
 		}
 	};
 
+	//c This class is the standard memory driver for the indexed multimemory.
+	class indexed_multimemory_driver_
+	: public _base_indexed_multimemory_driver_
+	{
+	private:
+		indexed_multimemory_ *Multimemoire_;
+		// memoire à laquelle il a été affecté
+	protected:
+		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
+		virtual void MDRStore(
+			const epeios::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
+		{
+			Multimemoire_->Write( Buffer, Amount, S_.Index, Position );
+		}
+		// écrit 'Nombre' octets à la position 'Position'
+		virtual void MDRAllocate( mdr::size__ Capacity )
+		{
+			Multimemoire_->Allocate( S_.Index, Capacity );
+		}
+		// alloue 'Capacite' octets
+		virtual void MDRFlush( void )
+		{
+			if ( Multimemoire_ )
+				Multimemoire_->Flush();
+		}
+	public:
+		struct s
+		: public _base_indexed_multimemory_driver_::s
+		{};
+		indexed_multimemory_driver_( s &S )
+		: _base_indexed_multimemory_driver_( S, Multimemoire_ ) {}
+		void reset( bool P = true )
+		{
+			_base_indexed_multimemory_driver_::reset( P );
+		}
+		//f Initialize with the 'Multimemory' multimemory.
+		void Init( indexed_multimemory_ &Multimemory )
+		{
+			_base_indexed_multimemory_driver_::Init( );
+			Multimemoire_ = &Multimemory;
+		}
+		//f The 'Index' memory becomes the memory handled by this driver.
+	};
+
+	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.
+	class const_indexed_multimemory_driver_
+	: public _base_indexed_multimemory_driver_
+	{
+	private:
+		const indexed_multimemory_ *Multimemoire_;
+		// memoire à laquelle il a été affecté
+	public:
+		struct s
+		: public _base_indexed_multimemory_driver_::s
+		{};
+		const_indexed_multimemory_driver_( s &S )
+		: _base_indexed_multimemory_driver_( S, Multimemoire_ ) {}
+		void reset( bool P = true )
+		{
+			_base_indexed_multimemory_driver_::reset( P );
+		}
+		//f Initialize with the 'Multimemory' multimemory.
+		void Init( const indexed_multimemory_ &Multimemory )
+		{
+			_base_indexed_multimemory_driver_::Init( );
+			Multimemoire_ = &Multimemory;
+		}
+		//f The 'Index' memory becomes the memory handled by this driver.
+	};
 }
 
 

@@ -141,7 +141,7 @@ namespace flm {
 	};
 
 
-	class memoire_fichier_base_
+	class memoire_fichier_base__
 	{
 	private:
 		_file___ File_;
@@ -230,7 +230,7 @@ namespace flm {
 		}
 			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
 			agrandit la mémoire si nécessaire */
-		void Allouer( iop::amount__ Capacite )
+		bso::bool__ Allouer( iop::amount__ Capacite )
 		{
 			if ( Capacite > TailleFichier_ )
 			{
@@ -250,17 +250,20 @@ namespace flm {
 						Liberer();
 
 				TailleFichier_ = Capacite;
-			}
+
+				return true;
+			} else
+				return false;
 		}
 		// alloue 'Capacite' octets
 	public:
-		struct s
+		memoire_fichier_base__( void )
 		{
-			// Standardization.
-		};
-		memoire_fichier_base_( s &S )
+			reset( false );
+		}
+		~memoire_fichier_base__( void )
 		{
-			// Standardization.
+			reset();
 		}
 		void reset( bool P  = true )
 		{
@@ -284,12 +287,6 @@ namespace flm {
 			Temoin_.Interne = false;
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
-		}
-		memoire_fichier_base_ &operator =( const memoire_fichier_base_ &MFB )
-		{
-			ERRu();	// The '=' operator has no sens for this object. It is defined only because it is neede by some macros.
-
-			return *this;
 		}
 		void Init(
 			const char *NomFichier = NULL,
@@ -369,9 +366,9 @@ namespace flm {
 	};
 
 	//c The standard memory driver which handle a file as memory.
-	class file_memory_driver_
-	: public mdr::E_MEMORY_DRIVER_,
-	  public memoire_fichier_base_
+	class file_memory_driver__
+	: public mdr::E_MEMORY_DRIVER__,
+	  public memoire_fichier_base__
 	{
 	protected:
 		virtual void MDRRecall(
@@ -383,7 +380,7 @@ namespace flm {
 			if ( Amount > UINT_MAX )
 				ERRl();
 #endif
-			memoire_fichier_base_::Lire( (position__)Position, (unsigned int)Amount, Buffer );
+			memoire_fichier_base__::Lire( (position__)Position, (unsigned int)Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRStore(
@@ -395,57 +392,41 @@ namespace flm {
 			if ( Amount > UINT_MAX )
 				ERRl();
 #endif
-			memoire_fichier_base_::Ecrire( Buffer, (unsigned int)Amount, (position__)Position );
+			memoire_fichier_base__::Ecrire( Buffer, (unsigned int)Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			memoire_fichier_base_::Allouer( (iop::amount__)Size );
+			memoire_fichier_base__::Allouer( (iop::amount__)Size );
 		}
 		// alloue 'Taille' octets
 	public:
-		struct s
-		: public E_MEMORY_DRIVER_::s,
-		  memoire_fichier_base_::s
-		{};
-		file_memory_driver_( s &S )
-		: E_MEMORY_DRIVER_( S ),
-		  memoire_fichier_base_( S )
-		{}
 		void reset( bool P = true )
 		{
-			memoire_fichier_base_::reset( P );
-			E_MEMORY_DRIVER_::reset( P );
+			memoire_fichier_base__::reset( P );
+			E_MEMORY_DRIVER__::reset( P );
 		}
 		//f Return the mode.
 		mdr::mode Mode( void )
 		{
-			return memoire_fichier_base_::Mode();
+			return memoire_fichier_base__::Mode();
 		}
 		//f 'Mode' becomes the mode.
 		void Mode( mdr::mode Mode )
 		{
-			memoire_fichier_base_::Mode( Mode );
-		}
-		file_memory_driver_ &operator =( const file_memory_driver_ &FMD )
-		{
-			memoire_fichier_base_::operator =( FMD );
-			E_MEMORY_DRIVER_::operator =( FMD );
-
-			return *this;
+			memoire_fichier_base__::Mode( Mode );
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
+			mdr::size__ OriginalSize,
 			const char *FileName = NULL,
 			mdr::mode Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base_::Init( FileName, Mode, Creation );
-			E_MEMORY_DRIVER_::Init();
+			memoire_fichier_base__::Init( FileName, Mode, Creation );
+			E_MEMORY_DRIVER__::Init( OriginalSize );
 		}
 	};
-
-	E_AUTO( file_memory_driver )
 }
 
 /*$END$*/

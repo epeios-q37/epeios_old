@@ -66,9 +66,7 @@ extern class ttr_tutor &MDRTutor;
 #include "flw.h"
 #include "bso.h"
 
-namespace mmm {
-	class multimemory_;
-}
+#define MDR_INTERNAL_MEMORY_DRIVER *(mdr::E_MEMORY_DRIVER__ *)NULL
 
 namespace mdr {
 
@@ -101,9 +99,24 @@ namespace mdr {
 		m_amount
 	};
 
-	//c Abstract memory driver. Use 'E_MEMORY_DRIVER_' instead directly this class.
-	class memory_driver_
+	//c Abstract memory driver. Use 'E_MEMORY_DRIVER__' instead directly this class.
+	class memory_driver__
 	{
+	private:
+#ifdef MDR_DBG
+		mdr::size__ _Extent;
+		void _Test(
+			row_t__ Position,
+			size__ Amount ) const
+		{
+			if ( Position >= _Extent )
+				if ( Amount > 0 )
+					ERRu();
+
+			if ( ( Position + Amount ) > _Extent )
+				ERRu();
+		}
+#endif
 	protected:
 		//v Recall 'Amount' at position 'Position' and put them in 'Buffer'.
 		virtual void MDRRecall(
@@ -119,7 +132,7 @@ namespace mdr {
 			ERRu();
 			// For read-only memory.
 		}
-		//v Allocate 'Capacity' bytes in memory.
+		//v Alloue 'Size' octet.
 		virtual void MDRAllocate( size__ Size )
 		{
 			ERRu();
@@ -131,31 +144,51 @@ namespace mdr {
 			ERRu();
 			// for read-only memory.
 		}
+		mdr::size__ Extent( void ) const
+		{
+#ifdef MDR_DBG
+			return _Extent;
+#else
+			return 0;
+#endif
+		}
+		void Extent( mdr::size__ Extent )
+		{
+#ifdef MDR_DBG
+			_Extent = Extent;
+#endif
+		}
 	public:
-		struct s {};
-		memory_driver_( s &S )
+		memory_driver__( void )
 		{
 			reset( false );
 		}
-		virtual ~memory_driver_( void )	// to be sure that the destructor of dervaed classes are call.
+		virtual ~memory_driver__( void )	// to be sure that the destructor of dervaed classes are call.
 		{
 			reset( true );
 		}
 		void reset( bool = true )
-		{}
-		void plug( class mmm::multimemory_ & )
 		{
-			// For standardization.
+#ifdef MDR_DBG
+			_Extent = 0;
+#endif
 		}
 		//f Initialization.
-		void Init( void )
-		{}
+		void Init( mdr::size__ Extent )
+		{
+#ifdef MDR_DBG
+			_Extent = Extent;
+#endif
+		}
 		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
 		void Recall(
 			row_t__ Position,
 			size__ Amount,
 			datum__ *Buffer )
 		{
+#ifdef MDR_DBG
+			_Test( Position, Amount );
+#endif
 			MDRRecall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
@@ -164,12 +197,18 @@ namespace mdr {
 			size__ Amount,
 			row_t__ Position )
 		{
+#ifdef MDR_DBG
+			_Test( Position, Amount );
+#endif
 			MDRStore( Buffer, Amount, Position );
 		}
 		//f Allocate 'Size' bytes in memory.
 		void Allocate( size__ Size )
 		{
 			MDRAllocate( Size );
+#ifdef MDR_DBG
+			_Extent = Size;
+#endif
 		}
 		//f Flush buffers.
 		void Flush( void )
@@ -178,6 +217,7 @@ namespace mdr {
 		}
 	};
 
+/*
 	class memory_driver
 	: public memory_driver_
 	{
@@ -193,9 +233,9 @@ namespace mdr {
 			memory_driver_::reset( true );
 		}
 	};
+*/
 
-	#define E_MEMORY_DRIVER_	memory_driver_
-	#define E_MEMORY_DRIVER		memory_driver
+	#define E_MEMORY_DRIVER__	memory_driver__
 }
 
 /*$END$*/

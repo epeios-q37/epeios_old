@@ -89,7 +89,7 @@ namespace btf {
 			Tree_ = NULL;
 			E_BSTACKt_( r, row__ )::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			E_BSTACKt_( r, row__ )::plug( MD );
 		}

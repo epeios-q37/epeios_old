@@ -97,7 +97,7 @@ namespace str {
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &Driver )
+		void plug( mdr::E_MEMORY_DRIVER__ &Driver )
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::plug( Driver );
 		}

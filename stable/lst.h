@@ -138,7 +138,7 @@ namespace lst {
 		{
 			Locations.reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &M )
+		void plug( mdr::E_MEMORY_DRIVER__ &M )
 		{
 			Locations.plug( M );
 		}

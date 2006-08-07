@@ -66,7 +66,7 @@ extern class ttr_tutor &CVMTutor;
 
 namespace cvm {
 	//c Basic conventional memory.
-	class basic_conventional_memory
+	class basic_conventional_memory__
 	{
 		char *Tampon_;
 			// le contenu de la mémoire
@@ -117,31 +117,33 @@ namespace cvm {
 	public:
 		void reset( bool P = true )
 		{
-			if ( P )
-			{
+			if ( P ) {
 				if ( Tampon_ )
 					free( Tampon_ );
 			}
 
 			Tampon_ = NULL;
 		}
-		void plug( class mmm::multimemory_ & ){}	// standardization
-		basic_conventional_memory( void )
+		basic_conventional_memory__( void )
 		{
 			reset( false );
 		}
-		virtual ~basic_conventional_memory( void )
+		virtual ~basic_conventional_memory__( void )
 		{
 			reset( true );
 		}
 		//f Initialization.
-		void Init( void ){}
+		void Init( void )
+		{
+			// reset();
+			// Inutile de faire un reset. On réutilise la même mémoire (gain de temps).
+		}
 	};
 
 	//c Conventional memory driver.
-	class conventional_memory_driver
-	: public mdr::E_MEMORY_DRIVER,
-	  public basic_conventional_memory
+	class conventional_memory_driver__
+	: public mdr::E_MEMORY_DRIVER__,
+	  public basic_conventional_memory__
 	{
 	protected:
 		virtual void MDRRecall(
@@ -149,7 +151,7 @@ namespace cvm {
 			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
 		{
-			basic_conventional_memory::Recall( Position, Amount, Buffer );
+			basic_conventional_memory__::Recall( Position, Amount, Buffer );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRStore(
@@ -157,37 +159,32 @@ namespace cvm {
 			mdr::size__ Nombre,
 			mdr::row_t__ Position )
 		{
-			basic_conventional_memory::Store( Buffer, Nombre, Position );
+			basic_conventional_memory__::Store( Buffer, Nombre, Position );
 		}
 		// alloue 'Taille' octets
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			basic_conventional_memory::Allocate( Size );
+			basic_conventional_memory__::Allocate( Size );
 		}
 	public:
 		void reset( bool P = true )
 		{
-			basic_conventional_memory::reset( P );
-			E_MEMORY_DRIVER::reset( P );
+			basic_conventional_memory__::reset( P );
+			E_MEMORY_DRIVER__::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
-		{
-			basic_conventional_memory::plug( M );
-			E_MEMORY_DRIVER::plug( M );
-		}
-		conventional_memory_driver( void )
+		conventional_memory_driver__( void )
 		{
 			reset( false );
 		}
-		virtual ~conventional_memory_driver( void )
+		virtual ~conventional_memory_driver__( void )
 		{
 			reset( true );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			basic_conventional_memory::Init();
-			E_MEMORY_DRIVER::Init();
+			basic_conventional_memory__::Init();
+			E_MEMORY_DRIVER__::Init( E_MEMORY_DRIVER__::Extent() );
 		}
 	};
 }

@@ -1,5 +1,10 @@
 $Id$
 
+07/08/06 :
+	GENERAL :
+		- Déplacement test capacité en mode débogage de 'UYM' vers 'MDR'.
+		- Adaptation aux modifications 'MDR' et 'UYM'.
+
 17/07/06
 	- CIO :
 		- Adaptation aux modifications de la bibliothèque 'CPE'.

@@ -112,7 +112,7 @@ namespace mmm {
 
 	//c The standard memory driver for the multimemory.
 	class multimemory_driver_
-		: public mdr::E_MEMORY_DRIVER_
+	: public mdr::E_MEMORY_DRIVER__
 	{
 	private:
 		// memoire à laquelle il a été affecté
@@ -137,14 +137,11 @@ namespace mmm {
 		virtual void MDRFlush( void );
 	public:
 		struct s
-		: public E_MEMORY_DRIVER_::s
 		{
 			descriptor__ Descripteur;
 		} &S_;
 		multimemory_driver_( s &S )
-		: S_( S ),
-	//	  E_MEMORY_DRIVER_( *(E_MEMORY_DRIVER_::s *)&S )
-		  E_MEMORY_DRIVER_( S )
+		: S_( S )
 		{}
 		void reset( bool P = true )
 		{
@@ -156,7 +153,7 @@ namespace mmm {
 
 			S_.Descripteur = 0;
 			
-			E_MEMORY_DRIVER_::reset( P );
+			E_MEMORY_DRIVER__::reset( P );
 		}
 		//f Initialization with the 'Multimemory' multimemory.
 		void Init( multimemory_ &Multimemory )
@@ -166,7 +163,7 @@ namespace mmm {
 			Multimemoire_ = &Multimemory;
 			S_.Descripteur = 0;
 
-			E_MEMORY_DRIVER_::Init();
+			E_MEMORY_DRIVER__::Init( 0 );
 		}
 		//f Return the current descriptor.
 		descriptor__ Descriptor( void ) const
@@ -627,10 +624,10 @@ namespace mmm {
 			PiloteMultimemoire_.Init( M );
 			Memoire_.plug( PiloteMultimemoire_ );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &Pilote = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			PiloteMultimemoire_.reset();
-			Memoire_.plug( Pilote );
+			Memoire_.plug( MD );
 		}
 #if 0
 		void write( flw::oflow___ &OFlow ) const

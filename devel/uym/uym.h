@@ -71,9 +71,12 @@ extern class ttr_tutor &UYMTutor;
 //d Maximal size of a memory.
 #define UYM_MAX_SIZE			UYM_UNREACHABLE_POSITION
 
-#ifndef UYM_DEFAULT_E_MEMORY_DRIVER
-#	define UYM_DEFAULT_E_MEMORY_DRIVER cvm::conventional_memory_driver
+#ifdef UYM__DEFAULT_MEMORY_DRIVER
+#	define UYM_DEFAULT_MEMORY_DRIVER UYM__DEFAULT_MEMORY_DRIVER
+#else
+#	define UYM_DEFAULT_MEMORY_DRIVER cvm::conventional_memory_driver__
 #endif
+
 /*
 
 #ifdef DED_MS
@@ -96,7 +99,7 @@ namespace uym {
 	{
 	private:
 		// Le pilote.
-		mdr::E_MEMORY_DRIVER_ *Pilote_;
+		mdr::E_MEMORY_DRIVER__ *Pilote_;
 		// Indique si le pilote a été défini de manière interne ou non.
 		bso::bool__ Interne_;
 	public:
@@ -124,7 +127,7 @@ namespace uym {
 		{
 			reset( true );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
+		void plug( mdr::E_MEMORY_DRIVER__ &Pilote )
 		{
 			if ( &Pilote != NULL )
 			{
@@ -142,16 +145,16 @@ namespace uym {
 		{
 			if ( Pilote_ == NULL )
 			{
-				if ( ( Pilote_ = new UYM_DEFAULT_E_MEMORY_DRIVER ) == NULL )
+				if ( ( Pilote_ = new UYM_DEFAULT_MEMORY_DRIVER ) == NULL )
 					ERRa();
 				else
 				{
 					Interne_ = true;
-					((UYM_DEFAULT_E_MEMORY_DRIVER *)Pilote_)->Init();
+					((UYM_DEFAULT_MEMORY_DRIVER *)Pilote_)->Init();
 				}
 			}
 		}
-		mdr::E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false ) const
+		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore && !Pilote_ )
@@ -160,7 +163,7 @@ namespace uym {
 			return Pilote_;
 		}
 		// Operateur d'indirection.
-		mdr::E_MEMORY_DRIVER_ *operator ->( void ) const
+		mdr::E_MEMORY_DRIVER__ *operator ->( void ) const
 		{
 			return Driver();
 		}
@@ -177,30 +180,19 @@ namespace uym {
 		// Le pilote mémoire.
 		_memory_driver Pilote_;
 	#ifdef UYM_DBG
-		void _Test(
-			mdr::row_t__ Position,
-			mdr::size__ Nombre ) const
+		void _Test( void ) const
 		{
 			if ( !Pilote_ )
-				ERRu();
- 
-			if ( Position >= S_.Size )
-				if ( Nombre > 0 )
-					ERRu();
-
-			if ( ( Position + Nombre ) > S_.Size )
 				ERRu();
 		}
 	#endif
 		void _Recall(
 			mdr::row_t__ Position,
 			mdr::size__ Nombre, 
-			mdr::datum__ *Tampon,
-			bso::bool__ Ignore = false ) const
+			mdr::datum__ *Tampon ) const
 		{
 	#ifdef UYM_DBG
-			if ( !Ignore )
-				_Test( Position, Nombre );
+			_Test();
 	#endif
 			Pilote_->Recall( Position, Nombre, Tampon );
 		}
@@ -210,17 +202,14 @@ namespace uym {
 			mdr::row_t__ Position )
 		{
 	#ifdef UYM_DBG
-			_Test( Position, Nombre );
+			_Test();
 	#endif
 			Pilote_->Store( Tampon, Nombre, Position );
 		}
 		void _Allocate( mdr::size__ Size )
 		{
 	#ifdef UYM_DBG
-			S_.Size = Size;
-
-			if ( !Pilote_ )
-				ERRu();
+			_Test();
 	#endif
 			Pilote_->Allocate( Size );
 		}
@@ -231,36 +220,23 @@ namespace uym {
 		}
 	public:
 		struct s {
-	#ifdef UYM_DBG
-			mdr::size__ Size;
-		} &S_;
-	#else
+			// A des fins de standardisation.
 		};
-	#endif
 		void reset( bool P )
 		{
 			Pilote_.reset( P );
-	#ifdef UYM_DBG
-			S_.Size = 0;
-	#endif
 		}
 		untyped_memory_( s &S )
-	#ifdef UYM_DBG
-		: S_( S )
-	#endif
 		{
 			reset( false );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &Driver = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+		void plug( mdr::E_MEMORY_DRIVER__ &Driver  )
 		{
 			Pilote_.plug( Driver );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-	#ifdef UYM_DBG
-			S_.Size = 0;
-	#endif
 			Pilote_.Init();
 		}
 #if 0
@@ -284,10 +260,9 @@ namespace uym {
 		void Recall(
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
-			mdr::datum__ *Buffer,
-			bso::bool__ Ignore = false ) const
+			mdr::datum__ *Buffer ) const
 		{
-			_Recall( Position, Amount, Buffer, Ignore );
+			_Recall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at 'Offset'.
 		void Store(
@@ -339,7 +314,7 @@ namespace uym {
 			mdr::row_t__ Begin,
 			mdr::row_t__ End ) const;
 		//f Return the used memory driver. 'Ignore' is only for 'UYM_DBG' mode and for the 'MMG' library.
-		mdr::E_MEMORY_DRIVER_ *Driver( bso::bool__ Ignore = false )
+		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false )
 		{
 			return Pilote_.Driver( Ignore );
 		}

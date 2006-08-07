@@ -247,10 +247,10 @@ namespace tym {
 			PiloteMultimemoire_.Init( M );
 			_memory_< t, uym::untyped_memory_, r >::plug( PiloteMultimemoire_ );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &Pilote )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			PiloteMultimemoire_.reset();
-			_memory_< t, uym::untyped_memory_, r >::plug( Pilote );
+			_memory_< t, uym::untyped_memory_, r >::plug( MD );
 		}
 		void write(
 			r Position,

@@ -93,7 +93,7 @@ namespace idxbtr {
 		r Equilibrer_(
 			que::E_QUEUEt_( r ) &Index,
 			r Premier,
-			mdr::E_MEMORY_DRIVER_ &Pilote );
+			mdr::E_MEMORY_DRIVER__ &Pilote );
 	public:
 		struct s
 		: public E_BTREEt_( r )::s
@@ -109,7 +109,7 @@ namespace idxbtr {
 		{
 			E_BTREEt_( r )::plug( MM );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			E_BTREEt_( r )::plug( MD );
 		}
@@ -266,7 +266,7 @@ namespace idxbtr {
 		r Fill(
 			que::E_QUEUEt_( r ) &Queue,
 			r Head,
-			mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
 		{
 			Init();
 
@@ -315,7 +315,7 @@ namespace idxbtr {
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
 		epeios::row_t__ Premier,
-		mdr::E_MEMORY_DRIVER_ &Pilote );
+		mdr::E_MEMORY_DRIVER__ &Pilote );
 
 	template <typename r> inline r tree_index_<r>::NoeudSansFils_( r Position ) const
 	{
@@ -340,7 +340,7 @@ namespace idxbtr {
 	template <typename r> inline r tree_index_<r>::Equilibrer_(
 		que::E_QUEUEt_( r ) &Index,
 		r Premier,
-		mdr::E_MEMORY_DRIVER_ &Pilote )
+		mdr::E_MEMORY_DRIVER__ &Pilote )
 	{
 		return idxbtr::Equilibrer_( *(E_IBTREE_ *)this, *(que::E_QUEUE_ *)&Index, *Premier, Pilote );
 	}

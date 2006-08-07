@@ -245,7 +245,7 @@ namespace que {
 		{
 			Links.plug( M );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			Links.plug( MD );
 		}
@@ -639,7 +639,7 @@ namespace que {
 		{
 			Queue.plug( M );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			Queue.plug( MD );
 		}

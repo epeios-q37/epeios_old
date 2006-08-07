@@ -316,7 +316,7 @@ namespace bitbch {
 		{
 			Table.plug( M );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
+		void plug( mdr::E_MEMORY_DRIVER__ &MDriver )
 		{
 			Table.plug( MDriver );
 		}

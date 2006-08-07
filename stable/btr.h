@@ -341,7 +341,7 @@ namespace btr {
 		{
 			Nodes.plug( M );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &M )
+		void plug( mdr::E_MEMORY_DRIVER__ &M )
 		{
 			Nodes.plug( M );
 		}

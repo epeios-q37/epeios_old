@@ -159,7 +159,7 @@ namespace idxbtr {
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
 		epeios::row_t__ Premier,
-		mdr::E_MEMORY_DRIVER_ &Pilote )
+		mdr::E_MEMORY_DRIVER__ &Pilote )
 	{
 		epeios::row_t__ Racine, &Courant = Premier;
 	ERRProlog

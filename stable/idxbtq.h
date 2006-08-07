@@ -179,7 +179,7 @@ namespace idxbtq {
 		//f Balances the tree of the index.
 		r Balance(
 			r Root,
-			mdr::E_MEMORY_DRIVER_ &MD = *(mdr::E_MEMORY_DRIVER_ *)NULL )
+			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
 		{
 			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
 		}

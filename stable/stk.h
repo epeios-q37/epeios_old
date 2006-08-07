@@ -81,7 +81,7 @@ namespace stk {
 		{
 			structure::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MDriver )
+		void plug( mdr::E_MEMORY_DRIVER__ &MDriver )
 		{
 			structure::plug( MDriver );
 		}
