@@ -111,10 +111,11 @@ namespace mmm {
 	class multimemory_;
 
 	//c The standard memory driver for the multimemory.
-	class multimemory_driver_
+	class multimemory_driver__
 	: public mdr::E_MEMORY_DRIVER__
 	{
 	private:
+		descriptor__ &_Descriptor;
 		// memoire à laquelle il a été affecté
 		multimemory_ *Multimemoire_;
 		void Liberer_();
@@ -136,22 +137,20 @@ namespace mmm {
 		virtual void MDRAllocate( mdr::size__ Size );
 		virtual void MDRFlush( void );
 	public:
-		struct s
-		{
-			descriptor__ Descripteur;
-		} &S_;
-		multimemory_driver_( s &S )
-		: S_( S )
+		multimemory_driver__(
+			descriptor__ &Descriptor,
+			mdr::size__ &Extent )
+		: _Descriptor( Descriptor ),
+		  E_MEMORY_DRIVER__( Extent )
 		{}
 		void reset( bool P = true )
 		{
 			if ( P )
-			{
 				Liberer_();
-			} else
+			else
 				Multimemoire_ = NULL;
 
-			S_.Descripteur = 0;
+			_Descriptor = 0;
 			
 			E_MEMORY_DRIVER__::reset( P );
 		}
@@ -161,36 +160,43 @@ namespace mmm {
 			Liberer_();
 
 			Multimemoire_ = &Multimemory;
-			S_.Descripteur = 0;
+			_Descriptor = 0;
 
-			E_MEMORY_DRIVER__::Init( 0 );
+			E_MEMORY_DRIVER__::Init();
 		}
 		//f Return the current descriptor.
 		descriptor__ Descriptor( void ) const
 		{
-			return S_.Descripteur;
+			return _Descriptor;
 		}
 		//f Return the used multimemory.
 		multimemory_ *Multimemory( void ) const
 		{
 			return Multimemoire_;
 		}
-		multimemory_driver_ &operator =( const multimemory_driver_ & )
-		{
-			ERRc();
-
-			return *this;
-		}
 	};
 
-	E_AUTO( multimemory_driver )
+	class standalone_multimemory_driver__
+	: public multimemory_driver__
+	{
+	private:
+		mdr::size__ _Extent;
+		descriptor__ _Descriptor;
+	public:
+		standalone_multimemory_driver__( void )
+		: multimemory_driver__( _Descriptor, _Extent )
+		{}
+	};
+
+	#define E_MULTIMEMORY_DRIVER__	standalone_multimemory_driver__
+
 
 	//c A mutltimemory.
 	class multimemory_
 	{
 	private:
 		// L'éventuel pilote multimémoire.
-		multimemory_driver_ PiloteMultimemoire_;
+		multimemory_driver__ PiloteMultimemoire_;
 		// memoire décomposee en plusieurs
 		uym::untyped_memory_ Memoire_;
 	// fonctions
@@ -597,7 +603,8 @@ namespace mmm {
 	public:
 		struct s 
 		{
-			multimemory_driver_::s PiloteMultimemoire_;
+			descriptor__ MultimemoryDriverDescriptor;
+			mdr::size__ MultimemoryDriverExtent;
 			uym::untyped_memory_::s Memoire_;
 			mdr::size__ Capacite;
 				// Descripteur à essayer lorsque l'on a besoin d'un emplacement libre.
@@ -605,7 +612,7 @@ namespace mmm {
 		} &S_;
 		multimemory_( s &S )
 		: S_( S ),
-		  PiloteMultimemoire_( S.PiloteMultimemoire_ ),
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverExtent ),
 		  Memoire_( S.Memoire_ )
 		{}
 		void reset( bool P = true )
@@ -809,35 +816,35 @@ namespace mmm {
 
 	E_AUTO( multimemory )
 
-	inline void multimemory_driver_::Liberer_( void )
+	inline void multimemory_driver__::Liberer_( void )
 	{
-		if ( S_.Descripteur )
-			Multimemoire_->Free( S_.Descripteur );
+		if ( _Descriptor )
+			Multimemoire_->Free( _Descriptor );
 	}
 
-	inline void multimemory_driver_::MDRRecall(
+	inline void multimemory_driver__::MDRRecall(
 		mdr::row_t__ Position,
 		mdr::size__ Amount,
 		mdr::datum__ *Buffer )
 	{
-		Multimemoire_->Read( S_.Descripteur, Position, Amount, Buffer );
+		Multimemoire_->Read( _Descriptor, Position, Amount, Buffer );
 	}
 	// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-	inline void multimemory_driver_::MDRStore(
+	inline void multimemory_driver__::MDRStore(
 		const mdr::datum__ *Buffer,
 		mdr::size__ Amount,
 		mdr::row_t__ Position )
 	{
-		Multimemoire_->Write( Buffer, Amount, S_.Descripteur, Position );
+		Multimemoire_->Write( Buffer, Amount, _Descriptor, Position );
 	}
 	// écrit 'Nombre' octets à la position 'Position'
-	inline void multimemory_driver_::MDRAllocate( mdr::size__ Size )
+	inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
 	{
-		S_.Descripteur = Multimemoire_->Reallocate( S_.Descripteur, Size );
+		_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size );
 	}
 	// alloue 'Capacite' octets
 
-	inline void multimemory_driver_::MDRFlush( void )
+	inline void multimemory_driver__::MDRFlush( void )
 	{
 		if ( Multimemoire_ )
 			Multimemoire_->Flush();

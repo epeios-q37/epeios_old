@@ -104,7 +104,7 @@ namespace cslio {
 		{
 			_Test();
 
-			if ( fseek( _D, Offset, SEEK_SET ) != Offset )
+			if ( fseek( _D, Offset, SEEK_SET ) != 0 )
 				ERRx();
 		}
 	};

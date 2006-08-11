@@ -172,7 +172,8 @@ namespace cvm {
 			basic_conventional_memory__::reset( P );
 			E_MEMORY_DRIVER__::reset( P );
 		}
-		conventional_memory_driver__( void )
+		conventional_memory_driver__( mdr::size__ &Extent )
+		: memory_driver__( Extent )
 		{
 			reset( false );
 		}
@@ -184,9 +185,13 @@ namespace cvm {
 		void Init( void )
 		{
 			basic_conventional_memory__::Init();
-			E_MEMORY_DRIVER__::Init( E_MEMORY_DRIVER__::Extent() );
+			E_MEMORY_DRIVER__::Init();
 		}
 	};
+
+	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( cvm::conventional_memory_driver__ ) standalone_converntional_memory;
+
+	#define E_CONVENTIONAL_MEMORY_DRIVER__ standalone_converntional_memory
 }
 
 /*$END$*/

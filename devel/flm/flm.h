@@ -77,13 +77,10 @@ namespace flm {
 	/* CLASSE DE BASE DE GESTION D'UNE MEMOIRE STOCKEE DANS UN FICHIER */
 	/*******************************************************************/
 
-	struct flm
+	enum creation
 	{
-		enum creation
-		{
-			cNow,
-			cFirstUse
-		};
+		cNow,
+		cFirstUse
 	};
 
 	typedef iop::io__		_io__;
@@ -367,7 +364,7 @@ namespace flm {
 
 	//c The standard memory driver which handle a file as memory.
 	class file_memory_driver__
-	: public mdr::E_MEMORY_DRIVER__,
+	: public mdr::memory_driver__,
 	  public memoire_fichier_base__
 	{
 	protected:
@@ -401,6 +398,10 @@ namespace flm {
 		}
 		// alloue 'Taille' octets
 	public:
+		file_memory_driver__( mdr::size__ &Extent )
+		: memory_driver__( Extent ),
+		  memoire_fichier_base__()
+		{}
 		void reset( bool P = true )
 		{
 			memoire_fichier_base__::reset( P );
@@ -418,15 +419,18 @@ namespace flm {
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
-			mdr::size__ OriginalSize,
 			const char *FileName = NULL,
 			mdr::mode Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
 			memoire_fichier_base__::Init( FileName, Mode, Creation );
-			E_MEMORY_DRIVER__::Init( OriginalSize );
+			E_MEMORY_DRIVER__::Init();
 		}
 	};
+
+	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( flm::file_memory_driver__ ) standalone_file_memory_driver__;
+
+	#define E_FILE_MEMORY_DRIVER__	standalone_file_memory_driver__
 }
 
 /*$END$*/

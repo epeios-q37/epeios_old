@@ -226,16 +226,18 @@ namespace tym {
 	{
 	private:
 		// l'éventuel pilote de la multimemoire
-		mmm::multimemory_driver_ PiloteMultimemoire_;
+		mmm::multimemory_driver__ PiloteMultimemoire_;
 	public:
 		struct s
 		: public _memory_< t, uym::untyped_memory_, r >::s
 		{
-			mmm::multimemory_driver_::s PiloteMultimemoire_;
-		};
+			mmm::descriptor__ MultimemoryDriverDescriptor;
+			mdr::size__ MultimemoryDriverExtent;
+		} &S_;
 		memory_( s &S )
-		: _memory_< t, uym::untyped_memory_, r >( S ),
-		  PiloteMultimemoire_( S.PiloteMultimemoire_ )
+		: S_( S ),
+		  _memory_< t, uym::untyped_memory_, r >( S ),
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverExtent )
 		{}
 		void reset( bool P = true )
 		{

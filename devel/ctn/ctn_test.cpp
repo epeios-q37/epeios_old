@@ -274,7 +274,7 @@ void Remplir( str::string_ &S )
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) CS, CD;
 /*	fch_flot_sortie_fichier S;
@@ -396,7 +396,7 @@ void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
 	int a = A( A_( 3 ) );
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory Mm;
 	E_XMCONTAINER( str::string_ ) CC;
 	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
@@ -561,7 +561,7 @@ ERREpilog
 }
 
 void SSP2(
-	const E_MCONTAINER_( str::string_ ) &O,
+	const E_XMCONTAINER_( str::string_ ) &O,
 	char M,
 	char m )
 {
@@ -605,7 +605,7 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
 	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) GC;
@@ -656,7 +656,7 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
@@ -683,7 +683,7 @@ ERREpilog
 void EssaiSimpleMulti( void )
 {
 ERRProlog
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory M;
 	E_MCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
@@ -697,9 +697,9 @@ ERRBegin
 	E.Init( C );
 
 	E(0).Init();
-	E(0) = str::string( "a" );
+	E(0) = str::string( "ca" );
 	E(1).Init();
-	E(1)= str::string( "b" );
+	E(1)= str::string( "bte" );
 	cout << E(0) << txf::tab;
 	cout << E(1) << txf::nl;
 ERRErr
@@ -710,10 +710,10 @@ ERREpilog
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
-	flm::file_memory_driver F;
+	flm::E_FILE_MEMORY_DRIVER__ F;
 	mmm::multimemory M;
-	E_XMCONTAINER( str::string_ ) CS;
-	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) CC;
+	E_XCONTAINER( str::string_ ) CS;
+	E_XCONTAINER( E_XCONTAINER_( str::string_ ) ) CC;
 //	ITEM( str::string_ ) ECS;
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin

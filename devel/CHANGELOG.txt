@@ -1,5 +1,23 @@
 $Id$
 
+11/08/06 :
+	- GENERAL :
+		- Corrections bogues apparus suite aux modifications 'MDR'.
+
+10/08/06 :
+	- CSLIO :
+		- Correction bogue 'Seek'.
+	- FIL :
+		- Correction bogue paramètre 'Mode'.
+
+09/08/06 :
+	- CPE :
+		- Correction oublie test 'CPE_ST' pour 'cygwin'.
+	- CTN :
+		- Petite modification dû aux changement dans 'MMI'.
+	- MMI :
+		- Suppression d'un test en mode débogage qui n'avait pas de sens.
+
 07/08/06 :
 	GENERAL :
 		- Déplacement test capacité en mode débogage de 'UYM' vers 'MDR'.

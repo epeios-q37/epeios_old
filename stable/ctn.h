@@ -304,7 +304,6 @@ namespace ctn {
 
 	//c The base of a volatile item. Internal use.
 	template <class st, typename r> class item_base_volatile__
-	// La fonction 'Init()' est héritée de t
 	{
 	private:
 		bool Vide_( void ) const
@@ -329,15 +328,13 @@ namespace ctn {
 		basic_container_<st, r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
-		mmi::indexed_multimemory_driver_ Pilote_;
+		mmi::indexed_multimemory_driver__ Pilote_;
 		// Mode d'accés
 		mdr::mode Mode_;
 	public:
 		struct s
 		: public st
-		{
-			mmi::indexed_multimemory_driver_::s Pilote_;
-		} ctn_S_; //pour ne pas risquer d'ambigüité.
+		{} ctn_S_; //pour ne pas risquer d'ambigüité.
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -350,7 +347,7 @@ namespace ctn {
 			Mode_ = mdr::mReadOnly;
 		}
 		item_base_volatile__( void )
-		: Pilote_( ctn_S_.Pilote_ )
+		: Pilote_( ctn_S_.Extent )
 		{
 			reset( false );
 		}
@@ -392,6 +389,10 @@ namespace ctn {
 			if ( Pilote_.Index() != *Position )
 			{
 				Vider_();
+	#ifdef CTN_DBG
+				if ( Conteneur_ == NULL )
+					ERRu();
+	#endif
 				Conteneur_->Statics.Recall( Position, ctn_S_ );
 				Pilote_.Index( *Position );
 			}
@@ -448,13 +449,11 @@ namespace ctn {
 		const basic_container_<st,r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
-		mmi::const_indexed_multimemory_driver_ Pilote_;
+		mmi::const_indexed_multimemory_driver__ Pilote_;
 	public:
 		struct s
 		: public st
-		{
-			mmi::const_indexed_multimemory_driver_::s Pilote_;
-		} ctn_S_; //pour ne pas risquer d'ambigüité.
+		{} ctn_S_; //pour ne pas risquer d'ambigüité.
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -466,7 +465,7 @@ namespace ctn {
 			Conteneur_ = NULL;
 		}
 		item_base_const__( void )
-		: Pilote_( ctn_S_.Pilote_ )
+		: Pilote_( ctn_S_.Extent )
 		{
 			reset( false );
 		}
@@ -497,12 +496,12 @@ namespace ctn {
 			if ( *Pilote_.Index() != *Position )
 			{
 				Vider_();
-				Pilote_.Index( *Position );
 	#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
 					ERRu();
 	#endif
 				Conteneur_->Statics.Recall( Position, ctn_S_ );
+				Pilote_.Index( *Position );
 			}
 		}
 		// Synchronise avec l'élément du conteneur (leur contenu devient identique).
@@ -527,7 +526,10 @@ namespace ctn {
 
 
 	template <class st> struct item_mono_statique__
-	: public st {};
+	: public st
+	{
+		mdr::size__ Extent;
+	};
 
 	/*c To reach an object from a 'MCONTAINER_( t )'. Use 'MITEM( t )'
 	rather then directly this class. */
@@ -915,6 +917,7 @@ namespace ctn {
 	: public st
 	{
 		mmm::multimemory_::s Multimemoire;
+		mdr::size__ Extent;
 	};
 
 	/*c To reach an object from a 'CONTAINER_( t )'. Use 'ITEM( t )'

@@ -76,7 +76,10 @@ static inline iop::descriptor__ Open_(
 		strcat( Flags, "a+" );
 		break;
 	case mReadWrite:
-		strcat( Flags, "r+" );
+		if ( tol::FileExists( Nom ) )
+			strcat( Flags, "r+" );
+		else
+			strcat( Flags, "w+" );
 		break;
 	case mReadOnly:
 		strcat( Flags, "r" );

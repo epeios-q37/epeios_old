@@ -103,8 +103,8 @@ namespace mdr {
 	class memory_driver__
 	{
 	private:
+		mdr::size__ &_Extent;
 #ifdef MDR_DBG
-		mdr::size__ _Extent;
 		void _Test(
 			row_t__ Position,
 			size__ Amount ) const
@@ -144,22 +144,9 @@ namespace mdr {
 			ERRu();
 			// for read-only memory.
 		}
-		mdr::size__ Extent( void ) const
-		{
-#ifdef MDR_DBG
-			return _Extent;
-#else
-			return 0;
-#endif
-		}
-		void Extent( mdr::size__ Extent )
-		{
-#ifdef MDR_DBG
-			_Extent = Extent;
-#endif
-		}
 	public:
-		memory_driver__( void )
+		memory_driver__( mdr::size__ &Extent )
+		: _Extent( Extent )
 		{
 			reset( false );
 		}
@@ -169,16 +156,12 @@ namespace mdr {
 		}
 		void reset( bool = true )
 		{
-#ifdef MDR_DBG
 			_Extent = 0;
-#endif
 		}
 		//f Initialization.
-		void Init( mdr::size__ Extent )
+		void Init( void )
 		{
-#ifdef MDR_DBG
-			_Extent = Extent;
-#endif
+			reset();
 		}
 		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
 		void Recall(
@@ -206,9 +189,7 @@ namespace mdr {
 		void Allocate( size__ Size )
 		{
 			MDRAllocate( Size );
-#ifdef MDR_DBG
 			_Extent = Size;
-#endif
 		}
 		//f Flush buffers.
 		void Flush( void )
@@ -236,6 +217,19 @@ namespace mdr {
 */
 
 	#define E_MEMORY_DRIVER__	memory_driver__
+
+	template <typename md> class standalone_memory_driver__
+	: public md
+	{
+	private:
+		mdr::size__ _Extent;
+	public:
+		standalone_memory_driver__( void )
+		: md( _Extent )
+		{}
+	};
+
+	#define E_STANDALONE_MEMORY_DRIVER__( md ) standalone_memory_driver__<md>
 }
 
 /*$END$*/

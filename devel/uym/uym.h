@@ -74,7 +74,7 @@ extern class ttr_tutor &UYMTutor;
 #ifdef UYM__DEFAULT_MEMORY_DRIVER
 #	define UYM_DEFAULT_MEMORY_DRIVER UYM__DEFAULT_MEMORY_DRIVER
 #else
-#	define UYM_DEFAULT_MEMORY_DRIVER cvm::conventional_memory_driver__
+#	define UYM_DEFAULT_MEMORY_DRIVER cvm::E_CONVENTIONAL_MEMORY_DRIVER__
 #endif
 
 /*
