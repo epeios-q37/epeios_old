@@ -64,7 +64,8 @@ extern class ttr_tutor &UIFTutor;
 #include "flw.h"
 #include "tol.h"
 
-#include "wx/wx.h" 
+#include <wx/wx.h>
+
 #include "wx/treectrl.h"
 
 namespace uif {
