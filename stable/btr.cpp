@@ -59,6 +59,7 @@ public:
 
 using namespace epeios;
 
+#if 1
 void btr::_nodes_manager_::Release(
 	row_t__ Start,
 	row_t__ End )
@@ -312,7 +313,280 @@ mbs__position abb_arbre_binaire_::TrouverAieulMaleAvecRight_(
 	return Courant;
 }
 */
+#else // Version portable.
+template <typename r_t, typename nodes> static void Release_(
+	nodes &Nodes,
+	row_t__ Start,
+	row_t__ End )
+{
+	do {
+		if ( Nodes.HasParent( Start ) )
+		{
+			if ( Nodes.IsLeft( Start ) )
+				Nodes.ReleaseLeft( Nodes.Get( Start ).Parent );
+			else
+				Nodes.ReleaseRight( Nodes.Get( Start ).Parent );
 
+			Nodes.ReleaseParent( Start );
+		}
+
+		if ( Nodes.HasLeft( Start ) )
+		{
+			Nodes.ReleaseParent( Nodes.Get( Start ).Left );
+			Nodes.ReleaseLeft( Start );
+		}
+
+		if ( Nodes.HasRight( Start ) )
+		{
+			Nodes.ReleaseParent( Nodes.Get( Start ).Right );
+			Nodes.ReleaseRight( Start );
+		}
+	}
+	while( ++Start <= End );
+}
+
+template <typename r_t, typename nodes> static void Prepare_(
+	nodes &Nodes,
+	row_t__ Start,
+	row_t__ End )
+{
+	do {
+		Nodes.ReleaseParent( Start );
+		Nodes.ReleaseRight( Start );
+		Nodes.ReleaseLeft( Start );
+	}
+	while( ++Start <= End );
+}
+
+void btr::Release(
+	_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
+	epeios::row_t__ Start,
+	epeios::row_t__ End )
+{
+	Release_< epeios::row_t__,_nodes_manager_<epeios::row_t__, _nodes_> >( Nodes, Start, End );
+}
+
+void btr::Prepare(
+	_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
+	row_t__ Start,
+	row_t__ End )
+{
+	Prepare_< epeios::row_t__,_nodes_manager_<epeios::row_t__, _nodes_> >( Nodes, Start, End );
+}
+
+
+// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
+/*
+void arbre_binaire::EcrireDansFlot(
+	flo_sortie_portable_ &Flot,
+	mbs__position Position ) const
+{
+	mbs__position_ Courant = Position();
+	fdm__bool DoitBoucler = true, RemonteeRight = false, RemonteeLeft = false;
+
+	Flot << begin << tag << 'R' << data;
+
+	ABBEcrire( Flot, Courant );
+
+	while ( DoitBoucler )
+	{
+		if ( !RemonteeRight && !RemonteeLeft && HasRight( Courant ) )
+		{
+			Courant = Right_( Courant );
+			Flot << tag << 'f' << data;
+			ABBEcrire( Flot, Courant );
+		}
+		else if ( !RemonteeLeft && HasLeft( Courant ) )
+		{
+			RemonteeRight = 0;
+
+			Courant = Left_( Courant );
+
+			Flot << tag << 'F' << data;
+			ABBEcrire( Flot, Courant );
+		}
+		else if ( Courant != Position() )
+		{
+			if ( EstRight( Courant ) )
+			{
+				RemonteeLeft = 0;
+				RemonteeRight = 1;
+			}
+			else
+			{
+				RemonteeLeft = 1;
+				RemonteeRight = 0;
+			}
+
+			Courant = Parent_( Courant );
+
+			Flot << tag << 'P' << data << nothing;
+		}
+		else
+			DoitBoucler = 0;
+	}
+
+	Flot << end;
+}
+*/
+
+/* Lecture de l'abre contenu dans 'Flot'. La valeur retournée correspond à
+la position de la racine. */
+/*
+mbs__position abb_arbre_binaire_::LireDeFlot( flo_entree_portable_ &Flot )
+{
+	mbs__position_ Courant, Nouveau;
+	fdm__ubyte Type;
+
+	Flot >> begin >> tag >> data;
+
+	if ( *Flot.LastTag() != 'R' )
+		ERRF();
+
+	Courant = ABBLire( Flot )();
+
+	while( !Flot.End() )
+	{
+		Flot >> tag >> data;
+
+		if ( *Flot.LastTag() == 'P' )
+		{
+			Courant = Parent_( Courant );
+			Flot >> nothing;
+		}
+		else if ( *Flot.LastTag() == 'F' )
+		{
+			Nouveau = ABBLire( Flot )();
+			AdopterLeft( Courant, Nouveau );
+			Courant = Nouveau;
+		}
+		else if ( *Flot.LastTag() == 'f' )
+		{
+			Nouveau = ABBLire( Flot )();
+			AdopterRight( Courant, Nouveau );
+			Courant = Nouveau;
+		}
+	}
+
+	return Courant;
+}
+*/
+
+
+static void AfficherBlancs_(
+	txf::text_oflow__ &Flot,
+	bso::ulong__ Nombre )
+{
+	do {
+		Flot.Put( '.' );
+	} while ( Nombre-- );
+}
+
+//f Affiche la structure de l'arbre dans 'Flot'. A des fins de deboggage.
+/*
+void btr::_nodes_manager_::PrintStructure(
+	row_t__ Racine,
+	txf::text_oflow__ &Flot ) const
+{
+	bso::ulong__ Niveau = 0;
+	bso::bool__ Left = false, Right = false;
+	row_t__ Courant = Racine;
+
+	Flot << '*';
+
+	do {
+		if ( Left )
+		{
+			Left = Right = false;
+
+			if ( HasRight( Courant ) )
+			{
+				Courant = this->Right( Courant );
+
+				Flot << txf::nl;
+				AfficherBlancs_( Flot, Niveau );
+				Flot << '*';
+
+				Niveau++;
+			}
+			else
+			{
+				if ( IsLeft( Courant ) )
+					Left = true;
+				else
+					Right = true;
+
+				Courant = Parent( Courant );
+				Niveau--;
+			}
+		}
+		else if ( Right )
+		{
+			Left = Right = false;
+
+			if ( IsLeft( Courant ) )
+				Left = true;
+			else
+				Right = true;
+
+			Courant = Parent( Courant );
+			Niveau--;
+		}
+		else if ( HasLeft( Courant ) )
+		{
+			Courant = this->Left( Courant );
+
+			Flot << '*';
+			Niveau++;
+		}
+		else if ( HasRight( Courant ) )
+		{
+			Courant = this->Right( Courant );
+			Flot << txf::nl;
+			AfficherBlancs_( Flot, Niveau );
+			Flot << '*';
+			Niveau++;
+		}
+		else if ( IsLeft( Courant ) )
+		{
+			Courant = Parent( Courant );
+			Left = true;
+			Niveau--;
+		}
+		else if ( IsRight( Courant ) )
+		{
+			Courant = Parent( Courant );
+			Right = true;
+			Niveau--;
+		}
+	} while ( Niveau || Left );
+
+	Flot << txf::nl << txf::sync;
+}
+*/
+/* Remonte l'arbre 'Racine' à partir de 'Depart', dont la présence d'une fille
+n'est pas testée, jusqu'à trouver un aieul avec une fille. */
+/*
+mbs__position abb_arbre_binaire_::TrouverAieulMaleAvecRight_(
+	mbs__position Depart,
+	mbs__position Racine ) const
+{
+	mbs__position &Courant = Depart;
+	fdm__bool EtaitRight = false;
+
+	do {
+		EtaitRight = EstRight( Courant );
+		Courant = Parent( Courant );
+	} while( ( EtaitRight || !HasRight( Courant ) )
+			 && ( Courant != Racine ) );
+
+	if ( ( Courant == Racine ) && EtaitRight ) 
+		Courant = ABB_INEXISTANT;
+
+	return Courant;
+}
+*/
+#endif
 
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -183,6 +183,16 @@ namespace bch {
 
 			mmr::Store( Bunch, Amount, Row, Offset );
 		}
+		void StoreAndAdjust(
+			const _bunch &Bunch,
+			epeios::size__ Amount,
+			row Row = 0,
+			row Offset = 0 )
+		{
+			Allocate( Amount + *Offset );
+
+			mmr::Store( Bunch, Amount, Row, Offset );
+		}
 		/*f Store at 'Offset' the content of 'Bunch' from position 'Row' to the end.
 		Adjust the size of the bunch. */
 		void StoreAndAdjust(
@@ -403,14 +413,14 @@ namespace bch {
 			return Search( Object, Begin, mng::Amount() );
 		}
 		//f Store 'Count' 'Object' at 'Row'. Adjust the size of the bunch.
-		void StoreAndAdjust(
+		void SetAndAdjust(
 			const type &Object,
 			row Row,
 			epeios::size__ Count )
 		{
 			Allocate( *Row + Count );
 
-			mmr::Store( Object, Row, Count );
+			mmr::Set( Object, Row, Count );
 		}
 		//f Return reference to memory.
 		mmr &Memory( void )

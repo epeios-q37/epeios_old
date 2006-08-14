@@ -122,6 +122,14 @@ namespace bso {
 
 			return P[0] | ( P[1] << 8 );
 		}
+		bool operator ==( p_short__ P ) const
+		{
+			return Op_ == P.Op_;
+		}
+		bool operator !=( p_short__ P ) const
+		{
+			return Op_ != P.Op_;
+		}
 	};
 
 
@@ -187,6 +195,14 @@ namespace bso {
 
 			return P[0] | ( P[1] << 8 ) | ( P[2] << 16 ) | ( P[3] << 24 );
 		}
+		bool operator ==( p_long__ P ) const
+		{
+			return Op_ == P.Op_;
+		}
+		bool operator != ( p_long__ P ) const
+		{
+			return Op_ != P.Op_;
+		}
 	};
 
 
@@ -241,11 +257,11 @@ namespace bso {
 
 	//c The portable version of a buffer size.
 	class p_msize__
-	: p_long__<msize__>
+	: public p_long__<msize__>
 	{
 	public:
 		p_msize__( msize__ Op = 0 )
-			: p_long__<msize__>( Op )
+		: p_long__<msize__>( Op )
 		{}
 	};
 
@@ -259,11 +275,11 @@ namespace bso {
 
 	//c The portable version of a buffer size.
 	class p_bsize__
-	: p_long__<bsize__>
+	: public p_long__<bsize__>
 	{
 	public:
 		p_bsize__( bsize__ Op = 0 )
-			: p_long__<bsize__>( Op )
+		: p_long__<bsize__>( Op )
 		{}
 	};
 

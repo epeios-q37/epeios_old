@@ -72,6 +72,9 @@ namespace mdr {
 
 	//t The position in a memory.
 	typedef bso::msize__	row_t__;
+	typedef bso::p_msize__	p_row_t__;
+
+
 	#define MDR_ROW_T_MAX		( BSO_MSIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
 

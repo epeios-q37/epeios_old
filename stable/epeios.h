@@ -74,9 +74,14 @@ namespace epeios {
 	typedef mdr::row_t__	row_t__;
 	E_TYPEDEF( row_t__, row__ );
 
+	typedef mdr::p_row_t__	p_row_t__;
+	E_TYPEDEF( p_row_t__, p_row__ );
+
 	#define EPEIOS_ROW_MAX		MDR_ROW_T_MAX
 
 	using mdr::size__;
+	using mdr::p_size__;
+
 	#define EPEIOS_SIZE_MAX		MDR_SIZE_MAX
 
 	using mdr::datum__;

@@ -64,6 +64,8 @@ extern class ttr_tutor &BTRTutor;
 #include "flw.h"
 #include "bch.h"
 
+#if 1
+
 namespace btr {
 	//c Node. Internal use.
 	class _node__
@@ -569,6 +571,538 @@ namespace btr {
 	#define E_BTREE_	E_BTREEt_( epeios::row__ )
 	#define E_BTREE		E_BTREEt( epeios::row__ )
 }
+
+
+#else	//Version portable ; pb avec gcc.
+namespace btr {
+	//c Node. Internal use.
+	template <typename r_t> class _node__
+	{
+	public:
+		r_t
+			// Parent of the node.
+			Parent,
+			// Left children.
+			Left,
+			// Right children.
+			Right;
+		void reset( bso::bool__ = true )
+		{
+			Parent = Left = Right = NONE;
+		}
+		_node__( void )
+		{
+			reset( false );
+		}
+	};
+
+	// Prédéclaration.
+	template <typename r_t, typename nodes> class _nodes_manager_;
+
+	typedef bch::E_BUNCH_( btr::_node__<epeios::row_t__> ) _nodes_;
+
+	void Release(
+		_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
+		epeios::row_t__ Start,
+		epeios::row_t__ End );
+
+	void Prepare(
+		_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
+		epeios::row_t__ Start,
+		epeios::row_t__ End );
+
+
+	template <typename r_t, typename nodes> class _nodes_manager_
+	: public nodes
+	{
+	public:
+		struct s
+		: public nodes::s
+		{};
+		_nodes_manager_( s &S )
+		: nodes( S )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			nodes::reset( P );
+		}
+		//f Initialization.
+		void Init( void )
+		{
+			nodes::Init();
+		}
+		void Prepare(
+			r_t Start,
+			r_t End )
+		{
+			btr::Prepare( *this, Start, End );
+		}
+		void Release(
+			r_t Start,
+			r_t End )
+		{
+			btr::Release( *this, Start, End );
+		}
+		//f Release father of 'Node'.
+		void ReleaseParent( r_t Node )
+		{
+			_node__<r_t> Buffer = nodes::Get( Node );
+
+			Buffer.Parent = NONE;
+			nodes::Store( Buffer, Node );
+		}
+		//f Release left child of 'Node'.
+		void ReleaseLeft( r_t Node )
+		{
+			_node__<r_t> Buffer = nodes::Get( Node );
+
+			Buffer.Left = NONE;
+			nodes::Store( Buffer, Node );
+		}
+		//f Release right child of 'Node'.
+		void ReleaseRight( r_t Node )
+		{
+			_node__<r_t> Buffer = nodes::Get( Node );
+
+			Buffer.Right = NONE;
+			nodes::Store( Buffer, Node );
+		}
+		//f Return true if 'Node' has a father.
+		bso::bool__ HasParent( r_t Node ) const
+		{
+			return nodes::Get( Node ).Parent != NONE;
+		}
+		//f Return true if 'Node' has left chid.
+		bso::bool__ HasLeft( r_t Node ) const
+		{
+			return nodes::Get( Node ).Left != NONE;
+		}
+		//f Return true if 'Node' has right chid.
+		bso::bool__ HasRight( r_t Node ) const
+		{
+			return nodes::Get( Node ).Right != NONE;
+		}
+		//f Return father of 'Node', or 'NONE' if nonde.
+		r_t Parent( r_t Node ) const
+		{
+			return nodes::Get( Node ).Parent;
+		}
+		//f Return left child of 'Node', or 'NONE' if nonde.
+		r_t Left( r_t Node ) const
+		{
+			return nodes::Get( Node ).Left;
+		}
+		//f Return right child of 'Node', or 'NONE' if nonde.
+		r_t Right( r_t Node ) const
+		{
+			return nodes::Get( Node ).Right;
+		}
+		//f 'Left' becomes left child of 'Parent'.
+		void BecomeLeft(
+			r_t Left,
+			r_t Parent )
+		{
+			_node__<r_t> GParent = nodes::Get( Parent ), GLeft = nodes::Get( Left );
+
+			GParent.Left = Left;
+			GLeft.Parent = Parent;
+
+			nodes::Store( GParent, Parent );
+			nodes::Store( GLeft, Left );
+		}
+		//f 'Right' becomes left child of 'Parent'.
+		void BecomeRight(
+			r_t Right,
+			r_t Parent )
+		{
+			_node__<r_t> GParent = nodes::Get( Parent ), GRight = nodes::Get( Right );
+
+			GParent.Right = Right;
+			GRight.Parent = Parent;
+
+			nodes::Store( GParent,Parent );
+			nodes::Store( GRight, Right );
+		}
+/*		row_t__ TrouverAieulMaleAvecRight(
+			row_t__ Depart,
+			row_t__ Racine ) const;
+*/		r_t ForceParent(
+			r_t Node,
+			r_t  Parent )
+		{
+			_node__<r_t> Lien = nodes::Get( Node );
+			r_t AncienParent = Lien.Parent;
+
+			Lien.Parent = Parent;
+
+			nodes::Store( Lien, Node );
+
+			return AncienParent;
+		}
+		//f Return true if 'Node' is a left child.
+		bso::bool__ IsLeft( r_t Node ) const
+		{
+			return HasParent( Node ) && Left( Parent( Node ) ) == Node;
+		}
+		//f Return true if 'Node' is a right.
+		bso::bool__ IsRight( r_t Node ) const
+		{
+			return HasParent( Node ) && Right( Parent( Node ) ) == Node;
+		}
+		//f Return true if 'Node' is child.
+		bso::bool__ IsChild( r_t Node ) const
+		{
+			return HasParent( Node );
+		}
+		//f Return true if 'Node' is parent.
+		bso::bool__ IsParent( r_t Node ) const
+		{
+			return HasLeft( Node ) || HasRight( Node );
+		}
+		void PrintStructure(
+			r_t Racine,
+			txf::text_oflow__ &Flot ) const;
+		//f Return true if 'Node' has a child.
+		bso::bool__ HasChild( r_t Node ) const
+		{
+			return HasRight( Node ) || HasLeft( Node );
+		}
+	};
+
+	/**********************************************/
+	/* CLASSE DE GESTION D'UN CONTENAIRE D'ARBRES */
+	/**********************************************/
+
+	//c Binary tree.
+	template <typename r, typename r_t> class binary_tree_
+	{
+	private:
+		void Prepare_(
+			r_t Start,
+			r_t End )
+		{
+			Nodes.Prepare( Start, End );
+		}
+		void Release_(
+			r_t Start,
+			r_t End )
+		{
+			Nodes.Release( Start, End );
+		}
+		void ReleaseParent_( r_t Node )
+		{
+			Nodes.ReleaseParent( Node );
+		}
+		void ReleaseLeft_( r_t Node )
+		{
+			Nodes.ReleaseLeft( Node );
+		}
+		void ReleaseRight_( r_t Node )
+		{
+			Nodes.ReleaseRight( Node );
+		}
+		bso::bool__ HasParent_( r_t Node ) const
+		{
+			return Nodes.HasParent( Node );
+		}
+		bso::bool__ HasLeft_( r_t Node ) const
+		{
+			return Nodes.HasLeft( Node );
+		}
+		bso::bool__ HasRight_( r_t Node ) const
+		{
+			return Nodes.HasRight( Node );
+		}
+		r_t Parent_( r_t Node ) const
+		{
+			return Nodes.Parent( Node );
+		}
+		r_t Left_( r_t Node ) const
+		{
+			return Nodes.Left( Node );
+		}
+		r_t Right_( r_t Node ) const
+		{
+			return Nodes.Right( Node );
+		}
+		void BecomeLeft_(
+			r_t Left,
+			r_t Parent )
+		{
+			Nodes.BecomeLeft( Left, Parent );
+		}
+		void BecomeRight_(
+			r_t Right,
+			r_t Parent )
+		{
+			Nodes.BecomeRight( Right, Parent );
+		}
+/*
+		r_t TrouverAieulMaleAvecRight_(
+			r_t Depart,
+			r_t Racine ) const
+		{
+			return Nodes.TrouverAieulMaleAvecRight( Depart, Racine );
+		}
+*/		r_t ForceParent_(
+			r_t Node,
+			r_t  Parent )
+		{
+			return Nodes.ForceParent( Node, Parent );
+		}
+	public:
+		struct s
+		{
+			_nodes_manager_<r_t,bch::E_BUNCH_( _node__<r_t> )>::s Nodes;
+		};
+		// La table des liens.
+		_nodes_manager_<r_t,bch::E_BUNCH_( _node__<r_t> )> Nodes;
+		binary_tree_( s &S )
+		: Nodes( S.Nodes )
+		{}
+		void reset( bool P = true )
+		{
+			Nodes.reset( P );
+		}
+		void plug( mmm::multimemory_ &M )
+		{
+			Nodes.plug( M );
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &M )
+		{
+			Nodes.plug( M );
+		}
+		// Operateur d'affectation.
+		binary_tree_ &operator =( const binary_tree_ &O )
+		{
+			Nodes = O.Nodes;
+
+			return *this;
+		}
+	/*	void ecrire( flo_sortie_ &F ) const
+		{
+			Nodes.ecrire( F );
+		}
+		void lire( flo_entree_ &F )
+		{
+			Nodes.lire( F );
+		}
+	*/	//f Initialization.
+		void Init( void )
+		{
+			Nodes.Init();
+		}
+		//f Extent of the tree.
+		epeios::size__ Extent( void ) const
+		{
+			return Nodes.Extent();
+		}
+		//f Amount of node in the tree.
+		epeios::size__ Amount( void ) const
+		{
+			return Nodes.Amount();
+		}
+		//f Return parent of 'Node'.
+		r Parent( r Node ) const
+		{
+			return Parent_( *Node );
+		}
+		//f Return left of 'Node'..
+		r Left( r Node ) const
+		{
+			return Left_( *Node ) ;
+		}
+		//f Return right of 'Node'..
+		r Right( r Node ) const
+		{
+			return Right_( *Node );
+		}
+		/* Elague 'Node'; 'Node' devient la racine de l'arbre
+		et perd donc son père. */
+		//f Cut 'Node'. 'Node' becomes a root.
+		void Cut( r Node )
+		{
+			r_t Parent = Parent_( *Node );
+
+			if ( HasLeft_( Parent ) && ( Left_( Parent ) == *Node ) )
+				ReleaseLeft_( Parent );
+			
+			if ( HasRight_( Parent ) && ( Right_( Parent ) == *Node ) )
+				ReleaseRight_( Parent );
+
+			ReleaseParent_( *Node );
+		}
+		//f Return true if 'Child' is left of 'Parent'.
+		bso::bool__ IsLeft(
+			r Child,
+			r Parent ) const
+		{
+			return Left_( *Parent ) == Child;
+		}
+		//f Return true if 'Child' is right of 'Parent'.
+		bso::bool__ IsRight(
+			r Child,
+			r Parent ) const
+		{
+			return Right_( *Parent ) == Child;
+		}
+		//f Return true if 'Child' is child of 'Parent'.
+		bso::bool__ IsChild(
+			r Child,
+			r Parent ) const
+		{
+			return ( Left_( *Parent ) == Child ) || ( Right_( *Parent ) == Child );
+		}
+		//f Return true if 'Parent' is parent of 'Child'.
+		bso::bool__ IsParent(
+			r Parent,
+			r Child ) const
+		{
+			return Parent_( *Child ) == Parent;
+		}
+		//f Return true if 'Node' is a child.
+		bso::bool__ IsLeft( r Node ) const
+		{
+			return HasParent_( *Node ) && Left_( Parent_( *Node ) ) == *Node;
+		}
+		//f Return true if 'Node' is a right.
+		bso::bool__ IsRight( r Node ) const
+		{
+			return HasParent_( *Node ) && Right_( Parent_( *Node ) ) == *Node;
+		}
+		//f Return true if 'Node' is child.
+		bso::bool__ IsChild( r Node ) const
+		{
+			return HasParent_( *Node );
+		}
+		//f Return true if 'Node' is parent.
+		bso::bool__ IsParent( r Node ) const
+		{
+			return HasLeft_( *Node ) || HasRight_( *Node );
+		}
+		//f 'Parent' take 'Child' as left.
+		void TakeLeft(
+			r Parent,
+			r Child )
+		{
+			BecomeLeft_( *Child, *Parent );
+		}
+		//f 'Parent' take 'Child' as right.
+		void TakeRight(
+			r Parent,
+			r Child )
+		{
+			BecomeRight_( *Child, *Parent );
+		}
+		//f 'Child' becomes left of 'Parent'.
+		void BecomeLeft(
+			r Child,
+			r Parent )
+		{
+			BecomeLeft_( *Child, *Parent );
+		}
+		//f 'Child' becomes right of 'Parent'.
+		void BecomeRight(
+			r Child,
+			r Parent )
+		{
+			BecomeRight_( *Child, *Parent );
+		}
+		//f Allocate enough room to handle 'Size' node.
+		void Allocate(
+			epeios::size__ Size,
+			aem::mode Mode = aem::mDefault )
+		{
+			if ( Size > Nodes.Amount() )
+			{
+				epeios::size__ PrecCapacite = Nodes.Amount();
+
+				Nodes.Allocate( Size, Mode );
+				Prepare_( PrecCapacite, Size - 1 );
+			}
+			else if ( Size < Nodes.Amount() )
+			{
+				Release_( Size, Nodes.Amount() - 1 );
+				Nodes.Allocate( Size, Mode );
+			}
+		}
+		//f Return true if 'Node' has right.
+		bso::bool__ HasRight( r Node ) const
+		{
+			return HasRight_( *Node );
+		}
+		//f Return true if 'Node' has left.
+		bso::bool__ HasLeft( r Node ) const
+		{
+			return HasLeft_( *Node );
+		}
+		//f Return true if 'Node' has a child.
+		bso::bool__ HasChild( r Node ) const
+		{
+			return HasChild_( *Node ) || ALeft_( *Node );
+		}
+		//f Return true if 'Node' has a parent.
+		bso::bool__ HasParent( r Node ) const
+		{
+			return HasParent_( *Node );
+		}
+
+		//f Force the parent from 'Node' to 'Parent'. Return the previous parent.
+		r ForceParent(
+			r Node,
+			r Parent )
+		{
+			return ForceParent_( *Node, *Parent );
+		}
+
+	/*	// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
+		void EcrireDansFlot(
+			flo_sortie_portable_ &Flot,
+			r Position ) const;
+		/* Lecture de l'abre contenu dans 'Flot'. La valeur retournée correspond à
+		la position de la racine. */
+		//	r LireDeFlot( flo_entree_portable_ &Flot );
+		//f Print to 'OFfow' the structure of the tree whith root 'Root'.
+		void PrintStructure(
+			r Root,
+			txf::text_oflow__ &OFlow ) const
+		{
+			Nodes.PrintStructure( *Root, OFlow );
+		}
+		// Sert à parcourir l'arbre de racine 'Racine'. Retourne le noeud aprés 'Position'.
+	/*	r Suivant(
+			r Courant,
+			r Racine ) const
+		{
+			row_t__ &Temp = Racine;
+
+			if ( ALeft( Courant ) )
+				Courant = Left( Courant );
+			else if ( ARight( Courant ) )
+				Courant = Right( Courant );
+			else if ( ( Courant = TrouverAieulMaleAvecRight_( Courant, Racine ) ) != BTR_INEXISTANT )
+					Courant = Right( Courant );
+
+			return Courant;
+		}
+	*/
+	};
+
+	E_AUTO2( binary_tree )
+
+	#define E_BTREEt_( r )	binary_tree_<r,epeios::row_t__>
+	#define E_BTREEt( r )	binary_tree<r,epeios::row_t__>
+
+	#define E_BTREE_	E_BTREEt_( epeios::row__ )
+	#define E_BTREE		E_BTREEt( epeios::row__ )
+
+	#define E_PBTREEt_( r )	binary_tree_<r,epeios::p_row_t__>
+	#define E_PBTREEt( r )	binary_tree<r,epeios::p_row_t__>
+
+	#define E_PBTREE_		E_PBTREEt_( epeios::p_row__ )
+	#define E_PBTREE		E_PBTREEt( epeios::p_row__ )
+}
+#endif
 
 /*$END$*/
 				  /********************************************/

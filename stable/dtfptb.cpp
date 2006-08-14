@@ -62,7 +62,7 @@ using namespace dtfptb;
 #define M3	DTFPTB_L3
 
 
-bso::ubyte__ PutSize(
+void dtfptb::PutSize(
 	bso::ulong__ Size,
 	size_buffer__ &Buffer )
 {
@@ -97,8 +97,6 @@ bso::ubyte__ PutSize(
 	}
 
 	*(Pointer++) = (bso::raw__)( Size & 255 );
-
-	return ( Pointer - Buffer );
 }
 
 

@@ -1,5 +1,9 @@
 $Id$
 
+14/08/06 
+	- GENERAL :
+		- Début codage de la version portable de différentes bibliothèques.
+
 13/08/06 :
 	- DTFPTB :
 		- Améliorations.
