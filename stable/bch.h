@@ -85,7 +85,7 @@ namespace bch {
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
-			const _bunch &Source,
+			const mmr &Source,
 			epeios::size__ Quantite,
 			epeios::row_t__ PosSource,
 			epeios::row_t__ PosDest )
@@ -174,7 +174,7 @@ namespace bch {
 		/*f Store at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
 		Adjust the size of the bunch. */
 		void StoreAndAdjust(
-			const _bunch &Bunch,
+			const mmr &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
@@ -252,7 +252,7 @@ namespace bch {
 		}
 		//f Append 'Amount' objects at 'Position' from 'Bunch'. Return the position where the object are put.
 		row Append(
-			const _bunch &Bunch,
+			const mmr &Bunch,
 			epeios::size__ Amount,
 			row Position = 0 )
 		{
@@ -264,7 +264,7 @@ namespace bch {
 		}
 		// Ajoute le contenu de 'Bunch' de la position 'First' à la position 'Last', toute deux incluses.
 		row Append(
-			const _bunch &Bunch,
+			const mmr &Bunch,
 			row First,
 			row Last )
 		{
@@ -333,7 +333,7 @@ namespace bch {
 		}
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
-			const _bunch &Source,
+			const mmr &Source,
 			epeios::size__ Amount,
 			row RowSource,
 			row RowDest )

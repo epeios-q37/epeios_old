@@ -57,11 +57,52 @@ public:
 
 using namespace dtfptb;
 
+#define M1	DTFPTB_L1
+#define M2	DTFPTB_L2
+#define M3	DTFPTB_L3
 
-#define M1	255
-#define M2	65535
-#define M3	16777215
 
+bso::ubyte__ PutSize(
+	bso::ulong__ Size,
+	size_buffer__ &Buffer )
+{
+	bso::raw__ *Pointer = Buffer;
+
+	if ( Size >= M1 )
+	{
+		*(Pointer++) = M1;
+		Size -= M1;
+
+		if ( Size >= M2 )
+		{
+			*(Pointer++) = M1;
+			*(Pointer++) = M1;
+			Size -= M2;
+
+			if ( Size >= M3 )
+			{
+				*(Pointer++) = M1;
+				*(Pointer++) = M1;
+				*(Pointer++) = M1;
+
+				Size -= M3;
+
+				*(Pointer++) = (bso::raw__)( ( Size & ( 255 << 24 ) ) >> 24 );
+			}
+
+			*(Pointer++) = (bso::raw__)( ( Size & ( 255 << 16 ) ) >> 16 );
+		}
+
+		*(Pointer++) = (bso::raw__)( ( Size & ( 255 << 8 ) ) >> 8 );
+	}
+
+	*(Pointer++) = (bso::raw__)( Size & 255 );
+
+	return ( Pointer - Buffer );
+}
+
+
+#if 0	// Version originale.
 void dtfptb::PutSize(
 	bso::ulong__ Size,
 	flw::oflow__ &Flow )
@@ -93,6 +134,18 @@ void dtfptb::PutSize(
 	}
 	Flow.Put( (flw::datum__)( Size & 255 ) );
 }
+#else
+void dtfptb::PutSize(
+	bso::ulong__ Size,
+	flw::oflow__ &Flow )
+{
+	size_buffer__ Buffer;
+
+	PutSize( Size, Buffer );
+
+	Flow.Write( Buffer, GetSizeLength( Size ) );
+}
+#endif
 
 bso::ulong__ dtfptb::GetSize( flw::iflow__ &IFlow )
 {
@@ -117,6 +170,28 @@ bso::ulong__ dtfptb::GetSize( flw::iflow__ &IFlow )
 				IFlow.Read( 4, Data );
 
 				Size += ( Data[0] << 24 ) | ( Data[1] << 16 ) | ( Data[2] << 8 ) | Data[3];
+			}
+		}
+	}
+
+	return Size;
+}
+
+bso::ulong__ dtfptb::GetSize( const size_buffer__ &Buffer )
+{
+	bso::ulong__ Size = Buffer[0];
+
+	if ( Size == M1 )
+	{
+		Size += ( Buffer[1] << 8 ) | Buffer[2];
+
+		if ( Size == ( M1 + M2 ) )
+		{
+			Size += ( Buffer[3] << 16 ) | ( Buffer[4] << 8 ) | Buffer[5];
+
+			if ( Size == ( M1 + M2 + M3 ) ) {
+
+				Size += ( Buffer[6] << 24 ) | ( Buffer[7] << 16 ) | ( Buffer[8] << 8 ) | Buffer[9];
 			}
 		}
 	}

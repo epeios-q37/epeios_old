@@ -1,5 +1,10 @@
 $Id$
 
+13/08/06 :
+	- DTFPTB :
+		- Améliorations.
+		
+
 11/08/06 :
 	- GENERAL :
 		- Corrections bogues apparus suite aux modifications 'MDR'.
