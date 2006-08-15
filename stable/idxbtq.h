@@ -161,14 +161,6 @@ namespace idxbtq {
 			E_IBTREEt_( r )::MarkAsLesser( Row, Current );
 			E_IQUEUEt_( r )::MarkAsLesser( Row, Current );
 		}
-		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void MarkAsSame(
-			r Row,
-			r Current )
-		{
-			E_IBTREEt_( r )::MarkAsSame( Row, Current );
-			E_IQUEUEt_( r )::MarkAsSame( Row, Current );
-		}
 		r Delete(
 			r Item,
 			r Root )

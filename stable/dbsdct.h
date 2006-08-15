@@ -388,6 +388,12 @@ namespace dbsdct {
 
 			Entries.Store( Entry, Row );
 		}
+		void _Retrieve(
+			data_row__ Row,
+			data_ &Data ) const
+		{
+			Storage.Retrieve( Row, Data, _S.Unallocated );
+		}
 	public:
 		storage_ Storage;
 		availables_ Availables;
@@ -460,6 +466,23 @@ namespace dbsdct {
 			_Erase( Row );
 
 			_Store( Data, Row );
+		}
+		// Retourne 'true' si l'enregistrement existe, faux sinon.
+		bso::bool__ Retrieve(
+			row__ Row,
+			data_ &Data ) const
+		{
+			entry__ Entry = Entries.Get( Row );
+
+			if ( Entry.Head != NONE )
+				_Retrieve( Entry.Head, Data );
+			else
+				return false;
+
+			if ( Entry.Tail != NONE )
+				_Retrieve( Entry.Tail, Data );
+
+			return true;
 		}
 	};
 

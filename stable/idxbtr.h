@@ -250,16 +250,6 @@ namespace idxbtr {
 #endif
 			BecomeLeft( Row, Current );
 		}
-		//f Mark 'Row' as same then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void MarkAsSame(
-			r Row,
-			r Current )
-		{
-			if ( *Row & 1 )	// Little random generator :-).
-				BecomeLeft( Row, NoeudSansFils_( Current ) );
-			else
-				BecomeRight( Row, NoeudSansFille_( Current ) );
-		}
 		//f Balances the tree which underlies the index. Return the new root.
 		r Balance( r Root );
 		//f Fill the index with the items in 'Queue' beginning at 'Head', using 'MD' as memory driver if != 'NULL'. Return the new root.

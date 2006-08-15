@@ -1,5 +1,13 @@
 $Id$
 
+15/08/06 :
+	- IDXQUE :
+		- Suppression méthode 'MarkAsSame', source de bogues.
+	- IDXBTR
+		- Suppression méthode 'MarkAsSame', source de bogues.
+	- IDXBTQ
+		- Suppression méthode 'MarkAsSame', source de bogues.
+
 14/08/06 
 	- GENERAL :
 		- Début codage de la version portable de différentes bibliothèques.

@@ -68,7 +68,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &cvm		&epeios		&2000-2001, \
 	&ConVentional Memory
 &dbsdct		&epeios		&\
-	&DataBaSeDataContent
+	&DataBaSe DataContent
+&dbsidx		&epeios		&\
+	&DataBaSe Index
 &dbt		&epeios		&\
 	&Differentiated Binary Tree
 &dir		&epeios		&\

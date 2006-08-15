@@ -134,13 +134,6 @@ namespace idxque {
 		{
 			E_QUEUEt_( r )::BecomePrevious( Item, Node );
 		}
-		//f Item is marked as same then 'Node'.
-		void MarkAsSame(
-			r Item,
-			r Node )
-		{
-			E_QUEUEt_( r )::BecomeNext( Item, Node );
-		}
 	};
 
 	E_AUTO1( queue_index )
