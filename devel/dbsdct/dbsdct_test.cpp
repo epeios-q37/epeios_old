@@ -40,7 +40,49 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	dbsdct::file_content Content;
+	dbsdct::row__ Row1 = NONE, Row2 = NONE;
+	dbsdct::data Data;
 ERRBegin
+	if ( !Content.Init( str::string( "test" ) ) ) {
+		cout << "Inexistent content : creating !" << txf::nl << txf::sync;
+
+		Data.Init( "Hello !");
+		Row1 = Content.Store( Data );
+
+		Data.Init( "Hi !");
+		Row2 = Content.Store( Data );
+
+		Data.Init();
+		Content.Retrieve( Row1, Data );
+		cout << Data << txf::nl;
+		
+		Data.Init();
+		Content.Retrieve( Row2, Data );
+		cout << Data << txf::nl;
+
+		Data.Init( "Hello the World !" );
+		Content.Store( Data, Row1 );
+
+		Data.Init( "Bonjour tout le monde !" );
+		Content.Store( Data, Row2 );
+	} else {
+		Row1 = Content.First();
+		Row2 = Content.Last();
+
+		Row1 = 0;
+		Row2 = 1;
+	}
+
+	Data.Init();
+	Content.Retrieve( Row1, Data );
+	cout << Data << txf::nl;
+
+	Data.Init();
+	Content.Retrieve( Row2, Data );
+	cout << Data << txf::nl;
+
+	cout << txf::sync;
 ERRErr
 ERREnd
 ERREpilog

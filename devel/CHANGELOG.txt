@@ -1,5 +1,15 @@
 $Id$
 
+16/08/06 :
+	- CSLIO :
+		- Ajout méthode 'Size'.
+	- FLM :
+		- Correction erreur sur nom classes.
+	- LSTBCH :
+		- Amélioration ergonomie.
+	- WLLIO :
+		- Ajout méthode 'Size'.
+
 15/08/06 :
 	- IDXQUE :
 		- Suppression méthode 'MarkAsSame', source de bogues.

@@ -55,7 +55,7 @@ extern class ttr_tutor &DBSDCTTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D DataBaSeDataContent 
+//D DataBaSe DataContent 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -68,6 +68,7 @@ extern class ttr_tutor &DBSDCTTutor;
 #include "str.h"
 #include "stk.h"
 #include "lstbch.h"
+#include "flm.h"
 
 namespace dbsdct {
 
@@ -103,11 +104,10 @@ namespace dbsdct {
 
 			return Wanted;
 		}
-		/* Stocke à la position 'Row' 'Datum' sachant qu'à cette position 'Available' octets sont disponibles.
-		Retourne le nombre d'octets de 'Datum' effetivement stockés. */
 		size__ _Store(
 			const data_ &Data,
-			data_row__ Row,
+			data_row__ &Row,
+			size__ Offset,
 			size__ Available )
 		{
 			size__ &Amount = Available;
@@ -119,13 +119,24 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Amount, SizeBuffer );
 
-			Memory.Store( *(const datum__ *)SizeBuffer, SizeLength );
+			Memory.Store( (const datum__ *)SizeBuffer, SizeLength, Row );
 
 			*Row += SizeLength;
 
-			Memory.Store( *(const memory_ *)&Data, Amount, Row );
+			Memory.Store( *(const memory_ *)&Data, Amount, Offset, Row );
+
+			*Row += Data.Amount() - Offset;
 
 			return Amount;
+		}
+		/* Stocke à la position 'Row' 'Datum' sachant qu'à cette position 'Available' octets sont disponibles.
+		Retourne le nombre d'octets de 'Datum' effetivement stockés. */
+		size__ _Store(
+			const data_ &Data,
+			data_row__ Row,
+			size__ Available )
+		{
+			return _Store( Data, Row, 0, Available );
 		}
 		/* Ajoute 'Data' à la position 'Row', sachant que 'Row' est la position du premier octet non alloué.
 		L'espace necessaire est alloué. Retourne la position du nouveau premier octet non alloué. */
@@ -134,21 +145,12 @@ namespace dbsdct {
 			size__ Offset,
 			data_row__ Row )
 		{
-			dtfptb::size_buffer__ SizeBuffer;
 			size__ DataAmount = Data.Amount() - Offset;
-			bso::ulong__ SizeLength = dtfptb::GetSizeLength( DataAmount );
+			size__ TotalSize = DataAmount + dtfptb::GetSizeLength( DataAmount );
 
-			dtfptb::PutSize( DataAmount, SizeBuffer );
+			Memory.Allocate( *Row + TotalSize );
 
-			Memory.Allocate( *Row + SizeLength + DataAmount );
-
-			Memory.Store( *(const datum__ *)SizeBuffer, SizeLength );
-
-			*Row += SizeLength;
-
-			Memory.Store( *(const memory_ *)&Data, DataAmount, Row, Offset );
-
-			*Row += DataAmount;
+			_Store( Data, Row, Offset, TotalSize );	// 'Row' mis à jour par cette méthode.
 
 			return Row;
 		}
@@ -159,7 +161,7 @@ namespace dbsdct {
 			dtfptb::size_buffer__ SizeBuffer;
 			bso::ubyte__ PossibleSizeLength = sizeof( SizeBuffer );
 
-			if ( ( *Unallocated - *Row ) > PossibleSizeLength )
+			if ( ( *Unallocated - *Row ) < PossibleSizeLength )
 				PossibleSizeLength = (bso::ubyte__)( *Unallocated - *Row );
 
 			Memory.Recall( Row, PossibleSizeLength, (datum__ *)SizeBuffer );
@@ -281,7 +283,7 @@ namespace dbsdct {
 		{
 			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
-			Data.Append( *(const tym::memory_<bso::char__, epeios::row__>*)&Memory, *Row + dtfptb::GetSizeLength( Size ), Size );
+			Data.Append( *(const tym::memory_<bso::char__, epeios::row__>*)&Memory, Size, *Row + dtfptb::GetSizeLength( Size ) );
 		}
 	};
 
@@ -347,7 +349,7 @@ namespace dbsdct {
 		{
 			entry__ Entry;
 
-			Entry.Tail = _S.Unallocated;
+			Entry.Head = _S.Unallocated;
 
 			_S.Unallocated = Storage.Append( Data, _S.Unallocated );
 
@@ -376,7 +378,6 @@ namespace dbsdct {
 		void _Erase( row__ Row )
 		{
 			entry__ Entry = Entries.Get( Row );
-			available__ Available;
 
 			if ( Entry.Tail != NONE )
 				_Erase( Entry.Tail );
@@ -484,9 +485,53 @@ namespace dbsdct {
 
 			return true;
 		}
+		E_NAVt( Entries., row__ )
 	};
 
 	E_AUTO( content )
+
+	// Content stocké dans des fichiers.
+	class file_content_
+	: public content_
+	{
+	public:
+		str::string_ RootFileName;
+		struct s
+		: public content_::s
+		{
+			struct memory_driver__ {
+				flm::E_FILE_MEMORY_DRIVER___
+					Storage,
+					Entries;
+			} MemoryDriver;
+			str::string_::s RootFileName;
+		} &_S;
+		file_content_( s &S )
+		: _S( S ), 
+		  content_( S ),
+		  RootFileName( S.RootFileName )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_S.MemoryDriver.Storage.reset( P );
+			_S.MemoryDriver.Entries.reset( P );
+			RootFileName.reset( P );
+			content_::reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ & )
+		{
+			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
+		}
+		file_content_ &operator =( const file_content_ &)
+		{
+			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
+
+			return *this;	// Pour éviter un warning
+		}
+		bso::bool__ Init( const str::string_ &RootFileName );
+	};
+
+	E_AUTO( file_content )
 
 }
 

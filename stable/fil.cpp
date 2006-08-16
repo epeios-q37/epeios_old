@@ -101,7 +101,7 @@ static void Close_( iop::descriptor__ D )
 }
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
-#	ifdef CPE__MS
+#	ifdef CPE__P_MS
 #include "sys/stat.h"
 
 static inline iop::descriptor__ Open_(
@@ -141,12 +141,12 @@ static void Close_( iop::descriptor__ D )
 		ERRd();
 }
 
-#	elif defined( CPE__UNIX )
+#	elif defined( CPE__P_LINUX )
 static inline iop::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
 {
-#ifdef CPE__CYGWIN
+#ifdef CPE__P_CYGWIN
 	int Flags = O_BINARY;
 #else
 	int Flags = 0;
@@ -180,7 +180,7 @@ static void Close_( iop::descriptor__ D )
 }
 
 
-#	elif defined( CPE__MAC )
+#	elif defined( CPE__P_MAC )
 #		error "MAC not implemented yet !"
 #	else
 #		error "Unknow complation enviroment !"

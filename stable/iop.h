@@ -62,6 +62,7 @@ extern class ttr_tutor &IOPTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "cpe.h"
 
 #ifdef IOP_BUFFER_SIZE
 #	define IOP__BUFFER_SIZE	IOP_BUFFER_SIZE
@@ -71,11 +72,11 @@ extern class ttr_tutor &IOPTutor;
 
 #ifdef IOP_USE_STANDARD_IO
 #	define IOP__USE_STANDARD_IO
-#elif defined( CPE__MS )
+#elif defined( CPE__P_MS )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__UNIX )
+#elif defined( CPE__P_LINUX )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__MAC )
+#elif defined( CPE__P_MAC )
 //#	define IOP__USE_LOWLEVEL_IO	// Because not implemented yet for Mac.
 #	define	IOP__USE_STANDARD_IO
 #else

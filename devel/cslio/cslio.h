@@ -107,6 +107,15 @@ namespace cslio {
 			if ( fseek( _D, Offset, SEEK_SET ) != 0 )
 				ERRx();
 		}
+		long Size( void )
+		{
+			_Test();
+
+			if ( fseek( _D, 0, SEEK_END ) != 0 )
+				ERRx();
+
+			return ftell( _D );
+		}
 	};
 
 

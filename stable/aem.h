@@ -325,6 +325,10 @@ namespace aem {
 		{
 			return *Row < Amount();
 		}
+		void ForceSizeAndExtent( epeios::size__ Size )
+		{
+			Force( Size );
+		}
 	};
 
 

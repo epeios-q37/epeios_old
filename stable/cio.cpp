@@ -57,7 +57,7 @@ public:
 
 #include "flx.h"
 
-#if defined( CPE__MS )
+#if defined( CPE__P_MS )
 #	include <io.h>
 #	include <fcntl.h>
 #endif
@@ -65,9 +65,9 @@ public:
 using namespace cio;
 
 #ifdef IOP__USE_LOWLEVEL_IO
-#	if defined( CPE__MS ) || defined( CPE__UNIX )
+#	if defined( CPE__P_MS ) || defined( CPE__P_LINUX )
 iop::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
-#	elif defined( CPE__MAC )
+#	elif defined( CPE__P_MAC )
 #		error "Not implemented yet ! "
 #	else
 #		error "Unknow compilation enviroment !"
@@ -101,7 +101,7 @@ class ciopersonnalization
 public:
 	ciopersonnalization( void )
 	{
-#if defined( CPE__MS )
+#if defined( CPE__P_MS )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
 

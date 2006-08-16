@@ -109,6 +109,17 @@ namespace wllio {
 			if ( _lseek( _D, Offset, SEEK_SET ) != Offset )
 				ERRd();
 		}
+		long Size( void )
+		{
+			long Size;
+
+			_Test();
+
+			if ( ( Size = _lseek( _D, 0, SEEK_END ) ) == -1 )
+				ERRd();
+
+			return Size;
+		}
 		void Init( descriptor__ D )
 		{
 			_D = D;

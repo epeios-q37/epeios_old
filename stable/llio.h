@@ -62,24 +62,24 @@ extern class ttr_tutor &LLIOTutor;
 
 #include "cpe.h"
 
-#ifdef CPE__VC
+#ifdef CPE__C_VC
 #	include "wllio.h"
-#elif defined( CPE__UNIX )
+#elif defined( CPE__P_LINUX )
 #	include "pllio.h"
-#elif defined( CPE__MAC )
+#elif defined( CPE__P_MAC )
 #	include "mllio.h"
 #else
 #	error "Not implemented yet."
 #endif
 
 namespace llio {
-#ifdef CPE__VC
+#ifdef CPE__C_VC
 	using namespace wllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__UNIX )
+#elif defined( CPE__T_LINUX )
 	using namespace pllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	PLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__MAC )
+#elif defined( CPE__T_MAC )
 	using namespace mllio;
 #endif
 }

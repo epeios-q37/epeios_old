@@ -147,6 +147,22 @@ namespace lstbch {
 		{
 			ERRu();
 		}
+		bunch_<type, row> &Bunch( void )
+		{
+			return *this;
+		}
+		const bunch_<type, row> &Bunch( void ) const
+		{
+			return *this;
+		}
+		list_<row, row_t> &List( void )
+		{
+			return *this;
+		}
+		const list_<row, row_t> &List( void ) const
+		{
+			return *this;
+		}
 	};
 
 	E_AUTO3( list_bunch )

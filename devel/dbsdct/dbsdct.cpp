@@ -57,6 +57,58 @@ public:
 
 using namespace dbsdct;
 
+template <typename container> static bso::bool__ Set_(
+	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
+	const str::string_ &FileName,
+	container &C )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileNameBuffer = FileName.Convert();
+
+	Exists = tol::FileExists( FileNameBuffer );
+
+	MemoryDriver.Init( FileNameBuffer );
+	MemoryDriver.Persistant();
+	C.plug( MemoryDriver );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+
+bso::bool__ dbsdct::file_content_::Init( const str::string_ &RootFileName )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init( RootFileName );
+	FileName.Append( ".ctt" );
+	Exists = Set_( _S.MemoryDriver.Storage, FileName, content_::Storage );
+	content_::Storage.Memory.Allocate( _S.MemoryDriver.Storage.Size() );
+
+	FileName.Init( RootFileName );
+	FileName.Append( ".etr" );
+
+	if ( Set_( _S.MemoryDriver.Entries, FileName, Entries.Bunch() ) != Exists )
+		ERRu();
+
+	this->RootFileName.Init( RootFileName );
+
+	content_::Init();
+	content_::_S.Unallocated = _S.MemoryDriver.Storage.Size();
+	Entries.Bunch().Allocate( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ), aem::mFit );
+	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
