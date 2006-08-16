@@ -361,18 +361,22 @@ namespace flw {
 			while ( Amount-- )
 				Get();
 		}
-		/* 'Data' is a NUL terminated string to use as end of flow data.
-		'Data' is NOT duplicated and should not be modified. */
-		void EOFD( const char *Data )
+		void EOFD(
+			const void *Data,
+			bsize__ Length )
 		{
-			size_t Length = strlen( Data );
-
 			if ( Length > FLW_BSIZE_MAX )
 				ERRl();
 
 			EOFD_.Data = (const datum__ *)Data;
 			EOFD_.Size = (bsize__)Length;
 			EOFD_.HandleAmount = false;
+		}
+		/* 'Data' is a NUL terminated string to use as end of flow data.
+		'Data' is NOT duplicated and should not be modified. */
+		void EOFD( const char *Data )
+		{
+			EOFD( Data, strlen( Data ) );
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. This data will

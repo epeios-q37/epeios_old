@@ -55,6 +55,11 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flf.h"
+
+#define LOCATIONS_EXTENSION		".edl"
+#define AVAILABLES_EXTENSION	".eda"
+
 using namespace dbsdct;
 
 template <typename container> static bso::bool__ Set_(
@@ -79,21 +84,156 @@ ERREpilog
 	return Exists;
 }
 
+static inline void Save_(
+	epeios::row__ Row,
+	flw::oflow__ &Flow )
+{
+	dtfptb::PutULong( *Row, Flow );
+}
+
+static inline void Save_(
+	const available__ &Available,
+	flw::oflow__ &Flow )
+{
+	dtfptb::PutULong( *Available.Row, Flow );
+	dtfptb::PutULong( Available.RawSize, Flow );
+}
+
+template <typename item> static void Save_(
+	const stk::E_BSTACK_( item ) &Bunch,
+	flw::oflow__ &Flow )
+{
+	stk::row__ Row = Bunch.First();
+
+	while ( Row != NONE ) {
+		Save_( Bunch( Row ), Flow );
+
+		Row = Bunch.Next( Row );
+	}
+}
+
+template <typename item> static void Save_(
+	const stk::E_BSTACK_( item ) &Bunch,
+	const char *RootFileName )
+{
+ERRProlog
+	flf::file_oflow___ Flow;
+ERRBegin
+	Flow.Init( RootFileName );
+
+	Save_( Bunch, Flow );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+template <typename item> static void Save_(
+	const stk::E_BSTACK_( item ) &Bunch,
+	const str::string_ &RootFileName,
+	const char *Extension )
+{
+ERRProlog
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileName.Init( RootFileName );
+	FileName.Append( Extension );
+	Save_( Bunch, FileNameBuffer = FileName.Convert() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void dbsdct::file_content_::_SaveLocationsAndAvailables( void ) const
+{
+	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_EXTENSION );
+	Save_( Availables, RootFileName, AVAILABLES_EXTENSION );
+}
+
+static inline void Load_(
+	flw::iflow__ &Flow,
+	epeios::row__ &Row )
+{
+	Row = dtfptb::GetULong( Flow );
+}
+	
+static inline void Load_(
+	flw::iflow__ &Flow,
+	available__ &Available )
+{
+	Available.Row = dtfptb::GetULong( Flow );
+	Available.RawSize = dtfptb::GetULong( Flow );
+}
+	
+
+template <typename item> static void Load_(
+	flw::iflow__ &Flow,
+	stk::E_BSTACK_( item ) &Bunch,
+	item TestValue )
+{
+	item Item;
+
+	Load_( Flow, Item );
+
+	while ( Item != TestValue ) {
+		Bunch.Append( Item );
+		Load_( Flow, Item );
+	}
+}
+
+template <typename item> static void Load_(
+	const char *RootFileName,
+	stk::E_BSTACK_( item ) &Bunch,
+	item TestValue )
+{
+ERRProlog
+	flf::file_iflow___ Flow;
+static flw::datum__ Buffer[sizeof( item )];
+ERRBegin
+	Flow.Init( RootFileName );
+
+	memcpy( Buffer, &TestValue, sizeof( item ) );
+
+	Flow.EOFD( (void *)Buffer, sizeof( item ) );
+
+	Load_( Flow, Bunch, TestValue );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+template <typename item> static void Load_(
+	const str::string_ &RootFileName,
+	stk::E_BSTACK_( item ) &Bunch,
+	item TestValue,
+	const char *Extension )
+{
+ERRProlog
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileName.Init( RootFileName );
+	FileName.Append( Extension );
+	Load_( FileNameBuffer = FileName.Convert(), Bunch, TestValue );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 bso::bool__ dbsdct::file_content_::Init( const str::string_ &RootFileName )
 {
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string FileName;
+	available__ TestAvailable;
 ERRBegin
 	FileName.Init( RootFileName );
-	FileName.Append( ".ctt" );
+	FileName.Append( ".edc" );
 	Exists = Set_( _S.MemoryDriver.Storage, FileName, content_::Storage );
 	content_::Storage.Memory.Allocate( _S.MemoryDriver.Storage.Size() );
 
 	FileName.Init( RootFileName );
-	FileName.Append( ".etr" );
-
+	FileName.Append( ".edb" );
 	if ( Set_( _S.MemoryDriver.Entries, FileName, Entries.Bunch() ) != Exists )
 		ERRu();
 
@@ -101,8 +241,16 @@ ERRBegin
 
 	content_::Init();
 	content_::_S.Unallocated = _S.MemoryDriver.Storage.Size();
+
 	Entries.Bunch().Allocate( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ), aem::mFit );
 	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
+
+	Entries.List().Locations.Init( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
+
+	if ( Exists ) {
+		Load_<epeios::row__>( RootFileName, Entries.List().Locations.Released, NONE, LOCATIONS_EXTENSION );
+		Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_EXTENSION );
+	}
 ERRErr
 ERREnd
 ERREpilog

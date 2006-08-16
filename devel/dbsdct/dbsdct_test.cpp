@@ -68,19 +68,27 @@ ERRBegin
 		Content.Store( Data, Row2 );
 	} else {
 		Row1 = Content.First();
-		Row2 = Content.Last();
-
+		Row2 = Content.Next( Row1 );
+/*
 		Row1 = 0;
 		Row2 = 1;
+*/
 	}
 
 	Data.Init();
 	Content.Retrieve( Row1, Data );
 	cout << Data << txf::nl;
 
-	Data.Init();
-	Content.Retrieve( Row2, Data );
-	cout << Data << txf::nl;
+	if ( Content.Exists( Row2 ) ) {
+		Data.Init();
+		Content.Retrieve( Row2, Data );
+		cout << Data << txf::nl;
+		Content.Erase( Row2 );
+	} else {
+		Data.Init( "Asta la vista, baby !" );
+		Content.Store( Data );
+	}
+
 
 	cout << txf::sync;
 ERRErr

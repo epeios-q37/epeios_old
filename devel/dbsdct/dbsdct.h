@@ -296,6 +296,15 @@ namespace dbsdct {
 		data_row__ Row;
 		// Taille brute, c'est-à-dire sans tenir compte de la place occupée par le marqueur de taille.
 		size__ RawSize;
+		available__( void )
+		{
+			Row = NONE;
+			RawSize = 0;
+		}
+		bool operator !=( const available__ &A ) const
+		{
+			return ( Row != A.Row ) || ( RawSize != A.RawSize );
+		}
 	};
 
 	// Pile contenant tous les emplacement libres.
@@ -494,6 +503,8 @@ namespace dbsdct {
 	class file_content_
 	: public content_
 	{
+	private:
+		void _SaveLocationsAndAvailables( void ) const;
 	public:
 		str::string_ RootFileName;
 		struct s
@@ -513,6 +524,11 @@ namespace dbsdct {
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				if ( RootFileName.Amount() != 0 )
+					_SaveLocationsAndAvailables();
+			}
+
 			_S.MemoryDriver.Storage.reset( P );
 			_S.MemoryDriver.Entries.reset( P );
 			RootFileName.reset( P );

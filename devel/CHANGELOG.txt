@@ -5,6 +5,8 @@ $Id$
 		- Ajout méthode 'Size'.
 	- FLM :
 		- Correction erreur sur nom classes.
+	- FLW :
+		- Ajout méthode 'EOFD()' avec paramètre taille.
 	- LSTBCH :
 		- Amélioration ergonomie.
 	- WLLIO :
