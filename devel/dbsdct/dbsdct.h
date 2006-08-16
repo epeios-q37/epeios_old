@@ -106,13 +106,13 @@ namespace dbsdct {
 		}
 		size__ _Store(
 			const data_ &Data,
-			data_row__ &Row,
 			size__ Offset,
+			data_row__ &Row,
 			size__ Available )
 		{
 			size__ &Amount = Available;
 			
-			Amount = _AmountWritable( Data.Amount(), Available );
+			Amount = _AmountWritable( Data.Amount() - Offset, Available );
 
 			dtfptb::size_buffer__ SizeBuffer;
 			bso::ubyte__ SizeLength = dtfptb::GetSizeLength( Amount );
@@ -129,30 +129,21 @@ namespace dbsdct {
 
 			return Amount;
 		}
-		/* Stocke à la position 'Row' 'Datum' sachant qu'à cette position 'Available' octets sont disponibles.
-		Retourne le nombre d'octets de 'Datum' effetivement stockés. */
-		size__ _Store(
-			const data_ &Data,
-			data_row__ Row,
-			size__ Available )
-		{
-			return _Store( Data, Row, 0, Available );
-		}
-		/* Ajoute 'Data' à la position 'Row', sachant que 'Row' est la position du premier octet non alloué.
+		/* Ajoute 'Data' à la position 'Row', sachant que 'Unallocated' est la position du premier octet non alloué.
 		L'espace necessaire est alloué. Retourne la position du nouveau premier octet non alloué. */
 		data_row__ _Store(
 			const data_ &Data,
 			size__ Offset,
-			data_row__ Row )
+			data_row__ Unallocated )
 		{
 			size__ DataAmount = Data.Amount() - Offset;
 			size__ TotalSize = DataAmount + dtfptb::GetSizeLength( DataAmount );
 
-			Memory.Allocate( *Row + TotalSize );
+			Memory.Allocate( *Unallocated + TotalSize );
 
-			_Store( Data, Row, Offset, TotalSize );	// 'Row' mis à jour par cette méthode.
+			_Store( Data, Offset, Unallocated, TotalSize );	// 'Unallocated' mis à jour par cette méthode.
 
-			return Row;
+			return Unallocated;
 		}
 		size__ _GetComputedSize(
 			data_row__ Row,
@@ -212,6 +203,7 @@ namespace dbsdct {
 		une partie de 'Data' est placé à 'Unavailable' (en allouant l'espace nécessaire), qui est alors modifié
 		pour pointer sur la nouvelle position du premier octet non alloué. Si 'Row', au retour, est != 'NONE',
 		alors il reste 'Available' octets à 'Row'. */
+/*
 		data_row__ Write(
 			const data_ &Data,
 			data_row__ &Row,
@@ -236,30 +228,48 @@ namespace dbsdct {
 
 			return Rest;
 		}
+*/
+		size__ Store(
+			const data_ &Data,
+			size__ Offset,
+			data_row__ &Row,
+			size__ &Available )
+		{
+			size__ Written = _Store( Data, Offset, Row, Available );
+			size__ TotalWritten = Written + dtfptb::GetSizeLength( Written );
+
+			Available -= TotalWritten;
+
+			if ( Available == 0 )
+				Row = NONE;
+
+			return Written;
+		}
 		/* Ajoute 'Data' à 'Row', qui est la position du premier octet non alloué. La place nécessaire est allouée et
 		la nouvelle position du premier octet non alloué et retourné. */
 		data_row__ Append(
 			const data_ &Data,
+			size__ Offset,
 			data_row__ Row )
 		{
-			return _Store( Data, 0, Row );
+			return _Store( Data, Offset, Row );
 		}
 		size__ GetComputedSize(
 			data_row__ Row,
-			data_row__ Unavailable ) const
+			data_row__ Unallocated ) const
 		{
-			return _GetComputedSize( Row, Unavailable );
+			return _GetComputedSize( Row, Unallocated );
 		}
 		size__ GetRawSize(
 			data_row__ Row,
-			data_row__ Unavailable ) const
+			data_row__ Unallocated ) const
 		{
-			return _GetRawSize( Row, Unavailable );
+			return _GetRawSize( Row, Unallocated );
 		}
 		/* Place un marqueur de taille à 'DataRow' sachant qu'il y a 'Size' octets de disponibles. Retourne le nombre
 		d'octets effectivement disponibles à cette position aprés y avoir placé le marquer de taille. */
 		size__ StoreSize(
-			data_row__ DataRow,
+			data_row__ Row,
 			size__ Size )
 		{
 #ifdef DBSDCT_DBG
@@ -272,7 +282,7 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Size, SizeBuffer );
 
-			Memory.Store( *(const datum__ *)SizeBuffer, dtfptb::GetSizeLength( Size ) );
+			Memory.Store( (const datum__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
 
 			return Size;
 		}
@@ -333,45 +343,63 @@ namespace dbsdct {
 	class content_
 	{
 	private:
-		void _StoreInAvailable(
+		size__ _StoreInAvailable(
 			const data_ &Data,
-			row__ Row )
+			size__ Offset,
+			data_row__ &Row )
 		{
-			entry__ Entry;
 			available__ Available;
+			size__ Written;
 
 			Available = Availables.Pop();
 
-			Entry.Head = Available.Row;
-			Entry.Tail = Storage.Write( Data, Available.Row, Available.RawSize, _S.Unallocated );
+			Row = Available.Row;
+
+			Written = Storage.Store( Data, Offset, Available.Row, Available.RawSize );
 
 			if ( Available.Row != NONE ) {
+#ifdef DBSDCT_DBG
+				if ( Written != ( Data.Amount() - Offset ) )
+					ERRc();
+#endif
 				Storage.StoreSize( Available.Row, Available.RawSize );
 				Availables.Push( Available );
 			}
 
-			Entries.Store( Entry, Row );
+			return Written;
 		}
 		void _Append(
 			const data_& Data,
-			row__ Row )
+			size__ Offset,
+			data_row__ &Row )
 		{
 			entry__ Entry;
 
-			Entry.Head = _S.Unallocated;
+			Row = _S.Unallocated;
 
-			_S.Unallocated = Storage.Append( Data, _S.Unallocated );
-
-			Entries.Store( Entry, Row );
+			_S.Unallocated = Storage.Append( Data, Offset, _S.Unallocated );
 		}
 		row__ _Store(
 			const data_ &Data,
 			row__ Row )
 		{
-			if ( Availables.Amount() != 0 )
-				_StoreInAvailable( Data, Row );
-			else
-				_Append( Data, Row );
+			entry__ Entry;
+
+			if ( Availables.Amount() != 0 ) {
+				size__ Written;
+	
+				Written = _StoreInAvailable( Data, 0, Entry.Head );
+
+				if ( ( Written != Data.Amount() )
+					 && ( Availables.Amount() != 0 )
+					 && ( Storage.GetComputedSize( Availables.Top().Row, _S.Unallocated ) >= ( Data.Amount() - Written ) ) )
+					_StoreInAvailable( Data, Written, Entry.Tail );
+				else
+					_Append( Data, Written, Entry.Tail );
+			} else
+				_Append( Data, 0, Entry.Head );
+
+			Entries.Store( Entry, Row );
 
 			return Row;
 		}
