@@ -376,7 +376,7 @@ namespace flw {
 		'Data' is NOT duplicated and should not be modified. */
 		void EOFD( const char *Data )
 		{
-			EOFD( Data, strlen( Data ) );
+			EOFD( (void *)Data, strlen( Data ) );
 		}
 		/* 'Data' is a NUL terminated string to use as end of flow data.
 		'Data' is NOT suplicated and should not be modified. This data will
