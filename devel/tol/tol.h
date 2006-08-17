@@ -65,6 +65,7 @@ extern class ttr_tutor &TOLTutor;
 #include <stddef.h>
 #include <time.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #include "cpe.h"
 #include "bso.h"
@@ -450,6 +451,32 @@ namespace tol {
 
 	//f Return true if the file 'Name' exists, false otherwise.
 	bool FileExists( const char *Nom );
+
+	inline time_t GetFileLastModificationTime( const char *FileName )
+	{
+#ifdef CPE__T_MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mtime;
+#elif defined CPE__T_LINUX
+		stat stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return stat.st_mtime;
+#else
+		ERRl();
+#endif
+	}
+
+	inline RemoveFile( const char *FileName )
+	{
+		remove( FileName );
+	}
 
 	//f Return the current date.
 	const char *Date( buffer__ &Buffer );

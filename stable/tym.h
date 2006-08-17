@@ -217,6 +217,10 @@ namespace tym {
 		{
 			return Get( Position );
 		}
+		size_t GetItemSize( void ) const
+		{
+			return sizeof( t );
+		}
 	};
 
 	/*c Memory of statical object of type 't'. */

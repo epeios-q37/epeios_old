@@ -522,6 +522,16 @@ namespace dbsdct {
 
 			return true;
 		}
+		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
+		void RebuildLocations( void )
+		{
+			ERRl();
+		}
+		// Reconstruit la liste des portions inoccupés dans 'Storage'.
+		void RebuildAvailables( void )
+		{
+			ERRl();
+		}
 		E_NAVt( Entries., row__ )
 	};
 
@@ -566,11 +576,11 @@ namespace dbsdct {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_content_ &operator =( const file_content_ &)
+		file_content_ &operator =( const content_ &C )
 		{
-			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
+			content_::operator =( C );
 
-			return *this;	// Pour éviter un warning
+			return *this;
 		}
 		bso::bool__ Init( const str::string_ &RootFileName );
 	};

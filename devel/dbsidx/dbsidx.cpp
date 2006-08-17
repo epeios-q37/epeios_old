@@ -55,7 +55,13 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flf.h"
+
 using namespace dbsidx;
+
+#define TREE_FILE_NAME_EXTENSION	".edt"
+#define QUEUE_FILE_NAME_EXTENSION	".edq"
+#define ROOT_FILE_NAME_EXTENSION	".edr"
 
 bso::sign__ dbsidx::index_::_Search(
 	const data_ &Data,
@@ -139,6 +145,180 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+template <typename container> static bso::bool__ Set_(
+	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
+	const str::string_ &FileName,
+	container &C )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileNameBuffer = FileName.Convert();
+
+	Exists = tol::FileExists( FileNameBuffer );
+
+	MemoryDriver.Init( FileNameBuffer );
+	MemoryDriver.Persistant();
+	C.plug( MemoryDriver );
+	C.SetStepValue( 0 );
+	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+static time_t GetModificationTimeStamp_( const str::string_ &FileName )
+{
+	time_t TimeStamp;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileNameBuffer = FileName.Convert();
+
+	TimeStamp = tol::GetFileLastModificationTime( FileNameBuffer );
+ERRErr
+ERREnd
+ERREpilog
+	return TimeStamp;
+}
+
+static inline void Save_(
+	row__ Row,
+	flw::oflow__ &Flow )
+{
+	dtfptb::PutULong( *Row, Flow );
+}
+
+static void Save_(
+	row__ Row,
+	const char *RootFileName )
+{
+ERRProlog
+	flf::file_oflow___ Flow;
+ERRBegin
+	Flow.Init( RootFileName );
+
+	Save_( Row, Flow );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void Save_(
+	row__ Row,
+	const str::string_ &RootFileName,
+	const char *Extension )
+{
+ERRProlog
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileName.Init( RootFileName );
+	FileName.Append( Extension );
+	Save_( Row, FileNameBuffer = FileName.Convert() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void dbsidx::file_index_::_SaveRoot( void ) const
+{
+	Save_( index_::_S.Root, RootFileName, ROOT_FILE_NAME_EXTENSION );
+}
+
+static inline void Load_(
+	flw::iflow__ &Flow,
+	row__ &Row )
+{
+	Row = dtfptb::GetULong( Flow );
+}
+
+static bso::bool__ Load_(
+	const char *RootFileName,
+	row__ &Row,
+	time_t TimeStamp )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	flf::file_iflow___ Flow;
+ERRBegin
+	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
+		if ( tol::GetFileLastModificationTime( RootFileName ) > TimeStamp )
+			ERRReturn;
+
+		Load_( Flow, Row );
+
+		Success = true;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+static bso::bool__ Load_(
+	const str::string_ &RootFileName,
+	row__ &Row,
+	const char *Extension,
+	time_t TimeStamp )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileName.Init( RootFileName );
+	FileName.Append( Extension );
+	Success = Load_( FileNameBuffer = FileName.Convert(), Row, TimeStamp );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+
+bso::bool__ dbsidx::file_index_::Init( const str::string_ &RootFileName )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	str::string TreeFileName;
+	str::string QueueFileName;
+ERRBegin
+	index_::Init();
+	TreeFileName.Init( RootFileName );
+	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
+	Exists = Set_( _S.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().Nodes );
+
+	QueueFileName.Init( RootFileName );
+	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
+	if ( Set_( _S.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links ) != Exists )
+		ERRu();
+
+	this->RootFileName.Init( RootFileName );
+
+	if ( Exists ) {
+		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
+
+		TreeTimeStamp = GetModificationTimeStamp_( TreeFileName );
+		QueueTimeStamp = GetModificationTimeStamp_( QueueFileName );
+
+		if ( TreeTimeStamp > QueueTimeStamp )
+			LastTimeStamp = TreeTimeStamp;
+		else
+			LastTimeStamp = QueueTimeStamp;
+
+		if ( !Load_( RootFileName, index_::_S.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
+			SearchRoot();
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

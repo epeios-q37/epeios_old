@@ -1,5 +1,11 @@
 $Id$
 
+17/08/06 :
+	- IDXBTQ :
+		- Amélioration de l'ergonomie.
+	- TOL :
+		- Ajout fonction 'RemoveFile()'.
+
 16/08/06 :
 	- CSLIO :
 		- Ajout méthode 'Size'.

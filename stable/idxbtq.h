@@ -195,6 +195,22 @@ namespace idxbtq {
 		{
 			return E_IBTREEt_( r )::Amount();
 		}
+		E_IBTREEt_( r ) &Tree( void )
+		{
+			return *this;
+		}
+		const E_IBTREEt_( r ) &Tree( void ) const
+		{
+			return *this;
+		}
+		E_IQUEUEt_( r ) &Queue( void )
+		{
+			return *this;
+		}
+		const E_IQUEUEt_( r ) &Queue( void ) const
+		{
+			return *this;
+		}
 	};
 
 	E_AUTO1( tree_queue_index )

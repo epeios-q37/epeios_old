@@ -40,7 +40,9 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	dbsidx::file_index Index;
 ERRBegin
+Index.Init( str::string( "essai" ) );
 ERRErr
 ERREnd
 ERREpilog

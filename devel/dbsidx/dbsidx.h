@@ -144,8 +144,8 @@ namespace dbsidx {
 			return *this;
 		}
 		void Init(
-			const content_ &Content,
-			sort_function__ &Sort )
+			const content_ &Content = *(content_ *)NULL,
+			sort_function__ &Sort = *(sort_function__ *)NULL)
 		{
 			BaseIndex.Init();
 			_S.Root = NONE;
@@ -154,7 +154,66 @@ namespace dbsidx {
 			_S.Sort = &Sort;
 		}
 		void Index( row__ Row );
+		row__ SearchRoot( void )
+		{
+			ERRl();
+
+			return _S.Root;
+		}
 	};
+
+	E_AUTO( index )
+
+	// 'index' stockés dans des fichiers.
+
+	class file_index_
+	: public index_
+	{
+	private:
+		void _SaveRoot( void ) const;
+	public:
+		str::string_ RootFileName;
+		struct s
+		: public index_::s
+		{
+			struct memory_driver__ {
+				flm::E_FILE_MEMORY_DRIVER___
+					Tree,
+					Queue;
+			} MemoryDriver;
+			str::string_::s RootFileName;
+		} &_S;
+		file_index_( s &S )
+		: _S( S ), 
+		  index_( S ),
+		  RootFileName( S.RootFileName )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( RootFileName.Amount() != 0 )
+					_SaveRoot();
+			}
+
+			_S.MemoryDriver.Tree.reset( P );
+			_S.MemoryDriver.Queue.reset( P );
+			RootFileName.reset( P );
+			index_::reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ & )
+		{
+			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
+		}
+		file_index_ &operator =( const index_ &FI )
+		{
+			index_::operator =( FI );
+
+			return *this;	// Pour éviter un warning
+		}
+		bso::bool__ Init( const str::string_ &RootFileName );
+	};
+
+	E_AUTO( file_index )
 
 
 

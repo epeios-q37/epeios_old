@@ -57,8 +57,10 @@ public:
 
 #include "flf.h"
 
-#define LOCATIONS_EXTENSION		".edl"
-#define AVAILABLES_EXTENSION	".eda"
+#define LOCATIONS_FILE_NAME_EXTENSION	".edl"
+#define AVAILABLES_FILE_NAME_EXTENSION	".eda"
+#define CONTENT_FILE_NAME_EXTENSION		".edc"
+#define ENTRIES_FILE_NAME_EXTENSION		".ede"
 
 using namespace dbsdct;
 
@@ -78,6 +80,7 @@ ERRBegin
 	MemoryDriver.Init( FileNameBuffer );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
+	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
 ERRErr
 ERREnd
 ERREpilog
@@ -146,8 +149,8 @@ ERREpilog
 
 void dbsdct::file_content_::_SaveLocationsAndAvailables( void ) const
 {
-	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_EXTENSION );
-	Save_( Availables, RootFileName, AVAILABLES_EXTENSION );
+	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
+	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
 }
 
 static inline void Load_(
@@ -181,75 +184,115 @@ template <typename item> static void Load_(
 	}
 }
 
-template <typename item> static void Load_(
+template <typename item> static bso::bool__ Load_(
 	const char *RootFileName,
 	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue )
+	item TestValue,
+	time_t TimeStamp )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	flf::file_iflow___ Flow;
-static flw::datum__ Buffer[sizeof( item )];
+	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
-	Flow.Init( RootFileName );
+	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
+		if ( tol::GetFileLastModificationTime( RootFileName ) > TimeStamp )
+			ERRReturn;
 
-	memcpy( Buffer, &TestValue, sizeof( item ) );
+		memcpy( Buffer, &TestValue, sizeof( item ) );
 
-	Flow.EOFD( (void *)Buffer, sizeof( item ) );
+		Flow.EOFD( (void *)Buffer, sizeof( item ) );
 
-	Load_( Flow, Bunch, TestValue );
+		Load_( Flow, Bunch, TestValue );
+
+		Flow.reset();
+
+		Success = true;
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
-template <typename item> static void Load_(
+template <typename item> static bso::bool__ Load_(
 	const str::string_ &RootFileName,
 	stk::E_BSTACK_( item ) &Bunch,
 	item TestValue,
-	const char *Extension )
+	const char *Extension,
+	time_t TimeStamp )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	str::string FileName;
 	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	Load_( FileNameBuffer = FileName.Convert(), Bunch, TestValue );
+	Success = Load_( FileNameBuffer = FileName.Convert(), Bunch, TestValue, TimeStamp );
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
+}
+
+static time_t GetModificationTimeStamp_( const str::string_ &FileName )
+{
+	time_t TimeStamp;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	FileNameBuffer = FileName.Convert();
+
+	TimeStamp = tol::GetFileLastModificationTime( FileNameBuffer );
+ERRErr
+ERREnd
+ERREpilog
+	return TimeStamp;
 }
 
 bso::bool__ dbsdct::file_content_::Init( const str::string_ &RootFileName )
 {
 	bso::bool__ Exists = false;
 ERRProlog
-	str::string FileName;
+	str::string ContentFileName;
+	str::string EntriesFileName;
 	available__ TestAvailable;
 ERRBegin
-	FileName.Init( RootFileName );
-	FileName.Append( ".edc" );
-	Exists = Set_( _S.MemoryDriver.Storage, FileName, content_::Storage );
-	content_::Storage.Memory.Allocate( _S.MemoryDriver.Storage.Size() );
+	content_::Init();
 
-	FileName.Init( RootFileName );
-	FileName.Append( ".edb" );
-	if ( Set_( _S.MemoryDriver.Entries, FileName, Entries.Bunch() ) != Exists )
+	ContentFileName.Init( RootFileName );
+	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
+	Exists = Set_( _S.MemoryDriver.Storage, ContentFileName, content_::Storage.Memory );
+
+	EntriesFileName.Init( RootFileName );
+	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
+	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
+	if ( Set_( _S.MemoryDriver.Entries, EntriesFileName, Entries.Bunch() ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );
 
-	content_::Init();
 	content_::_S.Unallocated = _S.MemoryDriver.Storage.Size();
-
-	Entries.Bunch().Allocate( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ), aem::mFit );
-	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
 
 	Entries.List().Locations.Init( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
 
 	if ( Exists ) {
-		Load_<epeios::row__>( RootFileName, Entries.List().Locations.Released, NONE, LOCATIONS_EXTENSION );
-		Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_EXTENSION );
+		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
+
+		ContentTimeStamp = GetModificationTimeStamp_( ContentFileName );
+		EntriesTimeStamp = GetModificationTimeStamp_( EntriesFileName );
+
+		if ( ContentTimeStamp > EntriesTimeStamp )
+			LastTimeStamp = ContentTimeStamp;
+		else
+			LastTimeStamp = EntriesTimeStamp;
+
+		if ( !Load_<epeios::row__>( RootFileName, Entries.List().Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, LastTimeStamp ) )
+			RebuildLocations();
+
+		if ( !Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, LastTimeStamp ) )
+			RebuildAvailables();
 	}
 ERRErr
 ERREnd
