@@ -69,6 +69,7 @@ extern class ttr_tutor &IDXBTRTutor;
 #include "btr.h"
 #include "que.h"
 #include "stk.h"
+#include "bitbch.h"
 
 namespace idxbtr {
 
@@ -94,28 +95,110 @@ namespace idxbtr {
 			que::E_QUEUEt_( r ) &Index,
 			r Premier,
 			mdr::E_MEMORY_DRIVER__ &Pilote );
+		bso::bool__ _IsBlack( r Node ) const
+		{
+			return !Colors( Node );
+		}
+		bso::bool__ _IsRed( r Node ) const
+		{
+			return Colors( Node );
+		}
+		void _BecomeBlack( r Node )
+		{
+			Colors.Store( false, Node );
+		}
+		void _BecomeRed( r Node )
+		{
+			Colors.Store( true, Node );
+		}
+		E_BTREEt_( r ) &_BaseTree( void )
+		{
+			return *this;
+		}
+		const E_BTREEt_( r ) &_BaseTree( void ) const
+		{
+			return *this;
+		}
+		void _InsertCase1( r Node )
+		{
+			if ( HasParent( Node )) {
+				_BecomeRed( Node );
+				_InsertCase2( Node );
+			} else
+				_BecomeBlack( Node );
+		}
+		void _InsertCase2( r Node)
+		{
+			if ( _IsRed( Parent( Node ) ) )
+				_InsertCase3( Node );
+		}
+		void _InsertCase3( r Node )
+		{
+			r Parent, GrandParent, Uncle = this->Uncle( Node, Parent, GrandParent );
+
+			if ( ( Uncle != NONE ) && ( _IsRed( Uncle ) ) ) {
+				_BecomeBlack( Parent );
+				_BecomeBlack( Uncle );
+				_BecomeRed( GrandParent );
+				_InsertCase1( GrandParent );
+			} else
+				_InsertCase4( Node );
+		}
+
+		void _InsertCase4( r Node)
+		{
+			r Parent, GrandParent = this->GrandParent( Node, Parent );
+
+			if ( IsRight( Node ) && IsLeft( Parent ) ) {
+				RotateLeft( Parent );
+				Node = Left( Node );
+			} else if ( IsLeft( Node ) && IsRight( Parent ) ) {
+				RotateRight( Parent );
+				Node = Right( Node );
+			}
+
+			_InsertCase5( Node );
+		}
+
+		void _InsertCase5( r Node )
+		{
+			r Parent, GrandParent = this->GrandParent( Node, Parent );
+
+			if ( IsLeft( Node ) && IsLeft( Parent ) )
+				RotateRight( GrandParent );
+			else
+				RotateLeft( GrandParent );
+		}
 	public:
+		bitbch::E_BIT_BUNCHt_( r ) Colors;		
 		struct s
 		: public E_BTREEt_( r )::s
-		{};
+		{
+			bitbch::E_BIT_BUNCHt_( r )::s Colors;
+		};
 		tree_index_( s &S )
-		: E_BTREEt_( r )( S )
+		: E_BTREEt_( r )( S ),
+		  Colors( S.Colors )
 		{}
 		void reset( bool P = true )
 		{
 			E_BTREEt_( r )::reset( P );
+			Colors.reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
 			E_BTREEt_( r )::plug( MM );
+			Colors.plug ( MM );
 		}
+/*
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			E_BTREEt_( r )::plug( MD );
 		}
-		tree_index_ &operator =( const tree_index_ &I )
+*/		tree_index_ &operator =( const tree_index_ &I )
 		{
 			E_BTREEt_( r )::operator =( I );
+			Colors = I.Colors;
 
 			return *this;
 		}
@@ -133,6 +216,14 @@ namespace idxbtr {
 		void Init( void )
 		{
 			E_BTREEt_( r) ::Init();
+			Colors.Init();
+		}
+		void Allocate(
+			epeios::size__ Size,
+			aem::mode Mode = aem::mDefault )
+		{
+			_BaseTree().Allocate( Size, Mode );
+			Colors.Allocate( Size, Mode );
 		}
 		//f Return the first item of the index.
 		r First( r Root ) const
@@ -142,7 +233,7 @@ namespace idxbtr {
 		//f Return the last item of the index.
 		r Last( r Root ) const
 		{
-				return NoeudSansFille_( Root );
+			return NoeudSansFille_( Root );
 		}
 		//f Return the item next to 'Item'.
 		r Next( r Item ) const
@@ -169,6 +260,28 @@ namespace idxbtr {
 					return PereFilleEnRemontant_( Position );
 				else
 					return NONE;
+		}
+		// 'Node' devient le fils gauche de 'Parent'.
+		void BecomeLeft(
+			r Node,
+			r Parent,
+			bso::bool__ AutoBalance = true )
+		{
+			_BaseTree().BecomeLeft( Node, Parent );
+
+			if ( AutoBalance )
+				_InsertCase1( Node );
+		}
+		// 'Node' devient le fils gauche de 'Parent'.
+		void BecomeRight(
+			r Node,
+			r Parent,
+			bso::bool__ AutoBalance = true )
+		{
+			_BaseTree().BecomeRight( Node, Parent );
+
+			if ( AutoBalance )
+				_InsertCase1( Node );
 		}
 		//f Remove 'Item'. Return the new root.
 		r Delete(

@@ -392,6 +392,137 @@ namespace btr {
 		{
 			return Right_( *Node );
 		}
+		// Retourne le grand-parent de 'Node', ou 'NONE' si inexistant. Sotcke dans 'Parent' le parent de 'Node', si existant.
+		r GrandParent(
+			r Node,
+			r &Parent ) const
+		{
+			if ( ( Parent = this->Parent( Node ) ) != NONE )
+				return this->Parent( Parent );
+			else
+				return NONE;
+		}
+		// Retourne le grand-parent de 'Node', ou 'NONE' si inexistant
+		r GrandParent( r Node ) const
+		{
+			r Parent;
+
+			return GrandParent( Node, Parent );
+		}
+		/* Retourne l'oncle de 'Node', ou 'NONE' si inexistant. Stocke dans 'Parent' et 'GrandParent' respectivement 
+		le parent et le grand-parent de 'Node', s'ils existent. ATTENTION : 'Parent' et 'GrandParent' ne doivent PAS pointer
+		sur la même variable. */
+		r Uncle(
+			r Node,
+			r &Parent,
+			r &GrandParent ) const
+		{
+			if ( ( GrandParent = this->GrandParent( Node, Parent ) ) == NONE )
+				return NONE;
+
+			if ( IsLeft( Parent ) )
+				return Right( GrandParent );
+			else
+				return Left( GrandParent );
+		}
+		/* Retourne l'oncle de 'Node', ou 'NONE' si inexistant. Stocke dans 'Parent' et 'GrandParent' respectivement 
+		le parent et le grand-parent de 'Node', d'ils existent. */
+		r Uncle( r Node ) const
+		{
+			r Parent, GrandParent;
+
+			return Uncle( Node, Parent, GrandParent );
+		}
+		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche.
+		void RotateRight( r Node )
+		{
+			r A, B, C, P, &D = Node;
+			bso::bool__ IsLeftFlag = false;
+
+			P = Parent( D );
+
+			if ( P != NONE ) {
+				IsLeftFlag = IsLeft( D );
+				Cut( D );
+			}
+
+			B = Left( D );
+
+#ifdef BTR_DBG
+			if ( B == NONE )
+				ERRu();
+#endif
+
+			A = Left( B );
+			C = Right( B );
+
+			Cut( B );
+
+			if ( A != NONE )
+				Cut( A );
+
+			if ( C != NONE )
+				Cut( C );
+
+			if ( P != NONE )
+				if ( IsLeftFlag )
+					BecomeLeft( B, P );
+				else
+					BecomeRight( B, P );
+
+			BecomeRight( D, B );
+
+			if ( A != NONE )
+				BecomeLeft( A, B );
+
+			if ( C != NONE )
+				BecomeLeft( C, D );
+		}
+		// Rotation à gauche avec 'Node' come pivot, qui DOIT avoir un fils droit.
+		void RotateLeft( r Node )
+		{
+			r E, D, C, P, &B = Node;
+			bso::bool__ IsLeftFlag = false;
+
+			P = Parent( B );
+
+			if ( P != NONE ) {
+				IsLeftFlag = IsLeft( B );
+				Cut( B );
+			}
+
+			D = Right( B );
+
+#ifdef BTR_DBG
+			if ( D == NONE )
+				ERRu();
+#endif
+
+			E = Right( D );
+			C = Left( B );
+
+			Cut( D );
+
+			if ( E != NONE )
+				Cut( E );
+
+			if ( C != NONE )
+				Cut( C );
+
+			if ( P != NONE )
+				if ( IsLeftFlag )
+					BecomeLeft( D, P );
+				else
+					BecomeRight( D, P );
+
+			BecomeLeft( B, D );
+
+			if ( E != NONE )
+				BecomeRight( E, D );
+
+			if ( C != NONE )
+				BecomeRight( C, B );
+		}
 		/* Elague 'Node'; 'Node' devient la racine de l'arbre
 		et perd donc son père. */
 		//f Cut 'Node'. 'Node' becomes a root.
@@ -917,6 +1048,47 @@ namespace btr {
 		{
 			return Right_( *Node );
 		}
+		// Retourne le grand-parent de 'Node', ou 'NONE' si inexistant. Sotcke dans 'Parent' le parent de 'Node', si existant.
+		r GrandParent(
+			r Node,
+			r &Parent ) const
+		{
+			if ( ( Parent = Parent_( *Node ) ) != NONE )
+				return Parent_( Parent );
+			else
+				return NONE;
+		}
+		// Retourne le grand-parent de 'Node', ou 'NONE' si inexistant
+		r GrandParent( r Node ) const
+		{
+			r Parent;
+
+			return GranParent( Node, Parent );
+		}
+		/* Retourne l'oncle de 'Node', ou 'NONE' si inexistant. Stocke dans 'Parent' et 'GrandParent' respectivement 
+		le parent et le grand-parent de 'Node', s'ils existent. ATTENTION : 'Parent' et 'GrandParent' ne doivent PAS pointer
+		sur la même variable. */
+		r Uncle(
+			r Node,
+			r &Parent,
+			r &GrandParent ) const
+		{
+			if ( ( GrandParent = GrandParent( Node, Parent ) ) == NONE )
+				return NONE;
+
+			if ( IsLeft( Parent, GrandParent ) )
+				return Right( GrandParent );
+			else
+				return Left( GrandParent );
+		}
+		/* Retourne l'oncle de 'Node', ou 'NONE' si inexistant. Stocke dans 'Parent' et 'GrandParent' respectivement 
+		le parent et le grand-parent de 'Node', d'ils existent. */
+		r Uncle( r Node ) const
+		{
+			r Parent, GrandParent;
+
+			return Uncle( Node, Parent, GrandParent );
+		}
 		/* Elague 'Node'; 'Node' devient la racine de l'arbre
 		et perd donc son père. */
 		//f Cut 'Node'. 'Node' becomes a root.
@@ -1046,7 +1218,96 @@ namespace btr {
 		{
 			return HasParent_( *Node );
 		}
+		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche.
+		void RotateRight( r Node )
+		{
+			r A, B, C, P, D = &Node;
+			bso::bool__ IsLeft = false;
 
+			Parent = Parent( D );
+
+			if ( Parent != NONE ) {
+				IsLeft = IsLeft( D );
+				Cut( D );
+			}
+
+			B = Left( D );
+
+#ifdef BTR_DBG
+			if ( B == NONE )
+				ERRu();
+#endif
+
+			A = Left( B );
+			C = Right( B );
+
+			Cut( B );
+
+			if ( A != NONE )
+				Cut( A );
+
+			if ( C != NONE )
+				Cut( C );
+
+			if ( Parent != NONE )
+				if ( IsLeft )
+					BecomeLeft( B, Parent );
+				else
+					BecomRight( B, Parent );
+
+			BecomeRight( D, B );
+
+			if ( A != NONE )
+				BecomeLeft( A, B );
+
+			if ( C != NONE )
+				BecomeLeft( C, D );
+		}
+		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils droit.
+		void RotateRight( r Node )
+		{
+			r E, D, C, P, B = &Node;
+			bso::bool__ IsLeft = false;
+
+			P = P( B );
+
+			if ( P != NONE ) {
+				IsLeft = IsLeft( B );
+				Cut( B );
+			}
+
+			D = Right( B );
+
+#ifdef BTR_DBG
+			if ( D == NONE )
+				ERRu();
+#endif
+
+			E = Right( D );
+			C = Left( B );
+
+			Cut( D );
+
+			if ( E != NONE )
+				Cut( E );
+
+			if ( C != NONE )
+				Cut( C );
+
+			if ( P != NONE )
+				if ( IsLeft )
+					BecomeLeft( D, Parent );
+				else
+					BecomRight( D, Parent );
+
+			BecomeLeft( B, D );
+
+			if ( E != NONE )
+				BecomeRight( E, D );
+
+			if ( C != NONE )
+				BecomeRight( C, B );
+		}
 		//f Force the parent from 'Node' to 'Parent'. Return the previous parent.
 		r ForceParent(
 			r Node,

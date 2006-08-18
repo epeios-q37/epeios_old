@@ -1,5 +1,11 @@
 $Id$
 
+18/08/08 :
+	- BTR :
+		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
+	- IDXBTR :
+		- Implémentation de l'agorithme 'red-black tree'.
+
 17/08/06 :
 	- IDXBTQ :
 		- Amélioration de l'ergonomie.
