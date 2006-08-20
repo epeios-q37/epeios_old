@@ -67,54 +67,32 @@ namespace idxbtr {
 		epeios::size__ Niveau;
 	};
 
-	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-	epeios::row_t__ idxbtr::NoeudSansFils_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( Tree.E_BTREE_::HasLeft( Position ) )
-			Position = *Tree.E_BTREE_::Left( Position );
-
-		return Position;
-	}
-
-	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-	epeios::row_t__ idxbtr::NoeudSansFille_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( Tree.E_BTREE_::HasRight( Position ) )
-			Position = *Tree.E_BTREE_::Right( Position );
-
-		return Position;
-	}
-
 	// Retourne le premier noeud qui est fils en remontant.
 	epeios::row_t__ idxbtr::PereFilsEnRemontant_( 
-		const E_IBTREE_ &Tree,
+		const btr::E_BTREE_ &Tree,
 		epeios::row_t__ Position )
 	{
-		while( !Tree.E_BTREE_::IsLeft( Position )
-			   && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::Parent( Position );
+		while( !Tree.IsLeft( Position )
+			   && Tree.HasParent( Position ) )
+			Position = *Tree.Parent( Position );
 
-		if ( Tree.E_BTREE_::IsLeft( Position ) )
-			return *Tree.E_BTREE_::Parent( Position );
+		if ( Tree.IsLeft( Position ) )
+			return *Tree.Parent( Position );
 		else
 			return NONE;
 	}
 
 	// Retourne le premier noeud qui est fille en remontant.
 	epeios::row_t__ idxbtr::PereFilleEnRemontant_( 
-		const E_IBTREE_ &Tree,
+		const btr::E_BTREE_ &Tree,
 		epeios::row_t__ Position )
 	{
-		while( !Tree.E_BTREE_::IsRight( Position )
-			    && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::Parent( Position );
+		while( !Tree.IsRight( Position )
+			    && Tree.HasParent( Position ) )
+			Position = *Tree.Parent( Position );
 
-		if ( Tree.E_BTREE_::IsRight( Position ) )
-			return *Tree.E_BTREE_::Parent( Position );
+		if ( Tree.IsRight( Position ) )
+			return *Tree.Parent( Position );
 		else
 			return NONE;
 	}
@@ -128,7 +106,7 @@ namespace idxbtr {
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
-		Queue.Allocate( Tree.Extent() );
+		Queue.Allocate( Tree.BaseTree.Extent() );
 
 		Current = Tree.First( Root );
 
@@ -183,7 +161,7 @@ namespace idxbtr {
 				Sommet = Pile.Pop();
 
 				Niveau = Sommet.Niveau + 1;
-				Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+				Tree.BaseTree.BecomeRight( Racine, Sommet.Racine );
 
 				Racine = *Sommet.Racine;
 			}
@@ -194,7 +172,7 @@ namespace idxbtr {
 			{
 				if ( File.HasNext( Courant ) )
 				{
-					Tree.E_BTREE_::BecomeLeft( Racine, Courant );
+					Tree.BaseTree.BecomeLeft( Racine, Courant );
 
 					Sommet.Racine = Courant;
 					Sommet.Niveau = Niveau;
@@ -206,7 +184,7 @@ namespace idxbtr {
 				else
 				{
 					Boucler = false;
-					Tree.E_BTREE_::BecomeRight( Courant, NoeudSansFille_( Tree, Racine ) );
+					Tree.BaseTree.BecomeRight( Courant, Tree.SearchMostRightNode( Racine ) );
 				}
 			}
 			else
@@ -223,7 +201,7 @@ namespace idxbtr {
 		{
 			Sommet = Pile.Pop();
 
-			Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+			Tree.BaseTree.BecomeRight( Racine, Sommet.Racine );
 
 			Racine = *Sommet.Racine;
 		}

@@ -103,6 +103,35 @@ void btr::_nodes_manager_::Prepare(
 }
 
 
+epeios::row_t__ btr::_nodes_manager_::SearchMostLeftNode(
+	epeios::row_t__ Node,
+	level__ &Level ) const
+{
+	Level = 0;
+
+	while( HasLeft( Node ) ) {
+		Node = Left( Node );
+		Level++;
+	}
+
+	return Node;
+}
+
+// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
+epeios::row_t__ btr::_nodes_manager_::SearchMostRightNode(
+	epeios::row_t__ Node,
+	level__ &Level ) const
+{
+	while( HasRight( Node ) ) {
+		Node = Right( Node );
+		Level++;
+	}
+
+	return Node;
+}
+
+
+
 // Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
 /*
 void arbre_binaire::EcrireDansFlot(

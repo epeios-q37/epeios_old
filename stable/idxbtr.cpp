@@ -67,28 +67,6 @@ namespace idxbtr {
 		epeios::size__ Niveau;
 	};
 
-	// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-	epeios::row_t__ idxbtr::NoeudSansFils_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( Tree.E_BTREE_::HasLeft( Position ) )
-			Position = *Tree.E_BTREE_::Left( Position );
-
-		return Position;
-	}
-
-	// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-	epeios::row_t__ idxbtr::NoeudSansFille_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( Tree.E_BTREE_::HasRight( Position ) )
-			Position = *Tree.E_BTREE_::Right( Position );
-
-		return Position;
-	}
-
 	// Retourne le premier noeud qui est fils en remontant.
 	epeios::row_t__ idxbtr::PereFilsEnRemontant_( 
 		const E_IBTREE_ &Tree,
@@ -206,7 +184,7 @@ namespace idxbtr {
 				else
 				{
 					Boucler = false;
-					Tree.E_BTREE_::BecomeRight( Courant, NoeudSansFille_( Tree, Racine ) );
+					Tree.E_BTREE_::BecomeRight( Courant, Tree.SearchMostRightNode( Racine ) );
 				}
 			}
 			else

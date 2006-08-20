@@ -73,17 +73,12 @@ extern class ttr_tutor &IDXBTRTutor;
 
 namespace idxbtr {
 
-	using btr::binary_tree_;
+	using btr::level__;
 
 	//c Tree-based index, fast sorting, but slow browsing.
 	template <typename r> class tree_index_
-	: public E_BTREEt_( r )
 	{
 	private:
-		// Retourne le premier noeud sans fils à partir de 'Position' en descendant par les fils.
-		r NoeudSansFils_( r Position ) const;
-		// Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-		r NoeudSansFille_( r Position ) const;
 		// Retourne le père du premier noeud qui est fils en remontant.
 		r PereFilsEnRemontant_( r Position ) const;
 		// Retourne le père du premier noeud qui est fille en remontant.
@@ -111,13 +106,11 @@ namespace idxbtr {
 		{
 			Colors.Store( true, Node );
 		}
-		E_BTREEt_( r ) &_BaseTree( void )
+		void _BecomeSameColor(
+			r Source,
+			r Target )
 		{
-			return *this;
-		}
-		const E_BTREEt_( r ) &_BaseTree( void ) const
-		{
-			return *this;
+			Colors.Store( Colors( Source ), Target );
 		}
 		void _InsertCase1( r Node )
 		{
@@ -169,11 +162,112 @@ namespace idxbtr {
 			else
 				RotateLeft( GrandParent );
 		}
+		void _delete_case1( r Node )
+		{
+			if ( HasParent( Node ))
+				_delete_case2( Node );
+		}
+		void _delete_case2( r Node )
+		{
+			r Parent = NONE;
+			r Sibling = this->Sibling( Node, Parent );
+
+			if ( IsRed( Sibling ) ) {
+				_BecomeRed( Parent );
+				_BecomeBlack( Sibling );
+
+				if ( IsLeft( Node ) )
+					RotateLeft( Parent );
+				else
+					RotateRight( Parent );
+			}
+
+			_delete_case3( Node );
+		}
+		void _delete_case3( r Node )
+		{
+			r Parent = NONE;
+			r Sibling = this->Sibling( Node, Parent );
+
+			if ( _IsBlack( Parent ) &&
+				 _IsBlack( Sibling ) &&
+				 _IsBlack( Left( Sibling ) ) &&
+				 _IsBlack( Right( Sibling ) ) )
+			{
+				_BecomeRed( Sibling );
+				_delete_case1( Parent );
+			}
+			else
+				_delete_case4( Node );
+		}	
+		void _delete_case4( r Node )
+		{
+			r Parent = NONE;
+			r Sibling = this->Sibling( Node, Parent );
+
+			if ( _IsRed( Parent ) &&
+				 _IsBlack( Sibling ) &&
+				 _IsBlack( Left( Sibling ) ) &&
+				 _IsBlack( Right( Sibling ) ) )
+			{
+				_BecomeRed( Sibling ),
+				_BecomeBlack( Parent );
+			}
+			else
+				_delete_case5( Node );
+		}
+		void _delete_case5( r Node )
+		{
+			r Parent = NONE;
+			r Sibling = this->Sibling( Node, Parent );
+
+			if ( IsLeft( Node ) &&
+				 _IsBlack( Sibling ) &&
+				 _IsBlack( Left( Sibling ) ) &&
+				 _IsRed( Right( Sibling ) ) )
+			{
+				_BecomeRed( Sibling );
+				_BecomeBlack( Left( Sibling ) );
+				RotateRight( Sibling );
+			}
+			if ( IsRight( Node ) &&
+				 _IsBlack( Sibling ) &&
+				 _IsRed( Left( Sibling ) ) &&
+				 _IsBlack( Right( Sibling ) ) )
+			{
+				_BecomeRed( Sibling );
+				_BecomeBlack( Right( Sibling ) );
+				RotateLeft( Sibling );
+			}
+
+			_delete_case6( Node );
+		}
+		void _delete_case6( r Node )
+		{
+			r Parent = NONE;
+			r Sibling = this->Sibling( Node, Parent );
+
+			_BecomeSameColor( Parent, Sibling );
+			_BecomeBlack( Parent );
+
+			if ( IsLeft( Node ) ) {
+				/* Here, sibling(n)->right->color == RED */
+				_BecomeBlack( Right( Sibling ) );
+				RotateLeft( Parent );
+			}
+			else
+			{
+				/* Here, sibling(n)->left->color == RED */
+				_BecomeBlack( Left( Sibling ) );
+				RotateRight( Parent );
+			}
+		}
 	public:
+		btr::E_BTREEt_( r ) BaseTree;
 		bitbch::E_BIT_BUNCHt_( r ) Colors;		
 		struct s
-		: public E_BTREEt_( r )::s
 		{
+			btr::E_BTREEt_( r )::s BaseTree;
 			bitbch::E_BIT_BUNCHt_( r )::s Colors;
 		};
 		tree_index_( s &S )
@@ -215,20 +309,32 @@ namespace idxbtr {
 	*/	//f Initialization.
 		void Init( void )
 		{
-			E_BTREEt_( r) ::Init();
+			BaseTree.Init();
 			Colors.Init();
 		}
 		void Allocate(
 			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
-			_BaseTree().Allocate( Size, Mode );
+			BaseTree.Allocate( Size, Mode );
 			Colors.Allocate( Size, Mode );
+		}
+		r SearchMostLeftNode( r Node ) const
+		{
+			level__ Level;
+
+			return BaseTree.SearchMostLeftNode( Node, Level );
+		}
+		r SearchMostRightNode( r Node ) const
+		{
+			level__ Level;
+
+			return BaseTree.SearchMostRightNode( Node, Level );
 		}
 		//f Return the first item of the index.
 		r First( r Root ) const
 		{
-			return NoeudSansFils_( Root );
+			return SearchMostLeftNode( Root );
 		}
 		//f Return the last item of the index.
 		r Last( r Root ) const
@@ -238,12 +344,12 @@ namespace idxbtr {
 		//f Return the item next to 'Item'.
 		r Next( r Item ) const
 		{
-			if ( E_BTREEt_( r )::HasRight( Item ) )
-				return NoeudSansFils_( E_BTREEt_( r )::Right( Item ) );
+			if ( BaseTree.HasRight( Item ) )
+				return SearchMostLeftNode( BaseTree.Right( Item ) );
 			else
-				if ( E_BTREEt_( r )::IsLeft( Item ) )
-					return E_BTREEt_( r )::Parent( Item );
-				else if ( E_BTREEt_( r )::IsRight( Item ) )
+				if ( BaseTree.IsLeft( Item ) )
+					return BaseTree.Parent( Item );
+				else if ( BaseTree.IsRight( Item ) )
 					return PereFilsEnRemontant_( Item );
 				else
 					return NONE;
@@ -251,12 +357,12 @@ namespace idxbtr {
 		//f Return the item previous to 'Item'.
 		r Previous( r Position ) const
 		{
-			if ( E_BTREEt_( r )::HasLeft( Position ) )
-				return NoeudSansFille_( E_BTREEt_( r )::Left( Position ) );
+			if ( BaseTree.HasLeft( Position ) )
+				return NoeudSansFille_( BaseTree.Left( Position ) );
 			else
-				if ( E_BTREEt_( r )::IsRight( Position ) )
-					return E_BTREEt_( r )::Parent( Position );
-				else if ( E_BTREEt_( r )::IsLeft( Position ) )
+				if ( BaseTree.IsRight( Position ) )
+					return BaseTree.Parent( Position );
+				else if ( BaseTree.IsLeft( Position ) )
 					return PereFilleEnRemontant_( Position );
 				else
 					return NONE;
@@ -283,6 +389,65 @@ namespace idxbtr {
 			if ( AutoBalance )
 				_InsertCase1( Node );
 		}
+		r Delete(
+			r Node,
+			r Root )
+		{
+			if ( HasBothChildren( Node ) ) {
+				r NewNode = NONE;
+
+				if ( *Node & 1 )	// Petit générateur aléatoire.
+					NewNode = SearchMostLeftNode( Right( Node ) );
+				else
+					NewNode = SearchMostRightNode( Left( Node ) );
+
+				if ( Root == Node )
+					Root = NewNode;
+
+				SwapNodes( Node, NewNode );
+
+				Node = NewNode;
+			}
+
+			if ( HasChildren( Node ) ) {
+
+				r NewNode = NONE;
+
+				if ( HasLeft( Node ) )
+					NewNode = Left( Node );
+				else
+					NewNode = Right( Node );
+
+				if ( Node == Root )
+					Root = NewNode;
+
+				SwapNodes( Node, NewNode );
+			}
+
+			if ( Node == Root )
+				Root = NONE;
+
+			if ( !HasChildren( Node ) ) {
+				_delete_case1( Node );
+				Cut( Node );
+			} else {
+				r Child = HasLeft( Node ) ? Left( Node ) : Right( Node );
+
+				Cut( Child );
+
+				SwapTrees( Child, Node );	// Sans que les couleurs suivent.
+
+				if ( _IsBlack( Node ) ) {
+					if ( _IsRed( Child ) )
+						_BecomeBlack( Child );
+					else
+						_delete_case1( Child );
+				}
+			}
+
+
+		}
+#if 0
 		//f Remove 'Item'. Return the new root.
 		r Delete(
 			r Item,
@@ -341,6 +506,7 @@ namespace idxbtr {
 
 			return Root;
 		}
+#endif
 		//f Mark 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
 		void MarkAsGreater(
 			r Row,
@@ -382,7 +548,7 @@ namespace idxbtr {
 			txf::text_oflow__ &OStream,
 			r Root ) const
 		{
-			E_BTREEt_( r )::PrintStructure( Root, OStream );
+			BaseTree.PrintStructure( Root, OStream );
 		}
 	};
 
@@ -394,20 +560,12 @@ namespace idxbtr {
 	#define E_IBTREE	E_IBTREEt( epeios::row__ )
 	#define E_IBTREE_	E_IBTREEt_( epeios::row__ )
 
-	epeios::row_t__ NoeudSansFils_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position );
-
-	epeios::row_t__ NoeudSansFille_(
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position );
-
 	epeios::row_t__ PereFilsEnRemontant_( 
-		const E_IBTREE_ &Tree,
+	const btr::E_BTREE_ &Tree,
 		epeios::row_t__ Position );
 
 	epeios::row_t__ PereFilleEnRemontant_( 
-		const E_IBTREE_ &Tree,
+		const btr::E_BTREE_ &Tree,
 		epeios::row_t__ Position );
 
 	epeios::row_t__ Balance_(
@@ -419,16 +577,6 @@ namespace idxbtr {
 		que::E_QUEUE_ &File,
 		epeios::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER__ &Pilote );
-
-	template <typename r> inline r tree_index_<r>::NoeudSansFils_( r Position ) const
-	{
-		return idxbtr::NoeudSansFils_( *(const E_IBTREE_ *)this, *Position );
-	}
-
-	template <typename r> inline r tree_index_<r>::NoeudSansFille_( r Position ) const
-	{
-		return idxbtr::NoeudSansFille_( *(const E_IBTREE_ *)this, *Position );
-	}
 
 	template <typename r> inline r tree_index_<r>::PereFilsEnRemontant_( r Position ) const
 	{

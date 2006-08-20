@@ -67,6 +67,8 @@ extern class ttr_tutor &BTRTutor;
 #if 1
 
 namespace btr {
+	typedef bso::ubyte__ level__;
+
 	//c Node. Internal use.
 	class _node__
 	{
@@ -94,6 +96,41 @@ namespace btr {
 	class _nodes_manager_
 	: public _nodes_
 	{
+	private:
+		/* Fait pointer le, parent s'il existe, de 'OldNode' sur 'NewNode', 'Node' contenant
+		les caratéristiques de 'OldNode'. */
+		void _SwapParent(
+			const _node__&Node,
+			epeios::row_t__ OldNode,
+			epeios::row_t__ NewNode )
+		{
+			if ( Node.Parent != NONE )
+				if ( IsLeft( OldNode ) )
+					BecomeLeft( NewNode, Node.Parent );
+				else
+					BecomeRight( NewNode, Node.Parent );
+		}
+		/* Fait pointer les enfants, s'ils existents, de 'OldNode' sur 'NewNode', 'Node' contenant
+		les caratéristiques de 'OldNode'. */
+		void _SwapChildren(
+			const _node__&Node,
+			epeios::row_t__ OldNode,
+			epeios::row_t__ NewNode )
+		{
+			if ( Node.Parent != NONE )
+				if ( IsLeft( OldNode ) )
+					BecomeLeft( NewNode, Node.Parent );
+				else
+					BecomeRight( NewNode, Node.Parent );
+		}
+		void _SwapRelated(
+			const _node__&Node,
+			epeios::row_t__ OldNode,
+			epeios::row_t__ NewNode )
+		{
+			_SwapParent( Node, OldNode, NewNode );
+			_SwapChildren( Node, OldNode, NewNode );
+		}
 	public:
 		struct s
 		: public _nodes_::s
@@ -232,13 +269,57 @@ namespace btr {
 		{
 			return HasLeft( Node ) || HasRight( Node );
 		}
+		// Retourne le premier noeud sans fils gauche à partir de 'Node' en descendant par les fils gauche.
+		epeios::row_t__ SearchMostLeftNode(
+			epeios::row_t__ Node,
+			level__ &Level ) const;
+		// Retourne le premier noeud sans noeid gauche à partir de 'Node' en descendant par les noeuds gauche.
+		epeios::row_t__ SearchMostRightNode(
+			epeios::row_t__ Node,
+			level__ &Level ) const;
 		void PrintStructure(
 			epeios::row_t__ Racine,
 			txf::text_oflow__ &Flot ) const;
 		//f Return true if 'Node' has a child.
-		bso::bool__ HasChild( epeios::row_t__ Node ) const
+		bso::bool__ HasChildren( epeios::row_t__ Node ) const
 		{
 			return HasRight( Node ) || HasLeft( Node );
+		}
+		bso::bool__ HasBothChildren( epeios::row_t__ Node ) const
+		{
+			return HasRight( Node ) && HasLeft( Node );
+		}
+		// Echange 'Node1' avec 'Node2', c'est-à-dire qu'il echangent leur parent, et fils gauche et droit respectif.
+		void SwapNodes(
+			epeios::row_t__ Node1,
+			epeios::row_t__ Node2 )
+		{
+			_node__ N1, N2;
+
+			N1 = Get( Node1 );
+			N2 = Get( Node2 );
+
+			_SwapRelated( N1, Node1, Node2 );
+			_SwapRelated( N2, Node2, Node1 );
+
+			Store( N2, Node1 );
+			Store( N1, Node2 );
+		}
+		// Echange l'abre de racine 'Node1' avec l'abre de racine 'Node2'.
+		void SwapTrees(
+			epeios::row_t__ Node1,
+			epeios::row_t__ Node2 )
+		{
+			_node__ N1, N2;
+
+			N1 = Get( Node1 );
+			N2 = Get( Node2 );
+
+			_SwapParent( N1, Node1, Node2 );
+			_SwapParent( N2, Node2, Node1 );
+
+			Store( N2, Node1 );
+			Store( N1, Node2 );
 		}
 	};
 
@@ -432,6 +513,29 @@ namespace btr {
 			r Parent, GrandParent;
 
 			return Uncle( Node, Parent, GrandParent );
+		}
+		r Sibling( r Node ) const
+		{
+			if ( IsLeft( Node ) )
+				return Right( Parent( Node ) );
+			else IsRight( Node ) 
+				return Left ( Parent( Node ) );
+			else
+				return NONE;
+		}
+		// Echange 'Node1' avec 'Node2', c'est-à-dire qu'il echangent leur parent, et enfants respectifs.
+		void SwapNodes(
+			epeios::row_t__ Node1,
+			epeios::row_t__ Node2 )
+		{
+			Nodes.SwapNodes( Node1, Node2 );
+		}
+		// Echange l'arbre de racine 'Node1' avec l'arbre de racine 'Node2'.
+		void SwapTrees(
+			epeios::row_t__ Node1,
+			epeios::row_t__ Node2 )
+		{
+			Nodes.SwapTrees( Node1, Node2 );
 		}
 		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche.
 		void RotateRight( r Node )
@@ -660,7 +764,18 @@ namespace btr {
 		{
 			return ForceParent_( *Node, *Parent );
 		}
-
+		r SearchMostLeftNode(
+			r Node,
+			level__ &Level ) const
+		{
+			return Nodes.SearchMostLeftNode( *Node, Level );
+		}
+		r SearchMostRightNode(
+			r Node,
+			level__ &Level ) const
+		{
+			return Nodes.SearchMostRightNode( *Node, Level );
+		}
 	/*	// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
 		void EcrireDansFlot(
 			flo_sortie_portable_ &Flot,
