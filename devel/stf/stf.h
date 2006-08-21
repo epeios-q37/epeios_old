@@ -60,6 +60,8 @@ extern class ttr_tutor &STFTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'CIO' library instead !".
+
 #include <iostream>
 
 #include "err.h"

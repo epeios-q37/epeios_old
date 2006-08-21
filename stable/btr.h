@@ -321,6 +321,10 @@ namespace btr {
 			Store( N2, Node1 );
 			Store( N1, Node2 );
 		}
+		// Retourne le parent du premier noeud qui est fils en remontant.
+		epeios::row_t__ ParentOfFirstLeftNode( epeios::row_t__ Node ) const;
+		// Retourne le père du premier noeud qui est fille en remontant.
+		epeios::row_t__ ParentOfFirstRightNode( epeios::row_t__ Node ) const;
 	};
 
 
@@ -514,31 +518,36 @@ namespace btr {
 
 			return Uncle( Node, Parent, GrandParent );
 		}
-		r Sibling( r Node ) const
+		// Retourne le frère, 's'il existe, de 'Node'. Stocke, s'il existe, le parent de 'Node' dans 'PArent'
+		r Sibling(
+			r Node,
+			r &Parent ) const
 		{
+			Parent = this->Parent( Node );
+
 			if ( IsLeft( Node ) )
-				return Right( Parent( Node ) );
-			else IsRight( Node ) 
-				return Left ( Parent( Node ) );
+				return Right( Parent );
+			else if ( IsRight( Node ) )
+				return Left ( Parent );
 			else
 				return NONE;
 		}
 		// Echange 'Node1' avec 'Node2', c'est-à-dire qu'il echangent leur parent, et enfants respectifs.
 		void SwapNodes(
-			epeios::row_t__ Node1,
-			epeios::row_t__ Node2 )
+			r Node1,
+			r Node2 )
 		{
-			Nodes.SwapNodes( Node1, Node2 );
+			Nodes.SwapNodes( *Node1, *Node2 );
 		}
 		// Echange l'arbre de racine 'Node1' avec l'arbre de racine 'Node2'.
 		void SwapTrees(
-			epeios::row_t__ Node1,
-			epeios::row_t__ Node2 )
+			r Node1,
+			r Node2 )
 		{
-			Nodes.SwapTrees( Node1, Node2 );
+			Nodes.SwapTrees( *Node1, *Node2 );
 		}
-		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche.
-		void RotateRight( r Node )
+		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche. Retourne le remplaçant de 'Node'.
+		r RotateRight( r Node )
 		{
 			r A, B, C, P, &D = Node;
 			bso::bool__ IsLeftFlag = false;
@@ -581,9 +590,11 @@ namespace btr {
 
 			if ( C != NONE )
 				BecomeLeft( C, D );
+
+			return B;
 		}
-		// Rotation à gauche avec 'Node' come pivot, qui DOIT avoir un fils droit.
-		void RotateLeft( r Node )
+		// Rotation à gauche avec 'Node' come pivot, qui DOIT avoir un fils droit.. Retourne le remplaçant de 'Node'.
+		r RotateLeft( r Node )
 		{
 			r E, D, C, P, &B = Node;
 			bso::bool__ IsLeftFlag = false;
@@ -626,6 +637,8 @@ namespace btr {
 
 			if ( C != NONE )
 				BecomeRight( C, B );
+
+			return D;
 		}
 		/* Elague 'Node'; 'Node' devient la racine de l'arbre
 		et perd donc son père. */
@@ -689,6 +702,15 @@ namespace btr {
 		bso::bool__ IsParent( r Node ) const
 		{
 			return HasLeft_( *Node ) || HasRight_( *Node );
+		}
+		//f Return true if 'Node' has a child.
+		bso::bool__ HasChildren( r Node ) const
+		{
+			return Nodes.HasChildren( *Node );
+		}
+		bso::bool__ HasBothChildren( r Node ) const
+		{
+			return Nodes.HasBothChildren( *Node );
 		}
 		//f 'Parent' take 'Child' as left.
 		void TakeLeft(
@@ -775,6 +797,16 @@ namespace btr {
 			level__ &Level ) const
 		{
 			return Nodes.SearchMostRightNode( *Node, Level );
+		}
+		// Retourne le père du premier noeud qui est fils en remontant.
+		r ParentOfFirstLeftNode( r Node ) const
+		{
+			return Nodes.ParentOfFirstLeftNode( *Node );
+		}
+		// Retourne le père du premier noeud qui est fille en remontant.
+		r ParentOfFirstRightNode( r Node ) const
+		{
+			return Nodes.ParentOfFirstRightNode( *Node );
 		}
 	/*	// Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.
 		void EcrireDansFlot(

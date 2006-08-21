@@ -67,36 +67,6 @@ namespace idxbtr {
 		epeios::size__ Niveau;
 	};
 
-	// Retourne le premier noeud qui est fils en remontant.
-	epeios::row_t__ idxbtr::PereFilsEnRemontant_( 
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( !Tree.E_BTREE_::IsLeft( Position )
-			   && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::Parent( Position );
-
-		if ( Tree.E_BTREE_::IsLeft( Position ) )
-			return *Tree.E_BTREE_::Parent( Position );
-		else
-			return NONE;
-	}
-
-	// Retourne le premier noeud qui est fille en remontant.
-	epeios::row_t__ idxbtr::PereFilleEnRemontant_( 
-		const E_IBTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( !Tree.E_BTREE_::IsRight( Position )
-			    && Tree.E_BTREE_::HasParent( Position ) )
-			Position = *Tree.E_BTREE_::Parent( Position );
-
-		if ( Tree.E_BTREE_::IsRight( Position ) )
-			return *Tree.E_BTREE_::Parent( Position );
-		else
-			return NONE;
-	}
-
 	epeios::row_t__ idxbtr::Balance_(
 		E_IBTREE_ &Tree,
 		epeios::row_t__ Root )
@@ -106,7 +76,7 @@ namespace idxbtr {
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
-		Queue.Allocate( Tree.Extent() );
+		Queue.Allocate( Tree.BaseTree.Extent() );
 
 		Current = Tree.First( Root );
 
@@ -161,7 +131,7 @@ namespace idxbtr {
 				Sommet = Pile.Pop();
 
 				Niveau = Sommet.Niveau + 1;
-				Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+				Tree.BaseTree.BecomeRight( Racine, Sommet.Racine );
 
 				Racine = *Sommet.Racine;
 			}
@@ -172,7 +142,7 @@ namespace idxbtr {
 			{
 				if ( File.HasNext( Courant ) )
 				{
-					Tree.E_BTREE_::BecomeLeft( Racine, Courant );
+					Tree.BaseTree.BecomeLeft( Racine, Courant );
 
 					Sommet.Racine = Courant;
 					Sommet.Niveau = Niveau;
@@ -184,7 +154,7 @@ namespace idxbtr {
 				else
 				{
 					Boucler = false;
-					Tree.E_BTREE_::BecomeRight( Courant, Tree.SearchMostRightNode( Racine ) );
+					Tree.BaseTree.BecomeRight( Courant, Tree._SearchMostRightNode( Racine ) );
 				}
 			}
 			else
@@ -201,7 +171,7 @@ namespace idxbtr {
 		{
 			Sommet = Pile.Pop();
 
-			Tree.E_BTREE_::BecomeRight( Racine, Sommet.Racine );
+			Tree.BaseTree.BecomeRight( Racine, Sommet.Racine );
 
 			Racine = *Sommet.Racine;
 		}

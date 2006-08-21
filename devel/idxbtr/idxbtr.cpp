@@ -67,36 +67,6 @@ namespace idxbtr {
 		epeios::size__ Niveau;
 	};
 
-	// Retourne le premier noeud qui est fils en remontant.
-	epeios::row_t__ idxbtr::PereFilsEnRemontant_( 
-		const btr::E_BTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( !Tree.IsLeft( Position )
-			   && Tree.HasParent( Position ) )
-			Position = *Tree.Parent( Position );
-
-		if ( Tree.IsLeft( Position ) )
-			return *Tree.Parent( Position );
-		else
-			return NONE;
-	}
-
-	// Retourne le premier noeud qui est fille en remontant.
-	epeios::row_t__ idxbtr::PereFilleEnRemontant_( 
-		const btr::E_BTREE_ &Tree,
-		epeios::row_t__ Position )
-	{
-		while( !Tree.IsRight( Position )
-			    && Tree.HasParent( Position ) )
-			Position = *Tree.Parent( Position );
-
-		if ( Tree.IsRight( Position ) )
-			return *Tree.Parent( Position );
-		else
-			return NONE;
-	}
-
 	epeios::row_t__ idxbtr::Balance_(
 		E_IBTREE_ &Tree,
 		epeios::row_t__ Root )
@@ -184,7 +154,7 @@ namespace idxbtr {
 				else
 				{
 					Boucler = false;
-					Tree.BaseTree.BecomeRight( Courant, Tree.SearchMostRightNode( Racine ) );
+					Tree.BaseTree.BecomeRight( Courant, Tree._SearchMostRightNode( Racine ) );
 				}
 			}
 			else

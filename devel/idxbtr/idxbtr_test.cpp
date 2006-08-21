@@ -25,17 +25,21 @@
 
 //	$Id$
 
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>
-
+*/
 #include "idxbtr.h"
+#include "cio.h"
 
 #include "err.h"
-#include "stf.h"
 
-TYPEDEF( epeios::row_t__, row__ );
+E_ROW( row__ );
+
+using cio::cout;
+using cio::cerr;
 
 void Generic( int argc, char *argv[] )
 {
@@ -43,9 +47,13 @@ ERRProlog
 	idxbtr::E_IBTREEt( row__ ) Index;
 	idxbtr::E_TSEEKERt__( row__ )	Seeker;
 ERRBegin
-	Index.Balance();
+	Index.Balance( NONE );
 
-	Index.First();
+	Index.First( NONE );
+
+	Index.Delete( NONE, NONE );
+
+	Index.BecomeGreater( NONE, NONE, NONE );
 ERRErr
 ERREnd
 ERREpilog
@@ -56,7 +64,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << IDXBTRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cout << "Test of library " << IDXBTRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -65,20 +73,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << IDXBTRTutor.Name << " [/i]\n\n";
-		ERRt();
+		cout << txf::sync;
+		cerr << "\nBad arguments.\n";
+		cout << "Usage: " << IDXBTRTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << IDXBTRTutor.Name << ".\n";
+	cout << "\nEnd of program " << IDXBTRTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

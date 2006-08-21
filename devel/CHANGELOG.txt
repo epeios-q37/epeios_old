@@ -1,13 +1,23 @@
 $Id$
 
-20/08/08 :
+21/08/06 :
+	- BTR :
+		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
+	- IDXBTQ
+		- Adaptation aux modifications 'IDXBTR'.
+	- IDXBTR :
+		- Implémentation de l'algorithme 'red-black tree'.
+	- SSNMNG
+		- Adaptation aux modifications 'IDXBTQ'.
+
+20/08/06 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
 	- IDXBTR :
 		- Implémentation de l'algorithme 'red-black tree'.
 
 
-18/08/08 :
+18/08/06 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
 	- IDXBTR :

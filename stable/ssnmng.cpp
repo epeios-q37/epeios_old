@@ -124,10 +124,10 @@ row__ ssnmng::base_sessions_manager_::Open( void )
 
 		switch ( Search_( Table, SessionID.Value(), Seeker ) ) {
 		case 1:
-			Index.MarkAsGreater( P, Seeker.GetCurrent() );
+			S_.Root = Index.BecomeGreater( P, Seeker.GetCurrent(), S_.Root );
 			break;
 		case -1:
-			Index.MarkAsLesser( P, Seeker.GetCurrent() );
+			S_.Root = Index.BecomeLesser( P, Seeker.GetCurrent(), S_.Root );
 			break;
 		default:
 			ERRc();

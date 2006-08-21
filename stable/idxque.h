@@ -121,14 +121,14 @@ namespace idxque {
 			E_QUEUEt_( r )::Dump( Stack, Begin, Direction );
 		}
 		//f Item is marked as greater then 'Node'.
-		void MarkAsGreater(
+		void BecomeGreater(
 			r Item,
 			r Node )
 		{
 			E_QUEUEt_( r )::BecomeNext( Item, Node );
 		}
 		//f Item is marked as lesser then 'Node'.
-		void MarkAsLesser(
+		void BecomeLesser(
 			r Item,
 			r Node )
 		{

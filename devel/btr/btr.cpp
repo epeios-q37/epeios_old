@@ -130,6 +130,31 @@ epeios::row_t__ btr::_nodes_manager_::SearchMostRightNode(
 	return Node;
 }
 
+// Retourne le père du premier noeud qui est fils en remontant.
+epeios::row_t__ btr::_nodes_manager_::ParentOfFirstLeftNode( epeios::row_t__ Node ) const
+{
+	while( !IsLeft( Node )
+		   && HasParent( Node ) )
+		Node = Parent( Node );
+
+	if ( IsLeft( Node ) )
+		return Parent( Node );
+	else
+		return NONE;
+}
+
+// Retourne le père du premier noeud qui est fille en remontant.
+epeios::row_t__ btr::_nodes_manager_::ParentOfFirstRightNode( epeios::row_t__ Node ) const
+{
+	while( !IsRight( Node )
+			&& HasParent( Node ) )
+		Node = Parent( Node );
+
+	if ( IsRight( Node ) )
+		return Parent( Node );
+	else
+		return NONE;
+}
 
 
 // Ecrit dans 'Flot' l'arbre de racine l'élément à 'Position'.

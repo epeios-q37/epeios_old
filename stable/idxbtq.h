@@ -127,39 +127,31 @@ namespace idxbtq {
 			E_IBTREEt_( r )::Allocate( Size );
 			E_IQUEUEt_( r )::Allocate( Size );
 		}
-		/*f 'New' becomes the next item of 'Item'. 'NextAvailable( Item )' must
-		return true to use this function. */
-		void BecomeNext(
-			r New,
-			r Item )
+		void BecomeNext( void )	//Obsolete.
 		{
-			E_IBTREEt_( r )::BecomeNext( New, Item );
-			E_IQUEUEt_( r )::BecomeNext( New, Item );
+			ERRu();	// 
 		}
-		/*f 'New' becomes the previous item of 'Item'. 'PreviousAvailable( Item )' must
-		return true to use this function. */
-		void BecomePrevious(
-			r New,
-			r Item )
+		void BecomePrevious( void )	//Obsolete.
 		{
-			E_IBTREEt_( r )::BecomePrevious( New, Item );
-			E_IQUEUEt_( r )::BecomePrevious( New, Item );
+			ERRu();	// 
 		}
 		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void MarkAsGreater(
+		r BecomeGreater(
 			r Row,
-			r Current )
+			r Current,
+			r Root )
 		{
-			E_IBTREEt_( r )::MarkAsGreater( Row, Current );
-			E_IQUEUEt_( r )::MarkAsGreater( Row, Current );
+			E_IQUEUEt_( r )::BecomeGreater( Row, Current );
+			return E_IBTREEt_( r )::BecomeGreater( Row, Current, Root );
 		}
 		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		void MarkAsLesser(
+		r BecomeLesser(
 			r Row,
-			r Current )
+			r Current,
+			r Root )
 		{
-			E_IBTREEt_( r )::MarkAsLesser( Row, Current );
-			E_IQUEUEt_( r )::MarkAsLesser( Row, Current );
+			E_IQUEUEt_( r )::BecomeLesser( Row, Current );
+			return E_IBTREEt_( r )::BecomeLesser( Row, Current, Root );
 		}
 		r Delete(
 			r Item,
@@ -173,6 +165,8 @@ namespace idxbtq {
 			r Root,
 			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
 		{
+//			ERRu();
+
 			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
 		}
 		r First( r Root ) const
