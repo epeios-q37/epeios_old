@@ -90,9 +90,9 @@ extern class ttr_tutor &MTXTutor;
 #ifndef MTX__USE_ATOMIC_OPERATIONS
 #	ifndef MTX_SUPPRESS_NO_ATOMIC_OPERATIONS_WARNING
 #		ifdef CPE__C_VC
-#			pragma message( "BE CAREFUL : Mutexes does not use atomic operations !" )
+#			pragma message( "BE CAREFUL : Mutexes do not use atomic operations !" )
 #		elif defined( CPE__C_GCC )
-#			warning "BE CAREFUL : Mutexes does not use atomic operations !"
+#			warning "BE CAREFUL : Mutexes do not use atomic operations !"
 #		endif
 #	endif
 #endif

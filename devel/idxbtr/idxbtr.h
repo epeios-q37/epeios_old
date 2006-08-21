@@ -317,8 +317,8 @@ namespace idxbtr {
 		bitbch::E_BIT_BUNCHt_( r ) Colors;		
 		struct s
 		{
-			btr::E_BTREEt_( r )::s BaseTree;
-			bitbch::E_BIT_BUNCHt_( r )::s Colors;
+			typename btr::E_BTREEt_( r )::s BaseTree;
+			typename bitbch::E_BIT_BUNCHt_( r )::s Colors;
 		};
 		tree_index_( s &S )
 		: BaseTree( S.BaseTree ),
@@ -401,7 +401,7 @@ namespace idxbtr {
 				if ( BaseTree.IsRight( Position ) )
 					return BaseTree.Parent( Position );
 				else if ( BaseTree.IsLeft( Position ) )
-					return BaseTree.SearchFirstRightFather( Item );
+					return BaseTree.SearchFirstRightFather( Position );
 				else
 					return NONE;
 		}
@@ -578,7 +578,7 @@ namespace idxbtr {
 			BaseTree.PrintStructure( Root, OStream );
 		}
 		friend epeios::row_t__ Equilibrer_(
-			tree_index_ &Tree,
+			tree_index_<epeios::row__> &Tree,
 			que::E_QUEUE_ &File,
 			epeios::row_t__ Premier,
 			mdr::E_MEMORY_DRIVER__ &Pilote );
