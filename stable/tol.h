@@ -457,13 +457,15 @@ namespace tol {
 #ifdef CPE__T_MS
 		struct _stat Stat;
 
-		_stat( FileName, &Stat );
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
 
 		return Stat.st_mtime;
 #elif defined CPE__T_LINUX
 		stat stat;
 
-		stat( FileName, &Stat );
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
 
 		return stat.st_mtime;
 #else
@@ -471,7 +473,7 @@ namespace tol {
 #endif
 	}
 
-	inline RemoveFile( const char *FileName )
+	inline void RemoveFile( const char *FileName )
 	{
 		remove( FileName );
 	}

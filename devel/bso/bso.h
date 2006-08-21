@@ -443,7 +443,7 @@ namespace bso {
 		lfloat__ Value,
 		float_buffer__ &Buffer )
 	{
-		sprintf( Buffer.Datum, "%Lf", Value );
+		sprintf( Buffer.Datum, "%Lg", Value );
 
 		return Buffer.Datum;
 	}

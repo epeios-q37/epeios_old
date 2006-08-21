@@ -317,7 +317,7 @@ namespace idxbtr {
 		bitbch::E_BIT_BUNCHt_( r ) Colors;		
 		struct s
 		{
-			btr::E_BTREEt_( r )::s BaseTree;
+			btr::E_BTREEt_( r ) ::s BaseTree;
 			bitbch::E_BIT_BUNCHt_( r )::s Colors;
 		};
 		tree_index_( s &S )

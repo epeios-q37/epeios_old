@@ -473,7 +473,7 @@ namespace tol {
 #endif
 	}
 
-	inline RemoveFile( const char *FileName )
+	inline void RemoveFile( const char *FileName )
 	{
 		remove( FileName );
 	}

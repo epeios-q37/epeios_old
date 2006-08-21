@@ -843,8 +843,8 @@ namespace btr {
 
 	E_AUTO1( binary_tree )
 
-	#define E_BTREEt_( r )	binary_tree_<r>
-	#define E_BTREEt( r )	binary_tree<r>
+	#define E_BTREEt_( r )	binary_tree_< r >
+	#define E_BTREEt( r )	binary_tree< r >
 
 	#define E_BTREE_	E_BTREEt_( epeios::row__ )
 	#define E_BTREE		E_BTREEt( epeios::row__ )
