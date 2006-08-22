@@ -60,6 +60,8 @@ extern class ttr_tutor &NSXPCMTutor;
 
 /*$BEGIN$*/
 
+// Ce dichier d'entête nécessite un environnement de développement génèré à partir des sources !
+
 #include "err.h"
 #include "flw.h"
 #include "epeios.h"
@@ -69,6 +71,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsEmbedString.h"
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
+#include "nsIListBoxObject.h"
 //#include "nsIDOMHTMLInputElement.h"
 
 #ifdef NSXPCM_BKD
@@ -86,6 +89,26 @@ namespace nsxpcm {
 
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
+
+	class listbox__
+	{
+	public:
+		nsIDOMElement *Element;
+		nsIListBoxObject *Object;
+		listbox__( void )
+		{
+			Element = NULL;
+			Object = NULL;
+		}
+		void Select( nsIDOMElement *Item )
+		{
+			PRInt32 Index;
+
+			Object->GetIndexOfItem( Item, &Index );
+			Object->ScrollToIndex( Index );
+		}
+
+	};
 
 	void Transform(
 		const char *CString,
