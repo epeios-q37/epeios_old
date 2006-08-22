@@ -72,6 +72,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
 #include "nsIListBoxObject.h"
+#include "nsIDOMXULMultSelectCntrlEl.h"
 //#include "nsIDOMHTMLInputElement.h"
 
 #ifdef NSXPCM_BKD
@@ -93,19 +94,16 @@ namespace nsxpcm {
 	class listbox__
 	{
 	public:
-		nsIDOMElement *Element;
+		nsIDOMXULMultiSelectControlElement *Element;
 		nsIListBoxObject *Object;
 		listbox__( void )
 		{
 			Element = NULL;
 			Object = NULL;
 		}
-		void Select( nsIDOMElement *Item )
+		void Select( nsIDOMXULSelectControlItemElement *Item )
 		{
-			PRInt32 Index;
-
-			Object->GetIndexOfItem( Item, &Index );
-			Object->ScrollToIndex( Index );
+			Element->SelectItem( Item );
 		}
 
 	};
