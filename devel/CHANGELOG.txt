@@ -1,5 +1,9 @@
 $Id$
 
+23/08/06
+	- GENERAL :
+		- Correction erreurs apparus lors d'une compilation sous Linux.
+
 21/08/06 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.

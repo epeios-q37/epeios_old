@@ -462,12 +462,12 @@ namespace tol {
 
 		return Stat.st_mtime;
 #elif defined CPE__T_LINUX
-		stat stat;
+		struct stat Stat;
 
 		if ( stat( FileName, &Stat ) != 0 )
 			ERRu();
 
-		return stat.st_mtime;
+		return Stat.st_mtime;
 #else
 		ERRl();
 #endif

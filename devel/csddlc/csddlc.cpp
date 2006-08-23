@@ -59,7 +59,7 @@ public:
 
 #define FUNCTION_NAME	"CSDDLEntry"
 
-#if defined( CPE__T_UNIX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
+#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
 #	define CSDDLC__POSIX
 #elif defined( CPE__T_MS )
 #	define CSDDLC__MS

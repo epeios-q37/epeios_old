@@ -64,7 +64,7 @@ extern class ttr_tutor &CSDBNCTutor;
 #include "flw.h"
 #include "sck.h"
 
-#if defined( CPE__T_UNIX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
+#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
 #	define CSDBNC__POSIX
 #elif defined( CPE__T_MS )
 #	define CSDBNC__MS

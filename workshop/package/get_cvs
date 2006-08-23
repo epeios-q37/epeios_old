@@ -2,5 +2,5 @@
 rep="$1"
 dir="$2"
 mod="$3"
-cp -R /cvs/$rep/$mod $dir
+cp -R ~/cvs/$rep/$mod $dir
 rm -rf $dir/CVS

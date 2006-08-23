@@ -73,7 +73,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsiDOMElement.h"
 #include "nsIListBoxObject.h"
 #include "nsIDOMXULMultSelectCntrlEl.h"
-//#include "nsIDOMHTMLInputElement.h"
+#include "nsIDOMXULSelectCntrlItemEl.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -91,22 +91,58 @@ namespace nsxpcm {
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
 
-	class listbox__
+	template <typename element> struct _element__
 	{
+	private:
 	public:
-		nsIDOMXULMultiSelectControlElement *Element;
-		nsIListBoxObject *Object;
-		listbox__( void )
+		element *_Element;
+		_element__( element *Element = NULL )
 		{
-			Element = NULL;
-			Object = NULL;
+			_Element = Element;
 		}
-		void Select( nsIDOMXULSelectControlItemElement *Item )
+		operator element *( void ) const
 		{
-			Element->SelectItem( Item );
+			return _Element;
 		}
-
+		operator nsIDOMElement *( void )
+		{
+			return _Element;
+		}
+		element *operator ->( void )
+		{
+			return _Element;
+		}
+		const element *operator ->( void ) const
+		{
+			return _Element;
+		}
+		element *operator *( void )
+		{
+			return _Element;
+		}
+		const element *operator *( void ) const
+		{
+			return _Element;
+		}
+		bool operator ==( const element *Op )
+		{
+			return Op == _Element;
+		}
+		bool operator !=( const element *Op )
+		{
+			return Op != _Element;
+		}
 	};
+
+	#define NSXPCM_TYPEDEF( name )	typedef _element__<name> name##__;
+
+
+
+	typedef nsIDOMXULMultiSelectControlElement listbox;
+	NSXPCM_TYPEDEF( listbox )
+
+	typedef nsIDOMXULSelectControlItemElement listitem;
+	NSXPCM_TYPEDEF( listitem )
 
 	void Transform(
 		const char *CString,
@@ -215,6 +251,23 @@ namespace nsxpcm {
 
 		return Element;
 
+	}
+
+	template <typename element> inline element *_CreateElement(
+		nsIDOMDocument *Document,
+		const char *Name )
+	{
+		return (element *)CreateElement( Document, Name );
+	}
+
+	inline listbox *CreateListboxElement( nsIDOMDocument *Document )
+	{
+		return _CreateElement<listbox>( Document, "listbox" );
+	}
+
+	inline listitem *CreateListitemElement( nsIDOMDocument *Document )
+	{
+		return _CreateElement<listitem>( Document, "listitem" );
 	}
 
 	inline void SetAttribute(
