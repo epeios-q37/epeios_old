@@ -68,6 +68,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "str.h"
 #include "ctn.h"
 
+#include "nsCOMPtr.h"
 #include "nsEmbedString.h"
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
@@ -95,12 +96,20 @@ namespace nsxpcm {
 	{
 	private:
 	public:
-		element *_Element;
+		nsCOMPtr<element> _Element;
 		_element__( element *Element = NULL )
 		{
 			_Element = Element;
 		}
-		operator element *( void ) const
+		_element__( nsCOMPtr<element> Element )
+		{
+			_Element = Element;
+		}
+		operator nsCOMPtr<element> ( void ) const
+		{
+			return _Element;
+		}
+		operator nsIDOMNode *( void )
 		{
 			return _Element;
 		}
@@ -108,19 +117,7 @@ namespace nsxpcm {
 		{
 			return _Element;
 		}
-		element *operator ->( void )
-		{
-			return _Element;
-		}
-		const element *operator ->( void ) const
-		{
-			return _Element;
-		}
-		element *operator *( void )
-		{
-			return _Element;
-		}
-		const element *operator *( void ) const
+		operator element *( void )
 		{
 			return _Element;
 		}
@@ -215,7 +212,7 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	inline nsIDOMElement *GetElementById(
+	inline nsCOMPtr<nsIDOMElement> GetElementById(
 		nsIDOMDocument *Document,
 		const str::string_ &Id )
 	{
@@ -234,7 +231,7 @@ namespace nsxpcm {
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
-		nsIDOMElement *Element;
+		nsIDOMElement* Element;
 		nsEmbedString EName;
 
 		Transform( Name, EName );
@@ -253,19 +250,19 @@ namespace nsxpcm {
 
 	}
 
-	template <typename element> inline element *_CreateElement(
+	template <typename element> inline nsCOMPtr<element> _CreateElement(
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
 		return (element *)CreateElement( Document, Name );
 	}
 
-	inline listbox *CreateListboxElement( nsIDOMDocument *Document )
+	inline nsCOMPtr<listbox> CreateListboxElement( nsIDOMDocument *Document )
 	{
 		return _CreateElement<listbox>( Document, "listbox" );
 	}
 
-	inline listitem *CreateListitemElement( nsIDOMDocument *Document )
+	inline nsCOMPtr<listitem> CreateListitemElement( nsIDOMDocument *Document )
 	{
 		return _CreateElement<listitem>( Document, "listitem" );
 	}
