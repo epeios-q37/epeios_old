@@ -68,13 +68,12 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "str.h"
 #include "ctn.h"
 
-#include "nsCOMPtr.h"
 #include "nsEmbedString.h"
 #include "nsiDOMDocument.h"
 #include "nsiDOMElement.h"
-#include "nsIListBoxObject.h"
 #include "nsIDOMXULMultSelectCntrlEl.h"
 #include "nsIDOMXULSelectCntrlItemEl.h"
+#include "nsIDOMXULTextboxElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -95,51 +94,45 @@ namespace nsxpcm {
 	template <typename element> struct _element__
 	{
 	private:
+		element *_Element;
 	public:
-		nsCOMPtr<element> _Element;
 		_element__( element *Element = NULL )
 		{
 			_Element = Element;
-		}
-		_element__( nsCOMPtr<element> Element )
-		{
-			_Element = Element;
-		}
-		operator nsCOMPtr<element> ( void ) const
-		{
-			return _Element;
-		}
-		operator nsIDOMNode *( void )
-		{
-			return _Element;
-		}
-		operator nsIDOMElement *( void )
-		{
-			return _Element;
 		}
 		operator element *( void )
 		{
 			return _Element;
 		}
+		const element *operator ->( void ) const
+		{
+			return _Element;
+		}
+		element *operator ->( void )
+		{
+			return _Element;
+		}
 		bool operator ==( const element *Op )
 		{
-			return Op == _Element;
+			return ( Op == _Element );
 		}
 		bool operator !=( const element *Op )
 		{
-			return Op != _Element;
+			return ( Op != _Element );
 		}
 	};
 
-	#define NSXPCM_TYPEDEF( name )	typedef _element__<name> name##__;
+	#define NSXPCM_TYPEDEFS( element, name )\
+		typedef element name;\
+		typedef _element__<name> name##__;
 
 
+	NSXPCM_TYPEDEFS( nsIDOMXULMultiSelectControlElement, listbox )
 
-	typedef nsIDOMXULMultiSelectControlElement listbox;
-	NSXPCM_TYPEDEF( listbox )
+	NSXPCM_TYPEDEFS( nsIDOMXULSelectControlItemElement, listitem )
 
-	typedef nsIDOMXULSelectControlItemElement listitem;
-	NSXPCM_TYPEDEF( listitem )
+	NSXPCM_TYPEDEFS( nsIDOMXULTextBoxElement, textbox )
+
 
 	void Transform(
 		const char *CString,
@@ -212,7 +205,7 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	inline nsCOMPtr<nsIDOMElement> GetElementById(
+	inline nsIDOMElement *GetElementById(
 		nsIDOMDocument *Document,
 		const str::string_ &Id )
 	{
@@ -250,19 +243,19 @@ namespace nsxpcm {
 
 	}
 
-	template <typename element> inline nsCOMPtr<element> _CreateElement(
+	template <typename element> inline element *_CreateElement(
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
 		return (element *)CreateElement( Document, Name );
 	}
 
-	inline nsCOMPtr<listbox> CreateListboxElement( nsIDOMDocument *Document )
+	inline listbox *CreateListboxElement( nsIDOMDocument *Document )
 	{
 		return _CreateElement<listbox>( Document, "listbox" );
 	}
 
-	inline nsCOMPtr<listitem> CreateListitemElement( nsIDOMDocument *Document )
+	inline listitem *CreateListitemElement( nsIDOMDocument *Document )
 	{
 		return _CreateElement<listitem>( Document, "listitem" );
 	}
@@ -344,6 +337,13 @@ namespace nsxpcm {
 		return Value;
 	}
 
+	template <typename t> inline const str::string_ &GetValue(
+		_element__<t> &Element,
+		str::string_ &Value )
+	{
+		return GetValue( Element.operator->(), Value );
+	}
+
 	inline void SetAttribute(
 		nsIDOMElement *Element,
 		const char *Name,
@@ -376,6 +376,13 @@ namespace nsxpcm {
 #endif
 		
 		Element->SetValue( EValue );
+	}
+
+	template <typename t> inline void SetValue(
+		_element__<t> &Element,
+		const str::string_ &Value )
+	{
+		SetValue( Element.operator->(), Value );
 	}
 
 	inline void CloneNode(
