@@ -377,7 +377,7 @@ namespace idxbtr {
 		//f Return the last item of the index.
 		r Last( r Root ) const
 		{
-			return NoeudSansFille_( Root );
+			return _SearchMostRightNode( Root );
 		}
 		//f Return the item next to 'Item'.
 		r Next( r Item ) const

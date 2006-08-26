@@ -59,7 +59,8 @@ public:
 
 using namespace dbsidx;
 
-#define TREE_FILE_NAME_EXTENSION	".edt"
+#define NODES_FILE_NAME_EXTENSION	".edn"
+#define COLORS_FILE_NAME_EXTENSION	".edc"
 #define QUEUE_FILE_NAME_EXTENSION	".edq"
 #define ROOT_FILE_NAME_EXTENSION	".edr"
 
@@ -113,6 +114,10 @@ ERRProlog
 	data Data;
 	row__ TargetRow = NONE;
 ERRBegin
+
+	if ( _Content().Amount() > BaseIndex.Amount() )
+		BaseIndex.Allocate( _Content().Amount() );
+
 	if ( _S.Root == NONE ) {
 		_S.Root = Row;
 		ERRReturn;
@@ -125,10 +130,10 @@ ERRBegin
 	switch ( _Search( Data, TargetRow ) ) {
 	case 1:
 	case 0:
-		BaseIndex.MarkAsGreater( Row, TargetRow );
+		_S.Root = BaseIndex.BecomeGreater( Row, TargetRow, _S.Root );
 		break;
 	case -1:
-		BaseIndex.MarkAsLesser( Row, TargetRow );
+		_S.Root = BaseIndex.BecomeLesser( Row, TargetRow, _S.Root );
 		break;
 	default:
 		ERRc();
@@ -146,7 +151,7 @@ ERREnd
 ERREpilog
 }
 
-template <typename container> static bso::bool__ Set_(
+template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const str::string_ &FileName,
 	container &C )
@@ -163,10 +168,21 @@ ERRBegin
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
 	C.SetStepValue( 0 );
-	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
 ERRErr
 ERREnd
 ERREpilog
+	return Exists;
+}
+
+template <typename container> static bso::bool__ Set_(
+	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
+	const str::string_ &FileName,
+	container &C )
+{
+	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C );
+
+	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
+
 	return Exists;
 }
 
@@ -246,7 +262,7 @@ ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
 	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( RootFileName ) > TimeStamp )
+		if ( tol::GetFileLastModificationTime( RootFileName ) < TimeStamp )
 			ERRReturn;
 
 		Load_( Flow, Row );
@@ -280,17 +296,30 @@ ERREpilog
 }
 
 
-bso::bool__ dbsidx::file_index_::Init( const str::string_ &RootFileName )
+bso::bool__ dbsidx::file_index_::Init(
+	const str::string_ &RootFileName,
+	const content_ &Content,
+	sort_function__ &Sort )
 {
 	bso::bool__ Exists = false;
 ERRProlog
-	str::string TreeFileName;
+	str::string NodesFileName;
+	str::string ColorsFileName;
 	str::string QueueFileName;
 ERRBegin
-	index_::Init();
-	TreeFileName.Init( RootFileName );
-	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
-	Exists = Set_( _S.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().Nodes );
+	index_::Init( Content, Sort );
+
+	NodesFileName.Init( RootFileName );
+	NodesFileName.Append( NODES_FILE_NAME_EXTENSION );
+	Exists = Set_( _S.MemoryDriver.Tree.Nodes, NodesFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
+
+	ColorsFileName.Init( RootFileName );
+	ColorsFileName.Append( COLORS_FILE_NAME_EXTENSION );
+	if ( CoreSet_( _S.MemoryDriver.Tree.Colors, ColorsFileName, index_::BaseIndex.Tree().Colors ) != Exists )
+		ERRu();
+	_S.MemoryDriver.Tree.Colors.Size();	// Pour forcer la création du fichier.
+	index_::BaseIndex.Tree().Colors.Allocate( index_::BaseIndex.Tree().BaseTree.Amount() );
+
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
@@ -300,15 +329,19 @@ ERRBegin
 	this->RootFileName.Init( RootFileName );
 
 	if ( Exists ) {
-		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
+		time_t NodesTimeStamp, ColorsTimeStamp, QueueTimeStamp, LastTimeStamp;
 
-		TreeTimeStamp = GetModificationTimeStamp_( TreeFileName );
+		NodesTimeStamp = GetModificationTimeStamp_( NodesFileName );
+		ColorsTimeStamp = GetModificationTimeStamp_( ColorsFileName );
 		QueueTimeStamp = GetModificationTimeStamp_( QueueFileName );
 
-		if ( TreeTimeStamp > QueueTimeStamp )
-			LastTimeStamp = TreeTimeStamp;
+		if ( NodesTimeStamp > NodesTimeStamp )
+			LastTimeStamp = NodesTimeStamp;
 		else
 			LastTimeStamp = QueueTimeStamp;
+
+		if ( ColorsTimeStamp > LastTimeStamp )
+			LastTimeStamp = ColorsTimeStamp;
 
 		if ( !Load_( RootFileName, index_::_S.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
 			SearchRoot();

@@ -1,5 +1,9 @@
 $Id$
 
+26/08/06 :
+	- GENERAL :
+		- Codage 'DBSxxx'.
+
 23/08/06
 	- GENERAL :
 		- Correction erreurs apparus lors d'une compilation sous Linux.

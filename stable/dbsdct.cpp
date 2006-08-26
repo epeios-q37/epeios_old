@@ -59,7 +59,7 @@ public:
 
 #define LOCATIONS_FILE_NAME_EXTENSION	".edl"
 #define AVAILABLES_FILE_NAME_EXTENSION	".eda"
-#define CONTENT_FILE_NAME_EXTENSION		".edc"
+#define CONTENT_FILE_NAME_EXTENSION		".edd"
 #define ENTRIES_FILE_NAME_EXTENSION		".ede"
 
 using namespace dbsdct;
@@ -196,7 +196,7 @@ ERRProlog
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
 	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( RootFileName ) > TimeStamp )
+		if ( tol::GetFileLastModificationTime( RootFileName ) < TimeStamp )
 			ERRReturn;
 
 		memcpy( Buffer, &TestValue, sizeof( item ) );

@@ -112,6 +112,14 @@ namespace nsxpcm {
 		{
 			return _Element;
 		}
+		element *&operator()( void )
+		{
+			return _Element;
+		}
+		const element *&operator()( void ) const
+		{
+			return _Element;
+		}
 		bool operator ==( const element *Op )
 		{
 			return ( Op == _Element );
@@ -247,7 +255,11 @@ namespace nsxpcm {
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
-		return (element *)CreateElement( Document, Name );
+		element *Element = NULL;
+
+		int Result = CreateElement( Document, Name )->QueryInterface( element::GetIID(), (void **)&Element );
+
+		return Element;
 	}
 
 	inline listbox *CreateListboxElement( nsIDOMDocument *Document )

@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "dbsidx.h"
+#include "dbsdct.h"
 
 #include "err.h"
 #include "cio.h"
@@ -37,12 +38,108 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+#define TEXT	"azertyuiopmlkjhgfdsqwxcvbnAQWXSZEDCVFRTGBNHYUJKIOLMP1029384756"
+
+const char *Generate( void )
+{
+	static  char Buffer[1000];
+
+	Buffer[999] = 0;
+
+	int L = 999;
+
+	while ( L-- )
+		Buffer[L] = TEXT[rand() % sizeof( TEXT )];
+
+	return Buffer;
+}
+
+void Fill(
+	  dbsdct::content_ &Content,
+	  dbsidx::index_ &Index )
+{
+	int L = 10000;
+	const char *Buffer;
+
+	tol::InitializeRandomGenerator();
+
+	while ( L-- ) {
+		Buffer = Generate();
+
+		cout << Buffer << txf::tab << txf::sync;
+
+		Index.Index( Content.Store( str::string( Buffer ) ) );
+	}
+}
+
+void Display(
+	  const dbsdct::content_ &Content,
+	  const dbsidx::index_ &Index )
+{
+ERRProlog
+	dbsdct::row__ Row = NONE;
+	dbsdct::data Data;
+ERRBegin
+	cout << txf::nl << "---------------------" << txf::nl;
+
+	Row = Index.First();
+
+	while ( Row != NONE ) {
+		Data.Init();
+
+		Content.Retrieve( Row, Data );
+
+		cout << Data << txf::tab << txf::sync;
+
+		Row = Index.Next( Row );
+	}
+
+	cout << txf::nl << "---------------------" << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+class sort__
+: public dbsidx::sort_function__
+{
+protected:
+	virtual bso::sign__ DBSIDXCompare(
+		const dbsdct::data_ &Data1,
+		const dbsdct::data_ &Data2 )
+	{
+			bso::sign__ Sign;
+		ERRProlog
+			dbsdct::data D1, D2;
+		ERRBegin
+			D1.Init( Data1 );
+			D2.Init( Data2 );
+
+			str::ToUpper( D1 );
+			str::ToUpper( D2 );
+
+			Sign = str::Compare( D1, D2 );
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Sign;
+	}
+};
+
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	dbsidx::file_index Index;
+	dbsdct::file_content Content;
+	sort__ Sort;
 ERRBegin
-Index.Init( str::string( "essai" ) );
+	Content.Init( str::string( "test\\d" ) );
+	Index.Init( str::string( "test\\i" ), Content, Sort );
+	Display( Content, Index );
+	Fill( Content, Index );
+	Display( Content, Index );
 ERRErr
 ERREnd
 ERREpilog

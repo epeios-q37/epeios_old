@@ -94,10 +94,10 @@ void btr::_nodes_manager_::Prepare(
 	row_t__ Start,
 	row_t__ End )
 {
+	_node__ Node;
+
 	do {
-		ReleaseParent( Start );
-		ReleaseRight( Start );
-		ReleaseLeft( Start );
+		Store( Node, Start );
 	}
 	while( ++Start <= End );
 }

@@ -160,6 +160,28 @@ namespace dbsidx {
 
 			return _S.Root;
 		}
+		row__ First( void ) const
+		{
+			if ( _S.Root != NONE )
+				return BaseIndex.First( _S.Root );
+			else
+				return NONE;
+		}
+		row__ Last( void ) const
+		{
+			if ( _S.Root != NONE )
+				return BaseIndex.Last( _S.Root );
+			else
+				return NONE;
+		}
+		row__ Next( row__ Row ) const
+		{
+			return BaseIndex.Next( Row );
+		}
+		row__ Previous( row__ Row ) const
+		{
+			return BaseIndex.Previous( Row );
+		}
 	};
 
 	E_AUTO( index )
@@ -177,9 +199,12 @@ namespace dbsidx {
 		: public index_::s
 		{
 			struct memory_driver__ {
-				flm::E_FILE_MEMORY_DRIVER___
-					Tree,
-					Queue;
+				struct tree__ {
+					flm::E_FILE_MEMORY_DRIVER___
+						Nodes,
+						Colors;
+				} Tree;
+				flm::E_FILE_MEMORY_DRIVER___ Queue;
 			} MemoryDriver;
 			str::string_::s RootFileName;
 		} &_S;
@@ -195,7 +220,8 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			_S.MemoryDriver.Tree.reset( P );
+			_S.MemoryDriver.Tree.Nodes.reset( P );
+			_S.MemoryDriver.Tree.Colors.reset( P );
 			_S.MemoryDriver.Queue.reset( P );
 			RootFileName.reset( P );
 			index_::reset( P );
@@ -210,7 +236,10 @@ namespace dbsidx {
 
 			return *this;	// Pour éviter un warning
 		}
-		bso::bool__ Init( const str::string_ &RootFileName );
+		bso::bool__ Init(
+			const str::string_ &RootFileName,
+			const content_ &Content = *(content_ *)NULL,
+			sort_function__ &Sort = *(sort_function__ *)NULL );
 	};
 
 	E_AUTO( file_index )
