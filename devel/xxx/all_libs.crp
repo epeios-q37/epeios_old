@@ -70,7 +70,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dbsdct		&epeios		&\
 	&DataBaSe DataContent
 &dbsidx		&epeios		&\
-	&DataBaSe Index
+	&DataBaSe InDeX
+&dbstbl		&epeios		&\
+	&DataBaSe TaBLe
 &dbt		&epeios		&\
 	&Differentiated Binary Tree
 &dir		&epeios		&\

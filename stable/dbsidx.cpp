@@ -114,6 +114,10 @@ ERRProlog
 	data Data;
 	row__ TargetRow = NONE;
 ERRBegin
+
+	if ( _Content().Amount() > BaseIndex.Amount() )
+		BaseIndex.Allocate( _Content().Amount() );
+
 	if ( _S.Root == NONE ) {
 		_S.Root = Row;
 		ERRReturn;
@@ -145,6 +149,25 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+row__ dbsidx::index_::Search( 
+	const data_ &Data,
+	bso::sign__ &Sign ) const
+{
+	row__ Row = NONE;
+
+	if ( _S.Root == NONE )
+		return NONE;
+
+	Sign = _Search( Data, Row );
+
+#ifdef DBSIDX_DBG
+	if ( Row == NONE )
+		ERRc();
+#endif
+
+	return Row;
 }
 
 template <typename container> static bso::bool__ CoreSet_(
@@ -292,7 +315,10 @@ ERREpilog
 }
 
 
-bso::bool__ dbsidx::file_index_::Init( const str::string_ &RootFileName )
+bso::bool__ dbsidx::file_index_::Init(
+	const str::string_ &RootFileName,
+	const content_ &Content,
+	sort_function__ &Sort )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -300,7 +326,7 @@ ERRProlog
 	str::string ColorsFileName;
 	str::string QueueFileName;
 ERRBegin
-	index_::Init();
+	index_::Init( Content, Sort );
 
 	NodesFileName.Init( RootFileName );
 	NodesFileName.Append( NODES_FILE_NAME_EXTENSION );

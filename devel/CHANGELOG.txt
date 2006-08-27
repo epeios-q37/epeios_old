@@ -1,4 +1,7 @@
 $Id$
+27/08/06 :
+	- GENERAL :
+		- Creation 'DBSTBL'
 
 26/08/06 :
 	- GENERAL :

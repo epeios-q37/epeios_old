@@ -42,16 +42,31 @@ using cio::cerr;
 
 const char *Generate( void )
 {
-	static  char Buffer[1000];
+	static  char Buffer[100];
 
-	Buffer[999] = 0;
+	Buffer[99] = 0;
 
-	int L = 999;
+	int L = 99;
 
 	while ( L-- )
 		Buffer[L] = TEXT[rand() % sizeof( TEXT )];
 
 	return Buffer;
+}
+
+void Delete(
+	  dbsdct::content_ &Content,
+	  dbsidx::index_ &Index )
+{
+	dbsidx::row__ Row = NONE;
+	const char *Buffer;
+
+	Buffer = Generate();
+
+	if ( ( Row = Index.Search( str::string( Buffer ) ) ) != NONE ) {
+		Index.Delete( Row );
+		Content.Erase( Row );
+	}
 }
 
 void Fill(
@@ -64,11 +79,16 @@ void Fill(
 	tol::InitializeRandomGenerator();
 
 	while ( L-- ) {
-		Buffer = Generate();
 
-		cout << Buffer << txf::tab << txf::sync;
+		if ( ( rand() % 10 ) == 0 )
+			Delete( Content, Index );
+		else {
+			Buffer = Generate();
 
-		Index.Index( Content.Store( str::string( Buffer ) ) );
+			cout << Buffer << txf::tab << txf::sync;
+
+			Index.Index( Content.Store( str::string( Buffer ) ) );
+		}
 	}
 }
 
@@ -100,6 +120,48 @@ ERREnd
 ERREpilog
 }
 
+void Display(
+	const dbsdct::content_ &Content,
+	dbsidx::row__ Row )
+{
+ERRProlog
+	dbsidx::data Data;
+ERRBegin
+	if ( Row != NONE ) {
+		Data.Init();
+		Content.Retrieve( Row, Data );
+		cout << Data;
+	} else
+		cout << "<>";
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+
+void Search(
+	  const dbsdct::content_ &Content,
+	  const dbsidx::index_ &Index )
+{
+	dbsidx::row__ Row = NONE;
+	const char *Buffer;
+
+	Buffer = Generate();
+
+	cout << txf::nl << Buffer << " : ";
+
+	if ( ( Row = Index.Search( str::string( Buffer ) ) ) != NONE ) {
+		Display( Content, Index.Previous( Row ) );
+		cout << txf::tab;
+		Display( Content, Row );
+		cout << txf::tab;
+		Display( Content, Index.Next( Row ) );
+		cout << txf::nl << txf::sync;
+	}
+}
 
 class sort__
 : public dbsidx::sort_function__
@@ -137,9 +199,9 @@ ERRProlog
 ERRBegin
 	Content.Init( str::string( "test\\d" ) );
 	Index.Init( str::string( "test\\i" ), Content, Sort );
-	Display( Content, Index );
 	Fill( Content, Index );
 	Display( Content, Index );
+	Search( Content, Index );
 ERRErr
 ERREnd
 ERREpilog

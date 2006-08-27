@@ -154,6 +154,23 @@ namespace dbsidx {
 			_S.Sort = &Sort;
 		}
 		void Index( row__ Row );
+		void Delete( row__ Row )
+		{
+#ifdef DBSIDX_DBG
+			if ( _S.Root == NONE )
+				ERRu();
+#endif
+			_S.Root = BaseIndex.Delete( Row, _S.Root );
+		}
+		row__ Search(
+			const data_ &Data,
+			bso::sign__ &Sign ) const;
+		row__ Search( const data &Data ) const
+		{
+			bso::sign__ Sign;
+
+			return Search( Data, Sign );
+		}
 		row__ SearchRoot( void )
 		{
 			ERRl();
@@ -181,6 +198,10 @@ namespace dbsidx {
 		row__ Previous( row__ Row ) const
 		{
 			return BaseIndex.Previous( Row );
+		}
+		mdr::size__ Amount( void ) const
+		{
+			return BaseIndex.Amount();
 		}
 	};
 

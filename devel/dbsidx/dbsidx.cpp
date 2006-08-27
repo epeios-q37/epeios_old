@@ -151,6 +151,25 @@ ERREnd
 ERREpilog
 }
 
+row__ dbsidx::index_::Search( 
+	const data_ &Data,
+	bso::sign__ &Sign ) const
+{
+	row__ Row = NONE;
+
+	if ( _S.Root == NONE )
+		return NONE;
+
+	Sign = _Search( Data, Row );
+
+#ifdef DBSIDX_DBG
+	if ( Row == NONE )
+		ERRc();
+#endif
+
+	return Row;
+}
+
 template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const str::string_ &FileName,

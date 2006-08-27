@@ -154,11 +154,54 @@ namespace dbsidx {
 			_S.Sort = &Sort;
 		}
 		void Index( row__ Row );
+		void Delete( row__ Row )
+		{
+#ifdef DBSIDX_DBG
+			if ( _S.Root == NONE )
+				ERRu();
+#endif
+			_S.Root = BaseIndex.Delete( Row, _S.Root );
+		}
+		row__ Search(
+			const data_ &Data,
+			bso::sign__ &Sign ) const;
+		row__ Search( const data &Data ) const
+		{
+			bso::sign__ Sign;
+
+			return Search( Data, Sign );
+		}
 		row__ SearchRoot( void )
 		{
 			ERRl();
 
 			return _S.Root;
+		}
+		row__ First( void ) const
+		{
+			if ( _S.Root != NONE )
+				return BaseIndex.First( _S.Root );
+			else
+				return NONE;
+		}
+		row__ Last( void ) const
+		{
+			if ( _S.Root != NONE )
+				return BaseIndex.Last( _S.Root );
+			else
+				return NONE;
+		}
+		row__ Next( row__ Row ) const
+		{
+			return BaseIndex.Next( Row );
+		}
+		row__ Previous( row__ Row ) const
+		{
+			return BaseIndex.Previous( Row );
+		}
+		mdr::size__ Amount( void ) const
+		{
+			return BaseIndex.Amount();
 		}
 	};
 
@@ -214,7 +257,10 @@ namespace dbsidx {
 
 			return *this;	// Pour éviter un warning
 		}
-		bso::bool__ Init( const str::string_ &RootFileName );
+		bso::bool__ Init(
+			const str::string_ &RootFileName,
+			const content_ &Content = *(content_ *)NULL,
+			sort_function__ &Sort = *(sort_function__ *)NULL );
 	};
 
 	E_AUTO( file_index )
