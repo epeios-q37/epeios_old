@@ -588,16 +588,23 @@ namespace nsxpcm {
 		return Index;
 	}
 
-	template <typename element> inline bool GetCheckState( element *Element )
+	template <typename element> inline bool GetChecked( element *Element )
 	{
 		PRBool Checked;
 
-		if ( Element->GetCheckState( &Checked ) != NS_OK )
+		if ( Element->GetChecked( &Checked ) != NS_OK )
 			ERRx();
 
 		return Checked != 0;
 	}
 
+	template <typename element> inline void SetChecked(
+		element *Element,
+		bso::bool__ State )
+	{
+		if ( Element->SetChecked( State ) != NS_OK )
+			ERRx();
+	}
 
 #ifdef NSXPCM__BKD
 	void Convert(
