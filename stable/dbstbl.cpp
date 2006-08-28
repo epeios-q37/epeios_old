@@ -79,6 +79,77 @@ void dbstbl::table_::_DeleteFromIndexes( row__ Row )
 	}
 }
 
+void dbstbl::table_::_Reindex(
+	irow__ IRow,
+	observer_functions__ &Observer )
+{
+	index_ &Index = _I( IRow );
+	const content_ &Content = _C();
+	time_t Top;
+	mdr::size__ RecordCount = 0;
+
+	Index.Reset();
+
+	Index.Allocate( Content.Amount() );
+
+	row__ Row = Content.First();
+
+	if ( &Observer != NULL ) {
+		Observer.Notify( 0, Content.Amount() );
+		Top = tol::Clock() + Observer._Delay;
+	}
+
+	while ( Row != NONE ) {
+		Index.Index( Row );
+
+		RecordCount++;
+
+		if ( ( &Observer != NULL ) && tol::Clock() > Top ) {
+			Observer.Notify( RecordCount, Content.Amount() );
+
+			Top = tol::Clock() + Observer._Delay;
+		}
+
+		Row = Content.Next( Row );
+	}
+
+	if ( &Observer != NULL )
+		Observer.Notify( RecordCount, Content.Amount() );
+}
+
+void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
+{
+	_Test();
+
+	bso::ulong__ IndexCount = 0;
+	irow__ Row = Indexes.First();
+
+	if ( &Observer != NULL )
+		Observer._IndexAmount = Indexes.Amount();
+
+	while ( Row != NONE ) {
+		IndexCount++;
+
+		if ( &Observer )
+			Observer._CurrentIndex = IndexCount;
+
+		_Reindex( Row, Observer );
+
+		Row = Indexes.Next( Row );
+	}
+}
+
+void dbstbl::table_::_ResetAllIndexes( void )
+{
+	irow__ Row = Indexes.First();
+
+	while ( Row != NONE ) {
+		_I( Row ).Reset();
+
+		Row = Indexes.Next( Row );
+	}
+}
+
 #ifdef DBSTBL__THREAD_SAFE
 
 #define RO	const table_ &T = _RO();
@@ -89,14 +160,15 @@ void dbstbl::table_::_DeleteFromIndexes( row__ Row )
 
 irow__ dbstbl::thread_safe_table_::AddIndex(
 	index_ &Index,
-	bso::bool__ Reindex )
+	bso::bool__ Reindex,
+	observer_functions__ &Observer )
 {
 	irow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RW
 
-	Row = T.AddIndex( Index, Reindex );
+	Row = T.AddIndex( Index, Reindex, Observer );
 ERRErr
 ERREnd
 	RRW
@@ -258,6 +330,23 @@ ERREnd
 ERREpilog
 	return Amount;
 }
+
+void dbstbl::thread_safe_table_::SwitchMode(
+	mode__ Mode,
+	observer_functions__ &Observer )
+{
+ERRProlog
+ERRBegin
+	RW
+
+	T.SwitchMode( Mode, Observer );
+ERRErr
+ERREnd
+	RRW
+ERREpilog
+}
+
+
 
 #endif
 

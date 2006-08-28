@@ -115,8 +115,8 @@ ERRProlog
 	row__ TargetRow = NONE;
 ERRBegin
 
-	if ( _Content().Amount() > BaseIndex.Amount() )
-		BaseIndex.Allocate( _Content().Amount() );
+	if ( _Content().Extent() > BaseIndex.Extent() )
+		BaseIndex.Allocate( _Content().Extent() );
 
 	if ( _S.Root == NONE ) {
 		_S.Root = Row;

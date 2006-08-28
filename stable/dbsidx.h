@@ -153,6 +153,16 @@ namespace dbsidx {
 			_S.Content = &Content;
 			_S.Sort = &Sort;
 		}
+		// Vide l'index.
+		void Reset( void )
+		{
+			_S.Root = NONE;
+			BaseIndex.Init();
+		}
+		void Allocate( mdr::size__ Size )
+		{
+			BaseIndex.Allocate( Size );
+		}
 		void Index( row__ Row );
 		void Delete( row__ Row )
 		{

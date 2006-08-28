@@ -80,14 +80,56 @@ extern class ttr_tutor &DBSTBLTutor;
 
 namespace dbstbl {
 
-	E_ROW( irow__ );
-
 	using dbsdct::content_;
 	using dbsidx::index_;
 	using dbsdct::data_;
 	using dbsdct::row__;
 
+	E_ROW( irow__ );
+
+	enum mode__ {
+		// Pas d'indexation, ou diffèrée.
+		mBulk,
+		// Lecture seule.
+		mReadOnly,
+		// Lecture/écriture.
+		mReadWrite,
+		m_amount,
+		m_Undefined
+	};
+
 	typedef bch::E_BUNCHt_( index_ *, irow__ ) _indexes_;
+
+	class observer_functions__
+	{
+	private:
+		// Durée entre deuw appels en ms.
+		time_t _Delay;
+		bso::ulong__ _CurrentIndex, _IndexAmount;
+	protected:
+		virtual void DBSTBLNotify(
+			bso::ulong__ CurrentIndex,
+			bso::ulong__ IndexAmount,
+			bso::ulong__ CurrentRecord,
+			bso::ulong__ RecordAmount ) = 0;
+	public:
+		observer_functions__( void )
+		{
+			_Delay = 1000;	// Délai par défaut : 1 s.
+			_CurrentIndex = _IndexAmount = 0;
+		}
+		void SetDelay( time_t Delay )
+		{
+			_Delay = Delay;
+		}
+		void Notify(
+			bso::ulong__ CurrentRecord,
+			bso::ulong__ RecordAmount )
+		{
+			DBSTBLNotify( _CurrentIndex, _IndexAmount, CurrentRecord, RecordAmount );
+		}
+		friend class table_;
+	};
 
 	class table_
 	{
@@ -119,20 +161,61 @@ namespace dbstbl {
 
 			return *Indexes( Row );
 		}
-		void _Reindex( irow__ Row )
+		void _Test( void ) const
 		{
-			_ITest( Row );
-
-			ERRl();
+			switch ( _S.Mode ) {
+			case mBulk:
+			case mReadWrite:
+				break;
+			case mReadOnly:
+				ERRu();
+				break;
+			default:
+				ERRu();
+				break;
+			}
 		}
+		void _Test( void )
+		{
+			switch ( _S.Mode ) {
+			case mBulk:
+			case mReadWrite:
+			case mReadOnly:
+				break;
+			default:
+				ERRu();
+				break;
+			}
+		}
+		void _Reindex(
+			irow__ Row,
+			observer_functions__ &Observer );
 		void _InsertInIndexes( row__ Row );
 		void _DeleteFromIndexes( row__ Row );
+		void _ReindexAll( observer_functions__ &Observer );
+		void _ResetAllIndexes( void );
+		bso::bool__ _IsBulk( void ) const
+		{
+			switch ( _S.Mode ) {
+			case mBulk:
+				return true;
+			case mReadWrite:
+			case mReadOnly:
+				return false;
+				break;
+			default:
+				ERRu();
+				return false;	// Pour éviter un warning.
+				break;
+			}
+		}
 	public:
 		_indexes_ Indexes;
 		struct s
 		{
 			_indexes_::s Indexes;
 			content_ *Content;
+			mode__ Mode;
 		} &_S;
 		table_( s &S )
 		: _S( S ),
@@ -141,6 +224,8 @@ namespace dbstbl {
 		void reset( bso::bool__ P = true )
 		{
 			Indexes.reset( P );
+			_S.Content = NULL;
+			_S.Mode = m_Undefined;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -150,35 +235,49 @@ namespace dbstbl {
 		{
 			Indexes = T.Indexes;
 			_S.Content = T._S.Content;
+			_S.Mode = T._S.Mode;
 
 			return *this;
 		}
-		void Init( content_ &Content )
+		void Init(
+			content_ &Content,
+			mode__ Mode = mReadWrite )
 		{
 			reset();
 
 			Indexes.Init();
 
 			_S.Content = &Content;
+			_S.Mode = Mode;
 		}
 		irow__ AddIndex(
 			index_ &Index,
-			bso::bool__ Reindex = false )
+			bso::bool__ Reindex = false,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
+			_Test();
+
 			irow__ Row = Indexes.Append( &Index );
 
-			if ( Reindex )
-				_Reindex( Row );
-			else if ( Index.Amount() != _C().Amount() )
+			if ( Reindex ) {
+				if ( &Observer != NULL ) {
+					Observer._CurrentIndex = 1;
+					Observer._IndexAmount = 1;
+				}
+				_Reindex( Row, Observer );
+			} else if ( Index.Amount() != _C().Amount() )
 				ERRu();
 
 			return Row;
 		}
 		row__ Store( const data_ &Data )
 		{
+			_Test();
+
 			row__ Row = _C().Store( Data );
 
-			_InsertInIndexes( Row );
+			if ( !_IsBulk() )
+				_InsertInIndexes( Row );
 
 			return Row;
 		}
@@ -186,23 +285,35 @@ namespace dbstbl {
 			const data_ &Data,
 			row__ Row )
 		{
-			_DeleteFromIndexes( Row );
+			_Test();
+
+			if ( !_IsBulk() )
+				_DeleteFromIndexes( Row );
 
 			_C().Store( Data, Row );
 
-			_InsertInIndexes( Row );
+			if ( !_IsBulk() )
+				_InsertInIndexes( Row );
 		}
 		void Delete( row__ Row )
 		{
+			_Test();
+
 			_C().Erase( Row );
 
-			_DeleteFromIndexes( Row );
+			if ( !_IsBulk() )
+				_DeleteFromIndexes( Row );
 		}
 		row__ Search(
 			const data_ &Data,
 			irow__ IRow,
 			bso::sign__ &Sign ) const
 		{
+			_Test();
+
+			if ( _IsBulk() )
+				ERRu();
+
 			return _I( IRow ).Search( Data, Sign );
 		}
 		row__ Search(
@@ -211,43 +322,91 @@ namespace dbstbl {
 		{
 			bso::sign__ Sign;
 
+			_Test();
+
 			return Search( Data, IRow, Sign );
 		}
 		row__ First( irow__ IRow ) const
 		{
+			_Test();
+
 			if ( IRow == NONE )
 				return _C().First();
-			else
-				return _I( IRow ).First();
+			else if ( _IsBulk() )
+				ERRu();
+
+			return _I( IRow ).First();
 		}
 		row__ Last( irow__ IRow ) const
 		{
+			_Test();
+
 			if ( IRow == NONE )
 				return _C().Last();
-			else
-				return _I( IRow ).Last();
+			else if ( _IsBulk() )
+				ERRu();
+
+			return _I( IRow ).Last();
 		}
 		row__ Next( 
 			irow__ IRow,
 			row__ Row ) const
 		{
+			_Test();
+
 			if ( IRow == NONE )
 				return _C().Next( Row );
-			else
-				return _I( IRow ).Next( Row );
+			else if ( _IsBulk() )
+				ERRu();
+
+			return _I( IRow ).Next( Row );
 		}
 		row__ Previous( 
 			irow__ IRow,
 			row__ Row ) const
 		{
+			_Test();
+
 			if ( IRow == NONE )
 				return _C().Previous( Row );
-			else
-				return _I( IRow ).Previous( Row );
+			else if ( _IsBulk() )
+				ERRu();
+
+			return _I( IRow ).Previous( Row );
 		}
 		mdr::size__ Amount( void ) const
 		{
+			_Test();
+
 			return _C().Amount();
+		}
+		void SwitchMode(
+			mode__ Mode,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL )
+		{
+			switch ( Mode ) {
+			case mBulk:
+				_ResetAllIndexes();
+				break;
+			case mReadWrite:
+			case mReadOnly:
+				switch( _S.Mode ) {
+				case mBulk:
+					_ReindexAll( Observer );
+					break;
+				case mReadOnly:
+				case mReadWrite:
+					break;
+				default:
+					ERRc();
+					break;
+				}
+			default:
+				ERRu();
+				break;
+			}
+
+			_S.Mode = Mode;
 		}
 	};
 
@@ -313,7 +472,8 @@ namespace dbstbl {
 		}
 		irow__ AddIndex(
 			index_ &Index,
-			bso::bool__ Reindex = false );
+			bso::bool__ Reindex = false,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL );
 		row__ Store( const data_ &Data );
 		void Store(
 			const data_ &Data,
@@ -335,6 +495,9 @@ namespace dbstbl {
 			irow__ IRow,
 			row__ Row );
 		mdr::size__ Amount( void );
+		void SwitchMode(
+			mode__ Mode,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL );
 	};
 
 	E_AUTO( thread_safe_table )
