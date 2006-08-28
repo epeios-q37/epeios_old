@@ -75,6 +75,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULSelectCntrlItemEl.h"
 #include "nsIDOMXULTextboxElement.h"
 #include "nsIDOMXULMenuListElement.h"
+#include "nsIDOMXULCheckboxElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -291,6 +292,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULSelectControlItemElement, listitem, Listitem )
 	NSXPCM_DEFINE( nsIDOMXULTextBoxElement, textbox, Textbox )
 	NSXPCM_DEFINE( nsIDOMXULMenuListElement, menulist, Menulist )
+	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -575,6 +577,27 @@ namespace nsxpcm {
 		return Name;
 
 	}
+
+	template <typename element> bso::slong__ GetSelectedIndex( element *Element )
+	{
+		PRInt32 Index;
+
+		if ( Element->GetSelectedIndex( &Index ) != NS_OK )
+			ERRx();
+
+		return Index;
+	}
+
+	template <typename element> inline bool GetCheckState( element *Element )
+	{
+		PRBool Checked;
+
+		if ( Element->GetCheckState( &Checked ) != NS_OK )
+			ERRx();
+
+		return Checked != 0;
+	}
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
