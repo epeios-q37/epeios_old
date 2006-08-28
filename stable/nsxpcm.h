@@ -74,6 +74,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULMultSelectCntrlEl.h"
 #include "nsIDOMXULSelectCntrlItemEl.h"
 #include "nsIDOMXULTextboxElement.h"
+#include "nsIDOMXULMenuListElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -90,57 +91,6 @@ namespace nsxpcm {
 
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
-
-	template <typename element> struct _element__
-	{
-	private:
-		element *_Element;
-	public:
-		_element__( element *Element = NULL )
-		{
-			_Element = Element;
-		}
-		operator element *( void )
-		{
-			return _Element;
-		}
-		const element *operator ->( void ) const
-		{
-			return _Element;
-		}
-		element *operator ->( void )
-		{
-			return _Element;
-		}
-		element *&operator()( void )
-		{
-			return _Element;
-		}
-		const element *&operator()( void ) const
-		{
-			return _Element;
-		}
-		bool operator ==( const element *Op )
-		{
-			return ( Op == _Element );
-		}
-		bool operator !=( const element *Op )
-		{
-			return ( Op != _Element );
-		}
-	};
-
-	#define NSXPCM_TYPEDEFS( element, name )\
-		typedef element name;\
-		typedef _element__<name> name##__;
-
-
-	NSXPCM_TYPEDEFS( nsIDOMXULMultiSelectControlElement, listbox )
-
-	NSXPCM_TYPEDEFS( nsIDOMXULSelectControlItemElement, listitem )
-
-	NSXPCM_TYPEDEFS( nsIDOMXULTextBoxElement, textbox )
-
 
 	void Transform(
 		const char *CString,
@@ -208,7 +158,8 @@ namespace nsxpcm {
 
 		Transform( Id, EId );
 
-		Document->GetElementById( EId, &Element );
+		if ( Document->GetElementById( EId, &Element ) != NS_OK )
+			ERRu();
 
 		return Element;
 	}
@@ -222,11 +173,23 @@ namespace nsxpcm {
 
 		Transform( Id, EId );
 
-		Document->GetElementById( EId, &Element );
+		if ( Document->GetElementById( EId, &Element ) != NS_OK )
+			ERRu();
 
 		return Element;
 	}
 
+	template <typename element> inline element *_GetElementById(
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		element *Element = NULL;
+
+		if ( GetElementById( Document, Id )->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK )
+			ERRu();
+
+		return Element;
+	}
 
 	inline nsIDOMElement *CreateElement(
 		nsIDOMDocument *Document,
@@ -257,20 +220,77 @@ namespace nsxpcm {
 	{
 		element *Element = NULL;
 
+#if 0	// Ne fonctionne pas !
 		int Result = CreateElement( Document, Name )->QueryInterface( element::GetIID(), (void **)&Element );
 
+		// Ne pas oulier de tester 'Result' lors de la mise en place de ma version fonctionnelle.
+#else	// Fonctionne, mais présente des risques ...
+		Element = (element *)CreateElement( Document, Name );
+#endif
 		return Element;
 	}
 
-	inline listbox *CreateListboxElement( nsIDOMDocument *Document )
+/*
+	template <typename element> struct _element__
 	{
-		return _CreateElement<listbox>( Document, "listbox" );
-	}
+	private:
+		element *_Element;
+	public:
+		_element__( element *Element = NULL )
+		{
+			_Element = Element;
+		}
+		operator element *( void )
+		{
+			return _Element;
+		}
+		const element *operator ->( void ) const
+		{
+			return _Element;
+		}
+		element *operator ->( void )
+		{
+			return _Element;
+		}
+		element *&operator()( void )
+		{
+			return _Element;
+		}
+		const element *&operator()( void ) const
+		{
+			return _Element;
+		}
+		bool operator ==( const element *Op )
+		{
+			return ( Op == _Element );
+		}
+		bool operator !=( const element *Op )
+		{
+			return ( Op != _Element );
+		}
+	};
+*/
 
-	inline listitem *CreateListitemElement( nsIDOMDocument *Document )
-	{
-		return _CreateElement<listitem>( Document, "listitem" );
-	}
+	// 'name' nom du type 'doit correspondre au nom du tag XUL associé); 'Name' pour le fonctions associées.
+	#define NSXPCM_DEFINE( element, name, Name )\
+		typedef element name;\
+		typedef element name##_;\
+		inline name *Get##Name##ById(\
+			nsIDOMDocument *Document,\
+			const char *Id )\
+		{\
+			return _GetElementById< name >( Document, Id );\
+		}\
+		inline name *Create##Name##( nsIDOMDocument *Document )\
+		{\
+			return _CreateElement< name >( Document, #name );\
+		}
+
+
+	NSXPCM_DEFINE( nsIDOMXULMultiSelectControlElement, listbox, Listbox )
+	NSXPCM_DEFINE( nsIDOMXULSelectControlItemElement, listitem, Listitem )
+	NSXPCM_DEFINE( nsIDOMXULTextBoxElement, textbox, Textbox )
+	NSXPCM_DEFINE( nsIDOMXULMenuListElement, menulist, Menulist )
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -348,14 +368,14 @@ namespace nsxpcm {
 
 		return Value;
 	}
-
+/*
 	template <typename t> inline const str::string_ &GetValue(
 		_element__<t> &Element,
 		str::string_ &Value )
 	{
 		return GetValue( Element.operator->(), Value );
 	}
-
+*/
 	inline void SetAttribute(
 		nsIDOMElement *Element,
 		const char *Name,
@@ -389,14 +409,14 @@ namespace nsxpcm {
 		
 		Element->SetValue( EValue );
 	}
-
+/*
 	template <typename t> inline void SetValue(
 		_element__<t> &Element,
 		const str::string_ &Value )
 	{
 		SetValue( Element.operator->(), Value );
 	}
-
+*/
 	inline void CloneNode(
 		nsIDOMNode *Node,
 		bso::bool__ Deep,
