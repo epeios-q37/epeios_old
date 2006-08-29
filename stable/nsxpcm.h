@@ -76,6 +76,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULTextboxElement.h"
 #include "nsIDOMXULMenuListElement.h"
 #include "nsIDOMXULCheckboxElement.h"
+#include "nsCOMPtr.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -215,14 +216,16 @@ namespace nsxpcm {
 
 	}
 
+
+
 	template <typename element> inline element *_CreateElement(
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
-		element *Element = NULL;
+		nsCOMPtr<element> Element;
 
-#if 0	// Ne fonctionne pas !
-		int Result = CreateElement( Document, Name )->QueryInterface( element::GetIID(), (void **)&Element );
+#if 1	// Ne fonctionne pas !
+		Element = do_QueryInterface( CreateElement( Document, Name ) );
 
 		// Ne pas oulier de tester 'Result' lors de la mise en place de ma version fonctionnelle.
 #else	// Fonctionne, mais présente des risques ...
@@ -411,14 +414,7 @@ namespace nsxpcm {
 		
 		Element->SetValue( EValue );
 	}
-/*
-	template <typename t> inline void SetValue(
-		_element__<t> &Element,
-		const str::string_ &Value )
-	{
-		SetValue( Element.operator->(), Value );
-	}
-*/
+
 	inline void CloneNode(
 		nsIDOMNode *Node,
 		bso::bool__ Deep,
