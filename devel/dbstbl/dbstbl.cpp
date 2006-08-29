@@ -57,7 +57,7 @@ public:
 
 using namespace dbstbl;
 
-void dbstbl::table_::_InsertInIndexes( row__ Row )
+void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
 	irow__ IRow = Indexes.First();
 
@@ -68,7 +68,7 @@ void dbstbl::table_::_InsertInIndexes( row__ Row )
 	}
 }
 
-void dbstbl::table_::_DeleteFromIndexes( row__ Row )
+void dbstbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
 	irow__ IRow = Indexes.First();
 
@@ -92,7 +92,7 @@ void dbstbl::table_::_Reindex(
 
 	Index.Allocate( Content.Amount() );
 
-	row__ Row = Content.First();
+	rrow__ Row = Content.First();
 
 	if ( &Observer != NULL ) {
 		Observer.Notify( 0, Content.Amount() );
@@ -176,14 +176,14 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::Store( const data_ &Data )
+rrow__ dbstbl::thread_safe_table_::Store( const datum_ &Datum )
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RW
 
-	T.Store( Data );
+	T.Store( Datum );
 ERRErr
 ERREnd
 	RRW
@@ -192,21 +192,37 @@ ERREpilog
 }
 
 void dbstbl::thread_safe_table_::Store(
-	const data_ &Data,
-	row__ Row )
+	const datum_ &Datum,
+	rrow__ Row )
 {
 ERRProlog
 ERRBegin
 	RW
 
-	T.Store( Data, Row );
+	T.Store( Datum, Row );
 ERRErr
 ERREnd
 	RRW
 ERREpilog
 }
 
-void dbstbl::thread_safe_table_::Delete( row__ Row )
+void dbstbl::thread_safe_table_::Retrieve(
+	rrow__ Row,
+	datum_ &Datum )
+{
+ERRProlog
+ERRBegin
+	RO
+
+	T.Retrieve( Row, Datum );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+}
+
+
+void dbstbl::thread_safe_table_::Delete( rrow__ Row )
 {
 ERRProlog
 ERRBegin
@@ -219,17 +235,17 @@ ERREnd
 ERREpilog
 }
 
-row__ dbstbl::thread_safe_table_::Search(
-	const data_ &Data,
+rrow__ dbstbl::thread_safe_table_::Search(
+	const datum_ &Datum,
 	irow__ IRow,
 	bso::sign__ &Sign )
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Search( Data, IRow, Sign );
+	Row = T.Search( Datum, IRow, Sign );
 ERRErr
 ERREnd
 	RRO
@@ -237,16 +253,16 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::Search(
-	const data_ &Data,
+rrow__ dbstbl::thread_safe_table_::Search(
+	const datum_ &Datum,
 	irow__ IRow )
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Search( Data, IRow );
+	Row = T.Search( Datum, IRow );
 ERRErr
 ERREnd
 	RRO
@@ -254,9 +270,9 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::First( irow__ IRow )
+rrow__ dbstbl::thread_safe_table_::First( irow__ IRow )
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
@@ -269,9 +285,9 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::Last( irow__ IRow )
+rrow__ dbstbl::thread_safe_table_::Last( irow__ IRow )
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
@@ -284,9 +300,9 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::Next( 
+rrow__ dbstbl::thread_safe_table_::Next( 
 	irow__ IRow,
-	row__ Row )
+	rrow__ Row )
 {
 ERRProlog
 ERRBegin
@@ -300,9 +316,9 @@ ERREpilog
 	return Row;
 }
 
-row__ dbstbl::thread_safe_table_::Previous( 
+rrow__ dbstbl::thread_safe_table_::Previous( 
 	irow__ IRow,
-	row__ Row )
+	rrow__ Row )
 {
 ERRProlog
 ERRBegin

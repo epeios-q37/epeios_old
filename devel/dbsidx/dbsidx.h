@@ -63,56 +63,56 @@ extern class ttr_tutor &DBSIDXTutor;
 #include "err.h"
 #include "flw.h"
 #include "idxbtq.h"
-#include "dbsdct.h"
+#include "dbsctt.h"
 
 namespace dbsidx {
-	using dbsdct::data_;
-	using dbsdct::data;
+	using dbsctt::datum_;
+	using dbsctt::datum;
 
-	using dbsdct::content_;
-	using dbsdct::content;
+	using dbsctt::content_;
+	using dbsctt::content;
 
-	using dbsdct::row__;
+	using dbsctt::rrow__;
 
 	class sort_function__
 	{
 	protected:
 		virtual bso::sign__ DBSIDXCompare(
-			const data_ &Data1,
-			const data_ &Data2 ) = 0;
+			const datum_ &Data1,
+			const datum_ &Data2 ) = 0;
 	public:
 		bso::sign__ Compare(
-			const data_ &Data1,
-			const data_ &Data2 )
+			const datum_ &Data1,
+			const datum_ &Data2 )
 		{
 			return DBSIDXCompare( Data1, Data2 );
 		}
 	};
 
-	typedef idxbtq::E_INDEXt_( row__ ) _index_;
+	typedef idxbtq::E_INDEXt_( rrow__ ) _index_;
 	E_AUTO( _index )
 
 	class index_
 	{
 	private:
 		bso::sign__ _Search(
-			const data_ &Data,
-			row__ &Row ) const;
+			const datum_ &Data,
+			rrow__ &Row ) const;
 		const content_ &_Content( void ) const
 		{
 			return *_S.Content;
 		}
 		void _Retrieve(
-			row__ Row,
-			data_ &Data ) const
+			rrow__ Row,
+			datum_ &Datum ) const
 		{
-			_Content().Retrieve( Row, Data );
+			_Content().Retrieve( Row, Datum );
 		}
 	public:
 		_index_ BaseIndex;
 		struct s {
 			_index_::s BaseIndex;
-			row__ Root;
+			rrow__ Root;
 			sort_function__ *Sort;
 			const content_ *Content;
 		} &_S;
@@ -163,8 +163,8 @@ namespace dbsidx {
 		{
 			BaseIndex.Allocate( Size );
 		}
-		void Index( row__ Row );
-		void Delete( row__ Row )
+		void Index( rrow__ Row );
+		void Delete( rrow__ Row )
 		{
 #ifdef DBSIDX_DBG
 			if ( _S.Root == NONE )
@@ -172,40 +172,40 @@ namespace dbsidx {
 #endif
 			_S.Root = BaseIndex.Delete( Row, _S.Root );
 		}
-		row__ Search(
-			const data_ &Data,
+		rrow__ Search(
+			const datum_ &Datum,
 			bso::sign__ &Sign ) const;
-		row__ Search( const data &Data ) const
+		rrow__ Search( const datum_ &Datum ) const
 		{
 			bso::sign__ Sign;
 
-			return Search( Data, Sign );
+			return Search( Datum, Sign );
 		}
-		row__ SearchRoot( void )
+		rrow__ SearchRoot( void )
 		{
 			ERRl();
 
 			return _S.Root;
 		}
-		row__ First( void ) const
+		rrow__ First( void ) const
 		{
 			if ( _S.Root != NONE )
 				return BaseIndex.First( _S.Root );
 			else
 				return NONE;
 		}
-		row__ Last( void ) const
+		rrow__ Last( void ) const
 		{
 			if ( _S.Root != NONE )
 				return BaseIndex.Last( _S.Root );
 			else
 				return NONE;
 		}
-		row__ Next( row__ Row ) const
+		rrow__ Next( rrow__ Row ) const
 		{
 			return BaseIndex.Next( Row );
 		}
-		row__ Previous( row__ Row ) const
+		rrow__ Previous( rrow__ Row ) const
 		{
 			return BaseIndex.Previous( Row );
 		}

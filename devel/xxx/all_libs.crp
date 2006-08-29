@@ -67,8 +67,12 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&ConTaiNer (of dynamic objects)
 &cvm		&epeios		&2000-2001, \
 	&ConVentional Memory
+&dbsctt		&epeios		&\
+	&DataBaSe ConTenT
 &dbsdct		&epeios		&\
 	&DataBaSe DataContent
+&dbsctt		&epeios		&\
+	&DataBaSe DaTA
 &dbsidx		&epeios		&\
 	&DataBaSe InDeX
 &dbstbl		&epeios		&\

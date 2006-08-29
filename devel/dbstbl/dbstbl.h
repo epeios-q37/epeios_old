@@ -62,14 +62,14 @@ extern class ttr_tutor &DBSTBLTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "dbsdct.h"
+#include "dbsctt.h"
 #include "dbsidx.h"
 #include "cpe.h"
 
 #ifdef DBSTBL_THREAD_SAFE
 #	define DBSTBL__THREAD_SAFE
 #elif !defined( DBSTBL_NO_THREAD_SAFE
-#	ifdef CPE__MT
+#	ifdef CPE__T_MT
 #		define DBSTBL__THREAD_SAFE
 #	endif
 #endif
@@ -80,10 +80,10 @@ extern class ttr_tutor &DBSTBLTutor;
 
 namespace dbstbl {
 
-	using dbsdct::content_;
+	using dbsctt::content_;
 	using dbsidx::index_;
-	using dbsdct::data_;
-	using dbsdct::row__;
+	using dbsctt::datum_;
+	using dbsctt::rrow__;
 
 	E_ROW( irow__ );
 
@@ -190,8 +190,8 @@ namespace dbstbl {
 		void _Reindex(
 			irow__ Row,
 			observer_functions__ &Observer );
-		void _InsertInIndexes( row__ Row );
-		void _DeleteFromIndexes( row__ Row );
+		void _InsertInIndexes( rrow__ Row );
+		void _DeleteFromIndexes( rrow__ Row );
 		void _ReindexAll( observer_functions__ &Observer );
 		void _ResetAllIndexes( void );
 		bso::bool__ _IsBulk( void ) const
@@ -270,11 +270,11 @@ namespace dbstbl {
 
 			return Row;
 		}
-		row__ Store( const data_ &Data )
+		rrow__ Store( const datum_ &Datum )
 		{
 			_Test();
 
-			row__ Row = _C().Store( Data );
+			rrow__ Row = _C().Store( Datum );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
@@ -282,20 +282,28 @@ namespace dbstbl {
 			return Row;
 		}
 		void Store(
-			const data_ &Data,
-			row__ Row )
+			const datum_ &Datum,
+			rrow__ Row )
 		{
 			_Test();
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( Row );
 
-			_C().Store( Data, Row );
+			_C().Store( Datum, Row );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
 		}
-		void Delete( row__ Row )
+		void Retrieve(
+			rrow__ Row,
+			datum_ &Datum ) const
+		{
+			_Test();
+
+			_C().Retrieve( Row, Datum );
+		}
+		void Delete( rrow__ Row )
 		{
 			_Test();
 
@@ -304,8 +312,8 @@ namespace dbstbl {
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( Row );
 		}
-		row__ Search(
-			const data_ &Data,
+		rrow__ Search(
+			const datum_ &Datum,
 			irow__ IRow,
 			bso::sign__ &Sign ) const
 		{
@@ -314,19 +322,19 @@ namespace dbstbl {
 			if ( _IsBulk() )
 				ERRu();
 
-			return _I( IRow ).Search( Data, Sign );
+			return _I( IRow ).Search( Datum, Sign );
 		}
-		row__ Search(
-			const data_ &Data,
+		rrow__ Search(
+			const datum_ &Datum,
 			irow__ IRow ) const
 		{
 			bso::sign__ Sign;
 
 			_Test();
 
-			return Search( Data, IRow, Sign );
+			return Search( Datum, IRow, Sign );
 		}
-		row__ First( irow__ IRow ) const
+		rrow__ First( irow__ IRow ) const
 		{
 			_Test();
 
@@ -337,7 +345,7 @@ namespace dbstbl {
 
 			return _I( IRow ).First();
 		}
-		row__ Last( irow__ IRow ) const
+		rrow__ Last( irow__ IRow ) const
 		{
 			_Test();
 
@@ -348,9 +356,9 @@ namespace dbstbl {
 
 			return _I( IRow ).Last();
 		}
-		row__ Next( 
+		rrow__ Next( 
 			irow__ IRow,
-			row__ Row ) const
+			rrow__ Row ) const
 		{
 			_Test();
 
@@ -361,9 +369,9 @@ namespace dbstbl {
 
 			return _I( IRow ).Next( Row );
 		}
-		row__ Previous( 
+		rrow__ Previous( 
 			irow__ IRow,
-			row__ Row ) const
+			rrow__ Row ) const
 		{
 			_Test();
 
@@ -474,26 +482,29 @@ namespace dbstbl {
 			index_ &Index,
 			bso::bool__ Reindex = false,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );
-		row__ Store( const data_ &Data );
+		rrow__ Store( const datum_ &Datum );
 		void Store(
-			const data_ &Data,
-			row__ Row );
-		void Delete( row__ Row );
-		row__ Search(
-			const data_ &Data,
+			const datum_ &Datum,
+			rrow__ Row );
+		void Retrieve(
+			rrow__ Row,
+			datum_ &Datum );
+		void Delete( rrow__ Row );
+		rrow__ Search(
+			const datum_ &Datum,
 			irow__ IRow,
 			bso::sign__ &Sign );
-		row__ Search(
-			const data_ &Data,
+		rrow__ Search(
+			const datum_ &Datum,
 			irow__ IRow );
-		row__ First( irow__ IRow );
-		row__ Last( irow__ IRow );
-		row__ Next( 
+		rrow__ First( irow__ IRow );
+		rrow__ Last( irow__ IRow );
+		rrow__ Next( 
 			irow__ IRow,
-			row__ Row );
-		row__ Previous( 
+			rrow__ Row );
+		rrow__ Previous( 
 			irow__ IRow,
-			row__ Row );
+			rrow__ Row );
 		mdr::size__ Amount( void );
 		void SwitchMode(
 			mode__ Mode,

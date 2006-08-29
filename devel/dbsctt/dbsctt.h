@@ -1,5 +1,5 @@
 /*
-	Header for the 'dbsdct' library by Claude SIMON (csimon@epeios.org)
+	Header for the 'dbsctt' library by Claude SIMON (csimon@epeios.org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
 $_RAW_$
 	This file is part of the Epeios (http://epeios.org/) project.
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef DBSDCT__INC
-#define DBSDCT__INC
+#ifndef DBSCTT__INC
+#define DBSCTT__INC
 
-#define DBSDCT_NAME		"DBSDCT"
+#define DBSCTT_NAME		"DBSCTT"
 
-#define	DBSDCT_VERSION	"$Revision$"
+#define	DBSCTT_VERSION	"$Revision$"
 
-#define DBSDCT_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define DBSCTT_OWNER		"Claude SIMON (csimon@epeios.org)"
 
 #include "ttr.h"
 
-extern class ttr_tutor &DBSDCTTutor;
+extern class ttr_tutor &DBSCTTTutor;
 
-#if defined( XXX_DBG ) && !defined( DBSDCT_NODBG )
-#define DBSDCT_DBG
+#if defined( XXX_DBG ) && !defined( DBSCTT_NODBG )
+#define DBSCTT_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,34 +55,30 @@ extern class ttr_tutor &DBSDCTTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D DataBaSe DataContent 
+//D DataBaSe DaTA 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete ! Use 'DBSCTT' instead !"
-
 #include "err.h"
 #include "flw.h"
-#include "tym.h"
-#include "tol.h"
-#include "dtfptb.h"
 #include "str.h"
+#include "dtfptb.h"
 #include "stk.h"
 #include "lstbch.h"
 #include "flm.h"
 
-namespace dbsdct {
+namespace dbsctt {
 
 	using mdr::size__;
 
-	typedef bso::char__ datum__;
-	typedef str::string_ data_;
-	typedef str::string data;
+	typedef bso::char__ atom__;
+	typedef str::string_ datum_;
+	typedef str::string datum;
 
-	E_ROW( data_row__ );
+	E_ROW( datum_row__ );
 
-	typedef tym::memory_<datum__, data_row__> memory_;
+	typedef tym::memory_<atom__, datum_row__> memory_;
 
 	class storage_
 	{
@@ -94,7 +90,7 @@ namespace dbsdct {
 			size__ Wanted,
 			size__ Available )
 		{
-#ifdef DBSDCT_DBG
+#ifdef DBSCTT_DBG
 			if ( Available == 0 )
 				ERRc();
 #endif
@@ -107,9 +103,9 @@ namespace dbsdct {
 			return Wanted;
 		}
 		size__ _Store(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row,
+			datum_row__ &Row,
 			size__ Available )
 		{
 			size__ &Amount = Available;
@@ -121,7 +117,7 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Amount, SizeBuffer );
 
-			Memory.Store( (const datum__ *)SizeBuffer, SizeLength, Row );
+			Memory.Store( (const atom__ *)SizeBuffer, SizeLength, Row );
 
 			*Row += SizeLength;
 
@@ -133,10 +129,10 @@ namespace dbsdct {
 		}
 		/* Ajoute 'Data' à la position 'Row', sachant que 'Unallocated' est la position du premier octet non alloué.
 		L'espace necessaire est alloué. Retourne la position du nouveau premier octet non alloué. */
-		data_row__ _Store(
-			const data_ &Data,
+		datum_row__ _Store(
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ Unallocated )
+			datum_row__ Unallocated )
 		{
 			size__ DataAmount = Data.Amount() - Offset;
 			size__ TotalSize = DataAmount + dtfptb::GetSizeLength( DataAmount );
@@ -148,8 +144,8 @@ namespace dbsdct {
 			return Unallocated;
 		}
 		size__ _GetComputedSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			dtfptb::size_buffer__ SizeBuffer;
 			bso::ubyte__ PossibleSizeLength = sizeof( SizeBuffer );
@@ -157,13 +153,13 @@ namespace dbsdct {
 			if ( ( *Unallocated - *Row ) < PossibleSizeLength )
 				PossibleSizeLength = (bso::ubyte__)( *Unallocated - *Row );
 
-			Memory.Recall( Row, PossibleSizeLength, (datum__ *)SizeBuffer );
+			Memory.Recall( Row, PossibleSizeLength, (atom__ *)SizeBuffer );
 
 			return dtfptb::GetSize( SizeBuffer );
 		}
 		size__ _GetRawSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			size__ Size = _GetComputedSize( Row, Unallocated );
 
@@ -206,15 +202,15 @@ namespace dbsdct {
 		pour pointer sur la nouvelle position du premier octet non alloué. Si 'Row', au retour, est != 'NONE',
 		alors il reste 'Available' octets à 'Row'. */
 /*
-		data_row__ Write(
-			const data_ &Data,
-			data_row__ &Row,
+		datum_row__ Write(
+			const datum_ &Data,
+			datum_row__ &Row,
 			size__ &Available,
-			data_row__ &Unallocated )
+			datum_row__ &Unallocated )
 		{
 			size__ Written = _Store( Data, Row, Available );
 			size__ TotalWritten = Written + dtfptb::GetSizeLength( Written );
-			data_row__ Rest = NONE;
+			datum_row__ Rest = NONE;
 
 			Available -= TotalWritten;
 
@@ -232,9 +228,9 @@ namespace dbsdct {
 		}
 */
 		size__ Store(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row,
+			datum_row__ &Row,
 			size__ &Available )
 		{
 			size__ Written = _Store( Data, Offset, Row, Available );
@@ -249,32 +245,32 @@ namespace dbsdct {
 		}
 		/* Ajoute 'Data' à 'Row', qui est la position du premier octet non alloué. La place nécessaire est allouée et
 		la nouvelle position du premier octet non alloué et retourné. */
-		data_row__ Append(
-			const data_ &Data,
+		datum_row__ Append(
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ Row )
+			datum_row__ Row )
 		{
 			return _Store( Data, Offset, Row );
 		}
 		size__ GetComputedSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			return _GetComputedSize( Row, Unallocated );
 		}
 		size__ GetRawSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			return _GetRawSize( Row, Unallocated );
 		}
 		/* Place un marqueur de taille à 'DataRow' sachant qu'il y a 'Size' octets de disponibles. Retourne le nombre
 		d'octets effectivement disponibles à cette position aprés y avoir placé le marquer de taille. */
 		size__ StoreSize(
-			data_row__ Row,
+			datum_row__ Row,
 			size__ Size )
 		{
-#ifdef DBSDCT_DBG
+#ifdef DBSCTT_DBG
 			if ( Size == 0 )
 				ERRu();
 #endif
@@ -284,14 +280,14 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Size, SizeBuffer );
 
-			Memory.Store( (const datum__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
+			Memory.Store( (const atom__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
 
 			return Size;
 		}
 		void Retrieve(
-			data_row__ Row,
-			data_ &Data,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_ &Data,
+			datum_row__ Unallocated ) const
 		{
 			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
@@ -305,7 +301,7 @@ namespace dbsdct {
 	struct available__
 	{
 		// Position.
-		data_row__ Row;
+		datum_row__ Row;
 		// Taille brute, c'est-à-dire sans tenir compte de la place occupée par le marqueur de taille.
 		size__ RawSize;
 		available__( void )
@@ -324,31 +320,31 @@ namespace dbsdct {
 	E_AUTO( availables )
 
 
-	// 'data_row__' portable
-	typedef bso::p_ulong__	p_data_row__;
+	// 'datum_row__' portable
+	typedef bso::p_ulong__	p_datum_row__;
 
 	struct entry__
 	{
 	public:
-		data_row__ Head;
-		data_row__ Tail;
+		datum_row__ Head;
+		datum_row__ Tail;
 		entry__( void )
 		{
 			Head = Tail = NONE;
 		}
 	};
 
-	E_ROW( row__ );
+	E_ROW( rrow__ );	//Record row.
 
-	typedef lstbch::E_LBUNCHt_( entry__, row__ ) entries_;
+	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
 	class content_
 	{
 	private:
 		size__ _StoreInAvailable(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row )
+			datum_row__ &Row )
 		{
 			available__ Available;
 			size__ Written;
@@ -371,9 +367,9 @@ namespace dbsdct {
 			return Written;
 		}
 		void _Append(
-			const data_& Data,
+			const datum_& Data,
 			size__ Offset,
-			data_row__ &Row )
+			datum_row__ &Row )
 		{
 			entry__ Entry;
 
@@ -381,9 +377,9 @@ namespace dbsdct {
 
 			_S.Unallocated = Storage.Append( Data, Offset, _S.Unallocated );
 		}
-		row__ _Store(
-			const data_ &Data,
-			row__ Row )
+		rrow__ _Store(
+			const datum_ &Data,
+			rrow__ Row )
 		{
 			entry__ Entry;
 
@@ -405,7 +401,7 @@ namespace dbsdct {
 
 			return Row;
 		}
-		void _Erase( data_row__ DataRow )
+		void _Erase( datum_row__ DataRow )
 		{
 			available__ Available;
 
@@ -414,7 +410,7 @@ namespace dbsdct {
 
 			Availables.Push( Available );
 		}
-		void _Erase( row__ Row )
+		void _Erase( rrow__ Row )
 		{
 			entry__ Entry = Entries.Get( Row );
 
@@ -429,8 +425,8 @@ namespace dbsdct {
 			Entries.Store( Entry, Row );
 		}
 		void _Retrieve(
-			data_row__ Row,
-			data_ &Data ) const
+			datum_row__ Row,
+			datum_ &Data ) const
 		{
 			Storage.Retrieve( Row, Data, _S.Unallocated );
 		}
@@ -443,7 +439,7 @@ namespace dbsdct {
 			availables_::s Availables;
 			entries_::s Entries;
 			// Position du premier octet non alloué.
-			data_row__ Unallocated;
+			datum_row__ Unallocated;
 		} &_S;
 		content_( s &S )
 		: _S( S ),
@@ -485,23 +481,23 @@ namespace dbsdct {
 
 			_S.Unallocated = 0;
 		}
-		row__ Store( const data_ &Data )
+		rrow__ Store( const datum_ &Data )
 		{
-			row__ Row = Entries.New();
+			rrow__ Row = Entries.New();
 
 			_Store( Data, Row );
 
 			return Row;
 		}
-		void Erase( row__ Row )
+		void Erase( rrow__ Row )
 		{
 			_Erase( Row );
 
 			Entries.Delete( Row );
 		}
 		void Store(
-			const data_ &Data,
-			row__ Row )
+			const datum_ &Data,
+			rrow__ Row )
 		{
 			_Erase( Row );
 
@@ -509,8 +505,8 @@ namespace dbsdct {
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
-			row__ Row,
-			data_ &Data ) const
+			rrow__ Row,
+			datum_ &Data ) const
 		{
 			entry__ Entry = Entries.Get( Row );
 
@@ -534,7 +530,7 @@ namespace dbsdct {
 		{
 			ERRl();
 		}
-		E_NAVt( Entries., row__ )
+		E_NAVt( Entries., rrow__ )
 	};
 
 	E_AUTO( content )
@@ -588,7 +584,6 @@ namespace dbsdct {
 	};
 
 	E_AUTO( file_content )
-
 }
 
 /*$END$*/

@@ -60,6 +60,8 @@ extern class ttr_tutor &DBSDCTTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'DBSCTT' instead !"
+
 #include "err.h"
 #include "flw.h"
 #include "tym.h"

@@ -65,13 +65,13 @@ using namespace dbsidx;
 #define ROOT_FILE_NAME_EXTENSION	".edr"
 
 bso::sign__ dbsidx::index_::_Search(
-	const data_ &Data,
-	row__ &Row ) const
+	const datum_ &Datum,
+	rrow__ &Row ) const
 {
 	bso::sign__ Result = 0;
 ERRProlog
-	data DataToCompare;
-	idxbtq::E_ISEEKERt__( row__ ) Seeker;
+	datum DatumToCompare;
+	idxbtq::E_ISEEKERt__( rrow__ ) Seeker;
 ERRBegin
 	if ( _S.Root == NONE ) {
 		Row = NONE;
@@ -83,11 +83,11 @@ ERRBegin
 	Row = Seeker.GetCurrent();
 
 	while ( Row != NONE ) {
-		DataToCompare.Init();
+		DatumToCompare.Init();
 
-		_Retrieve( Row, DataToCompare );
+		_Retrieve( Row, DatumToCompare );
 
-		switch ( Result = _S.Sort->Compare( Data, DataToCompare ) ) {
+		switch ( Result = _S.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
 		case 1:
 			Row = Seeker.SearchGreater();
@@ -108,11 +108,11 @@ ERREpilog
 	return Result;
 }
 
-void dbsidx::index_::Index( dbsdct::row__ Row )
+void dbsidx::index_::Index( rrow__ Row )
 {
 ERRProlog
-	data Data;
-	row__ TargetRow = NONE;
+	datum Datum;
+	rrow__ TargetRow = NONE;
 ERRBegin
 
 	if ( _Content().Extent() > BaseIndex.Extent() )
@@ -123,11 +123,11 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Data.Init();
+	Datum.Init();
 
-	_Retrieve( Row, Data );
+	_Retrieve( Row, Datum );
 
-	switch ( _Search( Data, TargetRow ) ) {
+	switch ( _Search( Datum, TargetRow ) ) {
 	case 1:
 	case 0:
 		_S.Root = BaseIndex.BecomeGreater( Row, TargetRow, _S.Root );
@@ -151,16 +151,16 @@ ERREnd
 ERREpilog
 }
 
-row__ dbsidx::index_::Search( 
-	const data_ &Data,
+rrow__ dbsidx::index_::Search( 
+	const datum_ &Datum,
 	bso::sign__ &Sign ) const
 {
-	row__ Row = NONE;
+	rrow__ Row = NONE;
 
 	if ( _S.Root == NONE )
 		return NONE;
 
-	Sign = _Search( Data, Row );
+	Sign = _Search( Datum, Row );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )
@@ -221,14 +221,14 @@ ERREpilog
 }
 
 static inline void Save_(
-	row__ Row,
+	rrow__ Row,
 	flw::oflow__ &Flow )
 {
 	dtfptb::PutULong( *Row, Flow );
 }
 
 static void Save_(
-	row__ Row,
+	rrow__ Row,
 	const char *RootFileName )
 {
 ERRProlog
@@ -243,7 +243,7 @@ ERREpilog
 }
 
 static void Save_(
-	row__ Row,
+	rrow__ Row,
 	const str::string_ &RootFileName,
 	const char *Extension )
 {
@@ -266,14 +266,14 @@ void dbsidx::file_index_::_SaveRoot( void ) const
 
 static inline void Load_(
 	flw::iflow__ &Flow,
-	row__ &Row )
+	rrow__ &Row )
 {
 	Row = dtfptb::GetULong( Flow );
 }
 
 static bso::bool__ Load_(
 	const char *RootFileName,
-	row__ &Row,
+	rrow__ &Row,
 	time_t TimeStamp )
 {
 	bso::bool__ Success = false;
@@ -296,7 +296,7 @@ ERREpilog
 
 static bso::bool__ Load_(
 	const str::string_ &RootFileName,
-	row__ &Row,
+	rrow__ &Row,
 	const char *Extension,
 	time_t TimeStamp )
 {
