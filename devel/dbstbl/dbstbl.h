@@ -80,10 +80,8 @@ extern class ttr_tutor &DBSTBLTutor;
 
 namespace dbstbl {
 
-	using dbsctt::content_;
-	using dbsidx::index_;
-	using dbsctt::datum_;
-	using dbsctt::rrow__;
+	using namespace dbsctt;
+	using namespace dbsidx;
 
 	E_ROW( irow__ );
 
@@ -94,6 +92,8 @@ namespace dbstbl {
 		mReadOnly,
 		// Lecture/écriture.
 		mReadWrite,
+		// Administrateur : changement de la structure  (création/suppression d'index, p. ex.).
+		mAdmin,
 		m_amount,
 		m_Undefined
 	};
@@ -131,6 +131,15 @@ namespace dbstbl {
 		friend class table_;
 	};
 
+	typedef bch::E_BUNCH_( rrow__ ) rrows_;
+	E_AUTO( rrows );
+
+	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
+	E_AUTO( data );
+
+	typedef bch::E_BUNCH_( epeios::row__ ) rows_;
+	E_AUTO( rows );
+
 	class table_
 	{
 	private:
@@ -161,11 +170,12 @@ namespace dbstbl {
 
 			return *Indexes( Row );
 		}
-		void _Test( void ) const
+		void _Test( void )
 		{
 			switch ( _S.Mode ) {
 			case mBulk:
 			case mReadWrite:
+			case mAdmin:
 				break;
 			case mReadOnly:
 				ERRu();
@@ -175,12 +185,13 @@ namespace dbstbl {
 				break;
 			}
 		}
-		void _Test( void )
+		void _Test( void ) const
 		{
 			switch ( _S.Mode ) {
 			case mBulk:
 			case mReadWrite:
 			case mReadOnly:
+			case mAdmin:
 				break;
 			default:
 				ERRu();
@@ -241,7 +252,7 @@ namespace dbstbl {
 		}
 		void Init(
 			content_ &Content,
-			mode__ Mode = mReadWrite )
+			mode__ Mode = mAdmin )
 		{
 			reset();
 
@@ -255,6 +266,9 @@ namespace dbstbl {
 			bso::bool__ Reindex = false,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
+			if ( _S.Mode != mAdmin )
+				ERRu();
+
 			_Test();
 
 			irow__ Row = Indexes.Append( &Index );
@@ -303,6 +317,9 @@ namespace dbstbl {
 
 			_C().Retrieve( Row, Datum );
 		}
+		void Retrieve(
+			rrows_ Row,
+			data_ &Data ) const;
 		void Delete( rrow__ Row )
 		{
 			_Test();
@@ -388,17 +405,20 @@ namespace dbstbl {
 
 			return _C().Amount();
 		}
-		void SwitchMode(
+		mode__ SwitchMode(
 			mode__ Mode,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
+			mode__ OldMode = _S.Mode;
+
 			switch ( Mode ) {
 			case mBulk:
 				_ResetAllIndexes();
 				break;
+			case mAdmin:
 			case mReadWrite:
 			case mReadOnly:
-				switch( _S.Mode ) {
+				switch( OldMode ) {
 				case mBulk:
 					_ReindexAll( Observer );
 					break;
@@ -415,7 +435,23 @@ namespace dbstbl {
 			}
 
 			_S.Mode = Mode;
+
+			return OldMode;
 		}
+		mode__ Mode( void ) const
+		{
+			_Test();
+
+			return _S.Mode;
+		}
+		bso::bool__ RecordExists( rrow__ RecordRow ) const
+		{
+			return _C().Exists( RecordRow );
+		}
+		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
+		void TestRecordsExistence(
+			const rrows_ &RecordRows,
+			rows_ &Rows ) const;
 	};
 
 	E_AUTO( table )
@@ -470,11 +506,13 @@ namespace dbstbl {
 
 			return *this;	// Pour éviter un warning.
 		}
-		void Init( content_ &Content )
+		void Init(
+			content_ &Content,
+			mode__ Mode = mAdmin )
 		{
 			reset();
 
-			Table.Init( Content );
+			Table.Init( Content, Mode );
 
 			_S.Control.Init( Table );
 		}
@@ -489,6 +527,11 @@ namespace dbstbl {
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum );
+		// Toute les 'Delay' ms, le 'thread' rend la main pour donner une chance aux autres 'thread's de s'exécuter.
+		void Retrieve(
+			rrows_ Rows,
+			data_ &Data,
+			time_t Delay = 100 );
 		void Delete( rrow__ Row );
 		rrow__ Search(
 			const datum_ &Datum,
@@ -506,9 +549,16 @@ namespace dbstbl {
 			irow__ IRow,
 			rrow__ Row );
 		mdr::size__ Amount( void );
-		void SwitchMode(
+		mode__ SwitchMode(
 			mode__ Mode,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );
+		mode__ Mode( void );
+		bso::bool__ RecordExists( rrow__ RecordRow );
+		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
+		void TestRecordsExistence(
+			const rrows_ &RecordRows,
+			rows_ &Rows,
+			time_t Delay = 100 );
 	};
 
 	E_AUTO( thread_safe_table )

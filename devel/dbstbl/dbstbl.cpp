@@ -139,6 +139,35 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 	}
 }
 
+void dbstbl::table_::Retrieve(
+	rrows_ Rows,
+	data_ &Data ) const
+{
+ERRProlog
+	datum Datum;
+	epeios::row__ Row = NONE;
+ERRBegin
+	_Test();
+
+	const content_ &Content = _C();
+
+	Row = Rows.First();
+
+	while ( Row != NONE ) {
+		Datum.Init();
+
+		Content.Retrieve( Rows( Row ), Datum );
+
+		Data.Append( Datum );
+
+		Row = Rows.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void dbstbl::table_::_ResetAllIndexes( void )
 {
 	irow__ Row = Indexes.First();
@@ -149,6 +178,22 @@ void dbstbl::table_::_ResetAllIndexes( void )
 		Row = Indexes.Next( Row );
 	}
 }
+
+void dbstbl::table_::TestRecordsExistence(
+	const rrows_ &RecordRows,
+	rows_ &Rows ) const
+{
+	epeios::row__ Row = RecordRows.First();
+
+	while ( Row != NONE ) {
+		if ( !RecordExists( RecordRows( Row ) ) )
+			Rows.Append( Row );
+
+		Row = RecordRows.Next( Row );
+	}
+
+}
+
 
 #ifdef DBSTBL__THREAD_SAFE
 
@@ -221,6 +266,46 @@ ERREnd
 ERREpilog
 }
 
+void dbstbl::thread_safe_table_::Retrieve(
+	rrows_ Rows,
+	data_ &Data,
+	time_t Delay )
+{
+ERRProlog
+	datum Datum;
+	epeios::row__ Row = NONE;
+	time_t Limit;
+ERRBegin
+	RO
+
+	Row = Rows.First();
+
+	Limit = tol::Clock() + Delay;
+
+	while ( Row != NONE ) {
+		if ( tol::Clock() > Limit ) {
+			_RRO();
+
+			tht::Defer();
+
+			_RO();
+
+			Limit = tol::Clock() + Delay;
+		}
+
+		Datum.Init();
+
+		T.Retrieve( Rows( Row ), Datum );
+
+		Data.Append( Datum );
+
+		Row = Rows.Next( Row );
+	}
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+}
 
 void dbstbl::thread_safe_table_::Delete( rrow__ Row )
 {
@@ -347,7 +432,7 @@ ERREpilog
 	return Amount;
 }
 
-void dbstbl::thread_safe_table_::SwitchMode(
+mode__ dbstbl::thread_safe_table_::SwitchMode(
 	mode__ Mode,
 	observer_functions__ &Observer )
 {
@@ -355,10 +440,80 @@ ERRProlog
 ERRBegin
 	RW
 
-	T.SwitchMode( Mode, Observer );
+	Mode = T.SwitchMode( Mode, Observer );
 ERRErr
 ERREnd
 	RRW
+ERREpilog
+	return Mode;
+}
+
+mode__ dbstbl::thread_safe_table_::Mode( void )
+{
+	mode__ Mode = m_Undefined;
+ERRProlog
+ERRBegin
+	RO
+
+	Mode = T.Mode();
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Mode;
+}
+
+bso::bool__ dbstbl::thread_safe_table_::RecordExists( rrow__ RecordRow )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+ERRBegin
+	RO
+
+	Exists = T.RecordExists( RecordRow );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Exists;
+}
+
+void dbstbl::thread_safe_table_::TestRecordsExistence(
+	const rrows_ &RecordRows,
+	rows_ &Rows,
+	time_t Delay )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	time_t Limit;
+ERRBegin
+	RO
+
+	Row = RecordRows.First();
+
+	Limit = tol::Clock() + Delay;
+
+	while ( Row != NONE ) {
+
+		if ( !RecordExists( RecordRows( Row ) ) )
+			Rows.Append( Row );
+
+		if ( tol::Clock() > Limit ) {
+			_RRO();
+
+			tht::Defer();
+
+			_RO();
+
+			Limit = tol::Clock() + Delay;
+		}
+
+		Row = RecordRows.Next( Row );
+	}
+
+ERRErr
+ERREnd
+	RRO
 ERREpilog
 }
 
