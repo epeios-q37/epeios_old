@@ -291,6 +291,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dbidpd		&ldbi		&2002-\
 	&DataBase Interface Database DePenDences
 &dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
+&dbiedb		&ldbi		&\
+	&DataBase Interface Epeios DataBase
 &dbigrd		&ldbi		&\
 	&DataBase Interface GRiD
 &dbiibp		&ldbi		&\
