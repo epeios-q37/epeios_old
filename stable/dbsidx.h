@@ -78,14 +78,24 @@ namespace dbsidx {
 	{
 	protected:
 		virtual bso::sign__ DBSIDXCompare(
-			const datum_ &Data1,
-			const datum_ &Data2 ) = 0;
+			const datum_ &Datum1,
+			const datum_ &Datum2 ) = 0;
+		virtual bso::bool__ DBSIDXBegins(
+			const datum_ &Datum,
+			const datum_ &Pattern ) = 0;
+		//NOTA : l'opérateur 'Contains' n'a pas de sens pour un index, car il ne peut y avoir un ordre de tri.
 	public:
 		bso::sign__ Compare(
 			const datum_ &Data1,
 			const datum_ &Data2 )
 		{
 			return DBSIDXCompare( Data1, Data2 );
+		}
+		bso::bool__ Begins(
+			const datum_ &Datum,
+			const datum_ &Pattern )
+		{
+			return DBSIDXBegins( Datum, Pattern );
 		}
 	};
 
@@ -95,7 +105,7 @@ namespace dbsidx {
 	class index_
 	{
 	private:
-		bso::sign__ _Search(
+		bso::sign__ _Seek(
 			const datum_ &Data,
 			rrow__ &Row ) const;
 		const content_ &_Content( void ) const
@@ -172,15 +182,18 @@ namespace dbsidx {
 #endif
 			_S.Root = BaseIndex.Delete( Row, _S.Root );
 		}
-		rrow__ Search(
+		rrow__ Seek(
 			const datum_ &Datum,
 			bso::sign__ &Sign ) const;
-		rrow__ Search( const datum_ &Datum ) const
+		rrow__ Seek( const datum_ &Datum ) const
 		{
 			bso::sign__ Sign;
 
-			return Search( Datum, Sign );
+			return Seek( Datum, Sign );
 		}
+		bso::bool__ Begins(
+			rrow__ RecordRow,
+			const datum_ &Datum ) const;
 		rrow__ SearchRoot( void )
 		{
 			ERRl();

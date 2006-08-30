@@ -284,7 +284,7 @@ namespace dbstbl {
 
 			return Row;
 		}
-		rrow__ Store( const datum_ &Datum )
+		rrow__ Insert( const datum_ &Datum )
 		{
 			_Test();
 
@@ -295,20 +295,26 @@ namespace dbstbl {
 
 			return Row;
 		}
-		void Store(
+		void Insert(
+			const data_ &Data,
+			rrows_ &RecordRows );
+		void Update(
 			const datum_ &Datum,
-			rrow__ Row )
+			rrow__ RecordRow )
 		{
 			_Test();
 
 			if ( !_IsBulk() )
-				_DeleteFromIndexes( Row );
+				_DeleteFromIndexes( RecordRow );
 
-			_C().Store( Datum, Row );
+			_C().Store( Datum, RecordRow );
 
 			if ( !_IsBulk() )
-				_InsertInIndexes( Row );
+				_InsertInIndexes( RecordRow );
 		}
+		void Update(
+			const data_ &Data,
+			const rrows_ &RecordRows );
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum ) const
@@ -320,16 +326,17 @@ namespace dbstbl {
 		void Retrieve(
 			rrows_ Row,
 			data_ &Data ) const;
-		void Delete( rrow__ Row )
+		void Delete( rrow__ RecordRow )
 		{
 			_Test();
 
-			_C().Erase( Row );
+			_C().Erase( RecordRow );
 
 			if ( !_IsBulk() )
-				_DeleteFromIndexes( Row );
+				_DeleteFromIndexes( RecordRow );
 		}
-		rrow__ Search(
+		void Delete( const rrows_ &RecordRows );
+		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
 			bso::sign__ &Sign ) const
@@ -339,9 +346,9 @@ namespace dbstbl {
 			if ( _IsBulk() )
 				ERRu();
 
-			return _I( IRow ).Search( Datum, Sign );
+			return _I( IRow ).Seek( Datum, Sign );
 		}
-		rrow__ Search(
+		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow ) const
 		{
@@ -349,7 +356,19 @@ namespace dbstbl {
 
 			_Test();
 
-			return Search( Datum, IRow, Sign );
+			return Seek( Datum, IRow, Sign );
+		}
+		bso::bool__ Begins(
+			rrow__ RecordRow,
+			const datum_ &Pattern,
+			irow__ IndexRow ) const
+		{
+			_Test();
+
+			if ( _IsBulk() )
+				ERRu();
+
+			return _I( IndexRow).Begins( RecordRow, Pattern );
 		}
 		rrow__ First( irow__ IRow ) const
 		{
@@ -457,6 +476,13 @@ namespace dbstbl {
 	E_AUTO( table )
 
 #ifdef DBSTBL__THREAD_SAFE
+
+#	ifdef DBSTBL_DEFAULT_DELAY
+#		define DBSTBL__DEFAULT_DELAY	DBSTBL_DEFAULT_DELAY
+#	else
+#		define DBSTBL__DEFAULT_DELAY	100	// en ms.
+#endif
+
 	class thread_safe_table_
 	{
 	private:
@@ -520,10 +546,18 @@ namespace dbstbl {
 			index_ &Index,
 			bso::bool__ Reindex = false,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );
-		rrow__ Store( const datum_ &Datum );
-		void Store(
+		rrow__ Insert( const datum_ &Datum );
+		void Insert(
+			const data_ &Data,
+			rrows_ &RecordRows,
+			time_t Delay = DBSTBL__DEFAULT_DELAY );
+		void Update(
 			const datum_ &Datum,
-			rrow__ Row );
+			rrow__ RecordRow );
+		void Update(
+			const data_ &Data,
+			const rrows_ &RecordRows,
+			time_t Delay = DBSTBL__DEFAULT_DELAY );
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum );
@@ -531,13 +565,20 @@ namespace dbstbl {
 		void Retrieve(
 			rrows_ Rows,
 			data_ &Data,
-			time_t Delay = 100 );
-		void Delete( rrow__ Row );
-		rrow__ Search(
+			time_t Delay = DBSTBL__DEFAULT_DELAY );
+		void Delete( rrow__ RecordRow );
+		void Delete(
+			const rrows_ &RecordRows,
+			time_t Delay = DBSTBL__DEFAULT_DELAY );
+		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
 			bso::sign__ &Sign );
-		rrow__ Search(
+		rrow__ Seek(
+			const datum_ &Datum,
+			irow__ IRow );
+		bso::bool__ Begins(
+			rrow__ RecordRow,
 			const datum_ &Datum,
 			irow__ IRow );
 		rrow__ First( irow__ IRow );
@@ -558,7 +599,7 @@ namespace dbstbl {
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
 			rows_ &Rows,
-			time_t Delay = 100 );
+			time_t Delay = DBSTBL__DEFAULT_DELAY );
 	};
 
 	E_AUTO( thread_safe_table )

@@ -57,6 +57,28 @@ public:
 
 using namespace dbstbl;
 
+class chrono__
+{
+private:
+	time_t _Delay;
+	time_t _Limit;
+public:
+	void Init( time_t Delay )
+	{
+		_Limit = 0;
+		_Delay = Delay;
+	}
+	void Launch( void )
+	{
+		_Limit = tol::Clock() + _Delay;
+	}
+	bso::bool__ IsElapsed( void ) const
+	{
+		return tol::Clock() > _Limit;
+	}
+};
+
+
 void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
 	irow__ IRow = Indexes.First();
@@ -85,8 +107,8 @@ void dbstbl::table_::_Reindex(
 {
 	index_ &Index = _I( IRow );
 	const content_ &Content = _C();
-	time_t Top;
 	mdr::size__ RecordCount = 0;
+	chrono__ Chrono;
 
 	Index.Reset();
 
@@ -96,7 +118,8 @@ void dbstbl::table_::_Reindex(
 
 	if ( &Observer != NULL ) {
 		Observer.Notify( 0, Content.Amount() );
-		Top = tol::Clock() + Observer._Delay;
+		Chrono.Init( Observer._Delay );
+		Chrono.Launch();
 	}
 
 	while ( Row != NONE ) {
@@ -104,10 +127,10 @@ void dbstbl::table_::_Reindex(
 
 		RecordCount++;
 
-		if ( ( &Observer != NULL ) && tol::Clock() > Top ) {
+		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
 			Observer.Notify( RecordCount, Content.Amount() );
 
-			Top = tol::Clock() + Observer._Delay;
+			Chrono.Launch();
 		}
 
 		Row = Content.Next( Row );
@@ -167,6 +190,58 @@ ERREnd
 ERREpilog
 }
 
+void dbstbl::table_::Insert(
+	const data_ &Data,
+	rrows_ &RecordRows )
+{
+	_Test();
+
+	ctn::E_CMITEM( datum_ ) Datum;
+	epeios::row__ Row = Data.First();
+
+	Datum.Init( Data );
+
+	while ( Row != NONE ) {
+		RecordRows.Append( Insert( Datum( Row ) ) );
+
+		Row = Data.Next( Row );
+	}
+}
+
+void dbstbl::table_::Update(
+	const data_ &Data,
+	const rrows_ &RecordRows )
+{
+	if ( Data.Amount() != RecordRows.Amount() )
+		ERRu();
+
+	_Test();
+
+	ctn::E_CMITEM( datum_ ) Datum;
+	epeios::row__ Row = Data.First();
+
+	Datum.Init( Data );
+
+	while ( Row != NONE ) {
+		Update( Datum( Row ), RecordRows( Row ) );
+
+		Row = Data.Next( Row );
+	}
+}
+
+void dbstbl::table_::Delete( const rrows_ &RecordRows )
+{
+	_Test();
+
+	epeios::row__ Row = RecordRows.First();
+
+	while ( Row != NONE ) {
+		Delete( RecordRows( Row ) );
+
+		Row = RecordRows.Next( Row );
+	}
+}
+
 
 void dbstbl::table_::_ResetAllIndexes( void )
 {
@@ -221,14 +296,14 @@ ERREpilog
 	return Row;
 }
 
-rrow__ dbstbl::thread_safe_table_::Store( const datum_ &Datum )
+rrow__ dbstbl::thread_safe_table_::Insert( const datum_ &Datum )
 {
 	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RW
 
-	T.Store( Datum );
+	T.Insert( Datum );
 ERRErr
 ERREnd
 	RRW
@@ -236,7 +311,47 @@ ERREpilog
 	return Row;
 }
 
-void dbstbl::thread_safe_table_::Store(
+void dbstbl::thread_safe_table_::Insert(
+	const data_ &Data,
+	rrows_ &RecordRows,
+	time_t Delay )
+{
+ERRProlog
+	ctn::E_CMITEM( datum_ ) Datum;
+	epeios::row__ Row = NONE;
+	chrono__ Chrono;
+ERRBegin
+	RW
+
+	epeios::row__ Row = Data.First();
+
+	Datum.Init( Data );
+
+	Chrono.Init( Delay );
+	Chrono.Launch();
+
+	while ( Row != NONE ) {
+		if ( Chrono.IsElapsed() ) {
+			_RRW();
+
+			tht::Defer();
+
+			_RW();
+
+			Chrono.Launch();
+		}
+
+
+		RecordRows.Append( T.Insert( Datum( Row ) ) );
+
+		Row = Data.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void dbstbl::thread_safe_table_::Update(
 	const datum_ &Datum,
 	rrow__ Row )
 {
@@ -244,10 +359,52 @@ ERRProlog
 ERRBegin
 	RW
 
-	T.Store( Datum, Row );
+	T.Update( Datum, Row );
 ERRErr
 ERREnd
 	RRW
+ERREpilog
+}
+
+void dbstbl::thread_safe_table_::Update(
+	const data_ &Data,
+	const rrows_ &RecordRows,
+	time_t Delay )
+{
+ERRProlog
+	ctn::E_CMITEM( datum_ ) Datum;
+	epeios::row__ Row = NONE;
+	chrono__ Chrono;
+ERRBegin
+	RW
+
+	if ( Data.Amount() != RecordRows.Amount() )
+		ERRu();
+
+	Row = Data.First();
+
+	Datum.Init( Data );
+
+	Chrono.Init( Delay );
+	Chrono.Launch();
+
+	while ( Row != NONE ) {
+		if ( Chrono.IsElapsed() ) {
+			_RRW();
+
+			tht::Defer();
+
+			_RW();
+
+			Chrono.Launch();
+		}
+
+		T.Update( Datum( Row ), RecordRows( Row ) );
+
+		Row = Data.Next( Row );
+	}
+ERRErr
+ERREnd
 ERREpilog
 }
 
@@ -274,23 +431,24 @@ void dbstbl::thread_safe_table_::Retrieve(
 ERRProlog
 	datum Datum;
 	epeios::row__ Row = NONE;
-	time_t Limit;
+	chrono__ Chrono;
 ERRBegin
 	RO
 
 	Row = Rows.First();
 
-	Limit = tol::Clock() + Delay;
+	Chrono.Init( Delay );
+	Chrono.Launch();
 
 	while ( Row != NONE ) {
-		if ( tol::Clock() > Limit ) {
+		if ( Chrono.IsElapsed() ) {
 			_RRO();
 
 			tht::Defer();
 
 			_RO();
 
-			Limit = tol::Clock() + Delay;
+			Chrono.Launch();
 		}
 
 		Datum.Init();
@@ -320,7 +478,42 @@ ERREnd
 ERREpilog
 }
 
-rrow__ dbstbl::thread_safe_table_::Search(
+void dbstbl::thread_safe_table_::Delete(
+	const rrows_ &RecordRows,
+	time_t Delay )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	chrono__ Chrono;
+ERRBegin
+	RW
+
+	Row = RecordRows.First();
+
+	Chrono.Init( Delay );
+	Chrono.Launch();
+
+	while ( Row != NONE ) {
+		if ( Chrono.IsElapsed() ) {
+			_RRW();
+
+			tht::Defer();
+
+			_RW();
+
+			Chrono.Launch();
+		}
+
+		T.Delete( RecordRows( Row ) );
+
+		Row = RecordRows.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
 	irow__ IRow,
 	bso::sign__ &Sign )
@@ -330,7 +523,7 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Search( Datum, IRow, Sign );
+	Row = T.Seek( Datum, IRow, Sign );
 ERRErr
 ERREnd
 	RRO
@@ -338,7 +531,7 @@ ERREpilog
 	return Row;
 }
 
-rrow__ dbstbl::thread_safe_table_::Search(
+rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
 	irow__ IRow )
 {
@@ -347,12 +540,30 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Search( Datum, IRow );
+	Row = T.Seek( Datum, IRow );
 ERRErr
 ERREnd
 	RRO
 ERREpilog
 	return Row;
+}
+
+bso::bool__ dbstbl::thread_safe_table_::Begins(
+	rrow__ RecordRow,
+	const datum_ &Pattern,
+	irow__ IRow )
+{
+	bso::bool__ Result = false;
+ERRProlog
+ERRBegin
+	RO
+
+	Result = T.Begins( RecordRow, Pattern, IRow );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Result;
 }
 
 rrow__ dbstbl::thread_safe_table_::First( irow__ IRow )
@@ -485,28 +696,30 @@ void dbstbl::thread_safe_table_::TestRecordsExistence(
 {
 ERRProlog
 	epeios::row__ Row = NONE;
-	time_t Limit;
+	chrono__ Chrono;
 ERRBegin
 	RO
 
 	Row = RecordRows.First();
 
-	Limit = tol::Clock() + Delay;
+	Chrono.Init( Delay );
+	Chrono.Launch();
+
 
 	while ( Row != NONE ) {
 
-		if ( !RecordExists( RecordRows( Row ) ) )
-			Rows.Append( Row );
-
-		if ( tol::Clock() > Limit ) {
+		if ( Chrono.IsElapsed() ) {
 			_RRO();
 
 			tht::Defer();
 
 			_RO();
 
-			Limit = tol::Clock() + Delay;
+			Chrono.Launch();
 		}
+
+		if ( !T.RecordExists( RecordRows( Row ) ) )
+			Rows.Append( Row );
 
 		Row = RecordRows.Next( Row );
 	}

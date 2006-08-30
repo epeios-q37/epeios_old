@@ -64,7 +64,7 @@ using namespace dbsidx;
 #define QUEUE_FILE_NAME_EXTENSION	".edq"
 #define ROOT_FILE_NAME_EXTENSION	".edr"
 
-bso::sign__ dbsidx::index_::_Search(
+bso::sign__ dbsidx::index_::_Seek(
 	const datum_ &Datum,
 	rrow__ &Row ) const
 {
@@ -127,7 +127,7 @@ ERRBegin
 
 	_Retrieve( Row, Datum );
 
-	switch ( _Search( Datum, TargetRow ) ) {
+	switch ( _Seek( Datum, TargetRow ) ) {
 	case 1:
 	case 0:
 		_S.Root = BaseIndex.BecomeGreater( Row, TargetRow, _S.Root );
@@ -151,7 +151,7 @@ ERREnd
 ERREpilog
 }
 
-rrow__ dbsidx::index_::Search( 
+rrow__ dbsidx::index_::Seek( 
 	const datum_ &Datum,
 	bso::sign__ &Sign ) const
 {
@@ -160,7 +160,7 @@ rrow__ dbsidx::index_::Search(
 	if ( _S.Root == NONE )
 		return NONE;
 
-	Sign = _Search( Datum, Row );
+	Sign = _Seek( Datum, Row );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )
@@ -168,6 +168,25 @@ rrow__ dbsidx::index_::Search(
 #endif
 
 	return Row;
+}
+
+bso::bool__ dbsidx::index_::Begins(
+	rrow__ RecordRow,
+	const datum_ &Pattern ) const
+{
+	bso::bool__ Result = false;
+ERRProlog
+	datum Datum;
+ERRBegin
+	Datum.Init();
+
+	_Content().Retrieve( RecordRow, Datum );
+
+	Result = _S.Sort->Begins( Datum, Pattern );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
 }
 
 template <typename container> static bso::bool__ CoreSet_(
