@@ -370,6 +370,15 @@ namespace dbstbl {
 
 			return _I( IndexRow).Begins( RecordRow, Pattern );
 		}
+		bso::sign__ Compare(
+			rrow__ RecordRow,
+			const datum_&Pattern,
+			irow__ IndexRow ) const
+		{
+			_Test();
+
+			return _I( IndexRow ).Compare( RecordRow, Pattern );
+		}
 		rrow__ First( irow__ IRow ) const
 		{
 			_Test();
@@ -581,6 +590,10 @@ namespace dbstbl {
 			rrow__ RecordRow,
 			const datum_ &Datum,
 			irow__ IRow );
+		bso::sign__ Compare(
+			rrow__ RecordRow,
+			const datum_&Pattern,
+			irow__ IndexRow );
 		rrow__ First( irow__ IRow );
 		rrow__ Last( irow__ IRow );
 		rrow__ Next( 

@@ -189,6 +189,25 @@ ERREpilog
 	return Result;
 }
 
+bso::sign__ dbsidx::index_::Compare(
+	rrow__ RecordRow,
+	const datum_ &Pattern ) const
+{
+	bso::sign__ Result = 0;
+ERRProlog
+	datum Datum;
+ERRBegin
+	Datum.Init();
+
+	_Content().Retrieve( RecordRow, Datum );
+
+	Result = _S.Sort->Compare( Datum, Pattern );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
 template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const str::string_ &FileName,

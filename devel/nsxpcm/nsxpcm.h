@@ -224,7 +224,7 @@ namespace nsxpcm {
 	{
 		nsCOMPtr<element> Element;
 
-#if 1	// Ne fonctionne pas !
+#if 0	// Ne fonctionne pas !
 		Element = do_QueryInterface( CreateElement( Document, Name ) );
 
 		// Ne pas oulier de tester 'Result' lors de la mise en place de ma version fonctionnelle.

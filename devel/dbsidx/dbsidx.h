@@ -226,6 +226,9 @@ namespace dbsidx {
 		{
 			return BaseIndex.Amount();
 		}
+		bso::sign__ Compare(
+			rrow__ RecordId,
+			const datum_ &Pattern ) const;
 	};
 
 	E_AUTO( index )

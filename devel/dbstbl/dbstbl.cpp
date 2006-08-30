@@ -730,6 +730,24 @@ ERREnd
 ERREpilog
 }
 
+bso::sign__ dbstbl::thread_safe_table_::Compare(
+	rrow__ RecordRow,
+	const datum_&Pattern,
+	irow__ IndexRow )
+{
+	bso::sign__ Result = 0;
+ERRProlog
+ERRBegin
+	RO
+
+	Result = T.Compare( RecordRow, Pattern, IndexRow );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Result;
+}
+
 
 
 #endif
