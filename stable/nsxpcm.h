@@ -78,6 +78,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULCheckboxElement.h"
 #include "nsCOMPtr.h"
 #include "nsITreeView.h"
+#include "nsITreeContentView.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -302,6 +303,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULTextBoxElement, textbox, Textbox )
 	NSXPCM_DEFINE( nsIDOMXULMenuListElement, menulist, Menulist )
 	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
+	NSXPCM_DEFINE( nsITreeContentView, tree, Treecontentview )
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
