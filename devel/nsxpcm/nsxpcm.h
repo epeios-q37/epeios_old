@@ -77,6 +77,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULMenuListElement.h"
 #include "nsIDOMXULCheckboxElement.h"
 #include "nsCOMPtr.h"
+#include "nsITreeView.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -181,16 +182,26 @@ namespace nsxpcm {
 		return Element;
 	}
 
+	template <typename element> inline element *QueryInterface( nsIDOMElement *GenericElement )
+	{
+		element *Element = NULL;
+
+#ifdef NSXPCM_DBG
+
+		if ( GenericElement == NULL )
+			ERRu();
+#endif
+		if ( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK )
+			ERRu();
+
+		return Element;
+	}
+
 	template <typename element> inline element *_GetElementById(
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		element *Element = NULL;
-
-		if ( GetElementById( Document, Id )->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK )
-			ERRu();
-
-		return Element;
+		return QueryInterface<element>( GetElementById( Document, Id ) );
 	}
 
 	inline nsIDOMElement *CreateElement(
@@ -216,22 +227,17 @@ namespace nsxpcm {
 
 	}
 
-
-
 	template <typename element> inline element *_CreateElement(
 		nsIDOMDocument *Document,
 		const char *Name )
 	{
-		nsCOMPtr<element> Element;
-
 #if 0	// Ne fonctionne pas !
-		Element = do_QueryInterface( CreateElement( Document, Name ) );
+		return QueryInterface<element>( CreateElement( Document, Name ) );
 
 		// Ne pas oulier de tester 'Result' lors de la mise en place de ma version fonctionnelle.
 #else	// Fonctionne, mais présente des risques ...
-		Element = (element *)CreateElement( Document, Name );
+		return (element *)CreateElement( Document, Name );
 #endif
-		return Element;
 	}
 
 /*

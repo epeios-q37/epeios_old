@@ -1,4 +1,10 @@
 $Id$
+
+04/09/06 :
+	- NSXPCM :
+		- Codage nouvelle fonctions.
+
+
 27/08/06 :
 	- GENERAL :
 		- Creation 'DBSTBL'
