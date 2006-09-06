@@ -29,7 +29,7 @@
 #include <string.h>
 
 #include "dbsidx.h"
-#include "dbsdct.h"
+#include "dbsctt.h"
 
 #include "err.h"
 #include "cio.h"
@@ -55,22 +55,22 @@ const char *Generate( void )
 }
 
 void Delete(
-	  dbsdct::content_ &Content,
+	  dbsctt::content_ &Content,
 	  dbsidx::index_ &Index )
 {
-	dbsidx::row__ Row = NONE;
+	dbsidx::rrow__ Row = NONE;
 	const char *Buffer;
 
 	Buffer = Generate();
 
-	if ( ( Row = Index.Search( str::string( Buffer ) ) ) != NONE ) {
+	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != NONE ) {
 		Index.Delete( Row );
 		Content.Erase( Row );
 	}
 }
 
 void Fill(
-	  dbsdct::content_ &Content,
+	  dbsctt::content_ &Content,
 	  dbsidx::index_ &Index )
 {
 	int L = 10000;
@@ -93,23 +93,23 @@ void Fill(
 }
 
 void Display(
-	  const dbsdct::content_ &Content,
+	  const dbsctt::content_ &Content,
 	  const dbsidx::index_ &Index )
 {
 ERRProlog
-	dbsdct::row__ Row = NONE;
-	dbsdct::data Data;
+	dbsctt::rrow__ Row = NONE;
+	dbsctt::datum Datum;
 ERRBegin
 	cout << txf::nl << "---------------------" << txf::nl;
 
 	Row = Index.First();
 
 	while ( Row != NONE ) {
-		Data.Init();
+		Datum.Init();
 
-		Content.Retrieve( Row, Data );
+		Content.Retrieve( Row, Datum );
 
-		cout << Data << txf::tab << txf::sync;
+		cout << Datum << txf::tab << txf::sync;
 
 		Row = Index.Next( Row );
 	}
@@ -121,16 +121,16 @@ ERREpilog
 }
 
 void Display(
-	const dbsdct::content_ &Content,
-	dbsidx::row__ Row )
+	const dbsctt::content_ &Content,
+	dbsidx::rrow__ Row )
 {
 ERRProlog
-	dbsidx::data Data;
+	dbsidx::datum Datum;
 ERRBegin
 	if ( Row != NONE ) {
-		Data.Init();
-		Content.Retrieve( Row, Data );
-		cout << Data;
+		Datum.Init();
+		Content.Retrieve( Row, Datum );
+		cout << Datum;
 	} else
 		cout << "<>";
 
@@ -143,17 +143,17 @@ ERREpilog
 
 
 void Search(
-	  const dbsdct::content_ &Content,
+	  const dbsctt::content_ &Content,
 	  const dbsidx::index_ &Index )
 {
-	dbsidx::row__ Row = NONE;
+	dbsidx::rrow__ Row = NONE;
 	const char *Buffer;
 
 	Buffer = Generate();
 
 	cout << txf::nl << Buffer << " : ";
 
-	if ( ( Row = Index.Search( str::string( Buffer ) ) ) != NONE ) {
+	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != NONE ) {
 		Display( Content, Index.Previous( Row ) );
 		cout << txf::tab;
 		Display( Content, Row );
@@ -168,15 +168,15 @@ class sort__
 {
 protected:
 	virtual bso::sign__ DBSIDXCompare(
-		const dbsdct::data_ &Data1,
-		const dbsdct::data_ &Data2 )
+		const dbsctt::datum_ &Datum1,
+		const dbsctt::datum_ &Datum2 )
 	{
 			bso::sign__ Sign;
 		ERRProlog
-			dbsdct::data D1, D2;
+			dbsctt::datum D1, D2;
 		ERRBegin
-			D1.Init( Data1 );
-			D2.Init( Data2 );
+			D1.Init( Datum1 );
+			D2.Init( Datum2 );
 
 			str::ToUpper( D1 );
 			str::ToUpper( D2 );
@@ -187,6 +187,12 @@ protected:
 		ERREpilog
 			return Sign;
 	}
+	virtual bso::bool__ DBSIDXBegins(
+		const dbsctt::datum_ &Datum,
+		const dbsctt::datum_ &Pattern )
+	{
+		return true;
+	}
 };
 
 
@@ -194,7 +200,7 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	dbsidx::file_index Index;
-	dbsdct::file_content Content;
+	dbsctt::file_content Content;
 	sort__ Sort;
 ERRBegin
 	Content.Init( str::string( "test\\d" ) );

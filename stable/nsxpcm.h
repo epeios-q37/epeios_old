@@ -554,7 +554,8 @@ namespace nsxpcm {
 		if ( Child == NULL )
 			ERRu();
 #endif
-		Node->RemoveChild( Child, &Dummy );
+		if ( Node->RemoveChild( Child, &Dummy ) != NS_OK )
+			ERRu();
 	}
 
 	inline void RemoveChildren( nsIDOMNode *Node )
