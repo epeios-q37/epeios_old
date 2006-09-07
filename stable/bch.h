@@ -200,7 +200,7 @@ namespace bch {
 			row Row,
 			row Offset = 0 )
 		{
-			StoreAndAdjust( Bunch, Bunch.Amount() - Row, Row, Offset );
+			StoreAndAdjust( Bunch, Bunch.Amount() - *Row, Row, Offset );
 		}
 		//f Store at 'Offset' 'Amount' objects from 'Buffer'.
 		void StoreAndAdjust(

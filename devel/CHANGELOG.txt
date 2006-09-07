@@ -1,5 +1,9 @@
 $Id$
 
+07/09/06 :
+	- BCH :
+		- Correction.
+
 04/09/06 :
 	- NSXPCM :
 		- Codage nouvelle fonctions.
