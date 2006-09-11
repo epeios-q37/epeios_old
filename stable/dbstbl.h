@@ -433,6 +433,12 @@ namespace dbstbl {
 
 			return C_().Amount();
 		}
+		mdr::size__ Extent( void ) const
+		{
+			_Test();
+
+			return C_().Extent();
+		}
 		mode__ SwitchMode(
 			mode__ Mode,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
@@ -603,6 +609,7 @@ namespace dbstbl {
 			irow__ IRow,
 			rrow__ Row );
 		mdr::size__ Amount( void );
+		mdr::size__ Extent( void );
 		mode__ SwitchMode(
 			mode__ Mode,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );

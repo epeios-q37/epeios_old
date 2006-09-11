@@ -643,6 +643,21 @@ ERREpilog
 	return Amount;
 }
 
+mdr::size__ dbstbl::thread_safe_table_::Extent( void )
+{
+	mdr::size__ Extent;
+ERRProlog
+ERRBegin
+	RO
+
+	Extent = T.Extent();
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Extent;
+}
+
 mode__ dbstbl::thread_safe_table_::SwitchMode(
 	mode__ Mode,
 	observer_functions__ &Observer )
