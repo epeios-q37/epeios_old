@@ -68,7 +68,7 @@ extern class ttr_tutor &DBSTBLTutor;
 
 #ifdef DBSTBL_THREAD_SAFE
 #	define DBSTBL__THREAD_SAFE
-#elif !defined( DBSTBL_NO_THREAD_SAFE
+#elif !defined( DBSTBL_NO_THREAD_SAFE )
 #	ifdef CPE__T_MT
 #		define DBSTBL__THREAD_SAFE
 #	endif
@@ -150,13 +150,13 @@ namespace dbstbl {
 				ERRc();
 #endif
 		}
-		const content_ &_C( void ) const
+		const content_ &C_( void ) const
 		{
-			return *_S.Content;
+			return *S_.Content;
 		}
-		content_ &_C( void )
+		content_ &C_( void )
 		{
-			return *_S.Content;
+			return *S_.Content;
 		}
 		const index_ &_I( irow__ Row ) const
 		{
@@ -172,7 +172,7 @@ namespace dbstbl {
 		}
 		void _Test( void )
 		{
-			switch ( _S.Mode ) {
+			switch ( S_.Mode ) {
 			case mBulk:
 			case mReadWrite:
 			case mAdmin:
@@ -187,7 +187,7 @@ namespace dbstbl {
 		}
 		void _Test( void ) const
 		{
-			switch ( _S.Mode ) {
+			switch ( S_.Mode ) {
 			case mBulk:
 			case mReadWrite:
 			case mReadOnly:
@@ -207,7 +207,7 @@ namespace dbstbl {
 		void _ResetAllIndexes( void );
 		bso::bool__ _IsBulk( void ) const
 		{
-			switch ( _S.Mode ) {
+			switch ( S_.Mode ) {
 			case mBulk:
 				return true;
 			case mReadWrite:
@@ -227,16 +227,16 @@ namespace dbstbl {
 			_indexes_::s Indexes;
 			content_ *Content;
 			mode__ Mode;
-		} &_S;
+		} &S_;
 		table_( s &S )
-		: _S( S ),
+		: S_( S ),
 		Indexes( S.Indexes )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Indexes.reset( P );
-			_S.Content = NULL;
-			_S.Mode = m_Undefined;
+			S_.Content = NULL;
+			S_.Mode = m_Undefined;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -245,8 +245,8 @@ namespace dbstbl {
 		table_ &operator =( const table_ &T )
 		{
 			Indexes = T.Indexes;
-			_S.Content = T._S.Content;
-			_S.Mode = T._S.Mode;
+			S_.Content = T.S_.Content;
+			S_.Mode = T.S_.Mode;
 
 			return *this;
 		}
@@ -258,15 +258,15 @@ namespace dbstbl {
 
 			Indexes.Init();
 
-			_S.Content = &Content;
-			_S.Mode = Mode;
+			S_.Content = &Content;
+			S_.Mode = Mode;
 		}
 		irow__ AddIndex(
 			index_ &Index,
 			bso::bool__ Reindex = false,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
-			if ( _S.Mode != mAdmin )
+			if ( S_.Mode != mAdmin )
 				ERRu();
 
 			_Test();
@@ -279,7 +279,7 @@ namespace dbstbl {
 					Observer._IndexAmount = 1;
 				}
 				_Reindex( Row, Observer );
-			} else if ( Index.Amount() != _C().Amount() )
+			} else if ( Index.Amount() != C_().Amount() )
 				ERRu();
 
 			return Row;
@@ -288,7 +288,7 @@ namespace dbstbl {
 		{
 			_Test();
 
-			rrow__ Row = _C().Store( Datum );
+			rrow__ Row = C_().Store( Datum );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
@@ -307,7 +307,7 @@ namespace dbstbl {
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 
-			_C().Store( Datum, RecordRow );
+			C_().Store( Datum, RecordRow );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( RecordRow );
@@ -321,7 +321,7 @@ namespace dbstbl {
 		{
 			_Test();
 
-			_C().Retrieve( Row, Datum );
+			C_().Retrieve( Row, Datum );
 		}
 		void Retrieve(
 			rrows_ Row,
@@ -330,7 +330,7 @@ namespace dbstbl {
 		{
 			_Test();
 
-			_C().Erase( RecordRow );
+			C_().Erase( RecordRow );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
@@ -384,7 +384,7 @@ namespace dbstbl {
 			_Test();
 
 			if ( IRow == NONE )
-				return _C().First();
+				return C_().First();
 			else if ( _IsBulk() )
 				ERRu();
 
@@ -395,7 +395,7 @@ namespace dbstbl {
 			_Test();
 
 			if ( IRow == NONE )
-				return _C().Last();
+				return C_().Last();
 			else if ( _IsBulk() )
 				ERRu();
 
@@ -408,7 +408,7 @@ namespace dbstbl {
 			_Test();
 
 			if ( IRow == NONE )
-				return _C().Next( Row );
+				return C_().Next( Row );
 			else if ( _IsBulk() )
 				ERRu();
 
@@ -421,7 +421,7 @@ namespace dbstbl {
 			_Test();
 
 			if ( IRow == NONE )
-				return _C().Previous( Row );
+				return C_().Previous( Row );
 			else if ( _IsBulk() )
 				ERRu();
 
@@ -431,13 +431,13 @@ namespace dbstbl {
 		{
 			_Test();
 
-			return _C().Amount();
+			return C_().Amount();
 		}
 		mode__ SwitchMode(
 			mode__ Mode,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
-			mode__ OldMode = _S.Mode;
+			mode__ OldMode = S_.Mode;
 
 			switch ( Mode ) {
 			case mBulk:
@@ -462,7 +462,7 @@ namespace dbstbl {
 				break;
 			}
 
-			_S.Mode = Mode;
+			S_.Mode = Mode;
 
 			return OldMode;
 		}
@@ -470,11 +470,11 @@ namespace dbstbl {
 		{
 			_Test();
 
-			return _S.Mode;
+			return S_.Mode;
 		}
 		bso::bool__ RecordExists( rrow__ RecordRow ) const
 		{
-			return _C().Exists( RecordRow );
+			return C_().Exists( RecordRow );
 		}
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
 		void TestRecordsExistence(
@@ -495,25 +495,25 @@ namespace dbstbl {
 	class thread_safe_table_
 	{
 	private:
-		lck::control___<table_> _C( void )
+		lck::control___<table_> C_( void )
 		{
-			return _S.Control;
+			return S_.Control;
 		}
 		const table_ &_RO( void )
 		{
-			return _C().GetReadOnly();
+			return C_().GetReadOnly();
 		}
 		table_ &_RW( void )
 		{
-			return _C().GetReadWrite();
+			return C_().GetReadWrite();
 		}
 		void _RRO( void )
 		{
-			_C().ReleaseReadOnly();
+			C_().ReleaseReadOnly();
 		}
 		void _RRW( void )
 		{
-			_C().ReleaseReadWrite();
+			C_().ReleaseReadWrite();
 		}
 	public:
 		table_ Table;
@@ -521,15 +521,15 @@ namespace dbstbl {
 		{
 			table_::s Table;
 			lck::control___<table_> Control;
-		} &_S;
+		} &S_;
 		thread_safe_table_( s &S )
-		: _S( S ),
+		: S_( S ),
 		  Table( S.Table )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Table.reset( P );
-			_S.Control.reset( P );
+			S_.Control.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -549,7 +549,7 @@ namespace dbstbl {
 
 			Table.Init( Content, Mode );
 
-			_S.Control.Init( Table );
+			S_.Control.Init( Table );
 		}
 		irow__ AddIndex(
 			index_ &Index,

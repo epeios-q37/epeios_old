@@ -367,15 +367,15 @@ namespace dbsctt {
 			return Written;
 		}
 		void _Append(
-			const datum_& Data,
+			const datum_ &Data,
 			size__ Offset,
 			datum_row__ &Row )
 		{
 			entry__ Entry;
 
-			Row = _S.Unallocated;
+			Row = S_.Unallocated;
 
-			_S.Unallocated = Storage.Append( Data, Offset, _S.Unallocated );
+			S_.Unallocated = Storage.Append( Data, Offset, S_.Unallocated );
 		}
 		rrow__ _Store(
 			const datum_ &Data,
@@ -390,7 +390,7 @@ namespace dbsctt {
 
 				if ( ( Written != Data.Amount() )
 					 && ( Availables.Amount() != 0 )
-					 && ( Storage.GetComputedSize( Availables.Top().Row, _S.Unallocated ) >= ( Data.Amount() - Written ) ) )
+					 && ( Storage.GetComputedSize( Availables.Top().Row, S_.Unallocated ) >= ( Data.Amount() - Written ) ) )
 					_StoreInAvailable( Data, Written, Entry.Tail );
 				else
 					_Append( Data, Written, Entry.Tail );
@@ -406,7 +406,7 @@ namespace dbsctt {
 			available__ Available;
 
 			Available.Row = DataRow;
-			Available.RawSize = Storage.GetRawSize( DataRow, _S.Unallocated );
+			Available.RawSize = Storage.GetRawSize( DataRow, S_.Unallocated );
 
 			Availables.Push( Available );
 		}
@@ -428,7 +428,7 @@ namespace dbsctt {
 			datum_row__ Row,
 			datum_ &Data ) const
 		{
-			Storage.Retrieve( Row, Data, _S.Unallocated );
+			Storage.Retrieve( Row, Data, S_.Unallocated );
 		}
 	public:
 		storage_ Storage;
@@ -440,9 +440,9 @@ namespace dbsctt {
 			entries_::s Entries;
 			// Position du premier octet non alloué.
 			datum_row__ Unallocated;
-		} &_S;
+		} &S_;
 		content_( s &S )
-		: _S( S ),
+		: S_( S ),
 		  Storage( S.Storage ),
 		  Availables( S.Availables ),
 		  Entries( S.Entries )
@@ -453,7 +453,7 @@ namespace dbsctt {
 			Availables.reset( P );
 			Entries.reset( P );
 
-			_S.Unallocated = 0;
+			S_.Unallocated = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -463,9 +463,9 @@ namespace dbsctt {
 		}
 		content_ &operator =( const content_ &C )
 		{
-			Storage.Memory.Allocate( *C._S.Unallocated );
-			Storage.Memory.Store( C.Storage.Memory, *C._S.Unallocated );
-			_S.Unallocated = C._S.Unallocated;
+			Storage.Memory.Allocate( *C.S_.Unallocated );
+			Storage.Memory.Store( C.Storage.Memory, *C.S_.Unallocated );
+			S_.Unallocated = C.S_.Unallocated;
 
 			Availables = C.Availables;
 
@@ -479,7 +479,7 @@ namespace dbsctt {
 			Availables.Init();
 			Entries.Init();
 
-			_S.Unallocated = 0;
+			S_.Unallocated = 0;
 		}
 		rrow__ Store( const datum_ &Data )
 		{
@@ -552,9 +552,9 @@ namespace dbsctt {
 					Entries;
 			} MemoryDriver;
 			str::string_::s RootFileName;
-		} &_S;
+		} &S_;
 		file_content_( s &S )
-		: _S( S ), 
+		: S_( S ), 
 		  content_( S ),
 		  RootFileName( S.RootFileName )
 		{}
@@ -565,8 +565,8 @@ namespace dbsctt {
 					_SaveLocationsAndAvailables();
 			}
 
-			_S.MemoryDriver.Storage.reset( P );
-			_S.MemoryDriver.Entries.reset( P );
+			S_.MemoryDriver.Storage.reset( P );
+			S_.MemoryDriver.Entries.reset( P );
 			RootFileName.reset( P );
 			content_::reset( P );
 		}
@@ -574,7 +574,7 @@ namespace dbsctt {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_content_ &operator =( const content_ &C )
+		file_content_ &operator =( const file_content_ &C )
 		{
 			content_::operator =( C );
 

@@ -106,7 +106,7 @@ void dbstbl::table_::_Reindex(
 	observer_functions__ &Observer )
 {
 	index_ &Index = _I( IRow );
-	const content_ &Content = _C();
+	const content_ &Content = C_();
 	mdr::size__ RecordCount = 0;
 	chrono__ Chrono;
 
@@ -172,7 +172,7 @@ ERRProlog
 ERRBegin
 	_Test();
 
-	const content_ &Content = _C();
+	const content_ &Content = C_();
 
 	Row = Rows.First();
 

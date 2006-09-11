@@ -263,19 +263,19 @@ ERRBegin
 
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	Exists = Set_( _S.MemoryDriver.Storage, ContentFileName, content_::Storage.Memory );
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileName, content_::Storage.Memory );
 
 	EntriesFileName.Init( RootFileName );
 	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
 	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( _S.MemoryDriver.Entries, EntriesFileName, Entries.Bunch() ) != Exists )
+	if ( Set_( S_.MemoryDriver.Entries, EntriesFileName, Entries.Bunch() ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );
 
-	content_::_S.Unallocated = _S.MemoryDriver.Storage.Size();
+	content_::S_.Unallocated = S_.MemoryDriver.Storage.Size();
 
-	Entries.List().Locations.Init( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
+	Entries.List().Locations.Init( S_.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
 
 	if ( Exists ) {
 		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;

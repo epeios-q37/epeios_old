@@ -73,12 +73,12 @@ ERRProlog
 	datum DatumToCompare;
 	idxbtq::E_ISEEKERt__( rrow__ ) Seeker;
 ERRBegin
-	if ( _S.Root == NONE ) {
+	if ( S_.Root == NONE ) {
 		Row = NONE;
 		ERRReturn;
 	}
 
-	Seeker.Init( BaseIndex, _S.Root );
+	Seeker.Init( BaseIndex, S_.Root );
 
 	Row = Seeker.GetCurrent();
 
@@ -87,7 +87,7 @@ ERRBegin
 
 		_Retrieve( Row, DatumToCompare );
 
-		switch ( Result = _S.Sort->Compare( Datum, DatumToCompare ) ) {
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
 		case 1:
 			Row = Seeker.SearchGreater();
@@ -118,8 +118,8 @@ ERRBegin
 	if ( _Content().Extent() > BaseIndex.Extent() )
 		BaseIndex.Allocate( _Content().Extent() );
 
-	if ( _S.Root == NONE ) {
-		_S.Root = Row;
+	if ( S_.Root == NONE ) {
+		S_.Root = Row;
 		ERRReturn;
 	}
 
@@ -130,10 +130,10 @@ ERRBegin
 	switch ( _Seek( Datum, TargetRow ) ) {
 	case 1:
 	case 0:
-		_S.Root = BaseIndex.BecomeGreater( Row, TargetRow, _S.Root );
+		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	case -1:
-		_S.Root = BaseIndex.BecomeLesser( Row, TargetRow, _S.Root );
+		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
 		break;
 	default:
 		ERRc();
@@ -157,7 +157,7 @@ rrow__ dbsidx::index_::Seek(
 {
 	rrow__ Row = NONE;
 
-	if ( _S.Root == NONE )
+	if ( S_.Root == NONE )
 		return NONE;
 
 	Sign = _Seek( Datum, Row );
@@ -182,7 +182,7 @@ ERRBegin
 
 	_Content().Retrieve( RecordRow, Datum );
 
-	Result = _S.Sort->Begins( Datum, Pattern );
+	Result = S_.Sort->Begins( Datum, Pattern );
 ERRErr
 ERREnd
 ERREpilog
@@ -201,7 +201,7 @@ ERRBegin
 
 	_Content().Retrieve( RecordRow, Datum );
 
-	Result = _S.Sort->Compare( Datum, Pattern );
+	Result = S_.Sort->Compare( Datum, Pattern );
 ERRErr
 ERREnd
 ERREpilog
@@ -299,7 +299,7 @@ ERREpilog
 
 void dbsidx::file_index_::_SaveRoot( void ) const
 {
-	Save_( index_::_S.Root, RootFileName, ROOT_FILE_NAME_EXTENSION );
+	Save_( index_::S_.Root, RootFileName, ROOT_FILE_NAME_EXTENSION );
 }
 
 static inline void Load_(
@@ -368,19 +368,19 @@ ERRBegin
 
 	NodesFileName.Init( RootFileName );
 	NodesFileName.Append( NODES_FILE_NAME_EXTENSION );
-	Exists = Set_( _S.MemoryDriver.Tree.Nodes, NodesFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
+	Exists = Set_( S_.MemoryDriver.Tree.Nodes, NodesFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
 
 	ColorsFileName.Init( RootFileName );
 	ColorsFileName.Append( COLORS_FILE_NAME_EXTENSION );
-	if ( CoreSet_( _S.MemoryDriver.Tree.Colors, ColorsFileName, index_::BaseIndex.Tree().Colors ) != Exists )
+	if ( CoreSet_( S_.MemoryDriver.Tree.Colors, ColorsFileName, index_::BaseIndex.Tree().Colors ) != Exists )
 		ERRu();
-	_S.MemoryDriver.Tree.Colors.Size();	// Pour forcer la création du fichier.
+	S_.MemoryDriver.Tree.Colors.Size();	// Pour forcer la création du fichier.
 	index_::BaseIndex.Tree().Colors.Allocate( index_::BaseIndex.Tree().BaseTree.Amount() );
 
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
-	if ( Set_( _S.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links ) != Exists )
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );
@@ -400,7 +400,7 @@ ERRBegin
 		if ( ColorsTimeStamp > LastTimeStamp )
 			LastTimeStamp = ColorsTimeStamp;
 
-		if ( !Load_( RootFileName, index_::_S.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
+		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
 			SearchRoot();
 	}
 ERRErr

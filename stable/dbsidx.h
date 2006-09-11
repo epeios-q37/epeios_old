@@ -110,7 +110,7 @@ namespace dbsidx {
 			rrow__ &Row ) const;
 		const content_ &_Content( void ) const
 		{
-			return *_S.Content;
+			return *S_.Content;
 		}
 		void _Retrieve(
 			rrow__ Row,
@@ -125,18 +125,18 @@ namespace dbsidx {
 			rrow__ Root;
 			sort_function__ *Sort;
 			const content_ *Content;
-		} &_S;
+		} &S_;
 		index_( s &S )
-		: _S( S ),
+		: S_( S ),
 		  BaseIndex( S.BaseIndex )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			BaseIndex.reset( P );
-			_S.Root = NONE;
+			S_.Root = NONE;
 
-			_S.Sort = NULL;
-			_S.Content = NULL;
+			S_.Sort = NULL;
+			S_.Content = NULL;
 
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -146,10 +146,10 @@ namespace dbsidx {
 		index_ &operator =( const index_ &I )
 		{
 			BaseIndex = I.BaseIndex;
-			_S.Root = I._S.Root;
+			S_.Root = I.S_.Root;
 
-			_S.Sort = I._S.Sort;
-			_S.Content = I._S.Content;
+			S_.Sort = I.S_.Sort;
+			S_.Content = I.S_.Content;
 
 			return *this;
 		}
@@ -158,15 +158,15 @@ namespace dbsidx {
 			sort_function__ &Sort = *(sort_function__ *)NULL)
 		{
 			BaseIndex.Init();
-			_S.Root = NONE;
+			S_.Root = NONE;
 
-			_S.Content = &Content;
-			_S.Sort = &Sort;
+			S_.Content = &Content;
+			S_.Sort = &Sort;
 		}
 		// Vide l'index.
 		void Reset( void )
 		{
-			_S.Root = NONE;
+			S_.Root = NONE;
 			BaseIndex.Init();
 		}
 		void Allocate( mdr::size__ Size )
@@ -177,10 +177,10 @@ namespace dbsidx {
 		void Delete( rrow__ Row )
 		{
 #ifdef DBSIDX_DBG
-			if ( _S.Root == NONE )
+			if ( S_.Root == NONE )
 				ERRu();
 #endif
-			_S.Root = BaseIndex.Delete( Row, _S.Root );
+			S_.Root = BaseIndex.Delete( Row, S_.Root );
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
@@ -198,19 +198,19 @@ namespace dbsidx {
 		{
 			ERRl();
 
-			return _S.Root;
+			return S_.Root;
 		}
 		rrow__ First( void ) const
 		{
-			if ( _S.Root != NONE )
-				return BaseIndex.First( _S.Root );
+			if ( S_.Root != NONE )
+				return BaseIndex.First( S_.Root );
 			else
 				return NONE;
 		}
 		rrow__ Last( void ) const
 		{
-			if ( _S.Root != NONE )
-				return BaseIndex.Last( _S.Root );
+			if ( S_.Root != NONE )
+				return BaseIndex.Last( S_.Root );
 			else
 				return NONE;
 		}
@@ -254,9 +254,9 @@ namespace dbsidx {
 				flm::E_FILE_MEMORY_DRIVER___ Queue;
 			} MemoryDriver;
 			str::string_::s RootFileName;
-		} &_S;
+		} &S_;
 		file_index_( s &S )
-		: _S( S ), 
+		: S_( S ), 
 		  index_( S ),
 		  RootFileName( S.RootFileName )
 		{}
@@ -267,9 +267,9 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			_S.MemoryDriver.Tree.Nodes.reset( P );
-			_S.MemoryDriver.Tree.Colors.reset( P );
-			_S.MemoryDriver.Queue.reset( P );
+			S_.MemoryDriver.Tree.Nodes.reset( P );
+			S_.MemoryDriver.Tree.Colors.reset( P );
+			S_.MemoryDriver.Queue.reset( P );
 			RootFileName.reset( P );
 			index_::reset( P );
 		}
@@ -277,7 +277,7 @@ namespace dbsidx {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_index_ &operator =( const index_ &FI )
+		file_index_ &operator =( const file_index_ &FI )
 		{
 			index_::operator =( FI );
 
