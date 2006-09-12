@@ -501,7 +501,7 @@ namespace dbstbl {
 	class thread_safe_table_
 	{
 	private:
-		lck::control___<table_> C_( void )
+		lck::control___<table_> &C_( void )
 		{
 			return S_.Control;
 		}

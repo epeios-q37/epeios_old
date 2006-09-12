@@ -61,7 +61,7 @@ using namespace dbsctt;
 
 #define LOCATIONS_FILE_NAME_EXTENSION	".edl"
 #define AVAILABLES_FILE_NAME_EXTENSION	".eda"
-#define CONTENT_FILE_NAME_EXTENSION		".edd"
+#define CONTENT_FILE_NAME_EXTENSION		".edc"
 #define ENTRIES_FILE_NAME_EXTENSION		".ede"
 
 template <typename container> static bso::bool__ Set_(
