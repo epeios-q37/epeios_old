@@ -125,6 +125,7 @@ namespace dbsidx {
 			rrow__ Root;
 			sort_function__ *Sort;
 			const content_ *Content;
+			time_t ModificationTimeStamp;
 		} &S_;
 		index_( s &S )
 		: S_( S ),
@@ -137,6 +138,8 @@ namespace dbsidx {
 
 			S_.Sort = NULL;
 			S_.Content = NULL;
+
+			S_.ModificationTimeStamp = 0;
 
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -151,6 +154,8 @@ namespace dbsidx {
 			S_.Sort = I.S_.Sort;
 			S_.Content = I.S_.Content;
 
+			S_.ModificationTimeStamp = I.S_.ModificationTimeStamp;
+
 			return *this;
 		}
 		void Init(
@@ -162,12 +167,17 @@ namespace dbsidx {
 
 			S_.Content = &Content;
 			S_.Sort = &Sort;
+
+			S_.ModificationTimeStamp = tol::Clock();
+
 		}
 		// Vide l'index.
 		void Reset( void )
 		{
 			S_.Root = NONE;
 			BaseIndex.Init();
+
+			S_.ModificationTimeStamp = 0;
 		}
 		void Allocate( mdr::size__ Size )
 		{
@@ -181,6 +191,8 @@ namespace dbsidx {
 				ERRu();
 #endif
 			S_.Root = BaseIndex.Delete( Row, S_.Root );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
@@ -191,6 +203,9 @@ namespace dbsidx {
 
 			return Seek( Datum, Sign );
 		}
+		bso::sign__ Compare(
+			rrow__ RecordId,
+			const datum_ &Pattern ) const;
 		bso::bool__ Begins(
 			rrow__ RecordRow,
 			const datum_ &Datum ) const;
@@ -226,9 +241,10 @@ namespace dbsidx {
 		{
 			return BaseIndex.Amount();
 		}
-		bso::sign__ Compare(
-			rrow__ RecordId,
-			const datum_ &Pattern ) const;
+		bso::bool__ IsSynchronized( void ) const
+		{
+			return S_.ModificationTimeStamp > _Content().ModificationTimeStamp();
+		}
 	};
 
 	E_AUTO( index )

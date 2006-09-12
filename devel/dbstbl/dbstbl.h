@@ -105,28 +105,28 @@ namespace dbstbl {
 	private:
 		// Durée entre deuw appels en ms.
 		time_t _Delay;
-		bso::ulong__ _CurrentIndex, _IndexAmount;
+		bso::ulong__ _HandledIndexAmount, _TotalIndexAmount;
 	protected:
 		virtual void DBSTBLNotify(
-			bso::ulong__ CurrentIndex,
-			bso::ulong__ IndexAmount,
-			bso::ulong__ CurrentRecord,
-			bso::ulong__ RecordAmount ) = 0;
+			bso::ulong__ HandledIndexAmount,
+			bso::ulong__ TotalIndexAmount,
+			bso::ulong__ HandledRecordAmount,
+			bso::ulong__ TotalRecordAmount ) = 0;
 	public:
 		observer_functions__( void )
 		{
 			_Delay = 1000;	// Délai par défaut : 1 s.
-			_CurrentIndex = _IndexAmount = 0;
+			_TotalIndexAmount = _HandledIndexAmount = 0;
 		}
 		void SetDelay( time_t Delay )
 		{
 			_Delay = Delay;
 		}
 		void Notify(
-			bso::ulong__ CurrentRecord,
-			bso::ulong__ RecordAmount )
+			bso::ulong__ HandledRecordAmount,
+			bso::ulong__ TotalRecordAmount )
 		{
-			DBSTBLNotify( _CurrentIndex, _IndexAmount, CurrentRecord, RecordAmount );
+			DBSTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount );
 		}
 		friend class table_;
 	};
@@ -262,28 +262,14 @@ namespace dbstbl {
 			S_.Content = &Content;
 			S_.Mode = Mode;
 		}
-		irow__ AddIndex(
-			index_ &Index,
-			bso::bool__ Reindex = false,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL )
+		irow__ AddIndex( index_ &Index )
 		{
 			if ( S_.Mode != mAdmin )
 				ERRu();
 
 			_Test();
 
-			irow__ Row = Indexes.Append( &Index );
-
-			if ( Reindex ) {
-				if ( &Observer != NULL ) {
-					Observer._CurrentIndex = 1;
-					Observer._IndexAmount = 1;
-				}
-				_Reindex( Row, Observer );
-			} else if ( Index.Amount() != C_().Amount() )
-				ERRu();
-
-			return Row;
+			return Indexes.Append( &Index );
 		}
 		rrow__ Insert( const datum_ &Datum )
 		{
@@ -440,9 +426,7 @@ namespace dbstbl {
 
 			return C_().Extent();
 		}
-		mode__ SwitchMode(
-			mode__ Mode,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL )
+		mode__ SwitchMode( mode__ Mode )
 		{
 			mode__ OldMode = S_.Mode;
 
@@ -455,7 +439,8 @@ namespace dbstbl {
 			case mReadOnly:
 				switch( OldMode ) {
 				case mBulk:
-					_ReindexAll( Observer );
+					if ( !AreAllIndexesSynchronized() )
+						ERRu();
 					break;
 				case mReadOnly:
 				case mReadWrite:
@@ -487,6 +472,21 @@ namespace dbstbl {
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
 			rows_ &Rows ) const;
+		void Reindex(
+			irow__ IndexRow,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL )
+		{
+			_Reindex( IndexRow, Observer );
+		}
+		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL )
+ 		{
+			_ReindexAll( Observer );
+		}
+		bso::bool__ IsIndexSynchronized( irow__ IndexRow ) const
+		{
+			return _I( IndexRow ).IsSynchronized();
+		}
+		bso::bool__ AreAllIndexesSynchronized( void ) const;
 	};
 
 	E_AUTO( table )
@@ -558,10 +558,7 @@ namespace dbstbl {
 
 			S_.Control.Init( Table );
 		}
-		irow__ AddIndex(
-			index_ &Index,
-			bso::bool__ Reindex = false,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL );
+		irow__ AddIndex( index_ &Index );
 		rrow__ Insert( const datum_ &Datum );
 		void Insert(
 			const data_ &Data,
@@ -611,9 +608,7 @@ namespace dbstbl {
 			rrow__ Row );
 		mdr::size__ Amount( void );
 		mdr::size__ Extent( void );
-		mode__ SwitchMode(
-			mode__ Mode,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL );
+		mode__ SwitchMode( mode__ Mode );
 		mode__ Mode( void );
 		bso::bool__ RecordExists( rrow__ RecordRow );
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
@@ -621,6 +616,12 @@ namespace dbstbl {
 			const rrows_ &RecordRows,
 			rows_ &Rows,
 			time_t Delay = DBSTBL__DEFAULT_DELAY );
+		void Reindex(
+			irow__ IndexRow,
+			observer_functions__ &Observer = *(observer_functions__ *)NULL );
+		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL );
+		bso::bool__ IsIndexSynchronized( irow__ IndexRow );
+		bso::bool__ AreAllIndexesSynchronized( void );
 	};
 
 	E_AUTO( thread_safe_table )

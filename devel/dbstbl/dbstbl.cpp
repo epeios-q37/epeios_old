@@ -57,27 +57,7 @@ public:
 
 using namespace dbstbl;
 
-class chrono__
-{
-private:
-	time_t _Delay;
-	time_t _Limit;
-public:
-	void Init( time_t Delay )
-	{
-		_Limit = 0;
-		_Delay = Delay;
-	}
-	void Launch( void )
-	{
-		_Limit = tol::Clock() + _Delay;
-	}
-	bso::bool__ IsElapsed( void ) const
-	{
-		return tol::Clock() > _Limit;
-	}
-};
-
+using tol::chrono__;
 
 void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
@@ -144,19 +124,18 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 {
 	_Test();
 
-	bso::ulong__ IndexCount = 0;
 	irow__ Row = Indexes.First();
 
-	if ( &Observer != NULL )
-		Observer._IndexAmount = Indexes.Amount();
+	if ( &Observer != NULL ) {
+		Observer._TotalIndexAmount = Indexes.Amount();
+		Observer._HandledIndexAmount = 0;
+	}
 
 	while ( Row != NONE ) {
-		IndexCount++;
+		_Reindex( Row, Observer );
 
 		if ( &Observer )
-			Observer._CurrentIndex = IndexCount;
-
-		_Reindex( Row, Observer );
+			Observer._HandledIndexAmount++;
 
 		Row = Indexes.Next( Row );
 	}
@@ -270,6 +249,21 @@ void dbstbl::table_::TestRecordsExistence(
 }
 
 
+bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
+{
+	irow__ Row = Indexes.First();
+
+	while ( Row != NONE ) {
+		if ( !IsIndexSynchronized( Row ) )
+			return false;
+
+		Row = Indexes.Next( Row );
+	}
+
+	return true;
+}
+
+
 #ifdef DBSTBL__THREAD_SAFE
 
 #define RO	const table_ &T = _RO();
@@ -278,17 +272,14 @@ void dbstbl::table_::TestRecordsExistence(
 #define RRO	_RRO();
 #define RRW	_RRW();
 
-irow__ dbstbl::thread_safe_table_::AddIndex(
-	index_ &Index,
-	bso::bool__ Reindex,
-	observer_functions__ &Observer )
+irow__ dbstbl::thread_safe_table_::AddIndex( index_ &Index )
 {
 	irow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RW
 
-	Row = T.AddIndex( Index, Reindex, Observer );
+	Row = T.AddIndex( Index );
 ERRErr
 ERREnd
 	RRW
@@ -658,15 +649,13 @@ ERREpilog
 	return Extent;
 }
 
-mode__ dbstbl::thread_safe_table_::SwitchMode(
-	mode__ Mode,
-	observer_functions__ &Observer )
+mode__ dbstbl::thread_safe_table_::SwitchMode( mode__ Mode )
 {
 ERRProlog
 ERRBegin
 	RW
 
-	Mode = T.SwitchMode( Mode, Observer );
+	Mode = T.SwitchMode( Mode );
 ERRErr
 ERREnd
 	RRW
@@ -763,7 +752,63 @@ ERREpilog
 	return Result;
 }
 
+bso::bool__ dbstbl::thread_safe_table_::IsIndexSynchronized( irow__ IndexRow )
+{
+	bso::bool__ Result = false;
+ERRProlog
+ERRBegin
+	RO
 
+	Result = T.IsIndexSynchronized( IndexRow );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Result;
+}
+
+bso::bool__ dbstbl::thread_safe_table_::AreAllIndexesSynchronized( void )
+{
+	bso::bool__ Result = false;
+ERRProlog
+ERRBegin
+	RO
+
+	Result = T.AreAllIndexesSynchronized();
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Result;
+}
+
+void dbstbl::thread_safe_table_::Reindex(
+	irow__ IndexRow,
+	observer_functions__ &Observer )
+{
+ERRProlog
+ERRBegin
+	RW
+
+	T.Reindex( IndexRow, Observer );
+ERRErr
+ERREnd
+	RRW
+ERREpilog
+}
+
+void dbstbl::thread_safe_table_::ReindexAll( observer_functions__ &Observer )
+{
+ERRProlog
+ERRBegin
+	RW
+
+	T.ReindexAll( Observer );
+ERRErr
+ERREnd
+	RRW
+ERREpilog
+}
 
 #endif
 

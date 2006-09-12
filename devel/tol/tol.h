@@ -552,6 +552,27 @@ namespace tol {
 	{
 		srand( Seed );
 	}
+
+	class chrono__
+	{
+	private:
+		time_t _Delay;
+		time_t _Limit;
+	public:
+		void Init( time_t Delay )
+		{
+			_Limit = 0;
+			_Delay = Delay;
+		}
+		void Launch( void )
+		{
+			_Limit = Clock() + _Delay;
+		}
+		bso::bool__ IsElapsed( void ) const
+		{
+			return Clock() > _Limit;
+		}
+	};
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.

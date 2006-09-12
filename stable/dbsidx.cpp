@@ -147,7 +147,7 @@ ERRBegin
 		ERRc();
 #endif
 
-
+	S_.ModificationTimeStamp = tol::Clock();
 ERRErr
 ERREnd
 ERREpilog

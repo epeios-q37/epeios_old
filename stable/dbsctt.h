@@ -440,6 +440,7 @@ namespace dbsctt {
 			entries_::s Entries;
 			// Position du premier octet non alloué.
 			datum_row__ Unallocated;
+			time_t ModificationTimeStamp;
 		} &S_;
 		content_( s &S )
 		: S_( S ),
@@ -454,6 +455,7 @@ namespace dbsctt {
 			Entries.reset( P );
 
 			S_.Unallocated = 0;
+			S_.ModificationTimeStamp = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -466,6 +468,7 @@ namespace dbsctt {
 			Storage.Memory.Allocate( *C.S_.Unallocated );
 			Storage.Memory.Store( C.Storage.Memory, *C.S_.Unallocated );
 			S_.Unallocated = C.S_.Unallocated;
+			S_.ModificationTimeStamp = C.S_.ModificationTimeStamp;
 
 			Availables = C.Availables;
 
@@ -480,12 +483,15 @@ namespace dbsctt {
 			Entries.Init();
 
 			S_.Unallocated = 0;
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		rrow__ Store( const datum_ &Data )
 		{
 			rrow__ Row = Entries.New();
 
 			_Store( Data, Row );
+
+			S_.ModificationTimeStamp = tol::Clock();
 
 			return Row;
 		}
@@ -494,6 +500,8 @@ namespace dbsctt {
 			_Erase( Row );
 
 			Entries.Delete( Row );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		void Store(
 			const datum_ &Data,
@@ -502,6 +510,8 @@ namespace dbsctt {
 			_Erase( Row );
 
 			_Store( Data, Row );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
@@ -531,6 +541,7 @@ namespace dbsctt {
 			ERRl();
 		}
 		E_NAVt( Entries., rrow__ )
+		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
 	E_AUTO( content )
