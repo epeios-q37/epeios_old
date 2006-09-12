@@ -303,7 +303,7 @@ ERRProlog
 ERRBegin
 	RW
 
-	T.Insert( Datum );
+	Row = T.Insert( Datum );
 ERRErr
 ERREnd
 	RRW

@@ -212,6 +212,7 @@ namespace dbstbl {
 				return true;
 			case mReadWrite:
 			case mReadOnly:
+			case mAdmin:
 				return false;
 				break;
 			default:
@@ -252,7 +253,7 @@ namespace dbstbl {
 		}
 		void Init(
 			content_ &Content,
-			mode__ Mode = mAdmin )
+			mode__ Mode )
 		{
 			reset();
 
@@ -549,7 +550,7 @@ namespace dbstbl {
 		}
 		void Init(
 			content_ &Content,
-			mode__ Mode = mAdmin )
+			mode__ Mode )
 		{
 			reset();
 

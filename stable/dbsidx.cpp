@@ -89,6 +89,8 @@ ERRBegin
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
+			Row = NONE;	// Pour sortir de la boucle.
+			break;
 		case 1:
 			Row = Seeker.SearchGreater();
 			break;
