@@ -95,10 +95,10 @@ ERRBegin
 			Row = NONE;	// Pour sortir de la boucle.
 			break;
 		case 1:
-			Row = Seeker.SearchGreater();
+			Row = Seeker.SearchLesser();
 			break;
 		case -1:
-			Row = Seeker.SearchLesser();
+			Row = Seeker.SearchGreater();
 			break;
 		default:
 			ERRc();
@@ -141,10 +141,10 @@ ERRBegin
 	switch ( _Seek( Datum, TargetRow, Round ) ) {
 	case 1:
 	case 0:
-		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
+		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
 		break;
 	case -1:
-		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
+		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	default:
 		ERRc();
