@@ -549,33 +549,28 @@ namespace btr {
 		// Rotation à droite avec 'Node' come pivot, qui DOIT avoir un fils gauche. Retourne le remplaçant de 'Node'.
 		r RotateRight( r Node )
 		{
-			r A, B, C, P, &D = Node;
+			r B, D, &E = Node, P;
 			bso::bool__ IsLeftFlag = false;
 
-			P = Parent( D );
+			P = Parent( E );
 
 			if ( P != NONE ) {
-				IsLeftFlag = IsLeft( D );
-				Cut( D );
+				IsLeftFlag = IsLeft( E );
+				Cut( E );
 			}
 
-			B = Left( D );
+			B = Left( E );
 
 #ifdef BTR_DBG
 			if ( B == NONE )
 				ERRu();
 #endif
-
-			A = Left( B );
-			C = Right( B );
-
 			Cut( B );
 
-			if ( A != NONE )
-				Cut( A );
+			D = Right( B );
 
-			if ( C != NONE )
-				Cut( C );
+			if ( D != NONE )
+				Cut( D );
 
 			if ( P != NONE )
 				if ( IsLeftFlag )
@@ -583,20 +578,17 @@ namespace btr {
 				else
 					BecomeRight( B, P );
 
-			BecomeRight( D, B );
+			BecomeRight( E, B );
 
-			if ( A != NONE )
-				BecomeLeft( A, B );
-
-			if ( C != NONE )
-				BecomeLeft( C, D );
+			if ( D != NONE )
+				BecomeLeft( D, E );
 
 			return B;
 		}
 		// Rotation à gauche avec 'Node' come pivot, qui DOIT avoir un fils droit.. Retourne le remplaçant de 'Node'.
 		r RotateLeft( r Node )
 		{
-			r E, D, C, P, &B = Node;
+			r &B = Node, D, E, P;
 			bso::bool__ IsLeftFlag = false;
 
 			P = Parent( B );
@@ -606,39 +598,31 @@ namespace btr {
 				Cut( B );
 			}
 
-			D = Right( B );
+			E = Right( B );
 
 #ifdef BTR_DBG
-			if ( D == NONE )
+			if ( E == NONE )
 				ERRu();
 #endif
+			Cut( E );
 
-			E = Right( D );
-			C = Left( B );
+			D = Left( E );
 
-			Cut( D );
-
-			if ( E != NONE )
-				Cut( E );
-
-			if ( C != NONE )
-				Cut( C );
+			if ( D != NONE )
+				Cut( D );
 
 			if ( P != NONE )
 				if ( IsLeftFlag )
-					BecomeLeft( D, P );
+					BecomeLeft( E, P );
 				else
-					BecomeRight( D, P );
+					BecomeRight( E, P );
 
-			BecomeLeft( B, D );
+			BecomeLeft( B, E );
 
-			if ( E != NONE )
-				BecomeRight( E, D );
+			if ( D != NONE )
+				BecomeRight( D, B );
 
-			if ( C != NONE )
-				BecomeRight( C, B );
-
-			return D;
+			return E;
 		}
 		/* Elague 'Node'; 'Node' devient la racine de l'arbre
 		et perd donc son père. */

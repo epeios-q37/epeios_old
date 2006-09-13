@@ -107,7 +107,8 @@ namespace dbsidx {
 	private:
 		bso::sign__ _Seek(
 			const datum_ &Data,
-			rrow__ &Row ) const;
+			rrow__ &Row,
+			bso::ubyte__ &Round ) const;
 		const content_ &_Content( void ) const
 		{
 			return *S_.Content;

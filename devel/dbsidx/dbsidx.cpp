@@ -66,13 +66,16 @@ using namespace dbsidx;
 
 bso::sign__ dbsidx::index_::_Seek(
 	const datum_ &Datum,
-	rrow__ &Row ) const
+	rrow__ &Row,
+	bso::ubyte__ &Round ) const
 {
 	bso::sign__ Result = 0;
 ERRProlog
 	datum DatumToCompare;
 	idxbtq::E_ISEEKERt__( rrow__ ) Seeker;
 ERRBegin
+	Round = 0;
+
 	if ( S_.Root == NONE ) {
 		Row = NONE;
 		ERRReturn;
@@ -101,6 +104,8 @@ ERRBegin
 			ERRc();
 			break;
 		}
+
+		Round++;
 	}
 
 	Row = Seeker.GetCurrent();
@@ -115,6 +120,7 @@ void dbsidx::index_::Index( rrow__ Row )
 ERRProlog
 	datum Datum;
 	rrow__ TargetRow = NONE;
+	bso::ubyte__ Round;
 ERRBegin
 
 	if ( _Content().Extent() > BaseIndex.Extent() )
@@ -122,6 +128,9 @@ ERRBegin
 
 	if ( S_.Root == NONE ) {
 		S_.Root = Row;
+
+		BaseIndex.BecomeRoot( Row );
+
 		ERRReturn;
 	}
 
@@ -129,7 +138,7 @@ ERRBegin
 
 	_Retrieve( Row, Datum );
 
-	switch ( _Seek( Datum, TargetRow ) ) {
+	switch ( _Seek( Datum, TargetRow, Round ) ) {
 	case 1:
 	case 0:
 		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
@@ -141,6 +150,11 @@ ERRBegin
 		ERRc();
 		break;
 	}
+
+#ifdef DBSIDX_DBG
+	if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 1 ) ) > _Content().Amount() ) )
+		S_.Root = S_.Root;	// Juste pour pouvoir placer un point d'arrêt.
+#endif
 
 #ifdef DBSIDX_DBG
 	if ( TargetRow == NONE )
@@ -158,11 +172,12 @@ rrow__ dbsidx::index_::Seek(
 	bso::sign__ &Sign ) const
 {
 	rrow__ Row = NONE;
+	bso::ubyte__ Round;
 
 	if ( S_.Root == NONE )
 		return NONE;
 
-	Sign = _Seek( Datum, Row );
+	Sign = _Seek( Datum, Row, Round );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )

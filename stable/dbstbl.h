@@ -442,6 +442,7 @@ namespace dbstbl {
 					if ( !AreAllIndexesSynchronized() )
 						ERRu();
 					break;
+				case mAdmin:
 				case mReadOnly:
 				case mReadWrite:
 					break;
@@ -449,6 +450,7 @@ namespace dbstbl {
 					ERRc();
 					break;
 				}
+				break;
 			default:
 				ERRu();
 				break;

@@ -96,7 +96,7 @@ void dbstbl::table_::_Reindex(
 
 	rrow__ Row = Content.First();
 
-	if ( &Observer != NULL ) {
+	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
 		Observer.Notify( 0, Content.Amount() );
 		Chrono.Init( Observer._Delay );
 		Chrono.Launch();
@@ -116,7 +116,7 @@ void dbstbl::table_::_Reindex(
 		Row = Content.Next( Row );
 	}
 
-	if ( &Observer != NULL )
+	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
 		Observer.Notify( RecordCount, Content.Amount() );
 }
 

@@ -122,11 +122,11 @@ namespace idxbtr {
 			r Node,
 			r Root )
 		{
-			return Root;
+//			return Root;
 
-			if ( BaseTree.HasParent( Node )) {
+			if ( BaseTree.HasParent( Node ) ) {
 				_BecomeRed( Node );
-				_InsertCase2( Node, Root );
+				Root = _InsertCase2( Node, Root );
 			} else
 				_BecomeBlack( Node );
 
@@ -136,6 +136,10 @@ namespace idxbtr {
 			r Node,
 			r Root )
 		{
+#ifdef IDXBTR_DBG
+			if ( !_IsBlack( Root ) )
+				ERRu();
+#endif
 			if ( _IsRed( BaseTree.Parent( Node ) ) )
 				Root = _InsertCase3( Node, Root );
 
@@ -186,16 +190,20 @@ namespace idxbtr {
 		{
 			r Parent, GrandParent = BaseTree.GrandParent( Node, Parent );
 
-			if ( BaseTree.IsLeft( Node ) && BaseTree.IsLeft( Parent ) )
+			_BecomeBlack( Parent );
+			_BecomeRed( GrandParent );
+
+			if ( BaseTree.IsLeft( Node ) && BaseTree.IsLeft( Parent ) ) {
 				if ( GrandParent == Root )
 					Root = BaseTree.RotateRight( GrandParent );
 				else
 					BaseTree.RotateRight( GrandParent );
-			else
+			} else {
 				if ( GrandParent == Root )
 					Root = BaseTree.RotateLeft( GrandParent );
 				else
 					BaseTree.RotateLeft( GrandParent );
+			}
 
 			return Root;
 
@@ -409,7 +417,7 @@ namespace idxbtr {
 		{
 			return BaseTree.Amount();
 		}
-#if 0
+#if 1
 		r Delete(
 			r Node,
 			r Root )
@@ -536,7 +544,7 @@ namespace idxbtr {
 		{
 			BaseTree.BecomeRight( Row, Current );
 
-			return _InsertCase1( Current, Root );
+			return _InsertCase1( Row, Root );
 		}
 		//f Mark 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
 		r BecomeLesser(
@@ -546,7 +554,15 @@ namespace idxbtr {
 		{
 			BaseTree.BecomeLeft( Row, Current );
 
-			return _InsertCase1( Current, Root );
+			return _InsertCase1( Row, Root );
+		}
+		void BecomeRoot( r Node )
+		{
+#ifdef IDXBTR_DBG
+			if ( BaseTree.HasParent( Node ) )
+				ERRu();
+#endif
+			_InsertCase1( Node, Node );
 		}
 		r GetLesser( r Node ) const
 		{

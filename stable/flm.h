@@ -401,6 +401,12 @@ namespace flm {
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
 			memoire_fichier_base___::Allouer( (iop::amount__)Size );
+
+			if ( Size > memoire_fichier_base___::Size() ) {
+				mdr::datum__ Datum = 0;
+				memoire_fichier_base___::Ecrire( &Datum, 1, Size - 1 );
+			}
+
 		}
 		// alloue 'Taille' octets
 	public:
