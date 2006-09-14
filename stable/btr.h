@@ -97,39 +97,63 @@ namespace btr {
 	: public _nodes_
 	{
 	private:
-		/* Fait pointer le, parent s'il existe, de 'OldNode' sur 'NewNode', 'Node' contenant
-		les caratéristiques de 'OldNode'. */
-		void _SwapParent(
-			const _node__&Node,
-			epeios::row_t__ OldNode,
-			epeios::row_t__ NewNode )
+		void _Swap(
+			epeios::row_t__ &R1,
+			epeios::row_t__ &R2 )
 		{
-			if ( Node.Parent != NONE )
-				if ( IsLeft( OldNode ) )
-					BecomeLeft( NewNode, Node.Parent );
-				else
-					BecomeRight( NewNode, Node.Parent );
+			epeios::row_t__ R = R1;
+			R1 = R2;
+			R2 = R;
 		}
-		/* Fait pointer les enfants, s'ils existents, de 'OldNode' sur 'NewNode', 'Node' contenant
-		les caratéristiques de 'OldNode'. */
-		void _SwapChildren(
-			const _node__&Node,
-			epeios::row_t__ OldNode,
-			epeios::row_t__ NewNode )
+		void _ChangeLeft(
+			epeios::row_t__ Node,
+			epeios::row_t__ NewLeft )
 		{
-			if ( Node.Parent != NONE )
-				if ( IsLeft( OldNode ) )
-					BecomeLeft( NewNode, Node.Parent );
-				else
-					BecomeRight( NewNode, Node.Parent );
+			_node__ N = Get( Node );
+
+			N.Left = NewLeft;
+
+			Store( N, Node );
 		}
-		void _SwapRelated(
-			const _node__&Node,
-			epeios::row_t__ OldNode,
-			epeios::row_t__ NewNode )
+		void _ChangeRight(
+			epeios::row_t__ Node,
+			epeios::row_t__ NewRight )
 		{
-			_SwapParent( Node, OldNode, NewNode );
-			_SwapChildren( Node, OldNode, NewNode );
+			_node__ N = Get( Node );
+
+			N.Right = NewRight;
+
+			Store( N, Node );
+		}
+		// Fait pointer le fils du parent de 'OldChild', s'il existe, sur 'NewChild'.
+		void _ChangeParentChild(
+			epeios::row_t__ &OldChild,
+			epeios::row_t__ &NewChild )
+		{
+			if ( IsLeft( OldChild ) )
+				_ChangeLeft( Parent( OldChild ), NewChild );
+			else if ( IsRight( OldChild ) )
+				_ChangeRight( Parent( OldChild ), NewChild );
+		}
+		void _ChangeParent(
+			epeios::row_t__ Node,
+			epeios::row_t__ NewParent )
+		{
+			_node__ N = Get( Node );
+
+			N.Parent = NewParent;
+
+			Store( N, Node );
+		}
+		void _ChangeChildrenParent(
+			const _node__ &Node,
+			epeios::row_t__ NewParent )
+		{
+			if ( Node.Left != NONE )
+				_ChangeParent( Node.Left, NewParent );
+
+			if ( Node.Right != NONE )
+				_ChangeParent( Node.Right, NewParent );
 		}
 	public:
 		struct s
@@ -291,35 +315,34 @@ namespace btr {
 		}
 		// Echange 'Node1' avec 'Node2', c'est-à-dire qu'il echangent leur parent, et fils gauche et droit respectif.
 		void SwapNodes(
-			epeios::row_t__ Node1,
-			epeios::row_t__ Node2 )
+			epeios::row_t__ RN1,
+			epeios::row_t__ RN2 )
 		{
-			_node__ N1, N2;
+			_node__ N1 = Get( RN1 ), N2 = Get( RN2 );
 
-			N1 = Get( Node1 );
-			N2 = Get( Node2 );
+			_ChangeParentChild( RN1, RN2 );
+			_ChangeParentChild( RN2, RN1 );
 
-			_SwapRelated( N1, Node1, Node2 );
-			_SwapRelated( N2, Node2, Node1 );
+			_ChangeChildrenParent( N1, RN2 );
+			_ChangeChildrenParent( N2, RN1 );
 
-			Store( N2, Node1 );
-			Store( N1, Node2 );
+			Store( N1, RN2 );
+			Store( N2, RN1 );
 		}
 		// Echange l'abre de racine 'Node1' avec l'abre de racine 'Node2'.
 		void SwapTrees(
-			epeios::row_t__ Node1,
-			epeios::row_t__ Node2 )
+			epeios::row_t__ RN1,
+			epeios::row_t__ RN2 )
 		{
-			_node__ N1, N2;
+			_node__ N1 = Get( RN1 ), N2 = Get( RN2 );
 
-			N1 = Get( Node1 );
-			N2 = Get( Node2 );
+			_ChangeParentChild( RN1, RN2 );
+			_ChangeParentChild( RN2, RN1 );
 
-			_SwapParent( N1, Node1, Node2 );
-			_SwapParent( N2, Node2, Node1 );
+			_Swap( N1.Parent, N2.Parent );
 
-			Store( N2, Node1 );
-			Store( N1, Node2 );
+			Store( N1, RN1 );
+			Store( N2, RN2 );
 		}
 		// Retourne le parent du premier noeud qui est fils en remontant.
 		epeios::row_t__ ParentOfFirstLeftNode( epeios::row_t__ Node ) const;

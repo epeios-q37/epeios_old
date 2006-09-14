@@ -88,18 +88,28 @@ namespace idxbtr {
 			mdr::E_MEMORY_DRIVER__ &Pilote );
 		bso::bool__ _IsBlack( r Node ) const
 		{
-			return !Colors( Node );
+			if ( Node == NONE )
+				return true;
+			else
+				return !Colors( Node );
 		}
 		bso::bool__ _IsRed( r Node ) const
 		{
-			return Colors( Node );
+			if ( Node == NONE )
+				return false;
+			else
+				return Colors( Node );
 		}
 		void _BecomeBlack( r Node )
 		{
-			Colors.Store( false, Node );
+			if ( Node != NONE )
+				Colors.Store( false, Node );
 		}
 		void _BecomeRed( r Node )
 		{
+			if ( Node == NONE )
+				ERRc();
+
 			Colors.Store( true, Node );
 		}
 		void _BecomeSameColor(
@@ -269,17 +279,16 @@ namespace idxbtr {
 
 			if ( BaseTree.IsLeft( Node ) &&
 				 _IsBlack( Sibling ) &&
-				 _IsBlack( BaseTree.Left( Sibling ) ) &&
-				 _IsRed( BaseTree.Right( Sibling ) ) )
+				 _IsRed( BaseTree.Left( Sibling ) ) &&
+				 _IsBlack( BaseTree.Right( Sibling ) ) )
 			{
 				_BecomeRed( Sibling );
 				_BecomeBlack( BaseTree.Left( Sibling ) );
 				BaseTree.RotateRight( Sibling );
-			}
-			if ( BaseTree.IsRight( Node ) &&
+			} else if ( BaseTree.IsRight( Node ) &&
 				 _IsBlack( Sibling ) &&
-				 _IsRed( BaseTree.Left( Sibling ) ) &&
-				 _IsBlack( BaseTree.Right( Sibling ) ) )
+				 _IsRed( BaseTree.Right( Sibling ) ) &&
+				 _IsBlack( BaseTree.Left( Sibling ) ) )
 			{
 				_BecomeRed( Sibling );
 				_BecomeBlack( BaseTree.Right( Sibling ) );
@@ -438,41 +447,27 @@ namespace idxbtr {
 				Node = NewNode;
 			}
 
-			if ( BaseTree.HasChildren( Node ) ) {
-
-				r NewNode = NONE;
-
-				if ( BaseTree.HasLeft( Node ) )
-					NewNode = BaseTree.Left( Node );
-				else
-					NewNode = BaseTree.Right( Node );
-
-				if ( Node == Root )
-					Root = NewNode;
-
-				BaseTree.SwapNodes( Node, NewNode );
-			}
-
-			if ( Node == Root )
-				Root = NONE;
-
 			if ( !BaseTree.HasChildren( Node ) ) {
 				_DeleteCase1( Node );
-				BaseTree.Cut( Node );
+				if ( Node != Root )
+					BaseTree.Cut( Node );
 			} else {
 				r Child = BaseTree.HasLeft( Node ) ? BaseTree.Left( Node ) : BaseTree.Right( Node );
+
+				if ( _IsBlack( Child ) ) {
+					if ( _IsRed( Node ) )
+						_BecomeBlack( Node );
+					else
+						_DeleteCase1( Node );
+				}
 
 				BaseTree.Cut( Child );
 
 				BaseTree.SwapTrees( Child, Node );	// Sans que les couleurs suivent.
-
-				if ( _IsBlack( Node ) ) {
-					if ( _IsRed( Child ) )
-						_BecomeBlack( Child );
-					else
-						_DeleteCase1( Child );
-				}
 			}
+
+			if ( Node == Root )
+				Root = NONE;
 
 			return Root;
 		}
