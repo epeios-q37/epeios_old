@@ -85,12 +85,17 @@ void dbstbl::table_::_Reindex(
 	irow__ IRow,
 	observer_functions__ &Observer )
 {
+ERRProlog
 	index_ &Index = _I( IRow );
 	const content_ &Content = C_();
 	mdr::size__ RecordCount = 0;
 	chrono__ Chrono;
-
+	dbsidx::index TempIndex;
+	bso::ubyte__ Round;
+ERRBegin
 	Index.Reset();
+
+	TempIndex.Init( Index.Content(), Index.SortFunction() );
 
 	Index.Allocate( Content.Amount() );
 
@@ -103,7 +108,10 @@ void dbstbl::table_::_Reindex(
 	}
 
 	while ( Row != NONE ) {
-		Index.Index( Row );
+		Round = TempIndex.Index( Row );
+
+		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 1 ) ) > TempIndex.Content().Amount() ) )
+			TempIndex.Balance();
 
 		RecordCount++;
 
@@ -118,6 +126,13 @@ void dbstbl::table_::_Reindex(
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
 		Observer.Notify( RecordCount, Content.Amount() );
+
+	TempIndex.Balance();
+
+	Index = TempIndex;
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )

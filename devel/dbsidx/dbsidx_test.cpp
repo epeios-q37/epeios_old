@@ -44,9 +44,9 @@ const char *Generate( void )
 {
 	static  char Buffer[100];
 
-	Buffer[99] = 0;
+	Buffer[9] = 0;
 
-	int L = 99;
+	int L = 9;
 
 	while ( L-- )
 		Buffer[L] = TEXT[rand() % sizeof( TEXT )];
@@ -73,14 +73,14 @@ void Fill(
 	  dbsctt::content_ &Content,
 	  dbsidx::index_ &Index )
 {
-	int L = 10000;
+	int L = 100;
 	const char *Buffer;
 
 	tol::InitializeRandomGenerator();
 
 	while ( L-- ) {
 
-		if ( ( rand() % 10 ) == 0 )
+		if ( ( rand() % 10 ) == 10 )
 			Delete( Content, Index );
 		else {
 			Buffer = Generate();

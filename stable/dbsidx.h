@@ -107,6 +107,7 @@ namespace dbsidx {
 	private:
 		bso::sign__ _Seek(
 			const datum_ &Data,
+			bso::bool__ StopIfEqual,
 			rrow__ &Row,
 			bso::ubyte__ &Round ) const;
 		const content_ &_Content( void ) const
@@ -184,7 +185,7 @@ namespace dbsidx {
 		{
 			BaseIndex.Allocate( Size );
 		}
-		void Index( rrow__ Row );
+		bso::ubyte__ Index( rrow__ Row );	// Retourne le nombre de noeuds parcourus pour cette indexation.
 		void Delete( rrow__ Row )
 		{
 #ifdef DBSIDX_DBG
@@ -246,6 +247,19 @@ namespace dbsidx {
 		{
 			return S_.ModificationTimeStamp > _Content().ModificationTimeStamp();
 		}
+		sort_function__ &SortFunction( void ) const
+		{
+			return *S_.Sort;
+		}
+		const content_ &Content( void ) const
+		{
+			return *S_.Content;
+		}
+		void Balance( void )
+		{
+			if ( S_.Root != NONE )
+				S_.Root = BaseIndex.Balance( S_.Root );
+		}
 	};
 
 	E_AUTO( index )
@@ -298,7 +312,7 @@ namespace dbsidx {
 		{
 			index_::operator =( FI );
 
-			return *this;	// Pour éviter un warning
+			return *this;
 		}
 		bso::bool__ Init(
 			const str::string_ &RootFileName,

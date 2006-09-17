@@ -132,7 +132,7 @@ namespace idxbtr {
 			r Node,
 			r Root )
 		{
-//			return Root;
+			return Root;
 
 			if ( BaseTree.HasParent( Node ) ) {
 				_BecomeRed( Node );
@@ -220,6 +220,8 @@ namespace idxbtr {
 		}
 		void _DeleteCase1( r Node )
 		{
+			return;
+
 			if ( BaseTree.HasParent( Node ))
 				_DeleteCase2( Node );
 		}
