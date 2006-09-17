@@ -461,7 +461,7 @@ namespace tol {
 			ERRu();
 
 		return Stat.st_mtime;
-#elif defined CPE__T_LINUX
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
 		struct stat Stat;
 
 		if ( stat( FileName, &Stat ) != 0 )

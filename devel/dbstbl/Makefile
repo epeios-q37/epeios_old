@@ -29,8 +29,9 @@ copt =
 copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
+copt += -DCPE_ST
 lopt = 
-libs = ttr tol flw cio err
+libs = ttr tol flw cio err uym mmi dbsctt dbsidx str fil flm btr que idxbtr lst tht dtfptb
 
 
 
