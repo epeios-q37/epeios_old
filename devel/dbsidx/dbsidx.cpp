@@ -324,6 +324,8 @@ template <typename container> static bso::bool__ Set_(
 
 	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
 
+	MemoryDriver.Liberer();	// Pour fermer.
+
 	return Exists;
 }
 

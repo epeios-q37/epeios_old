@@ -81,6 +81,8 @@ ERRBegin
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
 	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
+
+	MemoryDriver.Liberer();	// Pour fermer.
 ERRErr
 ERREnd
 ERREpilog
@@ -274,8 +276,10 @@ ERRBegin
 	this->RootFileName.Init( RootFileName );
 
 	content_::S_.Unallocated = S_.MemoryDriver.Storage.Size();
+	S_.MemoryDriver.Storage.Liberer();	//Pour fermer.
 
 	Entries.List().Locations.Init( S_.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
+	S_.MemoryDriver.Entries.Liberer();	//Pour fermer.
 
 	if ( Exists ) {
 		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
