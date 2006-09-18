@@ -147,6 +147,7 @@ namespace mdr {
 			ERRu();
 			// for read-only memory.
 		}
+		datum__ *_Pointer;	// Only for the conventional memory driver.
 	public:
 		memory_driver__( mdr::size__ &Extent )
 		: _Extent( Extent )
@@ -160,6 +161,7 @@ namespace mdr {
 		void reset( bool = true )
 		{
 			_Extent = 0;
+			_Pointer = NULL;
 		}
 		//f Initialization.
 		void Init( void )
@@ -175,7 +177,10 @@ namespace mdr {
 #ifdef MDR_DBG
 			_Test( Position, Amount );
 #endif
-			MDRRecall( Position, Amount, Buffer );
+			if ( _Pointer != NULL )
+				memcpy( Buffer, _Pointer + Position, Amount );
+			else
+				MDRRecall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
 		void Store(
@@ -186,7 +191,10 @@ namespace mdr {
 #ifdef MDR_DBG
 			_Test( Position, Amount );
 #endif
-			MDRStore( Buffer, Amount, Position );
+			if ( _Pointer != NULL )
+				memcpy( _Pointer + Position, Buffer, Amount );
+			else
+				MDRStore( Buffer, Amount, Position );
 		}
 		//f Allocate 'Size' bytes in memory.
 		void Allocate( size__ Size )
@@ -197,7 +205,8 @@ namespace mdr {
 		//f Flush buffers.
 		void Flush( void )
 		{
-			MDRFlush();
+			if ( _Pointer == NULL )
+				MDRFlush();
 		}
 	};
 

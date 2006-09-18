@@ -59,10 +59,9 @@ public:
 
 using namespace dbsidx;
 
-#define NODES_FILE_NAME_EXTENSION	".ein"
-#define COLORS_FILE_NAME_EXTENSION	".eic"
-#define QUEUE_FILE_NAME_EXTENSION	".eiq"
-#define ROOT_FILE_NAME_EXTENSION	".eir"
+#define TREE_FILE_NAME_EXTENSION	".edt"
+#define QUEUE_FILE_NAME_EXTENSION	".edq"
+#define ROOT_FILE_NAME_EXTENSION	".edr"
 
 /*
 #include "cio.h"
@@ -121,7 +120,8 @@ bso::sign__ dbsidx::index_::_Seek(
 	const datum_ &Datum,
 	bso::bool__ StopIfEqual,
 	rrow__ &Row,
-	bso::ubyte__ &Round ) const
+	bso::ubyte__ &Round,
+	dbsctt::_cache_ &Cache ) const
 {
 	bso::sign__ Result = 0;
 ERRProlog
@@ -142,7 +142,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		DatumToCompare.Init();
 
-		_Retrieve( Row, DatumToCompare );
+		_Retrieve( Row, DatumToCompare, Cache );
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
@@ -172,7 +172,9 @@ ERREpilog
 	return Result;
 }
 
-bso::ubyte__ dbsidx::index_::Index( rrow__ Row )
+bso::ubyte__ dbsidx::index_::Index(
+	rrow__ Row,
+	dbsctt::_cache_ &Cache )
 {
 	bso::ubyte__ Round = 0;
 ERRProlog
@@ -195,12 +197,12 @@ ERRBegin
 
 	Datum.Init();
 
-	_Retrieve( Row, Datum );
+	_Retrieve( Row, Datum, *(dbsctt::_cache_ *)NULL );
 
 //	cout << tol::DateAndTime( Buffer ) << txf::tab << &BaseIndex << txf::nl <<  txf::sync;
 //	Display( BaseIndex, S_.Root, cout );
 
-	switch ( _Seek( Datum, false, TargetRow, Round ) ) {
+	switch ( _Seek( Datum, false, TargetRow, Round, Cache ) ) {
 	case 1:
 	case 0:
 		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
@@ -242,7 +244,7 @@ rrow__ dbsidx::index_::Seek(
 	if ( S_.Root == NONE )
 		return NONE;
 
-	Sign = _Seek( Datum, true, Row, Round );
+	Sign = _Seek( Datum, true, Row, Round, *(dbsctt::_cache_ *)NULL );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )
@@ -262,7 +264,7 @@ ERRProlog
 ERRBegin
 	Datum.Init();
 
-	_Content().Retrieve( RecordRow, Datum );
+	_Content().Retrieve( RecordRow, Datum, *(dbsctt::_cache_ *)NULL );
 
 	Result = S_.Sort->Begins( Datum, Pattern );
 ERRErr
@@ -281,7 +283,7 @@ ERRProlog
 ERRBegin
 	Datum.Init();
 
-	_Content().Retrieve( RecordRow, Datum );
+	_Content().Retrieve( RecordRow, Datum, *(dbsctt::_cache_ *)NULL );
 
 	Result = S_.Sort->Compare( Datum, Pattern );
 ERRErr
@@ -442,23 +444,14 @@ bso::bool__ dbsidx::file_index_::Init(
 {
 	bso::bool__ Exists = false;
 ERRProlog
-	str::string NodesFileName;
-	str::string ColorsFileName;
+	str::string TreeFileName;
 	str::string QueueFileName;
 ERRBegin
 	index_::Init( Content, Sort );
 
-	NodesFileName.Init( RootFileName );
-	NodesFileName.Append( NODES_FILE_NAME_EXTENSION );
-	Exists = Set_( S_.MemoryDriver.Tree.Nodes, NodesFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
-
-	ColorsFileName.Init( RootFileName );
-	ColorsFileName.Append( COLORS_FILE_NAME_EXTENSION );
-	if ( CoreSet_( S_.MemoryDriver.Tree.Colors, ColorsFileName, index_::BaseIndex.Tree().Colors ) != Exists )
-		ERRu();
-	S_.MemoryDriver.Tree.Colors.Size();	// Pour forcer la création du fichier.
-	index_::BaseIndex.Tree().Colors.Allocate( index_::BaseIndex.Tree().BaseTree.Amount() );
-
+	TreeFileName.Init( RootFileName );
+	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
@@ -468,19 +461,15 @@ ERRBegin
 	this->RootFileName.Init( RootFileName );
 
 	if ( Exists ) {
-		time_t NodesTimeStamp, ColorsTimeStamp, QueueTimeStamp, LastTimeStamp;
+		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
 
-		NodesTimeStamp = GetModificationTimeStamp_( NodesFileName );
-		ColorsTimeStamp = GetModificationTimeStamp_( ColorsFileName );
+		TreeTimeStamp = GetModificationTimeStamp_( TreeFileName );
 		QueueTimeStamp = GetModificationTimeStamp_( QueueFileName );
 
-		if ( NodesTimeStamp > NodesTimeStamp )
-			LastTimeStamp = NodesTimeStamp;
-		else
+		if ( QueueTimeStamp > TreeTimeStamp )
 			LastTimeStamp = QueueTimeStamp;
-
-		if ( ColorsTimeStamp > LastTimeStamp )
-			LastTimeStamp = ColorsTimeStamp;
+		else
+			LastTimeStamp = TreeTimeStamp;
 
 		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
 			SearchRoot();

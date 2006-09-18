@@ -543,6 +543,12 @@ namespace que {
 		{
 			return Queue.Exists( Node );
 		}
+		bso::bool__ IsMember(
+			r Node,
+			const que::E_QUEUEt_(r) &Queue ) const
+		{
+			return Queue.HasPrevious( Node ) || Queue.HasNext( Node ) || ( Head_ == Node );
+		}
 		//f return 'true' if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
 		{
@@ -696,6 +702,10 @@ namespace que {
 		epeios::size__ Extent( void ) const
 		{
 			return Queue.Extent();
+		}
+		bso::bool__ IsMember( r Node ) const
+		{
+			return S_.QueueManager.IsMember( Node, Queue );
 		}
 		//f Return 'true' if 'Node' exists, false otherwise.
 		bso::bool__ Exists( r Node ) const

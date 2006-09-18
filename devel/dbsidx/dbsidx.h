@@ -109,16 +109,18 @@ namespace dbsidx {
 			const datum_ &Data,
 			bso::bool__ StopIfEqual,
 			rrow__ &Row,
-			bso::ubyte__ &Round ) const;
+			bso::ubyte__ &Round,
+			dbsctt::_cache_ &Cache ) const;
 		const content_ &_Content( void ) const
 		{
 			return *S_.Content;
 		}
 		void _Retrieve(
 			rrow__ Row,
-			datum_ &Datum ) const
+			datum_ &Datum,
+			dbsctt::_cache_ &Cache ) const
 		{
-			_Content().Retrieve( Row, Datum );
+			_Content().Retrieve( Row, Datum, Cache );
 		}
 	public:
 		_index_ BaseIndex;
@@ -185,7 +187,9 @@ namespace dbsidx {
 		{
 			BaseIndex.Allocate( Size );
 		}
-		bso::ubyte__ Index( rrow__ Row );	// Retourne le nombre de noeuds parcourus pour cette indexation.
+		bso::ubyte__ Index(
+			rrow__ Row,
+			dbsctt::_cache_ &Cache  = *(dbsctt:: _cache_ *)NULL );	// Retourne le nombre de noeuds parcourus pour cette indexation.
 		void Delete( rrow__ Row )
 		{
 #ifdef DBSIDX_DBG
@@ -277,11 +281,7 @@ namespace dbsidx {
 		: public index_::s
 		{
 			struct memory_driver__ {
-				struct tree__ {
-					flm::E_FILE_MEMORY_DRIVER___
-						Nodes,
-						Colors;
-				} Tree;
+				flm::E_FILE_MEMORY_DRIVER___ Tree;
 				flm::E_FILE_MEMORY_DRIVER___ Queue;
 			} MemoryDriver;
 			str::string_::s RootFileName;
@@ -298,8 +298,7 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			S_.MemoryDriver.Tree.Nodes.reset( P );
-			S_.MemoryDriver.Tree.Colors.reset( P );
+			S_.MemoryDriver.Tree.reset( P );
 			S_.MemoryDriver.Queue.reset( P );
 			RootFileName.reset( P );
 			index_::reset( P );

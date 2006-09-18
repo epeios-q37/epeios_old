@@ -197,7 +197,12 @@ namespace str {
 		char *Pointeur = NULL;
 	ERRProlog
 	ERRBegin
-		if ( ( Quantity + *Position ) > Amount() )
+#ifdef STR_DBG
+		if ( *Position >= Amount() )
+			ERRu();
+#endif
+
+		if ( Quantity > ( Amount() - *Position ) )
 			Quantity = Amount() - *Position;
 
 		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )

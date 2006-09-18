@@ -68,7 +68,7 @@ namespace cvm {
 	//c Basic conventional memory.
 	class basic_conventional_memory__
 	{
-		char *Tampon_;
+		mdr::datum__ *&Tampon_;
 			// le contenu de la mémoire
 	#ifdef CVM_DBG
 		void Test_( void )
@@ -105,9 +105,9 @@ namespace cvm {
 		// alloue 'Nombre' octets
 		void Allocate( mdr::size__ Size )
 		{
-			char *Tampon;
+			mdr::datum__ *Tampon;
 
-			Tampon = (char *)realloc( Tampon_, Size );
+			Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
 
 			if ( !Tampon && Size )
 				ERRa();
@@ -124,7 +124,8 @@ namespace cvm {
 
 			Tampon_ = NULL;
 		}
-		basic_conventional_memory__( void )
+		basic_conventional_memory__( mdr::datum__ *&Pointer )
+		: Tampon_( Pointer )
 		{
 			reset( false );
 		}
@@ -173,7 +174,8 @@ namespace cvm {
 			E_MEMORY_DRIVER__::reset( P );
 		}
 		conventional_memory_driver__( mdr::size__ &Extent )
-		: memory_driver__( Extent )
+		: memory_driver__( Extent ),
+		  basic_conventional_memory__( _Pointer )
 		{
 			reset( false );
 		}

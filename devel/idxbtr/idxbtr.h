@@ -86,239 +86,6 @@ namespace idxbtr {
 			que::E_QUEUEt_( r ) &Index,
 			r Premier,
 			mdr::E_MEMORY_DRIVER__ &Pilote );
-		bso::bool__ _IsBlack( r Node ) const
-		{
-			if ( Node == NONE )
-				return true;
-			else
-				return !Colors( Node );
-		}
-		bso::bool__ _IsRed( r Node ) const
-		{
-			if ( Node == NONE )
-				return false;
-			else
-				return Colors( Node );
-		}
-		void _BecomeBlack( r Node )
-		{
-			if ( Node != NONE )
-				Colors.Store( false, Node );
-		}
-		void _BecomeRed( r Node )
-		{
-			if ( Node == NONE )
-				ERRc();
-
-			Colors.Store( true, Node );
-		}
-		void _BecomeSameColor(
-			r Source,
-			r Target )
-		{
-			Colors.Store( Colors( Source ), Target );
-		}
-		void _SwapColors(
-			r Node1,
-			r Node2 )
-		{
-			bso::bool__ Buffer = Colors( Node1 );
-
-			Colors.Store( Colors( Node2 ), Node1 );
-
-			Colors.Store( Buffer, Node2 );
-		}
-		r _InsertCase1(
-			r Node,
-			r Root )
-		{
-			return Root;
-
-			if ( BaseTree.HasParent( Node ) ) {
-				_BecomeRed( Node );
-				Root = _InsertCase2( Node, Root );
-			} else
-				_BecomeBlack( Node );
-
-			return Root;
-		}
-		r _InsertCase2(
-			r Node,
-			r Root )
-		{
-#ifdef IDXBTR_DBG
-			if ( !_IsBlack( Root ) )
-				ERRu();
-#endif
-			if ( _IsRed( BaseTree.Parent( Node ) ) )
-				Root = _InsertCase3( Node, Root );
-
-			return Root;
-		}
-		r _InsertCase3(
-			r Node,
-			r Root )
-		{
-			r Parent, GrandParent, Uncle = BaseTree.Uncle( Node, Parent, GrandParent );
-
-			if ( ( Uncle != NONE ) && ( _IsRed( Uncle ) ) ) {
-				_BecomeBlack( Parent );
-				_BecomeBlack( Uncle );
-				_BecomeRed( GrandParent );
-				Root = _InsertCase1( GrandParent, Root );
-			} else
-				Root = _InsertCase4( Node, Root );
-
-			return Root;
-		}
-		r _InsertCase4(
-			r Node,
-			r Root )
-		{
-			r Parent, GrandParent = BaseTree.GrandParent( Node, Parent );
-
-			if ( BaseTree.IsRight( Node ) && BaseTree.IsLeft( Parent ) ) {
-				if ( Parent == Root )
-					Root = BaseTree.RotateLeft( Parent );
-				else
-					BaseTree.RotateLeft( Parent );
-				Node = BaseTree.Left( Node );
-			} else if ( BaseTree.IsLeft( Node ) && BaseTree.IsRight( Parent ) ) {
-				if ( Parent == Root )
-					Root = BaseTree.RotateRight( Parent );
-				else
-					BaseTree.RotateRight( Parent );
-
-				Node = BaseTree.Right( Node );
-			}
-
-			return _InsertCase5( Node, Root );
-		}
-		r _InsertCase5(
-			r Node,
-			r Root )
-		{
-			r Parent, GrandParent = BaseTree.GrandParent( Node, Parent );
-
-			_BecomeBlack( Parent );
-			_BecomeRed( GrandParent );
-
-			if ( BaseTree.IsLeft( Node ) && BaseTree.IsLeft( Parent ) ) {
-				if ( GrandParent == Root )
-					Root = BaseTree.RotateRight( GrandParent );
-				else
-					BaseTree.RotateRight( GrandParent );
-			} else {
-				if ( GrandParent == Root )
-					Root = BaseTree.RotateLeft( GrandParent );
-				else
-					BaseTree.RotateLeft( GrandParent );
-			}
-
-			return Root;
-
-		}
-		void _DeleteCase1( r Node )
-		{
-			return;
-
-			if ( BaseTree.HasParent( Node ))
-				_DeleteCase2( Node );
-		}
-		void _DeleteCase2( r Node )
-		{
-			r Parent = NONE;
-			r Sibling = BaseTree.Sibling( Node, Parent );
-
-			if ( _IsRed( Sibling ) ) {
-				_BecomeRed( Parent );
-				_BecomeBlack( Sibling );
-
-				if ( BaseTree.IsLeft( Node ) )
-					BaseTree.RotateLeft( Parent );
-				else
-					BaseTree.RotateRight( Parent );
-			}
-
-			_DeleteCase3( Node );
-		}
-		void _DeleteCase3( r Node )
-		{
-			r Parent = NONE;
-			r Sibling = BaseTree.Sibling( Node, Parent );
-
-			if ( _IsBlack( Parent ) &&
-				 _IsBlack( Sibling ) &&
-				 _IsBlack( BaseTree.Left( Sibling ) ) &&
-				 _IsBlack( BaseTree.Right( Sibling ) ) )
-			{
-				_BecomeRed( Sibling );
-				_DeleteCase1( Parent );
-			}
-			else
-				_DeleteCase4( Node );
-		}	
-		void _DeleteCase4( r Node )
-		{
-			r Parent = NONE;
-			r Sibling = BaseTree.Sibling( Node, Parent );
-
-			if ( _IsRed( Parent ) &&
-				 _IsBlack( Sibling ) &&
-				 _IsBlack( BaseTree.Left( Sibling ) ) &&
-				 _IsBlack( BaseTree.Right( Sibling ) ) )
-			{
-				_BecomeRed( Sibling ),
-				_BecomeBlack( Parent );
-			}
-			else
-				_DeleteCase5( Node );
-		}
-		void _DeleteCase5( r Node )
-		{
-			r Parent = NONE;
-			r Sibling = BaseTree.Sibling( Node, Parent );
-
-			if ( BaseTree.IsLeft( Node ) &&
-				 _IsBlack( Sibling ) &&
-				 _IsRed( BaseTree.Left( Sibling ) ) &&
-				 _IsBlack( BaseTree.Right( Sibling ) ) )
-			{
-				_BecomeRed( Sibling );
-				_BecomeBlack( BaseTree.Left( Sibling ) );
-				BaseTree.RotateRight( Sibling );
-			} else if ( BaseTree.IsRight( Node ) &&
-				 _IsBlack( Sibling ) &&
-				 _IsRed( BaseTree.Right( Sibling ) ) &&
-				 _IsBlack( BaseTree.Left( Sibling ) ) )
-			{
-				_BecomeRed( Sibling );
-				_BecomeBlack( BaseTree.Right( Sibling ) );
-				BaseTree.RotateLeft( Sibling );
-			}
-
-			_DeleteCase6( Node );
-		}
-		void _DeleteCase6( r Node )
-		{
-			r Parent = NONE;
-			r Sibling = BaseTree.Sibling( Node, Parent );
-
-			_BecomeSameColor( Parent, Sibling );
-			_BecomeBlack( Parent );
-
-			if ( BaseTree.IsLeft( Node ) ) {
-				/* Here, sibling(n)->right->color == RED */
-				_BecomeBlack( BaseTree.Right( Sibling ) );
-				BaseTree.RotateLeft( Parent );
-			}
-			else
-			{
-				/* Here, sibling(n)->left->color == RED */
-				_BecomeBlack( BaseTree.Left( Sibling ) );
-				BaseTree.RotateRight( Parent );
-			}
-		}
 		r _SearchMostLeftNode( r Node ) const
 		{
 			level__ Level;
@@ -333,25 +100,20 @@ namespace idxbtr {
 		}
 	public:
 		btr::E_BTREEt_( r ) BaseTree;
-		bitbch::E_BIT_BUNCHt_( r ) Colors;		
 		struct s
 		{
 			typename btr::E_BTREEt_( r )::s BaseTree;
-			typename bitbch::E_BIT_BUNCHt_( r )::s Colors;
 		};
 		tree_index_( s &S )
-		: BaseTree( S.BaseTree ),
-		  Colors( S.Colors )
+		: BaseTree( S.BaseTree )
 		{}
 		void reset( bool P = true )
 		{
 			BaseTree.reset( P );
-			Colors.reset( P );
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
 			BaseTree.plug( MM );
-			Colors.plug ( MM );
 		}
 /*
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
@@ -361,7 +123,6 @@ namespace idxbtr {
 */		tree_index_ &operator =( const tree_index_ &I )
 		{
 			BaseTree = I.BaseTree;
-			Colors = I.Colors;
 
 			return *this;
 		}
@@ -379,14 +140,12 @@ namespace idxbtr {
 		void Init( void )
 		{
 			BaseTree.Init();
-			Colors.Init();
 		}
 		void Allocate(
 			epeios::size__ Size,
 			aem::mode Mode = aem::mDefault )
 		{
 			BaseTree.Allocate( Size, Mode );
-			Colors.Allocate( Size, Mode );
 		}
 		//f Return the first item of the index.
 		r First( r Root ) const
@@ -450,18 +209,10 @@ namespace idxbtr {
 			}
 
 			if ( !BaseTree.HasChildren( Node ) ) {
-				_DeleteCase1( Node );
 				if ( Node != Root )
 					BaseTree.Cut( Node );
 			} else {
 				r Child = BaseTree.HasLeft( Node ) ? BaseTree.Left( Node ) : BaseTree.Right( Node );
-
-				if ( _IsBlack( Child ) ) {
-					if ( _IsRed( Node ) )
-						_BecomeBlack( Node );
-					else
-						_DeleteCase1( Node );
-				}
 
 				BaseTree.Cut( Child );
 
@@ -541,7 +292,7 @@ namespace idxbtr {
 		{
 			BaseTree.BecomeRight( Row, Current );
 
-			return _InsertCase1( Row, Root );
+			return Root;
 		}
 		//f Mark 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
 		r BecomeLesser(
@@ -551,7 +302,7 @@ namespace idxbtr {
 		{
 			BaseTree.BecomeLeft( Row, Current );
 
-			return _InsertCase1( Row, Root );
+			return Root;
 		}
 		void BecomeRoot( r Node )
 		{
@@ -559,7 +310,6 @@ namespace idxbtr {
 			if ( BaseTree.HasParent( Node ) )
 				ERRu();
 #endif
-			_InsertCase1( Node, Node );
 		}
 		r GetLesser( r Node ) const
 		{

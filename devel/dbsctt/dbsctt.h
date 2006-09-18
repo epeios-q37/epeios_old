@@ -67,6 +67,7 @@ extern class ttr_tutor &DBSCTTTutor;
 #include "stk.h"
 #include "lstbch.h"
 #include "flm.h"
+#include "que.h"
 
 namespace dbsctt {
 
@@ -338,6 +339,119 @@ namespace dbsctt {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
+	typedef ctn::E_XMCONTAINERt_( datum_, rrow__ ) _container_;
+	typedef que::E_MQUEUEt_( rrow__ ) _queue_;
+
+	#define DBSCTT_CACHE_DEFAULT_AMOUNT_MAX	( 2 << 15 )
+
+	class _cache_
+	{
+	private:
+		void _PutToHead( rrow__ Row )
+		{
+			if ( _IsMember( Row ) )
+				Queue.Delete( Row );
+
+			if ( Queue.IsEmpty() )
+				Queue.Create( Row );
+			else
+				Queue.BecomePrevious( Row, Queue.Head() );
+		}
+		bso::bool__ _IsMember( rrow__ Row ) const
+		{
+			if ( Queue.Exists( Row ) )
+				return Queue.IsMember( Row );
+			else
+				return false;
+		}
+	public:
+		_container_ Container;
+		_queue_ Queue;
+		struct s {
+			_container_::s Container;
+			_queue_::s Queue;
+			bso::ulong__ AmountMax;
+		} &S_;
+		_cache_( s &S )
+		: S_( S ),
+		  Container( S.Container ),
+		  Queue( S.Queue )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Container.reset( P );
+			Queue.reset( P );
+
+			S_.AmountMax = 0;
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Container.plug( MM );
+			Queue.plug( MM );
+		}
+		_cache_ &operator =( const _cache_ &C )
+		{
+			Container = C.Container;
+			Queue = C.Queue;
+
+			S_.AmountMax = C.S_.AmountMax;
+
+			return *this;
+		}
+		void Init( bso::ulong__ AmountMax = DBSCTT_CACHE_DEFAULT_AMOUNT_MAX )
+		{
+			reset();
+
+			Container.Init();
+			Queue.Init();
+
+			S_.AmountMax = AmountMax;
+		}
+		bso::bool__ Retrieve(
+			rrow__ Row,
+			datum_ &Datum )
+		{
+			bso::bool__ IsMember = false;
+
+			if ( IsMember = _IsMember( Row ) ) {
+				Container.Recall( Row, Datum );
+				_PutToHead( Row );
+			}
+
+			return IsMember;
+		}
+		void Store(
+			const datum_ &Datum,
+			rrow__ Row )
+		{
+#ifdef DBSCTT_DBG
+			if ( _IsMember( Row ) )
+				ERRu();
+#endif
+			if ( !Queue.Exists( Row ) ) {
+				Queue.Allocate( *Row + 1 );
+				Container.Allocate( *Row + 1 );
+			}
+
+			if ( Queue.Amount() >= S_.AmountMax ) {
+				Container( Queue.Tail() ).reset();
+				Queue.Delete( Queue.Tail() );
+			}
+
+			Container.Store( Datum, Row );
+			_PutToHead( Row );
+		}
+		void Remove( rrow__ Row )
+		{
+			if ( _IsMember( Row ) )
+				Queue.Delete( Row );
+		}
+	};
+
+	E_AUTO( _cache )
+
+
+
 	class content_
 	{
 	private:
@@ -438,6 +552,7 @@ namespace dbsctt {
 			storage_::s Storage;
 			availables_::s Availables;
 			entries_::s Entries;
+			_cache_::s Cache;
 			// Position du premier octet non alloué.
 			datum_row__ Unallocated;
 			time_t ModificationTimeStamp;
@@ -516,19 +631,37 @@ namespace dbsctt {
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
 			rrow__ Row,
-			datum_ &Data ) const
+			datum_ &Datum ) const
 		{
 			entry__ Entry = Entries.Get( Row );
 
 			if ( Entry.Head != NONE )
-				_Retrieve( Entry.Head, Data );
+				_Retrieve( Entry.Head, Datum );
 			else
 				return false;
 
 			if ( Entry.Tail != NONE )
-				_Retrieve( Entry.Tail, Data );
+				_Retrieve( Entry.Tail, Datum );
 
 			return true;
+		}
+		// Retourne 'true' si l'enregistrement existe, faux sinon.
+		bso::bool__ Retrieve(
+			rrow__ Row,
+			datum_ &Datum,
+			_cache_ &Cache ) const
+		{
+			bso::bool__ Exists = true;
+
+			if ( ( &Cache == NULL ) || !Cache.Retrieve( Row, Datum ) ) {
+
+				Exists = Retrieve( Row, Datum );
+
+				if ( Exists && ( &Cache != NULL ) )
+					Cache.Store( Datum, Row );
+			}
+
+			return Exists;
 		}
 		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
 		void RebuildLocations( void )

@@ -92,6 +92,7 @@ ERRProlog
 	chrono__ Chrono;
 	dbsidx::index TempIndex;
 	bso::ubyte__ Round;
+	dbsctt::_cache  Cache;
 ERRBegin
 	Index.Reset();
 
@@ -107,10 +108,12 @@ ERRBegin
 		Chrono.Launch();
 	}
 
-	while ( Row != NONE ) {
-		Round = TempIndex.Index( Row );
+	Cache.Init();
 
-		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 1 ) ) > TempIndex.Content().Amount() ) )
+	while ( Row != NONE ) {
+		Round = TempIndex.Index( Row, Cache );
+
+		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > TempIndex.Content().Amount() ) )
 			TempIndex.Balance();
 
 		RecordCount++;
