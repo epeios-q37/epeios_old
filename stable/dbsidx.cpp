@@ -174,12 +174,15 @@ ERREpilog
 
 bso::ubyte__ dbsidx::index_::Index(
 	rrow__ Row,
+	extremities__ *Extremities,
 	dbsctt::_cache_ &Cache )
 {
 	bso::ubyte__ Round = 0;
 ERRProlog
+	datum DatumToCompare;
 	datum Datum;
 	rrow__ TargetRow = NONE;
+	bso::sign__ Result;
 //	tol::buffer__ Buffer;
 //	cio::aware_cout___ cout;
 ERRBegin
@@ -199,15 +202,69 @@ ERRBegin
 
 	_Retrieve( Row, Datum, *(dbsctt::_cache_ *)NULL );
 
+
+	if ( Extremities != NULL ) {
+		if ( Extremities->First == NONE )
+			Extremities->First = BaseIndex.First( S_.Root );
+
+		TargetRow = Extremities->First;
+
+		DatumToCompare.Init();
+
+		_Retrieve( TargetRow, DatumToCompare, Cache );
+
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
+		case 1:
+		case 0:
+			break;
+		case -1:
+			TargetRow = NONE;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	if ( ( TargetRow == NONE ) && ( Extremities != NULL ) ) {
+		if ( Extremities->Last == NONE )
+			Extremities->Last = BaseIndex.Last( S_.Root );
+
+		TargetRow = Extremities->Last;
+
+		DatumToCompare.Init();
+
+		_Retrieve( TargetRow, DatumToCompare, Cache );
+
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
+		case -1:
+		case 0:
+			break;
+		case 1:
+			TargetRow = NONE;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	} 
+
+	if ( TargetRow == NONE )
+		Result = _Seek( Datum, false, TargetRow, Round, Cache );
+
 //	cout << tol::DateAndTime( Buffer ) << txf::tab << &BaseIndex << txf::nl <<  txf::sync;
 //	Display( BaseIndex, S_.Root, cout );
 
-	switch ( _Seek( Datum, false, TargetRow, Round, Cache ) ) {
+	switch ( Result ) {
 	case 1:
 	case 0:
+		if ( ( Extremities != NULL ) && ( Extremities->First == TargetRow ) )
+			Extremities->First = Row;
 		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
 		break;
 	case -1:
+		if ( ( Extremities != NULL ) && ( Extremities->Last == TargetRow ) )
+			Extremities->Last = Row;
 		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	default:
@@ -295,7 +352,8 @@ ERREpilog
 template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const str::string_ &FileName,
-	container &C )
+	container &C,
+	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -304,6 +362,11 @@ ERRBegin
 	FileNameBuffer = FileName.Convert();
 
 	Exists = tol::FileExists( FileNameBuffer );
+
+	if ( Exists && Erase ) {
+		remove( FileNameBuffer );
+		Exists = false;
+	}
 
 	MemoryDriver.Init( FileNameBuffer );
 	MemoryDriver.Persistant();
@@ -318,9 +381,10 @@ ERREpilog
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const str::string_ &FileName,
-	container &C )
+	container &C,
+	bso::bool__ Erase )
 {
-	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C );
+	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Erase );
 
 	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
 
@@ -442,7 +506,8 @@ ERREpilog
 bso::bool__ dbsidx::file_index_::Init(
 	const str::string_ &RootFileName,
 	const content_ &Content,
-	sort_function__ &Sort )
+	sort_function__ &Sort,
+	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -453,11 +518,11 @@ ERRBegin
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().BaseTree.Nodes );
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().BaseTree.Nodes, Erase );
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links ) != Exists )
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links, Erase ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );

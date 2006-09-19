@@ -64,7 +64,7 @@ void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 	irow__ IRow = Indexes.First();
 
 	while ( IRow != NONE ) {
-		_I( IRow ).Index( Row );
+		_I( IRow ).Index( Row, false );
 
 		IRow = Indexes.Next( IRow );
 	}
@@ -93,6 +93,7 @@ ERRProlog
 	dbsidx::index TempIndex;
 	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
+	tol::E_DPOINTER___( extremities__ ) Extremities;
 ERRBegin
 	Index.Reset();
 
@@ -111,10 +112,12 @@ ERRBegin
 	Cache.Init();
 
 	while ( Row != NONE ) {
-		Round = TempIndex.Index( Row, Cache );
+		Round = TempIndex.Index( Row, Extremities, Cache );
 
-		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > TempIndex.Content().Amount() ) )
+		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > TempIndex.Content().Amount() ) ) {
 			TempIndex.Balance();
+			Extremities = new extremities__;
+		}
 
 		RecordCount++;
 

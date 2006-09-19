@@ -102,6 +102,15 @@ namespace dbsidx {
 	typedef idxbtq::E_INDEXt_( rrow__ ) _index_;
 	E_AUTO( _index )
 
+	struct extremities__
+	{
+		rrow__ First, Last;
+		extremities__( void )
+		{
+			First = Last = NONE;
+		}
+	};
+
 	class index_
 	{
 	private:
@@ -189,6 +198,7 @@ namespace dbsidx {
 		}
 		bso::ubyte__ Index(
 			rrow__ Row,
+			extremities__ *Extremities,	// Si à 'true', compare d'abord avec les extrémités. Utilisé pour la réindexation.
 			dbsctt::_cache_ &Cache  = *(dbsctt:: _cache_ *)NULL );	// Retourne le nombre de noeuds parcourus pour cette indexation.
 		void Delete( rrow__ Row )
 		{
@@ -315,8 +325,9 @@ namespace dbsidx {
 		}
 		bso::bool__ Init(
 			const str::string_ &RootFileName,
-			const content_ &Content = *(content_ *)NULL,
-			sort_function__ &Sort = *(sort_function__ *)NULL );
+			const content_ &Content,
+			sort_function__ &Sort,
+			bso::bool__ Erase );
 	};
 
 	E_AUTO( file_index )
