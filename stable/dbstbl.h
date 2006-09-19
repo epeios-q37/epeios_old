@@ -311,7 +311,7 @@ namespace dbstbl {
 			C_().Retrieve( Row, Datum );
 		}
 		void Retrieve(
-			rrows_ Row,
+			const rrows_ &Rows,
 			data_ &Data ) const;
 		void Delete( rrow__ RecordRow )
 		{
@@ -564,27 +564,22 @@ namespace dbstbl {
 		rrow__ Insert( const datum_ &Datum );
 		void Insert(
 			const data_ &Data,
-			rrows_ &RecordRows,
-			time_t Delay = DBSTBL__DEFAULT_DELAY );
+			rrows_ &RecordRows );
 		void Update(
 			const datum_ &Datum,
 			rrow__ RecordRow );
 		void Update(
 			const data_ &Data,
-			const rrows_ &RecordRows,
-			time_t Delay = DBSTBL__DEFAULT_DELAY );
+			const rrows_ &RecordRows );
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum );
-		// Toute les 'Delay' ms, le 'thread' rend la main pour donner une chance aux autres 'thread's de s'exécuter.
 		void Retrieve(
-			rrows_ Rows,
-			data_ &Data,
-			time_t Delay = DBSTBL__DEFAULT_DELAY );
+			const rrows_ &Rows,
+			data_ &Data );
 		void Delete( rrow__ RecordRow );
 		void Delete(
-			const rrows_ &RecordRows,
-			time_t Delay = DBSTBL__DEFAULT_DELAY );
+			const rrows_ &RecordRows );
 		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
@@ -616,8 +611,7 @@ namespace dbstbl {
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
-			rows_ &Rows,
-			time_t Delay = DBSTBL__DEFAULT_DELAY );
+			rows_ &Rows );
 		void Reindex(
 			irow__ IndexRow,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );

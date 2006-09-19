@@ -57,8 +57,6 @@ public:
 
 using namespace dbstbl;
 
-using tol::chrono__;
-
 void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
 	irow__ IRow = Indexes.First();
@@ -89,7 +87,7 @@ ERRProlog
 	index_ &Index = _I( IRow );
 	const content_ &Content = C_();
 	mdr::size__ RecordCount = 0;
-	chrono__ Chrono;
+	tol::chrono__ Chrono;
 	dbsidx::index TempIndex;
 	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
@@ -163,7 +161,7 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 }
 
 void dbstbl::table_::Retrieve(
-	rrows_ Rows,
+	const rrows_ &Rows,
 	data_ &Data ) const
 {
 ERRProlog
@@ -325,13 +323,11 @@ ERREpilog
 
 void dbstbl::thread_safe_table_::Insert(
 	const data_ &Data,
-	rrows_ &RecordRows,
-	time_t Delay )
+	rrows_ &RecordRows )
 {
 ERRProlog
 	ctn::E_CMITEM( datum_ ) Datum;
 	epeios::row__ Row = NONE;
-	chrono__ Chrono;
 ERRBegin
 	RW
 
@@ -339,27 +335,14 @@ ERRBegin
 
 	Datum.Init( Data );
 
-	Chrono.Init( Delay );
-	Chrono.Launch();
-
 	while ( Row != NONE ) {
-		if ( Chrono.IsElapsed() ) {
-			_RRW();
-
-			tht::Defer();
-
-			_RW();
-
-			Chrono.Launch();
-		}
-
-
 		RecordRows.Append( T.Insert( Datum( Row ) ) );
 
 		Row = Data.Next( Row );
 	}
 ERRErr
 ERREnd
+	RRW
 ERREpilog
 }
 
@@ -380,13 +363,11 @@ ERREpilog
 
 void dbstbl::thread_safe_table_::Update(
 	const data_ &Data,
-	const rrows_ &RecordRows,
-	time_t Delay )
+	const rrows_ &RecordRows )
 {
 ERRProlog
 	ctn::E_CMITEM( datum_ ) Datum;
 	epeios::row__ Row = NONE;
-	chrono__ Chrono;
 ERRBegin
 	RW
 
@@ -397,26 +378,14 @@ ERRBegin
 
 	Datum.Init( Data );
 
-	Chrono.Init( Delay );
-	Chrono.Launch();
-
 	while ( Row != NONE ) {
-		if ( Chrono.IsElapsed() ) {
-			_RRW();
-
-			tht::Defer();
-
-			_RW();
-
-			Chrono.Launch();
-		}
-
 		T.Update( Datum( Row ), RecordRows( Row ) );
 
 		Row = Data.Next( Row );
 	}
 ERRErr
 ERREnd
+	RRW
 ERREpilog
 }
 
@@ -436,33 +405,18 @@ ERREpilog
 }
 
 void dbstbl::thread_safe_table_::Retrieve(
-	rrows_ Rows,
-	data_ &Data,
-	time_t Delay )
+	const rrows_ &Rows,
+	data_ &Data )
 {
 ERRProlog
 	datum Datum;
 	epeios::row__ Row = NONE;
-	chrono__ Chrono;
 ERRBegin
 	RO
 
 	Row = Rows.First();
 
-	Chrono.Init( Delay );
-	Chrono.Launch();
-
 	while ( Row != NONE ) {
-		if ( Chrono.IsElapsed() ) {
-			_RRO();
-
-			tht::Defer();
-
-			_RO();
-
-			Chrono.Launch();
-		}
-
 		Datum.Init();
 
 		T.Retrieve( Rows( Row ), Datum );
@@ -490,38 +444,23 @@ ERREnd
 ERREpilog
 }
 
-void dbstbl::thread_safe_table_::Delete(
-	const rrows_ &RecordRows,
-	time_t Delay )
+void dbstbl::thread_safe_table_::Delete( const rrows_ &RecordRows )
 {
 ERRProlog
 	epeios::row__ Row = NONE;
-	chrono__ Chrono;
 ERRBegin
 	RW
 
 	Row = RecordRows.First();
 
-	Chrono.Init( Delay );
-	Chrono.Launch();
-
 	while ( Row != NONE ) {
-		if ( Chrono.IsElapsed() ) {
-			_RRW();
-
-			tht::Defer();
-
-			_RW();
-
-			Chrono.Launch();
-		}
-
 		T.Delete( RecordRows( Row ) );
 
 		Row = RecordRows.Next( Row );
 	}
 ERRErr
 ERREnd
+	RRW
 ERREpilog
 }
 
@@ -716,33 +655,16 @@ ERREpilog
 
 void dbstbl::thread_safe_table_::TestRecordsExistence(
 	const rrows_ &RecordRows,
-	rows_ &Rows,
-	time_t Delay )
+	rows_ &Rows )
 {
 ERRProlog
 	epeios::row__ Row = NONE;
-	chrono__ Chrono;
 ERRBegin
 	RO
 
 	Row = RecordRows.First();
 
-	Chrono.Init( Delay );
-	Chrono.Launch();
-
-
 	while ( Row != NONE ) {
-
-		if ( Chrono.IsElapsed() ) {
-			_RRO();
-
-			tht::Defer();
-
-			_RO();
-
-			Chrono.Launch();
-		}
-
 		if ( !T.RecordExists( RecordRows( Row ) ) )
 			Rows.Append( Row );
 
