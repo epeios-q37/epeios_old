@@ -473,6 +473,27 @@ namespace tol {
 #endif
 	}
 
+	inline time_t GetFileSize( const char *FileName )
+	{
+#ifdef CPE__T_MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_size;
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_size;
+#else
+		ERRl();
+#endif
+	}
+
 	inline void RemoveFile( const char *FileName )
 	{
 		remove( FileName );

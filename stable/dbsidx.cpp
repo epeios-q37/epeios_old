@@ -353,44 +353,37 @@ ERREpilog
 
 template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const str::string_ &FileName,
+	const char *FileName,
 	container &C,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
-ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileNameBuffer = FileName.Convert();
 
-	Exists = tol::FileExists( FileNameBuffer );
+	Exists = tol::FileExists( FileName );
 
 	if ( Exists && Erase ) {
-		remove( FileNameBuffer );
+		remove( FileName );
 		Exists = false;
 	}
 
-	MemoryDriver.Init( FileNameBuffer );
+	MemoryDriver.Init( FileName );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
 	C.SetStepValue( 0 );
-ERRErr
-ERREnd
-ERREpilog
+
 	return Exists;
 }
 
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const str::string_ &FileName,
+	const char *FileName,
 	container &C,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Erase );
 
-	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
-
-	MemoryDriver.Liberer();	// Pour fermer.
+	if ( Exists )
+		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
 
 	return Exists;
 }
@@ -514,17 +507,21 @@ bso::bool__ dbsidx::file_index_::Init(
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string TreeFileName;
+	tol::E_FPOINTER___( bso::char__ ) TreeFileNameBuffer;
 	str::string QueueFileName;
+	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
 ERRBegin
 	index_::Init( Content, Sort );
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileName, index_::BaseIndex.Tree().BaseTree.Nodes, Erase );
+	TreeFileNameBuffer = TreeFileName.Convert();
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, Erase );
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileName, index_::BaseIndex.Queue().Links, Erase ) != Exists )
+	QueueFileNameBuffer = QueueFileName.Convert();
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, Erase ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );

@@ -66,26 +66,18 @@ using namespace dbsctt;
 
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const str::string_ &FileName,
+	const char *FileName,
 	container &C )
 {
 	bso::bool__ Exists = false;
-ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileNameBuffer = FileName.Convert();
 
-	Exists = tol::FileExists( FileNameBuffer );
+	Exists = tol::FileExists( FileName );
 
-	MemoryDriver.Init( FileNameBuffer );
+	MemoryDriver.Init( FileName );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
-	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
+	C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
 
-	MemoryDriver.Liberer();	// Pour fermer.
-ERRErr
-ERREnd
-ERREpilog
 	return Exists;
 }
 
@@ -258,27 +250,31 @@ bso::bool__ dbsctt::file_content_::Init( const str::string_ &RootFileName )
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string ContentFileName;
+	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
 	str::string EntriesFileName;
+	tol::E_FPOINTER___( bso::char__ ) EntriesFileNameBuffer;
 	available__ TestAvailable;
 ERRBegin
 	content_::Init();
 
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileName, content_::Storage.Memory );
+	ContentFileNameBuffer = ContentFileName.Convert();
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, content_::Storage.Memory );
 
 	EntriesFileName.Init( RootFileName );
 	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
+	EntriesFileNameBuffer = EntriesFileName.Convert();
 	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( S_.MemoryDriver.Entries, EntriesFileName, Entries.Bunch() ) != Exists )
+	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, Entries.Bunch() ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );
 
-	content_::S_.Unallocated = S_.MemoryDriver.Storage.Size();
+	content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
 	S_.MemoryDriver.Storage.Liberer();	//Pour fermer.
 
-	Entries.List().Locations.Init( S_.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
+	Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
 	S_.MemoryDriver.Entries.Liberer();	//Pour fermer.
 
 	if ( Exists ) {
