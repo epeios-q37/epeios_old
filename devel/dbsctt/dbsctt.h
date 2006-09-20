@@ -398,12 +398,17 @@ namespace dbsctt {
 
 			return *this;
 		}
-		void Init( bso::ulong__ AmountMax = DBSCTT_CACHE_DEFAULT_AMOUNT_MAX )
+		void Init(
+			epeios::size__ Size,
+			bso::ulong__ AmountMax = DBSCTT_CACHE_DEFAULT_AMOUNT_MAX )
 		{
 			reset();
 
 			Container.Init();
 			Queue.Init();
+
+			Queue.Allocate( Size );
+			Container.Allocate( Size );
 
 			S_.AmountMax = AmountMax;
 		}
@@ -427,11 +432,10 @@ namespace dbsctt {
 #ifdef DBSCTT_DBG
 			if ( _IsMember( Row ) )
 				ERRu();
+
+			if ( !Queue.Exists( Row ) )
+				ERRu();
 #endif
-			if ( !Queue.Exists( Row ) ) {
-				Queue.Allocate( *Row + 1 );
-				Container.Allocate( *Row + 1 );
-			}
 
 			if ( Queue.Amount() >= S_.AmountMax ) {
 				Container( Queue.Tail() ).reset();

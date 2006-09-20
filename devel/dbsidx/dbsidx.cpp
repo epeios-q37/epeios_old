@@ -214,8 +214,9 @@ ERRBegin
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
-		case 1:
 		case 0:
+			Result = 1;	// Pour forcer son positionnement en tant que premier.
+		case 1:
 			break;
 		case -1:
 			TargetRow = NONE;
@@ -237,8 +238,9 @@ ERRBegin
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
-		case -1:
 		case 0:
+			Result = -1;	// Pour forcer son positionnement en tant que dernier.
+		case -1:
 			break;
 		case 1:
 			TargetRow = NONE;

@@ -92,22 +92,23 @@ ERRProlog
 	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
+	rrow__ Row = NONE;
 ERRBegin
 	Index.Reset();
 
 	TempIndex.Init( Index.Content(), Index.SortFunction() );
 
-	Index.Allocate( Content.Amount() );
+	TempIndex.Allocate( Content.Extent() );
 
-	rrow__ Row = Content.First();
+	Cache.Init( Content.Extent() );
+
+	Row = Content.First();
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
 		Observer.Notify( 0, Content.Amount() );
 		Chrono.Init( Observer._Delay );
 		Chrono.Launch();
 	}
-
-	Cache.Init();
 
 	while ( Row != NONE ) {
 		Round = TempIndex.Index( Row, Extremities, Cache );
