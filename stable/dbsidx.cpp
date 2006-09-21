@@ -148,8 +148,14 @@ ERRBegin
 		case 0:
 			if ( StopIfEqual )
 				Row = NONE;	// Pour sortir de la boucle.
-			else
+			else if ( !Seeker.HasLesser() )
+				Row = Seeker.SearchLesser();	// Retourne 'NONE', pour remplir l'abre au plus prés de la racine.
+			else if ( !Seeker.HasGreater() )
+				Row = Seeker.SearchGreater();	// Retourne 'NONE', pour remplir l'abre au plus prés de la racine.
+			else if ( *Row & 1 )	// Petit générateur aléatoire (sans doute inutile ?).
 				Row = Seeker.SearchLesser();
+			else
+				Row = Seeker.SearchGreater();
 			break;
 		case 1:
 			Row = Seeker.SearchLesser();
@@ -259,10 +265,17 @@ ERRBegin
 
 	switch ( Result ) {
 	case 1:
-	case 0:
 		if ( ( Extremities != NULL ) && ( Extremities->First == TargetRow ) )
 			Extremities->First = Row;
 		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
+		break;
+	case 0:	// Pas de problème avec la gestion des 'extremities', 
+		if ( !BaseIndex.TreeHasLesser( Row ) )
+			S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
+		else if ( !BaseIndex.TreeHasGreater( Row ) )
+			S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
+		else
+			ERRc();
 		break;
 	case -1:
 		if ( ( Extremities != NULL ) && ( Extremities->Last == TargetRow ) )

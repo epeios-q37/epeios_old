@@ -205,6 +205,22 @@ namespace idxbtq {
 		{
 			return *this;
 		}
+		bso::bool__ TreeHasLesser( r Node ) const
+		{
+			return E_IBTREEt_( r )::HasLesser( Node );
+		}
+		bso::bool__ TreeHasGreater( r Node ) const
+		{
+			return E_IBTREEt_( r )::HasGreater( Node );
+		}
+		void HasGreater( void )	// Obsolete.
+		{
+			ERRu();	
+		}
+		void HasLesser( void )	// Obsolete.
+		{
+			ERRu();	
+		}
 	};
 
 	E_AUTO1( tree_queue_index )

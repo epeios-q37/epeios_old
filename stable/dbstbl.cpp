@@ -99,8 +99,10 @@ ERRProlog
 	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
-	rrow__ Row = NONE;
-
+	rrow__ RecordRow = NONE;
+	bso::ulong__ BalancingCount = 0;
+	bch::E_BUNCH( rrow__ ) List;
+	epeios::row__ Row = NONE;
 ERRBegin
 	Index.Reset();
 
@@ -115,19 +117,32 @@ ERRBegin
 
 	Cache.Init( Content.Extent() );
 
-	Row = Content.First();
+	List.Init();
+
+	RecordRow = Content.First();
+
+	while ( RecordRow != NONE ) {
+		List.Append( RecordRow );
+
+		RecordRow = Content.Next( RecordRow );
+	}
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
-		Observer.Notify( 0, Content.Amount() );
+		Observer.Notify( 0, Content.Amount(), BalancingCount );
 		Chrono.Init( Observer._Delay );
 		Chrono.Launch();
 	}
 
-	while ( Row != NONE ) {
-		Round = UsedIndex->Index( Row, Extremities, Cache );
+	while ( List.Amount() != 0 ) {
+		Row = List.Amount() - ( rand() % List.Amount() ) - 1;
 
-		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > Content.Amount() ) ) {
+		Round = UsedIndex->Index( List( Row ), Extremities, Cache );
+
+		List.Remove( Row );
+
+		if ( ( 1UL << ( Round >> 3 ) ) > RecordCount ) {
 			UsedIndex->Balance();
+			BalancingCount++;
 			if ( Extremities == NULL )
 				Extremities = new extremities__;
 		}
@@ -135,16 +150,14 @@ ERRBegin
 		RecordCount++;
 
 		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
-			Observer.Notify( RecordCount, Content.Amount() );
+			Observer.Notify( RecordCount, Content.Amount(), BalancingCount );
 
 			Chrono.Launch();
 		}
-
-		Row = Content.Next( Row );
 	}
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
-		Observer.Notify( RecordCount, Content.Amount() );
+		Observer.Notify( RecordCount, Content.Amount(), BalancingCount );
 
 	UsedIndex->Balance();
 
@@ -167,8 +180,6 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 	}
 
 	while ( Row != NONE ) {
-#pragma message ( __LOC__ "test ci-dessous pour DIP à enlever." )
-		if ( Row == 2 )
 		_Reindex( Row, Observer );
 
 		if ( &Observer )

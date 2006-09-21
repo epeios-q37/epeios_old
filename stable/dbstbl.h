@@ -111,7 +111,8 @@ namespace dbstbl {
 			bso::ulong__ HandledIndexAmount,
 			bso::ulong__ TotalIndexAmount,
 			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount ) = 0;
+			bso::ulong__ TotalRecordAmount,
+			bso::ulong__ BalancingCount ) = 0;
 	public:
 		observer_functions__( void )
 		{
@@ -124,9 +125,10 @@ namespace dbstbl {
 		}
 		void Notify(
 			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount )
+			bso::ulong__ TotalRecordAmount,
+			bso::ulong__ BalancingCount )
 		{
-			DBSTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount );
+			DBSTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount, BalancingCount );
 		}
 		friend class table_;
 	};

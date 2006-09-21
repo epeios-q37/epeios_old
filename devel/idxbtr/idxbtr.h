@@ -285,7 +285,7 @@ namespace idxbtr {
 		}
 #endif
 		//f Mark 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		r BecomeGreater(
+		r BecomeRight(
 			r Row,
 			r Current,
 			r Root )
@@ -295,7 +295,7 @@ namespace idxbtr {
 			return Root;
 		}
 		//f Mark 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
-		r BecomeLesser(
+		r BecomeLeft(
 			r Row,
 			r Current,
 			r Root )
@@ -315,9 +315,32 @@ namespace idxbtr {
 		{
 			return BaseTree.Left( Node );
 		}
+		bso::bool__ HasLesser( r Node ) const
+		{
+			return GetLesser( Node ) != NONE;
+		}
 		r GetGreater( r Node ) const
 		{
 			return BaseTree.Right( Node );
+		}
+		bso::bool__ HasGreater( r Node ) const
+		{
+			return GetGreater( Node ) != NONE;
+		}
+		r BecomeGreater(
+			r Row,
+			r Current,
+			r Root )
+		{
+			return BecomeRight( Row, Current, Root );
+		}
+		//f Mark 'Row' as lesser then 'Current'. 'Current' must be the result as a search with 'seeker_'.
+		r BecomeLesser(
+			r Row,
+			r Current,
+			r Root )
+		{
+			return BecomeLeft( Row, Current, Root );
 		}
 		//f Balances the tree which underlies the index. Return the new root.
 		r Balance( r Root );
@@ -426,22 +449,39 @@ namespace idxbtr {
 
 			_Current = Root;
 		}
+		r GetGreater( void ) const
+		{
+			return Index_->GetGreater( _Current );
+		}
 		//f Try to find an element greater then the current.
 		r SearchGreater( void )
 		{
 #ifdef IDXBTR_DBG
 			_Test();
 #endif
-			return _Handle( Index_->GetGreater( _Current ) );
+			return _Handle( GetGreater() );
+		}
+		bso::bool__ HasGreater( void ) const
+		{
+			return GetGreater() != NONE;
 		}
 		//f Try to find an element lesser then the current.
+		r GetLesser( void ) const
+		{
+			return Index_->GetLesser( _Current );
+		}
 		r SearchLesser( void )
 		{
 #ifdef IDXBTR_DBG
 			_Test();
 #endif
-			return _Handle( Index_->GetLesser( _Current ) );
+			return _Handle( GetLesser() );
 		}
+		bso::bool__ HasLesser( void ) const
+		{
+			return GetLesser() != NONE;
+		}
+
 		E_RODISCLOSE__( r, Current )
 	};
 
