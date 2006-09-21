@@ -76,7 +76,9 @@ template <typename container> static bso::bool__ Set_(
 	MemoryDriver.Init( FileName );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
-	C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
+
+	if ( Exists )
+		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
 
 	return Exists;
 }
@@ -271,11 +273,13 @@ ERRBegin
 
 	this->RootFileName.Init( RootFileName );
 
-	content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
-	S_.MemoryDriver.Storage.Liberer();	//Pour fermer.
-
-	Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
-	S_.MemoryDriver.Entries.Liberer();	//Pour fermer.
+	if ( Exists ) {
+		content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
+		Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
+	} else {
+		content_::S_.Unallocated = 0;
+		Entries.List().Locations.Init( 0 / sizeof( entry__ ) );
+	}
 
 	if ( Exists ) {
 		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
