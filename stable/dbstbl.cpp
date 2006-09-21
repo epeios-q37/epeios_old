@@ -55,6 +55,12 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#define MEMORY_REINDEXATION_LIMIT	10000000
+/* Limite du nombre d'neregistrement au-delà de laquelle on utilise 
+directement l'index sur le disque et non pas une copie temporaire en mémoire
+pour éviter la mise en oeuvre de la mémoire virtuelle. */
+
+
 using namespace dbstbl;
 
 void dbstbl::table_::_InsertInIndexes( rrow__ Row )
@@ -88,17 +94,24 @@ ERRProlog
 	const content_ &Content = C_();
 	mdr::size__ RecordCount = 0;
 	tol::chrono__ Chrono;
-	dbsidx::index TempIndex;
+	dbsidx::index IndexInMemory;
+	dbsidx::index_ *UsedIndex = NULL;
 	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
 	rrow__ Row = NONE;
+
 ERRBegin
 	Index.Reset();
 
-	TempIndex.Init( Index.Content(), Index.SortFunction() );
+	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
+		IndexInMemory.Init( Index.Content(), Index.SortFunction() );
 
-	TempIndex.Allocate( Content.Extent() );
+		IndexInMemory.Allocate( Content.Extent() );
+
+		UsedIndex = &IndexInMemory;
+	} else
+		UsedIndex = &Index;
 
 	Cache.Init( Content.Extent() );
 
@@ -111,11 +124,12 @@ ERRBegin
 	}
 
 	while ( Row != NONE ) {
-		Round = TempIndex.Index( Row, Extremities, Cache );
+		Round = UsedIndex->Index( Row, Extremities, Cache );
 
-		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > TempIndex.Content().Amount() ) ) {
-			TempIndex.Balance();
-			Extremities = new extremities__;
+		if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 4 ) ) > Content.Amount() ) ) {
+			UsedIndex->Balance();
+			if ( Extremities == NULL )
+				Extremities = new extremities__;
 		}
 
 		RecordCount++;
@@ -132,9 +146,10 @@ ERRBegin
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
 		Observer.Notify( RecordCount, Content.Amount() );
 
-	TempIndex.Balance();
+	UsedIndex->Balance();
 
-	Index = TempIndex;
+	if ( UsedIndex != &Index )
+		Index = *UsedIndex;
 ERRErr
 ERREnd
 ERREpilog
@@ -152,6 +167,8 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 	}
 
 	while ( Row != NONE ) {
+#pragma message ( __LOC__ "test ci-dessous pour DIP à enlever." )
+		if ( Row == 2 )
 		_Reindex( Row, Observer );
 
 		if ( &Observer )

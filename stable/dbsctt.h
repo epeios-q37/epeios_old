@@ -66,6 +66,7 @@ extern class ttr_tutor &DBSCTTTutor;
 #include "dtfptb.h"
 #include "stk.h"
 #include "lstbch.h"
+#include "lstctn.h"
 #include "flm.h"
 #include "que.h"
 
@@ -339,17 +340,20 @@ namespace dbsctt {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef ctn::E_XMCONTAINERt_( datum_, rrow__ ) _container_;
-	typedef que::E_MQUEUEt_( rrow__ ) _queue_;
+	E_ROW( crow__ );	// Cache row.
+
+	typedef lstctn::E_LXMCONTAINERt_( datum_, crow__ ) _container_;
+	typedef que::E_MQUEUEt_( crow__ ) _queue_;
+	typedef bch::E_BUNCHt_( crow__, rrow__ ) _list_;
 
 	#define DBSCTT_CACHE_DEFAULT_AMOUNT_MAX	( 2 << 15 )
 
 	class _cache_
 	{
 	private:
-		void _PutToHead( rrow__ Row )
+		void _PutToHead( crow__ Row )
 		{
-			if ( _IsMember( Row ) )
+			if ( Queue.Exists( Row ) && Queue.IsMember( Row ) )
 				Queue.Delete( Row );
 
 			if ( Queue.IsEmpty() )
@@ -359,28 +363,32 @@ namespace dbsctt {
 		}
 		bso::bool__ _IsMember( rrow__ Row ) const
 		{
-			if ( Queue.Exists( Row ) )
-				return Queue.IsMember( Row );
+			if ( List.Exists( Row ) )
+				return List( Row ) != NONE;
 			else
 				return false;
 		}
 	public:
 		_container_ Container;
 		_queue_ Queue;
+		_list_ List;
 		struct s {
 			_container_::s Container;
 			_queue_::s Queue;
+			_list_::s List;
 			bso::ulong__ AmountMax;
 		} &S_;
 		_cache_( s &S )
 		: S_( S ),
 		  Container( S.Container ),
-		  Queue( S.Queue )
+		  Queue( S.Queue ),
+		  List( S.List )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Container.reset( P );
 			Queue.reset( P );
+			List.reset( P );
 
 			S_.AmountMax = 0;
 		}
@@ -388,11 +396,13 @@ namespace dbsctt {
 		{
 			Container.plug( MM );
 			Queue.plug( MM );
+			List.plug( MM );
 		}
 		_cache_ &operator =( const _cache_ &C )
 		{
 			Container = C.Container;
 			Queue = C.Queue;
+			List = C.List;
 
 			S_.AmountMax = C.S_.AmountMax;
 
@@ -406,9 +416,13 @@ namespace dbsctt {
 
 			Container.Init();
 			Queue.Init();
+			List.Init();
 
-			Queue.Allocate( Size );
-			Container.Allocate( Size );
+			Queue.Allocate( AmountMax );
+			Container.Allocate( AmountMax );
+
+			List.Allocate( Size );
+			List.Set( NONE );
 
 			S_.AmountMax = AmountMax;
 		}
@@ -419,8 +433,9 @@ namespace dbsctt {
 			bso::bool__ IsMember = false;
 
 			if ( IsMember = _IsMember( Row ) ) {
-				Container.Recall( Row, Datum );
-				_PutToHead( Row );
+				crow__ CacheRow = List( Row );
+				Container.Recall( CacheRow, Datum );
+				_PutToHead( CacheRow );
 			}
 
 			return IsMember;
@@ -432,29 +447,30 @@ namespace dbsctt {
 #ifdef DBSCTT_DBG
 			if ( _IsMember( Row ) )
 				ERRu();
-
-			if ( !Queue.Exists( Row ) )
-				ERRu();
 #endif
+			crow__ CacheRow = NONE;
 
-			if ( Queue.Amount() >= S_.AmountMax ) {
-				Container( Queue.Tail() ).reset();
-				Queue.Delete( Queue.Tail() );
-			}
+			if ( Queue.Amount() >= S_.AmountMax )
+				CacheRow = Queue.Tail();
+			else
+				CacheRow = Container.New();
 
-			Container.Store( Datum, Row );
-			_PutToHead( Row );
+			Container.Store( Datum, CacheRow );
+			_PutToHead( CacheRow );
+			List.Store( CacheRow, Row );
 		}
 		void Remove( rrow__ Row )
 		{
-			if ( _IsMember( Row ) )
-				Queue.Delete( Row );
+			if ( _IsMember( Row ) ) {
+				crow__ CacheRow = List( Row );
+				Container.Delete( CacheRow );
+				Queue.Delete( CacheRow );
+				List.Store( NONE, Row );
+			}
 		}
 	};
 
 	E_AUTO( _cache )
-
-
 
 	class content_
 	{
