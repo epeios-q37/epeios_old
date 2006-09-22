@@ -210,10 +210,10 @@ ERRBegin
 
 
 	if ( Extremities != NULL ) {
-		if ( Extremities->First == NONE )
-			Extremities->First = BaseIndex.First( S_.Root );
+		if ( Extremities->Smallest == NONE )
+			Extremities->Smallest = BaseIndex.First( S_.Root );
 
-		TargetRow = Extremities->First;
+		TargetRow = Extremities->Smallest;
 
 		DatumToCompare.Init();
 
@@ -234,10 +234,10 @@ ERRBegin
 	}
 
 	if ( ( TargetRow == NONE ) && ( Extremities != NULL ) ) {
-		if ( Extremities->Last == NONE )
-			Extremities->Last = BaseIndex.Last( S_.Root );
+		if ( Extremities->Greatest == NONE )
+			Extremities->Greatest = BaseIndex.Last( S_.Root );
 
-		TargetRow = Extremities->Last;
+		TargetRow = Extremities->Greatest;
 
 		DatumToCompare.Init();
 
@@ -259,27 +259,29 @@ ERRBegin
 
 	if ( TargetRow == NONE )
 		Result = _Seek( Datum, false, TargetRow, Round, Cache );
+	else
+		Extremities->Used++;
 
 //	cout << tol::DateAndTime( Buffer ) << txf::tab << &BaseIndex << txf::nl <<  txf::sync;
 //	Display( BaseIndex, S_.Root, cout );
 
 	switch ( Result ) {
 	case 1:
-		if ( ( Extremities != NULL ) && ( Extremities->First == TargetRow ) )
-			Extremities->First = Row;
+		if ( ( Extremities != NULL ) && ( Extremities->Smallest == TargetRow ) )
+			Extremities->Smallest = Row;
 		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
 		break;
 	case 0:	// Pas de problème avec la gestion des 'extremities', 
-		if ( !BaseIndex.TreeHasLesser( Row ) )
+		if ( !BaseIndex.TreeHasLesser( TargetRow ) )
 			S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
-		else if ( !BaseIndex.TreeHasGreater( Row ) )
+		else if ( !BaseIndex.TreeHasGreater( TargetRow ) )
 			S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		else
 			ERRc();
 		break;
 	case -1:
-		if ( ( Extremities != NULL ) && ( Extremities->Last == TargetRow ) )
-			Extremities->Last = Row;
+		if ( ( Extremities != NULL ) && ( Extremities->Greatest == TargetRow ) )
+			Extremities->Greatest = Row;
 		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	default:

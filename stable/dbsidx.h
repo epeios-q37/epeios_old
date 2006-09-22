@@ -104,10 +104,12 @@ namespace dbsidx {
 
 	struct extremities__
 	{
-		rrow__ First, Last;
+		rrow__ Smallest, Greatest;
+		bso::ulong__ Used;
 		extremities__( void )
 		{
-			First = Last = NONE;
+			Smallest = Greatest = NONE;
+			Used = 0;
 		}
 	};
 

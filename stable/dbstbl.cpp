@@ -60,6 +60,10 @@ public:
 directement l'index sur le disque et non pas une copie temporaire en mémoire
 pour éviter la mise en oeuvre de la mémoire virtuelle. */
 
+#define RECORD_PANEL_SIZE		50000	// Nombre d'enregistrements par tranche.
+
+#define RECORD_TEST_PANEL_SIZE		1000	// Nombre d'enregistrements pour la tranche de test.
+
 
 using namespace dbstbl;
 
@@ -85,6 +89,48 @@ void dbstbl::table_::_DeleteFromIndexes( rrow__ Row )
 	}
 }
 
+static inline void Reindex_(
+	rrows_ &Rows,
+	index_ &Index,
+	observer_functions__ &Observer,
+	dbsctt::_cache_  &Cache,
+	tol::chrono__ &Chrono,
+	bso::ulong__ &HandledRecordAmount,
+	bso::ulong__ &BalancingCount,
+	tol::E_DPOINTER___( extremities__ ) &Extremities,
+	bso::bool__ Randomly )
+{
+	epeios::row__ Row = NONE;
+	bso::ubyte__ Round = 0;
+
+	while ( Rows.Amount() ) {
+		if ( Randomly )
+			Row = Rows.Amount() - ( rand() % Rows.Amount() ) - 1;
+		else
+			Row = Rows.First();
+
+		Round = Index.Index( Rows( Row ), Extremities, Cache );
+
+		Rows.Remove( Row );
+
+		if ( ( 1UL << ( Round >> 3 ) ) > HandledRecordAmount ) {
+			Index.Balance();
+			BalancingCount++;
+			if ( ( Extremities == NULL ) && ( BalancingCount > 1 ) )
+				Extremities = new extremities__;
+		}
+
+		HandledRecordAmount++;
+
+		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
+			Observer.Notify( HandledRecordAmount, Index.Content().Amount(), BalancingCount );
+
+			Chrono.Launch();
+		}
+	}
+
+}
+
 void dbstbl::table_::_Reindex(
 	irow__ IRow,
 	observer_functions__ &Observer )
@@ -92,17 +138,18 @@ void dbstbl::table_::_Reindex(
 ERRProlog
 	index_ &Index = _I( IRow );
 	const content_ &Content = C_();
-	mdr::size__ RecordCount = 0;
+	mdr::size__ HandledRecordAmount = 0;
 	tol::chrono__ Chrono;
 	dbsidx::index IndexInMemory;
 	dbsidx::index_ *UsedIndex = NULL;
-	bso::ubyte__ Round;
 	dbsctt::_cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
-	rrow__ RecordRow = NONE;
 	bso::ulong__ BalancingCount = 0;
-	bch::E_BUNCH( rrow__ ) List;
-	epeios::row__ Row = NONE;
+	bch::E_BUNCH( rrow__ ) Rows;
+	rrow__ Row = NONE;
+	bso::ulong__ PanelRecordCounter;
+	bso::ulong__ PanelRecordSize;
+	bso::bool__ Randomly = false;
 ERRBegin
 	Index.Reset();
 
@@ -117,15 +164,13 @@ ERRBegin
 
 	Cache.Init( Content.Extent() );
 
-	List.Init();
+	Rows.Init();
 
-	RecordRow = Content.First();
+	Row = Content.First();
 
-	while ( RecordRow != NONE ) {
-		List.Append( RecordRow );
+	PanelRecordSize = RECORD_TEST_PANEL_SIZE;
 
-		RecordRow = Content.Next( RecordRow );
-	}
+	PanelRecordCounter = PanelRecordSize;
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
 		Observer.Notify( 0, Content.Amount(), BalancingCount );
@@ -133,31 +178,31 @@ ERRBegin
 		Chrono.Launch();
 	}
 
-	while ( List.Amount() != 0 ) {
-		Row = List.Amount() - ( rand() % List.Amount() ) - 1;
+	while ( Row != NONE ) {
+		Rows.Append( Row );
 
-		Round = UsedIndex->Index( List( Row ), Extremities, Cache );
+		if ( PanelRecordCounter-- == 0 ) {
+			Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
 
-		List.Remove( Row );
+			if ( Randomly == false )
+				if ( ( Extremities == NULL ) || ( Extremities->Used < ( ( 2 * PanelRecordSize ) / 3 ) ) )
+					Randomly = true;
+				else
+					Extremities->Used = 0;
 
-		if ( ( 1UL << ( Round >> 3 ) ) > RecordCount ) {
-			UsedIndex->Balance();
-			BalancingCount++;
-			if ( Extremities == NULL )
-				Extremities = new extremities__;
+
+			PanelRecordSize = RECORD_PANEL_SIZE;
+
+			PanelRecordCounter = PanelRecordSize;
 		}
 
-		RecordCount++;
-
-		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
-			Observer.Notify( RecordCount, Content.Amount(), BalancingCount );
-
-			Chrono.Launch();
-		}
+		Row = Content.Next( Row );
 	}
 
+	Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
+
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
-		Observer.Notify( RecordCount, Content.Amount(), BalancingCount );
+		Observer.Notify( HandledRecordAmount, Content.Amount(), BalancingCount );
 
 	UsedIndex->Balance();
 

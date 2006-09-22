@@ -237,6 +237,13 @@ namespace btr {
 			epeios::row_t__ Parent )
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
+#ifdef BTR_DBG
+			if ( GParent.Left != NONE )
+				ERRu();
+
+			if ( GLeft.Parent != NONE )
+				ERRu();
+#endif
 
 			GParent.Left = Left;
 			GLeft.Parent = Parent;
@@ -251,6 +258,13 @@ namespace btr {
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
 
+#ifdef BTR_DBG
+			if ( GParent.Right != NONE )
+				ERRu();
+
+			if ( GRight.Parent != NONE )
+				ERRu();
+#endif
 			GParent.Right = Right;
 			GRight.Parent = Parent;
 
