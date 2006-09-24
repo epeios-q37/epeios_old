@@ -68,6 +68,7 @@ extern class ttr_tutor &FLMTutor;
 #include "mdr.h"
 #include "iop.h"
 #include "fil.h"
+#include "epeios.h"
 
 namespace flm {
 	typedef iop::amount__ position__;
@@ -137,6 +138,12 @@ namespace flm {
 		}
 	};
 
+	E_ROW( row__ );
+
+	row__ _Register( class memoire_fichier_base___ &MFB );
+	void _Unregister( row__ Row );
+	void _ReportFileUsing( row__ Row );
+	void _ReportFileClosing( row__ Row );
 
 	class memoire_fichier_base___
 	{
@@ -160,6 +167,7 @@ namespace flm {
 				// Loi d'accés à la mémoire.
 				mdr::mode Mode;
 		} Temoin_;
+		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 	// Fonctions
 		void Ouvrir_( void )
 		{
@@ -172,8 +180,11 @@ namespace flm {
 					if ( File_.Init( Nom_, fil::mReadWrite ) == fil::sFailure )
 						ERRd();
 				}
+
 				Temoin_.Ouvert = 1;
 			}
+
+			_ReportFileUsing( _Row );
 		}
 	protected:
 		void Lire(
@@ -268,6 +279,9 @@ namespace flm {
 			{
 				Liberer();
 
+				if ( _Row != NONE )
+					_Unregister( _Row );
+
 				if ( Nom_ )
 				{
 					if ( !Temoin_.Persistant )
@@ -284,6 +298,7 @@ namespace flm {
 			Temoin_.Interne = false;
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
+			_Row = NONE;
 		}
 		void Init(
 			const char *NomFichier = NULL,
@@ -300,6 +315,8 @@ namespace flm {
 				strcpy( Nom_, NomFichier );
 
 				Temoin_.Interne = false;
+
+				_Row = _Register( *this );
 			}
 			else if ( !Temoin_.Interne )
 			{
@@ -311,6 +328,8 @@ namespace flm {
 				tmpnam( Nom_ );
 
 				Temoin_.Interne = true;
+
+				_Row = _Register( *this );
 			}
 
 			Temoin_.Mode = Mode;
@@ -326,8 +345,11 @@ namespace flm {
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
 		void Liberer( void )
 		{
-			if ( Temoin_.Ouvert )
+			if ( Temoin_.Ouvert ) {
 				File_.reset();
+
+				_ReportFileClosing( _Row );
+			}
 
 			Temoin_.Ouvert = 0;
 		}

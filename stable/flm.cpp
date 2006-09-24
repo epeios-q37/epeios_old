@@ -55,6 +55,58 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "lstbch.h"
+#include "que.h"
+
+using namespace flm;
+
+static lstbch::E_LBUNCHt( memoire_fichier_base___ *, row__ ) List;
+static que::E_MQUEUEt( row__ ) Queue;
+
+row__ flm::_Register( memoire_fichier_base___ &MFB )
+{
+	row__ Row = List.New();
+
+	if ( Queue.Amount() < List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
+		Queue.Allocate( List.Extent() );
+
+	List.Store( &MFB, Row );
+
+	return Row;
+}
+
+void flm::_Unregister( row__ Row )
+{
+	List.Store( NULL, Row );
+	List.Delete( Row );
+
+	if ( Queue.IsMember( Row ) )
+		Queue.Delete( Row );
+}
+
+void flm::_ReportFileUsing( row__ Row )
+{
+	if ( Queue.IsMember( Row ) )
+		Queue.Delete( Row );
+	else if ( Queue.Amount() > 1000 ) {
+		List( Queue.Tail() )->Liberer();
+//		Queue.Delete( Queue.Tail() );	// Inutile, car réalisé par la méthode ci-dessus.
+	}
+
+	if ( Queue.IsEmpty() )
+		Queue.Create( Row );
+	else
+		Queue.BecomePrevious( Row, Queue.Head() );
+}
+
+void flm::_ReportFileClosing( row__ Row )
+{
+	if ( Queue.IsMember( Row ) )
+		Queue.Delete( Row );
+}
+
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class flmpersonnalization
@@ -63,6 +115,9 @@ class flmpersonnalization
 public:
 	flmpersonnalization( void )
 	{
+		List.Init();
+		Queue.Init();
+
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

@@ -339,7 +339,9 @@ namespace uym {
 
 
 	//d A position take this value if an object cannot be find.
+#ifndef NONE
 	#define NONE	UYM_UNREACHABLE_POSITION
+#endif
 
 	void _Copy(
 		const class untyped_memory_ &Source,
