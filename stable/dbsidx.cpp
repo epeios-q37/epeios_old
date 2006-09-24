@@ -370,6 +370,7 @@ template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const char *FileName,
 	container &C,
+	mdr::mode Mode,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
@@ -381,7 +382,7 @@ template <typename container> static bso::bool__ CoreSet_(
 		Exists = false;
 	}
 
-	MemoryDriver.Init( FileName );
+	MemoryDriver.Init( FileName, Mode );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
 	C.SetStepValue( 0 );
@@ -393,9 +394,10 @@ template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const char *FileName,
 	container &C,
+	mdr::mode Mode,
 	bso::bool__ Erase )
 {
-	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Erase );
+	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Mode, Erase );
 
 	if ( Exists )
 		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
@@ -517,6 +519,7 @@ bso::bool__ dbsidx::file_index_::Init(
 	const str::string_ &RootFileName,
 	const content_ &Content,
 	sort_function__ &Sort,
+	mdr::mode Mode,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
@@ -531,12 +534,12 @@ ERRBegin
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 	TreeFileNameBuffer = TreeFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, Erase );
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, Mode, Erase );
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, Erase ) != Exists )
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, Mode, Erase ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );

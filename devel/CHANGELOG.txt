@@ -1,5 +1,9 @@
 $Id$
 
+24/09/06 :
+	- TOL :
+		- Correction problème ouverture intempestive fichier lors de l'allocation.
+
 07/09/06 :
 	- BCH :
 		- Correction.

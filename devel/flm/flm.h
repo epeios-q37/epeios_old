@@ -227,30 +227,30 @@ namespace flm {
 		}
 			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
 			agrandit la mémoire si nécessaire */
-		bso::bool__ Allouer( iop::amount__ Capacite )
+		void Allouer( iop::amount__ Capacite )
 		{
+			if ( ( TailleFichier_ == 0 ) && tol::FileExists( Nom_ ) )
+				TailleFichier_ = tol::GetFileSize( Nom_ );
+
 			if ( Capacite > TailleFichier_ )
 			{
+				mdr::datum__ Datum = 0;
+
 				Ouvrir_();
 				
 				File_.Seek( Capacite - (iop::amount__)1 );
-/*
-				if ( File_.Write( &Capacite, 1 ) != 1 )
-				{
+
+				if ( File_.Write( &Datum, 1 ) != 1 ) {
 					if ( !Temoin_.Manuel )
 						Liberer();
 
 					ERRm();
-				}
-				else
-*/					if ( !Temoin_.Manuel )
+				} else
+					if ( !Temoin_.Manuel )
 						Liberer();
 
 				TailleFichier_ = Capacite;
-
-				return true;
-			} else
-				return false;
+			}
 		}
 		// alloue 'Capacite' octets
 	public:
@@ -401,12 +401,6 @@ namespace flm {
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
 			memoire_fichier_base___::Allouer( (iop::amount__)Size );
-
-			if ( Size > memoire_fichier_base___::Size() ) {
-				mdr::datum__ Datum = 0;
-				memoire_fichier_base___::Ecrire( &Datum, 1, Size - 1 );
-			}
-
 		}
 		// alloue 'Taille' octets
 	public:

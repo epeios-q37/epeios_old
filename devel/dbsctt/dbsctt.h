@@ -618,7 +618,7 @@ namespace dbsctt {
 			Entries.Init();
 
 			S_.Unallocated = 0;
-			S_.ModificationTimeStamp = tol::Clock();
+			S_.ModificationTimeStamp = 0;
 		}
 		rrow__ Store( const datum_ &Data )
 		{
@@ -725,7 +725,7 @@ namespace dbsctt {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( RootFileName.Amount() != 0 )
+				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveLocationsAndAvailables();
 			}
 
@@ -744,7 +744,23 @@ namespace dbsctt {
 
 			return *this;
 		}
-		bso::bool__ Init( const str::string_ &RootFileName );
+		bso::bool__ Init(
+			const str::string_ &RootFileName,
+			mdr::mode Mode );
+		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
+		{
+			_SaveLocationsAndAvailables();
+		}
+		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
+		{
+			S_.MemoryDriver.Storage.Liberer();
+			S_.MemoryDriver.Entries.Liberer();
+		}
+		void SwitchMode( mdr::mode Mode )
+		{
+			S_.MemoryDriver.Storage.Mode( Mode );
+			S_.MemoryDriver.Entries.Mode( Mode );
+		}
 	};
 
 	E_AUTO( file_content )

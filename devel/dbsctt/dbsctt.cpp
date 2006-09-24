@@ -67,13 +67,14 @@ using namespace dbsctt;
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const char *FileName,
+	mdr::mode Mode,
 	container &C )
 {
 	bso::bool__ Exists = false;
 
 	Exists = tol::FileExists( FileName );
 
-	MemoryDriver.Init( FileName );
+	MemoryDriver.Init( FileName, Mode );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
 
@@ -247,7 +248,9 @@ ERREpilog
 	return TimeStamp;
 }
 
-bso::bool__ dbsctt::file_content_::Init( const str::string_ &RootFileName )
+bso::bool__ dbsctt::file_content_::Init(
+	const str::string_ &RootFileName,
+	mdr::mode Mode )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -262,13 +265,13 @@ ERRBegin
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, content_::Storage.Memory );
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, Mode, content_::Storage.Memory );
 
 	EntriesFileName.Init( RootFileName );
 	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
 	EntriesFileNameBuffer = EntriesFileName.Convert();
 	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, Entries.Bunch() ) != Exists )
+	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, Mode, Entries.Bunch() ) != Exists )
 		ERRu();
 
 	this->RootFileName.Init( RootFileName );

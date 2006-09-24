@@ -183,7 +183,7 @@ namespace dbsidx {
 			S_.Content = &Content;
 			S_.Sort = &Sort;
 
-			S_.ModificationTimeStamp = tol::Clock();
+			S_.ModificationTimeStamp = 0;
 
 		}
 		// Vide l'index.
@@ -275,7 +275,10 @@ namespace dbsidx {
 		{
 			if ( S_.Root != NONE )
 				S_.Root = BaseIndex.Balance( S_.Root );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
+		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
 	E_AUTO( index )
@@ -306,7 +309,7 @@ namespace dbsidx {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( RootFileName.Amount() != 0 )
+				if ( ( RootFileName.Amount() != 0 ) && ModificationTimeStamp() != 0 )
 					_SaveRoot();
 			}
 
@@ -329,7 +332,13 @@ namespace dbsidx {
 			const str::string_ &RootFileName,
 			const content_ &Content,
 			sort_function__ &Sort,
+			mdr::mode Mode,
 			bso::bool__ Erase );
+		void CloseFiles( void )
+		{
+			S_.MemoryDriver.Tree.Liberer();
+			S_.MemoryDriver.Queue.Liberer();
+		}
 	};
 
 	E_AUTO( file_index )
