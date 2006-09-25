@@ -66,6 +66,7 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #include "cpe.h"
 #include "bso.h"
@@ -450,7 +451,51 @@ namespace tol {
 	};
 
 	//f Return true if the file 'Name' exists, false otherwise.
-	bool FileExists( const char *Nom );
+	inline bool FileExists( const char *FileName )
+	{
+#ifdef CPE__T_MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) == 0 )
+			return true;
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) == 0 )
+			return true;
+#else
+		ERRl();
+#endif
+		switch ( errno ) {
+		case EBADF:
+			ERRs();	// Normalement, cette erreur ne peut arriver, compte tenu de la focntion utilisée.
+			break;
+		case ENOENT:
+			break;
+		case ENOTDIR:
+			break;
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+		case ELOOP:
+			break;
+#endif
+		case EFAULT:
+			ERRu();
+			break;
+		case EACCES:
+			break;
+		case ENOMEM:
+			ERRs();
+			break;
+		case ENAMETOOLONG:
+			ERRu();
+			break;
+		default:
+			ERRs();
+			break;
+		}
+
+		return false;
+	}
 
 	inline time_t GetFileLastModificationTime( const char *FileName )
 	{

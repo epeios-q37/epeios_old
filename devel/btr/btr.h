@@ -231,6 +231,32 @@ namespace btr {
 		{
 			return _nodes_::Get( Node ).Right;
 		}
+		void BecomeOverridingLeft(
+			epeios::row_t__ Left,
+			epeios::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
+		{
+			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
+
+			GParent.Left = Left;
+			GLeft.Parent = Parent;
+
+			_nodes_::Store( GParent, Parent );
+			_nodes_::Store( GLeft, Left );
+		}
+		//f 'Right' becomes left child of 'Parent'.
+		void BecomeOverridingRight(
+			epeios::row_t__ Right,
+			epeios::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
+		{
+			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
+
+			GParent.Right = Right;
+			GRight.Parent = Parent;
+
+			_nodes_::Store( GParent,Parent );
+			_nodes_::Store( GRight, Right );
+		}
+
 		//f 'Left' becomes left child of 'Parent'.
 		void BecomeLeft(
 			epeios::row_t__ Left,
@@ -241,7 +267,7 @@ namespace btr {
 			if ( GParent.Left != NONE )
 				ERRu();
 
-			if ( GLeft.Parent != NONE )
+			if ( ( GLeft.Parent != NONE ) && ( GLeft.Parent != Parent ) )	// Un noeud peut avoir pour fils gauche et droit le même noeud.
 				ERRu();
 #endif
 
@@ -262,7 +288,7 @@ namespace btr {
 			if ( GParent.Right != NONE )
 				ERRu();
 
-			if ( GRight.Parent != NONE )
+			if ( ( GRight.Parent != NONE ) && ( GRight.Parent != Parent ) ) // Un noeud peut avoir pour fils gauche et droit le même noeud.
 				ERRu();
 #endif
 			GParent.Right = Right;
@@ -433,6 +459,18 @@ namespace btr {
 			epeios::row_t__ Parent )
 		{
 			Nodes.BecomeRight( Right, Parent );
+		}
+		void BecomeOverridingLeft_(
+			epeios::row_t__ Left,
+			epeios::row_t__ Parent )
+		{
+			Nodes.BecomeOverridingLeft( Left, Parent );
+		}
+		void BecomeOverridingRight_(
+			epeios::row_t__ Right,
+			epeios::row_t__ Parent )
+		{
+			Nodes.BecomeOverridingRight( Right, Parent );
 		}
 /*
 		epeios::row_t__ TrouverAieulMaleAvecRight_(
@@ -760,6 +798,20 @@ namespace btr {
 			r Parent )
 		{
 			BecomeRight_( *Child, *Parent );
+		}
+		//f 'Child' becomes left of 'Parent'.
+		void BecomeOverridingLeft(
+			r Child,
+			r Parent )
+		{
+			BecomeOverridingLeft_( *Child, *Parent );
+		}
+		//f 'Child' becomes right of 'Parent'.
+		void BecomeOverridingRight(
+			r Child,
+			r Parent )
+		{
+			BecomeOverridingRight_( *Child, *Parent );
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
@@ -1124,6 +1176,18 @@ namespace btr {
 		{
 			return Nodes.Right( Node );
 		}
+		void BecomeOverrindingLeft_(
+			r_t Left,
+			r_t Parent )
+		{
+			Nodes.BecomeOverridingLeft( Left, Parent );
+		}
+		void BecomeOverridingRight_(
+			r_t Right,
+			r_t Parent )
+		{
+			Nodes.BecomeOverridingRight( Right, Parent );
+		}
 		void BecomeLeft_(
 			r_t Left,
 			r_t Parent )
@@ -1347,6 +1411,20 @@ namespace btr {
 			r Parent )
 		{
 			BecomeRight_( *Child, *Parent );
+		}
+		//f 'Child' becomes left of 'Parent'.
+		void BecomeOverridingLeft(
+			r Child,
+			r Parent )
+		{
+			BecomeOverridingLeft_( *Child, *Parent );
+		}
+		//f 'Child' becomes right of 'Parent'.
+		void BecomeOverridingRight(
+			r Child,
+			r Parent )
+		{
+			BecomeOverridingRight_( *Child, *Parent );
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(

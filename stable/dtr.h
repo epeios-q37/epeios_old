@@ -159,11 +159,11 @@ namespace dtr {
 			r Node )
 		{
 			if ( Tree.Left( Node ) == NONE )
-				Tree.BecomeRight( First, Node );
+				Tree.BecomeOverridingRight( First, Node );
 			else
 				Queue.BecomePrevious( First, Tree.Left( Node ) );
 
-			Tree.BecomeLeft( First, Node );
+			Tree.BecomeOverridingLeft( First, Node );
 		}
 		//f 'Last' becomes last of 'Node'.
 		void BecomeLast( 
@@ -171,11 +171,11 @@ namespace dtr {
 			r Node )
 		{
 			if ( Tree.Right( Node ) == NONE )
-				Tree.BecomeLeft( Last, Node );
+				Tree.BecomeOverridingLeft( Last, Node );
 			else
 				Queue.BecomeNext( Last, Tree.Right( Node ) );
 
-			Tree.BecomeRight( Last, Node );
+			Tree.BecomeOverridingRight( Last, Node );
 		}
 		//f 'Previous' becomes node previous to 'Node'.
 		void BecomePrevious(

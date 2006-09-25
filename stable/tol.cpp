@@ -58,17 +58,6 @@ public:
 
 #include <fstream>
 
-bool tol::FileExists( const char *Nom )
-{
-	std::ifstream Stream( Nom, std::ios::binary );
-
-#ifdef CPE__C_VC
-	return Stream != NULL;
-#else
-	return Stream;
-#endif
-}
-
 const char *tol::Date( buffer__ &Buffer )
 {
    struct tm *time_now;
