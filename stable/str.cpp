@@ -198,7 +198,7 @@ namespace str {
 	ERRProlog
 	ERRBegin
 #ifdef STR_DBG
-		if ( *Position >= Amount() && ( Position != 0 ) )
+		if ( *Position > Amount() && ( Position != 0 ) )
 			ERRu();
 #endif
 
