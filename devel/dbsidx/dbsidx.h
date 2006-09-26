@@ -113,12 +113,27 @@ namespace dbsidx {
 		}
 	};
 
+	// Pour idiquer le comportement d'un "seek' lorsqu'il tombe sur un élément qu est égal à celui recherché.
+	enum behavior__ {
+		// On stoppe la recherche.
+		bStop,
+		// On cherche le plus grand
+		bGreater,
+		// On cherche le plus petit
+		bLesser,
+		// On stoppe s'il manque l'un des fils. (sert lors d'une indexation).
+		bStopIfOneChildMissing,
+		b_amount,
+		b_Undefined
+	};
+
+
 	class index_
 	{
 	private:
 		bso::sign__ _Seek(
 			const datum_ &Data,
-			bso::bool__ StopIfEqual,
+			behavior__ StopIfEqual,
 			rrow__ &Row,
 			bso::ubyte__ &Round,
 			dbsctt::_cache_ &Cache ) const;

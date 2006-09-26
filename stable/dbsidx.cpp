@@ -118,7 +118,7 @@ void Display(
 
 bso::sign__ dbsidx::index_::_Seek(
 	const datum_ &Datum,
-	bso::bool__ StopIfEqual,
+	behavior__ EqualBehavior,
 	rrow__ &Row,
 	bso::ubyte__ &Round,
 	dbsctt::_cache_ &Cache ) const
@@ -146,17 +146,27 @@ ERRBegin
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
-			if ( StopIfEqual )
+			switch ( EqualBehavior ) {
+			case bStop:
 				Row = NONE;	// Pour sortir de la boucle.
-			else if ( !Seeker.HasLesser() )
-				Row = Seeker.SearchLesser();	// Retourne 'NONE', pour remplir l'abre au plus prés de la racine.
-			else if ( !Seeker.HasGreater() )
-				Row = Seeker.SearchGreater();	// Retourne 'NONE', pour remplir l'abre au plus prés de la racine.
-			else if ( *Row & 1 )	// Petit générateur aléatoire (sans doute inutile ?).
-				Row = Seeker.SearchLesser();
-			else
+				break;
+			case bGreater:
 				Row = Seeker.SearchGreater();
+				break;
+			case bLesser:
+				Row = Seeker.SearchLesser();
+				break;
+			case bStopIfOneChildMissing:
+				if ( !Seeker.HasLesser() || !Seeker.HasGreater() )
+					Row = NONE;	// Popur sortir de la boucle.
+				else if ( *Row & 1 )	// Petit générateur aléatoire (sans doute inutile ?).
+					Row = Seeker.SearchLesser();
+				else
+					Row = Seeker.SearchGreater();
 			break;
+			default:
+				ERRu();
+			}
 		case 1:
 			Row = Seeker.SearchLesser();
 			break;
@@ -258,7 +268,7 @@ ERRBegin
 	} 
 
 	if ( TargetRow == NONE )
-		Result = _Seek( Datum, false, TargetRow, Round, Cache );
+		Result = _Seek( Datum, bStopIfOneChildMissing, TargetRow, Round, Cache );
 	else
 		Extremities->Used++;
 
@@ -318,7 +328,7 @@ rrow__ dbsidx::index_::Seek(
 	if ( S_.Root == NONE )
 		return NONE;
 
-	Sign = _Seek( Datum, true, Row, Round, *(dbsctt::_cache_ *)NULL );
+	Sign = _Seek( Datum, bStop, Row, Round, *(dbsctt::_cache_ *)NULL );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )
