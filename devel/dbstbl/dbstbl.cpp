@@ -541,6 +541,7 @@ ERREpilog
 rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
 	irow__ IRow,
+	behavior__ EqualBehavior,
 	bso::sign__ &Sign )
 {
 	rrow__ Row = NONE;
@@ -548,7 +549,7 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow, Sign );
+	Row = T.Seek( Datum, IRow, EqualBehavior, Sign );
 ERRErr
 ERREnd
 	RRO
@@ -558,14 +559,15 @@ ERREpilog
 
 rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
-	irow__ IRow )
+	irow__ IRow,
+	behavior__ EqualBehavior )
 {
 	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow );
+	Row = T.Seek( Datum, IRow, EqualBehavior );
 ERRErr
 ERREnd
 	RRO

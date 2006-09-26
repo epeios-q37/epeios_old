@@ -229,12 +229,15 @@ namespace dbsidx {
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
+			behavior__ EqualBehavior,
 			bso::sign__ &Sign ) const;
-		rrow__ Seek( const datum_ &Datum ) const
+		rrow__ Seek(
+			behavior__ EqualBehavior,
+			const datum_ &Datum ) const
 		{
 			bso::sign__ Sign;
 
-			return Seek( Datum, Sign );
+			return Seek( Datum, EqualBehavior, Sign );
 		}
 		bso::sign__ Compare(
 			rrow__ RecordId,

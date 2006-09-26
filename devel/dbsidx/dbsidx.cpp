@@ -163,10 +163,11 @@ ERRBegin
 					Row = Seeker.SearchLesser();
 				else
 					Row = Seeker.SearchGreater();
-			break;
+				break;
 			default:
 				ERRu();
 			}
+			break;
 		case 1:
 			Row = Seeker.SearchLesser();
 			break;
@@ -320,6 +321,7 @@ ERREpilog
 
 rrow__ dbsidx::index_::Seek( 
 	const datum_ &Datum,
+	behavior__ EqualBehavior,
 	bso::sign__ &Sign ) const
 {
 	rrow__ Row = NONE;
@@ -328,7 +330,7 @@ rrow__ dbsidx::index_::Seek(
 	if ( S_.Root == NONE )
 		return NONE;
 
-	Sign = _Seek( Datum, bStop, Row, Round, *(dbsctt::_cache_ *)NULL );
+	Sign = _Seek( Datum, EqualBehavior, Row, Round, *(dbsctt::_cache_ *)NULL );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )
