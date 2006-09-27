@@ -205,6 +205,13 @@ namespace nsxpcm {
 		return QueryInterface<element>( GetElementById( Document, Id ) );
 	}
 
+	template <typename element> inline element *_GetElementById(
+		nsIDOMDocument *Document,
+		const string_ &Id )
+	{
+		return QueryInterface<element>( GetElementById( Document, Id ) );
+	}
+
 	inline nsIDOMElement *CreateElement(
 		nsIDOMDocument *Document,
 		const char *Name )
@@ -289,6 +296,12 @@ namespace nsxpcm {
 		inline name *Get##Name##ById(\
 			nsIDOMDocument *Document,\
 			const char *Id )\
+		{\
+			return _GetElementById< name >( Document, Id );\
+		}\
+		inline name *Get##Name##ById(\
+			nsIDOMDocument *Document,\
+			const string_ &Id )\
 		{\
 			return _GetElementById< name >( Document, Id );\
 		}\
