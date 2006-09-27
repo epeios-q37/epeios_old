@@ -60,7 +60,7 @@ public:
 directement l'index sur le disque et non pas une copie temporaire en mémoire
 pour éviter la mise en oeuvre de la mémoire virtuelle. */
 
-#define RECORD_PANEL_SIZE		100000	// Nombre d'enregistrements par tranche.
+#define RECORD_PANEL_SIZE		50000	// Nombre d'enregistrements par tranche.
 
 #define RECORD_TEST_PANEL_SIZE		1000	// Nombre d'enregistrements pour la tranche de test.
 
@@ -105,7 +105,7 @@ static inline void Reindex_(
 
 	while ( Rows.Amount() ) {
 		if ( Randomly )
-			Row = Rows.Amount() - ( ( (bso::ulong__)rand() * (bso::ulong__)rand() ) % Rows.Amount() ) - 1;
+			Row = Rows.Amount() - ( rand() % Rows.Amount() ) - 1;
 		else
 			Row = Rows.First();
 
@@ -114,8 +114,10 @@ static inline void Reindex_(
 		Rows.Remove( Row );
 
 		if ( ( 1UL << ( Round >> 3 ) ) > HandledRecordAmount ) {
+			Index.Balance();
+			if ( Index.Test() != NONE )
+				ERRc();
 			BalancingCount++;
-//			Index.Balance();
 			if ( ( Extremities == NULL ) && ( BalancingCount > 1 ) )
 				Extremities = new extremities__;
 		}
@@ -204,7 +206,11 @@ ERRBegin
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
 		Observer.Notify( HandledRecordAmount, Content.Amount(), BalancingCount );
 
-//	UsedIndex->Balance();
+	UsedIndex->Balance();
+
+	if ( UsedIndex->Test() != NONE )
+		ERRc();
+
 
 	if ( UsedIndex != &Index )
 		Index = *UsedIndex;
@@ -225,8 +231,8 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 	}
 
 	while ( Row != NONE ) {
-		if ( ( *Row == 5 ) || ( *Row == 2 ) )
-			_Reindex( Row, Observer );
+		if ( *Row == 2 )
+		_Reindex( Row, Observer );
 
 		if ( &Observer )
 			Observer._HandledIndexAmount++;

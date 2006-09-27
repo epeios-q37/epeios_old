@@ -359,6 +359,40 @@ ERREpilog
 	return Result;
 }
 
+rrow__ dbsidx::index_::Test( void ) const
+{
+	rrow__ Row = NONE;
+ERRProlog
+	datum Datum;
+ERRBegin
+	if ( S_.Root == NONE )
+		ERRReturn;
+
+	Row = First();
+
+	Datum.Init();
+
+	_Content().Retrieve( Row, Datum );
+
+	Row = Next( Row );
+
+	while ( Row != NONE ) {
+		if ( Compare( Row, Datum ) == 1 )
+			ERRReturn;
+
+		Datum.Init();
+
+		_Content().Retrieve( Row, Datum );
+
+		Row = Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
+
+
 bso::sign__ dbsidx::index_::Compare(
 	rrow__ RecordRow,
 	const datum_ &Pattern ) const

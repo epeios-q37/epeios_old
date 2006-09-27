@@ -182,6 +182,24 @@ namespace idxbtr {
 	}
 }
 
+epeios::row_t__ idxbtr::Compare_(
+	const E_IBTREE_ &Tree,
+	const que::E_QUEUE_ &Queue,
+	epeios::row_t__ First )
+{
+	epeios::row_t__ &Row = First;
+
+	while ( Row != NONE ) {
+		if ( Queue.Next( Row ) != Tree.Next( Row ) )
+			return Row;
+
+		Row = *Queue.Next( Row );
+	}
+
+	return Row;
+}
+
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

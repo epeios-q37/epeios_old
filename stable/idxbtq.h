@@ -165,9 +165,11 @@ namespace idxbtq {
 			r Root,
 			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
 		{
-//			ERRu();
-
 			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
+		}
+		r Compare( r Root ) const
+		{
+			return E_IBTREEt_( r )::Compare( *this, First( Root ) );
 		}
 		r First( r Root ) const
 		{

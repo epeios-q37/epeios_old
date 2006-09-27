@@ -345,6 +345,7 @@ namespace dbsctt {
 	typedef lstctn::E_LXMCONTAINERt_( datum_, crow__ ) _container_;
 	typedef que::E_MQUEUEt_( crow__ ) _queue_;
 	typedef bch::E_BUNCHt_( crow__, rrow__ ) _list_;
+	typedef bch::E_BUNCHt_( rrow__, crow__ ) _links_;
 
 	#define DBSCTT_CACHE_DEFAULT_AMOUNT_MAX	( 2 << 15 )
 
@@ -372,23 +373,27 @@ namespace dbsctt {
 		_container_ Container;
 		_queue_ Queue;
 		_list_ List;
+		_links_ Links;
 		struct s {
 			_container_::s Container;
 			_queue_::s Queue;
 			_list_::s List;
+			_links_::s Links;
 			bso::ulong__ AmountMax;
 		} &S_;
 		_cache_( s &S )
 		: S_( S ),
 		  Container( S.Container ),
 		  Queue( S.Queue ),
-		  List( S.List )
+		  List( S.List ),
+		  Links( S.Links )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Container.reset( P );
 			Queue.reset( P );
 			List.reset( P );
+			Links.reset( P );
 
 			S_.AmountMax = 0;
 		}
@@ -397,12 +402,14 @@ namespace dbsctt {
 			Container.plug( MM );
 			Queue.plug( MM );
 			List.plug( MM );
+			Links.plug( MM );
 		}
 		_cache_ &operator =( const _cache_ &C )
 		{
 			Container = C.Container;
 			Queue = C.Queue;
 			List = C.List;
+			Links = C.Links;
 
 			S_.AmountMax = C.S_.AmountMax;
 
@@ -417,9 +424,13 @@ namespace dbsctt {
 			Container.Init();
 			Queue.Init();
 			List.Init();
+			Links.Init();
 
 			Queue.Allocate( AmountMax );
 			Container.Allocate( AmountMax );
+
+			Links.Allocate( AmountMax );
+			Links.Set( NONE );
 
 			List.Allocate( Size );
 			List.Set( NONE );
@@ -450,12 +461,14 @@ namespace dbsctt {
 #endif
 			crow__ CacheRow = NONE;
 
-			if ( Queue.Amount() >= S_.AmountMax )
+			if ( Queue.Amount() >= S_.AmountMax ) {
 				CacheRow = Queue.Tail();
-			else
+				List.Store( NONE, Links( CacheRow ) );
+			} else
 				CacheRow = Container.New();
 
 			Container.Store( Datum, CacheRow );
+			Links.Store( Row, CacheRow );
 			_PutToHead( CacheRow );
 			List.Store( CacheRow, Row );
 		}
@@ -464,6 +477,8 @@ namespace dbsctt {
 			if ( _IsMember( Row ) ) {
 				crow__ CacheRow = List( Row );
 				Container.Delete( CacheRow );
+				List.Store( NONE, Links( CacheRow ) );
+				Links.Store( NONE, CacheRow );
 				Queue.Delete( CacheRow );
 				List.Store( NONE, Row );
 			}

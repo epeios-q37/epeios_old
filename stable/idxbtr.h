@@ -86,6 +86,9 @@ namespace idxbtr {
 			que::E_QUEUEt_( r ) &Index,
 			r Premier,
 			mdr::E_MEMORY_DRIVER__ &Pilote );
+		r _Compare(
+			const que::E_QUEUEt_( r ) &Queue,
+			r First ) const;
 		r _SearchMostLeftNode( r Node ) const
 		{
 			level__ Level;
@@ -356,6 +359,12 @@ namespace idxbtr {
 
 			return Equilibrer_( Queue, Head, MD );
 		}
+		r Compare(
+			const que::E_QUEUEt_( r ) &Queue,
+			r First ) const
+		{
+			return _Compare( Queue, First );
+		}
 		//f Print the tree structure of the index.
 		void PrintStructure(
 			txf::text_oflow__ &OStream,
@@ -388,6 +397,11 @@ namespace idxbtr {
 		epeios::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER__ &Pilote );
 
+	epeios::row_t__ Compare_(
+		const E_IBTREE_ &Tree,
+		const que::E_QUEUE_ &File,
+		epeios::row_t__ First );	// Compare 'Tree' avec 'Queue'.
+
 	template <typename r> inline r tree_index_<r>::Equilibrer_(
 		que::E_QUEUEt_( r ) &Index,
 		r Premier,
@@ -399,6 +413,13 @@ namespace idxbtr {
 	template <typename r> inline r tree_index_<r>::Balance( r Root )
 	{
 		return idxbtr::Balance_( *(E_IBTREE_ *)this, *Root );
+	}
+
+	template <typename r> inline r tree_index_<r>::_Compare(
+		const que::E_QUEUEt_( r ) &Index,
+		r First ) const
+	{
+		return idxbtr::Compare_( *(E_IBTREE_ *)this, *(que::E_QUEUE_ *)&Index, *First );
 	}
 
 	//c To seek in a tree index.

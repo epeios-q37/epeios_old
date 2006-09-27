@@ -296,6 +296,14 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = tol::Clock();
 		}
+		rrow__ CompareTreeAndQueue( void ) const
+		{
+			if ( S_.Root != NONE )
+				return BaseIndex.Compare( S_.Root );
+			else
+				return NONE;
+		}
+		rrow__ Test( void ) const;
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
