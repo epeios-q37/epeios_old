@@ -115,8 +115,6 @@ static inline void Reindex_(
 
 		if ( ( 1UL << ( Round >> 3 ) ) > HandledRecordAmount ) {
 			Index.Balance();
-			if ( Index.Test() != NONE )
-				ERRc();
 			BalancingCount++;
 			if ( ( Extremities == NULL ) && ( BalancingCount > 1 ) )
 				Extremities = new extremities__;
@@ -208,10 +206,6 @@ ERRBegin
 
 	UsedIndex->Balance();
 
-	if ( UsedIndex->Test() != NONE )
-		ERRc();
-
-
 	if ( UsedIndex != &Index )
 		Index = *UsedIndex;
 ERRErr
@@ -231,7 +225,6 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 	}
 
 	while ( Row != NONE ) {
-		if ( *Row == 2 )
 		_Reindex( Row, Observer );
 
 		if ( &Observer )
