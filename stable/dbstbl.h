@@ -114,13 +114,19 @@ namespace dbstbl {
 			bso::ulong__ TotalRecordAmount,
 			bso::ulong__ BalancingCount ) = 0;
 	public:
-		observer_functions__( void )
+		void reset( bso::bool__ = true )
 		{
 			_Delay = 1000;	// Délai par défaut : 1 s.
 			_TotalIndexAmount = _HandledIndexAmount = 0;
 		}
-		void SetDelay( time_t Delay )
+		observer_functions__( void )
 		{
+			reset( false );
+		}
+		void Init( time_t Delay = 1000 )	// Délai par défaut : 1 s.
+		{
+			reset();
+
 			_Delay = Delay;
 		}
 		void Notify(
