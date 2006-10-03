@@ -230,7 +230,7 @@ const char *msg::i18_messages_::_GetMessage(
 			ERRl();
 #endif
 
-		Message().Recall( 0, Message().Amount(), Buffer.Data );
+		Message().Recall( 0, Message( MessageId ).Amount(), Buffer.Data );
 
 		Buffer.Data[Message().Amount()]=0;
 	}
