@@ -251,6 +251,8 @@ public:\
 	{\
 	}
 
+#define E_TTYPEDEF___	E_TTYPEDEF__
+
 
 //d Create a new type for a row named 'Type'.
 #define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )

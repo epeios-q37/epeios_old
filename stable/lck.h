@@ -462,6 +462,10 @@ namespace lck {
 			return false;
 		}
 	};
+
+
+	template <typename objet> E_TTYPEDEF___( read_write_access___<objet>,	exclusive_access___ );
+	template <typename objet> E_TTYPEDEF___( read_only_access___<objet>,	shared_access___ );
 }
 
 /*$END$*/

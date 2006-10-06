@@ -1,8 +1,61 @@
 $Id$
 
+06/10/06 :
+	- LCK :
+		- Ajout classe '[exclusive|shared]_access___'.
+	- TOL :
+		- Ajout de la macro 'E_TTYPEDEF___'.
+
+03/10/06 :
+	- MSG :
+		- Correction bogue apparaissant en mode 'Release'.
+
+28/09/06 :
+	- DBSTBL :
+		- Suppression méthode 'SetDelay()' (pris en charge par 'Init()').
+
+27/09/06
+	- DBSCTT :
+		- Correction bogue objet '_cache_'.
+	- DBSIDX :
+		- Ajout méthode 'CompareTreeAndQueue()'.
+	- IDXBTQ :
+		- Ajout méthode 'Compare()' nécessitée par modification 'DBSIDX'.
+	- IDXBTR :
+		- Ajout méthode 'Compare()' nécessitée par modification 'IDXBTQ'.
+	- NSXPCM :
+		- Ajout quelques fonctions.
+
+25/09/06 :
+	- BTR :
+		- Adaptation aux particularités de le 'DTR'.
+	- DTR :
+		- Correction bogue 'Become[First|Last]()'.
+	- STR :
+		- Correction bogue méthode 'Convert()'.
+	- TOL :
+		- Réécriture fonction 'FileExists()' pour s'appuyer sur la fonction 'stat()'.
+
 24/09/06 :
+	- EPEIOS :
+		- Mise en place définition conditionelle de 'NONE'.
+	- FLM :
+		- Correction bogue fonction d'allocation.
+		- Mise en oeuvre du contrôle automatique du nombre de fichiers simultanément ouverts.
 	- TOL :
 		- Correction problème ouverture intempestive fichier lors de l'allocation.
+	- UYM :
+		- Rajout définition conditionelle de 'NONE'.
+
+18/09/06 :
+	- CVM :
+		- Modification pour adaptation modification 'MDR'.
+	- IDXBTR :
+		- Suppression algorithme 'red-black'.
+	- MDR :
+		- L'utilisation de la mémoire conventionelle (RAM) ne passe plus par des appels a des fonctions virtuelles.
+	- QUE :
+		- Rajout méthode 'IsMember()'.
 
 07/09/06 :
 	- BCH :
@@ -10,8 +63,7 @@ $Id$
 
 04/09/06 :
 	- NSXPCM :
-		- Codage nouvelle fonctions.
-
+		- Codage nouvelles fonctions.
 
 27/08/06 :
 	- GENERAL :
@@ -446,7 +498,7 @@ $Id$
 10/09/05:
 	- DTR :
 		- Simplification du parcour de l'arbre (objet 'browser__').
-		- Mise à niveau (nouveau standards).
+		- Mise à niveau (nouveaux standards).
 	 
 07/09/05:
 	- CSDDLC:
@@ -649,7 +701,7 @@ $Id$
 12/03/05
 - LCK:
 	- Amélioration de l'ergonomie.
-	- Ajout de la rotection des données partagées.
+	- Ajout de la protection des données partagées.
 	- Suppression de fonctions délicates.
 
 11/03/05:
