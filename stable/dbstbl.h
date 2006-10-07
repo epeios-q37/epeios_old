@@ -157,13 +157,25 @@ namespace dbstbl {
 			if ( !Indexes.Exists( Row ) )
 				ERRc();
 #endif
+			if ( !Indexes( Row )->InitializationCompleted() ) {
+				Indexes( Row )->CompleteInitialization();
+
+				if ( !S_.Content->InitializationCompleted() )
+					S_.Content->CompleteInitialization();
+			}
 		}
 		const content_ &C_( void ) const
 		{
+			if ( !S_.Content->InitializationCompleted() )
+				S_.Content->CompleteInitialization();
+
 			return *S_.Content;
 		}
 		content_ &C_( void )
 		{
+			if ( !S_.Content->InitializationCompleted() )
+				S_.Content->CompleteInitialization();
+
 			return *S_.Content;
 		}
 		const index_ &_I( irow__ Row ) const

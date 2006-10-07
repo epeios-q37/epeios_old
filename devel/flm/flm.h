@@ -165,7 +165,7 @@ namespace flm {
 				// Signale que le nom du fichier a été crée de manière interne
 				Interne			:1;
 				// Loi d'accés à la mémoire.
-				mdr::mode Mode;
+				mdr::mode__ Mode;
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 	// Fonctions
@@ -302,7 +302,7 @@ namespace flm {
 		}
 		void Init(
 			const char *NomFichier = NULL,
-			mdr::mode Mode = mdr::mReadWrite,
+			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
 			if ( NomFichier )
@@ -369,7 +369,7 @@ namespace flm {
 			Temoin_.Persistant = true;
 		}
 		// bascule en mode d'acces 'Acces'.
-		void Mode( mdr::mode Mode )
+		void Mode( mdr::mode__ Mode )
 		{
 			if ( Temoin_.Mode != Mode )
 			{
@@ -378,7 +378,7 @@ namespace flm {
 			}
 		}
 		// Retourne le mode d'accés.
-		mdr::mode Mode( void )
+		mdr::mode__ Mode( void )
 		{
 			return Temoin_.Mode;
 		}
@@ -436,19 +436,19 @@ namespace flm {
 			E_MEMORY_DRIVER__::reset( P );
 		}
 		//f Return the mode.
-		mdr::mode Mode( void )
+		mdr::mode__ Mode( void )
 		{
 			return memoire_fichier_base___::Mode();
 		}
 		//f 'Mode' becomes the mode.
-		void Mode( mdr::mode Mode )
+		void Mode( mdr::mode__ Mode )
 		{
 			memoire_fichier_base___::Mode( Mode );
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
 			const char *FileName = NULL,
-			mdr::mode Mode = mdr::mReadWrite,
+			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
 			memoire_fichier_base___::Init( FileName, Mode, Creation );

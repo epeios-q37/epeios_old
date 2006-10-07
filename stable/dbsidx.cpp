@@ -416,7 +416,7 @@ template <typename container> static bso::bool__ CoreSet_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const char *FileName,
 	container &C,
-	mdr::mode Mode,
+	mdr::mode__ Mode,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = false;
@@ -440,7 +440,7 @@ template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
 	const char *FileName,
 	container &C,
-	mdr::mode Mode,
+	mdr::mode__ Mode,
 	bso::bool__ Erase )
 {
 	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Mode, Erase );
@@ -561,12 +561,7 @@ ERREpilog
 }
 
 
-bso::bool__ dbsidx::file_index_::Init(
-	const str::string_ &RootFileName,
-	const content_ &Content,
-	sort_function__ &Sort,
-	mdr::mode Mode,
-	bso::bool__ Erase )
+bso::bool__ dbsidx::file_index_::_ConnectToFiles( )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -575,20 +570,16 @@ ERRProlog
 	str::string QueueFileName;
 	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
 ERRBegin
-	index_::Init( Content, Sort );
-
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 	TreeFileNameBuffer = TreeFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, Mode, Erase );
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, Mode, Erase ) != Exists )
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
 		ERRu();
-
-	this->RootFileName.Init( RootFileName );
 
 	if ( Exists ) {
 		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;

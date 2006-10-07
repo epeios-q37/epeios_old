@@ -1,5 +1,12 @@
 $Id$
 
+07/10/06 :
+	- GENERAL :
+		- Création DBSBSC.
+		- Adaptation aux modifications 'MDR'.
+	- MDR :
+		- Mise aux normes enum 'mode'.
+
 06/10/06 :
 	- LCK :
 		- Ajout classe '[exclusive|shared]_access___'.

@@ -330,7 +330,7 @@ namespace ctn {
 		dans le conteneur auquel cet élément est rattaché. */
 		mmi::indexed_multimemory_driver__ Pilote_;
 		// Mode d'accés
-		mdr::mode Mode_;
+		mdr::mode__ Mode_;
 	public:
 		struct s
 		: public st
@@ -363,14 +363,14 @@ namespace ctn {
 		// Rattache au conteneur 'Conteneur'.
 		void Init(
 			basic_container_<st, r> &Conteneur,
-			mdr::mode Mode = mdr::mReadWrite )
+			mdr::mode__ Mode = mdr::mReadWrite )
 		{
 			Init( &Conteneur, Mode );
 		}
 		// Rattache au conteneur 'Conteneur'.
 		void Init(
 			basic_container_<st,r> *Conteneur,
-			mdr::mode Mode = mdr::mReadWrite )
+			mdr::mode__ Mode = mdr::mReadWrite )
 		{
 #ifdef CTN_DBG
 			Conteneur->FlushTest();
@@ -418,7 +418,7 @@ namespace ctn {
 			Pilote_.Index( NONE );
 		}
 		// Bascule en mde 'Mode'.
-		void ChangeMode( mdr::mode Mode )
+		void ChangeMode( mdr::mode__ Mode )
 		{
 			if ( Mode_ != Mode )
 			{
@@ -966,7 +966,7 @@ namespace ctn {
 		//f Initialize with container 'Container', in mode 'Mode'.
 		void Init(
 			basic_container_< item_multi_statique__< typename t::s >, r > &Container,
-			mdr::mode Mode = mdr::mReadWrite )
+			mdr::mode__ Mode = mdr::mReadWrite )
 		{
 #ifdef CTN_DBG
 			Container.FlushTest();

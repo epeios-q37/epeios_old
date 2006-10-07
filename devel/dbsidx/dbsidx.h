@@ -64,6 +64,7 @@ extern class ttr_tutor &DBSIDXTutor;
 #include "flw.h"
 #include "idxbtq.h"
 #include "dbsctt.h"
+#include "dbsbsc.h"
 
 namespace dbsidx {
 	using dbsctt::datum_;
@@ -127,9 +128,16 @@ namespace dbsidx {
 		b_Undefined
 	};
 
+	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
 
 	class index_
+	: public _delayed_initialization_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			// Rien à faire.
+		}
 	private:
 		bso::sign__ _Seek(
 			const datum_ &Data,
@@ -150,7 +158,9 @@ namespace dbsidx {
 		}
 	public:
 		_index_ BaseIndex;
-		struct s {
+		struct s
+		: public _delayed_initialization_::s
+		{
 			_index_::s BaseIndex;
 			rrow__ Root;
 			sort_function__ *Sort;
@@ -159,6 +169,7 @@ namespace dbsidx {
 		} &S_;
 		index_( s &S )
 		: S_( S ),
+		  _delayed_initialization_( S ),
 		  BaseIndex( S.BaseIndex )
 		{}
 		void reset( bso::bool__ P = true )
@@ -171,6 +182,7 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = 0;
 
+			_delayed_initialization_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -190,7 +202,8 @@ namespace dbsidx {
 		}
 		void Init(
 			const content_ &Content = *(content_ *)NULL,
-			sort_function__ &Sort = *(sort_function__ *)NULL)
+			sort_function__ &Sort = *(sort_function__ *)NULL,
+			bso::bool__ Partial = false )
 		{
 			BaseIndex.Init();
 			S_.Root = NONE;
@@ -200,6 +213,7 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = 0;
 
+			_delayed_initialization_::Init( Partial );
 		}
 		// Vide l'index.
 		void Reset( void )
@@ -314,8 +328,14 @@ namespace dbsidx {
 	class file_index_
 	: public index_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			_ConnectToFiles();
+		}
 	private:
 		void _SaveRoot( void ) const;
+		bso::bool__ _ConnectToFiles( void );
 	public:
 		str::string_ RootFileName;
 		struct s
@@ -326,6 +346,8 @@ namespace dbsidx {
 				flm::E_FILE_MEMORY_DRIVER___ Queue;
 			} MemoryDriver;
 			str::string_::s RootFileName;
+			bso::bool__ Erase;	// Seulement utile lors d'uen initialisation retardée.
+			mdr::mode__ Mode;
 		} &S_;
 		file_index_( s &S )
 		: S_( S ), 
@@ -343,6 +365,8 @@ namespace dbsidx {
 			S_.MemoryDriver.Queue.reset( P );
 			RootFileName.reset( P );
 			index_::reset( P );
+			S_.Erase = false;
+			S_.Mode = mdr::m_Undefined;
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{
@@ -354,12 +378,23 @@ namespace dbsidx {
 
 			return *this;
 		}
-		bso::bool__ Init(
+		void Init(
 			const str::string_ &RootFileName,
 			const content_ &Content,
 			sort_function__ &Sort,
-			mdr::mode Mode,
-			bso::bool__ Erase );
+			mdr::mode__ Mode,
+			bso::bool__ Erase,
+			bso::bool__ Partial )
+		{
+			reset();
+
+			this->RootFileName.Init( RootFileName );
+
+			index_::Init( Content, Sort, Partial );
+
+			S_.Mode = Mode;
+			S_.Erase = Erase;
+		}
 		void CloseFiles( void )
 		{
 			S_.MemoryDriver.Tree.Liberer();

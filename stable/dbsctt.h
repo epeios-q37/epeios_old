@@ -69,6 +69,7 @@ extern class ttr_tutor &DBSCTTTutor;
 #include "lstctn.h"
 #include "flm.h"
 #include "que.h"
+#include "dbsbsc.h"
 
 namespace dbsctt {
 
@@ -487,8 +488,16 @@ namespace dbsctt {
 
 	E_AUTO( _cache )
 
+	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
+
 	class content_
+	: public _delayed_initialization_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			// Rien à faire.
+		}
 	private:
 		size__ _StoreInAvailable(
 			const datum_ &Data,
@@ -583,7 +592,9 @@ namespace dbsctt {
 		storage_ Storage;
 		availables_ Availables;
 		entries_ Entries;
-		struct s {
+		struct s
+		: public _delayed_initialization_::s
+		{
 			storage_::s Storage;
 			availables_::s Availables;
 			entries_::s Entries;
@@ -594,6 +605,7 @@ namespace dbsctt {
 		} &S_;
 		content_( s &S )
 		: S_( S ),
+		  _delayed_initialization_( S ),
 		  Storage( S.Storage ),
 		  Availables( S.Availables ),
 		  Entries( S.Entries )
@@ -606,6 +618,7 @@ namespace dbsctt {
 
 			S_.Unallocated = 0;
 			S_.ModificationTimeStamp = 0;
+			_delayed_initialization_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -626,7 +639,7 @@ namespace dbsctt {
 
 			return *this;
 		}
-		void Init( void )
+		void Init( bso::bool__ Partial = false )
 		{
 			Storage.Init();
 			Availables.Init();
@@ -634,6 +647,8 @@ namespace dbsctt {
 
 			S_.Unallocated = 0;
 			S_.ModificationTimeStamp = 0;
+
+			_delayed_initialization_::Init( Partial );
 		}
 		rrow__ Store( const datum_ &Data )
 		{
@@ -718,8 +733,14 @@ namespace dbsctt {
 	class file_content_
 	: public content_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			_ConnectToFiles();
+		}
 	private:
 		void _SaveLocationsAndAvailables( void ) const;
+		bso::bool__ _ConnectToFiles( void );
 	public:
 		str::string_ RootFileName;
 		struct s
@@ -731,6 +752,7 @@ namespace dbsctt {
 					Entries;
 			} MemoryDriver;
 			str::string_::s RootFileName;
+			mdr::mode__ Mode;
 		} &S_;
 		file_content_( s &S )
 		: S_( S ), 
@@ -746,6 +768,7 @@ namespace dbsctt {
 
 			S_.MemoryDriver.Storage.reset( P );
 			S_.MemoryDriver.Entries.reset( P );
+			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
 			content_::reset( P );
 		}
@@ -759,9 +782,18 @@ namespace dbsctt {
 
 			return *this;
 		}
-		bso::bool__ Init(
+		void Init(
 			const str::string_ &RootFileName,
-			mdr::mode Mode );
+			mdr::mode__ Mode,
+			bso::bool__ Partial )
+		{
+			reset();
+
+			this->RootFileName.Init( RootFileName );
+			S_.Mode = Mode;
+
+			content_::Init( Partial );
+		}
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();
@@ -771,10 +803,14 @@ namespace dbsctt {
 			S_.MemoryDriver.Storage.Liberer();
 			S_.MemoryDriver.Entries.Liberer();
 		}
-		void SwitchMode( mdr::mode Mode )
+		void SwitchMode( mdr::mode__ Mode )
 		{
-			S_.MemoryDriver.Storage.Mode( Mode );
-			S_.MemoryDriver.Entries.Mode( Mode );
+			if ( Mode != S_.Mode ) {
+				S_.MemoryDriver.Storage.Mode( Mode );
+				S_.MemoryDriver.Entries.Mode( Mode );
+
+				S_.Mode = Mode;
+			}
 		}
 	};
 
