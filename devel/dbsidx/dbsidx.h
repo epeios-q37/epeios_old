@@ -67,13 +67,10 @@ extern class ttr_tutor &DBSIDXTutor;
 #include "dbsbsc.h"
 
 namespace dbsidx {
-	using dbsctt::datum_;
-	using dbsctt::datum;
+	using dbsbsc::datum_;
+	using dbsbsc::datum;
 
-	using dbsctt::content_;
-	using dbsctt::content;
-
-	using dbsctt::rrow__;
+	using dbsbsc::rrow__;
 
 	class sort_function__
 	{
@@ -145,7 +142,7 @@ namespace dbsidx {
 			rrow__ &Row,
 			bso::ubyte__ &Round,
 			dbsctt::_cache_ &Cache ) const;
-		const content_ &_Content( void ) const
+		const dbsctt::content__ &_Content( void ) const
 		{
 			return *S_.Content;
 		}
@@ -164,7 +161,7 @@ namespace dbsidx {
 			_index_::s BaseIndex;
 			rrow__ Root;
 			sort_function__ *Sort;
-			const content_ *Content;
+			const dbsctt::content__ *Content;
 			time_t ModificationTimeStamp;
 		} &S_;
 		index_( s &S )
@@ -201,7 +198,7 @@ namespace dbsidx {
 			return *this;
 		}
 		void Init(
-			const content_ &Content = *(content_ *)NULL,
+			const dbsctt::content__ &Content = *(dbsctt::content__ *)NULL,
 			sort_function__ &Sort = *(sort_function__ *)NULL,
 			bso::bool__ Partial = false )
 		{
@@ -299,7 +296,7 @@ namespace dbsidx {
 		{
 			return *S_.Sort;
 		}
-		const content_ &Content( void ) const
+		const dbsctt::content__ &Content( void ) const
 		{
 			return *S_.Content;
 		}
@@ -380,7 +377,7 @@ namespace dbsidx {
 		}
 		void Init(
 			const str::string_ &RootFileName,
-			const content_ &Content,
+			const dbsctt::content__ &Content,
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,

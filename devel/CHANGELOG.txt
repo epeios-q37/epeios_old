@@ -1,5 +1,9 @@
 $Id$
 
+08/10/06 :
+	- LCK :
+		- Ajout méthodes 'Get[Exclusive|Shared]Access()' et 'Release[Exclusive|Shared]Access()'.
+
 07/10/06 :
 	- GENERAL :
 		- Création DBSBSC.

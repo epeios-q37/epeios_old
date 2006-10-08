@@ -289,11 +289,19 @@ namespace lck {
 
 			return *Object_;
 		}
+		const object &GetSharedAccess( void )
+		{
+			return GetReadOnly();
+		}
 		void ReleaseReadOnly( void )
 		{
 			_Lock();
 			_ReleaseReadOnly();
 			_Unlock();
+		}
+		void ReleaseSharedAccess( void )
+		{
+			ReleaseReadOnly();
 		}
 		object &GetReadWrite( void )
 		{
@@ -312,19 +320,19 @@ namespace lck {
 
 			return *Object_;
 		}
-		object &GetWithoutLocking( void )
+		object &GetExclusiveAccess( void )
 		{
-			return *Object_;
-		}
-		const object &GetWithoutLocking( void ) const
-		{
-			return *Object_;
+			return GetReadWrite();
 		}
 		void ReleaseReadWrite( void )
 		{
 			_Lock();
 			_ReleaseReadWrite();
 			_Unlock();
+		}
+		void ReleaseExclusiveAccess( void )
+		{
+			ReleaseReadWrite();
 		}
 		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
 		{
@@ -343,6 +351,14 @@ namespace lck {
 			_Unlock();
 
 			return WasLocked;
+		}
+		object &GetWithoutLocking( void )
+		{
+			return *Object_;
+		}
+		const object &GetWithoutLocking( void ) const
+		{
+			return *Object_;
 		}
 		bso::bool__ IsLocked( void )
 		{

@@ -137,12 +137,12 @@ void dbstbl::table_::_Reindex(
 {
 ERRProlog
 	index_ &Index = _I( IRow );
-	const content_ &Content = C_();
+	const dbsctt::content__ &Content = C_();
 	mdr::size__ HandledRecordAmount = 0;
 	tol::chrono__ Chrono;
 	dbsidx::index IndexInMemory;
 	dbsidx::index_ *UsedIndex = NULL;
-	dbsctt::_cache  Cache;
+	dbsbsc::_cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
 	bso::ulong__ BalancingCount = 0;
 	bch::E_BUNCH( rrow__ ) Rows;
@@ -244,7 +244,7 @@ ERRProlog
 ERRBegin
 	_Test();
 
-	const content_ &Content = C_();
+	const dbsctt::content__ &Content = C_();
 
 	Row = Rows.First();
 
@@ -359,11 +359,11 @@ bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
 
 #ifdef DBSTBL__THREAD_SAFE
 
-#define RO	const table_ &T = _RO();
-#define RW	table_ &T = _RW();
+#define RO	const table_ &T = _Lock();
+#define RW	table_ &T = _Lock();
 
-#define RRO	_RRO();
-#define RRW	_RRW();
+#define RRO	_Release();
+#define RRW	_Release();
 
 irow__ dbstbl::thread_safe_table_::AddIndex( index_ &Index )
 {

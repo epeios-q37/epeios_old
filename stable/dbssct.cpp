@@ -1,8 +1,8 @@
 /*
-	'dbsdct' library by Claude SIMON (csimon@epeios.org)
-	Requires the 'dbsdct' header file ('dbsdct.h').
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
-$_RAW_$
+	'dbssct' library by Claude SIMON (csimon@epeios.org)
+	Requires the 'dbssct' header file ('dbssct.h').
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+
 	This file is part of the Epeios (http://epeios.org/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define DBSDCT__COMPILATION
+#define DBSSCT__COMPILATION
 
-#include "dbsdct.h"
+#include "dbssct.h"
 
-class dbsdcttutor
+class dbsscttutor
 : public ttr_tutor
 {
 public:
-	dbsdcttutor( void )
-	: ttr_tutor( DBSDCT_NAME )
+	dbsscttutor( void )
+	: ttr_tutor( DBSSCT_NAME )
 	{
-#ifdef DBSDCT_DBG
-		Version = DBSDCT_VERSION "\b\bD $";
+#ifdef DBSSCT_DBG
+		Version = DBSSCT_VERSION "\b\bD $";
 #else
-		Version = DBSDCT_VERSION;
+		Version = DBSSCT_VERSION;
 #endif
-		Owner = DBSDCT_OWNER;
+		Owner = DBSSCT_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~dbsdcttutor( void ){}
+	virtual ~dbsscttutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,14 +55,14 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace dbsdct;
+#include "dtfptb.h"
+
+using namespace dbssct;
 
 #include "flf.h"
 
 #define LOCATIONS_FILE_NAME_EXTENSION	".edl"
-#define AVAILABLES_FILE_NAME_EXTENSION	".eda"
 #define CONTENT_FILE_NAME_EXTENSION		".edc"
-#define ENTRIES_FILE_NAME_EXTENSION		".ede"
 
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
@@ -89,14 +89,6 @@ static inline void Save_(
 	flw::oflow__ &Flow )
 {
 	dtfptb::PutULong( *Row, Flow );
-}
-
-static inline void Save_(
-	const available__ &Available,
-	flw::oflow__ &Flow )
-{
-	dtfptb::PutULong( *Available.Row, Flow );
-	dtfptb::PutULong( Available.RawSize, Flow );
 }
 
 template <typename item> static void Save_(
@@ -144,10 +136,9 @@ ERREnd
 ERREpilog
 }
 
-void dbsdct::file_dynamic_content_::_SaveLocationsAndAvailables( void ) const
+void dbssct::file_static_content_::_SaveLocations( void ) const
 {
-	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
-	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
+	Save_( _list_::Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
 }
 
 static inline void Load_(
@@ -157,15 +148,6 @@ static inline void Load_(
 	Row = dtfptb::GetULong( Flow );
 }
 	
-static inline void Load_(
-	flw::iflow__ &Flow,
-	available__ &Available )
-{
-	Available.Row = dtfptb::GetULong( Flow );
-	Available.RawSize = dtfptb::GetULong( Flow );
-}
-	
-
 template <typename item> static void Load_(
 	flw::iflow__ &Flow,
 	stk::E_BSTACK_( item ) &Bunch,
@@ -248,52 +230,27 @@ ERREpilog
 	return TimeStamp;
 }
 
-bso::bool__ dbsdct::file_dynamic_content_::_ConnectToFiles( void )
+bso::bool__ dbssct::file_static_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string ContentFileName;
 	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
-	str::string EntriesFileName;
-	tol::E_FPOINTER___( bso::char__ ) EntriesFileNameBuffer;
-	available__ TestAvailable;
+	str::string ListFileName;
+	tol::E_FPOINTER___( bso::char__ ) ListFileNameBuffer;
 ERRBegin
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, dynamic_content_::Storage.Memory );
-
-	EntriesFileName.Init( RootFileName );
-	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
-	EntriesFileNameBuffer = EntriesFileName.Convert();
-	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, S_.Mode, Entries.Bunch() ) != Exists )
-		ERRu();
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
 
 	if ( Exists ) {
-		dynamic_content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
-		Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
-	} else {
-		dynamic_content_::S_.Unallocated = 0;
-		Entries.List().Locations.Init( 0 / sizeof( entry__ ) );
-	}
+		time_t TimeStamp;
 
-	if ( Exists ) {
-		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
+		TimeStamp = GetModificationTimeStamp_( ContentFileName );
 
-		ContentTimeStamp = GetModificationTimeStamp_( ContentFileName );
-		EntriesTimeStamp = GetModificationTimeStamp_( EntriesFileName );
-
-		if ( ContentTimeStamp > EntriesTimeStamp )
-			LastTimeStamp = ContentTimeStamp;
-		else
-			LastTimeStamp = EntriesTimeStamp;
-
-		if ( !Load_<epeios::row__>( RootFileName, Entries.List().Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, LastTimeStamp ) )
+		if ( !Load_<epeios::row__>( RootFileName, _list_::Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, TimeStamp ) )
 			RebuildLocations();
-
-		if ( !Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, LastTimeStamp ) )
-			RebuildAvailables();
 	}
 ERRErr
 ERREnd
@@ -301,19 +258,20 @@ ERREpilog
 	return Exists;
 }
 
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class dbsdctpersonnalization
-: public dbsdcttutor
+class dbssctpersonnalization
+: public dbsscttutor
 {
 public:
-	dbsdctpersonnalization( void )
+	dbssctpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~dbsdctpersonnalization( void )
+	~dbssctpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -329,6 +287,6 @@ public:
 
 // 'static' by GNU C++.
 
-static dbsdctpersonnalization Tutor;
+static dbssctpersonnalization Tutor;
 
-ttr_tutor &DBSDCTTutor = Tutor;
+ttr_tutor &DBSSCTTutor = Tutor;

@@ -55,35 +55,32 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace dbsdct;
+
 #include "flf.h"
 
 #define LOCATIONS_FILE_NAME_EXTENSION	".edl"
 #define AVAILABLES_FILE_NAME_EXTENSION	".eda"
-#define CONTENT_FILE_NAME_EXTENSION		".edd"
+#define CONTENT_FILE_NAME_EXTENSION		".edc"
 #define ENTRIES_FILE_NAME_EXTENSION		".ede"
-
-using namespace dbsdct;
 
 template <typename container> static bso::bool__ Set_(
 	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const str::string_ &FileName,
+	const char *FileName,
+	mdr::mode__ Mode,
 	container &C )
 {
 	bso::bool__ Exists = false;
-ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileNameBuffer = FileName.Convert();
 
-	Exists = tol::FileExists( FileNameBuffer );
+	Exists = tol::FileExists( FileName );
 
-	MemoryDriver.Init( FileNameBuffer );
+	MemoryDriver.Init( FileName, Mode );
 	MemoryDriver.Persistant();
 	C.plug( MemoryDriver );
-	C.Allocate( MemoryDriver.Size() / C.GetItemSize() );
-ERRErr
-ERREnd
-ERREpilog
+
+	if ( Exists )
+		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
+
 	return Exists;
 }
 
@@ -147,7 +144,7 @@ ERREnd
 ERREpilog
 }
 
-void dbsdct::file_content_::_SaveLocationsAndAvailables( void ) const
+void dbsdct::file_dynamic_content_::_SaveLocationsAndAvailables( void ) const
 {
 	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
 	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
@@ -251,31 +248,35 @@ ERREpilog
 	return TimeStamp;
 }
 
-bso::bool__ dbsdct::file_content_::Init( const str::string_ &RootFileName )
+bso::bool__ dbsdct::file_dynamic_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string ContentFileName;
+	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
 	str::string EntriesFileName;
+	tol::E_FPOINTER___( bso::char__ ) EntriesFileNameBuffer;
 	available__ TestAvailable;
 ERRBegin
-	content_::Init();
-
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	Exists = Set_( _S.MemoryDriver.Storage, ContentFileName, content_::Storage.Memory );
+	ContentFileNameBuffer = ContentFileName.Convert();
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, dynamic_content_::Storage.Memory );
 
 	EntriesFileName.Init( RootFileName );
 	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
+	EntriesFileNameBuffer = EntriesFileName.Convert();
 	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( _S.MemoryDriver.Entries, EntriesFileName, Entries.Bunch() ) != Exists )
+	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, S_.Mode, Entries.Bunch() ) != Exists )
 		ERRu();
 
-	this->RootFileName.Init( RootFileName );
-
-	content_::_S.Unallocated = _S.MemoryDriver.Storage.Size();
-
-	Entries.List().Locations.Init( _S.MemoryDriver.Entries.Size() / sizeof( entry__ ) );
+	if ( Exists ) {
+		dynamic_content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
+		Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
+	} else {
+		dynamic_content_::S_.Unallocated = 0;
+		Entries.List().Locations.Init( 0 / sizeof( entry__ ) );
+	}
 
 	if ( Exists ) {
 		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;

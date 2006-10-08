@@ -55,34 +55,35 @@ extern class ttr_tutor &DBSDCTTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D DataBaSe DataContent 
+//D DataBaSe Dynamic Content 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete ! Use 'DBSCTT' instead !"
-
 #include "err.h"
 #include "flw.h"
-#include "tym.h"
-#include "tol.h"
-#include "dtfptb.h"
 #include "str.h"
+#include "dtfptb.h"
 #include "stk.h"
 #include "lstbch.h"
+#include "lstctn.h"
 #include "flm.h"
+#include "que.h"
+#include "dbsbsc.h"
 
 namespace dbsdct {
 
 	using mdr::size__;
 
-	typedef bso::char__ datum__;
-	typedef str::string_ data_;
-	typedef str::string data;
+	using dbsbsc::atom__;
+	using dbsbsc::datum_;
+	using dbsbsc::datum;
+	using dbsbsc::rrow__;
+	using dbsbsc::_cache_;
 
-	E_ROW( data_row__ );
+	E_ROW( datum_row__ );
 
-	typedef tym::memory_<datum__, data_row__> memory_;
+	typedef tym::memory_<atom__, datum_row__> memory_;
 
 	class storage_
 	{
@@ -107,9 +108,9 @@ namespace dbsdct {
 			return Wanted;
 		}
 		size__ _Store(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row,
+			datum_row__ &Row,
 			size__ Available )
 		{
 			size__ &Amount = Available;
@@ -121,7 +122,7 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Amount, SizeBuffer );
 
-			Memory.Store( (const datum__ *)SizeBuffer, SizeLength, Row );
+			Memory.Store( (const atom__ *)SizeBuffer, SizeLength, Row );
 
 			*Row += SizeLength;
 
@@ -133,10 +134,10 @@ namespace dbsdct {
 		}
 		/* Ajoute 'Data' à la position 'Row', sachant que 'Unallocated' est la position du premier octet non alloué.
 		L'espace necessaire est alloué. Retourne la position du nouveau premier octet non alloué. */
-		data_row__ _Store(
-			const data_ &Data,
+		datum_row__ _Store(
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ Unallocated )
+			datum_row__ Unallocated )
 		{
 			size__ DataAmount = Data.Amount() - Offset;
 			size__ TotalSize = DataAmount + dtfptb::GetSizeLength( DataAmount );
@@ -148,8 +149,8 @@ namespace dbsdct {
 			return Unallocated;
 		}
 		size__ _GetComputedSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			dtfptb::size_buffer__ SizeBuffer;
 			bso::ubyte__ PossibleSizeLength = sizeof( SizeBuffer );
@@ -157,13 +158,13 @@ namespace dbsdct {
 			if ( ( *Unallocated - *Row ) < PossibleSizeLength )
 				PossibleSizeLength = (bso::ubyte__)( *Unallocated - *Row );
 
-			Memory.Recall( Row, PossibleSizeLength, (datum__ *)SizeBuffer );
+			Memory.Recall( Row, PossibleSizeLength, (atom__ *)SizeBuffer );
 
 			return dtfptb::GetSize( SizeBuffer );
 		}
 		size__ _GetRawSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			size__ Size = _GetComputedSize( Row, Unallocated );
 
@@ -206,15 +207,15 @@ namespace dbsdct {
 		pour pointer sur la nouvelle position du premier octet non alloué. Si 'Row', au retour, est != 'NONE',
 		alors il reste 'Available' octets à 'Row'. */
 /*
-		data_row__ Write(
-			const data_ &Data,
-			data_row__ &Row,
+		datum_row__ Write(
+			const datum_ &Data,
+			datum_row__ &Row,
 			size__ &Available,
-			data_row__ &Unallocated )
+			datum_row__ &Unallocated )
 		{
 			size__ Written = _Store( Data, Row, Available );
 			size__ TotalWritten = Written + dtfptb::GetSizeLength( Written );
-			data_row__ Rest = NONE;
+			datum_row__ Rest = NONE;
 
 			Available -= TotalWritten;
 
@@ -232,9 +233,9 @@ namespace dbsdct {
 		}
 */
 		size__ Store(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row,
+			datum_row__ &Row,
 			size__ &Available )
 		{
 			size__ Written = _Store( Data, Offset, Row, Available );
@@ -249,29 +250,29 @@ namespace dbsdct {
 		}
 		/* Ajoute 'Data' à 'Row', qui est la position du premier octet non alloué. La place nécessaire est allouée et
 		la nouvelle position du premier octet non alloué et retourné. */
-		data_row__ Append(
-			const data_ &Data,
+		datum_row__ Append(
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ Row )
+			datum_row__ Row )
 		{
 			return _Store( Data, Offset, Row );
 		}
 		size__ GetComputedSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			return _GetComputedSize( Row, Unallocated );
 		}
 		size__ GetRawSize(
-			data_row__ Row,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_row__ Unallocated ) const
 		{
 			return _GetRawSize( Row, Unallocated );
 		}
 		/* Place un marqueur de taille à 'DataRow' sachant qu'il y a 'Size' octets de disponibles. Retourne le nombre
 		d'octets effectivement disponibles à cette position aprés y avoir placé le marquer de taille. */
 		size__ StoreSize(
-			data_row__ Row,
+			datum_row__ Row,
 			size__ Size )
 		{
 #ifdef DBSDCT_DBG
@@ -284,14 +285,14 @@ namespace dbsdct {
 
 			dtfptb::PutSize( Size, SizeBuffer );
 
-			Memory.Store( (const datum__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
+			Memory.Store( (const atom__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
 
 			return Size;
 		}
 		void Retrieve(
-			data_row__ Row,
-			data_ &Data,
-			data_row__ Unallocated ) const
+			datum_row__ Row,
+			datum_ &Data,
+			datum_row__ Unallocated ) const
 		{
 			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
@@ -305,7 +306,7 @@ namespace dbsdct {
 	struct available__
 	{
 		// Position.
-		data_row__ Row;
+		datum_row__ Row;
 		// Taille brute, c'est-à-dire sans tenir compte de la place occupée par le marqueur de taille.
 		size__ RawSize;
 		available__( void )
@@ -324,31 +325,37 @@ namespace dbsdct {
 	E_AUTO( availables )
 
 
-	// 'data_row__' portable
-	typedef bso::p_ulong__	p_data_row__;
+	// 'datum_row__' portable
+	typedef bso::p_ulong__	p_datum_row__;
 
 	struct entry__
 	{
 	public:
-		data_row__ Head;
-		data_row__ Tail;
+		datum_row__ Head;
+		datum_row__ Tail;
 		entry__( void )
 		{
 			Head = Tail = NONE;
 		}
 	};
 
-	E_ROW( row__ );
+	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef lstbch::E_LBUNCHt_( entry__, row__ ) entries_;
+	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
 
-	class content_
+	class dynamic_content_
+	: public _delayed_initialization_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			// Rien à faire.
+		}
 	private:
 		size__ _StoreInAvailable(
-			const data_ &Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row )
+			datum_row__ &Row )
 		{
 			available__ Available;
 			size__ Written;
@@ -371,19 +378,19 @@ namespace dbsdct {
 			return Written;
 		}
 		void _Append(
-			const data_& Data,
+			const datum_ &Data,
 			size__ Offset,
-			data_row__ &Row )
+			datum_row__ &Row )
 		{
 			entry__ Entry;
 
-			Row = _S.Unallocated;
+			Row = S_.Unallocated;
 
-			_S.Unallocated = Storage.Append( Data, Offset, _S.Unallocated );
+			S_.Unallocated = Storage.Append( Data, Offset, S_.Unallocated );
 		}
-		row__ _Store(
-			const data_ &Data,
-			row__ Row )
+		rrow__ _Store(
+			const datum_ &Data,
+			rrow__ Row )
 		{
 			entry__ Entry;
 
@@ -394,7 +401,7 @@ namespace dbsdct {
 
 				if ( ( Written != Data.Amount() )
 					 && ( Availables.Amount() != 0 )
-					 && ( Storage.GetComputedSize( Availables.Top().Row, _S.Unallocated ) >= ( Data.Amount() - Written ) ) )
+					 && ( Storage.GetComputedSize( Availables.Top().Row, S_.Unallocated ) >= ( Data.Amount() - Written ) ) )
 					_StoreInAvailable( Data, Written, Entry.Tail );
 				else
 					_Append( Data, Written, Entry.Tail );
@@ -405,16 +412,16 @@ namespace dbsdct {
 
 			return Row;
 		}
-		void _Erase( data_row__ DataRow )
+		void _Erase( datum_row__ DataRow )
 		{
 			available__ Available;
 
 			Available.Row = DataRow;
-			Available.RawSize = Storage.GetRawSize( DataRow, _S.Unallocated );
+			Available.RawSize = Storage.GetRawSize( DataRow, S_.Unallocated );
 
 			Availables.Push( Available );
 		}
-		void _Erase( row__ Row )
+		void _Erase( rrow__ Row )
 		{
 			entry__ Entry = Entries.Get( Row );
 
@@ -429,24 +436,29 @@ namespace dbsdct {
 			Entries.Store( Entry, Row );
 		}
 		void _Retrieve(
-			data_row__ Row,
-			data_ &Data ) const
+			datum_row__ Row,
+			datum_ &Data ) const
 		{
-			Storage.Retrieve( Row, Data, _S.Unallocated );
+			Storage.Retrieve( Row, Data, S_.Unallocated );
 		}
 	public:
 		storage_ Storage;
 		availables_ Availables;
 		entries_ Entries;
-		struct s {
+		struct s
+		: public _delayed_initialization_::s
+		{
 			storage_::s Storage;
 			availables_::s Availables;
 			entries_::s Entries;
+			_cache_::s Cache;
 			// Position du premier octet non alloué.
-			data_row__ Unallocated;
-		} &_S;
-		content_( s &S )
-		: _S( S ),
+			datum_row__ Unallocated;
+			time_t ModificationTimeStamp;
+		} &S_;
+		dynamic_content_( s &S )
+		: S_( S ),
+		  _delayed_initialization_( S ),
 		  Storage( S.Storage ),
 		  Availables( S.Availables ),
 		  Entries( S.Entries )
@@ -457,7 +469,9 @@ namespace dbsdct {
 			Availables.reset( P );
 			Entries.reset( P );
 
-			_S.Unallocated = 0;
+			S_.Unallocated = 0;
+			S_.ModificationTimeStamp = 0;
+			_delayed_initialization_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -465,64 +479,92 @@ namespace dbsdct {
 			Availables.plug( MM );
 			Entries.plug( MM );
 		}
-		content_ &operator =( const content_ &C )
+		dynamic_content_ &operator =( const dynamic_content_ &DC )
 		{
-			Storage.Memory.Allocate( *C._S.Unallocated );
-			Storage.Memory.Store( C.Storage.Memory, *C._S.Unallocated );
-			_S.Unallocated = C._S.Unallocated;
+			Storage.Memory.Allocate( *DC.S_.Unallocated );
+			Storage.Memory.Store( DC.Storage.Memory, *DC.S_.Unallocated );
+			S_.Unallocated = DC.S_.Unallocated;
+			S_.ModificationTimeStamp = DC.S_.ModificationTimeStamp;
 
-			Availables = C.Availables;
+			Availables = DC.Availables;
 
-			Entries = C.Entries;
+			Entries = DC.Entries;
 
 			return *this;
 		}
-		void Init( void )
+		void Init( bso::bool__ Partial = false )
 		{
 			Storage.Init();
 			Availables.Init();
 			Entries.Init();
 
-			_S.Unallocated = 0;
+			S_.Unallocated = 0;
+			S_.ModificationTimeStamp = 0;
+
+			_delayed_initialization_::Init( Partial );
 		}
-		row__ Store( const data_ &Data )
+		rrow__ Store( const datum_ &Data )
 		{
-			row__ Row = Entries.New();
+			rrow__ Row = Entries.New();
 
 			_Store( Data, Row );
 
+			S_.ModificationTimeStamp = tol::Clock();
+
 			return Row;
 		}
-		void Erase( row__ Row )
+		void Erase( rrow__ Row )
 		{
 			_Erase( Row );
 
 			Entries.Delete( Row );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		void Store(
-			const data_ &Data,
-			row__ Row )
+			const datum_ &Data,
+			rrow__ Row )
 		{
 			_Erase( Row );
 
 			_Store( Data, Row );
+
+			S_.ModificationTimeStamp = tol::Clock();
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
-			row__ Row,
-			data_ &Data ) const
+			rrow__ Row,
+			datum_ &Datum ) const
 		{
 			entry__ Entry = Entries.Get( Row );
 
 			if ( Entry.Head != NONE )
-				_Retrieve( Entry.Head, Data );
+				_Retrieve( Entry.Head, Datum );
 			else
 				return false;
 
 			if ( Entry.Tail != NONE )
-				_Retrieve( Entry.Tail, Data );
+				_Retrieve( Entry.Tail, Datum );
 
 			return true;
+		}
+		// Retourne 'true' si l'enregistrement existe, faux sinon.
+		bso::bool__ Retrieve(
+			rrow__ Row,
+			datum_ &Datum,
+			_cache_ &Cache ) const
+		{
+			bso::bool__ Exists = true;
+
+			if ( ( &Cache == NULL ) || !Cache.Retrieve( Row, Datum ) ) {
+
+				Exists = Retrieve( Row, Datum );
+
+				if ( Exists && ( &Cache != NULL ) )
+					Cache.Store( Datum, Row );
+			}
+
+			return Exists;
 		}
 		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
 		void RebuildLocations( void )
@@ -534,21 +576,28 @@ namespace dbsdct {
 		{
 			ERRl();
 		}
-		E_NAVt( Entries., row__ )
+		E_NAVt( Entries., rrow__ )
+		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
-	E_AUTO( content )
+	E_AUTO( dynamic_content )
 
 	// Content stocké dans des fichiers.
-	class file_content_
-	: public content_
+	class file_dynamic_content_
+	: public dynamic_content_
 	{
+	protected:
+		virtual void DBSBSCCompleteInitialization( void )
+		{
+			_ConnectToFiles();
+		}
 	private:
 		void _SaveLocationsAndAvailables( void ) const;
+		bso::bool__ _ConnectToFiles( void );
 	public:
 		str::string_ RootFileName;
 		struct s
-		: public content_::s
+		: public dynamic_content_::s
 		{
 			struct memory_driver__ {
 				flm::E_FILE_MEMORY_DRIVER___
@@ -556,39 +605,69 @@ namespace dbsdct {
 					Entries;
 			} MemoryDriver;
 			str::string_::s RootFileName;
-		} &_S;
-		file_content_( s &S )
-		: _S( S ), 
-		  content_( S ),
+			mdr::mode__ Mode;
+		} &S_;
+		file_dynamic_content_( s &S )
+		: S_( S ), 
+		  dynamic_content_( S ),
 		  RootFileName( S.RootFileName )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( RootFileName.Amount() != 0 )
+				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveLocationsAndAvailables();
 			}
 
-			_S.MemoryDriver.Storage.reset( P );
-			_S.MemoryDriver.Entries.reset( P );
+			S_.MemoryDriver.Storage.reset( P );
+			S_.MemoryDriver.Entries.reset( P );
+			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
-			content_::reset( P );
+			dynamic_content_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_content_ &operator =( const content_ &C )
+		file_dynamic_content_ &operator =( const file_dynamic_content_ &FDC )
 		{
-			content_::operator =( C );
+			dynamic_content_::operator =( FDC );
 
 			return *this;
 		}
-		bso::bool__ Init( const str::string_ &RootFileName );
+		void Init(
+			const str::string_ &RootFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Partial )
+		{
+			reset();
+
+			this->RootFileName.Init( RootFileName );
+			S_.Mode = Mode;
+
+			dynamic_content_::Init( Partial );
+		}
+		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
+		{
+			_SaveLocationsAndAvailables();
+		}
+		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
+		{
+			S_.MemoryDriver.Storage.Liberer();
+			S_.MemoryDriver.Entries.Liberer();
+		}
+		void SwitchMode( mdr::mode__ Mode )
+		{
+			if ( Mode != S_.Mode ) {
+				S_.MemoryDriver.Storage.Mode( Mode );
+				S_.MemoryDriver.Entries.Mode( Mode );
+
+				S_.Mode = Mode;
+			}
+		}
 	};
 
-	E_AUTO( file_content )
-
+	E_AUTO( file_dynamic_content )
 }
 
 /*$END$*/

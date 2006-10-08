@@ -164,14 +164,14 @@ namespace dbstbl {
 					S_.Content->CompleteInitialization();
 			}
 		}
-		const content_ &C_( void ) const
+		const dbsctt::content__ &C_( void ) const
 		{
 			if ( !S_.Content->InitializationCompleted() )
 				S_.Content->CompleteInitialization();
 
 			return *S_.Content;
 		}
-		content_ &C_( void )
+		dbsctt::content__ &C_( void )
 		{
 			if ( !S_.Content->InitializationCompleted() )
 				S_.Content->CompleteInitialization();
@@ -246,7 +246,7 @@ namespace dbstbl {
 		struct s
 		{
 			_indexes_::s Indexes;
-			content_ *Content;
+			dbsctt::content__ *Content;
 			mode__ Mode;
 		} &S_;
 		table_( s &S )
@@ -272,7 +272,7 @@ namespace dbstbl {
 			return *this;
 		}
 		void Init(
-			content_ &Content,
+			dbsctt::content__ &Content,
 			mode__ Mode )
 		{
 			reset();
@@ -530,21 +530,13 @@ namespace dbstbl {
 		{
 			return S_.Control;
 		}
-		const table_ &_RO( void )
+		table_ &_Lock( void )
 		{
-			return C_().GetReadOnly();
+			return C_().GetExclusiveAccess();
 		}
-		table_ &_RW( void )
+		void _Release( void )
 		{
-			return C_().GetReadWrite();
-		}
-		void _RRO( void )
-		{
-			C_().ReleaseReadOnly();
-		}
-		void _RRW( void )
-		{
-			C_().ReleaseReadWrite();
+			C_().ReleaseExclusiveAccess();
 		}
 	public:
 		table_ Table;
@@ -573,7 +565,7 @@ namespace dbstbl {
 			return *this;	// Pour éviter un warning.
 		}
 		void Init(
-			content_ &Content,
+			dbsctt::content__ &Content,
 			mode__ Mode )
 		{
 			reset();

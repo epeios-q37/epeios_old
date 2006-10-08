@@ -71,12 +71,16 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&DataBaSe BaSiCs
 &dbsctt		&epeios		&\
 	&DataBaSe ConTenT
+&dbssct		&epeios		&\
+	&DataBaSe Dynamic Static ConTent
 &dbsdct		&epeios		&\
-	&DataBaSe DataContent
+	&DataBaSe DynamicContent
 &dbsctt		&epeios		&\
 	&DataBaSe DaTA
 &dbsidx		&epeios		&\
 	&DataBaSe InDeX
+&dbssct		&epeios		&\
+	&DataBaSe Dynamic Static ConTent
 &dbstbl		&epeios		&\
 	&DataBaSe TaBLe
 &dbt		&epeios		&\
