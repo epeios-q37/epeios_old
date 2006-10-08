@@ -267,6 +267,7 @@ namespace dbssct {
 			return *this;
 		}
 		void Init(
+			epeios::size__ Size,
 			const str::string_ &RootFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Partial )
@@ -276,7 +277,7 @@ namespace dbssct {
 			this->RootFileName.Init( RootFileName );
 			S_.Mode = Mode;
 
-			static_content_::Init( Partial );
+			static_content_::Init( Size, Partial );
 		}
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
