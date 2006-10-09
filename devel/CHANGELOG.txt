@@ -1,5 +1,11 @@
 $Id$
 
+09/10/06 :
+	- NSXPCM :
+		- Ajout méthode 'DeleteListboxContent()'.
+		- Changement type argument 'QueryInterface()'.
+		- Ajout fonction 'SelectListboxItem()'.
+
 08/10/06 :
 	- LCK :
 		- Ajout méthodes 'Get[Exclusive|Shared]Access()' et 'Release[Exclusive|Shared]Access()'.

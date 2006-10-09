@@ -79,6 +79,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsCOMPtr.h"
 #include "nsITreeView.h"
 #include "nsITreeContentView.h"
+#include "nsIListBoxObject.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -183,7 +184,7 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	template <typename element> inline element *QueryInterface( nsIDOMElement *GenericElement )
+	template <typename element> inline element *QueryInterface( nsISupports *GenericElement )
 	{
 		element *Element = NULL;
 
@@ -622,6 +623,26 @@ namespace nsxpcm {
 	{
 		if ( Element->SetChecked( State ) != NS_OK )
 			ERRx();
+	}
+
+	void RemoveListboxContent( listbox_ *Listbox );
+
+	inline void SelectListboxItem(
+		listbox_ *Listbox,
+		listitem_ *Listitem )
+	{
+		PRInt32 Index = -1;
+		nsIBoxObject *BoxObject = NULL;
+		nsIListBoxObject *ListBoxObject = NULL;
+
+		Listbox->GetBoxObject( &BoxObject );
+
+		ListBoxObject = QueryInterface<nsIListBoxObject>( BoxObject );
+
+		ListBoxObject->GetIndexOfItem( Listitem, &Index );
+		ListBoxObject->ScrollToIndex( Index );
+
+		Listbox->SelectItem( Listitem );
 	}
 
 #ifdef NSXPCM__BKD

@@ -251,6 +251,33 @@ ERREnd
 ERREpilog
 }
 
+void nsxpcm::RemoveListboxContent( listbox_ *Listbox )
+{
+ERRProlog
+	str::string Name;
+	nsIDOMNode *Node = NULL, *Next = NULL;
+ERRBegin
+	Node = GetFirstChild( Listbox );
+
+	while ( Node != NULL ) {
+		Next = GetNextSibling( Node );
+
+		Name.Init();
+
+		if ( GetNodeName( Node, Name ) == "listitem" )
+			RemoveChild( Listbox, Node );
+
+		Node = Next;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+
 #ifdef NSXPCM__BKD
 void nsxpcm::Convert(
 	const strings_ &Items,
