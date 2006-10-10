@@ -147,19 +147,6 @@ namespace dbssct {
 
 			_delayed_initialization_::Init( Partial );
 		}
-		rrow__ Store( const datum_ &Data )
-		{
-			rrow__ Row = _list_::New();
-
-			if ( Data.Amount() != S_.Size )
-				ERRu();
-
-			Storage.Store( Data, 0, S_.Size );
-
-			S_.ModificationTimeStamp = tol::Clock();
-
-			return Row;
-		}
 		void Erase( rrow__ Row )
 		{
 			_list_::Delete( Row );
@@ -167,22 +154,30 @@ namespace dbssct {
 			S_.ModificationTimeStamp = tol::Clock();
 		}
 		void Store(
-			const datum_ &Data,
+			const datum_ &Datum,
 			rrow__ Row )
 		{
-			if ( Data.Amount() != S_.Size )
+			if ( Datum.Amount() != S_.Size )
 				ERRu();
 
-			Storage.Store( Data, 0, S_.Size );
+			Storage.Store( Datum, S_.Size, 0, *Row * S_.Size );
 
 			S_.ModificationTimeStamp = tol::Clock();
+		}
+		rrow__ Store( const datum_ &Datum )
+		{
+			rrow__ Row = _list_::New();
+
+			Store( Datum, Row );
+
+			return Row;
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum ) const
 		{
-			Datum.Store( Storage, *Row * S_.Size, S_.Size );
+			Datum.Append( Storage, S_.Size, *Row * S_.Size );
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		void Retrieve(
@@ -200,11 +195,6 @@ namespace dbssct {
 		}
 		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
 		void RebuildLocations( void )
-		{
-			ERRl();
-		}
-		// Reconstruit la liste des portions inoccupés dans 'Storage'.
-		void RebuildAvailables( void )
 		{
 			ERRl();
 		}
@@ -231,9 +221,7 @@ namespace dbssct {
 		: public static_content_::s
 		{
 			struct memory_driver__ {
-				flm::E_FILE_MEMORY_DRIVER___
-					Storage,
-					List;
+				flm::E_FILE_MEMORY_DRIVER___ Storage;
 			} MemoryDriver;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
@@ -251,7 +239,6 @@ namespace dbssct {
 			}
 
 			S_.MemoryDriver.Storage.reset( P );
-			S_.MemoryDriver.List.reset( P );
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
 			static_content_::reset( P );
@@ -279,20 +266,18 @@ namespace dbssct {
 
 			static_content_::Init( Size, Partial );
 		}
-		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
+		void WriteLocationsFile( void )	// Met à jour les fichiers.
 		{
 			_SaveLocations();
 		}
 		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
 		{
 			S_.MemoryDriver.Storage.Liberer();
-			S_.MemoryDriver.List.Liberer();
 		}
 		void SwitchMode( mdr::mode__ Mode )
 		{
 			if ( Mode != S_.Mode ) {
 				S_.MemoryDriver.Storage.Mode( Mode );
-				S_.MemoryDriver.List.Mode( Mode );
 
 				S_.Mode = Mode;
 			}

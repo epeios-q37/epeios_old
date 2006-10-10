@@ -79,7 +79,7 @@ template <typename container> static bso::bool__ Set_(
 	C.plug( MemoryDriver );
 
 	if ( Exists )
-		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
+		C.Allocate( tol::GetFileSize( FileName ) );
 
 	return Exists;
 }
@@ -245,9 +245,9 @@ ERRBegin
 	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
 
 	if ( Exists ) {
-		time_t TimeStamp;
+		_list_::Locations.Init( tol::GetFileSize( ContentFileNameBuffer ) / S_.Size );
 
-		TimeStamp = GetModificationTimeStamp_( ContentFileName );
+		time_t TimeStamp = GetModificationTimeStamp_( ContentFileName );
 
 		if ( !Load_<epeios::row__>( RootFileName, _list_::Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, TimeStamp ) )
 			RebuildLocations();
