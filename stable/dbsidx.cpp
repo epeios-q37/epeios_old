@@ -569,17 +569,34 @@ ERRProlog
 	tol::E_FPOINTER___( bso::char__ ) TreeFileNameBuffer;
 	str::string QueueFileName;
 	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
+	idxbtq::E_INDEXt( rrow__ ) Index;
 ERRBegin
+	Index.Init();
+
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 	TreeFileNameBuffer = TreeFileName.Convert();
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, Index.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
+/*
 	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
+*/
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
+
+
+/*	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
 		ERRu();
+*/
+
+
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, Index.Queue().Links, S_.Mode, S_.Erase ) != Exists )
+		ERRu();
+
+	index_::BaseIndex = Index;
+
+
 
 	if ( Exists ) {
 		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;

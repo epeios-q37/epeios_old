@@ -238,11 +238,19 @@ ERRProlog
 	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
 	str::string ListFileName;
 	tol::E_FPOINTER___( bso::char__ ) ListFileNameBuffer;
+	tym::E_MEMORY( atom__) Storage;
 ERRBegin
+	Storage.Init();
+
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
+//	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, Storage );
+
+	static_content_::Storage.Allocate( tol::GetFileSize( ContentFileNameBuffer ) );
+	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
+
 
 	if ( Exists ) {
 		_list_::Locations.Init( tol::GetFileSize( ContentFileNameBuffer ) / S_.Size );
