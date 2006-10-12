@@ -275,6 +275,29 @@ ERREnd
 ERREpilog
 }
 
+nsIDOMNode *nsxpcm::FindParent(
+	nsIDOMNode *Node,
+	const str::string_ &NodeName )
+{
+ERRProlog
+	str::string Name;
+ERRBegin
+	while ( Node != NULL ) {
+		Name.Init();
+
+		GetNodeName( Node, Name );
+
+		if ( NodeName == Name )
+			break;
+
+		Node = GetParentNode( Node );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Node;
+}
 
 
 

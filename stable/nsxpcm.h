@@ -76,9 +76,11 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULTextboxElement.h"
 #include "nsIDOMXULMenuListElement.h"
 #include "nsIDOMXULCheckboxElement.h"
+#include "nsIDOMXULTreeElement.h"
 #include "nsCOMPtr.h"
 #include "nsITreeView.h"
 #include "nsITreeContentView.h"
+#include "nsITreeSelection.h"
 #include "nsIListBoxObject.h"
 
 #ifdef NSXPCM_BKD
@@ -317,7 +319,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULTextBoxElement, textbox, Textbox )
 	NSXPCM_DEFINE( nsIDOMXULMenuListElement, menulist, Menulist )
 	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
-	NSXPCM_DEFINE( nsITreeContentView, tree, Treecontentview )
+	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -644,6 +646,24 @@ namespace nsxpcm {
 
 		Listbox->SelectItem( Listitem );
 	}
+
+	nsIDOMNode *FindParent(
+		nsIDOMNode *Node,
+		const str::string_ &NodeName );
+
+	template <typename element> inline element *FindParent(
+		nsIDOMNode *Node,
+		const str::string_ &NodeName )
+	{
+		Node = FindParent<nsIDOMNode>( Node, NodeName );
+
+		if ( Node != NULL )
+			return QueryInterface<element>( Node );
+		else
+			return NULL;
+	}
+
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
