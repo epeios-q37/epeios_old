@@ -258,19 +258,19 @@ namespace tym {
 			PiloteMultimemoire_.reset();
 			_memory_< t, uym::untyped_memory_, r >::plug( MD );
 		}
-		void write(
+		void WriteToFlow(
 			r Position,
 			epeios::size__ Quantity,
 			flw::oflow__ &OFlow ) const
 		{
-			_memory_<t, uym::untyped_memory_, r >::write( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
+			_memory_<t, uym::untyped_memory_, r >::WriteToFlow( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
 		}
-		void read(
+		void ReadFromFlow(
 			flw::iflow__  &IFlow,
 			r Position,
 			epeios::size__ Quantite )
 		{
-			_memory_<t, uym::untyped_memory_, r >::read( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
+			_memory_<t, uym::untyped_memory_, r >::ReadFromFlow( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
 		}
 	};
 

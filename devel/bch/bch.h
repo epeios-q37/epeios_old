@@ -65,6 +65,7 @@ extern class ttr_tutor &BCHTutor;
 #include "tym.h"
 #include "aem.h"
 #include "epeios.h"
+#include "dtfptb.h"
 
 namespace bch {
 
@@ -436,50 +437,50 @@ namespace bch {
 
 
 	/*c The core set of static object of type 'type'. Internal use only. */
-	template <class type, typename row, typename aem, typename sh> class _bunch_
-	: public _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >
+	template <class type, typename row, typename mng, typename sh> class _bunch_
+	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
 	{
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::s
+		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s
 		{};
 		_bunch_( s &S )
-		: _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >( S )
+		: _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >( S )
 		{};
 		void reset( bool P = true )
 		{
-			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::reset( P );
-			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Memory().reset( P );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::reset( P );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().reset( P );
 		}
 		_bunch_ &operator =( const _bunch_ &Op )
 		{
-			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row , sh>::operator =( Op );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row , sh>::operator =( Op );
 
 			Allocate( Op.Amount() );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Memory().Store( Op, Op.Amount() );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
 
 			return *this;
 		}
-		void write( flw::oflow__ &OFlow ) const
+		void WriteToFlow( flw::oflow__ &OFlow ) const
 		{
-			flw::Put( aem::Amount(), OFlow );
-			tym::E_MEMORYt_( type, row )::Memory().write( 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount(), OFlow );
+			dtfptb::PutSize( mng::Amount(), OFlow );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
-		void read( flw::iflow__ &IFlow )
+		void ReadFromFlow( flw::iflow__ &IFlow )
 		{
 			epeios::size__ Amount;
 
-			flw::Get( IFlow, Amount );
-			_bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Allocate( Amount );
-			tym::E_MEMORYt_( type, row )::Memory().read( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Amount() );
+			Amount = dtfptb::GetSize( IFlow );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );
 
 		}
 		//f Adjust the extent to amount.
 		void Adjust( void )
 		{
-			if ( _bunch<type, tym::E_MEMORYt_( type, row ), aem, row, sh >::Force( aem::Amount() ) )
-				tym::E_MEMORYt_( type, row )::Memory().Allocate( aem::Amount() );
+			if ( _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Force( mng::Amount() ) )
+				tym::E_MEMORYt_( type, row )::Memory().Allocate( mng::Amount() );
 		}
 	};
 

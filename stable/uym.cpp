@@ -220,21 +220,22 @@ void untyped_memory_::Store(
 	_Copy( Source, Position, *this, Offset, Amount, Buffer, BUFFER_SIZE );
 }
 
-#if 0
-void untyped_memory_::write(
-	row__ Position,
-	size__ Quantite,
+#define BUFFER_SIZE_MAX		FLW_SIZE_MAX
+
+void untyped_memory_::WriteToFlow(
+	mdr::row_t__ Position,
+	mdr::size__ Quantite,
 	flw::oflow__ &OFlow ) const
 {
 ERRProlog
-	datum__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
+	datum__ TamponSecurite[BUFFER_SIZE];
 	datum__ *Tampon = TamponSecurite;
 	size_t Taille = sizeof( TamponSecurite );
 ERRBegin
-	if ( Quantite > UYM_MIN_BUFFER_SIZE )
+	if ( Quantite > BUFFER_SIZE )
 	{
-		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (datum__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Taille = ( Quantite > BUFFER_SIZE_MAX ? BUFFER_SIZE_MAX : Quantite );
+		Tampon = (datum__ *)malloc( Taille );
 
 		if ( !Tampon )
 		{
@@ -249,11 +250,8 @@ ERRBegin
 			Taille = Quantite;
 
 		Recall( Position, Taille, Tampon );
-#ifdef UYM_DBG
-	if ( Taille > FLW_AMOUNT_MAX )
-		ERRc(),
-#endif
-		OFlow.Write( Tampon, (flw::amount__)Taille );
+
+		OFlow.Write( Tampon, (flw::size__)Taille );
 
 		Quantite -= Taille;
 		Position += Taille;
@@ -261,24 +259,24 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( ( Tampon != TamponSecurite ) && ( Tampon != NULL ) )
-		fam::FAM.Free( Tampon );
+		free( Tampon );
 ERREpilog
 }
 
-void untyped_memory_::read(
+void untyped_memory_::ReadFromFlow(
 	flw::iflow__ &IFlow,
-	row__ Position,
-	size__ Quantite )
+	mdr::row_t__ Position,
+	mdr::size__ Quantite )
 {
 ERRProlog
-	datum__ TamponSecurite[UYM_MIN_BUFFER_SIZE];
+	datum__ TamponSecurite[BUFFER_SIZE];
 	datum__ *Tampon = TamponSecurite;
 	size_t Taille = sizeof( TamponSecurite );
 ERRBegin
-	if ( Quantite > UYM_MIN_BUFFER_SIZE )
+	if ( Quantite > BUFFER_SIZE )
 	{
-		Taille = ( Quantite > UYM_MAX_BUFFER_SIZE ? UYM_MAX_BUFFER_SIZE : Quantite );
-		Tampon = (datum__ *)fam::FAM.Allocate( Taille, ( Taille > UYM_MIN_BUFFER_SIZE ? UYM_MIN_BUFFER_SIZE : Taille ) );
+		Taille = ( Quantite > BUFFER_SIZE_MAX ? BUFFER_SIZE_MAX : Quantite );
+		Tampon = (datum__ *)malloc( Taille );
 
 		if ( !Tampon )
 		{
@@ -292,11 +290,7 @@ ERRBegin
 		if ( Quantite < Taille )
 			Taille = Quantite;
 
-#ifdef UYM_DBG
-	if ( Taille > FLW_AMOUNT_MAX )
-		ERRc(),
-#endif
-		IFlow.Read( (flw::amount__)Taille, Tampon );
+		IFlow.Read( (flw::size__)Taille, Tampon );
 
 		Store( Tampon, Taille, Position );
 
@@ -306,10 +300,9 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( ( Tampon != TamponSecurite ) && ( Tampon != NULL ) )
-		fam::FAM.Free( Tampon );
+		free( Tampon );
 ERREpilog
 }
-#endif
 
 void uym::_Fill(
 	const datum__ *Object,

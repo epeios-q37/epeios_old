@@ -239,16 +239,14 @@ namespace uym {
 		{
 			Pilote_.Init();
 		}
-#if 0
-		void write(
-			row__ Position,
-			size__ Size,
+		void WriteToFlow(
+			mdr::row_t__ Position,
+			mdr::size__ Size,
 			flw::oflow__ &OFlow ) const;
-		void read(
+		void ReadFromFlow(
 			flw::iflow__  &IFlow,
-			row__ Position,
-			size__ Size );
-#endif
+			mdr::row_t__ Position,
+			mdr::size__ Size );
 		//f Allocates 'Capacity' bytes.
 		void Allocate( mdr::size__ Size )
 		{
