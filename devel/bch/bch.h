@@ -580,13 +580,12 @@ namespace bch {
 		r BeginS1 = 0,
 		r BeginS2 = 0 )
 	{
-		if ( ( S1.Amount() - *BeginS1 ) != ( S2.Amount() - *BeginS2 ) )
-			if ( ( S1.Amount() - *BeginS1 ) > ( S2.Amount() - *BeginS2 ) )
-				return 1;
-			else
-				return -1;
-		else
-			return tym::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - *BeginS1 );
+		bso::sign__ Result = bso::Compare( S1.Amount() - *BeginS1, S2.Amount() - *BeginS2 );
+
+		if ( Result == 0 )
+			Result = tym::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - *BeginS1 );
+
+		return Result;
 	}
 
 

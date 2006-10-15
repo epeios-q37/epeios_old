@@ -338,7 +338,7 @@ namespace dte {
 		const date__ &Date1,
 		const date__ &Date2 )
 	{
-		return (bso::sign__)(bso::sbyte__)( Date1 - Date2 );
+		return ( Date2 > Date1 ? 1L : ( Date2 == Date1 ? 0L : -1L ) );
 	}
 
 	inline txf::text_oflow__ &operator <<(

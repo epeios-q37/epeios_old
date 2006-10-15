@@ -318,6 +318,19 @@ namespace bso {
 		}
 	};
 
+	// Retourne le signe ce 'V1' - 'V2'.
+	template <typename t> inline bso::sign__ Compare(
+		const t &V1,
+		const t &V2 )
+	{
+		if ( V1 < V2 )
+			return -1;
+		else if ( V1 == V2 )
+			return 0;
+		else
+			return 1;
+	}
+
 	//t A portable sign.
 	typedef sign__ p_sign__;
 
