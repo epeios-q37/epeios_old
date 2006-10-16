@@ -462,16 +462,22 @@ namespace bch {
 
 			return *this;
 		}
-		void WriteToFlow( flw::oflow__ &OFlow ) const
+		void WriteToFlow(
+			flw::oflow__ &OFlow,
+			bso::bool__ WriteSize ) const
 		{
-			dtfptb::PutSize( mng::Amount(), OFlow );
+			if ( WriteSize )
+				dtfptb::PutSize( mng::Amount(), OFlow );
+
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
-		void ReadFromFlow( flw::iflow__ &IFlow )
+		void ReadFromFlow(
+			flw::iflow__ &IFlow,
+			epeios::size__ Amount )
 		{
-			epeios::size__ Amount;
+			if ( Amount == 0 )
+				Amount = dtfptb::GetSize( IFlow );
 
-			Amount = dtfptb::GetSize( IFlow );
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );
 
