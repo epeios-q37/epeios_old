@@ -230,6 +230,9 @@ ERREpilog
 	return TimeStamp;
 }
 
+// Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
+//#define IN_MEMORY
+
 bso::bool__ dbssct::file_static_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
@@ -238,18 +241,23 @@ ERRProlog
 	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
 	str::string ListFileName;
 	tol::E_FPOINTER___( bso::char__ ) ListFileNameBuffer;
+#ifdef IN_MEMORY
 	tym::E_MEMORY( atom__) Storage;
+#endif
 ERRBegin
-	Storage.Init();
-
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
-//	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
+#ifdef IN_MEMORY
+	Storage.Init();
 	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, Storage );
 
 	static_content_::Storage.Allocate( tol::GetFileSize( ContentFileNameBuffer ) );
 	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
+#else
+	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
+#endif
+
 
 
 	if ( Exists ) {

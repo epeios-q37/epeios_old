@@ -560,6 +560,8 @@ ERREpilog
 	return Success;
 }
 
+// Permet de stocker toutes les données en mémoire. NON UTILISABLE EN EXPLOITATION !
+//#define IN_MEMORY
 
 bso::bool__ dbsidx::file_index_::_ConnectToFiles( )
 {
@@ -569,32 +571,37 @@ ERRProlog
 	tol::E_FPOINTER___( bso::char__ ) TreeFileNameBuffer;
 	str::string QueueFileName;
 	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
+#ifdef IN_MEMORY
 	idxbtq::E_INDEXt( rrow__ ) Index;
+#endif
 ERRBegin
-	Index.Init();
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 	TreeFileNameBuffer = TreeFileName.Convert();
+#ifdef IN_MEMORY
+	Index.Init();
 	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, Index.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
-/*
+#else
 	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
-*/
+#endif
+
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
 
 
-/*	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
-		ERRu();
-*/
-
-
+#ifdef IN_MEMORY
 	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, Index.Queue().Links, S_.Mode, S_.Erase ) != Exists )
 		ERRu();
-
 	index_::BaseIndex = Index;
+#else
+	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
+		ERRu();
+#endif
+
+
 
 
 
