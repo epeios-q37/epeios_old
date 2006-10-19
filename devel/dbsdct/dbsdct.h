@@ -341,15 +341,19 @@ namespace dbsdct {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
+	typedef dbsbsc::file_features_	_file_features_;
 
 	class dynamic_content_
-	: public _delayed_initialization_
+	: public _file_features_
 	{
 	protected:
 		virtual void DBSBSCCompleteInitialization( void )
 		{
 			// Rien à faire.
+		}
+		virtual void DBSBSCDrop( void )
+		{
+			reset();
 		}
 	private:
 		size__ _StoreInAvailable(
@@ -446,7 +450,7 @@ namespace dbsdct {
 		availables_ Availables;
 		entries_ Entries;
 		struct s
-		: public _delayed_initialization_::s
+		: public _file_features_::s
 		{
 			storage_::s Storage;
 			availables_::s Availables;
@@ -458,7 +462,7 @@ namespace dbsdct {
 		} &S_;
 		dynamic_content_( s &S )
 		: S_( S ),
-		  _delayed_initialization_( S ),
+		  _file_features_( S ),
 		  Storage( S.Storage ),
 		  Availables( S.Availables ),
 		  Entries( S.Entries )
@@ -471,7 +475,7 @@ namespace dbsdct {
 
 			S_.Unallocated = 0;
 			S_.ModificationTimeStamp = 0;
-			_delayed_initialization_::reset( P );
+			_file_features_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -501,7 +505,7 @@ namespace dbsdct {
 			S_.Unallocated = 0;
 			S_.ModificationTimeStamp = 0;
 
-			_delayed_initialization_::Init( Partial );
+			_file_features_::Init( Partial );
 		}
 		rrow__ Store( const datum_ &Data )
 		{
@@ -576,6 +580,10 @@ namespace dbsdct {
 		{
 			ERRl();
 		}
+		void Drop( void )	// Efface tout, y compris la table sous-jacente.
+		{
+			_file_features_::Drop();
+		}
 		E_NAVt( Entries., rrow__ )
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
@@ -591,9 +599,15 @@ namespace dbsdct {
 		{
 			_ConnectToFiles();
 		}
+		virtual void DBSBSCDrop( void )
+		{
+			dynamic_content_::DBSBSCDrop();
+			_Drop();
+		}
 	private:
 		void _SaveLocationsAndAvailables( void ) const;
 		bso::bool__ _ConnectToFiles( void );
+		void _Drop( void );
 	public:
 		str::string_ RootFileName;
 		struct s

@@ -224,16 +224,17 @@ namespace dbsbsc {
 
 	E_AUTO( _cache )
 
-	class delayed_initialization_	// Permet d'éviter certaines opérations coûteuses en temps à l'initialisation.
+	class file_features_	// Permet d'implémenter certains comportements necessitéz par le stockage des données dans un fichier.
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void ) = 0;
+		virtual void DBSBSCCompleteInitialization( void ) = 0;// Permet d'éviter certaines opérations coûteuses en temps à l'initialisation.
+		virtual void DBSBSCDrop( void ) = 0;
 	public:
 		struct s
 		{
 			bso::bool__ InitializationCompleted;
 		} &S_;
-		delayed_initialization_( s &S )
+		file_features_( s &S )
 		: S_( S )
 		{}
 		void reset( bso::bool__ = true )
@@ -248,9 +249,9 @@ namespace dbsbsc {
 		{
 			// A des fins de standardisation.
 		}
-		delayed_initialization_ &operator =( const delayed_initialization_ &DI )
+		file_features_ &operator =( const file_features_ &FF )
 		{
-			S_.InitializationCompleted = DI.S_.InitializationCompleted;
+			S_.InitializationCompleted = FF.S_.InitializationCompleted;
 
 			return *this;
 		}
@@ -270,9 +271,19 @@ namespace dbsbsc {
 
 			S_.InitializationCompleted = true;
 		}
+		void Drop( void )
+		{
+			if ( !S_.InitializationCompleted )
+				DBSBSCCompleteInitialization();	// Pour que les 'file memory driver's sous-jacents se connecte au fichier, sinon l'effacement ne se fait pas.
+
+			DBSBSCDrop();
+		}
 		E_RODISCLOSE_( bso::bool__, InitializationCompleted );
 	};
 
+	void DropFile(
+		const str::string_ &RootFileName,
+		const char *Extension );
 
 }
 

@@ -125,15 +125,19 @@ namespace dbsidx {
 		b_Undefined
 	};
 
-	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
+	typedef dbsbsc::file_features_	_file_features_;
 
 	class index_
-	: public _delayed_initialization_
+	: public _file_features_
 	{
 	protected:
 		virtual void DBSBSCCompleteInitialization( void )
 		{
 			// Rien à faire.
+		}
+		virtual void DBSBSCDrop( void )
+		{
+			reset();
 		}
 	private:
 		bso::sign__ _Seek(
@@ -156,7 +160,7 @@ namespace dbsidx {
 	public:
 		_index_ BaseIndex;
 		struct s
-		: public _delayed_initialization_::s
+		: public _file_features_::s
 		{
 			_index_::s BaseIndex;
 			rrow__ Root;
@@ -166,7 +170,7 @@ namespace dbsidx {
 		} &S_;
 		index_( s &S )
 		: S_( S ),
-		  _delayed_initialization_( S ),
+		  _file_features_( S ),
 		  BaseIndex( S.BaseIndex )
 		{}
 		void reset( bso::bool__ P = true )
@@ -179,7 +183,7 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = 0;
 
-			_delayed_initialization_::reset( P );
+			_file_features_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -210,7 +214,7 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = 0;
 
-			_delayed_initialization_::Init( Partial );
+			_file_features_::Init( Partial );
 		}
 		// Vide l'index.
 		void Reset( void )
@@ -315,6 +319,10 @@ namespace dbsidx {
 				return NONE;
 		}
 		rrow__ Test( void ) const;
+		void Drop( void )
+		{
+			_file_features_::Drop();
+		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
@@ -330,9 +338,15 @@ namespace dbsidx {
 		{
 			_ConnectToFiles();
 		}
+		virtual void DBSBSCDrop( void )
+		{
+			index_::DBSBSCDrop();
+			_Drop();
+		}
 	private:
 		void _SaveRoot( void ) const;
 		bso::bool__ _ConnectToFiles( void );
+		void _Drop( void );
 	public:
 		str::string_ RootFileName;
 		struct s

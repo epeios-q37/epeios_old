@@ -388,6 +388,16 @@ namespace flm {
 
 			return File_.Size();
 		}
+		void Drop( void ) // Efface le fichier sous-jacent, s'il existe.
+		{
+			Liberer();
+
+			if ( ( Nom_ != NULL ) && tol::FileExists( Nom_ ) )
+				if ( remove( Nom_ ) != 0 )
+					ERRd();
+
+			TailleFichier_ = 0;
+		}
 	};
 
 	//c The standard memory driver which handle a file as memory.

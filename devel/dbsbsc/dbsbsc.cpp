@@ -57,6 +57,29 @@ public:
 
 using namespace dbsbsc;
 
+void dbsbsc::DropFile(
+	const str::string_ &RootFileName,
+	const char *Extension )
+{
+ERRProlog
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+ERRBegin
+	if ( RootFileName.Amount() != 0 ) {
+		FileName.Init( RootFileName );
+		FileName.Append( Extension );
+
+		if ( tol::FileExists( FileNameBuffer = FileName.Convert() ) )
+			if ( remove( FileNameBuffer ) != 0 )
+				ERRd();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

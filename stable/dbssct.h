@@ -78,16 +78,20 @@ namespace dbssct {
 
 	typedef lst::E_LISTt_( rrow__ ) _list_;
 
-	typedef dbsbsc::delayed_initialization_	_delayed_initialization_;
+	typedef dbsbsc::file_features_	_file_features_;
 
 	class static_content_
-	: public _delayed_initialization_,
+	: public _file_features_,
 	  public _list_
 	{
 	protected:
 		virtual void DBSBSCCompleteInitialization( void )
 		{
 			// Rien à faire.
+		}
+		virtual void DBSBSCDrop(  void )
+		{
+			reset();
 		}
 		virtual void LSTAllocate( epeios::size__ Amount )
 		{
@@ -97,7 +101,7 @@ namespace dbssct {
 		storage_ Storage;
 		struct s
 		: public _list_::s,
-		  public _delayed_initialization_::s
+		  public _file_features_::s
 		{
 			storage_::s Storage;
 			_cache_::s Cache;
@@ -108,7 +112,7 @@ namespace dbssct {
 		static_content_( s &S )
 		: S_( S ),
 		  _list_( S ),
-		  _delayed_initialization_( S ),
+		  _file_features_( S ),
 		  Storage( S.Storage )
 		{}
 		void reset( bso::bool__ P = true )
@@ -118,7 +122,7 @@ namespace dbssct {
 
 			S_.Size = 0;
 			S_.ModificationTimeStamp = 0;
-			_delayed_initialization_::reset( P );
+			_file_features_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -145,7 +149,7 @@ namespace dbssct {
 			S_.Size = Size;
 			S_.ModificationTimeStamp = 0;
 
-			_delayed_initialization_::Init( Partial );
+			_file_features_::Init( Partial );
 		}
 		void Erase( rrow__ Row )
 		{
@@ -198,6 +202,10 @@ namespace dbssct {
 		{
 			ERRl();
 		}
+		void Drop( void )	// Efface tout, y compris la table sous-jacente.
+		{
+			_file_features_::Drop();
+		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
@@ -212,9 +220,15 @@ namespace dbssct {
 		{
 			_ConnectToFiles();
 		}
+		virtual void DBSBSCDrop( void )
+		{
+			static_content_::DBSBSCDrop();
+			_Drop();
+		}
 	private:
 		void _SaveLocations( void ) const;
 		bso::bool__ _ConnectToFiles( void );
+		void _Drop( void );
 	public:
 		str::string_ RootFileName;
 		struct s

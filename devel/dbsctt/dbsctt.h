@@ -277,6 +277,17 @@ namespace dbsctt {
 
 			return false;	// Pour éviter un 'warning'.
 		}
+		void Drop( void )
+		{
+			if ( _Static != NULL )
+				 _Static->Drop();
+			else if ( _Dynamic != NULL )
+				_Dynamic->Drop();
+			else
+				ERRu();
+		}
+
+
 
 	};
 }

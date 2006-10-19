@@ -601,10 +601,6 @@ ERRBegin
 		ERRu();
 #endif
 
-
-
-
-
 	if ( Exists ) {
 		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
 
@@ -624,6 +620,20 @@ ERREnd
 ERREpilog
 	return Exists;
 }
+
+void dbsidx::file_index_::_Drop( void )
+{
+ERRProlog
+ERRBegin
+	S_.MemoryDriver.Tree.Drop();
+	S_.MemoryDriver.Queue.Drop();
+
+	dbsbsc::DropFile( RootFileName, ROOT_FILE_NAME_EXTENSION );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

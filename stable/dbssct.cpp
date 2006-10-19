@@ -274,6 +274,17 @@ ERREpilog
 	return Exists;
 }
 
+void dbssct::file_static_content_::_Drop( void )
+{
+ERRProlog
+ERRBegin
+	S_.MemoryDriver.Storage.Drop();
+
+	dbsbsc::DropFile( RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

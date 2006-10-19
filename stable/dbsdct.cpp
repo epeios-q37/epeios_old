@@ -301,6 +301,20 @@ ERREpilog
 	return Exists;
 }
 
+void dbsdct::file_dynamic_content_::_Drop( void )
+{
+ERRProlog
+ERRBegin
+	S_.MemoryDriver.Storage.Drop();
+	S_.MemoryDriver.Entries.Drop();
+
+	dbsbsc::DropFile( RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
+	dbsbsc::DropFile( RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
