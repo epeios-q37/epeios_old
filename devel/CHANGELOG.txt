@@ -1,5 +1,9 @@
 $Id$
 
+19/10/06 :
+	- IDXBTR :
+		- Correction bogue 'Delete()'.
+
 15/10/06 :
 	- BCH :
 		- Codage '[ReadFrom|WriteTo]Flow()'.

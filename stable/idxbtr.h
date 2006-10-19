@@ -196,19 +196,17 @@ namespace idxbtr {
 			r Root )
 		{
 			if ( BaseTree.HasBothChildren( Node ) ) {
-				r NewNode = NONE;
+				r TargetNode = NONE;
 
 				if ( *Node & 1 )	// Petit générateur aléatoire.
-					NewNode = _SearchMostLeftNode( BaseTree.Right( Node ) );
+					TargetNode = _SearchMostLeftNode( BaseTree.Right( Node ) );
 				else
-					NewNode = _SearchMostRightNode( BaseTree.Left( Node ) );
+					TargetNode = _SearchMostRightNode( BaseTree.Left( Node ) );
 
 				if ( Root == Node )
-					Root = NewNode;
+					Root = TargetNode;
 
-				BaseTree.SwapNodes( Node, NewNode );
-
-				Node = NewNode;
+				BaseTree.SwapNodes( Node, TargetNode );
 			}
 
 			if ( !BaseTree.HasChildren( Node ) ) {
@@ -217,12 +215,15 @@ namespace idxbtr {
 			} else {
 				r Child = BaseTree.HasLeft( Node ) ? BaseTree.Left( Node ) : BaseTree.Right( Node );
 
+				if ( Root == Node )
+					Root = Child;
+
 				BaseTree.Cut( Child );
 
 				BaseTree.SwapTrees( Child, Node );	// Sans que les couleurs suivent.
 			}
 
-			if ( Node == Root )
+			if ( Root == Node )
 				Root = NONE;
 
 			return Root;
