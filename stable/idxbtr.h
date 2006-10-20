@@ -190,7 +190,7 @@ namespace idxbtr {
 		{
 			return BaseTree.Amount();
 		}
-#if 1
+#if 0
 		r Delete(
 			r Node,
 			r Root )
