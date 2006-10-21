@@ -97,6 +97,10 @@ namespace dbssct {
 		{
 			Storage.Allocate( Amount * S_.Size );
 		}
+		void _Touch( void )
+		{
+			S_.ModificationTimeStamp = tol::Clock( true );
+		}
 	public:
 		storage_ Storage;
 		struct s
@@ -155,7 +159,7 @@ namespace dbssct {
 		{
 			_list_::Delete( Row );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		void Store(
 			const datum_ &Datum,
@@ -166,7 +170,7 @@ namespace dbssct {
 
 			Storage.Store( Datum, S_.Size, 0, *Row * S_.Size );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		rrow__ Store( const datum_ &Datum )
 		{

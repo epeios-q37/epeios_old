@@ -583,7 +583,7 @@ namespace tol {
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'clock()' only return how long
 	the application is using the processor.*/
-	inline time_t Clock( void )
+	inline time_t _Clock( void )
 	{
 		timeb T;
 
@@ -595,13 +595,25 @@ namespace tol {
 		return T.time * 1000UL + T.millitm;
 	}
 #else	// CW temporary workaround.
-	inline unsigned long Clock( void )
+	inline unsigned long _Clock( void )
 	{
 		return 1000UL * ::clock() / CLOCKS_PER_SEC;
 	}
 #endif
 
+	inline time_t Clock( bso::bool__ Discrimination )	// Mettre 'Discrimination' à 'true' pour être sûr que deux
+													// appels successifs à cette focntion renvoit deux valeurs différentes.
+	{
+		time_t Time = tol::_Clock();
 
+		if ( Discrimination ) {
+			while ( Time == tol::_Clock() );
+
+			Time = tol::_Clock();
+		}
+
+		return Time;
+	}
 
 	/*f Initialize the random generator using the date & time.
 	The used value is returned to be used with the following
@@ -634,11 +646,11 @@ namespace tol {
 		}
 		void Launch( void )
 		{
-			_Limit = Clock() + _Delay;
+			_Limit = Clock( false ) + _Delay;
 		}
 		bso::bool__ IsElapsed( void ) const
 		{
-			return Clock() > _Limit;
+			return Clock( false ) > _Limit;
 		}
 	};
 }

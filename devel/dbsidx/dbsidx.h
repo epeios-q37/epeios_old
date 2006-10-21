@@ -157,6 +157,10 @@ namespace dbsidx {
 		{
 			_Content().Retrieve( Row, Datum, Cache );
 		}
+		void _Touch( void )
+		{
+			S_.ModificationTimeStamp = tol::Clock( true );
+		}
 	public:
 		_index_ BaseIndex;
 		struct s
@@ -240,7 +244,7 @@ namespace dbsidx {
 #endif
 			S_.Root = BaseIndex.Delete( Row, S_.Root );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
@@ -309,7 +313,7 @@ namespace dbsidx {
 			if ( S_.Root != NONE )
 				S_.Root = BaseIndex.Balance( S_.Root );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		rrow__ CompareTreeAndQueue( void ) const
 		{

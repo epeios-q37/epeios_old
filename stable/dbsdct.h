@@ -445,6 +445,10 @@ namespace dbsdct {
 		{
 			Storage.Retrieve( Row, Data, S_.Unallocated );
 		}
+		void _Touch( void )
+		{
+			S_.ModificationTimeStamp = tol::Clock( true );
+		}
 	public:
 		storage_ Storage;
 		availables_ Availables;
@@ -513,7 +517,7 @@ namespace dbsdct {
 
 			_Store( Data, Row );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 
 			return Row;
 		}
@@ -523,7 +527,7 @@ namespace dbsdct {
 
 			Entries.Delete( Row );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		void Store(
 			const datum_ &Data,
@@ -533,7 +537,7 @@ namespace dbsdct {
 
 			_Store( Data, Row );
 
-			S_.ModificationTimeStamp = tol::Clock();
+			_Touch();
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(

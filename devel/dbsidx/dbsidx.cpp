@@ -132,6 +132,7 @@ ERRBegin
 
 	if ( S_.Root == NONE ) {
 		Row = NONE;
+
 		ERRReturn;
 	}
 
@@ -312,9 +313,9 @@ ERRBegin
 		ERRc();
 #endif
 
-	S_.ModificationTimeStamp = tol::Clock();
 ERRErr
 ERREnd
+	_Touch();
 ERREpilog
 	return Round;
 }
