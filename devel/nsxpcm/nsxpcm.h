@@ -96,8 +96,13 @@ namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
+#ifdef NSXPCM__BKD
+	using bkdacc::strings_;
+	using bkdacc::strings;
+#else
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
+#endif
 
 	void Transform(
 		const char *CString,
