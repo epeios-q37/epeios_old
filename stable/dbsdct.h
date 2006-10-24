@@ -447,7 +447,7 @@ namespace dbsdct {
 		}
 		void _Touch( void )
 		{
-			S_.ModificationTimeStamp = tol::Clock( true );
+			S_.ModificationTimeStamp = tol::Clock( false );
 		}
 	public:
 		storage_ Storage;

@@ -170,10 +170,10 @@ ERRBegin
 			}
 			break;
 		case 1:
-			Row = Seeker.SearchLesser();
+			Row = Seeker.SearchGreater();
 			break;
 		case -1:
-			Row = Seeker.SearchGreater();
+			Row = Seeker.SearchLesser();
 			break;
 		default:
 			ERRc();
@@ -315,7 +315,7 @@ ERRBegin
 
 ERRErr
 ERREnd
-	_Touch();
+	_Touch( false );
 ERREpilog
 	return Round;
 }
