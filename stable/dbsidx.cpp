@@ -233,10 +233,10 @@ ERRBegin
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
-			Result = 1;	// Pour forcer son positionnement en tant que premier.
-		case 1:
-			break;
+			Result = -1;	// Pour forcer son positionnement en tant que premier.
 		case -1:
+			break;
+		case 1:
 			TargetRow = NONE;
 			break;
 		default:
@@ -257,10 +257,10 @@ ERRBegin
 
 		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
 		case 0:
-			Result = -1;	// Pour forcer son positionnement en tant que dernier.
-		case -1:
-			break;
+			Result = 1;	// Pour forcer son positionnement en tant que dernier.
 		case 1:
+			break;
+		case -1:
 			TargetRow = NONE;
 			break;
 		default:
@@ -278,7 +278,7 @@ ERRBegin
 //	Display( BaseIndex, S_.Root, cout );
 
 	switch ( Result ) {
-	case 1:
+	case -1:
 		if ( ( Extremities != NULL ) && ( Extremities->Smallest == TargetRow ) )
 			Extremities->Smallest = Row;
 		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
@@ -291,7 +291,7 @@ ERRBegin
 		else
 			ERRc();
 		break;
-	case -1:
+	case 1:
 		if ( ( Extremities != NULL ) && ( Extremities->Greatest == TargetRow ) )
 			Extremities->Greatest = Row;
 		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );

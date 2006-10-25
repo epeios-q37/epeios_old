@@ -238,9 +238,7 @@ namespace dbssct {
 		struct s
 		: public static_content_::s
 		{
-			struct memory_driver__ {
-				flm::E_FILE_MEMORY_DRIVER___ Storage;
-			} MemoryDriver;
+			bch::bunch_file_manager___ FileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;
@@ -256,7 +254,7 @@ namespace dbssct {
 					_SaveLocations();
 			}
 
-			S_.MemoryDriver.Storage.reset( P );
+			S_.FileManager.reset( P );
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
 			static_content_::reset( P );
@@ -275,27 +273,19 @@ namespace dbssct {
 			epeios::size__ Size,
 			const str::string_ &RootFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Partial )
-		{
-			reset();
-
-			this->RootFileName.Init( RootFileName );
-			S_.Mode = Mode;
-
-			static_content_::Init( Size, Partial );
-		}
+			bso::bool__ Partial );
 		void WriteLocationsFile( void )	// Met à jour les fichiers.
 		{
 			_SaveLocations();
 		}
 		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
 		{
-			S_.MemoryDriver.Storage.Liberer();
+			S_.FileManager.ReleaseFile();
 		}
 		void SwitchMode( mdr::mode__ Mode )
 		{
 			if ( Mode != S_.Mode ) {
-				S_.MemoryDriver.Storage.Mode( Mode );
+				S_.FileManager.Mode( Mode );
 
 				S_.Mode = Mode;
 			}

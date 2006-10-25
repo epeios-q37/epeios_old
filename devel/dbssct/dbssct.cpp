@@ -230,6 +230,35 @@ ERREpilog
 	return TimeStamp;
 }
 
+
+void dbssct::file_static_content_::Init(
+	epeios::size__ Size,
+	const str::string_ &RootFileName,
+	mdr::mode__ Mode,
+	bso::bool__ Partial )
+{
+ERRProlog
+	str::string ContentFileName;
+	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
+ERRBegin
+	reset();
+
+	this->RootFileName.Init( RootFileName );
+	S_.Mode = Mode;
+
+	static_content_::Init( Size, Partial );
+
+	ContentFileName.Init( RootFileName );
+	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
+	ContentFileNameBuffer = ContentFileName.Convert();
+
+	S_.FileManager.Init( ContentFileNameBuffer, Mode, true );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
@@ -255,10 +284,9 @@ ERRBegin
 	static_content_::Storage.Allocate( tol::GetFileSize( ContentFileNameBuffer ) );
 	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
 #else
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
+//	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
 #endif
-
-
+	Exists = bch::Connect( this->Storage, S_.FileManager );
 
 	if ( Exists ) {
 		_list_::Locations.Init( tol::GetFileSize( ContentFileNameBuffer ) / S_.Size );
@@ -278,7 +306,7 @@ void dbssct::file_static_content_::_Drop( void )
 {
 ERRProlog
 ERRBegin
-	S_.MemoryDriver.Storage.Drop();
+	S_.FileManager.Drop();
 
 	dbsbsc::DropFile( RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
 ERRErr

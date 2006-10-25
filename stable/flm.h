@@ -398,6 +398,10 @@ namespace flm {
 
 			TailleFichier_ = 0;
 		}
+		const char *FileName( void ) const
+		{
+			return Nom_;
+		}
 	};
 
 	//c The standard memory driver which handle a file as memory.

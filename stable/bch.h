@@ -66,6 +66,7 @@ extern class ttr_tutor &BCHTutor;
 #include "aem.h"
 #include "epeios.h"
 #include "dtfptb.h"
+#include "flm.h"
 
 namespace bch {
 
@@ -528,6 +529,70 @@ namespace bch {
 
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
+
+	class bunch_file_manager___ {
+	private:
+		flm::E_FILE_MEMORY_DRIVER___ _MemoryDriver;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_MemoryDriver.reset( P );
+		}
+		bunch_file_manager___( void )
+		{
+			reset( false );
+		}
+		~bunch_file_manager___( void )
+		{
+			reset();
+		}
+		void Init( 
+			const char *FileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persitent )
+		{
+			_MemoryDriver.Init( FileName, Mode, flm::cFirstUse );
+
+			if ( Persitent )
+				_MemoryDriver.Persistant();
+		}
+		void ReleaseFile( void )
+		{
+			_MemoryDriver.Liberer();
+		}
+		void Mode( mdr::mode__ Mode )
+		{
+			_MemoryDriver.Mode( Mode );
+		}
+		void Drop( void )
+		{
+			_MemoryDriver.Drop();
+		}
+		const char *FileName( void ) const
+		{
+			return _MemoryDriver.FileName();
+		}
+		flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver( void )
+		{
+			return _MemoryDriver;
+		}
+	};
+
+
+	template <typename bunch> bso::bool__ Connect(
+		bunch &Bunch,
+		bunch_file_manager___ &FileManager )
+	{
+		bso::bool__ Exists = tol::FileExists( FileManager.FileName() );
+
+		Bunch.plug( FileManager.MemoryDriver() );
+
+		if ( Exists )
+			Bunch.Allocate( tol::GetFileSize( FileManager.FileName() ) / Bunch.GetItemSize() );
+
+		return Exists;
+	}
+
 
 	typedef E_BUNCH_( epeios::row__ ) relations_;
 	E_AUTO( relations )
