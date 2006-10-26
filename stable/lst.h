@@ -68,6 +68,16 @@ namespace lst {
 
 	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
 
+	epeios::row__ _WriteToFile(
+		const store_ &Store,
+		const char *FileName );
+
+	bso::bool__ _ReadFromFile(
+		const char *FileName,
+		epeios::row__ FirstUnused,
+		time_t TimeStamp,
+		store_ &Store );
+
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
 		epeios::size__ Amount,
@@ -293,6 +303,23 @@ namespace lst {
 	};
 
 	E_AUTO2( list )
+
+	// Retourne l'id de la première entrée disponible (hors pile des 'released').
+	template <typename list> epeios::row__ WriteToFile(
+		const list &List,
+		const char *FileName )
+	{
+		return _WriteToFile( List.Locations, FileName );
+	}
+
+	template <typename list> bso::bool__ ReadFromFile(
+		const char *FileName,
+		epeios::row__ FirstUnused,
+		list &List,
+		time_t TimeStamp = 0 )
+	{
+		return _ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations );
+	}
 
 
 	#define E_LISTtx( r, r_t )	list<r, r_t>

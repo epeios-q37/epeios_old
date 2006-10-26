@@ -61,66 +61,11 @@ using namespace dbssct;
 
 #include "flf.h"
 
-#define LOCATIONS_FILE_NAME_EXTENSION	".edl"
+#define LIST_FILE_NAME_EXTENSION	".edl"
 #define CONTENT_FILE_NAME_EXTENSION		".edc"
 
-template <typename container> static bso::bool__ Set_(
-	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const char *FileName,
-	mdr::mode__ Mode,
-	container &C )
-{
-	bso::bool__ Exists = false;
-
-	Exists = tol::FileExists( FileName );
-
-	MemoryDriver.Init( FileName, Mode );
-	MemoryDriver.Persistant();
-	C.plug( MemoryDriver );
-
-	if ( Exists )
-		C.Allocate( tol::GetFileSize( FileName ) );
-
-	return Exists;
-}
-
-static inline void Save_(
-	epeios::row__ Row,
-	flw::oflow__ &Flow )
-{
-	dtfptb::PutULong( *Row, Flow );
-}
-
-template <typename item> static void Save_(
-	const stk::E_BSTACK_( item ) &Bunch,
-	flw::oflow__ &Flow )
-{
-	stk::row__ Row = Bunch.First();
-
-	while ( Row != NONE ) {
-		Save_( Bunch( Row ), Flow );
-
-		Row = Bunch.Next( Row );
-	}
-}
-
-template <typename item> static void Save_(
-	const stk::E_BSTACK_( item ) &Bunch,
-	const char *RootFileName )
-{
-ERRProlog
-	flf::file_oflow___ Flow;
-ERRBegin
-	Flow.Init( RootFileName );
-
-	Save_( Bunch, Flow );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-template <typename item> static void Save_(
-	const stk::E_BSTACK_( item ) &Bunch,
+static void Save_(
+	const _list_ &List,
 	const str::string_ &RootFileName,
 	const char *Extension )
 {
@@ -130,7 +75,7 @@ ERRProlog
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	Save_( Bunch, FileNameBuffer = FileName.Convert() );
+	lst::WriteToFile( List, FileNameBuffer = FileName.Convert() );
 ERRErr
 ERREnd
 ERREpilog
@@ -138,98 +83,8 @@ ERREpilog
 
 void dbssct::file_static_content_::_SaveLocations( void ) const
 {
-	Save_( _list_::Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
+	Save_( *this, RootFileName, LIST_FILE_NAME_EXTENSION );
 }
-
-static inline void Load_(
-	flw::iflow__ &Flow,
-	epeios::row__ &Row )
-{
-	Row = dtfptb::GetULong( Flow );
-}
-	
-template <typename item> static void Load_(
-	flw::iflow__ &Flow,
-	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue )
-{
-	item Item;
-
-	Load_( Flow, Item );
-
-	while ( Item != TestValue ) {
-		Bunch.Append( Item );
-		Load_( Flow, Item );
-	}
-}
-
-template <typename item> static bso::bool__ Load_(
-	const char *RootFileName,
-	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue,
-	time_t TimeStamp )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	flf::file_iflow___ Flow;
-	static flw::datum__ Buffer[sizeof( item )];
-ERRBegin
-	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( RootFileName ) < TimeStamp )
-			ERRReturn;
-
-		memcpy( Buffer, &TestValue, sizeof( item ) );
-
-		Flow.EOFD( (void *)Buffer, sizeof( item ) );
-
-		Load_( Flow, Bunch, TestValue );
-
-		Flow.reset();
-
-		Success = true;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
-}
-
-template <typename item> static bso::bool__ Load_(
-	const str::string_ &RootFileName,
-	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue,
-	const char *Extension,
-	time_t TimeStamp )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileName.Init( RootFileName );
-	FileName.Append( Extension );
-	Success = Load_( FileNameBuffer = FileName.Convert(), Bunch, TestValue, TimeStamp );
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
-}
-
-static time_t GetModificationTimeStamp_( const str::string_ &FileName )
-{
-	time_t TimeStamp;
-ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileNameBuffer = FileName.Convert();
-
-	TimeStamp = tol::GetFileLastModificationTime( FileNameBuffer );
-ERRErr
-ERREnd
-ERREpilog
-	return TimeStamp;
-}
-
 
 void dbssct::file_static_content_::Init(
 	epeios::size__ Size,
@@ -258,7 +113,6 @@ ERREnd
 ERREpilog
 }
 
-
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
@@ -285,15 +139,15 @@ ERRBegin
 	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
 #else
 //	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
-#endif
 	Exists = bch::Connect( this->Storage, S_.FileManager );
+#endif
 
 	if ( Exists ) {
-		_list_::Locations.Init( tol::GetFileSize( ContentFileNameBuffer ) / S_.Size );
+		ListFileName.Init( RootFileName );
+		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
+		ListFileNameBuffer = ContentFileName.Convert();
 
-		time_t TimeStamp = GetModificationTimeStamp_( ContentFileName );
-
-		if ( !Load_<epeios::row__>( RootFileName, _list_::Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, TimeStamp ) )
+		if ( !lst::ReadFromFile( ListFileNameBuffer, tol::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, tol::GetFileLastModificationTime( ContentFileNameBuffer ) ) )
 			RebuildLocations();
 	}
 ERRErr
@@ -308,7 +162,7 @@ ERRProlog
 ERRBegin
 	S_.FileManager.Drop();
 
-	dbsbsc::DropFile( RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
+	dbsbsc::DropFile( RootFileName, LIST_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd
 ERREpilog

@@ -54,6 +54,93 @@ public:
 				  /*			  unless specified			 */
 				  /*******************************************/
 /*$BEGIN$*/
+#include "flf.h"
+
+static inline void Save_(
+	epeios::row__ Row,
+	flw::oflow__ &Flow )
+{
+	dtfptb::PutULong( *Row, Flow );
+}
+
+static void Save_(
+	const stk::E_BSTACK_( epeios::row__ ) &Bunch,
+	flw::oflow__ &Flow )
+{
+	stk::row__ Row = Bunch.First();
+
+	while ( Row != NONE ) {
+		Save_( Bunch( Row ), Flow );
+
+		Row = Bunch.Next( Row );
+	}
+}
+
+epeios::row__ lst::_WriteToFile(
+	const store_ &Store,
+	const char *FileName )
+{
+	epeios::row__ Row;
+ERRProlog
+	flf::file_oflow___ Flow;
+ERRBegin
+	Flow.Init( FileName );
+
+	Save_( Store.Released, Flow );
+
+	Row = Store.GetFirstAvailable();
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
+
+static inline void Load_(
+	flw::iflow__ &Flow,
+	epeios::row__ &Row )
+{
+	Row = dtfptb::GetULong( Flow );
+}
+	
+static void Load_(
+	flw::iflow__ &Flow,
+	epeios::size__ Amount,
+	stk::E_BSTACK_( epeios::row__ ) &Stack )
+{
+	epeios::row__ Row;
+
+	while ( Amount-- ) {
+		Load_( Flow, Row );
+		Stack.Append( Row );
+	}
+}
+
+bso::bool__ lst::_ReadFromFile(
+	const char *FileName,
+	epeios::row__ FirstUnused,
+	time_t TimeStamp,
+	store_ &Store )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	flf::file_iflow___ Flow;
+ERRBegin
+	if ( Flow.Init( FileName, err::hSkip ) == fil::sSuccess ) {
+		if ( tol::GetFileLastModificationTime( FileName ) < TimeStamp )
+			ERRReturn;
+
+		Store.Init( FirstUnused );
+
+		Load_( Flow, tol::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
+
+		Success = true;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
 
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 epeios::row_t__ lst::Successeur_(
