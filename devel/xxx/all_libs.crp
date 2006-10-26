@@ -364,6 +364,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib EnTRies
 &gsbetr_	&lgsb		&\
 	&GeSBib EnTRies (for backend).
+&gsbbfc		&lgsb		&\
+	&GeSBib Backend/Frontend Commons
 &gsbfil		&lgsb		&\
 	&GeSBib FILler
 &gsbfld		&lgsb		&2002-\
