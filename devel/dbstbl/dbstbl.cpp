@@ -575,24 +575,6 @@ ERREpilog
 	return Row;
 }
 
-bso::bool__ dbstbl::thread_safe_table_::Begins(
-	rrow__ RecordRow,
-	const datum_ &Pattern,
-	irow__ IRow )
-{
-	bso::bool__ Result = false;
-ERRProlog
-ERRBegin
-	RO
-
-	Result = T.Begins( RecordRow, Pattern, IRow );
-ERRErr
-ERREnd
-	RRO
-ERREpilog
-	return Result;
-}
-
 rrow__ dbstbl::thread_safe_table_::First( irow__ IRow )
 {
 	rrow__ Row = NONE;

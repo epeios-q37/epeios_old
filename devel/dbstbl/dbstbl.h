@@ -367,18 +367,6 @@ namespace dbstbl {
 
 			return Seek( Datum, IRow, EqualBehavior, Sign );
 		}
-		bso::bool__ Begins(
-			rrow__ RecordRow,
-			const datum_ &Pattern,
-			irow__ IndexRow ) const
-		{
-			_Test();
-
-			if ( _IsBulk() )
-				ERRu();
-
-			return _I( IndexRow).Begins( RecordRow, Pattern );
-		}
 		bso::sign__ Compare(
 			rrow__ RecordRow,
 			const datum_&Pattern,
@@ -603,10 +591,6 @@ namespace dbstbl {
 			const datum_ &Datum,
 			irow__ IRow,
 			behavior__ EqualBahavior );
-		bso::bool__ Begins(
-			rrow__ RecordRow,
-			const datum_ &Datum,
-			irow__ IRow );
 		bso::sign__ Compare(
 			rrow__ RecordRow,
 			const datum_&Pattern,

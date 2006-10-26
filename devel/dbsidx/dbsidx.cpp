@@ -341,25 +341,6 @@ rrow__ dbsidx::index_::Seek(
 	return Row;
 }
 
-bso::bool__ dbsidx::index_::Begins(
-	rrow__ RecordRow,
-	const datum_ &Pattern ) const
-{
-	bso::bool__ Result = false;
-ERRProlog
-	datum Datum;
-ERRBegin
-	Datum.Init();
-
-	_Content().Retrieve( RecordRow, Datum, *(dbsctt::_cache_ *)NULL );
-
-	Result = S_.Sort->Begins( Datum, Pattern );
-ERRErr
-ERREnd
-ERREpilog
-	return Result;
-}
-
 rrow__ dbsidx::index_::Test( void ) const
 {
 	rrow__ Row = NONE;
