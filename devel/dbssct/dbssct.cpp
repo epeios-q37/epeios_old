@@ -139,7 +139,7 @@ ERRBegin
 	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
 #else
 //	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
-	Exists = bch::Connect( this->Storage, S_.FileManager );
+	Exists = tym::Connect( this->Storage, S_.FileManager );
 #endif
 
 	if ( Exists ) {

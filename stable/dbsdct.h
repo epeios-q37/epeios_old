@@ -341,6 +341,8 @@ namespace dbsdct {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
+	typedef lstbch::list_bunch_file_manager___<entries_> entries_file_manager___;
+
 	typedef dbsbsc::file_features_	_file_features_;
 
 	class dynamic_content_
@@ -617,11 +619,8 @@ namespace dbsdct {
 		struct s
 		: public dynamic_content_::s
 		{
-			struct memory_driver__ {
-				flm::E_FILE_MEMORY_DRIVER___
-					Storage,
-					Entries;
-			} MemoryDriver;
+			tym::memory_file_manager___ StorageFileManager;
+			entries_file_manager___ EntriesFileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;
@@ -637,8 +636,8 @@ namespace dbsdct {
 					_SaveLocationsAndAvailables();
 			}
 
-			S_.MemoryDriver.Storage.reset( P );
-			S_.MemoryDriver.Entries.reset( P );
+			S_.StorageFileManager.reset( P );
+			S_.EntriesFileManager.reset( P );
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
 			dynamic_content_::reset( P );
@@ -656,29 +655,21 @@ namespace dbsdct {
 		void Init(
 			const str::string_ &RootFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Partial )
-		{
-			reset();
-
-			this->RootFileName.Init( RootFileName );
-			S_.Mode = Mode;
-
-			dynamic_content_::Init( Partial );
-		}
+			bso::bool__ Partial );
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();
 		}
 		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
 		{
-			S_.MemoryDriver.Storage.Liberer();
-			S_.MemoryDriver.Entries.Liberer();
+			S_.StorageFileManager.ReleaseFile();
+			S_.EntriesFileManager.ReleaseFile();
 		}
 		void SwitchMode( mdr::mode__ Mode )
 		{
 			if ( Mode != S_.Mode ) {
-				S_.MemoryDriver.Storage.Mode( Mode );
-				S_.MemoryDriver.Entries.Mode( Mode );
+				S_.StorageFileManager.Mode( Mode );
+				S_.EntriesFileManager.Mode( Mode );
 
 				S_.Mode = Mode;
 			}

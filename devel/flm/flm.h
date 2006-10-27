@@ -368,6 +368,10 @@ namespace flm {
 		{
 			Temoin_.Persistant = true;
 		}
+		bso::bool__ IsPersistent( void ) const
+		{
+			return Temoin_.Persistant != 0;
+		}
 		// bascule en mode d'acces 'Acces'.
 		void Mode( mdr::mode__ Mode )
 		{

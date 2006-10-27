@@ -167,6 +167,90 @@ namespace lstbch {
 
 	E_AUTO3( list_bunch )
 
+	typedef bch::bunch_file_manager___ _bunch_file_manager___;
+
+	template <typename list_bunch> class list_bunch_file_manager___
+	: public _bunch_file_manager___
+	{
+	private:
+		list_bunch *_ListBunch;
+		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( ( _ListBunch != NULL )
+					 && _bunch_file_manager___::IsPersistent()
+					 && tol::FileExists( _bunch_file_manager___::FileName() )
+					 && ( !tol::FileExists( _ListFileName )
+					      || ( tol::GetFileLastModificationTime( _bunch_file_manager___::FileName() )
+						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
+					lst::WriteToFile( *_ListBunch, _ListFileName );
+			}
+
+			_bunch_file_manager___::reset( P );
+			_ListFileName.reset( P );
+
+			_ListBunch = NULL;
+		}
+		list_bunch_file_manager___( void )
+		{
+			reset( false );
+		}
+		~list_bunch_file_manager___( void )
+		{
+			reset();
+		}
+		void Init(
+			list_bunch &ListBunch,
+			const char *BunchFileName,
+			const char *ListFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent )
+		{
+			reset();
+
+			_ListBunch = &ListBunch;
+
+			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent );
+
+			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
+				ERRa();
+
+			strcpy( _ListFileName, ListFileName );
+		}
+		void Drop( void )
+		{
+			if ( ( _ListBunch == NULL ) || ( _ListFileName == NULL ) )
+				ERRu();
+
+			_bunch_file_manager___::Drop();
+
+			if ( tol::FileExists( _ListFileName ) )
+				if ( remove( _ListFileName ) != 0 )
+					ERRu();
+		}
+		const char *ListFileName( void ) const
+		{
+			return _ListFileName;
+		}
+	};
+
+
+	template <typename list_bunch> bso::bool__ Connect(
+		list_bunch &ListBunch,
+		list_bunch_file_manager___<list_bunch> &FileManager )
+	{
+		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
+
+		if ( Exists )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), tol::GetFileSize( FileManager.FileName() ) / ListBunch.GetItemSize(), ListBunch, tol::GetFileLastModificationTime( FileManager.FileName() ) ) )
+				ERRu();
+
+		return Exists;
+	}
+
+
 	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
 	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>
 

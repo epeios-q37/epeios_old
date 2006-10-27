@@ -238,7 +238,7 @@ namespace dbssct {
 		struct s
 		: public static_content_::s
 		{
-			bch::bunch_file_manager___ FileManager;
+			tym::memory_file_manager___ FileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;

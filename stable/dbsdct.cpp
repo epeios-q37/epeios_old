@@ -59,30 +59,10 @@ using namespace dbsdct;
 
 #include "flf.h"
 
-#define LOCATIONS_FILE_NAME_EXTENSION	".edl"
+#define LIST_FILE_NAME_EXTENSION	".edl"
 #define AVAILABLES_FILE_NAME_EXTENSION	".eda"
 #define CONTENT_FILE_NAME_EXTENSION		".edc"
 #define ENTRIES_FILE_NAME_EXTENSION		".ede"
-
-template <typename container> static bso::bool__ Set_(
-	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const char *FileName,
-	mdr::mode__ Mode,
-	container &C )
-{
-	bso::bool__ Exists = false;
-
-	Exists = tol::FileExists( FileName );
-
-	MemoryDriver.Init( FileName, Mode );
-	MemoryDriver.Persistant();
-	C.plug( MemoryDriver );
-
-	if ( Exists )
-		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
-
-	return Exists;
-}
 
 static inline void Save_(
 	epeios::row__ Row,
@@ -146,7 +126,6 @@ ERREpilog
 
 void dbsdct::file_dynamic_content_::_SaveLocationsAndAvailables( void ) const
 {
-	Save_( Entries.List().Locations.Released, RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
 	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
 }
 
@@ -233,64 +212,73 @@ ERREpilog
 	return Success;
 }
 
-static time_t GetModificationTimeStamp_( const str::string_ &FileName )
+void dbsdct::file_dynamic_content_::Init(
+	const str::string_ &RootFileName,
+	mdr::mode__ Mode,
+	bso::bool__ Partial )
 {
-	time_t TimeStamp;
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	str::string ContentFileName;
+	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
+	str::string EntriesBunchFileName;
+	tol::E_FPOINTER___( bso::char__ ) EntriesBunchFileNameBuffer;
+	str::string EntriesListFileName;
+	tol::E_FPOINTER___( bso::char__ ) EntriesListFileNameBuffer;
 ERRBegin
-	FileNameBuffer = FileName.Convert();
+	reset();
 
-	TimeStamp = tol::GetFileLastModificationTime( FileNameBuffer );
+	ContentFileName.Init( RootFileName );
+	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
+	ContentFileNameBuffer = ContentFileName.Convert();
+
+	S_.StorageFileManager.Init( ContentFileNameBuffer, Mode, true );
+
+	EntriesBunchFileName.Init( RootFileName );
+	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
+	EntriesBunchFileNameBuffer = EntriesBunchFileName.Convert();
+
+	EntriesListFileName.Init( RootFileName );
+	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
+	EntriesListFileNameBuffer = EntriesListFileName.Convert();
+
+	S_.EntriesFileManager.Init( Entries, EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true );
+
+	this->RootFileName.Init( RootFileName );
+	S_.Mode = Mode;
+
+	dynamic_content_::Init( Partial );
 ERRErr
 ERREnd
 ERREpilog
-	return TimeStamp;
 }
+
 
 bso::bool__ dbsdct::file_dynamic_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
-	str::string ContentFileName;
-	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
-	str::string EntriesFileName;
-	tol::E_FPOINTER___( bso::char__ ) EntriesFileNameBuffer;
 	available__ TestAvailable;
 ERRBegin
-	ContentFileName.Init( RootFileName );
-	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	ContentFileNameBuffer = ContentFileName.Convert();
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, dynamic_content_::Storage.Memory );
+	Exists = tym::Connect( Storage.Memory, S_.StorageFileManager );
 
-	EntriesFileName.Init( RootFileName );
-	EntriesFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
-	EntriesFileNameBuffer = EntriesFileName.Convert();
-	Entries.Bunch().SetStepValue( 0 );	// Pas de préallocation ('Extent' == 'Size' ).
-	if ( Set_( S_.MemoryDriver.Entries, EntriesFileNameBuffer, S_.Mode, Entries.Bunch() ) != Exists )
+	if ( lstbch::Connect( Entries, S_.EntriesFileManager ) != Exists )
 		ERRu();
 
-	if ( Exists ) {
-		dynamic_content_::S_.Unallocated = tol::GetFileSize( ContentFileNameBuffer );
-		Entries.List().Locations.Init( tol::GetFileSize( EntriesFileNameBuffer ) / sizeof( entry__ ) );
-	} else {
+	if ( Exists )
+		dynamic_content_::S_.Unallocated = tol::GetFileSize( S_.StorageFileManager.FileName() );
+	else
 		dynamic_content_::S_.Unallocated = 0;
-		Entries.List().Locations.Init( 0 / sizeof( entry__ ) );
-	}
 
 	if ( Exists ) {
 		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
 
-		ContentTimeStamp = GetModificationTimeStamp_( ContentFileName );
-		EntriesTimeStamp = GetModificationTimeStamp_( EntriesFileName );
+		ContentTimeStamp = tol::GetFileLastModificationTime( S_.StorageFileManager.FileName() );
+		EntriesTimeStamp = tol::GetFileLastModificationTime( S_.EntriesFileManager.FileName() );
 
 		if ( ContentTimeStamp > EntriesTimeStamp )
 			LastTimeStamp = ContentTimeStamp;
 		else
 			LastTimeStamp = EntriesTimeStamp;
-
-		if ( !Load_<epeios::row__>( RootFileName, Entries.List().Locations.Released, NONE, LOCATIONS_FILE_NAME_EXTENSION, LastTimeStamp ) )
-			RebuildLocations();
 
 		if ( !Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, LastTimeStamp ) )
 			RebuildAvailables();
@@ -305,10 +293,9 @@ void dbsdct::file_dynamic_content_::_Drop( void )
 {
 ERRProlog
 ERRBegin
-	S_.MemoryDriver.Storage.Drop();
-	S_.MemoryDriver.Entries.Drop();
+	S_.StorageFileManager.Drop();
+	S_.EntriesFileManager.Drop();
 
-	dbsbsc::DropFile( RootFileName, LOCATIONS_FILE_NAME_EXTENSION );
 	dbsbsc::DropFile( RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd
