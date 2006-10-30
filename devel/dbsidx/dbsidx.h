@@ -346,6 +346,7 @@ namespace dbsidx {
 		struct s
 		: public index_::s
 		{
+			idxbtq::index_file_manager___ FileManager;
 			struct memory_driver__ {
 				flm::E_FILE_MEMORY_DRIVER___ Tree;
 				flm::E_FILE_MEMORY_DRIVER___ Queue;
@@ -366,10 +367,9 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			S_.MemoryDriver.Tree.reset( P );
-			S_.MemoryDriver.Queue.reset( P );
 			RootFileName.reset( P );
 			index_::reset( P );
+			S_.FileManager.reset( P );
 			S_.Erase = false;
 			S_.Mode = mdr::m_Undefined;
 		}
@@ -389,21 +389,10 @@ namespace dbsidx {
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,
-			bso::bool__ Partial )
-		{
-			reset();
-
-			this->RootFileName.Init( RootFileName );
-
-			index_::Init( Content, Sort, Partial );
-
-			S_.Mode = Mode;
-			S_.Erase = Erase;
-		}
+			bso::bool__ Partial );
 		void CloseFiles( void )
 		{
-			S_.MemoryDriver.Tree.Liberer();
-			S_.MemoryDriver.Queue.Liberer();
+			S_.FileManager.ReleaseFiles();
 		}
 	};
 

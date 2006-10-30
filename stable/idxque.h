@@ -137,6 +137,16 @@ namespace idxque {
 	};
 
 	E_AUTO1( queue_index )
+
+	typedef que::queue_file_manager___ queue_index_file_manager___;
+
+	template <typename index> bso::bool__ Connect(
+		index &Index,
+		queue_index_file_manager___ &FileManager )
+	{
+		return que::Connect( Index, FileManager );
+	}
+
 	
 	#define E_IQUEUEt_( r )	queue_index_<r>
 	#define E_IQUEUEt( r )	queue_index<r>

@@ -916,6 +916,16 @@ namespace btr {
 
 	E_AUTO1( binary_tree )
 
+	typedef bch::bunch_file_manager___ binary_tree_file_manager___;
+
+	template <typename tree> bso::bool__ Connect(
+		tree &Tree,
+		binary_tree_file_manager___ &FileManager )
+	{
+		return bch::Connect( Tree.Nodes, FileManager );
+	}
+
+
 	#define E_BTREEt_( r )	binary_tree_< r >
 	#define E_BTREEt( r )	binary_tree< r >
 

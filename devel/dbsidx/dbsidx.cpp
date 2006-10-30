@@ -394,60 +394,6 @@ ERREpilog
 	return Result;
 }
 
-template <typename container> static bso::bool__ CoreSet_(
-	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const char *FileName,
-	container &C,
-	mdr::mode__ Mode,
-	bso::bool__ Erase )
-{
-	bso::bool__ Exists = false;
-
-	Exists = tol::FileExists( FileName );
-
-	if ( Exists && Erase ) {
-		remove( FileName );
-		Exists = false;
-	}
-
-	MemoryDriver.Init( FileName, Mode );
-	MemoryDriver.Persistant();
-	C.plug( MemoryDriver );
-	C.SetStepValue( 0 );
-
-	return Exists;
-}
-
-template <typename container> static bso::bool__ Set_(
-	flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver,
-	const char *FileName,
-	container &C,
-	mdr::mode__ Mode,
-	bso::bool__ Erase )
-{
-	bso::bool__ Exists = CoreSet_( MemoryDriver, FileName, C, Mode, Erase );
-
-	if ( Exists )
-		C.Allocate( tol::GetFileSize( FileName ) / C.GetItemSize() );
-
-	return Exists;
-}
-
-static time_t GetModificationTimeStamp_( const str::string_ &FileName )
-{
-	time_t TimeStamp;
-ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
-ERRBegin
-	FileNameBuffer = FileName.Convert();
-
-	TimeStamp = tol::GetFileLastModificationTime( FileNameBuffer );
-ERRErr
-ERREnd
-ERREpilog
-	return TimeStamp;
-}
-
 static inline void Save_(
 	rrow__ Row,
 	flw::oflow__ &Flow )
@@ -542,52 +488,70 @@ ERREpilog
 	return Success;
 }
 
-// Permet de stocker toutes les données en mémoire. NON UTILISABLE EN EXPLOITATION !
-//#define IN_MEMORY
 
-bso::bool__ dbsidx::file_index_::_ConnectToFiles( )
+void dbsidx::file_index_::Init(
+	const str::string_ &RootFileName,
+	const dbsctt::content__ &Content,
+	sort_function__ &Sort,
+	mdr::mode__ Mode,
+	bso::bool__ Erase,
+	bso::bool__ Partial )
 {
-	bso::bool__ Exists = false;
 ERRProlog
 	str::string TreeFileName;
 	tol::E_FPOINTER___( bso::char__ ) TreeFileNameBuffer;
 	str::string QueueFileName;
 	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
-#ifdef IN_MEMORY
-	idxbtq::E_INDEXt( rrow__ ) Index;
-#endif
 ERRBegin
+	reset();
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 	TreeFileNameBuffer = TreeFileName.Convert();
-#ifdef IN_MEMORY
-	Index.Init();
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, Index.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
-#else
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, index_::BaseIndex.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
-#endif
-
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
 
+	S_.FileManager.Init( TreeFileNameBuffer, QueueFileNameBuffer, Mode, true );
+
+	this->RootFileName.Init( RootFileName );
+
+	index_::Init( Content, Sort, Partial );
+
+	S_.Mode = Mode;
+	S_.Erase = Erase;
+ERRErr
+ERREnd
+ERREpilog
+}
+// Permet de stocker toutes les données en mémoire. NON UTILISABLE EN EXPLOITATION !
+//#define IN_MEMORY
+
+bso::bool__ dbsidx::file_index_::_ConnectToFiles( void )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+#ifdef IN_MEMORY
+	idxbtq::E_INDEXt( rrow__ ) Index;
+#endif
+ERRBegin
 
 #ifdef IN_MEMORY
+	Index.Init();
+	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, Index.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
 	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, Index.Queue().Links, S_.Mode, S_.Erase ) != Exists )
 		ERRu();
 	index_::BaseIndex = Index;
 #else
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, index_::BaseIndex.Queue().Links, S_.Mode, S_.Erase ) != Exists )
-		ERRu();
+	Exists = idxbtq::Connect( BaseIndex, S_.FileManager );
 #endif
 
 	if ( Exists ) {
 		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
 
-		TreeTimeStamp = GetModificationTimeStamp_( TreeFileName );
-		QueueTimeStamp = GetModificationTimeStamp_( QueueFileName );
+		TreeTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.TreeFileName() );
+		QueueTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.QueueFileName() );
 
 		if ( QueueTimeStamp > TreeTimeStamp )
 			LastTimeStamp = QueueTimeStamp;

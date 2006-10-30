@@ -227,6 +227,86 @@ namespace idxbtq {
 
 	E_AUTO1( tree_queue_index )
 
+	class index_file_manager___ {
+	private:
+		idxbtr::tree_index_file_manager___ _TreeFileManager;
+		idxque::queue_index_file_manager___ _QueueFileManager;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_TreeFileManager.reset( P );
+			_QueueFileManager.reset( P );
+		}
+		index_file_manager___( void ) 
+		{
+			reset( false );
+		}
+		~index_file_manager___( void ) 
+		{
+			reset();
+		}
+		void Init( 
+			const char *TreeFileName,
+			const char *QueueFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent )
+		{
+			reset();
+
+			_TreeFileManager.Init( TreeFileName, Mode, Persistent );
+
+			_QueueFileManager.Init( QueueFileName, Mode, Persistent );
+		}
+		void ReleaseFiles( void )
+		{
+			_TreeFileManager.ReleaseFile();
+			_QueueFileManager.ReleaseFile();
+		}
+		void Mode( mdr::mode__ Mode )
+		{
+			_TreeFileManager.Mode( Mode );
+			_QueueFileManager.Mode( Mode );
+		}
+		bso::bool__ IsPersistent( void ) const
+		{
+			if ( ( _TreeFileManager.IsPersistent() ) != _QueueFileManager.IsPersistent() )
+				ERRc();
+
+			return _TreeFileManager.IsPersistent();
+		}
+		void Drop( void )
+		{
+			_TreeFileManager.Drop();
+			_QueueFileManager.Drop();
+		}
+		const char *TreeFileName( void ) const
+		{
+			return _TreeFileManager.FileName();
+		}
+		const char *QueueFileName( void ) const
+		{
+			return _QueueFileManager.FileName();
+		}
+		template <typename index> friend bso::bool__ Connect(
+			index &Index,
+			index_file_manager___ &FileManager );
+	};
+
+
+	template <typename index> bso::bool__ Connect(
+		index &Index,
+		index_file_manager___ &FileManager )
+	{
+		bso::bool__ Exists = idxbtr::Connect( Index, FileManager._TreeFileManager );
+
+		if ( Exists != idxque::Connect( Index, FileManager._QueueFileManager ) )
+			ERRc();
+
+		return Exists;
+	}
+
+
+
 	template <typename r> E_TTYPEDEF__( idxbtr::E_TSEEKERt__( r ), index_seeker__ );
 }
 
