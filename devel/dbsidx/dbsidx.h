@@ -337,6 +337,18 @@ namespace dbsidx {
 			index_::DBSBSCDrop();
 			_Drop();
 		}
+		time_t _GetUnderlyingFilesLastModificationTime( void ) const
+		{
+			time_t TreeTimeStamp, QueueTimeStamp;
+
+			TreeTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.TreeFileName() );
+			QueueTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.QueueFileName() );
+
+			if ( QueueTimeStamp > TreeTimeStamp )
+				return QueueTimeStamp;
+			else
+				return TreeTimeStamp;
+		}
 	private:
 		void _SaveRoot( void ) const;
 		bso::bool__ _ConnectToFiles( void );

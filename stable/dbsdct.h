@@ -611,6 +611,18 @@ namespace dbsdct {
 			_Drop();
 		}
 	private:
+		time_t _GetUnderlyingFilesLastModificationTime( void ) const
+		{
+			time_t ContentTimeStamp, EntriesTimeStamp;
+
+			ContentTimeStamp = tol::GetFileLastModificationTime( S_.StorageFileManager.FileName() );
+			EntriesTimeStamp = tol::GetFileLastModificationTime( S_.EntriesFileManager.FileName() );
+
+			if ( ContentTimeStamp > EntriesTimeStamp )
+				return ContentTimeStamp;
+			else
+				return EntriesTimeStamp;
+		}
 		void _SaveLocationsAndAvailables( void ) const;
 		bso::bool__ _ConnectToFiles( void );
 		void _Drop( void );

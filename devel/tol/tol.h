@@ -66,6 +66,7 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <sys/utime.h>
 #include <errno.h>
 
 #include "cpe.h"
@@ -539,6 +540,13 @@ namespace tol {
 #else
 		ERRl();
 #endif
+	}
+
+	// Modifie la date de modification d'un fichier à la date courante.
+	inline void Touch( const char *FileName )
+	{
+		if ( utime( FileName, NULL ) != 0 )
+			ERRu();
 	}
 
 	inline void RemoveFile( const char *FileName )

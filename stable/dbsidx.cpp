@@ -419,7 +419,8 @@ ERREpilog
 static void Save_(
 	rrow__ Row,
 	const str::string_ &RootFileName,
-	const char *Extension )
+	const char *Extension,
+	time_t UnderlyingFilesLastModificationTime )
 {
 ERRProlog
 	str::string FileName;
@@ -427,7 +428,14 @@ ERRProlog
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
+
 	Save_( Row, FileNameBuffer = FileName.Convert() );
+
+	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
+		tol::Clock( true );
+		tol::Touch( FileNameBuffer );
+	}
+
 ERRErr
 ERREnd
 ERREpilog
@@ -435,7 +443,7 @@ ERREpilog
 
 void dbsidx::file_index_::_SaveRoot( void ) const
 {
-	Save_( index_::S_.Root, RootFileName, ROOT_FILE_NAME_EXTENSION );
+	Save_( index_::S_.Root, RootFileName, ROOT_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
 static inline void Load_(
@@ -548,17 +556,7 @@ ERRBegin
 #endif
 
 	if ( Exists ) {
-		time_t TreeTimeStamp, QueueTimeStamp, LastTimeStamp;
-
-		TreeTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.TreeFileName() );
-		QueueTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.QueueFileName() );
-
-		if ( QueueTimeStamp > TreeTimeStamp )
-			LastTimeStamp = QueueTimeStamp;
-		else
-			LastTimeStamp = TreeTimeStamp;
-
-		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, LastTimeStamp ) )
+		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
 			SearchRoot();
 	}
 ERRErr

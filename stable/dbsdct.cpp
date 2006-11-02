@@ -110,7 +110,8 @@ ERREpilog
 template <typename item> static void Save_(
 	const stk::E_BSTACK_( item ) &Bunch,
 	const str::string_ &RootFileName,
-	const char *Extension )
+	const char *Extension,
+	time_t UnderlyingFilesLastModificationTime )
 {
 ERRProlog
 	str::string FileName;
@@ -119,6 +120,11 @@ ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
 	Save_( Bunch, FileNameBuffer = FileName.Convert() );
+
+	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
+		tol::Clock( true );
+		tol::Touch( FileNameBuffer );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -126,7 +132,7 @@ ERREpilog
 
 void dbsdct::file_dynamic_content_::_SaveLocationsAndAvailables( void ) const
 {
-	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
+	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
 static inline void Load_(
@@ -270,17 +276,7 @@ ERRBegin
 		dynamic_content_::S_.Unallocated = 0;
 
 	if ( Exists ) {
-		time_t ContentTimeStamp, EntriesTimeStamp, LastTimeStamp;
-
-		ContentTimeStamp = tol::GetFileLastModificationTime( S_.StorageFileManager.FileName() );
-		EntriesTimeStamp = tol::GetFileLastModificationTime( S_.EntriesFileManager.FileName() );
-
-		if ( ContentTimeStamp > EntriesTimeStamp )
-			LastTimeStamp = ContentTimeStamp;
-		else
-			LastTimeStamp = EntriesTimeStamp;
-
-		if ( !Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, LastTimeStamp ) )
+		if ( !Load_<available__>( RootFileName, Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
 			RebuildAvailables();
 	}
 ERRErr

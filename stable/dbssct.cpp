@@ -67,7 +67,8 @@ using namespace dbssct;
 static void Save_(
 	const _list_ &List,
 	const str::string_ &RootFileName,
-	const char *Extension )
+	const char *Extension,
+	time_t UnderlyingFilesLastModificationTime )
 {
 ERRProlog
 	str::string FileName;
@@ -76,6 +77,11 @@ ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
 	lst::WriteToFile( List, FileNameBuffer = FileName.Convert() );
+
+	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
+		tol::Clock( true );
+		tol::Touch( FileNameBuffer );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -83,7 +89,7 @@ ERREpilog
 
 void dbssct::file_static_content_::_SaveLocations( void ) const
 {
-	Save_( *this, RootFileName, LIST_FILE_NAME_EXTENSION );
+	Save_( *this, RootFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
 void dbssct::file_static_content_::Init(
@@ -147,7 +153,7 @@ ERRBegin
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 		ListFileNameBuffer = ContentFileName.Convert();
 
-		if ( !lst::ReadFromFile( ListFileNameBuffer, tol::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, tol::GetFileLastModificationTime( ContentFileNameBuffer ) ) )
+		if ( !lst::ReadFromFile( ListFileNameBuffer, tol::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, _GetUnderlyingFilesLastModificationTime() ) )
 			RebuildLocations();
 	}
 ERRErr

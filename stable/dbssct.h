@@ -230,6 +230,10 @@ namespace dbssct {
 			_Drop();
 		}
 	private:
+		time_t _GetUnderlyingFilesLastModificationTime( void ) const
+		{
+			return tol::GetFileLastModificationTime( S_.FileManager.FileName() );
+		}
 		void _SaveLocations( void ) const;
 		bso::bool__ _ConnectToFiles( void );
 		void _Drop( void );
