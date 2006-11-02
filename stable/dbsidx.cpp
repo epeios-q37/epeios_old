@@ -569,9 +569,6 @@ void dbsidx::file_index_::_Drop( void )
 {
 ERRProlog
 ERRBegin
-	S_.MemoryDriver.Tree.Drop();
-	S_.MemoryDriver.Queue.Drop();
-
 	dbsbsc::DropFile( RootFileName, ROOT_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd

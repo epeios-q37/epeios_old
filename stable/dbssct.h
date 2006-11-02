@@ -258,10 +258,10 @@ namespace dbssct {
 					_SaveLocations();
 			}
 
+			static_content_::reset( P );
 			S_.FileManager.reset( P );
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
-			static_content_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{

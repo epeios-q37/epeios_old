@@ -648,11 +648,11 @@ namespace dbsdct {
 					_SaveLocationsAndAvailables();
 			}
 
+			dynamic_content_::reset( P );
 			S_.StorageFileManager.reset( P );
 			S_.EntriesFileManager.reset( P );
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
-			dynamic_content_::reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{

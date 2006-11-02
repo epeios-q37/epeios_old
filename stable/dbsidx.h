@@ -359,10 +359,6 @@ namespace dbsidx {
 		: public index_::s
 		{
 			idxbtq::index_file_manager___ FileManager;
-			struct memory_driver__ {
-				flm::E_FILE_MEMORY_DRIVER___ Tree;
-				flm::E_FILE_MEMORY_DRIVER___ Queue;
-			} MemoryDriver;
 			str::string_::s RootFileName;
 			bso::bool__ Erase;	// Seulement utile lors d'uen initialisation retardée.
 			mdr::mode__ Mode;
@@ -379,8 +375,8 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			RootFileName.reset( P );
 			index_::reset( P );
+			RootFileName.reset( P );
 			S_.FileManager.reset( P );
 			S_.Erase = false;
 			S_.Mode = mdr::m_Undefined;
