@@ -153,6 +153,9 @@ ERRProlog
 ERRBegin
 	Index.Reset();
 
+	if ( Content.Amount() == 0 )
+		ERRReturn;
+
 	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
 		IndexInMemory.Init( Index.Content(), Index.SortFunction() );
 

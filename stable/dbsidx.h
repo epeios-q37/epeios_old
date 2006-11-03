@@ -371,7 +371,7 @@ namespace dbsidx {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( ( RootFileName.Amount() != 0 ) && ModificationTimeStamp() != 0 )
+				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveRoot();
 			}
 
