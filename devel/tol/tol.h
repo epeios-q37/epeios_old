@@ -545,7 +545,7 @@ namespace tol {
 	// Modifie la date de modification d'un fichier à la date courante.
 	inline void Touch( const char *FileName )
 	{
-		if ( _utime( FileName, NULL ) != 0 )
+		if ( utime( FileName, NULL ) != 0 )
 			ERRu();
 	}
 
