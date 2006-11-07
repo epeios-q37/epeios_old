@@ -364,9 +364,7 @@ E_ROW( srow__ );
 
 bso::bool__ xml::Parse(
 	xtf::extended_text_iflow__ &Flow,
-	callback__ &Callback,
-	xtf::location__ &ErrorLine,
-	xtf::location__ &ErrorColumn )
+	callback__ &Callback )
 {
 	bso::bool__ Success = true;
 ERRProlog
@@ -417,7 +415,7 @@ ERRBegin
 
 			Tags.Push( Name );
 
-			if ( !Callback.XMLTag( Name ) )
+			if ( !Callback.XMLStartTag( Name ) )
 				ERRI( iBeam );
 
 			SkipSpaces_( Flow );
@@ -437,13 +435,15 @@ ERRBegin
 
 				Tags.Pop( Tag );
 
-				if ( !Callback.XMLTagClosed( Name ) )
+				if ( !Callback.XMLEndTag( Name ) )
 					ERRI( iBeam );
 
 				State = ValueExpected;
 				break;
 			case '>':
 				Flow.Get();
+				if ( !Callback.XMLStartTagClosed( Name ) )
+					ERRI( iBeam );
 				State = ValueExpected;
 				break;
 			default:
@@ -484,7 +484,7 @@ ERRBegin
 
 					Tags.Pop( Tag );
 
-					if ( !Callback.XMLTagClosed( Tag ) )
+					if ( !Callback.XMLEndTag( Tag ) )
 						ERRI( iBeam );
 
 					State = TagExpected;
@@ -494,6 +494,8 @@ ERRBegin
 					ERRI( iBeam );
 			} else if ( Flow.View() == '>' ) {
 				Flow.Get();
+				if ( !Callback.XMLStartTagClosed( Name ) )
+					ERRI( iBeam );
 				State = ValueExpected;
 			}
 
@@ -520,7 +522,7 @@ ERRBegin
 			if ( Tag != Name )
 				ERRI( iBeam );
 
-			if ( !Callback.XMLTagClosed( Tag ) )
+			if ( !Callback.XMLEndTag( Tag ) )
 				ERRI( iBeam );
 
 			State = ValueExpected;
@@ -554,8 +556,6 @@ ERRBegin
 ERRErr
 	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iBeam ) ) {
 		Success = false;
-		ErrorLine = Flow.Line();
-		ErrorColumn = Flow.Column();
 		ERRRst();
 	}
 ERREnd

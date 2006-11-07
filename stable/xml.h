@@ -71,7 +71,11 @@ namespace xml {
 
 	struct callback__
 	{
-		virtual bso::bool__ XMLTag(	const str::string_ &Name ) = 0;
+		virtual bso::bool__ XMLStartTag( const str::string_ &Name ) = 0;
+		virtual bso::bool__ XMLStartTagClosed( const str::string_ &Name )
+		{
+			return true ;
+		}
 		virtual bso::bool__ XMLValue(
 			const str::string_ &TagName,
 			const str::string_ &Value ) = 0;
@@ -79,14 +83,12 @@ namespace xml {
 			const str::string_ &TagName,
 			const str::string_ &Name,
 			const str::string_ &Value ) = 0;
-		virtual bso::bool__ XMLTagClosed( const str::string_ &Name ) = 0;
+		virtual bso::bool__ XMLEndTag( const str::string_ &Name ) = 0;
 	};
 
 	bso::bool__ Parse(
 		xtf::extended_text_iflow__ &Flow,
-		callback__ &Callback,
-		xtf::location__ &ErrorLine,
-		xtf::location__ &ErrorColumn );
+		callback__ &Callback );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
 	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
 
