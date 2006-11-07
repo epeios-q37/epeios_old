@@ -231,13 +231,13 @@ namespace xtf {
 
 		}
 		//f Return the ligne of the next character.
-		location__ Line( void )
+		const location__ &Line( void )
 		{
 			return Ligne_;
 		}
 		/*f Return the column of the next character. If == 0, then
 		a '\n' or a '\r' was unget()'. */
-		location__ Column( void )
+		const location__ &Column( void )
 		{
 			return Colonne_;
 		}

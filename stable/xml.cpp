@@ -371,12 +371,16 @@ ERRProlog
 	state__ State = HeaderExpected;
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
+	bso::ulong__ Level = BSO_ULONG_MAX;
 ERRBegin
 	Tags.Init();
 
 	SkipSpaces_( Flow );
 
-	while ( !Flow.EOX() ) {
+	while ( Level ) {
+		if ( Flow.EOX() )
+			ERRI( iBeam );
+
 		switch ( State ) {
 		case HeaderExpected:
 			if ( Flow.View() != '<' )
@@ -418,6 +422,16 @@ ERRBegin
 			if ( !Callback.XMLStartTag( Name ) )
 				ERRI( iBeam );
 
+			if ( Level == BSO_ULONG_MAX )
+				Level = 1;
+			else {
+				Level++;
+
+				if ( Level == BSO_ULONG_MAX )
+					ERRl();
+			}
+
+
 			SkipSpaces_( Flow );
 
 			switch( Flow.View() ) {
@@ -437,6 +451,8 @@ ERRBegin
 
 				if ( !Callback.XMLEndTag( Name ) )
 					ERRI( iBeam );
+
+				Level--;
 
 				State = ValueExpected;
 				break;
@@ -487,6 +503,8 @@ ERRBegin
 					if ( !Callback.XMLEndTag( Tag ) )
 						ERRI( iBeam );
 
+					Level--;
+
 					State = TagExpected;
 					Flow.Get();
 					SkipSpaces_( Flow );
@@ -524,6 +542,8 @@ ERRBegin
 
 			if ( !Callback.XMLEndTag( Tag ) )
 				ERRI( iBeam );
+
+			Level--;
 
 			State = ValueExpected;
 			break;
