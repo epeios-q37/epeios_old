@@ -731,7 +731,6 @@ private:
 		flf::file_iflow___ FFlow;
 		xtf::extended_text_iflow__ XFlow;
 		tol::E_FPOINTER___( bso::char__ ) Buffer;
-		location__ ErrorLine, ErrorColumn;
 	ERRBegin
 		Buffer = _ExpandTagAttributeValue.Convert();
 
@@ -744,11 +743,11 @@ private:
 
 		XFlow.Init( FFlow );
 
-		if ( !xml::Parse( XFlow, *this, ErrorLine, ErrorColumn ) )  {
+		if ( !xml::Parse( XFlow, *this ) )  {
 			if ( _ExpandTagAttributeValue.Amount() == 0 ) {	// Si pas == 0, alors l'erreur se trouve dans un sous-fcihier.
 				_ExpandTagAttributeValue.Init( Buffer );	// Pour indiquer que l'erreur se situe dans un fichier et lequel.
-				_IncludeErrorLine = ErrorLine;
-				_IncludeErrorColumn = ErrorColumn;
+				_IncludeErrorLine = XFlow.Line();
+				_IncludeErrorColumn = XFlow.Column();
 			}
 			ERRReturn;
 		}
@@ -767,7 +766,7 @@ private:
 			return _ExplodeNode();
 	}
 protected:
-	virtual bso::bool__ XMLTag( const str::string_ &TagName )
+	virtual bso::bool__ XMLStartTag( const str::string_ &TagName )
 	{
 		bso::bool__ Ignore = false;
 
@@ -892,7 +891,7 @@ protected:
 
 		return true;
 	}
-	virtual bso::bool__ XMLTagClosed( const str::string_ &TagName )
+	virtual bso::bool__ XMLEndTag( const str::string_ &TagName )
 	{
 		switch ( _Mode ) {
 		case mRegular:
@@ -1277,10 +1276,13 @@ nrow__ rgstry::Parse(
 ERRProlog
 	callback___ Callback( Registry, Root );
 ERRBegin
-	if ( xml::Parse( Flow, Callback, ErrorLine, ErrorColumn ) )
+	if ( xml::Parse( Flow, Callback ) )
 		Root = Callback.GetRoot();
-	else
+	else {
 		Root = NONE;
+		ErrorLine = Flow.Line();
+		ErrorColumn = Flow.Column();
+	}
 
 	if ( ( &ErrorFileName != NULL ) && ( Callback.IncludeErrorFileName().Amount() != 0 ) ) {
 		ErrorFileName = Callback.IncludeErrorFileName();
