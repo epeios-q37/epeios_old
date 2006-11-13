@@ -375,11 +375,11 @@ namespace dbsidx {
 					_SaveRoot();
 			}
 
-			index_::reset( P );
-			RootFileName.reset( P );
 			S_.FileManager.reset( P );
+			index_::reset( P );
 			S_.Erase = false;
 			S_.Mode = mdr::m_Undefined;
+			RootFileName.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{
