@@ -66,11 +66,18 @@ extern class ttr_tutor &TOLTutor;
 #include <time.h>
 #include <signal.h>
 #include <sys/stat.h>
-#include <sys/utime.h>
 #include <errno.h>
 
 #include "cpe.h"
 #include "bso.h"
+
+#ifdef CPE__T_MS
+#	include <sys/utime.h>
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#	include <utime.h>
+#else
+#	error "Undefined compilation enviroment."
+#endif
 
 #if defined( CPE__C_VC ) || defined( CPE__C_GCC )
 #	include <sys/timeb.h>

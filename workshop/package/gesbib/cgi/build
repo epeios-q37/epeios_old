@@ -23,6 +23,9 @@ $GET lgsb $DIR apps/gesbib/frontend/cgid/*.h
 $GET lgsb $DIR apps/gesbib/frontend/cgid/*.cpp
 $GET lgsb $DIR apps/gesbib/frontend/cgid/Makefile
 
+$GET lgsb $DIR stable/gsbbfc.h
+$GET lgsb $DIR stable/gsbbfc.cpp
+
 #../../../create_pkg $DIR
 tar --gzip -cf $DIR.tar.gz $DIR
 

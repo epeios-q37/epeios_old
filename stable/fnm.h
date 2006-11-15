@@ -65,7 +65,7 @@ extern class ttr_tutor &FNMTutor;
 #include <string.h>
 #include "cpe.h"
 
-#if defined( CPE__T_UNIX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
+#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )
 #	define FNM__POSIX
 #elif defined( CPE__T_MS )
 #	define FNM__MS

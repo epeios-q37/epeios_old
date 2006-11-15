@@ -104,6 +104,17 @@ namespace pllio {
 			if ( lseek( _D, Offset, SEEK_SET ) != Offset )
 				ERRd();
 		}
+		long Size( void )
+		{
+			long Size;
+
+			_Test();
+
+			if ( ( Size = lseek( _D, 0, SEEK_END ) ) == -1 )
+				ERRd();
+
+			return Size;
+		}
 		void Init( descriptor__ D )
 		{
 			_D = D;
