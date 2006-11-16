@@ -32,7 +32,7 @@
 
 #include "err.h"
 #include "cio.h"
-#include "fil.h"
+#include "flf.h"
 #include "xtf.h"
 
 using cio::cin;
@@ -46,16 +46,16 @@ void Consult(
 	epeios::row__ Cursor = NONE;
 	rgstry::term_buffer Buffer;
 
-	cout << "Host : " << Registry.GetPathValue( str::string( "Backend/Host" ), Root, Buffer ) << txf::nl;
+	cout << "Limit : " << Registry.GetPathValue( str::string( "RecordAmountLimitation" ), Root, Buffer ) << txf::nl;
 
-	cout << "Service : " << Registry.GetPathValue( str::string( "Backend/Service" ), Root, Buffer ) << txf::nl;
+	cout << "Outfit : " << Registry.GetPathValue( str::string( "Outfit" ), Root, Buffer ) << txf::nl;
 }
 
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	fil::file_iflow___ FFlow;
+	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Registry;
 	rgstry::nrow__ Root;

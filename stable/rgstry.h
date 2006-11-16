@@ -476,12 +476,12 @@ namespace rgstry {
 				Writer.PutValue( Value );
 
 		}
-		void _Dump(
+		epeios::size__ _Dump(
 			nrow__ Root,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer,
 			term_buffer &TermBuffer,
-			node_buffer &NodeBuffer ) const;
+			node_buffer &NodeBuffer ) const;	// Retourne le nombre d'enfants.
 	public:
 		struct s {
 			terms_::s Terms;
@@ -860,11 +860,11 @@ namespace rgstry {
 			const term_ &Path,
 			nrow__ ParentRow,
 			epeios::row__ &PathErrorRow ) const;
-		void Dump(
+		epeios::size__ Dump(
 			nrow__ Root,
 			bso::bool__ RootToo,
 			bso::bool__ Indent,
-			txf::text_oflow__ &Flow ) const;
+			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
 
 	E_AUTO( registry )

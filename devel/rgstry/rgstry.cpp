@@ -366,6 +366,16 @@ nrow__ rgstry::registry_::_SearchPath(
 
 	Result = ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
 
+#ifdef RGSTRY_DBG
+	tol::E_FPOINTER___( bso::char__ ) Tag;
+	tol::E_FPOINTER___( bso::char__ ) AttributeName;
+	tol::E_FPOINTER___( bso::char__ ) AttributeValue;
+
+	Tag = Item( PathRow ).TagName.Convert();
+	AttributeName = Item( PathRow ).AttributeName.Convert();
+	AttributeValue = Item( PathRow ).AttributeValue.Convert();
+#endif
+
 	if ( PathRow != Path.Last() ) {
 #ifdef RGSTRY_DBG
 		if ( AttributeEntryRow != NONE )
@@ -645,11 +655,12 @@ private:
 	{
 		return str::Compare( TagName, _Bloc.TagName, TagName.First(), _Bloc.TagName.First() ) == 0;
 	}
-	void _Dump(
+	epeios::size__ _Dump(
 		registry_ &Registry,
 		nrow__ Root,
-		str::string_ &Result )
+		str::string_ &Result )	// Retourne le nombre d'enfnats.
 	{
+		epeios::size__ ChildAmount = 0;
 	ERRProlog
 		flx::E_STRING_OFLOW___ Flow;
 		txf::text_oflow__ TFlow( Flow );
@@ -657,15 +668,17 @@ private:
 		Flow.Init( Result );
 //		TFlow.Init( Flow );
 
-		Registry.Dump( Root, false, false, TFlow );
+		ChildAmount = Registry.Dump( Root, false, false, TFlow );
 	ERRErr
 	ERREnd
 	ERREpilog
+		return ChildAmount;
 	}
 	void _Import(
 		const str::string_ &Buffer,
 		registry_ &Registry,
-		nrow__ Root )
+		nrow__ Root,
+		epeios::size__ ChildAmount )
 	{
 	ERRProlog
 		flx::E_STRING_IFLOW__ Flow;
@@ -675,8 +688,9 @@ private:
 		Flow.Init( Buffer );
 		TFlow.Init( Flow );
 
-		if ( Parse( TFlow, Registry, Root, *(str::string_ *)NULL, Error, Error ) == NONE )
-			ERRc();	// Normalement, toutes les erreurs ont été détectées lors du 'define'.
+		while ( ChildAmount-- ) 
+			if ( Parse( TFlow, Registry, Root, *(str::string_ *)NULL, Error, Error ) == NONE )
+				ERRc();	// Normalement, toutes les erreurs ont été détectées lors du 'define'.
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -690,6 +704,7 @@ private:
 		term Path;
 		erow__ AttributeEntryRow = NONE;
 		epeios::row__ PathErrorRow = NONE;
+		epeios::size__ ChildAmount = 0;
 	ERRBegin
 		Path.Init();
 
@@ -712,11 +727,11 @@ private:
 
 		Buffer.Init();
 
-		_Dump( _Manager.Registry, Root, Buffer );
+		ChildAmount = _Dump( _Manager.Registry, Root, Buffer );
 
 		Buffer.Append( XTF_EOXC );
 
-		_Import( Buffer, _Registry(), _Current() );
+		_Import( Buffer, _Registry(), _Current(), ChildAmount );
 
 		Success = true;
 	ERRErr
@@ -1053,16 +1068,17 @@ void rgstry::registry_::_DumpAttributes(
 
 }
 
-void rgstry::registry_::_Dump(
+epeios::size__ rgstry::registry_::_Dump(
 	nrow__ Root,
 	bso::bool__ RootToo,
 	xml::writer_ &Writer,
 	term_buffer &TermBuffer,
 	node_buffer &NodeBuffer ) const
 {
+	epeios::size__ ChildAmount = 0;
 ERRProlog
 	nrows Children;
-epeios::row__ Row = NONE;
+	epeios::row__ Row = NONE;
 ERRBegin
 	Children.Init();
 	Children = _GetNode( Root, NodeBuffer ).Children;
@@ -1080,18 +1096,22 @@ ERRBegin
 
 	if ( RootToo )
 		Writer.PopTag();
+
+	ChildAmount = Children.Amount();
 ERRErr
 ERREnd
 ERREpilog
+	return ChildAmount;
 }
 
 
-void rgstry::registry_::Dump(
+epeios::size__ rgstry::registry_::Dump(
 	nrow__ Root,
 	bso::bool__ RootToo,
 	bso::bool__ Indent,
 	txf::text_oflow__ &Flow ) const
 {
+	epeios::size__ ChildAmount = 0;
 ERRProlog
 	xml::writer Writer;
 	term_buffer TermBuffer;
@@ -1102,10 +1122,11 @@ ERRBegin
 
 	Writer.Init( Flow, Indent );
 
-	_Dump( Root, RootToo, Writer, TermBuffer, NodeBuffer );
+	ChildAmount = _Dump( Root, RootToo, Writer, TermBuffer, NodeBuffer );
 ERRErr
 ERREnd
 ERREpilog
+	return ChildAmount;
 }
 
 

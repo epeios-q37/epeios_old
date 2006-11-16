@@ -80,6 +80,7 @@ extern class ttr_tutor &SCKTutor;
 #	define SCK_SOCKET_ERROR			SOCKET_ERROR
 #	define SCK_ECONNRESET			WSAECONNRESET
 #	define SCK_EWOULDBLOCK			WSAEWOULDBLOCK
+#	define SCK_EAGAIN				WSAEWOULDBLOCK	// Pas de 'WSAEAGAIN', mais mettre ça simplifie certaines lignes.
 #	define SCK_EINTR				WSAEINTR
 #	define SCK_ENOTSOCK				WSAENOTSOCK
 #elif defined( SCK__POSIX )
@@ -94,6 +95,7 @@ extern class ttr_tutor &SCKTutor;
 #	define SCK_SOCKET_ERROR			-1
 #	define SCK_ECONNRESET			ECONNRESET
 #	define SCK_EWOULDBLOCK			EWOULDBLOCK
+#	define SCK_EAGAIN				EAGAIN
 #	define SCK_EINTR				EINTR
 #	define SCK_ENOTSOCK				ENOTSOCK
 #else

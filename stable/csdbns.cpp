@@ -123,7 +123,7 @@ ERRBegin
 		else if ( Reponse > 0 )
 		{
 			if ( ( Socket = accept( Socket_, NULL, NULL ) ) == SCK_INVALID_SOCKET )
-				if ( Error() != SCK_EWOULDBLOCK )
+				if ( ( Error() != SCK_EWOULDBLOCK ) && ( Error() != SCK_EAGAIN ) )
 					ERRs();
 		}
 ERRErr

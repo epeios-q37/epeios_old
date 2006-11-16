@@ -49,7 +49,7 @@ struct callback__
 		while ( Counter-- )
 			cout << txf::tab;
 	}
-	virtual bso::bool__ XMLTag(	const str::string_ &Name )
+	virtual bso::bool__ XMLStartTag(	const str::string_ &Name )
 	{
 		Ident_();
 		cout << "Tag : '" << Name << '\'' << txf::nl;
@@ -79,7 +79,7 @@ struct callback__
 
 		return true;
 	}
-	virtual bso::bool__ XMLTagClosed( const str::string_ &Name )
+	virtual bso::bool__ XMLEndTag( const str::string_ &Name )
 	{
 		ident--;
 
@@ -103,7 +103,6 @@ ERRProlog
 	callback__ Callback;
 	flx::E_STRING_IFLOW__ Flow;
 	xtf::extended_text_iflow__ XTFlow;
-	xml::location__ Line, Column;
 ERRBegin
 	Example.Init( "Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root>" );
 	Flow.Init( Example );
@@ -112,9 +111,9 @@ ERRBegin
 
 	XTFlow.Init( Flow );
 
-	if ( !xml::Parse( XTFlow, Callback, Line, Column ) ) {
+	if ( !xml::Parse( XTFlow, Callback ) ) {
 		cout << txf::sync;
-		cerr << txf::nl << "Error at line " << Line << ", Column " << Column << txf::nl;
+		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column() << txf::nl;
 	}
 
 	
