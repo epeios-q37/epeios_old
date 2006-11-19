@@ -64,6 +64,7 @@ extern class ttr_tutor &UYMTutor;
 #include "tol.h"
 #include "mdr.h"
 #include "cvm.h"
+#include "flm.h"
 
 //d Value that a position can not have.
 #define UYM_UNREACHABLE_POSITION	((mdr::row_t__)-1)
@@ -322,6 +323,38 @@ namespace uym {
 			_Flush();
 		}
 	};
+
+	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
+
+	class file_manager___
+	: public _file_memory_driver___
+	{
+	public:
+		void Init( 
+			const char *FileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persitent )
+		{
+			_file_memory_driver___::Init( FileName, Mode, flm::cFirstUse );
+
+			if ( Persitent )
+				_file_memory_driver___::Persistent();
+		}
+	};
+
+	inline bso::bool__ Connect(
+		untyped_memory_ &Memory,
+		file_manager___ &FileManager )
+	{
+		bso::bool__ Exists = FileManager.Exists();
+
+		Memory.plug( FileManager );
+
+		if ( Exists )
+			Memory.Allocate( FileManager.Size() );
+
+		return Exists;
+	}
 
 	//c Untyped memory. 
 	class untyped_memory

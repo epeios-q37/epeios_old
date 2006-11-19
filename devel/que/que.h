@@ -408,11 +408,11 @@ namespace que {
 
 	E_AUTO1( queue )
 
-	typedef bch::bunch_file_manager___ queue_file_manager___;
+	typedef bch::file_manager___ file_manager___;
 
 	template <typename queue> bso::bool__ Connect(
 		queue &Queue,
-		queue_file_manager___ &FileManager )
+		file_manager___ &FileManager )
 	{
 		return bch::Connect( Queue.Links, FileManager );
 	}

@@ -232,7 +232,7 @@ namespace dbssct {
 	private:
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
-			return tol::GetFileLastModificationTime( S_.FileManager.FileName() );
+			return S_.FileManager.TimeStamp();
 		}
 		void _SaveLocations( void ) const;
 		bso::bool__ _ConnectToFiles( void );
@@ -242,7 +242,7 @@ namespace dbssct {
 		struct s
 		: public static_content_::s
 		{
-			tym::memory_file_manager___ FileManager;
+			tym::file_manager___ FileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;

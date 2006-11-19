@@ -210,7 +210,7 @@ namespace flm {
 			}
 
 			if ( !Temoin_.Manuel )
-				Liberer();
+				ReleaseFile();
 		}
 			/* lit à partir de 'Taille' et place dans 'Tampon' 'Taille' octets
 			retourne le nombre d'octets effectivement lus */
@@ -234,7 +234,7 @@ namespace flm {
 			}
 
 			if ( !Temoin_.Manuel )
-				Liberer();
+				ReleaseFile();
 		}
 			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
 			agrandit la mémoire si nécessaire */
@@ -253,12 +253,12 @@ namespace flm {
 
 				if ( File_.Write( &Datum, 1 ) != 1 ) {
 					if ( !Temoin_.Manuel )
-						Liberer();
+						ReleaseFile();
 
 					ERRm();
 				} else
 					if ( !Temoin_.Manuel )
-						Liberer();
+						ReleaseFile();
 
 				TailleFichier_ = Capacite;
 			}
@@ -277,7 +277,7 @@ namespace flm {
 		{
 			if ( P )
 			{
-				Liberer();
+				ReleaseFile();
 
 				if ( _Row != NONE )
 					_Unregister( _Row );
@@ -343,7 +343,7 @@ namespace flm {
 				ERRu();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
-		void Liberer( void )
+		void ReleaseFile( void )
 		{
 			if ( Temoin_.Ouvert ) {
 				File_.reset();
@@ -354,17 +354,17 @@ namespace flm {
 			Temoin_.Ouvert = 0;
 		}
 			// libère le File Descriptor
-		void Manuel( void )
+		void Manual( void )
 		{
 			Temoin_.Manuel = 1;
 		}
 			// indique que la fermeture du fichier se fait manuellement
-		void Automatique( void )
+		void Automatic( void )
 		{
 			Temoin_.Manuel = 0;
 		}
 			// indique que la fermeture du fichier se fait automatiquement
-		void Persistant( void )
+		void Persistent( void )
 		{
 			Temoin_.Persistant = true;
 		}
@@ -378,7 +378,7 @@ namespace flm {
 			if ( Temoin_.Mode != Mode )
 			{
 				Temoin_.Mode = Mode;
-				Liberer();
+				ReleaseFile();
 			}
 		}
 		// Retourne le mode d'accés.
@@ -394,7 +394,7 @@ namespace flm {
 		}
 		void Drop( void ) // Efface le fichier sous-jacent, s'il existe.
 		{
-			Liberer();
+			ReleaseFile();
 
 			if ( ( Nom_ != NULL ) && tol::FileExists( Nom_ ) )
 				if ( remove( Nom_ ) != 0 )
@@ -402,9 +402,17 @@ namespace flm {
 
 			TailleFichier_ = 0;
 		}
-		const char *FileName( void ) const
+		const char *GetFileName( void ) const
 		{
 			return Nom_;
+		}
+		bso::bool__ Exists( void ) const
+		{
+			return tol::FileExists( Nom_ );
+		}
+		time_t TimeStamp( void ) const
+		{
+			return tol::GetFileLastModificationTime( Nom_ );
 		}
 	};
 

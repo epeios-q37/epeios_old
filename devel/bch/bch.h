@@ -538,11 +538,11 @@ namespace bch {
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
 
-	typedef tym::memory_file_manager___ bunch_file_manager___;
+	typedef tym::file_manager___ file_manager___;
 
 	template <typename bunch> bso::bool__ Connect(
 		bunch &Bunch,
-		bunch_file_manager___ &FileManager )
+		file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = false;
 
@@ -551,7 +551,7 @@ namespace bch {
 		Exists = tym::Connect( Bunch, FileManager );
 
 		if ( Exists )
-			Bunch.Allocate( tol::GetFileSize( FileManager.FileName() ) / Bunch.GetItemSize(), aem::mFit );
+			Bunch.Allocate( FileManager.Size() / Bunch.GetItemSize(), aem::mFit );
 
 		return Exists;
 	}

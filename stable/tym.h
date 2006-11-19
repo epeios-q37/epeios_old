@@ -222,6 +222,10 @@ namespace tym {
 		{
 			return sizeof( t );
 		}
+		b &GetUnderlyingMemory( void )
+		{
+			return *this;
+		}
 	};
 
 	/*c Memory of statical object of type 't'. */
@@ -283,70 +287,13 @@ namespace tym {
 
 	E_AUTO2( memory )
 
-	class memory_file_manager___ {
-	private:
-		flm::E_FILE_MEMORY_DRIVER___ _MemoryDriver;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_MemoryDriver.reset( P );
-		}
-		memory_file_manager___( void )
-		{
-			reset( false );
-		}
-		~memory_file_manager___( void )
-		{
-			reset();
-		}
-		void Init( 
-			const char *FileName,
-			mdr::mode__ Mode,
-			bso::bool__ Persitent )
-		{
-			_MemoryDriver.Init( FileName, Mode, flm::cFirstUse );
+	using uym::file_manager___;
 
-			if ( Persitent )
-				_MemoryDriver.Persistant();
-		}
-		void ReleaseFile( void )
-		{
-			_MemoryDriver.Liberer();
-		}
-		void Mode( mdr::mode__ Mode )
-		{
-			_MemoryDriver.Mode( Mode );
-		}
-		bso::bool__ IsPersistent( void ) const
-		{
-			return _MemoryDriver.IsPersistent();
-		}
-		void Drop( void )
-		{
-			_MemoryDriver.Drop();
-		}
-		const char *FileName( void ) const
-		{
-			return _MemoryDriver.FileName();
-		}
-		flm::E_FILE_MEMORY_DRIVER___ &MemoryDriver( void )
-		{
-			return _MemoryDriver;
-		}
-	};
-
-	template <typename memory> bso::bool__ Connect(
+	template <typename memory> inline bso::bool__ Connect(
 		memory &Memory,
-		memory_file_manager___ &FileManager )
+		file_manager___ &FileManager )
 	{
-		bso::bool__ Exists = tol::FileExists( FileManager.FileName() );
-
-		Memory.plug( FileManager.MemoryDriver() );
-
-		if ( Exists )
-			Memory.Allocate( tol::GetFileSize( FileManager.FileName() ) / Memory.GetItemSize() );
-
-		return Exists;
+		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
 	}
 
 	//m 'memory' would be often used, then create a special name.

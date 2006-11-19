@@ -167,9 +167,9 @@ namespace lstbch {
 
 	E_AUTO3( list_bunch )
 
-	typedef bch::bunch_file_manager___ _bunch_file_manager___;
+	typedef bch::file_manager___ _bunch_file_manager___;
 
-	template <typename list_bunch> class list_bunch_file_manager___
+	template <typename list_bunch> class file_manager___
 	: public _bunch_file_manager___
 	{
 	private:
@@ -181,9 +181,9 @@ namespace lstbch {
 			if ( P ) {
 				if ( ( _ListBunch != NULL )
 					 && _bunch_file_manager___::IsPersistent()
-					 && tol::FileExists( _bunch_file_manager___::FileName() )
+					 && _bunch_file_manager___::Exists()
 					 && ( !tol::FileExists( _ListFileName )
-					      || ( tol::GetFileLastModificationTime( _bunch_file_manager___::FileName() )
+					      || ( _bunch_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
 					lst::WriteToFile( *_ListBunch, _ListFileName );
 			}
@@ -193,11 +193,11 @@ namespace lstbch {
 
 			_ListBunch = NULL;
 		}
-		list_bunch_file_manager___( void )
+		file_manager___( void )
 		{
 			reset( false );
 		}
-		~list_bunch_file_manager___( void )
+		~file_manager___( void )
 		{
 			reset();
 		}
@@ -239,12 +239,12 @@ namespace lstbch {
 
 	template <typename list_bunch> bso::bool__ Connect(
 		list_bunch &ListBunch,
-		list_bunch_file_manager___<list_bunch> &FileManager )
+		file_manager___<list_bunch> &FileManager )
 	{
 		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
 
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), tol::GetFileSize( FileManager.FileName() ) / ListBunch.GetItemSize(), ListBunch, tol::GetFileLastModificationTime( FileManager.FileName() ) ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.Size() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
 				ERRu();
 
 		return Exists;

@@ -290,6 +290,80 @@ namespace mmi {
 
 	E_AUTO( indexed_multimemory )
 
+	class file_manager___ {
+	private:
+		tym::file_manager___ _Descriptors;
+		mmm::file_manager___ _Multimemory;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Descriptors.reset( P );
+			_Multimemory.reset( P );
+		}
+		file_manager___( void )
+		{
+			reset( false );
+		}
+		~file_manager___( void )
+		{
+			reset();
+		}
+		void Init( 
+			const char *DescriptorsFileName,
+			const char *MultimemoryFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent )
+		{
+			_Descriptors.Init( DescriptorsFileName, Mode, Persistent );
+			_Multimemory.Init( MultimemoryFileName, Mode, Persistent );
+		}
+		void ReleaseFile( void )
+		{
+			_Descriptors.ReleaseFile();
+			_Multimemory.ReleaseFile();
+		}
+		void Mode( mdr::mode__ Mode )
+		{
+			_Descriptors.Mode( Mode );
+			_Multimemory.Mode( Mode );
+		}
+		bso::bool__ IsPersistent( void ) const
+		{
+#ifdef MMI_DBG
+			if ( _Descriptors.IsPersistent() != _Multimemory.IsPersistent() )
+				ERRc();
+#endif
+			return _Descriptors.IsPersistent();
+		}
+		void Drop( void )
+		{
+			_Descriptors.Drop();
+			_Multimemory.Drop();
+		}
+		uym::file_manager___ &DescriptorsFileManager( void )
+		{
+			return _Descriptors;
+		}
+		tym::file_manager___ &MultimemoryFileManager( void )
+		{
+			return _Multimemory;
+		}
+	};
+
+	inline bso::bool__ Connect(
+		indexed_multimemory_ &Memory,
+		file_manager___ &FileManager )
+	{
+		bso::bool__ Exists = tym::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
+
+		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != Exists )
+			ERRc();
+
+		return Exists;
+	}
+
+
+
 //	using mdr::E_MEMORY_DRIVER__;
 
 	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.

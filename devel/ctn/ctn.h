@@ -302,6 +302,81 @@ namespace ctn {
 	};
 
 
+	class file_manager___ {
+	private:
+		tym::file_manager___ _Statics;
+		mmi::file_manager___ _Dynamics;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Statics.reset( P );
+			_Dynamics.reset( P );
+		}
+		file_manager___( void )
+		{
+			reset( false );
+		}
+		~file_manager___( void )
+		{
+			reset();
+		}
+		void Init( 
+			const char *StaticsFileName,
+			const char *DescriptorsDynamicsFileName,
+			const char *MultimemoryDynamicsFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent )
+		{
+			_Statics.Init( StaticsFileName, Mode, Persistent );
+			_Dynamics.Init( DescriptorsDynamicsFileName, MultimemoryDynamicsFileName, Mode, Persistent );
+		}
+		void ReleaseFile( void )
+		{
+			_Statics.ReleaseFile();
+			_Dynamics.ReleaseFile();
+		}
+		void Mode( mdr::mode__ Mode )
+		{
+			_Statics.Mode( Mode );
+			_Dynamics.Mode( Mode );
+		}
+		bso::bool__ IsPersistent( void ) const
+		{
+#ifdef CTN_DBG
+			if ( _Statics.IsPersistent() != _Dynamics.IsPersistent() )
+				ERRc();
+#endif
+			return _Statics.IsPersistent();
+		}
+		void Drop( void )
+		{
+			_Statics.Drop();
+			_Dynamics.Drop();
+		}
+		uym::file_manager___ &StaticsFileManager( void )
+		{
+			return _Statics;
+		}
+		mmi::file_manager___ &DynamicsFileManager( void )
+		{
+			return _Dynamics;
+		}
+	};
+
+	template <typename memory> inline bso::bool__ Connect(
+		memory &Memory,
+		file_manager___ &FileManager )
+	{
+		bso::bool__ Exists = tym::Connect( Memory.Statics, FileManager.StaticsFileManager() );
+
+		if ( mmm::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
+			ERRc();
+
+		return Exists;
+	}
+
+
+
 	//c The base of a volatile item. Internal use.
 	template <class st, typename r> class item_base_volatile__
 	{

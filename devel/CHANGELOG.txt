@@ -2,7 +2,7 @@ $Id$
 
 19/11/06 :
 	- CSDBNS :
-		- Ajout de code pour traquer bogue aappru sous Linux concernant cette bibliothèque.
+		- Ajout de code pour traquer bogue apparu sous Linux concernant cette bibliothèque.
 
 16/11/06 :
 	- GENERAL :

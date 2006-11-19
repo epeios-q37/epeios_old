@@ -812,9 +812,23 @@ namespace mmm {
 		{
 			return S_.Capacite;
 		}
+		uym::untyped_memory_ &GetUnderlyingMemory( void )
+		{
+			return Memoire_;
+		}
 	};
 
 	E_AUTO( multimemory )
+
+	using uym::file_manager___;
+
+	inline bso::bool__ Connect(
+		multimemory_ &Memory,
+		file_manager___ &FileManager )
+	{
+		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
+	}
+
 
 	inline void multimemory_driver__::Liberer_( void )
 	{

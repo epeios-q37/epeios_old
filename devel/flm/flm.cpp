@@ -89,7 +89,7 @@ void flm::_ReportFileUsing( row__ Row )
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
 	else if ( Queue.Amount() > 1000 ) {
-		List( Queue.Tail() )->Liberer();
+		List( Queue.Tail() )->ReleaseFile();
 //		Queue.Delete( Queue.Tail() );	// Inutile, car réalisé par la méthode ci-dessus.
 	}
 

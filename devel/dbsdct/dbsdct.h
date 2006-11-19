@@ -341,7 +341,7 @@ namespace dbsdct {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef lstbch::list_bunch_file_manager___<entries_> entries_file_manager___;
+	typedef lstbch::file_manager___<entries_> entries_file_manager___;
 
 	typedef dbsbsc::file_features_	_file_features_;
 
@@ -615,8 +615,8 @@ namespace dbsdct {
 		{
 			time_t ContentTimeStamp, EntriesTimeStamp;
 
-			ContentTimeStamp = tol::GetFileLastModificationTime( S_.StorageFileManager.FileName() );
-			EntriesTimeStamp = tol::GetFileLastModificationTime( S_.EntriesFileManager.FileName() );
+			ContentTimeStamp = S_.StorageFileManager.TimeStamp();
+			EntriesTimeStamp = S_.EntriesFileManager.TimeStamp();
 
 			if ( ContentTimeStamp > EntriesTimeStamp )
 				return ContentTimeStamp;
@@ -631,7 +631,7 @@ namespace dbsdct {
 		struct s
 		: public dynamic_content_::s
 		{
-			tym::memory_file_manager___ StorageFileManager;
+			tym::file_manager___ StorageFileManager;
 			entries_file_manager___ EntriesFileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;

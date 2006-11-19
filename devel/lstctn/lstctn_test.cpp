@@ -1,6 +1,6 @@
 /*
 	Test source for the 'lstctn' library by Claude SIMON (csimon@epeios.org).
-	Copyright (C) 2002  Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
 
 	This file is part of the Epeios (http://epeios.org/) project.
 
@@ -27,16 +27,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "lstctn.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
+
+#include "str.h"
+
+using cio::cin;
+using cio::cout;
+using cio::cerr;
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	lstctn::E_LCONTAINER( str::string_ ) Container;
+	lstctn::list_container_file_manager___< lstctn::E_LCONTAINER( str::string_ ) > FileMAnger;
 ERRBegin
 ERRErr
 ERREnd
@@ -45,10 +52,9 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << LSTCTNTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cout << "Test of library " << LSTCTNTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -57,20 +63,18 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cout );
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << LSTCTNTutor.Name << " [/i]\n\n";
-		ERRt();
+		cout << txf::sync;
+		cerr << "\nBad arguments.\n";
+		cout << "Usage: " << LSTCTNTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << LSTCTNTutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }

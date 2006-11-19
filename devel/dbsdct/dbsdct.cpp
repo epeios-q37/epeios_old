@@ -271,7 +271,7 @@ ERRBegin
 		ERRu();
 
 	if ( Exists )
-		dynamic_content_::S_.Unallocated = tol::GetFileSize( S_.StorageFileManager.FileName() );
+		dynamic_content_::S_.Unallocated = S_.StorageFileManager.Size();
 	else
 		dynamic_content_::S_.Unallocated = 0;
 
