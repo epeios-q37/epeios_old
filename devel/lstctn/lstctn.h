@@ -141,7 +141,7 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
-	typedef ctn::memory_file_manager___ _container_file_manager___;
+	typedef ctn::file_manager___ _container_file_manager___;
 
 	template <typename list_container> class list_container_file_manager___
 	: public _container_file_manager___
@@ -155,9 +155,9 @@ namespace lstctn {
 			if ( P ) {
 				if ( ( _ListContainer != NULL )
 					 && _container_file_manager___::IsPersistent()
-					 && tol::FileExists( _container_file_manager___::FileName() )
+					 && _container_file_manager___::Exists()
 					 && ( !tol::FileExists( _ListFileName )
-					      || ( tol::GetFileLastModificationTime( _container_file_manager___::FileName() )
+					      || ( _container_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
 					lst::WriteToFile( *_ListContainer, _ListFileName );
 			}

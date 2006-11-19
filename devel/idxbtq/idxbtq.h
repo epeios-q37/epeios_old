@@ -279,17 +279,23 @@ namespace idxbtq {
 			_TreeFileManager.Drop();
 			_QueueFileManager.Drop();
 		}
-		const char *TreeFileName( void ) const
+		idxbtr::file_manager___ TreeFileManager( void )
 		{
-			return _TreeFileManager.FileName();
+			return _TreeFileManager;
 		}
-		const char *QueueFileName( void ) const
+		idxque::file_manager___ QueueFileManager( void )
 		{
-			return _QueueFileManager.FileName();
+			return _QueueFileManager;
 		}
-		template <typename index> friend bso::bool__ Connect(
-			index &Index,
-			index_file_manager___ &FileManager );
+		time_t TimeStamp( void ) const
+		{
+			time_t TreeTimeStamp, QueueTimeStamp;
+
+			TreeTimeStamp = _TreeFileManager.TimeStamp();
+			QueueTimeStamp = _QueueFileManager.TimeStamp();
+
+			return ( TreeTimeStamp > QueueTimeStamp ? TreeTimeStamp : QueueTimeStamp );
+		}
 	};
 
 
@@ -297,9 +303,9 @@ namespace idxbtq {
 		index &Index,
 		index_file_manager___ &FileManager )
 	{
-		bso::bool__ Exists = idxbtr::Connect( Index, FileManager._TreeFileManager );
+		bso::bool__ Exists = idxbtr::Connect( Index, FileManager.TreeFileManager() );
 
-		if ( Exists != idxque::Connect( Index, FileManager._QueueFileManager ) )
+		if ( Exists != idxque::Connect( Index, FileManager.QueueFileManager() ) )
 			ERRc();
 
 		return Exists;

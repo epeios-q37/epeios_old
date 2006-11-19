@@ -141,6 +141,91 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
+	typedef ctn::file_manager___ _container_file_manager___;
+
+	template <typename list_container> class list_container_file_manager___
+	: public _container_file_manager___
+	{
+	private:
+		list_container *_ListContainer;
+		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( ( _ListContainer != NULL )
+					 && _container_file_manager___::IsPersistent()
+					 && _container_file_manager___::Exists()
+					 && ( !tol::FileExists( _ListFileName )
+					      || ( _container_file_manager___::TimeStamp()
+						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
+					lst::WriteToFile( *_ListContainer, _ListFileName );
+			}
+
+			_container_file_manager___::reset( P );
+			_ListFileName.reset( P );
+
+			_ListContainer = NULL;
+		}
+		list_container_file_manager___( void )
+		{
+			reset( false );
+		}
+		~list_container_file_manager___( void )
+		{
+			reset();
+		}
+		void Init(
+			list_container &ListContainer,
+			const char *ContainerFileName,
+			const char *ListFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent )
+		{
+			reset();
+
+			_ListContainer = &ListContainer;
+
+			_container_file_manager___::Init( ContainerFileName, Mode, Persistent );
+
+			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
+				ERRa();
+
+			strcpy( _ListFileName, ListFileName );
+		}
+		void Drop( void )
+		{
+			if ( ( _ListContainer == NULL ) || ( _ListFileName == NULL ) )
+				ERRu();
+
+			_container_file_manager___::Drop();
+
+			if ( tol::FileExists( _ListFileName ) )
+				if ( remove( _ListFileName ) != 0 )
+					ERRu();
+		}
+		const char *ListFileName( void ) const
+		{
+			return _ListFileName;
+		}
+	};
+
+
+	template <typename list_container> bso::bool__ Connect(
+		list_container &ListContainer,
+		list_container_file_manager___<list_container> &FileManager )
+	{
+		bso::bool__ Exists = bch::Connect( ListContainer.Container(), FileManager );
+
+		if ( Exists )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), tol::GetFileSize( FileManager.FileName() ) / ListContainer.GetItemSize(), ListContainer, tol::GetFileLastModificationTime( FileManager.FileName() ) ) )
+				ERRu();
+
+		return Exists;
+	}
+
+
+
 	template <typename container, typename object, typename row, typename row_t> class list_xcontainer_
 	: public list_container_<container, row, row_t>
 	{

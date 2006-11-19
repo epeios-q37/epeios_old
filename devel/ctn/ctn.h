@@ -361,6 +361,24 @@ namespace ctn {
 		{
 			return _Dynamics;
 		}
+		bso::bool__ Exists( void ) const
+		{
+			bso::bool__ Exists = _Statics.Exists();
+
+			if ( Exists != _Dynamics.Exists() )
+				ERRc();
+
+			return Exists;
+		}
+		time_t TimeStamp( void ) const
+		{
+			time_t StaticsTimeStamp, DynamicsTimeStamp;
+
+			StaticsTimeStamp = _Statics.TimeStamp();
+			DynamicsTimeStamp = _Dynamics.TimeStamp();
+
+			return ( StaticsTimeStamp > DynamicsTimeStamp ? StaticsTimeStamp : DynamicsTimeStamp );
+		}
 	};
 
 	template <typename memory> inline bso::bool__ Connect(

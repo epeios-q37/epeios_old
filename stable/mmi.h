@@ -348,6 +348,24 @@ namespace mmi {
 		{
 			return _Multimemory;
 		}
+		bso::bool__ Exists( void ) const
+		{
+			bso::bool__ Exists = _Descriptors.Exists();
+
+			if ( Exists != _Multimemory.Exists() )
+				ERRc();
+
+			return Exists;
+		}
+		time_t TimeStamp( void ) const
+		{
+			time_t DescriptorsTimeStamp, MultimemoryTimeStamp;
+
+			DescriptorsTimeStamp = _Descriptors.TimeStamp();
+			MultimemoryTimeStamp = _Multimemory.TimeStamp();
+
+			return ( DescriptorsTimeStamp > MultimemoryTimeStamp ? DescriptorsTimeStamp : MultimemoryTimeStamp );
+		}
 	};
 
 	inline bso::bool__ Connect(

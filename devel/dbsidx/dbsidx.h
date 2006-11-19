@@ -339,15 +339,7 @@ namespace dbsidx {
 		}
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
-			time_t TreeTimeStamp, QueueTimeStamp;
-
-			TreeTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.TreeFileName() );
-			QueueTimeStamp = tol::GetFileLastModificationTime( S_.FileManager.QueueFileName() );
-
-			if ( QueueTimeStamp > TreeTimeStamp )
-				return QueueTimeStamp;
-			else
-				return TreeTimeStamp;
+			return S_.FileManager.TimeStamp();
 		}
 	private:
 		void _SaveRoot( void ) const;
