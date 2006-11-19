@@ -215,6 +215,18 @@ namespace sck {
 #endif
 	}
 
+	inline const char *ErrorDescription( error__ Error )
+	{
+#ifdef SCK__MS
+		return ("Not implemented" );
+#elif defined( SCK__POSIX )
+		return strerror( Error );
+#else
+#	error
+#endif
+	}
+
+
 #ifndef CPE__T_BEOS
 	/*f The socket 'Socket' becomes blocking or not, depend on the value of 'Value'.
 	Not currently available under Be OS. */

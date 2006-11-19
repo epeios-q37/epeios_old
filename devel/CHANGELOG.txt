@@ -1,5 +1,38 @@
 $Id$
 
+19/11/06 :
+	- CSDBNS :
+		- Ajout de code pour traquer bogue aappru sous Linux concernant cette bibliothèque.
+
+16/11/06 :
+	- GENERAL :
+		- Correction bogues apparus lors de la compilation sous Linux.
+	- RGSTRY :
+		- Correction bogue apparus suite modification 'XML'.
+
+15/11/06 :
+	- GENERAL :
+		- Correction bogues apparus lors de la compilation sous Linux.
+
+07/11/06 :
+	- XML :
+		- Le parser ne parse plus que le contenu de la première balise rencontrée et non plus jusqu'à la fin du 'flow'.
+		- La position d'un éventuelle erreur n'est plus récupèrée à travers les paramètres, mais directement par l'objet 'flow'.
+	- XTF :
+		- Modifications pour faciliter les modification bibliothèque 'XML'.
+
+30/10/06 :
+	- GENERAL :
+		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
+
+27/10/06 :
+	- GENERAL :
+		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
+
+26/10/06 :
+	- GENERAL :
+		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
+
 19/10/06 :
 	- FLM :
 		- Ajout méthode 'Drop()'.

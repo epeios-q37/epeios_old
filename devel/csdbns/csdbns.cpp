@@ -62,6 +62,10 @@ using namespace csdbns;
 #include "mtk.h"
 #endif
 
+#ifdef CPE__T_CONSOLE
+#	include "cio.h"
+#endif
+
 bso::bool__ csdbns::listener___::Init(
 	service__ Service,
 	int Amount,
@@ -122,9 +126,21 @@ ERRBegin
 			ERRs();
 		else if ( Reponse > 0 )
 		{
-			if ( ( Socket = accept( Socket_, NULL, NULL ) ) == SCK_INVALID_SOCKET )
-				if ( ( Error() != SCK_EWOULDBLOCK ) && ( Error() != SCK_EAGAIN ) )
+			if ( ( Socket = accept( Socket_, NULL, NULL ) ) == SCK_INVALID_SOCKET ) {
+				error__ Error = sck::Error();
+#ifdef CPE__T_CONSOLE
+				ERRProlog
+					cio::aware_cerr___ cerr;
+					tol::buffer__ Buffer;
+				ERRBegin
+					cerr << tol::DateAndTime( Buffer ) << " (" << __FILE__ << ", " << (bso::ulong__)__LINE__  << ") : ("  << (bso::ulong__)Error << ") " << sck::ErrorDescription( Error ) << txf::nl << txf::sync;
+				ERRErr
+				ERREnd
+				ERREpilog
+#endif
+				if ( ( Error != SCK_EWOULDBLOCK ) && ( Error != SCK_EAGAIN ) )
 					ERRs();
+			}
 		}
 ERRErr
 	if ( ErrHandle == err::hSkip )
