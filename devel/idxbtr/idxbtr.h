@@ -382,11 +382,11 @@ namespace idxbtr {
 
 	E_AUTO1( tree_index )
 
-	typedef btr::file_manager___ file_manager___;
+	typedef btr::binary_tree_file_manager___ tree_index_file_manager___;
 
 	template <typename index> bso::bool__ Connect(
 		index &Index,
-		file_manager___ &FileManager )
+		tree_index_file_manager___ &FileManager )
 	{
 		return btr::Connect( Index.BaseTree, FileManager );
 	}

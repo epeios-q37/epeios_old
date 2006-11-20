@@ -287,11 +287,11 @@ namespace tym {
 
 	E_AUTO2( memory )
 
-	using uym::file_manager___;
+	typedef uym::untyped_memory_file_manager___ memory_file_manager___;
 
 	template <typename memory> inline bso::bool__ Connect(
 		memory &Memory,
-		file_manager___ &FileManager )
+		memory_file_manager___ &FileManager )
 	{
 		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
 	}

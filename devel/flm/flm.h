@@ -70,6 +70,17 @@ extern class ttr_tutor &FLMTutor;
 #include "fil.h"
 #include "epeios.h"
 
+#ifdef FLM_MAX_FILE_AMOUNT
+#	define FLM__MAX_FILE_AMOUNT	FLM_MAX_FILE_AMOUNT
+#elif defined( CPE__T_MS )
+#	define FLM__MAX_FILE_AMOUNT	1000
+#elif defined ( CPE__T_LINUX )
+#	define FLM__MAX_FILE_AMOUNT	800	// Linus, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
+#else
+#	error "Unimplemented target !"
+#endif
+
+
 namespace flm {
 	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire
@@ -144,6 +155,8 @@ namespace flm {
 	void _Unregister( row__ Row );
 	void _ReportFileUsing( row__ Row );
 	void _ReportFileClosing( row__ Row );
+
+	void ReleaseAllFiles( void );
 
 	class memoire_fichier_base___
 	{

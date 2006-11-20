@@ -1,5 +1,10 @@
 $Id$
 
+20/11/06 :
+	- FLM :
+		- Ajout gestion 'FLM_[_]MAX_FILE_AMOUNT'.
+
+
 19/11/06 :
 	- CSDBNS :
 		- Ajout de code pour traquer bogue apparu sous Linux concernant cette bibliothèque.

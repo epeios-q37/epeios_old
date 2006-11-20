@@ -167,9 +167,9 @@ namespace lstbch {
 
 	E_AUTO3( list_bunch )
 
-	typedef bch::file_manager___ _bunch_file_manager___;
+	typedef bch::bunch_file_manager___ _bunch_file_manager___;
 
-	template <typename list_bunch> class file_manager___
+	template <typename list_bunch> class list_bunch_file_manager___
 	: public _bunch_file_manager___
 	{
 	private:
@@ -193,11 +193,11 @@ namespace lstbch {
 
 			_ListBunch = NULL;
 		}
-		file_manager___( void )
+		list_bunch_file_manager___( void )
 		{
 			reset( false );
 		}
-		~file_manager___( void )
+		~list_bunch_file_manager___( void )
 		{
 			reset();
 		}
@@ -239,7 +239,7 @@ namespace lstbch {
 
 	template <typename list_bunch> bso::bool__ Connect(
 		list_bunch &ListBunch,
-		file_manager___<list_bunch> &FileManager )
+		list_bunch_file_manager___<list_bunch> &FileManager )
 	{
 		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
 

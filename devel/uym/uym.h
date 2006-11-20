@@ -326,7 +326,7 @@ namespace uym {
 
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
 
-	class file_manager___
+	class untyped_memory_file_manager___
 	: public _file_memory_driver___
 	{
 	public:
@@ -344,7 +344,7 @@ namespace uym {
 
 	inline bso::bool__ Connect(
 		untyped_memory_ &Memory,
-		file_manager___ &FileManager )
+		untyped_memory_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = FileManager.Exists();
 

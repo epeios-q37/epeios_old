@@ -341,7 +341,7 @@ namespace dbsdct {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef lstbch::file_manager___<entries_> entries_file_manager___;
+	typedef lstbch::list_bunch_file_manager___<entries_> entries_file_manager___;
 
 	typedef dbsbsc::file_features_	_file_features_;
 
@@ -631,7 +631,7 @@ namespace dbsdct {
 		struct s
 		: public dynamic_content_::s
 		{
-			tym::file_manager___ StorageFileManager;
+			tym::memory_file_manager___ StorageFileManager;
 			entries_file_manager___ EntriesFileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
@@ -643,6 +643,10 @@ namespace dbsdct {
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			S_.StorageFileManager.ReleaseFile();
+			S_.EntriesFileManager.ReleaseFile();
+			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+
 			if ( P ) {
 				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveLocationsAndAvailables();

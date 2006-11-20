@@ -820,11 +820,11 @@ namespace mmm {
 
 	E_AUTO( multimemory )
 
-	using uym::file_manager___;
+	typedef uym::untyped_memory_file_manager___	multimemory_file_manager___;
 
 	inline bso::bool__ Connect(
 		multimemory_ &Memory,
-		file_manager___ &FileManager )
+		multimemory_file_manager___ &FileManager )
 	{
 		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
 	}

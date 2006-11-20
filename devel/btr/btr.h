@@ -916,11 +916,11 @@ namespace btr {
 
 	E_AUTO1( binary_tree )
 
-	typedef bch::file_manager___ file_manager___;
+	typedef bch::bunch_file_manager___ binary_tree_file_manager___;
 
 	template <typename tree> bso::bool__ Connect(
 		tree &Tree,
-		file_manager___ &FileManager )
+		binary_tree_file_manager___ &FileManager )
 	{
 		return bch::Connect( Tree.Nodes, FileManager );
 	}

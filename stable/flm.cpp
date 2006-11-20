@@ -88,7 +88,7 @@ void flm::_ReportFileUsing( row__ Row )
 {
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
-	else if ( Queue.Amount() > 1000 ) {
+	else if ( Queue.Amount() > FLM__MAX_FILE_AMOUNT ) {
 		List( Queue.Tail() )->ReleaseFile();
 //		Queue.Delete( Queue.Tail() );	// Inutile, car réalisé par la méthode ci-dessus.
 	}
@@ -104,6 +104,22 @@ void flm::_ReportFileClosing( row__ Row )
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
 }
+
+void flm::ReleaseAllFiles( void )
+{
+	flm::row__ Row = List.First();
+	flm::row__ RowBuffer;
+
+	while ( Row != NONE ) {
+		RowBuffer = Row;
+
+		Row = List.Next( Row );
+
+		List( RowBuffer )->ReleaseFile();
+	}
+
+}
+
 
 
 

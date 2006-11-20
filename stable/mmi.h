@@ -290,21 +290,21 @@ namespace mmi {
 
 	E_AUTO( indexed_multimemory )
 
-	class file_manager___ {
+	class indexed_multimemory_file_manager___ {
 	private:
-		tym::file_manager___ _Descriptors;
-		mmm::file_manager___ _Multimemory;
+		tym::memory_file_manager___ _Descriptors;
+		mmm::multimemory_file_manager___ _Multimemory;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_Descriptors.reset( P );
 			_Multimemory.reset( P );
 		}
-		file_manager___( void )
+		indexed_multimemory_file_manager___( void )
 		{
 			reset( false );
 		}
-		~file_manager___( void )
+		~indexed_multimemory_file_manager___( void )
 		{
 			reset();
 		}
@@ -340,11 +340,11 @@ namespace mmi {
 			_Descriptors.Drop();
 			_Multimemory.Drop();
 		}
-		uym::file_manager___ &DescriptorsFileManager( void )
+		tym::memory_file_manager___ &DescriptorsFileManager( void )
 		{
 			return _Descriptors;
 		}
-		tym::file_manager___ &MultimemoryFileManager( void )
+		mmm::multimemory_file_manager___ &MultimemoryFileManager( void )
 		{
 			return _Multimemory;
 		}
@@ -370,7 +370,7 @@ namespace mmi {
 
 	inline bso::bool__ Connect(
 		indexed_multimemory_ &Memory,
-		file_manager___ &FileManager )
+		indexed_multimemory_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = tym::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
 

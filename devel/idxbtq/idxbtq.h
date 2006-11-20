@@ -229,8 +229,8 @@ namespace idxbtq {
 
 	class index_file_manager___ {
 	private:
-		idxbtr::file_manager___ _TreeFileManager;
-		idxque::file_manager___ _QueueFileManager;
+		idxbtr::tree_index_file_manager___ _TreeFileManager;
+		idxque::queue_index_file_manager___ _QueueFileManager;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -279,11 +279,11 @@ namespace idxbtq {
 			_TreeFileManager.Drop();
 			_QueueFileManager.Drop();
 		}
-		idxbtr::file_manager___ TreeFileManager( void )
+		idxbtr::tree_index_file_manager___ &TreeFileManager( void )
 		{
 			return _TreeFileManager;
 		}
-		idxque::file_manager___ QueueFileManager( void )
+		idxque::queue_index_file_manager___ &QueueFileManager( void )
 		{
 			return _QueueFileManager;
 		}

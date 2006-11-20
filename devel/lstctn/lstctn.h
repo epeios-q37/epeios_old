@@ -141,7 +141,7 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
-	typedef ctn::file_manager___ _container_file_manager___;
+	typedef ctn::container_file_manager___ _container_file_manager___;
 
 	template <typename list_container> class list_container_file_manager___
 	: public _container_file_manager___

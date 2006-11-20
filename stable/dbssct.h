@@ -242,7 +242,7 @@ namespace dbssct {
 		struct s
 		: public static_content_::s
 		{
-			tym::file_manager___ FileManager;
+			tym::memory_file_manager___ FileManager;
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;
@@ -253,6 +253,8 @@ namespace dbssct {
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			S_.FileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+
 			if ( P ) {
 				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveLocations();

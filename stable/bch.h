@@ -538,11 +538,11 @@ namespace bch {
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
 
-	typedef tym::file_manager___ file_manager___;
+	typedef tym::memory_file_manager___ bunch_file_manager___;
 
 	template <typename bunch> bso::bool__ Connect(
 		bunch &Bunch,
-		file_manager___ &FileManager )
+		bunch_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = false;
 

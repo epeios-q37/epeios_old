@@ -362,6 +362,9 @@ namespace dbsidx {
 		{}
 		void reset( bso::bool__ P = true )
 		{
+
+			S_.FileManager.ReleaseFiles();
+
 			if ( P ) {
 				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveRoot();

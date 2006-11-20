@@ -302,21 +302,21 @@ namespace ctn {
 	};
 
 
-	class file_manager___ {
+	class container_file_manager___ {
 	private:
-		tym::file_manager___ _Statics;
-		mmi::file_manager___ _Dynamics;
+		tym::memory_file_manager___ _Statics;
+		mmi::indexed_multimemory_file_manager___ _Dynamics;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_Statics.reset( P );
 			_Dynamics.reset( P );
 		}
-		file_manager___( void )
+		container_file_manager___( void )
 		{
 			reset( false );
 		}
-		~file_manager___( void )
+		~container_file_manager___( void )
 		{
 			reset();
 		}
@@ -353,11 +353,11 @@ namespace ctn {
 			_Statics.Drop();
 			_Dynamics.Drop();
 		}
-		uym::file_manager___ &StaticsFileManager( void )
+		tym::memory_file_manager___ &StaticsFileManager( void )
 		{
 			return _Statics;
 		}
-		mmi::file_manager___ &DynamicsFileManager( void )
+		mmi::indexed_multimemory_file_manager___ &DynamicsFileManager( void )
 		{
 			return _Dynamics;
 		}
@@ -383,7 +383,7 @@ namespace ctn {
 
 	template <typename memory> inline bso::bool__ Connect(
 		memory &Memory,
-		file_manager___ &FileManager )
+		container_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = tym::Connect( Memory.Statics, FileManager.StaticsFileManager() );
 
