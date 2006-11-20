@@ -58,55 +58,103 @@ public:
 #include "lstbch.h"
 #include "que.h"
 
+#ifdef CPE__T_MT
+#	define MT
+#endif
+
+#ifdef MT
+#	include "mtx.h"
+#endif
+
 using namespace flm;
+
+epeios::size__ flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
+
+#ifdef MT
+static mtx::mutex_handler__ Mutex_;
+#endif
+
+static inline void Lock_( void )
+{
+#ifdef MT
+	mtx::Lock( Mutex_ );
+#endif
+}
+
+static inline void Unlock_( void )
+{
+#ifdef MT
+	mtx::Unlock( Mutex_ );
+#endif
+}
 
 static lstbch::E_LBUNCHt( memoire_fichier_base___ *, row__ ) List;
 static que::E_MQUEUEt( row__ ) Queue;
 
 row__ flm::_Register( memoire_fichier_base___ &MFB )
 {
-	row__ Row = List.New();
+	row__ Row = NONE;
+
+	Lock_();
+
+	Row = List.New();
 
 	if ( Queue.Amount() < List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
 		Queue.Allocate( List.Extent() );
 
 	List.Store( &MFB, Row );
 
+	Unlock_();
+
 	return Row;
 }
 
 void flm::_Unregister( row__ Row )
 {
+	Lock_();
+
 	List.Store( NULL, Row );
 	List.Delete( Row );
 
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
+
+	Unlock_();
 }
 
 void flm::_ReportFileUsing( row__ Row )
 {
+	Lock_();
+
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
-	else if ( Queue.Amount() > FLM__MAX_FILE_AMOUNT ) {
-		List( Queue.Tail() )->ReleaseFile();
-//		Queue.Delete( Queue.Tail() );	// Inutile, car réalisé par la méthode ci-dessus.
+	else if ( Queue.Amount() >= FLM__MAX_FILE_AMOUNT ) {
+		List( Queue.Tail() )->ReleaseFile( false );
+		Queue.Delete( Queue.Tail() );
 	}
 
 	if ( Queue.IsEmpty() )
 		Queue.Create( Row );
 	else
 		Queue.BecomePrevious( Row, Queue.Head() );
+
+	Unlock_();
 }
 
 void flm::_ReportFileClosing( row__ Row )
 {
+	Lock_();
+
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
+
+	Unlock_();
 }
 
 void flm::ReleaseAllFiles( void )
 {
+	Lock_();
+
 	flm::row__ Row = List.First();
 	flm::row__ RowBuffer;
 
@@ -115,8 +163,13 @@ void flm::ReleaseAllFiles( void )
 
 		Row = List.Next( Row );
 
-		List( RowBuffer )->ReleaseFile();
+		List( RowBuffer )->ReleaseFile( false );
+
+		if ( Queue.IsMember( RowBuffer ) )
+			Queue.Delete( RowBuffer );
 	}
+
+	Unlock_();
 
 }
 
@@ -134,11 +187,21 @@ public:
 		List.Init();
 		Queue.Init();
 
+		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
+
+#ifdef MT
+		Mutex_ = mtx::Create( mtx::mOwned );
+#endif
+
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
 	~flmpersonnalization( void )
 	{
+
+#ifdef MT
+		mtx::Delete( Mutex_ );
+#endif
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

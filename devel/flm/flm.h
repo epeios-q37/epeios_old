@@ -70,18 +70,25 @@ extern class ttr_tutor &FLMTutor;
 #include "fil.h"
 #include "epeios.h"
 
-#ifdef FLM_MAX_FILE_AMOUNT
-#	define FLM__MAX_FILE_AMOUNT	FLM_MAX_FILE_AMOUNT
-#elif defined( CPE__T_MS )
-#	define FLM__MAX_FILE_AMOUNT	1000
+#if defined( CPE__T_MS )
+#	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
 #elif defined ( CPE__T_LINUX )
-#	define FLM__MAX_FILE_AMOUNT	800	// Linus, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
+#	define FLM_DEFAULT_MAX_FILE_AMOUNT	800	// Linus, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
 #else
 #	error "Unimplemented target !"
 #endif
 
 
+#ifdef FLM_MAX_FILE_AMOUNT
+#	define FLM__MAX_FILE_AMOUNT	FLM_MAX_FILE_AMOUNT
+#else
+#	define FLM__MAX_FILE_AMOUNT	FLM_DEFAULT_MAX_FILE_AMOUNT
+#endif
+
+
 namespace flm {
+	extern epeios::size__ MaxFileAmount;
+
 	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire
 
@@ -356,12 +363,13 @@ namespace flm {
 				ERRu();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
-		void ReleaseFile( void )
+		void ReleaseFile( bso::bool__ ReportClosing = true )
 		{
 			if ( Temoin_.Ouvert ) {
 				File_.reset();
 
-				_ReportFileClosing( _Row );
+				if ( ReportClosing )
+					_ReportFileClosing( _Row );
 			}
 
 			Temoin_.Ouvert = 0;

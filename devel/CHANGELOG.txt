@@ -3,7 +3,7 @@ $Id$
 20/11/06 :
 	- FLM :
 		- Ajout gestion 'FLM_[_]MAX_FILE_AMOUNT'.
-
+		- Rendue 'thread-safe'.
 
 19/11/06 :
 	- CSDBNS :
