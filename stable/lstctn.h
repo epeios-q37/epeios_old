@@ -152,6 +152,8 @@ namespace lstctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			_container_file_manager___::ReleaseFile();
+
 			if ( P ) {
 				if ( ( _ListContainer != NULL )
 					 && _container_file_manager___::IsPersistent()

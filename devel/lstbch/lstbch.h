@@ -178,6 +178,8 @@ namespace lstbch {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			_bunch_file_manager___::ReleaseFile();
+
 			if ( P ) {
 				if ( ( _ListBunch != NULL )
 					 && _bunch_file_manager___::IsPersistent()

@@ -569,6 +569,8 @@ void dbsidx::file_index_::_Drop( void )
 {
 ERRProlog
 ERRBegin
+	S_.FileManager.Drop();
+
 	dbsbsc::DropFile( RootFileName, ROOT_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd
