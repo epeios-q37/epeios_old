@@ -83,7 +83,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__T_MT		// Cible multitâche.
 #undef CPE__T_CONSOLE	// Cible console.
 #undef CPE__T_GUI		// Cible GUI
-#undef CPE__T_LIBRARY	// Cible bibliothèque (SLL, .so, ...)
+#undef CPE__T_LIBRARY	// Cible bibliothèque (DLL, .so, ...)
 
 #ifdef _MSC_VER
 #	define CPE__P_MS
@@ -127,6 +127,10 @@ extern class ttr_tutor &CPETutor;
 #	endif
 #endif
 
+#ifdef CPE__P_MS
+#	define CPE__T_MS
+#endif
+
 #ifndef CPE__T_MT
 #	ifdef CPE_MT 
 #		define CPE__T_MT
@@ -139,7 +143,7 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef CPE_LIBRARY
 #	define CPE__T_LIBRARY
-#elif defined( CPE__MS )
+#elif defined( CPE__T_MS )
 #	if defined(_USRDLL )
 #		define CPE__T_LIBRARY
 #	endif
@@ -170,10 +174,6 @@ extern class ttr_tutor &CPETutor;
 #	if __GNUC__ == 3
 #		define CPE__C_GCC3
 #	endif
-#endif
-
-#ifdef CPE__P_MS
-#	define CPE__T_MS
 #endif
 
 #ifdef CPE__P_CYGWIN
