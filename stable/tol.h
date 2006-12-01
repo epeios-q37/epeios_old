@@ -463,7 +463,7 @@ namespace tol {
 	//f Return true if the file 'Name' exists, false otherwise.
 	inline bool FileExists( const char *FileName )
 	{
-#ifdef CPE__T_MS
+#ifdef CPE__P_MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) == 0 )
@@ -509,7 +509,7 @@ namespace tol {
 
 	inline time_t GetFileLastModificationTime( const char *FileName )
 	{
-#ifdef CPE__T_MS
+#ifdef CPE__P_MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
@@ -530,7 +530,7 @@ namespace tol {
 
 	inline time_t GetFileSize( const char *FileName )
 	{
-#ifdef CPE__T_MS
+#ifdef CPE__P_MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
