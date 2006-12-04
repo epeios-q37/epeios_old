@@ -110,7 +110,7 @@ namespace dbssct {
 			storage_::s Storage;
 			_cache_::s Cache;
 			// Taille de l'élément.
-			size_t Size;
+			epeios::size__ Size;
 			time_t ModificationTimeStamp;
 		} &S_;
 		static_content_( s &S )

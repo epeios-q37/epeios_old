@@ -75,16 +75,16 @@ namespace iof {
 	  public fwf::oflow_functions___
 	{
 	protected:
-		fwf::bsize__ FWFWrite(
+		fwf::size__ FWFWrite(
 			const fwf::datum__ *Tampon,
-			fwf::bsize__ Minimum,
-			fwf::bsize__ Demande )
+			fwf::size__ Minimum,
+			fwf::size__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			fwf::bsize__ Written = 0;
+			fwf::size__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += _output__::Write( Tampon, Demande - Written );
@@ -147,16 +147,16 @@ namespace iof {
 	  public fwf::iflow_functions___
 	{
 	protected:
-		fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Tampon,
-			fwf::bsize__ Desire )
+			fwf::size__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			fwf::bsize__ NombreLus = 0;
+			fwf::size__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += _input__::Read( Desire - NombreLus, Tampon );
@@ -219,16 +219,16 @@ namespace iof {
 	  public fwf::ioflow_functions___
 	{
 	protected:
-		fwf::bsize__ FWFWrite(
+		fwf::size__ FWFWrite(
 			const fwf::datum__ *Tampon,
-			fwf::bsize__ Minimum,
-			fwf::bsize__ Demande )
+			fwf::size__ Minimum,
+			fwf::size__ Demande )
 		{
 #ifdef IOF_DBG
 			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
 				ERRu();
 #endif
-			fwf::bsize__ Written = 0;
+			fwf::size__ Written = 0;
 
 			while ( Written < Minimum )
 				Written += _output__::Write( Tampon, Demande - Written );
@@ -239,16 +239,16 @@ namespace iof {
 		{
 			Flush();
 		}
-		fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Tampon,
-			fwf::bsize__ Desire )
+			fwf::size__ Desire )
 		{
 	#ifdef STF_DBG
 			if( Tampon == NULL )
 				ERRu();
 	#endif
-			fwf::bsize__ NombreLus = 0;
+			fwf::size__ NombreLus = 0;
 
 			while ( !OnEOF() && ( NombreLus < Minimum ) )
 				NombreLus += _input__::Read( Desire - NombreLus, Tampon );

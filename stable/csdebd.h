@@ -81,10 +81,10 @@ namespace csdebd {
 		data_ &_Write;
 		epeios::row__ _Row;
 	protected:
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted )
+			fwf::size__ Wanted )
 		{
 			if ( _Row == NONE )
 				_Row = _Read.First();
@@ -121,10 +121,10 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 #endif
 			_Read.Init();
 		}
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Read.Amount() != 0 )

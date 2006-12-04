@@ -75,16 +75,10 @@ extern class ttr_tutor &FWFTutor;
 
 namespace fwf {
 		//t Amount of data.
-	typedef bso::msize__		size__;
+	using bso::size__;
 
 	//d The max value for a amount.
-#	define FWF_SIZE_MAX			BSO_MSIZE_MAX
-
-	//t Size (of a cache, for example).
-	typedef bso::bsize__		bsize__;
-
-	//d The max value for a size.
-#	define FWF_BSIZE_MAX		BSO_BSIZE_MAX
+#	define FWF_SIZE_MAX			BSO_SIZE_MAX
 
 	//t Type of a datum.
 	typedef unsigned char		datum__;
@@ -173,10 +167,10 @@ namespace fwf {
 		/* Place un minimum de 'Miimum' octets et jusqu'à 'Wanted' octets dans 'Buffer'. Retourne le nombre d'octets
 		effectivement place dans 'Buffer'. Cette value peut être infèrieure à 'Minimum' uniquement si toutes les données 
 		ont été lues du périphérique sous-jacent. */
-		virtual bsize__ FWFRead(
-			bsize__ Minimum,
+		virtual size__ FWFRead(
+			size__ Minimum,
 			datum__ *Buffer,
-			bsize__ Wanted ) = 0;
+			size__ Wanted ) = 0;
 		virtual void FWFDismiss( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
@@ -213,10 +207,10 @@ namespace fwf {
 				_Unlock();
 			}
 		}
-		bsize__ Read(
-			bsize__ Minimum,
+		size__ Read(
+			size__ Minimum,
 			datum__ *Buffer,
-			bsize__ Wanted )
+			size__ Wanted )
 		{
 #ifdef FWF_DBG
 			if ( Minimum < 1 )
@@ -248,10 +242,10 @@ namespace fwf {
 			}
 		}
 	protected:
-		virtual bsize__ FWFWrite(
+		virtual size__ FWFWrite(
 			const datum__ *Buffer,
-			bsize__ Wanted,
-			bsize__ Minimum ) = 0;
+			size__ Wanted,
+			size__ Minimum ) = 0;
 		virtual void FWFSynchronize( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
@@ -287,10 +281,10 @@ namespace fwf {
 				_Unlock();
 			}
 		}
-		bsize__ Write(
+		size__ Write(
 			const datum__ *Buffer,
-			bsize__ Wanted,
-			bsize__ Minimum )
+			size__ Wanted,
+			size__ Minimum )
 		{
 			_Lock();
 			return FWFWrite( Buffer, Wanted, Minimum );

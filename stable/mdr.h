@@ -71,20 +71,20 @@ extern class ttr_tutor &MDRTutor;
 namespace mdr {
 
 	//t The position in a memory.
-	typedef bso::msize__	row_t__;
-	typedef bso::p_msize__	p_row_t__;
+	typedef bso::size__	row_t__;
+	typedef bso::p_size__	p_row_t__;
 
 
 	#define MDR_ROW_T_MAX		( BSO_MSIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
 
 	//t The size of a memory.
-	typedef bso::msize__	size__;
-	#define MDR_SIZE_MAX	BSO_MSIZE_MAX
+	using bso::size__;
+	#define MDR_SIZE_MAX	BSO_SIZE_MAX
 
 	//t The portable version of a 'size__'.
-	typedef bso::p_msize__	p_size__;
-	#define MDR_P_SIZE_MAX	BSO_P_MSIZE_MAX
+	using bso::p_size__;
+	#define MDR_P_SIZE_MAX	BSO_P_SIZE_MAX
 
 	//t The type of the datum in a memory.
 	typedef bso::raw__	datum__;

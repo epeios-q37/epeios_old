@@ -67,7 +67,7 @@ extern class ttr_tutor &TXFTutor;
 #include "flw.h"
 
 namespace txf {
-	using flw::bsize__;
+	using flw::size__;
 	using flw::datum__;
 
 	//c Input text flow.
@@ -80,8 +80,8 @@ namespace txf {
 		{
 			return Flow_.Get();
 		}
-		bsize__ Lire_(
-			bsize__ Nombre,
+		size__ Lire_(
+			size__ Nombre,
 			datum__ *Tampon )
 		{
 			return Flow_.ReadUpTo( Nombre, Tampon );
@@ -99,7 +99,7 @@ namespace txf {
 		text_iflow__ &operator >>( unsigned long &E )
 		{
 			datum__ C[9];
-			bsize__ Pos;
+			size__ Pos;
 
 			if ( ( Pos = Lire_( 9, C ) ) > 8 )
 				ERRf();
@@ -162,8 +162,8 @@ namespace txf {
 			return *this;
 		}
 		//f Read 'Amount' characters and put them in 'Buffer'.
-		bsize__ Get(
-			bsize__ Amount,
+		size__ Get(
+			size__ Amount,
 			datum__ *Buffer )
 		{
 			return Lire_( Amount, Buffer );
@@ -188,7 +188,7 @@ namespace txf {
 		}
 		void Ecrire_(
 			const datum__ *Tampon,
-			bsize__ Nombre )
+			size__ Nombre )
 		{
 			Flow_.Write( Tampon, Nombre );
 		}
@@ -214,10 +214,10 @@ namespace txf {
 		{
 			size_t Length = strlen( C );
 
-			if ( Length > FLW_BSIZE_MAX )
+			if ( Length > FLW_SIZE_MAX )
 				ERRl();
 
-			Ecrire_( (const datum__ *)C, (bsize__)Length );
+			Ecrire_( (const datum__ *)C, (size__)Length );
 
 			return *this;
 		}
@@ -269,7 +269,7 @@ namespace txf {
 		//f Wrtie 'Amount' data from 'Buffer'.
 		void Put(
 			const datum__ *Buffer,
-			bsize__ Amount )
+			size__ Amount )
 		{
 			Ecrire_( Buffer, Amount );
 		}

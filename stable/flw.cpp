@@ -63,9 +63,9 @@ using namespace flw;
 
 void flw::oflow__::_Write(
 	const datum__ *Buffer,
-	bsize__ Amount )
+	size__ Amount )
 {
-	bsize__ AmountWritten = _WriteUpTo( Buffer, Amount );
+	size__ AmountWritten = _WriteUpTo( Buffer, Amount );
 
 	while( AmountWritten < Amount )
 		AmountWritten += _WriteUpTo( Buffer + AmountWritten, Amount - AmountWritten );
@@ -85,12 +85,12 @@ bool flw::GetString(
 }
 
 
-bsize__ flw::iflow__::_Read(
-	bsize__ Minimum,
+size__ flw::iflow__::_Read(
+	size__ Minimum,
 	datum__ *Buffer,
-	bsize__ Wanted )
+	size__ Wanted )
 {
-	bsize__ Amount = 0;
+	size__ Amount = 0;
 ERRProlog
 ERRBegin
 	if ( _Size == 0 )	// There was an error before. See below, in 'ERRErr'.
@@ -109,12 +109,12 @@ ERREpilog
 	return Amount;
 }
 
-bsize__ flw::oflow__::_DirectWrite(
+size__ flw::oflow__::_DirectWrite(
 	const datum__ *Buffer,
-	bsize__ Wanted,
-	bsize__ Minimum )
+	size__ Wanted,
+	size__ Minimum )
 {
-	bsize__ Amount = 0;
+	size__ Amount = 0;
 ERRProlog
 ERRBegin
 	if ( ( _Size == 0 ) && ( _Cache != NULL ) )	// There was an error before. See below, in 'ERRErr'.

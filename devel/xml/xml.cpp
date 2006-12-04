@@ -93,7 +93,7 @@ enum entity_state__ {
 };
 
 
-static char HandleEntity_( xtf::extended_text_iflow__ &Flow )
+static unsigned char HandleEntity_( xtf::extended_text_iflow__ &Flow )
 {
 	entity_state__ State = sStart;
 
@@ -243,7 +243,7 @@ static bso::bool__ GetValue_(
 	bso::char__ Delimiter,
 	str::string_ &Value )
 {
-	char C;
+	unsigned char C;
 	bso::bool__ IsSpace = true;
 
 	while ( !Flow.EOX() && ( Flow.View() != Delimiter ) ) {

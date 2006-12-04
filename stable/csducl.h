@@ -137,10 +137,10 @@ namespace csducl {
 			return *(flw::ioflow__ *)NULL;	// Pour éviter un 'warning'.
 		}
 	protected:
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted )
+			fwf::size__ Wanted )
 		{
 			return _Get().ReadRelay( Minimum, Buffer, Wanted );
 		}
@@ -148,10 +148,10 @@ namespace csducl {
 		{
 			_Get().Dismiss();
 		}
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 			return _Get().WriteRelay( Buffer, Wanted, Minimum );
 		}

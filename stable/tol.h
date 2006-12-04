@@ -528,7 +528,7 @@ namespace tol {
 #endif
 	}
 
-	inline time_t GetFileSize( const char *FileName )
+	inline bso::size__ GetFileSize( const char *FileName )
 	{
 #ifdef CPE__P_MS
 		struct _stat Stat;

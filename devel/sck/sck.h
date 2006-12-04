@@ -255,19 +255,19 @@ namespace sck {
 	the amount effectively red. If 0 is returned, it means that the 'Timeout'
 	expired. If the connection no longer exists, then 'SCK_DISCONNECTED' is
 	returned. */
-	flw::bsize__ Read(
+	flw::size__ Read(
 		socket__ Socket,
-		flw::bsize__ Amount,
+		flw::size__ Amount,
 		void *Buffer,
 		duration__ TimeOut = SCK_INFINITE );
 
 	/*f Write up to 'Amount' bytes from 'Buffer' to the socket 'Socket'. Return
 	the amount effectively written. If 0 is returned, it means 'TimeOut' expired.
 	If connection no longer exists, then 'SCK_DISCONNECTED' is returned. */
-	flw::bsize__ Write(
+	flw::size__ Write(
 		socket__ Socket,
 		const void *Buffer,
-		flw::bsize__ Amount,
+		flw::size__ Amount,
 		duration__ TimeOut = SCK_INFINITE );
 
 	//f Close the socket 'Socket'.
@@ -295,14 +295,14 @@ namespace sck {
 		duration__ _TimeOut;
 		bso::bool__ _Error;
 	protected:
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted );
-		virtual fwf::bsize__ FWFWrite(
+			fwf::size__ Wanted );
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum );
+			fwf::size__ Wanted,
+			fwf::size__ Minimum );
 		virtual void FWFDismiss( void )
 		{}
 		virtual void FWFSynchronize( void )

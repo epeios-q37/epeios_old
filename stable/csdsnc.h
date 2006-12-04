@@ -315,10 +315,10 @@ ERREpilog
 				ERRf();
 		}
 	protected:
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 			fwf::size__ Amount = 0;
 
@@ -330,12 +330,12 @@ ERREpilog
 		{
 			_Synchronize();
 		}
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted )
+			fwf::size__ Wanted )
 		{
-			fwf::bsize__ Amount = 0;
+			fwf::size__ Amount = 0;
 
 			if ( !_Prepare() )
 				_Synchronize();

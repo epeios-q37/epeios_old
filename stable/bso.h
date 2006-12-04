@@ -247,39 +247,21 @@ namespace bso {
 		{}
 	};
 
-	//d Maximal value of a 'msize__'.
-	#define BSO_MSIZE_MAX	ULONG_MAX
-	//d Minimal value of a 'msize__'.
-	#define BSO_MSIZE_MIN	0
+	//d Maximal value of a 'size'.
+	#define BSO_SIZE_MAX	BSO_ULONG_MAX
+	//d Minimal value of a 'size__'.
+	#define BSO_SIZE_MIN	0
 
 	//t Size of a memory .
-	typedef bso::ulong__ msize__;
+	typedef bso::ulong__ size__;
 
 	//c The portable version of a buffer size.
-	class p_msize__
-	: public p_long__<msize__>
+	class p_size__
+	: public p_long__<size__>
 	{
 	public:
-		p_msize__( msize__ Op = 0 )
-		: p_long__<msize__>( Op )
-		{}
-	};
-
-	//d Maximal value of a 'bsize'.
-	#define BSO_BSIZE_MAX	INT_MAX
-	//d Minimal value of a 'bsize__'.
-	#define BSO_BSIZE_MIN	0
-
-	//t Size of a memory .
-	typedef int bsize__;
-
-	//c The portable version of a buffer size.
-	class p_bsize__
-	: public p_long__<bsize__>
-	{
-	public:
-		p_bsize__( bsize__ Op = 0 )
-		: p_long__<bsize__>( Op )
+		p_size__( size__ Op = 0 )
+		: p_long__<size__>( Op )
 		{}
 	};
 

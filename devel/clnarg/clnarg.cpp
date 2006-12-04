@@ -177,8 +177,8 @@ static const char *AddMulti_(
 	const commands_ &CmdDesc,
 	option_list_ &OptList )
 {
-	bso::bsize__ i = 0;
-	bso::bsize__ Limit = strlen( String );
+	bso::size__ i = 0;
+	bso::size__ Limit = strlen( String );
 	id__ Id = CLNARG_NONE;
 	const char *Return = NULL;
 	static char Unknow[] = "-o";

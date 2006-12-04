@@ -327,7 +327,7 @@ namespace dte {
 				Month += 12;
 				Year -= 1;
 			}
-			return ( ( Day + 1 + ( Month * 2 ) + ( int )( ( Month + 1 ) * 3 / 5 )
+			return ( ( Day + 1 + ( Month * 2 ) + (int )( ( Month + 1 ) * 3 / 5 )
 				       + Year + (int)( Year / 4 ) - (int)( Year / 100)
 					   + (int) ( Year / 400 ) ) % 7 );
 		}

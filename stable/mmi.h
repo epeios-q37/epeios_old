@@ -425,6 +425,12 @@ namespace mmi {
 		: Multimemoire_( Multimemoire ),
 		  E_MEMORY_DRIVER__( Extent )
 		{}
+		_base_indexed_multimemory_driver__(
+			indexed_multimemory_ *&Multimemoire,
+			mdr::size__ &Extent )
+		: Multimemoire_( *(const indexed_multimemory_ **)& Multimemoire ),
+		  E_MEMORY_DRIVER__( Extent )
+		{}
 		void reset( bool P = true )
 		{
 			E_MEMORY_DRIVER__::reset( P );
@@ -457,13 +463,6 @@ namespace mmi {
 		friend class indexed_multimemory_driver__;
 	};
 
-#if defined( CPE__USE_WORKAROUNDS ) && defined( CPE__C_GCC3 )
-#	define MMI__CAST *(const indexed_multimemory_ **)&
-#else
-#	define MMI__CAST
-#endif
-
-
 	//c This class is the standard memory driver for the indexed multimemory.
 	class indexed_multimemory_driver__
 	: public _base_indexed_multimemory_driver__
@@ -493,7 +492,7 @@ namespace mmi {
 		}
 	public:
 		indexed_multimemory_driver__( mdr::size__ &Extent	)
-		: _base_indexed_multimemory_driver__( MMI__CAST Multimemoire_, Extent ) {}
+		: _base_indexed_multimemory_driver__( Multimemoire_, Extent ) {}
 		void reset( bool P = true )
 		{
 			_base_indexed_multimemory_driver__::reset( P );

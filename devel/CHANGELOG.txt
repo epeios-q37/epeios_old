@@ -1,5 +1,9 @@
 $Id$
 
+03/12/06 :
+	- GENERAL :
+		- Adaptaion à VC++ 8.
+
 20/11/06 :
 	- FLM :
 		- Ajout gestion 'FLM_[_]MAX_FILE_AMOUNT'.

@@ -80,7 +80,6 @@ namespace epeios {
 	#define EPEIOS_ROW_MAX		MDR_ROW_T_MAX
 
 	using mdr::size__;
-	using mdr::p_size__;
 
 	#define EPEIOS_SIZE_MAX		MDR_SIZE_MAX
 

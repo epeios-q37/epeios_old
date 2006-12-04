@@ -77,10 +77,10 @@ namespace ltf {
 		bso::ubyte__ Amount_;
 		txf::text_oflow__ &TFlow_;
 	protected:
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 			if ( ( Amount_ + Wanted ) > Size_ ) {
 				if ( Wanted >= Size_ ) {
@@ -93,7 +93,7 @@ namespace ltf {
 				Amount_ = Size_ + 1;
 			} else {
 				memcpy( Data_ + Amount_, Buffer, Wanted );
-				Amount_ += Wanted;
+				Amount_ += (bso::ubyte__)Wanted;
 			}
 
 			if ( Amount_ < Size_ ) {

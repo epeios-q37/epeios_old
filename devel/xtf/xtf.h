@@ -94,12 +94,12 @@ namespace xtf {
 			Position_ = Offset;
 		}
 		// Retourne le prochain caractère sans l'extraire.
-		char Consulter_( _amount__ Offset = 0 )
+		unsigned char Consulter_( _amount__ Offset = 0 )
 		{
 			if ( !Nombre_ )
 				RemplirTampon_( Offset );
 
-			return (char)Cache_[Position_];
+			return (unsigned char)Cache_[Position_];
 		}
 		// Retourne vrai lorsque le cache est vide, faux sinon.
 		bool CacheVide_( void )
@@ -167,9 +167,9 @@ namespace xtf {
 			Entree_ = &IStream;
 		}
 		//f Extract and return next character in flow.
-		char Get( void )
+		unsigned char Get( void )
 		{
-			char C = Consulter_();
+			unsigned char C = Consulter_();
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
@@ -206,7 +206,7 @@ namespace xtf {
 			return C;
 		}
 		//f 'C' would be the next character returned by 'get()'.
-		void Unget( char C )
+		void Unget( unsigned char C )
 		{
 			if ( EOL_ )
 				EOL_ = 0;
@@ -257,9 +257,9 @@ namespace xtf {
 			GetLine( *(str::string_ *)NULL );
 		}
 		//f Return the next character in the flow, but let it in the flow.
-		char View( bso::bool__ HandleNL = false )
+		unsigned char View( bso::bool__ HandleNL = false )
 		{
-			char C = Consulter_( 1 );
+			unsigned char C = Consulter_( 1 );
 
 			if ( HandleNL && EOL_ ) {
 
