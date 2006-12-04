@@ -83,12 +83,12 @@ extern class ttr_tutor &CCHTutor;
 
 namespace cch {
 	//t Size of a cache.
-	typedef bso::bsize__ csize__;
+	typedef bso::size__ csize__;
 
-	using bso::bsize__;
+	using bso::size__;
 
 	//t Position in the buffer.
-	typedef bso::bsize__ position__;
+	typedef bso::size__ position__;
 
 	#define CCH_POSITION_MAX	BSO_BSIZE_MAX
 	#define CCH_ROW_MAX		EPEIOS_ROW_MAX
