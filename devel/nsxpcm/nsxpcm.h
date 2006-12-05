@@ -652,7 +652,7 @@ namespace nsxpcm {
 		Listbox->SelectItem( Listitem );
 	}
 
-	nsIDOMNode *FindParent(
+	nsIDOMNode *_FindParent(
 		nsIDOMNode *Node,
 		const str::string_ &NodeName );
 
@@ -660,7 +660,7 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		const str::string_ &NodeName )
 	{
-		Node = FindParent<nsIDOMNode>( Node, NodeName );
+		Node = _FindParent( Node, NodeName );
 
 		if ( Node != NULL )
 			return QueryInterface<element>( Node );

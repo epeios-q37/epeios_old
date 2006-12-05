@@ -408,7 +408,7 @@ namespace txmtbl {
 			return Line( Row ).Location();
 		}
 
-		E_NAV( lines_:: )
+		E_XNAV( lines_:: )
 	};
 
 	E_AUTO( table )

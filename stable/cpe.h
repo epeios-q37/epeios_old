@@ -144,14 +144,14 @@ extern class ttr_tutor &CPETutor;
 #ifdef CPE_LIBRARY
 #	define CPE__T_LIBRARY
 #elif defined( CPE__T_MS )
-#	if defined(_USRDLL )
+#	if defined( _USRDLL ) || defined( _WINDLL )
 #		define CPE__T_LIBRARY
 #	endif
 #endif
 
 #if defined( wxUSE_GUI ) || defined( CPE_GUI )
 #	define CPE__T_GUI
-#elif !defined( _USRDLL ) && !defined( CPE__T_LIBRARY )
+#elif !defined( CPE__T_LIBRARY )
 #	define CPE__T_CONSOLE
 #endif
 

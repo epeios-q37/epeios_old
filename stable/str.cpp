@@ -348,7 +348,7 @@ namespace str {
 		bso::bool__ Negate = false;
 		bso::lfloat__ Result = 0;
 		epeios::row__ &P = Begin;
-		char C;
+		unsigned char C;
 
 		if ( *P < Amount() ) {
 			if ( ( P != NONE ) && ( Get( P ) == '-' ) ) {

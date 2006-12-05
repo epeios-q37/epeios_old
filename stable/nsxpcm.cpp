@@ -275,7 +275,7 @@ ERREnd
 ERREpilog
 }
 
-nsIDOMNode *nsxpcm::FindParent(
+nsIDOMNode *nsxpcm::_FindParent(
 	nsIDOMNode *Node,
 	const str::string_ &NodeName )
 {
