@@ -71,6 +71,7 @@ extern class ttr_tutor &CPETutor;
 
 #undef CPE__C_VC		// Compilateur VC++
 #undef CPE__C_VC6		// Compilateur VC++ V6.0
+#undef CPE__C_VC8		// Compilateur VC++ V6.0 (2005)
 #undef CPE__C_GCC		// Compilateur GNU C++.
 #undef CPE__C_GCC3		// Compilateur GNU C++ V3.x
 #undef CPE__C_CW		// Compilateur CodeWarrior
@@ -167,6 +168,10 @@ extern class ttr_tutor &CPETutor;
 #	endif
 #	if _MSC_VER == 1200
 #		define CPE__C_VC6
+#	elif _MSC_VER == 1400
+#		define CPE__C_VC8
+#	else
+#		error "Unknown VC++ compiler version"
 #	endif
 #endif
 
