@@ -62,7 +62,7 @@ extern class ttr_tutor &THTTutor;
 
 #include "err.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
 #	define THT__POSIX
 #elif defined ( CPE__T_MS )
 #	define THT__MS

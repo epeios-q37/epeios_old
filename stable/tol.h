@@ -72,17 +72,26 @@ extern class ttr_tutor &TOLTutor;
 #include "bso.h"
 
 #ifdef CPE__T_MS
-#	include <sys/utime.h>
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
-#	include <utime.h>
+#	define TOL__MS
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
+#	define TOL__POSIX
 #else
 #	error "Undefined compilation enviroment."
 #endif
 
+
+#ifdef TOL__MS
+#	include <sys/utime.h>
+#elif defined( TOL__POSIX )
+#	include <utime.h>
+#else
+#	error
+#endif
+
 #if defined( CPE__C_VC ) || defined( CPE__C_GCC )
 #	include <sys/timeb.h>
-#elif !defined( CPE__C_CW )
-#	error "Unknown compilation enviroment"
+#else
+#	error "Unknown compiler"
 #endif
 
 #include "err.h"
@@ -463,18 +472,18 @@ namespace tol {
 	//f Return true if the file 'Name' exists, false otherwise.
 	inline bool FileExists( const char *FileName )
 	{
-#ifdef CPE__P_MS
+#ifdef TOL__MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) == 0 )
 			return true;
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#elif defined( TOL__POSIX )
 		struct stat Stat;
 
 		if ( stat( FileName, &Stat ) == 0 )
 			return true;
 #else
-		ERRl();
+#	error
 #endif
 		switch ( errno ) {
 		case EBADF:
@@ -484,7 +493,7 @@ namespace tol {
 			break;
 		case ENOTDIR:
 			break;
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#if defined( TOL__POSIX )
 		case ELOOP:
 			break;
 #endif
@@ -509,14 +518,14 @@ namespace tol {
 
 	inline time_t GetFileLastModificationTime( const char *FileName )
 	{
-#ifdef CPE__P_MS
+#ifdef TOL__MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mtime;
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#elif defined( TOL__POSIX )
 		struct stat Stat;
 
 		if ( stat( FileName, &Stat ) != 0 )
@@ -524,20 +533,20 @@ namespace tol {
 
 		return Stat.st_mtime;
 #else
-		ERRl();
+#	error
 #endif
 	}
 
 	inline bso::size__ GetFileSize( const char *FileName )
 	{
-#ifdef CPE__P_MS
+#ifdef TOL__MS
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_size;
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#elif defined( TOL__POSIX )
 		struct stat Stat;
 
 		if ( stat( FileName, &Stat ) != 0 )
@@ -545,7 +554,7 @@ namespace tol {
 
 		return Stat.st_size;
 #else
-		ERRl();
+#	error
 #endif
 	}
 
@@ -571,7 +580,7 @@ namespace tol {
 	const char *DateAndTime( buffer__ &Buffer );
 
 
-#ifndef CPE__T_MT
+#ifndef TOL__MS
 	inline const char *Date( void )
 	{
 		static buffer__ Buffer;
@@ -594,7 +603,6 @@ namespace tol {
 	}
 #endif
 
-#ifndef CPE__T_CW
 	/*f Return a time in ms. Only usefull by susbstracting 2 value.
 	Is different from 'clock()' because 'clock()' only return how long
 	the application is using the processor.*/
@@ -609,12 +617,6 @@ namespace tol {
 
 		return T.time * 1000UL + T.millitm;
 	}
-#else	// CW temporary workaround.
-	inline unsigned long _Clock( void )
-	{
-		return 1000UL * ::clock() / CLOCKS_PER_SEC;
-	}
-#endif
 
 	inline time_t Clock( bso::bool__ Discrimination )	// Mettre 'Discrimination' à 'true' pour être sûr que deux
 													// appels successifs à cette focntion renvoit deux valeurs différentes.

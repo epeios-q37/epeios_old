@@ -296,7 +296,7 @@ namespace txf {
 	{
 #if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
 		return Flow << "\r\n" << sync;
-#elif defined CPE__T_LINUX
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
 		return Flow << '\n' << sync;
 #else
 #	error "Unknow target !"

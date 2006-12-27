@@ -116,7 +116,7 @@ char *fnm::MakeFileName(
 {
 	char *Resultat = NULL;
 ERRProlog
-	int TailleRep = 0, TailleNom = 0, TailleExt = 0;
+	size_t TailleRep = 0, TailleNom = 0, TailleExt = 0;
 ERRBegin
 	if ( Rep )
 		TailleRep = strlen( Rep );

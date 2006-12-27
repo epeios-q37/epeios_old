@@ -67,7 +67,7 @@ namespace idxbtr {
 		epeios::size__ Niveau;
 	};
 
-	epeios::row_t__ idxbtr::Balance_(
+	epeios::row_t__ Balance_(
 		E_IBTREE_ &Tree,
 		epeios::row_t__ Root )
 	{
@@ -103,7 +103,7 @@ namespace idxbtr {
 
 	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
 	la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
-	epeios::row_t__ idxbtr::Equilibrer_(
+	epeios::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
 		epeios::row_t__ Premier,

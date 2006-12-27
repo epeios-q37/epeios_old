@@ -107,9 +107,9 @@ static inline void signal_( int s )
 
 static inline void ExitOnSignal_( void )
 {
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN )
+#if defined( TOL__POSIX )
 	signal( SIGHUP, signal_ );
-#elif defined( CPE__T_MS )
+#elif defined( TOL__MS )
 	signal( SIGBREAK, signal_ );
 #else
 #	error "Undefined target !"

@@ -77,9 +77,11 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__C_CW		// Compilateur CodeWarrior
 #undef CPE__C_VER		// Version du compilateur.
 
+
 #undef CPE__T_MS		// Cible Microsoft (DOS, Windows, ...).
 #undef CPE__T_LINUX		// Cible Linux
 #undef CPE__T_CYGWIN	// Cible CYGWIN
+#undef CPE__T_MAC		// Cible Mac
 #undef CPE__T_32		// Cible 32 bits.
 #undef CPE__T_MT		// Cible multitâche.
 #undef CPE__T_CONSOLE	// Cible console.
@@ -100,6 +102,16 @@ extern class ttr_tutor &CPETutor;
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
 #endif
+
+#ifdef __APPLE__
+#	define CPE__P_MAC
+#endif
+
+#ifdef CPE__P_MAC
+#	define CPE__T_MAC
+#	define CPE__C_GCC
+#endif
+
 
 #ifdef __GNUC__
 #	define CPE__C_GCC

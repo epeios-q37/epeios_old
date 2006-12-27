@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flf.h"
+
 using namespace tagexp;
 
 // Must correspond to 'tagexp::tag'.
@@ -91,7 +93,7 @@ static fil::status__ WriteFile_(
 	fil::status__ Return = fil::s_Undefined;
 ERRProlog
 	char *Name = NULL;
-	fil::file_iflow___ File;
+	flf::file_iflow___ File;
 	xtf::extended_text_iflow__ IFlow;
 ERRBegin
 	Name = FileName.Convert();

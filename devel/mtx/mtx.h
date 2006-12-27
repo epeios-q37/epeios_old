@@ -80,6 +80,8 @@ extern class ttr_tutor &MTXTutor;
 #		define MTX__USE_MS_ATOMIC_OPERATIONS
 #	elif defined (CPE__T_LINUX )
 #		define MTX__USE_LINUX_ATOMIC_OPERATIONS
+#	elif defined (CPE__T_MAC )
+#		define MTX__USE_MAC_ATOMIC_OPERATIONS
 #	else
 #		error "No atomic operations available for this compiling enviroment"
 #	endif
@@ -99,6 +101,10 @@ extern class ttr_tutor &MTXTutor;
 
 #ifdef MTX__USE_LINUX_ATOMIC_OPERATIONS
 #	include "asm/atomic.h"
+#endif
+
+#ifdef MTX__USE_MAC_ATOMIC_OPERATIONS
+#	include <libkern/OSAtomic.h>
 #endif
 
 #ifndef CPE__T_MT
@@ -134,8 +140,12 @@ namespace mtx {
 		typedef LONG counter__;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		typedef atomic_t	counter__;
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		typedef int32_t	counter__;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		typedef volatile bso::sshort__ counter__;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 
@@ -154,8 +164,12 @@ namespace mtx {
 		Counter = Value;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		atomic_set( &Counter, Value );
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		Counter = Value;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		Counter = Value;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 
@@ -165,8 +179,12 @@ namespace mtx {
 		return Counter;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_read( &Counter );
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		return Counter;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return Counter;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 
@@ -176,8 +194,12 @@ namespace mtx {
 		return Counter;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_read( &Counter );
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		return Counter;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return Counter;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 
@@ -187,8 +209,12 @@ namespace mtx {
 		InterlockedIncrement( &Counter );
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		atomic_inc( &Counter );
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		OSAtomicIncrement32( &Counter );
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		++Counter;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 
@@ -198,8 +224,12 @@ namespace mtx {
 		return InterlockedDecrement( &Counter ) == 0;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_dec_and_test( &Counter );
+#elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
+		return OSAtomicDecrement32( &Counter ) == 1;	// '== 1' car 'OSAtomicDecrement' retourne la valeur AVANT décrémentation.
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return --Counter == 0;
+#else
+#	error "No mutex handling scheme !"
 #endif
 	}
 

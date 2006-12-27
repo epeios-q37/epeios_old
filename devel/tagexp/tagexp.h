@@ -68,7 +68,6 @@ extern class ttr_tutor &TAGEXPTutor;
 #include "bitbch.h"
 #include "ctn.h"
 #include "xtf.h"
-#include "fil.h"
 
 namespace tagexp
 {

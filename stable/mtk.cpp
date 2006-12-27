@@ -203,7 +203,7 @@ ERREpilog
 }
 
 namespace {
-	struct {
+	struct common__ {
 		// Lock to ensure that data was red before reusing them.
 		mtx::mutex_handler__ Data;
 		// Lock for new thread to block caller.

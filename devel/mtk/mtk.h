@@ -65,7 +65,7 @@ extern class ttr_tutor &MTKTutor;
 #include "errno.h"
 #include "tht.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS )
+#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS ) || defined( CPE__T_MAC )
 #	define MTK__POSIX
 #elif defined( CPE__T_MS )
 #	define MTK__MS

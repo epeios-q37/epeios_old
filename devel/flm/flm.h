@@ -74,6 +74,8 @@ extern class ttr_tutor &FLMTutor;
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
 #elif defined ( CPE__T_LINUX )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
+#elif defined ( CPE__T_MAC )
+#	define FLM_DEFAULT_MAX_FILE_AMOUNT	200	// Mac, par défaut, ne peut ouvrir que 256 descripteurs (socket comprises).
 #else
 #	error "Unimplemented target !"
 #endif

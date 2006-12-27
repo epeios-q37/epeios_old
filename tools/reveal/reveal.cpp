@@ -26,7 +26,7 @@
 
 
 #include "tol.h"
-#include "fil.h"
+#include "flf.h"
 #include "tagexp.h"
 #include "clnarg.h"
 #include "epsmsc.h"
@@ -779,10 +779,10 @@ static inline void Main(
 	const char *argv[] )
 {
 ERRProlog
-	fil::file_iflow___ IFile;
-	fil::file_oflow___ OFile;
+	flf::file_iflow___ IFile;
+	flf::file_oflow___ OFile;
 	txf::text_oflow__ OText( OFile );
-	fil::file_iflow___ DFile;
+	flf::file_iflow___ DFile;
 	xtf::extended_text_iflow__ DText;
 	txf::text_oflow__ *OFlow = NULL;
 	flw::iflow__ *IFlow = NULL;

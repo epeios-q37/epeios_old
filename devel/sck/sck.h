@@ -66,7 +66,7 @@ extern class ttr_tutor &SCKTutor;
 #include "flw.h"
 #include "tol.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN )
+#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
 #	define SCK__POSIX
 #elif defined( CPE__T_MS )
 #	define SCK__MS
