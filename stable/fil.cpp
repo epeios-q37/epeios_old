@@ -141,7 +141,7 @@ static void Close_( iop::descriptor__ D )
 		ERRd();
 }
 
-#	elif defined( CPE__P_LINUX )
+#	elif defined( CPE__P_LINUX ) ||  defined( CPE__P_MAC )
 static inline iop::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
@@ -179,9 +179,6 @@ static void Close_( iop::descriptor__ D )
 		ERRd();
 }
 
-
-#	elif defined( CPE__P_MAC )
-#		error "MAC not implemented yet !"
 #	else
 #		error "Unknow complation enviroment !"
 #	endif

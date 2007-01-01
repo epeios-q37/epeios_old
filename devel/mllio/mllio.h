@@ -60,7 +60,7 @@ extern class ttr_tutor &MLLIOTutor;
 
 /*$BEGIN$*/
 
-#error "Not implemented yet."
+#error "Not needed. Use 'pllio' module."
 
 namespace mllio {
 

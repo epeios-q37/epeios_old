@@ -65,11 +65,9 @@ public:
 using namespace cio;
 
 #ifdef IOP__USE_LOWLEVEL_IO
-#	if defined( CPE__P_MS ) || defined( CPE__P_LINUX )
+#	if defined( CPE__P_MS ) || defined( CPE__P_LINUX ) || defined( CPE__P_MAC )
 iop::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
-#	elif defined( CPE__P_MAC )
-#		error "Not implemented yet ! "
-#	else
+#else
 #		error "Unknow compilation enviroment !"
 #	endif
 #elif defined( IOP__USE_STANDARD_IO )

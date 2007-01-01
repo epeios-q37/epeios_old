@@ -67,7 +67,8 @@ extern class ttr_tutor &LLIOTutor;
 #elif defined( CPE__P_LINUX )
 #	include "pllio.h"
 #elif defined( CPE__P_MAC )
-#	include "mllio.h"
+//#	include "mllio.h"
+#	include "pllio.h"	// Mac suit la norme POSIX.
 #else
 #	error "Not implemented yet."
 #endif
@@ -76,11 +77,11 @@ namespace llio {
 #ifdef CPE__C_VC
 	using namespace wllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__T_LINUX )
+#elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
 	using namespace pllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	PLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__T_MAC )
-	using namespace mllio;
+#else
+#	error
 #endif
 }
 

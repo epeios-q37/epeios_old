@@ -77,8 +77,7 @@ extern class ttr_tutor &IOPTutor;
 #elif defined( CPE__P_LINUX )
 #	define IOP__USE_LOWLEVEL_IO
 #elif defined( CPE__P_MAC )
-//#	define IOP__USE_LOWLEVEL_IO	// Because not implemented yet for Mac.
-#	define	IOP__USE_STANDARD_IO
+#	define IOP__USE_LOWLEVEL_IO
 #else
 #	define	IOP__USE_STANDARD_IO
 #endif
