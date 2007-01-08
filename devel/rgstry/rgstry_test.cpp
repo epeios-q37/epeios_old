@@ -45,7 +45,7 @@ void Consult(
 {
 	epeios::row__ Cursor = NONE;
 	rgstry::term_buffer Buffer;
-#if 0
+#if 1
 	cout << "Limit : " << Registry.GetPathValue( str::string( "RecordAmountLimitation" ), Root, Buffer ) << txf::nl;
 
 	cout << "Outfit : " << Registry.GetPathValue( str::string( "Outfit" ), Root, Buffer ) << txf::nl;

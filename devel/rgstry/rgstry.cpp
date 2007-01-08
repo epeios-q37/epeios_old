@@ -1330,7 +1330,10 @@ protected:
 				}
 
 				return true;
-		} else if ( _IsSwitchTagName( TagName ) || _IsBlocTagName( TagName ) )
+		} else if ( _IsSwitchTagName( TagName ) ) {
+			_Mode = mRegular;
+			return true;
+		} else if ( _IsBlocTagName( TagName ) )
 			return true;
 
 		switch ( _Mode ) {

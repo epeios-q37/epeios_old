@@ -56,6 +56,8 @@ public:
 /*$BEGIN$*/
 
 #include "nsMemory.h"
+#include "nsIDOMEvent.h"
+#include "nsIDOMEventTarget.h"
 
 using namespace nsxpcm;
 
@@ -299,9 +301,43 @@ ERREpilog
 	return Node;
 }
 
+void nsxpcm::Handle( 
+	nsIDOMEvent *Event,
+	const _element_cores_ &Cores )
+{
+ERRProlog
+	nsIDOMEventTarget *EventTarget = NULL;
+	nsIDOMElement *Element = NULL;
+	nsEmbedString String;
+	str::string S;
+	epeios::row__ Row = NONE;
+ERRBegin
+	Event->GetTarget( &EventTarget );
+	Element = nsxpcm::QueryInterface<nsIDOMElement>( EventTarget );
+
+	Row = Cores.First();
+
+	while ( ( Row != NONE ) && ( Cores( Row )->GetElement() != Element ) )
+		Row = Cores.Next( Row );
+
+	if ( Row == NONE )
+		ERRu();
+
+	Event->GetType( String );
+
+	S.Init();
+
+	nsxpcm::Transform( String, S );
+
+	Cores( Row )->Handle( S );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 
 #ifdef NSXPCM__BKD
+
 void nsxpcm::Convert(
 	const strings_ &Items,
 	bkdacc::ids32_ &Ids )

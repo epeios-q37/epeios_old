@@ -82,6 +82,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsITreeContentView.h"
 #include "nsITreeSelection.h"
 #include "nsIListBoxObject.h"
+//#include "nsIButton.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -668,7 +669,73 @@ namespace nsxpcm {
 			return NULL;
 	}
 
+	typedef nsIDOMElement *nsIDOMElementPointer;
 
+	class _element_core__
+	{
+	private:
+		nsIDOMElement *_Element;
+	protected:
+		virtual void NSXPCMOnCommand( void )
+		{
+			ERRu();
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Element = NULL;
+		}
+		_element_core__( void )
+		{
+			reset( false );
+		}
+		~_element_core__( void )
+		{
+			reset( );
+		}
+		void Init(
+			nsIDOMElement *Element,
+			void *UP )
+		{
+			if ( _Element != NULL )
+				ERRu();
+
+			_Element = Element;
+		}
+		E_RODISCLOSE__( nsIDOMElementPointer, Element );
+		void Handle( const str::string_ &EventType )
+		{
+			if ( EventType == "command" )
+				NSXPCMOnCommand();
+			else
+				ERRl();
+		}
+	};
+
+	E_ROW( row__ );
+
+	typedef bch::E_BUNCH_( _element_core__ * ) _element_cores_;
+	E_AUTO( _element_cores );
+
+	void Handle( 
+		nsIDOMEvent *Event,
+		const _element_cores_ &Cores );
+
+	template <typename object> class _element__
+	: public _element_core__
+	{
+	private:
+		object *_GetObject( void )
+		{
+			return QueryInterface<object>( Element );
+		}
+	public:
+	};
+
+	class button__
+	: public _element__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
+	{
+	};
 
 #ifdef NSXPCM__BKD
 	void Convert(
