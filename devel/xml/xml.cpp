@@ -500,6 +500,9 @@ ERRBegin
 
 					Tags.Pop( Tag );
 
+					if ( !Callback.XMLStartTagClosed( Tag ) )
+						ERRI( iBeam );
+
 					if ( !Callback.XMLEndTag( Tag ) )
 						ERRI( iBeam );
 
