@@ -547,20 +547,6 @@ struct kernel__ {
 	}
 };
 
-enum mode__ {
-	mRegular,	// mode normale.
-	mDefineDeclaration,	// mode définition d'un  bloc, partie déclration ('<xcf:define ...>')
-	mDefineDefinition,	// mode définition d'un  bloc, partie définition ('<xcf:define name="test">...')
-	mExpandInRegular,	// mode déploiement d'un bloc ou inclusion d'un fichier en mode 'Regular'.
-	mExpandInDefine,	// mode déploiement d'un bloc ou inclusion d'un fichier en mode 'Define'.
-	mSet,	// Balise 'xcf:set' détectée. Valide seulement jusqu'à la fermeture de cette balise.
-	mSwitch,	// Balise 'xcf:switch' détecté. Etat temporaire, jusqu'à prochaine balise (normalement 'xcf:case', ou 'xcf:default').
-	mCase,		// Balise 'xcf:case' détecté. Etat temporaire jusqu'à la prochaine balise.
-	mDefault,	// Balise 'xcf:defualt' détecté. Etat temporaire jusqu'à la prochaine balise.
-	m_amount,
-	m_Undefined,
-};
-
 #define NAMESPACE			"xcf"
 #define PREFIX				NAMESPACE ":"
 
@@ -575,15 +561,9 @@ enum mode__ {
 #define SET_NAME_ATTRIBUTE	"name"
 #define SET_VALUE_ATTRIBUTE	"value"
 
-#define SWITCH_TAG				PREFIX "switch"
-#define SWITCH_SELECT_ATTRIBUTE	"select"
-
-#define CASE_TAG				PREFIX "case"
-#define CASE_VALUE_ATTRIBUTE	"value"
-
-#define DEFAULT_TAG			PREFIX "default"
-#define DEFAULT_ATTRIBUTE	""	// Pas d'attribut.
-
+#define IFEQ_TAG				PREFIX "ifeq"
+#define IFEQ_SELECT_ATTRIBUTE	"select"
+#define IFEQ_VALUE_ATTRIBUTE	"value"
 
 #define BLOC_TAG			PREFIX "bloc"
 #define BLOC_ATTRIBUTE		""	// Pas d'attribut.
@@ -646,22 +626,21 @@ class callback___
 {
 private:
 	registry _ManagerRegistry;
-	kernel__ _User, _Manager;
-	mode__ _Mode;
+	kernel__ _UserKernel, _ManagerKernel, *_CurrentKernel;
 	term _ExpandTagAttributeValue;
 	bso::bool__ _ExpandIsInclude;
 	location__ _IncludeErrorLine, _IncludeErrorColumn;
 	// Valeurs des attributs de la balise 'xcf:set'.
 	term _SetName, _SetValue;
-	// Valeur de l'attribut 'select' de la balise 'xcf:switch'.
 	variables___ _Variables;
-	term _SwitchSelect;
-	// Value de l'attribut 'xcf:value' de la balise 'xcf:case'.
-	term _CaseValue;
-	// Niveau d'imbrication de 'xcf:case' (ou 'xcf:default') à traiter.
-	bso::ulong__ _MatchingCaseLevel;
-	// Niveau d'imbrication de 'xcf:case' (ou 'xcf:default') à ignorer.
-	bso::ulong__ _UnmatchingCaseLevel;
+	// Value de l'attribut 'select' de la balise 'xcf:ifeq'.
+	term _IfeqSelect;
+	// Value de l'attribut 'value' de la balise 'xcf:ifeq'.
+	term _IfeqValue;
+	// Niveau d'imbrication de 'xcf:ifeq' à traiter.
+	bso::ulong__ _MatchingIfeqLevel;
+	// Niveau d'imbrication de 'xcf:ifeq' à ignorer.
+	bso::ulong__ _UnmatchingIfeqLevel;
 
 	static struct define {
 		term TagName;
@@ -680,34 +659,40 @@ private:
 		term NameAttributeName;
 		term ValueAttributeName;
 	} _Set;
-	static struct swtch {	// 'swtch' car 'switch' est un mot-clef.
+	static struct ifeq {
 		term TagName;
 		term SelectAttributeName;
-		term CaseTagName;
-		term CaseValueAttributeName;
-		term DefaultTagName;
-	} _Switch;
+		term ValueAttributeName;
+	} _Ifeq;
 	static term _Prefix;
+	const kernel__ &_Kernel( void ) const
+	{
+#ifdef RGSTRY_DBG
+		if ( _CurrentKernel == NULL )
+			ERRc();
+#endif
+		return *_CurrentKernel;
+
+	}
 	kernel__ &_Kernel( void )
 	{
-		switch ( _Mode ) {
-		case mDefineDeclaration:
-		case mDefineDefinition:
-		case mExpandInDefine:
-			return _Manager;
-			break;
-		case mExpandInRegular:
-		case mRegular:
-			return _User;
-			break;
-		default:
+#ifdef RGSTRY_DBG
+		if ( _CurrentKernel == NULL )
 			ERRc();
-			break;
-		}
-
-		ERRc();
-
-		return *(kernel__ *)NULL;	// Pour éviter un 'warning'.
+#endif
+		return *_CurrentKernel;
+	}
+	void _SwitchToUserKernel( void )
+	{
+		_CurrentKernel = &_UserKernel;
+	}
+	void _SwitchToManagerKernel( void )
+	{
+		_CurrentKernel = &_ManagerKernel;
+	}
+	bso::bool__ _IsDefining( void ) const
+	{
+		return &_Kernel() == &_ManagerKernel;
 	}
 	registry_ &_Registry( void )
 	{
@@ -761,25 +746,17 @@ private:
 	{
 		return str::Compare( AttributeName, _Set.ValueAttributeName ) == 0;
 	}
-	bso::bool__ _IsSwitchTagName( const str::string_ &TagName ) const
+	bso::bool__ _IsIfeqTagName( const str::string_ &TagName ) const
 	{
-		return str::Compare( TagName, _Switch.TagName ) == 0;
+		return str::Compare( TagName, _Ifeq.TagName ) == 0;
 	}
-	bso::bool__ _IsSwitchSelectAttributeName( const str::string_ &AttributeName ) const
+	bso::bool__ _IsIfeqSelectAttributeName( const str::string_ &AttributeName ) const
 	{
-		return str::Compare( AttributeName, _Switch.SelectAttributeName ) == 0;
+		return str::Compare( AttributeName, _Ifeq.SelectAttributeName ) == 0;
 	}
-	bso::bool__ _IsCaseTagName( const str::string_ &TagName ) const
+	bso::bool__ _IsIfeqValueAttributeName( const str::string_ &AttributeName ) const
 	{
-		return str::Compare( TagName, _Switch.CaseTagName ) == 0;
-	}
-	bso::bool__ _IsCaseValueAttributeName( const str::string_ &AttributeName ) const
-	{
-		return str::Compare( AttributeName, _Switch.CaseValueAttributeName ) == 0;
-	}
-	bso::bool__ _IsDefaultTagName( const str::string_ &TagName ) const
-	{
-		return str::Compare( TagName, _Switch.DefaultTagName ) == 0;
+		return str::Compare( AttributeName, _Ifeq.ValueAttributeName ) == 0;
 	}
 	epeios::size__ _Dump(
 		registry_ &Registry,
@@ -840,7 +817,7 @@ private:
 
 		_ExpandTagAttributeValue.Init();
 
-		Root = _Manager.Registry.SearchPath( Path, _Manager.Root, AttributeEntryRow, PathErrorRow );
+		Root = _ManagerKernel.Registry.SearchPath( Path, _ManagerKernel.Root, AttributeEntryRow, PathErrorRow );
 
 		if ( PathErrorRow != NONE )
 			ERRc();
@@ -853,7 +830,7 @@ private:
 
 		Buffer.Init();
 
-		ChildAmount = _Dump( _Manager.Registry, Root, Buffer );
+		ChildAmount = _Dump( _ManagerKernel.Registry, Root, Buffer );
 
 		Buffer.Append( XTF_EOXC );
 
@@ -908,7 +885,7 @@ private:
 	}
 	bso::bool__ _IsActive( void ) const
 	{
-		return _UnmatchingCaseLevel == 0;
+		return _UnmatchingIfeqLevel == 0;
 	}
 protected:
 	virtual bso::bool__ XMLStartTag( const str::string_ &TagName )
@@ -917,331 +894,43 @@ protected:
 
 		if ( _BelongsToNamespace( TagName ) ) {
 			if ( _IsDefineTagName( TagName ) ) {
-				switch ( _Mode ) {
-				case mDefineDeclaration:
+				if ( _IsDefining() )
 					return false;
-				case mDefineDefinition:
-				case mExpandInRegular:
-				case mExpandInDefine:
-				case mSet:
-				case mSwitch:
-				case mCase:
-				case mDefault:
-					return false;
-					break;
-				case mRegular:
-					_Mode = mDefineDeclaration;
-					break;
-				default:
-					ERRc();
-					break;
-				}
+				_SwitchToManagerKernel();
 			} else if ( _IsExpandTagName( TagName ) ) {
 				Ignore = true;
-
-				switch ( _Mode ) {
-				case mDefineDeclaration:
-				case mSet:
-				case mSwitch:
-				case mCase:
-				case mDefault:
-					return false;
-					break;
-				case mDefineDefinition:
-					_Mode = mExpandInDefine;
-					break;
-				case mRegular:
-					_Mode = mExpandInRegular;
-					break;
-				case mExpandInRegular:
-				case mExpandInDefine:
-					return false;
-					break;
-				default:
-					ERRc();
-					break;
-				}
 			} else if ( _IsBlocTagName( TagName ) ) {
-				if ( _Mode == mRegular )
+				if ( !_IsDefining() )
 					Ignore = true;
 			} else if ( _IsSetTagName( TagName ) ) {
-				switch ( _Mode ) {
-				case mDefineDeclaration:
-					ERRc();
-					break;
-				case mSet:
-					ERRc();
-					break;
-				case mSwitch:
+				if ( _IsDefining() )
 					return false;
-					break;
-				case mCase:
-					ERRc();
-					break;
-				case mDefault:
-					ERRc();
-					break;
-				case mDefineDefinition:
-					return false;
-					break;
-				case mRegular:
-					break;
-				case mExpandInRegular:
-					ERRc();
-					break;
-				case mExpandInDefine:
-					ERRc();
-					break;
-				default:
-					ERRc();
-					break;
-				}
 
 				_SetName.Init();
 				_SetValue.Init();
 
-				_Mode = mSet;
 				Ignore = true;
-			} else if ( _IsSwitchTagName( TagName ) ) {
-				switch ( _Mode ) {
-				case mDefineDeclaration:
-					ERRc();
-					break;
-				case mSet:
-					ERRc();
-					break;
-				case mSwitch:
+			} else if ( _IsIfeqTagName( TagName ) ) {
+				if ( _IsDefining() )
 					return false;
-					break;
-				case mCase:
-					break;
-				case mDefault:
-					break;
-				case mDefineDefinition:
-					return false;
-					break;
-				case mRegular:
-					break;
-				case mExpandInRegular:
-					ERRc();
-					break;
-				case mExpandInDefine:
-					ERRc();
-					break;
-				default:
-					ERRc();
-					break;
-				}
 
-				_SwitchSelect.Init();
-				_CaseValue.Init();
+				_IfeqSelect.Init();
+				_IfeqValue.Init();
 
-				_Mode = mSwitch;
-				Ignore = true;
-			} else if ( _IsCaseTagName( TagName ) ) {
-				switch ( _Mode ) {
-				case mDefineDeclaration:
-					ERRc();
-					break;
-				case mSet:
-					ERRc();
-					break;
-				case mSwitch:
-					break;
-				case mCase:
-					return false;
-					break;
-				case mDefault:
-					return false;
-					break;
-				case mDefineDefinition:
-					ERRc();
-					break;
-				case mRegular:
-					break;
-				case mExpandInRegular:
-					ERRc();
-					break;
-				case mExpandInDefine:
-					ERRc();
-					break;
-				default:
-					ERRc();
-					break;
-				}
-
-				_CaseValue.Init();
-
-				_Mode = mCase;
-				Ignore = true;
-			} else if ( _IsDefaultTagName( TagName ) ) {
-				ERRl();
-				switch ( _Mode ) {
-				case mDefineDeclaration:
-					ERRc();
-					break;
-				case mSet:
-					ERRc();
-					break;
-				case mSwitch:
-					break;
-				case mCase:
-					return false;
-					break;
-				case mDefault:
-					return false;
-					break;
-				case mDefineDefinition:
-					ERRc();
-					break;
-				case mRegular:
-					return false;
-					break;
-				case mExpandInRegular:
-					ERRc();
-					break;
-				case mExpandInDefine:
-					ERRc();
-					break;
-				default:
-					ERRc();
-					break;
-				}
-
-				_Mode = mDefault;
 				Ignore = true;
 			} else
 				return false;
 		}
 
 		if ( !Ignore ) {
-			switch ( _Mode ) {
-			case mDefineDeclaration:
-				break;
-			case mDefineDefinition:
-				break;
-			case mRegular:
-				break;
-			case mExpandInRegular:
-				break;
-			case mExpandInDefine:
-				break;
-			case mSet:
-				return false;
-				break;
-			case mSwitch:
-				return false;
-				break;
-			case mCase:
-				break;
-			case mDefault:
-				break;
-			default:
-				ERRc();
-				break;
-			}
 			if ( _Current() == NONE ) {
 				if ( _Root() == NONE )
 					_Root() = _Current() = _Registry().CreateNode( TagName );
 				else
-					return false;
+					ERRc();
 			} else
 				_Current() = _Registry().AddChild( TagName, _Current() );
 		}
-
-		return true;
-	}
-	virtual bso::bool__ XMLStartTagClosed( const str::string_ &Name )
-	{
-		switch ( _Mode ) {
-		case mDefineDeclaration:
-		case mDefineDefinition:
-		case mRegular:
-		case mExpandInRegular:
-		case mExpandInDefine:
-		case mSet:
-			break;
-		case mSwitch:
-			if ( _SwitchSelect.Amount() == 0 )
-				return false;
-
-			if ( _IsActive() )
-				if ( !_Variables.Exists( _SwitchSelect ) )
-					return false;
-
-			break;
-		case mCase:
-		{
-		ERRProlog
-			str::string Value;
-		ERRBegin
-			if ( _SwitchSelect.Amount() == 0 )
-				ERRc();
-
-			if ( _IsActive() ) {
-				Value.Init();
-
-				if ( _Variables.Get( _SwitchSelect, Value ) )
-					if ( Value == _CaseValue ) {
-						if ( _MatchingCaseLevel == BSO_ULONG_MAX )
-							ERRl();
-						_MatchingCaseLevel++;
-					} else {
-						if ( _UnmatchingCaseLevel != 0 )
-							ERRc();
-						_UnmatchingCaseLevel = 1;
-					}
-			} else {
-				if ( _UnmatchingCaseLevel == BSO_ULONG_MAX )
-					ERRl();
-				_UnmatchingCaseLevel++;
-			}
-
-			_Mode = mRegular;
-		ERRErr
-		ERREnd
-		ERREpilog
-		}
-		break;
-		case mDefault:
-			ERRl();
-			break;
-		default:
-			ERRc();
-			break;
-		}
-
-		return true;
-	}
-	virtual bso::bool__ XMLValue(
-		const str::string_ &TagName,
-		const str::string_ &Value )
-	{
-		switch ( _Mode ) {
-		case mDefineDeclaration:
-			return false;
-			break;
-		case mDefineDefinition:
-			if ( _IsDefineTagName( TagName ) )
-				return false;
-		case mRegular:
-			break;
-		case mExpandInRegular:
-		case mExpandInDefine:
-			break;
-		case mSet:
-		case mSwitch:
-			return false;
-			break;
-		case mCase:
-		case mDefault:
-			break;
-		default:
-			ERRc();
-			break;
-		}
-
-		_Registry().SetValue( Value, _Current(), true );
 
 		return true;
 	}
@@ -1250,157 +939,132 @@ protected:
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
-		switch ( _Mode ) {
-		case mDefineDeclaration:
-			if ( _IsDefineTagAttributeName( Name ) ) {
-				_Registry().AddAttribute( Name, Value, _Current() );
-				_Mode = mDefineDefinition;
-			} else
-				return false;
-			break;
-		case mDefineDefinition:
-		case mRegular:
-			_Registry().AddAttribute( Name, Value, _Current() );
-			break;
-		case mExpandInRegular:
-		case mExpandInDefine:
+
+		if ( _BelongsToNamespace( TagName ) ) {
+			if ( _IsDefineTagName( TagName ) ) {
 #ifdef RGSTRY_DBG
-			if ( !_IsExpandTagName( TagName ) )
-				ERRc();
+				if ( !_IsDefining() )
+					ERRc();
 #endif
-			if ( _IsExpandTagExplodeAttributeName( Name ) )
-				_ExpandIsInclude = false;
-			else if ( _IsExpandTagIncludeAttributeName( Name ) )
-				_ExpandIsInclude = true;
-			else
-				return false;
-
-			_ExpandTagAttributeValue.Init( Value );
-			break;
-		case mSet:
-			if ( _IsSetNameAttributeName( Name ) ) {
-				if ( _SetName.Amount() != 0 )
+				if ( _IsDefineTagAttributeName( Name ) ) {
+					_Registry().AddAttribute( Name, Value, _Current() );
+				} else
 					return false;
-				_SetName = Value;
-			} else if ( _IsSetValueAttributeName( Name ) ) {
-				if ( _SetValue.Amount() != 0 )
-					return false;
-				_SetValue = Value;
-			} else
-				return false;
-			break;
-		case mSwitch:
-			if ( _IsSwitchSelectAttributeName( Name ) ) {
-				if ( _SwitchSelect.Amount() != 0 )
-					return false;
-				_SwitchSelect = Value;
-			} else
-				return false;
-			break;
-		case mCase:
-			if ( _IsCaseValueAttributeName( Name ) ) {
-				if ( _CaseValue.Amount() != 0 )
+			} else 	if ( _IsExpandTagName( TagName ) ) {
+				if ( _IsExpandTagExplodeAttributeName( Name ) )
+					_ExpandIsInclude = false;
+				else if ( _IsExpandTagIncludeAttributeName( Name ) )
+					_ExpandIsInclude = true;
+				else
 					return false;
 
-				_CaseValue = Value;
+				_ExpandTagAttributeValue.Init( Value );
+			} else 	if ( _IsSetTagName( TagName ) ) {
+				if ( _IsSetNameAttributeName( Name ) ) {
+					if ( _SetName.Amount() != 0 )
+						return false;
+					_SetName = Value;
+				} else if ( _IsSetValueAttributeName( Name ) ) {
+					if ( _SetValue.Amount() != 0 )
+						return false;
+					_SetValue = Value;
+				} else
+					return false;
+			} else 	if ( _IsIfeqTagName( TagName ) ) {
+				if ( _IsIfeqSelectAttributeName( Name ) ) {
+					if ( _IfeqSelect.Amount() != 0 )
+						return false;
+					_IfeqSelect = Value;
+				} else if ( _IsIfeqValueAttributeName( Name ) ) {
+					if ( _IfeqValue.Amount() != 0 )
+						return false;
+					_IfeqValue = Value;
+				} else
+					return false;
 			} else
-				return false;
-			break;
-		case mDefault:
-			return false;
-			break;
-		default:
-			ERRc();
-			break;
+				ERRc();
+		} else
+			_Registry().AddAttribute( Name, Value, _Current() );
+
+		return true;
+	}
+	virtual bso::bool__ XMLStartTagClosed( const str::string_ &TagName )
+	{
+		if ( _IsIfeqTagName( TagName ) ) {
+		ERRProlog
+			str::string Value;
+		ERRBegin
+			if ( _IfeqSelect.Amount() == 0 )
+				ERRc();
+
+			if ( _IsActive() ) {
+				Value.Init();
+
+				if ( _Variables.Get( _IfeqSelect, Value ) )
+					if ( Value == _IfeqValue ) {
+						if ( _MatchingIfeqLevel == BSO_ULONG_MAX )
+							ERRl();
+						_MatchingIfeqLevel++;
+					} else {
+						if ( _UnmatchingIfeqLevel != 0 )
+							ERRc();
+						_UnmatchingIfeqLevel = 1;
+					}
+			} else {
+				if ( _UnmatchingIfeqLevel == BSO_ULONG_MAX )
+					ERRl();
+				_UnmatchingIfeqLevel++;
+			}
+
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
+
+		return true;
+	}
+	virtual bso::bool__ XMLValue(
+		const str::string_ &TagName,
+		const str::string_ &Value )
+	{
+		_Registry().SetValue( Value, _Current(), true );
 
 		return true;
 	}
 	virtual bso::bool__ XMLEndTag( const str::string_ &TagName )
 	{
-		if ( _IsCaseTagName( TagName ) || _IsDefaultTagName( TagName ) ) {
-				if ( _IsActive() ) {
-					if ( _MatchingCaseLevel == 0 )
-						ERRc();
-					_MatchingCaseLevel--;
-				} else {
-					if ( _UnmatchingCaseLevel == 0 )
-						ERRc();
-					_UnmatchingCaseLevel--;
-				}
-
-				return true;
-		} else if ( _IsSwitchTagName( TagName ) ) {
-			_Mode = mRegular;
-			return true;
-		} else if ( _IsBlocTagName( TagName ) )
-			return true;
-
-		switch ( _Mode ) {
-		case mRegular:
-		case mDefineDeclaration:
-		case mDefineDefinition:
-			if ( _IsActive() )
-				_Current() = _Registry().GetParent( _Current() );
-			break;
-		case mExpandInRegular:
-#ifdef RGSTRY_DBG
-			if ( !_IsExpandTagName( TagName ) )
-				ERRc();
-#endif
-			_Mode = mRegular;
-
-			if ( _IsActive() )
-				if ( !_ExpandNode() )
-					return false;
-
-//			_Current() = _Registry().GetParent( _Current() );
-
-			break;
-		case mExpandInDefine:
-#ifdef RGSTRY_DBG
-			if ( !_IsExpandTagName( TagName ) )
-				ERRc();
-#endif
-			if ( _IsActive() )
-				if ( !_ExpandNode() )
-					return false;
-
-//			_Current() = _Registry().GetParent( _Current() );
-
-			_Mode = mDefineDefinition;
-			break;
-			case mSet:
+		if ( _BelongsToNamespace( TagName ) ) {
+			if ( _IsDefineTagName( TagName ) )
+				_SwitchToUserKernel();
+			else if ( _IsIfeqTagName( TagName ) ) {
+					if ( _IsActive() ) {
+						if ( _MatchingIfeqLevel == 0 )
+							ERRc();
+						_MatchingIfeqLevel--;
+					} else {
+						if ( _UnmatchingIfeqLevel == 0 )
+							ERRc();
+						_UnmatchingIfeqLevel--;
+					}
+			} else if ( _IsExpandTagName( TagName )  ) {
+				if ( _IsActive() )
+					if ( !_ExpandNode() )
+						return false;
+			} else if ( _IsBlocTagName( TagName ) ) {
+			} else if ( _IsSetTagName( TagName ) ) {
 				if ( _SetName.Amount() == 0 )
 					return false;
 
 				if ( _IsActive() )
 					_Variables.Set( _SetName, _SetValue );
-
-			case mSwitch:
-				_Mode = mRegular;
-				return true;
-
-				break;
-			case mCase:
-			case mDefault:
+			} else
 				ERRc();
-				break;
-		default:
-			ERRc();
-			break;
+		} else if ( _IsActive() ) {
+			_Current() = _Registry().GetParent( _Current() );
+
+			if ( ( _Current() == NONE ) && ( _Root() == NONE ) )
+				return false;
 		}
-		
-
-
-		if ( ( _Current() == NONE ) && ( _Root() == NONE ) )
-			return false;
-
-		if ( _BelongsToNamespace( TagName ) )
-			if ( _IsDefineTagName( TagName ) )
-				_Mode = mRegular;
-		/* Pas de test extensif, puisque que l'on est sûr que le nom de la balise est correct,
-		sinon cela aurait été détecté lors de l'ouverture de cette balise. */
 
 		return true;
 	}
@@ -1408,23 +1072,23 @@ public:
 	callback___(
 		registry_ &Registry,
 		nrow__ Root )
-	: _User( Registry, Root ),
-	  _Manager( _ManagerRegistry, NONE )
+	: _UserKernel( Registry, Root ),
+	  _ManagerKernel( _ManagerRegistry, NONE )
 	{
 		_ManagerRegistry.Init();
-		_Manager.Root = _Manager.Current = _Manager.Registry.CreateNode( term( "_internal_" ) );
+		_ManagerKernel.Root = _ManagerKernel.Current = _ManagerKernel.Registry.CreateNode( term( "_internals_" ) );
 		_ExpandTagAttributeValue.Init();
-		_Mode = mRegular;
 		_IncludeErrorLine = _IncludeErrorColumn = 0;
 		_Variables.Init();
-		_MatchingCaseLevel = _UnmatchingCaseLevel = 0;
+		_MatchingIfeqLevel = _UnmatchingIfeqLevel = 0;
+		_CurrentKernel = &_UserKernel;
 	}
 	nrow__ GetRoot( void ) const
 	{
-		if ( _User.Current != NONE )
-			return _User.Current;
+		if ( _UserKernel.Current != NONE )
+			return _UserKernel.Current;
 		else
-			return _User.Root;
+			return _UserKernel.Root;
 	}
 	~callback___( void )
 	{
@@ -1449,7 +1113,7 @@ callback___::define callback___::_Define;
 callback___::expand callback___::_Expand;
 callback___::bloc callback___::_Bloc;
 callback___::set callback___::_Set;
-callback___::swtch callback___::_Switch;
+callback___::ifeq callback___::_Ifeq;
 term callback___::_Prefix;
 
 void rgstry::registry_::_Delete( const erows_ &Rows )
@@ -1868,11 +1532,9 @@ public:
 		callback___::_Set.NameAttributeName.Init( SET_NAME_ATTRIBUTE );
 		callback___::_Set.ValueAttributeName.Init( SET_VALUE_ATTRIBUTE );
 
-		callback___::_Switch.TagName.Init( SWITCH_TAG );
-		callback___::_Switch.SelectAttributeName.Init( SWITCH_SELECT_ATTRIBUTE );
-		callback___::_Switch.CaseTagName.Init( CASE_TAG );
-		callback___::_Switch.CaseValueAttributeName.Init( CASE_VALUE_ATTRIBUTE );
-		callback___::_Switch.DefaultTagName.Init( DEFAULT_TAG );
+		callback___::_Ifeq.TagName.Init( IFEQ_TAG );
+		callback___::_Ifeq.SelectAttributeName.Init( IFEQ_SELECT_ATTRIBUTE );
+		callback___::_Ifeq.ValueAttributeName.Init( IFEQ_VALUE_ATTRIBUTE );
 
 		callback___::_Prefix.Init( PREFIX );
 

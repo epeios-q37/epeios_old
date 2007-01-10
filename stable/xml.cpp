@@ -295,6 +295,12 @@ static void GetAttribute_(
 
 	Flow.Get();	// To skip the '"'.
 
+	if ( Flow.EOX() )
+		ERRI( iBeam );
+
+	if ( !isspace( Flow.View() ) && ( Flow.View() != '/' ) && ( Flow.View() != '>' ) )
+		ERRI( iBeam );
+
 	SkipSpaces_( Flow );
 }
 
@@ -515,7 +521,7 @@ ERRBegin
 					ERRI( iBeam );
 			} else if ( Flow.View() == '>' ) {
 				Flow.Get();
-				if ( !Callback.XMLStartTagClosed( Name ) )
+				if ( !Callback.XMLStartTagClosed( Tag ) )
 					ERRI( iBeam );
 				State = ValueExpected;
 			}

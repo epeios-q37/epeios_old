@@ -1,12 +1,17 @@
 $Id$
 
+10/01/07 :
+	- XML :
+		- S'il n'y a pas d'espace entre deux attributs, une erreur est maintenant génèrée.
+		- Correction bogue appel 'XMLStartTagClosed()'
+
 07/01/07
 	- XML :
 		- '<... />' appelle maintenant 'StartTagClosed()' avant 'EndTag()'.
 
 03/12/06 :
 	- GENERAL :
-		- Adaptaion à VC++ 8.
+		- Adaptation à VC++ 8.
 
 20/11/06 :
 	- FLM :
