@@ -573,11 +573,14 @@ E_AUTO( strings )
 
 class variables___
 {
-	epeios::row__ _Locate( const str::string_ &Name )
+	epeios::row__ _Locate( const str::string_ &Name ) const
 	{
+		ctn::E_CMITEM( str::string_ ) NamesItem;
 		epeios::row__ Row = Names.First();
 
-		while ( ( Row != NONE ) && ( Names( Row ) != Name ) )
+		NamesItem.Init( Names );
+
+		while ( ( Row != NONE ) && ( NamesItem( Row ) != Name ) )
 			Row = Names.Next( Row );
 
 		return Row;
@@ -599,21 +602,28 @@ public:
 			Row = Names.Append( Name );
 			if ( Row != Values.Append( Value ) )
 				ERRc();
-		} else
+		} else {
 			Values( Row ) = Value;
+			Values.Flush();
+		}
 	}
 	bso::bool__ Get(
 		const str::string_ &Name,
-		str::string_ &Value )
+		str::string_ &Value ) const
 	{
 		epeios::row__ Row = _Locate( Name );
 
-		if ( Row != NONE )
-			Value = Values( Row );
+
+		if ( Row != NONE ) {
+			ctn::E_CMITEM( str::string_ ) ValuesItem;
+			ValuesItem.Init( Values );
+
+			Value = ValuesItem( Row );
+		}
 
 		return Row != NONE;
 	}
-	bso::bool__ Exists( const str::string_ &Name )
+	bso::bool__ Exists( const str::string_ &Name ) const
 	{
 		return _Locate( Name ) != NONE;
 	}
@@ -627,7 +637,8 @@ class callback___
 private:
 	registry _ManagerRegistry;
 	kernel__ _UserKernel, _ManagerKernel, *_CurrentKernel;
-	term _ExpandTagAttributeValue;
+	// Value de l'attribut 'select' ou 'href' de la balise 'xcf:ifeq'.
+	term _ExpandTagAttribute;
 	bso::bool__ _ExpandIsInclude;
 	location__ _IncludeErrorLine, _IncludeErrorColumn;
 	// Valeurs des attributs de la balise 'xcf:set'.
@@ -812,10 +823,10 @@ private:
 		Path.Init();
 
 		Path.Append( DEFINE_TAG "[" DEFINE_ATTRIBUTE "=\"" );
-		Path.Append( _ExpandTagAttributeValue );
+		Path.Append( _ExpandTagAttribute );
 		Path.Append( "\"]" );
 
-		_ExpandTagAttributeValue.Init();
+		_ExpandTagAttribute.Init();
 
 		Root = _ManagerKernel.Registry.SearchPath( Path, _ManagerKernel.Root, AttributeEntryRow, PathErrorRow );
 
@@ -850,9 +861,9 @@ private:
 		xtf::extended_text_iflow__ XFlow;
 		tol::E_FPOINTER___( bso::char__ ) Buffer;
 	ERRBegin
-		Buffer = _ExpandTagAttributeValue.Convert();
+		Buffer = _ExpandTagAttribute.Convert();
 
-		_ExpandTagAttributeValue.Init();
+		_ExpandTagAttribute.Init();
 
 		if ( !FFlow.Init( Buffer, err::hSkip ) )
 			ERRReturn;
@@ -862,8 +873,8 @@ private:
 		XFlow.Init( FFlow );
 
 		if ( !xml::Parse( XFlow, *this ) )  {
-			if ( _ExpandTagAttributeValue.Amount() == 0 ) {	// Si pas == 0, alors l'erreur se trouve dans un sous-fcihier.
-				_ExpandTagAttributeValue.Init( Buffer );	// Pour indiquer que l'erreur se situe dans un fichier et lequel.
+			if ( _ExpandTagAttribute.Amount() == 0 ) {	// Si pas == 0, alors l'erreur se trouve dans un sous-fcihier.
+				_ExpandTagAttribute.Init( Buffer );	// Pour indiquer que l'erreur se situe dans un fichier et lequel.
 				_IncludeErrorLine = XFlow.Line();
 				_IncludeErrorColumn = XFlow.Column();
 			}
@@ -896,7 +907,9 @@ protected:
 			if ( _IsDefineTagName( TagName ) ) {
 				if ( _IsDefining() )
 					return false;
-				_SwitchToManagerKernel();
+				_SwitchToManagerKernel();	// Même si pas actif.
+				if ( !_IsActive() )
+					Ignore = true;
 			} else if ( _IsExpandTagName( TagName ) ) {
 				Ignore = true;
 			} else if ( _IsBlocTagName( TagName ) ) {
@@ -939,7 +952,6 @@ protected:
 		const str::string_ &Name,
 		const str::string_ &Value )
 	{
-
 		if ( _BelongsToNamespace( TagName ) ) {
 			if ( _IsDefineTagName( TagName ) ) {
 #ifdef RGSTRY_DBG
@@ -958,7 +970,7 @@ protected:
 				else
 					return false;
 
-				_ExpandTagAttributeValue.Init( Value );
+				_ExpandTagAttribute.Init( Value );
 			} else 	if ( _IsSetTagName( TagName ) ) {
 				if ( _IsSetNameAttributeName( Name ) ) {
 					if ( _SetName.Amount() != 0 )
@@ -1033,33 +1045,53 @@ protected:
 	}
 	virtual bso::bool__ XMLEndTag( const str::string_ &TagName )
 	{
+		bso::bool__ Ignore = false;
+
 		if ( _BelongsToNamespace( TagName ) ) {
-			if ( _IsDefineTagName( TagName ) )
-				_SwitchToUserKernel();
-			else if ( _IsIfeqTagName( TagName ) ) {
-					if ( _IsActive() ) {
-						if ( _MatchingIfeqLevel == 0 )
-							ERRc();
-						_MatchingIfeqLevel--;
-					} else {
-						if ( _UnmatchingIfeqLevel == 0 )
-							ERRc();
-						_UnmatchingIfeqLevel--;
-					}
+			if ( _IsDefineTagName( TagName ) ) {
+				if ( !_IsDefining() )
+					ERRc();
+				_Current() = _Registry().GetParent( _Current() );
+				_SwitchToUserKernel();	// Même is pas actif (void 'XMLStartTag()').
+				Ignore = true;
+			} else if ( _IsIfeqTagName( TagName ) ) {
+				if ( _IsActive() ) {
+					if ( _MatchingIfeqLevel == 0 )
+						ERRc();
+					_MatchingIfeqLevel--;
+				} else {
+					if ( _UnmatchingIfeqLevel == 0 )
+						ERRc();
+					_UnmatchingIfeqLevel--;
+				}
+
+				Ignore = true;
 			} else if ( _IsExpandTagName( TagName )  ) {
 				if ( _IsActive() )
 					if ( !_ExpandNode() )
 						return false;
+
+				_ExpandTagAttribute.Init();
+
+				Ignore = true;
 			} else if ( _IsBlocTagName( TagName ) ) {
+				if ( !_IsDefining() )
+					Ignore = true;
+
 			} else if ( _IsSetTagName( TagName ) ) {
 				if ( _SetName.Amount() == 0 )
 					return false;
 
 				if ( _IsActive() )
 					_Variables.Set( _SetName, _SetValue );
+
+				Ignore = true;
 			} else
 				ERRc();
-		} else if ( _IsActive() ) {
+		} else if ( !_IsActive() )
+			Ignore = true;
+
+		if ( !Ignore ) {
 			_Current() = _Registry().GetParent( _Current() );
 
 			if ( ( _Current() == NONE ) && ( _Root() == NONE ) )
@@ -1077,7 +1109,7 @@ public:
 	{
 		_ManagerRegistry.Init();
 		_ManagerKernel.Root = _ManagerKernel.Current = _ManagerKernel.Registry.CreateNode( term( "_internals_" ) );
-		_ExpandTagAttributeValue.Init();
+		_ExpandTagAttribute.Init();
 		_IncludeErrorLine = _IncludeErrorColumn = 0;
 		_Variables.Init();
 		_MatchingIfeqLevel = _UnmatchingIfeqLevel = 0;
@@ -1101,7 +1133,7 @@ public:
 	}
 	const str::string_ &IncludeErrorFileName( void )
 	{
-		return _ExpandTagAttributeValue;
+		return _ExpandTagAttribute;
 	}
 	E_RODISCLOSE__( location__, IncludeErrorLine )
 	E_RODISCLOSE__( location__, IncludeErrorColumn )

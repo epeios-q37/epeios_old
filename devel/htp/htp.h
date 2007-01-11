@@ -124,7 +124,7 @@ namespace htp {
 			Value.reset( P );
 			S_.Name = f_unknow;
 		}
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			Value.plug( MD );
 		}

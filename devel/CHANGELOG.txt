@@ -1,5 +1,10 @@
 $Id$
 
+11/01/07 :
+	- RGSTRY :
+		- Simplification.
+		- Mise en oeuvre des balises 'xcf:set' et 'xcf:ifeq'.
+
 10/01/07 :
 	- XML :
 		- S'il n'y a pas d'espace entre deux attributs, une erreur est maintenant génèrée.
