@@ -122,7 +122,7 @@ public:
 
 		Ids_.Init();
 #ifdef CPE__T_MT
-		::Mutex_ = mtx::Create();
+		::Mutex_ = mtx::Create( mtx::mFree );
 #endif
 	}
 	~uifpersonnalization( void )
