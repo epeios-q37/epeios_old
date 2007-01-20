@@ -28,12 +28,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "dtr.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
 
 void Generic( int argc, char *argv[] )
 {
@@ -50,7 +49,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << DTRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << DTRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -59,20 +58,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cio::cout );
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << DTRTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << DTRTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << DTRTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << DTRTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

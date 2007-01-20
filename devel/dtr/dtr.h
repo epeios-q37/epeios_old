@@ -154,7 +154,7 @@ namespace dtr {
 			Queue.Allocate( Size, Mode );
 		}
 		//f 'First' becomes first of 'Node'.
-		void BecomeFirst( 
+		void BecomeFirstSibling( 
 			r First,
 			r Node )
 		{
@@ -231,36 +231,36 @@ namespace dtr {
 		}
 	#endif
 		//f Return first node of 'Node'.
-		r First( r Node ) const
+		r FirstChild( r Node ) const
 		{
 			return Tree.Left( Node );
 		}
 		//f Return last node of 'Node'.
-		r Last( r Node ) const
+		r LastChild( r Node ) const
 		{
 			return Tree.Right( Node );
 		}
 		bso::bool__ HasChild( r Node ) const
 		{
-			return First( Node ) != NONE;
+			return FirstChild( Node ) != NONE;
 		}
 		//f Return node previous to 'Node'.
-		r Previous( r Node ) const
+		r PreviousSibling( r Node ) const
 		{
 			return Queue.Previous( Node );
 		}
-		bso::bool__ HasPrevious( r Node ) const
+		bso::bool__ HasPreviousSibling( r Node ) const
 		{
-			return Previous( Node ) != NONE;
+			return PreviousSibling( Node ) != NONE;
 		}
 		//f Return node next to 'Node'.
-		r Next( r Node ) const
+		r NextSibling( r Node ) const
 		{
 			return Queue.Next( Node );
 		}
-		bso::bool__ HasNext( r Node ) const
+		bso::bool__ HasNextSibling( r Node ) const
 		{
-			return Next( Node ) != NONE;
+			return NextSibling( Node ) != NONE;
 		}
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
@@ -312,17 +312,17 @@ namespace dtr {
 					ERRu();
 
 				if ( HasChild( Position ) ) {
-					Position = First( Position );
+					Position = FirstChild( Position );
 					Kinship = kChild;
 				}
 				break;
 			case kChild:
 			case kSibling:
 				if ( HasChild( Position ) ) {
-					Position = First( Position );
+					Position = FirstChild( Position );
 					Kinship = kChild;
-				} else if ( HasNext( Position ) ) {
-					Position = Next( Position );
+				} else if ( HasNextSibling( Position ) ) {
+					Position = NextSibling( Position );
 					Kinship = kSibling;
 #ifdef DTR_DBG
 				} else if ( !HasParent( Position ) ) {
@@ -334,8 +334,8 @@ namespace dtr {
 				}
 				break;
 			case kParent:
-				if ( HasNext( Position ) ) {
-					Position = Next( Position );
+				if ( HasNextSibling( Position ) ) {
+					Position = NextSibling( Position );
 					Kinship = kSibling;
 #ifdef DTR_DBG
 				} else if ( !HasParent( Position ) ) {
