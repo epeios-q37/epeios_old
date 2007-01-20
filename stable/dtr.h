@@ -235,18 +235,14 @@ namespace dtr {
 		{
 			return Tree.Left( Node );
 		}
-		bso::bool__ HasFirst( r Node ) const
-		{
-			return First( Node ) != NONE;
-		}
 		//f Return last node of 'Node'.
 		r Last( r Node ) const
 		{
 			return Tree.Right( Node );
 		}
-		bso::bool__ HasLast( r Node ) const
+		bso::bool__ HasChild( r Node ) const
 		{
-			return Last( Node ) != NONE;
+			return First( Node ) != NONE;
 		}
 		//f Return node previous to 'Node'.
 		r Previous( r Node ) const
@@ -315,14 +311,14 @@ namespace dtr {
 				if ( Root == NONE )
 					ERRu();
 
-				if ( HasFirst( Position ) ) {
+				if ( HasChild( Position ) ) {
 					Position = First( Position );
 					Kinship = kChild;
 				}
 				break;
 			case kChild:
 			case kSibling:
-				if ( HasFirst( Position ) ) {
+				if ( HasChild( Position ) ) {
 					Position = First( Position );
 					Kinship = kChild;
 				} else if ( HasNext( Position ) ) {

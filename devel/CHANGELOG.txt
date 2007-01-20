@@ -1,5 +1,9 @@
 $Id$
 
+20/01/07 :
+	- DTR :
+		- 'HasFirst()' et 'HasLast()' sont tous deux remplacer par 'HasChild()'.
+
 11/01/07 :
 	- RGSTRY :
 		- Simplification.
