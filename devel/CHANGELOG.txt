@@ -1,5 +1,9 @@
 $Id$
 
+21/01/07 :
+	- STR :
+		- Introduction de la notion de base pour les conversions de nombres.
+
 20/01/07 :
 	- DTR :
 		- 'HasFirst()' et 'HasLast()' sont tous deux remplacer par 'HasChild()'.

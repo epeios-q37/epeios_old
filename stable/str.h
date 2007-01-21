@@ -70,6 +70,13 @@ namespace str {
 		using bch::bunch_;
 	}
 
+	enum base__ {
+		bAuto = 0,	// Détermination automatique de la base (suivant le premier caractère).
+		b10 = 10,	// Base décimale.
+		b16 = 16,	// Base hexadécimale.
+	};
+
+
 	class _string_size_handler {
 	public:
 		static epeios::size__ SizeOf( const char *S )
@@ -176,13 +183,15 @@ namespace str {
 		bso::ulong__ ToUL(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
+			base__ Base,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const;
 		//f Variation in parameters.
 		bso::ulong__ ToUL(
 			epeios::row__ *ErrP = NULL,
+			base__ Base = bAuto,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const
 		{
-			return ToUL( 0, ErrP, Limit );
+			return ToUL( 0, ErrP, Base, Limit );
 		}
 		/*f Convert to signed long. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max absolute value that the returned value can have. */
@@ -196,9 +205,9 @@ namespace str {
 					*ErrP = *Begin + 1;
 					return 0;
 				} else 
-					return -(bso::slong__)ToUL( Next( Begin ), ErrP, Limit );
+					return -(bso::slong__)ToUL( Next( Begin ), ErrP, b10, Limit );
 			else
-				return (bso::slong__)ToUL( Begin, ErrP, Limit );
+				return (bso::slong__)ToUL( Begin, ErrP, b10, Limit );
 		}
 		//f Variation in parameters.
 		bso::slong__ ToSL(
@@ -212,16 +221,26 @@ namespace str {
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			base__ Base = bAuto,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)ToUL( Begin, ErrP, Limit );
+			return (bso::ushort__)ToUL( Begin, ErrP, Base, Limit );
+		}
+		bso::ushort__ ToUS(
+			epeios::row__ *ErrP,
+			base__ Base,
+			epeios::row__ Begin,
+			bso::ushort__ Limit = BSO_USHORT_MAX ) const
+		{
+			return (bso::ushort__)ToUS( ErrP, Begin, Base, Limit );
 		}
 		//f Variation in parameters.
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP = NULL,
+			base__ Base = bAuto,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
-			return ToUS( ErrP, 0, Limit );
+			return ToUS( ErrP, Base, 0, Limit );
 		}
 		/*f Convert to signed short. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
@@ -244,16 +263,26 @@ namespace str {
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)ToUL( 0, ErrP, Limit );
+			return (bso::ubyte__)ToUL( 0, ErrP, Base, Limit );
+		}
+		bso::ubyte__ ToUB(
+			epeios::row__ *ErrP,
+			base__ Base,
+			epeios::row__ Begin,
+			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
+		{
+			return ToUB( ErrP, Begin, Base, Limit );
 		}
 		//f Variation in parameters.
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP = NULL,
+			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return ToUB( ErrP, 0, Limit );
+			return ToUB( ErrP, 0, Base, Limit );
 		}
 		/*f Convert to signed byte. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */

@@ -90,6 +90,13 @@ static inline int toxupper_( int C )
 	return toupper( GetAccentFree_( C ) );
 }
 
+static bso::ubyte__ Convert_( bso::char__ C )
+{
+	if ( isdigit( C ) )
+		return C - '0';
+	else
+		return tolower( C )- 'a' + 10;
+}
 
 namespace str {
 
@@ -319,19 +326,40 @@ namespace str {
 	bso::ulong__ string_::ToUL(
 		epeios::row__ Begin,
 		epeios::row__ *ErrP,
+		base__ BaseFlag,
 		bso::ulong__ Limit ) const
 	{
 		bso::ulong__ Result = 0;
 		epeios::row__ &P = Begin;
 		char C;
+		bso::ubyte__ Base;
 
-		Limit /= 10;
+		if ( BaseFlag == bAuto )
+			if ( Get( P ) == '#' ) {
+				BaseFlag = b16;
+				P = Next( P );
+			} else
+				BaseFlag = b10;
+
+		if ( BaseFlag > 255 )
+			ERRu();
+
+		Base = (int)BaseFlag;
+
+		Limit /= Base;
 
 		if ( *P < Amount() )
-			while( ( P != NONE )
-				   && isdigit( C = Get( P ) )
-				   && ( Result <= Limit ) ) {
-				Result = Result * 10 + C - '0';
+			while( P != NONE ) {
+				C = Convert_( Get( P ) );
+
+				if ( C >= Base )
+					break;
+
+			   if ( Result > Limit )
+				   break;
+
+				Result = Result * Base + C;
+
 				P = Next( P );
 			}
 
