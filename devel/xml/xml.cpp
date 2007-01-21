@@ -332,14 +332,18 @@ static void SkipComment_( xtf::extended_text_iflow__ &Flow )
 		if ( Flow.EOX() )
 			ERRI( iBeam );
 
-		if ( Flow.Get() != '-' )
-			ERRI( iBeam );
+		if ( Flow.View() == '-' ) {
+			Flow.Get();
 
-		if ( Flow.EOX() )
-			ERRI( iBeam );
+			if ( Flow.EOX() )
+				ERRI( iBeam );
 
-		if ( Flow.Get() == '>' )
-			Continue = false;
+			if ( Flow.View() == '>' ) {
+				Flow.Get();
+
+				Continue = false;
+			}
+		}
 	}
 }
 

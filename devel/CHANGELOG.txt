@@ -3,6 +3,8 @@ $Id$
 21/01/07 :
 	- STR :
 		- Introduction de la notion de base pour les conversions de nombres.
+	- XML :
+		- Correction bogue commentaire.
 
 20/01/07 :
 	- DTR :
