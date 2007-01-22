@@ -335,7 +335,7 @@ namespace str {
 		bso::ubyte__ Base;
 
 		if ( BaseFlag == bAuto )
-			if ( Get( P ) == '#' ) {
+			if ( ( ( Amount() != 0 ) ) && ( Get( P ) == '#' ) ) {
 				BaseFlag = b16;
 				P = Next( P );
 			} else
