@@ -82,7 +82,8 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsITreeContentView.h"
 #include "nsITreeSelection.h"
 #include "nsIListBoxObject.h"
-//#include "nsIButton.h"
+#include "nsIDOMWindowInternal.h"
+#include "nsIXULWindow.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD

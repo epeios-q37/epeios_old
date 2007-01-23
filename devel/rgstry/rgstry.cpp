@@ -933,7 +933,8 @@ protected:
 				Ignore = true;
 			} else
 				return false;
-		}
+		} else if ( !_IsActive() )
+			Ignore = true;
 
 		if ( !Ignore ) {
 			if ( _Current() == NONE ) {
@@ -995,7 +996,7 @@ protected:
 					return false;
 			} else
 				ERRc();
-		} else
+		} else if ( _IsActive() )
 			_Registry().AddAttribute( Name, Value, _Current() );
 
 		return true;
@@ -1039,7 +1040,8 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Value )
 	{
-		_Registry().SetValue( Value, _Current(), true );
+		if ( _IsActive() )
+			_Registry().SetValue( Value, _Current(), true );
 
 		return true;
 	}
@@ -1051,7 +1053,8 @@ protected:
 			if ( _IsDefineTagName( TagName ) ) {
 				if ( !_IsDefining() )
 					ERRc();
-				_Current() = _Registry().GetParent( _Current() );
+				if ( _IsActive() )
+					_Current() = _Registry().GetParent( _Current() );
 				_SwitchToUserKernel();	// Même is pas actif (void 'XMLStartTag()').
 				Ignore = true;
 			} else if ( _IsIfeqTagName( TagName ) ) {
