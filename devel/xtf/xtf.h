@@ -157,9 +157,12 @@ namespace xtf {
 		}
 		//f Initialization with 'Flow'..
 		void Init(
-			flw::iflow__ &IStream )
+			flw::iflow__ &IStream,
+			xtf::location__ Line = 1,
+			xtf::location__ Column = 1)
 		{
-			Ligne_ = Colonne_ = 1;
+			Ligne_ = Line;
+			Colonne_ = Column;
 			Position_ = Nombre_ = 0;
 			Entree_ = NULL;
 			EOL_ = false;
@@ -291,6 +294,13 @@ namespace xtf {
 		flw::size__ AmountRed( void ) const
 		{
 			return Entree_->AmountRed() - Nombre_;
+		}
+		void Set(
+			xtf::location__ Line,
+			xtf::location__ Column )
+		{
+			Ligne_ = Line;
+			Colonne_ = Column;
 		}
 	};
 }

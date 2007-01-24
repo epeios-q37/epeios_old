@@ -49,7 +49,9 @@ struct callback__
 		while ( Counter-- )
 			cout << txf::tab;
 	}
-	virtual bso::bool__ XMLStartTag(	const str::string_ &Name )
+	virtual bso::bool__ XMLStartTag(
+		const str::string_ &Name,
+		const str::string_ &Dump )
 	{
 		Ident_();
 		cout << "Tag : '" << Name << '\'' << txf::nl;
@@ -60,7 +62,8 @@ struct callback__
 	}
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
-		const str::string_ &Value )
+		const str::string_ &Value,
+		const str::string_ &Dump )
 	{
 		Ident_();
 
@@ -71,7 +74,8 @@ struct callback__
 	virtual bso::bool__ XMLAttribute(
 		const str::string_ &TagName,
 		const str::string_ &Name,
-		const str::string_ &Value )
+		const str::string_ &Value,
+		const str::string_ &Dump )
 	{
 		Ident_();
 
@@ -79,7 +83,9 @@ struct callback__
 
 		return true;
 	}
-	virtual bso::bool__ XMLEndTag( const str::string_ &Name )
+	virtual bso::bool__ XMLEndTag(
+		const str::string_ &Name,
+		const str::string_ &Dump )
 	{
 		ident--;
 
@@ -104,14 +110,14 @@ ERRProlog
 	flx::E_STRING_IFLOW__ Flow;
 	xtf::extended_text_iflow__ XTFlow;
 ERRBegin
-	Example.Init( "Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root>" );
+Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 	Flow.Init( Example );
 
 	Flow.EOFD( XTF_EOXT );
 
 	XTFlow.Init( Flow );
 
-	if ( !xml::Parse( XTFlow, Callback ) ) {
+	if ( !xml::ExtendedParse( XTFlow, str::string( "xcf" ), Callback ) ) {
 		cout << txf::sync;
 		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column() << txf::nl;
 	}

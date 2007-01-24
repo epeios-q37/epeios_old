@@ -71,23 +71,40 @@ namespace xml {
 
 	struct callback__
 	{
-		virtual bso::bool__ XMLStartTag( const str::string_ &Name ) = 0;
-		virtual bso::bool__ XMLStartTagClosed( const str::string_ &Name )
+		virtual bso::bool__ XMLStartTag(
+			const str::string_ &Name,
+			const str::string_ &Dump ) = 0;
+		virtual bso::bool__ XMLStartTagClosed(
+			const str::string_ &Name,
+			const str::string_ &Dump )
 		{
-			return true ;
+			return true;
 		}
-		virtual bso::bool__ XMLValue(
-			const str::string_ &TagName,
-			const str::string_ &Value ) = 0;
 		virtual bso::bool__ XMLAttribute(
 			const str::string_ &TagName,
 			const str::string_ &Name,
-			const str::string_ &Value ) = 0;
-		virtual bso::bool__ XMLEndTag( const str::string_ &Name ) = 0;
+			const str::string_ &Value,
+			const str::string_ &Dump ) = 0;
+		virtual bso::bool__ XMLValue(
+			const str::string_ &TagName,
+			const str::string_ &Value,
+			const str::string_ &Dump ) = 0;
+		virtual bso::bool__ XMLEndTag(
+			const str::string_ &Name,
+			const str::string_ &Dump ) = 0;
+		void Init( void )
+		{}
 	};
 
 	bso::bool__ Parse(
 		xtf::extended_text_iflow__ &Flow,
+		callback__ &Callback );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+
+	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
+	// où 'xxx' est la valeur donné à 'NameSpace'.
+	bso::bool__ ExtendedParse(
+		xtf::extended_text_iflow__ &Flow,
+		const str::string_ &Namespace,
 		callback__ &Callback );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
 	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.

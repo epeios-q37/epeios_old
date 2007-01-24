@@ -899,7 +899,9 @@ private:
 		return _UnmatchingIfeqLevel == 0;
 	}
 protected:
-	virtual bso::bool__ XMLStartTag( const str::string_ &TagName )
+	virtual bso::bool__ XMLStartTag(
+		const str::string_ &TagName,
+		const str::string_ &Dump )
 	{
 		bso::bool__ Ignore = false;
 
@@ -951,7 +953,8 @@ protected:
 	virtual bso::bool__ XMLAttribute(
 		const str::string_ &TagName,
 		const str::string_ &Name,
-		const str::string_ &Value )
+		const str::string_ &Value,
+		const str::string_ &Dump )
 	{
 		if ( _BelongsToNamespace( TagName ) ) {
 			if ( _IsDefineTagName( TagName ) ) {
@@ -1001,7 +1004,9 @@ protected:
 
 		return true;
 	}
-	virtual bso::bool__ XMLStartTagClosed( const str::string_ &TagName )
+	virtual bso::bool__ XMLStartTagClosed(
+		const str::string_ &TagName,
+		const str::string_ &Dump )
 	{
 		if ( _IsIfeqTagName( TagName ) ) {
 		ERRProlog
@@ -1038,14 +1043,17 @@ protected:
 	}
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
-		const str::string_ &Value )
+		const str::string_ &Value,
+		const str::string_ &Dump )
 	{
 		if ( _IsActive() )
 			_Registry().SetValue( Value, _Current(), true );
 
 		return true;
 	}
-	virtual bso::bool__ XMLEndTag( const str::string_ &TagName )
+	virtual bso::bool__ XMLEndTag(
+		const str::string_ &TagName,
+		const str::string_ &Dump )
 	{
 		bso::bool__ Ignore = false;
 
@@ -1447,7 +1455,7 @@ nrow__ rgstry::Parse(
 ERRProlog
 	callback___ Callback( Registry, Root );
 ERRBegin
-	if ( xml::Parse( Flow, Callback ) )
+	if ( xml::ExtendedParse( Flow, str::string( "test" ), Callback ) )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
