@@ -359,6 +359,17 @@ namespace dtr {
 
 			return Position;
 		}
+		bso::ulong__ GetLevel( r Row ) const
+		{
+			bso::ulong__ Level = 0;
+
+			while ( HasParent( Row ) ) {
+				Level++;
+				Row = Parent( Row );
+			}
+
+			return Level;
+		}
 	};
 
 	E_AUTO1( dynamic_tree )

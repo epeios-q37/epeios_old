@@ -1,8 +1,10 @@
 $Id$
 
 24/02/07 :
+	- DTR :
+		- Ajout de la notion de niveau ('Level').
 	- XTF :
-		- On peut maintenant forcer la valeur des membres 'Line' et 'Column'.
+		- On peut maintenant forcer la valeur des membres 'Line' et 'Column'
 
 21/01/07 :
 	- STR :
