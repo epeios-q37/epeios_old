@@ -715,11 +715,7 @@ public:
 
 		return true;
 	}
-	bso::bool__ Exists( const str::string_ &Name ) const
-	{
-		return _Locate( Name ) != NONE;
-	}
-	void Get(
+	bso::bool__ Get(
 		const str::string_ &Name,
 		xtf::location__ &Line,
 		xtf::location__ &Column,
@@ -728,7 +724,7 @@ public:
 		rrow__ Row = _Locate( Name );
 
 		if ( Row == NONE )
-			ERRu();
+			return false;
 
 		position__ P = Positions.Get( Row );
 
@@ -736,6 +732,8 @@ public:
 
 		Line = P.Line;
 		Column = P.Column;
+
+		return true;
 	}
 };
 
@@ -1023,7 +1021,8 @@ private:
 	ERRBegin
 		String.Init();
 
-		_Repository.Get( Name, Line, Column, String );
+		if ( !_Repository.Get( Name, Line, Column, String ) )
+			ERRReturn;
 
 		SFlow.Init( String );
 		XFlow.Init( SFlow, Line, Column );
@@ -1075,7 +1074,7 @@ protected:
 			_NameSelectAttribute.Init();
 			break;
 		case tExpand:
-			_ValueAttribute.Init();
+			_NameSelectAttribute.Init();
 			break;
 		case tIfeq:
 			_NameSelectAttribute.Init();
@@ -1234,6 +1233,7 @@ protected:
 			return false;
 			break;
 		case tBloc:
+			return _UserCallback->XMLValue( TagName, Value, Dump );
 			break;
 		case tSet:
 			return false;
