@@ -959,9 +959,15 @@ private:
 	str::string _IfeqTag;
 	str::string _BlocTag;
 	str::string _SetTag;
+	// Balise parent de 'xxx:bloc' successifs et/ou imbriqués.
+	str::string _BlocPendingTag;
+	// Cumul des éventuels valeur de 'xxx::bloc' sucessifs et/ou imbriqués.
+	str::string _BlocPendingValue;
+	// Cumul des éventuels 'dump' de 'xxx::bloc' sucessifs et/ou imbriqués.
+	str::string _BlocPendingDump;
 	// Contient la valeur de l'attribut 'name' ou 'select'.
 	str::string _NameSelectAttribute;
-	// Contient la valeur de l'atribut 'value'.
+	// Contient la valeur de l'attribut 'value'.
 	str::string _ValueAttribute;
 	bso::bool__ _IsDefining;
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
@@ -1040,7 +1046,16 @@ private:
 	ERREpilog
 		return Success;
 	}
+	void _HandleBloc( void )
+	{
+		if ( _BlocPendingValue.Amount() != 0 ) {
+			_UserCallback->XMLValue( _BlocPendingTag, _BlocPendingValue, _BlocPendingDump );
 
+			_BlocPendingTag.Init();
+			_BlocPendingValue.Init();
+			_BlocPendingDump.Init();
+		}
+	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
 	{
@@ -1068,21 +1083,28 @@ protected:
 
 		switch ( _GetTag( Name ) ) {
 		case tUser:
+			_HandleBloc();
 			return _UserCallback->XMLStartTag( Name, Dump );
 			break;
 		case tDefine:
+			_HandleBloc();
 			_NameSelectAttribute.Init();
 			break;
 		case tExpand:
+			_HandleBloc();
 			_NameSelectAttribute.Init();
 			break;
 		case tIfeq:
+			_HandleBloc();
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case tBloc:
+			if ( _BlocPendingTag.Amount() != 0 )
+				_BlocPendingTag = Name;
 			break;
 		case tSet:
+			_HandleBloc();
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
@@ -1233,7 +1255,8 @@ protected:
 			return false;
 			break;
 		case tBloc:
-			return _UserCallback->XMLValue( TagName, Value, Dump );
+			_BlocPendingValue.Append( Value );
+			_BlocPendingDump.Append( Dump );
 			break;
 		case tSet:
 			return false;
@@ -1329,6 +1352,9 @@ protected:
 
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
+
+			_BlocPendingTag.Init();
+			_BlocPendingValue.Init();
 
 			_IsDefining = false;
 		}
