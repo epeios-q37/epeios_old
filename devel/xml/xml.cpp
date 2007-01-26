@@ -1046,18 +1046,6 @@ private:
 	ERREpilog
 		return Success;
 	}
-	void _HandleBloc( const str::string_ &TagName )
-	{
-		if ( _BlocPendingValue.Amount() != 0 ) {
-			_UserCallback->XMLValue( _BlocPendingTag, _BlocPendingValue, _BlocPendingDump );
-
-			_BlocPendingTag.Init();
-			_BlocPendingValue.Init();
-			_BlocPendingDump.Init();
-		} else if ( !_BelongsToNamespace( TagName ) )
-			_BlocPendingTag = TagName;
-
-	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
 	{
@@ -1083,28 +1071,26 @@ protected:
 		if ( _IsDefining )
 			return false;
 
+		if ( !_BelongsToNamespace( Name ) )
+			_BlocPendingTag = Name;
+
 		switch ( _GetTag( Name ) ) {
 		case tUser:
-			_HandleBloc( Name );
 			return _UserCallback->XMLStartTag( Name, Dump );
 			break;
 		case tDefine:
-			_HandleBloc( Name );
 			_NameSelectAttribute.Init();
 			break;
 		case tExpand:
-			_HandleBloc( Name );
 			_NameSelectAttribute.Init();
 			break;
 		case tIfeq:
-			_HandleBloc( Name );
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case tBloc:
 			break;
 		case tSet:
-			_HandleBloc( Name );
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
@@ -1275,6 +1261,14 @@ protected:
 		const str::string_ &Name,
 		const str::string_ &Dump )
 	{
+		if ( !_BelongsToNamespace( Name ) && ( _BlocPendingValue.Amount() != 0 ) ) {
+			_UserCallback->XMLValue( _BlocPendingTag, _BlocPendingValue, _BlocPendingDump );
+
+			_BlocPendingTag.Init();
+			_BlocPendingValue.Init();
+			_BlocPendingDump.Init();
+		}
+
 		switch ( _GetTag( Name ) ) {
 		case tUser:
 		return _UserCallback->XMLEndTag( Name, Dump );
