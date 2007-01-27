@@ -552,6 +552,8 @@ ERRBegin
 
 				if ( Flow.View() == '>' ) {
 
+					Flow.Get();
+
 					if ( Tags.IsEmpty() )
 						ERRI( iBeam );
 
@@ -572,8 +574,9 @@ ERRBegin
 					Level--;
 
 					State = TagExpected;
-					Flow.Get();
-					SkipSpaces_( Flow );
+
+					if ( Level )
+						SkipSpaces_( Flow );
 				} else
 					ERRI( iBeam );
 			} else if ( Flow.View() == '>' ) {
@@ -1031,6 +1034,9 @@ private:
 			ERRReturn;
 
 		SFlow.Init( String );
+		SFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
+
+
 		XFlow.Init( SFlow, Line, Column );
 
 		_Flow = &XFlow;
