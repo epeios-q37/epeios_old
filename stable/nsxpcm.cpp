@@ -58,6 +58,8 @@ public:
 #include "nsMemory.h"
 #include "nsIDOMEvent.h"
 #include "nsIDOMEventTarget.h"
+#include "nsIFilePicker.h"
+#include "nsILocalFile.h"
 
 using namespace nsxpcm;
 
@@ -163,6 +165,18 @@ void nsxpcm::Transform(
 
 	String.Append( ECString.get() );
 }
+
+void nsxpcm::Transform(
+	const nsEmbedCString &ECString,
+	str::string_ &String )
+{
+	nsEmbedString EString;
+
+	Transform( ECString, EString );
+
+	Transform( EString, String );
+}
+
 
 void nsxpcm::Split( 
 	const string_ &Joined,
@@ -334,6 +348,72 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+static bso::bool__ FileDialogBox_(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	PRInt16 Mode,
+	str::string_ &Name )
+{
+	nsCOMPtr<nsIFilePicker> FilePicker = NULL;
+	nsresult Error = NS_OK;
+	nsEmbedString EString;
+
+	CreateInstance<nsIFilePicker>( "@mozilla.org/filepicker;1", FilePicker );
+
+	Transform( Title, EString );
+
+	if ( ( Error = FilePicker->Init( Parent, EString, Mode ) ) != NS_OK )
+		ERRx();
+
+	PRInt16 _retval = 0;
+
+	if ( ( Error = FilePicker->Show( &_retval ) ) != NS_OK )
+		ERRx();
+
+	if ( _retval == nsIFilePicker::returnCancel )
+		return false;
+	else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
+		ERRx();
+
+	nsILocalFile *File;
+
+	if ( ( Error = FilePicker->GetFile( &File ) ) != NS_OK )
+		ERRx();
+
+	if ( ( Error = File->GetPath( EString ) ) != NS_OK )
+		ERRx();
+
+	nsxpcm::Transform( EString, Name );
+
+	return true;
+}
+
+bso::bool__ nsxpcm::FileOpenDialogBox(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	str::string_ &FileName )
+{
+	return FileDialogBox_( Parent, Title, nsIFilePicker::modeOpen, FileName );
+}
+
+bso::bool__ nsxpcm::FileSaveDialogBox(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	str::string_ &FileName )
+{
+	return FileDialogBox_( Parent, Title, nsIFilePicker::modeSave, FileName );
+}
+
+bso::bool__ nsxpcm::DirectorySelectDialogBox(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	str::string_ &FileName )
+{
+	return FileDialogBox_( Parent, Title, nsIFilePicker::modeGetFolder, FileName );
+}
+
+
 
 
 #ifdef NSXPCM__BKD

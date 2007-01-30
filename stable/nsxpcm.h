@@ -84,6 +84,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIListBoxObject.h"
 #include "nsIDOMWindowInternal.h"
 #include "nsIXULWindow.h"
+#include "nsComponentManagerUtils.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -143,6 +144,10 @@ namespace nsxpcm {
 		const nsEmbedString &EString,
 		str::string_ &String );
 
+	void Transform(
+		const nsEmbedCString &ECString,
+		str::string_ &String );
+
 	void Split( 
 		const string_ &Joined,
 		bso::char__ Seaparator,
@@ -162,6 +167,21 @@ namespace nsxpcm {
 		const strings_ &Splitted,
 		bso::char__ Separator,
 		char **JString );
+
+	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
+	template <typename t> inline t *CreateInstance(
+		const char *ContractID,
+		nsCOMPtr<t> &Instance )
+	{	
+		nsresult Error = NS_OK;
+
+		Instance = do_CreateInstance( ContractID, &Error );
+
+		if ( Error != NS_OK )
+			ERRu();
+
+		return Instance;
+	}
 
 	inline nsIDOMElement *GetElementById(
 		nsIDOMDocument *Document,
@@ -737,6 +757,28 @@ namespace nsxpcm {
 	: public _element__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
 	{
 	};
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	bso::bool__ FileOpenDialogBox(
+		nsIDOMWindow *Parent,
+		const char *Title,
+		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	bso::bool__ FileSaveDialogBox(
+		nsIDOMWindow *Parent,
+		const char *Title,
+		str::string_ &FileName );
+
+	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
+	'false' si 'Cancel' a été sélectionné. */
+	bso::bool__ DirectorySelectDialogBox(
+		nsIDOMWindow *Parent,
+		const char *Title,
+		str::string_ &DirectoryName );
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
