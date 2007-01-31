@@ -60,6 +60,8 @@ public:
 
 using namespace xml;
 
+#define	EXPAND_MAX_NESTING_LEVEL	100
+
 class flow {
 private:
 	xtf::extended_text_iflow__ *_Flow;
@@ -973,6 +975,7 @@ private:
 	// Contient la valeur de l'attribut 'value'.
 	str::string _ValueAttribute;
 	bso::bool__ _IsDefining;
+	bso::ubyte__ _ExpandNestingLevel;	// Niveau d'imbrication de 'xxx:expand'.
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
 		return str::Compare( TagName, _Namespace, TagName.First(), _Namespace.First(), _Namespace.Amount() ) == 0;
@@ -1041,7 +1044,13 @@ private:
 
 		_Flow = &XFlow;
 
+		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
+			ERRReturn;
+
 		Success = Parse( XFlow, *this );
+
+		if ( _ExpandNestingLevel-- == 0 )
+			ERRc();
 
 		_Flow = PreviousFlow;
 
@@ -1358,6 +1367,7 @@ protected:
 			_BlocPendingDump.Init();
 
 			_IsDefining = false;
+			_ExpandNestingLevel = 0;
 		}
 };
 
@@ -1379,7 +1389,78 @@ ERREpilog
 	return Success;
 }
 
+class neutral_callback
+: public callback__
+{
+private:
+	xml::writer _Writer;
+protected:
+	virtual bso::bool__ XMLStartTag(
+		const str::string_ &Name,
+		const str::string_ &Dump )
+	{
+		_Writer.PushTag( Name );
 
+		return true;
+	}
+	virtual bso::bool__ XMLStartTagClosed(
+		const str::string_ &Name,
+		const str::string_ &Dump )
+	{
+		return true;
+	}
+	virtual bso::bool__ XMLAttribute(
+		const str::string_ &TagName,
+		const str::string_ &Name,
+		const str::string_ &Value,
+		const str::string_ &Dump )
+	{
+		_Writer.PutAttribute( Name, Value );
+
+		return true;
+	}
+	virtual bso::bool__ XMLValue(
+		const str::string_ &TagName,
+		const str::string_ &Value,
+		const str::string_ &Dump )
+	{
+		_Writer.PutValue( Value );
+
+		return true;
+	}
+	virtual bso::bool__ XMLEndTag(
+		const str::string_ &Name,
+		const str::string_ &Dump )
+	{
+		_Writer.PopTag();
+
+		return true;
+	}
+public:
+	void Init( txf::text_oflow__ &Flow )
+	{
+		_Writer.Init( Flow );
+	}
+};
+
+
+bso::bool__ xml::Normalize(
+	xtf::extended_text_iflow__ &IFlow,
+	const str::string_ &Namespace,
+	txf::text_oflow__ &OFlow )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	neutral_callback NCallback;
+ERRBegin
+	NCallback.Init( OFlow );
+
+	Success = ExtendedParse( IFlow, Namespace, NCallback );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
 
 void xml::Transform( str::string_ &Target )
 {

@@ -71,10 +71,10 @@ extern class ttr_tutor &TOLTutor;
 #include "cpe.h"
 #include "bso.h"
 
-#ifdef CPE__T_MS
-#	define TOL__MS
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
 #	define TOL__POSIX
+#elif defined( CPE__T_MS )
+#	define TOL__MS
 #else
 #	error "Undefined compilation enviroment."
 #endif
