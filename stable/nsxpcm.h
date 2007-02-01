@@ -745,17 +745,30 @@ namespace nsxpcm {
 	template <typename object> class _element__
 	: public _element_core__
 	{
-	private:
-		object *_GetObject( void )
-		{
-			return QueryInterface<object>( Element );
-		}
 	public:
+		object *GetObject( void )
+		{
+			return QueryInterface<object>( Element() );
+		}
 	};
 
 	class button__
 	: public _element__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
 	{
+	};
+
+	class textbox__
+	: public _element__<nsIDOMXULTextBoxElement>
+	{
+	public:
+		void SetValue( const str::string_ &Value )
+		{
+			nsxpcm::SetValue( GetObject(), Value );
+		}
+		void GetValue( str::string_ &Value )
+		{
+			nsxpcm::GetValue( GetObject(), Value );
+		}
 	};
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
