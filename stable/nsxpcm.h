@@ -77,6 +77,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMXULMenuListElement.h"
 #include "nsIDOMXULCheckboxElement.h"
 #include "nsIDOMXULTreeElement.h"
+#include "nsIDOMXULLabelElement.h"
 #include "nsCOMPtr.h"
 #include "nsITreeView.h"
 #include "nsITreeContentView.h"
@@ -759,6 +760,20 @@ namespace nsxpcm {
 
 	class textbox__
 	: public _element__<nsIDOMXULTextBoxElement>
+	{
+	public:
+		void SetValue( const str::string_ &Value )
+		{
+			nsxpcm::SetValue( GetObject(), Value );
+		}
+		void GetValue( str::string_ &Value )
+		{
+			nsxpcm::GetValue( GetObject(), Value );
+		}
+	};
+
+	class label__
+	: public _element__<nsIDOMXULLabelElement>
 	{
 	public:
 		void SetValue( const str::string_ &Value )
