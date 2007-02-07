@@ -86,6 +86,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMWindowInternal.h"
 #include "nsIXULWindow.h"
 #include "nsComponentManagerUtils.h"
+#include "nsIInterfaceRequestor.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -224,6 +225,25 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		if ( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK )
+			ERRu();
+
+		return Element;
+	}
+
+	template <typename element> inline element *GetInterface( nsISupports *GenericElement )
+	{
+		nsCOMPtr<nsIInterfaceRequestor> Requestor;
+		element *Element = NULL;
+
+#ifdef NSXPCM_DBG
+
+		if ( GenericElement == NULL )
+			ERRu();
+#endif
+		Requestor = QueryInterface<nsIInterfaceRequestor>( GenericElement );
+
+
+		if ( Requestor->GetInterface( element::GetIID(), (void **)&Element ) != NS_OK )
 			ERRu();
 
 		return Element;
