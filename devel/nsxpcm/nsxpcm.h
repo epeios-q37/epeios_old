@@ -87,7 +87,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIXULWindow.h"
 #include "nsComponentManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
-
+#include "nsIDOMXULSelectCntrlItemEl.h"
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
 #endif
@@ -726,6 +726,10 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnClick( void )
+		{
+			ERRu();
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -755,6 +759,8 @@ namespace nsxpcm {
 				NSXPCMOnCommand();
 			else if ( EventType == "input" )
 				NSXPCMOnInput();
+			else if ( EventType == "click" )
+				NSXPCMOnClick();
 			else
 				ERRl();
 		}
@@ -811,6 +817,10 @@ namespace nsxpcm {
 			nsxpcm::GetValue( GetObject(), Value );
 		}
 	};
+
+	class listitem__
+	: public _element__<nsIDOMXULSelectControlItemElement>
+	{};
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
