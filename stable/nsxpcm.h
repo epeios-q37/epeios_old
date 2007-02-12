@@ -722,6 +722,10 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnInput( void )
+		{
+			ERRu();
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -749,6 +753,8 @@ namespace nsxpcm {
 		{
 			if ( EventType == "command" )
 				NSXPCMOnCommand();
+			else if ( EventType == "input" )
+				NSXPCMOnInput();
 			else
 				ERRl();
 		}
