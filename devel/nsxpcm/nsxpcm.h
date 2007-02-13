@@ -713,7 +713,7 @@ namespace nsxpcm {
 
 	typedef nsIDOMElement *nsIDOMElementPointer;
 
-	class _element_core__
+	class element_core__
 	{
 	private:
 		nsIDOMElement *_Element;
@@ -735,11 +735,11 @@ namespace nsxpcm {
 		{
 			_Element = NULL;
 		}
-		_element_core__( void )
+		element_core__( void )
 		{
 			reset( false );
 		}
-		~_element_core__( void )
+		virtual ~element_core__( void )
 		{
 			reset( );
 		}
@@ -768,15 +768,18 @@ namespace nsxpcm {
 
 	E_ROW( row__ );
 
-	typedef bch::E_BUNCH_( _element_core__ * ) _element_cores_;
-	E_AUTO( _element_cores );
+	typedef bch::E_BUNCH_( element_core__ * ) element_cores_;
+	E_AUTO( element_cores );
+
+	// Supprime (désalloue) tous les éléments stockés dans 'Cores'.
+	void Delete( element_cores_ &Cores );
 
 	void Handle( 
 		nsIDOMEvent *Event,
-		const _element_cores_ &Cores );
+		const element_cores_ &Cores );
 
 	template <typename object> class _element__
-	: public _element_core__
+	: public element_core__
 	{
 	public:
 		object *GetObject( void )

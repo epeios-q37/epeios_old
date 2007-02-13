@@ -317,7 +317,7 @@ ERREpilog
 
 void nsxpcm::Handle( 
 	nsIDOMEvent *Event,
-	const _element_cores_ &Cores )
+	const element_cores_ &Cores )
 {
 ERRProlog
 	nsIDOMEventTarget *EventTarget = NULL;
@@ -413,7 +413,20 @@ bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	return FileDialogBox_( Parent, Title, nsIFilePicker::modeGetFolder, FileName );
 }
 
+void nsxpcm::Delete( element_cores_ &Cores )
+{
+	epeios::row__ Row = Cores.First();
 
+	while ( Row != NONE ) {
+		delete Cores( Row );
+
+		Cores.Set( NULL, Row );
+
+		Row = Cores.Next( Row );
+	}
+
+	Cores.Init();
+}
 
 
 #ifdef NSXPCM__BKD
