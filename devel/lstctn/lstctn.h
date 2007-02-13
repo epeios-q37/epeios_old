@@ -137,6 +137,16 @@ namespace lstctn {
 		{
 			ERRu();
 		}
+		// Pour éviter certains 'castage'.
+		const container &Container( void ) const
+		{
+			return *this;
+		}
+		// Pour éviter certains 'castage'.
+		container &Container( void )
+		{
+			return *this;
+		}
 	};
 
 	E_AUTO3( list_container )
@@ -179,7 +189,9 @@ namespace lstctn {
 		}
 		void Init(
 			list_container &ListContainer,
-			const char *ContainerFileName,
+			const char *ContainerStaticsFileName,
+			const char *ContainerDynamicsFileName,
+			const char *ContainerMultimemoryFileName,
 			const char *ListFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent )
@@ -188,7 +200,7 @@ namespace lstctn {
 
 			_ListContainer = &ListContainer;
 
-			_container_file_manager___::Init( ContainerFileName, Mode, Persistent );
+			_container_file_manager___::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();
@@ -217,10 +229,10 @@ namespace lstctn {
 		list_container &ListContainer,
 		list_container_file_manager___<list_container> &FileManager )
 	{
-		bso::bool__ Exists = bch::Connect( ListContainer.Container(), FileManager );
+		bso::bool__ Exists = ctn::Connect( ListContainer.Container(), FileManager );
 
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), tol::GetFileSize( FileManager.FileName() ) / ListContainer.GetItemSize(), ListContainer, tol::GetFileLastModificationTime( FileManager.FileName() ) ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.Size() / ListContainer.GetItemSize(), FileManager.TimeStamp() ) )
 				ERRu();
 
 		return Exists;

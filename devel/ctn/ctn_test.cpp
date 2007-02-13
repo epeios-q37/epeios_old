@@ -274,7 +274,7 @@ void Remplir( str::string_ &S )
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) CS, CD;
 /*	fch_flot_sortie_fichier S;
@@ -284,7 +284,7 @@ ERRProlog
 	epeios::row__ P;
 ERRBegin
 	F.Init();
-	F.Automatique();
+	F.Automatic();
 	M.plug( F );
 	M.Init();
 	CS.plug( M );
@@ -396,7 +396,7 @@ void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
 	int a = A( A_( 3 ) );
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
 	E_XMCONTAINER( str::string_ ) CC;
 	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
@@ -507,6 +507,130 @@ ERREnd
 ERREpilog
 }
 
+
+void EssaiPersistence( int argc, const char *argv[] )
+{
+ERRProlog
+	int a = A( A_( 3 ) );
+	ctn::container_file_manager___ FileManager;
+	E_XMCONTAINER( str::string_ ) CC;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
+	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
+	str::string S;
+/*	fch_flot_sortie_fichier FO;
+	fch_flot_entree_fichier FI;
+*/	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) ECM;
+//	ITEM( MCONTAINER_( str::string_ ) ) ECm;
+	E_MITEM( str::string_ ) ECC;
+	char M, m, C;
+ERRBegin
+	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", mdr::mReadWrite, true );
+
+	Cm.Init();
+	CC.Init();
+
+	Cm.Allocate( Lm - 'a' + 1 );
+	CC.Allocate( LC - '0' + 1 );
+
+	ECC.Init( CC );
+//	ECm.Init( Cm );
+	ECM.Init( CM );
+
+	if ( !ctn::Connect( CM, FileManager ) ) {
+
+		cout << "***** CREATION *****" << txf::nl << txf::sync;
+
+		CM.Init();
+
+		CM.Allocate( LM - 'A' + 1 );
+
+		for ( M = 'A'; M <= LM; M++ )
+		{
+			for ( m = 'a'; m <= Lm; m++ )
+			{
+				for ( C = '0'; C <= LC; C++ )
+				{
+					S.Init();
+	//				S.SetStepValue( 0 );
+
+					S.Append( M );
+					S.Append( m );
+					S.Append( C );
+
+					ECC( C - '0' ).Init();
+					ECC() = S;
+	//				fout << S << " ";
+					cout << ECC(C - '0') << " ";
+
+				}
+
+				ECC.Flush();
+
+				cout << '\t';
+	/*
+				ECm( m - 'a' ).Init();
+				ECm() = CC;
+	*/
+				Cm( m - 'a' ).Init();
+				Cm() = CC;
+
+			}
+
+	//		ECm.Flush();
+			Cm.Flush();
+
+			cout << txf::nl;
+			ECM(M - 'A').Init();
+			ECM() = Cm;
+		}
+	} else {
+		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
+	}
+
+
+	cout << "--------------" << txf::nl;
+
+	ECM.ChangeMode( mdr::mReadOnly );
+//	ECm.ChangeMode( mdr::mReadOnly );
+	ECC.ChangeMode( mdr::mReadOnly );
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		Cm = ECM(M - 'A');
+
+		for ( m ='a'; m <= Lm; m++ )
+		{
+//			CC = ECm(m - 'a');
+			CC = Cm(m - 'a');
+
+			for ( C = '0'; C <= LC; C++ )
+			{
+				S.Init();
+				S = ECC(C - '0');
+
+				cout << S << ' ' << txf::sync;
+			}
+
+			cout << '\t';
+
+		}
+
+		cout << txf::nl;
+	}
+/*
+	CMS.Mode( plm::mModification );
+	F.Mode( plm::mModification );
+*/
+	// Pour que l'objet puisse se détruire.
+
+ERRErr
+	// instructions à exécuter si erreur
+ERREnd
+	// instructions à exécuter, erreur ou non
+ERREpilog
+}
+
+
 void SP2(
 	E_XMCONTAINER_( str::string_ ) &O,
 	char M,
@@ -605,7 +729,7 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
 	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) GC;
@@ -613,7 +737,7 @@ ERRProlog
 	char M;
 ERRBegin
 	F.Init("b.tmp");
-	F.Manuel();
+	F.Manual();
 	Mm.plug( F );
 	Mm.Init();
 //	GC.plug( Mm );
@@ -656,7 +780,7 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
@@ -683,10 +807,10 @@ ERREpilog
 void EssaiSimpleMulti( void )
 {
 ERRProlog
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
-	E_MCONTAINER( str::string_ ) C;
-	E_MITEM( str::string_ ) E;
+	E_XCONTAINER( str::string_ ) C;
+	E_ITEM( str::string_ ) E;
 ERRBegin
 	F.Init( "coucou.tmp" );
 	M.plug( F );
@@ -710,7 +834,7 @@ ERREpilog
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
-	flm::E_FILE_MEMORY_DRIVER__ F;
+	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XCONTAINER( str::string_ ) CS;
 	E_XCONTAINER( E_XCONTAINER_( str::string_ ) ) CC;
@@ -787,9 +911,11 @@ ERRFBegin
 		EssaiSimpleMulti();
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiDirect( argc, argv );
+//		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
+		cout << "********************************************************" << txf::nl;
+		EssaiPersistence( argc, argv );
 #else
 		BugTracking();
 #endif

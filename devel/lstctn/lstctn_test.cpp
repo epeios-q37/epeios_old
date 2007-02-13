@@ -39,7 +39,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-void Generic( int argc, char *argv[] )
+void Generic( int argc, const char *argv[] )
 {
 ERRProlog
 	lstctn::E_LCONTAINER( str::string_ ) Container;
@@ -50,7 +50,134 @@ ERREnd
 ERREpilog
 }
 
-int main( int argc, char *argv[] )
+using namespace lstctn;
+
+#define LM	'Z'
+#define Lm	'z'
+#define LC	'9'
+
+void Essai( int argc, const char *argv[] )
+{
+ERRProlog
+//	int a = A( A_( 3 ) );
+	list_container_file_manager___<E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) )> FileManager;
+	E_LXMCONTAINER( str::string_ ) CC;
+	E_LXCONTAINER( E_LXMCONTAINER_( str::string_ ) ) Cm;
+	E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) CM;
+	str::string S;
+	ctn::E_ITEM( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) ECM;
+	ctn::E_MITEM( str::string_ ) ECC;
+	char M, m, C;
+ERRBegin
+	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.lst", mdr::mReadWrite, true );
+
+	Cm.Init();
+	CC.Init();
+
+	Cm.Allocate( Lm - 'a' + 1 );
+	CC.Allocate( LC - '0' + 1 );
+
+	ECC.Init( CC );
+//	ECm.Init( Cm );
+	ECM.Init( CM );
+
+	if ( !Connect( CM, FileManager ) ) {
+
+		cout << "***** CREATION *****" << txf::nl << txf::sync;
+
+		CM.Init();
+
+		CM.Allocate( LM - 'A' + 1 );
+
+		for ( M = 'A'; M <= LM; M++ )
+		{
+			for ( m = 'a'; m <= Lm; m++ )
+			{
+				for ( C = '0'; C <= LC; C++ )
+				{
+					S.Init();
+	//				S.SetStepValue( 0 );
+
+					S.Append( M );
+					S.Append( m );
+					S.Append( C );
+
+					ECC( C - '0' ).Init();
+					ECC() = S;
+	//				fout << S << " ";
+					cout << ECC(C - '0') << " ";
+
+				}
+
+				ECC.Flush();
+
+				cout << '\t';
+	/*
+				ECm( m - 'a' ).Init();
+				ECm() = CC;
+	*/
+				Cm( m - 'a' ).Init();
+				Cm() = CC;
+
+			}
+
+	//		ECm.Flush();
+			Cm.Flush();
+
+			cout << txf::nl;
+			ECM(M - 'A').Init();
+			ECM() = Cm;
+		}
+	} else {
+		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
+	}
+
+
+	cout << "--------------" << txf::nl;
+
+	ECM.ChangeMode( mdr::mReadOnly );
+//	ECm.ChangeMode( mdr::mReadOnly );
+	ECC.ChangeMode( mdr::mReadOnly );
+
+	for ( M = 'A'; M <= LM; M++ )
+	{
+		Cm = ECM(M - 'A');
+
+		for ( m ='a'; m <= Lm; m++ )
+		{
+//			CC = ECm(m - 'a');
+			CC = Cm(m - 'a');
+
+			for ( C = '0'; C <= LC; C++ )
+			{
+				S.Init();
+				S = ECC(C - '0');
+
+				cout << S << ' ' << txf::sync;
+			}
+
+			cout << '\t';
+
+		}
+
+		cout << txf::nl;
+	}
+/*
+	CMS.Mode( plm::mModification );
+	F.Mode( plm::mModification );
+*/
+	// Pour que l'objet puisse se détruire.
+
+ERRErr
+	// instructions à exécuter si erreur
+ERREnd
+	// instructions à exécuter, erreur ou non
+ERREpilog
+}
+
+
+
+int main( int argc, const char *argv[] )
 {
 ERRFProlog
 ERRFBegin
@@ -59,6 +186,7 @@ ERRFBegin
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
+		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

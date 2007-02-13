@@ -387,7 +387,7 @@ namespace ctn {
 	{
 		bso::bool__ Exists = tym::Connect( Memory.Statics, FileManager.StaticsFileManager() );
 
-		if ( mmm::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
+		if ( mmi::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
 			ERRc();
 
 		return Exists;
