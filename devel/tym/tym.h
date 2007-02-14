@@ -218,7 +218,7 @@ namespace tym {
 		{
 			return Get( Position );
 		}
-		size_t GetItemSize( void ) const
+		static size_t GetItemSize( void )
 		{
 			return sizeof( t );
 		}

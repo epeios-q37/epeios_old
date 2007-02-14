@@ -551,7 +551,7 @@ namespace bch {
 		Exists = tym::Connect( Bunch, FileManager );
 
 		if ( Exists )
-			Bunch.Allocate( FileManager.Size() / Bunch.GetItemSize(), aem::mFit );
+			Bunch.Allocate( FileManager.FileSize() / Bunch.GetItemSize(), aem::mFit );
 
 		return Exists;
 	}

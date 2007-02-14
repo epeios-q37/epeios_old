@@ -1,5 +1,21 @@
 $Id$
 
+14/02/2007 :
+	- GENERAL :
+		- Généralisation et remaniement des '..._file_manager___'.
+	- FLM :
+		- Renommage 'Size' en 'FileSize' pour éviter certaines ambigüités.
+	- TYM :
+		- 'GetItemSize()' devient 'static'.
+	- UTM :
+		- Adaptation modification bibliothèque 'FLM'.
+
+13/02/2007 :
+	- GENERAL :
+		- Généralisation des '..._file_manager___'.
+	- NSXPCM
+		- Enrichissement.
+
 24/02/07 :
 	- DTR :
 		- Ajout de la notion de niveau ('Level').

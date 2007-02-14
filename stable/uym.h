@@ -351,7 +351,7 @@ namespace uym {
 		Memory.plug( FileManager );
 
 		if ( Exists )
-			Memory.Allocate( FileManager.Size() );
+			Memory.Allocate( FileManager.FileSize() );
 
 		return Exists;
 	}

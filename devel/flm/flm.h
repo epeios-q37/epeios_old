@@ -191,7 +191,7 @@ namespace flm {
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 	// Fonctions
-		void Ouvrir_( void )
+		void Open_( void )
 		{
 			if ( !Temoin_.Ouvert )
 			{
@@ -209,12 +209,12 @@ namespace flm {
 			_ReportFileUsing( _Row );
 		}
 	protected:
-		void Lire(
+		void Read(
 			position__ Position,
 			unsigned int Nombre,
 			void *Tampon )
 		{
-			Ouvrir_();
+			Open_();
 
 			iop::amount__ Amount;
 
@@ -236,12 +236,12 @@ namespace flm {
 		}
 			/* lit à partir de 'Taille' et place dans 'Tampon' 'Taille' octets
 			retourne le nombre d'octets effectivement lus */
-		void Ecrire(
+		void Write(
 			const void *Tampon,
 			unsigned int Nombre,
 			position__ Position )
 		{
-			Ouvrir_();
+			Open_();
 
 			iop::amount__ Amount;
 
@@ -258,9 +258,7 @@ namespace flm {
 			if ( !Temoin_.Manuel )
 				ReleaseFile();
 		}
-			/* écrit 'Taille' octet à la position 'Position' dans 'Tampon';
-			agrandit la mémoire si nécessaire */
-		void Allouer( iop::amount__ Capacite )
+		void Allocate( iop::amount__ Capacite )
 		{
 			if ( ( TailleFichier_ == 0 ) && tol::FileExists( Nom_ ) )
 				TailleFichier_ = tol::GetFileSize( Nom_ );
@@ -269,7 +267,7 @@ namespace flm {
 			{
 				mdr::datum__ Datum = 0;
 
-				Ouvrir_();
+				Open_();
 				
 				File_.Seek( Capacite - (iop::amount__)1 );
 
@@ -285,7 +283,6 @@ namespace flm {
 				TailleFichier_ = Capacite;
 			}
 		}
-		// alloue 'Capacite' octets
 	public:
 		memoire_fichier_base___( void )
 		{
@@ -358,7 +355,7 @@ namespace flm {
 
 			if ( Creation == flm::cNow  )
 				if ( Mode == mdr::mReadWrite )
-					Ouvrir_();
+					Open_();
 				else
 					ERRu();
 			else if ( Creation != flm::cFirstUse )
@@ -409,12 +406,6 @@ namespace flm {
 		{
 			return Temoin_.Mode;
 		}
-		mdr::size__ Size( void )
-		{
-			Ouvrir_();
-
-			return File_.Size();
-		}
 		void Drop( void ) // Efface le fichier sous-jacent, s'il existe.
 		{
 			ReleaseFile();
@@ -437,6 +428,12 @@ namespace flm {
 		{
 			return tol::GetFileLastModificationTime( Nom_ );
 		}
+		mdr::size__ FileSize( void )
+		{
+			Open_();
+
+			return File_.Size();
+		}
 	};
 
 	//c The standard memory driver which handle a file as memory.
@@ -454,7 +451,7 @@ namespace flm {
 			if ( Amount > UINT_MAX )
 				ERRl();
 #endif
-			memoire_fichier_base___::Lire( (position__)Position, (unsigned int)Amount, Buffer );
+			memoire_fichier_base___::Read( (position__)Position, (unsigned int)Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRStore(
@@ -466,12 +463,12 @@ namespace flm {
 			if ( Amount > UINT_MAX )
 				ERRl();
 #endif
-			memoire_fichier_base___::Ecrire( Buffer, (unsigned int)Amount, (position__)Position );
+			memoire_fichier_base___::Write( Buffer, (unsigned int)Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			memoire_fichier_base___::Allouer( (iop::amount__)Size );
+			memoire_fichier_base___::Allocate( (iop::amount__)Size );
 		}
 		// alloue 'Taille' octets
 	public:

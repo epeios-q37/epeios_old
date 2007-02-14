@@ -246,7 +246,7 @@ namespace lstbch {
 		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
 
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.Size() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
 				ERRu();
 
 		return Exists;

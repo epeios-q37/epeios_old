@@ -178,6 +178,8 @@ namespace lstbch {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			_bunch_file_manager___::ReleaseFile();
+
 			if ( P ) {
 				if ( ( _ListBunch != NULL )
 					 && _bunch_file_manager___::IsPersistent()
@@ -244,7 +246,7 @@ namespace lstbch {
 		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
 
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.Size() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
 				ERRu();
 
 		return Exists;
