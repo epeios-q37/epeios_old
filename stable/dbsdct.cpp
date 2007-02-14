@@ -271,7 +271,7 @@ ERRBegin
 		ERRu();
 
 	if ( Exists )
-		dynamic_content_::S_.Unallocated = S_.StorageFileManager.Size();
+		dynamic_content_::S_.Unallocated = S_.StorageFileManager.FileSize();
 	else
 		dynamic_content_::S_.Unallocated = 0;
 
