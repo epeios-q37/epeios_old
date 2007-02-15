@@ -341,7 +341,7 @@ namespace dbsdct {
 
 	typedef lstbch::E_LBUNCHt_( entry__, rrow__ ) entries_;
 
-	typedef lstbch::list_bunch_file_manager___<entries_> entries_file_manager___;
+	typedef lstbch::list_bunch_file_manager___ entries_file_manager___;
 
 	typedef dbsbsc::file_features_	_file_features_;
 

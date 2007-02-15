@@ -94,16 +94,19 @@ namespace dbt {
 	  public E_BTREEt_( irow__ )
 	{
 	protected:
-		void LSTAllocate( epeios::size__ Size )
+		void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			Nodes.Allocate( Size );
-			Types.Allocate( Size );
-			E_BTREEt_( irow__ )::Allocate( Size );
-			DBTAllocate( Size );
+			Nodes.Allocate( Size, Mode );
+			Types.Allocate( Size, Mode );
+			E_BTREEt_( irow__ )::Allocate( Size, Mode );
+			DBTAllocate( Size, Mode );
 		}
 		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
-		virtual void DBTAllocate( epeios::size__ Size )
-		{}
+		virtual void DBTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode ) = 0;
 	public:
 		struct s
 		: public E_LISTt_( irow__ )::s,

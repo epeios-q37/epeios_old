@@ -93,7 +93,9 @@ namespace dbssct {
 		{
 			reset();
 		}
-		virtual void LSTAllocate( epeios::size__ Amount )
+		virtual void LSTAllocate(
+			epeios::size__ Amount,
+			aem::mode Mode )
 		{
 			Storage.Allocate( Amount * S_.Size );
 		}

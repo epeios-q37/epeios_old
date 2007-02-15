@@ -73,9 +73,11 @@ namespace lstctn {
 	  public container
 	{
 	protected:
-		virtual void LSTAllocate( epeios::size__ Size )
+		virtual void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			container::Allocate( Size );
+			container::Allocate( Size, Mode );
 		}
 	public:
 		struct s
@@ -103,7 +105,7 @@ namespace lstctn {
 
 			return *this;
 		}
-		E_NAVt( list_<E_COVER2(row,row_t)>::, row )
+		E_XNAVt( list_<E_COVER2(row,row_t)>::, row )
 		//f Initialization.
 		void Init( void )
 		{
@@ -153,11 +155,11 @@ namespace lstctn {
 
 	typedef ctn::container_file_manager___ _container_file_manager___;
 
-	template <typename list_container> class list_container_file_manager___
+	class list_container_file_manager___
 	: public _container_file_manager___
 	{
 	private:
-		list_container *_ListContainer;
+		lst::store_ *_ListStore;
 		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
 	public:
 		void reset( bso::bool__ P = true )
@@ -165,19 +167,19 @@ namespace lstctn {
 			_container_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				if ( ( _ListContainer != NULL )
+				if ( ( _ListStore != NULL )
 					 && _container_file_manager___::IsPersistent()
 					 && _container_file_manager___::Exists()
 					 && ( !tol::FileExists( _ListFileName )
 					      || ( _container_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListContainer, _ListFileName );
+					lst::WriteToFile( *_ListStore, _ListFileName );
 			}
 
 			_container_file_manager___::reset( P );
 			_ListFileName.reset( P );
 
-			_ListContainer = NULL;
+			_ListStore = NULL;
 		}
 		list_container_file_manager___( void )
 		{
@@ -188,7 +190,6 @@ namespace lstctn {
 			reset();
 		}
 		void Init(
-			list_container &ListContainer,
 			const char *ContainerStaticsFileName,
 			const char *ContainerDynamicsFileName,
 			const char *ContainerMultimemoryFileName,
@@ -197,8 +198,6 @@ namespace lstctn {
 			bso::bool__ Persistent )
 		{
 			reset();
-
-			_ListContainer = &ListContainer;
 
 			_container_file_manager___::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent );
 
@@ -209,7 +208,7 @@ namespace lstctn {
 		}
 		void Drop( void )
 		{
-			if ( ( _ListContainer == NULL ) || ( _ListFileName == NULL ) )
+			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
 				ERRu();
 
 			_container_file_manager___::Drop();
@@ -222,17 +221,25 @@ namespace lstctn {
 		{
 			return _ListFileName;
 		}
-	};
+		void Set( lst::store_ &Store )
+		{
+			if ( _ListStore != NULL )
+				ERRu();
 
+			_ListStore = &Store;
+		}
+	};
 
 	template <typename list_container> bso::bool__ Connect(
 		list_container &ListContainer,
-		list_container_file_manager___<list_container> &FileManager )
+		list_container_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = ctn::Connect( ListContainer.Container(), FileManager );
 
+		FileManager.Set( ListContainer.Locations );
+
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.Size() / ListContainer.GetItemSize(), FileManager.TimeStamp() ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations ) )
 				ERRu();
 
 		return Exists;

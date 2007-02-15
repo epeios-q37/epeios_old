@@ -1,5 +1,19 @@
 $Id$
 
+15/02/07 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'LST'.
+		- Généralisation et remaniement des '..._file_manager___'.
+	- CTN :
+		- Ajout 'GetStaticsItemSize()'.
+	- DBT :
+		- 'DBTAllocate()' devient 'virtual pure' et prend un paramètre supplémentaire (de type 'aem::mode').
+	- LST :
+		- Ajout méthode 'Allocate()'.
+		- 'DBTAllocate()' est maintenant 'virtual pure' et prend un paramètre supplémentaire (de type 'aem::mode').
+	- TOL :
+		- Macro 'XNAVt()'  est enrichie de la méthode 'Allocate()'.
+
 14/02/2007 :
 	- GENERAL :
 		- Généralisation et remaniement des '..._file_manager___'.

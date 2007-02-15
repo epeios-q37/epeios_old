@@ -298,7 +298,10 @@ namespace ctn {
 #endif
 			Crop( Last - First + 1, First, Mode );
 		}
-
+		static epeios::size__ GetStaticsItemSize( void )
+		{
+			return sizeof( st );
+		}
 	};
 
 

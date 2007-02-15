@@ -729,6 +729,13 @@ namespace tol {
 	{\
 		return Object Next( P, Offset  );\
 	}\
+	void Allocate(\
+		epeios::size__ Size,\
+		aem::mode Mode = aem::mDefault )\
+	{\
+		return Object Allocate( Size, Mode );\
+	}
+
 
 #define E_NAV( Object )	E_NAVt( Object, epeios::row__ )
 #define E_XNAV( Object )	E_XNAVt( Object, epeios::row__ )

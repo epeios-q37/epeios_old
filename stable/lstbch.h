@@ -76,9 +76,11 @@ namespace lstbch {
 	  public bunch_<type, row>
 	{
 	protected:
-		virtual void LSTAllocate( epeios::size__ Size )
+		virtual void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			bunch_<type, row>::Allocate( Size );
+			bunch_<type, row>::Allocate( Size, Mode );
 		}
 	public:
 		struct s
@@ -169,11 +171,11 @@ namespace lstbch {
 
 	typedef bch::bunch_file_manager___ _bunch_file_manager___;
 
-	template <typename list_bunch> class list_bunch_file_manager___
+	class list_bunch_file_manager___
 	: public _bunch_file_manager___
 	{
 	private:
-		list_bunch *_ListBunch;
+		lst::store_ *_ListStore;
 		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
 	public:
 		void reset( bso::bool__ P = true )
@@ -181,19 +183,19 @@ namespace lstbch {
 			_bunch_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				if ( ( _ListBunch != NULL )
+				if ( ( _ListStore != NULL )
 					 && _bunch_file_manager___::IsPersistent()
 					 && _bunch_file_manager___::Exists()
 					 && ( !tol::FileExists( _ListFileName )
 					      || ( _bunch_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListBunch, _ListFileName );
+					lst::WriteToFile( *_ListStore, _ListFileName );
 			}
 
 			_bunch_file_manager___::reset( P );
 			_ListFileName.reset( P );
 
-			_ListBunch = NULL;
+			_ListStore = NULL;
 		}
 		list_bunch_file_manager___( void )
 		{
@@ -204,15 +206,12 @@ namespace lstbch {
 			reset();
 		}
 		void Init(
-			list_bunch &ListBunch,
 			const char *BunchFileName,
 			const char *ListFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent )
 		{
 			reset();
-
-			_ListBunch = &ListBunch;
 
 			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent );
 
@@ -223,7 +222,7 @@ namespace lstbch {
 		}
 		void Drop( void )
 		{
-			if ( ( _ListBunch == NULL ) || ( _ListFileName == NULL ) )
+			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
 				ERRu();
 
 			_bunch_file_manager___::Drop();
@@ -236,17 +235,26 @@ namespace lstbch {
 		{
 			return _ListFileName;
 		}
+		void Set( lst::store_ &Store )
+		{
+			if ( _ListStore != NULL )
+				ERRu();
+
+			_ListStore = &Store;
+		}
 	};
 
 
 	template <typename list_bunch> bso::bool__ Connect(
 		list_bunch &ListBunch,
-		list_bunch_file_manager___<list_bunch> &FileManager )
+		list_bunch_file_manager___ &FileManager )
 	{
 		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
 
+		FileManager.Set( ListBunch.Locations );
+
 		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), ListBunch, FileManager.TimeStamp() ) )
+			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), FileManager.TimeStamp(), ListBunch.Locations ) )
 				ERRu();
 
 		return Exists;

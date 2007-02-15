@@ -247,7 +247,7 @@ ERRBegin
 	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
 	EntriesListFileNameBuffer = EntriesListFileName.Convert();
 
-	S_.EntriesFileManager.Init( Entries, EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true );
+	S_.EntriesFileManager.Init( EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true );
 
 	this->RootFileName.Init( RootFileName );
 	S_.Mode = Mode;

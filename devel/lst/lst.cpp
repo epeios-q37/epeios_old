@@ -76,7 +76,7 @@ static void Save_(
 	}
 }
 
-epeios::row__ lst::_WriteToFile(
+epeios::row__ lst::WriteToFile(
 	const store_ &Store,
 	const char *FileName )
 {
@@ -115,7 +115,7 @@ static void Load_(
 	}
 }
 
-bso::bool__ lst::_ReadFromFile(
+bso::bool__ lst::ReadFromFile(
 	const char *FileName,
 	epeios::row__ FirstUnused,
 	time_t TimeStamp,

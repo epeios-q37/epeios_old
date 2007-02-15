@@ -68,11 +68,12 @@ namespace lst {
 
 	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
 
-	epeios::row__ _WriteToFile(
+	// Retourne l'id de la première entrée disponible (hors pile des 'released').
+	epeios::row__ WriteToFile(
 		const store_ &Store,
 		const char *FileName );
 
-	bso::bool__ _ReadFromFile(
+	bso::bool__ ReadFromFile(
 		const char *FileName,
 		epeios::row__ FirstUnused,
 		time_t TimeStamp,
@@ -104,22 +105,24 @@ namespace lst {
 	protected:
 		/*v Cette fonction est appelée lors d'allocations dans la liste;
 		permet de synchroniser la taille de la liste avec d'autres ensembles;
-		'Size' est la capacité allouée. Ne fait rien par défaut. */
-		virtual void LSTAllocate( epeios::size__ Size ) {}
+		'Size' est la capacité allouée. */
+		virtual void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode ) = 0;
 	private:
 		// Return the extent, based on 'Locations'.
 		epeios::row_t__ Extent_( void ) const
 		{
 			return *Locations.GetFirstAvailable();
 		}
-		epeios::row_t__ Nouveau_( void )
+		epeios::row_t__ Nouveau_( aem::mode Mode )
 		{
 			bso::bool__ Released = false;
 
 			epeios::row_t__ New = *Locations.New( Released );
 
 			if ( !Released )
-				LSTAllocate( Extent_() );
+				LSTAllocate( Extent_(), Mode );
 
 			return New;
 		}
@@ -185,19 +188,21 @@ namespace lst {
 			Locations.Release( *Entry );
 		}
 		//f Return the position of a new entry.
-		r New( void )
+		r New( aem::mode Mode = aem::mDefault )
 		{
-			return (r_t)Nouveau_();
+			return (r_t)Nouveau_( Mode );
 		}
 		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
-		r New( r Row )
+		r New(
+			r Row,
+			aem::mode Mode = mDefault )
 		{
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
 
 				if ( Locations.RestorationNew( *Row ) ) {
 
-					LSTAllocate( *Row + 1 );
+					LSTAllocate( *Row + 1, Mode );
 
 					if ( Row != FirstAvailable )
 						MarkAsReleased_( *FirstAvailable, *Row - 1, Locations );
@@ -300,6 +305,18 @@ namespace lst {
 			else
 				return !Locations.IsAvailable( *Entry );
 		}
+		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
+		void Allocate(
+			epeios::size__ Size,
+			aem::mode Mode = mDefault )
+		{
+			if ( Locations.Amount() != 0 )
+				ERRu();
+
+			Locations.Init( Size );
+
+			LSTAllocate( Size, Mode );
+		}
 	};
 
 	E_AUTO2( list )
@@ -309,7 +326,7 @@ namespace lst {
 		const list &List,
 		const char *FileName )
 	{
-		return _WriteToFile( List.Locations, FileName );
+		return WriteToFile( List.Locations, FileName );
 	}
 
 	template <typename list> bso::bool__ ReadFromFile(
@@ -318,7 +335,7 @@ namespace lst {
 		list &List,
 		time_t TimeStamp = 0 )
 	{
-		return _ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations );
+		return ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations );
 	}
 
 

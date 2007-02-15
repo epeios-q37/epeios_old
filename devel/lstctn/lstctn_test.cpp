@@ -43,7 +43,7 @@ void Generic( int argc, const char *argv[] )
 {
 ERRProlog
 	lstctn::E_LCONTAINER( str::string_ ) Container;
-	lstctn::list_container_file_manager___< lstctn::E_LCONTAINER( str::string_ ) > FileMAnger;
+	lstctn::list_container_file_manager___ FileManager;
 ERRBegin
 ERRErr
 ERREnd
@@ -60,7 +60,7 @@ void Essai( int argc, const char *argv[] )
 {
 ERRProlog
 //	int a = A( A_( 3 ) );
-	list_container_file_manager___<E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) )> FileManager;
+	list_container_file_manager___ FileManager;
 	E_LXMCONTAINER( str::string_ ) CC;
 	E_LXCONTAINER( E_LXMCONTAINER_( str::string_ ) ) Cm;
 	E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) CM;
@@ -69,7 +69,7 @@ ERRProlog
 	ctn::E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.lst", mdr::mReadWrite, true );
+	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", "Test.lst", mdr::mReadWrite, true );
 
 	Cm.Init();
 	CC.Init();
@@ -131,6 +131,8 @@ ERRBegin
 	} else {
 		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
 	}
+
+	CM.Delete( CM.Last( 1 ) );
 
 
 	cout << "--------------" << txf::nl;
