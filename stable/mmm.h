@@ -826,7 +826,12 @@ namespace mmm {
 		multimemory_ &Memory,
 		multimemory_file_manager___ &FileManager )
 	{
-		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
+		bso::bool__ Exists = uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
+
+		if ( Exists )
+			Memory.S_.Capacite = FileManager.FileSize();
+
+		return Exists;
 	}
 
 

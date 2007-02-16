@@ -52,20 +52,22 @@ ERREpilog
 
 using namespace lstctn;
 
-#define LM	'Z'
-#define Lm	'z'
-#define LC	'9'
+#define LM	'D'
+#define Lm	'a'
+#define LC	'1'
+
+using namespace ctn;
 
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
 //	int a = A( A_( 3 ) );
-	E_LXMCONTAINER( str::string_ ) CC;
-	E_LXCONTAINER( E_LXMCONTAINER_( str::string_ ) ) Cm;
-	E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) CM;
+	E_XMCONTAINER( str::string_ ) CC;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
+	E_LXCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
 	list_container_file_manager___ FileManager;
 	str::string S;
-	ctn::E_ITEM( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) ECM;
+	ctn::E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) ECM;
 	ctn::E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
@@ -81,11 +83,11 @@ ERRBegin
 //	ECm.Init( Cm );
 	ECM.Init( CM );
 
+	CM.Init();
+
 	if ( !Connect( CM, FileManager ) ) {
 
 		cout << "***** CREATION *****" << txf::nl << txf::sync;
-
-		CM.Init();
 
 		CM.Allocate( LM - 'A' + 1 );
 
@@ -128,13 +130,16 @@ ERRBegin
 			ECM(M - 'A').Init();
 			ECM() = Cm;
 		}
+/*
+		CM.Delete( CM.First( 1 ) );
+		CM.Delete( CM.Last( 1 ) );
+		CM.Delete( CM.Last( 1 ) );
+*/
 	} else {
 		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
 	}
 
-//	CM.Delete( CM.Last( 1 ) );
-
-	CM.Delete( CM.First() );
+	CM.Delete( CM.Last( 1 ) );
 
 	cout << "--------------" << txf::nl;
 

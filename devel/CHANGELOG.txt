@@ -1,5 +1,10 @@
 $Id$
 
+16/02/07 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'LST'.
+		- Généralisation et remaniement des '..._file_manager___'.
+
 15/02/07 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'LST'.
