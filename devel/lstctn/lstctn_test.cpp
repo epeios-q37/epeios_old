@@ -60,10 +60,10 @@ void Essai( int argc, const char *argv[] )
 {
 ERRProlog
 //	int a = A( A_( 3 ) );
-	list_container_file_manager___ FileManager;
 	E_LXMCONTAINER( str::string_ ) CC;
 	E_LXCONTAINER( E_LXMCONTAINER_( str::string_ ) ) Cm;
 	E_LXCONTAINER( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) CM;
+	list_container_file_manager___ FileManager;
 	str::string S;
 	ctn::E_ITEM( E_LXCONTAINER_( E_LXMCONTAINER_( str::string_ ) ) ) ECM;
 	ctn::E_MITEM( str::string_ ) ECC;
@@ -132,8 +132,9 @@ ERRBegin
 		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
 	}
 
-	CM.Delete( CM.Last( 1 ) );
+//	CM.Delete( CM.Last( 1 ) );
 
+	CM.Delete( CM.First() );
 
 	cout << "--------------" << txf::nl;
 
@@ -141,9 +142,10 @@ ERRBegin
 //	ECm.ChangeMode( mdr::mReadOnly );
 	ECC.ChangeMode( mdr::mReadOnly );
 
-	for ( M = 'A'; M <= LM; M++ )
-	{
-		Cm = ECM(M - 'A');
+	epeios::row__ RM = CM.First();
+
+	while ( RM != NONE ) {
+		Cm = ECM( RM );
 
 		for ( m ='a'; m <= Lm; m++ )
 		{
@@ -163,6 +165,8 @@ ERRBegin
 		}
 
 		cout << txf::nl;
+
+		RM = CM.Next( RM );
 	}
 /*
 	CMS.Mode( plm::mModification );
