@@ -733,7 +733,7 @@ namespace tol {
 		epeios::size__ Size,\
 		aem::mode Mode = aem::mDefault )\
 	{\
-		return Object Allocate( Size, Mode );\
+		Object Allocate( Size, Mode );\
 	}
 
 

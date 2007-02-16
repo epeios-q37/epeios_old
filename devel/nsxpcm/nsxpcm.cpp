@@ -177,6 +177,18 @@ void nsxpcm::Transform(
 	Transform( EString, String );
 }
 
+void nsxpcm::Transform(
+	const str::string_ &String,
+	nsEmbedCString &ECString )
+{
+	nsEmbedString EString;
+
+	Transform( String, EString );
+
+	Transform( EString, ECString );
+}
+
+
 
 void nsxpcm::Split( 
 	const string_ &Joined,

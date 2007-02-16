@@ -150,6 +150,10 @@ namespace nsxpcm {
 		const nsEmbedCString &ECString,
 		str::string_ &String );
 
+	void Transform(
+		const str::string_ &String,
+		nsEmbedCString &ECString );
+
 	void Split( 
 		const string_ &Joined,
 		bso::char__ Seaparator,
