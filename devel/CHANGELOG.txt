@@ -1,5 +1,14 @@
 $Id$
 
+19/02/07 :
+	- CCH :
+		- Réactivation ...
+		- Adaptation à 'g++'.
+	- CPE :
+		- Sous 'cygwin', on est maintenant, par défaut, dans un contexted 'single thread'.
+	- MDR :
+		- Correction définition 'MDR_ROW_T_MAX'.
+
 16/02/07 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'LST'.

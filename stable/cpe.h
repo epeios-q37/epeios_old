@@ -196,7 +196,7 @@ extern class ttr_tutor &CPETutor;
 #ifdef CPE__P_CYGWIN
 #	define CPE__T_CYGWIN
 #	define CPE__T_MS
-#	ifndef CPE_ST
+#	ifdef CPE_MT
 #		define CPE__T_MT 
 #	endif
 #endif

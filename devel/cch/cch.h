@@ -90,7 +90,7 @@ namespace cch {
 	//t Position in the buffer.
 	typedef bso::size__ position__;
 
-	#define CCH_POSITION_MAX	BSO_BSIZE_MAX
+	#define CCH_POSITION_MAX	EPEIOS_SIZE_MAX
 	#define CCH_ROW_MAX		EPEIOS_ROW_MAX
 
 	//t Amount of data in a buffer.
@@ -275,7 +275,6 @@ namespace cch {
 		}
 	};
 
-#if 0
 	// The core of a cache of static objects of type 'type'.
 	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
 	: public const_bunch_cache___< type__, r, bunch_caller__>
@@ -306,7 +305,7 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( bunch_caller__::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
@@ -317,19 +316,19 @@ namespace cch {
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
-			if ( Amount_ )
+			if ( const_bunch_cache___< type__, r, bunch_caller__>::Amount_ )
 				if ( Last_ > First_ ) {
 					if ( Adjust )
-						Allocate_( Position_ + Amount_ );
+						Allocate_( const_bunch_cache___< type__, r, bunch_caller__>::Position_ + const_bunch_cache___< type__, r, bunch_caller__>::Amount_ );
 #ifdef CCH_DBG
-					if ( ( Position_ + Amount_ ) > BunchAmount_() )
+					if ( ( const_bunch_cache___< type__, r, bunch_caller__>::Position_ + const_bunch_cache___< type__, r, bunch_caller__>::Amount_ ) > const_bunch_cache___< type__, r, bunch_caller__>::BunchAmount_() )
 						ERRc();
 #endif
-					WriteDirectlyIntoBunch_( Cache_ + First_, Last_ - First_ + 1, Position_ );
+					WriteDirectlyIntoBunch_( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First_, Last_ - First_ + 1, const_bunch_cache___< type__, r, bunch_caller__>::Position_ );
 				}
 
-			Amount_ = 0;
-			Position_ = NONE;
+			const_bunch_cache___< type__, r, bunch_caller__>::Amount_ = 0;
+			const_bunch_cache___< type__, r, bunch_caller__>::Position_ = NONE;
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
@@ -379,10 +378,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				Amount_ = 0;
-				Position_ = NONE;
+				const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::Amount_ = 0;
+				const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::Position_ = NONE;
 
-				if ( Amount > Size_ ) {
+				if ( Amount > const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -403,8 +402,8 @@ namespace cch {
 		an operation directly on the underlying bunch. */
 		void Synchronize( void )
 		{
-			Amount_ = 0;
-			Position_ = NONE;
+			const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::Amount_ = 0;
+			const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::Position_ = NONE;
 		}
 	};
 
@@ -433,7 +432,7 @@ namespace cch {
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Buffer, Size, FirstCacheJustification );
@@ -454,10 +453,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				DumpCache_( AppendMode_ );
+				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::DumpCache_( AppendMode_ );
 				AppendMode_ = false;
 
-				if ( Amount > Size_ ) {
+				if ( Amount > volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -483,9 +482,9 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				WriteIntoCache_( Buffer, Amount, Position );
 			else {
-				DumpCache_( false );
+				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::DumpCache_( false );
 
-				if ( Amount > Size_ ) {
+				if ( Amount > volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Size_ ) {
 					WriteDirectlyIntoBunch_( Buffer, Amount, Position );
 				} else {
 					FillCache_( Position, Amount );
@@ -505,7 +504,7 @@ namespace cch {
 		{
 			r Position;
 
-			if ( AppendMode_ && ( Amount_ == Size_ ) )
+			if ( AppendMode_ && ( volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Amount_ == volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Size_ ) )
 			{
 				Synchronize();
 				AppendMode_ = false;
@@ -513,12 +512,12 @@ namespace cch {
 
 			if ( !AppendMode_ ) {
 				Synchronize();
-				Position_ = BunchAmount_();
-				Amount_ = 0;
+				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Position_ = volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::BunchAmount_();
+				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Amount_ = 0;
 				AppendMode_ = true;
 			}
 
-			WriteIntoCache_( &Data, 1, Position = Position_ + Amount_++ );
+			WriteIntoCache_( &Data, 1, Position = volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Position_ + volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Amount_++ );
 
 			return Position;
 		}
@@ -527,15 +526,15 @@ namespace cch {
 		epeios::size__ Amount( void )
 		{
 			if ( AppendMode_ )
-				return Position_ + Amount_;
+				return volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Position_ + volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Amount_;
 			else
-				return BunchAmount_();
+				return volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::BunchAmount_();
 		}
 
 		//f Synchronize the content of the cache and the content of the bunch.
 		void Synchronize( void )
 		{
-			DumpCache_( AppendMode_ );
+			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::DumpCache_( AppendMode_ );
 			AppendMode_ = false;
 		}
 	};
@@ -571,7 +570,7 @@ namespace cch {
 		void Init(
 			const bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			core_read_only_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
@@ -621,7 +620,7 @@ namespace cch {
 		void Init(
 			bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			core_read_write_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
@@ -656,7 +655,7 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Synchronize();
+				core_read_only_cache___<type__, rb>::Synchronize();
 			}
 
 			core_read_only_cache___<type__, rb>::reset( P );
@@ -701,7 +700,7 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Synchronize();
+				core_read_write_cache___<type__, rb>::Synchronize();
 			}
 
 			Item_ = NULL;
@@ -926,17 +925,17 @@ namespace cch {
 		{
 			reset();
 
-			CacheSize_ = Size;
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::CacheSize_ = Size;
 
-			FirstCacheJustification_ = FirstCacheJustification;
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::FirstCacheJustification_ = FirstCacheJustification;
 
-			Item_.Init( Container );
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::Item_.Init( Container );
 
-			Caches_.Init();
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::Caches_.Init();
 
 			Allocate( Container.Amount() );
 
-			Cache_.Init( Caches_, IntermediateSize, fcjCentered );
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::Cache_.Init( read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::Caches_, IntermediateSize, fcjCentered );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Write(
@@ -964,7 +963,6 @@ namespace cch {
 			return GetCache_( PositionInContainer ).Append( Data );
 		}
 	};
-#endif
 
 #ifdef CCH__USE_SMA_HEAP
 	extern sma::memory_heap___ Heap;

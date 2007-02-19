@@ -90,7 +90,7 @@ namespace cch {
 	//t Position in the buffer.
 	typedef bso::size__ position__;
 
-	#define CCH_POSITION_MAX	BSO_BSIZE_MAX
+	#define CCH_POSITION_MAX	EPEIOS_SIZE_MAX
 	#define CCH_ROW_MAX		EPEIOS_ROW_MAX
 
 	//t Amount of data in a buffer.
@@ -275,7 +275,6 @@ namespace cch {
 		}
 	};
 
-#if 0
 	// The core of a cache of static objects of type 'type'.
 	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
 	: public const_bunch_cache___< type__, r, bunch_caller__>
@@ -306,7 +305,7 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( bunch_caller__::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
@@ -433,7 +432,7 @@ namespace cch {
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Buffer, Size, FirstCacheJustification );
@@ -571,7 +570,7 @@ namespace cch {
 		void Init(
 			const bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			core_read_only_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
@@ -621,7 +620,7 @@ namespace cch {
 		void Init(
 			bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
-			epeios::bsize__ Size,
+			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			core_read_write_cache___<type__, r>::Init( Buffer, Size, FirstCacheJustification );
@@ -964,7 +963,6 @@ namespace cch {
 			return GetCache_( PositionInContainer ).Append( Data );
 		}
 	};
-#endif
 
 #ifdef CCH__USE_SMA_HEAP
 	extern sma::memory_heap___ Heap;

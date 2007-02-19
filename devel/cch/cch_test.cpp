@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "cch.h"
 
@@ -60,7 +59,7 @@ ERRBegin
 
 	Container.Allocate( 10 );
 
-	RWCaches.Init( Container, 80, 2 );
+	RWCaches.Init( Container, 80, 2, cch::fcjCentered );
 
 	for( i = 0; i < 10; i++ ) {
 		for( j = 0; j < 100;  j++ )
@@ -73,7 +72,7 @@ ERRBegin
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 1000;
 
-		stf::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
+		cio::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -91,28 +90,28 @@ ERRProlog
 ERRBegin
 	Bunch.Init();
 
-	RWCache.Init( Bunch, 10 );
+	RWCache.Init( Bunch, 10, cch::fcjCentered );
 
 	for( i = 0; i <= 100; i++ )
 		RWCache.Append( i );
 
 	for( i = 0; i <= 100; i++ )
-		stf::cout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
+		cio::cout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
 
-	stf::cout << txf::nl;
+	cio::cout << txf::nl;
 
-	ROCache.Init( Bunch, 10 );
+	ROCache.Init( Bunch, 10, cch::fcjCentered );
 
 	for( i = 100; i >= 0; i-- )
-		stf::cout << (unsigned long)i << ": " << (unsigned long)ROCache.Get( i ) << txf::tab;
+		cio::cout << (unsigned long)i << ": " << (unsigned long)ROCache.Get( i ) << txf::tab;
 
-	stf::cout << txf::nl;
+	cio::cout << txf::nl;
 
 
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 101;
 
-		stf::cout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
+		cio::cout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
 	}
 
 	RWCache.Amount();
@@ -128,32 +127,32 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	stf::cout << "Test of library " << CCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << CCHTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
 		Test( argc, argv );
-		stf::cout << txf::nl << "-------------------------------------------" << txf::nl;
+		cio::cout << txf::nl << "-------------------------------------------" << txf::nl;
 		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cio::cout );
 			break;
 		}
 	default:
-		stf::cout << txf::sync;
-		stf::cerr << "\nBad arguments.\n";
-		stf::cout << "Usage: " << CCHTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << CCHTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	stf::cout << "\nEnd of program " << CCHTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << CCHTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

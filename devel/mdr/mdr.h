@@ -75,7 +75,7 @@ namespace mdr {
 	typedef bso::p_size__	p_row_t__;
 
 
-	#define MDR_ROW_T_MAX		( BSO_MSIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
+	#define MDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
 
 	//t The size of a memory.
