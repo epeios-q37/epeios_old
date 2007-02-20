@@ -511,7 +511,7 @@ namespace bch {
 
 
 	/*c A bunch of static object of type 'type'. Use 'E_BUNCH_( type )' rather then directly this class. */
-	template <class type, typename row, typename sh> class bunch_
+	template <class type, typename row, typename sh=dummy_size_handler> class bunch_
 	: public _bunch_<type, row, aem::amount_extent_manager_< row >, sh >
 	{
 	public:
@@ -584,7 +584,7 @@ namespace bch {
 
 
 	/*c A portable bunch of static object of type 'type'. Use 'E_PBUNCH_( type )' rather then directly this class. */
-	template <class type, typename row, typename sh> class p_bunch_
+	template <class type, typename row, typename sh = dummy_size_handler> class p_bunch_
 	: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, sh >
 	{
 	public:
@@ -670,7 +670,7 @@ namespace bch {
 		}
 	};
 
-	template <typename type, int size, typename row, typename sh> class bunch__
+	template <typename type, int size, typename row, typename sh = dummy_size_handler> class bunch__
 	: public _bunch__< type, size, row, aem::amount_extent_manager__<size, row>, sh >
 	{};
 
@@ -702,7 +702,7 @@ namespace bch {
 		}
 	};
 
-	template <typename type, typename row, typename sh> class bunch___
+	template <typename type, typename row, typename sh = dummy_size_handler> class bunch___
 	: public _bunch___< type, row, aem::amount_extent_manager___<row>, sh >
 	{};
 
@@ -714,7 +714,7 @@ namespace bch {
 
 
 
-	template <typename type, int size, typename row, typename sh> class p_bunch__
+	template <typename type, int size, typename row, typename sh = dummy_size_handler> class p_bunch__
 	: public _bunch__< type, size, row, aem::p_amount_extent_manager__<size, row>, sh >
 	{};
 
