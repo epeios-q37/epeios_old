@@ -499,7 +499,7 @@ namespace bch {
 		}
 	};
 
-	class _dummy_size_handler
+	class dummy_size_handler
 	{
 	public:
 		static epeios::size__ SizeOf( void * )
@@ -511,7 +511,7 @@ namespace bch {
 
 
 	/*c A bunch of static object of type 'type'. Use 'E_BUNCH_( type )' rather then directly this class. */
-	template <class type, typename row, typename sh = _dummy_size_handler> class bunch_
+	template <class type, typename row, typename sh> class bunch_
 	: public _bunch_<type, row, aem::amount_extent_manager_< row >, sh >
 	{
 	public:
@@ -523,16 +523,15 @@ namespace bch {
 		{};
 	};
 
-	E_AUTO2( bunch )
-
-	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
-	#define E_BUNCHt_( Type, r )	bunch_< Type, r >
-	#define E_BUNCHt( Type, r )		bunch< Type, r >
+	E_AUTO3( bunch )
 
 	#define E_BUNCHxt_( Type, r, s )	bunch_< Type, r, s  >
 	#define E_BUNCHxt( Type, r,s  )		bunch< Type, r, s >
 
-	#define E_BUNCHx( Type, s )	E_BUNCHxt( Type, epeios::row__, s )
+	#define E_BUNCHt_( Type, r )	E_BUNCHxt_( Type, r, bch::dummy_size_handler )
+	#define E_BUNCHt( Type, r )		E_BUNCHxt( Type, r, bch::dummy_size_handler )
+
+	#define E_BUNCHx( Type, s )		E_BUNCHxt( Type, epeios::row__, s )
 	#define E_BUNCHx_( Type, s )	E_BUNCHxt_( Type, epeios::row__, s )
 
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
@@ -585,19 +584,19 @@ namespace bch {
 
 
 	/*c A portable bunch of static object of type 'type'. Use 'E_PBUNCH_( type )' rather then directly this class. */
-	template <class type, typename row> class p_bunch_
-	: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, _dummy_size_handler >
+	template <class type, typename row, typename sh> class p_bunch_
+	: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, sh >
 	{
 	public:
 		struct s
-		: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, _dummy_size_handler >::s
+		: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, sh >::s
 		{};
 		p_bunch_( s &S )
-		: _bunch_<type, row, aem::p_amount_extent_manager_< row >, _dummy_size_handler >( S )
+		: _bunch_<type, row, aem::p_amount_extent_manager_< row >, sh >( S )
 		{};
 	};
 
-	E_AUTO2( p_bunch )
+	E_AUTO3( p_bunch )
 
 	//m A set of static object of type 'Type'. Use this rather then 'set_set_<type>'.
 	#define E_P_BUNCHt_( Type, r )		p_bunch_< Type, r >
@@ -650,29 +649,29 @@ namespace bch {
 	}
 
 	//c A set of maximum 'size' static objects of type 'type'. Use 'SET__( type, size )' rather then directly this class.
-	template <typename type, int size, typename row, typename aem> class _bunch__
-	: public _bunch< type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >
+	template <typename type, int size, typename row, typename aem, typename sh> class _bunch__
+	: public _bunch< type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >
 	{
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >::s {} S_;
+		: public _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::s {} S_;
 		_bunch__( void ) 
-		: _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >( S_ ) {}
+		: _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >( S_ ) {}
 		_bunch__ &operator =( const _bunch__ &S )
 		{
-			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >::StoreAndAdjust( S, S.Amount_ );
+			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
 
 			return *this;
 		}
 		void Init( void )
 		{
-			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, _dummy_size_handler >::Init();
+			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::Init();
 //			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
 		}
 	};
 
-	template <typename type, int size, typename row> class bunch__
-	: public _bunch__< type, size, row, aem::amount_extent_manager__<size, row> >
+	template <typename type, int size, typename row, typename sh> class bunch__
+	: public _bunch__< type, size, row, aem::amount_extent_manager__<size, row>, sh >
 	{};
 
 
@@ -682,29 +681,29 @@ namespace bch {
 	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , epeios::row__ )
 
 	//c A set of static objects of type 'type'. Use 'BUNCH___( type )' rather then directly this class.
-	template <typename type, typename row, typename aem> class _bunch___
-	: public _bunch< type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >
+	template <typename type, typename row, typename aem, typename sh> class _bunch___
+	: public _bunch< type, tym::E_MEMORYt___( type, row ), aem, row, sh >
 	{
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >::s {} S_;
+		: public _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::s {} S_;
 		_bunch___( void ) 
-		: _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >( S_ ) {}
+		: _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >( S_ ) {}
 		_bunch___ &operator =( const _bunch___ &S )
 		{
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >::StoreAndAdjust( S, S.Amount_ );
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
 	
 			return *this;
 		}
 		void Init( void )
 		{
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >::Init();
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, _dummy_size_handler >::SetStepValue( 0 );
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::Init();
+			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::SetStepValue( 0 );
 		}
 	};
 
-	template <typename type, typename row> class bunch___
-	: public _bunch___< type, row, aem::amount_extent_manager___<row> >
+	template <typename type, typename row, typename sh> class bunch___
+	: public _bunch___< type, row, aem::amount_extent_manager___<row>, sh >
 	{};
 
 
@@ -715,8 +714,8 @@ namespace bch {
 
 
 
-	template <typename type, int size, typename row> class p_bunch__
-	: public _bunch__< type, size, row, aem::p_amount_extent_manager__<size, row> >
+	template <typename type, int size, typename row, typename sh> class p_bunch__
+	: public _bunch__< type, size, row, aem::p_amount_extent_manager__<size, row>, sh >
 	{};
 
 

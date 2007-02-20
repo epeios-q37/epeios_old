@@ -36,7 +36,8 @@
 
 E_TYPEDEF( epeios::row_t__, brow__ );
 E_TYPEDEF( epeios::row_t__, crow__ );
-typedef bso::ushort__	mytype__;
+//typedef bso::ushort__	mytype__;
+#define mytype__	unsigned short
 
 void Generic( int argc, char *argv[] )
 {
@@ -46,12 +47,12 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
+/*
 void Essai( int argc, char *argv[] )
 {
 ERRProlog
 	ctn::E_XMCONTAINERt( bch::E_BUNCHt_( mytype__, brow__ ), crow__ ) Container;
-	cch::E_RW_CACHESt___( mytype__, brow__, crow__ ) RWCaches;
+	cch::E_RW_CACHESxt___( mytype__, brow__, crow__, bch::dummy_size_handler ) RWCaches;
 	int rnd, i, j;
 ERRBegin
 
@@ -78,22 +79,22 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
+*/
 void Test( int argc, char *argv[] )
 {
 ERRProlog
 	bch::E_BUNCHt( mytype__, brow__ ) Bunch;
-	cch::E_RW_CACHEt___( mytype__, brow__ ) RWCache;
-	cch::E_RO_CACHEt___( mytype__, brow__ ) ROCache;
+	cch::E_RW_CACHExt___( mytype__, brow__, bch::dummy_size_handler ) RWCache;
+	cch::E_RO_CACHExt___( mytype__, brow__, bch::dummy_size_handler ) ROCache;
 	int i;
 	int rnd;
 ERRBegin
 	Bunch.Init();
-
 	RWCache.Init( Bunch, 10, cch::fcjCentered );
 
 	for( i = 0; i <= 100; i++ )
 		RWCache.Append( i );
+#if 0
 
 	for( i = 0; i <= 100; i++ )
 		cio::cout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
@@ -115,12 +116,11 @@ ERRBegin
 	}
 
 	RWCache.Amount();
-
+#endif
 ERRErr
 ERREnd
 ERREpilog
 }
-
 
 int main( int argc, char *argv[] )
 {
@@ -134,7 +134,7 @@ ERRFBegin
 		Generic( argc, argv );
 		Test( argc, argv );
 		cio::cout << txf::nl << "-------------------------------------------" << txf::nl;
-		Essai( argc, argv );
+//		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

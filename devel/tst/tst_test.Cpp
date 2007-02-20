@@ -25,6 +25,8 @@
 
 //	$Id$
 
+#include <stdlib.h>
+
 #if 0
 /*
  * hworld.cpp
@@ -188,7 +190,7 @@ void Test( void )
 
 #endif
 
-#if 1
+#if 0
 
 #include "tht.h"
 
@@ -242,3 +244,96 @@ ERRFEpilog
 }
 
 #endif
+
+#if 0
+class a
+{
+protected:
+	virtual void f( void ) = 0;
+};
+
+class b
+: public a
+{
+	void f( void ) {}
+};
+
+template <typename t> class tt
+{
+public:
+	t TT;
+};
+
+template <typename t> class at
+{
+protected:
+	virtual tt<t> &f( void ) = 0;
+};
+
+template <typename t, typename v> class bt
+: public t
+{
+	tt<v> T;
+	tt<v> &f( void ) {return T;}
+};
+
+void Bug( void )
+{
+	b B;
+	bt<at<int>,int> BT;
+}
+#endif
+
+#if 1
+#include "bch.h"
+
+	template <class type__, typename r, typename sh> class bunch_caller__
+	{
+	protected:
+		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void ) = 0;
+	};
+
+	// The core of a cache of static objects of type 'type'.
+	template <class type__, typename r, class bunch_caller__> class bunch_cache___
+	: public bunch_caller__
+	{
+	};
+
+	//c A read-only cache of static object of type 't'.
+	template <class type__, typename r, typename sh> class core_cache___
+	: public bunch_cache___<type__, r, bunch_caller__<type__,r, sh> >
+	{
+	};
+
+
+
+	//c A read-only cache of static object of type 't'.
+	template <class type__, typename r, typename sh> class cache___
+	: public core_cache___<type__, r, sh>
+	{
+	private:
+		const bch::E_BUNCHxt_( type__, r, sh ) *Bunch_;
+	protected:
+		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void )
+		{
+			return *Bunch_;
+		}
+	public:
+		void F( void )
+		{
+			CCHGetBunch();
+		}
+	};
+
+
+#endif
+
+
+int main( int argc, const char **argv )
+{
+	cache___<int, epeios::row__, bch::dummy_size_handler> Cache;
+
+	Cache.F();
+
+	return EXIT_SUCCESS;
+}
