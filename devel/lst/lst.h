@@ -195,7 +195,7 @@ namespace lst {
 		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
 		r New(
 			r Row,
-			aem::mode Mode = mDefault )
+			aem::mode Mode = aem::mDefault )
 		{
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();

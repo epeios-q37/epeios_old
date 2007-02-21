@@ -722,18 +722,10 @@ namespace nsxpcm {
 	private:
 		nsIDOMElement *_Element;
 	protected:
-		virtual void NSXPCMOnCommand( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnInput( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnClick( void )
-		{
-			ERRu();
-		}
+		virtual void NSXPCMOnCommand( void ) = 0;
+		virtual void NSXPCMOnClick( void ) = 0;
+		virtual void NSXPCMOnInput( void ) = 0;
+		virtual void NSXPCMOnFocus( void ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -765,6 +757,8 @@ namespace nsxpcm {
 				NSXPCMOnInput();
 			else if ( EventType == "click" )
 				NSXPCMOnClick();
+			else if ( EventType == "focus" )
+				NSXPCMOnFocus();
 			else
 				ERRl();
 		}
