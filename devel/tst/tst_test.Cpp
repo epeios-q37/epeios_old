@@ -285,43 +285,46 @@ void Bug( void )
 #endif
 
 #if 1
-#include "bch.h"
 
-	template <class type__, typename r, typename sh> class bunch_caller__
+	template <typename t> class bunch_
+	{};
+
+	template <typename type__> class bunch_caller__
 	{
 	protected:
-		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void ) = 0;
+		virtual const bunch_<type__> &VF( void ) = 0;
 	};
 
 	// The core of a cache of static objects of type 'type'.
-	template <class type__, typename r, class bunch_caller__> class bunch_cache___
-	: public bunch_caller__
+	template <typename type__, typename bc> class bunch_cache___
+	: public bc
 	{
 	};
 
 	//c A read-only cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class core_cache___
-	: public bunch_cache___<type__, r, bunch_caller__<type__,r, sh> >
-	{
-	};
-
-
-
-	//c A read-only cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class cache___
-	: public core_cache___<type__, r, sh>
+	template <typename type__> class core_cache___
+	: public bunch_cache___<type__, bunch_caller__<type__> >
 	{
 	private:
-		const bch::E_BUNCHxt_( type__, r, sh ) *Bunch_;
+	public:
+		const bunch_<type__> &F( void )
+		{
+			return this->VF();
+		}
+	};
+
+
+
+	//c A read-only cache of static object of type 't'.
+	template <typename type__> class cache___
+	: public core_cache___<type__>
+	{
+	private:
+		const bunch_<type__> *Bunch_;
 	protected:
-		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void )
+		virtual const bunch_<type__> &VF( void )
 		{
 			return *Bunch_;
-		}
-	public:
-		void F( void )
-		{
-			CCHGetBunch();
 		}
 	};
 
@@ -331,7 +334,7 @@ void Bug( void )
 
 int main( int argc, const char **argv )
 {
-	cache___<int, epeios::row__, bch::dummy_size_handler> Cache;
+	cache___<int> Cache;
 
 	Cache.F();
 

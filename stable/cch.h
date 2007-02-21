@@ -65,6 +65,8 @@ extern class ttr_tutor &CCHTutor;
 #include "bch.h"
 #include "ctn.h"
 
+// NOTA : tous les 'this' apparamment inutiles sont requis par 'g++' (V3.4.4).
+
 #ifdef CCH_USE_SMA_HEAP
 #	define CCH__USE_SMA_HEAP
 #endif
@@ -118,8 +120,8 @@ namespace cch {
 	};
 
 	// The core of a cache of static objects of type 'type'.
-	template <class type__, typename r, class bunch_caller__> class const_bunch_cache___
-	: public bunch_caller__
+	template <class type__, typename r, typename bc> class const_bunch_cache___
+	: public bc
 	{
 	protected:
 		// The buffer which acts as cache.
@@ -152,14 +154,14 @@ namespace cch {
 		}
 		epeios::size__ BunchAmount_( void )
 		{
-			return bunch_caller__::CCHGetBunch().Amount();
+			return this->CCHGetBunch().Amount();
 		}
 		void ReadDirectlyFromBunch_(
 			r Position,
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			bunch_caller__::CCHGetBunch().Recall( Position, Amount, Buffer );
+			this->CCHGetBunch().Recall( Position, Amount, Buffer );
 		}
 		void FillCache_(
 			r Position,
@@ -276,8 +278,8 @@ namespace cch {
 	};
 
 	// The core of a cache of static objects of type 'type'.
-	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
-	: public const_bunch_cache___< type__, r, bunch_caller__>
+	template <class type__, typename r, class bc > class volatile_bunch_cache___
+	: public const_bunch_cache___< type__, r, bc >
 	{
 	private:
 		position__ 
@@ -286,14 +288,14 @@ namespace cch {
 	protected:
 		void Allocate_( epeios::size__ Size )
 		{
-			bunch_caller__::CCHGetBunch().Allocate( Size );
+			this->CCHGetBunch().Allocate( Size );
 		}
 		void WriteIntoCache_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			position__ First = *Position - First_;
+			position__ First = *Position - this->Position_;
 			position__ Last = First + Amount - 1;
 #ifdef CCH_DBG
 			if ( !IsInsideCache_( Position, Amount ) )
@@ -305,37 +307,37 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( this->Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			bunch_caller__::CCHGetBunch().Store( Buffer, Amount, Position );
+			this->CCHGetBunch().Store( Buffer, Amount, Position );
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
-			if ( Amount_ )
-				if ( Last_ > First_ ) {
+			if ( this->Amount_ )
+				if ( Last_ >= First_ ) {
 					if ( Adjust )
-						Allocate_( Position_ + Amount_ );
+						Allocate_( this->Position_ + this->Amount_ );
 #ifdef CCH_DBG
-					if ( ( Position_ + Amount_ ) > BunchAmount_() )
+					if ( ( this->Position_ + this->Amount_ ) > this->BunchAmount_() )
 						ERRc();
 #endif
-					WriteDirectlyIntoBunch_( Cache_ + First_, Last_ - First_ + 1, Position_ );
+					WriteDirectlyIntoBunch_( this->Cache_ + First_, Last_ - First_ + 1, this->Position_ );
 				}
 
-			Amount_ = 0;
-			Position_ = NONE;
+			this->Amount_ = 0;
+			this->Position_ = NONE;
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			const_bunch_cache___< type__, r, bunch_caller__>::reset( P );
+			const_bunch_cache___< type__, r, bc>::reset( P );
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
@@ -378,10 +380,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				Amount_ = 0;
-				Position_ = NONE;
+				this->Amount_ = 0;
+				this->Position_ = NONE;
 
-				if ( Amount > Size_ ) {
+				if ( Amount > this->Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -402,8 +404,8 @@ namespace cch {
 		an operation directly on the underlying bunch. */
 		void Synchronize( void )
 		{
-			Amount_ = 0;
-			Position_ = NONE;
+			this->Amount_ = 0;
+			this->Position_ = NONE;
 		}
 	};
 
@@ -453,10 +455,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				DumpCache_( AppendMode_ );
+				this->DumpCache_( AppendMode_ );
 				AppendMode_ = false;
 
-				if ( Amount > Size_ ) {
+				if ( Amount > this->Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -482,9 +484,9 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				WriteIntoCache_( Buffer, Amount, Position );
 			else {
-				DumpCache_( false );
+				this->DumpCache_( false );
 
-				if ( Amount > Size_ ) {
+				if ( Amount > this->Size_ ) {
 					WriteDirectlyIntoBunch_( Buffer, Amount, Position );
 				} else {
 					FillCache_( Position, Amount );
@@ -504,7 +506,7 @@ namespace cch {
 		{
 			r Position;
 
-			if ( AppendMode_ && ( Amount_ == Size_ ) )
+			if ( AppendMode_ && ( this->Amount_ == this->Size_ ) )
 			{
 				Synchronize();
 				AppendMode_ = false;
@@ -512,12 +514,12 @@ namespace cch {
 
 			if ( !AppendMode_ ) {
 				Synchronize();
-				Position_ = BunchAmount_();
-				Amount_ = 0;
+				this->Position_ = this->BunchAmount_();
+				this->Amount_ = 0;
 				AppendMode_ = true;
 			}
 
-			WriteIntoCache_( &Data, 1, Position = Position_ + Amount_++ );
+			WriteIntoCache_( &Data, 1, Position = this->Position_ + this->Amount_++ );
 
 			return Position;
 		}
@@ -526,15 +528,15 @@ namespace cch {
 		epeios::size__ Amount( void )
 		{
 			if ( AppendMode_ )
-				return Position_ + Amount_;
+				return this->Position_ + this->Amount_;
 			else
-				return BunchAmount_();
+				return this->BunchAmount_();
 		}
 
 		//f Synchronize the content of the cache and the content of the bunch.
 		void Synchronize( void )
 		{
-			DumpCache_( AppendMode_ );
+			this->DumpCache_( AppendMode_ );
 			AppendMode_ = false;
 		}
 	};
@@ -655,7 +657,7 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Synchronize();
+				this->Synchronize();
 			}
 
 			core_read_only_cache___<type__, rb>::reset( P );
@@ -700,7 +702,7 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Synchronize();
+				this->Synchronize();
 			}
 
 			Item_ = NULL;
@@ -925,17 +927,17 @@ namespace cch {
 		{
 			reset();
 
-			CacheSize_ = Size;
+			this->CacheSize_ = Size;
 
-			FirstCacheJustification_ = FirstCacheJustification;
+			this->FirstCacheJustification_ = FirstCacheJustification;
 
-			Item_.Init( Container );
+			this->Item_.Init( Container );
 
-			Caches_.Init();
+			this->Caches_.Init();
 
 			Allocate( Container.Amount() );
 
-			Cache_.Init( Caches_, IntermediateSize, fcjCentered );
+			this->Cache_.Init( this->Caches_, IntermediateSize, fcjCentered );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Write(

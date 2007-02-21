@@ -65,6 +65,8 @@ extern class ttr_tutor &CCHTutor;
 #include "bch.h"
 #include "ctn.h"
 
+// NOTA : tous les 'this' apparamment inutiles sont requis par 'g++' (V3.4.4).
+
 #ifdef CCH_USE_SMA_HEAP
 #	define CCH__USE_SMA_HEAP
 #endif
@@ -96,16 +98,16 @@ namespace cch {
 	//t Amount of data in a buffer.
 	typedef csize__ amount__;
 
-	template <class type__, typename r, typename sh> class const_bunch_caller__
+	template <class type__, typename r> class const_bunch_caller__
 	{
 	protected:
-		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void ) = 0;
+		virtual const bch::E_BUNCHt_( type__, r ) &CCHGetBunch( void ) = 0;
 	};
 
-	template <class type__, typename r, typename sh> class volatile_bunch_caller__
+	template <class type__, typename r> class volatile_bunch_caller__
 	{
 	protected:
-		virtual bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void ) = 0;
+		virtual bch::E_BUNCHt_( type__, r ) &CCHGetBunch( void ) = 0;
 	};
 
 	//e How the cache is filled for the first time.
@@ -118,8 +120,8 @@ namespace cch {
 	};
 
 	// The core of a cache of static objects of type 'type'.
-	template <class type__, typename r, class bunch_caller__> class const_bunch_cache___
-	: public bunch_caller__
+	template <class type__, typename r, typename bc> class const_bunch_cache___
+	: public bc
 	{
 	protected:
 		// The buffer which acts as cache.
@@ -152,14 +154,14 @@ namespace cch {
 		}
 		epeios::size__ BunchAmount_( void )
 		{
-			return bunch_caller__::CCHGetBunch().Amount();
+			return this->CCHGetBunch().Amount();
 		}
 		void ReadDirectlyFromBunch_(
 			r Position,
 			epeios::size__ Amount,
 			type__ *Buffer )
 		{
-			bunch_caller__::CCHGetBunch().Recall( Position, Amount, Buffer );
+			this->CCHGetBunch().Recall( Position, Amount, Buffer );
 		}
 		void FillCache_(
 			r Position,
@@ -276,8 +278,8 @@ namespace cch {
 	};
 
 	// The core of a cache of static objects of type 'type'.
-	template <class type__, typename r, class bunch_caller__> class volatile_bunch_cache___
-	: public const_bunch_cache___< type__, r, bunch_caller__>
+	template <class type__, typename r, class bc > class volatile_bunch_cache___
+	: public const_bunch_cache___< type__, r, bc >
 	{
 	private:
 		position__ 
@@ -286,14 +288,14 @@ namespace cch {
 	protected:
 		void Allocate_( epeios::size__ Size )
 		{
-			bunch_caller__::CCHGetBunch().Allocate( Size );
+			this->CCHGetBunch().Allocate( Size );
 		}
 		void WriteIntoCache_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			position__ First = *Position - First_;
+			position__ First = *Position - this->Position_;
 			position__ Last = First + Amount - 1;
 #ifdef CCH_DBG
 			if ( !IsInsideCache_( Position, Amount ) )
@@ -305,37 +307,37 @@ namespace cch {
 			if ( Last > Last_ )
 				Last_ = Last;
 
-			memcpy( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First, Buffer, Amount * sizeof( type__ ) );
+			memcpy( this->Cache_ + First, Buffer, Amount * sizeof( type__ ) );
 		}
 		void WriteDirectlyIntoBunch_(
 			const type__ *Buffer,
 			epeios::size__ Amount,
 			r Position )
 		{
-			bunch_caller__::CCHGetBunch().Store( Buffer, Amount, Position );
+			this->CCHGetBunch().Store( Buffer, Amount, Position );
 		}
 		void DumpCache_( bso::bool__ Adjust )
 		{
-			if ( const_bunch_cache___< type__, r, bunch_caller__>::Amount_ )
-				if ( Last_ > First_ ) {
+			if ( this->Amount_ )
+				if ( Last_ >= First_ ) {
 					if ( Adjust )
-						Allocate_( const_bunch_cache___< type__, r, bunch_caller__>::Position_ + const_bunch_cache___< type__, r, bunch_caller__>::Amount_ );
+						Allocate_( this->Position_ + this->Amount_ );
 #ifdef CCH_DBG
-					if ( ( const_bunch_cache___< type__, r, bunch_caller__>::Position_ + const_bunch_cache___< type__, r, bunch_caller__>::Amount_ ) > const_bunch_cache___< type__, r, bunch_caller__>::BunchAmount_() )
+					if ( ( this->Position_ + this->Amount_ ) > this->BunchAmount_() )
 						ERRc();
 #endif
-					WriteDirectlyIntoBunch_( const_bunch_cache___< type__, r, bunch_caller__>::Cache_ + First_, Last_ - First_ + 1, const_bunch_cache___< type__, r, bunch_caller__>::Position_ );
+					WriteDirectlyIntoBunch_( this->Cache_ + First_, Last_ - First_ + 1, this->Position_ );
 				}
 
-			const_bunch_cache___< type__, r, bunch_caller__>::Amount_ = 0;
-			const_bunch_cache___< type__, r, bunch_caller__>::Position_ = NONE;
+			this->Amount_ = 0;
+			this->Position_ = NONE;
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			const_bunch_cache___< type__, r, bunch_caller__>::reset( P );
+			const_bunch_cache___< type__, r, bc>::reset( P );
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
@@ -350,8 +352,8 @@ namespace cch {
 	};
 
 	//c A read-only cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class core_read_only_cache___
-	: public const_bunch_cache___<type__, r, const_bunch_caller__<type__,r, sh> >
+	template <class type__, typename r> class core_read_only_cache___
+	: public const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >
 	{
 	public:
 		void reset( bso::bool__ P = true )
@@ -360,7 +362,7 @@ namespace cch {
 				Synchronize();
 			}
 
-			const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::reset( P );
+			const_bunch_cache___<type__, r, const_bunch_caller__<type__,r> >::reset( P );
 		}
 		core_read_only_cache___( void )
 		{
@@ -378,10 +380,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::Amount_ = 0;
-				const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::Position_ = NONE;
+				this->Amount_ = 0;
+				this->Position_ = NONE;
 
-				if ( Amount > const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::Size_ ) {
+				if ( Amount > this->Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -402,14 +404,14 @@ namespace cch {
 		an operation directly on the underlying bunch. */
 		void Synchronize( void )
 		{
-			const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::Amount_ = 0;
-			const_bunch_cache___<type__, r, const_bunch_caller__<type__, r, sh> >::Position_ = NONE;
+			this->Amount_ = 0;
+			this->Position_ = NONE;
 		}
 	};
 
 	//c A read-write cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class core_read_write_cache___
-	: public volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >
+	template <class type__, typename r> class core_read_write_cache___
+	: public volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >
 	{
 	protected:
 		// At true if you append data.
@@ -417,7 +419,7 @@ namespace cch {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::reset( P );
+			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::reset( P );
 
 			AppendMode_ = false;
 		}
@@ -442,7 +444,7 @@ namespace cch {
 			csize__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
-			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Init( Size, FirstCacheJustification );
+			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Init( Size, FirstCacheJustification );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Read(
@@ -453,10 +455,10 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
-				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::DumpCache_( AppendMode_ );
+				this->DumpCache_( AppendMode_ );
 				AppendMode_ = false;
 
-				if ( Amount > volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Size_ ) {
+				if ( Amount > this->Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
 				} else {
 					FillCache_( Position, Amount );
@@ -482,9 +484,9 @@ namespace cch {
 			if ( IsInsideCache_( Position, Amount ) )
 				WriteIntoCache_( Buffer, Amount, Position );
 			else {
-				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::DumpCache_( false );
+				this->DumpCache_( false );
 
-				if ( Amount > volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r> >::Size_ ) {
+				if ( Amount > this->Size_ ) {
 					WriteDirectlyIntoBunch_( Buffer, Amount, Position );
 				} else {
 					FillCache_( Position, Amount );
@@ -504,7 +506,7 @@ namespace cch {
 		{
 			r Position;
 
-			if ( AppendMode_ && ( volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Amount_ == volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Size_ ) )
+			if ( AppendMode_ && ( this->Amount_ == this->Size_ ) )
 			{
 				Synchronize();
 				AppendMode_ = false;
@@ -512,12 +514,12 @@ namespace cch {
 
 			if ( !AppendMode_ ) {
 				Synchronize();
-				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Position_ = volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r,sh > >::BunchAmount_();
-				volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Amount_ = 0;
+				this->Position_ = this->BunchAmount_();
+				this->Amount_ = 0;
 				AppendMode_ = true;
 			}
 
-			WriteIntoCache_( &Data, 1, Position = volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Position_ + volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Amount_++ );
+			WriteIntoCache_( &Data, 1, Position = this->Position_ + this->Amount_++ );
 
 			return Position;
 		}
@@ -526,35 +528,35 @@ namespace cch {
 		epeios::size__ Amount( void )
 		{
 			if ( AppendMode_ )
-				return volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Position_ + volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::Amount_;
+				return this->Position_ + this->Amount_;
 			else
-				return volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::BunchAmount_();
+				return this->BunchAmount_();
 		}
 
 		//f Synchronize the content of the cache and the content of the bunch.
 		void Synchronize( void )
 		{
-			volatile_bunch_cache___<type__, r, volatile_bunch_caller__<type__, r, sh> >::DumpCache_( AppendMode_ );
+			this->DumpCache_( AppendMode_ );
 			AppendMode_ = false;
 		}
 	};
 
 
 	//c A read-only cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class read_only_cache___
-	: public core_read_only_cache___<type__, r, sh>
+	template <class type__, typename r> class read_only_cache___
+	: public core_read_only_cache___<type__, r>
 	{
 	private:
-		const bch::E_BUNCHxt_( type__, r, sh ) *Bunch_;
+		const bch::E_BUNCHt_( type__, r ) *Bunch_;
 	protected:
-		virtual const bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void )
+		virtual const bch::E_BUNCHt_( type__, r ) &CCHGetBunch( void )
 		{
 			return *Bunch_;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			core_read_only_cache___<type__, r, sh>::reset( P );
+			core_read_only_cache___<type__, r>::reset( P );
 
 			Bunch_ = NULL;
 		}
@@ -568,7 +570,7 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			const bch::bunch_<type__, r, sh> &Bunch,
+			const bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
 			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
@@ -579,11 +581,11 @@ namespace cch {
 		}
 		//f Initialisation and creation of a buffer of size 'Size'.
 		void Init( 
-			const bch::bunch_<type__, r, sh> &Bunch,
+			const bch::bunch_<type__, r> &Bunch,
 			csize__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_only_cache___<type__, r, sh>::Init( Size, FirstCacheJustification );
+			core_read_only_cache___<type__, r>::Init( Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
@@ -591,20 +593,20 @@ namespace cch {
 
 
 	//c A read-only cache of static object of type 't'.
-	template <class type__, typename r, typename sh> class read_write_cache___
-	: public core_read_write_cache___<type__, r, sh>
+	template <class type__, typename r> class read_write_cache___
+	: public core_read_write_cache___<type__, r>
 	{
 	private:
-		bch::E_BUNCHxt_( type__, r, sh ) *Bunch_;
+		bch::E_BUNCHt_( type__, r ) *Bunch_;
 	protected:
-		virtual bch::E_BUNCHxt_( type__, r, sh ) &CCHGetBunch( void )
+		virtual bch::E_BUNCHt_( type__, r ) &CCHGetBunch( void )
 		{
 			return *Bunch_;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			core_read_write_cache___<type__, r, sh>::reset( P );
+			core_read_write_cache___<type__, r>::reset( P );
 
 			Bunch_ = NULL;
 		}
@@ -618,7 +620,7 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			bch::bunch_<type__, r, sh> &Bunch,
+			bch::bunch_<type__, r> &Bunch,
 			type__ *Buffer,
 			epeios::size__ Size,
 			first_cache_justification__ FirstCacheJustification )
@@ -629,25 +631,25 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', and creation of a buffer of size 'Size'.
 		void Init(
-			bch::bunch_<type__, r, sh> &Bunch,
+			bch::bunch_<type__, r> &Bunch,
 			csize__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_write_cache___<type__, r,sh>::Init( Size, FirstCacheJustification );
+			core_read_write_cache___<type__, r>::Init( Size, FirstCacheJustification );
 
 			Bunch_ = &Bunch;
 		}
 	};
 
 	//c A read-only cache of object 't' using an item (in 'CTN4 library meaning).
-	template <class type__, typename rb, typename rc, typename sh> class item_read_only_cache___
-	: public core_read_only_cache___<type__, rb, sh>
+	template <class type__, typename rb, typename rc> class item_read_only_cache___
+	: public core_read_only_cache___<type__, rb>
 	{
 	private:
-		ctn::E_CMITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ) *Item_;
+		ctn::E_CMITEMt( bch::E_BUNCHt_( type__, rb ), rc ) *Item_;
 		rc PositionInContainer_;
 	protected:
-		const bch::E_BUNCHxt_( type__, rb, sh ) &CCHGetBunch( void )
+		virtual const bch::E_BUNCHt_( type__, rb ) &CCHGetBunch( void )
 		{
 			return Item_->operator()( PositionInContainer_ );
 		}
@@ -655,7 +657,7 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				core_read_only_cache___<type__, rb>::Synchronize();
+				this->Synchronize();
 			}
 
 			core_read_only_cache___<type__, rb>::reset( P );
@@ -672,7 +674,7 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			ctn::E_CMITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ) &Item,
+			ctn::E_CMITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
 			csize__ Size,
 			first_cache_justification__ FirstCacheJustification )
@@ -685,14 +687,14 @@ namespace cch {
 	};
 
 	//c A read-only cache of static object of type 't'.
-	template <class type__, typename rb, typename rc, typename sh> class item_read_write_cache___
-	: public core_read_write_cache___<type__, rb, sh>
+	template <class type__, typename rb, typename rc> class item_read_write_cache___
+	: public core_read_write_cache___<type__, rb>
 	{
 	private:
-		ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ) *Item_;
+		ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ) *Item_;
 		rc PositionInContainer_;
 	protected:
-		bch::E_BUNCHxt_( type__, rb, sh ) &CCHGetBunch( void )
+		virtual bch::E_BUNCHt_( type__, rb ) &CCHGetBunch( void )
 		{
 			return Item_->operator()( PositionInContainer_ );
 		}
@@ -700,11 +702,11 @@ namespace cch {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				core_read_write_cache___<type__, rb, sh>::Synchronize();
+				this->Synchronize();
 			}
 
 			Item_ = NULL;
-			core_read_write_cache___<type__, rb, sh>::reset( P );
+			core_read_write_cache___<type__, rb>::reset( P );
 		}
 		item_read_write_cache___( void )
 		{
@@ -716,12 +718,12 @@ namespace cch {
 		}
 		//f Initialisation with bunch 'Bunch', end 'Buffer' of size 'Size'.
 		void Init(
-			ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ) &Item,
+			ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ) &Item,
 			rc PositionInContainer,
 			csize__ Size,
 			first_cache_justification__ FirstCacheJustification )
 		{
-			core_read_write_cache___<type__, rb, sh>::Init( Size, FirstCacheJustification );
+			core_read_write_cache___<type__, rb>::Init( Size, FirstCacheJustification );
 
 			PositionInContainer_ = PositionInContainer;
 			Item_ = &Item;
@@ -730,12 +732,12 @@ namespace cch {
 
 	template <class type__,
 		      typename item, typename item_cache,
-			  typename rb, typename rc, typename sh>
+			  typename rb, typename rc>
 			  class read_only_caches___
 	{
 	protected:
 		bch::E_BUNCHt( item_cache *, rc ) Caches_;
-		read_only_cache___<item_cache *, rc, sh> Cache_;
+		read_only_cache___<item_cache *, rc> Cache_;
 		item Item_;
 		csize__ CacheSize_;
 		first_cache_justification__ FirstCacheJustification_;
@@ -814,7 +816,7 @@ namespace cch {
 		/*f Initialization with 'Container' and, for e&ch item,
 		creation of a buffer of size 'Size'. */
 		void Init( 
-			const ctn::E_MCONTAINERt_( bch::E_BUNCHxt_( type__, rb, sh ), rc ) &Container,
+			const ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
 			csize__ Size,
 			csize__ IntermediateSize,
 			first_cache_justification__ FirstCacheJustification )
@@ -899,13 +901,13 @@ namespace cch {
 		}
 	};
 
-	template <class type__, typename rb, typename rc, typename sh> class read_write_caches___
-	: public read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>
+	template <class type__, typename rb, typename rc> class read_write_caches___
+	: public read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>
 	{
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb, rc, sh>, rb, rc, sh>::reset( P );	
+			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHt_( type__, rb ), rc ),item_read_write_cache___<type__, rb,rc>,rb,rc>::reset( P );	
 		}
 		read_write_caches___( void )
 		{
@@ -918,24 +920,24 @@ namespace cch {
 		/*f Initialization with 'Container' and, for each item,
 		creation of a buffer of size 'Size'. */
 		void Init( 
-			ctn::E_MCONTAINERt_( bch::E_BUNCHxt_( type__, rb, sh ), rc ) &Container,
+			ctn::E_MCONTAINERt_( bch::E_BUNCHt_( type__, rb ), rc ) &Container,
 			csize__ Size,
 			csize__ IntermediateSize,
 			first_cache_justification__ FirstCacheJustification )
 		{
 			reset();
 
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::CacheSize_ = Size;
+			this->CacheSize_ = Size;
 
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::FirstCacheJustification_ = FirstCacheJustification;
+			this->FirstCacheJustification_ = FirstCacheJustification;
 
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::Item_.Init( Container );
+			this->Item_.Init( Container );
 
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::Caches_.Init();
+			this->Caches_.Init();
 
 			Allocate( Container.Amount() );
 
-			read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::Cache_.Init( read_only_caches___<type__,ctn::E_MITEMt( bch::E_BUNCHxt_( type__, rb, sh ), rc ),item_read_write_cache___<type__, rb,rc,sh>,rb,rc,sh>::Caches_, IntermediateSize, fcjCentered );
+			this->Cache_.Init( this->Caches_, IntermediateSize, fcjCentered );
 		}
 		//f Put 'Amount' data at 'Position' in 'Buffer'.
 		void Write(
@@ -970,19 +972,27 @@ namespace cch {
 
 }
 
-#define E_RO_CACHExt___( type, r, sh )	read_only_cache___<type, r, sh>
+#define E_RO_CACHEt___( type, r )	read_only_cache___<type, r>
 
 #define E_RO_CACHE___( type )	E_RO_CACHEt___( type, epeios::row__ )
 
-#define E_RW_CACHExt___( type, r, sh )	read_write_cache___<type, r, sh>
+#define E_RW_CACHEt___( type, r )	read_write_cache___<type, r>
 
 #define E_RW_CACHE___( type )	E_RW_CACHEt___( type, epeios::row__ )
 
-#define E_RO_CACHESt___( type, rb, rc )	read_only_caches___<type, ctn::E_CMITEMt( bch::E_BUNCHxt_( type, rb ), rc ), cch::item_read_only_cache___<type,rb,rc>, rb, rc>
+#define E_RO_CACHEt___( type, r )	read_only_cache___<type, r>
+
+#define E_RO_CACHE___( type )	E_RO_CACHEt___( type, epeios::row__ )
+
+#define E_RW_CACHEt___( type, r )	read_write_cache___<type, r>
+
+#define E_RW_CACHE___( type )	E_RW_CACHEt___( type, epeios::row__ )
+
+#define E_RO_CACHESt___( type, rb, rc )	read_only_caches___<type, ctn::E_CMITEMt( bch::E_BUNCHt_( type, rb ), rc ), cch::item_read_only_cache___<type,rb,rc>, rb, rc>
 
 #define E_RO_CACHES___( type, rb )	E_RO_CACHESt___( type, rb, epeios::row__ )
 
-#define E_RW_CACHESxt___( type, rb, rc, sh )	read_write_caches___<type, rb, rc, sh>
+#define E_RW_CACHESt___( type, rb, rc )	read_write_caches___<type, rb, rc>
 
 #define E_RW_CACHES___( type, rb ) E_RW_CACHESt___( type, rb, epeios::row__ )
 

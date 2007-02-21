@@ -47,12 +47,12 @@ ERRErr
 ERREnd
 ERREpilog
 }
-/*
+
 void Essai( int argc, char *argv[] )
 {
 ERRProlog
 	ctn::E_XMCONTAINERt( bch::E_BUNCHt_( mytype__, brow__ ), crow__ ) Container;
-	cch::E_RW_CACHESxt___( mytype__, brow__, crow__, bch::dummy_size_handler ) RWCaches;
+	cch::E_RW_CACHESt___( mytype__, brow__, crow__ ) RWCaches;
 	int rnd, i, j;
 ERRBegin
 
@@ -73,19 +73,22 @@ ERRBegin
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 1000;
 
+		if ( RWCaches.Get( rnd / 100, rnd % 100 ) != rnd )
+			ERRc();
+
 		cio::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
 	}
 ERRErr
 ERREnd
 ERREpilog
 }
-*/
+
 void Test( int argc, char *argv[] )
 {
 ERRProlog
 	bch::E_BUNCHt( mytype__, brow__ ) Bunch;
-	cch::E_RW_CACHExt___( mytype__, brow__, bch::dummy_size_handler ) RWCache;
-	cch::E_RO_CACHExt___( mytype__, brow__, bch::dummy_size_handler ) ROCache;
+	cch::E_RW_CACHEt___( mytype__, brow__ ) RWCache;
+	cch::E_RO_CACHEt___( mytype__, brow__ ) ROCache;
 	int i;
 	int rnd;
 ERRBegin
@@ -94,10 +97,10 @@ ERRBegin
 
 	for( i = 0; i <= 100; i++ )
 		RWCache.Append( i );
-#if 0
 
 	for( i = 0; i <= 100; i++ )
 		cio::cout << (unsigned long)i << ": " << (unsigned long)RWCache.Get( i ) << txf::tab;
+
 
 	cio::cout << txf::nl;
 
@@ -112,11 +115,13 @@ ERRBegin
 	for( i = 0; i <= 100; i++ ) {
 		rnd = rand() % 101;
 
+		if ( ROCache.Get( rnd ) != rnd )
+			ERRc();
+
 		cio::cout << (unsigned long)rnd << ": " << (unsigned long)ROCache.Get( rnd ) << txf::tab;
 	}
 
 	RWCache.Amount();
-#endif
 ERRErr
 ERREnd
 ERREpilog
@@ -134,7 +139,7 @@ ERRFBegin
 		Generic( argc, argv );
 		Test( argc, argv );
 		cio::cout << txf::nl << "-------------------------------------------" << txf::nl;
-//		Essai( argc, argv );
+		Essai( argc, argv );
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
