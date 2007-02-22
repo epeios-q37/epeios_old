@@ -191,22 +191,25 @@ namespace flm {
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 	// Fonctions
-		void Open_( void )
+		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
 		{
+			bso::bool__ Success = true;
+
 			if ( !Temoin_.Ouvert )
 			{
-				if ( Temoin_.Mode == mdr::mReadOnly ) {
-					if ( File_.Init( Nom_, fil::mReadOnly ) == fil::sFailure )
-						ERRd();
-				} else {
-					if ( File_.Init( Nom_, fil::mReadWrite ) == fil::sFailure )
-						ERRd();
-				}
+				if ( Temoin_.Mode == mdr::mReadOnly )
+					Success = File_.Init( Nom_, fil::mReadOnly, ErrHandle ) == fil::sSuccess;
+				else
+					Success = File_.Init( Nom_, fil::mReadWrite, ErrHandle ) == fil::sSuccess;
 
-				Temoin_.Ouvert = 1;
+				if ( Success )
+					Temoin_.Ouvert = 1;
 			}
+			
+			if ( Success )
+				_ReportFileUsing( _Row );
 
-			_ReportFileUsing( _Row );
+			return Success;
 		}
 	protected:
 		void Read(
@@ -433,6 +436,10 @@ namespace flm {
 			Open_();
 
 			return File_.Size();
+		}
+		bso::bool__ CreateFile( err::handle ErrHandle = err::hUsual )
+		{
+			return Open_( ErrHandle );
 		}
 	};
 

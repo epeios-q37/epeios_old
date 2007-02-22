@@ -1,5 +1,23 @@
 $Id$
 
+22/02/07 :
+	- FLM :
+		- Ajout méthode 'CreateFile()'.
+
+21/02/07 :
+	- CCH :
+		- Modifications (ajout des 'this') pour que la bibliothèque soit compilable sous g++ v3.4.4
+		- Correction de bogues.
+	- LST :
+		- Corection problème de paramètres.
+	- NSXPCM :
+		- Toutes les méthodes virtuelles sont rendues pures.
+		- Ajout de la gestion de l'évènement 'onfocus'.
+
+20/02/07 :
+	- BCH :
+		- Changement propagation du 'size_handler'.
+
 19/02/07 :
 	- CCH :
 		- Réactivation ...
