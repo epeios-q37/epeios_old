@@ -159,7 +159,7 @@ ERRBegin
 	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
 		IndexInMemory.Init( Index.Content(), Index.SortFunction() );
 
-		IndexInMemory.Allocate( Content.Extent() );
+		IndexInMemory.Allocate( Content.Extent(), aem::mDefault );
 
 		UsedIndex = &IndexInMemory;
 	} else

@@ -206,7 +206,7 @@ ERRProlog
 ERRBegin
 
 	if ( _Content().Extent() > BaseIndex.Extent() )
-		BaseIndex.Allocate( _Content().Extent() );
+		BaseIndex.Allocate( _Content().Extent(), aem::mDefault );
 
 	if ( S_.Root == NONE ) {
 		S_.Root = Row;
