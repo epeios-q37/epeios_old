@@ -128,19 +128,25 @@ namespace ssnmng {
 	  public _queue_
 	{
 	protected:
-		virtual void LSTAllocate( epeios::size__ Size )
+		virtual void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			Table.Allocate( Size );
-			Index.Allocate( Size );
-			Chronos.Allocate( Size );
-			_Allocate( Size );
-			SSNMNGAllocate( Size );
-			_queue_::Allocate( Size );
+			Table.Allocate( Size, Mode );
+			Index.Allocate( Size, Mode );
+			Chronos.Allocate( Size, Mode );
+			_Allocate( Size, Mode );
+			SSNMNGAllocate( Size, Mode );
+			_queue_::Allocate( Size, Mode );
 			
 		}
 		//v Permit to make an allocation with a affected structure.
-		virtual void SSNMNGAllocate( epeios::size__ Size ){}
-		virtual void _Allocate( epeios::size__ Size ) = 0;
+		virtual void SSNMNGAllocate(
+			epeios::size__ Size,
+			aem::mode Mode ) = 0;
+		virtual void _Allocate(
+			epeios::size__ Size,
+			aem::mode Mode ) = 0;
 	public:
 		struct s
 		: public _list_::s,
@@ -316,9 +322,11 @@ namespace ssnmng {
 	  public pointers_
 	{
 	private:
-		void _Allocate( epeios::size__ Size )
+		void _Allocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			pointers_::Allocate( Size );
+			pointers_::Allocate( Size, Mode );
 		}
 		user_functions__ *_UserFunctions;
 		void _Close( const rows_ &Rows );

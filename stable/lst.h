@@ -308,7 +308,7 @@ namespace lst {
 		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = mDefault )
+			aem::mode Mode = aem::mDefault )
 		{
 			if ( Locations.Amount() != 0 )
 				ERRu();

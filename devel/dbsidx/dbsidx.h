@@ -221,9 +221,11 @@ namespace dbsidx {
 
 			S_.ModificationTimeStamp = 0;
 		}
-		void Allocate( mdr::size__ Size )
+		void Allocate(
+			mdr::size__ Size,
+			aem::mode Mode )
 		{
-			BaseIndex.Allocate( Size );
+			BaseIndex.Allocate( Size, Mode );
 		}
 		bso::ubyte__ Index(
 			rrow__ Row,

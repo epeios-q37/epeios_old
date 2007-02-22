@@ -122,10 +122,12 @@ namespace idxbtq {
 			E_IQUEUEt_( r )::Init();
 		}
 		//f Allocate enough room to contain 'Size' items.
-		void Allocate( epeios::size__ Size )
+		void Allocate(
+			epeios::size__ Size,
+			aem::mode Mode )
 		{
-			E_IBTREEt_( r )::Allocate( Size );
-			E_IQUEUEt_( r )::Allocate( Size );
+			E_IBTREEt_( r )::Allocate( Size, Mode );
+			E_IQUEUEt_( r )::Allocate( Size, Mode );
 		}
 		void BecomeNext( void )	//Obsolete.
 		{

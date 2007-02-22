@@ -707,8 +707,10 @@ namespace tol {
 		return Object Exists( P );\
 	}
 	
-#define E_XNAVt( Object, Type )\
-	E_NAVt( Object, Type )\
+/* Lorsque 'Object' contient une virgule, on ne peut utiliser E_XNAVt(...), même en utilisant E_COVER2(...)
+car 'E_XNAVt(...)' fait elle-même appel à une macro. Aussi faudra-t'il explicitement appelé 'E_NAVt(...)' et cette macro-ci
+pour parvenir au même résultat que 'E_XNAVt(...)'. */
+#define E_NAVXt( Object, Type )\
 	Type First( epeios::size__ Offset ) const\
 	{\
 		return Object  First( Offset );\
@@ -736,8 +738,12 @@ namespace tol {
 		Object Allocate( Size, Mode );\
 	}
 
+#define E_XNAVt( Object, Type )\
+		E_NAVt( Object, Type )\
+		E_NAVXt( Object, Type )
 
-#define E_NAV( Object )	E_NAVt( Object, epeios::row__ )
+#define E_NAV( Object )		E_NAVt( Object, epeios::row__ )
+#define E_NAVX( Object )	E_NAVXt( Object, epeios::row__ )
 #define E_XNAV( Object )	E_XNAVt( Object, epeios::row__ )
 
 namespace mmm {

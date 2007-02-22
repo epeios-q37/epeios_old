@@ -105,7 +105,8 @@ namespace lstctn {
 
 			return *this;
 		}
-		E_XNAVt( list_<E_COVER2(row,row_t)>::, row )
+		E_NAVt( list_<E_COVER2(row,row_t)>::, row )
+		E_NAVXt( list_<E_COVER2(row,row_t)>::, row )
 		//f Initialization.
 		void Init( void )
 		{
