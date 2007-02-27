@@ -171,6 +171,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MultiMemory Index
 &mmm		&epeios		&2000-2001, \
 	&MultiMeMory
+&mmm0		&epeios		&\
+	&MultiMeMory base
+&mmm1		&epeios		&\
+	&MultiMeMory v1
 &msg		&epeios		&\
 	&MeSsaGes
 &mtk		&epeios		&2000-2001, 2003-\

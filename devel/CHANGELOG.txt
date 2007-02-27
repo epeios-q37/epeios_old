@@ -1,5 +1,9 @@
 $Id$
 
+26/02/07 :
+	- MMM :
+		- Recodage.
+
 22/02/07 :
 	- FLM :
 		- Ajout méthode 'CreateFile()'.
