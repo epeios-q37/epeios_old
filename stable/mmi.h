@@ -64,10 +64,10 @@ extern class ttr_tutor &MMITutor;
 #include "flw.h"
 #include "mmm.h"
 #include "tym.h"
+#include "mmisub.h"
+#include "bch.h"
 
 namespace mmi {
-	//t The type of an index in the indexed multimemory.
-	E_TYPEDEF( epeios::row_t__, index__ );
 
 	struct descripteur__
 	{
@@ -75,6 +75,7 @@ namespace mmi {
 		epeios::size__ Capacite;
 	};
 
+	typedef bch::E_BUNCHt_( descripteur__, index__ ) descriptors_;
 
 	//c An indexed multimemory.
 	class indexed_multimemory_
@@ -158,13 +159,13 @@ namespace mmi {
 			Descripteurs.Store( Descripteurs, Size - *Position - Amount, *Position, *Position + Amount );
 		}
 	public:
-		tym::E_MEMORY_( descripteur__ ) Descripteurs;
+		descriptors_ Descripteurs;
 		// les différents descripteurs
 		mmm::multimemory_ Multimemoire;
 		// la memoire générale
 		struct s
 		{
-			tym::E_MEMORY_( descripteur__ )::s Descripteurs;
+			descriptors_::s Descripteurs;
 			mmm::multimemory_::s Multimemoire;
 		};
 		indexed_multimemory_( s &S )
@@ -213,14 +214,23 @@ namespace mmi {
 			Multimemoire.Init();
 		}
 		//f Allocate 'Capacity' memories in the indexed multimemory. 'ActualCapacity' is the actual capacity.
-		void Allocate(
-			epeios::size__ Capacity,
-			epeios::size__ ActualCapacity )
+		void Allocate( epeios::size__ Amount )
 		{
-			if ( ActualCapacity > Capacity )
-				AllouerMoins_( ActualCapacity, Capacity );
+			epeios::size__ CurrentAmount = Descripteurs.Amount();
+
+			if ( CurrentAmount > Amount )
+				AllouerMoins_( CurrentAmount, Amount );
 			else
-				AllouerPlus_( ActualCapacity, Capacity );
+				AllouerPlus_( CurrentAmount, Amount );
+		}
+		index__ New( index__ Index = NONE )
+		{
+			if ( Index == NONE )
+				Index = Descripteurs.New();
+			else if ( !Descripteurs.Exists( Index ) )
+				ERRu();
+
+			return Index;
 		}
 		//f Put 'Amount' bytes in 'Buffer' from the 'Index' memory at 'Position' .
 		void Read(
@@ -292,7 +302,7 @@ namespace mmi {
 
 	class indexed_multimemory_file_manager___ {
 	private:
-		tym::memory_file_manager___ _Descriptors;
+		bch::bunch_file_manager___ _Descriptors;
 		mmm::multimemory_file_manager___ _Multimemory;
 	public:
 		void reset( bso::bool__ P = true )
@@ -372,7 +382,7 @@ namespace mmi {
 		indexed_multimemory_ &Memory,
 		indexed_multimemory_file_manager___ &FileManager )
 	{
-		bso::bool__ Exists = tym::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
+		bso::bool__ Exists = bch::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
 
 		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != Exists )
 			ERRc();
@@ -384,150 +394,37 @@ namespace mmi {
 
 //	using mdr::E_MEMORY_DRIVER__;
 
-	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.
-	class _base_indexed_multimemory_driver__
-	: public mdr::E_MEMORY_DRIVER__
+	inline void _base_indexed_multimemory_driver__::MDRRecall(
+		mdr::row_t__ Position,
+		mdr::size__ Amount,
+		mdr::datum__ *Buffer )
 	{
-	private:
-		index__ _Index;
-		const indexed_multimemory_ *&Multimemoire_;
-		// memoire à laquelle il a été affecté
-	protected:
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
-		{
-			Multimemoire_->Read( _Index, Position, Amount, Buffer );
-		}
-		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
-		{
-			ERRu();
-		}
-		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRAllocate( mdr::size__ Capacity )
-		{
-			ERRu();
-		}
-		// alloue 'Capacite' octets
-		virtual void MDRFlush( void )
-		{
-			ERRu();
-		}
-	public:
-		_base_indexed_multimemory_driver__(
-			const indexed_multimemory_ *&Multimemoire,
-			mdr::size__ &Extent )
-		: Multimemoire_( Multimemoire ),
-		  E_MEMORY_DRIVER__( Extent )
-		{}
-		_base_indexed_multimemory_driver__(
-			indexed_multimemory_ *&Multimemoire,
-			mdr::size__ &Extent )
-		: Multimemoire_( *(const indexed_multimemory_ **)& Multimemoire ),
-		  E_MEMORY_DRIVER__( Extent )
-		{}
-		void reset( bool P = true )
-		{
-			E_MEMORY_DRIVER__::reset( P );
+		Multimemoire_->Read( _Index, Position, Amount, Buffer );
+	}
 
-			_Index = NONE;
-			Multimemoire_ = NULL;
-		}
-		//f Initialize with 'Multimemory' multimemory.
-		void Init( void )
-		{
-			E_MEMORY_DRIVER__::Init();
-
-			_Index = NONE;
-		}
-		//f The 'Index' memory becomes the memory handled by this memory driver.
-		void Index( index__ Index )
-		{
-			_Index = Index;
-		}
-		//f Return the index of the current memory.
-		index__ Index( void ) const
-		{
-			return _Index;
-		}
-		//f Return the size of the memory.
-		epeios::size__ Size( void ) const
-		{
-			return Multimemoire_->Size( _Index );
-		}
-		friend class indexed_multimemory_driver__;
-	};
-
-	//c This class is the standard memory driver for the indexed multimemory.
-	class indexed_multimemory_driver__
-	: public _base_indexed_multimemory_driver__
+	inline epeios::size__ _base_indexed_multimemory_driver__::Size( void ) const
 	{
-	private:
-		indexed_multimemory_ *Multimemoire_;
-		// memoire à laquelle il a été affecté
-	protected:
-		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRStore(
-			const epeios::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
-		{
-			Multimemoire_->Write( Buffer, Amount, _Index, Position );
-		}
-		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRAllocate( mdr::size__ Capacity )
-		{
-			Multimemoire_->Allocate( _Index, Capacity );
-		}
-		// alloue 'Capacite' octets
-		virtual void MDRFlush( void )
-		{
-			if ( Multimemoire_ )
-				Multimemoire_->Flush();
-		}
-	public:
-		indexed_multimemory_driver__( mdr::size__ &Extent	)
-		: _base_indexed_multimemory_driver__( Multimemoire_, Extent ) {}
-		void reset( bool P = true )
-		{
-			_base_indexed_multimemory_driver__::reset( P );
-		}
-		//f Initialize with the 'Multimemory' multimemory.
-		void Init( indexed_multimemory_ &Multimemory )
-		{
-			_base_indexed_multimemory_driver__::Init();
-			Multimemoire_ = &Multimemory;
-		}
-		//f The 'Index' memory becomes the memory handled by this driver.
-	};
+		return Multimemoire_->Size( _Index );
+	}
 
-	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.
-	class const_indexed_multimemory_driver__
-	: public _base_indexed_multimemory_driver__
+	inline void indexed_multimemory_driver__::MDRStore(
+		const epeios::datum__ *Buffer,
+		mdr::size__ Amount,
+		mdr::row_t__ Position )
 	{
-	private:
-		const indexed_multimemory_ *Multimemoire_;
-		// memoire à laquelle il a été affecté
-	public:
-		const_indexed_multimemory_driver__( mdr::size__ &Extent	)
-		: _base_indexed_multimemory_driver__( Multimemoire_, Extent ) {}
-		void reset( bool P = true )
-		{
-			_base_indexed_multimemory_driver__::reset( P );
-		}
-		//f Initialize with the 'Multimemory' multimemory.
-		void Init( const indexed_multimemory_ &Multimemory )
-		{
-			_base_indexed_multimemory_driver__::Init();
-			Multimemoire_ = &Multimemory;
-		}
-		//f The 'Index' memory becomes the memory handled by this driver.
-	};
+		Multimemoire_->Write( Buffer, Amount, _Index, Position );
+	}
+
+	inline void indexed_multimemory_driver__::MDRAllocate( mdr::size__ Capacity )
+	{
+		Multimemoire_->Allocate( _Index, Capacity );
+	}
+
+	inline void indexed_multimemory_driver__::MDRFlush( void )
+	{
+		if ( Multimemoire_ )
+			Multimemoire_->Flush();
+	}
 }
 
 

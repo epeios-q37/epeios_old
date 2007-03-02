@@ -1,5 +1,12 @@
 $Id$
 
+27/02/07 :
+	- MMI : 
+		- Recodage en utilisant un 'bunch' au lieu de simplement une 'tym::memory'.
+		
+	- BCH :
+		- Recodage pour autoriser modifications 'MMI4.
+
 26/02/07 :
 	- MMM :
 		- Recodage.

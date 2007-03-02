@@ -67,6 +67,7 @@ extern class ttr_tutor &BCHTutor;
 #include "epeios.h"
 #include "dtfptb.h"
 #include "flm.h"
+#include "mmisub.h"
 
 namespace bch {
 
@@ -444,11 +445,12 @@ namespace bch {
 		}
 	};
 
-
 	/*c The core set of static object of type 'type'. Internal use only. */
 	template <class type, typename row, typename mng, typename sh> class _bunch_
 	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
 	{
+	private:
+	//	mmi::indexed_multimemory_driver__ _IndexedMultimemoryDriver;
 	public:
 		struct s
 		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s
@@ -555,6 +557,15 @@ namespace bch {
 		return Exists;
 	}
 
+/*
+	template <typename bunch> epeios::row__ Connect(
+		bunch &Bunch,
+		mmi::indexed_multimemory_ &IndexedMultimemory,
+		epeios::row__ *Tow = NULL )
+	{
+		Bunch.I
+	}
+*/
 
 	typedef E_BUNCH_( epeios::row__ ) relations_;
 	E_AUTO( relations )
