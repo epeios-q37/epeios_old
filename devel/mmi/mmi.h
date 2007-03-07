@@ -251,7 +251,7 @@ namespace mmi {
 			Ecrire_( Buffer, Amount, Index, Position );
 		}
 		//f Allocate 'Size' bytes in the 'Index' memory.
-		void Allocate(
+		void Reallocate(
 			index__ Index,
 			epeios::size__ Size )
 		{
@@ -417,7 +417,7 @@ namespace mmi {
 
 	inline void indexed_multimemory_driver__::MDRAllocate( mdr::size__ Capacity )
 	{
-		Multimemoire_->Allocate( _Index, Capacity );
+		Multimemoire_->Reallocate( _Index, Capacity );
 	}
 
 	inline void indexed_multimemory_driver__::MDRFlush( void )

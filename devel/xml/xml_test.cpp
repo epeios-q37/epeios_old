@@ -110,7 +110,7 @@ ERRProlog
 	flx::E_STRING_IFLOW__ Flow;
 	xtf::extended_text_iflow__ XTFlow;
 ERRBegin
-Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
+	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 	Flow.Init( Example );
 
 	Flow.EOFD( XTF_EOXT );

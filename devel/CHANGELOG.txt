@@ -1,11 +1,17 @@
 $Id$
 
+07/03/07 :
+	- CTN :
+		- Adaptations aux modifications 'MMI'.
+	- MMI :
+		- Renommage 'Allocate' en 'Reallocate' : permet déviter certains bogues.
+
 27/02/07 :
 	- MMI : 
 		- Recodage en utilisant un 'bunch' au lieu de simplement une 'tym::memory'.
 		
 	- BCH :
-		- Recodage pour autoriser modifications 'MMI4.
+		- Recodage pour autoriser modifications 'MMI'.
 
 26/02/07 :
 	- MMM :

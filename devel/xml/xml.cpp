@@ -57,6 +57,7 @@ public:
 
 #include "lstctn.h"
 #include "flx.h"
+#include "flf.h"
 
 using namespace xml;
 
@@ -941,6 +942,7 @@ public:
 
 #define NAME_ATTRIBUTE		"name"
 #define SELECT_ATTRIBUTE	"select"
+#define HREF_ATTRIBUTE		"href"
 #define VALUE_ATTRIBUTE		"value"
 
 #define DEFINE_TAG	"define"
@@ -976,6 +978,7 @@ private:
 	str::string _ValueAttribute;
 	bso::bool__ _IsDefining;
 	bso::ubyte__ _ExpandNestingLevel;	// Niveau d'imbrication de 'xxx:expand'.
+	bso::bool__ _ExpandIsHRef;
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
 		return str::Compare( TagName, _Namespace, TagName.First(), _Namespace.First(), _Namespace.Amount() ) == 0;
@@ -1021,7 +1024,7 @@ private:
 	ERREpilog
 		return Success;
 	}
-	bso::bool__ _HandleExpand( const str::string_ &Name )
+	bso::bool__ _HandleMacroExpand( const str::string_ &Name )
 	{
 		bso::bool__ Success = false;
 	ERRProlog
@@ -1061,6 +1064,54 @@ private:
 	ERREpilog
 		return Success;
 	}
+	bso::bool__ _HandleFileExpand( const str::string_ &Name )
+	{
+		bso::bool__ Success = false;
+	ERRProlog
+		str::string String;
+		flf::file_iflow___ Flow;
+		xtf::extended_text_iflow__ XFlow;
+		xtf::location__ Line = 0, Column = 0;
+		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
+		tol::E_FPOINTER___( char ) NameBuffer;
+	ERRBegin
+		NameBuffer = Name.Convert();
+
+		if ( Flow.Init( NameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
+			ERRReturn;
+
+		Flow.EOFD( XTF_EOXT );
+
+		XFlow.Init( Flow, Line, Column );
+
+		_Flow = &XFlow;
+
+		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
+			ERRReturn;
+
+		Success = Parse( XFlow, *this );
+
+		if ( _ExpandNestingLevel-- == 0 )
+			ERRc();
+
+		_Flow = PreviousFlow;
+
+		if ( !Success )
+			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Success;
+	}
+	bso::bool__ _HandleExpand(
+		const str::string_ &Name,
+		bso::bool__ IsHRef )
+	{
+		if ( IsHRef )
+			return _HandleFileExpand( Name );
+		else
+			return _HandleMacroExpand( Name );
+	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
 	{
@@ -1098,6 +1149,7 @@ protected:
 			break;
 		case tExpand:
 			_NameSelectAttribute.Init();
+			_ExpandIsHRef = false;
 			break;
 		case tIfeq:
 			_NameSelectAttribute.Init();
@@ -1143,9 +1195,19 @@ protected:
 				if ( _NameSelectAttribute.Amount() != 0 )
 					return false;
 
-				_NameSelectAttribute = Value;
+				_ExpandIsHRef = false;
+
+			} else if ( Name == HREF_ATTRIBUTE ) {
+				if ( _NameSelectAttribute.Amount() != 0 )
+					return false;
+
+				_ExpandIsHRef = true;
+
 			} else
 				return false;
+
+			_NameSelectAttribute = Value;
+
 			break;
 		case tIfeq:
 			if ( Name == SELECT_ATTRIBUTE ) {
@@ -1216,16 +1278,20 @@ protected:
 		case tIfeq:
 			if ( _NameSelectAttribute.Amount() == 0 )
 				return false;
+
 			if ( !_Variables.Exists( _NameSelectAttribute ) )
 				return false;
+
 			if ( !_Variables.IsEqual( _NameSelectAttribute, _ValueAttribute ) )
 				return _Ignore( *_Flow );
+
 			break;
 		case tBloc:
 			break;
 		case tSet:
 			if ( _NameSelectAttribute.Amount() == 0 )
 				return false;
+
 			break;
 		case t_Undefined:
 			return false;
@@ -1297,10 +1363,11 @@ protected:
 			if ( _NameSelectAttribute.Amount() == 0 )
 				return false;
 
-			if ( !_HandleExpand( _NameSelectAttribute ) )
+			if ( !_HandleExpand( _NameSelectAttribute, _ExpandIsHRef ) )
 				return false;
 
 			_NameSelectAttribute.Init();
+			_ExpandIsHRef = false;
 			break;
 		case tIfeq:
 			_NameSelectAttribute.Init();

@@ -178,7 +178,7 @@ namespace ctn {
 			AncCap = amount_extent_manager_<r>::Amount();
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( Amount, Mode ) ) {
-				Dynamics.Allocate( Amount, AncCap );
+				Dynamics.Allocate( Amount );
 				Statics.Allocate( Amount );
 			}
 
@@ -250,7 +250,7 @@ namespace ctn {
 			Statics.Store( Statics, NewAmount - *Position, *Position + Amount, Position );
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( NewAmount, Mode ) ) {
-				Dynamics.Allocate( NewAmount, CurrentAmount );
+				Dynamics.Allocate( NewAmount );
 				Statics.Allocate( NewAmount );
 			}
 		}
