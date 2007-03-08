@@ -98,27 +98,34 @@ namespace xml {
 
 	bso::bool__ Parse(
 		xtf::extended_text_iflow__ &Flow,
-		callback__ &Callback );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+		callback__ &Callback );
+	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
 	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
 	// où 'xxx' est la valeur donné à 'NameSpace'.
 	bso::bool__ ExtendedParse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Namespace,
-		callback__ &Callback );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+		callback__ &Callback,
+		str::string_ &FileName );
+	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
 
 	/* Traite toutes les balises 'xxx:...' (où 'xxx' correspond à 'Namespace') du flux XML 'IFlow' et
 	   génère un flux XML sans balises 'xxx:...' dans 'IFlow'. */
 	bso::bool__ Normalize(
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
-		txf::text_oflow__ &OFlow );	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+		txf::text_oflow__ &OFlow,
+		str::string_ &GuiltyFileName );
+	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
+	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
 
 	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
 
 	inline void Convert(
 		const str::string_ &Source,
-		str::string_ &Target )	// Conversion des caractères spéciaux, comm '<' qui devient '&lt;'.
+		str::string_ &Target )	// Conversion des caractères spéciaux, comme '<' qui devient '&lt;'.
 	{
 		Target = Source;
 

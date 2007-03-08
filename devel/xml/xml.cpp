@@ -309,9 +309,10 @@ inline static bso::bool__ GetTagValue_(
 
 inline static void GetAttributeValue_(
 	flow_ &Flow,
+	char Delimiter,
 	str::string_ &Value )
 {
-	GetValue_( Flow, '"', Value );
+	GetValue_( Flow, Delimiter, Value );
 }
 
 static void GetAttribute_(
@@ -319,6 +320,8 @@ static void GetAttribute_(
 	str::string_ &Name,
 	str::string_ &Value )
 {
+	char Delimiter;
+
 	GetName_( Flow, Name );
 
 	SkipSpaces_( Flow );
@@ -328,12 +331,17 @@ static void GetAttribute_(
 
 	SkipSpaces_( Flow );
 
-	if ( Flow.Get() != '"' )
+	Delimiter = Flow.Get();
+
+	if ( ( Delimiter != '"' ) && ( Delimiter != '\'' ) )
 		ERRI( iBeam );
 
-	GetAttributeValue_( Flow, Value );
+	GetAttributeValue_( Flow, Delimiter, Value );
 
-	Flow.Get();	// To skip the '"'.
+	if ( Flow.EOX() )
+		ERRI( iBeam );
+
+	Flow.Get();	// To skip the '"' or '''.
 
 	if ( Flow.EOX() )
 		ERRI( iBeam );
@@ -633,7 +641,7 @@ ERRBegin
 					Tag.Init();
 
 					if ( Tags.IsEmpty() )
-							ERRI( iBeam );
+						ERRI( iBeam );
 					else
 						Tags.Top( Tag );
 
@@ -1024,7 +1032,7 @@ private:
 	ERREpilog
 		return Success;
 	}
-	bso::bool__ _HandleMacroExpand( const str::string_ &Name )
+	bso::bool__ _HandleMacroExpand( void )
 	{
 		bso::bool__ Success = false;
 	ERRProlog
@@ -1036,7 +1044,7 @@ private:
 	ERRBegin
 		String.Init();
 
-		if ( !_Repository.Get( Name, Line, Column, String ) )
+		if ( !_Repository.Get( _NameSelectAttribute, Line, Column, String ) )
 			ERRReturn;
 
 		SFlow.Init( String );
@@ -1064,25 +1072,24 @@ private:
 	ERREpilog
 		return Success;
 	}
-	bso::bool__ _HandleFileExpand( const str::string_ &Name )
+	bso::bool__ _HandleFileExpand( void )
 	{
 		bso::bool__ Success = false;
 	ERRProlog
 		str::string String;
 		flf::file_iflow___ Flow;
 		xtf::extended_text_iflow__ XFlow;
-		xtf::location__ Line = 0, Column = 0;
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
 		tol::E_FPOINTER___( char ) NameBuffer;
 	ERRBegin
-		NameBuffer = Name.Convert();
+		NameBuffer = _NameSelectAttribute.Convert();
 
 		if ( Flow.Init( NameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
 			ERRReturn;
 
 		Flow.EOFD( XTF_EOXT );
 
-		XFlow.Init( Flow, Line, Column );
+		XFlow.Init( Flow );
 
 		_Flow = &XFlow;
 
@@ -1100,17 +1107,21 @@ private:
 			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
 	ERRErr
 	ERREnd
+		if ( ( Success == false ) && ( !_ExpandIsHRef ) ) {
+			// On rétablit les deux variables ci-dessous parce qu'elles ont peut-être été effacé par un 'expand' d'un sous-fichier.
+			// Elles sont utiles pour déterminer le sous-fichier contenant l'erreur.
+			_NameSelectAttribute = NameBuffer;
+			_ExpandIsHRef = true;
+		}
 	ERREpilog
 		return Success;
 	}
-	bso::bool__ _HandleExpand(
-		const str::string_ &Name,
-		bso::bool__ IsHRef )
+	bso::bool__ _HandleExpand( void )
 	{
-		if ( IsHRef )
-			return _HandleFileExpand( Name );
+		if ( _ExpandIsHRef )
+			return _HandleFileExpand();
 		else
-			return _HandleMacroExpand( Name );
+			return _HandleMacroExpand();
 	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
@@ -1363,7 +1374,7 @@ protected:
 			if ( _NameSelectAttribute.Amount() == 0 )
 				return false;
 
-			if ( !_HandleExpand( _NameSelectAttribute, _ExpandIsHRef ) )
+			if ( !_HandleExpand() )
 				return false;
 
 			_NameSelectAttribute.Init();
@@ -1436,12 +1447,21 @@ protected:
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
 		}
+		void GetGuiltyFileNameIfRelevant( str::string_ &FileName )
+		{
+			if ( _ExpandIsHRef ) {
+				if ( _NameSelectAttribute.Amount() == 0 )
+					ERRc();
+				FileName = _NameSelectAttribute;
+			}
+		}
 };
 
 bso::bool__ xml::ExtendedParse(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Namespace,
-	callback__ &Callback )
+	callback__ &Callback,
+	str::string_ &FileName )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -1450,6 +1470,10 @@ ERRBegin
 	XCallback.Init( Namespace, Flow, Callback );
 
 	Success = Parse( Flow, XCallback );
+
+	if ( !Success )
+		XCallback.GetGuiltyFileNameIfRelevant( FileName );
+
 ERRErr
 ERREnd
 ERREpilog
@@ -1514,7 +1538,8 @@ public:
 bso::bool__ xml::Normalize(
 	xtf::extended_text_iflow__ &IFlow,
 	const str::string_ &Namespace,
-	txf::text_oflow__ &OFlow )
+	txf::text_oflow__ &OFlow,
+	str::string_ &GuiltyFileName )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -1522,7 +1547,7 @@ ERRProlog
 ERRBegin
 	NCallback.Init( OFlow );
 
-	Success = ExtendedParse( IFlow, Namespace, NCallback );
+	Success = ExtendedParse( IFlow, Namespace, NCallback, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog

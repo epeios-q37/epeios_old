@@ -33,6 +33,7 @@
 
 #include "err.h"
 #include "cio.h"
+#include "flf.h"
 
 using cio::cin;
 using cio::cout;
@@ -105,21 +106,32 @@ struct callback__
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	str::string	Example;
+//	str::string	Example;
 	callback__ Callback;
-	flx::E_STRING_IFLOW__ Flow;
+//	flx::E_STRING_IFLOW__ Flow;
+	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XTFlow;
+	str::string GuiltyFileName;
 ERRBegin
-	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
-	Flow.Init( Example );
+//	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
+//	Flow.Init( Example );
+
+	Flow.Init( "test.xml" );
 
 	Flow.EOFD( XTF_EOXT );
 
 	XTFlow.Init( Flow );
 
-	if ( !xml::ExtendedParse( XTFlow, str::string( "xcf" ), Callback ) ) {
+	GuiltyFileName.Init();
+
+	if ( !xml::ExtendedParse( XTFlow, str::string( "xcf" ), Callback, GuiltyFileName ) ) {
 		cout << txf::sync;
-		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column() << txf::nl;
+		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column();
+
+		if ( GuiltyFileName.Amount() != 0 )
+			cerr << " in file '" << GuiltyFileName << '\'';
+
+		cerr << txf::nl;
 	}
 
 	
