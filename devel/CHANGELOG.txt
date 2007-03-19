@@ -1,29 +1,33 @@
 $Id$
 
-07/03/07 :
+19/03/2007 :
+	- UYM :
+		- Modification pour éviter des 'warnings'.
+
+07/03/2007 :
 	- CTN :
 		- Adaptations aux modifications 'MMI'.
 	- MMI :
 		- Renommage 'Allocate' en 'Reallocate' : permet déviter certains bogues.
 
-27/02/07 :
+27/02/2007 :
 	- MMI : 
 		- Recodage en utilisant un 'bunch' au lieu de simplement une 'tym::memory'.
 		
 	- BCH :
 		- Recodage pour autoriser modifications 'MMI'.
 
-26/02/07 :
+26/02/2007 :
 	- MMM :
 		- Recodage.
 
-22/02/07 :
+22/02/2007 :
 	- FLM :
 		- Ajout méthode 'CreateFile()'.
 	- LST :
 		- Correction problème de 'namespace'.
 
-21/02/07 :
+21/02/2007 :
 	- CCH :
 		- Modifications (ajout des 'this') pour que la bibliothèque soit compilable sous g++ v3.4.4
 		- Correction de bogues.
@@ -33,11 +37,11 @@ $Id$
 		- Toutes les méthodes virtuelles sont rendues pures.
 		- Ajout de la gestion de l'évènement 'onfocus'.
 
-20/02/07 :
+20/02/2007 :
 	- BCH :
 		- Changement propagation du 'size_handler'.
 
-19/02/07 :
+19/02/2007 :
 	- CCH :
 		- Réactivation ...
 		- Adaptation à 'g++'.
@@ -46,12 +50,12 @@ $Id$
 	- MDR :
 		- Correction définition 'MDR_ROW_T_MAX'.
 
-16/02/07 :
+16/02/2007 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'LST'.
 		- Généralisation et remaniement des '..._file_manager___'.
 
-15/02/07 :
+15/02/2007 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'LST'.
 		- Généralisation et remaniement des '..._file_manager___'.
@@ -81,85 +85,85 @@ $Id$
 	- NSXPCM
 		- Enrichissement.
 
-24/02/07 :
+24/02/2007 :
 	- DTR :
 		- Ajout de la notion de niveau ('Level').
 	- XTF :
 		- On peut maintenant forcer la valeur des membres 'Line' et 'Column'
 
-21/01/07 :
+21/01/2007 :
 	- STR :
 		- Introduction de la notion de base pour les conversions de nombres.
 	- XML :
 		- Correction bogue commentaire.
 
-20/01/07 :
+20/01/2007 :
 	- DTR :
 		- 'HasFirst()' et 'HasLast()' sont tous deux remplacer par 'HasChild()'.
 
-11/01/07 :
+11/01/2007 :
 	- RGSTRY :
 		- Simplification.
 		- Mise en oeuvre des balises 'xcf:set' et 'xcf:ifeq'.
 
-10/01/07 :
+10/01/2007 :
 	- XML :
 		- S'il n'y a pas d'espace entre deux attributs, une erreur est maintenant génèrée.
 		- Correction bogue appel 'XMLStartTagClosed()'
 
-07/01/07
+07/01/2007
 	- XML :
 		- '<... />' appelle maintenant 'StartTagClosed()' avant 'EndTag()'.
 
-03/12/06 :
+03/12/2006 :
 	- GENERAL :
 		- Adaptation à VC++ 8.
 
-20/11/06 :
+20/11/2006 :
 	- FLM :
 		- Ajout gestion 'FLM_[_]MAX_FILE_AMOUNT'.
 		- Rendue 'thread-safe'.
 
-19/11/06 :
+19/11/2006 :
 	- CSDBNS :
 		- Ajout de code pour traquer bogue apparu sous Linux concernant cette bibliothèque.
 
-16/11/06 :
+16/11/2006 :
 	- GENERAL :
 		- Correction bogues apparus lors de la compilation sous Linux.
 	- RGSTRY :
 		- Correction bogue apparus suite modification 'XML'.
 
-15/11/06 :
+15/11/2006 :
 	- GENERAL :
 		- Correction bogues apparus lors de la compilation sous Linux.
 
-07/11/06 :
+07/11/2006 :
 	- XML :
 		- Le parser ne parse plus que le contenu de la première balise rencontrée et non plus jusqu'à la fin du 'flow'.
 		- La position d'un éventuelle erreur n'est plus récupèrée à travers les paramètres, mais directement par l'objet 'flow'.
 	- XTF :
 		- Modifications pour faciliter les modification bibliothèque 'XML'.
 
-30/10/06 :
+30/10/2006 :
 	- GENERAL :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
-27/10/06 :
+27/10/2006 :
 	- GENERAL :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
-26/10/06 :
+26/10/2006 :
 	- GENERAL :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
-19/10/06 :
+19/10/2006 :
 	- FLM :
 		- Ajout méthode 'Drop()'.
 	- IDXBTR :
 		- Correction bogue 'Delete()'.
 
-15/10/06 :
+15/10/2006 :
 	- BCH :
 		- Codage '[ReadFrom|WriteTo]Flow()'.
 		- Adaptation aux modifications bibliothèque 'BSO'.
@@ -174,34 +178,34 @@ $Id$
 	- UYM :
 		- Codage '[ReadFrom|WriteTo]Flow()'.
 
-09/10/06 :
+09/10/2006 :
 	- NSXPCM :
 		- Ajout méthode 'DeleteListboxContent()'.
 		- Changement type argument 'QueryInterface()'.
 		- Ajout fonction 'SelectListboxItem()'.
 
-08/10/06 :
+08/10/2006 :
 	- LCK :
 		- Ajout méthodes 'Get[Exclusive|Shared]Access()' et 'Release[Exclusive|Shared]Access()'.
 
-07/10/06 :
+07/10/2006 :
 	- GENERAL :
 		- Création DBSBSC.
 		- Adaptation aux modifications 'MDR'.
 	- MDR :
 		- Mise aux normes enum 'mode'.
 
-06/10/06 :
+06/10/2006 :
 	- LCK :
 		- Ajout classe '[exclusive|shared]_access___'.
 	- TOL :
 		- Ajout de la macro 'E_TTYPEDEF___'.
 
-03/10/06 :
+03/10/2006 :
 	- MSG :
 		- Correction bogue apparaissant en mode 'Release'.
 
-28/09/06 :
+28/09/2006 :
 	- DBSTBL :
 		- Suppression méthode 'SetDelay()' (pris en charge par 'Init()').
 
@@ -217,7 +221,7 @@ $Id$
 	- NSXPCM :
 		- Ajout quelques fonctions.
 
-25/09/06 :
+25/09/2006 :
 	- BTR :
 		- Adaptation aux particularités de le 'DTR'.
 	- DTR :
@@ -227,7 +231,7 @@ $Id$
 	- TOL :
 		- Réécriture fonction 'FileExists()' pour s'appuyer sur la fonction 'stat()'.
 
-24/09/06 :
+24/09/2006 :
 	- EPEIOS :
 		- Mise en place définition conditionelle de 'NONE'.
 	- FLM :
@@ -238,7 +242,7 @@ $Id$
 	- UYM :
 		- Rajout définition conditionelle de 'NONE'.
 
-18/09/06 :
+18/09/2006 :
 	- CVM :
 		- Modification pour adaptation modification 'MDR'.
 	- IDXBTR :
@@ -248,19 +252,19 @@ $Id$
 	- QUE :
 		- Rajout méthode 'IsMember()'.
 
-07/09/06 :
+07/09/2006 :
 	- BCH :
 		- Correction.
 
-04/09/06 :
+04/09/2006 :
 	- NSXPCM :
 		- Codage nouvelles fonctions.
 
-27/08/06 :
+27/08/2006 :
 	- GENERAL :
 		- Creation 'DBSTBL'
 
-26/08/06 :
+26/08/2006 :
 	- GENERAL :
 		- Codage 'DBSxxx'.
 
@@ -268,7 +272,7 @@ $Id$
 	- GENERAL :
 		- Correction erreurs apparus lors d'une compilation sous Linux.
 
-21/08/06 :
+21/08/2006 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
 	- IDXBTQ
@@ -278,26 +282,26 @@ $Id$
 	- SSNMNG
 		- Adaptation aux modifications 'IDXBTQ'.
 
-20/08/06 :
+20/08/2006 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
 	- IDXBTR :
 		- Implémentation de l'algorithme 'red-black tree'.
 
 
-18/08/06 :
+18/08/2006 :
 	- BTR :
 		- Implémentation des fonctions de nouvelles fonctions nécessaire à la modification de 'IDXBTR'.
 	- IDXBTR :
 		- Implémentation de l'algorithme 'red-black tree'.
 
-17/08/06 :
+17/08/2006 :
 	- IDXBTQ :
 		- Amélioration de l'ergonomie.
 	- TOL :
 		- Ajout fonction 'RemoveFile()'.
 
-16/08/06 :
+16/08/2006 :
 	- CSLIO :
 		- Ajout méthode 'Size'.
 	- FLM :
@@ -309,7 +313,7 @@ $Id$
 	- WLLIO :
 		- Ajout méthode 'Size'.
 
-15/08/06 :
+15/08/2006 :
 	- IDXQUE :
 		- Suppression méthode 'MarkAsSame', source de bogues.
 	- IDXBTR
@@ -321,22 +325,22 @@ $Id$
 	- GENERAL :
 		- Début codage de la version portable de différentes bibliothèques.
 
-13/08/06 :
+13/08/2006 :
 	- DTFPTB :
 		- Améliorations.
 		
 
-11/08/06 :
+11/08/2006 :
 	- GENERAL :
 		- Corrections bogues apparus suite aux modifications 'MDR'.
 
-10/08/06 :
+10/08/2006 :
 	- CSLIO :
 		- Correction bogue 'Seek'.
 	- FIL :
 		- Correction bogue paramètre 'Mode'.
 
-09/08/06 :
+09/08/2006 :
 	- CPE :
 		- Correction oublie test 'CPE_ST' pour 'cygwin'.
 	- CTN :
@@ -344,7 +348,7 @@ $Id$
 	- MMI :
 		- Suppression d'un test en mode débogage qui n'avait pas de sens.
 
-07/08/06 :
+07/08/2006 :
 	GENERAL :
 		- Déplacement test capacité en mode débogage de 'UYM' vers 'MDR'.
 		- Adaptation aux modifications 'MDR' et 'UYM'.
@@ -355,21 +359,21 @@ $Id$
 	- CSDSNC :
 		- Correction pb utilisation bibliothèque 'MTX' même si pas en contexte multitâche.
 
-13/07/06 :
+13/07/2006 :
 	- BSO :
 		- LA conversion d'un '...float__' n'utilise plus la notation exponentielle.
 	- ERR :
 		- Adaptation aux modifications 'CPE' (voir 30/06/06).
 
-04/07/06 :
+04/07/2006 :
 	- NSXPCM :
 		- Ajout fonctions 'CloneNode()', 'GetPreviousSibling()' et 'GetNextSibling()'
 
-30/06/06 :
+30/06/2006 :
 	- CPE :
 		- Simplification.
 
-24/06/06 :
+24/06/2006 :
 	- GENERAL :
 		- Création 'FWF' pour remplacer 'FLF'.
 		- Création 'IOP'.
@@ -392,20 +396,20 @@ $Id$
 	- FLF :
 		- Toutes les méthodes virtuelles doivent maintenant être surchargées.
 
-05/06/06 :
+05/06/2006 :
 	- GENERAL :
 		- Création bibliothèque 'BFL' (Bit FLow) de lecture/écriture par bit.
 	- FLW :
 		- Rajout méthode 'GetCurrentCacheDatum'.
 		- Renommage des variables de la classe 'oflow__' pour la rendre conforme à la norme.
 
-26/05/06 :
+26/05/2006 :
 	- BSO :
 		- Simplification de la classe 'bso::sign__' pour éviter des ambiguïtés..
 	- LCK :
 		- Correction erreurs typographiques.
 
-25/05/06 :
+25/05/2006 :
 	- GENERAL :
 		- Adaptations aux changements dans 'FLW'.
 	- FLF :
@@ -413,7 +417,7 @@ $Id$
 	- FLW :
 		- Déportation des classes '...flow_functions___' vers 'LFL'.
 
-22/05/06 :
+22/05/2006 :
 	- RGSTRY :
 		- Correction bogue 'xcf:bloc' successifs.
 
@@ -429,11 +433,11 @@ $Id$
 	- RGSTRY :
 		- Correction bogue.
 
-12/04/06 :
+12/04/2006 :
 	- RGSTRY :
 		- Ajout du booléen 'Append' pour la méthode 'SetValue()'.
 
-02/04/06 :
+02/04/2006 :
 	- RGSTRY :
 		- Utilisation du namespace 'xcf' (XML-based configuration file) à la place de 'exml'.
 		- Introduction de 'xcf:bloc".
@@ -443,67 +447,67 @@ $Id$
 		permettant d'inclure un fichier.
 		- Remaniement assez conséquent pour implanter toutes ces fonctionnalités.
 		
-30/03/06 :
+30/03/2006 :
 	- FLX :
 		- Correction bogue suite aux modifications bibliothèque 'FLW'.
 	- XML :
 		- Correction bogue apparaissant avec l'arbre XML suivant :
 		"<A><B/>Valeur</A>" (balise vide syntaxe '<.../>' suivi d'une valeur).
 
-27/03/06 :
+27/03/2006 :
 	- NSXPCM :
 		- Ajout gestion des types 'ulongs' et 'slongs'.
 
-15/03/06 :
+15/03/2006 :
 	- DTE :
 		- Le test de la validité d'une date est maintenant correcte !
 
-14/03/06 :
+14/03/2006 :
 	- BCH :
 		- Ajout méthode 'Top()' (pour aller avec la méthode 'Pop()').
 
-12/03/06 :
+12/03/2006 :
 	- FLW :
 		- Modification pour éviter supprimer des 'warning' de g++.
 	- TAGEXP :
 		- Adaptation au modifications bibliothèque 'FIL'.
 
-06/03/06 :
+06/03/2006 :
 	- RGSTRY :
 		- Correction bogue recherche valeurs multiples.
 
-04/03/06 :
+04/03/2006 :
 	- CPE :
 		- Ajout macro 'CPE__LINUX'.
 		- Correction bogue 'CPE__MS' dans CYGWIN.
 	- MTX :
 		- Mise en oeuvre d'opérateur atomiques.
 
-02/03/06 :
+02/03/2006 :
 	- FLW :
 		- Correction bogue lorsque tentative de lire 0 octet.
 
-25/02/06 :
+25/02/2006 :
 	- RGSTRY :
 		- Correction bogue balise sans attribut.
 
-24/02/06 :
+24/02/2006 :
 	- FIL :
 		- Ajout classe 'file_(i|o)flow_functions___'.
 	- FLX :
 		- Ajout objet 'dump'.
 
-21/02/06 :
+21/02/2006 :
 	- GENERAL :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 	- FLW :
 		- Retrait paramètre 'Synchronization' de la méthode 'FLWWrite(...)'.
 
-20/02/06 :
+20/02/2006 :
 	- GENERAL :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 
-19/02/06 :
+19/02/2006 :
 	- GENERAL :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 	- FLW :
@@ -513,7 +517,7 @@ $Id$
 	- MTX :
 		- Renommage '...RELEASED...' en '...DELETED...'.
 
-28/01/06 :
+28/01/2006 :
 	- General :
 		- Création de la bibliothèque 'THT' (void 'MTK' et 'TOL' ).
 		- Adaptation aux changements de la bibliothèque 'MTX'.
@@ -534,11 +538,11 @@ $Id$
 	- NSXPDM :
 		- Rajout d'une fonction 'GetElementById()...' avec variation sur le type des paramètres.
 
-23/01/06 :
+23/01/2006 :
 	- RGSTRY :
 		- Rajout d'une méthode 'GetPathValue(...)'.
 
-23/01/06 :
+23/01/2006 :
 	- RGSTRY :
 		- Rajout d'une méthode 'GetPathValue(...)'.
 		- Toutes les variables booléenes 'Exists' sont maintenant passé par pointeur et non plus par référence,
@@ -547,21 +551,21 @@ $Id$
 		  à chaque appel).
 
 
-18/01/06 :
+18/01/2006 :
 	- BCH :
 		- Mise en place modifications requises par g++ v3.4.4.
 	- NSXPCM :
 		- Mise en oeuvre de 'templates'.
 
-10/01/06 :
+10/01/2006 :
 	- BCH :
 		- Ajout méthode 'Pop()'.
 
-09/01/06 :
+09/01/2006 :
 	- BCH :
 		- Ajout méthode 'Set()'.
 
-03/01/06 :
+03/01/2006 :
 	- DIR :
 		- Ajout fonction suppression de répertoire.
 

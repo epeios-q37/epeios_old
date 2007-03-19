@@ -180,7 +180,7 @@ row_t__ untyped_memory_::Search(
 	datum__ Tampon[BUFFER_SIZE];
 	bool Trouve = false;
 	size__ BufferSize = Taille * ( BUFFER_SIZE / Taille );
-	size_t BufferPosition = 0;
+	size__ BufferPosition = 0;
 
 	while( !Trouve && ( Debut < Fin ) )
 	{
@@ -230,7 +230,7 @@ void untyped_memory_::WriteToFlow(
 ERRProlog
 	datum__ TamponSecurite[BUFFER_SIZE];
 	datum__ *Tampon = TamponSecurite;
-	size_t Taille = sizeof( TamponSecurite );
+	size__ Taille = sizeof( TamponSecurite );
 ERRBegin
 	if ( Quantite > BUFFER_SIZE )
 	{
@@ -271,7 +271,7 @@ void untyped_memory_::ReadFromFlow(
 ERRProlog
 	datum__ TamponSecurite[BUFFER_SIZE];
 	datum__ *Tampon = TamponSecurite;
-	size_t Taille = sizeof( TamponSecurite );
+	size__ Taille = sizeof( TamponSecurite );
 ERRBegin
 	if ( Quantite > BUFFER_SIZE )
 	{
