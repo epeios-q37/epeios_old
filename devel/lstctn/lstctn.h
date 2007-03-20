@@ -165,7 +165,7 @@ namespace lstctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_container_file_manager___::ReleaseFile();
+			_container_file_manager___::ReleaseFiles();
 
 			if ( P ) {
 				if ( ( _ListStore != NULL )

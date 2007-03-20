@@ -1,5 +1,13 @@
 $Id$
 
+20/03/2007 :
+	- GENERAL :
+		- Adaptation modifications bibliothèque 'CTN'.
+	- CTN :
+		- 'ReleaseFile()' -> 'ReleaseFiles()'
+	- IDXBTQ :
+		- Ajout méthode 'Exists()' classe 'index_file_manager___'.
+
 19/03/2007 :
 	- UYM :
 		- Modification pour éviter des 'warnings'.

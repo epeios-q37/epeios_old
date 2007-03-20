@@ -333,7 +333,7 @@ namespace ctn {
 			_Statics.Init( StaticsFileName, Mode, Persistent );
 			_Dynamics.Init( DescriptorsDynamicsFileName, MultimemoryDynamicsFileName, Mode, Persistent );
 		}
-		void ReleaseFile( void )
+		void ReleaseFiles( void )
 		{
 			_Statics.ReleaseFile();
 			_Dynamics.ReleaseFile();

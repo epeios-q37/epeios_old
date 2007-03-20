@@ -276,6 +276,15 @@ namespace idxbtq {
 
 			return _TreeFileManager.IsPersistent();
 		}
+		bso::bool__ Exists( void ) const
+		{
+			bso::bool__ Exists = _TreeFileManager.Exists();
+
+			if ( Exists != _QueueFileManager.Exists() )
+				ERRc();
+
+			return Exists;
+		}
 		void Drop( void )
 		{
 			_TreeFileManager.Drop();
