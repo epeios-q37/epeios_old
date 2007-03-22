@@ -570,6 +570,10 @@ namespace tol {
 		remove( FileName );
 	}
 
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
+
 	bso::bool__ CreateFile(
 		const char *FileName,
 		err::handle ErrHandle = err::hUsual );	// Crée un fichier de nom 'FileName'.

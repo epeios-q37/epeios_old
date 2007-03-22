@@ -251,6 +251,9 @@ namespace lstbch {
 
 			return Exists;
 		}
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
 		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
 		{
 			bso::bool__ Success = _bunch_file_manager___::CreateFile( ErrHandle );

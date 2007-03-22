@@ -437,6 +437,9 @@ namespace flm {
 
 			return File_.Size();
 		}
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
 		bso::bool__ CreateFile( err::handle ErrHandle = err::hUsual )
 		{
 			return Open_( ErrHandle );
