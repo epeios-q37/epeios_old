@@ -1,5 +1,11 @@
 $Id$
 
+21/03/2007 :
+	- GENERAL :
+		- Ajout méthode 'CreateFile(s)()' dans les '..._file_manager___' ou elle n'existait pas.
+	- TOL :
+		- Ajout 'CreateFile(...)'.
+
 20/03/2007 :
 	- GENERAL :
 		- Adaptation modifications bibliothèque 'CTN'.

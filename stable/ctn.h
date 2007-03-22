@@ -382,6 +382,17 @@ namespace ctn {
 
 			return ( StaticsTimeStamp > DynamicsTimeStamp ? StaticsTimeStamp : DynamicsTimeStamp );
 		}
+		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		{
+			bso::bool__ Success = _Statics.CreateFile( ErrHandle );
+
+			if ( !Success )
+				return false;
+
+			Success = _Dynamics.CreateFiles( ErrHandle );
+
+			return Success;
+		}
 	};
 
 	template <typename memory> inline bso::bool__ Connect(

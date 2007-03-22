@@ -229,6 +229,32 @@ namespace lstctn {
 
 			_ListStore = &Store;
 		}
+		bso::bool__ Exists( void ) const
+		{
+			bso::bool__ Exists = _container_file_manager___::Exists();
+
+			if ( Exists != tol::FileExists( _ListFileName ) )
+				ERRc();
+
+			return Exists;
+		}
+		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		{
+			bso::bool__ Success = _container_file_manager___::CreateFiles( ErrHandle );
+
+			if ( !Success )
+				return false;
+
+			if ( tol::FileExists( _ListFileName ) )
+				if ( ErrHandle == err::hUsual )
+					ERRf();
+				else
+					return false;
+
+			Success = tol::CreateFile( _ListFileName, ErrHandle );
+
+			return Success;
+		}
 	};
 
 	template <typename list_container> bso::bool__ Connect(

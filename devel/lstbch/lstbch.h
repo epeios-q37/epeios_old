@@ -242,6 +242,36 @@ namespace lstbch {
 
 			_ListStore = &Store;
 		}
+		bso::bool__ Exists( void ) const
+		{
+			bso::bool__ Exists = _bunch_file_manager___::Exists();
+
+			if ( Exists != tol::FileExists( _ListFileName ) )
+				ERRc();
+
+			return Exists;
+		}
+		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		{
+			bso::bool__ Success = _bunch_file_manager___::CreateFile( ErrHandle );
+
+			if ( !Success )
+				return false;
+
+			if ( tol::FileExists( _ListFileName ) )
+				if ( ErrHandle == err::hUsual )
+					ERRf();
+				else
+					return false;
+
+			Success = tol::CreateFile( _ListFileName, ErrHandle );
+
+			return Success;
+		}
+		void CreateFile( int )	// Pour éviter un appel à la fonction correspondante de '_bunch_file_manager___'.
+		{
+			ERRu();
+		}
 	};
 
 

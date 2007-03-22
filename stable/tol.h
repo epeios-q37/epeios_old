@@ -570,6 +570,10 @@ namespace tol {
 		remove( FileName );
 	}
 
+	bso::bool__ CreateFile(
+		const char *FileName,
+		err::handle ErrHandle = err::hUsual );	// Crée un fichier de nom 'FileName'.
+
 	//f Return the current date.
 	const char *Date( buffer__ &Buffer );
 

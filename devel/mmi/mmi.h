@@ -376,6 +376,17 @@ namespace mmi {
 
 			return ( DescriptorsTimeStamp > MultimemoryTimeStamp ? DescriptorsTimeStamp : MultimemoryTimeStamp );
 		}
+		bso::bool__ CreateFiles( err::handle ErrHandle )
+		{
+			bso::bool__ Success = _Descriptors.CreateFile( ErrHandle );
+
+			if ( !Success )
+				return false;
+
+			Success = _Multimemory.CreateFile( ErrHandle );
+
+			return Success;
+		}
 	};
 
 	inline bso::bool__ Connect(

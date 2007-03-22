@@ -285,6 +285,17 @@ namespace idxbtq {
 
 			return Exists;
 		}
+		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		{
+			bso::bool__ Success = _TreeFileManager.CreateFile( ErrHandle );
+
+			if ( !Success )
+				return false;
+
+			Success = _QueueFileManager.CreateFile( ErrHandle );
+
+			return Success;
+		}
 		void Drop( void )
 		{
 			_TreeFileManager.Drop();
