@@ -313,7 +313,7 @@ namespace lst {
 			if ( Locations.Amount() != 0 )
 				ERRu();
 
-			Locations.Init( Size );
+//			Locations.Init( Size );
 
 			LSTAllocate( Size, Mode );
 		}

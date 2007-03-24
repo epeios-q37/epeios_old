@@ -1,5 +1,9 @@
 $Id$
 
+24/03/2007 :
+	- LST :
+		- Correction bogue allocation.
+
 21/03/2007 :
 	- GENERAL :
 		- Ajout méthode 'CreateFile(s)()' dans les '..._file_manager___' ou elle n'existait pas.

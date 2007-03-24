@@ -251,6 +251,10 @@ namespace lstctn {
 				else
 					return false;
 
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
+
 			Success = tol::CreateFile( _ListFileName, ErrHandle );
 
 			return Success;
