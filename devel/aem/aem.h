@@ -207,10 +207,11 @@ namespace aem {
 			return *this;
 		}
 		//f Initialization.
-		void Init( void )
+		void Init( size Amount = 0 )
 		{
 			S_.Amount = 0;
 			S_.Misc = 1;
+			Force( Amount );
 		}
 		//f Return the extent.
 		epeios::size__ Extent( void ) const

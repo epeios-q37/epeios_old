@@ -189,7 +189,7 @@ namespace lstbch {
 					 && ( !tol::FileExists( _ListFileName )
 					      || ( _bunch_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListStore, _ListFileName );
+					lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
 			}
 
 			_bunch_file_manager___::reset( P );

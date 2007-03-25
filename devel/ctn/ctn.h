@@ -406,11 +406,7 @@ namespace ctn {
 		if ( mmi::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
 			ERRc();
 
-		/*
-		if ( Exists )
-			Memory.Allocate( FileManager.StaticsFileManager().FileSize() / Memory.Statics.GetItemSize(), aem::mFit );
-		*/
-		// Pas d'allocation, sinon le contenu des fichiers sous-jacent est écrasé. Une partie du travail est fait pas le bibliothèque 'MMM'.
+		Memory.amount_extent_manager_::Init( Memory.Dynamics.Descripteurs.Amount() );
 
 		return Exists;
 	}

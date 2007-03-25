@@ -78,7 +78,8 @@ static void Save_(
 
 epeios::row__ lst::WriteToFile(
 	const store_ &Store,
-	const char *FileName )
+	const char *FileName,
+	time_t TimeStamp )
 {
 	epeios::row__ Row;
 ERRProlog
@@ -87,6 +88,11 @@ ERRBegin
 	Flow.Init( FileName );
 
 	Save_( Store.Released, Flow );
+
+	while ( tol::GetFileLastModificationTime( FileName ) <= TimeStamp ) {
+		tol::Clock( true );	// Permet d'attendre une unité de temps.
+		tol::Touch( FileName );
+	}
 
 	Row = Store.GetFirstAvailable();
 ERRErr

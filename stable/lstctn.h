@@ -174,7 +174,7 @@ namespace lstctn {
 					 && ( !tol::FileExists( _ListFileName )
 					      || ( _container_file_manager___::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListStore, _ListFileName );
+					lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___::TimeStamp() );
 			}
 
 			_container_file_manager___::reset( P );

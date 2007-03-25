@@ -1,5 +1,13 @@
 $Id$
 
+25/03/2007 :
+	- AEM :
+		- Amélioration métohod( 'Init(...)'.
+	- CTN :
+		- Correction bogue 'Connect(...)'.
+	- LST :
+		- Prise en compte du 'timestamp' des fichiers associés lors de la sauvegarde du fichier contenant les emplacements libres.
+
 24/03/2007 :
 	- LST :
 		- Correction bogue allocation.

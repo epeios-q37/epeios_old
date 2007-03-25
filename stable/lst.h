@@ -71,7 +71,8 @@ namespace lst {
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
 	epeios::row__ WriteToFile(
 		const store_ &Store,
-		const char *FileName );
+		const char *FileName,
+		time_t TimeStamp );
 
 	bso::bool__ ReadFromFile(
 		const char *FileName,
@@ -324,7 +325,8 @@ namespace lst {
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
 	template <typename list> epeios::row__ WriteToFile(
 		const list &List,
-		const char *FileName )
+		const char *FileName,
+		time_t TimeStamp )
 	{
 		return WriteToFile( List.Locations, FileName );
 	}
