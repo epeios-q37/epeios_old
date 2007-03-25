@@ -1,6 +1,8 @@
 $Id$
 
 25/03/2007 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'LST'.
 	- AEM :
 		- Amélioration métohod( 'Init(...)'.
 	- CTN :

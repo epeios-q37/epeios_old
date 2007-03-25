@@ -328,7 +328,7 @@ namespace lst {
 		const char *FileName,
 		time_t TimeStamp )
 	{
-		return WriteToFile( List.Locations, FileName );
+		return WriteToFile( List.Locations, FileName, TimeStamp );
 	}
 
 	template <typename list> bso::bool__ ReadFromFile(

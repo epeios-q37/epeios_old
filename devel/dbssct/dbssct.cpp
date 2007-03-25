@@ -76,12 +76,14 @@ ERRProlog
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	lst::WriteToFile( List, FileNameBuffer = FileName.Convert() );
+	lst::WriteToFile( List, FileNameBuffer = FileName.Convert(), UnderlyingFilesLastModificationTime );
 
+/*
 	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
 		tol::Touch( FileNameBuffer );
 	}
+*/
 ERRErr
 ERREnd
 ERREpilog
