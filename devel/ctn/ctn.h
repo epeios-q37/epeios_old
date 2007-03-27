@@ -302,6 +302,10 @@ namespace ctn {
 		{
 			return sizeof( st );
 		}
+		void SubInit( epeios::size__ Size )
+		{
+			amount_extent_manager_<r>::Init( Size );
+		}
 	};
 
 
@@ -406,7 +410,7 @@ namespace ctn {
 		if ( mmi::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
 			ERRc();
 
-		Memory.amount_extent_manager_::Init( Memory.Dynamics.Descripteurs.Amount() );
+		Memory.SubInit( Memory.Dynamics.Descripteurs.Amount() );
 
 		return Exists;
 	}

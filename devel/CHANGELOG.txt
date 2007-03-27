@@ -1,5 +1,9 @@
 $Id$
 
+26/03/2007 :
+	- CTN :
+		- Correction 'SubInit(...)'.
+
 25/03/2007 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'LST'.
