@@ -62,6 +62,8 @@ extern class ttr_tutor &EPSMSCTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "cpe.h"
+#include "txf.h"
 
 //d The epeios site URL.
 #define EPSMSC_EPEIOS_URL	"http://zeusw.org/epeios/"
@@ -100,7 +102,12 @@ extern class ttr_tutor &EPSMSCTutor;
 							
 namespace epsmsc {
 	//f Print information about GNU GPL license.
-	void PrintLicense( void );
+	void PrintLicense(
+		txf::text_oflow__ &Flow
+#ifdef CPE__ST
+		= cio::cout
+#endif
+		);
 }
 
 /*$END$*/

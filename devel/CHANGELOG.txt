@@ -1,5 +1,11 @@
 $Id$
 
+28/03/2007 :
+	- EPSMSC :
+		- Ajout paramètre 'Flow' fonction 'PrintLicense(...)'.
+	- MMI :
+		- Mise en place contournement problème 'CreateFile(...)' du à VC++.
+
 26/03/2007 :
 	- CTN :
 		- Correction 'SubInit(...)'.

@@ -376,6 +376,9 @@ namespace mmi {
 
 			return ( DescriptorsTimeStamp > MultimemoryTimeStamp ? DescriptorsTimeStamp : MultimemoryTimeStamp );
 		}
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
 		bso::bool__ CreateFiles( err::handle ErrHandle )
 		{
 			bso::bool__ Success = _Descriptors.CreateFile( ErrHandle );
