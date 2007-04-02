@@ -106,6 +106,7 @@ namespace xml {
 	bso::bool__ ExtendedParse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Namespace,
+		const str::string_ &Directory,
 		callback__ &Callback,
 		str::string_ &FileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
@@ -116,6 +117,7 @@ namespace xml {
 	bso::bool__ Normalize(
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
+		const str::string_ &Directory,
 		txf::text_oflow__ &OFlow,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.

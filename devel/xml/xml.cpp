@@ -58,6 +58,7 @@ public:
 #include "lstctn.h"
 #include "flx.h"
 #include "flf.h"
+#include "fnm.h"
 
 using namespace xml;
 
@@ -969,6 +970,7 @@ private:
 	variables _Variables;
 	repository _Repository;
 	str::string _Namespace;
+	str::string _Directory;
 	str::string _DefineTag;
 	str::string _ExpandTag;
 	str::string _IfeqTag;
@@ -1080,11 +1082,13 @@ private:
 		flf::file_iflow___ Flow;
 		xtf::extended_text_iflow__ XFlow;
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
-		tol::E_FPOINTER___( char ) NameBuffer;
+		tol::E_FPOINTER___( char ) DirectoryBuffer;
+		tol::E_FPOINTER___( char ) AttributeBuffer;
+		tol::E_FPOINTER___( char ) FileNameBuffer;
 	ERRBegin
-		NameBuffer = _NameSelectAttribute.Convert();
+		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _NameSelectAttribute.Convert(), "" );
 
-		if ( Flow.Init( NameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
+		if ( Flow.Init( FileNameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
 			ERRReturn;
 
 		Flow.EOFD( XTF_EOXT );
@@ -1110,7 +1114,7 @@ private:
 		if ( ( Success == false ) && ( !_ExpandIsHRef ) ) {
 			// On rétablit les deux variables ci-dessous parce qu'elles ont peut-être été effacé par un 'expand' d'un sous-fichier.
 			// Elles sont utiles pour déterminer le sous-fichier contenant l'erreur.
-			_NameSelectAttribute = NameBuffer;
+			_NameSelectAttribute = AttributeBuffer;
 			_ExpandIsHRef = true;
 		}
 	ERREpilog
@@ -1411,6 +1415,7 @@ protected:
 	public:
 		void Init(
 			const str::string_ &Namespace,
+			const str::string_ &Directory,
 			xtf::extended_text_iflow__ &Flow,
 			callback__ &UserCallback )
 		{
@@ -1418,6 +1423,7 @@ protected:
 			_Flow = &Flow;
 			_Variables.Init();
 			_Repository.Init();
+			_Directory.Init( Directory );
 
 			_Namespace.Init( Namespace );
 			_Namespace.Append( ":" );
@@ -1460,6 +1466,7 @@ protected:
 bso::bool__ xml::ExtendedParse(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Namespace,
+	const str::string_ &Directory,
 	callback__ &Callback,
 	str::string_ &FileName )
 {
@@ -1467,7 +1474,7 @@ bso::bool__ xml::ExtendedParse(
 ERRProlog
 	extended_callback XCallback;
 ERRBegin
-	XCallback.Init( Namespace, Flow, Callback );
+	XCallback.Init( Namespace, Directory, Flow, Callback );
 
 	Success = Parse( Flow, XCallback );
 
@@ -1538,6 +1545,7 @@ public:
 bso::bool__ xml::Normalize(
 	xtf::extended_text_iflow__ &IFlow,
 	const str::string_ &Namespace,
+	const str::string_ &Directory,
 	txf::text_oflow__ &OFlow,
 	str::string_ &GuiltyFileName )
 {
@@ -1547,7 +1555,7 @@ ERRProlog
 ERRBegin
 	NCallback.Init( OFlow );
 
-	Success = ExtendedParse( IFlow, Namespace, NCallback, GuiltyFileName );
+	Success = ExtendedParse( IFlow, Namespace, Directory, NCallback, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog

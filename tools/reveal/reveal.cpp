@@ -3,7 +3,7 @@
   Replaces tags in a file by text or file content.
   Copyright (C) 1999-2002 Claude SIMON (csimon@epeios.org)
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios project (http://www.zeusw.org/epeios/).
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -208,9 +208,11 @@ inline void AdditionalTags(
 	expander_ &Expander,
 	char Delimiter )
 {
+	tol::buffer__ Buffer;
+
 	Expander.Add( estring( Delimiter ), tagexp::nText, estring( "" ) );
-	Expander.Add( estring( tol::Date() ), tagexp::nText, estring( "_DATE_" ) );
-	Expander.Add( estring( tol::Time() ), tagexp::nText, estring( "_TIME_" ) );
+	Expander.Add( estring( tol::Date( Buffer ) ), tagexp::nText, estring( "_DATE_" ) );
+	Expander.Add( estring( tol::Time( Buffer ) ), tagexp::nText, estring( "_TIME_" ) );
 	Expander.Add( estring( NAME ), tagexp::nText, estring( "_NAME_" ) );
 	Expander.Add( estring( AUTHOR_NAME ), tagexp::nText, estring( "_AUTHOR_" ) );
 	Expander.Add( estring( AUTHOR_EMAIL ), tagexp::nText, estring( "_EMAIL_" ) );
@@ -755,7 +757,7 @@ ERRBegin
 		ERRi();
 		break;
 	case cLicense:
-		epsmsc::PrintLicense();
+		epsmsc::PrintLicense( cout );
 		ERRi();
 		break;
 	case cReveal:

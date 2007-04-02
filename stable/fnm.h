@@ -76,11 +76,13 @@ extern class ttr_tutor &FNMTutor;
 namespace fnm
 {
 	//e Different type of file name.
-	enum type {
+	enum type__ {
 		//i "" or NULL
 		tEmpty = 1,
-		//i "x:\...\nom.suf" or "\...\nom.suf" or "x:nom.suf" etc..
-		tLocalised,
+		//i "x:\...\nom.suf" or "\...\nom.suf" etc..
+		tAbsolute,
+		//i "x:nom.suf" or "../nom.suf" etc..
+		tRelative,
 		//i "nom.suf"
 		tSuffixed,
 		//i "nom"
@@ -92,7 +94,7 @@ namespace fnm
 	};
 
 	//f Type of the file name 'FileName'.
-	fnm::type Type( const char *FileName );
+	fnm::type__ Type( const char *FileName );
 
 	/*f Correct location, i. e. remplaces '\' or '/' with correct directory separator
 	depending on OS. The retuned pointer must be freed.*/
@@ -100,12 +102,12 @@ namespace fnm
 
 
 	//f Description of the 'Type' type.
-	const char *Description( fnm::type Type );
+	const char *Description( fnm::type__ Type );
 
 	/*f Make file name with 'Name', 'Directory' as default
 	directory, and 'Extension' as defaut extension; 
 	IMPORTANT: the returned pointer MUST be freed with 'free()'.*/
-	char *MakeFileName(
+	char *BuildFileName(
 		const char *Rep,
 		const char *Nom,
 		const char *Ext );

@@ -1,0 +1,30 @@
+# $Id$
+mkdir workdir
+cd workdir
+export DIR=getquotes
+GET=../../get_cvs
+
+mkdir -p $DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+#$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+#$GET epeios $DIR documentation/packages/$DIR/README.txt
+
+$GET pstx $DIR stable/*.h
+$GET pstx $DIR stable/*.cpp
+
+$GET pwsa $DIR stable/*.h
+$GET pwsa $DIR stable/*.cpp
+
+#$GET pwsa $DIR apps/$DIR/*.h
+$GET pwsa $DIR apps/$DIR/*.cpp
+$GET pwsa $DIR apps/$DIR/Makefile
+
+#mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+#mv $DIR/gnu_gpl.txt $DIR/LICENSE
+#mv $DIR/README.txt $DIR/README
+
+#../../create_pkg $DIR
+tar --gzip -cf $DIR.tar.gz $DIR

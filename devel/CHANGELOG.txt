@@ -1,5 +1,12 @@
 $Id$
 
+02/01/2007 :
+	- FNM :
+		- Modification liste 'type'.
+		- 'type' -> 'type__'.
+		- Modification fonction 'MakeFileName(...)'.
+		- 'MakeFileName(...)' -> 'BuildFileName(...)'
+
 28/03/2007 :
 	- EPSMSC :
 		- Ajout paramètre 'Flow' fonction 'PrintLicense(...)'.

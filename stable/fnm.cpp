@@ -60,13 +60,15 @@ public:
 
 using namespace fnm;
 
-const char *fnm::Description( fnm::type Type )
+const char *fnm::Description( fnm::type__ Type )
 {
 	switch ( Type ) {
 	case fnm::tEmpty:
 		return "Empty";
-	case fnm::tLocalised:
-		return "Localised";
+	case fnm::tAbsolute:
+		return "Absolute";
+	case fnm::tRelative:
+		return "Relative";
 	case fnm::tSuffixed:
 		return "Suffixed";
 	case fnm::tFree:
@@ -80,7 +82,7 @@ const char *fnm::Description( fnm::type Type )
 	}
 }
 
-fnm::type fnm::Type( const char *Nom )
+fnm::type__ fnm::Type( const char *Nom )
 {
 	const char *Repere;
 
@@ -94,22 +96,24 @@ fnm::type fnm::Type( const char *Nom )
 
 	Repere = strrchr( Nom, ':' );
 
-	if ( Repere < strrchr( Nom, '/' ) )
-		Repere = strrchr( Nom, '/' );
+	if ( Repere != NULL )
+		Repere++;
+	else
+		Repere = Nom;
 
-	if ( Repere < strrchr( Nom, '\\' ) )
-		Repere = strrchr( Nom, '\\' );
 
-	if ( Repere )
-		return fnm::tLocalised;
+	if ( ( *Repere == '/' ) || ( *Repere == '\\' ) )
+		return fnm::tAbsolute;
+	else
+		return fnm::tRelative;
 
-	if ( Repere < strrchr( Nom,'.' ) )
+	if ( Repere < strrchr( Nom, '.' ) )
 		return fnm::tSuffixed;
 	else
 		return fnm::tFree;
 }
 
-char *fnm::MakeFileName(
+char *fnm::BuildFileName(
 	const char *Rep,
 	const char *Nom,
 	const char *Ext )
@@ -146,12 +150,13 @@ ERRBegin
 	switch ( Type( Nom ) ) {
 	case fnm::tEmpty:
 		free( Resultat );
-		Resultat = NULL;
+		Resultat = "";
 		break;
 	case fnm::tSuffixed:
+	case fnm::tRelative:
 		strcat( Resultat, Nom );
 		break;
-	case fnm::tLocalised:
+	case fnm::tAbsolute:
 		strcpy( Resultat, Nom );
 		break;
 	case fnm::tFree:
@@ -185,7 +190,7 @@ const char *fnm::file_name_manager::MakeFileName_(
 	const char *Nom,
 	int Occurence )
 {
-	int i;
+	size_t i;
 	static char Resultat[9];
 
 	strcpy( Resultat, "00000000" );
@@ -196,7 +201,7 @@ const char *fnm::file_name_manager::MakeFileName_(
 
 	while( i-- )
 	{
-		int j = i%7;
+		size_t j = i%7;
 
 		Resultat[j] += Nom[i];
 
@@ -224,7 +229,7 @@ ERRProlog
 ERRBegin
 	for ( Occurence = 0; Occurence <= 36; Occurence++ )
 	{
-		Nom = MakeFileName(
+		Nom = BuildFileName(
 			Repertoire,
 			MakeFileName_( Parametres, Occurence ),
 			Extension );

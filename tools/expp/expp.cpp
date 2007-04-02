@@ -1,9 +1,25 @@
 /*
-	'$NAME$' by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
-	(description)
-	Copyright (C) $COPYRIGHT_DATES$$COPYRIGHT_OWNER$.
+	'expp' by Claude SIMON (claude.simon@zeusw.org)
+	Preprocesseur XML
+	Copyright (C) 2007 Claude SIMON
 
-$NOTICE$
+	This file is part of the Epeios project (http://zeusw.org/epeios/).
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, go to http://www.fsf.org or write to the
+  
+                        Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 // $$Id$$
@@ -13,18 +29,16 @@ $NOTICE$
 #include "epsmsc.h"
 #include "clnarg.h"
 
-#define NAME			"$NAME$"
+#define NAME			"expp"
 #define VERSION			"0.1.0"
-#define COPYRIGHT_YEARS	"2002"
-#define DESCRIPTION		"(description)"
+#define COPYRIGHT_YEARS	"2007"
+#define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
 #define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
-
-/*$RAW$*/
 
 using cio::cin;
 using cio::cout;
@@ -35,11 +49,12 @@ using cio::cerr;
 enum command {
 	cHelp,
 	cVersion,
-	cLicense
+	cLicense,
+	cNormalize
 };
 
 enum option {
-	// o
+	oNamespace,
 };
 
 struct parameters {
