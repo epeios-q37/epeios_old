@@ -534,419 +534,26 @@ ERREpilog
 	return Row;
 }
 
-struct kernel__ {
-	registry_ &Registry;
-	nrow__ Root;
-	nrow__ Current;
-	kernel__(
-		registry_ &Registry,
-		nrow__ Root )
-	: Registry( Registry )
-	{
-		this->Root = Current = Root;
-	}
-};
-
 #define NAMESPACE			"xcf"
-#define PREFIX				NAMESPACE ":"
-
-#define DEFINE_TAG			PREFIX "define"
-#define DEFINE_ATTRIBUTE			"name"
-
-#define EXPAND_TAG			PREFIX "expand"
-#define EXPAND_EXPLODE_ATTRIBUTE	"select"
-#define EXPAND_INCLUDE_ATTRIBUTE	"href"
-
-#define SET_TAG				PREFIX "set"
-#define SET_NAME_ATTRIBUTE	"name"
-#define SET_VALUE_ATTRIBUTE	"value"
-
-#define IFEQ_TAG				PREFIX "ifeq"
-#define IFEQ_SELECT_ATTRIBUTE	"select"
-#define IFEQ_VALUE_ATTRIBUTE	"value"
-
-#define BLOC_TAG			PREFIX "bloc"
-#define BLOC_ATTRIBUTE		""	// Pas d'attribut.
-
-typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
-E_AUTO( strings )
-
-class variables___
-{
-	epeios::row__ _Locate( const str::string_ &Name ) const
-	{
-		ctn::E_CMITEM( str::string_ ) NamesItem;
-		epeios::row__ Row = Names.First();
-
-		NamesItem.Init( Names );
-
-		while ( ( Row != NONE ) && ( NamesItem( Row ) != Name ) )
-			Row = Names.Next( Row );
-
-		return Row;
-	}
-public:
-	strings Names, Values;
-	void Init( void )
-	{
-		Names.Init();
-		Values.Init();
-	}
-	void Set(
-		const str::string_ &Name,
-		const str::string_ &Value )
-	{
-		epeios::row__ Row = _Locate( Name );
-
-		if ( Row == NONE ) {
-			Row = Names.Append( Name );
-			if ( Row != Values.Append( Value ) )
-				ERRc();
-		} else {
-			Values( Row ) = Value;
-			Values.Flush();
-		}
-	}
-	bso::bool__ Get(
-		const str::string_ &Name,
-		str::string_ &Value ) const
-	{
-		epeios::row__ Row = _Locate( Name );
-
-
-		if ( Row != NONE ) {
-			ctn::E_CMITEM( str::string_ ) ValuesItem;
-			ValuesItem.Init( Values );
-
-			Value = ValuesItem( Row );
-		}
-
-		return Row != NONE;
-	}
-	bso::bool__ Exists( const str::string_ &Name ) const
-	{
-		return _Locate( Name ) != NONE;
-	}
-};
-
-
 
 class callback___
 : public xml::callback__
 {
 private:
-	registry _ManagerRegistry;
-	kernel__ _UserKernel, _ManagerKernel, *_CurrentKernel;
-	// Value de l'attribut 'select' ou 'href' de la balise 'xcf:ifeq'.
-	term _ExpandTagAttribute;
-	bso::bool__ _ExpandIsInclude;
-	location__ _IncludeErrorLine, _IncludeErrorColumn;
-	// Valeurs des attributs de la balise 'xcf:set'.
-	term _SetName, _SetValue;
-	variables___ _Variables;
-	// Value de l'attribut 'select' de la balise 'xcf:ifeq'.
-	term _IfeqSelect;
-	// Value de l'attribut 'value' de la balise 'xcf:ifeq'.
-	term _IfeqValue;
-	// Niveau d'imbrication de 'xcf:ifeq' à traiter.
-	bso::ulong__ _MatchingIfeqLevel;
-	// Niveau d'imbrication de 'xcf:ifeq' à ignorer.
-	bso::ulong__ _UnmatchingIfeqLevel;
-
-	static struct define {
-		term TagName;
-		term AttributeName;
-	} _Define;
-	static struct expand {
-		term TagName;
-		term ExplodeAttributeName;
-		term IncludeAttributeName;
-	} _Expand;
-	static struct bloc {
-		term TagName;
-	} _Bloc;
-	static struct set {
-		term TagName;
-		term NameAttributeName;
-		term ValueAttributeName;
-	} _Set;
-	static struct ifeq {
-		term TagName;
-		term SelectAttributeName;
-		term ValueAttributeName;
-	} _Ifeq;
-	static term _Prefix;
-	const kernel__ &_Kernel( void ) const
-	{
-#ifdef RGSTRY_DBG
-		if ( _CurrentKernel == NULL )
-			ERRc();
-#endif
-		return *_CurrentKernel;
-
-	}
-	kernel__ &_Kernel( void )
-	{
-#ifdef RGSTRY_DBG
-		if ( _CurrentKernel == NULL )
-			ERRc();
-#endif
-		return *_CurrentKernel;
-	}
-	void _SwitchToUserKernel( void )
-	{
-		_CurrentKernel = &_UserKernel;
-	}
-	void _SwitchToManagerKernel( void )
-	{
-		_CurrentKernel = &_ManagerKernel;
-	}
-	bso::bool__ _IsDefining( void ) const
-	{
-		return &_Kernel() == &_ManagerKernel;
-	}
-	registry_ &_Registry( void )
-	{
-		return _Kernel().Registry;
-	}
-	nrow__ &_Root( void )
-	{
-		return _Kernel().Root;
-	}
-	nrow__ &_Current( void )
-	{
-		return _Kernel().Current;
-	}
-	bso::bool__ _BelongsToNamespace( const str::string_ &TagName )
-	{
-		return str::Compare( TagName, _Prefix, TagName.First(), _Prefix.First(), _Prefix.Amount() ) == 0;
-	}
-	bso::bool__ _IsDefineTagName( const str::string_ &TagName )
-	{
-		return str::Compare( TagName, _Define.TagName, TagName.First(), _Define.TagName.First() ) == 0;
-	}
-	bso::bool__ _IsDefineTagAttributeName( const str::string_ &AttributeName )
-	{
-		return str::Compare( AttributeName, _Define.AttributeName, AttributeName.First(), _Define.AttributeName.First() ) == 0;
-	}
-	bso::bool__ _IsExpandTagName( const str::string_ &TagName )
-	{
-		return str::Compare( TagName, _Expand.TagName, TagName.First(), _Expand.TagName.First() ) == 0;
-	}
-	bso::bool__ _IsExpandTagExplodeAttributeName( const str::string_ &AttributeName )
-	{
-		return str::Compare( AttributeName, _Expand.ExplodeAttributeName, AttributeName.First(), _Expand.ExplodeAttributeName.First() ) == 0;
-	}
-	bso::bool__ _IsExpandTagIncludeAttributeName( const str::string_ &AttributeName )
-	{
-		return str::Compare( AttributeName, _Expand.IncludeAttributeName, AttributeName.First(), _Expand.IncludeAttributeName.First() ) == 0;
-	}
-	bso::bool__ _IsBlocTagName( const str::string_ &TagName )
-	{
-		return str::Compare( TagName, _Bloc.TagName, TagName.First(), _Bloc.TagName.First() ) == 0;
-	}
-	bso::bool__ _IsSetTagName( const str::string_ &TagName ) const
-	{
-		return str::Compare( TagName, _Set.TagName ) == 0;
-	}
-	bso::bool__ _IsSetNameAttributeName( const str::string_ &AttributeName ) const
-	{
-		return str::Compare( AttributeName, _Set.NameAttributeName ) == 0;
-	}
-	bso::bool__ _IsSetValueAttributeName( const str::string_ &AttributeName ) const
-	{
-		return str::Compare( AttributeName, _Set.ValueAttributeName ) == 0;
-	}
-	bso::bool__ _IsIfeqTagName( const str::string_ &TagName ) const
-	{
-		return str::Compare( TagName, _Ifeq.TagName ) == 0;
-	}
-	bso::bool__ _IsIfeqSelectAttributeName( const str::string_ &AttributeName ) const
-	{
-		return str::Compare( AttributeName, _Ifeq.SelectAttributeName ) == 0;
-	}
-	bso::bool__ _IsIfeqValueAttributeName( const str::string_ &AttributeName ) const
-	{
-		return str::Compare( AttributeName, _Ifeq.ValueAttributeName ) == 0;
-	}
-	epeios::size__ _Dump(
-		registry_ &Registry,
-		nrow__ Root,
-		str::string_ &Result )	// Retourne le nombre d'enfnats.
-	{
-		epeios::size__ ChildAmount = 0;
-	ERRProlog
-		flx::E_STRING_OFLOW___ Flow;
-		txf::text_oflow__ TFlow( Flow );
-	ERRBegin
-		Flow.Init( Result );
-//		TFlow.Init( Flow );
-
-		ChildAmount = Registry.Dump( Root, false, false, TFlow );
-	ERRErr
-	ERREnd
-	ERREpilog
-		return ChildAmount;
-	}
-	void _Import(
-		const str::string_ &Buffer,
-		registry_ &Registry,
-		nrow__ Root,
-		epeios::size__ ChildAmount )
-	{
-	ERRProlog
-		flx::E_STRING_IFLOW__ Flow;
-		xtf::extended_text_iflow__ TFlow;
-		xtf::location__ Error;
-	ERRBegin
-		Flow.Init( Buffer );
-		TFlow.Init( Flow );
-
-		while ( ChildAmount-- ) 
-			if ( Parse( TFlow, Registry, Root, *(str::string_ *)NULL, Error, Error ) == NONE )
-				ERRc();	// Normalement, toutes les erreurs ont été détectées lors du 'define'.
-	ERRErr
-	ERREnd
-	ERREpilog
-	}
-	bso::bool__ _ExplodeNode( void )
-	{
-		bso::bool__ Success = false;
-	ERRProlog
-		str::string Buffer;
-		nrow__ Root = NONE;
-		term Path;
-		erow__ AttributeEntryRow = NONE;
-		epeios::row__ PathErrorRow = NONE;
-		epeios::size__ ChildAmount = 0;
-	ERRBegin
-		Path.Init();
-
-		Path.Append( DEFINE_TAG "[" DEFINE_ATTRIBUTE "=\"" );
-		Path.Append( _ExpandTagAttribute );
-		Path.Append( "\"]" );
-
-		_ExpandTagAttribute.Init();
-
-		Root = _ManagerKernel.Registry.SearchPath( Path, _ManagerKernel.Root, AttributeEntryRow, PathErrorRow );
-
-		if ( PathErrorRow != NONE )
-			ERRc();
-
-		if ( AttributeEntryRow != NONE )
-			ERRc();
-
-		if ( Root == NONE )
-			ERRReturn;
-
-		Buffer.Init();
-
-		ChildAmount = _Dump( _ManagerKernel.Registry, Root, Buffer );
-
-		Buffer.Append( XTF_EOXC );
-
-		_Import( Buffer, _Registry(), _Current(), ChildAmount );
-
-		Success = true;
-	ERRErr
-	ERREnd
-	ERREpilog
-		return Success;
-	}
-	bso::bool__ _IncludeFile( void )
-	{
-		bso::bool__ Success = false;
-	ERRProlog
-		flf::file_iflow___ FFlow;
-		xtf::extended_text_iflow__ XFlow;
-		tol::E_FPOINTER___( bso::char__ ) Buffer;
-	ERRBegin
-		Buffer = _ExpandTagAttribute.Convert();
-
-		_ExpandTagAttribute.Init();
-
-		if ( !FFlow.Init( Buffer, err::hSkip ) )
-			ERRReturn;
-
-		FFlow.EOFD( XTF_EOXT );
-
-		XFlow.Init( FFlow );
-
-		if ( !xml::Parse( XFlow, *this ) )  {
-			if ( _ExpandTagAttribute.Amount() == 0 ) {	// Si pas == 0, alors l'erreur se trouve dans un sous-fcihier.
-				_ExpandTagAttribute.Init( Buffer );	// Pour indiquer que l'erreur se situe dans un fichier et lequel.
-				_IncludeErrorLine = XFlow.Line();
-				_IncludeErrorColumn = XFlow.Column();
-			}
-			ERRReturn;
-		}
-
-		Success = true;
-	ERRErr
-	ERREnd
-	ERREpilog
-		return Success;
-	}
-	bso::bool__ _ExpandNode( void )
-	{
-		if ( _ExpandIsInclude )
-			return _IncludeFile();
-		else
-			return _ExplodeNode();
-	}
-	bso::bool__ _IsActive( void ) const
-	{
-		return _UnmatchingIfeqLevel == 0;
-	}
+	registry_ &_Registry;
+	nrow__ _Root, _Current;
 protected:
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &TagName,
 		const str::string_ &Dump )
 	{
-		bso::bool__ Ignore = false;
-
-		if ( _BelongsToNamespace( TagName ) ) {
-			if ( _IsDefineTagName( TagName ) ) {
-				if ( _IsDefining() )
-					return false;
-				_SwitchToManagerKernel();	// Même si pas actif.
-				if ( !_IsActive() )
-					Ignore = true;
-			} else if ( _IsExpandTagName( TagName ) ) {
-				Ignore = true;
-			} else if ( _IsBlocTagName( TagName ) ) {
-				if ( !_IsDefining() )
-					Ignore = true;
-			} else if ( _IsSetTagName( TagName ) ) {
-				if ( _IsDefining() )
-					return false;
-
-				_SetName.Init();
-				_SetValue.Init();
-
-				Ignore = true;
-			} else if ( _IsIfeqTagName( TagName ) ) {
-				if ( _IsDefining() )
-					return false;
-
-				_IfeqSelect.Init();
-				_IfeqValue.Init();
-
-				Ignore = true;
-			} else
-				return false;
-		} else if ( !_IsActive() )
-			Ignore = true;
-
-		if ( !Ignore ) {
-			if ( _Current() == NONE ) {
-				if ( _Root() == NONE )
-					_Root() = _Current() = _Registry().CreateNode( TagName );
-				else
-					ERRc();
-			} else
-				_Current() = _Registry().AddChild( TagName, _Current() );
-		}
+		if ( _Current == NONE ) {
+			if ( _Root == NONE )
+				_Root = _Current = _Registry.CreateNode( TagName );
+			else
+				ERRc();
+		} else
+			_Current = _Registry.AddChild( TagName, _Current );
 
 		return true;
 	}
@@ -956,51 +563,7 @@ protected:
 		const str::string_ &Value,
 		const str::string_ &Dump )
 	{
-		if ( _BelongsToNamespace( TagName ) ) {
-			if ( _IsDefineTagName( TagName ) ) {
-#ifdef RGSTRY_DBG
-				if ( !_IsDefining() )
-					ERRc();
-#endif
-				if ( _IsDefineTagAttributeName( Name ) ) {
-					_Registry().AddAttribute( Name, Value, _Current() );
-				} else
-					return false;
-			} else 	if ( _IsExpandTagName( TagName ) ) {
-				if ( _IsExpandTagExplodeAttributeName( Name ) )
-					_ExpandIsInclude = false;
-				else if ( _IsExpandTagIncludeAttributeName( Name ) )
-					_ExpandIsInclude = true;
-				else
-					return false;
-
-				_ExpandTagAttribute.Init( Value );
-			} else 	if ( _IsSetTagName( TagName ) ) {
-				if ( _IsSetNameAttributeName( Name ) ) {
-					if ( _SetName.Amount() != 0 )
-						return false;
-					_SetName = Value;
-				} else if ( _IsSetValueAttributeName( Name ) ) {
-					if ( _SetValue.Amount() != 0 )
-						return false;
-					_SetValue = Value;
-				} else
-					return false;
-			} else 	if ( _IsIfeqTagName( TagName ) ) {
-				if ( _IsIfeqSelectAttributeName( Name ) ) {
-					if ( _IfeqSelect.Amount() != 0 )
-						return false;
-					_IfeqSelect = Value;
-				} else if ( _IsIfeqValueAttributeName( Name ) ) {
-					if ( _IfeqValue.Amount() != 0 )
-						return false;
-					_IfeqValue = Value;
-				} else
-					return false;
-			} else
-				ERRc();
-		} else if ( _IsActive() )
-			_Registry().AddAttribute( Name, Value, _Current() );
+		_Registry.AddAttribute( Name, Value, _Current );
 
 		return true;
 	}
@@ -1008,37 +571,6 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Dump )
 	{
-		if ( _IsIfeqTagName( TagName ) ) {
-		ERRProlog
-			str::string Value;
-		ERRBegin
-			if ( _IfeqSelect.Amount() == 0 )
-				ERRc();
-
-			if ( _IsActive() ) {
-				Value.Init();
-
-				if ( _Variables.Get( _IfeqSelect, Value ) )
-					if ( Value == _IfeqValue ) {
-						if ( _MatchingIfeqLevel == BSO_ULONG_MAX )
-							ERRl();
-						_MatchingIfeqLevel++;
-					} else {
-						if ( _UnmatchingIfeqLevel != 0 )
-							ERRc();
-						_UnmatchingIfeqLevel = 1;
-					}
-			} else {
-				if ( _UnmatchingIfeqLevel == BSO_ULONG_MAX )
-					ERRl();
-				_UnmatchingIfeqLevel++;
-			}
-
-		ERRErr
-		ERREnd
-		ERREpilog
-		}
-
 		return true;
 	}
 	virtual bso::bool__ XMLValue(
@@ -1046,8 +578,7 @@ protected:
 		const str::string_ &Value,
 		const str::string_ &Dump )
 	{
-		if ( _IsActive() )
-			_Registry().SetValue( Value, _Current(), true );
+		_Registry.SetValue( Value, _Current, true );
 
 		return true;
 	}
@@ -1055,109 +586,29 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Dump )
 	{
-		bso::bool__ Ignore = false;
 
-		if ( _BelongsToNamespace( TagName ) ) {
-			if ( _IsDefineTagName( TagName ) ) {
-				if ( !_IsDefining() )
-					ERRc();
-				if ( _IsActive() )
-					_Current() = _Registry().GetParent( _Current() );
-				_SwitchToUserKernel();	// Même is pas actif (void 'XMLStartTag()').
-				Ignore = true;
-			} else if ( _IsIfeqTagName( TagName ) ) {
-				if ( _IsActive() ) {
-					if ( _MatchingIfeqLevel == 0 )
-						ERRc();
-					_MatchingIfeqLevel--;
-				} else {
-					if ( _UnmatchingIfeqLevel == 0 )
-						ERRc();
-					_UnmatchingIfeqLevel--;
-				}
+		_Current = _Registry.GetParent( _Current );
 
-				Ignore = true;
-			} else if ( _IsExpandTagName( TagName )  ) {
-				if ( _IsActive() )
-					if ( !_ExpandNode() )
-						return false;
-
-				_ExpandTagAttribute.Init();
-
-				Ignore = true;
-			} else if ( _IsBlocTagName( TagName ) ) {
-				if ( !_IsDefining() )
-					Ignore = true;
-
-			} else if ( _IsSetTagName( TagName ) ) {
-				if ( _SetName.Amount() == 0 )
-					return false;
-
-				if ( _IsActive() )
-					_Variables.Set( _SetName, _SetValue );
-
-				Ignore = true;
-			} else
-				ERRc();
-		} else if ( !_IsActive() )
-			Ignore = true;
-
-		if ( !Ignore ) {
-			_Current() = _Registry().GetParent( _Current() );
-
-			if ( ( _Current() == NONE ) && ( _Root() == NONE ) )
-				return false;
-		}
+		if ( ( _Current == NONE ) && ( _Root == NONE ) )
+			return false;
 
 		return true;
 	}
 public:
-	callback___(
-		registry_ &Registry,
-		nrow__ Root )
-	: _UserKernel( Registry, Root ),
-	  _ManagerKernel( _ManagerRegistry, NONE )
+	callback___( registry_ &Registry )
+	: _Registry( Registry )
 	{
-		_ManagerRegistry.Init();
-		_ManagerKernel.Root = _ManagerKernel.Current = _ManagerKernel.Registry.CreateNode( term( "_internals_" ) );
-		_ExpandTagAttribute.Init();
-		_IncludeErrorLine = _IncludeErrorColumn = 0;
-		_Variables.Init();
-		_MatchingIfeqLevel = _UnmatchingIfeqLevel = 0;
-		_CurrentKernel = &_UserKernel;
+		_Root = _Current = NONE;
+	}
+	void Init( nrow__ Root )
+	{
+		_Root = _Current = Root;
 	}
 	nrow__ GetRoot( void ) const
 	{
-		if ( _UserKernel.Current != NONE )
-			return _UserKernel.Current;
-		else
-			return _UserKernel.Root;
+		return _Root;
 	}
-	~callback___( void )
-	{
-/*
-		_Manager.Registry.Dump( _Manager.Root, true, true, cio::cout );
-		cio::cout << txf::nl;
-		_User.Registry.Dump( _User.Root, true, true, cio::cout );
-		cio::cout << txf::nl;
-*/
-	}
-	const str::string_ &IncludeErrorFileName( void )
-	{
-		return _ExpandTagAttribute;
-	}
-	E_RODISCLOSE__( location__, IncludeErrorLine )
-	E_RODISCLOSE__( location__, IncludeErrorColumn )
-
-	friend class rgstrypersonnalization;
 };
-
-callback___::define callback___::_Define;
-callback___::expand callback___::_Expand;
-callback___::bloc callback___::_Bloc;
-callback___::set callback___::_Set;
-callback___::ifeq callback___::_Ifeq;
-term callback___::_Prefix;
 
 void rgstry::registry_::_Delete( const erows_ &Rows )
 {
@@ -1446,6 +897,7 @@ ERREpilog
 
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
+	const str::string_ &Directory,
 	registry_ &Registry,
 	nrow__ Root,
 	str::string_ &ErrorFileName,
@@ -1453,23 +905,17 @@ nrow__ rgstry::Parse(
 	xtf::location__ &ErrorColumn )
 {
 ERRProlog
-	callback___ Callback( Registry, Root );
+	callback___ Callback( Registry );
 ERRBegin
-	if ( xml::ExtendedParse( Flow, str::string( "test" ), Callback ) )
+	Callback.Init( Root );
+
+	if ( xml::ExtendedParse( Flow, str::string( NAMESPACE ), Directory, Callback, ErrorFileName ) )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
 		ErrorLine = Flow.Line();
 		ErrorColumn = Flow.Column();
 	}
-
-	if ( ( &ErrorFileName != NULL ) && ( Callback.IncludeErrorFileName().Amount() != 0 ) ) {
-		ErrorFileName = Callback.IncludeErrorFileName();
-
-		ErrorLine = Callback.IncludeErrorLine();
-		ErrorColumn = Callback.IncludeErrorColumn();
-	}
-
 ERRErr
 ERREnd
 ERREpilog
@@ -1562,25 +1008,6 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-		callback___::_Define.TagName.Init( DEFINE_TAG );
-		callback___::_Define.AttributeName.Init( DEFINE_ATTRIBUTE );
-
-		callback___::_Expand.TagName.Init( EXPAND_TAG );
-		callback___::_Expand.ExplodeAttributeName.Init( EXPAND_EXPLODE_ATTRIBUTE );
-		callback___::_Expand.IncludeAttributeName.Init( EXPAND_INCLUDE_ATTRIBUTE );
-
-		callback___::_Bloc.TagName.Init( BLOC_TAG );
-
-		callback___::_Set.TagName.Init( SET_TAG );
-		callback___::_Set.NameAttributeName.Init( SET_NAME_ATTRIBUTE );
-		callback___::_Set.ValueAttributeName.Init( SET_VALUE_ATTRIBUTE );
-
-		callback___::_Ifeq.TagName.Init( IFEQ_TAG );
-		callback___::_Ifeq.SelectAttributeName.Init( IFEQ_SELECT_ATTRIBUTE );
-		callback___::_Ifeq.ValueAttributeName.Init( IFEQ_VALUE_ATTRIBUTE );
-
-		callback___::_Prefix.Init( PREFIX );
-
 	}
 	~rgstrypersonnalization( void )
 	{

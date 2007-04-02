@@ -1,11 +1,17 @@
 $Id$
 
 02/01/2007 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'XML'.
 	- FNM :
 		- Modification liste 'type'.
 		- 'type' -> 'type__'.
 		- Modification fonction 'MakeFileName(...)'.
 		- 'MakeFileName(...)' -> 'BuildFileName(...)'
+	- RGSTRY :
+		- Mise en place de la gestion des 'xcf:...' par la bibliothèque 'XML' (utilisation de 'xml::ExtendedParse(...)'.
+	- XML :
+		- Ajout prise en compte répertoire de base pour l'inclusion de fichiers.
 
 28/03/2007 :
 	- EPSMSC :

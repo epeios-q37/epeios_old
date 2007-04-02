@@ -871,6 +871,7 @@ namespace rgstry {
 
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
+		const str::string_ &Directory,
 		registry_ &Registry,
 		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 		str::string_ &ErrorFile,	// Peut être 'NULL' si pas interessé.
@@ -879,12 +880,13 @@ namespace rgstry {
 
 	inline nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
+		const str::string_ &Directory,
 		registry_ &Registry,
 		nrow__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
 		location__ Dummy;
 
-		return Parse( Flow, Registry, Root, *(str::string_ *)NULL, Dummy, Dummy );
+		return Parse( Flow, Directory, Registry, Root, *(str::string_ *)NULL, Dummy, Dummy );
 	}
 
 	class overloaded_registry___
