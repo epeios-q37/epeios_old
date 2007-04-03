@@ -1,6 +1,10 @@
 $Id$
 
-02/01/2007 :
+03/04/2007 :
+	- XML :
+		- Ajout 'XMLProcessingIntruction(...)'.
+
+02/04/2007 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'XML'.
 	- FNM :

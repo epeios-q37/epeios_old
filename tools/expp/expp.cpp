@@ -28,6 +28,9 @@
 #include "cio.h"
 #include "epsmsc.h"
 #include "clnarg.h"
+#include "xml.h"
+#include "fnm.h"
+#include "flf.h"
 
 #define NAME			"expp"
 #define VERSION			"0.1.0"
@@ -40,17 +43,30 @@
 #define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
+#define DEFAULT_NAMESPACE	"xpp"
+
 using cio::cin;
 using cio::cout;
 using cio::cerr;
 
 /* Beginning of the part which handles command line arguments. */
 
+enum exit_value__ {
+	evSuccess,
+	// Erreur dans les paramètres d'entrée.
+	evParameters,
+	// Erreur lors de l'ouverture des fichiers d'entrée ou de sortie.
+	evInputOutput,
+	// Erreur lors du traitement.
+	evProcessing,
+	ev_amount
+};
+
 enum command {
 	cHelp,
 	cVersion,
 	cLicense,
-	cNormalize
+	cProcess
 };
 
 enum option {
@@ -58,6 +74,9 @@ enum option {
 };
 
 struct parameters {
+	tol::E_FPOINTER___( char ) Namespace;
+	tol::E_FPOINTER___( char ) Source;
+	tol::E_FPOINTER___( char ) Destination;
 	parameters( void )
 	{
 	}
@@ -70,11 +89,14 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " <command> [options] ..." << txf::nl;
-	// Free argument description.
-	cout << "command:" << txf::nl;
+	cout << NAME << " <command> [options] [source-file [dest-file]]" << txf::nl;
+	cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
+	cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	cout << "command: " << txf::nl;
+	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vOneLine, true );
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	cout << "options:" << txf::nl;
+	clnarg::PrintOptionUsage( Description, oNamespace, "xpp tags namespace ;'" DEFAULT_NAMESPACE "' by default.", clnarg::vOneLine );
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
@@ -113,7 +135,17 @@ ERRBegin
 		Argument.Init();
 
 		switch( Option = Options( P ) ) {
-//		case o:
+		case oNamespace:
+			Analyzer.GetArgument( Option, Argument );
+
+			if ( Argument.Amount() == 0 ) {
+				cout << "Option " << Analyzer.Description().GetOptionLabels( oNamespace ) << " must have one argument !" << txf::nl;
+				ERRExit( evParameters );
+			}
+
+			Parameters.Namespace = Argument.Convert();
+
+			break;
 		default:
 			ERRc();
 		}
@@ -141,8 +173,14 @@ ERRBegin
 	P = Free.Last();
 
 	switch( Free.Amount() ) {
+	case 2:
+		Parameters.Destination = Free( P ).Convert();
+		P = Free.Previous( P );
+	case 1:
+		Parameters.Source = Free( P ).Convert();
+		break;
 	default:
-		cerr << "Too many arguments." << txf::nl;
+		cerr << "Wrong amount of arguments." << txf::nl;
 		cout << HELP << txf::nl;
 		ERRi();
 		break;
@@ -168,7 +206,9 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
+	Description.AddCommand( 'p', "process", cProcess );
 //	Description.AddOption( '', "", o );
+	Description.AddOption( 'n', "namespace", oNamespace );
 
 	Analyzer.Init( argc, argv, Description );
 
@@ -186,7 +226,7 @@ ERRBegin
 		epsmsc::PrintLicense( cout );
 		ERRi();
 		break;
-//	case c:
+	case cProcess:
 	case CLNARG_NONE:
 		break;
 	default:
@@ -204,13 +244,59 @@ ERREpilog
 
 /* End of the part which handles command line arguments. */
 
+static void Process_(
+	const char *Source,
+	const char *Destination,
+	const char *Namespace )
+{
+ERRProlog
+	flf::file_oflow___ OFlow;
+	txf::text_oflow__ TOFlow( OFlow );
+	flf::file_iflow___ IFlow;
+	xtf::extended_text_iflow__ XTFlow;
+	str::string ErrorFileName;
+	tol::E_FPOINTER___( char ) Directory;
+ERRBegin
+	if ( Source != NULL ) {
+		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
+			cerr << "Unable to open file '" << Source << "' for reading !" << txf::nl;
+			ERRExit( evInputOutput );
+		}
 
+		XTFlow.Init( IFlow );
 
+		Directory = fnm::GetLocation( Source );
+	} else
+		XTFlow.Init( cio::cinf );
+
+	if ( Destination != NULL )
+		if ( OFlow.Init( Destination, err::hSkip ) != fil::sSuccess ) {
+			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
+			ERRExit( evInputOutput );
+		}
+
+	ErrorFileName.Init();
+
+	if ( !xml::Normalize( XTFlow, str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ), str::string( Directory == NULL ? "" : Directory ), ( Destination == NULL ? cout : TOFlow ), ErrorFileName ) ) {
+		cerr << "Error ";
+
+		if ( ErrorFileName.Amount() != 0 )
+			cerr << "in file '" << ErrorFileName << "' ";
+
+		cerr << "at line " << XTFlow.Line() << " position " << XTFlow.Column() << " !" << txf::nl;
+
+		ERRExit( evProcessing );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
 void Go( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
+	Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace );
 ERRErr
 ERREnd
 ERREpilog

@@ -71,6 +71,7 @@ namespace xml {
 
 	struct callback__
 	{
+		virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump ) = 0;
 		virtual bso::bool__ XMLStartTag(
 			const str::string_ &Name,
 			const str::string_ &Dump ) = 0;

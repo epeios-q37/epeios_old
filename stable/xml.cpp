@@ -396,7 +396,7 @@ static void SkipComment_( flow_ &Flow )
 	}
 }
 
-static void SkipHeader_( flow_ &Flow )
+static void HandleProcessingInstruction_( flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
 		ERRI( iBeam );
@@ -450,7 +450,13 @@ ERRBegin
 			else {
 				Flow.Get();
 				if ( Flow.View() == '?' ) {
-					SkipHeader_( Flow );
+					HandleProcessingInstruction_( Flow );
+
+					if ( !Callback.XMLProcessingInstruction( Flow.Dump ) )
+						ERRI( iBeam );
+
+					Flow.Dump.Init();
+
 					SkipSpaces_( Flow );
 				} else
 					Flow.Unget( '<' );
@@ -842,6 +848,10 @@ class donothing_callback__
 : public callback__
 {
 protected:
+	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	{
+		return true;
+	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
 		const str::string_ &Dump )
@@ -898,6 +908,10 @@ private:
 		}
 	}
 protected:
+	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	{
+		return true;
+	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
 		const str::string_ &Dump )
@@ -1144,6 +1158,10 @@ protected:
 			return tSet;
 
 		return t_Undefined;
+	}
+	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	{
+		return _UserCallback->XMLProcessingInstruction( Dump );
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
@@ -1493,6 +1511,12 @@ class neutral_callback
 private:
 	xml::writer _Writer;
 protected:
+	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	{
+		_Writer.GetFlow() << Dump << txf::nl;
+
+		return true;
+	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
 		const str::string_ &Dump )
