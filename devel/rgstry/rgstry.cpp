@@ -543,6 +543,10 @@ private:
 	registry_ &_Registry;
 	nrow__ _Root, _Current;
 protected:
+	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &dump )
+	{
+		return true;
+	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &TagName,
 		const str::string_ &Dump )

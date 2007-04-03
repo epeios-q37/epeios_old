@@ -455,9 +455,9 @@ ERRBegin
 					if ( !Callback.XMLProcessingInstruction( Flow.Dump ) )
 						ERRI( iBeam );
 
-					Flow.Dump.Init();
-
 					SkipSpaces_( Flow );
+
+					Flow.Dump.Init();
 				} else
 					Flow.Unget( '<' );
 			}
@@ -1161,7 +1161,10 @@ protected:
 	}
 	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
 	{
-		return _UserCallback->XMLProcessingInstruction( Dump );
+		if ( _ExpandNestingLevel )
+			return true;
+		else
+			return _UserCallback->XMLProcessingInstruction( Dump );
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,

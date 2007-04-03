@@ -455,9 +455,9 @@ ERRBegin
 					if ( !Callback.XMLProcessingInstruction( Flow.Dump ) )
 						ERRI( iBeam );
 
-					Flow.Dump.Init();
-
 					SkipSpaces_( Flow );
+
+					Flow.Dump.Init();
 				} else
 					Flow.Unget( '<' );
 			}
