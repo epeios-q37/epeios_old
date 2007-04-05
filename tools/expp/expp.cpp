@@ -52,7 +52,8 @@ using cio::cerr;
 /* Beginning of the part which handles command line arguments. */
 
 enum exit_value__ {
-	evSuccess,
+	evSuccess = EXIT_SUCCESS,
+	evGenericFailure = EXIT_FAILURE,
 	// Erreur dans les paramètres d'entrée.
 	evParameters,
 	// Erreur lors de l'ouverture des fichiers d'entrée ou de sortie.
@@ -70,15 +71,21 @@ enum command {
 };
 
 enum option {
+	// Définition du namespace.
 	oNamespace,
+	// Suppression de l'indentation
+	oNoIndent
+
 };
 
 struct parameters {
 	tol::E_FPOINTER___( char ) Namespace;
 	tol::E_FPOINTER___( char ) Source;
 	tol::E_FPOINTER___( char ) Destination;
+	bso::bool__ NoIndent;
 	parameters( void )
 	{
+		NoIndent = false;
 	}
 };
 
@@ -93,10 +100,11 @@ void PrintUsage( const clnarg::description_ &Description )
 	cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
 	cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
 	cout << "command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vOneLine, true );
+	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vSplit, true );
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	cout << "options:" << txf::nl;
-	clnarg::PrintOptionUsage( Description, oNamespace, "xpp tags namespace ;'" DEFAULT_NAMESPACE "' by default.", clnarg::vOneLine );
+	clnarg::PrintOptionUsage( Description, oNamespace, "xpp tags namespace; '" DEFAULT_NAMESPACE "' by default.", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oNoIndent, "suppress indentation.", clnarg::vSplit );
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
@@ -146,6 +154,9 @@ ERRBegin
 			Parameters.Namespace = Argument.Convert();
 
 			break;
+		case oNoIndent:
+			Parameters.NoIndent = true;
+			break;
 		default:
 			ERRc();
 		}
@@ -179,6 +190,8 @@ ERRBegin
 	case 1:
 		Parameters.Source = Free( P ).Convert();
 		break;
+	case 0:
+		break;
 	default:
 		cerr << "Wrong amount of arguments." << txf::nl;
 		cout << HELP << txf::nl;
@@ -209,6 +222,7 @@ ERRBegin
 	Description.AddCommand( 'p', "process", cProcess );
 //	Description.AddOption( '', "", o );
 	Description.AddOption( 'n', "namespace", oNamespace );
+	Description.AddOption( CLNARG_NO_SHORT, "no-indent", oNoIndent );
 
 	Analyzer.Init( argc, argv, Description );
 
@@ -247,7 +261,8 @@ ERREpilog
 static void Process_(
 	const char *Source,
 	const char *Destination,
-	const char *Namespace )
+	const char *Namespace,
+	bso::bool__ Indent )
 {
 ERRProlog
 	flf::file_oflow___ OFlow;
@@ -256,6 +271,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XTFlow;
 	str::string ErrorFileName;
 	tol::E_FPOINTER___( char ) Directory;
+	bso::bool__ BackedUp = false;
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
@@ -269,15 +285,20 @@ ERRBegin
 	} else
 		XTFlow.Init( cio::cinf );
 
-	if ( Destination != NULL )
+	if ( Destination != NULL ) {
+		fil::CreateBackupFile( Destination, fil::hbfDuplicate );
+
+		BackedUp = true;
+
 		if ( OFlow.Init( Destination, err::hSkip ) != fil::sSuccess ) {
 			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
 			ERRExit( evInputOutput );
 		}
+	}
 
 	ErrorFileName.Init();
 
-	if ( !xml::Normalize( XTFlow, str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ), str::string( Directory == NULL ? "" : Directory ), ( Destination == NULL ? cout : TOFlow ), ErrorFileName ) ) {
+	if ( !xml::Normalize( XTFlow, str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ), str::string( Directory == NULL ? "" : Directory ), Indent, ( Destination == NULL ? cout : TOFlow ), ErrorFileName ) ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )
@@ -288,6 +309,8 @@ ERRBegin
 		ERRExit( evProcessing );
 	}
 ERRErr
+	if ( BackedUp )
+		fil::RecoverBackupFile( Destination );
 ERREnd
 ERREpilog
 }
@@ -296,7 +319,7 @@ void Go( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
-	Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace );
+	Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
 ERRErr
 ERREnd
 ERREpilog

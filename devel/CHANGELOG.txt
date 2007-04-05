@@ -1,5 +1,9 @@
 $Id$
 
+05/04/2007 :
+	- XML :
+		- Ajout paramètre 'Indent' à la focntion 'Normalize(...)'.
+		
 03/04/2007 :
 	- XML :
 		- Ajout 'XMLProcessingIntruction(...)'.

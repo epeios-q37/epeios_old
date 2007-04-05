@@ -1516,7 +1516,10 @@ private:
 protected:
 	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
 	{
-		_Writer.GetFlow() << Dump << txf::nl;
+		_Writer.GetFlow() << Dump;
+		
+		if ( _Writer.Indent() )
+			_Writer.GetFlow() << txf::nl;
 
 		return true;
 	}
@@ -1562,9 +1565,11 @@ protected:
 		return true;
 	}
 public:
-	void Init( txf::text_oflow__ &Flow )
+	void Init(
+		txf::text_oflow__ &Flow,
+		bso::bool__ Indent )
 	{
-		_Writer.Init( Flow );
+		_Writer.Init( Flow, Indent );
 	}
 };
 
@@ -1573,6 +1578,7 @@ bso::bool__ xml::Normalize(
 	xtf::extended_text_iflow__ &IFlow,
 	const str::string_ &Namespace,
 	const str::string_ &Directory,
+	bso::bool__ Indent,
 	txf::text_oflow__ &OFlow,
 	str::string_ &GuiltyFileName )
 {
@@ -1580,7 +1586,7 @@ bso::bool__ xml::Normalize(
 ERRProlog
 	neutral_callback NCallback;
 ERRBegin
-	NCallback.Init( OFlow );
+	NCallback.Init( OFlow, Indent );
 
 	Success = ExtendedParse( IFlow, Namespace, Directory, NCallback, GuiltyFileName );
 ERRErr

@@ -119,6 +119,7 @@ namespace xml {
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
 		const str::string_ &Directory,
+		bso::bool__ Indent,
 		txf::text_oflow__ &OFlow,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
@@ -265,6 +266,7 @@ namespace xml {
 		{
 			return *S_.Flow;
 		}
+		E_RODISCLOSE_( bso::bool__, Indent )
 	};
 
 	E_AUTO( writer )
