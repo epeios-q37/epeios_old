@@ -1,0 +1,21 @@
+# $Id$
+mkdir workdir
+cd workdir
+export DIR=expp
+GET=../../get_cvs
+
+mkdir -p $DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/$DIR/README.txt
+$GET epeios $DIR tools/$DIR/CHANGELOG.txt
+$GET epeios $DIR tools/$DIR/expp.exe
+
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+mv $DIR/gnu_gpl.txt $DIR/LICENSE
+mv $DIR/README.txt $DIR/README
+
+../../create_pkg $DIR

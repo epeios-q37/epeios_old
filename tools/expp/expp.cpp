@@ -282,8 +282,10 @@ ERRBegin
 		XTFlow.Init( IFlow );
 
 		Directory = fnm::GetLocation( Source );
-	} else
+	} else {
+		cio::cinf.EOFD( XTF_EOXT );
 		XTFlow.Init( cio::cinf );
+	}
 
 	if ( Destination != NULL ) {
 		fil::CreateBackupFile( Destination, fil::hbfDuplicate );
@@ -298,7 +300,12 @@ ERRBegin
 
 	ErrorFileName.Init();
 
-	if ( !xml::Normalize( XTFlow, str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ), str::string( Directory == NULL ? "" : Directory ), Indent, ( Destination == NULL ? cout : TOFlow ), ErrorFileName ) ) {
+	if ( !xml::Normalize( XTFlow,
+		                  str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
+						  str::string( Directory == NULL ? (const char *)"" : Directory ),
+						  Indent,
+						  ( Destination == NULL ? cout : TOFlow ),
+						  ErrorFileName ) ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )

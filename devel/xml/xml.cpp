@@ -1473,6 +1473,7 @@ protected:
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
+			_ExpandIsHRef = false;
 		}
 		void GetGuiltyFileNameIfRelevant( str::string_ &FileName )
 		{

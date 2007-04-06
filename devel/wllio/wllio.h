@@ -124,6 +124,10 @@ namespace wllio {
 		{
 			_D = D;
 		}
+		bso::bool__ IsSTDIN( void ) const
+		{
+			return _fileno( stdin ) == _D;
+		}
 	};
 
 	class lowlevel_input__
@@ -161,18 +165,27 @@ namespace wllio {
 		{
 			_Test();
 
-			switch( _eof( _D ) ) {
-			case 1:
-				return true;
-				break;
-			case 0:
-				return false;
-				break;
-			default:
-				ERRd();
-				return true;	// To avoid a warning.
-				break;
-			}
+			if ( IsSTDIN() ) {
+				return feof( stdin ) != 0;
+			} else 
+				switch( _eof( _D ) ) {
+				case 1:
+					return true;
+					break;
+				case 0:
+					return false;
+					break;
+				default:
+	#ifdef WLLIO_DBG
+					int Error = errno;	// Pour le débogage.
+	#endif
+					if ( _D == _fileno( stdin ) )	// Si 'stdin'.
+						return false;
+					else
+						ERRd();
+					return true;	// To avoid a warning.
+					break;
+				}
 		}
 	};
 

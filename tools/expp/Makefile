@@ -26,11 +26,11 @@
 name = expp
 copt =
 # Epeios general debugging features
-copt += -DXXX_DBG
+#copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err
+libs = cio clnarg epsmsc err fil flw fnm mmi str tol ttr uym xml
 
 ifndef EPEIOS_SRC
 	src=
@@ -54,9 +54,9 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
-co += -g
+#co += -g
 # General optimization.
-#co += -O
+co += -O
 # To use with gprof
 #co += -pg
 lo = -o $(name)
@@ -99,11 +99,8 @@ lo += $(EPEIOS_LOPT) $(lopt)
 
 objs = $(name).$(ox) $(libs:=.$(ox))
 
-$(name):  LinkResponseFile $(objs)
-	$(cc) $(lrfs)
+$(name):  $(objs)
+	$(cc) $(lo) $(objs)
 	
 %.$(ox): %.cpp
 	$(cc) $(co) $< 
-
-LinkResponseFile: $(objs)
-	echo $(lo) $(objs) >$@
