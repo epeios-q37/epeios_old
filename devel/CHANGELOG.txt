@@ -1,5 +1,11 @@
 $Id$
 
+08/04/2007 :
+	- XML :
+		- Rajout contrôle sur la détection d'un 'namespace'.
+		- Correction bogue lorsque le 'prolog' n'est pas au début du fichier.
+		- Correction bogue détection erreur lors d'une inclusion de fichier.
+
 06/04/2007 :
 	- XML :
 		- Correction bogue mauvaise initialisation '_ExpandIsHRef'.

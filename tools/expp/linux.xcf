@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!-- Exemple de fichier pour la commande 'expp' -->
+<Configuration>
+	<xpp:set name="OS" value="Linux"/>
+	<xpp:expand href="common.xcf"/>
+</Configuration>

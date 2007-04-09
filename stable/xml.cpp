@@ -487,6 +487,9 @@ ERRBegin
 
 			Tags.Push( Name );
 
+			if ( Name.Amount() == 0 )
+				ERRI( iBeam );
+
 			if ( !Callback.XMLStartTag( Name, Flow.Dump ) )
 				ERRI( iBeam );
 
@@ -1005,6 +1008,9 @@ private:
 	bso::bool__ _ExpandIsHRef;
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
+		if ( TagName.Amount() == 0 )
+			ERRc();
+
 		return str::Compare( TagName, _Namespace, TagName.First(), _Namespace.First(), _Namespace.Amount() ) == 0;
 	}
 	bso::bool__ _Ignore( xtf::extended_text_iflow__ &Flow )
@@ -1100,6 +1106,8 @@ private:
 		tol::E_FPOINTER___( char ) AttributeBuffer;
 		tol::E_FPOINTER___( char ) FileNameBuffer;
 	ERRBegin
+		_ExpandIsHRef = false;
+
 		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _NameSelectAttribute.Convert(), "" );
 
 		if ( Flow.Init( FileNameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
