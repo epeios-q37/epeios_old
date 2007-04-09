@@ -119,6 +119,10 @@ namespace pllio {
 		{
 			_D = D;
 		}
+		bso::bool__ IsSTDIN( void ) const
+		{
+			return fileno( stdin ) == _D;
+		}
 	};
 
 	class lowlevel_input__
@@ -157,18 +161,22 @@ namespace pllio {
 		}
 		bso::bool__ OnEOF( void )
 		{
-			struct stat Stat;
-			off_t Position;
+			if ( IsSTDIN() ) {
+				return feof( stdin ) != 0;
+			} else {
+				struct stat Stat;
+				off_t Position;
 
-			_Test();
+				_Test();
 
-			if ( fstat( _D, &Stat ) != 0 )
-				ERRd();
+				if ( fstat( _D, &Stat ) != 0 )
+					ERRd();
 
-			if ( ( Position = lseek( _D, 0, SEEK_CUR ) ) == -1 )
-				ERRd();
+				if ( ( Position = lseek( _D, 0, SEEK_CUR ) ) == -1 )
+					ERRd();
 
-			return Position >= Stat.st_size;
+				return Position >= Stat.st_size;
+			}
 		}
 	};
 

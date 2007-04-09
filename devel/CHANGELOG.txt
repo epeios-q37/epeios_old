@@ -5,6 +5,8 @@ $Id$
 		- Correction bogue mauvaise initialisation '_ExpandIsHRef'.
 	- WLLIO :
 		- Amélioration gestion fin de fichier (EOF) avec stdin.
+	- PLLIO :
+		- Amélioration gestion fin de fichier (EOF) avec stdin.
 
 05/04/2007 :
 	- XML :

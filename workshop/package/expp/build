@@ -12,7 +12,9 @@ $GET epeios $DIR stable/*.cpp
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/$DIR/README.txt
 $GET epeios $DIR tools/$DIR/CHANGELOG.txt
-$GET epeios $DIR tools/$DIR/expp.exe
+$GET epeios $DIR tools/$DIR/Makefile
+$GET epeios $DIR tools/$DIR/expp.cpp
+$GET epeios $DIR tools/$DIR/Release/expp.exe
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
