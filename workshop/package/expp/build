@@ -15,6 +15,9 @@ $GET epeios $DIR tools/$DIR/CHANGELOG.txt
 $GET epeios $DIR tools/$DIR/Makefile
 $GET epeios $DIR tools/$DIR/expp.cpp
 $GET epeios $DIR tools/$DIR/Release/expp.exe
+$GET epeios $DIR tools/$DIR/linux.xcf
+$GET epeios $DIR tools/$DIR/windows.xcf
+$GET epeios $DIR tools/$DIR/common.xcf
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
