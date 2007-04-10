@@ -1,5 +1,9 @@
 $Id$
 
+-----------
+Publication
+-----------
+
 10/04/2007 :
 	- FIL :
 		- Correction bogue, sous GNU/Linux, conduisant à affecter des droits aléatoires à un fichier nouvellement crée.
@@ -592,7 +596,7 @@ $Id$
 	- FLW :
 		- Réecriture pour faciliter la mise en oeuvre du verouillage.
 
-17/02/06
+17/02/2006
 	- MTX :
 		- Renommage '...RELEASED...' en '...DELETED...'.
 
@@ -613,7 +617,7 @@ $Id$
 		- Déplacement des fonctions 'Defer(...)' et 'Wait' vers la bibliothèque 'THT'.
 		- Déplacement de la fonction 'ForceExit(...)' vers bibloithèque 'MTK'.
 
-27/01/06
+27/01/2006
 	- NSXPDM :
 		- Rajout d'une fonction 'GetElementById()...' avec variation sur le type des paramètres.
 
@@ -648,75 +652,75 @@ $Id$
 	- DIR :
 		- Ajout fonction suppression de répertoire.
 
-20/12/05 :
+20/12/2005 :
 	- BSO :
 		- Ajout de l'initialisation par un flottant pour 'bso::sign__'.
 
-14/12/05 :
+14/12/2005 :
 	- DBT :
 		- Correction confusion type 'row__'.
 	- NSXPCM :
 		- Correction bogue 'Split()'.
 
-05/12/05 :
+05/12/2005 :
 	- UYM :
 		- Correction bogue comparaison.
 
-29/11/05 :
+29/11/2005 :
 	- CPE :
 		- Adaptation aux particularités de la compilation d'une bibliothèque sous Unix.
 
-20/11/05 :
+20/11/2005 :
 	- General :
 		- Création de la bibliothèque 'DIR', de gestion des répertoires.
 	- TOL : 
 		- Correction bogue marco 'E_TYPEDEF_'.
 
-18/11/05 :
+18/11/2005 :
 	- RGSTRY :
 		- Correction bogue 'SearchChild()'".
 
-17/11/05 :
+17/11/2005 :
 	- RGSTRY :
 		- Correction bogue 'GetPathValues()'.
 
-15/11/05 :
+15/11/2005 :
 	- RGSTRY :
 		- Ajout méthodes avec variation sur nombre de paramètres.
 
 
-14/11/05 :
+14/11/2005 :
 	- RGSTRY :
 		- Correction bogue parsing dans un arbre existant.
 		- Ajout gestion 'exml:define' et 'exml:expand'.
 	- XML :
 		- Correction bogue avec flux content un seul tag.
 
-10/11/05 :
+10/11/2005 :
 	- RGSTRY :
 		- Ajout méthodes 'GetPathValues(...)'.
 
-09/11/05 :
+09/11/2005 :
 	- XML :
 		- Ajout de la possibilité de génèrer du XML sans présentation.
 
-08/11/05 :
+08/11/2005 :
 	- CIO :
 		- Ajout du message d'erreur lors de l'utilisation dans un contexte de bibliothèque (DLL, '.so'. ...).
 	- FIL :
 		- Adpatation aux changements dans la bibliothèque 'CIO'.
 
-05/11/05 :
+05/11/2005 :
 	- CSDSNC :
 		- Le paramètre 'HostService' passé à l'initialisation de l'objet 'core_' voit son contenu stocké, et non plus seulement son pointeur.
 
-27/10/05
+27/10/2005
 	- CIO : 
 		- Déplacement de l'objet '(unsafe_)nul' vers la bibliothèque 'TXF'.
 	- TXF :
 		- Voir entrée concernant le bibliothèque 'CIO'.
 
-23/10/05 :
+23/10/2005 :
 	- CTN :
 		- Correction d'un bogue sur les constructeurs.
 	- DBT :
@@ -724,25 +728,25 @@ $Id$
 	- MDR :
 		- Correction constructeur/destructeur.
 
-29/09/05 :
+29/09/2005 :
 	- DTE :
 		- Ajout fonction 'Now()'.
 
-25/09/05 :
+25/09/2005 :
 	- GENERAL :
 		- Adaptations aux modifications de la bibliothèque 'FLW'.
 
-24/09/05 :
+24/09/2005 :
 	- CSLIO::
 		- Adaptation aux chnagements de la bibliothèque 'FLW'.
 	- FLW :
 		- Remise en place méthode 'reset(...)' et 'Init(...)' en lieu et place du contructeur avec argument et de l'opérateur '()'.
 
-22/09/05 :
+22/09/2005 :
 	- STR :
 		- Ajout des opérateurs de comparaisons entre un 'const string_ &' et un 'const char *'
 
-21/09/05 :
+21/09/2005 :
 	- XML :
 		- Renommage méthodes classe 'callback__'.
 		- Ajout et gestion code d'erreur méthodes classe 'callback__'.
@@ -750,7 +754,7 @@ $Id$
 	- RGSTRY:
 		- Adaptation modification bibliothèque 'XML'.
 
-20/09/05:
+20/09/2005:
 	- XML :
 		- Suppression de la gestion de suffixes.
 		- Ajout correspondance balise fermante.
@@ -761,7 +765,7 @@ $Id$
 	- TAGEXP : 
 		- Adaptation changements différentes bibliothèques.
 
-18/09/05
+18/09/2005
 	- GENERAL:
 		- Adaptation aux changememnts de la bibliothèque 'STK'.
 		- Nouvelle bibliothèque 'XML' à la place de 'LXMLPR'.
@@ -769,12 +773,12 @@ $Id$
 	- STK :
 		- Mise en place d'une pile basée sur un 'BUNCH' et d'une autre sur un '(X)(M)CONTAINER'.
 
-10/09/05:
+10/09/2005:
 	- DTR :
 		- Simplification du parcour de l'arbre (objet 'browser__').
 		- Mise à niveau (nouveaux standards).
 	 
-07/09/05:
+07/09/2005:
 	- CSDDLC:
 		- Mise en place de la gestion d'un code de retour signalant une erreur.
 	- CSDDLS : 
@@ -786,22 +790,22 @@ $Id$
 		- Mise en place d'un code de retour lors de l'initialisation pour signaler une erreur.
 	
 
-03/09/05:
+03/09/2005:
 	- TOL :
 		- Ajout de la directive préprocesseur '__LOC__'.
 
-29/08/05 :
+29/08/2005 :
 	- FLX :
 		- Ajout du paramètre 'Position' lors de l'initialisation d'un 'bunch_iflow__'.
 
-27/08/05
+27/08/2005
 	- LXMLPR :
 		- Amélioration de la détection d"erreurs du flux d'entrée.
 	- RGSTRY :
 		- Amélioration de la détection d'erreurs.
 		- Gestion des 'path' se terminant par un attribut ('.../@Nom').
 
-18/08/05
+18/08/2005
 	- ERR :
 		- Correction d'un problème apparaissant lors de l'édition de liens.
 	- LSTCTN :
@@ -811,46 +815,46 @@ $Id$
 	- RGSTRY :
 		- Adaptation aux modifications de la bibliothèque 'LXMLPR'.
 
-17/08/05:
+17/08/2005:
 	- BCH :
 		- Ajout d'une variante de la méthode 'Append'.
 
-14/08/05:
+14/08/2005:
 	- LXMLPR :
 		- Lors d'une erreur lors de l'analyse, la ligne et la colonne incriminées sont disponibles.
 	- RGSTRY:
 		- Lors d'une erreur lors de l'analyse, la ligne et la colonne incriminées sont disponibles.
 
-16/07/05 :
+16/07/2005 :
 	- General :
 		- Adaptation à VC8.
 
-11/07/05 :
+11/07/2005 :
 	- ERR :
 		- Correction affichage message d'erreur sur la mauvaise console.
 
-07/07/05 :
+07/07/2005 :
 	- SSNMNG :
 		- Ajout de la caractéristique 'AlwaysValid'.
 	- FLW :
 		- Correction bogue deadlock lorsque problème sur flot de lecture.
 
-05/07/05 :
+05/07/2005 :
 	- RGSTRY :
 		- Complétion.
 
-04/07/05 :
+04/07/2005 :
 	- FLW :
 		- Correction bogue.
 
-02/07/05 :
+02/07/2005 :
 	- GENERAL :
 		- Adaptation aux modification de la bibliothèque 'FLW'.
 	- FLW :
 		- Ajout des méthodes '<Write|Read>Relay(...)'.
 		- Possibilité de rendre les flots 'thread-safe'.
 
-30/06/05
+30/06/2005
 	- FLW :
 		- Ajout de la focntionnalite 'Dismiss()'.
 	- SCK :
@@ -860,54 +864,54 @@ $Id$
 	- TOL:
 		- Ajout de la gesion d'un pointeur gèré par 'new'/'delete'.
 
-23/06/05
+23/06/2005
 	- Ajout de la bibliothèque 'LXMLPR'.
 
-20/06/05
+20/06/2005
 - IDXBTQ :
 	- Ajout 'const' manquant.
 
-18/06/05
+18/06/2005
 - GENERAL:
 	- Adapting to G++ 3.4.4
 
-01/06/05
+01/06/2005
 - NSXPCM :
 	- Completion.
 
-25/05/05
+25/05/2005
 - GENERAL
 	- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
 
-09/05/05
+09/05/2005
 - CLT:
 	- Ajout d'un 'inline' manquant.
 
-06/05/05:
+06/05/2005:
 - CLT :
 	- Modifications pour rendre cette biliothèque 'thread-safe'.
 
-04/05/05:
+04/05/2005:
 - GENERAL :
 	- Modifications pour rendre les biliothèques 'thread-safe'.
 
-18/04/05:
+18/04/2005:
 - GENERAL:
 	- Adaptation aux changements de la bibliothèque 'TOL'.
 
-17/04/05:
+17/04/2005:
 - TOL:
 	- Adaptation des macros '...DISCLOSE...' au nouveau standard concernant les variables privées.
 
-10/04/05:
+10/04/2005:
 - STR:
 	- La virgule est, en plus du point, reconnu comme séparateur décimal par la méthode 'ToLF()'.
 
-21/04/05
+21/04/2005
 - ERR:
 	- Correction du bogue concernant les fonctions appelées lors du traitement d'erreur.
 
-04/04/05
+04/04/2005
 - FIL:
 	- Correction de bogues.
 - FLW:
@@ -915,11 +919,11 @@ $Id$
 - IOF:
 	- Améliorations.
 
-02/04/05:
+02/04/2005:
 - ERR:
 	- Amélioration de la gestion d'erreurs en cours de traitement d'erreur.
 
-28/03/05:
+28/03/2005:
 - Codage bibliothèque LTF.
 - FLX :
 	- Adaptation à la nouvell norme des ojects de type '__'.
@@ -927,17 +931,17 @@ $Id$
 	- Suppression de l'objet 'lout'.
 	- Création de l'objet 'nul'.
 
-26/03/05:
+26/03/2005:
 - FLW:
 	- Amélioration visant à pouvoir utiliser un flux de sortie sans cache.
 
-24/03/05
+24/03/2005
 - TOL :
 	- Adaptation aux changements de la bibliothèque 'AEM'.
 - TXMTBL:
 	- Adaptation aux changements de la bibliothqèue 'TOL'.
 
-23/03/05:
+23/03/2005:
 - AEM :
 	- Rajout des méthodes 'First()' et 'Last()' avec offset.
 - LST :
@@ -947,7 +951,7 @@ $Id$
 - TXMTBL :
 	- Correction de bogue.
 
-21/03/05:
+21/03/2005:
 - FLX :
 	- Correction de bogue.
 - LCK :
@@ -956,318 +960,318 @@ $Id$
 	- Ajout fonction/méthode 'IsLocked()'.
 	- Correction bogue.
 
-17/03/05:
+17/03/2005:
 - MTX:
 	- Correction bogue fonction 'Delete()'.
 	- Ajout paramètre 'EvenIfLocked' à la fonction 'Delete()'.
 
-16/03/05:
+16/03/2005:
 - HTP:
 	- Ajout du champ 'Content-Type' dans l'objet 'header'.
 	- Modifications cosmétiques.
 
-13/03/05:
+13/03/2005:
 - HTP:
 	- Ajout du traitement du code '302' ('Found').
 	- Ajout du champ 'Location' dans la classe 'header_'.
 	- Quelques modification cosmétiques.
 
-12/03/05
+12/03/2005
 - LCK:
 	- Amélioration de l'ergonomie.
 	- Ajout de la protection des données partagées.
 	- Suppression de fonctions délicates.
 
-11/03/05:
+11/03/2005:
 - CTN:
 	- Corrections dûs à des précédents changements.
 
-10/03/05:
+10/03/2005:
 - CTN:
 	- Ajout de méthodes 'Index()' et de nouveaux 'operator()( void )'.
 
-08/03/05:
+08/03/2005:
 - IDXBTR:
 	- Correction d'un bogue potentiel.
 	- Renommage de la méthode 'Remove' en 'Delete'.
 
-07/03/05
+07/03/2005
 - SSNMNG: Correction d'un bogue dans la méthode 'Close()'.
 
-06/03/05:
+06/03/2005:
 - SSNMNG : Ajout de la gestion des pointeurs utilisateurs.
 
 ==== Ancien format ====
 
 GENERAL:
-- (01/02/05) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
-- (02/02/05) Adding 'LLIO' and 'io' libraries.
+- (01/02/2005) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
+- (02/02/2005) Adding 'LLIO' and 'io' libraries.
 
 AEM:
-- (09/02/05) Fixing some compilation issue due to templates.
+- (09/02/2005) Fixing some compilation issue due to templates.
 
 BCH:
-- (10/01/05) Fixing type problem.
+- (10/01/2005) Fixing type problem.
 
 CCH:
-- (24/01/05) Adapting to changes in 'TOL' library.
+- (24/01/2005) Adapting to changes in 'TOL' library.
 
 CIO:
-- (03/02/05) Use now 'IOF' library.
+- (03/02/2005) Use now 'IOF' library.
 
 CPE:
-- (02/03/05) 'CPE__CONSOLE' n'est plus défini par défaut, ce qui posait problème avec des DLL sous Windows.
+- (02/03/2005) 'CPE__CONSOLE' n'est plus défini par défaut, ce qui posait problème avec des DLL sous Windows.
 
 ERR:
-- (26/02/05) Add 'uTest' and 'bTest' items to 'usr' and 'bkd' error type.
+- (26/02/2005) Add 'uTest' and 'bTest' items to 'usr' and 'bkd' error type.
 
 FIL:
-- (02/02/05) Use now 'IOF' library.
+- (02/02/2005) Use now 'IOF' library.
 
 FLM:
-- (02/02/05) Use now 'IOF' library.
-- (02/02/05) Adapting to changes in 'IOF' library.
+- (02/02/2005) Use now 'IOF' library.
+- (02/02/2005) Adapting to changes in 'IOF' library.
 
 FLW:
-- (03/02/05) No more 'Init()', 'reset()', ... method (new rules for '__' objects).
+- (03/02/2005) No more 'Init()', 'reset()', ... method (new rules for '__' objects).
 
 FLX:
-- (03/02/05) Adapting to changes in 'FLW' library.
+- (03/02/2005) Adapting to changes in 'FLW' library.
 
 MSG:
-- (26/01/05) Coding workaround for the silly 'GetMessage' problem for cygwin too.
+- (26/01/2005) Coding workaround for the silly 'GetMessage' problem for cygwin too.
 
 SCK:
-- (03/02/05) Adapting to changes in 'FLW'.
+- (03/02/2005) Adapting to changes in 'FLW'.
 
 SSNMNG:
-- (04/03/05) Removing default values in 'Init()' function.
-- (05/03/05) Adding and using the 'rows[_]' type.
+- (04/03/2005) Removing default values in 'Init()' function.
+- (05/03/2005) Adding and using the 'rows[_]' type.
 -			 Removing a non-thread-safe method.
 
 TAGECP:
-- (03/02/05) Adapting to changes in 'FIL' library.
+- (03/02/2005) Adapting to changes in 'FIL' library.
 
 TOL:
-- (20/01/05) Fixing empty 'pointer__' object copying problem.
+- (20/01/2005) Fixing empty 'pointer__' object copying problem.
 
 TYM:
-- (20/01/05) Fixing destructor calling problem.
+- (20/01/2005) Fixing destructor calling problem.
 
 --------
 20050109
 --------
 
 GENERAL:
-- (23/05/04) Creation of the 'FLF' library.
-- (24/05/04) Creation of the 'CIO' library.
-- (24/05/04) Adapting to changes in 'FLW' library.
-- (24/05/04) Adapting to changes in 'TXF' library.
-- (30/05/04) Adapting to changes in 'FLW' library.
-- (31/05/04) Adapting to changes in 'FLW' library.
-- (31/05/04) Using 'CIO' library instead of 'STF' for 'c(out|in|err)'.
-- (11/06/04) Adding the 'MSG' library.
-- (14/07/04) Adapting to changes in 'FLW' library.
-- (14/07/04) Adapting to changes in 'BSO' library.
-- (14/07/04) Removing apparently unused read/write methods.
-- (21/08/04) Obsoletes 'FAM' library, because not thread-safe.
-- (10/10/04) Adding 'UIF' library.
-- (23/10/04) Replacing 'Delete' with 'Remove' or 'Erase'.
-- (27/10/04) Adapting to changes in 'TOL' library.
-- (27/11/04) Adapting to changes in 'TOL' library.
+- (23/05/2004) Creation of the 'FLF' library.
+- (24/05/2004) Creation of the 'CIO' library.
+- (24/05/2004) Adapting to changes in 'FLW' library.
+- (24/05/2004) Adapting to changes in 'TXF' library.
+- (30/05/2004) Adapting to changes in 'FLW' library.
+- (31/05/2004) Adapting to changes in 'FLW' library.
+- (31/05/2004) Using 'CIO' library instead of 'STF' for 'c(out|in|err)'.
+- (11/06/2004) Adding the 'MSG' library.
+- (14/07/2004) Adapting to changes in 'FLW' library.
+- (14/07/2004) Adapting to changes in 'BSO' library.
+- (14/07/2004) Removing apparently unused read/write methods.
+- (21/08/2004) Obsoletes 'FAM' library, because not thread-safe.
+- (10/10/2004) Adding 'UIF' library.
+- (23/10/2004) Replacing 'Delete' with 'Remove' or 'Erase'.
+- (27/10/2004) Adapting to changes in 'TOL' library.
+- (27/11/2004) Adapting to changes in 'TOL' library.
 
 AEM:
-- (06/09/04) Adding 'Exists()' and 'IsEmpty()' to the static version.
-- (05/10/04) Adding 'Previous/Next' with offset.
+- (06/09/2004) Adding 'Exists()' and 'IsEmpty()' to the static version.
+- (05/10/2004) Adding 'Previous/Next' with offset.
 
 BCH:
-- (09/06/04) Adding 'relations(_)' type.
-- (07/09/04) Adding the truncate function with a position.
-- (22/10/04) Renaming 'Delete' to 'Remove'.
-- (15/12/04) Addin 'Crop()' methods.
+- (09/06/2004) Adding 'relations(_)' type.
+- (07/09/2004) Adding the truncate function with a position.
+- (22/10/2004) Renaming 'Delete' to 'Remove'.
+- (15/12/2004) Addin 'Crop()' methods.
 
 BITBCH:
-- (23/06/04) Adding the 'And', 'Or', 'XOr' and 'Not' functions.
-- (23/06/04) Fixing some template problems.
-- (07/07/04) Adding 'operator <<' function.
-- (30/07/04) Fixing error preventing compiling under g++.
-- (18/08/04) Optimization.
+- (23/06/2004) Adding the 'And', 'Or', 'XOr' and 'Not' functions.
+- (23/06/2004) Fixing some template problems.
+- (07/07/2004) Adding 'operator <<' function.
+- (30/07/2004) Fixing error preventing compiling under g++.
+- (18/08/2004) Optimization.
 
 BSO:
-- (12/03/04) Adding 'Convert()' function with 'String' parameter.
-- (03/05/04) disable thread-unsafe functions when working in multithreading.
+- (12/03/2004) Adding 'Convert()' function with 'String' parameter.
+- (03/05/2004) disable thread-unsafe functions when working in multithreading.
 -			 fixing the 'Allocate' bug.
-- (14/07/04) Removing the unused 'TXF' header.
-- (11/08/04) Renaming some preprocessor definitions.
+- (14/07/2004) Removing the unused 'TXF' header.
+- (11/08/2004) Renaming some preprocessor definitions.
 	
 CCH:
-- (20/05/04) Replacing the old 'Write', 'Fill' and 'Read' method.
-- (25/09/04) Optimizing dumping ot the write cache.
-- (09/10/04) Bug fixing.
+- (20/05/2004) Replacing the old 'Write', 'Fill' and 'Read' method.
+- (25/09/2004) Optimizing dumping ot the write cache.
+- (09/10/2004) Bug fixing.
 
 CPE:
-- (09/08/04) Introducing 'CPE_ST' to force single thread configuration even if the compiler is set to multithreading.
-- (28/08/04) Adding Console/GUI detection (with wxWidgets).
+- (09/08/2004) Introducing 'CPE_ST' to force single thread configuration even if the compiler is set to multithreading.
+- (28/08/2004) Adding Console/GUI detection (with wxWidgets).
 
 CTN:
 - Adding a 'FlushTest()' to '=' operator in debug mode.
-- (23/04/04) Adding a test in debug mode to avoid retrieving of an undefined item.
-- (10/05/04) Fixing 'Delete()' bug.
-- (24/10/04) Removing 'EstVide', replaced by 'IsEmpty'.
-- (13/12/04) 'Store' methods now return position where where object is stored.
-- (15/12/04) Addin 'Crop()' methods + misc. improvements.
+- (23/04/2004) Adding a test in debug mode to avoid retrieving of an undefined item.
+- (10/05/2004) Fixing 'Delete()' bug.
+- (24/10/2004) Removing 'EstVide', replaced by 'IsEmpty'.
+- (13/12/2004) 'Store' methods now return position where where object is stored.
+- (15/12/2004) Addin 'Crop()' methods + misc. improvements.
 
 DTE:
-- (15/04/04) Introducing the new structure.
-- (21/07/04) Improving some features about the thread-safeness of this library.
-- (31/07/04) Adding the 'GetSimplifiedRawDate()' function.
-- (09/08/04) Fixing sign bug.
-- (14/09/04) Some improvements.
+- (15/04/2004) Introducing the new structure.
+- (21/07/2004) Improving some features about the thread-safeness of this library.
+- (31/07/2004) Adding the 'GetSimplifiedRawDate()' function.
+- (09/08/2004) Fixing sign bug.
+- (14/09/2004) Some improvements.
 
 DTFPTB:
-- (13/10/04) Correcting misspelled function name (PutSShort -> PutSLong).
+- (13/10/2004) Correcting misspelled function name (PutSShort -> PutSLong).
 
 EPEIOS:
-- (15/06/04) Adding some useful constants.
-- (26/09/04) Adding 'EPEIOS_ROW_MAX'.
+- (15/06/2004) Adding some useful constants.
+- (26/09/2004) Adding 'EPEIOS_ROW_MAX'.
 
 EPSMSC:
 - Adding 'EPSMSC_COPYRIGHT()' macro.
 
 ERR:
 - Adding some minor features for the 'Intentional' error type.
-- (24/05/04) Using the 'CIO' library instead of 'STF'.
-- (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
-- (03/09/04) Adding some facilities.
-- (06/09/04) Adding some other facilities.
-- (12/12/04) Improvement error handling when flow ('FLW' library) involved.
+- (24/05/2004) Using the 'CIO' library instead of 'STF'.
+- (28/08/2004) No more use of the 'CIO' library when in GUI enviroment.
+- (03/09/2004) Adding some facilities.
+- (06/09/2004) Adding some other facilities.
+- (12/12/2004) Improvement error handling when flow ('FLW' library) involved.
 
 FLW:
-- (24/05/04) Removing the a tailing '_' to the object name.
-- (17/07/04) Adding amount of data red/written handling.
+- (24/05/2004) Removing the a tailing '_' to the object name.
+- (17/07/2004) Adding amount of data red/written handling.
 -			 Renaming some methods.
-- (20/07/04) Improvements.
-- (31/07/04) Fixing bug concerning the 'Reset()' function.
-- (10/12/04) Improvements.
-- (12/12/04) Improving error handling.
+- (20/07/2004) Improvements.
+- (31/07/2004) Fixing bug concerning the 'Reset()' function.
+- (10/12/2004) Improvements.
+- (12/12/2004) Improving error handling.
 
 FLF:
 - (02/02/05) Amelioration, bug fixing about the EOF handling.
 
 FLX:
-- (31/07/04) The 'bunch_(i|o)flow__' now works with all type of bunch.
-- (01/08/04) Correcting little error.
-- (05/11/04) Adding 'E_STRING_(I|O)FLOW__'.
+- (31/07/2004) The 'bunch_(i|o)flow__' now works with all type of bunch.
+- (01/08/2004) Correcting little error.
+- (05/11/2004) Adding 'E_STRING_(I|O)FLOW__'.
 
 FNM:
-- (15/12/04) Adding the 'GetLocation()' function.
+- (15/12/2004) Adding the 'GetLocation()' function.
 
 GNUMLL:
 - (09/01/05) Adapting to changes in 'XTF' and 'TXF' libraries.
 
 HTP:
-- (18/07/04) Little improvements.
-- (01/11/04) Changing 'Post' function parameters.
+- (18/07/2004) Little improvements.
+- (01/11/2004) Changing 'Post' function parameters.
 
 IDS:
 - (08/01/05) Fixing bug test bug (:->).
 
 IDXQUE:
-- (16/09/04) Using the core queue and no more the manage queue, to fit with 'IDXBTR'.
+- (16/09/2004) Using the core queue and no more the manage queue, to fit with 'IDXBTR'.
 
 IDXBTQ:
-- (15/09/04) Adapting to changes in 'IDXBTR'.
-- (16/09/04) Adapting to changes in 'IDXBTR'.
-- (17/09/04) Removing obsolete method.
+- (15/09/2004) Adapting to changes in 'IDXBTR'.
+- (16/09/2004) Adapting to changes in 'IDXBTR'.
+- (17/09/2004) Removing obsolete method.
 -			 Adding E_ISEEKER(t)__
 
 IDXBTR
 - Fixing bug in the 'tree_index_::Remove()' function.
-- (15/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
-- (16/09/04) The root is no more stored in the index, so an index can, in fact, contains several indexes.
-- (17/09/04) Simplifying the seeker object.
+- (15/09/2004) The root is no more stored in the index, so an index can, in fact, contains several indexes.
+- (16/09/2004) The root is no more stored in the index, so an index can, in fact, contains several indexes.
+- (17/09/2004) Simplifying the seeker object.
 
 LCK:
 - Adding 'GetUnlocked()' method.
-- (17/08/04) Some little changes in names.
+- (17/08/2004) Some little changes in names.
 
 MDR:
-- (15/06/04) Adding some useful constants.
-- (26/09/04) Adding 'MDR_ROW_MAX'.
+- (15/06/2004) Adding some useful constants.
+- (26/09/2004) Adding 'MDR_ROW_MAX'.
 
 MMG:
-- (19/07/04) Adapting to changes in 'FLW' library.
+- (19/07/2004) Adapting to changes in 'FLW' library.
 
 MMM:
-- (14/07/04) Using the 'CIO' library instead of 'STF'.
+- (14/07/2004) Using the 'CIO' library instead of 'STF'.
 
 MTX:
-- (31/07/04) Adding a 'Delay' parameter for locking functions.
+- (31/07/2004) Adding a 'Delay' parameter for locking functions.
 
 SCK:
-- (31/07/04) A timeout yet launch an error.
+- (31/07/2004) A timeout yet launch an error.
 -			 Rearranging some '#define'
-- (10/12/04) Adapting to changes in 'FLW' library.
+- (10/12/2004) Adapting to changes in 'FLW' library.
 
 SRV:
-- (21/09/04) Adding socket timeout handling.
+- (21/09/2004) Adding socket timeout handling.
 
 SSNMNG:
 - Using own row type for session id 'row__'.
 - Adding 'sessions_manager_::IsValid()' method.
 - Adding 'sessions_manager_::GetExpired()' methods.
 - Adding navigation 'sessions_manager_::First()', 'sessions_manager_::Next()', ...) methods.
-- (22/03/04) Fixing bug in session id creation.
-- (15/09/04) Adapting to changes in 'IDXBTQ' library.
-- (16/09/04) Adapting to changes in 'IDXBTQ' library.
+- (22/03/2004) Fixing bug in session id creation.
+- (15/09/2004) Adapting to changes in 'IDXBTQ' library.
+- (16/09/2004) Adapting to changes in 'IDXBTQ' library.
 
 STF:
-- (24/05/04) Removing the console stuff (they are put in 'CIO' library).
-- (24/05/04) Adating to changes in 'FLW' library.
-- (24/05/04) Renaming the objects ('stream...' instead'(i|o)stream...', removing one tailing '_')
+- (24/05/2004) Removing the console stuff (they are put in 'CIO' library).
+- (24/05/2004) Adating to changes in 'FLW' library.
+- (24/05/2004) Renaming the objects ('stream...' instead'(i|o)stream...', removing one tailing '_')
 
 STR:
-- (16/08/04) Fixing bug in 'ToLF' function.
-- (16/11/04) Adding 'string_' contructor and return value for 'ToUpper' and 'ToLower' functions.
-- (19/11/04) Handling acentuented characters in 'To(Low|Upp)er' functions.
+- (16/08/2004) Fixing bug in 'ToLF' function.
+- (16/11/2004) Adding 'string_' contructor and return value for 'ToUpper' and 'ToLower' functions.
+- (19/11/2004) Handling acentuented characters in 'To(Low|Upp)er' functions.
 
 TOL:
 - Adding the 'E_DISCLOSE_(_)' macro.
-- (05/05/04) Adding a 'Clock()' temporary workaround for CW.
-- (24/05/04) Using 'cio' library instead of 'stf'.
-- (24/06/04) Adding 'E_TTYPEDEF' macro.
-- (31/07/04) Adding 'Delay' function and 'Defer()' with delay parameter.
-- (28/08/04) No more use of the 'CIO' library when in GUI enviroment.
-- (29/09/04) Made it more thread-safe.
-- (27/10/04) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
-- (27/11/04) Removing 'Free(...)', replaced with 'E_POINTER___'.
-- (13/12/04) Improving 'E_RODISCLOSE()'.
+- (05/05/2004) Adding a 'Clock()' temporary workaround for CW.
+- (24/05/2004) Using 'cio' library instead of 'stf'.
+- (24/06/2004) Adding 'E_TTYPEDEF' macro.
+- (31/07/2004) Adding 'Delay' function and 'Defer()' with delay parameter.
+- (28/08/2004) No more use of the 'CIO' library when in GUI enviroment.
+- (29/09/2004) Made it more thread-safe.
+- (27/10/2004) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
+- (27/11/2004) Removing 'Free(...)', replaced with 'E_POINTER___'.
+- (13/12/2004) Improving 'E_RODISCLOSE()'.
 - (04/01/05) Adding debugging issue and missing methods to 'pointer___' object.
 
 TTR:
-- (23/05/04) Using 'CIO' library instead of 'STF'.
-- (24/05/04) Adapting to changes in 'TXF' library.
-- (27/07/04) Little improvement.
+- (23/05/2004) Using 'CIO' library instead of 'STF'.
+- (24/05/2004) Adapting to changes in 'TXF' library.
+- (27/07/2004) Little improvement.
 
 TXF:
-- (24/05/04) Adapting to changes in 'FLW' library.
-- (24/05/04) Removing tailing '_' in name objetcs.
-- (28/08/04) Removing references to the 'CIO' library in order to allowing
+- (24/05/2004) Adapting to changes in 'FLW' library.
+- (24/05/2004) Removing tailing '_' in name objetcs.
+- (28/08/2004) Removing references to the 'CIO' library in order to allowing
 			 the use of this library in a program with GUI.
 
 TXMPGH:
 - (09/01/05) Adapting to changes in 'XTF' and 'TXF' libraries.
 
 TXMTBL:
-- (05/12/04) The'GetUniqueCell' methods return now a boolean to signal if there is or not really only one cell.
+- (05/12/2004) The'GetUniqueCell' methods return now a boolean to signal if there is or not really only one cell.
 -			 Adding 'Location()' method to 'table_' object.
 
 XTF:
-- (31/05/04) Removing a tailing '_' to object name.
-- (20/07/04) Fixing 'View()' bug.
-- (24/10/04) Removing previous correction. There is a conception problem.
-- (01/11/04) Adding NL handling possibility for 'EOX()'.
-- (09/11/04) Adding handling of NL in 'View()'
+- (31/05/2004) Removing a tailing '_' to object name.
+- (20/07/2004) Fixing 'View()' bug.
+- (24/10/2004) Removing previous correction. There is a conception problem.
+- (01/11/2004) Adding NL handling possibility for 'EOX()'.
+- (09/11/2004) Adding handling of NL in 'View()'
 
 --------
 20040215
