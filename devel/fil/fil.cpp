@@ -170,7 +170,7 @@ static inline iop::descriptor__ Open_(
 		break;
 	}
 
-	return open( Nom, Flags );
+	return open( Nom, Flags, 0666 );	/* rw-rw-rw- */
 }
 
 static void Close_( iop::descriptor__ D )

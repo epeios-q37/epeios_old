@@ -588,7 +588,7 @@ namespace tol {
 	const char *DateAndTime( buffer__ &Buffer );
 
 
-#ifndef TOL__MS
+#ifndef CPE__T_MT
 	inline const char *Date( void )
 	{
 		static buffer__ Buffer;

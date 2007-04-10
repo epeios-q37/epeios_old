@@ -1,5 +1,11 @@
 $Id$
 
+10/04/2007 :
+	- FIL :
+		- Correction bogue, sous GNU/Linux, conduisant à affecter des droits aléatoires à un fichier nouvellement crée.
+	- TOL :
+		- Correction bogue instruction préprocesseur concernant la version 'single threaded' des fonctions 'Date(...)', 'Time(...)' et 'DateAndTime(...)'.
+
 08/04/2007 :
 	- XML :
 		- Rajout contrôle sur la détection d'un 'namespace'.
