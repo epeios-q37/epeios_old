@@ -63,6 +63,7 @@ public:
 using namespace xml;
 
 #define	EXPAND_MAX_NESTING_LEVEL	100
+#define	IFEQ_MAX_NESTING_LEVEL		100
 
 class flow {
 private:
@@ -1005,6 +1006,7 @@ private:
 	str::string _ValueAttribute;
 	bso::bool__ _IsDefining;
 	bso::ubyte__ _ExpandNestingLevel;	// Niveau d'imbrication de 'xxx:expand'.
+	bso::ubyte__ _IfeqIgnoring;	// On est dans un 'ifeq' dont le test est négatif.
 	bso::bool__ _ExpandIsHRef;
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
@@ -1181,6 +1183,9 @@ protected:
 		if ( _IsDefining )
 			return false;
 
+		if ( _IfeqIgnoring )
+			return false;
+
 		if ( !_BelongsToNamespace( Name ) )
 			_BlocPendingTag = Name;
 
@@ -1308,9 +1313,6 @@ protected:
 			if ( _NameSelectAttribute.Amount() == 0 )
 				return false;
 
-			if ( _Variables.Exists( _NameSelectAttribute ) )
-				return false;
-
 			if ( !_HandleDefine( *_Flow, _NameSelectAttribute ) )
 				return false;
 
@@ -1326,8 +1328,10 @@ protected:
 			if ( !_Variables.Exists( _NameSelectAttribute ) )
 				return false;
 
-			if ( !_Variables.IsEqual( _NameSelectAttribute, _ValueAttribute ) )
+			if ( !_Variables.IsEqual( _NameSelectAttribute, _ValueAttribute ) ) {
+				_IfeqIgnoring = true;
 				return _Ignore( *_Flow );
+			}
 
 			break;
 		case tBloc:
@@ -1414,6 +1418,7 @@ protected:
 			_ExpandIsHRef = false;
 			break;
 		case tIfeq:
+			_IfeqIgnoring = false;
 			_NameSelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
@@ -1481,6 +1486,7 @@ protected:
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
+			_IfeqIgnoring = false;;
 			_ExpandIsHRef = false;
 		}
 		void GetGuiltyFileNameIfRelevant( str::string_ &FileName )
