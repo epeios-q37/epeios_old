@@ -33,7 +33,7 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.1.0"
+#define VERSION			"0.1.1"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT
@@ -103,7 +103,7 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vSplit, true );
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	cout << "options:" << txf::nl;
-	clnarg::PrintOptionUsage( Description, oNamespace, "xpp tags namespace; '" DEFAULT_NAMESPACE "' by default.", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oNamespace, "<namespace>", "<namespace> becomes tags namespace; '" DEFAULT_NAMESPACE "' by default.", clnarg::vSplit );
 	clnarg::PrintOptionUsage( Description, oNoIndent, "suppress indentation.", clnarg::vSplit );
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
