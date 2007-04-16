@@ -315,6 +315,10 @@ namespace idxbtr {
 				ERRu();
 #endif
 		}
+		r GetParent( r Node ) const
+		{
+			return BaseTree.Parent( Node );
+		}
 		r GetLesser( r Node ) const
 		{
 			return BaseTree.Left( Node );

@@ -411,6 +411,17 @@ namespace dbstbl {
 
 			return _I( IRow ).Next( Row );
 		}
+		rrow__ GetStrictGreater(
+			irow__ IRow,
+			rrow__ Row ) const
+		{
+			_Test();
+
+			if ( _IsBulk() )
+				ERRu();
+
+			return _I( IRow ).StrictGreater( Row );
+		}
 		rrow__ Previous( 
 			irow__ IRow,
 			rrow__ Row ) const
@@ -598,6 +609,9 @@ namespace dbstbl {
 		rrow__ First( irow__ IRow );
 		rrow__ Last( irow__ IRow );
 		rrow__ Next( 
+			irow__ IRow,
+			rrow__ Row );
+		rrow__ GetStrictGreater( 
 			irow__ IRow,
 			rrow__ Row );
 		rrow__ Previous( 

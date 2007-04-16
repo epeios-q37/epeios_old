@@ -190,6 +190,50 @@ ERREpilog
 	return Result;
 }
 
+rrow__ dbsidx::index_::_SearchStrictGreater( rrow__ Row ) const
+{
+	rrow__ Buffer = BaseIndex.GetTreeGreater( Row );
+	rrow__ Candidate = NONE;
+
+	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row ) == 0 ) )
+		Buffer = BaseIndex.GetTreeGreater( Buffer );
+
+	if ( Buffer != NONE ) {
+		Candidate = Buffer;
+
+		Buffer = BaseIndex.GetTreeLesser( Buffer );
+
+		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row ) != 0 ) ) {
+			Candidate = Buffer;
+
+			Buffer = BaseIndex.GetTreeLesser( Buffer );
+		}
+
+		if ( Buffer != NONE ) {
+			Buffer = _SearchStrictGreater( Buffer );
+
+			if ( Buffer != NONE )
+				Candidate = Buffer;
+		}
+	} else {
+		Buffer = BaseIndex.GetTreeParent( Row );
+
+		while ( ( Buffer != NONE ) && ( BaseIndex.GetTreeGreater( Buffer ) == Row ) && ( Compare( Buffer, Row ) == 0 ) ) {
+			Row = Buffer;
+			Buffer = BaseIndex.GetTreeParent( Buffer );
+		}
+
+		if ( Buffer != NONE )
+			if ( Compare( Buffer, Row ) == 0 )
+				Candidate = _SearchStrictGreater( Buffer );
+			else
+				Candidate = Buffer;
+	}
+
+	return Candidate;
+}
+
+
 bso::ubyte__ dbsidx::index_::Index(
 	rrow__ Row,
 	extremities__ *Extremities,
@@ -388,6 +432,25 @@ ERRBegin
 	_Content().Retrieve( RecordRow, Datum, *(dbsctt::_cache_ *)NULL );
 
 	Result = S_.Sort->Compare( Datum, Pattern );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
+bso::sign__ dbsidx::index_::Compare(
+	rrow__ RecordRow1,
+	rrow__ RecordRow2 ) const
+{
+	bso::sign__ Result = 0;
+ERRProlog
+	datum Pattern;
+ERRBegin
+	Pattern.Init();
+
+	_Content().Retrieve( RecordRow2, Pattern, *(dbsctt::_cache_ *)NULL );
+
+	Result = Compare( RecordRow1, Pattern );
 ERRErr
 ERREnd
 ERREpilog

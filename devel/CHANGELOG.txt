@@ -1,5 +1,15 @@
 $Id$
 
+16/04/2007 :
+	- DBSIDX :
+		- Ajout 'StrictGreater(...)'
+	- DBSTBL :
+		- Ajout 'GetStrictGreater(...)'
+	- IDXBTQ :
+		- Ajout 'GetTree[Parent|Greater|Lesser](...)'.
+	- IDXBTR :
+		- Ajout 'GetParent(...)'.
+
 11/04/2007 :
 	- XML :
 		- Correction bogue empêchant d'avoir une macro portant le même nom qu'une variable.

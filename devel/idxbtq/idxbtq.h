@@ -209,6 +209,18 @@ namespace idxbtq {
 		{
 			return *this;
 		}
+		r GetTreeParent( r Node ) const
+		{
+			return E_IBTREEt_( r )::GetParent( Node );
+		}
+		r GetTreeLesser( r Node ) const
+		{
+			return E_IBTREEt_( r )::GetLesser( Node );
+		}
+		r GetTreeGreater( r Node ) const
+		{
+			return E_IBTREEt_( r )::GetGreater( Node );
+		}
 		bso::bool__ TreeHasLesser( r Node ) const
 		{
 			return E_IBTREEt_( r )::HasLesser( Node );

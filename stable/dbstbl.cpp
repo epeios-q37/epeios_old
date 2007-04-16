@@ -624,6 +624,22 @@ ERREpilog
 	return Row;
 }
 
+rrow__ dbstbl::thread_safe_table_::GetStrictGreater( 
+	irow__ IRow,
+	rrow__ Row )
+{
+ERRProlog
+ERRBegin
+	RO
+
+	Row = T.GetStrictGreater( IRow, Row );
+ERRErr
+ERREnd
+	RRO
+ERREpilog
+	return Row;
+}
+
 rrow__ dbstbl::thread_safe_table_::Previous( 
 	irow__ IRow,
 	rrow__ Row )

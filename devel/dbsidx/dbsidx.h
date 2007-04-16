@@ -154,6 +154,7 @@ namespace dbsidx {
 			if ( CompareWithContent && ( S_.ModificationTimeStamp == Content().ModificationTimeStamp() ) )
 				S_.ModificationTimeStamp = tol::Clock( true );
 		}
+		rrow__ _SearchStrictGreater( rrow__ Row ) const;
 	public:
 		_index_ BaseIndex;
 		struct s
@@ -256,6 +257,9 @@ namespace dbsidx {
 		bso::sign__ Compare(
 			rrow__ RecordId,
 			const datum_ &Pattern ) const;
+		bso::sign__ Compare(
+			rrow__ RecordRow1,
+			rrow__ RecordRow2 ) const;
 		rrow__ SearchRoot( void )
 		{
 			ERRl();
@@ -279,6 +283,17 @@ namespace dbsidx {
 		rrow__ Next( rrow__ Row ) const
 		{
 			return BaseIndex.Next( Row );
+		}
+		rrow__ StrictGreater( rrow__ Row ) const
+		{
+			rrow__ Candidate = Next( Row );
+
+			if ( Candidate == NONE )
+				return NONE;
+			else if ( Compare( Row, Candidate ) != 0 )
+				return Candidate;
+			else
+				return _SearchStrictGreater( Row );
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
