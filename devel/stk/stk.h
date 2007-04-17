@@ -114,11 +114,15 @@ namespace stk {
 			structure::Remove( Row );
 		}
 		//f Return and remove the object at the bottom of the stack. If 'Adjust' at 'true', than adjust the size of the stack.
+		void Pop( void )
+		{
+			Remove( structure::Last() );
+		}
 		void Pop( item &Item )
 		{
 			structure::Recall( structure::Last(), Item );
 
-			Remove( structure::Last() );
+			Pop();
 		}
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
 		bso::bool__ Exists( const item &Object ) const
@@ -189,6 +193,12 @@ namespace stk {
 
 	#define E_BSTACK_( item )	E_BSTACKt_( item, stk::row__ )
 	#define E_BSTACK( item )	E_BSTACKt( item, stk::row__ )
+
+	#define E_XCSTACKt_( item, row )	stack_< ctn::E_XCONTAINERt_( item, row ), item, row >
+	#define E_XCSTACKt( item, row )	stack< ctn::E_XCONTAINERt_( item, row ), item, row >
+
+	#define E_XCSTACK_( item )		E_XCSTACKt_( item, stk::row__ )
+	#define E_XCSTACK( item )		E_XCSTACKt( item, stk::row__ )
 
 	#define E_XMCSTACKt_( item, row )	stack_< ctn::E_XMCONTAINERt_( item, row ), item, row >
 	#define E_XMCSTACKt( item, row )	stack< ctn::E_XMCONTAINERt_( item, row ), item, row >

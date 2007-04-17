@@ -26,6 +26,10 @@
 			</xpp:define>
 		</xpp:bloc>
 	</xpp:define>
+	<xpp:define name="File">
+		<xpp:expand select="Directory"/>
+		<xpp:expand select="FileName"/>
+	</xpp:define>
 	<xpp:ifeq select="OS" value="Linux">
 		<xpp:expand select="Linux"/>
 	</xpp:ifeq>
@@ -33,8 +37,11 @@
 		<xpp:expand select="Windows"/>
 	</xpp:ifeq>
 	<SomeFile>
-		<xpp:expand select="Directory"/>
-		<xpp:bloc>SomeFile</xpp:bloc>
+		<xpp:expand select="File">
+			<xpp:define name="FileName">
+				<xpp:bloc>SomeFile</xpp:bloc>
+			</xpp:define>
+		</xpp:expand>
 	</SomeFile>
 	<OtherFile>
 		<xpp:expand select="Directory"/>

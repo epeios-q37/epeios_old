@@ -1,5 +1,10 @@
 $Id$
 
+17/04/2007 :
+	- STK:
+		- Ajout 'E_XCSTACK[t][_]'.
+		- Ajout méthode 'Pop()' (sans argument).
+
 16/04/2007 :
 	- DBSIDX :
 		- Ajout 'StrictGreater(...)'

@@ -30,6 +30,7 @@ $_RAW_$
 #define XML__COMPILATION
 
 #include "xml.h"
+#include "stk.h"
 
 class xmltutor
 : public ttr_tutor
@@ -696,7 +697,7 @@ struct position__
 
 E_ROW( rrow__ );	// Repository row.
 
-class repository
+class repository_
 {
 private:
 	rrow__ _Locate( const str::string_ &Name ) const
@@ -712,9 +713,39 @@ private:
 		return Row;
 	}
 public:
-	ctn::E_XMCONTAINERt( str::string_, rrow__ ) Names;
-	bch::E_BUNCHt( position__, rrow__ ) Positions;
-	ctn::E_XMCONTAINERt( str::string_, rrow__ ) Strings;
+	struct s {
+		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Names;
+		bch::E_BUNCHt( position__, rrow__ )::s Positions;
+		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Strings;
+	};
+	ctn::E_XMCONTAINERt_( str::string_, rrow__ ) Names;
+	bch::E_BUNCHt_( position__, rrow__ ) Positions;
+	ctn::E_XMCONTAINERt_( str::string_, rrow__ ) Strings;
+	repository_( s &S )
+	: Names( S.Names ),
+	  Positions( S.Positions ),
+      Strings( S.Strings )
+	{}
+	void reset( bso::bool__ P = true )
+	{
+		Names.reset( P );
+		Positions.reset( P );
+		Strings.reset( P );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		Names.plug( MM );
+		Positions.plug( MM );
+		Strings.plug( MM );
+	}
+	repository_ &operator =( const repository_ &R )
+	{
+		Names = R.Names;
+		Positions = R.Positions;
+		Strings = R.Strings;
+
+		return *this;
+	}
 	void Init( void )
 	{
 		Names.Init();
@@ -761,6 +792,11 @@ public:
 		return true;
 	}
 };
+
+E_AUTO( repository )
+
+typedef stk::E_XCSTACK_( repository_ )	repository_stack_;
+E_AUTO( repository_stack )
 
 E_ROW( vrow__ );	// Variable row.
 
@@ -986,7 +1022,9 @@ private:
 	callback__ *_UserCallback;
 	xtf::extended_text_iflow__ *_Flow;
 	variables _Variables;
-	repository _Repository;
+	repository _GlobalRepository;
+	repository_stack _RepositoryStack;
+	repository _CurrentRepository;
 	str::string _Namespace;
 	str::string _Directory;
 	str::string _DefineTag;
@@ -1000,13 +1038,16 @@ private:
 	str::string _BlocPendingValue;
 	// Cumul des éventuels 'dump' de 'xxx::bloc' sucessifs et/ou imbriqués.
 	str::string _BlocPendingDump;
-	// Contient la valeur de l'attribut 'name' ou 'select'.
-	str::string _NameSelectAttribute;
+	// Contient la valeur de l'attribut 'name' (balises 'set' ou 'define'.
+	str::string _NameAttribute;
+	// Contient la valeur de l'attribut 'name' (balises 'ifeq' ou 'expand'.
+	str::string _SelectAttribute;
 	// Contient la valeur de l'attribut 'value'.
 	str::string _ValueAttribute;
 	bso::bool__ _IsDefining;
 	bso::ubyte__ _ExpandNestingLevel;	// Niveau d'imbrication de 'xxx:expand'.
 	bso::ubyte__ _IfeqIgnoring;	// On est dans un 'ifeq' dont le test est négatif.
+	bso::bool__ _ExpandPending;
 	bso::bool__ _ExpandIsHRef;
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
@@ -1050,7 +1091,10 @@ private:
 
 		SFlow.Synchronize();
 
-		_Repository.Store(Name, Line, Column, String );
+		if ( _ExpandPending )
+			_CurrentRepository.Store(Name, Line, Column, String );
+		else
+			_GlobalRepository.Store(Name, Line, Column, String );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -1065,11 +1109,27 @@ private:
 		xtf::extended_text_iflow__ XFlow;
 		xtf::location__ Line, Column;
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
+		repository Repository;
+		stk::row__ Row = NONE;
+		bso::bool__ Found = false;
 	ERRBegin
 		String.Init();
 
-		if ( !_Repository.Get( _NameSelectAttribute, Line, Column, String ) )
-			ERRReturn;
+		Repository.Init();
+
+		Repository = _CurrentRepository;
+
+		Row = _RepositoryStack.Last();
+
+		while ( !( Found = Repository.Get( _SelectAttribute, Line, Column, String ) ) && ( Row != NONE ) ) {
+			_RepositoryStack.Recall( Row, Repository );
+
+			Row = _RepositoryStack.Previous( Row );
+		}
+
+		if ( !Found )
+			if ( !_GlobalRepository.Get( _SelectAttribute, Line, Column, String ) )
+				ERRReturn;
 
 		SFlow.Init( String );
 		SFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
@@ -1086,6 +1146,8 @@ private:
 
 		if ( _ExpandNestingLevel-- == 0 )
 			ERRc();
+
+		_RepositoryStack.Pop( _CurrentRepository );
 
 		_Flow = PreviousFlow;
 
@@ -1110,7 +1172,7 @@ private:
 	ERRBegin
 		_ExpandIsHRef = false;
 
-		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _NameSelectAttribute.Convert(), "" );
+		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _SelectAttribute.Convert(), "" );
 
 		if ( Flow.Init( FileNameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess )
 			ERRReturn;
@@ -1138,7 +1200,7 @@ private:
 		if ( ( Success == false ) && ( !_ExpandIsHRef ) ) {
 			// On rétablit les deux variables ci-dessous parce qu'elles ont peut-être été effacé par un 'expand' d'un sous-fichier.
 			// Elles sont utiles pour déterminer le sous-fichier contenant l'erreur.
-			_NameSelectAttribute = AttributeBuffer;
+			_SelectAttribute = AttributeBuffer;
 			_ExpandIsHRef = true;
 		}
 	ERREpilog
@@ -1186,6 +1248,13 @@ protected:
 		if ( _IfeqIgnoring )
 			return false;
 
+		if ( _ExpandPending )
+			if ( _ExpandIsHRef )
+				return false;
+			else if ( _GetTag( Name ) != tDefine )
+				return false;
+
+
 		if ( !_BelongsToNamespace( Name ) )
 			_BlocPendingTag = Name;
 
@@ -1194,20 +1263,20 @@ protected:
 			return _UserCallback->XMLStartTag( Name, Dump );
 			break;
 		case tDefine:
-			_NameSelectAttribute.Init();
+			_NameAttribute.Init();
 			break;
 		case tExpand:
-			_NameSelectAttribute.Init();
+			_SelectAttribute.Init();
 			_ExpandIsHRef = false;
 			break;
 		case tIfeq:
-			_NameSelectAttribute.Init();
+			_SelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case tBloc:
 			break;
 		case tSet:
-			_NameSelectAttribute.Init();
+			_NameAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case t_Undefined:
@@ -1232,22 +1301,22 @@ protected:
 			break;
 		case tDefine:
 			if ( Name == NAME_ATTRIBUTE ) {
-				if ( _NameSelectAttribute.Amount() != 0 )
+				if ( _NameAttribute.Amount() != 0 )
 					return false;
 
-				_NameSelectAttribute = Value;
+				_NameAttribute = Value;
 			} else
 				return false;
 			break;
 		case tExpand:
 			if ( Name == SELECT_ATTRIBUTE ) {
-				if ( _NameSelectAttribute.Amount() != 0 )
+				if ( _SelectAttribute.Amount() != 0 )
 					return false;
 
 				_ExpandIsHRef = false;
 
 			} else if ( Name == HREF_ATTRIBUTE ) {
-				if ( _NameSelectAttribute.Amount() != 0 )
+				if ( _SelectAttribute.Amount() != 0 )
 					return false;
 
 				_ExpandIsHRef = true;
@@ -1255,15 +1324,15 @@ protected:
 			} else
 				return false;
 
-			_NameSelectAttribute = Value;
+			_SelectAttribute = Value;
 
 			break;
 		case tIfeq:
 			if ( Name == SELECT_ATTRIBUTE ) {
-				if ( _NameSelectAttribute.Amount() != 0 )
+				if ( _SelectAttribute.Amount() != 0 )
 					return false;
 
-				_NameSelectAttribute = Value;
+				_SelectAttribute = Value;
 			} else
 			if ( Name == VALUE_ATTRIBUTE ) {
 				if ( _ValueAttribute.Amount() != 0 )
@@ -1278,10 +1347,10 @@ protected:
 			break;
 		case tSet:
 			if ( Name == NAME_ATTRIBUTE ) {
-				if ( _NameSelectAttribute.Amount() != 0 )
+				if ( _NameAttribute.Amount() != 0 )
 					return false;
 
-				_NameSelectAttribute = Value;
+				_NameAttribute = Value;
 			} else
 			if ( Name == VALUE_ATTRIBUTE ) {
 				if ( _ValueAttribute.Amount() != 0 )
@@ -1310,25 +1379,28 @@ protected:
 			return _UserCallback->XMLStartTagClosed( Name, Dump );
 			break;
 		case tDefine:
-			if ( _NameSelectAttribute.Amount() == 0 )
+			if ( _NameAttribute.Amount() == 0 )
 				return false;
 
-			if ( !_HandleDefine( *_Flow, _NameSelectAttribute ) )
+			if ( !_HandleDefine( *_Flow, _NameAttribute ) )
 				return false;
 
 			_IsDefining = true;
 
 			break;
 		case tExpand:
+			_RepositoryStack.Push( _CurrentRepository );
+			_CurrentRepository.Init();
+			_ExpandPending = true;
 			break;
 		case tIfeq:
-			if ( _NameSelectAttribute.Amount() == 0 )
+			if ( _SelectAttribute.Amount() == 0 )
 				return false;
 
-			if ( !_Variables.Exists( _NameSelectAttribute ) )
+			if ( !_Variables.Exists( _SelectAttribute ) )
 				return false;
 
-			if ( !_Variables.IsEqual( _NameSelectAttribute, _ValueAttribute ) ) {
+			if ( !_Variables.IsEqual( _SelectAttribute, _ValueAttribute ) ) {
 				_IfeqIgnoring = true;
 				return _Ignore( *_Flow );
 			}
@@ -1337,7 +1409,7 @@ protected:
 		case tBloc:
 			break;
 		case tSet:
-			if ( _NameSelectAttribute.Amount() == 0 )
+			if ( _NameAttribute.Amount() == 0 )
 				return false;
 
 			break;
@@ -1403,37 +1475,39 @@ protected:
 		return _UserCallback->XMLEndTag( Name, Dump );
 			break;
 		case tDefine:
-			_NameSelectAttribute.Init();
+			_NameAttribute.Init();
 
 			_IsDefining = false;
 			break;
 		case tExpand:
-			if ( _NameSelectAttribute.Amount() == 0 )
+			if ( _SelectAttribute.Amount() == 0 )
 				return false;
+
+			_ExpandPending = false;
 
 			if ( !_HandleExpand() )
 				return false;
 
-			_NameSelectAttribute.Init();
+			_SelectAttribute.Init();
 			_ExpandIsHRef = false;
 			break;
 		case tIfeq:
 			_IfeqIgnoring = false;
-			_NameSelectAttribute.Init();
+			_SelectAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case tBloc:
 			break;
 		case tSet:
-			if ( _NameSelectAttribute.Amount() == 0 )
+			if ( _NameAttribute.Amount() == 0 )
 				return false;
 
-			if ( _Variables.Exists( _NameSelectAttribute ) )
+			if ( _Variables.Exists( _NameAttribute ) )
 				return false;
 
-			_Variables.Set( _NameSelectAttribute, _ValueAttribute );
+			_Variables.Set( _NameAttribute, _ValueAttribute );
 
-			_NameSelectAttribute.Init();
+			_NameAttribute.Init();
 			_ValueAttribute.Init();
 			break;
 		case t_Undefined:
@@ -1456,7 +1530,9 @@ protected:
 			_UserCallback = &UserCallback;
 			_Flow = &Flow;
 			_Variables.Init();
-			_Repository.Init();
+			_GlobalRepository.Init();
+			_RepositoryStack.Init();
+			_CurrentRepository.Init();
 			_Directory.Init( Directory );
 
 			_Namespace.Init( Namespace );
@@ -1477,7 +1553,8 @@ protected:
 			_BlocTag.Init( _Namespace );
 			_BlocTag.Append( BLOC_TAG );
 
-			_NameSelectAttribute.Init();
+			_SelectAttribute.Init();
+			_NameAttribute.Init();
 			_ValueAttribute.Init();
 
 			_BlocPendingTag.Init();
@@ -1486,15 +1563,16 @@ protected:
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
-			_IfeqIgnoring = false;;
+			_IfeqIgnoring = false;
+			_ExpandPending = false;
 			_ExpandIsHRef = false;
 		}
 		void GetGuiltyFileNameIfRelevant( str::string_ &FileName )
 		{
 			if ( _ExpandIsHRef ) {
-				if ( _NameSelectAttribute.Amount() == 0 )
+				if ( _SelectAttribute.Amount() == 0 )
 					ERRc();
-				FileName = _NameSelectAttribute;
+				FileName = _SelectAttribute;
 			}
 		}
 };
