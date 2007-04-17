@@ -1,17 +1,17 @@
 $Id$
 
 17/04/2007 :
-	- IDXPTQ :
+	- DBSIDX :
+		- Ajout 'StrictGreater(...)'
+	- DBSTBL :
+		- Ajout 'GetStrictGreater(...)'
+	- IDXBTQ :
 		- Ajout 'IsTree[Lesser|Greater](...)'.
 	- STK:
 		- Ajout 'E_XCSTACK[t][_]'.
 		- Ajout méthode 'Pop()' (sans argument).
 
 16/04/2007 :
-	- DBSIDX :
-		- Ajout 'StrictGreater(...)'
-	- DBSTBL :
-		- Ajout 'GetStrictGreater(...)'
 	- IDXBTQ :
 		- Ajout 'GetTree[Parent|Greater|Lesser](...)'.
 	- IDXBTR :
