@@ -1,6 +1,8 @@
 $Id$
 
 17/04/2007 :
+	- IDXPTQ :
+		- Ajout 'IsTree[Lesser|Greater](...)'.
 	- STK:
 		- Ajout 'E_XCSTACK[t][_]'.
 		- Ajout méthode 'Pop()' (sans argument).

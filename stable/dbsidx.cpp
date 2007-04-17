@@ -218,16 +218,25 @@ rrow__ dbsidx::index_::_SearchStrictGreater( rrow__ Row ) const
 	} else {
 		Buffer = BaseIndex.GetTreeParent( Row );
 
-		while ( ( Buffer != NONE ) && ( BaseIndex.GetTreeGreater( Buffer ) == Row ) && ( Compare( Buffer, Row ) == 0 ) ) {
-			Row = Buffer;
-			Buffer = BaseIndex.GetTreeParent( Buffer );
-		}
+		if ( Buffer != NONE ) {
 
-		if ( Buffer != NONE )
-			if ( Compare( Buffer, Row ) == 0 )
-				Candidate = _SearchStrictGreater( Buffer );
-			else
-				Candidate = Buffer;
+			if ( BaseIndex.IsTreeGreater( Row ) ) {
+				while ( ( Buffer != NONE ) && BaseIndex.IsTreeGreater( Buffer ) )
+					Buffer = BaseIndex.GetTreeParent( Buffer );
+			} else
+				Buffer = Row;
+
+			if ( Buffer != NONE ) {
+				Buffer = BaseIndex.GetTreeParent( Buffer );
+
+				if ( Buffer != NONE ) {
+					if ( Compare( Row, Buffer ) != 0 )
+						Candidate = Buffer;
+					else
+						Candidate = _SearchStrictGreater( Buffer );
+				}
+			}
+		}
 	}
 
 	return Candidate;

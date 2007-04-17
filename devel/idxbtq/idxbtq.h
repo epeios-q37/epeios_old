@@ -217,9 +217,27 @@ namespace idxbtq {
 		{
 			return E_IBTREEt_( r )::GetLesser( Node );
 		}
+		bso::bool__ IsTreeLesser( r Node ) const
+		{
+			r Parent = GetTreeParent( Node );
+
+			if ( Parent != NONE )
+				return GetTreeLesser( Parent ) == Node;
+			else
+				return false;
+		}
 		r GetTreeGreater( r Node ) const
 		{
 			return E_IBTREEt_( r )::GetGreater( Node );
+		}
+		bso::bool__ IsTreeGreater( r Node ) const
+		{
+			r Parent = GetTreeParent( Node );
+
+			if ( Parent != NONE )
+				return GetTreeGreater( Parent ) == Node;
+			else
+				return false;
 		}
 		bso::bool__ TreeHasLesser( r Node ) const
 		{
