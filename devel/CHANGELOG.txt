@@ -1,5 +1,9 @@
 $Id$
 
+18/04/2007 :
+	- XML :
+		- Ajout définition de macros locales.
+
 17/04/2007 :
 	- DBSIDX :
 		- Ajout 'StrictGreater(...)'

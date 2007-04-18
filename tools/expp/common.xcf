@@ -1,5 +1,5 @@
 <!-- $Id$ -->
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/intl/expp">
 	<xpp:define name="LinuxURL">
 		<xpp:bloc>linuxfr.org</xpp:bloc>
 	</xpp:define>
@@ -27,8 +27,10 @@
 		</xpp:bloc>
 	</xpp:define>
 	<xpp:define name="File">
-		<xpp:expand select="Directory"/>
-		<xpp:expand select="FileName"/>
+		<xpp:bloc>
+			<xpp:expand select="Directory"/>
+			<xpp:expand select="FileName"/>
+		</xpp:bloc>
 	</xpp:define>
 	<xpp:ifeq select="OS" value="Linux">
 		<xpp:expand select="Linux"/>
@@ -44,8 +46,11 @@
 		</xpp:expand>
 	</SomeFile>
 	<OtherFile>
-		<xpp:expand select="Directory"/>
-		<xpp:bloc>OtherFile</xpp:bloc>
+		<xpp:expand select="File">
+			<xpp:define name="FileName">
+				<xpp:bloc>OtherFile</xpp:bloc>
+			</xpp:define>
+		</xpp:expand>
 	</OtherFile>
 	<SomeURL>
 		<xpp:bloc>http://</xpp:bloc>

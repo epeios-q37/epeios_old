@@ -1248,11 +1248,12 @@ protected:
 		if ( _IfeqIgnoring )
 			return false;
 
-		if ( _ExpandPending )
+		if ( _ExpandPending ) {
 			if ( _ExpandIsHRef )
 				return false;
 			else if ( _GetTag( Name ) != tDefine )
 				return false;
+		}
 
 
 		if ( !_BelongsToNamespace( Name ) )

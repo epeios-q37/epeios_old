@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- $Id$ -->
 <!-- Exemple de fichier pour la commande 'expp' -->
-<Configuration>
+<Configuration xmlns:xpp="http://zeusw.org/intl/expp">
 	<xpp:set name="OS" value="Windows"/>
 	<xpp:expand href="common.xcf"/>
 </Configuration>
