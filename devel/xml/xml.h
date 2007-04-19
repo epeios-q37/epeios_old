@@ -97,6 +97,20 @@ namespace xml {
 		{}
 	};
 
+	enum status__ {
+		sOK,
+		sUnexpectedEOF,
+		sUnknownEntity,
+		sMissingEqualSign,
+		sBadAttributeValueDelimiter,
+		sUnexpectedCharacter,
+		sEmptyTagName,
+		sMismatchedClosingTag,
+		sUserError,
+		s_amount,
+		s_Undefined,
+	};
+
 	bso::bool__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		callback__ &Callback );

@@ -103,168 +103,164 @@ public:
 
 typedef flow flow_;
 
-static void SkipSpaces_(
-	flow_ &Flow,
-	bso::bool__ ErrorIfEOF = true )
+static status__ SkipSpaces_( flow_ &Flow )
 {
 	while ( !Flow.EOX() && isspace( Flow.View() ) )
 		Flow.Get();
 
-	if ( Flow.EOX() && ErrorIfEOF )
-		ERRI( iBeam );
+	if ( Flow.EOX() )
+		return sUnexpectedEOF;
+
+	return sOK;
 }
 
 // Entitée reconnue : '&lt;', '&gt;', '&amp;', '&apos;', '&quot;'.
 
-enum entity_state__ {
-	sStart,
-	sL,
-	sLT,
-	sG,
-	sGT,
-	sA,
-	sAM,
-	sAMP,
-	sAP,
-	sAPO,
-	sAPOS,
-	sQ,
-	sQU,
-	sQUO,
-	sQUOT,
-	s_amount,
-	s_Undefined
+enum entity_handling_state__ {
+	ehsStart,
+	ehsL,
+	ehsLT,
+	ehsG,
+	ehsGT,
+	ehsA,
+	ehsAM,
+	ehsAMP,
+	ehsAP,
+	ehsAPO,
+	ehsAPOS,
+	ehsQ,
+	ehsQU,
+	ehsQUO,
+	ehsQUOT,
+	ehs_amount,
+	ehs_Undefined
 };
+
+#define ENTITY_ERROR_VALUE	0
 
 static unsigned char HandleEntity_( flow_ &Flow )
 {
-	entity_state__ State = sStart;
+	entity_handling_state__ State = ehsStart;
 
 	while ( !Flow.EOX() ) {
 
 		switch ( State ) {
-		case sStart:
+		case ehsStart:
 			switch( Flow.Get() ) {
 			case 'l':
-				State = sL;
+				State = ehsL;
 				break;
 			case 'g':
-				State = sG;
+				State = ehsG;
 				break;
 			case 'a':
-				State = sA;
+				State = ehsA;
 				break;
 			case 'q':
-				State = sQ;
+				State = ehsQ;
 				break;
 			default:
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 				break;
 			}
 			break;
-		case sL:
+		case ehsL:
 			if ( Flow.Get() != 't' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sLT;
+			State = ehsLT;
 			break;
-		case sLT:
+		case ehsLT:
 			if ( Flow.Get() != ';' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
 			return '<';
 			break;
-		case sG:
+		case ehsG:
 			if ( Flow.Get() != 't' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sGT;
+			State = ehsGT;
 			break;
-		case sGT:
+		case ehsGT:
 			if ( Flow.Get() != ';' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
 			return '>';
 			break;
-		case sA:
+		case ehsA:
 			switch ( Flow.Get() ) {
 			case 'm':
-				State = sAM;
+				State = ehsAM;
 				break;
 			case 'p':
-				State = sAP;
+				State = ehsAP;
 				break;
 			default:
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 				break;
 			}
 			break;
-		case sAM:
+		case ehsAM:
 			if ( Flow.Get() != 'p' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sAMP;
+			State = ehsAMP;
 			break;
-		case sAMP:
+		case ehsAMP:
 			if ( Flow.Get() != ';' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
 			return '&';
 			break;
-		case sAP:
+		case ehsAP:
 			if ( Flow.Get() != 'o' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sAPO;
+			State = ehsAPO;
 			break;
-		case sAPO:
+		case ehsAPO:
 			if ( Flow.Get() != 's' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sAPOS;
+			State = ehsAPOS;
 			break;
-		case sAPOS:
+		case ehsAPOS:
 			if ( Flow.Get() != ';' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
 			return '\'';
 			break;
-		case sQ:
+		case ehsQ:
 			if ( Flow.Get() != 'u' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sQU;
+			State = ehsQU;
 			break;
-		case sQU:
+		case ehsQU:
 			if ( Flow.Get() != 'o' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sQUO;
-		case sQUO:
+			State = ehsQUO;
+		case ehsQUO:
 			if ( Flow.Get() != 't' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
-			State = sQUOT;
-		case sQUOT:
+			State = ehsQUOT;
+		case ehsQUOT:
 			if ( Flow.Get() != ';' )
-				ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 
 			return '"';
 			break;
 		default:
-			ERRI( iBeam );
+				return ENTITY_ERROR_VALUE;
 			break;
 		}
 	}
 
-	ERRI( iBeam );
-
-	return 0;	// Juste pour éviter un 'Warning'.
+	return ENTITY_ERROR_VALUE;
 }
-
-
-
-
 
 static void GetId_(
 	flow_ &Flow,
@@ -281,113 +277,128 @@ static inline void GetName_(
 	GetId_( Flow, Name );
 }
 
-static bso::bool__ GetValue_(
+static status__ GetValue_(
 	flow_ &Flow,
 	bso::char__ Delimiter,
-	str::string_ &Value )
+	str::string_ &Value,
+	bso::bool__ &OnlySpaces )
 {
 	unsigned char C;
-	bso::bool__ IsSpace = true;
+	OnlySpaces = true;
 
 	while ( !Flow.EOX() && ( Flow.View() != Delimiter ) ) {
 
 		if ( !isspace( C = Flow.Get() ) )
-			IsSpace = false;
+			OnlySpaces = false;
 
-		if ( C == '&' )
-			Value.Append( HandleEntity_( Flow ) );
-		else
-			Value.Append( C );
+		if ( C == '&' ) {
+			C = HandleEntity_( Flow );
+
+			if ( C == ENTITY_ERROR_VALUE )
+				return sUnknownEntity;
+		}
+
+		Value.Append( C );
 	}
 
-	return !IsSpace;
+	return sOK;
 }
 
-inline static bso::bool__ GetTagValue_(
+inline static status__ GetTagValue_(
 	flow_ &Flow,
-	str::string_ &Value )
+	str::string_ &Value,
+	bso::bool__ &OnlySpaces )
 {
-	return GetValue_( Flow, '<', Value );
+	return GetValue_( Flow, '<', Value, OnlySpaces );
 }
 
-inline static void GetAttributeValue_(
+inline status__ GetAttributeValue_(
 	flow_ &Flow,
 	char Delimiter,
 	str::string_ &Value )
-{
-	GetValue_( Flow, Delimiter, Value );
+{	
+	bso::bool__ Dummy;
+
+	return GetValue_( Flow, Delimiter, Value, Dummy );
 }
 
-static void GetAttribute_(
+#define HANDLE( F )\
+	if ( ( Status = ( F ) ) != sOK )\
+		return ( Status );\
+	else\
+		Status = s_Undefined;
+
+static status__ GetAttribute_(
 	flow_ &Flow,
 	str::string_ &Name,
 	str::string_ &Value )
 {
 	char Delimiter;
+	status__ Status = s_Undefined;
 
 	GetName_( Flow, Name );
 
-	SkipSpaces_( Flow );
+	HANDLE( SkipSpaces_( Flow ) );
 
 	if ( Flow.Get() != '=' )
-		ERRI( iBeam );
+		return sMissingEqualSign;
 
-	SkipSpaces_( Flow );
+	HANDLE( SkipSpaces_( Flow ) );
 
 	Delimiter = Flow.Get();
 
 	if ( ( Delimiter != '"' ) && ( Delimiter != '\'' ) )
-		ERRI( iBeam );
+		sBadAttributeValueDelimiter;
 
-	GetAttributeValue_( Flow, Delimiter, Value );
+	HANDLE( GetAttributeValue_( Flow, Delimiter, Value ) );
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
 
 	Flow.Get();	// To skip the '"' or '''.
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
 
 	if ( !isspace( Flow.View() ) && ( Flow.View() != '/' ) && ( Flow.View() != '>' ) )
-		ERRI( iBeam );
+		return sUnexpectedCharacter;
 
-	SkipSpaces_( Flow );
+	HANDLE( SkipSpaces_( Flow ) );
 }
 
-static void SkipComment_( flow_ &Flow )
+static status__ SkipComment_( flow_ &Flow )
 {
 	bso::bool__ Continue = true;
 
 	if ( Flow.Get() != '!' )
-		ERRI( iBeam );
+		ERRc();
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
 
 	if ( Flow.Get() != '-' )
-		ERRI( iBeam );
+		return sUnexpectedCharacter;
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
 
 	if ( Flow.Get() != '-' )
-		ERRI( iBeam );
+		return sUnexpectedCharacter;
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
 
 	while ( Continue ) {
 		while ( !Flow.EOX() && ( Flow.Get() != '-' ) );
 
 		if ( Flow.EOX() )
-			ERRI( iBeam );
+			return sUnexpectedEOF;
 
 		if ( Flow.View() == '-' ) {
 			Flow.Get();
 
 			if ( Flow.EOX() )
-				ERRI( iBeam );
+				return sUnexpectedEOF;
 
 			if ( Flow.View() == '>' ) {
 				Flow.Get();
@@ -396,17 +407,21 @@ static void SkipComment_( flow_ &Flow )
 			}
 		}
 	}
+
+	return sOK;
 }
 
-static void HandleProcessingInstruction_( flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
+static status__ HandleProcessingInstruction_( flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
-		ERRI( iBeam );
+		ERRc();
 
 	while ( !Flow.EOX() && ( Flow.Get() != '>' ) );
 
 	if ( Flow.EOX() )
-		ERRI( iBeam );
+		return sUnexpectedEOF;
+
+	return sOK;
 }
 
 
@@ -423,41 +438,55 @@ using xtf::location__;
 
 E_ROW( srow__ );
 
+#undef HANDLE
+
+#define HANDLE( F )\
+	if ( ( Status = ( F ) ) != sOK )\
+		ERRReturn;
+
+#define RETURN( V )\
+	{\
+		Status = V;\
+		ERRReturn;\
+	}
+
+
 bso::bool__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
 	callback__ &Callback )
 {
-	bso::bool__ Success = true;
+	status__ Status = s_Undefined;
 ERRProlog
 	state__ State = HeaderExpected;
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 	bso::ulong__ Level = BSO_ULONG_MAX;
 	flow Flow;
+	bso::bool__ OnlySpaces;
 ERRBegin
 	Flow.Init( UserFlow );
 
 	Tags.Init();
 
-	SkipSpaces_( Flow );
+	HANDLE( SkipSpaces_( Flow ) );
 
 	while ( Level ) {
 		if ( Flow.EOX() )
-			ERRI( iBeam );
+			RETURN( sUnexpectedEOF );
 
 		switch ( State ) {
 		case HeaderExpected:
 			if ( Flow.View() != '<' )
-				ERRI( iBeam );
+				RETURN( sUnexpectedCharacter )
 			else {
 				Flow.Get();
 				if ( Flow.View() == '?' ) {
-					HandleProcessingInstruction_( Flow );
+					HANDLE( HandleProcessingInstruction_( Flow ) );
 
 					if ( !Callback.XMLProcessingInstruction( Flow.Dump ) )
-						ERRI( iBeam );
+						RETURN( sUserError );
 
-					SkipSpaces_( Flow );
+					HANDLE( SkipSpaces_( Flow ) );
 
 					Flow.Dump.Init();
 				} else
@@ -465,9 +494,9 @@ ERRBegin
 			}
 		case TagExpected:
 			if ( Flow.Get() != '<' )
-				ERRI( iBeam );
+				RETURN( sUnexpectedCharacter )
 
-			SkipSpaces_( Flow );
+			HANDLE( SkipSpaces_( Flow ) );
 
 			if ( Flow.View() == '/' ) {
 				State = ClosingTag;
@@ -477,9 +506,11 @@ ERRBegin
 			break;
 		case OpeningTag:
 			if ( Flow.View() == '!' ) {
-				SkipComment_( Flow );
+				HANDLE( SkipComment_( Flow ) );
 				State = TagExpected;
-				SkipSpaces_( Flow );
+
+				HANDLE( SkipSpaces_( Flow ) );
+
 				break;
 			}
 
@@ -490,10 +521,10 @@ ERRBegin
 			Tags.Push( Name );
 
 			if ( Name.Amount() == 0 )
-				ERRI( iBeam );
+				RETURN( sEmptyTagName );
 
 			if ( !Callback.XMLStartTag( Name, Flow.Dump ) )
-				ERRI( iBeam );
+				RETURN( sUserError );
 
 			Flow.Dump.Init();
 
@@ -506,26 +537,26 @@ ERRBegin
 					ERRl();
 			}
 
-
-			SkipSpaces_( Flow );
+			HANDLE( SkipSpaces_( Flow ) );
 
 			switch( Flow.View() ) {
 			case '/':
 				Flow.Get();
-				SkipSpaces_( Flow );
+
+				HANDLE( SkipSpaces_( Flow ) );
 
 				if ( Flow.Get() != '>' )
-					ERRI( iBeam );
+					RETURN( sUserError );
 
 				if ( Tags.IsEmpty() )
-					ERRI( iBeam );
+					ERRc();
 
 				Tag.Init();
 
 				Tags.Pop( Tag );
 
 				if ( !Callback.XMLEndTag( Name, Flow.Dump ) )
-					ERRI( iBeam );
+					RETURN( sUserError );
 
 				Flow.Dump.Init();
 
@@ -536,7 +567,7 @@ ERRBegin
 			case '>':
 				Flow.Get();
 				if ( !Callback.XMLStartTagClosed( Name, Flow.Dump ) )
-					ERRI( iBeam );
+					RETURN( sUserError );
 
 				Flow.Dump.Init();
 
@@ -551,46 +582,46 @@ ERRBegin
 			Name.Init();
 			Value.Init();
 
-			GetAttribute_( Flow, Name, Value );
+			HANDLE( GetAttribute_( Flow, Name, Value ) );
 
 			if ( Tags.IsEmpty() )
-				ERRI( iBeam );
+				ERRc();
 
 			Tag.Init();
 
 			Tags.Top( Tag );
 
 			if ( !Callback.XMLAttribute( Tag, Name, Value, Flow.Dump ) )
-					ERRI( iBeam );
+				RETURN( sUserError );
 
 			Flow.Dump.Init();
 
-			SkipSpaces_( Flow );
+			HANDLE( SkipSpaces_( Flow ) );
 
 			if ( Flow.View() == '/' ) {
 
 				Flow.Get();
 
-				SkipSpaces_( Flow );
+				HANDLE( SkipSpaces_( Flow ) );
 
 				if ( Flow.View() == '>' ) {
 
 					Flow.Get();
 
 					if ( Tags.IsEmpty() )
-						ERRI( iBeam );
+						ERRc();
 
 					Tag.Init();
 
 					Tags.Pop( Tag );
 
 					if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
-						ERRI( iBeam );
+						RETURN( sUserError );
 
 					Flow.Dump.Init();
 
 					if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
-						ERRI( iBeam );
+						RETURN( sUserError );
 
 					Flow.Dump.Init();
 
@@ -598,15 +629,16 @@ ERRBegin
 
 					State = TagExpected;
 
-					if ( Level )
-						SkipSpaces_( Flow );
+					if ( Level ) {
+						HANDLE( SkipSpaces_( Flow ) );
+					}
 				} else
-					ERRI( iBeam );
+					RETURN( sUnexpectedCharacter );
 			} else if ( Flow.View() == '>' ) {
 				Flow.Get();
 
 				if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
-					ERRI( iBeam );
+					RETURN( sUserError );
 
 				Flow.Dump.Init();
 
@@ -615,29 +647,29 @@ ERRBegin
 
 			break;
 		case ClosingTag:
-			SkipSpaces_( Flow );
+			HANDLE( SkipSpaces_( Flow ) );
 
 			Name.Init();
 
 			GetName_( Flow, Name );
 
-			SkipSpaces_( Flow );
+			HANDLE( SkipSpaces_( Flow ) );
 
 			if ( Flow.Get() != '>' )
-				ERRI( iBeam );
+				RETURN( sUnexpectedCharacter );
 
 			if ( Tags.IsEmpty() )
-				ERRI( iBeam );
+				ERRc();
 
 			Tag.Init();
 
 			Tags.Pop( Tag );
 
 			if ( Tag != Name )
-				ERRI( iBeam );
+				RETURN( sMismatchedClosingTag );
 
 			if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
-				ERRI( iBeam );
+				RETURN( sUserError );
 
 			Flow.Dump.Init();
 
@@ -648,17 +680,20 @@ ERRBegin
 		case ValueExpected:
 			if ( Flow.View() != '<' ) {
 				Value.Init();
-				if ( GetTagValue_( Flow, Value ) ) {
+				
+				HANDLE( GetTagValue_( Flow, Value, OnlySpaces ) );
+
+				if ( OnlySpaces ) {
 
 					Tag.Init();
 
 					if ( Tags.IsEmpty() )
-						ERRI( iBeam );
+						ERRc();
 					else
 						Tags.Top( Tag );
 
 					if ( !Callback.XMLValue( Tag, Value, Flow.Dump ) )
-						ERRI( iBeam );
+						RETURN( sUserError );
 
 					Flow.Dump.Init();
 				}
@@ -672,15 +707,13 @@ ERRBegin
 	}
 
 	if ( Tags.Amount() != 0 )
-		ERRI( iBeam );
+		ERRc();
+
+	Status = sOK;
 ERRErr
-	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iBeam ) ) {
-		Success = false;
-		ERRRst();
-	}
 ERREnd
 ERREpilog
-	return Success;
+	return Status;
 }
 
 struct position__
