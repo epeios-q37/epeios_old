@@ -1,5 +1,9 @@
 $Id$
 
+19/04/2007 :
+	- FIL :
+		- Correction bogue sous GNU/Linux empêchant l'ouverture d'un fichier en lecture/écriture si le fichier n'existe pas.
+
 18/04/2007 :
 	- XML :
 		- Ajout définition de macros locales.

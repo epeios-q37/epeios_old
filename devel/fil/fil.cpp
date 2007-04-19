@@ -160,7 +160,7 @@ static inline iop::descriptor__ Open_(
 		Flags |= O_APPEND | O_RDWR;
 		break;
 	case mReadWrite:
-		Flags |= O_RDWR;
+		Flags |= O_CREAT | O_RDWR;
 		break;
 	case mReadOnly:
 		Flags |= O_RDONLY;
