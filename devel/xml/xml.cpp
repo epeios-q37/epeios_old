@@ -451,7 +451,7 @@ E_ROW( srow__ );
 	}
 
 
-bso::bool__ xml::Parse(
+status__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
 	callback__ &Callback )
 {
@@ -1052,6 +1052,7 @@ class extended_callback
 : public callback__
 {
 private:
+	status__ _Status;
 	callback__ *_UserCallback;
 	xtf::extended_text_iflow__ *_Flow;
 	variables _Variables;
@@ -1276,16 +1277,16 @@ protected:
 		const str::string_ &Dump )
 	{
 		if ( _IsDefining )
-			return false;
+			RETURN( sxNoTagsAllowedHere );
 
 		if ( _IfeqIgnoring )
-			return false;
+			RETURN( sxNoTagsAllowedHere );
 
 		if ( _ExpandPending ) {
 			if ( _ExpandIsHRef )
-				return false;
+				RETURN( sxNoTagsAllowedHere );
 			else if ( _GetTag( Name ) != tDefine )
-				return false;
+				RETURN( sxUnexpectedTag );
 		}
 
 
@@ -1314,7 +1315,7 @@ protected:
 			_ValueAttribute.Init();
 			break;
 		case t_Undefined:
-			return false;
+			RETURN( sxUnkownTag );
 			break;
 		default:
 			ERRc();
@@ -1336,7 +1337,7 @@ protected:
 		case tDefine:
 			if ( Name == NAME_ATTRIBUTE ) {
 				if ( _NameAttribute.Amount() != 0 )
-					return false;
+					RETURN( sxAttributeValue );
 
 				_NameAttribute = Value;
 			} else
@@ -1345,7 +1346,7 @@ protected:
 		case tExpand:
 			if ( Name == SELECT_ATTRIBUTE ) {
 				if ( _SelectAttribute.Amount() != 0 )
-					return false;
+					RETURN( sxAttributeValue );
 
 				_ExpandIsHRef = false;
 
@@ -1561,6 +1562,7 @@ protected:
 			xtf::extended_text_iflow__ &Flow,
 			callback__ &UserCallback )
 		{
+			_Status = s_Undefined;
 			_UserCallback = &UserCallback;
 			_Flow = &Flow;
 			_Variables.Init();

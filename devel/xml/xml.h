@@ -107,11 +107,15 @@ namespace xml {
 		sEmptyTagName,
 		sMismatchedClosingTag,
 		sUserError,
+		// Valeurs génèrée uniquement par 'ExtendedParse'.
+		sxNoTagsAllowedHere,
+		sxUnexpectedTag,
+		sxUnknownTag,
 		s_amount,
 		s_Undefined,
 	};
 
-	bso::bool__ Parse(
+	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		callback__ &Callback );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
