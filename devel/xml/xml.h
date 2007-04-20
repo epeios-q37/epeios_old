@@ -111,9 +111,18 @@ namespace xml {
 		sxNoTagsAllowedHere,
 		sxUnexpectedTag,
 		sxUnknownTag,
+		sxAttributeAlreadyDefined,
+		sxUnexpectedAttribute,
+		sxMissingNameAttribute,
+		sxMissingSelectAttribute,
+		sxUnknownVariable,
+		sxNoValueAllowedHere,
+
 		s_amount,
 		s_Undefined,
 	};
+
+	const char *GetStatusLabel( status__ Status );
 
 	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
@@ -122,7 +131,7 @@ namespace xml {
 
 	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
 	// où 'xxx' est la valeur donné à 'NameSpace'.
-	bso::bool__ ExtendedParse(
+	status__ ExtendedParse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Namespace,
 		const str::string_ &Directory,
@@ -133,7 +142,7 @@ namespace xml {
 
 	/* Traite toutes les balises 'xxx:...' (où 'xxx' correspond à 'Namespace') du flux XML 'IFlow' et
 	   génère un flux XML sans balises 'xxx:...' dans 'IFlow'. */
-	bso::bool__ Normalize(
+	status__ Normalize(
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
 		const str::string_ &Directory,
