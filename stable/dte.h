@@ -68,6 +68,7 @@ extern class ttr_tutor &DTETutor;
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
+#include "txf.h"
 
 //d An invalid date.
 #define DTE_INVALID_DATE	0
@@ -111,8 +112,11 @@ namespace dte {
 	enum format__ {
 		fDDMMYYYY,	// à la française ('25/11/2003').
 		fMMDDYYYY,	// à l'anglaise ('11/25/2003').
+		fYYYYMMDD,	// informatique ('2003/25/11').
 		f_amount,
-		f_Undefined
+		f_Undefined,
+		f_Unknown,	// Format incommu.
+		f_Ambiguous	// Format indéterminable.
 	};
 
 	//c A date.
@@ -127,7 +131,9 @@ namespace dte {
 			year__ Year ) const;
 		/* Covert Date (in "dd.mm.yyyy" ) format into internal format.
 		Return 'STXDTE_INVALID_DATE' if date not valid, or the converted date */
-		raw_date__ _Convert( const char *Date );
+		raw_date__ _Convert(
+			const char *Date,
+			format__ Format );
 		// Return the core date.
 		bso::ulong__ _Core( raw_date__ Date ) const
 		{
@@ -172,11 +178,13 @@ namespace dte {
 
 			RawDate_ = _Convert( Date );
 		}
-		date__( const char *Date )
+		date__(
+			const char *Date,
+			format__ Format )
 		{
 			reset( false );
 
-			RawDate_ = _Convert( Date );
+			RawDate_ = _Convert( Date, Format );
 		}
 		date__(
 			day__ Day,
@@ -195,11 +203,13 @@ namespace dte {
 			RawDate_ = _Convert( Date );
 		}
 		//f Initialization with date 'Date'.
-		void Init( const char *Date  )
+		void Init(
+			const char *Date,
+			format__ Format )
 		{
 			reset();
 
-			RawDate_ = _Convert( Date );
+			RawDate_ = _Convert( Date, Format );
 		}
 		//f Initialization with 'Day', 'Month' and 'Year'.
 		void Init( 

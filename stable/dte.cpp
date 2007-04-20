@@ -102,43 +102,143 @@ raw_date__ dte::date__::_Convert(
 		return DTE_SIGN_MASK | ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
 }
 
-raw_date__ dte::date__::_Convert( const char *Date )
+#define LIMIT	( BSO_ULONG_MAX / 10 )
+
+static const char *ExtractItem_(
+	const char *Date,
+	bso::ulong__ &Item )
 {
-	day__ Jour = 0;
-	month__ Mois = 0;
-	year__ Annee = 0;
+	Item = 0;
 
-	if( !*Date || !isdigit( *Date ) )
-		return DTE_INVALID_DATE;
+	if ( !*Date )
+		return Date;
 
-	while( isdigit( *Date ) )
-		Jour = Jour * 10 + *Date++ - '0';
+	if( !isdigit( *Date ) )
+		return NULL;
+
+	while( isdigit( *Date ) && ( Item < LIMIT ) )
+		Item = Item * 10 + *Date++ - '0';
+
+	return Date;
+}
+
+static bso::bool__ ExtractItems_(
+	const char *Date,
+	bso::ulong__ &Item1,
+	bso::ulong__ &Item2,
+	bso::ulong__ &Item3 )
+{
+	Item1 = 0;
+	Item2 = 0;
+	Item3 = 0;
+
+	Date = ExtractItem_( Date, Item1 );
+
+	if  ( Date == NULL )
+		return false;
 
 	while( *Date && !isdigit( *Date ) )
 		Date++;
 
-	if ( *Date ) {
+	Date = ExtractItem_( Date, Item2 );
 
-		while( isdigit( *Date ) )
-			Mois = Mois * 10 + *Date++ - '0';
+	if  ( Date == NULL )
+		return false;
 
-		while( *Date && !isdigit( *Date ) )
-			Date++;
+	Date = ExtractItem_( Date, Item3 );
 
-		if ( *Date ) {
+	if  ( Date == NULL )
+		return false;
 
-			while( isdigit( *Date ) )
-				Annee = Annee * 10 + *Date++ - '0';
-		}
+	return true;
+}
+
+static inline bso::bool__ IsSuitableForYear_( bso::ulong__ Item )
+{
+	return true;
+}
+
+static inline bso::bool__ IsSuitableForMonth_( bso::ulong__ Item )
+{
+	return ( ( Item > 0 ) && ( Item <= 12 ) );
+}
+
+static inline bso::bool__ IsSuitableForDay_( bso::ulong__ Item )
+{
+	return ( ( Item > 0 ) && ( Item <= 31 ) );
+}
+
+static inline bso::bool__ TestAndSet_(
+	day__ &Day,
+	month__ &Month,
+	year__ &Year,
+	bso::ulong__ DayCandidate,
+	bso::ulong__ MonthCandidate,
+	bso::ulong__ YearCandidate )
+{
+	if ( IsSuitableForDay_( DayCandidate ) )
+		Day = (day__)DayCandidate;
+	else
+		return false;
+
+	if ( IsSuitableForMonth_( MonthCandidate ) )
+		Month = (month__)MonthCandidate;
+	else
+		return false;
+
+	if ( IsSuitableForYear_( YearCandidate ) )
+		Year = (year__)YearCandidate;
+	else
+		return false;
+
+	return true;
+
+
+}
+
+raw_date__ dte::date__::_Convert(
+	const char *Date,
+	format__ Format )
+{
+	day__ Day = 0;
+	month__ Month = 0;
+	year__ Year = 0;
+
+	bso::ulong__ Item1, Item2, Item3;
+
+	Item1 = Item2 = Item3 = 0;
+
+	if ( !ExtractItems_( Date, Item1, Item2, Item3 ) )
+		return DTE_INVALID_DATE;
+
+	if ( !Item1 || !Item2 || !Item3 )
+		return DTE_INVALID_DATE;
+
+	switch ( Format ) {
+		case fDDMMYYYY:
+			if ( !TestAndSet_( Day, Month, Year, Item1, Item2, Item3 ) )
+				return DTE_INVALID_DATE;
+			break;
+		case fMMDDYYYY:
+			if ( !TestAndSet_( Day, Month, Year, Item2, Item1, Item3 ) )
+				return DTE_INVALID_DATE;
+			break;
+		case fYYYYMMDD:
+			if ( !TestAndSet_( Day, Month, Year, Item3, Item2, Item1 ) )
+				return DTE_INVALID_DATE;
+		default:
+			ERRu();
+			break;
 	}
 
-	if ( Annee < 100 )
-		if ( Annee >= DTE_DEFAULT_DECENNIA_LIMIT )
-			Annee += 1900;
-		else
-			Annee += 2000;
 
-	return _Convert( Jour, Mois, Annee );
+	if ( Year < 100 )
+		if ( Year >= DTE_DEFAULT_DECENNIA_LIMIT )
+			Year += 1900;
+		else
+			Year += 2000;
+
+	return _Convert( Day, Month, Year );
 }
 
 const char *dte::date__::ASCII(
@@ -154,6 +254,9 @@ const char *dte::date__::ASCII(
 			break;
 		case fMMDDYYYY:
 			sprintf( Buffer.Data, "%02i/%02i/%i", (int)Month(), (int)Day(), (int)Year() );
+			break;
+		case fYYYYMMDD:
+			sprintf( Buffer.Data, "%i-02i-%02i", (int)Year(), (int)Month(), (int)Day() );
 			break;
 		default:
 			ERRu();
