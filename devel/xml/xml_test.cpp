@@ -123,6 +123,8 @@ ERRProlog
 	xtf::extended_text_iflow__ XTFlow;
 	str::string GuiltyFileName;
 	tol::E_FPOINTER___( char ) Directory;
+	xml::status__ BaseParsingStatus = xml::s_Undefined;
+	xml::extended_status__ XStatus = xml::xs_Undefined;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -137,12 +139,14 @@ ERRBegin
 
 	GuiltyFileName.Init();
 
-	if ( !xml::ExtendedParse( XTFlow, str::string( "xcf" ), str::string( Directory ), Callback, GuiltyFileName ) ) {
+	if ( ( XStatus = xml::ExtendedParse( XTFlow, str::string( "xcf" ), str::string( Directory ), Callback, BaseParsingStatus, GuiltyFileName ) ) != xml::xsOK ) {
 		cout << txf::sync;
 		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column();
 
 		if ( GuiltyFileName.Amount() != 0 )
 			cerr << " in file '" << GuiltyFileName << '\'';
+
+		cerr << " : " << xml::GetLabel( XStatus, BaseParsingStatus );
 
 		cerr << txf::nl;
 	}

@@ -1,5 +1,9 @@
 $Id$
 
+	- XML :
+		- Correction bogue non-appel de 'XMLStartTagClosed(...)' avec '<tag/>' (sans attribut).
+		- '[Extended]|Parse(...)' retourne maintenant un code d'erreur, et non plus seulement un booléen.
+
 20/04/2007 :
 	- DTE :
 		- Ajout du format 'fYYYYMMDD' (ex:'2007-04-20').
