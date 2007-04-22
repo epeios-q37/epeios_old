@@ -97,25 +97,65 @@ namespace xml {
 		{}
 	};
 
-	bso::bool__ Parse(
+	// Code d'erreur retournée par 'Parse()'.
+	enum status__ {
+		sOK,
+		sUnexpectedEOF,
+		sUnknownEntity,
+		sMissingEqualSign,
+		sBadAttributeValueDelimiter,
+		sUnexpectedCharacter,
+		sEmptyTagName,
+		sMismatchedTag,
+		sUserError,
+		s_amount,
+		s_Undefined,
+	};
+
+	const char *GetLabel( status__ Status );
+
+	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		callback__ &Callback );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
+	// Codes d'erreur retournée par 'ExtendedParse()'.
+	enum extended_status__ {
+		xsOK = sOK,
+		xsNoTagsAllowedHere = s_amount,
+		xsUnexpectedTag,
+		xsUnknownTag,
+		xsAttributeAlreadyDefined,
+		xsUnexpectedAttribute,
+		xsUnknownAttribute,
+		xsMissingNameAttribute,
+		xsMissingSelectAttribute,
+		xsMissingValueAttribute,
+		xsUnknownVariable,
+		xsNoValueAllowedHere,
+		xsTooManyTags,
+		xsUnableToOpenFile,
+
+		xs_amount,
+		xs_Undefined,
+	};
+
+	const char *GetLabel( extended_status__ Status );
+
 	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
 	// où 'xxx' est la valeur donné à 'NameSpace'.
-	bso::bool__ ExtendedParse(
+	extended_status__ ExtendedParse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Namespace,
 		const str::string_ &Directory,
 		callback__ &Callback,
-		str::string_ &FileName );
+		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
 
 	/* Traite toutes les balises 'xxx:...' (où 'xxx' correspond à 'Namespace') du flux XML 'IFlow' et
 	   génère un flux XML sans balises 'xxx:...' dans 'IFlow'. */
-	bso::bool__ Normalize(
+	extended_status__ Normalize(
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
 		const str::string_ &Directory,

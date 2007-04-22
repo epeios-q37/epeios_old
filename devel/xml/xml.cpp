@@ -102,14 +102,19 @@ const char *xml::GetLabel( status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
+static inline extended_status__ Convert_( status__ Status )
+{
+	return (extended_status__)Status;
+}
+
 const char *xml::GetLabel( extended_status__ Status )
 {
+	if ( Status < Convert_( s_amount ) )
+		return GetLabel( (status__)Status );
+
 	switch( Status ) {
 	case xsOK:
 		ERRu();
-		break;
-	case xsXMLError:
-		ERRu();	// Consulter 'XMLStatus'.
 		break;
 	case xsNoTagsAllowedHere:
 		return "No tags allowed here";
@@ -157,7 +162,6 @@ const char *xml::GetLabel( extended_status__ Status )
 
 	return NULL;	// Pour éviter un 'warning'.
 }
-
 
 #define	EXPAND_MAX_NESTING_LEVEL	100
 #define	IFEQ_MAX_NESTING_LEVEL		100
@@ -387,7 +391,7 @@ static status__ GetValue_(
 
 		if ( !isspace( C = Flow.Get() ) )
 			OnlySpaces = false;
-		else if ( !OnlySpaces && ErrorIfSpaceInValue )
+		else if ( !OnlySpaces && ErrorIfSpaceInValue && ( C != ' ' ) )
 			return sUnexpectedCharacter;
 
 		if ( C == '&' ) {
@@ -1152,32 +1156,19 @@ public:
 #define SET_TAG		"set"
 #define BLOC_TAG	"bloc"
 
-#undef RETURN	// Pour éviter de l'utiliser accidentellem//nt.
+#undef RETURN
 
-#define RETURNX( V )\
+#define RETURN( V )\
 	{\
-		_ExtendedStatus = V;\
+		_RelayedStatus = V;\
 		return false;\
 	}
-
-#define RETURNB( V )\
-	{\
-		if ( V == sUserError )\
-			_BaseStatus = sOK;\
-		else {\
-			_ExtendedStatus = xsXMLError;\
-			_BaseStatus = V;\
-		}\
-		return false;\
-	}
-
 
 class extended_callback
 : public callback__
 {
 private:
-	extended_status__ _ExtendedStatus;
-	status__ _BaseStatus;
+	extended_status__ _RelayedStatus;
 	callback__ *_UserCallback;
 	xtf::extended_text_iflow__ *_Flow;
 	variables _Variables;
@@ -1208,6 +1199,7 @@ private:
 	bso::ubyte__ _IfeqIgnoring;	// On est dans un 'ifeq' dont le test est négatif.
 	bso::bool__ _ExpandPending;
 	bso::bool__ _ExpandIsHRef;
+	str::string _GuiltyFileName;	// Lors d'une erreur, fichier contenant l'erreur, si significatif.
 	bso::bool__ _BelongsToNamespace( const str::string_ &TagName ) const
 	{
 		if ( TagName.Amount() == 0 )
@@ -1215,19 +1207,19 @@ private:
 
 		return str::Compare( TagName, _Namespace, TagName.First(), _Namespace.First(), _Namespace.Amount() ) == 0;
 	}
-	status__ _Ignore( xtf::extended_text_iflow__ &Flow )
+	extended_status__ _Ignore( xtf::extended_text_iflow__ &Flow )
 	{
 		donothing_callback__ Callback;
 
 		Callback.Init();
 
-		return xml::Parse( Flow, Callback );
+		return Convert_( xml::Parse( Flow, Callback ) );
 	}
-	status__ _HandleDefine( 
+	extended_status__ _HandleDefine( 
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Name )
 	{
-		status__ Status = s_Undefined;
+		extended_status__ Status = xs_Undefined;
 	ERRProlog
 		xtf::location__ Line, Column;
 		store_callback Callback;
@@ -1243,7 +1235,7 @@ private:
 
 		Callback.Init( SFlow );
 
-		if ( ( Status = Parse( Flow, Callback ) ) != sOK )
+		if ( ( Status = Convert_( Parse( Flow, Callback ) ) ) != xsOK )
 			ERRReturn;
 
 		SFlow.Synchronize();
@@ -1257,9 +1249,9 @@ private:
 	ERREpilog
 		return Status;
 	}
-	extended_status__ _HandleMacroExpand( status__ &BaseParseStatus )
+	extended_status__ _HandleMacroExpand( void )
 	{
-		extended_status__ XStatus = xs_Undefined;
+		extended_status__ Status = xs_Undefined;
 	ERRProlog
 		str::string String;
 		flx::E_STRING_IFLOW__ SFlow;
@@ -1299,7 +1291,7 @@ private:
 		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
 			ERRReturn;
 
-		BaseParseStatus = Parse( XFlow, *this );
+		Status = Convert_( Parse( XFlow, *this ) );
 
 		if ( _ExpandNestingLevel-- == 0 )
 			ERRc();
@@ -1308,19 +1300,19 @@ private:
 
 		_Flow = PreviousFlow;
 
-		if ( BaseParseStatus != sOK ) {
+		if ( Status != xsOK ) {
 			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
-			XStatus = xsXMLError;
-		} else
-			XStatus = xsOK;
+			if ( Status == Convert_( sUserError ) )
+				Status = _RelayedStatus;
+		}
 	ERRErr
 	ERREnd
 	ERREpilog
-		return XStatus;
+		return Status;
 	}
-	extended_status__ _HandleFileExpand( status__ &BaseParseStatus )
+	extended_status__ _HandleFileExpand( void )
 	{
-		extended_status__ XStatus = xs_Undefined;
+		extended_status__ Status = xs_Undefined;
 	ERRProlog
 		str::string String;
 		flf::file_iflow___ Flow;
@@ -1335,7 +1327,7 @@ private:
 		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _SelectAttribute.Convert(), "" );
 
 		if ( Flow.Init( FileNameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
-			XStatus = xsUnableToOpenFile;
+			Status = xsUnableToOpenFile;
 			ERRReturn;
 		}
 
@@ -1348,35 +1340,35 @@ private:
 		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
 			ERRReturn;
 
-		BaseParseStatus = Parse( XFlow, *this );
+		Status = Convert_( Parse( XFlow, *this ) );
 
 		if ( _ExpandNestingLevel-- == 0 )
 			ERRc();
 
 		_Flow = PreviousFlow;
 
-		if ( BaseParseStatus != sOK ) {
+		if ( Status != xsOK ) {
 			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
-			XStatus = xsXMLError;
-		} else
-			XStatus = xsOK;
+			if ( Status == Convert_( sUserError ) )
+				Status = _RelayedStatus;
+		}
 	ERRErr
 	ERREnd
-		if ( ( BaseParseStatus != sOK ) && ( !_ExpandIsHRef ) ) {
-			// On rétablit les deux variables ci-dessous parce qu'elles ont peut-être été effacé par un 'expand' d'un sous-fichier.
-			// Elles sont utiles pour déterminer le sous-fichier contenant l'erreur.
-			_SelectAttribute = AttributeBuffer;
-			_ExpandIsHRef = true;
-		}
+		if ( Status != xsOK )
+			if ( _GuiltyFileName.Amount() == 0 )
+				if ( ( Status != xsUnableToOpenFile ) || ( _ExpandIsHRef ) )
+					_GuiltyFileName = AttributeBuffer;
+				else
+					_ExpandIsHRef = true;
 	ERREpilog
-		return XStatus;
+		return Status;
 	}
-	extended_status__ _HandleExpand( status__ &BaseParseStatus )
+	extended_status__ _HandleExpand( void )
 	{
 		if ( _ExpandIsHRef )
-			return _HandleFileExpand( BaseParseStatus );
+			return _HandleFileExpand();
 		else
-			return _HandleMacroExpand( BaseParseStatus );
+			return _HandleMacroExpand();
 	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
@@ -1408,19 +1400,19 @@ protected:
 		const str::string_ &Dump )
 	{
 		if ( _IsDefining )
-			RETURNX( xsTooManyTags );
+			RETURN( xsTooManyTags );
 
 		if ( _IfeqIgnoring )
-			RETURNX( xsTooManyTags );
+			RETURN( xsTooManyTags );
 
 		if ( _ExpandPending ) {
 			if ( _ExpandIsHRef ) {
 				_ExpandIsHRef = false;
-				RETURNX( xsNoTagsAllowedHere )
+				RETURN( xsNoTagsAllowedHere )
 			} else if ( _GetTag( Name ) == t_Undefined )
-				RETURNX( xsUnknownTag )
+				RETURN( xsUnknownTag )
 			else if ( _GetTag( Name ) != tDefine )
-				RETURNX( xsUnexpectedTag )
+				RETURN( xsUnexpectedTag )
 		}
 
 
@@ -1449,7 +1441,7 @@ protected:
 			_ValueAttribute.Init();
 			break;
 		case t_Undefined:
-			RETURNX( xsUnknownTag )
+			RETURN( xsUnknownTag )
 			break;
 		default:
 			ERRc();
@@ -1471,33 +1463,33 @@ protected:
 		case tDefine:
 			if ( Name == NAME_ATTRIBUTE ) {
 				if ( _NameAttribute.Amount() != 0 )
-					RETURNX( xsAttributeAlreadyDefined )
+					RETURN( xsAttributeAlreadyDefined )
 
 				_NameAttribute = Value;
 			} else
-				RETURNX( xsUnknownAttribute )
+				RETURN( xsUnknownAttribute )
 			break;
 		case tExpand:
 			if ( Name == SELECT_ATTRIBUTE ) {
 				if ( _SelectAttribute.Amount() != 0 )
 					if ( _ExpandIsHRef )
-						RETURNX( xsUnexpectedAttribute )
+						RETURN( xsUnexpectedAttribute )
 					else
-						RETURNX( xsAttributeAlreadyDefined )
+						RETURN( xsAttributeAlreadyDefined )
 
 				_ExpandIsHRef = false;
 
 			} else if ( Name == HREF_ATTRIBUTE ) {
 				if ( _SelectAttribute.Amount() != 0 )
 					if ( _ExpandIsHRef )
-						RETURNX( xsAttributeAlreadyDefined )
+						RETURN( xsAttributeAlreadyDefined )
 					else
-						RETURNX( xsUnexpectedAttribute )
+						RETURN( xsUnexpectedAttribute )
 
 				_ExpandIsHRef = true;
 
 			} else
-				RETURNX( xsUnknownAttribute )
+				RETURN( xsUnknownAttribute )
 
 			_SelectAttribute = Value;
 
@@ -1505,37 +1497,38 @@ protected:
 		case tIfeq:
 			if ( Name == SELECT_ATTRIBUTE ) {
 				if ( _SelectAttribute.Amount() != 0 )
-					RETURNX( xsAttributeAlreadyDefined )
+					RETURN( xsAttributeAlreadyDefined )
 
 				_SelectAttribute = Value;
 			} else if ( Name == VALUE_ATTRIBUTE ) {
 				if ( _ValueAttribute.Amount() != 0 )
-					RETURNX( xsAttributeAlreadyDefined )
+					RETURN( xsAttributeAlreadyDefined )
 
 				_ValueAttribute = Value;
 			} else
-				RETURNX( xsUnknownAttribute )
+				RETURN( xsUnknownAttribute )
 			break;
 		case tBloc:
-			RETURNX( xsUnexpectedAttribute )
+			//RETURN( xsUnexpectedAttribute )
+			// Tous les attributs sont acceptés (et ignorés), notamment les 'xmlns:...'.
 			break;
 		case tSet:
 			if ( Name == NAME_ATTRIBUTE ) {
 				if ( _NameAttribute.Amount() != 0 )
-					RETURNX( xsAttributeAlreadyDefined )
+					RETURN( xsAttributeAlreadyDefined )
 
 				_NameAttribute = Value;
 			} else
 			if ( Name == VALUE_ATTRIBUTE ) {
 				if ( _ValueAttribute.Amount() != 0 )
-					RETURNX( xsAttributeAlreadyDefined )
+					RETURN( xsAttributeAlreadyDefined )
 
 				_ValueAttribute = Value;
 			} else
-				RETURNX( xsUnknownAttribute )
+				RETURN( xsUnknownAttribute )
 			break;
 		case t_Undefined:
-			RETURNX( xsUnknownTag )
+			RETURN( xsUnknownTag )
 			break;
 		default:
 			ERRc();
@@ -1554,13 +1547,13 @@ protected:
 			break;
 		case tDefine:
 		{
-			status__ Status = s_Undefined;
+			extended_status__ Status = xs_Undefined;
 
 			if ( _NameAttribute.Amount() == 0 )
-				RETURNX( xsMissingNameAttribute )
+				RETURN( xsMissingNameAttribute )
 
-			if ( ( Status = _HandleDefine( *_Flow, _NameAttribute ) ) != sOK )
-				RETURNB( Status )
+			if ( ( Status = _HandleDefine( *_Flow, _NameAttribute ) ) != xsOK )
+				RETURN( Status )
 
 			_IsDefining = true;
 
@@ -1568,7 +1561,7 @@ protected:
 		}
 		case tExpand:
 			if ( _SelectAttribute.Amount() == 0 )
-				RETURNX( xsMissingSelectAttribute )
+				RETURN( xsMissingSelectAttribute )
 
 			_RepositoryStack.Push( _CurrentRepository );
 			_CurrentRepository.Init();
@@ -1576,20 +1569,20 @@ protected:
 			break;
 		case tIfeq:
 			if ( _SelectAttribute.Amount() == 0 )
-				RETURNX( xsMissingSelectAttribute )
+				RETURN( xsMissingSelectAttribute )
 
 			if ( _ValueAttribute.Amount() == 0 )
-				RETURNX( xsMissingValueAttribute )
+				RETURN( xsMissingValueAttribute )
 
 			if ( !_Variables.Exists( _SelectAttribute ) )
-				RETURNX( xsUnknownVariable );
+				RETURN( xsUnknownVariable );
 
 			if ( !_Variables.IsEqual( _SelectAttribute, _ValueAttribute ) ) {
-				status__ Status = s_Undefined;
+				extended_status__ Status = xs_Undefined;
 				_IfeqIgnoring = true;
 
-				if ( ( Status = _Ignore( *_Flow ) ) != sOK )
-					RETURNB( Status )
+				if ( ( Status = _Ignore( *_Flow ) ) != xsOK )
+					RETURN( Status )
 			}
 
 			break;
@@ -1597,11 +1590,11 @@ protected:
 			break;
 		case tSet:
 			if ( _NameAttribute.Amount() == 0 )
-				RETURNX( xsMissingNameAttribute );
+				RETURN( xsMissingNameAttribute );
 
 			break;
 		case t_Undefined:
-			RETURNX( xsUnexpectedTag );
+			RETURN( xsUnexpectedTag );
 			break;
 		default:
 			ERRc();
@@ -1620,20 +1613,20 @@ protected:
 			return _UserCallback->XMLValue( TagName, Value, Dump );
 			break;
 		case tDefine:
-			RETURNX( xsNoValueAllowedHere )
+			RETURN( xsNoValueAllowedHere )
 			break;
 		case tExpand:
-			RETURNX( xsNoValueAllowedHere )
+			RETURN( xsNoValueAllowedHere )
 			break;
 		case tIfeq:
-			RETURNX( xsNoValueAllowedHere )
+			RETURN( xsNoValueAllowedHere )
 			break;
 		case tBloc:
 			_BlocPendingValue.Append( Value );
 			_BlocPendingDump.Append( Dump );
 			break;
 		case tSet:
-			RETURNX( xsNoValueAllowedHere )
+			RETURN( xsNoValueAllowedHere )
 			break;
 		case t_Undefined:
 			ERRc();
@@ -1668,15 +1661,15 @@ protected:
 			break;
 		case tExpand:
 		{
-			extended_status__ XStatus = xs_Undefined;
+			extended_status__ Status = xs_Undefined;
 
 			if ( _SelectAttribute.Amount() == 0 )
 				ERRc();
 
 			_ExpandPending = false;
 
-			if ( ( XStatus = _HandleExpand( _BaseStatus ) ) != xsOK )
-				RETURNX( XStatus )
+			if ( ( Status = _HandleExpand() ) != xsOK )
+				RETURN( Status )
 
 			_SelectAttribute.Init();
 			_ExpandIsHRef = false;
@@ -1694,7 +1687,7 @@ protected:
 				ERRc();
 
 			if ( _Variables.Exists( _NameAttribute ) )
-				RETURNX( xsUnknownVariable )
+				RETURN( xsUnknownVariable )
 
 			_Variables.Set( _NameAttribute, _ValueAttribute );
 
@@ -1718,8 +1711,7 @@ protected:
 			xtf::extended_text_iflow__ &Flow,
 			callback__ &UserCallback )
 		{
-			_BaseStatus = s_Undefined;
-			_ExtendedStatus = xs_Undefined;
+			_RelayedStatus = xs_Undefined;
 			_UserCallback = &UserCallback;
 			_Flow = &Flow;
 			_Variables.Init();
@@ -1759,17 +1751,12 @@ protected:
 			_IfeqIgnoring = false;
 			_ExpandPending = false;
 			_ExpandIsHRef = false;
+
+			_GuiltyFileName.Init();
 		}
-		void GetGuiltyFileNameIfRelevant( str::string_ &FileName )
-		{
-			if ( _ExpandIsHRef ) {
-				if ( _SelectAttribute.Amount() == 0 )
-					ERRc();
-				FileName = _SelectAttribute;
-			}
-		}
-		E_RODISCLOSE__( status__, BaseStatus );
-		E_RODISCLOSE__( extended_status__, ExtendedStatus );
+		E_RODISCLOSE__( extended_status__, RelayedStatus );
+		E_RODISCLOSE__( str::string_, GuiltyFileName );
+
 };
 
 extended_status__ xml::ExtendedParse(
@@ -1777,40 +1764,26 @@ extended_status__ xml::ExtendedParse(
 	const str::string_ &Namespace,
 	const str::string_ &Directory,
 	callback__ &Callback,
-	status__ &BaseParsingStatus,
 	str::string_ &FileName )
 {
-	extended_status__ ExtendedStatus = xs_Undefined;
+	extended_status__ Status = xs_Undefined;
 ERRProlog
 	extended_callback XCallback;
 ERRBegin
 	XCallback.Init( Namespace, Directory, Flow, Callback );
 
-	BaseParsingStatus = Parse( Flow, XCallback );
+	Status = Convert_( Parse( Flow, XCallback ) );
 
-	if ( BaseParsingStatus != sOK ) {
-		XCallback.GetGuiltyFileNameIfRelevant( FileName );
+	if ( Status != xsOK ) {
+		FileName = XCallback.GetGuiltyFileName();
 
-		if ( BaseParsingStatus == sUserError ) {
-			if ( XCallback.ExtendedStatus() == xs_Undefined )
-				ERRc();
-
-			ExtendedStatus = XCallback.ExtendedStatus();
-
-			if ( ExtendedStatus == xsXMLError )
-				BaseParsingStatus = XCallback.BaseStatus();
-			else
-				BaseParsingStatus = sOK;
-		} else 
-			ExtendedStatus = xsXMLError;
-	} else
-		ExtendedStatus = xsOK;
-		
-
+		if ( Status == Convert_( sUserError ) )
+			Status = XCallback.RelayedStatus();
+	}
 ERRErr
 ERREnd
 ERREpilog
-	return ExtendedStatus;
+	return Status;
 }
 
 class neutral_callback
@@ -1885,20 +1858,19 @@ extended_status__ xml::Normalize(
 	const str::string_ &Directory,
 	bso::bool__ Indent,
 	txf::text_oflow__ &OFlow,
-	status__ &BaseParsingStatus,
 	str::string_ &GuiltyFileName )
 {
-	extended_status__ XStatus = xs_Undefined;
+	extended_status__ Status = xs_Undefined;
 ERRProlog
 	neutral_callback NCallback;
 ERRBegin
 	NCallback.Init( OFlow, Indent );
 
-	XStatus = ExtendedParse( IFlow, Namespace, Directory, NCallback, BaseParsingStatus, GuiltyFileName );
+	Status = ExtendedParse( IFlow, Namespace, Directory, NCallback, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog
-	return XStatus;
+	return Status;
 }
 
 void xml::Transform( str::string_ &Target )

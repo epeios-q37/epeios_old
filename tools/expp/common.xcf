@@ -1,5 +1,5 @@
 <!-- $Id$ -->
-<xpp:bloc xmlns:xpp="http://zeusw.org/intl/expp">
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:define name="LinuxURL">
 		<xpp:bloc>linuxfr.org</xpp:bloc>
 	</xpp:define>

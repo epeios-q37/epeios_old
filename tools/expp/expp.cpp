@@ -33,7 +33,7 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.1.1"
+#define VERSION			"0.2.0"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT
@@ -272,6 +272,7 @@ ERRProlog
 	str::string ErrorFileName;
 	tol::E_FPOINTER___( char ) Directory;
 	bso::bool__ BackedUp = false;
+	xml::extended_status__ Status = xml::xs_Undefined;
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
@@ -300,18 +301,16 @@ ERRBegin
 
 	ErrorFileName.Init();
 
-	if ( !xml::Normalize( XTFlow,
-		                  str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
-						  str::string( Directory == NULL ? (const char *)"" : Directory ),
-						  Indent,
-						  ( Destination == NULL ? cout : TOFlow ),
-						  ErrorFileName ) ) {
+	if ( ( Status = xml::Normalize( XTFlow,
+									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
+									str::string( Directory == NULL ? (const char *)"" : Directory ),
+									Indent, ( Destination == NULL ? cout : TOFlow ),  ErrorFileName ) ) != xml::xsOK ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )
 			cerr << "in file '" << ErrorFileName << "' ";
 
-		cerr << "at line " << XTFlow.Line() << " position " << XTFlow.Column() << " !" << txf::nl;
+		cerr << "at line " << XTFlow.Line() << " position " << XTFlow.Column() << " : " << xml::GetLabel( Status ) << " !" << txf::nl;
 
 		ERRExit( evProcessing );
 	}

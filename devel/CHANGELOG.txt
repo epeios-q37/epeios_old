@@ -1,5 +1,8 @@
 $Id$
 
+22/04/2007:
+	- TOL :
+		- Correction bogue macro 'E_RRODISCLOSE__(...)'.
 	- XML :
 		- Correction bogue non-appel de 'XMLStartTagClosed(...)' avec '<tag/>' (sans attribut).
 		- '[Extended]|Parse(...)' retourne maintenant un code d'erreur, et non plus seulement un booléen.

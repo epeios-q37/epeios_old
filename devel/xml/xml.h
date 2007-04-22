@@ -122,10 +122,7 @@ namespace xml {
 	// Codes d'erreur retournée par 'ExtendedParse()'.
 	enum extended_status__ {
 		xsOK = sOK,
-		xsXMLError,	// Lorsque cette erreur est retournée, c'est que le flow analysé
-					// n'est pas conforme au sépcifications XML. Consulter 'BaseParsingStatus'
-					// pour savoir d'où vient le problème.
-		xsNoTagsAllowedHere,
+		xsNoTagsAllowedHere = s_amount,
 		xsUnexpectedTag,
 		xsUnknownTag,
 		xsAttributeAlreadyDefined,
@@ -145,34 +142,6 @@ namespace xml {
 
 	const char *GetLabel( extended_status__ Status );
 
-	inline const char *GetLabel(
-		extended_status__ ExtendedStatus,
-		status__ Status )
-	{
-		switch ( ExtendedStatus ) {
-		case xsOK:
-#ifdef XML_DBG
-			if ( Status != sOK )
-				ERRu();
-#endif
-			ERRu();
-			break;
-		case xsXMLError:
-			return GetLabel( Status );
-			break;
-		default:
-#ifdef XML_DBG
-			if ( Status != sOK )
-				ERRu();
-#endif
-			return GetLabel( ExtendedStatus );
-			break;
-		}
-
-		return NULL;	// Pour éviter un 'warning'.
-	}
-
-
 	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
 	// où 'xxx' est la valeur donné à 'NameSpace'.
 	extended_status__ ExtendedParse(
@@ -180,7 +149,6 @@ namespace xml {
 		const str::string_ &Namespace,
 		const str::string_ &Directory,
 		callback__ &Callback,
-		status__ &BaseParsingStatus,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
@@ -193,7 +161,6 @@ namespace xml {
 		const str::string_ &Directory,
 		bso::bool__ Indent,
 		txf::text_oflow__ &OFlow,
-		status__ &BaseParsingStatus,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.

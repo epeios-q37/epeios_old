@@ -1,8 +1,18 @@
 $Id$
 
 ---------------
+Version 0.2.0 :
+---------------
+
+- 22/04/2007 :
+	- Some minor bug fixing.
+	- Introducing local macro définition (inside an 'expand').
+	- When an error occurs, you have now an error description.
+	
+---------------
 Version 0.1.1 :
 ---------------
+
 - 15/04/2007 :
 	- Improved 'help' page.
 

@@ -8,9 +8,11 @@ $Id$
 
 The windows binary is provided with this package ('expp.exe').
 
-Under GNU/Linux, cygwin (et théororitically sous Mac), unpack the archive, then launch 'make'.
+Under GNU/Linux, cygwin (and theoritically under Mac), unpack the archive, then launch 'make'.
 
-'expp' without arguments waits for data on the standard input. Launchr 'expp --help' to obtain a help page.
+'expp' without arguments waits for data on the standard input.
+
+Launch 'expp --help' to obtain a help page.
 
 See 'http://zeusw.org/intl/expp/' for more details.
 
