@@ -145,6 +145,9 @@ static bso::bool__ ExtractItems_(
 	if  ( Date == NULL )
 		return false;
 
+	while( *Date && !isdigit( *Date ) )
+		Date++;
+
 	Date = ExtractItem_( Date, Item3 );
 
 	if  ( Date == NULL )
@@ -226,6 +229,7 @@ raw_date__ dte::date__::_Convert(
 		case fYYYYMMDD:
 			if ( !TestAndSet_( Day, Month, Year, Item3, Item2, Item1 ) )
 				return DTE_INVALID_DATE;
+			break;
 		default:
 			ERRu();
 			break;

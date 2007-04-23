@@ -1,6 +1,8 @@
 $Id$
 
 23/04/2007 :
+	- DTE :
+		- Correction bogue détection année.
 	- RGSTRY :
 		- Adaptation aux modifications bibliothèque 'XML'.
 	- TOL :

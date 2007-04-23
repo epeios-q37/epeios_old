@@ -914,7 +914,7 @@ ERRProlog
 ERRBegin
 	Callback.Init( Root );
 
-	if ( ( Status = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) != xml::xsOK )
+	if ( ( Status = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) == xml::xsOK )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
