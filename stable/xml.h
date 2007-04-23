@@ -147,8 +147,8 @@ namespace xml {
 	extended_status__ ExtendedParse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Namespace,
-		const str::string_ &Directory,
 		callback__ &Callback,
+		const str::string_ &Directory,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
@@ -158,8 +158,8 @@ namespace xml {
 	extended_status__ Normalize(
 		xtf::extended_text_iflow__ &IFlow,
 		const str::string_ &Namespace,
-		const str::string_ &Directory,
 		bso::bool__ Indent,
+		const str::string_ &Directory,
 		txf::text_oflow__ &OFlow,
 		str::string_ &GuiltyFileName );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.

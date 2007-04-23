@@ -1,5 +1,14 @@
 $Id$
 
+23/04/2007 :
+	- RGSTRY :
+		- Adaptation aux modifications bibliothèque 'XML'.
+	- TOL :
+		- Annulations des dernière modifications.
+	- XML :
+		- Changement de l'ordre des paramètres pour certaines fonctions.
+		- Adaptation aux modifications bitliothèque 'TOL4.
+
 22/04/2007:
 	- TOL :
 		- Correction bogue macro 'E_RRODISCLOSE__(...)'.

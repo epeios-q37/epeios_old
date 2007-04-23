@@ -904,6 +904,7 @@ nrow__ rgstry::Parse(
 	const str::string_ &Directory,
 	registry_ &Registry,
 	nrow__ Root,
+	xml::extended_status__ &Status,
 	str::string_ &ErrorFileName,
 	xtf::location__ &ErrorLine,
 	xtf::location__ &ErrorColumn )
@@ -913,7 +914,7 @@ ERRProlog
 ERRBegin
 	Callback.Init( Root );
 
-	if ( xml::ExtendedParse( Flow, str::string( NAMESPACE ), Directory, Callback, ErrorFileName ) )
+	if ( ( Status = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) != xml::xsOK )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;

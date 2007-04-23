@@ -303,8 +303,8 @@ ERRBegin
 
 	if ( ( Status = xml::Normalize( XTFlow,
 									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
-									str::string( Directory == NULL ? (const char *)"" : Directory ),
-									Indent, ( Destination == NULL ? cout : TOFlow ),  ErrorFileName ) ) != xml::xsOK ) {
+									Indent, str::string( Directory == NULL ? (const char *)"" : Directory ),
+									( Destination == NULL ? cout : TOFlow ),  ErrorFileName ) ) != xml::xsOK ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )

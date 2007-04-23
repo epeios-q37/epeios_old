@@ -874,6 +874,7 @@ namespace rgstry {
 		const str::string_ &Directory,
 		registry_ &Registry,
 		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
+		xml::extended_status__ &Status,	// Si valeur retournée == NONE, alors contient le code d'erreur.
 		str::string_ &ErrorFile,	// Peut être 'NULL' si pas interessé.
 		location__ &ErrorLine,
 		location__ &ErrorColumn );
@@ -885,8 +886,9 @@ namespace rgstry {
 		nrow__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
 		location__ Dummy;
+		xml::extended_status__ Status = xml::xs_Undefined;
 
-		return Parse( Flow, Directory, Registry, Root, *(str::string_ *)NULL, Dummy, Dummy );
+		return Parse( Flow, Directory, Registry, Root, Status, *(str::string_ *)NULL, Dummy, Dummy );
 	}
 
 	class overloaded_registry___

@@ -984,7 +984,7 @@ namespace tol {
 
 
 #define E_RRODISCLOSE__(type__, name )\
-	const type__ &Get##name( void ) const\
+	const type__ Get##name( void ) const\
 	{\
 		return _##name;\
 	}

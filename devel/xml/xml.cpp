@@ -1762,8 +1762,8 @@ protected:
 extended_status__ xml::ExtendedParse(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Namespace,
-	const str::string_ &Directory,
 	callback__ &Callback,
+	const str::string_ &Directory,
 	str::string_ &FileName )
 {
 	extended_status__ Status = xs_Undefined;
@@ -1775,7 +1775,7 @@ ERRBegin
 	Status = Convert_( Parse( Flow, XCallback ) );
 
 	if ( Status != xsOK ) {
-		FileName = XCallback.GetGuiltyFileName();
+		FileName = XCallback.GuiltyFileName();
 
 		if ( Status == Convert_( sUserError ) )
 			Status = XCallback.RelayedStatus();
@@ -1855,8 +1855,8 @@ public:
 extended_status__ xml::Normalize(
 	xtf::extended_text_iflow__ &IFlow,
 	const str::string_ &Namespace,
-	const str::string_ &Directory,
 	bso::bool__ Indent,
+	const str::string_ &Directory,
 	txf::text_oflow__ &OFlow,
 	str::string_ &GuiltyFileName )
 {
@@ -1866,7 +1866,7 @@ ERRProlog
 ERRBegin
 	NCallback.Init( OFlow, Indent );
 
-	Status = ExtendedParse( IFlow, Namespace, Directory, NCallback, GuiltyFileName );
+	Status = ExtendedParse( IFlow, Namespace, NCallback, Directory, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog
