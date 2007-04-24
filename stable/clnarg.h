@@ -240,7 +240,7 @@ namespace clnarg {
 		const description_ *Description_;
 		char Flag_;
 		bso::ubyte__ ArgCount_;
-		bso::bool__ analyzer___::GetArgument_( 
+		bso::bool__ GetArgument_( 
 			int &i,
 			id__ Option,
 			argument_ &Argument );
