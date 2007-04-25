@@ -1,5 +1,9 @@
 $Id$
 
+25/04/2007 :
+	- NSXPCM :
+		- Ajout fonction 'HasAttributes(...)'.
+
 23/04/2007 :
 	- DTE :
 		- Correction bogue détection année.

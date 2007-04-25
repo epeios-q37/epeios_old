@@ -539,6 +539,20 @@ namespace nsxpcm {
 
 	}
 
+	inline bso::bool__ HasAttributes( nsIDOMNode *Node )
+	{
+		PRBool Result;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+#endif
+
+		Node->HasAttributes( &Result );
+
+		return Result != 0;
+	}
+
 	inline nsIDOMNode *GetFirstChild( nsIDOMNode *Node )
 	{
 		nsIDOMNode *Child = NULL;
