@@ -116,12 +116,7 @@ extern class ttr_tutor &SCKTutor;
 #ifdef SCK_DEFAULT_TIMEOUT
 #	define SCK__DEFAULT_TIMEOUT	SCK_DEFAULT_TIMEOUT
 #else
-#	ifdef XXX_DBG
-#		define SCK__DEFAULT_TIMEOUT	SCK_INFINITE
-#	else
-//d Default timeout, in seconds.
-#		define SCK__DEFAULT_TIMEOUT	( 30 * 60 )	// half an hour.
-#	endif
+#	define SCK__DEFAULT_TIMEOUT	SCK_INFINITE
 #endif
 
 //d Max data amount of concurrent write and read.
@@ -259,7 +254,7 @@ namespace sck {
 		socket__ Socket,
 		flw::size__ Amount,
 		void *Buffer,
-		duration__ TimeOut = SCK_INFINITE );
+		duration__ TimeOut = SCK_INFINITE );	// En secondes.
 
 	/*f Write up to 'Amount' bytes from 'Buffer' to the socket 'Socket'. Return
 	the amount effectively written. If 0 is returned, it means 'TimeOut' expired.
@@ -268,7 +263,7 @@ namespace sck {
 		socket__ Socket,
 		const void *Buffer,
 		flw::size__ Amount,
-		duration__ TimeOut = SCK_INFINITE );
+		duration__ TimeOut = SCK_INFINITE );	// En secondes.
 
 	//f Close the socket 'Socket'.
 	inline void Close( socket__ Socket )
@@ -292,7 +287,7 @@ namespace sck {
 	{
 	private:
 		socket__ _Socket;
-		duration__ _TimeOut;
+		duration__ _TimeOut;	// En secondes.
 		bso::bool__ _Error;
 	protected:
 		virtual fwf::size__ FWFRead(
@@ -334,7 +329,7 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
-			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )
+			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )	// En secondes.
 		{
 			reset();
 		
@@ -371,7 +366,7 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
-			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )
+			duration__ TimeOut = SCK__DEFAULT_TIMEOUT ) // En secondes.
 		{
 			reset();
 

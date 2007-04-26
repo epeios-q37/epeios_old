@@ -1,5 +1,9 @@
 $Id$
 
+26/04/2007 :
+	- SCK :
+		- Par défaut, il n'y a plus de 'timeout', que l'on soit ou non en mode 'debug'.
+
 25/04/2007 :
 	- NSXPCM :
 		- Ajout fonction 'HasAttributes(...)'.
