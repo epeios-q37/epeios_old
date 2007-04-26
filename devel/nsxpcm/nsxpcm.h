@@ -219,7 +219,9 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	template <typename element> inline element *QueryInterface( nsISupports *GenericElement )
+	template <typename element> inline element *QueryInterface(
+		nsISupports *GenericElement,
+		err::handle ErrHandle = err::hUsual )
 	{
 		element *Element = NULL;
 
@@ -228,7 +230,7 @@ namespace nsxpcm {
 		if ( GenericElement == NULL )
 			ERRu();
 #endif
-		if ( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK )
+		if ( ( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK ) && ( ErrHandle != err::hSkip ) )
 			ERRu();
 
 		return Element;

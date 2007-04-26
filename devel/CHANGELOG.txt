@@ -1,6 +1,9 @@
 $Id$
 
 26/04/2007 :
+	- NSXPCM :
+		- Ajout paramètre 'ErrHandle' fonction 'QueryInterface(...)'.
+		- Ajout test fonction 'Handle(...)'.
 	- SCK :
 		- Par défaut, il n'y a plus de 'timeout', que l'on soit ou non en mode 'debug'.
 

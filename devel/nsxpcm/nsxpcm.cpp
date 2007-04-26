@@ -339,7 +339,10 @@ ERRProlog
 	epeios::row__ Row = NONE;
 ERRBegin
 	Event->GetTarget( &EventTarget );
-	Element = nsxpcm::QueryInterface<nsIDOMElement>( EventTarget );
+	Element = nsxpcm::QueryInterface< nsIDOMElement>( EventTarget, err::hSkip  );
+
+	if ( Element == NULL )
+		ERRReturn;
 
 	Row = Cores.First();
 
