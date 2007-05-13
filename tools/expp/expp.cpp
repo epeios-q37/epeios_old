@@ -33,7 +33,7 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.2.0"
+#define VERSION			"0.2.0p"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT
@@ -43,7 +43,7 @@
 #define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
-#define DEFAULT_NAMESPACE	"xpp"
+#define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
 
 using cio::cin;
 using cio::cout;

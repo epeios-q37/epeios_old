@@ -142,6 +142,8 @@ namespace xml {
 
 	const char *GetLabel( extended_status__ Status );
 
+#define XML_EXTENDED_PARSER_DEFAULT_NAMESPACE	"xpp"
+
 	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
 	// où 'xxx' est la valeur donné à 'NameSpace'.
 	extended_status__ ExtendedParse(

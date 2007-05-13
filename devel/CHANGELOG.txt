@@ -1,5 +1,9 @@
 $Id$
 
+11/05/2007 :
+	- XML :
+		- Adding extended parser default namespace definition.
+
 26/04/2007 :
 	- NSXPCM :
 		- Ajout paramètre 'ErrHandle' fonction 'QueryInterface(...)'.
