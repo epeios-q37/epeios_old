@@ -839,6 +839,10 @@ namespace nsxpcm {
 	: public _element__<nsIDOMXULSelectControlItemElement>
 	{};
 
+	class listbox__
+	: public _element__<nsIDOMXULMultiSelectControlElement>
+	{};
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(

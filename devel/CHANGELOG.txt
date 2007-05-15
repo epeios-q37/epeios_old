@@ -1,8 +1,12 @@
 $Id$
 
+15/05/2007 :
+	- NSXPCM :
+		- Ajout 'listbox__'.
+
 11/05/2007 :
 	- XML :
-		- Adding extended parser default namespace definition.
+		- Ajout de la définition du 'namespace' par défaut pour 'extended parser'.
 
 26/04/2007 :
 	- NSXPCM :
