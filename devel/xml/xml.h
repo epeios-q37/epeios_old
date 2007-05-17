@@ -135,6 +135,7 @@ namespace xml {
 		xsNoValueAllowedHere,
 		xsTooManyTags,
 		xsUnableToOpenFile,
+		xsNestingOverflow,
 
 		xs_amount,
 		xs_Undefined,

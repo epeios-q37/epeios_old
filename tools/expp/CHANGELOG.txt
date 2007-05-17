@@ -1,5 +1,13 @@
 $Id$
 
+---------------
+Version 0.2.1 :
+---------------
+
+- 17/05/2007 :
+	- Missing nesting overflow message bug fixed.
+	- Bug concerning file inclusion with relative path fixed.
+
 - 11/05/2007 :
 	- Using 'XML' library extended parser default namespace definition.
 

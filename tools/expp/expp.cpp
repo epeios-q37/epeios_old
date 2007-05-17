@@ -33,7 +33,7 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.2.0p"
+#define VERSION			"0.2.1"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT

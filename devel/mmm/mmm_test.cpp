@@ -32,7 +32,7 @@
 #include "mmm.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
 #include "tym.h"
 #include "flm.h"
 #include "bch.h"
@@ -56,13 +56,13 @@ void Test(
 {
 	static unsigned long Compteur = 1;
 
-	stf::cout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
+	cio::cout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
 	D = M.Reallocate( D, C );
-	stf::cout << ( D / 4 )<< nl;
+	cio::cout << ( D / 4 )<< nl;
 
-	M.PrintStructure();
+	M.PrintStructure( cio::cout );
 
-	stf::cout << nl;
+	cio::cout << nl;
 }
 
 
@@ -72,13 +72,13 @@ void Test(
 void EssaiBase( int argc, char *argv[] )
 {
 ERRProlog
-	flm::file_memory_driver M;
+	flm::standalone_file_memory_driver___ M;
 	E_MULTIMEMORY P;
 	descriptor__ D[NOMBRE];
 	bso::ushort__ C = 1;
 ERRBegin
 	M.Init( "coucou.tmp" );
-	M.Manuel();
+	M.Manual();
 //	P.plug( M );
 	P.Init();
 
@@ -107,13 +107,13 @@ ERREpilog
 void EssaiComplet( int argc, char *argv[] )
 {
 ERRProlog
-	flm::file_memory_driver Memoire;
+	flm::standalone_file_memory_driver___ Memoire;
 	E_MULTIMEMORY P;
-	multimemory_driver U1, U2, U3;
+	standalone_multimemory_driver__ U1, U2, U3;
 	bch::E_BUNCH( bso::ulong__ ) M1, M2, M3;
 	int i = 50;
 	bso::ulong__ j;
-	cvm::conventional_memory_driver M;
+	cvm::standalone_conventional_memory_driver__ M;
 //	int j;
 ERRBegin
 	Memoire.Init();
@@ -140,7 +140,7 @@ ERRBegin
 		j = i + 300;
 		M1.Store( &j, 1, i );
 		M1.Recall( i, 1, &j );
-		stf::cout << j << '\t';
+		cio::cout << j << '\t';
 	}
 
 	i = 0;
@@ -152,18 +152,18 @@ ERRBegin
 	while( i < 50  )
 	{
 		M1.Recall( i, 1, &j );
-		stf::cout << j << '\t';
+		cio::cout << j << '\t';
 
 		M2.Recall( i, 1, &j );
-		stf::cout << j << '\t';
+		cio::cout << j << '\t';
 
 		M3.Recall( i, 1, &j );
-		stf::cout << j << '\t';
+		cio::cout << j << '\t';
 
 		i++;
 	}
 
-	P.PrintStructure();
+	P.PrintStructure( cio::cout );
 
 
 ERRErr
@@ -178,29 +178,29 @@ ERREpilog
 void Essai( void )
 {
 ERRProlog
-	flm::file_memory_driver Memoire;
+	flm::standalone_file_memory_driver___ Memoire;
 	E_MULTIMEMORY Multimemoire;
 	descriptor__ Descripteurs[100];
 ERRBegin
 	Memoire.Init();
-	Memoire.Manuel();
+	Memoire.Manual();
 //	Multimemoire.cfg( Memoire );
 	Multimemoire.Init();
 
 	for( int i = 0; i < sizeof( Descripteurs ) / sizeof( Descripteurs[0] ); i++ )
 	{
 		Descripteurs[i] = Multimemoire.Allocate( rand() % TAILLE_MAX + 4 );
-		stf::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
-	stf::cout << nl;
+	cio::cout << nl;
 
 	for(;;)
 	{
-		i = rand() % 100;
+		int i = rand() % 100;
 
 		Descripteurs[i] = Multimemoire.Reallocate( Descripteurs[i], Multimemoire.Size( Descripteurs[i] ) + rand() % TAILLE_MAX + 4 );
-		stf::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
 
@@ -215,7 +215,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	stf::cout << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -226,20 +226,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cio::cout );
 			break;
 		}
 	default:
-		stf::cout << txf::sync;
-		stf::cerr << "\nBad arguments.\n";
-		stf::cout << "Usage: " << MMMTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << MMMTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	stf::cout << "\nEnd of program " << MMMTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << MMMTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

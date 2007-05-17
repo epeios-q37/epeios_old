@@ -1,5 +1,13 @@
 $Id$
 
+17/05/2007 :
+	- CVM :
+		- Correction erreurs typographiques.
+	- XML :
+		- Ajout 'xsNestingOverflow'.
+		- Correction bogue d'imbrication trop profonde.
+		- Correction bogue d'inclusion de fichier avec chemin relatif.
+
 15/05/2007 :
 	- NSXPCM :
 		- Ajout 'listbox__'.

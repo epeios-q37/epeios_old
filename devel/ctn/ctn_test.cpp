@@ -911,7 +911,7 @@ ERRFBegin
 		EssaiSimpleMulti();
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-//		EssaiDirect( argc, argv );
+		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;

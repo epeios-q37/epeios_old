@@ -191,9 +191,9 @@ namespace cvm {
 		}
 	};
 
-	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( cvm::conventional_memory_driver__ ) standalone_converntional_memory;
+	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( cvm::conventional_memory_driver__ ) standalone_conventional_memory_driver__;
 
-	#define E_CONVENTIONAL_MEMORY_DRIVER__ standalone_converntional_memory
+	#define E_CONVENTIONAL_MEMORY_DRIVER__ standalone_conventional_memory_driver__
 }
 
 /*$END$*/

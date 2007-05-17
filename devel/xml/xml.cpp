@@ -155,6 +155,9 @@ const char *xml::GetLabel( extended_status__ Status )
 	case xsUnableToOpenFile:
 		return "Unable to open file";
 		break;
+	case xsNestingOverflow:
+		return "Nesting overflow";
+		break;
 	default:
 		ERRu();
 		break;
@@ -1321,6 +1324,7 @@ private:
 		tol::E_FPOINTER___( char ) DirectoryBuffer;
 		tol::E_FPOINTER___( char ) AttributeBuffer;
 		tol::E_FPOINTER___( char ) FileNameBuffer;
+		tol::E_FPOINTER___( char ) LocationBuffer;
 	ERRBegin
 		_ExpandIsHRef = false;
 
@@ -1337,8 +1341,14 @@ private:
 
 		_Flow = &XFlow;
 
-		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
+		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL ) {
+			Status = xsNestingOverflow;
 			ERRReturn;
+		}
+
+		LocationBuffer = fnm::GetLocation( FileNameBuffer );
+
+		_Directory = LocationBuffer;
 
 		Status = Convert_( Parse( XFlow, *this ) );
 
@@ -1352,6 +1362,8 @@ private:
 			if ( Status == Convert_( sUserError ) )
 				Status = _RelayedStatus;
 		}
+
+		_Directory = DirectoryBuffer;
 	ERRErr
 	ERREnd
 		if ( Status != xsOK )
