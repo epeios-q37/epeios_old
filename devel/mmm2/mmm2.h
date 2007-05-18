@@ -75,6 +75,7 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 #define MMM2_L3 0xffffffffUL
 #define MMM2_SIZE_BUFFER_MAX_LENGTH	7
 #define MMM2_LINK_SIZE	sizeof( mdr::row_t__ )
+#define MMM2_ORPHAN_MAX_SIZE	6
 
 namespace mmm {
 	typedef mdr::datum__ size_buffer__[MMM2_SIZE_BUFFER_MAX_LENGTH];
@@ -85,6 +86,10 @@ namespace mmm {
 	public:
 		mdr::size__ _GetSizeLength( mdr::size__ Size ) const
 		{
+#ifdef MMM2_DBG
+			if ( Size == 0 )
+				ERRc();
+#endif
 			if ( Size < MMM2_L1 )
 				return 1;
 			else if ( Size < MMM2_L2 )
@@ -93,6 +98,20 @@ namespace mmm {
 				return 7;
 			else
 				ERRc();
+		}
+		// Retourne la taile maximale telle que cette taille + l'indicateur de taille soit inférieur à 'MaxSize'.
+		mdr::size__ _AdjustSize( mdr::size__ MaxSize ) const
+		{
+#ifdef MMM2_DBG
+			if ( MaxSize == 0 )
+				ERRc();
+#endif
+			mdr::size__ Size = MaxSize - 1;
+
+			while ( ( Size + _GetSizeLength( Size ) ) > MaxSize )
+				Size--;
+
+			return Size;
 		}
 		void _PutSize(
 			mdr::size__ Size,
@@ -193,7 +212,7 @@ namespace mmm {
 		{
 			_Store( &Datum, sizeof( Datum ), Position );
 		}
-		bso::bool__ _IsFragmentAvailable( mdr::row_t__ Position ) const
+		bso::bool__ _IsFragmentFree( mdr::row_t__ Position ) const
 		{
 			return ( _Get( Position ) & ( MMM2_FLAG_MASK ) ) != 0;
 		}
@@ -210,7 +229,7 @@ namespace mmm {
 			if ( ( Position + Amount ) > S_.Extent )
 				Amount = S_.Extent - Position;
 #ifdef MMM2_DBG
-			if ( !_IsFragmentAvailable( Position ) )
+			if ( !_IsFragmentFree( Position ) )
 				ERRc();
 #endif
 			_Recall( Position, sizeof( SizeBuffer ), SizeBuffer );
@@ -251,22 +270,19 @@ namespace mmm {
 #endif
 			return _IsFlagSet( Position );
 		}
-		void _MarkFragmentAsUsed(
-			mdr::row_t__ Position,
-			mdr::size__ Size,
-			mdr::row_t__ Link )	// Si pas chaîné, est égal à 'NONE'.
+		bso::bool__ _IsOrphan( mdr::row_t__ Position ) const
 		{
-#ifdef MMM2_DBG
-			if ( Size == 0 )
-				ERRc();
-#endif
-			_SetRawSize( Size, Position, ( Link != NONE ) );
-
-			if ( Link != NONE )
-				_Store( (const mdr::datum__ *)&Link, MMM2_LINK_SIZE, _GetSizeLength( Size ) + Size );
-
+			return _GetFreeFragmentSize( Position ) <= MMM2_ORPHAN_MAX_SIZE;
 		}
-		void _MarkFragmentAsAvailable(
+		mdr::row_t__ _GetUsedFragmentNextFragmentPosition( mdr::row_t__ Position ) const
+		{
+			return Position + _GetUsedFragmentTotalSize( Position );
+		}
+		mdr::row_t__ _GetFreeFragmentNextFragmentPosition( mdr::row_t__ Position ) const
+		{
+			return Position + _GetFreeFragmentSize( Position );
+		}
+		void _SetAsFreeFragment(
 			mdr::row_t__ Position,
 			mdr::size__ Size )
 		{
@@ -280,6 +296,28 @@ namespace mmm {
 				_Put( MMM2_FLAG_MASK, Position );
 				_SetRawSize( Size, Position + 1, false );
 			}
+		}
+		void _SetAsUsedFragment(
+			mdr::row_t__ Position,
+			mdr::size__ Size,
+			mdr::row_t__ Link,	// Si pas lié, est égal à 'NONE'.
+			mdr::row_t__ &RemainderPosition )	// Position du reliquat, si existant, et si pas orphelin.
+		{
+#ifdef MMM2_DBG
+			if ( Size == 0 )
+				ERRc();
+#endif
+			_SetRawSize( Size, Position, ( Link != NONE ) );
+
+			if ( Link != NONE )
+				_Store( (const mdr::datum__ *)&Link, MMM2_LINK_SIZE, _GetSizeLength( Size ) + Size );
+
+			RemainderPosition = Position + _GetUsedFragmentTotalSize( Position );
+
+			if ( ( RemainderPosition != S_.Extent ) && ( RemainderPosition != _GetUsedFragmentNextFragmentPosition( Position ) ) )
+				_SetAsFreeFragment( RemainderPosition, Size - _GetUsedFragmentTotalSize( Position ) );
+			else
+				RemainderPosition = NONE;
 		}
 		mdr::size__ _GetUsedFragmentDataSize( mdr::row_t__ Position ) const
 		{
@@ -295,16 +333,76 @@ namespace mmm {
 
 			return DataSize + _GetSizeLength( DataSize ) + ( _IsFragmentLinked( Position ) ? MMM2_LINK_SIZE : 0 );
 		}
-		mdr::size__ _GetAvailableFragmentSize( mdr::row_t__ Position ) const
+		mdr::size__ _GetFreeFragmentSize( mdr::row_t__ Position ) const
 		{
 #ifdef MMM2_DBG
-			if ( !_IsFragmentAvailable( Position ) )
+			if ( !_IsFragmentFree( Position ) )
 				ERRc();
 #endif
 			if ( _Get( Position ) & MMM2_FLAG_MASK )
 				return _GetRawSize( Position + 1 );
 			else
 				return 1;
+		}
+		mdr::size__ _GetFragmentAvailableSize(
+			mdr::row_t__ Position,
+			bso::bool__ Linked ) const
+		{
+#ifdef MMM2_DBG
+			if ( _IsOrphan( Position ) )
+				ERRc();
+#endif
+			return _AdjustSize( _GetFreeFragmentSize( Position ) - ( Linked ? MMM2_LINK_SIZE : 0 ) );
+		}
+		bso::bool__ _IsFragmentBigEnough(
+			mdr::row_t__ Position,
+			mdr::size__ Size ) const
+		{
+			return ( _GetFragmentAvailableSize( Position, false ) >= Size );
+		}
+		bso::bool__ _Allocate(
+			mdr::row_t__ FirstFragmentPosition,
+			mdr::row_t__ SecondFragmentPosition,
+			mdr::size__ Size,
+			mdr::row_t__ &RemainderPosition )
+		{
+#ifdef MMM2_DBG
+			if ( FirstFragmentPosition == NONE )
+				ERRc();
+#endif
+			if ( _IsFragmentBigEnough( FirstFragmentPosition, Size ) ) {
+				_SetAsUsedFragment( FirstFragmentPosition, Size, NONE, RemainderPosition );
+
+				if ( ( RemainderPosition != NONE ) && ( _IsOrphan( RemainderPosition ) )
+					RemainderPosition = NONE;
+
+				return false;
+			}
+
+			mdr::size__ FirstFragmentDataSize = _GetFragmentAvailableSize( FirstFreeFragmentPosition, true );
+			
+			if ( ( SecondFreeFragmentPosition != NONE ) && ( _IsFragmentBigEnough( SecondFreeFragmentPosition, Size - FirstFragmentSize ) ) {
+				_SetAsUsedFragment( FirstFreeFragmentPosition, FirstFragmentSize, SecondFreeFragmentPosition, RemainderPosition );
+
+				if ( RemainderPosition != NONE ) && ( !_IsOrphan( RemainderPosition ) )
+					ERRc();
+
+				_SetAsUsedFragment( SecondFragmentPosition, Size - FirstFragmentSize, NONE, RemainderPosition );
+
+				if ( RemainderPosition != NONE ) && ( _IsOrphan( RemainderPosition ) )
+					RemainderPosition = NONE;
+
+				return true;
+			}
+
+			SecondFragmentPosition = _AppendNewUsedFragment( Size - FirstFragmentDataSize );
+
+			_SetAsUsedFragment( FirstFreeFragmentPosition, FirstFragmentSize, SecondFreeFragmentPosition, RemainderPosition );
+
+			if ( RemainderPosition != NONE )
+				ERRc();
+
+			return false;
 		}
 		public:
 			struct s 
