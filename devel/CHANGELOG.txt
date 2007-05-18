@@ -1,5 +1,8 @@
 $Id$
 
+- GENERAL :
+	- Création 'MMM2'.
+
 17/05/2007 :
 	- CVM :
 		- Correction erreurs typographiques.
