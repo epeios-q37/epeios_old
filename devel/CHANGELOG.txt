@@ -2,6 +2,10 @@ $Id$
 
 - GENERAL :
 	- Création 'MMM2'.
+	
+20/02/2007:
+	- TYM :
+		- Pour faciliter le codage de la nouvelle bibliothèque 'MMM', inclusion de 'mmmO.h' au lieu de 'mmm.h'.
 
 17/05/2007 :
 	- CVM :

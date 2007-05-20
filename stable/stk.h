@@ -62,7 +62,7 @@ extern class ttr_tutor &STKTutor;
 
 #include "err.h"
 #include "bch.h"
-#include "ctn.h"
+//#include "ctn.h"
 
 namespace stk {
 

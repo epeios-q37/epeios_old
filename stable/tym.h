@@ -63,10 +63,15 @@ extern class ttr_tutor &TYMTutor;
 #include "err.h"
 #include "flw.h"
 #include "uym.h"
-#include "mmm.h"
+#include "mmm0.h"
 #include "epeios.h"
 #include "flm.h"
-
+/*
+namespace mmm {
+	class multimemory_driver__;
+	class descriptor__;
+}
+*/
 namespace tym {
 	#define TYM_MAX_SIZE	UYM_MAX_SIZE
 

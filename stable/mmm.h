@@ -66,7 +66,20 @@ extern class ttr_tutor &MMMTutor;
 #include "uym.h"
 #include "tol.h"
 #include "txf.h"
+
+#ifdef MMM_USE_V1
+#	define MMM__USE_V1
+#elif defined( MMM_USE_V2 )
+#	define MMM__USE_V2
+#else
+#	define MMM__USE_V1
+#endif
+
+#ifdef MMM__USE_V1
 #include "mmm1.h"
+#elif defined( MMM__USE_V2 )
+#	include "mmm2.h"
+#endif
 
 namespace mmm {
 	E_AUTO( multimemory )
