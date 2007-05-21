@@ -63,6 +63,7 @@ extern class ttr_tutor &IDSTutor;
 #include "err.h"
 #include "flw.h"
 #include "stk.h"
+#include "mmm.h"
 
 namespace ids {
 

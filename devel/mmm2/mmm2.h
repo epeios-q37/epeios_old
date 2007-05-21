@@ -85,7 +85,8 @@ namespace mmm {
 
 	class multimemory_
 	{
-	public:
+	private:
+		multimemory_driver__ _MultimemoryDriver;
 		mdr::size__ _GetSizeLength( mdr::size__ Size ) const
 		{
 #ifdef MMM2_DBG
@@ -468,11 +469,11 @@ namespace mmm {
 			return Position;
 		}
 		row__ _ReallocateLesser(
-			row__ Position,
+			row__ Descriptor,
 			mdr::size__ Size )
 		{
 #ifdef MMM2_DBG
-			if ( GetSize( Position ) <= Size )
+			if ( this->Size( *Descriptor ) <= Size )
 				ERRc();
 #endif
 			row__ Remainder = NONE;
@@ -502,20 +503,20 @@ namespace mmm {
 			return Descriptor;
 		}
 		row__ _ReallocateGreater(
-			row__ Position,
+			row__ Descriptor,
 			mdr::size__ Size )
 		{
 #ifdef MMM2_DBG
-			if ( GetSize( Position ) >= Size )
+			if ( this->Size( *Descriptor ) >= Size )
 				ERRc();
 #endif
 			if ( _IsFragmentLinked( Descriptor ) ) {
 				row__ Link = _GetLink( Descriptor );
-				row__ Remainder = NONE;
 				mdr::size__
 					LinkedFragmentCurrentSize = _GetUsedFragmentDataSize( Link ),
 					LinkedFragmentNewSize = Size - _GetUsedFragmentDataSize( Descriptor );
 				row__ NewLink = _GetNewUnlinkedFragment( LinkedFragmentNewSize );
+				row__ Remainder = NONE;
 
 				Memory.Store(
 					Memory,
@@ -523,106 +524,271 @@ namespace mmm {
 					*NewLink + _GetSizeLength( LinkedFragmentNewSize ),
 					LinkedFragmentCurrentSize );
 
-				Memory.Store( (const mdr::datum__ *)&NewLink, MMM2_LINK_SIZE, Descriptor + _GetSizeLength( FirstFragmentSize ) + FirstFragmentSize );
+				// Pour mettre en place le nouveu lien.
+				if ( _ResizeUsedFragment( Descriptor, _GetUsedFragmentDataSize( Descriptor ), NewLink ) != NONE )
+					ERRc();
 
-				_SetToFreeFragment( Link, _GetUsedFragmentTotalSize( Link ) );
+				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( Link ) );
 
-				_TestAndPush( Link );
+				_TestAndPush( Remainder );
+
+				return Descriptor;
 			} else {
 				if ( _GetUsedFragmentTotalSize( Descriptor ) <= MMM2_ORPHAN_MAX_SIZE ) {
 					row__ NewDescriptor = _GetNewUnlinkedFragment( Size );
+					mdr::size__ FirstFragmentCurrentDataSize = _GetUsedFragmentDataSize( Descriptor );
 
 					Memory.Store(
 						Memory,
-						Descriptor + _GetSizeLength( LinkedFragmentCurrentSize ),
-						NewLink + _GetSizeLength( LinkedFragmentNewSize ),
-						LinkedFragmentCurrentSize );
+						*Descriptor + _GetSizeLength( FirstFragmentCurrentDataSize ),
+						*NewDescriptor + _GetSizeLength( Size ),
+						FirstFragmentCurrentDataSize );
 
-					if ( !IsOrphan(_SetAsFreeFragment( Descriptor ) )
+					if ( !_IsOrphan( _SetAsFreeFragment( Descriptor, FirstFragmentCurrentDataSize ) ) )
 						ERRc();
 
 					return NewDescriptor;
 				} else {
-					mdr::size__ NewFirstFragmentDataSize = _GetUsedFragmentDataSize( Descriptor ) - MMM2_LINK_SIZE;
-					row__ Link = _GetNewUnlinkedFragment( Size - NewFirstFragmentDataSize );
+					mdr::size__ FirstFragmentNewDataSize = _GetUsedFragmentDataSize( Descriptor ) - MMM2_LINK_SIZE;
+					mdr::size__ LinkedFragmentDataSize = Size - FirstFragmentNewDataSize;
+					row__ Link = _GetNewUnlinkedFragment( LinkedFragmentDataSize );
+					row__ Remainder = NONE;
 
+					// Déplacement des données qui vont être écrasée par le lien.
 					Memory.Store(
 						Memory,
-						Descriptor + _GetSizeLength( LinkedFragmentCurrentSize ) + _GetUSedFragmentDataSize( Descriptor ),
-						NewLink + _GetSizeLength( LinkedFragmentNewSize ),
-						LinkedFragmentCurrentSize );
+						*Descriptor + _GetSizeLength( _GetUsedFragmentDataSize( Descriptor ) ) + FirstFragmentNewDataSize,
+						*Link + _GetSizeLength( LinkedFragmentDataSize ),
+						MMM2_LINK_SIZE );
+
+					Remainder = _ResizeUsedFragment( Descriptor, FirstFragmentNewDataSize, Link );
+
+					_TestAndPush( Remainder );
+
+					return Descriptor;
 				}
 			}
-		public:
-			bch::E_BUNCHt_( mdr::datum__, row__ ) Memory;
-			stk::E_BSTACK_( row__ ) Frees;
-			struct s 
-			{
-				bch::E_BUNCHt_( mdr::datum__, row__ )::s Memory;
-				stk::E_BSTACK_( row__ )::s Frees;
-			};
-			mdr::size__ GetSize( descriptor__ Descriptor )
-			{
-				mdr::size__ Size = _GetUsedFragmentDataSize( Descriptor );
-
-				if ( _IsFragmentLinked( Descriptor ) ) {
-					Size += _GetUsedFragmentDataSize( _GetLink( Descriptor ) );
+		}
+		mdr::size__ _ReadFromFragment(
+			descriptor__ Descriptor,
+			mdr::row_t__ Position,
+			mdr::size__ Size,
+			mdr::datum__ *Buffer ) const
+		{
+			mdr::size__ FragmentDataSize = _GetUsedFragmentDataSize( Descriptor );
 
 #ifdef MMM2_DBG
-					if ( _IsFragmentLinked( _GetLink( Descriptor ) ) )
-						ERRc();
+			if ( Position >= FragmentDataSize )
+				ERRc();
 #endif
-				}
 
-				return Size;
+			if ( Size > ( FragmentDataSize - Position ) )
+				Size = FragmentDataSize - Position;
+
+			Memory.Recall( Descriptor + _GetSizeLength( FragmentDataSize ) + Position, Size, Buffer );
+
+			return Size;
+		}
+		mdr::size__ _WriteToFragment(
+			const mdr::datum__ *Buffer,
+			descriptor__ Descriptor,
+			mdr::row_t__ Position,
+			mdr::size__ Size )
+		{
+			mdr::size__ FragmentDataSize = _GetUsedFragmentDataSize( Descriptor );
+
+#ifdef MMM2_DBG
+			if ( Position >= FragmentDataSize )
+				ERRc();
+#endif
+
+			if ( Size > ( FragmentDataSize - Position ) )
+				Size = FragmentDataSize - Position;
+
+			Memory.Store( Buffer, Size, Descriptor + _GetSizeLength( FragmentDataSize ) + Position );
+
+			return Size;
+		}
+	public:
+		bch::E_BUNCHt_( mdr::datum__, row__ ) Memory;
+		stk::E_BSTACK_( row__ ) Frees;
+		struct s 
+		{
+			bch::E_BUNCHt_( mdr::datum__, row__ )::s Memory;
+			stk::E_BSTACK_( row__ )::s Frees;
+			descriptor__ MultimemoryDriverDescriptor;
+			mdr::size__ MultimemoryDriverExtent;
+		} &S_;
+		multimemory_( s &S )
+		: S_( S) ,
+		  _MultimemoryDriver( S_.MultimemoryDriverDescriptor, S_.MultimemoryDriverExtent ),
+		  Memory( S.Memory ),
+		  Frees( S.Frees )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_MultimemoryDriver.reset( P );
+			Memory.reset( P );
+			Frees.reset( P );
+		}
+		void plug( multimemory_ &MM )
+		{
+			_MultimemoryDriver.Init( MM );
+			Memory.plug( _MultimemoryDriver );
+			Frees.plug( _MultimemoryDriver );
+		}
+		multimemory_ &operator =( const multimemory_ &M )
+		{
+			Memory = M.Memory;
+			Frees = M.Frees;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Memory.Init();
+			Frees.Init();
+		}
+		void Flush( void ) const
+		{
+			Memory.Flush();
+		}
+		mdr::size__ Size( descriptor__ Descriptor ) const
+		{
+			mdr::size__ Size = _GetUsedFragmentDataSize( Descriptor );
+
+			if ( _IsFragmentLinked( Descriptor ) ) {
+				Size += _GetUsedFragmentDataSize( _GetLink( Descriptor ) );
+
+#ifdef MMM2_DBG
+				if ( _IsFragmentLinked( _GetLink( Descriptor ) ) )
+					ERRc();
+#endif
 			}
-			descriptor__ Allocate( mdr::size__ Size )
-			{	
-				if ( Frees.Amount() != 0 ) {
-					row__ Free1 = NONE, Free2 = NONE, Remainder1 = NONE, Remainder2 = NONE;
 
-					Free1 = Frees.Pop();
+			return Size;
+		}
+		descriptor__ Allocate( mdr::size__ Size )
+		{	
+			if ( Frees.Amount() != 0 ) {
+				row__ Free1 = NONE, Free2 = NONE, Remainder1 = NONE, Remainder2 = NONE;
 
-					if ( Frees.Amount() != 0 )
-						Free2 = Frees.Top();
+				Free1 = Frees.Pop();
 
-					if ( _Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
-						Frees.Pop();
+				if ( Frees.Amount() != 0 )
+					Free2 = Frees.Top();
 
-					_TestAndPush( Remainder1 );
+				if ( _Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
+					Frees.Pop();
 
-					_TestAndPush( Remainder2 );
+				_TestAndPush( Remainder1 );
 
-					return *Free1;
-				} else
-					return *_AppendNewUnlinkedFragment( Size );
+				_TestAndPush( Remainder2 );
+
+				return *Free1;
+			} else
+				return *_AppendNewUnlinkedFragment( Size );
+		}
+		void Free( descriptor__ Descriptor )
+		{
+			row__ Remainder = NONE;
+
+			_Free( Descriptor, Remainder );
+
+			_TestAndPush( Descriptor );
+
+			_TestAndPush( Remainder );
+		}
+		descriptor__ Reallocate(
+			descriptor__ Descriptor,
+			mdr::size__ Size )
+		{
+			mdr::size__ CurrentSize = this->Size( Descriptor );
+
+			if ( Size == 0 ) {
+				ERRu();
+				return NONE; // Pour éviter un 'warning'.
 			}
-			void Free( descriptor__ Descriptor )
-			{
-				row__ Remainder = NONE;
 
-				_Free( Descriptor, Remainder );
+			if ( Size == CurrentSize )
+				return Descriptor;
+			else if ( Size < CurrentSize )
+				return *_ReallocateLesser( Descriptor, Size );
+			else
+				return *_ReallocateGreater( Descriptor, Size );
+		}
+		void Read(
+			descriptor__ Descriptor,
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer ) const
+		{
+#ifdef MMM2_DBG
+			if ( !_IsFragmentUsed( Position ) )
+				ERRu();
 
-				_TestAndPush( Descriptor );
+			if ( Size( Descriptor ) < ( Position + Amount ) )
+				ERRu();
+#endif
+			mdr::size__ AmountRed = 0;
+			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Position );
 
-				_TestAndPush( Remainder );
+			if ( Position <  FirstFragmentDataSize )
+				AmountRed = _ReadFromFragment( Descriptor, Position, Amount, Buffer );
+
+			if ( AmountRed < Amount ) {
+				descriptor__ Link = *_GetLink( Descriptor );
+
+				AmountRed += _ReadFromFragment( Link, Position + AmountRed - FirstFragmentDataSize, Amount - AmountRed, Buffer + AmountRed );
 			}
-			descriptor__ Reallocate(
-				descriptor__ Descriptor,
-				mdr::size__ Size )
-			{
-				mdr::size__ CurrentSize = GetSize( Descriptor );
 
-				if ( Size == CurrentSize )
-					return Descriptor;
+#ifdef MMM2_DBG
+			if ( Amount != AmountRed )
+				ERRc();
+#endif
+		}
+		void Write(
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			descriptor__ Descriptor,
+			mdr::row_t__ Position )
+		{
+#ifdef MMM2_DBG
+			if ( !_IsFragmentUsed( Position ) )
+				ERRu();
 
-				if ( Size < CurrentSize )
-					return _ReallocateLesser( Position, Size;
-				else
+			if ( Size( Descriptor ) < ( Position + Amount ) )
+				ERRu();
+#endif
+			mdr::size__ AmountWritten = 0;
+			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Position );
+
+			if ( Position <  FirstFragmentDataSize )
+				AmountWritten = _WriteToFragment( Buffer, Descriptor, Position, Amount );
+
+			if ( AmountWritten < Amount ) {
+				descriptor__ Link = *_GetLink( Descriptor );
+
+				AmountWritten += _WriteToFragment( Buffer + AmountWritten, Link, Position + AmountWritten - FirstFragmentDataSize, Amount - AmountWritten );
 			}
 
-
+#ifdef MMM2_DBG
+			if ( Amount != AmountWritten )
+				ERRc();
+#endif
+		}
 	};
+
+	typedef bch::bunch_file_manager___	multimemory_file_manager___;
+
+	inline bso::bool__ Connect(
+		multimemory_ &Multimemory,
+		multimemory_file_manager___ &FileManager )
+	{
+#pragma message( __LOC__ "Voir quoi faire avec 'Frees'" )
+		return bch::Connect( Multimemory.Memory, FileManager );
+	}
+
 }
 
 /*$END$*/

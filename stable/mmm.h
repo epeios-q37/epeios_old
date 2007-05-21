@@ -84,21 +84,6 @@ extern class ttr_tutor &MMMTutor;
 namespace mmm {
 	E_AUTO( multimemory )
 
-	typedef uym::untyped_memory_file_manager___	multimemory_file_manager___;
-
-	inline bso::bool__ Connect(
-		multimemory_ &Memory,
-		multimemory_file_manager___ &FileManager )
-	{
-		bso::bool__ Exists = uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
-
-		if ( Exists )
-			Memory.S_.Capacite = FileManager.FileSize();
-
-		return Exists;
-	}
-
-
 	inline void multimemory_driver__::Liberer_( void )
 	{
 		if ( _Descriptor )
