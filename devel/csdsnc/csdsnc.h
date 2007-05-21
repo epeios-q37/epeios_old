@@ -67,6 +67,7 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "csdbnc.h"
 #include "bso.h"
 #include "cpe.h"
+#include "mmm.h"
 
 #ifdef CPE__T_MT
 #	define CSDSNC__MT

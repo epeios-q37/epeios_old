@@ -65,6 +65,7 @@ extern class ttr_tutor &XMLTutor;
 #include "str.h"
 #include "xtf.h"
 #include "stk.h"
+#include "ctn.h"
 
 namespace xml {
 	using xtf::location__;

@@ -4,7 +4,7 @@ $Id$
 	- Création 'MMM2'.
 	
 21/05/2007 :
-	- IDS :
+	- GENERAL :
 		- Adaptation modifications bibliothèque 'MMM'.
 	
 20/05/2007 :
