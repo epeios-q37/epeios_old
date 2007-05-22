@@ -235,6 +235,12 @@ namespace uym {
 		{
 			Pilote_.plug( Driver );
 		}
+		untyped_memory_ &operator =( const untyped_memory_ & ) const
+		{
+			ERRu();	// Parce que cette opération n'a pas de sens.
+
+			return *(untyped_memory_ *)NULL;
+		}
 		//f Initialization.
 		void Init( void )
 		{
@@ -301,7 +307,7 @@ namespace uym {
 			Store( Datum, Position );
 		}
 		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
-		void Store(
+		void Store_(
 			const untyped_memory_ &Source,
 			mdr::size__ Amount,
 			mdr::row_t__ Position,

@@ -325,7 +325,7 @@ namespace bitbch {
 			amount_extent_manager_<r>::operator =( O );
 
 			Allocate( O.Amount() );
-			Table.Store( O.Table, Convert_( O.Amount() ) );
+			Table.Store_( O.Table, Convert_( O.Amount() ) );
 
 			return *this;
 		}

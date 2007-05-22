@@ -66,6 +66,22 @@ extern class ttr_tutor &MMM0Tutor;
 #include "flw.h"
 #include "mdr.h"
 
+#ifdef MMM_USE_V1
+#	define MMM__USE_V1
+#elif defined( MMM_USE_V2 )
+#	define MMM__USE_V2
+#else
+#	define MMM__USE_V1
+#endif
+
+#ifdef MMM__USE_V1
+#	define MMM_UNDEFINED_DESCRIPTOR	0
+#elif defined( MMM__USE_V2 )
+#	define MMM_UNDEFINED_DESCRIPTOR NONE
+#else
+#	error "No 'MMM' version défined !".
+#endif
+
 namespace mmm {
 	class multimemory_;	// Prédéclaration.
 
@@ -112,7 +128,7 @@ namespace mmm {
 			else
 				Multimemoire_ = NULL;
 
-			_Descriptor = 0;
+			_Descriptor = MMM_UNDEFINED_DESCRIPTOR;
 			
 			E_MEMORY_DRIVER__::reset( P );
 		}
@@ -122,7 +138,7 @@ namespace mmm {
 			Liberer_();
 
 			Multimemoire_ = &Multimemory;
-			_Descriptor = 0;
+			_Descriptor = MMM_UNDEFINED_DESCRIPTOR;
 
 			E_MEMORY_DRIVER__::Init();
 		}

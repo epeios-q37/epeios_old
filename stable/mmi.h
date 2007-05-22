@@ -86,13 +86,8 @@ namespace mmi {
 			epeios::size__ NouvelleCapacite )
 		{
 			descripteur__ D;
-#ifdef MMM__USE_V1
-			D.Descripteur = 0;
-#elif ( defined( MMM__USE_V2 ) )
-			D.Descripteur = NONE;
-#else
-#	error "A revoir lorsque nouvelle 'MMM' stabilisée !'
-#endif
+			D.Descripteur = MMM_UNDEFINED_DESCRIPTOR;
+
 			D.Capacite = 0;
 
 			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
@@ -150,25 +145,12 @@ namespace mmi {
 
 			Multimemoire.Free( D.Descripteur );
 
-#ifdef MMM__USE_V1
-			D.Descripteur = 0;
-#elif ( defined( MMM__USE_V2 ) )
-			D.Descripteur = NONE;
-#else
-#	error "A revoir lorsque nouvelle 'MMM' stabilisée !'
-#endif
+			D.Descripteur = MMM_UNDEFINED_DESCRIPTOR;
 			D.Capacite = 0;
 
 			Descripteurs.Store( D, *Index );
 		}
 		// libère la mémoire d'index 'Index'
-		void Push_(
-			epeios::row__ Position,
-			epeios::size__ Amount,
-			epeios::size__ Size )	// Assuming allocation already done !
-		{
-			Descripteurs.Store( Descripteurs, Size - *Position - Amount, *Position, *Position + Amount );
-		}
 	public:
 		descriptors_ Descripteurs;
 		// les différents descripteurs
@@ -205,7 +187,7 @@ namespace mmi {
 			epeios::size__ Size )
 		{
 			Descripteurs.Allocate( Size );
-			Descripteurs.Store( O.Descripteurs, Size );
+			Descripteurs.Store_( O.Descripteurs, Size );
 			Multimemoire = O.Multimemoire;
 		}
 	/*	void ecrire( flo_sortie_ &F ) const

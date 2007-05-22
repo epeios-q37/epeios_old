@@ -202,6 +202,9 @@ ERRBegin
 	C.Append( str::string( "coucou" ) );
 
 	C.Append( str::string( "hello" ) );
+
+	C(0).Insert( "toto", 3 );
+	C.Flush();
 #endif
 
 	cout << C( 0 ) << txf::tab;
@@ -865,7 +868,7 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	cout << CS( 0 ) << txf::tab;
+	cout << CS( 0 ) << txf::tab << txf::sync;
 
 	CS(0).Init();
 	CS() = "hello";
@@ -875,7 +878,7 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	cout << CS( 0 ) << txf::tab;
+	cout << CS( 0 ) << txf::tab << txf::sync;
 
 	CS = CC( 0 );
 	CC.Flush();

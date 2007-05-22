@@ -66,14 +66,7 @@ extern class ttr_tutor &MMMTutor;
 #include "uym.h"
 #include "tol.h"
 #include "txf.h"
-
-#ifdef MMM_USE_V1
-#	define MMM__USE_V1
-#elif defined( MMM_USE_V2 )
-#	define MMM__USE_V2
-#else
-#	define MMM__USE_V1
-#endif
+#include "mmm0.h"
 
 #ifdef MMM__USE_V1
 #include "mmm1.h"
@@ -86,7 +79,7 @@ namespace mmm {
 
 	inline void multimemory_driver__::Liberer_( void )
 	{
-		if ( _Descriptor )
+		if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
 			Multimemoire_->Free( _Descriptor );
 	}
 

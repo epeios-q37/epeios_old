@@ -84,7 +84,7 @@ namespace bch {
 			epeios::size__ Quantite )
 		{
 			Allouer_( mng::Amount() + Quantite, aem::mDefault );
-			mmr::Store( *this, mng::Amount() - Position - Quantite, Position, Position + Quantite);
+			mmr::Store_( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
@@ -94,7 +94,7 @@ namespace bch {
 			epeios::row_t__ PosDest )
 		{
 			Pousser_( PosDest, Quantite );
-			mmr::Store( Source, Quantite, PosSource, PosDest );
+			mmr::Store_( Source, Quantite, PosDest, PosSource );
 		}
 		// Insere 'Quantite' objets de 'Objets' à 'Position'.
 		void Inserer_(
@@ -176,17 +176,17 @@ namespace bch {
 		}
 		/*f Store at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
 		Adjust the size of the bunch. */
-		void StoreAndAdjust(
+		void StoreAndAdjust_(
 			const mmr &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
-			Allocate( Amount + *Offset );
+			Allocate( Amount + *Row );
 
-			mmr::Store( Bunch, Amount, Row, Offset );
+			mmr::Store_( Bunch, Amount, Row, Offset );
 		}
-		void StoreAndAdjust(
+		void StoreAndAdjust_(
 			const _bunch &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
@@ -194,7 +194,7 @@ namespace bch {
 		{
 			Allocate( Amount + *Offset );
 
-			mmr::Store( Bunch, Amount, Row, Offset );
+			mmr::Store_( Bunch, Amount, Row, Offset );
 		}
 		/*f Store at 'Offset' the content of 'Bunch' from position 'Row' to the end.
 		Adjust the size of the bunch. */
@@ -203,7 +203,7 @@ namespace bch {
 			row Row,
 			row Offset = 0 )
 		{
-			StoreAndAdjust( Bunch, Bunch.Amount() - *Row, Row, Offset );
+			StoreAndAdjust_( Bunch, Bunch.Amount() - *Row, Row, Offset );
 		}
 		//f Store at 'Offset' 'Amount' objects from 'Buffer'.
 		void StoreAndAdjust(
@@ -267,11 +267,11 @@ namespace bch {
 		row Append(
 			const mmr &Bunch,
 			epeios::size__ Amount,
-			row Position = 0 )
+			row Offset = 0 )
 		{
-			row Offset = this->Amount();
+			row Position = this->Amount();
 
-			StoreAndAdjust( Bunch, Amount, Position, Offset );
+			StoreAndAdjust_( Bunch, Amount, Position, Offset );
 
 			return Position;
 		}
@@ -387,7 +387,7 @@ namespace bch {
 			row Row,
 			epeios::size__ Amount = 1)
 		{
-			mmr::Store( *this, this->Amount() - ( Amount + *Row ), *Row + Amount, Row );
+			mmr::Store_( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
 
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
@@ -450,7 +450,7 @@ namespace bch {
 	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
 	{
 	private:
-	//	mmi::indexed_multimemory_driver__ _IndexedMultimemoryDriver;
+		mmi::standalone_indexed_multimemory_driver__ _IndexedMultimemoryDriver;
 	public:
 		struct s
 		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s
@@ -469,7 +469,7 @@ namespace bch {
 
 			Allocate( Op.Amount() );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store_( Op, Op.Amount() );
 
 			return *this;
 		}

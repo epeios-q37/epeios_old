@@ -266,7 +266,7 @@ namespace mmm {
 		{
 			row__ Link = NONE;
 #ifdef MMM2_DBG
-			if ( !_IsFreeFragmentLinked( Position ) )
+			if ( !_IsUsedFragmentLinked( Position ) )
 				ERRc();
 #endif
 			Memory.Recall( *Position + _GetUsedFragmentTotalSize( Position ) - 4, sizeof( Link ), (mdr::datum__ *)&Link );
@@ -547,11 +547,11 @@ namespace mmm {
 				row__ NewLink = _GetNewUnlinkedFragment( LinkedFragmentNewSize );
 				row__ Remainder = NONE;
 
-				Memory.Store(
+				Memory.Store_(
 					Memory,
-					*Link + _GetSizeLength( LinkedFragmentCurrentSize ),
+					LinkedFragmentCurrentSize,
 					*NewLink + _GetSizeLength( LinkedFragmentNewSize ),
-					LinkedFragmentCurrentSize );
+					*Link + _GetSizeLength( LinkedFragmentCurrentSize ) );
 
 				// Pour mettre en place le nouveu lien.
 				if ( _ResizeUsedFragment( Descriptor, _GetUsedFragmentDataSize( Descriptor ), NewLink ) != NONE )
@@ -567,11 +567,11 @@ namespace mmm {
 					row__ NewDescriptor = _GetNewUnlinkedFragment( Size );
 					mdr::size__ FirstFragmentCurrentDataSize = _GetUsedFragmentDataSize( Descriptor );
 
-					Memory.Store(
+					Memory.Store_(
 						Memory,
-						*Descriptor + _GetSizeLength( FirstFragmentCurrentDataSize ),
+						FirstFragmentCurrentDataSize,
 						*NewDescriptor + _GetSizeLength( Size ),
-						FirstFragmentCurrentDataSize );
+						*Descriptor + _GetSizeLength( FirstFragmentCurrentDataSize ) );
 
 					if ( !_IsOrphan( _SetAsFreeFragment( Descriptor, FirstFragmentCurrentDataSize ) ) )
 						ERRc();
@@ -584,11 +584,11 @@ namespace mmm {
 					row__ Remainder = NONE;
 
 					// Déplacement des données qui vont être écrasée par le lien.
-					Memory.Store(
+					Memory.Store_(
 						Memory,
-						*Descriptor + _GetSizeLength( _GetUsedFragmentDataSize( Descriptor ) ) + FirstFragmentNewDataSize,
+						MMM2_LINK_SIZE,
 						*Link + _GetSizeLength( LinkedFragmentDataSize ),
-						MMM2_LINK_SIZE );
+						*Descriptor + _GetSizeLength( _GetUsedFragmentDataSize( Descriptor ) ) + FirstFragmentNewDataSize );
 
 					Remainder = _ResizeUsedFragment( Descriptor, FirstFragmentNewDataSize, Link );
 
@@ -698,7 +698,8 @@ namespace mmm {
 		}
 		multimemory_ &operator =( const multimemory_ &M )
 		{
-			Memory = M.Memory;
+			Memory.Allocate( M.S_.Extent );
+			Memory.Store_( M.Memory, M.S_.Extent, 0 );
 
 			S_.Extent = M.S_.Extent;
 			S_.Free = M.S_.Free;
@@ -707,9 +708,10 @@ namespace mmm {
 		}
 		void Init( void )
 		{
-			reset();
-
 			Memory.Init();
+
+			S_.Extent = 0;
+			S_.Free = NONE;
 		}
 		void Flush( void ) const
 		{
@@ -793,14 +795,14 @@ namespace mmm {
 			mdr::datum__ *Buffer ) const
 		{
 #ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Position ) )
+			if ( !_IsFragmentUsed( Descriptor ) )
 				ERRu();
 
 			if ( Size( Descriptor ) < ( Position + Amount ) )
 				ERRu();
 #endif
 			mdr::size__ AmountRed = 0;
-			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Position );
+			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Descriptor );
 
 			if ( Position <  FirstFragmentDataSize )
 				AmountRed = _ReadFromFragment( Descriptor, Position, Amount, Buffer );
@@ -825,7 +827,7 @@ namespace mmm {
 #ifdef MMM2_DBG
 			mdr::size__ Size = 0;
 
-			if ( !_IsFragmentUsed( Position ) )
+			if ( !_IsFragmentUsed( Descriptor ) )
 				ERRu();
 
 			Size = this->Size( Descriptor );
@@ -834,7 +836,7 @@ namespace mmm {
 				ERRu();
 #endif
 			mdr::size__ AmountWritten = 0;
-			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Position );
+			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Descriptor );
 
 			if ( Position <  FirstFragmentDataSize )
 				AmountWritten = _WriteToFragment( Buffer, Descriptor, Position, Amount );

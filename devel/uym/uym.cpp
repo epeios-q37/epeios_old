@@ -209,7 +209,7 @@ row_t__ untyped_memory_::Search(
 }
 
 
-void untyped_memory_::Store(
+void untyped_memory_::Store_(
 	const untyped_memory_ &Source,
 	size__ Amount,
 	row_t__ Position,
@@ -217,7 +217,7 @@ void untyped_memory_::Store(
 {
 	datum__ Buffer[BUFFER_SIZE];
 
-	_Copy( Source, Position, *this, Offset, Amount, Buffer, BUFFER_SIZE );
+	_Copy( Source, Offset, *this, Position, Amount, Buffer, BUFFER_SIZE );
 }
 
 #define BUFFER_SIZE_MAX		FLW_SIZE_MAX

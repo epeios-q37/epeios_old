@@ -126,7 +126,7 @@ namespace dbsdct {
 
 			*Row += SizeLength;
 
-			Memory.Store( *(const memory_ *)&Data, Amount, Offset, Row );
+			Memory.Store_( *(const memory_ *)&Data, Amount, Row, Offset );
 
 			*Row += Data.Amount() - Offset;
 
@@ -492,7 +492,7 @@ namespace dbsdct {
 		dynamic_content_ &operator =( const dynamic_content_ &DC )
 		{
 			Storage.Memory.Allocate( *DC.S_.Unallocated );
-			Storage.Memory.Store( DC.Storage.Memory, *DC.S_.Unallocated );
+			Storage.Memory.Store_( DC.Storage.Memory, *DC.S_.Unallocated );
 			S_.Unallocated = DC.S_.Unallocated;
 			S_.ModificationTimeStamp = DC.S_.ModificationTimeStamp;
 

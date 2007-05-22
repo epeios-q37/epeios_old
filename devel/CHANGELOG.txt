@@ -5,15 +5,23 @@ $Id$
 	
 22/05/2007 :
 	- GENERAL :
-		- Adaptation modifications bibliothèque 'MMM'.
+		- Adaptation modifications bibliothèque 'MMM(0)'.
+	- MMM :
+		- Déportation définition version 'MMM' vers 'MMM0'.
+	- MMM(0) :
+		- Importation définition version 'MMM' depuis 'MMM'.
+		- Création 'MMM_UNDEFINED_DESCRIPTOR'.
 	- UYM :
 		- Ajout méthode 'Put(...)'.
+		- Ajout de l'opérateur '=' pour détecter son utilisation (ce qui est interdit) à l'exécution.
 	
 21/05/2007 :
 	- GENERAL :
 		- Adaptation modifications bibliothèque 'MMM'.
 	
 20/05/2007 :
+	- MMM :
+		- Ajout possibilité de basculer entre V1 et V2.
 	- TYM :
 		- Pour faciliter le codage de la nouvelle bibliothèque 'MMM', inclusion de 'mmmO.h' au lieu de 'mmm.h'.
 

@@ -98,13 +98,13 @@ namespace tym {
 		}
 		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
 		à la position 'Decalage' */
-		void _Store(
+		void _Store_(
 			const _memory_ &Source,
 			epeios::size__ Quantite,
 			epeios::row_t__ Position,
 			epeios::row_t__ Decalage )
 		{
-			b::Store( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
+			b::Store_( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
 		}
 		// allocation de 'Capacite' objets
 		void Allocate_( epeios::size__ Size )
@@ -173,13 +173,13 @@ namespace tym {
 			_Store( &Valeur, 1, *Position );
 		}
 		/*f Store 'Amount' objects at 'Position' in 'Source' at 'Offset'. */
-		void Store(
+		void Store_(
 			const _memory_<t,b,r> &Source,
 			epeios::size__ Amount,
 			r Position = 0,
 			r Offset = 0 )
 		{
-			_Store( Source, Amount, *Position, *Offset );
+			_Store_( Source, Amount, *Position, *Offset );
 		}
 		//f Swap objects at 'Position1' and 'Position2'.
 		void Swap(

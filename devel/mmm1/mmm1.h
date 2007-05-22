@@ -147,7 +147,7 @@ namespace mmm {
 			mdr::row_t__ Source,
 			mdr::size__ Taille )
 		{
-			Memoire_.Store( Memoire_, Taille, Source, Destination );
+			Memoire_.Store_( Memoire_, Taille, Destination, Source );
 		}
 		// Ajuste la taille de la mémoire principale en éliminant la portion de descripteur 'Descripteur'.
 		void AjusterMemoireAvantDescripteur_( descriptor__ Descripteur )
@@ -695,7 +695,7 @@ namespace mmm {
 
 			Memoire_.Allocate( Op.S_.Capacite );
 
-			Memoire_.Store( Op.Memoire_, Op.S_.Capacite, 0 );
+			Memoire_.Store_( Op.Memoire_, Op.S_.Capacite, 0 );
 
 			return *this;
 		}
