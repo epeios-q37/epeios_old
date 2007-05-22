@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Création 'MMM2'.
 	
+22/05/2007 :
+	- GENERAL :
+		- Adaptation modifications bibliothèque 'MMM'.
+	- UYM :
+		- Ajout méthode 'Put(...)'.
+	
 21/05/2007 :
 	- GENERAL :
 		- Adaptation modifications bibliothèque 'MMM'.

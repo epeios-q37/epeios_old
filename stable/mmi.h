@@ -86,8 +86,13 @@ namespace mmi {
 			epeios::size__ NouvelleCapacite )
 		{
 			descripteur__ D;
-
+#ifdef MMM__USE_V1
 			D.Descripteur = 0;
+#elif ( defined( MMM__USE_V2 ) )
+			D.Descripteur = NONE;
+#else
+#	error "A revoir lorsque nouvelle 'MMM' stabilisée !'
+#endif
 			D.Capacite = 0;
 
 			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
@@ -145,7 +150,13 @@ namespace mmi {
 
 			Multimemoire.Free( D.Descripteur );
 
+#ifdef MMM__USE_V1
 			D.Descripteur = 0;
+#elif ( defined( MMM__USE_V2 ) )
+			D.Descripteur = NONE;
+#else
+#	error "A revoir lorsque nouvelle 'MMM' stabilisée !'
+#endif
 			D.Capacite = 0;
 
 			Descripteurs.Store( D, *Index );

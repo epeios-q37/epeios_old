@@ -289,10 +289,16 @@ namespace uym {
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			mdr::datum__ Byte,
+			mdr::datum__ Datum,
 			mdr::row_t__ Position )
 		{
-			_Store( &Byte, 1, Position );
+			_Store( &Datum, 1, Position );
+		}
+		void Put(
+			mdr::datum__ Datum,
+			mdr::row_t__ Position )
+		{
+			Store( Datum, Position );
 		}
 		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
 		void Store(
@@ -452,10 +458,16 @@ namespace uym {
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			mdr::datum__ Byte,
+			mdr::datum__ Datum,
 			mdr::row_t__ Position )
 		{
-			*m::Data_[Position] = Byte;
+			*m::Data_[Position] = Datum;
+		}
+		void Put(
+			mdr::datum__ Datum,
+			mdr::row_t__ Position )
+		{
+			Store( Datum, Position );
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
