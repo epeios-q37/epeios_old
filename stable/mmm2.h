@@ -235,7 +235,7 @@ namespace mmm {
 			row__ Link )
 		{
 #ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Position ) )
+			if ( !_IsFragmentFree( Position ) )
 				ERRc();
 
 			if ( _IsOrphan( Position ) )
@@ -246,7 +246,7 @@ namespace mmm {
 		row__ _GetFreeFragmentLink( row__ Position ) const
 		{
 #ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Position ) )
+			if ( !_IsFragmentFree( Position ) )
 				ERRc();
 
 			if ( _IsOrphan( Position ) )
@@ -296,7 +296,8 @@ namespace mmm {
 			else {
 				Memory.Put( MMM2_FLAG_MASK, *Position );
 				_SetRawSize( Size, *Position + 1, false );
-				_SetFreeFragmentLink( Position, NONE );
+				if ( Size > MMM2_ORPHAN_MAX_SIZE ) 
+					_SetFreeFragmentLink( Position, NONE );
 			}
 		}
 		mdr::size__ _GetUsedFragmentDataSize( row__ Position ) const
