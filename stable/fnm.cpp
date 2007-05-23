@@ -153,12 +153,10 @@ ERRBegin
 		Resultat = "";
 		break;
 	case fnm::tSuffixed:
-	case fnm::tRelative:
 		strcat( Resultat, Nom );
 		break;
+	case fnm::tRelative:
 	case fnm::tAbsolute:
-		strcpy( Resultat, Nom );
-		break;
 	case fnm::tFree:
 		strcat( Resultat, Nom );
 
