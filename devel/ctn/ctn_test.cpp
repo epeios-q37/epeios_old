@@ -346,7 +346,7 @@ ERRBegin
 
 	cout << txf::nl;
 
-	Classer( CS );
+//	Classer( CS );
 #if 0
 	S.Init( "Essai.txt" );
 	S << CS;
@@ -741,7 +741,7 @@ ERRProlog
 ERRBegin
 	F.Init("b.tmp");
 	F.Manual();
-	Mm.plug( F );
+//	Mm.plug( F );
 	Mm.Init();
 //	GC.plug( Mm );
 	GC.Init();
@@ -908,11 +908,11 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
-		EssaiConteneurDansConteneur();
-		EssaiSimpleMono();
-		EssaiSimpleMulti();
-		Essai( argc, argv );
+//		EssaiBasic();
+//		EssaiConteneurDansConteneur();
+//		EssaiSimpleMono();
+//		EssaiSimpleMulti();
+//		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;

@@ -756,6 +756,9 @@ namespace mmm {
 		}
 		void Free( descriptor__ Descriptor )
 		{
+			if ( Descriptor == MMM_UNDEFINED_DESCRIPTOR )
+				return;
+
 			row__ Remainder = NONE;
 
 			if ( _IsUsedFragmentLinked( Descriptor ) ) {
