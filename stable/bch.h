@@ -186,24 +186,22 @@ namespace bch {
 
 			mmr::Store_( Bunch, Amount, Row, Offset );
 		}
-		void StoreAndAdjust_(
+/*		void StoreAndAdjust__(
 			const _bunch &Bunch,
 			epeios::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
-			Allocate( Amount + *Offset );
-
-			mmr::Store_( Bunch, Amount, Row, Offset );
+			StoreAndAdjust_( (const mmr)Bunch, Amount, Row, Offset );
 		}
-		/*f Store at 'Offset' the content of 'Bunch' from position 'Row' to the end.
+*/		/*f Store at 'Offset' the content of 'Bunch' from position 'Row' to the end.
 		Adjust the size of the bunch. */
-		void StoreAndAdjust(
-			const _bunch &Bunch,
+		void StoreAndAdjust_(
+			const mmr &Bunch,
 			row Row,
 			row Offset = 0 )
 		{
-			StoreAndAdjust_( Bunch, Bunch.Amount() - *Row, Row, Offset );
+			StoreAndAdjust_( Bunch, Bunch.Amount() - *Offset, Row, Offset );
 		}
 		//f Store at 'Offset' 'Amount' objects from 'Buffer'.
 		void StoreAndAdjust(
@@ -220,9 +218,11 @@ namespace bch {
 			const type *Buffer,
 			row Offset = 0 )
 		{
-			Allocate( sh::SizeOf( Buffer ) + *Offset );
+/*			Allocate( sh::SizeOf( Buffer ) + *Offset );
 
 			mmr::Store( Buffer, sh::SizeOf( Buffer ), Offset );
+*/
+			StoreAndAjust( Buffer, sh::SizeOf( Buffer ), Offset );
 		}
 		// Remplit tout le conteneur avec 'object' à partir de la position 'offset'.
 		void Set(

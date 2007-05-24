@@ -288,7 +288,7 @@ ERRProlog
 ERRBegin
 	F.Init();
 	F.Automatic();
-	M.plug( F );
+//	M.plug( F );
 	M.Init();
 	CS.plug( M );
 	CS.Init();
@@ -908,11 +908,11 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-//		EssaiBasic();
-//		EssaiConteneurDansConteneur();
-//		EssaiSimpleMono();
-//		EssaiSimpleMulti();
-//		Essai( argc, argv );
+		EssaiBasic();
+		EssaiConteneurDansConteneur();
+		EssaiSimpleMono();
+		EssaiSimpleMulti();
+		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;

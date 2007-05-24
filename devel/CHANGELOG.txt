@@ -1,7 +1,15 @@
 $Id$
 
 - GENERAL :
-	- Création 'MMM2'.
+	- Recodage bibliothèque 'MMM' par création 'MMM2'.
+	
+24/05/2007 :
+	- BCH :
+		- Correction bogues et simplifications.
+
+23/05/2007 :
+	- FNM :
+		- Correction bogue construction nom de fichier ('BuildFileName(...)').
 	
 22/05/2007 :
 	- GENERAL :
@@ -286,7 +294,7 @@ Publication
 
 20/01/2007 :
 	- DTR :
-		- 'HasFirst()' et 'HasLast()' sont tous deux remplacer par 'HasChild()'.
+		- 'HasFirst()' et 'HasLast()' sont tous deux remplacés par 'HasChild()'.
 
 11/01/2007 :
 	- RGSTRY :
@@ -536,7 +544,7 @@ Publication
 		- Suppression d'un test en mode débogage qui n'avait pas de sens.
 
 07/08/2006 :
-	GENERAL :
+	- GENERAL :
 		- Déplacement test capacité en mode débogage de 'UYM' vers 'MDR'.
 		- Adaptation aux modifications 'MDR' et 'UYM'.
 
@@ -966,7 +974,7 @@ Publication
 	- SRV :
 		- Découpage des fonctions utilisateurs.
 	- TOL:
-		- Ajout de la gesion d'un pointeur gèré par 'new'/'delete'.
+	- Ajout de la gesion d'un pointeur gèré par 'new'/'delete'.
 
 23/06/2005
 	- Ajout de la bibliothèque 'LXMLPR'.
@@ -980,12 +988,12 @@ Publication
 	- Adapting to G++ 3.4.4
 
 01/06/2005
-- NSXPCM :
-	- Completion.
+	- NSXPCM :
+		- Completion.
 
 25/05/2005
-- GENERAL
-	- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
+	- GENERAL
+		- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
 
 09/05/2005
 - CLT:
@@ -1100,10 +1108,12 @@ Publication
 	- Renommage de la méthode 'Remove' en 'Delete'.
 
 07/03/2005
-- SSNMNG: Correction d'un bogue dans la méthode 'Close()'.
+- SSNMNG:
+	- Correction d'un bogue dans la méthode 'Close()'.
 
 06/03/2005:
-- SSNMNG : Ajout de la gestion des pointeurs utilisateurs.
+- SSNMNG :
+	- Ajout de la gestion des pointeurs utilisateurs.
 
 ==== Ancien format ====
 
@@ -1260,7 +1270,7 @@ FLW:
 - (12/12/2004) Improving error handling.
 
 FLF:
-- (02/02/05) Amelioration, bug fixing about the EOF handling.
+- (02/02/2005) Amelioration, bug fixing about the EOF handling.
 
 FLX:
 - (31/07/2004) The 'bunch_(i|o)flow__' now works with all type of bunch.
@@ -1278,7 +1288,7 @@ HTP:
 - (01/11/2004) Changing 'Post' function parameters.
 
 IDS:
-- (08/01/05) Fixing bug test bug (:->).
+- (08/01/2005) Fixing bug test bug (:->).
 
 IDXQUE:
 - (16/09/2004) Using the core queue and no more the manage queue, to fit with 'IDXBTR'.
@@ -1350,7 +1360,7 @@ TOL:
 - (27/10/2004) The 'E_DISCLOSE_[_]' is replaced by 'E_RODISCLOSE_[_]' and 'E_RWDISCLOSE_[_]'
 - (27/11/2004) Removing 'Free(...)', replaced with 'E_POINTER___'.
 - (13/12/2004) Improving 'E_RODISCLOSE()'.
-- (04/01/05) Adding debugging issue and missing methods to 'pointer___' object.
+- (04/01/2005) Adding debugging issue and missing methods to 'pointer___' object.
 
 TTR:
 - (23/05/2004) Using 'CIO' library instead of 'STF'.
