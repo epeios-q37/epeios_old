@@ -65,6 +65,7 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 
 #include "err.h"
 #include "flw.h"
+#include "epeios.h"
 #include "mmm0.h"
 #include "uym.h"
 #include "bch.h"
@@ -175,12 +176,7 @@ namespace mmm {
 			row__ Position,
 			mdr::datum__ *Header ) const
 		{
-			mdr::size__ Amount = MMM2_HEADER_MAX_LENGTH;
-
-			if ( ( *Position + Amount ) > S_.Extent )
-				Amount = S_.Extent - *Position;
-
-			Memory.Recall( *Position, Amount, Header );
+			Memory.Recall( *Position, *Position + MMM2_HEADER_MAX_LENGTH > S_.Extent ? S_.Extent - *Position : MMM2_HEADER_MAX_LENGTH, Header );
 		}
 		bso::bool__ _IsFragmentUsed( const mdr::datum__ *Header ) const
 		{
@@ -294,15 +290,15 @@ namespace mmm {
 			if ( !_IsUsedFragmentLinked( Header ) )
 				ERRc();
 #endif
-			Memory.Recall( *Position + _GetUsedFragmentTotalSize( Position, Header ) - 4, sizeof( Link ), (mdr::datum__ *)&Link );
+			Memory.Recall( *Position + _GetUsedFragmentTotalSize( Header ) - sizeof( Link ), sizeof( Link ), (mdr::datum__ *)&Link );
 
 			return Link;
 		}
 		row__ _GetUsedFragmentNextFragmentPosition(
 			row__ Position,
-			const mdr::datum__ *Datum ) const
+			const mdr::datum__ *Header ) const
 		{
-			return *Position + _GetUsedFragmentTotalSize( Position, Datum );
+			return *Position + _GetUsedFragmentTotalSize( Header );
 		}
 		row__ _GetFreeFragmentNextFragmentPosition(
 			row__ Position,
@@ -327,12 +323,18 @@ namespace mmm {
 		}
 		mdr::size__ _GetUsedFragmentDataSize( const mdr::datum__ *Header ) const
 		{
+#ifdef MMM2_DBG
+			if ( !_IsFragmentUsed( Header ) )
+				ERRc();
+#endif
 			return _GetRawSize( Header );
 		}
-		mdr::size__ _GetUsedFragmentTotalSize(
-			row__ Position,
-			const mdr::datum__ *Header ) const
+		mdr::size__ _GetUsedFragmentTotalSize( const mdr::datum__ *Header ) const
 		{
+#ifdef MMM2_DBG
+			if ( !_IsFragmentUsed( Header ) )
+				ERRc();
+#endif
 			mdr::size__ DataSize = _GetUsedFragmentDataSize( Header );
 
 			return DataSize + _GetSizeLength( DataSize ) + ( _IsUsedFragmentLinked( Header ) ? MMM2_LINK_SIZE : 0 );
@@ -346,24 +348,21 @@ namespace mmm {
 				ERRc();
 #endif
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-			mdr::datum__ TempHeader[MMM2_HEADER_MAX_LENGTH];
-
-			_GetHeader( Position, Header );
 
 			if ( ( *Position + Size ) != S_.Extent ) {
-				_GetHeader( *Position + Size, TempHeader );
+				_GetHeader( *Position + Size, Header );
 
-				if ( _IsFragmentFree( TempHeader ) && _IsOrphan( TempHeader ) )
+				if ( _IsFragmentFree( Header ) && _IsOrphan( Header ) )
 					Size = +_GetFreeFragmentSize( Header );
 			}
 
 			if ( *Position < MMM2_ORPHAN_MAX_SIZE ) {
-				_GetHeader( 0, TempHeader );
+				_GetHeader( 0, Header );
 
-				 if ( _IsFragmentFree( TempHeader )
-				       && _IsOrphan( TempHeader )
-				     && ( _GetFreeFragmentNextFragmentPosition( 0, TempHeader ) == Position ) ) {
-					Size += _GetFreeFragmentSize( TempHeader );
+				 if ( _IsFragmentFree( Header )
+				      && _IsOrphan( Header )
+				      && ( _GetFreeFragmentNextFragmentPosition( 0, Header ) == Position ) ) {
+					Size += _GetFreeFragmentSize( Header );
 					Position = 0;
 				 }
 			}
@@ -373,70 +372,84 @@ namespace mmm {
 			return Position;
 
 		}
-		void _MarkAsUsedFragment(
+		mdr::size__ _GuessTotalSizeForUsedFragment(
+			mdr::size__ DataSize,
+			row__ Link ) const
+		{
+			return _GetSizeLength( DataSize ) + DataSize + ( ( Link != NONE ) ? MMM2_LINK_SIZE : 0 );
+		}
+		void _MarkAsUsedFragment_(
 			row__ Position,
-			mdr::size__ Size,
+			mdr::size__ DataSize,
 			row__ Link )	// Si pas lié, est égal à 'NONE'
 		{
 #ifdef MMM2_DBG
-			if ( Size == 0 )
+			if ( DataSize == 0 )
 				ERRc();
 #endif
-			_SetRawSize( Size, Position, ( Link != NONE ) );
+			_SetRawSize( DataSize, Position, ( Link != NONE ) );
 
 			if ( Link != NONE )
-				Memory.Store( (const mdr::datum__ *)&Link, MMM2_LINK_SIZE, *Position + _GetSizeLength( Size ) + Size );
+				Memory.Store( (const mdr::datum__ *)&Link, MMM2_LINK_SIZE, *Position + _GetSizeLength( DataSize ) + DataSize );
 		}
-		row__ _ConvertToUsedFragment(
+		row__ _ConvertToUsedFragment_(
 			row__ Position,
-			mdr::size__ Size,
+			mdr::size__ DataSize,
 			row__ Link,
-			mdr::size__ FragmentCurrentSize,
-			row__ NextFragmentPosition )
+			mdr::size__ FragmentCurrentSize )
 		{
+			mdr::size__ Size = _GuessTotalSizeForUsedFragment( DataSize, Link );
+			row__ RemainderPosition = *Position + Size;
 #ifdef MMM2_DBG
 			if ( Size == 0 )
 				ERRc();
-#endif
-			row__ RemainderPosition = *Position + FragmentCurrentSize;
 
-			if ( ( RemainderPosition != S_.Extent ) && ( RemainderPosition != NextFragmentPosition ) )
-				RemainderPosition =_SetAsFreeFragment( RemainderPosition, Size - FragmentCurrentSize );
+			if ( *RemainderPosition > S_.Extent )
+				ERRc();
+#endif
+			if ( ( RemainderPosition != S_.Extent ) && ( Size != FragmentCurrentSize ) )
+				RemainderPosition =_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
 			else
 				RemainderPosition = NONE;
 
-			_MarkAsUsedFragment( Position, Size, Link );
+			_MarkAsUsedFragment_( Position, DataSize, Link );
 
 			return RemainderPosition;
 		}
-		row__ _ConvertFreeToUsedFragment(
+		row__ _ConvertFreeToUsedFragment_(
 			row__ Position,
 			const mdr::datum__ *Header,
-			mdr::size__ Size,
+			mdr::size__ DataSize,
 			row__ Link )	// Si pas lié, est égal à 'NONE'
 			// Retourne la position du reliquat si existant.
 		{
 #ifdef MMM2_DBG
-			if ( Size == 0 )
-				ERRc();
-#endif
-			return _ConvertToUsedFragment( Position, Size, Link, _GetFreeFragmentSize( Header ), _GetFreeFragmentNextFragmentPosition( Position, Header ) );
-		}
-		row__ _ResizeUsedFragment(
-			row__ Position,
-			const mdr::datum__ *Header,
-			mdr::size__ Size,
-			row__ Link )	// Si pas lié, est égal à 'NONE'
-			// Retourne la position du reliquat si existant.
-		{
-#ifdef MMM2_DBG
-			if ( Size == 0 )
+			if ( DataSize == 0 )
 				ERRc();
 
-			if ( Size > _GetUsedFragmentDataSize( Header ) )
+			if ( !_IsFragmentFree( Header ) )
 				ERRc();
 #endif
-			return _ConvertToUsedFragment( Position, Size, Link, _GetUsedFragmentTotalSize( Position, Header ), _GetUsedFragmentNextFragmentPosition( Position, Header ) );
+			return _ConvertToUsedFragment_( Position, DataSize, Link, _GetFreeFragmentSize( Header ) );
+		}
+		row__ _ResizeUsedFragment_(
+			row__ Position,
+			const mdr::datum__ *Header,
+			mdr::size__ DataSize,
+			row__ Link )	// Si pas lié, est égal à 'NONE'
+			// Retourne la position du reliquat si existant.
+		{
+#ifdef MMM2_DBG
+			if ( DataSize == 0 )
+				ERRc();
+
+			if ( !_IsFragmentUsed( Header ) )
+				ERRc();
+
+			if ( DataSize > _GetUsedFragmentDataSize( Header ) )
+				ERRc();
+#endif
+			return _ConvertToUsedFragment_( Position, DataSize, Link, _GetUsedFragmentTotalSize( Header ) );
 		}
 		mdr::size__ _GetFreeFragmentAvailableSize(
 			const mdr::datum__ *Header,
@@ -450,36 +463,36 @@ namespace mmm {
 		}
 		bso::bool__ _IsFreeFragmentBigEnough(
 			const mdr::datum__ *Header,
-			mdr::size__ Size ) const
+			mdr::size__ DataSize ) const
 		{
-			return ( _GetFreeFragmentAvailableSize( Header, false ) >= Size );
+			return ( _GetFreeFragmentAvailableSize( Header, false ) >= DataSize );
 		}
 		bso::bool__ _IsFreeFragmentBigEnough_(
 			row__ Position,
-			mdr::size__ Size ) const
+			mdr::size__ DataSize ) const
 		{
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
 			_GetHeader( Position, Header );
 
-			return _IsFreeFragmentBigEnough( Header, Size );
+			return _IsFreeFragmentBigEnough( Header, DataSize );
 		}
-		row__ _AppendNewUnlinkedFragment( mdr::size__ Size )
+		row__ _AppendNewUnlinkedFragment( mdr::size__ DataSize )
 		{
 			row__ Row = S_.Extent;
 
-			S_.Extent += _GetSizeLength( Size ) + Size;
+			S_.Extent += _GetSizeLength( DataSize ) + DataSize;
 
 			Memory.Allocate( S_.Extent );
 
-			_SetRawSize( Size, Row, false );
+			_SetRawSize( DataSize, Row, false );
 
 			return Row;
 		}
 		bso::bool__ _Allocate(
 			row__ FirstFragmentPosition,
 			row__ SecondFragmentPosition,
-			mdr::size__ Size,
+			mdr::size__ DataSize,
 			row__ &FirstRemainderPosition,
 			row__ &SecondRemainderPosition )
 		{
@@ -487,36 +500,35 @@ namespace mmm {
 			if ( FirstFragmentPosition == NONE )
 				ERRc();
 #endif
-			mdr::size__  FirstFragmentDataSize = 0;
 			mdr::datum__ FirstFragmentHeader[MMM2_HEADER_MAX_LENGTH];
 
 			_GetHeader( FirstFragmentPosition, FirstFragmentHeader );
 
-			FirstFragmentDataSize = _GetFreeFragmentAvailableSize( FirstFragmentHeader, false );
-
-			if ( _IsFreeFragmentBigEnough( FirstFragmentHeader, Size ) ) {
-				FirstRemainderPosition = _ConvertFreeToUsedFragment( FirstFragmentPosition, FirstFragmentHeader, Size, NONE );
+			if ( _IsFreeFragmentBigEnough( FirstFragmentHeader, DataSize ) ) {
+				FirstRemainderPosition = _ConvertFreeToUsedFragment_( FirstFragmentPosition, FirstFragmentHeader, DataSize, NONE );
 
 				return false;
 			}
+
+			mdr::size__ FirstFragmentDataSize = _GetFreeFragmentAvailableSize( FirstFragmentHeader, true );
 
 			if ( SecondFragmentPosition != NONE ) {
 				mdr::datum__ SecondFragmentHeader[MMM2_HEADER_MAX_LENGTH];
 
 				_GetHeader( SecondFragmentPosition, SecondFragmentHeader );
 
-				if ( _IsFreeFragmentBigEnough( SecondFragmentHeader, Size - FirstFragmentDataSize ) ) {
-					FirstRemainderPosition = _ConvertFreeToUsedFragment( FirstFragmentPosition, FirstFragmentHeader, FirstFragmentDataSize, SecondFragmentPosition );
+				if ( _IsFreeFragmentBigEnough( SecondFragmentHeader, DataSize - FirstFragmentDataSize ) ) {
+					FirstRemainderPosition = _ConvertFreeToUsedFragment_( FirstFragmentPosition, FirstFragmentHeader, FirstFragmentDataSize, SecondFragmentPosition );
 
-					SecondRemainderPosition = _ConvertFreeToUsedFragment( SecondFragmentPosition, SecondFragmentHeader, Size - FirstFragmentDataSize, NONE );
+					SecondRemainderPosition = _ConvertFreeToUsedFragment_( SecondFragmentPosition, SecondFragmentHeader, DataSize - FirstFragmentDataSize, NONE );
 
 					return true;
 				}
 			}
 
-			SecondFragmentPosition = _AppendNewUnlinkedFragment( Size - FirstFragmentDataSize );
+			SecondFragmentPosition = _AppendNewUnlinkedFragment( DataSize - FirstFragmentDataSize );
 
-			FirstRemainderPosition = _ConvertFreeToUsedFragment( FirstFragmentPosition, FirstFragmentHeader, FirstFragmentDataSize, SecondFragmentPosition );
+			FirstRemainderPosition = _ConvertFreeToUsedFragment_( FirstFragmentPosition, FirstFragmentHeader, FirstFragmentDataSize, SecondFragmentPosition );
 
 			return false;
 		}
@@ -539,7 +551,7 @@ namespace mmm {
 
 			return _TestAndPush( Row, Header );
 		}
-		row__ _GetNewUnlinkedFragment( mdr::size__ Size )
+		row__ _GetNewUnlinkedFragment( mdr::size__ DataSize )
 		{
 			row__ Row = NONE;
 
@@ -549,28 +561,28 @@ namespace mmm {
 
 				_GetHeader( _Top(), Header );
 			
-				if ( _IsFreeFragmentBigEnough( Header, Size ) ) {
+				if ( _IsFreeFragmentBigEnough( Header, DataSize ) ) {
 					row__ RemainderPosition = NONE;
 
 					Row = _Pop();
 
-					RemainderPosition = _ConvertFreeToUsedFragment( Row, Header, Size, NONE );
+					RemainderPosition = _ConvertFreeToUsedFragment_( Row, Header, DataSize, NONE );
 
 					_TestAndPush_( RemainderPosition );
 				} else
-					Row = _AppendNewUnlinkedFragment( Size );
+					Row = _AppendNewUnlinkedFragment( DataSize );
 			} else
-				Row = _AppendNewUnlinkedFragment( Size );
+				Row = _AppendNewUnlinkedFragment( DataSize );
 
 			return Row;
 		}
 		row__ _ReallocateLesser(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
-			mdr::size__ Size )
+			mdr::size__ DataSize )
 		{
 #ifdef MMM2_DBG
-			if ( this->Size( *Descriptor ) <= Size )
+			if ( _Size( *Descriptor, Header ) <= DataSize )
 				ERRc();
 #endif
 			row__ Remainder = NONE;
@@ -582,21 +594,21 @@ namespace mmm {
 
 				_GetHeader( Link, LinkHeader );
 
-				if ( Size > _GetUsedFragmentDataSize( Header ) ) {
-					Remainder = _ResizeUsedFragment( Link, LinkHeader, Size - _GetUsedFragmentDataSize( Header ), NONE );
+				if ( DataSize > _GetUsedFragmentDataSize( Header ) ) {
+					Remainder = _ResizeUsedFragment_( Link, LinkHeader, DataSize - _GetUsedFragmentDataSize( Header ), NONE );
 
 					_TestAndPush_( Remainder );
 				} else {
-					Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( Link, LinkHeader ) );
+					Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 
 					_TestAndPush_( Remainder );
 
-					Remainder = _ResizeUsedFragment( Descriptor, Header, Size, NONE );
+					Remainder = _ResizeUsedFragment_( Descriptor, Header, DataSize, NONE );
 
 					_TestAndPush_( Remainder );
 				}
 			} else {
-				Remainder = _ResizeUsedFragment( Descriptor, Header, Size, NONE );
+				Remainder = _ResizeUsedFragment_( Descriptor, Header, DataSize, NONE );
 
 				_TestAndPush_( Remainder );
 			}
@@ -627,53 +639,53 @@ namespace mmm {
 		row__ _ReallocateGreater(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
-			mdr::size__ Size )
+			mdr::size__ DataSize )
 		{
 #ifdef MMM2_DBG
-			if ( _Size( *Descriptor, Header ) >= Size )
+			if ( _Size( *Descriptor, Header ) >= DataSize )
 				ERRc();
 #endif
 			if ( _IsUsedFragmentLinked( Header ) ) {
 				row__ Link = _GetUsedFragmentLink( Descriptor, Header );
 				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
 				mdr::size__
-					LinkedFragmentCurrentSize = _GetUsedFragmentDataSize( LinkHeader ),
-					LinkedFragmentNewSize = Size - _GetUsedFragmentDataSize( Header );
-				row__ NewLink = _GetNewUnlinkedFragment( LinkedFragmentNewSize );
+					LinkedFragmentCurrentDataSize = _GetUsedFragmentDataSize( LinkHeader ),
+					LinkedFragmentNewDataSize = DataSize - _GetUsedFragmentDataSize( Header );
+				row__ NewLink = _GetNewUnlinkedFragment( LinkedFragmentNewDataSize );
 				row__ Remainder = NONE;
 
 				_GetHeader( Link, LinkHeader );
 
 				Memory.Store_(
 					Memory,
-					LinkedFragmentCurrentSize,
-					*NewLink + _GetSizeLength( LinkedFragmentNewSize ),
-					*Link + _GetSizeLength( LinkedFragmentCurrentSize ) );
+					LinkedFragmentCurrentDataSize,
+					*NewLink + _GetSizeLength( LinkedFragmentNewDataSize ),
+					*Link + _GetSizeLength( LinkedFragmentCurrentDataSize ) );
 
 				// Pour mettre en place le nouveu lien.
-				if ( _ResizeUsedFragment( Descriptor, Header, _GetUsedFragmentDataSize( Header ), NewLink ) != NONE )
+				if ( _ResizeUsedFragment_( Descriptor, Header, _GetUsedFragmentDataSize( Header ), NewLink ) != NONE )
 					ERRc();
 
-				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( Link, LinkHeader ) );
+				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 
 				_TestAndPush_( Remainder );
 
 				return Descriptor;
 			} else {
-				if ( _GetUsedFragmentTotalSize( Descriptor, Header ) <= MMM2_ORPHAN_MAX_SIZE ) {
-					row__ NewDescriptor = _GetNewUnlinkedFragment( Size );
+				if ( _GetUsedFragmentTotalSize( Header ) <= MMM2_ORPHAN_MAX_SIZE ) {
+					row__ NewDescriptor = _GetNewUnlinkedFragment( DataSize );
 					mdr::size__ FirstFragmentCurrentDataSize = _GetUsedFragmentDataSize( Header );
 
 					Memory.Store_(
 						Memory,
 						FirstFragmentCurrentDataSize,
-						*NewDescriptor + _GetSizeLength( Size ),
+						*NewDescriptor + _GetSizeLength( DataSize ),
 						*Descriptor + _GetSizeLength( FirstFragmentCurrentDataSize ) );
 
 					return NewDescriptor;
 				} else {
 					mdr::size__ FirstFragmentNewDataSize = _GetUsedFragmentDataSize( Header ) - MMM2_LINK_SIZE;
-					mdr::size__ LinkedFragmentDataSize = Size - FirstFragmentNewDataSize;
+					mdr::size__ LinkedFragmentDataSize = DataSize - FirstFragmentNewDataSize;
 					row__ Link = _GetNewUnlinkedFragment( LinkedFragmentDataSize );
 					row__ Remainder = NONE;
 
@@ -684,7 +696,7 @@ namespace mmm {
 						*Link + _GetSizeLength( LinkedFragmentDataSize ),
 						*Descriptor + _GetSizeLength( _GetUsedFragmentDataSize( Header ) ) + FirstFragmentNewDataSize );
 
-					Remainder = _ResizeUsedFragment( Descriptor, Header, FirstFragmentNewDataSize, Link );
+					Remainder = _ResizeUsedFragment_( Descriptor, Header, FirstFragmentNewDataSize, Link );
 
 					_TestAndPush_( Remainder );
 
@@ -696,7 +708,7 @@ namespace mmm {
 			descriptor__ Descriptor,
 			const mdr::datum__ *Header,
 			mdr::row_t__ Position,
-			mdr::size__ Size,
+			mdr::size__ Amount,
 			mdr::datum__ *Buffer ) const
 		{
 			mdr::size__ FragmentDataSize = _GetUsedFragmentDataSize( Header );
@@ -706,19 +718,19 @@ namespace mmm {
 				ERRc();
 #endif
 
-			if ( Size > ( FragmentDataSize - Position ) )
-				Size = FragmentDataSize - Position;
+			if ( Amount > ( FragmentDataSize - Position ) )
+				Amount = FragmentDataSize - Position;
 
-			Memory.Recall( Descriptor + _GetSizeLength( FragmentDataSize ) + Position, Size, Buffer );
+			Memory.Recall( Descriptor + _GetSizeLength( FragmentDataSize ) + Position, Amount, Buffer );
 
-			return Size;
+			return Amount;
 		}
 		mdr::size__ _WriteToFragment(
 			const mdr::datum__ *Buffer,
 			descriptor__ Descriptor,
 			const mdr::datum__ *Header,
 			mdr::row_t__ Position,
-			mdr::size__ Size )
+			mdr::size__ Amount )
 		{
 			mdr::size__ FragmentDataSize = _GetUsedFragmentDataSize( Header );
 
@@ -727,12 +739,12 @@ namespace mmm {
 				ERRc();
 #endif
 
-			if ( Size > ( FragmentDataSize - Position ) )
-				Size = FragmentDataSize - Position;
+			if ( Amount > ( FragmentDataSize - Position ) )
+				Amount = FragmentDataSize - Position;
 
-			Memory.Store( Buffer, Size, Descriptor + _GetSizeLength( FragmentDataSize ) + Position );
+			Memory.Store( Buffer, Amount, Descriptor + _GetSizeLength( FragmentDataSize ) + Position );
 
-			return Size;
+			return Amount;
 		}
 		bso::bool__ _IsFreeFragmentAvailable( void )
 		{
@@ -858,11 +870,11 @@ namespace mmm {
 
 				_GetHeader( Link, LinkHeader );
 
-				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( Link, LinkHeader ) );
+				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 				_TestAndPush_( Remainder );
 			}
 
-			Remainder = _SetAsFreeFragment( Descriptor, _GetUsedFragmentTotalSize( Descriptor, Header ) );
+			Remainder = _SetAsFreeFragment( Descriptor, _GetUsedFragmentTotalSize( Header ) );
 
 			_TestAndPush_( Remainder );
 		}
@@ -873,8 +885,6 @@ namespace mmm {
 			if ( Descriptor == NONE )
 				return Allocate( Size );
 
-			mdr::size__ CurrentSize = this->Size( Descriptor );
-
 			if ( Size == 0 ) {
 				ERRu();
 				return NONE; // Pour éviter un 'warning'.
@@ -883,6 +893,8 @@ namespace mmm {
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
 			_GetHeader( Descriptor, Header );
+
+			mdr::size__ CurrentSize = _Size( Descriptor, Header );
 
 			if ( Size == CurrentSize )
 				return Descriptor;
@@ -917,7 +929,7 @@ namespace mmm {
 				descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
 				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
 
-				_GetHeader( Descriptor, LinkHeader );
+				_GetHeader( Link, LinkHeader );
 
 				AmountRed += _ReadFromFragment( Link, LinkHeader, Position + AmountRed - FirstFragmentDataSize, Amount - AmountRed, Buffer + AmountRed );
 			}
@@ -957,7 +969,7 @@ namespace mmm {
 				descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
 				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
 
-				_GetHeader( Descriptor, LinkHeader );
+				_GetHeader( Link, LinkHeader );
 
 				AmountWritten += _WriteToFragment( Buffer + AmountWritten, Link, LinkHeader, Position + AmountWritten - FirstFragmentDataSize, Amount - AmountWritten );
 			}
