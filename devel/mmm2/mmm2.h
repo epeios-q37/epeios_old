@@ -109,10 +109,10 @@ namespace mmm {
 		mdr::size__ _AdjustSize( mdr::size__ MaxSize ) const
 		{
 #ifdef MMM2_DBG
-			if ( MaxSize == 0 )
+			if ( MaxSize <= 1 )
 				ERRc();
 #endif
-			mdr::size__ Size = MaxSize - 1;
+			mdr::size__ Size = MaxSize - 1;	// au moins un octet pour stockerla taille.
 
 			while ( ( Size + _GetSizeLength( Size ) ) > MaxSize )
 				Size--;
@@ -163,10 +163,10 @@ namespace mmm {
 				Size += Datum[2];
 
 				if ( Size == MMM2_L2 ) {
-					Size += Datum[3] << 24;
-					Size += Datum[4] << 16;
-					Size += Datum[5] << 8;
-					Size += Datum[6];
+					Size += ( Datum[3] << 24 )
+						    + ( Datum[4] << 16 )
+							+ ( Datum[5] << 8 )
+							+ Datum[6];
 				}
 			}
 
@@ -176,7 +176,7 @@ namespace mmm {
 			row__ Position,
 			mdr::datum__ *Header ) const
 		{
-			Memory.Recall( *Position, *Position + MMM2_HEADER_MAX_LENGTH > S_.Extent ? S_.Extent - *Position : MMM2_HEADER_MAX_LENGTH, Header );
+			Memory.Recall( *Position, ( *Position + MMM2_HEADER_MAX_LENGTH ) > S_.Extent ? S_.Extent - *Position : MMM2_HEADER_MAX_LENGTH, Header );
 		}
 		bso::bool__ _IsFragmentUsed( const mdr::datum__ *Header ) const
 		{
@@ -186,7 +186,7 @@ namespace mmm {
 		{
 			return ( Header[0] & ~MMM2_FLAG_MASK ) == 0;
 		}
-		mdr::size__ _GetRawSize( const mdr::datum__ *Header ) const
+		mdr::size__ _GetRawSize_( const mdr::datum__ *Header ) const
 		{
 			if ( _IsFragmentFree( Header ) )
 				Header++;
@@ -224,10 +224,11 @@ namespace mmm {
 		}
 		mdr::size__ _GetFreeFragmentSize( const mdr::datum__ *Header ) const
 		{
-			if ( _IsFlagSet( Header++ ) )
-				return _GetRawSize( Header );
-			else
-				return 1;
+#ifdef MMM2_DBG
+			if ( !_IsFragmentFree( Header ) )
+				ERRc();
+#endif
+			return _GetRawSize_( Header );
 		}
 		mdr::size__ _GetFreeFragmentHeaderLength( const mdr::datum__ *Header ) const
 		{
@@ -327,7 +328,7 @@ namespace mmm {
 			if ( !_IsFragmentUsed( Header ) )
 				ERRc();
 #endif
-			return _GetRawSize( Header );
+			return _GetRawSize_( Header );
 		}
 		mdr::size__ _GetUsedFragmentTotalSize( const mdr::datum__ *Header ) const
 		{

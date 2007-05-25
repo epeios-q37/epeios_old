@@ -908,7 +908,7 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
+//		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
