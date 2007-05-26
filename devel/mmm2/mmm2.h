@@ -588,6 +588,51 @@ namespace mmm {
 
 			return Row;
 		}
+		descriptor__ _Allocate( mdr::size__ Size )
+		{	
+			if ( _IsFreeFragmentAvailable() ) {
+				row__ Free1 = NONE, Free2 = NONE, Remainder1 = NONE, Remainder2 = NONE;
+
+				Free1 = _Pop();
+
+				if ( _IsFreeFragmentAvailable()  )
+					Free2 = _Pop();
+
+				if ( !_Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
+					_TestAndPush_( Free2 );
+
+				_TestAndPush_( Remainder1 );
+
+				_TestAndPush_( Remainder2 );
+
+				return *Free1;
+			} else
+				return *_AppendNewUnlinkedFragment( Size );
+		}
+		void _Free( descriptor__ Descriptor )
+		{
+			if ( Descriptor == MMM_UNDEFINED_DESCRIPTOR )
+				return;
+
+			row__ Remainder = NONE;
+			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+
+			_GetHeader( Descriptor, Header );
+
+			if ( _IsUsedFragmentLinked( Header ) ) {
+				row__ Link = _GetUsedFragmentLink( Descriptor, Header );
+				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
+
+				_GetHeader( Link, LinkHeader );
+
+				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
+				_TestAndPush_( Remainder );
+			}
+
+			Remainder = _SetAsFreeFragment( Descriptor, _GetUsedFragmentTotalSize( Header ) );
+
+			_TestAndPush_( Remainder );
+		}
 		row__ _ReallocateLesser(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
@@ -648,6 +693,146 @@ namespace mmm {
 
 			return Size;
 		}
+		void _MoveHead(
+			row__ SourceFirstFragmentRow,
+			const mdr::size__ SourceFirstFragmentSize,
+			row__ SourceSecondFragmentRow,
+			const mdr::size__ SourceSecondFragmentSize,
+			row__ TargetFirstFragmentRow,
+			const mdr::size__ TargetFirstFragmentSize,
+			row__ TargetSecondFragmentRow,
+			const mdr::size__ TargetSecondFragmentSize  )
+			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
+			et non pas sur le début des fragments respectis. */
+		{
+			Memory.Store_(
+				Memory, SourceFirstFragmentSize > TargetFirstFragmentSize ? TargetFirstFragmentSize : SourceFirstFragmentSize,
+				*TargetFirstFragmentRow, *SourceFirstFragmentRow );
+
+			if ( ( SourceSecondFragmentSize != 0 ) && ( ( SourceFirstFragmentSize + SourceSecondFragmentSize ) < TargetFirstFragmentSize ) )
+				Memory.Store_(
+					Memory, SourceSecondFragmentSize,
+					*TargetFirstFragmentRow + SourceFirstFragmentSize,
+					*SourceSecondFragmentRow );
+		}
+		void _MoveMiddle(
+			row__ SourceFirstFragmentRow,
+			const mdr::size__ SourceFirstFragmentSize,
+			row__ SourceSecondFragmentRow,
+			const mdr::size__ SourceSecondFragmentSize,
+			row__ TargetFirstFragmentRow,
+			const mdr::size__ TargetFirstFragmentSize,
+			row__ TargetSecondFragmentRow,
+			const mdr::size__ TargetSecondFragmentSize  )
+			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
+			et non pas sur le début des fragments respectis. */
+		{
+			if ( SourceFirstFragmentSize > TargetFirstFragmentSize )
+				Memory.Store_(
+					Memory, SourceFirstFragmentSize - TargetFirstFragmentSize,
+					*TargetSecondFragmentRow, *SourceFirstFragmentRow + TargetFirstFragmentSize );
+			else
+				Memory.Store_(
+					Memory, TargetFirstFragmentSize - SourceFirstFragmentSize, 
+					*TargetFirstFragmentRow + SourceFirstFragmentSize,
+					*SourceSecondFragmentRow );
+		}
+		void _MoveTail(
+			row__ SourceFirstFragmentRow,
+			const mdr::size__ SourceFirstFragmentSize,
+			row__ SourceSecondFragmentRow,
+			const mdr::size__ SourceSecondFragmentSize,
+			row__ TargetFirstFragmentRow,
+			const mdr::size__ TargetFirstFragmentSize,
+			row__ TargetSecondFragmentRow,
+			const mdr::size__ TargetSecondFragmentSize  )
+			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
+			et non pas sur le début des fragments respectis. */
+		{
+			if ( SourceFirstFragmentSize > TargetFirstFragmentSize )
+				Memory.Store_(
+					Memory, SourceSecondFragmentSize,
+					*TargetSecondFragmentRow + SourceFirstFragmentSize - TargetFirstFragmentSize,
+					*SourceSecondFragmentRow );
+			else
+				Memory.Store_(
+					Memory, SourceSecondFragmentSize + SourceFirstFragmentSize - TargetFirstFragmentSize,
+					*TargetSecondFragmentRow,
+					*SourceSecondFragmentRow + TargetFirstFragmentSize - SourceFirstFragmentSize );
+		}
+		void _Move(
+			row__ SourceFirstFragmentRow,
+			mdr::size__ SourceFirstFragmentSize,
+			row__ SourceSecondFragmentRow,
+			mdr::size__ SourceSecondFragmentSize,
+			row__ TargetFirstFragmentRow,
+			mdr::size__ TargetFirstFragmentSize,
+			row__ TargetSecondFragmentRow,
+			mdr::size__ TargetSecondFragmentSize  )
+			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
+			et non pas sur le début des fragments respectis. */
+		{
+			_MoveHead(
+				SourceFirstFragmentRow, SourceFirstFragmentSize,
+				SourceSecondFragmentRow, SourceSecondFragmentSize,
+				TargetFirstFragmentRow, TargetFirstFragmentSize,
+				TargetSecondFragmentRow, TargetSecondFragmentSize );
+
+			if ( ( SourceFirstFragmentSize != TargetFirstFragmentSize ) && ( ( SourceFirstFragmentSize + SourceSecondFragmentSize ) > TargetFirstFragmentSize ) )
+				_MoveMiddle(
+					SourceFirstFragmentRow, SourceFirstFragmentSize,
+					SourceSecondFragmentRow, SourceSecondFragmentSize,
+					TargetFirstFragmentRow, TargetFirstFragmentSize,
+					TargetSecondFragmentRow, TargetSecondFragmentSize );
+
+			if ( ( SourceFirstFragmentSize  + SourceSecondFragmentSize ) > TargetFirstFragmentSize )
+				_MoveTail(
+					SourceFirstFragmentRow, SourceFirstFragmentSize,
+					SourceSecondFragmentRow, SourceSecondFragmentSize,
+					TargetFirstFragmentRow, TargetFirstFragmentSize,
+					TargetSecondFragmentRow, TargetSecondFragmentSize );
+		}
+		void _Move(
+			row__ SourceFirstFragmentRow,
+			const mdr::datum__ *SourceFirstFragmentHeader,
+			row__ TargetFirstFragmentRow,
+			const mdr::datum__ *TargetFirstFragmentHeader )
+		{
+			mdr::datum__ SourceSecondFragmentHeader[MMM2_HEADER_MAX_LENGTH], TargetSecondFragmentHeader[MMM2_HEADER_MAX_LENGTH];
+			row__ SourceSecondFragmentRow = NONE, TargetSecondFragmentRow = NONE;
+			mdr::size__
+				SourceFirstFragmentSize = _GetUsedFragmentDataSize( SourceFirstFragmentHeader ), SourceSecondFragmentSize = 0,
+				TargetFirstFragmentSize = _GetUsedFragmentDataSize( TargetFirstFragmentHeader ), TargetSecondFragmentSize = 0;
+
+			if ( _IsUsedFragmentLinked( SourceFirstFragmentHeader ) ) {
+				SourceSecondFragmentRow = _GetUsedFragmentLink( SourceFirstFragmentRow, SourceFirstFragmentHeader );
+				_GetHeader( SourceSecondFragmentRow, SourceSecondFragmentHeader );
+				SourceSecondFragmentSize = _GetUsedFragmentDataSize( SourceSecondFragmentHeader );
+			}
+
+			if ( _IsUsedFragmentLinked( TargetFirstFragmentHeader ) ) {
+				TargetSecondFragmentRow = _GetUsedFragmentLink( TargetFirstFragmentRow, TargetFirstFragmentHeader );
+				_GetHeader( TargetSecondFragmentRow, TargetSecondFragmentHeader );
+				TargetSecondFragmentSize = _GetUsedFragmentDataSize( TargetSecondFragmentHeader );
+			}
+
+			_Move(
+				*SourceFirstFragmentRow + _GetSizeLength( SourceFirstFragmentSize ), SourceFirstFragmentSize,
+				*SourceSecondFragmentRow + ( SourceSecondFragmentSize ? _GetSizeLength( SourceSecondFragmentSize ) : 0 ), SourceSecondFragmentSize,
+				*TargetFirstFragmentRow + _GetSizeLength( TargetFirstFragmentSize ), TargetFirstFragmentSize,
+				*TargetSecondFragmentRow + ( TargetSecondFragmentSize ? _GetSizeLength( TargetSecondFragmentSize ) : 0 ), TargetSecondFragmentSize );
+		}
+		void _Move(
+			row__ SourceFirstFragmentRow,
+			const mdr::datum__ *SourceFirstFragmentHeader,
+			row__ TargetFirstFragmentRow )
+		{
+			mdr::datum__ TargetFirstFragmentHeader[MMM2_HEADER_MAX_LENGTH];
+
+			_GetHeader( TargetFirstFragmentRow, TargetFirstFragmentHeader );
+
+			_Move( SourceFirstFragmentRow, SourceFirstFragmentHeader, TargetFirstFragmentRow, TargetFirstFragmentHeader );
+		}
 		row__ _ReallocateGreater(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
@@ -657,6 +842,16 @@ namespace mmm {
 			if ( _Size( *Descriptor, Header ) >= DataSize )
 				ERRc();
 #endif
+#if 1
+			row__ NewDescriptor = _Allocate( DataSize );
+
+			_Move( Descriptor, Header, NewDescriptor );
+
+			_Free( *Descriptor );
+
+			return NewDescriptor;
+
+#else	// Ancien algorithme. A CONSERVER pour s'en inspirer en vue de futurs optimisations.
 			if ( _IsUsedFragmentLinked( Header ) ) {
 				row__ Link = _GetUsedFragmentLink( Descriptor, Header );
 				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
@@ -716,6 +911,7 @@ namespace mmm {
 					return Descriptor;
 				}
 			}
+#endif
 		}
 		mdr::size__ _ReadFromFragment(
 			descriptor__ Descriptor,
@@ -848,55 +1044,18 @@ namespace mmm {
 		}
 		descriptor__ Allocate( mdr::size__ Size )
 		{	
-			if ( _IsFreeFragmentAvailable() ) {
-				row__ Free1 = NONE, Free2 = NONE, Remainder1 = NONE, Remainder2 = NONE;
-
-				Free1 = _Pop();
-
-				if ( _IsFreeFragmentAvailable()  )
-					Free2 = _Top();
-
-				if ( _Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
-					_Pop();
-
-				_TestAndPush_( Remainder1 );
-
-				_TestAndPush_( Remainder2 );
-
-				return *Free1;
-			} else
-				return *_AppendNewUnlinkedFragment( Size );
+			return _Allocate( Size );
 		}
 		void Free( descriptor__ Descriptor )
 		{
-			if ( Descriptor == MMM_UNDEFINED_DESCRIPTOR )
-				return;
-
-			row__ Remainder = NONE;
-			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-
-			_GetHeader( Descriptor, Header );
-
-			if ( _IsUsedFragmentLinked( Header ) ) {
-				row__ Link = _GetUsedFragmentLink( Descriptor, Header );
-				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
-
-				_GetHeader( Link, LinkHeader );
-
-				Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
-				_TestAndPush_( Remainder );
-			}
-
-			Remainder = _SetAsFreeFragment( Descriptor, _GetUsedFragmentTotalSize( Header ) );
-
-			_TestAndPush_( Remainder );
+			_Free( Descriptor );
 		}
 		descriptor__ Reallocate(
 			descriptor__ Descriptor,
 			mdr::size__ Size )
 		{
 			if ( Descriptor == NONE )
-				return Allocate( Size );
+				return _Allocate( Size );
 
 			if ( Size == 0 ) {
 				ERRu();
