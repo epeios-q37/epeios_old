@@ -660,13 +660,14 @@ namespace mmm {
 			if ( _IsUsedFragmentLinked( Header ) ) {
 				row__ Link = _GetUsedFragmentLink( Descriptor, Header );
 				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
+
+				_GetHeader( Link, LinkHeader );
+
 				mdr::size__
 					LinkedFragmentCurrentDataSize = _GetUsedFragmentDataSize( LinkHeader ),
 					LinkedFragmentNewDataSize = DataSize - _GetUsedFragmentDataSize( Header );
 				row__ NewLink = _GetNewUnlinkedFragment( LinkedFragmentNewDataSize );
 				row__ Remainder = NONE;
-
-				_GetHeader( Link, LinkHeader );
 
 				Memory.Store_(
 					Memory,
@@ -961,14 +962,10 @@ namespace mmm {
 			_GetHeader( Descriptor, Header );
 
 #ifdef MMM2_DBG
-			mdr::size__ Size = 0;
-
 			if ( !_IsFragmentUsed( Header ) )
 				ERRu();
 
-			Size = _Size( Descriptor, Header );
-
-			if ( Size < ( Position + Amount ) )
+			if ( _Size( Descriptor, Header ) < ( Position + Amount ) )
 				ERRu();
 #endif
 			mdr::size__ AmountWritten = 0;
