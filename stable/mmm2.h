@@ -186,12 +186,9 @@ namespace mmm {
 		{
 			return ( Header[0] & ~MMM2_FLAG_MASK ) == 0;
 		}
-		mdr::size__ _GetRawSize_( const mdr::datum__ *Header ) const
+		mdr::size__ _GetRawSize( const mdr::datum__ *SizeBuffer ) const
 		{
-			if ( _IsFragmentFree( Header ) )
-				Header++;
-
-			return _GetSize( Header );
+			return _GetSize( SizeBuffer );
 		}
 		void _SetRawSize(
 			mdr::size__ Size,
@@ -228,7 +225,10 @@ namespace mmm {
 			if ( !_IsFragmentFree( Header ) )
 				ERRc();
 #endif
-			return _GetRawSize_( Header );
+			if ( Header[0] == 0 )
+				return 1;
+			else
+				return _GetRawSize( Header + 1 );
 		}
 		mdr::size__ _GetFreeFragmentHeaderLength( const mdr::datum__ *Header ) const
 		{
@@ -339,7 +339,7 @@ namespace mmm {
 			if ( !_IsFragmentUsed( Header ) )
 				ERRc();
 #endif
-			return _GetRawSize_( Header );
+			return _GetRawSize( Header );
 		}
 		mdr::size__ _GetUsedFragmentTotalSize( const mdr::datum__ *Header ) const
 		{
@@ -571,18 +571,20 @@ namespace mmm {
 
 				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
-				_GetHeader( _Top(), Header );
+				Row = _Pop();
+
+				_GetHeader( Row, Header );
 			
 				if ( _IsFreeFragmentBigEnough( Header, DataSize ) ) {
 					row__ RemainderPosition = NONE;
 
-					Row = _Pop();
-
 					RemainderPosition = _ConvertFreeToUsedFragment_( Row, Header, DataSize, NONE );
 
 					_TestAndPush_( RemainderPosition );
-				} else
+				} else {
+					_TestAndPush_( Row );
 					Row = _AppendNewUnlinkedFragment( DataSize );
+				}
 			} else
 				Row = _AppendNewUnlinkedFragment( DataSize );
 
@@ -957,29 +959,34 @@ namespace mmm {
 		}
 		bso::bool__ _IsFreeFragmentAvailable( void )
 		{
-			return S_.Free != NONE;
-		}
-		row__ _Top( void ) const
-		{
-			return S_.Free;
+			return S_.FreeHead != NONE;
 		}
 		row__ _Pop( void )
 		{
-			row__ Row = S_.Free;
+			row__ Row = S_.FreeHead;
 
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
 			_GetHeader( Row, Header );
 
-			S_.Free = _GetFreeFragmentLink( Row, Header );
+			S_.FreeHead = _GetFreeFragmentLink( Row, Header );
+
+			if ( S_.FreeHead == NONE )
+				S_.FreeTail = NONE;
 
 			return Row;
 		}
 		void _Push( row__ Position )
 		{
-			_SetFreeFragmentLink( Position, S_.Free );
+			if ( S_.FreeTail != NONE )
+				_SetFreeFragmentLink( S_.FreeTail, Position );
 
-			S_.Free = Position;
+			_SetFreeFragmentLink( Position, NONE );
+
+			S_.FreeTail = Position;
+
+			if ( S_.FreeHead == NONE )
+				S_.FreeHead = Position;
 		}
 	public:
 		uym::untyped_memory_ Memory;
@@ -987,7 +994,7 @@ namespace mmm {
 		{
 			uym::untyped_memory_ ::s Memory;
 			mdr::size__ Extent;
-			row__ Free;	
+			row__ FreeTail, FreeHead;	
 			descriptor__ MultimemoryDriverDescriptor;
 			mdr::size__ MultimemoryDriverExtent;
 		} &S_;
@@ -1001,7 +1008,7 @@ namespace mmm {
 			_MultimemoryDriver.reset( P );
 			Memory.reset( P );
 			S_.Extent = 0;
-			S_.Free = NONE;
+			S_.FreeHead = S_.FreeTail = NONE;
 		}
 		void plug( multimemory_ &MM )
 		{
@@ -1019,7 +1026,8 @@ namespace mmm {
 			Memory.Store_( M.Memory, M.S_.Extent, 0 );
 
 			S_.Extent = M.S_.Extent;
-			S_.Free = M.S_.Free;
+			S_.FreeHead = M.S_.FreeHead;
+			S_.FreeTail = M.S_.FreeTail;
 
 			return *this;
 		}
@@ -1028,7 +1036,7 @@ namespace mmm {
 			Memory.Init();
 
 			S_.Extent = 0;
-			S_.Free = NONE;
+			S_.FreeHead = S_.FreeTail = NONE;
 		}
 		void Flush( void ) const
 		{
@@ -1155,7 +1163,7 @@ namespace mmm {
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{
-#pragma message( __LOC__ "Voir que faire avec 'S_.Free'" )
+#pragma message( __LOC__ "Voir que faire avec 'S_.Free[Head|Tail]'" )
 		bso::bool__ Exists = uym::Connect( Multimemory.Memory, FileManager );
 
 		if ( Exists )

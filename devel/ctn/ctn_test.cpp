@@ -225,41 +225,46 @@ void Classer( E_MCONTAINER_( str::string_ ) &Liste )
 {
 ERRProlog
 	bso::bool__ Swap = true;
-	str::string S1;
-	E_MITEM( str::string_ ) S2;
-	E_MITEM( str::string_ ) EListe;
+	str::string S;
+	E_MITEM( str::string_ ) I1, I2;
 ERRBegin
-	S1.Init();
-	S2.Init( Liste );
-	EListe.Init( Liste );
+	S.Init();
+	I1.Init( Liste );
+	I2.Init( Liste );
 
 	while ( Swap )
 	{
 		Swap = false;
 
 		if ( Liste.Amount() )
-			S2.Set( 0 );
+			I1.Set( 0 );
 //			S2 = Liste[0];
 
 		for ( epeios::row_t__ i = 1; i < Liste.Amount(); i++ )
-	{
-			S1 = S2();
-			S2.Set( i );
+		{
+			S = I1();
+			I1.Set( i );
 //			S2 = Liste[i];
 
-			if ( S1 < S2() )
+			if ( S < I1() )
 			{
 //				Liste.Dynamique.Multimemoire()->AfficherStructure();
 
 				Swap = true;
 
-				EListe(i-1) = S2();
-				S2() = S1;
+				I2(i-1) = I1();
+				I1() = S;
+				
+				I2.Flush();
 
 //				Liste.Dynamique.Multimemoire()->AfficherStructure();
 			}
 		}
 	}
+
+	I1.Flush();
+	I2.Flush();
+
 ERRErr
 ERREnd
 ERREpilog
@@ -273,6 +278,79 @@ void Remplir( str::string_ &S )
 }
 
 
+
+void PetitEssai( int argc, const char *argv[] )
+{
+ERRProlog
+//	mmm::multimemory M;
+	E_XMCONTAINER( str::string_ ) CS;
+/*	fch_flot_sortie_fichier S;
+	fch_flot_entree_fichier E;
+*/	E_MITEM( str::string_ ) ECS;
+	str::string Str;
+	epeios::row__ P;
+ERRBegin
+//	M.Init();
+//	CS.plug( M );
+	CS.Init();
+	CS.Allocate( 3 );
+	ECS.Init( CS );
+
+	Str.Init();
+
+	ECS(0).Init();
+	Str = "ab";
+	ECS(0)= Str;
+
+	ECS(1).Init();
+	Str = "c";
+	ECS(1)= Str;
+
+	ECS(2).Init();
+	Str = "de";
+	ECS(2)= Str;
+
+
+
+	P = CS.First();
+	
+	while( P != NONE ) {
+		cout << ECS(P) << txf::tab;
+		P = CS.Next( P );
+	}
+
+	cout << txf::nl;
+
+	ECS.Flush();
+
+	Classer( CS );
+#if 0
+	S.Init( "Essai.txt" );
+	S << CS;
+	S.prg();
+
+	E.Init( "Essai.txt" );
+	CD.Init();
+	E >> CD;
+	E.prg();
+#else
+#endif
+
+	P = CS.First();
+	
+	while( P != NONE ) {
+		cout << ECS(P) << txf::tab;
+		P = CS.Next( P );
+	}
+
+	ECS.Flush();
+
+	cout << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+
+}
 
 void Essai( int argc, const char *argv[] )
 {
@@ -290,7 +368,7 @@ ERRBegin
 	F.Automatic();
 //	M.plug( F );
 	M.Init();
-	CS.plug( M );
+//	CS.plug( M );
 	CS.Init();
 	CS.Allocate( 12 );
 	ECS.Init( CS );
@@ -346,7 +424,9 @@ ERRBegin
 
 	cout << txf::nl;
 
-//	Classer( CS );
+	ECS.Flush();
+
+	Classer( CS );
 #if 0
 	S.Init( "Essai.txt" );
 	S << CS;
@@ -908,10 +988,11 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
+/*		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
+*/		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
