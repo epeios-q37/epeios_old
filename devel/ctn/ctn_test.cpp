@@ -282,7 +282,7 @@ void Remplir( str::string_ &S )
 void PetitEssai( int argc, const char *argv[] )
 {
 ERRProlog
-//	mmm::multimemory M;
+	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) CS;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
@@ -290,8 +290,8 @@ ERRProlog
 	str::string Str;
 	epeios::row__ P;
 ERRBegin
-//	M.Init();
-//	CS.plug( M );
+	M.Init();
+	CS.plug( M );
 	CS.Init();
 	CS.Allocate( 3 );
 	ECS.Init( CS );
@@ -368,7 +368,7 @@ ERRBegin
 	F.Automatic();
 //	M.plug( F );
 	M.Init();
-//	CS.plug( M );
+	CS.plug( M );
 	CS.Init();
 	CS.Allocate( 12 );
 	ECS.Init( CS );
@@ -988,18 +988,18 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-/*		EssaiBasic();
+		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
-*/		PetitEssai( argc, argv );
+		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiPersistence( argc, argv );
+//		EssaiPersistence( argc, argv );
 #else
 		BugTracking();
 #endif
