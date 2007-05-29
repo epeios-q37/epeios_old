@@ -331,7 +331,7 @@ namespace str {
 	{
 		bso::ulong__ Result = 0;
 		epeios::row__ &P = Begin;
-		char C;
+		bso::ubyte__ C;
 		bso::ubyte__ Base;
 
 		if ( BaseFlag == bAuto )

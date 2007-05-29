@@ -2,6 +2,9 @@ $Id$
 
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
+26/05/2007 :
+	- STR :
+		- Correction bogues conversion en entier.
 	
 24/05/2007 :
 	- BCH :

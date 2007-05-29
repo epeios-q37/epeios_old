@@ -266,7 +266,7 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)ToUL( 0, ErrP, Base, Limit );
+			return (bso::ubyte__)ToUL( Begin, ErrP, Base, Limit );
 		}
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP,
