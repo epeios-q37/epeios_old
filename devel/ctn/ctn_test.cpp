@@ -779,7 +779,7 @@ ERRBegin
 
 	for ( char C = '0'; C <= LC; C++ )
 	{
-		cout << E(C - '0') << ' ';
+		cout << E(C - '0') << ' ' << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -790,6 +790,7 @@ ERREpilog
 void SSP1(
 	const E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) &O,
 	char M)
+
 {
 ERRProlog
 	E_CITEM( E_XMCONTAINER_( str::string_ ) ) E;
@@ -800,7 +801,7 @@ ERRBegin
 	{
 		SSP2( E(m - 'a'), M, m );
 
-		cout << '\t';
+		cout << txf::tab << txf::sync;
 	}
 ERRErr
 ERREnd
@@ -823,7 +824,7 @@ ERRBegin
 	F.Manual();
 //	Mm.plug( F );
 	Mm.Init();
-//	GC.plug( Mm );
+	GC.plug( Mm );
 	GC.Init();
 	GC.Allocate( LM - 'A' + 1 );
 
@@ -877,9 +878,9 @@ ERRBegin
 	E.Init( C );
 
 	E(0).Init();
-	E(0) = str::string( "a" );
+	E(0) = str::string( "ca" );
 	E(1).Init();
-	E(1)= str::string( "b" );
+	E(1)= str::string( "bte" );
 	cout << E(0) << txf::tab;
 	cout << E(1) << txf::nl;
 ERRErr
@@ -990,14 +991,14 @@ ERRFBegin
 #if 1
 /*		EssaiBasic();
 		EssaiConteneurDansConteneur();
-*/		EssaiSimpleMono();
+		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiDirect( argc, argv );
+*/		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiCopie( argc, argv );
+//		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
 //		EssaiPersistence( argc, argv );
 #else
