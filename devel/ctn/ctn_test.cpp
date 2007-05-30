@@ -207,8 +207,8 @@ ERRBegin
 	C.Flush();
 #endif
 
-	cout << C( 0 ) << txf::tab;
-	cout << C( 1 ) << txf::nl;
+	cout << C( 0 ) << txf::tab << txf::sync;
+	cout << C( 1 ) << txf::nl << txf::sync;
 	
 ERRErr
 ERREnd
@@ -869,7 +869,7 @@ ERRProlog
 	E_MITEM( str::string_ ) E;
 ERRBegin
 	F.Init( "coucou.tmp" );
-	M.plug( F );
+//	M.plug( F );
 	M.Init();
 	C.plug( M );
 	C.Init();
@@ -988,9 +988,9 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
+/*		EssaiBasic();
 		EssaiConteneurDansConteneur();
-		EssaiSimpleMono();
+*/		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
 		Essai( argc, argv );

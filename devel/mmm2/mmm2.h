@@ -226,6 +226,17 @@ namespace mmm {
 #endif
 			return ( Header[0] & MMM2_FREE_FLAG_MASK ) != 0;
 		}
+		void _SetFreeFlag(
+			row__ Position,
+			const mdr::datum__ *Header,
+			bso::bool__ Value )
+		{
+#ifdef MMM2_DBG
+			if ( _IsFreeFlagSet( Header ) )
+				ERRc();
+#endif
+			Memory.Put( ( Header[0] & ~MMM2_FREE_FLAG_MASK ) | ( Value << MMM2_FREE_FLAG_POSITION ), *Position );
+		}
 		bso::bool__ _IsLinkFlagSet( const mdr::datum__ *Header ) const
 		{
 #ifdef MMM2_DBG
@@ -240,7 +251,7 @@ namespace mmm {
 			if ( !_IsFragmentFree( Header ) )
 				ERRc();
 #endif
-			return ( Header[0] & MMM2_LINK_FLAG_MASK ) != 0;
+			return ( Header[0] & MMM2_SIZE_FLAG_MASK ) != 0;
 		}
 		bso::bool__ _IsUsedFragmentLinked( const mdr::datum__ *Header ) const
 		{
@@ -325,8 +336,8 @@ namespace mmm {
 				if ( Size < 7 )
 					Memory.Put( (mdr::datum__)Size, *Position + Size );
 				else {
-					Memory.Put( 0xff, *Position + Size );
-					Memory.Store( (const mdr::datum__ *)&Position, sizeof( Position ), *Position + Size - sizeof( Position ) - 1 );
+					Memory.Put( 0xff, *Position + Size - 1 );
+					Memory.Store( (const mdr::datum__ *)&Position, sizeof( Position ), *Position + Size - sizeof( Position ) - 2 );
 				}
 			}
 		}
@@ -351,23 +362,20 @@ namespace mmm {
 		row__ _GetUsedFragmentPreviousFreeFragmentPosition(
 			row__ Position,
 			const mdr::datum__ *Header,
-			mdr::datum__ *FreeFragmentTail ) const
+			const mdr::datum__ *FreeFragmentTail ) const
 		{
 #ifdef MMM2_DBG
 			if ( !_IsFreeFlagSet( Header ) )
 				ERRc();
 #endif
-			mdr::datum__ *Pointer = FreeFragmentTail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE;
+			const mdr::datum__ *Pointer = FreeFragmentTail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE;
 
 			if ( *Pointer == 0 )
 				return *Position - 1;
 			else if ( *Pointer != 0xff )
 				return *Position - *Pointer;
-			else {
-				Pointer -= MMM2_LINK_SIZE;
-
-				return *(row__ *)Pointer;
-			}
+			else
+				return *(row__ *)( Pointer - 1);
 		}
 		void _GetUsedFragmentPreviousFreeFragmentTail(
 			row__ Position,
@@ -431,13 +439,24 @@ namespace mmm {
 #endif
 			if ( ( *Position + Size ) != S_.Extent ) {
 				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-				_UpdateMarkers( *Position + Size );
 
 				_GetHeader( *Position + Size, Header );
 
-				if ( _IsFragmentFree( Header ) )
+				if ( _IsFragmentFree( Header ) ) {
+					_UpdateMarkers( *Position + Size );
 					Size = +_GetFreeFragmentSize( Header );
+				} else if ( _IsFragmentUsed( Header ) ) {
+#ifdef MMM2_DBG
+					if ( _IsFreeFlagSet( Header ) )
+						ERRc();
+#endif
+					_SetFreeFlag( Position, Header, true );
+				} else
+					ERRc();
 			}
+
+			if ( ( *Position + Size ) == S_.Extent )
+				S_.LastFragmentIsUsed = false;
 
 			_MarkAsFreeFragment( Position, Size );
 
@@ -446,7 +465,7 @@ namespace mmm {
 		row__ _FreeUsedFragment(
 			row__ Position,
 			const mdr::datum__ *Header,
-			mdr::size__ Size )	// Retourne la position du fragment libre ainsi crée.
+			mdr::size__ Size )	// Retourne la position du fragment libre ainsi crée.Peut être différent de 'Position' (fusion avec le fragment libre précédent).
 		{
 #ifdef MMM2_DBG
 			if ( Size == 0 )
@@ -474,8 +493,8 @@ namespace mmm {
 		void _MarkAsUsedFragment_(
 			row__ Position,
 			mdr::size__ DataSize,
-			row__ Link,
-			bso::bool__ FreeFlag )	// Si pas lié, est égal à 'NONE'
+			row__ Link,	// Si pas lié, est égal à 'NONE'.
+			bso::bool__ FreeFlag )
 		{
 #ifdef MMM2_DBG
 			if ( DataSize == 0 )
@@ -502,6 +521,8 @@ namespace mmm {
 			if ( *RemainderPosition > S_.Extent )
 				ERRc();
 #endif
+			_UpdateMarkers( Position );
+
 			if ( ( RemainderPosition != S_.Extent ) && ( Size != FragmentCurrentSize ) )
 				RemainderPosition =_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
 			else
@@ -545,7 +566,9 @@ namespace mmm {
 
 			Memory.Allocate( S_.Extent );
 
-			_SetRawSize( DataSize, Row, false, false );
+			_SetRawSize( DataSize, Row, false, !S_.LastFragmentIsUsed );
+
+			S_.LastFragmentIsUsed = true;
 
 			return Row;
 		}
@@ -649,7 +672,7 @@ namespace mmm {
 					Free2 = _RetrieveFreeFragment();
 
 				if ( !_Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
-					_ReportFreeFragment( Free2 );
+					_TestAndReportFreeFragment_( Free2 );
 
 				_TestAndReportFreeFragment_( Remainder1 );
 
@@ -1085,6 +1108,7 @@ namespace mmm {
 			bso::bool__ SeekedIsFree;	// Voir ci-dessus.
 			descriptor__ MultimemoryDriverDescriptor;
 			mdr::size__ MultimemoryDriverExtent;
+			bso::bool__ LastFragmentIsUsed;
 		} &S_;
 		multimemory_( s &S )
 		: S_( S ) ,
@@ -1098,6 +1122,7 @@ namespace mmm {
 			S_.Extent = 0;
 			S_.BiggestFree = S_.Seeked = NONE;
 			S_.SeekedIsFree = false;
+			S_.LastFragmentIsUsed = false;
 		}
 		void plug( multimemory_ &MM )
 		{
@@ -1118,6 +1143,7 @@ namespace mmm {
 			S_.BiggestFree = M.S_.BiggestFree;
 			S_.Seeked = M.S_.Seeked;
 			S_.SeekedIsFree = M.S_.SeekedIsFree;
+			S_.LastFragmentIsUsed = M.S_.LastFragmentIsUsed;
 
 			return *this;
 		}
@@ -1128,6 +1154,7 @@ namespace mmm {
 			S_.Extent = 0;
 			S_.BiggestFree = S_.Seeked = NONE;
 			S_.SeekedIsFree = false;
+			S_.LastFragmentIsUsed = false;
 		}
 		void Flush( void ) const
 		{
@@ -1254,7 +1281,7 @@ namespace mmm {
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{
-#pragma message( __LOC__ "Voir que faire avec 'S_.Free[Head|Tail]'" )
+#pragma message( __LOC__ "Voir que faire avec 'S_.(...)'" )
 		bso::bool__ Exists = uym::Connect( Multimemory.Memory, FileManager );
 
 		if ( Exists )
