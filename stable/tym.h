@@ -246,12 +246,13 @@ namespace tym {
 		: public _memory_< t, uym::untyped_memory_, r >::s
 		{
 			mmm::descriptor__ MultimemoryDriverDescriptor;
+			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
 		} &S_;
 		memory_( s &S )
 		: S_( S ),
 		  _memory_< t, uym::untyped_memory_, r >( S ),
-		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverExtent )
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum, S.MultimemoryDriverExtent )
 		{}
 		void reset( bool P = true )
 		{

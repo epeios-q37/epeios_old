@@ -102,7 +102,7 @@ namespace mmm {
 	{
 	private:
 		multimemory_driver__ _MultimemoryDriver;
-		mdr::size__ _GetSizeLength( mdr::size__ Size ) const
+		bso::ubyte__ _GetSizeLength( mdr::size__ Size ) const
 		{
 #ifdef MMM2_DBG
 			if ( Size == 0 )
@@ -573,7 +573,8 @@ namespace mmm {
 			row__ SecondFragmentPosition,
 			mdr::size__ DataSize,
 			row__ &FirstRemainderPosition,
-			row__ &SecondRemainderPosition )
+			row__ &SecondRemainderPosition,
+			bso::ubyte__ &Addendum )
 		{
 #ifdef MMM2_DBG
 			if ( FirstFragmentPosition == NONE )
@@ -586,8 +587,12 @@ namespace mmm {
 			if ( _IsFreeFragmentBigEnough( FirstFragmentHeader, DataSize ) ) {
 				FirstRemainderPosition = _ConvertFreeToUsedFragment_( FirstFragmentPosition, FirstFragmentHeader, DataSize, NONE );
 
+				Addendum = _GetSizeLength( DataSize );
+
 				return false;
 			}
+
+			Addendum = 0;
 
 			mdr::size__ FirstFragmentDataSize = _GetFreeFragmentAvailableSize( FirstFragmentHeader, true );
 
@@ -657,7 +662,9 @@ namespace mmm {
 
 			return Row;
 		}
-		descriptor__ _Allocate( mdr::size__ Size )
+		descriptor__ _Allocate(
+			mdr::size__ Size,
+			bso::ubyte__ &Addendum )
 		{	
 			if ( _IsFreeFragmentAvailable() ) {
 				row__ Free1 = NONE, Free2 = NONE, Remainder1 = NONE, Remainder2 = NONE;
@@ -667,7 +674,7 @@ namespace mmm {
 				if ( _IsFreeFragmentAvailable()  )
 					Free2 = _RetrieveFreeFragment();
 
-				if ( !_Allocate( Free1, Free2, Size, Remainder1, Remainder2 ) )
+				if ( !_Allocate( Free1, Free2, Size, Remainder1, Remainder2, Addendum ) )
 					_TestAndReportFreeFragment_( Free2 );
 
 				_TestAndReportFreeFragment_( Remainder1 );
@@ -675,8 +682,11 @@ namespace mmm {
 				_TestAndReportFreeFragment_( Remainder2 );
 
 				return *Free1;
-			} else
+			} else {
+				Addendum = _GetSizeLength( Size );
+
 				return *_AppendNewUnlinkedFragment( Size );
+			}
 		}
 		void _Free( descriptor__ Descriptor )
 		{
@@ -721,7 +731,8 @@ namespace mmm {
 		row__ _ReallocateLesser(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
-			mdr::size__ DataSize )
+			mdr::size__ DataSize,
+			bso::ubyte__ &Addendum )
 		{
 			row__ Remainder = NONE;
 
@@ -736,6 +747,8 @@ namespace mmm {
 					Remainder = _ResizeUsedFragment( Link, LinkHeader, DataSize - _GetUsedFragmentDataSize( Header ), NONE );
 
 					_TestAndReportFreeFragment_( Remainder );
+
+					Addendum = 0;
 				} else {
 					Remainder = _SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 
@@ -744,9 +757,13 @@ namespace mmm {
 					Remainder = _ResizeUsedFragment( Descriptor, Header, DataSize, NONE );
 
 					_TestAndReportFreeFragment_( Remainder );
+
+					Addendum = _GetSizeLength( DataSize );
 				}
 			} else {
 				Remainder = _ResizeUsedFragment( Descriptor, Header, DataSize, NONE );
+
+				Addendum = _GetSizeLength( DataSize );
 
 				_TestAndReportFreeFragment_( Remainder );
 			}
@@ -917,12 +934,13 @@ namespace mmm {
 		row__ _ReallocateGreater(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
-			mdr::size__ DataSize )
+			mdr::size__ DataSize,
+			bso::ubyte__ &Addendum )
 		{
 #if 1
 			if ( _IsUsedFragmentLinked( Header )
 				  || ( ( *Descriptor + _GetUsedFragmentTotalSize( Header ) ) < S_.Extent ) ) {
-				row__ NewDescriptor = _Allocate( DataSize );
+				row__ NewDescriptor = _Allocate( DataSize, Addendum );
 
 				_Move( Descriptor, Header, NewDescriptor );
 
@@ -946,6 +964,8 @@ namespace mmm {
 					Memory.Store_( Memory, _GetUsedFragmentDataSize( Header ), *Descriptor + NewSizeLength, *Descriptor + OldSizeLength );
 
 				_SetRawSize( DataSize, Descriptor, _IsLinkFlagSet( Header ), _IsFreeFlagSet( Header ) );
+
+				Addendum = _GetSizeLength( DataSize );
 
 				return Descriptor;
 			}
@@ -1122,12 +1142,13 @@ namespace mmm {
 								différent est plus petit que 'BiggestFree'. */
 			bso::bool__ SeekedIsFree;	// Voir ci-dessus.
 			descriptor__ MultimemoryDriverDescriptor;
+			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
 			bso::bool__ LastFragmentIsUsed;
 		} &S_;
 		multimemory_( s &S )
 		: S_( S ) ,
-		  _MultimemoryDriver( S.MultimemoryDriverDescriptor, S.MultimemoryDriverExtent ),
+		  _MultimemoryDriver( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum, S.MultimemoryDriverExtent ),
 		  Memory( S.Memory )
 		{}
 		void reset( bso::bool__ P = true )
@@ -1183,9 +1204,11 @@ namespace mmm {
 
 			return _Size( Descriptor, Header );
 		}
-		descriptor__ Allocate( mdr::size__ Size )
+		descriptor__ Allocate(
+			mdr::size__ Size,
+			bso::ubyte__ &Addendum )
 		{	
-			return _Allocate( Size );
+			return _Allocate( Size, Addendum );
 		}
 		void Free( descriptor__ Descriptor )
 		{
@@ -1193,10 +1216,11 @@ namespace mmm {
 		}
 		descriptor__ Reallocate(
 			descriptor__ Descriptor,
-			mdr::size__ Size )
+			mdr::size__ Size,
+			bso::ubyte__ &Addendum )
 		{
 			if ( Descriptor == NONE )
-				return _Allocate( Size );
+				return _Allocate( Size, Addendum );
 
 			if ( Size == 0 ) {
 				ERRu();
@@ -1212,75 +1236,85 @@ namespace mmm {
 			if ( Size == CurrentSize )
 				return Descriptor;
 			else if ( Size < CurrentSize )
-				return *_ReallocateLesser( Descriptor, Header, Size );
+				return *_ReallocateLesser( Descriptor, Header, Size, Addendum );
 			else
-				return *_ReallocateGreater( Descriptor, Header, Size );
+				return *_ReallocateGreater( Descriptor, Header, Size, Addendum );
 		}
 		void Read(
 			descriptor__ Descriptor,
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
-			mdr::datum__ *Buffer ) const
+			mdr::datum__ *Buffer,
+			bso::ubyte__ Addendum ) const
 		{
-//			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-			mdr::datum__ Header[4096];
-			_GetHeader( Descriptor, Header, sizeof( Header ) );
-
-#ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Header ) )
-				ERRu();
-#endif
-			mdr::size__ AmountRed = 0;
-			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
-
-			if ( Position <  FirstFragmentDataSize )
-				AmountRed = _ReadFromFragment( Descriptor, Header, sizeof( Header ), Position, Amount, Buffer );
-
-			if ( AmountRed < Amount ) {
-				descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
-
+			if ( Addendum == 0 ) {
+				//			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+				mdr::datum__ Header[1024];
 				_GetHeader( Descriptor, Header, sizeof( Header ) );
 
-				AmountRed += _ReadFromFragment( Link, Header, sizeof( Header ), Position + AmountRed - FirstFragmentDataSize, Amount - AmountRed, Buffer + AmountRed );
-			}
+#ifdef MMM2_DBG
+				if ( !_IsFragmentUsed( Header ) )
+					ERRu();
+#endif
+				mdr::size__ AmountRed = 0;
+				mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
+
+				if ( Position <  FirstFragmentDataSize )
+					AmountRed = _ReadFromFragment( Descriptor, Header, sizeof( Header ), Position, Amount, Buffer );
+
+				if ( AmountRed < Amount ) {
+					descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
+
+					_GetHeader( Descriptor, Header, sizeof( Header ) );
+
+					AmountRed += _ReadFromFragment( Link, Header, sizeof( Header ), Position + AmountRed - FirstFragmentDataSize, Amount - AmountRed, Buffer + AmountRed );
+				}
 
 #ifdef MMM2_DBG
-			if ( Amount != AmountRed )
-				ERRc();
+				if ( Amount != AmountRed )
+					ERRc();
 #endif
+			} else {
+				Memory.Recall( Descriptor + Addendum + Position, Amount, Buffer );
+			}
 		}
 		void Write(
 			const mdr::datum__ *Buffer,
 			mdr::size__ Amount,
 			descriptor__ Descriptor,
-			mdr::row_t__ Position )
+			mdr::row_t__ Position,
+			bso::ubyte__ Addendum )
 		{
-			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-			_GetHeader( Descriptor, Header );
+
+			if ( Addendum == 0 ) {
+				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+				_GetHeader( Descriptor, Header );
 
 #ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Header ) )
-				ERRu();
+				if ( !_IsFragmentUsed( Header ) )
+					ERRu();
 #endif
-			mdr::size__ AmountWritten = 0;
-			mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
+				mdr::size__ AmountWritten = 0;
+				mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
 
-			if ( Position <  FirstFragmentDataSize )
-				AmountWritten = _WriteToFragment( Buffer, Descriptor, Header, Position, Amount );
+				if ( Position <  FirstFragmentDataSize )
+					AmountWritten = _WriteToFragment( Buffer, Descriptor, Header, Position, Amount );
 
-			if ( AmountWritten < Amount ) {
-				descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
-				mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
+				if ( AmountWritten < Amount ) {
+					descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
+					mdr::datum__ LinkHeader[MMM2_HEADER_MAX_LENGTH];
 
-				_GetHeader( Link, LinkHeader );
+					_GetHeader( Link, LinkHeader );
 
-				AmountWritten += _WriteToFragment( Buffer + AmountWritten, Link, LinkHeader, Position + AmountWritten - FirstFragmentDataSize, Amount - AmountWritten );
-			}
+					AmountWritten += _WriteToFragment( Buffer + AmountWritten, Link, LinkHeader, Position + AmountWritten - FirstFragmentDataSize, Amount - AmountWritten );
+				}
 
 #ifdef MMM2_DBG
-			if ( Amount != AmountWritten )
-				ERRc();
+				if ( Amount != AmountWritten )
+					ERRc();
 #endif
+			} else
+				Memory.Store( Buffer, Amount, Descriptor + Addendum + Position );
 		}
 	};
 

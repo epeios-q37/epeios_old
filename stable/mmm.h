@@ -88,7 +88,7 @@ namespace mmm {
 		mdr::size__ Amount,
 		mdr::datum__ *Buffer )
 	{
-		Multimemoire_->Read( _Descriptor, Position, Amount, Buffer );
+		Multimemoire_->Read( _Descriptor, Position, Amount, Buffer, _Addendum );
 	}
 	// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
 	inline void multimemory_driver__::MDRStore(
@@ -96,12 +96,12 @@ namespace mmm {
 		mdr::size__ Amount,
 		mdr::row_t__ Position )
 	{
-		Multimemoire_->Write( Buffer, Amount, _Descriptor, Position );
+		Multimemoire_->Write( Buffer, Amount, _Descriptor, Position, _Addendum );
 	}
 	// écrit 'Nombre' octets à la position 'Position'
 	inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
 	{
-		_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size );
+		_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size, _Addendum );
 	}
 	// alloue 'Capacite' octets
 

@@ -510,6 +510,7 @@ namespace mmm {
 		{
 			descriptor__ MultimemoryDriverDescriptor;
 			mdr::size__ MultimemoryDriverExtent;
+			bso::ubyte__ MultimemoryDriverAddendum;
 			uym::untyped_memory_::s Memoire_;
 			mdr::size__ Capacite;
 				// Descripteur à essayer lorsque l'on a besoin d'un emplacement libre.
@@ -517,7 +518,7 @@ namespace mmm {
 		} &S_;
 		multimemory_( s &S )
 		: S_( S ),
-		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverExtent ),
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum, S.MultimemoryDriverExtent ),
 		  Memoire_( S.Memoire_ )
 		{}
 		void reset( bool P = true )
@@ -575,7 +576,8 @@ namespace mmm {
 		is conserved. */
 		descriptor__ Reallocate(
 			descriptor__ Descriptor,
-			mdr::size__ Size )
+			mdr::size__ Size,
+			bso::ubyte__ )	// Facilite la mise en oeuvre de la V2.
 		{
 			nombre__ Nombre = TailleEnNombre_( Size );
 
@@ -654,7 +656,8 @@ namespace mmm {
 			descriptor__ Descriptor,
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
-			mdr::datum__ *Buffer ) const
+			mdr::datum__ *Buffer,
+			bso::ubyte__ )	const // Facilite la mise en oeuvre de la V2.
 		{
 			MemoireLire_( Descriptor + Position, Amount, Buffer );
 		}
@@ -663,7 +666,8 @@ namespace mmm {
 			const mdr::datum__ *Buffer,
 			mdr::size__ Amount,
 			descriptor__ Descriptor,
-			mdr::row_t__ Position )
+			mdr::row_t__ Position,
+			bso::ubyte__ )	// Facilite la mise en oeuvre de la V2.
 		{
 			MemoireEcrire_( Buffer, Amount, Position + Descriptor );
 		}

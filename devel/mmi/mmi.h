@@ -72,6 +72,7 @@ namespace mmi {
 	struct descripteur__
 	{
 		mmm::descriptor__ Descripteur;
+		bso::ubyte__ Addendum;
 		epeios::size__ Capacite;
 	};
 
@@ -85,12 +86,25 @@ namespace mmi {
 			epeios::size__ CapaciteCourante,
 			epeios::size__ NouvelleCapacite )
 		{
+#if 1
+			descripteur__ Buffer[1024];
+
+			mdr::size__ Amount = NouvelleCapacite - CapaciteCourante;
+			mdr::size__ HandledAmount = 0;
+
+			memset( Buffer, MMM_UNDEFINED_DESCRIPTOR, sizeof( descripteur__ ) * ( ( Amount > sizeof( Buffer ) ? sizeof( Buffer ) : Amount ) ) );
+
+			while ( Amount != HandledAmount ) {
+				Descripteurs.Store( Buffer, ( ( Amount - HandledAmount ) > sizeof( Buffer ) ? sizeof( Buffer ) : ( Amount - HandledAmount ) ), CapaciteCourante + HandledAmount );
+				HandledAmount += ( ( Amount - HandledAmount ) > sizeof( Buffer ) ? sizeof( Buffer ) : ( Amount - HandledAmount ) );
+			}
+
+#else
 			descripteur__ D;
 			D.Descripteur = MMM_UNDEFINED_DESCRIPTOR;
-
 			D.Capacite = 0;
-
 			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
+#endif
 		}
 	// fonctions
 		void AllouerPlus_(
@@ -114,7 +128,7 @@ namespace mmi {
 			epeios::size__ Taille,
 			epeios::datum__ *Tampon ) const
 		{
-			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon );
+			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon, Descripteurs(*Index).Addendum );
 		}
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
@@ -123,7 +137,7 @@ namespace mmi {
 			index__ Index,
 			epeios::row_t__ Position )
 		{
-			Multimemoire.Write( Tampon, Taille, Descripteurs(*Index).Descripteur, Position );
+			Multimemoire.Write( Tampon, Taille, Descripteurs(*Index).Descripteur, Position, Descripteurs(*Index).Addendum );
 		}
 		// écrit à 'Position' de l'objet 'Index' 'Taille' octets de 'Tampon'
 		void Allouer_(
@@ -132,7 +146,7 @@ namespace mmi {
 		{
 			descripteur__ D = Descripteurs.Get( *Index );
 
-			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre );
+			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre, D.Addendum );
 
 			D.Capacite = Nombre;
 

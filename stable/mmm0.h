@@ -96,6 +96,7 @@ namespace mmm {
 		descriptor__ &_Descriptor;
 		// memoire à laquelle il a été affecté
 		class multimemory_ *Multimemoire_;
+		bso::ubyte__ &_Addendum;
 		void Liberer_();
 	protected:
 		// fonction déportée
@@ -117,8 +118,10 @@ namespace mmm {
 	public:
 		multimemory_driver__(
 			descriptor__ &Descriptor,
+			bso::ubyte__ &Addendum,
 			mdr::size__ &Extent )
 		: _Descriptor( Descriptor ),
+		  _Addendum( Addendum ),
 		  E_MEMORY_DRIVER__( Extent )
 		{}
 		void reset( bool P = true )
@@ -160,9 +163,10 @@ namespace mmm {
 	private:
 		mdr::size__ _Extent;
 		descriptor__ _Descriptor;
+		bso::ubyte__ _Addendum;
 	public:
 		standalone_multimemory_driver__( void )
-		: multimemory_driver__( _Descriptor, _Extent )
+		: multimemory_driver__( _Descriptor, _Addendum, _Extent )
 		{}
 	};
 
