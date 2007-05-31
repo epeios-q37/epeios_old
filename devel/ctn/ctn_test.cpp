@@ -822,7 +822,7 @@ ERRProlog
 ERRBegin
 	F.Init("b.tmp");
 	F.Manual();
-//	Mm.plug( F );
+	Mm.plug( F );
 	Mm.Init();
 	GC.plug( Mm );
 	GC.Init();

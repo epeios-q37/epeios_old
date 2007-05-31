@@ -1031,7 +1031,7 @@ namespace mmm {
 			if ( Amount > ( FragmentDataSize - Position ) )
 				Amount = FragmentDataSize - Position;
 
-			if ( _GetUsedFragmentTotalSize( Header ) <= HeaderSize )
+			if ( ( Position + Amount + _GetSizeLength( FragmentDataSize ) ) <= HeaderSize )
 				memcpy( Buffer, Header + _GetSizeLength( FragmentDataSize ) + Position, Amount );
 			else
 				Memory.Recall( Descriptor + _GetSizeLength( FragmentDataSize ) + Position, Amount, Buffer );
@@ -1222,7 +1222,8 @@ namespace mmm {
 			mdr::size__ Amount,
 			mdr::datum__ *Buffer ) const
 		{
-			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+//			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+			mdr::datum__ Header[4096];
 			_GetHeader( Descriptor, Header, sizeof( Header ) );
 
 #ifdef MMM2_DBG
