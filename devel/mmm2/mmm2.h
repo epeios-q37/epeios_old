@@ -91,8 +91,8 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 #define MMM2_L3 0xffffffffUL
 #define MMM2_SIZE_BUFFER_MAX_LENGTH	7
 #define MMM2_LINK_SIZE	sizeof( mmm::row__ )
-#define MMM2_ORPHAN_MAX_SIZE	5
-#define MMM2_HEADER_MAX_LENGTH	( MMM2_SIZE_BUFFER_MAX_LENGTH + 1  )	// + 1 pour la gestion des fragments libres.
+#define MMM2_ORPHAN_MAX_SIZE	10
+#define MMM2_HEADER_MAX_LENGTH	( MMM2_SIZE_BUFFER_MAX_LENGTH + 2 * MMM2_LINK_SIZE + 1  )
 #define MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE	( MMM2_LINK_SIZE + 1 )
 
 namespace mmm {
@@ -321,15 +321,20 @@ namespace mmm {
 		}
 		void _MarkAsFreeFragment(
 			row__ Position,
-			mdr::size__ Size )
+			mdr::size__ Size,
+			row__ PreviousFragmentPosition,
+			row__ NextFragmentPosition )
 		{
 			if ( Size == 0 )
 				ERRc();
 			else if ( Size == 1 )
 				Memory.Put( 0, *Position );
 			else {
+				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 				Memory.Put( MMM2_SIZE_FLAG_MASK, *Position );
+
 				_SetRawSize( Size, *Position + 1, false, false );
+
 				if ( Size < 7 )
 					Memory.Put( (mdr::datum__)Size, *Position + Size - 1 );
 				else {
@@ -405,22 +410,117 @@ namespace mmm {
 
 			return _GetUsedFragmentPreviousFreeFragmentPosition( Position, Header, FreeFragmentTail );
 		}
-		void _UpdateMarkers( row__ Position ) {
-			if ( S_.BiggestFree == Position )
-				if ( S_.SeekedIsFree ) {
+		mdr::size__ _GetFreeFragmentFreeFragmentPointersRelativePosition( const mdr::datum__ *Header ) const
+		{
 #ifdef MMM2_DBG
-					if ( S_.Seeked == NONE )
-						ERRc();
+			if ( !_IsFragmentUsed( Header ) )
+				ERRc();
+
+			if ( _IsOrphan( Header ) )
+				ERRc();
 #endif
-					S_.BiggestFree = S_.Seeked;
-					S_.Seeked = NONE;
-					S_.SeekedIsFree = false;
-				} else
-					S_.BiggestFree = NONE;
-			else if ( ( S_.SeekedIsFree ) && ( S_.Seeked == Position ) ) {
-				S_.Seeked = NONE;
-				S_.SeekedIsFree = false;
+			return 1 + _GetSizeLength( _GetFreeFragmentSize( Header ) );
+		}
+		mdr::size__ _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
+		{
+			return _GetFreeFragmentFreeFragmentPointersRelativePosition( Header );
+		}
+		mdr::size__ _GetFreeFragmentNextFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
+		{
+			return _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ) + MMM2_LINK_SIZE;
+		}
+		row__ _GetFreeFragmentPreviousFreeFragmentPointerPosition(
+			row__ Position,
+			const mdr::datum__ *Header ) const
+		{
+			return *Position + _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header );
+		}
+		row__ _GetFreeFragmentNextFreeFragmentPointerPosition(
+			row__ Position,
+			const mdr::datum__ *Header ) const
+		{
+			return *Position + _GetFreeFragmentNextFreeFragmentPointerRelativePosition( Header );
+		}
+		row__ _GetFreeFragmentPreviousFreeFragmentPosition( const mdr::datum__ *Header ) const
+		{
+			row__ Row;
+
+			memcpy( &Row, Header + _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ), MMM2_LINK_SIZE );
+
+			return Row;
+		}
+		void _SetFreeFragmentPreviousFreeFragmentPosition(
+			row__ Position,
+			const mdr::datum__ *Header,
+			row__ PreviousFragmentPosition )
+		{
+			Memory.Store( (const mdr::datum__ *)&PreviousFragmentPosition, MMM2_LINK_SIZE, *_GetFreeFragmentPreviousFreeFragmentPointerPosition( Position, Header ) );
+		}
+		void _SetFreeFragmentPreviousFreeFragmentPosition(
+			row__ Position,
+			row__ PreviousFragmentPosition )
+		{
+			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+
+			_GetHeader( Position, Header );
+
+			_SetFreeFragmentPreviousFreeFragmentPosition( Position, Header, PreviousFragmentPosition );
+		}
+		row__ _GetFreeFragmentNextFreeFragmentPosition( const mdr::datum__ *Header ) const
+		{
+			row__ Row;
+
+			memcpy( &Row, Header + _GetFreeFragmentNextFreeFragmentPointerRelativePosition( Header ), MMM2_LINK_SIZE );
+
+			return Row;
+		}
+		void _SetFreeFragmentNextFreeFragmentPosition(
+			row__ Position,
+			const mdr::datum__ *Header,
+			row__ NextFragmentPosition )
+		{
+			Memory.Store( (const mdr::datum__ *)&NextFragmentPosition, MMM2_LINK_SIZE, *_GetFreeFragmentNextFreeFragmentPointerPosition( Position, Header ) );
+		}
+		void _SetFreeFragmentNextFreeFragmentPosition(
+			row__ Position,
+			row__ NextFragmentPosition )
+		{
+			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+
+			_GetHeader( Position, Header );
+
+			_SetFreeFragmentNextFreeFragmentPosition( Position, Header, NextFragmentPosition );
+		}
+		void _UpdateFreeFragmentMarker(
+			row__ RemovedFragmentPosition,
+			const mdr::datum__ *Header )
+		{
+			if ( S_.FreeFragment == RemovedFragmentPosition )
+				if ( *RemovedFragmentPosition & 1 )	// Petit générateur al&atoire.
+					S_.FreeFragment = _GetFreeFragmentNextFreeFragmentPosition( Header );
+				else
+					S_.FreeFragment = _GetFreeFragmentPreviousFreeFragmentPosition( Header );
+		}
+		void _UpdateFreeFragments(
+			row__ RemovedFragmentPosition,
+			const mdr::datum__ *Header )
+		{
+			_UpdateFreeFragmentMarker( RemovedFragmentPosition, Header );
+
+			row__
+					Previous = _GetFreeFragmentNextFreeFragmentPosition( Header ),
+					Next = _GetFreeFragmentNextFreeFragmentPosition( Header );
+			
+			if ( Previous != NONE ) {
+#ifdef MMM2_DBG
+				if ( Next == NONE )
+					ERRc();
+#endif
+
+				_SetFreeFragmentNextFreeFragmentPosition( Previous, Next );
+				_SetFreeFragmentPreviousFreeFragmentPosition( Next, Previous );
 			}
+
 		}
 		row__ _SetAsFreeFragment(
 			row__ Position,	// 'Position' ne pointe pas nécessairement sur un 'header'.
@@ -1135,12 +1235,7 @@ namespace mmm {
 		{
 			uym::untyped_memory_ ::s Memory;
 			mdr::size__ Extent;
-			row__
-				BiggestFree,	// Position du plus gros fragment libre trouvé jusqu'à présent.
-				Seeked;	/* Position du fragment en cours d'investigation.
-								Si 'SeekFragmentIsFree' est à 'true', ce fragment est un fragment libre,
-								différent est plus petit que 'BiggestFree'. */
-			bso::bool__ SeekedIsFree;	// Voir ci-dessus.
+			row__ FreeFragment;	// Position d'un fragment libre. NONE si aucun.
 			descriptor__ MultimemoryDriverDescriptor;
 			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
