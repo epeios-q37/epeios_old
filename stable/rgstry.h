@@ -639,26 +639,26 @@ namespace rgstry {
 			const term_ &Term,
 			nrow__ ParentRow,
 			epeios::row__ &PathErrorRow );
-		const value_ &GetPathValue(
+		const value_ &GetPathValue_(
 			const path_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ *Exists,
-			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
-		const value_ &GetPathValue(
+			bso::bool__ *Missing,
+			term_buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+		const value_ &GetPathValue_(
 			const term_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ *Exists,
+			bso::bool__ *Missing,
 			epeios::row__ &PathErrorRow,
-			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
-		const value_ &GetPathValue(
+			term_buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+		const value_ &GetPathValue_(
 			const term_ &Path,
 			nrow__ ParentRow,
-			bso::bool__ *Exists,
-			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			bso::bool__ *Missing,
+			term_buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
 		{
 			epeios::row__ PathErrorRow = NONE;
 
-			const value_ &Value = GetPathValue( Path, ParentRow, Exists, PathErrorRow, Buffer );
+			const value_ &Value = GetPathValue_( Path, ParentRow, Missing, PathErrorRow, Buffer );
 
 			if ( PathErrorRow != NONE )
 				ERRu();
@@ -670,23 +670,23 @@ namespace rgstry {
 			nrow__ ParentRow,
 			value_ &Value ) const
 		{
-			bso::bool__ Exists = true;
+			bso::bool__ Missing = false;
 			term_buffer Buffer;
 
-			Value = GetPathValue( Path, ParentRow, &Exists, Buffer );
+			Value = GetPathValue_( Path, ParentRow, &Missing, Buffer );
 
-			return Exists;
+			return !Missing;
 		}
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
 			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
 		{
-			bso::bool__ Exists = true;
+			bso::bool__ Missing = true;
 
-			const value_ &Value = GetPathValue( Path, ParentRow, &Exists, Buffer );
+			const value_ &Value = GetPathValue_( Path, ParentRow, &Missing, Buffer );
 
-			if ( !Exists )
+			if ( Missing )
 				ERRu();
 
 			return Value;
@@ -937,19 +937,19 @@ namespace rgstry {
 			return this->Local.Root = LocalRoot;
 
 		}
-		const value_ &GetPathValue(
+		const value_ &GetPathValue_(
 			const term_ &Path,
-			bso::bool__ *Exists,
+			bso::bool__ *Missing,
 			epeios::row__ &PathErrorRow,
-			term_buffer &Buffer ) const;	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
-		const value_ &GetPathValue(
+			term_buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+		const value_ &GetPathValue_(
 			const term_ &Path,
-			bso::bool__ *Exists,
-			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			bso::bool__ *Missing,
+			term_buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
 		{
 			epeios::row__ PathErrorRow = NONE;
 
-			const value_ &Value = GetPathValue( Path, Exists, PathErrorRow, Buffer );
+			const value_ &Value = GetPathValue_( Path, Missing, PathErrorRow, Buffer );
 
 			if ( PathErrorRow != NONE )
 				ERRu();
@@ -961,11 +961,11 @@ namespace rgstry {
 			value_ &Value ) const
 		{
 			term_buffer Buffer;
-			bso::bool__ Exists = true;
+			bso::bool__ Missing = false;
 
-			Value = GetPathValue( Path, &Exists, Buffer );
+			Value = GetPathValue_( Path, &Missing, Buffer );
 
-			return Exists;
+			return !Missing;
 		}
 		bso::bool__ GetPathValues(
 			const term_ &PathString,

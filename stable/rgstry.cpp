@@ -754,10 +754,10 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 	}
 }
 
-const value_ &rgstry::registry_::GetPathValue(
+const value_ &rgstry::registry_::GetPathValue_(
 	const path_ &Path,
 	nrow__ ParentRow,
-	bso::bool__ *Exists,
+	bso::bool__ *Missing,
 	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
@@ -774,7 +774,7 @@ ERRBegin
 		else
 			Result = &GetValue( AttributeEntryRow, Buffer );
 	else {
-		*Exists = false;
+		*Missing = true;
 	}
 ERRErr
 ERREnd
@@ -782,10 +782,10 @@ ERREpilog
 	return *Result;
 }
 
-const value_ &rgstry::registry_::GetPathValue(
+const value_ &rgstry::registry_::GetPathValue_(
 	const term_ &PathString,
 	nrow__ ParentRow,
-	bso::bool__ *Exists,
+	bso::bool__ *Missing,
 	epeios::row__ &PathErrorRow,
 	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
@@ -800,11 +800,11 @@ ERRBegin
 	Empty.Init();
 
 	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
-		*Exists = false;
+		*Missing = true;
 		ERRReturn;
 	}
 
-	Result = &GetPathValue( Path, ParentRow, Exists, Buffer );
+	Result = &GetPathValue_( Path, ParentRow, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog
@@ -927,11 +927,11 @@ ERREpilog
 	return Root;
 }
 
-const value_ &rgstry::overloaded_registry___::GetPathValue(
+const value_ &rgstry::overloaded_registry___::GetPathValue_(
 	const term_ &PathString,
-	bso::bool__ *Exists,
+	bso::bool__ *Missing,
 	epeios::row__ &PathErrorRow,
-	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	term_buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = 0;
@@ -939,20 +939,20 @@ ERRProlog
 	nrow__ Row = NONE;
 	path Path;
 	erow__ AttributeEntryRow = NONE;
-	bso::bool__ LocalExists = true;
+	bso::bool__ LocalMissing = false;
 ERRBegin
 	Path.Init();
 	Empty.Init();
 
 	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
-		Exists = false;
+		*Missing = true;
 		ERRReturn;
 	}
 
-	Result = &Local.Registry->GetPathValue( Path, Local.Root, &LocalExists, Buffer );
+	Result = &Local.Registry->GetPathValue_( Path, Local.Root, &LocalMissing, Buffer );
 
-	if ( !LocalExists )
-		Result = &Global.Registry->GetPathValue( Path, Global.Root, Exists, Buffer );
+	if ( !LocalMissing )
+		Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog

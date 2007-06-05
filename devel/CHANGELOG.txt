@@ -2,6 +2,11 @@ $Id$
 
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
+	
+05/06/2007 :
+	- RGSTRY :
+		- Remplacement du paramètre 'Exists' par son opposé 'Missing' car moins susceptible de provoquer des bogues.
+		
 26/05/2007 :
 	- STR :
 		- Correction bogues conversion en entier.
