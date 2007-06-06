@@ -287,8 +287,10 @@ namespace mmm {
 
 			if ( Size == 1 )
 				return 1;
-			else
+			else if ( Size <= MMM2_ORPHAN_MAX_SIZE )
 				return _GetSizeLength( Size ) + 1;
+			else
+				return _GetSizeLength( Size ) + 1 + MMM2_LINK_SIZE + MMM2_LINK_SIZE;
 		}
 		bso::bool__ _IsOrphan( const mdr::datum__ *Header ) const
 		{
@@ -319,6 +321,25 @@ namespace mmm {
 		{
 			return *Position + _GetFreeFragmentSize( Header );
 		}
+		mdr::size__ _GetFreeFragmentFreeFragmentPointersRelativePosition( const mdr::datum__ *Header ) const
+		{
+#ifdef MMM2_DBG
+			if ( !_IsFragmentUsed( Header ) )
+				ERRc();
+
+			if ( _IsOrphan( Header ) )
+				ERRc();
+#endif
+			return 1 + _GetSizeLength( _GetFreeFragmentSize( Header ) );
+		}
+		mdr::size__ _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
+		{
+			return _GetFreeFragmentFreeFragmentPointersRelativePosition( Header );
+		}
+		mdr::size__ _GetFreeFragmentNextFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
+		{
+			return _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ) + MMM2_LINK_SIZE;
+		}
 		void _MarkAsFreeFragment(
 			row__ Position,
 			mdr::size__ Size,
@@ -331,16 +352,23 @@ namespace mmm {
 				Memory.Put( 0, *Position );
 			else {
 				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
-				Memory.Put( MMM2_SIZE_FLAG_MASK, *Position );
+
+				Header[0] = MMM2_SIZE_FLAG_MASK;
+
+				_PutSize( Size, Header + 1 );
 
 				_SetRawSize( Size, *Position + 1, false, false );
 
-				if ( Size < 7 )
+				if ( Size <= MMM2_ORPHAN_MAX_SIZE )
 					Memory.Put( (mdr::datum__)Size, *Position + Size - 1 );
 				else {
 					Memory.Put( 0xff, *Position + Size - 1 );
-					Memory.Store( (const mdr::datum__ *)&Position, sizeof( Position ), *Position + Size - sizeof( Position ) - 2 );
+					// Bien que 'Header' soit en cours de construction, son contenu est suffisant pour pouvoir l'utiliser.
+					memcpy( Header + _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ), &PreviousFragmentPosition, MMM2_LINK_SIZE );
+					memcpy( Header + _GetFreeFragmentNextFreeFragmentPointerRelativePosition( Header ), &NextFragmentPosition, MMM2_LINK_SIZE );
 				}
+
+				Memory.Store( Header, _GetFreeFragmentHeaderLength( Header ), *Position );
 			}
 		}
 		mdr::size__ _GetUsedFragmentDataSize( const mdr::datum__ *Header ) const
@@ -382,7 +410,7 @@ namespace mmm {
 		void _GetUsedFragmentPreviousFreeFragmentTail(
 			row__ Position,
 			const mdr::datum__ *Header,
-			mdr::datum__ *Tail ) const
+			mdr::datum__ *FreeFragmentTail ) const
 		{
 #ifdef MMM2_DBG
 			if ( !_IsFreeFlagSet( Header ) )
@@ -397,7 +425,7 @@ namespace mmm {
 			if ( *Position < Amount )
 				Amount = *Position;
 
-			Memory.Recall( *Position - Amount, Amount, Tail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE - Amount );
+			Memory.Recall( *Position - Amount, Amount, FreeFragmentTail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE - Amount );
 		}
 
 		row__ _GetUsedFragmentPreviousFreeFragmentPosition(
@@ -409,25 +437,6 @@ namespace mmm {
 			_GetUsedFragmentPreviousFreeFragmentTail( Position, Header, FreeFragmentTail );
 
 			return _GetUsedFragmentPreviousFreeFragmentPosition( Position, Header, FreeFragmentTail );
-		}
-		mdr::size__ _GetFreeFragmentFreeFragmentPointersRelativePosition( const mdr::datum__ *Header ) const
-		{
-#ifdef MMM2_DBG
-			if ( !_IsFragmentUsed( Header ) )
-				ERRc();
-
-			if ( _IsOrphan( Header ) )
-				ERRc();
-#endif
-			return 1 + _GetSizeLength( _GetFreeFragmentSize( Header ) );
-		}
-		mdr::size__ _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
-		{
-			return _GetFreeFragmentFreeFragmentPointersRelativePosition( Header );
-		}
-		mdr::size__ _GetFreeFragmentNextFreeFragmentPointerRelativePosition( const mdr::datum__ *Header ) const
-		{
-			return _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ) + MMM2_LINK_SIZE;
 		}
 		row__ _GetFreeFragmentPreviousFreeFragmentPointerPosition(
 			row__ Position,
@@ -495,13 +504,17 @@ namespace mmm {
 			row__ RemovedFragmentPosition,
 			const mdr::datum__ *Header )
 		{
+#ifdef MMM2_DBG
+			if  ( _IsOrphan( Header ) )
+				ERRc();
+#endif
 			if ( S_.FreeFragment == RemovedFragmentPosition )
 				if ( *RemovedFragmentPosition & 1 )	// Petit générateur al&atoire.
 					S_.FreeFragment = _GetFreeFragmentNextFreeFragmentPosition( Header );
 				else
 					S_.FreeFragment = _GetFreeFragmentPreviousFreeFragmentPosition( Header );
 		}
-		void _UpdateFreeFragments(
+		void _ReportRemovedFreeFragment(
 			row__ RemovedFragmentPosition,
 			const mdr::datum__ *Header )
 		{
@@ -522,7 +535,32 @@ namespace mmm {
 			}
 
 		}
-		row__ _SetAsFreeFragment(
+		void _ReportNewFreeFragment(
+			row__ NewFreeFragmentPosition,
+			row__ &PreviousFreeFragmentPosition,
+			row__ &NextFreeFragmentPosition )
+		{
+			if ( S_.FreeFragment != NONE ) {
+				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+				_GetHeader( S_.FreeFragment, Header );
+
+				PreviousFreeFragmentPosition = S_.FreeFragment;
+				NextFreeFragmentPosition = _GetFreeFragmentNextFreeFragmentPosition( Header );
+
+				_SetFreeFragmentNextFreeFragmentPosition( S_.FreeFragment, NewFreeFragmentPosition );
+
+				if ( NextFreeFragmentPosition != NONE )
+					_SetFreeFragmentPreviousFreeFragmentPosition( NextFreeFragmentPosition, NewFreeFragmentPosition );
+				else
+					NextFreeFragmentPosition = S_.FreeFragment;
+			} else {
+				PreviousFreeFragmentPosition = NextFreeFragmentPosition = NONE;
+				_SetFreeFragmentPreviousFreeFragmentPosition( S_.FreeFragment, NewFreeFragmentPosition );
+			}
+
+			S_.FreeFragment =  NewFreeFragmentPosition;
+		}
+		void _SetAsFreeFragment(
 			row__ Position,	// 'Position' ne pointe pas nécessairement sur un 'header'.
 			mdr::size__ Size )	// Retourne la position du fragment libre ainsi crée.
 		{
@@ -536,7 +574,8 @@ namespace mmm {
 				_GetHeader( *Position + Size, Header );
 
 				if ( _IsFragmentFree( Header ) ) {
-					_UpdateMarkers( *Position + Size );
+					if ( !_IsOrphan( Header ) )
+						_ReportRemovedFreeFragment( *Position + Size, Header );
 					Size = +_GetFreeFragmentSize( Header );
 				} else if ( _IsFragmentUsed( Header ) ) {
 					if ( !_IsFreeFlagSet( Header ) )
@@ -548,9 +587,13 @@ namespace mmm {
 			if ( ( *Position + Size ) == S_.Extent )
 				S_.LastFragmentIsUsed = false;
 
-			_MarkAsFreeFragment( Position, Size );
+			if  ( Size > MMM2_ORPHAN_MAX_SIZE ) {
+				row__ PreviousFreeFragmentPosition = NONE, NextFreeFragmentPosition = NONE;
 
-			return Position;
+				_ReportNewFreeFragment( Position, PreviousFreeFragmentPosition, NextFreeFragmentPosition );
+
+				_MarkAsFreeFragment( Position, Size, PreviousFreeFragmentPosition, NextFreeFragmentPosition );
+			}
 		}
 		row__ _FreeUsedFragment(
 			row__ Position,
@@ -601,7 +644,7 @@ namespace mmm {
 			if ( Link != NONE )
 				Memory.Store( (const mdr::datum__ *)&Link, MMM2_LINK_SIZE, *Position + _GetSizeLength( DataSize ) + DataSize );
 		}
-		row__ _ConvertFreeToUsedFragment_(
+		void _ConvertFreeToUsedFragment_(
 			row__ Position,
 			const mdr::datum__ *Header,
 			mdr::size__ DataSize,
@@ -617,16 +660,12 @@ namespace mmm {
 			if ( *RemainderPosition > S_.Extent )
 				ERRc();
 #endif
-			_UpdateMarkers( Position );
+			_ReportRemovedFreeFragment( Position, Header );
 
 			if ( ( RemainderPosition != S_.Extent ) && ( Size != FragmentCurrentSize ) )
-				RemainderPosition =_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
-			else
-				RemainderPosition = NONE;
+				_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
 
 			_MarkAsUsedFragment_( Position, DataSize, Link, false );
-
-			return RemainderPosition;
 		}
 		mdr::size__ _GetFreeFragmentAvailableSize(
 			const mdr::datum__ *Header,
