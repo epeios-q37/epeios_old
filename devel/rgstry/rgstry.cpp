@@ -951,7 +951,7 @@ ERRBegin
 
 	Result = &Local.Registry->GetPathValue_( Path, Local.Root, &LocalMissing, Buffer );
 
-	if ( !LocalMissing )
+	if ( LocalMissing )
 		Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
 ERRErr
 ERREnd

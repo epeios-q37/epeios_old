@@ -680,9 +680,9 @@ namespace rgstry {
 		const value_ &GetPathValue(
 			const term_ &Path,
 			nrow__ ParentRow,
-			term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas.
+			term_buffer &Buffer ) const
 		{
-			bso::bool__ Missing = true;
+			bso::bool__ Missing = false;
 
 			const value_ &Value = GetPathValue_( Path, ParentRow, &Missing, Buffer );
 
