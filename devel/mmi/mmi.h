@@ -78,6 +78,8 @@ namespace mmi {
 
 	typedef bch::E_BUNCHt_( descripteur__, index__ ) descriptors_;
 
+#define MMI_BUFFER_SIZE	1024
+
 	//c An indexed multimemory.
 	class indexed_multimemory_
 	{
@@ -87,16 +89,16 @@ namespace mmi {
 			epeios::size__ NouvelleCapacite )
 		{
 #if 1
-			descripteur__ Buffer[1024];
+			descripteur__ Buffer[MMI_BUFFER_SIZE];
 
 			mdr::size__ Amount = NouvelleCapacite - CapaciteCourante;
 			mdr::size__ HandledAmount = 0;
 
-			memset( Buffer, MMM_UNDEFINED_DESCRIPTOR, sizeof( descripteur__ ) * ( ( Amount > sizeof( Buffer ) ? sizeof( Buffer ) : Amount ) ) );
+			memset( Buffer, MMM_UNDEFINED_DESCRIPTOR, sizeof( descripteur__ ) * ( ( Amount  > MMI_BUFFER_SIZE ? MMI_BUFFER_SIZE : Amount ) ) );
 
 			while ( Amount != HandledAmount ) {
-				Descripteurs.Store( Buffer, ( ( Amount - HandledAmount ) > sizeof( Buffer ) ? sizeof( Buffer ) : ( Amount - HandledAmount ) ), CapaciteCourante + HandledAmount );
-				HandledAmount += ( ( Amount - HandledAmount ) > sizeof( Buffer ) ? sizeof( Buffer ) : ( Amount - HandledAmount ) );
+				Descripteurs.Store( Buffer, ( ( Amount - HandledAmount ) > MMI_BUFFER_SIZE ? MMI_BUFFER_SIZE : ( Amount - HandledAmount ) ), CapaciteCourante + HandledAmount );
+				HandledAmount += ( ( Amount - HandledAmount ) > MMI_BUFFER_SIZE ? MMI_BUFFER_SIZE : ( Amount - HandledAmount ) );
 			}
 
 #else

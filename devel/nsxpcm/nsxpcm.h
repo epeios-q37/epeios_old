@@ -236,7 +236,7 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	template <typename element> inline element *GetInterface( nsISupports *GenericElement )
+	template <typename element> inline element *_GetInterface( nsISupports *GenericElement )
 	{
 		nsCOMPtr<nsIInterfaceRequestor> Requestor;
 		element *Element = NULL;

@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+07/06/2007 :
+	- MMI :
+		- Correction bogue 'Initialize(...)'.
+	- NSXPCM :
+		- Suppression de 'GetInteface(...)' apparament inutile et source de bogue (confusion avec 'QueryInterface(...)').
+	
 05/06/2007 :
 	- RGSTRY :
 		- Remplacement du paramètre 'Exists' par son opposé 'Missing' car moins susceptible de provoquer des bogues.
