@@ -10,6 +10,8 @@ $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
 $GET etmc $DIR stable/*.h
 $GET etmc $DIR stable/*.cpp
+$GET emth $DIR stable/*.h
+$GET emth $DIR stable/*.cpp
 
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/$DIR/README.txt
