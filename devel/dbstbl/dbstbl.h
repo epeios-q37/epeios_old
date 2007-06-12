@@ -190,8 +190,66 @@ namespace dbstbl {
 
 			return *Indexes( Row );
 		}
-		void _Test( void )
+		void _TestMode( mode__ Mode ) const
 		{
+			switch ( Mode ) {
+			case mBulk:
+				ERRc();
+				break;
+			case mAdmin:
+				switch ( S_.Mode ) {
+				case mBulk:
+					ERRu();
+					break;
+				case mAdmin:
+					break;
+				case mReadWrite:
+				case mReadOnly:
+					ERRu();
+					break;
+				default:
+					ERRc();
+					break;
+				}
+				break;
+			case mReadWrite:
+				switch ( S_.Mode ) {
+				case mBulk:
+				case mAdmin:
+				case mReadWrite:
+					break;
+				case mReadOnly:
+					ERRu();
+					break;
+				default:
+					ERRc();
+					break;
+				}
+				break;
+			case mReadOnly:
+				break;
+				switch ( S_.Mode ) {
+				case mBulk:
+					ERRu();
+					break;
+				case mAdmin:
+				case mReadWrite:
+				case mReadOnly:
+					break;
+				default:
+					ERRc();
+					break;
+				}
+				break;
+			default:
+				ERRc();
+				break;
+			}
+		}
+		void _Test( mode__ Mode )
+		{
+			_TestMode( Mode );
+
 			switch ( S_.Mode ) {
 			case mBulk:
 			case mReadWrite:
@@ -205,8 +263,10 @@ namespace dbstbl {
 				break;
 			}
 		}
-		void _Test( void ) const
+		void _Test( mode__ Mode ) const
 		{
+			_TestMode( Mode );
+
 			switch ( S_.Mode ) {
 			case mBulk:
 			case mReadWrite:
@@ -284,16 +344,13 @@ namespace dbstbl {
 		}
 		irow__ AddIndex( index_ &Index )
 		{
-			if ( S_.Mode != mAdmin )
-				ERRu();
-
-			_Test();
+			_Test( mAdmin );
 
 			return Indexes.Append( &Index );
 		}
 		rrow__ Insert( const datum_ &Datum )
 		{
-			_Test();
+			_Test( mReadWrite );
 
 			rrow__ Row = C_().Store( Datum );
 
@@ -309,7 +366,7 @@ namespace dbstbl {
 			const datum_ &Datum,
 			rrow__ RecordRow )
 		{
-			_Test();
+			_Test( mReadWrite );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
@@ -326,7 +383,7 @@ namespace dbstbl {
 			rrow__ Row,
 			datum_ &Datum ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			C_().Retrieve( Row, Datum );
 		}
@@ -335,7 +392,7 @@ namespace dbstbl {
 			data_ &Data ) const;
 		void Delete( rrow__ RecordRow )
 		{
-			_Test();
+			_Test( mReadWrite );
 
 			C_().Erase( RecordRow );
 
@@ -349,7 +406,7 @@ namespace dbstbl {
 			behavior__ EqualBehavior,
 			bso::sign__ &Sign ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( _IsBulk() )
 				ERRu();
@@ -363,7 +420,7 @@ namespace dbstbl {
 		{
 			bso::sign__ Sign;
 
-			_Test();
+			_Test( mReadOnly );
 
 			return Seek( Datum, IRow, EqualBehavior, Sign );
 		}
@@ -372,13 +429,13 @@ namespace dbstbl {
 			const datum_&Pattern,
 			irow__ IndexRow ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			return _I( IndexRow ).Compare( RecordRow, Pattern );
 		}
 		rrow__ First( irow__ IRow ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( IRow == NONE )
 				return C_().First();
@@ -389,7 +446,7 @@ namespace dbstbl {
 		}
 		rrow__ Last( irow__ IRow ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( IRow == NONE )
 				return C_().Last();
@@ -402,7 +459,7 @@ namespace dbstbl {
 			irow__ IRow,
 			rrow__ Row ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( IRow == NONE )
 				return C_().Next( Row );
@@ -415,7 +472,7 @@ namespace dbstbl {
 			irow__ IRow,
 			rrow__ Row ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( _IsBulk() )
 				ERRu();
@@ -426,7 +483,7 @@ namespace dbstbl {
 			irow__ IRow,
 			rrow__ Row ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			if ( IRow == NONE )
 				return C_().Previous( Row );
@@ -437,13 +494,13 @@ namespace dbstbl {
 		}
 		mdr::size__ Amount( void ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			return C_().Amount();
 		}
 		mdr::size__ Extent( void ) const
 		{
-			_Test();
+			_Test( mReadOnly );
 
 			return C_().Extent();
 		}
@@ -483,12 +540,12 @@ namespace dbstbl {
 		}
 		mode__ Mode( void ) const
 		{
-			_Test();
-
 			return S_.Mode;
 		}
 		bso::bool__ RecordExists( rrow__ RecordRow ) const
 		{
+			_Test( mReadOnly );
+
 			return C_().Exists( RecordRow );
 		}
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.

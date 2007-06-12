@@ -218,7 +218,7 @@ ERREpilog
 
 void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 {
-	_Test();
+	_Test( mReadWrite );
 
 	irow__ Row = Indexes.First();
 
@@ -245,7 +245,7 @@ ERRProlog
 	datum Datum;
 	epeios::row__ Row = NONE;
 ERRBegin
-	_Test();
+	_Test( mReadOnly );
 
 	const dbsctt::content__ &Content = C_();
 
@@ -269,7 +269,7 @@ void dbstbl::table_::Insert(
 	const data_ &Data,
 	rrows_ &RecordRows )
 {
-	_Test();
+	_Test( mReadWrite );
 
 	ctn::E_CMITEM( datum_ ) Datum;
 	epeios::row__ Row = Data.First();
@@ -290,7 +290,7 @@ void dbstbl::table_::Update(
 	if ( Data.Amount() != RecordRows.Amount() )
 		ERRu();
 
-	_Test();
+	_Test( mReadWrite );
 
 	ctn::E_CMITEM( datum_ ) Datum;
 	epeios::row__ Row = Data.First();
@@ -306,7 +306,7 @@ void dbstbl::table_::Update(
 
 void dbstbl::table_::Delete( const rrows_ &RecordRows )
 {
-	_Test();
+	_Test( mReadWrite );
 
 	epeios::row__ Row = RecordRows.First();
 
@@ -333,6 +333,8 @@ void dbstbl::table_::TestRecordsExistence(
 	const rrows_ &RecordRows,
 	rows_ &Rows ) const
 {
+	_Test( mReadOnly );
+
 	epeios::row__ Row = RecordRows.First();
 
 	while ( Row != NONE ) {
@@ -347,6 +349,8 @@ void dbstbl::table_::TestRecordsExistence(
 
 bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
 {
+	_Test( mReadOnly );
+
 	irow__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
