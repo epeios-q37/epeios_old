@@ -772,7 +772,7 @@ namespace mmm {
 
 			return FirstFragmentPosition;
 		}
-		row__ _GetNewUnlinkedFreeFragment( mdr::size__ DataSize )
+/*		row__ _GetNewUnlinkedFreeFragment( mdr::size__ DataSize )
 		{
 			row__ Row = NONE;
 
@@ -793,7 +793,7 @@ namespace mmm {
 
 			return Row;
 		}
-		descriptor__ _Allocate(
+*/		descriptor__ _Allocate(
 			mdr::size__ Size,
 			bso::ubyte__ &Addendum )
 		{	

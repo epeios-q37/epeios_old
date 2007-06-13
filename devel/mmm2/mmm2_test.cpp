@@ -32,15 +32,44 @@
 
 #include "err.h"
 #include "cio.h"
+#include "mmi.h"
+#include "str.h"
 
 using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+using namespace mmm;
+
+#define D	Multimemory.DisplayStructure( cio::cout );cio::cout << "-------------------" << txf::nl;
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	multimemory Multimemory;
+	str::string S1;
+	str::string S2;
 ERRBegin
+	Multimemory.Init();
+
+	S1.plug( Multimemory );
+	S1.Init();
+	S1.SetStepValue( 0 );
+
+	S2.plug( Multimemory );
+	S2.Init();
+	S2.SetStepValue( 0 );
+
+	D;
+
+	S1.Append( "TOTO" );
+	D;
+
+	S2.Append( "sfertyrtgf" );
+	D;
+
+	S1.Append( "turlut" );
+	D;
 ERRErr
 ERREnd
 ERREpilog
