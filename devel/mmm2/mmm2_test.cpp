@@ -65,10 +65,10 @@ ERRBegin
 	S1.Append( "TOTO" );
 	D;
 
-	S2.Append( "sfertyrtgf" );
+	S2.Append( "sfertyrjhgjhgjhgjtgf" );
 	D;
 
-	S1.Append( "turlut" );
+	S1.Append( "turlututu" );
 	D;
 ERRErr
 ERREnd
