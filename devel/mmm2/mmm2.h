@@ -92,6 +92,7 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 #define MMM2_SIZE_BUFFER_MAX_LENGTH	7
 #define MMM2_LINK_SIZE	sizeof( mmm::row__ )
 #define MMM2_ORPHAN_MAX_SIZE	10
+#define MMM2_NORMAL_FREE_FRAGMENT_MIN_SIZE	( 1 + 1 + MMM2_LINK_SIZE + MMM2_LINK_SIZE + MMM2_LINK_SIZE + 1 )
 #define MMM2_HEADER_MAX_LENGTH	( 1+ MMM2_SIZE_BUFFER_MAX_LENGTH + 2 * MMM2_LINK_SIZE  )	// Correspond à la struture d'un 'header' d'un fragment libre,
 																							// ce dernier étant plus grang que le 'header' d'un fragment utilisé.
 #define MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE	( MMM2_LINK_SIZE + 1 )
@@ -367,9 +368,14 @@ namespace mmm {
 				_SetRawSize( Size, false, false, Header + 1 );
 
 				if ( Size <= MMM2_ORPHAN_MAX_SIZE )
-					Memory.Put( (mdr::datum__)Size, *Position + Size - 1 );
+					Memory.Put( (mdr::datum__)Size, *Position + Size - 1 );	// Marqueur à destination du fragement utilisé qui suit.
 				else {
-					Memory.Put( 0xff, *Position + Size - 1 );
+					if ( Size < MMM2_NORMAL_FREE_FRAGMENT_MIN_SIZE )
+						Memory.Put( (mdr::datum__)Size, *Position + Size - 1 );	// Marqueur à destination du fragement utilisé qui suit.
+					else {
+						Memory.Put( 0xff, *Position + Size - 1 );	// Marqueur à destination du fragement utilisé qui suit.
+						Memory.Store( (const mdr::datum__ *)&Position, MMM2_LINK_SIZE, *Position + Size - 5 );	// Position du début du fragment à destination du fragment utilisé qui suit.
+					}
 					// Bien que 'Header' soit en cours de construction, son contenu est suffisant pour pouvoir l'utiliser.
 					memcpy( Header + _GetFreeFragmentPreviousFreeFragmentPointerRelativePosition( Header ), &PreviousFragmentPosition, MMM2_LINK_SIZE );
 					memcpy( Header + _GetFreeFragmentNextFreeFragmentPointerRelativePosition( Header ), &NextFragmentPosition, MMM2_LINK_SIZE );
@@ -412,7 +418,7 @@ namespace mmm {
 			else if ( *Pointer != 0xff )
 				return *Position - *Pointer;
 			else
-				return *(row__ *)( Pointer - 1 - MMM2_LINK_SIZE );
+				return *(row__ *)( Pointer - MMM2_LINK_SIZE );
 		}
 		void _GetUsedFragmentPreviousFreeFragmentTail(
 			row__ Position,
@@ -570,8 +576,11 @@ namespace mmm {
 
 				if ( NextFreeFragmentPosition != NONE )
 					_SetFreeFragmentPreviousFreeFragmentPosition( NextFreeFragmentPosition, NewFreeFragmentPosition );
-				else
+				else {
 					NextFreeFragmentPosition = S_.FreeFragment;
+					_SetFreeFragmentPreviousFreeFragmentPosition( S_.FreeFragment, NewFreeFragmentPosition );
+				}
+
 			} else {
 				PreviousFreeFragmentPosition = NextFreeFragmentPosition = NONE;
 			}
@@ -594,15 +603,13 @@ namespace mmm {
 				if ( _IsFragmentFree( Header ) ) {
 					if ( !_IsFreeFragmentOrphan( Header ) )
 						_ExciseFreeFragment( *Position + Size, Header );
-					Size = +_GetFreeFragmentSize( Header );
+					Size += _GetFreeFragmentSize( Header );
 				} else if ( _IsFragmentUsed( Header ) ) {
 					if ( !_IsUsedFragmentFreeFlagSet( Header ) )
 						_SetUsedFragmentFreeFlag( *Position + Size, Header, true );
 				} else
 					ERRc();
-			}
-
-			if ( ( *Position + Size ) == S_.Extent )
+			} else
 				S_.LastFragmentIsFree = true;
 
 			if  ( Size > MMM2_ORPHAN_MAX_SIZE ) {

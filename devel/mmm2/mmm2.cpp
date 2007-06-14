@@ -93,7 +93,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 			_GetHeader( Position, Header );
 
 			if ( _IsFragmentUsed( Header ) ) {
-				Flow << "Used" << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab;
+				Flow << "Used" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
 
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
 					Flow << *_GetUsedFragmentPreviousFreeFragmentPosition( Position, Header );
@@ -112,7 +112,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 				if ( _IsFreeFragmentOrphan( Header ) ) {
 					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header );
 				} else {
-					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header );
+					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << txf::tab << txf::tab;
 					Display_( _GetFreeFragmentPreviousFreeFragmentPosition( Header ), Flow );
 					Flow << txf::tab;
 					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );

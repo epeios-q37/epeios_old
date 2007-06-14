@@ -65,11 +65,27 @@ ERRBegin
 	S1.Append( "TOTO" );
 	D;
 
-	S2.Append( "sfertyrjhgjhgjhgjtgf" );
+	S2.Append( "sfertyr" );
 	D;
 
-	S1.Append( "turlututu" );
+	S1.Append( "t" );
 	D;
+
+	S2.reset();
+	D;
+
+	S2.Append( "tt" );
+	D;
+
+	S2.Append( "ttryertyrtyertyerty" );
+	D;
+
+	S2.reset();
+	D;
+/*
+	S2.reset();
+	D;
+*/
 ERRErr
 ERREnd
 ERREpilog
