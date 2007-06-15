@@ -77,11 +77,11 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 	if ( S_.LastFragmentIsFree )
 		Flow << "Last fragment is free.";
 	else
-		Flow << "Last fragment is used.";
+		Flow << "Last fragment is USED.";
 
 	Flow << txf::nl;
 
-
+	Flow << "Pos." << txf::tab << "  State" << txf::tab << "Size" << txf::tab << "Next" << txf::tab << "DataS" << txf::tab << txf::tab << "PF" << txf::tab << "NF/L" << txf::nl;
 
 	if ( S_.Extent != 0 ) {
 		row__ Position = 0;
@@ -93,7 +93,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 			_GetHeader( Position, Header );
 
 			if ( _IsFragmentUsed( Header ) ) {
-				Flow << "Used" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
+				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
 
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
 					Flow << *_GetUsedFragmentPreviousFreeFragmentPosition( Position, Header );
@@ -110,9 +110,9 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 				Position = _GetUsedFragmentNextFragmentPosition( Position, Header );
 			} else if ( _IsFragmentFree( Header ) ) {
 				if ( _IsFreeFragmentOrphan( Header ) ) {
-					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header );
+					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab;
 				} else {
-					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << txf::tab << txf::tab;
+					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab << txf::tab << txf::tab;
 					Display_( _GetFreeFragmentPreviousFreeFragmentPosition( Header ), Flow );
 					Flow << txf::tab;
 					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );

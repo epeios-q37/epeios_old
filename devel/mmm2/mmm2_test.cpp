@@ -41,24 +41,29 @@ using cio::cerr;
 
 using namespace mmm;
 
-#define D	Multimemory.DisplayStructure( cio::cout );cio::cout << "-------------------" << txf::nl;
+#define D\
+	Multimemory.DisplayStructure( cio::cout );\
+	cio::cout << "-------------------" << txf::nl;
+
+#define I( s )\
+	s.plug( Multimemory );\
+	s.Init();\
+	s.SetStepValue( 0 );\
+
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	multimemory Multimemory;
-	str::string S1;
-	str::string S2;
+	str::string S1, S2, S3, S4, S5;
 ERRBegin
 	Multimemory.Init();
 
-	S1.plug( Multimemory );
-	S1.Init();
-	S1.SetStepValue( 0 );
-
-	S2.plug( Multimemory );
-	S2.Init();
-	S2.SetStepValue( 0 );
+	I( S1 );
+	I( S2 );
+	I( S3 );
+	I( S4 );
+	I( S5 );
 
 	D;
 
@@ -80,7 +85,30 @@ ERRBegin
 	S2.Append( "ttryertyrtyertyerty" );
 	D;
 
+	S3.Append( "dfghdfghdfghdfghdffg" );
+	D;
+
+	S4.Append( "dfsdfgsdfgsdfgsdfg" );
+	D;
+
+	S5.Append( "dfsdfgsdfgsdfgsdfg" );
+	D;
+
+	S3.reset();
+	D;
+
+	S5.reset();
+	D;
+
 	S2.reset();
+	D;
+
+	cout << "**********" << txf::nl;
+
+	S2.Append( "oiyiuuiyui" );
+	D;
+
+	S2.Append( "oiyiklmjlllllllllluuiyui" );
 	D;
 /*
 	S2.reset();

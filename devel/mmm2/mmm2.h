@@ -243,10 +243,20 @@ namespace mmm {
 			bso::bool__ Value )
 		{
 #ifdef MMM2_DBG
-			if ( _IsUsedFragmentFreeFlagSet( Header ) )
+			if ( !_IsFragmentUsed( Header ) )
 				ERRc();
 #endif
 			Memory.Put( ( Header[0] & ~MMM2_USED_FRAGMENT_FREE_FLAG_MASK ) | ( Value << MMM2_USED_FRAGMENT_FREE_FLAG_POSITION ), *Position );
+		}
+		void _SetUsedFragmentFreeFlag(
+			row__ Position,
+			bso::bool__ Value )
+		{
+			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+
+			_GetHeader( Position, Header );
+
+			_SetUsedFragmentFreeFlag( Position, Header, Value );
 		}
 		bso::bool__ _IsUsedFragmentLinkFlagSet( const mdr::datum__ *Header ) const
 		{
@@ -692,8 +702,12 @@ namespace mmm {
 #endif
 			_ExciseFreeFragment( Position, Header );
 
-			if ( ( RemainderPosition != S_.Extent ) && ( Size != FragmentCurrentSize ) )
-				_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
+			if ( RemainderPosition != S_.Extent )
+				if ( Size != FragmentCurrentSize )
+					_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
+				else
+					_SetUsedFragmentFreeFlag( RemainderPosition, false );	// 'RemainderPosition' is a used fragment, then report him
+																			// that he is no more preceded by a free fragment.
 
 			_MarkAsUsedFragment_( Position, DataSize, Link, false );
 		}
@@ -1236,10 +1250,10 @@ namespace mmm {
 			uym::untyped_memory_ ::s Memory;
 			mdr::size__ Extent;
 			row__ FreeFragment;	// Position d'un fragment libre. NONE si aucun.
+			bso::bool__ LastFragmentIsFree;
 			descriptor__ MultimemoryDriverDescriptor;
 			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
-			bso::bool__ LastFragmentIsFree;
 		} &S_;
 		multimemory_( s &S )
 		: S_( S ) ,
