@@ -57,6 +57,83 @@ public:
 
 using namespace mmm;
 
+static void Display_(
+	row__ Position,
+	txf::text_oflow__ &Flow )
+{
+	if ( Position == NONE )
+		Flow << "NONE";
+	else
+		Flow << *Position;
+}
+
+void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
+{
+	Flow << "Extent : " << S_.Extent << txf::tab;
+	Flow << "FreeFragment : ";
+	Display_( S_.FreeFragment, Flow );
+	Flow << txf::tab;
+
+	if ( S_.LastFragmentIsFree )
+		Flow << "Last fragment is free.";
+	else
+		Flow << "Last fragment is USED.";
+
+	Flow << txf::nl;
+
+	Flow << "Pos." << txf::tab << "  State" << txf::tab << "Size" << txf::tab << "Next" << txf::tab << "DataS" << txf::tab << txf::tab << "PF" << txf::tab << "NF/L" << txf::nl;
+
+	if ( S_.Extent != 0 ) {
+		row__ Position = 0;
+		mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
+
+		while ( Position != NONE ) {
+			Flow << *Position << txf::tab << ": ";
+
+			_GetHeader( Position, Header );
+
+			if ( _IsFragmentUsed( Header ) ) {
+				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
+
+				if ( _IsUsedFragmentFreeFlagSet( Header ) )
+					Flow << *_GetFreeFragmentPosition( Position );
+				else
+					Flow << "NONE";
+
+				Flow << txf::tab;
+
+				if ( _IsUsedFragmentLinkFlagSet( Header ) )
+					Flow << *_GetUsedFragmentLink( Position, Header );
+				else
+					Flow << "NONE";
+
+				Position = _GetUsedFragmentNextFragmentPosition( Position, Header );
+			} else if ( _IsFragmentFree( Header ) ) {
+				if ( _IsFreeFragmentOrphan( Header ) ) {
+					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab;
+				} else {
+					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab << txf::tab << txf::tab;
+					Display_( _GetFreeFragmentPreviousFreeFragmentPosition( Header ), Flow );
+					Flow << txf::tab;
+					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );
+				}
+
+				Position = _GetFreeFragmentNextFragmentPosition( Position, Header );
+			} else
+				ERRc();
+
+			Flow << txf::nl;
+
+			if ( Position == S_.Extent )
+				Position = NONE;
+			else if ( *Position > S_.Extent )
+				ERRc();
+
+		}
+	}
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
