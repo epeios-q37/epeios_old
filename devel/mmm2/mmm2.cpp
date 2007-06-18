@@ -96,7 +96,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
 
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
-					Flow << *_GetUsedFragmentPreviousFreeFragmentPosition( Position, Header );
+					Flow << *_GetFreeFragmentPosition( Position );
 				else
 					Flow << "NONE";
 
