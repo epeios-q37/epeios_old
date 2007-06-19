@@ -727,20 +727,20 @@ namespace mmm {
 
 			return _IsFreeFragmentBigEnough( Header, DataSize );
 		}
-		row__ _AppendNewUnlinkedUsedFragment( mdr::size__ DataSize )
+		row__ _AppendNewFragment( mdr::size__ Size )
 		{
 			row__ Row = NONE;
-			mdr::size__ Size = _GuessTotalSizeForUsedFragment( DataSize, false );
 
 			if ( S_.LastFragmentIsFree ) {
 				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 				mdr::size__ FreeFragmentSize = 0;
 
-				Row = _GetFreeFragmentPosition( S_.Extent );
+				Row = _GetLastFreeFragmentPosition();
 
 				_GetHeader( Row, Header );
 
-				_ExciseFreeFragment( Row, Header );
+				if ( !_IsFreeFragmentOrphan( Header ) )
+					_ExciseFreeFragment( Row, Header );
 
 				FreeFragmentSize = _GetFreeFragmentSize( Header );
 
@@ -765,10 +765,16 @@ namespace mmm {
 				Memory.Allocate( S_.Extent );
 			}
 
+			return Row;
+
+		}
+		row__ _AppendNewUnlinkedUsedFragment( mdr::size__ DataSize )
+		{
+			row__ Row = _AppendNewFragment( _GuessTotalSizeForUsedFragment( DataSize, false ) );
+
 			_SetRawSize( DataSize, Row, false, false );
 
 			return Row;
-
 		}
 		row__ _AllocateRetrievingFreeFragments(
 			mdr::size__ DataSize,
@@ -1173,14 +1179,22 @@ namespace mmm {
 
 			return Amount;
 		}
-		bso::bool__ _IsFreeFragmentAvailable( void )
+		row__ _GetLastFreeFragmentPosition( void ) const
+		{
+#ifdef MMM2_DBG
+			if ( !S_.LastFragmentIsFree )
+				ERRc();
+#endif
+			return _GetFreeFragmentPosition( S_.Extent );
+		}
+		bso::bool__ _IsFreeFragmentAvailable( void ) const
 		{
 			return S_.FreeFragment != NONE;
 		}
 		row__ _GetFreeFragment( void ) const
 		{
 #ifdef MMM2_DBG
-			if ( S_.FreeFragment == NONE )
+			if ( !_IsFreeFragmentAvailable() )
 				ERRc();
 #endif
 			return S_.FreeFragment;
@@ -1371,6 +1385,18 @@ namespace mmm {
 #endif
 			} else
 				Memory.Store( Buffer, Amount, Descriptor + Addendum + Position );
+		}
+		void Preallocate( mdr::size__ Size )
+		{
+			if ( S_.Extent > Size )
+				ERRu();
+			else if ( S_.Extent != Size ) {
+				Size -= S_.Extent;
+				row__ Row = _AppendNewFragment( Size );
+				_SetAsFreeFragment( Row,Size );
+
+				S_.LastFragmentIsFree = true;
+			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
 	};

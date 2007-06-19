@@ -184,10 +184,15 @@ ERREpilog
 void EssaiBasic( void )
 {
 ERRProlog
+	mmm::multimemory MM;
 	E_XMCONTAINER( str::string_ ) C;
 //	MITEM( str::string_ ) E;
 ERRBegin
+	MM.Init();
+//	MM.Preallocate( 10000 );
+	C.plug( MM );
 	C.Init();
+	MM.DisplayStructure( cout );
 #if 0
 	C.Allocate( 2 );
 
@@ -200,15 +205,20 @@ ERRBegin
 	C( 1 ) = "hello";
 #else
 	C.Append( str::string( "coucou" ) );
+	MM.DisplayStructure( cout );
 
 	C.Append( str::string( "hello" ) );
+	MM.DisplayStructure( cout );
 
 	C(0).Insert( "toto", 3 );
 	C.Flush();
+	MM.DisplayStructure( cout );
 #endif
 
 	cout << C( 0 ) << txf::tab << txf::sync;
 	cout << C( 1 ) << txf::nl << txf::sync;
+
+	MM.DisplayStructure( cout );
 	
 ERRErr
 ERREnd
@@ -496,6 +506,7 @@ ERRBegin
 //	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
+	Mm.Preallocate( 10000000 );
 	CM.plug( Mm );
 	CM.Init();
 	Cm.Init();
@@ -824,6 +835,7 @@ ERRBegin
 	F.Manual();
 //	Mm.plug( F );
 	Mm.Init();
+	Mm.Preallocate( 10000000 );
 	GC.plug( Mm );
 	GC.Init();
 	GC.Allocate( LM - 'A' + 1 );
@@ -839,8 +851,9 @@ ERRBegin
 		SP1( EGC(M - 'A' ), M );
 
 		cout << txf::nl;
-
 	}
+
+	Mm.DisplayStructure( cio::cout );
 
 	cout << "--------------" << txf::nl;
 
@@ -852,7 +865,7 @@ ERRBegin
 
 	}
 
-
+	Mm.DisplayStructure( cio::cout );
 
 ERRErr
 	// instructions à exécuter si erreur
@@ -996,7 +1009,7 @@ ERRFBegin
 		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiDirect( argc, argv );
+//		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
