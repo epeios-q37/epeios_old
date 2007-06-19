@@ -739,9 +739,6 @@ namespace mmm {
 
 				_GetHeader( Row, Header );
 
-				if ( !_IsFreeFragmentOrphan( Header ) )
-					_ExciseFreeFragment( Row, Header );
-
 				FreeFragmentSize = _GetFreeFragmentSize( Header );
 
 				if ( FreeFragmentSize > Size )
