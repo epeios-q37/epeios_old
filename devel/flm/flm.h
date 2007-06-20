@@ -69,8 +69,7 @@ extern class ttr_tutor &FLMTutor;
 #include "iop.h"
 #include "fil.h"
 #include "epeios.h"
-#include "lstbch.h"
-#include "que.h"
+#include "bch.h"
 
 #if defined( CPE__T_MS )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
@@ -89,16 +88,9 @@ extern class ttr_tutor &FLMTutor;
 #	define FLM__MAX_FILE_AMOUNT	FLM_DEFAULT_MAX_FILE_AMOUNT
 #endif
 
-#ifdef CPE__T_MT
-#	ifndef FLM_ST
-#		define FLM__MT
-#	endif
-#endif
-
-
 
 namespace flm {
-//	extern epeios::size__ MaxFileAmount;
+	extern epeios::size__ MaxFileAmount;
 
 	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire
@@ -169,78 +161,20 @@ namespace flm {
 
 	E_ROW( row__ );
 
-	class concurrent_opened_files_manager
-	{
-	private:
-		class lstbch::E_LBUNCHt( class memoire_fichier_base___ *, row__ ) _List;
-		class que::E_MQUEUEt( row__ ) _Queue;
-		epeios::size__ _MaxFileAmount;
-#ifdef FLM__MT
-		mtx::mutex_handler__ _Mutex;
-#endif
-		void _Lock( void )
-		{
-#ifdef FLM__MT
-			mtx::Lock( _Mutex );
-#endif
-		}
-		void _Unlock( void )
-		{
-#ifdef FLM__MT
-			mtx::Unlock( _Mutex );
-#endif
-	}
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			if ( P ) {
-				ReleaseAllFiles();
-#ifdef FLM__MT
-				mtx::Delete( _Mutex );
-#endif
-			}
+	typedef bch::E_BUNCH_( row__ ) files_group_;
+	E_AUTO( files_group );
 
-			_List.reset( P );
-			_Queue.reset( P );
-			_MaxFileAmount = 0;
-		}
-		concurrent_opened_files_manager( void )
-		{
-			reset( false );
-		}
-		~concurrent_opened_files_manager( void )
-		{
-			reset( false );
-		}
-		void Init( epeios::size__ MaxFileAmount )
-		{
-			reset();
-
-			_List.Init();
-			_Queue.Init();
-#ifdef FLM__MT
-			_Mutex = mtx::Create( mtx::mOwned );
-#endif
-			_MaxFileAmount = MaxFileAmount;
-		}
-		row__ Register( class memoire_fichier_base___ &MFB );
-		void Unregister( row__ Row );
-		void ReportFileUsing( row__ Row );
-		void ReportFileClosing( row__ Row );
-		void ReleaseAllFiles( void );
-	};
-
-	typedef concurrent_opened_files_manager concurrent_opened_files_manager_;
-
-
-/*
-	row__ _Register( class memoire_fichier_base___ &MFB );
-	void _Unregister( row__ Row );
+	row__ _Register(
+		class memoire_fichier_base___ &MFB,
+		files_group_ *FilesGroup );
+	void _Unregister(
+		row__ Row,
+		files_group_ *FilesGroup );
 	void _ReportFileUsing( row__ Row );
 	void _ReportFileClosing( row__ Row );
 
-	void ReleaseAllFiles( void );
-*/
+	void ReleaseFiles( const files_group_ *FilesGroup );
+
 	class memoire_fichier_base___
 	{
 	private:
@@ -249,8 +183,6 @@ namespace flm {
 		char *Nom_;
 		// taille du fichier
 		iop::amount__ TailleFichier_;
-		concurrent_opened_files_manager_ *_Manager;
-		// différents témoins
 		struct {
 			int
 				// signale si le Stream est ouvert ou non
@@ -265,39 +197,9 @@ namespace flm {
 				mdr::mode__ Mode;
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
+		// différents témoins
+		files_group_ *_FilesGroup;
 	// Fonctions
-		void _Test( void )
-		{
-#ifdef FLM_DBG
-			if ( _Manager == NULL )
-				ERRu();
-#endif
-		}
-		void _Register( void )
-		{
-#ifdef FLM_DBG
-			if ( _Row != NONE )
-				ERRu();
-#endif
-			_Test();
-
-			_Row = _Manager->Register( *this );
-		}
-		void _ReportFileUsing( void )
-		{
-			_Test();
-			_Manager->ReportFileUsing( _Row );
-		}
-		void _ReportFileClosing( void )
-		{
-			_Test();
-			_Manager->ReportFileClosing( _Row );
-		}
-		void _Unregister( void )
-		{
-			_Test();
-			_Manager->Unregister( _Row );
-		}
 		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
 		{
 			bso::bool__ Success = true;
@@ -314,7 +216,7 @@ namespace flm {
 			}
 			
 			if ( Success )
-				_ReportFileUsing();
+				_ReportFileUsing( _Row );
 
 			return Success;
 		}
@@ -409,7 +311,7 @@ namespace flm {
 				ReleaseFile();
 
 				if ( _Row != NONE )
-					_Unregister();
+					_Unregister( _Row, _FilesGroup );
 
 				if ( Nom_ )
 				{
@@ -428,10 +330,10 @@ namespace flm {
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
 			_Row = NONE;
-			_Manager = NULL;
+			_FilesGroup = NULL;
 		}
 		void Init(
-			concurrent_opened_files_manager_ &Manager,
+			files_group_ &FilesGroup,
 			const char *NomFichier = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
@@ -447,8 +349,9 @@ namespace flm {
 
 				Temoin_.Interne = false;
 
-				_Manager = &Manager;
-				_Register();
+				_FilesGroup = &FilesGroup;
+
+				_Row = _Register( *this, _FilesGroup );
 			}
 			else if ( !Temoin_.Interne )
 			{
@@ -461,8 +364,9 @@ namespace flm {
 
 				Temoin_.Interne = true;
 
-				_Manager = &Manager;
-				_Register();
+				_FilesGroup = &FilesGroup;
+
+				_Row = _Register( *this, _FilesGroup );
 			}
 
 			Temoin_.Mode = Mode;
@@ -482,7 +386,7 @@ namespace flm {
 				File_.reset();
 
 				if ( ReportClosing )
-					_ReportFileClosing();
+					_ReportFileClosing( _Row );
 			}
 
 			Temoin_.Ouvert = 0;
@@ -614,12 +518,12 @@ namespace flm {
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
-			concurrent_opened_files_manager_ &Manager,
+			files_group_ &FilesGroup,
 			const char *FileName = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base___::Init( Manager, FileName, Mode, Creation );
+			memoire_fichier_base___::Init( FilesGroup, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
 		}
 	};

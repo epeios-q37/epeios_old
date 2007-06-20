@@ -5,7 +5,10 @@ $Id$
 	
 20/06/2007 :
 	- GENERAL :
-		- Adapting to changes in 'UYM' library.
+		- Adaptation aux modifications de la bibliothèque 'FML'.
+		- Adaptation aux modifications de la bibliothèque 'UYM'.
+	- FLM :
+		- Chaque 'mémoire' se voit affecter un gestionnaire de fichiers simultanéments ouverts particulier et non plus celui par défaut.
 	- UYM :
 		- Adding conditional inclusion and use of 'FLM' library to avoid recursive inclusion.
 	
