@@ -55,9 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "lstbch.h"
-#include "que.h"
-
 #ifdef CPE__T_MT
 #	define MT
 #endif
@@ -68,12 +65,10 @@ public:
 
 using namespace flm;
 
-epeios::size__ flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
-
+/*
 #ifdef MT
 static mtx::mutex_handler__ Mutex_;
 #endif
-
 static inline void Lock_( void )
 {
 #ifdef MT
@@ -87,89 +82,90 @@ static inline void Unlock_( void )
 	mtx::Unlock( Mutex_ );
 #endif
 }
-
+*/
+/*
 static lstbch::E_LBUNCHt( memoire_fichier_base___ *, row__ ) List;
 static que::E_MQUEUEt( row__ ) Queue;
-
-row__ flm::_Register( memoire_fichier_base___ &MFB )
+*/
+row__ flm::concurrent_opened_files_manager::Register( memoire_fichier_base___ &MFB )
 {
 	row__ Row = NONE;
 
-	Lock_();
+	_Lock();
 
-	Row = List.New();
+	Row = _List.New();
 
-	if ( Queue.Amount() < List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
-		Queue.Allocate( List.Extent() );
+	if ( _Queue.Amount() < _List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
+		_Queue.Allocate( _List.Extent() );
 
-	List.Store( &MFB, Row );
+	_List.Store( &MFB, Row );
 
-	Unlock_();
+	_Unlock();
 
 	return Row;
 }
 
-void flm::_Unregister( row__ Row )
+void flm::concurrent_opened_files_manager::Unregister( row__ Row )
 {
-	Lock_();
+	_Lock();
 
-	List.Store( NULL, Row );
-	List.Delete( Row );
+	_List.Store( NULL, Row );
+	_List.Delete( Row );
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
+	if ( _Queue.IsMember( Row ) )
+		_Queue.Delete( Row );
 
-	Unlock_();
+	_Unlock();
 }
 
-void flm::_ReportFileUsing( row__ Row )
+void flm::concurrent_opened_files_manager::ReportFileUsing( row__ Row )
 {
-	Lock_();
+	_Lock();
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
-	else if ( Queue.Amount() >= FLM__MAX_FILE_AMOUNT ) {
-		List( Queue.Tail() )->ReleaseFile( false );
-		Queue.Delete( Queue.Tail() );
+	if ( _Queue.IsMember( Row ) )
+		_Queue.Delete( Row );
+	else if ( _Queue.Amount() >= FLM__MAX_FILE_AMOUNT ) {
+		_List( _Queue.Tail() )->ReleaseFile( false );
+		_Queue.Delete( _Queue.Tail() );
 	}
 
-	if ( Queue.IsEmpty() )
-		Queue.Create( Row );
+	if ( _Queue.IsEmpty() )
+		_Queue.Create( Row );
 	else
-		Queue.BecomePrevious( Row, Queue.Head() );
+		_Queue.BecomePrevious( Row, _Queue.Head() );
 
-	Unlock_();
+	_Unlock();
 }
 
-void flm::_ReportFileClosing( row__ Row )
+void flm::concurrent_opened_files_manager::ReportFileClosing( row__ Row )
 {
-	Lock_();
+	_Lock();
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
+	if ( _Queue.IsMember( Row ) )
+		_Queue.Delete( Row );
 
-	Unlock_();
+	_Unlock();
 }
 
-void flm::ReleaseAllFiles( void )
+void flm::concurrent_opened_files_manager::ReleaseAllFiles( void )
 {
-	Lock_();
+	_Lock();
 
-	flm::row__ Row = List.First();
+	flm::row__ Row = _List.First();
 	flm::row__ RowBuffer;
 
 	while ( Row != NONE ) {
 		RowBuffer = Row;
 
-		Row = List.Next( Row );
+		Row = _List.Next( Row );
 
-		List( RowBuffer )->ReleaseFile( false );
+		_List( RowBuffer )->ReleaseFile( false );
 
-		if ( Queue.IsMember( RowBuffer ) )
-			Queue.Delete( RowBuffer );
+		if ( _Queue.IsMember( RowBuffer ) )
+			_Queue.Delete( RowBuffer );
 	}
 
-	Unlock_();
+	_Unlock();
 
 }
 
@@ -184,24 +180,11 @@ class flmpersonnalization
 public:
 	flmpersonnalization( void )
 	{
-		List.Init();
-		Queue.Init();
-
-		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
-
-#ifdef MT
-		Mutex_ = mtx::Create( mtx::mOwned );
-#endif
-
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
 	~flmpersonnalization( void )
 	{
-
-#ifdef MT
-		mtx::Delete( Mutex_ );
-#endif
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

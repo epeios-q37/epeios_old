@@ -64,7 +64,9 @@ extern class ttr_tutor &UYMTutor;
 #include "tol.h"
 #include "mdr.h"
 #include "cvm.h"
-#include "flm.h"
+#ifndef FLM__COMPILATION	// To avoid resursice inclusion.
+#	include "flm.h"
+#endif
 
 //d Value that a position can not have.
 #define UYM_UNREACHABLE_POSITION	((mdr::row_t__)-1)
@@ -336,6 +338,7 @@ namespace uym {
 		}
 	};
 
+#ifndef FLM__COMPILATION
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
 
 	class untyped_memory_file_manager___
@@ -367,7 +370,7 @@ namespace uym {
 
 		return Exists;
 	}
-
+#endif
 	//c Untyped memory. 
 	class untyped_memory
 	: public untyped_memory_

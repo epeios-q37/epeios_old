@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+20/06/2007 :
+	- GENERAL :
+		- Adapting to changes in 'UYM' library.
+	- UYM :
+		- Adding conditional inclusion and use of 'FLM' library to avoid recursive inclusion.
+	
 12/06/2007 :
 	- DBSTBL :
 		- Reforcement test cohérence mode.

@@ -727,6 +727,7 @@ namespace mmm {
 		}
 	};
 
+#ifndef FLM__COMPILATION
 	typedef uym::untyped_memory_file_manager___	multimemory_file_manager___;
 
 	inline bso::bool__ Connect(
@@ -740,7 +741,7 @@ namespace mmm {
 
 		return Exists;
 	}
-
+#endif
 
 
 }

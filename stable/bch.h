@@ -539,6 +539,7 @@ namespace bch {
 	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
 	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
 
+#ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
 
 	template <typename bunch> bso::bool__ Connect(
@@ -556,7 +557,7 @@ namespace bch {
 
 		return Exists;
 	}
-
+#endif
 /*
 	template <typename bunch> epeios::row__ Connect(
 		bunch &Bunch,

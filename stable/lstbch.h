@@ -169,6 +169,7 @@ namespace lstbch {
 
 	E_AUTO3( list_bunch )
 
+#ifndef FLM__COMPILATION
 	typedef bch::bunch_file_manager___ _bunch_file_manager___;
 
 	class list_bunch_file_manager___
@@ -292,7 +293,7 @@ namespace lstbch {
 
 		return Exists;
 	}
-
+#endif
 
 	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
 	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>

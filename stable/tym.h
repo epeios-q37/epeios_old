@@ -65,7 +65,8 @@ extern class ttr_tutor &TYMTutor;
 #include "uym.h"
 #include "mmm0.h"
 #include "epeios.h"
-#include "flm.h"
+#include "mdr.h"
+
 /*
 namespace mmm {
 	class multimemory_driver__;
@@ -246,13 +247,13 @@ namespace tym {
 		: public _memory_< t, uym::untyped_memory_, r >::s
 		{
 			mmm::descriptor__ MultimemoryDriverDescriptor;
-			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
+			bso::ubyte__ Addendum;
 		} &S_;
 		memory_( s &S )
 		: S_( S ),
 		  _memory_< t, uym::untyped_memory_, r >( S ),
-		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum, S.MultimemoryDriverExtent )
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.Addendum, S.MultimemoryDriverExtent )
 		{}
 		void reset( bool P = true )
 		{
@@ -293,6 +294,7 @@ namespace tym {
 
 	E_AUTO2( memory )
 
+#ifndef FLM__COMPILATION
 	typedef uym::untyped_memory_file_manager___ memory_file_manager___;
 
 	template <typename memory> inline bso::bool__ Connect(
@@ -301,6 +303,7 @@ namespace tym {
 	{
 		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager );
 	}
+#endif
 
 	//m 'memory' would be often used, then create a special name.
 	#define E_MEMORYt( t, r )	memory< t, r >
