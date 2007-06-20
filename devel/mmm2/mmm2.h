@@ -602,14 +602,19 @@ namespace mmm {
 				if ( _IsFragmentFree( Header ) ) {
 					if ( !_IsFreeFragmentOrphan( Header ) )
 						_ExciseFreeFragment( *Position + Size, Header );
+
+					if ( ( *Position + Size ) == *S_.TailingFreeFragmentPosition )
+						S_.TailingFreeFragmentPosition = Position;
+
 					Size += _GetFreeFragmentSize( Header );
+
 				} else if ( _IsFragmentUsed( Header ) ) {
 					if ( !_IsUsedFragmentFreeFlagSet( Header ) )
 						_SetUsedFragmentFreeFlag( *Position + Size, Header, true );
 				} else
 					ERRc();
 			} else
-				S_.LastFragmentIsFree = true;
+				S_.TailingFreeFragmentPosition = Position;
 
 			if  ( Size > MMM2_ORPHAN_MAX_SIZE ) {
 				row__ PreviousFreeFragmentPosition = NONE, NextFreeFragmentPosition = NONE;
@@ -731,26 +736,27 @@ namespace mmm {
 		{
 			row__ Row = NONE;
 
-			if ( S_.LastFragmentIsFree ) {
+			if ( S_.TailingFreeFragmentPosition != NONE ) {
 				mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 				mdr::size__ FreeFragmentSize = 0;
 
-				Row = _GetLastFreeFragmentPosition();
+				Row = S_.TailingFreeFragmentPosition;
 
 				_GetHeader( Row, Header );
 
 				FreeFragmentSize = _GetFreeFragmentSize( Header );
 
-				if ( FreeFragmentSize > Size )
-					_SetAsFreeFragment( *Row + Size, FreeFragmentSize - Size );
-				else if ( FreeFragmentSize <= Size ) {
+				if ( FreeFragmentSize > Size ) {
+					S_.TailingFreeFragmentPosition = *Row + Size;
+					_SetAsFreeFragment( S_.TailingFreeFragmentPosition, FreeFragmentSize - Size );
+				} else if ( FreeFragmentSize <= Size ) {
 					if ( FreeFragmentSize != Size ) {
 						S_.Extent += Size - FreeFragmentSize;
 
 						Memory.Allocate( S_.Extent );
 					}
 
-					S_.LastFragmentIsFree = false;
+					S_.TailingFreeFragmentPosition = NONE;
 				} else
 					ERRc();
 
@@ -1176,14 +1182,6 @@ namespace mmm {
 
 			return Amount;
 		}
-		row__ _GetLastFreeFragmentPosition( void ) const
-		{
-#ifdef MMM2_DBG
-			if ( !S_.LastFragmentIsFree )
-				ERRc();
-#endif
-			return _GetFreeFragmentPosition( S_.Extent );
-		}
 		bso::bool__ _IsFreeFragmentAvailable( void ) const
 		{
 			return S_.FreeFragment != NONE;
@@ -1212,7 +1210,7 @@ namespace mmm {
 			uym::untyped_memory_ ::s Memory;
 			mdr::size__ Extent;
 			row__ FreeFragment;	// Position d'un fragment libre. NONE si aucun.
-			bso::bool__ LastFragmentIsFree;
+			row__ TailingFreeFragmentPosition;	// If the last fragment is a free one, this is its position (orphan or not).
 			descriptor__ MultimemoryDriverDescriptor;
 			bso::ubyte__ MultimemoryDriverAddendum;
 			mdr::size__ MultimemoryDriverExtent;
@@ -1228,7 +1226,7 @@ namespace mmm {
 			Memory.reset( P );
 			S_.Extent = 0;
 			S_.FreeFragment = NONE;
-			S_.LastFragmentIsFree = false;
+			S_.TailingFreeFragmentPosition = false;
 		}
 		void plug( multimemory_ &MM )
 		{
@@ -1247,7 +1245,7 @@ namespace mmm {
 
 			S_.Extent = M.S_.Extent;
 			S_.FreeFragment = M.S_.FreeFragment;
-			S_.LastFragmentIsFree = M.S_.LastFragmentIsFree;
+			S_.TailingFreeFragmentPosition = M.S_.TailingFreeFragmentPosition;
 
 			return *this;
 		}
@@ -1257,7 +1255,7 @@ namespace mmm {
 
 			S_.Extent = 0;
 			S_.FreeFragment = NONE;
-			S_.LastFragmentIsFree = false;
+			S_.TailingFreeFragmentPosition = NONE;
 		}
 		void Flush( void ) const
 		{
@@ -1392,7 +1390,7 @@ namespace mmm {
 				row__ Row = _AppendNewFragment( Size );
 				_SetAsFreeFragment( Row,Size );
 
-				S_.LastFragmentIsFree = true;
+				S_.TailingFreeFragmentPosition = Row;
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;

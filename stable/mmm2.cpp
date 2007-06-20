@@ -74,11 +74,9 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 	Display_( S_.FreeFragment, Flow );
 	Flow << txf::tab;
 
-	if ( S_.LastFragmentIsFree )
-		Flow << "Last fragment is free.";
-	else
-		Flow << "Last fragment is USED.";
-
+	Flow << "Tailing free fragment position : ";
+	Display_( S_.TailingFreeFragmentPosition, Flow );
+	
 	Flow << txf::nl;
 
 	Flow << "Pos." << txf::tab << "  State" << txf::tab << "Size" << txf::tab << "Next" << txf::tab << "DataS" << txf::tab << txf::tab << "PF" << txf::tab << "NF/L" << txf::nl;

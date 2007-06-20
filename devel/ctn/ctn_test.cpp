@@ -952,11 +952,12 @@ ERRBegin
 //	ECC.Init( CC );
 
 	CS.Allocate( 1 );
-	CC.Allocate( 2 );
 
 	CS(0).Init();
 	CS() = "coucou";
 	CS.Flush();
+
+	CC.Allocate( 2 );
 
 	CC(0).Init();
 	CC() = CS;
