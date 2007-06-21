@@ -3,6 +3,10 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+21/06/2007 :
+	- GENERAL :
+		- Suite de ce qui a été commencé le 20/06/2007.
+	
 20/06/2007 :
 	- GENERAL :
 		- Adaptation aux modifications de la bibliothèque 'FML'.
@@ -10,7 +14,7 @@ $Id$
 	- FLM :
 		- Chaque 'mémoire' se voit affecter un gestionnaire de fichiers simultanéments ouverts particulier et non plus celui par défaut.
 	- UYM :
-		- Adding conditional inclusion and use of 'FLM' library to avoid recursive inclusion.
+		- Ajout inclusion conditionnelle de la bibliothèque 'FLM' pour éviter problème d'inclusion récursive.
 	
 12/06/2007 :
 	- DBSTBL :
