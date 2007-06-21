@@ -221,7 +221,8 @@ ERREpilog
 void dbsdct::file_dynamic_content_::Init(
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
-	bso::bool__ Partial )
+	bso::bool__ Partial,
+	flm::files_group_ &FilesGroup )
 {
 ERRProlog
 	str::string ContentFileName;
@@ -237,7 +238,7 @@ ERRBegin
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
 
-	S_.StorageFileManager.Init( ContentFileNameBuffer, Mode, true );
+	S_.StorageFileManager.Init( ContentFileNameBuffer, Mode, true, FilesGroup );
 
 	EntriesBunchFileName.Init( RootFileName );
 	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
@@ -247,7 +248,7 @@ ERRBegin
 	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
 	EntriesListFileNameBuffer = EntriesListFileName.Convert();
 
-	S_.EntriesFileManager.Init( EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true );
+	S_.EntriesFileManager.Init( EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true, FilesGroup );
 
 	this->RootFileName.Init( RootFileName );
 	S_.Mode = Mode;

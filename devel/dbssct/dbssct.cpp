@@ -98,7 +98,8 @@ void dbssct::file_static_content_::Init(
 	epeios::size__ Size,
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
-	bso::bool__ Partial )
+	bso::bool__ Partial,
+	flm::files_group_ &FilesGroup )
 {
 ERRProlog
 	str::string ContentFileName;
@@ -115,7 +116,7 @@ ERRBegin
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
 
-	S_.FileManager.Init( ContentFileNameBuffer, Mode, true );
+	S_.FileManager.Init( ContentFileNameBuffer, Mode, true, FilesGroup );
 ERRErr
 ERREnd
 ERREpilog

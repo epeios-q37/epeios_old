@@ -210,11 +210,12 @@ namespace lstbch {
 			const char *BunchFileName,
 			const char *ListFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persistent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
 			reset();
 
-			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent );
+			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent, FilesGroup );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();

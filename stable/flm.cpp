@@ -57,6 +57,7 @@ public:
 
 #include "lstbch.h"
 #include "que.h"
+#include "bch.h"
 
 #ifdef CPE__T_MT
 #	define MT
@@ -91,7 +92,9 @@ static inline void Unlock_( void )
 static lstbch::E_LBUNCHt( memoire_fichier_base___ *, row__ ) List;
 static que::E_MQUEUEt( row__ ) Queue;
 
-row__ flm::_Register( memoire_fichier_base___ &MFB )
+row__ flm::_Register(
+	memoire_fichier_base___ &MFB,
+	files_group_ *FilesGroup )
 {
 	row__ Row = NONE;
 
@@ -106,10 +109,19 @@ row__ flm::_Register( memoire_fichier_base___ &MFB )
 
 	Unlock_();
 
+#ifdef FLM_DBG
+	if ( FilesGroup->Search( Row ) != NONE )
+		ERRc();
+#endif
+
+	FilesGroup->Append( Row );
+
 	return Row;
 }
 
-void flm::_Unregister( row__ Row )
+void flm::_Unregister(
+	row__ Row,
+	files_group_ *FilesGroup )
 {
 	Lock_();
 
@@ -118,6 +130,8 @@ void flm::_Unregister( row__ Row )
 
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
+
+	FilesGroup->Remove( FilesGroup->Search( Row ) );
 
 	Unlock_();
 }
@@ -151,6 +165,29 @@ void flm::_ReportFileClosing( row__ Row )
 	Unlock_();
 }
 
+void flm::ReleaseFiles( const files_group_ *FilesGroup )
+{
+	Lock_();
+
+	epeios::row__ FGRow = FilesGroup->First();
+	row__ Row = NONE;
+
+	while ( FGRow != NONE ) {
+		Row = FilesGroup->Get( FGRow );
+
+		List( Row )->ReleaseFile( false );
+
+		if ( Queue.IsMember( Row ) )
+			Queue.Delete( Row );
+
+		FGRow = FilesGroup->Next( FGRow );
+	}
+
+	Unlock_();
+}
+
+
+/*
 void flm::ReleaseAllFiles( void )
 {
 	Lock_();
@@ -172,9 +209,7 @@ void flm::ReleaseAllFiles( void )
 	Unlock_();
 
 }
-
-
-
+*/
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

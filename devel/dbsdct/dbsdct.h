@@ -671,7 +671,8 @@ namespace dbsdct {
 		void Init(
 			const str::string_ &RootFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Partial );
+			bso::bool__ Partial,
+			flm::files_group_ &FilesGroup );
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();

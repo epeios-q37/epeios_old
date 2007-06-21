@@ -332,10 +332,11 @@ namespace ctn {
 			const char *DescriptorsDynamicsFileName,
 			const char *MultimemoryDynamicsFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persistent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
-			_Statics.Init( StaticsFileName, Mode, Persistent );
-			_Dynamics.Init( DescriptorsDynamicsFileName, MultimemoryDynamicsFileName, Mode, Persistent );
+			_Statics.Init( StaticsFileName, Mode, Persistent, FilesGroup );
+			_Dynamics.Init( DescriptorsDynamicsFileName, MultimemoryDynamicsFileName, Mode, Persistent, FilesGroup );
 		}
 		void ReleaseFiles( void )
 		{

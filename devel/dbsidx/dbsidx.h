@@ -409,7 +409,8 @@ namespace dbsidx {
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,
-			bso::bool__ Partial );
+			bso::bool__ Partial,
+			flm::files_group_ &FilesGroup );
 		void CloseFiles( void )
 		{
 			S_.FileManager.ReleaseFiles();

@@ -331,10 +331,11 @@ namespace mmi {
 			const char *DescriptorsFileName,
 			const char *MultimemoryFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persistent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
-			_Descriptors.Init( DescriptorsFileName, Mode, Persistent );
-			_Multimemory.Init( MultimemoryFileName, Mode, Persistent );
+			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, FilesGroup );
+			_Multimemory.Init( MultimemoryFileName, Mode, Persistent, FilesGroup );
 		}
 		void ReleaseFile( void )
 		{

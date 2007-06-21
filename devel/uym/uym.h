@@ -348,11 +348,12 @@ namespace uym {
 		void Init( 
 			const char *FileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persitent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
-			_file_memory_driver___::Init( FileName, Mode, flm::cFirstUse );
+			_file_memory_driver___::Init( FilesGroup, FileName, Mode, flm::cFirstUse );
 
-			if ( Persitent )
+			if ( Persistent )
 				_file_memory_driver___::Persistent();
 		}
 	};

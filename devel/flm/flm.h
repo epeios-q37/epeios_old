@@ -69,7 +69,6 @@ extern class ttr_tutor &FLMTutor;
 #include "iop.h"
 #include "fil.h"
 #include "epeios.h"
-#include "bch.h"
 
 #if defined( CPE__T_MS )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
@@ -160,10 +159,18 @@ namespace flm {
 	};
 
 	E_ROW( row__ );
+	
+	// Predeclarations.
+	class files_group_;
+	class files_group;
 
+	// NOTA : 'files_group[_]' are defined in 'bch.h' to avoid recursive inclusion problems.
+
+
+/*
 	typedef bch::E_BUNCH_( row__ ) files_group_;
 	E_AUTO( files_group );
-
+*/
 	row__ _Register(
 		class memoire_fichier_base___ &MFB,
 		files_group_ *FilesGroup );

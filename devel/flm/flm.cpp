@@ -57,6 +57,7 @@ public:
 
 #include "lstbch.h"
 #include "que.h"
+#include "bch.h"
 
 #ifdef CPE__T_MT
 #	define MT
@@ -171,7 +172,7 @@ void flm::ReleaseFiles( const files_group_ *FilesGroup )
 	epeios::row__ FGRow = FilesGroup->First();
 	row__ Row = NONE;
 
-	while ( Row != NONE ) {
+	while ( FGRow != NONE ) {
 		Row = FilesGroup->Get( FGRow );
 
 		List( Row )->ReleaseFile( false );

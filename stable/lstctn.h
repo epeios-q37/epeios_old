@@ -196,11 +196,12 @@ namespace lstctn {
 			const char *ContainerMultimemoryFileName,
 			const char *ListFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persistent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
 			reset();
 
-			_container_file_manager___::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent );
+			_container_file_manager___::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent, FilesGroup );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();

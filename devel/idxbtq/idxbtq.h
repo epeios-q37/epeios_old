@@ -281,13 +281,14 @@ namespace idxbtq {
 			const char *TreeFileName,
 			const char *QueueFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Persistent )
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
 		{
 			reset();
 
-			_TreeFileManager.Init( TreeFileName, Mode, Persistent );
+			_TreeFileManager.Init( TreeFileName, Mode, Persistent, FilesGroup );
 
-			_QueueFileManager.Init( QueueFileName, Mode, Persistent );
+			_QueueFileManager.Init( QueueFileName, Mode, Persistent, FilesGroup );
 		}
 		void ReleaseFiles( void )
 		{

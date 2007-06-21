@@ -159,13 +159,28 @@ namespace flm {
 	};
 
 	E_ROW( row__ );
+	
+	// Predeclarations.
+	class files_group_;
+	class files_group;
 
-	row__ _Register( class memoire_fichier_base___ &MFB );
-	void _Unregister( row__ Row );
+	// NOTA : 'files_group[_]' are defined in 'bch.h' to avoid recursive inclusion problems.
+
+
+/*
+	typedef bch::E_BUNCH_( row__ ) files_group_;
+	E_AUTO( files_group );
+*/
+	row__ _Register(
+		class memoire_fichier_base___ &MFB,
+		files_group_ *FilesGroup );
+	void _Unregister(
+		row__ Row,
+		files_group_ *FilesGroup );
 	void _ReportFileUsing( row__ Row );
 	void _ReportFileClosing( row__ Row );
 
-	void ReleaseAllFiles( void );
+	void ReleaseFiles( const files_group_ *FilesGroup );
 
 	class memoire_fichier_base___
 	{
@@ -175,7 +190,6 @@ namespace flm {
 		char *Nom_;
 		// taille du fichier
 		iop::amount__ TailleFichier_;
-		// différents témoins
 		struct {
 			int
 				// signale si le Stream est ouvert ou non
@@ -190,6 +204,8 @@ namespace flm {
 				mdr::mode__ Mode;
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
+		// différents témoins
+		files_group_ *_FilesGroup;
 	// Fonctions
 		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
 		{
@@ -302,7 +318,7 @@ namespace flm {
 				ReleaseFile();
 
 				if ( _Row != NONE )
-					_Unregister( _Row );
+					_Unregister( _Row, _FilesGroup );
 
 				if ( Nom_ )
 				{
@@ -321,8 +337,10 @@ namespace flm {
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
 			_Row = NONE;
+			_FilesGroup = NULL;
 		}
 		void Init(
+			files_group_ &FilesGroup,
 			const char *NomFichier = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
@@ -338,7 +356,9 @@ namespace flm {
 
 				Temoin_.Interne = false;
 
-				_Row = _Register( *this );
+				_FilesGroup = &FilesGroup;
+
+				_Row = _Register( *this, _FilesGroup );
 			}
 			else if ( !Temoin_.Interne )
 			{
@@ -351,7 +371,9 @@ namespace flm {
 
 				Temoin_.Interne = true;
 
-				_Row = _Register( *this );
+				_FilesGroup = &FilesGroup;
+
+				_Row = _Register( *this, _FilesGroup );
 			}
 
 			Temoin_.Mode = Mode;
@@ -503,11 +525,12 @@ namespace flm {
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
+			files_group_ &FilesGroup,
 			const char *FileName = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base___::Init( FileName, Mode, Creation );
+			memoire_fichier_base___::Init( FilesGroup, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
 		}
 	};
