@@ -742,7 +742,7 @@ namespace bch {
 
 // This definitions are here to avoid recursive inclusion problems.
 namespace flm {
-	class flm::files_group_
+	class files_group_
 	: public bch::E_BUNCH_( flm::row__ )
 	{
 	public:

@@ -2,8 +2,10 @@ $Id$
 
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
-	
-22/06:2007 :
+
+22/06/2007 :
+	- BCH :
+		- Correction pour mieux coller à la norme.
 	- UYM :
 		- Retrait de ce qui a trait à la compilation conditionnelle par rapport à la bibliothèque 'FLM'.
 	
