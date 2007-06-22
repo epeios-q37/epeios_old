@@ -192,7 +192,7 @@ ERRBegin
 //	MM.Preallocate( 10000 );
 	C.plug( MM );
 	C.Init();
-	MM.DisplayStructure( cout );
+//	MM.DisplayStructure( cout );
 #if 0
 	C.Allocate( 2 );
 
@@ -205,20 +205,20 @@ ERRBegin
 	C( 1 ) = "hello";
 #else
 	C.Append( str::string( "coucou" ) );
-	MM.DisplayStructure( cout );
+//	MM.DisplayStructure( cout );
 
 	C.Append( str::string( "hello" ) );
-	MM.DisplayStructure( cout );
+//	MM.DisplayStructure( cout );
 
 	C(0).Insert( "toto", 3 );
 	C.Flush();
-	MM.DisplayStructure( cout );
+//	MM.DisplayStructure( cout );
 #endif
 
 	cout << C( 0 ) << txf::tab << txf::sync;
 	cout << C( 1 ) << txf::nl << txf::sync;
 
-	MM.DisplayStructure( cout );
+//	MM.DisplayStructure( cout );
 	
 ERRErr
 ERREnd
@@ -365,6 +365,7 @@ ERREpilog
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) CS, CD;
@@ -374,7 +375,8 @@ ERRProlog
 	str::string Str;
 	epeios::row__ P;
 ERRBegin
-	F.Init();
+	FilesGroup.Init();
+	F.Init( FilesGroup );
 	F.Automatic();
 //	M.plug( F );
 	M.Init();
@@ -488,6 +490,7 @@ ERREpilog
 void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	int a = A( A_( 3 ) );
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
@@ -502,7 +505,8 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	F.Init("a.tmp");
+	FilesGroup.Init();
+	F.Init( FilesGroup, "a.tmp" );
 //	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
@@ -538,6 +542,8 @@ ERRBegin
 //				fout << S << " ";
 				cout << ECC(C - '0') << " ";
 
+//				CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
 			}
 
 			ECC.Flush();
@@ -550,14 +556,19 @@ ERRBegin
 			Cm( m - 'a' ).Init();
 			Cm() = CC;
 
+			Cm.Dynamics.Multimemoire.DisplayStructure( cio::cout );
 		}
 
 //		ECm.Flush();
 		Cm.Flush();
 
+		Mm.DisplayStructure( cio::cout );
+
 		cout << txf::nl;
 		ECM(M - 'A').Init();
 		ECM() = Cm;
+
+		Mm.DisplayStructure( cio::cout );
 	}
 
 	cout << "--------------" << txf::nl;
@@ -605,6 +616,7 @@ ERREpilog
 void EssaiPersistence( int argc, const char *argv[] )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	int a = A( A_( 3 ) );
 	ctn::container_file_manager___ FileManager;
 	E_XMCONTAINER( str::string_ ) CC;
@@ -618,7 +630,8 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", mdr::mReadWrite, true );
+	FilesGroup.Init();
+	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", mdr::mReadWrite, true, FilesGroup );
 
 	Cm.Init();
 	CC.Init();
@@ -824,6 +837,7 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
@@ -831,7 +845,8 @@ ERRProlog
 	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) EGC;
 	char M;
 ERRBegin
-	F.Init("b.tmp");
+	FilesGroup.Init();
+	F.Init( FilesGroup, "b.tmp");
 	F.Manual();
 //	Mm.plug( F );
 	Mm.Init();
@@ -877,12 +892,14 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
 ERRBegin
-	F.Init( "coucou.tmp" );
+	FilesGroup.Init();
+	F.Init( FilesGroup, "coucou.tmp" );
 //	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -904,12 +921,14 @@ ERREpilog
 void EssaiSimpleMulti( void )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XCONTAINER( str::string_ ) C;
 	E_ITEM( str::string_ ) E;
 ERRBegin
-	F.Init( "coucou.tmp" );
+	FilesGroup.Init();
+	F.Init( FilesGroup, "coucou.tmp" );
 	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -931,6 +950,7 @@ ERREpilog
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
+	flm::files_group FilesGroup;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XCONTAINER( str::string_ ) CS;
@@ -938,7 +958,8 @@ ERRProlog
 //	ITEM( str::string_ ) ECS;
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
-	F.Init( "temp.tmp" );
+	FilesGroup.Init();
+	F.Init( FilesGroup, "temp.tmp" );
 	M.plug( F );
 	M.Init();
 
@@ -1003,15 +1024,15 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
+/*		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-//		EssaiDirect( argc, argv );
-		cout << "********************************************************" << txf::nl;
+		EssaiDirect( argc, argv );
+*/		cout << "********************************************************" << txf::nl;
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
 //		EssaiPersistence( argc, argv );

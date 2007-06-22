@@ -3,6 +3,10 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+22/06:2007 :
+	- UYM :
+		- Retrait de ce qui a trait à la compilation conditionnelle par rapport à la bibliothèque 'FLM'.
+	
 21/06/2007 :
 	- GENERAL :
 		- Suite de ce qui a été commencé le 20/06/2007.

@@ -338,7 +338,6 @@ namespace uym {
 		}
 	};
 
-#ifndef FLM__COMPILATION
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
 
 	class untyped_memory_file_manager___
@@ -371,7 +370,7 @@ namespace uym {
 
 		return Exists;
 	}
-#endif
+
 	//c Untyped memory. 
 	class untyped_memory
 	: public untyped_memory_

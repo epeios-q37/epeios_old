@@ -1226,7 +1226,7 @@ namespace mmm {
 			Memory.reset( P );
 			S_.Extent = 0;
 			S_.FreeFragment = NONE;
-			S_.TailingFreeFragmentPosition = false;
+			S_.TailingFreeFragmentPosition = NONE;
 		}
 		void plug( multimemory_ &MM )
 		{
