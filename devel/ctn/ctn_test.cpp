@@ -227,9 +227,9 @@ ERREpilog
 
 
 
-#define LM	'Z'
-#define Lm	'z'
-#define LC	'9'
+#define LM	'A'
+#define Lm	'a'
+#define LC	'0'
 
 void Classer( E_MCONTAINER_( str::string_ ) &Liste )
 {
@@ -485,7 +485,85 @@ ERREpilog
 #define A( m )	( m + m )
 #define A_( m ) ( m - m )
 
+void EssaiBogue( int argc, const char *argv[] )
+{
+ERRProlog
+	mmm::multimemory Mm;
+	str::string S;
+	E_XMCONTAINER( str::string_ ) CC;
+	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
+//	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
+ERRBegin
+	Mm.Init();
+	Mm.Preallocate( 10000000 );
+//	CM.plug( Mm );
+//	CM.Init();
+	Cm.plug( Mm );
+	Cm.Init();
+	CC.Init();
 
+//	CM.Allocate( LM - 'A' + 1 );
+	Cm.Allocate( Lm - 'a' + 1 );
+	CC.Allocate( LC - '0' + 1 );
+
+	Mm.DisplayStructure( cio::cout );
+	
+	S.Init();
+
+	S.Append( 'A' );
+	S.Append( 'a' );
+	S.Append( '0' );
+
+	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	CC( 0 ).Init();
+	CC() = S;
+
+	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	cout << CC( 0 ) << " ";
+
+	CC.Flush();
+
+	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	cout << '\t';
+
+//	Mm.DisplayStructure( cio::cout );
+
+	Cm( 0 ).Init();
+	Cm() = CC;
+
+//	Cm.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	Cm.Flush();
+
+//	Cm.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	cout << txf::nl;
+//	CM( 0 ).Init();
+//	CM() = Cm;
+
+	Mm.DisplayStructure( cio::cout );
+
+//	Cm = CM( 0 );
+
+	CC = Cm( 0 );
+
+	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+
+	S = CC( 0 );
+
+	cout << S << ' ' << txf::sync;
+
+	cout << '\t';
+
+	cout << txf::nl;
+	
+ERRErr
+ERREnd
+ERREpilog
+}
 
 void EssaiCopie( int argc, const char *argv[] )
 {
@@ -1033,7 +1111,8 @@ ERRFBegin
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 */		cout << "********************************************************" << txf::nl;
-		EssaiCopie( argc, argv );
+		EssaiBogue( argc, argv);
+//		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
 //		EssaiPersistence( argc, argv );
 #else
