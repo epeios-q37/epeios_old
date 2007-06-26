@@ -252,10 +252,9 @@ namespace ssnmng {
 			if ( time( &C.Relative ) == -1 )
 				ERRs();
 
-			Chronos.Store( C, P );
-
 			C.AlwaysValid = false;
 
+			Chronos.Store( C, P );
 	#ifdef SSNMNG_DBG
 			if ( _queue_::Amount() == 0 )
 				ERRu();

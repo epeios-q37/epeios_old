@@ -2,6 +2,10 @@ $Id$
 
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
+	
+26/06/2007 :
+	- SSNMNG :
+		- Correction d'un bogue qui rendait les sessions valides en permanence.
 
 22/06/2007 :
 	- BCH :
