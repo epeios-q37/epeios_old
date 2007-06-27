@@ -1330,7 +1330,7 @@ namespace mmm {
 				if ( AmountRed < Amount ) {
 					descriptor__ Link = *_GetUsedFragmentLink( Descriptor, Header );
 
-					_GetHeader( Descriptor, Header, sizeof( Header ) );
+					_GetHeader( Link, Header, sizeof( Header ) );
 
 					AmountRed += _ReadFromFragment( Link, Header, sizeof( Header ), Position + AmountRed - FirstFragmentDataSize, Amount - AmountRed, Buffer + AmountRed );
 				}

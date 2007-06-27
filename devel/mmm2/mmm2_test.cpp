@@ -50,6 +50,43 @@ using namespace mmm;
 	s.Init();\
 	s.SetStepValue( 0 );\
 
+void Bogue( void )
+{
+ERRProlog
+	flm::files_group FilesGroup;
+	flm::standalone_file_memory_driver___ FMD;
+	multimemory Multimemory;
+	str::string S;
+ERRBegin
+	FilesGroup.Init();
+	FMD.Init( FilesGroup, "test" );
+	Multimemory.plug( FMD );
+
+	Multimemory.Init();
+	Multimemory.Preallocate( 1000 );
+
+	S.plug( Multimemory );
+	S.Init();
+	S.SetStepValue( 0 );
+
+	S.Append( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	D
+	cout << S << txf::nl;
+
+	S.Append( "0123456789" );
+	D
+	cout << S << txf::nl;
+
+	S.Append( "abcdefghijklmnopqrstuvwxyz" );
+	D
+	cout << S << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
 
 void Generic( int argc, char *argv[] )
 {
@@ -128,7 +165,8 @@ ERRFBegin
 
 	switch( argc ) {
 	case 1:
-		Generic( argc, argv );
+	//	Generic( argc, argv );
+		Bogue();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
