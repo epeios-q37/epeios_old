@@ -463,6 +463,14 @@ namespace str {
 
 			return *this;
 		}
+		string_ &operator *( void )
+		{
+			return *this;
+		}
+		const string_ &operator *( void ) const
+		{
+			return *this;
+		}
 	};
 
 	inline bso::bool__ operator ==(

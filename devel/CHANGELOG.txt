@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+28/06/2007 :
+	- STR :
+		- Adaptation aux modifications bibliothèque 'TOL'.
+	- TOL :
+		- Ajout 'operator *()' aux macros définissant les version 'autonomes' des objets dynamiques (macros 'E_AUTOx(...)').
+	
 26/06/2007 :
 	- SSNMNG :
 		- Correction d'un bogue qui rendait les sessions valides en permanence.

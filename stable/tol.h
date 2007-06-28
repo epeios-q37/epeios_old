@@ -309,6 +309,14 @@ public:\
 \
 		return *this;\
 	}\
+	Name##_ &operator *( void )\
+	{\
+		return *this;\
+	}\
+	const Name##_ &operator *( void ) const\
+	{\
+		return *this;\
+	}\
 };
 
 
@@ -338,6 +346,14 @@ public:\
 	{\
 		Name##_<t>::operator =( S );\
 \
+		return *this;\
+	}\
+	Name##_<t> &operator *( void )\
+	{\
+		return *this;\
+	}\
+	const Name##_<t> &operator *( void ) const\
+	{\
 		return *this;\
 	}\
 };
@@ -371,6 +387,14 @@ public:\
 \
 		return *this;\
 	}\
+	Name##_<t,u> &operator *( void )\
+	{\
+		return *this;\
+	}\
+	const Name##_<t,u> &operator *( void ) const\
+	{\
+		return *this;\
+	}\
 };
 
 //m Same as 'E_AUTO()' but with three template parameter.
@@ -401,6 +425,14 @@ public:\
 \
 		return *this;\
 	}\
+	Name##_<t,u,v> &operator *( void )\
+	{\
+		return *this;\
+	}\
+	const Name##_<t,u,v> &operator *( void ) const\
+	{\
+		return *this;\
+	}\
 };
 
 //m Same as 'E_AUTO()' but with four template parameter.
@@ -429,6 +461,14 @@ public:\
 	{\
 		Name##_<t,u,v,w>::operator =( S );\
 \
+		return *this;\
+	}\
+	Name##_<t,u,v,w> &operator *( void )\
+	{\
+		return *this;\
+	}\
+	const Name##_<t,u,v,w> &operator *( void ) const\
+	{\
 		return *this;\
 	}\
 };
