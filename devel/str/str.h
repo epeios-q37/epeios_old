@@ -413,7 +413,9 @@ namespace str {
 			reset( false );
 
 			string_::Init();
-			string_::Append( S );
+
+			if ( S != NULL )
+				string_::Append( S );
 		}
 		string(
 			const char *S,
@@ -421,6 +423,10 @@ namespace str {
 		: string_( static_ )
 		{
 			reset( false );
+
+#ifdef STR_DBG
+			ERRu();
+#endif
 
 			string_::Init();
 			string_::Append( S, Length );
