@@ -3,6 +3,16 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+30/06/2007 :
+	- STR :
+		- Réorganisation des paramètres des méthodes 'To(U|S)(L|S|B)(...)'.
+	- TOL :
+		- Ajout 'GetLocaleDecimalPoint()'.
+	
+29/06/2007 :
+	- STR :
+		- Gestion de la valeur 'NULL' pour certains paramètres.
+	
 28/06/2007 :
 	- STR :
 		- Adaptation aux modifications bibliothèque 'TOL'.

@@ -67,6 +67,7 @@ extern class ttr_tutor &TOLTutor;
 #include <signal.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <locale.h>
 
 #include "cpe.h"
 #include "bso.h"
@@ -968,6 +969,22 @@ namespace tol {
 			return core_pointer___<t>::operator =( P );
 		}
 	};
+
+	inline bso::char__ GetLocaleDecimalSeparator( void )
+	{
+		lconv *LConv = localeconv();
+
+		if ( LConv->decimal_point == NULL )
+			ERRs();
+
+		if ( LConv->decimal_point[0] == 0 )
+			ERRs();
+
+		if ( LConv->decimal_point[1] != 0 )
+			ERRs();
+
+		return *LConv->decimal_point;
+	}
 
 	#define E_DPOINTER___( t )	delete_pointer___<t>
 

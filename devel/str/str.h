@@ -219,8 +219,8 @@ namespace str {
 		/*f Convert to unsigned short. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ushort__ ToUS(
-			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			epeios::row__ *ErrP,
 			base__ Base = bAuto,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
@@ -232,7 +232,7 @@ namespace str {
 			epeios::row__ Begin,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)ToUS( ErrP, Begin, Base, Limit );
+			return (bso::ushort__)ToUS( Begin, ErrP, Base, Limit );
 		}
 		//f Variation in parameters.
 		bso::ushort__ ToUS(
@@ -245,8 +245,8 @@ namespace str {
 		/*f Convert to signed short. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::sshort__ ToSS(
-			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			epeios::row__ *ErrP,
 			bso::sshort__ Limit = BSO_SSHORT_MAX ) const
 		{
 			return (bso::sshort__)ToSL( Begin, ErrP, Limit );
@@ -256,13 +256,13 @@ namespace str {
 			epeios::row__ *ErrP = NULL,
 			bso::sshort__ Limit = BSO_SSHORT_MAX ) const
 		{
-			return ToSS( ErrP, 0, Limit );
+			return ToSS( 0, ErrP, Limit );
 		}
 		/*f Convert to unsigned byte. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ubyte__ ToUB(
-			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			epeios::row__ *ErrP,
 			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
@@ -274,7 +274,7 @@ namespace str {
 			epeios::row__ Begin,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return ToUB( ErrP, Begin, Base, Limit );
+			return ToUB( Begin, ErrP, Base, Limit );
 		}
 		//f Variation in parameters.
 		bso::ubyte__ ToUB(
@@ -282,13 +282,13 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return ToUB( ErrP, 0, Base, Limit );
+			return ToUB( 0, ErrP, Base, Limit );
 		}
 		/*f Convert to signed byte. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::sbyte__ ToSB(
-			epeios::row__ *ErrP,
 			epeios::row__ Begin,
+			epeios::row__ *ErrP,
 			bso::ubyte__ Limit = BSO_SBYTE_MAX ) const
 		{
 			return (bso::sbyte__)ToSL( 0, ErrP, Limit );
@@ -298,7 +298,7 @@ namespace str {
 			epeios::row__ *ErrP = NULL,
 			bso::ubyte__ Limit = BSO_SBYTE_MAX ) const
 		{
-			return ToSB( ErrP, 0, Limit );
+			return ToSB( 0, ErrP, Limit );
 		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
