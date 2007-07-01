@@ -409,7 +409,7 @@ const char *description_::GetCommandLabels(
 	
 const char *description_::GetOptionLabels( int Id ) const
 {
-	return GetLabel_( Options, Id, CLNARG_DETAIL_SEPARATOR );
+	return GetLabel_( Options, Id, CLNARG_GENERAL_SEPARATOR );
 }
 
 static void HandleView_(
@@ -418,10 +418,10 @@ static void HandleView_(
 {
 	switch( View ) {
 	case clnarg::vOneLine:
-		Flow << txf::tab;
+		Flow << txf::pad;
 		break;
 	case clnarg::vSplit:
-		Flow << txf::nl << txf::tab << txf::tab;
+		Flow << txf::nl << txf::pad << txf::tab;
 		break;
 	default:
 		ERRu();
@@ -437,7 +437,7 @@ void clnarg::PrintCommandUsage(
 	txf::text_oflow__ &Flow,
 	bso::bool__ Default )
 {
-	Flow << txf::tab;
+	Flow << txf::pad;
 		
 	if ( Default )
 		Flow << "<none>, ";

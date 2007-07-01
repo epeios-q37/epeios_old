@@ -309,6 +309,12 @@ namespace txf {
 		return Flow << '\t';
 	}
 
+	// 4 spaces (half tab).
+	TXF_DFS( pad )
+	{
+		return Flow << "    ";
+	}
+
 	// Revient en début de ligne.
 	TXF_DFS( rfl )
 	{

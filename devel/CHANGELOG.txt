@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+01/07/2007 :
+	- CLNARG :
+		- Changement affichage réalisé par différentes méthodes/fonctions.
+	- TXF :
+		- Ajout fonction 'pad'.
+	
 30/06/2007 :
 	- STR :
 		- Réorganisation des paramètres des méthodes 'To(U|S)(L|S|B)(...)'.
