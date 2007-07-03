@@ -215,7 +215,8 @@ namespace str {
 		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
 			ERRa();
 
-		Recall( Position, Quantity, Pointeur );
+		if ( Quantity != 0 )
+			Recall( Position, Quantity, Pointeur );
 
 		Pointeur[Quantity] = 0;
 	ERRErr

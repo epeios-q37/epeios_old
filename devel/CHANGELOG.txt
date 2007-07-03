@@ -3,6 +3,10 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+03/07/2007 :
+	- STR :
+		- Ajout test sur le nombre d'octets demandés méthode 'Convert(...)'.
+	
 01/07/2007 :
 	- CLNARG :
 		- Changement affichage réalisé par différentes méthodes/fonctions.
