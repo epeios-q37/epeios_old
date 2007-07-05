@@ -293,7 +293,7 @@ namespace mmm {
 			else
 				return _GetRawSize( Header + 1 );
 		}
-		mdr::size__ _GetFreeFragmentSize_( row__ Position ) const
+		mdr::size__ _GetFreeFragmentSize( row__ Position ) const
 		{
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
@@ -706,6 +706,12 @@ namespace mmm {
 
 			_MarkAsUsedFragment_( Position, DataSize, Link, false );
 		}
+		mdr::size__ _GuessDataSize(
+			mdr::size__ TotalSize,
+			bso::bool__ Linked ) const
+		{
+			return _AdjustSize( TotalSize - ( Linked ? MMM2_LINK_SIZE : 0 ) );
+		}
 		mdr::size__ _GetFreeFragmentAvailableSize(
 			const mdr::datum__ *Header,
 			bso::bool__ Linked ) const
@@ -714,23 +720,25 @@ namespace mmm {
 			if ( _IsFreeFragmentOrphan( Header ) )
 				ERRc();
 #endif
-			return _AdjustSize( _GetFreeFragmentSize( Header ) - ( Linked ? MMM2_LINK_SIZE : 0 ) );
+			return _GuessDataSize( _GetFreeFragmentSize( Header ), Linked );
 		}
 		bso::bool__ _IsFreeFragmentBigEnough(
 			const mdr::datum__ *Header,
-			mdr::size__ DataSize ) const
+			mdr::size__ DataSize,
+			bso::bool__ Linked ) const
 		{
-			return ( _GetFreeFragmentAvailableSize( Header, false ) >= DataSize );
+			return ( _GetFreeFragmentAvailableSize( Header, Linked ) >= DataSize );
 		}
 		bso::bool__ _IsFreeFragmentBigEnough_(
 			row__ Position,
-			mdr::size__ DataSize ) const
+			mdr::size__ DataSize,
+			bso::bool__ Linked ) const
 		{
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
 			_GetHeader( Position, Header );
 
-			return _IsFreeFragmentBigEnough( Header, DataSize );
+			return _IsFreeFragmentBigEnough( Header, DataSize, Linked );
 		}
 		row__ _AppendNewFragment( mdr::size__ Size )
 		{
@@ -788,7 +796,7 @@ namespace mmm {
 
 			_GetHeader( FirstFragmentPosition, FirstFragmentHeader );
 
-			if ( _IsFreeFragmentBigEnough( FirstFragmentHeader, DataSize ) ) {
+			if ( _IsFreeFragmentBigEnough( FirstFragmentHeader, DataSize, false ) ) {
 				_ConvertFreeFragmentToUsedFragment( FirstFragmentPosition, FirstFragmentHeader, DataSize, NONE );
 
 				Addendum = _GetSizeLength( DataSize );
@@ -808,7 +816,7 @@ namespace mmm {
 
 				_GetHeader( SecondFragmentPosition, SecondFragmentHeader );
 
-				if ( _IsFreeFragmentBigEnough( SecondFragmentHeader, DataSize - FirstFragmentDataSize ) ) {
+				if ( _IsFreeFragmentBigEnough( SecondFragmentHeader, DataSize - FirstFragmentDataSize, false ) ) {
 					_ConvertFreeFragmentToUsedFragment( FirstFragmentPosition, FirstFragmentHeader, FirstFragmentDataSize, SecondFragmentPosition );
 
 					_ConvertFreeFragmentToUsedFragment( SecondFragmentPosition, SecondFragmentHeader, DataSize - FirstFragmentDataSize, NONE );
@@ -1102,6 +1110,37 @@ namespace mmm {
 
 			_Move( SourceFirstFragmentRow, SourceFirstFragmentHeader, TargetFirstFragmentRow, TargetFirstFragmentHeader );
 		}
+		mdr::size__ _GetMergedWithPrecedingAndFollowingFreeFragmentsIfAvailableUsedFragmentNewDataSize(
+			row__ Descriptor,
+			const mdr::datum__ *Header,
+			bso::bool__ Linked )
+		{
+			mdr::size__ TotalSize = _GetUsedFragmentTotalSize( Header );
+			row__ Descriptor = _GetUsedFragmentNextFragmentPosition( Descriptor, Header );
+
+			if ( Descriptor < S_.Extent
+
+			if ( _IsUsedFragmentFreeFlagSet( Header ) )
+				TotalSize += _GetFreeFragmentSize( _GetFreeFragmentPosition( Descriptor ) );
+
+
+
+
+		}
+		row__ _ReallocateGreaterUsingNewFragments(
+			row__ Descriptor,
+			const mdr::datum__ *Header,
+			mdr::size__ DataSize,
+			bso::ubyte__ &Addendum )
+		{
+			row__ NewDescriptor = _Allocate( DataSize, Addendum );
+
+			_Move( Descriptor, Header, NewDescriptor );
+
+			_Free( *Descriptor );
+
+			return NewDescriptor;
+		}
 		row__ _ReallocateGreater(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
@@ -1110,13 +1149,7 @@ namespace mmm {
 		{
 			if ( _IsUsedFragmentLinked( Header )
 				  || ( ( *Descriptor + _GetUsedFragmentTotalSize( Header ) ) < S_.Extent ) ) {
-				row__ NewDescriptor = _Allocate( DataSize, Addendum );
-
-				_Move( Descriptor, Header, NewDescriptor );
-
-				_Free( *Descriptor );
-
-				return NewDescriptor;
+				_ReallocateGreaterUsingNewFragments( Descriptor, Header, DataSize, Addendum );
 			} else {
 				S_.Extent += _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header );
 
