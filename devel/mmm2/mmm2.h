@@ -903,11 +903,33 @@ namespace mmm {
 
 			_FreeUsedFragment( Position, Header );
 		}
-		void _ResizeUsedFragment(
-			row__ Position,
+		void _HandleResizedUsedFragmentHeader(
+			row__ Position,	// Must not be a linked fragment
 			const mdr::datum__ *Header,
-			mdr::size__ Size,
-			row__ Link )
+			mdr::size__ OldDataSize,
+			mdr::size__ NewDataSize,
+			addendum_ &Addendum )	// Handles shrunking and growing used fragment.
+		{
+#ifdef MMM2_DBG
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+#endif
+			mdr::size__
+				OldSizeLength = _GetSizeLength( OldSizeLength ),
+				NewSizeLength = _GetSizeLength( NewSizeLength );
+
+			if ( OldSizeLength != NewSizeLength )
+				Memory.Store_( Memory, OldSize, *Descriptor + NewSizeLength, *Descriptor + OldSizeLength );
+
+			_SetRawSize( DataSize, Descriptor, _IsUsedFragmentLinkFlagSet( Header ), _IsUsedFragmentFreeFlagSet( Header ) );
+
+			Addendum = _GetSizeLength( NewSize );
+		}
+		void _ShrunkUsedFragment(
+			row__ Position,	// Must not be a linked fragment
+			const mdr::datum__ *Header,
+			mdr::size__ DataSize,
+			addendum__ &Addendum )
 		{
 #ifdef MMM2_DBG
 			if ( Size > _GetUsedFragmentTotalSize( Header ) )
@@ -915,7 +937,7 @@ namespace mmm {
 #endif
 			_SetAsFreeFragment( *Position + _GetSizeLength( Size ) + Size, _GetUsedFragmentTotalSize( Header ) - _GetSizeLength( Size ) - Size );
 
-			_MarkAsUsedFragment_( Position, Size, Link, _IsUsedFragmentFreeFlagSet( Header ) );
+			_HandleResizedUsedFragmentHeader( Position, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
 		row__ _ReallocateLesser(
 			row__ Descriptor,
@@ -1110,22 +1132,127 @@ namespace mmm {
 
 			_Move( SourceFirstFragmentRow, SourceFirstFragmentHeader, TargetFirstFragmentRow, TargetFirstFragmentHeader );
 		}
-		mdr::size__ _GetMergedWithPrecedingAndFollowingFreeFragmentsIfAvailableUsedFragmentNewDataSize(
+		void _ExtendUsedFragmentNotFollowedByAnyFragment(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
-			bso::bool__ Linked )
+			mdr::size__ DataSize,
+			bso::ubyte__ &Addendum )	// The fragment must not be a  linked fragment.
 		{
+#ifdef MMM2_DBG
+			if ( ( _Descriptor + _GetUsedFragmentTotalSize( Header ) ) != S_.Extent )
+				ERRc();
+
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+#endif
+			S_.Extent += _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header );
+
+			Memory.Allocate( S_.Extent );
+
+			mdr::size__
+				OldSizeLength = _GetSizeLength( _GetUsedFragmentDataSize( Header ) ),
+				NewSizeLength = _GetSizeLength( DataSize );
+
+			if ( OldSizeLength != NewSizeLength )
+				Memory.Store_( Memory, _GetUsedFragmentDataSize( Header ), *Descriptor + NewSizeLength, *Descriptor + OldSizeLength );
+
+			_SetRawSize( DataSize, Descriptor, _IsUsedFragmentLinkFlagSet( Header ), _IsUsedFragmentFreeFlagSet( Header ) );
+
+			Addendum = _GetSizeLength( DataSize );
+		}
+		void _ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment(
+			row__ Descriptor,	// The fragment must not be linked.
+			const mdr::datum__ *Header,
+			row__ NextFragmentPosition,
+			const mdr::datum__ *NextFragmentHeader,
+			bso::ubyte__ &Addendum )
+		{
+#ifdef MMM2_DBG
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+
+			if ( NextFragmentPosition != S_.TailingFreeFragment )
+				ERRc();
+#endif
+			S_.TaillingFreeFragment = false;
+
+			S_.Extent = Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
+
+			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
+		}
+		void _ExtendUsedFragmentFollowedByFreeFragment(
+			row__ Descriptor,	// The fragment must not be linked.
+			const mdr::datum__ *Header,
+			row__ NextFragmentPosition,
+			const mdr::datum__ *NextFragmentHeader,
+			bso::ubyte__ &Addendum )
+		{
+#ifdef MMM2_DBG
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+#endif
+			if ( NextFragmentPosition == S_.TailingFreeFragmentPosition )
+				S_.TailingFreeFragmentPosition = NONE;
+			else
+				_ExciseFreeFragment( NextFragmentPosition, NextFragmentHeader );
+
+
+		}
+		bso::bool__ _TryToExtendUsedFragmentFollwedByFreeFragment(
+			row__ Descriptor,	// The fragment must not be linked.
+			const mdr::datum__ *Header,
+			row__ NextFragmentPosition,
+			const mdr::datum__ *NextFragmentHeader,
+			bso::ubyte__ &Addendum )
+		{
+#ifdef MMM2_DBG
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+
+			if ( !_IsFragmentFree( NextFragmentHeader ) )
+				ERRc();
+#endif
+			mdr::size__ TotalSize = _GetUsedFragmentTotalSize( Header ) + _GetFreeFragmentSize( NExtFragmentHeader );
+
+			if ( _GuessTotalSize( TotalSize, false ) < DataSize )
+				if ( NextFragmentPosition != S_.TailingFreeFragmentPosition ) )
+					return false;
+				else
+					_ExtendUsedFragmentFollwedByUndersizedTailingFreeFragment( Descriptor, Header, NextFragmentPosition, NextFragmentHeader, Addendum );
+			else
+				_ExtendUsedFragmentFollwedByFreeFragment( Descriptor, Header, NextFragmentPosition, NextFragmentHeader, Addendum );
+
+			return true;
+		}
+		bso::bool__ _TryToExtendUsedFragment(
+			row__ Descriptor,
+			const mdr::datum__ *Header,
+			bso::ubyte__ &Addendum )	// The fragment must not be linked.
+		{
+#ifdef MMM2_DBG
+			if ( _IsUsedFragmentLinked( Header ) )
+				ERRc();
+#endif
 			mdr::size__ TotalSize = _GetUsedFragmentTotalSize( Header );
-			row__ Descriptor = _GetUsedFragmentNextFragmentPosition( Descriptor, Header );
+			row__ NextFragmentPosition = _GetUsedFragmentNextFragmentPosition( Descriptor, Header );
 
-			if ( Descriptor < S_.Extent
+			if ( NextFragmentPosition == S_.Extent )  {
+				_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Haader, Addendum );
 
-			if ( _IsUsedFragmentFreeFlagSet( Header ) )
-				TotalSize += _GetFreeFragmentSize( _GetFreeFragmentPosition( Descriptor ) );
+				return true;
+			} else if ( NextFragmentPosition < S_.Extent ) {
+				mdr::datum__ NextFragmentHeader[MMM2_HEADER_MAX_LENGTH];
 
+				_GetHeader( NextFragmentPosition, NextFragmentHeader );
 
+				if ( _IsFragmentFree( Header ) )
+					return _TryToExtendUsedFragmentFollwedByFreeFragment( Descriptor, Header, NextFragmentPosition, NextFragmentHeader, DataSize, Addendum );
+				else
+					return false;
+			} else
+				ERRc();
 
-
+			return false;	// To avoid a 'warning'.
 		}
 		row__ _ReallocateGreaterUsingNewFragments(
 			row__ Descriptor,
