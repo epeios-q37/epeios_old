@@ -94,7 +94,7 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 #define MMM2_ORPHAN_MAX_SIZE	10
 #define MMM2_NORMAL_FREE_FRAGMENT_MIN_SIZE	( 1 + 1 + MMM2_LINK_SIZE + MMM2_LINK_SIZE + MMM2_LINK_SIZE + 1 )
 #define MMM2_HEADER_MAX_LENGTH	( 1+ MMM2_SIZE_BUFFER_MAX_LENGTH + 2 * MMM2_LINK_SIZE  )	// Correspond à la struture d'un 'header' d'un fragment libre,
-																							// ce dernier étant plus grang que le 'header' d'un fragment utilisé.
+																							// ce dernier étant plus grand que le 'header' d'un fragment utilisé.
 #define MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE	( MMM2_LINK_SIZE + 1 )
 
 namespace mmm {
@@ -714,7 +714,7 @@ namespace mmm {
 		{
 			return _AdjustSize( TotalSize - ( Linked ? MMM2_LINK_SIZE : 0 ) );
 		}
-		mdr::size__ _GetFreeFragmentAvailableSize(
+		mdr::size__ _GuessFreeFragmentAvailableSize(
 			const mdr::datum__ *Header,
 			bso::bool__ Linked ) const
 		{
@@ -729,7 +729,7 @@ namespace mmm {
 			mdr::size__ DataSize,
 			bso::bool__ Linked ) const
 		{
-			return ( _GetFreeFragmentAvailableSize( Header, Linked ) >= DataSize );
+			return ( _GuessFreeFragmentAvailableSize( Header, Linked ) >= DataSize );
 		}
 		bso::bool__ _IsFreeFragmentBigEnough_(
 			row__ Position,
@@ -810,7 +810,7 @@ namespace mmm {
 
 			Addendum = 0;
 
-			mdr::size__ FirstFragmentDataSize = _GetFreeFragmentAvailableSize( FirstFragmentHeader, true );
+			mdr::size__ FirstFragmentDataSize = _GuessFreeFragmentAvailableSize( FirstFragmentHeader, true );
 
 			if ( _IsFreeFragmentAvailable() ) {
 				SecondFragmentPosition = _GetFreeFragment();
@@ -941,7 +941,7 @@ namespace mmm {
 
 			_HandleResizedUsedFragmentHeader( Position, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
-		row__ _Shrunk(
+		row__ _Shrink(
 			row__ Descriptor,
 			const mdr::datum__ *Header,
 			mdr::size__ DataSize,
@@ -962,13 +962,9 @@ namespace mmm {
 					_SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 
 					_ShrinkUsedFragment( Descriptor, Header, DataSize, Addendum );
-
-					Addendum = _GetSizeLength( DataSize );
 				}
 			} else {
 				_ShrinkUsedFragment( Descriptor, Header, DataSize, Addendum );
-
-				Addendum = _GetSizeLength( DataSize );
 			}
 
 			return Descriptor;
@@ -1151,16 +1147,7 @@ namespace mmm {
 
 			Memory.Allocate( S_.Extent );
 
-			mdr::size__
-				OldSizeLength = _GetSizeLength( _GetUsedFragmentDataSize( Header ) ),
-				NewSizeLength = _GetSizeLength( DataSize );
-
-			if ( OldSizeLength != NewSizeLength )
-				Memory.Store_( Memory, _GetUsedFragmentDataSize( Header ), *Descriptor + NewSizeLength, *Descriptor + OldSizeLength );
-
-			_SetRawSize( DataSize, Descriptor, _IsUsedFragmentLinkFlagSet( Header ), _IsUsedFragmentFreeFlagSet( Header ) );
-
-			Addendum = _GetSizeLength( DataSize );
+			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
 		void _ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment(
 			row__ Descriptor,	// The fragment must not be linked.
@@ -1183,7 +1170,7 @@ namespace mmm {
 
 			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
 		}
-		void _ExtendUsedFragmentFollowedByFreeFragment(
+		void _ExtendUsedFragmentFollowedByBigEnoughFreeFragment(
 			row__ Descriptor,	// The fragment must not be linked.
 			const mdr::datum__ *Header,
 			mdr::size__ DataSize,
@@ -1207,7 +1194,7 @@ namespace mmm {
 			else if ( Delta > _GetFreeFragmentSize( NextFragmentHeader ) )
 				ERRc();
 
-			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ),DataSize, Addendum );
+			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
 		bso::bool__ _TryToExtendUsedFragmentFollowedByFreeFragmentWithoutMoving(
 			row__ Descriptor,	// The fragment must not be linked.
@@ -1232,7 +1219,7 @@ namespace mmm {
 				else
 					_ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
 			else
-				_ExtendUsedFragmentFollowedByFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
+				_ExtendUsedFragmentFollowedByBigEnoughFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
 
 			return true;
 		}
@@ -1470,7 +1457,7 @@ namespace mmm {
 			if ( Size == CurrentSize )
 				return Descriptor;
 			else if ( Size < CurrentSize )
-				return *_Shrunk( Descriptor, Header, Size, Addendum );
+				return *_Shrink( Descriptor, Header, Size, Addendum );
 			else
 				return *_Extend( Descriptor, Header, Size, Addendum );
 		}
