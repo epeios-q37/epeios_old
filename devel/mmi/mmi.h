@@ -328,14 +328,26 @@ namespace mmi {
 			reset();
 		}
 		void Init( 
+#ifdef MMM__USE_V2
+			indexed_multimemory_ &IndexedMultimemory,
+#endif
 			const char *DescriptorsFileName,
 			const char *MultimemoryFileName,
+#ifdef MMM__USE_V2
+			const char *MultimemoryFreeFragmentPositionsFileName,
+#endif
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, FilesGroup );
+#ifdef MMM__USE_V1
 			_Multimemory.Init( MultimemoryFileName, Mode, Persistent, FilesGroup );
+#elif defined( MMM__USE_V2 )
+			_Multimemory.Init( IndexedMultimemory.Multimemoire, MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
+#else
+#	error
+#endif
 		}
 		void ReleaseFile( void )
 		{

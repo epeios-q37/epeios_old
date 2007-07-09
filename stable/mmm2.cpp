@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flf.h"
+
 using namespace mmm;
 
 static void Display_(
@@ -130,6 +132,45 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 		}
 	}
 }
+
+void mmm::multimemory_file_manager___::_WriteFreeFragmentPositions( void )
+{
+ERRProlog
+	flf::file_oflow___ OFlow;
+ERRBegin
+	OFlow.Init( _FreeFragmentPositionFileName );
+
+	flw::Put( _Multimemory->S_.FreeFragment, OFlow );
+	flw::Put( _Multimemory->S_.TailingFreeFragmentPosition, OFlow );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ mmm::Connect(
+	multimemory_ &Multimemory,
+	multimemory_file_manager___ &FileManager )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	flf::file_iflow___ IFlow;
+ERRBegin
+	Exists = uym::Connect( Multimemory.Memory, FileManager );
+
+	if ( Exists ) {
+		Multimemory.S_.Extent = FileManager.FileSize();
+		IFlow.Init( FileManager._FreeFragmentPositionFileName );
+
+		flw::Get( IFlow, Multimemory.S_.FreeFragment );
+		flw::Get( IFlow, Multimemory.S_.TailingFreeFragmentPosition );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

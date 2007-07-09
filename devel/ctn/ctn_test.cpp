@@ -681,10 +681,10 @@ void EssaiPersistence( int argc, const char *argv[] )
 ERRProlog
 	flm::files_group FilesGroup;
 	int a = A( A_( 3 ) );
-	ctn::container_file_manager___ FileManager;
 	E_XMCONTAINER( str::string_ ) CC;
 	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
 	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
+	ctn::container_file_manager___<E_XCONTAINER_( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) )> FileManager;
 	str::string S;
 /*	fch_flot_sortie_fichier FO;
 	fch_flot_entree_fichier FI;
@@ -694,7 +694,7 @@ ERRProlog
 	char M, m, C;
 ERRBegin
 	FilesGroup.Init();
-	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", mdr::mReadWrite, true, FilesGroup );
+	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", mdr::mReadWrite, true, FilesGroup );
 
 	Cm.Init();
 	CC.Init();
@@ -756,6 +756,8 @@ ERRBegin
 	} else {
 		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
 	}
+
+	CM.Dynamics.Multimemoire.DisplayStructure( cout );
 
 
 	cout << "--------------" << txf::nl;
@@ -1087,7 +1089,7 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
+/*		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
@@ -1096,10 +1098,10 @@ ERRFBegin
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
-//		EssaiBogue( argc, argv);
+		EssaiBogue( argc, argv);
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
-//		EssaiPersistence( argc, argv );
+*/		EssaiPersistence( argc, argv );
 #else
 		BugTracking();
 #endif

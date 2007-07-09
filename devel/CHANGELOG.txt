@@ -8,6 +8,8 @@ $Id$
 		- Certains items de la bibliothèque 'IOP' sont maintenant directement accessible à partir de la bibliothèque 'FIL'.
 	- FLM :
 		- Ajout 'ReleaseInactiveFiles(...)'.
+	- MMI :
+		- Adaptation à la 'MMM' V2.
 	
 03/07/2007 :
 	- STR :

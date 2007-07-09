@@ -1561,30 +1561,27 @@ namespace mmm {
 	{
 	private:
 		multimemory_ *_Multimemory;
-		void _WriteTailingFreeFragmentIfRelevantAndFreeFragmentPointer( void );
-		str::string _FreeFragmentPointerFileName;
+		void _WriteFreeFragmentPositions( void );
+		tol::E_FPOINTER___( bso::char__ ) _FreeFragmentPositionFileName;
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			_untyped_memory_file_manager___::ReleaseFile();
+
 			if ( P ) {
-				if ( Multimemory != NULL ) {
-					switch ( _untyped_memory_file_manager___::Mode() ) {
-					case mdr::mReadOnly:
-						break;
-					case mdr::mReadWrite:
-						_WriteTailingFreeFragmentIfRelevantAndFreeFragmentPointer();
-						break;
-					default:
-						ERRc();
-						break;
-					}
-				}
+				if ( ( _Multimemory != NULL )
+					 && _untyped_memory_file_manager___::IsPersistent()
+					 && untyped_memory_file_manager___::Exists()
+					 && ( !tol::FileExists( _FreeFragmentPositionFileName )
+					      || ( untyped_memory_file_manager___::TimeStamp()
+						       >= tol::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
+					_WriteFreeFragmentPositions();
 			}
 
-			_FreeFragmentPointerFileName.reset( P );
-			_Multimemory = NULL;
+			_untyped_memory_file_manager___::reset( P );
+			_FreeFragmentPositionFileName.reset( P );
 
-			uym_file_manager___::reset( P );
+			_Multimemory = NULL;
 		}
 		multimemory_file_manager___( void )
 		: _untyped_memory_file_manager___()
@@ -1592,40 +1589,37 @@ namespace mmm {
 			reset( false );
 		}
 		~multimemory_file_manager___( void )
-		: ~_untyped_memory_file_manager___()
 		{
 			reset();
 		}
 		void Init(
-			multimeory_ &Multimemory,
+			multimemory_ &Multimemory,
 			const char *FileName,
-			const char *FreeFragmentPositionFileName,
+			const char *FreeFragmentPositionsFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
 			reset();
 
-			_untyped_memory_file_manager___::Init( 
+			if ( ( _FreeFragmentPositionFileName = malloc( strlen( FreeFragmentPositionsFileName ) + 1 ) ) == NULL )
+				ERRa();
+
+			strcpy( _FreeFragmentPositionFileName, FreeFragmentPositionsFileName );
+
+			_Multimemory = &Multimemory;
+
+			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, FilesGroup );
 		}
+		friend bso::bool__ Connect(
+			multimemory_ &Multimemory,
+			multimemory_file_manager___ &FileManager );
+	};
 
 
-	}
-
-
-	inline bso::bool__ Connect(
+	bso::bool__ Connect(
 		multimemory_ &Multimemory,
-		multimemory_file_manager___ &FileManager )
-	{
-		bso::bool__ Exists = uym::Connect( Multimemory.Memory, FileManager );
-
-		if ( Exists ) {
-			Multimemory.S_.Extent = FileManager.FileSize();
-			Multimemory._GetFreeFragmentPosition( Multimemory.S_.Extent );
-		}
-
-		return Exists;
-	}
+		multimemory_file_manager___ &FileManager );
 }
 
 /*$END$*/

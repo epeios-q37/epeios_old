@@ -309,7 +309,7 @@ namespace ctn {
 	};
 
 
-	class container_file_manager___ {
+	template <typename container> class container_file_manager___ {
 	private:
 		tym::memory_file_manager___ _Statics;
 		mmi::indexed_multimemory_file_manager___ _Dynamics;
@@ -328,15 +328,27 @@ namespace ctn {
 			reset();
 		}
 		void Init( 
+#ifdef MMM__USE_V2
+			container &Container,
+#endif
 			const char *StaticsFileName,
-			const char *DescriptorsDynamicsFileName,
-			const char *MultimemoryDynamicsFileName,
+			const char *DynamicsDescriptorsFileName,
+			const char *DynamicsMultimemoryFileName,
+#ifdef MMM__USE_V2
+			const char *DynamicsMultimemoryFreeFragmentPositionsFileName,
+#endif
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
 			_Statics.Init( StaticsFileName, Mode, Persistent, FilesGroup );
-			_Dynamics.Init( DescriptorsDynamicsFileName, MultimemoryDynamicsFileName, Mode, Persistent, FilesGroup );
+#ifdef MMM__USE_V1
+			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, Mode, Persistent, FilesGroup );
+#elif defined( MMM__USE_V2 )
+			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
+#else
+#	error
+#endif
 		}
 		void ReleaseFiles( void )
 		{
@@ -400,18 +412,18 @@ namespace ctn {
 		}
 	};
 
-	template <typename memory> inline bso::bool__ Connect(
-		memory &Memory,
-		container_file_manager___ &FileManager )
+	template <typename container, typename file_manager> inline bso::bool__ Connect(
+		container &Container,
+		file_manager &FileManager )
 	{
-		bso::bool__ Exists = tym::Connect( Memory.Statics, FileManager.StaticsFileManager() );
+		bso::bool__ Exists = tym::Connect( Container.Statics, FileManager.StaticsFileManager() );
 
-		Memory.SetStepValue( 0 );	// Pas de préallocation.
+		Container.SetStepValue( 0 );	// Pas de préallocation.
 
-		if ( mmi::Connect( Memory.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
+		if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
 			ERRc();
 
-		Memory.SubInit( Memory.Dynamics.Descripteurs.Amount() );
+		Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
 
 		return Exists;
 	}
