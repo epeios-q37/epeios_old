@@ -81,14 +81,17 @@ extern class ttr_tutor &FILTutor;
 //d The default backup file extension.
 #define FIL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
 
+#define FIL_UNDEFINED_DESCRIPTOR	IOP_UNDEFINED_DESCRIPTOR
+
 #ifdef FIL_FLOW_BUFFER_SIZE
 #	define FIL__FLOW_BUFFER_SIZE FIL_FLOW_BUFFER_SIZE
 #else
 #	define FIL__FLOW_BUFFER_SIZE	100
 #endif
 
-namespace fil
-{
+namespace fil {
+	using namespace iop;
+
 	enum mode__ {
 		//i Unknow.
 		mUnknow,

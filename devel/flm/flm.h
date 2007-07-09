@@ -205,6 +205,7 @@ namespace flm {
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 		// différents témoins
+		time_t _LastAccessTime;	// Last access time.
 		files_group_ *_FilesGroup;
 	// Fonctions
 		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
@@ -222,8 +223,10 @@ namespace flm {
 					Temoin_.Ouvert = 1;
 			}
 			
-			if ( Success )
+			if ( Success ) {
 				_ReportFileUsing( _Row );
+				_LastAccessTime = tol::Clock( false );
+			}
 
 			return Success;
 		}
@@ -338,6 +341,7 @@ namespace flm {
 			TailleFichier_ = 0;
 			_Row = NONE;
 			_FilesGroup = NULL;
+			_LastAccessTime = 0;
 		}
 		void Init(
 			files_group_ &FilesGroup,
@@ -466,6 +470,7 @@ namespace flm {
 		{
 			return Open_( ErrHandle );
 		}
+		E_RODISCLOSE__( time_t, LastAccessTime );
 	};
 
 	//c The standard memory driver which handle a file as memory.
@@ -538,6 +543,10 @@ namespace flm {
 	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( flm::file_memory_driver___ ) standalone_file_memory_driver___;
 
 	#define E_FILE_MEMORY_DRIVER___	standalone_file_memory_driver___
+
+	void ReleaseInactiveFiles(
+		time_t Delay,
+		bso::ulong__ MaxAmount = BSO_ULONG_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
 }
 
 /*$END$*/

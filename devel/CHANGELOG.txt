@@ -3,6 +3,12 @@ $Id$
 - GENERAL :
 	- Recodage bibliothèque 'MMM' par création 'MMM2'.
 	
+09/07/2007 :
+	- FIL :
+		- Certains items de la bibliothèque 'IOP' sont maintenant directement accessible à partir de la bibliothèque 'FIL'.
+	- FLM :
+		- Ajout 'ReleaseInactiveFiles(...)'.
+	
 03/07/2007 :
 	- STR :
 		- Ajout test sur le nombre d'octets demandés méthode 'Convert(...)'.

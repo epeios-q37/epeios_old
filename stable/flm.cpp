@@ -187,6 +187,22 @@ void flm::ReleaseFiles( const files_group_ *FilesGroup )
 }
 
 
+void flm::ReleaseInactiveFiles(
+	time_t Delay,
+	bso::ulong__ MaxAmount )
+{
+	Lock_();
+
+	time_t Now = tol::Clock( false );
+
+	while ( MaxAmount-- && ( Queue.Tail() != NONE ) && ( ( Now - List( Queue.Tail() )->GetLastAccessTime() ) <= Delay ) ) {
+		List( Queue.Tail() )->ReleaseFile( false );
+		Queue.Delete( Queue.Tail() );
+	}
+
+	Unlock_();
+}
+
 /*
 void flm::ReleaseAllFiles( void )
 {

@@ -60,7 +60,7 @@ extern class ttr_tutor &MMM2Tutor;
 
 /*$BEGIN$*/
 
-/* NOTA : Lorsque le fragment est utilisé, la taille totoale est la taille utilisable (taille des données).
+/* NOTA : Lorsque le fragment est utilisé, la taille totale est la taille utilisable (taille des données).
 Lorsque le fragment est disponible, c'est la taille total du fragment qui est stockée. */
 
 #include "err.h"
@@ -95,7 +95,7 @@ Lorsque le fragment est disponible, c'est la taille total du fragment qui est st
 #define MMM2_NORMAL_FREE_FRAGMENT_MIN_SIZE	( 1 + 1 + MMM2_LINK_SIZE + MMM2_LINK_SIZE + MMM2_LINK_SIZE + 1 )
 #define MMM2_HEADER_MAX_LENGTH	( 1+ MMM2_SIZE_BUFFER_MAX_LENGTH + 2 * MMM2_LINK_SIZE  )	// Correspond à la struture d'un 'header' d'un fragment libre,
 																							// ce dernier étant plus grand que le 'header' d'un fragment utilisé.
-#define MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE	( MMM2_LINK_SIZE + 1 )
+#define MMM2_FREE_FRAGMENT_FOOTER_MAX_SIZE	( MMM2_LINK_SIZE + 1 )
 
 namespace mmm {
 	E_ROW( row__ );
@@ -415,42 +415,42 @@ namespace mmm {
 			return DataSize + _GetSizeLength( DataSize ) + ( _IsUsedFragmentLinked( Header ) ? MMM2_LINK_SIZE : 0 );
 		}
 		row__ _GetFreeFragmentPosition(
-			row__ AfterFreeFragmentTailPosition,	// Position immedialty after the free fragment tail.
+			row__ AfterFreeFragmentFooterPosition,	// Position immedialty after the free fragment footer.
 			const mdr::datum__ *FreeFragmentTail ) const
 		{
-			const mdr::datum__ *Pointer = FreeFragmentTail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE - 1;
+			const mdr::datum__ *Pointer = FreeFragmentTail + MMM2_FREE_FRAGMENT_FOOTER_MAX_SIZE - 1;
 
 			if ( *Pointer == 0 )
-				return *AfterFreeFragmentTailPosition - 1;
+				return *AfterFreeFragmentFooterPosition - 1;
 			else if ( *Pointer != 0xff )
-				return *AfterFreeFragmentTailPosition - *Pointer;
+				return *AfterFreeFragmentFooterPosition - *Pointer;
 			else
 				return *(row__ *)( Pointer - MMM2_LINK_SIZE );
 		}
-		void _GetFreeFragmentTail(
-			row__ AfterFreeFragmentTailPosition,	// Position immedialty after the free fragment tail.
-			mdr::datum__ *FreeFragmentTail ) const
+		void _GetFreeFragmentFooter(
+			row__ AfterFreeFragmentFooterPosition,	// Position immedialty after the free fragment footer.
+			mdr::datum__ *FreeFragmentFooter ) const
 		{
 #ifdef MMM2_DBG
-			if ( AfterFreeFragmentTailPosition == 0 )
+			if ( AfterFreeFragmentFooterPosition == 0 )
 				ERRc();
 #endif
 
-			mdr::size__ Amount = MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE;
+			mdr::size__ Amount = MMM2_FREE_FRAGMENT_FOOTER_MAX_SIZE;
 
-			if ( *AfterFreeFragmentTailPosition < Amount )
-				Amount = *AfterFreeFragmentTailPosition;
+			if ( *AfterFreeFragmentFooterPosition < Amount )
+				Amount = *AfterFreeFragmentFooterPosition;
 
-			Memory.Recall( *AfterFreeFragmentTailPosition - Amount, Amount, FreeFragmentTail + MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE - Amount );
+			Memory.Recall( *AfterFreeFragmentFooterPosition - Amount, Amount, FreeFragmentFooter + MMM2_FREE_FRAGMENT_FOOTER_MAX_SIZE - Amount );
 		}
 
-		row__ _GetFreeFragmentPosition( row__ AfterFreeFragmentTailPosition ) const	// Position immedialty after the free fragment tail.
+		row__ _GetFreeFragmentPosition( row__ AfterFreeFragmentFooterPosition ) const	// Position immedialty after the free fragment footer.
 		{
-			mdr::datum__ FreeFragmentTail[MMM2_FREE_FRAGMENT_TAIL_MAX_SIZE];
+			mdr::datum__ FreeFragmentFooter[MMM2_FREE_FRAGMENT_FOOTER_MAX_SIZE];
 
-			_GetFreeFragmentTail( AfterFreeFragmentTailPosition, FreeFragmentTail );
+			_GetFreeFragmentFooter( AfterFreeFragmentFooterPosition, FreeFragmentFooter );
 
-			return _GetFreeFragmentPosition( AfterFreeFragmentTailPosition, FreeFragmentTail );
+			return _GetFreeFragmentPosition( AfterFreeFragmentFooterPosition, FreeFragmentFooter );
 		}
 		row__ _GetFreeFragmentPreviousFreeFragmentPointerPosition(
 			row__ Position,
@@ -917,8 +917,8 @@ namespace mmm {
 				ERRc();
 #endif
 			mdr::size__
-				OldSizeLength = _GetSizeLength( OldSizeLength ),
-				NewSizeLength = _GetSizeLength( NewSizeLength );
+				OldSizeLength = _GetSizeLength( OldDataSize ),
+				NewSizeLength = _GetSizeLength( NewDataSize );
 
 			if ( OldSizeLength != NewSizeLength )
 				Memory.Store_( Memory, OldDataSize, *Position + NewSizeLength, *Position + OldSizeLength );
@@ -1213,13 +1213,12 @@ namespace mmm {
 #endif
 			mdr::size__ TotalSize = _GetUsedFragmentTotalSize( Header ) + _GetFreeFragmentSize( NextFragmentHeader );
 
-			if ( _GuessTotalSizeForUsedFragment( DataSize, false ) < TotalSize )
-				if ( NextFragmentPosition != S_.TailingFreeFragmentPosition )
-					return false;
-				else
-					_ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
-			else
+			if ( _GuessTotalSizeForUsedFragment( DataSize, false ) <= TotalSize )
 				_ExtendUsedFragmentFollowedByBigEnoughFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
+			else if ( NextFragmentPosition == S_.TailingFreeFragmentPosition )
+				_ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
+			else
+				return false;
 
 			return true;
 		}
@@ -1245,7 +1244,7 @@ namespace mmm {
 
 				_GetHeader( NextFragmentPosition, NextFragmentHeader );
 
-				if ( _IsFragmentFree( Header ) )
+				if ( _IsFragmentFree( NextFragmentHeader ) )
 					return _TryToExtendUsedFragmentFollowedByFreeFragmentWithoutMoving( Descriptor, Header, DataSize, NextFragmentPosition, NextFragmentHeader, Addendum );
 				else
 					return false;
@@ -1550,19 +1549,80 @@ namespace mmm {
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
+		friend bso::bool__ Connect(
+			multimemory_ &Multimemory,
+			class multimemory_file_manager___ &FileManager );
 	};
 
-	typedef uym::untyped_memory_file_manager___	multimemory_file_manager___;
+	typedef uym::untyped_memory_file_manager___ _untyped_memory_file_manager___;
+
+	class multimemory_file_manager___
+	: public _untyped_memory_file_manager___
+	{
+	private:
+		multimemory_ *_Multimemory;
+		void _WriteTailingFreeFragmentIfRelevantAndFreeFragmentPointer( void );
+		str::string _FreeFragmentPointerFileName;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( Multimemory != NULL ) {
+					switch ( _untyped_memory_file_manager___::Mode() ) {
+					case mdr::mReadOnly:
+						break;
+					case mdr::mReadWrite:
+						_WriteTailingFreeFragmentIfRelevantAndFreeFragmentPointer();
+						break;
+					default:
+						ERRc();
+						break;
+					}
+				}
+			}
+
+			_FreeFragmentPointerFileName.reset( P );
+			_Multimemory = NULL;
+
+			uym_file_manager___::reset( P );
+		}
+		multimemory_file_manager___( void )
+		: _untyped_memory_file_manager___()
+		{
+			reset( false );
+		}
+		~multimemory_file_manager___( void )
+		: ~_untyped_memory_file_manager___()
+		{
+			reset();
+		}
+		void Init(
+			multimeory_ &Multimemory,
+			const char *FileName,
+			const char *FreeFragmentPositionFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Persistent,
+			flm::files_group_ &FilesGroup )
+		{
+			reset();
+
+			_untyped_memory_file_manager___::Init( 
+		}
+
+
+	}
+
 
 	inline bso::bool__ Connect(
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{
-#pragma message( __LOC__ "Voir que faire avec 'S_.(...)'" )
 		bso::bool__ Exists = uym::Connect( Multimemory.Memory, FileManager );
 
-		if ( Exists )
+		if ( Exists ) {
 			Multimemory.S_.Extent = FileManager.FileSize();
+			Multimemory._GetFreeFragmentPosition( Multimemory.S_.Extent );
+		}
 
 		return Exists;
 	}

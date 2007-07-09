@@ -63,7 +63,7 @@ ERRBegin
 	Multimemory.plug( FMD );
 
 	Multimemory.Init();
-	Multimemory.Preallocate( 1000 );
+	Multimemory.Preallocate( 50 );
 
 	S.plug( Multimemory );
 	S.Init();
