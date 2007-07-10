@@ -154,10 +154,10 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
-	typedef ctn::container_file_manager___ _container_file_manager___;
+	template <typename container> E_TTYPEDEF( ctn::container_file_manager___<container>, _container_file_manager___ );
 
-	class list_container_file_manager___
-	: public _container_file_manager___
+	template <typename container> class list_container_file_manager___
+	: public _container_file_manager___<container>
 	{
 	private:
 		lst::store_ *_ListStore;
@@ -264,7 +264,7 @@ namespace lstctn {
 
 	template <typename list_container> bso::bool__ Connect(
 		list_container &ListContainer,
-		list_container_file_manager___ &FileManager )
+		list_container_file_manager___<list_container> &FileManager )
 	{
 		bso::bool__ Exists = ctn::Connect( ListContainer.Container(), FileManager );
 

@@ -1089,19 +1089,19 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-/*		EssaiBasic();
+		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
-		EssaiDirect( argc, argv );
+//		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiBogue( argc, argv);
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
-*/		EssaiPersistence( argc, argv );
+		EssaiPersistence( argc, argv );
 #else
 		BugTracking();
 #endif

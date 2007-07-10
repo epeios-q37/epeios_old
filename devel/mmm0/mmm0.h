@@ -71,7 +71,7 @@ extern class ttr_tutor &MMM0Tutor;
 #elif defined( MMM_USE_V2 )
 #	define MMM__USE_V2
 #else
-#	define MMM__USE_V1
+#	define MMM__USE_V2
 #endif
 
 #ifdef MMM__USE_V1

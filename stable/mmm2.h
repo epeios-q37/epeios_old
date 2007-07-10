@@ -1184,7 +1184,7 @@ namespace mmm {
 #endif
 			if ( NextFragmentPosition == S_.TailingFreeFragmentPosition )
 				S_.TailingFreeFragmentPosition = NONE;
-			else
+			else if ( !_IsFreeFragmentOrphan( NextFragmentHeader ) )
 				_ExciseFreeFragment( NextFragmentPosition, NextFragmentHeader );
 
 			mdr::size__ Delta = _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header );
@@ -1259,10 +1259,6 @@ namespace mmm {
 			mdr::size__ DataSize,
 			addendum__ &Addendum )
 		{
-#ifdef MMM2_DBG
-			if ( _IsUsedFragmentLinked( Header ) )
-				ERRc();
-#endif
 			row__ NewDescriptor = _Allocate( DataSize, Addendum );
 
 			_Move( Descriptor, Header, NewDescriptor );
@@ -1440,7 +1436,10 @@ namespace mmm {
 			addendum__ &Addendum )
 		{
 			if ( Descriptor == NONE )
-				return _Allocate( Size, Addendum );
+				if ( Size != 0 )
+					return _Allocate( Size, Addendum );
+				else
+					return Descriptor;
 
 			if ( Size == 0 ) {
 				ERRu();

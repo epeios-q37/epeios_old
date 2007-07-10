@@ -1,7 +1,13 @@
 $Id$
 
-- GENERAL :
-	- Recodage bibliothèque 'MMM' par création 'MMM2'.
+	
+10/07/2007 :
+	- CTN :
+		- Adaptation à la 'MMM' V2.
+	- MMM0 :
+		- Par défaut, c'est la V2 qui est utilisée.
+	- MMM2 :
+		- Correction de bogues divers.
 	
 09/07/2007 :
 	- FIL :
@@ -10,6 +16,8 @@ $Id$
 		- Ajout 'ReleaseInactiveFiles(...)'.
 	- MMI :
 		- Adaptation à la 'MMM' V2.
+	- MMM2 :
+		- Publication.
 	
 03/07/2007 :
 	- STR :
