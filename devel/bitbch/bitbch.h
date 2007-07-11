@@ -290,7 +290,7 @@ namespace bitbch {
 		// place un bit de valeur 'Valeur' à la position 'Position'
 		void Allouer_(
 			epeios::size__ Nombre,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			if ( amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
 				Table.Allocate( Convert_( Nombre ) );
@@ -356,7 +356,7 @@ namespace bitbch {
 		//f Allocate enough room to contain 'Size' bits.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			Allouer_( Size, Mode );
 		}

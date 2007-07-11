@@ -111,9 +111,10 @@ namespace mmi {
 	// fonctions
 		void AllouerPlus_(
 			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite )
+			epeios::size__ NouvelleCapacite,
+			aem::mode__ Mode )
 		{
-			Descripteurs.Allocate( NouvelleCapacite );
+			Descripteurs.Allocate( NouvelleCapacite, Mode );
 
 			Initialize_( CapaciteCourante, NouvelleCapacite );
 		}
@@ -121,7 +122,8 @@ namespace mmi {
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void AllouerMoins_(
 			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite );
+			epeios::size__ NouvelleCapacite,
+			aem::mode__ Mode );
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void Lire_(
@@ -202,7 +204,7 @@ namespace mmi {
 			const indexed_multimemory_ &O,
 			epeios::size__ Size )
 		{
-			Descripteurs.Allocate( Size );
+			Descripteurs.Allocate( Size, aem::mFit );
 			Descripteurs.Store_( O.Descripteurs, Size );
 			Multimemoire = O.Multimemoire;
 		}
@@ -223,14 +225,16 @@ namespace mmi {
 			Multimemoire.Init();
 		}
 		//f Allocate 'Capacity' memories in the indexed multimemory. 'ActualCapacity' is the actual capacity.
-		void Allocate( epeios::size__ Amount )
+		void Allocate(
+			epeios::size__ Amount,
+			aem::mode__ Mode = aem::mDefault)
 		{
 			epeios::size__ CurrentAmount = Descripteurs.Amount();
 
 			if ( CurrentAmount > Amount )
-				AllouerMoins_( CurrentAmount, Amount );
+				AllouerMoins_( CurrentAmount, Amount, Mode );
 			else
-				AllouerPlus_( CurrentAmount, Amount );
+				AllouerPlus_( CurrentAmount, Amount, Mode );
 		}
 		index__ New( index__ Index = NONE )
 		{

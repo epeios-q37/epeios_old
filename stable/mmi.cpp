@@ -61,12 +61,13 @@ public:
 namespace mmi {
 	void multimemoire_indexee::AllouerMoins_(
 		capacite CapaciteCourante,
-		capacite CapaciteDemandee )
+		capacite CapaciteDemandee,
+		aem::mode__ Mode )
 	{
 		while ( CapaciteCourante-- > CapaciteDemandee )
 			Multimemoire.Free( Descripteurs.Get( CapaciteCourante ).Descripteur );
 
-		Descripteurs.Allocate( CapaciteDemandee );
+		Descripteurs.Allocate( CapaciteDemandee, Mode );
 	}
 
 	void multimemoire_indexee::RemoveWithoutReallocating(

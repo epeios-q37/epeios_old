@@ -109,7 +109,7 @@ namespace stk {
 		//f Remove the object at row 'R'. If 'Adjust' at 'true', than adjust the size of the stack.
 		void Remove(
 			row Row,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			structure::Remove( Row );
 		}

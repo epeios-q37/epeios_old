@@ -109,14 +109,14 @@ namespace lst {
 		'Size' est la capacité allouée. */
 		virtual void LSTAllocate(
 			epeios::size__ Size,
-			aem::mode Mode ) = 0;
+			aem::mode__ Mode ) = 0;
 	private:
 		// Return the extent, based on 'Locations'.
 		epeios::row_t__ Extent_( void ) const
 		{
 			return *Locations.GetFirstAvailable();
 		}
-		epeios::row_t__ Nouveau_( aem::mode Mode )
+		epeios::row_t__ Nouveau_( aem::mode__ Mode )
 		{
 			bso::bool__ Released = false;
 
@@ -189,14 +189,14 @@ namespace lst {
 			Locations.Release( *Entry );
 		}
 		//f Return the position of a new entry.
-		r New( aem::mode Mode = aem::mDefault )
+		r New( aem::mode__ Mode = aem::mDefault )
 		{
 			return (r_t)Nouveau_( Mode );
 		}
 		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
 		r New(
 			r Row,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
@@ -309,7 +309,7 @@ namespace lst {
 		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			if ( Locations.Amount() != 0 )
 				ERRu();

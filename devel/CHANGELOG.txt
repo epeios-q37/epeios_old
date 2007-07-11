@@ -1,5 +1,19 @@
 $Id$
 
+11/07/2007 :
+	- GENERAL :
+		- Adaptation aux modifications 'AEM'.
+	- AEM :
+		- Mise aux normes du type 'mode(__)'.
+		- Ajout méthode protègée 'Preallocate'.
+		- Réorganisation.
+	- BCH :
+		- Ajout méthode protègée 'Preallocate'.
+		- La copie alloue maintenant le strict minimum dans l'objet cible.
+	- MMI :
+		- Ajout paramètre 'Mode' manquant.
+		- La copie alloue maintenant le strict minimum dans l'objet cible.
+		
 	
 10/07/2007 :
 	- CTN :

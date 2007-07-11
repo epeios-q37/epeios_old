@@ -108,7 +108,7 @@ namespace bch {
 		// Allocation de la place nécessaire à 'Taille' objets.
 		void Allouer_(
 			epeios::size__ Taille,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			if ( mng::AmountToAllocate( Taille, Mode ) )
 				mmr::Allocate( Taille );
@@ -157,7 +157,7 @@ namespace bch {
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			Allouer_( Size, Mode );
 		}
@@ -165,7 +165,7 @@ namespace bch {
 		void Allocate(
 			epeios::size__ Size,
 			const type &Object,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			epeios::size__ PreviousSize = mng::Amount();
 
@@ -173,6 +173,11 @@ namespace bch {
 
 			if ( Size > PreviousSize )
 				Store( Object, PreviousSize, Size - PreviousSize );
+		}
+		void Preallocate( mdr::size__ Size )
+		{
+			if ( mng::Preallocate( Size ) )
+				mmr::Allocate( Size );
 		}
 		/*f Store at 'Offset' 'Amount' objects from 'Bunch' beginnig at 'Row'.
 		Adjust the size of the bunch. */
@@ -467,7 +472,7 @@ namespace bch {
 		{
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row , sh>::operator =( Op );
 
-			Allocate( Op.Amount() );
+			Allocate( Op.Amount(), aem::mFit );
 
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store_( Op, Op.Amount() );
 

@@ -706,11 +706,12 @@ ERRBegin
 //	ECm.Init( Cm );
 	ECM.Init( CM );
 
+	CM.Init();
+
 	if ( !ctn::Connect( CM, FileManager ) ) {
 
 		cout << "***** CREATION *****" << txf::nl << txf::sync;
 
-		CM.Init();
 
 		CM.Allocate( LM - 'A' + 1 );
 
@@ -721,7 +722,7 @@ ERRBegin
 				for ( C = '0'; C <= LC; C++ )
 				{
 					S.Init();
-	//				S.SetStepValue( 0 );
+					S.SetStepValue( 0 );
 
 					S.Append( M );
 					S.Append( m );
@@ -1089,17 +1090,17 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-		EssaiBasic();
-		EssaiConteneurDansConteneur();
-		EssaiSimpleMono();
-		EssaiSimpleMulti();
-		PetitEssai( argc, argv );
-		Essai( argc, argv );
-		cout << "********************************************************" << txf::nl;
-//		EssaiDirect( argc, argv );
-		cout << "********************************************************" << txf::nl;
-		EssaiBogue( argc, argv);
-		EssaiCopie( argc, argv );
+//		EssaiBasic();
+//		EssaiConteneurDansConteneur();
+//		EssaiSimpleMono();
+//		EssaiSimpleMulti();
+//		PetitEssai( argc, argv );
+//		Essai( argc, argv );
+//		cout << "********************************************************" << txf::nl;
+////		EssaiDirect( argc, argv );
+//		cout << "********************************************************" << txf::nl;
+//		EssaiBogue( argc, argv);
+//		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiPersistence( argc, argv );
 #else

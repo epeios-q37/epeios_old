@@ -75,13 +75,13 @@ namespace aem {
 	using namespace tym;
 
 	//e Mode of the allocation.
-	enum mode {
-		//i Undefined.
-		mUndefined,
+	enum mode__ {
 		//i Extent is handled using step value.
 		mDefault,
 		//i Extent fits with amount.
 		mFit,
+		m_amount,
+		m_Undefined,
 	};
 
 	//t Type of a step value.
@@ -98,12 +98,24 @@ namespace aem {
 		{
 			return ( S_.Misc & 0x80 ) != 0;
 		}
-		epeios::size__ Adjust_( epeios::size__ Size )
+		step_value__ StepValue_( void ) const
+		{
+			return (step_value__)( S_.Misc & 0x7f );
+		}
+		step_size__ StepSize_( void ) const
+		{
+			return (step_size__)( StepValue_() * AEM_STEP_COEFFICIENT );
+		}
+		mdr::size__ _GuessExtent( mdr::size__ Size )
 		{
 			step_size__ Step = StepSize_();
 
+			return ( Size ? ( ( ( ( Size - 1 ) / Step ) + 1 ) * Step ) : 0 );
+		}
+		epeios::size__ Adjust_( epeios::size__ Size )
+		{
 			S_.Amount = Size;
-			S_.Misc = ( Size ? ( ( ( ( Size - 1 ) / Step ) + 1 ) * Step ) : 0 ) | ( S_.Misc & 0xff );
+			S_.Misc = _GuessExtent( Size ) | ( S_.Misc & 0xff );
 
 			return S_.Misc & 0xffffff00;
 		}
@@ -113,14 +125,6 @@ namespace aem {
 				return S_.Amount;
 			else
 				return S_.Misc & 0xffffff00;
-		}
-		step_value__ StepValue_( void ) const
-		{
-			return (step_value__)( S_.Misc & 0x7f );
-		}
-		step_size__ StepSize_( void ) const
-		{
-			return (step_size__)( StepValue_() * AEM_STEP_COEFFICIENT );
 		}
 		bso::bool__ Decrease_( epeios::size__ &Size )
 		{
@@ -144,7 +148,7 @@ namespace aem {
 		to 'Size'. */
 		bso::bool__ AmountToAllocate(
 			epeios::size__ &Size,
-			mode Mode )
+			mode__ Mode )
 		{
 			if ( Size == S_.Amount )
 				return false;
@@ -166,11 +170,32 @@ namespace aem {
 					return false;
 				}
 		}
+		bso::bool__ Preallocate( mdr::size__ &Size )
+		{
+			mdr::size__ Extent = Extent_();
+
+			Size = _GuessExtent( Size );
+
+			if ( Size > Extent ) {
+				S_.Misc = Size | ( S_.Misc & 0xff );
+				return true;
+			} else if ( Size < Extent_() ) {
+				if ( S_.Amount > Size )
+					ERRu();
+
+				if ( !OnlyGrowing_() ) {
+					S_.Misc = Size | ( S_.Misc & 0xff );
+					return true;
+				}
+			}
+
+			return false;
+		}
 		/*f Force the amount and extent to exactly 'Size'.
 		Return true if the amount or the extent wasn't equal to 'Size'. */
 		bso::bool__ Force( epeios::size__ Size )
 		{
-			bso::bool__ NotEqual = ( Extent() != Size ) || ( Amount() != Size );
+			bso::bool__ NotEqual = ( Extent() != Size ) || ( S_.Amount != Size );
 
 			S_.Amount = Size;
 			S_.Misc = S_.Misc & 0xff;	// Avoid the '&=' notation due to possible portable type of 'S_.Misc'.
@@ -255,8 +280,8 @@ namespace aem {
 		//f Return position of the last object of the set.
 		row Last( void ) const
 		{
-			if ( Amount() )
-				return Amount() - 1;
+			if ( S_.Amount )
+				return S_.Amount - 1;
 			else
 				return NONE;
 		}
@@ -272,7 +297,7 @@ namespace aem {
 		//f Return position of the first object of the set.
 		row First( void ) const
 		{
-			if ( Amount() )
+			if ( S_.Amount )
 				return 0;
 			else
 				return NONE;
@@ -291,7 +316,7 @@ namespace aem {
 			row Current,
 			epeios::size__ Offset ) const
 		{
-			if ( ( *Current += Offset ) < Amount() )
+			if ( ( *Current += Offset ) < S_.Amount )
 				return Current;
 			else
 				return NONE;
@@ -319,12 +344,12 @@ namespace aem {
 		//f Return true if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
 		{
-			return Amount() == 0;
+			return S_.Amount == 0;
 		}
 		//f Return true if 'Row' exists, false otherwise.
 		bso::bool__ Exists( row Row ) const
 		{
-			return *Row < Amount();
+			return *Row < S_.Amount;
 		}
 	};
 
@@ -366,7 +391,7 @@ namespace aem {
 		the real size to allocate. */
 		bso::bool__ AmountToAllocate(
 			epeios::size__ &Size,
-			mode Mode)
+			mode__ Mode)
 		{
 			Amount_ = Size;
 			return false;
@@ -406,8 +431,8 @@ namespace aem {
 		//f Return position of the last object of the set.
 		row Last( void ) const
 		{
-			if ( Amount() )
-				return Amount() - 1;
+			if ( Amount_ )
+				return Amount_ - 1;
 			else
 				return NONE;
 		}
@@ -423,7 +448,7 @@ namespace aem {
 		//f Return position of the first object of the set.
 		row First( void ) const
 		{
-			if ( Amount() )
+			if ( Amount_ )
 				return 0;
 			else
 				return NONE;
@@ -442,7 +467,7 @@ namespace aem {
 			row Current,
 			epeios::size__ Offset ) const
 		{
-			if ( ( *Current += Offset ) < Amount() )
+			if ( ( *Current += Offset ) < Amount_ )
 				return Current;
 			else
 				return NONE;
@@ -470,12 +495,12 @@ namespace aem {
 		//f Return true if empty, false otherwise.
 		bso::bool__ IsEmpty( void ) const
 		{
-			return Amount() == 0;
+			return Amount_ == 0;
 		}
 		//f Return true if 'Row' exists, false otherwise.
 		bso::bool__ Exists( row Row ) const
 		{
-			return *Row < Amount();
+			return *Row < Amount_;
 		}
 	};
 

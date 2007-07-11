@@ -78,7 +78,7 @@ namespace lstbch {
 	protected:
 		virtual void LSTAllocate(
 			epeios::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			bunch_<type, row>::Allocate( Size, Mode );
 		}
