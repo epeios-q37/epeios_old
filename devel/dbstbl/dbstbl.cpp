@@ -690,7 +690,7 @@ ERREpilog
 	return Extent;
 }
 
-mode__ dbstbl::thread_safe_table_::SwitchMode( mode__ Mode )
+dbstbl::mode__ dbstbl::thread_safe_table_::SwitchMode( dbstbl::mode__ Mode )
 {
 ERRProlog
 ERRBegin
@@ -704,7 +704,7 @@ ERREpilog
 	return Mode;
 }
 
-mode__ dbstbl::thread_safe_table_::Mode( void )
+dbstbl::mode__ dbstbl::thread_safe_table_::Mode( void )
 {
 	mode__ Mode = m_Undefined;
 ERRProlog

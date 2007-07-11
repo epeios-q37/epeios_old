@@ -75,7 +75,7 @@ namespace lstctn {
 	protected:
 		virtual void LSTAllocate(
 			epeios::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			container::Allocate( Size, Mode );
 		}

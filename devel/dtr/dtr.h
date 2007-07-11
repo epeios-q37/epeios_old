@@ -148,7 +148,7 @@ namespace dtr {
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			Tree.Allocate( Size, Mode );
 			Queue.Allocate( Size, Mode );

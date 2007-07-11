@@ -96,7 +96,7 @@ namespace dbt {
 	protected:
 		void LSTAllocate(
 			epeios::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			Nodes.Allocate( Size, Mode );
 			Types.Allocate( Size, Mode );
@@ -106,7 +106,7 @@ namespace dbt {
 		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
 		virtual void DBTAllocate(
 			epeios::size__ Size,
-			aem::mode Mode ) = 0;
+			aem::mode__ Mode ) = 0;
 	public:
 		struct s
 		: public E_LISTt_( irow__ )::s,

@@ -124,7 +124,7 @@ namespace idxbtq {
 		//f Allocate enough room to contain 'Size' items.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			E_IBTREEt_( r )::Allocate( Size, Mode );
 			E_IQUEUEt_( r )::Allocate( Size, Mode );

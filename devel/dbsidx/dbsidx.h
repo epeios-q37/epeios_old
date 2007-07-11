@@ -224,7 +224,7 @@ namespace dbsidx {
 		}
 		void Allocate(
 			mdr::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 			BaseIndex.Allocate( Size, Mode );
 		}

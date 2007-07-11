@@ -167,7 +167,7 @@ namespace ctn {
 		void Allocate(
 			epeios::size__ Size,
 			st &ST,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
@@ -178,7 +178,7 @@ namespace ctn {
 			AncCap = amount_extent_manager_<r>::Amount();
 
 			if ( amount_extent_manager_<r>::AmountToAllocate( Amount, Mode ) ) {
-				Dynamics.Allocate( Amount );
+				Dynamics.Allocate( Amount, aem::mFit );
 				Statics.Allocate( Amount );
 			}
 
@@ -196,7 +196,7 @@ namespace ctn {
 		}
 		void DecreaseTo(
 			epeios::size__ Size,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			if ( Size > amount_extent_manager_<r>::Amount() )
@@ -238,7 +238,7 @@ namespace ctn {
 		void Remove(
 			r Position,
 			epeios::size__ Amount,
-			aem::mode Mode )
+			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
@@ -257,7 +257,7 @@ namespace ctn {
 		//f Remove 'Amount' objects from the end of the container.
 		void Truncate(
 			epeios::size__ Amount = 1,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 	#ifdef CTN_DBG
 			if ( Amount > this->Amount() )
@@ -268,7 +268,7 @@ namespace ctn {
 		//f Remove objects all objects beginning at 'Row'.
 		void Truncate(
 			r Row,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 #ifdef CTN_DBG
 			if ( !Exists( Row ) )
@@ -280,7 +280,7 @@ namespace ctn {
 		void Crop(
 			epeios::size__ Amount,
 			r Row = 0,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			Truncate( this->Amount() - ( *Row + Amount ), Mode );
 
@@ -290,7 +290,7 @@ namespace ctn {
 		void Crop(
 			r First,
 			r Last,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 #ifdef BCH_DBG
 			if ( Last < First )
@@ -305,6 +305,7 @@ namespace ctn {
 		void SubInit( epeios::size__ Size )
 		{
 			amount_extent_manager_<r>::Init( Size );
+			amount_extent_manager_<r>::SetStepValue( 0 );
 		}
 	};
 
@@ -418,7 +419,7 @@ namespace ctn {
 	{
 		bso::bool__ Exists = tym::Connect( Container.Statics, FileManager.StaticsFileManager() );
 
-		Container.SetStepValue( 0 );	// Pas de préallocation.
+		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
 		if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
 			ERRc();
@@ -907,7 +908,7 @@ namespace ctn {
 		//f Allocate room for 'Size' objects.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			E_MITEMt( t, r ) E;
 
@@ -934,7 +935,7 @@ namespace ctn {
 		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
@@ -1309,7 +1310,7 @@ namespace ctn {
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
 			epeios::size__ Capacity,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			E_ITEMt( t, r ) E;
 
@@ -1336,7 +1337,7 @@ namespace ctn {
 		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )

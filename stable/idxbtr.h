@@ -146,7 +146,7 @@ namespace idxbtr {
 		}
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode__ Mode = aem::mDefault )
 		{
 			BaseTree.Allocate( Size, Mode );
 		}
