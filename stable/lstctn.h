@@ -154,7 +154,7 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
-	template <typename container> E_TTYPEDEF( ctn::container_file_manager___<container>, _container_file_manager___ );
+	template <typename container> E_TTYPEDEF___( ctn::container_file_manager___<container>, _container_file_manager___ );
 
 	template <typename container> class list_container_file_manager___
 	: public _container_file_manager___<container>
@@ -191,9 +191,11 @@ namespace lstctn {
 			reset();
 		}
 		void Init(
+			container &Container,
 			const char *ContainerStaticsFileName,
 			const char *ContainerDynamicsFileName,
 			const char *ContainerMultimemoryFileName,
+			const char *ContainerMultimemoryFreeFragmentPositionsFileName,
 			const char *ListFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
@@ -201,7 +203,7 @@ namespace lstctn {
 		{
 			reset();
 
-			_container_file_manager___::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent, FilesGroup );
+			_container_file_manager___<container>::Init( Container, ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();
