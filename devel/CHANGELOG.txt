@@ -1,5 +1,9 @@
 $Id$
 
+12/07/2007 :
+	- MMM2 :
+		- Quelques statistiques sont affichées par 'DisplayStructure()'.
+
 11/07/2007 :
 	- GENERAL :
 		- Adaptation aux modifications 'AEM'.

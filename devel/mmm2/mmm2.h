@@ -162,7 +162,7 @@ namespace mmm {
 
 			Size -= 0xffff;
 
-			if ( Size < ( MMM2_L3 - MMM2_L2 - MMM2_L1 ) ) {
+			if ( Size < ( MMM2_L3 - MMM2_L2 ) ) {
 				Datum[3] = (mdr::datum__)( Size >> 24 );
 				Datum[4] = (mdr::datum__)( ( Size >> 16 ) & 0xff );
 				Datum[5] = (mdr::datum__)( ( Size >> 8 ) & 0xff );
@@ -177,8 +177,7 @@ namespace mmm {
 			Size = Datum[0] & ~MMM2_USED_FRAGMENT_FLAGS_MASK;
 
 			if ( Size == MMM2_L1 ) {
-				Size += Datum[1] << 8;
-				Size += Datum[2];
+				Size += ( Datum[1] << 8 ) + Datum[2];
 
 				if ( Size == MMM2_L2 ) {
 					Size += ( Datum[3] << 24 )

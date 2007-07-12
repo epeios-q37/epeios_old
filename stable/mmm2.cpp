@@ -71,6 +71,8 @@ static void Display_(
 
 void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 {
+	bso::ulong__ UsedFragmentTotalSize = 0, UsedFragmentDataSize = 0, FreeFragmentSize = 0;
+
 	Flow << "Extent : " << S_.Extent << txf::tab;
 	Flow << "FreeFragment : ";
 	Display_( S_.FreeFragment, Flow );
@@ -95,6 +97,9 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 			if ( _IsFragmentUsed( Header ) ) {
 				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
 
+				UsedFragmentTotalSize += _GetUsedFragmentTotalSize( Header );
+				UsedFragmentDataSize += _GetUsedFragmentDataSize( Header );
+
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
 					Flow << *_GetFreeFragmentPosition( Position );
 				else
@@ -118,6 +123,8 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );
 				}
 
+				FreeFragmentSize += _GetFreeFragmentSize( Header );
+
 				Position = _GetFreeFragmentNextFragmentPosition( Position, Header );
 			} else
 				ERRc();
@@ -130,6 +137,8 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 				ERRc();
 
 		}
+
+		Flow << "DS : " << UsedFragmentDataSize << txf::tab << "OH : " << ( 100 * ( UsedFragmentTotalSize - UsedFragmentDataSize ) ) / UsedFragmentDataSize << '%' << txf::tab << "FS : " << FreeFragmentSize << txf::tab << "R : " << ( 100 * FreeFragmentSize ) / UsedFragmentDataSize << '%' << txf::nl; 
 	}
 }
 
