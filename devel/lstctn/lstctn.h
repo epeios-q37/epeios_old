@@ -165,19 +165,19 @@ namespace lstctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_container_file_manager___::ReleaseFiles();
+			_container_file_manager___<container>::ReleaseFiles();
 
 			if ( P ) {
 				if ( ( _ListStore != NULL )
-					 && _container_file_manager___::IsPersistent()
-					 && _container_file_manager___::Exists()
+					 && _container_file_manager___<container>::IsPersistent()
+					 && _container_file_manager___<container>::Exists()
 					 && ( !tol::FileExists( _ListFileName )
-					      || ( _container_file_manager___::TimeStamp()
+					      || ( _container_file_manager___<container>::TimeStamp()
 						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___::TimeStamp() );
+					lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___<container>::TimeStamp() );
 			}
 
-			_container_file_manager___::reset( P );
+			_container_file_manager___<container>::reset( P );
 			_ListFileName.reset( P );
 
 			_ListStore = NULL;
@@ -215,7 +215,7 @@ namespace lstctn {
 			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
 				ERRu();
 
-			_container_file_manager___::Drop();
+			_container_file_manager___<container>::Drop();
 
 			if ( tol::FileExists( _ListFileName ) )
 				if ( remove( _ListFileName ) != 0 )
@@ -234,7 +234,7 @@ namespace lstctn {
 		}
 		bso::bool__ Exists( void ) const
 		{
-			bso::bool__ Exists = _container_file_manager___::Exists();
+			bso::bool__ Exists = _container_file_manager___<container>::Exists();
 
 			if ( Exists != tol::FileExists( _ListFileName ) )
 				ERRc();
@@ -243,7 +243,7 @@ namespace lstctn {
 		}
 		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
 		{
-			bso::bool__ Success = _container_file_manager___::CreateFiles( ErrHandle );
+			bso::bool__ Success = _container_file_manager___<container>::CreateFiles( ErrHandle );
 
 			if ( !Success )
 				return false;

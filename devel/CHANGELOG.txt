@@ -1,6 +1,8 @@
 $Id$
 
 12/07/2007 :
+	- GENERAL :
+		- Correction erreurs détectées par g++.
 	- MMM2 :
 		- Quelques statistiques sont affichées par 'DisplayStructure()'.
 
