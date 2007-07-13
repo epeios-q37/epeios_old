@@ -936,9 +936,9 @@ namespace mmm {
 			if ( DataSize > _GetUsedFragmentDataSize( Header ) )
 				ERRc();
 #endif
-			_SetAsFreeFragment( *Position + _GetSizeLength( DataSize ) + DataSize, _GetUsedFragmentTotalSize( Header ) - _GetSizeLength( DataSize ) - DataSize );
-
 			_HandleResizedUsedFragmentHeader( Position, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
+
+			_SetAsFreeFragment( *Position + _GetSizeLength( DataSize ) + DataSize, _GetUsedFragmentTotalSize( Header ) - _GetSizeLength( DataSize ) - DataSize );
 		}
 		row__ _Shrink(
 			row__ Descriptor,

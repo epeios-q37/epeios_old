@@ -1,5 +1,9 @@
 $Id$
 
+13/07/2007 :
+	- MMM2 :
+		- Correction bogue 'Shrink...(...)'.
+
 12/07/2007 :
 	- GENERAL :
 		- Correction erreurs détectées par g++.
