@@ -207,7 +207,7 @@ ERRBegin
 	C.Append( str::string( "coucou" ) );
 //	MM.DisplayStructure( cout );
 
-	C.Append( str::string( "hello" ) );
+	C.Insert( str::string( "hello" ), 0 );
 //	MM.DisplayStructure( cout );
 
 	C(0).Insert( "toto", 3 );
@@ -303,7 +303,7 @@ ERRBegin
 	M.Init();
 	CS.plug( M );
 	CS.Init();
-	CS.Allocate( 3 );
+	CS.Allocate( 2 );
 	ECS.Init( CS );
 
 	Str.Init();
@@ -315,10 +315,10 @@ ERRBegin
 	ECS(1).Init();
 	Str = "c";
 	ECS(1)= Str;
+	ECS.Flush();
 
-	ECS(2).Init();
 	Str = "de";
-	ECS(2)= Str;
+	CS.Insert( Str, 1 );
 
 
 
@@ -1090,11 +1090,11 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-//		EssaiBasic();
+		EssaiBasic();
 //		EssaiConteneurDansConteneur();
 //		EssaiSimpleMono();
 //		EssaiSimpleMulti();
-//		PetitEssai( argc, argv );
+		PetitEssai( argc, argv );
 //		Essai( argc, argv );
 //		cout << "********************************************************" << txf::nl;
 ////		EssaiDirect( argc, argv );

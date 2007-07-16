@@ -73,7 +73,6 @@ namespace mmi {
 	{
 		mmm::descriptor__ Descripteur;
 		bso::ubyte__ Addendum;
-		epeios::size__ Capacite;
 	};
 
 	typedef bch::E_BUNCHt_( descripteur__, index__ ) descriptors_;
@@ -152,7 +151,7 @@ namespace mmi {
 
 			D.Descripteur = Multimemoire.Reallocate( D.Descripteur, Nombre, D.Addendum );
 
-			D.Capacite = Nombre;
+//			D.Capacite = Nombre;
 
 			Descripteurs.Store( D, *Index );
 		}
@@ -164,7 +163,7 @@ namespace mmi {
 			Multimemoire.Free( D.Descripteur );
 
 			D.Descripteur = MMM_UNDEFINED_DESCRIPTOR;
-			D.Capacite = 0;
+//			D.Capacite = 0;
 
 			Descripteurs.Store( D, *Index );
 		}
@@ -284,7 +283,7 @@ namespace mmi {
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
-			return Descripteurs( *Index ).Capacite;
+			return Multimemoire.Size( Descripteurs( *Index ).Descripteur );
 		}
 		/*f Delete 'Amount' entries from 'Position',
 		'ActualCapacity' is the actual capacity.
@@ -293,6 +292,12 @@ namespace mmi {
 			epeios::row__ Position,
 			epeios::size__ ActualCapacity,
 			epeios::size__ Amount );
+		void Shift( index__ Index )	// Shift all elements from 'Index' from one position to the end. Last element is lost.
+		{
+			descripteur__ Descripteur = {NONE, 0};
+			Descripteurs.Store_( Descripteurs, Descripteurs.Amount() - 1 - *Index, *Index + 1, Index );
+			Descripteurs.Store( Descripteur, Index );
+		}
 #if 0
 		void write(
 			flw::oflow__ &OFlow,

@@ -1,5 +1,12 @@
 $Id$
 
+15/07/2007 :
+	- CTN :
+		- Ajout méthode 'Insert(...)'.
+	- MMI :
+		- La taille d'une sous-mémoire n'est plus stockée dans le 'descripteur__' mais récupèré de la multimémoire.
+		- Ajout de 'Shift(...)'.
+
 13/07/2007 :
 	- MMM2 :
 		- Correction bogue 'Shrink...(...)'.

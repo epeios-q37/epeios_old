@@ -85,6 +85,20 @@ namespace ctn {
 	template <class st, typename r> class basic_container_
 	: public amount_extent_manager_<r>
 	{
+	private:
+		void _Allocate(
+			epeios::size__ Size,
+			aem::mode__ Mode )
+		{
+#ifdef CTN_DBG
+			FlushTest();
+#endif
+			if ( amount_extent_manager_<r>::AmountToAllocate( Size, Mode ) ) {
+				Dynamics.Allocate( Size, aem::mFit );
+				Statics.Allocate( Size );
+			}
+		}
+
 #ifdef CTN_DBG
 	protected:
 		virtual bso::bool__ IsFlushed( void ) const = 0;
@@ -166,7 +180,7 @@ namespace ctn {
 		//f Allocation room for 'Size' object of statical part 'ST'.
 		void Allocate(
 			epeios::size__ Size,
-			st &ST,
+			const st &ST,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
@@ -177,10 +191,7 @@ namespace ctn {
 
 			AncCap = amount_extent_manager_<r>::Amount();
 
-			if ( amount_extent_manager_<r>::AmountToAllocate( Amount, Mode ) ) {
-				Dynamics.Allocate( Amount, aem::mFit );
-				Statics.Allocate( Amount );
-			}
+			_Allocate( Size, Mode );
 
 			if ( AncCap < Size )
 			{
@@ -193,6 +204,18 @@ namespace ctn {
 				else
 					Statics.Store( ST, AncCap );
 			}
+		}
+		void Insert(
+			const st &ST,
+			r Row,
+			aem::mode__ Mode )
+		{
+			_Allocate( Amount() + 1, Mode );
+
+			Statics.Store_( Statics, Amount() - 1 - *Row, *Row + 1, Row );
+			Dynamics.Shift( *Row );
+			
+			Statics.Store( ST, Row );
 		}
 		void DecreaseTo(
 			epeios::size__ Size,
@@ -249,10 +272,7 @@ namespace ctn {
 			Dynamics.RemoveWithoutReallocating( *Position, CurrentAmount, Amount );
 			Statics.Store_( Statics, NewAmount - *Position, Position, *Position + Amount );
 
-			if ( amount_extent_manager_<r>::AmountToAllocate( NewAmount, Mode ) ) {
-				Dynamics.Allocate( NewAmount );
-				Statics.Allocate( NewAmount );
-			}
+			_Allocate( NewAmount, Mode );
 		}
 		//f Remove 'Amount' objects from the end of the container.
 		void Truncate(
@@ -914,6 +934,23 @@ namespace ctn {
 
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::Allocate( Size, E.ctn_S_, Mode );	// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
 		}
+		void Insert(
+			const t &Object,
+			r Row,
+			aem::mode__ Mode = aem::mDefault )
+		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
+			E_CMITEMt( t, r ) E;
+
+			basic_container_< item_mono_statique__< typename_ t::s >, r >::Insert( E.ctn_S_, Row, Mode );
+
+			operator()( Row ) = Object;
+
+			Flush();
+		}
 		mono_container_ &operator =( const mono_container_ &C )
 		{
 			Ponctuel_.Erase();
@@ -947,7 +984,6 @@ namespace ctn {
 		{
 			return Ponctuel_.Index();
 		}
-
 	};
 
 	E_AUTO2( mono_container )
@@ -1315,6 +1351,23 @@ namespace ctn {
 			E_ITEMt( t, r ) E;
 
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::Allocate( Capacity, E.ctn_S_, Mode );// pas de E.xxx::ctn_S_ car G++ V2.90.29 n'aime pas
+		}
+		void Insert(
+			const t &Object,
+			r Row,
+			aem::mode__ Mode = aem::mDefault )
+		{
+#ifdef CTN_DBG
+			if ( !IsFlushed() )
+				ERRu();
+#endif
+			E_CITEMt( t, r ) E;
+
+			basic_container_< item_multi_statique__< typename_ t::s >, r >::Insert( E.ctn_S_, Row, Mode );
+
+			operator()( Row ) = Object;
+
+			Flush();
 		}
 		multi_container_ &operator =( const multi_container_ &C )
 		{
