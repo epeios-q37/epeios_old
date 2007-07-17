@@ -459,9 +459,11 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &mthfrc		&emth		&\
 	&MaTH FRaCtion
 &mthitg		&emth		&2000-2001, 	&MaTH InTeGer
-&mthvct		&emth		&2000-2001, 	&MaTH VeCTor
 &mthpln		&emth		&\
 	&MaTH PoLyNomial
+&mthvct		&emth		&2000-2001, 	&MaTH VeCTor
+&mthtmc		&emth		&\
+	&MaTH TiMeCode
 
 
 
