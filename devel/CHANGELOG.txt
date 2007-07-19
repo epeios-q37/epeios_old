@@ -8,6 +8,8 @@ $Id$
 	- DBSTBL :
 		- Renommage '_ITest(...)' en '_ConnectIndexToFileIfNot(...)'
 		- Ajout paramètre 'DontConnectToFiles' à la méthode '_I(...)'.
+	- MMM2 :
+		- Correction bogue '...Shrink...(...)' interdisant les 'linked fragment'.
 
 15/07/2007 :
 	- CTN :

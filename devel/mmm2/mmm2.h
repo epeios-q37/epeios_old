@@ -905,16 +905,12 @@ namespace mmm {
 			_FreeUsedFragment( Position, Header );
 		}
 		void _HandleResizedUsedFragmentHeader(
-			row__ Position,	// Must not be a linked fragment
+			row__ Position,	// NOTA : Can be a linked fragment, but the fragment becomes unlinked.
 			const mdr::datum__ *Header,
 			mdr::size__ OldDataSize,
 			mdr::size__ NewDataSize,
 			addendum__ &Addendum )	// Handles shrinking and growing used fragment.
 		{
-#ifdef MMM2_DBG
-			if ( _IsUsedFragmentLinked( Header ) )
-				ERRc();
-#endif
 			mdr::size__
 				OldSizeLength = _GetSizeLength( OldDataSize ),
 				NewSizeLength = _GetSizeLength( NewDataSize );
@@ -922,12 +918,12 @@ namespace mmm {
 			if ( OldSizeLength != NewSizeLength )
 				Memory.Store_( Memory, OldDataSize, *Position + NewSizeLength, *Position + OldSizeLength );
 
-			_SetRawSize( NewDataSize, Position, _IsUsedFragmentLinkFlagSet( Header ), _IsUsedFragmentFreeFlagSet( Header ) );
+			_SetRawSize( NewDataSize, Position, false, _IsUsedFragmentFreeFlagSet( Header ) );
 
 			Addendum = _GetSizeLength( NewDataSize );
 		}
 		void _ShrinkUsedFragment(
-			row__ Position,	// Must not be a linked fragment
+			row__ Position,	// NOTA : Can be a linked fragment, but the fragment becomes unlinked.
 			const mdr::datum__ *Header,
 			mdr::size__ DataSize,
 			addendum__ &Addendum )
