@@ -151,7 +151,7 @@ namespace dbstbl {
 	class table_
 	{
 	private:
-		void _ITest( irow__ Row ) const
+		void _ConnectIndexToFileIfNot( irow__ Row ) const
 		{
 #ifdef DBSTBL_DBG
 			if ( !Indexes.Exists( Row ) )
@@ -178,15 +178,21 @@ namespace dbstbl {
 
 			return *S_.Content;
 		}
-		const index_ &_I( irow__ Row ) const
+		const index_ &_I(
+			irow__ Row,
+			bso::bool__ DontConnectToFiles = false ) const
 		{
-			_ITest( Row );
+			if ( !DontConnectToFiles )
+				_ConnectIndexToFileIfNot( Row );
 
 			return *Indexes( Row );
 		}
-		index_ &_I( irow__ Row )
+		index_ &_I(
+			irow__ Row,
+			bso::bool__ DontConnectToFiles = false )
 		{
-			_ITest( Row );
+			if ( !DontConnectToFiles )
+				_ConnectIndexToFileIfNot( Row );
 
 			return *Indexes( Row );
 		}

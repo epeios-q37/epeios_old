@@ -609,7 +609,7 @@ ERREpilog
 // Permet de stocker toutes les données en mémoire. NON UTILISABLE EN EXPLOITATION !
 //#define IN_MEMORY
 
-bso::bool__ dbsidx::file_index_::_ConnectToFiles( void )
+bso::bool__ dbsidx::file_index_::_ConnectToFiles( bso::bool__ IgnoreAdditionalFiles )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -628,7 +628,7 @@ ERRBegin
 	Exists = idxbtq::Connect( BaseIndex, S_.FileManager );
 #endif
 
-	if ( Exists ) {
+	if ( Exists && !IgnoreAdditionalFiles ) {
 		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
 			SearchRoot();
 	}

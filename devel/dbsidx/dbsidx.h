@@ -121,13 +121,13 @@ namespace dbsidx {
 	: public _file_features_
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void )
+		virtual void DBSBSCCompleteInitialization( bso::bool__ )
 		{
 			// Rien à faire.
 		}
 		virtual void DBSBSCDrop( void )
 		{
-			reset();
+			// Rien à faire.
 		}
 	private:
 		bso::sign__ _Seek(
@@ -219,6 +219,7 @@ namespace dbsidx {
 		{
 			S_.Root = NONE;
 			BaseIndex.Init();
+			Drop();
 
 			S_.ModificationTimeStamp = 0;
 		}
@@ -330,10 +331,6 @@ namespace dbsidx {
 				return NONE;
 		}
 		rrow__ Test( void ) const;
-		void Drop( void )
-		{
-			_file_features_::Drop();
-		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
@@ -345,9 +342,9 @@ namespace dbsidx {
 	: public index_
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void )
+		virtual void DBSBSCCompleteInitialization( bso::bool__ IgnoreAdditionalFiles )
 		{
-			_ConnectToFiles();
+			_ConnectToFiles( IgnoreAdditionalFiles );
 		}
 		virtual void DBSBSCDrop( void )
 		{
@@ -360,7 +357,7 @@ namespace dbsidx {
 		}
 	private:
 		void _SaveRoot( void ) const;
-		bso::bool__ _ConnectToFiles( void );
+		bso::bool__ _ConnectToFiles( bso::bool__ IgnoreAdditionalfiles );
 		void _Drop( void );
 	public:
 		str::string_ RootFileName;

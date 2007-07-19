@@ -323,7 +323,7 @@ void dbstbl::table_::_ResetAllIndexes( void )
 	irow__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
-		_I( Row ).Reset();
+		_I( Row, true ).Reset();
 
 		Row = Indexes.Next( Row );
 	}

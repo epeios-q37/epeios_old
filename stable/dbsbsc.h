@@ -227,7 +227,7 @@ namespace dbsbsc {
 	class file_features_	// Permet d'implémenter certains comportements necessitéz par le stockage des données dans un fichier.
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void ) = 0;// Permet d'éviter certaines opérations coûteuses en temps à l'initialisation.
+		virtual void DBSBSCCompleteInitialization( bso::bool__ IgnoreAdditionalFiles ) = 0;// Permet d'éviter certaines opérations coûteuses en temps à l'initialisation.
 		virtual void DBSBSCDrop( void ) = 0;
 	public:
 		struct s
@@ -258,7 +258,7 @@ namespace dbsbsc {
 		void Init( bso::bool__ Partial )
 		{
 			if ( !Partial )
-				DBSBSCCompleteInitialization();
+				DBSBSCCompleteInitialization( false );
 
 			S_.InitializationCompleted = !Partial;
 		}
@@ -267,14 +267,14 @@ namespace dbsbsc {
 			if ( S_.InitializationCompleted )
 				ERRu();
 
-			DBSBSCCompleteInitialization();
+			DBSBSCCompleteInitialization( false );
 
 			S_.InitializationCompleted = true;
 		}
 		void Drop( void )
 		{
 			if ( !S_.InitializationCompleted )
-				DBSBSCCompleteInitialization();	// Pour que les 'file memory driver's sous-jacents se connecte au fichier, sinon l'effacement ne se fait pas.
+				DBSBSCCompleteInitialization( true );	// Pour que les 'file memory driver's sous-jacents se connecte au fichier, sinon l'effacement ne se fait pas.
 
 			DBSBSCDrop();
 		}

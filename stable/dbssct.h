@@ -222,7 +222,7 @@ namespace dbssct {
 	: public static_content_
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void )
+		virtual void DBSBSCCompleteInitialization( bso::bool__ )
 		{
 			_ConnectToFiles();
 		}

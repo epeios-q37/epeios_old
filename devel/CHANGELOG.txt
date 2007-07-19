@@ -1,5 +1,14 @@
 $Id$
 
+19/07/2007 :
+	- GENERAL :
+		- Adaptations aux modifications bibliothèque 'DBSBSC'.
+	- DBSBSC :
+		- Ajout paramètre 'IgnoreAdditionalFiles' méthode 'DBSBSCCompleteInitialization(...)'.
+	- DBSTBL :
+		- Renommage '_ITest(...)' en '_ConnectIndexToFileIfNot(...)'
+		- Ajout paramètre 'DontConnectToFiles' à la méthode '_I(...)'.
+
 15/07/2007 :
 	- CTN :
 		- Ajout méthode 'Insert(...)'.
