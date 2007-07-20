@@ -552,7 +552,7 @@ namespace mmm {
 				}
 			}
 		}
-		void _ExciseFreeFragment_( row__ RemovedFreeFragmentPosition )
+		void _ExciseFreeFragment( row__ RemovedFreeFragmentPosition )
 		{
 			mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
@@ -665,7 +665,7 @@ namespace mmm {
 		{
 			return _GuessTotalSizeForUsedFragment( DataSize, Link != NONE );
 		}
-		void _MarkAsUsedFragment_(
+		void _MarkAsUsedFragment(
 			row__ Position,
 			mdr::size__ DataSize,
 			row__ Link,	// Si pas lié, est égal à 'NONE'.
@@ -705,7 +705,7 @@ namespace mmm {
 					_SetUsedFragmentFreeFlag( RemainderPosition, false );	// 'RemainderPosition' is a used fragment, then report him
 																			// that he is no more preceded by a free fragment.
 
-			_MarkAsUsedFragment_( Position, DataSize, Link, false );
+			_MarkAsUsedFragment( Position, DataSize, Link, false );
 		}
 		mdr::size__ _GuessDataSize(
 			mdr::size__ TotalSize,
@@ -730,7 +730,7 @@ namespace mmm {
 		{
 			return ( _GuessFreeFragmentAvailableSize( Header, Linked ) >= DataSize );
 		}
-		bso::bool__ _IsFreeFragmentBigEnough_(
+		bso::bool__ _IsFreeFragmentBigEnough(
 			row__ Position,
 			mdr::size__ DataSize,
 			bso::bool__ Linked ) const
@@ -900,6 +900,8 @@ namespace mmm {
 				_GetHeader( Link, LinkHeader );
 
 				_FreeUsedFragment( Link, LinkHeader );
+
+				_GetHeader( Position, Header );	// Retrieving the header, because it was perhaps modified by above function.
 			}
 
 			_FreeUsedFragment( Position, Header );
@@ -954,9 +956,12 @@ namespace mmm {
 
 					Addendum = 0;
 				} else {
+					mdr::datum__ NewHeader[MMM2_HEADER_MAX_LENGTH];
 					_SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
 
-					_ShrinkUsedFragment( Descriptor, Header, DataSize, Addendum );
+					_GetHeader( Descriptor, NewHeader );	// We retrieve the header, because it was perhaps modified by above method.
+
+					_ShrinkUsedFragment( Descriptor, NewHeader, DataSize, Addendum );
 				}
 			} else {
 				_ShrinkUsedFragment( Descriptor, Header, DataSize, Addendum );
@@ -1186,7 +1191,14 @@ namespace mmm {
 
 			if ( Delta < _GetFreeFragmentSize( NextFragmentHeader ) )
 				_SetAsFreeFragment( *NextFragmentPosition + Delta, _GetFreeFragmentSize( NextFragmentHeader ) - Delta );
-			else if ( Delta > _GetFreeFragmentSize( NextFragmentHeader ) )
+			else if ( Delta == _GetFreeFragmentSize( NextFragmentHeader ) ) {
+				if ( ( *NextFragmentPosition + Delta ) < S_.Extent )
+					_SetUsedFragmentFreeFlag( *NextFragmentPosition + Delta, false );
+#ifdef MMM2_DBG
+				else if ( ( *NextFragmentPosition + Delta ) > S_.Extent )
+					ERRc();
+#endif
+			} else if ( Delta > _GetFreeFragmentSize( NextFragmentHeader ) )
 				ERRc();
 
 			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
