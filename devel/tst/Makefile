@@ -1,7 +1,7 @@
-# 'tst' Makefile by Claude SIMON (csimon@epeios.org)
+# 'tst' Makefile by Claude SIMON (csimon at zeusw dot org)
 # Builds test executable for the 'tst' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) NA2004  Claude SIMON (csimon@epeios.org).
+# Copyright (C) NA2004  Claude SIMON.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = tol flw cio err uym ttr
+libs = ttr tol flw cio err fil
 
 
 

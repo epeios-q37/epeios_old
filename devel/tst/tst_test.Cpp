@@ -25,8 +25,6 @@
 
 //	$Id$
 
-#include <stdlib.h>
-
 #if 0
 /*
  * hworld.cpp
@@ -284,7 +282,7 @@ void Bug( void )
 }
 #endif
 
-#if 1
+#if 0
 
 	template <typename t> class bunch_
 	{};
@@ -329,7 +327,6 @@ void Bug( void )
 	};
 
 
-#endif
 
 
 int main( int argc, const char **argv )
@@ -340,3 +337,24 @@ int main( int argc, const char **argv )
 
 	return EXIT_SUCCESS;
 }
+
+#endif
+
+#if 1
+
+#include "bso.h"
+#include "err.h"
+#include "cio.h"
+#include "ltf.h"
+
+int main( int argc, const char **argv )
+{
+ERRFProlog
+ERRFBegin
+	while ( 1 )
+		cio::cout << (char)cio::cin.Get() << txf::sync;
+ERRFErr
+ERRFEpilog
+ERRFEnd
+}
+#endif
