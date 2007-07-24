@@ -1,5 +1,9 @@
 $Id$
 
+24/07/2007 :
+	- MMM2 :
+		- Correction bogue calcul taille de 'free fragments' fusionnnés.
+
 19/07/2007 :
 	- GENERAL :
 		- Adaptations aux modifications bibliothèque 'DBSBSC'.
