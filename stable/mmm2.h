@@ -957,7 +957,7 @@ namespace mmm {
 					Addendum = 0;
 				} else {
 					mdr::datum__ NewHeader[MMM2_HEADER_MAX_LENGTH];
-					_SetAsFreeFragment( Link, _GetUsedFragmentTotalSize( LinkHeader ) );
+					_FreeUsedFragment( Link, LinkHeader );
 
 					_GetHeader( Descriptor, NewHeader );	// We retrieve the header, because it was perhaps modified by above method.
 

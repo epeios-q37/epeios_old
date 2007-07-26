@@ -1,8 +1,8 @@
 $Id$
 
-24/07/2007 :
+26/07/2007 :
 	- MMM2 :
-		- Correction bogue calcul taille de 'free fragments' fusionnnés.
+		- Correction bogue 'Shrink(...)' lorsque fragment 'linké' complètement supprimer.
 
 19/07/2007 :
 	- GENERAL :
