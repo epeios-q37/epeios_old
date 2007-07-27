@@ -1,5 +1,11 @@
 $Id$
 
+27/07/2007 :
+	- TOL :
+		- Retrait de la surcharge de 'SIGBREAK', car ce signal est lancé lors d'une déconnection,
+		  ce qui lance la fermeture du logiciel même lorsqu'il s'agit d'un service. La documentation sur le sujet
+		  prête parfois à confusion, mais il semblerait que ce soit 'SIGINT' qui réagisse au 'Ctrl-C'.
+
 26/07/2007 :
 	- MMM2 :
 		- Correction bogue 'Shrink(...)' lorsque fragment 'linké' complètement supprimé.

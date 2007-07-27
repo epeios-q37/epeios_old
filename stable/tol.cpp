@@ -138,14 +138,15 @@ static inline void ExitOnSignal_( void )
 #if defined( TOL__POSIX )
 	signal( SIGHUP, signal_ );
 #elif defined( TOL__MS )
-	signal( SIGBREAK, signal_ );
+//	signal( SIGBREAK, signal_ );
+//	No more in action, because it is launched when loging off, causing the exiting of the program even when it's a service.
 #else
 #	error "Undefined target !"
 #endif
 
 	signal( SIGTERM, signal_ );
 	signal( SIGABRT, signal_ );
-	signal( SIGINT, signal_ );
+	signal( SIGINT, signal_ );	// Documentations about this signal not very clear, but this handles Ctrl-C.
 }
 
 /* Although in theory this class is inaccessible to the different modules,
