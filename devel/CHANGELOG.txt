@@ -1,5 +1,9 @@
 $Id$
 
+30/07/2007 :
+	- MMM2 :
+		- Correction bogue 'Reallocate(...)' lorsque taille nulle.
+
 27/07/2007 :
 	- TOL :
 		- Retrait de la surcharge de 'SIGBREAK', car ce signal est lancé lors d'une déconnection,

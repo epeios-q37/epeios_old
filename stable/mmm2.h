@@ -1449,7 +1449,7 @@ namespace mmm {
 					return Descriptor;
 
 			if ( Size == 0 ) {
-				ERRu();
+				Free( Descriptor );
 				return NONE; // Pour éviter un 'warning'.
 			}
 
