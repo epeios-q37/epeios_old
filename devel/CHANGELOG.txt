@@ -1,5 +1,9 @@
 $Id$
 
+01/07/2007 :
+	- TOL :
+		- Ajout 'PatchSignalHandlingForWindowsService(...)'.
+
 30/07/2007 :
 	- MMM2 :
 		- Correction bogue 'Reallocate(...)' lorsque taille nulle.

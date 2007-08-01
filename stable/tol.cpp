@@ -138,8 +138,7 @@ static inline void ExitOnSignal_( void )
 #if defined( TOL__POSIX )
 	signal( SIGHUP, signal_ );
 #elif defined( TOL__MS )
-//	signal( SIGBREAK, signal_ );
-//	No more in action, because it is launched when loging off, causing the exiting of the program even when it's a service.
+	signal( SIGBREAK, signal_ );
 #else
 #	error "Undefined target !"
 #endif

@@ -719,6 +719,16 @@ namespace tol {
 			return Clock( false ) > _Limit;
 		}
 	};
+
+#ifdef CPE__T_MS
+	// If an application is launched as a windows service, this should be launched to avoid 
+	// that the appplication exits when loging off.
+	// Applies only to windows.
+	inline void PatchSignalHandlingForWindowsService( void )
+	{
+		signal( SIGBREAK, SIG_DFL );
+	}
+#endif
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
