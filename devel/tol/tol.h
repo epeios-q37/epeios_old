@@ -720,7 +720,7 @@ namespace tol {
 		}
 	};
 
-#ifdef CPE__T_MS
+#ifdef TOL__MS
 	// If an application is launched as a windows service, this should be launched to avoid 
 	// that the appplication exits when loging off.
 	// Applies only to windows.

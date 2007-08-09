@@ -346,13 +346,27 @@ int main( int argc, const char **argv )
 #include "err.h"
 #include "cio.h"
 #include "ltf.h"
+#include "mmi.h"
+#include "xtf.h"
 
 int main( int argc, const char **argv )
 {
 ERRFProlog
+	xtf::extended_text_iflow__ XFlow;
+	str::string Line;
 ERRFBegin
-	while ( 1 )
+	XFlow.Init( cio::cinf );
+
+	while ( !XFlow.EOX() ) {
+		Line.Init();
+		XFlow.GetLine( Line );
+		cio::cout << Line << txf::nl;
+	}
+
+
+/*	while ( 1 )
 		cio::cout << (char)getchar() << txf::sync;
+*/
 ERRFErr
 ERRFEpilog
 ERRFEnd

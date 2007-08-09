@@ -1,5 +1,9 @@
 $Id$
 
+09/08/2007 :
+	- TOL :
+		- Utilisation de 'TOL__MS' au lieu de 'CPE__T_MS'.
+
 01/07/2007 :
 	- TOL :
 		- Ajout 'PatchSignalHandlingForWindowsService(...)'.
