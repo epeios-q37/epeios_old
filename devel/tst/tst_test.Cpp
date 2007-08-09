@@ -352,7 +352,7 @@ int main( int argc, const char **argv )
 ERRFProlog
 ERRFBegin
 	while ( 1 )
-		cio::cout << (char)cio::cin.Get() << txf::sync;
+		cio::cout << (char)getchar() << txf::sync;
 ERRFErr
 ERRFEpilog
 ERRFEnd
