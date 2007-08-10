@@ -1,5 +1,15 @@
 $Id$
 
+10/08/2007 :
+	- GENERAL :
+		- Adaptation aux modifications 'IOP'.
+	- CSLIO :
+		- Modification pour que le retour chariot ne soit pas bufferisé lorsqu'on lit l'entrée standard ('stdin').
+	- IOP :
+		- Mise en oeuvre de la 'PLLIO' sous cygwin, au lieu de 'CSLIO'.
+	- XTF :
+		- Correction du bogue retardant la détection d'une cellule lorsque le retour chariot est constitué d'un seul caractère.
+
 09/08/2007 :
 	- TOL :
 		- Utilisation de 'TOL__MS' au lieu de 'CPE__T_MS'.

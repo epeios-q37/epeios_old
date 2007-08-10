@@ -78,6 +78,8 @@ extern class ttr_tutor &IOPTutor;
 #	define IOP__USE_LOWLEVEL_IO
 #elif defined( CPE__P_MAC )
 #	define IOP__USE_LOWLEVEL_IO
+#elif defined( CPE__P_CYGWIN )
+#	define IOP__USE_LOWLEVEL_IO
 #else
 #	define	IOP__USE_STANDARD_IO
 #endif

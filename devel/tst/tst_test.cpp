@@ -357,16 +357,21 @@ ERRFProlog
 ERRFBegin
 	XFlow.Init( cio::cinf );
 
+#if 1
+/*	while ( 1 )
+		cio::cout << (char)cio::cin.Get() << txf::sync;
+*/
 	while ( !XFlow.EOX() ) {
 		Line.Init();
 		XFlow.GetLine( Line );
 		cio::cout << Line << txf::nl;
 	}
 
-
-/*	while ( 1 )
+#else
+	while ( 1 )
 		cio::cout << (char)getchar() << txf::sync;
-*/
+#endif
+
 ERRFErr
 ERRFEpilog
 ERRFEnd

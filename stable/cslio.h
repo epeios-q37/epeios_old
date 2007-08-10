@@ -137,7 +137,7 @@ namespace cslio {
 		}
 		void Init( descriptor__ D )
 		{
-			io_core__:: Init( D );
+			io_core__::Init( D );
 		}
 		size_t Read(
 			amount__ Amount,
@@ -145,7 +145,11 @@ namespace cslio {
 		{
 			_Test();
 
-			return fread( Buffer, 1, Amount, _D );
+			if ( _D == stdin ) {
+				*(char *)Buffer = getc( _D );	// To avoid the buffering of '\n'.
+				return 1;
+			} else
+				return fread( Buffer, 1, Amount, _D );
 		}
 		bso::bool__ OnEOF( void )
 		{

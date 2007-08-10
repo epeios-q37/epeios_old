@@ -86,7 +86,7 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 			else if ( &Line != NULL )
 				Line.Append( C );
 
-			if ( EOX() )
+			if ( Cont && EOX() )
 				Cont = false;
 
 			if ( Cont == true )	
