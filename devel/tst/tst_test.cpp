@@ -340,7 +340,7 @@ int main( int argc, const char **argv )
 
 #endif
 
-#if 1
+#if 0
 
 #include "bso.h"
 #include "err.h"
@@ -357,7 +357,7 @@ ERRFProlog
 ERRFBegin
 	XFlow.Init( cio::cinf );
 
-#if 1
+#if 0
 /*	while ( 1 )
 		cio::cout << (char)cio::cin.Get() << txf::sync;
 */
@@ -375,5 +375,363 @@ ERRFBegin
 ERRFErr
 ERRFEpilog
 ERRFEnd
+}
+#endif
+
+#if 1
+// TestService.cpp : Defines the entry point for the console application.
+//
+// Exemple de service windows comprenat l'installation l'execution 
+// et la desinstallation du service.
+//  
+// Farscape le 16/09/2004 : farscape-dev@tiscali.fr
+//
+//#include "stdafx.h"
+#include <windows.h>
+//#include <Winsvc.h>
+
+#include <iostream>
+
+
+#include "tol.h"
+#include "flf.h"
+#include "fnm.h"
+#include <stdlib.h>
+
+//#include "TestService.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// The one and only application object
+
+//CWinApp theApp;
+
+#define LOCK_FILE_NAME	"LOCK"
+
+static void CreateLockFile_( void )
+{
+ERRProlog
+	tol::E_FPOINTER___( char ) Buffer;
+	flf::file_oflow___ OFlow;
+	txf::text_oflow__ TOFlow( OFlow );
+ERRBegin
+Buffer = fnm::BuildFileName( "c:\\temp\\", LOCK_FILE_NAME, NULL );
+
+/*
+	if ( tol::FileExists( Buffer ) ) {
+		Status = sRepositoryLocked;
+		ERRReturn;
+	}
+*/
+	OFlow.Init( Buffer );
+	TOFlow << tol::DateAndTime();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void RemoveLockFile_( void )
+{
+ERRProlog
+	tol::E_FPOINTER___( char ) Buffer;
+ERRBegin
+	Buffer = fnm::BuildFileName( "c:\\temp\\", LOCK_FILE_NAME, NULL );
+
+	if ( tol::FileExists( Buffer ) )
+		tol::RemoveFile( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+using namespace std;
+
+BOOL SendStatusToSCM(DWORD dwCurrentState,
+					 DWORD dwWin32ExitCode,
+					 DWORD dwServiceSpecificExitCode,
+					 DWORD dwCheckPoint,
+					 DWORD dwWaitHint);
+
+char *SERVICE_NAME= "TestService";
+
+HANDLE hTerminateEvent=NULL;
+HANDLE hTerminateThread=NULL;
+HANDLE ThreadHandle = NULL;
+
+SERVICE_STATUS_HANDLE ServiceStatusHandle;
+
+BOOL bPauseService=FALSE;
+BOOL bRunningService=FALSE;
+
+// ------------------------------------------------------
+void ErrorHandler(const char *s,DWORD err)
+{
+	std::cout << s << endl;
+	std::cout << "Erreur Numéro: " << err << endl;
+	ExitProcess(err);
+}
+// ------------------------------------------------------
+DWORD ServiceThread(LPDWORD param)
+{		
+	CreateLockFile_();
+
+//	atexit( RemoveLockFile_ );
+
+	while(1)
+	{
+		if(::WaitForSingleObject(hTerminateThread, 0) == WAIT_OBJECT_0)
+		{
+			// signale l'objet event d'attente et sort.
+			::SetEvent(hTerminateEvent);
+			return 0;
+		}
+		// placer le code de votre service ici
+		Sleep(5000); // juste pour l'exemple.
+    }			
+	return 0;
+}
+// ------------------------------------------------------
+BOOL InitService()
+{
+	DWORD id=0;	
+	ThreadHandle = CreateThread(0,0,(LPTHREAD_START_ROUTINE)ServiceThread,NULL,0,&id);
+	if(ThreadHandle==0)
+	{
+		if(ServiceStatusHandle)  SendStatusToSCM(SERVICE_STOPPED,0,0,0,0);
+		if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
+		if(hTerminateThread)	 CloseHandle(hTerminateThread);
+
+		ErrorHandler("Erreur sur la mise en place du service",0);
+		return FALSE;
+	}	
+	bRunningService=TRUE;
+	return TRUE;	
+}
+// ------------------------------------------------------
+void ResumeService()
+{
+	bPauseService = FALSE;
+	ResumeThread(ThreadHandle);
+}
+// ------------------------------------------------------
+void PauseService()
+{
+	bPauseService = TRUE;
+	SuspendThread(ThreadHandle);
+}
+// ------------------------------------------------------
+void StopService()
+{
+	bRunningService=FALSE;
+	SetEvent(hTerminateThread);
+}
+// ------------------------------------------------------
+BOOL SendStatusToSCM(DWORD dwCurrentState,
+                     DWORD dwWin32ExitCode,
+                     DWORD dwServiceSpecificExitCode,
+                     DWORD dwCheckPoint,
+                     DWORD dwWaitHint)
+{
+    BOOL bSuccess;
+    SERVICE_STATUS ServiceStatus;
+    ServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+    ServiceStatus.dwCurrentState= dwCurrentState;
+    
+    ServiceStatus.dwControlsAccepted=0;
+    if(dwCurrentState != SERVICE_START_PENDING)        
+    ServiceStatus.dwControlsAccepted= SERVICE_ACCEPT_STOP |
+                                      SERVICE_ACCEPT_SHUTDOWN|         
+                                      SERVICE_ACCEPT_PAUSE_CONTINUE;
+
+    ServiceStatus.dwWin32ExitCode=ERROR_SERVICE_SPECIFIC_ERROR;
+    if(!dwServiceSpecificExitCode) ServiceStatus.dwWin32ExitCode=dwWin32ExitCode;
+    
+    ServiceStatus.dwServiceSpecificExitCode=dwServiceSpecificExitCode;
+    
+    ServiceStatus.dwCheckPoint = dwCheckPoint;
+    ServiceStatus.dwWaitHint = dwWaitHint;
+    
+    bSuccess = SetServiceStatus(ServiceStatusHandle,&ServiceStatus);
+    if(!bSuccess) StopService();
+    return bSuccess;
+}
+// ------------------------------------------------------
+void ServiceCtrlHandler(DWORD controlCode)
+{
+	DWORD currentState= 0;
+	BOOL  bSuccess;
+	switch(controlCode)
+	{
+		case SERVICE_CONTROL_STOP:
+				currentState= SERVICE_STOP_PENDING;
+				bSuccess= SendStatusToSCM(SERVICE_STOP_PENDING,NO_ERROR,0,1,5000);
+				StopService();
+				return;
+
+		case SERVICE_CONTROL_PAUSE:
+				if(bRunningService && !bPauseService)
+				{
+					bSuccess= SendStatusToSCM(SERVICE_PAUSE_PENDING,NO_ERROR,0,1,1000);
+					PauseService();
+					currentState= SERVICE_PAUSED;
+				}
+				break;
+		case SERVICE_CONTROL_CONTINUE:
+				if(bRunningService && bPauseService)
+				{
+					bSuccess= SendStatusToSCM(SERVICE_CONTINUE_PENDING,NO_ERROR,0,1,1000);
+					ResumeService();
+					currentState= SERVICE_RUNNING;
+				}
+				break;
+		case SERVICE_CONTROL_INTERROGATE:break;
+
+		case SERVICE_CONTROL_SHUTDOWN:return;
+
+		default:break;						
+	}
+	SendStatusToSCM(currentState,NO_ERROR,0,0,0);
+}
+// ------------------------------------------------------
+void Terminate(DWORD error)
+{		
+	if(ServiceStatusHandle) SendStatusToSCM(SERVICE_STOPPED,error,0,0,0);
+	if(ThreadHandle)		 CloseHandle(ThreadHandle);	
+	if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
+	if(hTerminateThread)	 CloseHandle(hTerminateThread);
+}
+// ------------------------------------------------------
+void AddService()
+{
+	SC_HANDLE newService,scm;
+//	CString strPath;
+	char szFilename[255];
+
+	GetModuleFileNameA(NULL,szFilename,sizeof(szFilename));
+//	strPath=szFilename;
+
+	scm= OpenSCManager(0,0,SC_MANAGER_CREATE_SERVICE);
+	if(!scm) ErrorHandler("Dans OpenScManager",GetLastError());
+	newService= CreateServiceA(scm,SERVICE_NAME,
+							  SERVICE_NAME,
+							  SERVICE_ALL_ACCESS,
+							  SERVICE_WIN32_OWN_PROCESS,
+							  SERVICE_DEMAND_START,
+							  SERVICE_ERROR_NORMAL,
+							  szFilename,
+							  0,0,0,0,0);
+	if(!newService)	ErrorHandler("Dans CreateService",GetLastError());
+	else std::cout << "Service " << SERVICE_NAME << " Installé\n";
+}
+// ------------------------------------------------------
+void DeleteService()
+{
+	SC_HANDLE newService,scm;
+//	CString strPath;
+	char szFilename[255];
+
+	GetModuleFileNameA(NULL,szFilename,sizeof(szFilename));
+//	strPath=szFilename;
+
+	scm= OpenSCManager(0,0,SC_MANAGER_ALL_ACCESS);
+	if(!scm) ErrorHandler("Dans OpenScManager",GetLastError());
+
+	newService=OpenServiceA(scm,SERVICE_NAME,SERVICE_ALL_ACCESS| DELETE);
+	if(newService)	DeleteService(newService);	
+	if(!newService)	ErrorHandler("Dans DeleteService",GetLastError());
+	else std::cout << "Service "<< SERVICE_NAME << " Supprimé\n";
+}
+// ------------------------------------------------------
+void ServiceMain(DWORD argc,LPTSTR *argv)
+{
+	BOOL bSuccess;
+    
+	ServiceStatusHandle = RegisterServiceCtrlHandlerA(SERVICE_NAME,(LPHANDLER_FUNCTION)ServiceCtrlHandler);
+	if(!ServiceStatusHandle)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,1,5000);
+	if(!bSuccess)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	hTerminateEvent = CreateEvent(0,TRUE,FALSE,0);
+	if(!hTerminateEvent)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	hTerminateThread = CreateEvent(0,TRUE,FALSE,0);
+	if(!hTerminateThread)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,2,1000);
+	if(!bSuccess)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	bSuccess = InitService();
+	if(!bSuccess)
+	{
+		Terminate(GetLastError());
+		return;
+	}
+	bSuccess= SendStatusToSCM(SERVICE_RUNNING,NO_ERROR,0,0,0);
+	if(!bSuccess)
+	{
+		Terminate(GetLastError());
+		return;
+	}		
+	WaitForSingleObject(hTerminateEvent,INFINITE);
+	Terminate(0);
+}
+//------------------------------------------------------------------------------------------
+int main(int argc, const char** argv )
+{
+	SERVICE_TABLE_ENTRYA serviceTable[]=
+	{
+		{SERVICE_NAME,(LPSERVICE_MAIN_FUNCTIONA)ServiceMain},
+		{NULL		 , NULL}
+	};
+		
+	// initialize MFC and print and error on failure
+/*
+	if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
+	{
+		// TODO: change error code to suit your needs
+		ErrorHandler("Fatal Error: MFC initialization failed",0);
+		return 1;
+	}
+*/
+/*
+	CString strCmdLine;
+	if(argc>1) strCmdLine=argv[1];	
+	strCmdLine.MakeUpper();
+*/
+
+	if ( argc > 1 ) {
+		if(!strcmp( argv[1], "INSTALL"))
+		{
+			AddService();
+			return 0;
+		}
+		if(!strcmp( argv[1], "DELETE"))
+		{
+			DeleteService();
+			return 0;
+		}
+	}
+	
+	BOOL bSuccess;	
+	bSuccess= StartServiceCtrlDispatcherA(serviceTable);
+	if(!bSuccess) ErrorHandler("Dans StartServiceCtrlDispatcher",GetLastError());
+	return bSuccess;	
 }
 #endif
