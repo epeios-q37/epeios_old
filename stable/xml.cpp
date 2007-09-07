@@ -1369,7 +1369,7 @@ private:
 		if ( Status != xsOK )
 			if ( _GuiltyFileName.Amount() == 0 )
 				if ( ( Status != xsUnableToOpenFile ) || ( _ExpandIsHRef ) )
-					_GuiltyFileName = AttributeBuffer;
+					_GuiltyFileName = FileNameBuffer;
 				else
 					_ExpandIsHRef = true;
 	ERREpilog

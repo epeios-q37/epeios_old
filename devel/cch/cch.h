@@ -326,7 +326,7 @@ namespace cch {
 					if ( ( this->Position_ + this->Amount_ ) > this->BunchAmount_() )
 						ERRc();
 #endif
-					WriteDirectlyIntoBunch_( this->Cache_ + First_, Last_ - First_ + 1, this->Position_ );
+					WriteDirectlyIntoBunch_( this->Cache_ + First_, Last_ - First_ + 1, First_ - this->Position_ );
 				}
 
 			this->Amount_ = 0;
