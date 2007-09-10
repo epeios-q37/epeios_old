@@ -3,6 +3,8 @@ $Id$
 10/09/2007 :
 	- CTN :
 		- Correction pour éviter une erreur signalée par g++ (V3.4.4).
+	- DTFPTB :
+		- Correction bogue calcul taiile.
 
 07/09/2007 :
 	- XML :

@@ -1,9 +1,9 @@
 /*
-	'dtfptb' library by Claude SIMON (csimon@epeios.org)
+	'dtfptb' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'dtfptb' header file ('dtfptb.h').
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

@@ -1,8 +1,8 @@
 /*
-	Header for the 'dtfptb' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Header for the 'dtfptb' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@
 
 #define	DTFPTB_VERSION	"$Revision$"
 
-#define DTFPTB_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define DTFPTB_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &DTFPTBTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -168,9 +168,9 @@ namespace dtfptb {
 
 	inline bso::ubyte__ GetSizeLength( bso::ulong__ Size )
 	{
-		if ( Size >= DTFPTB_L3 )
+		if ( Size >= ( DTFPTB_L3 + DTFPTB_L2 + DTFPTB_L1 ) )
 			return 10;
-		else if ( Size >= DTFPTB_L2 )
+		else if ( Size >= ( DTFPTB_L2 + DTFPTB_L1 ) )
 			return 6;
 		else if ( Size >= DTFPTB_L1 )
 			return 3;
