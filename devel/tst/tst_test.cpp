@@ -392,7 +392,9 @@ ERRFEnd
 
 #include <iostream>
 
+#include <winuser.h>
 
+#if 0
 #include "tol.h"
 #include "flf.h"
 #include "fnm.h"
@@ -405,6 +407,7 @@ ERRFEnd
 
 //CWinApp theApp;
 
+
 #define LOCK_FILE_NAME	"LOCK"
 
 static void CreateLockFile_( void )
@@ -414,7 +417,7 @@ ERRProlog
 	flf::file_oflow___ OFlow;
 	txf::text_oflow__ TOFlow( OFlow );
 ERRBegin
-Buffer = fnm::BuildFileName( "c:\\temp\\", LOCK_FILE_NAME, NULL );
+	Buffer = fnm::BuildFileName( "c:\\temp\\", LOCK_FILE_NAME, NULL );
 
 /*
 	if ( tol::FileExists( Buffer ) ) {
@@ -442,7 +445,7 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
+#endif
 
 
 using namespace std;
@@ -472,11 +475,21 @@ void ErrorHandler(const char *s,DWORD err)
 	ExitProcess(err);
 }
 // ------------------------------------------------------
+
+#define Message( Text )		system( "echo " Text " >> c:\\temp\\log.txt" );
+//MessageBox( NULL, TEXT( Text ), NULL, 0x00040000L )
+
 DWORD ServiceThread(LPDWORD param)
 {		
-	CreateLockFile_();
+/*	bso::bool__ Loop = true;
 
+	while( Loop );
+
+	CreateLockFile_();
+*/
 //	atexit( RemoveLockFile_ );
+
+	Message( "ServiceThread" );
 
 	while(1)
 	{
@@ -567,6 +580,7 @@ void ServiceCtrlHandler(DWORD controlCode)
 				currentState= SERVICE_STOP_PENDING;
 				bSuccess= SendStatusToSCM(SERVICE_STOP_PENDING,NO_ERROR,0,1,5000);
 				StopService();
+				Message( "Stop" );
 				return;
 
 		case SERVICE_CONTROL_PAUSE:
@@ -576,6 +590,7 @@ void ServiceCtrlHandler(DWORD controlCode)
 					PauseService();
 					currentState= SERVICE_PAUSED;
 				}
+				Message( "Pause" );
 				break;
 		case SERVICE_CONTROL_CONTINUE:
 				if(bRunningService && bPauseService)
@@ -584,10 +599,15 @@ void ServiceCtrlHandler(DWORD controlCode)
 					ResumeService();
 					currentState= SERVICE_RUNNING;
 				}
+				Message( "Interrogate" );
 				break;
-		case SERVICE_CONTROL_INTERROGATE:break;
+		case SERVICE_CONTROL_INTERROGATE:
+			Message( "Break" );
+			break;
 
-		case SERVICE_CONTROL_SHUTDOWN:return;
+		case SERVICE_CONTROL_SHUTDOWN:
+			Message( "Shutdown" );
+			return;
 
 		default:break;						
 	}
