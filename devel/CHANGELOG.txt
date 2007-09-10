@@ -1,5 +1,9 @@
 $Id$
 
+10/09/2007 :
+	- CTN :
+		- Correction pour éviter une erreur signalée par g++ (V3.4.4).
+
 07/09/2007 :
 	- XML :
 		- Correction bogue affichage chemin lors d'une erreur dans un fichier situé dans un sous-répertoire inclus par un fichier lui-même dans un sous-répertoire.

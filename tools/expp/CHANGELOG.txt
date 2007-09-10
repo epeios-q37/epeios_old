@@ -1,12 +1,19 @@
 $Id$
 
 ---------------
+Version 0.2.3 :
+---------------
+
+- 07/09/2007 :
+	- Fixing file localization bug in XML error detection algorithm which occurs when included files are in subdirectories.
+
+---------------
 Version 0.2.1 :
 ---------------
 
 - 17/05/2007 :
 	- Missing nesting overflow message bug fixed.
-	- Bug about concerning inclusion with relative path fixed.
+	- Bug concerning file inclusion with relative path fixed.
 
 - 11/05/2007 :
 	- Using 'XML' library extended parser default namespace definition.

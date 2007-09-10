@@ -210,9 +210,9 @@ namespace ctn {
 			r Row,
 			aem::mode__ Mode )
 		{
-			_Allocate( Amount() + 1, Mode );
+			_Allocate( amount_extent_manager_<r>::Amount() + 1, Mode );
 
-			Statics.Store_( Statics, Amount() - 1 - *Row, *Row + 1, Row );
+			Statics.Store_( Statics, amount_extent_manager_<r>::Amount() - 1 - *Row, *Row + 1, Row );
 			Dynamics.Shift( *Row );
 			
 			Statics.Store( ST, Row );
