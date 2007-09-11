@@ -16,7 +16,7 @@ $GET epeios $DIR documentation/packages/$DIR/README.txt
 $GET emth $DIR apps/$DIR/CHANGELOG.txt
 $GET emth $DIR apps/$DIR/Makefile
 $GET emth $DIR apps/$DIR/etmccalc.cpp
-$GET emth $DIR apps/$DIR/Debug/etmccalc.exe
+cp /cygdrive/h/bin/etmccalc.exe $DIR
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
