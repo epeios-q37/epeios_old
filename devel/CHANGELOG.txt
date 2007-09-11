@@ -1,5 +1,10 @@
 $Id$
 
+11/09/2007 :
+	- CIO :
+		- L'initialization peut ne peut plus être faite de manière automatique.
+		- Possibilité de lancer explcitement l'initialisation si elle n'a pas été faite de manière automatique.
+
 10/09/2007 :
 	- CTN :
 		- Correction pour éviter une erreur signalée par g++ (V3.4.4).

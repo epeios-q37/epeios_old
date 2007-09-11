@@ -490,6 +490,9 @@ DWORD ServiceThread(LPDWORD param)
 //	atexit( RemoveLockFile_ );
 
 	Message( "ServiceThread" );
+	Message ("Avant" );
+	printf( "coucou" );
+	Message ("Apres" );
 
 	while(1)
 	{

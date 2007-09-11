@@ -90,15 +90,8 @@ iof::io_iflow_functions___ cio::_cinf;
 	aware_cin___ cio::cin;
 #endif
 
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-
-class ciopersonnalization
-: public ciotutor
+void cio::Initialize( void )
 {
-public:
-	ciopersonnalization( void )
-	{
 #if defined( CPE__P_MS )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
@@ -112,7 +105,20 @@ public:
 		cio::_coutf.Init( coutd );
 		cio::_cinf.Init( cind );
 		cio::_cerrf.Init( cerrd );
+}
 
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
+
+class ciopersonnalization
+: public ciotutor
+{
+public:
+	ciopersonnalization( void )
+	{
+#ifdef CIO__AUTOMATIC_INITIALIZATION
+		cio::Initialize();
+#endif
 	/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

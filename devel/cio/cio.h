@@ -70,6 +70,10 @@ extern class ttr_tutor &CIOTutor;
 #	error "Cannot be used in a library !"
 #endif
 
+#ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Usefull for a Windows service.
+#	define CIO__AUTOMATIC_INITIALIZATION
+#endif
+
 namespace cio {
 
 	extern iop::descriptor__ cind, coutd, cerrd;
@@ -165,6 +169,10 @@ namespace cio {
 	extern aware_cerr___ cerr;
 	extern aware_cin___ cin;
 #endif
+
+	void Initialize( void );
+	/* Peform the initialization needed by this library if not
+	automatically done (defining of 'CIO_NO_AUTOMATIC_INITIALIZATION' ). */
 }
 
 /*$END$*/
