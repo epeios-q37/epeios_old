@@ -241,6 +241,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&User Interface Framework (based on wxWidgets).
 &uym		&epeios		&2000-\
 	&UnTyped Memory
+&wintol		&epeios	&\
+	&WINdows TOols
 &wllio		&epeios		&\
 	&Windows Low-Level Input/Output
 &xml		&epeios		&\

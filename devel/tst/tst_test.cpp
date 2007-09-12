@@ -378,7 +378,7 @@ ERRFEnd
 }
 #endif
 
-#if 1
+#if 0
 // TestService.cpp : Defines the entry point for the console application.
 //
 // Exemple de service windows comprenat l'installation l'execution 
@@ -757,4 +757,65 @@ int main(int argc, const char** argv )
 	if(!bSuccess) ErrorHandler("Dans StartServiceCtrlDispatcher",GetLastError());
 	return bSuccess;	
 }
+#endif
+
+#if 1
+#include "wintol.h"
+
+#define Message( Text )		system( "echo " Text " >> c:\\temp\\log.txt" );
+
+void ExitFunction( void )
+{
+	Message ("EXITING" );
+}
+
+#include "tht.h"
+
+class myservice__ :
+public wintol::service__
+{
+protected:
+	virtual void WINTOLCallback( void )
+	{
+		Message( "Start" );
+
+		atexit( ExitFunction );
+
+		while ( 1 ) {
+			Message( "Ping" );
+
+			tht::Suspend( 1000 );
+		}
+	}
+};
+
+int main(int argc, const char** argv )
+{
+	myservice__ Service;
+
+	Service.Init( "TEST" );
+
+	if ( argc > 1 ) {
+		if(!strcmp( argv[1], "I"))
+		{
+			Service.Install();
+			return 0;
+		}
+		if(!strcmp( argv[1], "R"))
+		{
+			Service.Remove();
+			return 0;
+		}
+	} else {
+/*		bso::bool__ Loop = true;
+
+		while( Loop );
+*/
+		Service.Launch();
+	}
+
+	return 0;
+}
+
+
 #endif
