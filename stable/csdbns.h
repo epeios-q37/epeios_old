@@ -106,7 +106,9 @@ namespace csdbns {
 		/* Retourne une socket sur une connection. FONCTION BLOQUANTE.
 		Lorsque 'IgnorerErreur' à vrai, toute les erreurs sont ignorées, ceci pour garantir
 		la présence du processus d'écoute. */
-		socket__ Interroger_( err::handle ErrHandle );
+		socket__ _Interroger(
+			err::handle ErrHandle,
+			sck::duration__ TimeOut );
 	public:
 		void reset( bool P = true )
 		{
@@ -141,22 +143,27 @@ namespace csdbns {
 		{
 			return Init( Service, Amount, ErrHandle );
 		}
-		//f Return the first available connection. BLOCKING FUNCTION.
-		socket__ GetConnection( err::handle ErrHandle = err::hUsual )
+		//f Return the first available connection. BLOCKING FUNCTION if 'TimeOut == 'SCK_INFINITE'.
+		socket__ GetConnection(
+			err::handle ErrHandle = err::hUsual,
+			sck::duration__ TimeOut = SCK_INFINITE )
 		{
-			return Interroger_( ErrHandle );
+			return _Interroger( ErrHandle, TimeOut );
 		}
-		//f Initialize 'Socket' with the first connection available. BLOCKING FUNCTION.
+		//f Initialize 'Socket' with the first connection available. BLOCKING FUNCTION if 'TimeOut' == 'SCK_INFINITE'.
 		void GetConnection(
 			socket__ &Socket,
-			err::handle ErrHandle = err::hUsual )
+			err::handle ErrHandle = err::hUsual,
+			sck::duration__ TimeOut = 0 )
 		{
-			Socket = Interroger_( ErrHandle );
+			Socket = _Interroger( ErrHandle, TimeOut );
 		}
-		//f Handle new connection using 'Functions'. BLOCKING FUNCTION.
-		void Process(
+		// If returned value = 'true', then exiting is because 'TimeOut' reached.
+		// If returned value == 'false', then underlying user function retuns 'bStop'.
+		bso::bool__ Process(
 			socket_user_functions__ &Functions,
-			err::handle ErrHandle = err::hUsual );
+			err::handle ErrHandle = err::hUsual,
+			sck::duration__ TimeOut = SCK_INFINITE );
 	};
 
 #ifdef CPE__T_MT
@@ -198,6 +205,7 @@ namespace csdbns {
 		/*f Handle each new connection using 'Functions'. */
 		void Process(
 			socket_user_functions__ &Functions,
+			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
 			err::handle ErrHandle = err::hUsual );
 		/*f Handle each new connection using 'Functions'. */
 		void Process(

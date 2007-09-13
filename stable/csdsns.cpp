@@ -1,9 +1,9 @@
 /*
-	'csdsns' library by Claude SIMON (csimon@epeios.org)
+	'csdsns' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'csdsns' header file ('csdsns.h').
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -156,17 +156,15 @@ namespace {
 }
 
 void csdsns::server___::Process(
-		service__ Service,
 		user_functions__ &UFunctions,
-		core_ &Core )
+		core_ &Core,
+		sck::duration__ TimeOut )
 {
 	functions__ Functions;
 
 	Functions.Init( Core, UFunctions );
 
-	_Server.Init( Service );
-
-	_Server.Process(  Functions );
+	_Server.Process( Functions, TimeOut );
 }
 
 

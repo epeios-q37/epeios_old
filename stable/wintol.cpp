@@ -71,7 +71,7 @@ BOOL SendStatusToSCM(DWORD dwCurrentState,
 					 DWORD dwWaitHint);
 
 HANDLE hTerminateEvent=NULL;
-//HANDLE hTerminateThread=NULL;
+HANDLE hTerminateThread=NULL;
 HANDLE ThreadHandle = NULL;
 
 SERVICE_STATUS_HANDLE ServiceStatusHandle;
@@ -108,7 +108,7 @@ BOOL InitService( void )
 	{
 		if(ServiceStatusHandle)  SendStatusToSCM(SERVICE_STOPPED,0,0,0,0);
 		if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
-//		if(hTerminateThread)	 CloseHandle(hTerminateThread);
+		if(hTerminateThread)	 CloseHandle(hTerminateThread);
 
 		return FALSE;
 	}	
@@ -131,7 +131,7 @@ void PauseService()
 void StopService()
 {
 	bRunningService=FALSE;
-//	SetEvent(hTerminateThread);
+	SetEvent(hTerminateThread);
 	::SetEvent(hTerminateEvent);
 	if(ThreadHandle)
 		CloseHandle(ThreadHandle);	
@@ -212,7 +212,7 @@ void Terminate(DWORD error)
 	if(ServiceStatusHandle) SendStatusToSCM(SERVICE_STOPPED,error,0,0,0);
 	if(ThreadHandle)		 CloseHandle(ThreadHandle);	
 	if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
-//	if(hTerminateThread)	 CloseHandle(hTerminateThread);
+	if(hTerminateThread)	 CloseHandle(hTerminateThread);
 
 	if ( error != 0 )
 		ERRs();
@@ -297,13 +297,13 @@ void ServiceMain(DWORD argc,LPTSTR *argv)
 		Terminate(GetLastError());
 		return;
 	}
-/*	hTerminateThread = CreateEvent(0,TRUE,FALSE,0);
+	hTerminateThread = CreateEvent(0,TRUE,FALSE,0);
 	if(!hTerminateThread)
 	{
 		Terminate(GetLastError());
 		return;
 	}
-*/	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,2,1000);
+	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,2,1000);
 	if(!bSuccess)
 	{
 		Terminate(GetLastError());
@@ -360,6 +360,17 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+bso::bool__ wintol::service__::TestTermination( void )
+{
+	if(::WaitForSingleObject(hTerminateThread, 0) == WAIT_OBJECT_0)
+	{
+		// signale l'objet event d'attente et sort.
+		::SetEvent(hTerminateEvent);
+		return true;
+	} else
+		return false;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

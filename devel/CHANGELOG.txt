@@ -1,5 +1,11 @@
 $Id$
 
+13/09/2007 :
+	- CSDBNS :
+		- Généralisation 'TimeOut'.
+	- CSDSNS :
+		- Ajout paramètre 'TimeOut'.
+
 11/09/2007 :
 	- CIO :
 		- L'initialization peut ne peut plus être faite de manière automatique.

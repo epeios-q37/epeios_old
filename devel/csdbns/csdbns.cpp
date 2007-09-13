@@ -104,7 +104,9 @@ bso::bool__ csdbns::listener___::Init(
 	return true;
 }
 
-socket__ csdbns::listener___::Interroger_( err::handle ErrHandle )
+socket__ csdbns::listener___::_Interroger(
+	err::handle ErrHandle,
+	sck::duration__ TimeOut )
 {
 	fd_set fds;
 	int Reponse;
@@ -115,12 +117,16 @@ socket__ csdbns::listener___::Interroger_( err::handle ErrHandle )
 	{
 ERRProlog
 		Socket = SCK_INVALID_SOCKET;
+		timeval TimeOutStruct;
 ERRBegin
 		Boucler = false;
 		FD_ZERO( &fds );
 		FD_SET( Socket_, &fds );
 
-		Reponse = select( (int)( Socket_ + 1 ), &fds, 0, 0, NULL );
+		TimeOutStruct.tv_sec = TimeOut / 1000;
+		TimeOutStruct.tv_usec = ( (bso::ulong__)TimeOut % 1000UL ) * 1000;
+
+		Reponse = select( (int)( Socket_ + 1 ), &fds, 0, 0, TimeOut != SCK_INFINITE ? &TimeOutStruct : NULL );
 
 		if ( Reponse == SCK_SOCKET_ERROR )
 			ERRs();
@@ -157,30 +163,37 @@ ERREpilog
 	return Socket;
 }
 
-void csdbns::listener___::Process(
+bso::bool__ csdbns::listener___::Process(
 	socket_user_functions__ &Functions,
-	err::handle ErrHandle )
+	err::handle ErrHandle,
+	sck::duration__ TimeOut )
 {
+	bso::bool__ Continue = true;
 ERRProlog
 	void *UP = NULL;
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
 	action__ Action = a_Undefined;
 ERRBegin
-	Socket = Interroger_( ErrHandle );
+	Socket = _Interroger( ErrHandle, TimeOut );
 
-	UP = Functions.PreProcess( Socket );
+	if ( Socket != SCK_INVALID_SOCKET ) {
 
-	while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
+		UP = Functions.PreProcess( Socket );
 
-	switch( Action ) {
-	case aContinue:
-		ERRc();
-		break;
-	case aStop:
-		break;
-	default:
-		ERRu();
-		break;
+		while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
+
+		switch( Action ) {
+		case aContinue:
+			ERRc();
+			break;
+		case aStop:
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		Continue = false;
 	}
 
 ERRErr
@@ -188,6 +201,7 @@ ERREnd
 	if ( UP != NULL )
 		Functions.PostProcess( UP );
 ERREpilog
+	return Continue;
 }
 
 #ifdef CPE__T_MT
@@ -227,36 +241,43 @@ ERRFEpilog
 
 void server___::Process(
 	socket_user_functions__ &Functions,
+	sck::duration__ TimeOut,
 	err::handle ErrHandle )
 {
 ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
 	::socket_data__ Data = {NULL, SCK_INVALID_SOCKET, MTX_INVALID_HANDLER};
+	bso::bool__ Continue = true;
 ERRBegin
 
-	Socket = listener___::GetConnection( ErrHandle );
+	Socket = listener___::GetConnection( ErrHandle, TimeOut );
 
-	Data.Functions = &Functions;
-	Data.Mutex = mtx::Create( mtx::mFree );
+	if ( Socket != SCK_INVALID_SOCKET ) {
 
-	mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
+		Data.Functions = &Functions;
+		Data.Mutex = mtx::Create( mtx::mFree );
 
-	Data.Socket = Socket;
+		mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 
+		Data.Socket = Socket;
+	} else
+		Continue = false;
 
-	for(;;)
-	{
+	while ( Continue ) {
 		mtk::Launch( Traiter_, &Data );
 
 //		SCKClose( Socket );	// Only needed when using processes.
 
 		Socket = SCK_INVALID_SOCKET;
 
-		Socket = listener___::GetConnection( ErrHandle );
+		Socket = listener___::GetConnection( ErrHandle, TimeOut );
 
-		mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
+		if ( Socket != SCK_INVALID_SOCKET ) {
+			mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 
-		Data.Socket = Socket;
+			Data.Socket = Socket;
+		} else
+			Continue = false;
 	}
 ERRErr
 ERREnd
@@ -320,7 +341,6 @@ namespace {
 		}
 	public:
 		user_functions__ *Functions;
-		sck::duration__ TimeOut;
 	};
 }
 
@@ -332,9 +352,8 @@ void server___::Process(
 	internal_functions__ F;
 
 	F.Functions = &Functions;
-	F.TimeOut = TimeOut;
 
-	Process( F, ErrHandle );
+	Process( F, TimeOut, ErrHandle );
 }
 
 

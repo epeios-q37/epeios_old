@@ -1,8 +1,8 @@
 /*
-	Header for the 'csdsns' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Header for the 'csdsns' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@
 
 #define	CSDSNS_VERSION	"$Revision$"
 
-#define CSDSNS_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define CSDSNS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &CSDSNSTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -266,12 +266,14 @@ ERREpilog
 	private:
 		csdbns::server___ _Server;
 	public:
-		void Init( void )
-		{}
+		void Init( service__ Service )
+		{
+			_Server.Init( Service );
+		}
 		void Process(
-			service__ Service,
 			user_functions__ &Functiosn,
-			core_ &Core );
+			core_ &Core,
+			sck::duration__ TimeOut = SCK_INFINITE );
 	};
 
 

@@ -83,6 +83,8 @@ namespace wintol {
 		void Install( void );
 		void Remove( void );
 		void Launch( void );
+		// Return 'true' if termination was required.
+		bso::bool__ TestTermination( void );
 		void Callback( void )
 		{
 			WINTOLCallback();
