@@ -107,6 +107,15 @@ void cio::Initialize( void )
 		cio::_cerrf.Init( cerrd );
 }
 
+static flx::dump_oflow__ nul;
+
+void cio::InitializeNull( void )
+{
+	cio::_coutf.Init( ::nul );
+//	cio::_cinf.Init( cind );
+	cio::_cerrf.Init( ::nul );
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
