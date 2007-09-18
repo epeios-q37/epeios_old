@@ -261,19 +261,101 @@ ERREpilog
 
 	E_AUTO( core)
 
+	class _functions__
+	: public csdbns::user_functions__
+	{
+	private:
+		core_ *_Core;
+		user_functions__ *_Functions;
+	protected:
+		virtual void *CSDPreProcess( flw::ioflow__ &Flow )
+		{
+			return NULL;
+		}
+		virtual action__ CSDProcess(
+			flw::ioflow__ &Flow,
+			void *UP )
+		{
+#ifdef CSDSNS_DBG
+			if ( UP != NULL )
+				ERRc();
+#endif
+			id__ Id = CSDSNS_UNDEFINED;
+			action__ Action = aContinue;
+
+			UP = NULL;
+
+			Flow.Read( sizeof( Id ), &Id );
+
+			if ( Id == CSDSNS_UNDEFINED ) {
+				Id = _Core->New();
+				Flow.Write( &Id, sizeof( Id ) );
+				UP = _Functions->PreProcess( Flow );
+				_Core->Store( UP, Id );
+				_Functions->Process( Flow, UP );
+			} else {
+				if ( !_Core->TestAndGet( Id, UP ) ) {
+					Flow.Put( (flw::datum__)-1 );
+					Flow.Synchronize();
+					Action = aStop;
+				} else {
+					Flow.Put( 0 );
+					Action = _Functions->Process( Flow, UP );
+				}
+
+				switch ( Action ) {
+				case aContinue:
+					break;
+				case aStop:
+					if ( UP != NULL )
+						_Functions->PostProcess( UP );
+					if ( Id != CSDSNS_UNDEFINED )
+						_Core->Delete( Id );
+					break;
+				default:
+					ERRu();
+					break;
+				}
+			}
+
+			return aContinue;
+		}
+		virtual void CSDPostProcess( void *UP )
+		{
+#ifdef CSDSNS_DBG
+			ERRc();
+#endif
+		}
+	public:
+		void Init(
+			core_ &Core,
+			user_functions__ &Functions )
+		{
+			_Core = &Core;
+			_Functions = &Functions;
+		}
+	};
+
+
 	class server___
 	{
 	private:
 		csdbns::server___ _Server;
+		_functions__ _Functions;
 	public:
-		void Init( service__ Service )
+		void Init(
+			service__ Service,
+			user_functions__ &UserFunctions,
+			core_ &Core )
 		{
-			_Server.Init( Service );
+			_Functions.Init( Core, UserFunctions );
+
+			_Server.Init( Service, _Functions );
 		}
-		void Process(
-			user_functions__ &Functiosn,
-			core_ &Core,
-			sck::duration__ TimeOut = SCK_INFINITE );
+		void Process( sck::duration__ TimeOut = SCK_INFINITE )
+		{
+			_Server.Process( TimeOut );
+		}
 	};
 
 

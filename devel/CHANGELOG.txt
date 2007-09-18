@@ -1,5 +1,11 @@
 $Id$
 
+18/09/2007 :
+	- CSNBNS :
+		- Modification pour faciliter mise en place en tant que service Windows.
+	- CSNSNS :
+		- Modification pour faciliter mise en place en tant que service Windows.
+
 13/09/2007 :
 	- CSDBNS :
 		- Généralisation 'TimeOut'.

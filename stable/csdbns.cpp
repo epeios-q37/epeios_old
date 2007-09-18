@@ -240,7 +240,6 @@ ERRFEpilog
 }
 
 void server___::Process(
-	socket_user_functions__ &Functions,
 	sck::duration__ TimeOut,
 	err::handle ErrHandle )
 {
@@ -254,7 +253,7 @@ ERRBegin
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
-		Data.Functions = &Functions;
+		Data.Functions = _SocketFunctions;
 		Data.Mutex = mtx::Create( mtx::mFree );
 
 		mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
@@ -288,74 +287,6 @@ ERREnd
 		mtx::Delete( Data.Mutex );
 ERREpilog
 }
-
-
-namespace {
-	struct flow_data__ {
-		sck::unsafe_socket_ioflow___ Flow;
-		void *UP;
-	};
-
-	class internal_functions__
-	: public socket_user_functions__
-	{
-	protected:
-		virtual void *CSDNBSPreProcess( socket__ Socket )
-		{
-			flow_data__ *Data = NULL;
-		ERRProlog
-		ERRBegin
-			Data = new flow_data__;
-
-			if ( Data == NULL )
-				ERRa();
-
-			Data->Flow.Init( Socket );
-			Data->UP = Functions->PreProcess( Data->Flow );
-		ERRErr
-			if ( Data != NULL )
-				delete Data;
-			Data = NULL;
-		ERREnd
-		ERREpilog
-			return Data;
-		}
-		virtual action__ CSDNBSProcess(
-			socket__ Socket,
-			void *UP )
-		{
-			flow_data__ &Data = *(flow_data__ *)UP;
-#ifdef CSDNBS_DBG
-			if ( Data.Flow.GetSocket() != Socket )
-				ERRc();
-#endif
-
-			return Functions->Process( Data.Flow, Data.UP );
-		}
-		virtual void CSDNBSPostProcess( void *UP )
-		{
-			if ( UP == NULL )
-				ERRc();
-
-			delete (flow_data__ *)UP;
-		}
-	public:
-		user_functions__ *Functions;
-	};
-}
-
-void server___::Process(
-	user_functions__ &Functions,
-	sck::duration__ TimeOut,
-	err::handle ErrHandle )
-{
-	internal_functions__ F;
-
-	F.Functions = &Functions;
-
-	Process( F, TimeOut, ErrHandle );
-}
-
 
 #endif
 

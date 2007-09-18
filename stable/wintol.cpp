@@ -132,10 +132,6 @@ void StopService()
 {
 	bRunningService=FALSE;
 	SetEvent(hTerminateThread);
-	::SetEvent(hTerminateEvent);
-	if(ThreadHandle)
-		CloseHandle(ThreadHandle);	
-	exit( EXIT_SUCCESS );
 }
 // ------------------------------------------------------
 BOOL SendStatusToSCM(DWORD dwCurrentState,

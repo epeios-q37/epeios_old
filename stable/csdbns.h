@@ -167,10 +167,66 @@ namespace csdbns {
 	};
 
 #ifdef CPE__T_MT
+
+	struct _flow_data__ {
+		sck::unsafe_socket_ioflow___ Flow;
+		void *UP;
+	};
+
+	class _functions__
+	: public socket_user_functions__
+	{
+	protected:
+		virtual void *CSDNBSPreProcess( socket__ Socket )
+		{
+			_flow_data__ *Data = NULL;
+		ERRProlog
+		ERRBegin
+			Data = new _flow_data__;
+
+			if ( Data == NULL )
+				ERRa();
+
+			Data->Flow.Init( Socket );
+			Data->UP = UserFunctions->PreProcess( Data->Flow );
+		ERRErr
+			if ( Data != NULL )
+				delete Data;
+			Data = NULL;
+		ERREnd
+		ERREpilog
+			return Data;
+		}
+		virtual action__ CSDNBSProcess(
+			socket__ Socket,
+			void *UP )
+		{
+			_flow_data__ &Data = *(_flow_data__ *)UP;
+#ifdef CSDNBS_DBG
+			if ( Data.Flow.GetSocket() != Socket )
+				ERRc();
+#endif
+
+			return UserFunctions->Process( Data.Flow, Data.UP );
+		}
+		virtual void CSDNBSPostProcess( void *UP )
+		{
+			if ( UP == NULL )
+				ERRc();
+
+			delete (_flow_data__ *)UP;
+		}
+	public:
+		user_functions__ *UserFunctions;
+	};
+
 	/*c Handling a server, with process duplication for each client. */
 	class server___
 	: public listener___
 	{
+	private:
+		socket_user_functions__ *_SocketFunctions;
+		_functions__ _Functions;
 	public:
 		void reset( bool P = true )
 		{
@@ -179,6 +235,7 @@ namespace csdbns {
 		server___( void )
 		{
 			reset( false );
+			_SocketFunctions = NULL;
 		}
 		~server___( void )
 		{
@@ -188,28 +245,48 @@ namespace csdbns {
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
 			service__ Service,
+			socket_user_functions__ &SocketFunctions,
 			int Amount,
 			err::handle ErrHandle = err::hUsual )
 		{
+			_SocketFunctions = &SocketFunctions;
+			
 			return listener___::Init( Service, Amount, ErrHandle );
 		}
 		/*f Initialzation with 'Service' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
 			service__ Service,
+			socket_user_functions__ &SocketFunctions,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
 		{
+			_SocketFunctions = &SocketFunctions;
+
 			return listener___::Init( Service, Amount, ErrHandle );
+		}
+		bso::bool__ Init(
+			service__ Service,
+			user_functions__ &UserFunctions,
+			err::handle ErrHandle = err::hUsual,
+			int Amount = 5 )
+		{
+			_Functions.UserFunctions = &UserFunctions;
+
+			return Init( Service, this->_Functions, Amount, ErrHandle );
+		}
+		bso::bool__ Init(
+			service__ Service,
+			user_functions__ &UserFunctions,
+			int Amount,
+			err::handle ErrHandle = err::hUsual )
+		{
+			_Functions.UserFunctions = &UserFunctions;
+
+			return Init( Service, this->_Functions, Amount, ErrHandle );
 		}
 		/*f Handle each new connection using 'Functions'. */
 		void Process(
-			socket_user_functions__ &Functions,
-			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
-			err::handle ErrHandle = err::hUsual );
-		/*f Handle each new connection using 'Functions'. */
-		void Process(
-			user_functions__ &Functions,
 			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
 			err::handle ErrHandle = err::hUsual );
 	};
