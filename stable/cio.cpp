@@ -107,12 +107,6 @@ void cio::Initialize( void )
 		cio::_cerrf.Init( cerrd );
 }
 
-void cio::InitializeNull( void )
-{
-	cio::_coutf.Init( xtf::nul );
-//	cio::_cinf.Init( cind );
-	cio::_cerrf.Init( xtf::nul );
-}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
