@@ -173,6 +173,8 @@ namespace cio {
 	void Initialize( void );
 	/* Peform the initialization needed by this library if not
 	automatically done (defining of 'CIO_NO_AUTOMATIC_INITIALIZATION' ). */
+
+	bso::bool__ IsInitialized( void );
 }
 
 /*$END$*/

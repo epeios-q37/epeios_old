@@ -1,5 +1,17 @@
 $Id$
 
+19/09/2007 :
+	- CIO :
+		- Rajout 'IsInitialized(...)'.
+	- ERR :
+		- Adaptation à la bibliothèque 'CIO'.
+	- TOL :
+		- Cerrection bogue potentiel (delete|free)_pointer___.
+	- WINTOL :
+		- Le service est maintenant configuré en démarrage automatique par défault.
+		- Specification possible du nom du service, de son nom affiché et de sa description.
+		- Modification du gestionnaire de signaux pour éviter qu'une fermeture de session ne coupe le service.
+
 18/09/2007 :
 	- CSNBNS :
 		- Modification pour faciliter mise en place en tant que service Windows.
@@ -11,6 +23,10 @@ $Id$
 		- Généralisation 'TimeOut'.
 	- CSDSNS :
 		- Ajout paramètre 'TimeOut'.
+		
+12/09/2007 :
+	- GENERAL :
+		- Création de 'WINTOL', bibliothèque facilitant la mise en place d'une application en tant que service Windows.
 
 11/09/2007 :
 	- CIO :

@@ -856,24 +856,20 @@ namespace tol {
 
 	E_AUTO2( object )
 
-	template <typename t> class core_pointer___	// Classe de base de gestion d'un pointeur.
+	template <typename t> class _core_pointer___	// Classe de base de gestion d'un pointeur.
 	{
 	protected:
 		t *P_;
 	public:
-		void reset( bso::bool__ P = true )
+		virtual void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				if ( P_ != NULL )
-					free( P_ );
-
 			P_ = NULL;
 		}
-		core_pointer___( void )
+		_core_pointer___( void )
 		{
 			reset( false );
 		}
-		~core_pointer___( void )
+		virtual ~_core_pointer___( void )
 		{
 			reset( true );
 		}
@@ -881,7 +877,7 @@ namespace tol {
 		{
 			reset();
 		}
-		core_pointer___ &operator =( const core_pointer___ &Pointer )
+		_core_pointer___ &operator =( const _core_pointer___ &Pointer )
 		{
 			ERRu();	// Otherwise the same ressource is used twice ; which delete them ?
 
@@ -889,8 +885,10 @@ namespace tol {
 		}
 		t *operator =( t *P )
 		{
+#ifdef TOL_DBG
 			if ( P_ != NULL )
-				free( (void *)P_ );
+				ERRu();
+#endif
 
 			P_ = P;
 
@@ -935,50 +933,60 @@ namespace tol {
 	};
 
 	template <typename t> class free_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'free'.
-	: public core_pointer___<t>
+	: public _core_pointer___<t>
 	{
 	public:
-		void reset( bso::bool__ P = true )
+		virtual void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( core_pointer___<t>::P_ != NULL )
-					free( core_pointer___<t>::P_ );
+				if ( _core_pointer___<t>::P_ != NULL )
+					free( _core_pointer___<t>::P_ );
 
-				core_pointer___<t>::P_ = NULL;
+			_core_pointer___<t>::reset( P );
 		}
 		t *operator =( t *P )
 		{
-			return core_pointer___<t>::operator =( P );
+			reset();
+
+			return _core_pointer___<t>::operator =( P );
 		}
 		t *operator =( void *P )
 		{
-			return core_pointer___<t>::operator =( P );
+			reset();
+
+			return _core_pointer___<t>::operator =( P );
 		}
 	};
 
 	#define E_FPOINTER___( t )	free_pointer___<t>
 
 	template <typename t> class delete_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'delete'.
-	: public core_pointer___<t>
+	: public _core_pointer___<t>
 	{
 	public:
-		void reset( bso::bool__ P = true )
+		virtual void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( core_pointer___<t>::P_ != NULL )
-					delete core_pointer___<t>::P_;
+				if ( _core_pointer___<t>::P_ != NULL )
+					delete _core_pointer___<t>::P_;
 
-				core_pointer___<t>::P_ = NULL;
+			_core_pointer___<t>::reset( P );
 		}
 		t *operator =( t *P )
 		{
-			return core_pointer___<t>::operator =( P );
+			reset();
+
+			return _core_pointer___<t>::operator =( P );
 		}
 		t *operator =( void *P )
 		{
-			return core_pointer___<t>::operator =( P );
+			reset();
+
+			return _core_pointer___<t>::operator =( P );
 		}
 	};
+
+	#define E_DPOINTER___( t )	delete_pointer___<t>
 
 	inline bso::char__ GetLocaleDecimalSeparator( void )
 	{

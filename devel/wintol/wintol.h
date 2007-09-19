@@ -76,13 +76,17 @@ namespace wintol {
 		{
 			_Name = NULL;
 		}
-		void Init( const char *Name )	// WARNING : 'Name' is not duplicated, so you should not change the content.
+		bso::bool__ Init( const char *Name )	// WARNING : 'Name' is not duplicated, so you should not change the content.
 		{
 			_Name = Name;
+
+			return true;
 		}
-		void Install( void );
-		void Remove( void );
-		void Launch( void );
+		bso::bool__ Install(
+			const char *DisplayName,
+			const char *Description );
+		bso::bool__ Remove( void );
+		bso::bool__ Launch( void );
 		// Return 'true' if termination was required.
 		bso::bool__ TestTermination( void );
 		void Callback( void )

@@ -57,6 +57,8 @@ public:
 
 #include "flx.h"
 
+static bso::bool__ Initialized_ = false;
+
 #if defined( CPE__P_MS )
 #	include <io.h>
 #	include <fcntl.h>
@@ -105,8 +107,14 @@ void cio::Initialize( void )
 		cio::_coutf.Init( coutd );
 		cio::_cinf.Init( cind );
 		cio::_cerrf.Init( cerrd );
+
+		::Initialized_ = true;
 }
 
+bso::bool__ cio::IsInitialized( void )
+{
+	return ::Initialized_;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

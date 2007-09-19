@@ -64,24 +64,24 @@ wintol::service__ *Service = NULL;
 
 #include <windows.h>
 
-BOOL SendStatusToSCM(DWORD dwCurrentState,
+static BOOL SendStatusToSCM_(DWORD dwCurrentState,
 					 DWORD dwWin32ExitCode,
 					 DWORD dwServiceSpecificExitCode,
 					 DWORD dwCheckPoint,
 					 DWORD dwWaitHint);
 
-HANDLE hTerminateEvent=NULL;
-HANDLE hTerminateThread=NULL;
-HANDLE ThreadHandle = NULL;
+static HANDLE hTerminateEvent_ = NULL;
+static HANDLE hTerminateThread_ = NULL;
+static HANDLE ThreadHandle_ = NULL;
 
-SERVICE_STATUS_HANDLE ServiceStatusHandle;
+static SERVICE_STATUS_HANDLE ServiceStatusHandle_;
 
-BOOL bPauseService=FALSE;
-BOOL bRunningService=FALSE;
+static BOOL bPauseService_ = FALSE;
+static BOOL bRunningService_ = FALSE;
 
 
 
-DWORD ServiceThread(LPDWORD param)
+static DWORD ServiceThread_(LPDWORD param)
 {		
 /*
 	if(::WaitForSingleObject(hTerminateThread, 0) == WAIT_OBJECT_0)
@@ -100,41 +100,41 @@ DWORD ServiceThread(LPDWORD param)
 	return 0;
 }
 // ------------------------------------------------------
-BOOL InitService( void )
+static BOOL InitService_( void )
 {
 	DWORD id=0;	
-	ThreadHandle = CreateThread(0,0,(LPTHREAD_START_ROUTINE)ServiceThread,NULL,0,&id);
-	if(ThreadHandle==0)
+	ThreadHandle_ = CreateThread(0,0,(LPTHREAD_START_ROUTINE)ServiceThread_,NULL,0,&id);
+	if(ThreadHandle_==0)
 	{
-		if(ServiceStatusHandle)  SendStatusToSCM(SERVICE_STOPPED,0,0,0,0);
-		if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
-		if(hTerminateThread)	 CloseHandle(hTerminateThread);
+		if(ServiceStatusHandle_)  SendStatusToSCM_(SERVICE_STOPPED,0,0,0,0);
+		if(hTerminateEvent_)		 CloseHandle(hTerminateEvent_);
+		if(hTerminateThread_)	 CloseHandle(hTerminateThread_);
 
 		return FALSE;
 	}	
-	bRunningService=TRUE;
+	bRunningService_=TRUE;
 	return TRUE;	
 }
 // ------------------------------------------------------
-void ResumeService()
+static void ResumeService_()
 {
-	bPauseService = FALSE;
-	ResumeThread(ThreadHandle);
+	bPauseService_ = FALSE;
+	ResumeThread(ThreadHandle_);
 }
 // ------------------------------------------------------
-void PauseService()
+static void PauseService_()
 {
-	bPauseService = TRUE;
-	SuspendThread(ThreadHandle);
+	bPauseService_ = TRUE;
+	SuspendThread(ThreadHandle_);
 }
 // ------------------------------------------------------
-void StopService()
+static void StopService_()
 {
-	bRunningService=FALSE;
-	SetEvent(hTerminateThread);
+	bRunningService_=FALSE;
+	SetEvent(hTerminateThread_);
 }
 // ------------------------------------------------------
-BOOL SendStatusToSCM(DWORD dwCurrentState,
+static BOOL SendStatusToSCM_(DWORD dwCurrentState,
                      DWORD dwWin32ExitCode,
                      DWORD dwServiceSpecificExitCode,
                      DWORD dwCheckPoint,
@@ -159,12 +159,12 @@ BOOL SendStatusToSCM(DWORD dwCurrentState,
     ServiceStatus.dwCheckPoint = dwCheckPoint;
     ServiceStatus.dwWaitHint = dwWaitHint;
     
-    bSuccess = SetServiceStatus(ServiceStatusHandle,&ServiceStatus);
-    if(!bSuccess) StopService();
+    bSuccess = SetServiceStatus(ServiceStatusHandle_,&ServiceStatus);
+    if(!bSuccess) StopService_();
     return bSuccess;
 }
 // ------------------------------------------------------
-void ServiceCtrlHandler(DWORD controlCode)
+static void ServiceCtrlHandler_(DWORD controlCode)
 {
 	DWORD currentState= 0;
 	BOOL  bSuccess;
@@ -172,23 +172,23 @@ void ServiceCtrlHandler(DWORD controlCode)
 	{
 		case SERVICE_CONTROL_STOP:
 				currentState= SERVICE_STOP_PENDING;
-				bSuccess= SendStatusToSCM(SERVICE_STOP_PENDING,NO_ERROR,0,1,5000);
-				StopService();
+				bSuccess= SendStatusToSCM_(SERVICE_STOP_PENDING,NO_ERROR,0,1,5000);
+				StopService_();
 				return;
 
 		case SERVICE_CONTROL_PAUSE:
-				if(bRunningService && !bPauseService)
+				if(bRunningService_ && !bPauseService_)
 				{
-					bSuccess= SendStatusToSCM(SERVICE_PAUSE_PENDING,NO_ERROR,0,1,1000);
-					PauseService();
+					bSuccess= SendStatusToSCM_(SERVICE_PAUSE_PENDING,NO_ERROR,0,1,1000);
+					PauseService_();
 					currentState= SERVICE_PAUSED;
 				}
 				break;
 		case SERVICE_CONTROL_CONTINUE:
-				if(bRunningService && bPauseService)
+				if(bRunningService_ && bPauseService_)
 				{
-					bSuccess= SendStatusToSCM(SERVICE_CONTINUE_PENDING,NO_ERROR,0,1,1000);
-					ResumeService();
+					bSuccess= SendStatusToSCM_(SERVICE_CONTINUE_PENDING,NO_ERROR,0,1,1000);
+					ResumeService_();
 					currentState= SERVICE_RUNNING;
 				}
 				break;
@@ -200,21 +200,24 @@ void ServiceCtrlHandler(DWORD controlCode)
 
 		default:break;						
 	}
-	SendStatusToSCM(currentState,NO_ERROR,0,0,0);
+	SendStatusToSCM_(currentState,NO_ERROR,0,0,0);
 }
 // ------------------------------------------------------
-void Terminate(DWORD error)
+static void Terminate_(DWORD error)
 {		
-	if(ServiceStatusHandle) SendStatusToSCM(SERVICE_STOPPED,error,0,0,0);
-	if(ThreadHandle)		 CloseHandle(ThreadHandle);	
-	if(hTerminateEvent)		 CloseHandle(hTerminateEvent);
-	if(hTerminateThread)	 CloseHandle(hTerminateThread);
+	if(ServiceStatusHandle_) SendStatusToSCM_(SERVICE_STOPPED,error,0,0,0);
+	if(ThreadHandle_)		 CloseHandle(ThreadHandle_);	
+	if(hTerminateEvent_)		 CloseHandle(hTerminateEvent_);
+	if(hTerminateThread_)	 CloseHandle(hTerminateThread_);
 
 	if ( error != 0 )
 		ERRs();
 }
 // ------------------------------------------------------
-void AddService( const char *Name )
+static bso::bool__ AddService_(
+	const char *ServiceName,
+	const char *DisplayName,
+	const char *Description )
 {
 	SC_HANDLE newService,scm;
 //	CString strPath;
@@ -228,21 +231,29 @@ void AddService( const char *Name )
 //	if(!scm) ErrorHandler("Dans OpenScManager",GetLastError());
 
 	if ( !scm )
-		ERRs();
+		return false;
 
-	newService= CreateService(scm,Name,
-							  Name,
+	newService= CreateService(scm,ServiceName,
+							  ( DisplayName == NULL ? ServiceName : DisplayName ),
 							  SERVICE_ALL_ACCESS,
 							  SERVICE_WIN32_OWN_PROCESS,
-							  SERVICE_DEMAND_START,
+							  SERVICE_AUTO_START,
 							  SERVICE_ERROR_NORMAL,
 							  szFilename,
 							  0,0,0,0,0);
 	if (!newService )
-		ERRs();
+		return false;
+
+	if ( Description != NULL ) {
+		SERVICE_DESCRIPTION ServiceDescriptionStruct = { (char *)Description };
+
+		ChangeServiceConfig2( newService, SERVICE_CONFIG_DESCRIPTION, &ServiceDescriptionStruct );
+	}
+
+	return true;
 }
 // ------------------------------------------------------
-void RemoveService( const char *Name )
+static bso::bool__ RemoveService_( const char *Name )
 {
 	SC_HANDLE newService,scm;
 //	CString strPath;
@@ -256,7 +267,7 @@ void RemoveService( const char *Name )
 //	if (!scm) ErrorHandler("Dans OpenScManager",GetLastError());
 
 	if ( !scm )
-		ERRs();
+		return false;
 
 	newService=OpenService(scm,Name,SERVICE_ALL_ACCESS| DELETE);
 
@@ -265,105 +276,99 @@ void RemoveService( const char *Name )
 //	if(!newService)	ErrorHandler("Dans DeleteService",GetLastError());
 
 	if ( !newService )
-		ERRs();
+		return false;
+
+	return true;
 }
 // ------------------------------------------------------
-void ServiceMain(DWORD argc,LPTSTR *argv)
+static void ServiceMain_(DWORD argc,LPTSTR *argv)
 {
 	BOOL bSuccess;
 
 	if ( argc < 1 )
 		ERRs();
     
-	ServiceStatusHandle = RegisterServiceCtrlHandler(argv[0],(LPHANDLER_FUNCTION)ServiceCtrlHandler);
-	if(!ServiceStatusHandle)
+	ServiceStatusHandle_ = RegisterServiceCtrlHandler(argv[0],(LPHANDLER_FUNCTION)ServiceCtrlHandler_);
+	if(!ServiceStatusHandle_)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,1,5000);
+	bSuccess= SendStatusToSCM_(SERVICE_START_PENDING,NO_ERROR,0,1,5000);
 	if(!bSuccess)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	hTerminateEvent = CreateEvent(0,TRUE,FALSE,0);
-	if(!hTerminateEvent)
+	hTerminateEvent_ = CreateEvent(0,TRUE,FALSE,0);
+	if(!hTerminateEvent_)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	hTerminateThread = CreateEvent(0,TRUE,FALSE,0);
-	if(!hTerminateThread)
+	hTerminateThread_ = CreateEvent(0,TRUE,FALSE,0);
+	if(!hTerminateThread_)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	bSuccess= SendStatusToSCM(SERVICE_START_PENDING,NO_ERROR,0,2,1000);
+	bSuccess= SendStatusToSCM_(SERVICE_START_PENDING,NO_ERROR,0,2,1000);
 	if(!bSuccess)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	bSuccess = InitService();
+	bSuccess = InitService_();
 	if(!bSuccess)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}
-	bSuccess= SendStatusToSCM(SERVICE_RUNNING,NO_ERROR,0,0,0);
+	bSuccess= SendStatusToSCM_(SERVICE_RUNNING,NO_ERROR,0,0,0);
 	if(!bSuccess)
 	{
-		Terminate(GetLastError());
+		Terminate_(GetLastError());
 		return;
 	}		
-	WaitForSingleObject(hTerminateEvent,INFINITE);
-	Terminate(0);
+	WaitForSingleObject(hTerminateEvent_,INFINITE);
+	Terminate_(0);
 }
 
-void wintol::service__::Install( void )
+bso::bool__ wintol::service__::Install(
+	const char *DisplayName,
+	const char *Description )
 {
-	AddService( _Name );
+	return AddService_( _Name, DisplayName, Description );
 }
 
-void wintol::service__::Remove( void )
+bso::bool__ wintol::service__::Remove( void )
 {
-	RemoveService( _Name );
+	return RemoveService_( _Name );
 }
 
-void wintol::service__::Launch( void )
+bso::bool__ wintol::service__::Launch( void )
 {
-ERRProlog
-	tol::E_FPOINTER___( char ) Buffer;
-ERRBegin
-	Buffer = malloc( strlen( _Name ) + 1 );
-
-	strcpy( Buffer, _Name );
+	tol::PatchSignalHandlingForWindowsService();
 
 	SERVICE_TABLE_ENTRY serviceTable[]=
 	{
-		{ Buffer,(LPSERVICE_MAIN_FUNCTION)ServiceMain},
+		{ (char *)_Name,(LPSERVICE_MAIN_FUNCTION)ServiceMain_},
 		{NULL , NULL}
 	};
 
-	while ( Service != NULL );	// Light mutex simulation.
+	while ( Service != NULL );	// Light lock simulation.
 
 	Service = this;
  
-	if ( !StartServiceCtrlDispatcher(serviceTable) )
-		ERRs();
-
-ERRErr
-ERREnd
-ERREpilog
+	return ( StartServiceCtrlDispatcher(serviceTable) == TRUE );
 }
 
 bso::bool__ wintol::service__::TestTermination( void )
 {
-	if(::WaitForSingleObject(hTerminateThread, 0) == WAIT_OBJECT_0)
+	if(::WaitForSingleObject(hTerminateThread_, 0) == WAIT_OBJECT_0)
 	{
 		// signale l'objet event d'attente et sort.
-		::SetEvent(hTerminateEvent);
+		::SetEvent(hTerminateEvent_);
 		return true;
 	} else
 		return false;

@@ -253,8 +253,10 @@ ERRProlog
 	static txf::text_oflow__ &cerr = cio::cerr;
 #	endif
 ERRBegin
+	if ( cio::IsInitialized() ) {
 		cout << txf::sync;
 		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
+	}
 ERRErr
 ERREnd
 ERREpilog
