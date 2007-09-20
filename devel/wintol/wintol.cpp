@@ -58,7 +58,7 @@ public:
 using namespace wintol;
 #include "tol.h"
 
-wintol::service__ *Service = NULL;
+static wintol::service__ *Service_ = NULL;
 
 // Inspired from http://cpp.developpez.com/faq/vc/?page=ProcessThread#HowToMakeService 
 
@@ -91,11 +91,10 @@ static DWORD ServiceThread_(LPDWORD param)
 		return 0;
 	}
 */
-	service__ *Service = ::Service;
+	if ( Service_ == NULL )
+		ERRu();
 
-	::Service = NULL;
-
-	Service->Callback();
+	::Service_->Process();
 
 	return 0;
 }
@@ -195,8 +194,11 @@ static void ServiceCtrlHandler_(DWORD controlCode)
 		case SERVICE_CONTROL_INTERROGATE:break;
 
 		case SERVICE_CONTROL_SHUTDOWN:
-			ERRExit( EXIT_SUCCESS );
-//			return;
+//			ERRExit( EXIT_SUCCESS );
+			if ( ::Service_ == NULL )
+				ERRu();
+			::Service_->Shutdown();
+			return;
 
 		default:break;						
 	}
@@ -348,7 +350,7 @@ bso::bool__ wintol::service__::Remove( void )
 
 bso::bool__ wintol::service__::Launch( void )
 {
-	tol::PatchSignalHandlingForWindowsService();
+	PatchSignalHandlingForWindowsService();
 
 	SERVICE_TABLE_ENTRY serviceTable[]=
 	{
@@ -356,9 +358,10 @@ bso::bool__ wintol::service__::Launch( void )
 		{NULL , NULL}
 	};
 
-	while ( Service != NULL );	// Light lock simulation.
+	if ( Service_ != NULL )
+		ERRu();
 
-	Service = this;
+	Service_ = this;
  
 	return ( StartServiceCtrlDispatcher(serviceTable) == TRUE );
 }

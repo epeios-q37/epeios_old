@@ -60,17 +60,26 @@ extern class ttr_tutor &WINTOLTutor;
 
 /*$BEGIN$*/
 
+#include <signal.h>
+
 #include "err.h"
 #include "flw.h"
 
 namespace wintol {
+
+	inline void PatchSignalHandlingForWindowsService( void )
+	{
+		signal( SIGBREAK, SIG_DFL );
+	}
+	// Used by below class.
 
 	class service__
 	{
 	private:
 		const char *_Name;
 	protected:
-		virtual void WINTOLCallback( void ) = 0;
+		virtual void WINTOLProcess( void ) = 0;
+		virtual void WINTOLShutdown( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -89,9 +98,13 @@ namespace wintol {
 		bso::bool__ Launch( void );
 		// Return 'true' if termination was required.
 		bso::bool__ TestTermination( void );
-		void Callback( void )
+		void Process( void )
 		{
-			WINTOLCallback();
+			WINTOLProcess();
+		}
+		void Shutdown( void )
+		{
+			WINTOLShutdown();
 		}
 	};
 }

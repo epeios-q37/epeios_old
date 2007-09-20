@@ -122,6 +122,9 @@ char *fnm::BuildFileName(
 ERRProlog
 	size_t TailleRep = 0, TailleNom = 0, TailleExt = 0;
 ERRBegin
+	if ( Type( Nom ) == tAbsolute )
+		Rep = NULL;
+
 	if ( Rep )
 		TailleRep = strlen( Rep );
 

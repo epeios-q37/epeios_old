@@ -1,5 +1,14 @@
 $Id$
 
+20/09/2007 :
+	- FNM :
+		- Modification de 'BuildFileName(...)' pour traiter le cas où le paramètre 'Nom' est une localisation absolue
+	- TOL :
+		- Déplacement 'PatchSignalHandlingForWindowsService(...)' vers 'WINTOL'.
+	- WINTOL :
+		- Codage (?#!* de service Windows !).
+		- Récupération 'PatchSignalHandlingForWindowsService(...)' de 'TOL'.
+
 19/09/2007 :
 	- CIO :
 		- Rajout 'IsInitialized(...)'.
