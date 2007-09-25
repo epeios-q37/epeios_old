@@ -334,6 +334,7 @@ namespace str {
 		epeios::row__ &P = Begin;
 		bso::ubyte__ C;
 		bso::ubyte__ Base;
+		bso::ulong__ OtherLimit = 0;
 
 		if ( BaseFlag == bAuto )
 			if ( ( ( Amount() != 0 ) ) && ( Get( P ) == '#' ) ) {
@@ -347,7 +348,12 @@ namespace str {
 
 		Base = (int)BaseFlag;
 
-		Limit /= Base;
+#ifdef STR_DBG
+		if ( Limit < Base )
+			ERRu();
+#endif
+
+		OtherLimit = Limit / Base;
 
 		if ( *P < Amount() )
 			while( P != NONE ) {
@@ -356,10 +362,15 @@ namespace str {
 				if ( C >= Base )
 					break;
 
-			   if ( Result > Limit )
+				if ( Result > OtherLimit )
+					break;
+
+				Result *= Base;
+
+				if ( ( Limit - C ) < Result )
 				   break;
 
-				Result = Result * Base + C;
+				Result += C;
 
 				P = Next( P );
 			}

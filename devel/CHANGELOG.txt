@@ -1,5 +1,9 @@
 $Id$
 
+25/09/2007 :
+	- STR :
+		- Amélioration de l'algorithme de détection de dépassement.
+
 20/09/2007 :
 	- FNM :
 		- Modification de 'BuildFileName(...)' pour traiter le cas où le paramètre 'Nom' est une localisation absolue
