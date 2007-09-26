@@ -198,25 +198,25 @@ namespace str {
 		bso::slong__ ToSL(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ulong__ AbsolutePositiveLimit = BSO_SLONG_MAX,
-			bso::ulong__ AbsoluteNegativeLimit = -BSO_SLONG_MIN ) const
+			bso::ulong__ PositiveLimit = BSO_SLONG_MAX,
+			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
 		{
 			if ( Get( Begin ) == '-' )
 				if ( Next( Begin ) == NONE ) {
 					*ErrP = *Begin + 1;
 					return 0;
 				} else 
-					return -(bso::slong__)ToUL( Next( Begin ), ErrP, b10, AbsoluteNegativeLimit );
+					return -(bso::slong__)ToUL( Next( Begin ), ErrP, b10, -NegativeLimit );
 			else
-				return (bso::slong__)ToUL( Begin, ErrP, b10, AbsolutePositiveLimit );
+				return (bso::slong__)ToUL( Begin, ErrP, b10, PositiveLimit );
 		}
 		//f Variation in parameters.
 		bso::slong__ ToSL(
 			epeios::row__ *ErrP = NULL,
-			bso::ulong__ AbsolutePositiveLimit = BSO_SLONG_MAX,
-			bso::ulong__ AbsoluteNegativeLimit = -BSO_SLONG_MIN ) const
+			bso::ulong__ PositiveLimit = BSO_SLONG_MAX,
+			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
 		{
-			return ToSL( 0, ErrP, AbsolutePositiveLimit, AbsoluteNegativeLimit );
+			return ToSL( 0, ErrP, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to unsigned short. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
@@ -249,18 +249,18 @@ namespace str {
 		bso::sshort__ ToSS(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ushort__ AbsolutePositiveLimit = BSO_SSHORT_MAX,
-			bso::ulong__ AbsoluteNegativeLimit = -BSO_SSHORT_MIN ) const
+			bso::ushort__ PositiveLimit = BSO_SSHORT_MAX,
+			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
 		{
-			return (bso::sshort__)ToSL( Begin, ErrP, AbsolutePositiveLimit, AbsoluteNegativeLimit );
+			return (bso::sshort__)ToSL( Begin, ErrP, PositiveLimit, NegativeLimit );
 		}
 		//f Variation in parameters.
 		bso::sshort__ ToSS(
 			epeios::row__ *ErrP = NULL,
-			bso::ushort__ AbsolutePositiveLimit = BSO_SSHORT_MAX,
-			bso::ulong__ AbsoluteNegativeLimit = -BSO_SSHORT_MIN ) const
+			bso::ushort__ PositiveLimit = BSO_SSHORT_MAX,
+			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
 		{
-			return ToSS( 0, ErrP, AbsolutePositiveLimit, AbsoluteNegativeLimit );
+			return ToSS( 0, ErrP, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to unsigned byte. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
@@ -293,18 +293,18 @@ namespace str {
 		bso::sbyte__ ToSB(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ubyte__ AbsolutePositiveLimit = BSO_SBYTE_MAX,
-			bso::ushort__ AbsoluteNegativeLimit = -BSO_SBYTE_MIN ) const
+			bso::ubyte__ PositiveLimit = BSO_SBYTE_MAX,
+			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
 		{
-			return (bso::sbyte__)ToSL( 0, ErrP, AbsolutePositiveLimit, AbsoluteNegativeLimit );
+			return (bso::sbyte__)ToSL( 0, ErrP, PositiveLimit, NegativeLimit );
 		}
 		//f Variation in parameters.
 		bso::sbyte__ ToSB(
 			epeios::row__ *ErrP = NULL,
-			bso::ubyte__ AbsolutePositiveLimit = BSO_SBYTE_MAX,
-			bso::ushort__ AbsoluteNegativeLimit = -BSO_SBYTE_MIN ) const
+			bso::ubyte__ PositiveLimit = BSO_SBYTE_MAX,
+			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
 		{
-			return ToSB( 0, ErrP, AbsolutePositiveLimit, AbsoluteNegativeLimit );
+			return ToSB( 0, ErrP, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */
