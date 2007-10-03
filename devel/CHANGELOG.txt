@@ -1,5 +1,9 @@
 $Id$
 
+03/10/2007 :
+	 -DIR :
+		- Ajout 'ChangeDir(...)'.
+
 25/09/2007 :
 	- STR :
 		- Amélioration de l'algorithme de détection de dépassement.

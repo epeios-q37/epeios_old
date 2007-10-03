@@ -1,8 +1,8 @@
 /*
-	Header for the 'dir' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+	Header for the 'dir' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	DIR_VERSION	"$Revision$"
 
-#define DIR_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define DIR_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &DIRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -88,7 +88,7 @@ namespace dir {
 	enum state__ {
 		sOK,
 		sExists,		// Le répertoire existe déjà.
-		sBadPath,		// Le chemin fourinit n'est pas correct.
+		sBadPath,		// Le chemin fournit n'est pas correct.
 		sIncorrectPath,	// Un élment du chemin n'existe pas ou n'est pas un répertoire adapté (fichier, mauvais droits, ...).
 		s_amount,
 		s_Undefined
@@ -188,6 +188,56 @@ namespace dir {
 
 		return s_Undefined;	// Pour éviter un 'warning'.
 	}
+
+	inline state__ ChangeDir( const char *Path )
+	{
+#pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
+#ifdef DIR__MS
+		switch ( _chdir( Path ) ) {
+#elif defined( DIR__POSIX )
+		switch ( chdir( Path ) ) {
+#else
+#	error
+#endif
+		case 0:
+			return sOK;
+			break;
+		case -1:
+			switch ( errno ) {
+			case EEXIST:
+				return sExists;
+				break;
+			case ENOENT:
+#ifdef DIR__POSIX
+			case EPERM:
+			case EACCES:
+			case ENOTDIR:
+			case EROFS:
+			case ELOOP:
+#endif
+				return sIncorrectPath;
+				break;
+#ifdef DIR__POSIX
+			case ENAMETOOLONG:
+				return sBadPath;
+				break;
+			case EFAULT:
+				ERRu();
+				break;
+#endif
+			default:
+				ERRs();
+				break;
+			}
+		default:
+			ERRs();
+			break;
+		}
+
+		return s_Undefined;	// Pour éviter un 'warning'.
+	}
+
+
 }
 
 /*$END$*/
