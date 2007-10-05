@@ -349,27 +349,17 @@ namespace ctn {
 			reset();
 		}
 		void Init( 
-#ifdef MMM__USE_V2
 			container &Container,
-#endif
 			const char *StaticsFileName,
 			const char *DynamicsDescriptorsFileName,
 			const char *DynamicsMultimemoryFileName,
-#ifdef MMM__USE_V2
 			const char *DynamicsMultimemoryFreeFragmentPositionsFileName,
-#endif
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
 			_Statics.Init( StaticsFileName, Mode, Persistent, FilesGroup );
-#ifdef MMM__USE_V1
-			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, Mode, Persistent, FilesGroup );
-#elif defined( MMM__USE_V2 )
 			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
-#else
-#	error
-#endif
 		}
 		void ReleaseFiles( void )
 		{

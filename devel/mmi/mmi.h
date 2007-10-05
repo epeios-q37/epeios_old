@@ -64,16 +64,176 @@ extern class ttr_tutor &MMITutor;
 #include "flw.h"
 #include "mmm.h"
 #include "tym.h"
-#include "mmisub.h"
-#include "bch.h"
 
 namespace mmi {
+
+	//t The type of an index in the indexed multimemory.
+	E_ROW( index__ );
+
+	// Prédéclaration.
+	class indexed_multimemory_;
+
+	class _base_indexed_multimemory_driver__
+	: public mdr::E_MEMORY_DRIVER__
+	{
+	private:
+		index__ _Index;
+		const indexed_multimemory_ *&Multimemoire_;
+	protected:
+		// Déportée.
+		virtual void MDRRecall(
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer );
+		virtual void MDRStore(
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
+		{
+			ERRu();
+		}
+		virtual void MDRAllocate( mdr::size__ Capacity )
+		{
+			ERRu();
+		}
+		virtual void MDRFlush( void )
+		{
+			ERRu();
+		}
+	public:
+		_base_indexed_multimemory_driver__(
+			const indexed_multimemory_ *&Multimemoire,
+			mdr::size__ &Extent )
+		: Multimemoire_( Multimemoire ),
+		  E_MEMORY_DRIVER__( Extent )
+		{}
+		_base_indexed_multimemory_driver__(
+			indexed_multimemory_ *&Multimemoire,
+			mdr::size__ &Extent )
+		: Multimemoire_( *(const indexed_multimemory_ **)& Multimemoire ),
+		  E_MEMORY_DRIVER__( Extent )
+		{}
+		void reset( bool P = true )
+		{
+			E_MEMORY_DRIVER__::reset( P );
+
+			_Index = NONE;
+			Multimemoire_ = NULL;
+		}
+		//f Initialize with 'Multimemory' multimemory.
+		void Init( void )
+		{
+			E_MEMORY_DRIVER__::Init();
+
+			_Index = NONE;
+		}
+		//f The 'Index' memory becomes the memory handled by this memory driver.
+		void Index( index__ Index )
+		{
+			_Index = Index;
+		}
+		//f Return the index of the current memory.
+		index__ Index( void ) const
+		{
+			return _Index;
+		}
+		// Déportée.
+		epeios::size__ Size( void ) const;
+		friend class indexed_multimemory_driver__;
+	};
+
+	//c This class is the standard memory driver for the indexed multimemory.
+	class indexed_multimemory_driver__
+	: public _base_indexed_multimemory_driver__
+	{
+	private:
+		indexed_multimemory_ *Multimemoire_;
+		// memoire à laquelle il a été affecté
+	protected:
+		// Déportée.
+		virtual void MDRStore(
+			const epeios::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position );
+		// Déportée.
+		virtual void MDRAllocate( mdr::size__ Capacity );
+		// Déportée.
+		virtual void MDRFlush( void );
+	public:
+		indexed_multimemory_driver__( mdr::size__ &Extent	)
+		: _base_indexed_multimemory_driver__( Multimemoire_, Extent ) {}
+		void reset( bool P = true )
+		{
+			_base_indexed_multimemory_driver__::reset( P );
+		}
+		//f Initialize with the 'Multimemory' multimemory.
+		void Init( indexed_multimemory_ &Multimemory )
+		{
+			_base_indexed_multimemory_driver__::Init();
+			Multimemoire_ = &Multimemory;
+		}
+		//f The 'Index' memory becomes the memory handled by this driver.
+	};
+
+	class standalone_indexed_multimemory_driver__
+	: public indexed_multimemory_driver__
+	{
+	private:
+		epeios::size__ _Extent;
+	public:
+		standalone_indexed_multimemory_driver__( void )
+		: indexed_multimemory_driver__( _Extent )
+		{
+			_Extent = 0;
+		}
+	};
+
+	//c Same as 'mmmi_indexed_multimemory_driver_', but for read-only memory.
+	class const_indexed_multimemory_driver__
+	: public _base_indexed_multimemory_driver__
+	{
+	private:
+		const indexed_multimemory_ *Multimemoire_;
+		// memoire à laquelle il a été affecté
+	public:
+		const_indexed_multimemory_driver__( mdr::size__ &Extent	)
+		: _base_indexed_multimemory_driver__( Multimemoire_, Extent ) {}
+		void reset( bool P = true )
+		{
+			_base_indexed_multimemory_driver__::reset( P );
+		}
+		//f Initialize with the 'Multimemory' multimemory.
+		void Init( const indexed_multimemory_ &Multimemory )
+		{
+			_base_indexed_multimemory_driver__::Init();
+			Multimemoire_ = &Multimemory;
+		}
+		//f The 'Index' memory becomes the memory handled by this driver.
+	};
+
+	class standalone_const_indexed_multimemory_driver__
+	: public const_indexed_multimemory_driver__
+	{
+	private:
+		epeios::size__ _Extent;
+	public:
+		standalone_const_indexed_multimemory_driver__( void )
+		: const_indexed_multimemory_driver__( _Extent )
+		{
+			_Extent = 0;
+		}
+	};
 
 	struct descripteur__
 	{
 		mmm::descriptor__ Descripteur;
 		bso::ubyte__ Addendum;
 	};
+}
+
+#include "bch.h"
+
+namespace mmi {
 
 	typedef bch::E_BUNCHt_( descripteur__, index__ ) descriptors_;
 
@@ -337,26 +497,16 @@ namespace mmi {
 			reset();
 		}
 		void Init( 
-#ifdef MMM__USE_V2
 			indexed_multimemory_ &IndexedMultimemory,
-#endif
 			const char *DescriptorsFileName,
 			const char *MultimemoryFileName,
-#ifdef MMM__USE_V2
 			const char *MultimemoryFreeFragmentPositionsFileName,
-#endif
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, FilesGroup );
-#ifdef MMM__USE_V1
-			_Multimemory.Init( MultimemoryFileName, Mode, Persistent, FilesGroup );
-#elif defined( MMM__USE_V2 )
 			_Multimemory.Init( IndexedMultimemory.Multimemoire, MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
-#else
-#	error
-#endif
 		}
 		void ReleaseFile( void )
 		{

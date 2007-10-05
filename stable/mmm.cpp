@@ -55,221 +55,129 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cio.h"
+#include "flf.h"
 
 using namespace mmm;
 
-#define	multimemoire	multimemory_
-#define nombre			nombre__
-#define descripteur		descriptor__
-#define indice_bloc		indice_bloc__
-#define taille			taille__
-
-/*
-void multimemoire::Liberer_(
-	descripteur Descripteur,
-	fdm__bool Ajustement )
+static void Display_(
+	row__ Position,
+	txf::text_oflow__ &Flow )
 {
-	if ( HorsLimite_( Suivant_( Descripteur ) ) )
-	{
-		capacite NouvelleCapacite;
-
-		Memoire.Allouer( NouvelleCapacite = Descripteur - sizeof( nombre ) );
-
-		S_.Capacite = NouvelleCapacite;
-
-		if ( Ajustement )
-			AjusterCapacite_();
-	}
+	if ( Position == NONE )
+		Flow << "NONE";
 	else
-	{
-		nombre Nombre = NombreBlocsOccupes_( Descripteur );
-
-		while ( Nombre-- )
-		{
-			EcrireNombreBlocs_( Descripteur, 0 );
-			Descripteur += S_.Taille;
-		}
-	}
+		Flow << *Position;
 }
 
-nombre multimemoire::NombreBlocsSuccessifsLibres_( descripteur Descripteur )
+void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 {
-	nombre Nombre = 0;
+	bso::ulong__ UsedFragmentTotalSize = 0, UsedFragmentDataSize = 0, FreeFragmentSize = 0;
 
-	while ( !HorsLimite_( Descripteur ) && EstLibre_( Descripteur ) )
-	{
-		Nombre++;
-		Descripteur += S_.Taille;
-	}
+	Flow << "Extent : " << S_.Extent << txf::tab;
+	Flow << "FreeFragment : ";
+	Display_( S_.FreeFragment, Flow );
+	Flow << txf::tab;
 
-	return Nombre;
-}
-
-void multimemoire::AjusterCapacite_( void )
-{
-	descripteur Descripteur = PremierDescripteur_();
-
-	if ( !HorsLimite_( Descripteur ) )
-	{
-		while( !HorsLimite_( Suivant_( Descripteur ) ) )
-			Descripteur = Suivant_( Descripteur );
-
-		if ( EstLibre_( Descripteur ) )
-		{
-			capacite NouvelleCapacite;
-			Memoire.Allouer( NouvelleCapacite = Descripteur - sizeof( nombre ) );
-			S_.Capacite = NouvelleCapacite;
-		}
-	}
-}
-
-descripteur multimemoire::Allouer_( capacite Capacite )
-{
-	descripteur Descripteur;
-
-	if ( ( Optimisation_ == mmm::Taille ) || ( S_.Capacite < PremierDescripteur_() ) )
-		Descripteur = PremierDescripteur_();
-	else
-		Descripteur = PremierDescripteur_() + S_.Capacite;
-
-	while ( !HorsLimite_( Descripteur )
-			&& ( !EstLibre_( Descripteur ) || ( TailleEspaceLibre_( Descripteur ) < Capacite ) ) )
-		Descripteur = Suivant_( Descripteur );
-
-	if ( HorsLimite_( Descripteur ) )
-	{
-		capacite NouvelleCapacite;
-
-		if ( ( ( Capacite + sizeof( nombre ) - 1 ) / S_.Taille + 1 ) > FDM_USHORT_MAX )
-			ERRL();
-
-		Memoire.Allouer( NouvelleCapacite = Descripteur + S_.Taille * ( ( Capacite + sizeof( nombre ) - 1 ) / S_.Taille + 1 ) - sizeof( nombre ) );
-
-		S_.Capacite = NouvelleCapacite;
-	}
-
-	Marquer_( Descripteur, Capacite );
-
-	return Descripteur;
-}
-*/
-
-void multimemoire::AfficherStructure_( txf::text_oflow__ &Flow ) const
-{
-	descripteur Descripteur = PremierDescripteur_();
-	descripteur P, D, M, m;
-	mdr::size__ Nombre = 0, Total;
-
-	while ( !HorsLimite_( Descripteur ) )
-	{
-		Flow << (unsigned long)TailleEnNombre_( Descripteur ) << ": ";
-
-		if ( EstLibre_( Descripteur ) )
-		{
-			Flow << '+';
-
-			if ( !Nombre )
-			{
-				P = D = M = m = Descripteur;
-				Total = Nombre_( Descripteur );
-			}
-			else
-			{
-				D = Descripteur;
-
-				if ( Nombre_( Descripteur ) > Nombre_( M ) )
-					M = Descripteur;
-				else if ( Nombre_( Descripteur ) < Nombre_( m ) )
-					m = Descripteur;
-
-				Total += Nombre_( Descripteur );
-			}
-
-			Nombre++;
-		}
-		else
-			Flow << '-';
-
-		Flow << (unsigned long)Nombre_( Descripteur ) << txf::tab;
-
-		Descripteur = Successeur_( Descripteur );
-	}
-
-	Flow << txf::nl << (unsigned long)TailleEnNombre_( Descripteur ) << ": hors limite ...";
-
-	if ( Nombre )
-	{
-		Flow << txf::tab << "N:" << (unsigned long)Nombre << txf::tab << "T: " << (unsigned long)Total << txf::tab << "M: " << (unsigned long)( Total / Nombre ) << txf::nl
-			 << "P: " << (unsigned long)TailleEnNombre_( P ) << ';' << (unsigned long)Nombre_( P ) << txf::tab
-			 << "D: " << (unsigned long)TailleEnNombre_( D ) << ';' << (unsigned long)Nombre_( D ) << txf::tab
-			 << "m: " << (unsigned long)TailleEnNombre_( m ) << ';' << (unsigned long)Nombre_( m ) << txf::tab
-			 << "M: " << (unsigned long)TailleEnNombre_( M ) << ';' << (unsigned long)Nombre_( M );
-
-		if ( S_.Libre )
-			Flow << txf::tab << "L: " << (unsigned long)TailleEnNombre_( S_.Libre ) << ';' << (unsigned long)Nombre_( S_.Libre );
-	}
-
+	Flow << "Tailing free fragment position : ";
+	Display_( S_.TailingFreeFragmentPosition, Flow );
+	
 	Flow << txf::nl;
-}
-/*
-descripteur multimemoire::Descripteur_( indice_bloc IndiceBloc )
-{
-	descripteur Descripteur = PremierDescripteur_();
 
-	if ( EstLibre_( Descripteur ) )
-		Descripteur = Suivant_( Descripteur );
+	Flow << "Pos." << txf::tab << "  State" << txf::tab << "Size" << txf::tab << "Next" << txf::tab << "DataS" << txf::tab << txf::tab << "PF" << txf::tab << "NF/L" << txf::nl;
 
-	IndiceBloc--;
+	if ( S_.Extent != 0 ) {
+		row__ Position = 0;
+		mdr::datum__ Header[MMM_HEADER_MAX_LENGTH];
 
-	while( IndiceBloc-- )
-	{
-		Descripteur = Suivant_( Descripteur );
+		while ( Position != NONE ) {
+			Flow << *Position << txf::tab << ": ";
 
-		if ( EstLibre_( Descripteur ) )
-			Descripteur = Suivant_( Descripteur );
+			_GetHeader( Position, Header );
+
+			if ( _IsFragmentUsed( Header ) ) {
+				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
+
+				UsedFragmentTotalSize += _GetUsedFragmentTotalSize( Header );
+				UsedFragmentDataSize += _GetUsedFragmentDataSize( Header );
+
+				if ( _IsUsedFragmentFreeFlagSet( Header ) )
+					Flow << *_GetFreeFragmentPosition( Position );
+				else
+					Flow << "NONE";
+
+				Flow << txf::tab;
+
+				if ( _IsUsedFragmentLinkFlagSet( Header ) )
+					Flow << *_GetUsedFragmentLink( Position, Header );
+				else
+					Flow << "NONE";
+
+				Position = _GetUsedFragmentNextFragmentPosition( Position, Header );
+			} else if ( _IsFragmentFree( Header ) ) {
+				if ( _IsFreeFragmentOrphan( Header ) ) {
+					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab;
+				} else {
+					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab << txf::tab << txf::tab;
+					Display_( _GetFreeFragmentPreviousFreeFragmentPosition( Header ), Flow );
+					Flow << txf::tab;
+					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );
+				}
+
+				FreeFragmentSize += _GetFreeFragmentSize( Header );
+
+				Position = _GetFreeFragmentNextFragmentPosition( Position, Header );
+			} else
+				ERRc();
+
+			Flow << txf::nl;
+
+			if ( Position == S_.Extent )
+				Position = NONE;
+			else if ( *Position > S_.Extent )
+				ERRc();
+
+		}
+
+		Flow << "DS : " << UsedFragmentDataSize << txf::tab << "OH : " << ( 100 * ( UsedFragmentTotalSize - UsedFragmentDataSize ) ) / UsedFragmentDataSize << '%' << txf::tab << "FS : " << FreeFragmentSize << txf::tab << "R : " << ( 100 * FreeFragmentSize ) / UsedFragmentDataSize << '%' << txf::nl; 
 	}
-
-	return Descripteur;
 }
 
-indice_bloc multimemoire::IndiceBloc_( descripteur Descripteur )
+void mmm::multimemory_file_manager___::_WriteFreeFragmentPositions( void )
 {
-	indice_bloc Indice = 1;
-	descripteur Recherche = PremierDescripteur_();
+ERRProlog
+	flf::file_oflow___ OFlow;
+ERRBegin
+	OFlow.Init( _FreeFragmentPositionFileName );
 
-	if ( EstLibre_( Recherche ) )
-		Recherche = Suivant_( Recherche );
-
-	while( Recherche < Descripteur )
-	{
-		Recherche = Suivant_( Recherche );
-
-		if ( EstLibre_( Recherche ) )
-			Recherche = Suivant_( Recherche );
-
-		Indice++;
-	}
-
-	return Indice;
+	flw::Put( _Multimemory->S_.FreeFragment, OFlow );
+	flw::Put( _Multimemory->S_.TailingFreeFragmentPosition, OFlow );
+ERRErr
+ERREnd
+ERREpilog
 }
 
-capacite multimemoire::NombreEspacesUtilises_( void )
+bso::bool__ mmm::Connect(
+	multimemory_ &Multimemory,
+	multimemory_file_manager___ &FileManager )
 {
-	capacite Nombre = 0;
-	descripteur Descripteur = PremierDescripteur_();
+	bso::bool__ Exists = false;
+ERRProlog
+	flf::file_iflow___ IFlow;
+ERRBegin
+	Exists = uym::Connect( Multimemory.Memory, FileManager );
 
-	while ( !HorsLimite_( Descripteur ) )
-	{
-		if ( !EstLibre_( Descripteur ) )
-			Nombre++;
+	if ( Exists ) {
+		Multimemory.S_.Extent = FileManager.FileSize();
+		IFlow.Init( FileManager._FreeFragmentPositionFileName );
 
-		Descripteur = Suivant_( Descripteur );
+		flw::Get( IFlow, Multimemory.S_.FreeFragment );
+		flw::Get( IFlow, Multimemory.S_.TailingFreeFragmentPosition );
 	}
-
-	return Nombre;
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
 }
-*/
 
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -289,7 +197,6 @@ public:
 		to be realized at the ending of the application  */
 	}
 };
-
 
 /*$END$*/
 				  /********************************************/

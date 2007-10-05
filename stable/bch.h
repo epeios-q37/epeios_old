@@ -67,7 +67,12 @@ extern class ttr_tutor &BCHTutor;
 #include "epeios.h"
 #include "dtfptb.h"
 #include "flm.h"
-#include "mmisub.h"
+
+#ifndef MMI__INC
+#	undef BCH__INC
+#	include "mmi.h"
+#else
+
 
 namespace bch {
 
@@ -769,5 +774,5 @@ namespace flm {
 				  /* do not modify anything belove this limit */
 				  /*			  unless specified		   	  */
 /******************************************************************************/
-
+#endif
 #endif
