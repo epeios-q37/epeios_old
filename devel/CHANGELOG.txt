@@ -1,7 +1,19 @@
 $Id$
 
+06/10/2007 :
+	- GENERAL :
+		- Adaptation modifications 'MMI' et 'MMM'.
+
+05/10/2007 :
+	- GENERAL :
+		- Adaptation modifications 'MMI' et 'MMM'.
+	- MMM
+		- Mise en place définitive du nouvel algorthme ('MMM2') de gestion de la 'multimémoire'.
+	- MMI :
+		- Modification pour ne plus avoir à utilisee la sous-bibliothèque 'MMISUB'.
+
 03/10/2007 :
-	 -DIR :
+	 - DIR :
 		- Ajout 'ChangeDir(...)'.
 
 25/09/2007 :

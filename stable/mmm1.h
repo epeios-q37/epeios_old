@@ -60,6 +60,8 @@ extern class ttr_tutor &MMM1Tutor;
 
 /*$BEGIN$*/
 
+#error Do noy use. Use 'MMM' instead.
+
 #include "err.h"
 #include "flw.h"
 #include "mmm0.h"

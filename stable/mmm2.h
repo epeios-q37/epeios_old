@@ -60,6 +60,8 @@ extern class ttr_tutor &MMM2Tutor;
 
 /*$BEGIN$*/
 
+#error Do noy use. Use 'MMM' instead.
+
 /* NOTA : Lorsque le fragment est utilisé, la taille totale est la taille utilisable (taille des données).
 Lorsque le fragment est disponible, c'est la taille total du fragment qui est stockée. */
 

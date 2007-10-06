@@ -60,6 +60,8 @@ extern class ttr_tutor &MMM0Tutor;
 
 /*$BEGIN$*/
 
+#error Do not use. Use 'MMM' instead.
+
 // Ce module contient les définitions communes pour tous les 'mmmX' (X > 0), d'où son namesapce 'mmm'.
 
 #include "err.h"

@@ -60,6 +60,8 @@ extern class ttr_tutor &MMISUBTutor;
 
 /*$BEGIN$*/
 
+#error Do not use. Use 'MMI' library instead.
+
 #include "err.h"
 #include "flw.h"
 #include "mdr.h"

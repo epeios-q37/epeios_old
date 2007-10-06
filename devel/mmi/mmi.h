@@ -478,6 +478,8 @@ namespace mmi {
 
 	E_AUTO( indexed_multimemory )
 
+#ifndef FLM__COMPILATION
+
 	class indexed_multimemory_file_manager___ {
 	private:
 		bch::bunch_file_manager___ _Descriptors;
@@ -585,9 +587,7 @@ namespace mmi {
 		return Exists;
 	}
 
-
-
-//	using mdr::E_MEMORY_DRIVER__;
+#endif
 
 	inline void _base_indexed_multimemory_driver__::MDRRecall(
 		mdr::row_t__ Position,
