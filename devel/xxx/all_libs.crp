@@ -446,6 +446,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MuSiC MiDi File		
 &mscmdm		&emsc		&2002, \
 	&MuSiC MiDi Messages
+&mscmdx	&emsc	&\
+	&MuSiC MiDi Xml features
 &mscsf2		&emsc		&\
 	&MuSiC SoudFont 2
 &mscvkp		&emsc		&2002-\
