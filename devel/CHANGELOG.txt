@@ -1,5 +1,9 @@
 $Id$
 
+10/10/2007 :
+	- STR :
+		- Un 'string' peut maintenant être initialisé avec lui-même sans que cela l'initialise.
+
 06/10/2007 :
 	- GENERAL :
 		- Adaptation modifications 'MMI' et 'MMM'.

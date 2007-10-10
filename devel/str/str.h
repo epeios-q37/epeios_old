@@ -135,9 +135,11 @@ namespace str {
 		//f Initialization with 'Seed'.
 		void Init( const str::string_ &Seed )
 		{
-			Init();
+			if ( this != &Seed ) {
+				Init();
 
-			this->operator =( Seed );
+				this->operator =( Seed );
+			}
 		}
 		string_ &operator =( const char *Chaine )
 		{
