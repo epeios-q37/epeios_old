@@ -181,11 +181,13 @@ namespace fnm
 		in 'Directory' with 'Extension' as extension. Use 'TOLFileExists' to define
 		if this file already exists. If 'NULL' is returned, then no file can be
 		generated, because all occurence are already used. */
+#ifndef CPE__T_MT
 		const char *SearchFileName(
 			const char *Directory,
 			const char *Base,
 			const char *Extension,
 			FNM__P );
+#endif
 	};
 }
 

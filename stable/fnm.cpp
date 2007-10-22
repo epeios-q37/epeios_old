@@ -218,7 +218,6 @@ const char *fnm::file_name_manager::MakeFileName_(
 
 	return Resultat;
 }
-#endif
 
 const char *fnm::file_name_manager::SearchFileName(
 	const char *Repertoire,
@@ -252,6 +251,7 @@ ERREnd
 ERREpilog
 	return Nom;
 }
+#endif
 
 const char *fnm::GetFileNameRoot(
 	const char *Nom,
