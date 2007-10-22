@@ -1323,14 +1323,16 @@ private:
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
 		tol::E_FPOINTER___( char ) DirectoryBuffer;
 		tol::E_FPOINTER___( char ) AttributeBuffer;
-		tol::E_FPOINTER___( char ) FileNameBuffer;
-		tol::E_FPOINTER___( char ) LocationBuffer;
+		FNM_BUFFER___ FileNameBuffer;
+		FNM_BUFFER___ LocationBuffer;
+		const char *FileName = NULL;
+		const char *Location = NULL;
 	ERRBegin
 		_ExpandIsHRef = false;
 
-		FileNameBuffer =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _SelectAttribute.Convert(), "" );
+		FileName =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _SelectAttribute.Convert(), "", FileNameBuffer );
 
-		if ( Flow.Init( FileNameBuffer, fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
+		if ( Flow.Init( FileName, fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
 			Status = xsUnableToOpenFile;
 			ERRReturn;
 		}
@@ -1346,9 +1348,9 @@ private:
 			ERRReturn;
 		}
 
-		LocationBuffer = fnm::GetLocation( FileNameBuffer );
+		Location = fnm::GetLocation( FileName, LocationBuffer );
 
-		_Directory = LocationBuffer;
+		_Directory = Location;
 
 		Status = Convert_( Parse( XFlow, *this ) );
 
@@ -1369,7 +1371,7 @@ private:
 		if ( Status != xsOK )
 			if ( _GuiltyFileName.Amount() == 0 )
 				if ( ( Status != xsUnableToOpenFile ) || ( _ExpandIsHRef ) )
-					_GuiltyFileName = FileNameBuffer;
+					_GuiltyFileName = FileName;
 				else
 					_ExpandIsHRef = true;
 	ERREpilog

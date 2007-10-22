@@ -1,5 +1,14 @@
 $Id$
 
+22/10/2007 :
+	- GENERAL :
+		- Adaptation aux modifications 'FNM'.
+	- FNM:
+		- Ajout 'GetExtension(...)'.
+		- Mise en oeuvre de 'FNM_BUFFER__' pour éviter oubli 'free(...)' sur pointeurs retournées.
+	- TOL :
+		- Correction 'operator *(..)' de '_core_pointer<...>'.
+
 10/10/2007 :
 	- STR :
 		- Un 'string' peut maintenant être initialisé avec lui-même sans que cela l'initialise.

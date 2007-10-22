@@ -914,11 +914,11 @@ namespace tol {
 		}
 		const t &operator *( void ) const
 		{
-			return P_;
+			return *P_;
 		}
 		t &operator *( void )
 		{
-			return P_;
+			return *P_;
 		}
 	};
 

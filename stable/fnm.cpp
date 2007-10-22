@@ -113,12 +113,12 @@ fnm::type__ fnm::Type( const char *Nom )
 		return fnm::tFree;
 }
 
-char *fnm::BuildFileName(
+const char *fnm::BuildFileName(
 	const char *Rep,
 	const char *Nom,
-	const char *Ext )
+	const char *Ext,
+	FNM__P )
 {
-	char *Resultat = NULL;
 ERRProlog
 	size_t TailleRep = 0, TailleNom = 0, TailleExt = 0;
 ERRBegin
@@ -136,7 +136,7 @@ ERRBegin
 
 	if ( TailleNom )
 	{
-		if ( ( Resultat = (char *)calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
+		if ( ( P = calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
 			ERRa();
 	}
 	else
@@ -145,45 +145,45 @@ ERRBegin
 	if ( TailleRep )
 	{
 		if ( ( Rep[TailleRep-1] != ':' ) && ( Rep[TailleRep-1] != '/' ) && ( Rep[TailleRep-1] != '\\' ))
-			sprintf( Resultat, "%s%c", Rep, FNM_DIRECTORY_SEPARATOR_CHARACTER );
+			sprintf( P, "%s%c", Rep, FNM_DIRECTORY_SEPARATOR_CHARACTER );
 		else
-			sprintf( Resultat, "%s", Rep );
+			sprintf( P, "%s", Rep );
 	}
 
 	switch ( Type( Nom ) ) {
 	case fnm::tEmpty:
-		free( Resultat );
-		Resultat = "";
+		P.reset();
+		if ( ( P = (char *)calloc( 1, sizeof( char ) ) ) == NULL )
+			ERRa();
+		*P = 0;
 		break;
 	case fnm::tSuffixed:
-		strcat( Resultat, Nom );
+		strcat( P, Nom );
 		break;
 	case fnm::tRelative:
 	case fnm::tAbsolute:
 	case fnm::tFree:
-		strcat( Resultat, Nom );
+		strcat( P, Nom );
 
 		if ( TailleExt )
-			strcat( Resultat, Ext );
+			strcat( P, Ext );
 
 		break;
 	case fnm::tPath:
-		strcpy( Resultat, Nom );
+		strcpy( P, Nom );
 		break;
 	case fnm::tUnknow:
-		free( Resultat );
-		Resultat = NULL;
+		P.reset();
 		break;
 	default:
 		ERRc();
 		break;
 	}
 ERRErr
-	if ( Resultat )
-		free( Resultat );
+	P.reset();
 ERREnd
 ERREpilog
-	return Resultat;
+	return P;
 }
 
 #ifndef CPE__T_MT
@@ -218,13 +218,15 @@ const char *fnm::file_name_manager::MakeFileName_(
 
 	return Resultat;
 }
+#endif
 
-char *fnm::file_name_manager::SearchFileName(
+const char *fnm::file_name_manager::SearchFileName(
 	const char *Repertoire,
 	const char *Parametres,
-	const char *Extension )
+	const char *Extension,
+	FNM__P )
 {
-	char *Nom = NULL;
+	const char *Nom = NULL;
 ERRProlog
 	int Occurence;
 ERRBegin
@@ -233,7 +235,8 @@ ERRBegin
 		Nom = BuildFileName(
 			Repertoire,
 			MakeFileName_( Parametres, Occurence ),
-			Extension );
+			Extension,
+			P );
 
 		if ( !tol::FileExists( Nom ) || FNMMatch( Nom ) )
 			break;
@@ -242,8 +245,7 @@ ERRBegin
 		Nom = NULL;
 	}
 ERRErr
-	if ( Nom )
-		free( Nom );
+	P.reset();
 
 	Nom = NULL;
 ERREnd
@@ -251,49 +253,50 @@ ERREpilog
 	return Nom;
 }
 
-const char *fnm::GetFileNameRoot( const char *Nom )
+const char *fnm::GetFileNameRoot(
+	const char *Nom,
+	FNM__P )
 {
-	const char *Repere;
-	static char Resultat[20];
+	const char *Repere = NULL;
 
 	Repere = GetFileName( Nom );
 
-	if ( strlen( Repere ) >= sizeof( Resultat ) )
-		ERRl();
-
-	strcpy( Resultat, Repere );
-
-	if ( strchr( Resultat, '.' ) )
-		*strchr( Resultat, '.' ) = 0;
-
-	return Resultat;
-}
-#endif
-
-char *fnm::CorrectLocation( const char *Location )
-{
-	char *Buffer = (char *)malloc( strlen( Location ) + 1 );
-	char *P;
-
-	if ( Buffer == NULL )
+	if ( ( P = malloc( strlen( Repere ) + 1 ) ) == NULL )
 		ERRa();
 
-	strcpy( Buffer, Location );
+	strcpy( P, Repere );
 
-	P = strpbrk( Buffer, "\\/" );
+	if ( strchr( P, '.' ) )
+		*strchr( P, '.' ) = 0;
 
-	while( P != NULL ) {
-		*P = FNM_DIRECTORY_SEPARATOR_CHARACTER;
-		P = strpbrk( P+1, "\\/" );
-	}
-
-	return Buffer;
+	return P;
 }
 
-char *fnm::GetLocation( const char *Name )
+const char *fnm::CorrectLocation(
+	const char *Location,
+	FNM__P )
 {
-	char *P = NULL;
+	char *R = NULL;
 
+	if ( ( P = (char *)malloc( strlen( Location ) + 1 ) ) == NULL )
+		ERRa();
+
+	strcpy( P, Location );
+
+	R = strpbrk( P, "\\/" );
+
+	while( R != NULL ) {
+		*R = FNM_DIRECTORY_SEPARATOR_CHARACTER;
+		R = strpbrk( P+1, "\\/" );
+	}
+
+	return P;
+}
+
+const char *fnm::GetLocation(
+	const char *Name,
+	FNM__P )
+{
 	size_t L = GetFileName( Name ) - Name;
 
 	if ( L != 0 ) {

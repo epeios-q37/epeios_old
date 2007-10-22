@@ -64,6 +64,7 @@ extern class ttr_tutor &FNMTutor;
 
 #include <string.h>
 #include "cpe.h"
+#include "tol.h"
 
 #if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
 #	define FNM__POSIX
@@ -96,9 +97,13 @@ namespace fnm
 	//f Type of the file name 'FileName'.
 	fnm::type__ Type( const char *FileName );
 
-	/*f Correct location, i. e. remplaces '\' or '/' with correct directory separator
-	depending on OS. The retuned pointer must be freed.*/
-	char *CorrectLocation( const char *Location );
+#define FNM_BUFFER___	tol::E_FPOINTER___( char )
+#define FNM__P	FNM_BUFFER___ &P
+
+	/*f Correct location, i. e. remplaces '\' or '/' with correct directory separator depending on OS. */
+	const char *CorrectLocation(
+		const char *Location,
+		FNM__P );
 
 
 	//f Description of the 'Type' type.
@@ -107,10 +112,11 @@ namespace fnm
 	/*f Make file name with 'Name', 'Directory' as default
 	directory, and 'Extension' as defaut extension; 
 	IMPORTANT: the returned pointer MUST be freed with 'free()'.*/
-	char *BuildFileName(
+	const char *BuildFileName(
 		const char *Rep,
 		const char *Nom,
-		const char *Ext );
+		const char *Ext,
+		FNM__P );
 
 	/*f Return the name of the file named 'Name', without its localization. */
 	inline const char *GetFileName( const char *Name )
@@ -129,13 +135,21 @@ namespace fnm
 		return Repere;
 	}
 
-	// Return a string contaiinig the location only. Returned pointermust be freed.
-	char *GetLocation( const char *Name );
+	inline const char *GetExtension( const char *Name )
+	{
+		return strrchr( GetFileName( Name ), '.' );
+	}
 
-#ifndef CPE__T_MT
+
+	// Return a string contaiinig the location only.
+	const char *GetLocation(
+		const char *Name,
+		FNM__P );
+
 	//f Return the file name of 'Name' without localization and extension.
-	const char *GetFileNameRoot( const char *Nom );
-#endif
+	const char *GetFileNameRoot(
+		const char *Nom,
+		FNM__P );
 
 	/************************************************/
 	/* GESTION DE LA GENERATION D'UN NOM DE FICHIER */
@@ -166,12 +180,12 @@ namespace fnm
 		/*f Return a 8 characters file name based on the 'Base' string (any lentgh)
 		in 'Directory' with 'Extension' as extension. Use 'TOLFileExists' to define
 		if this file already exists. If 'NULL' is returned, then no file can be
-		generated, because all occurence are already used.
-		IMPORTANT: the returned pointer, if != 'NULL', MUST be freed with 'free'. */
-		char *SearchFileName(
+		generated, because all occurence are already used. */
+		const char *SearchFileName(
 			const char *Directory,
 			const char *Base,
-			const char *Extension );
+			const char *Extension,
+			FNM__P );
 	};
 }
 
