@@ -742,6 +742,7 @@ namespace nsxpcm {
 		virtual void NSXPCMOnClick( void ) = 0;
 		virtual void NSXPCMOnInput( void ) = 0;
 		virtual void NSXPCMOnFocus( void ) = 0;
+		virtual void NSXPCMOnBlur( void ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -765,6 +766,7 @@ namespace nsxpcm {
 			_Element = Element;
 		}
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
+		// If a new event is handled, you have to add the corresponding 'event_listener' too.
 		void Handle( const str::string_ &EventType )
 		{
 			if ( EventType == "command" )
@@ -775,6 +777,8 @@ namespace nsxpcm {
 				NSXPCMOnClick();
 			else if ( EventType == "focus" )
 				NSXPCMOnFocus();
+			else if ( EventType == "blur" )
+				NSXPCMOnBlur();
 			else
 				ERRl();
 		}
