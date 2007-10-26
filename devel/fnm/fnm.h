@@ -123,6 +123,11 @@ namespace fnm
 	{
 		const char *Repere;
 
+#ifdef FNM_DBG
+		if ( Name == NULL )
+			ERRu();
+#endif
+
 		if ( ( ( Repere = strrchr( Name, '/' ) ) == NULL )
 			&& ( ( Repere = strrchr( Name, '\\' ) ) == NULL ) )
 			if ( ( Repere = strrchr( Name, ':' ) ) == NULL )

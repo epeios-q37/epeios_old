@@ -86,7 +86,12 @@ fnm::type__ fnm::Type( const char *Nom )
 {
 	const char *Repere;
 
-	if ( ( Nom == NULL ) || ( *Nom == '\0' ) )
+#ifdef FNM_DBG
+		if ( Nom == NULL )
+			ERRu();
+#endif
+
+	if ( *Nom == '\0' )
 		return fnm::tEmpty;
 
 	if ( ( Nom[strlen( Nom )-1] == ':' )
@@ -277,6 +282,11 @@ const char *fnm::CorrectLocation(
 	FNM__P )
 {
 	char *R = NULL;
+
+#ifdef FNM_DBG
+		if ( Location == NULL )
+			ERRu();
+#endif
 
 	if ( ( P = (char *)malloc( strlen( Location ) + 1 ) ) == NULL )
 		ERRa();

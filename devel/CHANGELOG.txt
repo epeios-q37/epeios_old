@@ -1,5 +1,9 @@
 $Id$
 
+26/10/2007 :
+	- FNM :
+		- Ajout de test en 'debug' pour faciliter la détection de bogues.
+
 23/10/2007 :
 	- NSXPCM :
 		- Ajout de la gestion de l'évènement 'onblur' (inverse de 'onfocus').
