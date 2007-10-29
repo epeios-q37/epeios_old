@@ -1,5 +1,9 @@
 $Id$
 
+29/10/2007 :
+	- DBSTBL :
+		- Correction bogue 'SwitchMode(...)'.
+
 26/10/2007 :
 	- FNM :
 		- Ajout de test en 'debug' pour faciliter la détection de bogues.
@@ -29,7 +33,7 @@ $Id$
 	- GENERAL :
 		- Adaptation modifications 'MMI' et 'MMM'.
 	- MMM
-		- Mise en place définitive du nouvel algorthme ('MMM2') de gestion de la 'multimémoire'.
+		- Mise en place définitive du nouvel algorithme ('MMM2') de gestion de la 'multimémoire'.
 	- MMI :
 		- Modification pour ne plus avoir à utilisee la sous-bibliothèque 'MMISUB'.
 

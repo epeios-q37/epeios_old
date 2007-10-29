@@ -516,7 +516,7 @@ namespace dbstbl {
 
 			switch ( Mode ) {
 			case mBulk:
-				_ResetAllIndexes();
+//				_ResetAllIndexes();
 				break;
 			case mAdmin:
 			case mReadWrite:
