@@ -440,6 +440,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios MSC libraries.
+&msccmq		&emsc		&\
+	&MuSiC Customized Midi Quantizer
 &mscmdd		&emsc		&\
 	&MuSiC MiDi Device
 &mscmdf		&emsc		&2002, \
@@ -448,6 +450,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MuSiC MiDi Messages
 &mscmdx	&emsc	&\
 	&MuSiC MiDi Xml features
+&mscmld	&emsc	&\
+	&MuSiC MeLody Description
 &mscsf2		&emsc		&\
 	&MuSiC SoudFont 2
 &mscvkp		&emsc		&2002-\
