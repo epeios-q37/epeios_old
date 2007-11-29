@@ -132,6 +132,7 @@ namespace err {
 	{
 		uGeneric,
 		uTest,	// for testing purpose.
+		uObsolete,	// Calling of obsolete code.
 	};
 		// user error
 	enum b

@@ -1,5 +1,9 @@
 $Id$
 
+29/11/2007 :
+	- ERR :
+		- Ajout 'uObsolete', signalant la tentative de mise en oeuvre d'un code obsolete.
+
 19/11/2007 :
 	- CCH :
 		- Correction bogue 'DumpCache_(...)'.
