@@ -1,8 +1,8 @@
 /*
-	Header for the 'btf' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+	Header for the 'btf' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	BTF_VERSION	"$Revision$"
 
-#define BTF_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define BTF_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &BTFTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -145,7 +145,7 @@ namespace btf {
 				return NONE;
 		}
 		//f Return true if a call to 'Join' is possible, false otherwise.
-		bso::bool__ IsJoinable( void )
+		bso::bool__ IsJoinable( void ) const
 		{
 			return E_BSTACKt_( r, row__ )::Amount() >= 2;
 		}

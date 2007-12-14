@@ -1,5 +1,9 @@
 $Id$
 
+14/12/2007 :
+	- BTF :
+		- Ajout 'const' manquant.
+
 29/11/2007 :
 	- ERR :
 		- Ajout 'uObsolete', signalant la tentative de mise en oeuvre d'un code obsolete.
