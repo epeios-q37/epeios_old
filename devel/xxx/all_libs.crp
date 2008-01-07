@@ -503,6 +503,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Web Site Agent EuRoNext.com
 
 #Private STX libraries.
+&stxbse		&pstx		&\
+	&STock eXchange BSE
 &stxcde		&pstx		&2000-2002 ,\
 	&STock eXchange CoDE
 &stxdbs		&pstx		&2000-2002 ,\
