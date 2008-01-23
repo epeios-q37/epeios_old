@@ -1,5 +1,10 @@
 $Id$
 
+23/01/2007 :
+	- DTE :
+		- Correction bogue 'AddMonth(...)'.
+		- Ajout 'SubMonth(...)'.
+
 14/12/2007 :
 	- BTF :
 		- Ajout 'const' manquant.

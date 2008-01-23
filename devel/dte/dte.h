@@ -265,9 +265,27 @@ namespace dte {
 		//f Add 'Amount' Month.
 		void AddMonth( bso::ulong__ Amount = 1 )
 		{
-			bso::ulong__ Month = this->Month() + Amount - 1; 
+			bso::ushort__ DeltaYear = (bso::ushort__)( Amount / 12 );
+			bso::sbyte__ DeltaMonth = (bso::ubyte__)( Amount % 12 );
 
-			RawDate_ = _Convert( this->Day(), (month__)( Month % 12 + 1 ), (year__)( Year() + Month / 12 ) );
+			if ( ( DeltaMonth + Month() ) > 12 ) {
+				DeltaYear++;
+				DeltaMonth -= 12;
+			}
+
+			RawDate_ = _Convert( this->Day(), (month__)( Month() + DeltaMonth ), (year__)( Year() + DeltaYear ) );
+		}
+		void SubMonth( bso::ulong__ Amount = 1 )
+		{
+			bso::ushort__ DeltaYear = (bso::ushort__)( Amount / 12 );
+			bso::sbyte__ DeltaMonth = (bso::ubyte__)( Amount % 12 );
+
+			if ( DeltaMonth >= Month() ) {
+				DeltaYear++;
+				DeltaMonth -= 12;
+			}
+
+			RawDate_ = _Convert( this->Day(), (month__)( Month() - DeltaMonth ), (year__)( Year() - DeltaYear ) );
 		}
 		//f Return true if the date is valid, false otherwise.
 		bso::bool__ IsValid( void ) const
