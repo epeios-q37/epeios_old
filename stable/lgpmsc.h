@@ -1,8 +1,8 @@
 /*
-	Header for the 'lgpmsc' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Header for the 'lgpmsc' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@
 
 #define	LGPMSC_VERSION	"$Revision$"
 
-#define LGPMSC_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define LGPMSC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &LGPMSCTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -85,7 +85,7 @@ extern class ttr_tutor &LGPMSCTutor;
 #define LGPMSC_AUTHOR_NAME	"Claude SIMON"
 
 //d Author e-mail
-#define LGPMSC_AUTHOR_EMAIL	"develop@logiplus.fr"
+#define LGPMSC_AUTHOR_EMAIL	"logiplus@logiplus.fr"
 
 //d Author mail hypertext link.
 #define LGPMSC_AUTHOR_LINK	"<A HREF=\"mailto://" LGPMSC_AUTHOR_EMAIL "\">" LGPMSC_AUTHOR_NAME "</A>"
