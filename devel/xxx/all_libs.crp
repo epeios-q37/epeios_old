@@ -511,6 +511,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STock eXchange DataBaSe
 &stxdte		&pstx		&2000-2002, \
 	&STock eXchange DATe
+&stxdfd		&pstx		&\
+	&STock eXchange Database FeeDing
 &stxstk		&pstx		&2000-2002, \
 	&STock eXchange SToK
 &stxqot		&pstx		&2000-2002, \
