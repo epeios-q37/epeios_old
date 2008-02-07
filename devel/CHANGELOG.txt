@@ -1,6 +1,13 @@
 $Id$
 
-23/01/2007 :
+07/01/2008 :
+	- CVM :
+		- Changements normalement sans effet dans la méthode 'Allocate(...)' dans l'espoir de contourner
+		ce qui semble un bogue de la fonction 'realloc(...)' (échec d'un 'realloc( NULL, 2048)' alors
+		qu'il y a suffisamment de mémoire ???).(Mise à jour : la fonction 'realloc(...)' n'était pas en cause,
+		mais la réaction du debugger au bogue est trompeuse).
+
+23/01/2008 :
 	- DTE :
 		- Correction bogue 'AddMonth(...)'.
 		- Ajout 'SubMonth(...)'.

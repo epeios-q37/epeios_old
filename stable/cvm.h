@@ -105,11 +105,9 @@ namespace cvm {
 		// alloue 'Nombre' octets
 		void Allocate( mdr::size__ Size )
 		{
-			mdr::datum__ *Tampon;
+			mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
 
-			Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
-
-			if ( !Tampon && Size )
+			if ( ( Tampon == NULL ) && ( Size != 0 ) )
 				ERRa();
 
 			Tampon_ = Tampon;
