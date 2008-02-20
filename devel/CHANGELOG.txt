@@ -1,5 +1,9 @@
 $Id$
 
+20/01/08 :
+	- LGG :
+		- Ajout du néerlandais et du portugais (pour 'gesbib').
+
 07/01/2008 :
 	- CVM :
 		- Changements normalement sans effet dans la méthode 'Allocate(...)' dans l'espoir de contourner

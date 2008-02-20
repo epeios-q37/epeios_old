@@ -1,9 +1,9 @@
 /*
-	'lgg' library by Claude SIMON (csimon@epeios.org)
+	'lgg' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'lgg' header file ('lgg.h').
-	Copyright (C) 2000, 2002-2004 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000, 2002-2004 Claude SIMON.
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -63,6 +63,8 @@ const char *lgg::LanguageNames[lgg::l_amount] = {
 	"Français",
 	"Deutsch",
 	"Español",
+	"Nederlands",
+	"Português"
  };
 
 const char *lgg::LanguageLabels[lgg::l_amount] = {
@@ -71,6 +73,8 @@ const char *lgg::LanguageLabels[lgg::l_amount] = {
 	"fr",
 	"de",
 	"es",
+	"nl",
+	"pt"
 };
 
 language__ lgg::GetLanguageIDNamed( const char *Name )
