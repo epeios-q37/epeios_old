@@ -1,2 +1,3 @@
 # $Id$
-../upload_pkg
+scp -r workdir/*.tar.gz smncld@cvs.musicanet.org:build
+rm -rf workdir
