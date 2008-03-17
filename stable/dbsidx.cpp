@@ -61,7 +61,7 @@ using namespace dbsidx;
 
 #define TREE_FILE_NAME_EXTENSION	".edt"
 #define QUEUE_FILE_NAME_EXTENSION	".edq"
-#define ROOT_FILE_NAME_EXTENSION	".edr"
+// #define ROOT_FILE_NAME_EXTENSION	".edr"
 
 /*
 #include "cio.h"
@@ -513,10 +513,12 @@ ERREnd
 ERREpilog
 }
 
+/*
 void dbsidx::file_index_::_SaveRoot( void ) const
 {
 	Save_( index_::S_.Root, RootFileName, ROOT_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
+*/
 
 static inline void Load_(
 	flw::iflow__ &Flow,
@@ -572,6 +574,7 @@ ERREpilog
 void dbsidx::file_index_::Init(
 	const str::string_ &RootFileName,
 	const dbsctt::content__ &Content,
+	rrow__ Member,
 	sort_function__ &Sort,
 	mdr::mode__ Mode,
 	bso::bool__ Erase,
@@ -602,55 +605,11 @@ ERRBegin
 
 	S_.Mode = Mode;
 	S_.Erase = Erase;
+	S_.Member = Member;
 ERRErr
 ERREnd
 ERREpilog
 }
-// Permet de stocker toutes les données en mémoire. NON UTILISABLE EN EXPLOITATION !
-//#define IN_MEMORY
-
-bso::bool__ dbsidx::file_index_::_ConnectToFiles( bso::bool__ IgnoreAdditionalFiles )
-{
-	bso::bool__ Exists = false;
-ERRProlog
-#ifdef IN_MEMORY
-	idxbtq::E_INDEXt( rrow__ ) Index;
-#endif
-ERRBegin
-
-#ifdef IN_MEMORY
-	Index.Init();
-	Exists = Set_( S_.MemoryDriver.Tree, TreeFileNameBuffer, Index.Tree().BaseTree.Nodes, S_.Mode, S_.Erase );
-	if ( Set_( S_.MemoryDriver.Queue, QueueFileNameBuffer, Index.Queue().Links, S_.Mode, S_.Erase ) != Exists )
-		ERRu();
-	index_::BaseIndex = Index;
-#else
-	Exists = idxbtq::Connect( BaseIndex, S_.FileManager );
-#endif
-
-	if ( Exists && !IgnoreAdditionalFiles ) {
-		if ( !Load_( RootFileName, index_::S_.Root, ROOT_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-			SearchRoot();
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Exists;
-}
-
-void dbsidx::file_index_::_Drop( void )
-{
-ERRProlog
-ERRBegin
-	S_.FileManager.Drop();
-
-	dbsbsc::DropFile( RootFileName, ROOT_FILE_NAME_EXTENSION );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

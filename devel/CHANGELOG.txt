@@ -1,6 +1,11 @@
 $Id$
 
-20/01/08 :
+17/03/2008 :
+	- DBSIDX :
+		- LEs '.edr' (stockage de la racine de l'arbre de l'iindex) ne sont plus utilisés.
+	
+
+20/01/2008 :
 	- LGG :
 		- Ajout du néerlandais et du portugais (pour 'gesbib').
 

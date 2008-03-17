@@ -261,9 +261,13 @@ namespace dbsidx {
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
 			rrow__ RecordRow2 ) const;
-		rrow__ SearchRoot( void )
+		rrow__ SearchRoot( rrow__ Member )
 		{
-			ERRl();
+			S_.Root = Member;
+
+			if ( Member != NONE ) 
+				while ( ( Member = BaseIndex.GetTreeParent( Member ) ) != NONE )
+					S_.Root = Member;
 
 			return S_.Root;
 		}
@@ -344,7 +348,7 @@ namespace dbsidx {
 	protected:
 		virtual void DBSBSCCompleteInitialization( bso::bool__ IgnoreAdditionalFiles )
 		{
-			_ConnectToFiles( IgnoreAdditionalFiles );
+			_ConnectToFiles();
 		}
 		virtual void DBSBSCDrop( void )
 		{
@@ -356,9 +360,24 @@ namespace dbsidx {
 			return S_.FileManager.TimeStamp();
 		}
 	private:
-		void _SaveRoot( void ) const;
-		bso::bool__ _ConnectToFiles( bso::bool__ IgnoreAdditionalfiles );
-		void _Drop( void );
+//		void _SaveRoot( void ) const;
+		bso::bool__ _ConnectToFiles( void )
+		{
+			if ( idxbtq::Connect( BaseIndex, S_.FileManager ) ) {
+				index_::SearchRoot( S_.Member );
+				return true;
+			} else {
+				if ( S_.Member != NONE )
+					ERRu();
+				return false;
+			}
+		}
+		void _Drop( void )
+		{
+			S_.FileManager.Drop();
+
+//			dbsbsc::DropFile( RootFileName, ROOT_FILE_NAME_EXTENSION );
+		}
 	public:
 		str::string_ RootFileName;
 		struct s
@@ -368,6 +387,7 @@ namespace dbsidx {
 			str::string_::s RootFileName;
 			bso::bool__ Erase;	// Seulement utile lors d'uen initialisation retardée.
 			mdr::mode__ Mode;
+			rrow__ Member;
 		} &S_;
 		file_index_( s &S )
 		: S_( S ), 
@@ -378,17 +398,18 @@ namespace dbsidx {
 		{
 
 			S_.FileManager.ReleaseFiles();
-
+/*
 			if ( P ) {
 				if ( ( RootFileName.Amount() != 0 ) && ( ModificationTimeStamp() != 0 ) )
 					_SaveRoot();
 			}
-
+*/
 			S_.FileManager.reset( P );
 			index_::reset( P );
 			S_.Erase = false;
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
+			S_.Member = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{
@@ -403,6 +424,7 @@ namespace dbsidx {
 		void Init(
 			const str::string_ &RootFileName,
 			const dbsctt::content__ &Content,
+			rrow__ Member,	// Un 'row' d'un des membre de la structure associé à l'index, pour rechercher le 'root'.
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,
