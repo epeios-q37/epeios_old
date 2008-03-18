@@ -269,14 +269,13 @@ namespace flf {
 	public:
 		void reset( bool P = true )
 		{
+			_io_oflow___::reset( P );
+
 			if ( P ) {
 				if ( D_ != IOP_UNDEFINED_DESCRIPTOR ) {
-					_io_oflow___::Synchronize();
 					fil::Close( D_ );
 				}
 			}
-
-			_io_oflow___::reset( P );
 
 			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}

@@ -126,6 +126,7 @@ namespace iof {
 		void reset( bso::bool__ P = true )
 		{
 			oflow__::reset( P );
+			_Functions.reset( P );
 		}
 		io_oflow___( iop::amount__ AmountMax )
 		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )

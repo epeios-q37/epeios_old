@@ -220,11 +220,14 @@ namespace wllio {
 		}
 		void Flush( void )
 		{
-/*
-			if ( _commit( D_ ) != 0 )
-				ERRd();
-*/
-			// No flushing, as data are not buffered.
+			if ( _D == _fileno( stdin ) )
+				ERRu();
+			else if ( _D == WLLIO_UNDEFINED_DESCRIPTOR )
+				ERRu();
+			else if ( ( _D != _fileno( stdout ) )
+				      && ( _D != _fileno( stderr ) ) )
+				if ( _commit( _D ) != 0 )
+					ERRd();
 		}
 	};
 

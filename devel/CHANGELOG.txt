@@ -1,9 +1,20 @@
 $Id$
 
+18/03/2008 :
+	- FLF :
+		- Correction bogue du 'reset()' (mauvais ordre d'appel du 'reset()' de la classe mère'.
+	- FLM :
+		- Une écriture force maintenant le vidage des classes.
+	- IOF :
+		- correction bogue 'reset()' ('reset()' d'un membre manquant).
+	- WLLIO :
+		- Réactivation en oeuvre de 'Synchronize(...)'. (nota : '_commit()' force le système
+		d'exploitation à écrire sur le disque, et non pas la bibliothèque à vider ses caches,
+		car les appels bas niveau de lma bibliothèque ('_write(...)') ne sont 'bufférisé').
+
 17/03/2008 :
 	- DBSIDX :
-		- LEs '.edr' (stockage de la racine de l'arbre de l'iindex) ne sont plus utilisés.
-	
+		- Les '.edr' (stockage de la racine de l'arbre de l'iindex) ne sont plus utilisés.
 
 20/01/2008 :
 	- LGG :

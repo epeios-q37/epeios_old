@@ -279,6 +279,8 @@ namespace flm {
 
 			if ( !Temoin_.Manuel )
 				ReleaseFile();
+			else
+				File_.Flush();
 		}
 		void Allocate( iop::amount__ Capacite )
 		{
