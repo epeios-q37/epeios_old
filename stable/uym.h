@@ -350,7 +350,7 @@ namespace uym {
 			bso::bool__ Persistent,
 			flm::files_group_ &FilesGroup )
 		{
-			_file_memory_driver___::Init( FilesGroup, FileName, Mode, flm::cFirstUse );
+			_file_memory_driver___::Init( FilesGroup, Persistent, FileName, Mode, flm::cFirstUse );
 
 			if ( Persistent )
 				_file_memory_driver___::Persistent();

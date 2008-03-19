@@ -132,6 +132,7 @@ namespace flm {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode,
+			bso::bool__ FlushToDevice,
 			err::handle ErrHandle = err::hUsual )
 		{
 			reset();
@@ -152,7 +153,7 @@ namespace flm {
 				}
 			}
 
-			_io__::Init( D_ );
+			_io__::Init( D_, FlushToDevice );
 
 			return fil::sSuccess;
 		}
@@ -207,6 +208,7 @@ namespace flm {
 		// différents témoins
 		time_t _LastAccessTime;	// Last access time.
 		files_group_ *_FilesGroup;
+		bso::bool__ _FlushToDevice;	// Voir 'wllio' ou 'pllio'.
 	// Fonctions
 		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
 		{
@@ -215,9 +217,9 @@ namespace flm {
 			if ( !Temoin_.Ouvert )
 			{
 				if ( Temoin_.Mode == mdr::mReadOnly )
-					Success = File_.Init( Nom_, fil::mReadOnly, ErrHandle ) == fil::sSuccess;
+					Success = File_.Init( Nom_, fil::mReadOnly, _FlushToDevice, ErrHandle ) == fil::sSuccess;
 				else
-					Success = File_.Init( Nom_, fil::mReadWrite, ErrHandle ) == fil::sSuccess;
+					Success = File_.Init( Nom_, fil::mReadWrite, _FlushToDevice, ErrHandle ) == fil::sSuccess;
 
 				if ( Success )
 					Temoin_.Ouvert = 1;
@@ -344,9 +346,11 @@ namespace flm {
 			_Row = NONE;
 			_FilesGroup = NULL;
 			_LastAccessTime = 0;
+			_FlushToDevice = false;
 		}
 		void Init(
 			files_group_ &FilesGroup,
+			bso::bool__ FlushToDevice,
 			const char *NomFichier = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
@@ -365,6 +369,8 @@ namespace flm {
 				_FilesGroup = &FilesGroup;
 
 				_Row = _Register( *this, _FilesGroup );
+
+				_FlushToDevice = FlushToDevice;
 			}
 			else if ( !Temoin_.Interne )
 			{
@@ -533,11 +539,12 @@ namespace flm {
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
 			files_group_ &FilesGroup,
+			bso::bool__ FlushToDevice,
 			const char *FileName = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base___::Init( FilesGroup, FileName, Mode, Creation );
+			memoire_fichier_base___::Init( FilesGroup, FlushToDevice, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
 		}
 	};

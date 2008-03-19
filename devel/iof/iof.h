@@ -109,9 +109,11 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			bso::bool__ FlushToDevice )
 		{
-			_output__::Init( D );
+			_output__::Init( D, FlushToDevice );
 			oflow_functions___::Init();
 		}
 	};
@@ -137,9 +139,11 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			bso::bool__ FlushToDevice )
 		{
-			_Functions.Init( D );
+			_Functions.Init( D, FlushToDevice );
 		}
 	};
 
@@ -259,10 +263,12 @@ namespace iof {
 		void FWFDismiss( void )
 		{}
 	public:
-		void Init( iop::descriptor__ D  )
+		void Init(
+			iop::descriptor__ D,
+			bso::bool__ FlushToDevice )
 		{
 			_input__::Init( D );
-			_output__::Init( D );
+			_output__::Init( D, FlushToDevice );
 		}
 
 	};
@@ -291,10 +297,11 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax )
+			iop::amount__ AmountMax,
+			bso::bool__ FlushToDevice )
 		{
-			_io__::Init( D );
-			_Functions.Init( D );
+			_io__::Init( D, FlushToDevice );
+			_Functions.Init( D, FlushToDevice );
 		}
 	};
 }

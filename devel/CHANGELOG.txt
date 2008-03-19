@@ -1,5 +1,11 @@
 $Id$
 
+19/03/2008 :
+	- GENERAL :
+		- Adaptation aux modifications 'WLLIO'.
+	- WLLIO :
+		- Ajout '_FlushToDevice', pour moduler l'action du 'Flush()'.
+
 18/03/2008 :
 	- FLF :
 		- Correction bogue du 'reset()' (mauvais ordre d'appel du 'reset()' de la classe mère'.
