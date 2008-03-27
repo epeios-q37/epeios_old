@@ -1,5 +1,9 @@
 $Id$
 
+27/03/2008 :
+	- PLLIO :
+		- Adaptation à la modification de 'WLLIO' (contournement temporaire).
+
 19/03/2008 :
 	- GENERAL :
 		- Adaptation aux modifications 'WLLIO'.

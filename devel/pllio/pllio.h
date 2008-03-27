@@ -196,9 +196,14 @@ namespace pllio {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init(
+			descriptor__ D,
+			bso::bool__ FlushToDevice )
 		{
 			io_core__::Init( D );
+
+			if ( FlushToDevice == true )
+				ERRl();
 		}
 		int Write(
 			const void *Buffer,
@@ -245,9 +250,11 @@ namespace pllio {
 		{
 			reset();
 		}
-		void Init( descriptor__ D )
+		void Init(
+			descriptor__ D,
+			bso::bool__ FlushToDevice )
 		{
-			lowlevel_output__::Init( D );
+			lowlevel_output__::Init( D, FlushToDevice );
 			lowlevel_input__::Init( D );
 		}
 	};
