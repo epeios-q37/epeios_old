@@ -99,7 +99,7 @@ void dbssct::file_static_content_::Init(
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
 	bso::bool__ Partial,
-	flm::files_group_ &FilesGroup )
+	flm::id__ ID )
 {
 ERRProlog
 	str::string ContentFileName;
@@ -116,7 +116,7 @@ ERRBegin
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	ContentFileNameBuffer = ContentFileName.Convert();
 
-	S_.FileManager.Init( ContentFileNameBuffer, Mode, true, FilesGroup );
+	S_.FileManager.Init( ContentFileNameBuffer, Mode, true, ID );
 ERRErr
 ERREnd
 ERREpilog

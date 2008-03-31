@@ -750,25 +750,6 @@ namespace bch {
 
 }
 
-// This definitions are here to avoid recursive inclusion problems.
-namespace flm {
-	class files_group_
-	: public bch::E_BUNCH_( flm::row__ )
-	{
-	public:
-		struct s
-		: public bch::E_BUNCH_( flm::row__ )::s
-		{};
-		files_group_( s &S )
-		: bch::E_BUNCH_( flm::row__ )( S )
-		{}
-	};
-
-	E_AUTO( files_group )
-
-}
-
-
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

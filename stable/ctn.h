@@ -356,10 +356,10 @@ namespace ctn {
 			const char *DynamicsMultimemoryFreeFragmentPositionsFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
-			_Statics.Init( StaticsFileName, Mode, Persistent, FilesGroup );
-			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
+			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
+			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
 		void ReleaseFiles( void )
 		{

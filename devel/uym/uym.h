@@ -64,7 +64,7 @@ extern class ttr_tutor &UYMTutor;
 #include "tol.h"
 #include "mdr.h"
 #include "cvm.h"
-#ifndef FLM__COMPILATION	// To avoid resursice inclusion.
+#ifndef FLM__COMPILATION	// To avoid resursive inclusion.
 #	include "flm.h"
 #endif
 
@@ -348,9 +348,9 @@ namespace uym {
 			const char *FileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
-			_file_memory_driver___::Init( FilesGroup, Persistent, FileName, Mode, flm::cFirstUse );
+			_file_memory_driver___::Init( ID, Persistent, FileName, Mode, flm::cFirstUse );
 
 			if ( Persistent )
 				_file_memory_driver___::Persistent();

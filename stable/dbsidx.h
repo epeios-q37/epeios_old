@@ -429,7 +429,7 @@ namespace dbsidx {
 			mdr::mode__ Mode,
 			bso::bool__ Erase,
 			bso::bool__ Partial,
-			flm::files_group_ &FilesGroup );
+			flm::id__ ID );
 		void CloseFiles( void )
 		{
 			S_.FileManager.ReleaseFiles();

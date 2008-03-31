@@ -579,7 +579,7 @@ void dbsidx::file_index_::Init(
 	mdr::mode__ Mode,
 	bso::bool__ Erase,
 	bso::bool__ Partial,
-	flm::files_group_ &FilesGroup )
+	flm::id__ ID )
 {
 ERRProlog
 	str::string TreeFileName;
@@ -597,7 +597,7 @@ ERRBegin
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 	QueueFileNameBuffer = QueueFileName.Convert();
 
-	S_.FileManager.Init( TreeFileNameBuffer, QueueFileNameBuffer, Mode, true, FilesGroup );
+	S_.FileManager.Init( TreeFileNameBuffer, QueueFileNameBuffer, Mode, true, ID );
 
 	this->RootFileName.Init( RootFileName );
 

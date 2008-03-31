@@ -94,6 +94,14 @@ namespace flm {
 	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire
 
+	// Identifiant sous lequel est regroupé un ensemble de fichiers.
+	E_ROW( id__ );
+	#define FLM_UNDEFINED_ID	NONE
+
+	id__ GetId( void );
+
+	void ReleaseId( id__ ID );
+
 	/*******************************************************************/
 	/* CLASSE DE BASE DE GESTION D'UNE MEMOIRE STOCKEE DANS UN FICHIER */
 	/*******************************************************************/
@@ -160,28 +168,17 @@ namespace flm {
 	};
 
 	E_ROW( row__ );
-	
-	// Predeclarations.
-	class files_group_;
-	class files_group;
 
-	// NOTA : 'files_group[_]' are defined in 'bch.h' to avoid recursive inclusion problems.
-
-
-/*
-	typedef bch::E_BUNCH_( row__ ) files_group_;
-	E_AUTO( files_group );
-*/
 	row__ _Register(
 		class memoire_fichier_base___ &MFB,
-		files_group_ *FilesGroup );
+		id__ ID );
 	void _Unregister(
 		row__ Row,
-		files_group_ *FilesGroup );
+		id__ ID );
 	void _ReportFileUsing( row__ Row );
 	void _ReportFileClosing( row__ Row );
 
-	void ReleaseFiles( const files_group_ *FilesGroup );
+	void ReleaseFiles( id__ ID );
 
 	class memoire_fichier_base___
 	{
@@ -207,7 +204,7 @@ namespace flm {
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 		// différents témoins
 		time_t _LastAccessTime;	// Last access time.
-		files_group_ *_FilesGroup;
+		id__ _ID;
 		bso::bool__ _FlushToDevice;	// Voir 'wllio' ou 'pllio'.
 	// Fonctions
 		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
@@ -281,9 +278,9 @@ namespace flm {
 
 			if ( !Temoin_.Manuel )
 				ReleaseFile();
-			else
+/*			else
 				File_.Flush();
-		}
+*/		}
 		void Allocate( iop::amount__ Capacite )
 		{
 			if ( ( TailleFichier_ == 0 ) && tol::FileExists( Nom_ ) )
@@ -325,7 +322,7 @@ namespace flm {
 				ReleaseFile();
 
 				if ( _Row != NONE )
-					_Unregister( _Row, _FilesGroup );
+					_Unregister( _Row, _ID );
 
 				if ( Nom_ )
 				{
@@ -344,12 +341,12 @@ namespace flm {
 			Temoin_.Mode = mdr::mReadOnly;
 			TailleFichier_ = 0;
 			_Row = NONE;
-			_FilesGroup = NULL;
+			_ID = FLM_UNDEFINED_ID;
 			_LastAccessTime = 0;
 			_FlushToDevice = false;
 		}
 		void Init(
-			files_group_ &FilesGroup,
+			id__ ID,
 			bso::bool__ FlushToDevice,
 			const char *NomFichier = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
@@ -366,9 +363,9 @@ namespace flm {
 
 				Temoin_.Interne = false;
 
-				_FilesGroup = &FilesGroup;
+				_ID = ID;
 
-				_Row = _Register( *this, _FilesGroup );
+				_Row = _Register( *this, _ID );
 
 				_FlushToDevice = FlushToDevice;
 			}
@@ -383,9 +380,9 @@ namespace flm {
 
 				Temoin_.Interne = true;
 
-				_FilesGroup = &FilesGroup;
+				_ID = ID;
 
-				_Row = _Register( *this, _FilesGroup );
+				_Row = _Register( *this, _ID );
 			}
 
 			Temoin_.Mode = Mode;
@@ -538,13 +535,13 @@ namespace flm {
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
-			files_group_ &FilesGroup,
+			id__ ID,
 			bso::bool__ FlushToDevice,
 			const char *FileName = NULL,
 			mdr::mode__ Mode = mdr::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base___::Init( FilesGroup, FlushToDevice, FileName, Mode, Creation );
+			memoire_fichier_base___::Init( ID, FlushToDevice, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
 		}
 	};

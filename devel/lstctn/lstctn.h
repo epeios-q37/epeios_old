@@ -199,11 +199,11 @@ namespace lstctn {
 			const char *ListFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
 			reset();
 
-			_container_file_manager___<container>::Init( Container, ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
+			_container_file_manager___<container>::Init( Container, ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();

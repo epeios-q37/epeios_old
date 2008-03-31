@@ -505,10 +505,10 @@ namespace mmi {
 			const char *MultimemoryFreeFragmentPositionsFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
-			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, FilesGroup );
-			_Multimemory.Init( IndexedMultimemory.Multimemoire, MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, FilesGroup );
+			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, ID );
+			_Multimemory.Init( IndexedMultimemory.Multimemoire, MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
 		void ReleaseFile( void )
 		{

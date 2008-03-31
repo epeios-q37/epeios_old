@@ -1676,7 +1676,7 @@ namespace mmm {
 			const char *FreeFragmentPositionsFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
 			reset();
 
@@ -1687,7 +1687,7 @@ namespace mmm {
 
 			_Multimemory = &Multimemory;
 
-			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, FilesGroup );
+			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
 		friend bso::bool__ Connect(
 			multimemory_ &Multimemory,

@@ -211,11 +211,11 @@ namespace lstbch {
 			const char *ListFileName,
 			mdr::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::files_group_ &FilesGroup )
+			flm::id__ ID )
 		{
 			reset();
 
-			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent, FilesGroup );
+			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent, ID );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();

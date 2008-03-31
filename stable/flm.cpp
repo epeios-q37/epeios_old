@@ -89,14 +89,52 @@ static inline void Unlock_( void )
 #endif
 }
 
-static lstbch::E_LBUNCHt( memoire_fichier_base___ *, row__ ) List;
+struct _data__ {
+	memoire_fichier_base___ *File;
+	id__ ID;
+	void reset( bso::bool__ = true )
+	{
+		File = NULL;
+		ID = FLM_UNDEFINED_ID;
+	}
+};
+
+static lstbch::E_LBUNCHt( _data__, row__ ) List;
 static que::E_MQUEUEt( row__ ) Queue;
+
+typedef ids::E_IDS_STORE_( id__ )	_ids_;
+E_AUTO( _ids );
+
+static _ids	_IDs;
+
+id__ flm::GetId( void )
+{
+	id__ ID = FLM_UNDEFINED_ID;
+
+	Lock_();
+
+	ID = _IDs.New();
+
+	Unlock_();
+
+	return ID;
+}
+
+void flm::ReleaseId( id__ ID )
+{
+	Lock_();
+
+	_IDs.Release( ID );
+
+	Unlock_();
+}
 
 row__ flm::_Register(
 	memoire_fichier_base___ &MFB,
-	files_group_ *FilesGroup )
+	id__ ID )
 {
 	row__ Row = NONE;
+	_data__ Data = {&MFB, ID };
 
 	Lock_();
 
@@ -105,33 +143,29 @@ row__ flm::_Register(
 	if ( Queue.Amount() < List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
 		Queue.Allocate( List.Extent() );
 
-	List.Store( &MFB, Row );
+	List.Store( Data, Row );
 
 	Unlock_();
-
-#ifdef FLM_DBG
-	if ( FilesGroup->Search( Row ) != NONE )
-		ERRc();
-#endif
-
-	FilesGroup->Append( Row );
 
 	return Row;
 }
 
 void flm::_Unregister(
 	row__ Row,
-	files_group_ *FilesGroup )
+	id__ ID )
 {
+	_data__ Data;
+
 	Lock_();
 
-	List.Store( NULL, Row );
+	if ( List( Row ).ID != ID )
+		ERRu();
+
+	List.Store( Data, Row );
 	List.Delete( Row );
 
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
-
-	FilesGroup->Remove( FilesGroup->Search( Row ) );
 
 	Unlock_();
 }
@@ -143,7 +177,7 @@ void flm::_ReportFileUsing( row__ Row )
 	if ( Queue.IsMember( Row ) )
 		Queue.Delete( Row );
 	else if ( Queue.Amount() >= FLM__MAX_FILE_AMOUNT ) {
-		List( Queue.Tail() )->ReleaseFile( false );
+		List( Queue.Tail() ).File->ReleaseFile( false );
 		Queue.Delete( Queue.Tail() );
 	}
 
@@ -165,25 +199,50 @@ void flm::_ReportFileClosing( row__ Row )
 	Unlock_();
 }
 
-void flm::ReleaseFiles( const files_group_ *FilesGroup )
+static void _Search(
+	id__ ID,
+	bch::E_BUNCH_( row__ ) &Rows )
 {
+	row__ Row = List.First();
+
+	while ( Row != NONE ) {
+		if ( List( Row ).ID == ID )
+			Rows.Append( Row );
+
+		Row = List.Next( Row );
+	}
+}
+
+static void _Release( const bch::E_BUNCH_( row__ ) &Rows )
+{
+	epeios::row__ Row = Rows.First();
+
+	while ( Row != NONE ) {
+		List( Rows( Row ) ).File->ReleaseFile( false );
+
+		if ( Queue.IsMember( Rows( Row ) ) )
+			Queue.Delete( Rows( Row ) );
+
+		Row = Rows.Next( Row );
+	}
+}
+
+void flm::ReleaseFiles( id__ ID )
+{
+ERRProlog
+	bch::E_BUNCH( row__ ) Rows;
+ERRBegin
 	Lock_();
 
-	epeios::row__ FGRow = FilesGroup->First();
-	row__ Row = NONE;
+	Rows.Init();
 
-	while ( FGRow != NONE ) {
-		Row = FilesGroup->Get( FGRow );
+	_Search( ID, Rows );
 
-		List( Row )->ReleaseFile( false );
-
-		if ( Queue.IsMember( Row ) )
-			Queue.Delete( Row );
-
-		FGRow = FilesGroup->Next( FGRow );
-	}
-
+	_Release( Rows );
+ERRErr
+ERREnd
 	Unlock_();
+ERREpilog
 }
 
 
@@ -195,8 +254,8 @@ void flm::ReleaseInactiveFiles(
 
 	time_t Now = tol::Clock( false );
 
-	while ( MaxAmount-- && ( Queue.Tail() != NONE ) && ( ( Now - List( Queue.Tail() )->GetLastAccessTime() ) <= Delay ) ) {
-		List( Queue.Tail() )->ReleaseFile( false );
+	while ( MaxAmount-- && ( Queue.Tail() != NONE ) && ( ( Now - List( Queue.Tail() ).File->GetLastAccessTime() ) <= Delay ) ) {
+		List( Queue.Tail() ).File->ReleaseFile( false );
 		Queue.Delete( Queue.Tail() );
 	}
 
@@ -237,6 +296,7 @@ public:
 	{
 		List.Init();
 		Queue.Init();
+		_IDs.Init();
 
 		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 

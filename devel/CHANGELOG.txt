@@ -1,6 +1,8 @@
 $Id$
 
 31/03/2008 :
+	- GENERAL :
+		- Adptation aux modifications 'FLM' (devrait accèlèrer l'ouverture des fichiers).
 	- WLLIO :
 		- Ajout méthode ('IsSDTOUT()' et 'IsSTDERR()').
 		- Simplification gestion du 'FlushToDevice()'.
