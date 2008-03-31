@@ -1,5 +1,10 @@
 $Id$
 
+31/03/2008 :
+	- WLLIO :
+		- Ajout méthode ('IsSDTOUT()' et 'IsSTDERR()').
+		- Simplification gestion du 'FlushToDevice()'.
+
 27/03/2008 :
 	- PLLIO :
 		- Adaptation à la modification de 'WLLIO' (contournement temporaire).
@@ -24,7 +29,7 @@ $Id$
 
 17/03/2008 :
 	- DBSIDX :
-		- Les '.edr' (stockage de la racine de l'arbre de l'iindex) ne sont plus utilisés.
+		- Les '.edr' (stockage de la racine de l'arbre de l'index) ne sont plus utilisés.
 
 20/01/2008 :
 	- LGG :

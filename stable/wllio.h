@@ -128,6 +128,14 @@ namespace wllio {
 		{
 			return _fileno( stdin ) == _D;
 		}
+		bso::bool__ IsSTDOUT( void ) const
+		{
+			return _fileno( stdout ) == _D;
+		}
+		bso::bool__ IsSTDERR( void ) const
+		{
+			return _fileno( stderr ) == _D;
+		}
 	};
 
 	class lowlevel_input__
@@ -214,6 +222,12 @@ namespace wllio {
 			descriptor__ D,
 			bso::bool__ FlushToDevice )
 		{
+			if ( FlushToDevice )
+				if ( IsSTDOUT() )
+					ERRu();
+				else if ( IsSTDERR() )
+					ERRu();
+
 			io_core__::Init( D );
 			_FlushToDevice = FlushToDevice;
 		}
@@ -229,14 +243,8 @@ namespace wllio {
 		void Flush( void )
 		{
 			if ( _FlushToDevice ) {
-				if ( _D == _fileno( stdin ) )
-					ERRu();
-				else if ( _D == WLLIO_UNDEFINED_DESCRIPTOR )
-					ERRu();
-				else if ( ( _D != _fileno( stdout ) )
-						  && ( _D != _fileno( stderr ) ) )
-					if ( _commit( _D ) != 0 )
-						ERRd();
+				if ( _commit( _D ) != 0 )
+					ERRd();
 			}
 		}
 	};
