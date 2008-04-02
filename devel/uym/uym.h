@@ -309,7 +309,7 @@ namespace uym {
 			Store( Datum, Position );
 		}
 		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
-		void Store_(
+		void Store(
 			const untyped_memory_ &Source,
 			mdr::size__ Amount,
 			mdr::row_t__ Position,

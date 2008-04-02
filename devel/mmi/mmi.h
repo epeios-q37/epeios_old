@@ -364,7 +364,7 @@ namespace mmi {
 			epeios::size__ Size )
 		{
 			Descripteurs.Allocate( Size, aem::mFit );
-			Descripteurs.Store_( O.Descripteurs, Size );
+			Descripteurs.Store( O.Descripteurs, Size );
 			Multimemoire = O.Multimemoire;
 		}
 	/*	void ecrire( flo_sortie_ &F ) const
@@ -455,7 +455,7 @@ namespace mmi {
 		void Shift( index__ Index )	// Shift all elements from 'Index' from one position to the end. Last element is lost.
 		{
 			descripteur__ Descripteur = {NONE, 0};
-			Descripteurs.Store_( Descripteurs, Descripteurs.Amount() - 1 - *Index, *Index + 1, Index );
+			Descripteurs.Store( Descripteurs, Descripteurs.Amount() - 1 - *Index, *Index + 1, Index );
 			Descripteurs.Store( Descripteur, Index );
 		}
 #if 0

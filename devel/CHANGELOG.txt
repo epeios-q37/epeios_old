@@ -1,5 +1,11 @@
 $Id$
 
+02/03/2008 :
+	- UYM :
+		- Remise en oeuvre de 'Store(...)' à la place de 'Store_(..)' (crée à des fins de test).
+	- GENERAL :
+		- Adaptation aux modifications de 'UYM'.
+
 31/03/2008 :
 	- GENERAL :
 		- Adptation aux modifications 'FLM' (devrait accèlèrer l'ouverture des fichiers).

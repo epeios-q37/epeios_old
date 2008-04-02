@@ -209,7 +209,7 @@ row_t__ untyped_memory_::Search(
 }
 
 
-void untyped_memory_::Store_(
+void untyped_memory_::Store(
 	const untyped_memory_ &Source,
 	size__ Amount,
 	row_t__ Position,

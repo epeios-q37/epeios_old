@@ -139,7 +139,7 @@ namespace ctn {
 #endif
 			Dynamics.Copy( O.Dynamics, O.Amount() );
 			Statics.Allocate( O.Amount() );
-			Statics.Store_( O.Statics, O.Amount() ); 
+			Statics.Store( O.Statics, O.Amount() ); 
 
 			amount_extent_manager_<r>::Force( O.Amount() );
 			amount_extent_manager_<r>::operator =( O );
@@ -212,7 +212,7 @@ namespace ctn {
 		{
 			_Allocate( amount_extent_manager_<r>::Amount() + 1, Mode );
 
-			Statics.Store_( Statics, amount_extent_manager_<r>::Amount() - 1 - *Row, *Row + 1, Row );
+			Statics.Store( Statics, amount_extent_manager_<r>::Amount() - 1 - *Row, *Row + 1, Row );
 			Dynamics.Shift( *Row );
 			
 			Statics.Store( ST, Row );
@@ -270,7 +270,7 @@ namespace ctn {
 			epeios::size__ NewAmount = CurrentAmount - Amount;
 
 			Dynamics.RemoveWithoutReallocating( *Position, CurrentAmount, Amount );
-			Statics.Store_( Statics, NewAmount - *Position, Position, *Position + Amount );
+			Statics.Store( Statics, NewAmount - *Position, Position, *Position + Amount );
 
 			_Allocate( NewAmount, Mode );
 		}

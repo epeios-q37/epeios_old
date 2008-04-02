@@ -89,7 +89,7 @@ namespace bch {
 			epeios::size__ Quantite )
 		{
 			Allouer_( mng::Amount() + Quantite, aem::mDefault );
-			mmr::Store_( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
+			mmr::Store( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
@@ -99,7 +99,7 @@ namespace bch {
 			epeios::row_t__ PosDest )
 		{
 			Pousser_( PosDest, Quantite );
-			mmr::Store_( Source, Quantite, PosDest, PosSource );
+			mmr::Store( Source, Quantite, PosDest, PosSource );
 		}
 		// Insere 'Quantite' objets de 'Objets' à 'Position'.
 		void Inserer_(
@@ -194,7 +194,7 @@ namespace bch {
 		{
 			Allocate( Amount + *Row );
 
-			mmr::Store_( Bunch, Amount, Row, Offset );
+			mmr::Store( Bunch, Amount, Row, Offset );
 		}
 /*		void StoreAndAdjust__(
 			const _bunch &Bunch,
@@ -397,7 +397,7 @@ namespace bch {
 			row Row,
 			epeios::size__ Amount = 1)
 		{
-			mmr::Store_( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
+			mmr::Store( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
 
 			Allouer_( this->Amount() - Amount, aem::mDefault );
 		}
@@ -479,7 +479,7 @@ namespace bch {
 
 			Allocate( Op.Amount(), aem::mFit );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store_( Op, Op.Amount() );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
 
 			return *this;
 		}

@@ -80,7 +80,7 @@ namespace mmi {
 		while( Counter-- )
 			Multimemoire.Free( Descripteurs.Get( *Position + Counter ).Descripteur );
 
-		Descripteurs.Store_( Descripteurs, ActualCapacity - *Position - Amount, *Position, *Position + Amount );
+		Descripteurs.Store( Descripteurs, ActualCapacity - *Position - Amount, *Position, *Position + Amount );
 
 		Initialize_( ActualCapacity - Amount, ActualCapacity );
 	}

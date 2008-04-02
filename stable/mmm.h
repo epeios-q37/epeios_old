@@ -990,7 +990,7 @@ namespace mmm {
 				NewSizeLength = _GetSizeLength( NewDataSize );
 
 			if ( OldSizeLength != NewSizeLength )
-				Memory.Store_( Memory, OldDataSize, *Position + NewSizeLength, *Position + OldSizeLength );
+				Memory.Store( Memory, OldDataSize, *Position + NewSizeLength, *Position + OldSizeLength );
 
 			_SetRawSize( NewDataSize, Position, false, _IsUsedFragmentFreeFlagSet( Header ) );
 
@@ -1074,12 +1074,12 @@ namespace mmm {
 			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
 			et non pas sur le début des fragments respectis. */
 		{
-			Memory.Store_(
+			Memory.Store(
 				Memory, SourceFirstFragmentSize > TargetFirstFragmentSize ? TargetFirstFragmentSize : SourceFirstFragmentSize,
 				*TargetFirstFragmentRow, *SourceFirstFragmentRow );
 
 			if ( ( SourceSecondFragmentSize != 0 ) && ( ( SourceFirstFragmentSize + SourceSecondFragmentSize ) < TargetFirstFragmentSize ) )
-				Memory.Store_(
+				Memory.Store(
 					Memory, SourceSecondFragmentSize,
 					*TargetFirstFragmentRow + SourceFirstFragmentSize,
 					*SourceSecondFragmentRow );
@@ -1097,11 +1097,11 @@ namespace mmm {
 			et non pas sur le début des fragments respectis. */
 		{
 			if ( SourceFirstFragmentSize > TargetFirstFragmentSize )
-				Memory.Store_(
+				Memory.Store(
 					Memory, SourceFirstFragmentSize - TargetFirstFragmentSize,
 					*TargetSecondFragmentRow, *SourceFirstFragmentRow + TargetFirstFragmentSize );
 			else
-				Memory.Store_(
+				Memory.Store(
 					Memory, TargetFirstFragmentSize - SourceFirstFragmentSize, 
 					*TargetFirstFragmentRow + SourceFirstFragmentSize,
 					*SourceSecondFragmentRow );
@@ -1119,12 +1119,12 @@ namespace mmm {
 			et non pas sur le début des fragments respectis. */
 		{
 			if ( SourceFirstFragmentSize > TargetFirstFragmentSize )
-				Memory.Store_(
+				Memory.Store(
 					Memory, SourceSecondFragmentSize,
 					*TargetSecondFragmentRow + SourceFirstFragmentSize - TargetFirstFragmentSize,
 					*SourceSecondFragmentRow );
 			else
-				Memory.Store_(
+				Memory.Store(
 					Memory, SourceSecondFragmentSize + SourceFirstFragmentSize - TargetFirstFragmentSize,
 					*TargetSecondFragmentRow,
 					*SourceSecondFragmentRow + TargetFirstFragmentSize - SourceFirstFragmentSize );
@@ -1471,7 +1471,7 @@ namespace mmm {
 		multimemory_ &operator =( const multimemory_ &M )
 		{
 			Memory.Allocate( M.S_.Extent );
-			Memory.Store_( M.Memory, M.S_.Extent, 0 );
+			Memory.Store( M.Memory, M.S_.Extent, 0 );
 
 			S_.Extent = M.S_.Extent;
 			S_.FreeFragment = M.S_.FreeFragment;
