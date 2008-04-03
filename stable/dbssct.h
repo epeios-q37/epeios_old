@@ -139,7 +139,7 @@ namespace dbssct {
 		{
 			_list_::operator =( SC );
 			Storage.Allocate( SC.Amount() * S_.Size );
-			Storage.Store_( SC.Storage, SC.Amount() * S_.Size );
+			Storage.Store( SC.Storage, SC.Amount() * S_.Size );
 			S_.Size = SC.S_.Size;
 			S_.ModificationTimeStamp = SC.S_.ModificationTimeStamp;
 
@@ -170,7 +170,7 @@ namespace dbssct {
 			if ( Datum.Amount() != S_.Size )
 				ERRu();
 
-			Storage.Store_( Datum, S_.Size, *Row * S_.Size );
+			Storage.Store( Datum, S_.Size, *Row * S_.Size );
 
 			_Touch();
 		}

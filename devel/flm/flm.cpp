@@ -65,6 +65,7 @@ public:
 
 #ifdef MT
 #	include "mtx.h"
+#	include "mtk.h"
 #endif
 
 using namespace flm;
@@ -89,23 +90,34 @@ static inline void Unlock_( void )
 #endif
 }
 
+static inline bso::bool__ IsLocked_( void )
+{
+#ifdef MT
+	return mtx::IsLocked( Mutex_ );
+#else
+	return true;
+#endif
+}
+
 struct _data__ {
+	bso::bool__ ToFlush;	// Doit être 'flushé' si à 'true'.
 	memoire_fichier_base___ *File;
 	id__ ID;
 	void reset( bso::bool__ = true )
 	{
+		ToFlush = false;
 		File = NULL;
 		ID = FLM_UNDEFINED_ID;
 	}
 };
 
-static lstbch::E_LBUNCHt( _data__, row__ ) List;
-static que::E_MQUEUEt( row__ ) Queue;
+static lstbch::E_LBUNCHt( _data__, row__ ) List_;
+static que::E_MQUEUEt( row__ ) Queue_;
 
 typedef ids::E_IDS_STORE_( id__ )	_ids_;
 E_AUTO( _ids );
 
-static _ids	_IDs;
+static _ids	IDs_;
 
 id__ flm::GetId( void )
 {
@@ -113,7 +125,7 @@ id__ flm::GetId( void )
 
 	Lock_();
 
-	ID = _IDs.New();
+	ID = IDs_.New();
 
 	Unlock_();
 
@@ -124,7 +136,7 @@ void flm::ReleaseId( id__ ID )
 {
 	Lock_();
 
-	_IDs.Release( ID );
+	IDs_.Release( ID );
 
 	Unlock_();
 }
@@ -134,16 +146,16 @@ row__ flm::_Register(
 	id__ ID )
 {
 	row__ Row = NONE;
-	_data__ Data = {&MFB, ID };
+	_data__ Data = { false, &MFB, ID };
 
 	Lock_();
 
-	Row = List.New();
+	Row = List_.New();
 
-	if ( Queue.Amount() < List.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la queue.
-		Queue.Allocate( List.Extent() );
+	if ( Queue_.Amount() < List_.Extent() )	// On teste 'Amount' parce que ce qui est entre 'Amount' et 'Extent' n'est pas initialisé dans la file.
+		Queue_.Allocate( List_.Extent() );
 
-	List.Store( Data, Row );
+	List_.Store( Data, Row );
 
 	Unlock_();
 
@@ -158,33 +170,110 @@ void flm::_Unregister(
 
 	Lock_();
 
-	if ( List( Row ).ID != ID )
+	if ( List_( Row ).ID != ID )
 		ERRu();
 
-	List.Store( Data, Row );
-	List.Delete( Row );
+	List_.Store( Data, Row );
+	List_.Delete( Row );
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
+	if ( Queue_.IsMember( Row ) )
+		Queue_.Delete( Row );
 
 	Unlock_();
 }
 
-void flm::_ReportFileUsing( row__ Row )
+#define DELAY	1000	// en ms.
+
+struct _flusher_data__
+{
+	row__ Row;
+	time_t LastFileAccessTime;
+	 _flusher_data__( void )
+	{
+		Row = NONE;
+		LastFileAccessTime = tol::Clock( false );
+	}
+} FlusherData_;
+
+static inline void Flusher_( void * )
 {
 	Lock_();
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
-	else if ( Queue.Amount() >= FLM__MAX_FILE_AMOUNT ) {
-		List( Queue.Tail() ).File->ReleaseFile( false );
-		Queue.Delete( Queue.Tail() );
+	_data__ Data;
+
+	while ( FlusherData_.Row != NONE ) {
+
+		Unlock_();
+		tht::Defer();
+		Lock_();
+
+		while ( ( tol::Clock( false ) - FlusherData_.LastFileAccessTime ) < DELAY ) {
+			Unlock_();
+			tht::Defer( DELAY );
+			Lock_();
+		}
+
+		List_.Recall( FlusherData_.Row, Data );
+
+		if ( Data.ToFlush ) {
+			Data.File->Flush();
+
+			Data.ToFlush = false;
+
+			List_.Store( Data, FlusherData_.Row );
+		}
+
+		FlusherData_.Row = Queue_.Previous( FlusherData_.Row );
 	}
 
-	if ( Queue.IsEmpty() )
-		Queue.Create( Row );
+	Unlock_();
+}
+
+static void LaunchFlusher_( void )
+{
+#ifdef FLM_DBG
+	if ( !IsLocked_() )
+		ERRc();
+#endif
+	if ( FlusherData_.Row == NONE )
+		mtk::Launch( Flusher_, NULL );
+
+	FlusherData_.Row = Queue_.Last();
+}
+
+
+void flm::_ReportFileUsing(
+	row__ Row,
+	bso::bool__ ToFlush )
+{
+	Lock_();
+
+	if ( ToFlush ) {
+		_data__ Data;
+
+		List_.Recall( Row, Data );
+
+		if ( !Data.ToFlush ) {
+			Data.ToFlush = true;
+			List_.Store( Data, Row );
+		}
+
+		LaunchFlusher_();
+	}
+
+	if ( Queue_.IsMember( Row ) )
+		Queue_.Delete( Row );
+	else if ( Queue_.Amount() >= FLM__MAX_FILE_AMOUNT ) {
+		List_( Queue_.Tail() ).File->ReleaseFile( false );
+		Queue_.Delete( Queue_.Tail() );
+	}
+
+	if ( Queue_.IsEmpty() )
+		Queue_.Create( Row );
 	else
-		Queue.BecomePrevious( Row, Queue.Head() );
+		Queue_.BecomePrevious( Row, Queue_.Head() );
+
+	FlusherData_.LastFileAccessTime = tol::Clock( false );
 
 	Unlock_();
 }
@@ -193,8 +282,8 @@ void flm::_ReportFileClosing( row__ Row )
 {
 	Lock_();
 
-	if ( Queue.IsMember( Row ) )
-		Queue.Delete( Row );
+	if ( Queue_.IsMember( Row ) )
+		Queue_.Delete( Row );
 
 	Unlock_();
 }
@@ -203,13 +292,13 @@ static void _Search(
 	id__ ID,
 	bch::E_BUNCH_( row__ ) &Rows )
 {
-	row__ Row = List.First();
+	row__ Row = List_.First();
 
 	while ( Row != NONE ) {
-		if ( List( Row ).ID == ID )
+		if ( List_( Row ).ID == ID )
 			Rows.Append( Row );
 
-		Row = List.Next( Row );
+		Row = List_.Next( Row );
 	}
 }
 
@@ -218,10 +307,10 @@ static void _Release( const bch::E_BUNCH_( row__ ) &Rows )
 	epeios::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
-		List( Rows( Row ) ).File->ReleaseFile( false );
+		List_( Rows( Row ) ).File->ReleaseFile( false );
 
-		if ( Queue.IsMember( Rows( Row ) ) )
-			Queue.Delete( Rows( Row ) );
+		if ( Queue_.IsMember( Rows( Row ) ) )
+			Queue_.Delete( Rows( Row ) );
 
 		Row = Rows.Next( Row );
 	}
@@ -254,9 +343,9 @@ void flm::ReleaseInactiveFiles(
 
 	time_t Now = tol::Clock( false );
 
-	while ( MaxAmount-- && ( Queue.Tail() != NONE ) && ( ( Now - List( Queue.Tail() ).File->GetLastAccessTime() ) <= Delay ) ) {
-		List( Queue.Tail() ).File->ReleaseFile( false );
-		Queue.Delete( Queue.Tail() );
+	while ( MaxAmount-- && ( Queue_.Tail() != NONE ) && ( ( Now - List_( Queue_.Tail() ).File->GetLastAccessTime() ) <= Delay ) ) {
+		List_( Queue_.Tail() ).File->ReleaseFile( false );
+		Queue_.Delete( Queue_.Tail() );
 	}
 
 	Unlock_();
@@ -294,9 +383,9 @@ class flmpersonnalization
 public:
 	flmpersonnalization( void )
 	{
-		List.Init();
-		Queue.Init();
-		_IDs.Init();
+		List_.Init();
+		Queue_.Init();
+		IDs_.Init();
 
 		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 

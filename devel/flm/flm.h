@@ -175,7 +175,9 @@ namespace flm {
 	void _Unregister(
 		row__ Row,
 		id__ ID );
-	void _ReportFileUsing( row__ Row );
+	void _ReportFileUsing(
+		row__ Row,
+		bso::bool__ ToFlush );
 	void _ReportFileClosing( row__ Row );
 
 	void ReleaseFiles( id__ ID );
@@ -207,7 +209,9 @@ namespace flm {
 		id__ _ID;
 		bso::bool__ _FlushToDevice;	// Voir 'wllio' ou 'pllio'.
 	// Fonctions
-		bso::bool__ Open_( err::handle ErrHandle = err::hUsual )
+		bso::bool__ Open_(
+			bso::bool__ ToFlush,
+			err::handle ErrHandle = err::hUsual )	// Si à 'true', le fichier doit être 'flushé' (accés en écriture).
 		{
 			bso::bool__ Success = true;
 
@@ -223,7 +227,7 @@ namespace flm {
 			}
 			
 			if ( Success ) {
-				_ReportFileUsing( _Row );
+				_ReportFileUsing( _Row, ToFlush );
 				_LastAccessTime = tol::Clock( false );
 			}
 
@@ -235,7 +239,7 @@ namespace flm {
 			unsigned int Nombre,
 			void *Tampon )
 		{
-			Open_();
+			Open_( false );
 
 			iop::amount__ Amount;
 
@@ -262,7 +266,7 @@ namespace flm {
 			unsigned int Nombre,
 			position__ Position )
 		{
-			Open_();
+			Open_( true );
 
 			iop::amount__ Amount;
 
@@ -290,7 +294,7 @@ namespace flm {
 			{
 				mdr::datum__ Datum = 0;
 
-				Open_();
+				Open_( true );
 				
 				File_.Seek( Capacite - (iop::amount__)1 );
 
@@ -389,7 +393,7 @@ namespace flm {
 
 			if ( Creation == flm::cNow  )
 				if ( Mode == mdr::mReadWrite )
-					Open_();
+					Open_( false );
 				else
 					ERRu();
 			else if ( Creation != flm::cFirstUse )
@@ -464,7 +468,7 @@ namespace flm {
 		}
 		mdr::size__ FileSize( void )
 		{
-			Open_();
+			Open_( false );
 
 			return File_.Size();
 		}
@@ -473,9 +477,13 @@ namespace flm {
 #endif
 		bso::bool__ CreateFile( err::handle ErrHandle = err::hUsual )
 		{
-			return Open_( ErrHandle );
+			return Open_( false, ErrHandle );
 		}
 		E_RODISCLOSE__( time_t, LastAccessTime );
+		void Flush( void )
+		{
+			File_.Flush();
+		}
 	};
 
 	//c The standard memory driver which handle a file as memory.
