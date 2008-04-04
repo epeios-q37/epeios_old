@@ -3,6 +3,8 @@ $Id$
 03/03/2008 :
 	- GENERAL :
 		- Adaptation aux modifications de 'UYM'.
+	- FLM :
+		- Mise en oeuvre d'un 'flushage' automatique.
 
 02/03/2008 :
 	- UYM :
