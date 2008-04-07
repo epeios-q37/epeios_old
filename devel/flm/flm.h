@@ -88,6 +88,16 @@ extern class ttr_tutor &FLMTutor;
 #endif
 
 
+#ifdef FLM_MT
+#	define FLM__MT
+#elif defined( FLM_NO_MT )
+#else
+#	ifdef CPE__T_MT
+#		define FLM__MT
+#	endif
+#endif
+
+
 namespace flm {
 	extern epeios::size__ MaxFileAmount;
 
@@ -115,19 +125,41 @@ namespace flm {
 	typedef iop::io__		_io__;
 
 	class _file___
-	: public _io__
 	{
 	private:
-		iop::descriptor__ D_;
+		iop::descriptor__ _D;
+		_io__ _Core;
+#ifdef FLM__MT
+		mtx::mutex_handler__ _Mutex;
+#endif
+		void _Lock( void )
+		{
+#ifdef FLM__MT
+			mtx::Lock( _Mutex );
+#endif
+		}
+		void _Unlock( void )
+		{
+#ifdef FLM__MT
+			mtx::Unlock( _Mutex );
+#endif
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( D_ != IOP_UNDEFINED_DESCRIPTOR )
-					fil::Close( D_ );
+				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
+					fil::Close( _D );
+#ifdef FLM__MT
+				if ( _Mutex != MTX_INVALID_HANDLER )
+					mtx::Delete( _Mutex );
+#endif
 			}
 
-			D_ = IOP_UNDEFINED_DESCRIPTOR;
+			_D = IOP_UNDEFINED_DESCRIPTOR;
+#ifdef FLM__MT
+			_Mutex = MTX_INVALID_HANDLER;
+#endif
 		}
 		_file___( void )
 		{
@@ -145,9 +177,13 @@ namespace flm {
 		{
 			reset();
 
-			D_ = fil::Open( FileName, Mode );
+#ifdef FLM__MT
+			_Mutex = mtx::Create( mtx::mOwned );
+#endif
 
-			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
+			_D = fil::Open( FileName, Mode );
+
+			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
 				switch ( ErrHandle ) {
 				case err::hSkip:
 					return fil::sFailure;
@@ -161,9 +197,71 @@ namespace flm {
 				}
 			}
 
-			_io__::Init( D_, FlushToDevice );
+			_Core.Init( _D, FlushToDevice );
 
 			return fil::sSuccess;
+		}
+		void Lock( void )
+		{
+			_Lock();
+		}
+		void Unlock( void )
+		{
+			_Unlock();
+		}
+		void Seek( long Offset )
+		{
+			_Lock();
+
+			_Core.Seek( Offset );
+
+			_Unlock();
+		}
+		unsigned int Read(
+			unsigned int Amount,
+			void *Buffer )
+		{
+			_Lock();
+
+			Amount = _Core.Read( Amount, Buffer );
+
+			_Unlock();
+
+			return Amount;
+		}
+		unsigned int Write(
+			const void *Buffer,
+			unsigned int Amount )
+		{
+			_Lock();
+
+			Amount = _Core.Write( Buffer, Amount );
+
+			_Unlock();
+
+			return Amount;
+		}
+		mdr::size__ Size( void )
+		{
+			_Lock();
+
+			mdr::size__ Size = _Core.Size();
+
+			_Unlock();
+
+			return Size;
+		}
+		void ThreadUnsafeFlush( void )
+		{
+			_Core.Flush();
+		}
+		void Flush( void )
+		{
+			_Lock();
+
+			ThreadUnsafeFlush();
+
+			_Unlock();
 		}
 	};
 
@@ -480,9 +578,9 @@ namespace flm {
 			return Open_( false, ErrHandle );
 		}
 		E_RODISCLOSE__( time_t, LastAccessTime );
-		void Flush( void )
+		_file___ &File( void )
 		{
-			File_.Flush();
+			return File_;
 		}
 	};
 

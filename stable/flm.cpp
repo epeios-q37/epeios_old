@@ -197,6 +197,10 @@ struct _flusher_data__
 
 static inline void Flusher_( void * )
 {
+	bso::bool__ ToFlush = false;
+	_file___ *File = NULL;
+
+
 	Lock_();
 
 	_data__ Data;
@@ -205,21 +209,30 @@ static inline void Flusher_( void * )
 
 		Unlock_();
 		tht::Defer();
+
+		if ( ToFlush  ) {
+			File->Lock();
+			File->ThreadUnsafeFlush();
+			File->Unlock();
+			ToFlush = false;
+			File = NULL;
+		}
+
 		Lock_();
 
-		while ( ( tol::Clock( false ) - FlusherData_.LastFileAccessTime ) < DELAY ) {
+/*		while ( ( tol::Clock( false ) - FlusherData_.LastFileAccessTime ) < DELAY ) {
 			Unlock_();
 			tht::Defer( DELAY );
 			Lock_();
 		}
 
-		List_.Recall( FlusherData_.Row, Data );
+*/		List_.Recall( FlusherData_.Row, Data );
 
 		if ( Data.ToFlush ) {
-			Data.File->Flush();
+			ToFlush = true;
+			File = &Data.File->File();
 
 			Data.ToFlush = false;
-
 			List_.Store( Data, FlusherData_.Row );
 		}
 
