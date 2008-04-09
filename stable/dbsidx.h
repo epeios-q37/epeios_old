@@ -78,12 +78,19 @@ namespace dbsidx {
 		virtual bso::sign__ DBSIDXCompare(
 			const datum_ &Datum1,
 			const datum_ &Datum2 ) = 0;
+		virtual rrow__ DBSIDXGetMember( void ) = 0;	// Doit retourner un membre de la structure affecté
+													// à l'index pour permettre de trouver la racine
+													// de l'arbre de l'index.
 	public:
 		bso::sign__ Compare(
 			const datum_ &Data1,
 			const datum_ &Data2 )
 		{
 			return DBSIDXCompare( Data1, Data2 );
+		}
+		rrow__ GetMember( void )
+		{
+			return DBSIDXGetMember();
 		}
 	};
 
@@ -261,8 +268,10 @@ namespace dbsidx {
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
 			rrow__ RecordRow2 ) const;
-		rrow__ SearchRoot( rrow__ Member )
-		{
+		rrow__ SearchRoot( void )
+		{	
+			rrow__ Member = S_.Sort->GetMember();
+
 			S_.Root = Member;
 
 			if ( Member != NONE ) 
@@ -364,11 +373,9 @@ namespace dbsidx {
 		bso::bool__ _ConnectToFiles( void )
 		{
 			if ( idxbtq::Connect( BaseIndex, S_.FileManager ) ) {
-				index_::SearchRoot( S_.Member );
+				index_::SearchRoot();
 				return true;
 			} else {
-				if ( S_.Member != NONE )
-					ERRu();
 				return false;
 			}
 		}
@@ -387,7 +394,6 @@ namespace dbsidx {
 			str::string_::s RootFileName;
 			bso::bool__ Erase;	// Seulement utile lors d'uen initialisation retardée.
 			mdr::mode__ Mode;
-			rrow__ Member;
 		} &S_;
 		file_index_( s &S )
 		: S_( S ), 
@@ -409,7 +415,6 @@ namespace dbsidx {
 			S_.Erase = false;
 			S_.Mode = mdr::m_Undefined;
 			RootFileName.reset( P );
-			S_.Member = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ & )
 		{
@@ -424,7 +429,6 @@ namespace dbsidx {
 		void Init(
 			const str::string_ &RootFileName,
 			const dbsctt::content__ &Content,
-			rrow__ Member,	// Un 'row' d'un des membre de la structure associé à l'index, pour rechercher le 'root'.
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,

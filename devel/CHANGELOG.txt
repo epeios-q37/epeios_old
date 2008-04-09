@@ -1,5 +1,11 @@
 $Id$
 
+09/04/2008 :
+	- DBSIDX :
+		- Ajout de la méthode 'DBSIDXGetMember()' pour éviter d'avoir à ouvrir les fichiers de la
+		structure (coûteux en temps) lors de l'initialisation de l'index.
+		- Suppression du paramètre 'membre', au profit du système ci-dessus.
+
 07/04/2008 :
 	- FLM :
 		- Ajout d'un verrou propre à chaque fichier.

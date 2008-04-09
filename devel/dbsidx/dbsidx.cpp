@@ -574,7 +574,6 @@ ERREpilog
 void dbsidx::file_index_::Init(
 	const str::string_ &RootFileName,
 	const dbsctt::content__ &Content,
-	rrow__ Member,
 	sort_function__ &Sort,
 	mdr::mode__ Mode,
 	bso::bool__ Erase,
@@ -605,7 +604,6 @@ ERRBegin
 
 	S_.Mode = Mode;
 	S_.Erase = Erase;
-	S_.Member = Member;
 ERRErr
 ERREnd
 ERREpilog
