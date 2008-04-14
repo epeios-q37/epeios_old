@@ -158,10 +158,11 @@ namespace dbstbl {
 				ERRc();
 #endif
 			if ( !Indexes( Row )->InitializationCompleted() ) {
-				Indexes( Row )->CompleteInitialization();
-
 				if ( !S_.Content->InitializationCompleted() )
 					S_.Content->CompleteInitialization();
+
+				Indexes( Row )->CompleteInitialization();
+
 			}
 		}
 		const dbsctt::content__ &C_( void ) const

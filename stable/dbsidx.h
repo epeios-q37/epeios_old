@@ -78,19 +78,12 @@ namespace dbsidx {
 		virtual bso::sign__ DBSIDXCompare(
 			const datum_ &Datum1,
 			const datum_ &Datum2 ) = 0;
-		virtual rrow__ DBSIDXGetMember( void ) = 0;	// Doit retourner un membre de la structure affecté
-													// à l'index pour permettre de trouver la racine
-													// de l'arbre de l'index.
 	public:
 		bso::sign__ Compare(
 			const datum_ &Data1,
 			const datum_ &Data2 )
 		{
 			return DBSIDXCompare( Data1, Data2 );
-		}
-		rrow__ GetMember( void )
-		{
-			return DBSIDXGetMember();
 		}
 	};
 
@@ -268,10 +261,8 @@ namespace dbsidx {
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
 			rrow__ RecordRow2 ) const;
-		rrow__ SearchRoot( void )
+		rrow__ SearchRoot( rrow__ Member )
 		{	
-			rrow__ Member = S_.Sort->GetMember();
-
 			S_.Root = Member;
 
 			if ( Member != NONE ) 
@@ -370,10 +361,10 @@ namespace dbsidx {
 		}
 	private:
 //		void _SaveRoot( void ) const;
-		bso::bool__ _ConnectToFiles( void )
+		bso::bool__ _ConnectToFiles()
 		{
 			if ( idxbtq::Connect( BaseIndex, S_.FileManager ) ) {
-				index_::SearchRoot();
+				index_::SearchRoot( Content().First() );
 				return true;
 			} else {
 				return false;

@@ -184,14 +184,15 @@ void flm::_Unregister(
 
 #define DELAY	1000	// en ms.
 
+#ifdef MT
 struct _flusher_data__
 {
 	row__ Row;
-	time_t LastFileAccessTime;
+//	time_t LastFileAccessTime;
 	 _flusher_data__( void )
 	{
 		Row = NONE;
-		LastFileAccessTime = tol::Clock( false );
+//		LastFileAccessTime = tol::Clock( false );
 	}
 } FlusherData_;
 
@@ -241,9 +242,11 @@ static inline void Flusher_( void * )
 
 	Unlock_();
 }
+#endif
 
-static void LaunchFlusher_( void )
+inline static void LaunchFlusher_( void )
 {
+#ifdef MT
 #ifdef FLM_DBG
 	if ( !IsLocked_() )
 		ERRc();
@@ -252,6 +255,7 @@ static void LaunchFlusher_( void )
 		mtk::Launch( Flusher_, NULL );
 
 	FlusherData_.Row = Queue_.Last();
+#endif
 }
 
 
@@ -286,7 +290,7 @@ void flm::_ReportFileUsing(
 	else
 		Queue_.BecomePrevious( Row, Queue_.Head() );
 
-	FlusherData_.LastFileAccessTime = tol::Clock( false );
+//	FlusherData_.LastFileAccessTime = tol::Clock( false );
 
 	Unlock_();
 }
