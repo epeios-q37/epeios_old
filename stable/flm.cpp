@@ -188,11 +188,11 @@ void flm::_Unregister(
 struct _flusher_data__
 {
 	row__ Row;
-//	time_t LastFileAccessTime;
+	time_t LastFileWriteTime;
 	 _flusher_data__( void )
 	{
 		Row = NONE;
-//		LastFileAccessTime = tol::Clock( false );
+		LastFileWriteTime = tol::Clock( false );
 	}
 } FlusherData_;
 
@@ -221,13 +221,13 @@ static inline void Flusher_( void * )
 
 		Lock_();
 
-/*		while ( ( tol::Clock( false ) - FlusherData_.LastFileAccessTime ) < DELAY ) {
+		while ( ( tol::Clock( false ) - FlusherData_.LastFileWriteTime ) < DELAY ) {
 			Unlock_();
 			tht::Defer( DELAY );
 			Lock_();
 		}
 
-*/		List_.Recall( FlusherData_.Row, Data );
+		List_.Recall( FlusherData_.Row, Data );
 
 		if ( Data.ToFlush ) {
 			ToFlush = true;
@@ -255,6 +255,14 @@ inline static void LaunchFlusher_( void )
 		mtk::Launch( Flusher_, NULL );
 
 	FlusherData_.Row = Queue_.Last();
+#endif
+}
+
+inline static void TouchFlusher_( bso::bool__ ToFlush )	// Indique au 'flusher' qu'une écriture à eu lieu.
+{
+#ifdef MT
+	if ( ToFlush )
+		FlusherData_.LastFileWriteTime = tol::Clock( false );
 #endif
 }
 
@@ -289,6 +297,8 @@ void flm::_ReportFileUsing(
 		Queue_.Create( Row );
 	else
 		Queue_.BecomePrevious( Row, Queue_.Head() );
+
+	TouchFlusher_( ToFlush );
 
 //	FlusherData_.LastFileAccessTime = tol::Clock( false );
 
