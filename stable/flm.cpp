@@ -59,11 +59,7 @@ public:
 #include "que.h"
 #include "bch.h"
 
-#ifdef CPE__T_MT
-#	define MT
-#endif
-
-#ifdef MT
+#ifdef FLM__MT
 #	include "mtx.h"
 #	include "mtk.h"
 #endif
@@ -72,27 +68,27 @@ using namespace flm;
 
 epeios::size__ flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 
-#ifdef MT
+#ifdef FLM__MT
 static mtx::mutex_handler__ Mutex_;
 #endif
 
 static inline void Lock_( void )
 {
-#ifdef MT
+#ifdef FLM__MT
 	mtx::Lock( Mutex_ );
 #endif
 }
 
 static inline void Unlock_( void )
 {
-#ifdef MT
+#ifdef FLM__MT
 	mtx::Unlock( Mutex_ );
 #endif
 }
 
 static inline bso::bool__ IsLocked_( void )
 {
-#ifdef MT
+#ifdef FLM__AUTOFLUSH
 	return mtx::IsLocked( Mutex_ );
 #else
 	return true;
@@ -100,12 +96,16 @@ static inline bso::bool__ IsLocked_( void )
 }
 
 struct _data__ {
+#ifdef FLM__AUTOFLUSH
 	bso::bool__ ToFlush;	// Doit être 'flushé' si à 'true'.
+#endif
 	memoire_fichier_base___ *File;
 	id__ ID;
 	void reset( bso::bool__ = true )
 	{
+#ifdef FLM__AUTOFLUSH
 		ToFlush = false;
+#endif
 		File = NULL;
 		ID = FLM_UNDEFINED_ID;
 	}
@@ -146,7 +146,11 @@ row__ flm::_Register(
 	id__ ID )
 {
 	row__ Row = NONE;
-	_data__ Data = { false, &MFB, ID };
+	_data__ Data = {
+#ifdef FLM__AUTOFLUSH
+		false,
+#endif
+		&MFB, ID };
 
 	Lock_();
 
@@ -184,7 +188,7 @@ void flm::_Unregister(
 
 #define DELAY	1000	// en ms.
 
-#ifdef MT
+#ifdef FLM__AUTOFLUSH
 struct _flusher_data__
 {
 	row__ Row;
@@ -246,7 +250,7 @@ static inline void Flusher_( void * )
 
 inline static void LaunchFlusher_( void )
 {
-#ifdef MT
+#ifdef FLM__AUTOFLUSH
 #ifdef FLM_DBG
 	if ( !IsLocked_() )
 		ERRc();
@@ -260,7 +264,7 @@ inline static void LaunchFlusher_( void )
 
 inline static void TouchFlusher_( bso::bool__ ToFlush )	// Indique au 'flusher' qu'une écriture à eu lieu.
 {
-#ifdef MT
+#ifdef FLM__AUTOFLUSH
 	if ( ToFlush )
 		FlusherData_.LastFileWriteTime = tol::Clock( false );
 #endif
@@ -273,6 +277,7 @@ void flm::_ReportFileUsing(
 {
 	Lock_();
 
+#ifdef FLM__AUTOFLUSH
 	if ( ToFlush ) {
 		_data__ Data;
 
@@ -285,6 +290,7 @@ void flm::_ReportFileUsing(
 
 		LaunchFlusher_();
 	}
+#endif
 
 	if ( Queue_.IsMember( Row ) )
 		Queue_.Delete( Row );
@@ -416,7 +422,7 @@ public:
 
 		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 
-#ifdef MT
+#ifdef FLM__MT
 		Mutex_ = mtx::Create( mtx::mOwned );
 #endif
 

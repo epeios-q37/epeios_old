@@ -88,12 +88,16 @@ extern class ttr_tutor &FLMTutor;
 #endif
 
 
-#ifdef FLM_MT
-#	define FLM__MT
-#elif defined( FLM_NO_MT )
-#else
+#ifndef FLM_NO_MT
 #	ifdef CPE__T_MT
 #		define FLM__MT
+#	endif
+#endif
+
+
+#ifndef FLM_NO_AUTOFLUSH
+#	ifdef FLM__MT
+#		define FLM__AUTOFLUSH
 #	endif
 #endif
 
