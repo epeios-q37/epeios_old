@@ -1,5 +1,9 @@
 $Id$
 
+24/04/2008 :
+	- TXMTBL :
+		- Correction bogue location 'line_'.
+
 21/04/2008
 	- FLM :
 		- Introduction des macros 'FLM_NO_AUTOFLUSH' et 'FLM_NO_MT'.

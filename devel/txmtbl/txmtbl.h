@@ -224,22 +224,17 @@ namespace txmtbl {
 		//f Write 'Cell' and 'Location' at 'Position'.
 		void Write(
 			const cell_ &Cell,
-			location__ Location,
 			epeios::row__ Position )
 		{
 			cells_::Store( Cell, Position );
 			cells_::Flush();
-
-			S_.Location = Location;
 		}
 		//f Add 'Cell' and 'Location'. Return position where added.
-		epeios::row__ Add(
-			const cell_ &Cell,
-			location__ Location )
+		epeios::row__ Add( const cell_ &Cell )
 		{
 			epeios::row__ P = cells_::New();
 
-			Write( Cell, Location, P );
+			Write( Cell, P );
 
 			return P;
 		}

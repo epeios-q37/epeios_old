@@ -201,17 +201,16 @@ bso::bool__ txmtbl::GetLine(
 ERRProlog
 	cell Cell;
 	bso::bool__ Loop;
-	location__ Location;
 ERRBegin
 	Cell.Init();
 
-	do {
-		Location = Flow.Line();
+	Line.Location( Flow.Line() );
 
+	do {
 		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EOX();
 
 		if ( Loop || Cell.Amount() || Line.Amount() )
-			Line.Add( Cell, Location );
+			Line.Add( Cell );
 
 	}while ( Loop );
 ERRErr
