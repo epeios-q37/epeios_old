@@ -1,5 +1,10 @@
 $Id$
 
+22/05/2008 :
+	- CPE :
+		- Mise en place 'CPE__C_VC9'.
+		- Dorénavant, une version inconnue du compilateur VC++ ne provoquera plus d'erreur.
+
 24/04/2008 :
 	- TXMTBL :
 		- Correction bogue location 'line_'.
