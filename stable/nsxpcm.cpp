@@ -367,13 +367,17 @@ ERREpilog
 static bso::bool__ FileDialogBox_(
 	nsIDOMWindow *Parent,
 	const char *Title,
+	const char *DefaultExtension,
 	PRInt16 Mode,
+	PRInt32 FilterMask,
 	str::string_ &Name )
 {
+	bso::bool__ Success = false;
+ERRProlog
 	nsCOMPtr<nsIFilePicker> FilePicker = NULL;
 	nsresult Error = NS_OK;
 	nsEmbedString EString;
-
+ERRBegin
 	CreateInstance<nsIFilePicker>( "@mozilla.org/filepicker;1", FilePicker );
 
 	Transform( Title, EString );
@@ -381,14 +385,23 @@ static bso::bool__ FileDialogBox_(
 	if ( ( Error = FilePicker->Init( Parent, EString, Mode ) ) != NS_OK )
 		ERRx();
 
+	if ( ( Error = FilePicker->AppendFilters( FilterMask ) ) != NS_OK )
+		ERRx();
+
+	if ( *DefaultExtension != 0 ) {
+		Transform( DefaultExtension, EString );
+		FilePicker->SetDefaultExtension( EString );
+	}
+
 	PRInt16 _retval = 0;
 
 	if ( ( Error = FilePicker->Show( &_retval ) ) != NS_OK )
 		ERRx();
 
-	if ( _retval == nsIFilePicker::returnCancel )
-		return false;
-	else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
+	if ( _retval == nsIFilePicker::returnCancel ) {
+		Success = false;
+		ERRReturn;
+	} else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
 		ERRx();
 
 	nsILocalFile *File;
@@ -401,7 +414,11 @@ static bso::bool__ FileDialogBox_(
 
 	nsxpcm::Transform( EString, Name );
 
-	return true;
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
 }
 
 bso::bool__ nsxpcm::FileOpenDialogBox(
@@ -409,7 +426,15 @@ bso::bool__ nsxpcm::FileOpenDialogBox(
 	const char *Title,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( Parent, Title, nsIFilePicker::modeOpen, FileName );
+	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeOpen, nsIFilePicker::filterAll, FileName );
+}
+
+bso::bool__ nsxpcm::HTMLFileOpenDialogBox(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	str::string_ &FileName )
+{
+	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeOpen, nsIFilePicker::filterHTML, FileName );
 }
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
@@ -417,7 +442,15 @@ bso::bool__ nsxpcm::FileSaveDialogBox(
 	const char *Title,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( Parent, Title, nsIFilePicker::modeSave, FileName );
+	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeSave, nsIFilePicker::filterAll, FileName );
+}
+
+bso::bool__ nsxpcm::HTMLFileSaveDialogBox(
+	nsIDOMWindow *Parent,
+	const char *Title,
+	str::string_ &FileName )
+{
+	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeSave, nsIFilePicker::filterHTML, FileName );
 }
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
@@ -425,7 +458,7 @@ bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	const char *Title,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( Parent, Title, nsIFilePicker::modeGetFolder, FileName );
+	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeGetFolder, nsIFilePicker::filterAll, FileName );
 }
 
 void nsxpcm::Delete( element_cores_ &Cores )

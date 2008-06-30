@@ -856,7 +856,21 @@ namespace nsxpcm {
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
+	bso::bool__ HTMLFileOpenDialogBox(
+		nsIDOMWindow *Parent,
+		const char *Title,
+		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileSaveDialogBox(
+		nsIDOMWindow *Parent,
+		const char *Title,
+		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	bso::bool__ HTMLFileSaveDialogBox(
 		nsIDOMWindow *Parent,
 		const char *Title,
 		str::string_ &FileName );

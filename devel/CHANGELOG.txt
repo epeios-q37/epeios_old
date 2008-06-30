@@ -1,5 +1,9 @@
 $Id$
 
+30/06/2008 :
+	- NSXPCM :
+		- Ajout 'HTML(Open|Save)FileDialogBox(...)'.
+
 22/05/2008 :
 	- CPE :
 		- Mise en place 'CPE__C_VC9'.
