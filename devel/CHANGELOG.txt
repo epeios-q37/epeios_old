@@ -1,5 +1,11 @@
 $Id$
 
+08/06/2008 :
+	- CSDBNC
+		- Prise en compte de la plateforme Mac.
+	- NSXPCM :
+		- Correction incongruité détectée par g++ V4.0.1
+
 30/06/2008 :
 	- NSXPCM :
 		- Ajout 'HTML(Open|Save)FileDialogBox(...)'.

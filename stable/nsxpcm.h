@@ -362,7 +362,7 @@ namespace nsxpcm {
 		{\
 			return _GetElementById< name >( Document, Id );\
 		}\
-		inline name *Create##Name##( nsIDOMDocument *Document )\
+		inline name *Create##Name( nsIDOMDocument *Document )\
 		{\
 			return _CreateElement< name >( Document, #name );\
 		}
