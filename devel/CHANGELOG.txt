@@ -1,5 +1,9 @@
 $Id$
 
+09/06/2008 :
+	- CSDDLC
+		- Prise en compte de la plateforme Mac.
+		
 08/06/2008 :
 	- CSDBNC
 		- Prise en compte de la plateforme Mac.
