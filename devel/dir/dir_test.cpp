@@ -40,12 +40,25 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	dir::handle___ Handle = NULL;
+	const char *Name = NULL;
 ERRBegin
-	if ( dir::CreateDir( "coucou" ) != dir::sOK )
+/*	if ( dir::CreateDir( "coucou" ) != dir::sOK )
 		ERRu();
+*/
 
+	Name = dir::GetFirstFile( ".", Handle );
+
+	while ( ( Name != NULL ) && *Name ) {
+		cio::cout << Name << txf::nl;
+
+		Name = dir::GetNextFile( Handle );
+	}
+		
 ERRErr
 ERREnd
+	if ( Handle != NULL )
+		dir::Close( Handle );
 ERREpilog
 }
 

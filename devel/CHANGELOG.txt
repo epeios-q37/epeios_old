@@ -1,5 +1,10 @@
 $Id$
 
+18/08/2008 :
+	- DIR :
+		- Correction entêtes manquants.
+		- Codage 'FindFirstFile(...)', 'FindNextFile(...)' et 'Close(...)'.
+
 09/06/2008 :
 	- CSDDLC
 		- Prise en compte de la plateforme Mac.
