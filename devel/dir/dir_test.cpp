@@ -32,25 +32,41 @@
 
 #include "err.h"
 #include "cio.h"
+#include "fil.h"
 
 using cio::cin;
 using cio::cout;
 using cio::cerr;
+
+#define PATH	"c:"
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	dir::handle___ Handle = NULL;
 	const char *Name = NULL;
+	char LocalizedName[MAX_PATH];
 ERRBegin
 /*	if ( dir::CreateDir( "coucou" ) != dir::sOK )
 		ERRu();
 */
 
-	Name = dir::GetFirstFile( ".", Handle );
+	Name = dir::GetFirstFile( PATH, Handle );
 
 	while ( ( Name != NULL ) && *Name ) {
-		cio::cout << Name << txf::nl;
+
+		sprintf( LocalizedName, "%s\\%s", PATH, Name );
+
+		cio::cout << '"' << LocalizedName << "\" : ";
+
+		if ( fil::IsDirectory( LocalizedName ) )
+			cout << "Directory";
+		else if ( fil::IsFile( LocalizedName ) )
+			cout << "File";
+		else
+			cout << "???";
+
+		cout << txf::nl;
 
 		Name = dir::GetNextFile( Handle );
 	}

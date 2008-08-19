@@ -1,5 +1,18 @@
 $Id$
 
+19/08/2008 :
+	- GENERAL :
+		- Adaptations aux modifications 'TOL' et 'FIL'.
+	- DIR :
+		- Poursuite codage ...
+	- FIL :
+		- Récupération des fonctions relatives aux fichiers de la 'TOL'.
+		- Rajout 'IsDirectory(...)' et 'IsFile(...)'.
+	- FLW :
+		- Rajout fonction 'Copy(...)'.
+	- TOL :
+		- Déportation des fonctions relatives au fichiers vers 'FIL'.
+
 18/08/2008 :
 	- DIR :
 		- Correction entêtes manquants.

@@ -1650,9 +1650,9 @@ namespace mmm {
 				if ( ( _Multimemory != NULL )
 					 && _untyped_memory_file_manager___::IsPersistent()
 					 && untyped_memory_file_manager___::Exists()
-					 && ( !tol::FileExists( _FreeFragmentPositionFileName )
+					 && ( !fil::FileExists( _FreeFragmentPositionFileName )
 					      || ( untyped_memory_file_manager___::TimeStamp()
-						       >= tol::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
+						       >= fil::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
 					_WriteFreeFragmentPositions();
 			}
 

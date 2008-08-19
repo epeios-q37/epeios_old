@@ -62,6 +62,9 @@ extern class ttr_tutor &FILTutor;
 
 //D FILe. File management.
 
+#include <sys/stat.h>
+#include <errno.h>
+
 #include "iop.h"
 #include "flw.h"
 #include "txf.h"
@@ -76,6 +79,13 @@ extern class ttr_tutor &FILTutor;
 #	include "cio.h"
 #endif
 
+#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
+#	define FIL__POSIX
+#elif defined( CPE__T_MS )
+#	define FIL__MS
+#else
+#	error "Undefined compilation enviroment."
+#endif
 
 
 //d The default backup file extension.
@@ -124,6 +134,158 @@ namespace fil {
 
 	void Close( iop::descriptor__ D );
 
+	//f Return true if the file 'Name' exists, false otherwise.
+	inline bool FileExists( const char *FileName )
+	{
+#ifdef FIL__MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) == 0 )
+			return true;
+#elif defined( FIL__POSIX )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) == 0 )
+			return true;
+#else
+#	error
+#endif
+		switch ( errno ) {
+		case EBADF:
+			ERRs();	// Normalement, cette erreur ne peut arriver, compte tenu de la focntion utilisée.
+			break;
+		case ENOENT:
+			break;
+		case ENOTDIR:
+			break;
+#if defined( FIL__POSIX )
+		case ELOOP:
+			break;
+#endif
+		case EFAULT:
+			ERRu();
+			break;
+		case EACCES:
+			break;
+		case ENOMEM:
+			ERRs();
+			break;
+		case ENAMETOOLONG:
+			ERRu();
+			break;
+		default:
+			ERRs();
+			break;
+		}
+
+		return false;
+	}
+
+	inline time_t GetFileLastModificationTime( const char *FileName )
+	{
+#ifdef FIL__MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mtime;
+#elif defined( FIL__POSIX )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mtime;
+#else
+#	error
+#endif
+	}
+
+	inline bso::size__ GetFileSize( const char *FileName )
+	{
+#ifdef FIL__MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_size;
+#elif defined( FIL__POSIX )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_size;
+#else
+#	error
+#endif
+	}
+
+	inline bso::size__ IsDirectory( const char *FileName )
+	{
+#ifdef FIL__MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mode & _S_IFDIR;
+#elif defined( FIL__POSIX )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mode & S_IFDIR;
+#else
+#	error
+#endif
+	}
+
+	inline bso::size__ IsFile( const char *FileName )
+	{
+#ifdef FIL__MS
+		struct _stat Stat;
+
+		if ( _stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mode & _S_IFREG;
+#elif defined( FIL__POSIX )
+		struct stat Stat;
+
+		if ( stat( FileName, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_mode & S_IFREG;
+#else
+#	error
+#endif
+	}
+
+	// Modifie la date de modification d'un fichier à la date courante.
+	inline void TouchFile( const char *FileName )
+	{
+		if ( utime( FileName, NULL ) != 0 )
+			ERRu();
+	}
+
+	inline void RemoveFile( const char *FileName )
+	{
+		remove( FileName );
+	}
+
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
+
+	bso::bool__ CreateFile(
+		const char *FileName,
+		err::handle ErrHandle = err::hUsual );	// Crée un fichier de nom 'FileName'.
+
+
 	//e Error code which can occurs during backup file operation.
 	enum rbf
 	{
@@ -131,11 +293,11 @@ namespace fil {
 		rbfOK,
 		//i error by renaming.
 		rbfRenaming,
-		//i Error by duplication. Occurs only with 'TOLCreateBackupFile()'.
+		//i Error by duplication. Occurs only with 'FILCreateBackupFile()'.
 		rbfDuplication,
 		//i Error by suppression. 
 		rbfSuppression,
-		//i Erreur by allocation. Occurs only with 'TOLRecoverBackupFile()'.
+		//i Erreur by allocation. Occurs only with 'FILRecoverBackupFile()'.
 		rbfAllocation
 	};
 
@@ -150,8 +312,8 @@ namespace fil {
 
 
 	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
-	If 'Handle' == 'tol::hbfDuplicate', the backup file is create by duplicating the original one.
-	If 'Handle' == 'tol::hbfRename', the bachup file is create by renaming the original one. */
+	If 'Handle' == 'fil::hbfDuplicate', the backup file is create by duplicating the original one.
+	If 'Handle' == 'fil::hbfRename', the bachup file is create by renaming the original one. */
 	rbf CreateBackupFile(
 		const char *Name,
 		hbf Handle,

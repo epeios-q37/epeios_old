@@ -389,8 +389,8 @@ namespace flm {
 */		}
 		void Allocate( iop::amount__ Capacite )
 		{
-			if ( ( TailleFichier_ == 0 ) && tol::FileExists( Nom_ ) )
-				TailleFichier_ = tol::GetFileSize( Nom_ );
+			if ( ( TailleFichier_ == 0 ) && fil::FileExists( Nom_ ) )
+				TailleFichier_ = fil::GetFileSize( Nom_ );
 
 			if ( Capacite > TailleFichier_ )
 			{
@@ -550,7 +550,7 @@ namespace flm {
 		{
 			ReleaseFile();
 
-			if ( ( Nom_ != NULL ) && tol::FileExists( Nom_ ) )
+			if ( ( Nom_ != NULL ) && fil::FileExists( Nom_ ) )
 				if ( remove( Nom_ ) != 0 )
 					ERRd();
 
@@ -562,11 +562,11 @@ namespace flm {
 		}
 		bso::bool__ Exists( void ) const
 		{
-			return tol::FileExists( Nom_ );
+			return fil::FileExists( Nom_ );
 		}
 		time_t TimeStamp( void ) const
 		{
-			return tol::GetFileLastModificationTime( Nom_ );
+			return fil::GetFileLastModificationTime( Nom_ );
 		}
 		mdr::size__ FileSize( void )
 		{

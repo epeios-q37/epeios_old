@@ -76,8 +76,11 @@ extern class ttr_tutor &DIRTutor;
 
 #ifdef DIR__MS
 #	include <direct.h>
+#	include <windows.h>
 #elif defined( DIR__POSIX )
+#	include <unistd.h>
 #	include <sys/stat.h>
+#	include <dirent.h>
 #else
 #	error
 #endif
@@ -236,6 +239,139 @@ namespace dir {
 
 		return s_Undefined;	// Pour éviter un 'warning'.
 	}
+
+#ifdef DIR__MS
+	typedef HANDLE	handle___;
+#elif defined( DIR__POSIX )
+	typedef DIR	*handle___;
+#else
+#	error
+#endif
+
+	// Si retourne chaîne vide, plus de fichier; si retourne NULL, erreur.
+	inline const char *GetFirstFile(
+		const char *Directory,
+		handle___ &Handle )
+	{
+#ifdef DIR__MS
+#	ifdef CPE__MT
+		return NULL;
+#	endif
+		static WIN32_FIND_DATAA File;
+		HANDLE &hSearch = Handle;
+		char SearchString[MAX_PATH+1] = "";
+
+		if ( ( strlen( Directory ) + 4 ) > MAX_PATH )
+			ERRl();
+
+		strcpy( SearchString, Directory );
+
+		if ( *SearchString )
+			strcat( SearchString, "\\" );
+
+		strcat( SearchString, "*.*" );
+
+	    hSearch = FindFirstFileA( SearchString, &File );
+
+		if ( hSearch == INVALID_HANDLE_VALUE )
+			if ( GetLastError() == ERROR_NO_MORE_FILES )
+				return "";
+			else
+				return NULL;
+		else
+			return File.cFileName;
+#elif defined( DIR__POSIX )
+#	ifdef CPE__MT
+		return NULL;
+#	endif
+	struct dirent * ent;
+    DIR *&rep = Handle;
+    
+    rep = opendir( Directory );
+
+	if( rep == NULL )
+		return NULL;
+
+	errno = 0;
+    
+    if ( ( ent = readdir(rep) ) == NULL )
+		if ( errno != 0 )
+			return NULL;
+		else
+			return "";
+	else
+		return ent->d_name;
+    
+    return 0;
+#endif
+	}
+
+	// Si retourne chaîne vide, plus de fichier; si retourne NULL, erreur.
+	inline const char *GetNextFile( handle___ &Handle )
+	{
+#ifdef DIR_DBG
+		if ( Handle == NULL )
+			ERRu();
+#endif
+#ifdef DIR__MS
+#	ifdef CPE__MT
+		return NULL;
+#	endif
+		static WIN32_FIND_DATAA File;
+		HANDLE &hSearch = Handle;
+
+		if ( !FindNextFileA( hSearch, &File ) )
+			if ( GetLastError() == ERROR_NO_MORE_FILES )
+				return "";
+			else
+				return NULL;
+
+		return File.cFileName;
+#endif
+#ifdef DIR__POSIX
+	struct dirent * ent;
+    DIR *&rep = Handle;
+    
+	errno = 0;
+    
+    if ( ( ent = readdir(rep) ) == NULL )
+		if ( errno != 0 )
+			return NULL;
+		else
+			return "";
+	else
+		return ent->d_name;
+    
+    return 0;
+#endif
+	}
+
+	inline void Close( handle___ &Handle )
+	{
+#ifdef DIR_DBG
+		if ( Handle == NULL )
+			ERRu();
+#endif
+#ifdef DIR__MS
+#	ifdef CPE__MT
+		return NULL;
+#	endif
+		if ( !FindClose( Handle ) )
+			ERRs();
+
+		Handle = NULL;
+#endif
+		
+#ifdef DIR__POSIX
+    DIR *&rep = Handle;
+    
+    if ( closedir(rep) )
+		ERRs();
+
+	Handle = NULL;
+#endif
+	}
+
 
 
 }

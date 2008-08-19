@@ -259,8 +259,19 @@ namespace dir {
 #	endif
 		static WIN32_FIND_DATAA File;
 		HANDLE &hSearch = Handle;
-	    
-		hSearch = FindFirstFileA( "*.*", &File );
+		char SearchString[MAX_PATH+1] = "";
+
+		if ( ( strlen( Directory ) + 4 ) > MAX_PATH )
+			ERRl();
+
+		strcpy( SearchString, Directory );
+
+		if ( *SearchString )
+			strcat( SearchString, "\\" );
+
+		strcat( SearchString, "*.*" );
+
+	    hSearch = FindFirstFileA( SearchString, &File );
 
 		if ( hSearch == INVALID_HANDLE_VALUE )
 			if ( GetLastError() == ERROR_NO_MORE_FILES )
@@ -354,8 +365,10 @@ namespace dir {
 #ifdef DIR__POSIX
     DIR *&rep = Handle;
     
-    if ( !closedir(rep) )
+    if ( closedir(rep) )
 		ERRs();
+
+	Handle = NULL;
 #endif
 	}
 

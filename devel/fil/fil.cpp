@@ -76,7 +76,7 @@ static inline iop::descriptor__ Open_(
 		strcat( Flags, "a+" );
 		break;
 	case mReadWrite:
-		if ( tol::FileExists( Nom ) )
+		if ( FileExists( Nom ) )
 			strcat( Flags, "r+" );
 		else
 			strcat( Flags, "w+" );
@@ -102,7 +102,6 @@ static void Close_( iop::descriptor__ D )
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
 #	ifdef CPE__P_MS
-#include "sys/stat.h"
 
 static inline iop::descriptor__ Open_(
 	const char *Nom,
@@ -198,6 +197,29 @@ void fil::Close( iop::descriptor__ D )
 	::Close_( D );
 }
 
+bso::bool__ fil::CreateFile(
+	const char *FileName,
+	err::handle ErrHandle )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	iop::descriptor__ Descriptor = IOP_UNDEFINED_DESCRIPTOR;
+ERRBegin
+	Descriptor = fil::Open( FileName, fil::mReadWrite );
+
+	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
+
+	if ( !Success && ( ErrHandle == err::hUsual ) )
+		ERRf();
+ERRErr
+ERREnd
+	if ( Descriptor != IOP_UNDEFINED_DESCRIPTOR )
+		fil::Close( Descriptor );
+ERREpilog
+	return Success;
+}
+
+
 rbf fil::CreateBackupFile(
 	const char *NomFichier,
 	hbf Handle,
@@ -209,14 +231,14 @@ rbf fil::CreateBackupFile(
 ERRProlog
 	char *NomFichierSecurite = NULL;
 ERRBegin
-	if ( tol::FileExists( NomFichier ) )
+	if ( FileExists( NomFichier ) )
 	{
 		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
 			ERRa();
 
 		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
 
-		if ( tol::FileExists( NomFichierSecurite ) )
+		if ( FileExists( NomFichierSecurite ) )
 			if ( remove( NomFichierSecurite ) )
 				Etat = rbfSuppression;
 
@@ -291,7 +313,7 @@ rbf fil::RecoverBackupFile(
 ERRProlog
 	char *NomFichierSecurite = NULL;
 ERRBegin
-	if ( tol::FileExists( NomFichier ) )
+	if ( FileExists( NomFichier ) )
 		if ( remove( NomFichier ) )
 			Etat = rbfSuppression;
 
@@ -303,7 +325,7 @@ ERRBegin
 	{
 		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
 
-		if ( tol::FileExists( NomFichierSecurite ) )
+		if ( FileExists( NomFichierSecurite ) )
 			if ( rename( NomFichierSecurite, NomFichier ) )
 				Etat = rbfRenaming;
 	}

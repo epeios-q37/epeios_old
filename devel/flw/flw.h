@@ -774,6 +774,12 @@ namespace flw {
 	typedef unsafe_ioflow___	ioflow___;
 #endif
 
+	// Copie 'Amount' octets de 'IFlow' dans 'OFlow'.
+	void Copy(
+		iflow__ &IFlow,
+		size__ Amount,
+		oflow__ &OFlow );
+
 }
 
 inline flw::oflow__ &operator <<(

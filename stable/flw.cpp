@@ -147,6 +147,15 @@ ERREpilog
 	return Amount;
 }
 
+void flw::Copy(
+	iflow__ &IFlow,
+	size__ Amount,
+	oflow__ &OFlow )	// A optimiser.
+{
+	while ( Amount-- )
+		OFlow.Put( IFlow.Get() );
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

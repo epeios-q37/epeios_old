@@ -65,8 +65,6 @@ extern class ttr_tutor &TOLTutor;
 #include <stddef.h>
 #include <time.h>
 #include <signal.h>
-#include <sys/stat.h>
-#include <errno.h>
 #include <locale.h>
 
 #include "cpe.h"
@@ -510,114 +508,6 @@ namespace tol {
 		}
 	};
 
-	//f Return true if the file 'Name' exists, false otherwise.
-	inline bool FileExists( const char *FileName )
-	{
-#ifdef TOL__MS
-		struct _stat Stat;
-
-		if ( _stat( FileName, &Stat ) == 0 )
-			return true;
-#elif defined( TOL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) == 0 )
-			return true;
-#else
-#	error
-#endif
-		switch ( errno ) {
-		case EBADF:
-			ERRs();	// Normalement, cette erreur ne peut arriver, compte tenu de la focntion utilisée.
-			break;
-		case ENOENT:
-			break;
-		case ENOTDIR:
-			break;
-#if defined( TOL__POSIX )
-		case ELOOP:
-			break;
-#endif
-		case EFAULT:
-			ERRu();
-			break;
-		case EACCES:
-			break;
-		case ENOMEM:
-			ERRs();
-			break;
-		case ENAMETOOLONG:
-			ERRu();
-			break;
-		default:
-			ERRs();
-			break;
-		}
-
-		return false;
-	}
-
-	inline time_t GetFileLastModificationTime( const char *FileName )
-	{
-#ifdef TOL__MS
-		struct _stat Stat;
-
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
-
-		return Stat.st_mtime;
-#elif defined( TOL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
-			ERRu();
-
-		return Stat.st_mtime;
-#else
-#	error
-#endif
-	}
-
-	inline bso::size__ GetFileSize( const char *FileName )
-	{
-#ifdef TOL__MS
-		struct _stat Stat;
-
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
-
-		return Stat.st_size;
-#elif defined( TOL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
-			ERRu();
-
-		return Stat.st_size;
-#else
-#	error
-#endif
-	}
-
-	// Modifie la date de modification d'un fichier à la date courante.
-	inline void Touch( const char *FileName )
-	{
-		if ( utime( FileName, NULL ) != 0 )
-			ERRu();
-	}
-
-	inline void RemoveFile( const char *FileName )
-	{
-		remove( FileName );
-	}
-
-#ifdef CPE__C_VC
-#	undef CreateFile
-#endif
-
-	bso::bool__ CreateFile(
-		const char *FileName,
-		err::handle ErrHandle = err::hUsual );	// Crée un fichier de nom 'FileName'.
 
 	//f Return the current date.
 	const char *Date( buffer__ &Buffer );

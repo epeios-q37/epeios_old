@@ -105,29 +105,6 @@ const char *tol::DateAndTime( buffer__ &Buffer )
 #	undef CreateFile
 #endif
 
-bso::bool__ tol::CreateFile(
-	const char *FileName,
-	err::handle ErrHandle )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	iop::descriptor__ Descriptor = IOP_UNDEFINED_DESCRIPTOR;
-ERRBegin
-	Descriptor = fil::Open( FileName, fil::mReadWrite );
-
-	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
-
-	if ( !Success && ( ErrHandle == err::hUsual ) )
-		ERRf();
-ERRErr
-ERREnd
-	if ( Descriptor != IOP_UNDEFINED_DESCRIPTOR )
-		fil::Close( Descriptor );
-ERREpilog
-	return Success;
-}
-
-
 static inline void signal_( int s )
 {
 	exit( EXIT_SUCCESS );
