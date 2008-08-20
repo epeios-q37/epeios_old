@@ -242,8 +242,10 @@ namespace dir {
 
 #ifdef DIR__MS
 	typedef HANDLE	handle___;
+#	define DIR_INVALID_HANDLE	INVALID_HANDLE_VALUE
 #elif defined( DIR__POSIX )
 	typedef DIR	*handle___;
+#	define DIR_INVALID_HANDLE	NULL
 #else
 #	error
 #endif
@@ -310,7 +312,7 @@ namespace dir {
 	inline const char *GetNextFile( handle___ &Handle )
 	{
 #ifdef DIR_DBG
-		if ( Handle == NULL )
+		if ( Handle == DIR_INVALID_HANDLE )
 			ERRu();
 #endif
 #ifdef DIR__MS
@@ -349,7 +351,7 @@ namespace dir {
 	inline void Close( handle___ &Handle )
 	{
 #ifdef DIR_DBG
-		if ( Handle == NULL )
+		if ( Handle == DIR_INVALID_HANDLE )
 			ERRu();
 #endif
 #ifdef DIR__MS
@@ -359,7 +361,7 @@ namespace dir {
 		if ( !FindClose( Handle ) )
 			ERRs();
 
-		Handle = NULL;
+		Handle = INVALID_HANDLE_VALUE;
 #endif
 		
 #ifdef DIR__POSIX
@@ -371,9 +373,6 @@ namespace dir {
 	Handle = NULL;
 #endif
 	}
-
-
-
 }
 
 /*$END$*/

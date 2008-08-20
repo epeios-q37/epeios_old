@@ -1,5 +1,11 @@
 $Id$
 
+20/08/2008 :
+	- DIR :
+		- Mise en oeuvre 'DIR_INVALID_HANDLE'
+	- FLW :
+		- Optimisation fonction 'Copy(...)'.
+
 19/08/2008 :
 	- GENERAL :
 		- Adaptations aux modifications 'TOL' et 'FIL'.

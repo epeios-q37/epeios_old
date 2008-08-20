@@ -150,10 +150,20 @@ ERREpilog
 void flw::Copy(
 	iflow__ &IFlow,
 	size__ Amount,
-	oflow__ &OFlow )	// A optimiser.
+	oflow__ &OFlow )
 {
-	while ( Amount-- )
-		OFlow.Put( IFlow.Get() );
+	bso::size__ Size = 4096;
+	datum__ Buffer[4096];
+
+	while ( Amount ) {
+		if ( Amount < Size )
+			Size = Amount;
+
+		IFlow.Read( Size, Buffer );
+		OFlow.Write( Buffer, Size );
+
+		Amount -= Size;
+	}
 }
 
 
