@@ -66,6 +66,12 @@ extern class ttr_tutor &TXFTutor;
 #include "err.h"
 #include "flw.h"
 
+#ifndef TXF_64_BITS_FORBIDDEN
+#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined(TXF_64_BITS_TYPES_ALLOWED )
+#		define TXF__64_BITS_TYPES_ALLOWED
+#	endif
+#endif
+
 namespace txf {
 	using flw::size__;
 	using flw::datum__;
@@ -96,6 +102,25 @@ namespace txf {
 
 			return *this;
 		}
+#ifdef TXF__64_BITS_TYPES_ALLOWED
+		text_iflow__ &operator >>( unsigned long long &E )
+		{
+			datum__ C[9];
+			size__ Pos;
+
+			if ( ( Pos = Lire_( 9, C ) ) > 8 )
+				ERRf();
+
+			if ( !isxdigit( C[0] ) )
+				ERRf();
+
+			C[Pos] = 0;
+
+			sscanf( (const char *)C, "%llx", &E );
+
+			return *this;
+		}
+#endif
 		text_iflow__ &operator >>( unsigned long &E )
 		{
 			datum__ C[9];
@@ -126,6 +151,30 @@ namespace txf {
 
 			return *this;
 		}
+#ifdef TXF__64_BITS_TYPES_ALLOWED
+		text_iflow__ &operator >>( signed long long &E )
+		{
+			unsigned long long L;
+			datum__ C = Get();
+
+			if ( ( C != '+' ) && ( C != '-' ) )
+				ERRf();
+
+			operator >>( L );
+
+			if ( C == '+' )
+				if ( L > LLONG_MAX )
+					ERRf();
+				else E = (signed long long)L;
+			else
+				if ( L > ((unsigned long long)-(LLONG_MIN + 1 ) + 1UL ) )
+					ERRf();
+				else
+					E = -(signed long long)L;
+
+			return *this;
+		}
+#endif
 		text_iflow__ &operator >>( signed long &E )
 		{
 			unsigned long L;
@@ -221,6 +270,16 @@ namespace txf {
 
 			return *this;
 		}
+#ifdef TXF__64_BITS_TYPES_ALLOWED
+		text_oflow__ &operator <<( unsigned long long E )
+		{
+			char C[21];
+
+			sprintf( C, "%llu", E );
+
+			return operator <<( C );
+		}
+#endif
 		text_oflow__ &operator <<( unsigned long E )
 		{
 			char C[11];
@@ -241,6 +300,16 @@ namespace txf {
 		{
 			return operator <<( (unsigned long) E );
 		}
+#ifdef TXF__64_BITS_TYPES_ALLOWED
+		text_oflow__ &operator <<( signed long long E )
+		{
+			char C[22];
+
+			sprintf( C, "%lli", E );
+
+			return operator <<( C );
+		}
+#endif
 		text_oflow__ &operator <<( signed long E )
 		{
 			char C[12];

@@ -63,6 +63,19 @@ extern class ttr_tutor &STRTutor;
 #include "err.h"
 #include "txf.h"
 #include "bch.h"
+#include "cpe.h"
+
+#ifndef STR_64_BITS_FORBIDDEN
+#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined( STR_64_BITS_TYPES_ALLOWED )
+#		define STR__64_BITS_TYPES_ALLOWED
+#	endif
+#endif
+
+#ifdef STR__64_BITS_TYPES_ALLOWED
+#	ifndef BSO__64_BITS_TYPES_ALLOWED
+#		error "64 bits types allowed in 'STR' library, but not in 'BSO' library !".
+#	endif
+#endif
 
 namespace str {
 
@@ -76,6 +89,20 @@ namespace str {
 		b16 = 16,	// Base hexadécimale.
 	};
 
+#ifdef STR__64_BITS_TYPES_ALLOWED
+	typedef bso::ullong__ _generic_integer__;
+#else
+	typedef bso::ulong__ _generic_integer__;
+#endif
+
+	class string_;	// Prédéclaration.
+
+	_generic_integer__ _GenericConversion(
+		const class string_ &String,
+		epeios::row__ Begin,
+		epeios::row__ *ErrP,
+		base__ Base,
+		_generic_integer__ Limit );
 
 	class _string_size_handler {
 	public:
@@ -180,20 +207,42 @@ namespace str {
 		epeios::row__ Search(
 			char C,
 			epeios::row__ Start = 0 ) const;
+		/*f Convert to unsigned long long. If 'ErrP' != NULL, put in it the position of the bad character
+		if there is one. 'Limit' is the max value that the returned value can have. */
+#ifdef STR__64_BITS_TYPES_ALLOWED
+		bso::ullong__ ToULL(
+			epeios::row__ Begin,
+			epeios::row__ *ErrP,
+			base__ Base,
+			bso::ullong__ Limit = BSO_ULLONG_MAX ) const
+		{
+			return _GenericConversion( *this, Begin, ErrP, Base, Limit );
+		}
+		bso::ullong__ ToULL(
+			epeios::row__ *ErrP = NULL,
+			base__ Base = bAuto,
+			bso::ullong__ Limit = BSO_ULLONG_MAX ) const
+		{
+			return ToULL( 0, ErrP, Base, Limit );
+		}
+#endif
 		/*f Convert to unsigned long. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
 		bso::ulong__ ToUL(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
 			base__ Base,
-			bso::ulong__ Limit = BSO_ULONG_MAX ) const;
+			bso::ulong__ Limit = BSO_ULONG_MAX ) const
+		{
+			return (bso::ulong__)_GenericConversion( *this, Begin, ErrP, Base, Limit );
+		}
 		//f Variation in parameters.
 		bso::ulong__ ToUL(
 			epeios::row__ *ErrP = NULL,
 			base__ Base = bAuto,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const
 		{
-			return ToUL( 0, ErrP, Base, Limit );
+			return (bso::ulong__)ToUL( 0, ErrP, Base, Limit );
 		}
 		/*f Convert to signed long. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max absolute value that the returned value can have. */
@@ -208,9 +257,9 @@ namespace str {
 					*ErrP = *Begin + 1;
 					return 0;
 				} else 
-					return -(bso::slong__)ToUL( Next( Begin ), ErrP, b10, -NegativeLimit );
+					return -(bso::slong__)_GenericConversion( *this, Next( Begin ), ErrP, b10, -NegativeLimit );
 			else
-				return (bso::slong__)ToUL( Begin, ErrP, b10, PositiveLimit );
+				return (bso::slong__)_GenericConversion( *this, Begin, ErrP, b10, PositiveLimit );
 		}
 		//f Variation in parameters.
 		bso::slong__ ToSL(
@@ -228,7 +277,7 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)ToUL( Begin, ErrP, Base, Limit );
+			return (bso::ushort__)_GenericConversion( *this, Begin, ErrP, Base, Limit );
 		}
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP,
@@ -272,7 +321,7 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)ToUL( Begin, ErrP, Base, Limit );
+			return (bso::ubyte__)_GenericConversion(*this, Begin, ErrP, Base, Limit );
 		}
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP,

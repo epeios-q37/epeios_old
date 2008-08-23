@@ -1,5 +1,12 @@
 $Id$
 
+22/08/2008 :
+	- GENERAL
+		- Introduction des particularités liés au 64 bits.
+		- Adaptations aux modification 'FIL' et 'TOL'.
+	- BSO :
+		- Renommage de 'p_long__' en 'p_32bits__'.
+
 20/08/2008 :
 	- DIR :
 		- Mise en oeuvre 'DIR_INVALID_HANDLE'

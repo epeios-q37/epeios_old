@@ -32,21 +32,88 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+#ifdef CPE__64_BITS_TYPES_ALLOWED
+// Disk space size.
+typedef bso::ullong__ dssize__;
+#	define DSSIZE_MAX	BSO_ULLONG_MAX
+#else
+typedef bso::ulong__ dssize__;
+#	define DSSIZE_MAX	BSO_ULONG_MAX
+#endif
+
+inline dssize__ ApplyFactor(
+	dssize__ Size,
+	bso::ulong__ Factor )
+{
+	if ( ( DSSIZE_MAX / Factor ) < Size ) {
+		cerr << "Total amount too big" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	return Size * Factor;
+}
+
+dssize__ GetSize(
+	str::string_ &SizeString,
+	const char *ErrorMessageTarget )
+{
+	epeios::row__ ErrP = NONE;
+
+	dssize__ Size = SizeString.ToULL( &ErrP );
+
+	if ( ErrP != NONE ) {
+		if ( SizeString( ErrP ) == 'G' ) 
+			Size = ApplyFactor( Size, 1024 * 1024 * 1024 );
+		else if ( SizeString( ErrP ) == 'g' )
+			Size = ApplyFactor( Size, 1000 *1000 *1000 );
+		else if ( SizeString( ErrP ) == 'M' )
+			Size = ApplyFactor( Size, 1024 * 1024 );
+		else if ( SizeString( ErrP ) == 'm' )
+			Size = ApplyFactor( Size, 1000 *1000 );
+		else if ( SizeString( ErrP ) == 'K' )
+			Size = ApplyFactor( Size, 1024 );
+		else if ( SizeString( ErrP ) == 'k' )
+			Size = ApplyFactor( Size, 1000 );
+		else {
+			cerr << "Bad " << ErrorMessageTarget << " value !" << txf::nl;
+			ERRExit( EXIT_FAILURE );
+		}
+
+		if ( ErrP != SizeString.Last() ) {
+			cerr << "Bad " << ErrorMessageTarget << " value !" << txf::nl;
+			ERRExit( EXIT_FAILURE );
+		}
+	}
+
+	return Size;
+}
+
 /* Beginning of the part which handles command line arguments. */
 
 enum command {
 	cHelp,
 	cVersion,
-	cLicense
+	cLicense,
+	cCopy,	// Copy files.
 };
 
 enum option {
 	// o
+	oMinSize,	// Minimum size of the file.
+	oMaxSize	// Maximum size of the file.
 };
 
 struct parameters {
+	tol::E_FPOINTER___( char ) SourceDir;
+	tol::E_FPOINTER___( char ) DestDir;
+	dssize__ MinSize;
+	dssize__ MaxSize;
+	dssize__ TotalSize;
 	parameters( void )
 	{
+		MinSize = TotalSize = 0;
+		MaxSize = DSSIZE_MAX;
+
 	}
 };
 
@@ -100,7 +167,22 @@ ERRBegin
 		Argument.Init();
 
 		switch( Option = Options( P ) ) {
-//		case o:
+		case oMaxSize:
+			Analyzer.GetArgument( Option, Argument );
+			if ( Argument.Amount() == 0 ) {
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oMaxSize ) << "' option must have an argument!" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			Parameters.MaxSize = GetSize( Argument, "max size option" );
+			break;
+		case oMinSize:
+			Analyzer.GetArgument( Option, Argument );
+			if ( Argument.Amount() == 0 ) {
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oMinSize ) << "' option must have an argument!" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			Parameters.MinSize = GetSize( Argument, "min size option" );
+			break;
 		default:
 			ERRc();
 		}
@@ -128,10 +210,17 @@ ERRBegin
 	P = Free.Last();
 
 	switch( Free.Amount() ) {
-	case 0:
+	case 3:
+		Parameters.TotalSize = GetSize( Free( P ), "total amount argument" );
+
+		P = Free.Previous( P );
+		Parameters.DestDir = Free( P ).Convert();
+
+		P = Free.Previous( P );
+		Parameters.SourceDir = Free( P ).Convert();
 		break;
 	default:
-		cerr << "Too many arguments." << txf::nl;
+		cerr << "Bad amount of arguments." << txf::nl;
 		cout << HELP << txf::nl;
 		ERRi();
 		break;
@@ -157,7 +246,8 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
-//	Description.AddOption( '', "", o );
+	Description.AddOption( 'S', "MaxSize", oMaxSize );
+	Description.AddOption( 's', "MinSize", oMinSize );
 
 	Analyzer.Init( argc, argv, Description );
 
@@ -314,37 +404,48 @@ ERREnd
 ERREpilog
 }
 
-void Display( const files_ &Files )
+void Display( const file_ &File )
 {
 ERRProlog
-	ctn::E_CITEM( file_ ) File;
-	epeios::row__ Row = NONE;
 	str::string String;
 ERRBegin
-	File.Init( Files );
+	String.Init();
 
-	Row = Files.First();
+	Build( File, String );
 
-	while ( Row != NONE ) {
-		String.Init();
-
-		Build( File( Row ), String );
-
-		cout << String << txf::nl;
-
-		Row = Files.Next( Row );
-	}
+	cout << String;
 ERRErr
 ERREnd
 ERREpilog
 }
 
+
+
+void Display( const files_ &Files )
+{
+
+	ctn::E_CITEM( file_ ) File;
+	epeios::row__ Row = NONE;
+
+	File.Init( Files );
+
+	Row = Files.First();
+
+	while ( Row != NONE ) {
+		Display( File( Row ) );
+
+		cout << txf::nl;
+
+		Row = Files.Next( Row );
+	}
+}
+
 inline bso::bool__ Match(
 	const char *RootDir,
 	const file_ &File,
-	bso::size__ MinSize,
-	bso::size__ MaxSize,
-	bso::size__ TotalSize )
+	dssize__ MinSize,
+	dssize__ MaxSize,
+	dssize__ TotalSize )
 {
 	bso::bool__ Match = false;
 ERRProlog
@@ -506,9 +607,9 @@ void RandomCopy(
 	const char *Source,
 	files_ &Files,
 	const char *Dest,
-	bso::size__ MinSize,
-	bso::size__ MaxSize,
-	bso::size__ TotalSize )
+	dssize__ MinSize,
+	dssize__ MaxSize,
+	dssize__ TotalSize )
 {
 	epeios::row__ Row = NONE;
 	ctn::E_CITEM( file_ ) File;
@@ -528,6 +629,12 @@ void RandomCopy(
 				break;
 			else
 				TotalSize -= FileExtent;
+
+			cout << TotalSize << txf::tab;
+
+			Display( File( Row ) );
+
+			cout << txf::nl;
 		}
 
 		Files.Remove( Row );
@@ -553,9 +660,9 @@ ERREpilog
 void RandomCopy(
 	const char *Source,
 	const char *Dest,
-	bso::size__ MinSize,
-	bso::size__ MaxSize,
-	bso::size__ TotalSize )
+	dssize__ MinSize,
+	dssize__ MaxSize,
+	dssize__ TotalSize )
 {
 ERRProlog
 	files Files;
@@ -568,6 +675,8 @@ ERRBegin
 
 	cout << "--------------------" << txf::nl;
 
+	cout << MinSize << txf::tab << MaxSize << txf::tab << TotalSize << txf::nl;
+
 	RandomCopy( Source, Files, Dest, MinSize, MaxSize, TotalSize );
 ERRErr
 ERREnd
@@ -579,7 +688,7 @@ void Go( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
-RandomCopy( "z:\\Music\\OGG", "g:\\MUSIC", 3000000, 40000000, 4114706432 );
+	RandomCopy( Parameters.SourceDir, Parameters.DestDir, Parameters.MinSize, Parameters.MaxSize, Parameters.TotalSize );
 ERRErr
 ERREnd
 ERREpilog

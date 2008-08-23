@@ -324,22 +324,23 @@ namespace str {
 			return Start;
 	}
 
-	bso::ulong__ string_::ToUL(
+	_generic_integer__ _GenericConversion(
+		const str::string_ &String,
 		epeios::row__ Begin,
 		epeios::row__ *ErrP,
 		base__ BaseFlag,
-		bso::ulong__ Limit ) const
+		_generic_integer__ Limit )
 	{
-		bso::ulong__ Result = 0;
+		_generic_integer__ Result = 0;
 		epeios::row__ &P = Begin;
 		bso::ubyte__ C;
 		bso::ubyte__ Base;
-		bso::ulong__ OtherLimit = 0;
+		_generic_integer__ OtherLimit = 0;
 
 		if ( BaseFlag == bAuto )
-			if ( ( ( Amount() != 0 ) ) && ( Get( P ) == '#' ) ) {
+			if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == '#' ) ) {
 				BaseFlag = b16;
-				P = Next( P );
+				P = String.Next( P );
 			} else
 				BaseFlag = b10;
 
@@ -355,9 +356,9 @@ namespace str {
 
 		OtherLimit = Limit / Base;
 
-		if ( *P < Amount() )
+		if ( *P < String.Amount() )
 			while( P != NONE ) {
-				C = Convert_( Get( P ) );
+				C = Convert_( String.Get( P ) );
 
 				if ( C >= Base )
 					break;
@@ -372,7 +373,7 @@ namespace str {
 
 				Result += C;
 
-				P = Next( P );
+				P = String.Next( P );
 			}
 
 		if ( ErrP )

@@ -89,6 +89,12 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__T_GUI		// Cible GUI
 #undef CPE__T_LIBRARY	// Cible bibliothèque (DLL, .so, ...)
 
+#undef CPE__64_BITS_TYPES_ALLOWED	// Les types 64 bits sont autorisés.
+
+#ifndef CPE_64_BITS_FORBIDDEN
+#	define CPE__64_BITS_TYPES_ALLOWED
+#endif
+
 #ifdef _MSC_VER
 #	define CPE__P_MS
 #	define CPE__C_VC

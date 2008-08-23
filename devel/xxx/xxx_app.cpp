@@ -127,7 +127,7 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	default:
-		cerr << "Too many arguments." << txf::nl;
+		cerr << "Bad amount of arguments." << txf::nl;
 		cout << HELP << txf::nl;
 		ERRi();
 		break;

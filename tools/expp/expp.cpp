@@ -270,9 +270,10 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 	xtf::extended_text_iflow__ XTFlow;
 	str::string ErrorFileName;
-	tol::E_FPOINTER___( char ) Directory;
+	const char *Directory;
 	bso::bool__ BackedUp = false;
 	xml::extended_status__ Status = xml::xs_Undefined;
+	FNM_BUFFER___ Buffer;
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
@@ -282,7 +283,7 @@ ERRBegin
 
 		XTFlow.Init( IFlow );
 
-		Directory = fnm::GetLocation( Source );
+		Directory = fnm::GetLocation( Source, Buffer );
 	} else {
 		cio::cinf.EOFD( XTF_EOXT );
 		XTFlow.Init( cio::cinf );

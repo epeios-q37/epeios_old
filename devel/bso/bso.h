@@ -65,6 +65,13 @@ extern class ttr_tutor &BSOTutor;
 #include "err.h"
 #include "cpe.h"
 
+#ifndef BSO_64_BITS_TYPES_FORBIDDEN
+#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined( BSO_64_BITS_TYPES_ALLOWED )
+#		define BSO__64_BITS_TYPES_ALLOWED
+#	endif
+#endif
+
+
 namespace bso {
 	//t Basic data, without any basically signification.
 	typedef unsigned char raw__;
@@ -174,13 +181,13 @@ namespace bso {
 		{}
 	};
 
-	// Portable long. Internal use only.
-	template <typename t> class p_long__
+	// Portable 32 bits integer. Internal use only.
+	template <typename t> class p_32_bits__
 	{
 	private:
 		t Op_;
 	public:
-		p_long__( t Op )
+		p_32_bits__( t Op )
 		{
 			raw__ *P = (raw__ *)&Op_;			
 
@@ -195,17 +202,56 @@ namespace bso {
 
 			return P[0] | ( P[1] << 8 ) | ( P[2] << 16 ) | ( P[3] << 24 );
 		}
-		bool operator ==( p_long__ P ) const
+		bool operator ==( p_32_bits__ P ) const
 		{
 			return Op_ == P.Op_;
 		}
-		bool operator != ( p_long__ P ) const
+		bool operator != ( p_32_bits__ P ) const
 		{
 			return Op_ != P.Op_;
 		}
 	};
 
 
+#ifdef BSO__64_BITS_TYPES_ALLOWED
+	// Portable 64 bits integer. Internal use only.
+	template <typename t> class p_64_bits__
+	{
+	private:
+		t Op_;
+	public:
+		p_64_bits__( t Op )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			P[0] = (raw__)( Op & 0xff );
+			P[1] = (raw__)( ( Op >> 8 ) & 0xff );
+			P[2] = (raw__)( ( Op >> 16 ) & 0xff );
+			P[3] = (raw__)( ( Op >> 24 ) & 0xff );
+			P[5] = (raw__)( ( Op >> 32 ) & 0xff );
+			P[5] = (raw__)( ( Op >> 40 ) & 0xff );
+			P[6] = (raw__)( ( Op >> 48 ) & 0xff );
+			P[7] = (raw__)( ( Op >> 56 ) & 0xff );
+		}
+		operator t( void )
+		{
+			raw__ *P = (raw__ *)&Op_;			
+
+			return (unsigned long long)P[0] | ( (unsigned long long)P[1] << 8 ) | ( (unsigned long long)P[2] << 16 ) | (unsigned long long)( P[3] << 24 )
+				   | ( (unsigned long long)P[4] << 32 ) | ( (unsigned long long)P[5] << 40 ) | ( (unsigned long long)P[6] << 48 ) | ( (unsigned long long)P[4] << 56 );
+		}
+		bool operator ==( p_64_bits__ P ) const
+		{
+			return Op_ == P.Op_;
+		}
+		bool operator != ( p_64_bits__ P ) const
+		{
+			return Op_ != P.Op_;
+		}
+	};
+
+
+#endif
 
 	//d Maximal value of a 'slong__'.
 	#define BSO_SLONG_MAX	LONG_MAX
@@ -219,13 +265,36 @@ namespace bso {
 
 	//c Portable signed long.
 	class p_slong__
-	: public p_long__<slong__>
+	: public p_32_bits__<slong__>
 	{
 	public:
 		p_slong__( slong__ Op = 0 )
-		: p_long__<slong__>( Op )
+		: p_32_bits__<slong__>( Op )
 		{}
 	};
+
+#ifdef BSO__64_BITS_TYPES_ALLOWED
+	//d Maximal value of a 'sllong__'.
+	#define BSO_SLLONG_MAX	LLONG_MAX
+	//d Minimal value of a 'sllong__'.
+	#define BSO_SLLONG_MIN   LLONG_MIN
+	//d Size, in bit, of a 'slong__'.
+	#define BSO_NB_BITS_SLLONG	64
+
+	//t Signed long.
+	typedef signed long long sllong__;
+
+	//c Portable signed long long.
+	class p_sllong__
+	: public p_64_bits__<sllong__>
+	{
+	public:
+		p_sllong__( sllong__ Op = 0 )
+		: p_64_bits__<sllong__>( Op )
+		{}
+	};
+
+#endif
 
 	//d Maximal value of a 'ulong__'.
 	#define BSO_ULONG_MAX	ULONG_MAX
@@ -239,13 +308,37 @@ namespace bso {
 
 	//c Portable unsigned long.
 	class p_ulong__
-	: public p_long__<ulong__>
+	: public p_32_bits__<ulong__>
 	{
 	public:
 		p_ulong__( ulong__ Op = 0 )
-		: p_long__<ulong__>( Op )
+		: p_32_bits__<ulong__>( Op )
 		{}
 	};
+
+#ifdef BSO__64_BITS_TYPES_ALLOWED
+
+	//d Maximal value of a 'ullong__'.
+	#define BSO_ULLONG_MAX	ULLONG_MAX
+	//d Minimal value of a 'ullong__'.
+	#define BSO_ULLONG_MIN   0
+	//d Size, in bit, of a 'ullong__'.
+	#define BSO_NB_BITS_ULLONG	64
+
+	//t Unsigned long.
+	typedef unsigned long long ullong__;
+
+	//c Portable unsigned long long.
+	class p_ullong__
+	: public p_64_bits__<ullong__>
+	{
+	public:
+		p_ullong__( ullong__ Op = 0 )
+		: p_64_bits__<ullong__>( Op )
+		{}
+	};
+
+#endif
 
 	//d Maximal value of a 'size'.
 	#define BSO_SIZE_MAX	BSO_ULONG_MAX
@@ -257,11 +350,11 @@ namespace bso {
 
 	//c The portable version of a buffer size.
 	class p_size__
-	: public p_long__<size__>
+	: public p_32_bits__<size__>
 	{
 	public:
 		p_size__( size__ Op = 0 )
-		: p_long__<size__>( Op )
+		: p_32_bits__<size__>( Op )
 		{}
 	};
 

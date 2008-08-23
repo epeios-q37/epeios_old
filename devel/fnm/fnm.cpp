@@ -57,6 +57,7 @@ public:
 
 #include "err.h"
 #include "tol.h"
+#include "fil.h"
 
 using namespace fnm;
 
@@ -242,7 +243,7 @@ ERRBegin
 			Extension,
 			P );
 
-		if ( !tol::FileExists( Nom ) || FNMMatch( Nom ) )
+		if ( !fil::FileExists( Nom ) || FNMMatch( Nom ) )
 			break;
 
 		free( (void *)Nom );
