@@ -76,6 +76,7 @@ namespace ltf {
 		bso::ubyte__ Size_;
 		bso::ubyte__ Amount_;
 		txf::text_oflow__ &TFlow_;
+		bso::ubyte__ _FreezePosition;
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
@@ -83,10 +84,10 @@ namespace ltf {
 			fwf::size__ Minimum )
 		{
 			if ( ( Amount_ + Wanted ) > Size_ ) {
-				if ( Wanted >= Size_ ) {
-					memcpy( Data_, Buffer + ( Size_ - Wanted ), Size_ );
+				if ( Wanted >= (fwf::size__)( Size_ - _FreezePosition ) ) {
+					memcpy( Data_ + _FreezePosition, Buffer + ( Size_ - _FreezePosition - Wanted ), Size_ - _FreezePosition );
 				} else {
-					memcpy( Data_, Data_ + Wanted, Size_ - Wanted );
+					memcpy( Data_ + _FreezePosition, Data_ + _FreezePosition + Wanted, Size_ - Wanted - _FreezePosition );
 					memcpy( Data_ + Size_ - Wanted, Buffer, Wanted );
 				}
 
@@ -99,7 +100,7 @@ namespace ltf {
 			if ( Amount_ < Size_ ) {
 				TFlow_.Put( Buffer, Wanted );
 			} else if ( Amount_ > Size_ )
-				Data_[0] = '<';
+				Data_[_FreezePosition] = '<';
 
 			return Wanted;
 		}
@@ -109,6 +110,8 @@ namespace ltf {
 				TFlow_ << txf::rfl;
 				TFlow_.Put( Data_, Size_ );
 			}
+
+			_FreezePosition = 0;
 
 			TFlow_ << txf::sync;
 		}
@@ -142,6 +145,7 @@ namespace ltf {
 			memset( Data_, ' ', Size_ );
 			Data_[Size_] = 0;
 			Amount_ = 0;
+			_FreezePosition = 0;
 		}
 		void Clear( void )
 		{
@@ -149,11 +153,17 @@ namespace ltf {
 			memset( Data_, ' ', Size_ );
 			TFlow_.Put( Data_, Size_ );
 			TFlow_ << txf::rfl;
+			_FreezePosition = 0;
 		}
 		void CR( void )
 		{
 			TFlow_ << txf::rfl;
 			Amount_ = 0;
+			_FreezePosition = 0;
+		}
+		void Freeze( void )
+		{
+			_FreezePosition = Amount_;
 		}
 	};
 
@@ -194,6 +204,10 @@ namespace ltf {
 		{
 			_Functions.CR();
 		}
+		void Freeze( void )
+		{
+			_Functions.Freeze();
+		}
 	};
 
 
@@ -232,6 +246,10 @@ namespace ltf {
 		void Clear( void )
 		{
 			Flow_.Clear();
+		}
+		void Freeze( void )
+		{
+			Flow_.Freeze();
 		}
 	};
 

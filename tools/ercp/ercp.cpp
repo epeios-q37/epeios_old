@@ -16,11 +16,12 @@ $NOTICE$
 #include "dir.h"
 #include "fnm.h"
 #include "flf.h"
+#include "ltf.h"
 
 #define NAME			"ercp"
 #define VERSION			"0.1.0"
 #define COPYRIGHT_YEARS	"2008"
-#define DESCRIPTION		"(description)"
+#define DESCRIPTION		"copy files randomly"
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
@@ -246,6 +247,7 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
+	Description.AddCommand( CLNARG_NO_SHORT, "copy", cCopy );
 	Description.AddOption( 'S', "MaxSize", oMaxSize );
 	Description.AddOption( 's', "MinSize", oMinSize );
 
@@ -265,7 +267,7 @@ ERRBegin
 		epsmsc::PrintLicense( cout );
 		ERRi();
 		break;
-//	case c:
+	case cCopy:
 	case CLNARG_NONE:
 		break;
 	default:
@@ -404,7 +406,9 @@ ERREnd
 ERREpilog
 }
 
-void Display( const file_ &File )
+void Display(
+	const file_ &File,
+	txf::text_oflow__ &TOFlow )
 {
 ERRProlog
 	str::string String;
@@ -413,7 +417,7 @@ ERRBegin
 
 	Build( File, String );
 
-	cout << String;
+	TOFlow << String;
 ERRErr
 ERREnd
 ERREpilog
@@ -421,7 +425,9 @@ ERREpilog
 
 
 
-void Display( const files_ &Files )
+void Display(
+	const files_ &Files,
+	txf::text_oflow__ &TOFlow )
 {
 
 	ctn::E_CITEM( file_ ) File;
@@ -432,7 +438,7 @@ void Display( const files_ &Files )
 	Row = Files.First();
 
 	while ( Row != NONE ) {
-		Display( File( Row ) );
+		Display( File( Row ), TOFlow );
 
 		cout << txf::nl;
 
@@ -536,6 +542,20 @@ ERREnd
 ERREpilog
 }
 
+void HandleError( const char *FileName )
+{
+ERRProlog
+ERRBegin
+	cerr << txf::nl << "Unable to copy '" << FileName << "'. Not enough  space left ?" << txf::nl;
+
+	if ( fil::FileExists( FileName ) )
+		fil::RemoveFile( FileName );
+ERRErr
+ERREnd
+	ERRExit( EXIT_FAILURE );
+ERREpilog
+}
+
 bso::size__ Copy(
 	const str::string_ &Source,
 	const str::string_ &Dest )
@@ -553,6 +573,7 @@ ERRBegin
 		Copy( SourceBuffer, DestBuffer, Extent );
 	}
 ERRErr
+	HandleError( DestBuffer );
 ERREnd
 ERREpilog
 	return Extent;	// Devrait en fait contenir la taille occupée sur le disque du fichier destination ... Contient 0 si le fichier existe déjà.
@@ -603,6 +624,52 @@ ERREpilog
 	return Extent;
 }
 
+
+
+static inline void DisplayTime(
+	time_t Time,
+	txf::text_oflow__ &TOFlow,
+	bso::bool__ Compact = true )
+{
+	bso::integer_buffer__ IBuffer;
+	bso::ulong__ H = (bso::ulong__)( Time / 3600 ), M = (bso::ulong__)( ( Time % 3600 ) / 60 );
+
+	if ( H  != 0 )
+		TOFlow << ( bso::Convert( H, IBuffer ) ) << 'h';
+
+	if ( ( M != 0 ) || ( H != 0 ) )
+		TOFlow << bso::Convert( M, IBuffer ) << 'm';
+
+	if ( ( H == 0 ) && ( ( M < 10 ) || !Compact ) )
+		TOFlow <<  bso::Convert( (bso::ulong__)( Time % 60 ), IBuffer ) << 's';
+}
+
+inline void DisplaySize(
+	dssize__ Size,
+	txf::text_oflow__ &TOFlow )
+{
+	if ( Size > ( 10ULL * 1024 * 1024 * 1024 ) )
+		TOFlow <<  Size / ( 1024 * 1024 * 1024 ) << 'G';
+	else if ( Size > ( 10 * 1024 * 1024 ) )
+		TOFlow <<  Size / ( 1024 * 1024 ) << 'M';
+	else if ( Size > ( 10 * 1024 ) )
+		TOFlow <<  Size / ( 1024 ) << 'K';
+	else
+		TOFlow <<  Size;
+
+	TOFlow << "B";
+}
+
+inline void DisplayDebit(
+	dssize__ Debit,
+	txf::text_oflow__ &TOFlow )
+{
+	DisplaySize( Debit, TOFlow );
+
+	TOFlow << "/s";
+}
+
+
 void RandomCopy(
 	const char *Source,
 	files_ &Files,
@@ -614,32 +681,80 @@ void RandomCopy(
 	epeios::row__ Row = NONE;
 	ctn::E_CITEM( file_ ) File;
 	bso::size__ FileExtent = 0;
+	dssize__ OriginalTotalSize = TotalSize;
+	ltf::line_text_oflow___<> LTFlow( cout );
+	time_t Start = tol::Clock(false), Diff = 0;
+	dssize__ Debit = 0;
+	bso::ulong__ FileAmount = 0;
+
+	LTFlow.Init();
 
 	File.Init( Files );
 
 	tol::InitializeRandomGenerator();
 
+	if ( ( TotalSize * 100 ) > DSSIZE_MAX )
+		ERRl();	// Algorithme d'affichage ne fonctionne pas.
+
 	while ( Files.Amount() ) {
 		Row = Files.First( rand() % Files.Amount() );
 
 		if ( Match( Source, File( Row ), MinSize, MaxSize, TotalSize ) ) {
+			Diff = tol::Clock(false) - Start;
+
+			if ( Diff != 0 )
+				Debit = 1000 * ( OriginalTotalSize - TotalSize ) / Diff;
+
+			LTFlow.Clear();
+
+			LTFlow << ( 100 - ( TotalSize * 100 ) / OriginalTotalSize ) << "% ";
+
+			if ( Debit != 0 ) {
+				LTFlow << '(';
+
+				DisplayDebit( Debit, LTFlow );
+
+				LTFlow << ", ";
+
+				DisplayTime( TotalSize / Debit, LTFlow );
+				LTFlow << " left) ";
+			}
+
+			LTFlow.Freeze();
+
+			Display( File( Row ), LTFlow );
+
+			LTFlow << txf::sync;
+
 			FileExtent = CopyCreatingMissingDirectories( Source, File( Row ), Dest );
+
+			if ( FileExtent != 0 )	// Sinon le fichier existait déjà.
+				FileAmount++;
 
 			if ( FileExtent >= TotalSize )
 				break;
 			else
 				TotalSize -= FileExtent;
-
-			cout << TotalSize << txf::tab;
-
-			Display( File( Row ) );
-
-			cout << txf::nl;
 		}
 
 		Files.Remove( Row );
 		File.Flush();
 	}
+
+	LTFlow.Clear();
+
+	cout << FileAmount << " files (";
+	DisplaySize( OriginalTotalSize - TotalSize, LTFlow );
+	cout << ") copied in ";
+
+	DisplayTime( ( tol::Clock( false ) - Start ) / 1000, cout, false );
+	cout << " seconds (";
+	DisplayDebit( Debit, LTFlow );
+	cout << ")." << txf::nl;
+
+
+
+
 }
 
 void GetFiles(
@@ -671,12 +786,12 @@ ERRBegin
 
 	GetFiles( Source, Files );
 
-	Display( Files );
+/*	Display( Files );
 
 	cout << "--------------------" << txf::nl;
 
 	cout << MinSize << txf::tab << MaxSize << txf::tab << TotalSize << txf::nl;
-
+*/
 	RandomCopy( Source, Files, Dest, MinSize, MaxSize, TotalSize );
 ERRErr
 ERREnd
