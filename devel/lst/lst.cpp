@@ -89,9 +89,9 @@ ERRBegin
 
 	Save_( Store.Released, Flow );
 
-	while ( tol::GetFileLastModificationTime( FileName ) <= TimeStamp ) {
+	while ( fil::GetFileLastModificationTime( FileName ) <= TimeStamp ) {
 		tol::Clock( true );	// Permet d'attendre une unité de temps.
-		tol::Touch( FileName );
+		fil::TouchFile( FileName );
 	}
 
 	Row = Store.GetFirstAvailable();
@@ -132,12 +132,12 @@ ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
 	if ( Flow.Init( FileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( FileName ) < TimeStamp )
+		if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
 			ERRReturn;
 
 		Store.Init( FirstUnused );
 
-		Load_( Flow, tol::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
+		Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
 
 		Success = true;
 	}

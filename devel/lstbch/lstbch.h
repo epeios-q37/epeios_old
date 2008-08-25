@@ -187,9 +187,9 @@ namespace lstbch {
 				if ( ( _ListStore != NULL )
 					 && _bunch_file_manager___::IsPersistent()
 					 && _bunch_file_manager___::Exists()
-					 && ( !tol::FileExists( _ListFileName )
+					 && ( !fil::FileExists( _ListFileName )
 					      || ( _bunch_file_manager___::TimeStamp()
-						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
+						       >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
 					lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
 			}
 
@@ -229,7 +229,7 @@ namespace lstbch {
 
 			_bunch_file_manager___::Drop();
 
-			if ( tol::FileExists( _ListFileName ) )
+			if ( fil::FileExists( _ListFileName ) )
 				if ( remove( _ListFileName ) != 0 )
 					ERRu();
 		}
@@ -248,7 +248,7 @@ namespace lstbch {
 		{
 			bso::bool__ Exists = _bunch_file_manager___::Exists();
 
-			if ( Exists != tol::FileExists( _ListFileName ) )
+			if ( Exists != fil::FileExists( _ListFileName ) )
 				ERRc();
 
 			return Exists;
@@ -263,13 +263,13 @@ namespace lstbch {
 			if ( !Success )
 				return false;
 
-			if ( tol::FileExists( _ListFileName ) )
+			if ( fil::FileExists( _ListFileName ) )
 				if ( ErrHandle == err::hUsual )
 					ERRf();
 				else
 					return false;
 
-			Success = tol::CreateFile( _ListFileName, ErrHandle );
+			Success = fil::CreateFile( _ListFileName, ErrHandle );
 
 			return Success;
 		}

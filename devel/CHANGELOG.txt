@@ -1,5 +1,9 @@
 $Id$
 
+25/08/2008 :
+	- GENERAL :
+		- Adaptations aux modification 'TOL' et 'FIL'
+
 24/08/2008 :
 	- LTF :
 		- Mise en oeuvre 'Freeze(...)'.
