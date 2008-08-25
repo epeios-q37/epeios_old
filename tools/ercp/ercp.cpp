@@ -44,7 +44,7 @@ typedef bso::ulong__ dssize__;
 
 inline dssize__ ApplyFactor(
 	dssize__ Size,
-	bso::ulong__ Factor )
+	dssize__ Factor )
 {
 	if ( ( DSSIZE_MAX / Factor ) < Size ) {
 		cerr << "Total amount too big" << txf::nl;
@@ -63,14 +63,18 @@ dssize__ GetSize(
 	dssize__ Size = SizeString.ToULL( &ErrP );
 
 	if ( ErrP != NONE ) {
-		if ( SizeString( ErrP ) == 'G' ) 
+		if ( SizeString( ErrP ) == 'T' ) 
+			Size = ApplyFactor( Size, 1024ULL * 1024 * 1024 * 1024 );
+		else if ( SizeString( ErrP ) == 't' )
+			Size = ApplyFactor( Size, 1000ULL * 1000 * 1000 * 1000 );
+		else if ( SizeString( ErrP ) == 'G' ) 
 			Size = ApplyFactor( Size, 1024 * 1024 * 1024 );
 		else if ( SizeString( ErrP ) == 'g' )
-			Size = ApplyFactor( Size, 1000 *1000 *1000 );
+			Size = ApplyFactor( Size, 1000 * 1000 * 1000 );
 		else if ( SizeString( ErrP ) == 'M' )
 			Size = ApplyFactor( Size, 1024 * 1024 );
 		else if ( SizeString( ErrP ) == 'm' )
-			Size = ApplyFactor( Size, 1000 *1000 );
+			Size = ApplyFactor( Size, 1000 * 1000 );
 		else if ( SizeString( ErrP ) == 'K' )
 			Size = ApplyFactor( Size, 1024 );
 		else if ( SizeString( ErrP ) == 'k' )
@@ -125,12 +129,17 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " <command> [options] ..." << txf::nl;
+	cout << NAME << " <command> [options] source-dir target-dir size" << txf::nl;
 	// Free argument description.
 	cout << "command:" << txf::nl;
-//	clnarg::PrintCommandUsage( Description, c, "", false, true );
+	clnarg::PrintCommandUsage( Description, cCopy, "copy up to size bytes of files from source-dir to dest-dir.", clnarg::vSplit, true );
 	cout << "options:" << txf::nl;
-//	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
+	clnarg::PrintOptionUsage( Description, oMinSize, "minimum size of the files to copy", clnarg::vOneLine );
+	clnarg::PrintOptionUsage( Description, oMaxSize, "maximum size of the files to copy", clnarg::vOneLine );
+	cout << txf::nl << "For the sizes, specify an integer, to which you can append :" << txf::nl;
+	cout << txf::pad << "- 'T', 'G', 'M', or 'K', for base 1024 based multiplicator," << txf::nl;
+	cout << "or" << txf::nl;
+	cout << txf::pad << "- 't', 'g', 'm', or 'k', for base 1000 based multiplicator." << txf::nl;
 }
 
 void PrintHeader( void )
@@ -363,6 +372,11 @@ ERRBegin
 	Buffer = LocalizedFileName.Convert();
 
 	Name = dir::GetFirstFile( Buffer, Handle );
+
+	if ( Name == NULL ) {
+		cerr << "Unable to parse directory '" << Buffer << "' !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
 
 	while ( ( Name != NULL ) && *Name ) {
 
@@ -648,7 +662,9 @@ inline void DisplaySize(
 	dssize__ Size,
 	txf::text_oflow__ &TOFlow )
 {
-	if ( Size > ( 10ULL * 1024 * 1024 * 1024 ) )
+	if ( Size > ( 10ULL * 1024 * 1024 * 1024 * 1024 ) )
+		TOFlow <<  Size / ( 1024ULL * 1024 * 1024 * 1024 ) << 'T';
+	else if ( Size > ( 10ULL * 1024 * 1024 * 1024 ) )
 		TOFlow <<  Size / ( 1024 * 1024 * 1024 ) << 'G';
 	else if ( Size > ( 10 * 1024 * 1024 ) )
 		TOFlow <<  Size / ( 1024 * 1024 ) << 'M';
