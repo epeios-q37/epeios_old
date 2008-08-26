@@ -22,22 +22,14 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-<<<<<<< lstbch.h
 //	$Id$
-=======
-//	$Id$
->>>>>>> 1.24
 
 #ifndef LSTBCH__INC
 #define LSTBCH__INC
 
 #define LSTBCH_NAME		"LSTBCH"
 
-<<<<<<< lstbch.h
 #define	LSTBCH_VERSION	"$Revision$"
-=======
-#define	LSTBCH_VERSION	"$Revision$"
->>>>>>> 1.24
 
 #define LSTBCH_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -51,17 +43,9 @@ extern class ttr_tutor &LSTBCHTutor;
 
 /* Begin of automatic documentation generation part. */
 
-<<<<<<< lstbch.h
 //V $Revision$
-=======
-//V $Revision$
->>>>>>> 1.24
 //C Claude SIMON (csimon@epeios.org)
-<<<<<<< lstbch.h
 //R $Date$
-=======
-//R $Date$
->>>>>>> 1.24
 
 /* End of automatic documentation generation part. */
 

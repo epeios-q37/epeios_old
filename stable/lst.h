@@ -22,22 +22,14 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-<<<<<<< lst.h
 //	$Id$
-=======
-//	$Id$
->>>>>>> 1.41
 
 #ifndef LST__INC
 #define LST__INC
 
 #define LST_NAME		"LST"
 
-<<<<<<< lst.h
 #define	LST_VERSION	"$Revision$"
-=======
-#define	LST_VERSION	"$Revision$"
->>>>>>> 1.41
 
 #define LST_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -51,17 +43,9 @@ extern class ttr_tutor &LSTTutor;
 
 /* Begin of automatic documentation generation part. */
 
-<<<<<<< lst.h
 //V $Revision$
-=======
-//V $Revision$
->>>>>>> 1.41
 //C Claude SIMON (csimon@epeios.org)
-<<<<<<< lst.h
 //R $Date$
-=======
-//R $Date$
->>>>>>> 1.41
 
 /* End of automatic documentation generation part. */
 

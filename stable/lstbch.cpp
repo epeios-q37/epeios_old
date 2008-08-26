@@ -25,11 +25,7 @@
 
 
 
-<<<<<<< lstbch.cpp
 //	$Id$
-=======
-//	$Id$
->>>>>>> 1.24
 
 #define LSTBCH__COMPILATION
 
@@ -48,11 +44,7 @@ public:
 		Version = LSTBCH_VERSION;
 #endif
 		Owner = LSTBCH_OWNER;
-<<<<<<< lstbch.cpp
 		Date = "$Date$";
-=======
-		Date = "$Date$";
->>>>>>> 1.24
 	}
 	virtual ~lstbchtutor( void ){}
 };
