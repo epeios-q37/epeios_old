@@ -25,7 +25,11 @@
 
 
 
+<<<<<<< lst.cpp
 //	$Id$
+=======
+//	$Id$
+>>>>>>> 1.42
 
 #define LST__COMPILATION
 
@@ -44,7 +48,11 @@ public:
 		Version = LST_VERSION;
 #endif
 		Owner = LST_OWNER;
+<<<<<<< lst.cpp
 		Date = "$Date$";
+=======
+		Date = "$Date$";
+>>>>>>> 1.42
 	}
 	virtual ~lsttutor( void ){}
 };
