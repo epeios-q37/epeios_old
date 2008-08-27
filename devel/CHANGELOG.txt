@@ -1,5 +1,9 @@
 $Id$
 
+27/08/2008 :
+	- GENERAL :
+		- Adaptations aux modification 'TOL' et 'FIL'
+
 25/08/2008 :
 	- GENERAL :
 		- Adaptations aux modification 'TOL' et 'FIL'

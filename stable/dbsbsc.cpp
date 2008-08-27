@@ -69,7 +69,7 @@ ERRBegin
 		FileName.Init( RootFileName );
 		FileName.Append( Extension );
 
-		if ( tol::FileExists( FileNameBuffer = FileName.Convert() ) )
+		if ( fil::FileExists( FileNameBuffer = FileName.Convert() ) )
 			if ( remove( FileNameBuffer ) != 0 )
 				ERRd();
 	}

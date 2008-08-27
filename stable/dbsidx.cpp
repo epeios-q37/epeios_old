@@ -503,9 +503,9 @@ ERRBegin
 
 	Save_( Row, FileNameBuffer = FileName.Convert() );
 
-	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
+	while ( UnderlyingFilesLastModificationTime >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
-		tol::Touch( FileNameBuffer );
+		fil::TouchFile( FileNameBuffer );
 	}
 
 ERRErr
@@ -537,7 +537,7 @@ ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
 	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( RootFileName ) < TimeStamp )
+		if ( fil::GetFileLastModificationTime( RootFileName ) < TimeStamp )
 			ERRReturn;
 
 		Load_( Flow, Row );

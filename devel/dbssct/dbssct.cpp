@@ -156,7 +156,7 @@ ERRBegin
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 		ListFileNameBuffer = ListFileName.Convert();
 
-		if ( !lst::ReadFromFile( ListFileNameBuffer, tol::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, _GetUnderlyingFilesLastModificationTime() ) )
+		if ( !lst::ReadFromFile( ListFileNameBuffer, fil::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, _GetUnderlyingFilesLastModificationTime() ) )
 			RebuildLocations();
 	}
 ERRErr

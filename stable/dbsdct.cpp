@@ -121,9 +121,9 @@ ERRBegin
 	FileName.Append( Extension );
 	Save_( Bunch, FileNameBuffer = FileName.Convert() );
 
-	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
+	while ( UnderlyingFilesLastModificationTime >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
-		tol::Touch( FileNameBuffer );
+		fil::TouchFile( FileNameBuffer );
 	}
 ERRErr
 ERREnd
@@ -178,7 +178,7 @@ ERRProlog
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
 	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( tol::GetFileLastModificationTime( RootFileName ) < TimeStamp )
+		if ( fil::GetFileLastModificationTime( RootFileName ) < TimeStamp )
 			ERRReturn;
 
 		memcpy( Buffer, &TestValue, sizeof( item ) );
