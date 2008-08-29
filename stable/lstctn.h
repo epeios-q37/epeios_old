@@ -171,9 +171,9 @@ namespace lstctn {
 				if ( ( _ListStore != NULL )
 					 && _container_file_manager___<container>::IsPersistent()
 					 && _container_file_manager___<container>::Exists()
-					 && ( !tol::FileExists( _ListFileName )
+					 && ( !fil::FileExists( _ListFileName )
 					      || ( _container_file_manager___<container>::TimeStamp()
-						       >= tol::GetFileLastModificationTime( _ListFileName ) ) ) )
+						       >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
 					lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___<container>::TimeStamp() );
 			}
 
@@ -217,7 +217,7 @@ namespace lstctn {
 
 			_container_file_manager___<container>::Drop();
 
-			if ( tol::FileExists( _ListFileName ) )
+			if ( fil::FileExists( _ListFileName ) )
 				if ( remove( _ListFileName ) != 0 )
 					ERRu();
 		}
@@ -236,7 +236,7 @@ namespace lstctn {
 		{
 			bso::bool__ Exists = _container_file_manager___<container>::Exists();
 
-			if ( Exists != tol::FileExists( _ListFileName ) )
+			if ( Exists != fil::FileExists( _ListFileName ) )
 				ERRc();
 
 			return Exists;
@@ -248,7 +248,7 @@ namespace lstctn {
 			if ( !Success )
 				return false;
 
-			if ( tol::FileExists( _ListFileName ) )
+			if ( fil::FileExists( _ListFileName ) )
 				if ( ErrHandle == err::hUsual )
 					ERRf();
 				else
@@ -258,7 +258,7 @@ namespace lstctn {
 #	undef CreateFile
 #endif
 
-			Success = tol::CreateFile( _ListFileName, ErrHandle );
+			Success = fil::CreateFile( _ListFileName, ErrHandle );
 
 			return Success;
 		}
