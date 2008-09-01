@@ -22,22 +22,14 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-<<<<<<< lstctn.h
 //	$Id$
-=======
-//	$Id$
->>>>>>> 1.37
 
 #ifndef LSTCTN__INC
 #define LSTCTN__INC
 
 #define LSTCTN_NAME		"LSTCTN"
 
-<<<<<<< lstctn.h
 #define	LSTCTN_VERSION	"$Revision$"
-=======
-#define	LSTCTN_VERSION	"$Revision$"
->>>>>>> 1.37
 
 #define LSTCTN_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -51,17 +43,9 @@ extern class ttr_tutor &LSTCTNTutor;
 
 /* Begin of automatic documentation generation part. */
 
-<<<<<<< lstctn.h
 //V $Revision$
-=======
-//V $Revision$
->>>>>>> 1.37
 //C Claude SIMON (csimon@epeios.org)
-<<<<<<< lstctn.h
 //R $Date$
-=======
-//R $Date$
->>>>>>> 1.37
 
 /* End of automatic documentation generation part. */
 
