@@ -22,39 +22,41 @@
   {0xca2c7cf2, 0xd7b2, 0x4419, \
     { 0x94, 0x10, 0xf8, 0xaa, 0xc6, 0x83, 0x25, 0x52 }}
 
-class NS_NO_VTABLE ietest : public nsISupports {
+class NS_NO_VTABLE NS_SCRIPTABLE ietest : public nsISupports {
  public: 
 
-  NS_DEFINE_STATIC_IID_ACCESSOR(IETEST_IID)
+  NS_DECLARE_STATIC_IID_ACCESSOR(IETEST_IID)
 
   /* string Test (); */
-  NS_IMETHOD Test(char **_retval) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Test(char **_retval) = 0;
 
   /* string XPCOM (); */
-  NS_IMETHOD XPCOM(char **_retval) = 0;
+  NS_SCRIPTABLE NS_IMETHOD XPCOM(char **_retval) = 0;
 
   /* string GetErrorMessage (); */
-  NS_IMETHOD GetErrorMessage(char **_retval) = 0;
+  NS_SCRIPTABLE NS_IMETHOD GetErrorMessage(char **_retval) = 0;
 
 };
 
+  NS_DEFINE_STATIC_IID_ACCESSOR(ietest, IETEST_IID)
+
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_IETEST \
-  NS_IMETHOD Test(char **_retval); \
-  NS_IMETHOD XPCOM(char **_retval); \
-  NS_IMETHOD GetErrorMessage(char **_retval); 
+  NS_SCRIPTABLE NS_IMETHOD Test(char **_retval); \
+  NS_SCRIPTABLE NS_IMETHOD XPCOM(char **_retval); \
+  NS_SCRIPTABLE NS_IMETHOD GetErrorMessage(char **_retval); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IETEST(_to) \
-  NS_IMETHOD Test(char **_retval) { return _to Test(_retval); } \
-  NS_IMETHOD XPCOM(char **_retval) { return _to XPCOM(_retval); } \
-  NS_IMETHOD GetErrorMessage(char **_retval) { return _to GetErrorMessage(_retval); } 
+  NS_SCRIPTABLE NS_IMETHOD Test(char **_retval) { return _to Test(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD XPCOM(char **_retval) { return _to XPCOM(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD GetErrorMessage(char **_retval) { return _to GetErrorMessage(_retval); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IETEST(_to) \
-  NS_IMETHOD Test(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(_retval); } \
-  NS_IMETHOD XPCOM(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->XPCOM(_retval); } \
-  NS_IMETHOD GetErrorMessage(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetErrorMessage(_retval); } 
+  NS_SCRIPTABLE NS_IMETHOD Test(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD XPCOM(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->XPCOM(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD GetErrorMessage(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetErrorMessage(_retval); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */

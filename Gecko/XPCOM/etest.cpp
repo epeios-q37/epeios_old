@@ -78,7 +78,7 @@ static inline void Convert_(
 	char **JString )
 {
 ERRProlog
-	tol::E_POINTER___( char ) Buffer;
+	tol::E_FPOINTER___( char ) Buffer;
 ERRBegin
 	Buffer = EString.Convert();
 
@@ -134,7 +134,7 @@ static inline void Convert_(
 	nsEmbedString &EString )
 {
 ERRProlog
-	tol::E_POINTER___( char ) Buffer;
+	tol::E_FPOINTER___( char ) Buffer;
 ERRBegin
 	Buffer = String.Convert();
 
