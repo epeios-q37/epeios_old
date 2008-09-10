@@ -119,6 +119,44 @@ namespace dte {
 		f_Ambiguous	// Format indéterminable.
 	};
 
+	inline const char *GetLabel( format__ Format )
+	{
+		switch ( Format ) {
+		case fDDMMYYYY:
+			return "DDMMYYYY";
+			break;
+		case fMMDDYYYY:
+			return "MMDDYYYY";
+			break;
+		case fYYYYMMDD:
+			return "YYYYMMDD";
+			break;
+		default:
+			ERRu();
+			return NULL;	// Pour éviter un warning.
+			break;
+		}
+	};
+
+	inline bso::bool__ _Compare(
+		format__ Format,
+		const char *Label )
+	{
+		return strcmp( GetLabel( Format ), Label ) == 0;
+	}
+
+	inline format__ GetFormat( const char *Label )
+	{
+		if ( _Compare( fDDMMYYYY, Label ) )
+			return fDDMMYYYY;
+		else if ( _Compare( fMMDDYYYY, Label ) )
+			return fDDMMYYYY;
+		else if ( _Compare( fYYYYMMDD, Label ) )
+			return fYYYYMMDD;
+		else
+			return f_Unknown;
+	}
+
 	//c A date.
 	class date__ {
 		// The raw date. See '.cpp' for structure.

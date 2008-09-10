@@ -1,5 +1,9 @@
 $Id$
 
+10/09/2008 :
+	- DTE :
+		- Ajout 'GetLabel(...)' a 'GetFormat(...)'.
+
 29/08/2008 :
 	- GENERAL :
 		- Adaptations aux modification 'TOL' et 'FIL'
