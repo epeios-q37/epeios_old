@@ -1,5 +1,9 @@
 $Id$
 
+17/09/2008 :
+	- XML :
+		- Rajout de la localisation des données (ligne et colonne).
+
 10/09/2008 :
 	- DTE :
 		- Ajout 'GetLabel(...)' a 'GetFormat(...)'.

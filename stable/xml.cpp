@@ -173,12 +173,15 @@ class flow {
 private:
 	xtf::extended_text_iflow__ *_Flow;
 public:
-	str::string Dump;
+	dump Dump;
 	unsigned char Get( void )
 	{
 		unsigned char C = _Flow->Get();
 
-		Dump.Append( C );
+		if ( Dump.RawData.Amount() == 0 )
+			Dump.Set( _Flow->Line(), _Flow->Column() );
+
+		Dump.RawData.Append( C );
 
 		return C;
 	}
@@ -194,7 +197,11 @@ public:
 	{
 		_Flow->Unget( C );
 
-		Dump.Truncate();
+		Dump.RawData.Truncate();
+	}
+	void Reset( void )
+	{
+		Dump.RawData.Init();
 	}
 	void Init( xtf::extended_text_iflow__ &Flow )
 	{
@@ -1033,19 +1040,19 @@ class donothing_callback__
 : public callback__
 {
 protected:
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLStartTagClosed(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		return true;
 	}
@@ -1053,20 +1060,20 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		return true;
 	}
@@ -1082,34 +1089,34 @@ class store_callback
 {
 private:
 	flw::oflow__ *_Flow;
-	void _Store( const str::string_ &Dump )
+	void _Store( const str::string_ &RawData )
 	{
-		epeios::row__ Row = Dump.First();
+		epeios::row__ Row = RawData.First();
 
 		while ( Row != NONE ) {
-			_Flow->Put( Dump( Row ) );
+			_Flow->Put( RawData( Row ) );
 
-			Row = Dump.Next( Row );
+			Row = RawData.Next( Row );
 		}
 	}
 protected:
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
-		_Store( Dump );
+		_Store( Dump.RawData );
 
 		return true;
 	}
 	virtual bso::bool__ XMLStartTagClosed(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
-		_Store( Dump );
+		_Store( Dump.RawData );
 
 		return true;
 	}
@@ -1117,26 +1124,26 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
-		_Store( Dump );
+		_Store( Dump.RawData );
 
 		return true;
 	}
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
-		_Store( Dump );
+		_Store( Dump.RawData );
 
 		return true;
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
-		_Store( Dump );
+		_Store( Dump.RawData );
 
 		return true;
 	}
@@ -1190,7 +1197,7 @@ private:
 	// Cumul des éventuels valeur de 'xxx::bloc' sucessifs et/ou imbriqués.
 	str::string _BlocPendingValue;
 	// Cumul des éventuels 'dump' de 'xxx::bloc' sucessifs et/ou imbriqués.
-	str::string _BlocPendingDump;
+	dump _BlocPendingDump;
 	// Contient la valeur de l'attribut 'name' (balises 'set' ou 'define'.
 	str::string _NameAttribute;
 	// Contient la valeur de l'attribut 'name' (balises 'ifeq' ou 'expand'.
@@ -1402,7 +1409,7 @@ protected:
 
 		return t_Undefined;
 	}
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
 		if ( _ExpandNestingLevel )
 			return true;
@@ -1411,7 +1418,7 @@ protected:
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		if ( _IsDefining )
 			RETURN( xsTooManyTags );
@@ -1468,7 +1475,7 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		switch ( _GetTag( TagName ) ) {
 		case tUser:
@@ -1553,7 +1560,7 @@ protected:
 	}
 	virtual bso::bool__ XMLStartTagClosed(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		switch ( _GetTag( Name ) ) {
 		case tUser:
@@ -1620,7 +1627,7 @@ protected:
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		switch ( _GetTag( TagName ) ) {
 		case tUser:
@@ -1654,14 +1661,14 @@ protected:
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		if ( !_BelongsToNamespace( Name ) && ( _BlocPendingValue.Amount() != 0 ) ) {
 			_UserCallback->XMLValue( _BlocPendingTag, _BlocPendingValue, _BlocPendingDump );
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Init();
+			_BlocPendingDump.Reset();
 		}
 
 		switch ( _GetTag( Name ) ) {
@@ -1806,9 +1813,9 @@ class neutral_callback
 private:
 	xml::writer _Writer;
 protected:
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
-		_Writer.GetFlow() << Dump;
+		_Writer.GetFlow() << Dump.RawData;
 		
 		if ( _Writer.Indent() )
 			_Writer.GetFlow() << txf::nl;
@@ -1817,7 +1824,7 @@ protected:
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		_Writer.PushTag( Name );
 
@@ -1833,7 +1840,7 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		_Writer.PutAttribute( Name, Value );
 
@@ -1842,7 +1849,7 @@ protected:
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		_Writer.PutValue( Value );
 
@@ -1850,7 +1857,7 @@ protected:
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const dump_ &Dump )
 	{
 		_Writer.PopTag();
 

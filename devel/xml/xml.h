@@ -70,15 +70,81 @@ extern class ttr_tutor &XMLTutor;
 namespace xml {
 	using xtf::location__;
 
+	class dump_ {
+	public:
+		struct s {
+			str::string_::s RawData;
+			location__ Line, Column;
+		} &S_;
+		str::string_ RawData;
+		dump_( s &S )
+		: S_( S ),
+		  RawData( S.RawData )
+		{
+		}
+		void reset( bso::bool__ P = true )
+		{
+			RawData.reset( P );
+
+			S_.Line = S_.Column = 0;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			RawData.plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			RawData.plug( MM );
+		}
+		dump_ operator =( const dump_ &D )
+		{
+			RawData = D.RawData;
+
+			S_.Line = D.S_.Line;
+			S_.Column = D.S_.Column;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			RawData.Init();
+
+			S_.Line = S_.Column = 0;
+		}
+		void Set(
+			location__ Line,
+			location__ Column )
+		{
+			S_.Line = Line;
+			S_.Column = Column;
+		}
+		void Append( const dump_ &Dump )
+		{
+			if ( RawData.Amount() == 0 )
+				this->operator =( Dump );
+			else
+				RawData.Append( Dump.RawData );
+		}
+		void Reset( void )
+		{
+			Init();
+		}
+		E_RWDISCLOSE_( xtf::location__, Line );
+		E_RWDISCLOSE_( xtf::location__, Column );
+	};
+
+	E_AUTO( dump )
+
 	struct callback__
 	{
-		virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump ) = 0;
+
+		virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLStartTag(
 			const str::string_ &Name,
-			const str::string_ &Dump ) = 0;
+			const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLStartTagClosed(
 			const str::string_ &Name,
-			const str::string_ &Dump )
+			const dump_ &Dump )
 		{
 			return true;
 		}
@@ -86,14 +152,14 @@ namespace xml {
 			const str::string_ &TagName,
 			const str::string_ &Name,
 			const str::string_ &Value,
-			const str::string_ &Dump ) = 0;
+			const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLValue(
 			const str::string_ &TagName,
 			const str::string_ &Value,
-			const str::string_ &Dump ) = 0;
+			const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLEndTag(
 			const str::string_ &Name,
-			const str::string_ &Dump ) = 0;
+			const dump_ &Dump ) = 0;
 		void Init( void )
 		{}
 	};
