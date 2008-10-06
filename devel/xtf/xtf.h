@@ -80,6 +80,34 @@ namespace xtf {
 	//t type of position in a text (line or column).
 	typedef bso::ulong__ location__;
 
+	struct coord__ {
+		location__ Line;
+		location__ Column;
+		void reset( bso::bool__ = false )
+		{
+			Line = Column = 0;
+		}
+		coord__( void )
+		{
+			reset( true );
+		}
+		coord__(
+			location__ Line,
+			location__ Column )
+		{
+			reset( true );
+
+			this->Line = Line;
+			this->Column = Column;
+		}
+		void Init( coord__ Coord = coord__() )
+		{
+			reset();
+
+			*this = Coord;
+		}
+	};
+
 	typedef bso::ubyte__ _amount__;
 
 	//c To handle a text flow, with counting lines and columns.
@@ -114,10 +142,8 @@ namespace xtf {
 		_amount__ Position_;
 		// Nombre de caractères encore disponibles dans le cache.
 		_amount__ Nombre_;
-		// Ligne sur laquelle se trouve le prochain caractère à lire.
-		location__ Ligne_;
-		// Colonne sur laquelle se situe le prochain caractère à lire.
-		location__ Colonne_;
+		// Corrdonnée du prochain caractère.
+		coord__ _Coord;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
 		// Adjust cache counters after reading a char.
@@ -130,19 +156,20 @@ namespace xtf {
 		void NewCharAdjust_( void )
 		{
 			CacheAdjust_();
-			Colonne_++;
+			_Coord.Column++;
 		}
 		// Adjust counters.after reading a new line character.
 		void NewLineAdjust_( void )
 		{
 			CacheAdjust_();
-			Ligne_++;
-			Colonne_ = 1;
+			_Coord.Line++;
+			_Coord.Column = 1;
 		}
 	public:
-		void reset( bool = true )
+		void reset( bool P = true )
 		{
-			Ligne_ = Colonne_ = 1;
+			_Coord.reset( P );
+			_Coord.Line = _Coord.Column = 1;
 			Position_ = Nombre_ = 0;
 			Entree_ = NULL;
 			EOL_ = false;
@@ -158,11 +185,9 @@ namespace xtf {
 		//f Initialization with 'Flow'..
 		void Init(
 			flw::iflow__ &IStream,
-			xtf::location__ Line = 1,
-			xtf::location__ Column = 1)
+			coord__ Coord = coord__( 1, 1 ) )
 		{
-			Ligne_ = Line;
-			Colonne_ = Column;
+			_Coord.Init( Coord );
 			Position_ = Nombre_ = 0;
 			Entree_ = NULL;
 			EOL_ = false;
@@ -223,26 +248,19 @@ namespace xtf {
 			Cache_[Position_] = (flw::datum__)C;
 
 			if ( ( C != '\n' ) && ( C != '\r' ) )
-				Colonne_--;
+				_Coord.Column--;
 			else
 			{
-				if ( Ligne_ )
-					Ligne_--;
+				if ( _Coord.Line )
+					_Coord.Line--;
 
-				Colonne_ = 0;
+				_Coord.Column = 0;
 			}
-
 		}
-		//f Return the ligne of the next character.
-		const location__ &Line( void )
+		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
+		const coord__ &Coord( void )
 		{
-			return Ligne_;
-		}
-		/*f Return the column of the next character. If == 0, then
-		a '\n' or a '\r' was unget()'. */
-		const location__ &Column( void )
-		{
-			return Colonne_;
+			return _Coord;
 		}
 		/*f Put the rest of the current cell in 'Cell'. Return true if the celle is delimited by 'Separator',
 		false otherwise (cell delimited by a new line, for example). */
@@ -295,12 +313,9 @@ namespace xtf {
 		{
 			return Entree_->AmountRed() - Nombre_;
 		}
-		void Set(
-			xtf::location__ Line,
-			xtf::location__ Column )
+		void Set( coord__ Coord )
 		{
-			Ligne_ = Line;
-			Colonne_ = Column;
+			_Coord = Coord;
 		}
 	};
 }

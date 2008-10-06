@@ -1,5 +1,11 @@
 $Id$
 
+06/10/2008 :
+	- XML :
+		- Adaptation aux modifications XTF:
+	- XTF :
+		- Mise en oeuvre de 'coord__' à la place de 'Ligne' et 'Colonne'.
+
 17/09/2008 :
 	- XML :
 		- Rajout de la localisation des données (ligne et colonne).

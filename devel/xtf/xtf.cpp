@@ -81,7 +81,7 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 
 			if ( C == Separator )
 				Cont = false;
-			else if ( Column() == 1 )
+			else if ( _Coord.Column == 1 )
 				Cont = false;
 			else if ( &Line != NULL )
 				Line.Append( C );
