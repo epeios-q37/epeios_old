@@ -68,13 +68,13 @@ extern class ttr_tutor &XMLTutor;
 #include "ctn.h"
 
 namespace xml {
-	using xtf::location__;
+	using xtf::coord__;
 
 	class dump_ {
 	public:
 		struct s {
 			str::string_::s RawData;
-			location__ Line, Column;
+			coord__ Coord;
 		} &S_;
 		str::string_ RawData;
 		dump_( s &S )
@@ -86,7 +86,7 @@ namespace xml {
 		{
 			RawData.reset( P );
 
-			S_.Line = S_.Column = 0;
+			S_.Coord.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -100,8 +100,7 @@ namespace xml {
 		{
 			RawData = D.RawData;
 
-			S_.Line = D.S_.Line;
-			S_.Column = D.S_.Column;
+			S_.Coord = D.S_.Coord;
 
 			return *this;
 		}
@@ -109,14 +108,11 @@ namespace xml {
 		{
 			RawData.Init();
 
-			S_.Line = S_.Column = 0;
+			S_.Coord.Init();
 		}
-		void Set(
-			location__ Line,
-			location__ Column )
+		void Set( coord__ Coord )
 		{
-			S_.Line = Line;
-			S_.Column = Column;
+			S_.Coord = Coord;
 		}
 		void Append( const dump_ &Dump )
 		{
@@ -129,8 +125,7 @@ namespace xml {
 		{
 			Init();
 		}
-		E_RWDISCLOSE_( xtf::location__, Line );
-		E_RWDISCLOSE_( xtf::location__, Column );
+		E_RWDISCLOSE_( coord__, Coord );
 	};
 
 	E_AUTO( dump )

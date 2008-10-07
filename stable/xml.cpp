@@ -179,7 +179,7 @@ public:
 		unsigned char C = _Flow->Get();
 
 		if ( Dump.RawData.Amount() == 0 )
-			Dump.Set( _Flow->Line(), _Flow->Column() );
+			Dump.Set( _Flow->Coord() );
 
 		Dump.RawData.Append( C );
 
@@ -549,7 +549,7 @@ enum state__ {
 	ValueExpected,
 };
 
-using xtf::location__;
+using xtf::coord__;
 
 E_ROW( srow__ );
 
@@ -835,18 +835,6 @@ ERREpilog
 	return Status;
 }
 
-struct position__
-{
-	xtf::location__ Line, Column;
-	position__(
-		xtf::location__ Line,
-		xtf::location__ Column )
-	{
-		this->Line = Line;
-		this->Column = Column;
-	}
-};
-
 E_ROW( rrow__ );	// Repository row.
 
 class repository_
@@ -867,33 +855,33 @@ private:
 public:
 	struct s {
 		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Names;
-		bch::E_BUNCHt( position__, rrow__ )::s Positions;
+		bch::E_BUNCHt( coord__, rrow__ )::s Coords;
 		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Strings;
 	};
 	ctn::E_XMCONTAINERt_( str::string_, rrow__ ) Names;
-	bch::E_BUNCHt_( position__, rrow__ ) Positions;
+	bch::E_BUNCHt_( coord__, rrow__ ) Coords;
 	ctn::E_XMCONTAINERt_( str::string_, rrow__ ) Strings;
 	repository_( s &S )
 	: Names( S.Names ),
-	  Positions( S.Positions ),
+	  Coords( S.Coords ),
       Strings( S.Strings )
 	{}
 	void reset( bso::bool__ P = true )
 	{
 		Names.reset( P );
-		Positions.reset( P );
+		Coords.reset( P );
 		Strings.reset( P );
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
 		Names.plug( MM );
-		Positions.plug( MM );
+		Coords.plug( MM );
 		Strings.plug( MM );
 	}
 	repository_ &operator =( const repository_ &R )
 	{
 		Names = R.Names;
-		Positions = R.Positions;
+		Coords = R.Coords;
 		Strings = R.Strings;
 
 		return *this;
@@ -901,13 +889,12 @@ public:
 	void Init( void )
 	{
 		Names.Init();
-		Positions.Init();
+		Coords.Init();
 		Strings.Init();
 	}
 	bso::bool__ Store(
 		const str::string_ &Name,
-		xtf::location__ Line,
-		xtf::location__ Column,
+		coord__ Coord,
 		const str::string_ &String )
 	{
 		if ( _Locate( Name ) != NONE )
@@ -915,7 +902,7 @@ public:
 
 		rrow__ Row = Names.Append( Name );
 
-		if ( Row != Positions.Append( position__( Line, Column ) ) )
+		if ( Row != Coords.Append( Coord ) )
 			ERRc();
 
 		if ( Row != Strings.Append( String ) )
@@ -925,8 +912,7 @@ public:
 	}
 	bso::bool__ Get(
 		const str::string_ &Name,
-		xtf::location__ &Line,
-		xtf::location__ &Column,
+		coord__ &Coord,
 		str::string_ &String ) const
 	{
 		rrow__ Row = _Locate( Name );
@@ -934,12 +920,9 @@ public:
 		if ( Row == NONE )
 			return false;
 
-		position__ P = Positions.Get( Row );
+		Coord = Coords.Get( Row );
 
 		Strings.Recall( Row, String );
-
-		Line = P.Line;
-		Column = P.Column;
 
 		return true;
 	}
@@ -1231,13 +1214,12 @@ private:
 	{
 		extended_status__ Status = xs_Undefined;
 	ERRProlog
-		xtf::location__ Line, Column;
+		xtf::coord__ Coord;
 		store_callback Callback;
 		str::string String;
 		flx::E_STRING_OFLOW___ SFlow;
 	ERRBegin
-		Line = Flow.Line();
-		Column = Flow.Column();
+		Coord = Flow.Coord();
 
 		String.Init();
 
@@ -1251,9 +1233,9 @@ private:
 		SFlow.Synchronize();
 
 		if ( _ExpandPending )
-			_CurrentRepository.Store(Name, Line, Column, String );
+			_CurrentRepository.Store(Name, Coord, String );
 		else
-			_GlobalRepository.Store(Name, Line, Column, String );
+			_GlobalRepository.Store(Name, Coord, String );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -1266,7 +1248,7 @@ private:
 		str::string String;
 		flx::E_STRING_IFLOW__ SFlow;
 		xtf::extended_text_iflow__ XFlow;
-		xtf::location__ Line, Column;
+		coord__ Coord;
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
 		repository Repository;
 		stk::row__ Row = NONE;
@@ -1280,21 +1262,21 @@ private:
 
 		Row = _RepositoryStack.Last();
 
-		while ( !( Found = Repository.Get( _SelectAttribute, Line, Column, String ) ) && ( Row != NONE ) ) {
+		while ( !( Found = Repository.Get( _SelectAttribute, Coord, String ) ) && ( Row != NONE ) ) {
 			_RepositoryStack.Recall( Row, Repository );
 
 			Row = _RepositoryStack.Previous( Row );
 		}
 
 		if ( !Found )
-			if ( !_GlobalRepository.Get( _SelectAttribute, Line, Column, String ) )
+			if ( !_GlobalRepository.Get( _SelectAttribute, Coord, String ) )
 				ERRReturn;
 
 		SFlow.Init( String );
 		SFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
 
 
-		XFlow.Init( SFlow, Line, Column );
+		XFlow.Init( SFlow, Coord );
 
 		_Flow = &XFlow;
 
@@ -1311,7 +1293,7 @@ private:
 		_Flow = PreviousFlow;
 
 		if ( Status != xsOK ) {
-			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
+			_Flow->Set( XFlow.Coord() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
 			if ( Status == Convert_( sUserError ) )
 				Status = _RelayedStatus;
 		}
@@ -1367,7 +1349,7 @@ private:
 		_Flow = PreviousFlow;
 
 		if ( Status != xsOK ) {
-			_Flow->Set( XFlow.Line(), XFlow.Column() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
+			_Flow->Set( XFlow.Coord() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
 			if ( Status == Convert_( sUserError ) )
 				Status = _RelayedStatus;
 		}

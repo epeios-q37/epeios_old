@@ -170,7 +170,7 @@ txmtbl::delimiter txmtbl::GetCell(
 
 	Cell.Init();
 
-	Cell.Location( Flow.Column() );
+	Cell.Location( Flow.Coord().Column );
 
 	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX, C ) ) 
 		Cell.Append( C );
@@ -204,7 +204,7 @@ ERRProlog
 ERRBegin
 	Cell.Init();
 
-	Line.Location( Flow.Line() );
+	Line.Location( Flow.Coord().Line );
 
 	do {
 		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EOX();
@@ -497,7 +497,7 @@ ERRBegin
 	{
 		Line.Init();
 
-		Line.Location( Flow.Line() );
+		Line.Location( Flow.Coord().Line );
 
 		GetLine( Flow, Line, Separator, Escape );
 

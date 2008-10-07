@@ -1,8 +1,13 @@
 $Id$
 
+07/10/2008 :
+	- TXMTBL :
+		- Adaptation aux modifications XTF.
+
+
 06/10/2008 :
 	- XML :
-		- Adaptation aux modifications XTF:
+		- Adaptation aux modifications XTF.
 	- XTF :
 		- Mise en oeuvre de 'coord__' à la place de 'Ligne' et 'Colonne'.
 
