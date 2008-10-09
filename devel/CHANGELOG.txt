@@ -1,5 +1,11 @@
 $Id$
 
+09/10/2008 :
+	- MSG :
+		- Adaptation aux modifications 'XTF'.
+	- RGSTRY :
+		- Adaptation aux modifications 'XTF' et 'XML'.
+
 07/10/2008 :
 	- TXMTBL :
 		- Adaptation aux modifications XTF.

@@ -158,7 +158,7 @@ ERRBegin
 				break;
 			default:
 				State = sEnd;
-				Location = Flow.Line();
+				Location = Flow.Coord().Line;
 				break;
 			}
 			Language++;
@@ -166,7 +166,7 @@ ERRBegin
 	} while ( State != sEnd );
 
 	if ( Row != NONE )
-		Location = Flow.Line();
+		Location = Flow.Coord().Line;
 ERRErr
 ERREnd
 ERREpilog

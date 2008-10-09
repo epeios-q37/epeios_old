@@ -543,13 +543,13 @@ private:
 	registry_ &_Registry;
 	nrow__ _Root, _Current;
 protected:
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &dump )
+	virtual bso::bool__ XMLProcessingInstruction( const xml::dump_ & )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &TagName,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		if ( _Current == NONE ) {
 			if ( _Root == NONE )
@@ -565,7 +565,7 @@ protected:
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		_Registry.AddAttribute( Name, Value, _Current );
 
@@ -573,14 +573,14 @@ protected:
 	}
 	virtual bso::bool__ XMLStartTagClosed(
 		const str::string_ &TagName,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		return true;
 	}
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		_Registry.SetValue( Value, _Current, true );
 
@@ -588,7 +588,7 @@ protected:
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &TagName,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 
 		_Current = _Registry.GetParent( _Current );
@@ -906,8 +906,7 @@ nrow__ rgstry::Parse(
 	nrow__ Root,
 	xml::extended_status__ &Status,
 	str::string_ &ErrorFileName,
-	xtf::location__ &ErrorLine,
-	xtf::location__ &ErrorColumn )
+	xtf::coord__ &ErrorCoord )
 {
 ERRProlog
 	callback___ Callback( Registry );
@@ -918,8 +917,7 @@ ERRBegin
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
-		ErrorLine = Flow.Line();
-		ErrorColumn = Flow.Column();
+		ErrorCoord = Flow.Coord();
 	}
 ERRErr
 ERREnd
