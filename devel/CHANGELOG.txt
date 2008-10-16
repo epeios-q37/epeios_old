@@ -1,5 +1,10 @@
 $Id$
 
+16/10/2008 :
+	- XML :
+		- Correction bogue ('&' manquant dans 'operator =(...)').
+		
+
 09/10/2008 :
 	- MSG :
 		- Adaptation aux modifications 'XTF'.

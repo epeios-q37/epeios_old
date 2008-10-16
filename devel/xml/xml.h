@@ -96,7 +96,7 @@ namespace xml {
 		{
 			RawData.plug( MM );
 		}
-		dump_ operator =( const dump_ &D )
+		dump_ &operator =( const dump_ &D )
 		{
 			RawData = D.RawData;
 
