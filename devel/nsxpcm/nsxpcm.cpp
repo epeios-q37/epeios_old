@@ -56,9 +56,9 @@ public:
 /*$BEGIN$*/
 
 #include "nsMemory.h"
-#include "nsIDOMEvent.h"
-#include "nsIDOMEventTarget.h"
-#include "nsIFilePicker.h"
+#include "dom/nsIDOMEvent.h"
+#include "dom/nsIDOMEventTarget.h"
+#include "widget/nsIFilePicker.h"
 #include "nsILocalFile.h"
 
 using namespace nsxpcm;

@@ -1,5 +1,9 @@
 $Id$
 
+05/11/2008 :
+	- NSXPCM :
+		- Modification des inclusions dans l'espoir de faciliter la mise en oeuvre de XPCOM.
+
 16/10/2008 :
 	- XML :
 		- Correction bogue ('&' manquant dans 'operator =(...)').
