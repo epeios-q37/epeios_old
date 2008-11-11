@@ -311,7 +311,7 @@ ERRBegin
 		if ( ErrorFileName.Amount() != 0 )
 			cerr << "in file '" << ErrorFileName << "' ";
 
-		cerr << "at line " << XTFlow.Line() << " position " << XTFlow.Column() << " : " << xml::GetLabel( Status ) << " !" << txf::nl;
+		cerr << "at line " << XTFlow.Coord().Line << " position " << XTFlow.Coord().Column << " : " << xml::GetLabel( Status ) << " !" << txf::nl;
 
 		ERRExit( evProcessing );
 	}

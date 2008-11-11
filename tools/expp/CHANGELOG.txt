@@ -1,5 +1,8 @@
 $Id$
 
+- 09/11/2008 :
+	- Adaptation to changes in 'XTF'.
+
 ---------------
 Version 0.2.3 :
 ---------------

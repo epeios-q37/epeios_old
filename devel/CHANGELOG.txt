@@ -1,5 +1,9 @@
 $Id$
 
+09/11/2008 :
+	- IOF :
+		- Ajout 'virtual's manqaunt.
+
 05/11/2008 :
 	- NSXPCM :
 		- Modification des inclusions dans l'espoir de faciliter la mise en oeuvre de XPCOM.

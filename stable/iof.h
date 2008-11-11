@@ -75,7 +75,7 @@ namespace iof {
 	  public fwf::oflow_functions___
 	{
 	protected:
-		fwf::size__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Tampon,
 			fwf::size__ Minimum,
 			fwf::size__ Demande )
@@ -91,7 +91,7 @@ namespace iof {
 
 			return Written;
 		}
-		void FWFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{
 			Flush();
 		}
@@ -152,7 +152,7 @@ namespace iof {
 	  public fwf::iflow_functions___
 	{
 	protected:
-		fwf::size__ FWFRead(
+		virtual fwf::size__ FWFRead(
 			fwf::size__ Minimum,
 			fwf::datum__ *Tampon,
 			fwf::size__ Desire )
@@ -168,7 +168,7 @@ namespace iof {
 
 			return NombreLus;
 		}
-		void FWFDismiss( void )
+		virtual void FWFDismiss( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -224,7 +224,7 @@ namespace iof {
 	  public fwf::ioflow_functions___
 	{
 	protected:
-		fwf::size__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Tampon,
 			fwf::size__ Minimum,
 			fwf::size__ Demande )
@@ -240,11 +240,11 @@ namespace iof {
 
 			return Written;
 		}
-		void FWFSynchronize( void )
+		virtual void FWFSynchronize( void )
 		{
 			Flush();
 		}
-		fwf::size__ FWFRead(
+		virtual fwf::size__ FWFRead(
 			fwf::size__ Minimum,
 			fwf::datum__ *Tampon,
 			fwf::size__ Desire )
@@ -260,7 +260,7 @@ namespace iof {
 
 			return NombreLus;
 		}
-		void FWFDismiss( void )
+		virtual void FWFDismiss( void )
 		{}
 	public:
 		void Init(
