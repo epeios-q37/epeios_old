@@ -1,6 +1,44 @@
 /* $Id$ */
 alert("From 'epeios.js' !");
 
+JSConsoleWindow = null;
+
+function jsconsole ()
+{
+	if ( ( JSConsoleWindow == null ) || ( JSConsoleWindow.closed ) )
+		JSConsoleWindow = window.open('chrome://global/content/console.xul', '_blank', 'chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar');
+	else {
+		JSConsoleWindow.focus();
+	}
+}
+
+jsconsole();
+
+
+try {
+Components.utils.reportError("reportError");
+} catch (err) {
+	alert(err);
+}
+
+try {
+Components.classes['@mozilla.org/consoleservice;1']
+            .getService(Components.interfaces.nsIConsoleService)
+            .logStringMessage("logStringMessage");
+} catch (err) {
+	alert(err);
+}
+
+try {
+Components.classes['@mozilla.org/consoleservice;1']
+            .getService(Components.interfaces.nsIConsoleService)
+            .logMessage("logMessage");
+} catch (err) {
+	alert(err);
+}
+
+
+
 try {
 	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 } catch (err) {
