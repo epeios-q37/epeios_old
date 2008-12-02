@@ -6,6 +6,7 @@
 [scriptable, uuid(82aff662-258f-4644-a1bb-c0e22f55595d)]
   interface ieshared : nsISupports
   {
+	  void Test();
 
   };
 

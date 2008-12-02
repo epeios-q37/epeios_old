@@ -27,21 +27,24 @@ class NS_NO_VTABLE NS_SCRIPTABLE ieshared : public nsISupports {
 
   NS_DECLARE_STATIC_IID_ACCESSOR(IESHARED_IID)
 
+  /* void Test (); */
+  NS_SCRIPTABLE NS_IMETHOD Test(void) = 0;
+
 };
 
   NS_DEFINE_STATIC_IID_ACCESSOR(ieshared, IESHARED_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_IESHARED \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD Test(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IESHARED(_to) \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD Test(void) { return _to Test(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IESHARED(_to) \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD Test(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -73,6 +76,12 @@ _MYCLASS_::_MYCLASS_()
 _MYCLASS_::~_MYCLASS_()
 {
   /* destructor code */
+}
+
+/* void Test (); */
+NS_IMETHODIMP _MYCLASS_::Test()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* End of implementation class template. */

@@ -60,15 +60,16 @@ extern class ttr_tutor &NSXPCMTutor;
 
 /*$BEGIN$*/
 
-// Ce dichier d'entête nécessite un environnement de développement génèré à partir des sources !
-
 #include "err.h"
 #include "flw.h"
 #include "epeios.h"
 #include "str.h"
 #include "ctn.h"
 
-#include "string/nsEmbedString.h"
+#include "layout/nsITreeView.h"
+#include "layout/nsITreeContentView.h"
+#include "layout/nsITreeSelection.h"
+#include "layout/nsIListBoxObject.h"
 #include "dom/nsiDOMDocument.h"
 #include "dom/nsiDOMElement.h"
 #include "dom/nsIDOMXULMultSelectCntrlEl.h"
@@ -78,14 +79,12 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULCheckboxElement.h"
 #include "dom/nsIDOMXULTreeElement.h"
 #include "dom/nsIDOMXULDescriptionElement.h"
-#include "nsCOMPtr.h"
-#include "layout/nsITreeView.h"
-#include "layout/nsITreeContentView.h"
-#include "layout/nsITreeSelection.h"
-#include "layout/nsIListBoxObject.h"
 #include "dom/nsIDOMWindowInternal.h"
+#include "string/nsEmbedString.h"
+#include "nsCOMPtr.h"
 #include "appshell/nsIXULWindow.h"
 #include "nsComponentManagerUtils.h"
+#include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
 #include "dom/nsIDOMXULSelectCntrlItemEl.h"
 #ifdef NSXPCM_BKD
@@ -173,6 +172,21 @@ namespace nsxpcm {
 		const strings_ &Splitted,
 		bso::char__ Separator,
 		char **JString );
+
+	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
+	template <typename t> inline t *GetService(
+		const char *ContractID,
+		nsCOMPtr<t> &Service )
+	{	
+		nsresult Error = NS_OK;
+
+		Service = do_GetService( ContractID, &Error );
+
+		if ( Error != NS_OK )
+			ERRu();
+
+		return Service;
+	}
 
 	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
 	template <typename t> inline t *CreateInstance(

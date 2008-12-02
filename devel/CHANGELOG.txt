@@ -1,5 +1,9 @@
 $Id$
 
+02/12/2008 :
+	- NSXPCM :
+		- Création de 'GetService(...)'.
+
 09/11/2008 :
 	- IOF :
 		- Ajout 'virtual's manqaunt.
