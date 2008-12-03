@@ -30,9 +30,10 @@ copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT -DMTK_KEEP
 # Required when compiling a library.
-copt += -DNSXPCM_BKD -DCPE_LIBRARY
+# copt += -DNSXPCM_BKD
+copt += -DCPE_LIBRARY
 lopt = 
-mods = err flw tht tol ttr
+mods = err flw tht tol ttr uym
 
 ifndef EPEIOS_SRC
 	src=
@@ -56,17 +57,22 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 co += -DMTX_NO_ATOMIC_OPERATIONS
-co += -I/usr/lib/xulrunner-devel-1.9.0.4/include
-co += -I/usr/lib/xulrunner-devel-1.9.0.4/sdk/include
+co += -fshort-wchar
+co += -include "mozilla-config.h"
+co += -I/home/csimon/xulrunner-sdk/include
+co += -I/home/csimon/xulrunner-sdk/include/xpcom
+co += -I/home/csimon/xulrunner-sdk/sdk/include
 # Generates debugging data.
-#co += -g
+# co += -g
 # We want a library.
 co += -fPIC
 # General optimization.
 #co += -O
 # To use with gprof
 #co += -pg
-lo = -shared -W1,-soname,$(name).so -o $(name).so 
+# lo = -shared -W1,-soname,$(name).so -o $(name).so 
+lo = -shared -o $(name).so 
+lo += -L/home/csimon/xulrunner-sdk/lib -L/home/csimon/xulrunner-sdk/bin -Wl,-soname,$(name).so,-rpath-link,/home/csimon/xulrunner-sdk/bin -lxpcomglue_s -lxpcom -lnspr4
 # needed when pthread are used.
 libs += -lpthread
 libs += -lm
@@ -126,7 +132,7 @@ lo += $(EPEIOS_LOPT) $(lopt)
 objs = $(name).$(ox) $(mods:=.$(ox))
 
 $(name).so: $(objs)
-	$(cc) $(lo) $(objs) $(libs) 
+	$(cc) $(objs) $(lo) $(libs) 
 	
 %.$(ox): %.cpp
 	$(cc) $(co) $< 

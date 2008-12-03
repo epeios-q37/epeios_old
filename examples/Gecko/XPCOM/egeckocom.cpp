@@ -2,42 +2,9 @@
 
 #include "egeckocom.h"
 #include "nsxpcm.h"
-#include "nsIConsoleservice.h"
+#include "nsIConsoleService.h"
 
 NS_IMPL_ISUPPORTS1(eshared, ieshared)
-
-char * StrAllocThrowA(size_t cchSize)
-{
-	return new char[cchSize];
-}
-wchar_t * StrAllocThrowW(size_t cchSize)
-{
-	return new wchar_t[cchSize];
-}
-void StrFreeA(char * s)
-{
-	delete[] s;
-}
-void StrFreeW(wchar_t * s)
-{
-	delete[] s;
-}
- 
-//Surcharge C++, plus simple.
-inline void StrFree( char   * s) { return StrFreeA(s); }
-inline void StrFree(wchar_t * s) { return StrFreeW(s); }
- 
-
-
-wchar_t * ambstowcs(char const *sczA)
-{
-	size_t const cchLenA = strlen(sczA);
-	size_t const cchLenW = mbstowcs(NULL, sczA, cchLenA+1);
-	wchar_t * szW = StrAllocThrowW(cchLenW+1);
-	mbstowcs(szW, sczA, cchLenA+1);
-	return szW;
-}
-
 
 #define RBB	ERRBegin
 
@@ -66,23 +33,43 @@ NS_IMETHODIMP eshared::Test( void )
 {
 RP
 	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
-	char const * orig = "Hello, World!";
+	NS_NAMED_LITERAL_STRING(wideString, "some string" );
 RBB
-	wchar_t *wcstring = ambstowcs(orig);
- 
+
 	nsxpcm::GetService<nsIConsoleService>( "@mozilla.org/consoleservice;1", ConsoleService );
 
-	ConsoleService->LogStringMessage( wcstring );
-	
-	StrFree(wcstring), wcstring = NULL;
+	ConsoleService->LogStringMessage( wideString.get() );
+RR
+RN
+RE
+}
+
+NS_IMETHODIMP eshared::Set(const char *Value)
+{
+RP
+RBB
+	this->Value.Init( Value );
+RR
+RN
+RE
+}
+
+/* string Get (); */
+NS_IMETHODIMP eshared::Get(char **_retval)
+{
+RP
+RBB
+	nsxpcm::Transform( Value, _retval );
 RR
 RN
 RE
 }
 
 
+
 eshared::eshared()
 {
+	Value.Init();
   /* member initializers and constructor code */
 }
 

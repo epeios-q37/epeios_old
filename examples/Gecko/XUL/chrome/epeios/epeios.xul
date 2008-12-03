@@ -10,8 +10,16 @@
 	onload="alert('This is as last from the main page once all loaded (subpage included) !');"
 >
 	<script type="text/javascript">alert('This is as first from the main window.');</script>
-	<deck id="mainDesck" flex="1" selectedIndex="0">
-		<iframe src="page.xul"/>
-	</deck>
+	<script type="text/javascript" src="epeios.js"/>
+	<vbox>
+		<deck id="mainDesck" flex="1" selectedIndex="0">
+			<iframe src="page.xul"/>
+		</deck>
+		<box>
+			<textbox id="Text"/>
+			<button label="Set" oncommand="Set( getElementById('Text').value );"/>
+			<button label="Get" oncommand="getElementById('Text').value=Get();"/>
+		</box>
+	</vbox>
 </window>
 	

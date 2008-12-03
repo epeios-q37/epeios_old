@@ -66,12 +66,14 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "str.h"
 #include "ctn.h"
 
+#include "xpcom-config.h"
+
 #include "layout/nsITreeView.h"
 #include "layout/nsITreeContentView.h"
 #include "layout/nsITreeSelection.h"
 #include "layout/nsIListBoxObject.h"
-#include "dom/nsiDOMDocument.h"
-#include "dom/nsiDOMElement.h"
+#include "dom/nsIDOMDocument.h"
+#include "dom/nsIDOMElement.h"
 #include "dom/nsIDOMXULMultSelectCntrlEl.h"
 #include "dom/nsIDOMXULSelectCntrlItemEl.h"
 #include "dom/nsIDOMXULTextboxElement.h"
@@ -80,13 +82,13 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULTreeElement.h"
 #include "dom/nsIDOMXULDescriptionElement.h"
 #include "dom/nsIDOMWindowInternal.h"
-#include "string/nsEmbedString.h"
+// #include "string/nsEmbedString.h"
+#include "nsEmbedString.h"
 #include "nsCOMPtr.h"
 #include "appshell/nsIXULWindow.h"
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
-#include "dom/nsIDOMXULSelectCntrlItemEl.h"
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
 #endif

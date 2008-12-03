@@ -4,11 +4,16 @@
 
 // Shared object, (using 'getService()').
 [scriptable, uuid(82aff662-258f-4644-a1bb-c0e22f55595d)]
-  interface ieshared : nsISupports
-  {
-	  void Test();
+interface ieshared
+: nsISupports
+{
+	void Test();
+	void Set( in string Value );
+	string Get();
 
-  };
+
+
+};
 
 
 // Private object (using 'createInstance()'.

@@ -56,3 +56,24 @@ try {
 alert( eshared );
 
 eshared.Test();
+
+function Set ( Value )
+{
+	try {
+		eshared.Set( Value );
+	} catch (err) {
+		alert(err);
+	}
+}
+
+function Get ()
+{
+	try {
+		Value = eshared.Get();
+	} catch (err) {
+		alert(err);
+	}
+	
+	return Value;
+}
+

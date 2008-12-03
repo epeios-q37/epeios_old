@@ -30,21 +30,33 @@ class NS_NO_VTABLE NS_SCRIPTABLE ieshared : public nsISupports {
   /* void Test (); */
   NS_SCRIPTABLE NS_IMETHOD Test(void) = 0;
 
+  /* void Set (in string Value); */
+  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) = 0;
+
+  /* string Get (); */
+  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) = 0;
+
 };
 
   NS_DEFINE_STATIC_IID_ACCESSOR(ieshared, IESHARED_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_IESHARED \
-  NS_SCRIPTABLE NS_IMETHOD Test(void); 
+  NS_SCRIPTABLE NS_IMETHOD Test(void); \
+  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value); \
+  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IESHARED(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Test(void) { return _to Test(); } 
+  NS_SCRIPTABLE NS_IMETHOD Test(void) { return _to Test(); } \
+  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) { return _to Set(Value); } \
+  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) { return _to Get(_retval); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IESHARED(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Test(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(); } 
+  NS_SCRIPTABLE NS_IMETHOD Test(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(); } \
+  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) { return !_to ? NS_ERROR_NULL_POINTER : _to->Set(Value); } \
+  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Get(_retval); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -80,6 +92,18 @@ _MYCLASS_::~_MYCLASS_()
 
 /* void Test (); */
 NS_IMETHODIMP _MYCLASS_::Test()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void Set (in string Value); */
+NS_IMETHODIMP _MYCLASS_::Set(const char *Value)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* string Get (); */
+NS_IMETHODIMP _MYCLASS_::Get(char **_retval)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
