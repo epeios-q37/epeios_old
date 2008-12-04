@@ -14,16 +14,12 @@ NS_IMPL_ISUPPORTS1(eshared, ieshared)
 #define RB	RBB { if ( !Connected ) ERRu(); kernel::SpecialDebug( "--> " __FILE__ " ", __LINE__ ); }
 #define RR	\
 	ERRErr	\
-/*	err::buffer__ Buffer;\
 	if ( ERRMajor != err::itn ) {\
-		Backend.SetMessage( "Frontend", err::Message( Buffer ) );\
 		NSResult = NS_ERROR_FAILURE;\
 	} else if ( ERRMinor != err::iReturn ) {\
 		NSResult = NS_ERROR_FAILURE;\
-		if ( ERRMinor != err::iBeam )\
-			Backend.SetMessage( "Frontend", err::Message( Buffer ) );\
 	}\
-*/	ERRRst();
+	ERRRst();
 #define RN	ERREnd
 #define RE	\
 	ERREpilog\
