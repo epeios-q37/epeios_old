@@ -60,6 +60,7 @@ public:
 #include "dom/nsIDOMEventTarget.h"
 #include "widget/nsIFilePicker.h"
 #include "nsILocalFile.h"
+#include "nsIConsoleService.h"
 
 using namespace nsxpcm;
 
@@ -819,6 +820,32 @@ ERREpilog
 
 
 #endif
+
+void nsxpcm::Log( const char *Text )
+{
+	nsEmbedString String;
+	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
+
+	nsxpcm::GetService<nsIConsoleService>( "@mozilla.org/consoleservice;1", ConsoleService );
+
+	nsxpcm::Transform( Text, String );
+
+	ConsoleService->LogStringMessage( String.get() );
+}
+
+void nsxpcm::Log( const str::string_ &Text )
+{
+ERRProlog
+	tol::E_FPOINTER___( char ) Buffer;
+ERRBegin
+	Buffer = Text.Convert();
+
+	Log( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 class nsxpcmpersonnalization

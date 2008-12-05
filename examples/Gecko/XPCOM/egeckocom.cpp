@@ -2,7 +2,6 @@
 
 #include "egeckocom.h"
 #include "nsxpcm.h"
-#include "nsIConsoleService.h"
 
 NS_IMPL_ISUPPORTS1(eshared, ieshared)
 
@@ -28,13 +27,8 @@ NS_IMPL_ISUPPORTS1(eshared, ieshared)
 NS_IMETHODIMP eshared::Test( void )
 {
 RP
-	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
-	NS_NAMED_LITERAL_STRING(wideString, "some string" );
 RBB
-
-	nsxpcm::GetService<nsIConsoleService>( "@mozilla.org/consoleservice;1", ConsoleService );
-
-	ConsoleService->LogStringMessage( wideString.get() );
+	nsxpcm::Log( "Hello the world !" );
 RR
 RN
 RE

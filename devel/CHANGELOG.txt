@@ -1,5 +1,9 @@
 $Id$
 
+05/12/2008 :
+	- NSXPCM :
+		- Ajout fonction 'Log(...)'.
+
 03/12/2008 :
 	- NSXPCM :
 		- Correction casse incorrecte dans le nom de fichiers d'entête inclus.

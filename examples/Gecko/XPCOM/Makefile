@@ -33,7 +33,11 @@ copt += -DCPE_MT -DMTK_KEEP
 # copt += -DNSXPCM_BKD
 copt += -DCPE_LIBRARY
 lopt = 
-mods = err flw tht tol ttr uym
+mods = err flw tht tol ttr uym nsxpcm str
+
+# To adapt !
+arm-sdk=/home/csimon/xulrunner-sdk-arm
+i686-sdk=/home/csimon/xulrunner-sdk-i686
 
 ifndef EPEIOS_SRC
 	src=
@@ -59,9 +63,14 @@ co = -c
 co += -DMTX_NO_ATOMIC_OPERATIONS
 co += -fshort-wchar
 co += -include "mozilla-config.h"
-co += -I/home/csimon/xulrunner-sdk/include
-co += -I/home/csimon/xulrunner-sdk/include/xpcom
-co += -I/home/csimon/xulrunner-sdk/sdk/include
+ifeq ("$(DEB_BUILD_ARCH)","armel")
+sdk=$(arm-sdk)
+else
+sdk=$(i686-sdk)
+endif
+co += -I$(sdk)/include
+co += -I$(sdk)/include/xpcom
+co += -I$(sdk)/sdk/include
 # Generates debugging data.
 # co += -g
 # We want a library.
@@ -72,7 +81,7 @@ co += -fPIC
 #co += -pg
 # lo = -shared -W1,-soname,$(name).so -o $(name).so 
 lo = -shared -o $(name).so 
-lo += -L/home/csimon/xulrunner-sdk/lib -L/home/csimon/xulrunner-sdk/bin -Wl,-soname,$(name).so,-rpath-link,/home/csimon/xulrunner-sdk/bin -lxpcomglue_s -lxpcom -lnspr4
+lo += -L$(sdk)/lib -L$(sdk)/bin -Wl,-soname,$(name).so,-rpath-link,$(sdk)/bin -lxpcomglue_s -lxpcom -lnspr4
 # needed when pthread are used.
 libs += -lpthread
 libs += -lm

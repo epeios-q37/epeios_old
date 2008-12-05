@@ -898,6 +898,12 @@ namespace nsxpcm {
 		const char *Title,
 		str::string_ &DirectoryName );
 
+	// Log to the javascript console.
+	void Log( const char *Text );
+
+	// Log to the javascript console.
+	void Log( const str::string_ &Text );
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
