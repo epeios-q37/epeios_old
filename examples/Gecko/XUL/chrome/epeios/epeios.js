@@ -1,5 +1,16 @@
 /* $Id$ */
-alert("From 'epeios.js' !");
+function log ( text )
+{
+	try {
+		Components.classes['@mozilla.org/consoleservice;1']
+            .getService(Components.interfaces.nsIConsoleService)
+            .logStringMessage( text );
+	} catch (err) {
+		alert(err);
+	}
+}
+
+log("From 'epeios.js' !");
 
 JSConsoleWindow = null;
 
@@ -22,14 +33,6 @@ Components.utils.reportError("reportError");
 }
 
 try {
-Components.classes['@mozilla.org/consoleservice;1']
-            .getService(Components.interfaces.nsIConsoleService)
-            .logStringMessage("logStringMessage");
-} catch (err) {
-	alert(err);
-}
-
-try {
 	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 } catch (err) {
 	alert(err);
@@ -42,20 +45,12 @@ try {
 }
 
 try {
-	gesbib = Components.classes["@logiplus.fr/gesbib;1"].getService().QueryInterface(Components.interfaces.igesbib);
-} catch (err) {
-	alert(err);
-}
-
-try {
 	eprivate = Components.classes["@zeusw.org/eprivate;1"].createInstance().QueryInterface(Components.interfaces.ieprivate);
 } catch (err) {
 	alert(err);
 }
 
-alert( eshared );
-
-eshared.Test();
+// alert( eprivate );
 
 function Set ( Value )
 {
@@ -76,4 +71,13 @@ function Get ()
 	
 	return Value;
 }
+
+function setUI ( document )
+ {
+	try {
+		eprivate.SetUI( document );
+	} catch (err ) {
+		alert( err );
+	}
+ }
 

@@ -1,6 +1,8 @@
 /* $Id$ */
 
 #include "nsISupports.idl"
+#include "nsIDOMDocument.idl"
+#include "nsIDOMEventListener.idl"
 
 // Shared object, (using 'getService()').
 [scriptable, uuid(82aff662-258f-4644-a1bb-c0e22f55595d)]
@@ -10,15 +12,20 @@ interface ieshared
 	void Test();
 	void Set( in string Value );
 	string Get();
-
-
-
 };
 
 
 // Private object (using 'createInstance()'.
 [scriptable, uuid(eb11441c-aedc-48a2-ba79-936372a30382)]
-  interface ieprivate : nsISupports
-  {
+interface ieprivate
+: nsISupports
+{
+	void SetUI( in nsIDOMDocument Document );	
+};
 
-  };
+// Evente listener (internal use only).
+[scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
+interface ieevent_listener
+: nsIDOMEventListener
+{};
+

@@ -7,18 +7,25 @@
 	title="Epeios Gecko demo !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="alert('This is as last from the main page once all loaded (subpage included) !');"
+	onload="log('This is as last from the main page once all loaded (subpage included) !');setUI( document );"
 >
-	<script type="text/javascript">alert('This is as first from the main window.');</script>
 	<script type="text/javascript" src="epeios.js"/>
+	<script type="text/javascript">log('This is as first from the main window.')</script>
 	<vbox>
 		<deck id="mainDesck" flex="1" selectedIndex="0">
 			<iframe src="page.xul"/>
 		</deck>
 		<box>
-			<textbox id="Text"/>
-			<button label="Set" oncommand="Set( getElementById('Text').value );"/>
-			<button label="Get" oncommand="getElementById('Text').value=Get();"/>
+			<label>Handled via Javascript</label>
+			<textbox id="jsText"/>
+			<button id="jsSet" label="Set" oncommand="Set( getElementById('jsText').value );"/>
+			<button id="jsGet" label="Get" oncommand="getElementById('jsText').value=Get();"/>
+		</box>
+		<box>
+			<label>Handled via XPCOM</label>
+			<textbox id="XPCOMText"/>
+			<button id="XPCOMSet" label="Set"/>
+			<button id="XPCOMGet" label="Get"/>
 		</box>
 	</vbox>
 </window>

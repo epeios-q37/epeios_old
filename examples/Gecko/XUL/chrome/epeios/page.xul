@@ -3,11 +3,11 @@
 <!-- $Id$ -->
 <page
 	id="subPage"
-	onload="alert('This is from the sub-page, once all loaded.');"
+	onload="log('This is from the sub-page, once all loaded.');"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml"
 >
 	<script type="text/javascript" src="epeios.js"/>
-	<script type="text/javascript">alert('This is as first from the sub-page, but as second after main window.');</script>
+	<script type="text/javascript">log('This is as first from the sub-page, but as second after main window.');</script>
 	<label>This is the content of the sub-page !</label>
 </page>

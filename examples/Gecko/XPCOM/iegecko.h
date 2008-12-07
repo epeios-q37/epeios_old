@@ -10,6 +10,14 @@
 #include "nsISupports.h"
 #endif
 
+#ifndef __gen_nsIDOMDocument_h__
+#include "nsIDOMDocument.h"
+#endif
+
+#ifndef __gen_nsIDOMEventListener_h__
+#include "nsIDOMEventListener.h"
+#endif
+
 /* For IDL files that don't want to include root IDL files. */
 #ifndef NS_NO_VTABLE
 #define NS_NO_VTABLE
@@ -124,21 +132,24 @@ class NS_NO_VTABLE NS_SCRIPTABLE ieprivate : public nsISupports {
 
   NS_DECLARE_STATIC_IID_ACCESSOR(IEPRIVATE_IID)
 
+  /* void SetUI (in nsIDOMDocument Document); */
+  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) = 0;
+
 };
 
   NS_DEFINE_STATIC_IID_ACCESSOR(ieprivate, IEPRIVATE_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_IEPRIVATE \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IEPRIVATE(_to) \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) { return _to SetUI(Document); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IEPRIVATE(_to) \
-  /* no methods! */
+  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetUI(Document); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -161,6 +172,76 @@ protected:
 
 /* Implementation file */
 NS_IMPL_ISUPPORTS1(_MYCLASS_, ieprivate)
+
+_MYCLASS_::_MYCLASS_()
+{
+  /* member initializers and constructor code */
+}
+
+_MYCLASS_::~_MYCLASS_()
+{
+  /* destructor code */
+}
+
+/* void SetUI (in nsIDOMDocument Document); */
+NS_IMETHODIMP _MYCLASS_::SetUI(nsIDOMDocument *Document)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* End of implementation class template. */
+#endif
+
+
+/* starting interface:    ieevent_listener */
+#define IEEVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
+
+#define IEEVENT_LISTENER_IID \
+  {0xd333cd20, 0xc453, 0x11dd, \
+    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
+
+class NS_NO_VTABLE NS_SCRIPTABLE ieevent_listener : public nsIDOMEventListener {
+ public: 
+
+  NS_DECLARE_STATIC_IID_ACCESSOR(IEEVENT_LISTENER_IID)
+
+};
+
+  NS_DEFINE_STATIC_IID_ACCESSOR(ieevent_listener, IEEVENT_LISTENER_IID)
+
+/* Use this macro when declaring classes that implement this interface. */
+#define NS_DECL_IEEVENT_LISTENER \
+  /* no methods! */
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object. */
+#define NS_FORWARD_IEEVENT_LISTENER(_to) \
+  /* no methods! */
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
+#define NS_FORWARD_SAFE_IEEVENT_LISTENER(_to) \
+  /* no methods! */
+
+#if 0
+/* Use the code below as a template for the implementation class for this interface. */
+
+/* Header file */
+class _MYCLASS_ : public ieevent_listener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_IEEVENT_LISTENER
+
+  _MYCLASS_();
+
+private:
+  ~_MYCLASS_();
+
+protected:
+  /* additional members */
+};
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(_MYCLASS_, ieevent_listener)
 
 _MYCLASS_::_MYCLASS_()
 {
