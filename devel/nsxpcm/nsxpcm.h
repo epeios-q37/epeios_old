@@ -89,6 +89,9 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
+#include "nsIDOMEventListener.h"
+#include "nsIGenericFactory.h"
+
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
 #endif
@@ -97,8 +100,13 @@ extern class ttr_tutor &NSXPCMTutor;
 #	include "bkdacc.h"
 #endif
 
-namespace nsxpcm {
+#define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
 
+#define NSXPCM_IEVENT_LISTENER_IID \
+  {0xd333cd20, 0xc453, 0x11dd, \
+    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
+
+namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
@@ -753,6 +761,8 @@ namespace nsxpcm {
 	{
 	private:
 		nsIDOMElement *_Element;
+	public:
+		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
 		virtual void NSXPCMOnCommand( void ) = 0;
 		virtual void NSXPCMOnClick( void ) = 0;
@@ -774,13 +784,7 @@ namespace nsxpcm {
 		}
 		void Init(
 			nsIDOMElement *Element,
-			void *UP )
-		{
-			if ( _Element != NULL )
-				ERRu();
-
-			_Element = Element;
-		}
+			void *UP );
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
 		// If a new event is handled, you have to add the corresponding 'event_listener' too.
 		void Handle( const str::string_ &EventType )
@@ -1000,6 +1004,74 @@ namespace nsxpcm {
 		bkdacc::xstrings_ &Strings );
 #endif
 }
+
+namespace nsxpcm {
+	class NS_NO_VTABLE NS_SCRIPTABLE ievent_listener
+	: public nsIDOMEventListener
+	{
+	public: 
+		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_IEVENT_LISTENER_IID)
+
+	};
+
+	struct event_listener
+	: ievent_listener
+	{
+	public:
+	  NS_DECL_ISUPPORTS
+	//  NS_DECL_IEEVENT_LISTENER
+
+	  event_listener()
+	  {
+		  reset( false );
+	  }
+	  void reset( bso::bool__ = true )
+	  {
+		  _Core = NULL;
+	  }
+
+	protected:
+		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
+	private:
+	  ~event_listener()
+	  {
+		  reset();
+	  }
+	public:
+	  element_core__ *_Core;
+	  void Init( element_core__ &Core )
+	  {
+#ifdef NSXPCM_DBG
+		  if ( _Core != NULL )
+			  ERRu();
+#endif
+		  reset();
+
+		  _Core = &Core;
+	  }
+	};
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener)
+}
+
+
+NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener, NSXPCM_IEVENT_LISTENER_IID)
+
+#define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;1"
+#define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
+// {d333cd20-c453-11dd-ad8b-0800200c9a66}
+#define NSXPCM_EVENT_LISTENER_CID  NSXPCM_IEVENT_LISTENER_IID
+
+#define NSXPCM_COMPONENTS\
+    {\
+       NSXPCM_EVENT_LISTENER_CLASSNAME,\
+       NSXPCM_EVENT_LISTENER_CID,\
+       NSXPCM_EVENT_LISTENER_CONTRACTID,\
+	   nsxpcm::event_listenerConstructor,\
+    }
+
+
+
 
 /*$END$*/
 				  /********************************************/

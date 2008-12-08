@@ -5,55 +5,12 @@
 #include "nsIDOMEventListener.h"
 #include "nsIDOMEventTarget.h"
 
-class element_repository
-: public nsxpcm::element_cores
-{
-public:
-	element_repository( void )
-	{
-		Init();
-	}
-};
-
-
-element_repository ElementRepository;
-
-void Append( nsxpcm::element_core__ &Core )
-{
-	nsIDOMEventTarget *EventTarget = NULL;
-	nsCOMPtr<eevent_listener> EventListener;
-
-	ElementRepository.Append( &Core );
-
-	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Core.GetElement() );
-
-	nsxpcm::CreateInstance( EEVENT_LISTENER_CONTRACTID, EventListener );
-
-	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), EventListener, true ) != NS_OK )
-		ERRc();
-
-	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), EventListener, true ) != NS_OK )
-		ERRc();
-
-	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), EventListener, true ) != NS_OK )
-		ERRc();
-
-	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), EventListener, true ) != NS_OK )
-		ERRc();
-
-	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), EventListener, true ) != NS_OK )
-		ERRc();
-}
-
-
 inline void Append(
 	nsxpcm::element_core__ &Core,
 	nsIDOMDocument *Document,
 	const str::string_ &Id )
 {
 	Core.Init( nsxpcm::GetElementById( Document, Id ), NULL );
-
-	Append( Core );
 }
 
 #define RBB	ERRBegin
@@ -136,41 +93,6 @@ eprivate::~eprivate()
   /* destructor code */
 }
 
-NS_IMPL_ISUPPORTS1(eevent_listener, ieevent_listener)
-
-eevent_listener::eevent_listener()
-{
-  /* member initializers and constructor code */
-}
-
-eevent_listener::~eevent_listener()
-{
-  /* destructor code */
-}
-
-NS_IMETHODIMP eevent_listener::HandleEvent(nsIDOMEvent *Event)
-{
-	nsresult NSResult = NS_OK;
-ERRProlog
-ERRBegin
-	nsxpcm::Handle( Event, ElementRepository );
-ERRErr
-	NSResult = NS_ERROR_FAILURE;
-
-/*	if ( _Kernel != NULL ) {
-		if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
-			_Kernel->Alert( err::Message( Buffer ) );	
-		else
-			_Kernel->Alert( _Kernel->Backend.GetMessage() );
-	}
-*/
-	ERRRst();
-ERREnd
-ERREpilog
-    return NSResult;
-}
-
-
 
 NS_IMETHODIMP eprivate::SetUI(nsIDOMDocument *Document)
 {
@@ -193,7 +115,6 @@ RE
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(eshared)
 NS_GENERIC_FACTORY_CONSTRUCTOR(eprivate)
-NS_GENERIC_FACTORY_CONSTRUCTOR(eevent_listener)
 
 static nsModuleComponentInfo components[] =
 {
@@ -209,12 +130,7 @@ static nsModuleComponentInfo components[] =
        EPRIVATE_CONTRACTID,
        eprivateConstructor,
     },
-    {
-       EEVENT_LISTENER_CLASSNAME, 
-       EEVENT_LISTENER_CID,
-       EEVENT_LISTENER_CONTRACTID,
-       eevent_listenerConstructor,
-    },
+	NSXPCM_COMPONENTS,
 };
 
 NS_IMPL_NSGETMODULE("EpeiosModule", components) 

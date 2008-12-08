@@ -1,4 +1,7 @@
 $Id$
+08/12/2008 :
+	- NSXPCM :
+		- Ajout de la gestion des évènements.
 
 05/12/2008 :
 	- NSXPCM :

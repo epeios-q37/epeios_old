@@ -24,8 +24,10 @@ interface ieprivate
 };
 
 // Evente listener (internal use only).
+/*
 [scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
 interface ieevent_listener
 : nsIDOMEventListener
 {};
+*/
 

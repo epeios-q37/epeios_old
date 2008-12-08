@@ -846,6 +846,77 @@ ERREnd
 ERREpilog
 }
 
+void nsxpcm::element_core__::Init(
+	nsIDOMElement *Element,
+	void *UP )
+{
+#ifdef NSXPCM_DBG
+	if ( _Element != NULL )
+		ERRu();
+#endif
+	reset();
+
+	_Element = Element;
+
+	nsIDOMEventTarget *EventTarget = NULL;
+
+	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Element );
+
+	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventListener );
+
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
+	_EventListener->Init( *this );
+
+}
+
+
+NS_IMPL_ISUPPORTS1(nsxpcm::event_listener, nsxpcm::ievent_listener)
+
+NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
+{
+	nsresult NSResult = NS_OK;
+ERRProlog
+	nsEmbedString String;
+	str::string S;
+ERRBegin
+	Event->GetType( String );
+
+	S.Init();
+
+	nsxpcm::Transform( String, S );
+
+	_Core->Handle( S );
+ERRErr
+	NSResult = NS_ERROR_FAILURE;
+
+/*	if ( _Kernel != NULL ) {
+		if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
+			_Kernel->Alert( err::Message( Buffer ) );	
+		else
+			_Kernel->Alert( _Kernel->Backend.GetMessage() );
+	}
+*/
+	ERRRst();
+ERREnd
+ERREpilog
+    return NSResult;
+}
+
+
 
 
 class nsxpcmpersonnalization

@@ -17,11 +17,6 @@
 // {eb11441c-aedc-48a2-ba79-936372a30382}
 #define EPRIVATE_CID  IEPRIVATE_IID
 
-#define EEVENT_LISTENER_CONTRACTID "@zeusw.org/eevent_listener;1"
-#define EEVENT_LISTENER_CLASSNAME "EEventListener"
-// {d333cd20-c453-11dd-ad8b-0800200c9a66}
-#define EEVENT_LISTENER_CID  IEEVENT_LISTENER_IID
-
 class ui_textbox__
 : public nsxpcm::textbox__
 {
@@ -215,21 +210,6 @@ private:
 
 protected:
   /* additional members */
-};
-
-class eevent_listener
-: public ieevent_listener
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_IEEVENT_LISTENER
-
-  eevent_listener();
-
-protected:
-	NS_IMETHOD HandleEvent(nsIDOMEvent *event);
-private:
-  ~eevent_listener();
 };
 
 #endif
