@@ -23,58 +23,58 @@
 #define NS_NO_VTABLE
 #endif
 
-/* starting interface:    ieshared */
-#define IESHARED_IID_STR "82aff662-258f-4644-a1bb-c0e22f55595d"
+/* starting interface:    iegeckocom */
+#define IEGECKOCOM_IID_STR "f1e695a0-b2f1-4a30-ac62-48a9edd9558a"
 
-#define IESHARED_IID \
-  {0x82aff662, 0x258f, 0x4644, \
-    { 0xa1, 0xbb, 0xc0, 0xe2, 0x2f, 0x55, 0x59, 0x5d }}
+#define IEGECKOCOM_IID \
+  {0xf1e695a0, 0xb2f1, 0x4a30, \
+    { 0xac, 0x62, 0x48, 0xa9, 0xed, 0xd9, 0x55, 0x8a }}
 
-class NS_NO_VTABLE NS_SCRIPTABLE ieshared : public nsISupports {
+class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
  public: 
 
-  NS_DECLARE_STATIC_IID_ACCESSOR(IESHARED_IID)
+  NS_DECLARE_STATIC_IID_ACCESSOR(IEGECKOCOM_IID)
 
-  /* void Test (); */
-  NS_SCRIPTABLE NS_IMETHOD Test(void) = 0;
+  /* void RegisteringStart (); */
+  NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) = 0;
 
-  /* void Set (in string Value); */
-  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) = 0;
+  /* void Register (in nsIDOMDocument Document); */
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) = 0;
 
-  /* string Get (); */
-  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) = 0;
+  /* void RegisteringEnd (); */
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) = 0;
 
 };
 
-  NS_DEFINE_STATIC_IID_ACCESSOR(ieshared, IESHARED_IID)
+  NS_DEFINE_STATIC_IID_ACCESSOR(iegeckocom, IEGECKOCOM_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
-#define NS_DECL_IESHARED \
-  NS_SCRIPTABLE NS_IMETHOD Test(void); \
-  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value); \
-  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval); 
+#define NS_DECL_IEGECKOCOM \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document); \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
-#define NS_FORWARD_IESHARED(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Test(void) { return _to Test(); } \
-  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) { return _to Set(Value); } \
-  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) { return _to Get(_retval); } 
+#define NS_FORWARD_IEGECKOCOM(_to) \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) { return _to Register(Document); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
-#define NS_FORWARD_SAFE_IESHARED(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Test(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(); } \
-  NS_SCRIPTABLE NS_IMETHOD Set(const char *Value) { return !_to ? NS_ERROR_NULL_POINTER : _to->Set(Value); } \
-  NS_SCRIPTABLE NS_IMETHOD Get(char **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Get(_retval); } 
+#define NS_FORWARD_SAFE_IEGECKOCOM(_to) \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Document); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
 
 /* Header file */
-class _MYCLASS_ : public ieshared
+class _MYCLASS_ : public iegeckocom
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_IESHARED
+  NS_DECL_IEGECKOCOM
 
   _MYCLASS_();
 
@@ -86,7 +86,7 @@ protected:
 };
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(_MYCLASS_, ieshared)
+NS_IMPL_ISUPPORTS1(_MYCLASS_, iegeckocom)
 
 _MYCLASS_::_MYCLASS_()
 {
@@ -98,93 +98,20 @@ _MYCLASS_::~_MYCLASS_()
   /* destructor code */
 }
 
-/* void Test (); */
-NS_IMETHODIMP _MYCLASS_::Test()
+/* void RegisteringStart (); */
+NS_IMETHODIMP _MYCLASS_::RegisteringStart()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void Set (in string Value); */
-NS_IMETHODIMP _MYCLASS_::Set(const char *Value)
+/* void Register (in nsIDOMDocument Document); */
+NS_IMETHODIMP _MYCLASS_::Register(nsIDOMDocument *Document)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* string Get (); */
-NS_IMETHODIMP _MYCLASS_::Get(char **_retval)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* End of implementation class template. */
-#endif
-
-
-/* starting interface:    ieprivate */
-#define IEPRIVATE_IID_STR "eb11441c-aedc-48a2-ba79-936372a30382"
-
-#define IEPRIVATE_IID \
-  {0xeb11441c, 0xaedc, 0x48a2, \
-    { 0xba, 0x79, 0x93, 0x63, 0x72, 0xa3, 0x03, 0x82 }}
-
-class NS_NO_VTABLE NS_SCRIPTABLE ieprivate : public nsISupports {
- public: 
-
-  NS_DECLARE_STATIC_IID_ACCESSOR(IEPRIVATE_IID)
-
-  /* void SetUI (in nsIDOMDocument Document); */
-  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) = 0;
-
-};
-
-  NS_DEFINE_STATIC_IID_ACCESSOR(ieprivate, IEPRIVATE_IID)
-
-/* Use this macro when declaring classes that implement this interface. */
-#define NS_DECL_IEPRIVATE \
-  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document); 
-
-/* Use this macro to declare functions that forward the behavior of this interface to another object. */
-#define NS_FORWARD_IEPRIVATE(_to) \
-  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) { return _to SetUI(Document); } 
-
-/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
-#define NS_FORWARD_SAFE_IEPRIVATE(_to) \
-  NS_SCRIPTABLE NS_IMETHOD SetUI(nsIDOMDocument *Document) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetUI(Document); } 
-
-#if 0
-/* Use the code below as a template for the implementation class for this interface. */
-
-/* Header file */
-class _MYCLASS_ : public ieprivate
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_IEPRIVATE
-
-  _MYCLASS_();
-
-private:
-  ~_MYCLASS_();
-
-protected:
-  /* additional members */
-};
-
-/* Implementation file */
-NS_IMPL_ISUPPORTS1(_MYCLASS_, ieprivate)
-
-_MYCLASS_::_MYCLASS_()
-{
-  /* member initializers and constructor code */
-}
-
-_MYCLASS_::~_MYCLASS_()
-{
-  /* destructor code */
-}
-
-/* void SetUI (in nsIDOMDocument Document); */
-NS_IMETHODIMP _MYCLASS_::SetUI(nsIDOMDocument *Document)
+/* void RegisteringEnd (); */
+NS_IMETHODIMP _MYCLASS_::RegisteringEnd()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

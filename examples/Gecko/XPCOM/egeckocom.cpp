@@ -5,13 +5,7 @@
 #include "nsIDOMEventListener.h"
 #include "nsIDOMEventTarget.h"
 
-inline void Append(
-	nsxpcm::element_core__ &Core,
-	nsIDOMDocument *Document,
-	const str::string_ &Id )
-{
-	Core.Init( nsxpcm::GetElementById( Document, Id ), NULL );
-}
+global Global;
 
 #define RBB	ERRBegin
 
@@ -32,103 +26,84 @@ inline void Append(
 	ERREpilog\
 	return NSResult;
 
-NS_IMPL_ISUPPORTS1(eshared, ieshared)
 
-NS_IMETHODIMP eshared::Test( void )
+NS_IMPL_ISUPPORTS1(egeckocom, iegeckocom)
+
+egeckocom::egeckocom()
 {
-RP
-RBB
-	nsxpcm::Log( "Hello the world !" );
-RR
-RN
-RE
-}
-
-NS_IMETHODIMP eshared::Set(const char *Value)
-{
-RP
-RBB
-	this->Value.Init( Value );
-RR
-RN
-RE
-}
-
-/* string Get (); */
-NS_IMETHODIMP eshared::Get(char **_retval)
-{
-RP
-RBB
-	nsxpcm::Transform( Value, _retval );
-RR
-RN
-RE
-}
-
-
-
-eshared::eshared()
-{
-	Value.Init();
   /* member initializers and constructor code */
 }
 
-eshared::~eshared()
+egeckocom::~egeckocom()
 {
   /* destructor code */
 }
 
-
-NS_IMPL_ISUPPORTS1(eprivate, ieprivate)
-
-eprivate::eprivate()
-{
-  /* member initializers and constructor code */
-	_Kernel.Init( _UI.Text );
-	_UI.Init( _Kernel );
-}
-
-eprivate::~eprivate()
-{
-  /* destructor code */
-}
-
-
-NS_IMETHODIMP eprivate::SetUI(nsIDOMDocument *Document)
+NS_IMETHODIMP egeckocom::RegisteringStart( void )
 {
 RP
 RBB
-	_UI.Document = Document;
-
-	Append( _UI.Set, Document, str::string( "XPCOMSet" ) );
-	Append( _UI.Get, Document, str::string( "XPCOMGet" ) );
-	Append( _UI.Text, Document, str::string( "XPCOMText" ) );
+	Global.CreateNewKernel();
 RR
 RN
 RE
 }
+
+template <typename element, typename id_type > static void _Register(
+	element &Core,
+	nsIDOMDocument *Document,
+	const id_type &Id )
+{
+	Core.Init( Global.GetCurrentKernelRow() );
+
+	nsxpcm::Register( Core, Document, Id );
+}
+
+
+NS_IMETHODIMP egeckocom::Register(nsIDOMDocument *Document)
+{
+RP
+RBB
+	kernel___ &Kernel = Global.GetCurrentKernel();
+
+	Kernel.Document = Document;
+
+	_Register( Kernel.Set, Document, "XPCOMSet" );	// Version 'const char *'.
+	_Register( Kernel.Get, Document, str::string( "XPCOMGet" ) );	// Version 'const str::string_'.
+	_Register( Kernel.Text, Document, "XPCOMText" );
+	_Register( Kernel.Shared, Document, "Shared" );
+	_Register( Kernel.Label, Document, "XPCOMLabel" );
+RR
+RN
+RE
+}
+
+NS_IMETHODIMP egeckocom::RegisteringEnd( void )
+{
+RP
+RBB
+	Global.DismissCurrentKernel();
+RR
+RN
+RE
+}
+
+
 
 
 /* Gecko required part. */
 
 #include "nsIGenericFactory.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(eshared)
-NS_GENERIC_FACTORY_CONSTRUCTOR(eprivate)
+NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
 
 static nsModuleComponentInfo components[] =
 {
     {
-       ESHARED_CLASSNAME, 
-       ESHARED_CID,
-       ESHARED_CONTRACTID,
-       esharedConstructor,
-    },
-    {
-       EPRIVATE_CLASSNAME, 
-       EPRIVATE_CID,
-       EPRIVATE_CONTRACTID,
-       eprivateConstructor,
+       EGECKOCOM_CLASSNAME, 
+       EGECKOCOM_CID,
+       EGECKOCOM_CONTRACTID,
+       egeckocomConstructor,
     },
 	NSXPCM_COMPONENTS,
 };

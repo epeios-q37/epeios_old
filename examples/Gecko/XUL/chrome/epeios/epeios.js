@@ -39,45 +39,38 @@ try {
 }
 
 try {
-	eshared = Components.classes["@zeusw.org/eshared;1"].getService().QueryInterface(Components.interfaces.ieshared);
-} catch (err) {
-	alert(err);
-}
-
-try {
-	eprivate = Components.classes["@zeusw.org/eprivate;1"].createInstance().QueryInterface(Components.interfaces.ieprivate);
+	egeckocom = Components.classes["@zeusw.org/egeckocom;1"].createInstance().QueryInterface(Components.interfaces.iegeckocom);
 } catch (err) {
 	alert(err);
 }
 
 // alert( eprivate );
 
-function Set ( Value )
-{
-	try {
-		eshared.Set( Value );
-	} catch (err) {
-		alert(err);
-	}
-}
-
-function Get ()
-{
-	try {
-		Value = eshared.Get();
-	} catch (err) {
-		alert(err);
-	}
-	
-	return Value;
-}
-
-function setUI ( document )
+function register ( document )
  {
 	try {
-		eprivate.SetUI( document );
+		egeckocom.Register( document );
 	} catch (err ) {
 		alert( err );
 	}
  }
+ 
+function registeringStart ()
+ {
+	try {
+		egeckocom.RegisteringStart();
+	} catch (err ) {
+		alert( err );
+	}
+ }
+
+function registeringEnd ()
+ {
+	try {
+		egeckocom.RegisteringEnd();
+	} catch (err ) {
+		alert( err );
+	}
+ }
+
 

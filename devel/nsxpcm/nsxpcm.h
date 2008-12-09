@@ -91,6 +91,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
 #include "nsIGenericFactory.h"
+#include "nsIDOMXULLabelElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -398,6 +399,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULMenuListElement, menulist, Menulist )
 	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
 	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
+	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -701,7 +703,7 @@ namespace nsxpcm {
 		return Index;
 	}
 
-	template <typename element> inline bool GetChecked( element *Element )
+	template <typename element> inline bool IsChecked( element *Element )
 	{
 		PRBool Checked;
 
@@ -859,6 +861,30 @@ namespace nsxpcm {
 		}
 	};
 
+	class label__
+	: public _element__<nsIDOMXULLabelElement>
+	{
+	public:
+		void SetValue( const str::string_ &Value )
+		{
+			nsxpcm::SetValue( GetObject(), Value );
+		}
+		void GetValue( str::string_ &Value )
+		{
+			nsxpcm::GetValue( GetObject(), Value );
+		}
+	};
+
+	class checkbox__
+	: public _element__<nsIDOMXULCheckboxElement>
+	{
+	public:
+		bso::bool__ IsChecked( void )
+		{
+			return nsxpcm::IsChecked( GetObject() );
+		}
+	};
+
 	class listitem__
 	: public _element__<nsIDOMXULSelectControlItemElement>
 	{};
@@ -901,6 +927,15 @@ namespace nsxpcm {
 		nsIDOMWindow *Parent,
 		const char *Title,
 		str::string_ &DirectoryName );
+
+	// Enregistre dans 'Core' l'élément d'identifiant (attribut XUL 'id') 'Id' appartenenant  au document 'Document'.
+	template <class id_type> void Register(
+		nsxpcm::element_core__ &Core,
+		nsIDOMDocument *Document,
+		const id_type &Id )
+	{
+		Core.Init( nsxpcm::GetElementById( Document, Id ), NULL );
+	}
 
 	// Log to the javascript console.
 	void Log( const char *Text );
@@ -1005,6 +1040,16 @@ namespace nsxpcm {
 #endif
 }
 
+// Début de la partie concernant l''event_listener'.
+// Copier à partir du '.h' d'un '.idl' contenant cd qui suit :
+
+/*
+[scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
+interface eevent_listener
+: nsIDOMEventListener
+{};
+*/
+
 namespace nsxpcm {
 	class NS_NO_VTABLE NS_SCRIPTABLE ievent_listener
 	: public nsIDOMEventListener
@@ -1069,6 +1114,8 @@ NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener, NSXPCM_IEVENT_LISTENER_II
        NSXPCM_EVENT_LISTENER_CONTRACTID,\
 	   nsxpcm::event_listenerConstructor,\
     }
+
+// Fin de la partie concernant l''event_listener'.
 
 
 
