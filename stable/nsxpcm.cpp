@@ -821,6 +821,37 @@ ERREpilog
 
 #endif
 
+void nsxpcm::Alert(
+	nsIDOMWindow *Window,
+	const char *Text )
+{
+ERRProlog
+	nsEmbedString NSText;
+ERRBegin
+	nsxpcm::Transform( Text, NSText );
+
+	nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window )->Alert( NSText );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void nsxpcm::Alert(
+	nsIDOMWindow *Window,
+	const str::string_ &Text )
+{
+ERRProlog
+	nsEmbedString NSText;
+ERRBegin
+	nsxpcm::Transform( Text, NSText );
+
+	nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window )->Alert( NSText );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void nsxpcm::Log( const char *Text )
 {
 	nsEmbedString String;
@@ -846,9 +877,9 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::element_core__::Init(
+void nsxpcm::element_core__::Register(
 	nsIDOMElement *Element,
-	void *UP )
+	nsIDOMWindow *Window )
 {
 #ifdef NSXPCM_DBG
 	if ( _Element != NULL )
@@ -857,6 +888,7 @@ void nsxpcm::element_core__::Init(
 	reset();
 
 	_Element = Element;
+	_Window = Window;
 
 	nsIDOMEventTarget *EventTarget = NULL;
 
@@ -892,6 +924,7 @@ NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
 ERRProlog
 	nsEmbedString String;
 	str::string S;
+	err::buffer__ Buffer;
 ERRBegin
 	Event->GetType( String );
 
@@ -903,13 +936,9 @@ ERRBegin
 ERRErr
 	NSResult = NS_ERROR_FAILURE;
 
-/*	if ( _Kernel != NULL ) {
-		if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
-			_Kernel->Alert( err::Message( Buffer ) );	
-		else
-			_Kernel->Alert( _Kernel->Backend.GetMessage() );
-	}
-*/
+	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
+		Alert( _Core->Window(), err::Message( Buffer ) );	
+
 	ERRRst();
 ERREnd
 ERREpilog

@@ -745,6 +745,18 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		const str::string_ &NodeName );
 
+	inline nsIDOMDocument *GetDocument( nsIDOMWindow *Window )
+	{
+		nsIDOMDocument *Document = NULL;
+
+		Window->GetDocument( &Document );
+
+		if ( Document == NULL )
+			ERRu();
+
+		return Document;
+	}
+
 	template <typename element> inline element *FindParent(
 		nsIDOMNode *Node,
 		const str::string_ &NodeName )
@@ -758,10 +770,12 @@ namespace nsxpcm {
 	}
 
 	typedef nsIDOMElement *nsIDOMElementPointer;
+	typedef nsIDOMWindow *nsIDOMWindowPointer;
 
 	class element_core__
 	{
 	private:
+		nsIDOMWindow *_Window;
 		nsIDOMElement *_Element;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
@@ -775,6 +789,7 @@ namespace nsxpcm {
 		void reset( bso::bool__ = true )
 		{
 			_Element = NULL;
+			_Window = NULL;
 		}
 		element_core__( void )
 		{
@@ -784,10 +799,12 @@ namespace nsxpcm {
 		{
 			reset( );
 		}
-		void Init(
-			nsIDOMElement *Element,
-			void *UP );
+		void Init( nsIDOMElement *Element )
+		{
+			reset();
+		}
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
+		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
 		// If a new event is handled, you have to add the corresponding 'event_listener' too.
 		void Handle( const str::string_ &EventType )
 		{
@@ -804,9 +821,28 @@ namespace nsxpcm {
 			else
 				ERRl();
 		}
+		void Register(
+			nsIDOMElement *Element,
+			nsIDOMWindow *Window );
 	};
 
 	E_ROW( row__ );
+
+	template <class id_type> void Register(
+		nsxpcm::element_core__ &Core,
+		nsIDOMWindow *Window,
+		const id_type &Id )
+	{
+		Core.Register( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window );
+	}
+
+	void Alert(
+		nsIDOMWindow *Window,
+		const char *Text );
+
+	void Alert(
+		nsIDOMWindow *Window,
+		const str::string_ &Text );
 
 	typedef bch::E_BUNCH_( element_core__ * ) element_cores_;
 	E_AUTO( element_cores );
@@ -927,15 +963,6 @@ namespace nsxpcm {
 		nsIDOMWindow *Parent,
 		const char *Title,
 		str::string_ &DirectoryName );
-
-	// Enregistre dans 'Core' l'élément d'identifiant (attribut XUL 'id') 'Id' appartenenant  au document 'Document'.
-	template <class id_type> void Register(
-		nsxpcm::element_core__ &Core,
-		nsIDOMDocument *Document,
-		const id_type &Id )
-	{
-		Core.Init( nsxpcm::GetElementById( Document, Id ), NULL );
-	}
 
 	// Log to the javascript console.
 	void Log( const char *Text );

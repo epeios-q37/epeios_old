@@ -70,6 +70,7 @@ sdk=$(i686-sdk)
 endif
 co += -I$(sdk)/include
 co += -I$(sdk)/include/xpcom
+co += -I$(sdk)/include/dom
 co += -I$(sdk)/sdk/include
 # Generates debugging data.
 # co += -g

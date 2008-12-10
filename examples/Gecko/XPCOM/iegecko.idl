@@ -10,8 +10,9 @@ interface iegeckocom
 : nsISupports
 {
 	void RegisteringStart();
-	void Register( in nsIDOMDocument Document );	
+	void Register( in nsIDOMwindow Window );	
 	void RegisteringEnd();
+	void Unregister();
 };
 
 // Evente listener (internal use only).

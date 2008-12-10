@@ -16,7 +16,7 @@
 
 E_ROW( krow__ );
 
-class kernel_access__
+class bridge__
 {
 private:
 	krow__ _KernelRow;
@@ -25,11 +25,11 @@ public:
 	{
 		_KernelRow = NONE;
 	}
-	kernel_access__()
+	bridge__()
 	{
 		reset( false );
 	}
-	~kernel_access__()
+	~bridge__()
 	{
 		reset();
 	}
@@ -45,11 +45,13 @@ public:
 	}
 	const class kernel___ &Kernel( void ) const;
 	class kernel___ &Kernel( void );
+	const class ui__ &UI( void ) const;
+	class ui__ &UI( void );
 };
 
 class ui_textbox__
 : public nsxpcm::textbox__,
-  public kernel_access__
+  public bridge__
 {
 protected:
 	virtual void NSXPCMOnCommand( void ){}
@@ -80,14 +82,16 @@ protected:
 public:
 	void Init( krow__ KernelRow )
 	{
-		kernel_access__::Init( KernelRow );
+		bridge__::Init( KernelRow );
 		// 'nsxpcm::button__::Init()' called later.
 	}
 };
+
+typedef ui_textbox__	ui_input_textbox__;
 
 class ui_label__
 : public nsxpcm::label__,
-  public kernel_access__
+  public bridge__
 {
 protected:
 	virtual void NSXPCMOnCommand( void ){}
@@ -98,14 +102,16 @@ protected:
 public:
 	void Init( krow__ KernelRow )
 	{
-		kernel_access__::Init( KernelRow );
-		// 'nsxpcm::button__::Init()' called later.
+		bridge__::Init( KernelRow );
+		// 'nsxpcm::label__::Init()' called later.
 	}
 };
+
+typedef ui_label__	ui_output_label__;
 
 class ui_checkbox__
 : public nsxpcm::checkbox__,
-  public kernel_access__
+  public bridge__
 {
 protected:
 	virtual void NSXPCMOnCommand( void ){}
@@ -116,14 +122,16 @@ protected:
 public:
 	void Init( krow__ KernelRow )
 	{
-		kernel_access__::Init( KernelRow );
-		// 'nsxpcm::button__::Init()' called later.
+		bridge__::Init( KernelRow );
+		// 'nsxpcm::checkbox__::Init()' called later.
 	}
 };
 
+typedef ui_checkbox__	ui_shared_checkbox__;
+
 class ui_button__
 : public nsxpcm::button__,
-  public kernel_access__
+  public bridge__
 {
 protected:
 	virtual void NSXPCMOnInput( void ){}
@@ -132,45 +140,38 @@ protected:
 public:
 	void Init( krow__ KernelRow )
 	{
-		kernel_access__::Init( KernelRow );
+		bridge__::Init( KernelRow );
 		// 'nsxpcm::button__::Init()' called later.
 	}
 };
 
-class ui_set_button__
+class ui_error_button__
 : public ui_button__
 {
 protected:
 	virtual void NSXPCMOnCommand( void ) {}
-	virtual void NSXPCMOnClick( void ) {}
-};
-
-class ui_get_button__
-: public ui_button__
-{
-	virtual void NSXPCMOnCommand( void ) {}
-	virtual void NSXPCMOnClick( void ) {}
+	virtual void NSXPCMOnClick( void );
 };
 
 class ui__
 {
 public:
 	nsIDOMDocument *Document;
-	ui_textbox__ Text;
-	ui_checkbox__ Shared;
-	ui_label__ Label;
-	ui_set_button__ Set;
-	ui_get_button__ Get;
+	nsIDOMWindow *Window;
+	ui_input_textbox__ Input;
+	ui_shared_checkbox__ Shared;
+	ui_output_label__ Output;
+	ui_error_button__ Error;
 	void Init( void )
 	{}
 };
 
 class kernel___
-: public ui__
 {
 private:
 	str::string _Text;
 public:
+	ui__ UI;
 	void reset( bso::bool__ P = true )
 	{
 		_Text.reset( P );
@@ -189,43 +190,30 @@ public:
 
 		_Text.Init();
 
-		ui__::Init();
+		UI.Init();
 
 	}
-	void Store( void )
-	{
-		_Text.Init();
-		Text.GetValue( _Text );
-	}
-	void Recall( void )
-	{
-		Text.SetValue( _Text );
-	}
-	void CopyToLabel( void )
+	void InputToOutput( void )
 	{
 	ERRProlog
 		str::string Value;
 	ERRBegin
 		Value.Init();
-		Text.GetValue( Value );
-		Label.SetValue( Value );
+		UI.Input.GetValue( Value );
+		UI.Output.SetValue( Value );
 	ERRErr
 	ERREnd
 	ERREpilog
 	}
-	void SetLabel( const str::string_ &Value )
-	{
-		Label.SetValue( Value );
-	}
-	void PropagateToLabels( void );
+	void InputToAllOutputs( void );
 };
 
-inline void ui_textbox__::NSXPCMOnInput( void )
+inline void ui_input_textbox__::NSXPCMOnInput( void )
 {
-	if ( Kernel().Shared.IsChecked() )
-		Kernel().PropagateToLabels();
+	if ( UI().Shared.IsChecked() )
+		Kernel().InputToAllOutputs();
 	else
-		Kernel().CopyToLabel();
+		Kernel().InputToOutput();
 }
 
 extern class global
@@ -275,26 +263,45 @@ public:
 	{
 		return *Get( GetCurrentKernelRow() );
 	}
+	void Delete( krow__ KernelRow )
+	{
+#ifdef XXX_DBG
+		if ( !Exists( KernelRow ) )
+			ERRu();
+#endif
+		delete Get( KernelRow );
+
+		Store( NULL, KernelRow );
+
+		lstbch::E_LBUNCHt( kernel___ *, krow__ )::Delete( KernelRow );
+
+	}
+
 } Global;
 
-inline kernel___ &kernel_access__::Kernel( void )
+inline kernel___ &bridge__::Kernel( void )
 {
 	return *Global.Get( _KernelRow );
 }
 
-inline void kernel___::PropagateToLabels( void )
+inline ui__ &bridge__::UI( void )
+{
+	return Kernel().UI;
+}
+
+inline void kernel___::InputToAllOutputs( void )
 {
 ERRProlog
 	str::string Value;
 ERRBegin
 	Value.Init();
-	Text.GetValue( Value );
+	UI.Input.GetValue( Value );
 
 	krow__ Row = Global.First();
 
 	while ( Row != NONE ) {
 
-		Global.Get( Row )->Label.SetValue( Value );
+		Global.Get( Row )->UI.Output.SetValue( Value );
 
 		Row = Global.Next( Row );
 	}
@@ -303,6 +310,16 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+#include "nsIDOMNodeList.h"
+#include "nsIDOMWindow.h"
+
+void ui_error_button__::NSXPCMOnClick( void )
+{
+//	nsxpcm::QueryInterface<nsIDOMWindowInternal>( UI().Window )->Alert( NS_LITERAL_STRING( "Yesss !" ) );
+	ERRu();
+}
+
 
 
 
@@ -314,7 +331,7 @@ public:
   NS_DECL_IEGECKOCOM
 
   egeckocom();
-
+  krow__ _KernelRow;
 private:
   ~egeckocom();
 protected:

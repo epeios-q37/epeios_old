@@ -38,11 +38,14 @@ class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
   /* void RegisteringStart (); */
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) = 0;
 
-  /* void Register (in nsIDOMDocument Document); */
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) = 0;
+  /* void Register (in nsIDOMWindow Window); */
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) = 0;
 
   /* void RegisteringEnd (); */
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) = 0;
+
+  /* void Unregister (); */
+  NS_SCRIPTABLE NS_IMETHOD Unregister(void) = 0;
 
 };
 
@@ -51,20 +54,23 @@ class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_IEGECKOCOM \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document); \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); 
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window); \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); \
+  NS_SCRIPTABLE NS_IMETHOD Unregister(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IEGECKOCOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) { return _to Register(Document); } \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } 
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return _to Register(Window); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } \
+  NS_SCRIPTABLE NS_IMETHOD Unregister(void) { return _to Unregister(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IEGECKOCOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMDocument *Document) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Document); } \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } 
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } \
+  NS_SCRIPTABLE NS_IMETHOD Unregister(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Unregister(); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -104,14 +110,20 @@ NS_IMETHODIMP _MYCLASS_::RegisteringStart()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void Register (in nsIDOMDocument Document); */
-NS_IMETHODIMP _MYCLASS_::Register(nsIDOMDocument *Document)
+/* void Register (in nsIDOMWindow Window); */
+NS_IMETHODIMP _MYCLASS_::Register(nsIDOMWindow *Window)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void RegisteringEnd (); */
 NS_IMETHODIMP _MYCLASS_::RegisteringEnd()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void Unregister (); */
+NS_IMETHODIMP _MYCLASS_::Unregister()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

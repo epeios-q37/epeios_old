@@ -7,7 +7,8 @@
 	title="Epeios Gecko demo !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="log('This is as last from the main page once all loaded (subpage included) !');register( document );registeringEnd();"
+	onload="log('This is as last from the main page once all loaded (subpage included) !');register( window );registeringEnd();"
+	onunload="unregister();"
 >
 	<script type="text/javascript" src="epeios.js"/>
 	<script type="text/javascript">log('This is as first from the main window.');registeringStart();</script>
@@ -16,12 +17,10 @@
 			<iframe src="page.xul"/>
 		</deck>
 		<box>
-			<label>Handled via XPCOM</label>
-			<textbox id="XPCOMText"/>
-			<button id="XPCOMSet" label="Set"/>
-			<button id="XPCOMGet" label="Get"/>
-			<checkbox label="Share" id="Shared"/>
-			<label id="XPCOMLabel"/>
+			<button id="error" label="Error"/>
+			<textbox id="input"/>
+			<checkbox label="Share" id="shared"/>
+			<label id="output"/>
 		</box>
 	</vbox>
 </window>

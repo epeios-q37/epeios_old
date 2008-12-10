@@ -23,7 +23,7 @@ function jsconsole ()
 	}
 }
 
-jsconsole();
+// jsconsole();
 
 
 try {
@@ -46,10 +46,10 @@ try {
 
 // alert( eprivate );
 
-function register ( document )
+function register ( windows )
  {
 	try {
-		egeckocom.Register( document );
+		egeckocom.Register( window );
 	} catch (err ) {
 		alert( err );
 	}
@@ -68,6 +68,15 @@ function registeringEnd ()
  {
 	try {
 		egeckocom.RegisteringEnd();
+	} catch (err ) {
+		alert( err );
+	}
+ }
+
+function unregister ()
+ {
+	try {
+		egeckocom.Unregister();
 	} catch (err ) {
 		alert( err );
 	}

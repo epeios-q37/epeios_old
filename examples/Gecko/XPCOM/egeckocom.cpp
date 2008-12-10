@@ -32,6 +32,7 @@ NS_IMPL_ISUPPORTS1(egeckocom, iegeckocom)
 egeckocom::egeckocom()
 {
   /* member initializers and constructor code */
+	_KernelRow =  NONE;
 }
 
 egeckocom::~egeckocom()
@@ -51,28 +52,37 @@ RE
 
 template <typename element, typename id_type > static void _Register(
 	element &Core,
-	nsIDOMDocument *Document,
+	nsIDOMWindow *Window,
 	const id_type &Id )
 {
 	Core.Init( Global.GetCurrentKernelRow() );
 
-	nsxpcm::Register( Core, Document, Id );
+	nsxpcm::Register( Core, Window, Id );
 }
 
 
-NS_IMETHODIMP egeckocom::Register(nsIDOMDocument *Document)
+NS_IMETHODIMP egeckocom::Register( nsIDOMWindow *Window )
 {
+	// Ne sait pas récupèrer une 'window' à partir de son document.
 RP
 RBB
-	kernel___ &Kernel = Global.GetCurrentKernel();
+	ui__ &UI = Global.GetCurrentKernel().UI;
 
-	Kernel.Document = Document;
+	UI.Window = Window;
+	
 
-	_Register( Kernel.Set, Document, "XPCOMSet" );	// Version 'const char *'.
-	_Register( Kernel.Get, Document, str::string( "XPCOMGet" ) );	// Version 'const str::string_'.
-	_Register( Kernel.Text, Document, "XPCOMText" );
-	_Register( Kernel.Shared, Document, "Shared" );
-	_Register( Kernel.Label, Document, "XPCOMLabel" );
+#ifdef XXX_DBG
+	if ( _KernelRow != NONE )
+		ERRu();
+#endif
+	_KernelRow = Global.GetCurrentKernelRow();
+
+	Window->GetDocument( &UI.Document );
+
+	_Register( UI.Error, Window, str::string( "error" ) );	// Version 'const str::string_', pour test.
+	_Register( UI.Input, Window, "input" );
+	_Register( UI.Shared, Window, "shared" );
+	_Register( UI.Output, Window, "output" );
 RR
 RN
 RE
@@ -83,6 +93,16 @@ NS_IMETHODIMP egeckocom::RegisteringEnd( void )
 RP
 RBB
 	Global.DismissCurrentKernel();
+RR
+RN
+RE
+}
+
+NS_IMETHODIMP egeckocom::Unregister( void )
+{
+RP
+RBB
+	Global.Delete( _KernelRow );
 RR
 RN
 RE
