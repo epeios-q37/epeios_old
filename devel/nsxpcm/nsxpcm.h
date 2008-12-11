@@ -775,7 +775,6 @@ namespace nsxpcm {
 	class element_core__
 	{
 	private:
-		nsIDOMWindow *_Window;
 		nsIDOMElement *_Element;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
@@ -789,7 +788,6 @@ namespace nsxpcm {
 		void reset( bso::bool__ = true )
 		{
 			_Element = NULL;
-			_Window = NULL;
 		}
 		element_core__( void )
 		{
@@ -799,12 +797,12 @@ namespace nsxpcm {
 		{
 			reset( );
 		}
-		void Init( nsIDOMElement *Element )
+		void Init( void )
 		{
 			reset();
 		}
+		void Init( nsIDOMElement *Element );
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
-		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
 		// If a new event is handled, you have to add the corresponding 'event_listener' too.
 		void Handle( const str::string_ &EventType )
 		{
@@ -821,19 +819,19 @@ namespace nsxpcm {
 			else
 				ERRl();
 		}
-		void Register(
+/*		void Register(
 			nsIDOMElement *Element,
 			nsIDOMWindow *Window );
-	};
+*/	};
 
 	E_ROW( row__ );
 
 	template <class id_type> void Register(
 		nsxpcm::element_core__ &Core,
-		nsIDOMWindow *Window,
+		nsIDOMDocument *Document,
 		const id_type &Id )
 	{
-		Core.Register( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window );
+		Core.Init( nsxpcm::GetElementById( Document, Id ) );
 	}
 
 	void Alert(

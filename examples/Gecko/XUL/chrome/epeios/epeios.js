@@ -46,10 +46,12 @@ try {
 
 // alert( eprivate );
 
-function register ( windows )
+function register (
+	windows,
+	identification 	)
  {
 	try {
-		egeckocom.Register( window );
+		egeckocom.Register( window, identification );
 	} catch (err ) {
 		alert( err );
 	}

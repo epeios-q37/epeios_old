@@ -10,7 +10,9 @@ interface iegeckocom
 : nsISupports
 {
 	void RegisteringStart();
-	void Register( in nsIDOMwindow Window );	
+	void Register(
+		in nsIDOMwindow Window,
+		in string UIDesignation );	
 	void RegisteringEnd();
 	void Unregister();
 };

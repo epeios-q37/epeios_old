@@ -156,12 +156,18 @@ protected:
 class ui__
 {
 public:
-	nsIDOMDocument *Document;
-	nsIDOMWindow *Window;
-	ui_input_textbox__ Input;
-	ui_shared_checkbox__ Shared;
-	ui_output_label__ Output;
-	ui_error_button__ Error;
+	struct main {
+		nsIDOMDocument *Document;
+		nsIDOMWindow *Window;
+		ui_input_textbox__ Input;
+		ui_shared_checkbox__ Shared;
+		ui_output_label__ Output;
+	} Main;
+	struct page {
+		nsIDOMDocument *Document;
+		nsIDOMWindow *Window;
+		ui_error_button__ Error;
+	} Page;
 	void Init( void )
 	{}
 };
@@ -199,8 +205,8 @@ public:
 		str::string Value;
 	ERRBegin
 		Value.Init();
-		UI.Input.GetValue( Value );
-		UI.Output.SetValue( Value );
+		UI.Main.Input.GetValue( Value );
+		UI.Main.Output.SetValue( Value );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -210,74 +216,103 @@ public:
 
 inline void ui_input_textbox__::NSXPCMOnInput( void )
 {
-	if ( UI().Shared.IsChecked() )
+	if ( UI().Main.Shared.IsChecked() )
 		Kernel().InputToAllOutputs();
 	else
 		Kernel().InputToOutput();
 }
 
-extern class global
-: public lstbch::E_LBUNCHt( kernel___ *, krow__ )
-{
-private:
-	krow__ _CurrentKernelRow;
-public:
-	global() 
-	{
-		_CurrentKernelRow = NONE;
-		Init();
-	}
-	void CreateNewKernel( void )
-	{
-		kernel___ *Kernel = NULL;
+template <typename user_type, typename user_row> E_TTYPEDEF( lstbch::E_LBUNCHt_( user_type *, user_row ), _lpbunch_ );	// 'List Pointer Bunch'.
 
-		if ( _CurrentKernelRow != NONE )
+template <typename user_type, typename user_row> class global_
+: public _lpbunch_<user_type, user_row>
+{
+public:
+	struct s
+	: _lpbunch_<user_type, user_row>::s
+	{
+		user_row Row;
+	} &S_;
+	void reset( bso::bool__ P = true )
+	{
+		if ( P ) {
+			if ( Amount() != 0 )
+				ERRu();	// Car des objets existent qui n'ont pas encore été supprimé ('delete'r).
+		}
+
+		_lpbunch_<user_type, user_row>::reset( P );
+		S_.Row = NONE;
+	}
+	global_( s &S )
+	: S_( S ),
+	  _lpbunch_<user_type, user_row>( S )
+	{}
+	void plug( mmm::E_MULTIMEMORY_ &MMM )
+	{
+		_lbunch_<user_type *, user_row>::plug();
+	}
+	global_ &operator =( const global_ &G )
+	{
+		_lbunch_<user_type *, user_row>::operator =( *this );
+		S_.Row = G.S_.Row;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		reset();
+		_lpbunch_<user_type, user_row>::Init();
+	}
+	void CreateNewObject( void )
+	{
+		user_type *UserObject = NULL;
+
+		if ( S_.Row != NONE )
 			ERRu();
 
-		if ( ( Kernel = new kernel___ ) == NULL )
+		if ( ( UserObject = new user_type ) == NULL )
 			ERRa();
 
-		_CurrentKernelRow = Add( Kernel );
+		S_.Row = Add( UserObject );
 
-		Get( _CurrentKernelRow )->Init();
+		Get( S_.Row )->Init();
 	}
-	void DismissCurrentKernel( void )
+	void DismissCurrentObject( void )
 	{
-		if ( _CurrentKernelRow == NONE )
+		if ( S_.Row == NONE )
 			ERRu();
 
-		_CurrentKernelRow = NONE;
+		S_.Row = NONE;
 	}
-	krow__ GetCurrentKernelRow( void ) const
+	user_row GetCurrentRow( void ) const
 	{
-		if ( _CurrentKernelRow == NONE )
+		if ( S_.Row == NONE )
 			ERRu();
 
-		return _CurrentKernelRow;
+		return S_.Row;
 	}
-	kernel___ &GetCurrentKernel( void )
+	user_type &GetCurrentObject( void ) const
 	{
-		return *Get( GetCurrentKernelRow() );
+		return *Get( GetCurrentRow() );
 	}
-	const kernel___ &GetCurrentKernel( void ) const
-	{
-		return *Get( GetCurrentKernelRow() );
-	}
-	void Delete( krow__ KernelRow )
+	void Delete( user_row Row )
 	{
 #ifdef XXX_DBG
-		if ( !Exists( KernelRow ) )
+		if ( !Exists( Row ) )
 			ERRu();
 #endif
-		delete Get( KernelRow );
+		delete Get( Row );
 
-		Store( NULL, KernelRow );
+		Store( NULL, Row );
 
-		lstbch::E_LBUNCHt( kernel___ *, krow__ )::Delete( KernelRow );
+		_lpbunch_<user_type, user_row>::Delete( Row );
 
 	}
+};
 
-} Global;
+E_AUTO2( global )
+
+extern global<kernel___, krow__ > Global;
 
 inline kernel___ &bridge__::Kernel( void )
 {
@@ -295,13 +330,13 @@ ERRProlog
 	str::string Value;
 ERRBegin
 	Value.Init();
-	UI.Input.GetValue( Value );
+	UI.Main.Input.GetValue( Value );
 
 	krow__ Row = Global.First();
 
 	while ( Row != NONE ) {
 
-		Global.Get( Row )->UI.Output.SetValue( Value );
+		Global.Get( Row )->UI.Main.Output.SetValue( Value );
 
 		Row = Global.Next( Row );
 	}

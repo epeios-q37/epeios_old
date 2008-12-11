@@ -877,9 +877,7 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::element_core__::Register(
-	nsIDOMElement *Element,
-	nsIDOMWindow *Window )
+void nsxpcm::element_core__::Init( nsIDOMElement *Element )
 {
 #ifdef NSXPCM_DBG
 	if ( _Element != NULL )
@@ -888,7 +886,6 @@ void nsxpcm::element_core__::Register(
 	reset();
 
 	_Element = Element;
-	_Window = Window;
 
 	nsIDOMEventTarget *EventTarget = NULL;
 
@@ -937,7 +934,7 @@ ERRErr
 	NSResult = NS_ERROR_FAILURE;
 
 	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
-		Alert( _Core->Window(), err::Message( Buffer ) );	
+		Log( err::Message( Buffer ) );	
 
 	ERRRst();
 ERREnd

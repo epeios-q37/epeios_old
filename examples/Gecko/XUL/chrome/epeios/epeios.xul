@@ -3,11 +3,11 @@
 <!-- $Id$ -->
 
 <window
-	id="mainWindow"
+	id="main"
 	title="Epeios Gecko demo !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="log('This is as last from the main page once all loaded (subpage included) !');register( window );registeringEnd();"
+	onload="jsconsole();log('This is as last from the main page once all loaded (subpage included) !');register( window, 'main' );registeringEnd();"
 	onunload="unregister();"
 >
 	<script type="text/javascript" src="epeios.js"/>
@@ -17,7 +17,6 @@
 			<iframe src="page.xul"/>
 		</deck>
 		<box>
-			<button id="error" label="Error"/>
 			<textbox id="input"/>
 			<checkbox label="Share" id="shared"/>
 			<label id="output"/>

@@ -5,7 +5,14 @@
 #include "nsIDOMEventListener.h"
 #include "nsIDOMEventTarget.h"
 
-global Global;
+global<kernel___, krow__> Global;
+
+struct autostart {
+	autostart( void )
+	{
+		Global.Init();
+	}
+} AutoStart;
 
 #define RBB	ERRBegin
 
@@ -44,45 +51,74 @@ NS_IMETHODIMP egeckocom::RegisteringStart( void )
 {
 RP
 RBB
-	Global.CreateNewKernel();
+	Global.CreateNewObject();
 RR
 RN
 RE
 }
 
-template <typename element, typename id_type > static void _Register(
+template <typename element, typename ui, typename id > static void _Register(
 	element &Core,
-	nsIDOMWindow *Window,
-	const id_type &Id )
+	ui &UI,
+	const id &Id )
 {
-	Core.Init( Global.GetCurrentKernelRow() );
+	Core.Init( Global.GetCurrentRow() );
 
-	nsxpcm::Register( Core, Window, Id );
+	nsxpcm::Register( Core, UI.Document, Id );
+}
+
+static void _RegisterSpecific( ui__::main &UI )
+{
+	_Register( UI.Input, UI, "input" );
+	_Register( UI.Shared, UI, "shared" );
+	_Register( UI.Output, UI, "output" );
+}
+
+static void _RegisterSpecific( ui__::page &UI )
+{
+	_Register( UI.Error, UI, str::string( "error" ) );	// Version 'const str::string_', pour test.
+}
+
+template <typename ui> static void _RegisterCommon(
+	nsIDOMWindow *Window,
+	ui &UI )
+{
+	UI.Window = Window;
+
+	Window->GetDocument( &UI.Document );
 }
 
 
-NS_IMETHODIMP egeckocom::Register( nsIDOMWindow *Window )
+template <typename ui> static void _Register(
+	nsIDOMWindow *Window,
+	ui &UI )
+{
+	_RegisterCommon( Window, UI );
+	_RegisterSpecific( UI );
+}
+
+NS_IMETHODIMP egeckocom::Register(
+	nsIDOMWindow *Window,
+	const char *UIDesignation )
 {
 	// Ne sait pas récupèrer une 'window' à partir de son document.
 RP
 RBB
-	ui__ &UI = Global.GetCurrentKernel().UI;
-
-	UI.Window = Window;
-	
+	ui__ &UI = Global.GetCurrentObject().UI;
 
 #ifdef XXX_DBG
 	if ( _KernelRow != NONE )
 		ERRu();
 #endif
-	_KernelRow = Global.GetCurrentKernelRow();
+	_KernelRow = Global.GetCurrentRow();
 
-	Window->GetDocument( &UI.Document );
+	if ( !strcmp( UIDesignation, "main" ) ) {
+		_Register( Window, UI.Main );
+	} else if ( !strcmp( UIDesignation, "page" ) ) {
+		_Register( Window, UI.Page );
+	} else
+		ERRu();
 
-	_Register( UI.Error, Window, str::string( "error" ) );	// Version 'const str::string_', pour test.
-	_Register( UI.Input, Window, "input" );
-	_Register( UI.Shared, Window, "shared" );
-	_Register( UI.Output, Window, "output" );
 RR
 RN
 RE
@@ -92,7 +128,7 @@ NS_IMETHODIMP egeckocom::RegisteringEnd( void )
 {
 RP
 RBB
-	Global.DismissCurrentKernel();
+	Global.DismissCurrentObject();
 RR
 RN
 RE
