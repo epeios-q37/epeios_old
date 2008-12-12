@@ -348,9 +348,28 @@ ERREpilog
 
 #include "nsIDOMNodeList.h"
 #include "nsIDOMWindow.h"
+#include "toolkitcomps/nsICommandLineRunner.h"
 
 void ui_error_button__::NSXPCMOnClick( void )
 {
+
+	nsCOMPtr<nsICommandLine> CommandLine = NULL;
+	nsresult Result = NS_OK;
+	PRInt32 Length = 32;
+
+	nsCID CID = NS_ICOMMANDLINE_IID;
+
+//	CommandLine = do_GetService( CID, &Result );
+
+//	nsxpcm::GetService<nsICommandLine>( "@mozilla.org/toolkit/command-line;1", CommandLine );
+
+//	nsxpcm::CreateInstance<nsICommandLineRunner>( "@mozilla.org/toolkit/command-line;1", CommandLine );
+
+	CommandLine = nsxpcm::QueryInterface<nsICommandLine>( this->Kernel().UI.Page.Window );
+
+
+	CommandLine->GetLength( &Length );
+
 //	nsxpcm::QueryInterface<nsIDOMWindowInternal>( UI().Window )->Alert( NS_LITERAL_STRING( "Yesss !" ) );
 	ERRu();
 }

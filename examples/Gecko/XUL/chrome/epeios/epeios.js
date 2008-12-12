@@ -85,3 +85,21 @@ function unregister ()
  }
 
 
+	commandLineConfigFile = "";
+
+	commandLineConfigFile = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine).getArgument( 0 );
+	
+	alert( commandLineConfigFile );
+
+	commandLineConfigFile = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine).getArgument( 1 );
+
+	alert( commandLineConfigFile );
+	
+	commandLineConfigFile = window.arguments[1].QueryInterface(Components.interfaces.nsICommandLine).getArgument( 0 );
+
+	alert( commandLineConfigFile );
+	
+	commandLineConfigFile = window.arguments[1].QueryInterface(Components.interfaces.nsICommandLine).getArgument( 1 );
+	
+	alert( commandLineConfigFile );
+	
