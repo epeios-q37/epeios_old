@@ -1,7 +1,7 @@
-;$Id$
+# $Id$
 
-; Dans le cas où l'on veut fournir l'extension sous forme d'archive, créer une archive ZIP dans le répertoire 'chrome',
-; contenant l'ensemble des fichiers du répertoire 'gesbib' de ce même répertoire 'chrome', lui donner le nom 'gesbib.jar',
-; décommenter la ligne ci-dessous, et commenter la ligne d'aprés.
-;content epeios jar:epeios.jar!
+# Dans le cas où l'on veut fournir l'extension sous forme d'archive, créer une archive ZIP dans le répertoire 'chrome',
+# contenant l'ensemble des fichiers du répertoire 'gesbib' de ce même répertoire 'chrome', lui donner le nom 'gesbib.jar',
+# décommenter la ligne ci-dessous, et commenter la ligne d'aprés.
+#content epeios jar:epeios.jar!
 content epeios file:epeios/

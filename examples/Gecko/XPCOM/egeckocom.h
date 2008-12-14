@@ -9,6 +9,8 @@
 #include "lstbch.h"
 #include "tol.h"
 
+#define VERSION __DATE__ " " __TIME__
+
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;1"
 #define EGECKOCOM_CLASSNAME "EGeckocom"
 // {f1e695a0-b2f1-4a30-ac62-48a9edd9558a}
@@ -57,27 +59,7 @@ protected:
 	virtual void NSXPCMOnCommand( void ){}
 	virtual void NSXPCMOnClick( void ){}
 	virtual void NSXPCMOnInput( void );
-/*	{
-	ERRProlog
-		str::string Value;
-	ERRBegin
-		Value.Init();
-		this->GetValue( Value );
-		nsxpcm::Log( Value );
-
-//		this->Kernel().Propagate();
-		epeios::row__ Row = Global.First();
-
-		while ( Row != NONE ) {
-			Global( Row )->Set( Value );
-
-			Row = Global.Next( Row );
-		}
-	ERRErr
-	ERREnd
-	ERREpilog
-	}
-*/	virtual void NSXPCMOnFocus( void ){}
+	virtual void NSXPCMOnFocus( void ){}
 	virtual void NSXPCMOnBlur( void ){}
 public:
 	void Init( krow__ KernelRow )
@@ -153,6 +135,36 @@ protected:
 	virtual void NSXPCMOnClick( void );
 };
 
+class ui_jsconsole_button__
+: public ui_button__
+{
+protected:
+	virtual void NSXPCMOnCommand( void );
+	virtual void NSXPCMOnClick( void )
+	{}
+};
+
+class ui_description__
+: public nsxpcm::description__,
+  public bridge__
+{
+protected:
+	virtual void NSXPCMOnCommand( void ){}
+	virtual void NSXPCMOnClick( void ){}
+	virtual void NSXPCMOnInput( void ){}
+	virtual void NSXPCMOnFocus( void ){}
+	virtual void NSXPCMOnBlur( void ){}
+public:
+	void Init( krow__ KernelRow )
+	{
+		bridge__::Init( KernelRow );
+		// 'nsxpcm::description__::Init()' called later.
+	}
+};
+
+typedef ui_description__ ui_endianess_description__;
+
+
 class ui__
 {
 public:
@@ -162,11 +174,23 @@ public:
 		ui_input_textbox__ Input;
 		ui_shared_checkbox__ Shared;
 		ui_output_label__ Output;
+		ui_jsconsole_button__ JSConsole;
+		ui_endianess_description__ Endianess;
+		main( void )
+		{
+			Document = NULL;
+			Window = NULL;
+		}
 	} Main;
 	struct page {
 		nsIDOMDocument *Document;
 		nsIDOMWindow *Window;
 		ui_error_button__ Error;
+		page( void )
+		{
+			Document = NULL;
+			Window = NULL;
+		}
 	} Page;
 	void Init( void )
 	{}
@@ -212,15 +236,9 @@ public:
 	ERREpilog
 	}
 	void InputToAllOutputs( void );
+	void OpenJSConsole( void );
+	void DisplayEndianess( void );
 };
-
-inline void ui_input_textbox__::NSXPCMOnInput( void )
-{
-	if ( UI().Main.Shared.IsChecked() )
-		Kernel().InputToAllOutputs();
-	else
-		Kernel().InputToOutput();
-}
 
 template <typename user_type, typename user_row> E_TTYPEDEF( lstbch::E_LBUNCHt_( user_type *, user_row ), _lpbunch_ );	// 'List Pointer Bunch'.
 
@@ -236,7 +254,7 @@ public:
 	void reset( bso::bool__ P = true )
 	{
 		if ( P ) {
-			if ( Amount() != 0 )
+			if ( _lpbunch_<user_type, user_row>::Amount() != 0 )
 				ERRu();	// Car des objets existent qui n'ont pas encore été supprimé ('delete'r).
 		}
 
@@ -249,11 +267,11 @@ public:
 	{}
 	void plug( mmm::E_MULTIMEMORY_ &MMM )
 	{
-		_lbunch_<user_type *, user_row>::plug();
+		_lpbunch_<user_type *, user_row>::plug();
 	}
 	global_ &operator =( const global_ &G )
 	{
-		_lbunch_<user_type *, user_row>::operator =( *this );
+		_lpbunch_<user_type *, user_row>::operator =( *this );
 		S_.Row = G.S_.Row;
 
 		return *this;
@@ -323,58 +341,6 @@ inline ui__ &bridge__::UI( void )
 {
 	return Kernel().UI;
 }
-
-inline void kernel___::InputToAllOutputs( void )
-{
-ERRProlog
-	str::string Value;
-ERRBegin
-	Value.Init();
-	UI.Main.Input.GetValue( Value );
-
-	krow__ Row = Global.First();
-
-	while ( Row != NONE ) {
-
-		Global.Get( Row )->UI.Main.Output.SetValue( Value );
-
-		Row = Global.Next( Row );
-	}
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
-#include "nsIDOMNodeList.h"
-#include "nsIDOMWindow.h"
-#include "toolkitcomps/nsICommandLineRunner.h"
-
-void ui_error_button__::NSXPCMOnClick( void )
-{
-
-	nsCOMPtr<nsICommandLine> CommandLine = NULL;
-	nsresult Result = NS_OK;
-	PRInt32 Length = 32;
-
-	nsCID CID = NS_ICOMMANDLINE_IID;
-
-//	CommandLine = do_GetService( CID, &Result );
-
-//	nsxpcm::GetService<nsICommandLine>( "@mozilla.org/toolkit/command-line;1", CommandLine );
-
-//	nsxpcm::CreateInstance<nsICommandLineRunner>( "@mozilla.org/toolkit/command-line;1", CommandLine );
-
-	CommandLine = nsxpcm::QueryInterface<nsICommandLine>( this->Kernel().UI.Page.Window );
-
-
-	CommandLine->GetLength( &Length );
-
-//	nsxpcm::QueryInterface<nsIDOMWindowInternal>( UI().Window )->Alert( NS_LITERAL_STRING( "Yesss !" ) );
-	ERRu();
-}
-
-
 
 
 class egeckocom

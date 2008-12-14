@@ -33,7 +33,7 @@ copt += -DCPE_MT -DMTK_KEEP
 # copt += -DNSXPCM_BKD
 copt += -DCPE_LIBRARY
 lopt = 
-mods = err flw tht tol ttr uym nsxpcm str
+mods = err fil flw lst mmi nsxpcm str tht tol ttr uym
 
 # To adapt !
 arm-sdk=/home/csimon/xulrunner-sdk-arm

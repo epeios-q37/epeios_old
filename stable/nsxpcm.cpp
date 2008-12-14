@@ -830,7 +830,7 @@ ERRProlog
 ERRBegin
 	nsxpcm::Transform( Text, NSText );
 
-	nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window )->Alert( NSText );
+	GetWindowInternal( Window )->Alert( NSText );
 ERRErr
 ERREnd
 ERREpilog
@@ -845,7 +845,7 @@ ERRProlog
 ERRBegin
 	nsxpcm::Transform( Text, NSText );
 
-	nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window )->Alert( NSText );
+	GetWindowInternal( Window )->Alert( NSText );
 ERRErr
 ERREnd
 ERREpilog

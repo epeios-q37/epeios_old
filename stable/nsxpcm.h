@@ -82,6 +82,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULTreeElement.h"
 #include "dom/nsIDOMXULDescriptionElement.h"
 #include "dom/nsIDOMWindowInternal.h"
+#include "dom/nsIDOMXULLabelElement.h"
 // #include "string/nsEmbedString.h"
 #include "nsEmbedString.h"
 #include "nsCOMPtr.h"
@@ -91,7 +92,6 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
 #include "nsIGenericFactory.h"
-#include "nsIDOMXULLabelElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -99,6 +99,12 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #ifdef NSXPCM__BKD
 #	include "bkdacc.h"
+#endif
+
+#if defined( __ARMEL__ ) || defined( NSXPCM_USE_ARMEL_WORKAROUND )
+#	ifndef NSXPCM_NO_ARMEL_WORKAROUND
+#		define NSXPCM__USE_ARMEL_WORKAROUND
+#	endif
 #endif
 
 #define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
@@ -968,6 +974,39 @@ namespace nsxpcm {
 	// Log to the javascript console.
 	void Log( const str::string_ &Text );
 
+	inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
+	{
+		PRBool Value = false;
+
+		Window->GetClosed( &Value );
+
+		return Value == PR_TRUE;
+	}
+
+	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
+	{
+#ifdef NSXPCM__USE_ARMEL_WORKAROUND
+		return (nsIDOMWindowInternal *)Window;
+#else
+		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
+#endif
+	}
+
+	inline nsIDOMWindowInternal *GetJSConsole(
+		nsIDOMWindow *ParentWindow,
+		nsIDOMWindowInternal **JSConsoleWindow )
+	{
+		nsIDOMWindow *Window = NULL;
+
+		if ( ( *JSConsoleWindow == NULL ) || ( IsClosed( *JSConsoleWindow ) ) ) {
+			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+			*JSConsoleWindow = GetWindowInternal( Window );
+		} else
+			(*JSConsoleWindow)->Focus();
+
+		return *JSConsoleWindow;
+	}
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
@@ -1066,7 +1105,7 @@ namespace nsxpcm {
 }
 
 // Début de la partie concernant l''event_listener'.
-// Copier à partir du '.h' d'un '.idl' contenant cd qui suit :
+// Copié à partir du '.h' d'un '.idl' contenant cd qui suit :
 
 /*
 [scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
@@ -1095,6 +1134,10 @@ namespace nsxpcm {
 	  {
 		  reset( false );
 	  }
+	  ~event_listener()
+	  {
+		  reset();
+	  }
 	  void reset( bso::bool__ = true )
 	  {
 		  _Core = NULL;
@@ -1103,10 +1146,6 @@ namespace nsxpcm {
 	protected:
 		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	private:
-	  ~event_listener()
-	  {
-		  reset();
-	  }
 	public:
 	  element_core__ *_Core;
 	  void Init( element_core__ &Core )

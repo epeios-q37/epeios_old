@@ -1,5 +1,12 @@
 $Id$
 
+14/12/2008 :
+	NSXPCM :
+		- Ajout 'GetJSConsole(...)'.
+		- Ajout 'GetWindowInternal(...)'.
+		- Ajout 'IsClosed(...)'.
+		- Mise en place contournement bogue 'nsDOMWindowInternal' sour architecture ARMEL.
+
 11/12/2008 :
 	- NSXPCM :
 		- Rajout fonction 'Register(...)' avec autres paramètres.

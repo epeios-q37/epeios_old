@@ -7,20 +7,52 @@
 	title="Epeios Gecko demo !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="jsconsole();log('This is as last from the main page once all loaded (subpage included) !');register( window, 'main' );registeringEnd();"
+	onload="log('This is as last from the main page once all loaded (subpage included) !');register( window, 'main' );registeringEnd();"
 	onunload="unregister();"
 >
 	<script type="text/javascript" src="epeios.js"/>
 	<script type="text/javascript">log('This is as first from the main window.');registeringStart();</script>
-	<vbox>
-		<deck id="mainDesck" flex="1" selectedIndex="0">
+	<hbox>
+		<vbox flex="1">
+			<tree flex="1" rows="2">
+			  <treecols>
+			    <treecol id="sender" label="Sender" flex="1"/>
+			    <treecol id="subject" label="Subject" flex="2"/>
+			  </treecols>
+			  <treechildren>
+			    <treeitem>
+			      <treerow>
+			        <treecell label="joe@somewhere.com"/>
+			        <treecell label="Top secret plans"/>
+			      </treerow>
+			    </treeitem>
+			    <treeitem>
+			      <treerow>
+			        <treecell label="mel@whereever.com"/>
+			        <treecell label="Let's do lunch"/>
+			      </treerow>
+			    </treeitem>
+			  </treechildren>
+			</tree>		
+		</vbox>
+		<splitter/>
+		<vbox flex="1">
+			<vbox>
+				<button id="jsconsole" label="JSConsole"/>
+				<hbox>
+					<vbox>
+						<label>Endianess : </label>
+						<description id="endianess" style="white-space: pre;"/>
+					</vbox>
+				</hbox>
+				<box>
+					<textbox id="input"/>
+					<checkbox label="Share" id="shared"/>
+					<label id="output"/>
+				</box>
+			</vbox>
 			<iframe src="page.xul"/>
-		</deck>
-		<box>
-			<textbox id="input"/>
-			<checkbox label="Share" id="shared"/>
-			<label id="output"/>
-		</box>
-	</vbox>
+		</vbox>
+	</hbox>
 </window>
 	
