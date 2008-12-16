@@ -302,8 +302,10 @@ namespace flw {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				Dismiss();
+			if ( P ) {
+				if ( _Red )
+					Dismiss();
+			}
 
 			_Red = 0;
 			_Available = _Position = 0;
@@ -574,8 +576,10 @@ namespace flw {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				Synchronize();
+			if ( P ) {
+				if ( _Written )
+					Synchronize();
+			}
 
 			_Written = 0;
 		}

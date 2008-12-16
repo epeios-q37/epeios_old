@@ -329,7 +329,8 @@ ERREpilog
 		}
 		virtual void FWFSynchronize( void )
 		{
-			_Synchronize();
+			if ( _Flow != NULL )
+				_Synchronize();
 		}
 		virtual fwf::size__ FWFRead(
 			fwf::size__ Minimum,
@@ -352,19 +353,19 @@ ERREpilog
 		}
 		virtual void FWFDismiss( void )
 		{
-			if ( _Flow != NULL )
+			if ( _Flow != NULL ) {
 				_Core->Release( _Flow );
-
-			_Flow->Dismiss();
+				_Flow->Dismiss();
+			}
 
 			_Flow = NULL;
 		}
 		public:
 			void reset( bso::bool__ P = true )
 			{
-			if ( P ) {
-				if ( _Flow != NULL )
-					delete _Flow;
+				if ( P ) {
+					if ( _Flow != NULL )
+						delete _Flow;
 			}
 
 			_Flow = NULL;

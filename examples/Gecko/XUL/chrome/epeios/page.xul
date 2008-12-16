@@ -12,5 +12,6 @@
 	<vbox>
 		<label>This is the content of the sub-page !</label>
 		<button id="error" label="Error"/>
+		<html:a id="link">zeusw.org</html:a>
 	</vbox>
 </page>

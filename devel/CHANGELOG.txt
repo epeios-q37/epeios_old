@@ -1,5 +1,13 @@
 $Id$
 
+16/12/2008 :
+	- CSDUCL
+		- Rejout fonction 'reset(...)', constructeur et destructeur.
+	- CSDSNC :
+		- Correction bogues 'FWFDismiss(...)' et FWFSynchronize(...)'.
+	- FLW :
+		Remaniement des fonctions 'reset(...)' pour évéiter deux appels successifs de 'dismiss()' ou de 'sychronize().' sans lecture ou écriture de données.
+
 14/12/2008 :
 	NSXPCM :
 		- Ajout 'GetJSConsole(...)'.

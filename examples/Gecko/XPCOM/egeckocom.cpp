@@ -91,6 +91,7 @@ static void _RegisterSpecific( ui__::main &UI )
 static void _RegisterSpecific( ui__::page &UI )
 {
 	_Register( UI.Error, UI, str::string( "error" ) );	// Version 'const str::string_', pour test.
+	_Register( UI.Link, UI, "link" );
 }
 
 template <typename ui> static void _RegisterCommon(
@@ -166,6 +167,16 @@ void ui_input_textbox__::NSXPCMOnInput( void )
 	else
 		Kernel().InputToOutput();
 }
+
+void ui_link__::NSXPCMOnCommand( void )
+{
+	nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ( "Command" ) );
+}
+void ui_link__::NSXPCMOnClick( void )
+{
+	nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ("The BIG click" ) );
+}
+
 
 void kernel___::InputToAllOutputs( void )
 {

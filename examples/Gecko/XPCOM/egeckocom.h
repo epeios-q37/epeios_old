@@ -164,6 +164,26 @@ public:
 
 typedef ui_description__ ui_endianess_description__;
 
+#include "nsIDOMHTMLAnchorElement.h"
+
+class ui_link__
+: public nsxpcm::_element__<nsIDOMHTMLAnchorElement>,
+  public bridge__
+{
+protected:
+	virtual void NSXPCMOnCommand( void );
+	virtual void NSXPCMOnClick( void );
+	virtual void NSXPCMOnInput( void ){}
+	virtual void NSXPCMOnFocus( void ){}
+	virtual void NSXPCMOnBlur( void ){}
+public:
+	void Init( krow__ KernelRow )
+	{
+		bridge__::Init( KernelRow );
+		// 'nsxpcm::description__::Init()' called later.
+	}
+};
+
 
 class ui__
 {
@@ -186,6 +206,7 @@ public:
 		nsIDOMDocument *Document;
 		nsIDOMWindow *Window;
 		ui_error_button__ Error;
+		ui_link__ Link;
 		page( void )
 		{
 			Document = NULL;

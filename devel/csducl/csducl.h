@@ -82,12 +82,28 @@ namespace csducl {
 		csdsnc::core _Shared;
 		csddlc::dynamic_library_client_core _LibraryName;
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			_LibraryName.reset( P );
+			_Shared.reset( P );
+			_Type = t_Undefined;
+		}
+		universal_client_core( void )
+		{
+			reset( false );
+		}
+		~universal_client_core( void )
+		{
+			reset();
+		}
 		bso::bool__ Init(
 			const char *Backend,
 			void *UP,
 			csdsnc::log_functions__ &Log,
 			type__ Type )
 		{
+			reset();
+
 			bso::bool__ Success = false;
 
 			switch ( Type ) {
