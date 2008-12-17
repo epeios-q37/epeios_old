@@ -289,12 +289,13 @@ ERREpilog
 #include "nsIDOMNodeList.h"
 #include "nsIDOMWindow.h"
 #include "toolkitcomps/nsICommandLineRunner.h"
+#include "content/nsIXSLTProcessor.h"
 
 void ui_error_button__::NSXPCMOnClick( void )
 {
+	nsresult Result = NS_OK;
 /*
 	nsCOMPtr<nsICommandLine> CommandLine = NULL;
-	nsresult Result = NS_OK;
 	PRInt32 Length = 32;
 
 	nsCID CID = NS_ICOMMANDLINE_IID;
@@ -312,6 +313,14 @@ void ui_error_button__::NSXPCMOnClick( void )
 
 //	nsxpcm::QueryInterface<nsIDOMWindowInternal>( UI().Window )->Alert( NS_LITERAL_STRING( "Yesss !" ) );
 */
+	nsCOMPtr<nsIXSLTProcessor> Processor = NULL;
+
+//	nsxpcm::CreateInstance
+
+	nsCID CID = NS_IXSLTPROCESSOR_IID;
+
+	Processor = do_CreateInstance( CID, &Result );
+
 	ERRu();
 }
 
@@ -371,6 +380,7 @@ void ui_jsconsole_button__::NSXPCMOnCommand( void )
 #include "nsIGenericFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
+NS_GENERIC_FACTORY_CONSTRUCTOR(nsIXSLTProcessor)
 
 static nsModuleComponentInfo components[] =
 {
@@ -379,6 +389,12 @@ static nsModuleComponentInfo components[] =
        EGECKOCOM_CID,
        EGECKOCOM_CONTRACTID,
        egeckocomConstructor,
+    },
+    {
+       "EXSLRProcessor", 
+       NS_IXSLTPROCESSOR_IID,
+       "@zeusw.org/xsltprocessor;1",
+       nsIXSLTProcessorConstructor,
     },
 	NSXPCM_COMPONENTS,
 };

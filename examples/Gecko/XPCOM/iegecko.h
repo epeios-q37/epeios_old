@@ -14,10 +14,6 @@
 #include "nsIDOMDocument.h"
 #endif
 
-#ifndef __gen_nsIDOMEventListener_h__
-#include "nsIDOMEventListener.h"
-#endif
-
 /* For IDL files that don't want to include root IDL files. */
 #ifndef NS_NO_VTABLE
 #define NS_NO_VTABLE

@@ -2,7 +2,6 @@
 
 #include "nsISupports.idl"
 #include "nsIDOMDocument.idl"
-#include "nsIDOMEventListener.idl"
 
 // Private object (using 'createInstance()'.
 [scriptable, uuid(f1e695a0-b2f1-4a30-ac62-48a9edd9558a)]
@@ -16,12 +15,3 @@ interface iegeckocom
 	void RegisteringEnd();
 	void Unregister();
 };
-
-// Evente listener (internal use only).
-/*
-[scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
-interface ieevent_listener
-: nsIDOMEventListener
-{};
-*/
-
