@@ -87,7 +87,7 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #include "appshell/nsIXULWindow.h"
 
-#include "content/nsIXSLTProcessor.h"
+// #include "content/nsIXSLTProcessor.h"
 
 #include "nsEmbedString.h"
 #include "nsCOMPtr.h"
@@ -96,6 +96,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
 #include "nsIGenericFactory.h"
+#include "nsIDOMHTMLAnchorElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -410,6 +411,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
 	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
 	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
+	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -937,6 +939,10 @@ namespace nsxpcm {
 	: public _element__<nsIDOMXULMultiSelectControlElement>
 	{};
 
+	class html_anchor__
+	: public _element__<nsIDOMHTMLAnchorElement>
+	{};
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
@@ -1183,7 +1189,7 @@ interface iexslt_processor
 : nsIXSLTProcessor
 {};
 */
-
+/*
 namespace nsxpcm {
 	class NS_NO_VTABLE NS_SCRIPTABLE iexslt_processor
 	: public nsIXSLTProcessor
@@ -1215,21 +1221,21 @@ namespace nsxpcm {
 #define NSXPCM_XSLT_PROCESSOR_CLASSNAME "NSXPCMXSLTProcessor"
 // {90d1d640-019d-4e60-bed1-3a5f3b208a2a}
 #define NSXPCM_XSLT_PROCESSOR_CID  NSXPCM_XSLT_PROCESSOR_IID
-
+*/
 // fin de la partie concernant l'xslt_processor'
 
 #define NSXPCM_COMPONENTS\
-    {\
-       NSXPCM_EVENT_LISTENER_CLASSNAME,\
-       NSXPCM_EVENT_LISTENER_CID,\
-       NSXPCM_EVENT_LISTENER_CONTRACTID,\
-	   nsxpcm::event_listenerConstructor,\
-    },\
-    {\
+/*    {\
        NSXPCM_XSLT_PROCESSOR_CLASSNAME,\
        NSXPCM_XSLT_PROCESSOR_CID,\
        NSXPCM_XSLT_PROCESSOR_CONTRACTID,\
 	   nsxpcm::xslt_processorConstructor,\
+    },\
+*/    {\
+       NSXPCM_EVENT_LISTENER_CLASSNAME,\
+       NSXPCM_EVENT_LISTENER_CID,\
+       NSXPCM_EVENT_LISTENER_CONTRACTID,\
+	   nsxpcm::event_listenerConstructor,\
     }
 
 /*$END$*/

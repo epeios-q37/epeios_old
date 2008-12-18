@@ -380,7 +380,6 @@ void ui_jsconsole_button__::NSXPCMOnCommand( void )
 #include "nsIGenericFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
-NS_GENERIC_FACTORY_CONSTRUCTOR(nsIXSLTProcessor)
 
 static nsModuleComponentInfo components[] =
 {
@@ -389,12 +388,6 @@ static nsModuleComponentInfo components[] =
        EGECKOCOM_CID,
        EGECKOCOM_CONTRACTID,
        egeckocomConstructor,
-    },
-    {
-       "EXSLRProcessor", 
-       NS_IXSLTPROCESSOR_IID,
-       "@zeusw.org/xsltprocessor;1",
-       nsIXSLTProcessorConstructor,
     },
 	NSXPCM_COMPONENTS,
 };

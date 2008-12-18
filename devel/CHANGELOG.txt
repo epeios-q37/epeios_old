@@ -1,5 +1,10 @@
 $Id$
 
+18/12/2008 :
+	- Ajout élément 'html_anchor' (correspondant au '<a ...></a>').
+
+...
+
 16/12/2008 :
 	- CSDUCL
 		- Rejout fonction 'reset(...)', constructeur et destructeur.

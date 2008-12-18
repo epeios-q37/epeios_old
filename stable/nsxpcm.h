@@ -72,6 +72,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "layout/nsITreeContentView.h"
 #include "layout/nsITreeSelection.h"
 #include "layout/nsIListBoxObject.h"
+
 #include "dom/nsIDOMDocument.h"
 #include "dom/nsIDOMElement.h"
 #include "dom/nsIDOMXULMultSelectCntrlEl.h"
@@ -83,15 +84,19 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULDescriptionElement.h"
 #include "dom/nsIDOMWindowInternal.h"
 #include "dom/nsIDOMXULLabelElement.h"
-// #include "string/nsEmbedString.h"
+
+#include "appshell/nsIXULWindow.h"
+
+// #include "content/nsIXSLTProcessor.h"
+
 #include "nsEmbedString.h"
 #include "nsCOMPtr.h"
-#include "appshell/nsIXULWindow.h"
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
 #include "nsIGenericFactory.h"
+#include "nsIDOMHTMLAnchorElement.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -406,6 +411,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULCheckboxElement, checkbox, Checkbox )
 	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
 	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
+	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
 
 	inline void SetAttribute(
 		nsIDOMElement *Element,
@@ -933,6 +939,10 @@ namespace nsxpcm {
 	: public _element__<nsIDOMXULMultiSelectControlElement>
 	{};
 
+	class html_anchor__
+	: public _element__<nsIDOMHTMLAnchorElement>
+	{};
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
@@ -1120,69 +1130,113 @@ namespace nsxpcm {
 	{
 	public: 
 		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_IEVENT_LISTENER_IID)
-
 	};
 
 	struct event_listener
 	: ievent_listener
 	{
 	public:
-	  NS_DECL_ISUPPORTS
+		NS_DECL_ISUPPORTS
 	//  NS_DECL_IEEVENT_LISTENER
-
-	  event_listener()
-	  {
-		  reset( false );
-	  }
-	  ~event_listener()
-	  {
-		  reset();
-	  }
-	  void reset( bso::bool__ = true )
-	  {
-		  _Core = NULL;
-	  }
-
+		  event_listener()
+		  {
+			  reset( false );
+		  }
+		  ~event_listener()
+		  {
+			  reset();
+		  }
+		  void reset( bso::bool__ = true )
+		  {
+			  _Core = NULL;
+		  }
 	protected:
 		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	private:
 	public:
-	  element_core__ *_Core;
-	  void Init( element_core__ &Core )
-	  {
+		element_core__ *_Core;
+		void Init( element_core__ &Core )
+		{
 #ifdef NSXPCM_DBG
-		  if ( _Core != NULL )
-			  ERRu();
+			if ( _Core != NULL )
+				ERRu();
 #endif
-		  reset();
+			reset();
 
-		  _Core = &Core;
-	  }
+			_Core = &Core;
+		}
 	};
 
 	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener)
 }
 
 
-NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener, NSXPCM_IEVENT_LISTENER_IID)
+	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener, NSXPCM_IEVENT_LISTENER_IID)
 
 #define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;1"
 #define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
 // {d333cd20-c453-11dd-ad8b-0800200c9a66}
 #define NSXPCM_EVENT_LISTENER_CID  NSXPCM_IEVENT_LISTENER_IID
 
+// Fin de la partie concernant l''event_listener'.
+
+// Début de la partie concernant l'xslt_processor'.
+// Copié à partir du '.h' d'un '.idl' contenant ce qui suit :
+
+/*
+[scriptable, uuid(90d1d640-019d-4e60-bed1-3a5f3b208a2a)]
+interface iexslt_processor
+: nsIXSLTProcessor
+{};
+*/
+/*
+namespace nsxpcm {
+	class NS_NO_VTABLE NS_SCRIPTABLE iexslt_processor
+	: public nsIXSLTProcessor
+	{
+	public: 
+		NS_DECLARE_STATIC_IID_ACCESSOR(IEXSLT_PROCESSOR_IID)
+	};
+
+
+
+	class exslt_processor
+	: public iexslt_processor
+	{
+	public:
+		NS_DECL_ISUPPORTS
+		// NS_DECL_IEXSLT_PROCESSOR
+
+		exslt_processor()
+		{}
+		~exslt_processor()
+		{}
+	};
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR(exslt_processor)
+
+	NS_DEFINE_STATIC_IID_ACCESSOR(iexslt_processor, IEXSLT_PROCESSOR_IID)
+
+#define NSXPCM_XSLT_PROCESSOR_CONTRACTID "@zeusw.org/nsxpcm_xslt_processor;1"
+#define NSXPCM_XSLT_PROCESSOR_CLASSNAME "NSXPCMXSLTProcessor"
+// {90d1d640-019d-4e60-bed1-3a5f3b208a2a}
+#define NSXPCM_XSLT_PROCESSOR_CID  NSXPCM_XSLT_PROCESSOR_IID
+*/
+// fin de la partie concernant l'xslt_processor'
+
 #define NSXPCM_COMPONENTS\
-    {\
+/*    {\
+       NSXPCM_XSLT_PROCESSOR_CLASSNAME,\
+       NSXPCM_XSLT_PROCESSOR_CID,\
+       NSXPCM_XSLT_PROCESSOR_CONTRACTID,\
+	   nsxpcm::xslt_processorConstructor,\
+    },\
+*/    {\
        NSXPCM_EVENT_LISTENER_CLASSNAME,\
        NSXPCM_EVENT_LISTENER_CID,\
        NSXPCM_EVENT_LISTENER_CONTRACTID,\
 	   nsxpcm::event_listenerConstructor,\
     }
-
-// Fin de la partie concernant l''event_listener'.
-
-
-
 
 /*$END$*/
 				  /********************************************/
