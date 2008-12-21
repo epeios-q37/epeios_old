@@ -94,6 +94,14 @@
 					<label id="output"/>
 				</box>
 			</vbox>
+			<groupbox>
+				<caption label="XSLT Transformation result !"/>
+				<html xmlns="http://www.w3.org/1999/xhtml" allowevents="true">
+					<div id="xsltTarget">
+						<b>This will be replaced by the result of the XSLT tyransformation.</b>
+					</div>
+				</html>
+			</groupbox>
 			<iframe src="page.xul"/>
 		</vbox>
 	</hbox>

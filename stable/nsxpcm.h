@@ -97,6 +97,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMEventListener.h"
 #include "nsIGenericFactory.h"
 #include "nsIDOMHTMLAnchorElement.h"
+#include "nsIDOMDocumentFragment.h"
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
@@ -1016,6 +1017,114 @@ namespace nsxpcm {
 
 		return *JSConsoleWindow;
 	}
+
+	class xslt_parameter_
+	{
+	public:
+		struct s {
+			str::string_::s Name, Value;
+		};
+		str::string_ Name, Value;
+		xslt_parameter_( s &S )
+		: Name( S.Name ),
+		  Value( S.Value )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Name.reset( P );
+			Value.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Name.plug( MM );
+			Value.plug( MM );
+		}
+		xslt_parameter_ &operator =( const xslt_parameter_ &XP )
+		{
+			Name = XP.Name;
+			Value = XP.Value;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			Name.Init();
+			Value.Init();
+		}
+	};
+
+	E_AUTO( xslt_parameter );
+
+	typedef ctn::E_XCONTAINER_( xslt_parameter_ ) _xslt_parameters_;
+
+	class xslt_parameters_
+	: public _xslt_parameters_
+	{
+	public:
+		struct s
+		: public _xslt_parameters_::s
+		{};
+		xslt_parameters_( s &S )
+		: _xslt_parameters_( S )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_xslt_parameters_::reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			_xslt_parameters_::plug( MM );
+		}
+		xslt_parameters_ &operator =( const xslt_parameters_ &XP )
+		{
+			_xslt_parameters_::operator =( XP );
+
+			return *this;
+		}
+		void Init( void )
+		{
+			_xslt_parameters_::Init();
+		}
+		void Append(
+			const str::string_ &Name,
+			const str::string_ &Value );
+		void Append(
+			const char *Name,
+			const char *Value )
+		{
+			Append( str::string( Name ), str::string( Value ) );
+		}
+		void Append(
+			const str::string_ &Name,
+			const char *Value )
+		{
+			Append( Name, str::string( Value ) );
+		}
+		void Append(
+			const char *Name,
+			const str::string_ &Value )
+		{
+			Append( str::string( Name ), str::string( Value ) );
+		}
+	};
+
+
+	E_AUTO( xslt_parameters );
+
+	nsIDOMDocumentFragment *XSLTTransform(
+		nsIDOMDocument *XMLDocument,
+		nsIDOMDocument *XSLTStylesheet,
+		nsIDOMDocument *Owner,
+		const xslt_parameters_ &Parameters );
+
+	nsIDOMDocumentFragment *XSLTTransform(
+		const str::string_ &XMLString,
+		const str::string_ &XSLStylesheetFileName,
+		nsIDOMDocument *Owner,
+		const xslt_parameters_ &Parameters );
+
 
 
 #ifdef NSXPCM__BKD

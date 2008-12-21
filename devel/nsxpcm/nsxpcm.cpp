@@ -61,6 +61,10 @@ public:
 #include "widget/nsIFilePicker.h"
 #include "nsILocalFile.h"
 #include "nsIConsoleService.h"
+#include "content/nsIXSLTProcessor.h"
+#include "nsIVariant.h"
+#include "nsIDOMParser.h"
+#include "nsIXMLHttpRequest.h"
 
 using namespace nsxpcm;
 
@@ -379,7 +383,7 @@ ERRProlog
 	nsresult Error = NS_OK;
 	nsEmbedString EString;
 ERRBegin
-	CreateInstance<nsIFilePicker>( "@mozilla.org/filepicker;1", FilePicker );
+	CreateInstance( "@mozilla.org/filepicker;1", FilePicker );
 
 	Transform( Title, EString );
 
@@ -857,7 +861,7 @@ void nsxpcm::Log( const char *Text )
 	nsEmbedString String;
 	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
 
-	nsxpcm::GetService<nsIConsoleService>( "@mozilla.org/consoleservice;1", ConsoleService );
+	nsxpcm::GetService<nsIConsoleService>( NS_CONSOLESERVICE_CONTRACTID, ConsoleService );
 
 	nsxpcm::Transform( Text, String );
 
@@ -942,8 +946,142 @@ ERREpilog
     return NSResult;
 }
 
+void nsxpcm::xslt_parameters_::Append(
+	const str::string_ &Name,
+	const str::string_ &Value )
+{
+ERRProlog
+	xslt_parameter Parameter;
+ERRBegin
+	Parameter.Init();
+
+	Parameter.Name = Name;
+	Parameter.Value = Value;
+
+	_xslt_parameters_::Append( Parameter );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 
+nsIDOMDocumentFragment *nsxpcm::XSLTTransform(
+	nsIDOMDocument *XMLDocument,
+	nsIDOMDocument *XSLStylesheet,
+	nsIDOMDocument *Owner,
+	const xslt_parameters_ &Parameters )
+{
+	nsIDOMDocumentFragment *Fragment = NULL;
+ERRProlog
+	nsCOMPtr<nsIXSLTProcessor> Processor;
+	nsEmbedString Name;
+	nsCOMPtr<nsIWritableVariant> Value;
+	tol::E_FPOINTER___( char ) NameBuffer, ValueBuffer;
+	ctn::E_CITEM( xslt_parameter_ ) Parameter;
+	nsresult Result = NS_OK;
+	epeios::row__ Row = NONE;
+ERRBegin
+	nsxpcm::CreateInstance( "@mozilla.org/document-transformer;1?type=xslt", Processor );
+
+	Result = Processor->ImportStylesheet( XSLStylesheet );
+
+	if ( Result != NS_OK )
+		ERRu();
+
+	Parameter.Init( Parameters );
+
+	Row = Parameters.First();
+
+	while ( Row != NONE ) {
+		Transform( Parameter( Row ).Name, Name );
+
+		nsxpcm::CreateInstance( NS_VARIANT_CONTRACTID, Value );
+		Value->SetAsString( NameBuffer = Parameter( Row ).Value.Convert() );
+
+		Result = Processor->SetParameter( NS_LITERAL_STRING( "" ), Name, Value );
+
+		if ( Result != NS_OK )
+			ERRu();
+
+		Row = Parameters.Next( Row );
+	}
+
+
+	Result = Processor->TransformToFragment( XMLDocument, Owner, &Fragment );
+
+	if ( Result != NS_OK )
+		ERRu();
+ERRErr
+	Fragment = NULL;
+ERREnd
+ERREpilog
+	return Fragment;
+}
+
+static void _GetXMLDocument(
+	const str::string_ &XMLString,
+	nsIDOMDocument *&XMLDocument )
+{
+	nsEmbedString XMLEmbedString;
+	nsCOMPtr<nsIDOMParser> Parser;
+
+	nsxpcm::Transform( XMLString, XMLEmbedString );
+	
+	CreateInstance( NS_DOMPARSER_CONTRACTID, Parser );
+	Parser->ParseFromString( XMLEmbedString.get(), "text/xml", &XMLDocument );
+}
+
+static void _GetXSLStylesheet(
+	const str::string_ &XSLStylesheetFileName,
+	nsIDOMDocument *&XSLStylesheet )
+{
+	nsresult Result = NS_OK;
+	nsEmbedCString Method, URL;
+	nsEmbedString Empty;
+	nsCOMPtr<nsIXMLHttpRequest> HTTPRequest;
+
+	Transform( str::string( "GET" ), Method );
+	Transform( XSLStylesheetFileName, URL );
+
+	CreateInstance( NS_XMLHTTPREQUEST_CONTRACTID, HTTPRequest );
+
+	Result = HTTPRequest->OpenRequest( Method, URL, false, Empty, Empty );
+
+	if ( Result != NS_OK )
+		ERRu();
+
+	Result = HTTPRequest->Send( NULL );
+
+	if ( Result != NS_OK )
+		ERRu();
+
+	Result = HTTPRequest->GetResponseXML( &XSLStylesheet );
+
+	if ( Result != NS_OK )
+		ERRu();
+}
+
+nsIDOMDocumentFragment *nsxpcm::XSLTTransform(
+	const str::string_ &XMLString,
+	const str::string_ &XSLStylesheetFileName,
+	nsIDOMDocument *Owner,
+	const xslt_parameters_ &Parameters )
+{
+	nsIDOMDocumentFragment *Fragment = NULL;
+ERRProlog
+	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
+ERRBegin
+	_GetXMLDocument( XMLString, XMLDocument );
+
+	_GetXSLStylesheet( XSLStylesheetFileName, XSLStylesheet );
+
+	Fragment = XSLTTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
+ERRErr
+	Fragment = NULL;
+ERREnd
+ERREpilog
+	return Fragment;
+}
 
 class nsxpcmpersonnalization
 : public nsxpcmtutor

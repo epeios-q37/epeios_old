@@ -285,43 +285,30 @@ ERREnd
 ERREpilog
 }
 
-
-#include "nsIDOMNodeList.h"
-#include "nsIDOMWindow.h"
-#include "toolkitcomps/nsICommandLineRunner.h"
-#include "content/nsIXSLTProcessor.h"
-
 void ui_error_button__::NSXPCMOnClick( void )
 {
-	nsresult Result = NS_OK;
-/*
-	nsCOMPtr<nsICommandLine> CommandLine = NULL;
-	PRInt32 Length = 32;
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	nsIDOMDocumentFragment *Fragment = NULL;
+	str::string Value;
+ERRBegin
+	Value.Init();
+	UI().Main.Input.GetValue( Value );
 
-	nsCID CID = NS_ICOMMANDLINE_IID;
+	Parameters.Init();
+	Parameters.Append( "Value", Value );
 
-//	CommandLine = do_GetService( CID, &Result );
+//	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://epeios.xsl" ), UI().Main.Document, Parameters );
+	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://H:/cvs/epeios/examples/Gecko/XUL/chrome/epeios/epeios.xsl" ), UI().Main.Document, Parameters );
 
-//	nsxpcm::GetService<nsICommandLine>( "@mozilla.org/toolkit/command-line;1", CommandLine );
+	nsxpcm::RemoveChildren( nsxpcm::GetElementById( UI().Main.Document, "xsltTarget" ) );
 
-//	nsxpcm::CreateInstance<nsICommandLineRunner>( "@mozilla.org/toolkit/command-line;1", CommandLine );
-
-	CommandLine = nsxpcm::QueryInterface<nsICommandLine>( this->Kernel().UI.Page.Window );
-
-
-	CommandLine->GetLength( &Length );
-
-//	nsxpcm::QueryInterface<nsIDOMWindowInternal>( UI().Window )->Alert( NS_LITERAL_STRING( "Yesss !" ) );
-*/
-	nsCOMPtr<nsIXSLTProcessor> Processor = NULL;
-
-//	nsxpcm::CreateInstance
-
-	nsCID CID = NS_IXSLTPROCESSOR_IID;
-
-	Processor = do_CreateInstance( CID, &Result );
+	nsxpcm::AppendChild( nsxpcm::GetElementById( UI().Main.Document, "xsltTarget" ), Fragment );
 
 	ERRu();
+ERRErr
+ERREnd
+ERREpilog
 }
 
 template <typename element> inline element *_QueryInterface(

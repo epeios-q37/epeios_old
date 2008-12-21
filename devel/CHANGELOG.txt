@@ -1,5 +1,9 @@
 $Id$
 
+21/12/2008 :
+	- Suppression des "@mozilla/..." par leur 'CONTRACTID' quand possible.
+	
+
 18/12/2008 :
 	- Ajout élément 'html_anchor' (correspondant au '<a ...></a>').
 
