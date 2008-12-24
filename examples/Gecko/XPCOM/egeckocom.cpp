@@ -85,6 +85,7 @@ static void _RegisterSpecific( ui__::main &UI )
 	_Register( UI.Shared, UI, "shared" );
 	_Register( UI.Output, UI, "output" );
 	_Register( UI.JSConsole, UI, "jsconsole" );
+	_Register( UI.XSLT, UI, "xslt" );
 	_Register( UI.Endianess, UI, "endianess" );
 }
 
@@ -276,7 +277,7 @@ ERRBegin
 	Result.Init();
 
 	_DisplayEndianess( 0x0123456789abcdefULL, Result );
-	Result.Append( "\n" );
+	Result.Append( " - " );
 	_DisplayEndianess( 0xfedcba9876543210ULL, Result );
 
 	UI.Main.Endianess.SetValue( Result );
@@ -285,7 +286,17 @@ ERREnd
 ERREpilog
 }
 
-void ui_error_button__::NSXPCMOnClick( void )
+void ui_error_button__::NSXPCMOnCommand( void )
+{
+ERRProlog
+ERRBegin
+	ERRu();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui_xslt_button__::NSXPCMOnCommand( void )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
@@ -298,8 +309,8 @@ ERRBegin
 	Parameters.Init();
 	Parameters.Append( "Value", Value );
 
-//	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://epeios.xsl" ), UI().Main.Document, Parameters );
-	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://H:/cvs/epeios/examples/Gecko/XUL/chrome/epeios/epeios.xsl" ), UI().Main.Document, Parameters );
+	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "chrome://epeios/content/epeios.xsl" ), UI().Main.Document, Parameters );
+//	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://H:/cvs/epeios/examples/Gecko/XUL/chrome/epeios/epeios.xsl" ), UI().Main.Document, Parameters );
 
 	nsxpcm::RemoveChildren( nsxpcm::GetElementById( UI().Main.Document, "xsltTarget" ) );
 
@@ -311,6 +322,8 @@ ERREnd
 ERREpilog
 }
 
+
+#if 0
 template <typename element> inline element *_QueryInterface(
 	nsISupports *GenericElement,
 	err::handle ErrHandle = err::hUsual )
@@ -338,7 +351,7 @@ template <typename element> inline element *_QueryInterface(
 */
 	return Element;
 }
-
+#endif
 
 void ui_jsconsole_button__::NSXPCMOnCommand( void )
 {

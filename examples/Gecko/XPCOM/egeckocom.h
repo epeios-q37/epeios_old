@@ -116,6 +116,7 @@ class ui_button__
   public bridge__
 {
 protected:
+	virtual void NSXPCMOnClick( void ){}
 	virtual void NSXPCMOnInput( void ){}
 	virtual void NSXPCMOnFocus( void ){}
 	virtual void NSXPCMOnBlur( void ){}
@@ -131,8 +132,7 @@ class ui_error_button__
 : public ui_button__
 {
 protected:
-	virtual void NSXPCMOnCommand( void ) {}
-	virtual void NSXPCMOnClick( void );
+	virtual void NSXPCMOnCommand( void );
 };
 
 class ui_jsconsole_button__
@@ -140,9 +140,15 @@ class ui_jsconsole_button__
 {
 protected:
 	virtual void NSXPCMOnCommand( void );
-	virtual void NSXPCMOnClick( void )
-	{}
 };
+
+class ui_xslt_button__
+: public ui_button__
+{
+protected:
+	virtual void NSXPCMOnCommand( void );
+};
+
 
 class ui_description__
 : public nsxpcm::description__,
@@ -195,6 +201,7 @@ public:
 		ui_shared_checkbox__ Shared;
 		ui_output_label__ Output;
 		ui_jsconsole_button__ JSConsole;
+		ui_xslt_button__ XSLT;
 		ui_endianess_description__ Endianess;
 		main( void )
 		{
@@ -259,6 +266,14 @@ public:
 	void InputToAllOutputs( void );
 	void OpenJSConsole( void );
 	void DisplayEndianess( void );
+	void Alert( const str::string_ &Message )
+	{
+		nsxpcm::Alert( UI.Main.Window, Message );
+	}
+	void Alert( const char *Message )
+	{
+		nsxpcm::Alert( UI.Main.Window, Message );
+	}
 };
 
 template <typename user_type, typename user_row> E_TTYPEDEF( lstbch::E_LBUNCHt_( user_type *, user_row ), _lpbunch_ );	// 'List Pointer Bunch'.

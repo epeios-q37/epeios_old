@@ -103,3 +103,49 @@ function unregister ()
 	
 	alert( commandLineConfigFile );
 */	
+
+
+function circle(ctx, color, x, y, radius)	// function from xul.fr
+{
+	var radians = (Math.PI / 180)* 0.1;
+	
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, radians, true);
+	ctx.strokeStyle = color;		
+	ctx.stroke();
+}
+
+function roundedRect(ctx,x,y,width,height,radius)		// function from Mozilla
+{
+	ctx.beginPath();
+	ctx.moveTo(x,y+radius);
+	ctx.lineTo(x,y+height-radius);
+	ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
+	ctx.lineTo(x+width-radius,y+height);
+	ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
+	ctx.lineTo(x+width,y+radius);
+	ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
+	ctx.lineTo(x+radius,y);
+	ctx.quadraticCurveTo(x,y,x,y+radius);
+	ctx.stroke();
+}
+
+function draw()
+{
+	var canvas = document.getElementById('mycanvas');
+	if (canvas.getContext)
+	{
+		var ctx = canvas.getContext('2d');
+
+		ctx.strokeStyle = "green"; 
+		ctx.strokeRect(50,50,50,50);
+
+		ctx.fillStyle = "orange";
+		ctx.fillRect(25,125,100,100);
+
+		ctx.strokeStyle = "blue"; 
+		roundedRect(ctx, 12,120,60,60,15);
+		
+		circle(ctx, "red", 100, 150, 90);
+	}
+}
