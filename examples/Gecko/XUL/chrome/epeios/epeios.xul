@@ -34,6 +34,7 @@
 					<vbox>
 						<datepicker type="popup"/>
 						<button id="jsconsole" label="JSConsole"/>
+						<button id="erte" label="un aurte bouton" oncommand="alert('coucou');"/>
 						<box>
 							<textbox id="input"/>
 							<checkbox label="Share" id="shared"/>

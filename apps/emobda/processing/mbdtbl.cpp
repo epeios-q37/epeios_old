@@ -19,4 +19,41 @@
 
 // $Id$
 
-#include "mdbtbl.h"
+#include "mbdtbl.h"
+
+using namespace mbdbsc;
+
+void mbdtbl::table_::Init(
+	const str::string_ &Location,
+	dbstbl::mode__ Mode,
+	bso::bool__ Erase,
+	bso::bool__ Partial )
+{
+ERRProlog
+	mdr::mode__ FileMode = mdr::m_Undefined;
+	str::string	LocatedRootFileName;
+ERRBegin
+	reset();
+
+	FileMode = dbstbl::Convert( Mode );
+
+	S_.FilesgroupID = flm::GetId();
+
+	S_.UniversalContent.Init( Content );
+	_table_::Init( S_.UniversalContent, Mode );
+
+	LocatedRootFileName.Init();
+	mbdbsc::BuildLocatedContentRootFileName( Location, LocatedRootFileName );
+	Content.Init( LocatedRootFileName, FileMode ,Partial, S_.FilesgroupID );
+
+	LocatedRootFileName.Init();
+	mbdbsc::BuildLocatedRecordFieldIndexRootFileName( Location, LocatedRootFileName );
+	RecordRowFieldRowIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+
+	LocatedRootFileName.Init();
+	mbdbsc::BuildLocatedFieldDatumIndexRootFileName( Location, LocatedRootFileName );
+	FieldRowDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+ERRErr
+ERREnd
+ERREpilog
+}

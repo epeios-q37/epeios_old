@@ -8,7 +8,7 @@
 		<xsl:element name="hr"/>
 		<xsl:text>Value of the above box : </xsl:text>
 		<xsl:element name="font">
-			<xsl:attribute name="style">color: blue; font-weight: bold; font-style: italic;</xsl:attribute>
+			<xsl:attribute name="style">color: red; font-weight: bold; font-style: italic;</xsl:attribute>
 			<xsl:value-of select="$Value"/>
 		</xsl:element>
 	</xsl:template>

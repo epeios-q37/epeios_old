@@ -26,7 +26,23 @@
 #include "mmm.h"
 #include "mdr.h"
 
+#define MBDBSC_CONTENT_ROOT_FILE_NAME				"Data"
+#define MBDBSC_RECORD_FIELD_INDEX_ROOT_FILE_NAME	"RecordFieldIndex"
+#define MBDBSC_FIELD_DATUM_INDEX_ROOT_FILE_NAME		"FieldDatum"
+
 namespace mbdbsc {
+
+	const str::string_ &BuildLocatedContentRootFileName(
+		const str::string_ &Location,
+		str::string_ &LocalizedRootFileName );
+
+	const str::string_ &BuildLocatedRecordFieldIndexRootFileName(
+		const str::string_ &Location,
+		str::string_ &LocalizedRootFileName );
+
+	const str::string_ &BuildLocatedFieldDatumIndexRootFileName(
+		const str::string_ &Location,
+		str::string_ &LocalizedRootFileName );
 
 	E_ROW( record_row__ );
 	E_ROW( field_row__ );
@@ -185,7 +201,7 @@ namespace mbdbsc {
 		const raw_datum_ &RawDatum,
 		record_ &Record );
 
-	void Convert(
+	inline void Convert(
 		const record_ &Record,
 		raw_datum_ &RawDatum )
 	{

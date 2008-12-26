@@ -19,9 +19,51 @@
 
 // $Id$
 
-#include "mdbbsc.h"
+#include "mbdbsc.h"
+
+#include "fnm.h"
 
 using namespace mbdbsc;
+
+static const str::string_ &BuildLocatedRootFileName_(
+	const str::string_ &Location,
+	const char *RootFileName,
+	str::string_ &LocatedRootFileName )
+{
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+	FNM_BUFFER___ FileNameBuffer;
+ERRBegin
+	LocatedRootFileName.Append( fnm::BuildFileName( LocationBuffer = Location.Convert(), RootFileName, NULL, FileNameBuffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return LocatedRootFileName;
+}
+
+const str::string_ &mbdbsc::BuildLocatedContentRootFileName(
+	const str::string_ &Location,
+	str::string_ &LocalizedRootFileName )
+{
+	return BuildLocatedRootFileName_( Location, MBDBSC_CONTENT_ROOT_FILE_NAME, LocalizedRootFileName );
+}
+
+const str::string_ &mbdbsc::BuildLocatedRecordFieldIndexRootFileName(
+	const str::string_ &Location,
+	str::string_ &LocalizedRootFileName )
+{
+	return BuildLocatedRootFileName_( Location, MBDBSC_RECORD_FIELD_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+}
+
+const str::string_ &mbdbsc::BuildLocatedFieldDatumIndexRootFileName(
+	const str::string_ &Location,
+	str::string_ &LocalizedRootFileName )
+{
+	return BuildLocatedRootFileName_( Location, MBDBSC_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+}
+
+
+
 
 
 void mbdbsc::Extract(

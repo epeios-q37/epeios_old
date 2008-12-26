@@ -98,6 +98,28 @@ namespace dbstbl {
 		m_Undefined
 	};
 
+	inline mdr::mode__ Convert( mode__ Mode )
+	{
+		switch ( Mode ) {
+		case mBulk:
+		case mReadWrite:
+		case mAdmin:
+			return mdr::mReadWrite;
+			break;
+		case mReadOnly:
+			return mdr::mReadOnly;
+			break;
+		case m_Undefined:
+			ERRu();
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return mdr::m_Undefined;	// Pour éviter un 'warning'.
+	}
+
 	typedef bch::E_BUNCHt_( index_ *, irow__ ) _indexes_;
 
 	class observer_functions__
@@ -584,7 +606,7 @@ namespace dbstbl {
 #		define DBSTBL__DEFAULT_DELAY	DBSTBL_DEFAULT_DELAY
 #	else
 #		define DBSTBL__DEFAULT_DELAY	100	// en ms.
-#endif
+#	endif
 
 	class thread_safe_table_
 	{
