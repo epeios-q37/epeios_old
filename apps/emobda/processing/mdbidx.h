@@ -23,10 +23,21 @@
 #define MDBIDX__INC
 
 #include "dbsidx.h"
+#include "mbdbsc.h"
 
-namespace mdbidx {
-	class index
+namespace mbdidx {
+	typedef dbsidx::sort_function__ _sort_function__;
+
+	class record_row_field_row_sort_function__
+	: public _sort_function__
 	{
+	protected:
+		virtual bso::sign__ DBSIDXCompare(
+			const dbsidx::datum_ &RawDatum1,
+			const dbsidx:: &RawDatum2 )
+		{
+			return mbdbsc::RecordRowFieldRowCompare( Datum1, Datum2 );
+		}
 	};
 }
 	

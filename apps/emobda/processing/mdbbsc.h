@@ -26,7 +26,7 @@
 #include "mmm.h"
 #include "mdr.h"
 
-namespace mdbbsc {
+namespace mbdbsc {
 
 	E_ROW( record_row__ );
 	E_ROW( field_row__ );
@@ -69,6 +69,45 @@ namespace mdbbsc {
 
 		return Result;
 	}
+
+	inline void ExtractRecordStaticPart(
+		const raw_datum_ &RawDatum,
+		record_static_part__ &RecordStaticPart )
+	{
+		if ( RawDatum.Amount() < sizeof( RecordStaticPart ) )
+			ERRu();
+
+		RawDatum.Get( RawDatum.First(), sizeof( record_static_part__ ), (dbsbsc::atom__ *)&RecordStaticPart );
+	}
+
+	inline record_static_part__ ExtractRecordStaticPart( const raw_datum_ &Datum )
+	{
+		record_static_part__ RecordStaticPart;
+
+		ExtractRecordStaticPart( Datum, RecordStaticPart );
+
+		return RecordStaticPart;
+	}
+
+	inline bso::sign__ FieldRowCompare(
+		const raw_datum_ &D1,
+		const raw_datum_ &D2 )
+	{
+		return FieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ) );
+	}
+
+	inline bso::sign__ RecordRowFieldRowCompare(
+		const raw_datum_ &D1,
+		const raw_datum_ &D2 )
+	{
+		return RecordRowFieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ) );
+	}
+
+	bso::sign__ Compare(
+		const raw_datum_ &D1,
+		epeios::row__ O1,
+		const raw_datum_ &D2,
+		epeios::row__ &O2 );
 
 	class record_ {
 	public:
@@ -129,6 +168,19 @@ namespace mdbbsc {
 		}
 	};
 
+	inline bso::sign__ FieldRowDatumCompare(
+		const raw_datum_ &D1,
+		const raw_datum_ &D2 )
+	{
+		bso::sign__ Result = FieldRowCompare( D1, D2 );
+
+		if ( Result == 0 )
+			Result = Compare( D1, D1.First( sizeof( record_static_part__ ) ), D2, D2.First( sizeof( record_static_part__ ) ) );
+
+		return Result;
+	}
+
+
 	void Extract(
 		const raw_datum_ &RawDatum,
 		record_ &Record );
@@ -144,6 +196,5 @@ namespace mdbbsc {
 		RawDatum.Append( Record.Datum );
 	}
 }
-
 
 #endif

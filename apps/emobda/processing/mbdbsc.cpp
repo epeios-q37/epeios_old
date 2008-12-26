@@ -21,9 +21,10 @@
 
 #include "mdbbsc.h"
 
-using namespace mdbbsc;
+using namespace mbdbsc;
 
-void Extract(
+
+void mbdbsc::Extract(
 	const raw_datum_ &RawDatum,
 	record_ &Record )
 {
@@ -31,10 +32,7 @@ ERRProlog
 	record_static_part__ RecordStaticPart;
 	datum Datum;
 ERRBegin
-	if ( RawDatum.Amount() < sizeof( RecordStaticPart ) )
-		ERRu();
-
-	RawDatum.Get( RawDatum.First(), sizeof( record_static_part__ ), (dbsbsc::atom__ *)&RecordStaticPart );
+	ExtractRecordStaticPart( RawDatum, RecordStaticPart );
 
 	Datum.Init();
 
@@ -42,5 +40,49 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+static inline bso::char__ ToUpper_( bso::char__ C )
+{
+	if ( ( C > 0 ) && islower( C ) )
+		return toupper( C );
+	else
+		return C;
+}
+
+static inline bso::sign__ Compare_(
+	bso::char__ C1,
+	bso::char__ C2 )
+{
+	return bso::Compare( ToUpper_( C1 ), ToUpper_( C2 ) );
+}
+
+bso::sign__ mbdbsc::Compare(
+	const raw_datum_ &D1,
+	epeios::row__ O1,
+	const raw_datum_ &D2,
+	epeios::row__ &O2 )
+{
+	bso::sign__ Result = 0;
+
+	while ( ( O1 != NONE ) && ( O2 != NONE ) && ( ( Result == Compare_( D1( O1 ), D2( O2 ) ) == 0 ) ) ) {
+		O1 = D1.Next( 01 );
+		O2 = D2.Next( O2 );
+	}
+
+	if ( Result == 0 )
+		if ( O1 == NONE )
+			if ( O2 == NONE )
+				Result = 0;
+			else
+				Result = 1;
+		else
+			if ( O2 == NONE )
+				Result = -1;
+			else
+				ERRc();
+
+	return Result;
 
 }
+
