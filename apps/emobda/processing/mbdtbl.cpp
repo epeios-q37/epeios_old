@@ -53,6 +53,10 @@ ERRBegin
 	LocatedRootFileName.Init();
 	mbdbsc::BuildLocatedFieldDatumIndexRootFileName( Location, LocatedRootFileName );
 	FieldRowDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+
+	S_.RecordRowFieldRowIndexRow = AddIndex( RecordRowFieldRowIndex );
+	S_.FieldRowDatumIndexRow = AddIndex( FieldRowDatumIndex );
+
 ERRErr
 ERREnd
 ERREpilog

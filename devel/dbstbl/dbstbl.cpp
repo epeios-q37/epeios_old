@@ -630,13 +630,14 @@ ERREpilog
 
 rrow__ dbstbl::thread_safe_table_::GetStrictGreater( 
 	irow__ IRow,
-	rrow__ Row )
+	rrow__ Row,
+	skip_level__ SkipLevel )
 {
 ERRProlog
 ERRBegin
 	RO
 
-	Row = T.GetStrictGreater( IRow, Row );
+	Row = T.GetStrictGreater( IRow, Row, SkipLevel );
 ERRErr
 ERREnd
 	RRO
@@ -761,14 +762,15 @@ ERREpilog
 bso::sign__ dbstbl::thread_safe_table_::Compare(
 	rrow__ RecordRow,
 	const datum_&Pattern,
-	irow__ IndexRow )
+	irow__ IndexRow,
+	skip_level__ SkipLevel )
 {
 	bso::sign__ Result = 0;
 ERRProlog
 ERRBegin
 	RO
 
-	Result = T.Compare( RecordRow, Pattern, IndexRow );
+	Result = T.Compare( RecordRow, Pattern, IndexRow, SkipLevel );
 ERRErr
 ERREnd
 	RRO

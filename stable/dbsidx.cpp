@@ -145,7 +145,7 @@ ERRBegin
 
 		_Retrieve( Row, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, DBSIDX_NO_SKIP ) ) {
 		case 0:
 			switch ( EqualBehavior ) {
 			case bStop:
@@ -190,12 +190,14 @@ ERREpilog
 	return Result;
 }
 
-rrow__ dbsidx::index_::_SearchStrictGreater( rrow__ Row ) const
+rrow__ dbsidx::index_::_SearchStrictGreater(
+	rrow__ Row,
+	skip_level__ SkipLevel ) const
 {
 	rrow__ Buffer = BaseIndex.GetTreeGreater( Row );
 	rrow__ Candidate = NONE;
 
-	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row ) == 0 ) )
+	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
 		Buffer = BaseIndex.GetTreeGreater( Buffer );
 
 	if ( Buffer != NONE ) {
@@ -203,14 +205,14 @@ rrow__ dbsidx::index_::_SearchStrictGreater( rrow__ Row ) const
 
 		Buffer = BaseIndex.GetTreeLesser( Buffer );
 
-		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row ) != 0 ) ) {
+		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
 			Candidate = Buffer;
 
 			Buffer = BaseIndex.GetTreeLesser( Buffer );
 		}
 
 		if ( Buffer != NONE ) {
-			Buffer = _SearchStrictGreater( Buffer );
+			Buffer = _SearchStrictGreater( Buffer, SkipLevel );
 
 			if ( Buffer != NONE )
 				Candidate = Buffer;
@@ -230,10 +232,10 @@ rrow__ dbsidx::index_::_SearchStrictGreater( rrow__ Row ) const
 				Buffer = BaseIndex.GetTreeParent( Buffer );
 
 				if ( Buffer != NONE ) {
-					if ( Compare( Row, Buffer ) != 0 )
+					if ( Compare( Row, Buffer, SkipLevel ) != 0 )
 						Candidate = Buffer;
 					else
-						Candidate = _SearchStrictGreater( Buffer );
+						Candidate = _SearchStrictGreater( Buffer, SkipLevel );
 				}
 			}
 		}
@@ -284,7 +286,7 @@ ERRBegin
 
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, DBSIDX_NO_SKIP ) ) {
 		case 0:
 			Result = -1;	// Pour forcer son positionnement en tant que premier.
 		case -1:
@@ -308,7 +310,7 @@ ERRBegin
 
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare ) ) {
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, DBSIDX_NO_SKIP ) ) {
 		case 0:
 			Result = 1;	// Pour forcer son positionnement en tant que dernier.
 		case 1:
@@ -412,7 +414,7 @@ ERRBegin
 	Row = Next( Row );
 
 	while ( Row != NONE ) {
-		if ( Compare( Row, Datum ) == 1 )
+		if ( Compare( Row, Datum, DBSIDX_NO_SKIP ) == 1 )
 			ERRReturn;
 
 		Datum.Init();
@@ -430,7 +432,8 @@ ERREpilog
 
 bso::sign__ dbsidx::index_::Compare(
 	rrow__ RecordRow,
-	const datum_ &Pattern ) const
+	const datum_ &Pattern,
+	skip_level__ SkipLevel ) const
 {
 	bso::sign__ Result = 0;
 ERRProlog
@@ -440,7 +443,7 @@ ERRBegin
 
 	_Content().Retrieve( RecordRow, Datum, *(dbsctt::_cache_ *)NULL );
 
-	Result = S_.Sort->Compare( Datum, Pattern );
+	Result = S_.Sort->Compare( Datum, Pattern, SkipLevel  );
 ERRErr
 ERREnd
 ERREpilog
@@ -449,7 +452,8 @@ ERREpilog
 
 bso::sign__ dbsidx::index_::Compare(
 	rrow__ RecordRow1,
-	rrow__ RecordRow2 ) const
+	rrow__ RecordRow2,
+	skip_level__ SkipLevel ) const
 {
 	bso::sign__ Result = 0;
 ERRProlog
@@ -459,7 +463,7 @@ ERRBegin
 
 	_Content().Retrieve( RecordRow2, Pattern, *(dbsctt::_cache_ *)NULL );
 
-	Result = Compare( RecordRow1, Pattern );
+	Result = Compare( RecordRow1, Pattern, SkipLevel );
 ERRErr
 ERREnd
 ERREpilog

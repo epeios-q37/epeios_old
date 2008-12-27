@@ -75,6 +75,9 @@ namespace dbsbsc {
 	E_ROW( rrow__ );	// Record row.
 	E_ROW( crow__ );	// Cache row.
 
+	typedef bso::ubyte__ skip_level__;
+#define DBSBSC_NO_SKIP	0
+
 	typedef bso::char__ atom__;
 	typedef str::string_ datum_;
 	typedef str::string datum;

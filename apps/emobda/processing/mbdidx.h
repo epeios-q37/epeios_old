@@ -19,6 +19,8 @@
 
 // $Id$
 
+// eMoBDa InDeX
+
 #ifndef MDBIDX__INC
 #define MDBIDX__INC
 
@@ -35,9 +37,10 @@ namespace mbdidx {
 	protected:
 		virtual bso::sign__ DBSIDXCompare(
 			const dbsidx::datum_ &RawDatum1,
-			const dbsidx::datum_ &RawDatum2 )
+			const dbsidx::datum_ &RawDatum2,
+			dbsidx::skip_level__ SkipLevel )
 		{
-			return mbdbsc::RecordRowFieldRowCompare( RawDatum1, RawDatum2 );
+			return mbdbsc::RecordRowFieldRowCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
 	public:
 		void reset( bso::bool__ = true )
@@ -54,9 +57,10 @@ namespace mbdidx {
 	protected:
 		virtual bso::sign__ DBSIDXCompare(
 			const dbsidx::datum_ &RawDatum1,
-			const dbsidx::datum_ &RawDatum2 )
+			const dbsidx::datum_ &RawDatum2,
+			dbsidx::skip_level__ SkipLevel )
 		{
-			return mbdbsc::FieldRowDatumCompare( RawDatum1, RawDatum2 );
+			return mbdbsc::FieldRowDatumCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
 	public:
 		void reset( bso::bool__ = true )

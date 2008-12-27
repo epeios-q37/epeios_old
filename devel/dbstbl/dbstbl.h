@@ -456,11 +456,12 @@ namespace dbstbl {
 		bso::sign__ Compare(
 			rrow__ RecordRow,
 			const datum_&Pattern,
-			irow__ IndexRow ) const
+			irow__ IndexRow,
+			skip_level__ SkipLevel ) const
 		{
 			_Test( mReadOnly );
 
-			return _I( IndexRow ).Compare( RecordRow, Pattern );
+			return _I( IndexRow ).Compare( RecordRow, Pattern, SkipLevel );
 		}
 		rrow__ First( irow__ IRow ) const
 		{
@@ -499,14 +500,15 @@ namespace dbstbl {
 		}
 		rrow__ GetStrictGreater(
 			irow__ IRow,
-			rrow__ Row ) const
+			rrow__ Row,
+			skip_level__ SkipLevel) const
 		{
 			_Test( mReadOnly );
 
 			if ( _IsBulk() )
 				ERRu();
 
-			return _I( IRow ).StrictGreater( Row );
+			return _I( IRow ).StrictGreater( Row, SkipLevel );
 		}
 		rrow__ Previous( 
 			irow__ IRow,
@@ -691,7 +693,8 @@ namespace dbstbl {
 		bso::sign__ Compare(
 			rrow__ RecordRow,
 			const datum_&Pattern,
-			irow__ IndexRow );
+			irow__ IndexRow,
+			skip_level__ SkipLevel );
 		rrow__ First( irow__ IRow );
 		rrow__ Last( irow__ IRow );
 		rrow__ Next( 
@@ -699,7 +702,8 @@ namespace dbstbl {
 			rrow__ Row );
 		rrow__ GetStrictGreater( 
 			irow__ IRow,
-			rrow__ Row );
+			rrow__ Row,
+			skip_level__ SkipLevel );
 		rrow__ Previous( 
 			irow__ IRow,
 			rrow__ Row );

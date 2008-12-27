@@ -72,18 +72,24 @@ namespace dbsidx {
 
 	using dbsbsc::rrow__;
 
+	using dbsbsc::skip_level__;
+
+#define DBSIDX_NO_SKIP	DBSBSC_NO_SKIP
+
 	class sort_function__
 	{
 	protected:
 		virtual bso::sign__ DBSIDXCompare(
 			const datum_ &Datum1,
-			const datum_ &Datum2 ) = 0;
+			const datum_ &Datum2,
+			skip_level__ SkipLevel ) = 0;	// Si == 0, la comparaison se fait sur tous les champs
 	public:
 		bso::sign__ Compare(
-			const datum_ &Data1,
-			const datum_ &Data2 )
+			const datum_ &Datum1,
+			const datum_ &Datum2,
+			skip_level__ SkipLevel )
 		{
-			return DBSIDXCompare( Data1, Data2 );
+			return DBSIDXCompare( Datum1, Datum2, SkipLevel );
 		}
 	};
 
@@ -154,7 +160,9 @@ namespace dbsidx {
 			if ( CompareWithContent && ( S_.ModificationTimeStamp == Content().ModificationTimeStamp() ) )
 				S_.ModificationTimeStamp = tol::Clock( true );
 		}
-		rrow__ _SearchStrictGreater( rrow__ Row ) const;
+		rrow__ _SearchStrictGreater(
+			rrow__ Row,
+			skip_level__ SkipLevel ) const;
 	public:
 		_index_ BaseIndex;
 		struct s
@@ -257,10 +265,12 @@ namespace dbsidx {
 		}
 		bso::sign__ Compare(
 			rrow__ RecordId,
-			const datum_ &Pattern ) const;
+			const datum_ &Pattern,
+			skip_level__ SkipLevel ) const;
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
-			rrow__ RecordRow2 ) const;
+			rrow__ RecordRow2,
+			skip_level__ SkipLevel ) const;
 		rrow__ SearchRoot( rrow__ Member )
 		{	
 			S_.Root = Member;
@@ -289,16 +299,18 @@ namespace dbsidx {
 		{
 			return BaseIndex.Next( Row );
 		}
-		rrow__ StrictGreater( rrow__ Row ) const
+		rrow__ StrictGreater(
+			rrow__ Row,
+			skip_level__ SkipLevel ) const
 		{
 			rrow__ Candidate = Next( Row );
 
 			if ( Candidate == NONE )
 				return NONE;
-			else if ( Compare( Row, Candidate ) != 0 )
+			else if ( Compare( Row, Candidate, SkipLevel ) != 0 )
 				return Candidate;
 			else
-				return _SearchStrictGreater( Row );
+				return _SearchStrictGreater( Row, SkipLevel );
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{

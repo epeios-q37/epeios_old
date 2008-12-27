@@ -19,6 +19,8 @@
 
 // $Id$
 
+// eMoBDa TaBLe
+
 #ifndef MDBTBL__INC
 #define MDBTBL__INC
 
@@ -42,6 +44,7 @@ namespace mbdtbl {
 			dbsctt::content__ UniversalContent;
 			mbdidx::record_row_field_row_index_::s RecordRowFieldRowIndex;
 			mbdidx::field_row_datum_index_::s FieldRowDatumIndex;
+			dbstbl::irow__ RecordRowFieldRowIndexRow, FieldRowDatumIndexRow;
 		} &S_;
 		_content_ Content;
 		mbdidx::record_row_field_row_index_ RecordRowFieldRowIndex;
@@ -69,6 +72,7 @@ namespace mbdtbl {
 			}
 
 			S_.FilesgroupID = FLM_UNDEFINED_ID;
+			S_.RecordRowFieldRowIndexRow = S_.FieldRowDatumIndexRow = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -85,6 +89,9 @@ namespace mbdtbl {
 			Content = T.Content;
 			RecordRowFieldRowIndex = T.RecordRowFieldRowIndex;
 			FieldRowDatumIndex = T.FieldRowDatumIndex;
+
+			S_.RecordRowFieldRowIndexRow = T.S_.RecordRowFieldRowIndexRow;
+			S_.FieldRowDatumIndexRow = T.S_.FieldRowDatumIndexRow;
 
 			return *this;
 		}

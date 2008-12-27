@@ -19,6 +19,8 @@
 
 // $Id$
 
+// eMoBDa BaSiCs
+
 #ifndef MDBBSC__INC
 #define MDBBSC__INC
 
@@ -76,11 +78,12 @@ namespace mbdbsc {
 
 	inline bso::sign__ RecordRowFieldRowCompare(
 		const record_static_part__ &O1,
-		const record_static_part__ &O2 )
+		const record_static_part__ &O2,
+		dbsbsc::skip_level__ SkipLevel )
 	{
 		bso::sign__ Result = RecordRowCompare( O1, O2 );
 
-		if ( Result == 0 )
+		if ( ( Result == 0 ) && ( SkipLevel == DBSBSC_NO_SKIP ) )
 			Result = FieldRowCompare( O1, O2 );
 
 		return Result;
@@ -114,9 +117,10 @@ namespace mbdbsc {
 
 	inline bso::sign__ RecordRowFieldRowCompare(
 		const raw_datum_ &D1,
-		const raw_datum_ &D2 )
+		const raw_datum_ &D2,
+		dbsbsc::skip_level__ SkipLevel )
 	{
-		return RecordRowFieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ) );
+		return RecordRowFieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ), SkipLevel );
 	}
 
 	bso::sign__ Compare(
@@ -186,11 +190,12 @@ namespace mbdbsc {
 
 	inline bso::sign__ FieldRowDatumCompare(
 		const raw_datum_ &D1,
-		const raw_datum_ &D2 )
+		const raw_datum_ &D2,
+		dbsbsc::skip_level__ SkipLevel )
 	{
 		bso::sign__ Result = FieldRowCompare( D1, D2 );
 
-		if ( Result == 0 )
+		if ( ( Result == 0 ) && ( SkipLevel == DBSBSC_NO_SKIP ) )
 			Result = Compare( D1, D1.First( sizeof( record_static_part__ ) ), D2, D2.First( sizeof( record_static_part__ ) ) );
 
 		return Result;
