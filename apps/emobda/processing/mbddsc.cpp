@@ -23,13 +23,86 @@
 
 using namespace mbddsc;
 
-void mbddsc::Dump(
-	const description_ &Description,
-	xml::writer_ &Writer )
-{
-	Writer.PushTag( "Name" );
-	Writer.PutValue( Description.Name );
-	Writer.PopTag();
+using xml::writer_;
 
-	mdbfld::Dump( Description.Fields, Writer );
+static inline void DescriptionHeader_( writer_ &Writer )
+{
+	Writer.PushTag( MBDDSC_DESCRIPTION_TAG_NAME );
+	Writer.PutAttribute( MBDDSC_NAMESPACE_ATTRIBUTE_NAME, MBDDSC_NAMESPACE_URI );
+	Writer.PutAttribute( MBDDSC_VERSION_ATTRIBUTE_NAME, GetLabel( vDefault ) );
 }
+
+static inline void DescriptionFooter_( writer_ &Writer )
+{
+	Writer.PopTag();
+}
+
+static inline const char *GetDefaultLabel( item__ Item )
+{
+	return GetLabel( Item, vDefault );
+}
+
+#define DL( item )	GetDefaultLabel( i##item )
+
+static void Export_(
+	const field_ &Field,
+	field_row__ FieldRow,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+
+	Writer.PushTag( DL( FieldTagName ) );
+	Writer.PutAttribute( DL( FieldIdAttributeName ), bso::Convert( *FieldRow, Buffer ) );
+	Writer.PushTag( DL( FieldNameTagName ) );
+	Writer.PutValue( Field.Name );
+	Writer.PopTag();
+	Writer.PopTag();
+}
+
+static void Export_(
+	const fields_ &Fields,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+	ctn::E_CITEMt( field_, field_row__ ) Field;
+	field_row__ FieldRow = Fields.First();
+
+	Field.Init( Fields );
+
+	Writer.PushTag( DL( FieldsTagName ) );
+	Writer.PutAttribute( DL( FieldsAmountAttributeName ), bso::Convert( Fields.Amount(), Buffer ) );
+
+	while ( FieldRow != NONE ) {
+		Export_( Field( FieldRow ), FieldRow, Writer );
+
+		FieldRow = Fields.Next( FieldRow );
+	}
+
+	Writer.PopTag();
+}
+
+void mbddsc::Export(
+	const mbdstr::structure_ &Structure,
+	writer_ &Writer,
+	bso::bool__ WithInternals,
+	bso::bool__ AsOrphan )
+{
+	if ( AsOrphan ) {
+		DescriptionHeader_( Writer );
+	}
+
+	Writer.PushTag( DL( StructureTagName ) );
+
+	if ( WithInternals ) {
+		Writer.PushTag( DL( EngineTagName ) );
+		Writer.PutAttribute( DL( EngineVersionAttributeName ), MBDDSC_ENGINE_VERSION );
+		Writer.PopTag();
+	}
+
+	Export_( Structure.Fields, Writer );
+
+	if ( AsOrphan ) {
+		DescriptionFooter_( Writer );
+	}
+}
+

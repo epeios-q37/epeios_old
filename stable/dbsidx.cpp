@@ -118,6 +118,7 @@ void Display(
 
 bso::sign__ dbsidx::index_::_Seek(
 	const datum_ &Datum,
+	skip_level__ SkipLevel,
 	behavior__ EqualBehavior,
 	rrow__ &Row,
 	bso::ubyte__ &Round,
@@ -145,7 +146,7 @@ ERRBegin
 
 		_Retrieve( Row, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, DBSIDX_NO_SKIP ) ) {
+		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, SkipLevel ) ) {
 		case 0:
 			switch ( EqualBehavior ) {
 			case bStop:
@@ -325,7 +326,7 @@ ERRBegin
 	} 
 
 	if ( TargetRow == NONE )
-		Result = _Seek( Datum, bStopIfOneChildMissing, TargetRow, Round, Cache );
+		Result = _Seek( Datum, DBSIDX_NO_SKIP, bStopIfOneChildMissing, TargetRow, Round, Cache );
 	else
 		Extremities->Used++;
 
@@ -377,6 +378,7 @@ ERREpilog
 
 rrow__ dbsidx::index_::Seek( 
 	const datum_ &Datum,
+	skip_level__ SkipLevel,
 	behavior__ EqualBehavior,
 	bso::sign__ &Sign ) const
 {
@@ -386,7 +388,7 @@ rrow__ dbsidx::index_::Seek(
 	if ( S_.Root == NONE )
 		return NONE;
 
-	Sign = _Seek( Datum, EqualBehavior, Row, Round, *(dbsctt::_cache_ *)NULL );
+	Sign = _Seek( Datum, SkipLevel, EqualBehavior, Row, Round, *(dbsctt::_cache_ *)NULL );
 
 #ifdef DBSIDX_DBG
 	if ( Row == NONE )

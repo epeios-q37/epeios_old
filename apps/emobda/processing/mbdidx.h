@@ -31,7 +31,7 @@ namespace mbdidx {
 	typedef dbsidx::sort_function__ _sort_function__;
 	typedef dbsidx::file_index_ _index_;
 
-	class record_row_field_row_sort_function__
+	class record_id_field_row_sort_function__
 	: public _sort_function__
 	{
 	protected:
@@ -40,7 +40,7 @@ namespace mbdidx {
 			const dbsidx::datum_ &RawDatum2,
 			dbsidx::skip_level__ SkipLevel )
 		{
-			return mbdbsc::RecordRowFieldRowCompare( RawDatum1, RawDatum2, SkipLevel );
+			return mbdbsc::RecordIdFieldRowCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
 	public:
 		void reset( bso::bool__ = true )
@@ -116,8 +116,8 @@ namespace mbdidx {
 		}
 	};
 
-	typedef index_<record_row_field_row_sort_function__> record_row_field_row_index_;
-	E_AUTO( record_row_field_row_index );
+	typedef index_<record_id_field_row_sort_function__> record_id_field_row_index_;
+	E_AUTO( record_id_field_row_index );
 
 	typedef index_<field_row_datum_sort_function__> field_row_datum_index_;
 	E_AUTO( field_row_datum_index );

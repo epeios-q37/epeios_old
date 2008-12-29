@@ -1,5 +1,5 @@
 /*
-	'mdbmng.h' by Claude SIMON (http://zeusw.org/).
+	'mbdmng.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -24,9 +24,103 @@
 #ifndef MDBMNG__INC
 #define MDBMNG__INC
 
-#include "mbdtbl.h"
+#ifdef XXX_DBG
+#	define MBDMNG__DBG
+#endif
+
+#include "mbdeng.h"
+#include "mbdstr.h"
 
 namespace mbdmng {
+
+	using namespace mbdeng;
+	using namespace mbdstr;
+	using namespace mbdbsc;
+
+	class manager_
+	{
+	private:
+		const record_ &GetRecord_(
+			dbstbl::rrow__ Row,
+			record_ &Record ) const;
+		record_id__ GetRecordId_( dbstbl::rrow__ Row ) const;
+		const datum_ GetDatum_(
+			dbstbl::rrow__ Row,
+			datum_ &Datum ) const;
+	public:
+		struct s {
+			mbdeng::table_::s Table;
+			mbdstr::structure_::s Structure;
+		};
+		mbdeng::table_ Table;
+		mbdstr::structure_ Structure;
+		manager_( s &S )
+		: Table( S.Table ),
+		  Structure( S.Structure )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Table.reset( P );
+			Structure.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Table.plug( MM );
+			Structure.plug( MM );
+		}
+		manager_ &operator =( const manager_ &M )
+		{
+			Table = M.Table;
+			Structure = M.Structure;
+
+			return *this;
+		}
+		void Init(
+			const str::string_ &Location,
+			dbstbl::mode__ Mode,
+			bso::bool__ Erase,
+			bso::bool__ Partial )
+		{
+			reset();
+
+			Table.Init( Location, Mode, Erase, Partial );
+			Structure.Init();
+		}
+		field_row__ AddField(
+			const field_description_ &FieldDescription,
+			field_row__ FieldRow )
+		{
+			return Structure.AddField( FieldDescription, FieldRow );
+		}
+		epeios::row__ TestExistence( const field_rows_ &FieldRows ) const;	// Si != 'NONE', alors la valeur retournée fournit la position d'un 'FieldRow' inexistant.
+		bso::bool__ Exist( const field_rows_ &FieldRows ) const
+		{
+			return ( TestExistence( FieldRows ) == NONE );
+		}
+		record_id__ GetLastRecordId( void ) const
+		{
+			dbstbl::rrow__ Row = Table.Last( Table.GetRecordIdFieldRowIndexRow() );
+
+			if ( Row == NONE )
+				return MBDBSC_UNDEFINED_RECORD_ID;
+			else
+				return GetRecordId_( Row );
+		}
+		record_id__ AddRecord(
+			const data_ &Data,
+			const field_rows_ &FieldRows );
+		void GetRecord(
+			record_id__ RecordId,
+			const field_rows_ &FieldRows,
+			data_ &Data ) const;
+		void DeleteRecord( record_id__ RecordId );
+	};
+
+	epeios::row__ TestUnicity( const field_rows_ &FieldRows );
+	inline bso::bool__ AreUnique( const field_rows_ &FieldRows )
+	{
+		return ( TestUnicity( FieldRows ) == NONE );
+	}
 }
 
 

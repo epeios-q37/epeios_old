@@ -46,11 +46,19 @@ namespace mbdbsc {
 		const str::string_ &Location,
 		str::string_ &LocalizedRootFileName );
 
-	E_ROW( record_row__ );
+	typedef bso::ulong__ record_id__;
+#define MBDBSC_UNDEFINED_RECORD_ID	0
+
 	E_ROW( field_row__ );
+
+	typedef bch::E_BUNCH_( field_row__ ) field_rows_;
+	E_AUTO( field_rows );
 
 	typedef str::string_ datum_;
 	typedef str::string datum;
+
+	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
+	E_AUTO( data );
 
 	typedef dbsbsc::datum_	raw_datum_;
 	typedef dbsbsc::datum	raw_datum;
@@ -58,15 +66,15 @@ namespace mbdbsc {
 	class record_static_part__
 	{
 	public:
-		record_row__ RecordRow;
+		record_id__ RecordId;
 		field_row__ FieldRow;
 	};
 
-	inline bso::sign__ RecordRowCompare(
+	inline bso::sign__ RecordIdCompare(
 		const record_static_part__ &O1,
 		const record_static_part__ &O2 )
 	{
-		return bso::Compare( *O1.RecordRow, *O2.RecordRow );
+		return bso::Compare( O1.RecordId, O2.RecordId );
 	}
 
 	inline bso::sign__ FieldRowCompare(
@@ -76,12 +84,12 @@ namespace mbdbsc {
 		return bso::Compare( *O1.FieldRow, *O2.FieldRow );
 	}
 
-	inline bso::sign__ RecordRowFieldRowCompare(
+	inline bso::sign__ RecordIdFieldRowCompare(
 		const record_static_part__ &O1,
 		const record_static_part__ &O2,
 		dbsbsc::skip_level__ SkipLevel )
 	{
-		bso::sign__ Result = RecordRowCompare( O1, O2 );
+		bso::sign__ Result = RecordIdCompare( O1, O2 );
 
 		if ( ( Result == 0 ) && ( SkipLevel == DBSBSC_NO_SKIP ) )
 			Result = FieldRowCompare( O1, O2 );
@@ -115,12 +123,12 @@ namespace mbdbsc {
 		return FieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ) );
 	}
 
-	inline bso::sign__ RecordRowFieldRowCompare(
+	inline bso::sign__ RecordIdFieldRowCompare(
 		const raw_datum_ &D1,
 		const raw_datum_ &D2,
 		dbsbsc::skip_level__ SkipLevel )
 	{
-		return RecordRowFieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ), SkipLevel );
+		return RecordIdFieldRowCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ), SkipLevel );
 	}
 
 	bso::sign__ Compare(
@@ -145,7 +153,7 @@ namespace mbdbsc {
 		{
 			Datum.reset( P );
 
-			S_.RecordRow = NONE;
+			S_.RecordId = NONE;
 			S_.FieldRow = NONE;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
@@ -160,7 +168,7 @@ namespace mbdbsc {
 		{
 			Datum = R.Datum;
 
-			S_.RecordRow = R.S_.RecordRow;
+			S_.RecordId = R.S_.RecordId;
 			S_.FieldRow = R.S_.FieldRow;
 
 			return *this;
@@ -180,13 +188,28 @@ namespace mbdbsc {
 			this->Datum = Datum;
 
 			S_.FieldRow = RecordStaticPart.FieldRow;
-			S_.RecordRow = RecordStaticPart.RecordRow;
+			S_.RecordId = RecordStaticPart.RecordId;
 		}
-		const record_static_part__ GetStaticPart( void ) const
+		void Init(
+			record_id__ RecordId,
+			field_row__ FieldRow,
+			const datum_ &Datum )
+		{
+			record_static_part__ RecordStaticPart = { RecordId, FieldRow };
+
+			Init( RecordStaticPart, Datum );
+		}
+		const record_static_part__ &GetStaticPart( void ) const
+		{
+			return S_;
+		}
+		record_static_part__ &GetStaticPart( void )
 		{
 			return S_;
 		}
 	};
+
+	E_AUTO( record );
 
 	inline bso::sign__ FieldRowDatumCompare(
 		const raw_datum_ &D1,

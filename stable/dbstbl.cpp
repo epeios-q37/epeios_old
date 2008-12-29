@@ -567,14 +567,15 @@ ERREpilog
 rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
 	irow__ IRow,
-	behavior__ EqualBehavior )
+	behavior__ EqualBehavior,
+	skip_level__ SkipLevel )
 {
 	rrow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow, EqualBehavior );
+	Row = T.Seek( Datum, IRow, EqualBehavior, SkipLevel );
 ERRErr
 ERREnd
 	RRO

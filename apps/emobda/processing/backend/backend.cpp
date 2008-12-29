@@ -1,5 +1,5 @@
 /*
-	'mdbfld.cpp' by Claude SIMON (http://zeusw.org/).
+	'backend.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,37 +19,6 @@
 
 // $Id$
 
-#include "mbdfld.h"
+#include "backend.h"
 
-using namespace mbdfld;
 
-void mbdfld::Dump(
-	const field_ &Field,
-	xml::writer_ &Writer )
-{
-	Writer.PushTag( "Name" );
-	Writer.PutValue( Field.Name );
-	Writer.PopTag();
-}
-
-void mbdfld::Dump(
-	const fields_ &Fields,
-	xml::writer_ &Writer )
-{
-	field_row__ Row = Fields.First();
-	ctn::E_CITEMt( field_, field_row__ ) Field;
-	bso::integer_buffer__ Buffer;
-
-	Field.Init( Fields );
-
-	while ( Row != NULL ) {
-		Writer.PushTag( "Field" );
-		Writer.PutAttribute( "id", bso::Convert( *Row, Buffer ) );
-
-		Dump( Field( Row ), Writer );
-
-		Writer.PopTag();
-
-		Row = Fields.Next( Row );
-	}
-}

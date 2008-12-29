@@ -138,6 +138,7 @@ namespace dbsidx {
 	private:
 		bso::sign__ _Seek(
 			const datum_ &Data,
+			skip_level__ SkipLevel,
 			behavior__ StopIfEqual,
 			rrow__ &Row,
 			bso::ubyte__ &Round,
@@ -253,15 +254,17 @@ namespace dbsidx {
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
+			skip_level__ SkipLevel,
 			behavior__ EqualBehavior,
 			bso::sign__ &Sign ) const;
 		rrow__ Seek(
 			behavior__ EqualBehavior,
-			const datum_ &Datum ) const
+			const datum_ &Datum,
+			skip_level__ SkipLevel ) const
 		{
 			bso::sign__ Sign;
 
-			return Seek( Datum, EqualBehavior, Sign );
+			return Seek( Datum, SkipLevel, EqualBehavior, Sign );
 		}
 		bso::sign__ Compare(
 			rrow__ RecordId,

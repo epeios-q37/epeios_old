@@ -1,5 +1,5 @@
 /*
-	'mdbfld.h' by Claude SIMON (http://zeusw.org/).
+	'mdbstr.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,41 +19,46 @@
 
 // $Id$
 
-// eMoBDa FieLDs
+// eMoBDa STRucture
 
-#ifndef MDBFLD__INC
-#define MDBFLD__INC
+#ifndef MDBSTR__INC
+#define MDBSTR__INC
 
-#include "mbdbsc.h"
+#include "mbdfld.h"
 
-#include "str.h"
-#include "lstctn.h"
-#include "xml.h"
+#define MBDSTR_STRUCTURE_VERSION	"0.1.0"	// Doit être modifié dés que la structure interne (le format des fichiers) est modifié.
 
-namespace mbdfld {
+namespace mbdstr {
+	using namespace mbdfld;
 
-	using mbdbsc::field_row__;
-
-	class field_ {
+	class structure_
+	{
 	public:
-		struct s {
+		struct s
+		{
 			str::string_::s Name;
+			fields_::s Fields;
 		};
-		str::string Name;
-		field_( s &S )
-		: Name( S.Name )
+		str::string_ Name;
+		fields_ Fields;
+		structure_( s &S )
+		: Name( S.Name ),
+		  Fields( S.Fields )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Fields.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Fields.plug( MM );
 		}
-		field_ &operator =( const field_ &F )
+		structure_ &operator =( const structure_ &D )
 		{
-			Name = F.Name;
+			Name = D.Name;
+			Fields = D.Fields;
 
 			return *this;
 		}
@@ -62,28 +67,21 @@ namespace mbdfld {
 			reset();
 
 			Name.Init();
+			Fields.Init();
+		}
+		field_row__ AddField(
+			const field_description_ &Description,
+			field_row__ FieldRow )	// Peut être = à 'NONE'.
+		{
+			FieldRow = Fields.New( FieldRow );
+
+			Fields( FieldRow ).Init();
+
+			Fields( FieldRow ).Name =  Description ;
 		}
 	};
 
-	E_AUTO( field );
-
-	typedef lstctn::E_LXCONTAINERt_( field_, field_row__ ) fields_;
-	E_AUTO( fields );
-
-	void Dump(
-		const field_ &Field,
-		xml::writer_ &Writer );
-
-	void Dump(
-		const fields_ &Fields,
-		xml::writer_ &Writer );
-
-	typedef str::string_ field_description_;
-	typedef str::string	field_description;
-
-	typedef ctn::E_XMCONTAINER_( field_description_ ) field_descriptions_;
-	E_AUTO( field_descriptions );
-
+	E_AUTO( structure );
 }
 
 #endif

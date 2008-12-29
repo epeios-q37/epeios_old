@@ -1,5 +1,5 @@
 /*
-	'mdbtbl.h' by Claude SIMON (http://zeusw.org/).
+	'mbdeng.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,20 +19,22 @@
 
 // $Id$
 
-// eMoBDa TaBLe
+// eMoBDa ENGine
 
 #ifndef MDBTBL__INC
 #define MDBTBL__INC
 
-#error	"Obsolete ! use 'MBDENG' instead !"
+#include "mbdidx.h"
+#include "mbdfld.h"
 
 #include "dbstbl.h"
-#include "mbdidx.h"
 
 
-namespace mbdtbl {
+#define MBDENG_ENGINE_VERSION	"0.1.0"	// Doit $etre modifié à chaque fois que le moteur change (format des fichiers utilisé pour stocker la bse).
 
-	typedef dbstbl::E_DBTABLE_	_table_;
+namespace mbdeng {
+
+	typedef dbstbl::table	_table_;
 	typedef dbsdct::file_dynamic_content_	_content_;
 
 	class table_
@@ -45,18 +47,18 @@ namespace mbdtbl {
 			flm::id__ FilesgroupID;
 			_content_::s Content;
 			dbsctt::content__ UniversalContent;
-			mbdidx::record_row_field_row_index_::s RecordRowFieldRowIndex;
+			mbdidx::record_id_field_row_index_::s RecordIdFieldRowIndex;
 			mbdidx::field_row_datum_index_::s FieldRowDatumIndex;
-			dbstbl::irow__ RecordRowFieldRowIndexRow, FieldRowDatumIndexRow;
+			dbstbl::irow__ RecordIdFieldRowIndexRow, FieldRowDatumIndexRow;
 		} &S_;
 		_content_ Content;
-		mbdidx::record_row_field_row_index_ RecordRowFieldRowIndex;
+		mbdidx::record_id_field_row_index_ RecordIdFieldRowIndex;
 		mbdidx::field_row_datum_index_ FieldRowDatumIndex;
 		table_( s &S )
 		: S_( S ),
 		  _table_( S ),
 		  Content( S.Content ),
-		  RecordRowFieldRowIndex( S.RecordRowFieldRowIndex ),
+		  RecordIdFieldRowIndex( S.RecordIdFieldRowIndex ),
 		  FieldRowDatumIndex( S.FieldRowDatumIndex )
 		{}
 		void reset( bso::bool__ P = true )
@@ -64,7 +66,7 @@ namespace mbdtbl {
 			_table_::reset( P );
 			S_.UniversalContent.reset( P );
 			Content.reset( P );
-			RecordRowFieldRowIndex.reset( P );
+			RecordIdFieldRowIndex.reset( P );
 			FieldRowDatumIndex.reset( P );
 
 			if ( P ) {
@@ -75,13 +77,13 @@ namespace mbdtbl {
 			}
 
 			S_.FilesgroupID = FLM_UNDEFINED_ID;
-			S_.RecordRowFieldRowIndexRow = S_.FieldRowDatumIndexRow = NONE;
+			S_.RecordIdFieldRowIndexRow = S_.FieldRowDatumIndexRow = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			_table_::plug( MM );
 			Content.plug( MM );
-			RecordRowFieldRowIndex.plug( MM );
+			RecordIdFieldRowIndex.plug( MM );
 			FieldRowDatumIndex.plug( MM );
 		}
 		table_ &operator =( const table_ &T )
@@ -90,10 +92,10 @@ namespace mbdtbl {
 
 			_table_::operator=( *this );
 			Content = T.Content;
-			RecordRowFieldRowIndex = T.RecordRowFieldRowIndex;
+			RecordIdFieldRowIndex = T.RecordIdFieldRowIndex;
 			FieldRowDatumIndex = T.FieldRowDatumIndex;
 
-			S_.RecordRowFieldRowIndexRow = T.S_.RecordRowFieldRowIndexRow;
+			S_.RecordIdFieldRowIndexRow = T.S_.RecordIdFieldRowIndexRow;
 			S_.FieldRowDatumIndexRow = T.S_.FieldRowDatumIndexRow;
 
 			return *this;
@@ -103,6 +105,8 @@ namespace mbdtbl {
 			dbstbl::mode__ Mode,
 			bso::bool__ Erase,
 			bso::bool__ Partial );
+		E_RODISCLOSE_( dbstbl::irow__, RecordIdFieldRowIndexRow );
+		E_RODISCLOSE_( dbstbl::irow__, FieldRowDatumIndexRow );
 	};
 
 
