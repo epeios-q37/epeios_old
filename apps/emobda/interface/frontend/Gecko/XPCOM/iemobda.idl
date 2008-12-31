@@ -1,5 +1,5 @@
 /*
-	'backend.h' by Claude SIMON (http://zeusw.org/).
+	'iemobda.xpt' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,36 +19,17 @@
 
 // $Id$
 
-// BACKEND
+#include "nsIDOMWindow.idl"
 
-#ifndef BACKEND__INC
-#define BACKEND__INC
-
-#error "Obsolete dur to name conflict ! Use 'mbdbkd' instead !".
-
-#include "mngbkd.h"
-
-#define BACKEND_NAME	"emobda"
-#define BACKEND_VERSION	"0.1.0"
-
-namespace backend {
-	typedef bkdmng::backend	_backend;
-
-	class backend
-	: public _backend
-	{
-	private:
-		BKDMNG_RAM_MODULE( mngbkd::manager ) Manager;
-	public:
-		void Init( void )
-		{
-			_backend::Init( BACKEND_NAME, BACKEND_VERSION );
-		}
-
-	};
-
-	typedef backend backend_;
-}
-
-
-#endif
+// Private object (using 'createInstance()'.
+[scriptable, uuid(cfee5019-09e1-4d5c-af89-0ffadf903df5)]
+interface iemobdacom
+: nsISupports
+{
+	void RegisteringStart();
+	void Register(
+		in nsIDOMwindow Window,
+		in string UIDesignation );	
+	void RegisteringEnd();
+	void Unregister();
+};

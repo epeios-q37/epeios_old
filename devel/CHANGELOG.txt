@@ -1,5 +1,9 @@
 $Id$
 
+31/12/2008 :
+	- CSDSCM :
+		- Ajout fonction 'Init()'.
+
 29/12/2008 :
 	- DBSxxx :
 		- Extension de l'utilisation du 'SkipLevel'.

@@ -78,6 +78,8 @@ namespace mbdstr {
 			Fields( FieldRow ).Init();
 
 			Fields( FieldRow ).Name =  Description ;
+
+			return FieldRow;
 		}
 	};
 

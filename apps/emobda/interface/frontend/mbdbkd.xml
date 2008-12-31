@@ -1,0 +1,78 @@
+<!-- Don't modify !
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 31/12/2008 12:24:04. -->
+<!-- CVS feature : $Id$ -->
+<API>
+	<Misc>
+		<Generator>
+			<Name>getbkdapi</Name>
+			<Version>0.2.2</Version>
+			<Author>
+				<Name>Claude SIMON</Name>
+				<EMail>csimon@zeusw.org</EMail>
+			</Author>
+			<Copyright>
+				<Owner>Claude SIMON (csimon@zeusw.org)</Owner>
+				<Date>2001-2006</Date>
+			</Copyright>
+		</Generator>
+		<Backend>
+			<Name>emobda</Name>
+			<Version>0.1.0</Version>
+		</Backend>
+		<Date>31/12/2008</Date>
+		<Time>12:24:04</Time>
+	</Misc>
+	<Messages Amount="7">
+		<Message Content="_UnknowObjectType"/>
+		<Message Content="_UnknowObjectTypeName"/>
+		<Message Content="_UnknowCommandNameOrDescription"/>
+		<Message Content="_UnknowLanguage"/>
+		<Message Content="_BackendError"/>
+		<Message Content="MANAGER_OK"/>
+		<Message Content="MANAGER_IncorrectFieldName"/>
+	</Messages>
+	<Types>
+		<Type Object="Master">
+			<ID>65535</ID>
+			<Prefix Default="" Lower="" Upper=""/>
+			<Name Raw="" Underscored="" Uppercased=""/>
+		</Type>
+		<Type>
+			<ID>65535</ID>
+			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
+			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
+			<Commands Amount="2">
+				<Command>
+					<Name>AddField</Name>
+					<ID>0</ID>
+					<Parameters Amount="3" Position="0">
+						<In>
+							<Parameter Discriminator="1" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+						</In>
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetFields</Name>
+					<ID>1</ID>
+					<Parameters Amount="2" Position="3">
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Container">
+								<Name>items32</Name>
+								<ID>26</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+			</Commands>
+		</Type>
+	</Types>
+</API>

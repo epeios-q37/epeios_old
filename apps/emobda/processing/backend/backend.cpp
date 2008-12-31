@@ -21,4 +21,71 @@
 
 #include "backend.h"
 
+using namespace backend;
+
+static struct data {
+	backend Backend;
+};
+
+bso::bool__ gesbib::Process(
+	flw::ioflow__ &Client,
+	backend_ &Backend )
+{
+	bso::bool__ ReturnValue;
+ERRProlog
+#ifdef CPE__T_LIBRARY
+	bkdlrm::local_request_manager Request;
+#else
+	bkdrrm::remote_request_manager Request;
+#endif
+ERRBegin
+	Request.Init( Client );
+
+	ReturnValue = Backend.Handle( Request, NULL, LogFunctions );
+ERRErr
+ERREnd
+ERREpilog
+	return ReturnValue;
+}
+
+void *gesbib::server_functions__::CSDPreProcess( flw::ioflow__ &Flow )
+{
+	data__ *Data = NULL;
+ERRProlog
+ERRBegin
+	Data = new data__( *_FlowFunctions );
+
+	if ( Data == NULL )
+		ERRa();
+
+	Data->Backend.Init();
+	Data->Backend.SetLanguage( bkdlgg::lFrench );
+ERRErr
+	if ( Data != NULL )
+		delete Data;
+ERREnd
+ERREpilog
+	return Data;
+}
+
+csdscm::action__ gesbib::server_functions__::CSDProcess(
+	flw::ioflow__ &Flow,
+	void *UP )
+{
+	data__ &Data = *(data__ *)UP;
+
+	if ( gesbib::Process( Flow, Data.Backend, Data.LogFunctions ) )
+		return csdscm::aContinue;
+	else
+		return csdscm::aStop;
+}
+
+void gesbib::server_functions__::CSDPostProcess( void *UP )
+{
+	delete (data__ *)UP;
+}
+
+
+
+
 

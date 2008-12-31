@@ -28,7 +28,7 @@
 
 #include "bkdmng.h"
 
-#define MNGBKD_BACKEND_PREFIX	"mbd"
+#define MNGBKD_MANAGER_PREFIX	"mbd"
 #define MNGBKD_MANAGER_NAME		"manager"
 
 namespace mngbkd {

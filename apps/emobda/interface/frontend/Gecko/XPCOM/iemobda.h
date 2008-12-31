@@ -1,9 +1,9 @@
 /*
- * DO NOT EDIT.  THIS FILE IS GENERATED FROM iegecko.idl
+ * DO NOT EDIT.  THIS FILE IS GENERATED FROM iemobda.idl
  */
 
-#ifndef __gen_iegecko_h__
-#define __gen_iegecko_h__
+#ifndef __gen_iemobda_h__
+#define __gen_iemobda_h__
 
 
 #ifndef __gen_nsIDOMWindow_h__
@@ -15,17 +15,17 @@
 #define NS_NO_VTABLE
 #endif
 
-/* starting interface:    iegeckocom */
-#define IEGECKOCOM_IID_STR "f1e695a0-b2f1-4a30-ac62-48a9edd9558a"
+/* starting interface:    iemobdacom */
+#define IEMOBDACOM_IID_STR "cfee5019-09e1-4d5c-af89-0ffadf903df5"
 
-#define IEGECKOCOM_IID \
-  {0xf1e695a0, 0xb2f1, 0x4a30, \
-    { 0xac, 0x62, 0x48, 0xa9, 0xed, 0xd9, 0x55, 0x8a }}
+#define IEMOBDACOM_IID \
+  {0xcfee5019, 0x09e1, 0x4d5c, \
+    { 0xaf, 0x89, 0x0f, 0xfa, 0xdf, 0x90, 0x3d, 0xf5 }}
 
-class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
+class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
  public: 
 
-  NS_DECLARE_STATIC_IID_ACCESSOR(IEGECKOCOM_IID)
+  NS_DECLARE_STATIC_IID_ACCESSOR(IEMOBDACOM_IID)
 
   /* void RegisteringStart (); */
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) = 0;
@@ -41,24 +41,24 @@ class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
 
 };
 
-  NS_DEFINE_STATIC_IID_ACCESSOR(iegeckocom, IEGECKOCOM_IID)
+  NS_DEFINE_STATIC_IID_ACCESSOR(iemobdacom, IEMOBDACOM_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
-#define NS_DECL_IEGECKOCOM \
+#define NS_DECL_IEMOBDACOM \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation); \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); \
   NS_SCRIPTABLE NS_IMETHOD Unregister(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
-#define NS_FORWARD_IEGECKOCOM(_to) \
+#define NS_FORWARD_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation) { return _to Register(Window, UIDesignation); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } \
   NS_SCRIPTABLE NS_IMETHOD Unregister(void) { return _to Unregister(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
-#define NS_FORWARD_SAFE_IEGECKOCOM(_to) \
+#define NS_FORWARD_SAFE_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window, UIDesignation); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } \
@@ -68,11 +68,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE iegeckocom : public nsISupports {
 /* Use the code below as a template for the implementation class for this interface. */
 
 /* Header file */
-class _MYCLASS_ : public iegeckocom
+class _MYCLASS_ : public iemobdacom
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_IEGECKOCOM
+  NS_DECL_IEMOBDACOM
 
   _MYCLASS_();
 
@@ -84,7 +84,7 @@ protected:
 };
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(_MYCLASS_, iegeckocom)
+NS_IMPL_ISUPPORTS1(_MYCLASS_, iemobdacom)
 
 _MYCLASS_::_MYCLASS_()
 {
@@ -124,4 +124,4 @@ NS_IMETHODIMP _MYCLASS_::Unregister()
 #endif
 
 
-#endif /* __gen_iegecko_h__ */
+#endif /* __gen_iemobda_h__ */

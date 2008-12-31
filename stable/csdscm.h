@@ -93,6 +93,10 @@ namespace csdscm {
 		{
 			CSDPostProcess( UP );
 		}
+		void Init( void )
+		{
+			// A des fins de standardisation.
+		}
 	};
 
 }

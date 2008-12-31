@@ -19,8 +19,9 @@
 
 // $Id$
 
-#include "../backend.h"
+#include "../mbdbkd.h"
 #include "epsmsc.h"
+#include "csdsns.h"
 
 #define VERSION			BACKEND_VERSION
 #define COPYRIGHT_YEAR	BACKEND_COPYRIGHT_YEAR
@@ -34,13 +35,46 @@
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define CVS_DETAILS		("$Id$\b " + 5)
 
+class log_functions__
+: public csdsns::log_functions__
+{
+	virtual void CSDSNSLog(
+		csdsns::log__ Log,
+		csdsns::id__ Id,
+		void *UP,
+		epeios::size__ Amount )
+	{
+	}
+public:
+} LogFunctions;
+
+class kernel___
+{
+public:
+	csdsns::core Core;
+	csdsns::server___ Server;
+	mbdbkd::backend_functions__ Functions;
+	void Init( csdsns::service__ Service )
+	{
+		Functions.Init( );
+		Core.Init( ::LogFunctions );
+		Server.Init( Service, Functions, Core );
+	}
+	void Process( sck::duration__ TimeOut )
+	{
+		Server.Process( TimeOut );
+	}
+};
+
 void Main(
 	int argc,
 	const char *argv[] )
 {
-	backend::backend Backend;
+	kernel___ Kernel;
 
-	Backend.Init();
+	Kernel.Init(1234);
+
+	Kernel.Process( SCK_INFINITE );
 }
 
 int main(

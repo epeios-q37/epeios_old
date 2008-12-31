@@ -1,7 +1,6 @@
 /* $Id$ */
 
-#include "nsISupports.idl"
-#include "nsIDOMDocument.idl"
+#include "nsIDOMWindow.idl"
 
 // Private object (using 'createInstance()'.
 [scriptable, uuid(f1e695a0-b2f1-4a30-ac62-48a9edd9558a)]
