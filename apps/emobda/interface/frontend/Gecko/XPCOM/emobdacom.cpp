@@ -23,12 +23,16 @@
 
 #include "nsxpcm.h"
 
+#include "kernel.h"
+
 #define VERSION __DATE__ " " __TIME__
 
 #define EMOBDACOM_CONTRACTID "@zeusw.org/emobdacom;1"
 #define EMOBDACOM_CLASSNAME "EMOBDA"
 // {cfee5019-09e1-4d5c-af89-0ffadf903df5}
 #define EMOBDACOM_CID  IEMOBDACOM_IID
+
+E_ROW( krow__ );	// Core row; see below.
 
 class emobdacom
 : public iemobdacom
@@ -38,12 +42,15 @@ public:
   NS_DECL_IEMOBDACOM
 
   emobdacom();
-//  krow__ _KernelRow;
 private:
+  krow__ _KernelRow;
   ~emobdacom();
 protected:
   /* additional members */
 };
+
+
+static nsxpcm::repository< kernel::kernel___, krow__> Repository_;
 
 #define RBB	ERRBegin
 
@@ -80,58 +87,22 @@ RBB
 
 	nsxpcm::Log( Version );
 
-//	Global.CreateNewObject();
+	Repository_.CreateNewObject();
 RR
 RN
 RE
 }
 
-template <typename element, typename ui, typename id > static void _Register(
-	element &Core,
-	ui &UI,
-	const id &Id )
+template <typename widget> static void Register_(
+	widget &Widget,
+	nsIDOMDocument *Document,
+	const char *Id )
 {
-	Core.Init( Global.GetCurrentRow() );
-
-	nsxpcm::Register( Core, UI.Document, Id );
+	Widget.Init( Repository_.GetCurrentObject() );
+	nsxpcm::Register( Widget, Document, Id );
 }
 
-/*
-static void _RegisterSpecific( ui__::main &UI )
-{
-	_Register( UI.Input, UI, "input" );
-	_Register( UI.Shared, UI, "shared" );
-	_Register( UI.Output, UI, "output" );
-	_Register( UI.JSConsole, UI, "jsconsole" );
-	_Register( UI.XSLT, UI, "xslt" );
-	_Register( UI.Endianess, UI, "endianess" );
-}
 
-static void _RegisterSpecific( ui__::page &UI )
-{
-	_Register( UI.Error, UI, str::string( "error" ) );	// Version 'const str::string_', pour test.
-	_Register( UI.Link, UI, "link" );
-}
-*/
-
-template <typename ui> static void _RegisterCommon(
-	nsIDOMWindow *Window,
-	ui &UI )
-{
-	UI.Window = Window;
-
-	Window->GetDocument( &UI.Document );
-}
-
-/*
-template <typename ui> static void _Register(
-	nsIDOMWindow *Window,
-	ui &UI )
-{
-	_RegisterCommon( Window, UI );
-	_RegisterSpecific( UI );
-}
-*/
 
 NS_IMETHODIMP emobdacom::Register(
 	nsIDOMWindow *Window,
@@ -140,22 +111,26 @@ NS_IMETHODIMP emobdacom::Register(
 	// Ne sait pas récupèrer une 'window' à partir de son document.
 RP
 RBB
-/*	ui__ &UI = Global.GetCurrentObject().UI;
+	ui::ui__ &UI = Repository_.GetCurrentObject().UI;
 
 #ifdef XXX_DBG
 	if ( _KernelRow != NONE )
 		ERRu();
 #endif
-	_KernelRow = Global.GetCurrentRow();
+	_KernelRow = Repository_.GetCurrentRow();
 
-	if ( !strcmp( UIDesignation, "main" ) ) {
-		_Register( Window, UI.Main );
-		Global.GetCurrentObject().DisplayEndianess();
-	} else if ( !strcmp( UIDesignation, "page" ) ) {
-		_Register( Window, UI.Page );
-	} else
-		ERRu();
-*/
+	UI.Main.Set( Window );
+
+	Register_( UI.Main.TableLocationTextbox, UI.Main.Document, "tableLocation" );
+	Register_( UI.Main.CreateTableButton, UI.Main.Document, "createTable" );
+
+	Register_( UI.Main.FieldNameTextbox, UI.Main.Document, "fieldName" );
+	Register_( UI.Main.AddFieldButton, UI.Main.Document, "addField" );
+
+	Register_( UI.Main.FieldListListbox, UI.Main.Document, "fieldList" );
+	Register_( UI.Main.RemoveFieldButton, UI.Main.Document, "removeField" );
+
+//	Repository_.GetCurrentObject().RefreshFieldList();
 RR
 RN
 RE
@@ -164,18 +139,20 @@ RE
 NS_IMETHODIMP emobdacom::RegisteringEnd( void )
 {
 RP
+	nsIDOMWindowInternal *Console = NULL;
 RBB
-//	Global.DismissCurrentObject();
+	nsxpcm::GetJSConsole( Repository_.GetCurrentObject().UI.Main.Window, &Console );
+	Repository_.DismissCurrentObject();
 RR
 RN
 RE
 }
 
-NS_IMETHODIMP emobdacom::Unregister( void )
+NS_IMETHODIMP emobdacom::Retire( void )
 {
 RP
 RBB
-//	Global.Delete( _KernelRow );
+	Repository_.Delete( _KernelRow );
 RR
 RN
 RE
@@ -183,13 +160,23 @@ RE
 
 emobdacom::emobdacom( void )
 {
+	_KernelRow = NONE;
 }
 
 emobdacom::~emobdacom( void )
 {
 }
 
-
+static class starter
+{
+public:
+	starter( void )
+	{
+		::Repository_.Init();
+	}
+	~starter( void )
+	{}
+} Stater_;
 
 /* Gecko required part. */
 

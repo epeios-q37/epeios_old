@@ -93,10 +93,10 @@ function registeringEnd ()
 	}
  }
 
-function unregister ()
+function retire ()
  {
 	try {
-		emobdacom.Unregister();
+		emobdacom.Retire();
 	} catch (err ) {
 		alert( err );
 	}

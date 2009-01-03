@@ -31,5 +31,5 @@ interface iemobdacom
 		in nsIDOMwindow Window,
 		in string UIDesignation );	
 	void RegisteringEnd();
-	void Unregister();
+	void Retire();
 };

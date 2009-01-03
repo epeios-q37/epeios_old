@@ -20,13 +20,16 @@
 // $Id$
 
 #include "mngbkd.h"
+#include "dir.h"
 
 using namespace mngbkd;
 using namespace mbdmng;
 
 enum message__ {
 	mOK,
+	mUnableToCreateTable,
 	mIncorrectFieldName,
+	mNameAlreadyUsed,
 	m_amount,
 	m_Undefined
 };
@@ -37,8 +40,8 @@ enum message__ {
 		break
 
 
-const char *mngbkd::manager::PREFIX = MNGBKD_MANAGER_PREFIX;
-const char *mngbkd::manager::NAME = MNGBKD_MANAGER_NAME;
+const char *mngbkd::manager_::PREFIX = MNGBKD_MANAGER_PREFIX;
+const char *mngbkd::manager_::NAME = MNGBKD_MANAGER_NAME;
 
 
 static const char *GetRawMessage_( message__ MessageId )
@@ -47,7 +50,9 @@ static const char *GetRawMessage_( message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( OK );
+	CASE( UnableToCreateTable );
 	CASE( IncorrectFieldName );
+	CASE( NameAlreadyUsed );
 	break;
 	default:
 		ERRu();
@@ -70,7 +75,7 @@ protected:
 	}
 } Messages_;
 
-void mngbkd::manager::RAW_MESSAGES( msg::messages_ &Messages )
+void mngbkd::manager_::RAW_MESSAGES( msg::messages_ &Messages )
 {
 	::Messages_.DumpRawMessages( Messages );
 }
@@ -97,7 +102,7 @@ static message__ name(\
 	_manager_ &Manager,\
 	bkdmng::request_manager__ &Request )
 
-void mngbkd::manager::HANDLE(
+void mngbkd::manager_::HANDLE(
 	bkdmng::backend &Backend,
 	bkdmng::untyped_module &Module,
 	bkdmng::index__ Index,
@@ -118,6 +123,28 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+DEC( CreateTable )
+{
+	message__ Message = mOK;
+ERRProlog
+	bkdmng::string Location;
+	tol::E_FPOINTER___( bso::char__ ) Buffer;
+ERRBegin
+	Location.Init();
+	Location = Request.StringIn();
+
+	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
+		Message = mUnableToCreateTable;
+		ERRReturn;
+	}
+
+	Manager.Init( Location, dbstbl::mAdmin, true, true );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
 }
 
 static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )
@@ -147,6 +174,12 @@ ERRBegin
 		Message = mIncorrectFieldName;
 		ERRReturn;
 	}
+
+	if ( Manager.SearchField( Name ) != NONE ) {
+		Message = mNameAlreadyUsed;
+		ERRReturn;
+	}
+
 
 	FieldRow = Manager.AddField( Name, FieldRow );
 
@@ -200,8 +233,12 @@ ERREpilog
 
 #define D( name )	#name, (void *)::##name
 
-void mngbkd::manager::NOTIFY( bkdmng::untyped_module &Module )
+void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 {
+	Module.Add( D( CreateTable ),
+			bkdmng::cString,	// Table location.
+		bkdmng::cEnd,
+		bkdmng::cEnd );
 	Module.Add( D( AddField ),
 			bkdmng::cString,	// Field name.
 		bkdmng::cEnd,
@@ -212,6 +249,35 @@ void mngbkd::manager::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cItems32,
 		bkdmng::cEnd );
 }
+
+#undef DEC
+#undef D
+
+#define DEC( name )\
+	static inline void name(\
+		bkdmng::backend_ &Backend,\
+		bkdmng::untyped_module &,\
+		bkdmng::index__,\
+		bkdmng::command__,\
+		bkdmng::request_manager__ &Request,\
+		bso::bool__ &,\
+		void * )
+
+DEC( Test )
+{
+}
+
+
+
+#define D( name )	"MBD" #name, ::name
+
+void mngbkd::Inform( bkdmng::backend_ &Backend )
+{
+	Backend.Add( D( Test ),
+		bkdmng::cEnd,
+		bkdmng::cEnd );
+}
+
 
 
 static class starter 

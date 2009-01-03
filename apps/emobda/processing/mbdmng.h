@@ -92,6 +92,10 @@ namespace mbdmng {
 		{
 			return Structure.AddField( FieldDescription, FieldRow );
 		}
+		field_row__ SearchField( const str::string_ &Name ) const
+		{
+			return Structure.SearchField( Name );
+		}
 		epeios::row__ TestExistence( const field_rows_ &FieldRows ) const;	// Si != 'NONE', alors la valeur retournée fournit la position d'un 'FieldRow' inexistant.
 		bso::bool__ Exist( const field_rows_ &FieldRows ) const
 		{

@@ -79,8 +79,11 @@ namespace mbdstr {
 
 			Fields( FieldRow ).Name =  Description ;
 
+			Fields.Flush();
+
 			return FieldRow;
 		}
+		field_row__ SearchField( const str::string_ &Name ) const;
 	};
 
 	E_AUTO( structure );

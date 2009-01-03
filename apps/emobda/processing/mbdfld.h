@@ -39,7 +39,7 @@ namespace mbdfld {
 		struct s {
 			str::string_::s Name;
 		};
-		str::string Name;
+		str::string_ Name;
 		field_( s &S )
 		: Name( S.Name )
 		{}

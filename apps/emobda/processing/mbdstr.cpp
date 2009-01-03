@@ -23,3 +23,18 @@
 
 using namespace mbdstr;
 
+field_row__ mbdstr::structure_::SearchField( const str::string_ &Name ) const
+{
+	ctn::E_CITEMt( field_, field_row__ ) Field;
+	field_row__ Row = Fields.First();
+
+	Field.Init( Fields );
+
+	while ( ( Row != NONE ) && ( Field( Row ).Name != Name ) )
+		Row = Fields.Next( Row );
+
+	return Row;
+
+}
+
+

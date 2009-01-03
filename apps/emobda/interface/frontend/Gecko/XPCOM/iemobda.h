@@ -36,8 +36,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   /* void RegisteringEnd (); */
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) = 0;
 
-  /* void Unregister (); */
-  NS_SCRIPTABLE NS_IMETHOD Unregister(void) = 0;
+  /* void Retire (); */
+  NS_SCRIPTABLE NS_IMETHOD Retire(void) = 0;
 
 };
 
@@ -48,21 +48,21 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation); \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); \
-  NS_SCRIPTABLE NS_IMETHOD Unregister(void); 
+  NS_SCRIPTABLE NS_IMETHOD Retire(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation) { return _to Register(Window, UIDesignation); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } \
-  NS_SCRIPTABLE NS_IMETHOD Unregister(void) { return _to Unregister(); } 
+  NS_SCRIPTABLE NS_IMETHOD Retire(void) { return _to Retire(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, const char *UIDesignation) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window, UIDesignation); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } \
-  NS_SCRIPTABLE NS_IMETHOD Unregister(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Unregister(); } 
+  NS_SCRIPTABLE NS_IMETHOD Retire(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retire(); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -114,8 +114,8 @@ NS_IMETHODIMP _MYCLASS_::RegisteringEnd()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void Unregister (); */
-NS_IMETHODIMP _MYCLASS_::Unregister()
+/* void Retire (); */
+NS_IMETHODIMP _MYCLASS_::Retire()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

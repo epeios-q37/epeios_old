@@ -29,9 +29,24 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	onload="register( window, 'main' );registeringEnd();"
-	onunload="unregister();"
+	onunload="retire();"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>
+	<vbox>
+		<hbox>
+			<textbox id="tableLocation"/>
+			<button id="createTable" label="CreateTable"/>
+		</hbox>
+		<hbox>
+			<textbox id="fieldName"/>
+			<button id="addField" label="AddField"/>
+		</hbox>
+		<hbox>
+			<listbox id="fieldList"/>
+			<button id="removeField" label="Remove"/>
+		</hbox>
+		<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome');"/>
+	</vbox>
 </window>
 	

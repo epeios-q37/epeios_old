@@ -32,16 +32,19 @@
 #define MNGBKD_MANAGER_NAME		"manager"
 
 namespace mngbkd {
+
+	void Inform( bkdmng::backend_ &Backend );
+
 	typedef mbdmng::manager_	_manager_;
 
-	class manager
+	class manager_
 	: public _manager_
 	{
 	public:
 		struct s
-		: _manager_::s
+		: public _manager_::s
 		{};
-		manager( s &S )
+		manager_( s &S )
 		: _manager_( S )
 		{}
 		void HANDLE(
@@ -62,13 +65,7 @@ namespace mngbkd {
 		void Init( void );
 	};
 
-	typedef manager	manager_;
-
-	class backend
-	: public bkdmng::backend
-	{
-		BKDMNG_RAM_MODULE( manager ) Manager;
-	};
+	E_AUTO(	manager );
 
 	msg::i18_messages_ &GetMessages( void );
 }

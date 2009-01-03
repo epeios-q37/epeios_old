@@ -1,3 +1,4 @@
+@echo off
 REM
 REM	'emobdacom.cpp' by Claude SIMON (http://zeusw.org/).
 REM
@@ -19,6 +20,7 @@ REM
 REM
 REM	 $Id$
 REM
+@echo on
 
-getbkdapi localhost:1234 mbdbkd.xml
-sabcmd file://H:\cvs\ebkd\stable\bkd4cpp.xsl mbdbkd.xml mbdbkd.h
+getbkdapi localhost:1234 mbdapi.xml
+sabcmd file://H:\cvs\ebkd\stable\bkd4cpp.xsl mbdapi.xml mbdapi.h

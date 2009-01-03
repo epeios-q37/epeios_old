@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 31/12/2008 12:24:04. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 02/01/2009 15:39:02. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,16 +19,17 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>31/12/2008</Date>
-		<Time>12:24:04</Time>
+		<Date>02/01/2009</Date>
+		<Time>15:39:02</Time>
 	</Misc>
-	<Messages Amount="7">
+	<Messages Amount="8">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
 		<Message Content="_UnknowLanguage"/>
 		<Message Content="_BackendError"/>
 		<Message Content="MANAGER_OK"/>
+		<Message Content="MANAGER_UnableToCreateTable"/>
 		<Message Content="MANAGER_IncorrectFieldName"/>
 	</Messages>
 	<Types>
@@ -36,6 +37,13 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="" Lower="" Upper=""/>
 			<Name Raw="" Underscored="" Uppercased=""/>
+			<Commands Amount="1">
+				<Command>
+					<Name>MBDTest</Name>
+					<ID>16</ID>
+					<Parameters Amount="1" Position="0"/>
+				</Command>
+			</Commands>
 		</Type>
 		<Type>
 			<ID>65535</ID>
