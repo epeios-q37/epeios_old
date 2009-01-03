@@ -65,6 +65,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "epeios.h"
 #include "str.h"
 #include "ctn.h"
+#include "lstbch.h"
 
 #include "xpcom-config.h"
 
@@ -785,6 +786,25 @@ namespace nsxpcm {
 	typedef nsIDOMElement *nsIDOMElementPointer;
 	typedef nsIDOMWindow *nsIDOMWindowPointer;
 
+	struct ui_core__ {
+		nsIDOMDocument *Document;
+		nsIDOMWindow *Window;
+		ui_core__( void )
+		{
+			Document = NULL;
+			Window = NULL;
+		}
+		void Init( void )
+		{
+			// A des fines de standardisation.
+		}
+		void Set( nsIDOMWindow *Window )
+		{
+			this->Window = Window;
+			this->Document = GetDocument( Window );
+		}
+	};
+
 	class element_core__
 	{
 	private:
@@ -797,6 +817,7 @@ namespace nsxpcm {
 		virtual void NSXPCMOnInput( void ) = 0;
 		virtual void NSXPCMOnFocus( void ) = 0;
 		virtual void NSXPCMOnBlur( void ) = 0;
+		virtual void NSXPCMOnSelect( void ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -829,6 +850,8 @@ namespace nsxpcm {
 				NSXPCMOnFocus();
 			else if ( EventType == "blur" )
 				NSXPCMOnBlur();
+			else if ( EventType == "select" )
+				NSXPCMOnSelect();
 			else
 				ERRl();
 		}
@@ -938,7 +961,39 @@ namespace nsxpcm {
 
 	class listbox__
 	: public _element__<nsIDOMXULMultiSelectControlElement>
-	{};
+	{
+	private:
+	public:
+		nsIDOMXULSelectControlItemElement *GetCurrentItem( bso::bool__ ErrorIfInexistant = true )
+		{
+			nsIDOMXULSelectControlItemElement *Item = NULL;
+
+			GetObject()->GetCurrentItem( &Item );
+
+			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
+				ERRu();
+
+			return Item;
+		}
+		const str::string_ &GetCurrentItemAttribute(
+			const char *Name,
+			str::string_ &Value )
+		{
+			return nsxpcm::GetAttribute( GetCurrentItem( true ), Name, Value );
+		}
+		const str::string_ &GetCurrentItemId( str::string_ &Value )
+		{
+			return GetCurrentItemAttribute( "id", Value );
+		}
+		bso::ulong__ GetSelectedCount( void )
+		{
+			PRInt32 Count = 0;
+
+			GetObject()->GetSelectedCount( &Count );
+
+			return Count;
+		}
+	};
 
 	class html_anchor__
 	: public _element__<nsIDOMHTMLAnchorElement>
@@ -1017,6 +1072,97 @@ namespace nsxpcm {
 
 		return *JSConsoleWindow;
 	}
+
+	template <typename type, typename row> E_TTYPEDEF( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.
+
+	template <typename type, typename row> class repository_
+	: public _lpbunch_<type, row>
+	{
+	public:
+		struct s
+		: _lpbunch_<type, row>::s
+		{
+			row Row;
+		} &S_;
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( _lpbunch_<type, row>::Amount() != 0 )
+					ERRu();	// Car des objets existent qui n'ont pas encore été supprimé ('delete'r).
+			}
+
+			_lpbunch_<type, row>::reset( P );
+			S_.Row = NONE;
+		}
+		repository_( s &S )
+		: S_( S ),
+		  _lpbunch_<type, row>( S )
+		{}
+		void plug( mmm::E_MULTIMEMORY_ &MMM )
+		{
+			_lpbunch_<type *, row>::plug();
+		}
+		repository_ &operator =( const repository_ &R )
+		{
+			_lpbunch_<type *, row>::operator =( *this );
+			S_.Row = R.S_.Row;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+			_lpbunch_<type, row>::Init();
+		}
+		void CreateNewObject( void )
+		{
+			type *UserObject = NULL;
+
+			if ( S_.Row != NONE )
+				ERRu();
+
+			if ( ( UserObject = new type ) == NULL )
+				ERRa();
+
+			S_.Row = Add( UserObject );
+
+			Get( S_.Row )->Init();
+		}
+		void DismissCurrentObject( void )
+		{
+			if ( S_.Row == NONE )
+				ERRu();
+
+			S_.Row = NONE;
+		}
+		row GetCurrentRow( void ) const
+		{
+			if ( S_.Row == NONE )
+				ERRu();
+
+			return S_.Row;
+		}
+		type &GetCurrentObject( void ) const
+		{
+			return *Get( GetCurrentRow() );
+		}
+		void Delete( row Row )
+		{
+	#ifdef XXX_DBG
+			if ( !Exists( Row ) )
+				ERRu();
+	#endif
+			delete Get( Row );
+
+			Store( NULL, Row );
+
+			_lpbunch_<type, row>::Delete( Row );
+
+		}
+	};
+
+	E_AUTO2( repository );
+
 
 	class xslt_parameter_
 	{

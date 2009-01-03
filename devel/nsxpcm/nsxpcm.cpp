@@ -912,6 +912,9 @@ void nsxpcm::element_core__::Init( nsIDOMElement *Element )
 	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, true ) != NS_OK )
 		ERRc();
 
+	if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, true ) != NS_OK )
+		ERRc();
+
 	_EventListener->Init( *this );
 
 }

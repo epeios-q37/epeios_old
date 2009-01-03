@@ -1,5 +1,14 @@
 $Id$
 
+03/01/2009 :
+	- NSXPCM :
+		- Ajout gestion de l'évènement 'onselect'.
+		- Enrichissement de l'objet 'listbox__' avec des fonctions dédiées.
+
+01/01/2009 :
+	- NSXPCM :
+		- Ajout 'repository[_]'.
+
 31/12/2008 :
 	- CSDSCM :
 		- Ajout fonction 'Init()'.
