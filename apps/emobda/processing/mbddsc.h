@@ -21,8 +21,8 @@
 
 // eMoBDa DeSCription
 
-#ifndef MDBDSC__INC
-#define MDBDSC__INC
+#ifndef MBDDSC__INC
+#define MBDDSC__INC
 
 #include "mbdstr.h"
 #include "mbdeng.h"
@@ -47,7 +47,7 @@ namespace mbddsc {
 		v_Undefined
 	};
 
-	const char *GetLabel( version__ Version )
+	inline const char *GetLabel( version__ Version )
 	{
 		const char *Label = NULL;
 
@@ -126,6 +126,98 @@ namespace mbddsc {
 		xml::writer_ &Writer,
 		bso::bool__ WithInternals,
 		bso::bool__ AsOrphan );
+
+	class field_description_ {
+	public:
+		struct s {
+			str::string_::s Name;
+			mbdbsc::field_row__ FieldRow;
+		} &S_;
+		str::string_ Name;
+		field_description_( s &S )
+		: S_( S ),
+		  Name( S.Name )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Name.reset( P );
+			S_.FieldRow = NONE;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			Name.plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Name.plug( MM );
+		}
+		field_description_ &operator =( const field_description_ &FD )
+		{
+			Name = FD.Name;
+			S_.FieldRow = FD.S_.FieldRow;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			Name.Init();
+		}
+		E_RWDISCLOSE_( field_row__, FieldRow );
+	};
+
+	E_AUTO( field_description );
+
+	typedef ctn::E_XMCONTAINER_( field_description_ ) field_descriptions_;
+	E_AUTO( field_descriptions )
+
+
+	class description_
+	{
+	public:
+		struct s
+		{
+			str::string_::s Name;
+			field_descriptions_::s Fields;
+		};
+		str::string_ Name;
+		field_descriptions_ Fields;
+		description_( s &S )
+		: Name( S.Name ),
+		  Fields( S.Fields )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Name.reset( P );
+			Fields.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Name.plug( MM );
+			Fields.plug( MM );
+		}
+		description_ &operator =( const description_ &D )
+		{
+			Name = D.Name;
+			Fields = D.Fields;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			Name.Init();
+			Fields.Init();
+		}
+	};
+
+	E_AUTO( description );
+
+	void Import(
+		xtf::extended_text_iflow__ &Flow,
+		description_ &Description );
 }
 
 #endif

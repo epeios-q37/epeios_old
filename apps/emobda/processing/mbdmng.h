@@ -21,8 +21,8 @@
 
 // eMoBDa MaNaGer
 
-#ifndef MDBMNG__INC
-#define MDBMNG__INC
+#ifndef MBDMNG__INC
+#define MBDMNG__INC
 
 #ifdef XXX_DBG
 #	define MBDMNG__DBG
@@ -30,6 +30,7 @@
 
 #include "mbdeng.h"
 #include "mbdstr.h"
+#include "mbddsc.h"
 
 namespace mbdmng {
 
@@ -47,31 +48,38 @@ namespace mbdmng {
 		const datum_ GetDatum_(
 			dbstbl::rrow__ Row,
 			datum_ &Datum ) const;
+		void ExportStructure_( void );
 	public:
 		struct s {
-			mbdeng::table_::s Table;
+			mbdeng::engine_::s Engine;
 			mbdstr::structure_::s Structure;
+			str::string_::s Location;
 		};
-		mbdeng::table_ Table;
+		mbdeng::engine_ Engine;
 		mbdstr::structure_ Structure;
+		str::string_ Location;
 		manager_( s &S )
-		: Table( S.Table ),
-		  Structure( S.Structure )
+		: Engine( S.Engine ),
+		  Structure( S.Structure ),
+		  Location( S.Location )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			Table.reset( P );
+			Engine.reset( P );
 			Structure.reset( P );
+			Location.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			Table.plug( MM );
+			Engine.plug( MM );
 			Structure.plug( MM );
+			Location.plug( MM );
 		}
 		manager_ &operator =( const manager_ &M )
 		{
-			Table = M.Table;
+			Engine = M.Engine;
 			Structure = M.Structure;
+			Location = M.Location;
 
 			return *this;
 		}
@@ -83,18 +91,25 @@ namespace mbdmng {
 		{
 			reset();
 
-			Table.Init( Location, Mode, Erase, Partial );
+			Engine.Init( Location, Mode, Erase, Partial );
 			Structure.Init();
+			this->Location.Init( Location );
 		}
 		field_row__ AddField(
-			const field_description_ &FieldDescription,
-			field_row__ FieldRow )
+			table_row__ TableRow,
+			const field_description_ &FieldDescription )
 		{
-			return Structure.AddField( FieldDescription, FieldRow );
+			field_row__ FieldRow = Structure.AddField( TableRow, FieldDescription );
+
+			ExportStructure_();
+
+			return FieldRow;
 		}
-		field_row__ SearchField( const str::string_ &Name ) const
+		field_row__ SearchField(
+			table_row__ TableRow,
+			const str::string_ &Name ) const
 		{
-			return Structure.SearchField( Name );
+			return Structure.SearchField( TableRow, Name );
 		}
 		epeios::row__ TestExistence( const field_rows_ &FieldRows ) const;	// Si != 'NONE', alors la valeur retournée fournit la position d'un 'FieldRow' inexistant.
 		bso::bool__ Exist( const field_rows_ &FieldRows ) const
@@ -103,7 +118,7 @@ namespace mbdmng {
 		}
 		record_id__ GetLastRecordId( void ) const
 		{
-			dbstbl::rrow__ Row = Table.Last( Table.GetRecordIdFieldRowIndexRow() );
+			dbstbl::rrow__ Row = Engine.Last( Engine.GetTableRecordFieldIndexRow() );
 
 			if ( Row == NONE )
 				return MBDBSC_UNDEFINED_RECORD_ID;
@@ -118,6 +133,11 @@ namespace mbdmng {
 			const field_rows_ &FieldRows,
 			data_ &Data ) const;
 		void DeleteRecord( record_id__ RecordId );
+		bso::bool__ TableExists( table_row__ TableRow ) const
+		{
+			return Structure.Tables.Exists( TableRow );
+		}
+
 	};
 
 	epeios::row__ TestUnicity( const field_rows_ &FieldRows );

@@ -20,6 +20,8 @@
 // $Id$
 
 #include "mbdmng.h"
+#include "fnm.h"
+#include "flf.h"
 
 using namespace mbdmng;
 
@@ -32,7 +34,7 @@ ERRProlog
 ERRBegin
 	RawDatum.Init();
 
-	Table.Retrieve( Row, RawDatum );
+	Engine.Retrieve( Row, RawDatum );
 ERRErr
 ERREnd
 ERREpilog
@@ -81,10 +83,11 @@ ERRProlog
 	epeios::row__ Row = NONE;
 	record Record;
 	raw_datum RawDatum;
+	field_row__ FieldRow = NONE;
 ERRBegin
 	ctn::E_CMITEM( datum_ ) Datum;
 	Row = Data.First();
-	RecordId = GetLastRecordId() + 1;
+	RecordId = *GetLastRecordId() + 1;
 
 #ifdef MBDMNG__DBG
 	if ( Data.Amount() != FieldRows.Amount() )
@@ -99,12 +102,13 @@ ERRBegin
 	Datum.Init( Data );
 
 	while ( Row != NONE ) {
-		Record.Init( RecordId, FieldRows( Row ), Datum( Row ) );
+		FieldRow = FieldRows( Row );
+		Record.Init( Structure.GetFieldTableId( FieldRow ), Structure.GetFieldFieldId( FieldRow ), RecordId, Datum( Row ) );
 
 		RawDatum.Init();
 		Convert( Record, RawDatum );
 
-		Table.Insert( RawDatum );
+		Engine.Insert( RawDatum );
 
 		Row = Data.Next( Row );
 	}
@@ -125,6 +129,7 @@ ERRProlog
 	dbstbl::rrow__ RawRecordRow = NONE;
 	raw_datum RawDatum;
 	datum Datum;
+	field_row__ FieldRow = NONE;
 ERRBegin
 #ifdef MBDMNG__DBG
 	if ( !Exist( FieldRows ) )
@@ -138,13 +143,16 @@ ERRBegin
 	Record.GetStaticPart().RecordId = RecordId;
 
 	while ( Row != NONE ) {
-		Record.GetStaticPart().FieldRow = FieldRows( Row );
+		FieldRow = FieldRows( Row );
+
+		Record.GetStaticPart().TableId = Structure.GetFieldTableId( FieldRow );
+		Record.GetStaticPart().FieldId = Structure.GetFieldFieldId( FieldRow );
 
 		RawDatum.Init();
 
 		Convert( Record, RawDatum );
 
-		RawRecordRow = Table.Seek( RawDatum, Table.GetRecordIdFieldRowIndexRow(), dbstbl::bStop, DBSIDX_NO_SKIP );
+		RawRecordRow = Engine.Seek( RawDatum, Engine.GetTableRecordFieldIndexRow(), dbstbl::bStop, DBSIDX_NO_SKIP );
 
 		Datum.Init();
 
@@ -174,12 +182,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RawRecordRow = Table.Seek( RawDatum, Table.GetRecordIdFieldRowIndexRow(), dbstbl::bStop, 1 );
+	RawRecordRow = Engine.Seek( RawDatum, Engine.TableRecordFieldIndexRow(), dbstbl::bStop, 1 );
 
 	while ( RawRecordRow != NONE ) {
-		Table.Delete( RawRecordRow );
+		Engine.Delete( RawRecordRow );
 
-		RawRecordRow = Table.Seek( RawDatum, Table.GetRecordIdFieldRowIndexRow(), dbstbl::bStop, 1 );
+		RawRecordRow = Engine.Seek( RawDatum, Engine.TableRecordFieldIndexRow(), dbstbl::bStop, 1 );
 	}
 ERRErr
 ERREnd
@@ -206,5 +214,24 @@ epeios::row__ mbdmng::TestUnicity( const field_rows_ &FieldRows )
 	return Row;
 }
 
+void mbdmng::manager_::ExportStructure_( void )
+{
+ERRProlog
+	flf::file_oflow___ Flow;
+	txf::text_oflow__ TFlow( Flow );
+	xml::writer Writer;
+	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+	FNM_BUFFER___ Buffer;
+	const char *Filename = NULL;
+ERRBegin
+	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "struct", "", Buffer );
 
+	Flow.Init( Filename );
 
+	Writer.Init( TFlow );
+
+	mbddsc::Export( Structure, Writer, true, true );
+ERRErr
+ERREnd
+ERREpilog
+}

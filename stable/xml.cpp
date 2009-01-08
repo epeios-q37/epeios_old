@@ -32,6 +32,10 @@
 #include "xml.h"
 #include "stk.h"
 
+#ifdef XML__MT
+#	include "mtk.h"
+#endif
+
 class xmltutor
 : public ttr_tutor
 {
@@ -2006,6 +2010,200 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+#ifdef XML__MT
+bso::bool__ ehanced_parser_callback___::XMLProcessingInstruction( const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cProcessingIntruction;
+
+	this->Name.Init();
+	this->Value.Init();
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+bso::bool__ xml::ehanced_parser_callback___::XMLStartTag(
+	const str::string_ &Name,
+	const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cStartTag;
+
+	this->Name = Name;
+	this->Value.Init();
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+bso::bool__ xml::ehanced_parser_callback___::XMLStartTagClosed(
+	const str::string_ &Name,
+	const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cStartTagClosed;
+
+	this->Name = Name;
+	this->Value.Init();
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+bso::bool__ xml::ehanced_parser_callback___::XMLAttribute(
+	const str::string_ &TagName,
+	const str::string_ &Name,
+	const str::string_ &Value,
+	const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cAttribute;
+
+	this->Name = Name;
+	this->Value = Value;
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+bso::bool__ xml::ehanced_parser_callback___::XMLValue(
+	const str::string_ &TagName,
+	const str::string_ &Value,
+	const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cValue;
+
+	this->Name = TagName;
+	this->Value = Value;
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+bso::bool__ xml::ehanced_parser_callback___::XMLEndTag(
+	const str::string_ &Name,
+	const dump_ &Dump )
+{
+	WriteLock();
+
+	if ( !Continue )
+		return false;
+
+	Context = cEndTag;
+
+	this->Name = Name;
+	this->Value.Init();
+	this->Dump = Dump;
+
+	ReadUnlock();
+
+	return true;
+}
+
+
+
+static void Routine_( void *UP )
+{
+	ehanced_parser_callback___ &Callback = *(ehanced_parser_callback___ *)UP;
+	status__ Status = xml::Parse( Callback.Flow(), Callback );
+
+	Callback.Status = Status;
+
+	if ( Status != sOK )
+		Callback.Context = cError;
+	else {
+		Callback.WriteLock();
+		Callback.Context = cProcessed;
+	}
+
+	Callback.ReadUnlock();
+
+}
+
+void xml::ehanced_parser___::Start( void )
+{
+	if ( _InProgress )
+		ERRu();
+
+	_Callback.WriteLock();
+	_Callback.ReadLock();
+
+	mtk::Launch( Routine_, &_Callback );
+
+	_InProgress = true;
+
+	_Callback.WriteUnlock();
+}
+
+context__ xml::ehanced_parser___::Parse(
+	str::string_ &Name,
+	str::string_ &Value,
+	dump_ &Dump,
+	status__ &Status )
+{
+	context__ Context = c_Undefined;
+	_Callback.ReadLock();
+
+	Name.Append( _Callback.Name );
+	Value.Append( _Callback.Value );
+	Dump = _Callback.Dump;
+	Status = _Callback.Status;
+
+	_Callback.WriteUnlock();
+
+	return Context;
+}
+
+void xml::ehanced_parser___::Break( void )
+{
+	_Callback.ReadLock();
+
+	_Callback.Continue = false;
+
+	_Callback.WriteUnlock();
+
+	_Callback.ReadLock();
+
+	_Callback.ReadUnlock();
+
+	_InProgress = false;
+}
+
+
+#endif
 
 
 

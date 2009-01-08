@@ -21,8 +21,8 @@
 
 // eMoBDa ENGine
 
-#ifndef MDBTBL__INC
-#define MDBTBL__INC
+#ifndef MBDENG__INC
+#define MBDENG__INC
 
 #include "mbdidx.h"
 #include "mbdfld.h"
@@ -37,7 +37,7 @@ namespace mbdeng {
 	typedef dbstbl::table	_table_;
 	typedef dbsdct::file_dynamic_content_	_content_;
 
-	class table_
+	class engine_
 	: public _table_
 	{
 	public:
@@ -47,27 +47,27 @@ namespace mbdeng {
 			flm::id__ FilesgroupID;
 			_content_::s Content;
 			dbsctt::content__ UniversalContent;
-			mbdidx::record_id_field_row_index_::s RecordIdFieldRowIndex;
-			mbdidx::field_row_datum_index_::s FieldRowDatumIndex;
-			dbstbl::irow__ RecordIdFieldRowIndexRow, FieldRowDatumIndexRow;
+			mbdidx::table_record_field_index_::s TableRecordFieldIndex;
+			mbdidx::table_field_datum_index_::s TableFieldDatumIndex;
+			dbstbl::irow__ TableRecordFieldIndexRow, TableFieldDatumIndexRow;
 		} &S_;
 		_content_ Content;
-		mbdidx::record_id_field_row_index_ RecordIdFieldRowIndex;
-		mbdidx::field_row_datum_index_ FieldRowDatumIndex;
-		table_( s &S )
+			mbdidx::table_record_field_index_ TableRecordFieldIndex;
+			mbdidx::table_field_datum_index_ TableFieldDatumIndex;
+		engine_( s &S )
 		: S_( S ),
 		  _table_( S ),
 		  Content( S.Content ),
-		  RecordIdFieldRowIndex( S.RecordIdFieldRowIndex ),
-		  FieldRowDatumIndex( S.FieldRowDatumIndex )
+		  TableRecordFieldIndex( S.TableRecordFieldIndex ),
+		  TableFieldDatumIndex( S.TableFieldDatumIndex )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			_table_::reset( P );
 			S_.UniversalContent.reset( P );
 			Content.reset( P );
-			RecordIdFieldRowIndex.reset( P );
-			FieldRowDatumIndex.reset( P );
+			TableRecordFieldIndex.reset( P );
+			TableFieldDatumIndex.reset( P );
 
 			if ( P ) {
 				if ( S_.FilesgroupID != FLM_UNDEFINED_ID ) {
@@ -77,26 +77,26 @@ namespace mbdeng {
 			}
 
 			S_.FilesgroupID = FLM_UNDEFINED_ID;
-			S_.RecordIdFieldRowIndexRow = S_.FieldRowDatumIndexRow = NONE;
+			S_.TableRecordFieldIndexRow = S_.TableFieldDatumIndexRow = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			_table_::plug( MM );
 			Content.plug( MM );
-			RecordIdFieldRowIndex.plug( MM );
-			FieldRowDatumIndex.plug( MM );
+			TableRecordFieldIndex.plug( MM );
+			TableFieldDatumIndex.plug( MM );
 		}
-		table_ &operator =( const table_ &T )
+		engine_ &operator =( const engine_ &T )
 		{
 			S_.UniversalContent = T.S_.UniversalContent;
 
 			_table_::operator=( *this );
 			Content = T.Content;
-			RecordIdFieldRowIndex = T.RecordIdFieldRowIndex;
-			FieldRowDatumIndex = T.FieldRowDatumIndex;
+			TableRecordFieldIndex = T.TableRecordFieldIndex;
+			TableFieldDatumIndex = T.TableFieldDatumIndex;
 
-			S_.RecordIdFieldRowIndexRow = T.S_.RecordIdFieldRowIndexRow;
-			S_.FieldRowDatumIndexRow = T.S_.FieldRowDatumIndexRow;
+			S_.TableRecordFieldIndexRow = T.S_.TableRecordFieldIndexRow;
+			S_.TableFieldDatumIndexRow = T.S_.TableFieldDatumIndexRow;
 
 			return *this;
 		}
@@ -105,8 +105,8 @@ namespace mbdeng {
 			dbstbl::mode__ Mode,
 			bso::bool__ Erase,
 			bso::bool__ Partial );
-		E_RODISCLOSE_( dbstbl::irow__, RecordIdFieldRowIndexRow );
-		E_RODISCLOSE_( dbstbl::irow__, FieldRowDatumIndexRow );
+		E_RODISCLOSE_( dbstbl::irow__, TableRecordFieldIndexRow );
+		E_RODISCLOSE_( dbstbl::irow__, TableFieldDatumIndexRow );
 	};
 
 

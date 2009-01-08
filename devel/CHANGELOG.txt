@@ -1,5 +1,15 @@
 $Id$
 
+08/01/2008 :
+	- IDS :
+		- Renommage de 'RestorationNew(...)' en 'New(...)'.
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'IDS'.
+
+06/01/2009 :
+	- NSXPCM :
+		- Ajout 'ehanced_parser___'.
+	
 03/01/2009 :
 	- NSXPCM :
 		- Ajout gestion de l'évènement 'onselect'.

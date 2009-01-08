@@ -22,13 +22,15 @@
 // eMoBDa XML
 
 #ifndef MDBXML__INC
-#	define MDBXML__INC
+#define MDBXML__INC
 
-#	include "xml.h"
-#	include "xmldsc.h"
+#error "Obsolete ! Use 'XMLDSC' instead !"
 
-#	define MBDXML_STRUCTURE_FORMAT_VERSION_TAG_NAME	"FormatVersion"
-#	define MBDXML_DESCRIPTION
+#include "xml.h"
+#include "xmldsc.h"
+
+#define MBDXML_STRUCTURE_FORMAT_VERSION_TAG_NAME	"FormatVersion"
+#define MBDXML_DESCRIPTION
 
 namespace mbdxml {
 

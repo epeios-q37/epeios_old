@@ -21,8 +21,8 @@
 
 // eMoBDa InDeX
 
-#ifndef MDBIDX__INC
-#define MDBIDX__INC
+#ifndef MBDIDX__INC
+#define MBDIDX__INC
 
 #include "dbsidx.h"
 #include "mbdbsc.h"
@@ -31,7 +31,7 @@ namespace mbdidx {
 	typedef dbsidx::sort_function__ _sort_function__;
 	typedef dbsidx::file_index_ _index_;
 
-	class record_id_field_row_sort_function__
+	class table_record_field_sort_function__
 	: public _sort_function__
 	{
 	protected:
@@ -40,7 +40,7 @@ namespace mbdidx {
 			const dbsidx::datum_ &RawDatum2,
 			dbsidx::skip_level__ SkipLevel )
 		{
-			return mbdbsc::RecordIdFieldRowCompare( RawDatum1, RawDatum2, SkipLevel );
+			return mbdbsc::TableRecordFieldCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
 	public:
 		void reset( bso::bool__ = true )
@@ -51,7 +51,7 @@ namespace mbdidx {
 		}
 	};
 
-	class field_row_datum_sort_function__
+	class table_field_datum_sort_function__
 	: public _sort_function__
 	{
 	protected:
@@ -60,7 +60,7 @@ namespace mbdidx {
 			const dbsidx::datum_ &RawDatum2,
 			dbsidx::skip_level__ SkipLevel )
 		{
-			return mbdbsc::FieldRowDatumCompare( RawDatum1, RawDatum2, SkipLevel );
+			return mbdbsc::TableFieldDatumCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
 	public:
 		void reset( bso::bool__ = true )
@@ -116,11 +116,11 @@ namespace mbdidx {
 		}
 	};
 
-	typedef index_<record_id_field_row_sort_function__> record_id_field_row_index_;
-	E_AUTO( record_id_field_row_index );
+	typedef index_<table_record_field_sort_function__> table_record_field_index_;
+	E_AUTO( table_record_field_index );
 
-	typedef index_<field_row_datum_sort_function__> field_row_datum_index_;
-	E_AUTO( field_row_datum_index );
+	typedef index_<table_field_datum_sort_function__> table_field_datum_index_;
+	E_AUTO( table_field_datum_index );
 
 }
 	

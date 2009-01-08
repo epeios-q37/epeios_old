@@ -28,6 +28,7 @@ using namespace mbdmng;
 enum message__ {
 	mOK,
 	mUnableToCreateTable,
+	mNoSuchTable,
 	mIncorrectFieldName,
 	mNameAlreadyUsed,
 	m_amount,
@@ -51,6 +52,7 @@ static const char *GetRawMessage_( message__ MessageId )
 	switch ( MessageId ) {
 	CASE( OK );
 	CASE( UnableToCreateTable );
+	CASE( NoSuchTable );
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
 	break;
@@ -163,25 +165,36 @@ DEC( AddField )
 	message__ Message = mOK;
 ERRProlog
 	bkdmng::string Name;
+	table_row__ TableRow = NONE;
 	field_row__ FieldRow = NONE;
+	field_description Field;
 ERRBegin
+
+	TableRow = *Request.Id32In();
+
 	Name.Init();
 	Name = Request.StringIn();
 
 	Name.StripCharacter( ' ' );
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mNoSuchTable;
+		ERRReturn;
+	}
 
 	if ( !TestAndNormalizeFieldName_( Name ) ) {
 		Message = mIncorrectFieldName;
 		ERRReturn;
 	}
 
-	if ( Manager.SearchField( Name ) != NONE ) {
+	if ( Manager.SearchField( TableRow, Name ) != NONE ) {
 		Message = mNameAlreadyUsed;
 		ERRReturn;
 	}
 
+	Field.Init( Name );
 
-	FieldRow = Manager.AddField( Name, FieldRow );
+	FieldRow = Manager.AddField( TableRow, Field );
 
 	Request.Id32Out() = *FieldRow;
 ERRErr
@@ -196,7 +209,7 @@ static const bkdmng::items32_ &Convert_(
 {
 ERRProlog
 	field_row__ FieldRow = NONE;
-	ctn::E_CITEMt( field_, field_row__ ) Field;
+	ctn::E_CMITEMt( field_, field_row__ ) Field;
 	bkdmng::item32 Item;
 ERRBegin
 	Field.Init( Fields );
@@ -240,6 +253,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( AddField ),
+		bkdmng::cId32,			// Table row (not id).
 			bkdmng::cString,	// Field name.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Field row.

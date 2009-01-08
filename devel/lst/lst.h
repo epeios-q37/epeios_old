@@ -201,7 +201,7 @@ namespace lst {
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
 
-				if ( Locations.RestorationNew( *Row ) ) {
+				if ( Locations.New( *Row ) ) {
 
 					LSTAllocate( *Row + 1, Mode );
 

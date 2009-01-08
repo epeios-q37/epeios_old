@@ -23,7 +23,7 @@
 
 using namespace mbdeng;
 
-void mbdeng::table_::Init(
+void mbdeng::engine_::Init(
 	const str::string_ &Location,
 	dbstbl::mode__ Mode,
 	bso::bool__ Erase,
@@ -48,14 +48,14 @@ ERRBegin
 
 	LocatedRootFileName.Init();
 	mbdbsc::BuildLocatedRecordFieldIndexRootFileName( Location, LocatedRootFileName );
-	RecordIdFieldRowIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+	TableRecordFieldIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
 
 	LocatedRootFileName.Init();
 	mbdbsc::BuildLocatedFieldDatumIndexRootFileName( Location, LocatedRootFileName );
-	FieldRowDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+	TableFieldDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
 
-	S_.RecordIdFieldRowIndexRow = AddIndex( RecordIdFieldRowIndex );
-	S_.FieldRowDatumIndexRow = AddIndex( FieldRowDatumIndex );
+	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
+	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );
 
 ERRErr
 ERREnd

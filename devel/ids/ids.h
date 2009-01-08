@@ -142,7 +142,7 @@ namespace ids {
 			return New( Released );
 		}
 		//f Mark 'ID' as used. Return true if 'ID' out of range. For restoration purpose only.
-		bso::bool__ RestorationNew( id__ ID )
+		bso::bool__ New( id__ ID )
 		{
 			if ( *ID >= *S_.FirstUnused ) {
 				S_.FirstUnused = *ID + 1;

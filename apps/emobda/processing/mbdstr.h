@@ -21,44 +21,64 @@
 
 // eMoBDa STRucture
 
-#ifndef MDBSTR__INC
-#define MDBSTR__INC
+#ifndef MBDSTR__INC
+#define MBDSTR__INC
 
 #include "mbdfld.h"
+#include "mbdtbl.h"
 
 #define MBDSTR_STRUCTURE_VERSION	"0.1.0"	// Doit être modifié dés que la structure interne (le format des fichiers) est modifié.
 
 namespace mbdstr {
 	using namespace mbdfld;
+	using namespace mbdtbl;
+
+	typedef ids::E_IDS_STORE_( table_id__ ) table_ids_store_;
 
 	class structure_
 	{
+	private:
+		void _AddFields(
+			table_row__ TableRow,
+			const field_descriptions_ &Descriptions );
 	public:
 		struct s
 		{
 			str::string_::s Name;
+			tables_::s Tables;
 			fields_::s Fields;
+			table_ids_store_::s TableIdsStore;
 		};
 		str::string_ Name;
+		tables_ Tables;
 		fields_ Fields;
+		table_ids_store_ TableIdsStore;
 		structure_( s &S )
 		: Name( S.Name ),
-		  Fields( S.Fields )
+		  Tables( S.Tables ),
+		  Fields( S.Fields ),
+		  TableIdsStore( S.TableIdsStore )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Tables.reset( P );
 			Fields.reset( P );
+			TableIdsStore.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Tables.plug( MM );
 			Fields.plug( MM );
+			TableIdsStore.plug( MM );
 		}
 		structure_ &operator =( const structure_ &D )
 		{
 			Name = D.Name;
+			Tables = D.Tables;
 			Fields = D.Fields;
+			TableIdsStore = D.TableIdsStore;
 
 			return *this;
 		}
@@ -67,23 +87,55 @@ namespace mbdstr {
 			reset();
 
 			Name.Init();
+			Tables.Init();
 			Fields.Init();
+			TableIdsStore.Init();
 		}
 		field_row__ AddField(
-			const field_description_ &Description,
-			field_row__ FieldRow )	// Peut être = à 'NONE'.
+			table_row__ TableRow,
+			const field_description_ &Description );
+		table_row__ SearchTable( const str::string_ &Name ) const;
+		field_row__ SearchField(
+			table_row__ TableRow,
+			const str::string_ &Name ) const;
+		void GetFieldTableAndRecordId(
+			field_row__ FieldRow,
+			table_id__ &TableId,
+			field_id__ &FieldId ) const
 		{
-			FieldRow = Fields.New( FieldRow );
+			ctn::E_CMITEMt( field_, field_row__ ) Field;
+			Field.Init( Fields );
 
-			Fields( FieldRow ).Init();
-
-			Fields( FieldRow ).Name =  Description ;
-
-			Fields.Flush();
-
-			return FieldRow;
+			TableId = Field( FieldRow ).TableId();
+			FieldId = Field( FieldRow ).FieldId();
 		}
-		field_row__ SearchField( const str::string_ &Name ) const;
+		table_id__ GetFieldTableId( field_row__ FieldRow ) const
+		{
+			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
+
+			GetFieldTableAndRecordId( FieldRow, TableId, FieldId );
+
+			return TableId;
+		}
+		field_id__ GetFieldFieldId( field_row__ FieldRow ) const
+		{
+			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
+
+			GetFieldTableAndRecordId( FieldRow, TableId, FieldId );
+
+			return FieldId;
+		}
+		table_id__ GetTableTableId( table_row__ TableRow ) const
+		{
+			ctn::E_CITEMt( table_, table_row__ ) Table;
+
+			Table.Init( Tables );
+
+			return Table( TableRow ).TableId();
+		}
+		table_row__ AddTable( const table_description_ &Description );
 	};
 
 	E_AUTO( structure );
