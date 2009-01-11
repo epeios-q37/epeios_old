@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-	'emobda.xul' by Claude SIMON (http://zeusw.org/).
+	'FieldList.xsl' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 

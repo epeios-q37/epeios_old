@@ -1,5 +1,5 @@
 /*
-	'ui.h' by Claude SIMON (http://zeusw.org/).
+	'ui_base.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,27 +19,8 @@
 
 // $Id$
 
-#ifndef UI__INC
-#define UI__INC
+#include "ui_base.h"
+#include "kernel.h"
 
-#include "ui_main.h"
-#include "ui_struct.h"
+using namespace ui_base;
 
-namespace ui {
-	using ui_base::bridge_functions__;
-
-	using ui_main::main__;
-	using ui_struct::structure__;
-
-	struct ui__ {
-		main__ Main;
-		structure__ Structure;
-		void Init( bridge_functions__ &Functions )
-		{
-			Main.Init();
-			Structure.Init( Functions );
-		}
-	};
-}
-
-#endif

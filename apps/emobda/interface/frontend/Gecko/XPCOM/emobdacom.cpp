@@ -102,7 +102,56 @@ template <typename widget> static void Register_(
 	nsxpcm::Register( Widget, Document, Id );
 }
 
+static void Register_(
+	ui::main__ &UI,
+	nsIDOMWindow *Window )
+{
+	UI.Set( Window );
 
+	Register_( UI.TableLocationTextbox, UI.Document, "tableLocation" );
+	Register_( UI.CreateTableButton, UI.Document, "createTable" );
+
+	Register_( UI.FieldNameTextbox, UI.Document, "fieldName" );
+	Register_( UI.AddFieldButton, UI.Document, "addField" );
+
+	Register_( UI.FieldListListbox, UI.Document, "fieldList" );
+	Register_( UI.RemoveFieldButton, UI.Document, "removeField" );
+}
+
+static void Register_(
+	ui::structure__ &UI,
+	nsIDOMWindow *Window )
+{
+	UI.Set( Window );
+
+	Register_( UI.FormBroadcaster, UI.Document, "formBroadcaster" );
+
+	UI.Items = nsxpcm::GetElementById( UI.Document, "items" );
+
+	UI.DatabaseButtonsPanel = nsxpcm::GetElementById( UI.Document, "databaseButtonsPanel" );
+	UI.TableButtonsPanel = nsxpcm::GetElementById( UI.Document, "tableButtonsPanel" );
+	UI.FieldButtonsPanel = nsxpcm::GetElementById( UI.Document, "fieldButtonsPanel" );
+
+
+	Register_( UI.BrowseTree, UI.Document, "browseTree" );
+
+	Register_( UI.ButtonsDeck, UI.Document, "buttonsDeck" );
+
+	Register_( UI.CreateTableButton, UI.Document, "createTableButton" );
+	Register_( UI.ModifyTableButton, UI.Document, "modifyTableButton" );
+
+	Register_( UI.CreateFieldButton, UI.Document, "createFieldButton" );
+	Register_( UI.ModifyFieldButton, UI.Document, "modifyFieldButton" );
+
+	Register_( UI.FormDeck, UI.Document, "formDeck" );
+
+	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
+	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
+	UI.FieldFormPanel = nsxpcm::GetElementById( UI.Document, "fieldFormPanel" );
+
+	Register_( UI.ApplyFormButton, UI.Document, "applyFormButton" );
+	Register_( UI.CancelFormButton, UI.Document, "cancelFormButton" );
+}
 
 NS_IMETHODIMP emobdacom::Register(
 	nsIDOMWindow *Window,
@@ -119,18 +168,12 @@ RBB
 #endif
 	_KernelRow = Repository_.GetCurrentRow();
 
-	UI.Main.Set( Window );
-
-	Register_( UI.Main.TableLocationTextbox, UI.Main.Document, "tableLocation" );
-	Register_( UI.Main.CreateTableButton, UI.Main.Document, "createTable" );
-
-	Register_( UI.Main.FieldNameTextbox, UI.Main.Document, "fieldName" );
-	Register_( UI.Main.AddFieldButton, UI.Main.Document, "addField" );
-
-	Register_( UI.Main.FieldListListbox, UI.Main.Document, "fieldList" );
-	Register_( UI.Main.RemoveFieldButton, UI.Main.Document, "removeField" );
-
-//	Repository_.GetCurrentObject().RefreshFieldList();
+	if ( !strcmp( UIDesignation, "main" ) )
+		Register_( UI.Main, Window );
+	else if ( !strcmp( UIDesignation, "structure" ) )
+		Register_( UI.Structure, Window );
+	else
+		ERRu();
 RR
 RN
 RE
@@ -142,6 +185,9 @@ RP
 	nsIDOMWindowInternal *Console = NULL;
 RBB
 	nsxpcm::GetJSConsole( Repository_.GetCurrentObject().UI.Main.Window, &Console );
+
+	Repository_.GetCurrentObject().RefreshStructureView();
+
 	Repository_.DismissCurrentObject();
 RR
 RN

@@ -15,7 +15,12 @@ enum message__ {
 	_UnknowLanguage,
 	_BackendError,
 	MANAGER_OK,
+	MANAGER_IncorrectLocation,
+	MANAGER_IncorrectDatabaseName,
+	MANAGER_UnableToCreateDatabase,
+	MANAGER_IncorrectTableName,
 	MANAGER_UnableToCreateTable,
+	MANAGER_NoSuchTable,
 	MANAGER_IncorrectFieldName,
 	MANAGER_NameAlreadyUsed,
 };
@@ -42,8 +47,23 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_OK" ) )
 		return MANAGER_OK;
 
+	if ( !strcmp( Message, "MANAGER_IncorrectLocation" ) )
+		return MANAGER_IncorrectLocation;
+
+	if ( !strcmp( Message, "MANAGER_IncorrectDatabaseName" ) )
+		return MANAGER_IncorrectDatabaseName;
+
+	if ( !strcmp( Message, "MANAGER_UnableToCreateDatabase" ) )
+		return MANAGER_UnableToCreateDatabase;
+
+	if ( !strcmp( Message, "MANAGER_IncorrectTableName" ) )
+		return MANAGER_IncorrectTableName;
+
 	if ( !strcmp( Message, "MANAGER_UnableToCreateTable" ) )
 		return MANAGER_UnableToCreateTable;
+
+	if ( !strcmp( Message, "MANAGER_NoSuchTable" ) )
+		return MANAGER_NoSuchTable;
 
 	if ( !strcmp( Message, "MANAGER_IncorrectFieldName" ) )
 		return MANAGER_IncorrectFieldName;
@@ -70,7 +90,7 @@ protected:
 
 		backend_access::GetRawMessages( Messages );
 
-		if ( Messages.Amount() != 9 )
+		if ( Messages.Amount() != 14 )
 			ERRb();
 
 		Message.Init( Messages );
@@ -121,7 +141,37 @@ protected:
 		Row = Messages.Next( Row );
 
 
+		if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectLocation" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectDatabaseName" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_UnableToCreateDatabase" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectTableName" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
 		if ( Message( Row ) != bkdacc::string( "MANAGER_UnableToCreateTable" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_NoSuchTable" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
@@ -193,7 +243,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[3];
+	bkdacc::command__ Commands[4];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -201,8 +251,9 @@ public:
 		bkdacc::ids16 Commands;
 
 		bkdacc::id8__ Parameters[] = {
-			18,0, 
+			18,18,0, 
 			18,0, 14,
+			14,18,0, 14,
 			0, 26,
 		};
 
@@ -213,24 +264,29 @@ public:
 		CommandsDetails.Init();
 
 		CommandDetail.Init();
+		CommandDetail.Name = "CreateDatabase";;
+		CommandDetail.Casts.Append( Parameters + 0, 3 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
 		CommandDetail.Name = "CreateTable";;
-		CommandDetail.Casts.Append( Parameters + 0, 2 );
+		CommandDetail.Casts.Append( Parameters + 3, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "AddField";;
-		CommandDetail.Casts.Append( Parameters + 2, 3 );
+		CommandDetail.Casts.Append( Parameters + 6, 4 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 5, 2 );
+		CommandDetail.Casts.Append( Parameters + 10, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 3, this->Commands );
+		Commands.Recall( 0, 4, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -275,18 +331,20 @@ public:
 
 		ID_ = Common_->GetNewObject();
 	}
-	bso::bool__ CreateTable( 
-		const bkdacc::string_ &In1 ) const
+	bso::bool__ CreateDatabase( 
+		const bkdacc::string_ &In1,
+		const bkdacc::string_ &In2 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[0] );
 		Common_->Backend->StringIn( In1 );
+		Common_->Backend->StringIn( In2 );
 
 		Common_->Backend->EndOfInParameters();
 
 
 		return Common_->Backend->Handle();
 	}
-	bso::bool__ AddField( 
+	bso::bool__ CreateTable( 
 		const bkdacc::string_ &In1,
 		bkdacc::id32__ &Out1 ) const
 	{
@@ -299,10 +357,25 @@ public:
 
 		return Common_->Backend->Handle();
 	}
+	bso::bool__ AddField( 
+		const bkdacc::id32__ &In1,
+		const bkdacc::string_ &In2,
+		bkdacc::id32__ &Out1 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[2] );
+		Common_->Backend->Id32In( In1 );
+		Common_->Backend->StringIn( In2 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->Id32Out( Out1 );
+
+		return Common_->Backend->Handle();
+	}
 	bso::bool__ GetFields( 
 		bkdacc::items32_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[2] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[3] );
 
 		Common_->Backend->EndOfInParameters();
 

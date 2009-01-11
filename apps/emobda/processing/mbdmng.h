@@ -83,8 +83,9 @@ namespace mbdmng {
 
 			return *this;
 		}
-		void Init(
+		bso::bool__ Init(
 			const str::string_ &Location,
+			const str::string_ &Name,
 			dbstbl::mode__ Mode,
 			bso::bool__ Erase,
 			bso::bool__ Partial )
@@ -94,6 +95,18 @@ namespace mbdmng {
 			Engine.Init( Location, Mode, Erase, Partial );
 			Structure.Init();
 			this->Location.Init( Location );
+
+			ExportStructure_();
+
+			return true;	// A Modifier.
+		}
+		table_row__ SearchTable( const str::string_ &Name ) const
+		{
+			return Structure.SearchTable( Name );
+		}
+		table_row__ AddTable( const mbdtbl::table_description_ &TableDescription )
+		{
+			return Structure.AddTable( TableDescription );
 		}
 		field_row__ AddField(
 			table_row__ TableRow,

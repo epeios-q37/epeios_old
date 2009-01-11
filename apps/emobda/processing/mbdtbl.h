@@ -167,7 +167,7 @@ namespace mbdtbl {
 		}
 		void Init(
 			const str::string_ &Name,
-			table_id__ TableId )
+			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID )
 		{
 			Init();
 

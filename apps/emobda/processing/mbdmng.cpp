@@ -230,7 +230,7 @@ ERRBegin
 
 	Writer.Init( TFlow );
 
-	mbddsc::Export( Structure, Writer, true, true );
+	mbddsc::Export( Structure, Writer, true );
 ERRErr
 ERREnd
 ERREpilog

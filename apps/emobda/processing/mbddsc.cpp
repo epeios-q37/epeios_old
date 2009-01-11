@@ -26,11 +26,29 @@ using namespace xml;
 
 using xml::writer_;
 
+static inline const char *GetDefaultLabel_( item__ Item )
+{
+	return GetLabel( Item, vDefault );
+}
+
+#define DL( item )	GetDefaultLabel_( i##item )
+
 static inline void DescriptionHeader_( writer_ &Writer )
 {
-	Writer.PushTag( MBDDSC_DESCRIPTION_TAG_NAME );
-	Writer.PutAttribute( MBDDSC_NAMESPACE_ATTRIBUTE_NAME, MBDDSC_NAMESPACE_URI );
-	Writer.PutAttribute( MBDDSC_VERSION_ATTRIBUTE_NAME, GetLabel( vDefault ) );
+	Writer.PushTag( MBDDSC_DESCRIPTION_TAG );
+	Writer.PutAttribute( MBDDSC_NAMESPACE_ATTRIBUTE, MBDDSC_NAMESPACE_URI );
+	Writer.PutAttribute( MBDDSC_VERSION_ATTRIBUTE, GetLabel( vDefault ) );
+
+	Writer.PushTag( DL( MiscellaneousTag ) );
+	{
+			Writer.PushTag( DL( EngineTag ) );
+			{
+				Writer.PutAttribute( DL( EngineVersionAttribute ), MBDDSC_ENGINE_VERSION );
+			}
+
+			Writer.PopTag();
+	}
+	Writer.PopTag();
 }
 
 static inline void DescriptionFooter_( writer_ &Writer )
@@ -38,73 +56,118 @@ static inline void DescriptionFooter_( writer_ &Writer )
 	Writer.PopTag();
 }
 
-static inline const char *GetDefaultLabel( item__ Item )
-{
-	return GetLabel( Item, vDefault );
-}
-
-#define DL( item )	GetDefaultLabel( i##item )
-
-static void Export_(
+static void ExportField_( 
 	const field_ &Field,
-	field_row__ FieldRow,
 	writer_ &Writer )
 {
 	bso::integer_buffer__ Buffer;
 
-	Writer.PushTag( DL( FieldTagName ) );
-	Writer.PutAttribute( DL( FieldIdAttributeName ), bso::Convert( *FieldRow, Buffer ) );
-	Writer.PushTag( DL( FieldNameTagName ) );
-	Writer.PutValue( Field.Name );
+	Writer.PushTag( DL( FieldTag ) );
+	{
+		Writer.PutAttribute( DL( FieldIdAttribute ), bso::Convert( *Field.GetFieldId(), Buffer ) );
+
+		Writer.PushTag( DL( FieldNameTag ) );
+		{
+			Writer.PutValue( Field.Name );
+		}
+		Writer.PopTag();
+	}
 	Writer.PopTag();
-	Writer.PopTag();
+
 }
 
-static void Export_(
+static void ExportFields_(
+	const field_rows_ &FieldRows,
 	const fields_ &Fields,
 	writer_ &Writer )
 {
 	bso::integer_buffer__ Buffer;
 	ctn::E_CMITEMt( field_, field_row__ ) Field;
-	field_row__ FieldRow = Fields.First();
+	epeios::row__ Row = FieldRows.First();
 
 	Field.Init( Fields );
 
-	Writer.PushTag( DL( FieldsTagName ) );
-	Writer.PutAttribute( DL( FieldsAmountAttributeName ), bso::Convert( Fields.Amount(), Buffer ) );
+	Writer.PushTag( DL( FieldsTag ) );
+	{
+		Writer.PutAttribute( DL( FieldsAmountAttribute ), bso::Convert( FieldRows.Amount(), Buffer ) );
 
-	while ( FieldRow != NONE ) {
-		Export_( Field( FieldRow ), FieldRow, Writer );
+		while ( Row != NONE ) {
+			ExportField_( Field( FieldRows( Row ) ), Writer );
 
-		FieldRow = Fields.Next( FieldRow );
+			Row = FieldRows.Next( Row );
+		}
 	}
+	Writer.PopTag();
+}
 
+static void ExportTable_(
+	const table_ &Table,
+	const fields_ &Fields,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+
+	Writer.PushTag( DL( TableTag ) );
+	{
+		Writer.PutAttribute( DL( TableIdAttribute ), bso::Convert( *Table.GetTableId(), Buffer ) );
+
+		Writer.PushTag( DL( TableNameTag ) );
+		{
+			Writer.PutValue( Table.Name );
+		}
+		Writer.PopTag();
+
+		ExportFields_( Table.Fields, Fields, Writer );
+	}
+	Writer.PopTag();
+}
+
+static void ExportTables_(
+	const tables_ &Tables,
+	const fields_ &Fields,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+	ctn::E_CITEMt( table_ , table_row__ ) Table;
+	table_row__ Row = Tables.First();
+
+	Table.Init( Tables );
+
+	Writer.PushTag( DL( TablesTag ) );
+	{
+		Writer.PutAttribute( DL( TablesAmountAttribute ), bso::Convert( Tables.Amount(), Buffer ) );
+
+		while ( Row != NONE ) {
+			ExportTable_( Table( Row ), Fields, Writer );
+
+			Row = Tables.Next( Row );
+		}
+	}
 	Writer.PopTag();
 }
 
 void mbddsc::Export(
 	const mbdstr::structure_ &Structure,
 	writer_ &Writer,
-	bso::bool__ WithInternals,
 	bso::bool__ AsOrphan )
 {
-	if ( AsOrphan ) {
+	if ( AsOrphan )
 		DescriptionHeader_( Writer );
-	}
 
-	Writer.PushTag( DL( StructureTagName ) );
+	{
+		Writer.PushTag( DL( StructureTag ) );
 
-	if ( WithInternals ) {
-		Writer.PushTag( DL( EngineTagName ) );
-		Writer.PutAttribute( DL( EngineVersionAttributeName ), MBDDSC_ENGINE_VERSION );
+		Writer.PushTag( DL( StructureNameTag ) );
+		{
+			Writer.PutValue( Structure.Name );
+		}
 		Writer.PopTag();
+
+		ExportTables_( Structure.Tables, Structure.Fields, Writer );
 	}
 
-	Export_( Structure.Fields, Writer );
-
-	if ( AsOrphan ) {
+	if ( AsOrphan )
 		DescriptionFooter_( Writer );
-	}
 }
 
 static version__ GetVersion_( const str::string_ &Version )
@@ -219,7 +282,7 @@ ERRBegin
 			ERRReturn;
 			break;
 		case cStartTag:
-			if ( Name == str::string( L( FieldNameTagName ) ) )
+			if ( Name == str::string( L( FieldNameTag ) ) )
 				Continue = ImportFieldName_( Parser, Field.Name, Version );
 			else {
 				Continue = false;
@@ -229,7 +292,7 @@ ERRBegin
 		case cStartTagClosed:
 			break;
 		case cAttribute:
-			if ( Name == L( FieldIdAttributeName ) )
+			if ( Name == L( FieldIdAttribute ) )
 				Continue = GetFieldRow_( Value, Field.FieldRow() );
 			else {
 				Continue = false;
@@ -288,7 +351,7 @@ ERRBegin
 			ERRReturn;
 			break;
 		case cStartTag:
-			if ( Name == str::string( L( FieldTagName ) ) ) {
+			if ( Name == str::string( L( FieldTag ) ) ) {
 				Field.Init();
 				Continue = ImportField_( Parser, Field, Version );
 				if ( Continue )
@@ -353,7 +416,7 @@ ERRBegin
 		case cProcessingIntruction:
 			break;
 		case cStartTag:
-			if ( Name == str::string( L( FieldsTagName ) ) ) {
+			if ( Name == str::string( L( FieldsTag ) ) ) {
 				if ( Version = v_Undefined ) {
 					Continue = false;
 					ERRReturn;
@@ -365,7 +428,7 @@ ERRBegin
 		case cStartTagClosed:
 			break;
 		case cAttribute:
-			if ( Name == str::string( MBDDSC_VERSION_ATTRIBUTE_NAME ) )
+			if ( Name == str::string( MBDDSC_VERSION_ATTRIBUTE ) )
 				if ( Version != v_Undefined ) {
 					Continue = false;
 					ERRReturn;
@@ -376,7 +439,7 @@ ERRBegin
 			ERRReturn;
 			break;
 		case cEndTag:
-			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG_NAME ) )
+			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG ) )
 				Handled = true;
 			break;
 		case cProcessed:
@@ -422,7 +485,7 @@ ERRBegin
 		case cProcessingIntruction:
 			break;
 		case cStartTag:
-			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG_NAME ) )
+			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG ) )
 				Continue = ImportDescription_( Parser, Description );
 			break;
 		case cStartTagClosed:

@@ -23,7 +23,7 @@
 <!-- $Id$ -->
 
 <window
-	id="main"
+	id="mainWindow"
 	title="Epeios mobile database !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -33,20 +33,23 @@
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>
-	<vbox>
-		<hbox>
-			<textbox id="tableLocation"/>
-			<button id="createTable" label="CreateTable"/>
-		</hbox>
-		<hbox>
-			<textbox id="fieldName"/>
-			<button id="addField" label="AddField"/>
-		</hbox>
-		<hbox>
-			<listbox id="fieldList"/>
-			<button id="removeField" label="Remove"/>
-		</hbox>
-		<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome');"/>
-	</vbox>
+	<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
+	<deck selectedIndex="1">
+		<vbox>
+			<hbox>
+				<textbox id="tableLocation"/>
+				<button id="createTable" label="CreateTable"/>
+			</hbox>
+			<hbox>
+				<textbox id="fieldName"/>
+				<button id="addField" label="AddField"/>
+			</hbox>
+			<hbox>
+				<listbox id="fieldList"/>
+				<button id="removeField" label="Remove"/>
+			</hbox>
+		</vbox>
+		<iframe src="structure.xul"/>
+	</deck>
 </window>
 	

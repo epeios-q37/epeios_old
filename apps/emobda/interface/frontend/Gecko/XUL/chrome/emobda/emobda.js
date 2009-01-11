@@ -43,12 +43,13 @@ function jsconsole ()
 
 // jsconsole();
 
-
+/*
 try {
 Components.utils.reportError("reportError");
 } catch (err) {
 	alert(err);
 }
+*/
 
 try {
 	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");

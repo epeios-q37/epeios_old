@@ -1,5 +1,17 @@
 $Id$
 
+11/01/2009 :
+	- NSXPCM :
+		- Modification de 'deck__' et ajout de 'broadcaster__'.
+
+10/01/2009 :
+	- NSXPCM :
+		- Modification 'deck__'.
+
+09/01/2009 :
+	- NSXPCM :
+		- Ajout 'tree__' et 'deck__'.
+
 08/01/2008 :
 	- IDS :
 		- Renommage de 'RestorationNew(...)' en 'New(...)'.

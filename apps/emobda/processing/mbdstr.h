@@ -91,6 +91,12 @@ namespace mbdstr {
 			Fields.Init();
 			TableIdsStore.Init();
 		}
+		void Init( const str::string_ &Name )
+		{
+			Init();
+
+			this->Name = Name;
+		}
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &Description );

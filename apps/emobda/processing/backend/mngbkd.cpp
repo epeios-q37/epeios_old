@@ -27,6 +27,10 @@ using namespace mbdmng;
 
 enum message__ {
 	mOK,
+	mIncorrectLocation,
+	mIncorrectDatabaseName,
+	mUnableToCreateDatabase,
+	mIncorrectTableName,
 	mUnableToCreateTable,
 	mNoSuchTable,
 	mIncorrectFieldName,
@@ -51,6 +55,10 @@ static const char *GetRawMessage_( message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( OK );
+	CASE( IncorrectLocation );
+	CASE( IncorrectDatabaseName );
+	CASE( UnableToCreateDatabase );
+	CASE( IncorrectTableName );
 	CASE( UnableToCreateTable );
 	CASE( NoSuchTable );
 	CASE( IncorrectFieldName );
@@ -127,29 +135,7 @@ ERREnd
 ERREpilog
 }
 
-DEC( CreateTable )
-{
-	message__ Message = mOK;
-ERRProlog
-	bkdmng::string Location;
-	tol::E_FPOINTER___( bso::char__ ) Buffer;
-ERRBegin
-	Location.Init();
-	Location = Request.StringIn();
-
-	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
-		Message = mUnableToCreateTable;
-		ERRReturn;
-	}
-
-	Manager.Init( Location, dbstbl::mAdmin, true, true );
-ERRErr
-ERREnd
-ERREpilog
-	return Message;
-}
-
-static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )
+static bso::bool__ TestAndNormalize_( str::string_ &Name )
 {
 	Name.StripCharacter( ' ' );
 
@@ -159,6 +145,118 @@ static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )
 	return true;
 }
 
+DEC( CreateDatabase )
+{
+	message__ Message = mOK;
+ERRProlog
+	str::string Location, Name;
+	tol::E_FPOINTER___( bso::char__ ) Buffer;
+ERRBegin
+	Location.Init();
+	Location = Request.StringIn();
+
+	Name.Init();
+	Name = Request.StringIn();
+
+	if ( !TestAndNormalize_( Location ) ) {
+		Message = mIncorrectLocation;
+		ERRReturn;
+	}
+
+	if ( !TestAndNormalize_( Name ) ) {
+		Message = mIncorrectDatabaseName;
+		ERRReturn;
+	}
+
+	// A inclure dans l'init ci-dessous.
+	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
+		Message = mUnableToCreateDatabase;
+		ERRReturn;
+	}
+
+	if ( !Manager.Init( Location, Name, dbstbl::mAdmin, true, true ) ) {
+		Message = mUnableToCreateDatabase;
+		ERRReturn;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+static bso::bool__ TestAndNormalizeTableName_( str::string_ &Name )
+{
+	return TestAndNormalize_( Name );
+}
+
+DEC( CreateTable )
+{
+	message__ Message = mOK;
+ERRProlog
+	bkdmng::string Name;
+	table_row__ TableRow = NONE;
+	mbdtbl::table_description Description;
+ERRBegin
+	Name.Init();
+	Name = Request.StringIn();
+
+	if ( !TestAndNormalizeTableName_( Name ) ) {
+		Message = mIncorrectTableName;
+		ERRReturn;
+	}
+
+	if ( Manager.SearchTable( Name ) != NONE ) {
+		Message = mNameAlreadyUsed;
+		ERRReturn;
+	}
+
+	Description.Init( Name );
+
+	if ( ( TableRow = Manager.AddTable( Description ) ) == NONE ) {
+		Message = mUnableToCreateTable;
+		ERRReturn;
+	}
+
+	Request.Id32Out() = *TableRow;
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+template <typename container, typename row> static void Convert_(
+	const container &Container,
+	bkdmng::ids32_ &Ids )
+{
+	row Row = Container.First();
+
+	while ( Row != NONE ) {
+		Ids.Append( *Row );
+
+		Row = Container.Next( Row );
+	}
+}
+
+DEC( GetTables )
+{
+	message__ Message = mOK;
+ERRProlog
+	bkdmng::ids32 Ids;
+ERRBegin
+	Ids.Init();
+
+	Convert_<tables_, table_row__>( Manager.Structure.Tables, Ids );
+
+	Request.Ids32Out() = Ids;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )
+{
+	return TestAndNormalize_( Name );
+}
 
 DEC( AddField )
 {
@@ -248,12 +346,18 @@ ERREpilog
 
 void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 {
-	Module.Add( D( CreateTable ),
-			bkdmng::cString,	// Table location.
+	Module.Add( D( CreateDatabase ),
+			bkdmng::cString,	// Database location.
+			bkdmng::cString,	// Database name.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
+	Module.Add( D( CreateTable ),
+			bkdmng::cString,	// Table name.
+		bkdmng::cEnd,
+			bkdmng::cId32,		// Table row.
+		bkdmng::cEnd );
 	Module.Add( D( AddField ),
-		bkdmng::cId32,			// Table row (not id).
+		bkdmng::cId32,			// Table row.
 			bkdmng::cString,	// Field name.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Field row.

@@ -86,6 +86,33 @@ ERREnd
 ERREpilog
 }
 
+
+void kernel::kernel___::RefreshStructureView( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+//	_DumpFieldsAsXML( XML );
+
+	XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+
+	Parameters.Init();
+
+	nsxpcm::RemoveChildren( UI.Structure.Items );
+
+	nsxpcm::AppendChild( UI.Structure.Items, nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), UI.Structure.Document, Parameters ) );
+
+	UI.Structure.UpdateDecks();
+
+	UI.Structure.DisableForm();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void kernel::kernel___::RefreshFieldList( void )
 {
 ERRProlog

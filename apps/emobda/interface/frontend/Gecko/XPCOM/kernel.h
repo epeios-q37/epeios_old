@@ -32,6 +32,12 @@
 
 namespace kernel {
 
+	E_TYPEDEF( bkdacc::id32__, table__ );
+#define UNDEFINED_TABLE	((table__)BKDACC_UNDEFINED_ID32 )
+
+	E_TYPEDEF( bkdacc::id32__, field__ );
+#define UNDEFINED_FIELD	((field__)BKDACC_UNDEFINED_ID32 )
+
 	typedef mbdbkd::backend___ _backend___;
 
 	class log_functions__
@@ -103,11 +109,15 @@ namespace kernel {
 
 			_ClientCore.Init( "192.168.5.10:1234", NULL, _LogFunctions, csducl::tShared );
 			_backend___::Init( _ClientCore );
-			UI.Init();
+			UI.Init( *this );
 		}
-		bso::bool__ CreateTable( const str::string_ &Location )
+		table__ CreateTable( const str::string_ &Name )
 		{
-			return Manager.CreateTable( Location );
+			table__ Table = UNDEFINED_TABLE;
+
+			_H( Manager.CreateTable( Name, *Table ) );
+
+			return Table;
 		}
 		void CreateTable( void )
 		{
@@ -117,23 +127,28 @@ namespace kernel {
 			Location.Init();
 			UI.Main.TableLocationTextbox.GetValue( Location );
 
-			if ( !CreateTable( Location ) )
+			if ( CreateTable( Location ) == UNDEFINED_TABLE )
 				nsxpcm::Alert( UI.Main.Window, GetRawMessage() );
 		ERRErr
 		ERREnd
 		ERREpilog
 		}
-		bso::bool__ AddField( const str::string_ &Name )
+		field__ AddField(
+			table__ Table,
+			const str::string_ &Name )
 		{
-			bkdacc::id32__ Row = NONE;
+			field__ Field = UNDEFINED_FIELD;
 
-			return Manager.AddField( Name, Row );
+			_H( Manager.AddField( *Table, Name, *Field ) );
+
+			return Field;
 		}
 		void AddField( void )
 		{
 		ERRProlog
 			str::string Name;
 		ERRBegin
+			/*
 			Name.Init();
 			UI.Main.FieldNameTextbox.GetValue( Name );
 
@@ -141,16 +156,20 @@ namespace kernel {
 				nsxpcm::Alert( UI.Main.Window, GetRawMessage() );
 
 			RefreshFieldList();
+			*/
+			ERRl();
 		ERRErr
 		ERREnd
 		ERREpilog
 		}
 		void RefreshFieldList( void );
+		void RefreshStructureView( void );
 		void ModifyField( void )
 		{
 			nsxpcm::Alert( UI.Main.Window, "FieldListModification detected !" );
 			RefreshFieldList();
 		}
+		void UpdateButtonsPanel( void );
 	};
 }
 

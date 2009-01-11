@@ -262,13 +262,14 @@ namespace nsxpcm {
 		err::handle ErrHandle = err::hUsual )
 	{
 		element *Element = NULL;
+		nsresult Result = NS_OK;	// Aide au débogage.
 
 #ifdef NSXPCM_DBG
 
 		if ( GenericElement == NULL )
 			ERRu();
 #endif
-		if ( ( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) != NS_OK ) && ( ErrHandle != err::hSkip ) )
+		if ( ( ( Result = GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) ) != NS_OK ) && ( ErrHandle != err::hSkip ) )
 			ERRu();
 
 		return Element;
@@ -896,6 +897,14 @@ namespace nsxpcm {
 		{
 			return QueryInterface<object>( Element() );
 		}
+		void Enable( bso::bool__ Value = true )
+		{
+			nsxpcm::SetAttribute( GetObject(), "disabled", Value ? "false" : "true" );
+		}
+		void Disable( void )
+		{
+			Enable( false );
+		}
 	};
 
 	class button__
@@ -985,7 +994,7 @@ namespace nsxpcm {
 		{
 			return GetCurrentItemAttribute( "id", Value );
 		}
-		bso::ulong__ GetSelectedCount( void )
+		bso::slong__ GetSelectedCount( void )
 		{
 			PRInt32 Count = 0;
 
@@ -994,6 +1003,123 @@ namespace nsxpcm {
 			return Count;
 		}
 	};
+
+	class deck__
+	: public _element__<nsIDOMElement>
+	{
+	private:
+	public:
+		bso::slong__ GetSelectedIndex( void )
+		{
+			bso::slong__ Index = -1;
+		ERRProlog
+			str::string Value;
+			epeios::row__ Error = NONE;
+		ERRBegin
+			Value.Init();
+			nsxpcm::GetAttribute( GetObject(), "selectedIndex", Value );
+
+			Index = Value.ToSL( &Error );
+
+			if ( Error != NONE )
+				ERRs();
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Index;
+		}
+		void SetSelectedIndex( bso::slong__ Index )
+		{
+			bso::integer_buffer__ Buffer;
+
+			nsxpcm::SetAttribute( GetObject(), "selectedIndex", bso::Convert( Index, Buffer ) );
+		}
+		void SetSelectedPanel( nsIDOMNode *Node )
+		{
+			bso::slong__ Index = -1;
+
+			while ( Node != NULL ) {
+				Index++;
+				Node = GetPreviousSibling( Node );
+			}
+
+			SetSelectedIndex( Index );
+		}
+	};
+
+
+	class tree__
+	: public _element__<nsIDOMXULTreeElement>
+	{
+	private:
+		nsITreeView *_GetView( void )
+		{
+			nsITreeView *View = NULL;
+
+			GetObject()->GetView( &View );
+
+			if ( View == NULL )
+				ERRu();
+
+			return View;
+		}
+		nsITreeSelection *_GetSelection( void )
+		{
+			nsITreeSelection *Selection = NULL;
+
+			_GetView()->GetSelection( &Selection );
+
+			if ( Selection == NULL )
+				ERRu();
+
+			return Selection;
+		}
+		nsITreeContentView *_GetContentView( void )
+		{
+			return nsxpcm::QueryInterface<nsITreeContentView>( _GetView() );
+		}
+	public:
+		bso::slong__ GetCurrentIndex( void )
+		{
+			PRInt32 Count = 0;
+
+			_GetSelection()->GetCurrentIndex( &Count );
+
+			return Count;
+		}
+		nsIDOMElement *GetCurrentItem( bso::bool__ ErrorIfInexistant = true )
+		{
+			nsIDOMElement *Element = NULL;
+
+			_GetContentView()->GetItemAtIndex( GetCurrentIndex(), &Element );
+
+			return Element;
+		}
+		const str::string_ &GetCurrentItemAttribute(
+			const char *Name,
+			str::string_ &Value )
+		{
+			return nsxpcm::GetAttribute( GetCurrentItem( true ), Name, Value );
+		}
+		const str::string_ &GetCurrentItemId( str::string_ &Value )
+		{
+			return GetCurrentItemAttribute( "id", Value );
+		}
+		bso::ulong__ GetSelectedCount( void )
+		{
+			PRInt32 Count = 0;
+
+			_GetSelection()->GetCount( &Count );
+
+			return Count;
+		}
+
+	};
+
+	class broadcaster__
+	: public _element__<nsIDOMElement>
+	{};
+
 
 	class html_anchor__
 	: public _element__<nsIDOMHTMLAnchorElement>

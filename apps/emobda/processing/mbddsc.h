@@ -29,10 +29,10 @@
 
 #include "xml.h"
 
-#define MBDDSC_NAMESPACE_URI				"http://zeusw.org/emobda/"
-#define MBDDSC_DESCRIPTION_TAG_NAME			"Description"
-#define MBDDSC_NAMESPACE_ATTRIBUTE_NAME		"xmlns"
-#define	MBDDSC_VERSION_ATTRIBUTE_NAME		"version"
+#define MBDDSC_NAMESPACE_URI			"http://zeusw.org/emobda/"
+#define MBDDSC_DESCRIPTION_TAG			"Description"
+#define MBDDSC_NAMESPACE_ATTRIBUTE		"xmlns"
+#define	MBDDSC_VERSION_ATTRIBUTE		"version"
 
 #define MBDDSC_ENGINE_VERSION			MBDENG_ENGINE_VERSION
 
@@ -67,14 +67,21 @@ namespace mbddsc {
 	}
 
 	enum item__ {
-		iStructureTagName,
-		iEngineTagName,
-		iEngineVersionAttributeName,
-		iFieldsTagName,
-		iFieldsAmountAttributeName,
-		iFieldTagName,
-		iFieldIdAttributeName,
-		iFieldNameTagName,
+		iMiscellaneousTag,
+		iEngineTag,
+		iEngineVersionAttribute,
+		iStructureTag,
+		iStructureNameTag,
+		iTablesTag,
+		iTablesAmountAttribute,
+		iTableTag,
+		iTableIdAttribute,
+		iTableNameTag,
+		iFieldsTag,
+		iFieldsAmountAttribute,
+		iFieldTag,
+		iFieldIdAttribute,
+		iFieldNameTag,
 		i_amount,
 		i_Undefined
 	};
@@ -86,28 +93,49 @@ namespace mbddsc {
 		const char *Label = NULL;
 
 		switch ( Item ) {
-		case iStructureTagName:
-			Label="Structure";
+		case iMiscellaneousTag:
+			Label = "Miscellaneous";
 			break;
-		case iEngineTagName:
+		case iEngineTag:
 			Label="Engine";
 			break;
-		case iEngineVersionAttributeName:
+		case iEngineVersionAttribute:
 			Label="Version";
 			break;
-		case iFieldsTagName:
+		case iStructureTag:
+			Label="Structure";
+			break;
+		case iStructureNameTag:
+			Label = "Name";
+			break;
+		case iTablesTag:
+			Label = "Tables";
+			break;
+		case iTablesAmountAttribute:
+			Label = "Amount";
+			break;
+		case iTableTag:
+			Label = "Table";
+			break;
+		case iTableIdAttribute:
+			Label = "id";
+			break;
+		case iTableNameTag:
+			Label = "Name";
+			break;
+		case iFieldsTag:
 			Label = "Fields";
 			break;
-		case iFieldsAmountAttributeName:
+		case iFieldsAmountAttribute:
 			Label="Amount";
 			break;
-		case iFieldTagName:
+		case iFieldTag:
 			Label="Field";
 			break;
-		case iFieldIdAttributeName:
+		case iFieldIdAttribute:
 			Label="id";
 			break;
-		case iFieldNameTagName:
+		case iFieldNameTag:
 			Label="Name";
 			break;
 		case i_Undefined:
@@ -124,7 +152,6 @@ namespace mbddsc {
 	void Export(
 		const mbdstr::structure_ &Description,
 		xml::writer_ &Writer,
-		bso::bool__ WithInternals,
 		bso::bool__ AsOrphan );
 
 	class field_description_ {
