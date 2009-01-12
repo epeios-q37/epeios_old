@@ -107,7 +107,8 @@ namespace kernel {
 		{
 			reset();
 
-			_ClientCore.Init( "192.168.5.10:1234", NULL, _LogFunctions, csducl::tShared );
+//			_ClientCore.Init( "192.168.5.10:1234", NULL, _LogFunctions, csducl::tShared );
+			_ClientCore.Init( "localhost:1234", NULL, _LogFunctions, csducl::tShared );
 			_backend___::Init( _ClientCore );
 			UI.Init( *this );
 		}
