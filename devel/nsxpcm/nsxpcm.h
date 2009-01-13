@@ -124,6 +124,18 @@ namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
+	enum event__ {
+		eNone = 0,
+		eCommand = 1,
+		eInput = 2,
+		eClick = 4,
+		eFocus = 8,
+		eBlur = 16,
+		eSelect = 32,
+		eAll = 63,
+		e_Undefined
+	};
+
 #ifdef NSXPCM__BKD
 	using bkdacc::strings_;
 	using bkdacc::strings;
@@ -813,12 +825,33 @@ namespace nsxpcm {
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
-		virtual void NSXPCMOnCommand( void ) = 0;
-		virtual void NSXPCMOnClick( void ) = 0;
-		virtual void NSXPCMOnInput( void ) = 0;
-		virtual void NSXPCMOnFocus( void ) = 0;
-		virtual void NSXPCMOnBlur( void ) = 0;
-		virtual void NSXPCMOnSelect( void ) = 0;
+		virtual void NSXPCMOnRawEvent( const str::string_ &Event );
+		virtual void NSXPCMOnRawEvent( const char *Event );
+		virtual void NSXPCMOnEvent( event__ Event );
+		virtual void NSXPCMOnCommand( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnClick( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnInput( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnFocus( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnBlur( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnSelect( void )
+		{
+			ERRu();
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -836,7 +869,9 @@ namespace nsxpcm {
 		{
 			reset();
 		}
-		void Init( nsIDOMElement *Element );
+		void Init(
+			nsIDOMElement *Element,
+			int Events );
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
 		// If a new event is handled, you have to add the corresponding 'event_listener' too.
 		void Handle( const str::string_ &EventType )
@@ -866,9 +901,10 @@ namespace nsxpcm {
 	template <class id_type> void Register(
 		nsxpcm::element_core__ &Core,
 		nsIDOMDocument *Document,
-		const id_type &Id )
+		const id_type &Id,
+		int Events )
 	{
-		Core.Init( nsxpcm::GetElementById( Document, Id ) );
+		Core.Init( nsxpcm::GetElementById( Document, Id ), Events );
 	}
 
 	void Alert(
