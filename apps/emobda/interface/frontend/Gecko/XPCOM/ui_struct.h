@@ -44,6 +44,8 @@ namespace ui_struct {
 	UI_NONE( button__, apply_form_button__ );
 	UI_NONE( button__, cancel_form_button__ );
 
+	UI_C( command__, test_command__ );
+
 	struct structure__
 	: public _ui_core__,
 	  public bridge__
@@ -62,6 +64,7 @@ namespace ui_struct {
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
 		apply_form_button__ ApplyFormButton;
 		cancel_form_button__ CancelFormButton;
+		test_command__ TestCommand;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();

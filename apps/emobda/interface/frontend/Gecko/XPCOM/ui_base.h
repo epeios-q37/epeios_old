@@ -89,6 +89,7 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::tree__> tree__;
 	typedef _generic__<nsxpcm::deck__> deck__;
 	typedef _generic__<nsxpcm::broadcaster__> broadcaster__;
+	typedef _generic__<nsxpcm::command__> command__;
 
 	// For widget with 'oncommand' event.
 }

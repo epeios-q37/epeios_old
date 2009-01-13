@@ -1120,6 +1120,10 @@ namespace nsxpcm {
 	: public _element__<nsIDOMElement>
 	{};
 
+	class command__
+	: public _element__<nsIDOMElement>
+	{};
+
 
 	class html_anchor__
 	: public _element__<nsIDOMHTMLAnchorElement>

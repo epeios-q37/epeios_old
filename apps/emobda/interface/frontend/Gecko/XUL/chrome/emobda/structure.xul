@@ -30,13 +30,16 @@
 	onload="register( window, 'structure' );"
 >
 	<script type="text/javascript" src="emobda.js"/>
+	<commandset>
+		<command id="cmd_select"/>
+	</commandset>
 	<brodcasterset>
 		<broadcaster id="formBroadcaster"/>
 	</brodcasterset>
 	<hbox flex="1">
 		<vbox>
 			<groupbox flex="1">
-				<tree id="browseTree" flex="1" hidecolumnpicker="false" seltype="single" class="tree" rows="5">
+				<tree id="browseTree" flex="1" hidecolumnpicker="false" seltype="single" class="tree" rows="5" command="cmd_select">
 					<treecols id="myTree2-treeCols">
 						<treecol id="myTree2-treeCol0" primary="true" flex="2" label="Column A"
 				             persist="width" ordinal="1"/>
@@ -111,5 +114,6 @@
 			</groupbox>
 		</vbox>
 	</hbox>
+	<button label="Test" command="test"/>
 </page>
 	

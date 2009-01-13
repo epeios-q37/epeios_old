@@ -151,6 +151,8 @@ static void Register_(
 
 	Register_( UI.ApplyFormButton, UI.Document, "applyFormButton" );
 	Register_( UI.CancelFormButton, UI.Document, "cancelFormButton" );
+
+	Register_( UI.TestCommand, UI.Document, "test" );
 }
 
 NS_IMETHODIMP emobdacom::Register(

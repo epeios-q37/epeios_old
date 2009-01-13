@@ -1,8 +1,13 @@
-$Id$
+$Id$4
+
+12/01/2009 :
+	- NSXPCM :
+		- Ajout de 'command__'.
 
 11/01/2009 :
 	- NSXPCM :
-		- Modification de 'deck__' et ajout de 'broadcaster__'.
+		- Modification de 'deck__'
+		- Ajout de 'broadcaster__'.
 
 10/01/2009 :
 	- NSXPCM :

@@ -94,5 +94,8 @@ void ui_struct::browse_tree__::NSXPCMOnSelect( void )
 	K().UI.Structure.UpdateDecks();
 }
 
-
+void ui_struct::test_command__::NSXPCMOnCommand( void )
+{
+	K().UI.Structure.TestCommand.Disable();
+}
 
