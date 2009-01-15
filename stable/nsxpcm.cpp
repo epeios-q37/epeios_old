@@ -910,6 +910,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eSelect;
 	else
 		ERRl();
+
+	NSXPCMOnEvent( Event );
 }
 
 void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )

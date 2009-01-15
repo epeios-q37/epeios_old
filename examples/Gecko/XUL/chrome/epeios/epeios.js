@@ -14,6 +14,11 @@ log("From 'epeios.js' !");
 
 JSConsoleWindow = null;
 
+function handle( event )
+{
+	alert('Click');
+}
+
 function jsconsole ()
 {
 	if ( ( JSConsoleWindow == null ) || ( JSConsoleWindow.closed ) )

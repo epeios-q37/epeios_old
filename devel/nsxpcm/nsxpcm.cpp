@@ -910,6 +910,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eSelect;
 	else
 		ERRl();
+
+	NSXPCMOnEvent( Event );
 }
 
 void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
@@ -958,28 +960,28 @@ void nsxpcm::element_core__::Init(
 
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventListener );
 
-	if ( Events | eCommand )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventListener, true ) != NS_OK )
+	if ( Events & eCommand )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events | eInput )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventListener, true ) != NS_OK )
+	if ( Events & eInput )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events | eClick )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, true ) != NS_OK )
+	if ( Events & eClick )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events | eFocus )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventListener, true ) != NS_OK )
+	if ( Events & eFocus )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events | eBlur )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, true ) != NS_OK )
+	if ( Events & eBlur )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events | eSelect )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, true ) != NS_OK )
+	if ( Events & eSelect )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	_EventListener->Init( *this );

@@ -99,7 +99,7 @@ template <typename widget> static void Register_(
 	const char *Id )
 {
 	Widget.Init( Repository_.GetCurrentObject() );
-	nsxpcm::Register( Widget, Document, Id );
+	nsxpcm::Register( Widget, Document, Id, nsxpcm::eAll );
 }
 
 static void Register_(

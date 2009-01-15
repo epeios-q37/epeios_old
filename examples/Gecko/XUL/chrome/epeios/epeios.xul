@@ -8,12 +8,26 @@
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="log('This is as last from the main page once all loaded (subpage included) !');register( window, 'main' );registeringEnd();draw();"
+	onload="log('This is as last from the main page once all loaded (subpage included) !');register( window, 'main' );registeringEnd();draw();document.getElementById('cmdJS').addEventListener('click',handle,true);"
 	onunload="unregister();"
 >
 	<script type="text/javascript" src="epeios.js"/>
 	<script type="text/javascript">log('This is as first from the main window.');registeringStart();</script>
+	<broadcasterset>
+		<broadcaster id="cmdJS"></broadcaster>
+		<broadcaster id="cmdXPCOM"></broadcaster>
+	</broadcasterset>
 	<vbox>
+		<hbox>
+			<description id="dscXPCOM" command="cmdXPCOM">XPCOM</description>
+			<spacer/>
+			<description id="dscJS" command="cmdJS">JS</description>
+		</hbox>
+		<hbox>
+			<button id="btnXPCOM" label="XPCOM" command="cmdXPCOM"/>
+			<button id="btnJS" label="JS" command="cmdJS"/>
+		</hbox>
+		<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
 		<hbox>
 			<vbox>
 				<label>Endianess : </label>
@@ -48,9 +62,9 @@
 						<button id="xslt" label="Transform"/>
 						<groupbox>
 							<caption label="XSLT Transformation result !"/>
-							<html xmlns="http://www.w3.org/1999/xhtml" allowevents="true">
+							<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" allowevents="true">
 								<div id="xsltTarget">
-									<b>This will be replaced by the result of the XSLT tyransformation.</b>
+									<b>This will be replaced by the result of the XSLT transformation.</b>
 								</div>
 							</html>
 						</groupbox>

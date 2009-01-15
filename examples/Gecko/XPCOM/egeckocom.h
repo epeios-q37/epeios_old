@@ -190,6 +190,20 @@ public:
 	}
 };
 
+class ui_command__
+: public nsxpcm::command__,
+  public bridge__
+{
+protected:
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
+public:
+	void Init( krow__ KernelRow )
+	{
+		bridge__::Init( KernelRow );
+		// 'nsxpcm::description__::Init()' called later.
+	}
+};
+
 
 class ui__
 {
@@ -203,6 +217,7 @@ public:
 		ui_jsconsole_button__ JSConsole;
 		ui_xslt_button__ XSLT;
 		ui_endianess_description__ Endianess;
+		ui_command__ LinkCommand;
 		main( void )
 		{
 			Document = NULL;

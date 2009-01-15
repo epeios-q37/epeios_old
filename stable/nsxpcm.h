@@ -100,6 +100,8 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMHTMLAnchorElement.h"
 #include "nsIDOMDocumentFragment.h"
 
+#include "commandhandler/nsICommandManager.h"
+
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD
 #endif
@@ -874,22 +876,9 @@ namespace nsxpcm {
 			int Events );
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
 		// If a new event is handled, you have to add the corresponding 'event_listener' too.
-		void Handle( const str::string_ &EventType )
+		void Handle( const str::string_ &Event )
 		{
-			if ( EventType == "command" )
-				NSXPCMOnCommand();
-			else if ( EventType == "input" )
-				NSXPCMOnInput();
-			else if ( EventType == "click" )
-				NSXPCMOnClick();
-			else if ( EventType == "focus" )
-				NSXPCMOnFocus();
-			else if ( EventType == "blur" )
-				NSXPCMOnBlur();
-			else if ( EventType == "select" )
-				NSXPCMOnSelect();
-			else
-				ERRl();
+			NSXPCMOnRawEvent( Event );
 		}
 /*		void Register(
 			nsIDOMElement *Element,
@@ -1157,7 +1146,7 @@ namespace nsxpcm {
 	{};
 
 	class command__
-	: public _element__<nsIDOMElement>
+	: public _element__<nsICommandManager>
 	{};
 
 

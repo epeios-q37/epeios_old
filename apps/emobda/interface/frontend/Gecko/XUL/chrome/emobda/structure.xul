@@ -32,6 +32,7 @@
 	<script type="text/javascript" src="emobda.js"/>
 	<commandset>
 		<command id="cmd_select"/>
+		<command id="test"/>
 	</commandset>
 	<brodcasterset>
 		<broadcaster id="formBroadcaster"/>

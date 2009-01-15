@@ -76,7 +76,7 @@ template <typename element, typename ui, typename id > static void _Register(
 {
 	Core.Init( Global.GetCurrentRow() );
 
-	nsxpcm::Register( Core, UI.Document, Id );
+	nsxpcm::Register( Core, UI.Document, Id, nsxpcm::eAll & ~nsxpcm::eFocus & ~nsxpcm::eBlur );
 }
 
 static void _RegisterSpecific( ui__::main &UI )
@@ -87,6 +87,7 @@ static void _RegisterSpecific( ui__::main &UI )
 	_Register( UI.JSConsole, UI, "jsconsole" );
 	_Register( UI.XSLT, UI, "xslt" );
 	_Register( UI.Endianess, UI, "endianess" );
+	_Register( UI.LinkCommand, UI, "cmdXPCOM" );
 }
 
 static void _RegisterSpecific( ui__::page &UI )
@@ -316,10 +317,17 @@ ERRBegin
 
 	nsxpcm::AppendChild( nsxpcm::GetElementById( UI().Main.Document, "xsltTarget" ), Fragment );
 
-	ERRu();
+//	ERRu();
 ERRErr
 ERREnd
 ERREpilog
+}
+
+void ui_command__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+	nsxpcm::Alert( this->Kernel().UI.Main.Window, "cmdXPCOM !!!" );
+
+//	GetObject();
 }
 
 
