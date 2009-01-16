@@ -1146,7 +1146,7 @@ namespace nsxpcm {
 	{};
 
 	class command__
-	: public _element__<nsICommandManager>
+	: public _element__<nsIDOMElement>
 	{};
 
 
