@@ -22,14 +22,22 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+<<<<<<< flw.h
 //	$Id$
+=======
+//	$Id$
+>>>>>>> 1.55
 
 #ifndef FLW__INC
 #define FLW__INC
 
 #define FLW_NAME		"FLW"
 
+<<<<<<< flw.h
 #define	FLW_VERSION	"$Revision$"
+=======
+#define	FLW_VERSION	"$Revision$"
+>>>>>>> 1.55
 
 #define FLW_OWNER		"Claude SIMON (csimon@epeios.org)"
 
@@ -43,9 +51,17 @@ extern class ttr_tutor &FLWTutor;
 
 /* Begin of automatic documentation generation part. */
 
+<<<<<<< flw.h
 //V $Revision$
+=======
+//V $Revision$
+>>>>>>> 1.55
 //C Claude SIMON (csimon@epeios.org)
+<<<<<<< flw.h
 //R $Date$
+=======
+//R $Date$
+>>>>>>> 1.55
 
 /* End of automatic documentation generation part. */
 

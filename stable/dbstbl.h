@@ -22,7 +22,11 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+<<<<<<< dbstbl.h
 //	$Id$
+=======
+//	$Id$
+>>>>>>> 1.28
 
 #ifndef DBSTBL__INC
 #define DBSTBL__INC
@@ -45,7 +49,11 @@ extern class ttr_tutor &DBSTBLTutor;
 
 //V $Revision$
 //C Claude SIMON (csimon@epeios.org)
+<<<<<<< dbstbl.h
 //R $Date$
+=======
+//R $Date$
+>>>>>>> 1.28
 
 /* End of automatic documentation generation part. */
 
