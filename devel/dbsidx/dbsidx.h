@@ -254,8 +254,8 @@ namespace dbsidx {
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
-			skip_level__ SkipLevel,
 			behavior__ EqualBehavior,
+			skip_level__ SkipLevel,
 			bso::sign__ &Sign ) const;
 		rrow__ Seek(
 			behavior__ EqualBehavior,
@@ -264,7 +264,7 @@ namespace dbsidx {
 		{
 			bso::sign__ Sign;
 
-			return Seek( Datum, SkipLevel, EqualBehavior, Sign );
+			return Seek( Datum, EqualBehavior, SkipLevel, Sign );
 		}
 		bso::sign__ Compare(
 			rrow__ RecordId,

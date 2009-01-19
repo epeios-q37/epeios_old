@@ -549,6 +549,7 @@ rrow__ dbstbl::thread_safe_table_::Seek(
 	const datum_ &Datum,
 	irow__ IRow,
 	behavior__ EqualBehavior,
+	skip_level__ SkipLevel,
 	bso::sign__ &Sign )
 {
 	rrow__ Row = NONE;
@@ -556,7 +557,7 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow, EqualBehavior, Sign );
+	Row = T.Seek( Datum, IRow, EqualBehavior, SkipLevel, Sign );
 ERRErr
 ERREnd
 	RRO

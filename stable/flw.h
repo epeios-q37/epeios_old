@@ -577,7 +577,7 @@ namespace flw {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( _Written )
+				if ( _Size != _Free )
 					Synchronize();
 			}
 

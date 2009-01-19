@@ -378,8 +378,8 @@ ERREpilog
 
 rrow__ dbsidx::index_::Seek( 
 	const datum_ &Datum,
-	skip_level__ SkipLevel,
 	behavior__ EqualBehavior,
+	skip_level__ SkipLevel,
 	bso::sign__ &Sign ) const
 {
 	rrow__ Row = NONE;

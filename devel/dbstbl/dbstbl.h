@@ -432,8 +432,8 @@ namespace dbstbl {
 		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
-			skip_level__ SkipLevel,
 			behavior__ EqualBehavior,
+			skip_level__ SkipLevel,
 			bso::sign__ &Sign ) const
 		{
 			_Test( mReadOnly );
@@ -441,7 +441,7 @@ namespace dbstbl {
 			if ( _IsBulk() )
 				ERRu();
 
-			return _I( IRow ).Seek( Datum, SkipLevel, EqualBehavior, Sign );
+			return _I( IRow ).Seek( Datum, EqualBehavior, SkipLevel, Sign );
 		}
 		rrow__ Seek(
 			const datum_ &Datum,
@@ -453,7 +453,7 @@ namespace dbstbl {
 
 			_Test( mReadOnly );
 
-			return Seek( Datum, IRow, SkipLevel, EqualBehavior, Sign );
+			return Seek( Datum, IRow, EqualBehavior, SkipLevel, Sign );
 		}
 		bso::sign__ Compare(
 			rrow__ RecordRow,
@@ -687,6 +687,7 @@ namespace dbstbl {
 			const datum_ &Datum,
 			irow__ IRow,
 			behavior__ EqualBehavior,
+			skip_level__ SkipLevel,
 			bso::sign__ &Sign );
 		rrow__ Seek(
 			const datum_ &Datum,

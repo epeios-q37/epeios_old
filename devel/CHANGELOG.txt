@@ -1,5 +1,12 @@
 $Id$4
 
+19/01/2008 :
+	- FLW :
+		- Correction  bogue 'reset(...)'.
+	- DBSTBL :
+		- Modification paramètres 'Seek' pour éviter ambigüité.
+		
+
 12/01/2009 :
 	- NSXPCM :
 		- Ajout de 'command__'.
