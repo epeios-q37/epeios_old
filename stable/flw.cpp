@@ -25,11 +25,7 @@
 
 
 
-<<<<<<< flw.cpp
 //	$Id$
-=======
-//	$Id$
->>>>>>> 1.59
 
 #define FLW__COMPILATION
 
@@ -48,11 +44,7 @@ public:
 		Version = FLW_VERSION;
 #endif
 		Owner = FLW_OWNER;
-<<<<<<< flw.cpp
 		Date = "$Date$";
-=======
-		Date = "$Date$";
->>>>>>> 1.59
 	}
 	virtual ~flwtutor( void ){}
 };
