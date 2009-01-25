@@ -40,6 +40,11 @@ namespace ui {
 			Structure.Init( Functions );
 		}
 	};
+
+	inline void Initialize( ui__ &UI )
+	{
+		UI.Main.Broadcasters.DatabaseOpened.Disable();
+	}
 }
 
 #endif

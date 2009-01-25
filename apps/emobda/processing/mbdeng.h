@@ -30,11 +30,11 @@
 #include "dbstbl.h"
 
 
-#define MBDENG_ENGINE_VERSION	"0.1.0"	// Doit $etre modifié à chaque fois que le moteur change (format des fichiers utilisé pour stocker la bse).
+#define MBDENG_ENGINE_VERSION	"0.1.0"	// Doit être modifié à chaque fois que le moteur change (format des fichiers utilisé pour stocker la bse).
 
 namespace mbdeng {
 
-	typedef dbstbl::table	_table_;
+	typedef dbstbl::table_	_table_;
 	typedef dbsdct::file_dynamic_content_	_content_;
 
 	class engine_
@@ -42,7 +42,7 @@ namespace mbdeng {
 	{
 	public:
 		struct s
-		: public _table_
+			: public _table_::s
 		{
 			flm::id__ FilesgroupID;
 			_content_::s Content;
@@ -52,8 +52,8 @@ namespace mbdeng {
 			dbstbl::irow__ TableRecordFieldIndexRow, TableFieldDatumIndexRow;
 		} &S_;
 		_content_ Content;
-			mbdidx::table_record_field_index_ TableRecordFieldIndex;
-			mbdidx::table_field_datum_index_ TableFieldDatumIndex;
+		mbdidx::table_record_field_index_ TableRecordFieldIndex;
+		mbdidx::table_field_datum_index_ TableFieldDatumIndex;
 		engine_( s &S )
 		: S_( S ),
 		  _table_( S ),

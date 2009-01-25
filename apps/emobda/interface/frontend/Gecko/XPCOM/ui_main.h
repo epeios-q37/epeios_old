@@ -27,6 +27,12 @@
 namespace ui_main {
 	using namespace ui_base;
 
+	UI_NONE( broadcaster__, database_opened_broadcaster__ );
+
+	UI_C( command__, create_database_command__ );
+	UI_C( command__, open_database_command__ );
+	UI_C( command__, close_database_command__ );
+
 	UI_C( textbox__, table_location_textbox__ );
 	UI_C( textbox__, field_name_textbox__ );
 
@@ -39,6 +45,18 @@ namespace ui_main {
 	struct main__
 	: public _ui_core__
 	{
+		struct commands__ {
+			struct database__ {
+				create_database_command__ Create;
+				create_database_command__ Open;
+				close_database_command__ Close;
+			} Database;
+		} Commands;
+
+		struct broadcasters__ {
+			database_opened_broadcaster__ DatabaseOpened;
+		} Broadcasters;
+
 		table_location_textbox__ TableLocationTextbox;
 		create_table_button__ CreateTableButton;
 		field_name_textbox__ FieldNameTextbox;
@@ -51,6 +69,11 @@ namespace ui_main {
 			_ui_core__::Init();
 		}
 	};
+
+	void Register(
+		kernel::kernel___ &Kernel,
+		main__ &UI,
+		nsIDOMWindow *Window );
 }
 
 #endif

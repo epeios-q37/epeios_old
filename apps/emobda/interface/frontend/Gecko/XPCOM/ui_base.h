@@ -91,7 +91,15 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::broadcaster__> broadcaster__;
 	typedef _generic__<nsxpcm::command__> command__;
 
-	// For widget with 'oncommand' event.
+	template <typename widget> void Register(
+		kernel::kernel___ &Kernel,
+		widget &Widget,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Widget.Init( Kernel );
+		nsxpcm::Register( Widget, Document, Id, nsxpcm::eAll );
+	}
 }
 
 #define UI_C( widget, name )\
@@ -120,6 +128,16 @@ namespace ui_base {
 		virtual void NSXPCMOnCommand( void ) {}\
 		virtual void NSXPCMOnSelect( void );\
 	}
+
+#define UI_B( widget, name )\
+	class name\
+	: public widget\
+	{\
+	protected:\
+		virtual void NSXPCMOnBroadcast( void );\
+	}
+
+
 
 	// For widget with no event.
 #define UI_NONE( widget, name )\

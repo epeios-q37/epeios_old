@@ -33,8 +33,25 @@
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>
+	<broadcasterset>
+		<broadcaster id="bcrDatabaseOpened"/>
+	</broadcasterset>
+	<commandset>
+		<command id="cmdCreateDatabase"/>
+		<command id="cmdOpenDatabase"/>
+		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
+	</commandset>
+	<menubar>
+		<menu label="Database">
+			<menupopup>
+				<menuitem label="New ..." command="cmdCreateDatabase"/>
+				<menuitem label="Open ..." command="cmdOpenDatabase"/>
+				<menuitem label="Close ..." command="cmdCloseDatabase"/>
+			</menupopup>
+		</menu>
+	</menubar>
 	<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
-	<deck selectedIndex="1">
+	<deck selectedIndex="1" flex="1">
 		<vbox>
 			<hbox>
 				<textbox id="tableLocation"/>

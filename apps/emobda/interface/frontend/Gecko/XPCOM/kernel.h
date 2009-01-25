@@ -58,8 +58,9 @@ namespace kernel {
 	private:
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
-		void _DumpFields( xml::writer_ &Writer );
-		void _DumpFieldsAsXML( str::string_ &XML );
+		void _DumpTablesStructure( xml::writer_ &Writer );
+		void _DumpDatabaseStructure( xml::writer_ &Writer );
+		void _DumpDatabaseStructureAsXML( str::string_ &XML );
 		void _H( bso::bool__ Result )
 		{
 		ERRProlog
@@ -111,6 +112,12 @@ namespace kernel {
 			_ClientCore.Init( "localhost:1234", NULL, _LogFunctions, csducl::tShared );
 			_backend___::Init( _ClientCore );
 			UI.Init( *this );
+		}
+		void CreateDatabase(
+			const str::string_ &Location,
+			const str::string_ &Name )
+		{
+			_H( Manager.CreateDatabase( Location, Name ) );
 		}
 		table__ CreateTable( const str::string_ &Name )
 		{
@@ -165,6 +172,13 @@ namespace kernel {
 		}
 		void RefreshFieldList( void );
 		void RefreshStructureView( void );
+		void UpdateUI( void )
+		{
+			RefreshStructureView();
+			UI.Main.Broadcasters.DatabaseOpened.Disable();
+			UI.Structure.Broadcasters.ItemEdition.Disable();
+			UI.Structure.Broadcasters.StructureBrowsing.Disable();
+		}
 		void ModifyField( void )
 		{
 			nsxpcm::Alert( UI.Main.Window, "FieldListModification detected !" );

@@ -93,68 +93,6 @@ RN
 RE
 }
 
-template <typename widget> static void Register_(
-	widget &Widget,
-	nsIDOMDocument *Document,
-	const char *Id )
-{
-	Widget.Init( Repository_.GetCurrentObject() );
-	nsxpcm::Register( Widget, Document, Id, nsxpcm::eAll );
-}
-
-static void Register_(
-	ui::main__ &UI,
-	nsIDOMWindow *Window )
-{
-	UI.Set( Window );
-
-	Register_( UI.TableLocationTextbox, UI.Document, "tableLocation" );
-	Register_( UI.CreateTableButton, UI.Document, "createTable" );
-
-	Register_( UI.FieldNameTextbox, UI.Document, "fieldName" );
-	Register_( UI.AddFieldButton, UI.Document, "addField" );
-
-	Register_( UI.FieldListListbox, UI.Document, "fieldList" );
-	Register_( UI.RemoveFieldButton, UI.Document, "removeField" );
-}
-
-static void Register_(
-	ui::structure__ &UI,
-	nsIDOMWindow *Window )
-{
-	UI.Set( Window );
-
-	Register_( UI.FormBroadcaster, UI.Document, "formBroadcaster" );
-
-	UI.Items = nsxpcm::GetElementById( UI.Document, "items" );
-
-	UI.DatabaseButtonsPanel = nsxpcm::GetElementById( UI.Document, "databaseButtonsPanel" );
-	UI.TableButtonsPanel = nsxpcm::GetElementById( UI.Document, "tableButtonsPanel" );
-	UI.FieldButtonsPanel = nsxpcm::GetElementById( UI.Document, "fieldButtonsPanel" );
-
-
-	Register_( UI.BrowseTree, UI.Document, "browseTree" );
-
-	Register_( UI.ButtonsDeck, UI.Document, "buttonsDeck" );
-
-	Register_( UI.CreateTableButton, UI.Document, "createTableButton" );
-	Register_( UI.ModifyTableButton, UI.Document, "modifyTableButton" );
-
-	Register_( UI.CreateFieldButton, UI.Document, "createFieldButton" );
-	Register_( UI.ModifyFieldButton, UI.Document, "modifyFieldButton" );
-
-	Register_( UI.FormDeck, UI.Document, "formDeck" );
-
-	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
-	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
-	UI.FieldFormPanel = nsxpcm::GetElementById( UI.Document, "fieldFormPanel" );
-
-	Register_( UI.ApplyFormButton, UI.Document, "applyFormButton" );
-	Register_( UI.CancelFormButton, UI.Document, "cancelFormButton" );
-
-	Register_( UI.TestCommand, UI.Document, "test" );
-}
-
 NS_IMETHODIMP emobdacom::Register(
 	nsIDOMWindow *Window,
 	const char *UIDesignation )
@@ -171,9 +109,9 @@ RBB
 	_KernelRow = Repository_.GetCurrentRow();
 
 	if ( !strcmp( UIDesignation, "main" ) )
-		Register_( UI.Main, Window );
+		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
 	else if ( !strcmp( UIDesignation, "structure" ) )
-		Register_( UI.Structure, Window );
+		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
 	else
 		ERRu();
 RR
@@ -188,8 +126,7 @@ RP
 RBB
 	nsxpcm::GetJSConsole( Repository_.GetCurrentObject().UI.Main.Window, &Console );
 
-	Repository_.GetCurrentObject().RefreshStructureView();
-
+	Repository_.GetCurrentObject().UpdateUI();
 	Repository_.DismissCurrentObject();
 RR
 RN

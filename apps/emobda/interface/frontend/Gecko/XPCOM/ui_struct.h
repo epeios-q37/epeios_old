@@ -27,24 +27,30 @@
 namespace ui_struct {
 	using namespace ui_base;
 
-	UI_NONE( broadcaster__, form_broadcaster__ );
+	UI_NONE( broadcaster__, item_edition_broadcaster__ );
+	UI_B( broadcaster__, structure_browsing_broadcaster__ );
+	UI_NONE( broadcaster__, database_selection_broadcaster__ );
+	UI_NONE( broadcaster__, table_selection_broadcaster__ );
+	UI_NONE( broadcaster__, field_selection_broadcaster__ );
 
 	UI_S( tree__, browse_tree__ );
 
 	UI_NONE( deck__, buttons_deck__ );
 
-	UI_C( button__, create_table_button__ );
-	UI_C( button__, modify_table_button__ );
+	UI_C( command__, rename_database_command__ );
 
-	UI_C( button__, create_field_button__ );
-	UI_C( button__, modify_field_button__ );
+	UI_C( command__, create_table_command__ );
+	UI_C( command__, rename_table_command__ );
+	UI_C( command__, delete_table_command__ );
+
+	UI_C( command__, create_field_command__ );
+	UI_C( command__, modify_field_command__ );
+	UI_C( command__, delete_field_command__ );
 
 	UI_NONE( deck__, form_deck__ );
 
 	UI_NONE( button__, apply_form_button__ );
 	UI_NONE( button__, cancel_form_button__ );
-
-	UI_C( command__, test_command__ );
 
 	struct structure__
 	: public _ui_core__,
@@ -52,34 +58,47 @@ namespace ui_struct {
 	{
 	public:
 		nsIDOMElement *Items;
-		form_broadcaster__ FormBroadcaster;
 		browse_tree__ BrowseTree;
-		buttons_deck__ ButtonsDeck;
-		nsIDOMElement *DatabaseButtonsPanel, *TableButtonsPanel, *FieldButtonsPanel;
-		create_table_button__ CreateTableButton;
-		modify_table_button__ ModifyTableButton;
-		create_table_button__ CreateFieldButton;
-		modify_table_button__ ModifyFieldButton;
+		struct broadcasters__ {
+			item_edition_broadcaster__ ItemEdition;
+			structure_browsing_broadcaster__ StructureBrowsing;
+			database_selection_broadcaster__ DatabaseSelection;
+			table_selection_broadcaster__ TableSelection;
+			field_selection_broadcaster__ FieldSelection;
+		} Broadcasters;
+		struct commands__ {
+			struct database__ {
+				rename_database_command__ Rename;
+			} Database;
+			struct table__ {
+				create_table_command__ Create;
+				rename_table_command__ Rename;
+				delete_table_command__ Delete;
+			} Table;
+			struct field__ {
+				create_field_command__ Create;
+				modify_field_command__ Modify;
+				delete_field_command__ Delete;
+			} Field;
+		} Commands;
 		form_deck__ FormDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
 		apply_form_button__ ApplyFormButton;
 		cancel_form_button__ CancelFormButton;
-		test_command__ TestCommand;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();
 			bridge__::Init( Functions );
 			Items = NULL;
-			DatabaseButtonsPanel = TableButtonsPanel = FieldButtonsPanel = NULL;
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;
 		}
 		void UpdateDecks( void );
-		void EnableForm( bso::bool__ Value = true );
-		void DisableForm( void )
-		{
-			EnableForm( false );
-		}
 	};
+
+	void Register(
+		kernel::kernel___ &Kernel,
+		structure__ &UI,
+		nsIDOMWindow *Window );
 }
 
 #endif

@@ -93,7 +93,7 @@ namespace mbdmng {
 			reset();
 
 			Engine.Init( Location, Mode, Erase, Partial );
-			Structure.Init();
+			Structure.Init( Name );
 			this->Location.Init( Location );
 
 			ExportStructure_();

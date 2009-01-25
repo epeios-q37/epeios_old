@@ -908,6 +908,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eBlur;
 	else if ( !strcmp( RawEvent, "select" ) )
 		Event = eSelect;
+	else if ( !strcmp( RawEvent, "broadcast" ) )
+		Event = eBroadcast;
 	else
 		ERRl();
 
@@ -934,6 +936,9 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 		break;
 	case eSelect:
 		NSXPCMOnSelect();
+		break;
+	case eBroadcast:
+		NSXPCMOnBroadcast();
 		break;
 	default:
 		ERRc();
@@ -982,6 +987,10 @@ void nsxpcm::element_core__::Init(
 
 	if ( Events & eSelect )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, false ) != NS_OK )
+			ERRc();
+
+	if ( Events & eBroadcast )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "broadcast" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	_EventListener->Init( *this );

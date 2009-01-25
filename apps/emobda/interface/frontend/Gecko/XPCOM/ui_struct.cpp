@@ -23,6 +23,7 @@
 #include "kernel.h"
 
 using namespace ui_struct;
+using kernel::kernel___;
 
 void ui_struct::structure__::UpdateDecks( void )
 {
@@ -36,18 +37,26 @@ ERRBegin
 		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
 
 		if ( Type == "Database" ) {
-			UI.ButtonsDeck.SetSelectedPanel( UI.DatabaseButtonsPanel );
+			UI.Broadcasters.DatabaseSelection.Show();
+			UI.Broadcasters.TableSelection.Hide();
+			UI.Broadcasters.FieldSelection.Hide();
 			UI.FormDeck.SetSelectedPanel( UI.DatabaseFormPanel );
 		} else if ( Type == "Table" ) {
-			UI.ButtonsDeck.SetSelectedPanel( UI.TableButtonsPanel );
+			UI.Broadcasters.DatabaseSelection.Hide();
+			UI.Broadcasters.TableSelection.Show();
+			UI.Broadcasters.FieldSelection.Hide();
 			UI.FormDeck.SetSelectedPanel( UI.TableFormPanel );
 		}else if ( Type == "Field" ) {
-			UI.ButtonsDeck.SetSelectedPanel( UI.FieldButtonsPanel );
+			UI.Broadcasters.DatabaseSelection.Hide();
+			UI.Broadcasters.TableSelection.Hide();
+			UI.Broadcasters.FieldSelection.Show();
 			UI.FormDeck.SetSelectedPanel( UI.FieldFormPanel );
 		} else
 			ERRu();
 	} else {
-		UI.ButtonsDeck.SetSelectedIndex( -1 );
+		UI.Broadcasters.DatabaseSelection.Hide();
+		UI.Broadcasters.TableSelection.Hide();
+		UI.Broadcasters.FieldSelection.Hide();
 		UI.FormDeck.SetSelectedIndex( -1 );
 	}
 
@@ -56,37 +65,46 @@ ERREnd
 ERREpilog
 }
 
-void ui_struct::structure__::EnableForm( bso::bool__ Value )
+void ui_struct::structure_browsing_broadcaster__::NSXPCMOnBroadcast( void )
 {
-	structure__ &UI = K().UI.Structure;
-/*
-	UI.ApplyFormButton.Enable( Value );
-	UI.CancelFormButton.Enable( Value );
-*/
-	UI.FormBroadcaster.Disable();
+	nsxpcm::Alert( K().UI.Structure.Window, "Broadcast !" );
 }
 
+void ui_struct::rename_database_command__::NSXPCMOnCommand( void )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Rename Database !" );
+}
 
-
-
-void ui_struct::create_table_button__::NSXPCMOnCommand( void )
+void ui_struct::create_table_command__::NSXPCMOnCommand( void )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Create Table !" );
+	K().UI.Structure.Broadcasters.StructureBrowsing.Disable();
+	K().UI.Structure.Broadcasters.ItemEdition.Enable();
 }
 
-void ui_struct::modify_table_button__::NSXPCMOnCommand( void )
+void ui_struct::rename_table_command__::NSXPCMOnCommand( void )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Modify Table !" );
+	nsxpcm::Alert( K().UI.Structure.Window, "Rename Table !" );
 }
 
-void ui_struct::create_field_button__::NSXPCMOnCommand( void )
+void ui_struct::delete_table_command__::NSXPCMOnCommand( void )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Delete Table !" );
+}
+
+void ui_struct::create_field_command__::NSXPCMOnCommand( void )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Create Field !" );
 }
 
-void ui_struct::modify_field_button__::NSXPCMOnCommand( void )
+void ui_struct::modify_field_command__::NSXPCMOnCommand( void )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Modify Field !" );
+}
+
+void ui_struct::delete_field_command__::NSXPCMOnCommand( void )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Delete Field !" );
 }
 
 void ui_struct::browse_tree__::NSXPCMOnSelect( void )
@@ -94,8 +112,91 @@ void ui_struct::browse_tree__::NSXPCMOnSelect( void )
 	K().UI.Structure.UpdateDecks();
 }
 
-void ui_struct::test_command__::NSXPCMOnCommand( void )
+/* UI Registrations */
+
+template <typename widget> static void Register_(
+	kernel___ &Kernel,
+	widget &Widget,
+	nsIDOMDocument *Document,
+	const char *Id )
 {
-	K().UI.Structure.TestCommand.Disable();
+	ui_base::Register( Kernel, Widget, Document, Id );
 }
 
+/* 'broadcaster's */
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::broadcasters__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.ItemEdition, Document, "bcrItemEdition" );
+	Register_( Kernel, UI.StructureBrowsing, Document, "bcrStructureBrowsing" );
+	Register_( Kernel, UI.DatabaseSelection,  Document, "bcrDatabaseSelection" );
+	Register_( Kernel, UI.TableSelection, Document, "bcrTableSelection" );
+	Register_( Kernel, UI.FieldSelection, Document, "bcrFieldSelection" );
+}
+
+/* 'command's */
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::database__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Rename, Document, "cmdRenameDatabase" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::table__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Create, Document, "cmdCreateTable" );
+	Register_( Kernel, UI.Rename, Document, "cmdRenameTable" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteTable" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::field__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Create, Document, "cmdCreateField" );
+	Register_( Kernel, UI.Modify, Document, "cmdModifyField" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteField" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Database, Document );
+	Register_( Kernel, UI.Table, Document );
+	Register_( Kernel, UI.Field, Document );
+}
+
+void ui_struct::Register(
+	kernel___ &Kernel,
+	structure__ &UI,
+	nsIDOMWindow *Window )
+{
+	UI.Set( Window );
+
+	UI.Items = nsxpcm::GetElementById( UI.Document, "items" );
+
+	Register_( Kernel, UI.BrowseTree, UI.Document, "browseTree" );
+
+	Register_( Kernel, UI.Broadcasters, UI.Document );
+	Register_( Kernel, UI.Commands, UI.Document );
+
+	Register_( Kernel, UI.FormDeck, UI.Document, "formDeck" );
+
+	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
+	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
+	UI.FieldFormPanel = nsxpcm::GetElementById( UI.Document, "fieldFormPanel" );
+
+	Register_( Kernel, UI.ApplyFormButton, UI.Document, "applyFormButton" );
+	Register_( Kernel, UI.CancelFormButton, UI.Document, "cancelFormButton" );
+}

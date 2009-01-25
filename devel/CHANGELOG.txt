@@ -1,4 +1,15 @@
-$Id$4
+$Id$
+
+25/01/2009 :
+	- FNM :
+		- Le paramètre 'Nom' de 'BuidFileName()' peut être vide, auquel cas l'extension est juste rajoutée à la location
+		(aprés retrait séparateur de répertoire si nécessaire).
+	- NSXPCM :
+	- Ajout gestion évènement 'onbroadcast'.
+
+24/01/2009 :
+	- NSXPCM :
+		- Ajout 'Show()' et 'Hide()'.
 
 19/01/2008 :
 	- FLW :

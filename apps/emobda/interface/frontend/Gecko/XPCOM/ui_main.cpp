@@ -23,6 +23,26 @@
 #include "kernel.h"
 
 using namespace ui;
+using kernel::kernel___;
+
+void ui_main::create_database_command__::NSXPCMOnCommand( void )
+{
+//	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
+	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ) );
+	K().RefreshStructureView();
+	K().UI.Structure.Broadcasters.StructureBrowsing.Enable();
+	K().UI.Structure.Broadcasters.ItemEdition.Disable();
+}
+
+void ui_main::open_database_command__::NSXPCMOnCommand( void )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Open Database !" );
+}
+
+void ui_main::close_database_command__::NSXPCMOnCommand( void )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
+}
 
 void ui_main::table_location_textbox__::NSXPCMOnCommand( void )
 {
@@ -72,3 +92,64 @@ ERREnd
 ERREpilog
 }
 
+/* Registrations */
+
+template <typename widget> static void Register_(
+	kernel___ &Kernel,
+	widget &Widget,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Widget, Document, Id );
+}
+
+/* 'broadcaster's */
+
+static void Register_(
+	kernel___ &Kernel,
+	main__::broadcasters__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
+}
+
+/* 'command's */
+
+static void Register_(
+	kernel___ &Kernel,
+	main__::commands__::database__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Create, Document, "cmdCreateDatabase" );
+	Register_( Kernel, UI.Open, Document, "cmdOpenDatabase" );
+	Register_( Kernel, UI.Close, Document, "cmdCloseDatabase" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	main__::commands__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Database, Document );
+}
+
+
+void ui_main::Register(
+	kernel___ &Kernel,
+	ui_main::main__ &UI,
+	nsIDOMWindow *Window )
+{
+	UI.Set( Window );
+
+	Register_( Kernel, UI.Broadcasters, UI.Document );
+	Register_( Kernel, UI.Commands, UI.Document );
+
+	Register_( Kernel, UI.TableLocationTextbox, UI.Document, "tableLocation" );
+	Register_( Kernel, UI.CreateTableButton, UI.Document, "createTable" );
+
+	Register_( Kernel, UI.FieldNameTextbox, UI.Document, "fieldName" );
+	Register_( Kernel, UI.AddFieldButton, UI.Document, "addField" );
+
+	Register_( Kernel, UI.FieldListListbox, UI.Document, "fieldList" );
+	Register_( Kernel, UI.RemoveFieldButton, UI.Document, "removeField" );
+}

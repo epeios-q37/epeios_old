@@ -24,42 +24,85 @@
 
 using namespace kernel;
 
-static void DumpFields_(
-	const bkdacc::items32_ &Items,
+static void _DumpTableStructure(
+	const bkdacc::string_ &Name,
 	xml::writer_ &Writer )
 {
-	bso::integer_buffer__ Buffer;
-	ctn::E_CMITEM( bkdacc::item32_ ) Item;
-	epeios::row__ Row = Items.First();
+	Writer.PushTag( "Name" );
 
-	Item.Init( Items );
+	Writer.PutValue( Name );
+
+	Writer.PopTag();
+}
+
+static void _DumpTablesStructure(
+	const bkdacc::strings_ &Names,
+	xml::writer_ &Writer )
+{
+	ctn::E_CMITEM( bkdacc::string_ ) Name;
+	epeios::row__ Row = Names.First();
+
+	Name.Init( Names );
 
 	while ( Row != NONE ) {
-		Writer.PushTag( "Field" );
-		Writer.PutAttribute( "Id", bso::Convert( *Item( Row ).ID(), Buffer ) );
+		Writer.PushTag( "Table" );
 
-		Writer.PushTag( "Name" );
-		Writer.PutValue( Item( Row ).Value );
-		Writer.PopTag();
+		_DumpTableStructure( Name( Row ), Writer );
 
 		Writer.PopTag();
 
-		Row = Items.Next( Row );
+		Row = Names.Next( Row );
 	}
 }
 
-void kernel::kernel___::_DumpFields( xml::writer_ &Writer )
+void kernel::kernel___::_DumpTablesStructure( xml::writer_ &Writer )
 {
 ERRProlog
-	bkdacc::items32 Fields;
+	bkdacc::ids32 Rows;
+	bkdacc::strings Names;
+	bkdacc::ids16 Ids;
 ERRBegin
-	Fields.Init();
+	Rows.Init();
+	Names.Init();
+	Ids.Init();
 
-	_H( Manager.GetFields( Fields ) );
+	_H( Manager.GetTables( Rows, Names, Ids ) );
 
-	Writer.PushTag( "Fields" );
+	if ( Rows.Amount() != Names.Amount() )
+		ERRc();
 
-	DumpFields_( Fields, Writer );
+	if ( Rows.Amount() != Ids.Amount() )
+		ERRc();
+
+	Writer.PushTag( "Tables" );
+
+	::_DumpTablesStructure( Names, Writer );
+
+	Writer.PopTag();
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::_DumpDatabaseStructure( xml::writer_ &Writer )
+{
+ERRProlog
+	bkdacc::string DatabaseName;
+ERRBegin
+	DatabaseName.Init();
+
+	_H( Manager.GetDatabaseInfos( DatabaseName ) );
+
+	Writer.PushTag( "Database" );
+
+	Writer.PushTag( "Name" );
+
+	Writer.PutValue( DatabaseName );
+
+	_DumpTablesStructure( Writer );
+
+	Writer.PopTag();
 
 	Writer.PopTag();
 ERRErr
@@ -67,7 +110,7 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpFieldsAsXML( str::string_ &XML )
+void kernel::kernel___::_DumpDatabaseStructureAsXML( str::string_ &XML )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
@@ -75,12 +118,9 @@ ERRProlog
 	xml::writer Writer;
 ERRBegin
 	Flow.Init( XML );
-
 	Writer.Init( TFlow, false );
 
-	_DumpFields( Writer );
-
-	TFlow.Synchronize();
+	_DumpDatabaseStructure( Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -95,9 +135,9 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-//	_DumpFieldsAsXML( XML );
+	_DumpDatabaseStructureAsXML( XML );
 
-	XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
 	Parameters.Init();
 
@@ -107,7 +147,7 @@ ERRBegin
 
 	UI.Structure.UpdateDecks();
 
-	UI.Structure.DisableForm();
+	UI.Structure.Broadcasters.ItemEdition.Disable();
 ERRErr
 ERREnd
 ERREpilog
@@ -121,7 +161,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpFieldsAsXML( XML );
+//	_DumpFieldsAsXML( XML );
 
 	Parameters.Init();
 

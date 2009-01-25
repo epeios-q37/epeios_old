@@ -224,7 +224,7 @@ ERRProlog
 	FNM_BUFFER___ Buffer;
 	const char *Filename = NULL;
 ERRBegin
-	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "struct", "", Buffer );
+	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
 
 	Flow.Init( Filename );
 

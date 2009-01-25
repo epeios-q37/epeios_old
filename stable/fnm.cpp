@@ -140,28 +140,41 @@ ERRBegin
 	if ( Ext )
 		TailleExt = strlen( Ext );
 
-	if ( TailleNom )
-	{
-		if ( ( P = calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
-			ERRa();
-	}
-	else
+	if ( ( P = calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
+		ERRa();
+
+	if ( ( TailleNom == 0 ) && ( TailleExt == 0 ) )
 		return NULL;
 
-	if ( TailleRep )
-	{
-		if ( ( Rep[TailleRep-1] != ':' ) && ( Rep[TailleRep-1] != '/' ) && ( Rep[TailleRep-1] != '\\' ))
-			sprintf( P, "%s%c", Rep, FNM_DIRECTORY_SEPARATOR_CHARACTER );
-		else
-			sprintf( P, "%s", Rep );
-	}
+	if ( TailleRep != 0 ) {
+		sprintf( P, "%s", Rep );
+
+		if ( TailleNom != 0 ) {
+			switch( Rep[TailleRep-1] ) {
+			case ':':
+			case '/':
+			case '\\':
+				break;
+			default:
+				strcat( P, FNM_DIRECTORY_SEPARATOR_STRING );
+				break;
+			}
+		} else {
+			while( --TailleRep &&
+				   ( ( P[TailleRep] == '/' )
+					 || ( P[TailleRep] == '\\' ) ) );
+
+			if ( ( P[TailleRep] == ':' ) || ( TailleRep == 0 ) )
+				return NULL;
+			else 
+				P[TailleRep+1] = 0;
+		}
+	} else if ( TailleNom == 0 )
+		return NULL;
 
 	switch ( Type( Nom ) ) {
 	case fnm::tEmpty:
-		P.reset();
-		if ( ( P = (char *)calloc( 1, sizeof( char ) ) ) == NULL )
-			ERRa();
-		*P = 0;
+		strcat( P, Ext );
 		break;
 	case fnm::tSuffixed:
 		strcat( P, Nom );

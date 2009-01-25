@@ -168,16 +168,29 @@ ERRBegin
 		ERRReturn;
 	}
 
-	// A inclure dans l'init ci-dessous.
+/*
 	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
 		Message = mUnableToCreateDatabase;
 		ERRReturn;
 	}
+*/
 
 	if ( !Manager.Init( Location, Name, dbstbl::mAdmin, true, true ) ) {
 		Message = mUnableToCreateDatabase;
 		ERRReturn;
 	}
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( GetDatabaseInfos )
+{
+	message__ Message = mOK;
+ERRProlog
+ERRBegin
+	Request.StringOut() = Manager.Structure.Name;
 ERRErr
 ERREnd
 ERREpilog
@@ -224,16 +237,24 @@ ERREpilog
 	return Message;
 }
 
-template <typename container, typename row> static void Convert_(
-	const container &Container,
-	bkdmng::ids32_ &Ids )
+static void GetTables_(
+	const mbdtbl::tables_ &Tables,
+	bkdmng::ids32_ &Rows,
+	bkdmng::strings_ &Names,
+	bkdmng::ids16_ &Ids )
 {
-	row Row = Container.First();
+	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
+	mbdtbl::table_row__ Row = Tables.First();
+
+	Table.Init( Tables );
 
 	while ( Row != NONE ) {
-		Ids.Append( *Row );
+		Rows.Append( *Row );
+		Names.Append( Table( Row ).Name );
+		Ids.Append( *Table( Row ).TableId() );
 
-		Row = Container.Next( Row );
+
+		Row = Tables.Next( Row );
 	}
 }
 
@@ -241,13 +262,12 @@ DEC( GetTables )
 {
 	message__ Message = mOK;
 ERRProlog
-	bkdmng::ids32 Ids;
 ERRBegin
-	Ids.Init();
+	bkdmng::ids32_ &Rows = Request.Ids32Out();
+	bkdmng::strings_ &Names = Request.StringsOut();
+	bkdmng::ids16_ &Ids = Request.Ids16Out();
 
-	Convert_<tables_, table_row__>( Manager.Structure.Tables, Ids );
-
-	Request.Ids32Out() = Ids;
+	GetTables_( Manager.Structure.Tables, Rows, Names, Ids );
 ERRErr
 ERREnd
 ERREpilog
@@ -351,10 +371,20 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cString,	// Database name.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
+	Module.Add( D( GetDatabaseInfos ),
+		bkdmng::cEnd,
+			bkdmng::cString,	// Nom de la base de donnée.
+		bkdmng::cEnd );
 	Module.Add( D( CreateTable ),
 			bkdmng::cString,	// Table name.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Table row.
+		bkdmng::cEnd );
+	Module.Add( D( GetTables ),
+		bkdmng::cEnd,
+			bkdmng::cIds32,		// 'row's.
+			bkdmng::cStrings,	// Noms.
+			bkdmng::cIds16,		// 'id's.
 		bkdmng::cEnd );
 	Module.Add( D( AddField ),
 		bkdmng::cId32,			// Table row.

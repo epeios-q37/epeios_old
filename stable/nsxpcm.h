@@ -134,7 +134,8 @@ namespace nsxpcm {
 		eFocus = 8,
 		eBlur = 16,
 		eSelect = 32,
-		eAll = 63,
+		eBroadcast = 64,
+		eAll = 127,
 		e_Undefined
 	};
 
@@ -854,6 +855,10 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnBroadcast( void )
+		{
+			ERRu();
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -929,6 +934,14 @@ namespace nsxpcm {
 		void Disable( void )
 		{
 			Enable( false );
+		}
+		void Show( bso::bool__ Value = true )
+		{
+			nsxpcm::SetAttribute( GetObject(), "hidden", Value ? "false" : "true" );
+		}
+		void Hide( void )
+		{
+			Show( false );
 		}
 	};
 
