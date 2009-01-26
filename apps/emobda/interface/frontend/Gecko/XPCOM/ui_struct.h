@@ -27,30 +27,30 @@
 namespace ui_struct {
 	using namespace ui_base;
 
-	UI_NONE( broadcaster__, item_edition_broadcaster__ );
-	UI_B( broadcaster__, structure_browsing_broadcaster__ );
-	UI_NONE( broadcaster__, database_selection_broadcaster__ );
-	UI_NONE( broadcaster__, table_selection_broadcaster__ );
-	UI_NONE( broadcaster__, field_selection_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, item_edition_broadcaster__ );
+	UI_ETYPEDEF( broadcaster__, structure_browsing_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, database_selection_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, table_selection_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, field_selection_broadcaster__ );
 
-	UI_S( tree__, browse_tree__ );
+	UI_ETYPEDEF( tree__, browse_tree__ );
 
-	UI_NONE( deck__, buttons_deck__ );
+	UI_TYPEDEF( deck__, buttons_deck__ );
 
-	UI_C( command__, rename_database_command__ );
+	UI_ETYPEDEF( command__, rename_database_command__ );
 
-	UI_C( command__, create_table_command__ );
-	UI_C( command__, rename_table_command__ );
-	UI_C( command__, delete_table_command__ );
+	UI_ETYPEDEF( command__, create_table_command__ );
+	UI_ETYPEDEF( command__, rename_table_command__ );
+	UI_ETYPEDEF( command__, delete_table_command__ );
 
-	UI_C( command__, create_field_command__ );
-	UI_C( command__, modify_field_command__ );
-	UI_C( command__, delete_field_command__ );
+	UI_ETYPEDEF( command__, create_field_command__ );
+	UI_ETYPEDEF( command__, modify_field_command__ );
+	UI_ETYPEDEF( command__, delete_field_command__ );
 
-	UI_NONE( deck__, form_deck__ );
+	UI_TYPEDEF( deck__, form_deck__ );
 
-	UI_NONE( button__, apply_form_button__ );
-	UI_NONE( button__, cancel_form_button__ );
+	UI_TYPEDEF( button__, apply_form_button__ );
+	UI_TYPEDEF( button__, cancel_form_button__ );
 
 	struct structure__
 	: public _ui_core__,

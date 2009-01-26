@@ -24,6 +24,7 @@
 
 using namespace ui_struct;
 using kernel::kernel___;
+using nsxpcm::event__;
 
 void ui_struct::structure__::UpdateDecks( void )
 {
@@ -65,62 +66,107 @@ ERREnd
 ERREpilog
 }
 
-void ui_struct::structure_browsing_broadcaster__::NSXPCMOnBroadcast( void )
+void ui_struct::structure_browsing_broadcaster__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Broadcast !" );
+	nsxpcm::Alert( K().UI.Structure.Window, "Attribute change !" );
 }
 
-void ui_struct::rename_database_command__::NSXPCMOnCommand( void )
+void ui_struct::rename_database_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Rename Database !" );
 }
 
-void ui_struct::create_table_command__::NSXPCMOnCommand( void )
+void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Create Table !" );
 	K().UI.Structure.Broadcasters.StructureBrowsing.Disable();
 	K().UI.Structure.Broadcasters.ItemEdition.Enable();
 }
 
-void ui_struct::rename_table_command__::NSXPCMOnCommand( void )
+void ui_struct::rename_table_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Rename Table !" );
 }
 
-void ui_struct::delete_table_command__::NSXPCMOnCommand( void )
+void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Delete Table !" );
 }
 
-void ui_struct::create_field_command__::NSXPCMOnCommand( void )
+void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Create Field !" );
 }
 
-void ui_struct::modify_field_command__::NSXPCMOnCommand( void )
+void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Modify Field !" );
 }
 
-void ui_struct::delete_field_command__::NSXPCMOnCommand( void )
+void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Delete Field !" );
 }
 
-void ui_struct::browse_tree__::NSXPCMOnSelect( void )
+void ui_struct::browse_tree__::NSXPCMOnEvent( event__ )
 {
 	K().UI.Structure.UpdateDecks();
 }
 
 /* UI Registrations */
 
-template <typename widget> static void Register_(
+static void Register_(
 	kernel___ &Kernel,
-	widget &Widget,
+	broadcaster__ &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Widget, Document, Id );
+	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	structure_browsing_broadcaster__ &Broadcaster,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efAttributeChange );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	command__ &Command,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	tree__ &Tree,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Tree, Document, Id, nsxpcm::efSelect );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	deck__ &Deck,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Deck, Document, Id, nsxpcm::efNone );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	button__ &Button,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
 }
 
 /* 'broadcaster's */

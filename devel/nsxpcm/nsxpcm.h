@@ -85,6 +85,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULDescriptionElement.h"
 #include "dom/nsIDOMWindowInternal.h"
 #include "dom/nsIDOMXULLabelElement.h"
+#include "dom/nsIDOMMutationEvent.h"
 
 #include "appshell/nsIXULWindow.h"
 
@@ -126,18 +127,43 @@ namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
-	enum event__ {
-		eNone = 0,
-		eCommand = 1,
-		eInput = 2,
-		eClick = 4,
-		eFocus = 8,
-		eBlur = 16,
-		eSelect = 32,
-		eBroadcast = 64,
-		eAll = 127,
+	enum event__
+	{
+		eCommand,
+		eInput,
+		eClick,
+		eFocus,
+		eBlur,
+		eSelect,
+		eAttributeChange,
+		e_amount,
 		e_Undefined
 	};
+
+#ifdef EF
+#	define NSXPCM__EF_BUFFER	EF
+#	undef EF
+#endif
+
+#define EF( name )	ef##name = ( 1 << e##name )
+
+	enum event_flag__ {
+		EF( Command ),
+		EF( Input ),
+		EF( Click ),
+		EF( Focus ),
+		EF( Blur ),
+		EF( Select ),
+		EF( AttributeChange ),
+		efNone = 0,
+		efAll = ( ( 1 << e_amount ) - 1 )
+	};
+
+#ifdef NSXPCM__F_BUFFER
+#	define	EF	NSXPCM__EF_BUFFER
+#	undef EF
+#endif
+
 
 #ifdef NSXPCM__BKD
 	using bkdacc::strings_;
@@ -825,6 +851,8 @@ namespace nsxpcm {
 	{
 	private:
 		nsIDOMElement *_Element;
+		nsIDOMEvent *_Event;
+		nsIDOMMutationEvent *_MutationEvent;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
@@ -855,7 +883,7 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
-		virtual void NSXPCMOnBroadcast( void )
+		virtual void NSXPCMOnAttributeChange( void )
 		{
 			ERRu();
 		}
@@ -880,10 +908,19 @@ namespace nsxpcm {
 			nsIDOMElement *Element,
 			int Events );
 		E_RODISCLOSE__( nsIDOMElementPointer, Element );
-		// If a new event is handled, you have to add the corresponding 'event_listener' too.
-		void Handle( const str::string_ &Event )
+		void Handle(
+			nsIDOMEvent * Event,
+			const str::string_ &EventString )
 		{
-			NSXPCMOnRawEvent( Event );
+			_Event = Event;
+
+			if ( EventString == "DOMAttrModified" )
+				_MutationEvent = QueryInterface<nsIDOMMutationEvent>( Event );
+
+			NSXPCMOnRawEvent( EventString );
+
+			_Event = NULL;
+			_MutationEvent = NULL;
 		}
 /*		void Register(
 			nsIDOMElement *Element,

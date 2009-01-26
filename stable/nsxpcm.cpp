@@ -344,7 +344,7 @@ ERRProlog
 	epeios::row__ Row = NONE;
 ERRBegin
 	Event->GetTarget( &EventTarget );
-	Element = nsxpcm::QueryInterface< nsIDOMElement>( EventTarget, err::hSkip  );
+	Element = nsxpcm::QueryInterface<nsIDOMElement>( EventTarget, err::hSkip  );
 
 	if ( Element == NULL )
 		ERRReturn;
@@ -363,7 +363,7 @@ ERRBegin
 
 	nsxpcm::Transform( String, S );
 
-	Cores( Row )->Handle( S );
+	Cores( Row )->Handle( Event, S );
 ERRErr
 ERREnd
 ERREpilog
@@ -908,8 +908,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eBlur;
 	else if ( !strcmp( RawEvent, "select" ) )
 		Event = eSelect;
-	else if ( !strcmp( RawEvent, "broadcast" ) )
-		Event = eBroadcast;
+	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
+		Event = eAttributeChange;
 	else
 		ERRl();
 
@@ -937,8 +937,8 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 	case eSelect:
 		NSXPCMOnSelect();
 		break;
-	case eBroadcast:
-		NSXPCMOnBroadcast();
+	case eAttributeChange:
+		NSXPCMOnAttributeChange();
 		break;
 	default:
 		ERRc();
@@ -965,32 +965,32 @@ void nsxpcm::element_core__::Init(
 
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventListener );
 
-	if ( Events & eCommand )
+	if ( Events & efCommand )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eInput )
+	if ( Events & efInput )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eClick )
+	if ( Events & efClick )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eFocus )
+	if ( Events & efFocus )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eBlur )
+	if ( Events & efBlur )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eSelect )
+	if ( Events & efSelect )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
-	if ( Events & eBroadcast )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "brodcast" ), _EventListener, false ) != NS_OK )
+	if ( Events & efAttributeChange )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	_EventListener->Init( *this );
@@ -1012,7 +1012,7 @@ ERRBegin
 
 	nsxpcm::Transform( String, S );
 
-	_Core->Handle( S );
+	_Core->Handle( Event, S );
 ERRErr
 	NSResult = NS_ERROR_FAILURE;
 

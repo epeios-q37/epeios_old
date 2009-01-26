@@ -1,11 +1,17 @@
 $Id$
 
+26/01/2009 :
+	- NSXPCM :
+		- Réorganisation gestion évènements.
+		- Suppression évènement 'onbroadcast'.
+		- Ajout gestion évènement 'OnAttributeChange'.
+
 25/01/2009 :
 	- FNM :
 		- Le paramètre 'Nom' de 'BuidFileName()' peut être vide, auquel cas l'extension est juste rajoutée à la location
 		(aprés retrait séparateur de répertoire si nécessaire).
 	- NSXPCM :
-	- Ajout gestion évènement 'onbroadcast'.
+		- Ajout gestion évènement 'onbroadcast'.
 
 24/01/2009 :
 	- NSXPCM :

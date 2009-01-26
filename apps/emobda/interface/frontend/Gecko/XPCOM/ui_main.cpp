@@ -22,10 +22,12 @@
 #include "ui_main.h"
 #include "kernel.h"
 
-using namespace ui;
+using namespace ui_main;
 using kernel::kernel___;
 
-void ui_main::create_database_command__::NSXPCMOnCommand( void )
+using nsxpcm::event__;
+
+void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 //	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
 	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ) );
@@ -34,37 +36,37 @@ void ui_main::create_database_command__::NSXPCMOnCommand( void )
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 }
 
-void ui_main::open_database_command__::NSXPCMOnCommand( void )
+void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Open Database !" );
 }
 
-void ui_main::close_database_command__::NSXPCMOnCommand( void )
+void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
 }
 
-void ui_main::table_location_textbox__::NSXPCMOnCommand( void )
+void ui_main::table_location_textbox__::NSXPCMOnEvent( event__ )
 {
 	K().CreateTable();
 }
 
-void ui_main::create_table_button__::NSXPCMOnCommand( void )
+void ui_main::create_table_button__::NSXPCMOnEvent( event__ )
 {
 	K().CreateTable();
 }
 
-void ui_main::field_name_textbox__::NSXPCMOnCommand( void )
+void ui_main::field_name_textbox__::NSXPCMOnEvent( event__ )
 {
 	K().AddField();
 }
 
-void ui_main::add_field_button__::NSXPCMOnCommand( void )
+void ui_main::add_field_button__::NSXPCMOnEvent( event__ )
 {
 	K().AddField();
 }
 
-void ui_main::field_list_listbox__::NSXPCMOnSelect( void )
+void ui_main::field_list_listbox__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string Value;
@@ -76,7 +78,7 @@ ERREnd
 ERREpilog
 }
 
-void ui_main::remove_field_button__::NSXPCMOnCommand( void )
+void ui_main::remove_field_button__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string Value;
@@ -94,13 +96,13 @@ ERREpilog
 
 /* Registrations */
 
-template <typename widget> static void Register_(
+static void Register_(
 	kernel___ &Kernel,
-	widget &Widget,
+	broadcaster__ &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Widget, Document, Id );
+	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
 }
 
 /* 'broadcaster's */
@@ -111,6 +113,42 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Kernel, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	command__ &Command,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	button__ &Button,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	textbox__ &Textbox,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Textbox, Document, Id, nsxpcm::efCommand );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	listbox__ &Listbox,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Listbox, Document, Id, nsxpcm::efSelect );
 }
 
 /* 'command's */

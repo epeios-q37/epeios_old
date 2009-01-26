@@ -27,20 +27,20 @@
 namespace ui_main {
 	using namespace ui_base;
 
-	UI_NONE( broadcaster__, database_opened_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
 
-	UI_C( command__, create_database_command__ );
-	UI_C( command__, open_database_command__ );
-	UI_C( command__, close_database_command__ );
+	UI_ETYPEDEF( command__, create_database_command__ );
+	UI_ETYPEDEF( command__, open_database_command__ );
+	UI_ETYPEDEF( command__, close_database_command__ );
 
-	UI_C( textbox__, table_location_textbox__ );
-	UI_C( textbox__, field_name_textbox__ );
+	UI_ETYPEDEF( textbox__, table_location_textbox__ );
+	UI_ETYPEDEF( textbox__, field_name_textbox__ );
 
-	UI_C( button__, create_table_button__ );
-	UI_C( button__, add_field_button__ );
+	UI_ETYPEDEF( button__, create_table_button__ );
+	UI_ETYPEDEF( button__, add_field_button__ );
 
-	UI_S( listbox__, field_list_listbox__ );
-	UI_C( button__, remove_field_button__ );
+	UI_ETYPEDEF( listbox__, field_list_listbox__ );
+	UI_ETYPEDEF( button__, remove_field_button__ );
 
 	struct main__
 	: public _ui_core__

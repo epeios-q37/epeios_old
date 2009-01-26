@@ -95,63 +95,25 @@ namespace ui_base {
 		kernel::kernel___ &Kernel,
 		widget &Widget,
 		nsIDOMDocument *Document,
-		const char *Id )
+		const char *Id,
+		int Events )
 	{
 		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Document, Id, nsxpcm::eAll );
+		nsxpcm::Register( Widget, Document, Id, Events );
 	}
 }
 
-#define UI_C( widget, name )\
+#define UI_ETYPEDEF( widget, name )\
 	class name\
 	: public widget\
 	{\
 	protected:\
-		virtual void NSXPCMOnClick( void ) {}\
-		virtual void NSXPCMOnInput( void ) {}\
-		virtual void NSXPCMOnFocus( void ) {}\
-		virtual void NSXPCMOnBlur( void ) {}\
-		virtual void NSXPCMOnSelect( void ) {}\
-		virtual void NSXPCMOnCommand( void );\
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
 	}
 
-	// For widget with 'onselect' event.
-#define UI_S( widget, name )\
+#define UI_TYPEDEF( widget, name )\
 	class name\
 	: public widget\
-	{\
-	protected:\
-		virtual void NSXPCMOnClick( void ) {}\
-		virtual void NSXPCMOnInput( void ) {}\
-		virtual void NSXPCMOnFocus( void ) {}\
-		virtual void NSXPCMOnBlur( void ) {}\
-		virtual void NSXPCMOnCommand( void ) {}\
-		virtual void NSXPCMOnSelect( void );\
-	}
-
-#define UI_B( widget, name )\
-	class name\
-	: public widget\
-	{\
-	protected:\
-		virtual void NSXPCMOnBroadcast( void );\
-	}
-
-
-
-	// For widget with no event.
-#define UI_NONE( widget, name )\
-	class name\
-	: public widget\
-	{\
-	protected:\
-		virtual void NSXPCMOnClick( void ) {}\
-		virtual void NSXPCMOnInput( void ) {}\
-		virtual void NSXPCMOnFocus( void ) {}\
-		virtual void NSXPCMOnBlur( void ) {}\
-		virtual void NSXPCMOnSelect( void ) {}\
-		virtual void NSXPCMOnCommand( void ) {}\
-	}
-
+	{}
 
 #endif
