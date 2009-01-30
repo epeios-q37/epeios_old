@@ -851,11 +851,11 @@ namespace nsxpcm {
 	{
 	private:
 		nsIDOMElement *_Element;
-		nsIDOMEvent *_Event;
-		nsIDOMMutationEvent *_MutationEvent;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
+		nsIDOMEvent *_Event;
+		nsIDOMMutationEvent *_MutationEvent;
 		virtual void NSXPCMOnRawEvent( const str::string_ &Event );
 		virtual void NSXPCMOnRawEvent( const char *Event );
 		virtual void NSXPCMOnEvent( event__ Event );
