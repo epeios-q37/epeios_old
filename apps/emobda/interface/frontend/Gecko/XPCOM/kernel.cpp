@@ -24,6 +24,59 @@
 
 using namespace kernel;
 
+#define CASE( m )	\
+	case mi##m:\
+		Message = #m;\
+		break
+
+static const char *GetRawMessage_( message_id__ MessageId )
+{
+	const char *Message = NULL;
+
+	switch ( MessageId ) {
+	CASE( ModifyDatabase );
+	CASE( DeleteDatabase );
+	CASE( CreateTable );
+	CASE( ModifyTable );
+	CASE( DeleteTable );
+	CASE( CreateField );
+	CASE( ModifyField );
+	CASE( DeleteField );
+	default:
+		ERRu();
+		break;
+	}
+
+	return Message;
+}
+
+typedef msg::i18_messages_ _messages_;
+typedef msg::i18_messages _messages;
+
+static class messages
+: public _messages
+{
+protected:
+	const char *MSGGetRawMessage( int MessageId ) const
+	{
+		return GetRawMessage_( (message_id__)MessageId );
+	}
+} Messages_;
+
+static const char *GetMessage_(
+	message_id__ MessageId,
+	lgg::language__ Language,
+	msg::buffer__ &Buffer )
+{
+	return ::Messages_.GetMessage( MessageId, Language, Buffer );
+}
+
+const char *kernel::kernel___::GetMessage( message_id__ MessageId )
+{
+	return GetMessage_( MessageId, _Language, _MessageBuffer );
+}
+
+
 static void _DumpTableStructure(
 	const bkdacc::string_ &Name,
 	xml::writer_ &Writer )
@@ -35,7 +88,7 @@ static void _DumpTableStructure(
 	Writer.PopTag();
 }
 
-static void _DumpTablesStructure(
+static void DumpTablesStructure_(
 	const bkdacc::strings_ &Names,
 	xml::writer_ &Writer )
 {
@@ -76,7 +129,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	::_DumpTablesStructure( Names, Writer );
+	DumpTablesStructure_( Names, Writer );
 
 	Writer.PopTag();
 
@@ -94,8 +147,6 @@ ERRBegin
 
 	_H( Manager.GetDatabaseInfos( DatabaseName ) );
 
-	Writer.PushTag( "Structure" );
-
 	if ( DatabaseName.Amount() != 0 ) {
 
 		Writer.PushTag( "Database" );
@@ -104,20 +155,18 @@ ERRBegin
 
 		Writer.PutValue( DatabaseName );
 
+		Writer.PopTag();
+
 		_DumpTablesStructure( Writer );
 
 		Writer.PopTag();
-
-		Writer.PopTag();
 	}
-
-	Writer.PopTag();
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpDatabaseStructureAsXML( str::string_ &XML )
+void kernel::kernel___::_DumpStructureAsXML( str::string_ &XML )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
@@ -127,7 +176,11 @@ ERRBegin
 	Flow.Init( XML );
 	Writer.Init( TFlow, false );
 
+	Writer.PushTag( "Structure" );
+
 	_DumpDatabaseStructure( Writer );
+
+	Writer.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -142,7 +195,9 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpDatabaseStructureAsXML( XML );
+	_DumpStructureAsXML( XML );
+
+	nsxpcm::Log( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -179,3 +234,15 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+
+static class starter 
+{
+public:
+	starter( void )
+	{
+		::Messages_.Init( mi_amount );
+	}
+	~starter( void )
+	{}
+} Starter_;

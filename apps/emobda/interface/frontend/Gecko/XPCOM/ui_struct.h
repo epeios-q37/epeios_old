@@ -41,10 +41,12 @@ namespace ui_struct {
 	UI_ETYPEDEF( command__, modify_structure_item_command__ );
 	UI_ETYPEDEF( command__, delete_structure_item_command__ );
 
-	UI_TYPEDEF( deck__, form_deck__ );
+	UI_TYPEDEF( textbox__, name_textbox__ );
 
-	UI_TYPEDEF( button__, apply_form_button__ );
-	UI_TYPEDEF( button__, cancel_form_button__ );
+	UI_ETYPEDEF( command__, apply_structure_item_command__ );
+	UI_ETYPEDEF( command__, cancel_structure_item_command__ );
+
+	UI_TYPEDEF( deck__, form_deck__ );
 
 	struct structure__
 	: public _ui_core__,
@@ -64,11 +66,12 @@ namespace ui_struct {
 			create_structure_item_command__ CreateStructureItem;
 			modify_structure_item_command__ ModifyStructureItem;
 			delete_structure_item_command__ DeleteStructureItem;
+			apply_structure_item_command__ ApplyStructureItem;
+			cancel_structure_item_command__ CancelStructureItem;
 		} Commands;
+		name_textbox__ NameTextbox;
 		form_deck__ FormDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
-		apply_form_button__ ApplyFormButton;
-		cancel_form_button__ CancelFormButton;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();

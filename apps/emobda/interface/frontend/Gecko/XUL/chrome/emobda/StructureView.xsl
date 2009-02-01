@@ -30,6 +30,9 @@
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
 			<xsl:attribute name="Type">Database</xsl:attribute>
+			<xsl:attribute name="Name">
+				<xsl:value-of select="Name"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 				<xsl:element name="treecell">
 					<xsl:attribute name="label">
@@ -49,10 +52,13 @@
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
 			<xsl:attribute name="Type">Table</xsl:attribute>
+			<xsl:attribute name="Name">
+				<xsl:value-of select="Name"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 				<xsl:element name="treecell">
 					<xsl:attribute name="label">
-						<xsl:value-of select="@Name"/>
+						<xsl:value-of select="Name"/>
 					</xsl:attribute>
 				</xsl:element>
 			</xsl:element>
@@ -66,8 +72,10 @@
 	</xsl:template>
 	<xsl:template match="Field">
 		<xsl:element name="treeitem">
-			<xsl:attribute name="label">TOTO</xsl:attribute>
 			<xsl:attribute name="Type">Field</xsl:attribute>
+			<xsl:attribute name="Name">
+				<xsl:value-of select="Name"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 				<xsl:element name="treecell">
 					<xsl:attribute name="label">

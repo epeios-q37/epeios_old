@@ -28,9 +28,25 @@
 #include "csdsnc.h"
 #include "csducl.h"
 #include "xml.h"
+#include "msg.h"
+#include "lgg.h"
 
-
+#define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
+
+	enum message_id__ 
+	{
+		miModifyDatabase,
+		miDeleteDatabase,
+		miCreateTable,
+		miModifyTable,
+		miDeleteTable,
+		miCreateField,
+		miModifyField,
+		miDeleteField,
+		mi_amount,
+		mi_Undefined
+	};
 
 	E_TYPEDEF( bkdacc::id32__, table__ );
 #define UNDEFINED_TABLE	((table__)BKDACC_UNDEFINED_ID32 )
@@ -56,11 +72,13 @@ namespace kernel {
 	  public _backend___
 	{
 	private:
+		msg::buffer__ _MessageBuffer;
+		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
 		void _DumpTablesStructure( xml::writer_ &Writer );
 		void _DumpDatabaseStructure( xml::writer_ &Writer );
-		void _DumpDatabaseStructureAsXML( str::string_ &XML );
+		void _DumpStructureAsXML( str::string_ &XML );
 		void _H( bso::bool__ Result )
 		{
 		ERRProlog
@@ -95,6 +113,7 @@ namespace kernel {
 		{
 			_backend___::reset( P );
 			_ClientCore.reset( P );
+			_Language = lgg::l_undefined;
 		}
 		kernel___( void )
 		{
@@ -112,7 +131,10 @@ namespace kernel {
 			_ClientCore.Init( "localhost:1234", NULL, _LogFunctions, csducl::tShared );
 			_backend___::Init( _ClientCore );
 			UI.Init( *this );
+
+			_Language = KERNEL_DEFAULT_LANGUAGE;	// A chnager.
 		}
+		const char *GetMessage( message_id__ Message );
 		void CreateDatabase(
 			const str::string_ &Location,
 			const str::string_ &Name )

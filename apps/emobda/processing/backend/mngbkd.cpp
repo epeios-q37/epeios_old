@@ -25,6 +25,9 @@
 using namespace mngbkd;
 using namespace mbdmng;
 
+const char *mngbkd::manager_::PREFIX = MNGBKD_MANAGER_PREFIX;
+const char *mngbkd::manager_::NAME = MNGBKD_MANAGER_NAME;
+
 enum message__ {
 	mOK,
 	mIncorrectLocation,
@@ -43,11 +46,6 @@ enum message__ {
 	case m##i:\
 		Message = "MANAGER_" #i;\
 		break
-
-
-const char *mngbkd::manager_::PREFIX = MNGBKD_MANAGER_PREFIX;
-const char *mngbkd::manager_::NAME = MNGBKD_MANAGER_NAME;
-
 
 static const char *GetRawMessage_( message__ MessageId )
 {
@@ -271,6 +269,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+	return Message;
 }
 
 static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )

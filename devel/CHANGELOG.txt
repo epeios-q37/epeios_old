@@ -1,5 +1,11 @@
 $Id$
 
+01/02/2009 :
+	- MSG :
+		- Extension du contournement de bogue VC++ 'GetMessage(A)()'.
+	- NSXPCM :
+		- 'Enable()' enlève l'attribut au ileu de le mettre à 'false'.
+
 26/01/2009 :
 	- NSXPCM :
 		- Réorganisation gestion évènements.

@@ -26,11 +26,13 @@ using namespace ui_struct;
 using kernel::kernel___;
 using nsxpcm::event__;
 
+using kernel::message_id__;
+
 void ui_struct::structure__::UpdateDecks( void )
 {
 ERRProlog
 	str::string Type;
-	str::string Label;
+	str::string Name;
 ERRBegin
 	structure__ &UI = K().UI.Structure;
 
@@ -42,24 +44,24 @@ ERRBegin
 		UI.Broadcasters.StructureItemModification.Enable();
 		UI.Broadcasters.StructureItemDeletion.Enable();
 
-		Label.Init( "Create " );
-		Label.Append( Type );
-		UI.Broadcasters.StructureItemCreation.SetLabel( Label );
-
-		Label.Init( "Modify " );
-		Label.Append( Type );
-		UI.Broadcasters.StructureItemModification.SetLabel( Label );
-
-		Label.Init( "Deletion " );
-		Label.Append( Type );
-		UI.Broadcasters.StructureItemDeletion.SetLabel( Label );
-
+		Name.Init();
+		UI.BrowseTree.GetCurrentItemAttribute( "Name", Name );
+		UI.NameTextbox.SetValue( Name );
 
 		if ( Type == "Database" ) {
+			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyDatabase ) );
+			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteDatabase ) );
+			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateTable ) );
 			UI.FormDeck.SetSelectedPanel( UI.DatabaseFormPanel );
 		} else if ( Type == "Table" ) {
+			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyTable ) );
+			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteTable ) );
+			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateField ) );
 			UI.FormDeck.SetSelectedPanel( UI.TableFormPanel );
 		}else if ( Type == "Field" ) {
+			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyField ) );
+			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteField ) );
+			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateField ) );
 			UI.FormDeck.SetSelectedPanel( UI.FieldFormPanel );
 		} else
 			ERRu();
@@ -91,6 +93,27 @@ void ui_struct::modify_structure_item_command__::NSXPCMOnEvent( event__ )
 void ui_struct::delete_structure_item_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Delete !" );
+}
+
+void ui_struct::apply_structure_item_command__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	str::string Buffer;
+ERRBegin
+	Buffer.Init();
+
+	K().CreateTable( K().UI.Structure.NameTextbox.GetValue( Buffer ) );
+	K().RefreshStructureView();
+	K().UI.Structure.Broadcasters.StructureItemBrowsing.Enable();
+	K().UI.Structure.Broadcasters.StructureItemEdition.Disable();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui_struct::cancel_structure_item_command__::NSXPCMOnEvent( event__ )
+{
+	nsxpcm::Alert( K().UI.Structure.Window, "Cancel !" );
 }
 
 void ui_struct::browse_tree__::NSXPCMOnEvent( event__ )
@@ -138,6 +161,15 @@ static void Register_(
 
 static void Register_(
 	kernel___ &Kernel,
+	textbox__ &Textbox,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Textbox, Document, Id, nsxpcm::efNone );
+}
+
+static void Register_(
+	kernel___ &Kernel,
 	button__ &Button,
 	nsIDOMDocument *Document,
 	const char *Id )
@@ -169,6 +201,10 @@ static void Register_(
 	Register_( Kernel, UI.CreateStructureItem, Document, "cmdCreateStructureItem" );
 	Register_( Kernel, UI.ModifyStructureItem, Document, "cmdModifyStructureItem" );
 	Register_( Kernel, UI.DeleteStructureItem, Document, "cmdDeleteStructureItem" );
+
+	Register_( Kernel, UI.ApplyStructureItem, Document, "cmdApplyStructureItem" );
+	Register_( Kernel, UI.CancelStructureItem, Document, "cmdCancelStructureItem" );
+
 }
 
 void ui_struct::Register(
@@ -187,10 +223,9 @@ void ui_struct::Register(
 
 	Register_( Kernel, UI.FormDeck, UI.Document, "formDeck" );
 
+	Register_( Kernel, UI.NameTextbox, UI.Document, "nameTextbox" );
+
 	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
 	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
 	UI.FieldFormPanel = nsxpcm::GetElementById( UI.Document, "fieldFormPanel" );
-
-	Register_( Kernel, UI.ApplyFormButton, UI.Document, "applyFormButton" );
-	Register_( Kernel, UI.CancelFormButton, UI.Document, "cancelFormButton" );
 }

@@ -66,6 +66,7 @@ extern class ttr_tutor &MSGTutor;
 #include "str.h"
 #include "ctn.h"
 #include "xtf.h"
+#include "cpe.h"
 
 #define MSG_MESSAGE_LENGTH_MAX	100
 
@@ -75,7 +76,7 @@ extern class ttr_tutor &MSGTutor;
 		break
 
 #ifdef CPE__USE_WORKAROUNDS
-#	ifdef CPE__C_VC6
+#	ifdef CPE__C_VC
 #		undef GetMessage
 #	endif
 #	ifdef CPE__P_CYGWIN

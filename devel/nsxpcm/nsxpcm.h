@@ -966,7 +966,10 @@ namespace nsxpcm {
 		}
 		void Enable( bso::bool__ Value = true )
 		{
-			nsxpcm::SetAttribute( GetObject(), "disabled", Value ? "false" : "true" );
+			if ( Value )
+				nsxpcm::RemoveAttribute( GetObject(), "disabled" );
+			else
+				nsxpcm::SetAttribute( GetObject(), "disabled", "true" );
 		}
 		void Disable( void )
 		{
@@ -981,6 +984,10 @@ namespace nsxpcm {
 			Show( false );
 		}
 		void SetLabel( str::string_ &Label )
+		{
+			nsxpcm::SetAttribute( GetObject(), "label", Label );
+		}
+		void SetLabel( const char *Label )
 		{
 			nsxpcm::SetAttribute( GetObject(), "label", Label );
 		}
@@ -999,9 +1006,11 @@ namespace nsxpcm {
 		{
 			nsxpcm::SetValue( GetObject(), Value );
 		}
-		void GetValue( str::string_ &Value )
+		const str::string_ &GetValue( str::string_ &Value )
 		{
 			nsxpcm::GetValue( GetObject(), Value );
+
+			return Value;
 		}
 	};
 

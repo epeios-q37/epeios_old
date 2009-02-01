@@ -118,7 +118,7 @@ ERRBegin
 	else
 		TableIdsStore.New( TableId );
 
-	Table.Init( Name, TableId );
+	Table.Init( Description.Name, TableId );
 
 	TableRow = Tables.Add( Table );
 ERRErr

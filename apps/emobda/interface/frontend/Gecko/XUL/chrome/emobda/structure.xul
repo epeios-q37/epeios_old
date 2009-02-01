@@ -43,6 +43,9 @@
 		<command id="cmdCreateStructureItem" observes="bcrStructureItemCreation"/>
 		<command id="cmdModifyStructureItem" observes="bcrStructureItemModification"/>
 		<command id="cmdDeleteStructureItem" observes="bcrStructureItemDeletion"/>
+		
+		<command id="cmdApplyStructureItem" label="|OK|" observes="bcrStructureItemEdition"/>
+		<command id="cmdCancelStructureItem" label="|Cancel|" observes="bcrStructureItemEdition"/>
 	</commandset>
 	<hbox flex="1">
 		<vbox flex="1">
@@ -70,7 +73,7 @@
 						<vbox flex="1">
 							<groupbox>
 								<caption label="Name"/>
-								<textbox id="nameTexbox" value="Test" observes="bcrItemEdition"/>
+								<textbox id="nameTextbox" value="Test" observes="bcrStructureItemEdition"/>
 							</groupbox>
 							<spacer/>
 						</vbox>
@@ -84,8 +87,8 @@
 						</box>
 					</deck>
 					<hbox>
-						<button id="applyFormButton" label="OK" observes="bcrStructureItemEdition"/>
-						<button id="cancelFormButton" label="Cancel" observes="bcrStructureItemEdition"/>
+						<button command="cmdApplyStructureItem"/>
+						<button command="cmdCancelStructureItem"/>
 					</hbox>
 				</vbox>
 			</groupbox>
