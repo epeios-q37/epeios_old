@@ -176,8 +176,11 @@ namespace kernel {
 		{
 			RefreshStructureView();
 			UI.Main.Broadcasters.DatabaseOpened.Disable();
-			UI.Structure.Broadcasters.ItemEdition.Disable();
-			UI.Structure.Broadcasters.StructureBrowsing.Disable();
+
+			UI.Structure.Broadcasters.StructureItemEdition.Disable();
+			UI.Structure.Broadcasters.StructureItemCreation.Disable();
+			UI.Structure.Broadcasters.StructureItemModification.Disable();
+			UI.Structure.Broadcasters.StructureItemDeletion.Disable();
 		}
 		void ModifyField( void )
 		{

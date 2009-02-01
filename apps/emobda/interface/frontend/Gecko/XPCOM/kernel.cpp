@@ -94,15 +94,22 @@ ERRBegin
 
 	_H( Manager.GetDatabaseInfos( DatabaseName ) );
 
-	Writer.PushTag( "Database" );
+	Writer.PushTag( "Structure" );
 
-	Writer.PushTag( "Name" );
+	if ( DatabaseName.Amount() != 0 ) {
 
-	Writer.PutValue( DatabaseName );
+		Writer.PushTag( "Database" );
 
-	_DumpTablesStructure( Writer );
+		Writer.PushTag( "Name" );
 
-	Writer.PopTag();
+		Writer.PutValue( DatabaseName );
+
+		_DumpTablesStructure( Writer );
+
+		Writer.PopTag();
+
+		Writer.PopTag();
+	}
 
 	Writer.PopTag();
 ERRErr
@@ -147,7 +154,7 @@ ERRBegin
 
 	UI.Structure.UpdateDecks();
 
-	UI.Structure.Broadcasters.ItemEdition.Disable();
+	UI.Structure.Broadcasters.StructureItemEdition.Disable();
 ERRErr
 ERREnd
 ERREpilog

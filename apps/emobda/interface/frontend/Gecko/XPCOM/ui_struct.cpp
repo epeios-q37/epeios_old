@@ -30,6 +30,7 @@ void ui_struct::structure__::UpdateDecks( void )
 {
 ERRProlog
 	str::string Type;
+	str::string Label;
 ERRBegin
 	structure__ &UI = K().UI.Structure;
 
@@ -37,27 +38,35 @@ ERRBegin
 		Type.Init();
 		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
 
+		UI.Broadcasters.StructureItemCreation.Enable();
+		UI.Broadcasters.StructureItemModification.Enable();
+		UI.Broadcasters.StructureItemDeletion.Enable();
+
+		Label.Init( "Create " );
+		Label.Append( Type );
+		UI.Broadcasters.StructureItemCreation.SetLabel( Label );
+
+		Label.Init( "Modify " );
+		Label.Append( Type );
+		UI.Broadcasters.StructureItemModification.SetLabel( Label );
+
+		Label.Init( "Deletion " );
+		Label.Append( Type );
+		UI.Broadcasters.StructureItemDeletion.SetLabel( Label );
+
+
 		if ( Type == "Database" ) {
-			UI.Broadcasters.DatabaseSelection.Show();
-			UI.Broadcasters.TableSelection.Hide();
-			UI.Broadcasters.FieldSelection.Hide();
 			UI.FormDeck.SetSelectedPanel( UI.DatabaseFormPanel );
 		} else if ( Type == "Table" ) {
-			UI.Broadcasters.DatabaseSelection.Hide();
-			UI.Broadcasters.TableSelection.Show();
-			UI.Broadcasters.FieldSelection.Hide();
 			UI.FormDeck.SetSelectedPanel( UI.TableFormPanel );
 		}else if ( Type == "Field" ) {
-			UI.Broadcasters.DatabaseSelection.Hide();
-			UI.Broadcasters.TableSelection.Hide();
-			UI.Broadcasters.FieldSelection.Show();
 			UI.FormDeck.SetSelectedPanel( UI.FieldFormPanel );
 		} else
 			ERRu();
 	} else {
-		UI.Broadcasters.DatabaseSelection.Hide();
-		UI.Broadcasters.TableSelection.Hide();
-		UI.Broadcasters.FieldSelection.Hide();
+		UI.Broadcasters.StructureItemCreation.Disable();
+		UI.Broadcasters.StructureItemModification.Disable();
+		UI.Broadcasters.StructureItemDeletion.Disable();
 		UI.FormDeck.SetSelectedIndex( -1 );
 	}
 
@@ -66,46 +75,22 @@ ERREnd
 ERREpilog
 }
 
-void ui_struct::structure_browsing_broadcaster__::NSXPCMOnEvent( event__ )
+void ui_struct::create_structure_item_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Attribute change !" );
+	nsxpcm::Alert( K().UI.Structure.Window, "Create !" );
+
+	K().UI.Structure.Broadcasters.StructureItemBrowsing.Disable();
+	K().UI.Structure.Broadcasters.StructureItemEdition.Enable();
 }
 
-void ui_struct::rename_database_command__::NSXPCMOnEvent( event__ )
+void ui_struct::modify_structure_item_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Rename Database !" );
+	nsxpcm::Alert( K().UI.Structure.Window, "Modify !" );
 }
 
-void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
+void ui_struct::delete_structure_item_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Create Table !" );
-	K().UI.Structure.Broadcasters.StructureBrowsing.Disable();
-	K().UI.Structure.Broadcasters.ItemEdition.Enable();
-}
-
-void ui_struct::rename_table_command__::NSXPCMOnEvent( event__ )
-{
-	nsxpcm::Alert( K().UI.Structure.Window, "Rename Table !" );
-}
-
-void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
-{
-	nsxpcm::Alert( K().UI.Structure.Window, "Delete Table !" );
-}
-
-void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
-{
-	nsxpcm::Alert( K().UI.Structure.Window, "Create Field !" );
-}
-
-void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
-{
-	nsxpcm::Alert( K().UI.Structure.Window, "Modify Field !" );
-}
-
-void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
-{
-	nsxpcm::Alert( K().UI.Structure.Window, "Delete Field !" );
+	nsxpcm::Alert( K().UI.Structure.Window, "Delete !" );
 }
 
 void ui_struct::browse_tree__::NSXPCMOnEvent( event__ )
@@ -122,15 +107,6 @@ static void Register_(
 	const char *Id )
 {
 	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
-}
-
-static void Register_(
-	kernel___ &Kernel,
-	structure_browsing_broadcaster__ &Broadcaster,
-	nsIDOMDocument *Document,
-	const char *Id )
-{
-	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efAttributeChange );
 }
 
 static void Register_(
@@ -176,51 +152,23 @@ static void Register_(
 	ui_struct::structure__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.ItemEdition, Document, "bcrItemEdition" );
-	Register_( Kernel, UI.StructureBrowsing, Document, "bcrStructureBrowsing" );
-	Register_( Kernel, UI.DatabaseSelection,  Document, "bcrDatabaseSelection" );
-	Register_( Kernel, UI.TableSelection, Document, "bcrTableSelection" );
-	Register_( Kernel, UI.FieldSelection, Document, "bcrFieldSelection" );
+	Register_( Kernel, UI.StructureItemEdition, Document, "bcrStructureItemEdition" );
+	Register_( Kernel, UI.StructureItemBrowsing, Document, "bcrStructureItemBrowsing" );
+	Register_( Kernel, UI.StructureItemCreation, Document, "bcrStructureItemCreation" );
+	Register_( Kernel, UI.StructureItemModification, Document, "bcrStructureItemModification" );
+	Register_( Kernel, UI.StructureItemDeletion, Document, "bcrStructureItemDeletion" );
 }
 
 /* 'command's */
 
 static void Register_(
 	kernel___ &Kernel,
-	ui_struct::structure__::commands__::database__ &UI,
-	nsIDOMDocument *Document )
-{
-	Register_( Kernel, UI.Rename, Document, "cmdRenameDatabase" );
-}
-
-static void Register_(
-	kernel___ &Kernel,
-	ui_struct::structure__::commands__::table__ &UI,
-	nsIDOMDocument *Document )
-{
-	Register_( Kernel, UI.Create, Document, "cmdCreateTable" );
-	Register_( Kernel, UI.Rename, Document, "cmdRenameTable" );
-	Register_( Kernel, UI.Delete, Document, "cmdDeleteTable" );
-}
-
-static void Register_(
-	kernel___ &Kernel,
-	ui_struct::structure__::commands__::field__ &UI,
-	nsIDOMDocument *Document )
-{
-	Register_( Kernel, UI.Create, Document, "cmdCreateField" );
-	Register_( Kernel, UI.Modify, Document, "cmdModifyField" );
-	Register_( Kernel, UI.Delete, Document, "cmdDeleteField" );
-}
-
-static void Register_(
-	kernel___ &Kernel,
 	ui_struct::structure__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Database, Document );
-	Register_( Kernel, UI.Table, Document );
-	Register_( Kernel, UI.Field, Document );
+	Register_( Kernel, UI.CreateStructureItem, Document, "cmdCreateStructureItem" );
+	Register_( Kernel, UI.ModifyStructureItem, Document, "cmdModifyStructureItem" );
+	Register_( Kernel, UI.DeleteStructureItem, Document, "cmdDeleteStructureItem" );
 }
 
 void ui_struct::Register(

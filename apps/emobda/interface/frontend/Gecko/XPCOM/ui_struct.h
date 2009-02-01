@@ -28,24 +28,18 @@ namespace ui_struct {
 	using namespace ui_base;
 
 	UI_TYPEDEF( broadcaster__, item_edition_broadcaster__ );
-	UI_ETYPEDEF( broadcaster__, structure_browsing_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, database_selection_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, table_selection_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, field_selection_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, structure_item_browsing_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, structure_item_creation_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, structure_item_modification_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, structure_item_deletion_broadcaster__ );
 
 	UI_ETYPEDEF( tree__, browse_tree__ );
 
 	UI_TYPEDEF( deck__, buttons_deck__ );
 
-	UI_ETYPEDEF( command__, rename_database_command__ );
-
-	UI_ETYPEDEF( command__, create_table_command__ );
-	UI_ETYPEDEF( command__, rename_table_command__ );
-	UI_ETYPEDEF( command__, delete_table_command__ );
-
-	UI_ETYPEDEF( command__, create_field_command__ );
-	UI_ETYPEDEF( command__, modify_field_command__ );
-	UI_ETYPEDEF( command__, delete_field_command__ );
+	UI_ETYPEDEF( command__, create_structure_item_command__ );
+	UI_ETYPEDEF( command__, modify_structure_item_command__ );
+	UI_ETYPEDEF( command__, delete_structure_item_command__ );
 
 	UI_TYPEDEF( deck__, form_deck__ );
 
@@ -60,26 +54,16 @@ namespace ui_struct {
 		nsIDOMElement *Items;
 		browse_tree__ BrowseTree;
 		struct broadcasters__ {
-			item_edition_broadcaster__ ItemEdition;
-			structure_browsing_broadcaster__ StructureBrowsing;
-			database_selection_broadcaster__ DatabaseSelection;
-			table_selection_broadcaster__ TableSelection;
-			field_selection_broadcaster__ FieldSelection;
+			item_edition_broadcaster__ StructureItemEdition;
+			structure_item_creation_broadcaster__ StructureItemBrowsing;
+			structure_item_creation_broadcaster__ StructureItemCreation;
+			structure_item_modification_broadcaster__ StructureItemModification;
+			structure_item_deletion_broadcaster__ StructureItemDeletion;
 		} Broadcasters;
 		struct commands__ {
-			struct database__ {
-				rename_database_command__ Rename;
-			} Database;
-			struct table__ {
-				create_table_command__ Create;
-				rename_table_command__ Rename;
-				delete_table_command__ Delete;
-			} Table;
-			struct field__ {
-				create_field_command__ Create;
-				modify_field_command__ Modify;
-				delete_field_command__ Delete;
-			} Field;
+			create_structure_item_command__ CreateStructureItem;
+			modify_structure_item_command__ ModifyStructureItem;
+			delete_structure_item_command__ DeleteStructureItem;
 		} Commands;
 		form_deck__ FormDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;

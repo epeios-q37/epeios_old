@@ -32,8 +32,8 @@ void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 //	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
 	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ) );
 	K().RefreshStructureView();
-	K().UI.Structure.Broadcasters.StructureBrowsing.Enable();
-	K().UI.Structure.Broadcasters.ItemEdition.Disable();
+	K().UI.Structure.Broadcasters.StructureItemBrowsing.Enable();
+	K().UI.Structure.Broadcasters.StructureItemEdition.Disable();
 }
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )

@@ -980,6 +980,10 @@ namespace nsxpcm {
 		{
 			Show( false );
 		}
+		void SetLabel( str::string_ &Label )
+		{
+			nsxpcm::SetAttribute( GetObject(), "label", Label );
+		}
 	};
 
 	class button__
