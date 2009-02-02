@@ -522,6 +522,14 @@ namespace nsxpcm {
 		return Value;
 	}
 
+	inline const str::string_ &GetAttribute(
+		nsIDOMNode *Node,
+		const char *Name,
+		str::string_ &Value )
+	{
+		return GetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+	}
+
 	template <typename t> inline const str::string_ &GetValue(
 		t *Element,
 		str::string_ &Value )
@@ -748,6 +756,35 @@ namespace nsxpcm {
 		return Name;
 
 	}
+
+	// Permet de parcourir une arborescence de noeuds.
+	class browser__
+	{
+	private:
+		nsIDOMNode *_Root, *_Current;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Root = _Current = NULL;
+		}
+		browser__( void )
+		{
+			reset( false );
+		}
+		~browser__( void )
+		{
+			reset();
+		}
+		void Init( nsIDOMNode *Root )
+		{
+			reset();
+
+			_Root = Root;
+			_Current = _Root;
+		}
+		// Retourne le prochain noeud, ou 'NULL' si tous ont été lus.
+		nsIDOMNode *GetNext( void );
+	};
 
 	template <typename element> bso::slong__ GetSelectedIndex( element *Element )
 	{
@@ -1215,6 +1252,10 @@ namespace nsxpcm {
 
 	class html_anchor__
 	: public _element__<nsIDOMHTMLAnchorElement>
+	{};
+
+	class menuitem__
+	: public _element__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
 	{};
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),

@@ -1162,6 +1162,30 @@ ERREpilog
 	return Fragment;
 }
 
+nsIDOMNode *browser__::GetNext( void )
+{
+	if ( _Current != NULL ) {
+		if ( _Current == _Root )
+			_Current = GetFirstChild( _Root );
+		else if ( GetFirstChild( _Current ) != NULL )
+			_Current = GetFirstChild( _Current );
+		else if ( GetNextSibling( _Current ) != NULL )
+			_Current = GetNextSibling( _Current );
+		else {
+			do
+				_Current = GetParentNode( _Current );
+			while ( ( _Current != _Root ) && ( GetNextSibling( _Current ) == NULL ) );
+
+			if ( _Current == _Root )
+				_Current = NULL;
+			else
+				_Current = GetNextSibling( _Current );
+		}
+	}
+
+	return _Current;
+}
+
 class nsxpcmpersonnalization
 : public nsxpcmtutor
 {

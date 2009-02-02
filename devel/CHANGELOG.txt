@@ -1,5 +1,11 @@
 $Id$
 
+02/02/2009 :
+	- NSXPCM :
+		- Ajout 'menuitem___'.
+		- Ajout 'browser__'.
+		- Ajout version 'GetAttribute(...)' avec un 'nsIDOMNode' comme paramètre.
+
 01/02/2009 :
 	- MSG :
 		- Extension du contournement de bogue VC++ 'GetMessage(A)()'.
