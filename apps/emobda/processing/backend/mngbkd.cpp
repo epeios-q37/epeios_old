@@ -377,7 +377,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 	Module.Add( D( CreateDatabase ),
 			bkdmng::cString,	// Database location.
 			bkdmng::cString,	// Database name.
-			bkfmng::cString,	// Database comment.
+			bkdmng::cString,	// Database comment.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetDatabaseInfos ),
