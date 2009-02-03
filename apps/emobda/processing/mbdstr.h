@@ -44,17 +44,18 @@ namespace mbdstr {
 	public:
 		struct s
 		{
-			str::string_::s Name;
+			str::string_::s Name, Comment;
 			tables_::s Tables;
 			fields_::s Fields;
 			table_ids_store_::s TableIdsStore;
 		};
-		str::string_ Name;
+		str::string_ Name, Comment;
 		tables_ Tables;
 		fields_ Fields;
 		table_ids_store_ TableIdsStore;
 		structure_( s &S )
 		: Name( S.Name ),
+		  Comment( S.Comment ),
 		  Tables( S.Tables ),
 		  Fields( S.Fields ),
 		  TableIdsStore( S.TableIdsStore )
@@ -62,6 +63,7 @@ namespace mbdstr {
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Comment.reset( P );
 			Tables.reset( P );
 			Fields.reset( P );
 			TableIdsStore.reset( P );
@@ -69,6 +71,7 @@ namespace mbdstr {
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Comment.plug( MM );
 			Tables.plug( MM );
 			Fields.plug( MM );
 			TableIdsStore.plug( MM );
@@ -76,6 +79,7 @@ namespace mbdstr {
 		structure_ &operator =( const structure_ &D )
 		{
 			Name = D.Name;
+			Comment= D.Comment;
 			Tables = D.Tables;
 			Fields = D.Fields;
 			TableIdsStore = D.TableIdsStore;
@@ -87,15 +91,19 @@ namespace mbdstr {
 			reset();
 
 			Name.Init();
+			Comment.Init();
 			Tables.Init();
 			Fields.Init();
 			TableIdsStore.Init();
 		}
-		void Init( const str::string_ &Name )
+		void Init(
+			const str::string_ &Name,
+			const str::string_ &Comment )
 		{
 			Init();
 
 			this->Name = Name;
+			this->Comment = Comment;
 		}
 		field_row__ AddField(
 			table_row__ TableRow,
@@ -109,7 +117,7 @@ namespace mbdstr {
 			table_id__ &TableId,
 			field_id__ &FieldId ) const
 		{
-			ctn::E_CMITEMt( field_, field_row__ ) Field;
+			ctn::E_CITEMt( field_, field_row__ ) Field;
 			Field.Init( Fields );
 
 			TableId = Field( FieldRow ).TableId();

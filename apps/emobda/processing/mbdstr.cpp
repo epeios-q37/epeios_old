@@ -40,7 +40,7 @@ field_row__ mbdstr::structure_::SearchField(
 	table_row__ TableRow,
 	const str::string_ &Name ) const
 {
-	ctn::E_CMITEMt( field_, field_row__ ) Field;
+	ctn::E_CITEMt( field_, field_row__ ) Field;
 	field_row__ Row = Fields.First();
 	table_id__ TableId = GetTableTableId( TableRow );
 
@@ -75,7 +75,7 @@ ERRBegin
 
 	FieldId = Tables( TableRow ).GetNewFieldId( Description.GetFieldId() );
 
-	Field.Init( Name, TableId, FieldId );
+	Field.Init( Description.Name, Description.Comment, TableId, FieldId );
 
 	FieldRow = Fields.Add( Field );
 
@@ -93,7 +93,7 @@ void mbdstr::structure_::_AddFields(
 	const field_descriptions_ &Descriptions )
 {
 	epeios::row__ Row = Descriptions.First();
-	ctn::E_CMITEM( field_description_ ) Description;
+	ctn::E_CITEM( field_description_ ) Description;
 
 	Description.Init( Descriptions );
 
@@ -118,7 +118,7 @@ ERRBegin
 	else
 		TableIdsStore.New( TableId );
 
-	Table.Init( Description.Name, TableId );
+	Table.Init( Description.Name, Description.Comment, TableId );
 
 	TableRow = Tables.Add( Table );
 ERRErr

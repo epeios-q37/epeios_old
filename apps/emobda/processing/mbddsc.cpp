@@ -82,7 +82,7 @@ static void ExportFields_(
 	writer_ &Writer )
 {
 	bso::integer_buffer__ Buffer;
-	ctn::E_CMITEMt( field_, field_row__ ) Field;
+	ctn::E_CITEMt( field_, field_row__ ) Field;
 	epeios::row__ Row = FieldRows.First();
 
 	Field.Init( Fields );

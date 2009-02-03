@@ -39,32 +39,33 @@ namespace mbdfld {
 	class field_ {
 	public:
 		struct s {
-			str::string_::s Name;
+			str::string_::s Name, Comment;
 			table_id__ TableId;
 			field_id__ FieldId;
 		} &S_;
-		str::string_ Name;
+		str::string_ Name, Comment;
 		field_( s &S )
 		: S_( S ),
-		  Name( S.Name )
+		  Name( S.Name ),
+		  Comment( S.Comment )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Comment.reset( P );
+
 			S_.TableId = MBDBSC_UNDEFINED_TABLE_ID;
 			S_.FieldId = MBDBSC_UNDEFINED_FIELD_ID;
-		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
-		{
-			Name.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Comment.plug( MM );
 		}
 		field_ &operator =( const field_ &F )
 		{
 			Name = F.Name;
+			Comment = F.Comment;
 
 			S_.TableId = F.S_.TableId;
 			S_.FieldId = F.S_.FieldId;
@@ -76,15 +77,18 @@ namespace mbdfld {
 			reset();
 
 			Name.Init();
+			Comment.Init();
 		}
 		void Init(
 			const str::string_ &Name,
+			const str::string_ &Comment,
 			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID,
 			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID )
 		{
 			Init();
 
 			this->Name = Name;
+			this->Comment = Comment;
 
 			S_.TableId = TableId;
 			S_.FieldId = FieldId;
@@ -96,13 +100,13 @@ namespace mbdfld {
 
 	E_AUTO( field );
 
-	typedef lstctn::E_LXMCONTAINERt_( field_, field_row__ ) fields_;
+	typedef lstctn::E_LXCONTAINERt_( field_, field_row__ ) fields_;
 	E_AUTO( fields );
 
 	typedef field_ field_description_;
 	E_AUTO( field_description );
 
-	typedef ctn::E_XMCONTAINER_( field_description_ ) field_descriptions_;
+	typedef ctn::E_XCONTAINER_( field_description_ ) field_descriptions_;
 	E_AUTO( field_descriptions );
 
 }

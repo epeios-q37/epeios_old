@@ -45,22 +45,24 @@ namespace mbdtbl {
 		struct s
 		{
 			table_id__ TableId;
-			str::string_::s Name;
+			str::string_::s Name, Comment;
 			field_rows_::s Fields;
 			field_ids_store_::s FieldIdsStore;
 		} &S_;
-		str::string_ Name;
+		str::string_ Name, Comment;
 		field_rows_ Fields;
 		field_ids_store_ FieldIdsStore;
 		table_( s &S )
 		: S_( S ),
 		  Name( S.Name ),
+		  Comment( S.Comment ),
 		  Fields( S.Fields ),
 		  FieldIdsStore( S.FieldIdsStore )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Comment.reset( P );
 			Fields.reset( P );
 			FieldIdsStore.reset( P );
 
@@ -69,12 +71,14 @@ namespace mbdtbl {
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Comment.plug( MM );
 			Fields.plug( MM );
 			FieldIdsStore.plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
 			Name = T.Name;
+			Comment = T.Comment;
 			Fields = T.Fields;
 			FieldIdsStore = T.FieldIdsStore;
 
@@ -87,16 +91,19 @@ namespace mbdtbl {
 			reset();
 
 			Name.Init();
+			Comment.Init();
 			Fields.Init();
 			FieldIdsStore.Init();
 		}
 		void Init(
 			const str::string_ &Name,
+			const str::string_ &Comment,
 			table_id__ TableId )
 		{
 			Init();
 
 			this->Name = Name;
+			this->Comment = Comment;
 			S_.TableId = TableId;
 		}
 		field_id__ GetNewFieldId( field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID )
@@ -127,19 +134,21 @@ namespace mbdtbl {
 		struct s
 		{
 			table_id__ TableId;
-			str::string_::s Name;
+			str::string_::s Name, Comment;
 			mbdfld::field_descriptions_::s Fields;
 		} &S_;
-		str::string_ Name;
+		str::string_ Name, Comment;
 		mbdfld::field_descriptions_ Fields;
 		table_description_( s &S )
 		: S_( S ),
 		  Name( S.Name ),
+		  Comment( S.Comment ),
 		  Fields( S.Fields )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
+			Comment.reset( P );
 			Fields.reset( P );
 
 			S_.TableId = MBDBSC_UNDEFINED_TABLE_ID;
@@ -147,11 +156,13 @@ namespace mbdtbl {
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
+			Comment.plug( MM );
 			Fields.plug( MM );
 		}
 		table_description_ &operator =( const table_description_ &TD )
 		{
 			Name = TD.Name;
+			Comment = TD.Comment;
 			Fields = TD.Fields;
 
 			S_.TableId = TD.S_.TableId;
@@ -163,15 +174,19 @@ namespace mbdtbl {
 			reset();
 
 			Name.Init();
+			Comment.Init();
 			Fields.Init();
 		}
 		void Init(
 			const str::string_ &Name,
+			const str::string_ &Comment,
 			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID )
 		{
 			Init();
 
 			this->Name = Name;
+			this->Comment = Comment;
+
 			S_.TableId = TableId;
 		}
 		E_RODISCLOSE_( table_id__, TableId );

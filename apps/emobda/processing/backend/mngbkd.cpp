@@ -147,7 +147,7 @@ DEC( CreateDatabase )
 {
 	message__ Message = mOK;
 ERRProlog
-	str::string Location, Name;
+	str::string Location, Name, Comment;
 	tol::E_FPOINTER___( bso::char__ ) Buffer;
 ERRBegin
 	Location.Init();
@@ -155,6 +155,9 @@ ERRBegin
 
 	Name.Init();
 	Name = Request.StringIn();
+
+	Comment.Init();
+	Comment = Request.StringIn();
 
 	if ( !TestAndNormalize_( Location ) ) {
 		Message = mIncorrectLocation;
@@ -173,7 +176,7 @@ ERRBegin
 	}
 */
 
-	if ( !Manager.Init( Location, Name, dbstbl::mAdmin, true, true ) ) {
+	if ( !Manager.Init( Location, Name, Comment, dbstbl::mAdmin, true, true ) ) {
 		Message = mUnableToCreateDatabase;
 		ERRReturn;
 	}
@@ -204,12 +207,15 @@ DEC( CreateTable )
 {
 	message__ Message = mOK;
 ERRProlog
-	bkdmng::string Name;
+	bkdmng::string Name, Comment;
 	table_row__ TableRow = NONE;
 	mbdtbl::table_description Description;
 ERRBegin
 	Name.Init();
 	Name = Request.StringIn();
+
+	Comment.Init();
+	Comment = Request.StringIn();
 
 	if ( !TestAndNormalizeTableName_( Name ) ) {
 		Message = mIncorrectTableName;
@@ -221,7 +227,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Description.Init( Name );
+	Description.Init( Name, Comment );
 
 	if ( ( TableRow = Manager.AddTable( Description ) ) == NONE ) {
 		Message = mUnableToCreateTable;
@@ -281,7 +287,7 @@ DEC( AddField )
 {
 	message__ Message = mOK;
 ERRProlog
-	bkdmng::string Name;
+	bkdmng::string Name, Comment;
 	table_row__ TableRow = NONE;
 	field_row__ FieldRow = NONE;
 	field_description Field;
@@ -291,6 +297,9 @@ ERRBegin
 
 	Name.Init();
 	Name = Request.StringIn();
+
+	Comment.Init();
+	Comment = Request.StringIn();
 
 	Name.StripCharacter( ' ' );
 
@@ -309,7 +318,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Field.Init( Name );
+	Field.Init( Name, Comment );
 
 	FieldRow = Manager.AddField( TableRow, Field );
 
@@ -326,7 +335,7 @@ static const bkdmng::items32_ &Convert_(
 {
 ERRProlog
 	field_row__ FieldRow = NONE;
-	ctn::E_CMITEMt( field_, field_row__ ) Field;
+	ctn::E_CITEMt( field_, field_row__ ) Field;
 	bkdmng::item32 Item;
 ERRBegin
 	Field.Init( Fields );
@@ -368,6 +377,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 	Module.Add( D( CreateDatabase ),
 			bkdmng::cString,	// Database location.
 			bkdmng::cString,	// Database name.
+			bkfmng::cString,	// Database comment.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetDatabaseInfos ),
@@ -376,6 +386,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 		bkdmng::cEnd );
 	Module.Add( D( CreateTable ),
 			bkdmng::cString,	// Table name.
+			bkdmng::cString,	// Table comment.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Table row.
 		bkdmng::cEnd );
@@ -383,11 +394,13 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 		bkdmng::cEnd,
 			bkdmng::cIds32,		// 'row's.
 			bkdmng::cStrings,	// Noms.
+			bkdmng::cStrings,	// Commentaires.
 			bkdmng::cIds16,		// 'id's.
 		bkdmng::cEnd );
 	Module.Add( D( AddField ),
 		bkdmng::cId32,			// Table row.
 			bkdmng::cString,	// Field name.
+			bkdmng::cString,	// Field comment.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Field row.
 		bkdmng::cEnd );

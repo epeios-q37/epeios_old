@@ -86,6 +86,7 @@ namespace mbdmng {
 		bso::bool__ Init(
 			const str::string_ &Location,
 			const str::string_ &Name,
+			const str::string_ &Comment,
 			dbstbl::mode__ Mode,
 			bso::bool__ Erase,
 			bso::bool__ Partial )
@@ -93,7 +94,7 @@ namespace mbdmng {
 			reset();
 
 			Engine.Init( Location, Mode, Erase, Partial );
-			Structure.Init( Name );
+			Structure.Init( Name, Comment );
 			this->Location.Init( Location );
 
 			ExportStructure_();
