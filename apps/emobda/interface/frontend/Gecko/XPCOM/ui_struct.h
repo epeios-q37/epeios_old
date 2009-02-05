@@ -42,6 +42,7 @@ namespace ui_struct {
 	UI_ETYPEDEF( command__, delete_structure_item_command__ );
 
 	UI_TYPEDEF( textbox__, name_textbox__ );
+	UI_TYPEDEF( textbox__, comment_textbox__ );
 
 	UI_ETYPEDEF( command__, apply_structure_item_command__ );
 	UI_ETYPEDEF( command__, cancel_structure_item_command__ );
@@ -70,6 +71,7 @@ namespace ui_struct {
 			cancel_structure_item_command__ CancelStructureItem;
 		} Commands;
 		name_textbox__ NameTextbox;
+		comment_textbox__ CommentTextbox;
 		form_deck__ FormDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
 		void Init( bridge_functions__ &Functions )

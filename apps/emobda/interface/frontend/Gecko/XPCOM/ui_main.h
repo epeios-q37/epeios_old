@@ -33,15 +33,6 @@ namespace ui_main {
 	UI_ETYPEDEF( command__, open_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );
 
-	UI_ETYPEDEF( textbox__, table_location_textbox__ );
-	UI_ETYPEDEF( textbox__, field_name_textbox__ );
-
-	UI_ETYPEDEF( button__, create_table_button__ );
-	UI_ETYPEDEF( button__, add_field_button__ );
-
-	UI_ETYPEDEF( listbox__, field_list_listbox__ );
-	UI_ETYPEDEF( button__, remove_field_button__ );
-
 	struct main__
 	: public _ui_core__
 	{
@@ -56,13 +47,6 @@ namespace ui_main {
 		struct broadcasters__ {
 			database_opened_broadcaster__ DatabaseOpened;
 		} Broadcasters;
-
-		table_location_textbox__ TableLocationTextbox;
-		create_table_button__ CreateTableButton;
-		field_name_textbox__ FieldNameTextbox;
-		add_field_button__ AddFieldButton;
-		field_list_listbox__ FieldListListbox;
-		remove_field_button__ RemoveFieldButton;
 
 		void Init( void )
 		{

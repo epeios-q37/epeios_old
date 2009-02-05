@@ -73,9 +73,12 @@
 						<vbox flex="1">
 							<groupbox>
 								<caption label="Name"/>
-								<textbox id="nameTextbox" value="Test" observes="bcrStructureItemEdition"/>
+								<textbox id="nameTextbox" value="Nom" observes="bcrStructureItemEdition"/>
 							</groupbox>
-							<spacer/>
+							<groupbox>
+								<caption label="Name"/>
+								<textbox id="commentTextbox" value="Commentaire" observes="bcrStructureItemEdition"/>
+							</groupbox>
 						</vbox>
 					</hbox>
 					<deck id="formDeck">

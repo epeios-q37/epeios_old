@@ -30,7 +30,7 @@ using nsxpcm::event__;
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 //	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
-	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ) );
+	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
 	K().RefreshStructureView();
 	K().UI.Structure.Broadcasters.StructureItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.StructureItemEdition.Disable();
@@ -44,54 +44,6 @@ void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
-}
-
-void ui_main::table_location_textbox__::NSXPCMOnEvent( event__ )
-{
-	K().CreateTable();
-}
-
-void ui_main::create_table_button__::NSXPCMOnEvent( event__ )
-{
-	K().CreateTable();
-}
-
-void ui_main::field_name_textbox__::NSXPCMOnEvent( event__ )
-{
-	K().AddField();
-}
-
-void ui_main::add_field_button__::NSXPCMOnEvent( event__ )
-{
-	K().AddField();
-}
-
-void ui_main::field_list_listbox__::NSXPCMOnEvent( event__ )
-{
-ERRProlog
-	str::string Value;
-ERRBegin
-	Value.Init();
-	nsxpcm::Alert( K().UI.Main.Window, K().UI.Main.FieldListListbox.GetCurrentItemAttribute( "FieldId", Value ) );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void ui_main::remove_field_button__::NSXPCMOnEvent( event__ )
-{
-ERRProlog
-	str::string Value;
-ERRBegin
-	if ( K().UI.Main.FieldListListbox.GetSelectedCount() == 0 )
-		nsxpcm::Alert( K().UI.Main.Window, "No item selected" );
-	else {
-		Value.Init();
-		nsxpcm::Alert( K().UI.Main.Window, K().UI.Main.FieldListListbox.GetCurrentItemAttribute( "FieldId", Value ) );
-	}
-ERRErr
-ERREnd
-ERREpilog
 }
 
 /* Registrations */
@@ -181,13 +133,4 @@ void ui_main::Register(
 
 	Register_( Kernel, UI.Broadcasters, UI.Document );
 	Register_( Kernel, UI.Commands, UI.Document );
-
-	Register_( Kernel, UI.TableLocationTextbox, UI.Document, "tableLocation" );
-	Register_( Kernel, UI.CreateTableButton, UI.Document, "createTable" );
-
-	Register_( Kernel, UI.FieldNameTextbox, UI.Document, "fieldName" );
-	Register_( Kernel, UI.AddFieldButton, UI.Document, "addField" );
-
-	Register_( Kernel, UI.FieldListListbox, UI.Document, "fieldList" );
-	Register_( Kernel, UI.RemoveFieldButton, UI.Document, "removeField" );
 }

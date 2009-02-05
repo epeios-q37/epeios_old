@@ -137,27 +137,33 @@ namespace kernel {
 		const char *GetMessage( message_id__ Message );
 		void CreateDatabase(
 			const str::string_ &Location,
-			const str::string_ &Name )
+			const str::string_ &Name,
+			const str::string_ &Comment )
 		{
-			_H( Manager.CreateDatabase( Location, Name ) );
+			_H( Manager.CreateDatabase( Location, Name, Comment ) );
 		}
-		table__ CreateTable( const str::string_ &Name )
+		table__ CreateTable(
+			const str::string_ &Name,
+			const str::string_ &Comment )
 		{
 			table__ Table = UNDEFINED_TABLE;
 
-			_H( Manager.CreateTable( Name, *Table ) );
+			_H( Manager.CreateTable( Name, Comment, *Table ) );
 
 			return Table;
 		}
 		void CreateTable( void )
 		{
 		ERRProlog
-			str::string Location;
+			str::string Name, Comment;
 		ERRBegin
-			Location.Init();
-			UI.Main.TableLocationTextbox.GetValue( Location );
+			Name.Init();
+			UI.Structure.NameTextbox.GetValue( Name );
 
-			if ( CreateTable( Location ) == UNDEFINED_TABLE )
+			Comment.Init();
+			UI.Structure.CommentTextbox.GetValue( Comment );
+
+			if ( CreateTable( Name, Comment ) == UNDEFINED_TABLE )
 				nsxpcm::Alert( UI.Main.Window, GetRawMessage() );
 		ERRErr
 		ERREnd
@@ -165,11 +171,12 @@ namespace kernel {
 		}
 		field__ AddField(
 			table__ Table,
-			const str::string_ &Name )
+			const str::string_ &Name,
+			const str::string_ &Comment )
 		{
 			field__ Field = UNDEFINED_FIELD;
 
-			_H( Manager.AddField( *Table, Name, *Field ) );
+			_H( Manager.AddField( *Table, Name, Comment, *Field ) );
 
 			return Field;
 		}
@@ -192,7 +199,6 @@ namespace kernel {
 		ERREnd
 		ERREpilog
 		}
-		void RefreshFieldList( void );
 		void RefreshStructureView( void );
 		void UpdateUI( void )
 		{
@@ -203,11 +209,6 @@ namespace kernel {
 			UI.Structure.Broadcasters.StructureItemCreation.Disable();
 			UI.Structure.Broadcasters.StructureItemModification.Disable();
 			UI.Structure.Broadcasters.StructureItemDeletion.Disable();
-		}
-		void ModifyField( void )
-		{
-			nsxpcm::Alert( UI.Main.Window, "FieldListModification detected !" );
-			RefreshFieldList();
 		}
 		void UpdateButtonsPanel( void );
 	};

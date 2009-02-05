@@ -79,28 +79,36 @@ const char *kernel::kernel___::GetMessage( message_id__ MessageId )
 
 static void _DumpTableStructure(
 	const bkdacc::string_ &Name,
+	const bkdacc::string_ &Comment,
 	xml::writer_ &Writer )
 {
 	Writer.PushTag( "Name" );
-
 	Writer.PutValue( Name );
+	Writer.PopTag();
 
+	Writer.PushTag( "Comment" );
+	Writer.PutValue( Comment );
 	Writer.PopTag();
 }
 
 static void DumpTablesStructure_(
 	const bkdacc::strings_ &Names,
+	const bkdacc::strings_ &Comments,
 	xml::writer_ &Writer )
 {
-	ctn::E_CMITEM( bkdacc::string_ ) Name;
+	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
 	epeios::row__ Row = Names.First();
 
+	if ( Names.Amount() != Comments.Amount() )
+		ERRc();
+
 	Name.Init( Names );
+	Comment.Init( Comments );
 
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		_DumpTableStructure( Name( Row ), Writer );
+		_DumpTableStructure( Name( Row ), Comment( Row ) , Writer );
 
 		Writer.PopTag();
 
@@ -112,14 +120,15 @@ void kernel::kernel___::_DumpTablesStructure( xml::writer_ &Writer )
 {
 ERRProlog
 	bkdacc::ids32 Rows;
-	bkdacc::strings Names;
+	bkdacc::strings Names, Comments;
 	bkdacc::ids16 Ids;
 ERRBegin
 	Rows.Init();
 	Names.Init();
+	Comments.Init();
 	Ids.Init();
 
-	_H( Manager.GetTables( Rows, Names, Ids ) );
+	_H( Manager.GetTables( Rows, Names, Comments, Ids ) );
 
 	if ( Rows.Amount() != Names.Amount() )
 		ERRc();
@@ -129,7 +138,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	DumpTablesStructure_( Names, Writer );
+	DumpTablesStructure_( Names, Comments, Writer );
 
 	Writer.PopTag();
 
@@ -214,27 +223,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-void kernel::kernel___::RefreshFieldList( void )
-{
-ERRProlog
-	nsxpcm::xslt_parameters Parameters;
-	str::string XML;
-ERRBegin
-	XML.Init();
-
-//	_DumpFieldsAsXML( XML );
-
-	Parameters.Init();
-
-	nsxpcm::RemoveChildren( UI.Main.FieldListListbox.GetObject() );
-
-	nsxpcm::AppendChild( UI.Main.FieldListListbox.GetObject(), nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/FieldList.xsl" ), UI.Main.Document, Parameters ) );
-ERRErr
-ERREnd
-ERREpilog
-}
-
 
 static class starter 
 {

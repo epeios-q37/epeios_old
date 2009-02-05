@@ -245,6 +245,7 @@ static void GetTables_(
 	const mbdtbl::tables_ &Tables,
 	bkdmng::ids32_ &Rows,
 	bkdmng::strings_ &Names,
+	bkdmng::strings_ &Comments,
 	bkdmng::ids16_ &Ids )
 {
 	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
@@ -255,6 +256,7 @@ static void GetTables_(
 	while ( Row != NONE ) {
 		Rows.Append( *Row );
 		Names.Append( Table( Row ).Name );
+		Comments.Append( Table( Row ).Comment );
 		Ids.Append( *Table( Row ).TableId() );
 
 
@@ -269,9 +271,10 @@ ERRProlog
 ERRBegin
 	bkdmng::ids32_ &Rows = Request.Ids32Out();
 	bkdmng::strings_ &Names = Request.StringsOut();
+	bkdmng::strings_ &Comments = Request.StringsOut();
 	bkdmng::ids16_ &Ids = Request.Ids16Out();
 
-	GetTables_( Manager.Structure.Tables, Rows, Names, Ids );
+	GetTables_( Manager.Structure.Tables, Rows, Names, Comments, Ids );
 ERRErr
 ERREnd
 ERREpilog

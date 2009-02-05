@@ -48,6 +48,8 @@ ERRBegin
 		UI.BrowseTree.GetCurrentItemAttribute( "Name", Name );
 		UI.NameTextbox.SetValue( Name );
 
+		UI.CommentTextbox.SetValue( str::string( "A traiter ..." ) );
+
 		if ( Type == "Database" ) {
 			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyDatabase ) );
 			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteDatabase ) );
@@ -98,11 +100,12 @@ void ui_struct::delete_structure_item_command__::NSXPCMOnEvent( event__ )
 void ui_struct::apply_structure_item_command__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
-	str::string Buffer;
+	str::string NameBuffer, CommentBuffer;
 ERRBegin
-	Buffer.Init();
+	NameBuffer.Init();
+	CommentBuffer.Init();
 
-	K().CreateTable( K().UI.Structure.NameTextbox.GetValue( Buffer ) );
+	K().CreateTable( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
 	K().RefreshStructureView();
 	K().UI.Structure.Broadcasters.StructureItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.StructureItemEdition.Disable();
@@ -224,6 +227,7 @@ void ui_struct::Register(
 	Register_( Kernel, UI.FormDeck, UI.Document, "formDeck" );
 
 	Register_( Kernel, UI.NameTextbox, UI.Document, "nameTextbox" );
+	Register_( Kernel, UI.CommentTextbox, UI.Document, "commentTextbox" );
 
 	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
 	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
