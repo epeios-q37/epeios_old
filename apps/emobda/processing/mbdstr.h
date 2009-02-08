@@ -35,54 +35,32 @@ namespace mbdstr {
 
 	typedef ids::E_IDS_STORE_( table_id__ ) table_ids_store_;
 
-	class structure_
+	class structure_core_
 	{
-	private:
-		void _AddFields(
-			table_row__ TableRow,
-			const field_descriptions_ &Descriptions );
 	public:
 		struct s
 		{
 			str::string_::s Name, Comment;
-			tables_::s Tables;
-			fields_::s Fields;
-			table_ids_store_::s TableIdsStore;
 		};
 		str::string_ Name, Comment;
-		tables_ Tables;
-		fields_ Fields;
-		table_ids_store_ TableIdsStore;
-		structure_( s &S )
+		structure_core_( s &S )
 		: Name( S.Name ),
-		  Comment( S.Comment ),
-		  Tables( S.Tables ),
-		  Fields( S.Fields ),
-		  TableIdsStore( S.TableIdsStore )
+		  Comment( S.Comment )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Name.reset( P );
 			Comment.reset( P );
-			Tables.reset( P );
-			Fields.reset( P );
-			TableIdsStore.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
 			Comment.plug( MM );
-			Tables.plug( MM );
-			Fields.plug( MM );
-			TableIdsStore.plug( MM );
 		}
-		structure_ &operator =( const structure_ &D )
+		structure_core_ &operator =( const structure_core_ &SD )
 		{
-			Name = D.Name;
-			Comment= D.Comment;
-			Tables = D.Tables;
-			Fields = D.Fields;
-			TableIdsStore = D.TableIdsStore;
+			Name = SD.Name;
+			Comment= SD.Comment;
 
 			return *this;
 		}
@@ -92,6 +70,70 @@ namespace mbdstr {
 
 			Name.Init();
 			Comment.Init();
+		}
+		void Init(
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			Init();
+
+			this->Name = Name;
+			this->Comment = Comment;
+		}
+	};
+
+	class structure_
+	: public structure_core_
+	{
+	private:
+		void _AddFields(
+			table_row__ TableRow,
+			const field_descriptions_ &Descriptions );
+	public:
+		struct s
+		: public structure_core_::s
+		{
+			tables_::s Tables;
+			fields_::s Fields;
+			table_ids_store_::s TableIdsStore;
+		};
+		tables_ Tables;
+		fields_ Fields;
+		table_ids_store_ TableIdsStore;
+		structure_( s &S )
+		: structure_core_( S ),
+		  Tables( S.Tables ),
+		  Fields( S.Fields ),
+		  TableIdsStore( S.TableIdsStore )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			structure_core_::reset( P );
+			Tables.reset( P );
+			Fields.reset( P );
+			TableIdsStore.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			structure_core_::plug( MM );
+			Tables.plug( MM );
+			Fields.plug( MM );
+			TableIdsStore.plug( MM );
+		}
+		structure_ &operator =( const structure_ &S )
+		{
+			structure_core_::operator =( S );
+			Tables = S.Tables;
+			Fields = S.Fields;
+			TableIdsStore = S.TableIdsStore;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			structure_core_::Init();
 			Tables.Init();
 			Fields.Init();
 			TableIdsStore.Init();
@@ -102,8 +144,7 @@ namespace mbdstr {
 		{
 			Init();
 
-			this->Name = Name;
-			this->Comment = Comment;
+			structure_core_::Init( Name, Comment );
 		}
 		field_row__ AddField(
 			table_row__ TableRow,
@@ -115,13 +156,13 @@ namespace mbdstr {
 		void GetFieldTableAndRecordId(
 			field_row__ FieldRow,
 			table_id__ &TableId,
-			field_id__ &FieldId ) const
+			field_id__ &Id ) const
 		{
 			ctn::E_CITEMt( field_, field_row__ ) Field;
 			Field.Init( Fields );
 
 			TableId = Field( FieldRow ).TableId();
-			FieldId = Field( FieldRow ).FieldId();
+			Id = Field( FieldRow ).Id();
 		}
 		table_id__ GetFieldTableId( field_row__ FieldRow ) const
 		{
@@ -147,12 +188,68 @@ namespace mbdstr {
 
 			Table.Init( Tables );
 
-			return Table( TableRow ).TableId();
+			return Table( TableRow ).Id();
 		}
 		table_row__ AddTable( const table_description_ &Description );
 	};
 
 	E_AUTO( structure );
+
+
+	class structure_description_
+	: public structure_core_
+	{
+	private:
+		void _AddFields(
+			table_row__ TableRow,
+			const field_descriptions_ &Descriptions );
+	public:
+		struct s
+		: public structure_core_::s
+		{
+			mbdtbl::table_descriptions_::s Tables;
+		};
+		mbdtbl::table_descriptions_ Tables;
+		structure_description_( s &S )
+		: structure_core_( S ),
+		  Tables( S.Tables )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			structure_core_::reset( P );
+			Tables.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			structure_core_::plug( MM );
+			Tables.plug( MM );
+		}
+		structure_description_ &operator =( const structure_description_ &SD )
+		{
+			structure_core_::operator =( SD );
+			Tables = SD.Tables;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			structure_core_::Init();
+			Tables.Init();
+		}
+		void Init(
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			Init();
+
+			structure_core_::Init( Name, Comment );
+		}
+
+	};
+
+	E_AUTO( structure_description );
 }
 
 #endif

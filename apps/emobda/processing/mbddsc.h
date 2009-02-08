@@ -81,6 +81,7 @@ namespace mbddsc {
 		iFieldsAmountAttribute,
 		iFieldTag,
 		iFieldIdAttribute,
+		iFieldTableIdAttribute,
 		iFieldNameTag,
 		i_amount,
 		i_Undefined
@@ -118,7 +119,7 @@ namespace mbddsc {
 			Label = "Table";
 			break;
 		case iTableIdAttribute:
-			Label = "id";
+			Label = "Id";
 			break;
 		case iTableNameTag:
 			Label = "Name";
@@ -133,7 +134,10 @@ namespace mbddsc {
 			Label="Field";
 			break;
 		case iFieldIdAttribute:
-			Label="id";
+			Label="Id";
+			break;
+		case iFieldTableIdAttribute:
+			Label="TableId";
 			break;
 		case iFieldNameTag:
 			Label="Name";
@@ -150,97 +154,13 @@ namespace mbddsc {
 	}
 
 	void Export(
-		const mbdstr::structure_ &Description,
+		const mbdstr::structure_ &Structure,
 		xml::writer_ &Writer,
 		bso::bool__ AsOrphan );
 
-	class field_description_ {
-	public:
-		struct s {
-			str::string_::s Name;
-			mbdbsc::field_row__ FieldRow;
-		} &S_;
-		str::string_ Name;
-		field_description_( s &S )
-		: S_( S ),
-		  Name( S.Name )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			Name.reset( P );
-			S_.FieldRow = NONE;
-		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
-		{
-			Name.plug( MD );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Name.plug( MM );
-		}
-		field_description_ &operator =( const field_description_ &FD )
-		{
-			Name = FD.Name;
-			S_.FieldRow = FD.S_.FieldRow;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			reset();
-
-			Name.Init();
-		}
-		E_RWDISCLOSE_( field_row__, FieldRow );
-	};
-
-	E_AUTO( field_description );
-
-	typedef ctn::E_XMCONTAINER_( field_description_ ) field_descriptions_;
-	E_AUTO( field_descriptions )
-
-
-	class description_
-	{
-	public:
-		struct s
-		{
-			str::string_::s Name;
-			field_descriptions_::s Fields;
-		};
-		str::string_ Name;
-		field_descriptions_ Fields;
-		description_( s &S )
-		: Name( S.Name ),
-		  Fields( S.Fields )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			Name.reset( P );
-			Fields.reset( P );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Name.plug( MM );
-			Fields.plug( MM );
-		}
-		description_ &operator =( const description_ &D )
-		{
-			Name = D.Name;
-			Fields = D.Fields;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			reset();
-
-			Name.Init();
-			Fields.Init();
-		}
-	};
-
+	typedef mbdstr::structure_description_ description_;
 	E_AUTO( description );
+
 
 	void Import(
 		xtf::extended_text_iflow__ &Flow,

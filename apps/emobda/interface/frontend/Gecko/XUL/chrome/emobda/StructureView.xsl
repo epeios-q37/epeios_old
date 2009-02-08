@@ -52,6 +52,9 @@
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
 			<xsl:attribute name="Type">Table</xsl:attribute>
+			<xsl:attribute name="id">
+				<xsl:value-of select="@Id"/>
+			</xsl:attribute>
 			<xsl:attribute name="Name">
 				<xsl:value-of select="Name"/>
 			</xsl:attribute>

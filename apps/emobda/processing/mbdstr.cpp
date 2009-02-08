@@ -70,10 +70,10 @@ ERRBegin
 	TableId = Description.GetTableId();
 
 	if ( TableId != MBDBSC_UNDEFINED_TABLE_ID )
-		if ( TableId != Tables( TableRow ).GetTableId() )
+		if ( TableId != Tables( TableRow ).GetId() )
 			ERRu();
 
-	FieldId = Tables( TableRow ).GetNewFieldId( Description.GetFieldId() );
+	FieldId = Tables( TableRow ).GetNewFieldId( Description.GetId() );
 
 	Field.Init( Description.Name, Description.Comment, TableId, FieldId );
 
@@ -111,7 +111,7 @@ ERRProlog
 	table Table;
 	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
 ERRBegin
-	TableId = Description.GetTableId();
+	TableId = Description.GetId();
 
 	if ( TableId == MBDBSC_UNDEFINED_TABLE_ID )
 		TableId = TableIdsStore.New();

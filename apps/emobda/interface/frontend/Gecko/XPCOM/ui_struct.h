@@ -28,24 +28,29 @@ namespace ui_struct {
 	using namespace ui_base;
 
 	UI_TYPEDEF( broadcaster__, item_edition_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, structure_item_browsing_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, structure_item_creation_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, structure_item_modification_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, structure_item_deletion_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, item_browsing_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, item_action_broadcaster__ );
 
 	UI_ETYPEDEF( tree__, browse_tree__ );
 
-	UI_TYPEDEF( deck__, buttons_deck__ );
+	UI_TYPEDEF( deck__, item_action_deck__ );
 
-	UI_ETYPEDEF( command__, create_structure_item_command__ );
-	UI_ETYPEDEF( command__, modify_structure_item_command__ );
-	UI_ETYPEDEF( command__, delete_structure_item_command__ );
+	UI_ETYPEDEF( command__, modify_database_command__ );
+	UI_ETYPEDEF( command__, delete_database_command__ );
+
+	UI_ETYPEDEF( command__, create_table_command__ );
+	UI_ETYPEDEF( command__, modify_table_command__ );
+	UI_ETYPEDEF( command__, delete_table_command__ );
+
+	UI_ETYPEDEF( command__, create_field_command__ );
+	UI_ETYPEDEF( command__, modify_field_command__ );
+	UI_ETYPEDEF( command__, delete_field_command__ );
 
 	UI_TYPEDEF( textbox__, name_textbox__ );
 	UI_TYPEDEF( textbox__, comment_textbox__ );
 
-	UI_ETYPEDEF( command__, apply_structure_item_command__ );
-	UI_ETYPEDEF( command__, cancel_structure_item_command__ );
+	UI_ETYPEDEF( command__, apply_item_command__ );
+	UI_ETYPEDEF( command__, cancel_item_command__ );
 
 	UI_TYPEDEF( deck__, form_deck__ );
 
@@ -57,29 +62,59 @@ namespace ui_struct {
 		nsIDOMElement *Items;
 		browse_tree__ BrowseTree;
 		struct broadcasters__ {
-			item_edition_broadcaster__ StructureItemEdition;
-			structure_item_creation_broadcaster__ StructureItemBrowsing;
-			structure_item_creation_broadcaster__ StructureItemCreation;
-			structure_item_modification_broadcaster__ StructureItemModification;
-			structure_item_deletion_broadcaster__ StructureItemDeletion;
+			item_edition_broadcaster__ ItemEdition;
+			item_browsing_broadcaster__ ItemBrowsing;
+			struct database__ {
+				item_action_broadcaster__
+					Modification,
+					Deletion;
+			} Database;
+			struct table__ {
+				item_action_broadcaster__
+					Creation,
+					Modification,
+					Deletion;
+			} Table;
+			struct field__ {
+				item_action_broadcaster__
+					Creation,
+					Modification,
+					Deletion;
+			} Field;
 		} Broadcasters;
 		struct commands__ {
-			create_structure_item_command__ CreateStructureItem;
-			modify_structure_item_command__ ModifyStructureItem;
-			delete_structure_item_command__ DeleteStructureItem;
-			apply_structure_item_command__ ApplyStructureItem;
-			cancel_structure_item_command__ CancelStructureItem;
+			struct database__ {
+				modify_database_command__ Modify;
+				delete_database_command__ Delete;
+			} Database;
+			struct table__ {
+				create_table_command__ Create;
+				modify_table_command__ Modify;
+				delete_table_command__ Delete;
+			} Table;
+			struct field__ {
+				create_field_command__ Create;
+				modify_field_command__ Modify;
+				delete_field_command__ Delete;
+			} Field;
+			struct item__ {
+				apply_item_command__ Apply;
+				cancel_item_command__ Cancel;
+			} Item;
 		} Commands;
 		name_textbox__ NameTextbox;
 		comment_textbox__ CommentTextbox;
 		form_deck__ FormDeck;
+		item_action_deck__ ActionDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
+		nsIDOMElement *DatabaseSelectionPanel, *TableSelectionPanel, *FieldSelectionPanel;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();
 			bridge__::Init( Functions );
 			Items = NULL;
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;
+			DatabaseSelectionPanel = TableSelectionPanel = FieldSelectionPanel = NULL;
 		}
 		void UpdateDecks( void );
 	};

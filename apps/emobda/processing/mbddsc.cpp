@@ -64,7 +64,7 @@ static void ExportField_(
 
 	Writer.PushTag( DL( FieldTag ) );
 	{
-		Writer.PutAttribute( DL( FieldIdAttribute ), bso::Convert( *Field.GetFieldId(), Buffer ) );
+		Writer.PutAttribute( DL( FieldIdAttribute ), bso::Convert( *Field.GetId(), Buffer ) );
 
 		Writer.PushTag( DL( FieldNameTag ) );
 		{
@@ -109,7 +109,7 @@ static void ExportTable_(
 
 	Writer.PushTag( DL( TableTag ) );
 	{
-		Writer.PutAttribute( DL( TableIdAttribute ), bso::Convert( *Table.GetTableId(), Buffer ) );
+		Writer.PutAttribute( DL( TableIdAttribute ), bso::Convert( *Table.GetId(), Buffer ) );
 
 		Writer.PushTag( DL( TableNameTag ) );
 		{
@@ -244,13 +244,13 @@ ERREpilog
 	return Continue;
 }
 
-static inline bso::bool__ GetFieldRow_(
+static inline bso::bool__ GetFieldId_(
 	const str::string_ &Value,
-	field_row__ &FieldRow )
+	field_id__ &FieldId )
 {
 	epeios::row__ Error = NONE;
 
-	FieldRow = Value.ToUL( &Error );
+	FieldId = Value.ToUB( &Error );
 
 	return Error == NONE;
 }
@@ -293,7 +293,7 @@ ERRBegin
 			break;
 		case cAttribute:
 			if ( Name == L( FieldIdAttribute ) )
-				Continue = GetFieldRow_( Value, Field.FieldRow() );
+				Continue = GetFieldId_( Value, Field.Id() );
 			else {
 				Continue = false;
 				ERRReturn;
@@ -391,6 +391,141 @@ ERREpilog
 	return Continue;
 }
 
+static bso::bool__ ImportTable_(
+	xml::ehanced_parser___ &Parser,
+	mbddsc::table_description_ &Table,
+	version__ Version )
+{
+	bso::bool__ Continue = true;
+ERRProlog
+	xml::ehanced_parser___ Parser;
+	bso::bool__ Continue = true;
+	str::string Name, Value;
+	xml::dump Dump;
+	xml::status__ Status = s_Undefined;
+	bso::bool__ Handled = false;
+ERRBegin
+
+	Name.Init();
+	Value.Init();
+	Dump.Init();
+
+	while ( !Handled ) {
+		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
+		case cProcessingIntruction:
+			Continue = false;
+			ERRReturn;
+			break;
+		case cStartTag:
+			if ( Name == str::string( L( FieldNameTag ) ) )
+				Continue = ImportFieldName_( Parser, Field.Name, Version );
+			else {
+				Continue = false;
+				ERRReturn;
+			}
+			break;
+		case cStartTagClosed:
+			break;
+		case cAttribute:
+			if ( Name == L( FieldIdAttribute ) )
+				Continue = GetFieldId_( Value, Field.Id() );
+			else {
+				Continue = false;
+				ERRReturn;
+			}
+			break;
+		case cValue:
+			Continue = false;
+			ERRReturn;
+			break;
+		case cEndTag:
+			break;
+		case cProcessed:
+			ERRc();
+			break;
+		case cError:
+			Continue = false;
+			ERRReturn;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Continue;
+}
+
+static bso::bool__ ImportTables_(
+	xml::ehanced_parser___ &Parser,
+	mbddsc::table_descriptions_ &Fields,
+	version__ Version )
+{
+	bso::bool__ Continue = true;
+ERRProlog
+	xml::ehanced_parser___ Parser;
+	bso::bool__ Continue = true;
+	str::string Name, Value;
+	xml::dump Dump;
+	xml::status__ Status = s_Undefined;
+	bso::bool__ Handled = false;
+	mbddsc::field_description Field;
+ERRBegin
+
+	Name.Init();
+	Value.Init();
+	Dump.Init();
+
+	while ( !Handled ) {
+		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
+		case cProcessingIntruction:
+			Continue = false;
+			ERRReturn;
+			break;
+		case cStartTag:
+			if ( Name == str::string( L( TableTag ) ) ) {
+				Field.Init();
+				Continue = ImportTable_( Parser, Field, Version );
+				if ( Continue )
+					Fields.Append( Field );
+			} else {
+				Continue = false;
+				ERRReturn;
+			}
+			break;
+		case cStartTagClosed:
+			break;
+		case cAttribute:
+			Continue = false;
+			ERRReturn;
+			break;
+		case cValue:
+			Continue = false;
+			ERRReturn;
+			break;
+		case cEndTag:
+			Handled = true;
+			break;
+		case cProcessed:
+			ERRc();
+			break;
+		case cError:
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Continue;
+}
+
 
 static bso::bool__ ImportDescription_(
 	xml::ehanced_parser___ &Parser,
@@ -416,13 +551,13 @@ ERRBegin
 		case cProcessingIntruction:
 			break;
 		case cStartTag:
-			if ( Name == str::string( L( FieldsTag ) ) ) {
+			if ( Name == str::string( L( TablesTag ) ) ) {
 				if ( Version = v_Undefined ) {
 					Continue = false;
 					ERRReturn;
 				}
 
-				Continue = ImportFields_( Parser, Description.Fields, Version );
+				Continue = ImportTables_( Parser, Description.Fields, Version );
 			}
 			break;
 		case cStartTagClosed:

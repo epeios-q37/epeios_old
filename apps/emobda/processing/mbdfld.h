@@ -36,15 +36,15 @@ namespace mbdfld {
 	using mbdbsc::table_id__;
 	using mbdbsc::field_id__;
 
-	class field_ {
+	class field_core_ {
 	public:
 		struct s {
 			str::string_::s Name, Comment;
 			table_id__ TableId;
-			field_id__ FieldId;
+			field_id__ Id;
 		} &S_;
 		str::string_ Name, Comment;
-		field_( s &S )
+		field_core_( s &S )
 		: S_( S ),
 		  Name( S.Name ),
 		  Comment( S.Comment )
@@ -55,20 +55,20 @@ namespace mbdfld {
 			Comment.reset( P );
 
 			S_.TableId = MBDBSC_UNDEFINED_TABLE_ID;
-			S_.FieldId = MBDBSC_UNDEFINED_FIELD_ID;
+			S_.Id = MBDBSC_UNDEFINED_FIELD_ID;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Name.plug( MM );
 			Comment.plug( MM );
 		}
-		field_ &operator =( const field_ &F )
+		field_core_ &operator =( const field_core_ &FC )
 		{
-			Name = F.Name;
-			Comment = F.Comment;
+			Name = FC.Name;
+			Comment = FC.Comment;
 
-			S_.TableId = F.S_.TableId;
-			S_.FieldId = F.S_.FieldId;
+			S_.TableId = FC.S_.TableId;
+			S_.Id = FC.S_.Id;
 
 			return *this;
 		}
@@ -83,7 +83,7 @@ namespace mbdfld {
 			const str::string_ &Name,
 			const str::string_ &Comment,
 			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID,
-			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID )
+			field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID )
 		{
 			Init();
 
@@ -91,14 +91,15 @@ namespace mbdfld {
 			this->Comment = Comment;
 
 			S_.TableId = TableId;
-			S_.FieldId = FieldId;
+			S_.Id = Id;
 
 		}
 		E_RWDISCLOSE_( table_id__, TableId );
-		E_RWDISCLOSE_( field_id__, FieldId );
+		E_RWDISCLOSE_( field_id__, Id );
 	};
 
-	E_AUTO( field );
+	typedef field_core_	field_;
+	E_AUTO( field )
 
 	typedef lstctn::E_LXCONTAINERt_( field_, field_row__ ) fields_;
 	E_AUTO( fields );
@@ -108,7 +109,6 @@ namespace mbdfld {
 
 	typedef ctn::E_XCONTAINER_( field_description_ ) field_descriptions_;
 	E_AUTO( field_descriptions );
-
 }
 
 #endif

@@ -49,6 +49,7 @@ namespace mbdmng {
 			dbstbl::rrow__ Row,
 			datum_ &Datum ) const;
 		void ExportStructure_( void );
+		bso::bool__ ImportStructure_( void );
 	public:
 		struct s {
 			mbdeng::engine_::s Engine;
@@ -91,15 +92,18 @@ namespace mbdmng {
 			bso::bool__ Erase,
 			bso::bool__ Partial )
 		{
+			bso::bool__ Exists = false;
+
 			reset();
 
-			Engine.Init( Location, Mode, Erase, Partial );
+			Exists = Engine.Init( Location, Mode, Erase, Partial );
 			Structure.Init( Name, Comment );
 			this->Location.Init( Location );
 
-			ExportStructure_();
+			if ( !Exists )
+				ExportStructure_();
 
-			return true;	// A Modifier.
+			return Exists;
 		}
 		table_row__ SearchTable( const str::string_ &Name ) const
 		{

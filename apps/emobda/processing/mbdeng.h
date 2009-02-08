@@ -100,10 +100,10 @@ namespace mbdeng {
 
 			return *this;
 		}
-		void Init(
+		bso::bool__ Init(
 			const str::string_ &Location,
 			dbstbl::mode__ Mode,
-			bso::bool__ Erase,
+			bso::bool__ EraseIndexes,
 			bso::bool__ Partial );
 		E_RODISCLOSE_( dbstbl::irow__, TableRecordFieldIndexRow );
 		E_RODISCLOSE_( dbstbl::irow__, TableFieldDatumIndexRow );

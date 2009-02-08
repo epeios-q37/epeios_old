@@ -31,37 +31,63 @@
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>
-		<broadcaster id="bcrStructureItemEdition"/>
-		<broadcaster id="bcrStructureItemBrowsing"/>
-		<broadcaster id="bcrStructureItemCreation" label="create"/>
-		<broadcaster id="bcrStructureItemModification" label="modify"/>
-		<broadcaster id="bcrStructureItemDeletion" label="delete"/>
+		<broadcaster id="bcrItemEdition"/>
+		<broadcaster id="bcrItemBrowsing"/>
+		
+		<broadcaster id="bcrDatabaseModification" label="Modify database" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrDatabaseDeletion" label="Delete database" observes="bcrItemBrowsing"/>
+		
+		<broadcaster id="bcrTableCreation" label="Create table" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrTableModification" label="Modify table" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrTableDeletion" label="Delete table" observes="bcrItemBrowsing"/>
+		
+		<broadcaster id="bcrFieldCreation" label="Create field" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrFieldModification" label="Modify field" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrFieldDeletion" label="Delete field" observes="bcrItemBrowsing"/>
 	</broadcasterset>
 	<commandset>
-		<command id="cmdBrowseStructureItem" observes="bcrStructureItemBrowsing"/>
+		<command id="cmdBrowseItem" observes="bcrItemBrowsing"/>
 		
-		<command id="cmdCreateStructureItem" observes="bcrStructureItemCreation"/>
-		<command id="cmdModifyStructureItem" observes="bcrStructureItemModification"/>
-		<command id="cmdDeleteStructureItem" observes="bcrStructureItemDeletion"/>
+		<command id="cmdModifyDatabase" observes="bcrDatabaseModification"/>
+		<command id="cmdDeleteDatabase" observes="bcrDatabaseDeletion"/>
+		<command id="cmdCreateTable" observes="bcrTableCreation"/>
+		<command id="cmdModifyTable" observes="bcrTableModification"/>
+		<command id="cmdDeleteTable" observes="bcrTableDeletion"/>
+		<command id="cmdCreateField" observes="bcrFieldCreation"/>
+		<command id="cmdModifyField" observes="ncrFieldModification"/>
+		<command id="cmdDeleteField" observes="FieldDeletion"/>
 		
-		<command id="cmdApplyStructureItem" label="|OK|" observes="bcrStructureItemEdition"/>
-		<command id="cmdCancelStructureItem" label="|Cancel|" observes="bcrStructureItemEdition"/>
+		<command id="cmdApplyItem" label="|OK|" observes="bcrItemEdition"/>
+		<command id="cmdCancelItem" label="|Cancel|" observes="bcrItemEdition"/>
 	</commandset>
 	<hbox flex="1">
 		<vbox flex="1">
 			<groupbox flex="1">
 				<vbox flex="1">
-					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" command="cmdBrowseStructureItem">
+					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" command="cmdBrowseItem">
 						<treecols>
 							<treecol id="myTree2-treeCol0" primary="true" label="Structure" flex="1"/>
 						</treecols>
 					  <treechildren id="items"/>
 					</tree>
-					<hbox>
-						<button command="cmdCreateStructureItem" flex="1"/>
-						<button command="cmdModifyStructureItem" flex="1"/>
-						<button command="cmdDeleteStructureItem" flex="1"/>
-					</hbox>
+					<deck id="itemActionDeck">
+						<hbox id="databaseSelectionPanel" flex="1">
+							<button command="cmdModifyDatabase" flex="1"/>
+							<button command="cmdDeleteDatabase" flex="1"/>
+							<button command="cmdCreateTable" flex="1"/>
+						</hbox>
+						<hbox id="tableSelectionPanel">
+							<button command="cmdCreateTable" flex="1"/>
+							<button command="cmdModifyTable" flex="1"/>
+							<button command="cmdDeleteTable" flex="1"/>
+							<button command="cmdCreateField" flex="1"/>
+						</hbox>
+						<hbox id="fieldSelectionPanel">
+							<button command="cmdModifyField" flex="1"/>
+							<button command="cmdDeleteField" flex="1"/>
+							<button command="cmdCreateField" flex="1"/>
+						</hbox>
+					</deck>
 				</vbox>
 			</groupbox>
 		</vbox>
@@ -73,11 +99,11 @@
 						<vbox flex="1">
 							<groupbox>
 								<caption label="Name"/>
-								<textbox id="nameTextbox" value="Nom" observes="bcrStructureItemEdition"/>
+								<textbox id="nameTextbox" observes="bcrItemEdition"/>
 							</groupbox>
 							<groupbox>
-								<caption label="Name"/>
-								<textbox id="commentTextbox" value="Commentaire" observes="bcrStructureItemEdition"/>
+								<caption label="Comment"/>
+								<textbox id="commentTextbox" observes="bcrItemEdition"/>
 							</groupbox>
 						</vbox>
 					</hbox>
@@ -90,8 +116,8 @@
 						</box>
 					</deck>
 					<hbox>
-						<button command="cmdApplyStructureItem"/>
-						<button command="cmdCancelStructureItem"/>
+						<button command="cmdApplyItem"/>
+						<button command="cmdCancelItem"/>
 					</hbox>
 				</vbox>
 			</groupbox>

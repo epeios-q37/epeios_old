@@ -26,52 +26,90 @@ using namespace ui_struct;
 using kernel::kernel___;
 using nsxpcm::event__;
 
-using kernel::message_id__;
+using namespace kernel;
 
 void ui_struct::structure__::UpdateDecks( void )
 {
 ERRProlog
 	str::string Type;
-	str::string Name;
+	str::string Name, Comment;
+	table_id__ TableId = UNDEFINED_TABLE_ID;
+	table__ Table = UNDEFINED_TABLE;
+	str::string Id;
+	epeios::row__ Error = NONE;
 ERRBegin
 	structure__ &UI = K().UI.Structure;
 
+	Name.Init();
+	Comment.Init();
+
 	if ( UI.BrowseTree.GetCurrentIndex() != -1 ) {
+
 		Type.Init();
 		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
 
-		UI.Broadcasters.StructureItemCreation.Enable();
-		UI.Broadcasters.StructureItemModification.Enable();
-		UI.Broadcasters.StructureItemDeletion.Enable();
+		
+		if ( Type == "Database" ) {
+			K().GetDatabaseInfos( Name, Comment );
+		} else if ( Type == "Table" ) {
+			Id.Init();
+			UI.BrowseTree.GetCurrentItemAttribute( "id", Id );
 
-		Name.Init();
-		UI.BrowseTree.GetCurrentItemAttribute( "Name", Name );
+			*Table = Id.ToUL( &Error );
+
+			if ( Error != NONE )
+				ERRc();
+
+			K().GetTableInfo( Table, Name, Comment, TableId );
+		}
+
 		UI.NameTextbox.SetValue( Name );
 
-		UI.CommentTextbox.SetValue( str::string( "A traiter ..." ) );
+		UI.CommentTextbox.SetValue( Comment );
 
 		if ( Type == "Database" ) {
-			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyDatabase ) );
-			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteDatabase ) );
-			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateTable ) );
-			UI.FormDeck.SetSelectedPanel( UI.DatabaseFormPanel );
+			UI.Broadcasters.Database.Deletion.Enable();
+			UI.Broadcasters.Database.Modification.Enable();
+
+			UI.Broadcasters.Table.Creation.Enable();
+			UI.Broadcasters.Table.Modification.Disable();
+			UI.Broadcasters.Table.Creation.Disable();
+
+			UI.Broadcasters.Field.Creation.Disable();
+			UI.Broadcasters.Field.Modification.Disable();
+			UI.Broadcasters.Field.Creation.Disable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.DatabaseSelectionPanel );
 		} else if ( Type == "Table" ) {
-			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyTable ) );
-			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteTable ) );
-			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateField ) );
-			UI.FormDeck.SetSelectedPanel( UI.TableFormPanel );
+			UI.Broadcasters.Database.Deletion.Disable();
+			UI.Broadcasters.Database.Modification.Disable();
+
+			UI.Broadcasters.Table.Creation.Enable();
+			UI.Broadcasters.Table.Modification.Enable();
+			UI.Broadcasters.Table.Creation.Enable();
+
+			UI.Broadcasters.Field.Creation.Enable();
+			UI.Broadcasters.Field.Modification.Disable();
+			UI.Broadcasters.Field.Deletion.Disable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.TableSelectionPanel );
 		}else if ( Type == "Field" ) {
-			UI.Broadcasters.StructureItemModification.SetLabel( K().GetMessage( kernel::miModifyField ) );
-			UI.Broadcasters.StructureItemDeletion.SetLabel( K().GetMessage( kernel::miDeleteField ) );
-			UI.Broadcasters.StructureItemCreation.SetLabel( K().GetMessage( kernel::miCreateField ) );
-			UI.FormDeck.SetSelectedPanel( UI.FieldFormPanel );
+			UI.Broadcasters.Database.Deletion.Disable();
+			UI.Broadcasters.Database.Modification.Disable();
+
+			UI.Broadcasters.Table.Creation.Disable();
+			UI.Broadcasters.Table.Modification.Disable();
+			UI.Broadcasters.Table.Creation.Disable();
+
+			UI.Broadcasters.Field.Creation.Enable();
+			UI.Broadcasters.Field.Modification.Enable();
+			UI.Broadcasters.Field.Creation.Enable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.FieldSelectionPanel );
 		} else
 			ERRu();
 	} else {
-		UI.Broadcasters.StructureItemCreation.Disable();
-		UI.Broadcasters.StructureItemModification.Disable();
-		UI.Broadcasters.StructureItemDeletion.Disable();
-		UI.FormDeck.SetSelectedIndex( -1 );
+		UI.ActionDeck.SetSelectedIndex( -1 );
 	}
 
 ERRErr
@@ -79,25 +117,40 @@ ERREnd
 ERREpilog
 }
 
-void ui_struct::create_structure_item_command__::NSXPCMOnEvent( event__ )
+void ui_struct::modify_database_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Create !" );
-
-	K().UI.Structure.Broadcasters.StructureItemBrowsing.Disable();
-	K().UI.Structure.Broadcasters.StructureItemEdition.Enable();
 }
 
-void ui_struct::modify_structure_item_command__::NSXPCMOnEvent( event__ )
+void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Modify !" );
 }
 
-void ui_struct::delete_structure_item_command__::NSXPCMOnEvent( event__ )
+void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Delete !" );
+	K().DefineTable();
 }
 
-void ui_struct::apply_structure_item_command__::NSXPCMOnEvent( event__ )
+void ui_struct::modify_table_command__::NSXPCMOnEvent( event__ )
+{
+}
+
+void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
+{
+}
+
+void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
+{
+}
+
+void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
+{
+}
+
+void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
+{
+}
+
+void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string NameBuffer, CommentBuffer;
@@ -107,14 +160,14 @@ ERRBegin
 
 	K().CreateTable( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
 	K().RefreshStructureView();
-	K().UI.Structure.Broadcasters.StructureItemBrowsing.Enable();
-	K().UI.Structure.Broadcasters.StructureItemEdition.Disable();
+	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
+	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void ui_struct::cancel_structure_item_command__::NSXPCMOnEvent( event__ )
+void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::Alert( K().UI.Structure.Window, "Cancel !" );
 }
@@ -184,30 +237,94 @@ static void Register_(
 
 static void Register_(
 	kernel___ &Kernel,
+	ui_struct::structure__::broadcasters__::database__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Modification, Document, "bcrDatabaseModification" );
+	Register_( Kernel, UI.Deletion, Document, "bcrDatabaseDeletion" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::broadcasters__::table__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Creation, Document, "bcrTableModification" );
+	Register_( Kernel, UI.Modification, Document, "bcrTableModification" );
+	Register_( Kernel, UI.Deletion, Document, "bcrTableDeletion" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::broadcasters__::field__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Creation, Document, "bcrFieldCreation" );
+	Register_( Kernel, UI.Modification, Document, "bcrFieldModification" );
+	Register_( Kernel, UI.Deletion, Document, "bcrFieldDeletion" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
 	ui_struct::structure__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.StructureItemEdition, Document, "bcrStructureItemEdition" );
-	Register_( Kernel, UI.StructureItemBrowsing, Document, "bcrStructureItemBrowsing" );
-	Register_( Kernel, UI.StructureItemCreation, Document, "bcrStructureItemCreation" );
-	Register_( Kernel, UI.StructureItemModification, Document, "bcrStructureItemModification" );
-	Register_( Kernel, UI.StructureItemDeletion, Document, "bcrStructureItemDeletion" );
+	Register_( Kernel, UI.ItemEdition, Document, "bcrItemEdition" );
+	Register_( Kernel, UI.ItemBrowsing, Document, "bcrItemBrowsing" );
+	Register_( Kernel, UI.Database, Document );
+	Register_( Kernel, UI.Table, Document );
+	Register_( Kernel, UI.Field, Document );
 }
 
 /* 'command's */
 
 static void Register_(
 	kernel___ &Kernel,
+	ui_struct::structure__::commands__::database__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Modify, Document, "cmdModifyDatabase" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteDatabase" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::table__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Create, Document, "cmdCreateTable" );
+	Register_( Kernel, UI.Modify, Document, "cmdModifyTable" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteTable" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::field__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Modify, Document, "cmdCreateField" );
+	Register_( Kernel, UI.Modify, Document, "cmdModifyField" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteField" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	ui_struct::structure__::commands__::item__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.Apply, Document, "cmdApplyItem" );
+	Register_( Kernel, UI.Cancel, Document, "cmdCancelItem" );
+}
+
+static void Register_(
+	kernel___ &Kernel,
 	ui_struct::structure__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.CreateStructureItem, Document, "cmdCreateStructureItem" );
-	Register_( Kernel, UI.ModifyStructureItem, Document, "cmdModifyStructureItem" );
-	Register_( Kernel, UI.DeleteStructureItem, Document, "cmdDeleteStructureItem" );
-
-	Register_( Kernel, UI.ApplyStructureItem, Document, "cmdApplyStructureItem" );
-	Register_( Kernel, UI.CancelStructureItem, Document, "cmdCancelStructureItem" );
-
+	Register_( Kernel, UI.Database, Document );
+	Register_( Kernel, UI.Table, Document );
+	Register_( Kernel, UI.Field, Document );
+	Register_( Kernel, UI.Item, Document );
 }
 
 void ui_struct::Register(
@@ -223,6 +340,12 @@ void ui_struct::Register(
 
 	Register_( Kernel, UI.Broadcasters, UI.Document );
 	Register_( Kernel, UI.Commands, UI.Document );
+
+	Register_( Kernel, UI.ActionDeck, UI.Document, "itemActionDeck" );
+
+	UI.DatabaseSelectionPanel = nsxpcm::GetElementById( UI.Document, "databaseSelectionPanel" );
+	UI.TableSelectionPanel = nsxpcm::GetElementById( UI.Document, "tableSelectionPanel" );
+	UI.FieldSelectionPanel = nsxpcm::GetElementById( UI.Document, "fieldSelectionPanel" );
 
 	Register_( Kernel, UI.FormDeck, UI.Document, "formDeck" );
 

@@ -192,6 +192,7 @@ DEC( GetDatabaseInfos )
 ERRProlog
 ERRBegin
 	Request.StringOut() = Manager.Structure.Name;
+	Request.StringOut() = Manager.Structure.Comment;
 ERRErr
 ERREnd
 ERREpilog
@@ -246,7 +247,7 @@ static void GetTables_(
 	bkdmng::ids32_ &Rows,
 	bkdmng::strings_ &Names,
 	bkdmng::strings_ &Comments,
-	bkdmng::ids16_ &Ids )
+	bkdmng::ids8_ &Ids )
 {
 	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
 	mbdtbl::table_row__ Row = Tables.First();
@@ -257,7 +258,7 @@ static void GetTables_(
 		Rows.Append( *Row );
 		Names.Append( Table( Row ).Name );
 		Comments.Append( Table( Row ).Comment );
-		Ids.Append( *Table( Row ).TableId() );
+		Ids.Append( *Table( Row ).Id() );
 
 
 		Row = Tables.Next( Row );
@@ -272,9 +273,35 @@ ERRBegin
 	bkdmng::ids32_ &Rows = Request.Ids32Out();
 	bkdmng::strings_ &Names = Request.StringsOut();
 	bkdmng::strings_ &Comments = Request.StringsOut();
-	bkdmng::ids16_ &Ids = Request.Ids16Out();
+	bkdmng::ids8_ &Ids = Request.Ids8Out();
 
 	GetTables_( Manager.Structure.Tables, Rows, Names, Comments, Ids );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( GetTableInfos )
+{
+	message__ Message = mOK;
+ERRProlog
+	table_row__ Row = NONE;
+	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
+ERRBegin
+	Row = *Request.Id32In();
+
+	if ( !Manager.TableExists( Row ) ) {
+		Message = mNoSuchTable;
+		ERRReturn;
+	}
+
+	Table.Init( Manager.Structure.Tables );
+
+	Request.StringOut() = Table( Row ).Name;
+	Request.StringOut() = Table( Row ).Comment;
+	Request.Id8Out() = *Table( Row ).Id();
+
 ERRErr
 ERREnd
 ERREpilog
@@ -386,6 +413,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 	Module.Add( D( GetDatabaseInfos ),
 		bkdmng::cEnd,
 			bkdmng::cString,	// Nom de la base de donnée.
+			bkdmng::cString,	// Commentaire de la base de donnée.
 		bkdmng::cEnd );
 	Module.Add( D( CreateTable ),
 			bkdmng::cString,	// Table name.
@@ -398,7 +426,14 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cIds32,		// 'row's.
 			bkdmng::cStrings,	// Noms.
 			bkdmng::cStrings,	// Commentaires.
-			bkdmng::cIds16,		// 'id's.
+			bkdmng::cIds8,		// 'id's.
+		bkdmng::cEnd );
+	Module.Add( D( GetTableInfos ),
+			bkdmng::cId32,		// Table 'row'.
+		bkdmng::cEnd,
+			bkdmng::cString,	// Nom.
+			bkdmng::cString,	// Commentaire.
+			bkdmng::cId8,		// 'id'.
 		bkdmng::cEnd );
 	Module.Add( D( AddField ),
 		bkdmng::cId32,			// Table row.

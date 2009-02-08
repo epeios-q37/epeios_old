@@ -34,14 +34,6 @@ static const char *GetRawMessage_( message_id__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
-	CASE( ModifyDatabase );
-	CASE( DeleteDatabase );
-	CASE( CreateTable );
-	CASE( ModifyTable );
-	CASE( DeleteTable );
-	CASE( CreateField );
-	CASE( ModifyField );
-	CASE( DeleteField );
 	default:
 		ERRu();
 		break;
@@ -80,8 +72,13 @@ const char *kernel::kernel___::GetMessage( message_id__ MessageId )
 static void _DumpTableStructure(
 	const bkdacc::string_ &Name,
 	const bkdacc::string_ &Comment,
+	bkdacc::id8__ Id,
 	xml::writer_ &Writer )
 {
+	bso::integer_buffer__ Buffer;
+
+	Writer.PutAttribute( "Id", bso::Convert( *Id, Buffer ) );
+
 	Writer.PushTag( "Name" );
 	Writer.PutValue( Name );
 	Writer.PopTag();
@@ -94,6 +91,7 @@ static void _DumpTableStructure(
 static void DumpTablesStructure_(
 	const bkdacc::strings_ &Names,
 	const bkdacc::strings_ &Comments,
+	const bkdacc::ids8_ &Ids,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
@@ -102,13 +100,16 @@ static void DumpTablesStructure_(
 	if ( Names.Amount() != Comments.Amount() )
 		ERRc();
 
+	if ( Names.Amount() != Ids.Amount() )
+		ERRc();
+
 	Name.Init( Names );
 	Comment.Init( Comments );
 
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		_DumpTableStructure( Name( Row ), Comment( Row ) , Writer );
+		_DumpTableStructure( Name( Row ), Comment( Row ) , Ids( Row ), Writer );
 
 		Writer.PopTag();
 
@@ -121,7 +122,7 @@ void kernel::kernel___::_DumpTablesStructure( xml::writer_ &Writer )
 ERRProlog
 	bkdacc::ids32 Rows;
 	bkdacc::strings Names, Comments;
-	bkdacc::ids16 Ids;
+	bkdacc::ids8 Ids;
 ERRBegin
 	Rows.Init();
 	Names.Init();
@@ -138,7 +139,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	DumpTablesStructure_( Names, Comments, Writer );
+	DumpTablesStructure_( Names, Comments, Ids, Writer );
 
 	Writer.PopTag();
 
@@ -150,20 +151,23 @@ ERREpilog
 void kernel::kernel___::_DumpDatabaseStructure( xml::writer_ &Writer )
 {
 ERRProlog
-	bkdacc::string DatabaseName;
+	bkdacc::string Name, Comment;
 ERRBegin
-	DatabaseName.Init();
+	Name.Init();
+	Comment.Init();
 
-	_H( Manager.GetDatabaseInfos( DatabaseName ) );
+	_H( Manager.GetDatabaseInfos( Name, Comment ) );
 
-	if ( DatabaseName.Amount() != 0 ) {
+	if ( Name.Amount() != 0 ) {
 
 		Writer.PushTag( "Database" );
 
 		Writer.PushTag( "Name" );
+		Writer.PutValue( Name );
+		Writer.PopTag();
 
-		Writer.PutValue( DatabaseName );
-
+		Writer.PushTag( "Comment" );
+		Writer.PutValue( Comment );
 		Writer.PopTag();
 
 		_DumpTablesStructure( Writer );
@@ -218,7 +222,7 @@ ERRBegin
 
 	UI.Structure.UpdateDecks();
 
-	UI.Structure.Broadcasters.StructureItemEdition.Disable();
+	UI.Structure.Broadcasters.ItemEdition.Disable();
 ERRErr
 ERREnd
 ERREpilog

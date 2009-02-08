@@ -22,6 +22,9 @@
 #include "mbdmng.h"
 #include "fnm.h"
 #include "flf.h"
+#include "fil.h"
+#include "dir.h"
+#include "mbddsc.h"
 
 using namespace mbdmng;
 
@@ -235,3 +238,45 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+static void Import_(
+	const char *Filename,
+	mbddsc::description_ &Description )
+{
+ERRProlog
+	flf::file_iflow___ Flow;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	Flow.Init( Filename );
+
+	XFlow.Init( Flow );
+
+	mbddsc::Import( XFlow, Description );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ mbdmng::manager_::ImportStructure_( void )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+	FNM_BUFFER___ Buffer;
+	const char *Filename = NULL;
+	mbddsc::description Description;
+ERRBegin
+	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
+
+	if ( Exists = fil::FileExists( Filename ) ) {
+		Description.Init();
+
+		Import_( Filename, Description );
+	}
+		
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+

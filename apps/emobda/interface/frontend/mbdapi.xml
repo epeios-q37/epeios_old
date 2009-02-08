@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 05/02/2009 14:40:01. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 07/02/2009 15:03:56. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -8,10 +8,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Version>0.2.2</Version>
 			<Author>
 				<Name>Claude SIMON</Name>
-				<EMail>csimon@epeios.org</EMail>
+				<EMail>csimon@zeusw.org</EMail>
 			</Author>
 			<Copyright>
-				<Owner>Claude SIMON (csimon@epeios.org)</Owner>
+				<Owner>Claude SIMON (csimon@zeusw.org)</Owner>
 				<Date>2001-2006</Date>
 			</Copyright>
 		</Generator>
@@ -19,8 +19,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>05/02/2009</Date>
-		<Time>14:40:01</Time>
+		<Date>07/02/2009</Date>
+		<Time>15:03:56</Time>
 	</Misc>
 	<Messages Amount="14">
 		<Message Content="_UnknowObjectType"/>
@@ -55,7 +55,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
 			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
-			<Commands Amount="6">
+			<Commands Amount="7">
 				<Command>
 					<Name>CreateDatabase</Name>
 					<ID>0</ID>
@@ -79,9 +79,13 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				<Command>
 					<Name>GetDatabaseInfos</Name>
 					<ID>1</ID>
-					<Parameters Amount="2" Position="4">
+					<Parameters Amount="3" Position="4">
 						<Out>
-							<Parameter Discriminator="1" Position="Last" Type="Bunch">
+							<Parameter Discriminator="1" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+							<Parameter Discriminator="2" Position="Last" Type="Bunch">
 								<Name>string</Name>
 								<ID>18</ID>
 							</Parameter>
@@ -91,7 +95,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				<Command>
 					<Name>CreateTable</Name>
 					<ID>2</ID>
-					<Parameters Amount="4" Position="6">
+					<Parameters Amount="4" Position="7">
 						<In>
 							<Parameter Discriminator="1" Type="Bunch">
 								<Name>string</Name>
@@ -113,7 +117,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				<Command>
 					<Name>GetTables</Name>
 					<ID>3</ID>
-					<Parameters Amount="5" Position="10">
+					<Parameters Amount="5" Position="11">
 						<Out>
 							<Parameter Discriminator="1" Type="Bunch">
 								<Name>ids32</Name>
@@ -128,16 +132,42 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 								<ID>19</ID>
 							</Parameter>
 							<Parameter Discriminator="4" Position="Last" Type="Bunch">
-								<Name>ids16</Name>
-								<ID>12</ID>
+								<Name>ids8</Name>
+								<ID>9</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetTableInfos</Name>
+					<ID>4</ID>
+					<Parameters Amount="5" Position="16">
+						<In>
+							<Parameter Discriminator="1" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+						</In>
+						<Out>
+							<Parameter Discriminator="1" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+							<Parameter Discriminator="2" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+							<Parameter Discriminator="3" Position="Last" Type="Static">
+								<Name>id8</Name>
+								<ID>8</ID>
 							</Parameter>
 						</Out>
 					</Parameters>
 				</Command>
 				<Command>
 					<Name>AddField</Name>
-					<ID>4</ID>
-					<Parameters Amount="5" Position="15">
+					<ID>5</ID>
+					<Parameters Amount="5" Position="21">
 						<In>
 							<Parameter Discriminator="1" Type="Static">
 								<Name>id32</Name>
@@ -162,8 +192,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>GetFields</Name>
-					<ID>5</ID>
-					<Parameters Amount="2" Position="20">
+					<ID>6</ID>
+					<Parameters Amount="2" Position="26">
 						<Out>
 							<Parameter Discriminator="1" Position="Last" Type="Container">
 								<Name>items32</Name>

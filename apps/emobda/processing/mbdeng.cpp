@@ -23,10 +23,10 @@
 
 using namespace mbdeng;
 
-void mbdeng::engine_::Init(
+bso::bool__ mbdeng::engine_::Init(
 	const str::string_ &Location,
 	dbstbl::mode__ Mode,
-	bso::bool__ Erase,
+	bso::bool__ EraseIndexes,
 	bso::bool__ Partial )
 {
 ERRProlog
@@ -48,11 +48,11 @@ ERRBegin
 
 	LocatedRootFileName.Init();
 	mbdbsc::BuildLocatedRecordFieldIndexRootFileName( Location, LocatedRootFileName );
-	TableRecordFieldIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+	TableRecordFieldIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
 	LocatedRootFileName.Init();
 	mbdbsc::BuildLocatedFieldDatumIndexRootFileName( Location, LocatedRootFileName );
-	TableFieldDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, Erase, Partial, S_.FilesgroupID );
+	TableFieldDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
 	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
 	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );

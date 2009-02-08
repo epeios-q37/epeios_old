@@ -36,14 +36,6 @@ namespace kernel {
 
 	enum message_id__ 
 	{
-		miModifyDatabase,
-		miDeleteDatabase,
-		miCreateTable,
-		miModifyTable,
-		miDeleteTable,
-		miCreateField,
-		miModifyField,
-		miDeleteField,
 		mi_amount,
 		mi_Undefined
 	};
@@ -51,8 +43,16 @@ namespace kernel {
 	E_TYPEDEF( bkdacc::id32__, table__ );
 #define UNDEFINED_TABLE	((table__)BKDACC_UNDEFINED_ID32 )
 
+	E_TYPEDEF( bkdacc::id8__, table_id__ );
+#define UNDEFINED_TABLE_ID	((table_id__)BKDACC_UNDEFINED_ID8 )
+
+
 	E_TYPEDEF( bkdacc::id32__, field__ );
 #define UNDEFINED_FIELD	((field__)BKDACC_UNDEFINED_ID32 )
+
+	E_TYPEDEF( bkdacc::id8__, field_id__ );
+#define UNDEFINED_FIELD_ID	((field_id__)BKDACC_UNDEFINED_ID8 )
+
 
 	typedef mbdbkd::backend___ _backend___;
 
@@ -204,13 +204,40 @@ namespace kernel {
 		{
 			RefreshStructureView();
 			UI.Main.Broadcasters.DatabaseOpened.Disable();
-
+/*
 			UI.Structure.Broadcasters.StructureItemEdition.Disable();
 			UI.Structure.Broadcasters.StructureItemCreation.Disable();
 			UI.Structure.Broadcasters.StructureItemModification.Disable();
 			UI.Structure.Broadcasters.StructureItemDeletion.Disable();
+*/
 		}
 		void UpdateButtonsPanel( void );
+		void DefineTable( void )
+		{
+			ui_struct::structure__ &UI = this->UI.Structure;
+
+			UI.Broadcasters.ItemBrowsing.Disable();
+			UI.Broadcasters.ItemEdition.Enable();
+
+			UI.NameTextbox.SetValue( str::string( "" ) );
+
+			UI.CommentTextbox.SetValue( str::string( "" ) );
+		}
+		void GetDatabaseInfos(
+			str::string_ &Name,
+			str::string_ &Comment )
+		{
+			_H( Manager.GetDatabaseInfos( Name, Comment ) );
+		}
+		void GetTableInfo(
+			table__ Table,
+			str::string_ &Name,
+			str::string_ &Comment,
+			table_id__ &Id )
+		{
+			_H( Manager.GetTableInfos( *Table, Name, Comment, *Id ) );
+		}
+
 	};
 }
 
