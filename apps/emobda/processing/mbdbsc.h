@@ -70,11 +70,13 @@ namespace mbdbsc {
 	typedef dbsbsc::datum_	raw_datum_;
 	typedef dbsbsc::datum	raw_datum;
 
-	typedef bso::ubyte__ table_id_t__;
+	typedef bso::ubyte__ id_t__;
+
+	typedef id_t__ table_id_t__;
 	E_TYPEDEF( table_id_t__, table_id__ );
 #define MBDBSC_UNDEFINED_TABLE_ID	((table_id__)BSO_UBYTE_MAX)
 
-	typedef bso::ubyte__ field_id_t__;
+	typedef id_t__ field_id_t__;
 	E_TYPEDEF( field_id_t__, field_id__ );
 #define MBDBSC_UNDEFINED_FIELD_ID	((field_id__)BSO_UBYTE_MAX)
 

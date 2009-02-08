@@ -77,12 +77,14 @@ namespace mbddsc {
 		iTableTag,
 		iTableIdAttribute,
 		iTableNameTag,
+		iTableCommentTag,
 		iFieldsTag,
 		iFieldsAmountAttribute,
 		iFieldTag,
 		iFieldIdAttribute,
 		iFieldTableIdAttribute,
 		iFieldNameTag,
+		iFieldCommentTag,
 		i_amount,
 		i_Undefined
 	};
@@ -124,6 +126,9 @@ namespace mbddsc {
 		case iTableNameTag:
 			Label = "Name";
 			break;
+		case iTableCommentTag:
+			Label = "Comment";
+			break;
 		case iFieldsTag:
 			Label = "Fields";
 			break;
@@ -141,6 +146,9 @@ namespace mbddsc {
 			break;
 		case iFieldNameTag:
 			Label="Name";
+			break;
+		case iFieldCommentTag:
+			Label="Comment";
 			break;
 		case i_Undefined:
 			ERRu();
@@ -162,7 +170,7 @@ namespace mbddsc {
 	E_AUTO( description );
 
 
-	void Import(
+	bso::bool__ Import(
 		xtf::extended_text_iflow__ &Flow,
 		description_ &Description );
 }

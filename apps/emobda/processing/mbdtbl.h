@@ -91,7 +91,7 @@ namespace mbdtbl {
 
 			S_.Id = Id;
 		}
-		E_RODISCLOSE_( table_id__, Id );
+		E_RWDISCLOSE_( table_id__, Id );
 	};
 
 	typedef ids::E_IDS_STORE_( field_id__ ) field_ids_store_;

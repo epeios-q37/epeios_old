@@ -2012,7 +2012,7 @@ ERREpilog
 }
 
 #ifdef XML__MT
-bso::bool__ ehanced_parser_callback___::XMLProcessingInstruction( const dump_ &Dump )
+bso::bool__ enhanced_parser_callback___::XMLProcessingInstruction( const dump_ &Dump )
 {
 	WriteLock();
 
@@ -2030,7 +2030,7 @@ bso::bool__ ehanced_parser_callback___::XMLProcessingInstruction( const dump_ &D
 	return true;
 }
 
-bso::bool__ xml::ehanced_parser_callback___::XMLStartTag(
+bso::bool__ xml::enhanced_parser_callback___::XMLStartTag(
 	const str::string_ &Name,
 	const dump_ &Dump )
 {
@@ -2050,7 +2050,7 @@ bso::bool__ xml::ehanced_parser_callback___::XMLStartTag(
 	return true;
 }
 
-bso::bool__ xml::ehanced_parser_callback___::XMLStartTagClosed(
+bso::bool__ xml::enhanced_parser_callback___::XMLStartTagClosed(
 	const str::string_ &Name,
 	const dump_ &Dump )
 {
@@ -2070,7 +2070,7 @@ bso::bool__ xml::ehanced_parser_callback___::XMLStartTagClosed(
 	return true;
 }
 
-bso::bool__ xml::ehanced_parser_callback___::XMLAttribute(
+bso::bool__ xml::enhanced_parser_callback___::XMLAttribute(
 	const str::string_ &TagName,
 	const str::string_ &Name,
 	const str::string_ &Value,
@@ -2092,7 +2092,7 @@ bso::bool__ xml::ehanced_parser_callback___::XMLAttribute(
 	return true;
 }
 
-bso::bool__ xml::ehanced_parser_callback___::XMLValue(
+bso::bool__ xml::enhanced_parser_callback___::XMLValue(
 	const str::string_ &TagName,
 	const str::string_ &Value,
 	const dump_ &Dump )
@@ -2113,7 +2113,7 @@ bso::bool__ xml::ehanced_parser_callback___::XMLValue(
 	return true;
 }
 
-bso::bool__ xml::ehanced_parser_callback___::XMLEndTag(
+bso::bool__ xml::enhanced_parser_callback___::XMLEndTag(
 	const str::string_ &Name,
 	const dump_ &Dump )
 {
@@ -2137,7 +2137,7 @@ bso::bool__ xml::ehanced_parser_callback___::XMLEndTag(
 
 static void Routine_( void *UP )
 {
-	ehanced_parser_callback___ &Callback = *(ehanced_parser_callback___ *)UP;
+	enhanced_parser_callback___ &Callback = *(enhanced_parser_callback___ *)UP;
 	status__ Status = xml::Parse( Callback.Flow(), Callback );
 
 	Callback.Status = Status;
@@ -2153,7 +2153,7 @@ static void Routine_( void *UP )
 
 }
 
-void xml::ehanced_parser___::Start( void )
+void xml::enhanced_parser___::Start( void )
 {
 	if ( _InProgress )
 		ERRu();
@@ -2168,7 +2168,7 @@ void xml::ehanced_parser___::Start( void )
 	_Callback.WriteUnlock();
 }
 
-context__ xml::ehanced_parser___::Parse(
+context__ xml::enhanced_parser___::Parse(
 	str::string_ &Name,
 	str::string_ &Value,
 	dump_ &Dump,
@@ -2187,7 +2187,7 @@ context__ xml::ehanced_parser___::Parse(
 	return Context;
 }
 
-void xml::ehanced_parser___::Break( void )
+void xml::enhanced_parser___::Break( void )
 {
 	_Callback.ReadLock();
 

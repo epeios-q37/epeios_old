@@ -1,5 +1,9 @@
 $Id$
 
+08/02/2009 :
+	- XML :
+		- Correction faute ('ehanced' -> 'enhanced').
+
 02/02/2009 :
 	- NSXPCM :
 		- Ajout 'menuitem___'.

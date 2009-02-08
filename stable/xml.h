@@ -408,7 +408,7 @@ namespace xml {
 		c_Undefined
 	};
 
-	class ehanced_parser_callback___
+	class enhanced_parser_callback___
 	: public callback__
 	{
 	private:
@@ -465,11 +465,11 @@ namespace xml {
 			Continue = false;
 			Context = c_Undefined;
 		}
-		ehanced_parser_callback___( void )
+		enhanced_parser_callback___( void )
 		{
 			reset( false );
 		}
-		~ehanced_parser_callback___( void )
+		~enhanced_parser_callback___( void )
 		{
 			reset();
 		}
@@ -512,17 +512,17 @@ namespace xml {
 		}
 	};
 
-	class ehanced_parser___
+	class enhanced_parser___
 	{
 	private:
-		ehanced_parser_callback___ _Callback;
+		enhanced_parser_callback___ _Callback;
 		bso::bool__ _InProgress;
 	public:
-		ehanced_parser___( void )
+		enhanced_parser___( void )
 		{
 			_InProgress = false;
 		}
-		~ehanced_parser___( void )
+		~enhanced_parser___( void )
 		{
 			if ( _InProgress )
 				Break();
