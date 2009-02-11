@@ -38,18 +38,28 @@ namespace mbdmng {
 	using namespace mbdstr;
 	using namespace mbdbsc;
 
+	enum type__ {
+		tCreate,	// Création d'une nouvelle base.
+		tRetrieve,	// Récupération.
+		t_amont,
+		t_Undefined
+	};
+
 	class manager_
 	{
 	private:
-		const record_ &GetRecord_(
+		const record_ &_GetRecord(
 			dbstbl::rrow__ Row,
 			record_ &Record ) const;
-		record_id__ GetRecordId_( dbstbl::rrow__ Row ) const;
-		const datum_ GetDatum_(
+		record_id__ _GetRecordId( dbstbl::rrow__ Row ) const;
+		const datum_ _GetDatum(
 			dbstbl::rrow__ Row,
 			datum_ &Datum ) const;
-		void ExportStructure_( void );
-		bso::bool__ ImportStructure_( void );
+		bso::bool__ _ExportStructure( void );
+		bso::bool__ _ImportStructure( void );
+		bso::bool__ _Create( void );
+		bso::bool__ _Retrieve( void );
+		bso::bool__ _SubInit( type__ Type );
 	public:
 		struct s {
 			mbdeng::engine_::s Engine;
@@ -86,24 +96,28 @@ namespace mbdmng {
 		}
 		bso::bool__ Init(
 			const str::string_ &Location,
-			const str::string_ &Name,
-			const str::string_ &Comment,
 			dbstbl::mode__ Mode,
-			bso::bool__ Erase,
-			bso::bool__ Partial )
+			bso::bool__ EraseIndexes,
+			type__ Type )
 		{
-			bso::bool__ Exists = false;
+			bso::bool__ Success = false;
 
 			reset();
 
-			Exists = Engine.Init( Location, Mode, Erase, Partial );
-			Structure.Init( Name, Comment );
+			Engine.Init( Location, Mode, EraseIndexes, false );
+			Structure.Init();
 			this->Location.Init( Location );
 
-			if ( !Exists )
-				ExportStructure_();
+			return _SubInit( Type );
+		}
+		void SetNameAndComment(
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			Structure.Name = Name;
+			Structure.Comment = Comment;
 
-			return Exists;
+			_ExportStructure();
 		}
 		table_row__ SearchTable( const str::string_ &Name ) const
 		{
@@ -119,7 +133,7 @@ namespace mbdmng {
 		{
 			field_row__ FieldRow = Structure.AddField( TableRow, FieldDescription );
 
-			ExportStructure_();
+			_ExportStructure();
 
 			return FieldRow;
 		}
@@ -141,7 +155,7 @@ namespace mbdmng {
 			if ( Row == NONE )
 				return MBDBSC_UNDEFINED_RECORD_ID;
 			else
-				return GetRecordId_( Row );
+				return _GetRecordId( Row );
 		}
 		record_id__ AddRecord(
 			const data_ &Data,

@@ -39,7 +39,7 @@ namespace ui_main {
 		struct commands__ {
 			struct database__ {
 				create_database_command__ Create;
-				create_database_command__ Open;
+				open_database_command__ Open;
 				close_database_command__ Close;
 			} Database;
 		} Commands;

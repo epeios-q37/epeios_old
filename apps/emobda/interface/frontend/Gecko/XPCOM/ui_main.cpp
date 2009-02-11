@@ -38,7 +38,10 @@ void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Open Database !" );
+	K().OpenDatabase( str::string( "h:\\temp\\emobda" ) );
+	K().RefreshStructureView();
+	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
+	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 }
 
 void ui_main::close_database_command__::NSXPCMOnEvent( event__ )

@@ -142,6 +142,10 @@ namespace kernel {
 		{
 			_H( Manager.CreateDatabase( Location, Name, Comment ) );
 		}
+		void OpenDatabase( const str::string_ &Location )
+		{
+			_H( Manager.OpenDatabase( Location ) );
+		}
 		table__ CreateTable(
 			const str::string_ &Name,
 			const str::string_ &Comment )

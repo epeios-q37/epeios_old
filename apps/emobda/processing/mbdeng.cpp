@@ -23,7 +23,7 @@
 
 using namespace mbdeng;
 
-bso::bool__ mbdeng::engine_::Init(
+void mbdeng::engine_::Init(
 	const str::string_ &Location,
 	dbstbl::mode__ Mode,
 	bso::bool__ EraseIndexes,

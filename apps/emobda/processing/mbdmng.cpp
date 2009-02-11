@@ -28,7 +28,7 @@
 
 using namespace mbdmng;
 
-const record_ &mbdmng::manager_::GetRecord_(
+const record_ &mbdmng::manager_::_GetRecord(
 	dbstbl::rrow__ Row,
 	record_ &Record ) const
 {
@@ -44,7 +44,7 @@ ERREpilog
 	return Record;
 }
 
-record_id__ mbdmng::manager_::GetRecordId_( dbstbl::rrow__ Row ) const
+record_id__ mbdmng::manager_::_GetRecordId( dbstbl::rrow__ Row ) const
 {
 	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
 ERRProlog
@@ -52,14 +52,14 @@ ERRProlog
 ERRBegin
 	Record.Init();
 
-	RecordId = GetRecord_( Row, Record ).GetStaticPart().RecordId;
+	RecordId = _GetRecord( Row, Record ).GetStaticPart().RecordId;
 ERRErr
 ERREnd
 ERREpilog
 	return RecordId;
 }
 
-const datum_ mbdmng::manager_::GetDatum_(
+const datum_ mbdmng::manager_::_GetDatum(
 	dbstbl::rrow__ Row,
 	datum_ &Datum ) const
 {
@@ -68,7 +68,7 @@ ERRProlog
 ERRBegin
 	Record.Init();
 
-	Datum.Append( GetRecord_( Row, Record ).Datum );
+	Datum.Append( _GetRecord( Row, Record ).Datum );
 ERRErr
 ERREnd
 ERREpilog
@@ -160,7 +160,7 @@ ERRBegin
 		Datum.Init();
 
 		if ( RawRecordRow != NONE )
-			GetDatum_( RawRecordRow, Datum );
+			_GetDatum( RawRecordRow, Datum );
 
 		Data.Append( Datum );
 
@@ -217,66 +217,129 @@ epeios::row__ mbdmng::TestUnicity( const field_rows_ &FieldRows )
 	return Row;
 }
 
-void mbdmng::manager_::ExportStructure_( void )
+inline static const char *GetStructureFileName_(
+	str::string_ &Location,
+	FNM_BUFFER___ &Buffer )
 {
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+ERRBegin
+	fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+bso::bool__ mbdmng::manager_::_ExportStructure( void )
+{
+	bso::bool__ Success = false;
 ERRProlog
 	flf::file_oflow___ Flow;
 	txf::text_oflow__ TFlow( Flow );
 	xml::writer Writer;
-	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
 	FNM_BUFFER___ Buffer;
 	const char *Filename = NULL;
 ERRBegin
-	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
+	if ( Flow.Init( GetStructureFileName_( Location, Buffer ), err::hSkip ) == fil::sSuccess ) {
+		Success = true;
 
-	Flow.Init( Filename );
+		Writer.Init( TFlow );
 
-	Writer.Init( TFlow );
-
-	mbddsc::Export( Structure, Writer, true );
+		mbddsc::Export( Structure, Writer, true );
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
-static void Import_(
+static bso::bool__ Import_(
 	const char *Filename,
 	mbddsc::description_ &Description )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	Flow.Init( Filename );
+	if ( Flow.Init( Filename, err::hSkip ) == fil::sSuccess ) {
+		XFlow.Init( Flow );
 
-	XFlow.Init( Flow );
-
-	mbddsc::Import( XFlow, Description );
+		mbddsc::Import( XFlow, Description );
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
-bso::bool__ mbdmng::manager_::ImportStructure_( void )
+bso::bool__ mbdmng::manager_::_ImportStructure( void )
 {
-	bso::bool__ Exists = false;
+	bso::bool__ Success = false;
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
 	FNM_BUFFER___ Buffer;
 	const char *Filename = NULL;
 	mbddsc::description Description;
 ERRBegin
-	Filename = fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
+	Filename = GetStructureFileName_( Location, Buffer );
 
-	if ( Exists = fil::FileExists( Filename ) ) {
+	if ( Success = fil::FileExists( Filename ) ) {
 		Description.Init();
 
-		Import_( Filename, Description );
+		Success = Import_( Filename, Description );
 	}
 		
 ERRErr
 ERREnd
 ERREpilog
-	return Exists;
+	return Success;
 }
+
+bso::bool__ mbdmng::manager_::_Create( void )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) Buffer;
+ERRBegin
+	if ( dir::CreateDir( Buffer = Location.Convert() ) == dir::sOK )
+		Success = _ExportStructure();
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+bso::bool__ mbdmng::manager_::_Retrieve( void )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	tol::E_FPOINTER___( bso::char__ ) Buffer;
+ERRBegin
+	Success = _ImportStructure();
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+bso::bool__ mbdmng::manager_::_SubInit( type__ Type )
+{
+	bso::bool__ Success = false;
+
+	switch ( Type ) {
+	case tCreate:
+		Success = _Create();
+		break;
+	case tRetrieve:
+		Success = _Retrieve();
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	return Success;
+}
+
 

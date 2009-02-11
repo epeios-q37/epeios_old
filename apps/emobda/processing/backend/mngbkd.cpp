@@ -33,6 +33,7 @@ enum message__ {
 	mIncorrectLocation,
 	mIncorrectDatabaseName,
 	mUnableToCreateDatabase,
+	mUnableToOpenDatabase,
 	mIncorrectTableName,
 	mUnableToCreateTable,
 	mNoSuchTable,
@@ -56,6 +57,7 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( IncorrectLocation );
 	CASE( IncorrectDatabaseName );
 	CASE( UnableToCreateDatabase );
+	CASE( UnableToOpenDatabase );
 	CASE( IncorrectTableName );
 	CASE( UnableToCreateTable );
 	CASE( NoSuchTable );
@@ -176,8 +178,42 @@ ERRBegin
 	}
 */
 
-	if ( !Manager.Init( Location, Name, Comment, dbstbl::mAdmin, true, true ) ) {
+	if ( !Manager.Init( Location, dbstbl::mAdmin, true, mbdmng::tCreate ) ) {
 		Message = mUnableToCreateDatabase;
+		ERRReturn;
+	}
+
+	Manager.SetNameAndComment( Name, Comment );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( OpenDatabase )
+{
+	message__ Message = mOK;
+ERRProlog
+	str::string Location;
+	tol::E_FPOINTER___( bso::char__ ) Buffer;
+ERRBegin
+	Location.Init();
+	Location = Request.StringIn();
+
+	if ( !TestAndNormalize_( Location ) ) {
+		Message = mIncorrectLocation;
+		ERRReturn;
+	}
+
+/*
+	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
+		Message = mUnableToCreateDatabase;
+		ERRReturn;
+	}
+*/
+
+	if ( !Manager.Init( Location, dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
+		Message = mUnableToOpenDatabase;
 		ERRReturn;
 	}
 ERRErr
@@ -408,6 +444,10 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cString,	// Database location.
 			bkdmng::cString,	// Database name.
 			bkdmng::cString,	// Database comment.
+		bkdmng::cEnd,
+		bkdmng::cEnd );
+	Module.Add( D( OpenDatabase ),
+			bkdmng::cString,	// Database location.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetDatabaseInfos ),

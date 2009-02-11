@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 07/02/2009 15:03:56. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 11/02/2009 16:22:19. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -8,10 +8,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Version>0.2.2</Version>
 			<Author>
 				<Name>Claude SIMON</Name>
-				<EMail>csimon@zeusw.org</EMail>
+				<EMail>csimon@epeios.org</EMail>
 			</Author>
 			<Copyright>
-				<Owner>Claude SIMON (csimon@zeusw.org)</Owner>
+				<Owner>Claude SIMON (csimon@epeios.org)</Owner>
 				<Date>2001-2006</Date>
 			</Copyright>
 		</Generator>
@@ -19,10 +19,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>07/02/2009</Date>
-		<Time>15:03:56</Time>
+		<Date>11/02/2009</Date>
+		<Time>16:22:19</Time>
 	</Misc>
-	<Messages Amount="14">
+	<Messages Amount="15">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
@@ -32,6 +32,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 		<Message Content="MANAGER_IncorrectLocation"/>
 		<Message Content="MANAGER_IncorrectDatabaseName"/>
 		<Message Content="MANAGER_UnableToCreateDatabase"/>
+		<Message Content="MANAGER_UnableToOpenDatabase"/>
 		<Message Content="MANAGER_IncorrectTableName"/>
 		<Message Content="MANAGER_UnableToCreateTable"/>
 		<Message Content="MANAGER_NoSuchTable"/>
@@ -55,7 +56,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
 			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
-			<Commands Amount="7">
+			<Commands Amount="8">
 				<Command>
 					<Name>CreateDatabase</Name>
 					<ID>0</ID>
@@ -77,9 +78,21 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 					</Parameters>
 				</Command>
 				<Command>
-					<Name>GetDatabaseInfos</Name>
+					<Name>OpenDatabase</Name>
 					<ID>1</ID>
-					<Parameters Amount="3" Position="4">
+					<Parameters Amount="2" Position="4">
+						<In>
+							<Parameter Discriminator="1" Position="Last" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+						</In>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetDatabaseInfos</Name>
+					<ID>2</ID>
+					<Parameters Amount="3" Position="6">
 						<Out>
 							<Parameter Discriminator="1" Type="Bunch">
 								<Name>string</Name>
@@ -94,8 +107,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>CreateTable</Name>
-					<ID>2</ID>
-					<Parameters Amount="4" Position="7">
+					<ID>3</ID>
+					<Parameters Amount="4" Position="9">
 						<In>
 							<Parameter Discriminator="1" Type="Bunch">
 								<Name>string</Name>
@@ -116,8 +129,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>GetTables</Name>
-					<ID>3</ID>
-					<Parameters Amount="5" Position="11">
+					<ID>4</ID>
+					<Parameters Amount="5" Position="13">
 						<Out>
 							<Parameter Discriminator="1" Type="Bunch">
 								<Name>ids32</Name>
@@ -140,8 +153,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>GetTableInfos</Name>
-					<ID>4</ID>
-					<Parameters Amount="5" Position="16">
+					<ID>5</ID>
+					<Parameters Amount="5" Position="18">
 						<In>
 							<Parameter Discriminator="1" Type="Static">
 								<Name>id32</Name>
@@ -166,8 +179,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>AddField</Name>
-					<ID>5</ID>
-					<Parameters Amount="5" Position="21">
+					<ID>6</ID>
+					<Parameters Amount="5" Position="23">
 						<In>
 							<Parameter Discriminator="1" Type="Static">
 								<Name>id32</Name>
@@ -192,8 +205,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>GetFields</Name>
-					<ID>6</ID>
-					<Parameters Amount="2" Position="26">
+					<ID>7</ID>
+					<Parameters Amount="2" Position="28">
 						<Out>
 							<Parameter Discriminator="1" Position="Last" Type="Container">
 								<Name>items32</Name>

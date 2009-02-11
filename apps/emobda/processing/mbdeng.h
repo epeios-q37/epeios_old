@@ -100,7 +100,7 @@ namespace mbdeng {
 
 			return *this;
 		}
-		bso::bool__ Init(
+		void Init(
 			const str::string_ &Location,
 			dbstbl::mode__ Mode,
 			bso::bool__ EraseIndexes,
