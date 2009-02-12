@@ -488,7 +488,7 @@ namespace xml {
 
 			_Flow = &Flow;
 
-			Continue = false;
+			Continue = true;
 		}
 		void WriteLock( void )
 		{

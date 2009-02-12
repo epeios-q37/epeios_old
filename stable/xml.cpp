@@ -2016,8 +2016,10 @@ bso::bool__ enhanced_parser_callback___::XMLProcessingInstruction( const dump_ &
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cProcessingIntruction;
 
@@ -2036,8 +2038,10 @@ bso::bool__ xml::enhanced_parser_callback___::XMLStartTag(
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cStartTag;
 
@@ -2056,8 +2060,10 @@ bso::bool__ xml::enhanced_parser_callback___::XMLStartTagClosed(
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cStartTagClosed;
 
@@ -2078,8 +2084,10 @@ bso::bool__ xml::enhanced_parser_callback___::XMLAttribute(
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cAttribute;
 
@@ -2099,8 +2107,10 @@ bso::bool__ xml::enhanced_parser_callback___::XMLValue(
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cValue;
 
@@ -2119,8 +2129,10 @@ bso::bool__ xml::enhanced_parser_callback___::XMLEndTag(
 {
 	WriteLock();
 
-	if ( !Continue )
+	if ( !Continue ) {
+		ReadUnlock();
 		return false;
+	}
 
 	Context = cEndTag;
 
