@@ -173,51 +173,7 @@ const char *xml::GetLabel( extended_status__ Status )
 #define	EXPAND_MAX_NESTING_LEVEL	100
 #define	IFEQ_MAX_NESTING_LEVEL		100
 
-class flow {
-private:
-	xtf::extended_text_iflow__ *_Flow;
-public:
-	dump Dump;
-	unsigned char Get( void )
-	{
-		unsigned char C = _Flow->Get();
-
-		if ( Dump.RawData.Amount() == 0 )
-			Dump.Set( _Flow->Coord() );
-
-		Dump.RawData.Append( C );
-
-		return C;
-	}
-	unsigned char View( void )
-	{
-		return _Flow->View();
-	}
-	bso::bool__ EOX( void )
-	{
-		return _Flow->EOX();
-	}
-	void Unget( unsigned char C )
-	{
-		_Flow->Unget( C );
-
-		Dump.RawData.Truncate();
-	}
-	void Reset( void )
-	{
-		Dump.RawData.Init();
-	}
-	void Init( xtf::extended_text_iflow__ &Flow )
-	{
-		_Flow = &Flow;
-
-		Dump.Init();
-	}
-};
-
-typedef flow flow_;
-
-static status__ SkipSpaces_( flow_ &Flow )
+static status__ SkipSpaces_( _flow_ &Flow )
 {
 	while ( !Flow.EOX() && isspace( Flow.View() ) )
 		Flow.Get();
@@ -252,7 +208,7 @@ enum entity_handling_state__ {
 
 #define ENTITY_ERROR_VALUE	0
 
-static unsigned char HandleEntity_( flow_ &Flow )
+static unsigned char HandleEntity_( _flow_ &Flow )
 {
 	entity_handling_state__ State = ehsStart;
 
@@ -377,7 +333,7 @@ static unsigned char HandleEntity_( flow_ &Flow )
 }
 
 static void GetId_(
-	flow_ &Flow,
+	_flow_ &Flow,
 	str::string_ &Id )
 {
 	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) )
@@ -385,14 +341,14 @@ static void GetId_(
 }
 
 static inline void GetName_( 
-	flow_ &Flow,
+	_flow_ &Flow,
 	str::string_ &Name )
 {
 	GetId_( Flow, Name );
 }
 
 static status__ GetValue_(
-	flow_ &Flow,
+	_flow_ &Flow,
 	bso::char__ Delimiter,
 	bso::bool__ ErrorIfSpaceInValue,
 	str::string_ &Value,
@@ -418,11 +374,14 @@ static status__ GetValue_(
 		Value.Append( C );
 	}
 
+	if ( Flow.EOX() )
+		return sUnexpectedEOF;
+
 	return sOK;
 }
 
 inline static status__ GetTagValue_(
-	flow_ &Flow,
+	_flow_ &Flow,
 	str::string_ &Value,
 	bso::bool__ &OnlySpaces )
 {
@@ -430,7 +389,7 @@ inline static status__ GetTagValue_(
 }
 
 inline status__ GetAttributeValue_(
-	flow_ &Flow,
+	_flow_ &Flow,
 	char Delimiter,
 	str::string_ &Value )
 {	
@@ -446,7 +405,7 @@ inline status__ GetAttributeValue_(
 		Status = s_Undefined;
 
 static status__ GetAttribute_(
-	flow_ &Flow,
+	_flow_ &Flow,
 	str::string_ &Name,
 	str::string_ &Value )
 {
@@ -485,7 +444,7 @@ static status__ GetAttribute_(
 	return sOK;
 }
 
-static status__ SkipComment_( flow_ &Flow )
+static status__ SkipComment_( _flow_ &Flow )
 {
 	bso::bool__ Continue = true;
 
@@ -530,7 +489,7 @@ static status__ SkipComment_( flow_ &Flow )
 	return sOK;
 }
 
-static status__ HandleProcessingInstruction_( flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
+static status__ HandleProcessingInstruction_( _flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
 		ERRc();
@@ -570,6 +529,7 @@ E_ROW( srow__ );
 	}
 
 
+#ifndef XML__USE_NEW
 status__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
 	callback__ &Callback )
@@ -580,7 +540,7 @@ ERRProlog
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 	bso::ulong__ Level = BSO_ULONG_MAX;
-	flow Flow;
+	_flow Flow;
 	bso::bool__ OnlySpaces;
 ERRBegin
 	Flow.Init( UserFlow );
@@ -838,6 +798,459 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+#else
+status__ xml::Parse(
+	xtf::extended_text_iflow__ &UserFlow,
+	callback__ &Callback )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	browser___ Browser;
+	str::string TagName, AttributeName, Value;	
+	bso::bool__ Stop = false;
+	xml::dump Dump;
+ERRBegin
+	Browser.Init( UserFlow );
+
+	while ( !Stop ) {
+		TagName.Init();
+		AttributeName.Init();
+		Value.Init();
+		Dump.Init();
+
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case iProcessingInstruction:
+			Stop = !Callback.XMLProcessingInstruction( Dump );
+			break;
+		case iStartTag:
+			Stop = !Callback.XMLStartTag( TagName, Dump );
+			break;
+		case iStartTagClosed:
+			Stop = !Callback.XMLStartTagClosed( TagName, Dump );
+			break;
+		case iAttribute:
+			Stop = !Callback.XMLAttribute( TagName, AttributeName, Value, Dump );
+			break;
+		case iValue:
+			Stop = !Callback.XMLValue( TagName, Value, Dump );
+			break;
+		case iEndTag:
+			Stop = !Callback.XMLEndTag( TagName, Dump );
+			break;
+		case iProcessed:
+			Stop = true;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+#endif
+
+#undef RETURN
+
+#define RETURN( V )\
+	{\
+		Status = V;\
+		_Item = iError;\
+		ERRReturn;\
+	}
+
+item__ xml::browser___::Browse(
+	str::string_ &TagName,
+	str::string_ &AttributeName,
+	str::string_ &Value,	// Tag value or attribute value dpending on returned value.
+	dump_ &Dump,
+	status__ &Status )
+{
+ERRProlog
+	bso::bool__ OnlySpaces = false, Retry = true;
+ERRBegin
+
+	while ( Retry ) {
+		if ( _Flow.EOX() )
+			if ( _Item != iEndTag )
+				RETURN( sUnexpectedEOF );
+
+		switch ( _Context ) {
+		case cHeaderExpected:
+
+			HANDLE( SkipSpaces_( _Flow ) );
+
+			switch ( _Item ) {
+			case i_Undefined:
+				if ( _Flow.View() != '<' )
+					RETURN( sUnexpectedCharacter )
+				else {
+					_Flow.Get();
+					if ( _Flow.View() == '?' ) {
+						HANDLE( HandleProcessingInstruction_( _Flow ) );
+
+						_Item = iProcessingInstruction;
+
+						Retry = false;
+
+					} else {
+						_Context = cTagExpected;
+						_Flow.Unget( '<' );
+					}
+				}
+				break;
+			case iProcessingInstruction:
+				_Item = i_Undefined;
+
+				HANDLE( SkipSpaces_( _Flow ) );
+
+				_Flow.Dump.Init();
+
+				_Context = cTagExpected;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		case cTagExpected:
+			if ( _Flow.Get() != '<' )
+				RETURN( sUnexpectedCharacter )
+
+			HANDLE( SkipSpaces_( _Flow ) );
+
+			if ( _Flow.View() == '/' ) {
+				_Context = cClosingTag;
+				_Flow.Get();
+			} else
+				_Context = cOpeningTag;
+			break;
+		case cOpeningTag:
+			switch ( _Item ) {
+			case i_Undefined:
+				if ( _Flow.View() == '!' ) {
+					HANDLE( SkipComment_( _Flow ) );
+					_Context = cTagExpected;
+
+					HANDLE( SkipSpaces_( _Flow ) );
+				} else {
+					TagName.Init();
+
+					GetName_( _Flow, TagName );
+
+					if ( TagName.Amount() == 0 )
+						RETURN( sEmptyTagName );
+
+					_Tags.Push( TagName );
+
+					_Item = iStartTag;
+
+					Retry = false;
+				}
+				break;
+			case iStartTag:
+				_Item = i_Undefined;
+
+				_Flow.Dump.Init();
+
+				HANDLE( SkipSpaces_( _Flow ) );
+
+				switch( _Flow.View() ) {
+				case '/':
+					_Flow.Get();
+
+					HANDLE( SkipSpaces_( _Flow ) );
+
+					if ( _Flow.Get() != '>' )
+						RETURN( sUnexpectedCharacter );
+
+					if ( _Tags.IsEmpty() )
+						ERRc();
+
+					TagName.Init();
+
+					_Tags.Top( TagName );
+
+					_Item = iEndTag;
+
+					Retry = false;
+
+					_EmptyTag = true;
+
+				break;
+				case '>':
+					_Flow.Get();
+
+					TagName.Init();
+
+					_Tags.Top( TagName );
+
+					_Item = iStartTagClosed;
+
+					_EmptyTag = false;
+
+					Retry = false;
+
+					break;
+				default:
+					_Context = cAttribute;
+					break;
+				}
+				break;
+			case iStartTagClosed:
+				if ( _EmptyTag ) {
+					TagName.Init();
+
+					_Tags.Top( TagName );
+
+					_Item = iEndTag;
+	
+					Retry = false;
+				} else {
+					_Item = i_Undefined;
+
+					_Flow.Dump.Init();
+
+					_Context = cValueExpected;
+				}
+				break;
+			case iEndTag:
+				_Item = i_Undefined;
+
+				TagName.Init();
+
+				_Tags.Pop( TagName );
+
+				_Flow.Dump.Init();
+
+				_Context = cValueExpected;
+				break;
+			default:
+				ERRc();
+			}
+			break;
+		case cAttribute:
+			switch ( _Item ) {
+			case i_Undefined:
+				AttributeName.Init();
+				Value.Init();
+
+				HANDLE( GetAttribute_( _Flow, AttributeName, Value ) );
+
+				if ( _Tags.IsEmpty() )
+					ERRc();
+
+				TagName.Init();
+
+				_Tags.Top( TagName );
+
+				_Item = iAttribute;
+
+				Retry = false;
+
+				break;
+			case iAttribute:
+				_Item = i_Undefined;
+
+				_Flow.Dump.Init();
+
+				HANDLE( SkipSpaces_( _Flow ) );
+
+				if ( _Flow.View() == '/' ) {
+
+					_Flow.Get();
+
+					HANDLE( SkipSpaces_( _Flow ) );
+
+					if ( _Flow.View() == '>' ) {
+
+						_Flow.Get();
+
+						if ( _Tags.IsEmpty() )
+							ERRc();
+
+						TagName.Init();
+
+						_Tags.Top( TagName );
+
+						_Item = iEndTag;
+
+						Retry = false;
+
+						_EmptyTag = true;
+
+
+					} else
+						RETURN( sUnexpectedCharacter );
+				} else if ( _Flow.View() == '>' ) {
+					_Flow.Get();
+
+					TagName.Init();
+
+					_Tags.Top( TagName );
+
+					_Item = iStartTagClosed;
+
+					Retry = false;
+
+					_EmptyTag = false;
+
+				}
+
+				break;
+			case iStartTagClosed:
+				if ( _EmptyTag ) {
+					TagName.Init();
+
+					_Tags.Top( TagName );
+
+					HANDLE( SkipSpaces_( _Flow ) );
+
+					_Flow.Dump.Init();
+
+					_Context = cTagExpected;
+
+					_Item = iEndTag;
+
+					Retry = false;
+				} else {
+					_Item = i_Undefined;
+
+					_Flow.Dump.Init();
+
+					_Context = cValueExpected;
+				}
+				break;
+			case iEndTag:
+				_Item = i_Undefined;
+
+				_Flow.Dump.Init();
+
+				TagName.Init();
+
+				_Tags.Pop( TagName );
+
+				_Context = cValueExpected;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		case cClosingTag:
+			switch ( _Item ) {
+			case i_Undefined:
+			case iValue:
+				HANDLE( SkipSpaces_( _Flow ) );
+
+				TagName.Init();
+
+				GetName_( _Flow, TagName );
+
+				HANDLE( SkipSpaces_( _Flow ) );
+
+				if ( _Flow.Get() != '>' )
+					RETURN( sUnexpectedCharacter );
+
+				if ( _Tags.IsEmpty() )
+					RETURN( sMismatchedTag );
+
+				{
+					str::string_ &Buffer = Value;
+
+					Buffer.Init();
+
+					_Tags.Top( Buffer );
+
+					if ( Buffer != TagName )
+						RETURN( sMismatchedTag );
+
+					Buffer.Init();
+				}
+
+				_Item = iEndTag;
+
+				Retry = false;
+
+				break;
+			case iEndTag:
+				_Item = i_Undefined;
+
+				TagName.Init();
+
+				_Tags.Pop( TagName );
+
+				_Flow.Dump.Init();
+
+				_Context = cValueExpected;
+
+				if ( _Flow.EOX() )
+					Retry = false;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		case cValueExpected:
+			switch( _Item ) {
+			case i_Undefined:
+				if ( _Flow.View() != '<' ) {
+					Value.Init();
+					
+					HANDLE( GetTagValue_( _Flow, Value, OnlySpaces ) );
+
+					if ( !OnlySpaces ) {
+
+						TagName.Init();
+
+						if ( _Tags.IsEmpty() )
+							ERRc();
+						else
+							_Tags.Top( TagName );
+
+						_Item = iValue;
+
+						Retry = false;
+					}
+				} else
+					_Context = cTagExpected;
+				break;
+			case iValue:
+				_Item  = i_Undefined;
+
+				_Flow.Dump.Init();
+
+				_Context = cTagExpected;
+			break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	if ( _Tags.IsEmpty() )
+		if ( _Item == i_Undefined )
+			_Item = iProcessed;
+
+	Status = sOK;
+
+	Dump = _Flow.Dump;
+ERRErr
+ERREnd
+ERREpilog
+	return _Item;
+}
+
+
 
 E_ROW( rrow__ );	// Repository row.
 
@@ -2010,214 +2423,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-#ifdef XML__MT
-bso::bool__ enhanced_parser_callback___::XMLProcessingInstruction( const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cProcessingIntruction;
-
-	this->Name.Init();
-	this->Value.Init();
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-bso::bool__ xml::enhanced_parser_callback___::XMLStartTag(
-	const str::string_ &Name,
-	const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cStartTag;
-
-	this->Name = Name;
-	this->Value.Init();
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-bso::bool__ xml::enhanced_parser_callback___::XMLStartTagClosed(
-	const str::string_ &Name,
-	const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cStartTagClosed;
-
-	this->Name = Name;
-	this->Value.Init();
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-bso::bool__ xml::enhanced_parser_callback___::XMLAttribute(
-	const str::string_ &TagName,
-	const str::string_ &Name,
-	const str::string_ &Value,
-	const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cAttribute;
-
-	this->Name = Name;
-	this->Value = Value;
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-bso::bool__ xml::enhanced_parser_callback___::XMLValue(
-	const str::string_ &TagName,
-	const str::string_ &Value,
-	const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cValue;
-
-	this->Name = TagName;
-	this->Value = Value;
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-bso::bool__ xml::enhanced_parser_callback___::XMLEndTag(
-	const str::string_ &Name,
-	const dump_ &Dump )
-{
-	WriteLock();
-
-	if ( !Continue ) {
-		ReadUnlock();
-		return false;
-	}
-
-	Context = cEndTag;
-
-	this->Name = Name;
-	this->Value.Init();
-	this->Dump = Dump;
-
-	ReadUnlock();
-
-	return true;
-}
-
-
-
-static void Routine_( void *UP )
-{
-	enhanced_parser_callback___ &Callback = *(enhanced_parser_callback___ *)UP;
-	status__ Status = xml::Parse( Callback.Flow(), Callback );
-
-	Callback.Status = Status;
-
-	if ( Status != sOK )
-		Callback.Context = cError;
-	else {
-		Callback.WriteLock();
-		Callback.Context = cProcessed;
-	}
-
-	Callback.ReadUnlock();
-
-}
-
-void xml::enhanced_parser___::Start( void )
-{
-	if ( _InProgress )
-		ERRu();
-
-	_Callback.WriteLock();
-	_Callback.ReadLock();
-
-	mtk::Launch( Routine_, &_Callback );
-
-	_InProgress = true;
-
-	_Callback.WriteUnlock();
-}
-
-context__ xml::enhanced_parser___::Parse(
-	str::string_ &Name,
-	str::string_ &Value,
-	dump_ &Dump,
-	status__ &Status )
-{
-	context__ Context = c_Undefined;
-	_Callback.ReadLock();
-
-	Name.Append( _Callback.Name );
-	Value.Append( _Callback.Value );
-	Dump = _Callback.Dump;
-	Status = _Callback.Status;
-
-	_Callback.WriteUnlock();
-
-	return Context;
-}
-
-void xml::enhanced_parser___::Break( void )
-{
-	_Callback.ReadLock();
-
-	_Callback.Continue = false;
-
-	_Callback.WriteUnlock();
-
-	_Callback.ReadLock();
-
-	_Callback.ReadUnlock();
-
-	_InProgress = false;
-}
-
-
-#endif
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

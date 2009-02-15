@@ -52,15 +52,15 @@ struct callback__
 		while ( Counter-- )
 			cout << txf::tab;
 	}
-	virtual bso::bool__ XMLProcessingInstruction( const str::string_ &Dump )
+	virtual bso::bool__ XMLProcessingInstruction( const xml::dump_ &Dump )
 	{
-		cout << "PI : " << Dump << txf::nl;
+		cout << "PI : " << Dump.RawData << txf::nl;
 
 		return true;
 	}
 	virtual bso::bool__ XMLStartTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		Ident_();
 		cout << "Tag : '" << Name << '\'' << txf::nl;
@@ -72,7 +72,7 @@ struct callback__
 	virtual bso::bool__ XMLValue(
 		const str::string_ &TagName,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		Ident_();
 
@@ -84,7 +84,7 @@ struct callback__
 		const str::string_ &TagName,
 		const str::string_ &Name,
 		const str::string_ &Value,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		Ident_();
 
@@ -94,7 +94,7 @@ struct callback__
 	}
 	virtual bso::bool__ XMLEndTag(
 		const str::string_ &Name,
-		const str::string_ &Dump )
+		const xml::dump_ &Dump )
 	{
 		ident--;
 
@@ -110,7 +110,7 @@ struct callback__
 	}
 };
 
-#define FILE	"../test.xml"
+#define FILE	"test.xml"
 
 
 void Generic( int argc, char *argv[] )
@@ -122,15 +122,16 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XTFlow;
 	str::string GuiltyFileName;
-	tol::E_FPOINTER___( char ) Directory;
+	const char *Directory;
 	xml::extended_status__ Status = xml::xs_Undefined;
+	FNM_BUFFER___ Buffer;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
 
 	Flow.Init( FILE );
 
-	Directory = fnm::GetLocation( FILE );
+	Directory = fnm::GetLocation( FILE, Buffer );
 
 	Flow.EOFD( XTF_EOXT );
 
@@ -138,9 +139,9 @@ ERRBegin
 
 	GuiltyFileName.Init();
 
-	if ( ( Status = xml::ExtendedParse( XTFlow, str::string( "xcf" ), str::string( Directory ), Callback, GuiltyFileName ) ) != xml::xsOK ) {
+	if ( ( Status = xml::ExtendedParse( XTFlow, str::string( "xcf" ), Callback, str::string( Directory ), GuiltyFileName ) ) != xml::xsOK ) {
 		cout << txf::sync;
-		cerr << txf::nl << "Error at line " << XTFlow.Line() << ", Column " << XTFlow.Column();
+		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
 
 		if ( GuiltyFileName.Amount() != 0 )
 			cerr << " in file '" << GuiltyFileName << '\'';
