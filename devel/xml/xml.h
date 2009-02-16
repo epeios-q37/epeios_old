@@ -68,7 +68,7 @@ extern class ttr_tutor &XMLTutor;
 #include "ctn.h"
 #include "cpe.h"
 
-#ifndef XML_USE_OLD
+#ifdef XML_USE_NEW
 #	define XML__USE_NEW
 #endif
 
