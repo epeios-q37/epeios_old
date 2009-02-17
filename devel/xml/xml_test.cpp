@@ -139,7 +139,7 @@ ERRBegin
 
 	GuiltyFileName.Init();
 
-	if ( ( Status = xml::ExtendedParse( XTFlow, str::string( "xcf" ), Callback, str::string( Directory ), GuiltyFileName ) ) != xml::xsOK ) {
+	if ( ( Status = xml::ExtendedParse( XTFlow, str::string( "xf" ), Callback, str::string( Directory ), GuiltyFileName ) ) != xml::xsOK ) {
 		cout << txf::sync;
 		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
 

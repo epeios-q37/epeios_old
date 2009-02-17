@@ -974,7 +974,7 @@ ERRBegin
 
 					_Tags.Top( TagName );
 
-					_Item = iEndTag;
+					_Item = iStartTagClosed;
 
 					Retry = false;
 
@@ -1076,7 +1076,7 @@ ERRBegin
 
 						_Tags.Top( TagName );
 
-						_Item = iEndTag;
+						_Item = iStartTagClosed;
 
 						Retry = false;
 
@@ -1110,8 +1110,6 @@ ERRBegin
 					HANDLE( SkipSpaces_( _Flow ) );
 
 					_Flow.Dump.Init();
-
-					_Context = cTagExpected;
 
 					_Item = iEndTag;
 
@@ -1187,7 +1185,7 @@ ERRBegin
 
 				_Context = cValueExpected;
 
-				if ( _Flow.EOX() )
+				if ( _Tags.IsEmpty() )
 					Retry = false;
 				break;
 			default:
