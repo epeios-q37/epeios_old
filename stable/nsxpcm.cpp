@@ -128,11 +128,9 @@ void nsxpcm::Transform(
 	char **JString )
 {
 ERRProlog
-	tol::E_FPOINTER___( char ) Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	Buffer = EString.Convert();
-
-	Transform( Buffer, EString.Amount() + 1, JString );
+	Transform( EString.Convert( Buffer ), EString.Amount() + 1, JString );
 ERRErr
 ERREnd
 ERREpilog
@@ -150,11 +148,9 @@ void nsxpcm::Transform(
 	nsEmbedString &EString )
 {
 ERRProlog
-	tol::E_FPOINTER___( char ) Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	Buffer = String.Convert();
-
-	Transform( Buffer, EString );
+	Transform( String.Convert( Buffer ), EString );
 ERRErr
 ERREnd
 ERREpilog
@@ -871,11 +867,9 @@ void nsxpcm::Log( const char *Text )
 void nsxpcm::Log( const str::string_ &Text )
 {
 ERRProlog
-	tol::E_FPOINTER___( char ) Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	Buffer = Text.Convert();
-
-	Log( Buffer );
+	Log( Text.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -884,9 +878,9 @@ ERREpilog
 void nsxpcm::element_core__::NSXPCMOnRawEvent( const str::string_ &Event )
 {
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	NSXPCMOnRawEvent( Buffer = Event.Convert() );
+	NSXPCMOnRawEvent( Event.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -1055,7 +1049,7 @@ ERRProlog
 	nsCOMPtr<nsIXSLTProcessor> Processor;
 	nsEmbedString Name;
 	nsCOMPtr<nsIWritableVariant> Value;
-	tol::E_FPOINTER___( char ) NameBuffer, ValueBuffer;
+	STR_BUFFER___ NameBuffer;
 	ctn::E_CITEM( xslt_parameter_ ) Parameter;
 	nsresult Result = NS_OK;
 	epeios::row__ Row = NONE;
@@ -1075,7 +1069,7 @@ ERRBegin
 		Transform( Parameter( Row ).Name, Name );
 
 		nsxpcm::CreateInstance( NS_VARIANT_CONTRACTID, Value );
-		Value->SetAsString( NameBuffer = Parameter( Row ).Value.Convert() );
+		Value->SetAsString( Parameter( Row ).Value.Convert( NameBuffer ) );
 
 		Result = Processor->SetParameter( NS_LITERAL_STRING( "" ), Name, Value );
 

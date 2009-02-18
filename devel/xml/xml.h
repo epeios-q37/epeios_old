@@ -68,8 +68,8 @@ extern class ttr_tutor &XMLTutor;
 #include "ctn.h"
 #include "cpe.h"
 
-#ifdef XML_USE_NEW
-#	define XML__USE_NEW
+#ifdef XML_USE_OLD
+#	define XML__USE_OLD
 #endif
 
 
@@ -459,25 +459,25 @@ namespace xml {
 		c_Undefined
 	};
 
-	enum item__
+	enum token__
 	{
-		iProcessingInstruction,
-		iStartTag,
-		iStartTagClosed,
-		iAttribute,
-		iValue,
-		iEndTag,
-		iProcessed,	// Tout le flux XML a été traité.
-		iError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
-		i_amount,
-		i_Undefined
+		tProcessingInstruction,
+		tStartTag,
+		tStartTagClosed,
+		tAttribute,
+		tValue,
+		tEndTag,
+		tProcessed,	// Tout le flux XML a été traité.
+		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
+		t_amount,
+		t_Undefined
 	};
 
 	class browser___
 	{
 	private:
 		_context__ _Context;
-		item__ _Item;
+		token__ _Token;
 		stk::E_XMCSTACK( str::string_ ) _Tags;
 		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
 		_flow _Flow;
@@ -485,7 +485,7 @@ namespace xml {
 		void reset( bso::bool__ P = true )
 		{
 			_Context = c_Undefined;
-			_Item = i_Undefined;
+			_Token = t_Undefined;
 			_EmptyTag = false;
 			_Flow.reset( P );
 
@@ -507,7 +507,7 @@ namespace xml {
 			_Flow.Init( Flow );
 			_Context = cHeaderExpected;
 		}
-		item__ Browse(
+		token__ Browse(
 			str::string_ &TagName,
 			str::string_ &AttributeName,
 			str::string_ &Value,	// Tag value or attribute value dpending on returned value.

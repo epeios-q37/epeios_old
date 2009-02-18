@@ -66,12 +66,26 @@ namespace mbddsc {
 		return Label;
 	}
 
+	inline version__ Convert( const char *Label )
+	{
+		int V = v_amount;
+
+		while ( V-- && strcmp( Label, GetLabel( (version__)V ) ) );
+
+		if ( V == -1 )
+			V = v_Undefined;
+
+		return (version__)V;
+
+	}
+
 	enum item__ {
 		iMiscellaneousTag,
 		iEngineTag,
 		iEngineVersionAttribute,
 		iStructureTag,
 		iStructureNameTag,
+		iStructureCommentTag,
 		iTablesTag,
 		iTablesAmountAttribute,
 		iTableTag,
@@ -109,6 +123,9 @@ namespace mbddsc {
 			Label="Structure";
 			break;
 		case iStructureNameTag:
+			Label = "Name";
+			break;
+		case iStructureCommentTag:
 			Label = "Name";
 			break;
 		case iTablesTag:

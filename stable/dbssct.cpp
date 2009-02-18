@@ -72,11 +72,11 @@ static void Save_(
 {
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	lst::WriteToFile( List, FileNameBuffer = FileName.Convert(), UnderlyingFilesLastModificationTime );
+	lst::WriteToFile( List, FileName.Convert( FileNameBuffer ), UnderlyingFilesLastModificationTime );
 
 /*
 	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
@@ -114,9 +114,8 @@ ERRBegin
 
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	ContentFileNameBuffer = ContentFileName.Convert();
 
-	S_.FileManager.Init( ContentFileNameBuffer, Mode, true, ID );
+	S_.FileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
 ERRErr
 ERREnd
 ERREpilog
@@ -130,16 +129,15 @@ bso::bool__ dbssct::file_static_content_::_ConnectToFiles( void )
 	bso::bool__ Exists = false;
 ERRProlog
 	str::string ContentFileName;
-	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
+	STR_BUFFER___ ContentFileNameBuffer;
 	str::string ListFileName;
-	tol::E_FPOINTER___( bso::char__ ) ListFileNameBuffer;
+	STR_BUFFER___ ListFileNameBuffer;
 #ifdef IN_MEMORY
 	tym::E_MEMORY( atom__) Storage;
 #endif
 ERRBegin
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	ContentFileNameBuffer = ContentFileName.Convert();
 #ifdef IN_MEMORY
 	Storage.Init();
 	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, Storage );
@@ -154,9 +152,8 @@ ERRBegin
 	if ( Exists ) {
 		ListFileName.Init( RootFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
-		ListFileNameBuffer = ListFileName.Convert();
 
-		if ( !lst::ReadFromFile( ListFileNameBuffer, fil::GetFileSize( ContentFileNameBuffer ) / S_.Size, *this, _GetUnderlyingFilesLastModificationTime() ) )
+		if ( !lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / S_.Size, *this, _GetUnderlyingFilesLastModificationTime() ) )
 			RebuildLocations();
 	}
 ERRErr

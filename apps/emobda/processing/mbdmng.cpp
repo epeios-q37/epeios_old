@@ -222,9 +222,9 @@ inline static const char *GetStructureFileName_(
 	FNM_BUFFER___ &Buffer )
 {
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+	STR_BUFFER___ LocationBuffer;
 ERRBegin
-	fnm::BuildFileName( LocationBuffer = Location.Convert(), "", ".embd", Buffer );
+	fnm::BuildFileName( Location.Convert( LocationBuffer ), "", ".embd", Buffer );
 ERRErr
 ERREnd
 ERREpilog
@@ -266,7 +266,7 @@ ERRBegin
 	if ( Flow.Init( Filename, err::hSkip ) == fil::sSuccess ) {
 		XFlow.Init( Flow );
 
-		mbddsc::Import( XFlow, Description );
+		Success = mbddsc::Import( XFlow, Description );
 	}
 ERRErr
 ERREnd
@@ -300,9 +300,9 @@ bso::bool__ mbdmng::manager_::_Create( void )
 {
 	bso::bool__ Success = false;
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	if ( dir::CreateDir( Buffer = Location.Convert() ) == dir::sOK )
+	if ( dir::CreateDir( Location.Convert( Buffer ) ) == dir::sOK )
 		Success = _ExportStructure();
 ERRErr
 ERREnd

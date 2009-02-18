@@ -68,12 +68,9 @@ extern class ttr_tutor &XMLTutor;
 #include "ctn.h"
 #include "cpe.h"
 
-#ifdef CPE__T_MT
-#	ifndef XML_FORBID_MT
-#		define XML__MT
-#	endif
+#ifdef XML_USE_OLD
+#	define XML__USE_OLD
 #endif
-
 
 
 namespace xml {
@@ -138,6 +135,67 @@ namespace xml {
 	};
 
 	E_AUTO( dump )
+
+	class _flow {
+	private:
+		xtf::extended_text_iflow__ *_Flow;
+	public:
+		dump Dump;
+		void reset( bso::bool__ P = true )
+		{
+			Dump.reset( P );
+			_Flow = NULL;
+		}
+		_flow( void )
+		{
+			reset( false );
+		}
+		~_flow( void )
+		{
+			reset();
+		}
+		unsigned char Get( void )
+		{
+			unsigned char C = _Flow->Get();
+
+			if ( Dump.RawData.Amount() == 0 )
+				Dump.Set( _Flow->Coord() );
+
+			Dump.RawData.Append( C );
+
+			return C;
+		}
+		unsigned char View( void )
+		{
+			return _Flow->View();
+		}
+		bso::bool__ EOX( void )
+		{
+			return _Flow->EOX();
+		}
+		void Unget( unsigned char C )
+		{
+			_Flow->Unget( C );
+
+			Dump.RawData.Truncate();
+		}
+		void Reset( void )
+		{
+			Dump.RawData.Init();
+		}
+		void Init( xtf::extended_text_iflow__ &Flow )
+		{
+			reset();
+
+			_Flow = &Flow;
+
+			Dump.Init();
+		}
+	};
+
+	typedef _flow _flow_;
+
+
 
 	struct callback__
 	{
@@ -390,86 +448,54 @@ namespace xml {
 		OFlow << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 	}
 
-#ifdef XML__MT
-#	include "mtx.h"
-	// NOTA : A réecrire sans passer par le multitâche.
-
-	enum context__
-	{
-		cProcessingIntruction,
-		cStartTag,
-		cStartTagClosed,
+	enum _context__ {
+		cHeaderExpected,
+		cTagExpected,
+		cOpeningTag,
+		cClosingTag,
 		cAttribute,
-		cValue,
-		cEndTag,
-		cProcessed,	// Tout le flux XML a été traité.
-		cError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
+		cValueExpected,
 		c_amount,
 		c_Undefined
 	};
 
-	class enhanced_parser_callback___
-	: public callback__
+	enum token__
+	{
+		tProcessingInstruction,
+		tStartTag,
+		tStartTagClosed,
+		tAttribute,
+		tValue,
+		tEndTag,
+		tProcessed,	// Tout le flux XML a été traité.
+		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
+		t_amount,
+		t_Undefined
+	};
+
+	class browser___
 	{
 	private:
-		mtx::mutex_handler__ _WriteMutex, _ReadMutex;;
-		xtf::extended_text_iflow__ *_Flow;
-	protected:
-		virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump );
-		virtual bso::bool__ XMLStartTag(
-			const str::string_ &Name,
-			const dump_ &Dump );
-		virtual bso::bool__ XMLStartTagClosed(
-			const str::string_ &Name,
-			const dump_ &Dump );
-		virtual bso::bool__ XMLAttribute(
-			const str::string_ &TagName,
-			const str::string_ &Name,
-			const str::string_ &Value,
-			const dump_ &Dump );
-		virtual bso::bool__ XMLValue(
-			const str::string_ &TagName,
-			const str::string_ &Value,
-			const dump_ &Dump );
-		virtual bso::bool__ XMLEndTag(
-			const str::string_ &Name,
-			const dump_ &Dump );
+		_context__ _Context;
+		token__ _Token;
+		stk::E_XMCSTACK( str::string_ ) _Tags;
+		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
+		_flow _Flow;
 	public:
-		context__ Context;
-		bso::bool__ Continue;
-		str::string Name;
-		str::string Value;
-		dump Dump;
-		status__ Status;
 		void reset( bso::bool__ P = true )
 		{
-			if ( P ) {
+			_Context = c_Undefined;
+			_Token = t_Undefined;
+			_EmptyTag = false;
+			_Flow.reset( P );
 
-				if ( _WriteMutex != MTX_INVALID_HANDLER )
-					mtx::Delete( _WriteMutex );
-
-				if ( _ReadMutex != MTX_INVALID_HANDLER )
-					mtx::Delete( _ReadMutex );
-			}
-
-			Name.reset( P );
-			Value.reset( P );
-			Dump.reset();
-			Status = sOK;
-
-			_WriteMutex = MTX_INVALID_HANDLER;
-			_ReadMutex = MTX_INVALID_HANDLER;
-
-			_Flow = NULL;
-
-			Continue = false;
-			Context = c_Undefined;
+			_Tags.reset( P );
 		}
-		enhanced_parser_callback___( void )
+		browser___( void )
 		{
 			reset( false );
 		}
-		~enhanced_parser_callback___( void )
+		~browser___( void )
 		{
 			reset();
 		}
@@ -477,71 +503,17 @@ namespace xml {
 		{
 			reset();
 
-			Name.Init();
-			Value.Init();
-			Dump.Init();
-
-			callback__::Init();
-
-			_WriteMutex = mtx::Create( mtx::mFree );
-			_ReadMutex = mtx::Create( mtx::mFree );
-
-			_Flow = &Flow;
-
-			Continue = true;
+			_Tags.Init();
+			_Flow.Init( Flow );
+			_Context = cHeaderExpected;
 		}
-		void WriteLock( void )
-		{
-			mtx::Lock( _WriteMutex );
-		}
-		void WriteUnlock( void )
-		{
-			mtx::Unlock( _WriteMutex );
-		}
-		void ReadLock( void )
-		{
-			mtx::Lock( _ReadMutex );
-		}
-		void ReadUnlock( void )
-		{
-			mtx::Unlock( _ReadMutex );
-		}
-		xtf::extended_text_iflow__ &Flow( void )
-		{
-			return *_Flow;
-		}
+		token__ Browse(
+			str::string_ &TagName,
+			str::string_ &AttributeName,
+			str::string_ &Value,	// Tag value or attribute value dpending on returned value.
+			xml::dump_ &Dump,
+			status__ &Status );	// 'Status' initialisé seulement si 'item__' == 'iError'.
 	};
-
-	class enhanced_parser___
-	{
-	private:
-		enhanced_parser_callback___ _Callback;
-		bso::bool__ _InProgress;
-	public:
-		enhanced_parser___( void )
-		{
-			_InProgress = false;
-		}
-		~enhanced_parser___( void )
-		{
-			if ( _InProgress )
-				Break();
-		}
-		void Init( xtf::extended_text_iflow__ &Flow )
-		{
-			_Callback.Init( Flow );
-		}
-		void Start( void );
-		context__ Parse(
-			str::string_ &Name,
-			str::string_ &Value,
-			dump_ &Dump,
-			status__ &Status );
-		void Break();
-	};
-#endif
-
-
 }
 
 /*$END$*/

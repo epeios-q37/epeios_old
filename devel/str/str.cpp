@@ -197,11 +197,11 @@ namespace str {
 	}
 
 	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
-	char *string_::Convert(
+	const char *string_::Convert(
 		epeios::row__ Position,
-		epeios::size__ Quantity ) const
+		epeios::size__ Quantity,
+		STR_BUFFER___ &Buffer ) const
 	{
-		char *Pointeur = NULL;
 	ERRProlog
 	ERRBegin
 #ifdef STR_DBG
@@ -212,19 +212,17 @@ namespace str {
 		if ( Quantity > ( Amount() - *Position ) )
 			Quantity = Amount() - *Position;
 
-		if ( ( Pointeur = (char *)malloc( Quantity + 1 ) ) == NULL )
+		if ( ( Buffer = (char *)malloc( Quantity + 1 ) ) == NULL )
 			ERRa();
 
 		if ( Quantity != 0 )
-			Recall( Position, Quantity, Pointeur );
+			Recall( Position, Quantity, Buffer );
 
-		Pointeur[Quantity] = 0;
+		Buffer[Quantity] = 0;
 	ERRErr
-		if ( Pointeur )
-			free( Pointeur );
 	ERREnd
 	ERREpilog
-		return Pointeur;
+		return Buffer;
 	}
 
 	// Could be easily optimized, would be when I have some time.

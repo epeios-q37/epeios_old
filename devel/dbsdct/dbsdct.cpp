@@ -115,11 +115,11 @@ template <typename item> static void Save_(
 {
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	Save_( Bunch, FileNameBuffer = FileName.Convert() );
+	Save_( Bunch, FileName.Convert( FileNameBuffer ) );
 
 	while ( UnderlyingFilesLastModificationTime >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
@@ -207,11 +207,11 @@ template <typename item> static bso::bool__ Load_(
 	bso::bool__ Success = false;
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	Success = Load_( FileNameBuffer = FileName.Convert(), Bunch, TestValue, TimeStamp );
+	Success = Load_( FileName.Convert( FileNameBuffer ), Bunch, TestValue, TimeStamp );
 ERRErr
 ERREnd
 ERREpilog
@@ -226,29 +226,25 @@ void dbsdct::file_dynamic_content_::Init(
 {
 ERRProlog
 	str::string ContentFileName;
-	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
+	STR_BUFFER___ ContentFileNameBuffer;
 	str::string EntriesBunchFileName;
-	tol::E_FPOINTER___( bso::char__ ) EntriesBunchFileNameBuffer;
+	STR_BUFFER___ EntriesBunchFileNameBuffer;
 	str::string EntriesListFileName;
-	tol::E_FPOINTER___( bso::char__ ) EntriesListFileNameBuffer;
+	STR_BUFFER___ EntriesListFileNameBuffer;
 ERRBegin
 	reset();
 
 	ContentFileName.Init( RootFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	ContentFileNameBuffer = ContentFileName.Convert();
-
-	S_.StorageFileManager.Init( ContentFileNameBuffer, Mode, true, ID );
+	S_.StorageFileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
 
 	EntriesBunchFileName.Init( RootFileName );
 	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
-	EntriesBunchFileNameBuffer = EntriesBunchFileName.Convert();
 
 	EntriesListFileName.Init( RootFileName );
 	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
-	EntriesListFileNameBuffer = EntriesListFileName.Convert();
 
-	S_.EntriesFileManager.Init( EntriesBunchFileNameBuffer, EntriesListFileNameBuffer, Mode, true, ID );
+	S_.EntriesFileManager.Init( EntriesBunchFileName.Convert( EntriesBunchFileNameBuffer) , EntriesListFileName.Convert( EntriesListFileNameBuffer ), Mode, true, ID );
 
 	this->RootFileName.Init( RootFileName );
 	S_.Mode = Mode;

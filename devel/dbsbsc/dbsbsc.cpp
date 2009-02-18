@@ -63,13 +63,13 @@ void dbsbsc::DropFile(
 {
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	if ( RootFileName.Amount() != 0 ) {
 		FileName.Init( RootFileName );
 		FileName.Append( Extension );
 
-		if ( fil::FileExists( FileNameBuffer = FileName.Convert() ) )
+		if ( fil::FileExists( FileName.Convert( FileNameBuffer) ) )
 			if ( remove( FileNameBuffer ) != 0 )
 				ERRd();
 	}

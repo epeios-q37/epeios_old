@@ -97,6 +97,9 @@ namespace str {
 
 	class string_;	// Prédéclaration.
 
+#define STR_BUFFER___	tol::E_FPOINTER___( bso::char__ )
+
+
 	_generic_integer__ _GenericConversion(
 		const class string_ &String,
 		epeios::row__ Begin,
@@ -179,10 +182,21 @@ namespace str {
 
 			return *this;
 		}
-		//f Convert 'Amount' characters at 'Position' from string to a 'char *'. Returned pointer MUST be freed with 'free'.
-		char *Convert(
-			epeios::row__ Position = 0,
-			epeios::size__ Amount = TYM_MAX_SIZE ) const;
+		//f Convert 'Amount' characters at 'Position' from string to a 'char *'.
+		const char *Convert(
+			epeios::row__ Position,
+			epeios::size__ Amount,
+			STR_BUFFER___ &Buffer ) const;
+		const char *Convert(
+			epeios::row__ Position,
+			STR_BUFFER___ &Buffer ) const
+		{
+			return Convert( Position, TYM_MAX_SIZE, Buffer );
+		}
+		const char *Convert( STR_BUFFER___ &Buffer ) const
+		{
+			return Convert( 0, TYM_MAX_SIZE, Buffer );
+		}
 		//f Filter out the 'Model' charactere.
 		void FilterOut( char Model );
 		//f Remove characters 'Model' beginnig the string.

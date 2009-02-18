@@ -529,7 +529,7 @@ E_ROW( srow__ );
 	}
 
 
-#ifndef XML__USE_NEW
+#ifdef XML__USE_OLD
 status__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
 	callback__ &Callback )
@@ -820,25 +820,25 @@ ERRBegin
 		Dump.Init();
 
 		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
-		case iProcessingInstruction:
+		case tProcessingInstruction:
 			Stop = !Callback.XMLProcessingInstruction( Dump );
 			break;
-		case iStartTag:
+		case tStartTag:
 			Stop = !Callback.XMLStartTag( TagName, Dump );
 			break;
-		case iStartTagClosed:
+		case tStartTagClosed:
 			Stop = !Callback.XMLStartTagClosed( TagName, Dump );
 			break;
-		case iAttribute:
+		case tAttribute:
 			Stop = !Callback.XMLAttribute( TagName, AttributeName, Value, Dump );
 			break;
-		case iValue:
+		case tValue:
 			Stop = !Callback.XMLValue( TagName, Value, Dump );
 			break;
-		case iEndTag:
+		case tEndTag:
 			Stop = !Callback.XMLEndTag( TagName, Dump );
 			break;
-		case iProcessed:
+		case tProcessed:
 			Stop = true;
 			break;
 		default:
@@ -858,11 +858,11 @@ ERREpilog
 #define RETURN( V )\
 	{\
 		Status = V;\
-		_Item = iError;\
+		_Token = tError;\
 		ERRReturn;\
 	}
 
-item__ xml::browser___::Browse(
+token__ xml::browser___::Browse(
 	str::string_ &TagName,
 	str::string_ &AttributeName,
 	str::string_ &Value,	// Tag value or attribute value dpending on returned value.
@@ -875,7 +875,7 @@ ERRBegin
 
 	while ( Retry ) {
 		if ( _Flow.EOX() )
-			if ( _Item != iEndTag )
+			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
 
 		switch ( _Context ) {
@@ -883,8 +883,8 @@ ERRBegin
 
 			HANDLE( SkipSpaces_( _Flow ) );
 
-			switch ( _Item ) {
-			case i_Undefined:
+			switch ( _Token ) {
+			case t_Undefined:
 				if ( _Flow.View() != '<' )
 					RETURN( sUnexpectedCharacter )
 				else {
@@ -892,7 +892,7 @@ ERRBegin
 					if ( _Flow.View() == '?' ) {
 						HANDLE( HandleProcessingInstruction_( _Flow ) );
 
-						_Item = iProcessingInstruction;
+						_Token = tProcessingInstruction;
 
 						Retry = false;
 
@@ -902,8 +902,8 @@ ERRBegin
 					}
 				}
 				break;
-			case iProcessingInstruction:
-				_Item = i_Undefined;
+			case tProcessingInstruction:
+				_Token = t_Undefined;
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -929,8 +929,8 @@ ERRBegin
 				_Context = cOpeningTag;
 			break;
 		case cOpeningTag:
-			switch ( _Item ) {
-			case i_Undefined:
+			switch ( _Token ) {
+			case t_Undefined:
 				if ( _Flow.View() == '!' ) {
 					HANDLE( SkipComment_( _Flow ) );
 					_Context = cTagExpected;
@@ -946,13 +946,13 @@ ERRBegin
 
 					_Tags.Push( TagName );
 
-					_Item = iStartTag;
+					_Token = tStartTag;
 
 					Retry = false;
 				}
 				break;
-			case iStartTag:
-				_Item = i_Undefined;
+			case tStartTag:
+				_Token = t_Undefined;
 
 				_Flow.Dump.Init();
 
@@ -974,7 +974,7 @@ ERRBegin
 
 					_Tags.Top( TagName );
 
-					_Item = iStartTagClosed;
+					_Token = tStartTagClosed;
 
 					Retry = false;
 
@@ -988,7 +988,7 @@ ERRBegin
 
 					_Tags.Top( TagName );
 
-					_Item = iStartTagClosed;
+					_Token = tStartTagClosed;
 
 					_EmptyTag = false;
 
@@ -1000,25 +1000,25 @@ ERRBegin
 					break;
 				}
 				break;
-			case iStartTagClosed:
+			case tStartTagClosed:
 				if ( _EmptyTag ) {
 					TagName.Init();
 
 					_Tags.Top( TagName );
 
-					_Item = iEndTag;
+					_Token = tEndTag;
 	
 					Retry = false;
 				} else {
-					_Item = i_Undefined;
+					_Token = t_Undefined;
 
 					_Flow.Dump.Init();
 
 					_Context = cValueExpected;
 				}
 				break;
-			case iEndTag:
-				_Item = i_Undefined;
+			case tEndTag:
+				_Token = t_Undefined;
 
 				TagName.Init();
 
@@ -1033,8 +1033,8 @@ ERRBegin
 			}
 			break;
 		case cAttribute:
-			switch ( _Item ) {
-			case i_Undefined:
+			switch ( _Token ) {
+			case t_Undefined:
 				AttributeName.Init();
 				Value.Init();
 
@@ -1047,13 +1047,13 @@ ERRBegin
 
 				_Tags.Top( TagName );
 
-				_Item = iAttribute;
+				_Token = tAttribute;
 
 				Retry = false;
 
 				break;
-			case iAttribute:
-				_Item = i_Undefined;
+			case tAttribute:
+				_Token = t_Undefined;
 
 				_Flow.Dump.Init();
 
@@ -1076,7 +1076,7 @@ ERRBegin
 
 						_Tags.Top( TagName );
 
-						_Item = iStartTagClosed;
+						_Token = tStartTagClosed;
 
 						Retry = false;
 
@@ -1092,7 +1092,7 @@ ERRBegin
 
 					_Tags.Top( TagName );
 
-					_Item = iStartTagClosed;
+					_Token = tStartTagClosed;
 
 					Retry = false;
 
@@ -1101,7 +1101,7 @@ ERRBegin
 				}
 
 				break;
-			case iStartTagClosed:
+			case tStartTagClosed:
 				if ( _EmptyTag ) {
 					TagName.Init();
 
@@ -1111,19 +1111,19 @@ ERRBegin
 
 					_Flow.Dump.Init();
 
-					_Item = iEndTag;
+					_Token = tEndTag;
 
 					Retry = false;
 				} else {
-					_Item = i_Undefined;
+					_Token = t_Undefined;
 
 					_Flow.Dump.Init();
 
 					_Context = cValueExpected;
 				}
 				break;
-			case iEndTag:
-				_Item = i_Undefined;
+			case tEndTag:
+				_Token = t_Undefined;
 
 				_Flow.Dump.Init();
 
@@ -1139,9 +1139,9 @@ ERRBegin
 			}
 			break;
 		case cClosingTag:
-			switch ( _Item ) {
-			case i_Undefined:
-			case iValue:
+			switch ( _Token ) {
+			case t_Undefined:
+			case tValue:
 				HANDLE( SkipSpaces_( _Flow ) );
 
 				TagName.Init();
@@ -1169,13 +1169,13 @@ ERRBegin
 					Buffer.Init();
 				}
 
-				_Item = iEndTag;
+				_Token = tEndTag;
 
 				Retry = false;
 
 				break;
-			case iEndTag:
-				_Item = i_Undefined;
+			case tEndTag:
+				_Token = t_Undefined;
 
 				TagName.Init();
 
@@ -1194,8 +1194,8 @@ ERRBegin
 			}
 			break;
 		case cValueExpected:
-			switch( _Item ) {
-			case i_Undefined:
+			switch( _Token ) {
+			case t_Undefined:
 				if ( _Flow.View() != '<' ) {
 					Value.Init();
 					
@@ -1210,15 +1210,15 @@ ERRBegin
 						else
 							_Tags.Top( TagName );
 
-						_Item = iValue;
+						_Token = tValue;
 
 						Retry = false;
 					}
 				} else
 					_Context = cTagExpected;
 				break;
-			case iValue:
-				_Item  = i_Undefined;
+			case tValue:
+				_Token  = t_Undefined;
 
 				_Flow.Dump.Init();
 
@@ -1236,8 +1236,8 @@ ERRBegin
 	}
 
 	if ( _Tags.IsEmpty() )
-		if ( _Item == i_Undefined )
-			_Item = iProcessed;
+		if ( _Token == t_Undefined )
+			_Token = tProcessed;
 
 	Status = sOK;
 
@@ -1245,7 +1245,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return _Item;
+	return _Token;
 }
 
 
@@ -1422,8 +1422,7 @@ public:
 };
 
 enum tag__ {
-	// Balise n'appartenant pas au 'namespace'.
-	tUser,
+	tUser,	// Balise n'appartenant pas au 'namespace'.
 	tDefine,
 	tExpand,
 	tIfeq,
@@ -1725,8 +1724,8 @@ private:
 		flf::file_iflow___ Flow;
 		xtf::extended_text_iflow__ XFlow;
 		xtf::extended_text_iflow__ *PreviousFlow = _Flow;
-		tol::E_FPOINTER___( char ) DirectoryBuffer;
-		tol::E_FPOINTER___( char ) AttributeBuffer;
+		STR_BUFFER___ DirectoryBuffer;
+		STR_BUFFER___ AttributeBuffer;
 		FNM_BUFFER___ FileNameBuffer;
 		FNM_BUFFER___ LocationBuffer;
 		const char *FileName = NULL;
@@ -1734,7 +1733,7 @@ private:
 	ERRBegin
 		_ExpandIsHRef = false;
 
-		FileName =  fnm::BuildFileName( DirectoryBuffer = _Directory.Convert(), AttributeBuffer = _SelectAttribute.Convert(), "", FileNameBuffer );
+		FileName =  fnm::BuildFileName( _Directory.Convert( DirectoryBuffer ), _SelectAttribute.Convert( AttributeBuffer ), "", FileNameBuffer );
 
 		if ( Flow.Init( FileName, fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
 			Status = xsUnableToOpenFile;
@@ -1804,7 +1803,7 @@ protected:
 		else if ( _SetTag == Name )
 			return tSet;
 
-		return t_Undefined;
+		return ::t_Undefined;
 	}
 	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
@@ -1827,7 +1826,7 @@ protected:
 			if ( _ExpandIsHRef ) {
 				_ExpandIsHRef = false;
 				RETURN( xsNoTagsAllowedHere )
-			} else if ( _GetTag( Name ) == t_Undefined )
+			} else if ( _GetTag( Name ) == ::t_Undefined )
 				RETURN( xsUnknownTag )
 			else if ( _GetTag( Name ) != tDefine )
 				RETURN( xsUnexpectedTag )
@@ -1858,7 +1857,7 @@ protected:
 			_NameAttribute.Init();
 			_ValueAttribute.Init();
 			break;
-		case t_Undefined:
+		case ::t_Undefined:
 			RETURN( xsUnknownTag )
 			break;
 		default:
@@ -1945,7 +1944,7 @@ protected:
 			} else
 				RETURN( xsUnknownAttribute )
 			break;
-		case t_Undefined:
+		case ::t_Undefined:
 			RETURN( xsUnknownTag )
 			break;
 		default:
@@ -2011,7 +2010,7 @@ protected:
 				RETURN( xsMissingNameAttribute );
 
 			break;
-		case t_Undefined:
+		case ::t_Undefined:
 			RETURN( xsUnexpectedTag );
 			break;
 		default:
@@ -2046,7 +2045,7 @@ protected:
 		case tSet:
 			RETURN( xsNoValueAllowedHere )
 			break;
-		case t_Undefined:
+		case ::t_Undefined:
 			ERRc();
 			break;
 		default:
@@ -2112,7 +2111,7 @@ protected:
 			_NameAttribute.Init();
 			_ValueAttribute.Init();
 			break;
-		case t_Undefined:
+		case ::t_Undefined:
 			ERRc();
 			break;
 		default:

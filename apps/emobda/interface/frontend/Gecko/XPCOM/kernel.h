@@ -82,7 +82,7 @@ namespace kernel {
 		void _H( bso::bool__ Result )
 		{
 		ERRProlog
-			tol::E_FPOINTER___( bso::char__ ) Buffer;
+			STR_BUFFER___ Buffer;
 			str::string Message;
 		ERRBegin
 			if ( !Result ) {
@@ -91,7 +91,7 @@ namespace kernel {
 				Message.Append( '\n' );
 				Message.Append( GetI18Message() );
 
-				nsxpcm::Alert( UI.Main.Window, Buffer = Message.Convert() );
+				nsxpcm::Alert( UI.Main.Window, Message.Convert( Buffer ) );
 				ERRReturn;
 			}
 		ERRErr

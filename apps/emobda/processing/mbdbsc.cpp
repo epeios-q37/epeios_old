@@ -31,10 +31,10 @@ static const str::string_ &BuildLocatedRootFileName_(
 	str::string_ &LocatedRootFileName )
 {
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) LocationBuffer;
+	STR_BUFFER___ LocationBuffer;
 	FNM_BUFFER___ FileNameBuffer;
 ERRBegin
-	LocatedRootFileName.Append( fnm::BuildFileName( LocationBuffer = Location.Convert(), RootFileName, NULL, FileNameBuffer ) );
+	LocatedRootFileName.Append( fnm::BuildFileName( Location.Convert( LocationBuffer ), RootFileName, NULL, FileNameBuffer ) );
 ERRErr
 ERREnd
 ERREpilog

@@ -163,6 +163,12 @@ void mbddsc::Export(
 		}
 		Writer.PopTag();
 
+		Writer.PushTag( DL( StructureCommentTag ) );
+		{
+			Writer.PutValue( Structure.Comment );
+		}
+		Writer.PopTag();
+
 		ExportTables_( Structure.Tables, Structure.Fields, Writer );
 	}
 
@@ -184,42 +190,44 @@ static version__ GetVersion_( const str::string_ &Version )
 
 #define L( name )	GetLabel( i##name, Version )
 
-static bso::bool__ ImportValue_(
-	xml::enhanced_parser___ &Parser,
+static void ImportValue_(
+	xml::browser___ &Browser,
 	str::string_ &Value,
 	xml::status__ &Status )
 {
 ERRProlog
-	str::string Name;
+	str::string TagName, AttributeName;
 	xml::dump Dump;
 	bso::bool__ Continue = true;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
-		case cStartTag:
+		case tStartTag:
 			ERRI( iBeam );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
+		case tAttribute:
 			ERRI( iBeam );
 			break;
-		case cValue:
-			break;
-		case cEndTag:
+		case tValue:
 			Continue = false;
 			break;
-		case cProcessed:
+		case tEndTag:
+			ERRI( iBeam );
+			break;
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -234,35 +242,35 @@ ERREpilog
 }
 	
 static inline void ImportName_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Name,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Name, Status );
+	ImportValue_( Browser, Name, Status );
 }
 
 static void ImprtComment_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Comment,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Comment, Status );
+	ImportValue_( Browser, Comment, Status );
 }
 
 static void ImportFieldName_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Name,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Name, Status );
+	ImportValue_( Browser, Name, Status );
 }
 
 static void ImportFieldComment_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Comment,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Comment, Status );
+	ImportValue_( Browser, Comment, Status );
 }
 
 static inline bso::bool__ GetId_(
@@ -291,53 +299,54 @@ static inline bso::bool__ GetTableId_(
 }
 
 static void ImportFieldDescription_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	mbddsc::field_description_ &Field,
 	version__ Version,
 	xml::status__ &Status )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
-		case cStartTag:
-			if ( Name == L( FieldNameTag ) )
-				ImportFieldName_( Parser, Field.Name, Status );
-			else if ( Name == L( FieldCommentTag ) )
-				ImportFieldComment_( Parser, Field.Comment, Status );
+		case tStartTag:
+			if ( TagName == L( FieldNameTag ) )
+				ImportFieldName_( Browser, Field.Name, Status );
+			else if ( TagName == L( FieldCommentTag ) )
+				ImportFieldComment_( Browser, Field.Comment, Status );
 			else
 				ERRI( iBeam );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
-			if ( Name == L( FieldIdAttribute ) )
+		case tAttribute:
+			if ( AttributeName == L( FieldIdAttribute ) )
 				GetFieldId_( Value, Field.Id() );
-			else if ( Name == L( FieldTableIdAttribute ) )
+			else if ( AttributeName == L( FieldTableIdAttribute ) )
 				GetTableId_( Value, Field.TableId() );
 			else
 				ERRI( iBeam );
 			break;
-		case cValue:
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cEndTag:
+		case tEndTag:
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -352,49 +361,50 @@ ERREpilog
 }
 
 static void ImportFieldDescriptions_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	mbddsc::field_descriptions_ &Fields,
 	version__ Version,
 	xml::status__ &Status)
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 	mbddsc::field_description Field;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
-		case cStartTag:
-			if ( Name == str::string( L( FieldTag ) ) ) {
+		case tStartTag:
+			if ( TagName == str::string( L( FieldTag ) ) ) {
 				Field.Init();
-				ImportFieldDescription_( Parser, Field, Version, Status );
+				ImportFieldDescription_( Browser, Field, Version, Status );
 				Fields.Append( Field );
 			} else
 				ERRI( iBeam );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
+		case tAttribute:
 			break;
-		case cValue:
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cEndTag:
+		case tEndTag:
 			Continue = false;
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -408,69 +418,70 @@ ERREpilog
 }
 
 static void ImportTableName_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Name,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Name, Status );
+	ImportValue_( Browser, Name, Status );
 }
 
 static void ImportTableComment_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	str::string_ &Comment,
 	xml::status__ &Status )
 {
-	ImportValue_( Parser, Comment, Status );
+	ImportValue_( Browser, Comment, Status );
 }
 
 static void ImportTableDescription_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	mbddsc::table_description_ &Table,
 	version__ Version,
 	xml::status__ &Status )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
-		case cStartTag:
-			if ( Name == L( TableNameTag ) )
-				ImportTableName_( Parser, Table.Name, Status );
-			else if ( Name == L( TableCommentTag ) )
-				ImportTableComment_( Parser, Table.Comment, Status );
-			else if ( Name == L( FieldsTag ) )
-				ImportFieldDescriptions_( Parser, Table.Fields, Version, Status );
+		case tStartTag:
+			if ( TagName == L( TableNameTag ) )
+				ImportTableName_( Browser, Table.Name, Status );
+			else if ( TagName == L( TableCommentTag ) )
+				ImportTableComment_( Browser, Table.Comment, Status );
+			else if ( TagName == L( FieldsTag ) )
+				ImportFieldDescriptions_( Browser, Table.Fields, Version, Status );
 			else
 				ERRI( iBeam );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
-			if ( Name == L( TableIdAttribute ) )
+		case tAttribute:
+			if ( AttributeName == L( TableIdAttribute ) )
 				GetTableId_( Value, Table.Id() );
 			else
 				ERRI( iBeam );
 			break;
-		case cValue:
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cEndTag:
+		case tEndTag:
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -485,50 +496,50 @@ ERREpilog
 }
 
 static void ImportTableDescriptions_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	mbddsc::table_descriptions_ &Tables,
 	version__ Version,
 	xml::status__ &Status )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 	mbddsc::table_description Table;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
-		case cStartTag:
-			if ( Name == str::string( L( TableTag ) ) ) {
+		case tStartTag:
+			if ( TagName == str::string( L( TableTag ) ) ) {
 				Table.Init();
-				ImportTableDescription_( Parser, Table, Version, Status );
+				ImportTableDescription_( Browser, Table, Version, Status );
 				Tables.Append( Table );
 			} else
 				ERRI( iBeam );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
+		case tAttribute:
+			break;
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cValue:
-			ERRI( iBeam );
-			break;
-		case cEndTag:
+		case tEndTag:
 			Continue = false;
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -542,52 +553,72 @@ ERREpilog
 }
 
 
+static void ImportStructureName_(
+	xml::browser___ &Browser,
+	str::string_ &Name,
+	xml::status__ &Status )
+{
+	ImportValue_( Browser, Name, Status );
+}
+
+static void ImportStructureComment_(
+	xml::browser___ &Browser,
+	str::string_ &Comment,
+	xml::status__ &Status )
+{
+	ImportValue_( Browser, Comment, Status );
+}
+
 static void ImportStructureDescription_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	description_ &Description,
 	version__ Version,
 	xml::status__ &Status )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 ERRBegin
-
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			break;
-		case cStartTag:
-			if ( Name == str::string( L( TablesTag ) ) ) {
+		case tStartTag:
+			if ( TagName == str::string( L( StructureNameTag ) ) )
+				ImportStructureName_( Browser, Description.Name, Status );
+			else if ( TagName == str::string( L( StructureCommentTag ) ) )
+				ImportStructureComment_( Browser, Description.Comment, Status );
+			else if ( TagName == str::string( L( TablesTag ) ) ) {
 				if ( Version == v_Undefined )
 					ERRI( iBeam );
 
-				ImportTableDescriptions_( Parser, Description.Tables, Version, Status );
+				ImportTableDescriptions_( Browser, Description.Tables, Version, Status );
 			}
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
-			if ( Name == str::string( MBDDSC_VERSION_ATTRIBUTE ) )
+		case tAttribute:
+			if ( AttributeName == str::string( MBDDSC_VERSION_ATTRIBUTE ) )
 				if ( Version != v_Undefined )
 					ERRI( iBeam );
 			break;
-		case cValue:
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cEndTag:
-			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG ) )
-				ERRI( iBeam );
+		case tEndTag:
+			if ( TagName == str::string( L( StructureTag ) ) )
+				Continue = false;
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -602,51 +633,51 @@ ERREpilog
 
 
 static void ImportDescription_(
-	xml::enhanced_parser___ &Parser,
+	xml::browser___ &Browser,
 	description_ &Description,
 	xml::status__ &Status )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 	version__ Version = v_Undefined;
+	STR_BUFFER___ ValueBuffer;
 ERRBegin
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
 	while ( Continue) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			break;
-		case cStartTag:
-			if ( Name == str::string( L( TablesTag ) ) ) {
-				if ( Version == v_Undefined )
-					ERRI( iBeam );
-				ImportStructureDescription_( Parser, Description, Version, Status );
-			} else
-				ERRI( iBeam );
+		case tStartTag:
+			if ( TagName == str::string( L( StructureTag ) ) )
+				ImportStructureDescription_( Browser, Description, Version, Status );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
-			if ( Name == str::string( MBDDSC_VERSION_ATTRIBUTE ) )
+		case tAttribute:
+			if ( AttributeName == str::string( MBDDSC_VERSION_ATTRIBUTE ) )
 				if ( Version != v_Undefined )
 					ERRI( iBeam );
+				else
+					Version = Convert( Value.Convert( ValueBuffer ) );
 			break;
-		case cValue:
+		case tValue:
 			ERRI( iBeam );
 			break;
-		case cEndTag:
-			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG ) )
+		case tEndTag:
+			if ( TagName == str::string( MBDDSC_DESCRIPTION_TAG ) )
 				Continue = false;
 			break;
-		case cProcessed:
+		case tProcessed:
 			ERRc();
 			break;
-		case cError:
+		case tError:
 			ERRI( iBeam );
 			break;
 		default:
@@ -665,40 +696,39 @@ bso::bool__ mbddsc::Import(
 {
 	bso::bool__ Error = false;
 ERRProlog
-	xml::enhanced_parser___ Parser;
+	xml::browser___ Browser;
 	bso::bool__ Continue = true;
-	str::string Name, Value;
+	str::string TagName, AttributeName, Value;
 	xml::dump Dump;
 	xml::status__ Status = s_Undefined;
 ERRBegin
-	Parser.Init( Flow );
+	Browser.Init( Flow );
 
-	Name.Init();
+	TagName.Init();
+	AttributeName.Init();
 	Value.Init();
 	Dump.Init();
 
-	Parser.Start();
-
 	while ( Continue ) {
-		switch ( Parser.Parse( Name, Value, Dump, Status ) ) {
-		case cProcessingIntruction:
+		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		case tProcessingInstruction:
 			break;
-		case cStartTag:
-			if ( Name == str::string( MBDDSC_DESCRIPTION_TAG ) )
-				ImportDescription_( Parser, Description, Status );
+		case tStartTag:
+			if ( TagName == str::string( MBDDSC_DESCRIPTION_TAG ) )
+				ImportDescription_( Browser, Description, Status );
 			break;
-		case cStartTagClosed:
+		case tStartTagClosed:
 			break;
-		case cAttribute:
+		case tAttribute:
 			break;
-		case cValue:
+		case tValue:
 			break;
-		case cEndTag:
+		case tEndTag:
 			break;
-		case cProcessed:
+		case tProcessed:
 			Continue = false;
 			break;
-		case cError:
+		case tError:
 			Continue = false;
 			Error = true;
 			break;

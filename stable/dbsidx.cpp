@@ -502,12 +502,12 @@ static void Save_(
 {
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
 
-	Save_( Row, FileNameBuffer = FileName.Convert() );
+	Save_( Row, FileName.Convert( FileNameBuffer ) );
 
 	while ( UnderlyingFilesLastModificationTime >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
@@ -565,11 +565,11 @@ static bso::bool__ Load_(
 	bso::bool__ Success = false;
 ERRProlog
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootFileName );
 	FileName.Append( Extension );
-	Success = Load_( FileNameBuffer = FileName.Convert(), Row, TimeStamp );
+	Success = Load_( FileName.Convert( FileNameBuffer ), Row, TimeStamp );
 ERRErr
 ERREnd
 ERREpilog
@@ -588,21 +588,19 @@ void dbsidx::file_index_::Init(
 {
 ERRProlog
 	str::string TreeFileName;
-	tol::E_FPOINTER___( bso::char__ ) TreeFileNameBuffer;
+	STR_BUFFER___ TreeFileNameBuffer;
 	str::string QueueFileName;
-	tol::E_FPOINTER___( bso::char__ ) QueueFileNameBuffer;
+	STR_BUFFER___ QueueFileNameBuffer;
 ERRBegin
 	reset();
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
-	TreeFileNameBuffer = TreeFileName.Convert();
 
 	QueueFileName.Init( RootFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
-	QueueFileNameBuffer = QueueFileName.Convert();
 
-	S_.FileManager.Init( TreeFileNameBuffer, QueueFileNameBuffer, Mode, true, ID );
+	S_.FileManager.Init( TreeFileName.Convert( TreeFileNameBuffer ), QueueFileName.Convert( QueueFileNameBuffer ), Mode, true, ID );
 
 	this->RootFileName.Init( RootFileName );
 

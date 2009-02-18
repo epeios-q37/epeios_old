@@ -1,5 +1,14 @@
 $Id$
 
+18/02/2009 :
+	- GENERAL :
+		- Adaptation aux modifications de 'STR'.
+	- STR :
+		- 'Convert()' prend maintenant un 'buffer'.
+	- XML :
+		- Codage 'browser___'.
+		- Mise en oeuvre de 'browser___' dans l'ExtendedParse(...)'.
+
 08/02/2009 :
 	- XML :
 		- Correction faute ('ehanced' -> 'enhanced').
@@ -94,7 +103,7 @@ $Id$
 
 21/12/2008 :
 	- NSXPCM :
-		- Suppression des "@mozilla/..." par leur 'CONTRACTID' quand possible.
+		- Remplacement des "@mozilla/..." par leur 'CONTRACTID' quand possible.
 	
 
 18/12/2008 :
