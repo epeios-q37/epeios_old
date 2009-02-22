@@ -1,5 +1,9 @@
 $Id$
 
+22/02/2009 :
+	- NSXPCM :
+		- Ajouts 'SetAttribute(...)' prenant un 'nsIDOMNode *'.
+
 18/02/2009 :
 	- GENERAL :
 		- Adaptation aux modifications de 'STR'.

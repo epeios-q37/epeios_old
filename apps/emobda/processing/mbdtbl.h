@@ -37,6 +37,9 @@ namespace mbdtbl {
 	using mbdbsc::field_row__;
 	using mbdbsc::field_rows_;
 
+	using mbdfld::field_;
+	using mbdfld::fields_;
+
 	class table_core_
 	{
 	public:

@@ -21,5 +21,54 @@
 
 #include "mbdtbl.h"
 
-using namespace mbdbsc;
+using namespace mbdtbl;
 
+using namespace mbdfld;
+
+static void AppendFields_(
+	table_ &Table,
+	fields_ &Fields,
+	const field_descriptions_ &FieldDescriptions )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	field Field;
+	ctn::E_CITEM( field_description_ ) FieldDescription;
+ERRBegin
+	FieldDescription.Init( FieldDescriptions );
+
+	Row = FieldDescriptions.First();
+
+	while ( Row != NONE ) {
+		Field.Init();
+
+		Set( Field, FieldDescription( Row ) );
+
+		Table.Append( Fields.Append( Field ) );
+
+		Row = FieldDescriptions.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void mbdtbl::Set(
+	table_ &Table,
+	fields_ &Fields,
+	const table_description_ &TableDescription )
+{
+ERRProlog
+	field Field;
+ERRBegin
+	Table.Init( TableDescription.Name, TableDescription.Comment, TableDescription.Id() );
+
+	AppendFields_( Table, Fields, TableDescription.Fields );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void mdbtbl::Set(
+	tables_ &Tables,
+	const table_descriptions_ &TableDescriptions );

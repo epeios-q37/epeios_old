@@ -475,6 +475,14 @@ namespace nsxpcm {
 		Element->SetAttribute( EName, EValue );
 	}
 
+	inline void SetAttribute(
+		nsIDOMNode *Node,
+		const char *Name,
+		const char *Value )
+	{
+		SetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+	}
+
 	inline void RemoveAttribute(
 		nsIDOMElement *Element,
 		const char *Name )
@@ -566,6 +574,15 @@ namespace nsxpcm {
 		
 		Element->SetAttribute( EName, EValue );
 	}
+
+	inline void SetAttribute(
+		nsIDOMNode *Node,
+		const char *Name,
+		const str::string_ &Value )
+	{
+		SetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+	}
+
 
 	template <typename t> inline void SetValue(
 		t *Element,

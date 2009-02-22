@@ -199,10 +199,6 @@ namespace mbdstr {
 	class structure_description_
 	: public structure_core_
 	{
-	private:
-		void _AddFields(
-			table_row__ TableRow,
-			const field_descriptions_ &Descriptions );
 	public:
 		struct s
 		: public structure_core_::s
@@ -250,6 +246,10 @@ namespace mbdstr {
 	};
 
 	E_AUTO( structure_description );
+
+	void Set(
+		structure_ &Structure,
+		const structure_description_ &Description );
 }
 
 #endif

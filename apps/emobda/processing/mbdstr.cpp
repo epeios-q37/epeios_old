@@ -77,7 +77,7 @@ ERRBegin
 
 	Field.Init( Description.Name, Description.Comment, TableId, FieldId );
 
-	FieldRow = Fields.Add( Field );
+	FieldRow = Fields.Append( Field );
 
 	Tables( TableRow ).Append( FieldRow );
 
@@ -127,5 +127,10 @@ ERREpilog
 	return TableRow;
 }
 
+void mbdstr::Set(
+	structure_ &Structure,
+	const structure_description_ &Description )
+{
+}
 
 
