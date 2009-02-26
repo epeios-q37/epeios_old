@@ -24,6 +24,8 @@ enum message__ {
 	MANAGER_NoSuchTable,
 	MANAGER_IncorrectFieldName,
 	MANAGER_NameAlreadyUsed,
+	MANAGER_InexistentTable,
+	MANAGER_InexistentField,
 };
 
 inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
@@ -75,6 +77,12 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_NameAlreadyUsed" ) )
 		return MANAGER_NameAlreadyUsed;
 
+	if ( !strcmp( Message, "MANAGER_InexistentTable" ) )
+		return MANAGER_InexistentTable;
+
+	if ( !strcmp( Message, "MANAGER_InexistentField" ) )
+		return MANAGER_InexistentField;
+
 	ERRb();
 	return (message__)0;	// To avoid a warning.
 }
@@ -94,7 +102,7 @@ protected:
 
 		backend_access::GetRawMessages( Messages );
 
-		if ( Messages.Amount() != 15 )
+		if ( Messages.Amount() != 17 )
 			ERRb();
 
 		Message.Init( Messages );
@@ -199,6 +207,18 @@ protected:
 		Row = Messages.Next( Row );
 
 
+		if ( Message( Row ) != bkdacc::string( "MANAGER_InexistentTable" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_InexistentField" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -253,7 +273,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[8];
+	bkdacc::command__ Commands[10];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -265,8 +285,10 @@ public:
 			18,0, 
 			0, 18,18,
 			18,18,0, 14,
-			0, 15,19,19,9,
-			14,0, 18,18,8,
+			0, 15,
+			15,0, 19,19,9,
+			14,0, 15,
+			15,0, 19,19,9,
 			14,18,18,0, 14,
 			0, 26,
 		};
@@ -299,28 +321,38 @@ public:
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetTables";;
-		CommandDetail.Casts.Append( Parameters + 13, 5 );
+		CommandDetail.Casts.Append( Parameters + 13, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
-		CommandDetail.Name = "GetTableInfos";;
-		CommandDetail.Casts.Append( Parameters + 18, 5 );
-		CommandsDetails.Append( CommandDetail );
-
-		CommandDetail.Init();
-		CommandDetail.Name = "AddField";;
-		CommandDetail.Casts.Append( Parameters + 23, 5 );
+		CommandDetail.Name = "GetTablesInfos";;
+		CommandDetail.Casts.Append( Parameters + 15, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 28, 2 );
+		CommandDetail.Casts.Append( Parameters + 20, 3 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
+		CommandDetail.Name = "GetFieldsInfos";;
+		CommandDetail.Casts.Append( Parameters + 23, 5 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
+		CommandDetail.Name = "AddField";;
+		CommandDetail.Casts.Append( Parameters + 28, 5 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
+		CommandDetail.Name = "GetFields";;
+		CommandDetail.Casts.Append( Parameters + 33, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 8, this->Commands );
+		Commands.Recall( 0, 10, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -420,36 +452,60 @@ public:
 		return Common_->Backend->Handle();
 	}
 	bso::bool__ GetTables( 
-		bkdacc::ids32_ &Out1,
-		bkdacc::strings_ &Out2,
-		bkdacc::strings_ &Out3,
-		bkdacc::ids8_ &Out4 ) const
+		bkdacc::ids32_ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[4] );
 
 		Common_->Backend->EndOfInParameters();
 
 		Common_->Backend->Ids32Out( Out1 );
-		Common_->Backend->StringsOut( Out2 );
-		Common_->Backend->StringsOut( Out3 );
-		Common_->Backend->Ids8Out( Out4 );
 
 		return Common_->Backend->Handle();
 	}
-	bso::bool__ GetTableInfos( 
-		const bkdacc::id32__ &In1,
-		bkdacc::string_ &Out1,
-		bkdacc::string_ &Out2,
-		bkdacc::id8__ &Out3 ) const
+	bso::bool__ GetTablesInfos( 
+		const bkdacc::ids32_ &In1,
+		bkdacc::strings_ &Out1,
+		bkdacc::strings_ &Out2,
+		bkdacc::ids8_ &Out3 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[5] );
+		Common_->Backend->Ids32In( In1 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->StringsOut( Out1 );
+		Common_->Backend->StringsOut( Out2 );
+		Common_->Backend->Ids8Out( Out3 );
+
+		return Common_->Backend->Handle();
+	}
+	bso::bool__ GetFields( 
+		const bkdacc::id32__ &In1,
+		bkdacc::ids32_ &Out1 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[6] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
 
-		Common_->Backend->StringOut( Out1 );
-		Common_->Backend->StringOut( Out2 );
-		Common_->Backend->Id8Out( Out3 );
+		Common_->Backend->Ids32Out( Out1 );
+
+		return Common_->Backend->Handle();
+	}
+	bso::bool__ GetFieldsInfos( 
+		const bkdacc::ids32_ &In1,
+		bkdacc::strings_ &Out1,
+		bkdacc::strings_ &Out2,
+		bkdacc::ids8_ &Out3 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[7] );
+		Common_->Backend->Ids32In( In1 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->StringsOut( Out1 );
+		Common_->Backend->StringsOut( Out2 );
+		Common_->Backend->Ids8Out( Out3 );
 
 		return Common_->Backend->Handle();
 	}
@@ -459,7 +515,7 @@ public:
 		const bkdacc::string_ &In3,
 		bkdacc::id32__ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[6] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[8] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->StringIn( In2 );
 		Common_->Backend->StringIn( In3 );
@@ -473,7 +529,7 @@ public:
 	bso::bool__ GetFields( 
 		bkdacc::items32_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[7] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[9] );
 
 		Common_->Backend->EndOfInParameters();
 

@@ -39,6 +39,8 @@ enum message__ {
 	mNoSuchTable,
 	mIncorrectFieldName,
 	mNameAlreadyUsed,
+	mInexistentTable,
+	mInexistentField,
 	m_amount,
 	m_Undefined
 };
@@ -63,6 +65,8 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( NoSuchTable );
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
+	CASE( InexistentTable );
+	CASE( InexistentField );
 	break;
 	default:
 		ERRu();
@@ -280,10 +284,7 @@ ERREpilog
 
 static void GetTables_(
 	const mbdtbl::tables_ &Tables,
-	bkdmng::ids32_ &Rows,
-	bkdmng::strings_ &Names,
-	bkdmng::strings_ &Comments,
-	bkdmng::ids8_ &Ids )
+	bkdmng::ids32_ &Rows )
 {
 	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
 	mbdtbl::table_row__ Row = Tables.First();
@@ -292,10 +293,6 @@ static void GetTables_(
 
 	while ( Row != NONE ) {
 		Rows.Append( *Row );
-		Names.Append( Table( Row ).Name );
-		Comments.Append( Table( Row ).Comment );
-		Ids.Append( *Table( Row ).Id() );
-
 
 		Row = Tables.Next( Row );
 	}
@@ -307,37 +304,55 @@ DEC( GetTables )
 ERRProlog
 ERRBegin
 	bkdmng::ids32_ &Rows = Request.Ids32Out();
-	bkdmng::strings_ &Names = Request.StringsOut();
-	bkdmng::strings_ &Comments = Request.StringsOut();
-	bkdmng::ids8_ &Ids = Request.Ids8Out();
 
-	GetTables_( Manager.Structure.Tables, Rows, Names, Comments, Ids );
+	GetTables_( Manager.Structure.Tables, Rows );
 ERRErr
 ERREnd
 ERREpilog
 	return Message;
 }
 
-DEC( GetTableInfos )
+static message__ GetTablesInfos_(
+	const bkdmng::ids32_ &TableRows,
+	const mbdtbl::tables_ &Tables,
+	bkdmng::strings_ &Names,
+	bkdmng::strings_ &Comments,
+	bkdmng::ids8_ &Ids )
+{
+	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
+	epeios::row__ Row = TableRows.First();
+	table_row__ TableRow = NONE;
+
+	Table.Init( Tables );
+
+	while ( Row != NONE ) {
+		TableRow = *TableRows( Row );
+
+		if ( !Tables.Exists( TableRow ) )
+			return mInexistentTable;
+
+		Names.Append( Table( TableRow ).Name );
+		Comments.Append( Table( TableRow ).Comment );
+		Ids.Append( *Table( TableRow ).Id() );
+
+
+		Row = TableRows.Next( Row );
+	}
+
+	return mOK;
+}
+
+DEC( GetTablesInfos )
 {
 	message__ Message = mOK;
 ERRProlog
-	table_row__ Row = NONE;
-	ctn::E_CITEMt( mbdtbl::table_, mbdtbl::table_row__ ) Table;
 ERRBegin
-	Row = *Request.Id32In();
+	const bkdmng::ids32_ &Rows = Request.Ids32In();
+	bkdmng::strings_ &Names = Request.StringsOut();
+	bkdmng::strings_ &Comments = Request.StringsOut();
+	bkdmng::ids8_ &Ids = Request.Ids8Out();
 
-	if ( !Manager.TableExists( Row ) ) {
-		Message = mNoSuchTable;
-		ERRReturn;
-	}
-
-	Table.Init( Manager.Structure.Tables );
-
-	Request.StringOut() = Table( Row ).Name;
-	Request.StringOut() = Table( Row ).Comment;
-	Request.Id8Out() = *Table( Row ).Id();
-
+	GetTablesInfos_( Rows, Manager.Structure.Tables, Names, Comments, Ids );
 ERRErr
 ERREnd
 ERREpilog
@@ -395,46 +410,88 @@ ERREpilog
 	return Message;
 }
 
-static const bkdmng::items32_ &Convert_(
-	const fields_ &Fields,
-	bkdmng::items32_ &Items )
+static void Convert_(
+	const field_rows_ &Rows,
+	bkdmng::ids32_ &Ids )
 {
-ERRProlog
-	field_row__ FieldRow = NONE;
-	ctn::E_CITEMt( field_, field_row__ ) Field;
-	bkdmng::item32 Item;
-ERRBegin
-	Field.Init( Fields );
+	epeios::row__ Row = Rows.First();
 
-	FieldRow = Fields.First();
+	while ( Row != NONE ) {
+		Ids.Append( *Rows( Row ) );
 
-	while ( FieldRow != NONE ) {
-		Item.Init( *FieldRow, Field( FieldRow ).Name );
-
-		Items.Append( Item );
-
-		FieldRow = Fields.Next( FieldRow );
+		Row = Rows.Next( Row );
 	}
-ERRErr
-ERREnd
-ERREpilog
-	return Items;
 }
+
 
 DEC( GetFields )
 {
 	message__ Message = mOK;
 ERRProlog
-	bkdmng::items32 Items;
+	table_row__ TableRow = NONE;
 ERRBegin
-	Items.Init();
+	TableRow = *Request.Id32In();
+	bkdmng::ids32_ &Fields = Request.Ids32Out();
 
-	Request.Items32Out() = Convert_( Manager.Structure.Fields, Items );
+	if ( !Manager.Structure.Tables.Exists( TableRow ) ) {
+		Message = mInexistentTable;
+		ERRReturn;	
+	}
+
+	Convert_( Manager.Structure.Tables( TableRow ).Fields, Fields );
 ERRErr
 ERREnd
 ERREpilog
 	return Message;
 }
+
+static message__ GetFieldsInfos_(
+	const bkdmng::ids32_ &FieldRows,
+	const mbdtbl::fields_ &Fields,
+	bkdmng::strings_ &Names,
+	bkdmng::strings_ &Comments,
+	bkdmng::ids8_ &Ids )
+{
+	ctn::E_CITEMt( mbdtbl::field_, mbdtbl::field_row__ ) Field;
+	epeios::row__ Row = FieldRows.First();
+	field_row__ FieldRow = NONE;
+
+	Field.Init( Fields );
+
+	while ( Row != NONE ) {
+		FieldRow = *FieldRows( Row );
+
+		if ( !Fields.Exists( FieldRow ) )
+			return mInexistentField;
+
+		Names.Append( Field( FieldRow ).Name );
+		Comments.Append( Field( FieldRow ).Comment );
+		Ids.Append( *Field( FieldRow ).Id() );
+
+
+		Row = FieldRows.Next( Row );
+	}
+
+	return mOK;
+}
+
+DEC( GetFieldsInfos )
+{
+	message__ Message = mOK;
+ERRProlog
+ERRBegin
+	const bkdmng::ids32_ &Rows = Request.Ids32In();
+	bkdmng::strings_ &Names = Request.StringsOut();
+	bkdmng::strings_ &Comments = Request.StringsOut();
+	bkdmng::ids8_ &Ids = Request.Ids8Out();
+
+	GetTablesInfos_( Rows, Manager.Structure.Tables, Names, Comments, Ids );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
 
 #define D( name )	#name, (void *)::##name
 
@@ -464,16 +521,25 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 	Module.Add( D( GetTables ),
 		bkdmng::cEnd,
 			bkdmng::cIds32,		// 'row's.
+		bkdmng::cEnd );
+	Module.Add( D( GetTablesInfos ),
+			bkdmng::cIds32,		// Table 'rows'.
+		bkdmng::cEnd,
 			bkdmng::cStrings,	// Noms.
 			bkdmng::cStrings,	// Commentaires.
 			bkdmng::cIds8,		// 'id's.
 		bkdmng::cEnd );
-	Module.Add( D( GetTableInfos ),
-			bkdmng::cId32,		// Table 'row'.
+	Module.Add( D( GetFields ),
+			bkdmng::cId32,		// Table row.
 		bkdmng::cEnd,
-			bkdmng::cString,	// Nom.
-			bkdmng::cString,	// Commentaire.
-			bkdmng::cId8,		// 'id'.
+			bkdmng::cIds32,		// 'row's.
+		bkdmng::cEnd );
+	Module.Add( D( GetFieldsInfos ),
+			bkdmng::cIds32,		// Field 'rows'.
+		bkdmng::cEnd,
+			bkdmng::cStrings,	// Noms.
+			bkdmng::cStrings,	// Commentaires.
+			bkdmng::cIds8,		// 'id's.
 		bkdmng::cEnd );
 	Module.Add( D( AddField ),
 		bkdmng::cId32,			// Table row.

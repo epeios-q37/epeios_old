@@ -125,7 +125,11 @@ namespace mbdmng {
 		}
 		table_row__ AddTable( const mbdtbl::table_description_ &TableDescription )
 		{
-			return Structure.AddTable( TableDescription );
+			table_row__ TableRow = Structure.AddTable( TableDescription );
+
+			_ExportStructure();
+
+			return TableRow;
 		}
 		field_row__ AddField(
 			table_row__ TableRow,
@@ -159,8 +163,10 @@ namespace mbdmng {
 		}
 		record_id__ AddRecord(
 			const data_ &Data,
+			table_row__ TableRow,
 			const field_rows_ &FieldRows );
 		void GetRecord(
+			table_row__ TableRow,
 			record_id__ RecordId,
 			const field_rows_ &FieldRows,
 			data_ &Data ) const;

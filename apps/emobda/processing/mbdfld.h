@@ -40,7 +40,6 @@ namespace mbdfld {
 	public:
 		struct s {
 			str::string_::s Name, Comment;
-			table_id__ TableId;
 			field_id__ Id;
 		} &S_;
 		str::string_ Name, Comment;
@@ -54,7 +53,6 @@ namespace mbdfld {
 			Name.reset( P );
 			Comment.reset( P );
 
-			S_.TableId = MBDBSC_UNDEFINED_TABLE_ID;
 			S_.Id = MBDBSC_UNDEFINED_FIELD_ID;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -67,7 +65,6 @@ namespace mbdfld {
 			Name = FC.Name;
 			Comment = FC.Comment;
 
-			S_.TableId = FC.S_.TableId;
 			S_.Id = FC.S_.Id;
 
 			return *this;
@@ -82,7 +79,6 @@ namespace mbdfld {
 		void Init(
 			const str::string_ &Name,
 			const str::string_ &Comment,
-			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID,
 			field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID )
 		{
 			Init();
@@ -90,11 +86,9 @@ namespace mbdfld {
 			this->Name = Name;
 			this->Comment = Comment;
 
-			S_.TableId = TableId;
 			S_.Id = Id;
 
 		}
-		E_RWDISCLOSE_( table_id__, TableId );
 		E_RWDISCLOSE_( field_id__, Id );
 	};
 

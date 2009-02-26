@@ -78,6 +78,7 @@ ERREpilog
 
 record_id__ mbdmng::manager_::AddRecord(
 	const data_ &Data,
+	table_row__ TableRow,
 	const field_rows_ &FieldRows )
 {
 	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
@@ -87,6 +88,7 @@ ERRProlog
 	record Record;
 	raw_datum RawDatum;
 	field_row__ FieldRow = NONE;
+	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
 ERRBegin
 	ctn::E_CMITEM( datum_ ) Datum;
 	Row = Data.First();
@@ -102,11 +104,13 @@ ERRBegin
 	if ( !AreUnique( FieldRows ) )
 		ERRu();
 #endif
+	TableId = Structure.GetTableTableId( TableRow );
+
 	Datum.Init( Data );
 
 	while ( Row != NONE ) {
 		FieldRow = FieldRows( Row );
-		Record.Init( Structure.GetFieldTableId( FieldRow ), Structure.GetFieldFieldId( FieldRow ), RecordId, Datum( Row ) );
+		Record.Init( TableId, Structure.GetFieldFieldId( FieldRow ), RecordId, Datum( Row ) );
 
 		RawDatum.Init();
 		Convert( Record, RawDatum );
@@ -122,6 +126,7 @@ ERREpilog
 }
 
 void mbdmng::manager_::GetRecord(
+	table_row__ TableRow,
 	record_id__ RecordId,
 	const field_rows_ &FieldRows,
 	data_ &Data ) const
@@ -133,6 +138,7 @@ ERRProlog
 	raw_datum RawDatum;
 	datum Datum;
 	field_row__ FieldRow = NONE;
+	table_id__ TableId= MBDBSC_UNDEFINED_TABLE_ID;
 ERRBegin
 #ifdef MBDMNG__DBG
 	if ( !Exist( FieldRows ) )
@@ -141,6 +147,7 @@ ERRBegin
 	if ( !AreUnique( FieldRows ) )
 		ERRu();
 #endif
+	TableId = Structure.GetTableTableId( TableRow );
 	Record.Init();
 	
 	Record.GetStaticPart().RecordId = RecordId;
@@ -148,7 +155,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		FieldRow = FieldRows( Row );
 
-		Record.GetStaticPart().TableId = Structure.GetFieldTableId( FieldRow );
+		Record.GetStaticPart().TableId = TableId;
 		Record.GetStaticPart().FieldId = Structure.GetFieldFieldId( FieldRow );
 
 		RawDatum.Init();
@@ -289,7 +296,8 @@ ERRBegin
 
 		Success = Import_( Filename, Description );
 	}
-		
+
+	Structure.Init( Description );
 ERRErr
 ERREnd
 ERREpilog

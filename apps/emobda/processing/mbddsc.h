@@ -96,7 +96,6 @@ namespace mbddsc {
 		iFieldsAmountAttribute,
 		iFieldTag,
 		iFieldIdAttribute,
-		iFieldTableIdAttribute,
 		iFieldNameTag,
 		iFieldCommentTag,
 		i_amount,
@@ -126,7 +125,7 @@ namespace mbddsc {
 			Label = "Name";
 			break;
 		case iStructureCommentTag:
-			Label = "Name";
+			Label = "Comment";
 			break;
 		case iTablesTag:
 			Label = "Tables";
@@ -157,9 +156,6 @@ namespace mbddsc {
 			break;
 		case iFieldIdAttribute:
 			Label="Id";
-			break;
-		case iFieldTableIdAttribute:
-			Label="TableId";
 			break;
 		case iFieldNameTag:
 			Label="Name";

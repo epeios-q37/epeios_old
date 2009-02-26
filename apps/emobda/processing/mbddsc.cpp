@@ -117,6 +117,12 @@ static void ExportTable_(
 		}
 		Writer.PopTag();
 
+		Writer.PushTag( DL( TableCommentTag ) );
+		{
+			Writer.PutValue( Table.Comment );
+		}
+		Writer.PopTag();
+
 		ExportFields_( Table.Fields, Fields, Writer );
 	}
 	Writer.PopTag();
@@ -196,7 +202,7 @@ static void ImportValue_(
 	xml::status__ &Status )
 {
 ERRProlog
-	str::string TagName, AttributeName;
+	str::string TagName, AttributeName, ValueBuffer;
 	xml::dump Dump;
 	bso::bool__ Continue = true;
 ERRBegin
@@ -204,9 +210,10 @@ ERRBegin
 	TagName.Init();
 	AttributeName.Init();
 	Dump.Init();
+	ValueBuffer.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		switch ( Browser.Browse( TagName, AttributeName, ValueBuffer, Dump, Status ) ) {
 		case tProcessingInstruction:
 			ERRI( iBeam );
 			break;
@@ -219,10 +226,10 @@ ERRBegin
 			ERRI( iBeam );
 			break;
 		case tValue:
-			Continue = false;
+			Value = ValueBuffer;
 			break;
 		case tEndTag:
-			ERRI( iBeam );
+			Continue = false;
 			break;
 		case tProcessed:
 			ERRc();
@@ -333,8 +340,6 @@ ERRBegin
 		case tAttribute:
 			if ( AttributeName == L( FieldIdAttribute ) )
 				GetFieldId_( Value, Field.Id() );
-			else if ( AttributeName == L( FieldTableIdAttribute ) )
-				GetTableId_( Value, Field.TableId() );
 			else
 				ERRI( iBeam );
 			break;
@@ -477,6 +482,7 @@ ERRBegin
 			ERRI( iBeam );
 			break;
 		case tEndTag:
+			Continue = false;
 			break;
 		case tProcessed:
 			ERRc();
@@ -612,8 +618,7 @@ ERRBegin
 			ERRI( iBeam );
 			break;
 		case tEndTag:
-			if ( TagName == str::string( L( StructureTag ) ) )
-				Continue = false;
+			Continue = false;
 			break;
 		case tProcessed:
 			ERRc();

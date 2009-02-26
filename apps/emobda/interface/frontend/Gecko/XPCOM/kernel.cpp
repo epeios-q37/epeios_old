@@ -68,16 +68,123 @@ const char *kernel::kernel___::GetMessage( message_id__ MessageId )
 	return GetMessage_( MessageId, _Language, _MessageBuffer );
 }
 
+void kernel::kernel___::GetTableInfo(
+	table__ Table,
+	str::string_ &Name,
+	str::string_ &Comment,
+	table_id__ &Id )
+{
+ERRProlog
+	tables Tables;
+	bkdacc::strings Names, Comments;
+	table_ids Ids;
+ERRBegin
+	Tables.Init();
+	Tables.Append( Table );
 
-static void _DumpTableStructure(
+	Names.Init();
+	Comments.Init();
+	Ids.Init();
+
+	GetTablesInfos( Tables, Names, Comments, Ids );
+
+	Name = Names( Names.First() );
+	Comment = Comments( Comments.First() );
+	Id = Ids( Ids.First() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void DumpFieldStructure_(
+	field__ Field,
 	const bkdacc::string_ &Name,
 	const bkdacc::string_ &Comment,
-	bkdacc::id8__ Id,
+	field_id__ Id,
 	xml::writer_ &Writer )
 {
 	bso::integer_buffer__ Buffer;
 
-	Writer.PutAttribute( "Id", bso::Convert( *Id, Buffer ) );
+	Writer.PushTag( "Field" );
+
+	Writer.PutAttribute( "Row", bso::Convert( **Field, Buffer ) );
+	Writer.PutAttribute( "Id", bso::Convert( **Id, Buffer ) );
+
+	Writer.PushTag( "Name" );
+	Writer.PutValue( Name );
+
+	Writer.PushTag( "Comment" );
+	Writer.PutValue( Comment );
+}
+
+
+static void DumpFieldsStructure_(
+	const fields_ &Fields,
+	kernel___ &Kernel,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	bkdacc::strings Names, Comments;
+	field_ids Ids;
+	epeios::row__ Row = NONE;
+	bso::integer_buffer__ Buffer;
+ERRBegin
+	Writer.PushTag( "Fields" );
+	Writer.PutAttribute( "Amount", bso::Convert( Fields.Amount(), Buffer ) );
+
+	Names.Init();
+	Comments.Init();
+	Ids.Init();
+
+	Kernel.GetFieldsInfos( Fields, Names, Comments, Ids );
+
+	Row = Fields.First();
+
+	while ( Row != NONE ) {
+		DumpFieldStructure_( Fields( Row ), Names( Row ), Comments( Row ), Ids( Row ), Writer );
+
+		Row = Fields.Next( Row );
+	}
+
+	Writer.PopTag();
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+static void DumpFieldsStructure_(
+	table__ Table,
+	kernel___ &Kernel,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	fields Fields;
+ERRBegin	
+	Fields.Init();
+
+	Kernel.GetFields( Table, Fields );
+
+	DumpFieldsStructure_( Fields, Kernel, Writer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+static void DumpTableStructure_(
+	const bkdacc::string_ &Name,
+	const bkdacc::string_ &Comment,
+	table__ Table,
+	table_id__ Id,
+	kernel___ &Kernel,
+	xml::writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+
+	Writer.PutAttribute( "Id", bso::Convert( **Id, Buffer ) );
+	Writer.PutAttribute( "Row", bso::Convert( **Table, Buffer ) );
 
 	Writer.PushTag( "Name" );
 	Writer.PutValue( Name );
@@ -86,12 +193,16 @@ static void _DumpTableStructure(
 	Writer.PushTag( "Comment" );
 	Writer.PutValue( Comment );
 	Writer.PopTag();
+
+	DumpFieldsStructure_( Table, Kernel, Writer );
 }
 
 static void DumpTablesStructure_(
 	const bkdacc::strings_ &Names,
 	const bkdacc::strings_ &Comments,
-	const bkdacc::ids8_ &Ids,
+	const tables_ &Tables,
+	const table_ids_ &Ids,
+	kernel___ &Kernel,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
@@ -109,7 +220,7 @@ static void DumpTablesStructure_(
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		_DumpTableStructure( Name( Row ), Comment( Row ) , Ids( Row ), Writer );
+		DumpTableStructure_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Kernel, Writer );
 
 		Writer.PopTag();
 
@@ -117,29 +228,34 @@ static void DumpTablesStructure_(
 	}
 }
 
-void kernel::kernel___::_DumpTablesStructure( xml::writer_ &Writer )
+static void DumpTablesStructure_(
+	kernel___ &Kernel,
+	xml::writer_ &Writer )
 {
 ERRProlog
-	bkdacc::ids32 Rows;
+	tables Tables;
 	bkdacc::strings Names, Comments;
-	bkdacc::ids8 Ids;
+	table_ids Ids;
 ERRBegin
-	Rows.Init();
+	Tables.Init();
+
+	Kernel.GetTables( Tables );
+
 	Names.Init();
 	Comments.Init();
 	Ids.Init();
 
-	_H( Manager.GetTables( Rows, Names, Comments, Ids ) );
+	Kernel.GetTablesInfos( Tables, Names, Comments, Ids );
 
-	if ( Rows.Amount() != Names.Amount() )
+	if ( Tables.Amount() != Names.Amount() )
 		ERRc();
 
-	if ( Rows.Amount() != Ids.Amount() )
+	if ( Tables.Amount() != Ids.Amount() )
 		ERRc();
 
 	Writer.PushTag( "Tables" );
 
-	DumpTablesStructure_( Names, Comments, Ids, Writer );
+	DumpTablesStructure_( Names, Comments, Tables, Ids, Kernel, Writer );
 
 	Writer.PopTag();
 
@@ -227,6 +343,9 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+
+
 
 static class starter 
 {

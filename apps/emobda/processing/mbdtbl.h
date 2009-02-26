@@ -225,7 +225,6 @@ namespace mbdtbl {
 			Init();
 
 			table_core_::Init( Name, Comment, Id );
-
 		}
 	};
 

@@ -146,6 +146,7 @@ namespace mbdstr {
 
 			structure_core_::Init( Name, Comment );
 		}
+		void Init( const class structure_description_ &Description );
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &Description );
@@ -153,34 +154,12 @@ namespace mbdstr {
 		field_row__ SearchField(
 			table_row__ TableRow,
 			const str::string_ &Name ) const;
-		void GetFieldTableAndRecordId(
-			field_row__ FieldRow,
-			table_id__ &TableId,
-			field_id__ &Id ) const
+		field_id__ GetFieldFieldId( field_row__ FieldRow ) const
 		{
 			ctn::E_CITEMt( field_, field_row__ ) Field;
 			Field.Init( Fields );
 
-			TableId = Field( FieldRow ).TableId();
-			Id = Field( FieldRow ).Id();
-		}
-		table_id__ GetFieldTableId( field_row__ FieldRow ) const
-		{
-			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
-			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
-
-			GetFieldTableAndRecordId( FieldRow, TableId, FieldId );
-
-			return TableId;
-		}
-		field_id__ GetFieldFieldId( field_row__ FieldRow ) const
-		{
-			table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
-			field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
-
-			GetFieldTableAndRecordId( FieldRow, TableId, FieldId );
-
-			return FieldId;
+			return Field( FieldRow ).Id();
 		}
 		table_id__ GetTableTableId( table_row__ TableRow ) const
 		{

@@ -30,6 +30,7 @@
 #include "xml.h"
 #include "msg.h"
 #include "lgg.h"
+#include "bkdacc.h"
 
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
@@ -40,17 +41,16 @@ namespace kernel {
 		mi_Undefined
 	};
 
-	E_TYPEDEF( bkdacc::id32__, table__ );
+	BKDACC_T32( table );
 #define UNDEFINED_TABLE	((table__)BKDACC_UNDEFINED_ID32 )
 
-	E_TYPEDEF( bkdacc::id8__, table_id__ );
+	BKDACC_T8( table_id );
 #define UNDEFINED_TABLE_ID	((table_id__)BKDACC_UNDEFINED_ID8 )
 
-
-	E_TYPEDEF( bkdacc::id32__, field__ );
+	BKDACC_T32( field );
 #define UNDEFINED_FIELD	((field__)BKDACC_UNDEFINED_ID32 )
 
-	E_TYPEDEF( bkdacc::id8__, field_id__ );
+	BKDACC_T8( field_id );
 #define UNDEFINED_FIELD_ID	((field_id__)BKDACC_UNDEFINED_ID8 )
 
 
@@ -156,22 +156,15 @@ namespace kernel {
 
 			return Table;
 		}
-		void CreateTable( void )
+		table__ CreateField(
+			const str::string_ &Name,
+			const str::string_ &Comment )
 		{
-		ERRProlog
-			str::string Name, Comment;
-		ERRBegin
-			Name.Init();
-			UI.Structure.NameTextbox.GetValue( Name );
+			table__ Table = UNDEFINED_TABLE;
 
-			Comment.Init();
-			UI.Structure.CommentTextbox.GetValue( Comment );
+//			_H( Manager.CreateField( Name, Comment, *Field ) );
 
-			if ( CreateTable( Name, Comment ) == UNDEFINED_TABLE )
-				nsxpcm::Alert( UI.Main.Window, GetRawMessage() );
-		ERRErr
-		ERREnd
-		ERREpilog
+			return Table;
 		}
 		field__ AddField(
 			table__ Table,
@@ -227,21 +220,54 @@ namespace kernel {
 
 			UI.CommentTextbox.SetValue( str::string( "" ) );
 		}
+		void DefineField( void )
+		{
+			ui_struct::structure__ &UI = this->UI.Structure;
+
+			UI.Broadcasters.ItemBrowsing.Disable();
+			UI.Broadcasters.ItemEdition.Enable();
+
+			UI.NameTextbox.SetValue( str::string( "" ) );
+
+			UI.CommentTextbox.SetValue( str::string( "" ) );
+		}
 		void GetDatabaseInfos(
 			str::string_ &Name,
 			str::string_ &Comment )
 		{
 			_H( Manager.GetDatabaseInfos( Name, Comment ) );
 		}
+		void GetTables( tables_ &Tables )
+		{
+			_H( Manager.GetTables( _( Tables ) ) );
+		}
+		void GetTablesInfos(
+			const tables_ &Tables,
+			bkdacc::strings_ &Names,
+			bkdacc::strings_ &Comments,
+			table_ids_ &Ids )
+		{
+			_H( Manager.GetTablesInfos( _( Tables ), Names, Comments, _( Ids ) ) );
+		}
 		void GetTableInfo(
 			table__ Table,
 			str::string_ &Name,
 			str::string_ &Comment,
-			table_id__ &Id )
+			table_id__ &Id );
+		void GetFields(
+			table__ Table,
+			fields_ &Fields )
 		{
-			_H( Manager.GetTableInfos( *Table, Name, Comment, *Id ) );
+			_H( Manager.GetFields( *Table, _( Fields ) ) );
 		}
-
+		void GetFieldsInfos(
+			const fields_ &Fields,
+			bkdacc::strings_ &Names,
+			bkdacc::strings_ &Comments,
+			field_ids_ &Ids )
+		{
+			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ) ) );
+		}
 	};
 }
 

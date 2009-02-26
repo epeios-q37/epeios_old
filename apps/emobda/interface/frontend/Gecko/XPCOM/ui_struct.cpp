@@ -140,6 +140,7 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
+	K().DefineField();
 }
 
 void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
@@ -158,7 +159,10 @@ ERRBegin
 	NameBuffer.Init();
 	CommentBuffer.Init();
 
-	K().CreateTable( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
+	if ( 0 )
+		K().CreateTable( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
+	else
+		K().CreateField( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
 	K().RefreshStructureView();
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();

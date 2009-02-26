@@ -40,18 +40,24 @@ field_row__ mbdstr::structure_::SearchField(
 	table_row__ TableRow,
 	const str::string_ &Name ) const
 {
+	ctn::E_CITEMt( table_, table_row__ ) Table;
 	ctn::E_CITEMt( field_, field_row__ ) Field;
-	field_row__ Row = Fields.First();
-	table_id__ TableId = GetTableTableId( TableRow );
+	epeios::row__ Row = NONE;
 
+	Table.Init( Tables );	
 	Field.Init( Fields );
 
-	while ( ( Row != NONE )
-		    && ( ( Field( Row ).GetTableId() != TableId )
-			     || ( Field( Row ).Name != Name ) ) )
-		Row = Fields.Next( Row );
+	const field_rows_ &FieldRows = Table( TableRow ).Fields;
 
-	return Row;
+	Row = FieldRows.First();
+
+	while ( ( Row != NONE ) && ( Field( FieldRows( Row ) ).Name != Name ) )
+		Row = FieldRows.Next( Row );
+
+	if ( Row == NONE )
+		return NONE;
+	else
+		return FieldRows( Row );
 }
 
 field_row__ mbdstr::structure_::AddField(
@@ -61,21 +67,14 @@ field_row__ mbdstr::structure_::AddField(
 	field_row__ FieldRow = NONE;
 ERRProlog
 	field Field;
-	field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
-	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+	field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID;
 ERRBegin
 	if ( Description.Name.Amount() == 0 )
 		ERRu();
 
-	TableId = Description.GetTableId();
+	Id = Tables( TableRow ).GetNewFieldId( Description.GetId() );
 
-	if ( TableId != MBDBSC_UNDEFINED_TABLE_ID )
-		if ( TableId != Tables( TableRow ).GetId() )
-			ERRu();
-
-	FieldId = Tables( TableRow ).GetNewFieldId( Description.GetId() );
-
-	Field.Init( Description.Name, Description.Comment, TableId, FieldId );
+	Field.Init( Description.Name, Description.Comment, Id );
 
 	FieldRow = Fields.Append( Field );
 
@@ -121,16 +120,35 @@ ERRBegin
 	Table.Init( Description.Name, Description.Comment, TableId );
 
 	TableRow = Tables.Add( Table );
+
+	_AddFields( TableRow, Description.Fields );
 ERRErr
 ERREnd
 ERREpilog
 	return TableRow;
 }
 
-void mbdstr::Set(
+static void Set_(
 	structure_ &Structure,
-	const structure_description_ &Description )
+	const mbdtbl::table_descriptions_ &Descriptions )
 {
+	epeios::row__ Row = Descriptions.First();
+	ctn::E_CITEM( mbdtbl::table_description_ ) Description;
+
+	Description.Init( Descriptions );
+
+	while ( Row != NONE ) {
+		Structure.AddTable( Description( Row ) );
+
+		Row = Descriptions.Next( Row );
+	}
+}
+
+void mbdstr::structure_::Init( const structure_description_ &Description )
+{
+	Init( Description.Name, Description.Comment );
+
+	Set_( *this, Description.Tables );
 }
 
 
