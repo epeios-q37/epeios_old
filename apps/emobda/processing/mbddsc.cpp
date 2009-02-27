@@ -347,6 +347,7 @@ ERRBegin
 			ERRI( iBeam );
 			break;
 		case tEndTag:
+			Continue = false;
 			break;
 		case tProcessed:
 			ERRc();

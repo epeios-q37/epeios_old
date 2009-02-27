@@ -33,9 +33,7 @@ void ui_struct::structure__::UpdateDecks( void )
 ERRProlog
 	str::string Type;
 	str::string Name, Comment;
-	table_id__ TableId = UNDEFINED_TABLE_ID;
-	table__ Table = UNDEFINED_TABLE;
-	str::string Id;
+	str::string Row;
 	epeios::row__ Error = NONE;
 ERRBegin
 	structure__ &UI = K().UI.Structure;
@@ -52,15 +50,19 @@ ERRBegin
 		if ( Type == "Database" ) {
 			K().GetDatabaseInfos( Name, Comment );
 		} else if ( Type == "Table" ) {
-			Id.Init();
-			UI.BrowseTree.GetCurrentItemAttribute( "id", Id );
+			table_id__ TableId = UNDEFINED_TABLE_ID;
 
-			*Table = Id.ToUL( &Error );
+			Row.Init();
+			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			if ( Error != NONE )
-				ERRc();
+			K().GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
+		} else if ( Type == "Field" ) {
+			field_id__ FieldId = UNDEFINED_FIELD_ID;
+			
+			Row.Init();
+			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			K().GetTableInfo( Table, Name, Comment, TableId );
+			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId );
 		}
 
 		UI.NameTextbox.SetValue( Name );
@@ -127,6 +129,7 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
+	K().SetCurrentItems( UNDEFINED_FIELD, UNDEFINED_TABLE );
 	K().DefineTable();
 }
 
@@ -140,6 +143,7 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
+	K().SetCurrentItems( UNDEFINED_FIELD, K().GetCurrentTable() );
 	K().DefineField();
 }
 
@@ -159,10 +163,13 @@ ERRBegin
 	NameBuffer.Init();
 	CommentBuffer.Init();
 
-	if ( 0 )
-		K().CreateTable( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
+	if ( K().GetCurrentTable() == UNDEFINED_TABLE )
+		K().CreateTable();
+	else if ( K().GetCurrentField() == UNDEFINED_FIELD )
+		K().AddField();
 	else
-		K().CreateField( K().UI.Structure.NameTextbox.GetValue( NameBuffer ), K().UI.Structure.CommentTextbox.GetValue( CommentBuffer ) );
+		ERRc();
+
 	K().RefreshStructureView();
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
@@ -176,8 +183,9 @@ void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 	nsxpcm::Alert( K().UI.Structure.Window, "Cancel !" );
 }
 
-void ui_struct::browse_tree__::NSXPCMOnEvent( event__ )
+void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 {
+	K().SetCurrentItems();
 	K().UI.Structure.UpdateDecks();
 }
 
@@ -306,7 +314,7 @@ static void Register_(
 	ui_struct::structure__::commands__::field__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Modify, Document, "cmdCreateField" );
+	Register_( Kernel, UI.Create, Document, "cmdCreateField" );
 	Register_( Kernel, UI.Modify, Document, "cmdModifyField" );
 	Register_( Kernel, UI.Delete, Document, "cmdDeleteField" );
 }

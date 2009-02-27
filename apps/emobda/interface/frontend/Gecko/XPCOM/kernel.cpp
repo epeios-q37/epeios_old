@@ -29,7 +29,7 @@ using namespace kernel;
 		Message = #m;\
 		break
 
-static const char *GetRawMessage_( message_id__ MessageId )
+static const char *GetRawMessage_( kernel::message__ MessageId )
 {
 	const char *Message = NULL;
 
@@ -51,19 +51,19 @@ static class messages
 protected:
 	const char *MSGGetRawMessage( int MessageId ) const
 	{
-		return GetRawMessage_( (message_id__)MessageId );
+		return GetRawMessage_( (kernel::message__)MessageId );
 	}
 } Messages_;
 
 static const char *GetMessage_(
-	message_id__ MessageId,
+							   kernel::message__ Message,
 	lgg::language__ Language,
 	msg::buffer__ &Buffer )
 {
-	return ::Messages_.GetMessage( MessageId, Language, Buffer );
+	return ::Messages_.GetMessage( Message, Language, Buffer );
 }
 
-const char *kernel::kernel___::GetMessage( message_id__ MessageId )
+const char *kernel::kernel___::GetMessage( kernel::message__ MessageId )
 {
 	return GetMessage_( MessageId, _Language, _MessageBuffer );
 }
@@ -96,7 +96,36 @@ ERREnd
 ERREpilog
 }
 
+void kernel::kernel___::GetFieldInfo(
+	field__ Field,
+	str::string_ &Name,
+	str::string_ &Comment,
+	field_id__ &Id )
+{
+ERRProlog
+	fields Fields;
+	bkdacc::strings Names, Comments;
+	field_ids Ids;
+ERRBegin
+	Fields.Init();
+	Fields.Append( Field );
+
+	Names.Init();
+	Comments.Init();
+	Ids.Init();
+
+	GetFieldsInfos( Fields, Names, Comments, Ids );
+
+	Name = Names( Names.First() );
+	Comment = Comments( Comments.First() );
+	Id = Ids( Ids.First() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static void DumpFieldStructure_(
+	table__ Table,
 	field__ Field,
 	const bkdacc::string_ &Name,
 	const bkdacc::string_ &Comment,
@@ -108,17 +137,23 @@ static void DumpFieldStructure_(
 	Writer.PushTag( "Field" );
 
 	Writer.PutAttribute( "Row", bso::Convert( **Field, Buffer ) );
+	Writer.PutAttribute( "TableRow", bso::Convert( **Table, Buffer ) );
 	Writer.PutAttribute( "Id", bso::Convert( **Id, Buffer ) );
 
 	Writer.PushTag( "Name" );
 	Writer.PutValue( Name );
+	Writer.PopTag();
 
 	Writer.PushTag( "Comment" );
 	Writer.PutValue( Comment );
+	Writer.PopTag();
+
+	Writer.PopTag();
 }
 
 
 static void DumpFieldsStructure_(
+	table__ Table,
 	const fields_ &Fields,
 	kernel___ &Kernel,
 	xml::writer_ &Writer )
@@ -141,7 +176,7 @@ ERRBegin
 	Row = Fields.First();
 
 	while ( Row != NONE ) {
-		DumpFieldStructure_( Fields( Row ), Names( Row ), Comments( Row ), Ids( Row ), Writer );
+		DumpFieldStructure_( Table, Fields( Row ), Names( Row ), Comments( Row ), Ids( Row ), Writer );
 
 		Row = Fields.Next( Row );
 	}
@@ -166,7 +201,7 @@ ERRBegin
 
 	Kernel.GetFields( Table, Fields );
 
-	DumpFieldsStructure_( Fields, Kernel, Writer );
+	DumpFieldsStructure_( Table, Fields, Kernel, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -264,7 +299,9 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpDatabaseStructure( xml::writer_ &Writer )
+static void DumpDatabaseStructure_(
+	kernel___ &Kernel,
+	xml::writer_ &Writer )
 {
 ERRProlog
 	bkdacc::string Name, Comment;
@@ -272,7 +309,7 @@ ERRBegin
 	Name.Init();
 	Comment.Init();
 
-	_H( Manager.GetDatabaseInfos( Name, Comment ) );
+	Kernel.GetDatabaseInfos( Name, Comment );
 
 	if ( Name.Amount() != 0 ) {
 
@@ -286,7 +323,7 @@ ERRBegin
 		Writer.PutValue( Comment );
 		Writer.PopTag();
 
-		_DumpTablesStructure( Writer );
+		DumpTablesStructure_( Kernel, Writer );
 
 		Writer.PopTag();
 	}
@@ -307,7 +344,7 @@ ERRBegin
 
 	Writer.PushTag( "Structure" );
 
-	_DumpDatabaseStructure( Writer );
+	DumpDatabaseStructure_( *this, Writer );
 
 	Writer.PopTag();
 ERRErr
@@ -344,6 +381,42 @@ ERREnd
 ERREpilog
 }
 
+void kernel::kernel___::SetCurrentItems( void )
+{
+ERRProlog
+	str::string Type, Row, TableRow;
+	field__ Field = UNDEFINED_FIELD;
+	table__ Table = UNDEFINED_TABLE;
+	ui_struct::browse_tree__ &Tree = UI.Structure.BrowseTree;
+ERRBegin
+
+	if ( Tree.GetSelectedCount() == 1 ) {
+		Type.Init();
+		Tree.GetCurrentItemAttribute( "Type", Type );
+
+		if ( Type == "Field" ) {
+			Row.Init();
+			Tree.GetCurrentItemAttribute( "Row", Row );
+			Field = ExtractField( Row );
+
+			TableRow.Init();
+			Tree.GetCurrentItemAttribute( "TableRow", TableRow );
+			Table = ExtractTable( Row );
+		} else if ( Type == "Table" ) {
+			Row.Init();
+			Tree.GetCurrentItemAttribute( "Row", Row );
+			Table = ExtractTable( Row );
+		} else if ( Type != "Database" )
+			ERRc();
+	}
+
+	SetCurrentItems( Field, Table );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 
 
@@ -352,7 +425,7 @@ static class starter
 public:
 	starter( void )
 	{
-		::Messages_.Init( mi_amount );
+		::Messages_.Init( m_amount );
 	}
 	~starter( void )
 	{}

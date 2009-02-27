@@ -54,8 +54,8 @@
 		<command id="cmdModifyTable" observes="bcrTableModification"/>
 		<command id="cmdDeleteTable" observes="bcrTableDeletion"/>
 		<command id="cmdCreateField" observes="bcrFieldCreation"/>
-		<command id="cmdModifyField" observes="ncrFieldModification"/>
-		<command id="cmdDeleteField" observes="FieldDeletion"/>
+		<command id="cmdModifyField" observes="bcrFieldModification"/>
+		<command id="cmdDeleteField" observes="bcrFieldDeletion"/>
 		
 		<command id="cmdApplyItem" label="|OK|" observes="bcrItemEdition"/>
 		<command id="cmdCancelItem" label="|Cancel|" observes="bcrItemEdition"/>

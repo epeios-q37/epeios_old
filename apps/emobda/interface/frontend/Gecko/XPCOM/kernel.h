@@ -35,10 +35,10 @@
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
 
-	enum message_id__ 
+	enum message__ 
 	{
-		mi_amount,
-		mi_Undefined
+		m_amount,
+		m_Undefined
 	};
 
 	BKDACC_T32( table );
@@ -76,9 +76,9 @@ namespace kernel {
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
-		void _DumpTablesStructure( xml::writer_ &Writer );
-		void _DumpDatabaseStructure( xml::writer_ &Writer );
 		void _DumpStructureAsXML( str::string_ &XML );
+		field__ _CurrentField;
+		table__ _CurrentTable;
 		void _H( bso::bool__ Result )
 		{
 		ERRProlog
@@ -114,6 +114,8 @@ namespace kernel {
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
+			_CurrentField = UNDEFINED_FIELD;
+			_CurrentTable = UNDEFINED_TABLE;
 		}
 		kernel___( void )
 		{
@@ -134,7 +136,19 @@ namespace kernel {
 
 			_Language = KERNEL_DEFAULT_LANGUAGE;	// A chnager.
 		}
-		const char *GetMessage( message_id__ Message );
+		const char *GetMessage( message__ Message );
+		void Alert( const char *Message )
+		{
+			nsxpcm::Alert( UI.Main.Window, Message );
+		}
+		void Alert( const str::string_ &Message )
+		{
+			nsxpcm::Alert( UI.Main.Window, Message );
+		}
+		void Alert( message__ Message )
+		{
+			Alert( GetMessage( Message ) );
+		}
 		void CreateDatabase(
 			const str::string_ &Location,
 			const str::string_ &Name,
@@ -156,15 +170,21 @@ namespace kernel {
 
 			return Table;
 		}
-		table__ CreateField(
-			const str::string_ &Name,
-			const str::string_ &Comment )
+		void CreateTable( void )
 		{
-			table__ Table = UNDEFINED_TABLE;
+		ERRProlog
+			str::string Name, Comment;
+		ERRBegin
+			Name.Init();
+			UI.Structure.NameTextbox.GetValue( Name );
 
-//			_H( Manager.CreateField( Name, Comment, *Field ) );
+			Comment.Init();
+			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			return Table;
+			CreateTable( Name, Comment );
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
 		field__ AddField(
 			table__ Table,
@@ -180,18 +200,18 @@ namespace kernel {
 		void AddField( void )
 		{
 		ERRProlog
-			str::string Name;
+			str::string Name, Comment;
 		ERRBegin
-			/*
+			if ( _CurrentTable == UNDEFINED_TABLE )
+				ERRu();
+
 			Name.Init();
-			UI.Main.FieldNameTextbox.GetValue( Name );
+			UI.Structure.NameTextbox.GetValue( Name );
 
-			if ( !AddField( Name ) )
-				nsxpcm::Alert( UI.Main.Window, GetRawMessage() );
+			Comment.Init();
+			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			RefreshFieldList();
-			*/
-			ERRl();
+			AddField( _CurrentTable, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -268,7 +288,48 @@ namespace kernel {
 		{
 			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ) ) );
 		}
+		void GetFieldInfo(
+			field__ field,
+			str::string_ &Name,
+			str::string_ &Comment,
+			field_id__ &Id );
+		void SetCurrentItems(
+			field__ Field,
+			table__ Table )
+		{
+			if ( Field != UNDEFINED_FIELD )
+				if ( Table == UNDEFINED_TABLE )
+					ERRl();
+
+			_CurrentField = Field;
+			_CurrentTable = Table;
+		}
+		void SetCurrentItems();
+		E_RODISCLOSE__( field__, CurrentField );
+		E_RODISCLOSE__( table__, CurrentTable );
 	};
+
+	inline bkdacc::id32__ _ExtractRow( const str::string_ &Value )
+	{
+		epeios::row__ Error = NONE;
+		bkdacc::id32__ Id = Value.ToUL( &Error );
+
+		if ( Error != NONE )
+			ERRu();
+
+		return Id;
+	
+	}
+
+	inline table__ ExtractTable( const str::string_ &Value )
+	{
+		return _ExtractRow( Value );
+	}
+
+	inline field__ ExtractField( const str::string_ &Value )
+	{
+		return _ExtractRow( Value );
+	}
 }
 
 #endif

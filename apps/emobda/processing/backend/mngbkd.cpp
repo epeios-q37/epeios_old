@@ -429,6 +429,7 @@ DEC( GetFields )
 	message__ Message = mOK;
 ERRProlog
 	table_row__ TableRow = NONE;
+	ctn::E_CITEMt( table_, table_row__ ) Table;
 ERRBegin
 	TableRow = *Request.Id32In();
 	bkdmng::ids32_ &Fields = Request.Ids32Out();
@@ -438,7 +439,9 @@ ERRBegin
 		ERRReturn;	
 	}
 
-	Convert_( Manager.Structure.Tables( TableRow ).Fields, Fields );
+	Table.Init( Manager.Structure.Tables );
+
+	Convert_( Table( TableRow ).Fields, Fields );
 ERRErr
 ERREnd
 ERREpilog
@@ -485,7 +488,7 @@ ERRBegin
 	bkdmng::strings_ &Comments = Request.StringsOut();
 	bkdmng::ids8_ &Ids = Request.Ids8Out();
 
-	GetTablesInfos_( Rows, Manager.Structure.Tables, Names, Comments, Ids );
+	GetFieldsInfos_( Rows, Manager.Structure.Fields, Names, Comments, Ids );
 ERRErr
 ERREnd
 ERREpilog
