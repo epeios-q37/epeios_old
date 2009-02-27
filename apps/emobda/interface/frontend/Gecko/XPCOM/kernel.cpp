@@ -352,8 +352,7 @@ ERREnd
 ERREpilog
 }
 
-
-void kernel::kernel___::RefreshStructureView( void )
+void kernel::kernel___::FillStructureView( void )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
@@ -376,6 +375,28 @@ ERRBegin
 	UI.Structure.UpdateDecks();
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::FillTableMenu( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+	_DumpStructureAsXML( XML );
+
+	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+
+	Parameters.Init();
+
+	UI.Main.TableMenu.RemoveChildren();
+
+	UI.Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/TableMenu.xsl" ), UI.Structure.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog

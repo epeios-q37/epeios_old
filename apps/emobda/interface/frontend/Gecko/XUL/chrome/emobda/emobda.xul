@@ -49,6 +49,10 @@
 				<menuitem label="Close ..." command="cmdCloseDatabase"/>
 			</menupopup>
 		</menu>
+		<menu label="Table" id="mnuTable"/>
+		<menu label="coucou">
+			<menupopup/>
+		</menu>
 	</menubar>
 	<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
 	<deck selectedIndex="1" flex="1">

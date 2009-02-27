@@ -29,6 +29,8 @@ namespace ui_main {
 
 	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
 
+	UI_TYPEDEF( menu__, table_menu__ );
+
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );
@@ -43,10 +45,10 @@ namespace ui_main {
 				close_database_command__ Close;
 			} Database;
 		} Commands;
-
 		struct broadcasters__ {
 			database_opened_broadcaster__ DatabaseOpened;
 		} Broadcasters;
+		table_menu__ TableMenu;
 
 		void Init( void )
 		{

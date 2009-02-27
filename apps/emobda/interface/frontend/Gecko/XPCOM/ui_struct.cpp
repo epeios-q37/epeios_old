@@ -159,6 +159,7 @@ void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string NameBuffer, CommentBuffer;
+	table__ Table = UNDEFINED_TABLE;
 ERRBegin
 	NameBuffer.Init();
 	CommentBuffer.Init();
@@ -170,7 +171,7 @@ ERRBegin
 	else
 		ERRc();
 
-	K().RefreshStructureView();
+	K().FillStructureView( Table );
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 ERRErr

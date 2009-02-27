@@ -1045,12 +1045,23 @@ namespace nsxpcm {
 		{
 			nsxpcm::SetAttribute( GetObject(), "label", Label );
 		}
+		void RemoveChildren( void )
+		{
+			nsxpcm::RemoveChildren( GetObject() );
+		}
+		void AppendChild( nsIDOMNode *Node )
+		{
+			nsxpcm::AppendChild( GetObject(), Node );
+		}
 	};
+
+	class element__	// Classe générique.
+	: public _element__<nsIDOMElement>
+	{};
 
 	class button__
 	: public _element__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
-	{
-	};
+	{};
 
 	class textbox__
 	: public _element__<nsIDOMXULTextBoxElement>

@@ -170,8 +170,9 @@ namespace kernel {
 
 			return Table;
 		}
-		void CreateTable( void )
+		table__ CreateTable( void )
 		{
+			table__ Table = UNDEFINED_TABLE;
 		ERRProlog
 			str::string Name, Comment;
 		ERRBegin
@@ -185,6 +186,7 @@ namespace kernel {
 		ERRErr
 		ERREnd
 		ERREpilog
+			return Table;
 		}
 		field__ AddField(
 			table__ Table,
@@ -216,10 +218,11 @@ namespace kernel {
 		ERREnd
 		ERREpilog
 		}
-		void RefreshStructureView( void );
+		void FillTableMenu( void );
+		void FillStructureView( table__ Table );
 		void UpdateUI( void )
 		{
-			RefreshStructureView();
+			FillStructureView( UNDEFINED_TABLE );
 			UI.Main.Broadcasters.DatabaseOpened.Disable();
 /*
 			UI.Structure.Broadcasters.StructureItemEdition.Disable();

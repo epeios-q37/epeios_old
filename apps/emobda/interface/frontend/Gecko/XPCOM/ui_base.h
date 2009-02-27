@@ -90,6 +90,7 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::deck__> deck__;
 	typedef _generic__<nsxpcm::broadcaster__> broadcaster__;
 	typedef _generic__<nsxpcm::command__> command__;
+	typedef _generic__<nsxpcm::element__> menu__;
 
 	template <typename widget> void Register(
 		kernel::kernel___ &Kernel,

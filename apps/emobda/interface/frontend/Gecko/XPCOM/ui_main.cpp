@@ -31,7 +31,7 @@ void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 //	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
 	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
-	K().RefreshStructureView();
+	K().FillStructureView();
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 }
@@ -39,7 +39,8 @@ void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 {
 	K().OpenDatabase( str::string( "h:\\temp\\emobda" ) );
-	K().RefreshStructureView();
+	K().FillStructureView();
+	K().FillTableMenu();
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 }
@@ -136,4 +137,6 @@ void ui_main::Register(
 
 	Register_( Kernel, UI.Broadcasters, UI.Document );
 	Register_( Kernel, UI.Commands, UI.Document );
+
+	ui_base::Register( Kernel, UI.TableMenu, UI.Document, "mnuTable", nsxpcm::efNone );
 }

@@ -1,5 +1,9 @@
 $Id$
 
+27/02/2009 :
+	- NSXPCM :
+		- Ajout 'element__'.
+
 22/02/2009 :
 	- NSXPCM :
 		- Ajouts 'SetAttribute(...)' prenant un 'nsIDOMNode *'.
