@@ -1000,6 +1000,14 @@ namespace nsxpcm {
 		nsIDOMWindow *Window,
 		const str::string_ &Text );
 
+	bso::bool__ Confirm(
+		nsIDOMWindow *Window,
+		const char *Text );
+
+	bso::bool__ Confirm(
+		nsIDOMWindow *Window,
+		const str::string_ &Text );
+
 	typedef bch::E_BUNCH_( element_core__ * ) element_cores_;
 	E_AUTO( element_cores );
 
@@ -1076,6 +1084,10 @@ namespace nsxpcm {
 			nsxpcm::GetValue( GetObject(), Value );
 
 			return Value;
+		}
+		void Select( void )
+		{
+			GetObject()->Select();
 		}
 	};
 
@@ -1240,13 +1252,34 @@ namespace nsxpcm {
 
 			return Count;
 		}
-		nsIDOMElement *GetCurrentItem( bso::bool__ ErrorIfInexistant = true )
+		void Select( bso::slong__ Index )
+		{
+//			_GetSelection()->SetCurrentIndex( Index );
+			_GetSelection()->Select( Index );
+		}
+		nsIDOMElement *GetCurrentItem( bso::bool__ ErrorIfInexistent = true )
 		{
 			nsIDOMElement *Element = NULL;
 
 			_GetContentView()->GetItemAtIndex( GetCurrentIndex(), &Element );
 
+			if ( ( Element == NULL ) && ErrorIfInexistent )
+				ERRu();
+
 			return Element;
+		}
+		void Select( nsIDOMElement *Element )
+		{
+			PRInt32 Index = -1;
+
+			if ( _GetContentView()->GetIndexOfItem( Element, &Index ) != NS_OK )
+				ERRu();
+
+			Select( Index );
+		}
+		void Select( nsIDOMNode *Node )
+		{
+			Select( QueryInterface<nsIDOMElement>( Node ) );
 		}
 		const str::string_ &GetCurrentItemAttribute(
 			const char *Name,
@@ -1258,13 +1291,9 @@ namespace nsxpcm {
 		{
 			return GetCurrentItemAttribute( "id", Value );
 		}
-		bso::ulong__ GetSelectedCount( void )
+		bso::bool__ IsThereSelected( void )
 		{
-			PRInt32 Count = 0;
-
-			_GetSelection()->GetCount( &Count );
-
-			return Count;
+			return GetCurrentIndex() != -1;
 		}
 
 	};

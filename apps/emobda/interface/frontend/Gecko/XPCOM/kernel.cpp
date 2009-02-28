@@ -24,9 +24,9 @@
 
 using namespace kernel;
 
-#define CASE( m )	\
-	case mi##m:\
-		Message = #m;\
+#define CASE( message )	\
+	case m##message:\
+		Message = #message;\
 		break
 
 static const char *GetRawMessage_( kernel::message__ MessageId )
@@ -34,6 +34,7 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
+	CASE( CancelInputConfirmation );
 	default:
 		ERRu();
 		break;
@@ -332,17 +333,26 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpStructureAsXML( str::string_ &XML )
+void kernel::kernel___::_DumpStructureAsXML(
+	const target__ &Current,
+	str::string_ &XML )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
 	txf::text_oflow__ TFlow( Flow );
 	xml::writer Writer;
+	bso::integer_buffer__ Buffer;
 ERRBegin
 	Flow.Init( XML );
 	Writer.Init( TFlow, false );
 
 	Writer.PushTag( "Structure" );
+
+	if ( Current.Table != UNDEFINED_TABLE )
+		Writer.PutAttribute( "CurrentTable", bso::Convert( **Current.Table, Buffer ) );
+
+	if ( Current.Field != UNDEFINED_FIELD )
+		Writer.PutAttribute( "CurrentField", bso::Convert( **Current.Field, Buffer ) );
 
 	DumpDatabaseStructure_( *this, Writer );
 
@@ -352,15 +362,89 @@ ERREnd
 ERREpilog
 }
 
+static void SelectItem_(
+	const str::string_ &Type,
+	const str::string_ &Row,
+	nsIDOMNode *Root,
+	nsxpcm::tree__ &Tree )
+{
+ERRProlog
+	str::string RowBuffer, TypeBuffer;
+	nsxpcm::browser__ Browser;
+	nsIDOMNode *&Node = Root;
+ERRBegin
+	Browser.Init( Root );
+
+	TypeBuffer.Init();
+	RowBuffer.Init();
+
+
+	while ( ( ( Node = Browser.GetNext() ) != NULL )
+		&& ( ( nsxpcm::GetAttribute( Node, "Type", TypeBuffer ) != Type )
+		      || ( nsxpcm::GetAttribute( Node, "Row", RowBuffer ) != Row ) ) ) {
+		TypeBuffer.Init();
+		RowBuffer.Init();
+	}
+
+	if ( Node == NULL )
+		ERRc();
+
+	Tree.Select( Node );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static inline void SelectItem_(
+	const char *Type,
+	const char *Row,
+	nsIDOMNode *Root,
+	nsxpcm::tree__ &Tree )
+{
+	SelectItem_( str::string( Type ), str::string( Row ), Root, Tree );
+}
+
+static inline void SelectItem_(
+	field__ Field,
+	nsIDOMNode *Root,
+	nsxpcm::tree__ &Tree )
+{
+	bso::integer_buffer__ Buffer;
+
+	SelectItem_( "Field", bso::Convert( **Field, Buffer ), Root, Tree );
+}
+
+static inline void SelectItem_(
+	table__ Table,
+	nsIDOMNode *Root,
+	nsxpcm::tree__ &Tree )
+{
+	bso::integer_buffer__ Buffer;
+
+	SelectItem_( "Table", bso::Convert( **Table, Buffer ), Root, Tree );
+}
+
+static inline void SelectItem_(
+	const target__ &Target,
+	nsIDOMNode *Root,
+	nsxpcm::tree__ &Tree )
+{
+	if ( Target.Field != UNDEFINED_FIELD )
+		SelectItem_( Target.Field, Root, Tree );
+	else  if ( Target.Table != UNDEFINED_TABLE )
+		SelectItem_( Target.Table, Root, Tree );
+}
+
 void kernel::kernel___::FillStructureView( void )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
 	str::string XML;
+	target__ Buffer;
 ERRBegin
 	XML.Init();
 
-	_DumpStructureAsXML( XML );
+	_DumpStructureAsXML( _Current, XML );
 
 	nsxpcm::Log( XML );
 
@@ -368,13 +452,19 @@ ERRBegin
 
 	Parameters.Init();
 
-	nsxpcm::RemoveChildren( UI.Structure.Items );
+	Buffer = _Current;
+
+	nsxpcm::RemoveChildren( UI.Structure.Items );	// Lance un évènement 'Select' qui remet à 0 '_Current'.
 
 	nsxpcm::AppendChild( UI.Structure.Items, nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), UI.Structure.Document, Parameters ) );
+
+	_Current = Buffer;
 
 	UI.Structure.UpdateDecks();
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
+
+	SelectItem_( _Current, UI.Structure.Items, UI.Structure.BrowseTree );
 ERRErr
 ERREnd
 ERREpilog
@@ -388,7 +478,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpStructureAsXML( XML );
+	_DumpStructureAsXML( target__(), XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -402,7 +492,7 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::SetCurrentItems( void )
+void kernel::kernel___::SetCurrent( void )
 {
 ERRProlog
 	str::string Type, Row, TableRow;
@@ -411,7 +501,7 @@ ERRProlog
 	ui_struct::browse_tree__ &Tree = UI.Structure.BrowseTree;
 ERRBegin
 
-	if ( Tree.GetSelectedCount() == 1 ) {
+	if ( Tree.IsThereSelected() ) {
 		Type.Init();
 		Tree.GetCurrentItemAttribute( "Type", Type );
 
@@ -431,7 +521,7 @@ ERRBegin
 			ERRc();
 	}
 
-	SetCurrentItems( Field, Table );
+	SetCurrent( target__( Field, Table ) );
 ERRErr
 ERREnd
 ERREpilog

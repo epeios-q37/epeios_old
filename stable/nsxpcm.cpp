@@ -821,9 +821,9 @@ ERREpilog
 
 #endif
 
-void nsxpcm::Alert(
+template <typename t> static void Alert_(
 	nsIDOMWindow *Window,
-	const char *Text )
+	t Text )
 {
 ERRProlog
 	nsEmbedString NSText;
@@ -838,17 +838,47 @@ ERREpilog
 
 void nsxpcm::Alert(
 	nsIDOMWindow *Window,
+	const char *Text )
+{
+	Alert_<const char *>( Window, Text );
+}
+
+void nsxpcm::Alert(
+	nsIDOMWindow *Window,
 	const str::string_ &Text )
 {
+	Alert_<const str::string_ &>( Window, Text );
+}
+
+template <typename t> bso::bool__ Confirm_(
+	nsIDOMWindow *Window,
+	t Text )
+{
+	PRBool Answer = 0;
 ERRProlog
 	nsEmbedString NSText;
 ERRBegin
 	nsxpcm::Transform( Text, NSText );
 
-	GetWindowInternal( Window )->Alert( NSText );
+	GetWindowInternal( Window )->Confirm( NSText, &Answer );
 ERRErr
 ERREnd
 ERREpilog
+	return Answer != 0;
+}
+
+bso::bool__ nsxpcm::Confirm(
+	nsIDOMWindow *Window,
+	const char *Text )
+{
+	return Confirm_<const char *>( Window, Text );
+}
+
+bso::bool__ nsxpcm::Confirm(
+	nsIDOMWindow *Window,
+	const str::string_ &Text )
+{
+	return Confirm_<const str::string_ &>( Window, Text );
 }
 
 

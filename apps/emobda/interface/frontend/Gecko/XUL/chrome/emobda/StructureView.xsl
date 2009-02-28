@@ -29,6 +29,7 @@
 	<xsl:template match="Database">
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
+			<xsl:attribute name="open">true</xsl:attribute>
 			<xsl:attribute name="Type">Database</xsl:attribute>
 			<xsl:attribute name="Name">
 				<xsl:value-of select="Name"/>
@@ -51,6 +52,11 @@
 	<xsl:template match="Table">
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
+			<xsl:if test="../../../@CurrentField">
+				<xsl:if test="../../../@CurrentTable=@Row">
+					<xsl:attribute name="open">true</xsl:attribute>
+				</xsl:if>
+			</xsl:if>
 			<xsl:attribute name="Type">Table</xsl:attribute>
 			<xsl:attribute name="Id">
 				<xsl:value-of select="@Id"/>

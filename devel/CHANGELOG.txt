@@ -1,5 +1,10 @@
 $Id$
 
+28/02/2009 :
+	- NSXPCM :
+		- Enrichissement/modification 'tree__'.
+		- Enrichissement 'textbox__'.
+
 27/02/2009 :
 	- NSXPCM :
 		- Ajout 'element__'.

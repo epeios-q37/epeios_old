@@ -129,7 +129,7 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetCurrentItems( UNDEFINED_FIELD, UNDEFINED_TABLE );
+	K().SetCurrent( target__() );
 	K().DefineTable();
 }
 
@@ -143,7 +143,7 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetCurrentItems( UNDEFINED_FIELD, K().GetCurrentTable() );
+	K().SetCurrent( target__( UNDEFINED_FIELD, K().GetCurrent().Table ) );
 	K().DefineField();
 }
 
@@ -159,19 +159,20 @@ void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string NameBuffer, CommentBuffer;
-	table__ Table = UNDEFINED_TABLE;
+	target__ Target;
 ERRBegin
 	NameBuffer.Init();
 	CommentBuffer.Init();
 
-	if ( K().GetCurrentTable() == UNDEFINED_TABLE )
-		K().CreateTable();
-	else if ( K().GetCurrentField() == UNDEFINED_FIELD )
-		K().AddField();
-	else
+	if ( K().GetCurrent().Table == UNDEFINED_TABLE )
+		Target.Table = K().CreateTable();
+	else if ( K().GetCurrent().Field == UNDEFINED_FIELD ) {
+		Target.Set( K().AddField(), K().GetCurrent().Table );
+	} else
 		ERRc();
 
-	K().FillStructureView( Table );
+	K().SetCurrent( Target );
+	K().FillStructureView();
 	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
 	K().UI.Structure.Broadcasters.ItemEdition.Disable();
 ERRErr
@@ -181,12 +182,16 @@ ERREpilog
 
 void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Cancel !" );
+	if ( K().Confirm( kernel::mCancelInputConfirmation ) ) {
+		K().FillStructureView();
+		K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
+		K().UI.Structure.Broadcasters.ItemEdition.Disable();
+	}
 }
 
 void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 {
-	K().SetCurrentItems();
+	K().SetCurrent();
 	K().UI.Structure.UpdateDecks();
 }
 

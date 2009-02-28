@@ -37,21 +37,61 @@ namespace kernel {
 
 	enum message__ 
 	{
+		mCancelInputConfirmation,
 		m_amount,
 		m_Undefined
 	};
 
 	BKDACC_T32( table );
-#define UNDEFINED_TABLE	((table__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_TABLE	((kernel::table__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( table_id );
-#define UNDEFINED_TABLE_ID	((table_id__)BKDACC_UNDEFINED_ID8 )
+#define UNDEFINED_TABLE_ID	((kernel::table_id__)BKDACC_UNDEFINED_ID8 )
 
 	BKDACC_T32( field );
-#define UNDEFINED_FIELD	((field__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_FIELD	((kernel::field__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( field_id );
-#define UNDEFINED_FIELD_ID	((field_id__)BKDACC_UNDEFINED_ID8 )
+#define UNDEFINED_FIELD_ID	((kernel::field_id__)BKDACC_UNDEFINED_ID8 )
+
+	struct target__ {
+		table__ Table;
+		field__ Field;
+		void reset( bso::bool__ = true )
+		{
+			Table = UNDEFINED_TABLE;
+			Field = UNDEFINED_FIELD;
+		}
+		target__( void )
+		{
+			reset( false );
+		}
+		target__(
+			field__ Field,
+			table__ Table )
+		{
+			Set( Field, Table );
+		}
+		target__( table__ Table )
+		{
+			Set( Table );
+		}
+		void Set(
+			field__ Field,
+			table__ Table )
+		{
+			if ( ( Field != UNDEFINED_FIELD ) && ( Table == UNDEFINED_TABLE ) )
+				ERRu();
+
+			this->Field = Field;
+			this->Table = Table;
+		}
+		void Set( table__ Table )
+		{
+			Set( UNDEFINED_FIELD, Table );
+		}
+	};
+
 
 
 	typedef mbdbkd::backend___ _backend___;
@@ -76,9 +116,10 @@ namespace kernel {
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
-		void _DumpStructureAsXML( str::string_ &XML );
-		field__ _CurrentField;
-		table__ _CurrentTable;
+		void _DumpStructureAsXML(
+			const target__ &Target,
+			str::string_ &XML );
+		target__ _Current;
 		void _H( bso::bool__ Result )
 		{
 		ERRProlog
@@ -114,8 +155,7 @@ namespace kernel {
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
-			_CurrentField = UNDEFINED_FIELD;
-			_CurrentTable = UNDEFINED_TABLE;
+			_Current.reset( P );
 		}
 		kernel___( void )
 		{
@@ -148,6 +188,18 @@ namespace kernel {
 		void Alert( message__ Message )
 		{
 			Alert( GetMessage( Message ) );
+		}
+		bso::bool__ Confirm( const char *Message )
+		{
+			return nsxpcm::Confirm( UI.Main.Window, Message );
+		}
+		bso::bool__ Confirm( const str::string_ &Message )
+		{
+			return nsxpcm::Confirm( UI.Main.Window, Message );
+		}
+		bso::bool__ Confirm( message__ Message )
+		{
+			return Confirm( GetMessage( Message ) );
 		}
 		void CreateDatabase(
 			const str::string_ &Location,
@@ -182,7 +234,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			CreateTable( Name, Comment );
+			Table = CreateTable( Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -199,12 +251,13 @@ namespace kernel {
 
 			return Field;
 		}
-		void AddField( void )
+		field__ AddField( void )
 		{
+			field__ Field = UNDEFINED_FIELD;
 		ERRProlog
 			str::string Name, Comment;
 		ERRBegin
-			if ( _CurrentTable == UNDEFINED_TABLE )
+			if ( _Current.Table == UNDEFINED_TABLE )
 				ERRu();
 
 			Name.Init();
@@ -213,16 +266,17 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			AddField( _CurrentTable, Name, Comment );
+			Field = AddField( _Current.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
+			return Field;
 		}
 		void FillTableMenu( void );
-		void FillStructureView( table__ Table );
+		void FillStructureView( void );
 		void UpdateUI( void )
 		{
-			FillStructureView( UNDEFINED_TABLE );
+			FillStructureView();
 			UI.Main.Broadcasters.DatabaseOpened.Disable();
 /*
 			UI.Structure.Broadcasters.StructureItemEdition.Disable();
@@ -240,6 +294,7 @@ namespace kernel {
 			UI.Broadcasters.ItemEdition.Enable();
 
 			UI.NameTextbox.SetValue( str::string( "" ) );
+			UI.NameTextbox.Select();
 
 			UI.CommentTextbox.SetValue( str::string( "" ) );
 		}
@@ -251,6 +306,7 @@ namespace kernel {
 			UI.Broadcasters.ItemEdition.Enable();
 
 			UI.NameTextbox.SetValue( str::string( "" ) );
+			UI.NameTextbox.Select();
 
 			UI.CommentTextbox.SetValue( str::string( "" ) );
 		}
@@ -296,20 +352,12 @@ namespace kernel {
 			str::string_ &Name,
 			str::string_ &Comment,
 			field_id__ &Id );
-		void SetCurrentItems(
-			field__ Field,
-			table__ Table )
+		void SetCurrent( target__ Current )
 		{
-			if ( Field != UNDEFINED_FIELD )
-				if ( Table == UNDEFINED_TABLE )
-					ERRl();
-
-			_CurrentField = Field;
-			_CurrentTable = Table;
+			_Current = Current;
 		}
-		void SetCurrentItems();
-		E_RODISCLOSE__( field__, CurrentField );
-		E_RODISCLOSE__( table__, CurrentTable );
+		void SetCurrent();
+		E_RODISCLOSE__( target__, Current );
 	};
 
 	inline bkdacc::id32__ _ExtractRow( const str::string_ &Value )
