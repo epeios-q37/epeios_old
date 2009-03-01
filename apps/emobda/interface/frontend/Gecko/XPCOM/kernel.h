@@ -34,6 +34,23 @@
 
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
+	using namespace mbdbkd;
+
+	enum task__ {
+		tApplyItem,
+		tDefineItem,
+		tBrowseStructure,
+		t_amount,
+		t_Undefined
+	};
+
+	enum context__ {
+		cStructureView,
+		cStructureItemView,
+		cItemForm,
+		c_amount,
+		c_Undefined
+	};
 
 	enum message__ 
 	{
@@ -41,18 +58,6 @@ namespace kernel {
 		m_amount,
 		m_Undefined
 	};
-
-	BKDACC_T32( table );
-#define UNDEFINED_TABLE	((kernel::table__)BKDACC_UNDEFINED_ID32 )
-
-	BKDACC_T8( table_id );
-#define UNDEFINED_TABLE_ID	((kernel::table_id__)BKDACC_UNDEFINED_ID8 )
-
-	BKDACC_T32( field );
-#define UNDEFINED_FIELD	((kernel::field__)BKDACC_UNDEFINED_ID32 )
-
-	BKDACC_T8( field_id );
-#define UNDEFINED_FIELD_ID	((kernel::field_id__)BKDACC_UNDEFINED_ID8 )
 
 	struct target__ {
 		table__ Table;
@@ -109,7 +114,7 @@ namespace kernel {
 
 	class kernel___
 	: public ui::bridge_functions__,
-	  public _backend___
+	  private _backend___
 	{
 	private:
 		msg::buffer__ _MessageBuffer;
@@ -120,33 +125,58 @@ namespace kernel {
 			const target__ &Target,
 			str::string_ &XML );
 		target__ _Current;
-		void _H( bso::bool__ Result )
+		void _SwitchTo( context__ Context );
+		table__ _CreateTable( void )
 		{
+			table__ Table = UNDEFINED_TABLE;
 		ERRProlog
-			STR_BUFFER___ Buffer;
-			str::string Message;
+			str::string Name, Comment;
 		ERRBegin
-			if ( !Result ) {
-				Message.Init();
-				Message.Append( GetRawMessage() );
-				Message.Append( '\n' );
-				Message.Append( GetI18Message() );
+			Name.Init();
+			UI.Structure.NameTextbox.GetValue( Name );
 
-				nsxpcm::Alert( UI.Main.Window, Message.Convert( Buffer ) );
-				ERRReturn;
-			}
+			Comment.Init();
+			UI.Structure.CommentTextbox.GetValue( Comment );
+
+			Table = CreateTable( Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
+			return Table;
+		}
+		field__ _CreateField( void )
+		{
+			field__ Field = UNDEFINED_FIELD;
+		ERRProlog
+			str::string Name, Comment;
+		ERRBegin
+			if ( _Current.Table == UNDEFINED_TABLE )
+				ERRu();
+
+			Name.Init();
+			UI.Structure.NameTextbox.GetValue( Name );
+
+			Comment.Init();
+			UI.Structure.CommentTextbox.GetValue( Comment );
+
+			Field = AddField( _Current.Table, Name, Comment );
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Field;
 		}
 	protected:
-		virtual const kernel___ &K_( void ) const
+		virtual const kernel___ &__K( void ) const
 		{
 			return *this;
 		}
-		virtual kernel___ &K_( void )
+		virtual kernel___ &__K( void )
 		{
 			return *this;
+		}
+		virtual void __Report( const char *Message )
+		{
+			nsxpcm::Alert( UI.Main.Window, Message );
 		}
 	public:
 		ui::ui__ UI;
@@ -201,76 +231,28 @@ namespace kernel {
 		{
 			return Confirm( GetMessage( Message ) );
 		}
-		void CreateDatabase(
-			const str::string_ &Location,
-			const str::string_ &Name,
-			const str::string_ &Comment )
+		void UpdateDecks( void );
+		void ApplyDatabase( void )
 		{
-			_H( Manager.CreateDatabase( Location, Name, Comment ) );
+			K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
+
+			_SwitchTo( cStructureView );
 		}
-		void OpenDatabase( const str::string_ &Location )
+		void BrowseDatabase( void )
 		{
-			_H( Manager.OpenDatabase( Location ) );
+			K().OpenDatabase( str::string( "h:\\temp\\emobda" ) );
+
+			_SwitchTo( cStructureView );
 		}
-		table__ CreateTable(
-			const str::string_ &Name,
-			const str::string_ &Comment )
+		void BrowseStructureItem( void )
 		{
-			table__ Table = UNDEFINED_TABLE;
-
-			_H( Manager.CreateTable( Name, Comment, *Table ) );
-
-			return Table;
+			SetCurrent();
+			_SwitchTo( cStructureItemView );
 		}
-		table__ CreateTable( void )
+		void ApplyStructureItem( void );
+		void DropStructureItem( void )
 		{
-			table__ Table = UNDEFINED_TABLE;
-		ERRProlog
-			str::string Name, Comment;
-		ERRBegin
-			Name.Init();
-			UI.Structure.NameTextbox.GetValue( Name );
-
-			Comment.Init();
-			UI.Structure.CommentTextbox.GetValue( Comment );
-
-			Table = CreateTable( Name, Comment );
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Table;
-		}
-		field__ AddField(
-			table__ Table,
-			const str::string_ &Name,
-			const str::string_ &Comment )
-		{
-			field__ Field = UNDEFINED_FIELD;
-
-			_H( Manager.AddField( *Table, Name, Comment, *Field ) );
-
-			return Field;
-		}
-		field__ AddField( void )
-		{
-			field__ Field = UNDEFINED_FIELD;
-		ERRProlog
-			str::string Name, Comment;
-		ERRBegin
-			if ( _Current.Table == UNDEFINED_TABLE )
-				ERRu();
-
-			Name.Init();
-			UI.Structure.NameTextbox.GetValue( Name );
-
-			Comment.Init();
-			UI.Structure.CommentTextbox.GetValue( Comment );
-
-			Field = AddField( _Current.Table, Name, Comment );
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Field;
+			_SwitchTo( cStructureView );
 		}
 		void FillTableMenu( void );
 		void FillStructureView( void );
@@ -310,48 +292,6 @@ namespace kernel {
 
 			UI.CommentTextbox.SetValue( str::string( "" ) );
 		}
-		void GetDatabaseInfos(
-			str::string_ &Name,
-			str::string_ &Comment )
-		{
-			_H( Manager.GetDatabaseInfos( Name, Comment ) );
-		}
-		void GetTables( tables_ &Tables )
-		{
-			_H( Manager.GetTables( _( Tables ) ) );
-		}
-		void GetTablesInfos(
-			const tables_ &Tables,
-			bkdacc::strings_ &Names,
-			bkdacc::strings_ &Comments,
-			table_ids_ &Ids )
-		{
-			_H( Manager.GetTablesInfos( _( Tables ), Names, Comments, _( Ids ) ) );
-		}
-		void GetTableInfo(
-			table__ Table,
-			str::string_ &Name,
-			str::string_ &Comment,
-			table_id__ &Id );
-		void GetFields(
-			table__ Table,
-			fields_ &Fields )
-		{
-			_H( Manager.GetFields( *Table, _( Fields ) ) );
-		}
-		void GetFieldsInfos(
-			const fields_ &Fields,
-			bkdacc::strings_ &Names,
-			bkdacc::strings_ &Comments,
-			field_ids_ &Ids )
-		{
-			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ) ) );
-		}
-		void GetFieldInfo(
-			field__ field,
-			str::string_ &Name,
-			str::string_ &Comment,
-			field_id__ &Id );
 		void SetCurrent( target__ Current )
 		{
 			_Current = Current;

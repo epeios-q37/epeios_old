@@ -69,62 +69,6 @@ const char *kernel::kernel___::GetMessage( kernel::message__ MessageId )
 	return GetMessage_( MessageId, _Language, _MessageBuffer );
 }
 
-void kernel::kernel___::GetTableInfo(
-	table__ Table,
-	str::string_ &Name,
-	str::string_ &Comment,
-	table_id__ &Id )
-{
-ERRProlog
-	tables Tables;
-	bkdacc::strings Names, Comments;
-	table_ids Ids;
-ERRBegin
-	Tables.Init();
-	Tables.Append( Table );
-
-	Names.Init();
-	Comments.Init();
-	Ids.Init();
-
-	GetTablesInfos( Tables, Names, Comments, Ids );
-
-	Name = Names( Names.First() );
-	Comment = Comments( Comments.First() );
-	Id = Ids( Ids.First() );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void kernel::kernel___::GetFieldInfo(
-	field__ Field,
-	str::string_ &Name,
-	str::string_ &Comment,
-	field_id__ &Id )
-{
-ERRProlog
-	fields Fields;
-	bkdacc::strings Names, Comments;
-	field_ids Ids;
-ERRBegin
-	Fields.Init();
-	Fields.Append( Field );
-
-	Names.Init();
-	Comments.Init();
-	Ids.Init();
-
-	GetFieldsInfos( Fields, Names, Comments, Ids );
-
-	Name = Names( Names.First() );
-	Comment = Comments( Comments.First() );
-	Id = Ids( Ids.First() );
-ERRErr
-ERREnd
-ERREpilog
-}
-
 static void DumpFieldStructure_(
 	table__ Table,
 	field__ Field,
@@ -156,7 +100,7 @@ static void DumpFieldStructure_(
 static void DumpFieldsStructure_(
 	table__ Table,
 	const fields_ &Fields,
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -172,7 +116,7 @@ ERRBegin
 	Comments.Init();
 	Ids.Init();
 
-	Kernel.GetFieldsInfos( Fields, Names, Comments, Ids );
+	Backend.GetFieldsInfos( Fields, Names, Comments, Ids );
 
 	Row = Fields.First();
 
@@ -192,7 +136,7 @@ ERREpilog
 
 static void DumpFieldsStructure_(
 	table__ Table,
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -200,9 +144,9 @@ ERRProlog
 ERRBegin	
 	Fields.Init();
 
-	Kernel.GetFields( Table, Fields );
+	Backend.GetFields( Table, Fields );
 
-	DumpFieldsStructure_( Table, Fields, Kernel, Writer );
+	DumpFieldsStructure_( Table, Fields, Backend, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -214,7 +158,7 @@ static void DumpTableStructure_(
 	const bkdacc::string_ &Comment,
 	table__ Table,
 	table_id__ Id,
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 	bso::integer_buffer__ Buffer;
@@ -230,7 +174,7 @@ static void DumpTableStructure_(
 	Writer.PutValue( Comment );
 	Writer.PopTag();
 
-	DumpFieldsStructure_( Table, Kernel, Writer );
+	DumpFieldsStructure_( Table, Backend, Writer );
 }
 
 static void DumpTablesStructure_(
@@ -238,7 +182,7 @@ static void DumpTablesStructure_(
 	const bkdacc::strings_ &Comments,
 	const tables_ &Tables,
 	const table_ids_ &Ids,
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
@@ -256,7 +200,7 @@ static void DumpTablesStructure_(
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		DumpTableStructure_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Kernel, Writer );
+		DumpTableStructure_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Backend, Writer );
 
 		Writer.PopTag();
 
@@ -265,7 +209,7 @@ static void DumpTablesStructure_(
 }
 
 static void DumpTablesStructure_(
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -275,13 +219,13 @@ ERRProlog
 ERRBegin
 	Tables.Init();
 
-	Kernel.GetTables( Tables );
+	Backend.GetTables( Tables );
 
 	Names.Init();
 	Comments.Init();
 	Ids.Init();
 
-	Kernel.GetTablesInfos( Tables, Names, Comments, Ids );
+	Backend.GetTablesInfos( Tables, Names, Comments, Ids );
 
 	if ( Tables.Amount() != Names.Amount() )
 		ERRc();
@@ -291,7 +235,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	DumpTablesStructure_( Names, Comments, Tables, Ids, Kernel, Writer );
+	DumpTablesStructure_( Names, Comments, Tables, Ids, Backend, Writer );
 
 	Writer.PopTag();
 
@@ -301,7 +245,7 @@ ERREpilog
 }
 
 static void DumpDatabaseStructure_(
-	kernel___ &Kernel,
+	backend___ &Backend,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -310,7 +254,7 @@ ERRBegin
 	Name.Init();
 	Comment.Init();
 
-	Kernel.GetDatabaseInfos( Name, Comment );
+	Backend.GetDatabaseInfos( Name, Comment );
 
 	if ( Name.Amount() != 0 ) {
 
@@ -324,7 +268,7 @@ ERRBegin
 		Writer.PutValue( Comment );
 		Writer.PopTag();
 
-		DumpTablesStructure_( Kernel, Writer );
+		DumpTablesStructure_( Backend, Writer );
 
 		Writer.PopTag();
 	}
@@ -460,7 +404,7 @@ ERRBegin
 
 	_Current = Buffer;
 
-	UI.Structure.UpdateDecks();
+	UpdateDecks();
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
 
@@ -525,6 +469,132 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+void kernel::kernel___::UpdateDecks( void )
+{
+ERRProlog
+	str::string Type;
+	str::string Name, Comment;
+	str::string Row;
+	epeios::row__ Error = NONE;
+ERRBegin
+	ui_struct::structure__ &UI = this->UI.Structure;
+
+	Name.Init();
+	Comment.Init();
+
+	if ( UI.BrowseTree.GetCurrentIndex() != -1 ) {
+
+		Type.Init();
+		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
+
+		
+		if ( Type == "Database" ) {
+			K().GetDatabaseInfos( Name, Comment );
+		} else if ( Type == "Table" ) {
+			table_id__ TableId = UNDEFINED_TABLE_ID;
+
+			Row.Init();
+			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
+
+			K().GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
+		} else if ( Type == "Field" ) {
+			field_id__ FieldId = UNDEFINED_FIELD_ID;
+			
+			Row.Init();
+			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
+
+			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId );
+		}
+
+		UI.NameTextbox.SetValue( Name );
+
+		UI.CommentTextbox.SetValue( Comment );
+
+		if ( Type == "Database" ) {
+			UI.Broadcasters.Database.Deletion.Enable();
+			UI.Broadcasters.Database.Modification.Enable();
+
+			UI.Broadcasters.Table.Creation.Enable();
+			UI.Broadcasters.Table.Modification.Disable();
+			UI.Broadcasters.Table.Creation.Disable();
+
+			UI.Broadcasters.Field.Creation.Disable();
+			UI.Broadcasters.Field.Modification.Disable();
+			UI.Broadcasters.Field.Creation.Disable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.DatabaseSelectionPanel );
+		} else if ( Type == "Table" ) {
+			UI.Broadcasters.Database.Deletion.Disable();
+			UI.Broadcasters.Database.Modification.Disable();
+
+			UI.Broadcasters.Table.Creation.Enable();
+			UI.Broadcasters.Table.Modification.Enable();
+			UI.Broadcasters.Table.Creation.Enable();
+
+			UI.Broadcasters.Field.Creation.Enable();
+			UI.Broadcasters.Field.Modification.Disable();
+			UI.Broadcasters.Field.Deletion.Disable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.TableSelectionPanel );
+		}else if ( Type == "Field" ) {
+			UI.Broadcasters.Database.Deletion.Disable();
+			UI.Broadcasters.Database.Modification.Disable();
+
+			UI.Broadcasters.Table.Creation.Disable();
+			UI.Broadcasters.Table.Modification.Disable();
+			UI.Broadcasters.Table.Creation.Disable();
+
+			UI.Broadcasters.Field.Creation.Enable();
+			UI.Broadcasters.Field.Modification.Enable();
+			UI.Broadcasters.Field.Creation.Enable();
+
+			UI.ActionDeck.SetSelectedPanel( UI.FieldSelectionPanel );
+		} else
+			ERRu();
+	} else {
+		UI.ActionDeck.SetSelectedIndex( -1 );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::_SwitchTo( context__ Context )
+{
+	switch ( Context ) {
+	case cStructureView:
+		FillStructureView();
+		K().FillTableMenu();
+		UI.Structure.Broadcasters.ItemBrowsing.Enable();
+		UI.Structure.Broadcasters.ItemEdition.Disable();
+		break;
+	case cStructureItemView:
+		UpdateDecks();
+		UI.Structure.Broadcasters.ItemBrowsing.Enable();
+		UI.Structure.Broadcasters.ItemEdition.Disable();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+}
+
+void kernel::kernel___::ApplyStructureItem( void )
+{
+	target__ Target;
+
+	if ( K().GetCurrent().Table == UNDEFINED_TABLE )
+		Target.Table = _CreateTable();
+	else if ( K().GetCurrent().Field == UNDEFINED_FIELD ) {
+		Target.Set( _CreateField(), GetCurrent().Table );
+	} else
+		ERRc();
+
+	SetCurrent( Target );
+	_SwitchTo( cStructureView );
 }
 
 

@@ -20,3 +20,59 @@
 // $Id$
 
 #include "mbdbkd.h"
+
+void mbdbkd::backend___::GetTableInfo(
+	table__ Table,
+	str::string_ &Name,
+	str::string_ &Comment,
+	table_id__ &Id )
+{
+ERRProlog
+	tables Tables;
+	bkdacc::strings Names, Comments;
+	table_ids Ids;
+ERRBegin
+	Tables.Init();
+	Tables.Append( Table );
+
+	Names.Init();
+	Comments.Init();
+	Ids.Init();
+
+	GetTablesInfos( Tables, Names, Comments, Ids );
+
+	Name = Names( Names.First() );
+	Comment = Comments( Comments.First() );
+	Id = Ids( Ids.First() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void mbdbkd::backend___::GetFieldInfo(
+	field__ Field,
+	str::string_ &Name,
+	str::string_ &Comment,
+	field_id__ &Id )
+{
+ERRProlog
+	fields Fields;
+	bkdacc::strings Names, Comments;
+	field_ids Ids;
+ERRBegin
+	Fields.Init();
+	Fields.Append( Field );
+
+	Names.Init();
+	Comments.Init();
+	Ids.Init();
+
+	GetFieldsInfos( Fields, Names, Comments, Ids );
+
+	Name = Names( Names.First() );
+	Comment = Comments( Comments.First() );
+	Id = Ids( Ids.First() );
+ERRErr
+ERREnd
+ERREpilog
+}

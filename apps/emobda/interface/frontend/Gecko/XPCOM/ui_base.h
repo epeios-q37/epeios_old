@@ -35,16 +35,16 @@ namespace ui_base {
 	class bridge_functions__
 	{
 	protected:
-		virtual const kernel::kernel___ &K_( void ) const = 0;
-		virtual kernel::kernel___ &K_( void ) = 0;
+		virtual const kernel::kernel___ &__K( void ) const = 0;
+		virtual kernel::kernel___ &__K( void ) = 0;
 	public:
 		const kernel::kernel___ &K( void ) const
 		{
-			return K_();
+			return __K();
 		}
 		kernel::kernel___ &K( void )
 		{
-			return K_();
+			return __K();
 		}
 	};
 

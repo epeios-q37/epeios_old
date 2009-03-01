@@ -29,20 +29,12 @@ using nsxpcm::event__;
 
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
-//	nsxpcm::Alert( K().UI.Structure.Window, "Create Database !" );
-	K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
-	K().FillStructureView();
-	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
-	K().UI.Structure.Broadcasters.ItemEdition.Disable();
+	K().ApplyDatabase();
 }
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().OpenDatabase( str::string( "h:\\temp\\emobda" ) );
-	K().FillStructureView();
-	K().FillTableMenu();
-	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
-	K().UI.Structure.Broadcasters.ItemEdition.Disable();
+	K().BrowseDatabase();
 }
 
 void ui_main::close_database_command__::NSXPCMOnEvent( event__ )

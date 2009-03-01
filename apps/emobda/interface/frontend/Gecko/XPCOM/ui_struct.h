@@ -116,7 +116,6 @@ namespace ui_struct {
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;
 			DatabaseSelectionPanel = TableSelectionPanel = FieldSelectionPanel = NULL;
 		}
-		void UpdateDecks( void );
 	};
 
 	void Register(

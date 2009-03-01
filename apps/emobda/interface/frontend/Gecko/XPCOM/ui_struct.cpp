@@ -28,97 +28,6 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
-void ui_struct::structure__::UpdateDecks( void )
-{
-ERRProlog
-	str::string Type;
-	str::string Name, Comment;
-	str::string Row;
-	epeios::row__ Error = NONE;
-ERRBegin
-	structure__ &UI = K().UI.Structure;
-
-	Name.Init();
-	Comment.Init();
-
-	if ( UI.BrowseTree.GetCurrentIndex() != -1 ) {
-
-		Type.Init();
-		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
-
-		
-		if ( Type == "Database" ) {
-			K().GetDatabaseInfos( Name, Comment );
-		} else if ( Type == "Table" ) {
-			table_id__ TableId = UNDEFINED_TABLE_ID;
-
-			Row.Init();
-			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
-
-			K().GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
-		} else if ( Type == "Field" ) {
-			field_id__ FieldId = UNDEFINED_FIELD_ID;
-			
-			Row.Init();
-			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
-
-			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId );
-		}
-
-		UI.NameTextbox.SetValue( Name );
-
-		UI.CommentTextbox.SetValue( Comment );
-
-		if ( Type == "Database" ) {
-			UI.Broadcasters.Database.Deletion.Enable();
-			UI.Broadcasters.Database.Modification.Enable();
-
-			UI.Broadcasters.Table.Creation.Enable();
-			UI.Broadcasters.Table.Modification.Disable();
-			UI.Broadcasters.Table.Creation.Disable();
-
-			UI.Broadcasters.Field.Creation.Disable();
-			UI.Broadcasters.Field.Modification.Disable();
-			UI.Broadcasters.Field.Creation.Disable();
-
-			UI.ActionDeck.SetSelectedPanel( UI.DatabaseSelectionPanel );
-		} else if ( Type == "Table" ) {
-			UI.Broadcasters.Database.Deletion.Disable();
-			UI.Broadcasters.Database.Modification.Disable();
-
-			UI.Broadcasters.Table.Creation.Enable();
-			UI.Broadcasters.Table.Modification.Enable();
-			UI.Broadcasters.Table.Creation.Enable();
-
-			UI.Broadcasters.Field.Creation.Enable();
-			UI.Broadcasters.Field.Modification.Disable();
-			UI.Broadcasters.Field.Deletion.Disable();
-
-			UI.ActionDeck.SetSelectedPanel( UI.TableSelectionPanel );
-		}else if ( Type == "Field" ) {
-			UI.Broadcasters.Database.Deletion.Disable();
-			UI.Broadcasters.Database.Modification.Disable();
-
-			UI.Broadcasters.Table.Creation.Disable();
-			UI.Broadcasters.Table.Modification.Disable();
-			UI.Broadcasters.Table.Creation.Disable();
-
-			UI.Broadcasters.Field.Creation.Enable();
-			UI.Broadcasters.Field.Modification.Enable();
-			UI.Broadcasters.Field.Creation.Enable();
-
-			UI.ActionDeck.SetSelectedPanel( UI.FieldSelectionPanel );
-		} else
-			ERRu();
-	} else {
-		UI.ActionDeck.SetSelectedIndex( -1 );
-	}
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
 void ui_struct::modify_database_command__::NSXPCMOnEvent( event__ )
 {
 }
@@ -157,42 +66,19 @@ void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 {
-ERRProlog
-	str::string NameBuffer, CommentBuffer;
-	target__ Target;
-ERRBegin
-	NameBuffer.Init();
-	CommentBuffer.Init();
-
-	if ( K().GetCurrent().Table == UNDEFINED_TABLE )
-		Target.Table = K().CreateTable();
-	else if ( K().GetCurrent().Field == UNDEFINED_FIELD ) {
-		Target.Set( K().AddField(), K().GetCurrent().Table );
-	} else
-		ERRc();
-
-	K().SetCurrent( Target );
-	K().FillStructureView();
-	K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
-	K().UI.Structure.Broadcasters.ItemEdition.Disable();
-ERRErr
-ERREnd
-ERREpilog
+	K().ApplyStructureItem();
 }
 
 void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 {
 	if ( K().Confirm( kernel::mCancelInputConfirmation ) ) {
-		K().FillStructureView();
-		K().UI.Structure.Broadcasters.ItemBrowsing.Enable();
-		K().UI.Structure.Broadcasters.ItemEdition.Disable();
+		K().DropStructureItem();
 	}
 }
 
 void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 {
-	K().SetCurrent();
-	K().UI.Structure.UpdateDecks();
+	K().BrowseStructureItem();
 }
 
 /* UI Registrations */
