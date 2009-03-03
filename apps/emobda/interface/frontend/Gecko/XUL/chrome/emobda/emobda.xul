@@ -76,7 +76,7 @@
 				<button id="removeField" label="Remove"/>
 			</hbox>
 		</vbox>
-		<iframe id="pnlStructureFormAndView" src="structure.xul"/>
+		<iframe id="pnlStructureFormAndView" src="StructureFormAndView.xul"/>
 		<iframe id="pnlRecordForm" src="RecordForm.xul"/>
 	</deck>
 </window>

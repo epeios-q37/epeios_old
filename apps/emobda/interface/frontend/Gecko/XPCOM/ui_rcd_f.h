@@ -1,5 +1,5 @@
 /*
-	'ui.h' by Claude SIMON (http://zeusw.org/).
+	'ui_rcd_f.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,31 +19,30 @@
 
 // $Id$
 
-#ifndef UI__INC
-#define UI__INC
+#ifndef UI_RCD_F__INC
+#define UI_RCD_F__INC
 
-#include "ui_main.h"
-#include "ui_struct.h"
-#include "ui_rcd_f.h"
+#include "ui_base.h"
 
-namespace ui {
-	using ui_base::bridge_functions__;
+namespace ui_rcd_f {
+	using namespace ui_base;
 
-	struct ui__ {
-		ui_main::main__ Main;
-		ui_struct::structure__ Structure;
-		ui_rcd_f::record_form__ RecordForm;
+	struct record_form__
+	: public _ui_core__,
+	  public bridge__
+	{
+	public:
 		void Init( bridge_functions__ &Functions )
 		{
-			Main.Init();
-			Structure.Init( Functions );
+			_ui_core__::Init();
+			bridge__::Init( Functions );
 		}
 	};
 
-	inline void Initialize( ui__ &UI )
-	{
-		UI.Main.Broadcasters.DatabaseOpened.Disable();
-	}
+	void Register(
+		kernel::kernel___ &Kernel,
+		record_form__ &UI,
+		nsIDOMWindow *Window );
 }
 
 #endif

@@ -548,7 +548,7 @@ ERRBegin
 
 			UI.Broadcasters.Field.Creation.Enable();
 			UI.Broadcasters.Field.Modification.Enable();
-			UI.Broadcasters.Field.Creation.Enable();
+			UI.Broadcasters.Field.Deletion.Enable();
 
 			UI.ActionDeck.SetSelectedPanel( UI.FieldSelectionPanel );
 		} else
@@ -565,6 +565,9 @@ ERREpilog
 void kernel::kernel___::_SwitchTo( context__ Context )
 {
 	switch ( Context ) {
+	case cSessionForm:
+		K().FillTableMenu();
+		break;
 	case cStructureView:
 		FillStructureView();
 		K().FillTableMenu();
@@ -575,6 +578,9 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UpdateDecks();
 		UI.Structure.Broadcasters.ItemBrowsing.Enable();
 		UI.Structure.Broadcasters.ItemEdition.Disable();
+		break;
+	case cRecordForm:
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordForm );
 		break;
 	default:
 		ERRc();

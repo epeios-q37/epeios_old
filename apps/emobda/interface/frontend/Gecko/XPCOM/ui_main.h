@@ -35,6 +35,10 @@ namespace ui_main {
 	UI_ETYPEDEF( command__, open_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );
 
+	UI_ETYPEDEF( command__, define_record_command__ );
+
+	UI_TYPEDEF( deck__, main_deck__ );
+
 	struct main__
 	: public _ui_core__
 	{
@@ -44,12 +48,18 @@ namespace ui_main {
 				open_database_command__ Open;
 				close_database_command__ Close;
 			} Database;
+			define_record_command__ DefinedRecord;
 		} Commands;
 		struct broadcasters__ {
 			database_opened_broadcaster__ DatabaseOpened;
 		} Broadcasters;
 		table_menu__ TableMenu;
-
+		main_deck__ MainDeck;
+		struct panels__ {
+			panel__
+				StructureFormAndView,
+				RecordForm;
+		} Panels;
 		void Init( void )
 		{
 			_ui_core__::Init();

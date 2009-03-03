@@ -1169,6 +1169,10 @@ namespace nsxpcm {
 		}
 	};
 
+	class panel__
+	: public _element__<nsIDOMElement>
+	{};
+
 	class deck__
 	: public _element__<nsIDOMElement>
 	{
@@ -1209,6 +1213,10 @@ namespace nsxpcm {
 			}
 
 			SetSelectedIndex( Index );
+		}
+		void SetSelectedPanel( panel__ &Panel )
+		{
+			SetSelectedPanel( Panel.GetElement() );
 		}
 	};
 

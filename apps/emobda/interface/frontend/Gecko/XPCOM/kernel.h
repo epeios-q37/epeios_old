@@ -36,18 +36,12 @@
 namespace kernel {
 	using namespace mbdbkd;
 
-	enum task__ {
-		tApplyItem,
-		tDefineItem,
-		tBrowseStructure,
-		t_amount,
-		t_Undefined
-	};
-
 	enum context__ {
+		cSessionForm,
 		cStructureView,
 		cStructureItemView,
 		cItemForm,
+		cRecordForm,
 		c_amount,
 		c_Undefined
 	};
@@ -254,6 +248,10 @@ namespace kernel {
 		{
 			_SwitchTo( cStructureView );
 		}
+		void DefineRecord( void )
+		{
+			_SwitchTo( cRecordForm );
+		}
 		void FillTableMenu( void );
 		void FillStructureView( void );
 		void UpdateUI( void )
@@ -268,6 +266,10 @@ namespace kernel {
 */
 		}
 		void UpdateButtonsPanel( void );
+		void DefineSession( void )
+		{
+			_SwitchTo( cSessionForm );
+		}
 		void DefineTable( void )
 		{
 			ui_struct::structure__ &UI = this->UI.Structure;

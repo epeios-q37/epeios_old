@@ -42,7 +42,14 @@ void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
 }
 
+void ui_main::define_record_command__::NSXPCMOnEvent( event__ )
+{
+	K().DefineRecord();
+}
+
 /* Registrations */
+
+/* 'broadcaster's */
 
 static void Register_(
 	kernel___ &Kernel,
@@ -53,7 +60,6 @@ static void Register_(
 	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
 }
 
-/* 'broadcaster's */
 
 static void Register_(
 	kernel___ &Kernel,
@@ -99,8 +105,6 @@ static void Register_(
 	ui_base::Register( Kernel, Listbox, Document, Id, nsxpcm::efSelect );
 }
 
-/* 'command's */
-
 static void Register_(
 	kernel___ &Kernel,
 	main__::commands__::database__ &UI,
@@ -117,6 +121,28 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Kernel, UI.Database, Document );
+
+	Register_( Kernel, UI.DefinedRecord, Document, "cmdDefineRecord" );
+}
+
+/* 'panel's */
+
+static void Register_(
+	kernel___ &Kernel,
+	panel__ &Panel,
+	nsIDOMDocument *Document,
+	const char *Id )
+{
+	ui_base::Register( Kernel, Panel, Document, Id, nsxpcm::efNone );
+}
+
+static void Register_(
+	kernel___ &Kernel,
+	main__::panels__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Kernel, UI.StructureFormAndView, Document, "pnlStructureFormAndView" );
+	Register_( Kernel, UI.RecordForm, Document, "pnlRecordForm" );
 }
 
 
@@ -131,4 +157,7 @@ void ui_main::Register(
 	Register_( Kernel, UI.Commands, UI.Document );
 
 	ui_base::Register( Kernel, UI.TableMenu, UI.Document, "mnuTable", nsxpcm::efNone );
+	ui_base::Register( Kernel, UI.MainDeck, UI.Document, "dckMain", nsxpcm::efNone );
+
+	Register_( Kernel, UI.Panels, UI.Document );
 }

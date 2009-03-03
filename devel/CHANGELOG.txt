@@ -1,5 +1,10 @@
 $Id$
 
+03/09/2009 :
+	- NSXPCM :
+		- Ajout 'panel__'.
+		- Ajout à 'deck__' de 'SetSelectedPanel( deck__ &)'.
+
 28/02/2009 :
 	- NSXPCM :
 		- Enrichissement/modification 'tree__'.

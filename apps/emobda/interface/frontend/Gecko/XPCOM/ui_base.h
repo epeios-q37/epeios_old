@@ -91,6 +91,7 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::broadcaster__> broadcaster__;
 	typedef _generic__<nsxpcm::command__> command__;
 	typedef _generic__<nsxpcm::element__> menu__;
+	typedef _generic__<nsxpcm::panel__> panel__;
 
 	template <typename widget> void Register(
 		kernel::kernel___ &Kernel,

@@ -110,8 +110,10 @@ RBB
 
 	if ( !strcmp( UIDesignation, "main" ) )
 		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
-	else if ( !strcmp( UIDesignation, "structure" ) )
+	else if ( !strcmp( UIDesignation, "StructureFormAndView" ) )
 		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
+	else if ( !strcmp( UIDesignation, "RecordForm" ) )
+		ui_rcd_f::Register( Repository_.GetCurrentObject(), UI.RecordForm, Window );
 	else
 		ERRu();
 RR
@@ -124,10 +126,15 @@ NS_IMETHODIMP emobdacom::RegisteringEnd( void )
 RP
 	nsIDOMWindowInternal *Console = NULL;
 RBB
-	nsxpcm::GetJSConsole( Repository_.GetCurrentObject().UI.Main.Window, &Console );
+	kernel::kernel___ &Kernel = Repository_.GetCurrentObject();
+
+	nsxpcm::GetJSConsole( Kernel.UI.Main.Window, &Console );
 
 	Repository_.GetCurrentObject().UpdateUI();
 	Repository_.DismissCurrentObject();
+
+	Kernel.DefineSession();
+	
 RR
 RN
 RE
