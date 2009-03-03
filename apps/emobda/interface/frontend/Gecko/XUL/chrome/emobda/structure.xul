@@ -23,11 +23,11 @@
 <!-- $Id$ -->
 
 <page
-	id="structurePage"
+	id="pgeStructure"
 	title="Structure view and form"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window, 'structure' );"
+	onload="register( window, 'StructureFormAndView' );"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>
