@@ -573,11 +573,13 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		K().FillTableMenu();
 		UI.Structure.Broadcasters.ItemBrowsing.Enable();
 		UI.Structure.Broadcasters.ItemEdition.Disable();
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
 		break;
 	case cStructureItemView:
 		UpdateDecks();
 		UI.Structure.Broadcasters.ItemBrowsing.Enable();
 		UI.Structure.Broadcasters.ItemEdition.Disable();
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
 		break;
 	case cRecordForm:
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordForm );
