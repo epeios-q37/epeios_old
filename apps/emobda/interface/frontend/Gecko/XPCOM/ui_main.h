@@ -31,6 +31,8 @@ namespace ui_main {
 
 	UI_TYPEDEF( menu__, table_menu__ );
 
+	UI_ETYPEDEF( menu_item__, table_menu_item__ );
+
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );

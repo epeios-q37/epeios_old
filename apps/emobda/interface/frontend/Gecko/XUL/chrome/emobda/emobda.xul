@@ -61,7 +61,7 @@
 		</menu>
 	</menubar>
 	<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
-	<deck id="dckMain" selectedIndex="1" flex="1">
+	<deck id="dckMain" selectedIndex="1" flex="1" >
 		<vbox>
 			<hbox>
 				<textbox id="tableLocation"/>

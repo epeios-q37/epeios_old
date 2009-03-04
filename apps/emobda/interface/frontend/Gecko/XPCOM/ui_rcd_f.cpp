@@ -36,6 +36,8 @@ void ui_rcd_f::Register(
 	nsIDOMWindow *Window )
 {
 	UI.Set( Window );
+
+	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }
 
 

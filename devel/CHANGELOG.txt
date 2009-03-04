@@ -1,6 +1,10 @@
 $Id$
 
-03/09/2009 :
+04/03/2009
+	- NSXPCM :
+		- 'menuitem__' -> 'menu_item__'.
+
+03/03/2009 :
 	- NSXPCM :
 		- Ajout 'panel__'.
 		- Ajout à 'deck__' de 'SetSelectedPanel( deck__ &)'.

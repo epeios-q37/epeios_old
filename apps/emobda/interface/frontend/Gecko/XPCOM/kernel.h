@@ -252,8 +252,9 @@ namespace kernel {
 		{
 			_SwitchTo( cRecordForm );
 		}
-		void FillTableMenu( void );
 		void FillStructureView( void );
+		void FillTableMenu( void );
+		void FillRecordForm( void );
 		void UpdateUI( void )
 		{
 			FillStructureView();

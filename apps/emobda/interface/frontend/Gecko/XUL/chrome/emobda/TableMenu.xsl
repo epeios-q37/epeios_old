@@ -50,6 +50,9 @@
 			<xsl:attribute name="label">
 				<xsl:value-of select="Name"/>
 			</xsl:attribute>
+			<xsl:attribute name="Row">
+				<xsl:value-of select="@Row"/>
+			</xsl:attribute>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

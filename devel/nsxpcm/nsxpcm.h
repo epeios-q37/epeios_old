@@ -983,13 +983,21 @@ namespace nsxpcm {
 
 	E_ROW( row__ );
 
-	template <class id_type> void Register(
+	inline void Register(
+		nsxpcm::element_core__ &Core,
+		nsIDOMElement *Element,
+		int Events )
+	{
+		Core.Init( Element, Events );
+	}
+
+	template <class id_type> inline void Register(
 		nsxpcm::element_core__ &Core,
 		nsIDOMDocument *Document,
 		const id_type &Id,
 		int Events )
 	{
-		Core.Init( nsxpcm::GetElementById( Document, Id ), Events );
+		Register( Core, nsxpcm::GetElementById( Document, Id ), Events );
 	}
 
 	void Alert(
@@ -1319,7 +1327,7 @@ namespace nsxpcm {
 	: public _element__<nsIDOMHTMLAnchorElement>
 	{};
 
-	class menuitem__
+	class menu_item__
 	: public _element__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
 	{};
 

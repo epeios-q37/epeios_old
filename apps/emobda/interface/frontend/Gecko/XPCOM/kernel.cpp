@@ -414,6 +414,58 @@ ERREnd
 ERREpilog
 }
 
+void kernel::kernel___::FillRecordForm( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+	_DumpStructureAsXML( _Current, XML );
+
+	nsxpcm::Log( XML );
+
+	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+
+	Parameters.Init();
+
+	UI.RecordForm.RecordBox.RemoveChildren();
+
+	UI.RecordForm.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/RecordForm.xsl" ), UI.Structure.Document, Parameters ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void Register_(
+	nsIDOMNode *Node,
+	kernel___ &Kernel )
+{
+ERRProlog
+	ui_main::table_menu_item__ *Item = NULL;
+	nsxpcm::browser__ Browser;
+	str::string Row;
+ERRBegin 
+	Browser.Init( Node );
+
+	while ( ( Node = Browser.GetNext() ) != NULL ) {
+		Row.Init();
+
+		nsxpcm::GetAttribute( Node, "Row", Row );
+
+		if ( Row.Amount() ) {
+			Item = new ui_main::table_menu_item__;
+
+			ui_base::Register( Kernel, *Item, nsxpcm::QueryInterface<nsIDOMElement>( Node ), nsxpcm::efCommand );
+		}
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void kernel::kernel___::FillTableMenu( void )
 {
 ERRProlog
@@ -431,6 +483,8 @@ ERRBegin
 	UI.Main.TableMenu.RemoveChildren();
 
 	UI.Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/TableMenu.xsl" ), UI.Structure.Document, Parameters ) );
+
+	Register_( UI.Main.TableMenu.GetElement(), *this );
 ERRErr
 ERREnd
 ERREpilog
@@ -582,6 +636,7 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
 		break;
 	case cRecordForm:
+		K().FillRecordForm();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordForm );
 		break;
 	default:

@@ -42,6 +42,15 @@ void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
 }
 
+void ui_main::table_menu_item__::NSXPCMOnEvent( event__ ) 
+{
+	str::string Row;
+
+	Row.Init();
+	nsxpcm::GetAttribute( GetElement(), "Row", Row );
+	K().Alert( Row );
+}
+
 void ui_main::define_record_command__::NSXPCMOnEvent( event__ )
 {
 	K().DefineRecord();

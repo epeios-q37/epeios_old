@@ -34,8 +34,12 @@
 	</broadcasterset>
 	<commandset>
 	</commandset>
-	<hbox flex="1">
-		<description>Record form !</description>
-	</hbox>
+	<vbox flex="1" >
+		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
+		<hbox>
+			<button label="|OK|"/>
+			<button label="|Cancel|"/>
+		</hbox>
+	</vbox>
 </page>
 	

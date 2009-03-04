@@ -27,11 +27,14 @@
 namespace ui_rcd_f {
 	using namespace ui_base;
 
+	UI_TYPEDEF( box__, record_box__ );
+
 	struct record_form__
 	: public _ui_core__,
 	  public bridge__
 	{
 	public:
+		record_box__ RecordBox;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();
