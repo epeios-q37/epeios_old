@@ -390,10 +390,13 @@ namespace str {
 		unsigned char C;
 
 		if ( *P < Amount() ) {
-			if ( ( P != NONE ) && ( Get( P ) == '-' ) ) {
-				Negate = true;
-				P = Next( P );
-			}
+			if ( P != NONE ) 
+				if ( Get( P ) == '-' ) {
+					Negate = true;
+					P = Next( P );
+				} else if ( Get( P ) == '+' ) {
+					P = Next( P );
+				}
 
 			while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
 				Result = Result * 10 + C - '0';

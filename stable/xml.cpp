@@ -853,21 +853,23 @@ ERREpilog
 }
 #endif
 
+#undef HANDLE
+
+#define HANDLE( F )\
+	if ( ( _Status = ( F ) ) != sOK )\
+		ERRReturn;
+
+
 #undef RETURN
 
 #define RETURN( V )\
 	{\
-		Status = V;\
+		_Status = V;\
 		_Token = tError;\
 		ERRReturn;\
 	}
 
-token__ xml::browser___::Browse(
-	str::string_ &TagName,
-	str::string_ &AttributeName,
-	str::string_ &Value,	// Tag value or attribute value dpending on returned value.
-	dump_ &Dump,
-	status__ &Status )
+token__ xml::browser___::Browse( void )
 {
 ERRProlog
 	bso::bool__ OnlySpaces = false, Retry = true;
@@ -937,14 +939,14 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( _Flow ) );
 				} else {
-					TagName.Init();
+					_TagName.Init();
 
-					GetName_( _Flow, TagName );
+					GetName_( _Flow, _TagName );
 
-					if ( TagName.Amount() == 0 )
+					if ( _TagName.Amount() == 0 )
 						RETURN( sEmptyTagName );
 
-					_Tags.Push( TagName );
+					_Tags.Push( _TagName );
 
 					_Token = tStartTag;
 
@@ -970,9 +972,9 @@ ERRBegin
 					if ( _Tags.IsEmpty() )
 						ERRc();
 
-					TagName.Init();
+					_TagName.Init();
 
-					_Tags.Top( TagName );
+					_Tags.Top( _TagName );
 
 					_Token = tStartTagClosed;
 
@@ -984,9 +986,9 @@ ERRBegin
 				case '>':
 					_Flow.Get();
 
-					TagName.Init();
+					_TagName.Init();
 
-					_Tags.Top( TagName );
+					_Tags.Top( _TagName );
 
 					_Token = tStartTagClosed;
 
@@ -1002,9 +1004,9 @@ ERRBegin
 				break;
 			case tStartTagClosed:
 				if ( _EmptyTag ) {
-					TagName.Init();
+					_TagName.Init();
 
-					_Tags.Top( TagName );
+					_Tags.Top( _TagName );
 
 					_Token = tEndTag;
 	
@@ -1020,9 +1022,9 @@ ERRBegin
 			case tEndTag:
 				_Token = t_Undefined;
 
-				TagName.Init();
+				_TagName.Init();
 
-				_Tags.Pop( TagName );
+				_Tags.Pop( _TagName );
 
 				_Flow.Dump.Init();
 
@@ -1035,17 +1037,17 @@ ERRBegin
 		case cAttribute:
 			switch ( _Token ) {
 			case t_Undefined:
-				AttributeName.Init();
-				Value.Init();
+				_AttributeName.Init();
+				_Value.Init();
 
-				HANDLE( GetAttribute_( _Flow, AttributeName, Value ) );
+				HANDLE( GetAttribute_( _Flow, _AttributeName, _Value ) );
 
 				if ( _Tags.IsEmpty() )
 					ERRc();
 
-				TagName.Init();
+				_TagName.Init();
 
-				_Tags.Top( TagName );
+				_Tags.Top( _TagName );
 
 				_Token = tAttribute;
 
@@ -1072,9 +1074,9 @@ ERRBegin
 						if ( _Tags.IsEmpty() )
 							ERRc();
 
-						TagName.Init();
+						_TagName.Init();
 
-						_Tags.Top( TagName );
+						_Tags.Top( _TagName );
 
 						_Token = tStartTagClosed;
 
@@ -1088,9 +1090,9 @@ ERRBegin
 				} else if ( _Flow.View() == '>' ) {
 					_Flow.Get();
 
-					TagName.Init();
+					_TagName.Init();
 
-					_Tags.Top( TagName );
+					_Tags.Top( _TagName );
 
 					_Token = tStartTagClosed;
 
@@ -1103,9 +1105,9 @@ ERRBegin
 				break;
 			case tStartTagClosed:
 				if ( _EmptyTag ) {
-					TagName.Init();
+					_TagName.Init();
 
-					_Tags.Top( TagName );
+					_Tags.Top( _TagName );
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1127,9 +1129,9 @@ ERRBegin
 
 				_Flow.Dump.Init();
 
-				TagName.Init();
+				_TagName.Init();
 
-				_Tags.Pop( TagName );
+				_Tags.Pop( _TagName );
 
 				_Context = cValueExpected;
 				break;
@@ -1144,9 +1146,9 @@ ERRBegin
 			case tValue:
 				HANDLE( SkipSpaces_( _Flow ) );
 
-				TagName.Init();
+				_TagName.Init();
 
-				GetName_( _Flow, TagName );
+				GetName_( _Flow, _TagName );
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1157,13 +1159,13 @@ ERRBegin
 					RETURN( sMismatchedTag );
 
 				{
-					str::string_ &Buffer = Value;
+					str::string_ &Buffer = _Value;
 
 					Buffer.Init();
 
 					_Tags.Top( Buffer );
 
-					if ( Buffer != TagName )
+					if ( Buffer != _TagName )
 						RETURN( sMismatchedTag );
 
 					Buffer.Init();
@@ -1177,9 +1179,9 @@ ERRBegin
 			case tEndTag:
 				_Token = t_Undefined;
 
-				TagName.Init();
+				_TagName.Init();
 
-				_Tags.Pop( TagName );
+				_Tags.Pop( _TagName );
 
 				_Flow.Dump.Init();
 
@@ -1197,18 +1199,18 @@ ERRBegin
 			switch( _Token ) {
 			case t_Undefined:
 				if ( _Flow.View() != '<' ) {
-					Value.Init();
+					_Value.Init();
 					
-					HANDLE( GetTagValue_( _Flow, Value, OnlySpaces ) );
+					HANDLE( GetTagValue_( _Flow, _Value, OnlySpaces ) );
 
 					if ( !OnlySpaces ) {
 
-						TagName.Init();
+						_TagName.Init();
 
 						if ( _Tags.IsEmpty() )
 							ERRc();
 						else
-							_Tags.Top( TagName );
+							_Tags.Top( _TagName );
 
 						_Token = tValue;
 
@@ -1239,9 +1241,9 @@ ERRBegin
 		if ( _Token == t_Undefined )
 			_Token = tProcessed;
 
-	Status = sOK;
+	_Status = sOK;
 
-	Dump = _Flow.Dump;
+	_Dump = _Flow.Dump;
 ERRErr
 ERREnd
 ERREpilog

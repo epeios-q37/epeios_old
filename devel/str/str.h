@@ -272,7 +272,13 @@ namespace str {
 					return 0;
 				} else 
 					return -(bso::slong__)_GenericConversion( *this, Next( Begin ), ErrP, b10, -NegativeLimit );
-			else
+			else if ( Get( Begin ) == '+' )
+				if ( Next( Begin ) == NONE ) {
+					*ErrP = *Begin + 1;
+					return 0;
+				} else 
+					return (bso::slong__)_GenericConversion( *this, Next( Begin ), ErrP, b10, PositiveLimit );
+			else 
 				return (bso::slong__)_GenericConversion( *this, Begin, ErrP, b10, PositiveLimit );
 		}
 		//f Variation in parameters.

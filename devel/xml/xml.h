@@ -481,6 +481,11 @@ namespace xml {
 		stk::E_XMCSTACK( str::string_ ) _Tags;
 		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
 		_flow _Flow;
+		str::string _TagName;
+		str::string _AttributeName;
+		str::string _Value;
+		xml::dump _Dump;
+		status__ _Status;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -488,6 +493,12 @@ namespace xml {
 			_Token = t_Undefined;
 			_EmptyTag = false;
 			_Flow.reset( P );
+
+			_TagName.reset( P );
+			_AttributeName.reset( P );
+			_Value.reset( P );
+			_Dump.reset( P );
+			_Status = s_Undefined;
 
 			_Tags.reset( P );
 		}
@@ -506,13 +517,35 @@ namespace xml {
 			_Tags.Init();
 			_Flow.Init( Flow );
 			_Context = cHeaderExpected;
+
+			_TagName.Init();
+			_AttributeName.Init();
+			_Value.Init();
+			_Dump.Init();
 		}
+		token__  Browse( void );
 		token__ Browse(
 			str::string_ &TagName,
 			str::string_ &AttributeName,
-			str::string_ &Value,	// Tag value or attribute value dpending on returned value.
+			str::string_ &Value,	// Tag value or attribute value depending on returned value.
 			xml::dump_ &Dump,
-			status__ &Status );	// 'Status' initialisé seulement si 'item__' == 'iError'.
+			status__ &Status )	// 'Status' initialisé seulement si 'item__' == 'iError'.
+		{
+			token__ Token = Browse();
+
+			TagName = _TagName;
+			AttributeName = _AttributeName;
+			Value = _Value;
+			Dump = _Dump;
+			Status = _Status;
+
+			return Token;
+		}
+		E_RODISCLOSE__( str::string_, TagName );
+		E_RODISCLOSE__( str::string_, AttributeName );
+		E_RODISCLOSE__( str::string_, Value );
+		E_RODISCLOSE__( dump_, Dump );
+		E_RODISCLOSE__( status__, Status );
 	};
 }
 
