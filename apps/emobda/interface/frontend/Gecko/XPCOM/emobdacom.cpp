@@ -112,6 +112,8 @@ RBB
 		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
 	else if ( !strcmp( UIDesignation, "StructureFormAndView" ) )
 		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
+	else if ( !strcmp( UIDesignation, "ListView" ) )
+		ui_lst_v::Register( Repository_.GetCurrentObject(), UI.ListView, Window );
 	else if ( !strcmp( UIDesignation, "RecordForm" ) )
 		ui_rcd_f::Register( Repository_.GetCurrentObject(), UI.RecordForm, Window );
 	else

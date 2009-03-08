@@ -23,6 +23,7 @@
 #include "flx.h"
 
 using namespace kernel;
+using xml::writer_;
 
 #define CASE( message )	\
 	case m##message:\
@@ -277,30 +278,62 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpStructureAsXML(
-	const target__ &Current,
-	str::string_ &XML )
+void kernel::kernel___::_DumpStructure( xml::writer_ &Writer )
+{
+	Writer.PushTag( "Structure" );
+
+	DumpDatabaseStructure_( *this, Writer );
+
+	Writer.PopTag();
+}
+
+static void Dump_(
+	const target__ &Target,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+
+	if ( Target.Table != UNDEFINED_TABLE )
+		Writer.PutAttribute( "Table", bso::Convert( **Target.Table, Buffer ) );
+
+	if ( Target.Field != UNDEFINED_FIELD )
+		Writer.PutAttribute( "Field", bso::Convert( **Target.Field, Buffer ) );
+}
+
+void kernel::kernel___::_DumpCurrent( writer_ &Writer )
+{
+	Writer.PushTag( "Current" );
+
+	Dump_( _Current, Writer );
+
+	Writer.PopTag();
+}
+
+void kernel::kernel___::_DumpAsXML( str::string_ &XML )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
 	txf::text_oflow__ TFlow( Flow );
 	xml::writer Writer;
-	bso::integer_buffer__ Buffer;
 ERRBegin
 	Flow.Init( XML );
-	Writer.Init( TFlow, false );
+	Writer.Init( TFlow, true );
 
-	Writer.PushTag( "Structure" );
+	Writer.PushTag( "emobda" );
 
-	if ( Current.Table != UNDEFINED_TABLE )
-		Writer.PutAttribute( "CurrentTable", bso::Convert( **Current.Table, Buffer ) );
+	_DumpCurrent( Writer );
 
-	if ( Current.Field != UNDEFINED_FIELD )
-		Writer.PutAttribute( "CurrentField", bso::Convert( **Current.Field, Buffer ) );
-
-	DumpDatabaseStructure_( *this, Writer );
+	_DumpStructure( Writer );
 
 	Writer.PopTag();
+
+	Writer.reset();
+
+	Flow.reset();
+
+	// TFlow.reset();
+
+	nsxpcm::Log( XML );
 ERRErr
 ERREnd
 ERREpilog
@@ -388,9 +421,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpStructureAsXML( _Current, XML );
-
-	nsxpcm::Log( XML );
+	_DumpAsXML( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -422,9 +453,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpStructureAsXML( _Current, XML );
-
-	nsxpcm::Log( XML );
+	_DumpAsXML( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -474,7 +503,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_DumpStructureAsXML( target__(), XML );
+	_DumpAsXML( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -634,6 +663,9 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UI.Structure.Broadcasters.ItemBrowsing.Enable();
 		UI.Structure.Broadcasters.ItemEdition.Disable();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
+		break;
+	case cListView:
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
 		break;
 	case cRecordForm:
 		K().FillRecordForm();

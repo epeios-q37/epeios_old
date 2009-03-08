@@ -45,10 +45,19 @@ void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 void ui_main::table_menu_item__::NSXPCMOnEvent( event__ ) 
 {
 	str::string Row;
+	epeios::row__ Error = NONE;
+	kernel::table__ Table;
 
 	Row.Init();
 	nsxpcm::GetAttribute( GetElement(), "Row", Row );
-	K().Alert( Row );
+
+	*Table = Row.ToUL( &Error );
+
+	if ( Error != NONE )
+		ERRc();
+
+	K().SelectTable( Table );
+
 }
 
 void ui_main::define_record_command__::NSXPCMOnEvent( event__ )
@@ -151,6 +160,7 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Kernel, UI.StructureFormAndView, Document, "pnlStructureFormAndView" );
+	Register_( Kernel, UI.ListView, Document, "pnlListView" );
 	Register_( Kernel, UI.RecordForm, Document, "pnlRecordForm" );
 }
 

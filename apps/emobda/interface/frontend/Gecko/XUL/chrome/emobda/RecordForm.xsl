@@ -30,7 +30,7 @@
 		<xsl:apply-templates select="Tables"/>
 	</xsl:template>
 	<xsl:template match="Tables">
-		<xsl:apply-templates select="Table[@Id='8']"/>
+		<xsl:apply-templates select="Table[@Row=/emobda/Current/@Table]"/>
 	</xsl:template>
 	<xsl:template match="Table">
 		<xsl:apply-templates select="Fields"/>

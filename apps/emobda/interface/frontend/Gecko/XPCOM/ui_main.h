@@ -60,6 +60,7 @@ namespace ui_main {
 		struct panels__ {
 			panel__
 				StructureFormAndView,
+				ListView,
 				RecordForm;
 		} Panels;
 		void Init( void )

@@ -1,5 +1,5 @@
 /*
-	'ui.h' by Claude SIMON (http://zeusw.org/).
+	'ui_lst_v.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,33 +19,26 @@
 
 // $Id$
 
-#ifndef UI__INC
-#define UI__INC
-
-#include "ui_main.h"
-#include "ui_struct.h"
 #include "ui_lst_v.h"
-#include "ui_rcd_f.h"
+#include "kernel.h"
 
-namespace ui {
-	using ui_base::bridge_functions__;
+using namespace ui_lst_v;
 
-	struct ui__ {
-		ui_main::main__ Main;
-		ui_struct::structure__ Structure;
-		ui_lst_v::list_view__ ListView;
-		ui_rcd_f::record_form__ RecordForm;
-		void Init( bridge_functions__ &Functions )
-		{
-			Main.Init();
-			Structure.Init( Functions );
-		}
-	};
+using kernel::kernel___;
+using nsxpcm::event__;
 
-	inline void Initialize( ui__ &UI )
-	{
-		UI.Main.Broadcasters.DatabaseOpened.Disable();
-	}
+using namespace kernel;
+
+/* UI Registrations */
+
+void ui_lst_v::Register(
+	kernel___ &Kernel,
+	list_view__ &UI,
+	nsIDOMWindow *Window )
+{
+	UI.Set( Window );
+
+//	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }
 
-#endif
+

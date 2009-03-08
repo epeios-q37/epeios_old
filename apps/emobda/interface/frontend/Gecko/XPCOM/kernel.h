@@ -41,6 +41,7 @@ namespace kernel {
 		cStructureView,
 		cStructureItemView,
 		cItemForm,
+		cListView,
 		cRecordForm,
 		c_amount,
 		c_Undefined
@@ -115,9 +116,9 @@ namespace kernel {
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
-		void _DumpStructureAsXML(
-			const target__ &Target,
-			str::string_ &XML );
+		void _DumpCurrent( xml::writer_ &Writer );
+		void _DumpStructure( xml::writer_ &Writer );
+		void _DumpAsXML( str::string_ &XML );
 		target__ _Current;
 		void _SwitchTo( context__ Context );
 		table__ _CreateTable( void )
@@ -248,6 +249,10 @@ namespace kernel {
 		{
 			_SwitchTo( cStructureView );
 		}
+		void BrowseList( void )
+		{
+			_SwitchTo( cListView );
+		}
 		void DefineRecord( void )
 		{
 			_SwitchTo( cRecordForm );
@@ -294,6 +299,14 @@ namespace kernel {
 			UI.NameTextbox.Select();
 
 			UI.CommentTextbox.SetValue( str::string( "" ) );
+		}
+		void SelectTable( table__ Table )
+		{
+			_Current = target__( Table );
+
+			FillTableMenu();
+
+			BrowseList();
 		}
 		void SetCurrent( target__ Current )
 		{
