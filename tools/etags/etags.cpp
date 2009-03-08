@@ -71,14 +71,12 @@ enum option {
 };
 
 struct parameters {
-	const char *Dir;
-	STR_BUFFER___ DirBuffer;
 	const char *XMLFile;
 	STR_BUFFER___ XMLLFileBuffer;
 	int Command;
 	parameters( void )
 	{
-		Dir = XMLFile = NULL;
+		XMLFile = NULL;
 		Command = CLNARG_NONE;
 	}
 };
@@ -90,11 +88,11 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " command [options] dir [tags]" << txf::nl;
+	cout << NAME << " command [options] [tags]" << txf::nl;
 	// Free argument description.
 	cout << "command:" << txf::nl;
-	clnarg::PrintCommandUsage( Description, cGet, "get tags from '*.otags' files in 'dir' and write it in 'tags'", clnarg::vSplit, true );
-	clnarg::PrintCommandUsage( Description, cSet, "set tags from 'tags' in '*.mtags' files from 'dir'", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cGet, "get tags from '*.otags' files in current dir and write it in 'tags'", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cSet, "set tags from 'tags' in '*.mtags' files from current dir", clnarg::vSplit, true );
 }
 
 void PrintHeader( void )
@@ -159,13 +157,10 @@ ERRBegin
 	P = Free.Last();
 
 	switch( Free.Amount() ) {
-	case 2:
-		Parameters.XMLFile = Free( P ).Convert( Parameters.XMLLFileBuffer);
-
-		P = Free.Previous( P );
 	case 1:
-		Parameters.Dir = Free( P ).Convert( Parameters.DirBuffer );
-
+		Parameters.XMLFile = Free( P ).Convert( Parameters.XMLLFileBuffer);
+		break;
+	case 0:
 		break;
 	default:
 		cerr << "Bad amount of arguments." << txf::nl;
@@ -473,6 +468,8 @@ ERRBegin
 	XFlow.Init( IFlow );
 
 	txmtbl::GetTable( XFlow, Table, '=' );
+
+	Table.RemoveEmptyLines();
 ERRErr
 ERREnd
 ERREnd
@@ -483,18 +480,30 @@ static void ExtractTag_(
 	tag_ &Tag )
 {
 	ctn::E_CMITEM( cell_ ) Cell;
+	epeios::row__ Row = Line.First();
 
 	Cell.Init( Line );
 
-	if ( Line.Amount() >= 1 ) {
-		Tag.Name = Cell( Line.First() );
-
-		if ( Line.Amount() == 2 )
-			Tag.Value = Cell( Line.First( 1 ) );
-		else
-			ERRl();
-	} else
+	if ( Row != NONE )
+		Tag.Name = Cell( Row );
+	else
 		ERRc();
+
+	Row = Line.Next( Row );
+
+	if ( Row != NONE ) {
+		Tag.Value = Cell( Row );
+
+		Row = Line.Next( Row );
+	}
+
+	while ( Row != NONE ) {
+		Tag.Value.Append( '=' );
+
+		Tag.Value.Append( Cell( Row ) );
+
+		Row = Line.Next( Row );
+	}
 }
 
 static void ExtractTags_(
@@ -718,9 +727,7 @@ ERREnd
 ERREpilog
 }
 
-static void Get_(
-	const char *Dir,
-	const char *XMLFile )
+static void Get_( const char *XMLFile )
 {
 ERRProlog
 	files Files;
@@ -728,7 +735,7 @@ ERRProlog
 ERRBegin
 	Files.Init();
 
-	GetFiles_( Dir, Files );
+	GetFiles_( ".", Files );
 
 /*	Display( Files );
 
@@ -1177,9 +1184,7 @@ static void Set_( const file_tags_ &FileTags )
 	Set_( FileTags.Tags, FileTags.File );
 }
 
-static void Set_(
-	const files_tags_ &FilesTags,
-	const char *Dir )
+static void Set_( const files_tags_ &FilesTags )
 {
 	ctn::E_CITEM( file_tags_ ) FileTags;
 	epeios::row__ Row = FilesTags.First();
@@ -1193,9 +1198,7 @@ static void Set_(
 	}
 }
 
-static void Set_(
-	const char *Dir,
-	const char *XMLFile )
+static void Set_( const char *XMLFile )
 {
 ERRProlog
 	files_tags FilesTags;
@@ -1204,7 +1207,7 @@ ERRBegin
 
 	Retrieve_( XMLFile, FilesTags );
 
-	Set_( FilesTags, Dir );
+	Set_( FilesTags );
 ERRErr
 ERREnd
 ERREpilog
@@ -1216,10 +1219,10 @@ ERRProlog
 ERRBegin
 	switch ( Parameters.Command ) {
 	case cGet:
-		Get_( Parameters.Dir, Parameters.XMLFile );
+		Get_( Parameters.XMLFile );
 		break;
 	case cSet:
-		Set_( Parameters.Dir, Parameters.XMLFile );
+		Set_( Parameters.XMLFile );
 		break;
 	case CLNARG_NONE:
 		cerr << "Missing command !" << txf::nl;
