@@ -60,6 +60,19 @@ field_row__ mbdstr::structure_::SearchField(
 		return FieldRows( Row );
 }
 
+void mbdstr::structure_::ModifyField(
+	field_row__ FieldRow,
+	const field_description_ &Description )
+{
+	if ( Description.GetId() != MBDBSC_UNDEFINED_FIELD_ID )
+		ERRu();
+
+	Fields( FieldRow ).Set( Description.Name, Description.Comment );
+
+	Fields.Flush();
+}
+
+
 field_row__ mbdstr::structure_::AddField(
 	table_row__ TableRow,
 	const field_description_ &Description )
@@ -101,6 +114,21 @@ void mbdstr::structure_::_AddFields(
 
 		Row = Descriptions.Next( Row );
 	}
+}
+
+void mbdstr::structure_::ModifyTable(
+	table_row__ Row,
+	const table_description_ &Description )
+{
+	if ( Description.GetId() != MBDBSC_UNDEFINED_TABLE_ID )
+		ERRu();
+
+	if ( Description.Fields.Amount() != 0 )
+		ERRu();
+
+	Tables( Row ).Set( Description.Name, Description.Comment );
+
+	Tables.Flush();
 }
 
 table_row__ mbdstr::structure_::AddTable( const table_description_ &Description )

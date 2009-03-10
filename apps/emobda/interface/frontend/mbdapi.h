@@ -19,13 +19,13 @@ enum message__ {
 	MANAGER_IncorrectDatabaseName,
 	MANAGER_UnableToCreateDatabase,
 	MANAGER_UnableToOpenDatabase,
+	MANAGER_NameAlreadyUsed,
 	MANAGER_IncorrectTableName,
 	MANAGER_UnableToCreateTable,
 	MANAGER_NoSuchTable,
 	MANAGER_IncorrectFieldName,
-	MANAGER_NameAlreadyUsed,
-	MANAGER_InexistentTable,
-	MANAGER_InexistentField,
+	MANAGER_NoSuchField,
+	MANAGER_FieldNotOwnedByTable,
 };
 
 inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
@@ -62,6 +62,9 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_UnableToOpenDatabase" ) )
 		return MANAGER_UnableToOpenDatabase;
 
+	if ( !strcmp( Message, "MANAGER_NameAlreadyUsed" ) )
+		return MANAGER_NameAlreadyUsed;
+
 	if ( !strcmp( Message, "MANAGER_IncorrectTableName" ) )
 		return MANAGER_IncorrectTableName;
 
@@ -74,14 +77,11 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_IncorrectFieldName" ) )
 		return MANAGER_IncorrectFieldName;
 
-	if ( !strcmp( Message, "MANAGER_NameAlreadyUsed" ) )
-		return MANAGER_NameAlreadyUsed;
+	if ( !strcmp( Message, "MANAGER_NoSuchField" ) )
+		return MANAGER_NoSuchField;
 
-	if ( !strcmp( Message, "MANAGER_InexistentTable" ) )
-		return MANAGER_InexistentTable;
-
-	if ( !strcmp( Message, "MANAGER_InexistentField" ) )
-		return MANAGER_InexistentField;
+	if ( !strcmp( Message, "MANAGER_FieldNotOwnedByTable" ) )
+		return MANAGER_FieldNotOwnedByTable;
 
 	ERRb();
 	return (message__)0;	// To avoid a warning.
@@ -177,6 +177,12 @@ protected:
 		Row = Messages.Next( Row );
 
 
+		if ( Message( Row ) != bkdacc::string( "MANAGER_NameAlreadyUsed" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
 		if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectTableName" ) )
 			ERRb();
 
@@ -201,19 +207,13 @@ protected:
 		Row = Messages.Next( Row );
 
 
-		if ( Message( Row ) != bkdacc::string( "MANAGER_NameAlreadyUsed" ) )
+		if ( Message( Row ) != bkdacc::string( "MANAGER_NoSuchField" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
 
 
-		if ( Message( Row ) != bkdacc::string( "MANAGER_InexistentTable" ) )
-			ERRb();
-
-		Row = Messages.Next( Row );
-
-
-		if ( Message( Row ) != bkdacc::string( "MANAGER_InexistentField" ) )
+		if ( Message( Row ) != bkdacc::string( "MANAGER_FieldNotOwnedByTable" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
@@ -284,12 +284,12 @@ public:
 			18,18,18,0, 
 			18,0, 
 			0, 18,18,
-			18,18,0, 14,
+			14,18,18,0, 14,
 			0, 15,
 			15,0, 19,19,9,
 			14,0, 15,
 			15,0, 19,19,9,
-			14,18,18,0, 14,
+			14,14,18,18,0, 14,
 			0, 26,
 		};
 
@@ -315,38 +315,38 @@ public:
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
-		CommandDetail.Name = "CreateTable";;
-		CommandDetail.Casts.Append( Parameters + 9, 4 );
+		CommandDetail.Name = "CreateOrModifyTable";;
+		CommandDetail.Casts.Append( Parameters + 9, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetTables";;
-		CommandDetail.Casts.Append( Parameters + 13, 2 );
+		CommandDetail.Casts.Append( Parameters + 14, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetTablesInfos";;
-		CommandDetail.Casts.Append( Parameters + 15, 5 );
+		CommandDetail.Casts.Append( Parameters + 16, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 20, 3 );
+		CommandDetail.Casts.Append( Parameters + 21, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFieldsInfos";;
-		CommandDetail.Casts.Append( Parameters + 23, 5 );
+		CommandDetail.Casts.Append( Parameters + 24, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
-		CommandDetail.Name = "AddField";;
-		CommandDetail.Casts.Append( Parameters + 28, 5 );
+		CommandDetail.Name = "AddOrModifyField";;
+		CommandDetail.Casts.Append( Parameters + 29, 6 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 33, 2 );
+		CommandDetail.Casts.Append( Parameters + 35, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 
@@ -436,14 +436,16 @@ public:
 
 		return Common_->Backend->Handle();
 	}
-	bso::bool__ CreateTable( 
-		const bkdacc::string_ &In1,
+	bso::bool__ CreateOrModifyTable( 
+		const bkdacc::id32__ &In1,
 		const bkdacc::string_ &In2,
+		const bkdacc::string_ &In3,
 		bkdacc::id32__ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[3] );
-		Common_->Backend->StringIn( In1 );
+		Common_->Backend->Id32In( In1 );
 		Common_->Backend->StringIn( In2 );
+		Common_->Backend->StringIn( In3 );
 
 		Common_->Backend->EndOfInParameters();
 
@@ -509,16 +511,18 @@ public:
 
 		return Common_->Backend->Handle();
 	}
-	bso::bool__ AddField( 
+	bso::bool__ AddOrModifyField( 
 		const bkdacc::id32__ &In1,
-		const bkdacc::string_ &In2,
+		const bkdacc::id32__ &In2,
 		const bkdacc::string_ &In3,
+		const bkdacc::string_ &In4,
 		bkdacc::id32__ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[8] );
 		Common_->Backend->Id32In( In1 );
-		Common_->Backend->StringIn( In2 );
+		Common_->Backend->Id32In( In2 );
 		Common_->Backend->StringIn( In3 );
+		Common_->Backend->StringIn( In4 );
 
 		Common_->Backend->EndOfInParameters();
 

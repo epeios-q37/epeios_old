@@ -31,16 +31,21 @@ const char *mngbkd::manager_::NAME = MNGBKD_MANAGER_NAME;
 enum message__ {
 	mOK,
 	mIncorrectLocation,
+
 	mIncorrectDatabaseName,
 	mUnableToCreateDatabase,
 	mUnableToOpenDatabase,
+
+	mNameAlreadyUsed,
+
 	mIncorrectTableName,
 	mUnableToCreateTable,
 	mNoSuchTable,
+
 	mIncorrectFieldName,
-	mNameAlreadyUsed,
-	mInexistentTable,
-	mInexistentField,
+	mNoSuchField,
+	mFieldNotOwnedByTable,
+
 	m_amount,
 	m_Undefined
 };
@@ -65,8 +70,8 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( NoSuchTable );
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
-	CASE( InexistentTable );
-	CASE( InexistentField );
+	CASE( NoSuchField );
+	CASE( FieldNotOwnedByTable );
 	break;
 	default:
 		ERRu();
@@ -244,7 +249,7 @@ static bso::bool__ TestAndNormalizeTableName_( str::string_ &Name )
 	return TestAndNormalize_( Name );
 }
 
-DEC( CreateTable )
+DEC( CreateOrModifyTable )
 {
 	message__ Message = mOK;
 ERRProlog
@@ -252,6 +257,15 @@ ERRProlog
 	table_row__ TableRow = NONE;
 	mbdtbl::table_description Description;
 ERRBegin
+	TableRow = *Request.Id32In();	// Si == 'NONE' création, sinon modification.
+
+	if ( TableRow != NONE )
+		if ( !Manager.TableExists( TableRow ) ) {
+			Message = mNoSuchTable;
+			ERRReturn;
+		}
+
+
 	Name.Init();
 	Name = Request.StringIn();
 
@@ -263,14 +277,18 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( Manager.SearchTable( Name ) != NONE ) {
+	if ( ( Manager.SearchTable( Name ) != NONE )
+	     && ( Manager.SearchTable( Name ) != TableRow ) )
+	{
 		Message = mNameAlreadyUsed;
 		ERRReturn;
 	}
 
 	Description.Init( Name, Comment );
 
-	if ( ( TableRow = Manager.AddTable( Description ) ) == NONE ) {
+	if ( TableRow != NONE )
+		Manager.ModifyTable( TableRow, Description );
+	else if ( ( TableRow = Manager.AddTable( Description ) ) == NONE ) {
 		Message = mUnableToCreateTable;
 		ERRReturn;
 	}
@@ -329,7 +347,7 @@ static message__ GetTablesInfos_(
 		TableRow = *TableRows( Row );
 
 		if ( !Tables.Exists( TableRow ) )
-			return mInexistentTable;
+			return mNoSuchTable;
 
 		Names.Append( Table( TableRow ).Name );
 		Comments.Append( Table( TableRow ).Comment );
@@ -364,7 +382,7 @@ static bso::bool__ TestAndNormalizeFieldName_( str::string_ &Name )
 	return TestAndNormalize_( Name );
 }
 
-DEC( AddField )
+DEC( AddOrModifyField )
 {
 	message__ Message = mOK;
 ERRProlog
@@ -373,6 +391,7 @@ ERRProlog
 	field_row__ FieldRow = NONE;
 	field_description Field;
 ERRBegin
+	FieldRow = *Request.Id32In();	// Si = 'NONE', création, sinon modification.
 
 	TableRow = *Request.Id32In();
 
@@ -389,19 +408,34 @@ ERRBegin
 		ERRReturn;
 	}
 
+	if ( FieldRow != NONE ) {
+		if ( !Manager.FieldExists( FieldRow ) ) {
+			Message = mNoSuchField;
+			ERRReturn;
+		} else if ( !Manager.IsFieldOwnedByTable( FieldRow, TableRow ) ) {
+			Message = mFieldNotOwnedByTable;
+			ERRReturn;
+		}
+	}
+
 	if ( !TestAndNormalizeFieldName_( Name ) ) {
 		Message = mIncorrectFieldName;
 		ERRReturn;
 	}
 
-	if ( Manager.SearchField( TableRow, Name ) != NONE ) {
+	if ( ( Manager.SearchField( TableRow, Name ) != NONE ) 
+		  && ( Manager.SearchField( TableRow, Name ) != FieldRow ) )
+	{
 		Message = mNameAlreadyUsed;
 		ERRReturn;
 	}
 
 	Field.Init( Name, Comment );
 
-	FieldRow = Manager.AddField( TableRow, Field );
+	if ( FieldRow != NONE )
+		Manager.ModifyField( FieldRow, Field );
+	else
+		FieldRow = Manager.AddField( TableRow, Field );
 
 	Request.Id32Out() = *FieldRow;
 ERRErr
@@ -435,7 +469,7 @@ ERRBegin
 	bkdmng::ids32_ &Fields = Request.Ids32Out();
 
 	if ( !Manager.Structure.Tables.Exists( TableRow ) ) {
-		Message = mInexistentTable;
+		Message = mNoSuchTable;
 		ERRReturn;	
 	}
 
@@ -465,7 +499,7 @@ static message__ GetFieldsInfos_(
 		FieldRow = *FieldRows( Row );
 
 		if ( !Fields.Exists( FieldRow ) )
-			return mInexistentField;
+			return mNoSuchField;
 
 		Names.Append( Field( FieldRow ).Name );
 		Comments.Append( Field( FieldRow ).Comment );
@@ -515,7 +549,8 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cString,	// Nom de la base de donnée.
 			bkdmng::cString,	// Commentaire de la base de donnée.
 		bkdmng::cEnd );
-	Module.Add( D( CreateTable ),
+	Module.Add( D( CreateOrModifyTable ),
+			bkdmng::cId32,		// Table row ('NONE' for creation).
 			bkdmng::cString,	// Table name.
 			bkdmng::cString,	// Table comment.
 		bkdmng::cEnd,
@@ -544,7 +579,8 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cStrings,	// Commentaires.
 			bkdmng::cIds8,		// 'id's.
 		bkdmng::cEnd );
-	Module.Add( D( AddField ),
+	Module.Add( D( AddOrModifyField ),
+		bkdmng::cId32,			// Field row ('NONE' for creation).
 		bkdmng::cId32,			// Table row.
 			bkdmng::cString,	// Field name.
 			bkdmng::cString,	// Field comment.

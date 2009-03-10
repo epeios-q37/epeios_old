@@ -467,6 +467,28 @@ ERREnd
 ERREpilog
 }
 
+void kernel::kernel___::FillListView( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+	_DumpAsXML( XML );
+
+	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+
+	Parameters.Init();
+
+	UI.ListView.ContentTree.RemoveChildren();
+
+	UI.ListView.ContentTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/ListView.xsl" ), UI.Structure.Document, Parameters ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static void Register_(
 	nsIDOMNode *Node,
 	kernel___ &Kernel )
@@ -666,6 +688,7 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		break;
 	case cListView:
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
+		K().FillListView();
 		break;
 	case cRecordForm:
 		K().FillRecordForm();
@@ -681,20 +704,35 @@ void kernel::kernel___::ApplyStructureItem( void )
 {
 	target__ Target;
 
-	if ( K().GetCurrent().Table == UNDEFINED_TABLE )
-		Target.Table = _CreateTable();
-	else if ( K().GetCurrent().Field == UNDEFINED_FIELD ) {
-		Target.Set( _CreateField(), GetCurrent().Table );
-	} else
-		ERRc();
+	if ( GetCurrent().Table == UNDEFINED_TABLE ) {
+		if ( _Temporary.Mode != tmCreation )
+			ERRc();
+
+		Target.Table = _CreateOrModifyTable();
+	} else if ( GetCurrent().Field == UNDEFINED_FIELD ) {
+		switch ( _Temporary.Mode ) {
+		case tmCreation:
+			Target.Set( _CreateOrModifyField(), GetCurrent().Table );
+			break;
+		case tmModification:
+			Target.Table = _CreateOrModifyTable();
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	} else {
+		if ( _Temporary.Mode != tmModification )
+			ERRc();
+
+		Target.Set( _CreateOrModifyField(), GetCurrent().Table );
+	}
+
+	_Temporary.reset();
 
 	SetCurrent( Target );
 	_SwitchTo( cStructureView );
 }
-
-
-
-
 
 static class starter 
 {

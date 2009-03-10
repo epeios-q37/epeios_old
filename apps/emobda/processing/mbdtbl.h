@@ -94,6 +94,17 @@ namespace mbdtbl {
 
 			S_.Id = Id;
 		}
+		void Set(
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			if ( S_.Id == MBDBSC_UNDEFINED_TABLE_ID )
+				ERRu();
+
+			this->Name = Name;
+			this->Comment = Comment;
+		}
+
 		E_RWDISCLOSE_( table_id__, Id );
 	};
 
@@ -156,7 +167,6 @@ namespace mbdtbl {
 			Init();
 
 			table_core_::Init( Name, Comment, Id );
-
 		}
 		field_id__ GetNewFieldId( field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID )
 		{
@@ -170,6 +180,10 @@ namespace mbdtbl {
 		void Append( field_row__ FieldRow )
 		{
 			Fields.Append( FieldRow );
+		}
+		bso::bool__ OwnsField( field_row__ FieldRow ) const
+		{
+			return Fields.Search( FieldRow ) != NONE;
 		}
 	};
 

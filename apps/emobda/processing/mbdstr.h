@@ -147,6 +147,9 @@ namespace mbdstr {
 			structure_core_::Init( Name, Comment );
 		}
 		void Init( const class structure_description_ &Description );
+		void ModifyField(
+			field_row__ FieldRow,
+			const field_description_ &Description );
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &Description );
@@ -154,6 +157,16 @@ namespace mbdstr {
 		field_row__ SearchField(
 			table_row__ TableRow,
 			const str::string_ &Name ) const;
+		bso::bool__ IsFieldOwnedByTable(
+			field_row__ FieldRow,
+			table_row__ TableRow ) const
+		{
+			ctn::E_CITEMt( table_, table_row__ ) Table;
+
+			Table.Init( Tables );
+
+			return Table( TableRow ).OwnsField( FieldRow );
+		}
 		field_id__ GetFieldFieldId( field_row__ FieldRow ) const
 		{
 			ctn::E_CITEMt( field_, field_row__ ) Field;
@@ -170,6 +183,9 @@ namespace mbdstr {
 			return Table( TableRow ).Id();
 		}
 		table_row__ AddTable( const table_description_ &Description );
+		void ModifyTable(
+			table_row__ Row,
+			const table_description_ &Description );
 	};
 
 	E_AUTO( structure );

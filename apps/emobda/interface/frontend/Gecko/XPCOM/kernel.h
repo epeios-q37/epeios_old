@@ -54,6 +54,23 @@ namespace kernel {
 		m_Undefined
 	};
 
+	enum temporary_mode__
+	{
+		tm_Undefined,
+		tmModification,
+		tmCreation
+	};
+
+	union temporary__ {
+		int _Raw;
+		temporary_mode__ Mode;
+		void reset( void )
+		{
+			_Raw = 0;
+		}
+
+	};
+
 	struct target__ {
 		table__ Table;
 		field__ Field;
@@ -119,9 +136,10 @@ namespace kernel {
 		void _DumpCurrent( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpAsXML( str::string_ &XML );
+		temporary__ _Temporary;
 		target__ _Current;
 		void _SwitchTo( context__ Context );
-		table__ _CreateTable( void )
+		table__ _CreateOrModifyTable( void )
 		{
 			table__ Table = UNDEFINED_TABLE;
 		ERRProlog
@@ -133,13 +151,13 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Table = CreateTable( Name, Comment );
+			Table = CreateOrModifyTable( _Current.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
 			return Table;
 		}
-		field__ _CreateField( void )
+		field__ _CreateOrModifyField( void )
 		{
 			field__ Field = UNDEFINED_FIELD;
 		ERRProlog
@@ -154,7 +172,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Field = AddField( _Current.Table, Name, Comment );
+			Field = AddOrModifyField( _Current.Field, _Current.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -181,6 +199,7 @@ namespace kernel {
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
 			_Current.reset( P );
+			_Temporary.reset();
 		}
 		kernel___( void )
 		{
@@ -260,6 +279,7 @@ namespace kernel {
 		void FillStructureView( void );
 		void FillTableMenu( void );
 		void FillRecordForm( void );
+		void FillListView( void );
 		void UpdateUI( void )
 		{
 			FillStructureView();
@@ -283,10 +303,13 @@ namespace kernel {
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			UI.NameTextbox.SetValue( str::string( "" ) );
-			UI.NameTextbox.Select();
+			if ( _Current.Table == UNDEFINED_TABLE ) {
+				UI.NameTextbox.SetValue( str::string( "" ) );
 
-			UI.CommentTextbox.SetValue( str::string( "" ) );
+				UI.CommentTextbox.SetValue( str::string( "" ) );
+			}
+
+			UI.NameTextbox.Select();
 		}
 		void DefineField( void )
 		{
@@ -295,10 +318,13 @@ namespace kernel {
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			UI.NameTextbox.SetValue( str::string( "" ) );
-			UI.NameTextbox.Select();
+			if ( _Current.Field == UNDEFINED_FIELD ) {
+				UI.NameTextbox.SetValue( str::string( "" ) );
 
-			UI.CommentTextbox.SetValue( str::string( "" ) );
+				UI.CommentTextbox.SetValue( str::string( "" ) );
+			}
+
+			UI.NameTextbox.Select();
 		}
 		void SelectTable( table__ Table )
 		{
@@ -313,6 +339,13 @@ namespace kernel {
 			_Current = Current;
 		}
 		void SetCurrent();
+		void SetTemporaryMode( temporary_mode__ Mode )
+		{
+			if ( _Temporary.Mode != tm_Undefined )
+				ERRc();
+
+			_Temporary.Mode = Mode;
+		}
 		E_RODISCLOSE__( target__, Current );
 	};
 

@@ -27,13 +27,14 @@
 namespace ui_lst_v {
 	using namespace ui_base;
 
-	UI_TYPEDEF( box__, record_box__ );
+	UI_TYPEDEF( ui_base::tree__, content_tree__ );
 
 	struct list_view__
 	: public _ui_core__,
 	  public bridge__
 	{
 	public:
+		content_tree__ ContentTree;
 		void Init( bridge_functions__ &Functions )
 		{
 			_ui_core__::Init();

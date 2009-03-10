@@ -89,6 +89,16 @@ namespace mbdfld {
 			S_.Id = Id;
 
 		}
+		void Set(
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			if ( S_.Id == MBDBSC_UNDEFINED_FIELD_ID )
+				ERRu();
+
+			this->Name = Name;
+			this->Comment = Comment;
+		}
 		E_RWDISCLOSE_( field_id__, Id );
 	};
 

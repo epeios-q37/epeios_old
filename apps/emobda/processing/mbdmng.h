@@ -131,6 +131,14 @@ namespace mbdmng {
 
 			return TableRow;
 		}
+		void ModifyTable(
+			table_row__ TableRow,
+			const mbdtbl::table_description_ &TableDescription )
+		{
+			Structure.ModifyTable( TableRow, TableDescription );
+
+			_ExportStructure();
+		}
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &FieldDescription )
@@ -140,6 +148,14 @@ namespace mbdmng {
 			_ExportStructure();
 
 			return FieldRow;
+		}
+		void ModifyField(
+			field_row__ FieldRow,
+			const field_description_ &FieldDescription )
+		{
+			Structure.ModifyField( FieldRow, FieldDescription );
+
+			_ExportStructure();
 		}
 		field_row__ SearchField(
 			table_row__ TableRow,
@@ -175,6 +191,17 @@ namespace mbdmng {
 		{
 			return Structure.Tables.Exists( TableRow );
 		}
+		bso::bool__ FieldExists( field_row__ FieldRow ) const
+		{
+			return Structure.Fields.Exists( FieldRow );
+		}
+		bso::bool__ IsFieldOwnedByTable(
+			field_row__ FieldRow,
+			table_row__ TableRow ) const
+		{
+			return Structure.IsFieldOwnedByTable( FieldRow, TableRow );
+		}
+
 
 	};
 

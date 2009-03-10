@@ -119,24 +119,22 @@ namespace mbdbkd{
 		{
 			_H( Manager.OpenDatabase( Location ) );
 		}
-		table__ CreateTable(
-			const str::string_ &Name,
-			const str::string_ &Comment )
-		{
-			table__ Table = UNDEFINED_TABLE;
-
-			_H( Manager.CreateTable( Name, Comment, *Table ) );
-
-			return Table;
-		}
-		field__ AddField(
+		table__ CreateOrModifyTable(
 			table__ Table,
 			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
-			field__ Field = UNDEFINED_FIELD;
+			_H( Manager.CreateOrModifyTable( *Table, Name, Comment, *Table ) );
 
-			_H( Manager.AddField( *Table, Name, Comment, *Field ) );
+			return Table;
+		}
+		field__ AddOrModifyField(
+			field__ Field,
+			table__ Table,
+			const str::string_ &Name,
+			const str::string_ &Comment )
+		{
+			_H( Manager.AddOrModifyField( *Field, *Table, Name, Comment, *Field ) );
 
 			return Field;
 		}

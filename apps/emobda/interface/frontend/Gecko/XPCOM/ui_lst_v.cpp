@@ -38,6 +38,8 @@ void ui_lst_v::Register(
 {
 	UI.Set( Window );
 
+	ui_base::Register( Kernel, UI.ContentTree, UI.Document, "treContent", nsxpcm::efSelect );
+
 //	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }
 
