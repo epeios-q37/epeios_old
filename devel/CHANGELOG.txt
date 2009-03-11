@@ -1,5 +1,9 @@
 $Id$
 
+11/03/2009 :
+	- NSXPCM :
+		- Gestion plus poussée des erreurs de 'GetAttribute( nsIDOMNode *, ...)'.
+
 05/03/2009 :
 	- STR :
 		- Ajout prise en compte du signe '+' lors d'un 'ToSL(...)' et d'un 'ToLF(...)'.

@@ -95,7 +95,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
+	ui_base::Register( Kernel, Broadcaster, Document, Id );
 }
 
 static void Register_(
@@ -104,7 +104,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
+	ui_base::Register( Kernel, Command, Document, Id );
 }
 
 static void Register_(
@@ -113,7 +113,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Tree, Document, Id, nsxpcm::efSelect );
+	ui_base::Register( Kernel, Tree, Document, Id );
 }
 
 static void Register_(
@@ -122,7 +122,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Deck, Document, Id, nsxpcm::efNone );
+	ui_base::Register( Kernel, Deck, Document, Id );
 }
 
 static void Register_(
@@ -131,7 +131,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Textbox, Document, Id, nsxpcm::efNone );
+	ui_base::Register( Kernel, Textbox, Document, Id );
 }
 
 static void Register_(
@@ -140,7 +140,7 @@ static void Register_(
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
+	ui_base::Register( Kernel, Button, Document, Id );
 }
 
 /* 'broadcaster's */

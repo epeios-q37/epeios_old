@@ -71,6 +71,12 @@ static void ExportField_(
 			Writer.PutValue( Field.Name );
 		}
 		Writer.PopTag();
+
+		Writer.PushTag( DL( FieldCommentTag ) );
+		{
+			Writer.PutValue( Field.Comment );
+		}
+		Writer.PopTag();
 	}
 	Writer.PopTag();
 

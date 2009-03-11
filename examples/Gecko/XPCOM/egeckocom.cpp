@@ -76,7 +76,7 @@ template <typename element, typename ui, typename id > static void _Register(
 {
 	Core.Init( Global.GetCurrentRow() );
 
-	nsxpcm::Register( Core, UI.Document, Id, nsxpcm::eAll & ~nsxpcm::eFocus & ~nsxpcm::eBlur );
+	nsxpcm::Register( Core, UI.Document, Id, nsxpcm::efAll & ~nsxpcm::efFocus & ~nsxpcm::efBlur );
 }
 
 static void _RegisterSpecific( ui__::main &UI )

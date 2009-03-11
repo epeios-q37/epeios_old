@@ -115,6 +115,61 @@ namespace ui_base {
 		Widget.Init( Kernel );
 		nsxpcm::Register( Widget, Element, Events );
 	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		broadcaster__ &Broadcaster,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		command__ &Command,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		tree__ &Tree,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Tree, Document, Id, nsxpcm::efSelect );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		deck__ &Deck,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Deck, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		textbox__ &Textbox,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Textbox, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		button__ &Button,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
+	}
+
 }
 
 #define UI_ETYPEDEF( widget, name )\

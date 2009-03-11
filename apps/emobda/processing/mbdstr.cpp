@@ -179,4 +179,26 @@ void mbdstr::structure_::Init( const structure_description_ &Description )
 	Set_( *this, Description.Tables );
 }
 
+bso::bool__ mbdstr::structure_::AreFieldsOwnedByTable(
+	const field_rows_ &FieldRows,
+	table_row__ TableRow ) const
+{
+	epeios::row__ Row = FieldRows.First();
+
+	while ( ( Row != NONE ) && IsFieldOwnedByTable( FieldRows( Row ), TableRow ) )
+		Row = FieldRows.Next( Row );
+
+	return Row == NONE;
+}
+
+bso::bool__ mbdstr::structure_::FieldsExist( const field_rows_ &FieldRows ) const
+{
+	epeios::row__ Row = FieldRows.First();
+
+	while ( ( Row != NONE ) && FieldExists( FieldRows( Row ) ) )
+		Row = FieldRows.Next( Row );
+
+	return Row == NONE;
+}
+
 

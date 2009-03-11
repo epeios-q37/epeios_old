@@ -33,12 +33,14 @@
 	<broadcasterset>
 	</broadcasterset>
 	<commandset>
+		<command id="cmdApplyRecord"/>
+		<command id="cmdCancelRecord"/>
 	</commandset>
 	<vbox flex="1" >
 		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 		<hbox>
-			<button label="|OK|"/>
-			<button label="|Cancel|"/>
+			<button label="|OK|" command="cmdApplyRecord"/>
+			<button label="|Cancel|" command="cmdCancelRecord"/>
 		</hbox>
 	</vbox>
 </page>

@@ -34,8 +34,9 @@ copt += -DCPE_MT -DMTK_KEEP
 copt += -DCPE_LIBRARY
 lopt =
 mods = bkdacc bkdcmd bkdcst bkdrac bkdtpm 
-mods += csdbnc csddlc dtfptb err fil flw fnm lgg mmi nsxpcm sck str tht tol ttr uym xml
-mods += kernel mbdbkd ui
+mods += csdbnc csddlc dtfptb err fil flw fnm lgg mmi msg mtk nsxpcm sck str tht tol ttr uym xml xtf
+mods += kernel mbdbkd
+mods += ui ui_base ui_lst_v ui_main ui_rcd_f ui_struct
 
 # To adapt !
 arm-sdk=/home/csimon/xulrunner-sdk-arm

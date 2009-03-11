@@ -22,6 +22,7 @@
 <!-- $Id$ -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<xsl:include href="Library.xsl"/>
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
 	<xsl:template match="/emobda">
 		<xsl:apply-templates select="Structure"/>
@@ -50,13 +51,22 @@
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Tables">
-		<xsl:apply-templates select="Table"/>
+		<xsl:apply-templates select="Table">
+			<xsl:with-param name="CurrentTable">
+				<xsl:call-template name="GetCurrentTable"/>
+			</xsl:with-param>
+			<xsl:with-param name="CurrentField">
+				<xsl:call-template name="GetCurrentField"/>
+			</xsl:with-param>
+		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="Table">
+		<xsl:param name="CurrentTable"/>
+		<xsl:param name="CurrentField"/>
 		<xsl:element name="treeitem">
 			<xsl:attribute name="container">true</xsl:attribute>
-			<xsl:if test="../../../@CurrentField">
-				<xsl:if test="../../../@CurrentTable=@Row">
+			<xsl:if test="$CurrentField">
+				<xsl:if test="$CurrentTable=@Row">
 					<xsl:attribute name="open">true</xsl:attribute>
 				</xsl:if>
 			</xsl:if>

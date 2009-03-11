@@ -40,11 +40,14 @@ enum message__ {
 
 	mIncorrectTableName,
 	mUnableToCreateTable,
-	mNoSuchTable,
+	mUnknownTable,
 
 	mIncorrectFieldName,
-	mNoSuchField,
+	mUnknownField,
 	mFieldNotOwnedByTable,
+
+	mBadFieldRow,
+	mSameFieldTwice,
 
 	m_amount,
 	m_Undefined
@@ -67,11 +70,13 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( UnableToOpenDatabase );
 	CASE( IncorrectTableName );
 	CASE( UnableToCreateTable );
-	CASE( NoSuchTable );
+	CASE( UnknownTable );
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
-	CASE( NoSuchField );
+	CASE( UnknownField );
 	CASE( FieldNotOwnedByTable );
+	CASE( BadFieldRow );
+	CASE( SameFieldTwice );
 	break;
 	default:
 		ERRu();
@@ -261,7 +266,7 @@ ERRBegin
 
 	if ( TableRow != NONE )
 		if ( !Manager.TableExists( TableRow ) ) {
-			Message = mNoSuchTable;
+			Message = mUnknownTable;
 			ERRReturn;
 		}
 
@@ -347,7 +352,7 @@ static message__ GetTablesInfos_(
 		TableRow = *TableRows( Row );
 
 		if ( !Tables.Exists( TableRow ) )
-			return mNoSuchTable;
+			return mUnknownTable;
 
 		Names.Append( Table( TableRow ).Name );
 		Comments.Append( Table( TableRow ).Comment );
@@ -404,13 +409,13 @@ ERRBegin
 	Name.StripCharacter( ' ' );
 
 	if ( !Manager.TableExists( TableRow ) ) {
-		Message = mNoSuchTable;
+		Message = mUnknownTable;
 		ERRReturn;
 	}
 
 	if ( FieldRow != NONE ) {
 		if ( !Manager.FieldExists( FieldRow ) ) {
-			Message = mNoSuchField;
+			Message = mUnknownField;
 			ERRReturn;
 		} else if ( !Manager.IsFieldOwnedByTable( FieldRow, TableRow ) ) {
 			Message = mFieldNotOwnedByTable;
@@ -468,8 +473,8 @@ ERRBegin
 	TableRow = *Request.Id32In();
 	bkdmng::ids32_ &Fields = Request.Ids32Out();
 
-	if ( !Manager.Structure.Tables.Exists( TableRow ) ) {
-		Message = mNoSuchTable;
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
 		ERRReturn;	
 	}
 
@@ -499,7 +504,7 @@ static message__ GetFieldsInfos_(
 		FieldRow = *FieldRows( Row );
 
 		if ( !Fields.Exists( FieldRow ) )
-			return mNoSuchField;
+			return mUnknownField;
 
 		Names.Append( Field( FieldRow ).Name );
 		Comments.Append( Field( FieldRow ).Comment );
@@ -523,6 +528,74 @@ ERRBegin
 	bkdmng::ids8_ &Ids = Request.Ids8Out();
 
 	GetFieldsInfos_( Rows, Manager.Structure.Fields, Names, Comments, Ids );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+static message__ ConvertAndTest_(
+	const bkdmng::items32_ &Items,
+	data_ &Data,
+	field_rows_ &FieldRows )
+{
+	ctn::E_CMITEM( bkdmng::item32_ ) Item;
+	epeios::row__ Row = Items.First();
+	field_row__ FieldRow = NONE;
+
+	Item.Init( Items );
+
+	while ( Row != NONE ) {
+		FieldRow = *Item( Row ).ID();
+
+		if ( FieldRow == NONE )
+			return mBadFieldRow;
+
+		if ( FieldRows.Search( FieldRow ) != NONE )
+			return mSameFieldTwice;
+
+		FieldRows.Append( FieldRow );
+
+		Data.Append( Item( Row ).Value );
+
+		Row = Items.Next( Row );
+	}
+
+	return mOK;
+}
+
+DEC( InsertRecord )
+{
+	message__ Message = mOK;
+ERRProlog
+	data Data;
+	field_rows FieldRows;
+	table_row__ TableRow = NONE;
+ERRBegin
+	Data.Init();
+	FieldRows.Init();
+
+	TableRow = *Request.Id32In();
+
+	if ( ( Message = ConvertAndTest_( Request.Items32In(), Data, FieldRows ) ) != mOK )
+		ERRReturn;
+
+	if ( !Manager.FieldsExist( FieldRows ) ) {
+		Message = mUnknownField;
+		ERRReturn;
+	}
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
+		ERRReturn;
+	}
+
+	if ( !Manager.AreFieldsOwnedByTable( FieldRows, TableRow ) ) {
+		Message = mFieldNotOwnedByTable;
+		ERRReturn;
+	}
+
+	Request.Id32Out() = *Manager.AddRecord( Data, TableRow, FieldRows );
 ERRErr
 ERREnd
 ERREpilog
@@ -590,6 +663,12 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 	Module.Add( D( GetFields ),
 		bkdmng::cEnd,
 			bkdmng::cItems32,
+		bkdmng::cEnd );
+	Module.Add( D( InsertRecord ),
+			bkdmng::cId32,		// Table row.
+			bkdmng::cItems32,	// Field row and corresponding datum.
+		bkdmng::cEnd,
+			bkdmng::cId32,			// Record id.
 		bkdmng::cEnd );
 }
 

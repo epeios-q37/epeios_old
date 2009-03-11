@@ -30,16 +30,19 @@
 namespace mbdbkd{
 
 	BKDACC_T32( table );
-#define UNDEFINED_TABLE	((mbdbkd::table__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_TABLE		((mbdbkd::table__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( table_id );
 #define UNDEFINED_TABLE_ID	((mbdbkd::table_id__)BKDACC_UNDEFINED_ID8 )
 
 	BKDACC_T32( field );
-#define UNDEFINED_FIELD	((mbdbkd::field__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_FIELD		((mbdbkd::field__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( field_id );
 #define UNDEFINED_FIELD_ID	((mbdbkd::field_id__)BKDACC_UNDEFINED_ID8 )
+
+	BKDACC_T32( record );
+#define UNDEFINED_RECORD	((mbdbkd::record__)BKDACC_UNDEFINED_ID32 )
 
 	class backend___
 	{
@@ -180,6 +183,16 @@ namespace mbdbkd{
 			str::string_ &Name,
 			str::string_ &Comment,
 			field_id__ &Id );
+		record__ InsertRecord(
+			const bkdacc::items32_ &Items,
+			table__ Table )
+		{
+			record__ Record = UNDEFINED_RECORD;
+
+			_H( Manager.InsertRecord( *Table, Items, *Record ) );
+
+			return Record;
+		}
 	};
 }
 

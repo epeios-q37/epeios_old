@@ -533,9 +533,15 @@ namespace nsxpcm {
 	inline const str::string_ &GetAttribute(
 		nsIDOMNode *Node,
 		const char *Name,
-		str::string_ &Value )
+		str::string_ &Value,
+		err::handle ErrHandle = err::hUsual )
 	{
-		return GetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node, ErrHandle );
+
+		if ( Element != NULL )
+			return GetAttribute( Element, Name, Value );
+		else
+			return Value;
 	}
 
 	template <typename t> inline const str::string_ &GetValue(

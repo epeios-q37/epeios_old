@@ -65,6 +65,9 @@
 			<xsl:if test="@Row=$CurrentTable">
 				<xsl:attribute name="checked">true</xsl:attribute>
 			</xsl:if>
+			<xsl:if test="number(Fields/@Amount)=0">
+				<xsl:attribute name="disabled">true</xsl:attribute>
+			</xsl:if>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

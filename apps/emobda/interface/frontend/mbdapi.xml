@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 10/03/2009 15:20:13. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 11/03/2009 11:58:23. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,10 +19,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>10/03/2009</Date>
-		<Time>15:20:13</Time>
+		<Date>11/03/2009</Date>
+		<Time>11:58:23</Time>
 	</Misc>
-	<Messages Amount="17">
+	<Messages Amount="19">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
@@ -36,10 +36,12 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 		<Message Content="MANAGER_NameAlreadyUsed"/>
 		<Message Content="MANAGER_IncorrectTableName"/>
 		<Message Content="MANAGER_UnableToCreateTable"/>
-		<Message Content="MANAGER_NoSuchTable"/>
+		<Message Content="MANAGER_UnknownTable"/>
 		<Message Content="MANAGER_IncorrectFieldName"/>
-		<Message Content="MANAGER_NoSuchField"/>
+		<Message Content="MANAGER_UnknownField"/>
 		<Message Content="MANAGER_FieldNotOwnedByTable"/>
+		<Message Content="MANAGER_BadFieldRow"/>
+		<Message Content="MANAGER_SameFieldTwice"/>
 	</Messages>
 	<Types>
 		<Type Object="Master">
@@ -58,7 +60,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
 			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
-			<Commands Amount="10">
+			<Commands Amount="11">
 				<Command>
 					<Name>CreateDatabase</Name>
 					<ID>0</ID>
@@ -253,6 +255,28 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 							<Parameter Discriminator="1" Position="Last" Type="Container">
 								<Name>items32</Name>
 								<ID>26</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>InsertRecord</Name>
+					<ID>10</ID>
+					<Parameters Amount="4" Position="37">
+						<In>
+							<Parameter Discriminator="1" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+							<Parameter Discriminator="2" Type="Container">
+								<Name>items32</Name>
+								<ID>26</ID>
+							</Parameter>
+						</In>
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
 							</Parameter>
 						</Out>
 					</Parameters>

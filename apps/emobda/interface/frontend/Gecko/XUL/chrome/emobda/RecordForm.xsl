@@ -23,6 +23,9 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
+	<xsl:template match="/emobda">
+		<xsl:apply-templates select="Structure"/>
+	</xsl:template>
 	<xsl:template match="Structure">
 		<xsl:apply-templates select="Database"/>
 	</xsl:template>
@@ -47,6 +50,9 @@
 			</xsl:element>
 			<xsl:element name="textbox">
 				<xsl:attribute name="multiline">true</xsl:attribute>
+				<xsl:attribute name="Field">
+					<xsl:value-of select="@Row"/>
+				</xsl:attribute>
 				<xsl:attribute name="label">
 					<xsl:value-of select="Name"/>
 				</xsl:attribute>

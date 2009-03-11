@@ -22,10 +22,12 @@ enum message__ {
 	MANAGER_NameAlreadyUsed,
 	MANAGER_IncorrectTableName,
 	MANAGER_UnableToCreateTable,
-	MANAGER_NoSuchTable,
+	MANAGER_UnknownTable,
 	MANAGER_IncorrectFieldName,
-	MANAGER_NoSuchField,
+	MANAGER_UnknownField,
 	MANAGER_FieldNotOwnedByTable,
+	MANAGER_BadFieldRow,
+	MANAGER_SameFieldTwice,
 };
 
 inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
@@ -71,17 +73,23 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_UnableToCreateTable" ) )
 		return MANAGER_UnableToCreateTable;
 
-	if ( !strcmp( Message, "MANAGER_NoSuchTable" ) )
-		return MANAGER_NoSuchTable;
+	if ( !strcmp( Message, "MANAGER_UnknownTable" ) )
+		return MANAGER_UnknownTable;
 
 	if ( !strcmp( Message, "MANAGER_IncorrectFieldName" ) )
 		return MANAGER_IncorrectFieldName;
 
-	if ( !strcmp( Message, "MANAGER_NoSuchField" ) )
-		return MANAGER_NoSuchField;
+	if ( !strcmp( Message, "MANAGER_UnknownField" ) )
+		return MANAGER_UnknownField;
 
 	if ( !strcmp( Message, "MANAGER_FieldNotOwnedByTable" ) )
 		return MANAGER_FieldNotOwnedByTable;
+
+	if ( !strcmp( Message, "MANAGER_BadFieldRow" ) )
+		return MANAGER_BadFieldRow;
+
+	if ( !strcmp( Message, "MANAGER_SameFieldTwice" ) )
+		return MANAGER_SameFieldTwice;
 
 	ERRb();
 	return (message__)0;	// To avoid a warning.
@@ -102,7 +110,7 @@ protected:
 
 		backend_access::GetRawMessages( Messages );
 
-		if ( Messages.Amount() != 17 )
+		if ( Messages.Amount() != 19 )
 			ERRb();
 
 		Message.Init( Messages );
@@ -195,7 +203,7 @@ protected:
 		Row = Messages.Next( Row );
 
 
-		if ( Message( Row ) != bkdacc::string( "MANAGER_NoSuchTable" ) )
+		if ( Message( Row ) != bkdacc::string( "MANAGER_UnknownTable" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
@@ -207,13 +215,25 @@ protected:
 		Row = Messages.Next( Row );
 
 
-		if ( Message( Row ) != bkdacc::string( "MANAGER_NoSuchField" ) )
+		if ( Message( Row ) != bkdacc::string( "MANAGER_UnknownField" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
 
 
 		if ( Message( Row ) != bkdacc::string( "MANAGER_FieldNotOwnedByTable" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_BadFieldRow" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_SameFieldTwice" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
@@ -273,7 +293,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[10];
+	bkdacc::command__ Commands[11];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -291,6 +311,7 @@ public:
 			15,0, 19,19,9,
 			14,14,18,18,0, 14,
 			0, 26,
+			14,26,0, 14,
 		};
 
 		this->Backend = &Backend;
@@ -349,10 +370,15 @@ public:
 		CommandDetail.Casts.Append( Parameters + 35, 2 );
 		CommandsDetails.Append( CommandDetail );
 
+		CommandDetail.Init();
+		CommandDetail.Name = "InsertRecord";;
+		CommandDetail.Casts.Append( Parameters + 37, 4 );
+		CommandsDetails.Append( CommandDetail );
+
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 10, this->Commands );
+		Commands.Recall( 0, 11, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -538,6 +564,21 @@ public:
 		Common_->Backend->EndOfInParameters();
 
 		Common_->Backend->Items32Out( Out1 );
+
+		return Common_->Backend->Handle();
+	}
+	bso::bool__ InsertRecord( 
+		const bkdacc::id32__ &In1,
+		const bkdacc::items32_ &In2,
+		bkdacc::id32__ &Out1 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[10] );
+		Common_->Backend->Id32In( In1 );
+		Common_->Backend->Items32In( In2 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->Id32Out( Out1 );
 
 		return Common_->Backend->Handle();
 	}

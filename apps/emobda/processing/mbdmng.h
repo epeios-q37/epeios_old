@@ -189,17 +189,27 @@ namespace mbdmng {
 		void DeleteRecord( record_id__ RecordId );
 		bso::bool__ TableExists( table_row__ TableRow ) const
 		{
-			return Structure.Tables.Exists( TableRow );
+			return Structure.TableExists( TableRow );
 		}
 		bso::bool__ FieldExists( field_row__ FieldRow ) const
 		{
-			return Structure.Fields.Exists( FieldRow );
+			return Structure.FieldExists( FieldRow );
+		}
+		bso::bool__ FieldsExist( const field_rows_ &FieldRows ) const
+		{
+			return Structure.FieldsExist( FieldRows );
 		}
 		bso::bool__ IsFieldOwnedByTable(
 			field_row__ FieldRow,
 			table_row__ TableRow ) const
 		{
 			return Structure.IsFieldOwnedByTable( FieldRow, TableRow );
+		}
+		bso::bool__ AreFieldsOwnedByTable(
+			const field_rows_ &FieldRows,
+			table_row__ TableRow ) const
+		{
+			return Structure.AreFieldsOwnedByTable( FieldRows, TableRow );
 		}
 
 

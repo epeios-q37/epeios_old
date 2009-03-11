@@ -734,6 +734,62 @@ void kernel::kernel___::ApplyStructureItem( void )
 	_SwitchTo( cStructureView );
 }
 
+static void RetrieveData_(
+	nsIDOMNode *Node,
+	bkdacc::items32_ &Data )
+{
+ERRProlog
+	nsxpcm::browser__ Browser;
+	str::string Value;
+	epeios::row__ Error = NONE;
+	bkdacc::id32__ Id = BKDACC_UNDEFINED_ID32;
+	bkdacc::item32 Item;
+ERRBegin
+	Browser.Init( Node );
+
+	while ( ( Node = Browser.GetNext() ) != NULL ) {
+		Value.Init();
+
+		nsxpcm::GetAttribute( Node, "Field", Value, err::hSkip );
+
+		if ( Value.Amount() != 0 ) {
+			Id = Value.ToUL( &Error );
+
+			if ( Error != NONE )
+				ERRu();
+
+			Value.Init();
+			nsxpcm::GetValue( nsxpcm::QueryInterface<nsIDOMXULTextBoxElement>( Node ), Value );
+			nsxpcm::GetAttribute( Node, "value", Value );
+
+			if ( Value.Amount() != 0 ) {
+				Item.Init( Id, Value );
+	
+				Data.Append( Item );
+			}
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::ApplyRecord( void )
+{
+ERRProlog
+	bkdacc::items32 Data;
+ERRBegin
+	Data.Init();
+	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
+
+	InsertRecord( Data, _Current.Table );
+
+	_SwitchTo( cListView );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static class starter 
 {
 public:

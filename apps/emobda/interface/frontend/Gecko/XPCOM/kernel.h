@@ -32,6 +32,11 @@
 #include "lgg.h"
 #include "bkdacc.h"
 
+// #define ADDRESS	"192.168.5.10:1234"	// Portable.
+// #define ADDRESS	"10.0.2.2:1234"		// Logiplus.
+#define ADDRESS	"localhost:1234"	// Local
+
+
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
 	using namespace mbdbkd;
@@ -213,12 +218,11 @@ namespace kernel {
 		{
 			reset();
 
-//			_ClientCore.Init( "192.168.5.10:1234", NULL, _LogFunctions, csducl::tShared );
-			_ClientCore.Init( "localhost:1234", NULL, _LogFunctions, csducl::tShared );
+			_ClientCore.Init( ADDRESS, NULL, _LogFunctions, csducl::tShared );	// Logiplus.
 			_backend___::Init( _ClientCore );
 			UI.Init( *this );
 
-			_Language = KERNEL_DEFAULT_LANGUAGE;	// A chnager.
+			_Language = KERNEL_DEFAULT_LANGUAGE;	// A changer.
 		}
 		const char *GetMessage( message__ Message );
 		void Alert( const char *Message )
@@ -248,13 +252,13 @@ namespace kernel {
 		void UpdateDecks( void );
 		void ApplyDatabase( void )
 		{
-			K().CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
+			CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
 
 			_SwitchTo( cStructureView );
 		}
 		void BrowseDatabase( void )
 		{
-			K().OpenDatabase( str::string( "h:\\temp\\emobda" ) );
+			OpenDatabase( str::string( "h:\\temp\\emobda" ) );
 
 			_SwitchTo( cStructureView );
 		}
@@ -346,6 +350,7 @@ namespace kernel {
 
 			_Temporary.Mode = Mode;
 		}
+		void ApplyRecord( void );
 		E_RODISCLOSE__( target__, Current );
 	};
 

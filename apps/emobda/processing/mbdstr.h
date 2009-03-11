@@ -157,6 +157,15 @@ namespace mbdstr {
 		field_row__ SearchField(
 			table_row__ TableRow,
 			const str::string_ &Name ) const;
+		bso::bool__ TableExists( table_row__ TableRow ) const
+		{
+			return Tables.Exists( TableRow );
+		}
+		bso::bool__ FieldExists( field_row__ FieldRow ) const
+		{
+			return Fields.Exists( FieldRow );
+		}
+		bso::bool__ FieldsExist( const field_rows_ &FieldRows ) const;
 		bso::bool__ IsFieldOwnedByTable(
 			field_row__ FieldRow,
 			table_row__ TableRow ) const
@@ -167,6 +176,9 @@ namespace mbdstr {
 
 			return Table( TableRow ).OwnsField( FieldRow );
 		}
+		bso::bool__ AreFieldsOwnedByTable(
+			const field_rows_ &FieldRows,
+			table_row__ TableRow ) const;
 		field_id__ GetFieldFieldId( field_row__ FieldRow ) const
 		{
 			ctn::E_CITEMt( field_, field_row__ ) Field;
