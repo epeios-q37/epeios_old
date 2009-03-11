@@ -32,9 +32,9 @@
 #include "lgg.h"
 #include "bkdacc.h"
 
-// #define ADDRESS	"192.168.5.10:1234"	// Portable.
+#define ADDRESS	"192.168.5.10:1234"	// Portable.
 // #define ADDRESS	"10.0.2.2:1234"		// Logiplus.
-#define ADDRESS	"localhost:1234"	// Local
+// #define ADDRESS	"localhost:1234"	// Local
 
 
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
