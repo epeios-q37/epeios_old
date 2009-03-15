@@ -602,6 +602,58 @@ ERREpilog
 	return Message;
 }
 
+static message__ Convert_(
+	const bkdmng::ids32_ &Ids,
+	field_rows_ &FieldRows )
+{
+	epeios::row__ Row = Ids.First();
+
+	while ( Row != NONE ) {
+		FieldRows.Append( *Ids( Row ) );
+
+		Row = Ids.Next( Row );
+	}
+
+	return mOK;
+}
+
+DEC( GetRecordData )
+{
+	message__ Message = mOK;
+ERRProlog
+	field_rows FieldRows;
+	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
+	table_row__ TableRow = NONE;
+ERRBegin
+	RecordId = *Request.Id32In();
+	TableRow = *Request.Id32In();
+
+	FieldRows.Init();
+
+	if ( ( Message = Convert_( Request.Ids32In(), FieldRows ) ) != mOK )
+		ERRReturn;
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
+		ERRReturn;
+	}
+
+	if ( !Manager.Exist( FieldRows ) ) {
+		Message = mUnknownField;
+		ERRReturn;
+	}
+
+	if ( !Manager.AreFieldsOwnedByTable( FieldRows, TableRow ) ) {
+		Message = mFieldNotOwnedByTable;
+		ERRReturn;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
 
 #define D( name )	#name, (void *)::##name
 

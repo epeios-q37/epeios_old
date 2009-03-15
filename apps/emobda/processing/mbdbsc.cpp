@@ -48,18 +48,18 @@ const str::string_ &mbdbsc::BuildLocatedContentRootFileName(
 	return BuildLocatedRootFileName_( Location, MBDBSC_CONTENT_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
-const str::string_ &mbdbsc::BuildLocatedRecordFieldIndexRootFileName(
+const str::string_ &mbdbsc::BuildLocatedTableRecordFieldIndexRootFileName(
 	const str::string_ &Location,
 	str::string_ &LocalizedRootFileName )
 {
-	return BuildLocatedRootFileName_( Location, MBDBSC_RECORD_FIELD_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+	return BuildLocatedRootFileName_( Location, MBDBSC_TABLE_RECORD_FIELD_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
-const str::string_ &mbdbsc::BuildLocatedFieldDatumIndexRootFileName(
+const str::string_ &mbdbsc::BuildLocatedTableFieldDatumIndexRootFileName(
 	const str::string_ &Location,
 	str::string_ &LocalizedRootFileName )
 {
-	return BuildLocatedRootFileName_( Location, MBDBSC_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+	return BuildLocatedRootFileName_( Location, MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
 

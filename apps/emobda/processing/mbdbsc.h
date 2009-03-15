@@ -29,8 +29,8 @@
 #include "mdr.h"
 
 #define MBDBSC_CONTENT_ROOT_FILE_NAME				"Data"
-#define MBDBSC_RECORD_FIELD_INDEX_ROOT_FILE_NAME	"RecordFieldIndex"
-#define MBDBSC_FIELD_DATUM_INDEX_ROOT_FILE_NAME		"FieldDatum"
+#define MBDBSC_TABLE_RECORD_FIELD_INDEX_ROOT_FILE_NAME	"TableRecordFieldIndex"
+#define MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME		"TableFieldDatumIndex"
 
 namespace mbdbsc {
 
@@ -38,18 +38,20 @@ namespace mbdbsc {
 		const str::string_ &Location,
 		str::string_ &LocalizedRootFileName );
 
-	const str::string_ &BuildLocatedRecordFieldIndexRootFileName(
+	const str::string_ &BuildLocatedTableRecordFieldIndexRootFileName(
 		const str::string_ &Location,
 		str::string_ &LocalizedRootFileName );
 
-	const str::string_ &BuildLocatedFieldDatumIndexRootFileName(
+	const str::string_ &BuildLocatedTableFieldDatumIndexRootFileName(
 		const str::string_ &Location,
 		str::string_ &LocalizedRootFileName );
 
 
-	typedef bso::ushort__ record_id_t__;
+	typedef bso::ulong__ record_id_t__;
 	E_TYPEDEF( record_id_t__, record_id__ );
 #define MBDBSC_UNDEFINED_RECORD_ID	((record_id__)BSO_USHORT_MAX)
+
+	typedef dbsbsc::rrow__ record_row__;
 
 	E_ROW( field_row__ );
 

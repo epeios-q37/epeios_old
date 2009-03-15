@@ -105,6 +105,7 @@ namespace mbdeng {
 			dbstbl::mode__ Mode,
 			bso::bool__ EraseIndexes,
 			bso::bool__ Partial );
+		epeios::size__ GetTableRecordsAmount( mbdbsc::table_id__ TableId ) const;
 		E_RODISCLOSE_( dbstbl::irow__, TableRecordFieldIndexRow );
 		E_RODISCLOSE_( dbstbl::irow__, TableFieldDatumIndexRow );
 	};

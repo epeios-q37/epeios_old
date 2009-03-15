@@ -23,6 +23,8 @@
 
 using namespace mbdeng;
 
+using namespace mbdbsc;
+
 void mbdeng::engine_::Init(
 	const str::string_ &Location,
 	dbstbl::mode__ Mode,
@@ -47,11 +49,11 @@ ERRBegin
 	Content.Init( LocatedRootFileName, FileMode ,Partial, S_.FilesgroupID );
 
 	LocatedRootFileName.Init();
-	mbdbsc::BuildLocatedRecordFieldIndexRootFileName( Location, LocatedRootFileName );
+	mbdbsc::BuildLocatedTableRecordFieldIndexRootFileName( Location, LocatedRootFileName );
 	TableRecordFieldIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
 	LocatedRootFileName.Init();
-	mbdbsc::BuildLocatedFieldDatumIndexRootFileName( Location, LocatedRootFileName );
+	mbdbsc::BuildLocatedTableFieldDatumIndexRootFileName( Location, LocatedRootFileName );
 	TableFieldDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
 	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
@@ -61,3 +63,41 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+epeios::size__ mbdeng::engine_::GetTableRecordsAmount( table_id__ TableId ) const
+{
+	epeios::size__ Amount = 0;
+ERRProlog
+	record_row__ Row = NONE;
+	field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
+	raw_datum RawDatum;
+	record_static_part__ RecordStaticPart;
+	record Record;
+ERRBegin
+	Record.Init( TableId, MBDBSC_UNDEFINED_FIELD_ID, MBDBSC_UNDEFINED_RECORD_ID, datum() );
+
+	RawDatum.Init();
+	mbdbsc::Convert( Record, RawDatum );
+
+	Row = TableRecordFieldIndex.Seek( dbsidx::bLesser, RawDatum, 2 );
+
+	while ( Row != NONE ) {
+		RawDatum.Init();
+		S_.UniversalContent.Retrieve( Row, RawDatum );
+
+		mbdbsc::ExtractRecordStaticPart( RawDatum, RecordStaticPart );
+
+		if ( RecordStaticPart.FieldId != FieldId ) {
+			Amount++;
+
+			FieldId = RecordStaticPart.FieldId;
+		}
+
+		Row = TableRecordFieldIndex.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Amount;
+}
+
