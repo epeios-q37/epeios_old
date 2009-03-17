@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 11/03/2009 11:58:23. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 17/03/2009 15:37:59. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,10 +19,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>11/03/2009</Date>
-		<Time>11:58:23</Time>
+		<Date>17/03/2009</Date>
+		<Time>15:37:59</Time>
 	</Misc>
-	<Messages Amount="19">
+	<Messages Amount="20">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
@@ -42,6 +42,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 		<Message Content="MANAGER_FieldNotOwnedByTable"/>
 		<Message Content="MANAGER_BadFieldRow"/>
 		<Message Content="MANAGER_SameFieldTwice"/>
+		<Message Content="MANAGER_UndefinedRecord"/>
 	</Messages>
 	<Types>
 		<Type Object="Master">
@@ -60,7 +61,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
 			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
-			<Commands Amount="11">
+			<Commands Amount="13">
 				<Command>
 					<Name>CreateDatabase</Name>
 					<ID>0</ID>
@@ -277,6 +278,50 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 							<Parameter Discriminator="1" Position="Last" Type="Static">
 								<Name>id32</Name>
 								<ID>14</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetRecords</Name>
+					<ID>11</ID>
+					<Parameters Amount="3" Position="41">
+						<In>
+							<Parameter Discriminator="1" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+						</In>
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Bunch">
+								<Name>ids32</Name>
+								<ID>15</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetRecordsData</Name>
+					<ID>12</ID>
+					<Parameters Amount="5" Position="44">
+						<In>
+							<Parameter Discriminator="1" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+							<Parameter Discriminator="2" Type="Bunch">
+								<Name>ids32</Name>
+								<ID>15</ID>
+							</Parameter>
+							<Parameter Discriminator="3" Type="Bunch">
+								<Name>ids32</Name>
+								<ID>15</ID>
+							</Parameter>
+						</In>
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Bunch">
+								<Name>xstrings</Name>
+								<ID>20</ID>
 							</Parameter>
 						</Out>
 					</Parameters>

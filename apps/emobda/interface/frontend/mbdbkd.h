@@ -193,6 +193,20 @@ namespace mbdbkd{
 
 			return Record;
 		}
+		void GetRecords(
+			table__ Table,
+			records_ &Records )
+		{
+			_H( Manager.GetRecords( *Table, _( Records ) ) );
+		}
+		void GetRecordsData(
+			table__ Table,
+			fields_ &Fields,
+			records_ &Records,
+			bkdacc::xstrings_ &DataCluster )
+		{
+			_H( Manager.GetRecordsData( *Table, _( Fields ), _( Records ), DataCluster ) );
+		}
 	};
 }
 

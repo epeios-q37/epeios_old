@@ -70,21 +70,38 @@ const char *kernel::kernel___::GetMessage( kernel::message__ MessageId )
 	return GetMessage_( MessageId, _Language, _MessageBuffer );
 }
 
+static inline void PutInt_(
+	const char *Name,
+	bso::ulong__ Value,
+	writer_ &Writer )
+{
+	bso::integer_buffer__ Buffer;
+
+	Writer.PutAttribute( Name, bso::Convert( Value, Buffer ) );
+}
+
+template <typename id> static inline void PutId_(
+	const char *Name,
+	id Id,
+	writer_ &Writer )
+{
+	PutInt_( Name, **Id, Writer );
+}
+
 static void DumpFieldStructure_(
 	table__ Table,
 	field__ Field,
 	const bkdacc::string_ &Name,
 	const bkdacc::string_ &Comment,
 	field_id__ Id,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
-	bso::integer_buffer__ Buffer;
 
 	Writer.PushTag( "Field" );
 
-	Writer.PutAttribute( "Row", bso::Convert( **Field, Buffer ) );
-	Writer.PutAttribute( "TableRow", bso::Convert( **Table, Buffer ) );
-	Writer.PutAttribute( "Id", bso::Convert( **Id, Buffer ) );
+	PutId_( "Row", Field, Writer );
+	PutId_( "TableRow", Table, Writer );
+	PutId_( "Id", Id, Writer );
 
 	Writer.PushTag( "Name" );
 	Writer.PutValue( Name );
@@ -102,16 +119,15 @@ static void DumpFieldsStructure_(
 	table__ Table,
 	const fields_ &Fields,
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
 ERRProlog
 	bkdacc::strings Names, Comments;
 	field_ids Ids;
 	epeios::row__ Row = NONE;
-	bso::integer_buffer__ Buffer;
 ERRBegin
 	Writer.PushTag( "Fields" );
-	Writer.PutAttribute( "Amount", bso::Convert( Fields.Amount(), Buffer ) );
+	PutInt_( "Amount", Fields.Amount(), Writer );
 
 	Names.Init();
 	Comments.Init();
@@ -138,7 +154,7 @@ ERREpilog
 static void DumpFieldsStructure_(
 	table__ Table,
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
 ERRProlog
 	fields Fields;
@@ -160,12 +176,10 @@ static void DumpTableStructure_(
 	table__ Table,
 	table_id__ Id,
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
-	bso::integer_buffer__ Buffer;
-
-	Writer.PutAttribute( "Id", bso::Convert( **Id, Buffer ) );
-	Writer.PutAttribute( "Row", bso::Convert( **Table, Buffer ) );
+	PutId_( "Id", Id, Writer );
+	PutId_( "Row", Table, Writer );
 
 	Writer.PushTag( "Name" );
 	Writer.PutValue( Name );
@@ -184,7 +198,7 @@ static void DumpTablesStructure_(
 	const tables_ &Tables,
 	const table_ids_ &Ids,
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
 	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
 	epeios::row__ Row = Names.First();
@@ -211,7 +225,7 @@ static void DumpTablesStructure_(
 
 static void DumpTablesStructure_(
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
 ERRProlog
 	tables Tables;
@@ -247,7 +261,7 @@ ERREpilog
 
 static void DumpDatabaseStructure_(
 	backend___ &Backend,
-	xml::writer_ &Writer )
+	writer_ &Writer )
 {
 ERRProlog
 	bkdacc::string Name, Comment;
@@ -278,7 +292,7 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_DumpStructure( xml::writer_ &Writer )
+void kernel::kernel___::_DumpStructure( writer_ &Writer )
 {
 	Writer.PushTag( "Structure" );
 
@@ -291,13 +305,11 @@ static void Dump_(
 	const target__ &Target,
 	writer_ &Writer )
 {
-	bso::integer_buffer__ Buffer;
-
 	if ( Target.Table != UNDEFINED_TABLE )
-		Writer.PutAttribute( "Table", bso::Convert( **Target.Table, Buffer ) );
+		PutId_( "Table", Target.Table, Writer );
 
 	if ( Target.Field != UNDEFINED_FIELD )
-		Writer.PutAttribute( "Field", bso::Convert( **Target.Field, Buffer ) );
+		PutId_( "Field", Target.Field, Writer );
 }
 
 void kernel::kernel___::_DumpCurrent( writer_ &Writer )
@@ -308,6 +320,105 @@ void kernel::kernel___::_DumpCurrent( writer_ &Writer )
 
 	Writer.PopTag();
 }
+
+static void inline Dump_(
+	field__ Field,
+	const bkdacc::string_ &Datum,
+	writer_ &Writer )
+{
+	Writer.PushTag( "Datum" );
+
+	PutId_( "Field", Field, Writer );
+
+	Writer.PutValue( Datum );
+
+	Writer.PopTag();
+}
+
+
+static void Dump_(
+	record__ Record,
+	const fields_ &Fields,
+	const bkdacc::strings_ &Data,
+	writer_ &Writer )
+{
+	ctn::E_CMITEM( bkdacc::string_ ) Datum;
+	epeios::row__ Row = Data.First();
+
+	if ( Fields.Amount() != Data.Amount() )
+		ERRc();
+
+	Writer.PushTag( "Record" );
+
+	PutId_( "Id", Record, Writer );
+
+	while ( Row != NONE ) {
+		Dump_( Fields( Row ), Datum( Row ), Writer );
+
+		Row = Fields.Next( Row );
+	}
+
+	Writer.PopTag();
+}
+
+static void Dump_(
+	const records_ &Records,
+	const fields_ &Fields,
+	const bkdacc::xstrings_ &DataCluster,
+	writer_ &Writer )
+{
+	ctn::E_CITEM( bkdacc::strings_ ) Data;
+	epeios::row__ Row = Records.First();
+
+	Data.Init( DataCluster );
+
+	if ( Records.Amount() != DataCluster.Amount() )
+		ERRc();
+
+	Writer.PushTag( "Records" );
+
+	PutInt_( "Amount", Records.Amount(), Writer );
+
+	while ( Row != NONE ) {
+		Dump_( Records( Row ), Fields, Data( Row ), Writer );
+
+		Row = Records.Next( Row );
+	}
+
+	Writer.PopTag();
+}
+
+
+void kernel::kernel___::_DumpContent( writer_ &Writer )
+{
+ERRProlog
+	fields Fields;
+	records Records;
+	bkdacc::xstrings DataCluster;
+	table__ Table = UNDEFINED_TABLE;
+ERRBegin
+	Writer.PushTag( "Content" );
+
+	if ( ( Table = Current().Table ) != UNDEFINED_TABLE ) {
+
+		Fields.Init();
+		this->GetFields( Table, Fields );
+
+		Records.Init();
+		this->GetRecords( Table, Records );
+
+		DataCluster.Init();
+		this->GetRecordsData( Table, Fields, Records, DataCluster );
+
+		Dump_( Records, Fields, DataCluster, Writer );
+	}
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 void kernel::kernel___::_DumpAsXML( str::string_ &XML )
 {
@@ -324,6 +435,8 @@ ERRBegin
 	_DumpCurrent( Writer );
 
 	_DumpStructure( Writer );
+
+	_DumpContent( Writer );
 
 	Writer.PopTag();
 

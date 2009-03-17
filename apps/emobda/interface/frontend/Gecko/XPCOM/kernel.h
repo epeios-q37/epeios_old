@@ -140,6 +140,7 @@ namespace kernel {
 		csducl::universal_client_core _ClientCore;
 		void _DumpCurrent( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
+		void _DumpContent( xml::writer_ &Writer );
 		void _DumpAsXML( str::string_ &XML );
 		temporary__ _Temporary;
 		target__ _Current;

@@ -49,6 +49,8 @@ enum message__ {
 	mBadFieldRow,
 	mSameFieldTwice,
 
+	mUndefinedRecord,
+
 	m_amount,
 	m_Undefined
 };
@@ -77,6 +79,7 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( FieldNotOwnedByTable );
 	CASE( BadFieldRow );
 	CASE( SameFieldTwice );
+	CASE( UndefinedRecord );
 	break;
 	default:
 		ERRu();
@@ -617,20 +620,60 @@ static message__ Convert_(
 	return mOK;
 }
 
-DEC( GetRecordData )
+static message__ Convert_(
+	const bkdmng::ids32_ &Ids,
+	record_ids_ &RecordIds )
+{
+	epeios::row__ Row = Ids.First();
+
+	while ( Row != NONE ) {
+		RecordIds.Append( *Ids( Row ) );
+
+		Row = Ids.Next( Row );
+	}
+
+	return mOK;
+}
+
+DEC( GetRecords )
+{
+	message__ Message = mOK;
+ERRProlog
+	table_row__ TableRow = NONE;
+ERRBegin
+	TableRow = *Request.Id32In();
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
+		ERRReturn;
+	}
+
+	Manager.GetRecords( TableRow, *(record_ids_ *)&Request.Ids32Out() );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( GetRecordsData )
 {
 	message__ Message = mOK;
 ERRProlog
 	field_rows FieldRows;
-	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
+	record_ids RecordIds;
 	table_row__ TableRow = NONE;
 ERRBegin
-	RecordId = *Request.Id32In();
 	TableRow = *Request.Id32In();
 
 	FieldRows.Init();
 
 	if ( ( Message = Convert_( Request.Ids32In(), FieldRows ) ) != mOK )
+		ERRReturn;
+
+	RecordIds.Init();
+
+	if ( ( Message = Convert_( Request.Ids32In(), RecordIds ) ) != mOK )
 		ERRReturn;
 
 	if ( !Manager.TableExists( TableRow ) ) {
@@ -648,6 +691,7 @@ ERRBegin
 		ERRReturn;
 	}
 
+	Manager.GetRecords( TableRow, FieldRows, RecordIds, Request.XStringsOut() );
 ERRErr
 ERREnd
 ERREpilog
@@ -721,6 +765,18 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cItems32,	// Field row and corresponding datum.
 		bkdmng::cEnd,
 			bkdmng::cId32,			// Record id.
+		bkdmng::cEnd );
+	Module.Add( D( GetRecords ),
+			bkdmng::cId32,		// Table row.
+		bkdmng::cEnd,
+			bkdmng::cIds32,		// Record ids,
+		bkdmng::cEnd );
+	Module.Add( D( GetRecordsData ),
+			bkdmng::cId32,		// Table row.
+			bkdmng::cIds32,		// Field rows.
+			bkdmng::cIds32,		// Record ids,
+		bkdmng::cEnd,
+			bkdmng::cXStrings,	// Data.
 		bkdmng::cEnd );
 }
 

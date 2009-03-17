@@ -181,11 +181,19 @@ namespace mbdmng {
 			const data_ &Data,
 			table_row__ TableRow,
 			const field_rows_ &FieldRows );
+		void GetRecords(
+			table_row__ TableRow,
+			record_ids_ &RecordIds ) const;
 		void GetRecord(
 			table_row__ TableRow,
-			record_id__ RecordId,
 			const field_rows_ &FieldRows,
+			record_id__ RecordId,
 			data_ &Data ) const;
+		void GetRecords(
+			table_row__ TableRow,
+			const field_rows_ &FieldRows,
+			const record_ids_ &RecordIds,
+			data_cluster_ &DataCluster ) const;
 		void DeleteRecord( record_id__ RecordId );
 		bso::bool__ TableExists( table_row__ TableRow ) const
 		{
@@ -211,8 +219,6 @@ namespace mbdmng {
 		{
 			return Structure.AreFieldsOwnedByTable( FieldRows, TableRow );
 		}
-
-
 	};
 
 	epeios::row__ TestUnicity( const field_rows_ &FieldRows );

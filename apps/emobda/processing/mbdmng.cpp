@@ -125,10 +125,61 @@ ERREpilog
 	return RecordId;
 }
 
+void mbdmng::manager_::GetRecords(
+	table_row__ TableRow,
+	record_ids_ &RecordIds ) const
+{
+ERRProlog
+	record_row__ RecordRow;
+	record Record;
+	raw_datum RawDatum;
+	bso::sign__ Sign = 0;
+	record_row__ LastRecordRow = NONE;
+ERRBegin
+	Record.Init( Structure.GetTableTableId( TableRow ), MBDBSC_UNDEFINED_FIELD_ID, MBDBSC_UNDEFINED_RECORD_ID, datum() );
+
+	RawDatum.Init();
+	mbdbsc::Convert( Record, RawDatum );
+
+	RecordRow = Engine.TableFieldDatumIndex.Seek( RawDatum, dbsidx::bLesser, 2, Sign );
+
+	if ( RecordRow != NONE ) {
+		switch( Sign ) {
+		case -1:
+			RecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );
+			break;
+		case 0:
+			break;
+		case 1:
+			ERRc();
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		LastRecordRow = Engine.TableRecordFieldIndex.Seek( dbsidx::bGreater, RawDatum, 2 );
+
+		LastRecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );	// Peut être 'NONE' sans problème.
+	}
+
+	while ( RecordRow != LastRecordRow ) {
+		RawDatum.Init();
+		Engine.Retrieve( RecordRow, RawDatum );
+
+		RecordIds.Append( mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId );
+
+		RecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void mbdmng::manager_::GetRecord(
 	table_row__ TableRow,
-	record_id__ RecordId,
 	const field_rows_ &FieldRows,
+	record_id__ RecordId,
 	data_ &Data ) const
 {
 ERRProlog
@@ -177,6 +228,33 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void mbdmng::manager_::GetRecords(
+	table_row__ TableRow,
+	const field_rows_ &FieldRows,
+	const record_ids_ &RecordIds,
+	data_cluster_ &DataCluster ) const
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	data Data;
+ERRBegin
+	Row = RecordIds.First();
+
+	while ( Row != NONE ) {
+		Data.Init();
+
+		GetRecord( TableRow, FieldRows, RecordIds( Row ), Data );
+
+		DataCluster.Append( Data );
+
+		Row = RecordIds.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 void mbdmng::manager_::DeleteRecord( record_id__ RecordId )
 {

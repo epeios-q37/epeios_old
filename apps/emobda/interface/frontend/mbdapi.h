@@ -28,6 +28,7 @@ enum message__ {
 	MANAGER_FieldNotOwnedByTable,
 	MANAGER_BadFieldRow,
 	MANAGER_SameFieldTwice,
+	MANAGER_UndefinedRecord,
 };
 
 inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
@@ -91,6 +92,9 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_SameFieldTwice" ) )
 		return MANAGER_SameFieldTwice;
 
+	if ( !strcmp( Message, "MANAGER_UndefinedRecord" ) )
+		return MANAGER_UndefinedRecord;
+
 	ERRb();
 	return (message__)0;	// To avoid a warning.
 }
@@ -110,7 +114,7 @@ protected:
 
 		backend_access::GetRawMessages( Messages );
 
-		if ( Messages.Amount() != 19 )
+		if ( Messages.Amount() != 20 )
 			ERRb();
 
 		Message.Init( Messages );
@@ -239,6 +243,12 @@ protected:
 		Row = Messages.Next( Row );
 
 
+		if ( Message( Row ) != bkdacc::string( "MANAGER_UndefinedRecord" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -293,7 +303,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[11];
+	bkdacc::command__ Commands[13];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -312,6 +322,8 @@ public:
 			14,14,18,18,0, 14,
 			0, 26,
 			14,26,0, 14,
+			14,0, 15,
+			14,15,15,0, 20,
 		};
 
 		this->Backend = &Backend;
@@ -375,10 +387,20 @@ public:
 		CommandDetail.Casts.Append( Parameters + 37, 4 );
 		CommandsDetails.Append( CommandDetail );
 
+		CommandDetail.Init();
+		CommandDetail.Name = "GetRecords";;
+		CommandDetail.Casts.Append( Parameters + 41, 3 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
+		CommandDetail.Name = "GetRecordsData";;
+		CommandDetail.Casts.Append( Parameters + 44, 5 );
+		CommandsDetails.Append( CommandDetail );
+
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 11, this->Commands );
+		Commands.Recall( 0, 13, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -579,6 +601,36 @@ public:
 		Common_->Backend->EndOfInParameters();
 
 		Common_->Backend->Id32Out( Out1 );
+
+		return Common_->Backend->Handle();
+	}
+	bso::bool__ GetRecords( 
+		const bkdacc::id32__ &In1,
+		bkdacc::ids32_ &Out1 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
+		Common_->Backend->Id32In( In1 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->Ids32Out( Out1 );
+
+		return Common_->Backend->Handle();
+	}
+	bso::bool__ GetRecordsData( 
+		const bkdacc::id32__ &In1,
+		const bkdacc::ids32_ &In2,
+		const bkdacc::ids32_ &In3,
+		bkdacc::xstrings_ &Out1 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
+		Common_->Backend->Id32In( In1 );
+		Common_->Backend->Ids32In( In2 );
+		Common_->Backend->Ids32In( In3 );
+
+		Common_->Backend->EndOfInParameters();
+
+		Common_->Backend->XStringsOut( Out1 );
 
 		return Common_->Backend->Handle();
 	}

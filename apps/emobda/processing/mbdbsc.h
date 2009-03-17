@@ -50,6 +50,8 @@ namespace mbdbsc {
 	typedef bso::ulong__ record_id_t__;
 	E_TYPEDEF( record_id_t__, record_id__ );
 #define MBDBSC_UNDEFINED_RECORD_ID	((record_id__)BSO_USHORT_MAX)
+	typedef bch::E_BUNCH_( record_id__ ) record_ids_;
+	E_AUTO( record_ids );
 
 	typedef dbsbsc::rrow__ record_row__;
 
@@ -68,6 +70,9 @@ namespace mbdbsc {
 
 	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
 	E_AUTO( data );
+
+	typedef ctn::E_XCONTAINER_( data_ ) data_cluster_;
+	E_AUTO( data_cluster );
 
 	typedef dbsbsc::datum_	raw_datum_;
 	typedef dbsbsc::datum	raw_datum;
