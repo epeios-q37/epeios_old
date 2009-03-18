@@ -123,6 +123,14 @@ namespace pllio {
 		{
 			return fileno( stdin ) == _D;
 		}
+		bso::bool__ IsSTDOUT( void ) const
+		{
+			return fileno( stdout ) == _D;
+		}
+		bso::bool__ IsSTDERR( void ) const
+		{
+			return fileno( stderr ) == _D;
+		}
 	};
 
 	class lowlevel_input__
@@ -198,12 +206,9 @@ namespace pllio {
 		}
 		void Init(
 			descriptor__ D,
-			bso::bool__ FlushToDevice )
+			bso::bool__ ) // Normalement 'FlushToDevice', mais seulement utile sous Windows (voir 'wllio').
 		{
 			io_core__::Init( D );
-
-			if ( FlushToDevice == true )
-				ERRl();
 		}
 		int Write(
 			const void *Buffer,
