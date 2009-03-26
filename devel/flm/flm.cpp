@@ -205,7 +205,6 @@ static inline void Flusher_( void * )
 	bso::bool__ ToFlush = false;
 	_file___ *File = NULL;
 
-
 	Lock_();
 
 	_data__ Data;
@@ -231,17 +230,19 @@ static inline void Flusher_( void * )
 			Lock_();
 		}
 
-		List_.Recall( FlusherData_.Row, Data );
+		if ( FlusherData_.Row != NONE ) {
+			List_.Recall( FlusherData_.Row, Data );
 
-		if ( Data.ToFlush ) {
-			ToFlush = true;
-			File = &Data.File->File();
+			if ( Data.ToFlush ) {
+				ToFlush = true;
+				File = &Data.File->File();
 
-			Data.ToFlush = false;
-			List_.Store( Data, FlusherData_.Row );
+				Data.ToFlush = false;
+				List_.Store( Data, FlusherData_.Row );
+			}
+
+			FlusherData_.Row = Queue_.Previous( FlusherData_.Row );
 		}
-
-		FlusherData_.Row = Queue_.Previous( FlusherData_.Row );
 	}
 
 	Unlock_();
@@ -256,7 +257,7 @@ inline static void LaunchFlusher_( void )
 		ERRc();
 #endif
 	if ( FlusherData_.Row == NONE )
-		mtk::Launch( Flusher_, NULL );
+		mtk::Launch( Flusher_, NULL );	// Le verrou est posé, donc ne fait rien tant que l'appelenat n'ôte pas le verrou.
 
 	FlusherData_.Row = Queue_.Last();
 #endif

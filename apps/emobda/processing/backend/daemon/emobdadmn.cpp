@@ -64,17 +64,16 @@ public:
 	{
 		Server.Process( TimeOut );
 	}
-};
+
+} Kernel_;
 
 void Main(
 	int argc,
 	const char *argv[] )
 {
-	kernel___ Kernel;
+	::Kernel_.Init(1234);
 
-	Kernel.Init(1234);
-
-	Kernel.Process( SCK_INFINITE );
+	::Kernel_.Process( SCK_INFINITE );
 }
 
 int main(
@@ -89,5 +88,3 @@ ERRFEnd
 ERRFEpilog
 	return ERRExitValue;
 }
-
-

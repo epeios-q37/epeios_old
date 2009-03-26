@@ -36,6 +36,8 @@
 // #define ADDRESS	"10.0.2.2:1234"		// Logiplus.
 #define ADDRESS	"localhost:1234"	// Local
 
+#define DEFAULT_LOCATION	"d:\\emobda\\test"
+
 
 #define KERNEL_DEFAULT_LANGUAGE	lgg::lEnglish
 namespace kernel {
@@ -253,13 +255,13 @@ namespace kernel {
 		void UpdateDecks( void );
 		void ApplyDatabase( void )
 		{
-			CreateDatabase( str::string( "h:\\temp\\emobda" ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
+			CreateDatabase( str::string( DEFAULT_LOCATION ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
 
 			_SwitchTo( cStructureView );
 		}
 		void BrowseDatabase( void )
 		{
-			OpenDatabase( str::string( "h:\\temp\\emobda" ) );
+			OpenDatabase( str::string( DEFAULT_LOCATION ) );
 
 			_SwitchTo( cStructureView );
 		}

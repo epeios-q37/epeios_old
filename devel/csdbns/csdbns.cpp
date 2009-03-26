@@ -60,6 +60,7 @@ using namespace csdbns;
 #ifdef CPE__T_MT
 #include "mtx.h"
 #include "mtk.h"
+#include "lstbch.h"
 #endif
 
 #ifdef CPE__T_CONSOLE
@@ -170,7 +171,6 @@ bso::bool__ csdbns::listener___::Process(
 {
 	bso::bool__ Continue = true;
 ERRProlog
-	void *UP = NULL;
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
 	action__ Action = a_Undefined;
 ERRBegin
@@ -178,9 +178,16 @@ ERRBegin
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
-		UP = Functions.PreProcess( Socket );
+			/* Bien que '_UP' et 'Functions' ne soient utilisés que dans cette fonction,
+			ils sont stockés dans l'objet même, pour être disponible lors de l'appel du destructeur.
+			On peut alors appeler le 'PostProcess' de l'utilisateur, lui permettant de détruire
+			correctement l'objet qu'il a crée (référencé par 'UP'), même lors d'un ^C,
+			qui nous éjecte directement de cette fonction, mais provoque quand même un appel du destructeur. */
 
-		while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
+		_UP = Functions.PreProcess( Socket );
+		_UserFunctions = &Functions;
+
+		while ( ( Action = Functions.Process( Socket, _UP ) ) == aContinue );
 
 		switch( Action ) {
 		case aContinue:
@@ -198,19 +205,104 @@ ERRBegin
 
 ERRErr
 ERREnd
-	if ( UP != NULL )
-		Functions.PostProcess( UP );
+	if ( _UserFunctionsCalled() ) {
+		Functions.PostProcess( _UP );
+		_UP = NULL;
+		_UserFunctions = NULL;	// Pour empêcher un autre appel au 'PostProcess' lors de l'appel du destructeur.
+	}
+
 ERREpilog
 	return Continue;
 }
 
 #ifdef CPE__T_MT
+
 struct socket_data__
 {
 	socket_user_functions__ *Functions;
 	sck::socket__ Socket;
 	mtx::mutex_handler__ Mutex;
 };
+
+/* Les objets et fonctions qui suivent sont pour permettre aux objets utilisateurs d'être
+détruits correctement même en cas de ^C */
+
+struct repository_item__ {
+	socket_user_functions__ *UserFunctions;
+	void *UP;
+};
+
+E_ROW( rrow__ );
+
+typedef lstbch::E_LBUNCHt_( repository_item__, rrow__ ) repository_;
+E_AUTO( repository );
+
+repository Repository_;
+
+mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
+
+inline static void Lock_( void )
+{
+	mtx::Lock( Mutex_ );
+}
+
+inline static void Unlock_( void )
+{
+	mtx::Unlock( Mutex_ );
+}
+
+
+inline static rrow__ New_( const repository_item__ &Item )
+{
+	rrow__ Row = NULL;
+
+	Lock_();
+
+	Row = Repository_.New();
+
+	Repository_.Store( Item, Row );
+
+	Unlock_();
+
+	return Row;
+}
+
+inline static void UnsafeClean_( rrow__ Row )
+{
+	repository_item__ Item;
+
+	Repository_.Recall( Row, Item );
+
+	Item.UserFunctions->PostProcess( Item.UP );
+
+	Repository_.Delete( Row );
+}
+
+inline static void Clean_( rrow__ Row )
+{
+	Lock_();
+
+	UnsafeClean_( Row );
+
+	Unlock_();
+}
+
+inline static void Clean_( void )
+{
+	Lock_();
+
+	rrow__ Row = Repository_.First();
+
+	while ( Row != NONE ) {
+		UnsafeClean_( Row );
+
+		Row = Repository_.Next( Row );
+	}
+
+	Repository_.Init();
+
+	Unlock_();
+}
 
 static void Traiter_( void *PU )
 {
@@ -221,6 +313,8 @@ ERRFProlog
 	socket__ Socket = Data.Socket;
 	void *UP = NULL;
 	action__ Action = a_Undefined;
+	rrow__ Row = NONE;
+	repository_item__ Item;
 ERRFBegin
 	mtx::Unlock( Data.Mutex );
 
@@ -228,11 +322,16 @@ ERRFBegin
 	ERRBegin
 		UP = Functions.PreProcess( Socket );
 
+		Item.UserFunctions = &Functions;
+		Item.UP = UP;
+
+		Row = New_( Item );
+
 		while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
 	ERRErr
 	ERREnd
-		if ( UP != NULL )
-			Functions.PostProcess( UP );
+		if ( Row != NONE )
+			Clean_( Row );
 	ERREpilog
 ERRFErr
 ERRFEnd
@@ -301,11 +400,22 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+#ifdef CPE__T_MT
+		Repository_.reset( false );
+		Repository_.Init();
+		Mutex_ = mtx::Create( mtx::mOwned );
+#endif
 	}
 	~csdbnspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
+#ifdef CPE__T_MT
+		Clean_();
+
+		if ( Mutex_ != MTX_INVALID_HANDLER )
+			mtx::Delete( Mutex_ );
+#endif
 	}
 };
 

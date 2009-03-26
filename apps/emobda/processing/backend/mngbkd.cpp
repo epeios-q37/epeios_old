@@ -818,5 +818,6 @@ public:
 		::Messages_.Init( m_amount );
 	}
 	~starter( void )
-	{}
+	{
+	}
 } Starter_;

@@ -1,5 +1,11 @@
 $Id$
 
+26/03/2009 :
+	- CSDBNS :
+		- Les objets utilisateurs sont maintenant détruits correctement même en ces de ^C.
+	- FLM :
+		- Correction bogue 'flusher'.
+
 11/03/2009 :
 	- NSXPCM :
 		- Gestion plus poussée des erreurs de 'GetAttribute( nsIDOMNode *, ...)'.

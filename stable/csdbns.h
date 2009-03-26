@@ -106,6 +106,12 @@ namespace csdbns {
 		/* Retourne une socket sur une connection. FONCTION BLOQUANTE.
 		Lorsque 'IgnorerErreur' à vrai, toute les erreurs sont ignorées, ceci pour garantir
 		la présence du processus d'écoute. */
+		socket_user_functions__ *_UserFunctions;
+		void *_UP;
+		bso::bool__ _UserFunctionsCalled( void ) const	// Retourne 'true', si une fonction utilisateurs a été appelée.
+		{
+			return _UserFunctions != NULL;
+		}
 		socket__ _Interroger(
 			err::handle ErrHandle,
 			sck::duration__ TimeOut );
@@ -116,9 +122,14 @@ namespace csdbns {
 			{
 				if ( Socket_ != SCK_INVALID_SOCKET )
 					Close( Socket_ );
+
+				if ( _UserFunctionsCalled() )
+					_UserFunctions->PostProcess( _UP );	// Même si 'UP' != NULL;
 			}
 
 			Socket_ = SCK_INVALID_SOCKET;
+			_UserFunctions = NULL;
+			_UP = NULL;
 		}
 		listener___( void )
 		{
