@@ -225,6 +225,8 @@ namespace csdbns {
 			if ( UP == NULL )
 				ERRc();
 
+			UserFunctions->PostProcess( ((_flow_data__ *)UP)->UP );
+
 			delete (_flow_data__ *)UP;
 		}
 	public:

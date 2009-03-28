@@ -261,12 +261,13 @@ ERREpilog
 
 	E_AUTO( core)
 
-	class _functions__
+	class _functions___
 	: public csdbns::user_functions__
 	{
 	private:
-		core_ *_Core;
+		core _Core;
 		user_functions__ *_Functions;
+		void _Clean( void );	// Appelle tout le 'postProcess' pour tous les objets utilisateurs.
 	protected:
 		virtual void *CSDPreProcess( flw::ioflow__ &Flow )
 		{
@@ -288,13 +289,13 @@ ERREpilog
 			Flow.Read( sizeof( Id ), &Id );
 
 			if ( Id == CSDSNS_UNDEFINED ) {
-				Id = _Core->New();
+				Id = _Core.New();
 				Flow.Write( &Id, sizeof( Id ) );
 				UP = _Functions->PreProcess( Flow );
-				_Core->Store( UP, Id );
+				_Core.Store( UP, Id );
 				_Functions->Process( Flow, UP );
 			} else {
-				if ( !_Core->TestAndGet( Id, UP ) ) {
+				if ( !_Core.TestAndGet( Id, UP ) ) {
 					Flow.Put( (flw::datum__)-1 );
 					Flow.Synchronize();
 					Action = aStop;
@@ -307,10 +308,9 @@ ERREpilog
 				case aContinue:
 					break;
 				case aStop:
-					if ( UP != NULL )
-						_Functions->PostProcess( UP );
+					_Functions->PostProcess( UP );
 					if ( Id != CSDSNS_UNDEFINED )
-						_Core->Delete( Id );
+						_Core.Delete( Id );
 					break;
 				default:
 					ERRu();
@@ -322,16 +322,33 @@ ERREpilog
 		}
 		virtual void CSDPostProcess( void *UP )
 		{
-#ifdef CSDSNS_DBG
-			ERRc();
-#endif
+			if ( UP != NULL )
+				ERRc();
 		}
 	public:
-		void Init(
-			core_ &Core,
-			user_functions__ &Functions )
+		void reset( bso::bool__ P = true )
 		{
-			_Core = &Core;
+			if ( P )
+				_Clean();
+
+			_Core.reset( P );
+			_Functions = NULL;
+		}
+		_functions___( void)
+		{
+			reset( false );
+		}
+		~_functions___( void)
+		{
+			reset();
+		}
+		void Init(
+			user_functions__ &Functions,
+			log_functions__ &LogFunctions )
+		{
+			reset();
+
+			_Core.Init( LogFunctions );
 			_Functions = &Functions;
 		}
 	};
@@ -341,14 +358,14 @@ ERREpilog
 	{
 	private:
 		csdbns::server___ _Server;
-		_functions__ _Functions;
+		_functions___ _Functions;
 	public:
 		void Init(
 			service__ Service,
 			user_functions__ &UserFunctions,
-			core_ &Core )
+			log_functions__ &LogFunctions )
 		{
-			_Functions.Init( Core, UserFunctions );
+			_Functions.Init( UserFunctions, LogFunctions );
 
 			_Server.Init( Service, _Functions );
 		}

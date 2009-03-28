@@ -219,7 +219,7 @@ is not concerned by the 'ITN' error. Concenrs the whole software, and
 not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
 #ifdef XXX_DBG
 	if ( Majeur != err::itn )
-		this->Major = Majeur;	// Silly, but is only goal is to allox the insertion of a breakpoint.
+		this->Major = ( this->Major == Majeur ? Majeur : this->Major );	// Silly, but is only goal is to allow the insertion of a breakpoint.
 	else
 		this->Major = err::itn;	// Silly too, because same goal.
 #endif

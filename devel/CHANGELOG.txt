@@ -2,6 +2,14 @@ $Id$
 
 26/03/2009 :
 	- CSDBNS :
+		- Les objets utilisateurs sont maintenant détruits correctement même en ces de ^C (contournement bogue VC++ 9).
+	- CSDSNS :
+		- L'objet 'core' n'a plus a être crée par l'utilisateur.
+	- ERR :
+		- Correction du bogue provoqué par le code facilitant l'insertion de points d'arrêts.
+		
+26/03/2009 :
+	- CSDBNS :
 		- Les objets utilisateurs sont maintenant détruits correctement même en ces de ^C.
 	- FLM :
 		- Correction bogue 'flusher'.

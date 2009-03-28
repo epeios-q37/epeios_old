@@ -348,6 +348,8 @@ static void Dump_(
 	if ( Fields.Amount() != Data.Amount() )
 		ERRc();
 
+	Datum.Init( Data );
+
 	Writer.PushTag( "Record" );
 
 	PutId_( "Id", Record, Writer );

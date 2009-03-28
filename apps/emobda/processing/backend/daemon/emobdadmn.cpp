@@ -58,7 +58,7 @@ public:
 	{
 		Functions.Init( );
 		Core.Init( ::LogFunctions );
-		Server.Init( Service, Functions, Core );
+		Server.Init( Service, Functions, ::LogFunctions );
 	}
 	void Process( sck::duration__ TimeOut )
 	{

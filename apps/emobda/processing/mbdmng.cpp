@@ -38,6 +38,8 @@ ERRBegin
 	RawDatum.Init();
 
 	Engine.Retrieve( Row, RawDatum );
+
+	Extract( RawDatum, Record );
 ERRErr
 ERREnd
 ERREpilog
@@ -59,7 +61,7 @@ ERREpilog
 	return RecordId;
 }
 
-const datum_ mbdmng::manager_::_GetDatum(
+const datum_ &mbdmng::manager_::_GetDatum(
 	dbstbl::rrow__ Row,
 	datum_ &Datum ) const
 {
@@ -202,6 +204,8 @@ ERRBegin
 	Record.Init();
 	
 	Record.GetStaticPart().RecordId = RecordId;
+
+	Row = FieldRows.First();
 
 	while ( Row != NONE ) {
 		FieldRow = FieldRows( Row );

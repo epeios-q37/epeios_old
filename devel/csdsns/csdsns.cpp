@@ -77,6 +77,19 @@ const char *csdsns::GetLogLabel( log__ Log )
 	}
 }
 
+void csdsns::_functions___::_Clean( void )
+{
+	epeios::row__ Row = _Core.UPs.First();
+
+	while ( Row != NONE ) {
+		_Functions->PostProcess( _Core.UPs( Row ) );
+
+		Row = _Core.UPs.Next( Row );
+	}
+
+	_Core.reset();
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

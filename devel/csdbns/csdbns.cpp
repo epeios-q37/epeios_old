@@ -227,17 +227,14 @@ struct socket_data__
 /* Les objets et fonctions qui suivent sont pour permettre aux objets utilisateurs d'être
 détruits correctement même en cas de ^C */
 
-struct repository_item__ {
+struct csdbns_repository_item__ {
 	socket_user_functions__ *UserFunctions;
 	void *UP;
 };
 
 E_ROW( rrow__ );
 
-typedef lstbch::E_LBUNCHt_( repository_item__, rrow__ ) repository_;
-E_AUTO( repository );
-
-repository Repository_;
+static lstbch::E_LBUNCHt( csdbns_repository_item__, rrow__ ) Repository_;
 
 mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
 
@@ -252,7 +249,7 @@ inline static void Unlock_( void )
 }
 
 
-inline static rrow__ New_( const repository_item__ &Item )
+inline static rrow__ New_( const csdbns_repository_item__ &Item )
 {
 	rrow__ Row = NULL;
 
@@ -269,7 +266,7 @@ inline static rrow__ New_( const repository_item__ &Item )
 
 inline static void UnsafeClean_( rrow__ Row )
 {
-	repository_item__ Item;
+	csdbns_repository_item__ Item;
 
 	Repository_.Recall( Row, Item );
 
@@ -314,7 +311,7 @@ ERRFProlog
 	void *UP = NULL;
 	action__ Action = a_Undefined;
 	rrow__ Row = NONE;
-	repository_item__ Item;
+	csdbns_repository_item__ Item;
 ERRFBegin
 	mtx::Unlock( Data.Mutex );
 

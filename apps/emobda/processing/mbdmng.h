@@ -52,7 +52,7 @@ namespace mbdmng {
 			dbstbl::rrow__ Row,
 			record_ &Record ) const;
 		record_id__ _GetRecordId( dbstbl::rrow__ Row ) const;
-		const datum_ _GetDatum(
+		const datum_ &_GetDatum(
 			dbstbl::rrow__ Row,
 			datum_ &Datum ) const;
 		bso::bool__ _ExportStructure( void );
