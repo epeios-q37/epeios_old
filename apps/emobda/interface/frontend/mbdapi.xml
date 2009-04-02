@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 17/03/2009 15:37:59. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 02/04/2009 08:44:18. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -8,10 +8,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Version>0.2.2</Version>
 			<Author>
 				<Name>Claude SIMON</Name>
-				<EMail>csimon@epeios.org</EMail>
+				<EMail>csimon@zeusw.org</EMail>
 			</Author>
 			<Copyright>
-				<Owner>Claude SIMON (csimon@epeios.org)</Owner>
+				<Owner>Claude SIMON (csimon@zeusw.org)</Owner>
 				<Date>2001-2006</Date>
 			</Copyright>
 		</Generator>
@@ -19,8 +19,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>17/03/2009</Date>
-		<Time>15:37:59</Time>
+		<Date>02/04/2009</Date>
+		<Time>08:44:18</Time>
 	</Misc>
 	<Messages Amount="20">
 		<Message Content="_UnknowObjectType"/>
@@ -276,8 +276,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 						</In>
 						<Out>
 							<Parameter Discriminator="1" Position="Last" Type="Static">
-								<Name>id32</Name>
-								<ID>14</ID>
+								<Name>id16</Name>
+								<ID>11</ID>
 							</Parameter>
 						</Out>
 					</Parameters>
@@ -294,8 +294,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 						</In>
 						<Out>
 							<Parameter Discriminator="1" Position="Last" Type="Bunch">
-								<Name>ids32</Name>
-								<ID>15</ID>
+								<Name>ids16</Name>
+								<ID>12</ID>
 							</Parameter>
 						</Out>
 					</Parameters>
@@ -314,8 +314,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 								<ID>15</ID>
 							</Parameter>
 							<Parameter Discriminator="3" Type="Bunch">
-								<Name>ids32</Name>
-								<ID>15</ID>
+								<Name>ids16</Name>
+								<ID>12</ID>
 							</Parameter>
 						</In>
 						<Out>

@@ -143,7 +143,7 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableFieldDatumIndex.Seek( RawDatum, dbsidx::bLesser, 2, Sign );
+	RecordRow = Engine.TableRecordFieldIndex.Seek( RawDatum, dbsidx::bLesser, 2, Sign );
 
 	if ( RecordRow != NONE ) {
 		switch( Sign ) {
@@ -160,9 +160,22 @@ ERRBegin
 			break;
 		}
 
-		LastRecordRow = Engine.TableRecordFieldIndex.Seek( dbsidx::bGreater, RawDatum, 2 );
+		LastRecordRow = Engine.TableRecordFieldIndex.Seek( RawDatum, dbsidx::bGreater, 2, Sign );
 
-		LastRecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );	// Peut être 'NONE' sans problème.
+		switch( Sign ) {
+		case -1:
+			ERRc();
+			break;
+		case 0:
+			LastRecordRow = NONE;
+			break;
+		case 1:
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
 	}
 
 	while ( RecordRow != LastRecordRow ) {

@@ -598,7 +598,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Request.Id32Out() = *Manager.AddRecord( Data, TableRow, FieldRows );
+	Request.Id16Out() = *Manager.AddRecord( Data, TableRow, FieldRows );
 ERRErr
 ERREnd
 ERREpilog
@@ -621,7 +621,7 @@ static message__ Convert_(
 }
 
 static message__ Convert_(
-	const bkdmng::ids32_ &Ids,
+	const bkdmng::ids16_ &Ids,
 	record_ids_ &RecordIds )
 {
 	epeios::row__ Row = Ids.First();
@@ -648,7 +648,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Manager.GetRecords( TableRow, *(record_ids_ *)&Request.Ids32Out() );
+	Manager.GetRecords( TableRow, *(record_ids_ *)&Request.Ids16Out() );
 
 ERRErr
 ERREnd
@@ -673,7 +673,7 @@ ERRBegin
 
 	RecordIds.Init();
 
-	if ( ( Message = Convert_( Request.Ids32In(), RecordIds ) ) != mOK )
+	if ( ( Message = Convert_( Request.Ids16In(), RecordIds ) ) != mOK )
 		ERRReturn;
 
 	if ( !Manager.TableExists( TableRow ) ) {
@@ -764,17 +764,17 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cId32,		// Table row.
 			bkdmng::cItems32,	// Field row and corresponding datum.
 		bkdmng::cEnd,
-			bkdmng::cId32,			// Record id.
+			bkdmng::cId16,			// Record id.
 		bkdmng::cEnd );
 	Module.Add( D( GetRecords ),
 			bkdmng::cId32,		// Table row.
 		bkdmng::cEnd,
-			bkdmng::cIds32,		// Record ids,
+			bkdmng::cIds16,		// Record ids,
 		bkdmng::cEnd );
 	Module.Add( D( GetRecordsData ),
 			bkdmng::cId32,		// Table row.
 			bkdmng::cIds32,		// Field rows.
-			bkdmng::cIds32,		// Record ids,
+			bkdmng::cIds16,		// Record ids,
 		bkdmng::cEnd,
 			bkdmng::cXStrings,	// Data.
 		bkdmng::cEnd );

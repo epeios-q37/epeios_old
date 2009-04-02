@@ -321,9 +321,9 @@ public:
 			15,0, 19,19,9,
 			14,14,18,18,0, 14,
 			0, 26,
-			14,26,0, 14,
-			14,0, 15,
-			14,15,15,0, 20,
+			14,26,0, 11,
+			14,0, 12,
+			14,15,12,0, 20,
 		};
 
 		this->Backend = &Backend;
@@ -592,7 +592,7 @@ public:
 	bso::bool__ InsertRecord( 
 		const bkdacc::id32__ &In1,
 		const bkdacc::items32_ &In2,
-		bkdacc::id32__ &Out1 ) const
+		bkdacc::id16__ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[10] );
 		Common_->Backend->Id32In( In1 );
@@ -600,33 +600,33 @@ public:
 
 		Common_->Backend->EndOfInParameters();
 
-		Common_->Backend->Id32Out( Out1 );
+		Common_->Backend->Id16Out( Out1 );
 
 		return Common_->Backend->Handle();
 	}
 	bso::bool__ GetRecords( 
 		const bkdacc::id32__ &In1,
-		bkdacc::ids32_ &Out1 ) const
+		bkdacc::ids16_ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
 
-		Common_->Backend->Ids32Out( Out1 );
+		Common_->Backend->Ids16Out( Out1 );
 
 		return Common_->Backend->Handle();
 	}
 	bso::bool__ GetRecordsData( 
 		const bkdacc::id32__ &In1,
 		const bkdacc::ids32_ &In2,
-		const bkdacc::ids32_ &In3,
+		const bkdacc::ids16_ &In3,
 		bkdacc::xstrings_ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->Ids32In( In2 );
-		Common_->Backend->Ids32In( In3 );
+		Common_->Backend->Ids16In( In3 );
 
 		Common_->Backend->EndOfInParameters();
 

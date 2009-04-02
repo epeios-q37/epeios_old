@@ -41,8 +41,8 @@ namespace mbdbkd{
 	BKDACC_T8( field_id );
 #define UNDEFINED_FIELD_ID	((mbdbkd::field_id__)BKDACC_UNDEFINED_ID8 )
 
-	BKDACC_T32( record );
-#define UNDEFINED_RECORD	((mbdbkd::record__)BKDACC_UNDEFINED_ID32 )
+	BKDACC_T16( record );
+#define UNDEFINED_RECORD	((mbdbkd::record__)BKDACC_UNDEFINED_ID16 )
 
 	class backend___
 	{

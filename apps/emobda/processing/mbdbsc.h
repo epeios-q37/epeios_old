@@ -47,7 +47,7 @@ namespace mbdbsc {
 		str::string_ &LocalizedRootFileName );
 
 
-	typedef bso::ulong__ record_id_t__;
+	typedef bso::ushort__ record_id_t__;
 	E_TYPEDEF( record_id_t__, record_id__ );
 #define MBDBSC_UNDEFINED_RECORD_ID	((record_id__)BSO_USHORT_MAX)
 	typedef bch::E_BUNCH_( record_id__ ) record_ids_;
@@ -182,7 +182,7 @@ namespace mbdbsc {
 		const raw_datum_ &D1,
 		epeios::row__ O1,
 		const raw_datum_ &D2,
-		epeios::row__ &O2 );
+		epeios::row__ O2 );
 
 	class record_ {
 	public:
@@ -282,9 +282,14 @@ namespace mbdbsc {
 		return Result;
 	}
 
-	void Extract(
+	inline void Extract(
 		const raw_datum_ &RawDatum,
-		record_ &Record );
+		record_ &Record )
+	{
+		ExtractRecordStaticPart( RawDatum, Record.GetStaticPart() );
+
+		Record.Datum.Append( RawDatum, RawDatum.First( sizeof( record_static_part__ ) ) );
+	}
 
 	inline void Convert(
 		const record_ &Record,

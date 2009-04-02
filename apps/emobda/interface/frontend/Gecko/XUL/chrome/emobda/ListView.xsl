@@ -26,6 +26,7 @@
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
 	<xsl:template match="/emobda">
 		<xsl:apply-templates select="Structure"/>
+		<xsl:apply-templates select="Content"/>
 	</xsl:template>
 	<xsl:template match="Structure">
 		<xsl:apply-templates select="Database"/>
@@ -38,7 +39,6 @@
 			<xsl:call-template name="GetCurrentTable"/>
 		</xsl:variable>
 		<xsl:apply-templates select="Table[@Row=$CurrentTable]"/>
-		<xsl:element name="treechildren"/>
 	</xsl:template>
 	<xsl:template match="Table">
 		<xsl:apply-templates select="Fields"/>
@@ -57,6 +57,28 @@
 				<xsl:value-of select="Name"/>
 			</xsl:attribute>
 			<xsl:attribute name="flex">1</xsl:attribute>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Content">
+		<xsl:apply-templates select="Records"/>
+	</xsl:template>
+	<xsl:template match="Records">
+		<xsl:element name="treechildren">
+			<xsl:apply-templates select="Record"/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Record">
+		<xsl:element name="treeitem">
+			<xsl:element name="treerow">
+				<xsl:apply-templates select="Datum"/>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Datum">
+		<xsl:element name="treecell">
+			<xsl:attribute name="label">
+				<xsl:value-of select="."/>
+			</xsl:attribute>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

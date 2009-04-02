@@ -62,28 +62,6 @@ const str::string_ &mbdbsc::BuildLocatedTableFieldDatumIndexRootFileName(
 	return BuildLocatedRootFileName_( Location, MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
-
-
-
-
-void mbdbsc::Extract(
-	const raw_datum_ &RawDatum,
-	record_ &Record )
-{
-ERRProlog
-	record_static_part__ RecordStaticPart;
-	datum Datum;
-ERRBegin
-	ExtractRecordStaticPart( RawDatum, RecordStaticPart );
-
-	Datum.Init();
-
-	Datum.Append( RawDatum, RawDatum.First( sizeof( record_static_part__ ) ) );
-ERRErr
-ERREnd
-ERREpilog
-}
-
 static inline bso::char__ ToUpper_( bso::char__ C )
 {
 	if ( ( C > 0 ) && islower( C ) )
@@ -103,11 +81,11 @@ bso::sign__ mbdbsc::Compare(
 	const raw_datum_ &D1,
 	epeios::row__ O1,
 	const raw_datum_ &D2,
-	epeios::row__ &O2 )
+	epeios::row__ O2 )
 {
 	bso::sign__ Result = 0;
 
-	while ( ( O1 != NONE ) && ( O2 != NONE ) && ( ( Result == Compare_( D1( O1 ), D2( O2 ) ) == 0 ) ) ) {
+	while ( ( O1 != NONE ) && ( O2 != NONE ) && ( ( Result = Compare_( D1( O1 ), D2( O2 ) ) ) == 0 ) ) {
 		O1 = D1.Next( 01 );
 		O2 = D2.Next( O2 );
 	}

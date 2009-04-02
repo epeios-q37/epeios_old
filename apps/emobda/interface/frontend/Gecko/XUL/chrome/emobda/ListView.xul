@@ -36,7 +36,7 @@
 	</commandset>
 	<vbox flex="1" >
 		<description>List view !</description>
-		<tree id="treContent" enableColumnDrag="true"/>
+		<tree id="treContent" enableColumnDrag="true" flex="1"/>
 	</vbox>
 </page>
 	
