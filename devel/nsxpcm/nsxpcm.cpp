@@ -926,6 +926,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eInput;
 	else if ( !strcmp( RawEvent, "click" ) )
 		Event = eClick;
+	else if ( !strcmp( RawEvent, "dblclick" ) )
+		Event = eDblClick;
 	else if ( !strcmp( RawEvent, "focus" ) )
 		Event = eFocus;
 	else if ( !strcmp( RawEvent, "blur" ) )
@@ -951,6 +953,9 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 		break;
 	case eClick:
 		NSXPCMOnClick();
+		break;
+	case eDblClick:
+		NSXPCMOnDblClick();
 		break;
 	case eFocus:
 		NSXPCMOnFocus();
@@ -999,6 +1004,10 @@ void nsxpcm::element_core__::Init(
 
 	if ( Events & efClick )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, false ) != NS_OK )
+			ERRc();
+
+	if ( Events & efDblClick )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "dblclick" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efFocus )

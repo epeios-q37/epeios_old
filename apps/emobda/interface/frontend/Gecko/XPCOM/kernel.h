@@ -50,6 +50,7 @@ namespace kernel {
 		cItemForm,
 		cListView,
 		cRecordForm,
+		cRecordView,
 		c_amount,
 		c_Undefined
 	};
@@ -265,10 +266,26 @@ namespace kernel {
 
 			_SwitchTo( cStructureView );
 		}
+		void DefineDatabase( void )
+		{
+			_SwitchTo( cStructureView );
+		}
 		void BrowseStructureItem( void )
 		{
 			SetCurrent();
 			_SwitchTo( cStructureItemView );
+		}
+		void DefineStructureItem( void )
+		{
+			SetTemporaryMode( kernel::tmModification );
+
+			if ( GetCurrent().Field != UNDEFINED_FIELD )
+				DefineField();
+			else if ( GetCurrent().Table != UNDEFINED_TABLE )
+				DefineTable();
+			else
+				ERRc();
+
 		}
 		void ApplyStructureItem( void );
 		void DropStructureItem( void )
@@ -283,9 +300,14 @@ namespace kernel {
 		{
 			_SwitchTo( cRecordForm );
 		}
+		void BrowseRecord( void )
+		{
+			_SwitchTo( cRecordView );
+		}
 		void FillStructureView( void );
 		void FillTableMenu( void );
 		void FillRecordForm( void );
+		void FillRecordView( void );
 		void FillListView( void );
 		void UpdateUI( void )
 		{

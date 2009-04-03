@@ -35,25 +35,31 @@
 	<script type="text/javascript">registeringStart();</script>
 	<broadcasterset>
 		<broadcaster id="bcrDatabaseOpened"/>
+		<broadcaster id="bcrTableSelected"/>
+		<broadcaster id="bcrRecordSelected"/>
 	</broadcasterset>
 	<commandset>
 		<command id="cmdCreateDatabase"/>
 		<command id="cmdOpenDatabase"/>
+		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
-		<command id="cmdDefineRecord"/>
+		<command id="cmdDefineRecord" observes="TableSelected"/>
+		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
 	<menubar>
 		<menu label="Database">
 			<menupopup>
-				<menuitem label="New ..." command="cmdCreateDatabase"/>
-				<menuitem label="Open ..." command="cmdOpenDatabase"/>
-				<menuitem label="Close ..." command="cmdCloseDatabase"/>
+				<menuitem label="|New|" command="cmdCreateDatabase"/>
+				<menuitem label="|Open|" command="cmdOpenDatabase"/>
+				<menuitem label="|Structure|" command="cmdDefineDatabase"/>
+				<menuitem label="|Close|" command="cmdCloseDatabase"/>
 			</menupopup>
 		</menu>
 		<menu label="|Tables|" id="mnuTable"/>
 		<menu label="|Data|">
 			<menupopup>
 				<menuitem label="|Input|" command="cmdDefineRecord"/>
+				<menuitem label="|Browse|" command="cmdBrowseRecord"/>
 			</menupopup>
 		</menu>
 		<menu label="coucou">
@@ -79,6 +85,7 @@
 		<iframe id="pnlStructureFormAndView" src="StructureFormAndView.xul"/>
 		<iframe id="pnlListView" src="ListView.xul"/>
 		<iframe id="pnlRecordForm" src="RecordForm.xul"/>
+		<iframe id="pnlRecordView" src="RecordView.xul"/>
 	</deck>
 </window>
 	

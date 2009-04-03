@@ -140,7 +140,7 @@ namespace ui_base {
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( Kernel, Tree, Document, Id, nsxpcm::efSelect );
+		Register( Kernel, Tree, Document, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
 	}
 
 	inline void Register(

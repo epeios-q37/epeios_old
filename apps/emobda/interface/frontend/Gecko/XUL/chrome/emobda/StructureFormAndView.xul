@@ -46,8 +46,6 @@
 		<broadcaster id="bcrFieldDeletion" label="Delete field" observes="bcrItemBrowsing"/>
 	</broadcasterset>
 	<commandset>
-		<command id="cmdBrowseItem" observes="bcrItemBrowsing"/>
-		
 		<command id="cmdModifyDatabase" observes="bcrDatabaseModification"/>
 		<command id="cmdDeleteDatabase" observes="bcrDatabaseDeletion"/>
 		<command id="cmdCreateTable" observes="bcrTableCreation"/>
@@ -64,7 +62,7 @@
 		<vbox flex="1">
 			<groupbox flex="1">
 				<vbox flex="1">
-					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" command="cmdBrowseItem">
+					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" observes="bcrItemBrowsing">
 						<treecols>
 							<treecol id="myTree2-treeCol0" primary="true" label="Structure" flex="1"/>
 						</treecols>

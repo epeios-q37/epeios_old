@@ -132,6 +132,7 @@ namespace nsxpcm {
 		eCommand,
 		eInput,
 		eClick,
+		eDblClick,
 		eFocus,
 		eBlur,
 		eSelect,
@@ -151,6 +152,7 @@ namespace nsxpcm {
 		EF( Command ),
 		EF( Input ),
 		EF( Click ),
+		EF( DblClick ),
 		EF( Focus ),
 		EF( Blur ),
 		EF( Select ),
@@ -924,6 +926,10 @@ namespace nsxpcm {
 			ERRu();
 		}
 		virtual void NSXPCMOnClick( void )
+		{
+			ERRu();
+		}
+		virtual void NSXPCMOnDblClick( void )
 		{
 			ERRu();
 		}

@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!--
-	'ListView.xul' by Claude SIMON (http://zeusw.org/).
+	'RecordView.xul' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -23,21 +23,19 @@
 <!-- $Id$ -->
 
 <page
-	id="pgeListView"
-	title="List view"
+	id="pgeRecordView"
+	title="Record view"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window, 'ListView' );"
+	onload="register( window, 'RecordView' );"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>
 	</broadcasterset>
 	<commandset>
-		<command id="cmdSelectRecord"/>
 	</commandset>
 	<vbox flex="1" >
-		<description>List view !</description>
-		<tree id="treContent" enableColumnDrag="true" flex="1" command="cmdSelectRecord"/>
+		<description>Record view (XUL)</description>
+		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 	</vbox>
 </page>
 	

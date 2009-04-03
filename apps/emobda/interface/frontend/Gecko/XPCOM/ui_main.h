@@ -28,6 +28,8 @@ namespace ui_main {
 	using namespace ui_base;
 
 	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, table_selected_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, record_selected_broadcaster__ );
 
 	UI_TYPEDEF( menu__, table_menu__ );
 
@@ -35,9 +37,11 @@ namespace ui_main {
 
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
+	UI_ETYPEDEF( command__, define_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );
 
 	UI_ETYPEDEF( command__, define_record_command__ );
+	UI_ETYPEDEF( command__, browse_record_command__ );
 
 	UI_TYPEDEF( deck__, main_deck__ );
 
@@ -48,12 +52,18 @@ namespace ui_main {
 			struct database__ {
 				create_database_command__ Create;
 				open_database_command__ Open;
+				define_database_command__ Define;
 				close_database_command__ Close;
 			} Database;
-			define_record_command__ DefinedRecord;
+			struct record__ {
+				define_record_command__ Defined;
+				browse_record_command__ Browse;
+			} Record;
 		} Commands;
 		struct broadcasters__ {
 			database_opened_broadcaster__ DatabaseOpened;
+			table_selected_broadcaster__ TableSelected;
+			record_selected_broadcaster__ RecordSelected;
 		} Broadcasters;
 		table_menu__ TableMenu;
 		main_deck__ MainDeck;
@@ -61,6 +71,7 @@ namespace ui_main {
 			panel__
 				StructureFormAndView,
 				ListView,
+				RecordView,
 				RecordForm;
 		} Panels;
 		void Init( void )

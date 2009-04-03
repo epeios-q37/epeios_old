@@ -116,6 +116,8 @@ RBB
 		ui_lst_v::Register( Repository_.GetCurrentObject(), UI.ListView, Window );
 	else if ( !strcmp( UIDesignation, "RecordForm" ) )
 		ui_rcd_f::Register( Repository_.GetCurrentObject(), UI.RecordForm, Window );
+	else if ( !strcmp( UIDesignation, "RecordView" ) )
+		ui_rcd_v::Register( Repository_.GetCurrentObject(), UI.RecordView, Window );
 	else
 		ERRu();
 RR

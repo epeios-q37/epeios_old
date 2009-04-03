@@ -446,14 +446,19 @@ namespace dbstbl {
 		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
-			behavior__ EqualBehavior,
 			skip_level__ SkipLevel ) const
 		{
 			bso::sign__ Sign;
+			rrow__ Row = NONE;
 
 			_Test( mReadOnly );
 
-			return Seek( Datum, IRow, EqualBehavior, SkipLevel, Sign );
+			Row = Seek( Datum, IRow, bStop, SkipLevel, Sign );
+
+			if ( Sign != 0 )
+				Row = NONE;
+
+			return Row;
 		}
 		bso::sign__ Compare(
 			rrow__ RecordRow,
@@ -692,7 +697,6 @@ namespace dbstbl {
 		rrow__ Seek(
 			const datum_ &Datum,
 			irow__ IRow,
-			behavior__ EqualBahavior,
 			skip_level__ SkipLevel );
 		bso::sign__ Compare(
 			rrow__ RecordRow,

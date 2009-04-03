@@ -582,6 +582,26 @@ ERREnd
 ERREpilog
 }
 
+void kernel::kernel___::FillRecordView( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+	_DumpAsXML( XML );
+
+	Parameters.Init();
+
+	UI.RecordView.RecordBox.RemoveChildren();
+
+	UI.RecordView.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/RecordView.xsl" ), UI.Structure.Document, Parameters ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void kernel::kernel___::FillListView( void )
 {
 ERRProlog
@@ -676,7 +696,7 @@ ERRBegin
 
 			TableRow.Init();
 			Tree.GetCurrentItemAttribute( "TableRow", TableRow );
-			Table = ExtractTable( Row );
+			Table = ExtractTable( TableRow );
 		} else if ( Type == "Table" ) {
 			Row.Init();
 			Tree.GetCurrentItemAttribute( "Row", Row );
@@ -791,6 +811,7 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 	case cStructureView:
 		FillStructureView();
 		K().FillTableMenu();
+		UI.Main.Broadcasters.DatabaseOpened.Enable();
 		UI.Structure.Broadcasters.ItemBrowsing.Enable();
 		UI.Structure.Broadcasters.ItemEdition.Disable();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
@@ -802,12 +823,16 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
 		break;
 	case cListView:
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
 		K().FillListView();
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
 		break;
 	case cRecordForm:
 		K().FillRecordForm();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordForm );
+		break;
+	case cRecordView:
+		K().FillRecordView();
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordView );
 		break;
 	default:
 		ERRc();

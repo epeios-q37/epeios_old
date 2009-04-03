@@ -1,5 +1,11 @@
 $Id$
 
+03/04/2009 :
+	- DBSTBL :
+		- Modification des paramètres du 'Seek(...)' simplifié pour éviter des risques de bogues.
+	- NSXPCM :
+		- Ajout evènement 'DblClick' (double click).
+
 26/03/2009 :
 	- CSDBNS :
 		- Les objets utilisateurs sont maintenant détruits correctement même en ces de ^C (contournement bogue VC++ 9).

@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-	'ListView.xul' by Claude SIMON (http://zeusw.org/).
+	'RecordView.xsl' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -22,22 +21,16 @@
 
 <!-- $Id$ -->
 
-<page
-	id="pgeListView"
-	title="List view"
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window, 'ListView' );"
->
-	<script type="text/javascript" src="emobda.js"/>
-	<broadcasterset>
-	</broadcasterset>
-	<commandset>
-		<command id="cmdSelectRecord"/>
-	</commandset>
-	<vbox flex="1" >
-		<description>List view !</description>
-		<tree id="treContent" enableColumnDrag="true" flex="1" command="cmdSelectRecord"/>
-	</vbox>
-</page>
-	
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
+	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
+	<xsl:template match="/emobda">
+		<xsl:apply-templates select="Content"/>
+	</xsl:template>
+	<xsl:template match="Content">
+		<xsl:element name="html">
+			<xsl:element name="h1">
+				<xsl:text>Record view (XSL)!</xsl:text>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+</xsl:stylesheet>

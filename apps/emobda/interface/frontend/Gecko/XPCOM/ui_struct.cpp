@@ -84,7 +84,17 @@ void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 {
-	K().BrowseStructureItem();
+	switch ( Event ) {
+		case nsxpcm::eSelect:
+			K().BrowseStructureItem();
+			break;
+		case nsxpcm::eDblClick:
+			K().DefineStructureItem();
+			break;
+		default:
+			ERRc();
+			break;
+	}
 }
 
 /* UI Registrations */
