@@ -134,7 +134,6 @@ RBB
 
 	nsxpcm::GetJSConsole( Kernel.UI.Main.Window, &Console );
 
-	Repository_.GetCurrentObject().UpdateUI();
 	Repository_.DismissCurrentObject();
 
 	Kernel.DefineSession();

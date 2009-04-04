@@ -465,6 +465,19 @@ static void Convert_(
 	}
 }
 
+static void SetWith_(
+	const fields_ &Fields,
+	bkdmng::ids32_ &Ids )
+{
+	field_row__ Row = Fields.First();
+
+	while ( Row != NONE ) {
+		Ids.Append( *Row );
+
+		Row = Fields.Next( Row );
+	}
+}
+	
 
 DEC( GetFields )
 {
@@ -476,14 +489,17 @@ ERRBegin
 	TableRow = *Request.Id32In();
 	bkdmng::ids32_ &Fields = Request.Ids32Out();
 
-	if ( !Manager.TableExists( TableRow ) ) {
-		Message = mUnknownTable;
-		ERRReturn;	
-	}
+	if ( TableRow != NONE ) {
+		if ( !Manager.TableExists( TableRow ) ) {
+			Message = mUnknownTable;
+			ERRReturn;	
+		}
 
-	Table.Init( Manager.Structure.Tables );
+		Table.Init( Manager.Structure.Tables );
 
-	Convert_( Table( TableRow ).Fields, Fields );
+		Convert_( Table( TableRow ).Fields, Fields );
+	} else
+		SetWith_( Manager.Structure.Fields, Fields );
 ERRErr
 ERREnd
 ERREpilog
@@ -495,7 +511,8 @@ static message__ GetFieldsInfos_(
 	const mbdtbl::fields_ &Fields,
 	bkdmng::strings_ &Names,
 	bkdmng::strings_ &Comments,
-	bkdmng::ids8_ &Ids )
+	bkdmng::ids8_ &Ids,
+	bkdmng::ids32_ &Tables )
 {
 	ctn::E_CITEMt( mbdtbl::field_, mbdtbl::field_row__ ) Field;
 	epeios::row__ Row = FieldRows.First();
@@ -512,6 +529,7 @@ static message__ GetFieldsInfos_(
 		Names.Append( Field( FieldRow ).Name );
 		Comments.Append( Field( FieldRow ).Comment );
 		Ids.Append( *Field( FieldRow ).Id() );
+		Tables.Append( *Field( FieldRow ).TableRow() );
 
 
 		Row = FieldRows.Next( Row );
@@ -529,8 +547,9 @@ ERRBegin
 	bkdmng::strings_ &Names = Request.StringsOut();
 	bkdmng::strings_ &Comments = Request.StringsOut();
 	bkdmng::ids8_ &Ids = Request.Ids8Out();
+	bkdmng::ids32_ &Tables = Request.Ids32Out();
 
-	GetFieldsInfos_( Rows, Manager.Structure.Fields, Names, Comments, Ids );
+	GetFieldsInfos_( Rows, Manager.Structure.Fields, Names, Comments, Ids, Tables );
 ERRErr
 ERREnd
 ERREpilog
@@ -737,7 +756,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cIds8,		// 'id's.
 		bkdmng::cEnd );
 	Module.Add( D( GetFields ),
-			bkdmng::cId32,		// Table row.
+			bkdmng::cId32,		// Table row. Si == 'NONE', tous les champs sont retournés.
 		bkdmng::cEnd,
 			bkdmng::cIds32,		// 'row's.
 		bkdmng::cEnd );
@@ -747,6 +766,7 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cStrings,	// Noms.
 			bkdmng::cStrings,	// Commentaires.
 			bkdmng::cIds8,		// 'id's.
+			bkdmng::cIds32,		// 'Table's.
 		bkdmng::cEnd );
 	Module.Add( D( AddOrModifyField ),
 		bkdmng::cId32,			// Field row ('NONE' for creation).

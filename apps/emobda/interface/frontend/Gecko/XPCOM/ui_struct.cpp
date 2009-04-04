@@ -39,7 +39,7 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
 	K().SetTemporaryMode( kernel::tmCreation );
-	K().SetCurrent( target__() );
+	K().Target().reset();
 	K().DefineTable();
 }
 
@@ -56,7 +56,7 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
 	K().SetTemporaryMode( kernel::tmCreation );
-	K().SetCurrent( target__( UNDEFINED_FIELD, K().GetCurrent().Table ) );
+	K().Target().Set( UNDEFINED_FIELD );
 	K().DefineField();
 }
 

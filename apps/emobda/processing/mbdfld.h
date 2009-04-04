@@ -32,6 +32,7 @@
 namespace mbdfld {
 
 	using mbdbsc::field_row__;
+	using mbdbsc::table_row__;
 
 	using mbdbsc::table_id__;
 	using mbdbsc::field_id__;
@@ -41,6 +42,7 @@ namespace mbdfld {
 		struct s {
 			str::string_::s Name, Comment;
 			field_id__ Id;
+			table_row__ TableRow;
 		} &S_;
 		str::string_ Name, Comment;
 		field_core_( s &S )
@@ -54,6 +56,7 @@ namespace mbdfld {
 			Comment.reset( P );
 
 			S_.Id = MBDBSC_UNDEFINED_FIELD_ID;
+			S_.TableRow = NONE;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -66,6 +69,7 @@ namespace mbdfld {
 			Comment = FC.Comment;
 
 			S_.Id = FC.S_.Id;
+			S_.TableRow = FC.S_.TableRow;
 
 			return *this;
 		}
@@ -79,7 +83,8 @@ namespace mbdfld {
 		void Init(
 			const str::string_ &Name,
 			const str::string_ &Comment,
-			field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID )
+			field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID,
+			table_row__ TableRow = NONE )
 		{
 			Init();
 
@@ -87,12 +92,16 @@ namespace mbdfld {
 			this->Comment = Comment;
 
 			S_.Id = Id;
+			S_.TableRow = TableRow;
 
 		}
 		void Set(
 			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
+			if ( S_.TableRow == NONE )
+				ERRu();
+
 			if ( S_.Id == MBDBSC_UNDEFINED_FIELD_ID )
 				ERRu();
 
@@ -100,6 +109,7 @@ namespace mbdfld {
 			this->Comment = Comment;
 		}
 		E_RWDISCLOSE_( field_id__, Id );
+		E_RWDISCLOSE_( table_row__, TableRow );
 	};
 
 	typedef field_core_	field_;

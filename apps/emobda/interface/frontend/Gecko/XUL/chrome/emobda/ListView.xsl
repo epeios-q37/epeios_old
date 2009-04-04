@@ -69,6 +69,9 @@
 	</xsl:template>
 	<xsl:template match="Record">
 		<xsl:element name="treeitem">
+			<xsl:attribute name="Record">
+				<xsl:value-of select="@Id"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 				<xsl:apply-templates select="Datum"/>
 			</xsl:element>

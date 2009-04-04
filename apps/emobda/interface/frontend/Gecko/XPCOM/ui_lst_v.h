@@ -27,7 +27,7 @@
 namespace ui_lst_v {
 	using namespace ui_base;
 
-	UI_TYPEDEF( ui_base::tree__, content_tree__ );
+	UI_ETYPEDEF( ui_base::tree__, content_tree__ );
 
 	struct list_view__
 	: public _ui_core__,

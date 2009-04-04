@@ -318,7 +318,7 @@ public:
 			0, 15,
 			15,0, 19,19,9,
 			14,0, 15,
-			15,0, 19,19,9,
+			15,0, 19,19,9,15,
 			14,14,18,18,0, 14,
 			0, 26,
 			14,26,0, 11,
@@ -369,32 +369,32 @@ public:
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFieldsInfos";;
-		CommandDetail.Casts.Append( Parameters + 24, 5 );
+		CommandDetail.Casts.Append( Parameters + 24, 6 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "AddOrModifyField";;
-		CommandDetail.Casts.Append( Parameters + 29, 6 );
+		CommandDetail.Casts.Append( Parameters + 30, 6 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 35, 2 );
+		CommandDetail.Casts.Append( Parameters + 36, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "InsertRecord";;
-		CommandDetail.Casts.Append( Parameters + 37, 4 );
+		CommandDetail.Casts.Append( Parameters + 38, 4 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecords";;
-		CommandDetail.Casts.Append( Parameters + 41, 3 );
+		CommandDetail.Casts.Append( Parameters + 42, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecordsData";;
-		CommandDetail.Casts.Append( Parameters + 44, 5 );
+		CommandDetail.Casts.Append( Parameters + 45, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 
@@ -546,7 +546,8 @@ public:
 		const bkdacc::ids32_ &In1,
 		bkdacc::strings_ &Out1,
 		bkdacc::strings_ &Out2,
-		bkdacc::ids8_ &Out3 ) const
+		bkdacc::ids8_ &Out3,
+		bkdacc::ids32_ &Out4 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[7] );
 		Common_->Backend->Ids32In( In1 );
@@ -556,6 +557,7 @@ public:
 		Common_->Backend->StringsOut( Out1 );
 		Common_->Backend->StringsOut( Out2 );
 		Common_->Backend->Ids8Out( Out3 );
+		Common_->Backend->Ids32Out( Out4 );
 
 		return Common_->Backend->Handle();
 	}

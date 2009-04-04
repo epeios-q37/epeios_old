@@ -88,7 +88,7 @@ template <typename id> static inline void PutId_(
 	PutInt_( Name, **Id, Writer );
 }
 
-static void DumpFieldStructure_(
+static void DumpField_(
 	table__ Table,
 	field__ Field,
 	const bkdacc::string_ &Name,
@@ -96,7 +96,6 @@ static void DumpFieldStructure_(
 	field_id__ Id,
 	writer_ &Writer )
 {
-
 	Writer.PushTag( "Field" );
 
 	PutId_( "Row", Field, Writer );
@@ -115,8 +114,7 @@ static void DumpFieldStructure_(
 }
 
 
-static void DumpFieldsStructure_(
-	table__ Table,
+static void DumpFields_(
 	const fields_ &Fields,
 	backend___ &Backend,
 	writer_ &Writer )
@@ -124,6 +122,7 @@ static void DumpFieldsStructure_(
 ERRProlog
 	bkdacc::strings Names, Comments;
 	field_ids Ids;
+	tables Tables;
 	epeios::row__ Row = NONE;
 ERRBegin
 	Writer.PushTag( "Fields" );
@@ -132,13 +131,14 @@ ERRBegin
 	Names.Init();
 	Comments.Init();
 	Ids.Init();
+	Tables.Init();
 
-	Backend.GetFieldsInfos( Fields, Names, Comments, Ids );
+	Backend.GetFieldsInfos( Fields, Names, Comments, Ids, Tables );
 
 	Row = Fields.First();
 
 	while ( Row != NONE ) {
-		DumpFieldStructure_( Table, Fields( Row ), Names( Row ), Comments( Row ), Ids( Row ), Writer );
+		DumpField_( Tables( Row ), Fields( Row ), Names( Row ), Comments( Row ), Ids( Row ), Writer );
 
 		Row = Fields.Next( Row );
 	}
@@ -151,8 +151,7 @@ ERREpilog
 }
 
 
-static void DumpFieldsStructure_(
-	table__ Table,
+static void DumpFields_(
 	backend___ &Backend,
 	writer_ &Writer )
 {
@@ -161,16 +160,16 @@ ERRProlog
 ERRBegin	
 	Fields.Init();
 
-	Backend.GetFields( Table, Fields );
+	Backend.GetFields( UNDEFINED_TABLE, Fields );
 
-	DumpFieldsStructure_( Table, Fields, Backend, Writer );
+	DumpFields_( Fields, Backend, Writer );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 
-static void DumpTableStructure_(
+static void DumpTable_(
 	const bkdacc::string_ &Name,
 	const bkdacc::string_ &Comment,
 	table__ Table,
@@ -188,11 +187,9 @@ static void DumpTableStructure_(
 	Writer.PushTag( "Comment" );
 	Writer.PutValue( Comment );
 	Writer.PopTag();
-
-	DumpFieldsStructure_( Table, Backend, Writer );
 }
 
-static void DumpTablesStructure_(
+static void DumpTables_(
 	const bkdacc::strings_ &Names,
 	const bkdacc::strings_ &Comments,
 	const tables_ &Tables,
@@ -215,7 +212,7 @@ static void DumpTablesStructure_(
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		DumpTableStructure_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Backend, Writer );
+		DumpTable_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Backend, Writer );
 
 		Writer.PopTag();
 
@@ -223,7 +220,7 @@ static void DumpTablesStructure_(
 	}
 }
 
-static void DumpTablesStructure_(
+static void DumpTables_(
 	backend___ &Backend,
 	writer_ &Writer )
 {
@@ -250,7 +247,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	DumpTablesStructure_( Names, Comments, Tables, Ids, Backend, Writer );
+	DumpTables_( Names, Comments, Tables, Ids, Backend, Writer );
 
 	Writer.PopTag();
 
@@ -259,7 +256,7 @@ ERREnd
 ERREpilog
 }
 
-static void DumpDatabaseStructure_(
+static void DumpDatabases_(
 	backend___ &Backend,
 	writer_ &Writer )
 {
@@ -270,6 +267,8 @@ ERRBegin
 	Comment.Init();
 
 	Backend.GetDatabaseInfos( Name, Comment );
+
+	Writer.PushTag( "Databases" );
 
 	if ( Name.Amount() != 0 ) {
 
@@ -283,10 +282,10 @@ ERRBegin
 		Writer.PutValue( Comment );
 		Writer.PopTag();
 
-		DumpTablesStructure_( Backend, Writer );
-
 		Writer.PopTag();
 	}
+
+	Writer.PopTag();
 ERRErr
 ERREnd
 ERREpilog
@@ -296,7 +295,9 @@ void kernel::kernel___::_DumpStructure( writer_ &Writer )
 {
 	Writer.PushTag( "Structure" );
 
-	DumpDatabaseStructure_( *this, Writer );
+	DumpDatabases_( *this, Writer );
+	DumpTables_( *this, Writer );
+	DumpFields_( *this, Writer );
 
 	Writer.PopTag();
 }
@@ -316,7 +317,7 @@ void kernel::kernel___::_DumpCurrent( writer_ &Writer )
 {
 	Writer.PushTag( "Current" );
 
-	Dump_( _Current, Writer );
+	Dump_( _Target, Writer );
 
 	Writer.PopTag();
 }
@@ -401,7 +402,7 @@ ERRProlog
 ERRBegin
 	Writer.PushTag( "Content" );
 
-	if ( ( Table = Current().Table ) != UNDEFINED_TABLE ) {
+	if ( ( Table = Target().Table ) != UNDEFINED_TABLE ) {
 
 		Fields.Init();
 		this->GetFields( Table, Fields );
@@ -542,19 +543,19 @@ ERRBegin
 
 	Parameters.Init();
 
-	Buffer = _Current;
+	Buffer = _Target;
 
 	nsxpcm::RemoveChildren( UI.Structure.Items );	// Lance un évènement 'Select' qui remet à 0 '_Current'.
 
 	nsxpcm::AppendChild( UI.Structure.Items, nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), UI.Structure.Document, Parameters ) );
 
-	_Current = Buffer;
+	_Target = Buffer;
 
 	UpdateDecks();
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
 
-	SelectItem_( _Current, UI.Structure.Items, UI.Structure.BrowseTree );
+	SelectItem_( _Target, UI.Structure.Items, UI.Structure.BrowseTree );
 ERRErr
 ERREnd
 ERREpilog
@@ -676,7 +677,7 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::SetCurrent( void )
+void kernel::kernel___::SelectStructureItem( void )
 {
 ERRProlog
 	str::string Type, Row, TableRow;
@@ -705,7 +706,30 @@ ERRBegin
 			ERRc();
 	}
 
-	SetCurrent( target__( Field, Table ) );
+	Target().Set( Field, Table );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::SelectRecord( void )
+{
+ERRProlog
+	str::string Id;
+	record__ Record = UNDEFINED_RECORD;
+	ui_lst_v::content_tree__ &Tree = UI.ListView.ContentTree;
+ERRBegin
+
+	if ( Tree.IsThereSelected() ) {
+		Id.Init();
+		Tree.GetCurrentItemAttribute( "Record", Id );
+
+		Record = ExtractRecord( Id );
+	}
+
+	Target().Set( Record );
+
+	UI.Main.Broadcasters.RecordSelected.Enable();
 ERRErr
 ERREnd
 ERREpilog
@@ -741,11 +765,12 @@ ERRBegin
 			K().GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
 		} else if ( Type == "Field" ) {
 			field_id__ FieldId = UNDEFINED_FIELD_ID;
+			table__ Table = UNDEFINED_TABLE;
 			
 			Row.Init();
 			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId );
+			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId, Table );
 		}
 
 		UI.NameTextbox.SetValue( Name );
@@ -807,6 +832,9 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 	switch ( Context ) {
 	case cSessionForm:
 		K().FillTableMenu();
+		UI.Main.Broadcasters.DatabaseOpened.Disable();
+		UI.Main.Broadcasters.TableSelected.Disable();
+		UI.Main.Broadcasters.RecordSelected.Disable();
 		break;
 	case cStructureView:
 		FillStructureView();
@@ -844,15 +872,15 @@ void kernel::kernel___::ApplyStructureItem( void )
 {
 	target__ Target;
 
-	if ( GetCurrent().Table == UNDEFINED_TABLE ) {
+	if ( GetTarget().Table == UNDEFINED_TABLE ) {
 		if ( _Temporary.Mode != tmCreation )
 			ERRc();
 
 		Target.Table = _CreateOrModifyTable();
-	} else if ( GetCurrent().Field == UNDEFINED_FIELD ) {
+	} else if ( GetTarget().Field == UNDEFINED_FIELD ) {
 		switch ( _Temporary.Mode ) {
 		case tmCreation:
-			Target.Set( _CreateOrModifyField(), GetCurrent().Table );
+			Target.Set( _CreateOrModifyField(), GetTarget().Table );
 			break;
 		case tmModification:
 			Target.Table = _CreateOrModifyTable();
@@ -865,12 +893,12 @@ void kernel::kernel___::ApplyStructureItem( void )
 		if ( _Temporary.Mode != tmModification )
 			ERRc();
 
-		Target.Set( _CreateOrModifyField(), GetCurrent().Table );
+		Target.Set( _CreateOrModifyField(), GetTarget().Table );
 	}
 
 	_Temporary.reset();
 
-	SetCurrent( Target );
+	this->Target() = Target;
 	_SwitchTo( cStructureView );
 }
 
@@ -922,9 +950,30 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
 
-	InsertRecord( Data, _Current.Table );
+	InsertRecord( Data, _Target.Table );
 
 	_SwitchTo( cListView );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::SelectTable( ui_main::table_menu_item__ &MenuItem )
+{
+ERRProlog
+	str::string Row;
+	epeios::row__ Error = NONE;
+	table__ Table;
+ERRBegin
+	Row.Init();
+	nsxpcm::GetAttribute( MenuItem.GetElement(), "Row", Row );
+
+	*Table = Row.ToUL( &Error );
+
+	if ( Error != NONE )
+		ERRc();
+
+	SelectTable( Table );
 ERRErr
 ERREnd
 ERREpilog

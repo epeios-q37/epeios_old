@@ -174,15 +174,17 @@ namespace mbdbkd{
 			const fields_ &Fields,
 			bkdacc::strings_ &Names,
 			bkdacc::strings_ &Comments,
-			field_ids_ &Ids )
+			field_ids_ &Ids,
+			tables_ &Tables )
 		{
-			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ) ) );
+			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ), _( Tables ) ) );
 		}
 		void GetFieldInfo(
 			field__ field,
 			str::string_ &Name,
 			str::string_ &Comment,
-			field_id__ &Id );
+			field_id__ &Id,
+			table__ &Table );
 		record__ InsertRecord(
 			const bkdacc::items32_ &Items,
 			table__ Table )

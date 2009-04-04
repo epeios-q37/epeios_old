@@ -28,6 +28,9 @@
 		<xsl:apply-templates select="Structure"/>
 	</xsl:template>
 	<xsl:template match="Structure">
+		<xsl:apply-templates select="Databases"/>
+	</xsl:template>
+	<xsl:template match="Databases">
 		<xsl:apply-templates select="Database"/>
 	</xsl:template>
 	<xsl:template match="Database">
@@ -46,7 +49,7 @@
 				</xsl:element>
 			</xsl:element>
 			<xsl:element name="treechildren">
-				<xsl:apply-templates select="Tables"/>
+				<xsl:apply-templates select="../../Tables"/>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
@@ -88,12 +91,15 @@
 				</xsl:element>
 			</xsl:element>
 			<xsl:element name="treechildren">
-				<xsl:apply-templates select="Fields"/>
+				<xsl:apply-templates select="../../Fields">
+					<xsl:with-param name="Table" select="@Row"/>
+				</xsl:apply-templates>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Fields">
-		<xsl:apply-templates select="Field"/>
+		<xsl:param name="Table"/>
+		<xsl:apply-templates select="Field[@TableRow=$Table]"/>
 	</xsl:template>
 	<xsl:template match="Field">
 		<xsl:element name="treeitem">

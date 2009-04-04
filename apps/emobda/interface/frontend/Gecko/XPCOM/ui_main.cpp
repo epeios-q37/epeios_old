@@ -49,20 +49,7 @@ void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::table_menu_item__::NSXPCMOnEvent( event__ ) 
 {
-	str::string Row;
-	epeios::row__ Error = NONE;
-	kernel::table__ Table;
-
-	Row.Init();
-	nsxpcm::GetAttribute( GetElement(), "Row", Row );
-
-	*Table = Row.ToUL( &Error );
-
-	if ( Error != NONE )
-		ERRc();
-
-	K().SelectTable( Table );
-
+	K().SelectTable( *this );
 }
 
 void ui_main::define_record_command__::NSXPCMOnEvent( event__ )

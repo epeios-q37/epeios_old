@@ -82,10 +82,12 @@ namespace kernel {
 	struct target__ {
 		table__ Table;
 		field__ Field;
+		record__ Record;
 		void reset( bso::bool__ = true )
 		{
 			Table = UNDEFINED_TABLE;
 			Field = UNDEFINED_FIELD;
+			Record = UNDEFINED_RECORD;
 		}
 		target__( void )
 		{
@@ -97,23 +99,54 @@ namespace kernel {
 		{
 			Set( Field, Table );
 		}
+		target__(
+			record__ Record,
+			table__ Table )
+		{
+			Set( Record, Table );
+		}
 		target__( table__ Table )
 		{
 			Set( Table );
 		}
 		void Set(
+			record__ Record,
 			field__ Field,
 			table__ Table )
 		{
+			if ( ( Record != UNDEFINED_RECORD ) && ( Table == UNDEFINED_TABLE ) )
+				ERRu();
+
 			if ( ( Field != UNDEFINED_FIELD ) && ( Table == UNDEFINED_TABLE ) )
 				ERRu();
 
+			this->Record = Record;
 			this->Field = Field;
 			this->Table = Table;
 		}
+		void Set(
+			record__ Record,
+			table__ Table )
+		{
+			Set( Record, UNDEFINED_FIELD, Table );
+		}
+		void Set( record__ Record )
+		{
+			Set( Record, this->Table );
+		}
+		void Set(
+			field__ Field,
+			table__ Table )
+		{
+			Set( UNDEFINED_RECORD, Field, Table );
+		}
+		void Set( field__ Field )
+		{
+			Set( Field, this->Table );
+		}
 		void Set( table__ Table )
 		{
-			Set( UNDEFINED_FIELD, Table );
+			Set( UNDEFINED_RECORD, UNDEFINED_FIELD, Table );
 		}
 	};
 
@@ -146,7 +179,7 @@ namespace kernel {
 		void _DumpContent( xml::writer_ &Writer );
 		void _DumpAsXML( str::string_ &XML );
 		temporary__ _Temporary;
-		target__ _Current;
+		target__ _Target;
 		void _SwitchTo( context__ Context );
 		table__ _CreateOrModifyTable( void )
 		{
@@ -160,7 +193,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Table = CreateOrModifyTable( _Current.Table, Name, Comment );
+			Table = CreateOrModifyTable( _Target.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -172,7 +205,7 @@ namespace kernel {
 		ERRProlog
 			str::string Name, Comment;
 		ERRBegin
-			if ( _Current.Table == UNDEFINED_TABLE )
+			if ( _Target.Table == UNDEFINED_TABLE )
 				ERRu();
 
 			Name.Init();
@@ -181,7 +214,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Field = AddOrModifyField( _Current.Field, _Current.Table, Name, Comment );
+			Field = AddOrModifyField( _Target.Field, _Target.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -207,7 +240,7 @@ namespace kernel {
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
-			_Current.reset( P );
+			_Target.reset( P );
 			_Temporary.reset();
 		}
 		kernel___( void )
@@ -272,16 +305,16 @@ namespace kernel {
 		}
 		void BrowseStructureItem( void )
 		{
-			SetCurrent();
+			SelectStructureItem();
 			_SwitchTo( cStructureItemView );
 		}
 		void DefineStructureItem( void )
 		{
 			SetTemporaryMode( kernel::tmModification );
 
-			if ( GetCurrent().Field != UNDEFINED_FIELD )
+			if ( GetTarget().Field != UNDEFINED_FIELD )
 				DefineField();
-			else if ( GetCurrent().Table != UNDEFINED_TABLE )
+			else if ( GetTarget().Table != UNDEFINED_TABLE )
 				DefineTable();
 			else
 				ERRc();
@@ -309,17 +342,6 @@ namespace kernel {
 		void FillRecordForm( void );
 		void FillRecordView( void );
 		void FillListView( void );
-		void UpdateUI( void )
-		{
-			FillStructureView();
-			UI.Main.Broadcasters.DatabaseOpened.Disable();
-/*
-			UI.Structure.Broadcasters.StructureItemEdition.Disable();
-			UI.Structure.Broadcasters.StructureItemCreation.Disable();
-			UI.Structure.Broadcasters.StructureItemModification.Disable();
-			UI.Structure.Broadcasters.StructureItemDeletion.Disable();
-*/
-		}
 		void UpdateButtonsPanel( void );
 		void DefineSession( void )
 		{
@@ -332,7 +354,7 @@ namespace kernel {
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			if ( _Current.Table == UNDEFINED_TABLE ) {
+			if ( _Target.Table == UNDEFINED_TABLE ) {
 				UI.NameTextbox.SetValue( str::string( "" ) );
 
 				UI.CommentTextbox.SetValue( str::string( "" ) );
@@ -347,7 +369,7 @@ namespace kernel {
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			if ( _Current.Field == UNDEFINED_FIELD ) {
+			if ( _Target.Field == UNDEFINED_FIELD ) {
 				UI.NameTextbox.SetValue( str::string( "" ) );
 
 				UI.CommentTextbox.SetValue( str::string( "" ) );
@@ -357,17 +379,15 @@ namespace kernel {
 		}
 		void SelectTable( table__ Table )
 		{
-			_Current = target__( Table );
+			_Target = target__( Table );
 
 			FillTableMenu();
-
 			BrowseList();
+			UI.Main.Broadcasters.TableSelected.Enable();
 		}
-		void SetCurrent( target__ Current )
-		{
-			_Current = Current;
-		}
-		void SetCurrent();
+		void SelectTable( ui_main::table_menu_item__ &MenuItem );
+		void SelectRecord( void );
+		void SelectStructureItem();
 		void SetTemporaryMode( temporary_mode__ Mode )
 		{
 			if ( _Temporary.Mode != tm_Undefined )
@@ -376,10 +396,10 @@ namespace kernel {
 			_Temporary.Mode = Mode;
 		}
 		void ApplyRecord( void );
-		E_RODISCLOSE__( target__, Current );
+		E_RWDISCLOSE__( target__, Target );
 	};
 
-	inline bkdacc::id32__ _ExtractRow( const str::string_ &Value )
+	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )
 	{
 		epeios::row__ Error = NONE;
 		bkdacc::id32__ Id = Value.ToUL( &Error );
@@ -391,14 +411,31 @@ namespace kernel {
 	
 	}
 
+	inline bkdacc::id16__ _ExtractId16( const str::string_ &Value )
+	{
+		epeios::row__ Error = NONE;
+		bkdacc::id16__ Id = Value.ToUS( &Error );
+
+		if ( Error != NONE )
+			ERRu();
+
+		return Id;
+	
+	}
+
 	inline table__ ExtractTable( const str::string_ &Value )
 	{
-		return _ExtractRow( Value );
+		return _ExtractId32( Value );
 	}
 
 	inline field__ ExtractField( const str::string_ &Value )
 	{
-		return _ExtractRow( Value );
+		return _ExtractId32( Value );
+	}
+
+	inline record__ ExtractRecord( const str::string_ &Value )
+	{
+		return _ExtractId16( Value );
 	}
 }
 

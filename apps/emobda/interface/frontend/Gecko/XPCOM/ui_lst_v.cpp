@@ -29,6 +29,21 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
+void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
+{
+	switch ( Event ) {
+	case nsxpcm::eSelect:
+		K().SelectRecord();
+		break;
+	case nsxpcm::eDblClick:
+		K().BrowseRecord();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+}
+
 /* UI Registrations */
 
 void ui_lst_v::Register(
@@ -38,9 +53,8 @@ void ui_lst_v::Register(
 {
 	UI.Set( Window );
 
-	ui_base::Register( Kernel, UI.ContentTree, UI.Document, "treContent", nsxpcm::efSelect );
+	ui_base::Register( Kernel, UI.ContentTree, UI.Document, "treContent" );
 
 //	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }
-
 

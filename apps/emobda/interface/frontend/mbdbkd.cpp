@@ -53,12 +53,14 @@ void mbdbkd::backend___::GetFieldInfo(
 	field__ Field,
 	str::string_ &Name,
 	str::string_ &Comment,
-	field_id__ &Id )
+	field_id__ &Id,
+	table__ &Table )
 {
 ERRProlog
 	fields Fields;
 	bkdacc::strings Names, Comments;
 	field_ids Ids;
+	tables Tables;
 ERRBegin
 	Fields.Init();
 	Fields.Append( Field );
@@ -66,12 +68,14 @@ ERRBegin
 	Names.Init();
 	Comments.Init();
 	Ids.Init();
+	Tables.Init();
 
-	GetFieldsInfos( Fields, Names, Comments, Ids );
+	GetFieldsInfos( Fields, Names, Comments, Ids, Tables );
 
 	Name = Names( Names.First() );
 	Comment = Comments( Comments.First() );
 	Id = Ids( Ids.First() );
+	Table = Tables( Tables.First() );
 ERRErr
 ERREnd
 ERREpilog

@@ -87,7 +87,7 @@ ERRBegin
 
 	Id = Tables( TableRow ).GetNewFieldId( Description.GetId() );
 
-	Field.Init( Description.Name, Description.Comment, Id );
+	Field.Init( Description.Name, Description.Comment, Id, TableRow );
 
 	FieldRow = Fields.Append( Field );
 

@@ -43,7 +43,7 @@
 		<command id="cmdOpenDatabase"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
-		<command id="cmdDefineRecord" observes="TableSelected"/>
+		<command id="cmdDefineRecord" observes="bcrTableSelected"/>
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
 	<menubar>
