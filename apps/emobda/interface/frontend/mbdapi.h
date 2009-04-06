@@ -321,7 +321,7 @@ public:
 			15,0, 19,19,9,15,
 			14,14,18,18,0, 14,
 			0, 26,
-			14,26,0, 11,
+			11,14,26,0, 11,
 			14,0, 12,
 			14,15,12,0, 20,
 		};
@@ -383,18 +383,18 @@ public:
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
-		CommandDetail.Name = "InsertRecord";;
-		CommandDetail.Casts.Append( Parameters + 38, 4 );
+		CommandDetail.Name = "InsertOrModifyRecord";;
+		CommandDetail.Casts.Append( Parameters + 38, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecords";;
-		CommandDetail.Casts.Append( Parameters + 42, 3 );
+		CommandDetail.Casts.Append( Parameters + 43, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecordsData";;
-		CommandDetail.Casts.Append( Parameters + 45, 5 );
+		CommandDetail.Casts.Append( Parameters + 46, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 
@@ -591,14 +591,16 @@ public:
 
 		return Common_->Backend->Handle();
 	}
-	bso::bool__ InsertRecord( 
-		const bkdacc::id32__ &In1,
-		const bkdacc::items32_ &In2,
+	bso::bool__ InsertOrModifyRecord( 
+		const bkdacc::id16__ &In1,
+		const bkdacc::id32__ &In2,
+		const bkdacc::items32_ &In3,
 		bkdacc::id16__ &Out1 ) const
 	{
 		Common_->Backend->PushHeader( ID_, Common_->Commands[10] );
-		Common_->Backend->Id32In( In1 );
-		Common_->Backend->Items32In( In2 );
+		Common_->Backend->Id16In( In1 );
+		Common_->Backend->Id32In( In2 );
+		Common_->Backend->Items32In( In3 );
 
 		Common_->Backend->EndOfInParameters();
 

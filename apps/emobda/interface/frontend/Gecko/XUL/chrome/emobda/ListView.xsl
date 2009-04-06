@@ -25,27 +25,26 @@
 	<xsl:include href="Library.xsl"/>
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
 	<xsl:template match="/emobda">
-		<xsl:apply-templates select="Structure"/>
-		<xsl:apply-templates select="Content"/>
-	</xsl:template>
-	<xsl:template match="Structure">
-		<xsl:apply-templates select="Database"/>
-	</xsl:template>
-	<xsl:template match="Database">
-		<xsl:apply-templates select="Tables"/>
-	</xsl:template>
-	<xsl:template match="Tables">
 		<xsl:variable name="CurrentTable">
 			<xsl:call-template name="GetCurrentTable"/>
 		</xsl:variable>
-		<xsl:apply-templates select="Table[@Row=$CurrentTable]"/>
+		<xsl:apply-templates select="Structure">
+			<xsl:with-param name="Table" select="$CurrentTable"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="Content">
+			<xsl:with-param name="Table" select="$CurrentTable"/>
+		</xsl:apply-templates>
 	</xsl:template>
-	<xsl:template match="Table">
-		<xsl:apply-templates select="Fields"/>
+	<xsl:template match="Structure">
+		<xsl:param name="Table"/>
+		<xsl:apply-templates select="Fields">
+			<xsl:with-param name="Table" select="$Table"/>
+		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="Fields">
+		<xsl:param name="Table"/>
 		<xsl:element name="treecols">
-			<xsl:apply-templates select="Field"/>
+			<xsl:apply-templates select="Field[@TableRow=$Table]"/>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Field">
@@ -73,9 +72,12 @@
 				<xsl:value-of select="@Id"/>
 			</xsl:attribute>
 			<xsl:element name="treerow">
-				<xsl:apply-templates select="Datum"/>
+		<xsl:apply-templates select="Data"/>
 			</xsl:element>
 		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Data">
+		<xsl:apply-templates select="Datum"/>
 	</xsl:template>
 	<xsl:template match="Datum">
 		<xsl:element name="treecell">

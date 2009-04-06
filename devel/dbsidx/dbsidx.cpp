@@ -376,7 +376,7 @@ ERREpilog
 	return Round;
 }
 
-rrow__ dbsidx::index_::Seek( 
+rrow__ dbsidx::index_::LooseSeek( 
 	const datum_ &Datum,
 	behavior__ EqualBehavior,
 	skip_level__ SkipLevel,

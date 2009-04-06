@@ -40,7 +40,8 @@ namespace ui_main {
 	UI_ETYPEDEF( command__, define_database_command__ );
 	UI_ETYPEDEF( command__, close_database_command__ );
 
-	UI_ETYPEDEF( command__, define_record_command__ );
+	UI_ETYPEDEF( command__, create_record_command__ );
+	UI_ETYPEDEF( command__, modify_record_command__ );
 	UI_ETYPEDEF( command__, browse_record_command__ );
 
 	UI_TYPEDEF( deck__, main_deck__ );
@@ -56,7 +57,8 @@ namespace ui_main {
 				close_database_command__ Close;
 			} Database;
 			struct record__ {
-				define_record_command__ Defined;
+				create_record_command__ Create;
+				modify_record_command__ Modify;
 				browse_record_command__ Browse;
 			} Record;
 		} Commands;

@@ -52,7 +52,13 @@ void ui_main::table_menu_item__::NSXPCMOnEvent( event__ )
 	K().SelectTable( *this );
 }
 
-void ui_main::define_record_command__::NSXPCMOnEvent( event__ )
+void ui_main::create_record_command__::NSXPCMOnEvent( event__ )
+{
+	K().Target().Set( UNDEFINED_RECORD );
+	K().DefineRecord();
+}
+
+void ui_main::modify_record_command__::NSXPCMOnEvent( event__ )
 {
 	K().DefineRecord();
 }
@@ -138,7 +144,8 @@ static void Register_(
 	main__::commands__::record__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Defined, Document, "cmdDefineRecord" );
+	Register_( Kernel, UI.Create, Document, "cmdCreateRecord" );
+	Register_( Kernel, UI.Modify, Document, "cmdModifyRecord" );
 	Register_( Kernel, UI.Browse, Document, "cmdBrowseRecord" );
 }
 

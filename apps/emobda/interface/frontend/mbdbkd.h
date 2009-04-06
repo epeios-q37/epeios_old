@@ -191,9 +191,16 @@ namespace mbdbkd{
 		{
 			record__ Record = UNDEFINED_RECORD;
 
-			_H( Manager.InsertRecord( *Table, Items, *Record ) );
+			_H( Manager.InsertOrModifyRecord( *Record, *Table, Items, *Record ) );
 
 			return Record;
+		}
+		void ModifyRecord(
+			record__ Record,
+			const bkdacc::items32_ &Items,
+			table__ Table )
+		{
+			_H( Manager.InsertOrModifyRecord( *Record, *Table, Items, *Record ) );
 		}
 		void GetRecords(
 			table__ Table,

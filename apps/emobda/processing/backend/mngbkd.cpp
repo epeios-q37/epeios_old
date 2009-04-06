@@ -586,17 +586,19 @@ static message__ ConvertAndTest_(
 	return mOK;
 }
 
-DEC( InsertRecord )
+DEC( InsertOrModifyRecord )
 {
 	message__ Message = mOK;
 ERRProlog
 	data Data;
 	field_rows FieldRows;
 	table_row__ TableRow = NONE;
+	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
 ERRBegin
 	Data.Init();
 	FieldRows.Init();
 
+	RecordId = *Request.Id16In();	// If == 'UNDEFINED_RECORD', creation, otherwise modification.
 	TableRow = *Request.Id32In();
 
 	if ( ( Message = ConvertAndTest_( Request.Items32In(), Data, FieldRows ) ) != mOK )
@@ -617,7 +619,12 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Request.Id16Out() = *Manager.AddRecord( Data, TableRow, FieldRows );
+	if ( RecordId == MBDBSC_UNDEFINED_RECORD_ID )
+		RecordId = *Manager.AddRecord( Data, TableRow, FieldRows );
+	else
+		Manager.ModifyRecord( RecordId, Data, TableRow, FieldRows );
+
+	Request.Id16Out() = *RecordId;
 ERRErr
 ERREnd
 ERREpilog
@@ -780,7 +787,8 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 		bkdmng::cEnd,
 			bkdmng::cItems32,
 		bkdmng::cEnd );
-	Module.Add( D( InsertRecord ),
+	Module.Add( D( InsertOrModifyRecord ),
+			bkdmng::cId16,		// Record id ('undefined' for creation).
 			bkdmng::cId32,		// Table row.
 			bkdmng::cItems32,	// Field row and corresponding datum.
 		bkdmng::cEnd,

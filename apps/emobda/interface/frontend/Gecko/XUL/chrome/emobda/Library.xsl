@@ -28,4 +28,16 @@
 	<xsl:template name="GetCurrentField">
 		<xsl:value-of select="/emobda/Current/@Field"/>
 	</xsl:template>
+	<xsl:template name="GetCurrentRecord">
+		<xsl:value-of select="/emobda/Current/@Record"/>
+	</xsl:template>
+	<xsl:template name="GetFieldWording">
+		<xsl:param name="Row"/>
+		<xsl:value-of select="/emobda/Structure/Fields/Field[@Row=$Row]/Name"/>
+	</xsl:template>
+	<xsl:template name="GetDatum">
+		<xsl:param name="RecordId"/>
+		<xsl:param name="FieldRow"/>
+		<xsl:value-of select="/emobda/Content/Records/Record[@Id=$RecordId]/Data/Datum[@Field=$FieldRow]"/>
+	</xsl:template>
 </xsl:stylesheet>

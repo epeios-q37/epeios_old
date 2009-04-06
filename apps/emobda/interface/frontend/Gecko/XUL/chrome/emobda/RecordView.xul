@@ -34,7 +34,6 @@
 	<commandset>
 	</commandset>
 	<vbox flex="1" >
-		<description>Record view (XUL)</description>
 		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 	</vbox>
 </page>

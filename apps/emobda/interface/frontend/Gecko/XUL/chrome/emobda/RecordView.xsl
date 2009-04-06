@@ -22,6 +22,7 @@
 <!-- $Id$ -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
+	<xsl:include href="Library.xsl"/>
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
 	<xsl:template match="/emobda">
 		<xsl:apply-templates select="Content"/>
@@ -29,7 +30,34 @@
 	<xsl:template match="Content">
 		<xsl:element name="html">
 			<xsl:element name="h1">
-				<xsl:text>Record view (XSL)!</xsl:text>
+				<xsl:apply-templates select="Content"/>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Content">
+		<xsl:apply-templates select="Records"/>
+	</xsl:template>
+	<xsl:template match="Records">
+		<xsl:element name="Table">
+			<xsl:apply-templates select="Record"/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="Record">
+		<xsl:apply-templates select="Data"/>
+	</xsl:template>
+	<xsl:template match="Data">
+		<xsl:apply-templates select="Datum"/>
+	</xsl:template>
+	<xsl:template match="Datum">
+		<xsl:element name="tr">
+			<xsl:element name="td">
+				<xsl:call-template name="GetFieldWording">
+					<xsl:with-param name="Row" select="@Field"/>
+				</xsl:call-template>
+			</xsl:element>
+			<xsl:text> : </xsl:text>
+			<xsl:element name="td">
+				<xsl:value-of select="."/>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>

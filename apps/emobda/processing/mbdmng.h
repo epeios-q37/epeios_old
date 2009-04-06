@@ -60,6 +60,11 @@ namespace mbdmng {
 		bso::bool__ _Create( void );
 		bso::bool__ _Retrieve( void );
 		bso::bool__ _SubInit( type__ Type );
+		bso::bool__ _AddOrModifyRecord(
+			record_id__ RecordId,
+			const data_ &Data,
+			table_row__ TableRow,
+			const field_rows_ &FieldRows );
 	public:
 		struct s {
 			mbdeng::engine_::s Engine;
@@ -180,7 +185,23 @@ namespace mbdmng {
 		record_id__ AddRecord(
 			const data_ &Data,
 			table_row__ TableRow,
-			const field_rows_ &FieldRows );
+			const field_rows_ &FieldRows )
+		{
+			record_id__ RecordId = *GetLastRecordId() + 1;
+
+			if ( _AddOrModifyRecord( RecordId, Data, TableRow, FieldRows ) )
+				ERRc();
+
+			return RecordId;
+		}
+		bso::bool__ ModifyRecord(
+			record_id__ RecordId,
+			const data_ &Data,
+			table_row__ TableRow,
+			const field_rows_ &FieldRows )
+		{
+			return _AddOrModifyRecord( RecordId, Data, TableRow, FieldRows );
+		}
 		void GetRecords(
 			table_row__ TableRow,
 			record_ids_ &RecordIds ) const;

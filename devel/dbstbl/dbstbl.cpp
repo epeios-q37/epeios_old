@@ -545,7 +545,7 @@ ERREnd
 ERREpilog
 }
 
-rrow__ dbstbl::thread_safe_table_::Seek(
+rrow__ dbstbl::thread_safe_table_::LooseSeek(
 	const datum_ &Datum,
 	irow__ IRow,
 	behavior__ EqualBehavior,
@@ -557,7 +557,7 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow, EqualBehavior, SkipLevel, Sign );
+	Row = T.LooseSeek( Datum, IRow, EqualBehavior, SkipLevel, Sign );
 ERRErr
 ERREnd
 	RRO
@@ -565,9 +565,10 @@ ERREpilog
 	return Row;
 }
 
-rrow__ dbstbl::thread_safe_table_::Seek(
+rrow__ dbstbl::thread_safe_table_::StrictSeek(
 	const datum_ &Datum,
 	irow__ IRow,
+	behavior__ EqualBehavior,
 	skip_level__ SkipLevel )
 {
 	rrow__ Row = NONE;
@@ -575,7 +576,7 @@ ERRProlog
 ERRBegin
 	RO
 
-	Row = T.Seek( Datum, IRow, SkipLevel );
+	Row = T.StrictSeek( Datum, IRow, EqualBehavior, SkipLevel );
 ERRErr
 ERREnd
 	RRO

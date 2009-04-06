@@ -429,7 +429,7 @@ namespace dbstbl {
 				_DeleteFromIndexes( RecordRow );
 		}
 		void Delete( const rrows_ &RecordRows );
-		rrow__ Seek(
+		rrow__ LooseSeek(
 			const datum_ &Datum,
 			irow__ IRow,
 			behavior__ EqualBehavior,
@@ -441,24 +441,20 @@ namespace dbstbl {
 			if ( _IsBulk() )
 				ERRu();
 
-			return _I( IRow ).Seek( Datum, EqualBehavior, SkipLevel, Sign );
+			return _I( IRow ).LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );
 		}
-		rrow__ Seek(
+		rrow__ StrictSeek(
 			const datum_ &Datum,
 			irow__ IRow,
+			behavior__ EqualBehavior,
 			skip_level__ SkipLevel ) const
 		{
-			bso::sign__ Sign;
-			rrow__ Row = NONE;
-
 			_Test( mReadOnly );
 
-			Row = Seek( Datum, IRow, bStop, SkipLevel, Sign );
+			if ( _IsBulk() )
+				ERRu();
 
-			if ( Sign != 0 )
-				Row = NONE;
-
-			return Row;
+			return _I( IRow ).StrictSeek( Datum, EqualBehavior, SkipLevel );
 		}
 		bso::sign__ Compare(
 			rrow__ RecordRow,
@@ -688,15 +684,16 @@ namespace dbstbl {
 		void Delete( rrow__ RecordRow );
 		void Delete(
 			const rrows_ &RecordRows );
-		rrow__ Seek(
+		rrow__ LooseSeek(
 			const datum_ &Datum,
 			irow__ IRow,
 			behavior__ EqualBehavior,
 			skip_level__ SkipLevel,
 			bso::sign__ &Sign );
-		rrow__ Seek(
+		rrow__ StrictSeek(
 			const datum_ &Datum,
 			irow__ IRow,
+			behavior__ EqualBehavior,
 			skip_level__ SkipLevel );
 		bso::sign__ Compare(
 			rrow__ RecordRow,

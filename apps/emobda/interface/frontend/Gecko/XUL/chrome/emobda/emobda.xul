@@ -43,7 +43,8 @@
 		<command id="cmdOpenDatabase"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
-		<command id="cmdDefineRecord" observes="bcrTableSelected"/>
+		<command id="cmdCreateRecord" observes="bcrTableSelected"/>
+		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
 	<menubar>
@@ -58,7 +59,8 @@
 		<menu label="|Tables|" id="mnuTable"/>
 		<menu label="|Data|">
 			<menupopup>
-				<menuitem label="|Input|" command="cmdDefineRecord"/>
+				<menuitem label="|Input|" command="cmdCreateRecord"/>
+				<menuitem label="|Input|" command="cmdModifyRecord"/>
 				<menuitem label="|Browse|" command="cmdBrowseRecord"/>
 			</menupopup>
 		</menu>

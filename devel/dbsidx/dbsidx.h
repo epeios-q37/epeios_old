@@ -252,24 +252,52 @@ namespace dbsidx {
 
 			_Touch( false );
 		}
-		rrow__ Seek(
+		rrow__ LooseSeek(
 			const datum_ &Datum,
 			behavior__ EqualBehavior,
 			skip_level__ SkipLevel,
-			bso::sign__ &Sign ) const;
-		rrow__ Seek(
-			behavior__ EqualBehavior,
+			bso::sign__ &Sign ) const;	// Retourne l'élément le plus proche, même si 
+		rrow__ StrictSeek(
 			const datum_ &Datum,
+			behavior__ EqualBehavior,
 			skip_level__ SkipLevel ) const
 		{
 			bso::sign__ Sign;
+			rrow__ Row = LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );
 
-			return Seek( Datum, EqualBehavior, SkipLevel, Sign );
+			switch ( Sign ) {
+			case -1:
+				if ( EqualBehavior == bStop )
+					Row = NONE;
+				else
+					Row = Next( Row );
+				break;
+			case 0:
+				break;
+			case 1:
+				if ( EqualBehavior == bStop )
+					Row = NONE;
+				else
+					Row = Previous( Row );
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			return Row;
 		}
 		bso::sign__ Compare(
 			rrow__ RecordId,
 			const datum_ &Pattern,
 			skip_level__ SkipLevel ) const;
+		bso::sign__ Compare(
+			const datum_ &Pattern,
+			rrow__ RecordId,
+			skip_level__ SkipLevel ) const
+		{
+			return -Compare( RecordId, Pattern, SkipLevel );
+		}
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
 			rrow__ RecordRow2,

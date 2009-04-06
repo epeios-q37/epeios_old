@@ -1,5 +1,11 @@
 $Id$
 
+06/04/2009 :
+	- DBSIDX :
+		- Introduction de 'LooseSeek()' et 'StrictSeek()' pour éviter des bogues ptentiels.
+	- GENERAL :
+		- Adaptation aux modifications 'DBSIDX'.
+
 03/04/2009 :
 	- DBSTBL :
 		- Modification des paramètres du 'Seek(...)' simplifié pour éviter des risques de bogues.

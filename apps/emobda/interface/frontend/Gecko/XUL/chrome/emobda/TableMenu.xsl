@@ -30,8 +30,8 @@
 	<xsl:template match="Structure">
 		<xsl:element name="menupopup">
 			<xsl:choose>
-				<xsl:when test="Database">
-					<xsl:apply-templates select="Database"/>
+				<xsl:when test="Tables/Table">
+					<xsl:apply-templates select="Tables"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:element name="menuitem">
@@ -41,9 +41,6 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:element>
-	</xsl:template>
-	<xsl:template match="Database">
-		<xsl:apply-templates select="Tables"/>
 	</xsl:template>
 	<xsl:template match="Tables">
 		<xsl:apply-templates select="Table">

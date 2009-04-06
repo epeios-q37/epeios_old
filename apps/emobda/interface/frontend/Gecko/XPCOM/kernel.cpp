@@ -311,6 +311,9 @@ static void Dump_(
 
 	if ( Target.Field != UNDEFINED_FIELD )
 		PutId_( "Field", Target.Field, Writer );
+
+	if ( Target.Record != UNDEFINED_RECORD )
+		PutId_( "Record", Target.Record, Writer );
 }
 
 void kernel::kernel___::_DumpCurrent( writer_ &Writer )
@@ -355,11 +358,15 @@ static void Dump_(
 
 	PutId_( "Id", Record, Writer );
 
+	Writer.PushTag( "Data" );
+
 	while ( Row != NONE ) {
 		Dump_( Fields( Row ), Datum( Row ), Writer );
 
 		Row = Fields.Next( Row );
 	}
+
+	Writer.PopTag();
 
 	Writer.PopTag();
 }
@@ -408,7 +415,11 @@ ERRBegin
 		this->GetFields( Table, Fields );
 
 		Records.Init();
-		this->GetRecords( Table, Records );
+
+		if ( Target().Record == UNDEFINED_RECORD )
+			this->GetRecords( Table, Records );
+		else
+			Records.Append( Target().Record );
 
 		DataCluster.Init();
 		this->GetRecordsData( Table, Fields, Records, DataCluster );
@@ -950,9 +961,12 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
 
-	InsertRecord( Data, _Target.Table );
+	if ( Target().Record == UNDEFINED_RECORD )
+		Target().Set( InsertRecord( Data, _Target.Table ) );
+	else
+		ModifyRecord( Target().Record, Data, _Target.Table );
 
-	_SwitchTo( cListView );
+	_SwitchTo( cRecordView );
 ERRErr
 ERREnd
 ERREpilog

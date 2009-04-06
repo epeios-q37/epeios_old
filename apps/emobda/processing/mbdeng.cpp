@@ -79,7 +79,7 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	Row = TableRecordFieldIndex.Seek( dbsidx::bLesser, RawDatum, 2 );
+	Row = TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
 
 	while ( Row != NONE ) {
 		RawDatum.Init();

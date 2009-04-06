@@ -78,12 +78,13 @@ ERREpilog
 }
 
 
-record_id__ mbdmng::manager_::AddRecord(
+bso::bool__ mbdmng::manager_::_AddOrModifyRecord(
+	record_id__ RecordId,
 	const data_ &Data,
 	table_row__ TableRow,
 	const field_rows_ &FieldRows )
 {
-	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
+	bso::bool__ Modification = false;
 ERRProlog
 	ctn::E_CMITEM( datum_ ) Datum;
 	epeios::row__ Row = NONE;
@@ -91,10 +92,10 @@ ERRProlog
 	raw_datum RawDatum;
 	field_row__ FieldRow = NONE;
 	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+	record_row__ RecordRow = NONE;
 ERRBegin
 	ctn::E_CMITEM( datum_ ) Datum;
 	Row = Data.First();
-	RecordId = *GetLastRecordId() + 1;
 
 #ifdef MBDMNG__DBG
 	if ( Data.Amount() != FieldRows.Amount() )
@@ -117,6 +118,13 @@ ERRBegin
 		RawDatum.Init();
 		Convert( Record, RawDatum );
 
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, DBSIDX_NO_SKIP );
+
+		if ( RecordRow != NONE ) {
+			Modification = true;
+			Engine.Delete( RecordRow );
+		}
+
 		Engine.Insert( RawDatum );
 
 		Row = Data.Next( Row );
@@ -124,7 +132,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return RecordId;
+	return Modification;
 }
 
 void mbdmng::manager_::GetRecords(
@@ -135,8 +143,7 @@ ERRProlog
 	record_row__ RecordRow;
 	record Record;
 	raw_datum RawDatum;
-	bso::sign__ Sign = 0;
-	record_row__ LastRecordRow = NONE;
+	record_row__ NextToLastRecordRow = NONE;
 	record_id__
 			RecordId = MBDBSC_UNDEFINED_RECORD_ID,
 			PreviousRecordId = MBDBSC_UNDEFINED_RECORD_ID;
@@ -146,53 +153,26 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableRecordFieldIndex.Seek( RawDatum, dbsidx::bLesser, 2, Sign );
+	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bGreater, 2 );
 
 	if ( RecordRow != NONE ) {
-		switch( Sign ) {
-		case -1:
+		NextToLastRecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );	// Can be 'NONE' without ptoblem.
+
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
+
+		while ( RecordRow != NextToLastRecordRow ) {
+			RawDatum.Init();
+			Engine.Retrieve( RecordRow, RawDatum );
+
+			RecordId = mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId;
+
+			if ( PreviousRecordId != RecordId ) {
+				RecordIds.Append( mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId );
+				PreviousRecordId = RecordId;
+			}
+
 			RecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );
-			break;
-		case 0:
-			break;
-		case 1:
-			ERRc();
-			break;
-		default:
-			ERRc();
-			break;
 		}
-
-		LastRecordRow = Engine.TableRecordFieldIndex.Seek( RawDatum, dbsidx::bGreater, 2, Sign );
-
-		switch( Sign ) {
-		case -1:
-			ERRc();
-			break;
-		case 0:
-			LastRecordRow = NONE;
-			break;
-		case 1:
-			break;
-		default:
-			ERRc();
-			break;
-		}
-
-	}
-
-	while ( RecordRow != LastRecordRow ) {
-		RawDatum.Init();
-		Engine.Retrieve( RecordRow, RawDatum );
-
-		RecordId = mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId;
-
-		if ( PreviousRecordId != RecordId ) {
-			RecordIds.Append( mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId );
-			PreviousRecordId = RecordId;
-		}
-
-		RecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );
 	}
 ERRErr
 ERREnd
@@ -238,7 +218,7 @@ ERRBegin
 
 		Convert( Record, RawDatum );
 
-		RawRecordRow = Engine.Seek( RawDatum, Engine.GetTableRecordFieldIndexRow(), DBSIDX_NO_SKIP );
+		RawRecordRow = Engine.StrictSeek( RawDatum, Engine.GetTableRecordFieldIndexRow(), dbsidx::bStop, DBSIDX_NO_SKIP );
 
 		Datum.Init();
 
@@ -295,12 +275,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RawRecordRow = Engine.Seek( RawDatum, Engine.TableRecordFieldIndexRow(), 1 );
+	RawRecordRow = Engine.StrictSeek( RawDatum, Engine.TableRecordFieldIndexRow(), dbsidx::bStop, 1 );
 
 	while ( RawRecordRow != NONE ) {
 		Engine.Delete( RawRecordRow );
 
-		RawRecordRow = Engine.Seek( RawDatum, Engine.TableRecordFieldIndexRow(), 1 );
+		RawRecordRow = Engine.StrictSeek( RawDatum, Engine.TableRecordFieldIndexRow(), dbsidx::bStop, 1 );
 	}
 ERRErr
 ERREnd
