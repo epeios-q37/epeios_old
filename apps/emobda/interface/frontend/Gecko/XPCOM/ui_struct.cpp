@@ -77,7 +77,7 @@ void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 {
-	if ( K().Confirm( kernel::mCancelInputConfirmation ) ) {
+	if ( K().Confirm( kernel::mDropStructureItemConfirmation ) ) {
 		K().DropStructureItem();
 	}
 }

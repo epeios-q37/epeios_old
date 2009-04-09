@@ -27,7 +27,7 @@
 	title="Structure view and form"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window, 'StructureFormAndView' );"
+	onload="register( window );"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>
@@ -64,7 +64,8 @@
 				<vbox flex="1">
 					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" observes="bcrItemBrowsing">
 						<treecols>
-							<treecol id="myTree2-treeCol0" primary="true" label="Structure" flex="1"/>
+							<treecol primary="true" label="Name" flex="1"/>
+							<treecol label="Id"/>
 						</treecols>
 					  <treechildren id="items"/>
 					</tree>

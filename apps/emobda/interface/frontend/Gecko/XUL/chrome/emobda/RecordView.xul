@@ -26,7 +26,7 @@
 	id="pgeRecordView"
 	title="Record view"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="register( window, 'RecordView' );"
+	onload="register( window );"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>

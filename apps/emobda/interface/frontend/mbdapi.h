@@ -28,7 +28,8 @@ enum message__ {
 	MANAGER_FieldNotOwnedByTable,
 	MANAGER_BadFieldRow,
 	MANAGER_SameFieldTwice,
-	MANAGER_UndefinedRecord,
+	MANAGER_UnknownRecord,
+	MANAGER_NoRecordGiven,
 };
 
 inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
@@ -92,8 +93,11 @@ inline message__ GetMessageCode( bkdacc::backend_access___ &Backend )
 	if ( !strcmp( Message, "MANAGER_SameFieldTwice" ) )
 		return MANAGER_SameFieldTwice;
 
-	if ( !strcmp( Message, "MANAGER_UndefinedRecord" ) )
-		return MANAGER_UndefinedRecord;
+	if ( !strcmp( Message, "MANAGER_UnknownRecord" ) )
+		return MANAGER_UnknownRecord;
+
+	if ( !strcmp( Message, "MANAGER_NoRecordGiven" ) )
+		return MANAGER_NoRecordGiven;
 
 	ERRb();
 	return (message__)0;	// To avoid a warning.
@@ -114,7 +118,7 @@ protected:
 
 		backend_access::GetRawMessages( Messages );
 
-		if ( Messages.Amount() != 20 )
+		if ( Messages.Amount() != 21 )
 			ERRb();
 
 		Message.Init( Messages );
@@ -243,7 +247,13 @@ protected:
 		Row = Messages.Next( Row );
 
 
-		if ( Message( Row ) != bkdacc::string( "MANAGER_UndefinedRecord" ) )
+		if ( Message( Row ) != bkdacc::string( "MANAGER_UnknownRecord" ) )
+			ERRb();
+
+		Row = Messages.Next( Row );
+
+
+		if ( Message( Row ) != bkdacc::string( "MANAGER_NoRecordGiven" ) )
 			ERRb();
 
 		Row = Messages.Next( Row );
@@ -303,7 +313,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[13];
+	bkdacc::command__ Commands[14];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -322,6 +332,7 @@ public:
 			14,14,18,18,0, 14,
 			0, 26,
 			11,14,26,0, 11,
+			11,14,0, 
 			14,0, 12,
 			14,15,12,0, 20,
 		};
@@ -388,19 +399,24 @@ public:
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
-		CommandDetail.Name = "GetRecords";;
+		CommandDetail.Name = "DeleteRecord";;
 		CommandDetail.Casts.Append( Parameters + 43, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
+		CommandDetail.Name = "GetRecords";;
+		CommandDetail.Casts.Append( Parameters + 46, 3 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
 		CommandDetail.Name = "GetRecordsData";;
-		CommandDetail.Casts.Append( Parameters + 46, 5 );
+		CommandDetail.Casts.Append( Parameters + 49, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 13, this->Commands );
+		Commands.Recall( 0, 14, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -608,11 +624,24 @@ public:
 
 		return Common_->Backend->Handle();
 	}
+	bso::bool__ DeleteRecord( 
+		const bkdacc::id16__ &In1,
+		const bkdacc::id32__ &In2 ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
+		Common_->Backend->Id16In( In1 );
+		Common_->Backend->Id32In( In2 );
+
+		Common_->Backend->EndOfInParameters();
+
+
+		return Common_->Backend->Handle();
+	}
 	bso::bool__ GetRecords( 
 		const bkdacc::id32__ &In1,
 		bkdacc::ids16_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -627,7 +656,7 @@ public:
 		const bkdacc::ids16_ &In3,
 		bkdacc::xstrings_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[13] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->Ids32In( In2 );
 		Common_->Backend->Ids16In( In3 );

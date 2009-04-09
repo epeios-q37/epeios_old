@@ -71,6 +71,13 @@ using namespace nsxpcm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
+extern nsIDOMWindow *nsxpcm::MasterWindow = NULL;
+static nsIDOMWindowInternal *_JSConsoleWindow = NULL;
+
+void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
+{
+	nsxpcm::GetJSConsole( ParentWindow, &_JSConsoleWindow );
+}
 
 void nsxpcm::Transform(
 	const char *CString,
@@ -1049,8 +1056,10 @@ ERRBegin
 ERRErr
 	NSResult = NS_ERROR_FAILURE;
 
-	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )
+	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) ) {
 		Log( err::Message( Buffer ) );	
+		GetJSConsole();
+	}
 
 	ERRRst();
 ERREnd

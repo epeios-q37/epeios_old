@@ -35,7 +35,9 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
-	CASE( CancelInputConfirmation );
+	CASE( DropStructureItemConfirmation );
+	CASE( DeleteRecordConfirmation );
+	CASE( DropRecordConfirmation );
 	default:
 		ERRu();
 		break;
@@ -863,7 +865,11 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		break;
 	case cListView:
 		K().FillListView();
+		UI.Main.Broadcasters.RecordSelected.Disable();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
+
+		if ( UI.ListView.ContentTree.IsThereSelected() )
+			SelectRecord();
 		break;
 	case cRecordForm:
 		K().FillRecordForm();
@@ -939,7 +945,6 @@ ERRBegin
 
 			Value.Init();
 			nsxpcm::GetValue( nsxpcm::QueryInterface<nsIDOMXULTextBoxElement>( Node ), Value );
-			nsxpcm::GetAttribute( Node, "value", Value );
 
 			if ( Value.Amount() != 0 ) {
 				Item.Init( Id, Value );

@@ -1,5 +1,11 @@
 $Id$
 
+09/04/2009 :
+	- NSXPCM :
+		- Ajout 'GetWindowDocument(...)', 'GetDocumentElement(...)', 'GetWindowElement(...)'.
+		- Introduction de 'MasterWindow', pour faciliter l'utilisation de certaines fonctions ('GetJSConsole(...), 'Alert(...)', ...);
+		- Une erreur dorénavant ouvre ou place en avant plan la console JS, à condition d'avoir défini 'MasterWindow'.
+
 06/04/2009 :
 	- DBSIDX :
 		- Introduction de 'LooseSeek()' et 'StrictSeek()' pour éviter des bogues ptentiels.

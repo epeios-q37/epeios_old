@@ -77,6 +77,30 @@ ERREpilog
 	return Datum;
 }
 
+bso::bool__ mbdmng::manager_::RecordExists(
+	record_id__ RecordId,
+	table_row__ TableRow ) const
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	record Record;
+	raw_datum RawDatum;
+	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+ERRBegin
+	TableId = Structure.GetTableTableId( TableRow );
+
+	Record.Init( TableId, MBDBSC_UNDEFINED_FIELD_ID, RecordId, datum( "" ) );
+
+	RawDatum.Init();
+	Convert( Record, RawDatum );
+
+	Exists = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 ) != NONE;	// We ignore the field.
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
 
 bso::bool__ mbdmng::manager_::_AddOrModifyRecord(
 	record_id__ RecordId,
@@ -133,6 +157,35 @@ ERRErr
 ERREnd
 ERREpilog
 	return Modification;
+}
+
+void mbdmng::manager_::DeleteRecord(
+	record_id__ RecordId,
+	table_row__ TableRow )
+{
+ERRProlog
+	record Record;
+	raw_datum RawDatum;
+	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+	record_row__ RecordRow = NONE;
+ERRBegin
+	TableId = Structure.GetTableTableId( TableRow );
+
+	Record.Init( TableId, MBDBSC_UNDEFINED_FIELD_ID, RecordId, datum( "" ) );
+
+	RawDatum.Init();
+	Convert( Record, RawDatum );
+
+	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the field.
+
+	while ( RecordRow != NONE ) {
+		Engine.Delete( RecordRow );
+
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the field.
+	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void mbdmng::manager_::GetRecords(

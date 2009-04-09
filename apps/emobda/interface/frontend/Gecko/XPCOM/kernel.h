@@ -57,7 +57,9 @@ namespace kernel {
 
 	enum message__ 
 	{
-		mCancelInputConfirmation,
+		mDropStructureItemConfirmation,
+		mDeleteRecordConfirmation,
+		mDropRecordConfirmation,
 		m_amount,
 		m_Undefined
 	};
@@ -323,6 +325,7 @@ namespace kernel {
 		void ApplyStructureItem( void );
 		void DropStructureItem( void )
 		{
+			_Temporary.reset();
 			_SwitchTo( cStructureView );
 		}
 		void BrowseList( void )
@@ -336,6 +339,16 @@ namespace kernel {
 		void BrowseRecord( void )
 		{
 			_SwitchTo( cRecordView );
+		}
+		void DropRecord( void )
+		{
+			_SwitchTo( cRecordView );
+		}
+		void RemoveRecord( void )
+		{
+			DeleteRecord( GetTarget().Record, GetTarget().Table );
+			Target().Set( UNDEFINED_RECORD );
+			_SwitchTo( cListView );
 		}
 		void FillStructureView( void );
 		void FillTableMenu( void );

@@ -30,6 +30,7 @@ namespace ui_rcd_f {
 	UI_TYPEDEF( box__, record_box__ );
 
 	UI_ETYPEDEF( command__, apply_record_command__ );
+	UI_ETYPEDEF( command__, cancel_record_command__ );
 
 	struct record_form__
 	: public _ui_core__,
@@ -39,6 +40,7 @@ namespace ui_rcd_f {
 		record_box__ RecordBox;
 		struct commands__ {
 			apply_record_command__ ApplyRecord;
+			cancel_record_command__ CancelRecord;
 		} Commands;
 		void Init( bridge_functions__ &Functions )
 		{

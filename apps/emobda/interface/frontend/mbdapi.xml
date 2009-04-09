@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 06/04/2009 17:44:52. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 09/04/2009 10:46:17. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,10 +19,10 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>06/04/2009</Date>
-		<Time>17:44:52</Time>
+		<Date>09/04/2009</Date>
+		<Time>10:46:17</Time>
 	</Misc>
-	<Messages Amount="20">
+	<Messages Amount="21">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
@@ -42,7 +42,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 		<Message Content="MANAGER_FieldNotOwnedByTable"/>
 		<Message Content="MANAGER_BadFieldRow"/>
 		<Message Content="MANAGER_SameFieldTwice"/>
-		<Message Content="MANAGER_UndefinedRecord"/>
+		<Message Content="MANAGER_UnknownRecord"/>
+		<Message Content="MANAGER_NoRecordGiven"/>
 	</Messages>
 	<Types>
 		<Type Object="Master">
@@ -61,7 +62,7 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="mbd" Lower="mbd" Upper="MBD"/>
 			<Name Raw="manager" Underscored="manager" Uppercased="Manager"/>
-			<Commands Amount="13">
+			<Commands Amount="14">
 				<Command>
 					<Name>CreateDatabase</Name>
 					<ID>0</ID>
@@ -291,9 +292,25 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 					</Parameters>
 				</Command>
 				<Command>
-					<Name>GetRecords</Name>
+					<Name>DeleteRecord</Name>
 					<ID>11</ID>
 					<Parameters Amount="3" Position="43">
+						<In>
+							<Parameter Discriminator="1" Type="Static">
+								<Name>id16</Name>
+								<ID>11</ID>
+							</Parameter>
+							<Parameter Discriminator="2" Position="Last" Type="Static">
+								<Name>id32</Name>
+								<ID>14</ID>
+							</Parameter>
+						</In>
+					</Parameters>
+				</Command>
+				<Command>
+					<Name>GetRecords</Name>
+					<ID>12</ID>
+					<Parameters Amount="3" Position="46">
 						<In>
 							<Parameter Discriminator="1" Type="Static">
 								<Name>id32</Name>
@@ -310,8 +327,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 				</Command>
 				<Command>
 					<Name>GetRecordsData</Name>
-					<ID>12</ID>
-					<Parameters Amount="5" Position="46">
+					<ID>13</ID>
+					<Parameters Amount="5" Position="49">
 						<In>
 							<Parameter Discriminator="1" Type="Static">
 								<Name>id32</Name>

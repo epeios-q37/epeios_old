@@ -23,12 +23,12 @@
 <!-- $Id$ -->
 
 <window
-	id="mainWindow"
+	id="wdwMain"
 	title="Epeios mobile database !"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window, 'main' );registeringEnd();"
+	onload="register( window );registeringEnd();"
 	onunload="retire();"
 >
 	<script type="text/javascript" src="emobda.js"/>
@@ -44,6 +44,7 @@
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCreateRecord" observes="bcrTableSelected"/>
+		<command id="cmdDeleteRecord" observes="bcrRecordSelected"/>
 		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
@@ -59,9 +60,10 @@
 		<menu label="|Tables|" id="mnuTable"/>
 		<menu label="|Data|">
 			<menupopup>
-				<menuitem label="|Input|" command="cmdCreateRecord"/>
-				<menuitem label="|Input|" command="cmdModifyRecord"/>
+				<menuitem label="|Create|" command="cmdCreateRecord"/>
+				<menuitem label="|Update|" command="cmdModifyRecord"/>
 				<menuitem label="|Browse|" command="cmdBrowseRecord"/>
+				<menuitem label="|Delete|" command="cmdDeleteRecord"/>
 			</menupopup>
 		</menu>
 		<menu label="coucou">

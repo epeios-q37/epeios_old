@@ -38,7 +38,7 @@
 		<xsl:apply-templates select="Records"/>
 	</xsl:template>
 	<xsl:template match="Records">
-		<xsl:element name="Table">
+		<xsl:element name="table">
 			<xsl:apply-templates select="Record"/>
 		</xsl:element>
 	</xsl:template>

@@ -68,6 +68,12 @@ void ui_main::browse_record_command__::NSXPCMOnEvent( event__ )
 	K().BrowseRecord();
 }
 
+void ui_main::delete_record_command__::NSXPCMOnEvent( event__ )
+{
+	if ( K().Confirm( kernel::mDeleteRecordConfirmation ) )
+		K().RemoveRecord();
+}
+
 /* Registrations */
 
 /* 'broadcaster's */
@@ -147,6 +153,7 @@ static void Register_(
 	Register_( Kernel, UI.Create, Document, "cmdCreateRecord" );
 	Register_( Kernel, UI.Modify, Document, "cmdModifyRecord" );
 	Register_( Kernel, UI.Browse, Document, "cmdBrowseRecord" );
+	Register_( Kernel, UI.Delete, Document, "cmdDeleteRecord" );
 }
 
 static void Register_(

@@ -49,7 +49,8 @@ enum message__ {
 	mBadFieldRow,
 	mSameFieldTwice,
 
-	mUndefinedRecord,
+	mUnknownRecord,
+	mNoRecordGiven,
 
 	m_amount,
 	m_Undefined
@@ -79,7 +80,8 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( FieldNotOwnedByTable );
 	CASE( BadFieldRow );
 	CASE( SameFieldTwice );
-	CASE( UndefinedRecord );
+	CASE( UnknownRecord );
+	CASE( NoRecordGiven );
 	break;
 	default:
 		ERRu();
@@ -621,10 +623,43 @@ ERRBegin
 
 	if ( RecordId == MBDBSC_UNDEFINED_RECORD_ID )
 		RecordId = *Manager.AddRecord( Data, TableRow, FieldRows );
-	else
+	else {
+		if ( !Manager.RecordExists( RecordId, TableRow ) ) {
+			Message = mUnknownRecord;
+			ERRReturn;
+		}
+
 		Manager.ModifyRecord( RecordId, Data, TableRow, FieldRows );
+	}
 
 	Request.Id16Out() = *RecordId;
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( DeleteRecord )
+{
+	message__ Message = mOK;
+ERRProlog
+	table_row__ TableRow = NONE;
+	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
+ERRBegin
+	RecordId = *Request.Id16In();	// If == 'UNDEFINED_RECORD', creation, otherwise modification.
+	TableRow = *Request.Id32In();
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
+		ERRReturn;
+	}
+
+	if ( RecordId == MBDBSC_UNDEFINED_RECORD_ID ) {
+		Message = mNoRecordGiven;
+		ERRReturn;
+	}
+
+	Manager.DeleteRecord( RecordId, TableRow );
 ERRErr
 ERREnd
 ERREpilog
@@ -793,6 +828,11 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cItems32,	// Field row and corresponding datum.
 		bkdmng::cEnd,
 			bkdmng::cId16,			// Record id.
+		bkdmng::cEnd );
+	Module.Add( D( DeleteRecord ),
+			bkdmng::cId16,		// Record id
+			bkdmng::cId32,		// Table row.
+		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetRecords ),
 			bkdmng::cId32,		// Table row.

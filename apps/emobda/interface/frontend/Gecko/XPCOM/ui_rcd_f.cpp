@@ -33,6 +33,12 @@ void ui_rcd_f::apply_record_command__::NSXPCMOnEvent( event__ )
 	K().ApplyRecord();
 }
 
+void ui_rcd_f::cancel_record_command__::NSXPCMOnEvent( event__ )
+{
+	if ( K().Confirm( kernel::mDropRecordConfirmation ) )
+		K().DropRecord();
+}
+
 /* UI Registrations */
 
 static void Register_(
@@ -50,6 +56,7 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Kernel, UI.ApplyRecord, Document, "cmdApplyRecord" );
+	Register_( Kernel, UI.CancelRecord, Document, "cmdCancelRecord" );
 }
 
 void ui_rcd_f::Register(

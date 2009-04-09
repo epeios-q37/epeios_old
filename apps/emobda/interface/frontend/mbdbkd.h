@@ -202,6 +202,12 @@ namespace mbdbkd{
 		{
 			_H( Manager.InsertOrModifyRecord( *Record, *Table, Items, *Record ) );
 		}
+		void DeleteRecord(
+			record__ Record,
+			table__ Table )
+		{
+			_H( Manager.DeleteRecord( *Record, *Table ) );
+		}
 		void GetRecords(
 			table__ Table,
 			records_ &Records )

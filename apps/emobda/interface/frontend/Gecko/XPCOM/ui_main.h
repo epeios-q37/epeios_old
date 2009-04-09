@@ -43,6 +43,7 @@ namespace ui_main {
 	UI_ETYPEDEF( command__, create_record_command__ );
 	UI_ETYPEDEF( command__, modify_record_command__ );
 	UI_ETYPEDEF( command__, browse_record_command__ );
+	UI_ETYPEDEF( command__, delete_record_command__ );
 
 	UI_TYPEDEF( deck__, main_deck__ );
 
@@ -60,6 +61,7 @@ namespace ui_main {
 				create_record_command__ Create;
 				modify_record_command__ Modify;
 				browse_record_command__ Browse;
+				delete_record_command__ Delete;
 			} Record;
 		} Commands;
 		struct broadcasters__ {

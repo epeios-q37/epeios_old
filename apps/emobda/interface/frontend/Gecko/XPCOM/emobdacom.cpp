@@ -93,12 +93,11 @@ RN
 RE
 }
 
-NS_IMETHODIMP emobdacom::Register(
-	nsIDOMWindow *Window,
-	const char *UIDesignation )
+NS_IMETHODIMP emobdacom::Register( nsIDOMWindow *Window )
 {
 	// Ne sait pas récupèrer une 'window' à partir de son document.
 RP
+	str::string Id;
 RBB
 	ui::ui__ &UI = Repository_.GetCurrentObject().UI;
 
@@ -108,15 +107,19 @@ RBB
 #endif
 	_KernelRow = Repository_.GetCurrentRow();
 
-	if ( !strcmp( UIDesignation, "main" ) )
+	Id.Init();
+	nsxpcm::Log( nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id ) );
+
+	if ( Id == "wdwMain" ) {
 		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
-	else if ( !strcmp( UIDesignation, "StructureFormAndView" ) )
+		nsxpcm::MasterWindow = Window;
+	} else if ( Id == "pgeStructure" )
 		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
-	else if ( !strcmp( UIDesignation, "ListView" ) )
+	else if ( Id == "pgeListView" )
 		ui_lst_v::Register( Repository_.GetCurrentObject(), UI.ListView, Window );
-	else if ( !strcmp( UIDesignation, "RecordForm" ) )
+	else if ( Id == "pgeRecordForm" )
 		ui_rcd_f::Register( Repository_.GetCurrentObject(), UI.RecordForm, Window );
-	else if ( !strcmp( UIDesignation, "RecordView" ) )
+	else if ( Id == "pgeRecordView" )
 		ui_rcd_v::Register( Repository_.GetCurrentObject(), UI.RecordView, Window );
 	else
 		ERRu();
@@ -132,7 +135,7 @@ RP
 RBB
 	kernel::kernel___ &Kernel = Repository_.GetCurrentObject();
 
-	nsxpcm::GetJSConsole( Kernel.UI.Main.Window, &Console );
+	nsxpcm::GetJSConsole();
 
 	Repository_.DismissCurrentObject();
 

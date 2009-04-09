@@ -127,6 +127,10 @@ namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
+	// A éventuellement initialiser par l'utilisateur, pour faciliter l'utilisation
+	// de certaines fonctions ('GetJSConsole(...)', 'Alert(...)', ...).
+	extern nsIDOMWindow *MasterWindow;
+
 	enum event__
 	{
 		eCommand,
@@ -863,16 +867,29 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		const str::string_ &NodeName );
 
-	inline nsIDOMDocument *GetDocument( nsIDOMWindow *Window )
+	inline nsIDOMElement *GetDocumentElement( nsIDOMDocument *Document )
+	{
+		nsIDOMElement *Element = NULL;
+
+		if ( Document->GetDocumentElement( &Element ) != NS_OK )
+			ERRu();
+
+		return Element;
+	}
+
+	inline nsIDOMDocument *GetWindowDocument( nsIDOMWindow *Window )
 	{
 		nsIDOMDocument *Document = NULL;
 
-		Window->GetDocument( &Document );
-
-		if ( Document == NULL )
+		if ( Window->GetDocument( &Document ) != NS_OK )
 			ERRu();
 
 		return Document;
+	}
+
+	inline nsIDOMElement *GetWindowElement( nsIDOMWindow *Window )
+	{
+		return GetDocumentElement( GetWindowDocument( Window ) );
 	}
 
 	template <typename element> inline element *FindParent(
@@ -905,7 +922,7 @@ namespace nsxpcm {
 		void Set( nsIDOMWindow *Window )
 		{
 			this->Window = Window;
-			this->Document = GetDocument( Window );
+			this->Document = GetWindowDocument( Window );
 		}
 	};
 
@@ -1415,6 +1432,14 @@ namespace nsxpcm {
 			(*JSConsoleWindow)->Focus();
 
 		return *JSConsoleWindow;
+	}
+
+	void GetJSConsole( nsIDOMWindow *ParentWindow );
+
+	inline void GetJSConsole( void )
+	{
+		if ( MasterWindow != NULL )
+			GetJSConsole( MasterWindow );
 	}
 
 	template <typename type, typename row> E_TTYPEDEF( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.

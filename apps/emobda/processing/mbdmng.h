@@ -202,6 +202,12 @@ namespace mbdmng {
 		{
 			return _AddOrModifyRecord( RecordId, Data, TableRow, FieldRows );
 		}
+		bso::bool__ RecordExists(
+			record_id__ RecordId,
+			table_row__ TableRow ) const;
+		void DeleteRecord(
+			record_id__ RecordId,
+			table_row__ TableRow );
 		void GetRecords(
 			table_row__ TableRow,
 			record_ids_ &RecordIds ) const;

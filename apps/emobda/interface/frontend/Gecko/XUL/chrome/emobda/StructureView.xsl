@@ -89,6 +89,11 @@
 						<xsl:value-of select="Name"/>
 					</xsl:attribute>
 				</xsl:element>
+				<xsl:element name="treecell">
+					<xsl:attribute name="label">
+						<xsl:value-of select="@Id"/>
+					</xsl:attribute>
+				</xsl:element>
 			</xsl:element>
 			<xsl:element name="treechildren">
 				<xsl:apply-templates select="../../Fields">
@@ -123,6 +128,11 @@
 				<xsl:element name="treecell">
 					<xsl:attribute name="label">
 						<xsl:value-of select="Name"/>
+					</xsl:attribute>
+				</xsl:element>
+				<xsl:element name="treecell">
+					<xsl:attribute name="label">
+						<xsl:value-of select="@Id"/>
 					</xsl:attribute>
 				</xsl:element>
 			</xsl:element>
