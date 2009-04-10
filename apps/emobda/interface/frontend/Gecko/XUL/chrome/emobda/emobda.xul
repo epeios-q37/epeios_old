@@ -39,6 +39,8 @@
 		<broadcaster id="bcrRecordSelected"/>
 	</broadcasterset>
 	<commandset>
+		<command id="cmdJSConsole" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM isn't call ! -->
+		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM isn't call ! -->
 		<command id="cmdCreateDatabase"/>
 		<command id="cmdOpenDatabase"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
@@ -48,6 +50,10 @@
 		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
+	<keyset>
+		<key id="keyJSConsole" modifiers="accel shift" key="j" command="cmdJSConsole"/>
+		<key id="keyDOMInspector" modifiers="accel shift" key="d" command="cmdDOMInspector"/>
+	</keyset>
 	<menubar>
 		<menu label="Database">
 			<menupopup>
@@ -70,7 +76,6 @@
 			<menupopup/>
 		</menu>
 	</menubar>
-	<button label="DOM Inspector" oncommand ="window.open('chrome://inspector/content/inspector.xul', '', 'chrome,resizable=yes');"/>
 	<deck id="dckMain" selectedIndex="1" flex="1" >
 		<vbox>
 			<hbox>

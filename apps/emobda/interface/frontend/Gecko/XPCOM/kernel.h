@@ -58,6 +58,7 @@ namespace kernel {
 	enum message__ 
 	{
 		mDropStructureItemConfirmation,
+		mDeleteFieldConfirmation,
 		mDeleteRecordConfirmation,
 		mDropRecordConfirmation,
 		m_amount,
@@ -323,6 +324,16 @@ namespace kernel {
 
 		}
 		void ApplyStructureItem( void );
+		void DeleteField( void )
+		{
+			if ( GetTarget().Field == UNDEFINED_FIELD )
+				ERRc();
+
+			_backend___::DeleteField( GetTarget().Field );
+			Target().Set( UNDEFINED_FIELD );
+
+			_SwitchTo( cStructureView );
+		}
 		void DropStructureItem( void )
 		{
 			_Temporary.reset();

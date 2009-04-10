@@ -108,11 +108,13 @@ RBB
 	_KernelRow = Repository_.GetCurrentRow();
 
 	Id.Init();
-	nsxpcm::Log( nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id ) );
+	nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id );
+//	nsxpcm::Log( Id );
 
 	if ( Id == "wdwMain" ) {
 		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
-		nsxpcm::MasterWindow = Window;
+		if ( nsxpcm::MasterWindow == NULL )
+			nsxpcm::MasterWindow = Window;
 	} else if ( Id == "pgeStructure" )
 		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
 	else if ( Id == "pgeListView" )
@@ -135,12 +137,9 @@ RP
 RBB
 	kernel::kernel___ &Kernel = Repository_.GetCurrentObject();
 
-	nsxpcm::GetJSConsole();
-
 	Repository_.DismissCurrentObject();
 
 	Kernel.DefineSession();
-	
 RR
 RN
 RE

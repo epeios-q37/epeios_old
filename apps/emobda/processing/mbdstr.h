@@ -147,16 +147,25 @@ namespace mbdstr {
 			structure_core_::Init( Name, Comment );
 		}
 		void Init( const class structure_description_ &Description );
-		void ModifyField(
-			field_row__ FieldRow,
-			const field_description_ &Description );
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &Description );
+		void ModifyField(
+			field_row__ FieldRow,
+			const field_description_ &Description );
+		void DeleteField( field_row__ FieldRow );
 		table_row__ SearchTable( const str::string_ &Name ) const;
 		field_row__ SearchField(
 			table_row__ TableRow,
 			const str::string_ &Name ) const;
+		table_id__ GetTableTableId( table_row__ TableRow ) const
+		{
+			ctn::E_CITEMt( table_, table_row__ ) Table;
+
+			Table.Init( Tables );
+
+			return Table( TableRow ).Id();
+		}
 		bso::bool__ TableExists( table_row__ TableRow ) const
 		{
 			return Tables.Exists( TableRow );
@@ -186,13 +195,16 @@ namespace mbdstr {
 
 			return Field( FieldRow ).Id();
 		}
-		table_id__ GetTableTableId( table_row__ TableRow ) const
+		table_row__ GetFieldTableRow( field_row__ FieldRow ) const
 		{
-			ctn::E_CITEMt( table_, table_row__ ) Table;
+			ctn::E_CITEMt( field_, field_row__ ) Field;
+			Field.Init( Fields );
 
-			Table.Init( Tables );
-
-			return Table( TableRow ).Id();
+			return Field( FieldRow ).TableRow();
+		}
+		table_id__ GetFieldTableId( field_row__ FieldRow ) const
+		{
+			return GetTableTableId( GetFieldTableRow( FieldRow ) );
 		}
 		table_row__ AddTable( const table_description_ &Description );
 		void ModifyTable(

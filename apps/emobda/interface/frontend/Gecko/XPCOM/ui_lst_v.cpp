@@ -36,6 +36,7 @@ void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
 		K().SelectRecord();
 		break;
 	case nsxpcm::eDblClick:
+		K().SelectRecord();	// In most case, the 'Select' event is called before the 'DblClick' one, but mot always.
 		K().BrowseRecord();
 		break;
 	default:

@@ -27,6 +27,16 @@ using kernel::kernel___;
 
 using nsxpcm::event__;
 
+void ui_main::jsconsole_command__::NSXPCMOnEvent( event__ )
+{
+	nsxpcm::GetJSConsole();
+}
+
+void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
+{
+	nsxpcm::GetDOMInspector();
+}
+
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 	K().ApplyDatabase();
@@ -161,6 +171,9 @@ static void Register_(
 	main__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
+	Register_( Kernel, UI.JSConsole, Document, "cmdJSConsole" );
+	Register_( Kernel, UI.DOMInspector, Document, "cmdDOMInspector" );
+
 	Register_( Kernel, UI.Database, Document );
 	Register_( Kernel, UI.Record, Document );
 }

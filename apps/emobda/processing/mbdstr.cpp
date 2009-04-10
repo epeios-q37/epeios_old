@@ -60,19 +60,6 @@ field_row__ mbdstr::structure_::SearchField(
 		return FieldRows( Row );
 }
 
-void mbdstr::structure_::ModifyField(
-	field_row__ FieldRow,
-	const field_description_ &Description )
-{
-	if ( Description.GetId() != MBDBSC_UNDEFINED_FIELD_ID )
-		ERRu();
-
-	Fields( FieldRow ).Set( Description.Name, Description.Comment );
-
-	Fields.Flush();
-}
-
-
 field_row__ mbdstr::structure_::AddField(
 	table_row__ TableRow,
 	const field_description_ &Description )
@@ -98,6 +85,34 @@ ERRErr
 ERREnd
 ERREpilog
 	return FieldRow;
+}
+
+void mbdstr::structure_::DeleteField( field_row__ FieldRow )
+{
+	table_row__ TableRow = GetFieldTableRow( FieldRow );
+
+	if ( TableRow == NONE )
+		ERRc();
+
+	Tables( TableRow ).RemoveField( FieldRow );
+
+	Tables.Flush();
+
+	Fields.Remove( FieldRow );
+
+	Fields.Flush();
+}
+
+void mbdstr::structure_::ModifyField(
+	field_row__ FieldRow,
+	const field_description_ &Description )
+{
+	if ( Description.GetId() != MBDBSC_UNDEFINED_FIELD_ID )
+		ERRu();
+
+	Fields( FieldRow ).Set( Description.Name, Description.Comment );
+
+	Fields.Flush();
 }
 
 void mbdstr::structure_::_AddFields(

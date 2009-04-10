@@ -35,9 +35,8 @@
 	<commandset>
 		<command id="cmdSelectRecord"/>
 	</commandset>
-	<vbox flex="1" >
-		<description>List view !</description>
-		<tree id="treContent" enableColumnDrag="true" flex="1" command="cmdSelectRecord"/>
+	<vbox flex="1">
+		<tree id="treContent" enableColumnDrag="true" flex="1"  style="overflow: auto;" command="cmdSelectRecord"/>
 	</vbox>
 </page>
 	

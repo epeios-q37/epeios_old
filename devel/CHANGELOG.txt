@@ -1,5 +1,9 @@
 $Id$
 
+10/04/2009 :
+	- NSXPCM :
+		- Ajout 'GetDOMInspector(...)'.
+
 09/04/2009 :
 	- NSXPCM :
 		- Ajout 'GetWindowDocument(...)', 'GetDocumentElement(...)', 'GetWindowElement(...)'.

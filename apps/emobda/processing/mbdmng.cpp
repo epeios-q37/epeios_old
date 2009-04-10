@@ -28,6 +28,40 @@
 
 using namespace mbdmng;
 
+void mbdmng::manager_::DeleteField( field_row__ FieldRow )
+{
+ERRProlog
+	record Record;
+	raw_datum RawDatum;
+	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+	field_id__ FieldId = MBDBSC_UNDEFINED_FIELD_ID;
+	record_row__ RecordRow = NONE;
+ERRBegin
+	FieldId = Structure.GetFieldFieldId( FieldRow );
+	TableId = Structure.GetFieldTableId( FieldRow );
+
+	Record.Init( TableId, FieldId, MBDBSC_UNDEFINED_RECORD_ID, datum( "" ) );
+
+	RawDatum.Init();
+	Convert( Record, RawDatum );
+
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the datum.
+
+	while ( RecordRow != NONE ) {
+		Engine.Delete( RecordRow );
+
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the datum.
+	}
+
+	Structure.DeleteField( FieldRow );
+
+	_ExportStructure();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 const record_ &mbdmng::manager_::_GetRecord(
 	dbstbl::rrow__ Row,
 	record_ &Record ) const

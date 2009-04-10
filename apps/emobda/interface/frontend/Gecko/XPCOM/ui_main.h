@@ -35,6 +35,9 @@ namespace ui_main {
 
 	UI_ETYPEDEF( menu_item__, table_menu_item__ );
 
+	UI_ETYPEDEF( command__, jsconsole_command__ );
+	UI_ETYPEDEF( command__, dom_inspector_command__ );
+
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
 	UI_ETYPEDEF( command__, define_database_command__ );
@@ -51,6 +54,8 @@ namespace ui_main {
 	: public _ui_core__
 	{
 		struct commands__ {
+			jsconsole_command__ JSConsole;
+			dom_inspector_command__ DOMInspector;
 			struct database__ {
 				create_database_command__ Create;
 				open_database_command__ Open;

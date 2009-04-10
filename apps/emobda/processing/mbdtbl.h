@@ -185,6 +185,15 @@ namespace mbdtbl {
 		{
 			return Fields.Search( FieldRow ) != NONE;
 		}
+		void RemoveField( field_row__ FieldRow )
+		{
+			epeios::row__ Row = Fields.Search( FieldRow );
+
+			if ( Row == NONE )
+				ERRc();
+
+			Fields.Remove( Row );
+		}
 	};
 
 	E_AUTO( table );

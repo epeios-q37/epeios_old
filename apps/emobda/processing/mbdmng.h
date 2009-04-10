@@ -162,6 +162,7 @@ namespace mbdmng {
 
 			_ExportStructure();
 		}
+		void DeleteField( field_row__ FieldRow );
 		field_row__ SearchField(
 			table_row__ TableRow,
 			const str::string_ &Name ) const

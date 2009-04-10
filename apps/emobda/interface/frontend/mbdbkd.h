@@ -141,6 +141,10 @@ namespace mbdbkd{
 
 			return Field;
 		}
+		void DeleteField( field__ Field )
+		{
+			_H( Manager.DeleteField( *Field ) );
+		}
 		void GetDatabaseInfos(
 			str::string_ &Name,
 			str::string_ &Comment )

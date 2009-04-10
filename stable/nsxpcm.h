@@ -1340,7 +1340,10 @@ namespace nsxpcm {
 		{
 			return GetCurrentIndex() != -1;
 		}
-
+		void ClearSelection( void )
+		{
+			_GetSelection()->ClearSelection();
+		}
 	};
 
 	class broadcaster__
@@ -1440,6 +1443,21 @@ namespace nsxpcm {
 	{
 		if ( MasterWindow != NULL )
 			GetJSConsole( MasterWindow );
+	}
+
+	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
+	inline void GetDOMInspector( nsIDOMWindow *ParentWindow )
+	{
+		nsIDOMWindow *Window = NULL;
+
+		GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://inspector/content/inspector.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+	}
+
+	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
+	inline void GetDOMInspector( void )
+	{
+		if ( MasterWindow != NULL )
+			GetDOMInspector( MasterWindow );
 	}
 
 	template <typename type, typename row> E_TTYPEDEF( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.

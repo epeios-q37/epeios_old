@@ -68,6 +68,9 @@ void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
 {
+	if ( K().Confirm( kernel::mDeleteFieldConfirmation ) ) {
+		K().DeleteField();
+	}
 }
 
 void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )

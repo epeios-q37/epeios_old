@@ -44,6 +44,7 @@ enum message__ {
 
 	mIncorrectFieldName,
 	mUnknownField,
+	mNoFieldGiven,
 	mFieldNotOwnedByTable,
 
 	mBadFieldRow,
@@ -77,6 +78,7 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
 	CASE( UnknownField );
+	CASE( NoFieldGiven );
 	CASE( FieldNotOwnedByTable );
 	CASE( BadFieldRow );
 	CASE( SameFieldTwice );
@@ -454,6 +456,31 @@ ERREpilog
 	return Message;
 }
 
+DEC( DeleteField )
+{
+	message__ Message = mOK;
+ERRProlog
+	field_row__ FieldRow = NONE;
+ERRBegin
+	FieldRow = *Request.Id32In();	// Si = 'NONE', création, sinon modification.
+
+	if ( FieldRow == NONE ) {
+		Message = mNoFieldGiven;
+		ERRReturn;
+	}
+
+	if ( !Manager.FieldExists( FieldRow ) ) {
+		Message = mUnknownField;
+		ERRReturn;
+	}
+
+	Manager.DeleteField( FieldRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
 static void Convert_(
 	const field_rows_ &Rows,
 	bkdmng::ids32_ &Ids )
@@ -811,12 +838,16 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cIds32,		// 'Table's.
 		bkdmng::cEnd );
 	Module.Add( D( AddOrModifyField ),
-		bkdmng::cId32,			// Field row ('NONE' for creation).
-		bkdmng::cId32,			// Table row.
+			bkdmng::cId32,		// Field row ('NONE' for creation).
+			bkdmng::cId32,		// Table row.
 			bkdmng::cString,	// Field name.
 			bkdmng::cString,	// Field comment.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Field row.
+		bkdmng::cEnd );
+	Module.Add( D( DeleteField ),
+		bkdmng::cId32,			// Row of the field to delete.
+		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetFields ),
 		bkdmng::cEnd,

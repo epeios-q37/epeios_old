@@ -36,6 +36,7 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( DropStructureItemConfirmation );
+	CASE( DeleteFieldConfirmation );
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
 	default:
@@ -468,7 +469,7 @@ ERREnd
 ERREpilog
 }
 
-static void SelectItem_(
+static void SelectStructItem_(
 	const str::string_ &Type,
 	const str::string_ &Row,
 	nsIDOMNode *Root,
@@ -483,7 +484,6 @@ ERRBegin
 
 	TypeBuffer.Init();
 	RowBuffer.Init();
-
 
 	while ( ( ( Node = Browser.GetNext() ) != NULL )
 		&& ( ( nsxpcm::GetAttribute( Node, "Type", TypeBuffer ) != Type )
@@ -501,44 +501,44 @@ ERREnd
 ERREpilog
 }
 
-static inline void SelectItem_(
+static inline void SelectStructItem_(
 	const char *Type,
 	const char *Row,
 	nsIDOMNode *Root,
 	nsxpcm::tree__ &Tree )
 {
-	SelectItem_( str::string( Type ), str::string( Row ), Root, Tree );
+	SelectStructItem_( str::string( Type ), str::string( Row ), Root, Tree );
 }
 
-static inline void SelectItem_(
+static inline void SelectStructItem_(
 	field__ Field,
 	nsIDOMNode *Root,
 	nsxpcm::tree__ &Tree )
 {
 	bso::integer_buffer__ Buffer;
 
-	SelectItem_( "Field", bso::Convert( **Field, Buffer ), Root, Tree );
+	SelectStructItem_( "Field", bso::Convert( **Field, Buffer ), Root, Tree );
 }
 
-static inline void SelectItem_(
+static inline void SelectStructItem_(
 	table__ Table,
 	nsIDOMNode *Root,
 	nsxpcm::tree__ &Tree )
 {
 	bso::integer_buffer__ Buffer;
 
-	SelectItem_( "Table", bso::Convert( **Table, Buffer ), Root, Tree );
+	SelectStructItem_( "Table", bso::Convert( **Table, Buffer ), Root, Tree );
 }
 
-static inline void SelectItem_(
+static inline void SelectStructItem_(
 	const target__ &Target,
 	nsIDOMNode *Root,
 	nsxpcm::tree__ &Tree )
 {
 	if ( Target.Field != UNDEFINED_FIELD )
-		SelectItem_( Target.Field, Root, Tree );
+		SelectStructItem_( Target.Field, Root, Tree );
 	else  if ( Target.Table != UNDEFINED_TABLE )
-		SelectItem_( Target.Table, Root, Tree );
+		SelectStructItem_( Target.Table, Root, Tree );
 }
 
 void kernel::kernel___::FillStructureView( void )
@@ -568,7 +568,7 @@ ERRBegin
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
 
-	SelectItem_( _Target, UI.Structure.Items, UI.Structure.BrowseTree );
+	SelectStructItem_( _Target, UI.Structure.Items, UI.Structure.BrowseTree );
 ERRErr
 ERREnd
 ERREpilog
@@ -868,8 +868,7 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UI.Main.Broadcasters.RecordSelected.Disable();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
 
-		if ( UI.ListView.ContentTree.IsThereSelected() )
-			SelectRecord();
+		UI.ListView.ContentTree.ClearSelection();
 		break;
 	case cRecordForm:
 		K().FillRecordForm();
