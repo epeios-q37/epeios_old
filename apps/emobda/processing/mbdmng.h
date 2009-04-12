@@ -144,6 +144,7 @@ namespace mbdmng {
 
 			_ExportStructure();
 		}
+		void DeleteTable( table_row__ TableRow );
 		field_row__ AddField(
 			table_row__ TableRow,
 			const field_description_ &FieldDescription )

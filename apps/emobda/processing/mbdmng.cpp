@@ -61,6 +61,37 @@ ERREnd
 ERREpilog
 }
 
+void mbdmng::manager_::DeleteTable( table_row__ TableRow )
+{
+ERRProlog
+	record Record;
+	raw_datum RawDatum;
+	table_id__ TableId = MBDBSC_UNDEFINED_TABLE_ID;
+	record_row__ RecordRow = NONE;
+ERRBegin
+	TableId = Structure.GetTableTableId( TableRow );
+
+	Record.Init( TableId, MBDBSC_UNDEFINED_FIELD_ID, MBDBSC_UNDEFINED_RECORD_ID, datum( "" ) );
+
+	RawDatum.Init();
+	Convert( Record, RawDatum );
+
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 2 );	// We ignore the datum and the field.
+
+	while ( RecordRow != NONE ) {
+		Engine.Delete( RecordRow );
+
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 2 );	// We ignore the datum and the field.
+	}
+
+	Structure.DeleteTable( TableRow );
+
+	_ExportStructure();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 const record_ &mbdmng::manager_::_GetRecord(
 	dbstbl::rrow__ Row,

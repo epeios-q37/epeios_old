@@ -40,6 +40,7 @@ enum message__ {
 
 	mIncorrectTableName,
 	mUnableToCreateTable,
+	mNoTableGiven,
 	mUnknownTable,
 
 	mIncorrectFieldName,
@@ -74,6 +75,7 @@ static const char *GetRawMessage_( message__ MessageId )
 	CASE( UnableToOpenDatabase );
 	CASE( IncorrectTableName );
 	CASE( UnableToCreateTable );
+	CASE( NoTableGiven );
 	CASE( UnknownTable );
 	CASE( IncorrectFieldName );
 	CASE( NameAlreadyUsed );
@@ -306,6 +308,31 @@ ERRBegin
 	}
 
 	Request.Id32Out() = *TableRow;
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+DEC( DeleteTable )
+{
+	message__ Message = mOK;
+ERRProlog
+	table_row__ TableRow = NONE;
+ERRBegin
+	TableRow = *Request.Id32In();	// Si == 'NONE' création, sinon modification.
+
+	if ( TableRow == NONE ) {
+		Message = mNoTableGiven;
+		ERRReturn;
+	}
+
+	if ( !Manager.TableExists( TableRow ) ) {
+		Message = mUnknownTable;
+		ERRReturn;
+	}
+
+	Manager.DeleteTable( TableRow );
 ERRErr
 ERREnd
 ERREpilog
@@ -812,6 +839,10 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cString,	// Table comment.
 		bkdmng::cEnd,
 			bkdmng::cId32,		// Table row.
+		bkdmng::cEnd );
+	Module.Add( D( DeleteTable ),
+		bkdmng::cId32,			// Row of the tblae to delete.
+		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetTables ),
 		bkdmng::cEnd,

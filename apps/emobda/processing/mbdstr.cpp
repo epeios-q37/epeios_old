@@ -103,6 +103,34 @@ void mbdstr::structure_::DeleteField( field_row__ FieldRow )
 	Fields.Flush();
 }
 
+void mbdstr::structure_::DeleteFields( const field_rows_ &FieldRows )
+{
+	epeios::row__ Row = FieldRows.Last();
+
+	while ( Row != NONE ) {
+		DeleteField( FieldRows( Row ) );
+
+		Row = FieldRows.Last();
+	}
+}
+
+void mbdstr::structure_::DeleteTable( table_row__ TableRow )
+{
+ERRProlog
+	field_rows FieldRows;
+ERRBegin
+	FieldRows.Init();
+
+	GetTableFieldRows( TableRow, FieldRows );
+
+	DeleteFields( FieldRows );
+
+	Tables.Delete( TableRow );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void mbdstr::structure_::ModifyField(
 	field_row__ FieldRow,
 	const field_description_ &Description )

@@ -36,6 +36,7 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( DropStructureItemConfirmation );
+	CASE( DeleteTableConfirmation );
 	CASE( DeleteFieldConfirmation );
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
@@ -901,6 +902,9 @@ void kernel::kernel___::ApplyStructureItem( void )
 		case tmModification:
 			Target.Table = _CreateOrModifyTable();
 			break;
+		case tmDuplication:
+			ERRc();
+			break;
 		default:
 			ERRc();
 			break;
@@ -965,12 +969,22 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
 
-	if ( Target().Record == UNDEFINED_RECORD )
-		Target().Set( InsertRecord( Data, _Target.Table ) );
-	else
-		ModifyRecord( Target().Record, Data, _Target.Table );
+	switch ( _Temporary.Mode ) {
+		case tmCreation:
+		case tmDuplication:
+			Target().Set( InsertRecord( Data, _Target.Table ) );
+			break;
+		case tmModification:
+			ModifyRecord( Target().Record, Data, _Target.Table );
+			break;
+		default:
+			ERRc();
+			break;
+	}
 
 	_SwitchTo( cRecordView );
+
+	_Temporary.reset();
 ERRErr
 ERREnd
 ERREpilog

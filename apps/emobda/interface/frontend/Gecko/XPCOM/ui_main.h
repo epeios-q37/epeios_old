@@ -45,6 +45,7 @@ namespace ui_main {
 
 	UI_ETYPEDEF( command__, create_record_command__ );
 	UI_ETYPEDEF( command__, modify_record_command__ );
+	UI_ETYPEDEF( command__, duplicate_record_command__ );
 	UI_ETYPEDEF( command__, browse_record_command__ );
 	UI_ETYPEDEF( command__, delete_record_command__ );
 
@@ -65,6 +66,7 @@ namespace ui_main {
 			struct record__ {
 				create_record_command__ Create;
 				modify_record_command__ Modify;
+				duplicate_record_command__ Duplicate;
 				browse_record_command__ Browse;
 				delete_record_command__ Delete;
 			} Record;

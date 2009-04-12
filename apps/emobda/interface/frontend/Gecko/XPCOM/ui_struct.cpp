@@ -51,6 +51,9 @@ void ui_struct::modify_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 {
+	if ( K().Confirm( kernel::mDeleteTableConfirmation ) ) {
+		K().DeleteTable();
+	}
 }
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )

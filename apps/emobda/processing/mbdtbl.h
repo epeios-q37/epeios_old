@@ -36,6 +36,7 @@ namespace mbdtbl {
 
 	using mbdbsc::field_row__;
 	using mbdbsc::field_rows_;
+	using mbdbsc::field_rows;
 
 	using mbdfld::field_;
 	using mbdfld::fields_;

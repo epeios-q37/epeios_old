@@ -58,6 +58,7 @@ namespace kernel {
 	enum message__ 
 	{
 		mDropStructureItemConfirmation,
+		mDeleteTableConfirmation,
 		mDeleteFieldConfirmation,
 		mDeleteRecordConfirmation,
 		mDropRecordConfirmation,
@@ -69,7 +70,9 @@ namespace kernel {
 	{
 		tm_Undefined,
 		tmModification,
-		tmCreation
+		tmCreation,
+		tmDuplication,
+		tm_amount,
 	};
 
 	union temporary__ {
@@ -324,6 +327,16 @@ namespace kernel {
 
 		}
 		void ApplyStructureItem( void );
+		void DeleteTable( void )
+		{
+			if ( GetTarget().Table == UNDEFINED_TABLE )
+				ERRc();
+
+			_backend___::DeleteTable( GetTarget().Table );
+			Target().Set( UNDEFINED_TABLE );
+
+			_SwitchTo( cStructureView );
+		}
 		void DeleteField( void )
 		{
 			if ( GetTarget().Field == UNDEFINED_FIELD )
@@ -353,6 +366,7 @@ namespace kernel {
 		}
 		void DropRecord( void )
 		{
+			_Temporary.reset();
 			_SwitchTo( cRecordView );
 		}
 		void RemoveRecord( void )

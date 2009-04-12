@@ -141,6 +141,10 @@ namespace mbdbkd{
 
 			return Field;
 		}
+		void DeleteTable( table__ Table )
+		{
+			_H( Manager.DeleteTable( *Table ) );
+		}
 		void DeleteField( field__ Field )
 		{
 			_H( Manager.DeleteField( *Field ) );

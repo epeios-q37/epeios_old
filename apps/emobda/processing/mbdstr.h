@@ -154,6 +154,7 @@ namespace mbdstr {
 			field_row__ FieldRow,
 			const field_description_ &Description );
 		void DeleteField( field_row__ FieldRow );
+		void DeleteFields( const field_rows_ &FieldRows );
 		table_row__ SearchTable( const str::string_ &Name ) const;
 		field_row__ SearchField(
 			table_row__ TableRow,
@@ -185,6 +186,18 @@ namespace mbdstr {
 
 			return Table( TableRow ).OwnsField( FieldRow );
 		}
+		const field_rows_ &GetTableFieldRows(
+			table_row__ TableRow,
+			field_rows_ &FieldRows ) const
+		{
+			ctn::E_CITEMt( table_, table_row__ ) Table;
+
+			Table.Init( Tables );
+
+			FieldRows = Table( TableRow ).Fields;
+
+			return FieldRows;
+		}
 		bso::bool__ AreFieldsOwnedByTable(
 			const field_rows_ &FieldRows,
 			table_row__ TableRow ) const;
@@ -210,6 +223,7 @@ namespace mbdstr {
 		void ModifyTable(
 			table_row__ Row,
 			const table_description_ &Description );
+		void DeleteTable( table_row__ TableRow );
 	};
 
 	E_AUTO( structure );

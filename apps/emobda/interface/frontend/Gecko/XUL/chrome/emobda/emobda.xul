@@ -46,8 +46,9 @@
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCreateRecord" observes="bcrTableSelected"/>
-		<command id="cmdDeleteRecord" observes="bcrRecordSelected"/>
 		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
+		<command id="cmdDuplicateRecord" observes="bcrRecordSelected"/>
+		<command id="cmdDeleteRecord" observes="bcrRecordSelected"/>
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
 	<keyset>
@@ -68,6 +69,7 @@
 			<menupopup>
 				<menuitem label="|Create|" command="cmdCreateRecord"/>
 				<menuitem label="|Update|" command="cmdModifyRecord"/>
+				<menuitem label="|Duplicate|" command="cmdDuplicateRecord"/>
 				<menuitem label="|Browse|" command="cmdBrowseRecord"/>
 				<menuitem label="|Delete|" command="cmdDeleteRecord"/>
 			</menupopup>
