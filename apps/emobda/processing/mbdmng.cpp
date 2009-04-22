@@ -432,7 +432,7 @@ inline static const char *GetStructureFileName_(
 ERRProlog
 	STR_BUFFER___ LocationBuffer;
 ERRBegin
-	fnm::BuildFileName( Location.Convert( LocationBuffer ), "", ".embd", Buffer );
+	fnm::BuildFileName( Location.Convert( LocationBuffer ), "", "." MBDBSC_STRUCTURE_FILE_EXTENSION, Buffer );
 ERRErr
 ERREnd
 ERREpilog
@@ -550,5 +550,23 @@ bso::bool__ mbdmng::manager_::_SubInit( type__ Type )
 
 	return Success;
 }
+
+const strings_ &mbdmng::GetDatabases( strings_ &Databases )
+{
+	dir::handle___ Handle = DIR_INVALID_HANDLE;
+	const char *File = dir::GetFirstFile( "*." MBDBSC_STRUCTURE_FILE_EXTENSION, Handle );
+
+	while ( ( File != NULL ) && ( File[0] ) ) {
+		Databases.Append( str::string( File ) );
+
+		File = dir::GetNextFile( Handle );
+	}
+
+	if ( File == NULL )
+		ERRu();
+
+	return Databases;
+}
+
 
 

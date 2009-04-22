@@ -255,6 +255,11 @@ namespace mbdmng {
 	{
 		return ( TestUnicity( FieldRows ) == NONE );
 	}
+
+	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
+	E_AUTO( strings );
+
+	const strings_ &GetDatabases( strings_ &Databases );
 }
 
 

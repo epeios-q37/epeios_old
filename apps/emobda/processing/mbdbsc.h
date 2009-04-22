@@ -28,6 +28,7 @@
 #include "mmm.h"
 #include "mdr.h"
 
+#define MBDBSC_STRUCTURE_FILE_EXTENSION				"embd"
 #define MBDBSC_CONTENT_ROOT_FILE_NAME				"Data"
 #define MBDBSC_TABLE_RECORD_FIELD_INDEX_ROOT_FILE_NAME	"TableRecordFieldIndex"
 #define MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME		"TableFieldDatumIndex"

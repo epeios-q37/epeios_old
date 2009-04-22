@@ -213,6 +213,18 @@ ERREpilog
 	return Message;
 }
 
+DEC( GetAvailableDatabases )
+{
+	message__ Message = mOK;
+ERRProlog
+ERRBegin
+	mbdmng::GetDatabases( Request.StringsOut() );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
 DEC( OpenDatabase )
 {
 	message__ Message = mOK;
@@ -813,7 +825,6 @@ ERREpilog
 	return Message;
 }
 
-
 #define D( name )	#name, (void *)::##name
 
 void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
@@ -823,6 +834,10 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cString,	// Database name.
 			bkdmng::cString,	// Database comment.
 		bkdmng::cEnd,
+		bkdmng::cEnd );
+	Module.Add( D( GetAvailableDatabases ),
+		bkdmng::cEnd,
+			bkdmng::cStrings,	// Available databases.
 		bkdmng::cEnd );
 	Module.Add( D( OpenDatabase ),
 			bkdmng::cString,	// Database location.
