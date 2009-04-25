@@ -1,5 +1,11 @@
 $Id$
 
+24/04/2009 :
+	- NSXPCM :
+		- 'CreateNewObject(...)' de 'repository_' prend maintenant un 'void *' qui est passé à l'objet crée lors de son initialisation.
+		- Lors de la création d'un objet par 'CreateNewObject(...)' de 'repsitory_', celui-ci reçoit maintenant également son 'row__'.
+		- Ajout 'SetCurrentRow(...)' à 'repository_'.
+
 10/04/2009 :
 	- NSXPCM :
 		- Ajout 'GetDOMInspector(...)'.

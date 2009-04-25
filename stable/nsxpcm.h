@@ -1501,7 +1501,7 @@ namespace nsxpcm {
 			reset();
 			_lpbunch_<type, row>::Init();
 		}
-		void CreateNewObject( void )
+		void CreateNewObject( void *UP )
 		{
 			type *UserObject = NULL;
 
@@ -1513,7 +1513,7 @@ namespace nsxpcm {
 
 			S_.Row = Add( UserObject );
 
-			Get( S_.Row )->Init();
+			Get( S_.Row )->Init( UP, S_.Row );
 		}
 		void DismissCurrentObject( void )
 		{
@@ -1521,6 +1521,13 @@ namespace nsxpcm {
 				ERRu();
 
 			S_.Row = NONE;
+		}
+		void SetCurrentRow( row Row )
+		{
+			if ( S_.Row != NONE )
+				ERRu();
+
+			S_.Row = Row;
 		}
 		row GetCurrentRow( void ) const
 		{

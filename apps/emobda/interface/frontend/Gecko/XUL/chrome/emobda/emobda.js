@@ -65,12 +65,19 @@ try {
 
 // alert( eprivate );
 
-function register (
-	windows,
-	identification 	)
+function register ( windows )
  {
 	try {
-		emobdacom.Register( window, identification );
+		emobdacom.Register( window );
+	} catch (err ) {
+		alert( err );
+	}
+ }
+ 
+function registerAlone ( windows )
+ {
+	try {
+		emobdacom.RegisterAlone( window );
 	} catch (err ) {
 		alert( err );
 	}

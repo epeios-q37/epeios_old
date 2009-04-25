@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!--
-	'ListView.xul' by Claude SIMON (http://zeusw.org/).
+	'DatabaseForm.xul' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -22,20 +22,40 @@
 
 <!-- $Id$ -->
 
-<page
-	id="pgeListView"
-	title="List view"
+<window
+	id="wdwDatabaseForm"
+	title="Database"
+	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="register( window );"
+	onload="registerAlone( window );"
 >
 	<script type="text/javascript" src="emobda.js"/>
-	<broadcasterset>
-	</broadcasterset>
-	<commandset>
-	</commandset>
+	
+	<broadcasters>
+		<broadcaster id="bcrDatabaseSelection" disabled="true"/>
+	</broadcasters>
+	<commands>
+		<command id="cmdApply" label="|OK|" observes="bcrDatabaseSelection"/>
+		<command id="cmdCancel" label="|Cancel|"/>
+	</commands>
 	<vbox flex="1">
-		<tree id="treContent" enableColumnDrag="true" flex="1"  style="overflow: auto;"/>
+		<groupbox>
+			<caption label="Name"/>
+			<textbox id="txbName"/>
+		</groupbox>
+		<groupbox>
+			<caption label="Location"/>
+			<textbox id="txbLocation"/>
+		</groupbox>
+		<groupbox>
+			<caption label="Comment"/>
+			<textbox id="txbComment"/>
+		</groupbox>
+		<hbox>
+			<button command="cmdApply"/>
+			<button command="cmdCancel"/>
+		</hbox>
 	</vbox>
-</page>
+</window>
 	

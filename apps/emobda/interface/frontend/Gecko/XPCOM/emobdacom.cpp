@@ -32,11 +32,14 @@
 // {cfee5019-09e1-4d5c-af89-0ffadf903df5}
 #define EMOBDACOM_CID  IEMOBDACOM_IID
 
-E_ROW( krow__ );	// Core row; see below.
+using kernel::krow__;
+using kernel::Repository;
 
 class emobdacom
 : public iemobdacom
 {
+private:
+	void _BaseRegistration( nsIDOMWindow *Window );
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_IEMOBDACOM
@@ -48,9 +51,6 @@ private:
 protected:
   /* additional members */
 };
-
-
-static nsxpcm::repository< kernel::kernel___, krow__> Repository_;
 
 #define RBB	ERRBegin
 
@@ -87,44 +87,70 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository_.CreateNewObject();
+	Repository.CreateNewObject( NULL );
 RR
 RN
 RE
 }
 
-NS_IMETHODIMP emobdacom::Register( nsIDOMWindow *Window )
+void emobdacom::_BaseRegistration( nsIDOMWindow *Window )
 {
-	// Ne sait pas récupèrer une 'window' à partir de son document.
-RP
+ERRProlog
 	str::string Id;
-RBB
-	ui::ui__ &UI = Repository_.GetCurrentObject().UI;
+ERRBegin
+	ui::ui__ &UI = Repository.GetCurrentObject().UI;
 
 #ifdef XXX_DBG
 	if ( _KernelRow != NONE )
 		ERRu();
 #endif
-	_KernelRow = Repository_.GetCurrentRow();
+	_KernelRow = Repository.GetCurrentRow();
 
 	Id.Init();
 	nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id );
 //	nsxpcm::Log( Id );
 
 	if ( Id == "wdwMain" ) {
-		ui_main::Register( Repository_.GetCurrentObject(), UI.Main, Window );
+		ui_main::Register( Repository.GetCurrentObject(), UI.Main, Window );
 		if ( nsxpcm::MasterWindow == NULL )
 			nsxpcm::MasterWindow = Window;
+	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
+		ui_dbsdb::Register( Repository.GetCurrentObject(), UI.DatabaseSelection, Window );
+		Repository.GetCurrentObject().FillDatabaseSelectionList();
 	} else if ( Id == "pgeStructure" )
-		ui_struct::Register( Repository_.GetCurrentObject(), UI.Structure, Window );
+		ui_struct::Register( Repository.GetCurrentObject(), UI.Structure, Window );
 	else if ( Id == "pgeListView" )
-		ui_lst_v::Register( Repository_.GetCurrentObject(), UI.ListView, Window );
+		ui_lst_v::Register( Repository.GetCurrentObject(), UI.ListView, Window );
 	else if ( Id == "pgeRecordForm" )
-		ui_rcd_f::Register( Repository_.GetCurrentObject(), UI.RecordForm, Window );
+		ui_rcd_f::Register( Repository.GetCurrentObject(), UI.RecordForm, Window );
 	else if ( Id == "pgeRecordView" )
-		ui_rcd_v::Register( Repository_.GetCurrentObject(), UI.RecordView, Window );
+		ui_rcd_v::Register( Repository.GetCurrentObject(), UI.RecordView, Window );
 	else
 		ERRu();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+NS_IMETHODIMP emobdacom::Register( nsIDOMWindow *Window )
+{
+	// Don't know how to get a 'window' fro its 'document'.
+RP
+RBB
+	_BaseRegistration( Window );
+RR
+RN
+RE
+}
+
+NS_IMETHODIMP emobdacom::RegisterAlone( nsIDOMWindow *Window )
+{
+	// Don't know how to get a 'window' fro its 'document'.
+RP
+RBB
+	_BaseRegistration( Window );
+
+	Repository.DismissCurrentObject();
 RR
 RN
 RE
@@ -133,11 +159,10 @@ RE
 NS_IMETHODIMP emobdacom::RegisteringEnd( void )
 {
 RP
-	nsIDOMWindowInternal *Console = NULL;
 RBB
-	kernel::kernel___ &Kernel = Repository_.GetCurrentObject();
+	kernel::kernel___ &Kernel = Repository.GetCurrentObject();
 
-	Repository_.DismissCurrentObject();
+	Repository.DismissCurrentObject();
 
 	Kernel.DefineSession();
 RR
@@ -149,7 +174,7 @@ NS_IMETHODIMP emobdacom::Retire( void )
 {
 RP
 RBB
-	Repository_.Delete( _KernelRow );
+	Repository.Delete( _KernelRow );
 RR
 RN
 RE
@@ -163,17 +188,6 @@ emobdacom::emobdacom( void )
 emobdacom::~emobdacom( void )
 {
 }
-
-static class starter
-{
-public:
-	starter( void )
-	{
-		::Repository_.Init();
-	}
-	~starter( void )
-	{}
-} Stater_;
 
 /* Gecko required part. */
 

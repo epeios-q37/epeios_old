@@ -43,6 +43,10 @@
 namespace kernel {
 	using namespace mbdbkd;
 
+	E_ROW( krow__ );	// 'kernel row', see below.
+
+	extern nsxpcm::repository< class kernel___, krow__> Repository;
+
 	enum context__ {
 		cSessionForm,
 		cStructureView,
@@ -176,6 +180,7 @@ namespace kernel {
 	  private _backend___
 	{
 	private:
+		krow__ _KRow;
 		msg::buffer__ _MessageBuffer;
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
@@ -243,6 +248,7 @@ namespace kernel {
 		ui::ui__ UI;
 		void reset( bso::bool__ P = true )
 		{
+			_KRow = NONE;
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
@@ -257,9 +263,13 @@ namespace kernel {
 		{
 			reset();
 		}
-		void Init( void )
+		void Init(
+			void *UP,	// Not used.
+			krow__ KRow )
 		{
 			reset();
+
+			_KRow = KRow;
 
 			_ClientCore.Init( ADDRESS, NULL, _LogFunctions, csducl::tShared );	// Logiplus.
 			_backend___::Init( _ClientCore );
@@ -293,17 +303,26 @@ namespace kernel {
 			return Confirm( GetMessage( Message ) );
 		}
 		void UpdateDecks( void );
-		void ApplyDatabase( void )
+		void CreateDatabase( void )
 		{
-			CreateDatabase( str::string( DEFAULT_LOCATION ), str::string( "Ceci est le nom de la base de données !" ), str::string( "Ceci est le commentaire de la basqe de données !" ) );
+			nsIDOMWindow *Window = NULL;
+			Repository.SetCurrentRow( _KRow );
+			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
 			_SwitchTo( cStructureView );
 		}
+		bso::bool__ SelectDatabase( void )
+		{
+			nsIDOMWindow *Window = NULL;
+			Repository.SetCurrentRow( _KRow );
+			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
+
+			return false;
+		}
 		void BrowseDatabase( void )
 		{
-			OpenDatabase( str::string( DEFAULT_LOCATION ) );
-
-			_SwitchTo( cStructureView );
+			if ( SelectDatabase() )
+				_SwitchTo( cStructureView );
 		}
 		void DefineDatabase( void )
 		{
@@ -375,6 +394,7 @@ namespace kernel {
 			Target().Set( UNDEFINED_RECORD );
 			_SwitchTo( cListView );
 		}
+		void FillDatabaseSelectionList( void );
 		void FillStructureView( void );
 		void FillTableMenu( void );
 		void FillRecordForm( void );

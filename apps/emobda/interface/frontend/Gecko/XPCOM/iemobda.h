@@ -33,6 +33,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   /* void Register (in nsIDOMWindow Window); */
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) = 0;
 
+  /* void RegisterAlone (in nsIDOMWindow Window); */
+  NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) = 0;
+
   /* void RegisteringEnd (); */
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) = 0;
 
@@ -47,6 +50,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
 #define NS_DECL_IEMOBDACOM \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window); \
+  NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window); \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); \
   NS_SCRIPTABLE NS_IMETHOD Retire(void); 
 
@@ -54,6 +58,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
 #define NS_FORWARD_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return _to Register(Window); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) { return _to RegisterAlone(Window); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } \
   NS_SCRIPTABLE NS_IMETHOD Retire(void) { return _to Retire(); } 
 
@@ -61,6 +66,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
 #define NS_FORWARD_SAFE_IEMOBDACOM(_to) \
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterAlone(Window); } \
   NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } \
   NS_SCRIPTABLE NS_IMETHOD Retire(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retire(); } 
 
@@ -104,6 +110,12 @@ NS_IMETHODIMP _MYCLASS_::RegisteringStart()
 
 /* void Register (in nsIDOMWindow Window); */
 NS_IMETHODIMP _MYCLASS_::Register(nsIDOMWindow *Window)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void RegisterAlone (in nsIDOMWindow Window); */
+NS_IMETHODIMP _MYCLASS_::RegisterAlone(nsIDOMWindow *Window)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

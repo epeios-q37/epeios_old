@@ -25,6 +25,8 @@
 using namespace kernel;
 using xml::writer_;
 
+nsxpcm::repository< kernel::kernel___, krow__> kernel::Repository;
+
 #define CASE( message )	\
 	case m##message:\
 		Message = #message;\
@@ -542,6 +544,28 @@ static inline void SelectStructItem_(
 		SelectStructItem_( Target.Table, Root, Tree );
 }
 
+void kernel::kernel___::FillDatabaseSelectionList( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+//	_DumpAsXML( XML );
+
+	XML.Append( "<Databases><Database><Path>First database</Path></Database><Database><Path>Second database</Path></Database></Databases>" );
+
+	Parameters.Init();
+
+	UI.DatabaseSelection.DatabaseTree.RemoveChildren();
+
+	UI.DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/DatabaseSelectionList.xsl" ), UI.Structure.Document, Parameters ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void kernel::kernel___::FillStructureView( void )
 {
 ERRProlog
@@ -1016,6 +1040,7 @@ static class starter
 public:
 	starter( void )
 	{
+		kernel::Repository.Init();
 		::Messages_.Init( m_amount );
 	}
 	~starter( void )
