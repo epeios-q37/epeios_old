@@ -80,6 +80,7 @@ namespace ui_main {
 		main_deck__ MainDeck;
 		struct panels__ {
 			panel__
+				Home,
 				StructureFormAndView,
 				ListView,
 				RecordView,

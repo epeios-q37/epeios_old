@@ -23,6 +23,7 @@
 #define UI__INC
 
 #include "ui_main.h"
+#include "ui_dbcdb.h"
 #include "ui_dbsdb.h"
 #include "ui_struct.h"
 #include "ui_lst_v.h"
@@ -34,6 +35,7 @@ namespace ui {
 
 	struct ui__ {
 		ui_main::main__ Main;
+		ui_dbcdb::database_creation__ DatabaseCreation;
 		ui_dbsdb::database_selection__ DatabaseSelection;
 		ui_struct::structure__ Structure;
 		ui_lst_v::list_view__ ListView;

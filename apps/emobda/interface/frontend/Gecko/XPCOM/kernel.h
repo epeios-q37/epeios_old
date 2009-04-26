@@ -61,6 +61,8 @@ namespace kernel {
 
 	enum message__ 
 	{
+		mMissingDatabaseName,
+		mMissingDatabasePath,
 		mDropStructureItemConfirmation,
 		mDeleteTableConfirmation,
 		mDeleteFieldConfirmation,
@@ -70,23 +72,140 @@ namespace kernel {
 		m_Undefined
 	};
 
-	enum temporary_mode__
-	{
-		tm_Undefined,
-		tmModification,
-		tmCreation,
-		tmDuplication,
-		tm_amount,
+	enum temporary_context__ {
+		tcStructureManagement,
+		tcDatabaseIdentification,
+		tc_amount,
+		tc_Undefined
 	};
 
-	union temporary__ {
-		int _Raw;
-		temporary_mode__ Mode;
+	enum structure_management_mode__
+	{
+		smm_Undefined,
+		smmModification,
+		smmCreation,
+		smmDuplication,
+		smm_amount,
+	};
+
+	enum database_identification_state__ {
+		dis_Undefined,
+		disValidated,
+		disCancelled,
+		dis_amount
+	};
+
+
+	struct temporary__ {
+		temporary_context__ Context;
+		union {
+		private:
+			int _Raw;
+		public:
+			structure_management_mode__ StructureManagementMode;
+			database_identification_state__ DatabaseIdentificationState;
+			void reset( void )
+			{
+				_Raw = 0;
+			}
+		} Core;
+		struct {
+			str::string Name, Path, Comment;
+			void reset( void )
+			{
+				Name.reset();
+				Path.reset();
+				Comment.reset();
+			}
+		} DatabaseIdentification;
 		void reset( void )
 		{
-			_Raw = 0;
+			Context = tc_Undefined;
+			Core.reset();
+			DatabaseIdentification.reset();
 		}
+		temporary__( void )
+		{
+			reset();
+		}
+		void SetStructureManagementMode( structure_management_mode__ Mode )
+		{
+			switch ( Context ) {
+			case tc_Undefined:
+				Context = tcStructureManagement;
+				break;
+			case tcStructureManagement:
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
+			if ( Core.StructureManagementMode != smm_Undefined )
+				ERRc();
+
+			Core.StructureManagementMode = Mode;
+		}
+		structure_management_mode__ GetStructureManagementMode( void ) const
+		{
+			if ( Context != tcStructureManagement )
+				ERRc();
+
+			return Core.StructureManagementMode;
+		}
+		void SetDatabaseIdentification(
+			const str::string_ &Name,
+			const str::string_ &Path,
+			const str::string_ &Comment )
+		{
+			if ( Context != tc_Undefined )
+				ERRc();
+
+			Context = tcDatabaseIdentification;
+
+			if ( Core.DatabaseIdentificationState != dis_Undefined )
+				ERRc();
+
+			Core.DatabaseIdentificationState = disValidated;
+
+			DatabaseIdentification.Name.Init( Name );
+			DatabaseIdentification.Path.Init( Path );
+			DatabaseIdentification.Comment.Init( Comment );
+		}
+		void SetCancelledDatabaseIdentificationState( void )
+		{
+			if ( Context != tc_Undefined )
+				ERRc();
+
+			Context = tcDatabaseIdentification;
+
+			if ( Core.DatabaseIdentificationState != dis_Undefined )
+				ERRc();
+
+			Core.DatabaseIdentificationState = disCancelled;
+		}
+		database_identification_state__ GetDatabaseIdentificationState( void ) const
+		{
+			if ( Context != tcDatabaseIdentification )
+				ERRc();
+
+			return Core.DatabaseIdentificationState;
+		}
+		void GetDatabaseIdentification(
+			str::string_ &Name,
+			str::string_ &Path,
+			str::string_ &Comment ) const
+		{
+			if ( Context != tcDatabaseIdentification )
+				ERRc();
+
+			if ( Core.DatabaseIdentificationState != disValidated )
+				ERRc();
+
+			Name = DatabaseIdentification.Name;
+			Path = DatabaseIdentification.Path;
+			Comment = DatabaseIdentification.Comment;
+		}
 	};
 
 	struct target__ {
@@ -186,6 +305,7 @@ namespace kernel {
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
 		void _DumpCurrent( xml::writer_ &Writer );
+		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
 		void _DumpAsXML( str::string_ &XML );
@@ -278,17 +398,35 @@ namespace kernel {
 			_Language = KERNEL_DEFAULT_LANGUAGE;	// A changer.
 		}
 		const char *GetMessage( message__ Message );
+		void Alert(
+			nsIDOMWindow *Window,
+			const char *Message )
+		{
+			nsxpcm::Alert( Window, Message );
+		}
+		void Alert(
+			nsIDOMWindow *Window,
+			const str::string_ &Message )
+		{
+			nsxpcm::Alert( Window, Message );
+		}
+		void Alert(
+			nsIDOMWindow *Window,
+			message__ Message )
+		{
+			Alert( Window, GetMessage( Message ) );
+		}
 		void Alert( const char *Message )
 		{
-			nsxpcm::Alert( UI.Main.Window, Message );
+			Alert( UI.Main.Window, Message );
 		}
 		void Alert( const str::string_ &Message )
 		{
-			nsxpcm::Alert( UI.Main.Window, Message );
+			Alert( UI.Main.Window, Message );
 		}
 		void Alert( message__ Message )
 		{
-			Alert( GetMessage( Message ) );
+			Alert( UI.Main.Window, Message );
 		}
 		bso::bool__ Confirm( const char *Message )
 		{
@@ -303,13 +441,50 @@ namespace kernel {
 			return Confirm( GetMessage( Message ) );
 		}
 		void UpdateDecks( void );
-		void CreateDatabase( void )
+		bso::bool__ GetDatabaseIdentification(
+			str::string_ &Name,
+			str::string_ &Path,
+			str::string_ &Comment )
 		{
+			bso::bool__ Validated = false;
+
 			nsIDOMWindow *Window = NULL;
 			Repository.SetCurrentRow( _KRow );
 			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			_SwitchTo( cStructureView );
+			switch ( _Temporary.GetDatabaseIdentificationState() ) {
+			case disValidated:
+				_Temporary.GetDatabaseIdentification( Name, Path, Comment );
+				Validated = true;
+				break;
+			case disCancelled:
+				Validated = false;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			_Temporary.reset();
+
+			return Validated;
+		}
+		void DefineDatabase( void )
+		{
+		ERRProlog
+			str::string Name, Path, Comment;
+		ERRBegin
+			Name.Init();
+			Path.Init();
+			Comment.Init();
+
+			if ( GetDatabaseIdentification( Name, Path, Comment ) ) {
+				CreateDatabase( Name, Path, Comment );
+				_SwitchTo( cStructureView );
+			}
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
 		bso::bool__ SelectDatabase( void )
 		{
@@ -324,10 +499,6 @@ namespace kernel {
 			if ( SelectDatabase() )
 				_SwitchTo( cStructureView );
 		}
-		void DefineDatabase( void )
-		{
-			_SwitchTo( cStructureView );
-		}
 		void BrowseStructureItem( void )
 		{
 			SelectStructureItem();
@@ -335,7 +506,7 @@ namespace kernel {
 		}
 		void DefineStructureItem( void )
 		{
-			SetTemporaryMode( kernel::tmModification );
+			_Temporary.SetStructureManagementMode( smmModification );
 
 			if ( GetTarget().Field != UNDEFINED_FIELD )
 				DefineField();
@@ -446,14 +617,26 @@ namespace kernel {
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );
 		void SelectRecord( void );
 		void SelectStructureItem();
-		void SetTemporaryMode( temporary_mode__ Mode )
-		{
-			if ( _Temporary.Mode != tm_Undefined )
-				ERRc();
-
-			_Temporary.Mode = Mode;
-		}
 		void ApplyRecord( void );
+		void SetStructureManagementMode( structure_management_mode__ Mode )
+		{
+			_Temporary.SetStructureManagementMode( Mode );
+		}
+		structure_management_mode__ GetStructureManagementMode( void ) const
+		{
+			return _Temporary.GetStructureManagementMode();
+		}
+		void SetDatabaseIdentification(
+			const str::string_ &Name,
+			const str::string_ &Path,
+			const str::string_ &Comment )
+		{
+			_Temporary.SetDatabaseIdentification( Name, Path, Comment );
+		}
+		void SetCancelledDatabaseIdentificationState( void )
+		{
+			_Temporary.SetCancelledDatabaseIdentificationState();
+		}
 		E_RWDISCLOSE__( target__, Target );
 	};
 

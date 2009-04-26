@@ -1,5 +1,10 @@
 $Id$
 
+26/04/2009 :
+	- NSXPCM :
+		- Rajout test 'IsClosed(...)'.
+		- Rajout 'Close(...)' de fenêtre.
+
 24/04/2009 :
 	- NSXPCM :
 		- 'CreateNewObject(...)' de 'repository_' prend maintenant un 'void *' qui est passé à l'objet crée lors de son initialisation.

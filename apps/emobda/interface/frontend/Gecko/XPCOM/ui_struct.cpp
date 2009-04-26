@@ -38,14 +38,14 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmCreation );
+	K().SetStructureManagementMode( kernel::smmCreation );
 	K().Target().reset();
 	K().DefineTable();
 }
 
 void ui_struct::modify_table_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmModification );
+	K().SetStructureManagementMode( kernel::smmModification );
 	K().DefineTable();
 }
 
@@ -58,14 +58,14 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmCreation );
+	K().SetStructureManagementMode( kernel::smmCreation );
 	K().Target().Set( UNDEFINED_FIELD );
 	K().DefineField();
 }
 
 void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmModification );
+	K().SetStructureManagementMode( kernel::smmModification );
 	K().DefineField();
 }
 
@@ -275,8 +275,8 @@ void ui_struct::Register(
 
 	Register_( Kernel, UI.FormDeck, UI.Document, "formDeck" );
 
-	Register_( Kernel, UI.NameTextbox, UI.Document, "nameTextbox" );
-	Register_( Kernel, UI.CommentTextbox, UI.Document, "commentTextbox" );
+	Register_( Kernel, UI.NameTextbox, UI.Document, "txbName" );
+	Register_( Kernel, UI.CommentTextbox, UI.Document, "txbComment" );
 
 	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
 	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );

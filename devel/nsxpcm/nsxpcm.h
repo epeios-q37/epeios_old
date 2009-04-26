@@ -1408,9 +1408,16 @@ namespace nsxpcm {
 	{
 		PRBool Value = false;
 
-		Window->GetClosed( &Value );
+		if ( Window->GetClosed( &Value ) != NS_OK )
+			ERRu();
 
 		return Value == PR_TRUE;
+	}
+
+	inline void Close( nsIDOMWindowInternal *Window )
+	{
+		if ( Window->Close() != NS_OK )
+			ERRu();
 	}
 
 	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
@@ -1420,6 +1427,11 @@ namespace nsxpcm {
 #else
 		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
 #endif
+	}
+
+	inline void Close( nsIDOMWindow *Window )
+	{
+		Close( GetWindowInternal( Window ) );
 	}
 
 	inline nsIDOMWindowInternal *GetJSConsole(

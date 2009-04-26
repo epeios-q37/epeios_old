@@ -118,6 +118,10 @@ namespace mbdbkd{
 		{
 			_H( Manager.CreateDatabase( Location, Name, Comment ) );
 		}
+		void GetAvailableDatabases( bkdacc::strings_ &Databases )
+		{
+			_H( Manager.GetAvailableDatabases( Databases ) );
+		}
 		void OpenDatabase( const str::string_ &Location )
 		{
 			_H( Manager.OpenDatabase( Location ) );

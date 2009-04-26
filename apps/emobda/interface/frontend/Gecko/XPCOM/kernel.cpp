@@ -37,6 +37,8 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
+	CASE( MissingDatabaseName );
+	CASE( MissingDatabasePath );
 	CASE( DropStructureItemConfirmation );
 	CASE( DeleteTableConfirmation );
 	CASE( DeleteFieldConfirmation );
@@ -92,6 +94,59 @@ template <typename id> static inline void PutId_(
 	writer_ &Writer )
 {
 	PutInt_( Name, **Id, Writer );
+}
+
+void Dump_(
+	const str::string_ &Database,
+	writer_ &Writer )
+{
+	Writer.PushTag( "Database" );
+	Writer.PushTag( "Path" );
+
+	Writer.PutValue( Database );
+
+	Writer.PopTag();
+	Writer.PopTag();
+}
+
+void Dump_(
+	const bkdacc::strings_ &Databases,
+	writer_ &Writer )
+{
+	ctn::E_CMITEM( str::string_ ) Database;
+	epeios::row__ Row = Databases.First();
+
+	Database.Init( Databases );
+
+	Writer.PushTag( "Databases" );
+
+	while ( Row != NONE ) {
+		Dump_( Database( Row ), Writer );
+
+		Row = Databases.Next( Row );
+	}
+
+	Writer.PopTag();
+}
+
+
+void kernel::kernel___::_DumpAvailableDatabases( writer_ &Writer )
+{
+ERRProlog
+	bkdacc::strings Databases;
+ERRBegin
+	Databases.Init();
+
+	GetAvailableDatabases( Databases );
+
+	Writer.PushTag( "Available" );
+
+	Dump_( Databases, Writer );
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void DumpField_(
@@ -451,8 +506,9 @@ ERRBegin
 	Writer.Init( TFlow, true );
 
 	Writer.PushTag( "emobda" );
-
 	_DumpCurrent( Writer );
+
+	_DumpAvailableDatabases( Writer );
 
 	_DumpStructure( Writer );
 
@@ -552,9 +608,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-//	_DumpAsXML( XML );
-
-	XML.Append( "<Databases><Database><Path>First database</Path></Database><Database><Path>Second database</Path></Database></Databases>" );
+	_DumpAsXML( XML );
 
 	Parameters.Init();
 
@@ -873,6 +927,7 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		UI.Main.Broadcasters.DatabaseOpened.Disable();
 		UI.Main.Broadcasters.TableSelected.Disable();
 		UI.Main.Broadcasters.RecordSelected.Disable();
+		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.Home );
 		break;
 	case cStructureView:
 		FillStructureView();
@@ -914,19 +969,19 @@ void kernel::kernel___::ApplyStructureItem( void )
 	target__ Target;
 
 	if ( GetTarget().Table == UNDEFINED_TABLE ) {
-		if ( _Temporary.Mode != tmCreation )
+		if ( GetStructureManagementMode() != smmCreation )
 			ERRc();
 
 		Target.Table = _CreateOrModifyTable();
 	} else if ( GetTarget().Field == UNDEFINED_FIELD ) {
-		switch ( _Temporary.Mode ) {
-		case tmCreation:
+		switch ( GetStructureManagementMode() ) {
+		case smmCreation:
 			Target.Set( _CreateOrModifyField(), GetTarget().Table );
 			break;
-		case tmModification:
+		case smmModification:
 			Target.Table = _CreateOrModifyTable();
 			break;
-		case tmDuplication:
+		case smmDuplication:
 			ERRc();
 			break;
 		default:
@@ -934,7 +989,7 @@ void kernel::kernel___::ApplyStructureItem( void )
 			break;
 		}
 	} else {
-		if ( _Temporary.Mode != tmModification )
+		if ( GetStructureManagementMode() != smmModification )
 			ERRc();
 
 		Target.Set( _CreateOrModifyField(), GetTarget().Table );
@@ -993,12 +1048,12 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
 
-	switch ( _Temporary.Mode ) {
-		case tmCreation:
-		case tmDuplication:
+	switch ( GetStructureManagementMode() ) {
+		case smmCreation:
+		case smmDuplication:
 			Target().Set( InsertRecord( Data, _Target.Table ) );
 			break;
-		case tmModification:
+		case smmModification:
 			ModifyRecord( Target().Record, Data, _Target.Table );
 			break;
 		default:

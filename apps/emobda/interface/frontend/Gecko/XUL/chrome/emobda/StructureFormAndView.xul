@@ -98,11 +98,11 @@
 						<vbox flex="1">
 							<groupbox>
 								<caption label="Name"/>
-								<textbox id="nameTextbox" observes="bcrItemEdition"/>
+								<textbox id="txbName" observes="bcrItemEdition"/>
 							</groupbox>
 							<groupbox>
 								<caption label="Comment"/>
-								<textbox id="commentTextbox" observes="bcrItemEdition"/>
+								<textbox id="txbComment" multiline="true" observes="bcrItemEdition"/>
 							</groupbox>
 						</vbox>
 					</hbox>

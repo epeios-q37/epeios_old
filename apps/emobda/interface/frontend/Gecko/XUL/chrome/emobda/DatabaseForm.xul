@@ -33,10 +33,10 @@
 	<script type="text/javascript" src="emobda.js"/>
 	
 	<broadcasters>
-		<broadcaster id="bcrDatabaseSelection" disabled="true"/>
+		<broadcaster id="bcrDatabaseNaming"/>
 	</broadcasters>
 	<commands>
-		<command id="cmdApply" label="|OK|" observes="bcrDatabaseSelection"/>
+		<command id="cmdApply" label="|OK|" observes="bcrDatabaseNaming"/>
 		<command id="cmdCancel" label="|Cancel|"/>
 	</commands>
 	<vbox flex="1">
@@ -45,12 +45,12 @@
 			<textbox id="txbName"/>
 		</groupbox>
 		<groupbox>
-			<caption label="Location"/>
-			<textbox id="txbLocation"/>
+			<caption label="Path"/>
+			<textbox id="txbPath"/>
 		</groupbox>
 		<groupbox>
 			<caption label="Comment"/>
-			<textbox id="txbComment"/>
+			<textbox id="txbComment" multiline="true"/>
 		</groupbox>
 		<hbox>
 			<button command="cmdApply"/>

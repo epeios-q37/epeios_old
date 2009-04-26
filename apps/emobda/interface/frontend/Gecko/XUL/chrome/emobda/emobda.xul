@@ -78,20 +78,9 @@
 			<menupopup/>
 		</menu>
 	</menubar>
-	<deck id="dckMain" selectedIndex="1" flex="1" >
-		<vbox>
-			<hbox>
-				<textbox id="tableLocation"/>
-				<button id="createTable" label="CreateTable"/>
-			</hbox>
-			<hbox>
-				<textbox id="fieldName"/>
-				<button id="addField" label="AddField"/>
-			</hbox>
-			<hbox>
-				<listbox id="fieldList"/>
-				<button id="removeField" label="Remove"/>
-			</hbox>
+	<deck id="dckMain" selectedIndex="0" flex="1" >
+		<vbox id="pnlHome" flex="1">
+			<description flex="1">EMobDa</description>
 		</vbox>
 		<iframe id="pnlStructureFormAndView" src="StructureFormAndView.xul"/>
 		<iframe id="pnlListView" src="ListView.xul"/>

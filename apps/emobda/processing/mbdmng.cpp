@@ -539,6 +539,7 @@ bso::bool__ mbdmng::manager_::_SubInit( type__ Type )
 	switch ( Type ) {
 	case tCreate:
 		Success = _Create();
+		_ExportStructure();
 		break;
 	case tRetrieve:
 		Success = _Retrieve();

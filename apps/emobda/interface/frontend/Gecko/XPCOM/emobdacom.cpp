@@ -117,6 +117,9 @@ ERRBegin
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
 		ui_dbsdb::Register( Repository.GetCurrentObject(), UI.DatabaseSelection, Window );
 		Repository.GetCurrentObject().FillDatabaseSelectionList();
+	} else if ( Id == "wdwDatabaseForm" ) {
+		ui_dbcdb::Register( Repository.GetCurrentObject(), UI.DatabaseCreation, Window );
+		UI.DatabaseCreation.Textboxes.Name.Select();
 	} else if ( Id == "pgeStructure" )
 		ui_struct::Register( Repository.GetCurrentObject(), UI.Structure, Window );
 	else if ( Id == "pgeListView" )

@@ -39,7 +39,7 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().CreateDatabase();
+	K().DefineDatabase();
 }
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
@@ -65,19 +65,19 @@ void ui_main::table_menu_item__::NSXPCMOnEvent( event__ )
 void ui_main::create_record_command__::NSXPCMOnEvent( event__ )
 {
 	K().Target().Set( UNDEFINED_RECORD );
-	K().SetTemporaryMode( kernel::tmCreation );
+	K().SetStructureManagementMode( kernel::smmCreation );
 	K().DefineRecord();
 }
 
 void ui_main::modify_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmModification );
+	K().SetStructureManagementMode( kernel::smmModification );
 	K().DefineRecord();
 }
 
 void ui_main::duplicate_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetTemporaryMode( kernel::tmDuplication );
+	K().SetStructureManagementMode( kernel::smmDuplication );
 	K().DefineRecord();
 }
 
@@ -203,6 +203,7 @@ static void Register_(
 	main__::panels__ &UI,
 	nsIDOMDocument *Document )
 {
+	Register_( Kernel, UI.Home, Document, "pnlHome" );
 	Register_( Kernel, UI.StructureFormAndView, Document, "pnlStructureFormAndView" );
 	Register_( Kernel, UI.ListView, Document, "pnlListView" );
 	Register_( Kernel, UI.RecordForm, Document, "pnlRecordForm" );
