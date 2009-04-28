@@ -28,14 +28,25 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
+void ui_dbsdb::window__::NSXPCMOnEvent( event__ Event )
+{
+	switch ( Event ) {
+	case nsxpcm::eClose:
+		K().SetCancelledDatabaseSelectionState();
+		break;
+	default:
+		break;
+	}
+}
+
 void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
 {
 	switch ( Event ) {
 		case nsxpcm::eSelect:
-			K().Alert( "Select !" );
+			K().UI.DatabaseSelection.Broadcasters.DatabaseSelection.Enable();
 			break;
 		case nsxpcm::eDblClick:
-			K().Alert( "DblClickj !" );
+			K().GetSelectedDatabase();
 			break;
 		default:
 			ERRc();
@@ -45,12 +56,13 @@ void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
 
 void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
 {
-	K().Alert( "OK !" );
+	K().GetSelectedDatabase();
 }
 
 void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )
 {
-	K().Alert( "Cancel !" );
+	K().SetCancelledDatabaseSelectionState();
+	K().UI.DatabaseSelection.Window.Close();
 }
 
 /* UI Registrations */
@@ -96,6 +108,8 @@ void ui_dbsdb::Register(
 	nsIDOMWindow *Window )
 {
 	UI.Set( Window );
+
+	ui_base::Register( Kernel, UI.Window, Window );
 
 	ui_base::Register( Kernel, UI.DatabaseTree, UI.Document, "treDatabases" );
 

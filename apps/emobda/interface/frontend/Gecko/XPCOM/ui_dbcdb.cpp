@@ -28,41 +28,26 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
+void ui_dbcdb::window__::NSXPCMOnEvent( event__ Event )
+{
+	switch ( Event ) {
+	case nsxpcm::eClose:
+		K().SetCancelledDatabaseIdentificationState();
+		break;
+	default:
+		break;
+	}
+}
+
 void ui_dbcdb::apply_command__::NSXPCMOnEvent( event__ )
 {
-ERRProlog
-	str::string Name, Path, Comment;
-ERRBegin
-	Name.Init();
-	Path.Init();
-	Comment.Init();
-
-	K().UI.DatabaseCreation.Textboxes.Name.GetValue( Name );
-	K().UI.DatabaseCreation.Textboxes.Path.GetValue( Path );
-	K().UI.DatabaseCreation.Textboxes.Comment.GetValue( Comment );
-
-	Name.StripCharacter( ' ' );
-	Path.StripCharacter( ' ' );
-
-	if ( Name.Amount() == 0 ) {
-		K().Alert( K().UI.DatabaseCreation.Window, kernel::mMissingDatabaseName );
-		K().UI.DatabaseCreation.Textboxes.Name.Select();
-	} else if ( Path.Amount() == 0 ) {
-		K().Alert( K().UI.DatabaseCreation.Window, kernel::mMissingDatabasePath );
-		K().UI.DatabaseCreation.Textboxes.Path.Select();
-	} else {
-		K().SetDatabaseIdentification( Name, Path, Comment );
-		nsxpcm::Close( K().UI.DatabaseCreation.Window );
-	}
-ERRErr
-ERREnd
-ERREpilog
+	K().GetDatabaseIdentification();
 }
 
 void ui_dbcdb::cancel_command__::NSXPCMOnEvent( event__ )
 {
 	K().SetCancelledDatabaseIdentificationState();
-	nsxpcm::Close( K().UI.DatabaseCreation.Window );
+	K().UI.DatabaseCreation.Window.Close();
 }
 
 /* UI Registrations */
@@ -127,6 +112,8 @@ void ui_dbcdb::Register(
 	nsIDOMWindow *Window )
 {
 	UI.Set( Window );
+
+	ui_base::Register( Kernel, UI.Window, Window );
 
 	Register_( Kernel, UI.Broadcasters, UI.Document );
 	Register_( Kernel, UI.Commands, UI.Document );

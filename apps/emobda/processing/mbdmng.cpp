@@ -556,12 +556,12 @@ const strings_ &mbdmng::GetDatabases( strings_ &Databases )
 {
 	dir::handle___ Handle = DIR_INVALID_HANDLE;
 	const char *File = dir::GetFirstFile( "." , Handle );
-	size_t Length = strlen( MBDBSC_STRUCTURE_FILE_EXTENSION );
+	size_t Length = strlen( "." MBDBSC_STRUCTURE_FILE_EXTENSION );
 
 	while ( ( File != NULL ) && ( File[0] ) ) {
 		if ( strlen( File ) >= Length )
-			if ( !strcmp( (File + strlen( File ) - Length ), MBDBSC_STRUCTURE_FILE_EXTENSION ) )
-				Databases.Append( str::string( File ) );
+			if ( !strcmp( (File + strlen( File ) - Length ), "." MBDBSC_STRUCTURE_FILE_EXTENSION ) )
+				Databases.Append( str::string( File ).Truncate( Length ) );
 
 		File = dir::GetNextFile( Handle );
 	}

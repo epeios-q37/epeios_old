@@ -27,6 +27,8 @@
 namespace ui_dbcdb {
 	using namespace ui_base;
 
+	UI_ETYPEDEF( ui_base::window__, window__ );
+
 	UI_TYPEDEF( broadcaster__, database_naming_broadcaster__ );
 
 	UI_ETYPEDEF( command__, apply_command__ );
@@ -41,6 +43,7 @@ namespace ui_dbcdb {
 	  public bridge__
 	{
 	public:
+		window__ Window;
 		struct broadcasters__ {
 			database_naming_broadcaster__ DatabaseNaming;
 		} Broadcasters;

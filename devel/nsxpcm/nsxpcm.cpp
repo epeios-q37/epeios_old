@@ -943,6 +943,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eSelect;
 	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
 		Event = eAttributeChange;
+	else if ( !strcmp( RawEvent, "close" ) )
+		Event = eClose;
 	else
 		ERRl();
 
@@ -976,6 +978,9 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 	case eAttributeChange:
 		NSXPCMOnAttributeChange();
 		break;
+	case eClose:
+		NSXPCMOnClose();
+		break;
 	default:
 		ERRc();
 		break;
@@ -984,20 +989,20 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 
 
 void nsxpcm::element_core__::Init(
-	nsIDOMElement *Element,
+	nsISupports *Supports,
 	int Events )
 {
 #ifdef NSXPCM_DBG
-	if ( _Element != NULL )
+	if ( _Supports != NULL )
 		ERRu();
 #endif
 	reset();
 
-	_Element = Element;
+	_Supports = Supports;
 
 	nsIDOMEventTarget *EventTarget = NULL;
 
-	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Element );
+	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventListener );
 
@@ -1031,6 +1036,10 @@ void nsxpcm::element_core__::Init(
 
 	if ( Events & efAttributeChange )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventListener, false ) != NS_OK )
+			ERRc();
+
+	if ( Events & efClose )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	_EventListener->Init( *this );

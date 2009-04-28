@@ -63,6 +63,10 @@ namespace kernel {
 	{
 		mMissingDatabaseName,
 		mMissingDatabasePath,
+
+		mNoDatabaseSelected,
+		mBadDatabasePath,
+
 		mDropStructureItemConfirmation,
 		mDeleteTableConfirmation,
 		mDeleteFieldConfirmation,
@@ -75,6 +79,7 @@ namespace kernel {
 	enum temporary_context__ {
 		tcStructureManagement,
 		tcDatabaseIdentification,
+		tcDatabaseSelection,
 		tc_amount,
 		tc_Undefined
 	};
@@ -95,6 +100,13 @@ namespace kernel {
 		dis_amount
 	};
 
+	enum database_selection_state__ {
+		dss_Undefined,
+		dssValidated,
+		dssCancelled,
+		dss_amount
+	};
+
 
 	struct temporary__ {
 		temporary_context__ Context;
@@ -104,6 +116,7 @@ namespace kernel {
 		public:
 			structure_management_mode__ StructureManagementMode;
 			database_identification_state__ DatabaseIdentificationState;
+			database_selection_state__ DatabaseSelectionState;
 			void reset( void )
 			{
 				_Raw = 0;
@@ -118,11 +131,19 @@ namespace kernel {
 				Comment.reset();
 			}
 		} DatabaseIdentification;
+		struct {
+			str::string Path;
+			void reset( void )
+			{
+				Path.reset();
+			}
+		} DatabaseSelection;
 		void reset( void )
 		{
 			Context = tc_Undefined;
 			Core.reset();
 			DatabaseIdentification.reset();
+			DatabaseSelection.reset();
 		}
 		temporary__( void )
 		{
@@ -205,6 +226,50 @@ namespace kernel {
 			Name = DatabaseIdentification.Name;
 			Path = DatabaseIdentification.Path;
 			Comment = DatabaseIdentification.Comment;
+		}
+
+		void SetSelectedDatabase( const str::string_ &Path )
+		{
+			if ( Context != tc_Undefined )
+				ERRc();
+
+			Context = tcDatabaseSelection;
+
+			if ( Core.DatabaseSelectionState != dss_Undefined )
+				ERRc();
+
+			Core.DatabaseSelectionState = dssValidated;
+
+			DatabaseSelection.Path.Init( Path );
+		}
+		void SetCancelledDatabaseSelectionState( void )
+		{
+			if ( Context != tc_Undefined )
+				ERRc();
+
+			Context = tcDatabaseSelection;
+
+			if ( Core.DatabaseSelectionState != dss_Undefined )
+				ERRc();
+
+			Core.DatabaseSelectionState = dssCancelled;
+		}
+		database_selection_state__ GetDatabaseSelectionState( void ) const
+		{
+			if ( Context != tcDatabaseSelection )
+				ERRc();
+
+			return Core.DatabaseSelectionState;
+		}
+		void GetSelectedDatabase( str::string_ &Path ) const
+		{
+			if ( Context != tcDatabaseSelection )
+				ERRc();
+
+			if ( Core.DatabaseSelectionState != dssValidated )
+				ERRc();
+
+			Path = DatabaseSelection.Path;
 		}
 	};
 
@@ -479,25 +544,52 @@ namespace kernel {
 			Comment.Init();
 
 			if ( GetDatabaseIdentification( Name, Path, Comment ) ) {
-				CreateDatabase( Name, Path, Comment );
-				_SwitchTo( cStructureView );
+				if ( CreateDatabase( Path, Name, Comment ) )
+					_SwitchTo( cStructureView );
 			}
 		ERRErr
 		ERREnd
 		ERREpilog
 		}
-		bso::bool__ SelectDatabase( void )
+		bso::bool__ GetSelectedDatabase( str::string_ &Path )
 		{
+			bso::bool__ Validated = false;
+
 			nsIDOMWindow *Window = NULL;
 			Repository.SetCurrentRow( _KRow );
 			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			return false;
+			switch ( _Temporary.GetDatabaseSelectionState() ) {
+			case dssValidated:
+				_Temporary.GetSelectedDatabase( Path );
+				Validated = true;
+				break;
+			case dssCancelled:
+				Validated = false;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			_Temporary.reset();
+
+			return Validated;
 		}
 		void BrowseDatabase( void )
 		{
-			if ( SelectDatabase() )
-				_SwitchTo( cStructureView );
+		ERRProlog
+			str::string Path;
+		ERRBegin
+			Path.Init();
+
+			if ( GetSelectedDatabase( Path ) ) {
+				if ( OpenDatabase( Path ) )
+					_SwitchTo( cStructureView );
+			}
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
 		void BrowseStructureItem( void )
 		{
@@ -626,6 +718,7 @@ namespace kernel {
 		{
 			return _Temporary.GetStructureManagementMode();
 		}
+		bso::bool__ GetDatabaseIdentification( void );	// Called from UI event. Fill '_Temporary' with content from dedicated interface object.
 		void SetDatabaseIdentification(
 			const str::string_ &Name,
 			const str::string_ &Path,
@@ -636,6 +729,15 @@ namespace kernel {
 		void SetCancelledDatabaseIdentificationState( void )
 		{
 			_Temporary.SetCancelledDatabaseIdentificationState();
+		}
+		bso::bool__ GetSelectedDatabase( void );	// Called from UI event. Fill '_Temporary' with content from dedicated interface object.
+		void SetSelectedDatabase( const str::string_ &Path )
+		{
+			_Temporary.SetSelectedDatabase( Path );
+		}
+		void SetCancelledDatabaseSelectionState( void )
+		{
+			_Temporary.SetCancelledDatabaseSelectionState();
 		}
 		E_RWDISCLOSE__( target__, Target );
 	};

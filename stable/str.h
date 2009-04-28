@@ -209,6 +209,18 @@ namespace str {
 			StripLeadingCharacter( Model );
 			StripTailingCharacter( Model );
 		}
+		string_ &Truncate( epeios::row__ Row )
+		{
+			E_BUNCHx_( bso::char__, _string_size_handler )::Truncate( Row );
+
+			return *this;
+		}
+		string_ &Truncate( bso::size__ Amount = 1 )
+		{
+			E_BUNCHx_( bso::char__, _string_size_handler )::Truncate( Amount );
+
+			return *this;
+		}
 		//f Replace the 'Old' char with the 'New' one.
 		void Replace(
 			char Old,

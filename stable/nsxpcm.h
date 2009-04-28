@@ -141,6 +141,7 @@ namespace nsxpcm {
 		eBlur,
 		eSelect,
 		eAttributeChange,
+		eClose,
 		e_amount,
 		e_Undefined
 	};
@@ -161,6 +162,7 @@ namespace nsxpcm {
 		EF( Blur ),
 		EF( Select ),
 		EF( AttributeChange ),
+		EF( Close ),
 		efNone = 0,
 		efAll = ( ( 1 << e_amount ) - 1 )
 	};
@@ -904,6 +906,42 @@ namespace nsxpcm {
 			return NULL;
 	}
 
+		inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
+	{
+		PRBool Value = false;
+
+		if ( Window->GetClosed( &Value ) != NS_OK )
+			ERRu();
+
+		return Value == PR_TRUE;
+	}
+
+	inline void Close( nsIDOMWindowInternal *Window )
+	{
+		if ( Window->Close() != NS_OK )
+			ERRu();
+	}
+
+	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
+	{
+#ifdef NSXPCM__USE_ARMEL_WORKAROUND
+		return (nsIDOMWindowInternal *)Window;
+#else
+		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
+#endif
+	}
+
+	inline void Close( nsIDOMWindow *Window )
+	{
+		Close( GetWindowInternal( Window ) );
+	}
+
+	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
+	{
+		return IsClosed( GetWindowInternal( Window ) );
+	}
+
+	typedef nsISupports *nsISupportsPointer;
 	typedef nsIDOMElement *nsIDOMElementPointer;
 	typedef nsIDOMWindow *nsIDOMWindowPointer;
 
@@ -929,12 +967,26 @@ namespace nsxpcm {
 	class element_core__
 	{
 	private:
-		nsIDOMElement *_Element;
+		nsISupports *_Supports;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
 		nsIDOMEvent *_Event;
 		nsIDOMMutationEvent *_MutationEvent;
+		void EventStopPropagation( void )
+		{
+			if ( _Event == NULL )
+				ERRu();
+
+			_Event->StopPropagation();
+		}
+		void EventPreventDefault( void )
+		{
+			if ( _Event == NULL )
+				ERRu();
+
+			_Event->PreventDefault();
+		}
 		virtual void NSXPCMOnRawEvent( const str::string_ &Event );
 		virtual void NSXPCMOnRawEvent( const char *Event );
 		virtual void NSXPCMOnEvent( event__ Event );
@@ -970,10 +1022,14 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnClose( void )
+		{
+			ERRu();
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
-			_Element = NULL;
+			_Supports = NULL;
 		}
 		element_core__( void )
 		{
@@ -988,13 +1044,17 @@ namespace nsxpcm {
 			reset();
 		}
 		void Init(
-			nsIDOMElement *Element,
+			nsISupports *Supports,
 			int Events );
-		E_RODISCLOSE__( nsIDOMElementPointer, Element );
+		E_RODISCLOSE__( nsISupportsPointer, Supports );
 		void Handle(
 			nsIDOMEvent * Event,
 			const str::string_ &EventString )
 		{
+			// Sauvegarde pour la gestion d'évènements imbriqués.
+			nsIDOMEvent *EventBuffer = _Event;
+			nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
+
 			_Event = Event;
 
 			if ( EventString == "DOMAttrModified" )
@@ -1002,8 +1062,12 @@ namespace nsxpcm {
 
 			NSXPCMOnRawEvent( EventString );
 
-			_Event = NULL;
-			_MutationEvent = NULL;
+			_Event = EventBuffer;
+			_MutationEvent = MutationEventBuffer;
+		}
+		nsIDOMElement *GetElement( void )
+		{
+			return QueryInterface<nsIDOMElement>( _Supports );
 		}
 /*		void Register(
 			nsIDOMElement *Element,
@@ -1014,10 +1078,10 @@ namespace nsxpcm {
 
 	inline void Register(
 		nsxpcm::element_core__ &Core,
-		nsIDOMElement *Element,
+		nsISupports *Supports,
 		int Events )
 	{
-		Core.Init( Element, Events );
+		Core.Init( Supports, Events );
 	}
 
 	template <class id_type> inline void Register(
@@ -1061,7 +1125,7 @@ namespace nsxpcm {
 	public:
 		object *GetObject( void )
 		{
-			return QueryInterface<object>( Element() );
+			return QueryInterface<object>( GetSupports() );
 		}
 		void Enable( bso::bool__ Value = true )
 		{
@@ -1363,6 +1427,24 @@ namespace nsxpcm {
 	: public _element__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
 	{};
 
+	class window__
+	: public _element__<nsIDOMWindow>
+	{
+	public:
+		void Close( void )
+		{
+			nsxpcm::Close( GetObject() );
+		}
+		bso::bool__ IsClosed( void )
+		{
+			return nsxpcm::IsClosed( GetObject() );
+		}
+		nsIDOMWindowInternal *GetInternal( void )
+		{
+			return nsxpcm::GetWindowInternal( GetObject() );
+		}
+	};
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
@@ -1404,35 +1486,6 @@ namespace nsxpcm {
 	// Log to the javascript console.
 	void Log( const str::string_ &Text );
 
-	inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
-	{
-		PRBool Value = false;
-
-		if ( Window->GetClosed( &Value ) != NS_OK )
-			ERRu();
-
-		return Value == PR_TRUE;
-	}
-
-	inline void Close( nsIDOMWindowInternal *Window )
-	{
-		if ( Window->Close() != NS_OK )
-			ERRu();
-	}
-
-	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
-	{
-#ifdef NSXPCM__USE_ARMEL_WORKAROUND
-		return (nsIDOMWindowInternal *)Window;
-#else
-		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
-#endif
-	}
-
-	inline void Close( nsIDOMWindow *Window )
-	{
-		Close( GetWindowInternal( Window ) );
-	}
 
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,

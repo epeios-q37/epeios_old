@@ -1,5 +1,15 @@
 $Id$
 
+28/04/2009 :
+	- NSXPCM :
+		- Rajout gestion évènement 'Unload' (pour les 'nsIDOMWindow').
+		- Rajout 'window__'.
+		- Réécriture de ce qui concerne la gestion des évènements pour s'appuyer sur un 'nsISupports', classe mère
+		de plus d'éléments que 'nsIDOMElement' utilisé jusqu'à présent.
+		- Ajout 'EventStopPropagation()' et 'EventPreventDefault()' à l'objet 'element_core__'.
+	- STR :
+		- Ajout de 'Truncate(...)', normalement hérité de 'bunch_<...>', qui obtenir un 'string_' en retour.
+
 26/04/2009 :
 	- NSXPCM :
 		- Rajout test 'IsClosed(...)'.

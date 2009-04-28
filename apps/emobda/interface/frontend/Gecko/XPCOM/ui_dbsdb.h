@@ -27,6 +27,8 @@
 namespace ui_dbsdb {
 	using namespace ui_base;
 
+	UI_ETYPEDEF( ui_base::window__, window__ );
+
 	UI_TYPEDEF( broadcaster__, database_selection_broadcaster__ );
 
 	UI_ETYPEDEF( tree__, database_tree__ );
@@ -39,6 +41,7 @@ namespace ui_dbsdb {
 	  public bridge__
 	{
 	public:
+		window__ Window;
 		database_tree__ DatabaseTree;
 		struct broadcasters__ {
 			database_selection_broadcaster__ DatabaseSelection;

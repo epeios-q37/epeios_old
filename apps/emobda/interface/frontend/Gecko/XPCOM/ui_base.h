@@ -94,6 +94,7 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::menu_item__> menu_item__;
 	typedef _generic__<nsxpcm::panel__> panel__;
 	typedef _generic__<nsxpcm::element__> box__;
+	typedef _generic__<nsxpcm::window__> window__;
 
 	template <typename widget> void Register(
 		kernel::kernel___ &Kernel,
@@ -109,11 +110,19 @@ namespace ui_base {
 	template <typename widget> void Register(
 		kernel::kernel___ &Kernel,
 		widget &Widget,
-		nsIDOMElement *Element,
+		nsISupports *Supports,
 		int Events )
 	{
 		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Element, Events );
+		nsxpcm::Register( Widget, Supports, Events );
+	}
+
+	inline void Register(
+		kernel::kernel___ &Kernel,
+		window__ &Window,
+		nsIDOMWindow *Element )
+	{
+		Register( Kernel, Window, Element, nsxpcm::efClose );
 	}
 
 	inline void Register(

@@ -1,6 +1,6 @@
 @echo off
 REM
-REM	'emobdacom.cpp' by Claude SIMON (http://zeusw.org/).
+REM	'getapi.bat' by Claude SIMON (http://zeusw.org/).
 REM
 REM	 This file is part of 'emobda' software.
 REM

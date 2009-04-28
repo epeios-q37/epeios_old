@@ -38,6 +38,9 @@
 	</xsl:template>
 	<xsl:template match="Database">
 		<xsl:element name="treeitem">
+			<xsl:attribute name="Path">
+				<xsl:value-of select="Path"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 				<xsl:element name="treecell">
 					<xsl:attribute name="label">

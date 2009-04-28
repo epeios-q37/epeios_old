@@ -40,7 +40,10 @@
 		<command id="cmdCancel" label="|Cancel|"/>
 	</commands>
 	<vbox flex="1">
-		<tree id="treDatabases" enableColumnDrag="true" flex="1"  style="overflow: auto;"/>
+		<groupbox flex="1">
+			<caption>Select database to open</caption>
+			<tree id="treDatabases" enableColumnDrag="true" style="overflow: auto;" flex="1"/>
+		</groupbox>
 		<hbox>
 			<button command="cmdApply"/>
 			<button command="cmdCancel"/>

@@ -50,7 +50,7 @@ namespace mbdbkd{
 		emobda_backend_access___<bkduac::backend_universal_access___> _BackendAccess;
 		mbd_manager_common__	_ManagerCommon;
 		csducl::universal_client _Flow;
-		void _H( bso::bool__ Result )
+		bso::bool__ _H( bso::bool__ Result )
 		{
 		ERRProlog
 			STR_BUFFER___ Buffer;
@@ -69,6 +69,7 @@ namespace mbdbkd{
 		ERRErr
 		ERREnd
 		ERREpilog
+			return Result;
 		}
 		void _Report( const char *Message )
 		{
@@ -111,20 +112,20 @@ namespace mbdbkd{
 		{
 			return _BackendAccess.GetI18Message();
 		}
-		void CreateDatabase(
+		bso::bool__ CreateDatabase(
 			const str::string_ &Location,
 			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
-			_H( Manager.CreateDatabase( Location, Name, Comment ) );
+			return _H( Manager.CreateDatabase( Location, Name, Comment ) );
 		}
-		void GetAvailableDatabases( bkdacc::strings_ &Databases )
+		bso::bool__ GetAvailableDatabases( bkdacc::strings_ &Databases )
 		{
-			_H( Manager.GetAvailableDatabases( Databases ) );
+			return _H( Manager.GetAvailableDatabases( Databases ) );
 		}
-		void OpenDatabase( const str::string_ &Location )
+		bso::bool__ OpenDatabase( const str::string_ &Location )
 		{
-			_H( Manager.OpenDatabase( Location ) );
+			return _H( Manager.OpenDatabase( Location ) );
 		}
 		table__ CreateOrModifyTable(
 			table__ Table,
@@ -145,51 +146,51 @@ namespace mbdbkd{
 
 			return Field;
 		}
-		void DeleteTable( table__ Table )
+		bso::bool__ DeleteTable( table__ Table )
 		{
-			_H( Manager.DeleteTable( *Table ) );
+			return _H( Manager.DeleteTable( *Table ) );
 		}
-		void DeleteField( field__ Field )
+		bso::bool__ DeleteField( field__ Field )
 		{
-			_H( Manager.DeleteField( *Field ) );
+			return _H( Manager.DeleteField( *Field ) );
 		}
-		void GetDatabaseInfos(
+		bso::bool__ GetDatabaseInfos(
 			str::string_ &Name,
 			str::string_ &Comment )
 		{
-			_H( Manager.GetDatabaseInfos( Name, Comment ) );
+			return _H( Manager.GetDatabaseInfos( Name, Comment ) );
 		}
-		void GetTables( tables_ &Tables )
+		bso::bool__ GetTables( tables_ &Tables )
 		{
-			_H( Manager.GetTables( _( Tables ) ) );
+			return _H( Manager.GetTables( _( Tables ) ) );
 		}
-		void GetTablesInfos(
+		bso::bool__ GetTablesInfos(
 			const tables_ &Tables,
 			bkdacc::strings_ &Names,
 			bkdacc::strings_ &Comments,
 			table_ids_ &Ids )
 		{
-			_H( Manager.GetTablesInfos( _( Tables ), Names, Comments, _( Ids ) ) );
+			return _H( Manager.GetTablesInfos( _( Tables ), Names, Comments, _( Ids ) ) );
 		}
 		void GetTableInfo(
 			table__ Table,
 			str::string_ &Name,
 			str::string_ &Comment,
 			table_id__ &Id );
-		void GetFields(
+		bso::bool__ GetFields(
 			table__ Table,
 			fields_ &Fields )
 		{
-			_H( Manager.GetFields( *Table, _( Fields ) ) );
+			return _H( Manager.GetFields( *Table, _( Fields ) ) );
 		}
-		void GetFieldsInfos(
+		bso::bool__ GetFieldsInfos(
 			const fields_ &Fields,
 			bkdacc::strings_ &Names,
 			bkdacc::strings_ &Comments,
 			field_ids_ &Ids,
 			tables_ &Tables )
 		{
-			_H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ), _( Tables ) ) );
+			return _H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ), _( Tables ) ) );
 		}
 		void GetFieldInfo(
 			field__ field,
@@ -207,32 +208,32 @@ namespace mbdbkd{
 
 			return Record;
 		}
-		void ModifyRecord(
+		bso::bool__ ModifyRecord(
 			record__ Record,
 			const bkdacc::items32_ &Items,
 			table__ Table )
 		{
-			_H( Manager.InsertOrModifyRecord( *Record, *Table, Items, *Record ) );
+			return _H( Manager.InsertOrModifyRecord( *Record, *Table, Items, *Record ) );
 		}
-		void DeleteRecord(
+		bso::bool__ DeleteRecord(
 			record__ Record,
 			table__ Table )
 		{
-			_H( Manager.DeleteRecord( *Record, *Table ) );
+			return _H( Manager.DeleteRecord( *Record, *Table ) );
 		}
-		void GetRecords(
+		bso::bool__ GetRecords(
 			table__ Table,
 			records_ &Records )
 		{
-			_H( Manager.GetRecords( *Table, _( Records ) ) );
+			return _H( Manager.GetRecords( *Table, _( Records ) ) );
 		}
-		void GetRecordsData(
+		bso::bool__ GetRecordsData(
 			table__ Table,
 			fields_ &Fields,
 			records_ &Records,
 			bkdacc::xstrings_ &DataCluster )
 		{
-			_H( Manager.GetRecordsData( *Table, _( Fields ), _( Records ), DataCluster ) );
+			return _H( Manager.GetRecordsData( *Table, _( Fields ), _( Records ), DataCluster ) );
 		}
 	};
 }

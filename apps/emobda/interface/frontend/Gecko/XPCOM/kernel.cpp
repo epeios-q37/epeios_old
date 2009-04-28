@@ -39,6 +39,8 @@ static const char *GetRawMessage_( kernel::message__ MessageId )
 	switch ( MessageId ) {
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
+	CASE( NoDatabaseSelected );
+	CASE( BadDatabasePath );
 	CASE( DropStructureItemConfirmation );
 	CASE( DeleteTableConfirmation );
 	CASE( DeleteFieldConfirmation );
@@ -847,14 +849,14 @@ ERRBegin
 
 		
 		if ( Type == "Database" ) {
-			K().GetDatabaseInfos( Name, Comment );
+			GetDatabaseInfos( Name, Comment );
 		} else if ( Type == "Table" ) {
 			table_id__ TableId = UNDEFINED_TABLE_ID;
 
 			Row.Init();
 			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			K().GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
+			GetTableInfo( ExtractTable( Row ), Name, Comment, TableId );
 		} else if ( Type == "Field" ) {
 			field_id__ FieldId = UNDEFINED_FIELD_ID;
 			table__ Table = UNDEFINED_TABLE;
@@ -862,7 +864,7 @@ ERRBegin
 			Row.Init();
 			UI.BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			K().GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId, Table );
+			GetFieldInfo( ExtractField( Row ), Name, Comment, FieldId, Table );
 		}
 
 		UI.NameTextbox.SetValue( Name );
@@ -1089,6 +1091,72 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+bso::bool__ kernel::kernel___::GetDatabaseIdentification( void )
+{
+	bso::bool__ OK = false;
+ERRProlog
+	str::string Name, Path, Comment;
+ERRBegin
+	Name.Init();
+	Path.Init();
+	Comment.Init();
+
+	UI.DatabaseCreation.Textboxes.Name.GetValue( Name );
+	UI.DatabaseCreation.Textboxes.Path.GetValue( Path );
+	UI.DatabaseCreation.Textboxes.Comment.GetValue( Comment );
+
+	Name.StripCharacter( ' ' );
+	Path.StripCharacter( ' ' );
+
+	if ( Name.Amount() == 0 ) {
+		Alert( UI.DatabaseCreation.Window.GetObject(), kernel::mMissingDatabaseName );
+		UI.DatabaseCreation.Textboxes.Name.Select();
+	} else if ( Path.Amount() == 0 ) {
+		Alert( UI.DatabaseCreation.Window.GetObject(), kernel::mMissingDatabasePath );
+		UI.DatabaseCreation.Textboxes.Path.Select();
+	} else {
+		SetDatabaseIdentification( Name, Path, Comment );
+		UI.DatabaseCreation.Window.Close();
+		OK = true;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return OK;
+}
+
+bso::bool__ kernel::kernel___::GetSelectedDatabase( void )
+{
+	bso::bool__ OK = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	if ( !UI.DatabaseSelection.DatabaseTree.IsThereSelected() ) {
+		Alert( UI.DatabaseSelection.Window.GetObject(), kernel::mNoDatabaseSelected );
+		ERRReturn;
+	}
+
+	UI.DatabaseSelection.DatabaseTree.GetCurrentItemAttribute( "Path", Path );
+	
+	Path.StripCharacter( ' ' );
+
+	if ( Path.Amount() == 0 ) {
+		Alert( UI.DatabaseSelection.Window.GetObject(), kernel::mBadDatabasePath );
+		ERRReturn;
+	}
+
+	SetSelectedDatabase( Path );
+	UI.DatabaseSelection.Window.Close();
+	OK = true;
+ERRErr
+ERREnd
+ERREpilog
+	return OK;
+}
+
 
 static class starter 
 {
