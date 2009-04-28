@@ -555,10 +555,13 @@ bso::bool__ mbdmng::manager_::_SubInit( type__ Type )
 const strings_ &mbdmng::GetDatabases( strings_ &Databases )
 {
 	dir::handle___ Handle = DIR_INVALID_HANDLE;
-	const char *File = dir::GetFirstFile( "*." MBDBSC_STRUCTURE_FILE_EXTENSION, Handle );
+	const char *File = dir::GetFirstFile( "." , Handle );
+	size_t Length = strlen( MBDBSC_STRUCTURE_FILE_EXTENSION );
 
 	while ( ( File != NULL ) && ( File[0] ) ) {
-		Databases.Append( str::string( File ) );
+		if ( strlen( File ) >= Length )
+			if ( !strcmp( (File + strlen( File ) - Length ), MBDBSC_STRUCTURE_FILE_EXTENSION ) )
+				Databases.Append( str::string( File ) );
 
 		File = dir::GetNextFile( Handle );
 	}
