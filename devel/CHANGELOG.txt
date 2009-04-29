@@ -1,6 +1,10 @@
 $Id$
 
 28/04/2009 :
+	- CSDUCL :
+		- Rajout 'reset(...)' manquants dont l'absence était source de plantages.
+
+28/04/2009 :
 	- NSXPCM :
 		- Rajout gestion évènement 'Unload' (pour les 'nsIDOMWindow').
 		- Rajout 'window__'.

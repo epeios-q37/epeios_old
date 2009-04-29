@@ -176,8 +176,25 @@ namespace csducl {
 			_Get().Synchronize();
 		}
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Shared.reset( P );
+			_Library.reset( P );
+
+			_Core = NULL;
+		}
+		universal_client_ioflow_functions___( void )
+		{
+			reset( true );
+		}
+		~universal_client_ioflow_functions___( void )
+		{
+			reset();
+		}
 		void Init( universal_client_core &Core )
 		{
+			reset();
+
 			_Core = &Core;
 
 			ioflow_functions___::Init();
@@ -203,11 +220,23 @@ namespace csducl {
 		universal_client_ioflow_functions___ _Functions;
 		flw::datum__ _Cache[CSDUCL_CACHE_SIZE];
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Functions.reset();
+		}
 		universal_client( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
-		{}
+		{
+			reset( false );
+		}
+		~universal_client( void )
+		{
+			reset();
+		}
 		void Init( universal_client_core &Core )
 		{
+			reset();
+
 			_Functions.Init( Core );
 		}
 	};
