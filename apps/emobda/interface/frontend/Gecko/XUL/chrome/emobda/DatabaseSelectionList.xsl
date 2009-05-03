@@ -24,6 +24,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<xsl:include href="Library.xsl"/>
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
+	<xsl:template match="/">
+		<xsl:apply-templates select="/emobda/Available/Databases"/>
+	</xsl:template>
 	<xsl:template match="/emobda/Available/Databases">
 		<xsl:element name="treecols">
 			<xsl:element name="treecol">

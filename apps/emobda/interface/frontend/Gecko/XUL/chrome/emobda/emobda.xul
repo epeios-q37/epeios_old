@@ -35,7 +35,7 @@
 	<script type="text/javascript">registeringStart();</script>
 	<broadcasterset>
 		<broadcaster id="bcrDatabaseOpened"/>
-		<broadcaster id="bcrTableSelected"/>
+		<broadcaster id="bcrTableWithFieldSelected"/>
 		<broadcaster id="bcrRecordSelected"/>
 	</broadcasterset>
 	<commandset>
@@ -45,7 +45,7 @@
 		<command id="cmdOpenDatabase"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
-		<command id="cmdCreateRecord" observes="bcrTableSelected"/>
+		<command id="cmdCreateRecord" observes="bcrTableWithFieldSelected"/>
 		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
 		<command id="cmdDuplicateRecord" observes="bcrRecordSelected"/>
 		<command id="cmdDeleteRecord" observes="bcrRecordSelected"/>

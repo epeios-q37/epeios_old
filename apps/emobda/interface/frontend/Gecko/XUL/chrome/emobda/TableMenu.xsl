@@ -62,9 +62,13 @@
 			<xsl:if test="@Row=$CurrentTable">
 				<xsl:attribute name="checked">true</xsl:attribute>
 			</xsl:if>
-			<xsl:if test="number(Fields/@Amount)=0">
-				<xsl:attribute name="disabled">true</xsl:attribute>
-			</xsl:if>
+			<xsl:variable name="Row" select="@Row"/>
+			<xsl:choose>
+				<xsl:when test="/emobda/Structure/Fields/Field[@TableRow=$Row]"/>
+				<xsl:otherwise>
+					<xsl:attribute name="disabled">true</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

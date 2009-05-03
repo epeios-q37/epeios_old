@@ -38,14 +38,14 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmCreation );
-	K().Target().reset();
+	K().StructureManagement().SetState( kernel::smsCreation );
+	K().StructureManagement().Target.reset();
 	K().DefineTable();
 }
 
 void ui_struct::modify_table_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmModification );
+	K().StructureManagement().SetState( kernel::smsModification );
 	K().DefineTable();
 }
 
@@ -58,14 +58,14 @@ void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmCreation );
-	K().Target().Set( UNDEFINED_FIELD );
+	K().StructureManagement().SetState( kernel::smsCreation );
+	K().StructureManagement().Target.Set( UNDEFINED_FIELD );
 	K().DefineField();
 }
 
 void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmModification );
+	K().StructureManagement().SetState( kernel::smsModification );
 	K().DefineField();
 }
 

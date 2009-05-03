@@ -39,7 +39,7 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().DefineDatabase();
+	K().CreateDatabase();
 }
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
@@ -54,7 +54,7 @@ void ui_main::define_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::Alert( K().UI.Structure.Window, "Close Database !" );
+	K().CloseDatabase();
 }
 
 void ui_main::table_menu_item__::NSXPCMOnEvent( event__ ) 
@@ -64,20 +64,19 @@ void ui_main::table_menu_item__::NSXPCMOnEvent( event__ )
 
 void ui_main::create_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().Target().Set( UNDEFINED_RECORD );
-	K().SetStructureManagementMode( kernel::smmCreation );
+	K().RecordInput().SetState( kernel::risCreation );
 	K().DefineRecord();
 }
 
 void ui_main::modify_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmModification );
+	K().RecordInput().SetState( kernel::risModification );
 	K().DefineRecord();
 }
 
 void ui_main::duplicate_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetStructureManagementMode( kernel::smmDuplication );
+	K().RecordInput().SetState( kernel::risDuplication );
 	K().DefineRecord();
 }
 
@@ -112,7 +111,7 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Kernel, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
-	Register_( Kernel, UI.TableSelected, Document, "bcrTableSelected" );
+	Register_( Kernel, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
 	Register_( Kernel, UI.RecordSelected, Document, "bcrRecordSelected" );
 }
 

@@ -41,7 +41,7 @@
 	</commands>
 	<vbox flex="1">
 		<groupbox flex="1">
-			<caption>Select database to open</caption>
+			<caption label="Select database to open"/>
 			<tree id="treDatabases" enableColumnDrag="true" style="overflow: auto;" flex="1"/>
 		</groupbox>
 		<hbox>

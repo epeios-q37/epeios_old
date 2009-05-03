@@ -235,6 +235,10 @@ namespace mbdbkd{
 		{
 			return _H( Manager.GetRecordsData( *Table, _( Fields ), _( Records ), DataCluster ) );
 		}
+		bso::bool__ CloseDatabase( void )
+		{
+			return _H( Manager.CloseDatabase() );
+		}
 	};
 }
 

@@ -627,8 +627,14 @@ void kernel::kernel___::FillStructureView( void )
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
 	str::string XML;
-	target__ Buffer;
+	target__ Target;
 ERRBegin
+
+	if ( _Temporary.Context() == tcStructureManagement )
+		Target = StructureManagement().Target;
+	else
+		GetSelectedStructureItem( Target );
+
 	XML.Init();
 
 	_DumpAsXML( XML );
@@ -637,19 +643,17 @@ ERRBegin
 
 	Parameters.Init();
 
-	Buffer = _Target;
-
-	nsxpcm::RemoveChildren( UI.Structure.Items );	// Lance un évènement 'Select' qui remet à 0 '_Current'.
+	nsxpcm::RemoveChildren( UI.Structure.Items );	// Launch an event which reset '_Target'.
 
 	nsxpcm::AppendChild( UI.Structure.Items, nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), UI.Structure.Document, Parameters ) );
-
-	_Target = Buffer;
 
 	UpdateDecks();
 
 	UI.Structure.Broadcasters.ItemEdition.Disable();
 
-	SelectStructItem_( _Target, UI.Structure.Items, UI.Structure.BrowseTree );
+	SelectStructItem_( StructureManagement().Target, UI.Structure.Items, UI.Structure.BrowseTree );	// Launch an event which set '_Target'.
+
+	_Temporary.reset();
 ERRErr
 ERREnd
 ERREpilog
@@ -771,8 +775,9 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::SelectStructureItem( void )
+bso::bool__ kernel::kernel___::GetSelectedStructureItem( target__ &Target )
 {
+	bso::bool__ Selected = false;
 ERRProlog
 	str::string Type, Row, TableRow;
 	field__ Field = UNDEFINED_FIELD;
@@ -798,12 +803,13 @@ ERRBegin
 			Table = ExtractTable( Row );
 		} else if ( Type != "Database" )
 			ERRc();
-	}
 
-	Target().Set( Field, Table );
+		Selected = true;
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Selected;
 }
 
 void kernel::kernel___::SelectRecord( void )
@@ -846,7 +852,6 @@ ERRBegin
 
 		Type.Init();
 		UI.BrowseTree.GetCurrentItemAttribute( "Type", Type );
-
 		
 		if ( Type == "Database" ) {
 			GetDatabaseInfos( Name, Comment );
@@ -927,8 +932,6 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 	case cSessionForm:
 		K().FillTableMenu();
 		UI.Main.Broadcasters.DatabaseOpened.Disable();
-		UI.Main.Broadcasters.TableSelected.Disable();
-		UI.Main.Broadcasters.RecordSelected.Disable();
 		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.Home );
 		break;
 	case cStructureView:
@@ -964,26 +967,32 @@ void kernel::kernel___::_SwitchTo( context__ Context )
 		ERRc();
 		break;
 	}
+
+	UI.Main.Broadcasters.RecordSelected.Enable( _Target.Record != UNDEFINED_RECORD );
+	UI.Main.Broadcasters.TableWithFieldSelected.Enable( _Target.Table != UNDEFINED_TABLE );
+
 }
 
 void kernel::kernel___::ApplyStructureItem( void )
 {
 	target__ Target;
 
-	if ( GetTarget().Table == UNDEFINED_TABLE ) {
-		if ( GetStructureManagementMode() != smmCreation )
+	GetSelectedStructureItem( Target );
+
+	if ( Target.Table == UNDEFINED_TABLE ) {
+		if ( StructureManagement().GetState() != smsCreation )
 			ERRc();
 
-		Target.Table = _CreateOrModifyTable();
-	} else if ( GetTarget().Field == UNDEFINED_FIELD ) {
-		switch ( GetStructureManagementMode() ) {
-		case smmCreation:
-			Target.Set( _CreateOrModifyField(), GetTarget().Table );
+		StructureManagement().Target.Set( _CreateOrModifyTable() );
+	} else if ( Target.Field == UNDEFINED_FIELD ) {
+		switch ( StructureManagement().GetState() ) {
+		case smsCreation:
+			StructureManagement().Target.Set( _CreateOrModifyField() );
 			break;
-		case smmModification:
-			Target.Table = _CreateOrModifyTable();
+		case smsModification:
+			StructureManagement().Target.Set( _CreateOrModifyTable() );
 			break;
-		case smmDuplication:
+		case smsDuplication:
 			ERRc();
 			break;
 		default:
@@ -991,15 +1000,12 @@ void kernel::kernel___::ApplyStructureItem( void )
 			break;
 		}
 	} else {
-		if ( GetStructureManagementMode() != smmModification )
+		if ( StructureManagement().GetState() != smsModification )
 			ERRc();
 
-		Target.Set( _CreateOrModifyField(), GetTarget().Table );
+		StructureManagement().Target.Set( _CreateOrModifyField() );
 	}
 
-	_Temporary.reset();
-
-	this->Target() = Target;
 	_SwitchTo( cStructureView );
 }
 
@@ -1050,22 +1056,22 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( UI.RecordForm.RecordBox.GetObject(), Data );
 
-	switch ( GetStructureManagementMode() ) {
-		case smmCreation:
-		case smmDuplication:
-			Target().Set( InsertRecord( Data, _Target.Table ) );
+	switch ( RecordInput().GetState() ) {
+		case risCreation:
+		case risDuplication:
+			Target().Set( InsertRecord( Data, Target().Table ) );
 			break;
-		case smmModification:
-			ModifyRecord( Target().Record, Data, _Target.Table );
+		case risModification:
+			ModifyRecord( Target().Record, Data, Target().Table );
 			break;
 		default:
 			ERRc();
 			break;
 	}
 
-	_SwitchTo( cRecordView );
-
 	_Temporary.reset();
+
+	_SwitchTo( cRecordView );
 ERRErr
 ERREnd
 ERREpilog
@@ -1116,7 +1122,7 @@ ERRBegin
 		Alert( UI.DatabaseCreation.Window.GetObject(), kernel::mMissingDatabasePath );
 		UI.DatabaseCreation.Textboxes.Path.Select();
 	} else {
-		SetDatabaseIdentification( Name, Path, Comment );
+		DatabaseIdentification().Set( Name, Path, Comment );
 		UI.DatabaseCreation.Window.Close();
 		OK = true;
 	}
@@ -1148,7 +1154,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	SetSelectedDatabase( Path );
+	DatabaseSelection().Set( Path );
 	UI.DatabaseSelection.Window.Close();
 	OK = true;
 ERRErr

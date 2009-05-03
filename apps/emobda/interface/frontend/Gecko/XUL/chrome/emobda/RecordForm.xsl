@@ -44,7 +44,9 @@
 	<xsl:template match="Field">
 		<xsl:element name="groupbox">
 			<xsl:element name="caption">
-				<xsl:value-of select="Name"/>
+				<xsl:attribute name="label">
+					<xsl:value-of select="Name"/>
+				</xsl:attribute>
 			</xsl:element>
 			<xsl:element name="textbox">
 				<xsl:attribute name="multiline">true</xsl:attribute>

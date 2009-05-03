@@ -76,202 +76,6 @@ namespace kernel {
 		m_Undefined
 	};
 
-	enum temporary_context__ {
-		tcStructureManagement,
-		tcDatabaseIdentification,
-		tcDatabaseSelection,
-		tc_amount,
-		tc_Undefined
-	};
-
-	enum structure_management_mode__
-	{
-		smm_Undefined,
-		smmModification,
-		smmCreation,
-		smmDuplication,
-		smm_amount,
-	};
-
-	enum database_identification_state__ {
-		dis_Undefined,
-		disValidated,
-		disCancelled,
-		dis_amount
-	};
-
-	enum database_selection_state__ {
-		dss_Undefined,
-		dssValidated,
-		dssCancelled,
-		dss_amount
-	};
-
-
-	struct temporary__ {
-		temporary_context__ Context;
-		union {
-		private:
-			int _Raw;
-		public:
-			structure_management_mode__ StructureManagementMode;
-			database_identification_state__ DatabaseIdentificationState;
-			database_selection_state__ DatabaseSelectionState;
-			void reset( void )
-			{
-				_Raw = 0;
-			}
-		} Core;
-		struct {
-			str::string Name, Path, Comment;
-			void reset( void )
-			{
-				Name.reset();
-				Path.reset();
-				Comment.reset();
-			}
-		} DatabaseIdentification;
-		struct {
-			str::string Path;
-			void reset( void )
-			{
-				Path.reset();
-			}
-		} DatabaseSelection;
-		void reset( void )
-		{
-			Context = tc_Undefined;
-			Core.reset();
-			DatabaseIdentification.reset();
-			DatabaseSelection.reset();
-		}
-		temporary__( void )
-		{
-			reset();
-		}
-		void SetStructureManagementMode( structure_management_mode__ Mode )
-		{
-			switch ( Context ) {
-			case tc_Undefined:
-				Context = tcStructureManagement;
-				break;
-			case tcStructureManagement:
-				break;
-			default:
-				ERRc();
-				break;
-			}
-
-			if ( Core.StructureManagementMode != smm_Undefined )
-				ERRc();
-
-			Core.StructureManagementMode = Mode;
-		}
-		structure_management_mode__ GetStructureManagementMode( void ) const
-		{
-			if ( Context != tcStructureManagement )
-				ERRc();
-
-			return Core.StructureManagementMode;
-		}
-		void SetDatabaseIdentification(
-			const str::string_ &Name,
-			const str::string_ &Path,
-			const str::string_ &Comment )
-		{
-			if ( Context != tc_Undefined )
-				ERRc();
-
-			Context = tcDatabaseIdentification;
-
-			if ( Core.DatabaseIdentificationState != dis_Undefined )
-				ERRc();
-
-			Core.DatabaseIdentificationState = disValidated;
-
-			DatabaseIdentification.Name.Init( Name );
-			DatabaseIdentification.Path.Init( Path );
-			DatabaseIdentification.Comment.Init( Comment );
-		}
-		void SetCancelledDatabaseIdentificationState( void )
-		{
-			if ( Context != tc_Undefined )
-				ERRc();
-
-			Context = tcDatabaseIdentification;
-
-			if ( Core.DatabaseIdentificationState != dis_Undefined )
-				ERRc();
-
-			Core.DatabaseIdentificationState = disCancelled;
-		}
-		database_identification_state__ GetDatabaseIdentificationState( void ) const
-		{
-			if ( Context != tcDatabaseIdentification )
-				ERRc();
-
-			return Core.DatabaseIdentificationState;
-		}
-		void GetDatabaseIdentification(
-			str::string_ &Name,
-			str::string_ &Path,
-			str::string_ &Comment ) const
-		{
-			if ( Context != tcDatabaseIdentification )
-				ERRc();
-
-			if ( Core.DatabaseIdentificationState != disValidated )
-				ERRc();
-
-			Name = DatabaseIdentification.Name;
-			Path = DatabaseIdentification.Path;
-			Comment = DatabaseIdentification.Comment;
-		}
-
-		void SetSelectedDatabase( const str::string_ &Path )
-		{
-			if ( Context != tc_Undefined )
-				ERRc();
-
-			Context = tcDatabaseSelection;
-
-			if ( Core.DatabaseSelectionState != dss_Undefined )
-				ERRc();
-
-			Core.DatabaseSelectionState = dssValidated;
-
-			DatabaseSelection.Path.Init( Path );
-		}
-		void SetCancelledDatabaseSelectionState( void )
-		{
-			if ( Context != tc_Undefined )
-				ERRc();
-
-			Context = tcDatabaseSelection;
-
-			if ( Core.DatabaseSelectionState != dss_Undefined )
-				ERRc();
-
-			Core.DatabaseSelectionState = dssCancelled;
-		}
-		database_selection_state__ GetDatabaseSelectionState( void ) const
-		{
-			if ( Context != tcDatabaseSelection )
-				ERRc();
-
-			return Core.DatabaseSelectionState;
-		}
-		void GetSelectedDatabase( str::string_ &Path ) const
-		{
-			if ( Context != tcDatabaseSelection )
-				ERRc();
-
-			if ( Core.DatabaseSelectionState != dssValidated )
-				ERRc();
-
-			Path = DatabaseSelection.Path;
-		}
-	};
 
 	struct target__ {
 		table__ Table;
@@ -344,7 +148,260 @@ namespace kernel {
 		}
 	};
 
+	enum temporary_context__ {
+		tcStructureManagement,
+		tcDatabaseIdentification,
+		tcDatabaseSelection,
+		tcRecordInput,
+		tc_amount,
+		tc_Undefined
+	};
 
+	template <typename e, e amount> struct _state__
+	{
+	private:
+		e _State;
+		e _Undefined( void ) const
+		{
+			return (e)( amount + 1 );
+		}
+		int _Amount( void ) const
+		{
+			return amount;
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_State = _Undefined();
+		}
+		e GetState( void ) const
+		{
+			return _State;
+		}
+		void SetState( e State )
+		{
+			if ( ( _State > _Amount() ) && ( _State != _Undefined() ) )
+				ERRu();
+
+			_State = State;
+		}
+	};
+
+	enum structure_management_state__
+	{
+		smsModification,
+		smsCreation,
+		smsDuplication,
+		sms_amount,
+		sms_Undefined,
+	};
+
+	typedef _state__<structure_management_state__, sms_amount> _sms__;
+
+	struct structure_management
+	: public _sms__
+	{
+		target__ Target;
+		void reset( bso::bool__ P = true )
+		{
+			_sms__::reset( P );
+		}
+
+	};
+
+	enum database_identification_state__ {
+		disValidated,
+		disCancelled,
+		dis_amount,
+		dis_Undefined
+	};
+
+	typedef _state__<database_identification_state__, dis_amount> _dis__;
+
+	struct database_identification
+	: public _dis__
+	{
+	private:
+		str::string _Name, _Path, _Comment;
+		void _SetState( database_identification_state__ State )
+		{
+			_dis__::SetState( State );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_dis__::reset( P );
+
+			_Name.reset();
+			_Path.reset();
+			_Comment.reset();
+		}
+		void Set(
+			const str::string_ &Name,
+			const str::string_ &Path,
+			const str::string_ &Comment )
+		{
+			if ( GetState() != dis_Undefined )
+				ERRc();
+
+			_SetState( disValidated );
+
+			_Name.Init( Name );
+			_Path.Init( Path );
+			_Comment.Init( Comment );
+		}
+		void SetCancelledState( void )
+		{
+			if ( GetState() != dis_Undefined )
+				ERRc();
+
+			_SetState( disCancelled );
+		}
+		void Get(
+			str::string_ &Name,
+			str::string_ &Path,
+			str::string_ &Comment ) const
+		{
+			if ( GetState() != disValidated )
+				ERRc();
+
+			Name = _Name;
+			Path = _Path;
+			Comment = _Comment;
+		}
+		void SetState( void )	// To avoid the use of the '_dis__' one, because it has not to be used directly.
+		{
+			ERRu();
+		}
+	};
+
+	enum database_selection_state__ {
+		dssValidated,
+		dssCancelled,
+		dss_amount,
+		dss_Undefined,
+	};
+
+	typedef _state__<database_selection_state__, dss_amount> _dss__;
+
+	class database_selection
+	: public _dss__
+	{
+	private:
+		str::string _Path;
+		void _SetState( database_selection_state__ State )
+		{
+			_dss__::SetState( State );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_dss__::reset( P );
+
+			_Path.reset( P );
+		}
+		void Set( const str::string_ &Path )
+		{
+			if ( GetState() != dss_Undefined )
+				ERRc();
+
+			_SetState( dssValidated );
+
+			_Path.Init( Path );
+		}
+		void SetCancelledState( void )
+		{
+			if ( GetState() != dss_Undefined )
+				ERRc();
+
+			_SetState( dssCancelled );
+		}
+		void Get( str::string_ &Path ) const
+		{
+			if ( GetState() != dssValidated )
+				ERRc();
+
+			Path = _Path;
+		}
+		void SetState( void )	// To avoid the use of the '_dis__' one, because it has not to be used directly.
+		{
+			ERRu();
+		}
+	};
+
+	enum record_input_state__ {
+		risCreation,
+		risModification,
+		risDuplication,
+		ris_amount,
+		ris_Undefined,
+	};
+
+	typedef _state__<record_input_state__, ris_amount> _ris__;
+
+	class record_input
+	: public _ris__
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_ris__::reset( P );
+		}
+	};
+
+#define KERNEL_TEMPORARY_DEF( type, object )\
+	private:\
+		type _##object;\
+	public:\
+		const type &object( void ) const\
+		{\
+		_Test( tc##object );\
+			return _##object;\
+		}\
+		type &object( void )\
+		{\
+			_TestAndSet( tc##object );\
+			return _##object;\
+		}\
+
+
+	class temporary__
+	{
+	private:
+		temporary_context__ _Context;
+		void _Test( temporary_context__ Context ) const
+		{
+			if ( _Context != Context )
+				ERRu();
+		}
+		void _TestAndSet( temporary_context__ Context )
+		{
+			if ( _Context == tc_Undefined )
+				_Context = Context;
+
+			if ( _Context != Context )
+				ERRu();
+		}
+	public:
+		KERNEL_TEMPORARY_DEF( structure_management, StructureManagement );
+		KERNEL_TEMPORARY_DEF( database_identification, DatabaseIdentification );
+		KERNEL_TEMPORARY_DEF( database_selection, DatabaseSelection );
+		KERNEL_TEMPORARY_DEF( record_input, RecordInput );
+		void reset( bso::bool__ P = true )
+		{
+			_Context = tc_Undefined;
+
+			_StructureManagement.reset( P );
+			_DatabaseIdentification.reset( P );
+			_DatabaseSelection.reset( P );
+			_RecordInput.reset();
+		}
+		temporary__( void )
+		{
+			reset( false );
+		}
+		E_RODISCLOSE__( temporary_context__, Context );
+	};
 
 	typedef mbdbkd::backend___ _backend___;
 
@@ -358,6 +415,17 @@ namespace kernel {
 			epeios::size__ Amount )
 		{}
 	};
+
+#define KERNEL_TEMPORARY_USE( type, object )\
+		const type &object( void ) const\
+		{\
+			return _Temporary.object();\
+		}\
+		type &object( void )\
+		{\
+			return _Temporary.object();\
+		}\
+
 
 	class kernel___
 	: public ui::bridge_functions__,
@@ -389,7 +457,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Table = CreateOrModifyTable( _Target.Table, Name, Comment );
+			Table = CreateOrModifyTable( StructureManagement().Target.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -401,7 +469,7 @@ namespace kernel {
 		ERRProlog
 			str::string Name, Comment;
 		ERRBegin
-			if ( _Target.Table == UNDEFINED_TABLE )
+			if ( StructureManagement().Target.Table == UNDEFINED_TABLE )
 				ERRu();
 
 			Name.Init();
@@ -410,7 +478,7 @@ namespace kernel {
 			Comment.Init();
 			UI.Structure.CommentTextbox.GetValue( Comment );
 
-			Field = AddOrModifyField( _Target.Field, _Target.Table, Name, Comment );
+			Field = AddOrModifyField( StructureManagement().Target.Field, StructureManagement().Target.Table, Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -505,6 +573,10 @@ namespace kernel {
 		{
 			return Confirm( GetMessage( Message ) );
 		}
+		KERNEL_TEMPORARY_USE( structure_management, StructureManagement );
+		KERNEL_TEMPORARY_USE( database_identification, DatabaseIdentification );
+		KERNEL_TEMPORARY_USE( database_selection, DatabaseSelection );
+		KERNEL_TEMPORARY_USE( record_input, RecordInput );
 		void UpdateDecks( void );
 		bso::bool__ GetDatabaseIdentification(
 			str::string_ &Name,
@@ -517,9 +589,9 @@ namespace kernel {
 			Repository.SetCurrentRow( _KRow );
 			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			switch ( _Temporary.GetDatabaseIdentificationState() ) {
+			switch ( DatabaseIdentification().GetState() ) {
 			case disValidated:
-				_Temporary.GetDatabaseIdentification( Name, Path, Comment );
+				DatabaseIdentification().Get( Name, Path, Comment );
 				Validated = true;
 				break;
 			case disCancelled:
@@ -534,7 +606,7 @@ namespace kernel {
 
 			return Validated;
 		}
-		void DefineDatabase( void )
+		void CreateDatabase( void )
 		{
 		ERRProlog
 			str::string Name, Path, Comment;
@@ -544,12 +616,18 @@ namespace kernel {
 			Comment.Init();
 
 			if ( GetDatabaseIdentification( Name, Path, Comment ) ) {
-				if ( CreateDatabase( Path, Name, Comment ) )
+				if ( _backend___::CreateDatabase( Path, Name, Comment ) ) {
+					_Target.Set( UNDEFINED_TABLE );
 					_SwitchTo( cStructureView );
+				}
 			}
 		ERRErr
 		ERREnd
 		ERREpilog
+		}
+		void DefineDatabase( void )
+		{
+			_SwitchTo( cStructureView );
 		}
 		bso::bool__ GetSelectedDatabase( str::string_ &Path )
 		{
@@ -559,9 +637,9 @@ namespace kernel {
 			Repository.SetCurrentRow( _KRow );
 			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			switch ( _Temporary.GetDatabaseSelectionState() ) {
+			switch ( DatabaseSelection().GetState() ) {
 			case dssValidated:
-				_Temporary.GetSelectedDatabase( Path );
+				DatabaseSelection().Get( Path );
 				Validated = true;
 				break;
 			case dssCancelled:
@@ -584,27 +662,38 @@ namespace kernel {
 			Path.Init();
 
 			if ( GetSelectedDatabase( Path ) ) {
-				if ( OpenDatabase( Path ) )
+				if ( OpenDatabase( Path ) ) {
+					_Target.Set( UNDEFINED_TABLE );
 					_SwitchTo( cStructureView );
+				}
 			}
 		ERRErr
 		ERREnd
 		ERREpilog
 		}
+		void CloseDatabase( void )
+		{
+			_backend___::CloseDatabase();
+
+			_SwitchTo( cSessionForm );
+		}
 		void BrowseStructureItem( void )
 		{
-			SelectStructureItem();
 			_SwitchTo( cStructureItemView );
 		}
 		void DefineStructureItem( void )
 		{
-			_Temporary.SetStructureManagementMode( smmModification );
 
-			if ( GetTarget().Field != UNDEFINED_FIELD )
-				DefineField();
-			else if ( GetTarget().Table != UNDEFINED_TABLE )
-				DefineTable();
-			else
+			target__ Target;
+
+			if ( GetSelectedStructureItem( Target ) ) {
+				if ( Target.Field != UNDEFINED_FIELD )
+					DefineField();
+				else if ( Target.Table != UNDEFINED_TABLE )
+					DefineTable();
+				else
+					ERRc();
+			} else
 				ERRc();
 
 		}
@@ -704,41 +793,13 @@ namespace kernel {
 
 			FillTableMenu();
 			BrowseList();
-			UI.Main.Broadcasters.TableSelected.Enable();
 		}
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );
 		void SelectRecord( void );
-		void SelectStructureItem();
+		bso::bool__ GetSelectedStructureItem( target__ &Target );
 		void ApplyRecord( void );
-		void SetStructureManagementMode( structure_management_mode__ Mode )
-		{
-			_Temporary.SetStructureManagementMode( Mode );
-		}
-		structure_management_mode__ GetStructureManagementMode( void ) const
-		{
-			return _Temporary.GetStructureManagementMode();
-		}
 		bso::bool__ GetDatabaseIdentification( void );	// Called from UI event. Fill '_Temporary' with content from dedicated interface object.
-		void SetDatabaseIdentification(
-			const str::string_ &Name,
-			const str::string_ &Path,
-			const str::string_ &Comment )
-		{
-			_Temporary.SetDatabaseIdentification( Name, Path, Comment );
-		}
-		void SetCancelledDatabaseIdentificationState( void )
-		{
-			_Temporary.SetCancelledDatabaseIdentificationState();
-		}
 		bso::bool__ GetSelectedDatabase( void );	// Called from UI event. Fill '_Temporary' with content from dedicated interface object.
-		void SetSelectedDatabase( const str::string_ &Path )
-		{
-			_Temporary.SetSelectedDatabase( Path );
-		}
-		void SetCancelledDatabaseSelectionState( void )
-		{
-			_Temporary.SetCancelledDatabaseSelectionState();
-		}
 		E_RWDISCLOSE__( target__, Target );
 	};
 

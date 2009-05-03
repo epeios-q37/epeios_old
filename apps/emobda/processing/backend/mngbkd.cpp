@@ -257,6 +257,18 @@ ERREpilog
 	return Message;
 }
 
+DEC( CloseDatabase )
+{
+	message__ Message = mOK;
+ERRProlog
+ERRBegin
+	Manager.reset();
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
 DEC( GetDatabaseInfos )
 {
 	message__ Message = mOK;
@@ -841,6 +853,9 @@ void mngbkd::manager_::NOTIFY( bkdmng::untyped_module &Module )
 		bkdmng::cEnd );
 	Module.Add( D( OpenDatabase ),
 			bkdmng::cString,	// Database location.
+		bkdmng::cEnd,
+		bkdmng::cEnd );
+	Module.Add( D( CloseDatabase ),
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( GetDatabaseInfos ),

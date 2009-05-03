@@ -32,7 +32,7 @@ void ui_dbsdb::window__::NSXPCMOnEvent( event__ Event )
 {
 	switch ( Event ) {
 	case nsxpcm::eClose:
-		K().SetCancelledDatabaseSelectionState();
+		K().DatabaseSelection().SetCancelledState();
 		break;
 	default:
 		break;
@@ -61,7 +61,7 @@ void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
 
 void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )
 {
-	K().SetCancelledDatabaseSelectionState();
+	K().DatabaseSelection().SetCancelledState();
 	K().UI.DatabaseSelection.Window.Close();
 }
 

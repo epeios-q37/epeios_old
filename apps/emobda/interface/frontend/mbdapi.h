@@ -333,7 +333,7 @@ private:
 	bkdacc::id16__ ID_;
 public:
 	bkdacc::backend_access___ *Backend;
-	bkdacc::command__ Commands[17];
+	bkdacc::command__ Commands[18];
 	void Init( bkdacc::backend_access___ &Backend )
 	{
 		bkdacc::commands_details CommandsDetails;
@@ -344,6 +344,7 @@ public:
 			18,18,18,0, 
 			0, 19,
 			18,0, 
+			0, 
 			0, 18,18,
 			14,18,18,0, 14,
 			14,0, 
@@ -382,79 +383,84 @@ public:
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
+		CommandDetail.Name = "CloseDatabase";;
+		CommandDetail.Casts.Append( Parameters + 8, 1 );
+		CommandsDetails.Append( CommandDetail );
+
+		CommandDetail.Init();
 		CommandDetail.Name = "GetDatabaseInfos";;
-		CommandDetail.Casts.Append( Parameters + 8, 3 );
+		CommandDetail.Casts.Append( Parameters + 9, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "CreateOrModifyTable";;
-		CommandDetail.Casts.Append( Parameters + 11, 5 );
+		CommandDetail.Casts.Append( Parameters + 12, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "DeleteTable";;
-		CommandDetail.Casts.Append( Parameters + 16, 2 );
+		CommandDetail.Casts.Append( Parameters + 17, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetTables";;
-		CommandDetail.Casts.Append( Parameters + 18, 2 );
+		CommandDetail.Casts.Append( Parameters + 19, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetTablesInfos";;
-		CommandDetail.Casts.Append( Parameters + 20, 5 );
+		CommandDetail.Casts.Append( Parameters + 21, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 25, 3 );
+		CommandDetail.Casts.Append( Parameters + 26, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFieldsInfos";;
-		CommandDetail.Casts.Append( Parameters + 28, 6 );
+		CommandDetail.Casts.Append( Parameters + 29, 6 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "AddOrModifyField";;
-		CommandDetail.Casts.Append( Parameters + 34, 6 );
+		CommandDetail.Casts.Append( Parameters + 35, 6 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "DeleteField";;
-		CommandDetail.Casts.Append( Parameters + 40, 2 );
+		CommandDetail.Casts.Append( Parameters + 41, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetFields";;
-		CommandDetail.Casts.Append( Parameters + 42, 2 );
+		CommandDetail.Casts.Append( Parameters + 43, 2 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "InsertOrModifyRecord";;
-		CommandDetail.Casts.Append( Parameters + 44, 5 );
+		CommandDetail.Casts.Append( Parameters + 45, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "DeleteRecord";;
-		CommandDetail.Casts.Append( Parameters + 49, 3 );
+		CommandDetail.Casts.Append( Parameters + 50, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecords";;
-		CommandDetail.Casts.Append( Parameters + 52, 3 );
+		CommandDetail.Casts.Append( Parameters + 53, 3 );
 		CommandsDetails.Append( CommandDetail );
 
 		CommandDetail.Init();
 		CommandDetail.Name = "GetRecordsData";;
-		CommandDetail.Casts.Append( Parameters + 55, 5 );
+		CommandDetail.Casts.Append( Parameters + 56, 5 );
 		CommandsDetails.Append( CommandDetail );
 
 
 		Commands.Init();
 		this->Backend->GetCommands( ID_, CommandsDetails, Commands );
-		Commands.Recall( 0, 17, this->Commands );
+		Commands.Recall( 0, 18, this->Commands );
 	}
 	bkdacc::object__ GetNewObject( void )
 	{
@@ -536,11 +542,20 @@ public:
 
 		return Common_->Backend->Handle();
 	}
+	bso::bool__ CloseDatabase( void ) const
+	{
+		Common_->Backend->PushHeader( ID_, Common_->Commands[3] );
+
+		Common_->Backend->EndOfInParameters();
+
+
+		return Common_->Backend->Handle();
+	}
 	bso::bool__ GetDatabaseInfos( 
 		bkdacc::string_ &Out1,
 		bkdacc::string_ &Out2 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[3] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[4] );
 
 		Common_->Backend->EndOfInParameters();
 
@@ -555,7 +570,7 @@ public:
 		const bkdacc::string_ &In3,
 		bkdacc::id32__ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[4] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[5] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->StringIn( In2 );
 		Common_->Backend->StringIn( In3 );
@@ -569,7 +584,7 @@ public:
 	bso::bool__ DeleteTable( 
 		const bkdacc::id32__ &In1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[5] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[6] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -580,7 +595,7 @@ public:
 	bso::bool__ GetTables( 
 		bkdacc::ids32_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[6] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[7] );
 
 		Common_->Backend->EndOfInParameters();
 
@@ -594,7 +609,7 @@ public:
 		bkdacc::strings_ &Out2,
 		bkdacc::ids8_ &Out3 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[7] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[8] );
 		Common_->Backend->Ids32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -609,7 +624,7 @@ public:
 		const bkdacc::id32__ &In1,
 		bkdacc::ids32_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[8] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[9] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -625,7 +640,7 @@ public:
 		bkdacc::ids8_ &Out3,
 		bkdacc::ids32_ &Out4 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[9] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[10] );
 		Common_->Backend->Ids32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -644,7 +659,7 @@ public:
 		const bkdacc::string_ &In4,
 		bkdacc::id32__ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[10] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->Id32In( In2 );
 		Common_->Backend->StringIn( In3 );
@@ -659,7 +674,7 @@ public:
 	bso::bool__ DeleteField( 
 		const bkdacc::id32__ &In1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[11] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -670,7 +685,7 @@ public:
 	bso::bool__ GetFields( 
 		bkdacc::items32_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[12] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[13] );
 
 		Common_->Backend->EndOfInParameters();
 
@@ -684,7 +699,7 @@ public:
 		const bkdacc::items32_ &In3,
 		bkdacc::id16__ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[13] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[14] );
 		Common_->Backend->Id16In( In1 );
 		Common_->Backend->Id32In( In2 );
 		Common_->Backend->Items32In( In3 );
@@ -699,7 +714,7 @@ public:
 		const bkdacc::id16__ &In1,
 		const bkdacc::id32__ &In2 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[14] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[15] );
 		Common_->Backend->Id16In( In1 );
 		Common_->Backend->Id32In( In2 );
 
@@ -712,7 +727,7 @@ public:
 		const bkdacc::id32__ &In1,
 		bkdacc::ids16_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[15] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[16] );
 		Common_->Backend->Id32In( In1 );
 
 		Common_->Backend->EndOfInParameters();
@@ -727,7 +742,7 @@ public:
 		const bkdacc::ids16_ &In3,
 		bkdacc::xstrings_ &Out1 ) const
 	{
-		Common_->Backend->PushHeader( ID_, Common_->Commands[16] );
+		Common_->Backend->PushHeader( ID_, Common_->Commands[17] );
 		Common_->Backend->Id32In( In1 );
 		Common_->Backend->Ids32In( In2 );
 		Common_->Backend->Ids16In( In3 );

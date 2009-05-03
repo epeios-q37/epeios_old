@@ -28,7 +28,7 @@ namespace ui_main {
 	using namespace ui_base;
 
 	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, table_selected_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, table_with_field_selected_broadcaster__ );
 	UI_TYPEDEF( broadcaster__, record_selected_broadcaster__ );
 
 	UI_TYPEDEF( menu__, table_menu__ );
@@ -73,7 +73,7 @@ namespace ui_main {
 		} Commands;
 		struct broadcasters__ {
 			database_opened_broadcaster__ DatabaseOpened;
-			table_selected_broadcaster__ TableSelected;
+			table_with_field_selected_broadcaster__ TableWithFieldSelected;
 			record_selected_broadcaster__ RecordSelected;
 		} Broadcasters;
 		table_menu__ TableMenu;
