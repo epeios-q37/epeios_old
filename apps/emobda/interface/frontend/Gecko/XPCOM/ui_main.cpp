@@ -20,10 +20,8 @@
 // $Id$
 
 #include "ui_main.h"
-#include "kernel.h"
 
 using namespace ui_main;
-using kernel::kernel___;
 
 using nsxpcm::event__;
 

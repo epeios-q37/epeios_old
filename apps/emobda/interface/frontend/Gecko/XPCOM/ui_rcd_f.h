@@ -50,8 +50,8 @@ namespace ui_rcd_f {
 	};
 
 	void Register(
-		kernel::kernel___ &Kernel,
-		record_form__ &UI,
+		ui::ui___ &UI,
+		record_form__ &RecordFormUI,
 		nsIDOMWindow *Window );
 }
 

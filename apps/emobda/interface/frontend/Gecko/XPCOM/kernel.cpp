@@ -926,53 +926,6 @@ ERREnd
 ERREpilog
 }
 
-void kernel::kernel___::_SwitchTo( context__ Context )
-{
-	switch ( Context ) {
-	case cSessionForm:
-		K().FillTableMenu();
-		UI.Main.Broadcasters.DatabaseOpened.Disable();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.Home );
-		break;
-	case cStructureView:
-		FillStructureView();
-		K().FillTableMenu();
-		UI.Main.Broadcasters.DatabaseOpened.Enable();
-		UI.Structure.Broadcasters.ItemBrowsing.Enable();
-		UI.Structure.Broadcasters.ItemEdition.Disable();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
-		break;
-	case cStructureItemView:
-		UpdateDecks();
-		UI.Structure.Broadcasters.ItemBrowsing.Enable();
-		UI.Structure.Broadcasters.ItemEdition.Disable();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.StructureFormAndView );
-		break;
-	case cListView:
-		K().FillListView();
-		UI.Main.Broadcasters.RecordSelected.Disable();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.ListView );
-
-		UI.ListView.ContentTree.ClearSelection();
-		break;
-	case cRecordForm:
-		K().FillRecordForm();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordForm );
-		break;
-	case cRecordView:
-		K().FillRecordView();
-		UI.Main.MainDeck.SetSelectedPanel( UI.Main.Panels.RecordView );
-		break;
-	default:
-		ERRc();
-		break;
-	}
-
-	UI.Main.Broadcasters.RecordSelected.Enable( _Target.Record != UNDEFINED_RECORD );
-	UI.Main.Broadcasters.TableWithFieldSelected.Enable( _Target.Table != UNDEFINED_TABLE );
-
-}
-
 void kernel::kernel___::ApplyStructureItem( void )
 {
 	target__ Target;

@@ -58,8 +58,8 @@ namespace ui_dbsdb {
 	};
 
 	void Register(
-		kernel::kernel___ &Kernel,
-		database_selection__ &UI,
+		ui::ui___ &UI,
+		database_selection__ &DatabaseSelectionUI,
 		nsIDOMWindow *Window );
 }
 

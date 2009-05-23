@@ -93,8 +93,8 @@ namespace ui_main {
 	};
 
 	void Register(
-		kernel::kernel___ &Kernel,
-		main__ &UI,
+		ui::ui___ &UI,
+		main__ &Main,
 		nsIDOMWindow *Window );
 }
 

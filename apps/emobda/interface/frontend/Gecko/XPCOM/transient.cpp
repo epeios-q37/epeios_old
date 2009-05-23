@@ -1,5 +1,5 @@
 /*
-	'ui_lst_v.h' by Claude SIMON (http://zeusw.org/).
+	'trnasient.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,33 +19,6 @@
 
 // $Id$
 
-#ifndef UI_LST_V__INC
-#define UI_LST_V__INC
+#include "transient.h"
 
-#include "ui_base.h"
-
-namespace ui_lst_v {
-	using namespace ui_base;
-
-	UI_ETYPEDEF( ui_base::tree__, content_tree__ );
-
-	struct list_view__
-	: public _ui_core__,
-	  public bridge__
-	{
-	public:
-		content_tree__ ContentTree;
-		void Init( bridge_functions__ &Functions )
-		{
-			_ui_core__::Init();
-			bridge__::Init( Functions );
-		}
-	};
-
-	void Register(
-		ui::ui___ &UI,
-		list_view__ &ListViewUI,
-		nsIDOMWindow *Window );
-}
-
-#endif
+using namespace transient;

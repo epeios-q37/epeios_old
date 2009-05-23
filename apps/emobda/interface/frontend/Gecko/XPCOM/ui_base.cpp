@@ -20,7 +20,6 @@
 // $Id$
 
 #include "ui_base.h"
-#include "kernel.h"
 
 using namespace ui_base;
 

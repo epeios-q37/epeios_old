@@ -25,8 +25,8 @@
 #include "nsxpcm.h"
 
 // Predeclaration.
-namespace kernel {
-	class kernel___;
+namespace ui {
+	class ui___;
 }
 
 namespace ui_base {
@@ -35,16 +35,16 @@ namespace ui_base {
 	class bridge_functions__
 	{
 	protected:
-		virtual const kernel::kernel___ &__K( void ) const = 0;
-		virtual kernel::kernel___ &__K( void ) = 0;
+		virtual const ui::ui___ &__UI( void ) const = 0;
+		virtual ui::ui___ &__UI( void ) = 0;
 	public:
-		const kernel::kernel___ &K( void ) const
+		const ui::ui___ &UI( void ) const
 		{
-			return __K();
+			return __UI();
 		}
-		kernel::kernel___ &K( void )
+		ui::ui___ &UI( void )
 		{
-			return __K();
+			return __UI();
 		}
 	};
 
@@ -61,13 +61,13 @@ namespace ui_base {
 		{
 			_Functions = &Functions;
 		}
-		const kernel::kernel___ &K( void ) const
+		const ui::ui___ &UI( void ) const
 		{
-			return _Functions->K();
+			return _Functions->UI();
 		}
-		kernel::kernel___ &K( void )
+		ui::ui___ &UI( void )
 		{
-			return _Functions->K();
+			return _Functions->UI();
 		}
 	};
 
@@ -95,90 +95,6 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::panel__> panel__;
 	typedef _generic__<nsxpcm::element__> box__;
 	typedef _generic__<nsxpcm::window__> window__;
-
-	template <typename widget> void Register(
-		kernel::kernel___ &Kernel,
-		widget &Widget,
-		nsIDOMDocument *Document,
-		const char *Id,
-		int Events )
-	{
-		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Document, Id, Events );
-	}
-
-	template <typename widget> void Register(
-		kernel::kernel___ &Kernel,
-		widget &Widget,
-		nsISupports *Supports,
-		int Events )
-	{
-		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Supports, Events );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		window__ &Window,
-		nsIDOMWindow *Element )
-	{
-		Register( Kernel, Window, Element, nsxpcm::efClose );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		broadcaster__ &Broadcaster,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		command__ &Command,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		tree__ &Tree,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Tree, Document, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		deck__ &Deck,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Deck, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		textbox__ &Textbox,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Textbox, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		button__ &Button,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
-	}
-
 }
 
 #define UI_ETYPEDEF( widget, name )\

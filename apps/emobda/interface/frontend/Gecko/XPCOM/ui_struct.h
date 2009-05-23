@@ -119,8 +119,8 @@ namespace ui_struct {
 	};
 
 	void Register(
-		kernel::kernel___ &Kernel,
-		structure__ &UI,
+		ui::ui___ &UI,
+		structure__ &StructureUI,
 		nsIDOMWindow *Window );
 }
 
