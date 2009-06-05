@@ -27,7 +27,7 @@
 #include "bkduac.h"
 #include "csducl.h"
 
-namespace mbdbkd{
+namespace mbdbkd {
 
 	BKDACC_T32( table );
 #define UNDEFINED_TABLE		((mbdbkd::table__)BKDACC_UNDEFINED_ID32 )

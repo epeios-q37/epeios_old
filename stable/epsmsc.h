@@ -31,7 +31,7 @@
 
 #define	EPSMSC_VERSION	"$Revision$"
 
-#define EPSMSC_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define EPSMSC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &EPSMSCTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -85,10 +85,10 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_AUTHOR_NAME	"Claude SIMON"
 
 //d Author e-mail
-#define EPSMSC_AUTHOR_EMAIL	"csimon@zeusw.org"
+#define EPSMSC_AUTHOR_CONTACT	EPSMSC_EPEIOS_URL "contact.html"
 
 //d Author mail hypertext link.
-#define EPSMSC_AUTHOR_LINK	"<A HREF=\"mailto://" EPSMSC_AUTHOR_EMAIL "\">" EPSMSC_AUTHOR_NAME "</A>"
+#define EPSMSC_AUTHOR_LINK	"<A HREF=\"" EPSMSC_AUTHOR_CONTACT "\">" EPSMSC_AUTHOR_NAME "</A>"
 
 //d GNU (http://www.gnu.org) Text.
 #define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ").\n\tIt uses Epeios (" EPSMSC_EPEIOS_URL ") technologies."

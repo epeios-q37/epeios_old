@@ -1,5 +1,10 @@
 $Id$
 
+29/05/2009 :
+	- EPSMSC :
+		- Modification pour retirer tout e-mail (remplacé par un lien
+		sur un formulaire d'envoi de courrier de 'http://zeusw.org/')
+
 28/04/2009 :
 	- CSDUCL :
 		- Rajout 'reset(...)' manquants dont l'absence était source de plantages.

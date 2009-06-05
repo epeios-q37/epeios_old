@@ -405,6 +405,22 @@ namespace ui {
 
 			UI.NameTextbox.Select();
 		}
+				void DefineStructureItem( void )
+		{
+
+			target__ Target;
+
+			if ( GetSelectedStructureItem( Target ) ) {
+				if ( Target.Field != UNDEFINED_FIELD )
+					DefineField();
+				else if ( Target.Table != UNDEFINED_TABLE )
+					DefineTable();
+				else
+					ERRc();
+			} else
+				ERRc();
+
+		}
 	};
 }
 

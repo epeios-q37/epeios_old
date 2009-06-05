@@ -24,6 +24,8 @@
 
 #include "kernel.h"
 
+#error "Moved. Use 'mbdtrsnt' instead !"
+
 namespace transient {
 
 	struct target__ {

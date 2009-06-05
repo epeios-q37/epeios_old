@@ -22,6 +22,8 @@
 #ifndef KERNEL__INC
 #define KERNEL__INC
 
+#error "Moved. Use 'mbdkernl' instead !"
+
 #include "../../mbdbkd.h"
 
 #include "csdsnc.h"
