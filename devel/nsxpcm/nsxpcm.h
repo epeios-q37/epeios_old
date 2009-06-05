@@ -226,9 +226,16 @@ namespace nsxpcm {
 		const str::string_ &String,
 		nsEmbedCString &ECString );
 
+	inline void Transform(
+		const char *String,
+		nsEmbedCString &ECString )
+	{
+		Transform( str::string( String ), ECString );
+	}
+
 	void Split( 
 		const string_ &Joined,
-		bso::char__ Seaparator,
+		bso::char__ Separator,
 		strings_ &Splitted );
 
 	void Split(
@@ -1730,6 +1737,9 @@ namespace nsxpcm {
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 
+	void LaunchURI( const char *URI );
+
+	void LaunchEmbedFile( const char *File );	// 'File' doit contenir un fichier avec un chemin relatif par rapport à où est situé 'xulrunner.exe'.
 
 
 #ifdef NSXPCM__BKD

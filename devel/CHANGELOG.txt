@@ -1,5 +1,9 @@
 $Id$
 
+05/06/2009 :
+	- NSXPCM :
+		- Ajout 'LaunchURI(...)'.
+
 29/05/2009 :
 	- EPSMSC :
 		- Modification pour retirer tout e-mail (remplacé par un lien

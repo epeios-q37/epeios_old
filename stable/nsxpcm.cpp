@@ -65,6 +65,9 @@ public:
 #include "nsIVariant.h"
 #include "nsIDOMParser.h"
 #include "nsIXMLHttpRequest.h"
+#include "nsIIOService.h"
+#include "nsIExternalProtocolService.h"
+#include "nsIDirectoryService.h"
 
 using namespace nsxpcm;
 
@@ -195,8 +198,6 @@ void nsxpcm::Transform(
 
 	Transform( EString, ECString );
 }
-
-
 
 void nsxpcm::Split( 
 	const string_ &Joined,
@@ -1170,7 +1171,7 @@ static void _GetXSLStylesheet(
 	nsEmbedString Empty;
 	nsCOMPtr<nsIXMLHttpRequest> HTTPRequest;
 
-	Transform( str::string( "GET" ), Method );
+	Transform( "GET", Method );
 	Transform( XSLStylesheetFileName, URL );
 
 	CreateInstance( NS_XMLHTTPREQUEST_CONTRACTID, HTTPRequest );
@@ -1236,6 +1237,81 @@ nsIDOMNode *browser__::GetNext( void )
 
 	return _Current;
 }
+
+void nsxpcm::LaunchURI( const char *RawURI )
+{
+	nsCOMPtr<nsIIOService> IOService = NULL;
+	nsCOMPtr<nsIExternalProtocolService> ExternalProtocolService = NULL;
+	nsEmbedCString TransformedURI;
+	nsIURI *URI = NULL;
+
+	nsresult Result = NS_OK;	// Uniquemen t à des fines de débogage.
+
+	CreateInstance( "@mozilla.org/network/io-service;1", IOService );
+	CreateInstance( "@mozilla.org/uriloader/external-protocol-service;1", ExternalProtocolService );
+
+	Transform( RawURI, TransformedURI );
+
+	if ( ( Result = IOService->NewURI( TransformedURI, NULL, NULL, &URI ) ) != NS_OK )
+		ERRu();
+
+	if ( ( Result = ExternalProtocolService->LoadURI( URI, NULL ) ) != NS_OK )
+		ERRu();
+}
+
+void nsxpcm::LaunchEmbedFile( const char *RawFile )
+{
+ERRProlog
+	nsCOMPtr<nsILocalFile> LocalFile = NULL;
+	nsCOMPtr<nsIDirectoryServiceProvider> DirectoryServiceProvider;
+	nsIFile *File = NULL;
+	nsEmbedString Path;
+	nsEmbedString Transformed;
+	str::string Joined;
+	strings Splitted;
+	epeios::row__ Row = NONE;
+ERRBegin
+	nsresult Result = NS_OK;	// Uniquement à des fines de débogage.
+
+	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
+	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
+
+	PRBool Persistent = false;
+	DirectoryServiceProvider->GetFile( "CurWorkD", &Persistent, &File );
+
+	if ( ( Result = File->GetPath( Path ) ) != NS_OK )
+		ERRu();
+
+	if ( ( Result = LocalFile->InitWithPath( Path ) ) != NS_OK )
+		ERRu();
+
+	Joined.Init( RawFile );
+	Splitted.Init();
+
+	Split( Joined, '/', Splitted );
+
+	if ( Splitted.Amount() == 0 )
+		Splitted.Append( Joined );
+
+	Row = Splitted.First();
+
+	while ( Row != NONE ) {
+		Transform( Splitted( Row ), Transformed );
+
+		if ( ( Result = LocalFile->AppendRelativePath( Transformed ) ) != NS_OK )
+			ERRu();
+
+		Row = Splitted.Next( Row );
+	}
+
+	if ( ( Result = LocalFile->Launch() ) != NS_OK )
+		ERRu();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 class nsxpcmpersonnalization
 : public nsxpcmtutor
