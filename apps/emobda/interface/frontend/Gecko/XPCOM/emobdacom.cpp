@@ -23,7 +23,7 @@
 
 #include "nsxpcm.h"
 
-#include "kernel.h"
+#include "ui.h"
 
 #define VERSION __DATE__ " " __TIME__
 

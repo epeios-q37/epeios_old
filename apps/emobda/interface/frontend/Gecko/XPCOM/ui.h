@@ -22,6 +22,8 @@
 #ifndef UI__INC
 #define UI__INC
 
+#include "kernel.h"
+#include "ui_base.h"
 #include "ui_main.h"
 #include "ui_dbcdb.h"
 #include "ui_dbsdb.h"
@@ -31,7 +33,9 @@
 #include "ui_rcd_v.h"
 
 namespace ui {
-	using ui_base::bridge_functions__;
+	using namespace ui_base;
+	using namespace kernel;
+	typedef kernel::message__ message__;	// To resolve ambiguity.
 
 	enum context__ {
 		cSessionForm,
@@ -128,7 +132,7 @@ namespace ui {
 		Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
 	}
 
-	struct ui___ {
+	class ui___ {
 	private:
 		ui_main::main__ Main;
 		ui_dbcdb::database_creation__ DatabaseCreation;
@@ -138,19 +142,19 @@ namespace ui {
 		ui_rcd_f::record_form__ RecordForm;
 		ui_rcd_v::record_view__ RecordView;
 		void _SwitchTo( context__ Context );
-		kernel::kernel__ *_Kernel;
-		const kernel::kernel__ &_K( void ) const
+		kernel::kernel___ *_Kernel;
+		const kernel::kernel___ &_K( void ) const
 		{
-			return *Kernel;
+			return *_Kernel;
 		}
-		kernel::kernel__ &_K( void )
+		kernel::kernel___ &_K( void )
 		{
-			return *Kernel;
+			return *_Kernel;
 		}
 	public:
 		void Init(
 			bridge_functions__ &Functions,
-			kernel::keral__ &Kernel )
+			kernel::kernel___ &Kernel )
 		{
 			Main.Init();
 			Structure.Init( Functions );
@@ -158,27 +162,27 @@ namespace ui {
 		}
 		void Alert( const char *Message )
 		{
-			Alert( UI.Main.Window, Message );
+			_K().Alert( Main.Window, Message );
 		}
 		void Alert( const str::string_ &Message )
 		{
-			Alert( UI.Main.Window, Message );
+			_K().Alert( Main.Window, Message );
 		}
 		void Alert( message__ Message )
 		{
-			Alert( UI.Main.Window, Message );
+			_K().Alert( Main.Window, Message );
 		}
 		bso::bool__ Confirm( const char *Message )
 		{
-			return nsxpcm::Confirm( UI.Main.Window, Message );
+			return nsxpcm::Confirm( Main.Window, Message );
 		}
 		bso::bool__ Confirm( const str::string_ &Message )
 		{
-			return nsxpcm::Confirm( UI.Main.Window, Message );
+			return nsxpcm::Confirm( Main.Window, Message );
 		}
 		bso::bool__ Confirm( message__ Message )
 		{
-			return Confirm( GetMessage( Message ) );
+			return Confirm( _K().GetMessage( Message ) );
 		}
 		table__ CreateOrModifyTable( void )
 		{
@@ -187,12 +191,12 @@ namespace ui {
 			str::string Name, Comment;
 		ERRBegin
 			Name.Init();
-			UI.Structure.NameTextbox.GetValue( Name );
+			Structure.NameTextbox.GetValue( Name );
 
 			Comment.Init();
-			UI.Structure.CommentTextbox.GetValue( Comment );
+			Structure.CommentTextbox.GetValue( Comment );
 
-			Table = CreateOrModifyTable( StructureManagement().Target.Table, Name, Comment );
+			Table = _K().CreateOrModifyTable( Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -204,16 +208,13 @@ namespace ui {
 		ERRProlog
 			str::string Name, Comment;
 		ERRBegin
-			if ( StructureManagement().Target.Table == UNDEFINED_TABLE )
-				ERRu();
-
 			Name.Init();
-			UI.Structure.NameTextbox.GetValue( Name );
+			Structure.NameTextbox.GetValue( Name );
 
 			Comment.Init();
-			UI.Structure.CommentTextbox.GetValue( Comment );
+			Structure.CommentTextbox.GetValue( Comment );
 
-			Field = AddOrModifyField( StructureManagement().Target.Field, StructureManagement().Target.Table, Name, Comment );
+			Field = _K().CreateOrModifyField( Name, Comment );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -228,15 +229,15 @@ namespace ui {
 			bso::bool__ Validated = false;
 
 			nsIDOMWindow *Window = NULL;
-			Repository.SetCurrentRow( _KRow );
-			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
+			_K().Expose();
+			nsxpcm::GetWindowInternal(Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			switch ( DatabaseIdentification().GetState() ) {
-			case disValidated:
-				DatabaseIdentification().Get( Name, Path, Comment );
+			switch ( _K().DatabaseIdentification().GetState() ) {
+			case mbdtrnsnt::disValidated:
+				_K().DatabaseIdentification().Get( Name, Path, Comment );
 				Validated = true;
 				break;
-			case disCancelled:
+			case mbdtrnsnt::disCancelled:
 				Validated = false;
 				break;
 			default:

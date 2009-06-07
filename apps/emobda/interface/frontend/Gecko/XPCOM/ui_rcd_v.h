@@ -23,6 +23,7 @@
 #define UI_RCD_V__INC
 
 #include "ui_base.h"
+#include "kernel.h"
 
 namespace ui_rcd_v {
 	using namespace ui_base;
