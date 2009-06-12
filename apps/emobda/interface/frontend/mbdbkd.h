@@ -172,7 +172,7 @@ namespace mbdbkd {
 		{
 			return _H( Manager.GetTablesInfos( _( Tables ), Names, Comments, _( Ids ) ) );
 		}
-		void GetTableInfo(
+		bso::bool__ GetTableInfos(
 			table__ Table,
 			str::string_ &Name,
 			str::string_ &Comment,
@@ -192,8 +192,8 @@ namespace mbdbkd {
 		{
 			return _H( Manager.GetFieldsInfos( _( Fields ), Names, Comments, _( Ids ), _( Tables ) ) );
 		}
-		void GetFieldInfo(
-			field__ field,
+		bso::bool__ GetFieldInfos(
+			field__ Field,
 			str::string_ &Name,
 			str::string_ &Comment,
 			field_id__ &Id,

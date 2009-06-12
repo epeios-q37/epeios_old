@@ -98,7 +98,7 @@ void emobdacom::_BaseRegistration( nsIDOMWindow *Window )
 ERRProlog
 	str::string Id;
 ERRBegin
-	ui::ui__ &UI = Repository.GetCurrentObject().UI;
+	ui::ui___ &UI = Repository.GetCurrentObject().UI;
 
 #ifdef XXX_DBG
 	if ( _KernelRow != NONE )

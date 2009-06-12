@@ -21,12 +21,13 @@
 
 #include "mbdbkd.h"
 
-void mbdbkd::backend___::GetTableInfo(
+bso::bool__ mbdbkd::backend___::GetTableInfos(
 	table__ Table,
 	str::string_ &Name,
 	str::string_ &Comment,
 	table_id__ &Id )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	tables Tables;
 	bkdacc::strings Names, Comments;
@@ -39,23 +40,25 @@ ERRBegin
 	Comments.Init();
 	Ids.Init();
 
-	GetTablesInfos( Tables, Names, Comments, Ids );
-
-	Name = Names( Names.First() );
-	Comment = Comments( Comments.First() );
-	Id = Ids( Ids.First() );
+	if ( Success = GetTablesInfos( Tables, Names, Comments, Ids ) ) {
+		Name = Names( Names.First() );
+		Comment = Comments( Comments.First() );
+		Id = Ids( Ids.First() );
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
-void mbdbkd::backend___::GetFieldInfo(
+bso::bool__ mbdbkd::backend___::GetFieldInfos(
 	field__ Field,
 	str::string_ &Name,
 	str::string_ &Comment,
 	field_id__ &Id,
 	table__ &Table )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	fields Fields;
 	bkdacc::strings Names, Comments;
@@ -70,13 +73,14 @@ ERRBegin
 	Ids.Init();
 	Tables.Init();
 
-	GetFieldsInfos( Fields, Names, Comments, Ids, Tables );
-
-	Name = Names( Names.First() );
-	Comment = Comments( Comments.First() );
-	Id = Ids( Ids.First() );
-	Table = Tables( Tables.First() );
+	if ( Success = GetFieldsInfos( Fields, Names, Comments, Ids, Tables ) ) {
+		Name = Names( Names.First() );
+		Comment = Comments( Comments.First() );
+		Id = Ids( Ids.First() );
+		Table = Tables( Tables.First() );
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }

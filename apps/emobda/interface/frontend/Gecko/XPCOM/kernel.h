@@ -26,6 +26,7 @@
 #include "../../mbdbkd.h"
 
 #include "nsxpcm.h"
+#include "ui.h"
 
 // #define ADDRESS	"192.168.5.10:1234"	// Portable.
 // #define ADDRESS	"10.0.2.2:1234"		// Logiplus.

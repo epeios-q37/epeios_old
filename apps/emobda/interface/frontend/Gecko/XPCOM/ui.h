@@ -35,6 +35,8 @@
 namespace ui {
 	using namespace ui_base;
 	using namespace kernel;
+	using mbdtrnsnt::target__;
+
 	typedef kernel::message__ message__;	// To resolve ambiguity.
 
 	enum context__ {
@@ -245,7 +247,7 @@ namespace ui {
 				break;
 			}
 
-			_Temporary.reset();
+			_K().ResetTransient();
 
 			return Validated;
 		}
@@ -259,8 +261,7 @@ namespace ui {
 			Comment.Init();
 
 			if ( GetDatabaseIdentification( Name, Path, Comment ) ) {
-				if ( _backend___::CreateDatabase( Path, Name, Comment ) ) {
-					_Target.Set( UNDEFINED_TABLE );
+				if ( _K().CreateDatabase( Path, Name, Comment ) ) {
 					_SwitchTo( cStructureView );
 				}
 			}
@@ -277,15 +278,15 @@ namespace ui {
 			bso::bool__ Validated = false;
 
 			nsIDOMWindow *Window = NULL;
-			Repository.SetCurrentRow( _KRow );
-			nsxpcm::GetWindowInternal( this->UI.Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
+			_K().Expose();
+			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
-			switch ( DatabaseSelection().GetState() ) {
-			case dssValidated:
-				DatabaseSelection().Get( Path );
+			switch ( _K().DatabaseSelection().GetState() ) {
+			case mbdtrnsnt::dssValidated:
+				_K().DatabaseSelection().Get( Path );
 				Validated = true;
 				break;
-			case dssCancelled:
+			case mbdtrnsnt::dssCancelled:
 				Validated = false;
 				break;
 			default:
@@ -293,7 +294,7 @@ namespace ui {
 				break;
 			}
 
-			_Temporary.reset();
+			_K().ResetTransient();
 
 			return Validated;
 		}
@@ -305,8 +306,7 @@ namespace ui {
 			Path.Init();
 
 			if ( GetSelectedDatabase( Path ) ) {
-				if ( OpenDatabase( Path ) ) {
-					_Target.Set( UNDEFINED_TABLE );
+				if ( _K().OpenDatabase( Path ) ) {
 					_SwitchTo( cStructureView );
 				}
 			}
@@ -316,7 +316,7 @@ namespace ui {
 		}
 		void CloseDatabase( void )
 		{
-			_backend___::CloseDatabase();
+			_K().CloseDatabase();
 
 			_SwitchTo( cSessionForm );
 		}
@@ -326,27 +326,17 @@ namespace ui {
 		}
 		void DeleteTable( void )
 		{
-			if ( GetTarget().Table == UNDEFINED_TABLE )
-				ERRc();
-
-			_backend___::DeleteTable( GetTarget().Table );
-			Target().Set( UNDEFINED_TABLE );
-
-			_SwitchTo( cStructureView );
+			if ( _K().DeleteTable() )
+				_SwitchTo( cStructureView );
 		}
 		void DeleteField( void )
 		{
-			if ( GetTarget().Field == UNDEFINED_FIELD )
-				ERRc();
-
-			_backend___::DeleteField( GetTarget().Field );
-			Target().Set( UNDEFINED_FIELD );
-
-			_SwitchTo( cStructureView );
+			if ( _K().DeleteField() )
+				_SwitchTo( cStructureView );
 		}
 		void DropStructureItem( void )
 		{
-			_Temporary.reset();
+			_K().ResetTransient();
 			_SwitchTo( cStructureView );
 		}
 		void BrowseList( void )
@@ -363,14 +353,13 @@ namespace ui {
 		}
 		void DropRecord( void )
 		{
-			_Temporary.reset();
+			_K().ResetTransient();
 			_SwitchTo( cRecordView );
 		}
 		void RemoveRecord( void )
 		{
-			DeleteRecord( GetTarget().Record, GetTarget().Table );
-			Target().Set( UNDEFINED_RECORD );
-			_SwitchTo( cListView );
+			if ( _K().RemoveRecord() )
+				_SwitchTo( cListView );
 		}
 		void DefineSession( void )
 		{
@@ -378,12 +367,12 @@ namespace ui {
 		}
 		void DefineTable( void )
 		{
-			ui_struct::structure__ &UI = this->UI.Structure;
+			ui_struct::structure__ &UI = Structure;
 
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			if ( _Target.Table == UNDEFINED_TABLE ) {
+			if ( _K().Target().Table == UNDEFINED_TABLE ) {
 				UI.NameTextbox.SetValue( str::string( "" ) );
 
 				UI.CommentTextbox.SetValue( str::string( "" ) );
@@ -393,12 +382,12 @@ namespace ui {
 		}
 		void DefineField( void )
 		{
-			ui_struct::structure__ &UI = this->UI.Structure;
+			ui_struct::structure__ &UI = Structure;
 
 			UI.Broadcasters.ItemBrowsing.Disable();
 			UI.Broadcasters.ItemEdition.Enable();
 
-			if ( _Target.Field == UNDEFINED_FIELD ) {
+			if ( _K().Target().Field == UNDEFINED_FIELD ) {
 				UI.NameTextbox.SetValue( str::string( "" ) );
 
 				UI.CommentTextbox.SetValue( str::string( "" ) );
@@ -406,22 +395,24 @@ namespace ui {
 
 			UI.NameTextbox.Select();
 		}
-				void DefineStructureItem( void )
+		void DefineStructureItem( void )
 		{
+			target__ Target = _K().StructureManagement().Target;
 
-			target__ Target;
-
-			if ( GetSelectedStructureItem( Target ) ) {
-				if ( Target.Field != UNDEFINED_FIELD )
-					DefineField();
-				else if ( Target.Table != UNDEFINED_TABLE )
-					DefineTable();
-				else
-					ERRc();
-			} else
+			if ( Target.Field != UNDEFINED_FIELD )
+				DefineField();
+			else if ( Target.Table != UNDEFINED_TABLE )
+				DefineTable();
+			else
 				ERRc();
-
 		}
+		bso::bool__ GetSelectedStructureItem( target__ &Target );
+		void FillTableMenu( void );
+		void FillStructureView( void );
+		void UpdateDecks( void );
+		void FillListView( void );
+		void FillRecordForm( void );
+		void FillRecordView( void );
 	};
 }
 
