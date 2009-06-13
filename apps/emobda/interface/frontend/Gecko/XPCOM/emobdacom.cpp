@@ -23,6 +23,7 @@
 
 #include "nsxpcm.h"
 
+#include "kernel.h"
 #include "ui.h"
 
 #define VERSION __DATE__ " " __TIME__
@@ -98,7 +99,7 @@ void emobdacom::_BaseRegistration( nsIDOMWindow *Window )
 ERRProlog
 	str::string Id;
 ERRBegin
-	ui::ui___ &UI = Repository.GetCurrentObject().UI;
+	ui::ui___ &UI = Repository.GetCurrentObject();
 
 #ifdef XXX_DBG
 	if ( _KernelRow != NONE )
@@ -111,7 +112,7 @@ ERRBegin
 //	nsxpcm::Log( Id );
 
 	if ( Id == "wdwMain" ) {
-		ui_main::Register( Repository.GetCurrentObject(), UI.Main, Window );
+		ui_main::Register( UI, Window );
 		if ( nsxpcm::MasterWindow == NULL )
 			nsxpcm::MasterWindow = Window;
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {

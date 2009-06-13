@@ -22,7 +22,7 @@
 #ifndef UI__INC
 #define UI__INC
 
-#include "kernel.h"
+#include "../../mbdkernl.h"
 #include "ui_base.h"
 #include "ui_main.h"
 #include "ui_dbcdb.h"
@@ -34,10 +34,15 @@
 
 namespace ui {
 	using namespace ui_base;
-	using namespace kernel;
 	using mbdtrnsnt::target__;
+	using mbdkernl::table__;
+	using mbdkernl::table_id__;
+	using mbdkernl::field__;
+	using mbdkernl::field_id__;
+	using mbdkernl::record__;
 
-	typedef kernel::message__ message__;	// To resolve ambiguity.
+	typedef mbdkernl::message__ message__;	// To resolve ambiguity.
+	typedef mbdkernl::kernel___ _kernel___;
 
 	enum context__ {
 		cSessionForm,
@@ -51,91 +56,10 @@ namespace ui {
 		c_Undefined
 	};
 
-	template <typename widget> void Register(
-		kernel::kernel___ &Kernel,
-		widget &Widget,
-		nsIDOMDocument *Document,
-		const char *Id,
-		int Events )
+	class ui___
+	: public ui_base::bridge_functions__
 	{
-		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Document, Id, Events );
-	}
-
-	template <typename widget> void Register(
-		kernel::kernel___ &Kernel,
-		widget &Widget,
-		nsISupports *Supports,
-		int Events )
-	{
-		Widget.Init( Kernel );
-		nsxpcm::Register( Widget, Supports, Events );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		window__ &Window,
-		nsIDOMWindow *Element )
-	{
-		Register( Kernel, Window, Element, nsxpcm::efClose );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		broadcaster__ &Broadcaster,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		command__ &Command,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		tree__ &Tree,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Tree, Document, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		deck__ &Deck,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Deck, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		textbox__ &Textbox,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Textbox, Document, Id, nsxpcm::efNone );
-	}
-
-	inline void Register(
-		kernel::kernel___ &Kernel,
-		button__ &Button,
-		nsIDOMDocument *Document,
-		const char *Id )
-	{
-		Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
-	}
-
-	class ui___ {
-	private:
+	public:
 		ui_main::main__ Main;
 		ui_dbcdb::database_creation__ DatabaseCreation;
 		ui_dbsdb::database_selection__ DatabaseSelection;
@@ -144,35 +68,66 @@ namespace ui {
 		ui_rcd_f::record_form__ RecordForm;
 		ui_rcd_v::record_view__ RecordView;
 		void _SwitchTo( context__ Context );
-		kernel::kernel___ *_Kernel;
-		const kernel::kernel___ &_K( void ) const
+		_kernel___ *_Kernel;
+		const _kernel___ &_K( void ) const
 		{
 			return *_Kernel;
 		}
-		kernel::kernel___ &_K( void )
+		_kernel___ &_K( void )
 		{
 			return *_Kernel;
+		}
+		virtual void UIExposeKernel( void ) = 0;	// Kernel used by UI becomes current kernel to use for coming UI part.
+		virtual void UIRevokeKernel( void ) = 0;	// Kernel used by this UI do no more be availabe for coming UI part.
+	protected:
+		virtual const ui::ui___ &__UI( void ) const
+		{
+			return *this;
+		}
+		virtual ui::ui___ &__UI( void )
+		{
+			return *this;
 		}
 	public:
-		void Init(
-			bridge_functions__ &Functions,
-			kernel::kernel___ &Kernel )
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		void Init( _kernel___ &Kernel )
 		{
 			Main.Init();
-			Structure.Init( Functions );
+			// Other member are initalized later.
 			_Kernel = &Kernel;
+		}
+		void Alert(
+			nsIDOMWindow *Window,
+			const char *Message )
+		{
+			nsxpcm::Alert( Window, Message );
+		}
+		void Alert(
+			nsIDOMWindow *Window,
+			const str::string_ &Message )
+		{
+			nsxpcm::Alert( Window, Message );
+		}
+		void Alert(
+			nsIDOMWindow *Window,
+			message__ Message )
+		{
+			Alert( Window, _K().GetMessage( Message ) );
 		}
 		void Alert( const char *Message )
 		{
-			_K().Alert( Main.Window, Message );
+			Alert( Main.Window, Message );
 		}
 		void Alert( const str::string_ &Message )
 		{
-			_K().Alert( Main.Window, Message );
+			Alert( Main.Window, Message );
 		}
 		void Alert( message__ Message )
 		{
-			_K().Alert( Main.Window, Message );
+			Alert( Main.Window, Message );
 		}
 		bso::bool__ Confirm( const char *Message )
 		{
@@ -231,7 +186,7 @@ namespace ui {
 			bso::bool__ Validated = false;
 
 			nsIDOMWindow *Window = NULL;
-			_K().Expose();
+			UIExposeKernel();
 			nsxpcm::GetWindowInternal(Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
 			switch ( _K().DatabaseIdentification().GetState() ) {
@@ -278,7 +233,7 @@ namespace ui {
 			bso::bool__ Validated = false;
 
 			nsIDOMWindow *Window = NULL;
-			_K().Expose();
+			UIExposeKernel();
 			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
 			switch ( _K().DatabaseSelection().GetState() ) {

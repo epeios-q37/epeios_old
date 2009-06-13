@@ -37,7 +37,7 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().CreateDatabase();
+	UI().CreateDatabase();
 }
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )

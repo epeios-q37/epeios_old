@@ -94,7 +94,6 @@ namespace ui_main {
 
 	void Register(
 		ui::ui___ &UI,
-		main__ &Main,
 		nsIDOMWindow *Window );
 }
 

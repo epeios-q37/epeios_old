@@ -95,6 +95,89 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::panel__> panel__;
 	typedef _generic__<nsxpcm::element__> box__;
 	typedef _generic__<nsxpcm::window__> window__;
+
+	template <typename widget> void Register(
+		bridge_functions__ &Functions,
+		widget &Widget,
+		nsIDOMDocument *Document,
+		const char *Id,
+		int Events )
+	{
+		Widget.Init( Functions );
+		nsxpcm::Register( Widget, Document, Id, Events );
+	}
+
+	template <typename widget> void Register(
+		bridge_functions__ &Functions,
+		widget &Widget,
+		nsISupports *Supports,
+		int Events )
+	{
+		Widget.Init( Functions );
+		nsxpcm::Register( Widget, Supports, Events );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		window__ &Window,
+		nsIDOMWindow *Element )
+	{
+		Register( Functions, Window, Element, nsxpcm::efClose );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		broadcaster__ &Broadcaster,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Broadcaster, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		command__ &Command,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Command, Document, Id, nsxpcm::efCommand );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		tree__ &Tree,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Tree, Document, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		deck__ &Deck,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Deck, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		textbox__ &Textbox,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Textbox, Document, Id, nsxpcm::efNone );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		button__ &Button,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Button, Document, Id, nsxpcm::efCommand );
+	}
 }
 
 #define UI_ETYPEDEF( widget, name )\

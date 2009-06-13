@@ -25,7 +25,7 @@ using namespace ui;
 
 static void Register_(
 	nsIDOMNode *Node,
-	kernel___ &Kernel )
+	ui_base::bridge_functions__ &Functions )
 {
 ERRProlog
 	ui_main::table_menu_item__ *Item = NULL;
@@ -42,7 +42,7 @@ ERRBegin
 		if ( Row.Amount() ) {
 			Item = new ui_main::table_menu_item__;
 
-			Register( Kernel, *Item, nsxpcm::QueryInterface<nsIDOMElement>( Node ), nsxpcm::efCommand );
+			Register( Functions, *Item, nsxpcm::QueryInterface<nsIDOMElement>( Node ), nsxpcm::efCommand );
 		}
 	}
 
@@ -106,7 +106,7 @@ ERRBegin
 
 	Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/TableMenu.xsl" ), Structure.Document, Parameters ) );
 
-	Register_( Main.TableMenu.GetElement(), _K() );
+	Register_( Main.TableMenu.GetElement(), *this );
 ERRErr
 ERREnd
 ERREpilog

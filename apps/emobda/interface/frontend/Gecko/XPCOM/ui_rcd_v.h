@@ -23,7 +23,6 @@
 #define UI_RCD_V__INC
 
 #include "ui_base.h"
-#include "kernel.h"
 
 namespace ui_rcd_v {
 	using namespace ui_base;
@@ -49,7 +48,7 @@ namespace ui_rcd_v {
 	};
 
 	void Register(
-		kernel::kernel___ &Kernel,
+		ui_base::bridge_functions__ &Functions,
 		record_view__ &UI,
 		nsIDOMWindow *Window );
 }

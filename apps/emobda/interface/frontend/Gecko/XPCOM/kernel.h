@@ -26,6 +26,7 @@
 #include "../../mbdbkd.h"
 
 #include "nsxpcm.h"
+
 #include "ui.h"
 
 // #define ADDRESS	"192.168.5.10:1234"	// Portable.
@@ -45,17 +46,30 @@ namespace kernel {
 	extern nsxpcm::repository< class kernel___, krow__> Repository;
 
 	typedef mbdkernl::kernel___ _kernel___;
+	typedef ui::ui___ _ui___;
 
 	class kernel___
-	: public _kernel___
+	: public _kernel___,
+	  public _ui___
 	{
 	private:
 		krow__ _KRow;
+	protected:
+		virtual void UIExposeKernel( void )
+
+		{
+			Expose();
+		}
+		virtual void UIRevokeKernel( void )
+		{
+			Revoke();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_KRow = NONE;
 			_kernel___::reset( P );
+			_ui___::reset( P );
 		}
 		kernel___( void )
 		{
@@ -72,24 +86,7 @@ namespace kernel {
 			reset();
 
 			_kernel___::Init();
-		}
-		void Alert(
-			nsIDOMWindow *Window,
-			const char *Message )
-		{
-			nsxpcm::Alert( Window, Message );
-		}
-		void Alert(
-			nsIDOMWindow *Window,
-			const str::string_ &Message )
-		{
-			nsxpcm::Alert( Window, Message );
-		}
-		void Alert(
-			nsIDOMWindow *Window,
-			message__ Message )
-		{
-			Alert( Window, _kernel___::GetMessage( Message ) );
+			_ui___::Init( *this );
 		}
 		void Expose( void )
 		{
