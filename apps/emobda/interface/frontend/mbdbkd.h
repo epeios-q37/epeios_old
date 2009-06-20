@@ -73,10 +73,10 @@ namespace mbdbkd {
 		}
 		void _Report( const char *Message )
 		{
-			__Report( Message );
+			MBDBKDReport( Message );
 		}
 	protected:
-		virtual void __Report( const char *Message ) =0;
+		virtual void MBDBKDReport( const char *Message ) =0;
 	public:
 		mbd_manager___ Manager;
 		void reset( bso::bool__ P = true )

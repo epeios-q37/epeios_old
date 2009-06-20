@@ -222,6 +222,29 @@ namespace mbdkernl {
 			} else
 				return false;
 		}
+		record__ InsertRecord(
+			const bkdacc::items32_ &Data,
+			table__ Table )
+		{
+			return _backend___::InsertRecord( Data, Table );
+		}
+		bso::bool__ InsertRecord( const bkdacc::items32_ &Data )
+		{
+			Target().Set( InsertRecord( Data, GetTarget().Table ) );
+			
+			return GetTarget().Record != UNDEFINED_RECORD;
+		}
+		bso::bool__ ModifyRecord( 
+			record__ Record,
+			const bkdacc::items32_ &Data,
+			table__ Table )
+		{
+			return _backend___::ModifyRecord( Record, Data, Table );
+		}
+		bso::bool__ ModifyRecord( const bkdacc::items32_ &Data )
+		{
+			return ModifyRecord( GetTarget().Record, Data, GetTarget(). Table );
+		}
 		bso::bool__ RemoveRecord( void )
 		{
 			if ( DeleteRecord( GetTarget().Record, GetTarget().Table ) ) {

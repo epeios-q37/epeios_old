@@ -118,9 +118,8 @@ namespace ui_struct {
 		}
 	};
 
-	void Register(
+	void RegisterStructureUI(
 		ui::ui___ &UI,
-		structure__ &StructureUI,
 		nsIDOMWindow *Window );
 }
 

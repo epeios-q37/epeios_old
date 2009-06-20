@@ -21,6 +21,8 @@
 
 #include "ui_main.h"
 
+#include "ui.h"
+
 using namespace ui_main;
 
 using nsxpcm::event__;
@@ -42,51 +44,51 @@ void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::open_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().BrowseDatabase();
+	UI().BrowseDatabase();
 }
 
 void ui_main::define_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().DefineDatabase();
+	UI().DefineDatabase();
 }
 
 void ui_main::close_database_command__::NSXPCMOnEvent( event__ )
 {
-	K().CloseDatabase();
+	UI().CloseDatabase();
 }
 
 void ui_main::table_menu_item__::NSXPCMOnEvent( event__ ) 
 {
-	K().SelectTable( *this );
+	UI().SelectTable( *this );
 }
 
 void ui_main::create_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().RecordInput().SetState( kernel::risCreation );
-	K().DefineRecord();
+	UI().K().RecordInput().SetState( mbdtrnsnt::risCreation );
+	UI().DefineRecord();
 }
 
 void ui_main::modify_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().RecordInput().SetState( kernel::risModification );
-	K().DefineRecord();
+	UI().K().RecordInput().SetState( mbdtrnsnt::risModification );
+	UI().DefineRecord();
 }
 
 void ui_main::duplicate_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().RecordInput().SetState( kernel::risDuplication );
-	K().DefineRecord();
+	UI().K().RecordInput().SetState( mbdtrnsnt::risDuplication );
+	UI().DefineRecord();
 }
 
 void ui_main::browse_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().BrowseRecord();
+	UI().BrowseRecord();
 }
 
 void ui_main::delete_record_command__::NSXPCMOnEvent( event__ )
 {
-	if ( K().Confirm( kernel::mDeleteRecordConfirmation ) )
-		K().RemoveRecord();
+	if ( UI().Confirm( mbdkernl::mDeleteRecordConfirmation ) )
+		UI().RemoveRecord();
 }
 
 /* Registrations */
@@ -94,132 +96,140 @@ void ui_main::delete_record_command__::NSXPCMOnEvent( event__ )
 /* 'broadcaster's */
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	broadcaster__ &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Broadcaster, Document, Id, nsxpcm::efNone );
+	ui_base::Register( Functions, Broadcaster, Document, Id, nsxpcm::efNone );
 }
 
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	main__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
-	Register_( Kernel, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
-	Register_( Kernel, UI.RecordSelected, Document, "bcrRecordSelected" );
+	Register_( Functions, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
+	Register_( Functions, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
+	Register_( Functions, UI.RecordSelected, Document, "bcrRecordSelected" );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	command__ &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Command, Document, Id, nsxpcm::efCommand );
+	ui_base::Register( Functions, Command, Document, Id, nsxpcm::efCommand );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	button__ &Button,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Button, Document, Id, nsxpcm::efCommand );
+	ui_base::Register( Functions, Button, Document, Id, nsxpcm::efCommand );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	textbox__ &Textbox,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Textbox, Document, Id, nsxpcm::efCommand );
+	ui_base::Register( Functions, Textbox, Document, Id, nsxpcm::efCommand );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	listbox__ &Listbox,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Listbox, Document, Id, nsxpcm::efSelect );
+	ui_base::Register( Functions, Listbox, Document, Id, nsxpcm::efSelect );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	main__::commands__::database__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Create, Document, "cmdCreateDatabase" );
-	Register_( Kernel, UI.Open, Document, "cmdOpenDatabase" );
-	Register_( Kernel, UI.Define, Document, "cmdDefineDatabase" );
-	Register_( Kernel, UI.Close, Document, "cmdCloseDatabase" );
+	Register_( Functions, UI.Create, Document, "cmdCreateDatabase" );
+	Register_( Functions, UI.Open, Document, "cmdOpenDatabase" );
+	Register_( Functions, UI.Define, Document, "cmdDefineDatabase" );
+	Register_( Functions, UI.Close, Document, "cmdCloseDatabase" );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	main__::commands__::record__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Create, Document, "cmdCreateRecord" );
-	Register_( Kernel, UI.Modify, Document, "cmdModifyRecord" );
-	Register_( Kernel, UI.Duplicate, Document, "cmdDuplicateRecord" );
-	Register_( Kernel, UI.Browse, Document, "cmdBrowseRecord" );
-	Register_( Kernel, UI.Delete, Document, "cmdDeleteRecord" );
+	Register_( Functions, UI.Create, Document, "cmdCreateRecord" );
+	Register_( Functions, UI.Modify, Document, "cmdModifyRecord" );
+	Register_( Functions, UI.Duplicate, Document, "cmdDuplicateRecord" );
+	Register_( Functions, UI.Browse, Document, "cmdBrowseRecord" );
+	Register_( Functions, UI.Delete, Document, "cmdDeleteRecord" );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	main__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.JSConsole, Document, "cmdJSConsole" );
-	Register_( Kernel, UI.DOMInspector, Document, "cmdDOMInspector" );
+	Register_( Functions, UI.JSConsole, Document, "cmdJSConsole" );
+	Register_( Functions, UI.DOMInspector, Document, "cmdDOMInspector" );
 
-	Register_( Kernel, UI.Database, Document );
-	Register_( Kernel, UI.Record, Document );
+	Register_( Functions, UI.Database, Document );
+	Register_( Functions, UI.Record, Document );
 }
 
 /* 'panel's */
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	panel__ &Panel,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Panel, Document, Id, nsxpcm::efNone );
+	ui_base::Register( Functions, Panel, Document, Id, nsxpcm::efNone );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	main__::panels__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Home, Document, "pnlHome" );
-	Register_( Kernel, UI.StructureFormAndView, Document, "pnlStructureFormAndView" );
-	Register_( Kernel, UI.ListView, Document, "pnlListView" );
-	Register_( Kernel, UI.RecordForm, Document, "pnlRecordForm" );
-	Register_( Kernel, UI.RecordView, Document, "pnlRecordView" );
+	Register_( Functions, UI.Home, Document, "pnlHome" );
+	Register_( Functions, UI.StructureFormAndView, Document, "pnlStructureFormAndView" );
+	Register_( Functions, UI.ListView, Document, "pnlListView" );
+	Register_( Functions, UI.RecordForm, Document, "pnlRecordForm" );
+	Register_( Functions, UI.RecordView, Document, "pnlRecordView" );
+}
+
+static void Register_(
+	bridge_functions__ &Functions,
+	main__ &UI )
+{
+	Register_( Functions, UI.Broadcasters, UI.Document );
+	Register_( Functions, UI.Commands, UI.Document );
+
+	ui_base::Register( Functions, UI.TableMenu, UI.Document, "mnuTable", nsxpcm::efNone );
+	ui_base::Register( Functions, UI.MainDeck, UI.Document, "dckMain", nsxpcm::efNone );
+
+	Register_( Functions, UI.Panels, UI.Document );
 }
 
 
-void ui_main::Register(
-	kernel___ &Kernel,
-	ui_main::main__ &UI,
+
+void ui_main::RegisterMainUI(
+	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Set( Window );
+	UI.Main.Set( Window );
 
-	Register_( Kernel, UI.Broadcasters, UI.Document );
-	Register_( Kernel, UI.Commands, UI.Document );
+	Register_( UI, UI.Main );
 
-	ui_base::Register( Kernel, UI.TableMenu, UI.Document, "mnuTable", nsxpcm::efNone );
-	ui_base::Register( Kernel, UI.MainDeck, UI.Document, "dckMain", nsxpcm::efNone );
-
-	Register_( Kernel, UI.Panels, UI.Document );
 }

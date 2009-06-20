@@ -112,23 +112,23 @@ ERRBegin
 //	nsxpcm::Log( Id );
 
 	if ( Id == "wdwMain" ) {
-		ui_main::Register( UI, Window );
+		ui_main::RegisterMainUI( UI, Window );
 		if ( nsxpcm::MasterWindow == NULL )
 			nsxpcm::MasterWindow = Window;
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
-		ui_dbsdb::Register( Repository.GetCurrentObject(), UI.DatabaseSelection, Window );
-		Repository.GetCurrentObject().FillDatabaseSelectionList();
+		ui_dbsdb::RegisterDatabaseSelectionUI( UI, Window );
+//		Repository.GetCurrentObject().FillDatabaseSelectionList();
 	} else if ( Id == "wdwDatabaseForm" ) {
-		ui_dbcdb::Register( Repository.GetCurrentObject(), UI.DatabaseCreation, Window );
-		UI.DatabaseCreation.Textboxes.Name.Select();
+		ui_dbcdb::RegisterDatabaseCreationUI( UI, Window );
+//		UI.DatabaseCreation.Textboxes.Name.Select();
 	} else if ( Id == "pgeStructure" )
-		ui_struct::Register( Repository.GetCurrentObject(), UI.Structure, Window );
+		ui_struct::RegisterStructureUI( UI, Window );
 	else if ( Id == "pgeListView" )
-		ui_lst_v::Register( Repository.GetCurrentObject(), UI.ListView, Window );
+		ui_lst_v::RegisterListViewUI( UI, Window );
 	else if ( Id == "pgeRecordForm" )
-		ui_rcd_f::Register( Repository.GetCurrentObject(), UI.RecordForm, Window );
+		ui_rcd_f::RegisterRecordFormUI( UI, Window );
 	else if ( Id == "pgeRecordView" )
-		ui_rcd_v::Register( Repository.GetCurrentObject(), UI.RecordView, Window );
+		ui_rcd_v::RegisterRecordViewUI( UI, Window );
 	else
 		ERRu();
 ERRErr

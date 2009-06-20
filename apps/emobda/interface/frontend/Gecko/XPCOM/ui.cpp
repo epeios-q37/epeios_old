@@ -398,7 +398,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Structure.Broadcasters.ItemEdition.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.StructureFormAndView );
 		break;
-	case cStructureItemDefinition:
+/*	case cStructureItemDefinition:
 	{
 		Structure.Broadcasters.ItemBrowsing.Disable();
 		Structure.Broadcasters.ItemEdition.Enable();
@@ -406,7 +406,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Structure.NameTextbox.Select();
 		break;
 	}
-	case cListView:
+*/	case cListView:
 		FillListView();
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.ListView );
@@ -430,3 +430,165 @@ void ui::ui___::_SwitchTo( context__ Context )
 	Main.Broadcasters.TableWithFieldSelected.Enable( _K().Target().Table != UNDEFINED_TABLE );
 }
 
+bso::bool__ ui::ui___::GetDatabaseIdentification ( void )
+{
+	bso::bool__ Validated = false;
+ERRProlog
+	str::string Name;
+	str::string Path;
+	str::string Comment;
+ERRBegin
+	Name.Init();
+	Path.Init();
+	Comment.Init();
+
+	if ( Validated = GetDatabaseIdentification( Name, Path, Comment ) )
+		K().DatabaseIdentification().Set( Name, Path, Comment );
+ERRErr
+ERREnd
+ERREpilog
+	return Validated;
+}
+
+bso::bool__ ui::ui___::GetSelectedDatabase( void )
+{
+	bso::bool__ Validated = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	if ( Validated = GetSelectedDatabase( Path ) )
+		K().DatabaseSelection().Set( Path );
+ERRErr
+ERREnd
+ERREpilog
+	return Validated;
+}
+
+void ui::ui___::SelectRecord( void )
+{
+ERRProlog
+	str::string Id;
+	record__ Record = UNDEFINED_RECORD;
+	ui_lst_v::content_tree__ &Tree = UI().ListView.ContentTree;
+ERRBegin
+
+	if ( Tree.IsThereSelected() ) {
+		Id.Init();
+		Tree.GetCurrentItemAttribute( "Record", Id );
+
+		Record = mbdkernl::ExtractRecord( Id );
+	}
+
+	K().Target().Set( Record );
+
+	Main.Broadcasters.RecordSelected.Enable();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void RetrieveData_(
+	nsIDOMNode *Node,
+	bkdacc::items32_ &Data )
+{
+ERRProlog
+	nsxpcm::browser__ Browser;
+	str::string Value;
+	epeios::row__ Error = NONE;
+	bkdacc::id32__ Id = BKDACC_UNDEFINED_ID32;
+	bkdacc::item32 Item;
+ERRBegin
+	Browser.Init( Node );
+
+	while ( ( Node = Browser.GetNext() ) != NULL ) {
+		Value.Init();
+
+		nsxpcm::GetAttribute( Node, "Field", Value, err::hSkip );
+
+		if ( Value.Amount() != 0 ) {
+			Id = Value.ToUL( &Error );
+
+			if ( Error != NONE )
+				ERRu();
+
+			Value.Init();
+			nsxpcm::GetValue( nsxpcm::QueryInterface<nsIDOMXULTextBoxElement>( Node ), Value );
+
+			if ( Value.Amount() != 0 ) {
+				Item.Init( Id, Value );
+	
+				Data.Append( Item );
+			}
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui::ui___::ApplyRecord( void )
+{
+ERRProlog
+	bkdacc::items32 Data;
+ERRBegin
+	Data.Init();
+	RetrieveData_( RecordForm.RecordBox.GetObject(), Data );
+
+	switch ( K().RecordInput().GetState() ) {
+		case mbdtrnsnt::risCreation:
+		case mbdtrnsnt::risDuplication:
+			K().InsertRecord( Data );
+			break;
+		case mbdtrnsnt::risModification:
+			K().ModifyRecord( Data );
+			break;
+		default:
+			ERRc();
+			break;
+	}
+
+	K().ResetTransient();
+
+	_SwitchTo( cRecordView );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui::ui___::ApplyStructureItem( void )
+{
+	target__ Target;
+
+	GetSelectedStructureItem( Target );
+
+	if ( Target.Table == UNDEFINED_TABLE ) {
+		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsCreation )
+			ERRc();
+
+		K().StructureManagement().Target.Set( CreateOrModifyTable() );
+	} else if ( Target.Field == UNDEFINED_FIELD ) {
+		switch ( K().StructureManagement().GetState() ) {
+		case mbdtrnsnt::smsCreation:
+			K().StructureManagement().Target.Set( CreateOrModifyField() );
+			break;
+		case mbdtrnsnt::smsModification:
+			K().StructureManagement().Target.Set( CreateOrModifyTable() );
+			break;
+		case mbdtrnsnt::smsDuplication:
+			ERRc();
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	} else {
+		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsModification )
+			ERRc();
+
+		K().StructureManagement().Target.Set( CreateOrModifyField() );
+	}
+
+	_SwitchTo( cStructureView );
+}

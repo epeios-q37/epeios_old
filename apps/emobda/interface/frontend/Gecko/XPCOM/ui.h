@@ -99,6 +99,14 @@ namespace ui {
 			// Other member are initalized later.
 			_Kernel = &Kernel;
 		}
+		const _kernel___ &K( void ) const
+		{
+			return _K();
+		}
+		_kernel___ &K( void )
+		{
+			return _K();
+		}
 		void Alert(
 			nsIDOMWindow *Window,
 			const char *Message )
@@ -206,6 +214,7 @@ namespace ui {
 
 			return Validated;
 		}
+		bso::bool__ GetDatabaseIdentification ( void );
 		void CreateDatabase( void )
 		{
 		ERRProlog
@@ -253,6 +262,7 @@ namespace ui {
 
 			return Validated;
 		}
+		bso::bool__ GetSelectedDatabase( void );
 		void BrowseDatabase( void )
 		{
 		ERRProlog
@@ -368,6 +378,9 @@ namespace ui {
 		void FillListView( void );
 		void FillRecordForm( void );
 		void FillRecordView( void );
+		void SelectRecord( void );
+		void ApplyRecord( void );
+		void ApplyStructureItem( void );
 	};
 }
 

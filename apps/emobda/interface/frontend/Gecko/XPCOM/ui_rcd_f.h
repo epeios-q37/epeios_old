@@ -49,9 +49,8 @@ namespace ui_rcd_f {
 		}
 	};
 
-	void Register(
+	void RegisterRecordFormUI(
 		ui::ui___ &UI,
-		record_form__ &RecordFormUI,
 		nsIDOMWindow *Window );
 }
 

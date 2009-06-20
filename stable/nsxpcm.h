@@ -1104,9 +1104,29 @@ namespace nsxpcm {
 		nsIDOMWindow *Window,
 		const char *Text );
 
+	inline void Alert(
+		const char *Text,
+		bso::bool__ IgnoreError = false )
+	{
+		if ( MasterWindow != NULL )
+			Alert( MasterWindow, Text );
+		else if ( !IgnoreError )
+			ERRu();
+	}
+
 	void Alert(
 		nsIDOMWindow *Window,
 		const str::string_ &Text );
+
+	inline void Alert(
+		const str::string_ &Text,
+		bso::bool__ IgnoreError = false )
+	{
+		if ( MasterWindow != NULL )
+			Alert( MasterWindow, Text );
+		else if ( !IgnoreError )
+			ERRu();
+	}
 
 	bso::bool__ Confirm(
 		nsIDOMWindow *Window,

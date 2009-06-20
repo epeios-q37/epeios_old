@@ -63,9 +63,8 @@ namespace ui_dbcdb {
 		}
 	};
 
-	void Register(
+	void RegisterDatabaseCreationUI(
 		ui::ui___ &UI,
-		database_creation__ &DatabaseCreationUI,
 		nsIDOMWindow *Window );
 }
 

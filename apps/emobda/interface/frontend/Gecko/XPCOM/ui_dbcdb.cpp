@@ -32,7 +32,7 @@ void ui_dbcdb::window__::NSXPCMOnEvent( event__ Event )
 {
 	switch ( Event ) {
 	case nsxpcm::eClose:
-		K().DatabaseIdentification().SetCancelledState();
+		UI().K().DatabaseIdentification().SetCancelledState();
 		break;
 	default:
 		break;
@@ -41,83 +41,89 @@ void ui_dbcdb::window__::NSXPCMOnEvent( event__ Event )
 
 void ui_dbcdb::apply_command__::NSXPCMOnEvent( event__ )
 {
-	K().GetDatabaseIdentification();
+	UI().GetDatabaseIdentification();
 }
 
 void ui_dbcdb::cancel_command__::NSXPCMOnEvent( event__ )
 {
-	K().DatabaseIdentification().SetCancelledState();
-	K().UI.DatabaseCreation.Window.Close();
+	UI().K().DatabaseIdentification().SetCancelledState();
+	UI().DatabaseCreation.Window.Close();
 }
 
 /* UI Registrations */
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	broadcaster__ &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Broadcaster, Document, Id );
+	ui_base::Register( Functions, Broadcaster, Document, Id );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	command__ &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Command, Document, Id );
+	ui_base::Register( Functions, Command, Document, Id );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	textbox__ &Textbox,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Textbox, Document, Id );
+	ui_base::Register( Functions, Textbox, Document, Id );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	database_creation__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.DatabaseNaming, Document, "bcrDatabaseNaming" );
+	Register_( Functions, UI.DatabaseNaming, Document, "bcrDatabaseNaming" );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	database_creation__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Apply, Document, "cmdApply" );
-	Register_( Kernel, UI.Cancel, Document, "cmdCancel" );
+	Register_( Functions, UI.Apply, Document, "cmdApply" );
+	Register_( Functions, UI.Cancel, Document, "cmdCancel" );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	database_creation__::textboxes__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.Name, Document, "txbName" );
-	Register_( Kernel, UI.Path, Document, "txbPath" );
-	Register_( Kernel, UI.Comment, Document, "txbComment" );
+	Register_( Functions, UI.Name, Document, "txbName" );
+	Register_( Functions, UI.Path, Document, "txbPath" );
+	Register_( Functions, UI.Comment, Document, "txbComment" );
 }
 
-void ui_dbcdb::Register(
-	kernel::kernel___ &Kernel,
-	database_creation__ &UI,
+static void Register_(
+	bridge_functions__ &Functions,
+	database_creation__ &UI )
+{
+	Register_( Functions, UI.Broadcasters, UI.Document );
+	Register_( Functions, UI.Commands, UI.Document );
+	Register_( Functions, UI.Textboxes, UI.Document );
+}
+
+void ui_dbcdb::RegisterDatabaseCreationUI(
+	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Set( Window );
+	UI.DatabaseCreation.Set( Window );
 
-	ui_base::Register( Kernel, UI.Window, Window );
+	ui_base::Register( UI, UI.DatabaseCreation.Window, Window );
 
-	Register_( Kernel, UI.Broadcasters, UI.Document );
-	Register_( Kernel, UI.Commands, UI.Document );
-	Register_( Kernel, UI.Textboxes, UI.Document );
+	Register_( UI, UI.DatabaseCreation );
 }
 
 

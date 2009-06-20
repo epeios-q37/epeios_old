@@ -42,9 +42,8 @@ namespace ui_lst_v {
 		}
 	};
 
-	void Register(
+	void RegisterListViewUI(
 		ui::ui___ &UI,
-		list_view__ &ListViewUI,
 		nsIDOMWindow *Window );
 }
 

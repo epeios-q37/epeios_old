@@ -47,9 +47,8 @@ namespace ui_rcd_v {
 		}
 	};
 
-	void Register(
-		ui_base::bridge_functions__ &Functions,
-		record_view__ &UI,
+	void RegisterRecordViewUI(
+		ui::ui___ &UI,
 		nsIDOMWindow *Window );
 }
 

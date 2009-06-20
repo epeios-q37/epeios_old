@@ -57,9 +57,8 @@ namespace ui_dbsdb {
 		}
 	};
 
-	void Register(
+	void RegisterDatabaseSelectionUI(
 		ui::ui___ &UI,
-		database_selection__ &DatabaseSelectionUI,
 		nsIDOMWindow *Window );
 }
 

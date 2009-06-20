@@ -1,5 +1,9 @@
 $Id$
 
+17/06/2009 :
+	- NSXPCM :
+		- Rajout 'Alert(...)' utilisant la 'MasterWindows'.
+
 05/06/2009 :
 	- NSXPCM :
 		- Ajout 'LaunchURI(...)'.

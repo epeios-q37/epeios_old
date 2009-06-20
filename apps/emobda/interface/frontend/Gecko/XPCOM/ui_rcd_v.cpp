@@ -31,32 +31,38 @@ using namespace kernel;
 /* UI Registrations */
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	command__ &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Command, Document, Id );
+	ui_base::Register( Functions, Command, Document, Id );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	record_view__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
 //	Register_( Kernel, UI.ApplyRecord, Document, "cmdApplyRecord" );
 }
 
-void ui_rcd_v::Register(
-	kernel___ &Kernel,
-	record_view__ &UI,
+static void Register_(
+	bridge_functions__ &Functions,
+	record_view__ &UI )
+{
+	ui_base::Register( Functions, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
+
+	Register_( Functions, UI.Commands, UI.Document );
+}
+
+void ui_rcd_v::RegisterRecordViewUI(
+	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Set( Window );
+	UI.RecordView.Set( Window );
 
-	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
-
-	Register_( Kernel, UI.Commands, UI.Document );
+	Register_( UI, UI.RecordView );
 }
 
 

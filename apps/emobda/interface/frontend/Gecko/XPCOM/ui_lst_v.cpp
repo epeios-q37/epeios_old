@@ -33,11 +33,11 @@ void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
 {
 	switch ( Event ) {
 	case nsxpcm::eSelect:
-		K().SelectRecord();
+		UI().SelectRecord();
 		break;
 	case nsxpcm::eDblClick:
-		K().SelectRecord();	// In most case, the 'Select' event is called before the 'DblClick' one, but mot always.
-		K().BrowseRecord();
+		UI().SelectRecord();	// In most case, the 'Select' event is called before the 'DblClick' one, but not always.
+		UI().BrowseRecord();
 		break;
 	default:
 		ERRc();
@@ -47,14 +47,13 @@ void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
 
 /* UI Registrations */
 
-void ui_lst_v::Register(
-	kernel___ &Kernel,
-	list_view__ &UI,
+void ui_lst_v::RegisterListViewUI(
+	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Set( Window );
+	UI.ListView.Set( Window );
 
-	ui_base::Register( Kernel, UI.ContentTree, UI.Document, "treContent" );
+	ui_base::Register( UI, UI.ListView.ContentTree, UI.ListView.Document, "treContent" );
 
 //	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }

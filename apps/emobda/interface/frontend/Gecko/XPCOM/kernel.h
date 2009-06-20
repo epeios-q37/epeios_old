@@ -64,6 +64,10 @@ namespace kernel {
 		{
 			Revoke();
 		}
+		virtual void MBDBKDReport( const char *Message )
+		{
+			nsxpcm::Alert( Message );
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{

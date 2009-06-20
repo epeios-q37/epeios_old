@@ -30,45 +30,52 @@ using namespace kernel;
 
 void ui_rcd_f::apply_record_command__::NSXPCMOnEvent( event__ )
 {
-	K().ApplyRecord();
+	UI().ApplyRecord();
 }
 
 void ui_rcd_f::cancel_record_command__::NSXPCMOnEvent( event__ )
 {
-	if ( K().Confirm( kernel::mDropRecordConfirmation ) )
-		K().DropRecord();
+	if ( UI().Confirm( mbdkernl::mDropRecordConfirmation ) )
+		UI().DropRecord();
 }
 
 /* UI Registrations */
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	command__ &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Kernel, Command, Document, Id );
+	ui_base::Register( Functions, Command, Document, Id );
 }
 
 static void Register_(
-	kernel___ &Kernel,
+	bridge_functions__ &Functions,
 	record_form__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Kernel, UI.ApplyRecord, Document, "cmdApplyRecord" );
-	Register_( Kernel, UI.CancelRecord, Document, "cmdCancelRecord" );
+	Register_( Functions, UI.ApplyRecord, Document, "cmdApplyRecord" );
+	Register_( Functions, UI.CancelRecord, Document, "cmdCancelRecord" );
 }
 
-void ui_rcd_f::Register(
-	kernel___ &Kernel,
-	record_form__ &UI,
+static void Register_(
+	bridge_functions__ &Functions,
+	record_form__ &UI )
+{
+	ui_base::Register( Functions, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
+
+	Register_( Functions, UI.Commands, UI.Document );
+}
+
+
+void ui_rcd_f::RegisterRecordFormUI(
+	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Set( Window );
+	UI.RecordForm.Set( Window );
 
-	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
-
-	Register_( Kernel, UI.Commands, UI.Document );
+	Register_( UI, UI.RecordForm );
 }
 
 

@@ -92,7 +92,7 @@ namespace ui_main {
 		}
 	};
 
-	void Register(
+	void RegisterMainUI(
 		ui::ui___ &UI,
 		nsIDOMWindow *Window );
 }
