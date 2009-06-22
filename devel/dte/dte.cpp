@@ -214,7 +214,7 @@ raw_date__ dte::date__::_Convert(
 	if ( !ExtractItems_( Date, Item1, Item2, Item3 ) )
 		return DTE_INVALID_DATE;
 
-	if ( !Item1 || !Item2 || !Item3 )
+	if ( !Item1 || !Item2 )
 		return DTE_INVALID_DATE;
 
 	switch ( Format ) {

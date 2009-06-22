@@ -592,3 +592,24 @@ void ui::ui___::ApplyStructureItem( void )
 
 	_SwitchTo( cStructureView );
 }
+
+void ui::ui___::SelectTable( ui_main::table_menu_item__ &MenuItem )
+{
+ERRProlog
+	str::string Row;
+	epeios::row__ Error = NONE;
+	table__ Table;
+ERRBegin
+	Row.Init();
+	nsxpcm::GetAttribute( MenuItem.GetElement(), "Row", Row );
+
+	*Table = Row.ToUL( &Error );
+
+	if ( Error != NONE )
+		ERRc();
+
+	SelectTable( Table );
+ERRErr
+ERREnd
+ERREpilog
+}

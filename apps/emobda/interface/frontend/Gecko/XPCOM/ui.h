@@ -185,6 +185,13 @@ namespace ui {
 		ERREpilog
 			return Field;
 		}
+		void SelectTable( table__ Table )
+		{
+			K().Target().Set( Table );
+
+			FillTableMenu();
+			BrowseList();
+		}
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );
 		bso::bool__ GetDatabaseIdentification(
 			str::string_ &Name,

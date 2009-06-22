@@ -1,5 +1,9 @@
 $Id$
 
+21/06/2009 :
+	- DTE :
+		- '0' comme année ne provoque dorénavant plus d'erreur.
+
 17/06/2009 :
 	- NSXPCM :
 		- Rajout 'Alert(...)' utilisant la 'MasterWindows'.
