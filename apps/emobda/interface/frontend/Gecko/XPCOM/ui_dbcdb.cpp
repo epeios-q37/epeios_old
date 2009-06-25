@@ -41,7 +41,33 @@ void ui_dbcdb::window__::NSXPCMOnEvent( event__ Event )
 
 void ui_dbcdb::apply_command__::NSXPCMOnEvent( event__ )
 {
-	UI().GetDatabaseIdentification();
+ERRProlog
+	str::string Name, Path, Comment;
+ERRBegin
+	Name.Init();
+	Path.Init();
+	Comment.Init();
+
+	UI().DatabaseCreation.Textboxes.Name.GetValue( Name );
+	UI().DatabaseCreation.Textboxes.Path.GetValue( Path );
+	UI().DatabaseCreation.Textboxes.Comment.GetValue( Comment );
+
+	Name.StripCharacter( ' ' );
+	Path.StripCharacter( ' ' );
+
+	if ( Name.Amount() == 0 ) {
+		UI().Alert( UI().DatabaseCreation.Window.GetObject(), mbdkernl::mMissingDatabaseName );
+		UI().DatabaseCreation.Textboxes.Name.Select();
+	} else if ( Path.Amount() == 0 ) {
+		UI().Alert( UI().DatabaseCreation.Window.GetObject(), mbdkernl::mMissingDatabasePath );
+		UI().DatabaseCreation.Textboxes.Path.Select();
+	} else {
+		UI().K().DatabaseIdentification().Set( Name, Path, Comment );
+		UI().DatabaseCreation.Window.Close();
+	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void ui_dbcdb::cancel_command__::NSXPCMOnEvent( event__ )

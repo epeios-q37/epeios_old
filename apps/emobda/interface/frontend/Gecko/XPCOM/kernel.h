@@ -56,7 +56,6 @@ namespace kernel {
 		krow__ _KRow;
 	protected:
 		virtual void UIExposeKernel( void )
-
 		{
 			Expose();
 		}
@@ -91,6 +90,7 @@ namespace kernel {
 
 			_kernel___::Init();
 			_ui___::Init( *this );
+			_KRow = KRow;
 		}
 		void Expose( void )
 		{
