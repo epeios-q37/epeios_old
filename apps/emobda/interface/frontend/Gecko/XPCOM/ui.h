@@ -388,6 +388,7 @@ namespace ui {
 		void SelectRecord( void );
 		void ApplyRecord( void );
 		void ApplyStructureItem( void );
+		void FillDatabaseSelectionList( void );
 	};
 }
 

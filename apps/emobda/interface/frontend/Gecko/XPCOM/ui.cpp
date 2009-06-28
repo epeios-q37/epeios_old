@@ -613,3 +613,23 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void ui::ui___::FillDatabaseSelectionList( void )
+{
+ERRProlog
+	nsxpcm::xslt_parameters Parameters;
+	str::string XML;
+ERRBegin
+	XML.Init();
+
+	K().DumpAsXML( XML );
+
+	Parameters.Init();
+
+	DatabaseSelection.DatabaseTree.RemoveChildren();
+
+	DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/DatabaseSelectionList.xsl" ), Structure.Document, Parameters ) );
+ERRErr
+ERREnd
+ERREpilog
+}

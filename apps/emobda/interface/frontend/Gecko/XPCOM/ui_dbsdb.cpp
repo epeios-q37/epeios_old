@@ -56,7 +56,31 @@ void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
 
 void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
 {
-	UI().GetSelectedDatabase();
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	if ( !UI().DatabaseSelection.DatabaseTree.IsThereSelected() ) {
+		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mNoDatabaseSelected );
+		ERRReturn;
+	}
+
+	UI().DatabaseSelection.DatabaseTree.GetCurrentItemAttribute( "Path", Path );
+	
+	Path.StripCharacter( ' ' );
+
+	if ( Path.Amount() == 0 ) {
+		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mBadDatabasePath );
+		ERRReturn;
+	}
+
+	UI().K().DatabaseSelection().Set( Path );
+	UI().DatabaseSelection.Window.Close();
+ERRErr
+ERREnd
+ERREpilog
+
 }
 
 void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )

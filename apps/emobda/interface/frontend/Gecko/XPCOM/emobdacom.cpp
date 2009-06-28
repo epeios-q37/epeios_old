@@ -117,10 +117,10 @@ ERRBegin
 			nsxpcm::MasterWindow = Window;
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
 		ui_dbsdb::RegisterDatabaseSelectionUI( UI, Window );
-//		Repository.GetCurrentObject().FillDatabaseSelectionList();
+		UI.FillDatabaseSelectionList();
 	} else if ( Id == "wdwDatabaseForm" ) {
 		ui_dbcdb::RegisterDatabaseCreationUI( UI, Window );
-//		UI.DatabaseCreation.Textboxes.Name.Select();
+		UI.DatabaseCreation.Textboxes.Name.Select();
 	} else if ( Id == "pgeStructure" )
 		ui_struct::RegisterStructureUI( UI, Window );
 	else if ( Id == "pgeListView" )
