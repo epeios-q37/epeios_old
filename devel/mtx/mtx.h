@@ -71,15 +71,23 @@ extern class ttr_tutor &MTXTutor;
 #	define MTX__DEFAULT_DELAY	1
 #endif
 
-#if !defined( MTX_NO_ATOMIC_OPERATIONS ) && !defined( CPE__T_CYGWIN )
+#if !defined( MTX_NO_ATOMIC_OPERATIONS )
 #	define MTX__USE_ATOMIC_OPERATIONS
 #endif
 
 #ifdef MTX__USE_ATOMIC_OPERATIONS
 #	if defined( CPE__T_MS )
-#		define MTX__USE_MS_ATOMIC_OPERATIONS
+#		if defined (CPE__T_CYGWIN )
+#			define MTX__USE_PTHREAD_MUTEX
+#		else
+#			define MTX__USE_MS_ATOMIC_OPERATIONS
+#	endif
 #	elif defined (CPE__T_LINUX )
-#		define MTX__USE_LINUX_ATOMIC_OPERATIONS
+#		if ( MTX__USE_ATOMIC_LIB )
+#			define MTX__USE_LINUX_ATOMIC_OPERATIONS
+#		else
+#			define MTX__USE_PTHREAD_MUTEX
+#		endif
 #	elif defined (CPE__T_MAC )
 #		define MTX__USE_MAC_ATOMIC_OPERATIONS
 #	else
@@ -105,6 +113,10 @@ extern class ttr_tutor &MTXTutor;
 
 #ifdef MTX__USE_MAC_ATOMIC_OPERATIONS
 #	include <libkern/OSAtomic.h>
+#endif
+
+#ifdef MTX__USE_PTHREAD_MUTEX
+#	include <pthread.h>
 #endif
 
 #ifndef CPE__T_MT
@@ -142,6 +154,12 @@ namespace mtx {
 		typedef atomic_t	counter__;
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		typedef int32_t	counter__;
+#elif defined ( MTX__USE_PTHREAD_MUTEX )
+		struct counter__ {
+			volatile bso::sshort__ Value;
+			pthread_mutexattr_t MutexAttr;
+			pthread_mutex_t Mutex;
+		};
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		typedef volatile bso::sshort__ counter__;
 #else
@@ -158,7 +176,8 @@ namespace mtx {
 
 	inline void _Set(
 		counter__ &Counter,
-		int Value )	// Retourne le signe de 'Counter'.
+		int Value,
+		bso::bool__ Destroy )	// Retourne le signe de 'Counter'.
 	{
 #ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
 		Counter = Value;
@@ -166,6 +185,21 @@ namespace mtx {
 		atomic_set( &Counter, Value );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		Counter = Value;
+#elif defined( MTX__USE_PTHREAD_MUTEX )
+		Counter.Value = Value;
+		if ( Destroy ) {
+			if ( pthread_mutex_destroy( &Counter.Mutex ) )
+				ERRs();
+			if ( pthread_mutexattr_destroy( &Counter.MutexAttr ) )
+				ERRs();
+		} else {
+			if ( pthread_mutexattr_init( &Counter.MutexAttr ) )
+				ERRs();
+			if ( pthread_mutexattr_setpshared( &Counter.MutexAttr, PTHREAD_PROCESS_SHARED ) )
+				ERRs();
+			if ( pthread_mutex_init( &Counter.Mutex, &Counter.MutexAttr ) )
+				ERRs();
+		}
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		Counter = Value;
 #else
@@ -181,6 +215,8 @@ namespace mtx {
 		return atomic_read( &Counter );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		return Counter;
+#elif defined( MTX__USE_PTHREAD_MUTEX )
+		return Counter.Value;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return Counter;
 #else
@@ -196,6 +232,8 @@ namespace mtx {
 		return atomic_read( &Counter );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		return Counter;
+#elif defined( MTX__USE_PTHREAD_MUTEX )
+		return Counter.Value;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return Counter;
 #else
@@ -211,6 +249,12 @@ namespace mtx {
 		atomic_inc( &Counter );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		OSAtomicIncrement32( &Counter );
+#elif defined( MTX__USE_PTHREAD_MUTEX )
+		if ( pthread_mutex_lock( &Counter.Mutex ) )
+			ERRs();;
+		++Counter.Value;
+		if ( pthread_mutex_unlock( &Counter.Mutex ) )
+			ERRs();
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		++Counter;
 #else
@@ -226,6 +270,14 @@ namespace mtx {
 		return atomic_dec_and_test( &Counter );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
 		return OSAtomicDecrement32( &Counter ) == 1;	// '== 1' car 'OSAtomicDecrement' retourne la valeur AVANT décrémentation.
+#elif defined( MTX__USE_PTHREAD_MUTEX )
+		bso::bool__ Buffer;
+		if ( pthread_mutex_lock( &Counter.Mutex ) )
+			ERRs();
+		Buffer = --Counter.Value == 0;
+		if ( pthread_mutex_unlock( &Counter.Mutex ) )
+			ERRs();
+		return Buffer;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return --Counter == 0;
 #else
@@ -239,9 +291,9 @@ namespace mtx {
 		mode__ Mode;
 		tht::thread_id__ Owner;
 #ifdef MTX__CONTROL
-		void Release( void )
+		void Release( bso::bool__ Destroy )	// 'Destruction' à vrai si appelé par le destructeur.
 		{
-			_Set( Counter, MTX__RELEASED_MUTEX_COUNTER_VALUE );
+			_Set( Counter, MTX__RELEASED_MUTEX_COUNTER_VALUE, Destroy );
 		}
 		bso::bool__ IsReleased( void )
 		{
@@ -314,7 +366,7 @@ namespace mtx {
 		}
 		mutex__( mode__ Mode )
 		{
-			_Set( Counter, MTX__UNLOCKED_MUTEX_COUNTER_VALUE );
+			_Set( Counter, MTX__UNLOCKED_MUTEX_COUNTER_VALUE, false );
 
 			this->Mode = Mode;
 			Owner = THT_UNDEFINED_THREAD_ID;
@@ -334,7 +386,7 @@ namespace mtx {
 		~mutex__( void )
 		{
 #ifdef MTX__CONTROL
-			Release();
+			Release( true );
 #endif
 		}
 	} *mutex_handler__;

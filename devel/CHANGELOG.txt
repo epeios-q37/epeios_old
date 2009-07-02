@@ -1,5 +1,9 @@
 $Id$
 
+02/07/2009 :
+	- MTX :
+		- Sous Cygwin et GNU/Linux, l'atomicité est maintenant assurée en utilisant les mutex 'pthread'.
+
 21/06/2009 :
 	- DTE :
 		- '0' comme année ne provoque dorénavant plus d'erreur.
