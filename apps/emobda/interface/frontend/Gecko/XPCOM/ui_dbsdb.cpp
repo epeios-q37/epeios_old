@@ -28,33 +28,7 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
-void ui_dbsdb::window__::NSXPCMOnEvent( event__ Event )
-{
-	switch ( Event ) {
-	case nsxpcm::eClose:
-		UI().K().DatabaseSelection().SetCancelledState();
-		break;
-	default:
-		break;
-	}
-}
-
-void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
-{
-	switch ( Event ) {
-		case nsxpcm::eSelect:
-			UI().DatabaseSelection.Broadcasters.DatabaseSelection.Enable();
-			break;
-		case nsxpcm::eDblClick:
-			UI().GetSelectedDatabase();
-			break;
-		default:
-			ERRc();
-			break;
-	}
-}
-
-void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
+void ui_dbsdb::database_selection__::ExtractSelectedDatabase( void )
 {
 ERRProlog
 	str::string Path;
@@ -81,6 +55,38 @@ ERRErr
 ERREnd
 ERREpilog
 
+}
+
+
+void ui_dbsdb::window__::NSXPCMOnEvent( event__ Event )
+{
+	switch ( Event ) {
+	case nsxpcm::eClose:
+		UI().K().DatabaseSelection().SetCancelledState();
+		break;
+	default:
+		break;
+	}
+}
+
+void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
+{
+	switch ( Event ) {
+		case nsxpcm::eSelect:
+			UI().DatabaseSelection.Broadcasters.DatabaseSelection.Enable();
+			break;
+		case nsxpcm::eDblClick:
+			UI().DatabaseSelection.ExtractSelectedDatabase();
+			break;
+		default:
+			ERRc();
+			break;
+	}
+}
+
+void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
+{
+	UI().DatabaseSelection.ExtractSelectedDatabase();
 }
 
 void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )
@@ -140,12 +146,11 @@ void ui_dbsdb::RegisterDatabaseSelectionUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.DatabaseSelection.Set( Window );
+	UI.DatabaseSelection.Init( UI, Window );
 
 	ui_base::Register( UI, UI.DatabaseSelection.Window, Window );
 
 	Register_( UI, UI.DatabaseSelection );
-
 }
 
 

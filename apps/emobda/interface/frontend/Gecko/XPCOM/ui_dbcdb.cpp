@@ -145,7 +145,7 @@ void ui_dbcdb::RegisterDatabaseCreationUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.DatabaseCreation.Set( Window );
+	UI.DatabaseCreation.Init( UI, Window );
 
 	ui_base::Register( UI, UI.DatabaseCreation.Window, Window );
 

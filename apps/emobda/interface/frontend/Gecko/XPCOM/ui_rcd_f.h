@@ -42,9 +42,11 @@ namespace ui_rcd_f {
 			apply_record_command__ ApplyRecord;
 			cancel_record_command__ CancelRecord;
 		} Commands;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
 	};

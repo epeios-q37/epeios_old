@@ -40,9 +40,11 @@ namespace ui_rcd_v {
 		struct commands__ {
 //			apply_record_command__ ApplyRecord;
 		} Commands;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
 	};

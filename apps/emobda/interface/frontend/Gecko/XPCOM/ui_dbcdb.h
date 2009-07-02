@@ -56,9 +56,11 @@ namespace ui_dbcdb {
 			path_textbox__ Path;
 			comment_textbox__ Comment;
 		} Textboxes;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
 	};

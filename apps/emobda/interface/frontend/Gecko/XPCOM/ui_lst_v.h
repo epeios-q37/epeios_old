@@ -35,9 +35,11 @@ namespace ui_lst_v {
 	{
 	public:
 		content_tree__ ContentTree;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
 	};

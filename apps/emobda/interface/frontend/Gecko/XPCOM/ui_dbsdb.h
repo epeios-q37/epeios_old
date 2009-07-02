@@ -50,11 +50,14 @@ namespace ui_dbsdb {
 			apply_command__ Apply;
 			cancel_command__ Cancel;
 		} Commands;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
+		void ExtractSelectedDatabase( void );
 	};
 
 	void RegisterDatabaseSelectionUI(

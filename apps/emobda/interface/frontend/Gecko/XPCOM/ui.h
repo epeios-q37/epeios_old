@@ -95,8 +95,7 @@ namespace ui {
 		}
 		void Init( _kernel___ &Kernel )
 		{
-			Main.Init();
-			// Other member are initalized later.
+			// 'ui_...' type member are are initalized later.
 			_Kernel = &Kernel;
 		}
 		const _kernel___ &K( void ) const

@@ -60,7 +60,7 @@ void ui_rcd_v::RegisterRecordViewUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.RecordView.Set( Window );
+	UI.RecordView.Init( UI, Window );
 
 	Register_( UI, UI.RecordView );
 }

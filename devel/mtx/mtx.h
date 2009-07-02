@@ -81,7 +81,7 @@ extern class ttr_tutor &MTXTutor;
 #			define MTX__USE_PTHREAD_MUTEX
 #		else
 #			define MTX__USE_MS_ATOMIC_OPERATIONS
-#	endif
+#		endif
 #	elif defined (CPE__T_LINUX )
 #		if ( MTX__USE_ATOMIC_LIB )
 #			define MTX__USE_LINUX_ATOMIC_OPERATIONS

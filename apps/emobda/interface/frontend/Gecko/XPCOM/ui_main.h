@@ -86,9 +86,9 @@ namespace ui_main {
 				RecordView,
 				RecordForm;
 		} Panels;
-		void Init( void )
+		void Init( nsIDOMWindow *Window )
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 		}
 	};
 

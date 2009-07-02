@@ -108,9 +108,11 @@ namespace ui_struct {
 		item_action_deck__ ActionDeck;
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
 		nsIDOMElement *DatabaseSelectionPanel, *TableSelectionPanel, *FieldSelectionPanel;
-		void Init( bridge_functions__ &Functions )
+		void Init(
+			bridge_functions__ &Functions,
+			nsIDOMWindow *Window)
 		{
-			_ui_core__::Init();
+			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 			Items = NULL;
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;

@@ -228,7 +228,7 @@ void ui_main::RegisterMainUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Main.Set( Window );
+	UI.Main.Init( Window );
 
 	Register_( UI, UI.Main );
 

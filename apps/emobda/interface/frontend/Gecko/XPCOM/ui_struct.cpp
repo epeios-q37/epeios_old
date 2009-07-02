@@ -284,7 +284,7 @@ void ui_struct::RegisterStructureUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.Structure.Set( Window );
+	UI.Structure.Init( UI, Window );
 
 	Register_( UI, UI.Structure );
 }

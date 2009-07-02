@@ -51,7 +51,7 @@ void ui_lst_v::RegisterListViewUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.ListView.Set( Window );
+	UI.ListView.Init( UI, Window );
 
 	ui_base::Register( UI, UI.ListView.ContentTree, UI.ListView.Document, "treContent" );
 

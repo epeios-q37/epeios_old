@@ -960,11 +960,7 @@ namespace nsxpcm {
 			Document = NULL;
 			Window = NULL;
 		}
-		void Init( void )
-		{
-			// A des fines de standardisation.
-		}
-		void Set( nsIDOMWindow *Window )
+		void Init( nsIDOMWindow *Window )
 		{
 			this->Window = Window;
 			this->Document = GetWindowDocument( Window );

@@ -73,7 +73,7 @@ void ui_rcd_f::RegisterRecordFormUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.RecordForm.Set( Window );
+	UI.RecordForm.Init( UI, Window );
 
 	Register_( UI, UI.RecordForm );
 }
