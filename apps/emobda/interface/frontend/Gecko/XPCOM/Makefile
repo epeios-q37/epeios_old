@@ -33,10 +33,11 @@ copt += -DCPE_MT -DMTK_KEEP
 # copt += -DNSXPCM_BKD
 copt += -DCPE_LIBRARY
 lopt =
-mods = bkdacc bkdcmd bkdcst bkdrac bkdtpm 
-mods += csdbnc csddlc dtfptb err fil flw fnm lgg mmi msg mtk nsxpcm sck str tht tol ttr uym xml xtf
-mods += kernel mbdbkd
-mods += ui ui_base ui_lst_v ui_main ui_rcd_f ui_struct
+mods += csdbnc csddlc
+mods += dtfptb err fil flw fnm lgg mmi msg mtk nsxpcm sck str tht tol ttr uym xml xtf
+mods += bkdacc bkdcmd bkdcst bkdrac bkdtpm 
+mods += kernel mbdbkd mbdkernl mbdtrnsnt
+mods += ui ui_base ui_dbcdb ui_dbsdb ui_lst_v ui_main ui_rcd_f ui_rcd_v ui_struct
 
 # To adapt !
 arm-sdk=/home/csimon/xulrunner-sdk-arm
@@ -76,6 +77,8 @@ co += -I$(sdk)/include/xpcom
 co += -I$(sdk)/include/content
 co += -I$(sdk)/include/dom
 co += -I$(sdk)/sdk/include
+co += -I$(sdk)/include/layout
+co += -I$(sdk)/include/exthandler
 src += ../..
 # Generates debugging data.
 # co += -g
@@ -107,7 +110,7 @@ endif
 
 ifeq ("$(env)","gnu")
 ox = o
-cc = g++
+cc = g++-4.1
 ds = :
 lrfs = `cat LinkResponseFile`
 endif
