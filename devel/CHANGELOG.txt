@@ -1,5 +1,10 @@
 $Id$
 
+05/07/2009 :	
+	- MTX :
+		- Attend maintenant pendant une durée aléatoire entre 2 tentatives de verrouillage, sinon risque non négligeable de se
+		retrouver dans une situation bloquante avec des machines équipées de processeurs multi-coeurs.
+
 02/07/2009 :
 	- MTX :
 		- Sous Cygwin et GNU/Linux, l'atomicité est maintenant assurée en utilisant les mutex 'pthread'.

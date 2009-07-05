@@ -423,26 +423,25 @@ namespace mtx {
 		return Handler->TryToLock();
 	}
 
-	// Wait until mutex unlocked, with 'Delay' millisecond between delays.
-	inline void WaitUntilUnlocked_(
-		mutex_handler__ Handler,
-		unsigned long Delay = MTX__DEFAULT_DELAY )
+	// Wait until mutex unlocked.
+	inline void WaitUntilUnlocked_( mutex_handler__ Handler )
 	{
 		while( !TryToLock( Handler ) )
-			tht::Defer( Delay );
+		{
+			tol::InitializeRandomGenerator();
+			tht::Defer( ( tht::GetTID() + rand() ) % 5 + 1 ); // 'rand() donne-t'il la même suite dans des coeurs différents ?
+		}
 	}
 
-	//f Lock 'Handler'. Blocks until lock succeed with 'Delay' millisecond between tries.
-	inline void Lock(
-		mutex_handler__ Handler,
-		unsigned long Delay = MTX__DEFAULT_DELAY )
+	//f Lock 'Handler'. Blocks until lock succeed.
+	inline void Lock( mutex_handler__ Handler )
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
 			ERRu();
 #endif
 		if ( !TryToLock( Handler ) )
-			WaitUntilUnlocked_( Handler, Delay );
+			WaitUntilUnlocked_( Handler );
 	}
 
 	//f Unlock 'Handler'.
@@ -501,14 +500,14 @@ namespace mtx {
 			
 			Handler_ = Handler;
 		}
-		//f Lock the semaphore.Waits 'Delay' millisecond between tries. BLOCKING FUNCTION.
-		void Lock( unsigned long Delay = MTX__DEFAULT_DELAY )
+		//f Lock the semaphore.
+		void Lock( void )
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
 				ERRu();
 #endif
-			mtx::Lock( Handler_, Delay );
+			mtx::Lock( Handler_ );
 		}
 		//f Unlock the semaphore.
 		void Unlock( void )
