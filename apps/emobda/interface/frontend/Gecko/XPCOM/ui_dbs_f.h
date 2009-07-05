@@ -1,5 +1,5 @@
 /*
-	'ui_dbcdb.h' by Claude SIMON (http://zeusw.org/).
+	'ui_dbs_f.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,14 +19,12 @@
 
 // $Id$
 
-#ifndef UI_DBCDB__INC
-#define UI_DBCDB__INC
-
-#error "Obsolete : use 'ui_dbs_f' module !"
+#ifndef UI_DBS_F__INC
+#define UI_DBS_F__INC
 
 #include "ui_base.h"
 
-namespace ui_dbcdb {
+namespace ui_dbs_f {
 	using namespace ui_base;
 
 	UI_ETYPEDEF( ui_base::window__, window__ );
@@ -40,7 +38,7 @@ namespace ui_dbcdb {
 	UI_TYPEDEF( textbox__, path_textbox__ );
 	UI_TYPEDEF( textbox__, comment_textbox__ );
 
-	struct database_creation__
+	struct database_form__
 	: public _ui_core__,
 	  public bridge__
 	{
@@ -67,7 +65,7 @@ namespace ui_dbcdb {
 		}
 	};
 
-	void RegisterDatabaseCreationUI(
+	void RegisterDatabaseFormUI(
 		ui::ui___ &UI,
 		nsIDOMWindow *Window );
 }

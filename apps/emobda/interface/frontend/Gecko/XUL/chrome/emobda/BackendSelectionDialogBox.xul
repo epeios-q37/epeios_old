@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!--
+	'BackendSelectionDialogBox.xul' by Claude SIMON (http://zeusw.org/).
+
+	 This file is part of 'emobda' software.
+
+	'emobda' is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	'emobda' is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with 'emobda'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- $Id$ -->
+
+<window
+	id="wdwBackendSelectionDialogBox"
+	title="Backend selection"
+	persist="height width screenX screenY"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	onload="registerAlone( window );"
+>
+	<script type="text/javascript" src="emobda.js"/>
+	
+	<broadcasters>
+		<broadcaster id="bcrBackendDefining"/>
+		<broadcaster id="bcrLocal"/>
+		<broadcaster id="bcrRemote"/>
+	</broadcasters>
+	<commands>
+		<command id="cmdApply" label="|OK|" observes="bcrBackendDefining"/>
+		<command id="cmdCancel" label="|Cancel|"/>
+	</commands>
+	<vbox flex="1">
+		<radiogroup>
+			<radio id="rdoLocal" label="Local"/>
+			<radio id="rdoRemote" label="Remote"/>
+			<label control="txbHostService" value="Remote backend host:port" type="autocomplete" autocompletesearch="history"/>
+			<textbox id="txbHostService"/>
+		</radiogroup>
+		<hbox>
+			<button command="cmdApply"/>
+			<button command="cmdCancel"/>
+		</hbox>
+	</vbox>
+</window>
+	

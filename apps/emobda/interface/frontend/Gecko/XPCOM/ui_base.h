@@ -84,6 +84,7 @@ namespace ui_base {
 	};
 
 	typedef _generic__<nsxpcm::textbox__> textbox__;
+	typedef _generic__<nsxpcm::radio__> radio__;
 	typedef _generic__<nsxpcm::button__> button__;
 	typedef _generic__<nsxpcm::listbox__> listbox__;
 	typedef _generic__<nsxpcm::tree__> tree__;

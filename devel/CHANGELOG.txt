@@ -4,6 +4,8 @@ $Id$
 	- MTX :
 		- Attend maintenant pendant une durée aléatoire entre 2 tentatives de verrouillage, sinon risque non négligeable de se
 		retrouver dans une situation bloquante avec des machines équipées de processeurs multi-coeurs.
+	- NSXPCM :
+		- Ajout 'radio__'.
 
 02/07/2009 :
 	- MTX :

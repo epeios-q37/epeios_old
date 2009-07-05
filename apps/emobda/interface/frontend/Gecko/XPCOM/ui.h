@@ -25,7 +25,7 @@
 #include "../../mbdkernl.h"
 #include "ui_base.h"
 #include "ui_main.h"
-#include "ui_dbcdb.h"
+#include "ui_dbs_f.h"
 #include "ui_dbsdb.h"
 #include "ui_struct.h"
 #include "ui_lst_v.h"
@@ -61,8 +61,8 @@ namespace ui {
 	{
 	public:
 		ui_main::main__ Main;
-		ui_dbcdb::database_creation__ DatabaseCreation;
 		ui_dbsdb::database_selection__ DatabaseSelection;
+		ui_dbs_f::database_form__ DatabaseForm;
 		ui_struct::structure__ Structure;
 		ui_lst_v::list_view__ ListView;
 		ui_rcd_f::record_form__ RecordForm;

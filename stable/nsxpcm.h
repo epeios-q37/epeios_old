@@ -81,6 +81,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMXULTextboxElement.h"
 #include "dom/nsIDOMXULMenuListElement.h"
 #include "dom/nsIDOMXULCheckboxElement.h"
+#include "dom/nsIDOMXULButtonElement.h"
 #include "dom/nsIDOMXULTreeElement.h"
 #include "dom/nsIDOMXULDescriptionElement.h"
 #include "dom/nsIDOMWindowInternal.h"
@@ -960,7 +961,11 @@ namespace nsxpcm {
 			Document = NULL;
 			Window = NULL;
 		}
-		void Init( nsIDOMWindow *Window )
+		void Init( void )
+		{
+			// A des fines de standardisation.
+		}
+		void Set( nsIDOMWindow *Window )
 		{
 			this->Window = Window;
 			this->Document = GetWindowDocument( Window );
@@ -1245,6 +1250,16 @@ namespace nsxpcm {
 
 	class checkbox__
 	: public _element__<nsIDOMXULCheckboxElement>
+	{
+	public:
+		bso::bool__ IsChecked( void )
+		{
+			return nsxpcm::IsChecked( GetObject() );
+		}
+	};
+
+	class radio__
+	: public _element__<nsIDOMXULButtonElement>
 	{
 	public:
 		bso::bool__ IsChecked( void )

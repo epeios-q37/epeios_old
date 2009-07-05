@@ -1,5 +1,5 @@
 /*
-	'ui_dbcdb.h' by Claude SIMON (http://zeusw.org/).
+	'ui_bksdb.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,45 +19,41 @@
 
 // $Id$
 
-#ifndef UI_DBCDB__INC
-#define UI_DBCDB__INC
-
-#error "Obsolete : use 'ui_dbs_f' module !"
+#ifndef UI_BKSDB__INC
+#define UI_BKSDB__INC
 
 #include "ui_base.h"
 
-namespace ui_dbcdb {
+namespace ui_bksdb {
 	using namespace ui_base;
 
 	UI_ETYPEDEF( ui_base::window__, window__ );
 
-	UI_TYPEDEF( broadcaster__, database_naming_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, backend_definition_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, remote_broadcaster__ );
+	UI_TYPEDEF( broadcaster__, local_broadcaster__ );
+
+	UI_ETYPEDEF( textbox__, host_service_textbox__ );
 
 	UI_ETYPEDEF( command__, apply_command__ );
 	UI_ETYPEDEF( command__, cancel_command__ );
 
-	UI_TYPEDEF( textbox__, name_textbox__ );
-	UI_TYPEDEF( textbox__, path_textbox__ );
-	UI_TYPEDEF( textbox__, comment_textbox__ );
-
-	struct database_creation__
+	struct backend_selection__
 	: public _ui_core__,
 	  public bridge__
 	{
 	public:
 		window__ Window;
+		host_service_textbox__ HostServiceTextbox;
 		struct broadcasters__ {
-			database_naming_broadcaster__ DatabaseNaming;
+			backend_definition_broadcaster__ BackendDefinition;
+			remote_broadcaster__ Remote;
+			local_broadcaster__ Local;
 		} Broadcasters;
 		struct commands__ {
 			apply_command__ Apply;
 			cancel_command__ Cancel;
 		} Commands;
-		struct textboxes__ {
-			name_textbox__ Name;
-			path_textbox__ Path;
-			comment_textbox__ Comment;
-		} Textboxes;
 		void Init(
 			bridge_functions__ &Functions,
 			nsIDOMWindow *Window)
@@ -65,9 +61,10 @@ namespace ui_dbcdb {
 			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
+		void ExtractSelectedDatabase( void );
 	};
 
-	void RegisterDatabaseCreationUI(
+	void RegisterDatabaseSelectionUI(
 		ui::ui___ &UI,
 		nsIDOMWindow *Window );
 }

@@ -119,8 +119,8 @@ ERRBegin
 		ui_dbsdb::RegisterDatabaseSelectionUI( UI, Window );
 		UI.FillDatabaseSelectionList();
 	} else if ( Id == "wdwDatabaseForm" ) {
-		ui_dbcdb::RegisterDatabaseCreationUI( UI, Window );
-		UI.DatabaseCreation.Textboxes.Name.Select();
+		ui_dbs_f::RegisterDatabaseFormUI( UI, Window );
+		UI.DatabaseForm.Textboxes.Name.Select();
 	} else if ( Id == "pgeStructure" )
 		ui_struct::RegisterStructureUI( UI, Window );
 	else if ( Id == "pgeListView" )
