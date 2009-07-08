@@ -88,7 +88,7 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository.CreateNewObject( NULL );
+	Repository.GetCurrentObject().Init( Repository.CreateNewObject() );
 RR
 RN
 RE
@@ -115,6 +115,8 @@ ERRBegin
 		ui_main::RegisterMainUI( UI, Window );
 		if ( nsxpcm::MasterWindow == NULL )
 			nsxpcm::MasterWindow = Window;
+	} else if ( Id == "wdwBackendSelectionDialogBox" ) {
+		ui_bksdb::RegisterBackendSelectionUI( UI, Window );
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
 		ui_dbsdb::RegisterDatabaseSelectionUI( UI, Window );
 		UI.FillDatabaseSelectionList();
@@ -163,12 +165,21 @@ RE
 NS_IMETHODIMP emobdacom::RegisteringEnd( void )
 {
 RP
+	csducl::type__ Type = csducl::t_Undefined;
+	str::string RemoteHostServiceOrLocalLibraryPath;
+	STR_BUFFER___ Buffer;
 RBB
 	kernel::kernel___ &Kernel = Repository.GetCurrentObject();
 
 	Repository.DismissCurrentObject();
 
-	Kernel.DefineSession();
+	RemoteHostServiceOrLocalLibraryPath.Init();
+
+	if ( Kernel.UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
+		Kernel.PostInit( Type, RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ) );
+		Kernel.DefineSession();
+	} else
+		nsxpcm::Close( Kernel.UI().Main.Window );
 RR
 RN
 RE

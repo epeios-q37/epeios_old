@@ -29,14 +29,10 @@ namespace ui_bksdb {
 
 	UI_ETYPEDEF( ui_base::window__, window__ );
 
-	UI_TYPEDEF( broadcaster__, backend_definition_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, remote_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, local_broadcaster__ );
-
 	UI_ETYPEDEF( textbox__, host_service_textbox__ );
 
-	UI_ETYPEDEF( command__, apply_command__ );
-	UI_ETYPEDEF( command__, cancel_command__ );
+	UI_ETYPEDEF( command__, local_command__ );
+	UI_ETYPEDEF( command__, remote_command__ );
 
 	struct backend_selection__
 	: public _ui_core__,
@@ -45,14 +41,9 @@ namespace ui_bksdb {
 	public:
 		window__ Window;
 		host_service_textbox__ HostServiceTextbox;
-		struct broadcasters__ {
-			backend_definition_broadcaster__ BackendDefinition;
-			remote_broadcaster__ Remote;
-			local_broadcaster__ Local;
-		} Broadcasters;
 		struct commands__ {
-			apply_command__ Apply;
-			cancel_command__ Cancel;
+			local_command__ Local;
+			remote_command__ Remote;
 		} Commands;
 		void Init(
 			bridge_functions__ &Functions,
@@ -61,10 +52,10 @@ namespace ui_bksdb {
 			_ui_core__::Init( Window );
 			bridge__::Init( Functions );
 		}
-		void ExtractSelectedDatabase( void );
+		void ExtractSelectedBackend( bso::bool__ Local );
 	};
 
-	void RegisterDatabaseSelectionUI(
+	void RegisterBackendSelectionUI(
 		ui::ui___ &UI,
 		nsIDOMWindow *Window );
 }

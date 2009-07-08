@@ -103,6 +103,7 @@ namespace mbdtrnsnt {
 		cStructureManagement,
 		cDatabaseIdentification,
 		cDatabaseSelection,
+		cBackendSelection,
 		cRecordInput,
 		c_amount,
 		c_Undefined
@@ -226,6 +227,71 @@ namespace mbdtrnsnt {
 		}
 	};
 
+	enum backend_selection_state__ {
+		bssLocal,
+		bssRemote,
+		bssCancelled,
+		bss_amount,
+		bss_Undefined,
+	};
+
+	typedef _state__<backend_selection_state__, bss_amount> _bss__;
+
+	class backend_selection
+	: public _bss__
+	{
+	private:
+		str::string _HostService;
+		void _SetState( backend_selection_state__ State )
+		{
+			_bss__::SetState( State );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_bss__::reset( P );
+
+			_HostService.reset( P );
+		}
+		void SetLocal( void )
+		{
+			if ( GetState() != bss_Undefined )
+				ERRc();
+
+			_SetState( bssLocal );
+
+			_HostService.Init();
+		}
+		void SetRemote( const str::string_ &HostService )
+		{
+			if ( GetState() != bss_Undefined )
+				ERRc();
+
+			_SetState( bssRemote );
+
+			_HostService.Init( HostService );
+		}
+		void SetCancelledState( void )
+		{
+			if ( GetState() != bss_Undefined )
+				ERRc();
+
+			_SetState( bssCancelled );
+		}
+		void GetHostService( str::string_ &HostService ) const
+		{
+			if ( GetState() != bssRemote )
+				ERRc();
+
+			HostService = _HostService;
+		}
+		void SetState( void )	// To avoid the use of the '_bss__' one, because it has not to be used directly.
+		{
+			ERRu();
+		}
+		E_TYPEDEF_( str::string, HostService );
+	};
+
 	enum database_selection_state__ {
 		dssValidated,
 		dssCancelled,
@@ -337,6 +403,7 @@ namespace mbdtrnsnt {
 		MBDTRNSNT_DEF( structure_management, StructureManagement );
 		MBDTRNSNT_DEF( database_identification, DatabaseIdentification );
 		MBDTRNSNT_DEF( database_selection, DatabaseSelection );
+		MBDTRNSNT_DEF( backend_selection, BackendSelection );
 		MBDTRNSNT_DEF( record_input, RecordInput );
 		void reset( bso::bool__ P = true )
 		{
@@ -345,6 +412,7 @@ namespace mbdtrnsnt {
 			_StructureManagement.reset( P );
 			_DatabaseIdentification.reset( P );
 			_DatabaseSelection.reset( P );
+			_BackendSelection.reset( P );
 			_RecordInput.reset();
 		}
 		transient__( void )

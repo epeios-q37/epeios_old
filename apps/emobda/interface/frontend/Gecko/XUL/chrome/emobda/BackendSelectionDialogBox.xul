@@ -25,7 +25,7 @@
 <window
 	id="wdwBackendSelectionDialogBox"
 	title="Backend selection"
-	persist="height width screenX screenY"
+	persist="screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	onload="registerAlone( window );"
@@ -33,20 +33,26 @@
 	<script type="text/javascript" src="emobda.js"/>
 	
 	<broadcasters>
-		<broadcaster id="bcrBackendDefining"/>
-		<broadcaster id="bcrLocal"/>
-		<broadcaster id="bcrRemote"/>
+		<broadcaster id="bcrBackendDefined"/>
+		<broadcaster id="bcrLocalSelected" disabled="true"/>
+		<broadcaster id="bcrRemoteSelected"/>
 	</broadcasters>
 	<commands>
-		<command id="cmdApply" label="|OK|" observes="bcrBackendDefining"/>
+		<command id="cmdLocal" label="Local"/>
+		<command id="cmdRemote" label="Remote"/>
+		<command id="cmdApply" label="|OK|" observes="bcrBackendDefined"/>
 		<command id="cmdCancel" label="|Cancel|"/>
 	</commands>
 	<vbox flex="1">
+		<button command="cmdLocal"/>
+		<groupbox control="ctrRemote">
+			<textbox id="txbHostService"  control="ctrRemote" type="autocomplete" autocompletesearch="history"/>
+			<button  control="ctrRemote" command="cmdRemote"/>
+		</groupbox>
 		<radiogroup>
-			<radio id="rdoLocal" label="Local"/>
-			<radio id="rdoRemote" label="Remote"/>
-			<label control="txbHostService" value="Remote backend host:port" type="autocomplete" autocompletesearch="history"/>
-			<textbox id="txbHostService"/>
+			<radio id="rdoLocal" label="Local" command="cmdLocal"/>
+			<radio id="rdoRemote" label="Remote" command="cmdRemote" selected="true"/>
+			<label observes="bcrRemoteSelected" control="txbHostService" value="Remote backend host:port :"/>
 		</radiogroup>
 		<hbox>
 			<button command="cmdApply"/>

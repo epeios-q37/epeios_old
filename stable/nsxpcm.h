@@ -961,11 +961,7 @@ namespace nsxpcm {
 			Document = NULL;
 			Window = NULL;
 		}
-		void Init( void )
-		{
-			// A des fines de standardisation.
-		}
-		void Set( nsIDOMWindow *Window )
+		void Init( nsIDOMWindow *Window )
 		{
 			this->Window = Window;
 			this->Document = GetWindowDocument( Window );
@@ -1165,6 +1161,26 @@ namespace nsxpcm {
 		void Disable( void )
 		{
 			Enable( false );
+		}
+		bso::bool__ IsEnabled( void )
+		{
+			bso::bool__ Enabled = false;
+		ERRProlog
+			str::string Value;
+		ERRBegin
+			Value.Init();
+
+			nsxpcm::GetAttribute( GetObject(), "disabled", Value );
+
+			Enabled = Value != "true";
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Enabled;
+		}
+		bso::bool__ IsDisabled( void )
+		{
+			return !IsEnabled();
 		}
 		void Show( bso::bool__ Value = true )
 		{
@@ -1604,7 +1620,7 @@ namespace nsxpcm {
 			reset();
 			_lpbunch_<type, row>::Init();
 		}
-		void CreateNewObject( void *UP )
+		row CreateNewObject( void )
 		{
 			type *UserObject = NULL;
 
@@ -1614,9 +1630,7 @@ namespace nsxpcm {
 			if ( ( UserObject = new type ) == NULL )
 				ERRa();
 
-			S_.Row = Add( UserObject );
-
-			Get( S_.Row )->Init( UP, S_.Row );
+			return S_.Row = Add( UserObject );
 		}
 		void DismissCurrentObject( void )
 		{

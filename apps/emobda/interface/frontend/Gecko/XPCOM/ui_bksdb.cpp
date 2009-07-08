@@ -28,71 +28,49 @@ using nsxpcm::event__;
 
 using namespace kernel;
 
-void ui_dbsdb::database_selection__::ExtractSelectedDatabase( void )
+void ui_bksdb::backend_selection__::ExtractSelectedBackend( bso::bool__ Local )
 {
 ERRProlog
-	str::string Path;
+str::string HostService;
 ERRBegin
-	Path.Init();
+	if ( Local )
+		UI().K().BackendSelection().SetLocal();
+	else {
+		HostService.Init();
+		HostServiceTextbox.GetValue( HostService );
+		UI().K().BackendSelection().SetRemote( HostService );
+	} 
 
-	if ( !UI().DatabaseSelection.DatabaseTree.IsThereSelected() ) {
-		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mNoDatabaseSelected );
-		ERRReturn;
-	}
-
-	UI().DatabaseSelection.DatabaseTree.GetCurrentItemAttribute( "Path", Path );
-	
-	Path.StripCharacter( ' ' );
-
-	if ( Path.Amount() == 0 ) {
-		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mBadDatabasePath );
-		ERRReturn;
-	}
-
-	UI().K().DatabaseSelection().Set( Path );
-	UI().DatabaseSelection.Window.Close();
+	UI().BackendSelection.Window.Close();
 ERRErr
 ERREnd
 ERREpilog
-
 }
 
 
-void ui_dbsdb::window__::NSXPCMOnEvent( event__ Event )
+void ui_bksdb::window__::NSXPCMOnEvent( event__ Event )
 {
 	switch ( Event ) {
 	case nsxpcm::eClose:
-		UI().K().DatabaseSelection().SetCancelledState();
+		UI().K().BackendSelection().SetCancelledState();
 		break;
 	default:
 		break;
 	}
 }
 
-void ui_dbsdb::database_tree__::NSXPCMOnEvent( event__ Event )
+void ui_bksdb::host_service_textbox__::NSXPCMOnEvent( event__ )
 {
-	switch ( Event ) {
-		case nsxpcm::eSelect:
-			UI().DatabaseSelection.Broadcasters.DatabaseSelection.Enable();
-			break;
-		case nsxpcm::eDblClick:
-			UI().DatabaseSelection.ExtractSelectedDatabase();
-			break;
-		default:
-			ERRc();
-			break;
-	}
 }
 
-void ui_dbsdb::apply_command__::NSXPCMOnEvent( event__ )
+void ui_bksdb::local_command__::NSXPCMOnEvent( event__ )
 {
-	UI().DatabaseSelection.ExtractSelectedDatabase();
+	UI().BackendSelection.ExtractSelectedBackend( true );
 }
 
-void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )
+void ui_bksdb::remote_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().DatabaseSelection().SetCancelledState();
-	UI().DatabaseSelection.Window.Close();
+	UI().BackendSelection.ExtractSelectedBackend( false );
 }
 
 /* UI Registrations */
@@ -117,40 +95,30 @@ static void Register_(
 
 static void Register_(
 	bridge_functions__ &Functions,
-	database_selection__::broadcasters__ &UI,
+	backend_selection__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.DatabaseSelection, Document, "bcrDatabaseSelection" );
+	Register_( Functions, UI.Local, Document, "cmdLocal" );
+	Register_( Functions, UI.Remote, Document, "cmdRemote" );
 }
 
 static void Register_(
 	bridge_functions__ &Functions,
-	database_selection__::commands__ &UI,
-	nsIDOMDocument *Document )
+	backend_selection__ &UI )
 {
-	Register_( Functions, UI.Apply, Document, "cmdApply" );
-	Register_( Functions, UI.Cancel, Document, "cmdCancel" );
-}
-
-static void Register_(
-	bridge_functions__ &Functions,
-	database_selection__ &UI )
-{
-	ui_base::Register( Functions, UI.DatabaseTree, UI.Document, "treDatabases" );
-
-	Register_( Functions, UI.Broadcasters, UI.Document );
 	Register_( Functions, UI.Commands, UI.Document );
+	ui_base::Register( Functions, UI.HostServiceTextbox, UI.Document, "txbHostService" );
 }
 
-void ui_dbsdb::RegisterDatabaseSelectionUI(
+void ui_bksdb::RegisterBackendSelectionUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
-	UI.DatabaseSelection.Init( UI, Window );
+	UI.BackendSelection.Init( UI, Window );
 
-	ui_base::Register( UI, UI.DatabaseSelection.Window, Window );
+	ui_base::Register( UI, UI.BackendSelection.Window, Window );
 
-	Register_( UI, UI.DatabaseSelection );
+	Register_( UI, UI.BackendSelection );
 }
 
 

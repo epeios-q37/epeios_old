@@ -36,7 +36,7 @@
 
 // #define ADDRESS	"192.168.5.10:1234"	// Portable.
 // #define ADDRESS	"10.0.2.2:1234"		// Logiplus.
-#define MBDKERNL_TEST_ADDRESS	"localhost:1234"	// Local
+// #define MBDKERNL_TEST_ADDRESS	"localhost:1234"	// Local
 
 #define MBDKERNL_TEST_LOCATION	"d:\\emobda\\test"
 
@@ -119,11 +119,13 @@ namespace mbdkernl {
 		{
 			reset();
 		}
-		void Init( void )
+		void Init(
+			csducl::type__ Type,
+			const char *RemoteHostServiceOrLocalLibraryPath )
 		{
 			reset();
 
-			_ClientCore.Init( MBDKERNL_TEST_ADDRESS, NULL, _LogFunctions, csducl::tShared );	// Logiplus.
+			_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, Type );
 			_backend___::Init( _ClientCore );
 
 			_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
@@ -132,6 +134,7 @@ namespace mbdkernl {
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
 		MBDKERNL_TRANSIENT_USE( database_selection, DatabaseSelection );
+		MBDKERNL_TRANSIENT_USE( backend_selection, BackendSelection );
 		MBDKERNL_TRANSIENT_USE( record_input, RecordInput );
 		bso::bool__ CreateDatabase(
 			const str::string_ &Name,

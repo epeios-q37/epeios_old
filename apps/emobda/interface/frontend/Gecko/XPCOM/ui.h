@@ -27,6 +27,7 @@
 #include "ui_main.h"
 #include "ui_dbs_f.h"
 #include "ui_dbsdb.h"
+#include "ui_bksdb.h"
 #include "ui_struct.h"
 #include "ui_lst_v.h"
 #include "ui_rcd_f.h"
@@ -62,6 +63,7 @@ namespace ui {
 	public:
 		ui_main::main__ Main;
 		ui_dbsdb::database_selection__ DatabaseSelection;
+		ui_bksdb::backend_selection__ BackendSelection;
 		ui_dbs_f::database_form__ DatabaseForm;
 		ui_struct::structure__ Structure;
 		ui_lst_v::list_view__ ListView;
@@ -242,6 +244,39 @@ namespace ui {
 		void DefineDatabase( void )
 		{
 			_SwitchTo( cStructureView );
+		}
+		bso::bool__ GetSelectedBackend(
+			csducl::type__ &Type,
+			str::string_ &RemoteHostServiceOrLocalLibraryPath )
+		{
+			bso::bool__ Validated = false;
+
+			nsIDOMWindow *Window = NULL;
+			UIExposeKernel();
+			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "BackendSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
+
+
+			switch ( _K().BackendSelection().GetState() ) {
+			case mbdtrnsnt::bssRemote:
+				_K().BackendSelection().GetHostService( RemoteHostServiceOrLocalLibraryPath );
+				Type = csducl::tShared;
+				Validated = true;
+				break;
+			case mbdtrnsnt::bssLocal:
+				Type = csducl::tLibrary;
+				Validated = true;
+				break;
+			case mbdtrnsnt::bssCancelled:
+				Validated = false;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			_K().ResetTransient();
+
+			return Validated;
 		}
 		bso::bool__ GetSelectedDatabase( str::string_ &Path )
 		{
