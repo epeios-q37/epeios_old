@@ -70,6 +70,13 @@ void ui_bksdb::local_command__::NSXPCMOnEvent( event__ )
 
 void ui_bksdb::remote_command__::NSXPCMOnEvent( event__ )
 {
+	str::string Value;
+
+	Value.Init();
+
+	UI().BackendSelection.HostServiceTextbox.GetValue( Value );
+
+	nsxpcm::AddFormHistoryEntry( str::string( "txbHostService" ), Value );
 	UI().BackendSelection.ExtractSelectedBackend( false );
 }
 
@@ -120,5 +127,3 @@ void ui_bksdb::RegisterBackendSelectionUI(
 
 	Register_( UI, UI.BackendSelection );
 }
-
-

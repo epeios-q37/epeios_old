@@ -27,6 +27,7 @@
 namespace ui_main {
 	using namespace ui_base;
 
+	UI_TYPEDEF( broadcaster__, connected_broadcaster__ );
 	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
 	UI_TYPEDEF( broadcaster__, table_with_field_selected_broadcaster__ );
 	UI_TYPEDEF( broadcaster__, record_selected_broadcaster__ );
@@ -37,6 +38,9 @@ namespace ui_main {
 
 	UI_ETYPEDEF( command__, jsconsole_command__ );
 	UI_ETYPEDEF( command__, dom_inspector_command__ );
+
+	UI_ETYPEDEF( command__, connect_command__ );
+	UI_ETYPEDEF( command__, disconnect_command__ );
 
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
@@ -57,6 +61,10 @@ namespace ui_main {
 		struct commands__ {
 			jsconsole_command__ JSConsole;
 			dom_inspector_command__ DOMInspector;
+			struct backend__ {
+				connect_command__ Connect;
+				disconnect_command__ Disconnect;
+			} Vackend;
 			struct database__ {
 				create_database_command__ Create;
 				open_database_command__ Open;
@@ -72,6 +80,7 @@ namespace ui_main {
 			} Record;
 		} Commands;
 		struct broadcasters__ {
+			connected_broadcaster__ Connected;
 			database_opened_broadcaster__ DatabaseOpened;
 			table_with_field_selected_broadcaster__ TableWithFieldSelected;
 			record_selected_broadcaster__ RecordSelected;

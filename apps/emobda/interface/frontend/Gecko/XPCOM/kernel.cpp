@@ -26,13 +26,13 @@ using namespace kernel;
 
 nsxpcm::repository< kernel::kernel___, krow__> kernel::Repository;
 
-static class starter 
+static class kernel_starter
 {
 public:
-	starter( void )
+	kernel_starter( void )
 	{
 		kernel::Repository.Init();
 	}
-	~starter( void )
+	~kernel_starter( void )
 	{}
 } Starter_;

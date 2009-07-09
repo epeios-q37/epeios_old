@@ -46,7 +46,7 @@
 	<vbox flex="1">
 		<button command="cmdLocal"/>
 		<groupbox control="ctrRemote">
-			<textbox id="txbHostService"  control="ctrRemote" type="autocomplete" autocompletesearch="history"/>
+			<textbox id="txbHostService"  control="ctrRemote" type="autocomplete" autocompletesearch="form-history" enablehistory="true" autocompletesearchparam="txbHostService"/>
 			<button  control="ctrRemote" command="cmdRemote"/>
 		</groupbox>
 		<radiogroup>

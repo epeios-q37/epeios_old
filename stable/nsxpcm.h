@@ -1786,6 +1786,37 @@ namespace nsxpcm {
 
 	void LaunchEmbedFile( const char *File );	// 'File' doit contenir un fichier avec un chemin relatif par rapport à où est situé 'xulrunner.exe'.
 
+	// Pour les 'textbox's de type 'autocomplete'.
+	// NOTA : La ligne 'pref("browser.formfill.enable", true);' doit être ajoutée dans le fihcier 'prefs.js'.
+	void AddFormHistoryEntry(
+		const str::string_ &Entry,	// Valuer de l'attribut 'autocompletesearchparam' dudit 'textbox'.
+		const str::string_ &Value );
+
+	inline void AddFormHistoryEntry(
+		const char *Name,
+		const str::string_ &Entry )
+	{
+		AddFormHistoryEntry( str::string( Name ), Entry );
+	}
+
+	void RemoveFormHistoryEntry(
+		const str::string_ &RawName,
+		const str::string_ &RawEntry );
+
+	inline void RemoveFormHistoryEntry(
+		const char *Name,
+		const str::string_ &Entry )
+	{
+		RemoveFormHistoryEntry( str::string( Name ), Entry );
+	}
+
+	void RemoveEntriesForName( const str::string_ &Name );
+
+	inline void RemoveEntriesForName( const char *Name )
+	{
+		RemoveEntriesForName( str::string( Name ) );
+	}
+
 
 #ifdef NSXPCM__BKD
 	void Convert(

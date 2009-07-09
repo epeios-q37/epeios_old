@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "cpe.h"
+
 #include "nsMemory.h"
 #include "dom/nsIDOMEvent.h"
 #include "dom/nsIDOMEventTarget.h"
@@ -68,18 +70,21 @@ public:
 #include "nsIIOService.h"
 #include "nsIExternalProtocolService.h"
 #include "nsIDirectoryService.h"
+#include "satchel/nsIFormHistory.h"
+
 
 using namespace nsxpcm;
 
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-
 extern nsIDOMWindow *nsxpcm::MasterWindow = NULL;
-static nsIDOMWindowInternal *_JSConsoleWindow = NULL;
+static nsIDOMWindowInternal *JSConsoleWindow_ = NULL;
+static nsCOMPtr<nsIFormHistory2> FormHistory_;
+#ifdef CPE__T_MT
+mtx::mutex_handler__ FormHistoryMutex_;
+#endif
 
 void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 {
-	nsxpcm::GetJSConsole( ParentWindow, &_JSConsoleWindow );
+	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
 }
 
 void nsxpcm::Transform(
@@ -1245,7 +1250,7 @@ void nsxpcm::LaunchURI( const char *RawURI )
 	nsEmbedCString TransformedURI;
 	nsIURI *URI = NULL;
 
-	nsresult Result = NS_OK;	// Uniquemen t à des fines de débogage.
+	nsresult Result = NS_OK;	// Uniquement à des fins de débogage.
 
 	CreateInstance( "@mozilla.org/network/io-service;1", IOService );
 	CreateInstance( "@mozilla.org/uriloader/external-protocol-service;1", ExternalProtocolService );
@@ -1271,7 +1276,7 @@ ERRProlog
 	strings Splitted;
 	epeios::row__ Row = NONE;
 ERRBegin
-	nsresult Result = NS_OK;	// Uniquement à des fines de débogage.
+	nsresult Result = NS_OK;	// Uniquement à des fins de débogage.
 
 	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
 	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
@@ -1311,7 +1316,60 @@ ERREnd
 ERREpilog
 }
 
+void nsxpcm::AddFormHistoryEntry(
+	const str::string_ &RawName,
+	const str::string_ &RawEntry )
+{
+	nsEmbedString Name, Entry;
 
+	nsxpcm::Transform( RawName, Name );
+	nsxpcm::Transform( RawEntry, Entry );
+
+#ifdef CPE__T_MT
+	mtx::Lock( FormHistoryMutex_ );
+#endif
+	FormHistory_->AddEntry( Name, Entry );
+#ifdef CPE__T_MT
+	mtx::Unlock( FormHistoryMutex_ );
+#endif
+}
+
+void nsxpcm::RemoveFormHistoryEntry(
+	const str::string_ &RawName,
+	const str::string_ &RawEntry )
+{
+	nsEmbedString Name, Entry;
+
+	nsxpcm::Transform( RawName, Name );
+	nsxpcm::Transform( RawEntry, Entry );
+
+#ifdef CPE__T_MT
+	mtx::Lock( FormHistoryMutex_ );
+#endif
+	FormHistory_->RemoveEntry( Name, Entry );
+#ifdef CPE__T_MT
+	mtx::Unlock( FormHistoryMutex_ );
+#endif
+}
+
+void nsxpcm::RemoveEntriesForName( const str::string_ &RawName )
+{
+	nsEmbedString Name;
+
+	nsxpcm::Transform( RawName, Name );
+
+#ifdef CPE__T_MT
+	mtx::Lock( FormHistoryMutex_ );
+#endif
+	FormHistory_->RemoveEntriesForName( Name );
+#ifdef CPE__T_MT
+	mtx::Unlock( FormHistoryMutex_ );
+#endif
+}
+
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 
 class nsxpcmpersonnalization
 : public nsxpcmtutor
@@ -1321,11 +1379,17 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+
+		nsxpcm::GetService( "@mozilla.org/satchel/form-history;1", FormHistory_ );
+#ifdef CPE__T_MT
+		FormHistoryMutex_ = mtx::Create( mtx::mOwned );
+#endif
 	}
 	~nsxpcmpersonnalization( void )
 	{
-		/* place here the actions concerning this library
-		to be realized at the ending of the application  */
+#ifdef CPE__T_MT
+		mtx::Delete( FormHistoryMutex_ );
+#endif
 	}
 };
 

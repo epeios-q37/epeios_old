@@ -34,17 +34,22 @@
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>
 	<broadcasterset>
+		<broadcaster id="bcrConnected"/>
 		<broadcaster id="bcrDatabaseOpened"/>
 		<broadcaster id="bcrTableWithFieldSelected"/>
 		<broadcaster id="bcrRecordSelected"/>
 	</broadcasterset>
 	<commandset>
-		<command id="cmdJSConsole" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM isn't call ! -->
-		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM isn't call ! -->
-		<command id="cmdCreateDatabase"/>
-		<command id="cmdOpenDatabase"/>
+		<command id="cmdJSConsole" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM compnent isn't called ! -->
+		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
+	</commandset>
+	<commandset>
+		<command id="cmdCreateDatabase" observes="bcrConnected"/>
+		<command id="cmdOpenDatabase" observes="bcrConnected"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
 		<command id="cmdCloseDatabase" observes="bcrDatabaseOpened"/>
+	</commandset>
+	<commandset>
 		<command id="cmdCreateRecord" observes="bcrTableWithFieldSelected"/>
 		<command id="cmdModifyRecord" observes="bcrRecordSelected"/>
 		<command id="cmdDuplicateRecord" observes="bcrRecordSelected"/>
@@ -56,6 +61,12 @@
 		<key id="keyDOMInspector" modifiers="accel shift" key="d" command="cmdDOMInspector"/>
 	</keyset>
 	<menubar>
+		<menu label="Backend">
+			<menupopup>
+				<menuitem label="Connect" command="cmdConnect"/>
+				<menuietm label="Disconnect" command="cmdDisconnect"/>
+			</menupopup>
+		</menu>
 		<menu label="Database">
 			<menupopup>
 				<menuitem label="|New|" command="cmdCreateDatabase"/>

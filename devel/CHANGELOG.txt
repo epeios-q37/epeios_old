@@ -1,5 +1,9 @@
 $Id$
 
+09/07/2009 :
+	- NSXPCM :
+		- Ajout fonctions relatifs aux 'textbox's avec historique.
+
 08/07/2009 :
 	- NSXPCM :
 		- Le 'CreateNewObject(...)' de 'repository_' n'initalise plus l'objet; cela doit dorénavent être fait explicitement.
