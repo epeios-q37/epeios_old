@@ -44,6 +44,10 @@
 		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
 	</commandset>
 	<commandset>
+		<command id="cmdConnect"/>
+		<command id="cmdDisconnect" observes="bcrConnected"/>
+	</commandset>
+	<commandset>
 		<command id="cmdCreateDatabase" observes="bcrConnected"/>
 		<command id="cmdOpenDatabase" observes="bcrConnected"/>
 		<command id="cmdDefineDatabase" observes="bcrDatabaseOpened"/>
@@ -64,7 +68,7 @@
 		<menu label="Backend">
 			<menupopup>
 				<menuitem label="Connect" command="cmdConnect"/>
-				<menuietm label="Disconnect" command="cmdDisconnect"/>
+				<menuitem label="Disconnect" command="cmdDisconnect"/>
 			</menupopup>
 		</menu>
 		<menu label="Database">

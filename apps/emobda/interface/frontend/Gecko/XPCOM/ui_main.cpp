@@ -37,6 +37,32 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 	nsxpcm::GetDOMInspector();
 }
 
+void ui_main::connect_command__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	csducl::type__ Type = csducl::t_Undefined;
+	str::string RemoteHostServiceOrLocalLibraryPath;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	RemoteHostServiceOrLocalLibraryPath.Init();
+
+	if ( UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
+		UI().K().Init( Type, RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ) );
+		UI().ApplySession();
+	} else
+		UI().DefineSession();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui_main::disconnect_command__::NSXPCMOnEvent( event__ )
+{
+	UI().K().reset();
+	UI().DefineSession();
+}
+
+
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 	UI().CreateDatabase();
@@ -110,6 +136,7 @@ static void Register_(
 	main__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
+	Register_( Functions, UI.Connected, Document, "bcrConnected" );
 	Register_( Functions, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
 	Register_( Functions, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
 	Register_( Functions, UI.RecordSelected, Document, "bcrRecordSelected" );
@@ -153,6 +180,15 @@ static void Register_(
 
 static void Register_(
 	bridge_functions__ &Functions,
+	main__::commands__::backend__ &UI,
+	nsIDOMDocument *Document )
+{
+	Register_( Functions, UI.Connect, Document, "cmdConnect" );
+	Register_( Functions, UI.Disconnect, Document, "cmdDisconnect" );
+}
+
+static void Register_(
+	bridge_functions__ &Functions,
 	main__::commands__::database__ &UI,
 	nsIDOMDocument *Document )
 {
@@ -182,6 +218,7 @@ static void Register_(
 	Register_( Functions, UI.JSConsole, Document, "cmdJSConsole" );
 	Register_( Functions, UI.DOMInspector, Document, "cmdDOMInspector" );
 
+	Register_( Functions, UI.Backend, Document );
 	Register_( Functions, UI.Database, Document );
 	Register_( Functions, UI.Record, Document );
 }

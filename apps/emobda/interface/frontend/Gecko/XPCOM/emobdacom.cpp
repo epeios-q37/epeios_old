@@ -88,7 +88,7 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository.GetCurrentObject().Init( Repository.CreateNewObject() );
+	Repository.GetCurrentObject().PreInit( Repository.CreateNewObject() );
 RR
 RN
 RE
@@ -165,21 +165,12 @@ RE
 NS_IMETHODIMP emobdacom::RegisteringEnd( void )
 {
 RP
-	csducl::type__ Type = csducl::t_Undefined;
-	str::string RemoteHostServiceOrLocalLibraryPath;
-	STR_BUFFER___ Buffer;
 RBB
 	kernel::kernel___ &Kernel = Repository.GetCurrentObject();
 
 	Repository.DismissCurrentObject();
 
-	RemoteHostServiceOrLocalLibraryPath.Init();
-
-	if ( Kernel.UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
-		Kernel.PostInit( Type, RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ) );
-		Kernel.DefineSession();
-	} else
-		nsxpcm::Close( Kernel.UI().Main.Window );
+	Kernel.DefineSession();
 RR
 RN
 RE

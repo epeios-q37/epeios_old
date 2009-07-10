@@ -88,6 +88,11 @@ ERREpilog
 	return Selected;
 }
 
+void ui::ui___::EmptyTableMenu( void )
+{
+	Main.TableMenu.RemoveChildren();
+}
+
 void ui::ui___::FillTableMenu( void )
 {
 ERRProlog
@@ -380,8 +385,19 @@ void ui::ui___::_SwitchTo( context__ Context )
 {
 	switch ( Context ) {
 	case cSessionForm:
-		FillTableMenu();
+		Main.Broadcasters.Connected.Disable();
 		Main.Broadcasters.DatabaseOpened.Disable();
+		Main.Broadcasters.RecordSelected.Disable();
+		Main.Broadcasters.TableWithFieldSelected.Disable();
+		Main.MainDeck.SetSelectedPanel( Main.Panels.Home );
+		EmptyTableMenu();
+		break;
+	case cSessionView:
+		FillTableMenu();
+		Main.Broadcasters.Connected.Enable();
+		Main.Broadcasters.DatabaseOpened.Disable();
+		Main.Broadcasters.RecordSelected.Disable();
+		Main.Broadcasters.TableWithFieldSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.Home );
 		break;
 	case cStructureView:

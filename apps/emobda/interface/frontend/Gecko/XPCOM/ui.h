@@ -47,6 +47,7 @@ namespace ui {
 
 	enum context__ {
 		cSessionForm,
+		cSessionView,
 		cStructureView,
 		cStructureItemView,
 		cItemForm,
@@ -371,6 +372,10 @@ namespace ui {
 		{
 			_SwitchTo( cSessionForm );
 		}
+		void ApplySession( void )
+		{
+			_SwitchTo( cSessionView );
+		}
 		void DefineTable( void )
 		{
 			ui_struct::structure__ &UI = Structure;
@@ -413,6 +418,7 @@ namespace ui {
 				ERRc();
 		}
 		bso::bool__ GetSelectedStructureItem( target__ &Target );
+		void EmptyTableMenu( void );
 		void FillTableMenu( void );
 		void FillStructureView( void );
 		void UpdateDecks( void );

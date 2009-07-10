@@ -82,18 +82,13 @@ namespace kernel {
 		{
 			reset();
 		}
-		void Init( krow__ KRow )
+		// The 'true' 'Init(...)' is the '_kernel___' one and is called later.
+		void PreInit( krow__ KRow )
 		{
 			reset();
 
 			_ui___::Init( *this );
 			_KRow = KRow;
-		}
-		void PostInit(
-			csducl::type__ Type,
-			const char *RemoteHostServiceOrLocalLibraryPath )
-		{
-			_kernel___::Init( Type, RemoteHostServiceOrLocalLibraryPath );
 		}
 		void Expose( void )
 		{

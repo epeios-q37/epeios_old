@@ -64,7 +64,7 @@ namespace ui_main {
 			struct backend__ {
 				connect_command__ Connect;
 				disconnect_command__ Disconnect;
-			} Vackend;
+			} Backend;
 			struct database__ {
 				create_database_command__ Create;
 				open_database_command__ Open;
