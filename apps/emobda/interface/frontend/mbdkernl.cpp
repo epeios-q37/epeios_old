@@ -96,6 +96,13 @@ template <typename id> static inline void PutId_(
 	PutInt_( Name, **Id, Writer );
 }
 
+void mbdkernl::kernel___::ApplyQuery( void )
+{
+	_Records.Init();
+
+	GetRecords( Target().Table, _Records );
+}
+
 void Dump_(
 	const str::string_ &Database,
 	writer_ &Writer )
@@ -468,8 +475,8 @@ void mbdkernl::kernel___::_DumpContent( writer_ &Writer )
 {
 ERRProlog
 	fields Fields;
-	records Records;
 	bkdacc::xstrings DataCluster;
+	records Records;
 	table__ Table = UNDEFINED_TABLE;
 ERRBegin
 	Writer.PushTag( "Content" );
@@ -482,7 +489,7 @@ ERRBegin
 		Records.Init();
 
 		if ( Target().Record == UNDEFINED_RECORD )
-			this->GetRecords( Table, Records );
+			Records = _Records;
 		else
 			Records.Append( Target().Record );
 

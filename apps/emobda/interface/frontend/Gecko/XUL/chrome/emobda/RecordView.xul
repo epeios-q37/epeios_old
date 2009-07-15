@@ -40,9 +40,12 @@
 		<command id="cmdLast" observes="bcrNotLastRecord"/>
 	</commandset>
 	<vbox flex="1" >
-		<hbox>
+		<hbox pack="center" align="center">
 			<button label="|&lt;" command="cmdFirst"/>
 			<button label="&lt;&lt;" command="cmdPrevious"/>
+			<textbox id="txbRecordNumber" size="5"/>
+			<description value="/"/>
+			<description id="dscRecordAmount" value="test"/>
 			<button label=">>" command="cmdNext"/>
 			<button label=">|" command="cmdLast"/>
 		</hbox>

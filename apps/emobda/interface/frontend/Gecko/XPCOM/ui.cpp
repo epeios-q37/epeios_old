@@ -216,6 +216,8 @@ ERRBegin
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
+//	nsxpcm::Log( XML );
+
 	Parameters.Init();
 
 	ListView.ContentTree.RemoveChildren();
@@ -409,19 +411,10 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Structure.Broadcasters.ItemEdition.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.StructureFormAndView );
 		break;
-/*	case cStructureItemDefinition:
-	{
-		Structure.Broadcasters.ItemBrowsing.Disable();
-		Structure.Broadcasters.ItemEdition.Enable();
-
-		Structure.NameTextbox.Select();
-		break;
-	}
-*/	case cListView:
+	case cListView:
 		FillListView();
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.ListView );
-
 		ListView.ContentTree.ClearSelection();
 		break;
 	case cRecordForm:
@@ -480,19 +473,23 @@ ERREpilog
 void ui::ui___::SelectRecord( void )
 {
 ERRProlog
-	str::string Id;
+	str::string Value;
 	record__ Record = UNDEFINED_RECORD;
+	record_position__ RecordPosition = UNDEFINED_RECORD_POSITION;
 	ui_lst_v::content_tree__ &Tree = UI().ListView.ContentTree;
 ERRBegin
 
 	if ( Tree.IsThereSelected() ) {
-		Id.Init();
-		Tree.GetCurrentItemAttribute( "Record", Id );
+		Value.Init();
+		Tree.GetCurrentItemAttribute( "Record", Value );
+		Record = mbdkernl::ExtractRecord( Value );
 
-		Record = mbdkernl::ExtractRecord( Id );
+		Value.Init();
+		Tree.GetCurrentItemAttribute( "RecordPosition", Value );
+		RecordPosition = mbdkernl::ExtractRecordPosition( Value );
 	}
 
-	K().Target().Set( Record );
+	K().Target().Set( Record, RecordPosition );
 
 	Main.Broadcasters.RecordSelected.Enable();
 ERRErr

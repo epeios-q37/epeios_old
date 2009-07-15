@@ -101,6 +101,7 @@ namespace mbdkernl {
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
 		transient__ _Transient;
+		records _Records;
 		target__ _Target;
 	public:
 		void reset( bso::bool__ P = true )
@@ -109,7 +110,8 @@ namespace mbdkernl {
 			_ClientCore.reset( P );
 			_Language = lgg::l_undefined;
 			_Target.reset( P );
-			_Transient.reset();
+			_Records.reset( P );
+			_Transient.reset( P );
 		}
 		kernel___( void )
 		{
@@ -129,6 +131,8 @@ namespace mbdkernl {
 			_backend___::Init( _ClientCore );
 
 			_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
+
+			_Records.Init();
 		}
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
@@ -233,9 +237,16 @@ namespace mbdkernl {
 		}
 		bso::bool__ InsertRecord( const bkdacc::items32_ &Data )
 		{
-			Target().Set( InsertRecord( Data, GetTarget().Table ) );
+			record__ Record = InsertRecord( Data, GetTarget().Table );
+
+			if ( Record != UNDEFINED_RECORD ) {
+				_Records.Append( Record );
+				Target().Set( Record, _Records.Amount() );
+			} else {
+				Target().Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION );
+			}
 			
-			return GetTarget().Record != UNDEFINED_RECORD;
+			return Record != UNDEFINED_RECORD;
 		}
 		bso::bool__ ModifyRecord( 
 			record__ Record,
@@ -251,11 +262,12 @@ namespace mbdkernl {
 		bso::bool__ RemoveRecord( void )
 		{
 			if ( DeleteRecord( GetTarget().Record, GetTarget().Table ) ) {
-				Target().Set( UNDEFINED_RECORD );
+				Target().Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION );
 				return true;
 			} else
 				return false;
 		}
+		void ApplyQuery( void );
 		void ResetTransient( void )
 		{
 			_Transient.reset();
@@ -270,26 +282,12 @@ namespace mbdkernl {
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )
 	{
-		epeios::row__ Error = NONE;
-		bkdacc::id32__ Id = Value.ToUL( &Error );
-
-		if ( Error != NONE )
-			ERRu();
-
-		return Id;
-	
+		return Value.ToUL();
 	}
 
 	inline bkdacc::id16__ _ExtractId16( const str::string_ &Value )
 	{
-		epeios::row__ Error = NONE;
-		bkdacc::id16__ Id = Value.ToUS( &Error );
-
-		if ( Error != NONE )
-			ERRu();
-
-		return Id;
-	
+		return Value.ToUS();
 	}
 
 	inline table__ ExtractTable( const str::string_ &Value )
@@ -305,6 +303,11 @@ namespace mbdkernl {
 	inline record__ ExtractRecord( const str::string_ &Value )
 	{
 		return _ExtractId16( Value );
+	}
+
+	inline record_position__ ExtractRecordPosition( const str::string_ &Value )
+	{
+		return Value.ToUL();
 	}
 }
 

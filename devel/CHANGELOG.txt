@@ -1,5 +1,10 @@
 $Id$
 
+15/07/2009 :
+	- STR :
+		- Les conversions en numérique génèrent maintenant une erreur si l'entrée est incorrecte est qu'un 'ErrP' n'est pas fourni.
+		- En outre, 'ErrP' n'est modifié (s'il est fourni), que s'il y a une erreur.
+
 09/07/2009 :
 	- NSXPCM :
 		- Ajout fonctions relatifs aux 'textbox's avec historique.

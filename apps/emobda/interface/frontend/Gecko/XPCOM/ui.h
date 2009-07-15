@@ -192,7 +192,7 @@ namespace ui {
 			K().Target().Set( Table );
 
 			FillTableMenu();
-			BrowseList();
+			ApplyQuery();
 		}
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );
 		bso::bool__ GetDatabaseIdentification(
@@ -346,8 +346,9 @@ namespace ui {
 			_K().ResetTransient();
 			_SwitchTo( cStructureView );
 		}
-		void BrowseList( void )
+		void ApplyQuery( void )
 		{
+			_K().ApplyQuery();
 			_SwitchTo( cListView );
 		}
 		void DefineRecord( void )

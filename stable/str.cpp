@@ -374,8 +374,11 @@ namespace str {
 				P = String.Next( P );
 			}
 
-		if ( ErrP )
-			*ErrP = P;
+		if ( P != NONE )
+			if ( ErrP )
+				*ErrP = P;
+			else
+				ERRu();
 
 		return Result;
 	}
@@ -415,8 +418,11 @@ namespace str {
 			}
 		}
 
-		if ( ErrP )
-			*ErrP = P;
+		if ( P != NONE )
+			if ( ErrP )
+				*ErrP = P;
+			else
+				ERRu();
 
 		if ( Negate )
 			return -Result;

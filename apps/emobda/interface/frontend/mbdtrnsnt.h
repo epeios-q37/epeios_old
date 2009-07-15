@@ -24,6 +24,10 @@
 
 #include "mbdbkd.h"
 
+// Only purpose is to dsign a record in a custom list.
+typedef bso::ulong__ record_position__;
+#define UNDEFINED_RECORD_POSITION	0
+
 namespace mbdtrnsnt {
 
 	using namespace mbdbkd;
@@ -32,11 +36,14 @@ namespace mbdtrnsnt {
 		table__ Table;
 		field__ Field;
 		record__ Record;
+		record_position__ RecordPosition;
 		void reset( bso::bool__ = true )
 		{
 			Table = UNDEFINED_TABLE;
 			Field = UNDEFINED_FIELD;
 			Record = UNDEFINED_RECORD;
+			RecordPosition = UNDEFINED_RECORD_POSITION;
+
 		}
 		target__( void )
 		{
@@ -50,9 +57,10 @@ namespace mbdtrnsnt {
 		}
 		target__(
 			record__ Record,
+			record_position__ RecordPosition,
 			table__ Table )
 		{
-			Set( Record, Table );
+			Set( Record, RecordPosition, Table );
 		}
 		target__( table__ Table )
 		{
@@ -60,6 +68,7 @@ namespace mbdtrnsnt {
 		}
 		void Set(
 			record__ Record,
+			record_position__ RecordPosition,
 			field__ Field,
 			table__ Table )
 		{
@@ -70,24 +79,28 @@ namespace mbdtrnsnt {
 				ERRu();
 
 			this->Record = Record;
+			this->RecordPosition = RecordPosition;
 			this->Field = Field;
 			this->Table = Table;
 		}
 		void Set(
 			record__ Record,
+			record_position__ RecordPosition,
 			table__ Table )
 		{
-			Set( Record, UNDEFINED_FIELD, Table );
+			Set( Record, RecordPosition, UNDEFINED_FIELD, Table );
 		}
-		void Set( record__ Record )
+		void Set(
+			record__ Record,
+			record_position__ RecordPosition )
 		{
-			Set( Record, this->Table );
+			Set( Record, RecordPosition, this->Table );
 		}
 		void Set(
 			field__ Field,
 			table__ Table )
 		{
-			Set( UNDEFINED_RECORD, Field, Table );
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, Field, Table );
 		}
 		void Set( field__ Field )
 		{
@@ -95,7 +108,7 @@ namespace mbdtrnsnt {
 		}
 		void Set( table__ Table )
 		{
-			Set( UNDEFINED_RECORD, UNDEFINED_FIELD, Table );
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, Table );
 		}
 	};
 

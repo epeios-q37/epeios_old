@@ -71,6 +71,9 @@
 			<xsl:attribute name="Record">
 				<xsl:value-of select="@Id"/>
 			</xsl:attribute>
+			<xsl:attribute name="RecordPosition">
+				<xsl:value-of select="position()"/>
+			</xsl:attribute>
 			<xsl:element name="treerow">
 		<xsl:apply-templates select="Data"/>
 			</xsl:element>
