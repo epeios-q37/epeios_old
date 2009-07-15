@@ -137,7 +137,8 @@ ERRProlog
 ERRBegin
 	Databases.Init();
 
-	GetAvailableDatabases( Databases );
+	if ( IsConnected() )
+		GetAvailableDatabases( Databases );
 
 	Writer.PushTag( "Available" );
 
@@ -194,7 +195,8 @@ ERRBegin
 	Ids.Init();
 	Tables.Init();
 
-	Backend.GetFieldsInfos( Fields, Names, Comments, Ids, Tables );
+	if ( Backend.IsConnected() )
+		Backend.GetFieldsInfos( Fields, Names, Comments, Ids, Tables );
 
 	Row = Fields.First();
 
@@ -221,7 +223,8 @@ ERRProlog
 ERRBegin	
 	Fields.Init();
 
-	Backend.GetFields( UNDEFINED_TABLE, Fields );
+	if ( Backend.IsConnected() )
+		Backend.GetFields( UNDEFINED_TABLE, Fields );
 
 	DumpFields_( Fields, Backend, Writer );
 ERRErr
@@ -235,7 +238,6 @@ static void DumpTable_(
 	const bkdacc::string_ &Comment,
 	table__ Table,
 	table_id__ Id,
-	backend___ &Backend,
 	writer_ &Writer )
 {
 	PutId_( "Id", Id, Writer );
@@ -255,7 +257,6 @@ static void DumpTables_(
 	const bkdacc::strings_ &Comments,
 	const tables_ &Tables,
 	const table_ids_ &Ids,
-	backend___ &Backend,
 	writer_ &Writer )
 {
 	ctn::E_CMITEM( bkdacc::string_ ) Name, Comment;
@@ -273,7 +274,7 @@ static void DumpTables_(
 	while ( Row != NONE ) {
 		Writer.PushTag( "Table" );
 
-		DumpTable_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Backend, Writer );
+		DumpTable_( Name( Row ), Comment( Row ), Tables( Row ), Ids( Row ), Writer );
 
 		Writer.PopTag();
 
@@ -292,13 +293,15 @@ ERRProlog
 ERRBegin
 	Tables.Init();
 
-	Backend.GetTables( Tables );
+	if ( Backend.IsConnected() )
+		Backend.GetTables( Tables );
 
 	Names.Init();
 	Comments.Init();
 	Ids.Init();
 
-	Backend.GetTablesInfos( Tables, Names, Comments, Ids );
+	if ( Backend.IsConnected() )
+		Backend.GetTablesInfos( Tables, Names, Comments, Ids );
 
 	if ( Tables.Amount() != Names.Amount() )
 		ERRc();
@@ -308,7 +311,7 @@ ERRBegin
 
 	Writer.PushTag( "Tables" );
 
-	DumpTables_( Names, Comments, Tables, Ids, Backend, Writer );
+	DumpTables_( Names, Comments, Tables, Ids, Writer );
 
 	Writer.PopTag();
 
@@ -327,7 +330,8 @@ ERRBegin
 	Name.Init();
 	Comment.Init();
 
-	Backend.GetDatabaseInfos( Name, Comment );
+	if ( Backend.IsConnected() )
+		Backend.GetDatabaseInfos( Name, Comment );
 
 	Writer.PushTag( "Databases" );
 

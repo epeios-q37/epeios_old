@@ -30,10 +30,22 @@
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<broadcasterset>
+		<broadcaster id="bcrNotLastRecord"/>
+		<broadcaster id="bcrNotFirstRecord"/>
 	</broadcasterset>
 	<commandset>
+		<command id="cmdFirst" observes="bcrNotFirstRecord"/>
+		<command id="cmdPrevious" observes="bcrNotFirstRecord"/>
+		<command id="cmdNext" observes="bcrNotLastRecord"/>
+		<command id="cmdLast" observes="bcrNotLastRecord"/>
 	</commandset>
 	<vbox flex="1" >
+		<hbox>
+			<button label="|&lt;" command="cmdFirst"/>
+			<button label="&lt;&lt;" command="cmdPrevious"/>
+			<button label=">>" command="cmdNext"/>
+			<button label=">|" command="cmdLast"/>
+		</hbox>
 		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 	</vbox>
 </page>

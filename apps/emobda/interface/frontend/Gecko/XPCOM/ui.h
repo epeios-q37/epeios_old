@@ -325,7 +325,7 @@ namespace ui {
 		{
 			_K().CloseDatabase();
 
-			_SwitchTo( cSessionForm );
+			_SwitchTo( cSessionView );
 		}
 		void BrowseStructureItem( void )
 		{
@@ -418,7 +418,6 @@ namespace ui {
 				ERRc();
 		}
 		bso::bool__ GetSelectedStructureItem( target__ &Target );
-		void EmptyTableMenu( void );
 		void FillTableMenu( void );
 		void FillStructureView( void );
 		void UpdateDecks( void );

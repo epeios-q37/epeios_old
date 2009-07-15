@@ -100,9 +100,14 @@ namespace mbdbkd {
 				ERRu();
 				break;
 			}
+
 			_ManagerCommon.Init( _BackendAccess );
 			Manager.Init( _ManagerCommon );
 			
+		}
+		bso::bool__ IsConnected( void ) const
+		{
+			return _BackendAccess.IsConnected();
 		}
 		const char *GetRawMessage( void ) const
 		{
