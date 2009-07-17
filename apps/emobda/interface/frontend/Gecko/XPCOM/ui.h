@@ -418,6 +418,61 @@ namespace ui {
 			else
 				ERRc();
 		}
+		bso::bool__ GoToRecordNumber( record_position__ Position )
+		{
+			if ( !K().GoToRecordNumber( Position ) ) {
+				Alert( mbdkernl::mUnableToReachRecord );
+				return false;
+			}
+
+			_SwitchTo( cRecordView );
+
+			return true;
+		}
+		bso::bool__ GoToFirstRecord( void )
+		{
+			if ( !K().GoToFirstRecord() ) {
+				Alert( mbdkernl::mUnableToReachRecord );
+				return false;
+			}
+
+			_SwitchTo( cRecordView );
+
+			return true;
+		}
+		bso::bool__ GoToPreviousRecord( void )
+		{
+			if ( !K().GoToPreviousRecord() ) {
+				Alert( mbdkernl::mUnableToReachRecord );
+				return false;
+			}
+
+			_SwitchTo( cRecordView );
+
+			return true;
+		}
+		bso::bool__ GoToNextRecord( void )
+		{
+			if ( !K().GoToNextRecord() ) {
+				Alert( mbdkernl::mUnableToReachRecord );
+				return false;
+			}
+
+			_SwitchTo( cRecordView );
+
+			return true;
+		}
+		bso::bool__ GoToLastRecord( void )
+		{
+			if ( !K().GoToLastRecord() ) {
+				Alert( mbdkernl::mUnableToReachRecord );
+				return false;
+			}
+
+			_SwitchTo( cRecordView );
+
+			return true;
+		}
 		bso::bool__ GetSelectedStructureItem( target__ &Target );
 		void FillTableMenu( void );
 		void FillStructureView( void );

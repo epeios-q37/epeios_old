@@ -34,20 +34,20 @@
 		<broadcaster id="bcrNotFirstRecord"/>
 	</broadcasterset>
 	<commandset>
-		<command id="cmdFirst" observes="bcrNotFirstRecord"/>
-		<command id="cmdPrevious" observes="bcrNotFirstRecord"/>
-		<command id="cmdNext" observes="bcrNotLastRecord"/>
-		<command id="cmdLast" observes="bcrNotLastRecord"/>
+		<command id="cmdFirstRecord" observes="bcrNotFirstRecord"/>
+		<command id="cmdPreviousRecord" observes="bcrNotFirstRecord"/>
+		<command id="cmdNextRecord" observes="bcrNotLastRecord"/>
+		<command id="cmdLastRecord" observes="bcrNotLastRecord"/>
 	</commandset>
 	<vbox flex="1" >
 		<hbox pack="center" align="center">
-			<button label="|&lt;" command="cmdFirst"/>
-			<button label="&lt;&lt;" command="cmdPrevious"/>
-			<textbox id="txbRecordNumber" size="5"/>
+			<button label="|&lt;" command="cmdFirstRecord"/>
+			<button label="&lt;&lt;" command="cmdPreviousRecord"/>
+			<textbox id="txbRecordNumber" min="1"/>
 			<description value="/"/>
-			<description id="dscRecordAmount" value="test"/>
-			<button label=">>" command="cmdNext"/>
-			<button label=">|" command="cmdLast"/>
+			<description id="dscRecordsAmount" value="test"/>
+			<button label=">>" command="cmdNextRecord"/>
+			<button label=">|" command="cmdLastRecord"/>
 		</hbox>
 		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 	</vbox>

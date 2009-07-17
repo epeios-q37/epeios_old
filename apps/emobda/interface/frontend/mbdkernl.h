@@ -55,10 +55,14 @@ namespace mbdkernl {
 		mBadDatabasePath,
 
 		mDropStructureItemConfirmation,
+
 		mDeleteTableConfirmation,
 		mDeleteFieldConfirmation,
 		mDeleteRecordConfirmation,
+
 		mDropRecordConfirmation,
+
+		mUnableToReachRecord,
 		m_amount,
 		m_Undefined
 	};
@@ -277,6 +281,38 @@ namespace mbdkernl {
 			return _Transient.Context();
 		}
 		E_RWDISCLOSE__( target__, Target );
+		bso::size__ GetRecordsAmount( void ) const
+		{
+			return _Records.Amount();
+		}
+		bso::bool__ GoToRecordNumber( record_position__ Position )
+		{
+			if ( Position == 0 )
+				return false;
+
+			if ( Position > _Records.Amount() )
+				return false;
+
+			_Target.Set( _Records( Position - 1 ), Position );
+
+			return true;
+		}
+		bso::bool__ GoToFirstRecord( void )
+		{
+			return GoToRecordNumber( 1 );
+		}
+		bso::bool__ GoToPreviousRecord( void )
+		{
+			return GoToRecordNumber( _Target.RecordPosition - 1 ); 
+		}
+		bso::bool__ GoToNextRecord( void )
+		{
+			return GoToRecordNumber( _Target.RecordPosition + 1 ); 
+		}
+		bso::bool__ GoToLastRecord( void )
+		{
+			return GoToRecordNumber( _Records.Amount() );
+		}
 		void DumpAsXML( str::string_ &XML );
 	};
 

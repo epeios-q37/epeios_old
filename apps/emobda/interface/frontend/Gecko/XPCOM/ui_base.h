@@ -91,11 +91,12 @@ namespace ui_base {
 	typedef _generic__<nsxpcm::deck__> deck__;
 	typedef _generic__<nsxpcm::broadcaster__> broadcaster__;
 	typedef _generic__<nsxpcm::command__> command__;
-	typedef _generic__<nsxpcm::element__> menu__;
+	typedef _generic__<nsxpcm::menu__> menu__;
 	typedef _generic__<nsxpcm::menu_item__> menu_item__;
 	typedef _generic__<nsxpcm::panel__> panel__;
 	typedef _generic__<nsxpcm::element__> box__;
 	typedef _generic__<nsxpcm::window__> window__;
+	typedef _generic__<nsxpcm::description__> description__;
 
 	template <typename widget> void Register(
 		bridge_functions__ &Functions,
@@ -178,6 +179,15 @@ namespace ui_base {
 		const char *Id )
 	{
 		Register( Functions, Button, Document, Id, nsxpcm::efCommand );
+	}
+
+	inline void Register(
+		bridge_functions__ &Functions,
+		description__ &Description,
+		nsIDOMDocument *Document,
+		const char *Id )
+	{
+		Register( Functions, Description, Document, Id, nsxpcm::efNone );
 	}
 }
 

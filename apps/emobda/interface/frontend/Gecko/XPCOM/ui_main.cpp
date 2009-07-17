@@ -259,8 +259,6 @@ static void Register_(
 	Register_( Functions, UI.Panels, UI.Document );
 }
 
-
-
 void ui_main::RegisterMainUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
@@ -268,5 +266,4 @@ void ui_main::RegisterMainUI(
 	UI.Main.Init( Window );
 
 	Register_( UI, UI.Main );
-
 }

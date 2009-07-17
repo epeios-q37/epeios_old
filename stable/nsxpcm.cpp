@@ -949,6 +949,8 @@ void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
 		Event = eSelect;
 	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
 		Event = eAttributeChange;
+	else if ( !strcmp( RawEvent, "keypress" ) )
+		Event = eKeyPress;
 	else if ( !strcmp( RawEvent, "close" ) )
 		Event = eClose;
 	else
@@ -983,6 +985,9 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 		break;
 	case eAttributeChange:
 		NSXPCMOnAttributeChange();
+		break;
+	case eKeyPress:
+		NSXPCMOnKeyPress();
 		break;
 	case eClose:
 		NSXPCMOnClose();
@@ -1042,6 +1047,10 @@ void nsxpcm::element_core__::Init(
 
 	if ( Events & efAttributeChange )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventListener, false ) != NS_OK )
+			ERRc();
+
+	if ( Events & efKeyPress )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "keypress" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efClose )

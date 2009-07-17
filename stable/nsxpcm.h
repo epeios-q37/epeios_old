@@ -87,6 +87,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "dom/nsIDOMWindowInternal.h"
 #include "dom/nsIDOMXULLabelElement.h"
 #include "dom/nsIDOMMutationEvent.h"
+#include "dom/nsIDOMKeyEvent.h"
 
 #include "appshell/nsIXULWindow.h"
 
@@ -142,6 +143,7 @@ namespace nsxpcm {
 		eBlur,
 		eSelect,
 		eAttributeChange,
+		eKeyPress,
 		eClose,
 		e_amount,
 		e_Undefined
@@ -163,9 +165,11 @@ namespace nsxpcm {
 		EF( Blur ),
 		EF( Select ),
 		EF( AttributeChange ),
+		EF( KeyPress ),
 		EF( Close ),
 		efNone = 0,
-		efAll = ( ( 1 << e_amount ) - 1 )
+		efAll = ( ( 1 << e_amount ) - 1 ),
+		efAllButAnnoying = efAll & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
 	};
 
 #ifdef NSXPCM__F_BUFFER
@@ -977,6 +981,7 @@ namespace nsxpcm {
 	protected:
 		nsIDOMEvent *_Event;
 		nsIDOMMutationEvent *_MutationEvent;
+		nsIDOMKeyEvent *_KeyEvent;
 		void EventStopPropagation( void )
 		{
 			if ( _Event == NULL )
@@ -1026,6 +1031,10 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnKeyPress( void )
+		{
+			ERRu();
+		}
 		virtual void NSXPCMOnClose( void )
 		{
 			ERRu();
@@ -1034,6 +1043,9 @@ namespace nsxpcm {
 		void reset( bso::bool__ = true )
 		{
 			_Supports = NULL;
+			_Event = NULL;
+			_MutationEvent = NULL;
+			_KeyEvent = NULL;
 		}
 		element_core__( void )
 		{
@@ -1058,16 +1070,21 @@ namespace nsxpcm {
 			// Sauvegarde pour la gestion d'évènements imbriqués.
 			nsIDOMEvent *EventBuffer = _Event;
 			nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
+			nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
 
 			_Event = Event;
 
 			if ( EventString == "DOMAttrModified" )
 				_MutationEvent = QueryInterface<nsIDOMMutationEvent>( Event );
 
+			if ( EventString == "keypress" )
+				_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( Event );
+
 			NSXPCMOnRawEvent( EventString );
 
 			_Event = EventBuffer;
 			_MutationEvent = MutationEventBuffer;
+			_KeyEvent = KeyEventBuffer;
 		}
 		nsIDOMElement *GetElement( void )
 		{
@@ -1232,7 +1249,36 @@ namespace nsxpcm {
 		}
 		void Select( void )
 		{
-			GetObject()->Select();
+			if ( GetObject()->Select() != NS_OK )
+				ERRs();
+		}
+		void SetSize( bso::size__ Size )
+		{
+			if ( GetObject()->SetSize( Size ) != NS_OK )
+				ERRu();
+		}
+		bso::size__ GetSize( void )
+		{
+			PRInt32 Buffer;
+
+			if ( GetObject()->GetSize( &Buffer ) != NS_OK )
+				ERRs();
+
+			return Buffer;
+		}
+		void SetMaxLength( bso::size__ Size )
+		{
+			if ( GetObject()->SetMaxLength( Size ) != NS_OK )
+				ERRu();
+		}
+		bso::size__ GetMaxLength( void )
+		{
+			PRInt32 Buffer;
+
+			if ( GetObject()->GetMaxLength( &Buffer ) != NS_OK )
+				ERRs();
+
+			return Buffer;
 		}
 	};
 
@@ -1475,6 +1521,10 @@ namespace nsxpcm {
 
 	class html_anchor__
 	: public _element__<nsIDOMHTMLAnchorElement>
+	{};
+
+	class menu__
+	: public _element__<nsIDOMElement>	// Pas cherché le 'nsI...' correspondant ...
 	{};
 
 	class menu_item__

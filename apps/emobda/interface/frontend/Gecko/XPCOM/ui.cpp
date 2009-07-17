@@ -423,6 +423,9 @@ void ui::ui___::_SwitchTo( context__ Context )
 		break;
 	case cRecordView:
 		FillRecordView();
+
+		UI().RecordView.UpdateInterface( K().Target().RecordPosition, K().GetRecordsAmount() );
+
 		Main.MainDeck.SetSelectedPanel( Main.Panels.RecordView );
 		break;
 	default:

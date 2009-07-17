@@ -56,10 +56,10 @@ ERRBegin
 	Path.StripCharacter( ' ' );
 
 	if ( Name.Amount() == 0 ) {
-		UI().Alert( UI().DatabaseForm.Window.GetObject(), mbdkernl::mMissingDatabaseName );
+		UI().Alert( mbdkernl::mMissingDatabaseName );
 		UI().DatabaseForm.Textboxes.Name.Select();
 	} else if ( Path.Amount() == 0 ) {
-		UI().Alert( UI().DatabaseForm.Window.GetObject(), mbdkernl::mMissingDatabasePath );
+		UI().Alert( mbdkernl::mMissingDatabasePath );
 		UI().DatabaseForm.Textboxes.Path.Select();
 	} else {
 		UI().K().DatabaseIdentification().Set( Name, Path, Comment );

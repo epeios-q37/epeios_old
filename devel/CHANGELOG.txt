@@ -1,5 +1,12 @@
 $Id$
 
+17/09/2009 :
+	- NSXPCM :
+		- Ajout 'menu__'.
+		- Ajout '(Get|Set)(Size|MaxLength)(...)' à 'textbox__'.
+		- Ajout 'efAllButAnnoying', qui enlève les évènements génant lors d'un débogage.
+		- Ajout évènement 'keypress'.
+
 15/07/2009 :
 	- STR :
 		- Les conversions en numérique génèrent maintenant une erreur si l'entrée est incorrecte est qu'un 'ErrP' n'est pas fourni.

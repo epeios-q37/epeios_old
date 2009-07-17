@@ -47,14 +47,20 @@ void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
 
 /* UI Registrations */
 
+static void Register_(
+	bridge_functions__ &Functions,
+	list_view__ &UI )
+{
+	ui_base::Register( Functions, UI.ContentTree, UI.Document, "treContent" );
+}
+
 void ui_lst_v::RegisterListViewUI(
 	ui::ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.ListView.Init( UI, Window );
 
-	ui_base::Register( UI, UI.ListView.ContentTree, UI.ListView.Document, "treContent" );
+	Register_( UI, UI.ListView );
 
-//	ui_base::Register( Kernel, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
 }
 

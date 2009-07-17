@@ -44,6 +44,7 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 	CASE( DeleteFieldConfirmation );
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
+	CASE( UnableToReachRecord );
 	default:
 		ERRu();
 		break;
