@@ -56,6 +56,31 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
+void mbdkernl::kernel___::Init(
+	rgstry::registry_ &Registry,
+	rgstry::nrow__ GlobalRegistryRoot,
+	rgstry::nrow__ LocalRegistryRoot )
+{
+ERRProlog
+	str::string RemoteHostOrLocalLibraryPath;
+ERRBegin
+	reset();
+
+	_UnprotectedRegistry.Init( Registry, GlobalRegistryRoot, LocalRegistryRoot );
+	_Registry.Init( _UnprotectedRegistry );
+
+	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, csducl::tShared );
+	_backend___::Init( _ClientCore );
+
+	_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
+
+	_Records.Init();
+ERRErr
+ERRENd
+ERREpilog
+}
+
+
 static class messages
 : public _messages
 {

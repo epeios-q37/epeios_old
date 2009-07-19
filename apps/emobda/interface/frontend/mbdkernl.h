@@ -25,6 +25,7 @@
 #include "mbdbkd.h"
 
 #include "mbdtrnsnt.h"
+#include "mbdrgstry.h"
 
 #include "csdsnc.h"
 #include "csducl.h"
@@ -32,6 +33,7 @@
 #include "msg.h"
 #include "lgg.h"
 #include "bkdacc.h"
+#include "lck.h"
 
 
 // #define ADDRESS	"192.168.5.10:1234"	// Portable.
@@ -45,6 +47,10 @@
 namespace mbdkernl {
 	using namespace mbdbkd;
 	using namespace mbdtrnsnt;
+
+	typedef lck::read_write_access___<rgstry::overloaded_unique_registry___> rwregistry___;
+	typedef lck::read_only_access___<rgstry::overloaded_unique_registry___> roregistry___;
+	typedef	lck::control___<rgstry::overloaded_unique_registry___> cregistry___;
 
 	enum message__ 
 	{
@@ -100,18 +106,22 @@ namespace mbdkernl {
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
+		rgstry::overloaded_unique_registry___ _UnprotectedRegistry;
+		cregistry___ _Registry;
+		transient__ _Transient;
+		records _Records;
+		target__ _Target;
 		void _DumpCurrent( xml::writer_ &Writer );
 		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
-		transient__ _Transient;
-		records _Records;
-		target__ _Target;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_backend___::reset( P );
 			_ClientCore.reset( P );
+			_UnprotectedRegistry.reset( P );
+			_Registry.reset( P );
 			_Language = lgg::l_undefined;
 			_Target.reset( P );
 			_Records.reset( P );
@@ -126,18 +136,9 @@ namespace mbdkernl {
 			reset();
 		}
 		void Init(
-			csducl::type__ Type,
-			const char *RemoteHostServiceOrLocalLibraryPath )
-		{
-			reset();
-
-			_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, Type );
-			_backend___::Init( _ClientCore );
-
-			_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
-
-			_Records.Init();
-		}
+			rgstry::registry_ &Registry,
+			rgstry::nrow__ GlobalRegistryRoot,
+			rgstry::nrow__ LocalRegistryRoot );
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
