@@ -22,8 +22,8 @@
 #ifndef KERNEL__INC
 #define KERNEL__INC
 
-#include "../../mbdkernl.h"
-#include "../../mbdbkd.h"
+#include "mbdkernl.h"
+#include "mbdbkd.h"
 
 #include "nsxpcm.h"
 

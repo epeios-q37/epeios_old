@@ -1,5 +1,5 @@
 /*
-	'kernel.cpp' by Claude SIMON (http://zeusw.org/).
+	'mbdkernl.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
