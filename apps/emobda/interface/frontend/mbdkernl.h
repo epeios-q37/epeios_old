@@ -33,7 +33,6 @@
 #include "msg.h"
 #include "lgg.h"
 #include "bkdacc.h"
-#include "lck.h"
 
 
 // #define ADDRESS	"192.168.5.10:1234"	// Portable.
@@ -47,10 +46,6 @@
 namespace mbdkernl {
 	using namespace mbdbkd;
 	using namespace mbdtrnsnt;
-
-	typedef lck::read_write_access___<rgstry::overloaded_unique_registry___> rwregistry___;
-	typedef lck::read_only_access___<rgstry::overloaded_unique_registry___> roregistry___;
-	typedef	lck::control___<rgstry::overloaded_unique_registry___> cregistry___;
 
 	enum message__ 
 	{
@@ -106,8 +101,8 @@ namespace mbdkernl {
 		lgg::language__ _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
-		rgstry::overloaded_unique_registry___ _UnprotectedRegistry;
-		cregistry___ _Registry;
+		rgstry::registry _GlobalRegistry;
+		rgstry::overloaded_unique_registry___ _Registry;
 		transient__ _Transient;
 		records _Records;
 		target__ _Target;
@@ -120,7 +115,7 @@ namespace mbdkernl {
 		{
 			_backend___::reset( P );
 			_ClientCore.reset( P );
-			_UnprotectedRegistry.reset( P );
+			_GlobalRegistry.reset( P );
 			_Registry.reset( P );
 			_Language = lgg::l_undefined;
 			_Target.reset( P );
@@ -136,15 +131,20 @@ namespace mbdkernl {
 			reset();
 		}
 		void Init(
-			rgstry::registry_ &Registry,
-			rgstry::nrow__ GlobalRegistryRoot,
-			rgstry::nrow__ LocalRegistryRoot );
+			xtf::extended_text_iflow__ &BaseConfig,
+			xtf::extended_text_iflow__ &UserConfig );
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
 		MBDKERNL_TRANSIENT_USE( database_selection, DatabaseSelection );
 		MBDKERNL_TRANSIENT_USE( backend_selection, BackendSelection );
 		MBDKERNL_TRANSIENT_USE( record_input, RecordInput );
+		bso::bool__ GetRegistryValue(
+			const char *Path,
+			str::string_ &Value )
+		{
+			return _Registry.GetPathValue( str::string( Path ), Value );
+		}
 		bso::bool__ CreateDatabase(
 			const str::string_ &Name,
 			const str::string_ &Path,

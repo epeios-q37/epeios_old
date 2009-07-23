@@ -57,26 +57,35 @@ typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
 void mbdkernl::kernel___::Init(
-	rgstry::registry_ &Registry,
-	rgstry::nrow__ GlobalRegistryRoot,
-	rgstry::nrow__ LocalRegistryRoot )
+	xtf::extended_text_iflow__ &BaseConfig,
+	xtf::extended_text_iflow__ &UserConfig )
 {
 ERRProlog
-	str::string RemoteHostOrLocalLibraryPath;
+	str::string RemoteHostServiceOrLocalLibraryPath;
+	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
+	rgstry::nrow__ BaseRoot = NONE, UserRoot = NONE;
 ERRBegin
 	reset();
 
-	_UnprotectedRegistry.Init( Registry, GlobalRegistryRoot, LocalRegistryRoot );
-	_Registry.Init( _UnprotectedRegistry );
+	_GlobalRegistry.Init();
 
-	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, csducl::tShared );
+	BaseRoot = rgstry::Parse( BaseConfig, str::string( "." ), _GlobalRegistry, NONE );
+	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
+
+	_Registry.Init( _GlobalRegistry, BaseRoot, UserRoot );
+
+	RemoteHostServiceOrLocalLibraryPath.Init();
+
+	GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath );
+
+	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
 	_backend___::Init( _ClientCore );
 
 	_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
 
 	_Records.Init();
 ERRErr
-ERRENd
+ERREnd
 ERREpilog
 }
 
