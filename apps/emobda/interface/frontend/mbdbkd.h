@@ -47,8 +47,8 @@ namespace mbdbkd {
 	class backend___
 	{
 	private:
-		emobda_backend_access___<bkduac::backend_universal_access___> _BackendAccess;
-		mbd_manager_common__	_ManagerCommon;
+		emobda::backend_access___<bkduac::backend_universal_access___> _BackendAccess;
+		emobda::mbd_manager_common__	_ManagerCommon;
 		csducl::universal_client _Flow;
 		bso::bool__ _H( bso::bool__ Result )
 		{
@@ -78,7 +78,7 @@ namespace mbdbkd {
 	protected:
 		virtual void MBDBKDReport( const char *Message ) =0;
 	public:
-		mbd_manager___ Manager;
+		emobda::mbd_manager___ Manager;
 		void reset( bso::bool__ P = true )
 		{
 			Manager.reset( P );

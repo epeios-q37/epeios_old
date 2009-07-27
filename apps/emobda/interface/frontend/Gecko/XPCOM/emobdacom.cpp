@@ -72,8 +72,6 @@ protected:
 	ERREpilog\
 	return NSResult;
 
-
-
 NS_IMETHODIMP emobdacom::RegisteringStart( void )
 {
 RP
@@ -162,15 +160,18 @@ RN
 RE
 }
 
-NS_IMETHODIMP emobdacom::RegisteringEnd( void )
+NS_IMETHODIMP emobdacom::RegisteringEnd( const char *ConfigFile )
 {
 RP
 RBB
 	kernel::kernel___ &Kernel = Repository.GetCurrentObject();
-
+	
 	Repository.DismissCurrentObject();
 
-	Kernel.DefineSession();
+	if ( ConfigFile != "" )
+		Kernel.Init( ConfigFile );
+	else
+		Kernel.DefineSession();
 RR
 RN
 RE

@@ -90,6 +90,15 @@ namespace kernel {
 			_ui___::Init( *this );
 			_KRow = KRow;
 		}
+		void Init( const char *ConfigFile )
+		{
+			message__ Message = mbdkernl::m_Undefined;
+
+			if ( ( Message = _kernel___::Init( ConfigFile ) ) != mbdkernl::m_Undefined )
+				Alert( Message );
+			else
+				ApplySession();
+		}
 		void Expose( void )
 		{
 			Repository.SetCurrentRow( _KRow );

@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 01/05/2009 08:39:22. -->
+This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 27/07/2009 11:18:27. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,8 +19,8 @@ This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/)
 			<Name>emobda</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>01/05/2009</Date>
-		<Time>08:39:22</Time>
+		<Date>27/07/2009</Date>
+		<Time>11:18:27</Time>
 	</Misc>
 	<Messages Amount="23">
 		<Message Content="_UnknowObjectType"/>

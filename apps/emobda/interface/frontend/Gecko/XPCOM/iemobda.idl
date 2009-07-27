@@ -29,6 +29,6 @@ interface iemobdacom
 	void RegisteringStart();
 	void Register( in nsIDOMwindow Window );	
 	void RegisterAlone( in nsIDOMwindow Window );	
-	void RegisteringEnd();
+	void RegisteringEnd( in string ConfigFile );
 	void Retire();
 };

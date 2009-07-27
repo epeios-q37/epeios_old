@@ -36,8 +36,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   /* void RegisterAlone (in nsIDOMWindow Window); */
   NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) = 0;
 
-  /* void RegisteringEnd (); */
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) = 0;
+  /* void RegisteringEnd (in string ConfigFile); */
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(const char *ConfigFile) = 0;
 
   /* void Retire (); */
   NS_SCRIPTABLE NS_IMETHOD Retire(void) = 0;
@@ -51,7 +51,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void); \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window); \
   NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window); \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void); \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(const char *ConfigFile); \
   NS_SCRIPTABLE NS_IMETHOD Retire(void); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
@@ -59,7 +59,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return _to RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return _to Register(Window); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) { return _to RegisterAlone(Window); } \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return _to RegisteringEnd(); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(const char *ConfigFile) { return _to RegisteringEnd(ConfigFile); } \
   NS_SCRIPTABLE NS_IMETHOD Retire(void) { return _to Retire(); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
@@ -67,7 +67,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE iemobdacom : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD RegisteringStart(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringStart(); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterAlone(nsIDOMWindow *Window) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterAlone(Window); } \
-  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisteringEnd(const char *ConfigFile) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisteringEnd(ConfigFile); } \
   NS_SCRIPTABLE NS_IMETHOD Retire(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retire(); } 
 
 #if 0
@@ -120,8 +120,8 @@ NS_IMETHODIMP _MYCLASS_::RegisterAlone(nsIDOMWindow *Window)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void RegisteringEnd (); */
-NS_IMETHODIMP _MYCLASS_::RegisteringEnd()
+/* void RegisteringEnd (in string ConfigFile); */
+NS_IMETHODIMP _MYCLASS_::RegisteringEnd(const char *ConfigFile)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

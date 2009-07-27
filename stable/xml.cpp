@@ -2194,7 +2194,8 @@ ERRBegin
 	Status = Convert_( Parse( Flow, XCallback ) );
 
 	if ( Status != xsOK ) {
-		FileName = XCallback.GuiltyFileName();
+		if ( &FileName != NULL )
+			FileName = XCallback.GuiltyFileName();
 
 		if ( Status == Convert_( sUserError ) )
 			Status = XCallback.RelayedStatus();

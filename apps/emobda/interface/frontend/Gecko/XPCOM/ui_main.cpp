@@ -37,26 +37,12 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 	nsxpcm::GetDOMInspector();
 }
 
-void ui_main::connect_command__::NSXPCMOnEvent( event__ )
+void ui_main::open_project_command__::NSXPCMOnEvent( event__ )
 {
-ERRProlog
-	csducl::type__ Type = csducl::t_Undefined;
-	str::string RemoteHostServiceOrLocalLibraryPath;
-	STR_BUFFER___ Buffer;
-ERRBegin
-	RemoteHostServiceOrLocalLibraryPath.Init();
-
-	if ( UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
-		UI().K().Init( Type, RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ) );
-		UI().ApplySession();
-	} else
-		UI().DefineSession();
-ERRErr
-ERREnd
-ERREpilog
+	UI().Alert( "Project opening !" );
 }
 
-void ui_main::disconnect_command__::NSXPCMOnEvent( event__ )
+void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 {
 	UI().K().reset();
 	UI().DefineSession();
@@ -136,6 +122,7 @@ static void Register_(
 	main__::broadcasters__ &UI,
 	nsIDOMDocument *Document )
 {
+	Register_( Functions, UI.ProjectOpened, Document, "bcrProjectOpened" );
 	Register_( Functions, UI.Connected, Document, "bcrConnected" );
 	Register_( Functions, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
 	Register_( Functions, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
@@ -183,8 +170,8 @@ static void Register_(
 	main__::commands__::backend__ &UI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Connect, Document, "cmdConnect" );
-	Register_( Functions, UI.Disconnect, Document, "cmdDisconnect" );
+	Register_( Functions, UI.OpenProject, Document, "cmdOpenProject" );
+	Register_( Functions, UI.CloseProject, Document, "cmdCloseProject" );
 }
 
 static void Register_(

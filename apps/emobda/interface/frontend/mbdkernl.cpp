@@ -21,6 +21,7 @@
 
 #include "mbdkernl.h"
 #include "flx.h"
+#include "flf.h"
 
 using namespace mbdkernl;
 using xml::writer_;
@@ -35,6 +36,9 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
+	CASE( UnableToOpenConfigFile );
+	CASE( NoConfigurationTree );
+	CASE( MissingBackendReference );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
 	CASE( NoDatabaseSelected );
@@ -56,37 +60,78 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
-void mbdkernl::kernel___::Init(
-	xtf::extended_text_iflow__ &BaseConfig,
-	xtf::extended_text_iflow__ &UserConfig )
+message__ mbdkernl::kernel___::Init( const char *ConfigFile )
 {
+	message__ Message = m_Undefined;
+ERRProlog
+	flf::file_iflow___ FIFlow;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	if ( FIFlow.Init( ConfigFile ) != fil::sSuccess ) {
+		Message = mUnableToOpenConfigFile;
+		ERRReturn;
+	}
+
+	FIFlow.EOFD( XTF_EOXT );
+
+	XFlow.Init( FIFlow );
+
+	Message = Init( XFlow );
+ERRErr
+ERREnd
+ERREpilog
+	return Message;
+}
+
+message__ mbdkernl::kernel___::Init( xtf::extended_text_iflow__ &Config )
+{
+	message__ Message = m_Undefined;
 ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
-	rgstry::nrow__ BaseRoot = NONE, UserRoot = NONE;
+	rgstry::nrow__ BaseRoot = NONE;
+	epeios::row__ PathErrorRow = NONE;
+	rgstry::erow__ AttributeEntryRow = NONE;
 ERRBegin
 	reset();
 
+	_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
+
 	_GlobalRegistry.Init();
 
-	BaseRoot = rgstry::Parse( BaseConfig, str::string( "." ), _GlobalRegistry, NONE );
-	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
+	BaseRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
+//	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
 
-	_Registry.Init( _GlobalRegistry, BaseRoot, UserRoot );
+	if ( ( BaseRoot = _GlobalRegistry.SearchPath( rgstry::term( "Configuration[target=\"emobda\"]" ), BaseRoot, AttributeEntryRow, PathErrorRow ) ) == NONE ) {
+		if ( PathErrorRow != NONE )
+			ERRc();
+
+		if ( AttributeEntryRow != NONE )
+			ERRc();
+
+		Message = mNoConfigurationTree;
+
+		ERRReturn;
+	}
+
+
+	_Registry.Init( _GlobalRegistry, BaseRoot, NONE );
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath );
+	if ( !GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
+		Message = mMissingBackendReference;
+		ERRReturn;
+	}
 
 	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
 	_backend___::Init( _ClientCore );
-
-	_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
 
 	_Records.Init();
 ERRErr
 ERREnd
 ERREpilog
+	return Message;
 }
 
 

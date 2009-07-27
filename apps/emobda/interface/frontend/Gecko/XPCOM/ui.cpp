@@ -391,6 +391,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		break;
 	case cSessionView:
 		FillTableMenu();
+		Main.Broadcasters.ProjectOpened.Enable();
 		Main.Broadcasters.Connected.Enable();
 		Main.Broadcasters.DatabaseOpened.Disable();
 		Main.Broadcasters.RecordSelected.Disable();

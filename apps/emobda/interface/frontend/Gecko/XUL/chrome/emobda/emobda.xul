@@ -34,7 +34,8 @@
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>
 	<broadcasterset>
-		<broadcaster id="bcrConnected"/>
+		<broadcaster id="bcrProjectOpened" disabled="true"/>
+		<broadcaster id="bcrConnected" disabled="true"/>
 		<broadcaster id="bcrDatabaseOpened"/>
 		<broadcaster id="bcrTableWithFieldSelected"/>
 		<broadcaster id="bcrRecordSelected"/>
@@ -44,8 +45,8 @@
 		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
 	</commandset>
 	<commandset>
-		<command id="cmdConnect"/>
-		<command id="cmdDisconnect" observes="bcrConnected"/>
+		<command id="cmdOpenProject"/>
+		<command id="cmdCloseProject" observes="bcrProjectOpened"/>
 	</commandset>
 	<commandset>
 		<command id="cmdCreateDatabase" observes="bcrConnected"/>
@@ -65,10 +66,10 @@
 		<key id="keyDOMInspector" modifiers="accel shift" key="d" command="cmdDOMInspector"/>
 	</keyset>
 	<menubar>
-		<menu label="Backend">
+		<menu label="Project">
 			<menupopup>
-				<menuitem label="Connect" command="cmdConnect"/>
-				<menuitem label="Disconnect" command="cmdDisconnect"/>
+				<menuitem label="Open" command="cmdOpenProject"/>
+				<menuitem label="Close" command="cmdCloseProject"/>
 			</menupopup>
 		</menu>
 		<menu label="Database">

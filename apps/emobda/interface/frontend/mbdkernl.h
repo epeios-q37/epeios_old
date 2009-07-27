@@ -49,6 +49,10 @@ namespace mbdkernl {
 
 	enum message__ 
 	{
+		mUnableToOpenConfigFile,
+		mNoConfigurationTree,
+		mMissingBackendReference,
+
 		mMissingDatabaseName,
 		mMissingDatabasePath,
 
@@ -115,8 +119,8 @@ namespace mbdkernl {
 		{
 			_backend___::reset( P );
 			_ClientCore.reset( P );
-			_GlobalRegistry.reset( P );
 			_Registry.reset( P );
+			_GlobalRegistry.reset( P );
 			_Language = lgg::l_undefined;
 			_Target.reset( P );
 			_Records.reset( P );
@@ -130,9 +134,8 @@ namespace mbdkernl {
 		{
 			reset();
 		}
-		void Init(
-			xtf::extended_text_iflow__ &BaseConfig,
-			xtf::extended_text_iflow__ &UserConfig );
+		message__ Init( const char *ConfigFile );
+		message__ Init( xtf::extended_text_iflow__ &Config );
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );

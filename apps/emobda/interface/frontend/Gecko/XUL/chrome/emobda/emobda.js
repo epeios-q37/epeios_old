@@ -95,7 +95,7 @@ function registeringStart ()
 function registeringEnd ()
  {
 	try {
-		emobdacom.RegisteringEnd();
+		emobdacom.RegisteringEnd( window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine).getArgument( 0 ) );
 	} catch (err ) {
 		alert( err );
 	}

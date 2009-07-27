@@ -1,6 +1,10 @@
 $Id$
 
-17/09/2009 :
+27/07/2009 :
+	- XML :
+		- Correction bogue plantage lorsque 'FileName' de 'Parse(...)' == 'NULL'.
+
+17/07/2009 :
 	- NSXPCM :
 		- Ajout 'menu__'.
 		- Ajout '(Get|Set)(Size|MaxLength)(...)' à 'textbox__'.
