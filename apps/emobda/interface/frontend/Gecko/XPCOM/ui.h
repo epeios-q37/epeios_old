@@ -35,12 +35,13 @@
 
 namespace ui {
 	using namespace ui_base;
-	using mbdtrnsnt::target__;
+	using mbdkernl::target__;
 	using mbdkernl::table__;
 	using mbdkernl::table_id__;
 	using mbdkernl::field__;
 	using mbdkernl::field_id__;
 	using mbdkernl::record__;
+	using mbdkernl::record_position__;
 
 	typedef mbdkernl::message__ message__;	// To resolve ambiguity.
 	typedef mbdkernl::kernel___ _kernel___;
@@ -409,7 +410,7 @@ namespace ui {
 		}
 		void DefineStructureItem( void )
 		{
-			target__ Target = _K().StructureManagement().Target;
+			target__ Target = _K().Target();
 
 			if ( Target.Field != UNDEFINED_FIELD )
 				DefineField();
@@ -473,10 +474,7 @@ namespace ui {
 
 			return true;
 		}
-		bso::bool__ GetSelectedStructureItem( target__ &Target );
 		void FillTableMenu( void );
-		void FillStructureView( void );
-		void UpdateDecks( void );
 		void FillListView( void );
 		void FillRecordForm( void );
 		void FillRecordView( void );

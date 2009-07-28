@@ -96,6 +96,85 @@ namespace mbdkernl {
 			return _Transient.object();\
 		}\
 
+		struct target__ {
+		table__ Table;
+		field__ Field;
+		record__ Record;
+		record_position__ RecordPosition;
+		void reset( bso::bool__ = true )
+		{
+			Table = UNDEFINED_TABLE;
+			Field = UNDEFINED_FIELD;
+			Record = UNDEFINED_RECORD;
+			RecordPosition = UNDEFINED_RECORD_POSITION;
+
+		}
+		target__( void )
+		{
+			reset( false );
+		}
+		target__(
+			field__ Field,
+			table__ Table )
+		{
+			Set( Field, Table );
+		}
+		target__(
+			record__ Record,
+			record_position__ RecordPosition,
+			table__ Table )
+		{
+			Set( Record, RecordPosition, Table );
+		}
+		target__( table__ Table )
+		{
+			Set( Table );
+		}
+		void Set(
+			record__ Record,
+			record_position__ RecordPosition,
+			field__ Field,
+			table__ Table )
+		{
+			if ( ( Record != UNDEFINED_RECORD ) && ( Table == UNDEFINED_TABLE ) )
+				ERRu();
+
+			if ( ( Field != UNDEFINED_FIELD ) && ( Table == UNDEFINED_TABLE ) )
+				ERRu();
+
+			this->Record = Record;
+			this->RecordPosition = RecordPosition;
+			this->Field = Field;
+			this->Table = Table;
+		}
+		void Set(
+			record__ Record,
+			record_position__ RecordPosition,
+			table__ Table )
+		{
+			Set( Record, RecordPosition, UNDEFINED_FIELD, Table );
+		}
+		void Set(
+			record__ Record,
+			record_position__ RecordPosition )
+		{
+			Set( Record, RecordPosition, this->Table );
+		}
+		void Set(
+			field__ Field,
+			table__ Table )
+		{
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, Field, Table );
+		}
+		void Set( field__ Field )
+		{
+			Set( Field, this->Table );
+		}
+		void Set( table__ Table )
+		{
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, Table );
+		}
+	};
 
 	class kernel___
 	: private _backend___
@@ -184,10 +263,10 @@ namespace mbdkernl {
 			return _backend___::GetDatabaseInfos( Name, Comment );
 		}
 		table__ CreateOrModifyTable(
-			const str::string_ Name,
+			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
-			return _backend___::CreateOrModifyTable( StructureManagement().Target.Table, Name, Comment );
+			return _backend___::CreateOrModifyTable( _Target.Table, Name, Comment );
 		}
 		bso::bool__ GetTableInfos(
 			table__ Table,
@@ -209,13 +288,13 @@ namespace mbdkernl {
 				return false;
 		}
 		field__ CreateOrModifyField(
-			const str::string_ Name,
+			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
-			if ( StructureManagement().Target.Table == UNDEFINED_TABLE )
+			if ( _Target.Table == UNDEFINED_TABLE )
 				ERRu();
 
-			return AddOrModifyField( StructureManagement().Target.Field, StructureManagement().Target.Table, Name, Comment );
+			return AddOrModifyField( _Target.Field, _Target.Table, Name, Comment );
 		}
 		bso::bool__ GetFieldInfos(
 			field__ Field,

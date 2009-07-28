@@ -24,93 +24,7 @@
 
 #include "mbdbkd.h"
 
-// Only purpose is to dsign a record in a custom list.
-typedef bso::ulong__ record_position__;
-#define UNDEFINED_RECORD_POSITION	0
-
 namespace mbdtrnsnt {
-
-	using namespace mbdbkd;
-
-	struct target__ {
-		table__ Table;
-		field__ Field;
-		record__ Record;
-		record_position__ RecordPosition;
-		void reset( bso::bool__ = true )
-		{
-			Table = UNDEFINED_TABLE;
-			Field = UNDEFINED_FIELD;
-			Record = UNDEFINED_RECORD;
-			RecordPosition = UNDEFINED_RECORD_POSITION;
-
-		}
-		target__( void )
-		{
-			reset( false );
-		}
-		target__(
-			field__ Field,
-			table__ Table )
-		{
-			Set( Field, Table );
-		}
-		target__(
-			record__ Record,
-			record_position__ RecordPosition,
-			table__ Table )
-		{
-			Set( Record, RecordPosition, Table );
-		}
-		target__( table__ Table )
-		{
-			Set( Table );
-		}
-		void Set(
-			record__ Record,
-			record_position__ RecordPosition,
-			field__ Field,
-			table__ Table )
-		{
-			if ( ( Record != UNDEFINED_RECORD ) && ( Table == UNDEFINED_TABLE ) )
-				ERRu();
-
-			if ( ( Field != UNDEFINED_FIELD ) && ( Table == UNDEFINED_TABLE ) )
-				ERRu();
-
-			this->Record = Record;
-			this->RecordPosition = RecordPosition;
-			this->Field = Field;
-			this->Table = Table;
-		}
-		void Set(
-			record__ Record,
-			record_position__ RecordPosition,
-			table__ Table )
-		{
-			Set( Record, RecordPosition, UNDEFINED_FIELD, Table );
-		}
-		void Set(
-			record__ Record,
-			record_position__ RecordPosition )
-		{
-			Set( Record, RecordPosition, this->Table );
-		}
-		void Set(
-			field__ Field,
-			table__ Table )
-		{
-			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, Field, Table );
-		}
-		void Set( field__ Field )
-		{
-			Set( Field, this->Table );
-		}
-		void Set( table__ Table )
-		{
-			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, Table );
-		}
-	};
 
 	enum context__ {
 		cStructureManagement,
@@ -166,7 +80,6 @@ namespace mbdtrnsnt {
 	struct structure_management
 	: public _sms__
 	{
-		target__ Target;
 		void reset( bso::bool__ P = true )
 		{
 			_sms__::reset( P );

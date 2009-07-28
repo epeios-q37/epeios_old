@@ -51,43 +51,6 @@ ERREnd
 ERREpilog
 }
 
-bso::bool__ ui::ui___::GetSelectedStructureItem( target__ &Target )
-{
-	bso::bool__ Selected = false;
-ERRProlog
-	str::string Type, Row, TableRow;
-	field__ Field = UNDEFINED_FIELD;
-	table__ Table = UNDEFINED_TABLE;
-	ui_struct::browse_tree__ &Tree = Structure.BrowseTree;
-ERRBegin
-
-	if ( Tree.IsThereSelected() ) {
-		Type.Init();
-		Tree.GetCurrentItemAttribute( "Type", Type );
-
-		if ( Type == "Field" ) {
-			Row.Init();
-			Tree.GetCurrentItemAttribute( "Row", Row );
-			Field = mbdkernl::ExtractField( Row );
-
-			TableRow.Init();
-			Tree.GetCurrentItemAttribute( "TableRow", TableRow );
-			Table = mbdkernl::ExtractTable( TableRow );
-		} else if ( Type == "Table" ) {
-			Row.Init();
-			Tree.GetCurrentItemAttribute( "Row", Row );
-			Table = mbdkernl::ExtractTable( Row );
-		} else if ( Type != "Database" )
-			ERRc();
-
-		Selected = true;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Selected;
-}
-
 void ui::ui___::FillTableMenu( void )
 {
 ERRProlog
@@ -107,98 +70,6 @@ ERRBegin
 	Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/TableMenu.xsl" ), Structure.Document, Parameters ) );
 
 	Register_( Main.TableMenu.GetElement(), *this );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void ui::ui___::UpdateDecks( void )
-{
-ERRProlog
-	str::string Type;
-	str::string Name, Comment;
-	str::string Row;
-	epeios::row__ Error = NONE;
-ERRBegin
-	Name.Init();
-	Comment.Init();
-
-	if ( Structure.BrowseTree.GetCurrentIndex() != -1 ) {
-
-		Type.Init();
-		Structure.BrowseTree.GetCurrentItemAttribute( "Type", Type );
-		
-		if ( Type == "Database" ) {
-			if ( !_K().GetDatabaseInfos( Name, Comment ) )
-				ERRReturn;
-		} else if ( Type == "Table" ) {
-			table_id__ TableId = UNDEFINED_TABLE_ID;
-
-			Row.Init();
-			Structure.BrowseTree.GetCurrentItemAttribute( "Row", Row );
-
-			if ( !_K().GetTableInfos( mbdkernl::ExtractTable( Row ), Name, Comment, TableId ) )
-				ERRReturn;
-		} else if ( Type == "Field" ) {
-			field_id__ FieldId = UNDEFINED_FIELD_ID;
-			table__ Table = UNDEFINED_TABLE;
-			
-			Row.Init();
-			Structure.BrowseTree.GetCurrentItemAttribute( "Row", Row );
-
-			if ( !_K().GetFieldInfos( mbdkernl::ExtractField( Row ), Name, Comment, FieldId, Table ) )
-				ERRReturn;
-		}
-
-		Structure.NameTextbox.SetValue( Name );
-
-		Structure.CommentTextbox.SetValue( Comment );
-
-		if ( Type == "Database" ) {
-			Structure.Broadcasters.Database.Deletion.Enable();
-			Structure.Broadcasters.Database.Modification.Enable();
-
-			Structure.Broadcasters.Table.Creation.Enable();
-			Structure.Broadcasters.Table.Modification.Disable();
-			Structure.Broadcasters.Table.Creation.Disable();
-
-			Structure.Broadcasters.Field.Creation.Disable();
-			Structure.Broadcasters.Field.Modification.Disable();
-			Structure.Broadcasters.Field.Creation.Disable();
-
-			Structure.ActionDeck.SetSelectedPanel( Structure.DatabaseSelectionPanel );
-		} else if ( Type == "Table" ) {
-			Structure.Broadcasters.Database.Deletion.Disable();
-			Structure.Broadcasters.Database.Modification.Disable();
-
-			Structure.Broadcasters.Table.Creation.Enable();
-			Structure.Broadcasters.Table.Modification.Enable();
-			Structure.Broadcasters.Table.Creation.Enable();
-
-			Structure.Broadcasters.Field.Creation.Enable();
-			Structure.Broadcasters.Field.Modification.Disable();
-			Structure.Broadcasters.Field.Deletion.Disable();
-
-			Structure.ActionDeck.SetSelectedPanel( Structure.TableSelectionPanel );
-		}else if ( Type == "Field" ) {
-			Structure.Broadcasters.Database.Deletion.Disable();
-			Structure.Broadcasters.Database.Modification.Disable();
-
-			Structure.Broadcasters.Table.Creation.Disable();
-			Structure.Broadcasters.Table.Modification.Disable();
-			Structure.Broadcasters.Table.Creation.Disable();
-
-			Structure.Broadcasters.Field.Creation.Enable();
-			Structure.Broadcasters.Field.Modification.Enable();
-			Structure.Broadcasters.Field.Deletion.Enable();
-
-			Structure.ActionDeck.SetSelectedPanel( Structure.FieldSelectionPanel );
-		} else
-			ERRu();
-	} else {
-		Structure.ActionDeck.SetSelectedIndex( -1 );
-	}
-
 ERRErr
 ERREnd
 ERREpilog
@@ -270,114 +141,6 @@ ERREnd
 ERREpilog
 }
 
-static void SelectStructItem_(
-	const str::string_ &Type,
-	const str::string_ &Row,
-	nsIDOMNode *Root,
-	nsxpcm::tree__ &Tree )
-{
-ERRProlog
-	str::string RowBuffer, TypeBuffer;
-	nsxpcm::browser__ Browser;
-	nsIDOMNode *&Node = Root;
-ERRBegin
-	Browser.Init( Root );
-
-	TypeBuffer.Init();
-	RowBuffer.Init();
-
-	while ( ( ( Node = Browser.GetNext() ) != NULL )
-		&& ( ( nsxpcm::GetAttribute( Node, "Type", TypeBuffer ) != Type )
-		      || ( nsxpcm::GetAttribute( Node, "Row", RowBuffer ) != Row ) ) ) {
-		TypeBuffer.Init();
-		RowBuffer.Init();
-	}
-
-	if ( Node == NULL )
-		ERRc();
-
-	Tree.Select( Node );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-static inline void SelectStructItem_(
-	const char *Type,
-	const char *Row,
-	nsIDOMNode *Root,
-	nsxpcm::tree__ &Tree )
-{
-	SelectStructItem_( str::string( Type ), str::string( Row ), Root, Tree );
-}
-
-static inline void SelectStructItem_(
-	field__ Field,
-	nsIDOMNode *Root,
-	nsxpcm::tree__ &Tree )
-{
-	bso::integer_buffer__ Buffer;
-
-	SelectStructItem_( "Field", bso::Convert( **Field, Buffer ), Root, Tree );
-}
-
-static inline void SelectStructItem_(
-	table__ Table,
-	nsIDOMNode *Root,
-	nsxpcm::tree__ &Tree )
-{
-	bso::integer_buffer__ Buffer;
-
-	SelectStructItem_( "Table", bso::Convert( **Table, Buffer ), Root, Tree );
-}
-
-static inline void SelectStructItem_(
-	const target__ &Target,
-	nsIDOMNode *Root,
-	nsxpcm::tree__ &Tree )
-{
-	if ( Target.Field != UNDEFINED_FIELD )
-		SelectStructItem_( Target.Field, Root, Tree );
-	else  if ( Target.Table != UNDEFINED_TABLE )
-		SelectStructItem_( Target.Table, Root, Tree );
-}
-
-void ui::ui___::FillStructureView( void )
-{
-ERRProlog
-	nsxpcm::xslt_parameters Parameters;
-	str::string XML;
-	target__ Target;
-ERRBegin
-	if ( _K().GetTransientContext() == mbdtrnsnt::cStructureManagement )
-		Target = _K().StructureManagement().Target;
-	else
-		GetSelectedStructureItem( Target );
-
-	XML.Init();
-
-	_K().DumpAsXML( XML );
-
-	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
-
-	Parameters.Init();
-
-	nsxpcm::RemoveChildren( Structure.Items );	// Launch an event which reset '_Target'.
-
-	nsxpcm::AppendChild( Structure.Items, nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), Structure.Document, Parameters ) );
-
-	UpdateDecks();
-
-	Structure.Broadcasters.ItemEdition.Disable();
-
-	SelectStructItem_( _K().StructureManagement().Target, Structure.Items, Structure.BrowseTree );	// Launch an event which set '_Target'.
-
-	_K().ResetTransient();
-ERRErr
-ERREnd
-ERREpilog
-}
-
 void ui::ui___::_SwitchTo( context__ Context )
 {
 	switch ( Context ) {
@@ -399,7 +162,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Main.MainDeck.SetSelectedPanel( Main.Panels.Home );
 		break;
 	case cStructureView:
-		FillStructureView();
+		Structure.FillView();
 		FillTableMenu();
 		Main.Broadcasters.DatabaseOpened.Enable();
 		Structure.Broadcasters.ItemBrowsing.Enable();
@@ -407,7 +170,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Main.MainDeck.SetSelectedPanel( Main.Panels.StructureFormAndView );
 		break;
 	case cStructureItemView:
-		UpdateDecks();
+		Structure.UpdateDecks();
 		Structure.Broadcasters.ItemBrowsing.Enable();
 		Structure.Broadcasters.ItemEdition.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.StructureFormAndView );
@@ -573,20 +336,20 @@ void ui::ui___::ApplyStructureItem( void )
 {
 	target__ Target;
 
-	GetSelectedStructureItem( Target );
+	Structure.GetSelectedItem( Target );
 
 	if ( Target.Table == UNDEFINED_TABLE ) {
 		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsCreation )
 			ERRc();
 
-		K().StructureManagement().Target.Set( CreateOrModifyTable() );
+		K().Target().Set( CreateOrModifyTable() );
 	} else if ( Target.Field == UNDEFINED_FIELD ) {
 		switch ( K().StructureManagement().GetState() ) {
 		case mbdtrnsnt::smsCreation:
-			K().StructureManagement().Target.Set( CreateOrModifyField() );
+			K().Target().Set( CreateOrModifyField() );
 			break;
 		case mbdtrnsnt::smsModification:
-			K().StructureManagement().Target.Set( CreateOrModifyTable() );
+			K().Target().Set( CreateOrModifyTable() );
 			break;
 		case mbdtrnsnt::smsDuplication:
 			ERRc();
@@ -599,7 +362,7 @@ void ui::ui___::ApplyStructureItem( void )
 		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsModification )
 			ERRc();
 
-		K().StructureManagement().Target.Set( CreateOrModifyField() );
+		K().Target().Set( CreateOrModifyField() );
 	}
 
 	_SwitchTo( cStructureView );

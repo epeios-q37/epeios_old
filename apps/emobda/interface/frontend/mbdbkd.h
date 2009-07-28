@@ -44,6 +44,10 @@ namespace mbdbkd {
 	BKDACC_T16( record );
 #define UNDEFINED_RECORD	((mbdbkd::record__)BKDACC_UNDEFINED_ID16 )
 
+// Only purpose is to point to a record in a custom list.
+	typedef bso::ulong__ record_position__;
+#define UNDEFINED_RECORD_POSITION	0
+
 	class backend___
 	{
 	private:

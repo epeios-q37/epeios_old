@@ -62,12 +62,12 @@
 		<vbox flex="1">
 			<groupbox flex="1">
 				<vbox flex="1">
-					<tree id="browseTree" flex="1" hidecolumnpicker="true" seltype="single" observes="bcrItemBrowsing">
+					<tree id="treBrowse" flex="1" hidecolumnpicker="true" seltype="single" observes="bcrItemBrowsing">
 						<treecols>
 							<treecol primary="true" label="Name" flex="1"/>
 							<treecol label="Id"/>
 						</treecols>
-					  <treechildren id="items"/>
+					  <treechildren id="tchItems"/>
 					</tree>
 					<deck id="itemActionDeck">
 						<hbox id="databaseSelectionPanel" flex="1">
