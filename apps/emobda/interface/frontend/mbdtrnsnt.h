@@ -36,6 +36,8 @@ namespace mbdtrnsnt {
 		c_Undefined
 	};
 
+	const char *GetContextLabel( context__ Context );
+
 	template <typename e, e amount> struct _state__
 	{
 	private:

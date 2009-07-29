@@ -48,7 +48,6 @@ void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 	UI().DefineSession();
 }
 
-
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 	UI().CreateDatabase();

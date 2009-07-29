@@ -192,7 +192,7 @@ namespace ui {
 		{
 			K().Target().Set( Table );
 
-			FillTableMenu();
+			FillTableMenu( true );
 			ApplyQuery();
 		}
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );
@@ -245,6 +245,7 @@ namespace ui {
 		}
 		void DefineDatabase( void )
 		{
+			K().Target().reset();
 			_SwitchTo( cStructureView );
 		}
 		bso::bool__ GetSelectedBackend(
@@ -474,7 +475,7 @@ namespace ui {
 
 			return true;
 		}
-		void FillTableMenu( void );
+		void FillTableMenu( bso::bool__ ContextIsStandard );
 		void FillListView( void );
 		void FillRecordForm( void );
 		void FillRecordView( void );

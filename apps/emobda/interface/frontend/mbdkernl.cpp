@@ -468,9 +468,13 @@ static void Dump_(
 		PutId_( "Record", Target.Record, Writer );
 }
 
-void mbdkernl::kernel___::_DumpCurrent( writer_ &Writer )
+void mbdkernl::kernel___::_DumpCurrent(
+	writer_ &Writer,
+	bso::bool__ ContextIsStandard )
 {
 	Writer.PushTag( "Current" );
+
+	Writer.PutAttribute( "Context", ContextIsStandard ? "Standard" : "Special" );
 
 	Dump_( _Target, Writer );
 
@@ -586,7 +590,9 @@ ERREpilog
 }
 
 
-void mbdkernl::kernel___::DumpAsXML( str::string_ &XML )
+void mbdkernl::kernel___::DumpAsXML(
+	str::string_ &XML,
+	bso::bool__ ContextIsStandard )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
@@ -597,7 +603,7 @@ ERRBegin
 	Writer.Init( TFlow, true );
 
 	Writer.PushTag( "emobda" );
-	_DumpCurrent( Writer );
+	_DumpCurrent( Writer, ContextIsStandard );
 
 	_DumpAvailableDatabases( Writer );
 

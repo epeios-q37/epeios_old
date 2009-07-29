@@ -189,7 +189,9 @@ namespace mbdkernl {
 		transient__ _Transient;
 		records _Records;
 		target__ _Target;
-		void _DumpCurrent( xml::writer_ &Writer );
+		void _DumpCurrent(
+			xml::writer_ &Writer,
+			bso::bool__ ContextIsStandard );
 		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
@@ -396,7 +398,9 @@ namespace mbdkernl {
 		{
 			return GoToRecordNumber( _Records.Amount() );
 		}
-		void DumpAsXML( str::string_ &XML );
+		void DumpAsXML(
+			str::string_ &XML,
+			bso::bool__ ContextIsStandard );
 	};
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )

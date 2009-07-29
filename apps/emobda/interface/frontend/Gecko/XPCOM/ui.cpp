@@ -51,7 +51,7 @@ ERREnd
 ERREpilog
 }
 
-void ui::ui___::FillTableMenu( void )
+void ui::ui___::FillTableMenu( bso::bool__ ContextIsStandard )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
@@ -59,9 +59,9 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML );
+	_K().DumpAsXML( XML, ContextIsStandard );
 
-	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
+	nsxpcm::Log( XML );
 
 	Parameters.Init();
 
@@ -83,7 +83,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML );
+	_K().DumpAsXML( XML, true );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -107,7 +107,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML );
+	_K().DumpAsXML( XML, true );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -129,7 +129,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML );
+	_K().DumpAsXML( XML, true );
 
 	Parameters.Init();
 
@@ -145,7 +145,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 {
 	switch ( Context ) {
 	case cSessionForm:
-		FillTableMenu();
+		FillTableMenu( true );
 		Main.Broadcasters.Connected.Disable();
 		Main.Broadcasters.DatabaseOpened.Disable();
 		Main.Broadcasters.RecordSelected.Disable();
@@ -153,7 +153,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Main.MainDeck.SetSelectedPanel( Main.Panels.Home );
 		break;
 	case cSessionView:
-		FillTableMenu();
+		FillTableMenu( true );
 		Main.Broadcasters.ProjectOpened.Enable();
 		Main.Broadcasters.Connected.Enable();
 		Main.Broadcasters.DatabaseOpened.Disable();
@@ -163,7 +163,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		break;
 	case cStructureView:
 		Structure.FillView();
-		FillTableMenu();
+		FillTableMenu( false );
 		Main.Broadcasters.DatabaseOpened.Enable();
 		Structure.Broadcasters.ItemBrowsing.Enable();
 		Structure.Broadcasters.ItemEdition.Disable();
@@ -334,16 +334,12 @@ ERREpilog
 
 void ui::ui___::ApplyStructureItem( void )
 {
-	target__ Target;
-
-	Structure.GetSelectedItem( Target );
-
-	if ( Target.Table == UNDEFINED_TABLE ) {
+	if ( K().Target().Table == UNDEFINED_TABLE ) {
 		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsCreation )
 			ERRc();
 
 		K().Target().Set( CreateOrModifyTable() );
-	} else if ( Target.Field == UNDEFINED_FIELD ) {
+	} else if ( K().Target().Field == UNDEFINED_FIELD ) {
 		switch ( K().StructureManagement().GetState() ) {
 		case mbdtrnsnt::smsCreation:
 			K().Target().Set( CreateOrModifyField() );
@@ -397,7 +393,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	K().DumpAsXML( XML );
+	K().DumpAsXML( XML, false );
 
 	Parameters.Init();
 

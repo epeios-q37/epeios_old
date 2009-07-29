@@ -22,6 +22,21 @@
 <!-- $Id$ -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<xsl:template name="GetContext">
+		<xsl:value-of select="/emobda/Current/@Context"/>
+	</xsl:template>
+	<xsl:template name="IsContext">
+		<xsl:param name="ContextLabel"/>
+		<xsl:variable name="Context">
+			<xsl:call-template name="GetContext"/>
+		</xsl:variable>
+		<xsl:value-of select="$Context=$ContextLabel"/>
+	</xsl:template>
+	<xsl:template name="IsContextStandard">
+		<xsl:call-template name="IsContext">
+			<xsl:with-param name="ContextLabel">Standard</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
 	<xsl:template name="GetCurrentTable">
 		<xsl:value-of select="/emobda/Current/@Table"/>
 	</xsl:template>

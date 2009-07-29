@@ -22,3 +22,27 @@
 #include "mbdtrnsnt.h"
 
 using namespace mbdtrnsnt;
+
+#define CASE( context )	\
+case c##context:\
+	Label = #context;\
+	break
+
+const char *mbdtrnsnt::GetContextLabel( context__ Context )
+{
+	const char *Label = NULL;
+
+	switch( Context ){
+	CASE( StructureManagement );
+	CASE( DatabaseIdentification );
+	CASE( DatabaseSelection );
+	CASE( BackendSelection );
+	CASE( RecordInput );
+	default:
+		ERRu();
+	}
+
+	return Label;
+}
+
+
