@@ -138,7 +138,7 @@ ERREpilog
 
 NS_IMETHODIMP emobdacom::Register( nsIDOMWindow *Window )
 {
-	// Don't know how to get a 'window' fro its 'document'.
+	// Don't know how to get a 'window' from its 'document'.
 RP
 RBB
 	_BaseRegistration( Window );

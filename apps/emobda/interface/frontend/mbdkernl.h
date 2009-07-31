@@ -51,7 +51,7 @@ namespace mbdkernl {
 	{
 		mUnableToOpenConfigFile,
 		mNoConfigurationTree,
-		mMissingBackendReference,
+		mUnableToOpenDatabase,
 
 		mMissingDatabaseName,
 		mMissingDatabasePath,
@@ -97,17 +97,18 @@ namespace mbdkernl {
 		}\
 
 		struct target__ {
-		table__ Table;
-		field__ Field;
-		record__ Record;
-		record_position__ RecordPosition;
+			bso::bool__ Database;	// At 'true' if database opened, 'false' otherwise.
+			table__ Table;
+			field__ Field;
+			record__ Record;
+			record_position__ RecordPosition;
 		void reset( bso::bool__ = true )
 		{
+			Database = false;
 			Table = UNDEFINED_TABLE;
 			Field = UNDEFINED_FIELD;
 			Record = UNDEFINED_RECORD;
 			RecordPosition = UNDEFINED_RECORD_POSITION;
-
 		}
 		target__( void )
 		{
@@ -134,7 +135,8 @@ namespace mbdkernl {
 			record__ Record,
 			record_position__ RecordPosition,
 			field__ Field,
-			table__ Table )
+			table__ Table,
+			bso::bool__ Database )
 		{
 			if ( ( Record != UNDEFINED_RECORD ) && ( Table == UNDEFINED_TABLE ) )
 				ERRu();
@@ -142,17 +144,21 @@ namespace mbdkernl {
 			if ( ( Field != UNDEFINED_FIELD ) && ( Table == UNDEFINED_TABLE ) )
 				ERRu();
 
+			if ( Table != UNDEFINED_TABLE && !Database )
+				ERRu();
+
 			this->Record = Record;
 			this->RecordPosition = RecordPosition;
 			this->Field = Field;
 			this->Table = Table;
+			this->Database = Database;
 		}
 		void Set(
 			record__ Record,
 			record_position__ RecordPosition,
 			table__ Table )
 		{
-			Set( Record, RecordPosition, UNDEFINED_FIELD, Table );
+			Set( Record, RecordPosition, UNDEFINED_FIELD, Table, Database );
 		}
 		void Set(
 			record__ Record,
@@ -164,7 +170,7 @@ namespace mbdkernl {
 			field__ Field,
 			table__ Table )
 		{
-			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, Field, Table );
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, Field, Table, Database );
 		}
 		void Set( field__ Field )
 		{
@@ -172,7 +178,11 @@ namespace mbdkernl {
 		}
 		void Set( table__ Table )
 		{
-			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, Table );
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, Table, Database );
+		}
+		void Set( bso::bool__ Database )
+		{
+			Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION, UNDEFINED_FIELD, UNDEFINED_TABLE, Database );
 		}
 	};
 
@@ -244,7 +254,7 @@ namespace mbdkernl {
 		{
 			if ( _backend___::OpenDatabase( Path ) )
 			{
-				_Target.Set( UNDEFINED_TABLE );
+				_Target.Set( true );
 				return true;
 			} else
 				return false;

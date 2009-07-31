@@ -35,6 +35,27 @@
 
 namespace mbdbsc {
 
+	// If modified, modify 'GetFieldTypeLabel' and 'MBDBSC_USING_FT' according !
+	enum field_type__ {
+		ftAlphanumeric,
+		ftNumeric,
+		ftRelational,	// NOTA : Not implemented yet.
+		ft_amount,
+		ft_Undefined
+	};
+
+#define MBDBSC__USING_FT( type )	using mbdbsc::ft##type;
+
+#define MBDBSC_USING_FT\
+	MBDBSC__USING_FT( Alphanumeric )\
+	MBDBSC__USING_FT( Numeric )\
+	MBDBSC__USING_FT( Relational )\
+	MBDBSC__USING_FT( Alphanumeric )\
+	MBDBSC__USING_FT( _Undefined )\
+
+
+	const char *GetFieldTypeLabel( field_type__ Fieldtype );
+
 	const str::string_ &BuildLocatedContentRootFileName(
 		const str::string_ &Location,
 		str::string_ &LocalizedRootFileName );

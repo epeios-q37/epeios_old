@@ -48,7 +48,7 @@
 		</xsl:variable>
 		<xsl:apply-templates select="Table">
 			<xsl:with-param name="CurrentTable">
-				<xsl:if test="$ContextIsStandard=true()">
+				<xsl:if test="$ContextIsStandard=string(true())">
 					<xsl:call-template name="GetCurrentTable"/>
 				</xsl:if>
 			</xsl:with-param>

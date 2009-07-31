@@ -493,7 +493,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Field.Init( Name, Comment );
+	Field.Init( mbdbsc::ftAlphanumeric, Name, Comment );
 
 	if ( FieldRow != NONE )
 		Manager.ModifyField( FieldRow, Field );

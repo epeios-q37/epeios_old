@@ -1,5 +1,9 @@
 $Id$
 
+31/7/2009 :
+	- NSXPCM :
+		- Désactivation des 'form history's sous Linux, car plantage.
+
 27/07/2009 :
 	- XML :
 		- Correction bogue plantage lorsque 'FileName' de 'Parse(...)' == 'NULL'.

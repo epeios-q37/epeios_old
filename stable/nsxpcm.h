@@ -60,6 +60,7 @@ extern class ttr_tutor &NSXPCMTutor;
 
 /*$BEGIN$*/
 
+#include "cpe.h"
 #include "err.h"
 #include "flw.h"
 #include "epeios.h"
@@ -104,6 +105,14 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMDocumentFragment.h"
 
 #include "commandhandler/nsICommandManager.h"
+
+#undef NSXPCM__ENABLE_FORMHISTORY
+
+#ifdef NSXPCM_FORCE_FORMHISTORY
+#	define NSXPCM__ENABLE_FORMHISTORY
+#elif !defined( CPE__T_LINUX )	// Problème avec les 'form history' sous Linux, d'où désactivation jusqu'à problème résolu.
+#	define NSXPCM__ENABLE_FORMHISTORY
+#endif
 
 #ifdef NSXPCM_BKD
 #	define NSXPCM__BKD

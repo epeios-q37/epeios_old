@@ -34,12 +34,16 @@ namespace mbdfld {
 	using mbdbsc::field_row__;
 	using mbdbsc::table_row__;
 
+	using mbdbsc::field_type__;
 	using mbdbsc::table_id__;
 	using mbdbsc::field_id__;
+
+	MBDBSC_USING_FT;
 
 	class field_core_ {
 	public:
 		struct s {
+			field_type__ Type;
 			str::string_::s Name, Comment;
 			field_id__ Id;
 			table_row__ TableRow;
@@ -55,6 +59,7 @@ namespace mbdfld {
 			Name.reset( P );
 			Comment.reset( P );
 
+			S_.Type = ft_Undefined;
 			S_.Id = MBDBSC_UNDEFINED_FIELD_ID;
 			S_.TableRow = NONE;
 		}
@@ -68,6 +73,7 @@ namespace mbdfld {
 			Name = FC.Name;
 			Comment = FC.Comment;
 
+			S_.Type = FC.S_.Type;
 			S_.Id = FC.S_.Id;
 			S_.TableRow = FC.S_.TableRow;
 
@@ -81,6 +87,7 @@ namespace mbdfld {
 			Comment.Init();
 		}
 		void Init(
+			field_type__ Type,
 			const str::string_ &Name,
 			const str::string_ &Comment,
 			field_id__ Id = MBDBSC_UNDEFINED_FIELD_ID,
@@ -99,6 +106,9 @@ namespace mbdfld {
 			const str::string_ &Name,
 			const str::string_ &Comment )
 		{
+			if ( S_.Type == ft_Undefined )
+				ERRu();
+
 			if ( S_.TableRow == NONE )
 				ERRu();
 
@@ -108,6 +118,7 @@ namespace mbdfld {
 			this->Name = Name;
 			this->Comment = Comment;
 		}
+		E_RWDISCLOSE_( field_type__, Type );
 		E_RWDISCLOSE_( field_id__, Id );
 		E_RWDISCLOSE_( table_row__, TableRow );
 	};

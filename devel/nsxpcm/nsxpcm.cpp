@@ -55,8 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "cpe.h"
-
 #include "nsMemory.h"
 #include "dom/nsIDOMEvent.h"
 #include "dom/nsIDOMEventTarget.h"
@@ -72,10 +70,13 @@ public:
 #include "nsIDirectoryService.h"
 #include "satchel/nsIFormHistory.h"
 
+#if defined NSXPCM__ENABLE_FORMHISTORY
+#	define ENABLE_FORMHISTORY
+#endif
 
 using namespace nsxpcm;
 
-extern nsIDOMWindow *nsxpcm::MasterWindow = NULL;
+nsIDOMWindow *nsxpcm::MasterWindow = NULL;
 static nsIDOMWindowInternal *JSConsoleWindow_ = NULL;
 static nsCOMPtr<nsIFormHistory2> FormHistory_;
 #ifdef CPE__T_MT
@@ -1329,17 +1330,21 @@ void nsxpcm::AddFormHistoryEntry(
 	const str::string_ &RawName,
 	const str::string_ &RawEntry )
 {
+#ifdef ENABLE_FORMHISTORY
 	nsEmbedString Name, Entry;
 
 	nsxpcm::Transform( RawName, Name );
 	nsxpcm::Transform( RawEntry, Entry );
 
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Lock( FormHistoryMutex_ );
-#endif
+#	endif
 	FormHistory_->AddEntry( Name, Entry );
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Unlock( FormHistoryMutex_ );
+#	endif
+#else
+	ERRl();
 #endif
 }
 
@@ -1347,32 +1352,40 @@ void nsxpcm::RemoveFormHistoryEntry(
 	const str::string_ &RawName,
 	const str::string_ &RawEntry )
 {
+#ifdef ENABLE_FORMHISTORY
 	nsEmbedString Name, Entry;
 
 	nsxpcm::Transform( RawName, Name );
 	nsxpcm::Transform( RawEntry, Entry );
 
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Lock( FormHistoryMutex_ );
-#endif
+#	endif
 	FormHistory_->RemoveEntry( Name, Entry );
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Unlock( FormHistoryMutex_ );
+#	endif
+#else
+	ERRl();
 #endif
 }
 
 void nsxpcm::RemoveEntriesForName( const str::string_ &RawName )
 {
+#ifdef ENABLE_FORMHISTORY
 	nsEmbedString Name;
 
 	nsxpcm::Transform( RawName, Name );
 
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Lock( FormHistoryMutex_ );
-#endif
+#	endif
 	FormHistory_->RemoveEntriesForName( Name );
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 	mtx::Unlock( FormHistoryMutex_ );
+#	endif
+#else
+	ERRl();
 #endif
 }
 
@@ -1388,10 +1401,11 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-
+#ifdef ENABLE_FORMHISTORY
 		nsxpcm::GetService( "@mozilla.org/satchel/form-history;1", FormHistory_ );
-#ifdef CPE__T_MT
+#	ifdef CPE__T_MT
 		FormHistoryMutex_ = mtx::Create( mtx::mOwned );
+#	endif
 #endif
 	}
 	~nsxpcmpersonnalization( void )

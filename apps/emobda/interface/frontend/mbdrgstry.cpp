@@ -37,6 +37,10 @@ const char *mbdrgstry::paths::backend::Type						= BACKEND "@Type";
 const char *mbdrgstry::paths::backend::AccessMode				= BACKEND "@AccessMode";
 const char *mbdrgstry::paths::backend::Configuration			= BACKEND "Configuration";
 
+#define DATABASE	PARAMETERS "Database" S
+const char *mbdrgstry::paths::database::Path					= DATABASE "Path";
+const char *mbdrgstry::paths::database::AccessMode				= DATABASE "@AccessMode";
+
 bso::bool__ mbdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,

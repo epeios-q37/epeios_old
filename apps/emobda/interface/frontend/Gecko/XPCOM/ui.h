@@ -316,7 +316,7 @@ namespace ui {
 
 			if ( GetSelectedDatabase( Path ) ) {
 				if ( _K().OpenDatabase( Path ) ) {
-					_SwitchTo( cStructureView );
+					_SwitchTo( cSessionView );
 				}
 			}
 		ERRErr

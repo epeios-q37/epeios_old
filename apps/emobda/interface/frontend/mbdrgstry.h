@@ -39,6 +39,11 @@ namespace mbdrgstry {
 				*AccessMode,
 				*Type;
 		} Backend;
+		static struct database {
+			static const char
+				* Path,
+				* AccessMode;
+		} Database;
 	};
 
 	typedef rgstry::overloaded_unique_registry___ registry___;

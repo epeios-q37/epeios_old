@@ -38,7 +38,7 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 	switch ( MessageId ) {
 	CASE( UnableToOpenConfigFile );
 	CASE( NoConfigurationTree );
-	CASE( MissingBackendReference );
+	CASE( UnableToOpenDatabase );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
 	CASE( NoDatabaseSelected );
@@ -87,7 +87,7 @@ message__ mbdkernl::kernel___::Init( xtf::extended_text_iflow__ &Config )
 {
 	message__ Message = m_Undefined;
 ERRProlog
-	str::string RemoteHostServiceOrLocalLibraryPath;
+	str::string RemoteHostServiceOrLocalLibraryPath, DatabasePath;
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 	rgstry::nrow__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
@@ -119,13 +119,20 @@ ERRBegin
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	if ( !GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
-		Message = mMissingBackendReference;
-		ERRReturn;
-	}
+	if ( GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
 
-	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
-	_backend___::Init( _ClientCore );
+		_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
+		_backend___::Init( _ClientCore );
+
+		DatabasePath.Init();
+
+		if ( GetRegistryValue( mbdrgstry::paths::Database.Path, DatabasePath ) ) {
+			if ( !OpenDatabase( DatabasePath ) ) {
+				Message = mUnableToOpenDatabase;
+				ERRReturn;
+			}
+		}
+	}
 
 	_Records.Init();
 ERRErr

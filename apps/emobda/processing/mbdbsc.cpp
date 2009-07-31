@@ -25,6 +25,32 @@
 
 using namespace mbdbsc;
 
+#define CASE( label )\
+	case ft##label:\
+	Label = #label;\
+	break;
+
+
+const char *mbdbsc::GetFieldTypeLabel( field_type__ FieldType )
+{
+	const char *Label = NULL;
+
+	if ( FieldType == ftRelational )	// Field type not yet implemented.
+		ERRl();
+
+	switch ( FieldType ) {
+		CASE( Alphanumeric );
+		CASE( Numeric );
+		CASE( Relational );
+		default:
+			ERRu();
+			break;
+	}
+
+	return Label;
+}
+
+
 static const str::string_ &BuildLocatedRootFileName_(
 	const str::string_ &Location,
 	const char *RootFileName,
