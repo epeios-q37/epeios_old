@@ -66,7 +66,7 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 #co += -DMTX_NO_ATOMIC_OPERATIONS
-co += -fshort-wchar
+#co += -fshort-wchar
 co += -include "mozilla-config.h"
 ifeq ("$(DEB_BUILD_ARCH)","armel")
 sdk=$(arm-sdk)
