@@ -25,25 +25,36 @@
 #include "rgstry.h"
 
 #define MBDRGSTRY_PATH_SEPARATOR	"/"	// Path item separator
-#define MBDRGSTRY_PATH_TAG			"$"	// Joker for tags.
 
-#define MBDRGSTRY_PARAMETERS_PATH	 "Parameters" MBDRGSTRY_PATH_SEPARATOR
+#define MBDRGSTRY_PATH_TAG_CHAR		'$'	// Joker for tags as character. NOTA : if modified, modify below too !
+#define MBDRGSTRY_PATH_TAG_STRING	"$"	// Joker for tags as string
+
+#define MBDRGSTRY_PARAMETERS_PATH	"Parameters" MBDRGSTRY_PATH_SEPARATOR
+#define MBDRGSTRY_PROFILES_PATH		"Profiles" MBDRGSTRY_PATH_SEPARATOR
 
 namespace mbdrgstry {
 
 	struct paths {
-		static struct backend {
-			static const char
-				*Location,
-				*Configuration,
-				*AccessMode,
-				*Type;
-		} Backend;
-		static struct database {
-			static const char
-				* Path,
-				* AccessMode;
-		} Database;
+		static struct parameters {
+			static struct backend {
+				static const char
+					*Location,
+					*Configuration,
+					*AccessMode,
+					*Type;
+			} Backend;
+			static struct database {
+				static const char
+					* Path,
+					* AccessMode;
+			} Database;
+		} Parameters;
+		static struct profiles {
+			static const char *CurrentTable;
+			static const char *FallbackProfile;
+			static const char *DefaultProfile;
+			static const char *UserProfile;
+		} Profiles;
 	};
 
 	typedef rgstry::overloaded_unique_registry___ registry___;
@@ -54,6 +65,25 @@ namespace mbdrgstry {
 		rgstry::registry_ &Registry,
 		rgstry::nrow__ &RegistryRoot,
 		txf::text_oflow__ &Flow );
+
+	inline bso::bool__ GetPathValue(
+		const char *Path,
+		const registry___ &Registry,
+		str::string_ &Value )
+	{
+		return Registry.GetPathValue( rgstry::term( Path ), Value );
+	}
+
+	bso::bool__ GetProfileValue(
+		const char *Path,
+		const registry___ &Registry,
+		str::string_ &Value );
+
+	bso::bool__ GetProfileIntegerValue(
+		const char *Path,
+		const registry___ &Registry,
+		bso::ulong__ &Id );
+
 }
 
 #endif

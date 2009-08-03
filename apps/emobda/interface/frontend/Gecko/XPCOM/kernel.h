@@ -96,8 +96,14 @@ namespace kernel {
 
 			if ( ( Message = _kernel___::Init( ConfigFile ) ) != mbdkernl::m_Undefined )
 				Alert( Message );
-			else
-				ApplySession();
+			else {
+				table__ Table;
+
+				if ( GetCurrentTable( Table ) )
+					SelectTable( Table );
+				else
+					ApplySession();
+			}
 		}
 		void Expose( void )
 		{

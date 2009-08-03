@@ -192,7 +192,6 @@ namespace ui {
 		{
 			K().Target().Set( Table );
 
-			FillTableMenu( true );
 			ApplyQuery();
 		}
 		void SelectTable( ui_main::table_menu_item__ &MenuItem );

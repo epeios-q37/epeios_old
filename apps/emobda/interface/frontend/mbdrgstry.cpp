@@ -26,20 +26,32 @@
 
 using namespace mbdrgstry;
 
-#define S	MBDRGSTRY_PATH_SEPARATOR 
-#define T	MBDRGSTRY_PATH_TAG 
+#define S		MBDRGSTRY_PATH_SEPARATOR 
+#define T		MBDRGSTRY_PATH_TAG_STRING 
+#define CTAG	MBDRGSTRY_PATH_TAG_CHAR
 
 #define PARAMETERS	MBDRGSTRY_PARAMETERS_PATH
 
 #define BACKEND		PARAMETERS "Backend" S
-const char *mbdrgstry::paths::backend::Location					= BACKEND "Location";
-const char *mbdrgstry::paths::backend::Type						= BACKEND "@Type";
-const char *mbdrgstry::paths::backend::AccessMode				= BACKEND "@AccessMode";
-const char *mbdrgstry::paths::backend::Configuration			= BACKEND "Configuration";
+const char *mbdrgstry::paths::parameters::backend::Location					= BACKEND "Location";
+const char *mbdrgstry::paths::parameters::backend::Type						= BACKEND "@Type";
+const char *mbdrgstry::paths::parameters::backend::AccessMode				= BACKEND "@AccessMode";
+const char *mbdrgstry::paths::parameters::backend::Configuration			= BACKEND "Configuration";
 
 #define DATABASE	PARAMETERS "Database" S
-const char *mbdrgstry::paths::database::Path					= DATABASE "Path";
-const char *mbdrgstry::paths::database::AccessMode				= DATABASE "@AccessMode";
+const char *mbdrgstry::paths::parameters::database::Path					= DATABASE "Path";
+const char *mbdrgstry::paths::parameters::database::AccessMode				= DATABASE "@AccessMode";
+
+
+#define PROFILES	MBDRGSTRY_PROFILES_PATH
+#define PROFILE		PROFILES "Profile[name=\"" T "\"]" S
+
+const char *mbdrgstry::paths::profiles::CurrentTable						= PROFILE "Table";
+const char *mbdrgstry::paths::profiles::FallbackProfile						= PROFILES "Fallback";
+const char *mbdrgstry::paths::profiles::DefaultProfile						= PROFILES "Default";
+const char *mbdrgstry::paths::profiles::UserProfile							= PROFILES "User";
+
+
 
 bso::bool__ mbdrgstry::FillRegistry(
 	const char *FileName,
@@ -108,3 +120,100 @@ ERREpilog
 	return Success;
 }
 
+static inline bso::bool__ GetFallbackProfileName_(
+	const registry___ &Registry,
+	str::string_ &Name )
+{
+	return GetPathValue( paths::Profiles.FallbackProfile, Registry, Name );
+}
+
+static inline bso::bool__ GetDefaultProfileName_(
+	const registry___ &Registry,
+	str::string_ &Name )
+{
+	return GetPathValue( paths::Profiles.DefaultProfile, Registry, Name );
+}
+
+static inline bso::bool__ GetUserProfileName_(
+	const registry___ &Registry,
+	str::string_ &Name )
+{
+	return GetPathValue( paths::Profiles.UserProfile, Registry, Name );
+}
+
+static bso::bool__ GetProfileValue_(
+	const char *Path,
+	const str::string_ &ProfileName,
+	const registry___ &Registry,
+	str::string_ &Value )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	rgstry::term WorkPath;
+ERRBegin
+	if ( ProfileName.Amount() == 0 )
+		ERRReturn;
+
+	WorkPath.Init( Path );
+
+	WorkPath.Replace( CTAG, 1, ProfileName );
+
+	Success = Registry.GetPathValue( WorkPath, Value );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+bso::bool__ mbdrgstry::GetProfileValue(
+	const char *Path,
+	const registry___ &Registry,
+	str::string_ &Value )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string ProfileName;
+ERRBegin
+	ProfileName.Init();
+
+	if ( GetUserProfileName_( Registry, ProfileName ) )
+		if ( Success = GetProfileValue_( Path, ProfileName, Registry, Value ) )
+			ERRReturn;
+
+	ProfileName.Init();
+
+	if ( GetDefaultProfileName_( Registry, ProfileName ) )
+		if ( Success = GetProfileValue_( Path, ProfileName, Registry, Value ) )
+			ERRReturn;
+
+	ProfileName.Init();
+
+	if ( GetFallbackProfileName_( Registry, ProfileName ) )
+		Success = GetProfileValue_( Path, ProfileName, Registry, Value );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ mbdrgstry::GetProfileIntegerValue(
+	const char *Path,
+	const registry___ &Registry,
+	bso::ulong__ &Id )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string Value;
+	epeios::row__ Error = NONE;
+ERRBegin
+	Value.Init();
+
+	if ( GetProfileValue( Path, Registry, Value ) ) {
+		Id = Value.ToUL( &Error );
+
+		Success = Error == NONE;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}

@@ -1,6 +1,11 @@
 $Id$
 
-31/7/2009 :
+03/08/2009 :
+	- STR :
+		- Ajout méthode 'Replace()' (remplacement d'une balise).
+		- Retrait 'namespace str {...}' dans le '.cpp' à des fins de normalisation.
+
+31/07/2009 :
 	- NSXPCM :
 		- Désactivation des 'form history's sous Linux, car plantage.
 

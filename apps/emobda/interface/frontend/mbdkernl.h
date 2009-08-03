@@ -411,6 +411,11 @@ namespace mbdkernl {
 		void DumpAsXML(
 			str::string_ &XML,
 			bso::bool__ ContextIsStandard );
+		bso::bool__ GetCurrentTable( table__ &Table )
+		{
+			return mbdrgstry::GetProfileIntegerValue( mbdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
+		}
+
 	};
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )

@@ -177,6 +177,10 @@ void ui::ui___::_SwitchTo( context__ Context )
 		break;
 	case cListView:
 		FillListView();
+		FillTableMenu( true );
+		Main.Broadcasters.ProjectOpened.Enable();
+		Main.Broadcasters.Connected.Enable();
+		Main.Broadcasters.DatabaseOpened.Enable( K().Target().Database );
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.ListView );
 		ListView.ContentTree.ClearSelection();

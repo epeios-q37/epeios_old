@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace str;
+
 static const char Table_[] = "AAAAAAãCEEEE¦-+¤DNUUUUOÎOUUUUYÌ¯aaaaaaµceeeeiiiionooooo¸°uuuuy¦y";
 
 static inline int GetAccentFree__( int C )
@@ -98,338 +100,359 @@ static bso::ubyte__ Convert_( bso::char__ C )
 		return tolower( C )- 'a' + 10;
 }
 
-namespace str {
+template <class ostream> static void Put_(
+	const string_ &String,
+	ostream &OStream )		// Can be optimized by using a buffer.
+{
+	epeios::size__ Amount = String.Amount();
 
-	template <class ostream> static void Put_(
-		const string_ &String,
-		ostream &OStream )		// Can be optimized by using a buffer.
+	if ( Amount != 0 )
 	{
-		epeios::size__ Amount = String.Amount();
-
-		if ( Amount != 0 )
-		{
 #ifdef STR_DBG
-			flw::datum__ C;
+		flw::datum__ C;
 #endif
-			epeios::row_t__ P = 0;
+		epeios::row_t__ P = 0;
 
 
-			while ( P < Amount ) {
+		while ( P < Amount ) {
 #ifdef STR_DBG
-				OStream.Put( C = (flw::datum__)String.Get( P++ ) );
+			OStream.Put( C = (flw::datum__)String.Get( P++ ) );
 
-				if ( C == 0 )
-					ERRu();
+			if ( C == 0 )
+				ERRu();
 #else
-				OStream.Put( (flw::datum__)String.Get( P++ ) );
+			OStream.Put( (flw::datum__)String.Get( P++ ) );
 #endif
-			}
 		}
 	}
+}
 
 
-	flw::oflow__ &operator <<(
-		flw::oflow__ &OStream,
-		const string_ &String )
-	{
-		Put_( String, OStream );
+flw::oflow__ &str::operator <<(
+	flw::oflow__ &OStream,
+	const string_ &String )
+{
+	Put_( String, OStream );
 
-		OStream.Put( 0 );
+	OStream.Put( 0 );
 
-		return OStream;
-	}
+	return OStream;
+}
 
 
-	flw::iflow__ &operator >>(
-		flw::iflow__ &IStream,
-		string_ &S )
-	{
-		char C;
+flw::iflow__ &str::operator >>(
+	flw::iflow__ &IStream,
+	string_ &S )
+{
+	char C;
 
-		while( ( C = (char)IStream.Get() ) != 0 )
-			S.Append( C );
+	while( ( C = (char)IStream.Get() ) != 0 )
+		S.Append( C );
 
-		return IStream;
-	}
-		
+	return IStream;
+}
+	
 
-	txf::text_oflow__ &operator <<(
-		txf::text_oflow__ &OStream,
-		const string_ &String )
-	{
-		Put_( String, OStream );
+txf::text_oflow__ &str::operator <<(
+	txf::text_oflow__ &OStream,
+	const string_ &String )
+{
+	Put_( String, OStream );
 
-		return OStream;
-	}
+	return OStream;
+}
 
-	// Convertit le contenu de 'String' en majuscule.
-	string_ &ToUpper(
-		string_ &String,
-		bso::bool__ DontHandleAccent )
-	{
-		epeios::row_t__ P = String.Amount();
+// Convertit le contenu de 'String' en majuscule.
+string_ &str::ToUpper(
+	string_ &String,
+	bso::bool__ DontHandleAccent )
+{
+	epeios::row_t__ P = String.Amount();
 
-		if ( DontHandleAccent )
-			while ( P-- )
-				String.Store( (char)toupper( String.Get( P ) ) , P );
-		else
-			while ( P-- )
-				String.Store( (char)toxupper_( String.Get( P ) ) , P );
+	if ( DontHandleAccent )
+		while ( P-- )
+			String.Store( (char)toupper( String.Get( P ) ) , P );
+	else
+		while ( P-- )
+			String.Store( (char)toxupper_( String.Get( P ) ) , P );
 
-		return String;
-	}
+	return String;
+}
 
-	// Convertit le contenu de 'String' en minuscule.
-	string_ &ToLower(
-		string_ &String,
-		bso::bool__ DontHandleAccent )
-	{
-		epeios::row_t__ P = String.Amount();
+// Convertit le contenu de 'String' en minuscule.
+string_ &str::ToLower(
+	string_ &String,
+	bso::bool__ DontHandleAccent )
+{
+	epeios::row_t__ P = String.Amount();
 
-		if ( DontHandleAccent )
-			while ( P-- )
-				String.Store( (char)tolower( String.Get( P )) , P );
-		else
-			while ( P-- )
-				String.Store( (char)toxlower_( String.Get( P )) , P );
+	if ( DontHandleAccent )
+		while ( P-- )
+			String.Store( (char)tolower( String.Get( P )) , P );
+	else
+		while ( P-- )
+			String.Store( (char)toxlower_( String.Get( P )) , P );
 
-		return String;
-	}
+	return String;
+}
 
-	// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
-	const char *string_::Convert(
-		epeios::row__ Position,
-		epeios::size__ Quantity,
-		STR_BUFFER___ &Buffer ) const
-	{
-	ERRProlog
-	ERRBegin
+// Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
+const char *string_::Convert(
+	epeios::row__ Position,
+	epeios::size__ Quantity,
+	STR_BUFFER___ &Buffer ) const
+{
+ERRProlog
+ERRBegin
 #ifdef STR_DBG
-		if ( *Position > Amount() && ( Position != 0 ) )
-			ERRu();
+	if ( *Position > Amount() && ( Position != 0 ) )
+		ERRu();
 #endif
 
-		if ( Quantity > ( Amount() - *Position ) )
-			Quantity = Amount() - *Position;
+	if ( Quantity > ( Amount() - *Position ) )
+		Quantity = Amount() - *Position;
 
-		if ( ( Buffer = (char *)malloc( Quantity + 1 ) ) == NULL )
-			ERRa();
+	if ( ( Buffer = (char *)malloc( Quantity + 1 ) ) == NULL )
+		ERRa();
 
-		if ( Quantity != 0 )
-			Recall( Position, Quantity, Buffer );
+	if ( Quantity != 0 )
+		Recall( Position, Quantity, Buffer );
 
-		Buffer[Quantity] = 0;
-	ERRErr
-	ERREnd
-	ERREpilog
-		return Buffer;
+	Buffer[Quantity] = 0;
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+// Could be easily optimized, would be when I have some time.
+void string_::FilterOut( char Model )
+{
+	epeios::row_t__ Source, Dest = 0;
+	char Char;
+
+	for( Source = 0; Source < Amount(); Source++ ) {
+		if ( ( Char = Get( Source ) ) != Model )
+			Store( Char, Dest++ );
 	}
 
-	// Could be easily optimized, would be when I have some time.
-	void string_::FilterOut( char Model )
-	{
-		epeios::row_t__ Source, Dest = 0;
-		char Char;
+	Allocate( Dest );
+}
 
-		for( Source = 0; Source < Amount(); Source++ ) {
-			if ( ( Char = Get( Source ) ) != Model )
-				Store( Char, Dest++ );
-		}
+// Could be easily optimized, would be when I have some time.
+void string_::StripLeadingCharacter( char Model )
+{
+	epeios::row__ Row = First();
+	epeios::size__ Amount = 0;
 
-		Allocate( Dest );
+	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+		Amount++;
+		Row = Next( Row );
 	}
 
-	// Could be easily optimized, would be when I have some time.
-	void string_::StripLeadingCharacter( char Model )
-	{
-		epeios::row__ Row = First();
-		epeios::size__ Amount = 0;
+	Remove( 0, Amount );
+}
 
-		while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
-			Amount++;
-			Row = Next( Row );
-		}
+// Could be easily optimized, would be when I have some time.
+void string_::StripTailingCharacter( char Model )
+{
+	epeios::row__ Row = Last();
+	epeios::size__ Amount = 0;
 
-		Remove( 0, Amount );
+	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+		Amount++;
+		Row = Previous( Row );
 	}
 
-	// Could be easily optimized, would be when I have some time.
-	void string_::StripTailingCharacter( char Model )
-	{
-		epeios::row__ Row = Last();
-		epeios::size__ Amount = 0;
+	Truncate( Amount );
+}
 
-		while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
-			Amount++;
-			Row = Previous( Row );
-		}
+// Could be easily optimized, would be when I have some time.
+void string_::Replace(
+	char Old,
+	char New )
+{
+	epeios::row_t__ Source;
+	char Char;
 
-		Truncate( Amount );
+	for( Source = 0; Source < Amount(); Source++ ) {
+		if ( ( Char = Get( Source ) ) == Old )
+			Store( New, Source );
+		else
+			Store( Char, Source );
+	}
+}
+
+bso::bool__ string_::Replace(
+	char Tag,
+	bso::ulong__ Position,
+	const str::string_ &Value )
+{
+	epeios::row__ Row = First();
+
+#ifdef STR_DBG
+	if ( Position == 0 )
+		ERRu();
+#endif
+
+	while ( ( Position-- ) && ( Row != NONE ) ) {
+		Row = Search( Tag, Row );
 	}
 
-	// Could be easily optimized, would be when I have some time.
-	void string_::Replace(
-		char Old,
-		char New )
-	{
-		epeios::row_t__ Source;
-		char Char;
+	if ( Row != NONE ) {
+		Remove( Row, 1 );
 
-		for( Source = 0; Source < Amount(); Source++ ) {
-			if ( ( Char = Get( Source ) ) == Old )
-				Store( New, Source );
-			else
-				Store( Char, Source );
-		}
-	}
+		Insert( Value, Row );
 
+		return true;
+	} else
+		return false;
+}
 
-	epeios::row__ string_::Search(
-		const string_ &S,
-		epeios::row__ Start ) const
-	{
-		if ( S.Amount() <= Amount() ) {
-			epeios::size__ Amount = S.Amount();
-			epeios::row_t__ Limit = this->Amount() - Amount;
+epeios::row__ string_::Search(
+	const string_ &S,
+	epeios::row__ Start ) const
+{
+	if ( S.Amount() <= Amount() ) {
+		epeios::size__ Amount = S.Amount();
+		epeios::row_t__ Limit = this->Amount() - Amount;
 
-			while( ( *Start <= Limit )
-				&& ( Compare( S, *this, 0, Start, Amount ) != 0 ) )
-				(*Start)++;
-
-			if ( *Start > Limit )
-				return NONE;
-			else
-				return Start;
-		}
-		else {
-			return NONE;
-		}
-	}
-
-	epeios::row__ string_::Search(
-		char C,
-		epeios::row__ Start ) const
-	{
-		epeios::row_t__ Limit = Amount();
-
-		while( ( *Start < Limit )
-			&& ( Get( Start ) != C ) )
+		while( ( *Start <= Limit )
+			&& ( Compare( S, *this, 0, Start, Amount ) != 0 ) )
 			(*Start)++;
 
-		if ( *Start >= Limit )
+		if ( *Start > Limit )
 			return NONE;
 		else
 			return Start;
 	}
+	else {
+		return NONE;
+	}
+}
 
-	_generic_integer__ _GenericConversion(
-		const str::string_ &String,
-		epeios::row__ Begin,
-		epeios::row__ *ErrP,
-		base__ BaseFlag,
-		_generic_integer__ Limit )
-	{
-		_generic_integer__ Result = 0;
-		epeios::row__ &P = Begin;
-		bso::ubyte__ C;
-		bso::ubyte__ Base;
-		_generic_integer__ OtherLimit = 0;
+epeios::row__ string_::Search(
+	char C,
+	epeios::row__ Start ) const
+{
+	epeios::row_t__ Limit = Amount();
 
-		if ( BaseFlag == bAuto )
-			if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == '#' ) ) {
-				BaseFlag = b16;
-				P = String.Next( P );
-			} else
-				BaseFlag = b10;
+	while( ( *Start < Limit )
+		&& ( Get( Start ) != C ) )
+		(*Start)++;
 
-		if ( BaseFlag > 255 )
-			ERRu();
+	if ( *Start >= Limit )
+		return NONE;
+	else
+		return Start;
+}
 
-		Base = (int)BaseFlag;
+_generic_integer__ str::_GenericConversion(
+	const str::string_ &String,
+	epeios::row__ Begin,
+	epeios::row__ *ErrP,
+	base__ BaseFlag,
+	_generic_integer__ Limit )
+{
+	_generic_integer__ Result = 0;
+	epeios::row__ &P = Begin;
+	bso::ubyte__ C;
+	bso::ubyte__ Base;
+	_generic_integer__ OtherLimit = 0;
+
+	if ( BaseFlag == bAuto )
+		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == '#' ) ) {
+			BaseFlag = b16;
+			P = String.Next( P );
+		} else
+			BaseFlag = b10;
+
+	if ( BaseFlag > 255 )
+		ERRu();
+
+	Base = (int)BaseFlag;
 
 #ifdef STR_DBG
-		if ( Limit < Base )
-			ERRu();
+	if ( Limit < Base )
+		ERRu();
 #endif
 
-		OtherLimit = Limit / Base;
+	OtherLimit = Limit / Base;
 
-		if ( *P < String.Amount() )
-			while( P != NONE ) {
-				C = Convert_( String.Get( P ) );
+	if ( *P < String.Amount() )
+		while( P != NONE ) {
+			C = Convert_( String.Get( P ) );
 
-				if ( C >= Base )
-					break;
+			if ( C >= Base )
+				break;
 
-				if ( Result > OtherLimit )
-					break;
+			if ( Result > OtherLimit )
+				break;
 
-				Result *= Base;
+			Result *= Base;
 
-				if ( ( Limit - C ) < Result )
-				   break;
+			if ( ( Limit - C ) < Result )
+			   break;
 
-				Result += C;
+			Result += C;
 
-				P = String.Next( P );
-			}
-
-		if ( P != NONE )
-			if ( ErrP )
-				*ErrP = P;
-			else
-				ERRu();
-
-		return Result;
-	}
-
-	bso::lfloat__ string_::ToLF(
-		epeios::row__ *ErrP,
-		epeios::row__ Begin ) const
-	{
-		bso::bool__ Negate = false;
-		bso::lfloat__ Result = 0;
-		epeios::row__ &P = Begin;
-		unsigned char C;
-
-		if ( *P < Amount() ) {
-			if ( P != NONE ) 
-				if ( Get( P ) == '-' ) {
-					Negate = true;
-					P = Next( P );
-				} else if ( Get( P ) == '+' ) {
-					P = Next( P );
-				}
-
-			while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
-				Result = Result * 10 + C - '0';
-				P = Next( P );
-			}
-
-			if ( ( P != NONE )
-				  && ( ( ( C = Get( P ) ) == '.' ) || ( C == ',' ) ) ) {
-				bso::lfloat__ Factor = .1;
-				P = Next( P );
-				while( ( P != NONE ) && isdigit( C = Get( P ) ) ) {
-					Result += ( C - '0' ) * Factor;
-					Factor /= 10;
-					P = Next( P );
-				}
-			}
+			P = String.Next( P );
 		}
 
-		if ( P != NONE )
-			if ( ErrP )
-				*ErrP = P;
-			else
-				ERRu();
-
-		if ( Negate )
-			return -Result;
+	if ( P != NONE )
+		if ( ErrP )
+			*ErrP = P;
 		else
-			return Result;
+			ERRu();
+
+	return Result;
+}
+
+bso::lfloat__ string_::ToLF(
+	epeios::row__ *ErrP,
+	epeios::row__ Begin ) const
+{
+	bso::bool__ Negate = false;
+	bso::lfloat__ Result = 0;
+	epeios::row__ &P = Begin;
+	unsigned char C;
+
+	if ( *P < Amount() ) {
+		if ( P != NONE ) 
+			if ( Get( P ) == '-' ) {
+				Negate = true;
+				P = Next( P );
+			} else if ( Get( P ) == '+' ) {
+				P = Next( P );
+			}
+
+		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+			Result = Result * 10 + C - '0';
+			P = Next( P );
+		}
+
+		if ( ( P != NONE )
+			  && ( ( ( C = Get( P ) ) == '.' ) || ( C == ',' ) ) ) {
+			bso::lfloat__ Factor = .1;
+			P = Next( P );
+			while( ( P != NONE ) && isdigit( C = Get( P ) ) ) {
+				Result += ( C - '0' ) * Factor;
+				Factor /= 10;
+				P = Next( P );
+			}
+		}
 	}
 
+	if ( P != NONE )
+		if ( ErrP )
+			*ErrP = P;
+		else
+			ERRu();
+
+	if ( Negate )
+		return -Result;
+	else
+		return Result;
 }
 
 

@@ -119,14 +119,14 @@ ERRBegin
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	if ( GetRegistryValue( mbdrgstry::paths::Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
+	if ( GetRegistryValue( mbdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
 
 		_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
 		_backend___::Init( _ClientCore );
 
 		DatabasePath.Init();
 
-		if ( GetRegistryValue( mbdrgstry::paths::Database.Path, DatabasePath ) ) {
+		if ( GetRegistryValue( mbdrgstry::paths::Parameters.Database.Path, DatabasePath ) ) {
 			if ( !OpenDatabase( DatabasePath ) ) {
 				Message = mUnableToOpenDatabase;
 				ERRReturn;
