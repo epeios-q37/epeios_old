@@ -84,6 +84,22 @@ namespace mbdrgstry {
 		const registry___ &Registry,
 		bso::ulong__ &Id );
 
+	void SetProfileValue(
+		const char *Path,
+		registry___ &Registry,
+		const str::string_ &Value );
+
+	inline void SetProfileIntegerValue(
+		const char *Path,
+		registry___ &Registry,
+		bso::ulong__ Id )
+	{
+		bso::integer_buffer__ Buffer;
+
+		SetProfileValue( Path, Registry, str::string( bso::Convert( Id, Buffer ) ) );
+	}
+
+
 }
 
 #endif

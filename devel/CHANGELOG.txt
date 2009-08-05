@@ -1,5 +1,9 @@
 $Id$
 
+05/08/2009 :
+	- RGSTRY :
+		- Ajout possibilité de retarder l'initialisationde  la 'registry' local des 'overloaded_[..._]registry_'.
+
 03/08/2009 :
 	- STR :
 		- Ajout méthode 'Replace()' (remplacement d'une balise).

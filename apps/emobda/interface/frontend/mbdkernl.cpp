@@ -37,7 +37,8 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( UnableToOpenConfigFile );
-	CASE( NoConfigurationTree );
+	CASE( MissingConfigurationTree );
+	CASE( MissingConfigurationId );
 	CASE( UnableToOpenDatabase );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
@@ -60,7 +61,9 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
-message__ mbdkernl::kernel___::Init( const char *ConfigFile )
+message__ mbdkernl::kernel___::Init(
+	const char *ConfigFile,
+	str::string_ &ConfigurationId )
 {
 	message__ Message = m_Undefined;
 ERRProlog
@@ -76,14 +79,16 @@ ERRBegin
 
 	XFlow.Init( FIFlow );
 
-	Message = Init( XFlow );
+	Message = Init( XFlow, ConfigurationId  );
 ERRErr
 ERREnd
 ERREpilog
 	return Message;
 }
 
-message__ mbdkernl::kernel___::Init( xtf::extended_text_iflow__ &Config )
+message__ mbdkernl::kernel___::Init(
+	xtf::extended_text_iflow__ &Config,
+	str::string_ &ConfigurationId )
 {
 	message__ Message = m_Undefined;
 ERRProlog
@@ -109,13 +114,17 @@ ERRBegin
 		if ( AttributeEntryRow != NONE )
 			ERRc();
 
-		Message = mNoConfigurationTree;
+		Message = mMissingConfigurationTree;
 
 		ERRReturn;
 	}
 
+	_Registry.Init( _GlobalRegistry, BaseRoot );
 
-	_Registry.Init( _GlobalRegistry, BaseRoot, NONE );
+	if ( !GetRegistryValue( "@Id", ConfigurationId ) ) {
+		Message = mMissingConfigurationId;
+		ERRReturn;
+	}
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
@@ -140,6 +149,41 @@ ERREnd
 ERREpilog
 	return Message;
 }
+
+rgstry::nrow__ mbdkernl::kernel___::SetLocalRegistry(
+	xtf::extended_text_iflow__ &Config,
+	const str::string_ &Path )
+{
+	rgstry::nrow__ LocalRegistryRoot;
+ERRProlog
+	rgstry::nrow__ BaseRoot = NONE;
+	epeios::row__ PathErrorRow = NONE;
+	rgstry::erow__ AttributeEntryRow = NONE;
+ERRBegin
+	LocalRegistryRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
+
+	BaseRoot = _GlobalRegistry.SearchPath( Path, LocalRegistryRoot, AttributeEntryRow, PathErrorRow );
+
+	if ( PathErrorRow != NONE )
+		ERRc();
+
+	if ( AttributeEntryRow != NONE )
+		ERRc();
+
+	if ( BaseRoot == NONE ) {
+		BaseRoot = _GlobalRegistry.CreatePath( Path, LocalRegistryRoot, PathErrorRow );
+
+		if ( PathErrorRow != NONE )
+			ERRc();
+	}
+
+	_Registry.SetLocal( _GlobalRegistry, BaseRoot );
+ERRErr
+ERREnd
+ERREpilog
+	return LocalRegistryRoot;
+}
+
 
 
 static class messages

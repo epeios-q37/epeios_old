@@ -24,7 +24,74 @@
 
 using namespace kernel;
 
+#define USERDATA_ATTRIBUTE_NAME	"userdata"
+
 nsxpcm::repository< kernel::kernel___, krow__> kernel::Repository;
+
+void kernel::kernel___::Init( const char *ConfigFile )
+{
+ERRProlog
+	message__ Message = mbdkernl::m_Undefined;
+	str::string ConfigurationId;
+	str::string UserData;
+	str::string UserConfigurationPath;
+	flx::E_STRING_IFLOW__ SIFlow;
+	xtf::extended_text_iflow__ XTFlow;
+ERRBegin
+	ConfigurationId.Init();
+
+	if ( ( Message = _kernel___::Init( ConfigFile, ConfigurationId ) ) != mbdkernl::m_Undefined )
+		Alert( Message );
+	else {
+		table__ Table;
+
+		UserConfigurationPath.Init( "Configuration[id=\"" );
+		UserConfigurationPath.Append( ConfigurationId );
+		UserConfigurationPath.Append( "\"]" );
+
+		UserData.Init();
+
+		nsxpcm::GetAttribute( nsxpcm::GetWindowElement( UI().Main.Window ), USERDATA_ATTRIBUTE_NAME, UserData );
+
+		if ( UserData.Amount() == 0 )
+			UserData.Init( "<Configurations/>" );
+
+		SIFlow.Init( UserData );
+		XTFlow.Init( SIFlow );
+
+		_LocalRegistryRoot = SetLocalRegistry( XTFlow, UserConfigurationPath );
+
+		if ( GetCurrentTable( Table ) )
+			SelectTable( Table );
+		else
+			ApplySession();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void kernel::kernel___::_SaveLocalRegistry( void ) const
+{
+ERRProlog
+	str::string UserData;
+	flx::E_STRING_OFLOW___ SOFlow;
+	txf::text_oflow__ TOFlow( SOFlow );
+ERRBegin
+	UserData.Init();
+	SOFlow.Init( UserData );
+
+	DumpRegistry( _LocalRegistryRoot, TOFlow );
+
+	SOFlow.reset();	// To flush buffer.
+
+	nsxpcm::SetAttribute( nsxpcm::GetWindowElement( UI().Main.Window ), USERDATA_ATTRIBUTE_NAME, UserData );
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 static class kernel_starter
 {

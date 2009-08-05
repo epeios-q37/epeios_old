@@ -190,7 +190,16 @@ namespace ui {
 		}
 		void SelectTable( table__ Table )
 		{
+			bso::integer_buffer__ Buffer;
+
 			K().Target().Set( Table );
+
+			K().SetCurrentTable( Table );
+
+			if ( !K().GetCurrentTable( Table ) )
+				ERRu();
+
+			Alert( bso::Convert( **Table, Buffer ) );
 
 			ApplyQuery();
 		}

@@ -193,6 +193,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
 bso::bool__ mbdrgstry::GetProfileIntegerValue(
@@ -216,4 +217,48 @@ ERRErr
 ERREnd
 ERREpilog
 	return Success;
+}
+
+static void SetProfileValue_(
+	const char *Path,
+	const str::string_ &ProfileName,
+	registry___ &Registry,
+	const str::string_ &Value )
+{
+ERRProlog
+	rgstry::term WorkPath;
+ERRBegin
+	if ( ProfileName.Amount() == 0 )
+		ERRReturn;
+
+	WorkPath.Init( Path );
+
+	WorkPath.Replace( CTAG, 1, ProfileName );
+
+	Registry.SetPathValue( WorkPath, Value );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void mbdrgstry::SetProfileValue(
+	const char *Path,
+	registry___ &Registry,
+	const str::string_ &Value )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string ProfileName;
+ERRBegin
+	ProfileName.Init();
+
+	if ( !GetUserProfileName_( Registry, ProfileName ) )
+		if ( !GetDefaultProfileName_( Registry, ProfileName ) )
+			if ( !GetFallbackProfileName_( Registry, ProfileName ) )
+				ERRReturn;
+
+	SetProfileValue_( Path, ProfileName, Registry, Value );
+ERRErr
+ERREnd
+ERREpilog
 }

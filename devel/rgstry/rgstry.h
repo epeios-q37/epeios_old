@@ -921,7 +921,7 @@ namespace rgstry {
 			const registry_ &Global,
 			nrow__ Root,
 			registry_ &Local,	// 'Global' et 'Local' peuvent être identiques.
-			nrow__ LocalRoot )	// Si égal à NONE, est crée et retourné.
+			nrow__ LocalRoot )	// Si égal à NONE et 'Local' != 'NULL', est crée et retourné.
 		{
 			term_buffer Buffer;
 
@@ -930,11 +930,37 @@ namespace rgstry {
 
 			this->Local.Registry = &Local;
 
-			if ( LocalRoot == NONE )
+			if ( ( &Local != NULL ) && ( LocalRoot == NONE ) )
 				LocalRoot = Local.CreateNode( this->Global.Registry->GetName( Root, Buffer ) );
 
 			return this->Local.Root = LocalRoot;
 
+		}
+		void Init(
+			const registry_ &Global,
+			nrow__ Root )
+		{
+			Init( Global, Root, *(registry_ *)NULL, NONE );
+		}
+		nrow__ SetLocal(
+			registry_ &Registry,	// Si == 'NULL', on prend le 'Global'.
+			nrow__ Root )	// Si == 'NONE' est crée et retourné.
+		{
+			if ( ( &Global.Registry == NULL ) || ( Global.Root == NONE ) )
+				ERRu();
+
+			if ( &Registry == NULL )
+				ERRu();
+
+			Local.Registry = &Registry;
+
+			if ( Root == NONE ) {
+				term_buffer Buffer;
+
+				Root = Registry.CreateNode( this->Global.Registry->GetName( Global.Root, Buffer ) );
+			}
+
+			return Local.Root = Root;
 		}
 		const value_ &GetPathValue_(
 			const term_ &Path,
@@ -1047,12 +1073,35 @@ namespace rgstry {
 		}
 		void Init(
 			registry_ &Global,
+			nrow__ Root )
+		{
+			reset();
+
+			_LocalRoot = overloaded_registry___::Init( Global, Root, *(registry_ *)NULL, NONE );
+		}
+		nrow__ Init(
+			registry_ &Global,
 			nrow__ Root,
 			nrow__ LocalRoot ) // Si égal à NONE, est crée et retourné.
 		{
 			reset();
 
-			_LocalRoot = overloaded_registry___::Init( Global, Root, Global, LocalRoot );
+			if ( LocalRoot == NONE )
+				LocalRoot = _LocalRoot = overloaded_registry___::Init( Global, Root, Global, LocalRoot );
+
+			return LocalRoot;
+		}
+		nrow__ SetLocal(
+			registry_ &Registry,
+			nrow__ Root )	// Si 'Root' == 'NONE'
+		{
+			if ( Root == NONE )
+				Root = _LocalRoot = overloaded_registry___::SetLocal( Registry, Root );
+			else
+				overloaded_registry___::SetLocal( Registry, Root );
+
+
+			return Root;
 		}
 	};
 }

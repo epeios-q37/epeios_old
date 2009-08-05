@@ -54,6 +54,8 @@ namespace kernel {
 	{
 	private:
 		krow__ _KRow;
+		rgstry::nrow__ _LocalRegistryRoot;
+		void _SaveLocalRegistry( void ) const;
 	protected:
 		virtual void UIExposeKernel( void )
 		{
@@ -70,7 +72,12 @@ namespace kernel {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			if ( P )
+				if ( _LocalRegistryRoot != NONE )
+					_SaveLocalRegistry();
+
 			_KRow = NONE;
+			_LocalRegistryRoot = NONE;
 			_kernel___::reset( P );
 			_ui___::reset( P );
 		}
@@ -90,21 +97,7 @@ namespace kernel {
 			_ui___::Init( *this );
 			_KRow = KRow;
 		}
-		void Init( const char *ConfigFile )
-		{
-			message__ Message = mbdkernl::m_Undefined;
-
-			if ( ( Message = _kernel___::Init( ConfigFile ) ) != mbdkernl::m_Undefined )
-				Alert( Message );
-			else {
-				table__ Table;
-
-				if ( GetCurrentTable( Table ) )
-					SelectTable( Table );
-				else
-					ApplySession();
-			}
-		}
+		void Init( const char *ConfigFile );
 		void Expose( void )
 		{
 			Repository.SetCurrentRow( _KRow );

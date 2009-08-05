@@ -25,11 +25,12 @@
 <window
 	id="wdwMain"
 	title="Epeios mobile database !"
-	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	onload="register( window );registeringEnd();"
 	onunload="retire();"
+	userdata=""
+	persist="height width screenX screenY userdata"
 >
 	<script type="text/javascript" src="emobda.js"/>
 	<script type="text/javascript">registeringStart();</script>

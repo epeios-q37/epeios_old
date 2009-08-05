@@ -50,7 +50,8 @@ namespace mbdkernl {
 	enum message__ 
 	{
 		mUnableToOpenConfigFile,
-		mNoConfigurationTree,
+		mMissingConfigurationTree,
+		mMissingConfigurationId,
 		mUnableToOpenDatabase,
 
 		mMissingDatabaseName,
@@ -225,8 +226,22 @@ namespace mbdkernl {
 		{
 			reset();
 		}
-		message__ Init( const char *ConfigFile );
-		message__ Init( xtf::extended_text_iflow__ &Config );
+		message__ Init(
+			const char *ConfigFile,
+			str::string_ &ConfigurationId );
+		message__ Init(
+			xtf::extended_text_iflow__ &Config,
+			str::string_ &ConfigurationId );
+		rgstry::nrow__ SetLocalRegistry(
+			xtf::extended_text_iflow__ &Config,
+			const str::string_ &Path );	/* To call after 'Init()'. 'Config' contains the 'XML' tree containing the user configuration.
+											'Path' contains the path of the root subtree. */
+		void DumpRegistry(
+			rgstry::nrow__ Root,
+			txf::text_oflow__ &OFlow ) const
+		{
+			_GlobalRegistry.Dump( Root, true, true, OFlow );
+		}
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
@@ -415,6 +430,10 @@ namespace mbdkernl {
 		{
 			return mbdrgstry::GetProfileIntegerValue( mbdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
 		}
+		void SetCurrentTable( table__ Table )
+		{
+			mbdrgstry::SetProfileIntegerValue( mbdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
+		}	
 
 	};
 

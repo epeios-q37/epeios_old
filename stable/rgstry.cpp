@@ -366,7 +366,21 @@ nrow__ rgstry::registry_::_SearchPath(
 
 	Result = ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
 
+#ifdef RGSTRY_DBG
+	tol::E_FPOINTER___( bso::char__ ) Tag;
+	tol::E_FPOINTER___( bso::char__ ) AttributeName;
+	tol::E_FPOINTER___( bso::char__ ) AttributeValue;
+
+	Item( PathRow ).TagName.Convert( Tag );
+	Item( PathRow ).AttributeName.Convert( AttributeName );
+	Item( PathRow ).AttributeValue.Convert( AttributeValue );
+#endif
+
 	if ( PathRow != Path.Last() ) {
+#ifdef RGSTRY_DBG
+		if ( AttributeEntryRow != NONE )
+			ERRc();
+#endif
 		while ( ChildRow != NONE )  {
 			AttributeEntryRow = NONE;
 			Result = _SearchPath( Path, Path.Next( PathRow ), ChildRow, AttributeEntryRow, ResultTags, ResultAttributes );
@@ -933,7 +947,10 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Result = &Local.Registry->GetPathValue_( Path, Local.Root, &LocalMissing, Buffer );
+	if ( Local.Registry != NULL )
+		Result = &Local.Registry->GetPathValue_( Path, Local.Root, &LocalMissing, Buffer );
+	else
+		LocalMissing = true;
 
 	if ( LocalMissing )
 		Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
@@ -958,7 +975,10 @@ ERRBegin
 	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
 		ERRReturn;
 
-	Exists = Local.Registry->GetPathValues( Path, Local.Root, Values ) || Global.Registry->GetPathValues( Path, Global.Root, Values );
+	if ( Local.Registry != NULL )
+		Exists = Local.Registry->GetPathValues( Path, Local.Root, Values );
+
+	Exists = Global.Registry->GetPathValues( Path, Global.Root, Values ) || Exists;
 ERRErr
 ERREnd
 ERREpilog
@@ -969,7 +989,7 @@ bso::bool__ rgstry::overloaded_registry___::PathExists(
 	const rgstry::term_ &PathString,
 	epeios::row__ &PathRow ) const
 {
-	bso::bool__ Result = false;
+	bso::bool__ Exists = false;
 ERRProlog
 	path Path;
 ERRBegin
@@ -978,11 +998,14 @@ ERRBegin
 	PathRow = BuildPath( PathString, Path );
 
 	if ( PathRow != NONE )
-		Result = Local.Registry->PathExists( Path, Local.Root ) || Global.Registry->PathExists( Path, Global.Root );
+		if ( Local.Registry != NULL )
+			Exists = Local.Registry->PathExists( Path, Local.Root );
+	
+	Exists = Exists || Global.Registry->PathExists( Path, Global.Root );
 ERRErr
 ERREnd
 ERREpilog
-	return Result;
+	return Exists;
 }
 
 
