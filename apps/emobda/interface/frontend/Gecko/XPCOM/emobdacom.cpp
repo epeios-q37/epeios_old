@@ -86,7 +86,7 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository.GetCurrentObject().PreInit( Repository.CreateNewObject() );
+	Repository.GetCurrentObject().Init( Repository.CreateNewObject(), lgg::lRaw );	// Language to retrieve from a main window attribute.
 RR
 RN
 RE
@@ -169,7 +169,7 @@ RBB
 	Repository.DismissCurrentObject();
 
 	if ( ConfigFile != "" )
-		Kernel.Init( ConfigFile );
+		Kernel.OpenProject( ConfigFile );
 	else
 		Kernel.DefineSession();
 RR

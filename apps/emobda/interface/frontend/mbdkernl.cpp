@@ -20,8 +20,8 @@
 // $Id$
 
 #include "mbdkernl.h"
-#include "flx.h"
 #include "flf.h"
+#include "flx.h"
 
 using namespace mbdkernl;
 using xml::writer_;
@@ -36,6 +36,7 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 	const char *Message = NULL;
 
 	switch ( MessageId ) {
+	CASE( SelectProjectFile );
 	CASE( UnableToOpenConfigFile );
 	CASE( MissingConfigurationTree );
 	CASE( MissingConfigurationId );
@@ -61,7 +62,7 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
-message__ mbdkernl::kernel___::Init(
+message__ mbdkernl::kernel___::OpenProject(
 	const char *ConfigFile,
 	str::string_ &ConfigurationId )
 {
@@ -79,14 +80,14 @@ ERRBegin
 
 	XFlow.Init( FIFlow );
 
-	Message = Init( XFlow, ConfigurationId  );
+	Message = OpenProject( XFlow, ConfigurationId  );
 ERRErr
 ERREnd
 ERREpilog
 	return Message;
 }
 
-message__ mbdkernl::kernel___::Init(
+message__ mbdkernl::kernel___::OpenProject(
 	xtf::extended_text_iflow__ &Config,
 	str::string_ &ConfigurationId )
 {
@@ -107,6 +108,11 @@ ERRBegin
 	BaseRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
 //	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
 
+	if ( BaseRoot == NONE ) {
+		Message = mMissingConfigurationTree;
+		ERRReturn;
+	}
+	
 	if ( ( BaseRoot = _GlobalRegistry.SearchPath( rgstry::term( "Configuration[target=\"emobda\"]" ), BaseRoot, AttributeEntryRow, PathErrorRow ) ) == NONE ) {
 		if ( PathErrorRow != NONE )
 			ERRc();
@@ -150,19 +156,21 @@ ERREpilog
 	return Message;
 }
 
-rgstry::nrow__ mbdkernl::kernel___::SetLocalRegistry(
+void mbdkernl::kernel___::SetLocalRegistry(
 	xtf::extended_text_iflow__ &Config,
 	const str::string_ &Path )
 {
-	rgstry::nrow__ LocalRegistryRoot;
 ERRProlog
 	rgstry::nrow__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::erow__ AttributeEntryRow = NONE;
 ERRBegin
-	LocalRegistryRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
+	if ( _LocalRegistryRoot != NONE )
+		ERRu();
 
-	BaseRoot = _GlobalRegistry.SearchPath( Path, LocalRegistryRoot, AttributeEntryRow, PathErrorRow );
+	_LocalRegistryRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
+
+	BaseRoot = _GlobalRegistry.SearchPath( Path, _LocalRegistryRoot, AttributeEntryRow, PathErrorRow );
 
 	if ( PathErrorRow != NONE )
 		ERRc();
@@ -171,7 +179,7 @@ ERRBegin
 		ERRc();
 
 	if ( BaseRoot == NONE ) {
-		BaseRoot = _GlobalRegistry.CreatePath( Path, LocalRegistryRoot, PathErrorRow );
+		BaseRoot = _GlobalRegistry.CreatePath( Path, _LocalRegistryRoot, PathErrorRow );
 
 		if ( PathErrorRow != NONE )
 			ERRc();
@@ -181,7 +189,6 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return LocalRegistryRoot;
 }
 
 

@@ -1088,6 +1088,8 @@ namespace rgstry {
 
 			if ( LocalRoot == NONE )
 				LocalRoot = _LocalRoot = overloaded_registry___::Init( Global, Root, Global, LocalRoot );
+			else
+				overloaded_registry___::Init( Global, Root, Global, LocalRoot );
 
 			return LocalRoot;
 		}

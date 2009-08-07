@@ -1410,8 +1410,10 @@ public:
 	}
 	~nsxpcmpersonnalization( void )
 	{
-#ifdef CPE__T_MT
+#ifdef ENABLE_FORMHISTORY
+#	ifdef CPE__T_MT
 		mtx::Delete( FormHistoryMutex_ );
+#	endif
 #endif
 	}
 };

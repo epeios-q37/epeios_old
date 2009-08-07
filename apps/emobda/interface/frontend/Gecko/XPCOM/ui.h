@@ -62,6 +62,8 @@ namespace ui {
 	class ui___
 	: public ui_base::bridge_functions__
 	{
+	private:
+		void _SaveLocalRegistry( void ) const;
 	public:
 		ui_main::main__ Main;
 		ui_dbsdb::database_selection__ DatabaseSelection;
@@ -93,14 +95,25 @@ namespace ui {
 			return *this;
 		}
 	public:
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
-			// Standardisation.
+			if ( P )
+				if ( _Kernel != NULL )
+					CloseProject();
+
+			_Kernel = NULL;
 		}
 		void Init( _kernel___ &Kernel )
 		{
 			// 'ui_...' type member are are initalized later.
 			_Kernel = &Kernel;
+		}
+		void OpenProject( const char *ConfigFile );
+		void CloseProject( void )
+		{
+			_SaveLocalRegistry();
+
+			K().CloseProject();
 		}
 		const _kernel___ &K( void ) const
 		{
@@ -190,16 +203,9 @@ namespace ui {
 		}
 		void SelectTable( table__ Table )
 		{
-			bso::integer_buffer__ Buffer;
-
 			K().Target().Set( Table );
 
 			K().SetCurrentTable( Table );
-
-			if ( !K().GetCurrentTable( Table ) )
-				ERRu();
-
-			Alert( bso::Convert( **Table, Buffer ) );
 
 			ApplyQuery();
 		}
@@ -253,7 +259,7 @@ namespace ui {
 		}
 		void DefineDatabase( void )
 		{
-			K().Target().reset();
+			K().Target().Set( UNDEFINED_TABLE );
 			_SwitchTo( cStructureView );
 		}
 		bso::bool__ GetSelectedBackend(

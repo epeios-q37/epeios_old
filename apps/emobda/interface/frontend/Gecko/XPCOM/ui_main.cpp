@@ -39,12 +39,23 @@ void ui_main::dom_inspector_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::open_project_command__::NSXPCMOnEvent( event__ )
 {
-	UI().Alert( "Project opening !" );
+ERRProlog
+	str::string FileName;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	FileName.Init();
+
+	if ( nsxpcm::FileOpenDialogBox( UI().Main.Window, UI().K().GetMessage( mbdkernl::mSelectProjectFile ), FileName ) )
+		UI().OpenProject( FileName.Convert( Buffer ) );
+
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().reset();
+	UI().CloseProject();
 	UI().DefineSession();
 }
 

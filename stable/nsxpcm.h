@@ -110,8 +110,6 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #ifdef NSXPCM_FORCE_FORMHISTORY
 #	define NSXPCM__ENABLE_FORMHISTORY
-#elif !defined( CPE__T_LINUX )	// Problème avec les 'form history' sous Linux, d'où désactivation jusqu'à problème résolu.
-#	define NSXPCM__ENABLE_FORMHISTORY
 #endif
 
 #ifdef NSXPCM_BKD

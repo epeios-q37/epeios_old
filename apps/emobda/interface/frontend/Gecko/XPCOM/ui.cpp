@@ -20,8 +20,74 @@
 // $Id$
 
 #include "ui.h"
+#include "flx.h"
+
+#define USERDATA_ATTRIBUTE_NAME	"userdata"
 
 using namespace ui;
+
+void ui::ui___::OpenProject( const char *ConfigFile )
+{
+ERRProlog
+	message__ Message = mbdkernl::m_Undefined;
+	str::string ConfigurationId;
+	str::string UserData;
+	str::string UserConfigurationPath;
+	flx::E_STRING_IFLOW__ SIFlow;
+	xtf::extended_text_iflow__ XTFlow;
+ERRBegin
+	ConfigurationId.Init();
+
+	if ( ( Message = K().OpenProject( ConfigFile, ConfigurationId ) ) != mbdkernl::m_Undefined )
+		Alert( Message );
+	else {
+		table__ Table;
+
+		UserConfigurationPath.Init( "Configuration[id=\"" );
+		UserConfigurationPath.Append( ConfigurationId );
+		UserConfigurationPath.Append( "\"]" );
+
+		UserData.Init();
+
+		nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Main.Window ), USERDATA_ATTRIBUTE_NAME, UserData );
+
+		if ( UserData.Amount() == 0 )
+			UserData.Init( "<Configurations/>" );
+
+		SIFlow.Init( UserData );
+		XTFlow.Init( SIFlow );
+
+		K().SetLocalRegistry( XTFlow, UserConfigurationPath );
+
+		if ( K().GetCurrentTable( Table ) )
+			SelectTable( Table );
+		else
+			ApplySession();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ui::ui___::_SaveLocalRegistry( void ) const
+{
+ERRProlog
+	str::string UserData;
+	flx::E_STRING_OFLOW___ SOFlow;
+	txf::text_oflow__ TOFlow( SOFlow );
+ERRBegin
+	UserData.Init();
+	SOFlow.Init( UserData );
+
+	K().DumpLocalRegistry( TOFlow );
+
+	SOFlow.reset();	// To flush buffer.
+
+	nsxpcm::SetAttribute( nsxpcm::GetWindowElement( UI().Main.Window ), USERDATA_ATTRIBUTE_NAME, UserData );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 static void Register_(
 	nsIDOMNode *Node,

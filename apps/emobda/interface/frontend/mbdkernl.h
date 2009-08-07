@@ -49,6 +49,8 @@ namespace mbdkernl {
 
 	enum message__ 
 	{
+		mSelectProjectFile,
+
 		mUnableToOpenConfigFile,
 		mMissingConfigurationTree,
 		mMissingConfigurationId,
@@ -197,6 +199,7 @@ namespace mbdkernl {
 		csducl::universal_client_core _ClientCore;
 		rgstry::registry _GlobalRegistry;
 		rgstry::overloaded_unique_registry___ _Registry;
+		rgstry::nrow__ _LocalRegistryRoot;
 		transient__ _Transient;
 		records _Records;
 		target__ _Target;
@@ -212,6 +215,7 @@ namespace mbdkernl {
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
+			_LocalRegistryRoot = NONE;
 			_GlobalRegistry.reset( P );
 			_Language = lgg::l_undefined;
 			_Target.reset( P );
@@ -226,13 +230,32 @@ namespace mbdkernl {
 		{
 			reset();
 		}
-		message__ Init(
+		void Init( lgg::language__ Language )
+		{
+			reset();
+
+			_Language = Language;
+
+			// Other initialisations happend in 'OpenProject'.
+		}
+		message__ OpenProject(
 			const char *ConfigFile,
 			str::string_ &ConfigurationId );
-		message__ Init(
+		void CloseProject( void )
+		{
+			_backend___::reset();
+			_ClientCore.reset();
+			_Registry.reset();
+			_LocalRegistryRoot = NONE;
+			_GlobalRegistry.reset();
+			_Target.reset();
+			_Records.reset();
+			_Transient.reset();
+		}
+		message__ OpenProject(
 			xtf::extended_text_iflow__ &Config,
 			str::string_ &ConfigurationId );
-		rgstry::nrow__ SetLocalRegistry(
+		void SetLocalRegistry(
 			xtf::extended_text_iflow__ &Config,
 			const str::string_ &Path );	/* To call after 'Init()'. 'Config' contains the 'XML' tree containing the user configuration.
 											'Path' contains the path of the root subtree. */
@@ -241,6 +264,10 @@ namespace mbdkernl {
 			txf::text_oflow__ &OFlow ) const
 		{
 			_GlobalRegistry.Dump( Root, true, true, OFlow );
+		}
+		void DumpLocalRegistry( txf::text_oflow__ &OFlow ) const
+		{
+			DumpRegistry( _LocalRegistryRoot, OFlow );
 		}
 		const char *GetMessage( message__ Message );
 		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );

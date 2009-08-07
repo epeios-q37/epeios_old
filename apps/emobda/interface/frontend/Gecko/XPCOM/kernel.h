@@ -54,8 +54,6 @@ namespace kernel {
 	{
 	private:
 		krow__ _KRow;
-		rgstry::nrow__ _LocalRegistryRoot;
-		void _SaveLocalRegistry( void ) const;
 	protected:
 		virtual void UIExposeKernel( void )
 		{
@@ -72,14 +70,9 @@ namespace kernel {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				if ( _LocalRegistryRoot != NONE )
-					_SaveLocalRegistry();
-
-			_KRow = NONE;
-			_LocalRegistryRoot = NONE;
-			_kernel___::reset( P );
 			_ui___::reset( P );
+			_kernel___::reset( P );
+			_KRow = NONE;
 		}
 		kernel___( void )
 		{
@@ -89,15 +82,20 @@ namespace kernel {
 		{
 			reset();
 		}
-		// The 'true' 'Init(...)' is the '_kernel___' one and is called later.
-		void PreInit( krow__ KRow )
+		void Init(
+			krow__ KRow,
+			lgg::language__ Language )
 		{
 			reset();
 
+			_kernel___::Init( Language );
 			_ui___::Init( *this );
 			_KRow = KRow;
 		}
-		void Init( const char *ConfigFile );
+		void OpenProject( const char *ConfigFile )
+		{
+			_ui___::OpenProject( ConfigFile );
+		}
 		void Expose( void )
 		{
 			Repository.SetCurrentRow( _KRow );
