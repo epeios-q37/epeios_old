@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/RecordForm.dtd">
+
 <page
 	id="pgeRecordForm"
 	title="Record form"
@@ -37,10 +39,12 @@
 		<command id="cmdCancelRecord"/>
 	</commandset>
 	<vbox flex="1" >
-		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
+		<groupbox flex="1" style="overflow: auto;">
+			<vbox id="boxRecord"/>
+		</groupbox>
 		<hbox>
-			<button label="|OK|" command="cmdApplyRecord"/>
-			<button label="|Cancel|" command="cmdCancelRecord"/>
+			<button label="&ok.label;" command="cmdApplyRecord"/>
+			<button label="&cancel.label;" command="cmdCancelRecord"/>
 		</hbox>
 	</vbox>
 </page>

@@ -4,7 +4,9 @@
 # contenant l'ensemble des fichiers du répertoire 'gesbib' de ce même répertoire 'chrome', lui donner le nom 'gesbib.jar',
 # décommenter la ligne ci-dessous, et commenter la ligne d'aprés.
 #content emobda jar:emobda.jar!
-content emobda file:emobda/
+content	emobda			emobda/content/
+locale	emobda	en-US 	emobda/locale/en-US/
+locale	emobda	fr 		emobda/locale/fr/
 
 # Concerne la mise en oeuvre du DOM Inspector.
 

@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!--
-	'DatabaseSelectionDailogBox.xul' by Claude SIMON (http://zeusw.org/).
+	'DatabaseSelectionDialogBox.xul' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/DatabaseSelectionDialogBox.dtd">
+
 <window
 	id="wdwDatabaseSelectionDialogBox"
 	title="Select database"
@@ -36,12 +38,12 @@
 		<broadcaster id="bcrDatabaseSelection" disabled="true"/>
 	</broadcasters>
 	<commands>
-		<command id="cmdApply" label="|OK|" observes="bcrDatabaseSelection"/>
-		<command id="cmdCancel" label="|Cancel|"/>
+		<command id="cmdApply" label="&ok.label;" observes="bcrDatabaseSelection"/>
+		<command id="cmdCancel" label="&cancel.label;"/>
 	</commands>
 	<vbox flex="1">
 		<groupbox flex="1">
-			<caption label="Select database to open"/>
+			<caption label="&databaseSelect.label;"/>
 			<tree id="treDatabases" enableColumnDrag="true" style="overflow: auto;" flex="1"/>
 		</groupbox>
 		<hbox>

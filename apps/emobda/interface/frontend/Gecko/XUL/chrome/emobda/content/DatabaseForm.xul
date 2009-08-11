@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/DatabaseForm.dtd">
+
 <window
 	id="wdwDatabaseForm"
 	title="Database"
@@ -36,20 +38,20 @@
 		<broadcaster id="bcrDatabaseNaming"/>
 	</broadcasters>
 	<commands>
-		<command id="cmdApply" label="|OK|" observes="bcrDatabaseNaming"/>
-		<command id="cmdCancel" label="|Cancel|"/>
+		<command id="cmdApply" label="&ok.label;" observes="bcrDatabaseNaming"/>
+		<command id="cmdCancel" label="&cancel.label;"/>
 	</commands>
 	<vbox flex="1">
 		<groupbox>
-			<caption label="Name"/>
+			<caption label="&name.label;"/>
 			<textbox id="txbName"/>
 		</groupbox>
 		<groupbox>
-			<caption label="Path"/>
+			<caption label="&path.label;"/>
 			<textbox id="txbPath"/>
 		</groupbox>
 		<groupbox>
-			<caption label="Comment"/>
+			<caption label="&comment.label;"/>
 			<textbox id="txbComment" multiline="true"/>
 		</groupbox>
 		<hbox>

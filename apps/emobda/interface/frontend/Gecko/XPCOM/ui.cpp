@@ -23,6 +23,7 @@
 #include "flx.h"
 
 #define USERDATA_ATTRIBUTE_NAME	"userdata"
+#define XSL_ROOT_PATH	"chrome://emobda/content/"
 
 using namespace ui;
 
@@ -133,7 +134,7 @@ ERRBegin
 
 	Main.TableMenu.RemoveChildren();
 
-	Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/TableMenu.xsl" ), Structure.Document, Parameters ) );
+	Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "TableMenu.xsl" ), Main.Document, Parameters ) );
 
 	Register_( Main.TableMenu.GetElement(), *this );
 ERRErr
@@ -159,7 +160,7 @@ ERRBegin
 
 	ListView.ContentTree.RemoveChildren();
 
-	ListView.ContentTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/ListView.xsl" ), Structure.Document, Parameters ) );
+	ListView.ContentTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "ListView.xsl" ), ListView.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -181,7 +182,7 @@ ERRBegin
 
 	RecordForm.RecordBox.RemoveChildren();
 
-	RecordForm.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/RecordForm.xsl" ), Structure.Document, Parameters ) );
+	RecordForm.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "RecordForm.xsl" ), RecordForm.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -201,7 +202,7 @@ ERRBegin
 
 	RecordView.RecordBox.RemoveChildren();
 
-	RecordView.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/RecordView.xsl" ), Structure.Document, Parameters ) );
+	RecordView.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "RecordView.xsl" ), RecordView.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -212,7 +213,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 	switch ( Context ) {
 	case cSessionForm:
 		FillTableMenu( true );
-		Main.Broadcasters.Connected.Disable();
+		Main.Broadcasters.ProjectOpened.Disable();
 		Main.Broadcasters.DatabaseOpened.Disable();
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.Broadcasters.TableWithFieldSelected.Disable();
@@ -221,7 +222,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 	case cSessionView:
 		FillTableMenu( true );
 		Main.Broadcasters.ProjectOpened.Enable();
-		Main.Broadcasters.Connected.Enable();
+		Main.Broadcasters.ProjectOpened.Enable();
 		Main.Broadcasters.DatabaseOpened.Enable( K().Target().Database );
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.Broadcasters.TableWithFieldSelected.Disable();
@@ -245,7 +246,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		FillListView();
 		FillTableMenu( true );
 		Main.Broadcasters.ProjectOpened.Enable();
-		Main.Broadcasters.Connected.Enable();
+		Main.Broadcasters.ProjectOpened.Enable();
 		Main.Broadcasters.DatabaseOpened.Enable( K().Target().Database );
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.ListView );
@@ -469,7 +470,7 @@ ERRBegin
 
 	DatabaseSelection.DatabaseTree.RemoveChildren();
 
-	DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( "chrome://emobda/content/DatabaseSelectionList.xsl" ), Structure.Document, Parameters ) );
+	DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "DatabaseSelectionList.xsl" ), DatabaseSelection.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog

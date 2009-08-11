@@ -168,7 +168,7 @@ RBB
 	
 	Repository.DismissCurrentObject();
 
-	if ( ConfigFile != "" )
+	if ( *ConfigFile != 0 )
 		Kernel.OpenProject( ConfigFile );
 	else
 		Kernel.DefineSession();

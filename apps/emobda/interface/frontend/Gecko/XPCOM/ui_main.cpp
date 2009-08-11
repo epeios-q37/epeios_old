@@ -133,7 +133,6 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Functions, UI.ProjectOpened, Document, "bcrProjectOpened" );
-	Register_( Functions, UI.Connected, Document, "bcrConnected" );
 	Register_( Functions, UI.DatabaseOpened, Document, "bcrDatabaseOpened" );
 	Register_( Functions, UI.TableWithFieldSelected, Document, "bcrTableWithFieldSelected" );
 	Register_( Functions, UI.RecordSelected, Document, "bcrRecordSelected" );

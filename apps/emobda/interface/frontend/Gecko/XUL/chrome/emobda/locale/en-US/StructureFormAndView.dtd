@@ -1,0 +1,22 @@
+<!-- $Id$ -->
+
+<!ENTITY databaseModify.label "Modify database">
+<!ENTITY databaseDelete "Delete database">
+
+<!ENTITY tableCreate.label "Create table">
+<!ENTITY tableModify.label "Modify table">
+<!ENTITY tableDelete.label "Delete table">
+
+<!ENTITY fieldCreate.label "Create field">
+<!ENTITY fieldModify.label "Modify field">
+<!ENTITY fieldDelete.label "Delete field">
+
+
+<!ENTITY ok.label "OK">
+<!ENTITY cancel.label "Cancel">
+
+<!ENTITY treeItemName.label "Name">
+<!ENTITY treeItemId.label "Id.">
+
+<!ENTITY name.label "Name">
+<!ENTITY comment.label "Comment">

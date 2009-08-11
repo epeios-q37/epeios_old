@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/RecordView.dtd">
+
 <page
 	id="pgeRecordView"
 	title="Record view"
@@ -41,13 +43,13 @@
 	</commandset>
 	<vbox flex="1" >
 		<hbox pack="center" align="center">
-			<button label="|&lt;" command="cmdFirstRecord"/>
-			<button label="&lt;&lt;" command="cmdPreviousRecord"/>
+			<button label="&firstRecord.label;" command="cmdFirstRecord"/>
+			<button label="&previousRecord.label;" command="cmdPreviousRecord"/>
 			<textbox id="txbRecordNumber" min="1"/>
 			<description value="/"/>
-			<description id="dscRecordsAmount" value="test"/>
-			<button label=">>" command="cmdNextRecord"/>
-			<button label=">|" command="cmdLastRecord"/>
+			<description id="dscRecordsAmount"/>
+			<button label="&nextRecord.label;" command="cmdNextRecord"/>
+			<button label="&lastRecord.label;" command="cmdLastRecord"/>
 		</hbox>
 		<vbox id="boxRecord" flex="1" style="overflow: auto;"/>
 	</vbox>

@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/StructureFormAndView.dtd">
+
 <page
 	id="pgeStructure"
 	title="Structure view and form"
@@ -34,16 +36,16 @@
 		<broadcaster id="bcrItemEdition"/>
 		<broadcaster id="bcrItemBrowsing"/>
 		
-		<broadcaster id="bcrDatabaseModification" label="Modify database" observes="bcrItemBrowsing"/>
-		<broadcaster id="bcrDatabaseDeletion" label="Delete database" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrDatabaseModification" label="&databaseModify.label;" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrDatabaseDeletion" label="&databaseDelete.label;" observes="bcrItemBrowsing"/>
 		
-		<broadcaster id="bcrTableCreation" label="Create table" observes="bcrItemBrowsing"/>
-		<broadcaster id="bcrTableModification" label="Modify table" observes="bcrItemBrowsing"/>
-		<broadcaster id="bcrTableDeletion" label="Delete table" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrTableCreation" label="&tableCreate.label;" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrTableModification" label="&tableModify.label;" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrTableDeletion" label="&tableDelete.label;" observes="bcrItemBrowsing"/>
 		
-		<broadcaster id="bcrFieldCreation" label="Create field" observes="bcrItemBrowsing"/>
-		<broadcaster id="bcrFieldModification" label="Modify field" observes="bcrItemBrowsing"/>
-		<broadcaster id="bcrFieldDeletion" label="Delete field" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrFieldCreation" label="&fieldCreate.label;" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrFieldModification" label="&fieldModify.label;" observes="bcrItemBrowsing"/>
+		<broadcaster id="bcrFieldDeletion" label="&fieldDelete.label;" observes="bcrItemBrowsing"/>
 	</broadcasterset>
 	<commandset>
 		<command id="cmdModifyDatabase" observes="bcrDatabaseModification"/>
@@ -55,8 +57,8 @@
 		<command id="cmdModifyField" observes="bcrFieldModification"/>
 		<command id="cmdDeleteField" observes="bcrFieldDeletion"/>
 		
-		<command id="cmdApplyItem" label="|OK|" observes="bcrItemEdition"/>
-		<command id="cmdCancelItem" label="|Cancel|" observes="bcrItemEdition"/>
+		<command id="cmdApplyItem" label="&ok.label;" observes="bcrItemEdition"/>
+		<command id="cmdCancelItem" label="&cancel.label;" observes="bcrItemEdition"/>
 	</commandset>
 	<hbox flex="1">
 		<vbox flex="1">
@@ -64,8 +66,8 @@
 				<vbox flex="1">
 					<tree id="treBrowse" flex="1" hidecolumnpicker="true" seltype="single" observes="bcrItemBrowsing">
 						<treecols>
-							<treecol primary="true" label="Name" flex="1"/>
-							<treecol label="Id"/>
+							<treecol primary="true" label="&treeItemName.label;" flex="1"/>
+							<treecol label="&treeItemId.label;"/>
 						</treecols>
 					  <treechildren id="tchItems"/>
 					</tree>
@@ -97,11 +99,11 @@
 					<hbox flex="1">
 						<vbox flex="1">
 							<groupbox>
-								<caption label="Name"/>
+								<caption label="&name.label;"/>
 								<textbox id="txbName" observes="bcrItemEdition"/>
 							</groupbox>
 							<groupbox>
-								<caption label="Comment"/>
+								<caption label="&comment.label;"/>
 								<textbox id="txbComment" multiline="true" observes="bcrItemEdition"/>
 							</groupbox>
 						</vbox>

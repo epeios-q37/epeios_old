@@ -63,36 +63,33 @@
 		<command id="cmdBrowseRecord" observes="bcrRecordSelected"/>
 	</commandset>
 	<keyset>
-		<key id="keyJSConsole" modifiers="accel shift" key="j" command="cmdJSConsole"/>
-		<key id="keyDOMInspector" modifiers="accel shift" key="d" command="cmdDOMInspector"/>
+		<key id="keyJSConsole" modifiers="accel shift" key="&jconsole.key;" command="cmdJSConsole"/>
+		<key id="keyDOMInspector" modifiers="accel shift" key="&dominspector.key;" command="cmdDOMInspector"/>
 	</keyset>
 	<menubar>
-		<menu label="Project">
+		<menu label="&project.label;">
 			<menupopup>
-				<menuitem label="Open" command="cmdOpenProject"/>
-				<menuitem label="Close" command="cmdCloseProject"/>
+				<menuitem label="&projectOpen.label;" command="cmdOpenProject"/>
+				<menuitem label="&projectClose.label;" command="cmdCloseProject"/>
 			</menupopup>
 		</menu>
-		<menu label="Database">
+		<menu label="&database.label;">
 			<menupopup>
-				<menuitem label="|New|" command="cmdCreateDatabase"/>
-				<menuitem label="|Open|" command="cmdOpenDatabase"/>
-				<menuitem label="|Structure|" command="cmdDefineDatabase"/>
-				<menuitem label="|Close|" command="cmdCloseDatabase"/>
+				<menuitem label="&databaseNew.label;" command="cmdCreateDatabase"/>
+				<menuitem label="&databaseOpen.label;" command="cmdOpenDatabase"/>
+				<menuitem label="&databaseStructure.label;" command="cmdDefineDatabase"/>
+				<menuitem label="&databaseClose.label;" command="cmdCloseDatabase"/>
 			</menupopup>
 		</menu>
-		<menu label="|Tables|" id="mnuTable"/>
-		<menu label="|Data|">
+		<menu label="&tables.label;" id="mnuTable"/>
+		<menu label="&record.label;">
 			<menupopup>
-				<menuitem label="|Create|" command="cmdCreateRecord"/>
-				<menuitem label="|Update|" command="cmdModifyRecord"/>
-				<menuitem label="|Duplicate|" command="cmdDuplicateRecord"/>
-				<menuitem label="|Browse|" command="cmdBrowseRecord"/>
-				<menuitem label="|Delete|" command="cmdDeleteRecord"/>
+				<menuitem label="&recordCreate.label;" command="cmdCreateRecord"/>
+				<menuitem label="&recordModify.label;" command="cmdModifyRecord"/>
+				<menuitem label="&recordDuplicate.label;" command="cmdDuplicateRecord"/>
+				<menuitem label="&recordBrowse.label;" command="cmdBrowseRecord"/>
+				<menuitem label="&recordDelete.label;" command="cmdDeleteRecord"/>
 			</menupopup>
-		</menu>
-		<menu label="&test;">
-			<menupopup/>
 		</menu>
 	</menubar>
 	<deck id="dckMain" selectedIndex="0" flex="1" >

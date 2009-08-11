@@ -1,0 +1,24 @@
+<!-- $Id$ -->
+
+<!ENTITY jconsole.key "j">
+<!ENTITY dominspector.key "d">
+
+<!ENTITY project.label "Project">
+<!ENTITY projectOpen.label "Open">
+<!ENTITY projectClose.label "Close">
+
+<!ENTITY database.label "Database">
+<!ENTITY databaseNew.label "New">
+<!ENTITY databaseOpen.label "Open">
+<!ENTITY databaseStructure.label "Structure">
+<!ENTITY databaseClose.label "Close">
+
+<!ENTITY tables.label "Tables">
+
+<!ENTITY record.label "Record">
+<!ENTITY recordCreate.label "Create">
+<!ENTITY recordModify.label "Modify">
+<!ENTITY recordDuplicate.label "Duplicate">
+<!ENTITY recordBrowse.label "Browse">
+<!ENTITY recordDelete.label "Delete">
+

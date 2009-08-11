@@ -98,7 +98,7 @@ namespace ui {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( _Kernel != NULL )
+				if ( IsProjectOpened() )
 					CloseProject();
 
 			_Kernel = NULL;
@@ -109,6 +109,13 @@ namespace ui {
 			_Kernel = &Kernel;
 		}
 		void OpenProject( const char *ConfigFile );
+		bso::bool__ IsProjectOpened( void ) const
+		{
+			if ( _Kernel != NULL )
+				return _Kernel->IsProjectOpened();
+			else
+				return false;
+		}
 		void CloseProject( void )
 		{
 			_SaveLocalRegistry();

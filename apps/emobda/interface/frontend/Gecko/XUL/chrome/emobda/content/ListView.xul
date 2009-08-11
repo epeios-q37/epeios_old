@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/ListView.dtd">
+
 <page
 	id="pgeListView"
 	title="List view"

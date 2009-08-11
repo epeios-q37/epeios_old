@@ -21,6 +21,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/DatabaseSelectionList.dtd">
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<xsl:include href="Library.xsl"/>
 	<xsl:output method="xml" indent="yes" encoding="ISO-8859-1" omit-xml-declaration="yes" standalone="yes"/>
@@ -31,7 +33,7 @@
 		<xsl:element name="treecols">
 			<xsl:element name="treecol">
 				<xsl:attribute name="id">Path</xsl:attribute>
-				<xsl:attribute name="label">Path</xsl:attribute>
+				<xsl:attribute name="label">&path.label;</xsl:attribute>
 				<xsl:attribute name="flex">1</xsl:attribute>
 			</xsl:element>
 		</xsl:element>

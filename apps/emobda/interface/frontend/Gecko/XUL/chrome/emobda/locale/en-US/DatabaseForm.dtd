@@ -1,0 +1,7 @@
+<!-- $Id$ -->
+
+<!ENTITY ok.label "OK">
+<!ENTITY cancel.label "Cancel">
+<!ENTITY name.label "Name">
+<!ENTITY path.label "Path">
+<!ENTITY comment.label "Comment">

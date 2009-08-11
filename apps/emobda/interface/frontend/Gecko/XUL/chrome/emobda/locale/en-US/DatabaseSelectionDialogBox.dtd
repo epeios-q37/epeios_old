@@ -1,0 +1,5 @@
+<!-- $Id$ -->
+
+<!ENTITY ok.label "OK">
+<!ENTITY cancel.label "Cancel">
+<!ENTITY databaseSelect.label "Select database">

@@ -212,6 +212,10 @@ namespace mbdkernl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			if ( P )
+				if ( IsProjectOpened() )
+					CloseProject();
+
 			_backend___::reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
@@ -251,6 +255,10 @@ namespace mbdkernl {
 			_Target.reset();
 			_Records.reset();
 			_Transient.reset();
+		}
+		bso::bool__ IsProjectOpened( void )
+		{
+			return IsConnected();
 		}
 		message__ OpenProject(
 			xtf::extended_text_iflow__ &Config,

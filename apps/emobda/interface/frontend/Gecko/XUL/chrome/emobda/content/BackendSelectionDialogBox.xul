@@ -22,6 +22,8 @@
 
 <!-- $Id$ -->
 
+<!DOCTYPE window SYSTEM "chrome://emobda/locale/BackendSelectionDialogBox.dtd">
+
 <window
 	id="wdwBackendSelectionDialogBox"
 	title="Backend selection"
