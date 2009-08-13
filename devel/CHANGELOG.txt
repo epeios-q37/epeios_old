@@ -1,11 +1,14 @@
 $Id$
 
+13/08/2009 :
+	- EPSMSC :
+		- Correction erreur dans macro 'EPSMSC_COPYRIGHT(...)'.
+
 06/08/2009 :
 	- NSXPCM :
 		- Désactivation par défaut des 'form history's dans 'Windows' également, car parfois empêche le chargement du composant.
 	- RGSTRY :
 		- Correction bogue introduit dans modification de hier.
-
 
 05/08/2009 :
 	- RGSTRY :

@@ -28,8 +28,9 @@
 
 #include "csdscm.h"
 
-#define MBDBKD_BACKEND_NAME	"emobda"
+#define MBDBKD_BACKEND_NAME	"emobdabkd"
 #define MBDBKD_BACKEND_VERSION	"0.1.0"
+#define MBDBKD_COPYRIGHT_YEARS	"2009"
 
 namespace mbdbkd {
 	typedef bkdmng::backend	_backend;

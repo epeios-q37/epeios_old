@@ -97,7 +97,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_EPEIOS_TEXT "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Epeios.
-#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
 
 							
 namespace epsmsc {
