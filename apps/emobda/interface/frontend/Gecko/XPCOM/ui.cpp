@@ -30,7 +30,7 @@ using namespace ui;
 void ui::ui___::OpenProject( const char *ConfigFile )
 {
 ERRProlog
-	message__ Message = mbdkernl::m_Undefined;
+	message__ Message = frdkernl::m_Undefined;
 	str::string ConfigurationId;
 	str::string UserData;
 	str::string UserConfigurationPath;
@@ -39,7 +39,7 @@ ERRProlog
 ERRBegin
 	ConfigurationId.Init();
 
-	if ( ( Message = K().OpenProject( ConfigFile, ConfigurationId ) ) != mbdkernl::m_Undefined )
+	if ( ( Message = K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationId ) ) != frdkernl::m_Undefined )
 		Alert( Message );
 	else {
 		table__ Table;
@@ -320,11 +320,11 @@ ERRBegin
 	if ( Tree.IsThereSelected() ) {
 		Value.Init();
 		Tree.GetCurrentItemAttribute( "Record", Value );
-		Record = mbdkernl::ExtractRecord( Value );
+		Record = frdkernl::ExtractRecord( Value );
 
 		Value.Init();
 		Tree.GetCurrentItemAttribute( "RecordPosition", Value );
-		RecordPosition = mbdkernl::ExtractRecordPosition( Value );
+		RecordPosition = frdkernl::ExtractRecordPosition( Value );
 	}
 
 	K().Target().Set( Record, RecordPosition );
@@ -383,11 +383,11 @@ ERRBegin
 	RetrieveData_( RecordForm.RecordBox.GetObject(), Data );
 
 	switch ( K().RecordInput().GetState() ) {
-		case mbdtrnsnt::risCreation:
-		case mbdtrnsnt::risDuplication:
+		case frdtrnsnt::risCreation:
+		case frdtrnsnt::risDuplication:
 			K().InsertRecord( Data );
 			break;
-		case mbdtrnsnt::risModification:
+		case frdtrnsnt::risModification:
 			K().ModifyRecord( Data );
 			break;
 		default:
@@ -406,19 +406,19 @@ ERREpilog
 void ui::ui___::ApplyStructureItem( void )
 {
 	if ( K().Target().Table == UNDEFINED_TABLE ) {
-		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsCreation )
+		if ( K().StructureManagement().GetState() != frdtrnsnt::smsCreation )
 			ERRc();
 
 		K().Target().Set( CreateOrModifyTable() );
 	} else if ( K().Target().Field == UNDEFINED_FIELD ) {
 		switch ( K().StructureManagement().GetState() ) {
-		case mbdtrnsnt::smsCreation:
+		case frdtrnsnt::smsCreation:
 			K().Target().Set( CreateOrModifyField() );
 			break;
-		case mbdtrnsnt::smsModification:
+		case frdtrnsnt::smsModification:
 			K().Target().Set( CreateOrModifyTable() );
 			break;
-		case mbdtrnsnt::smsDuplication:
+		case frdtrnsnt::smsDuplication:
 			ERRc();
 			break;
 		default:
@@ -426,7 +426,7 @@ void ui::ui___::ApplyStructureItem( void )
 			break;
 		}
 	} else {
-		if ( K().StructureManagement().GetState() != mbdtrnsnt::smsModification )
+		if ( K().StructureManagement().GetState() != frdtrnsnt::smsModification )
 			ERRc();
 
 		K().Target().Set( CreateOrModifyField() );

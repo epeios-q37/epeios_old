@@ -24,7 +24,7 @@
 
 #include "ui_base.h"
 
-namespace mbdkernl {
+namespace frdkernl {
 	struct target__;
 }	// Predeclaration.
 
@@ -122,7 +122,7 @@ namespace ui_struct {
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;
 			DatabaseSelectionPanel = TableSelectionPanel = FieldSelectionPanel = NULL;
 		}
-		bso::bool__ GetSelectedItem( mbdkernl::target__ &Target );	// Return 'false' if no item selected, 'true' otherwise.
+		bso::bool__ GetSelectedItem( frdkernl::target__ &Target );	// Return 'false' if no item selected, 'true' otherwise.
 		void UpdateDecks( void );
 		void FillView( void );
 	};

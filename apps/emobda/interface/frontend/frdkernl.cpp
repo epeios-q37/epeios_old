@@ -1,5 +1,5 @@
 /*
-	'mbdkernl.cpp' by Claude SIMON (http://zeusw.org/).
+	'frdkernl.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,11 +19,11 @@
 
 // $Id$
 
-#include "mbdkernl.h"
+#include "frdkernl.h"
 #include "flf.h"
 #include "flx.h"
 
-using namespace mbdkernl;
+using namespace frdkernl;
 using xml::writer_;
 
 #define CASE( message )	\
@@ -31,7 +31,7 @@ using xml::writer_;
 		Message = #message;\
 		break
 
-static const char *GetRawMessage_( mbdkernl::message__ MessageId )
+static const char *GetRawMessage_( frdkernl::message__ MessageId )
 {
 	const char *Message = NULL;
 
@@ -62,7 +62,7 @@ static const char *GetRawMessage_( mbdkernl::message__ MessageId )
 typedef msg::i18_messages_ _messages_;
 typedef msg::i18_messages _messages;
 
-message__ mbdkernl::kernel___::OpenProject(
+message__ frdkernl::kernel___::OpenProject(
 	const char *ConfigFile,
 	const char *RootPath,
 	str::string_ &ConfigurationId )
@@ -88,7 +88,7 @@ ERREpilog
 	return Message;
 }
 
-message__ mbdkernl::kernel___::OpenProject(
+message__ frdkernl::kernel___::OpenProject(
 	xtf::extended_text_iflow__ &Config,
 	const char *RootPath,
 	str::string_ &ConfigurationId )
@@ -103,7 +103,7 @@ ERRProlog
 ERRBegin
 	reset();
 
-	_Language = MBDKERNL_DEFAULT_LANGUAGE;	// A changer.
+	_Language = FRDKERNL_DEFAULT_LANGUAGE;	// A changer.
 
 	_GlobalRegistry.Init();
 
@@ -136,14 +136,14 @@ ERRBegin
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	if ( GetRegistryValue( mbdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
+	if ( GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
 
 		_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
 		_backend___::Init( _ClientCore );
 
 		DatabasePath.Init();
 
-		if ( GetRegistryValue( mbdrgstry::paths::Parameters.Database.Path, DatabasePath ) ) {
+		if ( GetRegistryValue( frdrgstry::paths::Parameters.Database.Path, DatabasePath ) ) {
 			if ( !OpenDatabase( DatabasePath ) ) {
 				Message = mUnableToOpenDatabase;
 				ERRReturn;
@@ -158,7 +158,7 @@ ERREpilog
 	return Message;
 }
 
-void mbdkernl::kernel___::SetLocalRegistry(
+void frdkernl::kernel___::SetLocalRegistry(
 	xtf::extended_text_iflow__ &Config,
 	const str::string_ &Path )
 {
@@ -201,19 +201,19 @@ static class messages
 protected:
 	const char *MSGGetRawMessage( int MessageId ) const
 	{
-		return GetRawMessage_( (mbdkernl::message__)MessageId );
+		return GetRawMessage_( (frdkernl::message__)MessageId );
 	}
 } Messages_;
 
 static const char *GetMessage_(
-	mbdkernl::message__ Message,
+	frdkernl::message__ Message,
 	lgg::language__ Language,
 	msg::buffer__ &Buffer )
 {
 	return ::Messages_.GetMessage( Message, Language, Buffer );
 }
 
-const char *mbdkernl::kernel___::GetMessage( mbdkernl::message__ MessageId )
+const char *frdkernl::kernel___::GetMessage( frdkernl::message__ MessageId )
 {
 	return GetMessage_( MessageId, _Language, _MessageBuffer );
 }
@@ -236,7 +236,7 @@ template <typename id> static inline void PutId_(
 	PutInt_( Name, **Id, Writer );
 }
 
-void mbdkernl::kernel___::ApplyQuery( void )
+void frdkernl::kernel___::ApplyQuery( void )
 {
 	_Records.Init();
 
@@ -277,7 +277,7 @@ void Dump_(
 }
 
 
-void mbdkernl::kernel___::_DumpAvailableDatabases( writer_ &Writer )
+void frdkernl::kernel___::_DumpAvailableDatabases( writer_ &Writer )
 {
 ERRProlog
 	bkdacc::strings Databases;
@@ -503,7 +503,7 @@ ERREnd
 ERREpilog
 }
 
-void mbdkernl::kernel___::_DumpStructure( writer_ &Writer )
+void frdkernl::kernel___::_DumpStructure( writer_ &Writer )
 {
 	Writer.PushTag( "Structure" );
 
@@ -528,7 +528,7 @@ static void Dump_(
 		PutId_( "Record", Target.Record, Writer );
 }
 
-void mbdkernl::kernel___::_DumpCurrent(
+void frdkernl::kernel___::_DumpCurrent(
 	writer_ &Writer,
 	bso::bool__ ContextIsStandard )
 {
@@ -615,7 +615,7 @@ static void Dump_(
 }
 
 
-void mbdkernl::kernel___::_DumpContent( writer_ &Writer )
+void frdkernl::kernel___::_DumpContent( writer_ &Writer )
 {
 ERRProlog
 	fields Fields;
@@ -650,7 +650,7 @@ ERREpilog
 }
 
 
-void mbdkernl::kernel___::DumpAsXML(
+void frdkernl::kernel___::DumpAsXML(
 	str::string_ &XML,
 	bso::bool__ ContextIsStandard )
 {

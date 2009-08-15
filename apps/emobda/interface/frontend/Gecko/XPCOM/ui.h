@@ -22,7 +22,7 @@
 #ifndef UI__INC
 #define UI__INC
 
-#include "../../mbdkernl.h"
+#include "../../frdkernl.h"
 #include "ui_base.h"
 #include "ui_main.h"
 #include "ui_dbs_f.h"
@@ -35,16 +35,16 @@
 
 namespace ui {
 	using namespace ui_base;
-	using mbdkernl::target__;
-	using mbdkernl::table__;
-	using mbdkernl::table_id__;
-	using mbdkernl::field__;
-	using mbdkernl::field_id__;
-	using mbdkernl::record__;
-	using mbdkernl::record_position__;
+	using frdkernl::target__;
+	using frdkernl::table__;
+	using frdkernl::table_id__;
+	using frdkernl::field__;
+	using frdkernl::field_id__;
+	using frdkernl::record__;
+	using frdkernl::record_position__;
 
-	typedef mbdkernl::message__ message__;	// To resolve ambiguity.
-	typedef mbdkernl::kernel___ _kernel___;
+	typedef frdkernl::message__ message__;	// To resolve ambiguity.
+	typedef frdkernl::kernel___ _kernel___;
 
 	enum context__ {
 		cSessionForm,
@@ -229,11 +229,11 @@ namespace ui {
 			nsxpcm::GetWindowInternal(Main.Window )->Open( NS_LITERAL_STRING( "DatabaseForm.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
 			switch ( _K().DatabaseIdentification().GetState() ) {
-			case mbdtrnsnt::disValidated:
+			case frdtrnsnt::disValidated:
 				_K().DatabaseIdentification().Get( Name, Path, Comment );
 				Validated = true;
 				break;
-			case mbdtrnsnt::disCancelled:
+			case frdtrnsnt::disCancelled:
 				Validated = false;
 				break;
 			default:
@@ -281,16 +281,16 @@ namespace ui {
 
 
 			switch ( _K().BackendSelection().GetState() ) {
-			case mbdtrnsnt::bssRemote:
+			case frdtrnsnt::bssRemote:
 				_K().BackendSelection().GetHostService( RemoteHostServiceOrLocalLibraryPath );
 				Type = csducl::tShared;
 				Validated = true;
 				break;
-			case mbdtrnsnt::bssLocal:
+			case frdtrnsnt::bssLocal:
 				Type = csducl::tLibrary;
 				Validated = true;
 				break;
-			case mbdtrnsnt::bssCancelled:
+			case frdtrnsnt::bssCancelled:
 				Validated = false;
 				break;
 			default:
@@ -311,11 +311,11 @@ namespace ui {
 			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "DatabaseSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
 
 			switch ( _K().DatabaseSelection().GetState() ) {
-			case mbdtrnsnt::dssValidated:
+			case frdtrnsnt::dssValidated:
 				_K().DatabaseSelection().Get( Path );
 				Validated = true;
 				break;
-			case mbdtrnsnt::dssCancelled:
+			case frdtrnsnt::dssCancelled:
 				Validated = false;
 				break;
 			default:
@@ -444,7 +444,7 @@ namespace ui {
 		bso::bool__ GoToRecordNumber( record_position__ Position )
 		{
 			if ( !K().GoToRecordNumber( Position ) ) {
-				Alert( mbdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mUnableToReachRecord );
 				return false;
 			}
 
@@ -455,7 +455,7 @@ namespace ui {
 		bso::bool__ GoToFirstRecord( void )
 		{
 			if ( !K().GoToFirstRecord() ) {
-				Alert( mbdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mUnableToReachRecord );
 				return false;
 			}
 
@@ -466,7 +466,7 @@ namespace ui {
 		bso::bool__ GoToPreviousRecord( void )
 		{
 			if ( !K().GoToPreviousRecord() ) {
-				Alert( mbdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mUnableToReachRecord );
 				return false;
 			}
 
@@ -477,7 +477,7 @@ namespace ui {
 		bso::bool__ GoToNextRecord( void )
 		{
 			if ( !K().GoToNextRecord() ) {
-				Alert( mbdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mUnableToReachRecord );
 				return false;
 			}
 
@@ -488,7 +488,7 @@ namespace ui {
 		bso::bool__ GoToLastRecord( void )
 		{
 			if ( !K().GoToLastRecord() ) {
-				Alert( mbdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mUnableToReachRecord );
 				return false;
 			}
 

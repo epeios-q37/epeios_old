@@ -22,8 +22,8 @@
 #ifndef KERNEL__INC
 #define KERNEL__INC
 
-#include "mbdkernl.h"
-#include "mbdbkd.h"
+#include "frdkernl.h"
+#include "frdbcknd.h"
 
 #include "nsxpcm.h"
 
@@ -36,16 +36,16 @@
 #define DEFAULT_LOCATION	"d:\\emobda\\test"
 
 namespace kernel {
-	using namespace mbdbkd;
+	using namespace frdbcknd;
 
-	using mbdkernl::message__;
-	using mbdkernl::database_identification_state__;
+	using frdkernl::message__;
+	using frdkernl::database_identification_state__;
 
 	E_ROW( krow__ );	// 'kernel row', see below.
 
 	extern nsxpcm::repository< class kernel___, krow__> Repository;
 
-	typedef mbdkernl::kernel___ _kernel___;
+	typedef frdkernl::kernel___ _kernel___;
 	typedef ui::ui___ _ui___;
 
 	class kernel___
@@ -63,7 +63,7 @@ namespace kernel {
 		{
 			Revoke();
 		}
-		virtual void MBDBKDReport( const char *Message )
+		virtual void FRDBCKNDReport( const char *Message )
 		{
 			nsxpcm::Alert( Message );
 		}

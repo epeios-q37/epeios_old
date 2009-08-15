@@ -1,5 +1,5 @@
 /*
-	'mdbbsc.cpp' by Claude SIMON (http://zeusw.org/).
+	'mbdbsc.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 

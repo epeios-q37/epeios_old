@@ -45,7 +45,7 @@ ERRProlog
 ERRBegin
 	FileName.Init();
 
-	if ( nsxpcm::FileOpenDialogBox( UI().Main.Window, UI().K().GetMessage( mbdkernl::mSelectProjectFile ), FileName ) )
+	if ( nsxpcm::FileOpenDialogBox( UI().Main.Window, UI().K().GetMessage( frdkernl::mSelectProjectFile ), FileName ) )
 		UI().OpenProject( FileName.Convert( Buffer ) );
 
 ERRErr
@@ -86,19 +86,19 @@ void ui_main::table_menu_item__::NSXPCMOnEvent( event__ )
 
 void ui_main::create_record_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().RecordInput().SetState( mbdtrnsnt::risCreation );
+	UI().K().RecordInput().SetState( frdtrnsnt::risCreation );
 	UI().DefineRecord();
 }
 
 void ui_main::modify_record_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().RecordInput().SetState( mbdtrnsnt::risModification );
+	UI().K().RecordInput().SetState( frdtrnsnt::risModification );
 	UI().DefineRecord();
 }
 
 void ui_main::duplicate_record_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().RecordInput().SetState( mbdtrnsnt::risDuplication );
+	UI().K().RecordInput().SetState( frdtrnsnt::risDuplication );
 	UI().DefineRecord();
 }
 
@@ -109,7 +109,7 @@ void ui_main::browse_record_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::delete_record_command__::NSXPCMOnEvent( event__ )
 {
-	if ( UI().Confirm( mbdkernl::mDeleteRecordConfirmation ) )
+	if ( UI().Confirm( frdkernl::mDeleteRecordConfirmation ) )
 		UI().RemoveRecord();
 }
 

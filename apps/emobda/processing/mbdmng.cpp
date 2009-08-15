@@ -552,10 +552,12 @@ bso::bool__ mbdmng::manager_::_SubInit( type__ Type )
 	return Success;
 }
 
-const strings_ &mbdmng::GetDatabases( strings_ &Databases )
+const strings_ &mbdmng::GetDatabases(
+	const char *Dir,
+	strings_ &Databases )
 {
 	dir::handle___ Handle = DIR_INVALID_HANDLE;
-	const char *File = dir::GetFirstFile( "." , Handle );
+	const char *File = dir::GetFirstFile( Dir , Handle );
 	size_t Length = strlen( "." MBDBSC_STRUCTURE_FILE_EXTENSION );
 
 	while ( ( File != NULL ) && ( File[0] ) ) {

@@ -24,6 +24,8 @@
 #ifndef MBDBKD__INC
 #define MBDBKD__INC
 
+#error "Obsolete ! Use 'bkdcore' module instead."
+
 #include "mngbkd.h"
 
 #include "csdscm.h"

@@ -1,5 +1,5 @@
 /*
-	'mbdrgstry.h' by Claude SIMON (http://zeusw.org/).
+	'frdrgstry.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,22 +19,20 @@
 
 // $Id$
 
-#ifndef MBDRGSTRY__INC
-#define MBDRGSTRY__INC
-
-#error "Obsolete ! Use 'frdrgstry' module instead !"
+#ifndef FRDRGSTRY__INC
+#define FRDRGSTRY__INC
 
 #include "rgstry.h"
 
-#define MBDRGSTRY_PATH_SEPARATOR	"/"	// Path item separator
+#define FRDRGSTRY_PATH_SEPARATOR	"/"	// Path item separator
 
-#define MBDRGSTRY_PATH_TAG_CHAR		'$'	// Joker for tags as character. NOTA : if modified, modify below too !
-#define MBDRGSTRY_PATH_TAG_STRING	"$"	// Joker for tags as string
+#define FRDRGSTRY_PATH_TAG_CHAR		'$'	// Joker for tags as character. NOTA : if modified, modify below too !
+#define FRDRGSTRY_PATH_TAG_STRING	"$"	// Joker for tags as string
 
-#define MBDRGSTRY_PARAMETERS_PATH	"Parameters" MBDRGSTRY_PATH_SEPARATOR
-#define MBDRGSTRY_PROFILES_PATH		"Profiles" MBDRGSTRY_PATH_SEPARATOR
+#define FRDRGSTRY_PARAMETERS_PATH	"Parameters" FRDRGSTRY_PATH_SEPARATOR
+#define FRDRGSTRY_PROFILES_PATH		"Profiles" FRDRGSTRY_PATH_SEPARATOR
 
-namespace mbdrgstry {
+namespace frdrgstry {
 
 	struct paths {
 		static struct parameters {

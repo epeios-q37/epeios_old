@@ -1,5 +1,5 @@
 /*
-	'mbdbkd.h' by Claude SIMON (http://zeusw.org/).
+	'frdbcknd.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,32 +19,32 @@
 
 // $Id$
 
+// FRontenD BaCKeND	(module to access the backend).
 
-#ifndef MBDBKD__INC
-#define MBDBKD__INC
 
-#error "Obsolete ! Use 'frdbcknd' module instead !"
+#ifndef FRDBCKND__INC
+#define FRDBCKND__INC
 
 #include "mbdapi.h"
 #include "bkduac.h"
 #include "csducl.h"
 
-namespace mbdbkd {
+namespace frdbcknd {
 
 	BKDACC_T32( table );
-#define UNDEFINED_TABLE		((mbdbkd::table__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_TABLE		((frdbcknd::table__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( table_id );
-#define UNDEFINED_TABLE_ID	((mbdbkd::table_id__)BKDACC_UNDEFINED_ID8 )
+#define UNDEFINED_TABLE_ID	((frdbcknd::table_id__)BKDACC_UNDEFINED_ID8 )
 
 	BKDACC_T32( field );
-#define UNDEFINED_FIELD		((mbdbkd::field__)BKDACC_UNDEFINED_ID32 )
+#define UNDEFINED_FIELD		((frdbcknd::field__)BKDACC_UNDEFINED_ID32 )
 
 	BKDACC_T8( field_id );
-#define UNDEFINED_FIELD_ID	((mbdbkd::field_id__)BKDACC_UNDEFINED_ID8 )
+#define UNDEFINED_FIELD_ID	((frdbcknd::field_id__)BKDACC_UNDEFINED_ID8 )
 
 	BKDACC_T16( record );
-#define UNDEFINED_RECORD	((mbdbkd::record__)BKDACC_UNDEFINED_ID16 )
+#define UNDEFINED_RECORD	((frdbcknd::record__)BKDACC_UNDEFINED_ID16 )
 
 // Only purpose is to point to a record in a custom list.
 	typedef bso::ulong__ record_position__;
@@ -79,10 +79,10 @@ namespace mbdbkd {
 		}
 		void _Report( const char *Message )
 		{
-			MBDBKDReport( Message );
+			FRDBCKNDReport( Message );
 		}
 	protected:
-		virtual void MBDBKDReport( const char *Message ) =0;
+		virtual void FRDBCKNDReport( const char *Message ) =0 ;
 	public:
 		emobda::mbd_manager___ Manager;
 		void reset( bso::bool__ P = true )

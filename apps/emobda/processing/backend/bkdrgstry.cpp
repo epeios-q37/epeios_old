@@ -1,5 +1,5 @@
 /*
-	'registry.h' by Claude SIMON (http://zeusw.org/).
+	'mbdrgy.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,13 +19,13 @@
 
 // $Id$
 
-#ifndef REGISTRY__INC
-#define REGISTRY__INC
+#include "bkdrgstry.h"
 
-#include "frdrgstry.h"
+using namespace bkdrgstry;
 
-namespace registry {
-	using namespace frdrgstry;
-}
+#define PATH_SEPARATOR MBDRGY_PATH_SEPARATOR
 
-#endif
+const char *bkdrgstry::paths::RootPath = "RootPath";
+
+
+

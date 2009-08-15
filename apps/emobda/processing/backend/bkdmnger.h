@@ -1,5 +1,5 @@
 /*
-	'mbdbkd.h' by Claude SIMON (http://zeusw.org/).
+	'bkdmnger.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,21 +19,19 @@
 
 // $Id$
 
-// MaNaGer BaCKend
+// BaCKend MaNGER
 
-#ifndef MNGBKD__INC
-#define MNGBKD__INC
-
-#error "Obsolete ! Use 'bkdmnger' instead !"
+#ifndef BKDMNGER__INC
+#define BKDMNGER__INC
 
 #include "../mbdmng.h"
 
 #include "bkdmng.h"
 
-#define MNGBKD_MANAGER_PREFIX	"mbd"
-#define MNGBKD_MANAGER_NAME		"manager"
+#define BKDMNGER_MANAGER_PREFIX	"mbd"
+#define BKDMNGER_MANAGER_NAME	"manager"
 
-namespace mngbkd {
+namespace bkdmnger {
 
 	void Inform( bkdmng::backend_ &Backend );
 

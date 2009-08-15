@@ -36,7 +36,7 @@ ERRBegin
 	Path.Init();
 
 	if ( !UI().DatabaseSelection.DatabaseTree.IsThereSelected() ) {
-		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mNoDatabaseSelected );
+		UI().Alert( UI().DatabaseSelection.Window.GetObject(), frdkernl::mNoDatabaseSelected );
 		ERRReturn;
 	}
 
@@ -45,7 +45,7 @@ ERRBegin
 	Path.StripCharacter( ' ' );
 
 	if ( Path.Amount() == 0 ) {
-		UI().Alert( UI().DatabaseSelection.Window.GetObject(), mbdkernl::mBadDatabasePath );
+		UI().Alert( UI().DatabaseSelection.Window.GetObject(), frdkernl::mBadDatabasePath );
 		ERRReturn;
 	}
 

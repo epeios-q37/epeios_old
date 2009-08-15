@@ -19,14 +19,16 @@
 
 // $Id$
 
-#include "../mbdbkd.h"
+#include "bkdcore.h"
+#include "registry.h"
+
 #include "epsmsc.h"
 #include "csdsns.h"
 #include "clnarg.h"
 #include "cio.h"
 
-#define VERSION			MBDBKD_BACKEND_VERSION
-#define COPYRIGHT_YEARS	MBDBKD_COPYRIGHT_YEARS
+#define VERSION			BKDCORE_BACKEND_VERSION
+#define COPYRIGHT_YEARS	BKDCORE_COPYRIGHT_YEARS
 
 #define NAME			"emobdadmn"
 #define DESCRIPTION		"Backend daemon for 'emobda' software"
@@ -270,7 +272,8 @@ class kernel___
 public:
 	csdsns::core Core;
 	csdsns::server___ Server;
-	mbdbkd::backend_functions__ Functions;
+	bkdcore::backend_functions__ Functions;
+	registry::registry___ Registry;
 	void Init( csdsns::service__ Service )
 	{
 		Functions.Init( );
@@ -288,6 +291,10 @@ void Main(
 	int argc,
 	const char *argv[] )
 {
+	bso::ulong__ Port = 0;
+
+	registry::GetPort( Kernel_.Registry, Port );
+
 	::Kernel_.Init(1234);
 
 	::Kernel_.Process( SCK_INFINITE );

@@ -1,5 +1,5 @@
 /*
-	'registry.h' by Claude SIMON (http://zeusw.org/).
+	'frdtrnsnt.cpp' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,13 +19,30 @@
 
 // $Id$
 
-#ifndef REGISTRY__INC
-#define REGISTRY__INC
+#include "frdtrnsnt.h"
 
-#include "frdrgstry.h"
+using namespace frdtrnsnt;
 
-namespace registry {
-	using namespace frdrgstry;
+#define CASE( context )	\
+case c##context:\
+	Label = #context;\
+	break
+
+const char *frdtrnsnt::GetContextLabel( context__ Context )
+{
+	const char *Label = NULL;
+
+	switch( Context ){
+	CASE( StructureManagement );
+	CASE( DatabaseIdentification );
+	CASE( DatabaseSelection );
+	CASE( BackendSelection );
+	CASE( RecordInput );
+	default:
+		ERRu();
+	}
+
+	return Label;
 }
 
-#endif
+

@@ -35,7 +35,7 @@ void ui_rcd_f::apply_record_command__::NSXPCMOnEvent( event__ )
 
 void ui_rcd_f::cancel_record_command__::NSXPCMOnEvent( event__ )
 {
-	if ( UI().Confirm( mbdkernl::mDropRecordConfirmation ) )
+	if ( UI().Confirm( frdkernl::mDropRecordConfirmation ) )
 		UI().DropRecord();
 }
 

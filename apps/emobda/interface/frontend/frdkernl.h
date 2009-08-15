@@ -1,5 +1,5 @@
 /*
-	'mbdkernl.h' by Claude SIMON (http://zeusw.org/).
+	'frdkernl.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,15 +19,13 @@
 
 // $Id$
 
-#ifndef MBDKERNL__INC
-#define MBDKERNL__INC
+#ifndef FRDKERNL__INC
+#define FRDKERNL__INC
 
-#error "Obsolete! Use 'frdkernl' module instead !"
+#include "frdbcknd.h"
 
-#include "mbdbkd.h"
-
-#include "mbdtrnsnt.h"
-#include "mbdrgstry.h"
+#include "frdtrnsnt.h"
+#include "frdrgstry.h"
 
 #include "csdsnc.h"
 #include "csducl.h"
@@ -36,18 +34,11 @@
 #include "lgg.h"
 #include "bkdacc.h"
 
+#define FRDKERNL_DEFAULT_LANGUAGE	lgg::lEnglish
 
-// #define ADDRESS	"192.168.5.10:1234"	// Portable.
-// #define ADDRESS	"10.0.2.2:1234"		// Logiplus.
-// #define MBDKERNL_TEST_ADDRESS	"localhost:1234"	// Local
-
-#define MBDKERNL_TEST_LOCATION	"d:\\emobda\\test"
-
-#define MBDKERNL_DEFAULT_LANGUAGE	lgg::lEnglish
-
-namespace mbdkernl {
-	using namespace mbdbkd;
-	using namespace mbdtrnsnt;
+namespace frdkernl {
+	using namespace frdbcknd;
+	using namespace frdtrnsnt;
 
 	enum message__ 
 	{
@@ -78,7 +69,7 @@ namespace mbdkernl {
 	};
 
 
-	typedef mbdbkd::backend___ _backend___;
+	typedef frdbcknd::backend___ _backend___;
 
 	class log_functions__
 	: public csdsnc::log_functions__
@@ -91,7 +82,7 @@ namespace mbdkernl {
 		{}
 	};
 
-#define MBDKERNL_TRANSIENT_USE( type, object )\
+#define FRDKERNL_TRANSIENT_USE( type, object )\
 		const type &object( void ) const\
 		{\
 			return _Transient.object();\
@@ -282,11 +273,11 @@ namespace mbdkernl {
 			DumpRegistry( _LocalRegistryRoot, OFlow );
 		}
 		const char *GetMessage( message__ Message );
-		MBDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
-		MBDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
-		MBDKERNL_TRANSIENT_USE( database_selection, DatabaseSelection );
-		MBDKERNL_TRANSIENT_USE( backend_selection, BackendSelection );
-		MBDKERNL_TRANSIENT_USE( record_input, RecordInput );
+		FRDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
+		FRDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
+		FRDKERNL_TRANSIENT_USE( database_selection, DatabaseSelection );
+		FRDKERNL_TRANSIENT_USE( backend_selection, BackendSelection );
+		FRDKERNL_TRANSIENT_USE( record_input, RecordInput );
 		bso::bool__ GetRegistryValue(
 			const char *Path,
 			str::string_ &Value )
@@ -467,11 +458,11 @@ namespace mbdkernl {
 			bso::bool__ ContextIsStandard );
 		bso::bool__ GetCurrentTable( table__ &Table )
 		{
-			return mbdrgstry::GetProfileIntegerValue( mbdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
+			return frdrgstry::GetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
 		}
 		void SetCurrentTable( table__ Table )
 		{
-			mbdrgstry::SetProfileIntegerValue( mbdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
+			frdrgstry::SetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
 		}	
 
 	};

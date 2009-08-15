@@ -25,7 +25,7 @@
 using namespace ui_struct;
 using kernel::kernel___;
 using nsxpcm::event__;
-using mbdkernl::target__;
+using frdkernl::target__;
 
 using namespace kernel;
 
@@ -43,15 +43,15 @@ ERRBegin
 		if ( Type == "Field" ) {
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
-			Target.Field = mbdkernl::ExtractField( Row );
+			Target.Field = frdkernl::ExtractField( Row );
 
 			TableRow.Init();
 			BrowseTree.GetCurrentItemAttribute( "TableRow", TableRow );
-			Target.Table = mbdkernl::ExtractTable( TableRow );
+			Target.Table = frdkernl::ExtractTable( TableRow );
 		} else if ( Type == "Table" ) {
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
-			Target.Table = mbdkernl::ExtractTable( Row );
+			Target.Table = frdkernl::ExtractTable( Row );
 		} else if ( Type != "Database" )
 			ERRc();
 
@@ -70,7 +70,7 @@ ERRProlog
 	str::string Name, Comment;
 	target__ Target;
 ERRBegin
-	mbdkernl::kernel___ &Kernel = UI()._K();
+	frdkernl::kernel___ &Kernel = UI()._K();
 
 	Name.Init();
 	Comment.Init();
@@ -161,7 +161,7 @@ ERRProlog
 	table__ Table = UNDEFINED_TABLE;
 	field__ Field = UNDEFINED_FIELD;
 ERRBegin
-	mbdkernl::kernel___ &Kernel = UI()._K();
+	frdkernl::kernel___ &Kernel = UI()._K();
 
 	Name.Init();
 	Comment.Init();
@@ -180,7 +180,7 @@ ERRBegin
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			Table = mbdkernl::ExtractTable( Row );
+			Table = frdkernl::ExtractTable( Row );
 
 			if ( !Kernel.GetTableInfos( Table, Name, Comment, TableId ) )
 				ERRReturn;
@@ -190,7 +190,7 @@ ERRBegin
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
 
-			Field = mbdkernl::ExtractField( Row );
+			Field = frdkernl::ExtractField( Row );
 
 			if ( !Kernel.GetFieldInfos( Field, Name, Comment, FieldId, Table ) )
 				ERRReturn;
@@ -333,9 +333,9 @@ ERRProlog
 	str::string XML;
 	target__ Target;
 ERRBegin
-	mbdkernl::kernel___ &Kernel = UI()._K();
+	frdkernl::kernel___ &Kernel = UI()._K();
 
-	if ( Kernel.GetTransientContext() == mbdtrnsnt::cStructureManagement )
+	if ( Kernel.GetTransientContext() == frdtrnsnt::cStructureManagement )
 		Target = Kernel.Target();
 	else
 		GetSelectedItem( Target );
@@ -376,40 +376,40 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().StructureManagement().SetState( mbdkernl::smsCreation );
+	UI().K().StructureManagement().SetState( frdkernl::smsCreation );
 	UI().K().Target().reset();
 	UI().DefineTable();
 }
 
 void ui_struct::modify_table_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().StructureManagement().SetState( mbdkernl::smsModification );
+	UI().K().StructureManagement().SetState( frdkernl::smsModification );
 	UI().DefineTable();
 }
 
 void ui_struct::delete_table_command__::NSXPCMOnEvent( event__ )
 {
-	if ( UI().Confirm( mbdkernl::mDeleteTableConfirmation ) ) {
+	if ( UI().Confirm( frdkernl::mDeleteTableConfirmation ) ) {
 		UI().DeleteTable();
 	}
 }
 
 void ui_struct::create_field_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().StructureManagement().SetState( mbdkernl::smsCreation );
+	UI().K().StructureManagement().SetState( frdkernl::smsCreation );
 	UI().K().Target().Set( UNDEFINED_FIELD );
 	UI().DefineField();
 }
 
 void ui_struct::modify_field_command__::NSXPCMOnEvent( event__ )
 {
-	UI().K().StructureManagement().SetState( mbdkernl::smsModification );
+	UI().K().StructureManagement().SetState( frdkernl::smsModification );
 	UI().DefineField();
 }
 
 void ui_struct::delete_field_command__::NSXPCMOnEvent( event__ )
 {
-	if ( UI().Confirm( mbdkernl::mDeleteFieldConfirmation ) ) {
+	if ( UI().Confirm( frdkernl::mDeleteFieldConfirmation ) ) {
 		UI().DeleteField();
 	}
 }
@@ -421,7 +421,7 @@ void ui_struct::apply_item_command__::NSXPCMOnEvent( event__ )
 
 void ui_struct::cancel_item_command__::NSXPCMOnEvent( event__ )
 {
-	if ( UI().Confirm( mbdkernl::mDropStructureItemConfirmation ) ) {
+	if ( UI().Confirm( frdkernl::mDropStructureItemConfirmation ) ) {
 		UI().DropStructureItem();
 	}
 }
@@ -433,7 +433,7 @@ void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 			UI().BrowseStructureItem();
 			break;
 		case nsxpcm::eDblClick:
-			UI().K().StructureManagement().SetState( mbdkernl::smsModification );
+			UI().K().StructureManagement().SetState( frdkernl::smsModification );
 			UI().DefineStructureItem();
 			break;
 		default:

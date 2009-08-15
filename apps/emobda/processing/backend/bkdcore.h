@@ -1,5 +1,5 @@
 /*
-	'backend.h' by Claude SIMON (http://zeusw.org/).
+	'mbdbkd.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,35 +19,59 @@
 
 // $Id$
 
-// BACKEND
+// BacKenD CORE
 
-#ifndef BACKEND__INC
-#define BACKEND__INC
+#ifndef BKDCORE__INC
+#define BKDCORE__INC
 
-#error "Obsolete due to name conflict ! Use 'mbdbkd' instead !".
+#include "bkdmnger.h"
 
-#include "mngbkd.h"
+#include "csdscm.h"
 
-#define BACKEND_NAME	"emobda"
-#define BACKEND_VERSION	"0.1.0"
+#define BKDCORE_BACKEND_NAME	"emobdabkd"
+#define BKDCORE_BACKEND_VERSION	"0.1.0"
+#define BKDCORE_COPYRIGHT_YEARS	"2009"
 
-namespace backend {
+namespace bkdcore {
 	typedef bkdmng::backend	_backend;
 
 	class backend
 	: public _backend
 	{
 	private:
-		BKDMNG_RAM_MODULE( mngbkd::manager ) Manager;
+		BKDMNG_RAM_MODULE( bkdmnger::manager_ ) Manager;
 	public:
 		void Init( void )
 		{
-			_backend::Init( BACKEND_NAME, BACKEND_VERSION );
+			_backend::Init( BKDCORE_BACKEND_NAME, BKDCORE_BACKEND_VERSION );
+
+			bkdmnger::Inform( *this );
+
+			Manager.Init();
+			Add( Manager );
 		}
 
 	};
 
 	typedef backend backend_;
+
+	typedef csdscm::user_functions__ _backend_functions__;
+
+	class backend_functions__
+	: public _backend_functions__
+	{
+	protected:
+		virtual void *CSDPreProcess( flw::ioflow__ &Flow );
+		virtual csdscm::action__ CSDProcess(
+			flw::ioflow__ &Flow,
+			void *UP );
+		virtual void CSDPostProcess( void *UP );
+	public:
+		void Init( void )
+		{
+			_backend_functions__::Init();
+		}
+	};
 }
 
 

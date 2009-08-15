@@ -1,5 +1,5 @@
 /*
-	'transient.h' by Claude SIMON (http://zeusw.org/).
+	'frdtrnsnt.h' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'emobda' software.
 
@@ -19,14 +19,12 @@
 
 // $Id$
 
-#ifndef MBDTRNSNT__INC
-#define MBDTRNSNT__INC
+#ifndef FRDTRNSNT__INC
+#define FRDTRNSNT__INC
 
-#error "Obsolete ! Use 'frdtrnsnt' module instead !'
+#include "frdbcknd.h"
 
-#include "mbdbkd.h"
-
-namespace mbdtrnsnt {
+namespace frdtrnsnt {
 
 	enum context__ {
 		cStructureManagement,
@@ -296,7 +294,7 @@ namespace mbdtrnsnt {
 		}
 	};
 
-#define MBDTRNSNT_DEF( type, object )\
+#define FRDTRNSNT_DEF( type, object )\
 	private:\
 		type _##object;\
 	public:\
@@ -330,11 +328,11 @@ namespace mbdtrnsnt {
 				ERRu();
 		}
 	public:
-		MBDTRNSNT_DEF( structure_management, StructureManagement );
-		MBDTRNSNT_DEF( database_identification, DatabaseIdentification );
-		MBDTRNSNT_DEF( database_selection, DatabaseSelection );
-		MBDTRNSNT_DEF( backend_selection, BackendSelection );
-		MBDTRNSNT_DEF( record_input, RecordInput );
+		FRDTRNSNT_DEF( structure_management, StructureManagement );
+		FRDTRNSNT_DEF( database_identification, DatabaseIdentification );
+		FRDTRNSNT_DEF( database_selection, DatabaseSelection );
+		FRDTRNSNT_DEF( backend_selection, BackendSelection );
+		FRDTRNSNT_DEF( record_input, RecordInput );
 		void reset( bso::bool__ P = true )
 		{
 			_Context = c_Undefined;
