@@ -223,7 +223,7 @@ ERRProlog
 ERRBegin
 	RootPath.Init();
 
-	if ( !bkdrgstry::GetRootPath( bkdrgstry::Registry, RootPath ) )
+	if ( !bkdrgstry::GetRootPath( RootPath ) )
 		ERRc();
 
 	mbdmng::GetDatabases( RootPath.Convert( Buffer ), Request.StringsOut() );

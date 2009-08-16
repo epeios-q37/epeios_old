@@ -1,5 +1,9 @@
 $Id$
 
+16/08/2009 :
+	- STR :
+		- Rajout 'ToNumber(...)'s.
+
 13/08/2009 :
 	- EPSMSC :
 		- Correction erreur dans macro 'EPSMSC_COPYRIGHT(...)'.

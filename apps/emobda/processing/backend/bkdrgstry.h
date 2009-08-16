@@ -30,33 +30,35 @@
 
 namespace bkdrgstry {
 
-	typedef rgstry::overloaded_unique_registry___ registry___;
-
-	extern registry___ Registry;
-
 	struct paths {
 		static const char *RootPath;
 	};
 
-	inline bso::bool__ GetPathValue(
+	bso::bool__ FillRegistry(
+		const char *ConfigurationFileName,
+		const char *PathRoot,
+		txf::text_oflow__ &ErrFlow );
+
+	bso::bool__ GetPathValue(
 		const char *Path,
-		const registry___ &Registry,
-		str::string_ &Value )
+		str::string_ &Value );
+
+	inline bso::bool__ GetRootPath( str::string_ &Value )
 	{
-		return Registry.GetPathValue( rgstry::term( Path ), Value );
+		return GetPathValue( paths::RootPath, Value );
 	}
 
-	inline bso::bool__ GetRootPath(
-		const registry___ &Registry,
-		str::string_ &Value )
-	{
-		return GetPathValue( paths::RootPath, Registry, Value );
-	}
-
-	bso::bool__ GetInteger(
+	bso::bool__ GetNumber(
 		const char *Path,
-		const registry___ &Registry,
-		bso::ulong__ &Value );
+		bso::ulong__ &ULong );
+
+	bso::bool__ GetNumber(
+		const char *Path,
+		bso::ushort__ &UShort );
+
+	bso::bool__ GetNumber(
+		const char *Path,
+		bso::ubyte__ &UByte );
 }
 
 #endif

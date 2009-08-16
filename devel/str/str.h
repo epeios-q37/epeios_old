@@ -404,7 +404,64 @@ namespace str {
 		{
 			return ToLF( ErrP, 0 );
 		}
-
+		// Les fonctions 'ToNumber(...)' ci-dessous facilitent l'utilisattion des 'template's.
+#ifdef STR__64_BITS_TYPES_ALLOWED
+		void ToNumber(
+			bso::ullong__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToULL( Error );
+		}
+		void ToNumber(
+			bso::sllong__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+//			Number = ToSLL( Error );	// Missing; TODO !
+			ERRl();
+		}
+#endif
+		void ToNumber(
+			bso::ulong__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToUL( Error );
+		}
+		void ToNumber(
+			bso::slong__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToSL( Error );
+		}
+		void ToNumber(
+			bso::ushort__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToUS( Error );
+		}
+		void ToNumber(
+			bso::sshort__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToSS( Error );
+		}
+		void ToNumber(
+			bso::ubyte__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToUB( Error );
+		}
+		void ToNumber(
+			bso::sbyte__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToSB( Error );
+		}
+		void ToNumber(
+			bso::lfloat__ &Number,
+			epeios::row__ *Error = NULL ) const
+		{
+			Number = ToLF( Error );
+		}
 	};
 
 	//f Put all the caracters of 'String' on 'Ostream', and put a 'NULL' character.

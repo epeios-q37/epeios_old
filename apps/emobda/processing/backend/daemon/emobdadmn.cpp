@@ -81,12 +81,12 @@ enum exit_value__ {
 
 struct parameters___ {
 	command Command;
-	STR_BUFFER___ ConfigurationBuffer;
-	const char *Configuration;
+	STR_BUFFER___ ConfigurationFileBuffer;
+	const char *ConfigurationFile;
 	parameters___( void )
 	{
 		Command = c_Undefined;
-		Configuration = NULL;
+		ConfigurationFile = NULL;
 	}
 };
 
@@ -150,10 +150,11 @@ ERRBegin
 				*CErr << "'" << Analyzer.Description().GetOptionLabels( oConfiguration ) << "' option must have an argument!" << txf::nl;
 				ERRExit( evParameters );
 			}
-			Parameters.Configuration = Argument.Convert( Parameters.ConfigurationBuffer );
+			Parameters.ConfigurationFile = Argument.Convert( Parameters.ConfigurationFileBuffer );
 			break;
 		default:
 			ERRc();
+			break;
 		}
 
 		P = Options.Next( P );
@@ -273,7 +274,6 @@ public:
 	csdsns::core Core;
 	csdsns::server___ Server;
 	bkdcore::backend_functions__ Functions;
-	registry::registry___ Registry;
 	void Init( csdsns::service__ Service )
 	{
 		Functions.Init( );
@@ -291,13 +291,57 @@ void Main(
 	int argc,
 	const char *argv[] )
 {
-	bso::ulong__ Port = 0;
+ERRProlog
+	parameters___ Parameters;
+	csdsns::service__ Service = 0;
+	str::string RootPath;
+	bso::bool__ AsWinService = false;
+ERRBegin
+#ifdef CPE__T_MS
+	if( !AsWinService )
+		cio::Initialize();	/* Since, when compiled for Linux, 'CIO_NO_AUTOMATIC_INITIALIZATION'
+							isn't defined, this is automatically made by the 'CIO' library. */
+#endif
 
-	registry::GetPort( Kernel_.Registry, Port );
+	if ( cio::IsInitialized() ) {
+#ifdef CPE__T_MT
+		CErr = &AwareCerr;
+		COut = &AwareCout;
+#else
+		CErr = &cio::cerr;
+		COut = &cio::cout;
+#endif
+	} else {
+		CErr = &txf::nul;
+		COut = &txf::nul;
+	}
 
-	::Kernel_.Init(1234);
+
+	AnalyzeArgs( argc, argv, Parameters );
+
+	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, "Configuration[name=\"emobdadmn\"]", *CErr ) )
+		ERRExit( evConfiguration );
+
+	if ( !registry::GetService( Service ) ) {
+		*CErr << "Unable to find '" << registry::paths::Service << "'entry in configuration file !";
+		ERRExit( evConfiguration );
+	}
+
+	RootPath.Init();
+
+	if ( !registry::GetRootPath( RootPath ) ) {
+		*CErr << "Unable to find '" << registry::paths::RootPath << "' entry in configuration file !" << txf::nl;
+		ERRExit( evConfiguration );
+	}
+
+	// We do nothing with 'RootPath' yet, but il will be used later !
+
+	::Kernel_.Init( Service );
 
 	::Kernel_.Process( SCK_INFINITE );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 int main(
