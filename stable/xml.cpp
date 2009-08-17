@@ -162,6 +162,9 @@ const char *xml::GetLabel( extended_status__ Status )
 	case xsNestingOverflow:
 		return "Nesting overflow";
 		break;
+	case xsUnknownMacro:
+		return "Unknown macro";
+		break;
 	default:
 		ERRu();
 		break;
@@ -1685,8 +1688,10 @@ private:
 		}
 
 		if ( !Found )
-			if ( !_GlobalRepository.Get( _SelectAttribute, Coord, String ) )
+			if ( !_GlobalRepository.Get( _SelectAttribute, Coord, String ) ) {
+				Status = xsUnknownMacro;
 				ERRReturn;
+			}
 
 		SFlow.Init( String );
 		SFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
@@ -1696,8 +1701,10 @@ private:
 
 		_Flow = &XFlow;
 
-		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL )
+		if ( _ExpandNestingLevel++ == EXPAND_MAX_NESTING_LEVEL ) {
+			Status = xsNestingOverflow;
 			ERRReturn;
+		}
 
 		Status = Convert_( Parse( XFlow, *this ) );
 

@@ -534,7 +534,11 @@ ERREpilog
 	return Row;
 }
 
-#define NAMESPACE			"xcf"
+#ifdef RGSTRY_PREPROCESSOR_NAMESPACE
+#	define NAMESPACE RGSTRY_PREPROCESSOR_NAMESPACE
+#else
+#	define NAMESPACE "xpp"
+#endif
 
 class callback___
 : public xml::callback__

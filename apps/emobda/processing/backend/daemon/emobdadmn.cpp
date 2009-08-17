@@ -319,7 +319,7 @@ ERRBegin
 
 	AnalyzeArgs( argc, argv, Parameters );
 
-	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, "Configuration[name=\"emobdadmn\"]", *CErr ) )
+	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, "Configuration[target=\"emobdadmn\"]", *CErr ) )
 		ERRExit( evConfiguration );
 
 	if ( !registry::GetService( Service ) ) {

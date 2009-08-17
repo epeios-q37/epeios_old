@@ -1,5 +1,12 @@
 $Id$
 
+17/08/2009
+	- RGDTRY :
+		- Le domaine de ome pour le preprocesseur est maintenant par défaut 'xpp' (et non plus 'xcf'). Cela peut être modifier
+		en définissant 'RGSTRY_PREPROCESSOR_NAMESPACE'.
+	- XML :
+		- Ajout statuts d'erreur manquants.
+
 16/08/2009 :
 	- STR :
 		- Rajout 'ToNumber(...)'s.

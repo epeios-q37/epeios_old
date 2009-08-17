@@ -264,6 +264,7 @@ namespace xml {
 		xsTooManyTags,
 		xsUnableToOpenFile,
 		xsNestingOverflow,
+		xsUnknownMacro,
 
 		xs_amount,
 		xs_Undefined,
