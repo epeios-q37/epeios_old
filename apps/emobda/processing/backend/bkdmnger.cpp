@@ -22,6 +22,7 @@
 #include "bkdmnger.h"
 #include "bkdrgstry.h"
 #include "dir.h"
+#include "fnm.h"
 
 using namespace bkdmnger;
 using namespace mbdmng;
@@ -237,8 +238,11 @@ DEC( OpenDatabase )
 {
 	message__ Message = mOK;
 ERRProlog
+	str::string RootPath;
+	STR_BUFFER___ RootPathBuffer;
 	str::string Location;
-	tol::E_FPOINTER___( bso::char__ ) Buffer;
+	STR_BUFFER___ LocationBuffer;
+	FNM_BUFFER___ FileNameBuffer;
 ERRBegin
 	Location.Init();
 	Location = Request.StringIn();
@@ -248,14 +252,12 @@ ERRBegin
 		ERRReturn;
 	}
 
-/*
-	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
-		Message = mUnableToCreateDatabase;
-		ERRReturn;
-	}
-*/
+	RootPath.Init();
 
-	if ( !Manager.Init( Location, dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
+	if ( !bkdrgstry::GetRootPath( RootPath ) )
+		ERRc();
+
+	if ( !Manager.Init( str::string( fnm::BuildFileName( RootPath.Convert( RootPathBuffer ), Location.Convert( LocationBuffer ), "", FileNameBuffer ) ), dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
 		Message = mUnableToOpenDatabase;
 		ERRReturn;
 	}

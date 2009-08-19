@@ -47,7 +47,6 @@ namespace frdkernl {
 		mUnableToOpenConfigFile,
 		mMissingConfigurationTree,
 		mMissingConfigurationId,
-		mUnableToOpenDatabase,
 
 		mMissingDatabaseName,
 		mMissingDatabasePath,
@@ -456,6 +455,11 @@ namespace frdkernl {
 		void DumpAsXML(
 			str::string_ &XML,
 			bso::bool__ ContextIsStandard );
+		bso::bool__ GetDatabase( str::string_ &Database )
+		{
+			return frdrgstry::GetPathValue( frdrgstry::paths::Parameters.Database.Path, _Registry, Database );
+		}
+
 		bso::bool__ GetCurrentTable( table__ &Table )
 		{
 			return frdrgstry::GetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );

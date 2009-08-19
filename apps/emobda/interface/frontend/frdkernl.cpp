@@ -40,7 +40,6 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	CASE( UnableToOpenConfigFile );
 	CASE( MissingConfigurationTree );
 	CASE( MissingConfigurationId );
-	CASE( UnableToOpenDatabase );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
 	CASE( NoDatabaseSelected );
@@ -95,7 +94,7 @@ message__ frdkernl::kernel___::OpenProject(
 {
 	message__ Message = m_Undefined;
 ERRProlog
-	str::string RemoteHostServiceOrLocalLibraryPath, DatabasePath;
+	str::string RemoteHostServiceOrLocalLibraryPath;
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 	rgstry::nrow__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
@@ -140,15 +139,6 @@ ERRBegin
 
 		_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
 		_backend___::Init( _ClientCore );
-
-		DatabasePath.Init();
-
-		if ( GetRegistryValue( frdrgstry::paths::Parameters.Database.Path, DatabasePath ) ) {
-			if ( !OpenDatabase( DatabasePath ) ) {
-				Message = mUnableToOpenDatabase;
-				ERRReturn;
-			}
-		}
 	}
 
 	_Records.Init();

@@ -36,6 +36,7 @@ ERRProlog
 	str::string UserConfigurationPath;
 	flx::E_STRING_IFLOW__ SIFlow;
 	xtf::extended_text_iflow__ XTFlow;
+	str::string DatabasePath;
 ERRBegin
 	ConfigurationId.Init();
 
@@ -60,9 +61,17 @@ ERRBegin
 
 		K().SetLocalRegistry( XTFlow, UserConfigurationPath );
 
-		if ( K().GetCurrentTable( Table ) )
-			SelectTable( Table );
-		else
+		DatabasePath.Init();
+
+		if ( K().GetDatabase( DatabasePath ) ) {
+			if ( K().OpenDatabase( DatabasePath ) ) {
+				if ( K().GetCurrentTable( Table ) )
+					SelectTable( Table );
+				else
+					ApplySession();
+			} else
+				ApplySession();
+		} else
 			ApplySession();
 	}
 ERRErr
