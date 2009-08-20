@@ -38,7 +38,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-void Display( const lcl::strings_ Strings )
+void Display( const lcl::strings_ &Strings )
 {
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) String;
@@ -68,6 +68,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	lcl::locales Locales;
 	lcl::strings Labels, Wordings;
+	str::string Translation;
 ERRBegin
 	FFlow.Init( "test.xml" );
 	XFlow.Init( FFlow );
@@ -82,6 +83,20 @@ ERRBegin
 
 	Display( Labels );
 	Display( Wordings );
+
+	Translation.Init();
+
+	if ( Locales.GetTranslation( "UnableToCreateDatabase", "fr", Translation  ) )
+		cout << Translation << txf::nl;
+	else
+		cout << "Not found !" << txf::nl;
+
+	Translation.Init();
+
+	if ( Locales.GetTranslation( "UnableToFindFile", "en", Translation  ) )
+		cout << Translation << txf::nl;
+	else
+		cout << "Not found !" << txf::nl;
 ERRErr
 ERREnd
 ERREpilog

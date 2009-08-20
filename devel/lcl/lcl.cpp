@@ -82,7 +82,7 @@ bso::bool__ lcl::locales_::Init(
 	return ( S_.Root = BaseRoot ) != NONE; 
 }
 
-void lcl::locales_::GetCorrespondingLabels_(
+void lcl::locales_::_GetCorrespondingLabels(
 	const strings_ &Labels,
 	strings_ &Wordings ) const
 {
@@ -114,6 +114,50 @@ ERREnd
 ERREpilog
 }
 
+bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenMessage(
+	const char *RawMessage,
+	const char *Language,
+	str::string_ &Translation ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	rgstry::term Path;
+ERRBegin
+	Path.Init( "Translations[language=\"" );
+	Path.Append( Language );
+	Path.Append( "\"]/Translation[message=\"" );
+	Path.Append( RawMessage );
+	Path.Append( "\"]" );
+
+	Found = Registry.GetPathValue( Path, S_.Root, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+bso::bool__ lcl::locales_::_GetTranslationFollowingMessageThenLanguage(
+	const char *RawMessage,
+	const char *Language,
+	str::string_ &Translation ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	rgstry::term Path;
+ERRBegin
+	Path.Init( "Translations[message=\"" );
+	Path.Append( RawMessage );
+	Path.Append( "\"]/Translation[language=\"" );
+	Path.Append( Language );
+	Path.Append( "\"]" );
+
+	Found = Registry.GetPathValue( Path, S_.Root, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
 void lcl::locales_::GetLanguages(
 	strings_ &Labels,
 	strings_ &Wordings ) const
@@ -122,7 +166,7 @@ void lcl::locales_::GetLanguages(
 
 	Registry.GetPathValues( str::string( "Languages/Language/@label" ), S_.Root, PathErrorRow, Labels );
 
-	GetCorrespondingLabels_( Labels, Wordings );
+	_GetCorrespondingLabels( Labels, Wordings );
 
 	if ( PathErrorRow != NONE )
 		ERRc();
@@ -134,7 +178,10 @@ bso::bool__ lcl::locales_::GetTranslation(
 	const char *Language,
 	str::string_ &Translation ) const
 {
-	return true;
+	if ( !_GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) )
+		return _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
+	else
+		return true;
 }
 
 

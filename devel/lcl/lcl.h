@@ -70,9 +70,17 @@ namespace lcl {
 
 	class locales_ {
 	private:
-		void GetCorrespondingLabels_(
+		void _GetCorrespondingLabels(
 			const strings_ &Labels,
 			strings_ &Wordings ) const;
+		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
+			const char *RawMessage,
+			const char *Language,
+			str::string_ &Translation ) const;
+		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
+			const char *RawMessage,
+			const char *Language,
+			str::string_ &Translation ) const;
 	public:
 		struct s {
 			rgstry::registry_::s Registry;
