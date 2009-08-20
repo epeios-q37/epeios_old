@@ -68,6 +68,10 @@ extern class ttr_tutor &MSGTutor;
 #include "xtf.h"
 #include "cpe.h"
 
+#ifndef LGG_REVIVAL	// Bien 'LGG_...', car fortemenet dé&pendant de cette bibliothèque.
+#	#error "Obsolete ! Use 'LCL' library instead !".
+#endif
+
 #define MSG_MESSAGE_LENGTH_MAX	100
 
 #define MSG_CASE( m, p )	\

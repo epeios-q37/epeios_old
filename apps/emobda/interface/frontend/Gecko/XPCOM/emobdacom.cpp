@@ -86,7 +86,7 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository.GetCurrentObject().Init( Repository.CreateNewObject(), lgg::lRaw );	// Language to retrieve from a main window attribute.
+	Repository.GetCurrentObject().Init( Repository.CreateNewObject(), str::string( "fr" ) );	// Language to retrieve from a main window attribute.
 RR
 RN
 RE

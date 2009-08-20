@@ -1,6 +1,10 @@
 $Id$
 
-17/08/2009
+20/08/2009 :
+	- LCL : création (bibliothèque de gestion des locales à l'aide d'un ficher XML).
+	- LGG, MSG : rendus obsolètes (peuvent quand même être réactivé en definissant 'LGG_REVIVAL' ).
+
+17/08/2009 :
 	- RGDTRY :
 		- Le domaine de ome pour le preprocesseur est maintenant par défaut 'xpp' (et non plus 'xcf'). Cela peut être modifier
 		en définissant 'RGSTRY_PREPROCESSOR_NAMESPACE'.

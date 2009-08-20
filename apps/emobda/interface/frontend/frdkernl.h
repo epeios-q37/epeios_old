@@ -30,11 +30,9 @@
 #include "csdsnc.h"
 #include "csducl.h"
 #include "xml.h"
-#include "msg.h"
-#include "lgg.h"
 #include "bkdacc.h"
 
-#define FRDKERNL_DEFAULT_LANGUAGE	lgg::lEnglish
+#define FRDKERNL_DEFAULT_LANGUAGE	"en"
 
 namespace frdkernl {
 	using namespace frdbcknd;
@@ -185,8 +183,7 @@ namespace frdkernl {
 	: private _backend___
 	{
 	private:
-		msg::buffer__ _MessageBuffer;
-		lgg::language__ _Language;
+		str::string _Language;
 		log_functions__ _LogFunctions;
 		csducl::universal_client_core _ClientCore;
 		rgstry::registry _GlobalRegistry;
@@ -213,7 +210,7 @@ namespace frdkernl {
 			_Registry.reset( P );
 			_LocalRegistryRoot = NONE;
 			_GlobalRegistry.reset( P );
-			_Language = lgg::l_undefined;
+			_Language.reset( P );
 			_Target.reset( P );
 			_Records.reset( P );
 			_Transient.reset( P );
@@ -226,11 +223,11 @@ namespace frdkernl {
 		{
 			reset();
 		}
-		void Init( lgg::language__ Language )
+		void Init( const str::string_ &Language )
 		{
 			reset();
 
-			_Language = Language;
+			_Language.Init( Language );
 
 			// Other initialisations happend in 'OpenProject'.
 		}
@@ -271,7 +268,9 @@ namespace frdkernl {
 		{
 			DumpRegistry( _LocalRegistryRoot, OFlow );
 		}
-		const char *GetMessage( message__ Message );
+		const char *GetMessage(
+			message__ Message,
+			STR_BUFFER___ &Buffer );
 		FRDKERNL_TRANSIENT_USE( structure_management, StructureManagement );
 		FRDKERNL_TRANSIENT_USE( database_identification, DatabaseIdentification );
 		FRDKERNL_TRANSIENT_USE( database_selection, DatabaseSelection );

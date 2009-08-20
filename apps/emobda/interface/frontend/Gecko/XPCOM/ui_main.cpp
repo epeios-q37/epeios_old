@@ -45,7 +45,7 @@ ERRProlog
 ERRBegin
 	FileName.Init();
 
-	if ( nsxpcm::FileOpenDialogBox( UI().Main.Window, UI().K().GetMessage( frdkernl::mSelectProjectFile ), FileName ) )
+	if ( nsxpcm::FileOpenDialogBox( UI().Main.Window, UI().K().GetMessage( frdkernl::mSelectProjectFile, Buffer ), FileName ) )
 		UI().OpenProject( FileName.Convert( Buffer ) );
 
 ERRErr

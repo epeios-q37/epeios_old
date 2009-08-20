@@ -64,11 +64,26 @@ extern class ttr_tutor &LCLTutor;
 #include "flw.h"
 #include "rgstry.h"
 
+#define LCL_DEFAULT_TAG	'%'
+
 namespace lcl {
 	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
 	E_AUTO( strings );
 
 	class locales_ {
+	private:
+		void _GetCorrespondingLabels(
+			const strings_ &Labels,
+			strings_ &Wordings ) const;
+		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
+			str::string_ &Translation ) const;
+		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
+			str::string_ &Translation ) const;
+	public:
 		struct s {
 			rgstry::registry_::s Registry;
 			rgstry::nrow__ Root;
@@ -91,10 +106,24 @@ namespace lcl {
 
 			return *this;
 		}
-		void Init(
+		bso::bool__ Init(
 			xtf::extended_text_iflow__ &XFlow,
 			const char *RootPath );
+		void GetLanguages(
+			strings_ &Labels,
+			strings_ &Wordings ) const;
+		bso::bool__ GetTranslation(
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
+			str::string_ &Translation ) const;
 	};
+
+	void ReplaceTags(
+		str::string_ &Message,
+		const strings_ &Values,
+		char Tag = LCL_DEFAULT_TAG );
+
+	E_AUTO( locales );
 
 }
 

@@ -22,6 +22,9 @@
 #include "frdkernl.h"
 #include "flf.h"
 #include "flx.h"
+#include "lcl.h"
+
+static lcl::locales Locales;
 
 using namespace frdkernl;
 using xml::writer_;
@@ -57,9 +60,6 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 
 	return Message;
 }
-
-typedef msg::i18_messages_ _messages_;
-typedef msg::i18_messages _messages;
 
 message__ frdkernl::kernel___::OpenProject(
 	const char *ConfigFile,
@@ -102,7 +102,7 @@ ERRProlog
 ERRBegin
 	reset();
 
-	_Language = FRDKERNL_DEFAULT_LANGUAGE;	// A changer.
+	_Language.Init( FRDKERNL_DEFAULT_LANGUAGE );	// A changer.
 
 	_GlobalRegistry.Init();
 
@@ -183,29 +183,30 @@ ERREnd
 ERREpilog
 }
 
-
-
-static class messages
-: public _messages
-{
-protected:
-	const char *MSGGetRawMessage( int MessageId ) const
-	{
-		return GetRawMessage_( (frdkernl::message__)MessageId );
-	}
-} Messages_;
-
 static const char *GetMessage_(
 	frdkernl::message__ Message,
-	lgg::language__ Language,
-	msg::buffer__ &Buffer )
+	const str::string_ &Language,
+	STR_BUFFER___ &Buffer )
 {
-	return ::Messages_.GetMessage( Message, Language, Buffer );
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	Locales.GetTranslation( str::string( GetRawMessage_( Message ) ), Language, Translation );
+
+	Translation.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer();
 }
 
-const char *frdkernl::kernel___::GetMessage( frdkernl::message__ MessageId )
+const char *frdkernl::kernel___::GetMessage(
+	frdkernl::message__ MessageId,
+	STR_BUFFER___ &Buffer  )
 {
-	return GetMessage_( MessageId, _Language, _MessageBuffer );
+	return GetMessage_( MessageId, _Language, Buffer );
 }
 
 static inline void PutInt_(
@@ -670,14 +671,3 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-static class starter 
-{
-public:
-	starter( void )
-	{
-		::Messages_.Init( m_amount );
-	}
-	~starter( void )
-	{}
-} Starter_;

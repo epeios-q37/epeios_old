@@ -267,7 +267,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&BacKenD DeSCriptions
 &bkdlac		&ebkd		&\
 	&BacKenD Local ACcess
-&bkdlgg		&ebkd		&2002-		&BacKenD LanGuaGes
+&bkdlcl		&ebkd		&2002-\
+	&BacKenD LoCaLes
+&bkdlgg		&ebkd		&2002-\
+	&BacKenD LanGuaGes
 &bkdlrm		&ebkd		&\
 	&BacKenD Local Request Manager.
 &bkdmng		&ebkd		&2001-\

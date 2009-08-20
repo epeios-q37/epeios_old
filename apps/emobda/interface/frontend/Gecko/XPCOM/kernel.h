@@ -84,7 +84,7 @@ namespace kernel {
 		}
 		void Init(
 			krow__ KRow,
-			lgg::language__ Language )
+			const str::string_ &Language )
 		{
 			reset();
 

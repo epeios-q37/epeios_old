@@ -115,8 +115,8 @@ ERREpilog
 }
 
 bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenMessage(
-	const char *RawMessage,
-	const char *Language,
+	const str::string_ &RawMessage,
+	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -137,8 +137,8 @@ ERREpilog
 }
 
 bso::bool__ lcl::locales_::_GetTranslationFollowingMessageThenLanguage(
-	const char *RawMessage,
-	const char *Language,
+	const str::string_ &RawMessage,
+	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -172,10 +172,9 @@ void lcl::locales_::GetLanguages(
 		ERRc();
 }
 
-
 bso::bool__ lcl::locales_::GetTranslation(
-	const char *RawMessage,
-	const char *Language,
+	const str::string_ &RawMessage,
+	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
 	if ( !_GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) )
@@ -183,6 +182,65 @@ bso::bool__ lcl::locales_::GetTranslation(
 	else
 		return true;
 }
+
+void lcl::ReplaceTags(
+	str::string_ &Message,
+	const strings_ &Values,
+	const char Tag )
+{
+ERRProlog
+	ctn::E_CMITEM( str::string_ ) Value;
+	bso::ubyte__ Indice = 1;
+	epeios::row__ Row = NONE, SearchRow = NONE;
+	str::string FullTag;
+	bso::integer_buffer__ Buffer;
+ERRBegin
+	if ( Values.Amount() > 9 )
+		ERRl();
+
+	Value.Init( Values );
+
+	Row = Values.First();
+
+	while ( Row != NONE ) {
+		FullTag.Init();
+		FullTag.Append( Tag );
+		FullTag.Append( bso::Convert( Indice, Buffer ) );
+
+		SearchRow = Message.Search( FullTag );
+
+		while ( SearchRow != NONE ) {
+			Message.Remove( SearchRow, FullTag.Amount() );
+
+			Message.Insert( Value( Row ), SearchRow );
+
+			SearchRow = Message.Search( FullTag, SearchRow );
+		}
+
+		Row = Values.Next( Row );
+
+		Indice++;
+	}
+
+	FullTag.Init();
+	FullTag.Append( Tag );
+	FullTag.Append( Tag );
+
+	SearchRow = Message.Search( FullTag );
+
+	while ( SearchRow != NONE ) {
+		Message.Remove( SearchRow, FullTag.Amount() );
+
+		Message.Insert( "%", SearchRow );
+
+		SearchRow = Message.Search( FullTag, SearchRow );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 

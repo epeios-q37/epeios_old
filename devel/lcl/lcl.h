@@ -64,6 +64,8 @@ extern class ttr_tutor &LCLTutor;
 #include "flw.h"
 #include "rgstry.h"
 
+#define LCL_DEFAULT_TAG	'%'
+
 namespace lcl {
 	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
 	E_AUTO( strings );
@@ -74,12 +76,12 @@ namespace lcl {
 			const strings_ &Labels,
 			strings_ &Wordings ) const;
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
-			const char *RawMessage,
-			const char *Language,
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
-			const char *RawMessage,
-			const char *Language,
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
 			str::string_ &Translation ) const;
 	public:
 		struct s {
@@ -111,10 +113,15 @@ namespace lcl {
 			strings_ &Labels,
 			strings_ &Wordings ) const;
 		bso::bool__ GetTranslation(
-			const char *RawMessage,
-			const char *Language,
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
 			str::string_ &Translation ) const;
 	};
+
+	void ReplaceTags(
+		str::string_ &Message,
+		const strings_ &Values,
+		char Tag = LCL_DEFAULT_TAG );
 
 	E_AUTO( locales );
 

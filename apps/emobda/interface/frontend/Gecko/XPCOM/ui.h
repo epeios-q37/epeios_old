@@ -146,7 +146,13 @@ namespace ui {
 			nsIDOMWindow *Window,
 			message__ Message )
 		{
-			Alert( Window, _K().GetMessage( Message ) );
+		ERRProlog
+			STR_BUFFER___ Buffer;
+		ERRBegin
+			Alert( Window, _K().GetMessage( Message, Buffer ) );
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
 		void Alert( const char *Message )
 		{
@@ -170,7 +176,15 @@ namespace ui {
 		}
 		bso::bool__ Confirm( message__ Message )
 		{
-			return Confirm( _K().GetMessage( Message ) );
+			bso::bool__ OK = false;
+		ERRProlog
+			STR_BUFFER___ Buffer;
+		ERRBegin
+			OK = Confirm( _K().GetMessage( Message, Buffer ) );
+		ERRErr
+		ERREnd
+		ERREpilog	
+			return OK;
 		}
 		table__ CreateOrModifyTable( void )
 		{

@@ -69,6 +69,7 @@ ERRProlog
 	lcl::locales Locales;
 	lcl::strings Labels, Wordings;
 	str::string Translation;
+	lcl::strings Values;
 ERRBegin
 	FFlow.Init( "test.xml" );
 	XFlow.Init( FFlow );
@@ -84,6 +85,12 @@ ERRBegin
 	Display( Labels );
 	Display( Wordings );
 
+	Values.Init();
+
+	Values.Append( str::string( "Valeur UNO" ) );
+	Values.Append( str::string( "Value 2" ) );
+	Values.Append( str::string( "III" ) );
+
 	Translation.Init();
 
 	if ( Locales.GetTranslation( "UnableToCreateDatabase", "fr", Translation  ) )
@@ -91,12 +98,18 @@ ERRBegin
 	else
 		cout << "Not found !" << txf::nl;
 
+	lcl::ReplaceTags( Translation, Values );
+	cout << Translation << txf::nl;
+
 	Translation.Init();
 
 	if ( Locales.GetTranslation( "UnableToFindFile", "en", Translation  ) )
 		cout << Translation << txf::nl;
 	else
 		cout << "Not found !" << txf::nl;
+
+	lcl::ReplaceTags( Translation, Values );
+	cout << Translation << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
