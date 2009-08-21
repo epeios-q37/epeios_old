@@ -60,6 +60,8 @@ extern class ttr_tutor &MSGTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'LCL' library instead !".
+
 #include "err.h"
 #include "flw.h"
 #include "lgg.h"
@@ -67,10 +69,6 @@ extern class ttr_tutor &MSGTutor;
 #include "ctn.h"
 #include "xtf.h"
 #include "cpe.h"
-
-#ifndef LGG_REVIVAL	// Bien 'LGG_...', car fortemenet dé&pendant de cette bibliothèque.
-#	#error "Obsolete ! Use 'LCL' library instead !".
-#endif
 
 #define MSG_MESSAGE_LENGTH_MAX	100
 

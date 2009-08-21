@@ -64,9 +64,7 @@ extern class ttr_tutor &LGGTutor;
 #include "flw.h"
 #include "bso.h"
 
-#ifndef LGG_REVIVAL
-#	error "Obsolete ! Use 'LCL' library instead !";
-#endif
+#error "Obsolete ! Use 'LCL' library instead !";
 
 namespace lgg {
 	//e Languages.
