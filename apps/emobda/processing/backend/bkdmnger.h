@@ -57,7 +57,7 @@ namespace bkdmnger {
 		static void NOTIFY( bkdmng::untyped_module &Module );
 		static const char *PREFIX;
 		static const char *NAME;
-		static void RAW_MESSAGES( msg::messages_ &Messages );
+		static void RAW_MESSAGES( lcl::strings_ &Messages );
 		_manager_ *OBJECT( void )
 		{
 			return this;
@@ -67,7 +67,7 @@ namespace bkdmnger {
 
 	E_AUTO(	manager );
 
-	msg::i18_messages_ &GetMessages( void );
+//	lcl::strings_ &GetMessages( void );
 }
 
 

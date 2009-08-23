@@ -53,8 +53,8 @@ namespace frdbcknd {
 	class backend___
 	{
 	private:
-		emobda::backend_access___<bkduac::backend_universal_access___> _BackendAccess;
-		emobda::mbd_manager_common__	_ManagerCommon;
+		emobdabkd::backend_access___<bkduac::backend_universal_access___> _BackendAccess;
+		emobdabkd::mbd_manager_common__	_ManagerCommon;
 		csducl::universal_client _Flow;
 		bso::bool__ _H( bso::bool__ Result )
 		{
@@ -84,7 +84,7 @@ namespace frdbcknd {
 	protected:
 		virtual void FRDBCKNDReport( const char *Message ) =0 ;
 	public:
-		emobda::mbd_manager___ Manager;
+		emobdabkd::mbd_manager___ Manager;
 		void reset( bso::bool__ P = true )
 		{
 			Manager.reset( P );

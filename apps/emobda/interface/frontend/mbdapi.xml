@@ -1,32 +1,32 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.2 (http://epeios.org/getbkdapi/) on 27/07/2009 11:18:27. -->
+This document was generated using getbkdapi 0.2.3 (http://epeios.org/getbkdapi/) on 23/08/2009 17:43:34. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
 		<Generator>
 			<Name>getbkdapi</Name>
-			<Version>0.2.2</Version>
+			<Version>0.2.3</Version>
 			<Author>
 				<Name>Claude SIMON</Name>
-				<EMail>csimon@zeusw.org</EMail>
+				<Contact>http://zeusw.org/epeios/contact.html</Contact>
 			</Author>
 			<Copyright>
-				<Owner>Claude SIMON (csimon@zeusw.org)</Owner>
+				<Owner>Claude SIMON (http://zeusw.org/epeios/contact.html)</Owner>
 				<Date>2001-2006</Date>
 			</Copyright>
 		</Generator>
 		<Backend>
-			<Name>emobda</Name>
+			<Name>emobdabkd</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>27/07/2009</Date>
-		<Time>11:18:27</Time>
+		<Date>23/08/2009</Date>
+		<Time>17:43:34</Time>
 	</Misc>
 	<Messages Amount="23">
 		<Message Content="_UnknowObjectType"/>
 		<Message Content="_UnknowObjectTypeName"/>
 		<Message Content="_UnknowCommandNameOrDescription"/>
-		<Message Content="_UnknowLanguage"/>
+		<Message Content="_BadLanguage"/>
 		<Message Content="_BackendError"/>
 		<Message Content="MANAGER_OK"/>
 		<Message Content="MANAGER_IncorrectLocation"/>

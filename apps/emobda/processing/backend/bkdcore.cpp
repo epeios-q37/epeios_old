@@ -81,7 +81,7 @@ ERRBegin
 		ERRa();
 
 	Data->Backend.Init();
-	Data->Backend.SetLanguage( bkdlgg::lFrench );
+	Data->Backend.SetLanguage( str::string( "fr" ) );
 ERRErr
 	if ( Data != NULL )
 		delete Data;

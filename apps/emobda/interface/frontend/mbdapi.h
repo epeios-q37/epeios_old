@@ -1,20 +1,20 @@
 /* DON'T MODIFY */
-/* This file was generated using getbkdapi	V0.2.2, and a XSL filea
+/* This file was generated using getbkdapi	V0.2.3, and a XSL filea
 ($RCSfile$ $Revision$ $Date$ $Author$) */
 // $Id$	(CVS feature).
-#ifndef emobda__INC
-#define emobda__INC
+#ifndef emobdabkd__INC
+#define emobdabkd__INC
 
 #include "bkdacc.h"
 #include "cpe.h"
 
-namespace emobda {
+namespace emobdabkd {
 
 	enum message__ {
 		_UnknowObjectType,
 		_UnknowObjectTypeName,
 		_UnknowCommandNameOrDescription,
-		_UnknowLanguage,
+		_BadLanguage,
 		_BackendError,
 		MANAGER_OK,
 		MANAGER_IncorrectLocation,
@@ -52,9 +52,9 @@ namespace emobda {
 
 			return _UnknowCommandNameOrDescription;
 
-		if ( !strcmp( Message, "_UnknowLanguage" ) )
+		if ( !strcmp( Message, "_BadLanguage" ) )
 
-			return _UnknowLanguage;
+			return _BadLanguage;
 
 		if ( !strcmp( Message, "_BackendError" ) )
 
@@ -185,7 +185,7 @@ namespace emobda {
 			Row = Messages.Next( Row );
 
 
-			if ( Message( Row ) != bkdacc::string( "_UnknowLanguage" ) )
+			if ( Message( Row ) != bkdacc::string( "_BadLanguage" ) )
 				ERRb();
 
 			Row = Messages.Next( Row );
@@ -783,4 +783,4 @@ namespace emobda {
 
 }
 
-#endif //#ifndef emobda__INC
+#endif //#ifndef emobdabkd__INC

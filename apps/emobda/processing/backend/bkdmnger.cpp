@@ -97,35 +97,36 @@ static const char *GetRawMessage_( message__ MessageId )
 	return Message;
 }
 
-typedef msg::i18_messages_ _messages_;
-typedef msg::i18_messages _messages;
+static lcl::locales Locales_;
 
-static class messages
-: public _messages
+void bkdmnger::manager_::RAW_MESSAGES( lcl::strings_ &Messages )
 {
-protected:
-	const char *MSGGetRawMessage( int MessageId ) const
-	{
-		return GetRawMessage_( (message__)MessageId );
-	}
-} Messages_;
-
-void bkdmnger::manager_::RAW_MESSAGES( msg::messages_ &Messages )
-{
-	::Messages_.DumpRawMessages( Messages );
+	for ( int i = 0; i < m_amount ; i++ )
+		Messages.Append( str::string( GetRawMessage_( (message__)i ) ) );
 }
-
+/*
 _messages_ &bkdmnger::GetMessages( void )
 {
 	return ::Messages_;
 }
-
+*/
 static const char *GetMessage_(
 	message__ MessageId,
-	lgg::language__ Language,
-	msg::buffer__ &Buffer )
+	const str::string_ &Language,
+	STR_BUFFER___ &Buffer )
 {
-	return ::Messages_.GetMessage( MessageId, Language, Buffer );
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	::Locales_.GetTranslation( str::string( GetRawMessage_( MessageId ) ), Language, Translation );
+
+	Translation.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer();
 }
 
 typedef message__ (* f_manager )(
@@ -147,13 +148,13 @@ void bkdmnger::manager_::HANDLE(
 {
 ERRProlog
 	message__ Message = m_Undefined;
-	msg::buffer__ RawMessageBuffer, I18MessageBuffer;
+	STR_BUFFER___ I18MessageBuffer;
 ERRBegin
 	Message = ((f_manager)Module.UPs( Command ))( *this, Request );
 
 	if ( Message != mOK )
 		Request.SendExplanationMessage(
-			GetMessage_( Message, lgg::lRaw, RawMessageBuffer ),
+			GetRawMessage_( Message ),
 			GetMessage_( Message, Backend.GetLanguage(), I18MessageBuffer ) );
 ERRErr
 ERREnd
@@ -978,16 +979,3 @@ void bkdmnger::Inform( bkdmng::backend_ &Backend )
 		bkdmng::cEnd );
 }
 
-
-
-static class starter 
-{
-public:
-	starter( void )
-	{
-		::Messages_.Init( m_amount );
-	}
-	~starter( void )
-	{
-	}
-} Starter_;

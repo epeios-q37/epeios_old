@@ -26,7 +26,7 @@
 
 <window
 	id="wdwDatabaseSelectionDialogBox"
-	title="Select database"
+	title="&databaseSelectionDialogBox.title;"
 	persist="height width screenX screenY"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"

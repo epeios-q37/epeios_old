@@ -60,6 +60,8 @@ extern class ttr_tutor &MSGTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'LCL' library instead !".
+
 #include "err.h"
 #include "flw.h"
 #include "lgg.h"

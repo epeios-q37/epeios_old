@@ -106,6 +106,12 @@ namespace lcl {
 
 			return *this;
 		}
+		void Init( void )
+		{
+			reset();
+
+			Registry.Init();
+		}
 		bso::bool__ Init(
 			xtf::extended_text_iflow__ &XFlow,
 			const char *RootPath );
@@ -118,12 +124,13 @@ namespace lcl {
 			str::string_ &Translation ) const;
 	};
 
+	E_AUTO( locales );
+
 	void ReplaceTags(
 		str::string_ &Message,
 		const strings_ &Values,
 		char Tag = LCL_DEFAULT_TAG );
 
-	E_AUTO( locales );
 
 }
 

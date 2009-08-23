@@ -1,7 +1,7 @@
 <!-- $Id$ -->
 
 <!ENTITY databaseModify.label "Modify database">
-<!ENTITY databaseDelete "Delete database">
+<!ENTITY databaseDelete.label "Delete database">
 
 <!ENTITY tableCreate.label "Create table">
 <!ENTITY tableModify.label "Modify table">

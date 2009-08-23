@@ -162,14 +162,16 @@ void lcl::locales_::GetLanguages(
 	strings_ &Labels,
 	strings_ &Wordings ) const
 {
-	epeios::row__ PathErrorRow = NONE;
+	if ( S_.Root != NONE ) {
+		epeios::row__ PathErrorRow = NONE;
 
-	Registry.GetPathValues( str::string( "Languages/Language/@label" ), S_.Root, PathErrorRow, Labels );
+		Registry.GetPathValues( str::string( "Languages/Language/@label" ), S_.Root, PathErrorRow, Labels );
 
-	_GetCorrespondingLabels( Labels, Wordings );
+		_GetCorrespondingLabels( Labels, Wordings );
 
-	if ( PathErrorRow != NONE )
-		ERRc();
+		if ( PathErrorRow != NONE )
+			ERRc();
+	}
 }
 
 bso::bool__ lcl::locales_::GetTranslation(
@@ -177,10 +179,15 @@ bso::bool__ lcl::locales_::GetTranslation(
 	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
-	if ( !_GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) )
-		return _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
-	else
-		return true;
+	if ( S_.Root != NONE ) {
+		if ( !_GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) )
+			return _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
+		else
+			return true;
+	} else {
+		Translation = RawMessage;
+		return false;
+	}
 }
 
 void lcl::ReplaceTags(
