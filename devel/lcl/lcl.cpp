@@ -190,6 +190,26 @@ bso::bool__ lcl::locales_::GetTranslation(
 	}
 }
 
+const char *lcl::locales_::GetTranslation(
+	const str::string_ &RawMessage,
+	const str::string_ &Language,
+	STR_BUFFER___ &Buffer ) const
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	GetTranslation( RawMessage, Language, Translation );
+
+	Translation.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+
 void lcl::ReplaceTags(
 	str::string_ &Message,
 	const strings_ &Values,
@@ -247,9 +267,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-
-
 
 
 /* Although in theory this class is inaccessible to the different modules,

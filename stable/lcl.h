@@ -122,6 +122,10 @@ namespace lcl {
 			const str::string_ &RawMessage,
 			const str::string_ &Language,
 			str::string_ &Translation ) const;
+		const char *GetTranslation(
+			const str::string_ &RawMessage,
+			const str::string_ &Language,
+			STR_BUFFER___ &Buffer ) const;	// Si la traducation n'existe pas, 'RawMessage' est renvoyé.
 	};
 
 	E_AUTO( locales );

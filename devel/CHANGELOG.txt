@@ -1,5 +1,9 @@
 $Id$
 
+24/08/2009 :
+	- LCL :
+		- Rajout 'GetTranlation(...)' retournant un 'const char *'.
+
 21/08/2009 :
 	- LGG :
 		- Obsolescence définitive au profit de la bibliothèque 'LCL', sans possibilité de réactivation (trop compliqué).
