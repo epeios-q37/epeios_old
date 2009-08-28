@@ -74,7 +74,6 @@ extern class ttr_tutor &RGSTRYTutor;
 #endif
 
 namespace rgstry {
-	using xml::coord__;
 
 	typedef str::string_	term_;
 	typedef str::string		term;
@@ -866,8 +865,51 @@ namespace rgstry {
 			bso::bool__ Indent,
 			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
-
 	E_AUTO( registry )
+
+	class xcoord_ {
+	public:
+		struct s {
+			xml::coord__ Coord;
+			str::string_::s File;
+		} &S_;
+		str::string_ File;
+		xcoord_( s &S )
+		: S_( S ),
+		  File( S.File )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			S_.Coord.reset( P );
+			File.reset( P );
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			File.plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			File.plug( MM );
+		}
+		xcoord_ &operator =( const xcoord_ &XC )
+		{
+			S_.Coord = XC.S_.Coord;
+
+			File = XC.File;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			S_.Coord.Init();
+			File.Init();
+		}
+		E_RWDISCLOSE_( xml::coord__, Coord );
+	};
+
+	E_AUTO( xcoord );
 
 	nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
@@ -875,8 +917,7 @@ namespace rgstry {
 		registry_ &Registry,
 		nrow__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 		xml::extended_status__ &Status,	// Si valeur retournée == NONE, alors contient le code d'erreur.
-		str::string_ &ErrorFile,	// Peut être 'NULL' si pas interessé.
-		coord__ &ErrorCoord );
+		xcoord_ &ErrorCoord );
 
 	inline nrow__ Parse(
 		xtf::extended_text_iflow__ &Flow,
@@ -884,10 +925,18 @@ namespace rgstry {
 		registry_ &Registry,
 		nrow__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
-		coord__ Dummy;
+		nrow__ Result = NONE;
+	ERRProlog
+		xcoord Dummy;
 		xml::extended_status__ Status = xml::xs_Undefined;
+	ERRBegin
+		Dummy.Init();
 
-		return Parse( Flow, Directory, Registry, Root, Status, *(str::string_ *)NULL, Dummy );
+		Result = Parse( Flow, Directory, Registry, Root, Status, Dummy );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Result;
 	}
 
 	class overloaded_registry___

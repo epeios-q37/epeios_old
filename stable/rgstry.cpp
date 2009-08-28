@@ -909,19 +909,22 @@ nrow__ rgstry::Parse(
 	registry_ &Registry,
 	nrow__ Root,
 	xml::extended_status__ &Status,
-	str::string_ &ErrorFileName,
-	xtf::coord__ &ErrorCoord )
+	xcoord_ &ErrorCoord )
 {
 ERRProlog
 	callback___ Callback( Registry );
+	str::string ErrorFileName;
 ERRBegin
 	Callback.Init( Root );
+
+	ErrorFileName.Init();
 
 	if ( ( Status = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) == xml::xsOK )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
-		ErrorCoord = Flow.Coord();
+		ErrorCoord.File = ErrorFileName;
+		ErrorCoord.SetCoord( Flow.Coord() );
 	}
 ERRErr
 ERREnd

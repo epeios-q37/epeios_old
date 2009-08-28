@@ -1,5 +1,9 @@
 $Id$
 
+27/085/2009 :
+	- RGSTRY :
+		- Mise en oeuvre 'xcooRd[_]'.
+
 24/08/2009 :
 	- LCL :
 		- Rajout 'GetTranlation(...)' retournant un 'const char *'.
