@@ -1,5 +1,7 @@
 <!-- $Id$ -->
 
+<!ENTITY language "en-US">
+
 <!ENTITY jconsole.key "j">
 <!ENTITY dominspector.key "d">
 

@@ -22,7 +22,7 @@
 #include "ui.h"
 #include "flx.h"
 
-#define USERDATA_ATTRIBUTE_NAME	"userdata"
+#define USERDATA_ATTRIBUTE_NAME	"UserData"
 #define XSL_ROOT_PATH	"chrome://emobda/content/"
 
 using namespace ui;
@@ -79,7 +79,7 @@ ERREnd
 ERREpilog
 }
 
-void ui::ui___::_SaveLocalRegistry( void ) const
+void ui::ui___::SaveLocalRegistry( void ) const
 {
 ERRProlog
 	str::string UserData;

@@ -62,8 +62,6 @@ namespace ui {
 	class ui___
 	: public ui_base::bridge_functions__
 	{
-	private:
-		void _SaveLocalRegistry( void ) const;
 	public:
 		ui_main::main__ Main;
 		ui_dbsdb::database_selection__ DatabaseSelection;
@@ -98,8 +96,8 @@ namespace ui {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( IsProjectOpened() )
-					CloseProject();
+				if ( _Kernel != NULL )
+					Close();
 
 			_Kernel = NULL;
 		}
@@ -108,20 +106,18 @@ namespace ui {
 			// 'ui_...' type member are are initalized later.
 			_Kernel = &Kernel;
 		}
+		void SaveLocalRegistry( void ) const;
 		void OpenProject( const char *ConfigFile );
+		void Close( void )
+		{
+			K().Close();
+		}
 		bso::bool__ IsProjectOpened( void ) const
 		{
 			if ( _Kernel != NULL )
 				return _Kernel->IsProjectOpened();
 			else
 				return false;
-		}
-		void CloseProject( void )
-		{
-			if ( K().IsProjectOpened() )
-				_SaveLocalRegistry();
-
-			K().Close();
 		}
 		const _kernel___ &K( void ) const
 		{

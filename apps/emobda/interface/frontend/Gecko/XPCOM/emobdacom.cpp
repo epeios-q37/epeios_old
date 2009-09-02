@@ -72,7 +72,7 @@ protected:
 	ERREpilog\
 	return NSResult;
 
-NS_IMETHODIMP emobdacom::RegisteringStart( void )
+NS_IMETHODIMP emobdacom::RegisteringStart( const char *Language )
 {
 RP
 	str::string Version;
@@ -86,7 +86,7 @@ RBB
 
 	nsxpcm::Log( Version );
 
-	Repository.GetCurrentObject().Init( Repository.CreateNewObject(), str::string( "fr" ) );	// Language to retrieve from a main window attribute.
+	Repository.GetCurrentObject().Init( Repository.CreateNewObject(), str::string( Language ), "emobdacom.xlc" );	// Language to retrieve from a main window attribute.
 RR
 RN
 RE

@@ -67,6 +67,11 @@ namespace kernel {
 		{
 			nsxpcm::Alert( Message );
 		}
+		virtual void FRDKERNLClose( void )
+		{
+			if ( _kernel___::IsProjectOpened() )
+				SaveLocalRegistry();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -84,11 +89,12 @@ namespace kernel {
 		}
 		void Init(
 			krow__ KRow,
-			const str::string_ &Language )
+			const str::string_ &Language,
+			const char *LocalesFileName )
 		{
 			reset();
 
-			_kernel___::Init( Language );
+			_kernel___::Init( Language, LocalesFileName );
 			_ui___::Init( *this );
 			_KRow = KRow;
 		}

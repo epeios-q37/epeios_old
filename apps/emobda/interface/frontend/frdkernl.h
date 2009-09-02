@@ -223,6 +223,8 @@ namespace frdkernl {
 			_Transient.reset();
 			_ProjectIsOpen = false;
 		}
+	protected:
+		virtual void FRDKERNLClose( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -248,14 +250,9 @@ namespace frdkernl {
 		{
 			reset();
 		}
-		void Init( const str::string_ &Language )
-		{
-			reset();
-
-			_Language.Init( Language );
-
-			// Other initialisations happend in 'OpenProject'.
-		}
+		void Init(
+			const str::string_ &Language,
+			const char *LocalesFileName );
 		void Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
@@ -266,29 +263,14 @@ namespace frdkernl {
 			const char *ConfigFile,
 			const char *RootPath,
 			str::string_ &ConfigurationId );
-		void CloseConnection( void )
-		{
-			_CloseConnection();
-
-			_EndClosing();
-		}
-		void CloseProject( void )
-		{
-			if ( !IsProjectOpened() )
-				ERRu();
-
-			_CloseConnection();
-
-			_EndClosing();
-		}
 		void Close( void )
 		{
-			if ( IsProjectOpened() )
-				CloseProject();
-			else if ( IsConnected() )
-				CloseConnection();
-			else
-				_EndClosing();
+			if ( IsProjectOpened() || IsConnected() ) {
+				FRDKERNLClose();
+				_CloseConnection();
+			}
+
+			_EndClosing();
 		}
 		bso::bool__ IsProjectOpened( void )
 		{

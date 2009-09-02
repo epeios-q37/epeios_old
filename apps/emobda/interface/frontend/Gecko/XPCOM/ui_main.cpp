@@ -55,7 +55,7 @@ ERREpilog
 
 void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 {
-	UI().CloseProject();
+	UI().Close();
 	UI().DefineSession();
 }
 

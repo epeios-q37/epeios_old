@@ -66,7 +66,6 @@
 				<xsl:variable name="ContextIsStandard">
 					<xsl:call-template name="IsContextStandard"/>
 				</xsl:variable>
-				<xsl:value-of select="$ContextIsStandard"/>
 			</xsl:attribute>
 			<xsl:attribute name="Row">
 				<xsl:value-of select="@Row"/>

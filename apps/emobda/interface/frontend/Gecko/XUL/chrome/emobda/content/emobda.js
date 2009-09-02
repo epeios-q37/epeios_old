@@ -83,10 +83,10 @@ function registerAlone ( windows )
 	}
  }
  
-function registeringStart ()
+function registeringStart ( language )
  {
 	try {
-		emobdacom.RegisteringStart();
+		emobdacom.RegisteringStart( language );
 	} catch (err ) {
 		alert( err );
 	}

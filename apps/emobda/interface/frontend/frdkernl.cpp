@@ -24,7 +24,7 @@
 #include "flx.h"
 #include "lcl.h"
 
-static lcl::locales Locales;
+static lcl::locales _Locales;
 
 using namespace frdkernl;
 using xml::writer_;
@@ -60,6 +60,34 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 
 	return Message;
 }
+
+void frdkernl::kernel___::Init(
+	const str::string_ &Language,
+	const char *LocalesFileName )
+{
+ERRProlog
+	flf::file_iflow___ FIFlow;
+	xtf::extended_text_iflow__ XTFlow;
+ERRBegin
+	reset();
+
+	_Language.Init( Language );
+
+	if ( FIFlow.Init( LocalesFileName, err::hSkip ) == fil::sSuccess ) {
+		FIFlow.EOFD( XTF_EOXT );
+
+		XTFlow.Init( FIFlow );
+
+		_Locales.Init( XTFlow, "Locale[target=\"emobdafrd\"]" );
+	}
+
+	// Other initialisations happend in 'OpenProject'.
+ERRErr
+ERREnd
+ERREpilog
+	// Other initialisations happend in 'OpenProject'.
+}
+
 
 message__ frdkernl::kernel___::OpenProject(
 	const char *ConfigFile,
@@ -181,6 +209,8 @@ ERRBegin
 		_Connect( RemoteHostServiceOrLocalLibraryPath, csducl::tShared );
 
 	_Records.Init();
+
+	_ProjectIsOpen = true;
 ERRErr
 ERREnd
 ERREpilog
@@ -232,7 +262,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	Locales.GetTranslation( str::string( GetRawMessage_( Message ) ), Language, Translation );
+	_Locales.GetTranslation( str::string( GetRawMessage_( Message ) ), Language, Translation );
 
 	Translation.Convert( Buffer );
 ERRErr

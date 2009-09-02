@@ -179,15 +179,16 @@ bso::bool__ lcl::locales_::GetTranslation(
 	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
-	if ( S_.Root != NONE ) {
-		if ( !_GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) )
-			return _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
-		else
-			return true;
-	} else {
+	bso::bool__ Found = false;
+
+	if ( S_.Root != NONE )
+		if ( !( Found = _GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) ) )
+			Found = _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
+
+	if ( !Found )
 		Translation = RawMessage;
-		return false;
-	}
+
+	return Found;
 }
 
 const char *lcl::locales_::GetTranslation(
@@ -267,6 +268,25 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void ReplaceTags(
+	str::string_ &Message,
+	const str::string_ &Value,
+	char Tag = LCL_DEFAULT_TAG )
+{
+ERRProlog
+	strings Values;
+ERRBegin
+	Values.Init();
+
+	Values.Append( Value );
+
+	ReplaceTags( Message, Values, Tag );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

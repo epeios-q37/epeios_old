@@ -26,7 +26,7 @@
 interface iemobdacom
 : nsISupports
 {
-	void RegisteringStart();
+	void RegisteringStart( in string Language );
 	void Register( in nsIDOMwindow Window );	
 	void RegisterAlone( in nsIDOMwindow Window );	
 	void RegisteringEnd( in string ConfigFile );

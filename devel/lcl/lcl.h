@@ -135,6 +135,19 @@ namespace lcl {
 		const strings_ &Values,
 		char Tag = LCL_DEFAULT_TAG );
 
+	void ReplaceTags(
+		str::string_ &Message,
+		const str::string_ &Value,
+		char Tag = LCL_DEFAULT_TAG );
+
+	inline void ReplaceTags(
+		str::string_ &Message,
+		const char *Value,
+		char Tag = LCL_DEFAULT_TAG )
+	{
+		ReplaceTags( Message, str::string( Value ), Tag );
+	}
+
 
 }
 

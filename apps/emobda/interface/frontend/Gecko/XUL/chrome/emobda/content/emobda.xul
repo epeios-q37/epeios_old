@@ -30,11 +30,12 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	onload="register( window );registeringEnd();"
 	onunload="retire();"
-	userdata=""
-	persist="height width screenX screenY userdata"
+	UserData=""
+	persist="height width screenX screenY UserData"
+	
 >
 	<script type="text/javascript" src="emobda.js"/>
-	<script type="text/javascript">registeringStart();</script>
+	<script type="text/javascript">registeringStart( "&language;" );</script>
 	<broadcasterset>
 		<broadcaster id="bcrProjectOpened" disabled="true"/>
 		<broadcaster id="bcrDatabaseOpened"/>

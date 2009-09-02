@@ -1,10 +1,15 @@
 $Id$
 
+02/09/2009 :
+	- LCL :
+		- Correction bogue 'GetTranslation(...)' qui retournait une chaîne vide dans certains cas.
+		- Ajout 'ReplaceTags(...)' avec variations dans les paramètres.
+
 01/09/2009 :
 	- LCL :
 		- Correction bogue se produisant lors de la lecture d'un fichier vide.
 	- STR :
-		- Correction de quelques inexactitudes C++ détectée par g++. 
+		- Correction de quelques inexactitudes C++ détectées par g++. 
 		
 27/085/2009 :
 	- RGSTRY :
