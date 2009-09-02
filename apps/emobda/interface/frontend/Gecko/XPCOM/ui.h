@@ -118,9 +118,10 @@ namespace ui {
 		}
 		void CloseProject( void )
 		{
-			_SaveLocalRegistry();
+			if ( K().IsProjectOpened() )
+				_SaveLocalRegistry();
 
-			K().CloseProject();
+			K().Close();
 		}
 		const _kernel___ &K( void ) const
 		{

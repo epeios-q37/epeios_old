@@ -61,7 +61,21 @@ void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 
 void ui_main::connect_to_backend_command__::NSXPCMOnEvent( event__ )
 {
-	UI().Alert( "Connection to backend !" );
+ERRProlog
+	csducl::type__ Type = csducl::t_Undefined;
+	str::string RemoteHostServiceOrLocalLibraryPath;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	RemoteHostServiceOrLocalLibraryPath.Init();
+
+	if ( UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
+		UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type );
+		UI().ApplySession();
+	} else
+		UI().DefineSession();
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )

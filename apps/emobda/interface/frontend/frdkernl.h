@@ -192,18 +192,42 @@ namespace frdkernl {
 		transient__ _Transient;
 		records _Records;
 		target__ _Target;
+		bso::bool__ _ProjectIsOpen;
 		void _DumpCurrent(
 			xml::writer_ &Writer,
 			bso::bool__ ContextIsStandard );
 		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
+		void _Connect(
+			const char *RemoteHostServiceOrLocalLibraryPath,
+			csducl::type__ Type );
+		void _Connect(
+			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+			csducl::type__ Type );
+		void _CloseConnection( void )
+		{
+			if ( !IsConnected() )
+				ERRu();
+
+			_backend___::reset();
+			_ClientCore.reset();
+		}
+		void _EndClosing( void )
+		{
+			_Registry.reset();
+			_LocalRegistryRoot = NONE;
+			_GlobalRegistry.reset();
+			_Target.reset();
+			_Records.reset();
+			_Transient.reset();
+			_ProjectIsOpen = false;
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				if ( IsProjectOpened() )
-					CloseProject();
+				Close();
 
 			_backend___::reset( P );
 			_ClientCore.reset( P );
@@ -214,6 +238,7 @@ namespace frdkernl {
 			_Target.reset( P );
 			_Records.reset( P );
 			_Transient.reset( P );
+			_ProjectIsOpen = false;
 		}
 		kernel___( void )
 		{
@@ -231,24 +256,43 @@ namespace frdkernl {
 
 			// Other initialisations happend in 'OpenProject'.
 		}
+		void Connect(
+			const char *RemoteHostServiceOrLocalLibraryPath,
+			csducl::type__ Type );
+		void Connect(
+			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+			csducl::type__ Type );
 		message__ OpenProject(
 			const char *ConfigFile,
 			const char *RootPath,
 			str::string_ &ConfigurationId );
+		void CloseConnection( void )
+		{
+			_CloseConnection();
+
+			_EndClosing();
+		}
 		void CloseProject( void )
 		{
-			_backend___::reset();
-			_ClientCore.reset();
-			_Registry.reset();
-			_LocalRegistryRoot = NONE;
-			_GlobalRegistry.reset();
-			_Target.reset();
-			_Records.reset();
-			_Transient.reset();
+			if ( !IsProjectOpened() )
+				ERRu();
+
+			_CloseConnection();
+
+			_EndClosing();
+		}
+		void Close( void )
+		{
+			if ( IsProjectOpened() )
+				CloseProject();
+			else if ( IsConnected() )
+				CloseConnection();
+			else
+				_EndClosing();
 		}
 		bso::bool__ IsProjectOpened( void )
 		{
-			return IsConnected();
+			return _ProjectIsOpen;
 		}
 		message__ OpenProject(
 			xtf::extended_text_iflow__ &Config,

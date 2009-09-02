@@ -87,6 +87,51 @@ ERREpilog
 	return Message;
 }
 
+void frdkernl::kernel___::_Connect(
+	const char *RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type )
+{
+	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, Type );
+	_backend___::Init( _ClientCore );
+}
+
+
+void frdkernl::kernel___::Connect(
+	const char *RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type )
+{
+	Close();
+
+	_Connect( RemoteHostServiceOrLocalLibraryPath, Type );
+}
+
+
+void frdkernl::kernel___::_Connect(
+	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type )
+{
+ERRProlog
+	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
+ERRBegin
+	_Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void frdkernl::kernel___::Connect(
+	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type )
+{
+ERRProlog
+	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
+ERRBegin
+	Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 message__ frdkernl::kernel___::OpenProject(
 	xtf::extended_text_iflow__ &Config,
 	const char *RootPath,
@@ -95,14 +140,11 @@ message__ frdkernl::kernel___::OpenProject(
 	message__ Message = m_Undefined;
 ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
-	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 	rgstry::nrow__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::erow__ AttributeEntryRow = NONE;
 ERRBegin
-	reset();
-
-	_Language.Init( FRDKERNL_DEFAULT_LANGUAGE );	// A changer.
+	Close();
 
 	_GlobalRegistry.Init();
 
@@ -135,11 +177,8 @@ ERRBegin
 
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	if ( GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
-
-		_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), NULL, _LogFunctions, csducl::tShared );
-		_backend___::Init( _ClientCore );
-	}
+	if ( GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) )
+		_Connect( RemoteHostServiceOrLocalLibraryPath, csducl::tShared );
 
 	_Records.Init();
 ERRErr

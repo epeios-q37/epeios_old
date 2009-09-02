@@ -76,7 +76,7 @@ void ui_bksdb::remote_command__::NSXPCMOnEvent( event__ )
 
 	UI().BackendSelection.HostServiceTextbox.GetValue( Value );
 
-	nsxpcm::AddFormHistoryEntry( str::string( "txbHostService" ), Value );
+//	nsxpcm::AddFormHistoryEntry( str::string( "txbHostService" ), Value );	// Désactivé jusqu'à résolution pb FormHistory
 	UI().BackendSelection.ExtractSelectedBackend( false );
 }
 
