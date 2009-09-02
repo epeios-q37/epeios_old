@@ -69,7 +69,7 @@ bso::bool__ lcl::locales_::Init(
 
 	BaseRoot = rgstry::Parse( XFlow, str::string(), Registry, NONE );
 
-	if ( ( RootPath != NULL ) && ( RootPath[0] != 0 ) ) {
+	if ( ( BaseRoot != NONE ) && ( RootPath != NULL ) && ( RootPath[0] != 0 ) ) {
 		BaseRoot = Registry.SearchPath( str::string( RootPath ), BaseRoot, AttributeEntryRow, PathErrorRow );
 
 		if ( AttributeEntryRow != NONE )

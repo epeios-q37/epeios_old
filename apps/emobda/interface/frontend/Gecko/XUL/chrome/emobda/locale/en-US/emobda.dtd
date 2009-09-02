@@ -6,6 +6,7 @@
 <!ENTITY project.label "Project">
 <!ENTITY projectOpen.label "Open">
 <!ENTITY projectClose.label "Close">
+<!ENTITY connectToBackend.label "Connect to backend">
 
 <!ENTITY database.label "Database">
 <!ENTITY databaseNew.label "New">

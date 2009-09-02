@@ -226,10 +226,10 @@ namespace str {
 			char Old,
 			char New );
 		// Remplace la 'Position'ième occurence de 'Tag' par 'Value'. Retourne 'true' si succés, 'false' sinon.
-		bso::bool__ string_::Replace(
+		bso::bool__ Replace(
 			char Tag,
 			bso::ulong__ Position,
-			const str::string_ &Value );
+			const string_ &Value );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
 		epeios::row__ Search(
 			const string_ &S,

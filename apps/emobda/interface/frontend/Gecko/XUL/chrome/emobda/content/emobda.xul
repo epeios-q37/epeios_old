@@ -48,6 +48,7 @@
 	<commandset>
 		<command id="cmdOpenProject"/>
 		<command id="cmdCloseProject" observes="bcrProjectOpened"/>
+		<command id="cmdConnectToBackend"/>
 	</commandset>
 	<commandset>
 		<command id="cmdCreateDatabase" observes="bcrProjectOpened"/>
@@ -71,6 +72,7 @@
 			<menupopup>
 				<menuitem label="&projectOpen.label;" command="cmdOpenProject"/>
 				<menuitem label="&projectClose.label;" command="cmdCloseProject"/>
+				<menuitem label="&connectToBackend.label;" command="cmdConnectToBackend"/>
 			</menupopup>
 		</menu>
 		<menu label="&database.label;">

@@ -41,6 +41,7 @@ namespace ui_main {
 
 	UI_ETYPEDEF( command__, open_project_command__ );
 	UI_ETYPEDEF( command__, close_project_command__ );
+	UI_ETYPEDEF( command__, connect_to_backend_command__ );
 
 	UI_ETYPEDEF( command__, create_database_command__ );
 	UI_ETYPEDEF( command__, open_database_command__ );
@@ -70,6 +71,7 @@ namespace ui_main {
 			struct backend__ {
 				open_project_command__ OpenProject;
 				close_project_command__ CloseProject;
+				connect_to_backend_command__ ConnectToBackend;
 			} Backend;
 			struct database__ {
 				create_database_command__ Create;

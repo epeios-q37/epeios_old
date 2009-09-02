@@ -59,6 +59,11 @@ void ui_main::close_project_command__::NSXPCMOnEvent( event__ )
 	UI().DefineSession();
 }
 
+void ui_main::connect_to_backend_command__::NSXPCMOnEvent( event__ )
+{
+	UI().Alert( "Connection to backend !" );
+}
+
 void ui_main::create_database_command__::NSXPCMOnEvent( event__ )
 {
 	UI().CreateDatabase();
@@ -181,6 +186,7 @@ static void Register_(
 {
 	Register_( Functions, UI.OpenProject, Document, "cmdOpenProject" );
 	Register_( Functions, UI.CloseProject, Document, "cmdCloseProject" );
+	Register_( Functions, UI.ConnectToBackend, Document, "cmdConnectToBackend" );
 }
 
 static void Register_(

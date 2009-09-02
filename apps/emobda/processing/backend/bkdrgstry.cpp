@@ -40,8 +40,7 @@ ERRProlog
 	rgstry::erow__  AttributeEntryRow = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	xml::extended_status__ ExtendedStatus = xml::xs_Undefined;
-	str::string ErrorFile;
-	xml::coord__ ErrorCoord;
+	rgstry::xcoord ErrorCoord;
 ERRBegin
 	if ( ::Root_ != NONE )
 		ERRc();
@@ -57,15 +56,15 @@ ERRBegin
 
 	::Registry_.Init();
 
-	ErrorFile.Init();
+	ErrorCoord.Init();
 
-	BaseRoot = rgstry::Parse( XFlow, str::string( "" ), ::Registry_, NONE, ExtendedStatus, ErrorFile, ErrorCoord );
+	BaseRoot = rgstry::Parse( XFlow, str::string( "" ), ::Registry_, NONE, ExtendedStatus, ErrorCoord );
 
 	if ( BaseRoot == NONE ) {
-		ErrFlow << xml::GetLabel( ExtendedStatus ) << " at line " << ErrorCoord.Line << ", column " << ErrorCoord.Column;
+		ErrFlow << xml::GetLabel( ExtendedStatus ) << " at line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column;
 
-		if ( ErrorFile.Amount() )
-			ErrFlow << " in file '" << ErrorFile;
+		if ( ErrorCoord.File.Amount() )
+			ErrFlow << " in file '" << ErrorCoord.File;
 
 		ErrFlow << " !" << txf::nl;
 

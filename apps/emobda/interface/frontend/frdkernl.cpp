@@ -71,7 +71,7 @@ ERRProlog
 	flf::file_iflow___ FIFlow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	if ( FIFlow.Init( ConfigFile ) != fil::sSuccess ) {
+	if ( FIFlow.Init( ConfigFile, err::hSkip ) != fil::sSuccess ) {
 		Message = mUnableToOpenConfigFile;
 		ERRReturn;
 	}

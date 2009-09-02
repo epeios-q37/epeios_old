@@ -34,10 +34,10 @@ copt += -DCPE_MT -DMTK_KEEP
 copt += -DCPE_LIBRARY
 lopt =
 mods += csdbnc csddlc
-mods += dtfptb err fil flw fnm lgg mmi msg mtk nsxpcm rgstry sck str tht tol ttr uym xml xtf
+mods += dtfptb err fil flw fnm lcl mmi mtk nsxpcm rgstry sck str tht tol ttr uym xml xtf
 mods += bkdacc bkdcmd bkdcst bkdrac bkdtpm 
 mods += kernel registry
-mods += mbdbkd mbdkernl mbdrgstry mbdtrnsnt
+mods += frdbcknd frdkernl frdrgstry frdtrnsnt
 mods += ui ui_base ui_bksdb ui_dbs_f ui_dbsdb ui_lst_v ui_main ui_rcd_f ui_rcd_v ui_struct
 
 # To adapt !
@@ -66,7 +66,7 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 #co += -DMTX_NO_ATOMIC_OPERATIONS
-#co += -fshort-wchar
+co += -fshort-wchar
 co += -include "mozilla-config.h"
 ifeq ("$(DEB_BUILD_ARCH)","armel")
 sdk=$(arm-sdk)

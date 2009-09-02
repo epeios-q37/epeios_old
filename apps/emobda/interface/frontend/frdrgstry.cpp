@@ -67,8 +67,7 @@ ERRProlog
 	rgstry::nrow__ Root = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::erow__ AttributeEntryRow = NONE;
-	xtf::coord__ ErrorCoord;;
-	str::string ErrorFileName;
+	rgstry::xcoord ErrorCoord;;
 	const char *Directory = NULL;
 	FNM_BUFFER___ DirectoryBuffer;
 	xml::extended_status__ Status = xml::xs_Undefined;
@@ -86,19 +85,19 @@ ERRBegin
 
 	Root = Registry.CreateNewRegistry( rgstry::term( "BaseRegistry" ) );
 
-	ErrorFileName.Init();
-
 	Directory = fnm::GetLocation( FileName, DirectoryBuffer );
 
-	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, Root, Status, ErrorFileName, ErrorCoord ) == NONE ) {
+	ErrorCoord.Init();
+
+	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, Root, Status, ErrorCoord ) == NONE ) {
 		Flow << "Error in file '";
 		
-		if ( ErrorFileName.Amount() != 0 )
-			Flow << ErrorFileName;
+		if ( ErrorCoord.File.Amount() != 0 )
+			Flow << ErrorCoord.File;
 		else
 			Flow << FileName;
 		
-		Flow << "' line " << ErrorCoord.Line << ", column " << ErrorCoord.Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
+		Flow << "' line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
 		ERRReturn;
 	}
 
