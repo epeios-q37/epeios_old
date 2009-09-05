@@ -1,5 +1,9 @@
 $Id$
 
+04/09/2009 :
+	- ERR :
+		- Ajout 'cIncoherency', pour signaler une incohérence dans le logiciel.
+
 02/09/2009 :
 	- LCL :
 		- Correction bogue 'GetTranslation(...)' qui retournait une chaîne vide dans certains cas.

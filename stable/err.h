@@ -104,7 +104,7 @@ namespace err {
 		phb = 256,
 		// prohibibition error; a prohibited fonction was called.
 		lmt = 512,
-		// limit error; attempt to exceed the limit
+		// limitation error; a software limitation xas reached.
 		mem = 1024,
 		// memory error (all memory type).
 		ext = 2048,
@@ -151,7 +151,8 @@ namespace err {
 		// throw error
 	enum c
 	{
-		cGeneric
+		cGeneric,
+		cIncoherency,	// Pour signaler une incohérence.
 	};
 		// conception error
 	enum f
