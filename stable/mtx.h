@@ -429,7 +429,7 @@ namespace mtx {
 		while( !TryToLock( Handler ) )
 		{
 			tol::InitializeRandomGenerator();
-			tht::Defer( ( tht::GetTID() + rand() ) % 5 + 1 ); // 'rand() donne-t'il la même suite dans des coeurs différents ?
+			tht::Defer( ( (int)tht::GetTID() + rand() ) % 5 + 1 ); // 'rand() donne-t'il la même suite dans des coeurs différents ?
 		}
 	}
 

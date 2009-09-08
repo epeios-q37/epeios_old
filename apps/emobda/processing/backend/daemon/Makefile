@@ -1,7 +1,7 @@
-# '$xxx$' Makefile by $AUTHOR_NAME$ ($AUTHOR_EMAIL$)
-# Builds executable for the '$xxx$' software.
+# 'emobdadmn' Makefile by Claude SIMON ($http://zeusw.org/$)
+# Builds executable for the 'emobdadmn' software.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) $COPYRIGHT_DATES$ $COPYRIGHT_OWNER$.
+# Copyright (C) 2009 Claude SIMON.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,16 +23,24 @@
 
 # $$Id$$
 
-name = $xxx$
+name = emobdadmn
 copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT -DMTK_KEEP
-#copt += -DMTX_NO_ATOMIC_OPERATIONS
-# copt += -DCPE_64_BITS_FORBIDDEN
+copt += -DCPE_MT -DMTK_KEEP
+copt += -DMTX_NO_ATOMIC_OPERATIONS
+#copt += -DCPE_64_BITS_FORBIDDEN
 lopt = 
-libs = ttr tol flw cio err
+mods = btr cio clnarg dtfptb epsmsc err fil flm flw fnm
+mods += idxbtr lcl lst mmi mtk que rgstry sck str tht tol ttr
+mods += txf uym xml xtf
+mods += dbsbsc dbsdct dbsidx dbstbl 
+mods += csdbns csdsns
+mods += bkdcore bkdmnger bkdrgstry
+mods += bkdcmd bkdcst bkddsc bkdmng bkdrrm bkdtpm
+mods += mbdbsc mbddsc mbdeng mbdfld mbdidx mbdmng mbdstr mbdtbl
+mods += registry
 
 ifndef EPEIOS_SRC
 	src=
@@ -63,6 +71,7 @@ lo += -o $(name)
 # needed when pthread are used.
 libs += -lpthread
 src += ..
+src += ../..
 # To use with gprof (both lines)
 #co += -pg
 #lo += -pg

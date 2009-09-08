@@ -62,7 +62,6 @@
 			<xsl:attribute name="type">radio</xsl:attribute>
 			<xsl:attribute name="label">
 				<xsl:value-of select="Name"/>
-				<xsl:call-template name="IsContextStandard"/>
 				<xsl:variable name="ContextIsStandard">
 					<xsl:call-template name="IsContextStandard"/>
 				</xsl:variable>

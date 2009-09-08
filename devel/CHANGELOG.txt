@@ -1,5 +1,9 @@
 $Id$
 
+08/09/2009 :
+	- MTX :
+		- Correction non-conformité aux standards C++ detectée par 'g++'.
+
 04/09/2009 :
 	- ERR :
 		- Ajout 'cIncoherency', pour signaler une incohérence dans le logiciel.

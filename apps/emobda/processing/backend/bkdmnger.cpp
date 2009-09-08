@@ -134,7 +134,7 @@ typedef message__ (* f_manager )(
 	bkdmng::request_manager__ &Request );
 
 #define DEC( name )\
-static message__ name(\
+	static message__ exported##name(\
 	_manager_ &Manager,\
 	bkdmng::request_manager__ &Request )
 
@@ -848,7 +848,7 @@ ERREpilog
 	return Message;
 }
 
-#define D( name )	#name, (void *)::##name
+#define D( name )	#name, (void *)exported##name
 
 void bkdmnger::manager_::NOTIFY( bkdmng::untyped_module &Module )
 {
