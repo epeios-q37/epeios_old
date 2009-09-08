@@ -40,6 +40,7 @@ struct data {
 	backend Backend;
 	log_functions__ LogFunctions;
 	cio::aware_cout___ LogFlow;
+	lcl::locales Locales;
 	data( void )
 	: LogFunctions( LogFlow )
 	{
@@ -80,7 +81,8 @@ ERRBegin
 	if ( Data == NULL )
 		ERRa();
 
-	Data->Backend.Init();
+	Data->Locales.Init();
+	Data->Backend.Init( Data->Locales );
 	Data->Backend.SetLanguage( str::string( "fr" ) );
 ERRErr
 	if ( Data != NULL )
