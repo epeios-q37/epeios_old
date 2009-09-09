@@ -69,8 +69,14 @@ ERRBegin
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
 	if ( UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
-		UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type );
-		UI().ApplySession();
+		if ( Type == csducl::tLibrary ) {
+			UI().Alert( frdkernl::mNotImplementedYet );
+			UI().DefineSession();
+		} else 
+		{
+			UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type );
+			UI().ApplySession();
+		}
 	} else
 		UI().DefineSession();
 ERRErr

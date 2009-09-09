@@ -38,6 +38,7 @@ namespace frdkernl {
 	using namespace frdbcknd;
 	using namespace frdtrnsnt;
 
+	// If modified, modify 'GetRawMessage_(...)' in 'frdkernel.cpp' according.
 	enum message__ 
 	{
 		mSelectProjectFile,
@@ -61,6 +62,9 @@ namespace frdkernl {
 		mDropRecordConfirmation,
 
 		mUnableToReachRecord,
+
+		mNotImplementedYet,
+
 		m_amount,
 		m_Undefined
 	};

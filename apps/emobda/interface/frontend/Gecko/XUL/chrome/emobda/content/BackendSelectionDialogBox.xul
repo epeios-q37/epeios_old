@@ -51,15 +51,6 @@
 			<textbox id="txbHostService"  control="ctrRemote" type="autocomplete" autocompletesearch="form-history" enablehistory="true" autocompletesearchparam="txbHostService"/>
 			<button  control="ctrRemote" command="cmdRemote"/>
 		</groupbox>
-		<radiogroup>
-			<radio id="rdoLocal" label="Local" command="cmdLocal"/>
-			<radio id="rdoRemote" label="Remote" command="cmdRemote" selected="true"/>
-			<label observes="bcrRemoteSelected" control="txbHostService" value="Remote backend host:port :"/>
-		</radiogroup>
-		<hbox>
-			<button command="cmdApply"/>
-			<button command="cmdCancel"/>
-		</hbox>
 	</vbox>
 </window>
 	

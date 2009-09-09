@@ -53,6 +53,8 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
 	CASE( UnableToReachRecord );
+	CASE( NotImplementedYet );
+
 	default:
 		ERRu();
 		break;
