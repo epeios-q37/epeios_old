@@ -65,6 +65,7 @@ ERRProlog
 	csducl::type__ Type = csducl::t_Undefined;
 	str::string RemoteHostServiceOrLocalLibraryPath;
 	STR_BUFFER___ Buffer;
+	str::string Message;
 ERRBegin
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
@@ -74,8 +75,13 @@ ERRBegin
 			UI().DefineSession();
 		} else 
 		{
-			UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type );
-			UI().ApplySession();
+			if ( !UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type ) ) {
+				Message.Init();
+				UI().K().GetMessage( frdkernl::mUnableToConnectToBackend_1, Message );
+				lcl::ReplaceTags( Message, RemoteHostServiceOrLocalLibraryPath );
+				UI().Alert( Message );
+			} else
+				UI().ApplySession();
 		}
 	} else
 		UI().DefineSession();

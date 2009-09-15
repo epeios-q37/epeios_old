@@ -40,8 +40,10 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( SelectProjectFile );
-	CASE( UnableToOpenConfigFile );
+	CASE( UnableToOpenConfigFile_1 );
 	CASE( MissingConfigurationTree );
+	CASE( NoRemoteHostServiceGiven );
+	CASE( UnableToConnectToBackend_1 );
 	CASE( MissingConfigurationId );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
@@ -91,18 +93,20 @@ ERREpilog
 }
 
 
-message__ frdkernl::kernel___::OpenProject(
+bso::bool__ frdkernl::kernel___::OpenProject(
 	const char *ConfigFile,
 	const char *RootPath,
-	str::string_ &ConfigurationId )
+	str::string_ &ConfigurationId,
+	str::string_ &Message )
 {
-	message__ Message = m_Undefined;
+	bso::bool__ Success = false;
 ERRProlog
 	flf::file_iflow___ FIFlow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	if ( FIFlow.Init( ConfigFile, err::hSkip ) != fil::sSuccess ) {
-		Message = mUnableToOpenConfigFile;
+		GetMessage( mUnableToOpenConfigFile_1, Message );
+		lcl::ReplaceTags( Message, ConfigFile );
 		ERRReturn;
 	}
 
@@ -110,29 +114,39 @@ ERRBegin
 
 	XFlow.Init( FIFlow );
 
-	Message = OpenProject( XFlow, RootPath, ConfigurationId  );
+	Success = OpenProject( XFlow, RootPath, ConfigurationId, Message );
 ERRErr
 ERREnd
 ERREpilog
-	return Message;
+	return Success;
 }
 
-void frdkernl::kernel___::_Connect(
+bso::bool__ frdkernl::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type )
 {
+	bso::bool__ Success = false;
+ERRProlog
+ERRBegin
 	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, _LogFunctions, Type );
 	_backend___::Init( _ClientCore );
+
+	Success = true;
+ERRErr
+	ERRRst();
+ERREnd
+ERREpilog
+	return Success;
 }
 
 
-void frdkernl::kernel___::Connect(
+bso::bool__ frdkernl::kernel___::Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type )
 {
 	Close();
 
-	_Connect( RemoteHostServiceOrLocalLibraryPath, Type );
+	return _Connect( RemoteHostServiceOrLocalLibraryPath, Type );
 }
 
 
@@ -162,12 +176,13 @@ ERREnd
 ERREpilog
 }
 
-message__ frdkernl::kernel___::OpenProject(
+bso::bool__ frdkernl::kernel___::OpenProject(
 	xtf::extended_text_iflow__ &Config,
 	const char *RootPath,
-	str::string_ &ConfigurationId )
+	str::string_ &ConfigurationId,
+	str::string_ &Message )
 {
-	message__ Message = m_Undefined;
+	bso::bool__ Success = false;
 ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
 	rgstry::nrow__ BaseRoot = NONE;
@@ -182,7 +197,7 @@ ERRBegin
 //	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
 
 	if ( BaseRoot == NONE ) {
-		Message = mMissingConfigurationTree;
+		GetMessage( mMissingConfigurationTree, Message );
 		ERRReturn;
 	}
 	
@@ -193,7 +208,7 @@ ERRBegin
 		if ( AttributeEntryRow != NONE )
 			ERRc();
 
-		Message = mMissingConfigurationTree;
+		GetMessage( mMissingConfigurationTree, Message );
 
 		ERRReturn;
 	}
@@ -201,7 +216,7 @@ ERRBegin
 	_Registry.Init( _GlobalRegistry, BaseRoot );
 
 	if ( !GetRegistryValue( "@Id", ConfigurationId ) ) {
-		Message = mMissingConfigurationId;
+		GetMessage( mMissingConfigurationId, Message );
 		ERRReturn;
 	}
 
@@ -213,10 +228,12 @@ ERRBegin
 	_Records.Init();
 
 	_ProjectIsOpen = true;
+
+	Success = true;
 ERRErr
 ERREnd
 ERREpilog
-	return Message;
+	return Success;
 }
 
 void frdkernl::kernel___::SetLocalRegistry(
@@ -254,6 +271,16 @@ ERREnd
 ERREpilog
 }
 
+static const str::string_ &GetMessage_(
+	frdkernl::message__ Message,
+	const str::string_ &Language,
+	str::string_ &Translation )
+{
+	_Locales.GetTranslation( str::string( GetRawMessage_( Message ) ), Language, Translation );
+
+	return Translation;
+}
+
 static const char *GetMessage_(
 	frdkernl::message__ Message,
 	const str::string_ &Language,
@@ -264,13 +291,20 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	_Locales.GetTranslation( str::string( GetRawMessage_( Message ) ), Language, Translation );
+	GetMessage_( Message, Language, Translation );
 
 	Translation.Convert( Buffer );
 ERRErr
 ERREnd
 ERREpilog
 	return Buffer();
+}
+
+const str::string_ &frdkernl::kernel___::GetMessage(
+	frdkernl::message__ MessageId,
+	str::string_ &Message  )
+{
+	return GetMessage_( MessageId, _Language, Message );
 }
 
 const char *frdkernl::kernel___::GetMessage(

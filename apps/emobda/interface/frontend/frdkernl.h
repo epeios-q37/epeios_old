@@ -43,9 +43,12 @@ namespace frdkernl {
 	{
 		mSelectProjectFile,
 
-		mUnableToOpenConfigFile,
+		mUnableToOpenConfigFile_1,
 		mMissingConfigurationTree,
 		mMissingConfigurationId,
+
+		mNoRemoteHostServiceGiven,
+		mUnableToConnectToBackend_1,
 
 		mMissingDatabaseName,
 		mMissingDatabasePath,
@@ -203,7 +206,7 @@ namespace frdkernl {
 		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
-		void _Connect(
+		bso::bool__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
 		void _Connect(
@@ -257,16 +260,22 @@ namespace frdkernl {
 		void Init(
 			const str::string_ &Language,
 			const char *LocalesFileName );
-		void Connect(
+		bso::bool__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
 		void Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
-		message__ OpenProject(
+		bso::bool__ OpenProject(
 			const char *ConfigFile,
 			const char *RootPath,
-			str::string_ &ConfigurationId );
+			str::string_ &ConfigurationId,
+			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
+		bso::bool__ OpenProject(
+			xtf::extended_text_iflow__ &Config,
+			const char *RootPath,
+			str::string_ &ConfigurationId,
+			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
 		void Close( void )
 		{
 			if ( IsProjectOpened() || IsConnected() ) {
@@ -280,10 +289,6 @@ namespace frdkernl {
 		{
 			return _ProjectIsOpen;
 		}
-		message__ OpenProject(
-			xtf::extended_text_iflow__ &Config,
-			const char *RootPath,
-			str::string_ &ConfigurationId );
 		void SetLocalRegistry(
 			xtf::extended_text_iflow__ &Config,
 			const str::string_ &Path );	/* To call after 'Init()'. 'Config' contains the 'XML' tree containing the user configuration.
@@ -298,6 +303,9 @@ namespace frdkernl {
 		{
 			DumpRegistry( _LocalRegistryRoot, OFlow );
 		}
+		const str::string_ &GetMessage(
+			message__ Message,
+			str::string_ &Translation );
 		const char *GetMessage(
 			message__ Message,
 			STR_BUFFER___ &Buffer );

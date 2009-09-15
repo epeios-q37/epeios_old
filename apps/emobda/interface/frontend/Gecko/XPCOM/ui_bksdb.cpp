@@ -31,7 +31,7 @@ using namespace kernel;
 void ui_bksdb::backend_selection__::ExtractSelectedBackend( bso::bool__ Local )
 {
 ERRProlog
-str::string HostService;
+	str::string HostService;
 ERRBegin
 	if ( Local )
 		UI().K().BackendSelection().SetLocal();
@@ -65,19 +65,33 @@ void ui_bksdb::host_service_textbox__::NSXPCMOnEvent( event__ )
 
 void ui_bksdb::local_command__::NSXPCMOnEvent( event__ )
 {
+	UI().Alert( frdkernl::mNotImplementedYet );
+
+	return;
+
 	UI().BackendSelection.ExtractSelectedBackend( true );
 }
 
 void ui_bksdb::remote_command__::NSXPCMOnEvent( event__ )
 {
+ERRProlog
 	str::string Value;
-
+ERRBegin
 	Value.Init();
 
 	UI().BackendSelection.HostServiceTextbox.GetValue( Value );
 
-//	nsxpcm::AddFormHistoryEntry( str::string( "txbHostService" ), Value );	// Désactivé jusqu'à résolution pb FormHistory
-	UI().BackendSelection.ExtractSelectedBackend( false );
+	Value.StripCharacter( ' ' );
+
+	if ( Value.Amount() == 0 ) {
+		UI().Alert( frdkernl::mNoRemoteHostServiceGiven );
+	} else {
+	//	nsxpcm::AddFormHistoryEntry( str::string( "txbHostService" ), Value );	// Désactivé jusqu'à résolution pb FormHistory
+		UI().BackendSelection.ExtractSelectedBackend( false );
+	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 /* UI Registrations */

@@ -30,7 +30,7 @@ using namespace ui;
 void ui::ui___::OpenProject( const char *ConfigFile )
 {
 ERRProlog
-	message__ Message = frdkernl::m_Undefined;
+	str::string Message;
 	str::string ConfigurationId;
 	str::string UserData;
 	str::string UserConfigurationPath;
@@ -40,7 +40,9 @@ ERRProlog
 ERRBegin
 	ConfigurationId.Init();
 
-	if ( ( Message = K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationId ) ) != frdkernl::m_Undefined )
+	Message.Init();
+
+	if ( !K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationId, Message ) )
 		Alert( Message );
 	else {
 		table__ Table;

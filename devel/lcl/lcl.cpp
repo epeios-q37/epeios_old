@@ -269,10 +269,10 @@ ERREnd
 ERREpilog
 }
 
-void ReplaceTags(
+void lcl::ReplaceTags(
 	str::string_ &Message,
 	const str::string_ &Value,
-	char Tag = LCL_DEFAULT_TAG )
+	char Tag )
 {
 ERRProlog
 	strings Values;
@@ -286,8 +286,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

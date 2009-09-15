@@ -73,6 +73,7 @@
 			<menupopup>
 				<menuitem label="&projectOpen.label;" command="cmdOpenProject"/>
 				<menuitem label="&projectClose.label;" command="cmdCloseProject"/>
+				<menuseparator/>
 				<menuitem label="&connectToBackend.label;" command="cmdConnectToBackend"/>
 			</menupopup>
 		</menu>
