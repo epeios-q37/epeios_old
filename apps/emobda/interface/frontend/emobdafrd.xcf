@@ -1,0 +1,19 @@
+<!-- $Id -->
+<Configurations>
+	<Configuration target="emobdacom" Id="Essai">
+		<Parameters>
+			<Backend Type="server">
+				<Location>192.168.56.1:1234</Location>
+			</Backend>
+			<Database>
+				<Path>MdP</Path>
+			</Database>
+		</Parameters>
+		<Profiles>
+		<Profile name="Default">
+			<Table>2</Table>
+		</Profile>
+		<User>Default</User>
+		</Profiles>
+	</Configuration>
+</Configurations>
