@@ -2,6 +2,7 @@
 
 <!ENTITY language "fr">
 
+<!ENTITY version.key "v">
 <!ENTITY jconsole.key "j">
 <!ENTITY dominspector.key "d">
 

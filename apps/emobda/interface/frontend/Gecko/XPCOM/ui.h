@@ -22,7 +22,7 @@
 #ifndef UI__INC
 #define UI__INC
 
-#include "../../frdkernl.h"
+#include "frdkernl.h"
 #include "ui_base.h"
 #include "ui_main.h"
 #include "ui_dbs_f.h"

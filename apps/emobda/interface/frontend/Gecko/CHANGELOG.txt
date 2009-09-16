@@ -1,0 +1,5 @@
+$Id$
+
+NOTES A L'AUTEUR :
+	- Avant publication, faire la fusion avec ce qu'il y dans ../CHANGELOG.txt,
+	- ce fichier concerne autant la partir C++ que XUL.

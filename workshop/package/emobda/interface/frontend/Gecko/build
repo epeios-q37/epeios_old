@@ -8,11 +8,15 @@ GET=../../../../../get_cvs
 mkdir -p $DIR
 
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
-$GET epeios $DIR documentation/packages/getbkdapi/README.txt
+$GET epeios $DIR documentation/packages/emobdagecko/README.txt
+$GET epeios $DIR apps/emobda/interface/frontend/Gecko/CHANGELOG.txt
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
+
+cp /cygdrive/h/xulrunner/components/gesbibcom.dll .
+cp /cygdrive/h/xulrunner/components/iemobda.xpt .
 
 mkdir $DIR/XPCOM
 
@@ -22,10 +26,17 @@ $GET epeios $DIR/XPCOM stable/*.cpp
 $GET ebkd $DIR/XPCOM stable/*.h
 $GET ebkd $DIR/XPCOM stable/*.cpp
 
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/*.cpp
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/*.h
+
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.cpp
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.h
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.idl
-$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.xpt
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/Makefile
+
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/emobdafrd.xlc
+mv $DIR/XPCOM/emobdafrd.xlc $DIR/XPCOM/emobdacom.xlc
+
 
 mkdir $DIR/XUL
 $GET epeios $DIR/XUL apps/emobda/interface/frontend/Gecko/XUL/application.ini
@@ -60,4 +71,4 @@ $GET epeios $DIR/XUL/defaults/preferences apps/emobda/interface/frontend/Gecko/X
 
 
 
-../../../../../create_pkg $DIR
+#../../../../../create_pkg $DIR

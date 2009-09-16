@@ -27,6 +27,64 @@ using namespace ui_main;
 
 using nsxpcm::event__;
 
+#include "epsmsc.h"
+
+#define NAME "emobdacom"
+#define VERSION "0.1.0"
+#define COPYRIGHT_YEARS	"2009"
+#ifdef XXX_DBG
+#	define DEBUG_FLAG	" (D)"
+#else
+#	define DEBUG_FLAG	""
+#endif
+#define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
+#define INFO			EPSMSC_EPEIOS_TEXT
+#define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
+#define CVS_DETAILS		("$Id$" + 5)
+
+void ui_main::version_command__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	str::string Version;
+	tol::buffer__ Buffer;
+	str::string BackendVersion;
+ERRBegin
+	Version.Init();
+
+#error "Finaliser la gestion de la version" !"
+
+	Version.Append( NAME " V" VERSION DEBUG_FLAG " "__DATE__ " " __TIME__ );
+	Version.Append( " <" );
+	Version.Append( tol::DateAndTime( Buffer ) );
+	Version.Append( "> \n" );
+	Version.Append( " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")""\n" );
+	Version.Append( COPYRIGHT"\n" );
+	Version.Append( INFO"\n" );
+	Version.Append( "CVS file details : " );
+	Version.Append( CVS_DETAILS );
+	Version.Append( '\n' );
+	Version.Append( '\n' );
+/*	Version.Append( "Backend version : " );
+
+	BackendVersion.Init();
+	K().Backend.Statics.GSBVersion( BackendVersion );
+
+	Version.Append( BackendVersion );
+
+	Version.Append( '\n' );
+	Version.Append( "Frontend access mode to backend : " );
+	Version.Append( gsbsessn::GetBackendAccessModeLabel( K().GetBackendAccessMode() ) );
+*/
+	UI().Alert( Version );
+
+	
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void ui_main::jsconsole_command__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::GetJSConsole();
@@ -243,6 +301,7 @@ static void Register_(
 	main__::commands__ &UI,
 	nsIDOMDocument *Document )
 {
+	Register_( Functions, UI.Version, Document, "cmdVersion" );
 	Register_( Functions, UI.JSConsole, Document, "cmdJSConsole" );
 	Register_( Functions, UI.DOMInspector, Document, "cmdDOMInspector" );
 
