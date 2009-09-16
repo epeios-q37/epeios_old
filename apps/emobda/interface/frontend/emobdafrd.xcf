@@ -1,4 +1,4 @@
-<!-- $Id -->
+<!-- $Id$ -->
 <Configurations>
 	<Configuration target="emobdacom" Id="Essai">
 		<Parameters>
