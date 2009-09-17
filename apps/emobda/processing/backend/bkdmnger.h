@@ -32,6 +32,7 @@
 #define BKDMNGER_MANAGER_NAME	"manager"
 
 namespace bkdmnger {
+	extern const char *UserDefinedBackendVersion;	// To define by the user.
 
 	void Inform( bkdmng::backend_ &Backend );
 

@@ -968,6 +968,10 @@ DEC( Test )
 {
 }
 
+DEC( Version )
+{
+	Request.StringOut() = UserDefinedBackendVersion;
+}
 
 
 #define D( name )	"MBD" #name, ::name
@@ -976,6 +980,11 @@ void bkdmnger::Inform( bkdmng::backend_ &Backend )
 {
 	Backend.Add( D( Test ),
 		bkdmng::cEnd,
+		bkdmng::cEnd );
+
+	Backend.Add( D( Version ),
+		bkdmng::cEnd,
+			bkdmng::cString,	// Version text.
 		bkdmng::cEnd );
 }
 

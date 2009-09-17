@@ -1,5 +1,9 @@
 $Id$
 
+17/09/2009 :
+	- RGSTRY :
+		- Correction bogue provoquant plnatage lorsque pas de registre définis.
+
 15/09/2009 :
 	- LCL :
 		- Correction mauvaise définition 'ReplaceTags(...)'.

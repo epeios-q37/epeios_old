@@ -82,9 +82,10 @@ namespace frdbcknd {
 			FRDBCKNDReport( Message );
 		}
 	protected:
-		virtual void FRDBCKNDReport( const char *Message ) =0 ;
+		virtual void FRDBCKNDReport( const char *Message ) = 0 ;
 	public:
 		emobdabkd::mbd_manager___ Manager;
+		emobdabkd::statics___ Statics;
 		void reset( bso::bool__ P = true )
 		{
 			Manager.reset( P );
@@ -109,7 +110,7 @@ namespace frdbcknd {
 
 			_ManagerCommon.Init( _BackendAccess );
 			Manager.Init( _ManagerCommon );
-			
+			Statics.Init( _BackendAccess );
 		}
 		bso::bool__ IsConnected( void ) const
 		{
@@ -249,6 +250,10 @@ namespace frdbcknd {
 		bso::bool__ CloseDatabase( void )
 		{
 			return _H( Manager.CloseDatabase() );
+		}
+		bso::bool__ Version( str::string_ &Version )
+		{
+			return _H( Statics.MBDVersion( Version ) );
 		}
 	};
 }

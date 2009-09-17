@@ -45,6 +45,8 @@
 #define SERVICE_LABEL	"EMobDa backend daemon"
 #define SERVICE_DESCRIPTION	"Daemon handling EMobDa frontend requests."
 
+const char *bkdmnger::UserDefinedBackendVersion = NAME " V" VERSION" (" __DATE__ " "  __TIME__ ")";
+
 
 #ifdef CPE__T_MT
 cio::aware_cout___ AwareCout;

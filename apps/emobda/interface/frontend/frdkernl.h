@@ -266,6 +266,12 @@ namespace frdkernl {
 		void Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
+		const str::string_ &BackendVersion( str::string_ &Version )
+		{
+			_backend___::Version( Version );
+
+			return Version;
+		}
 		bso::bool__ OpenProject(
 			const char *ConfigFile,
 			const char *RootPath,
@@ -288,6 +294,10 @@ namespace frdkernl {
 		bso::bool__ IsProjectOpened( void )
 		{
 			return _ProjectIsOpen;
+		}
+		bso::bool__ IsConnected( void )
+		{
+			return _backend___::IsConnected();
 		}
 		void SetLocalRegistry(
 			xtf::extended_text_iflow__ &Config,

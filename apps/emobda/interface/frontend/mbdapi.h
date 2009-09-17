@@ -1,5 +1,5 @@
 /* DON'T MODIFY */
-/* This file was generated using getbkdapi	V0.2.3, and a XSL filea
+/* This file was generated using getbkdapi	V0.2.4, and a XSL filea
 ($RCSfile$ $Revision$ $Date$ $Author$) */
 // $Id$	(CVS feature).
 #ifndef emobdabkd__INC
@@ -317,7 +317,7 @@ namespace emobdabkd {
 		bkdacc::object__ ID_;
 	public:
 		bkdacc::backend_access___ *Backend;
-		bkdacc::command__ Commands[1];
+		bkdacc::command__ Commands[2];
 		void Init( bkdacc::backend_access___ &Backend )
 		{
 			bkdacc::commands_details CommandsDetails;
@@ -326,6 +326,7 @@ namespace emobdabkd {
 
 			bkdacc::id8__ Parameters[] = {
 				0, 
+				0, 18,
 			};
 
 			this->Backend = &Backend;
@@ -337,10 +338,15 @@ namespace emobdabkd {
 			CommandDetail.Casts.Append( Parameters + 0, 1 );
 			CommandsDetails.Append( CommandDetail );
 
+			CommandDetail.Init();
+			CommandDetail.Name = "MBDVersion";;
+			CommandDetail.Casts.Append( Parameters + 1, 2 );
+			CommandsDetails.Append( CommandDetail );
+
 
 			Commands.Init();
 			this->Backend->GetCommands( BKDACC_MASTER_TYPE, CommandsDetails, Commands );
-			Commands.Recall( 0, 1, this->Commands );
+			Commands.Recall( 0, 2, this->Commands );
 		}
 		bso::bool__ MBDTest( void ) const
 		{
@@ -348,6 +354,17 @@ namespace emobdabkd {
 
 			Backend->EndOfInParameters();
 
+
+			return Backend->Handle();
+		}
+		bso::bool__ MBDVersion( 
+			bkdacc::string_ &Out1 ) const
+		{
+			Backend->PushHeader( ID_, Commands[1] );
+
+			Backend->EndOfInParameters();
+
+			Backend->StringOut( Out1 );
 
 			return Backend->Handle();
 		}

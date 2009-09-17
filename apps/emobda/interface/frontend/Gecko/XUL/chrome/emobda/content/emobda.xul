@@ -97,6 +97,11 @@
 				<menuitem label="&recordDelete.label;" command="cmdDeleteRecord"/>
 			</menupopup>
 		</menu>
+		<menu label="?">
+			<menupopup>
+				<menuitem label="A propos" command="cmdVersion"/>
+			</menupopup>
+		</menu>
 	</menubar>
 	<deck id="dckMain" selectedIndex="0" flex="1" >
 		<vbox id="pnlHome" flex="1">

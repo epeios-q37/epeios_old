@@ -900,9 +900,6 @@ ERREpilog
 	return Exists;
 }
 
-
-
-
 nrow__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Directory,
@@ -960,7 +957,8 @@ ERRBegin
 		LocalMissing = true;
 
 	if ( LocalMissing )
-		Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
+		if ( Global.Registry != NULL )
+			Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog

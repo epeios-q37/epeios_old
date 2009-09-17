@@ -1,11 +1,11 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.3 (http://epeios.org/getbkdapi/) on 23/08/2009 17:43:34. -->
+This document was generated using getbkdapi 0.2.4 (http://epeios.org/getbkdapi/) on 17/09/2009 16:18:50. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
 		<Generator>
 			<Name>getbkdapi</Name>
-			<Version>0.2.3</Version>
+			<Version>0.2.4</Version>
 			<Author>
 				<Name>Claude SIMON</Name>
 				<Contact>http://zeusw.org/epeios/contact.html</Contact>
@@ -19,8 +19,8 @@ This document was generated using getbkdapi 0.2.3 (http://epeios.org/getbkdapi/)
 			<Name>emobdabkd</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>23/08/2009</Date>
-		<Time>17:43:34</Time>
+		<Date>17/09/2009</Date>
+		<Time>16:18:50</Time>
 	</Misc>
 	<Messages Amount="23">
 		<Message Content="_UnknowObjectType"/>
@@ -52,11 +52,23 @@ This document was generated using getbkdapi 0.2.3 (http://epeios.org/getbkdapi/)
 			<ID>65535</ID>
 			<Prefix Default="" Lower="" Upper=""/>
 			<Name Raw="" Underscored="" Uppercased=""/>
-			<Commands Amount="1">
+			<Commands Amount="2">
 				<Command>
 					<Name>MBDTest</Name>
 					<ID>16</ID>
 					<Parameters Amount="1" Position="0"/>
+				</Command>
+				<Command>
+					<Name>MBDVersion</Name>
+					<ID>17</ID>
+					<Parameters Amount="2" Position="1">
+						<Out>
+							<Parameter Discriminator="1" Position="Last" Type="Bunch">
+								<Name>string</Name>
+								<ID>18</ID>
+							</Parameter>
+						</Out>
+					</Parameters>
 				</Command>
 			</Commands>
 		</Type>

@@ -41,7 +41,6 @@ using nsxpcm::event__;
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
-#define CVS_DETAILS		("$Id$" + 5)
 
 void ui_main::version_command__::NSXPCMOnEvent( event__ )
 {
@@ -52,27 +51,25 @@ ERRProlog
 ERRBegin
 	Version.Init();
 
-#error "Finaliser la gestion de la version" !"
-
 	Version.Append( NAME " V" VERSION DEBUG_FLAG " "__DATE__ " " __TIME__ );
 	Version.Append( " <" );
 	Version.Append( tol::DateAndTime( Buffer ) );
 	Version.Append( "> \n" );
-	Version.Append( " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")""\n" );
-	Version.Append( COPYRIGHT"\n" );
-	Version.Append( INFO"\n" );
-	Version.Append( "CVS file details : " );
-	Version.Append( CVS_DETAILS );
-	Version.Append( '\n' );
-	Version.Append( '\n' );
-/*	Version.Append( "Backend version : " );
+	Version.Append( " by " AUTHOR_NAME " (" AUTHOR_CONTACT ")""\n" );
+	Version.Append( COPYRIGHT "\n" );
+	Version.Append( INFO "\n" );
 
-	BackendVersion.Init();
-	K().Backend.Statics.GSBVersion( BackendVersion );
+	if ( UI().K().IsConnected() ) {
+		Version.Append( '\n' );
+		Version.Append( '\n' );
+		Version.Append( "Backend : " );
 
-	Version.Append( BackendVersion );
+		BackendVersion.Init();
+		Version.Append( UI().K().BackendVersion( BackendVersion ) );
 
-	Version.Append( '\n' );
+		Version.Append( '\n' );
+	}
+/*
 	Version.Append( "Frontend access mode to backend : " );
 	Version.Append( gsbsessn::GetBackendAccessModeLabel( K().GetBackendAccessMode() ) );
 */
