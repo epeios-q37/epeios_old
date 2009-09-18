@@ -115,6 +115,7 @@ ERRBegin
 			nsxpcm::MasterWindow = Window;
 	} else if ( Id == "wdwBackendSelectionDialogBox" ) {
 		ui_bksdb::RegisterBackendSelectionUI( UI, Window );
+		UI.BackendSelection.HostServiceTextbox.Select();
 	} else if ( Id == "wdwDatabaseSelectionDialogBox" ) {
 		ui_dbsdb::RegisterDatabaseSelectionUI( UI, Window );
 		UI.FillDatabaseSelectionList();

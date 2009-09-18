@@ -41,6 +41,7 @@ using nsxpcm::event__;
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
+#define EMOBDA_TEXT		"Part of the 'EMobDa' software (http://zeusw.org/intl/emobda/)"
 
 void ui_main::version_command__::NSXPCMOnEvent( event__ )
 {
@@ -58,6 +59,7 @@ ERRBegin
 	Version.Append( " by " AUTHOR_NAME " (" AUTHOR_CONTACT ")""\n" );
 	Version.Append( COPYRIGHT "\n" );
 	Version.Append( INFO "\n" );
+	Version.Append( EMOBDA_TEXT );
 
 	if ( UI().K().IsConnected() ) {
 		Version.Append( '\n' );

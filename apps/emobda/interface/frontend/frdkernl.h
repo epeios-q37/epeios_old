@@ -131,6 +131,10 @@ namespace frdkernl {
 		{
 			Set( Table );
 		}
+		void Init( void )
+		{
+			reset();
+		}
 		void Set(
 			record__ Record,
 			record_position__ RecordPosition,
@@ -222,12 +226,12 @@ namespace frdkernl {
 		}
 		void _EndClosing( void )
 		{
-			_Registry.reset();
+			_GlobalRegistry.Init();
+			_Registry.Init( _GlobalRegistry, NONE);
 			_LocalRegistryRoot = NONE;
-			_GlobalRegistry.reset();
-			_Target.reset();
-			_Records.reset();
-			_Transient.reset();
+			_Target.Init();
+			_Records.Init();
+			_Transient.Init();
 			_ProjectIsOpen = false;
 		}
 	protected:

@@ -59,7 +59,7 @@ void ui_bksdb::window__::NSXPCMOnEvent( event__ Event )
 	}
 }
 
-void ui_bksdb::host_service_textbox__::NSXPCMOnEvent( event__ )
+void ui_bksdb::host_service_textbox__::NSXPCMOnEvent( event__ Event )
 {
 }
 
@@ -128,7 +128,7 @@ static void Register_(
 	backend_selection__ &UI )
 {
 	Register_( Functions, UI.Commands, UI.Document );
-	ui_base::Register( Functions, UI.HostServiceTextbox, UI.Document, "txbHostService" );
+	ui_base::Register( Functions, UI.HostServiceTextbox, UI.Document, "txbHostService", nsxpcm::efAllButAnnoying );
 }
 
 void ui_bksdb::RegisterBackendSelectionUI(

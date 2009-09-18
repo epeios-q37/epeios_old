@@ -10,10 +10,10 @@
 			</Database>
 		</Parameters>
 		<Profiles>
-		<Profile name="Default">
-			<Table>2</Table>
-		</Profile>
-		<User>Default</User>
+			<Profile name="Default">
+				<Table>2</Table>
+			</Profile>
+			<User>Default</User>
 		</Profiles>
 	</Configuration>
 </Configurations>

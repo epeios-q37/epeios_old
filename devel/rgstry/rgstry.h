@@ -1120,13 +1120,18 @@ namespace rgstry {
 		{
 			reset();
 		}
-		void Init(
+		nrow__ Init(
 			registry_ &Global,
-			nrow__ Root )
+			nrow__ Root )	// Si == 'NONE', est crée et retourné.
 		{
 			reset();
 
+			if ( Root == NONE )
+				Root = Global.CreateNode( term() );
+
 			_LocalRoot = overloaded_registry___::Init( Global, Root, *(registry_ *)NULL, NONE );
+
+			return Root;
 		}
 		nrow__ Init(
 			registry_ &Global,

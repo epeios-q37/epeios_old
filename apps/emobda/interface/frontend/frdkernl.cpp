@@ -77,6 +77,9 @@ ERRBegin
 
 	_Language.Init( Language );
 
+	_GlobalRegistry.Init();
+	_Registry.Init( _GlobalRegistry, NONE );
+
 	if ( FIFlow.Init( LocalesFileName, err::hSkip ) == fil::sSuccess ) {
 		FIFlow.EOFD( XTF_EOXT );
 

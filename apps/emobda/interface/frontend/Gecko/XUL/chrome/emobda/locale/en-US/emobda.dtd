@@ -26,3 +26,5 @@
 <!ENTITY recordBrowse.label "Browse">
 <!ENTITY recordDelete.label "Delete">
 
+<!ENTITY misc.label "?">
+<!ENTITY about.label "About ...">

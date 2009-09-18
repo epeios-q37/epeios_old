@@ -936,7 +936,7 @@ const value_ &rgstry::overloaded_registry___::GetPathValue_(
 	term_buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
-	const value_ *Result = 0;
+	const value_ *Result = &Empty;
 ERRProlog
 	nrow__ Row = NONE;
 	path Path;

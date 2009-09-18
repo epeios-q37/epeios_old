@@ -11,7 +11,6 @@
 <!ENTITY projectClose.label "Fermer">
 <!ENTITY connectToBackend.label "Connection au backend">
 
-
 <!ENTITY database.label "Base de données">
 <!ENTITY databaseNew.label "Créer">
 <!ENTITY databaseOpen.label "Ouvrir">
@@ -26,4 +25,8 @@
 <!ENTITY recordDuplicate.label "Dupliquer">
 <!ENTITY recordBrowse.label "Visualiser">
 <!ENTITY recordDelete.label "Supprimer">
+
+<!ENTITY misc.label "?">
+<!ENTITY about.label "A propos ...">
+
 

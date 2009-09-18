@@ -347,6 +347,10 @@ namespace frdtrnsnt {
 		{
 			reset( false );
 		}
+		void Init( void )
+		{
+			reset();
+		}
 		E_RODISCLOSE__( context__, Context );
 	};
 }
