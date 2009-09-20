@@ -1,5 +1,9 @@
 $Id$
 
+20/09/2009 :
+	- CSDUCL :
+		- 'tShared' devient 'tDaemon'.
+
 18/09/2009 :
 	- RGSTRY :
 		- Correction bogue provoquant plantage lorsque pas de registre définis.
