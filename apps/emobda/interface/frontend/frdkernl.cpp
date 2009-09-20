@@ -24,6 +24,9 @@
 #include "flx.h"
 #include "lcl.h"
 
+#define DAEMON_BACKEND_TYPE		"daemon"
+#define LIBRARY_BACKEND_TYPE	"library"
+
 static lcl::locales _Locales;
 
 using namespace frdkernl;
@@ -42,6 +45,8 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	CASE( SelectProjectFile );
 	CASE( UnableToOpenConfigFile_1 );
 	CASE( MissingConfigurationTree );
+	CASE( BadOrMissingBackendType );
+	CASE( NoBackendLocationGiven );
 	CASE( NoRemoteHostServiceGiven );
 	CASE( UnableToConnectToBackend_1 );
 	CASE( MissingConfigurationId );
@@ -63,6 +68,26 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	}
 
 	return Message;
+}
+
+csducl::type__ frdkernl::GetBackendType( const frdrgstry::registry___ &Registry )
+{
+	csducl::type__ Type = csducl::t_Undefined;
+ERRProlog
+	str::string Target;
+ERRBegin
+	Target.Init();
+
+	frdrgstry::GetBackendType( Registry, Target );
+
+	if ( Target == DAEMON_BACKEND_TYPE )
+		Type = csducl::tDaemon;
+	else if ( Target == LIBRARY_BACKEND_TYPE )
+		Type = csducl::tLibrary;
+ERRErr
+ERREnd
+ERREpilog
+	return Type;
 }
 
 void frdkernl::kernel___::Init(
@@ -153,30 +178,34 @@ bso::bool__ frdkernl::kernel___::Connect(
 }
 
 
-void frdkernl::kernel___::_Connect(
+bso::bool__ frdkernl::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	_Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
+	Success = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
-void frdkernl::kernel___::Connect(
+bso::bool__ frdkernl::kernel___::Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
+	Success = Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
 }
 
 bso::bool__ frdkernl::kernel___::OpenProject(
@@ -191,6 +220,7 @@ ERRProlog
 	rgstry::nrow__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::erow__ AttributeEntryRow = NONE;
+	csducl::type__ Type = csducl::t_Undefined;
 ERRBegin
 	Close();
 
@@ -223,16 +253,32 @@ ERRBegin
 		ERRReturn;
 	}
 
+	Type = GetBackendType( _Registry );
+
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	if ( GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) )
-		_Connect( RemoteHostServiceOrLocalLibraryPath, csducl::tShared );
+	if ( Type == csducl::t_Undefined ) {
+		GetMessage( mBadOrMissingBackendType, Message );
+		ERRReturn;
+	}
+
+	if ( !GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
+		GetMessage( mNoBackendLocationGiven, Message );
+		ERRReturn;
+	}
+
+	if ( !_Connect( RemoteHostServiceOrLocalLibraryPath, Type ) ) {
+		GetMessage( mUnableToConnectToBackend_1, Message );
+		lcl::ReplaceTags( Message, RemoteHostServiceOrLocalLibraryPath );
+		ERRReturn;
+	}
 
 	_Records.Init();
 
 	_ProjectIsOpen = true;
 
 	Success = true;
+
 ERRErr
 ERREnd
 ERREpilog

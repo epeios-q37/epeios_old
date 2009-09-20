@@ -99,7 +99,12 @@ namespace frdrgstry {
 		SetProfileValue( Path, Registry, str::string( bso::Convert( Id, Buffer ) ) );
 	}
 
-
+	inline bso::bool__ GetBackendType(
+		const registry___ &Registry,
+		str::string_ &Target )
+	{
+		return GetPathValue( paths::Parameters.Backend.Type, Registry, Target );
+	}
 }
 
 #endif

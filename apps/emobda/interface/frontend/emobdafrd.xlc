@@ -61,9 +61,17 @@
 			<Translation language="fr">Non encore implémenté !</Translation>
 			<Translation language="en-US">Not implemented yet !</Translation>
 		</Translations>
+		<Translations message="BadOrMissingBackendType">
+			<Translation language="fr">Type de backend incorrect ou absent !</Translation>
+			<Translation language="en-US">Bad or missing backend type !</Translation>
+		</Translations>
 		<Translations message="UnableToConnectToBackend_1">
 			<Translation language="fr">Impossible de se connecter à'%1' !</Translation>
 			<Translation language="en-US">Unable to connect to '%1' !</Translation>
+		</Translations>
+		<Translations message="NoBackendLocationGiven">
+			<Translation language="fr">Localisation de backend manquant !</Translation>
+			<Translation language="en-US">No backend location given !</Translation>
 		</Translations>
 		<Translations message="NoRemoteHostServiceGiven">
 			<Translation language="fr">Une adresse de backend doit être fournie !</Translation>

@@ -100,7 +100,7 @@ namespace frdbcknd {
 			case csducl::tLibrary:
 				_BackendAccess.Init( _Flow, bkduac::tLocal );
 				break;
-			case csducl::tShared:
+			case csducl::tDaemon:
 				_BackendAccess.Init( _Flow, bkduac::tRemote );
 				break;
 			default:

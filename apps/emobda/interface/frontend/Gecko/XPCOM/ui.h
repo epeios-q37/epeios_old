@@ -294,7 +294,7 @@ namespace ui {
 			switch ( _K().BackendSelection().GetState() ) {
 			case frdtrnsnt::bssRemote:
 				_K().BackendSelection().GetHostService( RemoteHostServiceOrLocalLibraryPath );
-				Type = csducl::tShared;
+				Type = csducl::tDaemon;
 				Validated = true;
 				break;
 			case frdtrnsnt::bssLocal:

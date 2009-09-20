@@ -69,7 +69,7 @@ extern class ttr_tutor &CSDUCLTutor;
 
 namespace csducl {
 	enum type__ {
-		tShared,
+		tDaemon,
 		tLibrary,
 		t_amount,
 		t_Undefined
@@ -79,13 +79,13 @@ namespace csducl {
 	{
 	private:
 		type__ _Type;
-		csdsnc::core _Shared;
+		csdsnc::core _DaemonAccess;
 		csddlc::dynamic_library_client_core _LibraryName;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_LibraryName.reset( P );
-			_Shared.reset( P );
+			_DaemonAccess.reset( P );
 			_Type = t_Undefined;
 		}
 		universal_client_core( void )
@@ -107,8 +107,8 @@ namespace csducl {
 			bso::bool__ Success = false;
 
 			switch ( Type ) {
-			case tShared:
-				Success = _Shared.Init( Backend, Log );
+			case tDaemon:
+				Success = _DaemonAccess.Init( Backend, Log );
 				break;
 			case tLibrary:
 				Success = _LibraryName.Init( Backend, UP );
@@ -133,14 +133,14 @@ namespace csducl {
 	: public fwf::ioflow_functions___
 	{
 	private:
-		csdsnc::client_flow___ _Shared;
+		csdsnc::client_flow___ _DaemonAccess;
 		csddlc::dynamic_library_client _Library;
 		universal_client_core *_Core;
 		flw::ioflow__ &_Get( void )
 		{
 			switch ( _Core->_Type ) {
-			case tShared:
-				return _Shared;
+			case tDaemon:
+				return _DaemonAccess;
 				break;
 			case tLibrary:
 				return _Library;
@@ -178,7 +178,7 @@ namespace csducl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_Shared.reset( P );
+			_DaemonAccess.reset( P );
 			_Library.reset( P );
 
 			_Core = NULL;
@@ -200,8 +200,8 @@ namespace csducl {
 			ioflow_functions___::Init();
 
 			switch ( Core._Type ) {
-			case tShared:
-				_Shared.Init( Core._Shared );
+			case tDaemon:
+				_DaemonAccess.Init( Core._DaemonAccess );
 				break;
 			case tLibrary:
 				_Library.Init( Core._LibraryName );

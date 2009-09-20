@@ -2,7 +2,7 @@
 <Configurations>
 	<Configuration target="emobdacom" Id="Essai">
 		<Parameters>
-			<Backend Type="server">
+			<Backend Type="daemon">
 				<Location>192.168.56.1:1234</Location>
 			</Backend>
 			<Database>

@@ -47,7 +47,9 @@ namespace frdkernl {
 		mMissingConfigurationTree,
 		mMissingConfigurationId,
 
+		mBadOrMissingBackendType,
 		mNoRemoteHostServiceGiven,
+		mNoBackendLocationGiven,
 		mUnableToConnectToBackend_1,
 
 		mMissingDatabaseName,
@@ -72,6 +74,7 @@ namespace frdkernl {
 		m_Undefined
 	};
 
+	csducl::type__ GetBackendType( const frdrgstry::registry___ &Registry );
 
 	typedef frdbcknd::backend___ _backend___;
 
@@ -213,7 +216,7 @@ namespace frdkernl {
 		bso::bool__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
-		void _Connect(
+		bso::bool__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
 		void _CloseConnection( void )
@@ -267,7 +270,7 @@ namespace frdkernl {
 		bso::bool__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
-		void Connect(
+		bso::bool__ Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type );
 		const str::string_ &BackendVersion( str::string_ &Version )
