@@ -98,7 +98,7 @@ inline bso::bool__ bkdrgstry::GetPathValue(
 
 #define PATH_SEPARATOR MBDRGY_PATH_SEPARATOR
 
-const char *bkdrgstry::paths::RootPath = "RootPath";
+const char *bkdrgstry::paths::Repository = "Repository";
 
 template <typename t> static inline bso::bool__ Convert_(
 	const str::string_ &Value,

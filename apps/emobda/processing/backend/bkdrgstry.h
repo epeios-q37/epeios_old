@@ -31,7 +31,7 @@
 namespace bkdrgstry {
 
 	struct paths {
-		static const char *RootPath;
+		static const char *Repository;
 	};
 
 	bso::bool__ FillRegistry(
@@ -43,10 +43,16 @@ namespace bkdrgstry {
 		const char *Path,
 		str::string_ &Value );
 
-	inline bso::bool__ GetRootPath( str::string_ &Value )
+	inline const char *GetRepositoryPath( void )
 	{
-		return GetPathValue( paths::RootPath, Value );
+		return paths::Repository;
 	}
+
+	inline bso::bool__ GetRepository( str::string_ &Value )
+	{
+		return GetPathValue( GetRepositoryPath(), Value );
+	}
+
 
 	bso::bool__ GetNumber(
 		const char *Path,

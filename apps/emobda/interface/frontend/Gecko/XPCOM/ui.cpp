@@ -31,24 +31,24 @@ void ui::ui___::OpenProject( const char *ConfigFile )
 {
 ERRProlog
 	str::string Message;
-	str::string ConfigurationId;
+	str::string ConfigurationName;
 	str::string UserData;
 	str::string UserConfigurationPath;
 	flx::E_STRING_IFLOW__ SIFlow;
 	xtf::extended_text_iflow__ XTFlow;
 	str::string DatabasePath;
 ERRBegin
-	ConfigurationId.Init();
+	ConfigurationName.Init();
 
 	Message.Init();
 
-	if ( !K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationId, Message ) )
+	if ( !K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationName, Message ) )
 		Alert( Message );
 	else {
 		table__ Table;
 
-		UserConfigurationPath.Init( "Configuration[id=\"" );
-		UserConfigurationPath.Append( ConfigurationId );
+		UserConfigurationPath.Init( "Configuration[name=\"" );
+		UserConfigurationPath.Append( ConfigurationName );
 		UserConfigurationPath.Append( "\"]" );
 
 		UserData.Init();

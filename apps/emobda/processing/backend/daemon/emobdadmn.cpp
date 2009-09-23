@@ -296,7 +296,7 @@ void Main(
 ERRProlog
 	parameters___ Parameters;
 	csdsns::service__ Service = 0;
-	str::string RootPath;
+	str::string Repository;
 	bso::bool__ AsWinService = false;
 ERRBegin
 #ifdef CPE__T_MS
@@ -329,10 +329,10 @@ ERRBegin
 		ERRExit( evConfiguration );
 	}
 
-	RootPath.Init();
+	Repository.Init();
 
-	if ( !registry::GetRootPath( RootPath ) ) {
-		*CErr << "Unable to find '" << registry::paths::RootPath << "' entry in configuration file !" << txf::nl;
+	if ( !registry::GetRepository( Repository ) ) {
+		*CErr << "Unable to find '" << registry::GetRepositoryPath() << "' entry in configuration file !" << txf::nl;
 		ERRExit( evConfiguration );
 	}
 

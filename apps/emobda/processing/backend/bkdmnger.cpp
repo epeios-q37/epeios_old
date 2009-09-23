@@ -220,15 +220,15 @@ DEC( GetAvailableDatabases )
 {
 	message__ Message = mOK;
 ERRProlog
-	str::string RootPath;
+	str::string Repository;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	RootPath.Init();
+	Repository.Init();
 
-	if ( !bkdrgstry::GetRootPath( RootPath ) )
+	if ( !bkdrgstry::GetRepository( Repository ) )
 		ERRc();
 
-	mbdmng::GetDatabases( RootPath.Convert( Buffer ), Request.StringsOut() );
+	mbdmng::GetDatabases( Repository.Convert( Buffer ), Request.StringsOut() );
 ERRErr
 ERREnd
 ERREpilog
@@ -239,8 +239,8 @@ DEC( OpenDatabase )
 {
 	message__ Message = mOK;
 ERRProlog
-	str::string RootPath;
-	STR_BUFFER___ RootPathBuffer;
+	str::string Repository;
+	STR_BUFFER___ RepositoryBuffer;
 	str::string Location;
 	STR_BUFFER___ LocationBuffer;
 	FNM_BUFFER___ FileNameBuffer;
@@ -253,12 +253,12 @@ ERRBegin
 		ERRReturn;
 	}
 
-	RootPath.Init();
+	Repository.Init();
 
-	if ( !bkdrgstry::GetRootPath( RootPath ) )
+	if ( !bkdrgstry::GetRepository( Repository ) )
 		ERRc();
 
-	if ( !Manager.Init( str::string( fnm::BuildFileName( RootPath.Convert( RootPathBuffer ), Location.Convert( LocationBuffer ), "", FileNameBuffer ) ), dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
+	if ( !Manager.Init( str::string( fnm::BuildFileName( Repository.Convert( RepositoryBuffer ), Location.Convert( LocationBuffer ), "", FileNameBuffer ) ), dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
 		Message = mUnableToOpenDatabase;
 		ERRReturn;
 	}
