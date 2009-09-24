@@ -1,3 +1,4 @@
 <!-- $Id$ -->
 
-<!ENTITY test "en-US">
+<!ENTITY hostService.emptytext "adresse:port (ex.: 'localhost:1234')">
+

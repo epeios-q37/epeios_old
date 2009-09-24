@@ -1,5 +1,9 @@
 $Id$
 
+24/09/2009 :	
+	- NSXPCM :
+		- Lors d'une erreur dans le traitement d'un évènement, l'exception est maintenant interceptée, et un message d'erreur affiché.
+
 20/09/2009 :
 	- CSDUCL :
 		- 'tShared' devient 'tDaemon'.

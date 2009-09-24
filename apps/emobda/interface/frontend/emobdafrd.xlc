@@ -66,7 +66,7 @@
 			<Translation language="en-US">Bad or missing backend type !</Translation>
 		</Translations>
 		<Translations message="UnableToConnectToBackend_1">
-			<Translation language="fr">Impossible de se connecter à'%1' !</Translation>
+			<Translation language="fr">Impossible de se connecter à '%1' !</Translation>
 			<Translation language="en-US">Unable to connect to '%1' !</Translation>
 		</Translations>
 		<Translations message="NoBackendLocationGiven">

@@ -344,6 +344,7 @@ namespace frdkernl {
 		{
 			if ( _backend___::CreateDatabase( Path, Name, Comment ) ) {
 				_Target.Set( UNDEFINED_TABLE );
+				_Target.Set( true );
 				return true;
 			} else
 				return false;

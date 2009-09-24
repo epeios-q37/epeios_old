@@ -922,10 +922,13 @@ ERREpilog
 void nsxpcm::element_core__::NSXPCMOnRawEvent( const str::string_ &Event )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	STR_BUFFER___ StrBuffer;
+	err::buffer__ ErrBuffer;
 ERRBegin
-	NSXPCMOnRawEvent( Event.Convert( Buffer ) );
+	NSXPCMOnRawEvent( Event.Convert( StrBuffer ) );
 ERRErr
+	nsxpcm::Alert( err::Message( ErrBuffer ) );
+	ERRRst();
 ERREnd
 ERREpilog
 }

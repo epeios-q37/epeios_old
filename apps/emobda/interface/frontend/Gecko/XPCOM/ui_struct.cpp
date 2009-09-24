@@ -55,6 +55,7 @@ ERRBegin
 		} else if ( Type != "Database" )
 			ERRc();
 
+		Target.Set( true );
 		Selected = true;
 	}
 ERRErr
@@ -377,7 +378,7 @@ void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )
 {
 	UI().K().StructureManagement().SetState( frdkernl::smsCreation );
-	UI().K().Target().reset();
+	UI().K().Target().Set( UNDEFINED_TABLE );
 	UI().DefineTable();
 }
 
