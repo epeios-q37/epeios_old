@@ -51,8 +51,6 @@ const char *frdrgstry::paths::profiles::FallbackProfile						= PROFILES "Fallbac
 const char *frdrgstry::paths::profiles::DefaultProfile						= PROFILES "Default";
 const char *frdrgstry::paths::profiles::UserProfile							= PROFILES "User";
 
-
-
 bso::bool__ frdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
@@ -73,7 +71,7 @@ ERRProlog
 	xml::extended_status__ Status = xml::xs_Undefined;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
-		Flow << txf::nl << "Error opening configuration file '" << FileName << "' !" << txf::nl;
+		Flow << txf::nl << "Error opening project file '" << FileName << "' !" << txf::nl;
 		ERRReturn;
 	}
 

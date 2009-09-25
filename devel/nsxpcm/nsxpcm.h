@@ -983,6 +983,7 @@ namespace nsxpcm {
 	{
 	private:
 		nsISupports *_Supports;
+		bso::bool__ _EventInProgress;
 	public:
 		nsCOMPtr<struct event_listener> _EventListener;
 	protected:
@@ -1053,6 +1054,7 @@ namespace nsxpcm {
 			_Event = NULL;
 			_MutationEvent = NULL;
 			_KeyEvent = NULL;
+			_EventInProgress = false;
 		}
 		element_core__( void )
 		{
@@ -1074,24 +1076,29 @@ namespace nsxpcm {
 			nsIDOMEvent * Event,
 			const str::string_ &EventString )
 		{
-			// Sauvegarde pour la gestion d'évènements imbriqués.
-			nsIDOMEvent *EventBuffer = _Event;
-			nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
-			nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
+			if ( _EventInProgress ) {
+				_EventInProgress = true;
+				// Sauvegarde pour la gestion d'évènements imbriqués.
+				nsIDOMEvent *EventBuffer = _Event;
+				nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
+				nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
 
-			_Event = Event;
+				_Event = Event;
 
-			if ( EventString == "DOMAttrModified" )
-				_MutationEvent = QueryInterface<nsIDOMMutationEvent>( Event );
+				if ( EventString == "DOMAttrModified" )
+					_MutationEvent = QueryInterface<nsIDOMMutationEvent>( Event );
 
-			if ( EventString == "keypress" )
-				_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( Event );
+				if ( EventString == "keypress" )
+					_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( Event );
 
-			NSXPCMOnRawEvent( EventString );
+				NSXPCMOnRawEvent( EventString );
 
-			_Event = EventBuffer;
-			_MutationEvent = MutationEventBuffer;
-			_KeyEvent = KeyEventBuffer;
+				_Event = EventBuffer;
+				_MutationEvent = MutationEventBuffer;
+				_KeyEvent = KeyEventBuffer;
+			}
+
+			_EventInProgress = false;
 		}
 		nsIDOMElement *GetElement( void )
 		{

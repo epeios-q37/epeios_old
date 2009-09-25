@@ -1,6 +1,6 @@
 <!-- $Id$ -->
-<Configurations>
-	<Configuration target="emobdacom" Name="Essai">
+<Projects>
+	<Project target="emobdacom" Name="Essai">
 		<Parameters>
 			<Backend Type="daemon">
 				<Location>192.168.56.1:1234</Location>
@@ -15,5 +15,5 @@
 			</Profile>
 			<User>Default</User>
 		</Profiles>
-	</Configuration>
-</Configurations>
+	</Project>
+</Projects>

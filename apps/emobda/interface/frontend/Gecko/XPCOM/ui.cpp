@@ -27,41 +27,42 @@
 
 using namespace ui;
 
-void ui::ui___::OpenProject( const char *ConfigFile )
+void ui::ui___::OpenProject( const char *ProjectFile )
 {
 ERRProlog
 	str::string Message;
-	str::string ConfigurationName;
+	str::string ProjectName;
 	str::string UserData;
-	str::string UserConfigurationPath;
+	str::string UserProjectPath;
 	flx::E_STRING_IFLOW__ SIFlow;
 	xtf::extended_text_iflow__ XTFlow;
 	str::string DatabasePath;
 ERRBegin
-	ConfigurationName.Init();
+	ProjectName.Init();
 
 	Message.Init();
 
-	if ( !K().OpenProject( ConfigFile, "Configuration[target=\"emobdacom\"]", ConfigurationName, Message ) )
+	if ( !K().OpenProject( ProjectFile, "Project[target=\"emobdacom\"]", ProjectName, Message ) ) {
 		Alert( Message );
-	else {
+		DefineSession();
+	} else {
 		table__ Table;
 
-		UserConfigurationPath.Init( "Configuration[name=\"" );
-		UserConfigurationPath.Append( ConfigurationName );
-		UserConfigurationPath.Append( "\"]" );
+		UserProjectPath.Init( "Project[name=\"" );
+		UserProjectPath.Append( ProjectName );
+		UserProjectPath.Append( "\"]" );
 
 		UserData.Init();
 
 		nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Main.Window ), USERDATA_ATTRIBUTE_NAME, UserData );
 
 		if ( UserData.Amount() == 0 )
-			UserData.Init( "<Configurations/>" );
+			UserData.Init( "<Projects/>" );
 
 		SIFlow.Init( UserData );
 		XTFlow.Init( SIFlow );
 
-		K().SetLocalRegistry( XTFlow, UserConfigurationPath );
+		K().SetLocalRegistry( XTFlow, UserProjectPath );
 
 		DatabasePath.Init();
 

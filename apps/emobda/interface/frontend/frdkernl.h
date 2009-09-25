@@ -43,9 +43,9 @@ namespace frdkernl {
 	{
 		mSelectProjectFile,
 
-		mUnableToOpenConfigFile_1,
-		mMissingConfigurationTree,
-		mMissingConfigurationId,
+		mUnableToOpenProjectFile_1,
+		mMissingProjectTree,
+		mMissingProjectName,
 
 		mBadOrMissingBackendType,
 		mNoRemoteHostServiceGiven,
@@ -280,14 +280,14 @@ namespace frdkernl {
 			return Version;
 		}
 		bso::bool__ OpenProject(
-			const char *ConfigFile,
+			const char *ProjectFile,
 			const char *RootPath,
-			str::string_ &ConfigurationId,
+			str::string_ &ProjectName,
 			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
 		bso::bool__ OpenProject(
-			xtf::extended_text_iflow__ &Config,
+			xtf::extended_text_iflow__ &Project,
 			const char *RootPath,
-			str::string_ &ConfigurationId,
+			str::string_ &ProjectNAme,
 			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
 		void Close( void )
 		{
@@ -307,8 +307,8 @@ namespace frdkernl {
 			return _backend___::IsConnected();
 		}
 		void SetLocalRegistry(
-			xtf::extended_text_iflow__ &Config,
-			const str::string_ &Path );	/* To call after 'Init()'. 'Config' contains the 'XML' tree containing the user configuration.
+			xtf::extended_text_iflow__ &Project,
+			const str::string_ &Path );	/* To call after 'Init()'. 'Project' contains the 'XML' tree containing the user configuration.
 											'Path' contains the path of the root subtree. */
 		void DumpRegistry(
 			rgstry::nrow__ Root,
@@ -361,6 +361,9 @@ namespace frdkernl {
 		}
 		bso::bool__ CloseDatabase( void )
 		{
+			if ( !IsConnected() )
+				ERRc();
+
 			if ( _backend___::CloseDatabase() ) {
 				_Target.reset();
 				return true;
@@ -460,6 +463,8 @@ namespace frdkernl {
 		bso::bool__ RemoveRecord( void )
 		{
 			if ( DeleteRecord( GetTarget().Record, GetTarget().Table ) ) {
+				if ( Target().RecordPosition != UNDEFINED_RECORD_POSITION )
+					_Records.Remove( Target().RecordPosition - 1 );
 				Target().Set( UNDEFINED_RECORD, UNDEFINED_RECORD_POSITION );
 				return true;
 			} else
@@ -523,7 +528,6 @@ namespace frdkernl {
 		{
 			frdrgstry::SetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
 		}	
-
 	};
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )

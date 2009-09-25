@@ -34,6 +34,8 @@ bso::bool__ ui_struct::structure__::GetSelectedItem( target__ &Target )
 	bso::bool__ Selected = false;
 ERRProlog
 	str::string Type, Row, TableRow;
+	table__ Table = UNDEFINED_TABLE;
+	field__ Field = UNDEFINED_FIELD;
 ERRBegin
 
 	if ( BrowseTree.IsThereSelected() ) {
@@ -43,19 +45,19 @@ ERRBegin
 		if ( Type == "Field" ) {
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
-			Target.Field = frdkernl::ExtractField( Row );
+			Field = frdkernl::ExtractField( Row );
 
 			TableRow.Init();
 			BrowseTree.GetCurrentItemAttribute( "TableRow", TableRow );
-			Target.Table = frdkernl::ExtractTable( TableRow );
+			Table = frdkernl::ExtractTable( TableRow );
 		} else if ( Type == "Table" ) {
 			Row.Init();
 			BrowseTree.GetCurrentItemAttribute( "Row", Row );
-			Target.Table = frdkernl::ExtractTable( Row );
+			Table = frdkernl::ExtractTable( Row );
 		} else if ( Type != "Database" )
 			ERRc();
 
-		Target.Set( true );
+		Target.Set( Field, Table );
 		Selected = true;
 	}
 ERRErr
@@ -75,6 +77,8 @@ ERRBegin
 
 	Name.Init();
 	Comment.Init();
+
+	Target = Kernel.Target();
 
 	if ( GetSelectedItem( Target ) ) {
 
@@ -336,9 +340,9 @@ ERRProlog
 ERRBegin
 	frdkernl::kernel___ &Kernel = UI()._K();
 
-	if ( Kernel.GetTransientContext() == frdtrnsnt::cStructureManagement )
-		Target = Kernel.Target();
-	else
+	Target = Kernel.Target();
+
+	if ( Kernel.GetTransientContext() != frdtrnsnt::cStructureManagement )
 		GetSelectedItem( Target );
 
 	XML.Init();
@@ -369,10 +373,12 @@ ERREpilog
 
 void ui_struct::modify_database_command__::NSXPCMOnEvent( event__ )
 {
+	UI().Alert( frdkernl::mNotImplementedYet );
 }
 
 void ui_struct::delete_database_command__::NSXPCMOnEvent( event__ )
 {
+	UI().Alert( frdkernl::mNotImplementedYet );
 }
 
 void ui_struct::create_table_command__::NSXPCMOnEvent( event__ )

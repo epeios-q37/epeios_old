@@ -73,33 +73,33 @@
 	<menubar>
 		<menu label="&project.label;">
 			<menupopup>
-				<menuitem label="&projectOpen.label;" command="cmdOpenProject"/>
-				<menuitem label="&projectClose.label;" command="cmdCloseProject"/>
+				<menuitem label="&projectOpen.label;" tooltiptext="&projectOpen.tooltiptext;" command="cmdOpenProject"/>
+				<menuitem label="&projectClose.label;" tooltiptext="&projectClose.tooltiptext;" command="cmdCloseProject"/>
 				<menuseparator/>
-				<menuitem label="&connectToBackend.label;" command="cmdConnectToBackend"/>
+				<menuitem label="&connectToBackend.label;" tooltiptext="&connectToBackend.tooltiptext;" command="cmdConnectToBackend"/>
 			</menupopup>
 		</menu>
 		<menu label="&database.label;">
 			<menupopup>
-				<menuitem label="&databaseNew.label;" command="cmdCreateDatabase"/>
-				<menuitem label="&databaseOpen.label;" command="cmdOpenDatabase"/>
-				<menuitem label="&databaseStructure.label;" command="cmdDefineDatabase"/>
-				<menuitem label="&databaseClose.label;" command="cmdCloseDatabase"/>
+				<menuitem label="&databaseNew.label;" tooltiptext="&databaseNew.tooltiptext;" command="cmdCreateDatabase"/>
+				<menuitem label="&databaseOpen.label;" tooltiptext="&databaseOpen.tooltiptext;" command="cmdOpenDatabase"/>
+				<menuitem label="&databaseStructure.label;" tooltiptext="&databaseStructure.tooltiptext;" command="cmdDefineDatabase"/>
+				<menuitem label="&databaseClose.label;" tooltiptext="&databaseClose.tooltiptext;" command="cmdCloseDatabase"/>
 			</menupopup>
 		</menu>
 		<menu label="&tables.label;" id="mnuTable"/>
 		<menu label="&record.label;">
 			<menupopup>
-				<menuitem label="&recordCreate.label;" command="cmdCreateRecord"/>
-				<menuitem label="&recordModify.label;" command="cmdModifyRecord"/>
-				<menuitem label="&recordDuplicate.label;" command="cmdDuplicateRecord"/>
-				<menuitem label="&recordBrowse.label;" command="cmdBrowseRecord"/>
-				<menuitem label="&recordDelete.label;" command="cmdDeleteRecord"/>
+				<menuitem label="&recordCreate.label;" tooltiptext="&recordCreate.tooltiptext;" command="cmdCreateRecord"/>
+				<menuitem label="&recordModify.label;" tooltiptext="&recordModify.tooltiptext;" command="cmdModifyRecord"/>
+				<menuitem label="&recordDuplicate.label;" tooltiptext="&recordDuplicate.tooltiptext;" command="cmdDuplicateRecord"/>
+				<menuitem label="&recordBrowse.label;" tooltiptext="&recordBrowse.tooltiptext;" command="cmdBrowseRecord"/>
+				<menuitem label="&recordDelete.label;" tooltiptext="&recordDelete.tooltiptext;" command="cmdDeleteRecord"/>
 			</menupopup>
 		</menu>
 		<menu label="&misc.label;">
 			<menupopup>
-				<menuitem label="&about.label;" command="cmdVersion"/>
+				<menuitem label="&about.label;" tooltiptext="&about.tooltiptext;" command="cmdVersion"/>
 			</menupopup>
 		</menu>
 	</menubar>

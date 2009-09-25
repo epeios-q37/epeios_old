@@ -8,8 +8,8 @@
 <!ENTITY tableDelete.label "Supprimer table">
 
 <!ENTITY fieldCreate.label "Créer champ">
-<!ENTITY fieldModify.label "Modifier field">
-<!ENTITY fieldDelete.label "Supprimer field">
+<!ENTITY fieldModify.label "Modifier champ">
+<!ENTITY fieldDelete.label "Supprimer champ">
 
 
 <!ENTITY ok.label "OK">

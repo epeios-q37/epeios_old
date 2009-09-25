@@ -6,27 +6,57 @@
 <!ENTITY jconsole.key "j">
 <!ENTITY dominspector.key "d">
 
+
 <!ENTITY project.label "Projet">
+
 <!ENTITY projectOpen.label "Ouvrir">
+<!ENTITY projectOpen.tooltiptext "Ouvre un projet">
+
 <!ENTITY projectClose.label "Fermer">
+<!ENTITY projectClose.tooltiptext "Ferme un project et/ou la connection au backend">
+
 <!ENTITY connectToBackend.label "Connection au backend">
+<!ENTITY connectToBackend.tooltiptext "Ouvre une nouvelle connection vers un backend">
+
 
 <!ENTITY database.label "Base de données">
+
 <!ENTITY databaseNew.label "Créer">
+<!ENTITY databaseNew.tooltiptext "Créer une nouvelle base de données">
+
 <!ENTITY databaseOpen.label "Ouvrir">
+<!ENTITY databaseOpen.tooltiptext "Ouvre une base de données existante">
+
 <!ENTITY databaseStructure.label "Structure">
+<!ENTITY databaseStructure.tooltiptext "Affiche la structure de la base de données">
+
 <!ENTITY databaseClose.label "Femer">
+<!ENTITY databaseClose.tooltiptext "Ferme la base de données">
 
 <!ENTITY tables.label "Tables">
 
+
 <!ENTITY record.label "Enregistrement">
+
 <!ENTITY recordCreate.label "Créer">
+<!ENTITY recordCreate.tooltiptext "Créer un nouvel enregistrement">
+
 <!ENTITY recordModify.label "Modifier">
+<!ENTITY recordModify.tooltiptext "Modifie l'enregistrement courant">
+
 <!ENTITY recordDuplicate.label "Dupliquer">
+<!ENTITY recordDuplicate.tooltiptext "Duplique l'enregistrement courant">
+
 <!ENTITY recordBrowse.label "Visualiser">
+<!ENTITY recordBrowse.tooltiptext "Visualise des détails de l'enregistrement courant">
+
 <!ENTITY recordDelete.label "Supprimer">
+<!ENTITY recordDelete.tooltiptext "Supprime l'enregistrement courant">
+
 
 <!ENTITY misc.label "?">
+
 <!ENTITY about.label "A propos ...">
+<!ENTITY about.tooltiptext "Affiche des informations à propos de cette application">
 
 

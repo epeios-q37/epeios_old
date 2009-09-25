@@ -95,6 +95,8 @@ namespace mbdfld {
 		{
 			Init();
 
+			S_.Type = Type;
+
 			this->Name = Name;
 			this->Comment = Comment;
 

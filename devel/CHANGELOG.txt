@@ -1,5 +1,9 @@
 $Id$
 
+25/09/2009 :
+	- NSXPCM :
+		- Lorsqu'un évènement est en cours de traitement, tout autre évènement survenant sur le meme objet est dorénavant ignoré.
+
 24/09/2009 :	
 	- NSXPCM :
 		- Lors d'une erreur dans le traitement d'un évènement, l'exception est maintenant interceptée, et un message d'erreur affiché.

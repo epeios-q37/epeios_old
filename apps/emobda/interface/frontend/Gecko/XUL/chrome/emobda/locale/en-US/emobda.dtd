@@ -6,25 +6,56 @@
 <!ENTITY jconsole.key "j">
 <!ENTITY dominspector.key "d">
 
+
 <!ENTITY project.label "Project">
+
 <!ENTITY projectOpen.label "Open">
+<!ENTITY projectOpen.tooltiptext "Open an project">
+
 <!ENTITY projectClose.label "Close">
+<!ENTITY projectClose.tooltiptext "Close a project and/or the connection to the backend">
+
 <!ENTITY connectToBackend.label "Connect to backend">
+<!ENTITY connectToBackend.tooltiptext "Open a new connection to a backend">
+
 
 <!ENTITY database.label "Database">
+
 <!ENTITY databaseNew.label "New">
+<!ENTITY databaseNew.tooltiptext "Create a new database">
+
 <!ENTITY databaseOpen.label "Open">
+<!ENTITY databaseOpen.tooltiptext "Open an existing database">
+
 <!ENTITY databaseStructure.label "Structure">
+<!ENTITY databaseStructure.tooltiptext "Disply the structure of the database">
+
 <!ENTITY databaseClose.label "Close">
+<!ENTITY databaseClose.tooltiptext "Close of the database">
 
 <!ENTITY tables.label "Tables">
 
+
 <!ENTITY record.label "Record">
+
 <!ENTITY recordCreate.label "Create">
+<!ENTITY recordCreate.tooltiptext "Create a new record">
+
 <!ENTITY recordModify.label "Modify">
+<!ENTITY recordModify.tooltiptext "Modify the current record">
+
 <!ENTITY recordDuplicate.label "Duplicate">
+<!ENTITY recordDuplicate.tooltiptext "Duplicate the current record">
+
 <!ENTITY recordBrowse.label "Browse">
+<!ENTITY recordBrowse.tooltiptext "Display details of the current record">
+
 <!ENTITY recordDelete.label "Delete">
+<!ENTITY recordDelete.tooltiptext "Delete the current record">
+
 
 <!ENTITY misc.label "?">
+
 <!ENTITY about.label "About ...">
+<!ENTITY about.tooltiptext "Display informations about this application">
+

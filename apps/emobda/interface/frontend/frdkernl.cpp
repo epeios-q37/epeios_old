@@ -43,13 +43,13 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( SelectProjectFile );
-	CASE( UnableToOpenConfigFile_1 );
-	CASE( MissingConfigurationTree );
+	CASE( UnableToOpenProjectFile_1 );
+	CASE( MissingProjectTree );
 	CASE( BadOrMissingBackendType );
 	CASE( NoBackendLocationGiven );
 	CASE( NoRemoteHostServiceGiven );
 	CASE( UnableToConnectToBackend_1 );
-	CASE( MissingConfigurationId );
+	CASE( MissingProjectName );
 	CASE( MissingDatabaseName );
 	CASE( MissingDatabasePath );
 	CASE( NoDatabaseSelected );
@@ -122,9 +122,9 @@ ERREpilog
 
 
 bso::bool__ frdkernl::kernel___::OpenProject(
-	const char *ConfigFile,
+	const char *ProjectFile,
 	const char *RootPath,
-	str::string_ &ConfigurationId,
+	str::string_ &ProjectName,
 	str::string_ &Message )
 {
 	bso::bool__ Success = false;
@@ -132,9 +132,9 @@ ERRProlog
 	flf::file_iflow___ FIFlow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	if ( FIFlow.Init( ConfigFile, err::hSkip ) != fil::sSuccess ) {
-		GetMessage( mUnableToOpenConfigFile_1, Message );
-		lcl::ReplaceTags( Message, ConfigFile );
+	if ( FIFlow.Init( ProjectFile, err::hSkip ) != fil::sSuccess ) {
+		GetMessage( mUnableToOpenProjectFile_1, Message );
+		lcl::ReplaceTags( Message, ProjectFile );
 		ERRReturn;
 	}
 
@@ -142,7 +142,7 @@ ERRBegin
 
 	XFlow.Init( FIFlow );
 
-	Success = OpenProject( XFlow, RootPath, ConfigurationId, Message );
+	Success = OpenProject( XFlow, RootPath, ProjectName, Message );
 ERRErr
 ERREnd
 ERREpilog
@@ -209,9 +209,9 @@ ERREpilog
 }
 
 bso::bool__ frdkernl::kernel___::OpenProject(
-	xtf::extended_text_iflow__ &Config,
+	xtf::extended_text_iflow__ &Project,
 	const char *RootPath,
-	str::string_ &ConfigurationId,
+	str::string_ &ProjectName,
 	str::string_ &Message )
 {
 	bso::bool__ Success = false;
@@ -226,11 +226,11 @@ ERRBegin
 
 	_GlobalRegistry.Init();
 
-	BaseRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
-//	UserRoot = rgstry::Parse( UserConfig, str::string( "." ), _GlobalRegistry, NONE );
+	BaseRoot = rgstry::Parse( Project, str::string( "." ), _GlobalRegistry, NONE );
+//	UserRoot = rgstry::Parse( UserProject, str::string( "." ), _GlobalRegistry, NONE );
 
 	if ( BaseRoot == NONE ) {
-		GetMessage( mMissingConfigurationTree, Message );
+		GetMessage( mMissingProjectTree, Message );
 		ERRReturn;
 	}
 	
@@ -241,15 +241,15 @@ ERRBegin
 		if ( AttributeEntryRow != NONE )
 			ERRc();
 
-		GetMessage( mMissingConfigurationTree, Message );
+		GetMessage( mMissingProjectTree, Message );
 
 		ERRReturn;
 	}
 
 	_Registry.Init( _GlobalRegistry, BaseRoot );
 
-	if ( !GetRegistryValue( "@Id", ConfigurationId ) ) {
-		GetMessage( mMissingConfigurationId, Message );
+	if ( !GetRegistryValue( "@Name", ProjectName ) ) {
+		GetMessage( mMissingProjectName, Message );
 		ERRReturn;
 	}
 
@@ -286,7 +286,7 @@ ERREpilog
 }
 
 void frdkernl::kernel___::SetLocalRegistry(
-	xtf::extended_text_iflow__ &Config,
+	xtf::extended_text_iflow__ &Project,
 	const str::string_ &Path )
 {
 ERRProlog
@@ -297,7 +297,7 @@ ERRBegin
 	if ( _LocalRegistryRoot != NONE )
 		ERRu();
 
-	_LocalRegistryRoot = rgstry::Parse( Config, str::string( "." ), _GlobalRegistry, NONE );
+	_LocalRegistryRoot = rgstry::Parse( Project, str::string( "." ), _GlobalRegistry, NONE );
 
 	BaseRoot = _GlobalRegistry.SearchPath( Path, _LocalRegistryRoot, AttributeEntryRow, PathErrorRow );
 

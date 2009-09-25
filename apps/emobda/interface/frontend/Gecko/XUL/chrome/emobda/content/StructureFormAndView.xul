@@ -109,12 +109,8 @@
 						</vbox>
 					</hbox>
 					<deck id="formDeck">
-						<box id="tableFormPanel">
-							<description>Table Form !</description>
-						</box>
-						<box id="fieldFormPanel">
-							<description>Field Form !</description>
-						</box>
+						<box id="tableFormPanel"/>
+						<box id="fieldFormPanel"/>
 					</deck>
 					<hbox>
 						<button command="cmdApplyItem"/>

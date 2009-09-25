@@ -450,7 +450,7 @@ namespace ui {
 			else if ( Target.Table != UNDEFINED_TABLE )
 				DefineTable();
 			else
-				ERRc();
+				Alert( frdkernl::mNotImplementedYet );
 		}
 		bso::bool__ GoToRecordNumber( record_position__ Position )
 		{

@@ -5,17 +5,17 @@
 			<Translation language="fr">Sélectionner un projet</Translation>
 			<Translation language="en-US">Select a project</Translation>
 		</Translations>
-		<Translations message="UnableToOpenConfigFile_1">
-			<Translation language="fr">Impossible d'ouvrir le fichier de configuration '%1'!</Translation>
-			<Translation language="en-US">Unable to open file configuration file '%1'!</Translation>
+		<Translations message="UnableToOpenProjectFile_1">
+			<Translation language="fr">Impossible d'ouvrir le fichier de projet '%1'!</Translation>
+			<Translation language="en-US">Unable to open project file '%1'!</Translation>
 		</Translations>
-		<Translations message ="MissingConfigurationTree">
-			<Translation language="fr">Arbre de configuration manquant !</Translation>
-			<Translation language="en-US">Configuration tree missing !</Translation>
+		<Translations message ="MissingProjectTree">
+			<Translation language="fr">Arborescence  de projet manquant !</Translation>
+			<Translation language="en-US">Project tree missing !</Translation>
 		</Translations>
-		<Translations message ="MissingConfigurationId">
-			<Translation language="fr">Identificateur de configuration manquant!</Translation>
-			<Translation language="en-US">Configuration id. missing !</Translation>
+		<Translations message ="MissingProjectName">
+			<Translation language="fr">Nom de project manquant!</Translation>
+			<Translation language="en-US">Projet name missing !</Translation>
 		</Translations>
 		<Translations message ="MissingDatabaseName">
 			<Translation language="fr">Nom de base la base de données manquant !</Translation>
