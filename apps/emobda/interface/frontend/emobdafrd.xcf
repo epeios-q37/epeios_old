@@ -3,7 +3,7 @@
 	<Project target="emobdacom" Name="Essai">
 		<Parameters>
 			<Backend Type="daemon">
-				<Location>192.168.56.1:1234</Location>
+				<Location>localhost:1234</Location>
 			</Backend>
 			<Database>
 				<Path>MdP</Path>

@@ -454,14 +454,15 @@ namespace ui {
 		}
 		bso::bool__ GoToRecordNumber( record_position__ Position )
 		{
-			if ( !K().GoToRecordNumber( Position ) ) {
+			bso::bool__ Success = false;
+
+			if ( !( Success = K().GoToRecordNumber( Position ) ) ) {
 				Alert( frdkernl::mUnableToReachRecord );
-				return false;
 			}
 
 			_SwitchTo( cRecordView );
 
-			return true;
+			return Success;
 		}
 		bso::bool__ GoToFirstRecord( void )
 		{

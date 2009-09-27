@@ -140,6 +140,12 @@ namespace nsxpcm {
 	// de certaines fonctions ('GetJSConsole(...)', 'Alert(...)', ...).
 	extern nsIDOMWindow *MasterWindow;
 
+	// Log to the javascript console.
+	void Log( const char *Text );
+
+	// Log to the javascript console.
+	void Log( const str::string_ &Text );
+
 	enum event__
 	{
 		eCommand,
@@ -979,33 +985,50 @@ namespace nsxpcm {
 		}
 	};
 
+	typedef bso::slong__ event_imbrication_level__;
+#define NSXPCM__EVENT_IMBRICATION_LEVEL_MAX	BSO_SLONG_MAX
+
 	class element_core__
 	{
 	private:
 		nsISupports *_Supports;
-		bso::bool__ _EventInProgress;
-	public:
 		nsCOMPtr<struct event_listener> _EventListener;
-	protected:
-		nsIDOMEvent *_Event;
+		nsIDOMEvent *_RawEvent;
 		nsIDOMMutationEvent *_MutationEvent;
 		nsIDOMKeyEvent *_KeyEvent;
+		event_imbrication_level__ _EventImbricationLevel;
+	protected:
+		nsIDOMEvent &RawEvent( void )
+		{
+			return *_RawEvent;
+		}
+		nsIDOMMutationEvent &MutationEvent( void )
+		{
+			return *_MutationEvent;
+		}
+		nsIDOMKeyEvent &KeyEvent( void )
+		{
+			return *_KeyEvent;
+		}
+		E_RODISCLOSE__( event_imbrication_level__, EventImbricationLevel );
+		bso::bool__ IsEventImbricated( void ) const
+		{
+			return _EventImbricationLevel != 0;
+		}
 		void EventStopPropagation( void )
 		{
-			if ( _Event == NULL )
+			if ( _RawEvent == NULL )
 				ERRu();
 
-			_Event->StopPropagation();
+			_RawEvent->StopPropagation();
 		}
 		void EventPreventDefault( void )
 		{
-			if ( _Event == NULL )
+			if ( _RawEvent == NULL )
 				ERRu();
 
-			_Event->PreventDefault();
+			_RawEvent->PreventDefault();
 		}
-		virtual void NSXPCMOnRawEvent( const str::string_ &Event );
-		virtual void NSXPCMOnRawEvent( const char *Event );
 		virtual void NSXPCMOnEvent( event__ Event );
 		virtual void NSXPCMOnCommand( void )
 		{
@@ -1051,10 +1074,10 @@ namespace nsxpcm {
 		void reset( bso::bool__ = true )
 		{
 			_Supports = NULL;
-			_Event = NULL;
+			_RawEvent = NULL;
 			_MutationEvent = NULL;
 			_KeyEvent = NULL;
-			_EventInProgress = false;
+			_EventImbricationLevel = -1;
 		}
 		element_core__( void )
 		{
@@ -1072,34 +1095,7 @@ namespace nsxpcm {
 			nsISupports *Supports,
 			int Events );
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
-		void Handle(
-			nsIDOMEvent * Event,
-			const str::string_ &EventString )
-		{
-			if ( _EventInProgress ) {
-				_EventInProgress = true;
-				// Sauvegarde pour la gestion d'évènements imbriqués.
-				nsIDOMEvent *EventBuffer = _Event;
-				nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
-				nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
-
-				_Event = Event;
-
-				if ( EventString == "DOMAttrModified" )
-					_MutationEvent = QueryInterface<nsIDOMMutationEvent>( Event );
-
-				if ( EventString == "keypress" )
-					_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( Event );
-
-				NSXPCMOnRawEvent( EventString );
-
-				_Event = EventBuffer;
-				_MutationEvent = MutationEventBuffer;
-				_KeyEvent = KeyEventBuffer;
-			}
-
-			_EventInProgress = false;
-		}
+		bso::bool__ Handle( nsIDOMEvent *Event );
 		nsIDOMElement *GetElement( void )
 		{
 			return QueryInterface<nsIDOMElement>( _Supports );
@@ -1169,11 +1165,11 @@ namespace nsxpcm {
 
 	// Supprime (désalloue) tous les éléments stockés dans 'Cores'.
 	void Delete( element_cores_ &Cores );
-
+/*
 	void Handle( 
 		nsIDOMEvent *Event,
 		const element_cores_ &Cores );
-
+*/
 	template <typename object> class _element__
 	: public element_core__
 	{
@@ -1598,13 +1594,6 @@ namespace nsxpcm {
 		const char *Title,
 		str::string_ &DirectoryName );
 
-	// Log to the javascript console.
-	void Log( const char *Text );
-
-	// Log to the javascript console.
-	void Log( const str::string_ &Text );
-
-
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,
 		nsIDOMWindowInternal **JSConsoleWindow )
@@ -2017,8 +2006,8 @@ namespace nsxpcm {
 	protected:
 		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	private:
-	public:
 		element_core__ *_Core;
+	public:
 		void Init( element_core__ &Core )
 		{
 #ifdef NSXPCM_DBG

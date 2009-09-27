@@ -52,15 +52,16 @@ void ui_rcd_v::record_number_textbox__::NSXPCMOnEvent( event__ Event )
 	case nsxpcm::eKeyPress:
 		PRUint32 KeyCode;
 
-		if ( _KeyEvent->GetKeyCode( &KeyCode ) != NS_OK )
+		if ( KeyEvent().GetKeyCode( &KeyCode ) != NS_OK )
 			ERRs();
 
-		if ( KeyCode == _KeyEvent->DOM_VK_RETURN )
+		if ( KeyCode == KeyEvent().DOM_VK_RETURN )
 			UI().RecordView.HandleTextboxContent();
 
 		break;
 	case nsxpcm::eBlur:
-		UI()._SwitchTo( ui::cRecordView );
+		if ( !IsEventImbricated() )
+			UI()._SwitchTo( ui::cRecordView );
 		break;
 	default:
 		ERRc();

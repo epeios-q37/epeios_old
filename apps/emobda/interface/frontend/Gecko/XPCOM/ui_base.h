@@ -75,6 +75,11 @@ namespace ui_base {
 	: public bridge__,
 	  public widget
 	{
+	protected:
+		void NSXPCMOnEvent( nsxpcm::event__ )
+		{
+			ERRu();
+		}
 	public:
 		void Init( bridge_functions__ &Functions )
 		{

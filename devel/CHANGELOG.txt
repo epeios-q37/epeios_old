@@ -1,5 +1,12 @@
 $Id$
 
+27/09/2009 :
+	- NSXPCM :
+		- Interception d'erreur remaniée.
+		- Propagation d'évènement remaniée.
+		- L'imbrication d'évènements est à nouveau possible, et l'on dispose d'un 'EventImbricationLevel' pour connaître le niveau
+		  d'imbrication.
+
 25/09/2009 :
 	- NSXPCM :
 		- Lorsqu'un évènement est en cours de traitement, tout autre évènement survenant sur le meme objet est dorénavant ignoré.

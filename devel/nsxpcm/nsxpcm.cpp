@@ -341,7 +341,7 @@ ERREnd
 ERREpilog
 	return Node;
 }
-
+/*
 void nsxpcm::Handle( 
 	nsIDOMEvent *Event,
 	const element_cores_ &Cores )
@@ -378,7 +378,7 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
+*/
 static bso::bool__ FileDialogBox_(
 	nsIDOMWindow *Parent,
 	const char *Title,
@@ -919,50 +919,6 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::element_core__::NSXPCMOnRawEvent( const str::string_ &Event )
-{
-ERRProlog
-	STR_BUFFER___ StrBuffer;
-	err::buffer__ ErrBuffer;
-ERRBegin
-	NSXPCMOnRawEvent( Event.Convert( StrBuffer ) );
-ERRErr
-	nsxpcm::Alert( err::Message( ErrBuffer ) );
-	ERRRst();
-ERREnd
-ERREpilog
-}
-
-void nsxpcm::element_core__::NSXPCMOnRawEvent( const char *RawEvent )
-{
-	event__ Event = e_Undefined;
-
-	if ( !strcmp( RawEvent, "command" ) )
-		Event = eCommand;
-	else if ( !strcmp( RawEvent, "input" ) )
-		Event = eInput;
-	else if ( !strcmp( RawEvent, "click" ) )
-		Event = eClick;
-	else if ( !strcmp( RawEvent, "dblclick" ) )
-		Event = eDblClick;
-	else if ( !strcmp( RawEvent, "focus" ) )
-		Event = eFocus;
-	else if ( !strcmp( RawEvent, "blur" ) )
-		Event = eBlur;
-	else if ( !strcmp( RawEvent, "select" ) )
-		Event = eSelect;
-	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
-		Event = eAttributeChange;
-	else if ( !strcmp( RawEvent, "keypress" ) )
-		Event = eKeyPress;
-	else if ( !strcmp( RawEvent, "close" ) )
-		Event = eClose;
-	else
-		ERRl();
-
-	NSXPCMOnEvent( Event );
-}
-
 void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 {
 	switch( Event ) {
@@ -1001,6 +957,93 @@ void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 		break;
 	}
 }
+
+static event__ Convert_( const char *RawEvent )
+{
+	event__ Event = e_Undefined;
+
+	if ( !strcmp( RawEvent, "command" ) )
+		Event = eCommand;
+	else if ( !strcmp( RawEvent, "input" ) )
+		Event = eInput;
+	else if ( !strcmp( RawEvent, "click" ) )
+		Event = eClick;
+	else if ( !strcmp( RawEvent, "dblclick" ) )
+		Event = eDblClick;
+	else if ( !strcmp( RawEvent, "focus" ) )
+		Event = eFocus;
+	else if ( !strcmp( RawEvent, "blur" ) )
+		Event = eBlur;
+	else if ( !strcmp( RawEvent, "select" ) )
+		Event = eSelect;
+	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
+		Event = eAttributeChange;
+	else if ( !strcmp( RawEvent, "keypress" ) )
+		Event = eKeyPress;
+	else if ( !strcmp( RawEvent, "close" ) )
+		Event = eClose;
+	else
+		ERRl();
+
+	return Event;
+}
+
+bso::bool__ nsxpcm::element_core__::Handle( nsIDOMEvent *RawEvent )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	err::buffer__ Buffer;
+	nsEmbedString String;
+	str::string EventString;
+	event__ Event = e_Undefined;
+	STR_BUFFER___ StrBuffer;
+ERRBegin
+	// Sauvegarde pour la gestion d'évènements imbriqués.
+	nsIDOMEvent *RawEventBuffer = _RawEvent;
+	nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
+	nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
+
+	_RawEvent = RawEvent;
+
+	RawEvent->GetType( String );
+
+	EventString.Init();
+
+	nsxpcm::Transform( String, EventString );
+
+	if ( EventString == "DOMAttrModified" )
+		_MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
+
+	if ( EventString == "keypress" )
+		_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
+
+	Event = Convert_( EventString.Convert( StrBuffer ) );
+
+	if ( _EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
+		ERRl();
+
+	NSXPCMOnEvent( Event );
+
+	if ( _EventImbricationLevel-- < -1 )
+		ERRc();
+
+	_RawEvent = RawEventBuffer;
+	_MutationEvent = MutationEventBuffer;
+	_KeyEvent = KeyEventBuffer;
+
+	Success = true;
+ERRErr
+	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) ) {
+		Log( err::Message( Buffer ) );	
+		GetJSConsole();
+	}
+
+ERRRst();
+ERREnd
+ERREpilog
+	return Success;
+}
+
 
 
 void nsxpcm::element_core__::Init(
@@ -1069,29 +1112,10 @@ NS_IMPL_ISUPPORTS1(nsxpcm::event_listener, nsxpcm::ievent_listener)
 NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
 {
 	nsresult NSResult = NS_OK;
-ERRProlog
-	nsEmbedString String;
-	str::string S;
-	err::buffer__ Buffer;
-ERRBegin
-	Event->GetType( String );
 
-	S.Init();
+	if ( !_Core->Handle( Event ) )
+		NSResult = NS_ERROR_FAILURE;
 
-	nsxpcm::Transform( String, S );
-
-	_Core->Handle( Event, S );
-ERRErr
-	NSResult = NS_ERROR_FAILURE;
-
-	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) ) {
-		Log( err::Message( Buffer ) );	
-		GetJSConsole();
-	}
-
-	ERRRst();
-ERREnd
-ERREpilog
     return NSResult;
 }
 
