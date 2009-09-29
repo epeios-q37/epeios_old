@@ -66,13 +66,49 @@ namespace frdkernl {
 
 		mDropRecordConfirmation,
 
-		mUnableToReachRecord,
+		mNoSuchRecordNumber,
+		mBadRecordNumber,
 
 		mNotImplementedYet,
 
 		m_amount,
 		m_Undefined
 	};
+
+	// What should be in the XML dump. Not used as is, but through 'xml_dump_flag__'.
+	// Id modified, modify 'xml_dump_flag__' according.
+	enum _xml_dump__ {
+		_xdCurrentTable,	// Current selected table.
+		_xdCurrentField,	// Current selected field.
+		_xdCurrentRecord,	// Current selected record.
+		_xdStructure,	// The structure of the database.
+		_xdContent,	// The content (data of the record list or record).
+		_xdDatabases,	// The available databases.
+		_xd_amount,
+		_xd_undefined
+	};
+
+#ifdef XDF
+#	define FRDKERNL__XDF_BACKUP	XDF
+#endif
+
+#define XDF( name )	xdf##name = ( 1 << _xd##name )
+
+	enum xml_dump_flag__ {
+		XDF( CurrentTable ),
+		XDF( CurrentField ),
+		XDF( CurrentRecord ),
+		xdfAllCurrent = xdfCurrentTable | xdfCurrentField | xdfCurrentRecord,
+		XDF( Structure ),
+		XDF( Content ),
+		XDF( Databases ),
+		xdfNone = 0,
+		xdfAll = ( ( 1 << _xd_amount ) - 1 ),
+	};
+
+#ifdef FRDKERNL__XDF_BACKUP
+#	define XDF FRDKERNL__XDF_BACKUP
+#endif
 
 	csducl::type__ GetBackendType( const frdrgstry::registry___ &Registry );
 
@@ -208,8 +244,8 @@ namespace frdkernl {
 		target__ _Target;
 		bso::bool__ _ProjectIsOpen;
 		void _DumpCurrent(
-			xml::writer_ &Writer,
-			bso::bool__ ContextIsStandard );
+			int Flags,
+			xml::writer_ &Writer );
 		void _DumpAvailableDatabases( xml::writer_ &Writer );
 		void _DumpStructure( xml::writer_ &Writer );
 		void _DumpContent( xml::writer_ &Writer );
@@ -514,12 +550,11 @@ namespace frdkernl {
 		}
 		void DumpAsXML(
 			str::string_ &XML,
-			bso::bool__ ContextIsStandard );
+			int Flags );
 		bso::bool__ GetDatabase( str::string_ &Database )
 		{
 			return frdrgstry::GetPathValue( frdrgstry::paths::Parameters.Database.Path, _Registry, Database );
 		}
-
 		bso::bool__ GetCurrentTable( table__ &Table )
 		{
 			return frdrgstry::GetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );

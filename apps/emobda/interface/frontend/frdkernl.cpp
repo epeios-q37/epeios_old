@@ -59,7 +59,8 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	CASE( DeleteFieldConfirmation );
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
-	CASE( UnableToReachRecord );
+	CASE( NoSuchRecordNumber );
+	CASE( BadRecordNumber );
 	CASE( NotImplementedYet );
 
 	default:
@@ -661,27 +662,26 @@ void frdkernl::kernel___::_DumpStructure( writer_ &Writer )
 
 static void Dump_(
 	const target__ &Target,
+	int Flags,
 	writer_ &Writer )
 {
-	if ( Target.Table != UNDEFINED_TABLE )
+	if ( ( Target.Table != UNDEFINED_TABLE ) && ( Flags & xdfCurrentTable ) )
 		PutId_( "Table", Target.Table, Writer );
 
-	if ( Target.Field != UNDEFINED_FIELD )
+	if ( ( Target.Field != UNDEFINED_FIELD )&& ( Flags & xdfCurrentField ) )
 		PutId_( "Field", Target.Field, Writer );
 
-	if ( Target.Record != UNDEFINED_RECORD )
+	if ( ( Target.Record != UNDEFINED_RECORD ) && ( Flags & xdfCurrentRecord ) )
 		PutId_( "Record", Target.Record, Writer );
 }
 
 void frdkernl::kernel___::_DumpCurrent(
-	writer_ &Writer,
-	bso::bool__ ContextIsStandard )
+	int Flags,
+	writer_ &Writer )
 {
 	Writer.PushTag( "Current" );
 
-	Writer.PutAttribute( "Context", ContextIsStandard ? "Standard" : "Special" );
-
-	Dump_( _Target, Writer );
+	Dump_( _Target, Flags, Writer );
 
 	Writer.PopTag();
 }
@@ -797,7 +797,7 @@ ERREpilog
 
 void frdkernl::kernel___::DumpAsXML(
 	str::string_ &XML,
-	bso::bool__ ContextIsStandard )
+	int Flags )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
@@ -808,13 +808,18 @@ ERRBegin
 	Writer.Init( TFlow, true );
 
 	Writer.PushTag( "emobda" );
-	_DumpCurrent( Writer, ContextIsStandard );
 
-	_DumpAvailableDatabases( Writer );
+	if ( Flags & xdfAllCurrent )
+		_DumpCurrent( Flags & xdfAllCurrent, Writer );
 
-	_DumpStructure( Writer );
+	if ( Flags & xdfDatabases )
+		_DumpAvailableDatabases( Writer );
 
-	_DumpContent( Writer );
+	if ( Flags & xdfStructure )
+		_DumpStructure( Writer );
+
+	if ( Flags & xdfContent )
+		_DumpContent( Writer );
 
 	Writer.PopTag();
 

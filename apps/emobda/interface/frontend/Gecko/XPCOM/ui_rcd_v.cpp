@@ -33,14 +33,18 @@ void ui_rcd_v::record_view__::HandleTextboxContent( void )
 ERRProlog
 	str::string Value;
 	bso::ulong__ Number;
+	epeios::row__ Error = NONE;
 ERRBegin
 	Value.Init();
 
 	RecordNumberTextbox.GetValue( Value );
 
-	Number = Value.ToUL();
+	Number = Value.ToUL( &Error );
 
-	UI().GoToRecordNumber( Number );
+	if ( Error != NONE )
+		UI().Alert( frdkernl::mBadRecordNumber );
+	else
+		UI().GoToRecordNumber( Number );
 ERRErr
 ERREnd
 ERREpilog

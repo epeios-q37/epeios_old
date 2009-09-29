@@ -457,7 +457,7 @@ namespace ui {
 			bso::bool__ Success = false;
 
 			if ( !( Success = K().GoToRecordNumber( Position ) ) ) {
-				Alert( frdkernl::mUnableToReachRecord );
+				Alert( frdkernl::mNoSuchRecordNumber );
 			}
 
 			_SwitchTo( cRecordView );
@@ -467,7 +467,7 @@ namespace ui {
 		bso::bool__ GoToFirstRecord( void )
 		{
 			if ( !K().GoToFirstRecord() ) {
-				Alert( frdkernl::mUnableToReachRecord );
+				ERRc();
 				return false;
 			}
 
@@ -478,7 +478,7 @@ namespace ui {
 		bso::bool__ GoToPreviousRecord( void )
 		{
 			if ( !K().GoToPreviousRecord() ) {
-				Alert( frdkernl::mUnableToReachRecord );
+				ERRc();
 				return false;
 			}
 
@@ -489,7 +489,7 @@ namespace ui {
 		bso::bool__ GoToNextRecord( void )
 		{
 			if ( !K().GoToNextRecord() ) {
-				Alert( frdkernl::mUnableToReachRecord );
+				ERRc();
 				return false;
 			}
 
@@ -500,7 +500,7 @@ namespace ui {
 		bso::bool__ GoToLastRecord( void )
 		{
 			if ( !K().GoToLastRecord() ) {
-				Alert( frdkernl::mUnableToReachRecord );
+				ERRc();
 				return false;
 			}
 
@@ -508,7 +508,7 @@ namespace ui {
 
 			return true;
 		}
-		void FillTableMenu( bso::bool__ ContextIsStandard );
+		void FillTableMenu( bso::bool__ SelectCurrentTable );
 		void FillListView( void );
 		void FillRecordForm( void );
 		void FillRecordView( void );

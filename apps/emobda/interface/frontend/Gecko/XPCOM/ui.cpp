@@ -26,6 +26,7 @@
 #define XSL_ROOT_PATH	"chrome://emobda/content/"
 
 using namespace ui;
+using namespace frdkernl;
 
 void ui::ui___::OpenProject( const char *ProjectFile )
 {
@@ -130,7 +131,7 @@ ERREnd
 ERREpilog
 }
 
-void ui::ui___::FillTableMenu( bso::bool__ ContextIsStandard )
+void ui::ui___::FillTableMenu( bso::bool__ SelectCurrentTable )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
@@ -138,7 +139,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, ContextIsStandard );
+	_K().DumpAsXML( XML, xdfStructure | ( SelectCurrentTable ? xdfCurrentTable : xdfNone ) );
 
 	nsxpcm::Log( XML );
 
@@ -162,7 +163,9 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, true );
+	_K().DumpAsXML( XML, xdfCurrentTable | xdfStructure | xdfContent );
+
+	nsxpcm::Log( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -183,10 +186,25 @@ void ui::ui___::FillRecordForm( void )
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
 	str::string XML;
+	int Flags = xdfNone;
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, true );
+	Flags |= xdfCurrentTable | xdfStructure | xdfContent;
+
+	switch ( UI().K().RecordInput().GetState() ) {
+	case frdtrnsnt::risModification:
+	case frdtrnsnt::risDuplication:
+		Flags |= xdfCurrentRecord;
+		break;
+	case frdtrnsnt::risCreation:
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	_K().DumpAsXML( XML, Flags );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -208,7 +226,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, true );
+	_K().DumpAsXML( XML, xdfStructure | xdfContent );
 
 	Parameters.Init();
 
@@ -476,7 +494,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	K().DumpAsXML( XML, false );
+	K().DumpAsXML( XML, xdfDatabases );
 
 	Parameters.Init();
 

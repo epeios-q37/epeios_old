@@ -300,7 +300,7 @@ namespace frdtrnsnt {
 	public:\
 		const type &object( void ) const\
 		{\
-		_Test( c##object );\
+			_Test( c##object );\
 			return _##object;\
 		}\
 		type &object( void )\

@@ -45,14 +45,9 @@
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Tables">
-		<xsl:variable name="ContextIsStandard">
-			<xsl:call-template name="IsContextStandard"/>
-		</xsl:variable>
 		<xsl:apply-templates select="Table">
 			<xsl:with-param name="CurrentTable">
-				<xsl:if test="$ContextIsStandard=string(true())">
-					<xsl:call-template name="GetCurrentTable"/>
-				</xsl:if>
+				<xsl:call-template name="GetCurrentTable"/>
 			</xsl:with-param>
 		</xsl:apply-templates>
 	</xsl:template>
@@ -62,9 +57,6 @@
 			<xsl:attribute name="type">radio</xsl:attribute>
 			<xsl:attribute name="label">
 				<xsl:value-of select="Name"/>
-				<xsl:variable name="ContextIsStandard">
-					<xsl:call-template name="IsContextStandard"/>
-				</xsl:variable>
 			</xsl:attribute>
 			<xsl:attribute name="Row">
 				<xsl:value-of select="@Row"/>

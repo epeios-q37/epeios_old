@@ -347,7 +347,7 @@ ERRBegin
 
 	XML.Init();
 
-	Kernel.DumpAsXML( XML, false );
+	Kernel.DumpAsXML( XML, frdkernl::xdfStructure );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 

@@ -53,9 +53,13 @@
 			<Translation language="fr">Êtes-vous sûr de vouloir abandonner la saisie ?</Translation>
 			<Translation language="en-US">Are you sure you want to continue ?</Translation>
 		</Translations>
-		<Translations message ="UnableToReachRecord">
-			<Translation language="fr">Impossible d'atteindre cet enregistrement !</Translation>
-			<Translation language="en-US">Unable to reach record !</Translation>
+		<Translations message ="NoSuchRecordNumber">
+			<Translation language="fr">Pas d'enregistrement correspondant à ce numéro !</Translation>
+			<Translation language="en-US">No such record number !</Translation>
+		</Translations>
+		<Translations message ="BadRecordNumber">
+			<Translation language="fr">Numéro d'enregistrement incorrect !</Translation>
+			<Translation language="en-US">Bad record number !</Translation>
 		</Translations>
 		<Translations message="NotImplementedYet">
 			<Translation language="fr">Non encore implémenté !</Translation>
