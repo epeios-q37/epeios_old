@@ -280,7 +280,7 @@ void ui::ui___::_SwitchTo( context__ Context )
 		Main.Broadcasters.DatabaseOpened.Enable( K().Target().Database );
 		Main.Broadcasters.RecordSelected.Disable();
 		Main.MainDeck.SetSelectedPanel( Main.Panels.ListView );
-		ListView.ContentTree.ClearSelection();
+		ListView.ContentTree.ClearSelection( true );	// 'true' : the 'select' event is skipped.
 		break;
 	case cRecordForm:
 		FillRecordForm();

@@ -1,5 +1,10 @@
 $Id$
 
+30/09/2009 :
+	- NSXPCM :
+		- Ajout '(Add|Set)EventsToIgnore(...)'.
+		- Par défaut, un 'ClearSelection' lance un évènemnt 'select'. Cela peut-être maintenant évité.
+
 27/09/2009 :
 	- NSXPCM :
 		- Interception d'erreur remaniée.

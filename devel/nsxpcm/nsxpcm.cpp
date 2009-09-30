@@ -1011,18 +1011,19 @@ ERRBegin
 
 	nsxpcm::Transform( String, EventString );
 
+	Event = Convert_( EventString.Convert( StrBuffer ) );
+
 	if ( EventString == "DOMAttrModified" )
 		_MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
 
 	if ( EventString == "keypress" )
 		_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
 
-	Event = Convert_( EventString.Convert( StrBuffer ) );
-
 	if ( _EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
 		ERRl();
 
-	NSXPCMOnEvent( Event );
+	if ( !( _EventsToIgnore & ( 1 << Event ) ) )
+		NSXPCMOnEvent( Event );
 
 	if ( _EventImbricationLevel-- < -1 )
 		ERRc();
@@ -1109,6 +1110,7 @@ void nsxpcm::element_core__::Init(
 
 NS_IMPL_ISUPPORTS1(nsxpcm::event_listener, nsxpcm::ievent_listener)
 
+// ATTENTION, IMPORTANT : en cas de comportement étrange, voir remarque concernant cet objet dans le '.h' !
 NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
 {
 	nsresult NSResult = NS_OK;

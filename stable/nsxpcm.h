@@ -997,6 +997,7 @@ namespace nsxpcm {
 		nsIDOMMutationEvent *_MutationEvent;
 		nsIDOMKeyEvent *_KeyEvent;
 		event_imbrication_level__ _EventImbricationLevel;
+		int _EventsToIgnore;
 	protected:
 		nsIDOMEvent &RawEvent( void )
 		{
@@ -1078,6 +1079,7 @@ namespace nsxpcm {
 			_MutationEvent = NULL;
 			_KeyEvent = NULL;
 			_EventImbricationLevel = -1;
+			_EventsToIgnore = efNone;
 		}
 		element_core__( void )
 		{
@@ -1099,6 +1101,22 @@ namespace nsxpcm {
 		nsIDOMElement *GetElement( void )
 		{
 			return QueryInterface<nsIDOMElement>( _Supports );
+		}
+		int SetEventsToIgnore( int Events )
+		{
+			int Buffer = _EventsToIgnore;
+
+			_EventsToIgnore = Events;
+
+			return Buffer;
+		}
+		int AddEventsToIgnore( int Events )
+		{
+			int Buffer = _EventsToIgnore;
+
+			_EventsToIgnore |= Events;
+
+			return Buffer;
 		}
 /*		void Register(
 			nsIDOMElement *Element,
@@ -1514,9 +1532,15 @@ namespace nsxpcm {
 		{
 			return GetCurrentIndex() != -1;
 		}
-		void ClearSelection( void )
+		/* Par défaut (avec 'SkipSelectEvent' à false, un 'ClearSelection' lance un évènement 'select'.
+		Cela peut être évité en mettant 'SkipSelectEvent' à 'true'. */
+		void ClearSelection( bso::bool__ SkipSelectEvent )
 		{
+			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : efNone );
+
 			_GetSelection()->ClearSelection();
+
+			SetEventsToIgnore( Buffer );
 		}
 	};
 
@@ -1985,6 +2009,14 @@ namespace nsxpcm {
 		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_IEVENT_LISTENER_IID)
 	};
 
+	/*
+	ATTENTION, IMPORTANT : pour des raison de simplification de mise en oeuvre et de par le système
+	d'enregistrement de 'XULRunner', cet object est commun à tous les composants utilisant la gestion d'évènement
+	des bibliothèques Epeios. Une modification de cet objet	peut ne donc par être répercuté dans le composant,
+	parce que l'ancienne version de ce composant est encore	actif car existant dans un autre composant.
+	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modification
+	de cet objet soient prises en compte.
+	*/
 	struct event_listener
 	: ievent_listener
 	{
