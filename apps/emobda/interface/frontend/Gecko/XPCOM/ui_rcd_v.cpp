@@ -42,9 +42,9 @@ ERRBegin
 	Number = Value.ToUL( &Error );
 
 	if ( Error != NONE )
-		UI().Alert( frdkernl::mBadRecordNumber );
+		UI().Alert( frdkernl::mBadRecordPosition );
 	else
-		UI().GoToRecordNumber( Number );
+		UI().GoToRecordPosition( Number );
 ERRErr
 ERREnd
 ERREpilog

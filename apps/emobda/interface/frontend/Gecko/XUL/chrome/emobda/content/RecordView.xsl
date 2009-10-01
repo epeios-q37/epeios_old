@@ -29,9 +29,7 @@
 	</xsl:template>
 	<xsl:template match="Content">
 		<xsl:element name="html">
-			<xsl:element name="h1">
-				<xsl:apply-templates select="Content"/>
-			</xsl:element>
+			<xsl:apply-templates select="Content"/>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Content">
@@ -46,6 +44,17 @@
 		<xsl:apply-templates select="Data"/>
 	</xsl:template>
 	<xsl:template match="Data">
+		<xsl:element name="tr">
+			<xsl:element name="td">
+				<xsl:attribute name="style">font-style: italic;</xsl:attribute>
+				<xsl:text>Id.</xsl:text>
+			</xsl:element>
+			<xsl:text> : </xsl:text>
+			<xsl:element name="td">
+				<xsl:attribute name="style">font-weight: bold;font-style: italic;</xsl:attribute>
+				<xsl:value-of select="../@Id"/>
+			</xsl:element>
+		</xsl:element>
 		<xsl:apply-templates select="Datum"/>
 	</xsl:template>
 	<xsl:template match="Datum">
@@ -57,6 +66,7 @@
 			</xsl:element>
 			<xsl:text> : </xsl:text>
 			<xsl:element name="td">
+				<xsl:attribute name="style">font-weight: bold;</xsl:attribute>
 				<xsl:value-of select="."/>
 			</xsl:element>
 		</xsl:element>

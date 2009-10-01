@@ -128,7 +128,7 @@ namespace mbdfld {
 	typedef field_core_	field_;
 	E_AUTO( field )
 
-	typedef ctn::E_XCONTAINERt_( field_, field_row__ ) fields_;
+	typedef lstctn::E_LXCONTAINERt_( field_, field_row__ ) fields_;
 	E_AUTO( fields );
 
 	typedef field_ field_description_;

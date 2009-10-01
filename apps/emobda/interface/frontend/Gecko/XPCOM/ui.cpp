@@ -139,9 +139,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, xdfStructure | ( SelectCurrentTable ? xdfCurrentTable : xdfNone ) );
-
-	nsxpcm::Log( XML );
+	_K().DumpAsXML( xdfStructure | ( SelectCurrentTable ? xdfCurrentTable : xdfNone ), XML );
 
 	Parameters.Init();
 
@@ -163,13 +161,11 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, xdfCurrentTable | xdfStructure | xdfContent );
+	_K().DumpAsXML( xdfCurrentTable | xdfStructure | xdfContent, XML );
 
 	nsxpcm::Log( XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
-
-//	nsxpcm::Log( XML );
 
 	Parameters.Init();
 
@@ -204,7 +200,7 @@ ERRBegin
 		break;
 	}
 
-	_K().DumpAsXML( XML, Flags );
+	_K().DumpAsXML( Flags, XML );
 
 	// XML.Append( "<Structure><Tables><Table Name='T1'><Fields><Field Name='T1 F1'/><Field Name='T1 F2'/></Fields></Table><Table Name='T2'><Fields><Field Name='T2 F1'/><Field Name='T2 F2'/><Field Name='T2 F3'/></Fields></Table></Tables></Structure>" );
 
@@ -226,7 +222,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	_K().DumpAsXML( XML, xdfStructure | xdfContent );
+	_K().DumpAsXML( xdfStructure | xdfContent, XML );
 
 	Parameters.Init();
 
@@ -494,7 +490,7 @@ ERRProlog
 ERRBegin
 	XML.Init();
 
-	K().DumpAsXML( XML, xdfDatabases );
+	K().DumpAsXML( xdfDatabases, XML );
 
 	Parameters.Init();
 

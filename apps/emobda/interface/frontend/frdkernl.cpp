@@ -59,8 +59,8 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	CASE( DeleteFieldConfirmation );
 	CASE( DeleteRecordConfirmation );
 	CASE( DropRecordConfirmation );
-	CASE( NoSuchRecordNumber );
-	CASE( BadRecordNumber );
+	CASE( NoSuchRecordPosition );
+	CASE( BadRecordPosition );
 	CASE( NotImplementedYet );
 
 	default:
@@ -794,10 +794,9 @@ ERREnd
 ERREpilog
 }
 
-
 void frdkernl::kernel___::DumpAsXML(
-	str::string_ &XML,
-	int Flags )
+	int Flags,
+	str::string_ &XML )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
@@ -826,6 +825,7 @@ ERRBegin
 	Writer.reset();
 
 	Flow.reset();
+
 ERRErr
 ERREnd
 ERREpilog

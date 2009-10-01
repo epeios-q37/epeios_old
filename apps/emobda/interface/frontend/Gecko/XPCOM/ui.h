@@ -452,12 +452,12 @@ namespace ui {
 			else
 				Alert( frdkernl::mNotImplementedYet );
 		}
-		bso::bool__ GoToRecordNumber( record_position__ Position )
+		bso::bool__ GoToRecordPosition( record_position__ Position )
 		{
 			bso::bool__ Success = false;
 
-			if ( !( Success = K().GoToRecordNumber( Position ) ) ) {
-				Alert( frdkernl::mNoSuchRecordNumber );
+			if ( !( Success = K().GoToRecordPosition( Position ) ) ) {
+				Alert( frdkernl::mNoSuchRecordPosition );
 			}
 
 			_SwitchTo( cRecordView );

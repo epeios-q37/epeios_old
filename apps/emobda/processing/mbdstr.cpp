@@ -76,7 +76,7 @@ ERRBegin
 
 	Field.Init( Description.GetType(), Description.Name, Description.Comment, Id, TableRow );
 
-	FieldRow = Fields.Append( Field );
+	FieldRow = Fields.Add( Field );
 
 	Tables( TableRow ).Append( FieldRow );
 
@@ -98,19 +98,19 @@ void mbdstr::structure_::DeleteField( field_row__ FieldRow )
 
 	Tables.Flush();
 
-	Fields.Remove( FieldRow );
+	Fields.Delete( FieldRow );
 
 	Fields.Flush();
 }
 
 void mbdstr::structure_::DeleteFields( const field_rows_ &FieldRows )
 {
-	epeios::row__ Row = FieldRows.Last();
+	epeios::row__ Row = FieldRows.First();
 
 	while ( Row != NONE ) {
 		DeleteField( FieldRows( Row ) );
 
-		Row = FieldRows.Last();
+		Row = FieldRows.Next( Row );
 	}
 }
 

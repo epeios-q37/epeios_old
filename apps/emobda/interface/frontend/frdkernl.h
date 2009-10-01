@@ -66,8 +66,8 @@ namespace frdkernl {
 
 		mDropRecordConfirmation,
 
-		mNoSuchRecordNumber,
-		mBadRecordNumber,
+		mNoSuchRecordPosition,
+		mBadRecordPosition,
 
 		mNotImplementedYet,
 
@@ -520,7 +520,7 @@ namespace frdkernl {
 		{
 			return _Records.Amount();
 		}
-		bso::bool__ GoToRecordNumber( record_position__ Position )
+		bso::bool__ GoToRecordPosition( record_position__ Position )
 		{
 			if ( Position == 0 )
 				return false;
@@ -534,23 +534,23 @@ namespace frdkernl {
 		}
 		bso::bool__ GoToFirstRecord( void )
 		{
-			return GoToRecordNumber( 1 );
+			return GoToRecordPosition( 1 );
 		}
 		bso::bool__ GoToPreviousRecord( void )
 		{
-			return GoToRecordNumber( _Target.RecordPosition - 1 ); 
+			return GoToRecordPosition( _Target.RecordPosition - 1 ); 
 		}
 		bso::bool__ GoToNextRecord( void )
 		{
-			return GoToRecordNumber( _Target.RecordPosition + 1 ); 
+			return GoToRecordPosition( _Target.RecordPosition + 1 ); 
 		}
 		bso::bool__ GoToLastRecord( void )
 		{
-			return GoToRecordNumber( _Records.Amount() );
+			return GoToRecordPosition( _Records.Amount() );
 		}
 		void DumpAsXML(
-			str::string_ &XML,
-			int Flags );
+			int Flags,
+			str::string_ &XML );
 		bso::bool__ GetDatabase( str::string_ &Database )
 		{
 			return frdrgstry::GetPathValue( frdrgstry::paths::Parameters.Database.Path, _Registry, Database );

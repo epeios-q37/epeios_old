@@ -44,6 +44,14 @@
 	<xsl:template match="Fields">
 		<xsl:param name="Table"/>
 		<xsl:element name="treecols">
+			<xsl:element name="treecol">
+				<!--xsl:attribute name="id">
+					<xsl:value-of select="@Row"/>
+				</xsl:attribute-->
+				<xsl:attribute name="label">Id</xsl:attribute>
+				<xsl:attribute name="primary">true</xsl:attribute>
+				<xsl:attribute name="flex">1</xsl:attribute>
+			</xsl:element>
 			<xsl:apply-templates select="Field[@TableRow=$Table]"/>
 		</xsl:element>
 	</xsl:template>
@@ -75,11 +83,16 @@
 				<xsl:value-of select="position()"/>
 			</xsl:attribute>
 			<xsl:element name="treerow">
-		<xsl:apply-templates select="Data"/>
+				<xsl:apply-templates select="Data"/>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="Data">
+		<xsl:element name="treecell">
+			<xsl:attribute name="label">
+				<xsl:value-of select="../@Id"/>
+			</xsl:attribute>
+		</xsl:element>
 		<xsl:apply-templates select="Datum"/>
 	</xsl:template>
 	<xsl:template match="Datum">

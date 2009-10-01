@@ -113,7 +113,6 @@ namespace kernel {
 
 			Repository.DismissCurrentObject();
 		}
-
 	};
 }
 
