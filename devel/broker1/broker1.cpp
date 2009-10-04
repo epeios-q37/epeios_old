@@ -1,9 +1,9 @@
 /*
-  'broker1' library by Claude L. Simon (epeios@epeios.org)
+  'broker1' library by Claude SIMON (http://zeusw.org/intl/contact.html)
   Requires the 'broker1' header file ('broker1.h').
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org).
+  Copyright (C) 2000 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or

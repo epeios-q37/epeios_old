@@ -1,8 +1,8 @@
 /*
-  Header for the 'brkanl' library by Claude L. Simon (epeios@epeios.org)
-  Copyright (C) 2000 Claude L. SIMON (epeios@epeios.org) 
+  Header for the 'brkanl' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+  Copyright (C) 2000 Claude SIMON (http://zeusw.org/intl/contact.html) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 
 #define	BRKANL_VERSION	"$Revision$"	
 
-#define BRKANL_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define BRKANL_OWNER		"the Epeios project (http://zeusw.org/epeios/)"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &BRKANLTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (epeios@epeios.org)
+//C Claude SIMON (http://zeusw.org/intl/contact.html)
 //R $Date$
 
 /* End of automatic documentation generation part. */

@@ -1,8 +1,8 @@
 /*
-	'netspy' by Claude L. SIMON (simon@epeios.org)
+	'netspy' by Claude SIMON (http://zeusw.org/intl/contact.html)
 	Copyright (C) 2001 Claude L. SIMON
 
-	This file is part of the Epeios project (http://www.epeios.org/).
+	This file is part of the Epeios project (http://zeusw.org/epeios/).
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

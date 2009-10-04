@@ -1,5 +1,5 @@
 /*
-	'compose' by Claude SIMON (csimon@epeios.org)
+	'compose' by Claude SIMON (http://zeusw.org/intl/contact.html)
 	create images compsed by 4 (2x2) images.
 	Copyright (C) 2004 Claude SIMON
 

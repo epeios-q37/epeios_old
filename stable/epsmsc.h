@@ -1,8 +1,8 @@
 /*
-	Header for the 'epsmsc' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) 2000, 2004 Claude SIMON (csimon@epeios.org).
+	Header for the 'epsmsc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+	Copyright (C) 2000, 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -93,7 +93,7 @@ extern class ttr_tutor &EPSMSCTutor;
 //d GNU (http://www.gnu.org) Text.
 #define EPSMSC_GNU_TEXT "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ").\n\tIt uses Epeios (" EPSMSC_EPEIOS_URL ") technologies."
 
-//d Epeios (http://epeios.org) Text.
+//d Epeios (http://zeusw.org/epeios/) Text.
 #define EPSMSC_EPEIOS_TEXT "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Epeios.

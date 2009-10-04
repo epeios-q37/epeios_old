@@ -1,9 +1,9 @@
 /*
-  'gendoc' by Claude L. Simon (csimon@epeios.org).
+  'gendoc' by Claude SIMON (http://zeusw.org/intl/contact.html).
   Generates library documentation by parsing header files.
   Copyright (C) 2000 Claude Simon.
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios project (http://zeusw.org/epeios/).
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License

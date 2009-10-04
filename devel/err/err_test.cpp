@@ -2,7 +2,7 @@
   Test source for the 'err' library by Claude L. Simon (csimon@webmails.com).
   Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 
-  This file is part of the Epeios (http://epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or

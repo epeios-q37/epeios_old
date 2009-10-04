@@ -1,9 +1,9 @@
 /*
-  'mll2html' by Claude SIMON (csimon@epeios.org).
+  'mll2html' by Claude SIMON (http://zeusw.org/intl/contact.html).
   reformats, in HTML, a text file containing mailing lists descriptions.
-  Copyright (C) 1999-2002 Claude SIMON (csimon@epeios.org).
+  Copyright (C) 1999-2002 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios project (http://zeusw.org/epeios/).
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License

@@ -1,9 +1,9 @@
 /*
-  'bitmmr' library by Claude L. Simon (simon@epeios.org)
+  'bitmmr' library by Claude SIMON (http://zeusw.org/intl/contact.html)
   Requires the 'bitmmr' header file ('bitmmr.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org).
+  Copyright (C) 2000,2001 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or

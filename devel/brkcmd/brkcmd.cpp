@@ -3,7 +3,7 @@
   Requires the 'brkcmd' header file ('brkcmd.h').
   Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
 
-  This file is part of the Epeios (http://epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or

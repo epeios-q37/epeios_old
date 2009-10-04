@@ -1,8 +1,8 @@
 /*
-	Header for the 'flm' library by Claude SIMON (csimon@epeios.org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+	Header for the 'flm' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
 $_RAW_$
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	FLM_VERSION	"$Revision$"
 
-#define FLM_OWNER		"Claude SIMON (csimon@epeios.org)"
+#define FLM_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &FLMTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (csimon@epeios.org)
+//C Claude SIMON (http://zeusw.org/intl/contact.html)
 //R $Date$
 
 /* End of automatic documentation generation part. */

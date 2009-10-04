@@ -1,8 +1,8 @@
 /*
-  Header for the 'bitmmr' library by Claude L. Simon (simon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (simon@epeios.org) 
+  Header for the 'bitmmr' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+  Copyright (C) 2000,2001 Claude SIMON (http://zeusw.org/intl/contact.html) 
 
-  This file is part of the Epeios (http://www.epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	BITMMR_VERSION	"$Revision$"	
 
-#define BITMMR_OWNER		"the Epeios project (http://www.epeios.org/)"
+#define BITMMR_OWNER		"the Epeios project (http://zeusw.org/epeios/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &BITMMRTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org)
+//C Claude SIMON (http://zeusw.org/intl/contact.html)
 //R $Date$
 
 /* End of automatic documentation generation part. */

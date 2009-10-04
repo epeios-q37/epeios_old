@@ -1,9 +1,9 @@
 /*
-	'idxbtr' library by Claude SIMON (csimon@epeios.org)
+	'idxbtr' library by Claude SIMON (http://zeusw.org/intl/contact.html)
 	Requires the 'idxbtr' header file ('idxbtr.h').
-	Copyright (C) 2000-2004 Claude SIMON (csimon@epeios.org).
+	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

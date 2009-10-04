@@ -90,7 +90,7 @@ extern class ttr_tutor &LGPMSCTutor;
 //d Author mail hypertext link.
 #define LGPMSC_AUTHOR_LINK	"<A HREF=\"mailto://" LGPMSC_AUTHOR_EMAIL "\">" LGPMSC_AUTHOR_NAME "</A>"
 
-//d Logiplus (http://epeios.org) Text.
+//d Logiplus (http://zeusw.org/epeios/) Text.
 #define LGPMSC_LOGIPLUS_TEXT "\tThis program was developed for Logi+ (" LGPMSC_LOGIPLUS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Logi+.

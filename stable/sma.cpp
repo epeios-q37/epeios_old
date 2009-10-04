@@ -1,9 +1,9 @@
 /*
-  'sma' library by Claude L. Simon (csimon@epeios.org)
+  'sma' library by Claude SIMON (http://zeusw.org/intl/contact.html)
   Requires the 'sma' header file ('sma.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org).
+  Copyright (C) 2000,2001 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-  This file is part of the Epeios (http://epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or

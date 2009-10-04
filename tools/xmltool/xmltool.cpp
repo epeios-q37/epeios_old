@@ -1,9 +1,9 @@
 /*
-	'xmltool' by Claude L. Simon (simon@epeios.org)
+	'xmltool' by Claude SIMON (http://zeusw.org/intl/contact.html)
 	Copyright (C) 2001 IDEALX (http://www.IDEALX.com)
 
 	This program is part of an IDEALX (http://www.IDEALX.org/) project
-	which uses Epeios (http://www.epeios.org/) technology.
+	which uses Epeios (http://zeusw.org/epeios/) technology.
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

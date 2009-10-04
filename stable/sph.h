@@ -1,8 +1,8 @@
 /*
-  Header for the 'sph' library by Claude L. Simon (epeios@epeios.org)
+  Header for the 'sph' library by Claude SIMON (http://zeusw.org/intl/contact.html)
   Copyright (C) 2000 Claude L. Simon 
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios project (http://zeusw.org/epeios/).
   
 
   This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 
 #define	SPH_VERSION	"$Revision$"	
 
-#define SPH_OWNER		"the Epeios project (http://www.epeios.org/) "
+#define SPH_OWNER		"the Epeios project (http://zeusw.org/epeios/) "
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &SPHTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (simon@epeios.org) 
+//C Claude SIMON (http://zeusw.org/intl/contact.html) 
 //R $Date$
 
 /* End of automatic documentation generation part. */

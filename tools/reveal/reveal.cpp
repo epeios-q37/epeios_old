@@ -1,7 +1,7 @@
 /*
-  'reveal' by Claude SIMON (csimon@epeios.org).
+  'reveal' by Claude SIMON (http://zeusw.org/intl/contact.html).
   Replaces tags in a file by text or file content.
-  Copyright (C) 1999-2002 Claude SIMON (csimon@epeios.org)
+  Copyright (C) 1999-2002 Claude SIMON (http://zeusw.org/intl/contact.html)
 
   This file is part of the Epeios project (http://www.zeusw.org/epeios/).
 

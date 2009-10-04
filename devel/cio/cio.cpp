@@ -1,9 +1,9 @@
 /*
-	'cio' library by Claude SIMON (csimon@epeios.org)
+	'cio' library by Claude SIMON (http://zeusw.org/intl/contact.html)
 	Requires the 'cio' header file ('cio.h').
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (csimon@epeios.org).
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
 $_RAW_$
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

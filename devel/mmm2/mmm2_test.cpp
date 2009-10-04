@@ -1,8 +1,8 @@
 /*
-	Test source for the 'mmm2' library by Claude SIMON (csimon@epeios.org).
-	Copyright (C) 2004 Claude SIMON (csimon@epeios.org).
+	Test source for the 'mmm2' library by Claude SIMON (http://zeusw.org/intl/contact.html).
+	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
 
-	This file is part of the Epeios (http://epeios.org/) project.
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License

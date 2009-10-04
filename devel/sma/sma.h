@@ -1,8 +1,8 @@
 /*
-  Header for the 'sma' library by Claude L. Simon (csimon@epeios.org)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@epeios.org) 
+  Header for the 'sma' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+  Copyright (C) 2000,2001 Claude SIMON (http://zeusw.org/intl/contact.html) 
 
-  This file is part of the Epeios (http://epeios.org/) project.
+  This file is part of the Epeios (http://zeusw.org/epeios/) project.
   
 
   This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #define	SMA_VERSION	"$Revision$"	
 
-#define SMA_OWNER		"the Epeios project (http://epeios.org/)"
+#define SMA_OWNER		"the Epeios project (http://zeusw.org/epeios/)"
 
 #include "ttr.h"
 
@@ -45,7 +45,7 @@ extern class ttr_tutor &SMATutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@epeios.org)
+//C Claude SIMON (http://zeusw.org/intl/contact.html)
 //R $Date$
 
 /* End of automatic documentation generation part. */

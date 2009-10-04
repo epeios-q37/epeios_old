@@ -1,9 +1,9 @@
 /*
-  'shm' library by Claude L. Simon (epeios@epeios.org)
+  'shm' library by Claude SIMON (http://zeusw.org/intl/contact.html)
   Requires the 'shm' header file ('shm.h').
   Copyright (C) 2000 Claude L. Simon.
 
-  This file is part of the Epeios project (http://www.epeios.org/).
+  This file is part of the Epeios project (http://zeusw.org/epeios/).
   
 
   This library is free software; you can redistribute it and/or
