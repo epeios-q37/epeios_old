@@ -1,0 +1,36 @@
+# $Id$
+rm -rf workdir
+mkdir workdir
+cd workdir
+export DIR=emobdadmn
+GET=../../../../../get_cvs
+
+mkdir -p $DIR
+
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/emobdadmn/README.txt
+$GET epeios $DIR apps/emobda/processing/backend/CHANGELOG.txt
+
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+mv $DIR/gnu_gpl.txt $DIR/LICENSE
+mv $DIR/README.txt $DIR/README
+
+cp /cygdrive/h/bin/emobdadmn.exe $DIR
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET ebkd $DIR stable/*.h
+$GET ebkd $DIR stable/*.cpp
+
+$GET epeios $DIR/ apps/emobda/processing/*.h
+$GET epeios $DIR/ apps/emobda/processing/*.cpp
+
+$GET epeios $DIR/ apps/emobda/processing/backend/*.h
+$GET epeios $DIR/ apps/emobda/processing/backend/*.cpp
+
+$GET epeios $DIR/ apps/emobda/processing/backend/daemon/*.h
+$GET epeios $DIR/ apps/emobda/processing/backend/daemon/*.cpp
+$GET epeios $DIR/ apps/emobda/processing/backend/daemon/Makefile
+
+../../../../../create_pkg $DIR

@@ -1,5 +1,9 @@
 $Id$
 
+04/10/2009 :
+	- CLNARG :
+		- Ajout macro 'CLNARG_STRING_PARAM(...)' simplifiant la récupération d'un paramèetre de type 'str::string'.
+
 30/09/2009 :
 	- NSXPCM :
 		- Ajout '(Add|Set)EventsToIgnore(...)'.

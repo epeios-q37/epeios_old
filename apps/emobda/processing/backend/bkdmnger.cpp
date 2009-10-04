@@ -841,7 +841,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Manager.GetRecords( TableRow, FieldRows, RecordIds, Request.XStringsOut() );
+	Manager.GetRecordsData( TableRow, FieldRows, RecordIds, Request.XStringsOut() );
 ERRErr
 ERREnd
 ERREpilog

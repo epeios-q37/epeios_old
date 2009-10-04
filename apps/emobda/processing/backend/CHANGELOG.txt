@@ -1,0 +1,5 @@
+$Id$
+
+REMINDER :
+	- This file concerns both daemon and library.
+	- Before publication, merge with '../CHANGELOG.txt'.

@@ -26,11 +26,11 @@ $GET epeios $DIR/XPCOM stable/*.cpp
 $GET ebkd $DIR/XPCOM stable/*.h
 $GET ebkd $DIR/XPCOM stable/*.cpp
 
-$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/*.cpp
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/*.h
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/*.cpp
 
-$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.cpp
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.h
+$GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.cpp
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/*.idl
 $GET epeios $DIR/XPCOM apps/emobda/interface/frontend/Gecko/XPCOM/Makefile
 

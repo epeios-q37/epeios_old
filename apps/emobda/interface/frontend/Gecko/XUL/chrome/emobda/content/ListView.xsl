@@ -48,6 +48,7 @@
 				<!--xsl:attribute name="id">
 					<xsl:value-of select="@Row"/>
 				</xsl:attribute-->
+				<xsl:attribute name="sortDirection">descending</xsl:attribute>
 				<xsl:attribute name="label">Id</xsl:attribute>
 				<xsl:attribute name="primary">true</xsl:attribute>
 				<xsl:attribute name="flex">1</xsl:attribute>

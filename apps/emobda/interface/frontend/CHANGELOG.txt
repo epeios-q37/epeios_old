@@ -1,2 +1,5 @@
 $Id$
 
+REMINDER :
+	- This file concerns the frontend globally.
+	- The WEB version and the GECKO one have both their own file for what is specific to them.

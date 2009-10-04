@@ -213,12 +213,16 @@ namespace mbdmng {
 		void GetRecords(
 			table_row__ TableRow,
 			record_ids_ &RecordIds ) const;
-		void GetRecord(
+		void GetRecords(
+			table_row__ TableRow,
+			field_row__ SortFieldRow,
+			record_ids_ &RecordIds ) const;
+		void GetRecordData(
 			table_row__ TableRow,
 			const field_rows_ &FieldRows,
 			record_id__ RecordId,
 			data_ &Data ) const;
-		void GetRecords(
+		void GetRecordsData(
 			table_row__ TableRow,
 			const field_rows_ &FieldRows,
 			const record_ids_ &RecordIds,

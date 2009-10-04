@@ -24,7 +24,7 @@
 #ifndef BKDMNGER__INC
 #define BKDMNGER__INC
 
-#include "../mbdmng.h"
+#include "mbdmng.h"
 
 #include "bkdmng.h"
 

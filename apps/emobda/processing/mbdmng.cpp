@@ -297,7 +297,50 @@ ERREnd
 ERREpilog
 }
 
-void mbdmng::manager_::GetRecord(
+void mbdmng::manager_::GetRecords(
+	table_row__ TableRow,
+	field_row__ SortFieldRow,
+	record_ids_ &RecordIds ) const
+{
+ERRProlog
+	record_row__ RecordRow;
+	record Record;
+	raw_datum RawDatum;
+	record_row__ NextToLastRecordRow = NONE;
+	record_id__	RecordId = MBDBSC_UNDEFINED_RECORD_ID;
+ERRBegin
+	if ( !IsFieldOwnedByTable( SortFieldRow, TableRow ) )
+		ERRu();
+
+	Record.Init( Structure.GetTableTableId( TableRow ), Structure.GetFieldFieldId( SortFieldRow ), MBDBSC_UNDEFINED_RECORD_ID, datum() );
+
+	RawDatum.Init();
+	mbdbsc::Convert( Record, RawDatum );
+
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bGreater, 1 );
+
+	if ( RecordRow != NONE ) {
+		NextToLastRecordRow = Engine.TableFieldDatumIndex.Next( RecordRow );	// Can be 'NONE' without ptoblem.
+
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
+
+		while ( RecordRow != NextToLastRecordRow ) {
+			RawDatum.Init();
+			Engine.Retrieve( RecordRow, RawDatum );
+
+			RecordId = mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId;
+
+			RecordIds.Append( mbdbsc::ExtractRecordStaticPart( RawDatum ).RecordId );
+
+			RecordRow = Engine.TableFieldDatumIndex.Next( RecordRow );
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void mbdmng::manager_::GetRecordData(
 	table_row__ TableRow,
 	const field_rows_ &FieldRows,
 	record_id__ RecordId,
@@ -352,7 +395,7 @@ ERREnd
 ERREpilog
 }
 
-void mbdmng::manager_::GetRecords(
+void mbdmng::manager_::GetRecordsData(
 	table_row__ TableRow,
 	const field_rows_ &FieldRows,
 	const record_ids_ &RecordIds,
@@ -367,7 +410,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		Data.Init();
 
-		GetRecord( TableRow, FieldRows, RecordIds( Row ), Data );
+		GetRecordData( TableRow, FieldRows, RecordIds( Row ), Data );
 
 		DataCluster.Append( Data );
 

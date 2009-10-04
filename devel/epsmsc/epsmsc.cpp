@@ -7,7 +7,7 @@ $_RAW_$
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
+	as published by the Free Software Foundation; either version 3
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -63,7 +63,7 @@ void epsmsc::PrintLicense( txf::text_oflow__ &Flow )
 	Flow 
 	<< "        This program is free software; you can redistribute it and/or" << nl
 	<< "        modify it under the terms of the GNU General Public License" << nl
-	<< "        as published by the Free Software Foundation; either version 2" << nl
+	<< "        as published by the Free Software Foundation; either version 3" << nl
 	<< "        of the License, or (at your option) any later version." << nl
 	<< nl
 	<< "        This program is distributed in the hope that it will be useful," << nl

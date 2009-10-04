@@ -7,7 +7,7 @@
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
+  as published by the Free Software Foundation; either version 3
   of the License, or (at your option) any later version.
  
   This program is distributed in the hope that it will be useful,
@@ -33,14 +33,14 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.2.3"
-#define COPYRIGHT_YEARS	"2007"
+#define VERSION			"0.2.4"
+#define COPYRIGHT_YEARS	"2007-2009"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
@@ -78,10 +78,12 @@ enum option {
 
 };
 
+#define STRING_PARAM( name )	CLNARG_STRING_PARAM( name )
+
 struct parameters {
-	tol::E_FPOINTER___( char ) Namespace;
-	tol::E_FPOINTER___( char ) Source;
-	tol::E_FPOINTER___( char ) Destination;
+	STRING_PARAM( Namespace );
+	STRING_PARAM(  Source );
+	STRING_PARAM( Destination );
 	bso::bool__ NoIndent;
 	parameters( void )
 	{
@@ -111,7 +113,7 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << INFO << txf::nl;
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
@@ -151,7 +153,7 @@ ERRBegin
 				ERRExit( evParameters );
 			}
 
-			Parameters.Namespace = Argument.Convert();
+			Parameters.Namespace = Argument.Convert( Parameters.NamespaceBuffer );
 
 			break;
 		case oNoIndent:
@@ -185,10 +187,10 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 2:
-		Parameters.Destination = Free( P ).Convert();
+		Parameters.Destination = Free( P ).Convert( Parameters.DestinationBuffer );
 		P = Free.Previous( P );
 	case 1:
-		Parameters.Source = Free( P ).Convert();
+		Parameters.Source = Free( P ).Convert( Parameters.SourceBuffer );
 		break;
 	case 0:
 		break;
