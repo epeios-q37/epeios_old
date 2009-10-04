@@ -3,6 +3,8 @@ $Id$
 04/10/2009 :
 	- CLNARG :
 		- Ajout macro 'CLNARG_STRING_PARAM(...)' simplifiant la récupération d'un paramèetre de type 'str::string'.
+	- MTX :
+		- Retrait du nom de domaine anonyme qui dérange g++.
 
 30/09/2009 :
 	- NSXPCM :

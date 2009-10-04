@@ -29,7 +29,7 @@ copt =
 copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT -DMTK_KEEP
-copt += -DMTX_NO_ATOMIC_OPERATIONS
+#copt += -DMTX_NO_ATOMIC_OPERATIONS
 #copt += -DCPE_64_BITS_FORBIDDEN
 lopt = 
 mods = btr cio clnarg dtfptb epsmsc err fil flm flw fnm

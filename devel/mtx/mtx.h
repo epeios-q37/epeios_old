@@ -147,25 +147,23 @@ namespace mtx {
 		m_Undefined
 	};
 
-	namespace {
 #ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
-		typedef LONG counter__;
+	typedef LONG counter__;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
-		typedef atomic_t	counter__;
+	typedef atomic_t	counter__;
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
-		typedef int32_t	counter__;
+	typedef int32_t	counter__;
 #elif defined ( MTX__USE_PTHREAD_MUTEX )
-		struct counter__ {
-			volatile bso::sshort__ Value;
-			pthread_mutexattr_t MutexAttr;
-			pthread_mutex_t Mutex;
-		};
+	struct counter__ {
+		volatile bso::sshort__ Value;
+		pthread_mutexattr_t MutexAttr;
+		pthread_mutex_t Mutex;
+	};
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
-		typedef volatile bso::sshort__ counter__;
+	typedef volatile bso::sshort__ counter__;
 #else
 #	error "No mutex handling scheme !"
 #endif
-	}
 
 #ifdef MTX__CONTROL
 #	define MTX__RELEASED_MUTEX_COUNTER_VALUE	2

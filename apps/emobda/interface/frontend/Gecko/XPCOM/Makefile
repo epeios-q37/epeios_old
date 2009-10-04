@@ -42,8 +42,8 @@ mods += ui ui_base ui_bksdb ui_dbs_f ui_dbsdb ui_lst_v ui_main ui_rcd_f ui_rcd_v
 
 # To adapt !
 arm-sdk=/home/csimon/xulrunner-sdk-arm
-#i686-sdk=/home/csimon/xulrunner-sdk-i686
-i686-sdk=/cygdrive/h/xulrunner-sdk
+i686-sdk=/home/csimon/xulrunner-sdk-i686
+#i686-sdk=/cygdrive/h/xulrunner-sdk
 
 
 ifndef EPEIOS_SRC
