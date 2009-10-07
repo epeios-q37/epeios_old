@@ -69,38 +69,39 @@ namespace mbdmng {
 		struct s {
 			mbdeng::engine_::s Engine;
 			mbdstr::structure_::s Structure;
-			str::string_::s Location;
+			str::string_::s BaseDirectoryName;
 		};
 		mbdeng::engine_ Engine;
 		mbdstr::structure_ Structure;
-		str::string_ Location;
+		str::string_ BaseDirectoryName;
 		manager_( s &S )
 		: Engine( S.Engine ),
 		  Structure( S.Structure ),
-		  Location( S.Location )
+		  BaseDirectoryName( S.BaseDirectoryName )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Engine.reset( P );
 			Structure.reset( P );
-			Location.reset( P );
+			BaseDirectoryName.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Engine.plug( MM );
 			Structure.plug( MM );
-			Location.plug( MM );
+			BaseDirectoryName.plug( MM );
 		}
 		manager_ &operator =( const manager_ &M )
 		{
 			Engine = M.Engine;
 			Structure = M.Structure;
-			Location = M.Location;
+			BaseDirectoryName = M.BaseDirectoryName;
 
 			return *this;
 		}
 		bso::bool__ Init(
 			const str::string_ &Location,
+			const str::string_ &BaseName,
 			dbstbl::mode__ Mode,
 			bso::bool__ EraseIndexes,
 			type__ Type )
@@ -109,9 +110,11 @@ namespace mbdmng {
 
 			reset();
 
-			Engine.Init( Location, Mode, EraseIndexes, false );
+			Engine.Init( Location, BaseName, Mode, EraseIndexes, false );
 			Structure.Init();
-			this->Location.Init( Location );
+
+			BaseDirectoryName.Init();
+			mbdbsc::BuildBaseDirectoryName( Location, BaseName, BaseDirectoryName );
 
 			return _SubInit( Type );
 		}

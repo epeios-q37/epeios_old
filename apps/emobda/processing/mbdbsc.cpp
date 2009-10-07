@@ -50,42 +50,65 @@ const char *mbdbsc::GetFieldTypeLabel( field_type__ FieldType )
 	return Label;
 }
 
+const str::string_ &mbdbsc::BuildBaseDirectoryName(
+	const str::string_ &Location,
+	const str::string_ &BaseName,
+	str::string_ &BaseDirectoryName )
+{
+ERRProlog
+	STR_BUFFER___ LocationBuffer;
+	STR_BUFFER___ BaseNameBuffer;
+	FNM_BUFFER___ FullDirectoryBuffer;
+ERRBegin
+	BaseDirectoryName.Append( fnm::BuildFileName( Location.Convert( LocationBuffer ), BaseName.Convert( BaseNameBuffer ), NULL, FullDirectoryBuffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return BaseDirectoryName;
+}
 
 static const str::string_ &BuildLocatedRootFileName_(
 	const str::string_ &Location,
+	const str::string_ &BaseName,
 	const char *RootFileName,
 	str::string_ &LocatedRootFileName )
 {
 ERRProlog
-	STR_BUFFER___ LocationBuffer;
+	STR_BUFFER___ BaseDirectoryNameBuffer;
 	FNM_BUFFER___ FileNameBuffer;
+	str::string BaseDirectoryName;
 ERRBegin
-	LocatedRootFileName.Append( fnm::BuildFileName( Location.Convert( LocationBuffer ), RootFileName, NULL, FileNameBuffer ) );
+	BaseDirectoryName.Init();
+
+	LocatedRootFileName.Append( fnm::BuildFileName( BuildBaseDirectoryName( Location, BaseName, BaseDirectoryName ).Convert( BaseDirectoryNameBuffer ), RootFileName, NULL, FileNameBuffer ) );
 ERRErr
 ERREnd
 ERREpilog
 	return LocatedRootFileName;
 }
 
-const str::string_ &mbdbsc::BuildLocatedContentRootFileName(
+const str::string_ &mbdbsc::BuildLocatedContentBaseFileName(
 	const str::string_ &Location,
+	const str::string_ &BaseName,
 	str::string_ &LocalizedRootFileName )
 {
-	return BuildLocatedRootFileName_( Location, MBDBSC_CONTENT_ROOT_FILE_NAME, LocalizedRootFileName );
+	return BuildLocatedRootFileName_( Location, BaseName, MBDBSC_CONTENT_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
-const str::string_ &mbdbsc::BuildLocatedTableRecordFieldIndexRootFileName(
+const str::string_ &mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName(
 	const str::string_ &Location,
+	const str::string_ &BaseName,
 	str::string_ &LocalizedRootFileName )
 {
-	return BuildLocatedRootFileName_( Location, MBDBSC_TABLE_RECORD_FIELD_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+	return BuildLocatedRootFileName_( Location, BaseName, MBDBSC_TABLE_RECORD_FIELD_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
-const str::string_ &mbdbsc::BuildLocatedTableFieldDatumIndexRootFileName(
+const str::string_ &mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName(
 	const str::string_ &Location,
+	const str::string_ &BaseName,
 	str::string_ &LocalizedRootFileName )
 {
-	return BuildLocatedRootFileName_( Location, MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
+	return BuildLocatedRootFileName_( Location, BaseName, MBDBSC_TABLE_FIELD_DATUM_INDEX_ROOT_FILE_NAME, LocalizedRootFileName );
 }
 
 static inline bso::char__ ToUpper_( bso::char__ C )

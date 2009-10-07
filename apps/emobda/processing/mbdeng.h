@@ -102,6 +102,7 @@ namespace mbdeng {
 		}
 		void Init(
 			const str::string_ &Location,
+			const str::string_ &BaseName,
 			dbstbl::mode__ Mode,
 			bso::bool__ EraseIndexes,
 			bso::bool__ Partial );

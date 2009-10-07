@@ -27,13 +27,14 @@ using namespace mbdbsc;
 
 void mbdeng::engine_::Init(
 	const str::string_ &Location,
+	const str::string_ &BaseFileName,
 	dbstbl::mode__ Mode,
 	bso::bool__ EraseIndexes,
 	bso::bool__ Partial )
 {
 ERRProlog
 	mdr::mode__ FileMode = mdr::m_Undefined;
-	str::string	LocatedRootFileName;
+	str::string	LocatedBaseFileName;
 ERRBegin
 	reset();
 
@@ -44,17 +45,17 @@ ERRBegin
 	S_.UniversalContent.Init( Content );
 	_table_::Init( S_.UniversalContent, Mode );
 
-	LocatedRootFileName.Init();
-	mbdbsc::BuildLocatedContentRootFileName( Location, LocatedRootFileName );
-	Content.Init( LocatedRootFileName, FileMode ,Partial, S_.FilesgroupID );
+	LocatedBaseFileName.Init();
+	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );
+	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
 
-	LocatedRootFileName.Init();
-	mbdbsc::BuildLocatedTableRecordFieldIndexRootFileName( Location, LocatedRootFileName );
-	TableRecordFieldIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
+	LocatedBaseFileName.Init();
+	mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
+	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
-	LocatedRootFileName.Init();
-	mbdbsc::BuildLocatedTableFieldDatumIndexRootFileName( Location, LocatedRootFileName );
-	TableFieldDatumIndex.Init( LocatedRootFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
+	LocatedBaseFileName.Init();
+	mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
+	TableFieldDatumIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 
 	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
 	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );

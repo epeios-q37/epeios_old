@@ -32,7 +32,7 @@ const char *bkdmnger::manager_::NAME = BKDMNGER_MANAGER_NAME;
 
 enum message__ {
 	mOK,
-	mIncorrectLocation,
+	mIncorrectBaseName,
 
 	mIncorrectDatabaseName,
 	mUnableToCreateDatabase,
@@ -71,7 +71,7 @@ static const char *GetRawMessage_( message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( OK );
-	CASE( IncorrectLocation );
+	CASE( IncorrectBaseName );
 	CASE( IncorrectDatabaseName );
 	CASE( UnableToCreateDatabase );
 	CASE( UnableToOpenDatabase );
@@ -175,36 +175,35 @@ DEC( CreateDatabase )
 {
 	message__ Message = mOK;
 ERRProlog
-	str::string Location, Name, Comment;
+	str::string BaseName, Name, Comment;
 	tol::E_FPOINTER___( bso::char__ ) Buffer;
+	str::string Repository;
 ERRBegin
-	Location.Init();
-	Location = Request.StringIn();
-
 	Name.Init();
 	Name = Request.StringIn();
+
+	BaseName.Init();
+	BaseName = Request.StringIn();
 
 	Comment.Init();
 	Comment = Request.StringIn();
 
-	if ( !TestAndNormalize_( Location ) ) {
-		Message = mIncorrectLocation;
-		ERRReturn;
-	}
+	Repository.Init();
+
+	if ( !bkdrgstry::GetRepository( Repository ) )
+		ERRc();
 
 	if ( !TestAndNormalize_( Name ) ) {
 		Message = mIncorrectDatabaseName;
 		ERRReturn;
 	}
 
-/*
-	if ( dir::CreateDir( Buffer = Location.Convert() ) != dir::sOK ) {
-		Message = mUnableToCreateDatabase;
+	if ( !TestAndNormalize_( BaseName ) ) {
+		Message = mIncorrectBaseName;
 		ERRReturn;
 	}
-*/
 
-	if ( !Manager.Init( Location, dbstbl::mAdmin, true, mbdmng::tCreate ) ) {
+	if ( !Manager.Init( Repository, BaseName, dbstbl::mAdmin, true, mbdmng::tCreate ) ) {
 		Message = mUnableToCreateDatabase;
 		ERRReturn;
 	}
@@ -241,15 +240,14 @@ DEC( OpenDatabase )
 ERRProlog
 	str::string Repository;
 	STR_BUFFER___ RepositoryBuffer;
-	str::string Location;
-	STR_BUFFER___ LocationBuffer;
-	FNM_BUFFER___ FileNameBuffer;
+	str::string FileBaseName;
+	STR_BUFFER___ FileBaseNameBuffer;
 ERRBegin
-	Location.Init();
-	Location = Request.StringIn();
+	FileBaseName.Init();
+	FileBaseName = Request.StringIn();
 
-	if ( !TestAndNormalize_( Location ) ) {
-		Message = mIncorrectLocation;
+	if ( !TestAndNormalize_( FileBaseName ) ) {
+		Message = mIncorrectBaseName;
 		ERRReturn;
 	}
 
@@ -258,7 +256,7 @@ ERRBegin
 	if ( !bkdrgstry::GetRepository( Repository ) )
 		ERRc();
 
-	if ( !Manager.Init( str::string( fnm::BuildFileName( Repository.Convert( RepositoryBuffer ), Location.Convert( LocationBuffer ), "", FileNameBuffer ) ), dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
+	if ( !Manager.Init( Repository, FileBaseName, dbstbl::mAdmin, false, mbdmng::tRetrieve ) ) {
 		Message = mUnableToOpenDatabase;
 		ERRReturn;
 	}
@@ -853,8 +851,8 @@ ERREpilog
 void bkdmnger::manager_::NOTIFY( bkdmng::untyped_module &Module )
 {
 	Module.Add( D( CreateDatabase ),
-			bkdmng::cString,	// Database location.
 			bkdmng::cString,	// Database name.
+			bkdmng::cString,	// Database file base name
 			bkdmng::cString,	// Database comment.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
@@ -863,7 +861,7 @@ void bkdmnger::manager_::NOTIFY( bkdmng::untyped_module &Module )
 			bkdmng::cStrings,	// Available databases.
 		bkdmng::cEnd );
 	Module.Add( D( OpenDatabase ),
-			bkdmng::cString,	// Database location.
+			bkdmng::cString,	// Database file base name.
 		bkdmng::cEnd,
 		bkdmng::cEnd );
 	Module.Add( D( CloseDatabase ),

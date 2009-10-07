@@ -56,16 +56,24 @@ namespace mbdbsc {
 
 	const char *GetFieldTypeLabel( field_type__ Fieldtype );
 
-	const str::string_ &BuildLocatedContentRootFileName(
+	const str::string_ &BuildBaseDirectoryName(
 		const str::string_ &Location,
+		const str::string_ &BaseName,
+		str::string_ &BaseDirectoryName );
+
+	const str::string_ &BuildLocatedContentBaseFileName(
+		const str::string_ &Location,
+		const str::string_ &BaseName,
 		str::string_ &LocalizedRootFileName );
 
-	const str::string_ &BuildLocatedTableRecordFieldIndexRootFileName(
+	const str::string_ &BuildLocatedTableRecordFieldIndexBaseFileName(
 		const str::string_ &Location,
+		const str::string_ &BaseName,
 		str::string_ &LocalizedRootFileName );
 
-	const str::string_ &BuildLocatedTableFieldDatumIndexRootFileName(
+	const str::string_ &BuildLocatedTableFieldDatumIndexBaseFileName(
 		const str::string_ &Location,
+		const str::string_ &BaseName,
 		str::string_ &LocalizedRootFileName );
 
 

@@ -492,7 +492,7 @@ ERRProlog
 	FNM_BUFFER___ Buffer;
 	const char *Filename = NULL;
 ERRBegin
-	if ( Flow.Init( GetStructureFileName_( Location, Buffer ), err::hSkip ) == fil::sSuccess ) {
+	if ( Flow.Init( GetStructureFileName_( BaseDirectoryName, Buffer ), err::hSkip ) == fil::sSuccess ) {
 		Success = true;
 
 		Writer.Init( TFlow );
@@ -533,7 +533,7 @@ ERRProlog
 	const char *Filename = NULL;
 	mbddsc::description Description;
 ERRBegin
-	Filename = GetStructureFileName_( Location, Buffer );
+	Filename = GetStructureFileName_( BaseDirectoryName, Buffer );
 
 	if ( Success = fil::FileExists( Filename ) ) {
 		Description.Init();
@@ -554,7 +554,7 @@ bso::bool__ mbdmng::manager_::_Create( void )
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	if ( dir::CreateDir( Location.Convert( Buffer ) ) == dir::sOK )
+	if ( dir::CreateDir( BaseDirectoryName.Convert( Buffer ) ) == dir::sOK )
 		Success = _ExportStructure();
 ERRErr
 ERREnd

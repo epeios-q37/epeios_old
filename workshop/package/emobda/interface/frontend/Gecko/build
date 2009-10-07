@@ -15,10 +15,10 @@ mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
 
-cp /cygdrive/h/xulrunner/components/gesbibcom.dll .
-cp /cygdrive/h/xulrunner/components/iemobda.xpt .
-
 mkdir $DIR/XPCOM
+
+cp /cygdrive/h/xulrunner/components/emobdacom.dll $DIR/XPCOM
+cp /cygdrive/h/xulrunner/components/iemobda.xpt $DIR/XPCOM
 
 $GET epeios $DIR/XPCOM stable/*.h
 $GET epeios $DIR/XPCOM stable/*.cpp
@@ -64,11 +64,4 @@ mkdir $DIR/XUL/defaults/preferences
 $GET epeios $DIR/XUL/defaults/preferences apps/emobda/interface/frontend/Gecko/XUL/defaults/preferences/debug.js
 $GET epeios $DIR/XUL/defaults/preferences apps/emobda/interface/frontend/Gecko/XUL/defaults/preferences/prefs.js
 
-
-
-
-
-
-
-
-#../../../../../create_pkg $DIR
+../../../../../create_pkg $DIR

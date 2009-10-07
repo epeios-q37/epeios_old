@@ -1,5 +1,5 @@
 <!-- Don't modify !
-This document was generated using getbkdapi 0.2.4 (http://epeios.org/getbkdapi/) on 17/09/2009 16:18:50. -->
+This document was generated using getbkdapi 0.2.4 (http://epeios.org/getbkdapi/) on 06/10/2009 17:13:18. -->
 <!-- CVS feature : $Id$ -->
 <API>
 	<Misc>
@@ -19,8 +19,8 @@ This document was generated using getbkdapi 0.2.4 (http://epeios.org/getbkdapi/)
 			<Name>emobdabkd</Name>
 			<Version>0.1.0</Version>
 		</Backend>
-		<Date>17/09/2009</Date>
-		<Time>16:18:50</Time>
+		<Date>06/10/2009</Date>
+		<Time>17:13:18</Time>
 	</Misc>
 	<Messages Amount="23">
 		<Message Content="_UnknowObjectType"/>
@@ -29,7 +29,7 @@ This document was generated using getbkdapi 0.2.4 (http://epeios.org/getbkdapi/)
 		<Message Content="_BadLanguage"/>
 		<Message Content="_BackendError"/>
 		<Message Content="MANAGER_OK"/>
-		<Message Content="MANAGER_IncorrectLocation"/>
+		<Message Content="MANAGER_IncorrectBaseName"/>
 		<Message Content="MANAGER_IncorrectDatabaseName"/>
 		<Message Content="MANAGER_UnableToCreateDatabase"/>
 		<Message Content="MANAGER_UnableToOpenDatabase"/>

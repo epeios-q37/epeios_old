@@ -17,7 +17,7 @@ namespace emobdabkd {
 		_BadLanguage,
 		_BackendError,
 		MANAGER_OK,
-		MANAGER_IncorrectLocation,
+		MANAGER_IncorrectBaseName,
 		MANAGER_IncorrectDatabaseName,
 		MANAGER_UnableToCreateDatabase,
 		MANAGER_UnableToOpenDatabase,
@@ -64,9 +64,9 @@ namespace emobdabkd {
 
 			return MANAGER_OK;
 
-		if ( !strcmp( Message, "MANAGER_IncorrectLocation" ) )
+		if ( !strcmp( Message, "MANAGER_IncorrectBaseName" ) )
 
-			return MANAGER_IncorrectLocation;
+			return MANAGER_IncorrectBaseName;
 
 		if ( !strcmp( Message, "MANAGER_IncorrectDatabaseName" ) )
 
@@ -203,7 +203,7 @@ namespace emobdabkd {
 			Row = Messages.Next( Row );
 
 
-			if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectLocation" ) )
+			if ( Message( Row ) != bkdacc::string( "MANAGER_IncorrectBaseName" ) )
 				ERRb();
 
 			Row = Messages.Next( Row );
