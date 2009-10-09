@@ -59,3 +59,6 @@
 <!ENTITY about.label "About ...">
 <!ENTITY about.tooltiptext "Display informations about this application">
 
+<!ENTITY webSite.label "WEB site">
+<!ENTITY webSite.tooltiptext "Go to the 'EMobDa' dedicated WEB site">
+

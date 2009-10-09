@@ -44,6 +44,7 @@
 	</broadcasterset>
 	<commandset>
 		<command id="cmdVersion" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
+		<command id="cmdWebSite" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
 		<command id="cmdJSConsole" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
 		<command id="cmdDOMInspector" oncommand=";"/>		<!-- The 'oncommand' seems silly, but if missing, the 'oncommand' defined in the XPCOM component isn't called ! -->
 	</commandset>
@@ -100,6 +101,7 @@
 		<menu label="&misc.label;">
 			<menupopup>
 				<menuitem label="&about.label;" tooltiptext="&about.tooltiptext;" command="cmdVersion"/>
+				<menuitem label="&webSite.label;" tooltiptext="&webSite.tooltiptext;" command="cmdWebSite"/>
 			</menupopup>
 		</menu>
 	</menubar>

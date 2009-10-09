@@ -32,6 +32,7 @@ using nsxpcm::event__;
 #define NAME "emobdacom"
 #define VERSION "0.1.0"
 #define COPYRIGHT_YEARS	"2009"
+#define EMOBDA_URL	"http://zeusw.org/intl/emobda/"
 #ifdef XXX_DBG
 #	define DEBUG_FLAG	" (D)"
 #else
@@ -83,6 +84,10 @@ ERREnd
 ERREpilog
 }
 
+void ui_main::web_site_command__::NSXPCMOnEvent( event__ )
+{
+	nsxpcm::LaunchURI( EMOBDA_URL );
+}
 
 void ui_main::jsconsole_command__::NSXPCMOnEvent( event__ )
 {
@@ -301,6 +306,7 @@ static void Register_(
 	nsIDOMDocument *Document )
 {
 	Register_( Functions, UI.Version, Document, "cmdVersion" );
+	Register_( Functions, UI.WebSite, Document, "cmdWebSite" );
 	Register_( Functions, UI.JSConsole, Document, "cmdJSConsole" );
 	Register_( Functions, UI.DOMInspector, Document, "cmdDOMInspector" );
 

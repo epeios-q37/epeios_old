@@ -288,7 +288,7 @@ namespace ui {
 
 			nsIDOMWindow *Window = NULL;
 			UIExposeKernel();
-			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "BackendSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), &Window );
+			nsxpcm::GetWindowInternal( Main.Window )->Open( NS_LITERAL_STRING( "BackendSelectionDialogBox.xul" ),  NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome=yes,extrachrome=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,toolbar=yes,modal=yes" ), &Window );
 
 
 			switch ( _K().BackendSelection().GetState() ) {

@@ -64,7 +64,7 @@ endif
 ifeq ("$(env)","gnu")
 co = -c
 # Generates debugging data.
-#co += -g
+# co += -g
 # General optimization.
 #co += -O
 lo += -o $(name)

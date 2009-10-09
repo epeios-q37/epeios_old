@@ -37,6 +37,7 @@ namespace ui_main {
 	UI_ETYPEDEF( menu_item__, table_menu_item__ );
 
 	UI_ETYPEDEF( command__, version_command__ );
+	UI_ETYPEDEF( command__, web_site_command__ );
 	UI_ETYPEDEF( command__, jsconsole_command__ );
 	UI_ETYPEDEF( command__, dom_inspector_command__ );
 
@@ -68,6 +69,7 @@ namespace ui_main {
 		} Broadcasters;
 		struct commands__ {
 			version_command__ Version;
+			web_site_command__ WebSite;
 			jsconsole_command__ JSConsole;
 			dom_inspector_command__ DOMInspector;
 			struct backend__ {
