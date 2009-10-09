@@ -3,3 +3,7 @@ $Id$
 REMINDER :
 	- Before publication, merge with the content of ../CHANGELOG.txt.
 	- This file is for both C++ and XUL part of the program..
+	
+***********
+* V 0.1.0 *
+***********
