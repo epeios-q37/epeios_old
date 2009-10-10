@@ -251,7 +251,7 @@ inline static void Unlock_( void )
 
 inline static rrow__ New_( const csdbns_repository_item__ &Item )
 {
-	rrow__ Row = NULL;
+	rrow__ Row = NONE;
 
 	Lock_();
 

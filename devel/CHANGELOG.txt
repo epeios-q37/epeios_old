@@ -1,5 +1,9 @@
 $Id$
 
+10/10/2009 :
+	- CSDBNS :
+		- Correction affectation de 'NULL' au lieu de 'NONE'.
+
 04/10/2009 :
 	- CLNARG :
 		- Ajout macro 'CLNARG_STRING_PARAM(...)' simplifiant la récupération d'un paramèetre de type 'str::string'.
