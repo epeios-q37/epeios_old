@@ -1,14 +1,14 @@
 $Id$
 
 ---------------
-Version 0.2.3 :
+Version 0.2.4 :
 ---------------
 
 - 04/10/2009 :
-	- Adaptation aux changements dans les différentes bibliothèques.
+	- Adaptation to changes in the underlying libraries.
 
 - 09/11/2008 :
-	- Adaptation to changes in 'XTF'.
+	- Adaptation to changes in 'XTF' library.
 
 ---------------
 Version 0.2.3 :

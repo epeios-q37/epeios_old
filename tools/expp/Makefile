@@ -1,4 +1,4 @@
-# 'expp' Makefile by Claude SIMON (claude.simon@zeusw.org)
+# 'expp' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
 # Builds executable for the 'expp' software.
 # Requires GNU make (http://www.gnu.org/).
 # Copyright (C) 2007 Claude SIMON
