@@ -238,7 +238,7 @@ namespace frdkernl {
 		csducl::universal_client_core _ClientCore;
 		rgstry::registry _GlobalRegistry;
 		rgstry::overloaded_unique_registry___ _Registry;
-		rgstry::nrow__ _LocalRegistryRoot;
+		rgstry::row__ _LocalRegistryRoot;
 		transient__ _Transient;
 		records _Records;
 		target__ _Target;
@@ -347,7 +347,7 @@ namespace frdkernl {
 			const str::string_ &Path );	/* To call after 'Init()'. 'Project' contains the 'XML' tree containing the user configuration.
 											'Path' contains the path of the root subtree. */
 		void DumpRegistry(
-			rgstry::nrow__ Root,
+			rgstry::row__ Root,
 			txf::text_oflow__ &OFlow ) const
 		{
 			_GlobalRegistry.Dump( Root, true, true, OFlow );
@@ -371,7 +371,7 @@ namespace frdkernl {
 			const char *Path,
 			str::string_ &Value )
 		{
-			return _Registry.GetPathValue( str::string( Path ), Value );
+			return _Registry.GetValue( str::string( Path ), Value );
 		}
 		bso::bool__ CreateDatabase(
 			const str::string_ &Name,
@@ -553,7 +553,7 @@ namespace frdkernl {
 			str::string_ &XML );
 		bso::bool__ GetDatabase( str::string_ &Database )
 		{
-			return frdrgstry::GetPathValue( frdrgstry::paths::Parameters.Database.Path, _Registry, Database );
+			return frdrgstry::GetValue( frdrgstry::paths::Parameters.Database.Path, _Registry, Database );
 		}
 		bso::bool__ GetCurrentTable( table__ &Table )
 		{

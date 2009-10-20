@@ -63,15 +63,15 @@ namespace frdrgstry {
 		const char *FileName,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
-		rgstry::nrow__ &RegistryRoot,
+		rgstry::row__ &RegistryRoot,
 		txf::text_oflow__ &Flow );
 
-	inline bso::bool__ GetPathValue(
+	inline bso::bool__ GetValue(
 		const char *Path,
 		const registry___ &Registry,
 		str::string_ &Value )
 	{
-		return Registry.GetPathValue( rgstry::term( Path ), Value );
+		return Registry.GetValue( str::string( Path ), Value );
 	}
 
 	bso::bool__ GetProfileValue(
@@ -103,7 +103,7 @@ namespace frdrgstry {
 		const registry___ &Registry,
 		str::string_ &Target )
 	{
-		return GetPathValue( paths::Parameters.Backend.Type, Registry, Target );
+		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
 	}
 }
 

@@ -218,9 +218,8 @@ bso::bool__ frdkernl::kernel___::OpenProject(
 	bso::bool__ Success = false;
 ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
-	rgstry::nrow__ BaseRoot = NONE;
+	rgstry::row__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
-	rgstry::erow__ AttributeEntryRow = NONE;
 	csducl::type__ Type = csducl::t_Undefined;
 ERRBegin
 	Close();
@@ -235,11 +234,11 @@ ERRBegin
 		ERRReturn;
 	}
 	
-	if ( ( BaseRoot = _GlobalRegistry.SearchPath( rgstry::term( RootPath ), BaseRoot, AttributeEntryRow, PathErrorRow ) ) == NONE ) {
+	if ( ( BaseRoot = _GlobalRegistry.Search( str::string( RootPath ), BaseRoot, &PathErrorRow ) ) == NONE ) {
 		if ( PathErrorRow != NONE )
 			ERRc();
 
-		if ( AttributeEntryRow != NONE )
+		if ( _GlobalRegistry.GetNature( BaseRoot ) == rgstry::nAttribute )
 			ERRc();
 
 		GetMessage( mMissingProjectTree, Message );
@@ -291,25 +290,24 @@ void frdkernl::kernel___::SetLocalRegistry(
 	const str::string_ &Path )
 {
 ERRProlog
-	rgstry::nrow__ BaseRoot = NONE;
+	rgstry::row__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
-	rgstry::erow__ AttributeEntryRow = NONE;
 ERRBegin
 	if ( _LocalRegistryRoot != NONE )
 		ERRu();
 
 	_LocalRegistryRoot = rgstry::Parse( Project, str::string( "." ), _GlobalRegistry, NONE );
 
-	BaseRoot = _GlobalRegistry.SearchPath( Path, _LocalRegistryRoot, AttributeEntryRow, PathErrorRow );
+	BaseRoot = _GlobalRegistry.Search( Path, _LocalRegistryRoot, &PathErrorRow );
 
 	if ( PathErrorRow != NONE )
 		ERRc();
 
-	if ( AttributeEntryRow != NONE )
+	if ( _GlobalRegistry.GetNature( BaseRoot ) == rgstry::nAttribute )
 		ERRc();
 
 	if ( BaseRoot == NONE ) {
-		BaseRoot = _GlobalRegistry.CreatePath( Path, _LocalRegistryRoot, PathErrorRow );
+		BaseRoot = _GlobalRegistry.Create( Path, _LocalRegistryRoot, &PathErrorRow );
 
 		if ( PathErrorRow != NONE )
 			ERRc();

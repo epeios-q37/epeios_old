@@ -3,3 +3,6 @@ $Id$
 REMINDER :
 	- This file concerns the frontend globally.
 	- The WEB version and the GECKO one have both their own file for what is specific to them.
+	
+- 20/10/2009 :
+	- Adaptation to chnages in 'RGSTRY'.

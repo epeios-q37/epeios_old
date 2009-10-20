@@ -41,18 +41,18 @@ using cio::cerr;
 
 void Consult(
 	const rgstry::registry_ &Registry,
-	rgstry::nrow__ Root )
+	rgstry::row__ Root )
 {
 	epeios::row__ Cursor = NONE;
-	rgstry::term_buffer Buffer;
+	rgstry::buffer Buffer;
 #if 0
 	cout << "Limit : " << Registry.GetPathValue( str::string( "RecordAmountLimitation" ), Root, Buffer ) << txf::nl;
 
 	cout << "Outfit : " << Registry.GetPathValue( str::string( "Outfit" ), Root, Buffer ) << txf::nl;
 #else
-	cout << "Host : " << Registry.GetPathValue( str::string( "Backend/Host" ), Root, Buffer ) << txf::nl << txf::sync;
+	cout << "Host : " << Registry.GetValue( str::string( "Backend/Host" ), Root, Buffer ) << txf::nl << txf::sync;
 
-	cout << "Service : " << Registry.GetPathValue( str::string( "Backend/Service" ), Root, Buffer ) << txf::nl << txf::sync;
+	cout << "Service : " << Registry.GetValue( str::string( "Backend/Service" ), Root, Buffer ) << txf::nl << txf::sync;
 #endif
 }
 
@@ -63,9 +63,10 @@ ERRProlog
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Registry;
-	rgstry::nrow__ Root;
-	xtf::location__ Line, Column;
+	rgstry::row__ Root;
+	rgstry::xcoord Coord;
 	str::string FileName;
+	xml::extended_status__ Status = xml::xs_Undefined;
 ERRBegin
 	FFlow.Init( "essai.xml" );
 	FFlow.EOFD( XTF_EOXT );
@@ -76,7 +77,9 @@ ERRBegin
 
 	FileName.Init();
 
-	Root = rgstry::Parse( XFlow, Registry, NONE, FileName, Line, Column );
+	Coord.Init();
+
+	Root = rgstry::Parse( XFlow, str::string( "" ), Registry, NONE, Status, Coord );
 
 	if ( Root == NONE ) {
 	 cerr << "Erreur";
@@ -84,7 +87,7 @@ ERRBegin
 	 if ( FileName.Amount() )
 		 cerr << " fichier '" << FileName << '\'';
 	 
-	 cerr << " ligne " << Line << " colonne " << Column << txf::nl;
+	 cerr << " ligne " << Coord.GetCoord().Line << " colonne " << Coord.GetCoord().Column << txf::nl;
 
 	 ERRu();
 	}

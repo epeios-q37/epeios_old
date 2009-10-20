@@ -61,8 +61,7 @@ bso::bool__ lcl::locales_::Init(
 	xtf::extended_text_iflow__ &XFlow,
 	const char *RootPath )
 {
-	rgstry::nrow__ BaseRoot = NONE;
-	rgstry::erow__ AttributeEntryRow = NONE;
+	rgstry::row__ BaseRoot = NONE;
 	epeios::row__ PathErrorRow = NONE;
 
 	Registry.Init();
@@ -70,9 +69,9 @@ bso::bool__ lcl::locales_::Init(
 	BaseRoot = rgstry::Parse( XFlow, str::string(), Registry, NONE );
 
 	if ( ( BaseRoot != NONE ) && ( RootPath != NULL ) && ( RootPath[0] != 0 ) ) {
-		BaseRoot = Registry.SearchPath( str::string( RootPath ), BaseRoot, AttributeEntryRow, PathErrorRow );
+		BaseRoot = Registry.Search( str::string( RootPath ), BaseRoot, &PathErrorRow );
 
-		if ( AttributeEntryRow != NONE )
+		if ( ( BaseRoot != NONE ) && ( Registry.GetNature( BaseRoot ) == rgstry::nAttribute ) )
 			ERRu();
 
 		if ( PathErrorRow != NONE )
@@ -102,7 +101,7 @@ ERRBegin
 		Path.Append( "\"]/@Wording" );
 
 		Wording.Init();
-		if ( Registry.GetPathValue( Path, S_.Root, Wording ) )
+		if ( Registry.GetValue( Path, S_.Root, Wording ) )
 			Wordings.Append( Wording );
 		else
 			Wordings.Append( Label( Row ) );
@@ -121,7 +120,7 @@ bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenMessage(
 {
 	bso::bool__ Found = false;
 ERRProlog
-	rgstry::term Path;
+	str::string Path;
 ERRBegin
 	Path.Init( "Translations[language=\"" );
 	Path.Append( Language );
@@ -129,7 +128,7 @@ ERRBegin
 	Path.Append( RawMessage );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetPathValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, S_.Root, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -143,7 +142,7 @@ bso::bool__ lcl::locales_::_GetTranslationFollowingMessageThenLanguage(
 {
 	bso::bool__ Found = false;
 ERRProlog
-	rgstry::term Path;
+	str::string Path;
 ERRBegin
 	Path.Init( "Translations[message=\"" );
 	Path.Append( RawMessage );
@@ -151,7 +150,7 @@ ERRBegin
 	Path.Append( Language );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetPathValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, S_.Root, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -165,7 +164,7 @@ void lcl::locales_::GetLanguages(
 	if ( S_.Root != NONE ) {
 		epeios::row__ PathErrorRow = NONE;
 
-		Registry.GetPathValues( str::string( "Languages/Language/@label" ), S_.Root, PathErrorRow, Labels );
+		Registry.GetValues( str::string( "Languages/Language/@label" ), S_.Root, &PathErrorRow, Labels );
 
 		_GetCorrespondingLabels( Labels, Wordings );
 

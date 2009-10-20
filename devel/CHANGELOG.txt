@@ -1,5 +1,11 @@
 $Id$
 
+20/10/2009 :
+	- LCL :
+		- Adaptation aux changements dans 'RGSTRY'.
+	- RGSTRY :
+		- Simplification.
+
 10/10/2009 :
 	- CSDBNS :
 		- Correction affectation de 'NULL' au lieu de 'NONE'.

@@ -60,31 +60,12 @@ public:
 
 using namespace rgstry;
 
-erow__ rgstry::registry_::_SearchEntry(
-	const term_ &Name,
-	const erows_ &EntryRows ) const
-{
-	term_buffer Buffer;
-	epeios::row__ Row = EntryRows.First();
-
-	Buffer.Init( Terms );
-
-	while ( ( Row != NONE ) && ( _GetName( EntryRows( Row ), Buffer ) != Name ) )
-		Row = EntryRows.Next( Row );
-
-	if ( Row != NONE )
-		return EntryRows( Row );
-	else
-		return NONE;
-}
-
-nrow__ rgstry::registry_::_SearchNode(
-	const term_ &Name,
-	const nrows_ &NodeRows,
+row__ rgstry::registry_::_Search(
+	const name_ &Name,
+	const rows_ &NodeRows,
 	epeios::row__ &Cursor ) const
 {
-	node_buffer NodeBuffer;
-	term_buffer NameBuffer;
+	buffer Buffer;
 
 	epeios::row__ &Row = Cursor;
 	
@@ -93,10 +74,9 @@ nrow__ rgstry::registry_::_SearchNode(
 	else
 		Row = NodeRows.Next( Row );
 
-	NodeBuffer.Init( Nodes );
-	NameBuffer.Init( Terms );
+	Buffer.Init( Nodes );
 
-	while ( ( Row != NONE ) && ( _GetName( NodeRows( Row ), NameBuffer, NodeBuffer ) != Name ) )
+	while ( ( Row != NONE ) && ( Buffer( NodeRows( Row ) ).Name != Name ) )
 		Row = NodeRows.Next( Row );
 
 	if ( Row != NONE )
@@ -106,49 +86,87 @@ nrow__ rgstry::registry_::_SearchNode(
 
 }
 
-nrow__ rgstry::registry_::_SearchNode(
-	const term_ &NodeName,
-	const term_ &AttributeName,
-	const value_ &AttributeValue,
-	nrow__ ParentNodeRow,
-	epeios::row__ &Cursor ) const
+row__ rgstry::registry_::_Search(
+	nature__ Nature,
+	const name_ &Name,
+	const rows_ &NodeRows,
+	cursor__ &Cursor ) const
 {
-	nrow__ NodeRow = _SearchNode( NodeName, ParentNodeRow, Cursor );
+	buffer Buffer;
 
-	while ( ( NodeRow != NONE ) && ( !_AttributeExists( AttributeName, AttributeValue, NodeRow ) ) )
-		NodeRow = _SearchNode( NodeName, ParentNodeRow, Cursor );
+	row__ Row = NONE;
+	
+	Buffer.Init( Nodes );
 
-	return NodeRow;
+	Row = _Search( Name, NodeRows, Cursor );
+
+	while ( ( Row != NONE ) && ( Buffer( Row ).Nature() != Nature ) )
+		Row = _Search( Name, NodeRows, Cursor );
+
+	return Row;
 }
 
-const term_ &rgstry::registry_::GetCompleteName(
-	nrow__ NodeRow,
-	term_ &Term,
+row__ rgstry::registry_::_Search(
+	const name_ &KeyName,
+	const name_ &AttributeName,
+	const value_ &AttributeValue,
+	row__ Row,
+	cursor__ &Cursor ) const
+{
+	row__ ResultRow = NONE;
+
+	if ( KeyName.Amount() != 0 ) {
+		// .../KeyName...
+
+		ResultRow = _SearchKey( KeyName, Row, Cursor );
+
+		if ( ( ResultRow != NONE ) && ( AttributeName.Amount() != 0 ) ) {
+			// .../KeyName[@AttributeName='AttributeValue']/...
+
+			while ( ( ResultRow != NONE ) && ( !_AttributeExists( AttributeName, AttributeValue, ResultRow ) ) ) {
+				ResultRow = _SearchKey( KeyName, Row, Cursor );
+			}
+		}
+	} else {
+		if ( AttributeName.Amount() != 0 ) {
+			// .../@AttributeName...
+#ifdef RGSTRY_DBG
+			if ( AttributeValue.Amount() != 0 )
+				ERRc();
+#endif
+				ResultRow = _SearchAttribute( AttributeName, Row );
+		}
+	}
+
+	return ResultRow;
+}
+
+const str::string_ &rgstry::registry_::GetCompleteName(
+	row__ Row,
+	str::string_ &Name,
 	const char *Separator ) const
 {
-	term_buffer TermBuffer;
-	node_buffer NodeBuffer;
+	buffer Buffer;
 
-	TermBuffer.Init( Terms );
-	NodeBuffer.Init( Nodes );
+	Buffer.Init( Nodes );
 
-	if ( NodeRow != NONE ) {
-		Term.Append( _GetName( NodeRow, TermBuffer, NodeBuffer ) );
-		NodeRow = GetParent( NodeRow );
+	if ( Row != NONE ) {
+		Name.Append( Buffer( Row ).Name );
+		Row = Buffer( Row ).ParentRow();
 	}
 
-	while ( NodeRow != NONE ) {
-		Term.Insert( Separator, 0 );
-		Term.Insert( _GetName( NodeRow, TermBuffer, NodeBuffer ), 0 );
+	while ( Row != NONE ) {
+		Name.Insert( Separator, 0 );
+		Name.Insert( Buffer( Row ).Name, 0 );
 
-		NodeRow = GetParent( NodeRow );
+		Row = Buffer( Row ).ParentRow();
 	}
 
-	return Term;
+	return Name;
 }
 
 enum state__ {
-	sTagName,
+	sKeyName,
 	sAttributeName,
 	sAttributeValue,
 	s_amount,
@@ -156,59 +174,59 @@ enum state__ {
 };
 
 epeios::row__ rgstry::BuildPath(
-	const term_ &Term,
+	const str::string_ &PathString,
 	path_ &Path )
 {
-	epeios::row__ TermRow = NONE;
+	epeios::row__ Row = NONE;
 ERRProlog
 	bso::bool__ Continue = true;
 	state__ State = s_Undefined;
 	bso::char__ C;
 	path_item Item;
-	bso::bool__ TagNameAsAttribute = false;
+	bso::bool__ KeyNameAsAttribute = false;
 ERRBegin
-	TermRow = Term.First();
+	Row = PathString.First();
 
 	Item.Init();
 
-	Continue = TermRow != NONE;
+	Continue = Row != NONE;
 
-	State = sTagName;
+	State = sKeyName;
 
 	while ( Continue ) {
-		C = Term( TermRow );
+		C = PathString( Row );
 		switch ( State ) {
-		case sTagName:
+		case sKeyName:
 			switch ( C ) {
 			case '=':
 			case '"':
 				Continue = false;
 				break;
 			case '[':
-				if ( TagNameAsAttribute )
+				if ( KeyNameAsAttribute )
 					Continue = false;
-				else if ( Item.TagName.Amount() == 0 )
+				else if ( Item.KeyName.Amount() == 0 )
 					Continue = false;
 				State = sAttributeName;
 				Item.AttributeName.Init();
 				break;
 			case '/':
-				if ( TagNameAsAttribute )
+				if ( KeyNameAsAttribute )
 					Continue = false;
-				else if ( Item.TagName.Amount() == 0 )
+				else if ( Item.KeyName.Amount() == 0 )
 					Continue = false;
 				else
 					Path.Append( Item );
 				Item.Init();
 				break;
 			case '@':
-				if ( Item.TagName.Amount() != 0 )
+				if ( Item.KeyName.Amount() != 0 )
 					Continue = false;
 				else
-					TagNameAsAttribute = true;
+					KeyNameAsAttribute = true;
 				break;
 			default:
-				Item.TagName.Append( C );
+				Item.KeyName.Append( C );
 				break;
 			}
 			break;
@@ -225,9 +243,9 @@ ERRBegin
 						Continue = false;
 					State = sAttributeValue;
 					Item.AttributeValue.Init();
-					if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+					if ( ( Row = PathString.Next( Row ) ) == NONE )
 						Continue = false;
-					else if ( Term( TermRow ) != '"' )
+					else if ( PathString( Row ) != '"' )
 						Continue = false;
 					break;
 				default:
@@ -243,17 +261,17 @@ ERRBegin
 					Continue = false;
 					break;
 				case '"':
-					if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+					if ( ( Row = PathString.Next( Row ) ) == NONE )
 						Continue = false;
-					else if ( Term( TermRow ) != ']' )
+					else if ( PathString( Row ) != ']' )
 						Continue = false;
-					else if ( ( TermRow = Term.Next( TermRow ) ) == NONE )
+					else if ( ( Row = PathString.Next( Row ) ) == NONE )
 						Continue = false;
-					else if ( Term( TermRow ) != '/' )
+					else if ( PathString( Row ) != '/' )
 						Continue = false;
 					Path.Append( Item );
 					Item.Init();
-					State = sTagName;
+					State = sKeyName;
 					break;
 				default:
 					Item.AttributeValue.Append( C );
@@ -266,16 +284,16 @@ ERRBegin
 		}
 
 		if ( Continue )
-			TermRow = Term.Next( TermRow );
+			Row = PathString.Next( Row );
 
-		if ( TermRow == NONE )
+		if ( Row == NONE )
 			Continue = false;
 	}
 
-	if ( Item.TagName.Amount() != 0 ) {
-		if ( TagNameAsAttribute ) {
-			Item.AttributeName = Item.TagName;
-			Item.TagName.Init();
+	if ( Item.KeyName.Amount() != 0 ) {
+		if ( KeyNameAsAttribute ) {
+			Item.AttributeName = Item.KeyName;
+			Item.KeyName.Init();
 		}
 
 		Path.Append( Item );
@@ -283,151 +301,83 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return TermRow;
-}
-
-/*
-nrow__ rgstry::registry_::_SearchPath(
-	const path_ &Path,
-	nrow__ &ForkRow,
-	erow__ &AttributeEntryRow,
-	epeios::row__ &PathRow,
-	epeios::row__ &Cursor ) const
-{
-	ctn::E_CITEM( path_item_ ) Item;
-	nrow__ Row = ForkRow;
-	bso::bool__ ResetCursor = Cursor == NONE;
-	epeios::row__ LocalPathRow = ( PathRow == NONE ? Path.First() : PathRow );
-
-	AttributeEntryRow = NONE;
-
-	Item.Init( Path );
-
-	while ( ( LocalPathRow != NONE ) && ( Row != NONE ) ) {
-		if ( Item( LocalPathRow ).TagName.Amount() != 0 ) {// '.../Name[@AttributeName='AttributeValue']/...'
-			ForkRow = Row;
-			PathRow = LocalPathRow;
-			if ( ResetCursor )
-				Cursor = NONE;
-			Row = _SearchChild( Item( LocalPathRow ), Row, Cursor );	
-		} else if ( ( AttributeEntryRow = _GetAttribute( Item( LocalPathRow ).AttributeName, Row ) ) == NONE ) // '.../@Name'
-			Row = NONE;
-
-		LocalPathRow = Path.Next( LocalPathRow );
-
-#ifdef RGSTRY_DBG
-			if ( ( AttributeEntryRow != NONE ) && ( LocalPathRow != NONE ) )
-				ERRu();
-#endif
-	}
-
-	return Row;
-}
-*/
-
-nrow__ rgstry::registry_::_SearchChild(
-	const path_item_ &Item,
-	nrow__ Row,
-	erow__ &AttributeEntryRow,
-	epeios::row__ &Cursor ) const
-{
-	if ( Item.TagName.Amount() != 0 )
-		Row = _SearchChild( Item, Row, Cursor );	// '.../TagName[@AttributeName='AttributeValue']/...'
-	else if ( Cursor == NONE ) {
-		AttributeEntryRow = _GetAttribute( Item.AttributeName, Row );	// '.../@AttributeName'
-		if ( AttributeEntryRow == NONE ) {
-			AttributeEntryRow = *Row;	// Peu importe la valeur, pourvu qu'elle ce soit différente de 'NONE'.
-			Row = NONE;	// Pour signaler que l'on n'a pas trouvé.
-			// 'Row' == 'NONE 'et 'AttributeEntryRow' != 'NONE' signale que l'on a trouvé le tag, mais pas l'attribut.
-		}
-		Cursor = *Row;	// Peu importe la valeur, pourvu qu'elle ce soit différente de 'NONE'.
-	} else
-		Row = NONE;
-
 	return Row;
 }
 
-
-nrow__ rgstry::registry_::_SearchPath(
+row__ rgstry::registry_::_Search(
 	const path_ &Path,
 	epeios::row__ PathRow,
-	nrow__ Row,
-	erow__ &AttributeEntryRow,
-	nrows_ &ResultTags,
-	erows_ &ResultAttributes ) const
+	row__ Row,
+	rows_ &ResultKeys ) const
 {
-	epeios::row__ CandidateRow = NONE;
-	epeios::row__ Cursor = NONE;
+	cursor__ CandidateRow = NONE;
+	cursor__ Cursor = NONE;
 	ctn::E_CITEM( path_item_ ) Item;
-	nrow__ Result, ChildRow = NONE;
-	bso::bool__ All = &ResultTags != NULL;
+	row__ ResultRow, ChildRow = NONE;
+	bso::bool__ All = &ResultKeys != NULL;
+	buffer Buffer;
 
 	Item.Init( Path );
+	Buffer.Init( Nodes );
 
-	Result = ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
+	ResultRow = ChildRow = _Search( Item( PathRow ), Row, Cursor );
 
 #ifdef RGSTRY_DBG
-	tol::E_FPOINTER___( bso::char__ ) Tag;
+	tol::E_FPOINTER___( bso::char__ ) Key;
 	tol::E_FPOINTER___( bso::char__ ) AttributeName;
 	tol::E_FPOINTER___( bso::char__ ) AttributeValue;
 
-	Item( PathRow ).TagName.Convert( Tag );
+	Item( PathRow ).KeyName.Convert( Key );
 	Item( PathRow ).AttributeName.Convert( AttributeName );
 	Item( PathRow ).AttributeValue.Convert( AttributeValue );
 #endif
 
 	if ( PathRow != Path.Last() ) {
 #ifdef RGSTRY_DBG
-		if ( AttributeEntryRow != NONE )
+		if ( ( ResultRow != NONE ) && ( Buffer( ResultRow ).Nature() == nAttribute ) )
 			ERRc();
 #endif
 		while ( ChildRow != NONE )  {
-			AttributeEntryRow = NONE;
-			Result = _SearchPath( Path, Path.Next( PathRow ), ChildRow, AttributeEntryRow, ResultTags, ResultAttributes );
+			ResultRow = _Search( Path, Path.Next( PathRow ), ChildRow, ResultKeys );
 
-			if ( Result != NONE ) {
+			if ( ResultRow != NONE ) {
 				if ( All ) {
-					ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
+					ChildRow = _Search( Item( PathRow ), Row, Cursor );
 				} else
 					ChildRow = NONE;
-			} else if ( AttributeEntryRow == NONE )	// Voir '_SearchChild()'.
-				ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
-			else
-				ChildRow = NONE;	// pour sortir de la boucle.
+			} else
+				ChildRow = _Search( Item( PathRow ), Row, Cursor );
 		}
 
 	} else if ( All ) {
 
 		while ( ChildRow != NONE ) {
-			ResultTags.Append( ChildRow );
-			ResultAttributes.Append( AttributeEntryRow );
+			ResultKeys.Append( ChildRow );
 
-			ChildRow = _SearchChild( Item( PathRow ), Row, AttributeEntryRow, Cursor );
+			ChildRow = _Search( Item( PathRow ), Row, Cursor );
 		}
 
 	}
 
-	return Result;
+	return ResultRow;
 }
 
-nrow__ rgstry::registry_::_SearchPath(
+row__ rgstry::registry_::_Search(
 	const path_ &Path,
-	nrow__ Row,
-	erow__ &AttributeEntryRow ) const
+	row__ Row ) const
 {
 	epeios::row__ PathRow = NONE, Cursor = NONE;
 
 	if ( Path.Amount() != 0 )
-		return _SearchPath( Path, Path.First(), Row, AttributeEntryRow, *(nrows_ *)NULL, *(erows_ *)NULL );
+		return _Search( Path, Path.First(), Row, *(rows_ *)NULL );
 	else
 		return NONE;
 }
 
-nrow__ rgstry::registry_::_SearchPath(
-	const term_ &Term,
-	nrow__ Row,
-	erow__ &AttributeEntryRow,
-	epeios::row__ &PathErrorRow ) const
+row__ rgstry::registry_::_Search(
+	const str::string_ &PathString,
+	row__ Row,
+	epeios::row__ *PathErrorRow ) const
 {
 ERRProlog
 	epeios::row__ PathRow = NONE;
@@ -435,13 +385,13 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( Term, Path );
+	PathRow = BuildPath( PathString, Path );
 
 	if ( PathRow != NONE ) {
 		Row = NONE;
-		PathErrorRow = PathRow;
+		*PathErrorRow = PathRow;
 	} else
-		Row = _SearchPath( Path, Row, AttributeEntryRow );
+		Row = _Search( Path, Row );
 
 ERRErr
 ERREnd
@@ -449,32 +399,32 @@ ERREpilog
 	return Row;
 }
 
-nrow__ rgstry::registry_::CreatePath(
+row__ rgstry::registry_::Create(
 	const path_ &Path,
-	nrow__ Row )
+	row__ Row )
 {
 	bso::bool__ Exists = true;
 	ctn::E_CITEM( path_item_ ) Item;
 	epeios::row__ PathRow = Path.First();
-	nrow__ Candidate = NONE;
+	row__ CandidateRow = NONE;
 
 	Item.Init( Path );
 
 	while ( ( PathRow != NONE ) && Exists ) {
-		Candidate = _SearchChild( Item( PathRow ), Row );
+		CandidateRow = _Search( Item( PathRow ), Row );
 
-		if ( Candidate == NONE ) {
+		if ( CandidateRow == NONE ) {
 			Exists = false;
 
-			Row = _CreateChild( Item( PathRow ), Row );
+			Row = _Create( Item( PathRow ), Row );
 		} else
-			Row = Candidate;
+			Row = CandidateRow;
 
 		PathRow = Path.Next( PathRow );
 	}
 
 	while ( PathRow != NONE ) {
-		Row = _CreateChild( Item( PathRow ), Row );
+		Row = _Create( Item( PathRow ), Row );
 
 		PathRow = Path.Next( PathRow );
 	}
@@ -482,10 +432,10 @@ nrow__ rgstry::registry_::CreatePath(
 	return Row;
 }
 
-nrow__ rgstry::registry_::CreatePath(
-	const term_ &Term,
-	nrow__ Row,
-	epeios::row__ &PathErrorRow )
+row__ rgstry::registry_::Create(
+	const str::string_ &PathString,
+	row__ Row,
+	epeios::row__ *PathErrorRow )
 {
 ERRProlog
 	epeios::row__ PathRow = NONE;
@@ -493,13 +443,13 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( Term, Path );
+	PathRow = BuildPath( PathString, Path );
 
 	if ( PathRow != NONE ) {
 		Row = NONE;
-		PathErrorRow = PathRow;
+		*PathErrorRow = PathRow;
 	} else
-		Row = CreatePath( Path, Row );
+		Row = Create( Path, Row );
 
 ERRErr
 ERREnd
@@ -508,11 +458,11 @@ ERREpilog
 }
 
 
-nrow__ rgstry::registry_::SetPathValue(
-	const term_ &Term,
+row__ rgstry::registry_::SetValue(
+	const str::string_ &PathString,
 	const value_ &Value,
-	nrow__ Row,
-	epeios::row__ &PathErrorRow )
+	row__ Row,
+	epeios::row__ *PathErrorRow )
 {
 ERRProlog
 	epeios::row__ PathRow = NONE;
@@ -520,13 +470,13 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( Term, Path );
+	PathRow = BuildPath( PathString, Path );
 
 	if ( PathRow != NONE ) {
 		Row = NONE;
-		PathErrorRow = PathRow;
+		*PathErrorRow = PathRow;
 	} else
-		Row = SetPathValue( Path, Value, Row );
+		Row = SetValue( Path, Value, Row );
 
 ERRErr
 ERREnd
@@ -545,7 +495,7 @@ class callback___
 {
 private:
 	registry_ &_Registry;
-	nrow__ _Root, _Current;
+	row__ _Root, _Current;
 protected:
 	virtual bso::bool__ XMLProcessingInstruction( const xml::dump_ & )
 	{
@@ -557,11 +507,11 @@ protected:
 	{
 		if ( _Current == NONE ) {
 			if ( _Root == NONE )
-				_Root = _Current = _Registry.CreateNode( TagName );
+				_Root = _Current = _Registry.CreateNewRegistry( TagName );
 			else
 				ERRc();
 		} else
-			_Current = _Registry.AddChild( TagName, _Current );
+			_Current = _Registry.AddKey( TagName, _Current );
 
 		return true;
 	}
@@ -595,7 +545,7 @@ protected:
 		const xml::dump_ &Dump )
 	{
 
-		_Current = _Registry.GetParent( _Current );
+		_Current = _Registry.GetParentRow( _Current );
 
 		if ( ( _Current == NONE ) && ( _Root == NONE ) )
 			return false;
@@ -608,48 +558,29 @@ public:
 	{
 		_Root = _Current = NONE;
 	}
-	void Init( nrow__ Root )
+	void Init( row__ Root )
 	{
 		_Root = _Current = Root;
 	}
-	nrow__ GetRoot( void ) const
+	row__ GetRoot( void ) const
 	{
 		return _Root;
 	}
 };
 
-void rgstry::registry_::_Delete( const erows_ &Rows )
-{
-	epeios::row__ Row = Rows.First();
-
-	while ( Row != NONE ) {
-		_Delete( Rows( Row ) );
-
-		Row = Rows.Next( Row );
-	}
-}
-
-void rgstry::registry_::_Delete( nrow__ Row )
+void rgstry::registry_::_Delete( row__ Row )
 {
 	const node_ &Node = Nodes( Row );
-
-	_Delete( Node.Attributes );
-
-	if ( Node.NameRow() != NONE )
-		Terms.Delete( Node.NameRow() );
-
-	if ( Node.ValueRow() != NONE )
-		Terms.Delete( Node.ValueRow() );
 
 	_Delete( Node.Children );
 
 	Nodes.Delete( Row );
 }
 
-bso::bool__ rgstry::registry_::PathExists(
-	const term_ &PathString,
-	nrow__ ParentRow,
-	epeios::row__ &PathRow ) const
+bso::bool__ rgstry::registry_::Exists(
+	const str::string_ &PathString,
+	row__ ParentRow,
+	epeios::row__ *PathErrorRow ) const
 {
 	bso::bool__ Result = false;
 ERRProlog
@@ -657,10 +588,10 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( PathString, Path );
+	*PathErrorRow = BuildPath( PathString, Path );
 
-	if ( PathRow != NONE )
-		Result = PathExists( Path, ParentRow );
+	if ( *PathErrorRow != NONE )
+		Result = Exists( Path, ParentRow );
 ERRErr
 ERREnd
 ERREpilog
@@ -668,45 +599,54 @@ ERREpilog
 }
 
 void rgstry::registry_::_DumpAttributes(
-	const erows_ &Rows,
+	row__ Row,
 	xml::writer_ &Writer ) const
 {
-	epeios::row__ Row = Rows.First();
-	term_buffer Name, Value;
+ERRProlog
+	buffer Buffer;
+	rows Rows;
+	cursor__ Cursor = NONE;
+ERRBegin
+	Buffer.Init( Nodes );
 
-	Name.Init( Terms );
-	Value.Init( Terms );
+	Rows.Init();
 
-	while ( Row != NONE ){
-		Writer.PutAttribute( _GetName( Rows( Row ), Name ), _GetValue( Rows( Row ), Value ) );
+	Rows = Buffer( Row ).Children;
 
-		Row = Rows.Next( Row );
+	Cursor = Rows.First();
+
+	while ( Cursor != NONE ){
+		if ( Buffer( Rows( Cursor ) ).Nature() == nAttribute )
+			Writer.PutAttribute( Buffer().Name, Buffer().Value );
+
+		Cursor = Rows.Next( Cursor );
 	}
-
+ERRErr
+ERREnd
+ERREpilog
 }
 
 epeios::size__ rgstry::registry_::_Dump(
-	nrow__ Root,
+	row__ Root,
 	bso::bool__ RootToo,
 	xml::writer_ &Writer,
-	term_buffer &TermBuffer,
-	node_buffer &NodeBuffer ) const
+	buffer &Buffer ) const
 {
 	epeios::size__ ChildAmount = 0;
 ERRProlog
-	nrows Children;
+	rows Children;
 	epeios::row__ Row = NONE;
 ERRBegin
 	Children.Init();
-	Children = _GetNode( Root, NodeBuffer ).Children;
+	Children = Buffer( Root ).Children;
 
 	if ( RootToo )
-		_DumpNode( Root, Writer, TermBuffer, NodeBuffer );
+		_DumpNode( Root, Writer, Buffer );
 	
 	Row = Children.First();
 
 	while ( Row != NONE ) {
-		_Dump( Children( Row ), true, Writer, TermBuffer, NodeBuffer );
+		_Dump( Children( Row ), true, Writer, Buffer );
 
 		Row = Children.Next( Row );
 	}
@@ -723,7 +663,7 @@ ERREpilog
 
 
 epeios::size__ rgstry::registry_::Dump(
-	nrow__ Root,
+	row__ Root,
 	bso::bool__ RootToo,
 	bso::bool__ Indent,
 	txf::text_oflow__ &Flow ) const
@@ -731,15 +671,13 @@ epeios::size__ rgstry::registry_::Dump(
 	epeios::size__ ChildAmount = 0;
 ERRProlog
 	xml::writer Writer;
-	term_buffer TermBuffer;
-	node_buffer NodeBuffer;
+	buffer Buffer;
 ERRBegin
-	TermBuffer.Init( Terms );
-	NodeBuffer.Init( Nodes );
+	Buffer.Init( Nodes );
 
 	Writer.Init( Flow, Indent );
 
-	ChildAmount = _Dump( Root, RootToo, Writer, TermBuffer, NodeBuffer );
+	ChildAmount = _Dump( Root, RootToo, Writer, Buffer );
 ERRErr
 ERREnd
 ERREpilog
@@ -747,7 +685,7 @@ ERREpilog
 }
 
 
-void rgstry::registry_::_Delete( const nrows_ &Rows )
+void rgstry::registry_::_Delete( const rows_ &Rows )
 {
 	epeios::row__ Row = Rows.First();
 
@@ -758,97 +696,78 @@ void rgstry::registry_::_Delete( const nrows_ &Rows )
 	}
 }
 
-const value_ &rgstry::registry_::GetPathValue_(
+const value_ &rgstry::registry_::GetValue(
 	const path_ &Path,
-	nrow__ ParentRow,
+	row__ Row,
 	bso::bool__ *Missing,
-	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
-ERRProlog
-	nrow__ Row = NONE;
-	erow__ AttributeEntryRow = NONE;
-ERRBegin
-	Empty.Init();
+	row__ ResultRow = NONE;
 
-	if ( ( Row = _SearchPath( Path, ParentRow, AttributeEntryRow ) ) != NONE )
-		if ( AttributeEntryRow == NONE )
-			Result = &GetValue( Row, Buffer );
-		else
-			Result = &GetValue( AttributeEntryRow, Buffer );
-	else {
+	Empty.Init();
+	Buffer.Init( Nodes );
+
+	if ( ( ResultRow = _Search( Path, Row ) ) != NONE )
+		Result = &Buffer( ResultRow ).Value;
+	else
 		*Missing = true;
-	}
-ERRErr
-ERREnd
-ERREpilog
+
 	return *Result;
 }
 
-const value_ &rgstry::registry_::GetPathValue_(
-	const term_ &PathString,
-	nrow__ ParentRow,
+const value_ &rgstry::registry_::GetValue(
+	const str::string_ &PathString,
+	row__ Row,
 	bso::bool__ *Missing,
-	epeios::row__ &PathErrorRow,
-	term_buffer &Buffer ) const	// Nota : ne met 'Exists' à 'false' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	epeios::row__ *PathErrorRow,
+	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
 ERRProlog
-	nrow__ Row = NONE;
 	path Path;
-	erow__ AttributeEntryRow = NONE;
 ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
+	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
 		*Missing = true;
 		ERRReturn;
 	}
 
-	Result = &GetPathValue_( Path, ParentRow, Missing, Buffer );
+	Result = &GetValue( Path, Row, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog
 	return *Result;
 }
 
-bso::bool__ rgstry::registry_::GetPathValues(
+bso::bool__ rgstry::registry_::GetValues(
 	const path_ &Path,
-	nrow__ ParentRow,
+	row__ Row,
 	values_ &Values ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
-	epeios::row__ Row = NONE;
-	erow__ AttributeEntryRow = NONE;
-	term_buffer Buffer;
-	nrows TagRows;
-	erows AttributeRows;
+	cursor__ Cursor = NONE;
+	buffer Buffer;
+	rows ResultRows;
 ERRBegin
-	TagRows.Init();
-	AttributeRows.Init();
+	Buffer.Init( Nodes );
+	ResultRows.Init();
 
-	_SearchPath( Path, Path.First(), ParentRow, AttributeEntryRow, TagRows, AttributeRows );
+	_Search( Path, Path.First(), Row, ResultRows );
 
-#ifdef RGSTRY_DBG
-	if ( TagRows.Amount() != AttributeRows.Amount() )
-		ERRc();
-#endif
-
-	if ( TagRows.Amount() != 0 ) {
+	if ( ResultRows.Amount() != 0 ) {
 		Exists = true;
-		Row = TagRows.First();
+		Cursor = ResultRows.First();
 
 		while ( Row != NONE ) {
-			if ( AttributeRows( Row ) == NONE )
-				Values.Append( GetValue( TagRows( Row ), Buffer ) );
-			else
-				Values.Append( GetValue( AttributeRows( Row ), Buffer ) );
+			Values.Append( Buffer( ResultRows( Cursor ) ).Value );
 
-			Row = AttributeRows.Next( Row );
+			Cursor = ResultRows.Next( Cursor );
 		}
 	}
 ERRErr
@@ -857,10 +776,10 @@ ERREpilog
 	return Exists;
 }
 
-bso::bool__ rgstry::registry_::GetPathValues(
-	const term_ &PathString,
-	nrow__ ParentRow,
-	epeios::row__ &PathErrorRow,
+bso::bool__ rgstry::registry_::GetValues(
+	const str::string_ &PathString,
+	row__ ParentRow,
+	epeios::row__ *PathErrorRow,
 	values_ &Values ) const
 {
 	bso::bool__ Exists = false;
@@ -869,20 +788,20 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
 		ERRReturn;
 
-	Exists = GetPathValues( Path, ParentRow, Values );
+	Exists = GetValues( Path, ParentRow, Values );
 ERRErr
 ERREnd
 ERREpilog
 	return Exists;
 }
 
-bso::bool__ rgstry::registry_::DeletePath(
-	const term_ &PathString,
-	nrow__ ParentRow,
-	epeios::row__ &PathErrorRow )
+bso::bool__ rgstry::registry_::Delete(
+	const str::string_ &PathString,
+	row__ Row,
+	epeios::row__ *PathErrorRow )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -890,21 +809,21 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
 		ERRReturn;
 
-	Exists = DeletePath( Path, ParentRow );
+	Exists = Delete( Path, Row );
 ERRErr
 ERREnd
 ERREpilog
 	return Exists;
 }
 
-nrow__ rgstry::Parse(
+row__ rgstry::Parse(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Directory,
 	registry_ &Registry,
-	nrow__ Root,
+	row__ Root,
 	xml::extended_status__ &Status,
 	xcoord_ &ErrorCoord )
 {
@@ -929,70 +848,68 @@ ERREpilog
 	return Root;
 }
 
-const value_ &rgstry::overloaded_registry___::GetPathValue_(
-	const term_ &PathString,
+const value_ &rgstry::overloaded_registry___::GetValue(
+	const str::string_ &PathString,
 	bso::bool__ *Missing,
-	epeios::row__ &PathErrorRow,
-	term_buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	epeios::row__ *PathErrorRow,
+	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
 ERRProlog
-	nrow__ Row = NONE;
+	row__ Row = NONE;
 	path Path;
-	erow__ AttributeEntryRow = NONE;
 	bso::bool__ LocalMissing = false;
 ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
+	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
 		*Missing = true;
 		ERRReturn;
 	}
 
 	if ( Local.Registry != NULL )
-		Result = &Local.Registry->GetPathValue_( Path, Local.Root, &LocalMissing, Buffer );
+		Result = &Local.Registry->GetValue( Path, Local.Root, &LocalMissing, Buffer );
 	else
 		LocalMissing = true;
 
 	if ( LocalMissing )
 		if ( Global.Registry != NULL )
-			Result = &Global.Registry->GetPathValue_( Path, Global.Root, Missing, Buffer );
+			Result = &Global.Registry->GetValue( Path, Global.Root, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog
 	return *Result;
 }
 
-bso::bool__ rgstry::overloaded_registry___::GetPathValues(
-	const term_ &PathString,
-	epeios::row__ &PathErrorRow,
+bso::bool__ rgstry::overloaded_registry___::GetValues(
+	const str::string_ &PathString,
+	epeios::row__ *PathErrorRow,
 	values_ &Values ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
 	path Path;
-	erow__ AttributeEntryRow = NONE;
 ERRBegin
 	Path.Init();
 
-	if ( ( PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
 		ERRReturn;
 
 	if ( Local.Registry != NULL )
-		Exists = Local.Registry->GetPathValues( Path, Local.Root, Values );
+		Exists = Local.Registry->GetValues( Path, Local.Root, Values );
 
-	Exists = Global.Registry->GetPathValues( Path, Global.Root, Values ) || Exists;
+	Exists = Global.Registry->GetValues( Path, Global.Root, Values ) || Exists;
 ERRErr
 ERREnd
 ERREpilog
 	return Exists;
 }
 
-bso::bool__ rgstry::overloaded_registry___::PathExists(
-	const rgstry::term_ &PathString,
-	epeios::row__ &PathRow ) const
+bso::bool__ rgstry::overloaded_registry___::Exists(
+	const str::string_ &PathString,
+	epeios::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -1000,13 +917,13 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( PathString, Path );
+	*PathErrorRow = BuildPath( PathString, Path );
 
-	if ( PathRow != NONE )
+	if ( *PathErrorRow != NONE )
 		if ( Local.Registry != NULL )
-			Exists = Local.Registry->PathExists( Path, Local.Root );
+			Exists = Local.Registry->Exists( Path, Local.Root );
 	
-	Exists = Exists || Global.Registry->PathExists( Path, Global.Root );
+	Exists = Exists || Global.Registry->Exists( Path, Global.Root );
 ERRErr
 ERREnd
 ERREpilog

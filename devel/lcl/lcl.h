@@ -86,7 +86,7 @@ namespace lcl {
 	public:
 		struct s {
 			rgstry::registry_::s Registry;
-			rgstry::nrow__ Root;
+			rgstry::row__ Root;
 		} &S_;
 		rgstry::registry_ Registry;
 		locales_( s &S )

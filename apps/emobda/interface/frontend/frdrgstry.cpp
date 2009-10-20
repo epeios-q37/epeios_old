@@ -55,16 +55,15 @@ bso::bool__ frdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
-	rgstry::nrow__ &RegistryRoot,
+	rgstry::row__ &RegistryRoot,
 	txf::text_oflow__ &Flow )
 {
 	bso::bool__ Success = false;
 ERRProlog
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
-	rgstry::nrow__ Root = NONE;
+	rgstry::row__ Root = NONE;
 	epeios::row__ PathErrorRow = NONE;
-	rgstry::erow__ AttributeEntryRow = NONE;
 	rgstry::xcoord ErrorCoord;;
 	const char *Directory = NULL;
 	FNM_BUFFER___ DirectoryBuffer;
@@ -81,7 +80,7 @@ ERRBegin
 
 	Registry.Init();
 
-	Root = Registry.CreateNewRegistry( rgstry::term( "BaseRegistry" ) );
+	Root = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
 
 	Directory = fnm::GetLocation( FileName, DirectoryBuffer );
 
@@ -99,11 +98,11 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( ( RegistryRoot = Registry.SearchPath( rgstry::term( RootPath ), Root, AttributeEntryRow, PathErrorRow ) ) == NONE ) {
+	if ( ( RegistryRoot = Registry.Search( str::string( RootPath ), Root, &PathErrorRow ) ) == NONE ) {
 		if ( PathErrorRow != NONE )
 			ERRc();
 
-		if ( AttributeEntryRow != NONE )
+		if ( Registry.GetNature( RegistryRoot ) == rgstry::nAttribute )
 			ERRc();
 
 		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
@@ -121,21 +120,21 @@ static inline bso::bool__ GetFallbackProfileName_(
 	const registry___ &Registry,
 	str::string_ &Name )
 {
-	return GetPathValue( paths::Profiles.FallbackProfile, Registry, Name );
+	return GetValue( paths::Profiles.FallbackProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetDefaultProfileName_(
 	const registry___ &Registry,
 	str::string_ &Name )
 {
-	return GetPathValue( paths::Profiles.DefaultProfile, Registry, Name );
+	return GetValue( paths::Profiles.DefaultProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetUserProfileName_(
 	const registry___ &Registry,
 	str::string_ &Name )
 {
-	return GetPathValue( paths::Profiles.UserProfile, Registry, Name );
+	return GetValue( paths::Profiles.UserProfile, Registry, Name );
 }
 
 static bso::bool__ GetProfileValue_(
@@ -146,7 +145,7 @@ static bso::bool__ GetProfileValue_(
 {
 	bso::bool__ Success = false;
 ERRProlog
-	rgstry::term WorkPath;
+str::string WorkPath;
 ERRBegin
 	if ( ProfileName.Amount() == 0 )
 		ERRReturn;
@@ -155,7 +154,7 @@ ERRBegin
 
 	WorkPath.Replace( CTAG, 1, ProfileName );
 
-	Success = Registry.GetPathValue( WorkPath, Value );
+	Success = Registry.GetValue( WorkPath, Value );
 ERRErr
 ERREnd
 ERREpilog
@@ -223,7 +222,7 @@ static void SetProfileValue_(
 	const str::string_ &Value )
 {
 ERRProlog
-	rgstry::term WorkPath;
+str::string WorkPath;
 ERRBegin
 	if ( ProfileName.Amount() == 0 )
 		ERRReturn;
@@ -232,7 +231,7 @@ ERRBegin
 
 	WorkPath.Replace( CTAG, 1, ProfileName );
 
-	Registry.SetPathValue( WorkPath, Value );
+	Registry.SetValue( WorkPath, Value );
 ERRErr
 ERREnd
 ERREpilog
