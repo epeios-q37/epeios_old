@@ -57,6 +57,7 @@ public:
 
 #include "flx.h"
 #include "flf.h"
+#include "fnm.h"
 
 using namespace rgstry;
 
@@ -304,6 +305,26 @@ ERREpilog
 	return Row;
 }
 
+// Pour simplifier la mise en oeuvre de 'PathErrorRow' en tant que paramètre optionnel (alors == 'NULL').
+static inline bso::bool__ BuildPath_(
+	const str::string_ &PathString,
+	path_ &Path,
+	epeios::row__ *PathErrorRow )
+{
+	epeios::row__ PathErrorRowBuffer = BuildPath( PathString, Path );
+
+	if ( PathErrorRowBuffer != NONE )
+		if ( PathErrorRow == NULL )
+			ERRu();
+		else {
+			*PathErrorRow = PathErrorRowBuffer;
+			return false;
+		}
+
+	return true;
+
+}
+
 row__ rgstry::registry_::_Search(
 	const path_ &Path,
 	epeios::row__ PathRow,
@@ -380,17 +401,13 @@ row__ rgstry::registry_::_Search(
 	epeios::row__ *PathErrorRow ) const
 {
 ERRProlog
-	epeios::row__ PathRow = NONE;
 	path Path;
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( PathString, Path );
-
-	if ( PathRow != NONE ) {
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		Row = NONE;
-		*PathErrorRow = PathRow;
-	} else
+	else
 		Row = _Search( Path, Row );
 
 ERRErr
@@ -438,17 +455,13 @@ row__ rgstry::registry_::Create(
 	epeios::row__ *PathErrorRow )
 {
 ERRProlog
-	epeios::row__ PathRow = NONE;
 	path Path;
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( PathString, Path );
-
-	if ( PathRow != NONE ) {
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		Row = NONE;
-		*PathErrorRow = PathRow;
-	} else
+	else
 		Row = Create( Path, Row );
 
 ERRErr
@@ -465,17 +478,13 @@ row__ rgstry::registry_::SetValue(
 	epeios::row__ *PathErrorRow )
 {
 ERRProlog
-	epeios::row__ PathRow = NONE;
 	path Path;
 ERRBegin
 	Path.Init();
 
-	PathRow = BuildPath( PathString, Path );
-
-	if ( PathRow != NONE ) {
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		Row = NONE;
-		*PathErrorRow = PathRow;
-	} else
+	else
 		Row = SetValue( Path, Value, Row );
 
 ERRErr
@@ -588,9 +597,7 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	*PathErrorRow = BuildPath( PathString, Path );
-
-	if ( *PathErrorRow != NONE )
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
 		Result = Exists( Path, ParentRow );
 ERRErr
 ERREnd
@@ -721,8 +728,8 @@ const value_ &rgstry::registry_::GetValue(
 	const str::string_ &PathString,
 	row__ Row,
 	bso::bool__ *Missing,
-	epeios::row__ *PathErrorRow,
-	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	buffer &Buffer,
+	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -732,12 +739,10 @@ ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
+		Result = &GetValue( Path, Row, Missing, Buffer );
+	else
 		*Missing = true;
-		ERRReturn;
-	}
-
-	Result = &GetValue( Path, Row, Missing, Buffer );
 ERRErr
 ERREnd
 ERREpilog
@@ -779,8 +784,8 @@ ERREpilog
 bso::bool__ rgstry::registry_::GetValues(
 	const str::string_ &PathString,
 	row__ ParentRow,
-	epeios::row__ *PathErrorRow,
-	values_ &Values ) const
+	values_ &Values,
+	epeios::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -788,10 +793,8 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
-		ERRReturn;
-
-	Exists = GetValues( Path, ParentRow, Values );
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
+		Exists = GetValues( Path, ParentRow, Values );
 ERRErr
 ERREnd
 ERREpilog
@@ -809,10 +812,8 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
-		ERRReturn;
-
-	Exists = Delete( Path, Row );
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
+		Exists = Delete( Path, Row );
 ERRErr
 ERREnd
 ERREpilog
@@ -851,8 +852,8 @@ ERREpilog
 const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
-	epeios::row__ *PathErrorRow,
-	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	buffer &Buffer,
+	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -864,7 +865,7 @@ ERRBegin
 	Path.Init();
 	Empty.Init();
 
-	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE ) {
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) ) {
 		*Missing = true;
 		ERRReturn;
 	}
@@ -885,8 +886,8 @@ ERREpilog
 
 bso::bool__ rgstry::overloaded_registry___::GetValues(
 	const str::string_ &PathString,
-	epeios::row__ *PathErrorRow,
-	values_ &Values ) const
+	values_ &Values,
+	epeios::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -894,7 +895,7 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( ( *PathErrorRow = BuildPath( PathString, Path ) ) != NONE )
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		ERRReturn;
 
 	if ( Local.Registry != NULL )
@@ -917,9 +918,7 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	*PathErrorRow = BuildPath( PathString, Path );
-
-	if ( *PathErrorRow != NONE )
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
 		if ( Local.Registry != NULL )
 			Exists = Local.Registry->Exists( Path, Local.Root );
 	
@@ -929,6 +928,62 @@ ERREnd
 ERREpilog
 	return Exists;
 }
+
+error__ rgstry::FillRegistry(
+	const char *FileName,
+	const char *RootPath,
+	rgstry::registry_ &Registry,
+	rgstry::row__ &RegistryRoot,
+	xml::extended_status__ &Status,
+	xcoord &ErrorCoord,
+	epeios::row__ *PathErrorRow )
+{
+	error__ Error = eOK;
+ERRProlog
+	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
+	rgstry::row__ Root = NONE;
+	epeios::row__ PathErrorRow = NONE;
+	rgstry::xcoord ErrorCoord;;
+	const char *Directory = NULL;
+	FNM_BUFFER___ DirectoryBuffer;
+ERRBegin
+	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
+		Error = eUnableToOpenFile;
+		ERRReturn;
+	}
+
+	FFlow.EOFD( XTF_EOXT );
+
+	XFlow.Init( FFlow );
+
+	Registry.Init();
+
+	Root = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
+
+	Directory = fnm::GetLocation( FileName, DirectoryBuffer );
+
+	ErrorCoord.Init();
+
+	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, Root, Status, ErrorCoord ) == NONE ) {
+		Error = eParseError,
+		ERRReturn;
+	}
+
+	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
+		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), Root, &PathErrorRow ) ) == NONE )
+			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) ) {
+				Error = eRootPathError;
+				ERRReturn;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Error;
+}
+
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

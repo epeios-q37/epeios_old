@@ -412,7 +412,7 @@ namespace rgstry {
 		row__ _Search(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow ) const;
+			epeios::row__ *PathErrorRow = NULL ) const;
 		row__ _CreateWithoutFlush(
 			nature__ Nature,
 			const name_ &Name,
@@ -579,7 +579,7 @@ namespace rgstry {
 		row__ Search(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow ) const
+			epeios::row__ *PathErrorRow = NULL ) const
 		{
 			return _Search( PathString, Row, PathErrorRow );
 		}
@@ -589,7 +589,7 @@ namespace rgstry {
 		row__ Create(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow );
+			epeios::row__ *PathErrorRow = NULL );
 		nature__ GetNature( row__ Row ) const
 		{
 			return _GetNature( Row );
@@ -603,23 +603,8 @@ namespace rgstry {
 			const str::string_ &PathString,
 			row__ Row,
 			bso::bool__ *Missing,
-			epeios::row__ *PathErrorRow,
-			buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
-		const value_ &GetValue(
-			const str::string_ &PathString,
-			row__ Row,
-			bso::bool__ *Missing,
-			buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
-		{
-			epeios::row__ PathErrorRow = NONE;
-
-			const value_ &Value = GetValue( PathString, Row, Missing, &PathErrorRow, Buffer );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Value;
-		}
+			buffer &Buffer,
+			epeios::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			row__ Row,
@@ -653,8 +638,8 @@ namespace rgstry {
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow,
-			values_ &Values ) const;
+			values_ &Values,
+			epeios::row__ *PathErrorRow = NULL ) const;
 		row__ SetValue(
 			const path_ &Path,
 			const value_ &Value,
@@ -670,21 +655,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			const value_ &Value,
 			row__ Row,
-			epeios::row__ *PathErrorRow );
-		row__ SetValue(
-			const str::string_ &PathString,
-			const value_ &Value,
-			row__ Row )
-		{
-			epeios::row__ PathErrorRow = NONE;
-
-			row__ Result = SetValue( PathString, Value, Row, &PathErrorRow );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Result;
-		}
+			epeios::row__ *PathErrorRow = NULL );
 		row__ GetParentRow( row__ Row ) const
 		{
 			buffer Buffer;
@@ -751,7 +722,7 @@ namespace rgstry {
 		bso::bool__ Delete(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow );
+			epeios::row__ *PathErrorRow = NULL );
 		bso::bool__ Delete(
 			const str::string_ &PathString,
 			row__ Row )
@@ -777,7 +748,7 @@ namespace rgstry {
 		bso::bool__ Exists(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow ) const;
+			epeios::row__ *PathErrorRow = NULL ) const;
 		epeios::size__ Dump(
 			row__ Root,
 			bso::bool__ RootToo,
@@ -933,22 +904,8 @@ namespace rgstry {
 		const value_ &GetValue(
 			const str::string_ &PathString,
 			bso::bool__ *Missing,
-			epeios::row__ *PathErrorRow,
-			buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
-		const value_ &GetValue(
-			const str::string_ &PathString,
-			bso::bool__ *Missing,
-			buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
-		{
-			epeios::row__ PathErrorRow = NONE;
-
-			const value_ &Value = GetValue( PathString, Missing, &PathErrorRow, Buffer );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Value;
-		}
+			buffer &Buffer,
+			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			value_ &Value ) const
@@ -962,15 +919,15 @@ namespace rgstry {
 		}
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow,
-			values_ &Values ) const;
+			values_ &Values,
+			epeios::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
 			values_ &Values ) const
 		{
 			epeios::row__ PathErrorRow = NONE;
 
-			bso::bool__ Exists = GetValues( PathString, &PathErrorRow, Values );
+			bso::bool__ Exists = GetValues( PathString, Values, &PathErrorRow );
 
 			if ( PathErrorRow != NONE )
 				ERRu();
@@ -980,20 +937,9 @@ namespace rgstry {
 		void SetValue(
 			const str::string_ &PathString,
 			const value_ &Value,
-			epeios::row__ *PathErrorRow )
+			epeios::row__ *PathErrorRow = NULL )
 		{
 			Local.Registry->SetValue( PathString, Value, Local.Root, PathErrorRow );
-		}
-		void SetValue(
-			const str::string_ &PathString,
-			const value_ &Value )
-		{	
-			epeios::row__ PathErrorRow = NONE;
-
-			Local.Registry->SetValue( PathString, Value, Local.Root, &PathErrorRow );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
 		}
 		void Delete( row__ Row )
 		{
@@ -1001,7 +947,7 @@ namespace rgstry {
 		}
 		bso::bool__ Exists(
 			const str::string_ &Path,
-			epeios::row__ *PathErrorRow ) const;
+			epeios::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ Exists( const str::string_ &PathString ) const
 		{
 			epeios::row__ PathErrorRow = NONE;
@@ -1079,6 +1025,26 @@ namespace rgstry {
 			return Root;
 		}
 	};
+
+	enum error__ {
+		eOK,
+		eUnableToOpenFile,
+		eParseError,
+		eRootPathError,
+		e_amount,
+		e_Undefined
+	};
+
+	error__ FillRegistry(
+		const char *FileName,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		xml::extended_status__ &Status,
+		xcoord &ErrorCoord,
+		epeios::row__ *PathErrorRow );
+
+
 }
 
 

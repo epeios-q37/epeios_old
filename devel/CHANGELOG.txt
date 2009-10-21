@@ -1,5 +1,12 @@
 $Id$
 
+21/10/2010 :
+	- RGSTRY :
+		- Simplification de la gestion du paramètre 'PathErroRow' qui devient optionnel, et n'est modifié qu'en cas d'erreur.
+		- Ajout 'FillRegistry(...)'.
+	- LCL :
+		- Adaptation aux changements dans 'RGSTRY'.
+
 20/10/2009 :
 	- LCL :
 		- Adaptation aux changements dans 'RGSTRY'.

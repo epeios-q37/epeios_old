@@ -164,7 +164,7 @@ void lcl::locales_::GetLanguages(
 	if ( S_.Root != NONE ) {
 		epeios::row__ PathErrorRow = NONE;
 
-		Registry.GetValues( str::string( "Languages/Language/@label" ), S_.Root, &PathErrorRow, Labels );
+		Registry.GetValues( str::string( "Languages/Language/@label" ), S_.Root, Labels, &PathErrorRow );
 
 		_GetCorrespondingLabels( Labels, Wordings );
 
