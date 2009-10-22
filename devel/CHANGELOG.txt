@@ -1,6 +1,11 @@
 $Id$
 
-21/10/2010 :
+22/10/2009
+	- RGSTRY :
+		- Nettoyage suite aux modification faites récemment.
+		- Correction erruers argument 'PathErrorRow' de 'FillRegistry(...)'.
+
+21/10/2009 :
 	- RGSTRY :
 		- Simplification de la gestion du paramètre 'PathErroRow' qui devient optionnel, et n'est modifié qu'en cas d'erreur.
 		- Ajout 'FillRegistry(...)'.

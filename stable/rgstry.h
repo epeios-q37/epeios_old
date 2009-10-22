@@ -921,19 +921,6 @@ namespace rgstry {
 			const str::string_ &PathString,
 			values_ &Values,
 			epeios::row__ *PathErrorRow = NULL ) const;
-		bso::bool__ GetValues(
-			const str::string_ &PathString,
-			values_ &Values ) const
-		{
-			epeios::row__ PathErrorRow = NONE;
-
-			bso::bool__ Exists = GetValues( PathString, Values, &PathErrorRow );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Exists;
-		}
 		void SetValue(
 			const str::string_ &PathString,
 			const value_ &Value,
@@ -1042,7 +1029,7 @@ namespace rgstry {
 		rgstry::row__ &RegistryRoot,
 		xml::extended_status__ &Status,
 		xcoord &ErrorCoord,
-		epeios::row__ *PathErrorRow );
+		epeios::row__ *PathErrorRow = NULL );
 
 
 }

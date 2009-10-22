@@ -942,8 +942,6 @@ error__ rgstry::FillRegistry(
 ERRProlog
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
-	rgstry::row__ Root = NONE;
-	epeios::row__ PathErrorRow = NONE;
 	rgstry::xcoord ErrorCoord;;
 	const char *Directory = NULL;
 	FNM_BUFFER___ DirectoryBuffer;
@@ -959,19 +957,19 @@ ERRBegin
 
 	Registry.Init();
 
-	Root = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
+	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
 
 	Directory = fnm::GetLocation( FileName, DirectoryBuffer );
 
 	ErrorCoord.Init();
 
-	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, Root, Status, ErrorCoord ) == NONE ) {
+	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, RegistryRoot, Status, ErrorCoord ) == NONE ) {
 		Error = eParseError,
 		ERRReturn;
 	}
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
-		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), Root, &PathErrorRow ) ) == NONE )
+		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, PathErrorRow ) ) == NONE )
 			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) ) {
 				Error = eRootPathError;
 				ERRReturn;
