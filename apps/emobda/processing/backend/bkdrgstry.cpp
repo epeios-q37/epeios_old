@@ -25,8 +25,68 @@
 using namespace bkdrgstry;
 
 static rgstry::registry Registry_;
-static rgstry::nrow__ Root_ = NONE;
+static rgstry::row__ Root_ = NONE;
 
+#if 1
+bso::bool__ bkdrgstry::FillRegistry(
+	const char *FileName,
+	const char *RootPath,
+	txf::text_oflow__ &Flow )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
+	rgstry::row__ Root = NONE;
+	epeios::row__ PathErrorRow = NONE;
+	rgstry::xcoord ErrorCoord;;
+	xml::extended_status__ Status = xml::xs_Undefined;
+ERRBegin
+	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
+		Flow << txf::nl << "Error opening project file '" << FileName << "' !" << txf::nl;
+		ERRReturn;
+	}
+
+	FFlow.EOFD( XTF_EOXT );
+
+	XFlow.Init( FFlow );
+
+	Registry_.Init();
+
+	ErrorCoord.Init();
+
+	if ( ( Root = rgstry::Parse( XFlow, str::string( "" ), Registry_, Root, Status, ErrorCoord ) ) == NONE ) {
+		Flow << "Error in file '";
+		
+		if ( ErrorCoord.File.Amount() != 0 )
+			Flow << ErrorCoord.File;
+		else
+			Flow << FileName;
+		
+		Flow << "' line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
+		ERRReturn;
+	}
+
+	if ( ( Root_ = Registry_.Search( str::string( RootPath ), Root, &PathErrorRow ) ) == NONE ) {
+		if ( PathErrorRow != NONE )
+			ERRc();
+
+		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
+		ERRReturn;
+	}
+
+	if ( Registry_.GetNature( Root_ ) == rgstry::nAttribute )
+		ERRc();
+
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+#else
 bso::bool__ bkdrgstry::FillRegistry(
 	const char *ConfigurationFileName,
 	const char *PathRoot,
@@ -87,13 +147,13 @@ ERREnd
 ERREpilog
 	return Success;
 }
-
+#endif
 
 inline bso::bool__ bkdrgstry::GetPathValue(
 	const char *Path,
 	str::string_ &Value )
 {
-	return ::Registry_.GetPathValue( rgstry::term( Path ), ::Root_, Value );
+	return ::Registry_.GetValue( str::string( Path ), ::Root_, Value );
 }
 
 #define PATH_SEPARATOR MBDRGY_PATH_SEPARATOR

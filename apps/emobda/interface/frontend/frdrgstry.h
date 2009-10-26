@@ -58,14 +58,14 @@ namespace frdrgstry {
 	};
 
 	typedef rgstry::overloaded_unique_registry___ registry___;
-
+/*
 	bso::bool__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		txf::text_oflow__ &Flow );
-
+*/
 	inline bso::bool__ GetValue(
 		const char *Path,
 		const registry___ &Registry,

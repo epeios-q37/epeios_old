@@ -44,6 +44,7 @@ namespace frdkernl {
 		mSelectProjectFile,
 
 		mUnableToOpenProjectFile_1,
+		mParseError_4,
 		mMissingProjectTree,
 		mMissingProjectName,
 
@@ -316,14 +317,9 @@ namespace frdkernl {
 			return Version;
 		}
 		bso::bool__ OpenProject(
-			const char *ProjectFile,
+			const char *FileName,
 			const char *RootPath,
 			str::string_ &ProjectName,
-			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
-		bso::bool__ OpenProject(
-			xtf::extended_text_iflow__ &Project,
-			const char *RootPath,
-			str::string_ &ProjectNAme,
 			str::string_ &Message );	// If 'false' returned, error is in 'Message'.
 		void Close( void )
 		{

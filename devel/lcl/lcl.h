@@ -64,7 +64,7 @@ extern class ttr_tutor &LCLTutor;
 #include "flw.h"
 #include "rgstry.h"
 
-#define LCL_DEFAULT_TAG	'%'
+#define LCL_DEFAULT_TAG_MARKER	'%'
 
 namespace lcl {
 	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
@@ -133,22 +133,22 @@ namespace lcl {
 	void ReplaceTags(
 		str::string_ &Message,
 		const strings_ &Values,
-		char Tag = LCL_DEFAULT_TAG );
+		char TagMarker = LCL_DEFAULT_TAG_MARKER );
 
-	void ReplaceTags(
+	void ReplaceTag(
 		str::string_ &Message,
+		bso::ubyte__ Indice,
 		const str::string_ &Value,
-		char Tag = LCL_DEFAULT_TAG );
+		char TagMarker = LCL_DEFAULT_TAG_MARKER );
 
-	inline void ReplaceTags(
+	inline void ReplaceTag(
 		str::string_ &Message,
+		bso::ubyte__ Indice,
 		const char *Value,
-		char Tag = LCL_DEFAULT_TAG )
+		char TagMarker = LCL_DEFAULT_TAG_MARKER )
 	{
-		ReplaceTags( Message, str::string( Value ), Tag );
+		ReplaceTag( Message, Indice, str::string( Value ), TagMarker );
 	}
-
-
 }
 
 /*$END$*/

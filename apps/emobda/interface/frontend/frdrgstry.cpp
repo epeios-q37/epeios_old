@@ -50,7 +50,7 @@ const char *frdrgstry::paths::profiles::CurrentTable						= PROFILE "Table";
 const char *frdrgstry::paths::profiles::FallbackProfile						= PROFILES "Fallback";
 const char *frdrgstry::paths::profiles::DefaultProfile						= PROFILES "Default";
 const char *frdrgstry::paths::profiles::UserProfile							= PROFILES "User";
-
+/*
 bso::bool__ frdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
@@ -65,8 +65,8 @@ ERRProlog
 	rgstry::row__ Root = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::xcoord ErrorCoord;;
-	const char *Directory = NULL;
 	FNM_BUFFER___ DirectoryBuffer;
+	const char *Directory = NULL;
 	xml::extended_status__ Status = xml::xs_Undefined;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
@@ -102,12 +102,13 @@ ERRBegin
 		if ( PathErrorRow != NONE )
 			ERRc();
 
-		if ( Registry.GetNature( RegistryRoot ) == rgstry::nAttribute )
-			ERRc();
-
 		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
 		ERRReturn;
 	}
+
+	if ( Registry.GetNature( RegistryRoot ) == rgstry::nAttribute )
+		ERRc();
+
 
 	Success = true;
 ERRErr
@@ -115,7 +116,7 @@ ERREnd
 ERREpilog
 	return Success;
 }
-
+*/
 static inline bso::bool__ GetFallbackProfileName_(
 	const registry___ &Registry,
 	str::string_ &Name )

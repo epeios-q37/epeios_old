@@ -761,31 +761,31 @@ namespace rgstry {
 	public:
 		struct s {
 			xml::coord__ Coord;
-			str::string_::s File;
+			str::string_::s FileName;
 		} &S_;
-		str::string_ File;
+		str::string_ FileName;
 		xcoord_( s &S )
 		: S_( S ),
-		  File( S.File )
+		  FileName( S.FileName )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			S_.Coord.reset( P );
-			File.reset( P );
+			FileName.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			File.plug( MD );
+			FileName.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			File.plug( MM );
+			FileName.plug( MM );
 		}
 		xcoord_ &operator =( const xcoord_ &XC )
 		{
 			S_.Coord = XC.S_.Coord;
 
-			File = XC.File;
+			FileName = XC.FileName;
 
 			return *this;
 		}
@@ -794,7 +794,7 @@ namespace rgstry {
 			reset();
 
 			S_.Coord.Init();
-			File.Init();
+			FileName.Init();
 		}
 		E_RWDISCLOSE_( xml::coord__, Coord );
 	};
@@ -1023,12 +1023,22 @@ namespace rgstry {
 	};
 
 	error__ FillRegistry(
+		xtf::extended_text_iflow__ XTFlow,
+		const str::string_ &BaseDirectory,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		xml::extended_status__ &Status,
+		xcoord_ &ErrorCoord,
+		epeios::row__ *PathErrorRow = NULL );
+
+	error__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		xml::extended_status__ &Status,
-		xcoord &ErrorCoord,
+		xcoord_ &ErrorCoord,
 		epeios::row__ *PathErrorRow = NULL );
 
 

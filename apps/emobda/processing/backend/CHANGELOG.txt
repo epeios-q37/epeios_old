@@ -4,6 +4,9 @@ REMINDER :
 	- This file concerns both daemon and library.
 	- Before publication, merge with '../CHANGELOG.txt'.
 	
+26/10/2009 :
+	- Adaptation to change in 'RGSTRY'.
+	
 ***********
 * V 0.1.0 *
 ***********

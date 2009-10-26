@@ -44,6 +44,7 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 	switch ( MessageId ) {
 	CASE( SelectProjectFile );
 	CASE( UnableToOpenProjectFile_1 );
+	CASE( ParseError_4 );
 	CASE( MissingProjectTree );
 	CASE( BadOrMissingBackendType );
 	CASE( NoBackendLocationGiven );
@@ -121,29 +122,112 @@ ERREpilog
 	// Other initialisations happend in 'OpenProject'.
 }
 
-
 bso::bool__ frdkernl::kernel___::OpenProject(
-	const char *ProjectFile,
+	const char *FileName,
 	const char *RootPath,
 	str::string_ &ProjectName,
 	str::string_ &Message )
 {
 	bso::bool__ Success = false;
 ERRProlog
-	flf::file_iflow___ FIFlow;
-	xtf::extended_text_iflow__ XFlow;
+	str::string RemoteHostServiceOrLocalLibraryPath;
+	rgstry::row__ BaseRoot = NONE;
+	epeios::row__ PathErrorRow = NONE;
+	csducl::type__ Type = csducl::t_Undefined;
+	xml::extended_status__ Status = xml::xs_Undefined;
+	rgstry::xcoord ErrorCoord;
+	bso::integer_buffer__ Buffer;
 ERRBegin
-	if ( FIFlow.Init( ProjectFile, err::hSkip ) != fil::sSuccess ) {
+	Close();
+
+	_GlobalRegistry.Init();
+
+	ErrorCoord.Init();
+
+#if 1
+	switch ( rgstry::FillRegistry( FileName, RootPath, _GlobalRegistry, BaseRoot, Status, ErrorCoord, &PathErrorRow ) ) {
+	case rgstry::eOK:
+		break;
+	case rgstry::eUnableToOpenFile:
 		GetMessage( mUnableToOpenProjectFile_1, Message );
-		lcl::ReplaceTags( Message, ProjectFile );
+		lcl::ReplaceTag( Message, 1, FileName );
+		ERRReturn;
+		break;
+	case rgstry::eParseError :
+		GetMessage( mParseError_4, Message );
+		lcl::ReplaceTag( Message, 1, ErrorCoord.FileName );
+		lcl::ReplaceTag( Message, 2, bso::Convert( ErrorCoord.Coord().Line, Buffer ) );
+		lcl::ReplaceTag( Message, 3, bso::Convert( ErrorCoord.Coord().Column, Buffer ) );
+		lcl::ReplaceTag( Message, 4, xml::GetLabel( Status ) );
+		ERRReturn;
+		break;
+	case rgstry::eRootPathError:
+		if ( PathErrorRow != NONE )
+			ERRc();
+		GetMessage( mMissingProjectTree, Message );
+		ERRReturn;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+#else
+
+	BaseRoot = rgstry::Parse( Project, str::string( "." ), _GlobalRegistry, NONE );
+//	UserRoot = rgstry::Parse( UserProject, str::string( "." ), _GlobalRegistry, NONE );
+
+	if ( BaseRoot == NONE ) {
+		GetMessage( mMissingProjectTree, Message );
+		ERRReturn;
+	}
+	
+	if ( ( BaseRoot = _GlobalRegistry.Search( str::string( RootPath ), BaseRoot, &PathErrorRow ) ) == NONE ) {
+		if ( PathErrorRow != NONE )
+			ERRc();
+
+		if ( _GlobalRegistry.GetNature( BaseRoot ) == rgstry::nAttribute )
+			ERRc();
+
+		GetMessage( mMissingProjectTree, Message );
+
+		ERRReturn;
+
+	}
+#endif
+	_Registry.Init( _GlobalRegistry, BaseRoot );
+
+	if ( !GetRegistryValue( "@Name", ProjectName ) ) {
+		GetMessage( mMissingProjectName, Message );
 		ERRReturn;
 	}
 
-	FIFlow.EOFD( XTF_EOXT );
+	Type = GetBackendType( _Registry );
 
-	XFlow.Init( FIFlow );
+	RemoteHostServiceOrLocalLibraryPath.Init();
 
-	Success = OpenProject( XFlow, RootPath, ProjectName, Message );
+	if ( Type == csducl::t_Undefined ) {
+		GetMessage( mBadOrMissingBackendType, Message );
+		ERRReturn;
+	}
+
+	if ( !GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
+		GetMessage( mNoBackendLocationGiven, Message );
+		ERRReturn;
+	}
+
+	if ( !_Connect( RemoteHostServiceOrLocalLibraryPath, Type ) ) {
+		GetMessage( mUnableToConnectToBackend_1, Message );
+		lcl::ReplaceTag( Message, 1, RemoteHostServiceOrLocalLibraryPath );
+		ERRReturn;
+	}
+
+	_Records.Init();
+
+	_ProjectIsOpen = true;
+
+	Success = true;
+
 ERRErr
 ERREnd
 ERREpilog
@@ -203,82 +287,6 @@ ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
 	Success = Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type );
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
-}
-
-bso::bool__ frdkernl::kernel___::OpenProject(
-	xtf::extended_text_iflow__ &Project,
-	const char *RootPath,
-	str::string_ &ProjectName,
-	str::string_ &Message )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	str::string RemoteHostServiceOrLocalLibraryPath;
-	rgstry::row__ BaseRoot = NONE;
-	epeios::row__ PathErrorRow = NONE;
-	csducl::type__ Type = csducl::t_Undefined;
-ERRBegin
-	Close();
-
-	_GlobalRegistry.Init();
-
-	BaseRoot = rgstry::Parse( Project, str::string( "." ), _GlobalRegistry, NONE );
-//	UserRoot = rgstry::Parse( UserProject, str::string( "." ), _GlobalRegistry, NONE );
-
-	if ( BaseRoot == NONE ) {
-		GetMessage( mMissingProjectTree, Message );
-		ERRReturn;
-	}
-	
-	if ( ( BaseRoot = _GlobalRegistry.Search( str::string( RootPath ), BaseRoot, &PathErrorRow ) ) == NONE ) {
-		if ( PathErrorRow != NONE )
-			ERRc();
-
-		if ( _GlobalRegistry.GetNature( BaseRoot ) == rgstry::nAttribute )
-			ERRc();
-
-		GetMessage( mMissingProjectTree, Message );
-
-		ERRReturn;
-	}
-
-	_Registry.Init( _GlobalRegistry, BaseRoot );
-
-	if ( !GetRegistryValue( "@Name", ProjectName ) ) {
-		GetMessage( mMissingProjectName, Message );
-		ERRReturn;
-	}
-
-	Type = GetBackendType( _Registry );
-
-	RemoteHostServiceOrLocalLibraryPath.Init();
-
-	if ( Type == csducl::t_Undefined ) {
-		GetMessage( mBadOrMissingBackendType, Message );
-		ERRReturn;
-	}
-
-	if ( !GetRegistryValue( frdrgstry::paths::Parameters.Backend.Location, RemoteHostServiceOrLocalLibraryPath ) ) {
-		GetMessage( mNoBackendLocationGiven, Message );
-		ERRReturn;
-	}
-
-	if ( !_Connect( RemoteHostServiceOrLocalLibraryPath, Type ) ) {
-		GetMessage( mUnableToConnectToBackend_1, Message );
-		lcl::ReplaceTags( Message, RemoteHostServiceOrLocalLibraryPath );
-		ERRReturn;
-	}
-
-	_Records.Init();
-
-	_ProjectIsOpen = true;
-
-	Success = true;
-
 ERRErr
 ERREnd
 ERREpilog

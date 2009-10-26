@@ -140,7 +140,7 @@ ERRBegin
 			if ( !UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type ) ) {
 				Message.Init();
 				UI().K().GetMessage( frdkernl::mUnableToConnectToBackend_1, Message );
-				lcl::ReplaceTags( Message, RemoteHostServiceOrLocalLibraryPath );
+				lcl::ReplaceTag( Message, 1, RemoteHostServiceOrLocalLibraryPath );
 				UI().Alert( Message );
 			} else
 				UI().ApplySession();

@@ -840,7 +840,7 @@ ERRBegin
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
-		ErrorCoord.File = ErrorFileName;
+		ErrorCoord.FileName = ErrorFileName;
 		ErrorCoord.SetCoord( Flow.Coord() );
 	}
 ERRErr
@@ -930,20 +930,46 @@ ERREpilog
 }
 
 error__ rgstry::FillRegistry(
+	xtf::extended_text_iflow__ XTFlow,
+	const str::string_ &BaseDirectory,
+	const char *RootPath,
+	rgstry::registry_ &Registry,
+	rgstry::row__ &RegistryRoot,
+	xml::extended_status__ &Status,
+	xcoord_ &ErrorCoord,
+	epeios::row__ *PathErrorRow )
+{
+	Registry.Init();
+
+//	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
+
+	ErrorCoord.Init();
+
+	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, Status, ErrorCoord ) ) == NONE )
+		return eParseError;
+
+	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
+		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, PathErrorRow ) ) == NONE )
+			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
+				return eRootPathError;
+	}
+
+	return eOK;
+}
+
+error__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	xml::extended_status__ &Status,
-	xcoord &ErrorCoord,
+	xcoord_ &ErrorCoord,
 	epeios::row__ *PathErrorRow )
 {
-	error__ Error = eOK;
+	error__ Error = e_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XFlow;
-	rgstry::xcoord ErrorCoord;;
-	const char *Directory = NULL;
+	xtf::extended_text_iflow__ XTFlow;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
@@ -953,28 +979,15 @@ ERRBegin
 
 	FFlow.EOFD( XTF_EOXT );
 
-	XFlow.Init( FFlow );
+	XTFlow.Init( FFlow );
 
 	Registry.Init();
 
-	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
+	Error = FillRegistry( XTFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, Status, ErrorCoord, PathErrorRow );
 
-	Directory = fnm::GetLocation( FileName, DirectoryBuffer );
-
-	ErrorCoord.Init();
-
-	if ( rgstry::Parse( XFlow, str::string( Directory ), Registry, RegistryRoot, Status, ErrorCoord ) == NONE ) {
-		Error = eParseError,
-		ERRReturn;
-	}
-
-	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
-		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, PathErrorRow ) ) == NONE )
-			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) ) {
-				Error = eRootPathError;
-				ERRReturn;
-		}
-	}
+	if ( Error == eParseError )
+		if ( ErrorCoord.FileName.Amount() == 0 )
+			ErrorCoord.FileName = FileName;
 ERRErr
 ERREnd
 ERREpilog

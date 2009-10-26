@@ -213,7 +213,7 @@ ERREpilog
 void lcl::ReplaceTags(
 	str::string_ &Message,
 	const strings_ &Values,
-	const char Tag )
+	const char TagMarker )
 {
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Value;
@@ -231,7 +231,7 @@ ERRBegin
 
 	while ( Row != NONE ) {
 		FullTag.Init();
-		FullTag.Append( Tag );
+		FullTag.Append( TagMarker );
 		FullTag.Append( bso::Convert( Indice, Buffer ) );
 
 		SearchRow = Message.Search( FullTag );
@@ -250,15 +250,15 @@ ERRBegin
 	}
 
 	FullTag.Init();
-	FullTag.Append( Tag );
-	FullTag.Append( Tag );
+	FullTag.Append( TagMarker );
+	FullTag.Append( TagMarker );
 
 	SearchRow = Message.Search( FullTag );
 
 	while ( SearchRow != NONE ) {
 		Message.Remove( SearchRow, FullTag.Amount() );
 
-		Message.Insert( "%", SearchRow );
+		Message.Insert( TagMarker, SearchRow );
 
 		SearchRow = Message.Search( FullTag, SearchRow );
 	}
@@ -268,19 +268,36 @@ ERREnd
 ERREpilog
 }
 
-void lcl::ReplaceTags(
+void lcl::ReplaceTag(
 	str::string_ &Message,
+	bso::ubyte__ Indice,
 	const str::string_ &Value,
-	char Tag )
+	const char TagMarker )
 {
 ERRProlog
 	strings Values;
+	bso::ubyte__ Counter = 1;
+	bso::integer_buffer__ Buffer;
+	str::string Tag;
 ERRBegin
+	if ( ( Indice == 0 ) || ( Indice > 9 ) )
+		ERRu();
+
 	Values.Init();
+
+	while ( Counter != Indice ) {
+		Tag.Init();
+		Tag.Append( TagMarker );
+		Tag.Append( bso::Convert( Counter, Buffer ) );
+
+		Values.Append( Tag );
+
+		Counter++;
+	}
 
 	Values.Append( Value );
 
-	ReplaceTags( Message, Values, Tag );
+	ReplaceTags( Message, Values, TagMarker );
 ERRErr
 ERREnd
 ERREpilog

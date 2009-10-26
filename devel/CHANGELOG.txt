@@ -1,5 +1,11 @@
 $Id$
 
+26/10/2009 :
+	- LCL :
+		- Modification de certaines fonctions pour simplification d'utilisation.
+	- RGSTRY :
+		- Amélioration 'FillResgitry(...)'.
+
 22/10/2009
 	- RGSTRY :
 		- Nettoyage suite aux modification faites récemment.
