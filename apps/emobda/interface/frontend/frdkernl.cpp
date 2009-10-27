@@ -43,8 +43,8 @@ static const char *GetRawMessage_( frdkernl::message__ MessageId )
 
 	switch ( MessageId ) {
 	CASE( SelectProjectFile );
-	CASE( UnableToOpenProjectFile_1 );
-	CASE( ParseError_4 );
+//	CASE( UnableToOpenProjectFile_1 );
+//	CASE( ParseError_4 );
 	CASE( MissingProjectTree );
 	CASE( BadOrMissingBackendType );
 	CASE( NoBackendLocationGiven );
@@ -97,8 +97,7 @@ void frdkernl::kernel___::Init(
 	const char *LocalesFileName )
 {
 ERRProlog
-	flf::file_iflow___ FIFlow;
-	xtf::extended_text_iflow__ XTFlow;
+	rgstry::error_details ErrorDetails;
 ERRBegin
 	reset();
 
@@ -107,13 +106,9 @@ ERRBegin
 	_GlobalRegistry.Init();
 	_Registry.Init( _GlobalRegistry, NONE );
 
-	if ( FIFlow.Init( LocalesFileName, err::hSkip ) == fil::sSuccess ) {
-		FIFlow.EOFD( XTF_EOXT );
-
-		XTFlow.Init( FIFlow );
-
-		_Locales.Init( XTFlow, "Locale[target=\"emobdafrd\"]" );
-	}
+	ErrorDetails.Init();
+	_Locales.Init( LocalesFileName, "Locale[target=\"emobdafrd\"]", ErrorDetails );
+	// We don't handle errors, since, at this stage, we can not print a translated error message.
 
 	// Other initialisations happend in 'OpenProject'.
 ERRErr
@@ -132,43 +127,24 @@ bso::bool__ frdkernl::kernel___::OpenProject(
 ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
 	rgstry::row__ BaseRoot = NONE;
-	epeios::row__ PathErrorRow = NONE;
 	csducl::type__ Type = csducl::t_Undefined;
 	xml::extended_status__ Status = xml::xs_Undefined;
-	rgstry::xcoord ErrorCoord;
-	bso::integer_buffer__ Buffer;
+	rgstry::error_details ErrorDetails;
+	rgstry::error__ Error = rgstry::e_Undefined;
 ERRBegin
 	Close();
 
 	_GlobalRegistry.Init();
 
-	ErrorCoord.Init();
+	ErrorDetails.Init();
 
 #if 1
-	switch ( rgstry::FillRegistry( FileName, RootPath, _GlobalRegistry, BaseRoot, Status, ErrorCoord, &PathErrorRow ) ) {
+	switch ( Error = rgstry::FillRegistry( FileName, RootPath, _GlobalRegistry, BaseRoot, ErrorDetails ) ) {
 	case rgstry::eOK:
 		break;
-	case rgstry::eUnableToOpenFile:
-		GetMessage( mUnableToOpenProjectFile_1, Message );
-		lcl::ReplaceTag( Message, 1, FileName );
-		ERRReturn;
-		break;
-	case rgstry::eParseError :
-		GetMessage( mParseError_4, Message );
-		lcl::ReplaceTag( Message, 1, ErrorCoord.FileName );
-		lcl::ReplaceTag( Message, 2, bso::Convert( ErrorCoord.Coord().Line, Buffer ) );
-		lcl::ReplaceTag( Message, 3, bso::Convert( ErrorCoord.Coord().Column, Buffer ) );
-		lcl::ReplaceTag( Message, 4, xml::GetLabel( Status ) );
-		ERRReturn;
-		break;
-	case rgstry::eRootPathError:
-		if ( PathErrorRow != NONE )
-			ERRc();
-		GetMessage( mMissingProjectTree, Message );
-		ERRReturn;
-		break;
 	default:
-		ERRc();
+		rgstry::GetTranslation( Error, ErrorDetails, _Language, _Locales, Message );
+		ERRReturn;
 		break;
 	}
 

@@ -1022,6 +1022,7 @@ namespace rgstry {
 		}
 	};
 
+	// NOTA : Si modifié, modifier 'GetTranslation(...)' en conséquent, ainsi que le fichier de traduction 'ergstry.xlc'.
 	enum error__ {
 		eOK,
 		eUnableToOpenFile,
@@ -1030,6 +1031,13 @@ namespace rgstry {
 		e_amount,
 		e_Undefined
 	};
+
+	const str::string_ &GetTranslation(
+		error__ Error,
+		const error_details_ &ErrorDetails,
+		const str::string_ &Language,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
 
 	error__ FillRegistry(
 		xtf::extended_text_iflow__ XTFlow,

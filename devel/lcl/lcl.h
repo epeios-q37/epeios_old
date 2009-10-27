@@ -164,15 +164,6 @@ namespace lcl {
 		bso::ubyte__ Indice,
 		const str::string_ &Value,
 		char TagMarker = LCL_DEFAULT_TAG_MARKER );
-
-	inline void ReplaceTag(
-		str::string_ &Message,
-		bso::ubyte__ Indice,
-		const char *Value,
-		char TagMarker = LCL_DEFAULT_TAG_MARKER )
-	{
-		ReplaceTag( Message, Indice, str::string( Value ), TagMarker );
-	}
 }
 
 /*$END$*/

@@ -58,6 +58,7 @@ public:
 #include "flx.h"
 #include "flf.h"
 #include "fnm.h"
+#include "lcl.h"
 
 using namespace rgstry;
 
@@ -928,6 +929,61 @@ ERREpilog
 	return Exists;
 }
 
+const str::string_ &rgstry::GetTranslation(
+	error__ Error,
+	const error_details_ &ErrorDetails,
+	const str::string_ &Language,
+	const lcl::locales_ &Locales,
+	str::string_ &Translation )
+{
+ERRProlog
+	lcl::strings TagValues;
+	str::string TagValue;
+ERRBegin
+	switch ( Error ) {
+	case eOK:
+		ERRu();
+		break;
+	case eUnableToOpenFile:
+		Locales.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1" ), Language, Translation );
+
+		TagValues.Init();
+		TagValues.Append( ErrorDetails.FileName );
+
+		lcl::ReplaceTags( Translation, TagValues );
+		break;
+	case eParseError:
+		bso::integer_buffer__ Buffer;
+		Locales.GetTranslation( str::string( "ERGSTRY_ParseError_4" ), Language, Translation );
+	
+		TagValues.Init();
+		TagValues.Append( str::string(  ErrorDetails.FileName ) );
+		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Line, Buffer ) ) );
+		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Column, Buffer ) ) );
+
+		TagValue.Init();
+		xml::GetTranslation( ErrorDetails.XMLStatus(), Language, Locales, TagValue );
+		TagValues.Append( TagValue );
+
+		lcl::ReplaceTags( Translation, TagValues );
+		break;
+	case eRootPathError:
+		if ( ErrorDetails.GetPathErrorRow() != NONE )
+			ERRu();
+		Locales.GetTranslation( str::string( "ERGSTRY_UnableToFindRootPath" ), Language, Translation );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
 error__ rgstry::FillRegistry(
 	xtf::extended_text_iflow__ XTFlow,
 	const str::string_ &BaseDirectory,
@@ -943,11 +999,10 @@ error__ rgstry::FillRegistry(
 	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
 		return eParseError;
 
-	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
+	if ( ( RootPath != NULL ) && ( *RootPath ) )
 		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &ErrorDetails.S_.PathErrorRow ) ) == NONE )
 			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
 				return eRootPathError;
-	}
 
 	return eOK;
 }
@@ -967,6 +1022,7 @@ ERRProlog
 ERRBegin
 	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
 		Error = eUnableToOpenFile;
+		ErrorDetails.FileName = FileName;
 		ERRReturn;
 	}
 

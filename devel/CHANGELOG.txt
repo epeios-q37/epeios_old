@@ -1,6 +1,8 @@
 $Id$
 
 27/10/2009 :
+	- FNM :
+		- Correction bogue 'CorrectLocation'.
 	- LCL :
 		- Adaptation aux modifications de 'RGSTRY'.
 		- Mise en oeuvre des nouvelles fonctionnalités de 'RGSTRY'.
@@ -8,18 +10,20 @@ $Id$
 	- RGSTRY :
 		- Mise en oeuvre de 'error_details[_]', plus complet que 'xcoord[_]', pour simplifier la gestion des erreurs.
 	- XML :
-		- Amélioration de l'affichage des messages d'erreurs.
+		- Amélioration de l'affichage de la gestion des messages d'erreurs.
+		- 'sUserError' -> 'sUserDefinedError'.
+		- Correction du bogue empêchant l'expansion d'un fichier à cause de séparateurs de répertoires déifférents dans la spécification de son chemin.
 
 26/10/2009 :
 	- LCL :
 		- Modification de certaines fonctions pour simplification d'utilisation.
 	- RGSTRY :
-		- Amélioration 'FillResgitry(...)'.
+		- Amélioration 'FillRegsitry(...)'.
 
 22/10/2009
 	- RGSTRY :
 		- Nettoyage suite aux modification faites récemment.
-		- Correction erruers argument 'PathErrorRow' de 'FillRegistry(...)'.
+		- Correction erreurs argument 'PathErrorRow' de 'FillRegistry(...)'.
 
 21/10/2009 :
 	- RGSTRY :

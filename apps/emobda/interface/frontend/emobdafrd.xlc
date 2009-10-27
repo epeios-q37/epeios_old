@@ -5,14 +5,6 @@
 			<Translation language="fr">Sélectionner un projet</Translation>
 			<Translation language="en-US">Select a project</Translation>
 		</Translations>
-		<Translations message="ParseError_4">
-			<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : '%4')!</Translation>
-			<Translation language="en-US">Error in file '%1' (line %2, column %3 : '%4')!</Translation>
-		</Translations>
-		<Translations message="UnableToOpenProjectFile_1">
-			<Translation language="fr">Impossible d'ouvrir le fichier de projet '%1'!</Translation>
-			<Translation language="en-US">Unable to open project file '%1'!</Translation>
-		</Translations>
 		<Translations message ="MissingProjectTree">
 			<Translation language="fr">Arborescence  de projet manquant !</Translation>
 			<Translation language="en-US">Project tree missing !</Translation>
@@ -89,5 +81,17 @@
 			<Translation language="fr"></Translation>
 			<Translation language="en-US"></Translation>
 		</Translations-->
+		
+<!-- Translation messages for the 'RGSTRY' library -->
+		<xpp:expand href="ergstry.xlc"/>
+		<xpp:expand select="ergstry"/>
+<!-- End of translation messages for the 'RGSTRY' library -->
+
+<!-- Translation messages for the 'XML' library -->
+		<xpp:expand href="exml.xlc"/>
+		<xpp:expand select="exml"/>
+<!-- End of translation messages for the 'RGSTRY' library -->
+
+
 	</Locale>
 </Locales>

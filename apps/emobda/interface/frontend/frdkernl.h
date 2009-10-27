@@ -43,8 +43,8 @@ namespace frdkernl {
 	{
 		mSelectProjectFile,
 
-		mUnableToOpenProjectFile_1,
-		mParseError_4,
+//		mUnableToOpenProjectFile_1,
+//		mParseError_4,
 		mMissingProjectTree,
 		mMissingProjectName,
 

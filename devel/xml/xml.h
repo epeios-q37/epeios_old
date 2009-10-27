@@ -230,6 +230,7 @@ namespace xml {
 	};
 
 	// Code d'erreur retournée par 'Parse()'.
+	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
 	enum status__ {
 		sOK,
 		sUnexpectedEOF,
@@ -239,16 +240,14 @@ namespace xml {
 		sUnexpectedCharacter,
 		sEmptyTagName,
 		sMismatchedTag,
-		sUserError,
+		sUserDefinedError,
 		s_amount,
 		s_Undefined,
 	};
 
-	const char *GetLabel( status__ Status );
-
 	// Label de message préfixé par 'EXML_'.
 	const str::string_ &GetTranslation(
-		status__ &Status,
+		status__ Status,
 		const str::string_ &Language,
 		const lcl::locales_ &Locales,
 		str::string_ &Translation );
@@ -259,6 +258,8 @@ namespace xml {
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
 	// Codes d'erreur retournée par 'ExtendedParse()'.
+	// Code d'erreur retournée par 'Parse()'.
+	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
 	enum extended_status__ {
 		xsOK = sOK,
 		xsNoTagsAllowedHere = s_amount,
@@ -281,11 +282,10 @@ namespace xml {
 		xs_Undefined,
 	};
 
-	const char *GetLabel( extended_status__ Status );
-
 	// Label de message préfixé par 'EXML_'.
 	const str::string_ &GetTranslation(
-		extended_status__ &Status,
+		extended_status__ Status,
+		const str::string_ &Language,
 		const lcl::locales_ &Locales,
 		str::string_ &Translation );
 

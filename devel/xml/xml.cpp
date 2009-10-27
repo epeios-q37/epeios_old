@@ -75,7 +75,7 @@ using namespace xml;
 
 #define CASE( m )	CASE_( s, m )
 
-const char *xml::GetLabel( status__ Status )
+inline static const char *GetLabel_( status__ Status )
 {
 	switch( Status ) {
 #if 1
@@ -87,7 +87,7 @@ const char *xml::GetLabel( status__ Status )
 	CASE( UnexpectedCharacter );
 	CASE( EmptyTagName );
 	CASE( MismatchedTag );
-	CASE( UserError );
+	CASE( UserDefinedError );
 	default:
 		ERRu();
 		break;
@@ -117,7 +117,7 @@ const char *xml::GetLabel( status__ Status )
 	case sMismatchedTag:
 		return "Mismatched tag";
 		break;
-	case sUserError:
+	case sUserDefinedError:
 		return "User error";
 		break;
 	default:
@@ -129,8 +129,10 @@ const char *xml::GetLabel( status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
+#undef CASE
+
 const str::string_ &xml::GetTranslation(
-	status__ &Status,
+	status__ Status,
 	const str::string_ &Language,
 	const lcl::locales_ &Locales,
 	str::string_ &Translation )
@@ -140,7 +142,7 @@ ERRProlog
 ERRBegin
 	MessageLabel.Init( "EXML_" );
 
-	MessageLabel.Append( GetLabel( Status ) );
+	MessageLabel.Append( GetLabel_( Status ) );
 
 	Locales.GetTranslation( MessageLabel, Language, Translation );
 ERRErr
@@ -155,10 +157,36 @@ static inline extended_status__ Convert_( status__ Status )
 	return (extended_status__)Status;
 }
 
-const char *xml::GetLabel( extended_status__ Status )
+#define CASE( m )	CASE_( xs, m )
+
+static inline const char *GetLabel_( extended_status__ Status )
 {
 	if ( Status < Convert_( s_amount ) )
-		return GetLabel( (status__)Status );
+		return GetLabel_( (status__)Status );
+
+#if 1
+	switch( Status ) {
+	CASE( OK );
+	CASE( NoTagsAllowedHere );
+	CASE( UnexpectedTag );
+	CASE( UnknownTag );
+	CASE( AttributeAlreadyDefined );
+	CASE( UnexpectedAttribute );
+	CASE( UnknownAttribute );
+	CASE( MissingNameAttribute );
+	CASE( MissingSelectAttribute );
+	CASE( MissingValueAttribute );
+	CASE( UnknownVariable );
+	CASE( NoValueAllowedHere );
+	CASE( TooManyTags );
+	CASE( UnableToOpenFile );
+	CASE( NestingOverflow );
+	CASE( UnknownMacro );
+	default:
+		ERRu();
+		break;
+	}
+#else
 
 	switch( Status ) {
 	case xsOK:
@@ -214,8 +242,31 @@ const char *xml::GetLabel( extended_status__ Status )
 		break;
 	}
 
+#endif
+
 	return NULL;	// Pour éviter un 'warning'.
 }
+
+const str::string_ &xml::GetTranslation(
+	extended_status__ Status,
+	const str::string_ &Language,
+	const lcl::locales_ &Locales,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "EXML_" );
+
+	MessageLabel.Append( GetLabel_( Status ) );
+
+	Locales.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
 
 #define	EXPAND_MAX_NESTING_LEVEL	100
 #define	IFEQ_MAX_NESTING_LEVEL		100
@@ -610,7 +661,7 @@ ERRBegin
 					HANDLE( HandleProcessingInstruction_( Flow ) );
 
 					if ( !Callback.XMLProcessingInstruction( Flow.Dump ) )
-						RETURN( sUserError );
+						RETURN( sUserDefinedError );
 
 					HANDLE( SkipSpaces_( Flow ) );
 
@@ -650,7 +701,7 @@ ERRBegin
 				RETURN( sEmptyTagName );
 
 			if ( !Callback.XMLStartTag( Name, Flow.Dump ) )
-				RETURN( sUserError );
+				RETURN( sUserDefinedError );
 
 			Flow.Dump.Init();
 
@@ -672,7 +723,7 @@ ERRBegin
 				HANDLE( SkipSpaces_( Flow ) );
 
 				if ( Flow.Get() != '>' )
-					RETURN( sUserError );
+					RETURN( sUserDefinedError );
 
 				if ( Tags.IsEmpty() )
 					ERRc();
@@ -682,10 +733,10 @@ ERRBegin
 				Tags.Pop( Tag );
 
 				if ( !Callback.XMLStartTagClosed( Name, Flow.Dump ) )
-					RETURN( sUserError );
+					RETURN( sUserDefinedError );
 
 				if ( !Callback.XMLEndTag( Name, Flow.Dump ) )
-					RETURN( sUserError );
+					RETURN( sUserDefinedError );
 
 				Flow.Dump.Init();
 
@@ -697,7 +748,7 @@ ERRBegin
 				Flow.Get();
 
 				if ( !Callback.XMLStartTagClosed( Name, Flow.Dump ) )
-					RETURN( sUserError );
+					RETURN( sUserDefinedError );
 
 				Flow.Dump.Init();
 
@@ -722,7 +773,7 @@ ERRBegin
 			Tags.Top( Tag );
 
 			if ( !Callback.XMLAttribute( Tag, Name, Value, Flow.Dump ) )
-				RETURN( sUserError );
+				RETURN( sUserDefinedError );
 
 			Flow.Dump.Init();
 
@@ -746,12 +797,12 @@ ERRBegin
 					Tags.Pop( Tag );
 
 					if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
-						RETURN( sUserError );
+						RETURN( sUserDefinedError );
 
 					Flow.Dump.Init();
 
 					if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
-						RETURN( sUserError );
+						RETURN( sUserDefinedError );
 
 					Flow.Dump.Init();
 
@@ -768,7 +819,7 @@ ERRBegin
 				Flow.Get();
 
 				if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
-					RETURN( sUserError );
+					RETURN( sUserDefinedError );
 
 				Flow.Dump.Init();
 
@@ -799,7 +850,7 @@ ERRBegin
 				RETURN( sMismatchedTag );
 
 			if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
-				RETURN( sUserError );
+				RETURN( sUserDefinedError );
 
 			Flow.Dump.Init();
 
@@ -823,7 +874,7 @@ ERRBegin
 						Tags.Top( Tag );
 
 					if ( !Callback.XMLValue( Tag, Value, Flow.Dump ) )
-						RETURN( sUserError );
+						RETURN( sUserDefinedError );
 
 					Flow.Dump.Init();
 				}
@@ -1761,7 +1812,7 @@ private:
 
 		if ( Status != xsOK ) {
 			_Flow->Set( XFlow.Coord() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
-			if ( Status == Convert_( sUserError ) )
+			if ( Status == Convert_( sUserDefinedError ) )
 				Status = _RelayedStatus;
 		}
 	ERRErr
@@ -1788,7 +1839,7 @@ private:
 
 		FileName =  fnm::BuildFileName( _Directory.Convert( DirectoryBuffer ), _SelectAttribute.Convert( AttributeBuffer ), "", FileNameBuffer );
 
-		if ( Flow.Init( FileName, fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
+		if ( Flow.Init( fnm::CorrectLocation( FileName, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
 			Status = xsUnableToOpenFile;
 			ERRReturn;
 		}
@@ -1817,7 +1868,7 @@ private:
 
 		if ( Status != xsOK ) {
 			_Flow->Set( XFlow.Coord() );	// Pour que l'utilisateur puisse récupèrer la position de l'erreur.
-			if ( Status == Convert_( sUserError ) )
+			if ( Status == Convert_( sUserDefinedError ) )
 				Status = _RelayedStatus;
 		}
 
@@ -2248,7 +2299,7 @@ ERRBegin
 		if ( &FileName != NULL )
 			FileName = XCallback.GuiltyFileName();
 
-		if ( Status == Convert_( sUserError ) )
+		if ( Status == Convert_( sUserDefinedError ) )
 			Status = XCallback.RelayedStatus();
 	}
 ERRErr

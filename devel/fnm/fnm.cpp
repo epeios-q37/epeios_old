@@ -311,7 +311,7 @@ const char *fnm::CorrectLocation(
 
 	while( R != NULL ) {
 		*R = FNM_DIRECTORY_SEPARATOR_CHARACTER;
-		R = strpbrk( P+1, "\\/" );
+		R = strpbrk( R+1, "\\/" );
 	}
 
 	return P;
