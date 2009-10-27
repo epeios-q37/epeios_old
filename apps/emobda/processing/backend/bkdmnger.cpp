@@ -97,8 +97,6 @@ static const char *GetRawMessage_( message__ MessageId )
 	return Message;
 }
 
-static lcl::locales Locales_;
-
 void bkdmnger::manager_::RAW_MESSAGES( lcl::strings_ &Messages )
 {
 	for ( int i = 0; i < m_amount ; i++ )
@@ -112,21 +110,10 @@ _messages_ &bkdmnger::GetMessages( void )
 */
 static const char *GetMessage_(
 	message__ MessageId,
-	const str::string_ &Language,
+	bkdmng::backend &Backend,
 	STR_BUFFER___ &Buffer )
 {
-ERRProlog
-	str::string Translation;
-ERRBegin
-	Translation.Init();
-
-	::Locales_.GetTranslation( str::string( GetRawMessage_( MessageId ) ), Language, Translation );
-
-	Translation.Convert( Buffer );
-ERRErr
-ERREnd
-ERREpilog
-	return Buffer();
+	return Backend.GetTranslation( str::string( GetRawMessage_( MessageId ) ), Buffer );
 }
 
 typedef message__ (* f_manager )(
@@ -155,7 +142,7 @@ ERRBegin
 	if ( Message != mOK )
 		Request.SendExplanationMessage(
 			GetRawMessage_( Message ),
-			GetMessage_( Message, Backend.GetLanguage(), I18MessageBuffer ) );
+			GetMessage_( Message, Backend, I18MessageBuffer ) );
 ERRErr
 ERREnd
 ERREpilog

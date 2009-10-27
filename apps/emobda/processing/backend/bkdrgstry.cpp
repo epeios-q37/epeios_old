@@ -35,30 +35,42 @@ bso::bool__ bkdrgstry::FillRegistry(
 {
 	bso::bool__ Success = false;
 ERRProlog
-	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XFlow;
-	rgstry::row__ Root = NONE;
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::xcoord ErrorCoord;;
 	xml::extended_status__ Status = xml::xs_Undefined;
 ERRBegin
-	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
-		Flow << txf::nl << "Error opening project file '" << FileName << "' !" << txf::nl;
-		ERRReturn;
-	}
-
-	FFlow.EOFD( XTF_EOXT );
-
-	XFlow.Init( FFlow );
-
 	Registry_.Init();
 
 	ErrorCoord.Init();
+#if 1
+	switch ( rgstry::FillRegistry( FileName, RootPath, Registry_, Root_, Status, ErrorCoord, &PathErrorRow ) ) {
+	case rgstry::eOK:
+		break;
+	case rgstry::eUnableToOpenFile:
+		Flow << txf::nl << "Error opening file '" << FileName << "' !" << txf::nl;
+		ERRReturn;
+		break;
+	case rgstry::eParseError :
+		Flow << "Error in file '";
+		Flow << ErrorCoord.FileName;
+		Flow << "' line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
+		ERRReturn;
+		break;
+	case rgstry::eRootPathError:
+		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
+		ERRReturn;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+#else
 
 	if ( ( Root = rgstry::Parse( XFlow, str::string( "" ), Registry_, Root, Status, ErrorCoord ) ) == NONE ) {
 		Flow << "Error in file '";
 		
-		if ( ErrorCoord.File.Amount() != 0 )
+		if ( ErrorCoord.FileNAme.Amount() != 0 )
 			Flow << ErrorCoord.File;
 		else
 			Flow << FileName;
@@ -77,6 +89,7 @@ ERRBegin
 
 	if ( Registry_.GetNature( Root_ ) == rgstry::nAttribute )
 		ERRc();
+#endif
 
 
 	Success = true;

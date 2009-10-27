@@ -64,15 +64,37 @@ public:
 #include "flx.h"
 #include "flf.h"
 #include "fnm.h"
+#include "lcl.h"
 
 using namespace xml;
 
+#define CASE_( p, m )\
+	case p##m:\
+	return #m;\
+	break
+
+#define CASE( m )	CASE_( s, m )
 
 const char *xml::GetLabel( status__ Status )
 {
 	switch( Status ) {
-	case sOK:
+#if 1
+	CASE( OK );
+	CASE( UnexpectedEOF );
+	CASE( UnknownEntity );
+	CASE( MissingEqualSign );
+	CASE( BadAttributeValueDelimiter );
+	CASE( UnexpectedCharacter );
+	CASE( EmptyTagName );
+	CASE( MismatchedTag );
+	CASE( UserError );
+	default:
 		ERRu();
+		break;
+	}
+#else
+	case sOK:
+		return "OK";
 		break;
 	case sUnexpectedEOF:
 		return "Unexpected EOF";
@@ -102,9 +124,31 @@ const char *xml::GetLabel( status__ Status )
 		ERRu();
 		break;
 	}
+#endif
 
 	return NULL;	// Pour éviter un 'warning'.
 }
+
+const str::string_ &xml::GetTranslation(
+	status__ &Status,
+	const str::string_ &Language,
+	const lcl::locales_ &Locales,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "EXML_" );
+
+	MessageLabel.Append( GetLabel( Status ) );
+
+	Locales.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
 
 static inline extended_status__ Convert_( status__ Status )
 {

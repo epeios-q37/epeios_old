@@ -1,5 +1,15 @@
 $Id$
 
+27/10/2009 :
+	- LCL :
+		- Adaptation aux modifications de 'RGSTRY'.
+		- Mise en oeuvre des nouvelles fonctionnalités de 'RGSTRY'.
+		- Enrichissement.
+	- RGSTRY :
+		- Mise en oeuvre de 'error_details[_]', plus complet que 'xcoord[_]', pour simplifier la gestion des erreurs.
+	- XML :
+		- Amélioration de l'affichage des messages d'erreurs.
+
 26/10/2009 :
 	- LCL :
 		- Modification de certaines fonctions pour simplification d'utilisation.

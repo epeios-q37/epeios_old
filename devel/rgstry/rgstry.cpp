@@ -825,8 +825,7 @@ row__ rgstry::Parse(
 	const str::string_ &Directory,
 	registry_ &Registry,
 	row__ Root,
-	xml::extended_status__ &Status,
-	xcoord_ &ErrorCoord )
+	error_details_ &ErrorDetails )
 {
 ERRProlog
 	callback___ Callback( Registry );
@@ -836,12 +835,12 @@ ERRBegin
 
 	ErrorFileName.Init();
 
-	if ( ( Status = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) == xml::xsOK )
+	if ( ( ErrorDetails.S_.XMLStatus = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) == xml::xsOK )
 		Root = Callback.GetRoot();
 	else {
 		Root = NONE;
-		ErrorCoord.FileName = ErrorFileName;
-		ErrorCoord.SetCoord( Flow.Coord() );
+		ErrorDetails.FileName = ErrorFileName;
+		ErrorDetails.S_.Coord = Flow.Coord();
 	}
 ERRErr
 ERREnd
@@ -935,21 +934,17 @@ error__ rgstry::FillRegistry(
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
-	xml::extended_status__ &Status,
-	xcoord_ &ErrorCoord,
-	epeios::row__ *PathErrorRow )
+	error_details_ &ErrorDetails )
 {
 	Registry.Init();
 
 //	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
 
-	ErrorCoord.Init();
-
-	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, Status, ErrorCoord ) ) == NONE )
+	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
 		return eParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
-		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, PathErrorRow ) ) == NONE )
+		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &ErrorDetails.S_.PathErrorRow ) ) == NONE )
 			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
 				return eRootPathError;
 	}
@@ -962,9 +957,7 @@ error__ rgstry::FillRegistry(
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
-	xml::extended_status__ &Status,
-	xcoord_ &ErrorCoord,
-	epeios::row__ *PathErrorRow )
+	error_details_ &ErrorDetails )
 {
 	error__ Error = e_Undefined;
 ERRProlog
@@ -983,11 +976,11 @@ ERRBegin
 
 	Registry.Init();
 
-	Error = FillRegistry( XTFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, Status, ErrorCoord, PathErrorRow );
+	Error = FillRegistry( XTFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
 
 	if ( Error == eParseError )
-		if ( ErrorCoord.FileName.Amount() == 0 )
-			ErrorCoord.FileName = FileName;
+		if ( ErrorDetails.FileName.Amount() == 0 )
+			ErrorDetails.FileName = FileName;
 ERRErr
 ERREnd
 ERREpilog

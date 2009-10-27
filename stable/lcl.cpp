@@ -57,30 +57,6 @@ public:
 
 using namespace lcl;
 
-bso::bool__ lcl::locales_::Init(
-	xtf::extended_text_iflow__ &XFlow,
-	const char *RootPath )
-{
-	rgstry::row__ BaseRoot = NONE;
-	epeios::row__ PathErrorRow = NONE;
-
-	Registry.Init();
-
-	BaseRoot = rgstry::Parse( XFlow, str::string(), Registry, NONE );
-
-	if ( ( BaseRoot != NONE ) && ( RootPath != NULL ) && ( RootPath[0] != 0 ) ) {
-		BaseRoot = Registry.Search( str::string( RootPath ), BaseRoot, &PathErrorRow );
-
-		if ( ( BaseRoot != NONE ) && ( Registry.GetNature( BaseRoot ) == rgstry::nAttribute ) )
-			ERRu();
-
-		if ( PathErrorRow != NONE )
-			ERRu();
-	}
-
-	return ( S_.Root = BaseRoot ) != NONE; 
-}
-
 void lcl::locales_::_GetCorrespondingLabels(
 	const strings_ &Labels,
 	strings_ &Wordings ) const

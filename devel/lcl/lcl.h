@@ -67,6 +67,10 @@ extern class ttr_tutor &LCLTutor;
 #define LCL_DEFAULT_TAG_MARKER	'%'
 
 namespace lcl {
+	using rgstry::error__;
+	using rgstry::error_details_;
+	using rgstry::error_details;
+
 	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
 	E_AUTO( strings );
 
@@ -112,9 +116,29 @@ namespace lcl {
 
 			Registry.Init();
 		}
-		bso::bool__ Init(
-			xtf::extended_text_iflow__ &XFlow,
-			const char *RootPath );
+		error__ Init(
+			xtf::extended_text_iflow__ &XTFlow,
+			const char *RootPath,
+			const str::string_ &BaseDirectory,
+			error_details_ &ErrorDetails )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( XTFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
+		}
+		error__ Init(
+			const char *FileName,
+			const char *RootPath,
+			error_details_ &ErrorDetails )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( FileName, RootPath, Registry, S_.Root, ErrorDetails );
+		}
 		void GetLanguages(
 			strings_ &Labels,
 			strings_ &Wordings ) const;

@@ -757,19 +757,26 @@ namespace rgstry {
 	};
 	E_AUTO( registry )
 
-	class xcoord_ {
+	class error_details_
+	{
 	public:
 		struct s {
 			xml::coord__ Coord;
+			epeios::row__ PathErrorRow;
+			xml::extended_status__ XMLStatus;
 			str::string_::s FileName;
 		} &S_;
 		str::string_ FileName;
-		xcoord_( s &S )
+		error_details_( s &S )
 		: S_( S ),
 		  FileName( S.FileName )
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			S_.Coord.reset( P );
+			S_.PathErrorRow = NONE;
+			S_.XMLStatus = xml::xs_Undefined;
+
 			S_.Coord.reset( P );
 			FileName.reset( P );
 		}
@@ -781,11 +788,13 @@ namespace rgstry {
 		{
 			FileName.plug( MM );
 		}
-		xcoord_ &operator =( const xcoord_ &XC )
+		error_details_ &operator =( const error_details_ &ED )
 		{
-			S_.Coord = XC.S_.Coord;
+			S_.Coord = ED.S_.Coord;
+			S_.PathErrorRow = ED.S_.PathErrorRow;
+			S_.XMLStatus = ED.S_.XMLStatus;
 
-			FileName = XC.FileName;
+			FileName = ED.FileName;
 
 			return *this;
 		}
@@ -796,18 +805,19 @@ namespace rgstry {
 			S_.Coord.Init();
 			FileName.Init();
 		}
-		E_RWDISCLOSE_( xml::coord__, Coord );
+		E_RODISCLOSE_( xml::coord__, Coord );
+		E_RODISCLOSE_( epeios::row__, PathErrorRow );
+		E_RODISCLOSE_( xml::extended_status__, XMLStatus );
 	};
 
-	E_AUTO( xcoord );
+	E_AUTO( error_details );
 
 	row__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		const str::string_ &Directory,
 		registry_ &Registry,
 		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
-		xml::extended_status__ &Status,	// Si valeur retournée == NONE, alors contient le code d'erreur.
-		xcoord_ &ErrorCoord );
+		error_details_ &ErrorDetails );
 
 	inline row__ Parse(
 		xtf::extended_text_iflow__ &Flow,
@@ -817,12 +827,11 @@ namespace rgstry {
 	{
 		row__ Result = NONE;
 	ERRProlog
-		xcoord Dummy;
-		xml::extended_status__ Status = xml::xs_Undefined;
+		error_details Dummy;
 	ERRBegin
 		Dummy.Init();
 
-		Result = Parse( Flow, Directory, Registry, Root, Status, Dummy );
+		Result = Parse( Flow, Directory, Registry, Root, Dummy );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -1028,18 +1037,14 @@ namespace rgstry {
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
-		xml::extended_status__ &Status,
-		xcoord_ &ErrorCoord,
-		epeios::row__ *PathErrorRow = NULL );
+		error_details_ &ErrorDetails );
 
 	error__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
-		xml::extended_status__ &Status,
-		xcoord_ &ErrorCoord,
-		epeios::row__ *PathErrorRow = NULL );
+		error_details_ &ErrorDetails );
 
 
 }

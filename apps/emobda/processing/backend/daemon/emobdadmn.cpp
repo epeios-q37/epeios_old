@@ -276,9 +276,11 @@ public:
 	csdsns::core Core;
 	csdsns::server___ Server;
 	bkdcore::backend_functions__ Functions;
-	void Init( csdsns::service__ Service )
+	void Init(
+		csdsns::service__ Service,
+		const lcl::locales_ &Locales )
 	{
-		Functions.Init( );
+		Functions.Init( Locales );
 		Core.Init( ::LogFunctions );
 		Server.Init( Service, Functions, ::LogFunctions );
 	}
@@ -298,6 +300,7 @@ ERRProlog
 	csdsns::service__ Service = 0;
 	str::string Repository;
 	bso::bool__ AsWinService = false;
+	lcl::locales Locales;
 ERRBegin
 #ifdef CPE__T_MS
 	if( !AsWinService )
@@ -337,6 +340,10 @@ ERRBegin
 	}
 
 	// We do nothing with 'RootPath' yet, but il will be used later !
+
+	Locales.Init();
+
+	lcl::L
 
 	::Kernel_.Init( Service );
 

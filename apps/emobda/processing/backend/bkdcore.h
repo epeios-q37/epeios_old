@@ -62,6 +62,8 @@ namespace bkdcore {
 	class backend_functions__
 	: public _backend_functions__
 	{
+	private:
+		const lcl::locales_ *_Locales;
 	protected:
 		virtual void *CSDPreProcess( flw::ioflow__ &Flow );
 		virtual csdscm::action__ CSDProcess(
@@ -69,9 +71,14 @@ namespace bkdcore {
 			void *UP );
 		virtual void CSDPostProcess( void *UP );
 	public:
-		void Init( void )
+		backend_functions__( void )
+		{
+			_Locales = NULL;
+		}
+		void Init( const lcl::locales_ &Locales )
 		{
 			_backend_functions__::Init();
+			_Locales = &Locales;
 		}
 	};
 }

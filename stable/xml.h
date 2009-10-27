@@ -72,6 +72,10 @@ extern class ttr_tutor &XMLTutor;
 #	define XML__USE_OLD
 #endif
 
+// Prédéclaration.
+namespace lcl {
+	class locales_;
+}
 
 namespace xml {
 	using xtf::coord__;
@@ -242,6 +246,13 @@ namespace xml {
 
 	const char *GetLabel( status__ Status );
 
+	// Label de message préfixé par 'EXML_'.
+	const str::string_ &GetTranslation(
+		status__ &Status,
+		const str::string_ &Language,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
+
 	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		callback__ &Callback );
@@ -271,6 +282,12 @@ namespace xml {
 	};
 
 	const char *GetLabel( extended_status__ Status );
+
+	// Label de message préfixé par 'EXML_'.
+	const str::string_ &GetTranslation(
+		extended_status__ &Status,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
 
 #define XML_EXTENDED_PARSER_DEFAULT_NAMESPACE	"xpp"
 
