@@ -1,5 +1,14 @@
 $Id$
 
+28/10/2009 :
+	- LCL :
+		- Ajout du tag de la gestion de la balise d'indice '0' (qui est remplacé par l'ensemble des valeurs).
+	- RGSTRY :
+		- Modification du label des erreurs, pour y inclure la balise d'indice '0' (voir 'LCL').
+		- Les fichiers résultants en un fichier vide sont maintenent correctement rconnu.
+	- XML :
+		- Les attributs 'xmlns:...' sont maintenant acceptés.
+
 27/10/2009 :
 	- FNM :
 		- Correction bogue 'CorrectLocation'.

@@ -9,4 +9,4 @@ REMINDER :
 	- Adaptation to changes in 'RGSTRY' and 'LCL'.
 	
 - 20/10/2009 :
-	- Adaptation to chnages in 'RGSTRY'.
+	- Adaptation to changes in 'RGSTRY'.

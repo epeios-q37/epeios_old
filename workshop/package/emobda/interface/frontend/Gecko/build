@@ -22,6 +22,7 @@ cp /cygdrive/h/xulrunner/components/iemobda.xpt $DIR/XPCOM
 
 $GET epeios $DIR/XPCOM stable/*.h
 $GET epeios $DIR/XPCOM stable/*.cpp
+$GET epeios $DIR/XPCOM stable/*.xlc
 
 $GET ebkd $DIR/XPCOM stable/*.h
 $GET ebkd $DIR/XPCOM stable/*.cpp

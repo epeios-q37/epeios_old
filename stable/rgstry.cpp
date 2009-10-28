@@ -945,7 +945,7 @@ ERRBegin
 		ERRu();
 		break;
 	case eUnableToOpenFile:
-		Locales.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1" ), Language, Translation );
+		Locales.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1%0" ), Language, Translation );
 
 		TagValues.Init();
 		TagValues.Append( ErrorDetails.FileName );
@@ -954,7 +954,7 @@ ERRBegin
 		break;
 	case eParseError:
 		bso::integer_buffer__ Buffer;
-		Locales.GetTranslation( str::string( "ERGSTRY_ParseError_4" ), Language, Translation );
+		Locales.GetTranslation( str::string( "ERGSTRY_ParseError_4%0" ), Language, Translation );
 	
 		TagValues.Init();
 		TagValues.Append( str::string(  ErrorDetails.FileName ) );
@@ -997,7 +997,10 @@ error__ rgstry::FillRegistry(
 //	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
 
 	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
-		return eParseError;
+		if ( ErrorDetails.GetXMLStatus() == xml::xsOK )
+			return eRootPathError;
+		else
+			return eParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
 		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &ErrorDetails.S_.PathErrorRow ) ) == NONE )

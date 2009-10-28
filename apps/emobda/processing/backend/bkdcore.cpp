@@ -80,8 +80,7 @@ ERRBegin
 	if ( Data == NULL )
 		ERRa();
 
-	Data->Backend.Init( *_Locales, str::string( "coucou" ) );
-	Data->Backend.SetLanguage( str::string( "fr" ) );
+	Data->Backend.Init( *_Locales );
 ERRErr
 	if ( Data != NULL )
 		delete Data;

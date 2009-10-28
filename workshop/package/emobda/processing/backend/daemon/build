@@ -19,6 +19,7 @@ cp /cygdrive/h/bin/emobdadmn.exe $DIR
 
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
+$GET epeios $DIR/XPCOM stable/*.xlc
 
 $GET ebkd $DIR stable/*.h
 $GET ebkd $DIR stable/*.cpp

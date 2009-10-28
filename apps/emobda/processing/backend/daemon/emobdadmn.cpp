@@ -301,6 +301,7 @@ ERRProlog
 	str::string Repository;
 	bso::bool__ AsWinService = false;
 	lcl::locales Locales;
+
 ERRBegin
 #ifdef CPE__T_MS
 	if( !AsWinService )
@@ -343,9 +344,7 @@ ERRBegin
 
 	Locales.Init();
 
-	lcl::L
-
-	::Kernel_.Init( Service );
+	::Kernel_.Init( Service, Locales );
 
 	::Kernel_.Process( SCK_INFINITE );
 ERRErr

@@ -41,9 +41,7 @@ namespace bkdcore {
 	private:
 		BKDMNG_RAM_MODULE( bkdmnger::manager_ ) Manager;
 	public:
-		void Init(
-			const lcl::locales_ &Locales,
-			const str::string_ &Repository )
+		void Init( const lcl::locales_ &Locales )
 		{
 			_backend::Init( BKDCORE_BACKEND_NAME, BKDCORE_BACKEND_VERSION, Locales );
 

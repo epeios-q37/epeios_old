@@ -1,8 +1,8 @@
 <!-- $Id$ -->
-<Locales>
+<Locales xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Locale target="emobdafrd">
 		<Translations message ="SelectProjectFile">
-			<Translation language="fr">Sélectionner un projet</Translation>
+			<Translation language="fr">SÃ©lectionner un projet</Translation>
 			<Translation language="en-US">Select a project</Translation>
 		</Translations>
 		<Translations message ="MissingProjectTree">
@@ -14,43 +14,43 @@
 			<Translation language="en-US">Projet name missing !</Translation>
 		</Translations>
 		<Translations message ="MissingDatabaseName">
-			<Translation language="fr">Nom de base la base de données manquant !</Translation>
+			<Translation language="fr">Nom de base la base de donnÃ©es manquant !</Translation>
 			<Translation language="en-US">Database name missing !</Translation>
 		</Translations>
 		<Translations message ="MissingDatabasePath">
-			<Translation language="fr">Chemin de la base de données manquant !</Translation>
+			<Translation language="fr">Chemin de la base de donnÃ©es manquant !</Translation>
 			<Translation language="en-US">Database path missing !</Translation>
 		</Translations>
 		<Translations message ="NoDatabaseSelected">
-			<Translation language="fr">Pas de base de données sélectionnée !</Translation>
+			<Translation language="fr">Pas de base de donnÃ©es sÃ©lectionnÃ©e !</Translation>
 			<Translation language="en-US">No databse selected !</Translation>
 		</Translations>
 		<Translations message ="BadDatabasePath">
-			<Translation language="fr">Chemin de base de données incorrect !</Translation>
+			<Translation language="fr">Chemin de base de donnÃ©es incorrect !</Translation>
 			<Translation language="en-US">Bad database path !</Translation>
 		</Translations>
 		<Translations message ="DropStructureItemConfirmation">
-			<Translation language="fr">Êtes vous sûr de vouloir renoncer ?</Translation>
+			<Translation language="fr">ÃŠtes vous sÃ»r de vouloir renoncer ?</Translation>
 			<Translation language="en-US">Are you sure you want to givre up ?</Translation>
 		</Translations>
 		<Translations message ="DeleteTableConfirmation">
-			<Translation language="fr">Êtes-vous sûr de vouloir supprimer la table ?</Translation>
+			<Translation language="fr">ÃŠtes-vous sÃ»r de vouloir supprimer la table ?</Translation>
 			<Translation language="en-US">Are you sure you want to delete the table ?</Translation>
 		</Translations>
 		<Translations message ="DeleteFieldConfirmation">
-			<Translation language="fr">Êtes-vous sûr de vouloir effacer ce champs ?</Translation>
+			<Translation language="fr">ÃŠtes-vous sÃ»r de vouloir effacer ce champs ?</Translation>
 			<Translation language="en-US">Are you sure you want to delete field ?</Translation>
 		</Translations>
 		<Translations message ="DeleteRecordConfirmation">
-			<Translation language="fr">Êtes-vous sûr de vouloir effacer cet enregistrment ?</Translation>
+			<Translation language="fr">ÃŠtes-vous sÃ»r de vouloir effacer cet enregistrment ?</Translation>
 			<Translation language="en-US">Are you sure you want to delete this record ?</Translation>
 		</Translations>
 		<Translations message ="DropRecordConfirmation">
-			<Translation language="fr">Êtes-vous sûr de vouloir abandonner la saisie ?</Translation>
+			<Translation language="fr">ÃŠtes-vous sÃ»r de vouloir abandonner la saisie ?</Translation>
 			<Translation language="en-US">Are you sure you want to continue ?</Translation>
 		</Translations>
 		<Translations message ="NoSuchRecordPosition">
-			<Translation language="fr">Pas d'enregistrement à cette position !</Translation>
+			<Translation language="fr">Pas d'enregistrement Ã  cette position !</Translation>
 			<Translation language="en-US">No record at this position !</Translation>
 		</Translations>
 		<Translations message ="BadRecordPosition">
@@ -58,7 +58,7 @@
 			<Translation language="en-US">Bad record position !</Translation>
 		</Translations>
 		<Translations message="NotImplementedYet">
-			<Translation language="fr">Non encore implémenté !</Translation>
+			<Translation language="fr">Non encore implÃ©mentÃ© !</Translation>
 			<Translation language="en-US">Not implemented yet !</Translation>
 		</Translations>
 		<Translations message="BadOrMissingBackendType">
@@ -66,7 +66,7 @@
 			<Translation language="en-US">Bad or missing backend type !</Translation>
 		</Translations>
 		<Translations message="UnableToConnectToBackend_1">
-			<Translation language="fr">Impossible de se connecter à '%1' !</Translation>
+			<Translation language="fr">Impossible de se connecter Ã  '%1' !</Translation>
 			<Translation language="en-US">Unable to connect to '%1' !</Translation>
 		</Translations>
 		<Translations message="NoBackendLocationGiven">
@@ -74,8 +74,8 @@
 			<Translation language="en-US">No backend location given !</Translation>
 		</Translations>
 		<Translations message="NoRemoteHostServiceGiven">
-			<Translation language="fr">Une adresse de backend doit être fournie !</Translation>
-			<Translation language="en-US">An backend address is needed !</Translation>
+			<Translation language="fr">Une adresse de backend doit Ãªtre fournie !</Translation>
+			<Translation language="en-US">A backend address is needed !</Translation>
 		</Translations>
 		<!--Translations message="">
 			<Translation language="fr"></Translation>
@@ -90,8 +90,7 @@
 <!-- Translation messages for the 'XML' library -->
 		<xpp:expand href="exml.xlc"/>
 		<xpp:expand select="exml"/>
-<!-- End of translation messages for the 'RGSTRY' library -->
-
+<!-- End of translation messages for the 'XML' library -->
 
 	</Locale>
 </Locales>

@@ -21,13 +21,13 @@
 
 #include "bkdrgstry.h"
 #include "flf.h"
+#include "lcl.h"
 
 using namespace bkdrgstry;
 
 static rgstry::registry Registry_;
 static rgstry::row__ Root_ = NONE;
 
-#if 1
 bso::bool__ bkdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
@@ -36,61 +36,29 @@ bso::bool__ bkdrgstry::FillRegistry(
 	bso::bool__ Success = false;
 ERRProlog
 	epeios::row__ PathErrorRow = NONE;
-	rgstry::xcoord ErrorCoord;;
+	rgstry::error_details ErrorDetails;
 	xml::extended_status__ Status = xml::xs_Undefined;
+	rgstry::error__ Error = rgstry::e_Undefined;
+	str::string Message;
+	lcl::locales DummyLocales;
 ERRBegin
 	Registry_.Init();
 
-	ErrorCoord.Init();
-#if 1
-	switch ( rgstry::FillRegistry( FileName, RootPath, Registry_, Root_, Status, ErrorCoord, &PathErrorRow ) ) {
+	ErrorDetails.Init();
+
+	switch ( ( Error = rgstry::FillRegistry( FileName, RootPath, Registry_, Root_, ErrorDetails ) ) ) {
 	case rgstry::eOK:
 		break;
-	case rgstry::eUnableToOpenFile:
-		Flow << txf::nl << "Error opening file '" << FileName << "' !" << txf::nl;
-		ERRReturn;
-		break;
-	case rgstry::eParseError :
-		Flow << "Error in file '";
-		Flow << ErrorCoord.FileName;
-		Flow << "' line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
-		ERRReturn;
-		break;
-	case rgstry::eRootPathError:
-		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
-		ERRReturn;
-		break;
 	default:
-		ERRc();
+		// 'Registry_' should contain the 'locales' definition, so, if failed to read it, then we have no way to display translated messages.
+		DummyLocales.Init();
+		Message.Init();
+		rgstry::GetTranslation( Error, ErrorDetails, str::string( "" ), DummyLocales, Message );
+		Flow << Message << txf::nl;
+		ERRReturn;
 		break;
 	}
 
-#else
-
-	if ( ( Root = rgstry::Parse( XFlow, str::string( "" ), Registry_, Root, Status, ErrorCoord ) ) == NONE ) {
-		Flow << "Error in file '";
-		
-		if ( ErrorCoord.FileNAme.Amount() != 0 )
-			Flow << ErrorCoord.File;
-		else
-			Flow << FileName;
-		
-		Flow << "' line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column << " : " << xml::GetLabel( Status ) << " ! " << txf::nl;
-		ERRReturn;
-	}
-
-	if ( ( Root_ = Registry_.Search( str::string( RootPath ), Root, &PathErrorRow ) ) == NONE ) {
-		if ( PathErrorRow != NONE )
-			ERRc();
-
-		Flow << "Unable to find '" << RootPath << "'." << txf::nl;
-		ERRReturn;
-	}
-
-	if ( Registry_.GetNature( Root_ ) == rgstry::nAttribute )
-		ERRc();
-#endif
-
 
 	Success = true;
 ERRErr
@@ -99,68 +67,6 @@ ERREpilog
 	return Success;
 }
 
-#else
-bso::bool__ bkdrgstry::FillRegistry(
-	const char *ConfigurationFileName,
-	const char *PathRoot,
-	txf::text_oflow__ &ErrFlow )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	flf::file_iflow___ FIFlow;
-	xtf::extended_text_iflow__ XFlow;
-	rgstry::nrow__ BaseRoot = NONE;
-	rgstry::erow__  AttributeEntryRow = NONE;
-	epeios::row__ PathErrorRow = NONE;
-	xml::extended_status__ ExtendedStatus = xml::xs_Undefined;
-	rgstry::xcoord ErrorCoord;
-ERRBegin
-	if ( ::Root_ != NONE )
-		ERRc();
-
-	if ( FIFlow.Init( ConfigurationFileName, err::hSkip ) != fil::sSuccess ) {
-		ErrFlow << "Unable to open file '" << ConfigurationFileName << "' !" << txf::nl;
-		ERRReturn;
-	}
-
-	FIFlow.EOFD( XTF_EOXT );
-
-	XFlow.Init( FIFlow );
-
-	::Registry_.Init();
-
-	ErrorCoord.Init();
-
-	BaseRoot = rgstry::Parse( XFlow, str::string( "" ), ::Registry_, NONE, ExtendedStatus, ErrorCoord );
-
-	if ( BaseRoot == NONE ) {
-		ErrFlow << xml::GetLabel( ExtendedStatus ) << " at line " << ErrorCoord.Coord().Line << ", column " << ErrorCoord.Coord().Column;
-
-		if ( ErrorCoord.File.Amount() )
-			ErrFlow << " in file '" << ErrorCoord.File;
-
-		ErrFlow << " !" << txf::nl;
-
-		ERRReturn;
-	}
-
-	::Root_ = ::Registry_.SearchPath( str::string( PathRoot ), BaseRoot, AttributeEntryRow, PathErrorRow );
-
-	if ((  AttributeEntryRow != NONE ) || ( PathErrorRow != NONE ) )
-		ERRc();
-
-	if ( ::Root_ == NONE ) {
-		ErrFlow << "Unable to find '" << PathRoot << "' in configurationfile !" << txf::nl;
-		ERRReturn;
-	}
-
-	Success = true;
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
-}
-#endif
 
 inline bso::bool__ bkdrgstry::GetPathValue(
 	const char *Path,

@@ -1891,6 +1891,13 @@ private:
 		else
 			return _HandleMacroExpand();
 	}
+	bso::bool__ _BeginsWithNamespacePrefix( const str::string_ &Name )
+	{
+		if ( Name.Amount() < 6 )
+			return false;
+		else
+			return str::Compare( str::string( "xmlns:" ), Name, 0, 0, 6 ) == 0;
+	}
 protected:
 	tag__ _GetTag( const str::string_ &Name )
 	{
@@ -1987,7 +1994,7 @@ protected:
 					RETURN( xsAttributeAlreadyDefined )
 
 				_NameAttribute = Value;
-			} else
+			} else if ( !_BeginsWithNamespacePrefix( Name ) )
 				RETURN( xsUnknownAttribute )
 			break;
 		case tExpand:
@@ -1998,8 +2005,9 @@ protected:
 					else
 						RETURN( xsAttributeAlreadyDefined )
 
-				_ExpandIsHRef = false;
+				_SelectAttribute = Value;
 
+				_ExpandIsHRef = false;
 			} else if ( Name == HREF_ATTRIBUTE ) {
 				if ( _SelectAttribute.Amount() != 0 )
 					if ( _ExpandIsHRef )
@@ -2007,12 +2015,11 @@ protected:
 					else
 						RETURN( xsUnexpectedAttribute )
 
+				_SelectAttribute = Value;
+
 				_ExpandIsHRef = true;
-
-			} else
+			} else if ( !_BeginsWithNamespacePrefix( Name ) )
 				RETURN( xsUnknownAttribute )
-
-			_SelectAttribute = Value;
 
 			break;
 		case tIfeq:
@@ -2026,7 +2033,7 @@ protected:
 					RETURN( xsAttributeAlreadyDefined )
 
 				_ValueAttribute = Value;
-			} else
+			} else if ( !_BeginsWithNamespacePrefix( Name ) )
 				RETURN( xsUnknownAttribute )
 			break;
 		case tBloc:
@@ -2045,7 +2052,7 @@ protected:
 					RETURN( xsAttributeAlreadyDefined )
 
 				_ValueAttribute = Value;
-			} else
+			} else if ( !_BeginsWithNamespacePrefix( Name ) )
 				RETURN( xsUnknownAttribute )
 			break;
 		case ::t_Undefined:

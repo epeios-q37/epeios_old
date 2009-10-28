@@ -185,6 +185,60 @@ ERREpilog
 	return Buffer;
 }
 
+// Remplace le tag d'indice '04 par la liste des valeurs.
+static void Replace0Tag_(
+	str::string_ &Message,
+	const lcl::strings_ &Values,
+	const char TagMarker )
+{
+ERRProlog
+	str::string MergedValues;
+	ctn::E_CMITEM( str::string_ ) Value;
+	epeios::row__ Row = NONE;
+	str::string Tag;
+ERRBegin
+	Value.Init( Values );
+
+	Row = Values.First();
+
+	MergedValues.Init( " (" );
+
+	if ( Row != NONE ) {
+		MergedValues.Append( '\'' );
+		MergedValues.Append( Value( Row ) );
+		MergedValues.Append( '\'' );
+		Row = Values.Next( Row );
+	}
+
+	while ( Row != NONE ) {
+		MergedValues.Append( " ,'" );
+		MergedValues.Append( Value( Row ) );
+		MergedValues.Append( '\'' );
+		Row = Values.Next( Row );
+	}
+
+	MergedValues.Append( ") " );
+
+	Tag.Init();
+	Tag.Append( TagMarker );
+	Tag.Append( '0' );
+	
+	Row = Message.Search( Tag );
+
+	while ( Row != NONE ) {
+		Message.Remove( Row, Tag.Amount() );
+
+		Message.Insert( MergedValues, Row );
+
+		Row = Message.Search( Tag, Row );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 void lcl::ReplaceTags(
 	str::string_ &Message,
@@ -195,29 +249,31 @@ ERRProlog
 	ctn::E_CMITEM( str::string_ ) Value;
 	bso::ubyte__ Indice = 1;
 	epeios::row__ Row = NONE, SearchRow = NONE;
-	str::string FullTag;
+	str::string Tag;
 	bso::integer_buffer__ Buffer;
 ERRBegin
 	if ( Values.Amount() > 9 )
 		ERRl();
+
+	Replace0Tag_( Message, Values, TagMarker );
 
 	Value.Init( Values );
 
 	Row = Values.First();
 
 	while ( Row != NONE ) {
-		FullTag.Init();
-		FullTag.Append( TagMarker );
-		FullTag.Append( bso::Convert( Indice, Buffer ) );
+		Tag.Init();
+		Tag.Append( TagMarker );
+		Tag.Append( bso::Convert( Indice, Buffer ) );
 
-		SearchRow = Message.Search( FullTag );
+		SearchRow = Message.Search( Tag );
 
 		while ( SearchRow != NONE ) {
-			Message.Remove( SearchRow, FullTag.Amount() );
+			Message.Remove( SearchRow, Tag.Amount() );
 
 			Message.Insert( Value( Row ), SearchRow );
 
-			SearchRow = Message.Search( FullTag, SearchRow );
+			SearchRow = Message.Search( Tag, SearchRow );
 		}
 
 		Row = Values.Next( Row );
@@ -225,18 +281,18 @@ ERRBegin
 		Indice++;
 	}
 
-	FullTag.Init();
-	FullTag.Append( TagMarker );
-	FullTag.Append( TagMarker );
+	Tag.Init();
+	Tag.Append( TagMarker );
+	Tag.Append( TagMarker );
 
-	SearchRow = Message.Search( FullTag );
+	SearchRow = Message.Search( Tag );
 
 	while ( SearchRow != NONE ) {
-		Message.Remove( SearchRow, FullTag.Amount() );
+		Message.Remove( SearchRow, Tag.Amount() );
 
 		Message.Insert( TagMarker, SearchRow );
 
-		SearchRow = Message.Search( FullTag, SearchRow );
+		SearchRow = Message.Search( Tag, SearchRow );
 	}
 
 ERRErr
