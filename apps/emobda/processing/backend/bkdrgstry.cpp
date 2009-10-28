@@ -53,12 +53,10 @@ ERRBegin
 		// 'Registry_' should contain the 'locales' definition, so, if failed to read it, then we have no way to display translated messages.
 		DummyLocales.Init();
 		Message.Init();
-		rgstry::GetTranslation( Error, ErrorDetails, str::string( "" ), DummyLocales, Message );
-		Flow << Message << txf::nl;
+		Flow << rgstry::GetTranslation( Error, ErrorDetails, str::string( "" ), DummyLocales, Message ) << txf::nl;
 		ERRReturn;
 		break;
 	}
-
 
 	Success = true;
 ERRErr

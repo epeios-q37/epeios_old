@@ -31,7 +31,7 @@
 #define COPYRIGHT_YEARS	BKDCORE_COPYRIGHT_YEARS
 
 #define NAME			"emobdadmn"
-#define DESCRIPTION		"Backend daemon for 'emobda' software"
+#define DESCRIPTION		"Backend daemon for 'EMobDa' software"
 #define INFO			EPSMSC_EPEIOS_TEXT
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
@@ -39,11 +39,15 @@
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define CVS_DETAILS		("$Id$\b " + 5)
 
-#define DEFAULT_CONFIGURATION_FILENAME "emobdadmn.xcf"
+#define DEFAULT_CONFIGURATION_FILENAME NAME ".xcf"
+#define CONFIGURATION_ROOT_PATH	"Configuration[target=\"" NAME "\"]"
+
+#define DEFAULT_LOCALES_FILENAME	NAME ".xlc"
+#define LOCALES_PATH_ROOT	"Locale[target=\"" NAME "\"]"
 
 #define SERVICE_NAME	NAME
 #define SERVICE_LABEL	"EMobDa backend daemon"
-#define SERVICE_DESCRIPTION	"Daemon handling EMobDa frontend requests."
+#define SERVICE_DESCRIPTION	"Daemon handling 'EMobDa' frontend requests."
 
 const char *bkdmnger::UserDefinedBackendVersion = NAME " V" VERSION" (" __DATE__ " "  __TIME__ ")";
 
@@ -78,7 +82,7 @@ enum option {
 
 enum exit_value__ {
 	evParameters = 2,
-	evConfiguration
+	evConfiguration,
 };
 
 struct parameters___ {
@@ -301,7 +305,9 @@ ERRProlog
 	str::string Repository;
 	bso::bool__ AsWinService = false;
 	lcl::locales Locales;
-
+	rgstry::error__ Error = rgstry::e_Undefined;
+	rgstry::error_details ErrorDetails;
+	str::string Message;
 ERRBegin
 #ifdef CPE__T_MS
 	if( !AsWinService )
@@ -325,7 +331,7 @@ ERRBegin
 
 	AnalyzeArgs( argc, argv, Parameters );
 
-	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, "Configuration[target=\"emobdadmn\"]", *CErr ) )
+	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, CONFIGURATION_ROOT_PATH, *CErr ) )
 		ERRExit( evConfiguration );
 
 	if ( !registry::GetService( Service ) ) {
@@ -340,9 +346,18 @@ ERRBegin
 		ERRExit( evConfiguration );
 	}
 
-	// We do nothing with 'RootPath' yet, but il will be used later !
+	ErrorDetails.Init();
 
-	Locales.Init();
+	switch( Error = Locales.Init( DEFAULT_LOCALES_FILENAME, LOCALES_PATH_ROOT, ErrorDetails ) ) {
+	case rgstry::eOK:
+		break;
+	default:
+		Message.Init();
+		// Weird 'language' parameter, because, if we are here, it's because the 'locales' file could not be correctly open
+		// so no message translations are available ...
+		*CErr << "Failed to load '" DEFAULT_LOCALES_FILENAME "' locales file : " << rgstry::GetTranslation( Error, ErrorDetails, str::string( "" ), Locales, Message ) << txf::nl;
+		break;
+	}
 
 	::Kernel_.Init( Service, Locales );
 
