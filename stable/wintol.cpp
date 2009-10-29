@@ -7,7 +7,7 @@
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -336,25 +336,26 @@ static void ServiceMain_(DWORD argc,LPTSTR *argv)
 	Terminate_(0);
 }
 
-bso::bool__ wintol::service__::Install(
+bso::bool__ wintol::InstallService(
+	const char *ServiceName,
 	const char *DisplayName,
 	const char *Description )
 {
-	return AddService_( _Name, DisplayName, Description );
+	return AddService_( ServiceName, DisplayName, Description );
 }
 
-bso::bool__ wintol::service__::Remove( void )
+bso::bool__ wintol::service__::Remove( const char *ServiceName )
 {
-	return RemoveService_( _Name );
+	return RemoveService_( ServiceName );
 }
 
-bso::bool__ wintol::service__::Launch( void )
+bso::bool__ wintol::service__::Launch( const char *ServiceName )
 {
 	PatchSignalHandlingForWindowsService();
 
 	SERVICE_TABLE_ENTRY serviceTable[]=
 	{
-		{ (char *)_Name,(LPSERVICE_MAIN_FUNCTION)ServiceMain_},
+		{ (char *)ServiceName,(LPSERVICE_MAIN_FUNCTION)ServiceMain_},
 		{NULL , NULL}
 	};
 

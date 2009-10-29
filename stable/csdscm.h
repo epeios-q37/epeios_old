@@ -78,6 +78,8 @@ namespace csdscm {
 			flw::ioflow__ &Flow,
 			void *UP ) = 0;
 		virtual void CSDPostProcess( void *UP ) = 0;
+		virtual void CSDExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
+												// (facilite la mise en oeuvre en tant que service Windows).
 	public:
 		void *PreProcess( flw::ioflow__ &Flow )
 		{
@@ -92,6 +94,10 @@ namespace csdscm {
 		void PostProcess( void *UP )
 		{
 			CSDPostProcess( UP );
+		}
+		void Exit( void )
+		{
+			CSDExit();
 		}
 		void Init( void )
 		{

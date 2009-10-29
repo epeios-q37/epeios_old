@@ -6,7 +6,7 @@ $_RAW_$
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -67,6 +67,12 @@ extern class ttr_tutor &WINTOLTutor;
 
 namespace wintol {
 
+	bso::bool__ InstallService(
+		const char *ServiceName,
+		const char *DisplayName,
+		const char *Description );
+
+
 	inline void PatchSignalHandlingForWindowsService( void )
 	{
 		signal( SIGBREAK, SIG_DFL );
@@ -75,27 +81,19 @@ namespace wintol {
 
 	class service__
 	{
-	private:
-		const char *_Name;
 	protected:
 		virtual void WINTOLProcess( void ) = 0;
 		virtual void WINTOLShutdown( void ) = 0;
 	public:
-		void reset( bso::bool__ P = true )
+		void reset( bso::bool__ = true )
 		{
-			_Name = NULL;
 		}
-		bso::bool__ Init( const char *Name )	// WARNING : 'Name' is not duplicated, so you should not change the content.
+		bso::bool__ Init( void )
 		{
-			_Name = Name;
-
 			return true;
 		}
-		bso::bool__ Install(
-			const char *DisplayName,
-			const char *Description );
-		bso::bool__ Remove( void );
-		bso::bool__ Launch( void );
+		bso::bool__ Remove( const char *ServiceName );	// Même valeur que celle passée à 'InstallService(...)'.
+		bso::bool__ Launch( const char *ServiceName );	// Même valeur que celle passée à 'InstallService(...)'.
 		// Return 'true' if termination was required.
 		bso::bool__ TestTermination( void );
 		void Process( void )

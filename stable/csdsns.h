@@ -55,7 +55,7 @@ extern class ttr_tutor &CSDSNSTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client-Server Standard Network Client 
+//D Client-Server Standard Network Server.
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -70,7 +70,7 @@ extern class ttr_tutor &CSDSNSTutor;
 namespace csdsns {
 
 	using namespace csdscm;
-	using csdbns::service__;
+	using csdbns::port__;
 
 	enum log__ {
 		lNew,
@@ -325,6 +325,10 @@ ERREpilog
 			if ( UP != NULL )
 				ERRc();
 		}
+		virtual void CSDExit( void )
+		{
+			_Functions->Exit();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -353,7 +357,7 @@ ERREpilog
 		}
 	};
 
-
+	// Pour l'utilisation en tant que service Windows, voir csdbns::server__'. 
 	class server___
 	{
 	private:
@@ -361,13 +365,17 @@ ERREpilog
 		_functions___ _Functions;
 	public:
 		void Init(
-			service__ Service,
+			port__ Port,
 			user_functions__ &UserFunctions,
 			log_functions__ &LogFunctions )
 		{
 			_Functions.Init( UserFunctions, LogFunctions );
 
-			_Server.Init( Service, _Functions );
+			_Server.Init( Port, _Functions );
+		}
+		bso::bool__ LaunchService( const char *ServiceName )
+		{
+			return _Server.LaunchService( ServiceName );
 		}
 		void Process( sck::duration__ TimeOut = SCK_INFINITE )
 		{

@@ -1,5 +1,18 @@
 $Id$
 
+29/10/2009 :
+	- CSDBNS :
+		- 'service__' -> 'port__' pour éviter lma confusion avec le système de service Windows.
+		- Prise en charge du système de 'service' de Windows.
+		- Correction : CSDNBS...' --> 'CSDBNS...'
+	- CSDSCM :
+		- Ajout de '[CSDBNS]Exit()', pour faciliter la mise en oeuvre de service Windows.
+	- CSDSNS :
+		- Adaptation aux modifications dans 'CSDBNS'.
+	- WINTOL :
+		- Simplification de la procédure d'installation d'un service (méthode 'Install()' devient une fonction indépendente 'InstallService(...)'.
+		- Le nom du service n'est plus stocké, mais passé en paramètre à chaque fois.
+
 28/10/2009 :
 	- LCL :
 		- Ajout du tag de la gestion de la balise d'indice '0' (qui est remplacé par l'ensemble des valeurs).

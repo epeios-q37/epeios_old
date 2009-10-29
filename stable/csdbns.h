@@ -63,6 +63,19 @@ extern class ttr_tutor &CSDBNSTutor;
 #include "err.h"
 #include "sck.h"
 #include "csdscm.h"
+#include "cpe.h"
+
+#ifdef CPE__T_MS
+#	ifndef CSD__NO_SERVICE_HANDLING
+#		define CSD__HANDLE_SERVICE	// Handles the Windows service system.
+#	endif
+#endif
+
+#ifdef CSD__HANDLE_SERVICE
+#	include "wintol.h"
+	typedef	wintol::service__ _service__;
+	using wintol::InstallService;
+#endif
 
 #define CSDNBS__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
 
@@ -70,31 +83,36 @@ namespace csdbns {
 	using namespace sck;
 	using namespace csdscm;
 
-	//t The type of a service.
-	typedef bso::ushort__	service__;
+	//t The type of a port.
+	typedef bso::ushort__	port__;
 
 	//c User functions with socket.
 	class socket_user_functions__ {
 	protected:
-		virtual void *CSDNBSPreProcess( sck::socket__ Socket ) = 0;
-		virtual action__ CSDNBSProcess(
+		virtual void *CSDBNSPreProcess( sck::socket__ Socket ) = 0;
+		virtual action__ CSDBNSProcess(
 			sck::socket__ Socket,
 			void *UP ) = 0;
-		virtual void CSDNBSPostProcess( void *UP ) = 0;
+		virtual void CSDBNSPostProcess( void *UP ) = 0;
+		virtual void CSDBNSExit( void ) = 0;	// Appelé lorsque l'on quitte l'application, principalement dnas le cadre d'un service Windows.
 	public:
 		void *PreProcess( sck::socket__ Socket )
 		{
-			return CSDNBSPreProcess( Socket );
+			return CSDBNSPreProcess( Socket );
 		}
 		action__ Process(
 			sck::socket__ Socket,
 			void *UP )
 		{
-			return CSDNBSProcess( Socket, UP );
+			return CSDBNSProcess( Socket, UP );
 		}
 		void PostProcess( void *UP )
 		{
-			CSDNBSPostProcess( UP );
+			CSDBNSPostProcess( UP );
+		}
+		void Exit( void )
+		{
+			CSDBNSExit();
 		}
 	};
 
@@ -139,20 +157,20 @@ namespace csdbns {
 		{
 			reset( true );
 		}
-		/*f Initialzation with 'Service' as port to listen.
+		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			int Amount,
 			err::handle ErrHandle = err::hUsual );
-		/*f Initialzation with 'Service' as port to listen.
+		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
 		{
-			return Init( Service, Amount, ErrHandle );
+			return Init( Port, Amount, ErrHandle );
 		}
 		//f Return the first available connection. BLOCKING FUNCTION if 'TimeOut == 'SCK_INFINITE'.
 		socket__ GetConnection(
@@ -188,7 +206,7 @@ namespace csdbns {
 	: public socket_user_functions__
 	{
 	protected:
-		virtual void *CSDNBSPreProcess( socket__ Socket )
+		virtual void *CSDBNSPreProcess( socket__ Socket )
 		{
 			_flow_data__ *Data = NULL;
 		ERRProlog
@@ -208,7 +226,7 @@ namespace csdbns {
 		ERREpilog
 			return Data;
 		}
-		virtual action__ CSDNBSProcess(
+		virtual action__ CSDBNSProcess(
 			socket__ Socket,
 			void *UP )
 		{
@@ -220,7 +238,7 @@ namespace csdbns {
 
 			return UserFunctions->Process( Data.Flow, Data.UP );
 		}
-		virtual void CSDNBSPostProcess( void *UP )
+		virtual void CSDBNSPostProcess( void *UP )
 		{
 			if ( UP == NULL )
 				ERRc();
@@ -229,14 +247,41 @@ namespace csdbns {
 
 			delete (_flow_data__ *)UP;
 		}
+		virtual void CSDBNSExit( void )
+		{
+			UserFunctions->Exit();
+		}
 	public:
 		user_functions__ *UserFunctions;
 	};
 
 	/*c Handling a server, with process duplication for each client. */
+	/* Sous Windows, pour utiliser comme service :
+		- Pour installer le service : 
+			- 'InitService(...)' (Pas d'autres 'Init(...)',
+			- 'InstallService(...)'.
+		- Pour lancer le service (lorsque l'application lancée par le gestionnaire de service de 'Windows', auqual cas 'argc' == '0').
+			- 'Init(...)',
+			- 'LaunchService()'.
+	*/
 	class server___
 	: public listener___
+#ifdef CSD__HANDLE_SERVICE
+	, protected _service__
+#endif
 	{
+#ifdef CSD__HANDLE_SERVICE
+	protected:
+		virtual void WINTOLProcess( void )
+		{
+			while ( !TestTermination() )
+				Process( 2500 );
+		}
+		virtual void WINTOLShutdown( void )
+		{
+			_Functions.Exit();
+		}
+#endif
 	private:
 		socket_user_functions__ *_SocketFunctions;
 		_functions__ _Functions;
@@ -254,51 +299,74 @@ namespace csdbns {
 		{
 			reset( true );
 		}
-		/*f Initialzation with 'Service' as port to listen.
+		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			socket_user_functions__ &SocketFunctions,
 			int Amount,
 			err::handle ErrHandle = err::hUsual )
 		{
+#ifdef CSD__HANDLE_SERVICE
+			if ( !_service__::Init() )
+				ERRc();
+#endif
 			_SocketFunctions = &SocketFunctions;
 			
-			return listener___::Init( Service, Amount, ErrHandle );
+			return listener___::Init( Port, Amount, ErrHandle );
 		}
-		/*f Initialzation with 'Service' as port to listen.
+		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			socket_user_functions__ &SocketFunctions,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
 		{
+#ifdef CSD__HANDLE_SERVICE
+			if ( !_service__::Init() )
+				ERRc();
+#endif
 			_SocketFunctions = &SocketFunctions;
 
-			return listener___::Init( Service, Amount, ErrHandle );
+			return listener___::Init( Port, Amount, ErrHandle );
 		}
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			user_functions__ &UserFunctions,
 			err::handle ErrHandle = err::hUsual,
 			int Amount = 5 )
 		{
+#ifdef CSD__HANDLE_SERVICE
+			if ( !_service__::Init() )
+				ERRc();
+#endif
 			_Functions.UserFunctions = &UserFunctions;
 
-			return Init( Service, this->_Functions, Amount, ErrHandle );
+			return Init( Port, this->_Functions, Amount, ErrHandle );
 		}
 		bso::bool__ Init(
-			service__ Service,
+			port__ Port,
 			user_functions__ &UserFunctions,
 			int Amount,
 			err::handle ErrHandle = err::hUsual )
 		{
+#ifdef CSD__HANDLE_SERVICE
+			if ( !_service__::Init() )
+				ERRc();
+#endif
 			_Functions.UserFunctions = &UserFunctions;
 
-			return Init( Service, this->_Functions, Amount, ErrHandle );
+			return Init( Port, this->_Functions, Amount, ErrHandle );
 		}
-		/*f Handle each new connection using 'Functions'. */
+		bso::bool__ LaunchService( const char *ServiceName )
+		{
+#ifdef CSD__HANDLE_SERVICE
+			return _service__::Launch( ServiceName );
+#else
+			return false;
+#endif
+		}
 		void Process(
 			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
 			err::handle ErrHandle = err::hUsual );

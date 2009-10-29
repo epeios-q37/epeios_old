@@ -68,7 +68,7 @@ using namespace csdbns;
 #endif
 
 bso::bool__ csdbns::listener___::Init(
-	service__ Service,
+	port__ Port,
 	int Amount,
 	err::handle ErrHandle)
 {
@@ -81,7 +81,7 @@ bso::bool__ csdbns::listener___::Init(
 	Socket_ = CreateSocket();
 
 	memset((char *)&nom,0,sizeof(nom));
-	nom.sin_port=htons( Service );
+	nom.sin_port=htons( Port );
 	nom.sin_addr.s_addr=INADDR_ANY;
 	nom.sin_family=AF_INET;
 
