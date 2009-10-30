@@ -57,6 +57,11 @@ public:
 
 using namespace wintol;
 #include "tol.h"
+#include "cio.h"
+
+#ifdef CIO__AUTOMATIC_INITIALIZATION
+#	error "'CIO' is automatically initialized, which will crash the program if launched (not installed) as Windows service :"
+#endif
 
 static wintol::service__ *Service_ = NULL;
 

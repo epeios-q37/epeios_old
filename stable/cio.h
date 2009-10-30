@@ -72,6 +72,7 @@ extern class ttr_tutor &CIOTutor;
 
 #ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Usefull for a Windows service.
 #	define CIO__AUTOMATIC_INITIALIZATION
+	// Si modifié, modifier 'WINTOL' en conséquence !
 #endif
 
 namespace cio {

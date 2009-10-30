@@ -1,5 +1,11 @@
 $Id$
 
+30/10/2009 :
+	- CIO :
+		- Ajout commentaire concernat 'WINTOL'.
+	- WINTOL :
+		- Ajout d'un test sur l'initialisation automatiqee de la 'CIO', pour éviter plantage lors du lancement en tant que service Windows.
+
 29/10/2009 :
 	- CSDBNS :
 		- 'service__' -> 'port__' pour éviter lma confusion avec le système de service Windows.
