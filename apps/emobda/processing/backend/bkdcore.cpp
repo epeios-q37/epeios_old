@@ -41,8 +41,8 @@ struct data {
 	log_functions__ LogFunctions;
 	cio::aware_cout___ LogFlow;
 	data( void )
-	: LogFunctions( LogFlow )
 	{
+		LogFunctions.Init( LogFlow );
 	}
 };
 
@@ -104,6 +104,10 @@ csdscm::action__ backend_functions__::CSDProcess(
 void backend_functions__::CSDPostProcess( void *UP )
 {
 	delete (data *)UP;
+}
+
+void backend_functions__::CSDExit( void )
+{
 }
 
 

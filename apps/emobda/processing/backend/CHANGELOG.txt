@@ -1,8 +1,14 @@
 $Id$
 
-REMINDER :
+--------------------------------------------------------
+REMINDER FOR THE DEVELOPER :
 	- This file concerns both daemon and library.
 	- Before publication, merge with '../CHANGELOG.txt'.
+--------------------------------------------------------
+	
+01/11/2009 :
+	- Adaptation to changes in 'CSDSNS'.
+	- Adaptation to changes in 'BKDMNG'.
 	
 27/10/2009 :
 	- Improving 'locales' handling.

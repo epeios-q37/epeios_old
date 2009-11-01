@@ -68,6 +68,7 @@ namespace bkdcore {
 			flw::ioflow__ &Flow,
 			void *UP );
 		virtual void CSDPostProcess( void *UP );
+		virtual void CSDExit( void );
 	public:
 		backend_functions__( void )
 		{

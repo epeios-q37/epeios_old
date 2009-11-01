@@ -281,12 +281,12 @@ public:
 	csdsns::server___ Server;
 	bkdcore::backend_functions__ Functions;
 	void Init(
-		csdsns::service__ Service,
+		csdsns::port__ Port,
 		const lcl::locales_ &Locales )
 	{
 		Functions.Init( Locales );
 		Core.Init( ::LogFunctions );
-		Server.Init( Service, Functions, ::LogFunctions );
+		Server.Init( Port, Functions, ::LogFunctions );
 	}
 	void Process( sck::duration__ TimeOut )
 	{
@@ -301,7 +301,7 @@ void Main(
 {
 ERRProlog
 	parameters___ Parameters;
-	csdsns::service__ Service = 0;
+	csdsns::port__ Port = 0;
 	str::string Repository;
 	bso::bool__ AsWinService = false;
 	lcl::locales Locales;
@@ -334,7 +334,7 @@ ERRBegin
 	if ( !registry::FillRegistry( Parameters.ConfigurationFile == NULL ? DEFAULT_CONFIGURATION_FILENAME : Parameters.ConfigurationFile, CONFIGURATION_ROOT_PATH, *CErr ) )
 		ERRExit( evConfiguration );
 
-	if ( !registry::GetService( Service ) ) {
+	if ( !registry::GetService( Port ) ) {
 		*CErr << "Unable to find '" << registry::paths::Service << "'entry in configuration file !";
 		ERRExit( evConfiguration );
 	}
@@ -359,7 +359,7 @@ ERRBegin
 		break;
 	}
 
-	::Kernel_.Init( Service, Locales );
+	::Kernel_.Init( Port, Locales );
 
 	::Kernel_.Process( SCK_INFINITE );
 ERRErr
