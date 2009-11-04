@@ -85,7 +85,7 @@ namespace dbssct {
 	  public _list_
 	{
 	protected:
-		virtual void DBSBSCCompleteInitialization( void )
+		virtual void DBSBSCCompleteInitialization( bso::bool__ )
 		{
 			// Rien à faire.
 		}

@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "fnm.h"
+
 #define MEMORY_REINDEXATION_LIMIT	10000000
 /* Limite du nombre d'neregistrement au-delà de laquelle on utilise 
 directement l'index sur le disque et non pas une copie temporaire en mémoire
@@ -839,6 +841,83 @@ ERREpilog
 }
 
 #endif
+
+static const str::string_ &GetFileName_(
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	str::string_ &FileName )
+{
+#ifdef DBIEDB_DBG
+	if ( RootFileName.Amount() == 0 )
+		ERRc();
+#endif
+
+	FileName.Init( Path );
+
+	if ( FileName.Amount() != 0 )
+		FileName.Append( FNM_DIRECTORY_SEPARATOR_STRING );
+
+	FileName.Append( RootFileName );
+
+	return FileName;
+}
+
+void dbstbl::file_table::InitStatic(
+	epeios::size__ Size,									
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	mode__ Mode,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init();
+
+	GetFileName_( Path, RootFileName, FileName );
+
+	if ( Mode == dbstbl::mReadOnly )
+		_Static.Init( Size, FileName, mdr::mReadOnly, true, ID );
+	else
+		_Static.Init( Size, FileName, mdr::mReadWrite, true, ID );
+
+	Content.Init( _Static );
+
+	table::Init( Content, Mode );
+
+	this->RootFileName.Init( RootFileName );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void dbstbl::file_table::InitDynamic(
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	mode__ Mode,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init();
+
+	GetFileName_( Path, RootFileName, FileName );
+
+	if ( Mode == dbstbl::mReadOnly )
+		_Dynamic.Init( FileName, mdr::mReadOnly, true, ID );
+	else
+		_Dynamic.Init( FileName, mdr::mReadWrite, true, ID );
+
+	Content.Init( _Dynamic );
+
+	table::Init( Content, Mode );
+
+	this->RootFileName.Init( RootFileName );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

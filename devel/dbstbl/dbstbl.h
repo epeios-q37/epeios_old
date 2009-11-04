@@ -331,16 +331,17 @@ namespace dbstbl {
 			}
 		}
 	public:
-		_indexes_ Indexes;
 		struct s
 		{
 			_indexes_::s Indexes;
-			dbsctt::content__ *Content;
+			dbsctt::content__ *Content;	// On n'utilise pas 'content_', pour pouvoir appliquer
+										// une opération non 'const' dans une méthode 'const'.
 			mode__ Mode;
 		} &S_;
+		_indexes_ Indexes;
 		table_( s &S )
 		: S_( S ),
-		Indexes( S.Indexes )
+		  Indexes( S.Indexes )
 		{}
 		void reset( bso::bool__ P = true )
 		{
@@ -737,6 +738,36 @@ namespace dbstbl {
 #	define	E_DBTABLE_	table_
 #	define	E_DBTABLE	table
 #endif
+
+	class file_table
+	: public table
+	{
+	private:
+		// Seulement l'un des deux est utilisé.
+		dbsdct::file_dynamic_content _Dynamic;
+		dbssct::file_static_content _Static;
+	public:
+		content__ Content;
+		str::string RootFileName;
+		void InitStatic(
+			epeios::size__ Size,
+			const str::string_ &Path,
+			const str::string_ &RootFileName,
+			mode__ Mode,
+			flm::id__ ID );
+		void InitDynamic(
+			const str::string_ &Path,
+			const str::string_ &RootFileName,
+			mode__ Mode,
+			flm::id__ ID );
+		void Drop( void )
+		{
+			Content.Drop();
+		}
+	};
+
+	typedef file_table file_table_;
+
 
 }
 

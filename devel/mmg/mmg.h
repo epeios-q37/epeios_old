@@ -1,12 +1,12 @@
 /*
-	Header for the 'mmg' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'mmg' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	MMG_VERSION	"$Revision$"
 
-#define MMG_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define MMG_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &MMGTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -91,22 +91,21 @@ namespace mmg
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
-		uym::datum__ *Statique_;
+		mdr::datum__ *Statique_;
 		// Loi d'accés.
-		mdr::mode Mode_;
+		mdr::mode__ Mode_;
 	protected:
 		virtual void MDRRecall(
-			mdr::row__ Position,
-			mdr::bsize__ Amount,
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
-		// écrit 'Nombre' octets de 'Tampon' à la position 'Position'.
 		{
 			Memoire.Recall( Position + Taille, Amount, Buffer );
 		}
 		virtual void MDRStore(
 			const mdr::datum__ *Buffer,
-			mdr::bsize__ Amount,
-			mdr::row__ Position )
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
 			StockerStatique();
 			Memoire.Store( Buffer, Amount, Position + Taille );
@@ -143,9 +142,9 @@ namespace mmg
 			reset( true );
 		}
 		void Init(
-			uym::datum__ *Statique,
+			mdr::datum__ *Statique,
 			rule Regle,
-			mdr::mode Mode = mdr::mReadWrite )
+			mdr::mode__ Mode = mdr::mReadWrite )
 		{
 			reset();
 
@@ -185,11 +184,11 @@ namespace mmg
 		{
 			Memoire.Recall( 0, Taille, Statique_, true );
 		}
-		void Mode( mdr::mode Mode )
+		void Mode( mdr::mode__ Mode )
 		{
 			Mode_ = Mode;
 		}
-		mdr::mode Mode( void )
+		mdr::mode__ Mode( void )
 		{
 			return Mode_;
 		}
@@ -212,7 +211,7 @@ namespace mmg
 	{
 	private:
 		// l'éventuel pilote de la multimemoire
-		mmm::multimemory_driver PiloteMultimemoire_;
+		mmm::multimemory_driver__ PiloteMultimemoire_;
 		t Object;
 	public:
 		// La mémoire qui contient la partie dynamique de l'objet.
@@ -264,7 +263,7 @@ namespace mmg
 		//f Initialization with rule 'Rule' and mode 'Mode'.
 		void Init(
 			mmg::rule Rule,
-			mdr::mode Mode = mdr::mReadWrite)
+			mdr::mode__ Mode = mdr::mReadWrite)
 		{
 			reset();
 
@@ -278,7 +277,7 @@ namespace mmg
 				Memoire.Init();
 		}
 		//f Utilisation de 'Pilote' comme pilote mémoire.
-		void plug( mdr::E_MEMORY_DRIVER_ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			Pilote_.Memoire.plug( MD );
 		}
@@ -320,12 +319,12 @@ namespace mmg
 			S_.State = State;
 		}
 		//f The mode of the object decames 'Mode'.
-		void Mode( mdr::mode Mode )
+		void Mode( mdr::mode__ Mode )
 		{
 			Pilote_.Mode( Mode );
 		}
 		//f Return the mode of the object.
-		mdr::mode Mode( void ) const
+		mdr::mode__ Mode( void ) const
 		{
 			return Pilote_.Mode();
 		}
@@ -354,7 +353,7 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::file_memory_driver PiloteFichier_;
+		flm::file_memory_driver___ PiloteFichier_;
 	public:
 		void reset( bool P = true )
 		{
@@ -368,8 +367,8 @@ namespace mmg
 		both 'ObjectMode' and 'FileMode' are forced for to 'mdr::mReadWrite'. */
 		mmg::rule Init(
 			const char *FileName,
-			mdr::mode ObjectMode,
-			mdr::mode FileMode )
+			mdr::mode__ ObjectMode,
+			mdr::mode__ FileMode )
 		{	
 			bso::bool__ Test;
 
@@ -402,20 +401,20 @@ namespace mmg
 		'mdr::mReadWrite'. */
 		mmg::rule Init(
 			const char *NomFichier,
-			mdr::mode Mode = mdr::mReadOnly )
+			mdr::mode__ Mode = mdr::mReadOnly )
 		{
 			return Init( NomFichier, Mode, Mode );
 		}
 		//f The object is placed in 'ObjectMode', the file in 'FileMode'.
 		void Mode(
-			mdr::mode ObjectMode,
-			mdr::mode FileMode  )
+			mdr::mode__ ObjectMode,
+			mdr::mode__ FileMode  )
 		{
 			memory_merger<t, st>::Mode( ObjectMode );
 			PiloteFichier_.Mode( FileMode );
 		}
 		//f Fila and object are placed in 'Mode' mode.
-		void Mode( mdr::mode Mode )
+		void Mode( mdr::mode__ Mode )
 		{
 			this->Mode( Mode, Mode );
 		}
@@ -425,7 +424,7 @@ namespace mmg
 			memory_merger<t, st>::reset();
 			PiloteFichier_.reset();
 		}
-		void plug( mdr::E_MEMORY_DRIVER & )
+		void plug( mdr::E_MEMORY_DRIVER__ & )
 		{
 			ERRu();
 		}

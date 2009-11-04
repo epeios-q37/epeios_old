@@ -1,5 +1,19 @@
 $Id$
 
+03/11/2009 :
+	- DBSCCT :
+		- Ajout operateurs '->' et '*' à l'objet 'content[_]'.
+	- DBSTBL :
+		- Récupération de 'file_table' de 'DBIEDB'.
+
+02/11/2009 :
+	- DBSCCT :
+		- Ajout objet 'content[_]'.
+	- DBSDCT :
+		- Correction erreur qui rendait la classe 'dynamic_content_' ininstanciable.
+	- DBSSCT :
+		- Correction erreur qui rendait la classe 'static_content_' ininstanciable.
+
 30/10/2009 :
 	- CIO :
 		- Ajout commentaire concernat 'WINTOL'.

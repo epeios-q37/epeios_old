@@ -286,10 +286,79 @@ namespace dbsctt {
 			else
 				ERRu();
 		}
-
-
-
 	};
+
+	class content_
+	{
+	private:
+		content__ _Content;
+	public:
+		struct s {
+			dbsdct::dynamic_content_::s Dynamic;
+			dbssct::static_content_::s Static;
+		};
+		dbsdct::dynamic_content_ Dynamic;
+		dbssct::static_content_ Static;
+		content_( s &S )
+		: Dynamic( S.Dynamic ),
+		  Static( S.Static )
+		{
+		}
+		void reset( bso::bool__ P = true )
+		{
+			_Content.reset( P );
+			Dynamic.reset( P );
+			Static.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Dynamic.plug( MM );
+			Static.plug( MM );
+		}
+		content_ &operator =( const content_ &C )
+		{
+			_Content = C._Content;
+
+			Dynamic = C.Dynamic;
+			Static = C.Static;
+
+			return *this;
+		}
+		void InitDynamic( void )
+		{
+			reset();
+
+			Dynamic.Init();
+			_Content.Init( Dynamic );
+		}
+		void InitStatic( epeios::size__ Size )
+		{
+			reset();
+
+			Static.Init( Size );
+			_Content.Init( Static );
+		}
+		const content__ *operator ->( void ) const
+		{
+			return &_Content;
+		}
+		content__ *operator ->( void )
+		{
+			return &_Content;
+		}
+		const content__ *operator *( void ) const
+		{
+			return &_Content;
+		}
+		content__ *operator *( void )
+		{
+			return &_Content;
+		}
+		E_RWDISCLOSE__( content__, Content )
+	};
+
+	E_AUTO( content )
+
 }
 
 /*$END$*/
