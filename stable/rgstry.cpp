@@ -1011,6 +1011,27 @@ error__ rgstry::FillRegistry(
 }
 
 error__ rgstry::FillRegistry(
+	xtf::extended_text_iflow__ XTFlow,
+	const char *RootPath,
+	rgstry::registry_ &Registry,
+	rgstry::row__ &RegistryRoot,
+	const str::string_ &BaseDirectory )
+{
+	error__ Error = e_Undefined;
+ERRProlog
+	error_details Dummy;
+ERRBegin
+	Dummy.Init();
+
+	Error = FillRegistry( XTFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
+ERRErr
+ERREnd
+ERREpilog
+	return Error;
+}
+
+
+error__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
@@ -1040,6 +1061,25 @@ ERRBegin
 	if ( Error == eParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )
 			ErrorDetails.FileName = FileName;
+ERRErr
+ERREnd
+ERREpilog
+	return Error;
+}
+
+error__ rgstry::FillRegistry(
+	const char *FileName,
+	const char *RootPath,
+	rgstry::registry_ &Registry,
+	rgstry::row__ &RegistryRoot )
+{
+	error__ Error = e_Undefined;
+ERRProlog
+	error_details Dummy;
+ERRBegin
+	Dummy.Init();
+
+	Error = FillRegistry( FileName, RootPath, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog

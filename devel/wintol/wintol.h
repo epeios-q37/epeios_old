@@ -72,6 +72,8 @@ namespace wintol {
 		const char *DisplayName,
 		const char *Description );
 
+	bso::bool__ Remove( const char *ServiceName );
+
 
 	inline void PatchSignalHandlingForWindowsService( void )
 	{
@@ -92,7 +94,6 @@ namespace wintol {
 		{
 			return true;
 		}
-		bso::bool__ Remove( const char *ServiceName );	// Même valeur que celle passée à 'InstallService(...)'.
 		bso::bool__ Launch( const char *ServiceName );	// Même valeur que celle passée à 'InstallService(...)'.
 		// Return 'true' if termination was required.
 		bso::bool__ TestTermination( void );

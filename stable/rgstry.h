@@ -723,18 +723,6 @@ namespace rgstry {
 			const str::string_ &PathString,
 			row__ Row,
 			epeios::row__ *PathErrorRow = NULL );
-		bso::bool__ Delete(
-			const str::string_ &PathString,
-			row__ Row )
-		{
-			epeios::row__ PathErrorRow = NONE;
-			bso::bool__ Result = Delete( PathString, Row, &PathErrorRow );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Result;
-		}
 		row__ CreateNewRegistry( const name_ &Name )
 		{
 			return _CreateKey( Name );
@@ -1048,13 +1036,25 @@ namespace rgstry {
 		error_details_ &ErrorDetails );
 
 	error__ FillRegistry(
+		xtf::extended_text_iflow__ XTFlow,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		const str::string_ &BaseDirectory = str::string( "" ));
+
+
+	error__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
 
-
+	error__ FillRegistry(
+		const char *FileName,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot );
 }
 
 

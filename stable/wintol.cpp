@@ -349,7 +349,7 @@ bso::bool__ wintol::InstallService(
 	return AddService_( ServiceName, DisplayName, Description );
 }
 
-bso::bool__ wintol::service__::Remove( const char *ServiceName )
+bso::bool__ wintol::Remove( const char *ServiceName )
 {
 	return RemoveService_( ServiceName );
 }

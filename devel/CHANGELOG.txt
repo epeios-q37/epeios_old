@@ -1,5 +1,13 @@
 $Id$
 
+05/11/2009 :
+	- LCL :
+		- Ajout varianes 'Init(...)'.
+	- RGSTRY :
+		- Ajout variantes 'FillRegistry(...)'.
+	- WINTOL :
+		- 'Remove(...)' n'est plus une méthode, mais une fonctions.
+
 03/11/2009 :
 	- DBSCCT :
 		- Ajout operateurs '->' et '*' à l'objet 'content[_]'.

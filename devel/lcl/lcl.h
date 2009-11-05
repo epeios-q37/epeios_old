@@ -129,6 +129,17 @@ namespace lcl {
 			return rgstry::FillRegistry( XTFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
 		}
 		error__ Init(
+			xtf::extended_text_iflow__ &XTFlow,
+			const char *RootPath,
+			const str::string_ &BaseDirectory = str::string( "" ) )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( XTFlow, RootPath, Registry, S_.Root, BaseDirectory );
+		}
+		error__ Init(
 			const char *FileName,
 			const char *RootPath,
 			error_details_ &ErrorDetails )
@@ -138,6 +149,16 @@ namespace lcl {
 			Registry.Init();
 
 			return rgstry::FillRegistry( FileName, RootPath, Registry, S_.Root, ErrorDetails );
+		}
+		error__ Init(
+			const char *FileName,
+			const char *RootPath )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( FileName, RootPath, Registry, S_.Root );
 		}
 		void GetLanguages(
 			strings_ &Labels,
