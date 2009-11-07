@@ -40,7 +40,7 @@
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define DEFAULT_CONFIGURATION_FILENAME NAME ".xcf"
-#define CONFIGURATION_ROOT_PATH	"Configuration[target=\"" NAME "\"]"
+#define CONFIGURATION_ROOT_PATH	"Configurations/Configuration[target=\"" NAME "\"]"
 
 #define DEFAULT_LOCALES_FILENAME	NAME ".xlc"
 #define LOCALES_PATH_ROOT	"Locale[target=\"" NAME "\"]"

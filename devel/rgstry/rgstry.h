@@ -336,6 +336,13 @@ namespace rgstry {
 		}
 		row__ _SearchAttribute(
 			const name_ &Name,
+			row__ Row,
+			cursor__ &Cursor ) const
+		{
+			return _Search( nAttribute, Name, Row, Cursor );
+		}
+		row__ _SearchAttribute(
+			const name_ &Name,
 			row__ Row ) const
 		{
 			cursor__ Cursor = NONE;
@@ -489,7 +496,7 @@ namespace rgstry {
 		void _DumpNode(
 			row__ Row,
 			xml::writer_ &Writer,
-			buffer Buffer ) const
+			buffer &Buffer ) const
 		{
 			Writer.PushTag( Buffer( Row ).Name );	// 'PopTag' correspondant fait par méthode appelante.
 			_DumpAttributes( Row, Writer );

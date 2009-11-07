@@ -136,7 +136,7 @@ row__ rgstry::registry_::_Search(
 			if ( AttributeValue.Amount() != 0 )
 				ERRc();
 #endif
-				ResultRow = _SearchAttribute( AttributeName, Row );
+				ResultRow = _SearchAttribute( AttributeName, Row, Cursor );
 		}
 	}
 
@@ -330,13 +330,13 @@ row__ rgstry::registry_::_Search(
 	const path_ &Path,
 	epeios::row__ PathRow,
 	row__ Row,
-	rows_ &ResultKeys ) const
+	rows_ &ResultRows ) const
 {
 	cursor__ CandidateRow = NONE;
 	cursor__ Cursor = NONE;
 	ctn::E_CITEM( path_item_ ) Item;
 	row__ ResultRow, ChildRow = NONE;
-	bso::bool__ All = &ResultKeys != NULL;
+	bso::bool__ All = &ResultRows != NULL;
 	buffer Buffer;
 
 	Item.Init( Path );
@@ -360,7 +360,7 @@ row__ rgstry::registry_::_Search(
 			ERRc();
 #endif
 		while ( ChildRow != NONE )  {
-			ResultRow = _Search( Path, Path.Next( PathRow ), ChildRow, ResultKeys );
+			ResultRow = _Search( Path, Path.Next( PathRow ), ChildRow, ResultRows );
 
 			if ( ResultRow != NONE ) {
 				if ( All ) {
@@ -374,7 +374,7 @@ row__ rgstry::registry_::_Search(
 	} else if ( All ) {
 
 		while ( ChildRow != NONE ) {
-			ResultKeys.Append( ChildRow );
+			ResultRows.Append( ChildRow );
 
 			ChildRow = _Search( Item( PathRow ), Row, Cursor );
 		}
@@ -770,7 +770,7 @@ ERRBegin
 		Exists = true;
 		Cursor = ResultRows.First();
 
-		while ( Row != NONE ) {
+		while ( Cursor != NONE ) {
 			Values.Append( Buffer( ResultRows( Cursor ) ).Value );
 
 			Cursor = ResultRows.Next( Cursor );
@@ -994,7 +994,8 @@ error__ rgstry::FillRegistry(
 {
 	Registry.Init();
 
-//	RegistryRoot = Registry.CreateNewRegistry( str::string( "BaseRegistry" ) );
+	if ( RegistryRoot == NONE )
+		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
 	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
 		if ( ErrorDetails.GetXMLStatus() == xml::xsOK )

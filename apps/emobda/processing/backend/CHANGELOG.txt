@@ -5,6 +5,10 @@ REMINDER FOR THE DEVELOPER :
 	- This file concerns both daemon and library.
 	- Before publication, merge with '../CHANGELOG.txt'.
 --------------------------------------------------------
+
+05/11/2009 :
+	- (emobdadmn) : the root path of the registry includes yet the root tag of the configuration file
+	  (to match the behavior of the 'rgstry::FillRegistry(...)' function).
 	
 01/11/2009 :
 	- Adaptation to changes in 'CSDSNS'.

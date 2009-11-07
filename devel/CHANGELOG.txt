@@ -1,10 +1,17 @@
 $Id$
 
+06/11/2009 :
+	- RGSTRY :
+		- Correction bogue boucle infinie lorsque recherche de la veleur d'un attribut.
+		- Correction bogue dû à un '&' manquant.
+
 05/11/2009 :
 	- LCL :
 		- Ajout varianes 'Init(...)'.
 	- RGSTRY :
 		- Ajout variantes 'FillRegistry(...)'.
+		- Suppression 'Delete(...)' redondant.
+		- Lorsqu'une nouvelle 'registry' est crée, elle est fille d'une balise '_registry'.
 	- WINTOL :
 		- 'Remove(...)' n'est plus une méthode, mais une fonctions.
 
@@ -26,7 +33,7 @@ $Id$
 	- CIO :
 		- Ajout commentaire concernat 'WINTOL'.
 	- WINTOL :
-		- Ajout d'un test sur l'initialisation automatiqee de la 'CIO', pour éviter plantage lors du lancement en tant que service Windows.
+		- Ajout d'un test sur l'initialisation automatique de la 'CIO', pour éviter plantage lors du lancement en tant que service Windows.
 
 29/10/2009 :
 	- CSDBNS :
