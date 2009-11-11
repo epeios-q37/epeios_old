@@ -231,7 +231,7 @@ namespace dbsbsc {
 	{
 	protected:
 		virtual void DBSBSCCompleteInitialization( bso::bool__ IgnoreAdditionalFiles ) = 0;// Permet d'éviter certaines opérations coûteuses en temps à l'initialisation.
-		virtual void DBSBSCDrop( void ) = 0;
+		virtual void DBSBSCErasePhysically( void ) = 0;
 	public:
 		struct s
 		{
@@ -274,12 +274,12 @@ namespace dbsbsc {
 
 			S_.InitializationCompleted = true;
 		}
-		void Drop( void )
+		void ErasePhysically( void )
 		{
 			if ( !S_.InitializationCompleted )
 				DBSBSCCompleteInitialization( true );	// Pour que les 'file memory driver's sous-jacents se connecte au fichier, sinon l'effacement ne se fait pas.
 
-			DBSBSCDrop();
+			DBSBSCErasePhysically();
 		}
 		E_RODISCLOSE_( bso::bool__, InitializationCompleted );
 	};

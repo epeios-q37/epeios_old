@@ -1,5 +1,28 @@
 $Id$
 
+11/11/2009 :
+	- DBSTBL :
+		- Exposition du 'content__'.
+
+10/11/2009 :
+	- DBSBSC :
+		- '[...]Drop()' devient '[...]ErasePhysically()'.
+	- DBSCCT :
+		- Adaptation aux modifications dans 'DBSBSC'.
+	- DBSDCT :
+		- Adaptation aux modifications dans 'DBSBSC'.
+	- DBSIDX :
+		- Ajout d'un destructeur virtuel.
+		- Adaptation aux modifications dans 'DBSBSC'.
+	- DBSSCT :
+		- Adaptation aux modifications dans 'DBSBSC'.
+	- DBSTBL :
+		- Ajout d'un destructeur virtuel.
+		- Ajout d'une méthode 'ErasePhysically()'.
+	- TOL :
+		- Ajout 'E_VDTOR(...)'.
+		
+
 06/11/2009 :
 	- RGSTRY :
 		- Correction bogue boucle infinie lorsque recherche de la veleur d'un attribut.

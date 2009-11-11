@@ -277,12 +277,12 @@ namespace dbsctt {
 
 			return false;	// Pour éviter un 'warning'.
 		}
-		void Drop( void )
+		void ErasePhysically( void )
 		{
 			if ( _Static != NULL )
-				 _Static->Drop();
+				 _Static->ErasePhysically();
 			else if ( _Dynamic != NULL )
-				_Dynamic->Drop();
+				_Dynamic->ErasePhysically();
 			else
 				ERRu();
 		}

@@ -89,7 +89,7 @@ namespace dbssct {
 		{
 			// Rien à faire.
 		}
-		virtual void DBSBSCDrop(  void )
+		virtual void DBSBSCErasePhysically(  void )
 		{
 			reset();
 		}
@@ -208,9 +208,9 @@ namespace dbssct {
 		{
 			ERRl();
 		}
-		void Drop( void )	// Efface tout, y compris la table sous-jacente.
+		void ErasePhysically( void )	// Efface tout, y compris la table sous-jacente.
 		{
-			_file_features_::Drop();
+			_file_features_::ErasePhysically();
 		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
@@ -226,10 +226,10 @@ namespace dbssct {
 		{
 			_ConnectToFiles();
 		}
-		virtual void DBSBSCDrop( void )
+		virtual void DBSBSCErasePhysically( void )
 		{
-			static_content_::DBSBSCDrop();
-			_Drop();
+			static_content_::DBSBSCErasePhysically();
+			_ErasePhysically();
 		}
 	private:
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
@@ -238,7 +238,7 @@ namespace dbssct {
 		}
 		void _SaveLocations( void ) const;
 		bso::bool__ _ConnectToFiles( void );
-		void _Drop( void );
+		void _ErasePhysically( void );
 	public:
 		str::string_ RootFileName;
 		struct s

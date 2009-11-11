@@ -812,7 +812,7 @@ namespace tol {
 		}
 	};
 
-	template <typename t> class free_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'free'.
+	template <typename t> class free_pointer___	// Classe de gestion d'un pointeur devant être désalloué par un 'free'.
 	: public _core_pointer___<t>
 	{
 	public:
@@ -840,7 +840,7 @@ namespace tol {
 
 	#define E_FPOINTER___( t )	free_pointer___<t>
 
-	template <typename t> class delete_pointer___	// Classe de gestion d'un pointeur.devant être déalloué par un 'delete'.
+	template <typename t> class delete_pointer___	// Classe de gestion d'un pointeur devant être déalloué par un 'delete'.
 	: public _core_pointer___<t>
 	{
 	public:
@@ -884,7 +884,7 @@ namespace tol {
 		return *LConv->decimal_point;
 	}
 
-	#define E_DPOINTER___( t )	delete_pointer___<t>
+}
 
 #if 0
 	//f Free 'Pointer' only if != NULL. Pointer value becomes 'NULL'.
@@ -896,6 +896,13 @@ namespace tol {
 		}
 	}
 #endif
+
+// Permet de créer un destructeur virtuel.
+#define E_VDTOR( name )\
+	virtual ~name( void )\
+	{\
+		reset();\
+	}\
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
 #define E_RRODISCLOSE_(type__, name )\
@@ -972,8 +979,6 @@ namespace tol {
 #define E_RWDISCLOSE__(type__, name )\
 	E_RODISCLOSE__( type__, name )\
 	E_WODISCLOSE__( type__, name )
-
-}
 
 // Inspiré du site msdn.microsoft.com.
 #define __STR2__(x) #x

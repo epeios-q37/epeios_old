@@ -374,6 +374,19 @@ bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
 #define RRO	_Release();
 #define RRW	_Release();
 
+void dbstbl::thread_safe_table_::DBSTBLErasePhysically( void )
+{
+ERRProlog
+ERRBegin
+	RW
+
+	T.ErasePhysically();
+ERRErr
+ERREnd
+	RRW
+ERREpilog
+}
+
 irow__ dbstbl::thread_safe_table_::AddIndex( index_ &Index )
 {
 	irow__ Row = NONE;

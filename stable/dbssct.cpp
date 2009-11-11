@@ -162,7 +162,7 @@ ERREpilog
 	return Exists;
 }
 
-void dbssct::file_static_content_::_Drop( void )
+void dbssct::file_static_content_::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin

@@ -282,7 +282,7 @@ ERREpilog
 	return Exists;
 }
 
-void dbsdct::file_dynamic_content_::_Drop( void )
+void dbsdct::file_dynamic_content_::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin

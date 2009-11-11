@@ -131,7 +131,7 @@ namespace dbsidx {
 		{
 			// Rien à faire.
 		}
-		virtual void DBSBSCDrop( void )
+		virtual void DBSBSCErasePhysically( void )
 		{
 			// Rien à faire.
 		}
@@ -192,6 +192,7 @@ namespace dbsidx {
 
 			_file_features_::reset( P );
 		}
+		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			BaseIndex.plug( MM );
@@ -228,7 +229,7 @@ namespace dbsidx {
 		{
 			S_.Root = NONE;
 			BaseIndex.Init();
-			Drop();
+			ErasePhysically();
 
 			S_.ModificationTimeStamp = 0;
 		}
@@ -393,10 +394,10 @@ namespace dbsidx {
 		{
 			_ConnectToFiles();
 		}
-		virtual void DBSBSCDrop( void )
+		virtual void DBSBSCErasePhysically( void )
 		{
-			index_::DBSBSCDrop();
-			_Drop();
+			index_::DBSBSCErasePhysically();
+			_ErasePhysically();
 		}
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
@@ -413,7 +414,7 @@ namespace dbsidx {
 				return false;
 			}
 		}
-		void _Drop( void )
+		void _ErasePhysically( void )
 		{
 			S_.FileManager.Drop();
 

@@ -330,6 +330,9 @@ namespace dbstbl {
 				break;
 			}
 		}
+	protected:
+		virtual void DBSTBLErasePhysically( void )
+		{}
 	public:
 		struct s
 		{
@@ -349,6 +352,7 @@ namespace dbstbl {
 			S_.Content = NULL;
 			S_.Mode = m_Undefined;
 		}
+		E_VDTOR( table_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Indexes.plug( MM );
@@ -371,6 +375,14 @@ namespace dbstbl {
 
 			S_.Content = &Content;
 			S_.Mode = Mode;
+		}
+		dbsctt::content__ &Content( void )
+		{
+			return *S_.Content;
+		}
+		dbsctt::content__ &Content( void ) const	// L'absence de 'const' est normal.
+		{
+			return *S_.Content;
 		}
 		irow__ AddIndex( index_ &Index )
 		{
@@ -602,6 +614,10 @@ namespace dbstbl {
 			return _I( IndexRow ).IsSynchronized();
 		}
 		bso::bool__ AreAllIndexesSynchronized( void ) const;
+		void ErasePhysically( void )
+		{
+			DBSTBLErasePhysically();
+		}
 	};
 
 	E_AUTO( table )
@@ -629,6 +645,8 @@ namespace dbstbl {
 		{
 			C_().ReleaseExclusiveAccess();
 		}
+	protected:
+		virtual void DBSTBLErasePhysically( void );
 	public:
 		table_ Table;
 		struct s
@@ -728,6 +746,10 @@ namespace dbstbl {
 		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL );
 		bso::bool__ IsIndexSynchronized( irow__ IndexRow );
 		bso::bool__ AreAllIndexesSynchronized( void );
+		void ErasePhysically( void )
+		{
+			DBSTBLErasePhysically();
+		}
 	};
 
 	E_AUTO( thread_safe_table )
@@ -746,6 +768,12 @@ namespace dbstbl {
 		// Seulement l'un des deux est utilisé.
 		dbsdct::file_dynamic_content _Dynamic;
 		dbssct::file_static_content _Static;
+	protected:
+		virtual void DBSTBLErasePhysically( void )
+		{
+			table::ErasePhysically();
+			Content.ErasePhysically();
+		}
 	public:
 		content__ Content;
 		str::string RootFileName;
@@ -760,10 +788,6 @@ namespace dbstbl {
 			const str::string_ &RootFileName,
 			mode__ Mode,
 			flm::id__ ID );
-		void Drop( void )
-		{
-			Content.Drop();
-		}
 	};
 
 	typedef file_table file_table_;
