@@ -83,8 +83,6 @@ namespace dbstbl {
 	using namespace dbsctt;
 	using namespace dbsidx;
 
-	E_ROW( irow__ );
-
 	enum mode__ {
 		// Pas d'indexation, ou diffèrée.
 		mBulk,
@@ -120,46 +118,7 @@ namespace dbstbl {
 		return mdr::m_Undefined;	// Pour éviter un 'warning'.
 	}
 
-	typedef bch::E_BUNCHt_( index_ *, irow__ ) _indexes_;
-
-	class observer_functions__
-	{
-	private:
-		// Durée entre deuw appels en ms.
-		time_t _Delay;
-		bso::ulong__ _HandledIndexAmount, _TotalIndexAmount;
-	protected:
-		virtual void DBSTBLNotify(
-			bso::ulong__ HandledIndexAmount,
-			bso::ulong__ TotalIndexAmount,
-			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount,
-			bso::ulong__ BalancingCount ) = 0;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			_Delay = 1000;	// Délai par défaut : 1 s.
-			_TotalIndexAmount = _HandledIndexAmount = 0;
-		}
-		observer_functions__( void )
-		{
-			reset( false );
-		}
-		void Init( time_t Delay = 1000 )	// Délai par défaut : 1 s.
-		{
-			reset();
-
-			_Delay = Delay;
-		}
-		void Notify(
-			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount,
-			bso::ulong__ BalancingCount )
-		{
-			DBSTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount, BalancingCount );
-		}
-		friend class table_;
-	};
+	typedef bch::E_BUNCH_( index_ * ) _indexes_;
 
 	typedef bch::E_BUNCH_( rrow__ ) rrows_;
 	E_AUTO( rrows );
@@ -173,6 +132,7 @@ namespace dbstbl {
 	class table_
 	{
 	private:
+#if 0
 		void _ConnectIndexToFileIfNot( irow__ Row ) const
 		{
 #ifdef DBSTBL_DBG
@@ -187,20 +147,29 @@ namespace dbstbl {
 
 			}
 		}
-		const dbsctt::content__ &C_( void ) const
+#endif
+		void _CompleteInitializationIfNeeded( bso::bool__ CompleteInitializationIfNeeded ) const
 		{
-			if ( !S_.Content->InitializationCompleted() )
+			if ( !S_.Content->InitializationCompleted() && CompleteInitializationIfNeeded )
 				S_.Content->CompleteInitialization();
+		}
+		dbsctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true ) const	// L'absence de 'const' est normale.
+		{
+			_Test( mReadOnly );
+
+			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
 
 			return *S_.Content;
 		}
-		dbsctt::content__ &C_( void )
+		dbsctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true )
 		{
-			if ( !S_.Content->InitializationCompleted() )
-				S_.Content->CompleteInitialization();
+			_Test( mReadWrite );
+
+			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
 
 			return *S_.Content;
 		}
+#if 0
 		const index_ &_I(
 			irow__ Row,
 			bso::bool__ DontConnectToFiles = false ) const
@@ -219,6 +188,7 @@ namespace dbstbl {
 
 			return *Indexes( Row );
 		}
+#endif
 		void _TestMode( mode__ Mode ) const
 		{
 			switch ( Mode ) {
@@ -307,9 +277,11 @@ namespace dbstbl {
 				break;
 			}
 		}
+#if 0
 		void _Reindex(
 			irow__ Row,
 			observer_functions__ &Observer );
+#endif
 		void _InsertInIndexes( rrow__ Row );
 		void _DeleteFromIndexes( rrow__ Row );
 		void _ReindexAll( observer_functions__ &Observer );
@@ -376,25 +348,26 @@ namespace dbstbl {
 			S_.Content = &Content;
 			S_.Mode = Mode;
 		}
-		dbsctt::content__ &Content( void )
+		E_NAVt( _C()., rrow__ );
+		dbsctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded )
 		{
-			return *S_.Content;
+			return _C( CompleteInitializationIfNeeded );
 		}
-		dbsctt::content__ &Content( void ) const	// L'absence de 'const' est normal.
+		dbsctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const	// L'absence de 'const' est normal.
 		{
-			return *S_.Content;
+			return _C( CompleteInitializationIfNeeded );
 		}
-		irow__ AddIndex( index_ &Index )
+		void AddIndex( index_ &Index )
 		{
 			_Test( mAdmin );
 
-			return Indexes.Append( &Index );
+			Indexes.Append( &Index );
 		}
 		rrow__ Insert( const datum_ &Datum )
 		{
 			_Test( mReadWrite );
 
-			rrow__ Row = C_().Store( Datum );
+			rrow__ Row = _C().Store( Datum );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
@@ -413,7 +386,7 @@ namespace dbstbl {
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 
-			C_().Store( Datum, RecordRow );
+			_C().Store( Datum, RecordRow );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( RecordRow );
@@ -427,7 +400,7 @@ namespace dbstbl {
 		{
 			_Test( mReadOnly );
 
-			C_().Retrieve( Row, Datum );
+			_C().Retrieve( Row, Datum );
 		}
 		void Retrieve(
 			const rrows_ &Rows,
@@ -436,12 +409,13 @@ namespace dbstbl {
 		{
 			_Test( mReadWrite );
 
-			C_().Erase( RecordRow );
+			_C().Erase( RecordRow );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 		}
 		void Delete( const rrows_ &RecordRows );
+#if 0
 		rrow__ LooseSeek(
 			const datum_ &Datum,
 			irow__ IRow,
@@ -539,18 +513,7 @@ namespace dbstbl {
 
 			return _I( IRow ).Previous( Row );
 		}
-		mdr::size__ Amount( void ) const
-		{
-			_Test( mReadOnly );
-
-			return C_().Amount();
-		}
-		mdr::size__ Extent( void ) const
-		{
-			_Test( mReadOnly );
-
-			return C_().Extent();
-		}
+#endif
 		mode__ SwitchMode( mode__ Mode )
 		{
 			mode__ OldMode = S_.Mode;
@@ -593,26 +556,30 @@ namespace dbstbl {
 		{
 			_Test( mReadOnly );
 
-			return C_().Exists( RecordRow );
+			return _C().Exists( RecordRow );
 		}
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
 			rows_ &Rows ) const;
+#if 0
 		void Reindex(
 			irow__ IndexRow,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL )
 		{
 			_Reindex( IndexRow, Observer );
 		}
+#endif
 		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL )
  		{
 			_ReindexAll( Observer );
 		}
+#if 0
 		bso::bool__ IsIndexSynchronized( irow__ IndexRow ) const
 		{
 			return _I( IndexRow ).IsSynchronized();
 		}
+#endif
 		bso::bool__ AreAllIndexesSynchronized( void ) const;
 		void ErasePhysically( void )
 		{
@@ -633,17 +600,17 @@ namespace dbstbl {
 	class thread_safe_table_
 	{
 	private:
-		lck::control___<table_> &C_( void )
+		lck::control___<table_> &_C( void )
 		{
 			return S_.Control;
 		}
 		table_ &_Lock( void )
 		{
-			return C_().GetExclusiveAccess();
+			return _C().GetExclusiveAccess();
 		}
 		void _Release( void )
 		{
-			C_().ReleaseExclusiveAccess();
+			_C().ReleaseExclusiveAccess();
 		}
 	protected:
 		virtual void DBSTBLErasePhysically( void );
@@ -683,7 +650,7 @@ namespace dbstbl {
 
 			S_.Control.Init( Table );
 		}
-		irow__ AddIndex( index_ &Index );
+		void AddIndex( index_ &Index );
 		rrow__ Insert( const datum_ &Datum );
 		void Insert(
 			const data_ &Data,
@@ -703,6 +670,7 @@ namespace dbstbl {
 		void Delete( rrow__ RecordRow );
 		void Delete(
 			const rrows_ &RecordRows );
+#if 0
 		rrow__ LooseSeek(
 			const datum_ &Datum,
 			irow__ IRow,
@@ -731,6 +699,7 @@ namespace dbstbl {
 		rrow__ Previous( 
 			irow__ IRow,
 			rrow__ Row );
+#endif
 		mdr::size__ Amount( void );
 		mdr::size__ Extent( void );
 		mode__ SwitchMode( mode__ Mode );
@@ -740,11 +709,15 @@ namespace dbstbl {
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
 			rows_ &Rows );
+#if 0
 		void Reindex(
 			irow__ IndexRow,
 			observer_functions__ &Observer = *(observer_functions__ *)NULL );
+#endif
 		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL );
+#if 0
 		bso::bool__ IsIndexSynchronized( irow__ IndexRow );
+#endif
 		bso::bool__ AreAllIndexesSynchronized( void );
 		void ErasePhysically( void )
 		{

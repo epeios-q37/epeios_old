@@ -1,5 +1,18 @@
 $Id$
 
+12/11/2009 :
+	- DBSBSC :
+		- Récupération de 'rrows[_]' de 'DBSTBL'.
+	- DBSCTT :
+		- Ajout de 'IsEmpty()'.
+	- DBSIDX :
+		- Récupération de de 'observer_functions__' de 'DBSTBL'. 
+		- Récupération de 'Reindex' de 'DBSTBL'.
+	- DBSTBL :
+		- Suppression de 'irow__'.
+		- Déplacement de tout ce qui concerne la réindexation vers 'DBSIDX'.
+		- Ajout des méthodes de navigation.
+
 11/11/2009 :
 	- DBSTBL :
 		- Exposition du 'content__'.

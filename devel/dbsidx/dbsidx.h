@@ -71,6 +71,7 @@ namespace dbsidx {
 	using dbsbsc::datum;
 
 	using dbsbsc::rrow__;
+	using dbsbsc::rrows_;
 
 	using dbsbsc::skip_level__;
 
@@ -121,6 +122,54 @@ namespace dbsidx {
 		b_Undefined
 	};
 
+		class observer_functions__
+	{
+	private:
+		// Durée entre deuw appels en ms.
+		time_t _Delay;
+		bso::ulong__ _HandledIndexAmount, _TotalIndexAmount;
+	protected:
+		virtual void DBSTBLNotify(
+			bso::ulong__ HandledIndexAmount,
+			bso::ulong__ TotalIndexAmount,
+			bso::ulong__ HandledRecordAmount,
+			bso::ulong__ TotalRecordAmount,
+			bso::ulong__ BalancingCount ) = 0;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Delay = 1000;	// Délai par défaut : 1 s.
+			_TotalIndexAmount = _HandledIndexAmount = 0;
+		}
+		observer_functions__( void )
+		{
+			reset( false );
+		}
+		void Init( time_t Delay = 1000 )	// Délai par défaut : 1 s.
+		{
+			reset();
+
+			_Delay = Delay;
+		}
+		void Set( bso::ulong__ TotalIndexAmount )
+		{
+			_TotalIndexAmount = TotalIndexAmount;
+			_HandledIndexAmount = 0;
+		}
+		void IncrementHandledIndexAmount( bso::ulong__ Amount = 1 )
+		{
+			_HandledIndexAmount += Amount;
+		}
+		void Notify(
+			bso::ulong__ HandledRecordAmount,
+			bso::ulong__ TotalRecordAmount,
+			bso::ulong__ BalancingCount )
+		{
+			DBSTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount, BalancingCount );
+		}
+		friend class index_;
+	};
+
 	typedef dbsbsc::file_features_	_file_features_;
 
 	class index_
@@ -143,8 +192,11 @@ namespace dbsidx {
 			rrow__ &Row,
 			bso::ubyte__ &Round,
 			dbsctt::_cache_ &Cache ) const;
-		const dbsctt::content__ &_Content( void ) const
+		const dbsctt::content__ &_Content( bso::bool__ CompleteInitializationIfNeeded ) const
 		{
+			if ( !S_.Content->InitializationCompleted() && CompleteInitializationIfNeeded )
+				S_.Content->CompleteInitialization();
+
 			return *S_.Content;
 		}
 		void _Retrieve(
@@ -152,13 +204,13 @@ namespace dbsidx {
 			datum_ &Datum,
 			dbsctt::_cache_ &Cache ) const
 		{
-			_Content().Retrieve( Row, Datum, Cache );
+			_Content( true ).Retrieve( Row, Datum, Cache );
 		}
 		void _Touch( bso::bool__ CompareWithContent )
 		{
 			S_.ModificationTimeStamp = tol::Clock( false );
 
-			if ( CompareWithContent && ( S_.ModificationTimeStamp == Content().ModificationTimeStamp() ) )
+			if ( CompareWithContent && ( S_.ModificationTimeStamp == Content( true ).ModificationTimeStamp() ) )
 				S_.ModificationTimeStamp = tol::Clock( true );
 		}
 		rrow__ _SearchStrictGreater(
@@ -172,7 +224,7 @@ namespace dbsidx {
 			_index_::s BaseIndex;
 			rrow__ Root;
 			sort_function__ *Sort;
-			const dbsctt::content__ *Content;
+			dbsctt::content__ *Content;
 			time_t ModificationTimeStamp;
 		} &S_;
 		index_( s &S )
@@ -210,7 +262,7 @@ namespace dbsidx {
 			return *this;
 		}
 		void Init(
-			const dbsctt::content__ &Content = *(dbsctt::content__ *)NULL,
+			dbsctt::content__ &Content = *(dbsctt::content__ *)NULL,
 			sort_function__ &Sort = *(sort_function__ *)NULL,
 			bso::bool__ Partial = false )
 		{
@@ -354,15 +406,15 @@ namespace dbsidx {
 		}
 		bso::bool__ IsSynchronized( void ) const
 		{
-			return S_.ModificationTimeStamp > _Content().ModificationTimeStamp();
+			return S_.ModificationTimeStamp > _Content( false ).ModificationTimeStamp();
 		}
 		sort_function__ &SortFunction( void ) const
 		{
 			return *S_.Sort;
 		}
-		const dbsctt::content__ &Content( void ) const
+		const dbsctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const
 		{
-			return *S_.Content;
+			return _Content( CompleteInitializationIfNeeded );
 		}
 		void Balance( void )
 		{
@@ -379,6 +431,7 @@ namespace dbsidx {
 				return NONE;
 		}
 		rrow__ Test( void ) const;
+		void Reindex( observer_functions__ &Observer );
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
 	};
 
@@ -408,7 +461,7 @@ namespace dbsidx {
 		bso::bool__ _ConnectToFiles()
 		{
 			if ( idxbtq::Connect( BaseIndex, S_.FileManager ) ) {
-				index_::SearchRoot( Content().First() );
+				index_::SearchRoot( Content( true ).First() );
 				return true;
 			} else {
 				return false;
@@ -463,7 +516,7 @@ namespace dbsidx {
 		}
 		void Init(
 			const str::string_ &RootFileName,
-			const dbsctt::content__ &Content,
+			dbsctt::content__ &Content,
 			sort_function__ &Sort,
 			mdr::mode__ Mode,
 			bso::bool__ Erase,

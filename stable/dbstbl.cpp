@@ -57,24 +57,14 @@ public:
 
 #include "fnm.h"
 
-#define MEMORY_REINDEXATION_LIMIT	10000000
-/* Limite du nombre d'neregistrement au-delà de laquelle on utilise 
-directement l'index sur le disque et non pas une copie temporaire en mémoire
-pour éviter la mise en oeuvre de la mémoire virtuelle. */
-
-#define RECORD_PANEL_SIZE		50000	// Nombre d'enregistrements par tranche.
-
-#define RECORD_TEST_PANEL_SIZE		1000	// Nombre d'enregistrements pour la tranche de test.
-
-
 using namespace dbstbl;
 
 void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
-	irow__ IRow = Indexes.First();
+	epeios::row__ IRow = Indexes.First();
 
 	while ( IRow != NONE ) {
-		_I( IRow ).Index( Row, false );
+		Indexes( IRow )->Index( Row, false );
 
 		IRow = Indexes.Next( IRow );
 	}
@@ -82,158 +72,33 @@ void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 
 void dbstbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
-	irow__ IRow = Indexes.First();
+	epeios::row__ IRow = Indexes.First();
 
 	while ( IRow != NONE ) {
-		_I( IRow ).Delete( Row );
+		if ( !Indexes( IRow )->InitializationCompleted() )
+			Indexes( IRow )->CompleteInitialization();
+
+		Indexes( IRow )->Delete( Row );
 
 		IRow = Indexes.Next( IRow );
 	}
-}
-
-static inline void Reindex_(
-	rrows_ &Rows,
-	index_ &Index,
-	observer_functions__ &Observer,
-	dbsctt::_cache_  &Cache,
-	tol::chrono__ &Chrono,
-	bso::ulong__ &HandledRecordAmount,
-	bso::ulong__ &BalancingCount,
-	tol::E_DPOINTER___( extremities__ ) &Extremities,
-	bso::bool__ Randomly )
-{
-	epeios::row__ Row = NONE;
-	bso::ubyte__ Round = 0;
-
-	while ( Rows.Amount() ) {
-		if ( Randomly )
-			Row = Rows.Amount() - ( rand() % Rows.Amount() ) - 1;
-		else
-			Row = Rows.First();
-
-		Round = Index.Index( Rows( Row ), Extremities, Cache );
-
-		Rows.Remove( Row );
-
-		if ( ( 1UL << ( Round >> 3 ) ) > HandledRecordAmount ) {
-			Index.Balance();
-			BalancingCount++;
-			if ( ( Extremities == NULL ) && ( BalancingCount > 1 ) )
-				Extremities = new extremities__;
-		}
-
-		HandledRecordAmount++;
-
-		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
-			Observer.Notify( HandledRecordAmount, Index.Content().Amount(), BalancingCount );
-
-			Chrono.Launch();
-		}
-	}
-
-}
-
-void dbstbl::table_::_Reindex(
-	irow__ IRow,
-	observer_functions__ &Observer )
-{
-ERRProlog
-	index_ &Index = _I( IRow );
-	const dbsctt::content__ &Content = C_();
-	mdr::size__ HandledRecordAmount = 0;
-	tol::chrono__ Chrono;
-	dbsidx::index IndexInMemory;
-	dbsidx::index_ *UsedIndex = NULL;
-	dbsbsc::_cache  Cache;
-	tol::E_DPOINTER___( extremities__ ) Extremities;
-	bso::ulong__ BalancingCount = 0;
-	bch::E_BUNCH( rrow__ ) Rows;
-	rrow__ Row = NONE;
-	bso::ulong__ PanelRecordCounter;
-	bso::ulong__ PanelRecordSize;
-	bso::bool__ Randomly = false;
-ERRBegin
-	Index.Reset();
-
-	if ( Content.Amount() == 0 )
-		ERRReturn;
-
-	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
-		IndexInMemory.Init( Index.Content(), Index.SortFunction() );
-
-		IndexInMemory.Allocate( Content.Extent(), aem::mDefault );
-
-		UsedIndex = &IndexInMemory;
-	} else
-		UsedIndex = &Index;
-
-	Cache.Init( Content.Extent() );
-
-	Rows.Init();
-
-	Row = Content.First();
-
-	PanelRecordSize = RECORD_TEST_PANEL_SIZE;
-
-	PanelRecordCounter = PanelRecordSize;
-
-	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
-		Observer.Notify( 0, Content.Amount(), BalancingCount );
-		Chrono.Init( Observer._Delay );
-		Chrono.Launch();
-	}
-
-	while ( Row != NONE ) {
-		Rows.Append( Row );
-
-		if ( PanelRecordCounter-- == 0 ) {
-			Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
-
-			if ( Randomly == false )
-				if ( ( Extremities == NULL ) || ( Extremities->Used < ( ( 2 * PanelRecordSize ) / 3 ) ) )
-					Randomly = true;
-				else
-					Extremities->Used = 0;
-
-
-			PanelRecordSize = RECORD_PANEL_SIZE;
-
-			PanelRecordCounter = PanelRecordSize;
-		}
-
-		Row = Content.Next( Row );
-	}
-
-	Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
-
-	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
-		Observer.Notify( HandledRecordAmount, Content.Amount(), BalancingCount );
-
-	UsedIndex->Balance();
-
-	if ( UsedIndex != &Index )
-		Index = *UsedIndex;
-ERRErr
-ERREnd
-ERREpilog
 }
 
 void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 {
 	_Test( mReadWrite );
 
-	irow__ Row = Indexes.First();
+	epeios::row__ Row = Indexes.First();
 
 	if ( &Observer != NULL ) {
-		Observer._TotalIndexAmount = Indexes.Amount();
-		Observer._HandledIndexAmount = 0;
+		Observer.Set( Indexes.Amount() );
 	}
 
 	while ( Row != NONE ) {
-		_Reindex( Row, Observer );
+		Indexes( Row )->Reindex( Observer );
 
 		if ( &Observer )
-			Observer._HandledIndexAmount++;
+			Observer.IncrementHandledIndexAmount();
 
 		Row = Indexes.Next( Row );
 	}
@@ -249,7 +114,7 @@ ERRProlog
 ERRBegin
 	_Test( mReadOnly );
 
-	const dbsctt::content__ &Content = C_();
+	const dbsctt::content__ &Content = _C();
 
 	Row = Rows.First();
 
@@ -322,10 +187,10 @@ void dbstbl::table_::Delete( const rrows_ &RecordRows )
 
 void dbstbl::table_::_ResetAllIndexes( void )
 {
-	irow__ Row = Indexes.First();
+	epeios::row__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
-		_I( Row, true ).Reset();
+		Indexes( Row )->Reset();
 
 		Row = Indexes.Next( Row );
 	}
@@ -353,10 +218,10 @@ bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
 {
 	_Test( mReadOnly );
 
-	irow__ Row = Indexes.First();
+	epeios::row__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
-		if ( !IsIndexSynchronized( Row ) )
+		if ( !Indexes( Row )->IsSynchronized() )
 			return false;
 
 		Row = Indexes.Next( Row );
@@ -387,19 +252,17 @@ ERREnd
 ERREpilog
 }
 
-irow__ dbstbl::thread_safe_table_::AddIndex( index_ &Index )
+void dbstbl::thread_safe_table_::AddIndex( index_ &Index )
 {
-	irow__ Row = NONE;
 ERRProlog
 ERRBegin
 	RW
 
-	Row = T.AddIndex( Index );
+	T.AddIndex( Index );
 ERRErr
 ERREnd
 	RRW
 ERREpilog
-	return Row;
 }
 
 rrow__ dbstbl::thread_safe_table_::Insert( const datum_ &Datum )
@@ -560,6 +423,7 @@ ERREnd
 ERREpilog
 }
 
+#if 0
 rrow__ dbstbl::thread_safe_table_::LooseSeek(
 	const datum_ &Datum,
 	irow__ IRow,
@@ -692,6 +556,7 @@ ERREnd
 ERREpilog
 	return Amount;
 }
+#endif
 
 mdr::size__ dbstbl::thread_safe_table_::Extent( void )
 {
@@ -776,6 +641,7 @@ ERREnd
 ERREpilog
 }
 
+#if 0
 bso::sign__ dbstbl::thread_safe_table_::Compare(
 	rrow__ RecordRow,
 	const datum_&Pattern,
@@ -809,6 +675,7 @@ ERREnd
 ERREpilog
 	return Result;
 }
+#endif
 
 bso::bool__ dbstbl::thread_safe_table_::AreAllIndexesSynchronized( void )
 {
@@ -825,6 +692,7 @@ ERREpilog
 	return Result;
 }
 
+#if 0
 void dbstbl::thread_safe_table_::Reindex(
 	irow__ IndexRow,
 	observer_functions__ &Observer )
@@ -839,6 +707,7 @@ ERREnd
 	RRW
 ERREpilog
 }
+#endif
 
 void dbstbl::thread_safe_table_::ReindexAll( observer_functions__ &Observer )
 {

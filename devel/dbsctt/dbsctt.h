@@ -257,6 +257,17 @@ namespace dbsctt {
 
 			return false;
 		}
+		bso::bool__ IsEmpty( void ) const
+		{
+			if ( _Static != NULL )
+				return _Static->IsEmpty();
+			else if ( _Dynamic != NULL )
+				return _Dynamic->IsEmpty();
+			else
+				ERRu();
+
+			return false;
+		}
 		void CompleteInitialization( void )
 		{
 			if ( _Static != NULL )
