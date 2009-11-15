@@ -744,7 +744,7 @@ static const str::string_ &GetFileName_(
 	return FileName;
 }
 
-void dbstbl::file_table::InitStatic(
+void dbstbl::exploded_table::InitStatic(
 	epeios::size__ Size,									
 	const str::string_ &Path,
 	const str::string_ &RootFileName,
@@ -773,7 +773,7 @@ ERREnd
 ERREpilog
 }
 
-void dbstbl::file_table::InitDynamic(
+void dbstbl::exploded_table::InitDynamic(
 	const str::string_ &Path,
 	const str::string_ &RootFileName,
 	mode__ Mode,

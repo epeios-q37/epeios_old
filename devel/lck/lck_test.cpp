@@ -31,15 +31,19 @@
 #include "lck.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
+#include "str.h"
 
-using stf::cin;
-using stf::cout;
-using stf::cerr;
+/*
+using cio::cin;
+using cio::cout;
+using cio::cerr;
+*/
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	lck::control___<str::string> Dummy;
 ERRBegin
 ERRErr
 ERREnd

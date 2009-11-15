@@ -597,7 +597,7 @@ namespace dbsdct {
 	E_AUTO( dynamic_content )
 
 	// Content stocké dans des fichiers.
-	class file_dynamic_content_
+	class exploded_dynamic_content_
 	: public dynamic_content_
 	{
 	protected:
@@ -636,7 +636,7 @@ namespace dbsdct {
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;
-		file_dynamic_content_( s &S )
+		exploded_dynamic_content_( s &S )
 		: S_( S ), 
 		  dynamic_content_( S ),
 		  RootFileName( S.RootFileName )
@@ -662,9 +662,9 @@ namespace dbsdct {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_dynamic_content_ &operator =( const file_dynamic_content_ &FDC )
+		exploded_dynamic_content_ &operator =( const exploded_dynamic_content_ &XDC )
 		{
-			dynamic_content_::operator =( FDC );
+			dynamic_content_::operator =( XDC );
 
 			return *this;
 		}
@@ -693,7 +693,7 @@ namespace dbsdct {
 		}
 	};
 
-	E_AUTO( file_dynamic_content )
+	E_AUTO( exploded_dynamic_content )
 }
 
 /*$END$*/

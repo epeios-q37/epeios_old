@@ -587,7 +587,7 @@ ERREpilog
 }
 
 
-void dbsidx::file_index_::Init(
+void dbsidx::exploded_index_::Init(
 	const str::string_ &RootFileName,
 	dbsctt::content__ &Content,
 	sort_function__ &Sort,

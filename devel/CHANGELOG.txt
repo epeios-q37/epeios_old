@@ -1,5 +1,11 @@
 $Id$
 
+15/11/2009 :
+	- DBS...
+		- 'file_...' -> 'exploded_...' pour souligner l'aspect fragmentation poussée à m'extrême (un fichier par 'objet').
+	- LCK
+		- Réecriture pour pouvoir mettre toutes les objets membres de 'control__' en 'const'.
+
 12/11/2009 :
 	- DBSBSC :
 		- Récupération de 'rrows[_]' de 'DBSTBL'.

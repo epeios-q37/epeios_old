@@ -218,7 +218,7 @@ namespace dbssct {
 	E_AUTO( static_content )
 
 	// Content stocké dans des fichiers.
-	class file_static_content_
+	class exploded_static_content_
 	: public static_content_
 	{
 	protected:
@@ -248,7 +248,7 @@ namespace dbssct {
 			str::string_::s RootFileName;
 			mdr::mode__ Mode;
 		} &S_;
-		file_static_content_( s &S )
+		exploded_static_content_( s &S )
 		: S_( S ), 
 		  static_content_( S ),
 		  RootFileName( S.RootFileName )
@@ -271,9 +271,9 @@ namespace dbssct {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_static_content_ &operator =( const file_static_content_ &FSC )
+		exploded_static_content_ &operator =( const exploded_static_content_ &XSC )
 		{
-			static_content_::operator =( FSC );
+			static_content_::operator =( XSC );
 
 			return *this;
 		}
@@ -301,7 +301,7 @@ namespace dbssct {
 		}
 	};
 
-	E_AUTO( file_static_content )
+	E_AUTO( exploded_static_content )
 
 
 }

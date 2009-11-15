@@ -130,7 +130,7 @@ ERREnd
 ERREpilog
 }
 
-void dbsdct::file_dynamic_content_::_SaveLocationsAndAvailables( void ) const
+void dbsdct::exploded_dynamic_content_::_SaveLocationsAndAvailables( void ) const
 {
 	Save_( Availables, RootFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
@@ -218,7 +218,7 @@ ERREpilog
 	return Success;
 }
 
-void dbsdct::file_dynamic_content_::Init(
+void dbsdct::exploded_dynamic_content_::Init(
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
 	bso::bool__ Partial,
@@ -256,7 +256,7 @@ ERREpilog
 }
 
 
-bso::bool__ dbsdct::file_dynamic_content_::_ConnectToFiles( void )
+bso::bool__ dbsdct::exploded_dynamic_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -282,7 +282,7 @@ ERREpilog
 	return Exists;
 }
 
-void dbsdct::file_dynamic_content_::_ErasePhysically( void )
+void dbsdct::exploded_dynamic_content_::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin

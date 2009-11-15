@@ -202,61 +202,66 @@ namespace lck {
 	template <typename object> class control___
 	{
 	private:
-		object *Object_;
-		lck::lock___ Lock_;
-		bso::bool__ Locked_;
-		bso::bool__ ReadWrite_;
-		mtx::mutex_handler__ Mutex_;
-		void _Lock( void )
+		object *_Object;
+		struct {
+			lck::lock___ Lock;
+			bso::bool__ Locked;
+			bso::bool__ ReadWrite;
+			mtx::mutex_handler__ Mutex;
+		} _Core, &_Access;
+		/* Comme la volatibilité de l'objet en lui-même n'est pas interssante, mais uniquement celle de l'objet qu'il contrôle,
+		on utilise '_Access' pour pouvoir mettre toutes les méthodes en 'const'. */
+		void _Lock( void ) const
 		{
-			mtx::Lock( Mutex_ );
+			mtx::Lock( _Access.Mutex );
 		}
-		void _Unlock( void )
+		void _Unlock( void ) const
 		{
-			mtx::Unlock( Mutex_ );
+			mtx::Unlock( _Access.Mutex );
 		}
-		void _ReleaseReadOnly( void )
+		void _ReleaseReadOnly( void ) const
 		{
 #ifdef LCK__DBG
-			if ( !Locked_ )
+			if ( !_Access.Locked )
 				ERRu();
 
-			if ( ReadWrite_ )
+			if ( _Access.ReadWrite )
 				ERRu();
 #endif
-			Lock_.ReadingAchieved();
+			_Access.Lock.ReadingAchieved();
 
-			Locked_ = false;
+			_Access.Locked = false;
 		}
-		void _ReleaseReadWrite( void )
+		void _ReleaseReadWrite( void ) const
 		{
 #ifdef LCK__DBG
-			if ( !Locked_ )
+			if ( !_Access.Locked )
 				ERRu();
 
-			if ( !ReadWrite_ )
+			if ( !_Access.ReadWrite )
 				ERRu();
 #endif
-			Lock_.WritingAchieved();
+			_Access.Lock.WritingAchieved();
 
-			Locked_ = false;
+			_Access.Locked = false;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 
 			if ( P ) {
-				if ( Mutex_ != MTX_INVALID_HANDLER )
-					mtx::Delete( Mutex_ );
+				if ( _Access.Mutex != MTX_INVALID_HANDLER )
+					mtx::Delete( _Access.Mutex );
 			}
 
-			Object_ = NULL;
-			Lock_.reset( P );
-			Locked_ = false;
-			ReadWrite_ = false;
-			Mutex_ = MTX_INVALID_HANDLER;
+			_Object = NULL;
+			_Access.Lock.reset( P );
+			_Access.Locked = false;
+			_Access.ReadWrite = false;
+			_Access.Mutex = MTX_INVALID_HANDLER;
 		}
 		control___( void )
+		: _Access( _Core )
 		{
 			reset( false );
 		}
@@ -268,80 +273,80 @@ namespace lck {
 		{
 			reset();
 
-			Object_ = &Object;
-			Lock_.Init();
-			Mutex_ = mtx::Create( mtx::mFree );
+			_Object = &Object;
+			_Access.Lock.Init();
+			_Access.Mutex = mtx::Create( mtx::mFree );
 		}
-		const object &GetReadOnly( void )
+		const object &GetReadOnly( void ) const
 		{
 #ifdef LCK__DBG
 			_Lock();
-			if ( Locked_ )
+			if ( _Access.Locked )
 				ERRu();
 			_Unlock();
 #endif
-			Lock_.WaitUntilReadingAllowed();
+			_Access.Lock.WaitUntilReadingAllowed();
 
 			_Lock();
-			Locked_ = true;
-			ReadWrite_ = false;
+			_Access.Locked = true;
+			_Access.ReadWrite = false;
 			_Unlock();
 
-			return *Object_;
+			return *_Object;
 		}
-		const object &GetSharedAccess( void )
+		const object &GetSharedAccess( void ) const
 		{
 			return GetReadOnly();
 		}
-		void ReleaseReadOnly( void )
+		void ReleaseReadOnly( void ) const
 		{
 			_Lock();
 			_ReleaseReadOnly();
 			_Unlock();
 		}
-		void ReleaseSharedAccess( void )
+		void ReleaseSharedAccess( void ) const
 		{
 			ReleaseReadOnly();
 		}
-		object &GetReadWrite( void )
+		object &GetReadWrite( void ) const
 		{
 #ifdef LCK__DBG
 			_Lock();
-			if ( Locked_ )
+			if ( _Access.Locked )
 				ERRu();
 			_Unlock();
 #endif
-			Lock_.WaitUntilWritingAllowed();
+			_Access.Lock.WaitUntilWritingAllowed();
 
 			_Lock();
-			Locked_ = true;
-			ReadWrite_ = true;
+			_Access.Locked = true;
+			_Access.ReadWrite = true;
 			_Unlock();
 
-			return *Object_;
+			return *_Object;
 		}
-		object &GetExclusiveAccess( void )
+		object &GetExclusiveAccess( void ) const
 		{
 			return GetReadWrite();
 		}
-		void ReleaseReadWrite( void )
+		void ReleaseReadWrite( void ) const
 		{
 			_Lock();
 			_ReleaseReadWrite();
 			_Unlock();
 		}
-		void ReleaseExclusiveAccess( void )
+		void ReleaseExclusiveAccess( void ) const
 		{
 			ReleaseReadWrite();
 		}
-		bso::bool__ ReleaseLock( void )	// Return true if it was locked.
+		bso::bool__ ReleaseLock( void )	const // Return true if it was locked.
 		{
 			bso::bool__ WasLocked = false;
 
 			_Lock();
 
-			if ( Locked_ ) {
-				if ( ReadWrite_ ) 
+			if ( _Access.Locked ) {
+				if ( _Access.ReadWrite ) 
 					ReleaseReadWrite();
 				else
 					ReleaseReadOnly();
@@ -354,15 +359,15 @@ namespace lck {
 		}
 		object &GetWithoutLocking( void )
 		{
-			return *Object_;
+			return *_Object;
 		}
 		const object &GetWithoutLocking( void ) const
 		{
-			return *Object_;
+			return *_Object;
 		}
-		bso::bool__ IsLocked( void )
+		bso::bool__ IsLocked( void ) const
 		{
-			return Lock_.IsLocked();
+			return _Access.Lock.IsLocked();
 		}
 	};
 

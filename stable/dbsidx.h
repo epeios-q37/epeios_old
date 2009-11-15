@@ -439,7 +439,7 @@ namespace dbsidx {
 
 	// 'index' stockés dans des fichiers.
 
-	class file_index_
+	class exploded_index_
 	: public index_
 	{
 	protected:
@@ -483,7 +483,7 @@ namespace dbsidx {
 			bso::bool__ Erase;	// Seulement utile lors d'uen initialisation retardée.
 			mdr::mode__ Mode;
 		} &S_;
-		file_index_( s &S )
+		exploded_index_( s &S )
 		: S_( S ), 
 		  index_( S ),
 		  RootFileName( S.RootFileName )
@@ -508,9 +508,9 @@ namespace dbsidx {
 		{
 			ERRu();	// Cette méthode n'a pas de sens dans ce contexte.
 		}
-		file_index_ &operator =( const file_index_ &FI )
+		exploded_index_ &operator =( const exploded_index_ &XI )
 		{
-			index_::operator =( FI );
+			index_::operator =( XI );
 
 			return *this;
 		}
@@ -528,7 +528,7 @@ namespace dbsidx {
 		}
 	};
 
-	E_AUTO( file_index )
+	E_AUTO( exploded_index )
 
 
 

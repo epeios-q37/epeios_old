@@ -89,12 +89,12 @@ ERREnd
 ERREpilog
 }
 
-void dbssct::file_static_content_::_SaveLocations( void ) const
+void dbssct::exploded_static_content_::_SaveLocations( void ) const
 {
 	Save_( *this, RootFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
-void dbssct::file_static_content_::Init(
+void dbssct::exploded_static_content_::Init(
 	epeios::size__ Size,
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
@@ -124,7 +124,7 @@ ERREpilog
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
-bso::bool__ dbssct::file_static_content_::_ConnectToFiles( void )
+bso::bool__ dbssct::exploded_static_content_::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -162,7 +162,7 @@ ERREpilog
 	return Exists;
 }
 
-void dbssct::file_static_content_::_ErasePhysically( void )
+void dbssct::exploded_static_content_::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin

@@ -734,13 +734,13 @@ namespace dbstbl {
 #	define	E_DBTABLE	table
 #endif
 
-	class file_table
+	class exploded_table
 	: public table
 	{
 	private:
 		// Seulement l'un des deux est utilisé.
-		dbsdct::file_dynamic_content _Dynamic;
-		dbssct::file_static_content _Static;
+		dbsdct::exploded_dynamic_content _Dynamic;
+		dbssct::exploded_static_content _Static;
 	protected:
 		virtual void DBSTBLErasePhysically( void )
 		{
@@ -763,7 +763,7 @@ namespace dbstbl {
 			flm::id__ ID );
 	};
 
-	typedef file_table file_table_;
+	typedef exploded_table exploded_table_;
 
 
 }
