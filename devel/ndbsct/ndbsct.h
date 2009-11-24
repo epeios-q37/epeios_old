@@ -126,9 +126,7 @@ namespace ndbsct {
 
 			return *this;
 		}
-		void Init(
-			epeios::size__ Size,
-			bso::bool__ Partial = false )
+		void Init( epeios::size__ Size )
 		{
 			_list_::Init();
 			Storage.Init();
@@ -191,6 +189,64 @@ namespace ndbsct {
 	};
 
 	E_AUTO( static_content )
+
+	class static_content_spreaded_file_manager___
+	{
+	private:
+		static_content_ *_Content;
+		str::string _RootFileName;
+		tym::memory_file_manager___ _FileManager;
+		mdr::mode__ _Mode;
+		time_t _GetUnderlyingFilesLastModificationTime( void ) const
+		{
+			return _FileManager.TimeStamp();
+		}
+		void _SaveLocations( void ) const;
+		bso::bool__ _ConnectToFiles( void );
+		void _ErasePhysically( void );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_FileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+
+			if ( P ) {
+				if ( ( _Content != NULL ) && ( _RootFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+					_SaveLocations();
+			}
+
+			_FileManager.reset( P );
+			_Mode = mdr::m_Undefined;
+			_RootFileName.reset( P );
+			_Content = NULL;
+		}
+		static_content_spreaded_file_manager___( void )
+		{
+			reset( false );
+		}
+		void Init(
+			static_content_ &Content,
+			const str::string_ &RootFileName,
+			mdr::mode__ Mode,
+			flm::id__ ID );
+		void WriteLocationsFile( void )	// Met à jour les fichiers.
+		{
+			_SaveLocations();
+		}
+		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
+		{
+			_FileManager.ReleaseFile();
+		}
+		void SwitchMode( mdr::mode__ Mode )
+		{
+			if ( Mode != _Mode ) {
+				_FileManager.Mode( Mode );
+
+				_Mode = Mode;
+			}
+		}
+	};
+
+
 }
 
 /*$END$*/

@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "fnm.h"
+
 using namespace ndbtbl;
 
 void ndbtbl::table_::_InsertInIndexes( rrow__ Row )
@@ -112,14 +114,12 @@ ERRProlog
 ERRBegin
 	_Test( mReadOnly );
 
-	const ndbctt::content__ &Content = _C();
-
 	Row = Rows.First();
 
 	while ( Row != NONE ) {
 		Datum.Init();
 
-		Content.Retrieve( Rows( Row ), Datum );
+		Content().Retrieve( Rows( Row ), Datum );
 
 		Data.Append( Datum );
 
@@ -226,6 +226,73 @@ bso::bool__ ndbtbl::table_::AreAllIndexesSynchronized( void ) const
 
 	return true;
 }
+
+static const str::string_ &GetFileName_(
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	str::string_ &FileName )
+{
+#ifdef DBIEDB_DBG
+	if ( RootFileName.Amount() == 0 )
+		ERRc();
+#endif
+
+	FileName.Init( Path );
+
+	if ( FileName.Amount() != 0 )
+		FileName.Append( FNM_DIRECTORY_SEPARATOR_STRING );
+
+	FileName.Append( RootFileName );
+
+	return FileName;
+}
+
+void ndbtbl::table_spreaded_file_manager___::_InitStatic(
+	table_ &Table,
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	mode__ Mode,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init();
+
+	GetFileName_( Path, RootFileName, FileName );
+
+	if ( Mode == ndbtbl::mReadOnly )
+		_Static.Init( Table.Content.Static(), FileName, mdr::mReadOnly, ID );
+	else
+		_Static.Init( Table.Content.Static(), FileName, mdr::mReadWrite, ID );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void ndbtbl::table_spreaded_file_manager___::_InitDynamic(
+	table_ &Table,
+	const str::string_ &Path,
+	const str::string_ &RootFileName,
+	mode__ Mode,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init();
+
+	GetFileName_( Path, RootFileName, FileName );
+
+	if ( Mode == ndbtbl::mReadOnly )
+		_Dynamic.Init( Table.Content.Dynamic(), FileName, mdr::mReadOnly, ID );
+	else
+		_Dynamic.Init( Table.Content.Dynamic(), FileName, mdr::mReadWrite, ID );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 

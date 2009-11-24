@@ -57,6 +57,9 @@ public:
 
 using namespace ndbidx;
 
+#define TREE_FILE_NAME_EXTENSION	".edt"
+#define QUEUE_FILE_NAME_EXTENSION	".edq"
+
 bso::sign__ ndbidx::index_::_Seek(
 	const datum_ &Datum,
 	skip_level__ SkipLevel,
@@ -412,6 +415,38 @@ ERREnd
 ERREpilog
 	return Result;
 }
+
+void ndbidx::index_spreaded_file_manager___::Init(
+	const str::string_ &RootFileName,
+	mdr::mode__ Mode,
+	bso::bool__ Erase,
+	bso::bool__ Partial,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string TreeFileName;
+	STR_BUFFER___ TreeFileNameBuffer;
+	str::string QueueFileName;
+	STR_BUFFER___ QueueFileNameBuffer;
+ERRBegin
+	reset();
+
+	TreeFileName.Init( RootFileName );
+	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
+
+	QueueFileName.Init( RootFileName );
+	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
+
+	_FileManager.Init( TreeFileName.Convert( TreeFileNameBuffer ), QueueFileName.Convert( QueueFileNameBuffer ), Mode, true, ID );
+
+	_RootFileName.Init( RootFileName );
+
+	_Mode = Mode;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 

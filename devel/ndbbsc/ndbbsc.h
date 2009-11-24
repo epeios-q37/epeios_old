@@ -221,6 +221,11 @@ namespace ndbbsc {
 
 	E_AUTO( cache )
 
+	void DropFile(
+		const str::string_ &RootFileName,
+		const char *Extension );
+
+
 }
 
 /*$END$*/

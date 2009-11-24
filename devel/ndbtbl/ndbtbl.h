@@ -119,42 +119,6 @@ namespace ndbtbl {
 	class table_
 	{
 	private:
-		ndbctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true ) const	// L'absence de 'const' est normale.
-		{
-			_Test( mReadOnly );
-
-//			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
-
-			return *S_.Content;
-		}
-		ndbctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true )
-		{
-			_Test( mReadWrite );
-
-//			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
-
-			return *S_.Content;
-		}
-#if 0
-		const index_ &_I(
-			irow__ Row,
-			bso::bool__ DontConnectToFiles = false ) const
-		{
-			if ( !DontConnectToFiles )
-				_ConnectIndexToFileIfNot( Row );
-
-			return *Indexes( Row );
-		}
-		index_ &_I(
-			irow__ Row,
-			bso::bool__ DontConnectToFiles = false )
-		{
-			if ( !DontConnectToFiles )
-				_ConnectIndexToFileIfNot( Row );
-
-			return *Indexes( Row );
-		}
-#endif
 		void _TestMode( mode__ Mode ) const
 		{
 			switch ( Mode ) {
@@ -271,63 +235,63 @@ namespace ndbtbl {
 	public:
 		struct s
 		{
-			str::string_ ::s Label;
+			content_::s Content;
 			_indexes_::s Indexes;
-			ndbctt::content__ *Content;	// On n'utilise pas 'content_', pour pouvoir appliquer
 										// une opération non 'const' dans une méthode 'const'.
 			mode__ Mode;
 		} &S_;
-		str::string_ Label;	// Sert d'identifiant discriminat de la table. Utile pour servir de base aux noms de fichiers associées à la table.
+		content_ Content;
 		_indexes_ Indexes;
 		table_( s &S )
 		: S_( S ),
-		  Label( S.Label ),
+		  Content( S.Content ),
 		  Indexes( S.Indexes )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			Label.reset();
+			Content.reset( P );
 			Indexes.reset( P );
-			S_.Content = NULL;
 			S_.Mode = m_Undefined;
 		}
 		E_VDTOR( table_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			Label.plug( MM );
+			Content.plug( MM );
 			Indexes.plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
-			Label = T.Label;
+			Content = T.Content;
 			Indexes = T.Indexes;
 			S_.Content = T.S_.Content;
 			S_.Mode = T.S_.Mode;
 
 			return *this;
 		}
-		void Init(
-			const str::string_ &Label,
-			ndbctt::content__ &Content,
-			mode__ Mode )
+		void Init( mode__ Mode )
 		{
 			reset();
 
+			Content.Init();
 			Indexes.Init();
 
-			this->Label.Init( Label );
-			S_.Content = &Content;
 			S_.Mode = Mode;
 		}
-		E_NAVt( _C()., rrow__ );
-		ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded )
+		void InitStatic(
+			epeios::size__ Size,
+			mode__ Mode )
 		{
-			return _C( CompleteInitializationIfNeeded );
+			Init( Mode );
+
+			Content.InitStatic( Size );
 		}
-		ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const	// L'absence de 'const' est normal.
+		void InitDynamic( mode__ Mode )
 		{
-			return _C( CompleteInitializationIfNeeded );
+			Init( Mode );
+
+			Content.InitDynamic();
 		}
+		E_NAVt( Content()., rrow__ );
 		void AddIndex( index_ &Index )
 		{
 			_Test( mAdmin );
@@ -338,7 +302,7 @@ namespace ndbtbl {
 		{
 			_Test( mReadWrite );
 
-			rrow__ Row = _C().Store( Datum );
+			rrow__ Row = Content().Store( Datum );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
@@ -357,7 +321,7 @@ namespace ndbtbl {
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 
-			_C().Store( Datum, RecordRow );
+			Content().Store( Datum, RecordRow );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( RecordRow );
@@ -371,7 +335,7 @@ namespace ndbtbl {
 		{
 			_Test( mReadOnly );
 
-			_C().Retrieve( Row, Datum );
+			Content().Retrieve( Row, Datum );
 		}
 		void Retrieve(
 			const rrows_ &Rows,
@@ -380,7 +344,7 @@ namespace ndbtbl {
 		{
 			_Test( mReadWrite );
 
-			_C().Erase( RecordRow );
+			Content().Erase( RecordRow );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
@@ -428,7 +392,7 @@ namespace ndbtbl {
 		{
 			_Test( mReadOnly );
 
-			return _C().Exists( RecordRow );
+			return Content().Exists( RecordRow );
 		}
 		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
 		void TestRecordsExistence(
@@ -439,9 +403,54 @@ namespace ndbtbl {
 			_ReindexAll( Observer );
 		}
 		bso::bool__ AreAllIndexesSynchronized( void ) const;
+		type__ Type( void ) const
+		{
+			return Content().Type();
+		}
 	};
 
 	E_AUTO( table )
+
+	class table_spreaded_file_manager___
+	{
+	private:
+		// Seulement l'un des deux est utilisé.
+		ndbdct::dynamic_content_spreaded_file_manager___ _Dynamic;
+		ndbsct::static_content_spreaded_file_manager___ _Static;
+		void _InitStatic(
+			table_ &Table,
+			const str::string_ &Path,
+			const str::string_ &RootFileName,
+			mode__ Mode,
+			flm::id__ ID );
+		void _InitDynamic(
+			table_ &Table,
+			const str::string_ &Path,
+			const str::string_ &RootFileName,
+			mode__ Mode,
+			flm::id__ ID );
+	public:
+		void Init(
+			table_ &Table,
+			const str::string_ &Path,
+			const str::string_ &RootFileName,
+			mode__ Mode,
+			flm::id__ ID )
+		{
+			switch ( Table.Type() ) {
+			case tStatic:
+				_InitStatic( Table, Path, RootFileName, Mode, ID );
+				break;
+			case tDynamic:
+				_InitDynamic( Table, Path, RootFileName, Mode, ID );
+				break;
+			default:
+				ERRc();
+				break;
+			}
+		}
+	};
+
 
 
 }

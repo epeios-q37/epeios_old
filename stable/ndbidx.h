@@ -335,13 +335,13 @@ namespace ndbidx {
 			rrow__ RecordRow1,
 			rrow__ RecordRow2,
 			skip_level__ SkipLevel ) const;
-		rrow__ SearchRoot( rrow__ Member )
+		rrow__ SearchRoot( void )
 		{	
-			S_.Root = Member;
+			rrow__ Candidate = S_.Content->First();
 
-			if ( Member != NONE ) 
-				while ( ( Member = BaseIndex.GetTreeParent( Member ) ) != NONE )
-					S_.Root = Member;
+			if ( Candidate != NONE ) 
+				while ( ( Candidate = BaseIndex.GetTreeParent( Candidate ) ) != NONE )
+					S_.Root = Candidate;
 
 			return S_.Root;
 		}
@@ -416,6 +416,53 @@ namespace ndbidx {
 	};
 
 	E_AUTO( index )
+
+	class index_spreaded_file_manager___
+	{
+	private:
+		index_ *_Index;
+		str::string _RootFileName;
+		idxbtq::index_file_manager___ _FileManager;
+		mdr::mode__ _Mode;
+		bso::bool__ _ConnectToFiles()
+		{
+			if ( idxbtq::Connect( _Index->BaseIndex, _FileManager ) ) {
+				_Index->SearchRoot();
+				return true;
+			} else {
+				return false;
+			}
+		}
+		void _ErasePhysically( void )
+		{
+			_FileManager.Drop();
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_FileManager.ReleaseFiles();
+
+			_FileManager.reset( P );
+			_Mode = mdr::m_Undefined;
+			_RootFileName.reset( P );
+			_Index = NULL;
+		}
+		index_spreaded_file_manager___( void )
+		{
+			reset( false );
+		}
+		void Init(
+			const str::string_ &RootFileName,
+			mdr::mode__ Mode,
+			bso::bool__ Erase,
+			bso::bool__ Partial,
+			flm::id__ ID );
+		void CloseFiles( void )
+		{
+			_FileManager.ReleaseFiles();
+		}
+	};
+
 
 }
 

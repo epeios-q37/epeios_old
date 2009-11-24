@@ -57,6 +57,27 @@ public:
 
 using namespace ndbbsc;
 
+void ndbbsc::DropFile(
+	const str::string_ &RootFileName,
+	const char *Extension )
+{
+ERRProlog
+	str::string FileName;
+	STR_BUFFER___ FileNameBuffer;
+ERRBegin
+	if ( RootFileName.Amount() != 0 ) {
+		FileName.Init( RootFileName );
+		FileName.Append( Extension );
+
+		if ( fil::FileExists( FileName.Convert( FileNameBuffer) ) )
+			if ( remove( FileNameBuffer ) != 0 )
+				ERRd();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

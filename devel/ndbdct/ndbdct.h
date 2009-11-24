@@ -445,7 +445,7 @@ namespace ndbdct {
 
 			return *this;
 		}
-		void Init( bso::bool__ Partial = false )
+		void Init( void )
 		{
 			Storage.Init();
 			Availables.Init();
@@ -533,6 +533,76 @@ namespace ndbdct {
 
 	E_AUTO( dynamic_content )
 
+	// Content stocké dans des fichiers.
+	class dynamic_content_spreaded_file_manager___
+	{
+	private:
+		dynamic_content_ *_Content;
+		str::string _RootFileName;
+		tym::memory_file_manager___ _StorageFileManager;
+		entries_file_manager___ _EntriesFileManager;
+		mdr::mode__ _Mode;
+		time_t _GetUnderlyingFilesLastModificationTime( void ) const
+		{
+			time_t ContentTimeStamp, EntriesTimeStamp;
+
+			ContentTimeStamp = _StorageFileManager.TimeStamp();
+			EntriesTimeStamp = _EntriesFileManager.TimeStamp();
+
+			if ( ContentTimeStamp > EntriesTimeStamp )
+				return ContentTimeStamp;
+			else
+				return EntriesTimeStamp;
+		}
+		void _SaveLocationsAndAvailables( void ) const;
+		bso::bool__ _ConnectToFiles( void );
+		void _ErasePhysically( void );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_StorageFileManager.ReleaseFile();
+			_EntriesFileManager.ReleaseFile();
+			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+
+			if ( P ) {
+				if ( (_Content != NULL ) && ( _RootFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+					_SaveLocationsAndAvailables();
+			}
+
+			_StorageFileManager.reset( P );
+			_EntriesFileManager.reset( P );
+			_Mode = mdr::m_Undefined;
+			_RootFileName.reset( P );
+			_Content = NULL;
+		}
+		dynamic_content_spreaded_file_manager___( void )
+		{
+			reset( false );
+		}
+		void Init(
+			dynamic_content_ &Content,
+			const str::string_ &RootFileName,
+			mdr::mode__ Mode,
+			flm::id__ ID );
+		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
+		{
+			_SaveLocationsAndAvailables();
+		}
+		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
+		{
+			_StorageFileManager.ReleaseFile();
+			_EntriesFileManager.ReleaseFile();
+		}
+		void SwitchMode( mdr::mode__ Mode )
+		{
+			if ( Mode != _Mode ) {
+				_StorageFileManager.Mode( Mode );
+				_EntriesFileManager.Mode( Mode );
+
+				_Mode = Mode;
+			}
+		}
+	};
 }
 
 /*$END$*/

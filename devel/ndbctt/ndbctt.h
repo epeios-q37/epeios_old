@@ -71,11 +71,32 @@ namespace ndbctt {
 	using ndbbsc::datum_;
 	using ndbbsc::cache_;
 
+	enum type__ {
+		tStatic,
+		tDynamic,
+		t_amount,
+		t_Undefined
+	};
+
 	class content__
 	{
 	private:
 		ndbdct::dynamic_content_ *_Dynamic;
 		ndbsct::static_content_ *_Static;
+		type__ _Test( void ) const
+		{
+			if ( ( _Static == NULL ) == ( _Dynamic == NULL ) )
+				ERRu();
+
+			if ( _Static != NULL )
+				return tStatic;
+			else if ( _Dynamic != NULL )
+				return tDynamic;
+			else
+				ERRc();
+
+			return t_Undefined;	// Pour éviter un 'warning'.
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -85,6 +106,10 @@ namespace ndbctt {
 		content__( void )
 		{
 			reset( false );
+		}
+		void Init( void )
+		{
+			reset();
 		}
 		void Init( ndbdct::dynamic_content_ &Dynamic )
 		{
@@ -102,47 +127,67 @@ namespace ndbctt {
 		}
 		rrow__ Store( const datum_ &Data )
 		{
-			if ( _Static != NULL )
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Store( Data );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Store( Data );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return NONE;	// Pour éviter un 'warning'.
 		}
 		void Erase( rrow__ Row )
 		{
-			if ( _Static != NULL )
+			switch ( _Test() ) {
+			case tStatic:
 				_Static->Erase( Row );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				_Dynamic->Erase( Row );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 		}
 		void Store(
 			const datum_ &Data,
 			rrow__ Row )
 		{
-			if ( _Static != NULL )
+			switch ( _Test() ) {
+			case tStatic:
 				_Static->Store( Data, Row );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				_Dynamic->Store( Data, Row );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
 			rrow__ Row,
 			datum_ &Datum ) const
 		{
-			if ( _Static != NULL ) {
+			switch ( _Test() ) {
+			case tStatic:
 				 _Static->Retrieve( Row, Datum );
 				 return true;
-			} else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Retrieve( Row, Datum );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return false;	// Pour éviter un 'warning'.
 		}
@@ -152,114 +197,182 @@ namespace ndbctt {
 			datum_ &Datum,
 			cache_ &Cache ) const
 		{
-			if ( _Static != NULL ) {
+			switch ( _Test() ) {
+			case tStatic:
 				_Static->Retrieve( Row, Datum, Cache );
 				return true;
-			} else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Retrieve( Row, Datum, Cache );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return false;	// Pour éviter un 'warning'.
 		}
 		time_t ModificationTimeStamp( void ) const
 		{
-			if ( _Static != NULL )
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->ModificationTimeStamp();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->ModificationTimeStamp();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return 0;	// Pour éviter un 'warning'.
 		}
 		rrow__ First( void ) const
 		{
-			if ( _Static != NULL )
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->First();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->First();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return NONE;
 		}
 		rrow__ Last( void ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Last();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Last();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return NONE;
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Next( Row );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Next( Row );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return NONE;
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Previous( Row );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Previous( Row );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return NONE;
 		}
 		epeios::size__ Extent( void ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Extent();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Extent();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return 0;	// Pour éviter un 'warning'.
 		}
 		epeios::size__ Amount( void ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Amount();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Amount();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return 0;	// Pour éviter un 'warning'.
 		}
 		bso::bool__ Exists( rrow__ Row ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->Exists( Row );
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->Exists( Row );
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return false;
 		}
 		bso::bool__ IsEmpty( void ) const
 		{
-			if ( _Static != NULL )
+			_Test();
+
+			switch ( _Test() ) {
+			case tStatic:
 				return _Static->IsEmpty();
-			else if ( _Dynamic != NULL )
+				break;
+			case tDynamic:
 				return _Dynamic->IsEmpty();
-			else
-				ERRu();
+				break;
+			default:
+				ERRc();
+				break;
+			}
 
 			return false;
+		}
+		type__ Type( void ) const
+		{
+			return _Test();
 		}
 	};
 
@@ -267,69 +380,98 @@ namespace ndbctt {
 	{
 	private:
 		content__ _Content;
+		ndbdct::dynamic_content_ _Dynamic;
+		ndbsct::static_content_ _Static;
 	public:
 		struct s {
 			ndbdct::dynamic_content_::s Dynamic;
 			ndbsct::static_content_::s Static;
 		};
-		ndbdct::dynamic_content_ Dynamic;
-		ndbsct::static_content_ Static;
 		content_( s &S )
-		: Dynamic( S.Dynamic ),
-		  Static( S.Static )
+		: _Dynamic( S.Dynamic ),
+		  _Static( S.Static )
 		{
 		}
 		void reset( bso::bool__ P = true )
 		{
 			_Content.reset( P );
-			Dynamic.reset( P );
-			Static.reset( P );
+			_Dynamic.reset( P );
+			_Static.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			Dynamic.plug( MM );
-			Static.plug( MM );
+			_Dynamic.plug( MM );
+			_Static.plug( MM );
 		}
 		content_ &operator =( const content_ &C )
 		{
 			_Content = C._Content;
 
-			Dynamic = C.Dynamic;
-			Static = C.Static;
+			_Dynamic = C._Dynamic;
+			_Static = C._Static;
 
 			return *this;
+		}
+		void Init( void )
+		{
+			reset();
+
+			_Content.Init();
 		}
 		void InitDynamic( void )
 		{
 			reset();
 
-			Dynamic.Init();
-			_Content.Init( Dynamic );
+			_Dynamic.Init();
+			_Content.Init( _Dynamic );
 		}
 		void InitStatic( epeios::size__ Size )
 		{
 			reset();
 
-			Static.Init( Size );
-			_Content.Init( Static );
+			_Static.Init( Size );
+			_Content.Init( _Static );
 		}
-		const content__ *operator ->( void ) const
+		const content__ &operator ()( void ) const
 		{
-			return &_Content;
+			return _Content;
 		}
-		content__ *operator ->( void )
+		content__ &operator ()( void )
 		{
-			return &_Content;
+			return _Content;
 		}
-		const content__ *operator *( void ) const
+		type__ Type( void ) const
 		{
-			return &_Content;
+			return _Content.Type();
 		}
-		content__ *operator *( void )
+		ndbsct::static_content_ &Static( void )
 		{
-			return &_Content;
+			if ( Type() != tStatic )
+				ERRu();
+
+			return _Static;
 		}
-		E_RWDISCLOSE__( content__, Content )
+		const ndbsct::static_content_ &Static( void ) const
+		{
+			if ( Type() != tStatic )
+				ERRu();
+
+			return _Static;
+		}
+		const ndbdct::dynamic_content_ &Dynamic( void ) const
+		{
+			if ( Type() != tDynamic )
+				ERRu();
+
+			return _Dynamic;
+		}
+		ndbdct::dynamic_content_ &Dynamic( void )
+		{
+			if ( Type() != tDynamic )
+				ERRu();
+
+			return _Dynamic;
+		}
 	};
 
 	E_AUTO( content )
