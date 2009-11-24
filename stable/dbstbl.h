@@ -308,18 +308,22 @@ namespace dbstbl {
 	public:
 		struct s
 		{
+			str::string_ ::s Label;
 			_indexes_::s Indexes;
 			dbsctt::content__ *Content;	// On n'utilise pas 'content_', pour pouvoir appliquer
 										// une opération non 'const' dans une méthode 'const'.
 			mode__ Mode;
 		} &S_;
+		str::string_ Label;	// Sert d'identifiant discriminat de la table. Utile pour servir de base aux noms de fichiers associées à la table.
 		_indexes_ Indexes;
 		table_( s &S )
 		: S_( S ),
+		  Label( S.Label ),
 		  Indexes( S.Indexes )
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			Label.reset();
 			Indexes.reset( P );
 			S_.Content = NULL;
 			S_.Mode = m_Undefined;
@@ -327,10 +331,12 @@ namespace dbstbl {
 		E_VDTOR( table_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
+			Label.plug( MM );
 			Indexes.plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
+			Label = T.Label;
 			Indexes = T.Indexes;
 			S_.Content = T.S_.Content;
 			S_.Mode = T.S_.Mode;
@@ -338,6 +344,7 @@ namespace dbstbl {
 			return *this;
 		}
 		void Init(
+			const str::string_ &Label,
 			dbsctt::content__ &Content,
 			mode__ Mode )
 		{
@@ -345,6 +352,7 @@ namespace dbstbl {
 
 			Indexes.Init();
 
+			this->Label.Init( Label );
 			S_.Content = &Content;
 			S_.Mode = Mode;
 		}
@@ -415,105 +423,6 @@ namespace dbstbl {
 				_DeleteFromIndexes( RecordRow );
 		}
 		void Delete( const rrows_ &RecordRows );
-#if 0
-		rrow__ LooseSeek(
-			const datum_ &Datum,
-			irow__ IRow,
-			behavior__ EqualBehavior,
-			skip_level__ SkipLevel,
-			bso::sign__ &Sign ) const
-		{
-			_Test( mReadOnly );
-
-			if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );
-		}
-		rrow__ StrictSeek(
-			const datum_ &Datum,
-			irow__ IRow,
-			behavior__ EqualBehavior,
-			skip_level__ SkipLevel ) const
-		{
-			_Test( mReadOnly );
-
-			if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).StrictSeek( Datum, EqualBehavior, SkipLevel );
-		}
-		bso::sign__ Compare(
-			rrow__ RecordRow,
-			const datum_&Pattern,
-			irow__ IndexRow,
-			skip_level__ SkipLevel ) const
-		{
-			_Test( mReadOnly );
-
-			return _I( IndexRow ).Compare( RecordRow, Pattern, SkipLevel );
-		}
-		rrow__ First( irow__ IRow ) const
-		{
-			_Test( mReadOnly );
-
-			if ( IRow == NONE )
-				return C_().First();
-			else if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).First();
-		}
-		rrow__ Last( irow__ IRow ) const
-		{
-			_Test( mReadOnly );
-
-			if ( IRow == NONE )
-				return C_().Last();
-			else if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).Last();
-		}
-		rrow__ Next( 
-			irow__ IRow,
-			rrow__ Row ) const
-		{
-			_Test( mReadOnly );
-
-			if ( IRow == NONE )
-				return C_().Next( Row );
-			else if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).Next( Row );
-		}
-		rrow__ GetStrictGreater(
-			irow__ IRow,
-			rrow__ Row,
-			skip_level__ SkipLevel) const
-		{
-			_Test( mReadOnly );
-
-			if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).StrictGreater( Row, SkipLevel );
-		}
-		rrow__ Previous( 
-			irow__ IRow,
-			rrow__ Row ) const
-		{
-			_Test( mReadOnly );
-
-			if ( IRow == NONE )
-				return C_().Previous( Row );
-			else if ( _IsBulk() )
-				ERRu();
-
-			return _I( IRow ).Previous( Row );
-		}
-#endif
 		mode__ SwitchMode( mode__ Mode )
 		{
 			mode__ OldMode = S_.Mode;
@@ -562,24 +471,10 @@ namespace dbstbl {
 		void TestRecordsExistence(
 			const rrows_ &RecordRows,
 			rows_ &Rows ) const;
-#if 0
-		void Reindex(
-			irow__ IndexRow,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL )
-		{
-			_Reindex( IndexRow, Observer );
-		}
-#endif
 		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL )
  		{
 			_ReindexAll( Observer );
 		}
-#if 0
-		bso::bool__ IsIndexSynchronized( irow__ IndexRow ) const
-		{
-			return _I( IndexRow ).IsSynchronized();
-		}
-#endif
 		bso::bool__ AreAllIndexesSynchronized( void ) const;
 		void ErasePhysically( void )
 		{
@@ -600,9 +495,10 @@ namespace dbstbl {
 	class thread_safe_table_
 	{
 	private:
+		lck::control___<table_> _Control;
 		lck::control___<table_> &_C( void )
 		{
-			return S_.Control;
+			return _Control;
 		}
 		table_ &_Lock( void )
 		{
@@ -619,7 +515,6 @@ namespace dbstbl {
 		struct s
 		{
 			table_::s Table;
-			lck::control___<table_> Control;
 		} &S_;
 		thread_safe_table_( s &S )
 		: S_( S ),
@@ -628,7 +523,7 @@ namespace dbstbl {
 		void reset( bso::bool__ P = true )
 		{
 			Table.reset( P );
-			S_.Control.reset( P );
+			_Control.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -641,14 +536,15 @@ namespace dbstbl {
 			return *this;	// Pour éviter un warning.
 		}
 		void Init(
+			const str::string_ &Label,
 			dbsctt::content__ &Content,
 			mode__ Mode )
 		{
 			reset();
 
-			Table.Init( Content, Mode );
+			Table.Init( Label, Content, Mode );
 
-			S_.Control.Init( Table );
+			_Control.Init( Table );
 		}
 		void AddIndex( index_ &Index );
 		rrow__ Insert( const datum_ &Datum );
@@ -749,7 +645,6 @@ namespace dbstbl {
 		}
 	public:
 		content__ Content;
-		str::string RootFileName;
 		void InitStatic(
 			epeios::size__ Size,
 			const str::string_ &Path,

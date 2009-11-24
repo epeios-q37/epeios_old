@@ -193,6 +193,20 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Light XML PaRser
 &nsxpcm	&epeios		&\
 	&from nsXPCOM
+	
+&ndbbsc	&epeios	&\
+	&New DataBase BaSiCs (will be moved on its own project in the future)
+&ndbctt	&epeios	&\
+	&New DataBase ConTenT (will be moved on its own project in the future)
+&ndbdct	&epeios	&\
+	&New DataBase Dynamic ConTent (will be moved on its own project in the future)
+&ndbsct	&epeios	&\
+	&New DataBase Static Content (will be moved on its own project in the future)
+&ndbidx	&epeios	&\
+	&New DataBase InDeXes (will be moved on its own project in the future)
+&ndbtbl	&epeios	&\
+	&New DataBase TaBLe (will be moved on its own project in the future)
+	
 &pip		&epeios		&2000-		&PIPe
 &pllio		&epeios		&\
 	&POSIX Low-Level Input/Output

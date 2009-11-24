@@ -765,9 +765,7 @@ ERRBegin
 
 	Content.Init( _Static );
 
-	table::Init( Content, Mode );
-
-	this->RootFileName.Init( RootFileName );
+	table::Init( RootFileName, Content, Mode );
 ERRErr
 ERREnd
 ERREpilog
@@ -793,9 +791,7 @@ ERRBegin
 
 	Content.Init( _Dynamic );
 
-	table::Init( Content, Mode );
-
-	this->RootFileName.Init( RootFileName );
+	table::Init( RootFileName, Content, Mode );
 ERRErr
 ERREnd
 ERREpilog

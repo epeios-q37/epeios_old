@@ -1,12 +1,12 @@
 /*
-	Header for the 'dbstbl' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
-$_RAW_$
+	Header for the 'ndbtbl' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef DBSTBL__INC
-#define DBSTBL__INC
+#ifndef NDBTBL__INC
+#define NDBTBL__INC
 
-#define DBSTBL_NAME		"DBSTBL"
+#define NDBTBL_NAME		"NDBTBL"
 
-#define	DBSTBL_VERSION	"$Revision$"
+#define	NDBTBL_VERSION	"$Revision$"
 
-#define DBSTBL_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define NDBTBL_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &DBSTBLTutor;
+extern class ttr_tutor &NDBTBLTutor;
 
-#if defined( XXX_DBG ) && !defined( DBSTBL_NODBG )
-#define DBSTBL_DBG
+#if defined( XXX_DBG ) && !defined( NDBTBL_NODBG )
+#define NDBTBL_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,33 +55,20 @@ extern class ttr_tutor &DBSTBLTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D DataBaSe TaBLe 
+//D New DataBase TaBLe (will be moved on its own project in the future) 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 #include "err.h"
 #include "flw.h"
-#include "dbsctt.h"
-#include "dbsidx.h"
-#include "cpe.h"
+#include "ndbbsc.h"
+#include "ndbctt.h"
+#include "ndbidx.h"
 
-#ifdef DBSTBL_THREAD_SAFE
-#	define DBSTBL__THREAD_SAFE
-#elif !defined( DBSTBL_NO_THREAD_SAFE )
-#	ifdef CPE__T_MT
-#		define DBSTBL__THREAD_SAFE
-#	endif
-#endif
-
-#ifdef DBSTBL__THREAD_SAFE
-#	include "lck.h"
-#endif
-
-namespace dbstbl {
-
-	using namespace dbsctt;
-	using namespace dbsidx;
+namespace ndbtbl {
+	using namespace ndbctt;
+	using namespace ndbidx;
 
 	enum mode__ {
 		// Pas d'indexation, ou diffèrée.
@@ -132,40 +119,19 @@ namespace dbstbl {
 	class table_
 	{
 	private:
-#if 0
-		void _ConnectIndexToFileIfNot( irow__ Row ) const
-		{
-#ifdef DBSTBL_DBG
-			if ( !Indexes.Exists( Row ) )
-				ERRc();
-#endif
-			if ( !Indexes( Row )->InitializationCompleted() ) {
-				if ( !S_.Content->InitializationCompleted() )
-					S_.Content->CompleteInitialization();
-
-				Indexes( Row )->CompleteInitialization();
-
-			}
-		}
-#endif
-		void _CompleteInitializationIfNeeded( bso::bool__ CompleteInitializationIfNeeded ) const
-		{
-			if ( !S_.Content->InitializationCompleted() && CompleteInitializationIfNeeded )
-				S_.Content->CompleteInitialization();
-		}
-		dbsctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true ) const	// L'absence de 'const' est normale.
+		ndbctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true ) const	// L'absence de 'const' est normale.
 		{
 			_Test( mReadOnly );
 
-			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
+//			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
 
 			return *S_.Content;
 		}
-		dbsctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true )
+		ndbctt::content__ &_C( bso::bool__ CompleteInitializationIfNeeded = true )
 		{
 			_Test( mReadWrite );
 
-			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
+//			_CompleteInitializationIfNeeded( CompleteInitializationIfNeeded );
 
 			return *S_.Content;
 		}
@@ -302,15 +268,12 @@ namespace dbstbl {
 				break;
 			}
 		}
-	protected:
-		virtual void DBSTBLErasePhysically( void )
-		{}
 	public:
 		struct s
 		{
 			str::string_ ::s Label;
 			_indexes_::s Indexes;
-			dbsctt::content__ *Content;	// On n'utilise pas 'content_', pour pouvoir appliquer
+			ndbctt::content__ *Content;	// On n'utilise pas 'content_', pour pouvoir appliquer
 										// une opération non 'const' dans une méthode 'const'.
 			mode__ Mode;
 		} &S_;
@@ -345,7 +308,7 @@ namespace dbstbl {
 		}
 		void Init(
 			const str::string_ &Label,
-			dbsctt::content__ &Content,
+			ndbctt::content__ &Content,
 			mode__ Mode )
 		{
 			reset();
@@ -357,11 +320,11 @@ namespace dbstbl {
 			S_.Mode = Mode;
 		}
 		E_NAVt( _C()., rrow__ );
-		dbsctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded )
+		ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded )
 		{
 			return _C( CompleteInitializationIfNeeded );
 		}
-		dbsctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const	// L'absence de 'const' est normal.
+		ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const	// L'absence de 'const' est normal.
 		{
 			return _C( CompleteInitializationIfNeeded );
 		}
@@ -476,189 +439,9 @@ namespace dbstbl {
 			_ReindexAll( Observer );
 		}
 		bso::bool__ AreAllIndexesSynchronized( void ) const;
-		void ErasePhysically( void )
-		{
-			DBSTBLErasePhysically();
-		}
 	};
 
 	E_AUTO( table )
-
-#ifdef DBSTBL__THREAD_SAFE
-
-#	ifdef DBSTBL_DEFAULT_DELAY
-#		define DBSTBL__DEFAULT_DELAY	DBSTBL_DEFAULT_DELAY
-#	else
-#		define DBSTBL__DEFAULT_DELAY	100	// en ms.
-#	endif
-
-	class thread_safe_table_
-	{
-	private:
-		lck::control___<table_> _Control;
-		lck::control___<table_> &_C( void )
-		{
-			return _Control;
-		}
-		table_ &_Lock( void )
-		{
-			return _C().GetExclusiveAccess();
-		}
-		void _Release( void )
-		{
-			_C().ReleaseExclusiveAccess();
-		}
-	protected:
-		virtual void DBSTBLErasePhysically( void );
-	public:
-		table_ Table;
-		struct s
-		{
-			table_::s Table;
-		} &S_;
-		thread_safe_table_( s &S )
-		: S_( S ),
-		  Table( S.Table )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			Table.reset( P );
-			_Control.reset( P );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Table.plug( MM );
-		}
-		thread_safe_table_ &operator =( const thread_safe_table_ &TST )
-		{
-			ERRl();
-
-			return *this;	// Pour éviter un warning.
-		}
-		void Init(
-			const str::string_ &Label,
-			dbsctt::content__ &Content,
-			mode__ Mode )
-		{
-			reset();
-
-			Table.Init( Label, Content, Mode );
-
-			_Control.Init( Table );
-		}
-		void AddIndex( index_ &Index );
-		rrow__ Insert( const datum_ &Datum );
-		void Insert(
-			const data_ &Data,
-			rrows_ &RecordRows );
-		void Update(
-			const datum_ &Datum,
-			rrow__ RecordRow );
-		void Update(
-			const data_ &Data,
-			const rrows_ &RecordRows );
-		void Retrieve(
-			rrow__ Row,
-			datum_ &Datum );
-		void Retrieve(
-			const rrows_ &Rows,
-			data_ &Data );
-		void Delete( rrow__ RecordRow );
-		void Delete(
-			const rrows_ &RecordRows );
-#if 0
-		rrow__ LooseSeek(
-			const datum_ &Datum,
-			irow__ IRow,
-			behavior__ EqualBehavior,
-			skip_level__ SkipLevel,
-			bso::sign__ &Sign );
-		rrow__ StrictSeek(
-			const datum_ &Datum,
-			irow__ IRow,
-			behavior__ EqualBehavior,
-			skip_level__ SkipLevel );
-		bso::sign__ Compare(
-			rrow__ RecordRow,
-			const datum_&Pattern,
-			irow__ IndexRow,
-			skip_level__ SkipLevel );
-		rrow__ First( irow__ IRow );
-		rrow__ Last( irow__ IRow );
-		rrow__ Next( 
-			irow__ IRow,
-			rrow__ Row );
-		rrow__ GetStrictGreater( 
-			irow__ IRow,
-			rrow__ Row,
-			skip_level__ SkipLevel );
-		rrow__ Previous( 
-			irow__ IRow,
-			rrow__ Row );
-#endif
-		mdr::size__ Amount( void );
-		mdr::size__ Extent( void );
-		mode__ SwitchMode( mode__ Mode );
-		mode__ Mode( void );
-		bso::bool__ RecordExists( rrow__ RecordRow );
-		// 'Rows' contient les position dans 'RecordRows' des enregistrement inexistants.
-		void TestRecordsExistence(
-			const rrows_ &RecordRows,
-			rows_ &Rows );
-#if 0
-		void Reindex(
-			irow__ IndexRow,
-			observer_functions__ &Observer = *(observer_functions__ *)NULL );
-#endif
-		void ReindexAll( observer_functions__ &Observer = *(observer_functions__ *)NULL );
-#if 0
-		bso::bool__ IsIndexSynchronized( irow__ IndexRow );
-#endif
-		bso::bool__ AreAllIndexesSynchronized( void );
-		void ErasePhysically( void )
-		{
-			DBSTBLErasePhysically();
-		}
-	};
-
-	E_AUTO( thread_safe_table )
-
-#	define	E_DBTABLE_	thread_safe_table_
-#	define	E_DBTABLE	thread_safe_table
-#else
-#	define	E_DBTABLE_	table_
-#	define	E_DBTABLE	table
-#endif
-
-	class exploded_table
-	: public table
-	{
-	private:
-		// Seulement l'un des deux est utilisé.
-		dbsdct::exploded_dynamic_content _Dynamic;
-		dbssct::exploded_static_content _Static;
-	protected:
-		virtual void DBSTBLErasePhysically( void )
-		{
-			table::ErasePhysically();
-			Content.ErasePhysically();
-		}
-	public:
-		content__ Content;
-		void InitStatic(
-			epeios::size__ Size,
-			const str::string_ &Path,
-			const str::string_ &RootFileName,
-			mode__ Mode,
-			flm::id__ ID );
-		void InitDynamic(
-			const str::string_ &Path,
-			const str::string_ &RootFileName,
-			mode__ Mode,
-			flm::id__ ID );
-	};
-
-	typedef exploded_table exploded_table_;
 
 
 }

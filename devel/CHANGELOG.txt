@@ -1,5 +1,13 @@
 $Id$
 
+21/11/2009 :
+	- GENERAL :
+		- Codage 'NDB...'.
+		
+
+18/11/2009 :
+	- DBSTBL :
+		- Ajout notion de label.
 15/11/2009 :
 	- DBS...
 		- 'file_...' -> 'exploded_...' pour souligner l'aspect fragmentation poussée à m'extrême (un fichier par 'objet').
