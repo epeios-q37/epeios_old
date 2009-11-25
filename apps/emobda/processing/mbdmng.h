@@ -49,11 +49,11 @@ namespace mbdmng {
 	{
 	private:
 		const record_ &_GetRecord(
-			dbstbl::rrow__ Row,
+			ndbtbl::rrow__ Row,
 			record_ &Record ) const;
-		record_id__ _GetRecordId( dbstbl::rrow__ Row ) const;
+		record_id__ _GetRecordId( ndbtbl::rrow__ Row ) const;
 		const datum_ &_GetDatum(
-			dbstbl::rrow__ Row,
+			ndbtbl::rrow__ Row,
 			datum_ &Datum ) const;
 		bso::bool__ _ExportStructure( void );
 		bso::bool__ _ImportStructure( void );
@@ -102,7 +102,7 @@ namespace mbdmng {
 		bso::bool__ Init(
 			const str::string_ &Location,
 			const str::string_ &BaseName,
-			dbstbl::mode__ Mode,
+			ndbtbl::mode__ Mode,
 			bso::bool__ EraseIndexes,
 			type__ Type )
 		{
@@ -180,7 +180,7 @@ namespace mbdmng {
 		}
 		record_id__ GetLastRecordId( void ) const
 		{
-			dbstbl::rrow__ Row = Engine.Last( Engine.GetTableRecordFieldIndexRow() );
+			ndbtbl::rrow__ Row = Engine.TableRecordFieldIndex.Last();
 
 			if ( Row == NONE )
 				return MBDBSC_UNDEFINED_RECORD_ID;

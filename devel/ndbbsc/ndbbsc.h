@@ -70,6 +70,11 @@ extern class ttr_tutor &NDBBSCTutor;
 
 namespace ndbbsc {
 	E_ROW( rrow__ );	// 'Record row'.
+
+	typedef bch::E_BUNCH_( rrow__ ) rrows_;
+	E_AUTO( rrows );
+
+
 	E_ROW( crow__ );	// 'Cache row'.
 
 	typedef bso::char__ atom__;

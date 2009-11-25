@@ -71,6 +71,9 @@ namespace ndbidx {
 
 	using ndbbsc::rrow__;
 
+	using ndbbsc::rrows_;
+	using ndbbsc::rrows;
+
 	typedef bso::ubyte__ skip_level__;
 
 #define NDBIDX_NO_SKIP	0
@@ -210,7 +213,7 @@ namespace ndbidx {
 			_index_::s BaseIndex;
 			rrow__ Root;
 			sort_function__ *Sort;
-			ndbctt::content__ *Content;
+			const ndbctt::content__ *Content;
 			time_t ModificationTimeStamp;
 		} &S_;
 		index_( s &S )
@@ -245,9 +248,8 @@ namespace ndbidx {
 			return *this;
 		}
 		void Init(
-			ndbctt::content__ &Content = *(ndbctt::content__ *)NULL,
-			sort_function__ &Sort = *(sort_function__ *)NULL,
-			bso::bool__ Partial = false )
+			const ndbctt::content__ &Content = *(const ndbctt::content__ *)NULL,
+			sort_function__ &Sort = *(sort_function__ *)NULL )
 		{
 			BaseIndex.Init();
 			S_.Root = NONE;

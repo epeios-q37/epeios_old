@@ -24,21 +24,21 @@
 #ifndef MBDIDX__INC
 #define MBDIDX__INC
 
-#include "dbsidx.h"
+#include "ndbidx.h"
 #include "mbdbsc.h"
 
 namespace mbdidx {
-	typedef dbsidx::sort_function__ _sort_function__;
-	typedef dbsidx::file_index_ _index_;
+	typedef ndbidx::sort_function__ _sort_function__;
+	typedef ndbidx::index_ _index_;
 
 	class table_record_field_sort_function__
 	: public _sort_function__
 	{
 	protected:
-		virtual bso::sign__ DBSIDXCompare(
-			const dbsidx::datum_ &RawDatum1,
-			const dbsidx::datum_ &RawDatum2,
-			dbsidx::skip_level__ SkipLevel )
+		virtual bso::sign__ NDBIDXCompare(
+			const ndbidx::datum_ &RawDatum1,
+			const ndbidx::datum_ &RawDatum2,
+			ndbidx::skip_level__ SkipLevel )
 		{
 			return mbdbsc::TableRecordFieldCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
@@ -55,10 +55,10 @@ namespace mbdidx {
 	: public _sort_function__
 	{
 	protected:
-		virtual bso::sign__ DBSIDXCompare(
-			const dbsidx::datum_ &RawDatum1,
-			const dbsidx::datum_ &RawDatum2,
-			dbsidx::skip_level__ SkipLevel )
+		virtual bso::sign__ NDBIDXCompare(
+			const ndbidx::datum_ &RawDatum1,
+			const ndbidx::datum_ &RawDatum2,
+			ndbidx::skip_level__ SkipLevel )
 		{
 			return mbdbsc::TableFieldDatumCompare( RawDatum1, RawDatum2, SkipLevel );
 		}
@@ -102,17 +102,13 @@ namespace mbdidx {
 			return *this;
 		}
 		void Init(
-			const str::string_ &RootFileName,
-			const dbsctt::content__ &Content,
-			mdr::mode__ Mode,
-			bso::bool__ Erase,
-			bso::bool__ Partial,
-			flm::id__ ID )
+			const ndbctt::content__ &Content,
+			mdr::mode__ Mode )
 		{
 			reset();
 
 			S_.SortFunction.Init();
-			_index_::Init( RootFileName, Content, S_.SortFunction, Mode, Erase, Partial, ID );
+			_index_::Init( Content, S_.SortFunction );
 		}
 	};
 

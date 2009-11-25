@@ -1,10 +1,13 @@
 $Id$
 
-21/11/2009 :
+25/11/2009 :
 	- GENERAL :
 		- Codage 'NDB...'.
 		
-
+24/11/2009 :
+	- GENERAL :
+		- Codage 'NDB...'.
+		
 18/11/2009 :
 	- DBSTBL :
 		- Ajout notion de label.

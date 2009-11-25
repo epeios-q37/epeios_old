@@ -24,7 +24,8 @@
 #ifndef MBDBSC__INC
 #define MBDBSC__INC
 
-#include "dbsbsc.h"
+#include "ndbbsc.h"
+#include "ndbidx.h"
 #include "mmm.h"
 #include "mdr.h"
 
@@ -83,7 +84,7 @@ namespace mbdbsc {
 	typedef bch::E_BUNCH_( record_id__ ) record_ids_;
 	E_AUTO( record_ids );
 
-	typedef dbsbsc::rrow__ record_row__;
+	typedef ndbbsc::rrow__ record_row__;
 
 	E_ROW( field_row__ );
 
@@ -104,8 +105,8 @@ namespace mbdbsc {
 	typedef ctn::E_XCONTAINER_( data_ ) data_cluster_;
 	E_AUTO( data_cluster );
 
-	typedef dbsbsc::datum_	raw_datum_;
-	typedef dbsbsc::datum	raw_datum;
+	typedef ndbbsc::datum_	raw_datum_;
+	typedef ndbbsc::datum	raw_datum;
 
 	typedef bso::ubyte__ id_t__;
 
@@ -150,7 +151,7 @@ namespace mbdbsc {
 	inline bso::sign__ TableRecordFieldCompare(
 		const record_static_part__ &O1,
 		const record_static_part__ &O2,
-		dbsbsc::skip_level__ SkipLevel )
+		ndbidx::skip_level__ SkipLevel )
 	{
 		bso::sign__ Result = TableCompare( O1, O2 );
 
@@ -174,7 +175,7 @@ namespace mbdbsc {
 		if ( RawDatum.Amount() < sizeof( RecordStaticPart ) )
 			ERRu();
 
-		RawDatum.Get( RawDatum.First(), sizeof( record_static_part__ ), (dbsbsc::atom__ *)&RecordStaticPart );
+		RawDatum.Get( RawDatum.First(), sizeof( record_static_part__ ), (ndbbsc::atom__ *)&RecordStaticPart );
 	}
 
 	inline record_static_part__ ExtractRecordStaticPart( const raw_datum_ &Datum )
@@ -203,7 +204,7 @@ namespace mbdbsc {
 	inline bso::sign__ TableRecordFieldCompare(
 		const raw_datum_ &D1,
 		const raw_datum_ &D2,
-		dbsbsc::skip_level__ SkipLevel )
+		ndbidx::skip_level__ SkipLevel )
 	{
 		return TableRecordFieldCompare( ExtractRecordStaticPart( D1 ),  ExtractRecordStaticPart( D2 ), SkipLevel );
 	}
@@ -295,7 +296,7 @@ namespace mbdbsc {
 	inline bso::sign__ TableFieldDatumCompare(
 		const raw_datum_ &D1,
 		const raw_datum_ &D2,
-		dbsbsc::skip_level__ SkipLevel )
+		ndbidx::skip_level__ SkipLevel )
 	{
 		bso::sign__ Result = TableCompare( D1, D2 );
 
@@ -327,7 +328,7 @@ namespace mbdbsc {
 	{
 		const record_static_part__ &RecordStaticPart = Record.GetStaticPart();
 
-		RawDatum.Append( (const dbsbsc::atom__ *)&RecordStaticPart, sizeof( RecordStaticPart ) );
+		RawDatum.Append( (const ndbbsc::atom__ *)&RecordStaticPart, sizeof( RecordStaticPart ) );
 
 		RawDatum.Append( Record.Datum );
 	}

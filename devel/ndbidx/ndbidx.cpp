@@ -60,6 +60,16 @@ using namespace ndbidx;
 #define TREE_FILE_NAME_EXTENSION	".edt"
 #define QUEUE_FILE_NAME_EXTENSION	".edq"
 
+#define MEMORY_REINDEXATION_LIMIT	10000000
+/* Limite du nombre d'neregistrement au-delà de laquelle on utilise 
+directement l'index sur le disque et non pas une copie temporaire en mémoire
+pour éviter la mise en oeuvre de la mémoire virtuelle. */
+
+#define RECORD_PANEL_SIZE		50000	// Nombre d'enregistrements par tranche.
+
+#define RECORD_TEST_PANEL_SIZE		1000	// Nombre d'enregistrements pour la tranche de test.
+
+
 bso::sign__ ndbidx::index_::_Seek(
 	const datum_ &Datum,
 	skip_level__ SkipLevel,
@@ -416,6 +426,130 @@ ERREpilog
 	return Result;
 }
 
+static inline void Reindex_(
+	rrows_ &Rows,
+	index_ &Index,
+	observer_functions__ &Observer,
+	ndbctt::cache_  &Cache,
+	tol::chrono__ &Chrono,
+	bso::ulong__ &HandledRecordAmount,
+	bso::ulong__ &BalancingCount,
+	tol::E_DPOINTER___( extremities__ ) &Extremities,
+	bso::bool__ Randomly )
+{
+	epeios::row__ Row = NONE;
+	bso::ubyte__ Round = 0;
+
+	while ( Rows.Amount() ) {
+		if ( Randomly )
+			Row = Rows.Amount() - ( rand() % Rows.Amount() ) - 1;
+		else
+			Row = Rows.First();
+
+		Round = Index.Index( Rows( Row ), Extremities, Cache );
+
+		Rows.Remove( Row );
+
+		if ( ( 1UL << ( Round >> 3 ) ) > HandledRecordAmount ) {
+			Index.Balance();
+			BalancingCount++;
+			if ( ( Extremities == NULL ) && ( BalancingCount > 1 ) )
+				Extremities = new extremities__;
+		}
+
+		HandledRecordAmount++;
+
+		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
+			Observer.Notify( HandledRecordAmount, Index.Content( true ).Amount(), BalancingCount );
+
+			Chrono.Launch();
+		}
+	}
+}
+
+void ndbidx::index_::Reindex( observer_functions__ &Observer )
+{
+ERRProlog
+	const ndbctt::content__ &Content = *S_.Content;
+	mdr::size__ HandledRecordAmount = 0;
+	tol::chrono__ Chrono;
+	ndbidx::index IndexInMemory;
+	ndbidx::index_ *UsedIndex = NULL;
+	ndbbsc::cache  Cache;
+	tol::E_DPOINTER___( extremities__ ) Extremities;
+	bso::ulong__ BalancingCount = 0;
+	bch::E_BUNCH( rrow__ ) Rows;
+	rrow__ Row = NONE;
+	bso::ulong__ PanelRecordCounter;
+	bso::ulong__ PanelRecordSize;
+	bso::bool__ Randomly = false;
+ERRBegin
+	Reset();
+
+	if ( Content.Amount() == 0 )
+		ERRReturn;
+
+	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
+		IndexInMemory.Init( Content, SortFunction() );
+
+		IndexInMemory.Allocate( Content.Extent(), aem::mDefault );
+
+		UsedIndex = &IndexInMemory;
+	} else
+		UsedIndex = this;
+
+	Cache.Init( Content.Extent() );
+
+	Rows.Init();
+
+	Row = Content.First();
+
+	PanelRecordSize = RECORD_TEST_PANEL_SIZE;
+
+	PanelRecordCounter = PanelRecordSize;
+
+	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
+		Observer.Notify( 0, Content.Amount(), BalancingCount );
+		Chrono.Init( Observer._Delay );
+		Chrono.Launch();
+	}
+
+	while ( Row != NONE ) {
+		Rows.Append( Row );
+
+		if ( PanelRecordCounter-- == 0 ) {
+			Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
+
+			if ( Randomly == false )
+				if ( ( Extremities == NULL ) || ( Extremities->Used < ( ( 2 * PanelRecordSize ) / 3 ) ) )
+					Randomly = true;
+				else
+					Extremities->Used = 0;
+
+
+			PanelRecordSize = RECORD_PANEL_SIZE;
+
+			PanelRecordCounter = PanelRecordSize;
+		}
+
+		Row = Content.Next( Row );
+	}
+
+	Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
+
+	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
+		Observer.Notify( HandledRecordAmount, Content.Amount(), BalancingCount );
+
+	UsedIndex->Balance();
+
+	if ( UsedIndex != this )
+		this->operator =( *UsedIndex );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void ndbidx::index_spreaded_file_manager___::Init(
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
@@ -446,9 +580,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

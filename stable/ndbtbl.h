@@ -70,6 +70,9 @@ namespace ndbtbl {
 	using namespace ndbctt;
 	using namespace ndbidx;
 
+	using ndbbsc::rrows_;
+	using ndbbsc::rrows;
+
 	enum mode__ {
 		// Pas d'indexation, ou diffèrée.
 		mBulk,
@@ -106,9 +109,6 @@ namespace ndbtbl {
 	}
 
 	typedef bch::E_BUNCH_( index_ * ) _indexes_;
-
-	typedef bch::E_BUNCH_( rrow__ ) rrows_;
-	E_AUTO( rrows );
 
 	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
 	E_AUTO( data );

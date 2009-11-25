@@ -45,12 +45,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the datum.
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );	// We ignore the datum.
 
 	while ( RecordRow != NONE ) {
 		Engine.Delete( RecordRow );
 
-		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the datum.
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );	// We ignore the datum.
 	}
 
 	Structure.DeleteField( FieldRow );
@@ -76,12 +76,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 2 );	// We ignore the datum and the field.
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bStop, 2 );	// We ignore the datum and the field.
 
 	while ( RecordRow != NONE ) {
 		Engine.Delete( RecordRow );
 
-		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bStop, 2 );	// We ignore the datum and the field.
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bStop, 2 );	// We ignore the datum and the field.
 	}
 
 	Structure.DeleteTable( TableRow );
@@ -94,7 +94,7 @@ ERREpilog
 
 
 const record_ &mbdmng::manager_::_GetRecord(
-	dbstbl::rrow__ Row,
+	ndbtbl::rrow__ Row,
 	record_ &Record ) const
 {
 ERRProlog
@@ -111,7 +111,7 @@ ERREpilog
 	return Record;
 }
 
-record_id__ mbdmng::manager_::_GetRecordId( dbstbl::rrow__ Row ) const
+record_id__ mbdmng::manager_::_GetRecordId( ndbtbl::rrow__ Row ) const
 {
 	record_id__ RecordId = MBDBSC_UNDEFINED_RECORD_ID;
 ERRProlog
@@ -127,7 +127,7 @@ ERREpilog
 }
 
 const datum_ &mbdmng::manager_::_GetDatum(
-	dbstbl::rrow__ Row,
+	ndbtbl::rrow__ Row,
 	datum_ &Datum ) const
 {
 ERRProlog
@@ -159,7 +159,7 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	Exists = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 ) != NONE;	// We ignore the field.
+	Exists = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 ) != NONE;	// We ignore the field.
 ERRErr
 ERREnd
 ERREpilog
@@ -207,7 +207,7 @@ ERRBegin
 		RawDatum.Init();
 		Convert( Record, RawDatum );
 
-		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, DBSIDX_NO_SKIP );
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, NDBIDX_NO_SKIP );
 
 		if ( RecordRow != NONE ) {
 			Modification = true;
@@ -241,12 +241,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the field.
+	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );	// We ignore the field.
 
 	while ( RecordRow != NONE ) {
 		Engine.Delete( RecordRow );
 
-		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bStop, 1 );	// We ignore the field.
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );	// We ignore the field.
 	}
 ERRErr
 ERREnd
@@ -271,12 +271,12 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bGreater, 2 );
+	RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bGreater, 2 );
 
 	if ( RecordRow != NONE ) {
 		NextToLastRecordRow = Engine.TableRecordFieldIndex.Next( RecordRow );	// Can be 'NONE' without ptoblem.
 
-		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
+		RecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bLesser, 2 );
 
 		while ( RecordRow != NextToLastRecordRow ) {
 			RawDatum.Init();
@@ -317,12 +317,12 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bGreater, 1 );
+	RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bGreater, 1 );
 
 	if ( RecordRow != NONE ) {
 		NextToLastRecordRow = Engine.TableFieldDatumIndex.Next( RecordRow );	// Can be 'NONE' without ptoblem.
 
-		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
+		RecordRow = Engine.TableFieldDatumIndex.StrictSeek( RawDatum, ndbidx::bLesser, 2 );
 
 		while ( RecordRow != NextToLastRecordRow ) {
 			RawDatum.Init();
@@ -349,7 +349,7 @@ void mbdmng::manager_::GetRecordData(
 ERRProlog
 	record Record;
 	epeios::row__ Row = NONE;
-	dbstbl::rrow__ RawRecordRow = NONE;
+	ndbtbl::rrow__ RawRecordRow = NONE;
 	raw_datum RawDatum;
 	datum Datum;
 	field_row__ FieldRow = NONE;
@@ -379,7 +379,7 @@ ERRBegin
 
 		Convert( Record, RawDatum );
 
-		RawRecordRow = Engine.StrictSeek( RawDatum, Engine.GetTableRecordFieldIndexRow(), dbsidx::bStop, DBSIDX_NO_SKIP );
+		RawRecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, NDBIDX_NO_SKIP );
 
 		Datum.Init();
 
@@ -427,7 +427,7 @@ void mbdmng::manager_::DeleteRecord( record_id__ RecordId )
 ERRProlog
 	record Record;
 	raw_datum RawDatum;
-	dbstbl::rrow__ RawRecordRow = NONE;
+	ndbtbl::rrow__ RawRecordRow = NONE;
 ERRBegin
 	Record.Init();
 	
@@ -436,12 +436,12 @@ ERRBegin
 	RawDatum.Init();
 	Convert( Record, RawDatum );
 
-	RawRecordRow = Engine.StrictSeek( RawDatum, Engine.TableRecordFieldIndexRow(), dbsidx::bStop, 1 );
+	RawRecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );
 
 	while ( RawRecordRow != NONE ) {
 		Engine.Delete( RawRecordRow );
 
-		RawRecordRow = Engine.StrictSeek( RawDatum, Engine.TableRecordFieldIndexRow(), dbsidx::bStop, 1 );
+		RawRecordRow = Engine.TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bStop, 1 );
 	}
 ERRErr
 ERREnd

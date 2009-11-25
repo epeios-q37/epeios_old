@@ -28,7 +28,7 @@ using namespace mbdbsc;
 void mbdeng::engine_::Init(
 	const str::string_ &Location,
 	const str::string_ &BaseFileName,
-	dbstbl::mode__ Mode,
+	ndbtbl::mode__ Mode,
 	bso::bool__ EraseIndexes,
 	bso::bool__ Partial )
 {
@@ -38,27 +38,27 @@ ERRProlog
 ERRBegin
 	reset();
 
-	FileMode = dbstbl::Convert( Mode );
+	FileMode = ndbtbl::Convert( Mode );
 
 	S_.FilesgroupID = flm::GetId();
 
-	S_.UniversalContent.Init( Content );
-	_table_::Init( S_.UniversalContent, Mode );
+	_table_::Init( Mode );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
+//	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
+//	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
+	TableRecordFieldIndex.Init( _table_::Content(), FileMode );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	TableFieldDatumIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
+	TableFieldDatumIndex.Init( _table_::Content(), FileMode );
 
-	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
-	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );
+//	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
+//	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );
 
 ERRErr
 ERREnd
@@ -80,11 +80,11 @@ ERRBegin
 	RawDatum.Init();
 	mbdbsc::Convert( Record, RawDatum );
 
-	Row = TableRecordFieldIndex.StrictSeek( RawDatum, dbsidx::bLesser, 2 );
+	Row = TableRecordFieldIndex.StrictSeek( RawDatum, ndbidx::bLesser, 2 );
 
 	while ( Row != NONE ) {
 		RawDatum.Init();
-		S_.UniversalContent.Retrieve( Row, RawDatum );
+		Retrieve( Row, RawDatum );
 
 		mbdbsc::ExtractRecordStaticPart( RawDatum, RecordStaticPart );
 
