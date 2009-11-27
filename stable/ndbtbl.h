@@ -430,6 +430,19 @@ namespace ndbtbl {
 			mode__ Mode,
 			flm::id__ ID );
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Dynamic.reset( P );
+			_Static.reset( P );
+		}
+		table_spreaded_file_manager___( void )
+		{
+			reset( false );
+		}
+		~table_spreaded_file_manager___( void )
+		{
+			reset();
+		}
 		void Init(
 			table_ &Table,
 			const str::string_ &Path,

@@ -453,11 +453,14 @@ namespace ndbidx {
 		{
 			reset( false );
 		}
+		~index_spreaded_file_manager___( void )
+		{
+			reset();
+		}
 		void Init(
+			index_ &Index,
 			const str::string_ &RootFileName,
 			mdr::mode__ Mode,
-			bso::bool__ Erase,
-			bso::bool__ Partial,
 			flm::id__ ID );
 		void CloseFiles( void )
 		{

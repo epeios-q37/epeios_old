@@ -223,6 +223,10 @@ namespace ndbsct {
 		{
 			reset( false );
 		}
+		~static_content_spreaded_file_manager___( void )
+		{
+			reset();
+		}
 		void Init(
 			static_content_ &Content,
 			const str::string_ &RootFileName,

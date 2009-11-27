@@ -37,17 +37,31 @@ namespace mbdeng {
 	typedef ndbtbl::table_	_table_;
 	typedef ndbdct::dynamic_content_	_content_;
 
+	struct spreaded_file_manager___ {
+	public:
+		ndbtbl::table_spreaded_file_manager___ Table;
+		ndbidx::index_spreaded_file_manager___
+			TableRecordFieldIndex,
+			TableFieldDatumIndex;
+		void reset( bso::bool__ P = true )
+		{
+			TableRecordFieldIndex.reset( P );
+			TableFieldDatumIndex.reset( P );
+			Table.reset( P );
+		}
+	};
+
 	class engine_
 	: public _table_
 	{
 	public:
 		struct s
-			: public _table_::s
+		: public _table_::s
 		{
 			flm::id__ FilesgroupID;
 			mbdidx::table_record_field_index_::s TableRecordFieldIndex;
 			mbdidx::table_field_datum_index_::s TableFieldDatumIndex;
-//			ndbtbl::irow__ TableRecordFieldIndexRow, TableFieldDatumIndexRow;
+			spreaded_file_manager___ SpreadedFileManager;
 		} &S_;
 		mbdidx::table_record_field_index_ TableRecordFieldIndex;
 		mbdidx::table_field_datum_index_ TableFieldDatumIndex;
@@ -62,6 +76,7 @@ namespace mbdeng {
 			_table_::reset( P );
 			TableRecordFieldIndex.reset( P );
 			TableFieldDatumIndex.reset( P );
+			S_.SpreadedFileManager.reset( P );
 
 			if ( P ) {
 				if ( S_.FilesgroupID != FLM_UNDEFINED_ID ) {

@@ -42,23 +42,26 @@ ERRBegin
 
 	S_.FilesgroupID = flm::GetId();
 
-	_table_::Init( Mode );
+	_table_::InitDynamic( Mode );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );
+	S_.SpreadedFileManager.Table.Init( *this, str::string( "" ), LocatedBaseFileName, Mode, S_.FilesgroupID );
 //	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
 //	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 	TableRecordFieldIndex.Init( _table_::Content(), FileMode );
+	S_.SpreadedFileManager.TableRecordFieldIndex.Init( TableRecordFieldIndex, LocatedBaseFileName, FileMode, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
 	TableFieldDatumIndex.Init( _table_::Content(), FileMode );
+	S_.SpreadedFileManager.TableFieldDatumIndex.Init( TableFieldDatumIndex, LocatedBaseFileName, FileMode, S_.FilesgroupID );
 
-//	S_.TableRecordFieldIndexRow = AddIndex( TableRecordFieldIndex );
-//	S_.TableFieldDatumIndexRow = AddIndex( TableFieldDatumIndex );
+	_table_::AddIndex( TableRecordFieldIndex );
+	_table_::AddIndex( TableFieldDatumIndex );
 
 ERRErr
 ERREnd

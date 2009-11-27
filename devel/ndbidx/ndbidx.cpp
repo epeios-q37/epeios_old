@@ -551,10 +551,9 @@ ERREpilog
 
 
 void ndbidx::index_spreaded_file_manager___::Init(
+	index_ &Index,
 	const str::string_ &RootFileName,
 	mdr::mode__ Mode,
-	bso::bool__ Erase,
-	bso::bool__ Partial,
 	flm::id__ ID )
 {
 ERRProlog
@@ -564,6 +563,8 @@ ERRProlog
 	STR_BUFFER___ QueueFileNameBuffer;
 ERRBegin
 	reset();
+
+	_Index = &Index;
 
 	TreeFileName.Init( RootFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
@@ -576,6 +577,8 @@ ERRBegin
 	_RootFileName.Init( RootFileName );
 
 	_Mode = Mode;
+
+	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog

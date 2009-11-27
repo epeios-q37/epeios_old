@@ -579,6 +579,10 @@ namespace ndbdct {
 		{
 			reset( false );
 		}
+		~dynamic_content_spreaded_file_manager___( void )
+		{
+			reset();
+		}
 		void Init(
 			dynamic_content_ &Content,
 			const str::string_ &RootFileName,
