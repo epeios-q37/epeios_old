@@ -73,10 +73,10 @@ namespace mbdeng {
 		{}
 		void reset( bso::bool__ P = true )
 		{
+			S_.SpreadedFileManager.reset( P );
 			_table_::reset( P );
 			TableRecordFieldIndex.reset( P );
 			TableFieldDatumIndex.reset( P );
-			S_.SpreadedFileManager.reset( P );
 
 			if ( P ) {
 				if ( S_.FilesgroupID != FLM_UNDEFINED_ID ) {

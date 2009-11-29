@@ -1,5 +1,9 @@
 $Id$
 
+29/11/2009 :
+	- GENERAL :
+		- Codage 'NDB...'.
+		
 27/11/2009 :
 	- GENERAL :
 		- Codage 'NDB...'.

@@ -339,7 +339,7 @@ namespace ndbidx {
 			skip_level__ SkipLevel ) const;
 		rrow__ SearchRoot( void )
 		{	
-			rrow__ Candidate = S_.Content->First();
+			rrow__ Candidate = S_.Root = S_.Content->First();
 
 			if ( Candidate != NONE ) 
 				while ( ( Candidate = BaseIndex.GetTreeParent( Candidate ) ) != NONE )

@@ -1,4 +1,7 @@
 $Id$
 
+- 29/11/2009 :
+	- Adaptation to library 'NDB...'.
+	
 - 25/11/2009 :
 	- Using libraries 'NDB...' instead of 'DBS...'.
