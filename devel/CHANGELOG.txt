@@ -1,5 +1,19 @@
 $Id$
 
+01/12/2009 :
+	- MMM :
+		- Mise en place d'instructions préprocesseurs pour permettre l'auto-inclusion 'mmm.h'/'uym.h'.
+	- TYM :
+		- Déplacement de la gestion de la 'multimémoire' vers 'UYM'.
+	- UYM :
+		- 'untyped_memory[_]' accepte maintenant la 'multimémoire'.
+
+30/11/2009 :
+	- GENERAL :
+		- Codage 'NDB...'.
+	- MMG :
+		- Légère refonte pour faciliter utilisation avec 'NDB...'.
+		
 29/11/2009 :
 	- GENERAL :
 		- Codage 'NDB...'.

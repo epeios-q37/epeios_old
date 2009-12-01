@@ -419,14 +419,12 @@ namespace ndbtbl {
 		ndbsct::static_content_spreaded_file_manager___ _Static;
 		void _InitStatic(
 			table_ &Table,
-			const str::string_ &Path,
-			const str::string_ &RootFileName,
+			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID );
 		void _InitDynamic(
 			table_ &Table,
-			const str::string_ &Path,
-			const str::string_ &RootFileName,
+			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID );
 	public:
@@ -445,17 +443,16 @@ namespace ndbtbl {
 		}
 		void Init(
 			table_ &Table,
-			const str::string_ &Path,
-			const str::string_ &RootFileName,
+			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID )
 		{
 			switch ( Table.Type() ) {
 			case tStatic:
-				_InitStatic( Table, Path, RootFileName, Mode, ID );
+				_InitStatic( Table, BaseFileName, Mode, ID );
 				break;
 			case tDynamic:
-				_InitDynamic( Table, Path, RootFileName, Mode, ID );
+				_InitDynamic( Table, BaseFileName, Mode, ID );
 				break;
 			default:
 				ERRc();

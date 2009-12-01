@@ -226,7 +226,7 @@ bso::bool__ ndbtbl::table_::AreAllIndexesSynchronized( void ) const
 
 	return true;
 }
-
+/*
 static const str::string_ &GetFileName_(
 	const str::string_ &Path,
 	const str::string_ &RootFileName,
@@ -246,11 +246,11 @@ static const str::string_ &GetFileName_(
 
 	return FileName;
 }
+*/
 
 void ndbtbl::table_spreaded_file_manager___::_InitStatic(
 	table_ &Table,
-	const str::string_ &Path,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	mode__ Mode,
 	flm::id__ ID )
 {
@@ -259,12 +259,12 @@ ERRProlog
 ERRBegin
 	FileName.Init();
 
-	GetFileName_( Path, RootFileName, FileName );
+//	GetFileName_( Path, BaseFileName, FileName );
 
 	if ( Mode == ndbtbl::mReadOnly )
-		_Static.Init( Table.Content.Static(), FileName, mdr::mReadOnly, ID );
+		_Static.Init( Table.Content.Static(), BaseFileName, mdr::mReadOnly, ID );
 	else
-		_Static.Init( Table.Content.Static(), FileName, mdr::mReadWrite, ID );
+		_Static.Init( Table.Content.Static(), BaseFileName, mdr::mReadWrite, ID );
 ERRErr
 ERREnd
 ERREpilog
@@ -272,8 +272,7 @@ ERREpilog
 
 void ndbtbl::table_spreaded_file_manager___::_InitDynamic(
 	table_ &Table,
-	const str::string_ &Path,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	mode__ Mode,
 	flm::id__ ID )
 {
@@ -282,12 +281,12 @@ ERRProlog
 ERRBegin
 	FileName.Init();
 
-	GetFileName_( Path, RootFileName, FileName );
+//	GetFileName_( Path, RootFileName, FileName );
 
 	if ( Mode == ndbtbl::mReadOnly )
-		_Dynamic.Init( Table.Content.Dynamic(), FileName, mdr::mReadOnly, ID );
+		_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, mdr::mReadOnly, ID );
 	else
-		_Dynamic.Init( Table.Content.Dynamic(), FileName, mdr::mReadWrite, ID );
+		_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, mdr::mReadWrite, ID );
 ERRErr
 ERREnd
 ERREpilog

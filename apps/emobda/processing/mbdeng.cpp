@@ -46,7 +46,7 @@ ERRBegin
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	S_.SpreadedFileManager.Table.Init( *this, str::string( "" ), LocatedBaseFileName, Mode, S_.FilesgroupID );
+	S_.SpreadedFileManager.Table.Init( *this, LocatedBaseFileName, Mode, S_.FilesgroupID );
 //	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();

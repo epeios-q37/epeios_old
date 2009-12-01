@@ -86,12 +86,12 @@ namespace mmg
 	};
 
 	// Pilote mémoire à usage interne.
-	template <size_t Taille> class pilote_memoire
-	: public mdr::E_MEMORY_DRIVER
+	template <typename st> class merger_memory_driver__
+	: public mdr::E_MEMORY_DRIVER__
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
-		mdr::datum__ *Statique_;
+		st *Static_;
 		// Loi d'accés.
 		mdr::mode__ Mode_;
 	protected:
@@ -118,7 +118,7 @@ namespace mmg
 		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
 		notamment, les caches */
 	public:
-		uym::untyped_memory_ Memoire;
+		uym::untyped_memory_ Memory;
 		void reset(
 			bool P = true,
 			bool Ecriture = true )
@@ -129,15 +129,15 @@ namespace mmg
 					StockerStatique();
 			}
 
-			E_MEMORY_DRIVER::reset( P );
+			E_MEMORY_DRIVER__::reset( P );
 			Statique_ = NULL;
 		}
-		pilote_memoire( uym::untyped_memory_::s &S )
+		merger_memory_driver__( uym::untyped_memory_::s &S )
 		: Memoire( S )
 		{
 			reset( false );
 		}
-		~pilote_memoire( void )
+		~merger_memory_driver__( void )
 		{
 			reset( true );
 		}
@@ -230,7 +230,7 @@ namespace mmg
 		: public mmg::mmg_s < st > {} &S_;
 	private:
 		// Le pilote gèrant les particularités de cet objet
-		mmg::pilote_memoire < sizeof( mmg_s < st > ) > Pilote_;
+		mmg::merger_memory_driver__ < mmg_s < st > > Driver_;
 	public:
 		memory_merger_( s &S )
 		: S_( S ),
@@ -349,7 +349,7 @@ namespace mmg
 
 	/*c File memory merger. Same as mmg_memory_merger_<t, t::s>, but use a file as memory.
 	Use 'MMG_FILE_MEMORY_MERGER( t )' rather then directly this class. */
-	template <class t, class st> class file_memory_merger
+	template <class t, class st> class file_merger___
 	: public memory_merger<t, st>
 	{
 	private:
@@ -360,6 +360,10 @@ namespace mmg
 			memory_merger<t, st>::reset( P );
 
 			PiloteFichier_.reset( P );
+		}
+		file_merger___( void )
+		{
+			reset( false );
 		}
 		/*f Initialization with file named 'FileName'. The object is placed
 		in 'ObjectMode', and the file in 'FileMode'. Return a value which depends
@@ -419,7 +423,7 @@ namespace mmg
 			this->Mode( Mode, Mode );
 		}
 		// To change the default destruction order, which cuases error.
-		~file_memory_merger( void )
+		~file_merger___( void )
 		{
 			memory_merger<t, st>::reset();
 			PiloteFichier_.reset();
@@ -434,8 +438,7 @@ namespace mmg
 		}
 	};
 
-	//m Same as 'MMG_MEMORY_MERGER( t )', but use a file as memory.
-	#define E_FILE_MEMORY_MERGER( t )		file_memory_merger<t, t::s>
+	#define E_FILE_MERGER___( t )		file_merger___<t, t::s>
 }
 
 /*$END$*/

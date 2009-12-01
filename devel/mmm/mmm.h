@@ -63,9 +63,30 @@ extern class ttr_tutor &MMMTutor;
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
-#include "uym.h"
+// #include "uym.h"	// Déporté, parce que inclus 'mmm.h'.
 #include "tol.h"
 #include "txf.h"
+#include "flm.h"
+
+#ifdef UYM__INC
+#	ifndef UYM__HEADER_HANDLED
+#		define MMM__HANDLE_PART_ONE
+#		undef MMM__INC
+#	else
+#		define MMM__HANDLE_PART_TWO
+#	endif
+#else
+#	define MMM__HANDLE_PART_ONE
+#	define MMM__HANDLE_PART_TWO
+#endif
+
+#ifdef MMM__HANDLE_PART_ONE
+#	ifdef	MMM__PART_ONE_HANDLED
+#		error
+#	endif
+#	ifdef	MMM__PART_TWO_HANDLED
+#		error
+#	endif
 
 #define MMM_UNDEFINED_DESCRIPTOR NONE
 
@@ -173,6 +194,21 @@ namespace mmm {
 	};
 
 	typedef bso::ubyte__ addendum__;
+}
+
+#	define MMM__PART_ONE_HANDLED
+#endif
+
+#ifdef MMM__HANDLE_PART_TWO
+#	ifndef MMM__PART_ONE_HANDLED
+#		error
+#	endif
+#	ifdef MMM__PART_TWO_HANDLED
+#		error
+#	endif
+
+#include "uym.h"
+namespace mmm {
 
 	class multimemory_
 	{
@@ -1751,9 +1787,17 @@ namespace mmm {
 	}
 }
 
+#endif
+
+
 //d A multimemory.
 #define E_MULTIMEMORY_	multimemory_
 #define E_MULTIMEMORY	multimemory
+
+
+#undef MMM__HANDLE_PART_ONE
+#undef MMM__HANDLE_PART_TWO
+
 
 /*$END$*/
 				  /********************************************/

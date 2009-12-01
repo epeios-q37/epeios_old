@@ -64,6 +64,7 @@ extern class ttr_tutor &UYMTutor;
 #include "tol.h"
 #include "mdr.h"
 #include "cvm.h"
+#include "mmm.h"
 #ifndef FLM__COMPILATION	// To avoid resursive inclusion.
 #	include "flm.h"
 #endif
@@ -182,6 +183,8 @@ namespace uym {
 	private:
 		// Le pilote mémoire.
 		_memory_driver Pilote_;
+		// l'éventuel pilote de la multimemoire
+		mmm::multimemory_driver__ PiloteMultimemoire_;
 	#ifdef UYM_DBG
 		void _Test( void ) const
 		{
@@ -223,19 +226,30 @@ namespace uym {
 		}
 	public:
 		struct s {
-			// A des fins de standardisation.
-		};
+			mmm::descriptor__ MultimemoryDriverDescriptor;
+			mdr::size__ MultimemoryDriverExtent;
+			bso::ubyte__ Addendum;
+		} &S_;
 		void reset( bool P )
 		{
 			Pilote_.reset( P );
+			PiloteMultimemoire_.reset( P );
 		}
 		untyped_memory_( s &S )
+		: S_( S ),
+		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.Addendum, S.MultimemoryDriverExtent )
 		{
 			reset( false );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &Driver  )
 		{
+			PiloteMultimemoire_.reset();
 			Pilote_.plug( Driver );
+		}
+		void plug( mmm::multimemory_ &MMM )
+		{
+			PiloteMultimemoire_.Init( MMM );
+			Pilote_.plug( PiloteMultimemoire_ );
 		}
 		untyped_memory_ &operator =( const untyped_memory_ & ) const
 		{
@@ -591,6 +605,9 @@ namespace uym {
 
 	typedef _memory__< _untyped_memory___>	untyped_memory___;
 }
+
+#define UYM__HEADER_HANDLED	// A destination de 'MMM'.
+
 /*$END$*/
 				  /********************************************/
 				  /* do not modify anything belove this limit */

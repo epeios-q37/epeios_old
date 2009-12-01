@@ -28,19 +28,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "mmg.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
 #include "str.h"
 #include "ctn.h"
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	mmg::E_FILE_MEMORY_MERGER( ctn::E_XMCONTAINER_( str::string_ ) ) C;
+	mmg::E_FILE_MERGER___( ctn::E_XMCONTAINER_( str::string_ ) ) C;
 ERRBegin
 	C.Init( "test" );
 ERRErr

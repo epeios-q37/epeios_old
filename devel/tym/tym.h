@@ -239,35 +239,23 @@ namespace tym {
 		: public _memory_< t, uym::untyped_memory_, r >
 	/* NOTA: See 'memory_core about' '::s'. */
 	{
-	private:
-		// l'éventuel pilote de la multimemoire
-		mmm::multimemory_driver__ PiloteMultimemoire_;
 	public:
 		struct s
 		: public _memory_< t, uym::untyped_memory_, r >::s
-		{
-			mmm::descriptor__ MultimemoryDriverDescriptor;
-			mdr::size__ MultimemoryDriverExtent;
-			bso::ubyte__ Addendum;
-		} &S_;
+		{};
 		memory_( s &S )
-		: S_( S ),
-		  _memory_< t, uym::untyped_memory_, r >( S ),
-		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.Addendum, S.MultimemoryDriverExtent )
+		:  _memory_< t, uym::untyped_memory_, r >( S )
 		{}
 		void reset( bool P = true )
 		{
 			_memory_< t, uym::untyped_memory_, r >::reset( P );
-			PiloteMultimemoire_.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
-			PiloteMultimemoire_.Init( M );
-			_memory_< t, uym::untyped_memory_, r >::plug( PiloteMultimemoire_ );
+			_memory_< t, uym::untyped_memory_, r >::plug( MMM );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			PiloteMultimemoire_.reset();
 			_memory_< t, uym::untyped_memory_, r >::plug( MD );
 		}
 		void WriteToFlow(
