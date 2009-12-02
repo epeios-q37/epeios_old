@@ -94,12 +94,12 @@ template <typename item> static void Save_(
 
 template <typename item> static void Save_(
 	const stk::E_BSTACK_( item ) &Bunch,
-	const char *RootFileName )
+	const char *BaseFileName )
 {
 ERRProlog
 	flf::file_oflow___ Flow;
 ERRBegin
-	Flow.Init( RootFileName );
+	Flow.Init( BaseFileName );
 
 	Save_( Bunch, Flow );
 ERRErr
@@ -109,7 +109,7 @@ ERREpilog
 
 template <typename item> static void Save_(
 	const stk::E_BSTACK_( item ) &Bunch,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	const char *Extension,
 	time_t UnderlyingFilesLastModificationTime )
 {
@@ -117,7 +117,7 @@ ERRProlog
 	str::string FileName;
 	STR_BUFFER___ FileNameBuffer;
 ERRBegin
-	FileName.Init( RootFileName );
+	FileName.Init( BaseFileName );
 	FileName.Append( Extension );
 	Save_( Bunch, FileName.Convert( FileNameBuffer ) );
 
@@ -132,12 +132,12 @@ ERREpilog
 
 void ndbdct::dynamic_content_spreaded_file_manager___::_SaveLocationsAndAvailables( void ) const
 {
-	Save_( _Content->Availables, _RootFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
+	Save_( _Content->Availables, _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
 void ndbdct::dynamic_content_spreaded_file_manager___::Init(
 	dynamic_content_ &Content,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,
 	flm::id__ ID )
 {
@@ -151,19 +151,19 @@ ERRProlog
 ERRBegin
 	reset();
 
-	ContentFileName.Init( RootFileName );
+	ContentFileName.Init( BaseFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 	_StorageFileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
 
-	EntriesBunchFileName.Init( RootFileName );
+	EntriesBunchFileName.Init( BaseFileName );
 	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
 
-	EntriesListFileName.Init( RootFileName );
+	EntriesListFileName.Init( BaseFileName );
 	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
 	_EntriesFileManager.Init( EntriesBunchFileName.Convert( EntriesBunchFileNameBuffer) , EntriesListFileName.Convert( EntriesListFileNameBuffer ), Mode, true, ID );
 
-	_RootFileName.Init( RootFileName );
+	_BaseFileName.Init( BaseFileName );
 	_Mode = Mode;
 
 	_Content = &Content;
@@ -206,7 +206,7 @@ template <typename item> static void Load_(
 }
 
 template <typename item> static bso::bool__ Load_(
-	const char *RootFileName,
+	const char *BaseFileName,
 	stk::E_BSTACK_( item ) &Bunch,
 	item TestValue,
 	time_t TimeStamp )
@@ -216,8 +216,8 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
-	if ( Flow.Init( RootFileName, err::hSkip ) == fil::sSuccess ) {
-		if ( fil::GetFileLastModificationTime( RootFileName ) < TimeStamp )
+	if ( Flow.Init( BaseFileName, err::hSkip ) == fil::sSuccess ) {
+		if ( fil::GetFileLastModificationTime( BaseFileName ) < TimeStamp )
 			ERRReturn;
 
 		memcpy( Buffer, &TestValue, sizeof( item ) );
@@ -237,7 +237,7 @@ ERREpilog
 }
 
 template <typename item> static bso::bool__ Load_(
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	stk::E_BSTACK_( item ) &Bunch,
 	item TestValue,
 	const char *Extension,
@@ -248,7 +248,7 @@ ERRProlog
 	str::string FileName;
 	STR_BUFFER___ FileNameBuffer;
 ERRBegin
-	FileName.Init( RootFileName );
+	FileName.Init( BaseFileName );
 	FileName.Append( Extension );
 	Success = Load_( FileName.Convert( FileNameBuffer ), Bunch, TestValue, TimeStamp );
 ERRErr
@@ -275,7 +275,7 @@ ERRBegin
 		_Content->S_.Unallocated = 0;
 
 	if ( Exists ) {
-		if ( !Load_<available__>( _RootFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
+		if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
 			_Content->RebuildAvailables();
 	}
 ERRErr
@@ -291,7 +291,7 @@ ERRBegin
 	_StorageFileManager.Drop();
 	_EntriesFileManager.Drop();
 
-	ndbbsc::DropFile( _RootFileName, AVAILABLES_FILE_NAME_EXTENSION );
+	ndbbsc::DropFile( _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd
 ERREpilog

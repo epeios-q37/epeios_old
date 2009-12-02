@@ -1,5 +1,12 @@
 $Id$
 
+02/12/2009 :
+	- MMG :
+		- Suite refonte ...
+	- NDB... :
+		- Exposition 'BaseFielName'.
+		
+
 01/12/2009 :
 	- MMM :
 		- Mise en place d'instructions préprocesseurs pour permettre l'auto-inclusion 'mmm.h'/'uym.h'.

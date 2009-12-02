@@ -455,10 +455,29 @@ namespace ndbtbl {
 				_InitDynamic( Table, BaseFileName, Mode, ID );
 				break;
 			default:
-				ERRc();
+				ERRu();
 				break;
 			}
 		}
+		const str::string_ &BaseFileName( type__ Type ) const
+		{
+			str::string Dummy;
+
+			switch ( Type ) {
+			case tStatic:
+				return _Static.BaseFileName();
+				break;
+			case tDynamic:
+				return _Dynamic.BaseFileName();
+				break;
+			default:
+				ERRu();
+				break;
+			}
+
+			return Dummy;	// Pour éviter un 'warning'.
+		}
+
 	};
 
 

@@ -552,7 +552,7 @@ ERREpilog
 
 void ndbidx::index_spreaded_file_manager___::Init(
 	index_ &Index,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,
 	flm::id__ ID )
 {
@@ -566,15 +566,15 @@ ERRBegin
 
 	_Index = &Index;
 
-	TreeFileName.Init( RootFileName );
+	TreeFileName.Init( BaseFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );
 
-	QueueFileName.Init( RootFileName );
+	QueueFileName.Init( BaseFileName );
 	QueueFileName.Append( QUEUE_FILE_NAME_EXTENSION );
 
 	_FileManager.Init( TreeFileName.Convert( TreeFileNameBuffer ), QueueFileName.Convert( QueueFileNameBuffer ), Mode, true, ID );
 
-	_RootFileName.Init( RootFileName );
+	_BaseFileName.Init( BaseFileName );
 
 	_Mode = Mode;
 

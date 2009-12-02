@@ -86,21 +86,19 @@ namespace mmg
 	};
 
 	// Pilote mémoire à usage interne.
-	template <typename st> class merger_memory_driver__
+	template <typename st> class merger_memory_driver_
 	: public mdr::E_MEMORY_DRIVER__
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
-		st *Static_;
-		// Loi d'accés.
-		mdr::mode__ Mode_;
+		mdr::datum__ *Static_;
 	protected:
 		virtual void MDRRecall(
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
 		{
-			Memoire.Recall( Position + Taille, Amount, Buffer );
+			Memory.Recall( Position + sizeof( st ), Amount, Buffer );
 		}
 		virtual void MDRStore(
 			const mdr::datum__ *Buffer,
@@ -108,17 +106,26 @@ namespace mmg
 			mdr::row_t__ Position )
 		{
 			StockerStatique();
-			Memoire.Store( Buffer, Amount, Position + Taille );
+			Memory.Store( Buffer, Amount, Position + sizeof( st ) );
 		}
 		// Alloue 'Capacite' octets.
 		virtual void MDRAllocate( mdr::size__ Capacity )
 		{
-			Memoire.Allocate( Capacity + Taille );
+			Memory.Allocate( Capacity + sizeof( st ) );
 		}
 		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
 		notamment, les caches */
 	public:
+		struct s {
+			uym::untyped_memory_::s Memory;
+			mdr::size__ Extent;	// Passé à et entièrement pris en charge par 'mdr::E_MEMORY_DRIVER__'.
+		} &S_;
 		uym::untyped_memory_ Memory;
+		merger_memory_driver_( s &S )
+		: S_( S ),
+		  mdr::E_MEMORY_DRIVER__( S_.Extent ),
+		  Memory( S.Memory )
+		{}
 		void reset(
 			bool P = true,
 			bool Ecriture = true )
@@ -130,67 +137,53 @@ namespace mmg
 			}
 
 			E_MEMORY_DRIVER__::reset( P );
-			Statique_ = NULL;
-		}
-		merger_memory_driver__( uym::untyped_memory_::s &S )
-		: Memoire( S )
-		{
-			reset( false );
-		}
-		~merger_memory_driver__( void )
-		{
-			reset( true );
+			Memory.reset( P );
+			Static_ = NULL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			Memoire.plug( MD );
+			Memory.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
-			Memoire.plug( MMM );
+			Memory.plug( MMM );
 		}
 		void Init(
-			mdr::datum__ *Statique,
-			rule Regle,
-			mdr::mode__ Mode = mdr::mReadWrite )
+			st *Static,
+			rule Regle )
 		{
 			reset();
 
-			Statique_ = Statique;
-			E_MEMORY_DRIVER::Init();
-			Memoire.Init();
+			Static_ = (mdr::datum__ *)Static;
+			mdr::E_MEMORY_DRIVER__::Init();
+			Memory.Init();
 
 			if ( Regle == mmg::rCreation )
 			{
-				if ( Mode == mdr::mReadOnly )
-					ERRu();
-
-				Memoire.Allocate( Taille );
+				Memory.Allocate( sizeof( st ) );
 				StockerStatique();
 			}
 			else if ( Regle == mmg::rRecovery )
 				RecupererStatique();
 			else
 				ERRc();
-
-			Mode_ = Mode;
 		}
 		void StockerStatique( void )
 		{
-			if ( Statique_ && ( Mode_== mdr::mReadWrite ) )
-				Memoire.Store( Statique_, Taille, 0 );
+			if ( Static_ /* && ( Mode_== mdr::mReadWrite )*/ )
+				Memory.Store( Static_, sizeof( st ), 0 );
 		}
 		void EcrireDansFlot( flw::oflow__ &Flot ) const
 		{
-			Flot.Put( Statique_, Taille );
+			Flot.Put( Static_, sizeof( st ) );
 		}
 		void LireDeFlot( flw::iflow__ &Flot )
 		{
-			Flot.Get( Taille, Statique_ );
+			Flot.Get( sizeof( st ), Static_ );
 		}
 		void RecupererStatique( void )
 		{
-			Memoire.Recall( 0, Taille, Statique_, true );
+			Memory.Recall( 0, sizeof( st ), Static_ );
 		}
 		void Mode( mdr::mode__ Mode )
 		{
@@ -236,7 +229,7 @@ namespace mmg
 		: public mmg::mmg_s < st > {} &S_;
 	private:
 		// Le pilote gèrant les particularités de cet objet
-		mmg::merger_memory_driver__ < mmg_s < st > > Driver_;
+		mmg::merger_memory_driver_ < mmg_s < st > > Driver_;
 	public:
 		memory_merger_( s &S )
 		: S_( S ),

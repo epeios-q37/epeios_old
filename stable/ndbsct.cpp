@@ -62,7 +62,7 @@ using namespace ndbsct;
 
 static void Save_(
 	const _list_ &List,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	const char *Extension,
 	time_t UnderlyingFilesLastModificationTime )
 {
@@ -70,7 +70,7 @@ ERRProlog
 	str::string FileName;
 	STR_BUFFER___ FileNameBuffer;
 ERRBegin
-	FileName.Init( RootFileName );
+	FileName.Init( BaseFileName );
 	FileName.Append( Extension );
 	lst::WriteToFile( List, FileName.Convert( FileNameBuffer ), UnderlyingFilesLastModificationTime );
 
@@ -87,12 +87,12 @@ ERREpilog
 
 void ndbsct::static_content_spreaded_file_manager___::_SaveLocations( void ) const
 {
-	Save_( *_Content, _RootFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
+	Save_( *_Content, _BaseFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
 void ndbsct::static_content_spreaded_file_manager___::Init(
 	static_content_ &Content,
-	const str::string_ &RootFileName,
+	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,
 	flm::id__ ID )
 {
@@ -102,10 +102,10 @@ ERRProlog
 ERRBegin
 	reset();
 
-	_RootFileName.Init( RootFileName );
+	_BaseFileName.Init( BaseFileName );
 	_Mode = Mode;
 
-	ContentFileName.Init( RootFileName );
+	ContentFileName.Init( BaseFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 
 	_FileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
@@ -133,7 +133,7 @@ ERRProlog
 	tym::E_MEMORY( atom__) Storage;
 #endif
 ERRBegin
-	ContentFileName.Init( _RootFileName );
+	ContentFileName.Init( _BaseFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 #ifdef IN_MEMORY
 	Storage.Init();
@@ -147,7 +147,7 @@ ERRBegin
 #endif
 
 	if ( Exists ) {
-		ListFileName.Init( _RootFileName );
+		ListFileName.Init( _BaseFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
 		if ( !lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / _Content->S_.Size, *_Content, _GetUnderlyingFilesLastModificationTime() ) )
@@ -165,7 +165,7 @@ ERRProlog
 ERRBegin
 	_FileManager.Drop();
 
-	ndbbsc::DropFile( _RootFileName, LIST_FILE_NAME_EXTENSION );
+	ndbbsc::DropFile( _BaseFileName, LIST_FILE_NAME_EXTENSION );
 ERRErr
 ERREnd
 ERREpilog

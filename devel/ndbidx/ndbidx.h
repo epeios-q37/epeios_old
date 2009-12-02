@@ -423,7 +423,7 @@ namespace ndbidx {
 	{
 	private:
 		index_ *_Index;
-		str::string _RootFileName;
+		str::string _BaseFileName;
 		idxbtq::index_file_manager___ _FileManager;
 		mdr::mode__ _Mode;
 		bso::bool__ _ConnectToFiles()
@@ -446,7 +446,7 @@ namespace ndbidx {
 
 			_FileManager.reset( P );
 			_Mode = mdr::m_Undefined;
-			_RootFileName.reset( P );
+			_BaseFileName.reset( P );
 			_Index = NULL;
 		}
 		index_spreaded_file_manager___( void )
@@ -459,12 +459,16 @@ namespace ndbidx {
 		}
 		void Init(
 			index_ &Index,
-			const str::string_ &RootFileName,
+			const str::string_ &BaseFileName,
 			mdr::mode__ Mode,
 			flm::id__ ID );
 		void CloseFiles( void )
 		{
 			_FileManager.ReleaseFiles();
+		}
+		const str::string_ &BaseFileName( void ) const
+		{
+			return _BaseFileName;
 		}
 	};
 
