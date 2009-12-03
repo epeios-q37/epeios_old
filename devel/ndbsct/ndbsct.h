@@ -190,7 +190,7 @@ namespace ndbsct {
 
 	E_AUTO( static_content )
 
-	class static_content_spreaded_file_manager___
+	class static_content_atomized_file_manager___
 	{
 	private:
 		static_content_ *_Content;
@@ -219,11 +219,11 @@ namespace ndbsct {
 			_BaseFileName.reset( P );
 			_Content = NULL;
 		}
-		static_content_spreaded_file_manager___( void )
+		static_content_atomized_file_manager___( void )
 		{
 			reset( false );
 		}
-		~static_content_spreaded_file_manager___( void )
+		~static_content_atomized_file_manager___( void )
 		{
 			reset();
 		}

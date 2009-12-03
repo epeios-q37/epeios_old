@@ -419,7 +419,7 @@ namespace ndbidx {
 
 	E_AUTO( index )
 
-	class index_spreaded_file_manager___
+	class index_atomized_file_manager___
 	{
 	private:
 		index_ *_Index;
@@ -449,11 +449,11 @@ namespace ndbidx {
 			_BaseFileName.reset( P );
 			_Index = NULL;
 		}
-		index_spreaded_file_manager___( void )
+		index_atomized_file_manager___( void )
 		{
 			reset( false );
 		}
-		~index_spreaded_file_manager___( void )
+		~index_atomized_file_manager___( void )
 		{
 			reset();
 		}

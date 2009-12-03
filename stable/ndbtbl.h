@@ -411,12 +411,12 @@ namespace ndbtbl {
 
 	E_AUTO( table )
 
-	class table_spreaded_file_manager___
+	class table_atomized_file_manager___
 	{
 	private:
 		// Seulement l'un des deux est utilisé.
-		ndbdct::dynamic_content_spreaded_file_manager___ _Dynamic;
-		ndbsct::static_content_spreaded_file_manager___ _Static;
+		ndbdct::dynamic_content_atomized_file_manager___ _Dynamic;
+		ndbsct::static_content_atomized_file_manager___ _Static;
 		void _InitStatic(
 			table_ &Table,
 			const str::string_ &BaseFileName,
@@ -433,11 +433,11 @@ namespace ndbtbl {
 			_Dynamic.reset( P );
 			_Static.reset( P );
 		}
-		table_spreaded_file_manager___( void )
+		table_atomized_file_manager___( void )
 		{
 			reset( false );
 		}
-		~table_spreaded_file_manager___( void )
+		~table_atomized_file_manager___( void )
 		{
 			reset();
 		}

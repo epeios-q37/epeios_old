@@ -1,5 +1,9 @@
 $Id$
 
+03/12/2009 :
+	- 'NDB...' :
+		- '...spreaded...' -> '...atomized...'.
+
 02/12/2009 :
 	- MMG :
 		- Suite refonte ...

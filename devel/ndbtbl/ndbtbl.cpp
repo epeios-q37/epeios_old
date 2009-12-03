@@ -248,7 +248,7 @@ static const str::string_ &GetFileName_(
 }
 */
 
-void ndbtbl::table_spreaded_file_manager___::_InitStatic(
+void ndbtbl::table_atomized_file_manager___::_InitStatic(
 	table_ &Table,
 	const str::string_ &BaseFileName,
 	mode__ Mode,
@@ -270,7 +270,7 @@ ERREnd
 ERREpilog
 }
 
-void ndbtbl::table_spreaded_file_manager___::_InitDynamic(
+void ndbtbl::table_atomized_file_manager___::_InitDynamic(
 	table_ &Table,
 	const str::string_ &BaseFileName,
 	mode__ Mode,

@@ -550,7 +550,7 @@ ERREpilog
 }
 
 
-void ndbidx::index_spreaded_file_manager___::Init(
+void ndbidx::index_atomized_file_manager___::Init(
 	index_ &Index,
 	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,

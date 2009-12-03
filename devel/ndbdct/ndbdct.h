@@ -534,7 +534,7 @@ namespace ndbdct {
 	E_AUTO( dynamic_content )
 
 	// Content stocké dans des fichiers.
-	class dynamic_content_spreaded_file_manager___
+	class dynamic_content_atomized_file_manager___
 	{
 	private:
 		dynamic_content_ *_Content;
@@ -575,11 +575,11 @@ namespace ndbdct {
 			_BaseFileName.reset( P );
 			_Content = NULL;
 		}
-		dynamic_content_spreaded_file_manager___( void )
+		dynamic_content_atomized_file_manager___( void )
 		{
 			reset( false );
 		}
-		~dynamic_content_spreaded_file_manager___( void )
+		~dynamic_content_atomized_file_manager___( void )
 		{
 			reset();
 		}

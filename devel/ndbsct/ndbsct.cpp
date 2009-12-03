@@ -85,12 +85,12 @@ ERREnd
 ERREpilog
 }
 
-void ndbsct::static_content_spreaded_file_manager___::_SaveLocations( void ) const
+void ndbsct::static_content_atomized_file_manager___::_SaveLocations( void ) const
 {
 	Save_( *_Content, _BaseFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
-void ndbsct::static_content_spreaded_file_manager___::Init(
+void ndbsct::static_content_atomized_file_manager___::Init(
 	static_content_ &Content,
 	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,
@@ -121,7 +121,7 @@ ERREpilog
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
-bso::bool__ ndbsct::static_content_spreaded_file_manager___::_ConnectToFiles( void )
+bso::bool__ ndbsct::static_content_atomized_file_manager___::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -159,7 +159,7 @@ ERREpilog
 	return Exists;
 }
 
-void ndbsct::static_content_spreaded_file_manager___::_ErasePhysically( void )
+void ndbsct::static_content_atomized_file_manager___::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin

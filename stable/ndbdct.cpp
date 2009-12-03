@@ -130,12 +130,12 @@ ERREnd
 ERREpilog
 }
 
-void ndbdct::dynamic_content_spreaded_file_manager___::_SaveLocationsAndAvailables( void ) const
+void ndbdct::dynamic_content_atomized_file_manager___::_SaveLocationsAndAvailables( void ) const
 {
 	Save_( _Content->Availables, _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
 }
 
-void ndbdct::dynamic_content_spreaded_file_manager___::Init(
+void ndbdct::dynamic_content_atomized_file_manager___::Init(
 	dynamic_content_ &Content,
 	const str::string_ &BaseFileName,
 	mdr::mode__ Mode,
@@ -258,7 +258,7 @@ ERREpilog
 }
 
 
-bso::bool__ ndbdct::dynamic_content_spreaded_file_manager___::_ConnectToFiles( void )
+bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::_ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -284,7 +284,7 @@ ERREpilog
 	return Exists;
 }
 
-void ndbdct::dynamic_content_spreaded_file_manager___::_ErasePhysically( void )
+void ndbdct::dynamic_content_atomized_file_manager___::_ErasePhysically( void )
 {
 ERRProlog
 ERRBegin
