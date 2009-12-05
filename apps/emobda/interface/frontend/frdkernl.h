@@ -558,7 +558,11 @@ namespace frdkernl {
 		void SetCurrentTable( table__ Table )
 		{
 			frdrgstry::SetProfileIntegerValue( frdrgstry::paths::Profiles.CurrentTable, _Registry, **Table );
-		}	
+		}
+		bso::bool__ GetBackendConfigurationFileLocation( str::string_ &Location )
+		{
+			return frdrgstry::GetBackendConfigurationFileLocation( _Registry, Location );
+		}
 	};
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )

@@ -32,8 +32,10 @@ void ui_bksdb::backend_selection__::ExtractSelectedBackend( bso::bool__ Local )
 {
 ERRProlog
 	str::string HostService;
+	str::string LibraryPath;
 ERRBegin
-	if ( Local )
+	if ( Local ) {
+		UI().K().GetBackendConfigurationFileLocation( LibraryLo
 		UI().K().BackendSelection().SetLocal();
 	else {
 		HostService.Init();
@@ -65,10 +67,10 @@ void ui_bksdb::host_service_textbox__::NSXPCMOnEvent( event__ Event )
 
 void ui_bksdb::local_command__::NSXPCMOnEvent( event__ )
 {
-	UI().Alert( frdkernl::mNotImplementedYet );
+/*	UI().Alert( frdkernl::mNotImplementedYet );
 
 	return;
-
+*/
 	UI().BackendSelection.ExtractSelectedBackend( true );
 }
 

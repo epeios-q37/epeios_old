@@ -39,8 +39,8 @@ namespace mbdeng {
 
 	struct spreaded_file_manager___ {
 	public:
-		ndbtbl::table_spreaded_file_manager___ Table;
-		ndbidx::index_spreaded_file_manager___
+		ndbtbl::table_atomized_file_manager___ Table;
+		ndbidx::index_atomized_file_manager___
 			TableRecordFieldIndex,
 			TableFieldDatumIndex;
 		void reset( bso::bool__ P = true )

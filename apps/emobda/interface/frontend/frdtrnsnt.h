@@ -169,7 +169,7 @@ namespace frdtrnsnt {
 	: public _bss__
 	{
 	private:
-		str::string _HostService;
+		str::string _RemoteHostServiceOrLocalLibraryLocation;
 		void _SetState( backend_selection_state__ State )
 		{
 			_bss__::SetState( State );
@@ -179,16 +179,16 @@ namespace frdtrnsnt {
 		{
 			_bss__::reset( P );
 
-			_HostService.reset( P );
+			_RemoteHostServiceOrLocalLibraryLocation.reset( P );
 		}
-		void SetLocal( void )
+		void SetLocal( const str::string_ &LibraryLocation )
 		{
 			if ( GetState() != bss_Undefined )
 				ERRc();
 
 			_SetState( bssLocal );
 
-			_HostService.Init();
+			_RemoteHostServiceOrLocalLibraryLocation.Init( LibraryLocation );
 		}
 		void SetRemote( const str::string_ &HostService )
 		{
@@ -197,7 +197,7 @@ namespace frdtrnsnt {
 
 			_SetState( bssRemote );
 
-			_HostService.Init( HostService );
+			_RemoteHostServiceOrLocalLibraryLocation.Init( HostService );
 		}
 		void SetCancelledState( void )
 		{
@@ -211,7 +211,14 @@ namespace frdtrnsnt {
 			if ( GetState() != bssRemote )
 				ERRc();
 
-			HostService = _HostService;
+			HostService = _RemoteHostServiceOrLocalLibraryLocation;
+		}
+		void GetLibraryLocation( str::string_ &LibraryLocation ) const
+		{
+			if ( GetState() != bssLocal )
+				ERRc();
+
+			LibraryLocation = _RemoteHostServiceOrLocalLibraryLocation;
 		}
 		void SetState( void )	// To avoid the use of the '_bss__' one, because it has not to be used directly.
 		{

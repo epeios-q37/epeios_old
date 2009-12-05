@@ -38,11 +38,18 @@ typedef bkdmng::text_log_functions__	log_functions__;
 
 struct data {
 	backend Backend;
+#ifndef CPE__T_LIBRARY
+	cio::aware_cout___ Cout;
+#endif
 	log_functions__ LogFunctions;
-	cio::aware_cout___ LogFlow;
 	data( void )
 	{
-		LogFunctions.Init( LogFlow );
+#ifndef CPE__T_LIBRARY
+	if ( cio::IsInitialized() )
+		LogFunctions.Init( Cout );
+	else
+#endif
+		LogFunctions.Init( txf::nul );
 	}
 };
 

@@ -6,6 +6,10 @@ REMINDER FOR THE DEVELOPER :
 	- Before publication, merge with '../CHANGELOG.txt'.
 --------------------------------------------------------
 
+- 05/12/2009 :
+	- Adding the enrty concerning the locales file innthe registry.
+	- Creation of the library version of the backend ('emobdalib').
+
 05/11/2009 :
 	- (emobdadmn) : the root path of the registry includes yet the root tag of the configuration file
 	  (to match the behavior of the 'rgstry::FillRegistry(...)' function).

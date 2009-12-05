@@ -282,7 +282,7 @@ namespace ui {
 		}
 		bso::bool__ GetSelectedBackend(
 			csducl::type__ &Type,
-			str::string_ &RemoteHostServiceOrLocalLibraryPath )
+			str::string_ &RemoteHostServiceOrLocalLibraryLocation )
 		{
 			bso::bool__ Validated = false;
 
@@ -293,11 +293,12 @@ namespace ui {
 
 			switch ( _K().BackendSelection().GetState() ) {
 			case frdtrnsnt::bssRemote:
-				_K().BackendSelection().GetHostService( RemoteHostServiceOrLocalLibraryPath );
+				_K().BackendSelection().GetHostService( RemoteHostServiceOrLocalLibraryLocation );
 				Type = csducl::tDaemon;
 				Validated = true;
 				break;
 			case frdtrnsnt::bssLocal:
+				_K().BackendSelection().GetLibraryLocation( RemoteHostServiceOrLocalLibraryLocation );
 				Type = csducl::tLibrary;
 				Validated = true;
 				break;

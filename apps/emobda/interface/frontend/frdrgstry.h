@@ -39,7 +39,7 @@ namespace frdrgstry {
 			static struct backend {
 				static const char
 					*Location,
-					*Configuration,
+					*ConfigurationFile,
 					*AccessMode,
 					*Type;
 			} Backend;
@@ -104,6 +104,13 @@ namespace frdrgstry {
 		str::string_ &Target )
 	{
 		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
+	}
+
+	bso::bool__ GetBackendConfigurationFileLocation(
+		const registry___ &Registry,
+		str::string_ &Value )
+	{
+		return GetValue( paths::Parameters.Backend.ConfigurationFile, Registry, Value );
 	}
 }
 

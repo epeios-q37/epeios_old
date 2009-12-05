@@ -132,19 +132,13 @@ ERRBegin
 	RemoteHostServiceOrLocalLibraryPath.Init();
 
 	if ( UI().GetSelectedBackend( Type, RemoteHostServiceOrLocalLibraryPath ) ) {
-		if ( Type == csducl::tLibrary ) {
-			UI().Alert( frdkernl::mNotImplementedYet );
-			UI().DefineSession();
-		} else 
-		{
-			if ( !UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type ) ) {
-				Message.Init();
-				UI().K().GetMessage( frdkernl::mUnableToConnectToBackend_1, Message );
-				lcl::ReplaceTag( Message, 1, RemoteHostServiceOrLocalLibraryPath );
-				UI().Alert( Message );
-			} else
-				UI().ApplySession();
-		}
+		if ( !UI().K().Connect( RemoteHostServiceOrLocalLibraryPath.Convert( Buffer ), Type ) ) {
+			Message.Init();
+			UI().K().GetMessage( frdkernl::mUnableToConnectToBackend_1, Message );
+			lcl::ReplaceTag( Message, 1, RemoteHostServiceOrLocalLibraryPath );
+			UI().Alert( Message );
+		} else
+			UI().ApplySession();
 	} else
 		UI().DefineSession();
 ERRErr

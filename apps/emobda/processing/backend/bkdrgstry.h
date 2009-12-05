@@ -32,6 +32,8 @@ namespace bkdrgstry {
 
 	struct paths {
 		static const char *Repository;
+		static const char *Locales;
+
 	};
 
 	bso::bool__ FillRegistry(
@@ -65,6 +67,11 @@ namespace bkdrgstry {
 	bso::bool__ GetNumber(
 		const char *Path,
 		bso::ubyte__ &UByte );
+
+	inline bso::bool__ GetLocalesFileName( str::string_ &FileName )
+	{
+		return GetPathValue( paths::Locales, FileName );
+	}
 }
 
 #endif

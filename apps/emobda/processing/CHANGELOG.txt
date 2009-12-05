@@ -1,5 +1,8 @@
 $Id$
 
+- 05/12/2009 :
+	- Adaptation aux modifications 'NDB...'.
+
 - 01/12/2009 :
 	- Adaptation aux modifications 'NDB...'.
 

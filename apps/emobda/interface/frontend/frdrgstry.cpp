@@ -36,7 +36,7 @@ using namespace frdrgstry;
 const char *frdrgstry::paths::parameters::backend::Location					= BACKEND "Location";
 const char *frdrgstry::paths::parameters::backend::Type						= BACKEND "@Type";
 const char *frdrgstry::paths::parameters::backend::AccessMode				= BACKEND "@AccessMode";
-const char *frdrgstry::paths::parameters::backend::Configuration			= BACKEND "Configuration";
+const char *frdrgstry::paths::parameters::backend::ConfigurationFile		= BACKEND "ConfigurationFile";
 
 #define DATABASE	PARAMETERS "Database" S
 const char *frdrgstry::paths::parameters::database::Path					= DATABASE "Path";

@@ -28,6 +28,8 @@ using namespace bkdrgstry;
 static rgstry::registry Registry_;
 static rgstry::row__ Root_ = NONE;
 
+const char *bkdrgstry::paths::Locales = "Locales";
+
 bso::bool__ bkdrgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
