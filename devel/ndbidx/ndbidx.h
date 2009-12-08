@@ -460,6 +460,7 @@ namespace ndbidx {
 		void Init(
 			index_ &Index,
 			const str::string_ &BaseFileName,
+			bso::bool__ Erase,
 			mdr::mode__ Mode,
 			flm::id__ ID );
 		void CloseFiles( void )

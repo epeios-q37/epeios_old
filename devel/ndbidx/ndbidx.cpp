@@ -553,6 +553,7 @@ ERREpilog
 void ndbidx::index_atomized_file_manager___::Init(
 	index_ &Index,
 	const str::string_ &BaseFileName,
+	bso::bool__ Erase,
 	mdr::mode__ Mode,
 	flm::id__ ID )
 {
@@ -577,6 +578,9 @@ ERRBegin
 	_BaseFileName.Init( BaseFileName );
 
 	_Mode = Mode;
+
+	if ( Erase )
+		_ErasePhysically();
 
 	_ConnectToFiles();
 ERRErr

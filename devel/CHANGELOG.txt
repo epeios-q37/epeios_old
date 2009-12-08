@@ -1,5 +1,9 @@
 $Id$
 
+08/12/2009 :
+	- 'NBDISX' :
+		- Possibilité d'effacer les ficihers associés à un index 'atomized' lors de son initialisation.
+
 03/12/2009 :
 	- 'NDB...' :
 		- '...spreaded...' -> '...atomized...'.
