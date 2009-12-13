@@ -1,5 +1,13 @@
 $Id$
 
+13/12/2009
+	- MMG :
+		Correction bogue constructeur.
+
+11/12/2009 :
+	- XML :
+		Correction inexactitudes.
+
 08/12/2009 :
 	- 'NBDISX' :
 		- Possibilité d'effacer les ficihers associés à un index 'atomized' lors de son initialisation.

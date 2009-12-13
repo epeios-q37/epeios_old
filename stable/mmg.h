@@ -123,7 +123,7 @@ namespace mmg
 		uym::untyped_memory_ Memory;
 		merger_memory_driver_( s &S )
 		: S_( S ),
-		  mdr::E_MEMORY_DRIVER__( S_.Extent ),
+		  mdr::E_MEMORY_DRIVER__( S.Extent ),
 		  Memory( S.Memory )
 		{}
 		void reset(

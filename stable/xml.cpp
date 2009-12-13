@@ -1369,9 +1369,9 @@ private:
 	}
 public:
 	struct s {
-		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Names;
-		bch::E_BUNCHt( coord__, rrow__ )::s Coords;
-		ctn::E_XMCONTAINERt( str::string_, rrow__ )::s Strings;
+		ctn::E_XMCONTAINERt_( str::string_, rrow__ )::s Names;
+		bch::E_BUNCHt_( coord__, rrow__ )::s Coords;
+		ctn::E_XMCONTAINERt_( str::string_, rrow__ )::s Strings;
 	};
 	ctn::E_XMCONTAINERt_( str::string_, rrow__ ) Names;
 	bch::E_BUNCHt_( coord__, rrow__ ) Coords;
