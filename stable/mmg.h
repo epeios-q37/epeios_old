@@ -85,6 +85,13 @@ namespace mmg
 		sMortal,
 	};
 
+	struct merger_memory_driver_s__
+	{
+		uym::untyped_memory_::s Memory;
+		mdr::size__ Extent;	// Passé à et entièrement pris en charge par 'mdr::E_MEMORY_DRIVER__'.
+	};
+
+
 	// Pilote mémoire à usage interne.
 	template <typename st> class merger_memory_driver_
 	: public mdr::E_MEMORY_DRIVER__
@@ -116,10 +123,8 @@ namespace mmg
 		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
 		notamment, les caches */
 	public:
-		struct s {
-			uym::untyped_memory_::s Memory;
-			mdr::size__ Extent;	// Passé à et entièrement pris en charge par 'mdr::E_MEMORY_DRIVER__'.
-		} &S_;
+		typedef merger_memory_driver_s__ s;
+		s &S_;
 		uym::untyped_memory_ Memory;
 		merger_memory_driver_( s &S )
 		: S_( S ),
@@ -202,7 +207,7 @@ namespace mmg
 		mmm::multimemory_::s Memoire;
 		// A vrai si le contenu survit à l'objet.
 		st Object;
-		uym::untyped_memory_::s Pilote_;
+		merger_memory_driver_s__ Driver_;
 		mmg::state State;
 	};
 
@@ -235,7 +240,7 @@ namespace mmg
 		: S_( S ),
 		  Object( S.Object ),
 		  Memoire( S.Memoire ),
-		  Pilote_( S.Pilote_ )
+		  Driver_( S.Driver_ )
 		{}
 		void reset( bool P = true )
 		{
@@ -244,33 +249,31 @@ namespace mmg
 				if ( S_.State == mmg::sImmortal )
 					Immortalize();
 
-				if ( Pilote_.Memoire.Driver( true ) )	// Test si immortalisation ...
+				if ( Driver_.Memory.Driver( true ) )	// Test si immortalisation ...
 				{
 					Object.reset( true );
 					Memoire.reset( true );
-					Pilote_.reset( true );
+					Driver_.reset( true );
 				}
 			}
 
 			S_.State = mmg::sMortal;
 
-			Pilote_.reset( false );
+			Driver_.reset( false );
 			Memoire.reset( false );
 
 			Object.reset( false );
 		}
 		//f Initialization with rule 'Rule' and mode 'Mode'.
-		void Init(
-			mmg::rule Rule,
-			mdr::mode__ Mode = mdr::mReadWrite)
+		void Init( mmg::rule Rule )
 		{
 			reset();
 
 			Object.plug( Memoire );
 
-			Pilote_.Init( (uym::datum__ *)&S_, Rule, Mode );
+			Driver_.Init( &S_, Rule );
 
-			Memoire.plug( Pilote_ );
+			Memoire.plug( Driver_ );
 
 			if ( Rule == mmg::rCreation )
 				Memoire.Init();
@@ -278,20 +281,20 @@ namespace mmg
 		//f Utilisation de 'Pilote' comme pilote mémoire.
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			Pilote_.Memoire.plug( MD );
+			Driver_.Memory.plug( MD );
 		}
 		//f The memory is unpluged and can be used by an other object.
 		void Immortalize( void )
 		{
-			Pilote_.StockerStatique();
-			Pilote_.Memoire.plug( *(mdr::E_MEMORY_DRIVER_ *)NULL );
+			Driver_.StockerStatique();
+			Driver_.Memory.plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
 			Memoire.Synchronize();
 
 			PiloteMultimemoire_.plug( M );
-			Pilote_.Memoire.plug( PiloteMultimemoire_ );
+			Driver_.Memory.plug( PiloteMultimemoire_ );
 		}
 		//f Write to 'OFLow' as raw data.
 		void Write( flw::oflow__ &OFlow ) const
@@ -328,7 +331,7 @@ namespace mmg
 			return Pilote_.Mode();
 		}
 		//f Return the object which is handled by.
-		t &operator*( void )
+		t &operator ()( void )
 		{
 			return Object;
 		}
@@ -352,13 +355,20 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::file_memory_driver___ PiloteFichier_;
+		flm::E_FILE_MEMORY_DRIVER___ PiloteFichier_;
+		flm::id__ _ID;
 	public:
 		void reset( bool P = true )
 		{
 			memory_merger<t, st>::reset( P );
 
 			PiloteFichier_.reset( P );
+
+			if ( P )
+				if ( _ID != FLM_UNDEFINED_ID )
+					flm::ReleaseId( _ID );
+
+			_ID = FLM_UNDEFINED_ID;
 		}
 		file_merger___( void )
 		{
@@ -370,43 +380,36 @@ namespace mmg
 		both 'ObjectMode' and 'FileMode' are forced for to 'mdr::mReadWrite'. */
 		mmg::rule Init(
 			const char *FileName,
-			mdr::mode__ ObjectMode,
 			mdr::mode__ FileMode )
 		{	
+			reset();
+
 			bso::bool__ Test;
 
-			Test = tol::FileExists( FileName );
+			Test = fil::FileExists( FileName );
 
-			PiloteFichier_.Init( FileName, FileMode );
-			PiloteFichier_.Persistant();
-			PiloteFichier_.Manuel();
+			_ID = flm::GetId();
+
+			PiloteFichier_.Init( _ID, false, FileName, FileMode );
+			PiloteFichier_.Persistent();
+			PiloteFichier_.Manual();
 
 			memory_merger<t, st>::plug( PiloteFichier_ );
 
 			if ( Test )
 			{
-				memory_merger<t, st>::Init( mmg::rRecovery, ObjectMode );
+				memory_merger<t, st>::Init( mmg::rRecovery );
 				PiloteFichier_.Mode( FileMode );
 			}
 			else
 			{
-				memory_merger<t, st>::Init( mmg::rCreation, mdr::mReadWrite );
+				memory_merger<t, st>::Init( mmg::rCreation );
 				PiloteFichier_.Mode( mdr::mReadWrite );
 			}
 
 			memory_merger<t, st>::State( mmg::sImmortal );
 
 			return ( Test ? mmg::rRecovery : mmg::rCreation );
-		}
-		/*f Initialization with the file named 'FileName'. If the file is create,
-		'Mode' is forced to 'mdr::mReadWrite'.  Return a value which depends
-		on whether exists or not. If the file doesn't already exist, 'Mode' is forced to
-		'mdr::mReadWrite'. */
-		mmg::rule Init(
-			const char *NomFichier,
-			mdr::mode__ Mode = mdr::mReadOnly )
-		{
-			return Init( NomFichier, Mode, Mode );
 		}
 		//f The object is placed in 'ObjectMode', the file in 'FileMode'.
 		void Mode(

@@ -1,5 +1,10 @@
 $Id$
 
+17/12/2009 :
+	- MMG :
+		- Corrections pb détectés à l'utilisation de cette bibliothèque (erreurs de compilation non détectées
+		 immédiatement du fait de l'utilisation de 'template').
+
 13/12/2009
 	- MMG :
 		Correction bogue constructeur.
