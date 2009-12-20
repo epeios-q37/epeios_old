@@ -255,14 +255,15 @@ namespace mmg
 					Memoire.reset( true );
 					Driver_.reset( true );
 				}
+			} else {
+				Driver_.reset( P );
+				Memoire.reset( P );
+
+				Object.reset( P );
 			}
 
 			S_.State = mmg::sMortal;
 
-			Driver_.reset( false );
-			Memoire.reset( false );
-
-			Object.reset( false );
 		}
 		//f Initialization with rule 'Rule' and mode 'Mode'.
 		void Init( mmg::rule Rule )
@@ -281,13 +282,13 @@ namespace mmg
 		//f Utilisation de 'Pilote' comme pilote mémoire.
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			Driver_.Memory.plug( MD );
+			Driver_.plug( MD );
 		}
 		//f The memory is unpluged and can be used by an other object.
 		void Immortalize( void )
 		{
 			Driver_.StockerStatique();
-			Driver_.Memory.plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
+			Driver_.plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
@@ -355,7 +356,7 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::E_FILE_MEMORY_DRIVER___ PiloteFichier_;
+		flm::file_memory_driver___ PiloteFichier_;
 		flm::id__ _ID;
 	public:
 		void reset( bool P = true )
@@ -371,6 +372,7 @@ namespace mmg
 			_ID = FLM_UNDEFINED_ID;
 		}
 		file_merger___( void )
+		: PiloteFichier_( Memoire.S_.Extent )
 		{
 			reset( false );
 		}

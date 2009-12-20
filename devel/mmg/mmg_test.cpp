@@ -39,9 +39,15 @@
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	mmg::E_FILE_MERGER___( ctn::E_XMCONTAINER_( str::string_ ) ) C;
+	mmg::E_FILE_MERGER___( str::string_ ) C;
 ERRBegin
-	C.Init( "test" );
+	if ( C.Init( "test", mdr::mReadWrite ) == mmg::rCreation ) {
+		C().Init();
+
+		C().Append( "toto" );
+	}
+
+	cio::cout << C() << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -52,7 +58,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << MMGTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::cout << "Test of library " << MMGTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -61,20 +67,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( cio::cout );
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << MMGTutor.Name << " [/i]\n\n";
-		ERRt();
+		cio::cout << txf::sync;
+		cio::cerr << "\nBad arguments.\n";
+		cio::cout << "Usage: " << MMGTutor.Name << " [/i]\n\n";
+		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << MMGTutor.Name << ".\n";
+	cio::cout << "\nEnd of program " << MMGTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

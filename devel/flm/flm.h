@@ -654,6 +654,9 @@ namespace flm {
 		{
 			memoire_fichier_base___::Init( ID, FlushToDevice, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
+
+			if ( Exists() )
+				E_MEMORY_DRIVER__::Allocate( FileSize() );
 		}
 	};
 
