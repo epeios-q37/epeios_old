@@ -65,6 +65,7 @@ extern class ttr_tutor &MDRTutor;
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
+#include "tol.h"
 
 #define MDR_INTERNAL_MEMORY_DRIVER *(mdr::E_MEMORY_DRIVER__ *)NULL
 
@@ -208,6 +209,7 @@ namespace mdr {
 			if ( _Pointer == NULL )
 				MDRFlush();
 		}
+		E_RWDISCLOSE__( bso::size__, Extent );
 	};
 
 /*

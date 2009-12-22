@@ -175,6 +175,14 @@ namespace uym {
 		{
 			return Pilote_ != NULL;
 		}
+		bso::size__ Extent( void ) const
+		{
+			return Pilote_->Extent();
+		}
+		void SetExtent( bso::size__ Value )
+		{
+			Pilote_->Extent() = Value;
+		}
 	};
 
 	//c Untyped memory.
@@ -350,6 +358,15 @@ namespace uym {
 		{
 			_Flush();
 		}
+		bso::size__ GetDriverExtent( void ) const
+		{
+			return Pilote_.Extent();
+		}
+		void SetDriverExtent( bso::size__ Value )
+		{
+			Pilote_.SetExtent( Value );
+		}
+
 	};
 
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;

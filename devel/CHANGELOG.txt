@@ -1,10 +1,23 @@
 $Id$
+
+22/12/2009 :
+	- MMI :
+		- La fonction 'New()' initialise maintenant correctement le descripteur associé.
+
+21/12/2009 :
+	- MDR :
+		- L'extent' est maintenant consultable.
+	- MMM :
+		- Mise à niveau.
+		- Simplification suite à la prise en charge de la 'multimémoire' par la bibliothèque 'uym'.
+	- UYM :
+		- L'extent' est maintenant consultable.
+
 20/12/2009 :
 	- FLM :
 		- Mise à niveau.
 	- MMG :
 		- Mise à niveau.
-
 
 17/12/2009 :
 	- MMG :

@@ -397,10 +397,14 @@ namespace mmi {
 		}
 		index__ New( index__ Index = NONE )
 		{
+			descripteur__ D = { MMM_UNDEFINED_DESCRIPTOR, 0 };
+
 			if ( Index == NONE )
 				Index = Descripteurs.New();
 			else if ( !Descripteurs.Exists( Index ) )
 				ERRu();
+
+			Descripteurs.Store( D, Index );
 
 			return Index;
 		}

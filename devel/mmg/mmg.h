@@ -249,16 +249,15 @@ namespace mmg
 				if ( S_.State == mmg::sImmortal )
 					Immortalize();
 
-				if ( Driver_.Memory.Driver( true ) )	// Test si immortalisation ...
+				if ( !Driver_.Memory.Driver( true ) )	// Test si immortalisation ...
 				{
-					Object.reset( true );
-					Memoire.reset( true );
-					Driver_.reset( true );
+					Object.reset( false );
+					Memoire.reset( false );
+					Driver_.reset( false );
 				}
 			} else {
 				Driver_.reset( P );
 				Memoire.reset( P );
-
 				Object.reset( P );
 			}
 
@@ -356,7 +355,7 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::file_memory_driver___ PiloteFichier_;
+		flm::standalone_file_memory_driver___ PiloteFichier_;
 		flm::id__ _ID;
 	public:
 		void reset( bool P = true )
@@ -372,7 +371,7 @@ namespace mmg
 			_ID = FLM_UNDEFINED_ID;
 		}
 		file_merger___( void )
-		: PiloteFichier_( Memoire.S_.Extent )
+		: PiloteFichier_()
 		{
 			reset( false );
 		}

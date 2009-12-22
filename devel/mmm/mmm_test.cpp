@@ -55,12 +55,13 @@ void Test(
 	size__ C )
 {
 	static unsigned long Compteur = 1;
+	addendum__ Addendum = 0;
 
 	cio::cout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
-	D = M.Reallocate( D, C );
+	D = M.Reallocate( D, C, Addendum );
 	cio::cout << ( D / 4 )<< nl;
 
-	M.PrintStructure( cio::cout );
+	M.DisplayStructure( cio::cout );
 
 	cio::cout << nl;
 }
@@ -76,14 +77,16 @@ ERRProlog
 	E_MULTIMEMORY P;
 	descriptor__ D[NOMBRE];
 	bso::ushort__ C = 1;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 ERRBegin
-	M.Init( "coucou.tmp" );
+	ID = flm::GetId();
+	M.Init( ID, true, "coucou.tmp" );
 	M.Manual();
-//	P.plug( M );
+	P.plug( M );
 	P.Init();
 
 	for ( int i = 0; i < NOMBRE; i++ )
-		D[i] = 0;
+		D[i] = MMM_UNDEFINED_DESCRIPTOR;
 
 	while( C < LIMITE )
 	{
@@ -100,6 +103,8 @@ ERRBegin
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 	// instructions à exécuter, erreur ou non
 ERREpilog
 }
@@ -115,8 +120,10 @@ ERRProlog
 	bso::ulong__ j;
 	cvm::standalone_conventional_memory_driver__ M;
 //	int j;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 ERRBegin
-	Memoire.Init();
+	ID = flm::GetId();
+	Memoire.Init( ID, false );
 	P.plug( Memoire );
 	P.Init();
 
@@ -163,11 +170,13 @@ ERRBegin
 		i++;
 	}
 
-	P.PrintStructure( cio::cout );
+	P.DisplayStructure( cio::cout );
 
 
 ERRErr
 	// instructions à exécuter si erreur
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREnd
 	// instructions à exécuter, erreur ou non
 ERREpilog
@@ -181,30 +190,35 @@ ERRProlog
 	flm::standalone_file_memory_driver___ Memoire;
 	E_MULTIMEMORY Multimemoire;
 	descriptor__ Descripteurs[100];
+	flm::id__ ID = FLM_UNDEFINED_ID;
+	mmm::addendum__ Addendum = 0;
 ERRBegin
-	Memoire.Init();
+	ID = flm::GetId();
+	Memoire.Init( ID, false );
 	Memoire.Manual();
-//	Multimemoire.cfg( Memoire );
+	Multimemoire.plug( Memoire );
 	Multimemoire.Init();
 
 	for( int i = 0; i < sizeof( Descripteurs ) / sizeof( Descripteurs[0] ); i++ )
 	{
-		Descripteurs[i] = Multimemoire.Allocate( rand() % TAILLE_MAX + 4 );
+		Descripteurs[i] = Multimemoire.Allocate( rand() % TAILLE_MAX + 4, Addendum );
 		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
 	cio::cout << nl;
 
-	for(;;)
+	while ( rand() % 100000 )
 	{
 		int i = rand() % 100;
 
-		Descripteurs[i] = Multimemoire.Reallocate( Descripteurs[i], Multimemoire.Size( Descripteurs[i] ) + rand() % TAILLE_MAX + 4 );
+		Descripteurs[i] = Multimemoire.Reallocate( Descripteurs[i], Multimemoire.Size( Descripteurs[i] ) + rand() % TAILLE_MAX + 4, Addendum );
 		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
 	}
 
 
 ERRErr
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREnd
 ERREpilog
 }
@@ -221,6 +235,7 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 		EssaiBase( argc, argv );
+		Essai();
 		EssaiComplet( argc, argv );
 		break;
 	case 2:

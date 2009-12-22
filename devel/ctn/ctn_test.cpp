@@ -365,7 +365,7 @@ ERREpilog
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) CS, CD;
@@ -375,8 +375,8 @@ ERRProlog
 	str::string Str;
 	epeios::row__ P;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup );
+	ID = flm::GetId();
+	F.Init( ID, true );
 	F.Automatic();
 //	M.plug( F );
 	M.Init();
@@ -478,6 +478,8 @@ ERRBegin
 	cout << txf::nl;
 ERRErr
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREpilog
 
 }
@@ -553,7 +555,7 @@ ERREpilog
 void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	int a = A( A_( 3 ) );
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
@@ -568,8 +570,8 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup, "a.tmp" );
+	ID = flm::GetId();
+	F.Init( ID, true, "a.tmp" );
 //	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
@@ -679,7 +681,7 @@ ERREpilog
 void EssaiPersistence( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	int a = A( A_( 3 ) );
 	E_XMCONTAINER( str::string_ ) CC;
 	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
@@ -693,8 +695,8 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	FilesGroup.Init();
-	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", mdr::mReadWrite, true, FilesGroup );
+	ID = flm::GetId();
+	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", mdr::mReadWrite, true, ID );
 
 	Cm.Init();
 	CC.Init();
@@ -799,6 +801,8 @@ ERRBegin
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 	// instructions à exécuter, erreur ou non
 ERREpilog
 }
@@ -903,7 +907,7 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
@@ -911,8 +915,8 @@ ERRProlog
 	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) EGC;
 	char M;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup, "b.tmp");
+	ID = flm::GetId();
+	F.Init( ID, true, "b.tmp");
 	F.Manual();
 	Mm.plug( F );
 	Mm.Init();
@@ -951,6 +955,8 @@ ERRBegin
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 	// instructions à exécuter, erreur ou non
 ERREpilog
 }
@@ -958,14 +964,14 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XMCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup, "coucou.tmp" );
+	ID = flm::GetId();
+	F.Init( ID, true, "coucou.tmp" );
 //	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -981,20 +987,22 @@ ERRBegin
 	cout << E(1) << txf::nl;
 ERRErr
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREpilog
 }
 
 void EssaiSimpleMulti( void )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XCONTAINER( str::string_ ) C;
 	E_ITEM( str::string_ ) E;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup, "coucou.tmp" );
+	ID = flm::GetId();
+	F.Init( ID, true, "coucou.tmp" );
 	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -1010,13 +1018,15 @@ ERRBegin
 	cout << E(1) << txf::nl;
 ERRErr
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREpilog
 }
 
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
-	flm::files_group FilesGroup;
+	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
 	E_XCONTAINER( str::string_ ) CS;
@@ -1024,8 +1034,8 @@ ERRProlog
 //	ITEM( str::string_ ) ECS;
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
-	FilesGroup.Init();
-	F.Init( FilesGroup, "temp.tmp" );
+	ID = flm::GetId();
+	F.Init( ID, true, "temp.tmp" );
 	M.plug( F );
 	M.Init();
 
@@ -1073,6 +1083,8 @@ ERRBegin
 	CS.Flush();
 ERRErr
 ERREnd
+	if ( ID != FLM_UNDEFINED_ID )
+		flm::ReleaseId( ID );
 ERREpilog
 }
 

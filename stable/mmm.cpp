@@ -73,7 +73,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 {
 	bso::ulong__ UsedFragmentTotalSize = 0, UsedFragmentDataSize = 0, FreeFragmentSize = 0;
 
-	Flow << "Extent : " << S_.Extent << txf::tab;
+	Flow << "Extent : " << _Extent() << txf::tab;
 	Flow << "FreeFragment : ";
 	Display_( S_.FreeFragment, Flow );
 	Flow << txf::tab;
@@ -85,7 +85,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 
 	Flow << "Pos." << txf::tab << "  State" << txf::tab << "Size" << txf::tab << "Next" << txf::tab << "DataS" << txf::tab << txf::tab << "PF" << txf::tab << "NF/L" << txf::nl;
 
-	if ( S_.Extent != 0 ) {
+	if ( _Extent() != 0 ) {
 		row__ Position = 0;
 		mdr::datum__ Header[MMM_HEADER_MAX_LENGTH];
 
@@ -131,9 +131,9 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 
 			Flow << txf::nl;
 
-			if ( Position == S_.Extent )
+			if ( Position == _Extent() )
 				Position = NONE;
-			else if ( *Position > S_.Extent )
+			else if ( *Position > _Extent() )
 				ERRc();
 
 		}
@@ -167,7 +167,7 @@ ERRBegin
 	Exists = uym::Connect( Multimemory.Memory, FileManager );
 
 	if ( Exists ) {
-		Multimemory.S_.Extent = FileManager.FileSize();
+		Multimemory.SetExtent( FileManager.FileSize() );
 		IFlow.Init( FileManager._FreeFragmentPositionFileName );
 
 		flw::Get( IFlow, Multimemory.S_.FreeFragment );
