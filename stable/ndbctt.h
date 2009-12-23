@@ -246,8 +246,6 @@ namespace ndbctt {
 		}
 		rrow__ Last( void ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Last();
@@ -264,8 +262,6 @@ namespace ndbctt {
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Next( Row );
@@ -282,8 +278,6 @@ namespace ndbctt {
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Previous( Row );
@@ -300,8 +294,6 @@ namespace ndbctt {
 		}
 		epeios::size__ Extent( void ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Extent();
@@ -318,8 +310,6 @@ namespace ndbctt {
 		}
 		epeios::size__ Amount( void ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Amount();
@@ -336,8 +326,6 @@ namespace ndbctt {
 		}
 		bso::bool__ Exists( rrow__ Row ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->Exists( Row );
@@ -354,8 +342,6 @@ namespace ndbctt {
 		}
 		bso::bool__ IsEmpty( void ) const
 		{
-			_Test();
-
 			switch ( _Test() ) {
 			case tStatic:
 				return _Static->IsEmpty();

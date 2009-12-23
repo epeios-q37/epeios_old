@@ -148,6 +148,11 @@ namespace mmg
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
 			Memory.plug( MD );
+
+			if ( &MD != NULL )
+				SetExtent( MD.Extent() );
+			else
+				SetExtent( 0 );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
@@ -168,9 +173,10 @@ namespace mmg
 				Memory.Allocate( sizeof( st ) );
 				StockerStatique();
 			}
-			else if ( Regle == mmg::rRecovery )
+			else if ( Regle == mmg::rRecovery ) {
+				SetExtent( Memory.Driver()->Extent() );
 				RecupererStatique();
-			else
+			} else
 				ERRc();
 		}
 		void StockerStatique( void )

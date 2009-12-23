@@ -154,9 +154,10 @@ namespace mmm {
 	public:
 		void reset( bool P = true )
 		{
-			if ( P )
-				Liberer_();
-			else
+			if ( P ) {
+				if ( Multimemoire_ != NULL )
+					Liberer_();
+			} else
 				Multimemoire_ = NULL;
 
 			_Descriptor = MMM_UNDEFINED_DESCRIPTOR;

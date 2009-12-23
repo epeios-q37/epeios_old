@@ -128,10 +128,7 @@ namespace mmi {
 			_Index = NONE;
 		}
 		//f The 'Index' memory becomes the memory handled by this memory driver.
-		void Index( index__ Index )
-		{
-			_Index = Index;
-		}
+		void Index( index__ Index );
 		//f Return the index of the current memory.
 		index__ Index( void ) const
 		{
@@ -408,6 +405,10 @@ namespace mmi {
 
 			return Index;
 		}
+		bso::bool__ Exists( index__ Index ) const
+		{
+			return Descripteurs.Exists( Index );
+		}
 		//f Put 'Amount' bytes in 'Buffer' from the 'Index' memory at 'Position' .
 		void Read(
 			index__ Index,
@@ -447,7 +448,12 @@ namespace mmi {
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
-			return Multimemoire.Size( Descripteurs( *Index ).Descripteur );
+			mmm::descriptor__ D = Descripteurs( *Index ).Descripteur;
+
+			if ( D != NONE )
+				return Multimemoire.Size( D );
+			else
+				return 0;
 		}
 		/*f Delete 'Amount' entries from 'Position',
 		'ActualCapacity' is the actual capacity.
@@ -604,6 +610,14 @@ namespace mmi {
 	inline epeios::size__ _base_indexed_multimemory_driver__::Size( void ) const
 	{
 		return Multimemoire_->Size( _Index );
+	}
+
+	inline void _base_indexed_multimemory_driver__::Index( index__ Index )
+	{
+		if ( ( Index != NONE) && ( Multimemoire_ != NULL ) && ( Multimemoire_->Exists( Index ) ) )
+			SetExtent( Multimemoire_->Size( Index ) );
+
+		_Index = Index;
 	}
 
 	inline void indexed_multimemory_driver__::MDRStore(
