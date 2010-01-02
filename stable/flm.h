@@ -595,6 +595,18 @@ namespace flm {
 	  public memoire_fichier_base___
 	{
 	protected:
+		virtual void MDRAllocate( mdr::size__ Size )
+		{
+			memoire_fichier_base___::Allocate( (iop::amount__)Size );
+		}
+		// alloue 'Taille' octets
+		virtual mdr::size__ MDRUnderlyingSize( void )
+		{
+			if ( Exists() )
+				return FileSize();
+			else
+				return 0;
+		}
 		virtual void MDRRecall(
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
@@ -619,14 +631,9 @@ namespace flm {
 			memoire_fichier_base___::Write( Buffer, (unsigned int)Amount, (position__)Position );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRAllocate( mdr::size__ Size )
-		{
-			memoire_fichier_base___::Allocate( (iop::amount__)Size );
-		}
-		// alloue 'Taille' octets
 	public:
-		file_memory_driver___( mdr::size__ &Extent )
-		: memory_driver__( Extent ),
+		file_memory_driver___( void )
+		: memory_driver__(),
 		  memoire_fichier_base___()
 		{}
 		void reset( bool P = true )
@@ -654,17 +661,10 @@ namespace flm {
 		{
 			memoire_fichier_base___::Init( ID, FlushToDevice, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
-
-			if ( Exists() )
-				E_MEMORY_DRIVER__::Allocate( FileSize() );
-
-
 		}
 	};
 
-	typedef mdr::E_STANDALONE_MEMORY_DRIVER__( flm::file_memory_driver___ ) standalone_file_memory_driver___;
-
-	#define E_FILE_MEMORY_DRIVER___	standalone_file_memory_driver___
+	#define E_FILE_MEMORY_DRIVER___	file_memory_driver___
 
 	void ReleaseInactiveFiles(
 		time_t Delay,

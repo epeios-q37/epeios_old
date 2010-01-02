@@ -73,7 +73,7 @@ void Test(
 void EssaiBase( int argc, char *argv[] )
 {
 ERRProlog
-	flm::standalone_file_memory_driver___ M;
+	flm::file_memory_driver___ M;
 	E_MULTIMEMORY P;
 	descriptor__ D[NOMBRE];
 	bso::ushort__ C = 1;
@@ -112,13 +112,13 @@ ERREpilog
 void EssaiComplet( int argc, char *argv[] )
 {
 ERRProlog
-	flm::standalone_file_memory_driver___ Memoire;
+	flm::file_memory_driver___ Memoire;
 	E_MULTIMEMORY P;
 	standalone_multimemory_driver__ U1, U2, U3;
 	bch::E_BUNCH( bso::ulong__ ) M1, M2, M3;
 	int i = 50;
 	bso::ulong__ j;
-	cvm::standalone_conventional_memory_driver__ M;
+	cvm::standalone_conventional_memory_driver___ M;
 //	int j;
 	flm::id__ ID = FLM_UNDEFINED_ID;
 ERRBegin
@@ -187,7 +187,7 @@ ERREpilog
 void Essai( void )
 {
 ERRProlog
-	flm::standalone_file_memory_driver___ Memoire;
+	flm::file_memory_driver___ Memoire;
 	E_MULTIMEMORY Multimemoire;
 	descriptor__ Descripteurs[100];
 	flm::id__ ID = FLM_UNDEFINED_ID;

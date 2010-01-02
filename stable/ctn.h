@@ -486,7 +486,6 @@ namespace ctn {
 			Mode_ = mdr::mReadOnly;
 		}
 		item_base_volatile__( void )
-		: Pilote_( ctn_S_.Extent )
 		{
 			reset( false );
 		}
@@ -604,7 +603,6 @@ namespace ctn {
 			Conteneur_ = NULL;
 		}
 		item_base_const__( void )
-		: Pilote_( ctn_S_.Extent )
 		{
 			reset( false );
 		}

@@ -88,7 +88,6 @@ namespace mmg
 	struct merger_memory_driver_s__
 	{
 		uym::untyped_memory_::s Memory;
-		mdr::size__ Extent;	// Passé à et entièrement pris en charge par 'mdr::E_MEMORY_DRIVER__'.
 	};
 
 
@@ -100,6 +99,22 @@ namespace mmg
 		// Pointeur sur la partie statique de l'objet à sauver.
 		mdr::datum__ *Static_;
 	protected:
+		// Alloue 'Capacite' octets.
+		virtual void MDRAllocate( mdr::size__ Capacity )
+		{
+			Memory.Allocate( Capacity + sizeof( st ) );
+		}
+		virtual mdr::size__ MDRUnderlyingSize( void )
+		{
+			mdr::size__ Size = Memory.Size();
+
+			if ( Size < sizeof( st ) )
+				ERRc();
+			else
+				Size -= sizeof( st );
+
+			return Size;
+		}
 		virtual void MDRRecall(
 			mdr::row_t__ Position,
 			mdr::size__ Amount,
@@ -115,22 +130,10 @@ namespace mmg
 			StockerStatique();
 			Memory.Store( Buffer, Amount, Position + sizeof( st ) );
 		}
-		// Alloue 'Capacite' octets.
-		virtual void MDRAllocate( mdr::size__ Capacity )
-		{
-			Memory.Allocate( Capacity + sizeof( st ) );
-		}
-		/* Synchronisation de la mémoire; met à jour la mémoire en vidant,
-		notamment, les caches */
 	public:
 		typedef merger_memory_driver_s__ s;
 		s &S_;
 		uym::untyped_memory_ Memory;
-		merger_memory_driver_( s &S )
-		: S_( S ),
-		  mdr::E_MEMORY_DRIVER__( S.Extent ),
-		  Memory( S.Memory )
-		{}
 		void reset(
 			bool P = true,
 			bool Ecriture = true )
@@ -145,14 +148,19 @@ namespace mmg
 			Memory.reset( P );
 			Static_ = NULL;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		merger_memory_driver_( s &S )
+		: S_( S ),
+		  Memory( S.Memory )
 		{
-			Memory.plug( MD );
-
-			if ( &MD != NULL )
-				SetExtent( MD.Extent() );
-			else
-				SetExtent( 0 );
+			reset( false );
+		}
+		~merger_memory_driver_( void )
+		{
+			reset();
+		}
+		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			return Memory.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
@@ -174,7 +182,6 @@ namespace mmg
 				StockerStatique();
 			}
 			else if ( Regle == mmg::rRecovery ) {
-				SetExtent( Memory.Driver()->Extent() );
 				RecupererStatique();
 			} else
 				ERRc();
@@ -361,7 +368,7 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::standalone_file_memory_driver___ PiloteFichier_;
+		flm::file_memory_driver___ PiloteFichier_;
 		flm::id__ _ID;
 	public:
 		void reset( bool P = true )
@@ -380,6 +387,10 @@ namespace mmg
 		: PiloteFichier_()
 		{
 			reset( false );
+		}
+		~file_merger___( void )
+		{
+			reset();
 		}
 		/*f Initialization with file named 'FileName'. The object is placed
 		in 'ObjectMode', and the file in 'FileMode'. Return a value which depends
@@ -430,12 +441,6 @@ namespace mmg
 		void Mode( mdr::mode__ Mode )
 		{
 			this->Mode( Mode, Mode );
-		}
-		// To change the default destruction order, which cuases error.
-		~file_merger___( void )
-		{
-			memory_merger<t, st>::reset();
-			PiloteFichier_.reset();
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ & )
 		{

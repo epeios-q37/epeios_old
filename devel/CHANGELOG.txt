@@ -1,5 +1,17 @@
 $Id$
 
+02/01/2010 :
+	- GENERAL :
+		- Refonte globale de la gestion de la notion d''extent'.
+
+01/01/2010 :
+	- GENERAL :
+		- Refonte globale de la gestion de la notion d''extent'.
+
+31/12/2009 :
+	- GENERAL :
+		- Refonte globale de la gestion de la notion d''extent'.
+
 22/12/2009 :
 	- MMI :
 		- La fonction 'New()' initialise maintenant correctement le descripteur associé.

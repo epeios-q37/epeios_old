@@ -460,7 +460,7 @@ namespace bch {
 	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
 	{
 	private:
-		mmi::standalone_indexed_multimemory_driver__ _IndexedMultimemoryDriver;
+		mmi::indexed_multimemory_driver__ _IndexedMultimemoryDriver;
 	public:
 		struct s
 		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s

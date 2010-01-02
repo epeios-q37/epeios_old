@@ -166,11 +166,10 @@ namespace mmm {
 		}
 		multimemory_driver__(
 			descriptor__ &Descriptor,
-			bso::ubyte__ &Addendum,
-			mdr::size__ &Extent )
+			bso::ubyte__ &Addendum )
 		: _Descriptor( Descriptor ),
 		  _Addendum( Addendum ),
-		  E_MEMORY_DRIVER__( Extent )
+		  E_MEMORY_DRIVER__()
 		{
 			reset( false );
 		}
@@ -220,9 +219,9 @@ namespace mmm {
 	class multimemory_
 	{
 	private:
-		bso::size__ _Extent( void ) const
+		bso::size__ _Size( void ) const
 		{
-			return Memory.GetDriverExtent();
+			return Memory.GetSize();
 		}
 		bso::ubyte__ _GetSizeLength( mdr::size__ Size ) const
 		{
@@ -312,7 +311,7 @@ namespace mmm {
 			mdr::datum__ *Header,
 			mdr::size__ Amount = MMM_HEADER_MAX_LENGTH ) const
 		{
-			Memory.Recall( *Position, ( *Position + Amount ) > _Extent() ? _Extent() - *Position : Amount, Header );
+			Memory.Recall( *Position, ( *Position + Amount ) > _Size() ? _Size() - *Position : Amount, Header );
 		}
 		bso::bool__ _IsFragmentUsed( const mdr::datum__ *Header ) const
 		{
@@ -713,7 +712,7 @@ namespace mmm {
 			if ( Size == 0 )
 				ERRc();
 #endif
-			if ( ( *Position + Size ) != _Extent() ) {
+			if ( ( *Position + Size ) != _Size() ) {
 				mdr::datum__ Header[MMM_HEADER_MAX_LENGTH];
 
 				_GetHeader( *Position + Size, Header );
@@ -738,7 +737,7 @@ namespace mmm {
 			if  ( Size > MMM_ORPHAN_MAX_SIZE ) {
 				row__ PreviousFreeFragmentPosition = NONE, NextFreeFragmentPosition = NONE;
 
-				if ( ( *Position + Size ) != _Extent()	)	// If the freed fragment becomes the last one, it is not included in the list, because it is handled otherwher else.
+				if ( ( *Position + Size ) != _Size()	)	// If the freed fragment becomes the last one, it is not included in the list, because it is handled otherwher else.
 					_ReportNewFreeFragment( Position, PreviousFreeFragmentPosition, NextFreeFragmentPosition );
 
 				_MarkAsFreeFragment( Position, Size, PreviousFreeFragmentPosition, NextFreeFragmentPosition );
@@ -811,12 +810,12 @@ namespace mmm {
 			if ( Size == 0 )
 				ERRc();
 
-			if ( *RemainderPosition > _Extent() )
+			if ( *RemainderPosition > _Size() )
 				ERRc();
 #endif
 			_ExciseFreeFragment( Position, Header );
 
-			if ( RemainderPosition != _Extent() )
+			if ( RemainderPosition != _Size() )
 				if ( Size != FragmentCurrentSize )
 					_SetAsFreeFragment( RemainderPosition, FragmentCurrentSize - Size );
 				else
@@ -879,11 +878,11 @@ namespace mmm {
 				} else if ( FreeFragmentSize <= Size ) {
 					if ( FreeFragmentSize != Size ) {
 /*
-						S_.Extent += Size - FreeFragmentSize;
+						S_.Size += Size - FreeFragmentSize;
 
-						Memory.Allocate( S_.Extent );
+						Memory.Allocate( S_.Size );
 */
-						Memory.Allocate( _Extent() + Size - FreeFragmentSize );
+						Memory.Allocate( _Size() + Size - FreeFragmentSize );
 					}
 
 					S_.TailingFreeFragmentPosition = NONE;
@@ -891,13 +890,13 @@ namespace mmm {
 					ERRc();
 
 			} else {
-				Row = _Extent();
+				Row = _Size();
 /*
-				S_.Extent += Size;
+				S_.Size += Size;
 
-				Memory.Allocate( S_.Extent );
+				Memory.Allocate( S_.Size );
 */
-				Memory.Allocate( _Extent() + Size );
+				Memory.Allocate( _Size() + Size );
 			}
 
 			return Row;
@@ -1167,7 +1166,7 @@ namespace mmm {
 			row__ TargetSecondFragmentRow,
 			const mdr::size__ TargetSecondFragmentSize  )
 			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
-			et non pas sur le début des fragments respectis. */
+			et non pas sur le début des fragments respectifs. */
 		{
 			if ( SourceFirstFragmentSize > TargetFirstFragmentSize )
 				Memory.Store(
@@ -1190,7 +1189,7 @@ namespace mmm {
 			row__ TargetSecondFragmentRow,
 			mdr::size__ TargetSecondFragmentSize  )
 			/* ATTENTION : Les différents 'row' pointent directement sur les données des fragment respectifs (aprés l'indicateur de taille),
-			et non pas sur le début des fragments respectis. */
+			et non pas sur le début des fragments respectifs. */
 		{
 			_MoveHead(
 				SourceFirstFragmentRow, SourceFirstFragmentSize,
@@ -1260,18 +1259,18 @@ namespace mmm {
 			addendum__ &Addendum )	// The fragment must not be a  linked fragment.
 		{
 #ifdef MMM_DBG
-			if ( ( *Descriptor + _GetUsedFragmentTotalSize( Header ) ) != _Extent() )
+			if ( ( *Descriptor + _GetUsedFragmentTotalSize( Header ) ) != _Size() )
 				ERRc();
 
 			if ( _IsUsedFragmentLinked( Header ) )
 				ERRc();
 #endif
 /*
-			S_.Extent += _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header );
+			S_.Size += _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header );
 
-			Memory.Allocate( S_.Extent );
+			Memory.Allocate( S_.Size );
 */
-			Memory.Allocate( _Extent() + _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header ) );
+			Memory.Allocate( _Size() + _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header ) );
 
 			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
@@ -1293,7 +1292,7 @@ namespace mmm {
 			S_.TailingFreeFragmentPosition = NONE;
 
 #pragma message( "Point délicat ici !" )
-//			S_.Extent = *Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
+//			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
 
 			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
 		}
@@ -1319,10 +1318,10 @@ namespace mmm {
 			if ( Delta < _GetFreeFragmentSize( NextFragmentHeader ) )
 				_SetAsFreeFragment( *NextFragmentPosition + Delta, _GetFreeFragmentSize( NextFragmentHeader ) - Delta );
 			else if ( Delta == _GetFreeFragmentSize( NextFragmentHeader ) ) {
-				if ( ( *NextFragmentPosition + Delta ) < _Extent() )
+				if ( ( *NextFragmentPosition + Delta ) < _Size() )
 					_SetUsedFragmentFreeFlag( *NextFragmentPosition + Delta, false );
 #ifdef MMM_DBG
-				else if ( ( *NextFragmentPosition + Delta ) > _Extent() )
+				else if ( ( *NextFragmentPosition + Delta ) > _Size() )
 					ERRc();
 #endif
 			} else if ( Delta > _GetFreeFragmentSize( NextFragmentHeader ) )
@@ -1369,11 +1368,11 @@ namespace mmm {
 			mdr::size__ TotalSize = _GetUsedFragmentTotalSize( Header );
 			row__ NextFragmentPosition = _GetUsedFragmentNextFragmentPosition( Descriptor, Header );
 
-			if ( NextFragmentPosition == _Extent() )  {
+			if ( NextFragmentPosition == _Size() )  {
 				_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
 
 				return true;
-			} else if ( *NextFragmentPosition < _Extent() ) {
+			} else if ( *NextFragmentPosition < _Size() ) {
 				mdr::datum__ NextFragmentHeader[MMM_HEADER_MAX_LENGTH];
 
 				_GetHeader( NextFragmentPosition, NextFragmentHeader );
@@ -1493,20 +1492,26 @@ namespace mmm {
 		struct s 
 		{
 			uym::untyped_memory_ ::s Memory;
-//			mdr::size__ Extent;
+//			mdr::size__ Size;
 			row__ FreeFragment;	// Position d'un fragment libre. NONE si aucun.
 			row__ TailingFreeFragmentPosition;	// If the last fragment is a free one, this is its position (orphan or not).
 		} &S_;
-		multimemory_( s &S )
-		: S_( S ) ,
-		  Memory( S.Memory )
-		{}
 		void reset( bso::bool__ P = true )
 		{
 			Memory.reset( P );
-//			S_.Extent = 0;
+//			S_.Size = 0;
 			S_.FreeFragment = NONE;
 			S_.TailingFreeFragmentPosition = NONE;
+		}
+		multimemory_( s &S )
+		: S_( S ) ,
+		  Memory( S.Memory )
+		{
+			reset( false );
+		}
+		~multimemory_( void )
+		{
+			reset();
 		}
 		void plug( multimemory_ &MM )
 		{
@@ -1518,10 +1523,10 @@ namespace mmm {
 		}
 		multimemory_ &operator =( const multimemory_ &M )
 		{
-			Memory.Allocate( M._Extent() );
-			Memory.Store( M.Memory, M._Extent(), 0 );
+			Memory.Allocate( M._Size() );
+			Memory.Store( M.Memory, M._Size(), 0 );
 
-//			S_.Extent = M.S_.Extent;
+//			S_.Size = M.S_.Size;
 			S_.FreeFragment = M.S_.FreeFragment;
 			S_.TailingFreeFragmentPosition = M.S_.TailingFreeFragmentPosition;
 
@@ -1531,15 +1536,15 @@ namespace mmm {
 		{
 			Memory.Init();
 
-//			S_.Extent = 0;
+//			S_.Size = 0;
 			S_.FreeFragment = NONE;
 			S_.TailingFreeFragmentPosition = NONE;
 		}
-		void SetExtent( bso::size__ Value )
+		void SetSize( bso::size__ Value )
 		{
-			Memory.SetDriverExtent( Value );
+			Memory.SetSize( Value );
 		}
-		void Flush( void ) const
+		void Flush( void )
 		{
 			Memory.Flush();
 		}
@@ -1668,10 +1673,10 @@ namespace mmm {
 		}
 		void Preallocate( mdr::size__ Size )
 		{
-			if ( _Extent() > Size )
+			if ( _Size() > Size )
 				ERRu();
-			else if ( _Extent() != Size ) {
-				Size -= _Extent();
+			else if ( _Size() != Size ) {
+				Size -= _Size();
 				row__ Row = _AppendNewFragment( Size );
 				_SetAsFreeFragment( Row,Size );
 
@@ -1751,21 +1756,20 @@ namespace mmm {
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager );
 
-
 	class standalone_multimemory_driver__
-	: public multimemory_driver__
-	{
-	private:
-		mdr::size__ _Extent;
-		descriptor__ _Descriptor;
-		bso::ubyte__ _Addendum;
-	public:
-		standalone_multimemory_driver__( void )
-		: multimemory_driver__( _Descriptor, _Addendum, _Extent )
-		{}
-	};
+		: public multimemory_driver__
+		{
+		private:
+			descriptor__ _Descriptor;
+			bso::ubyte__ _Addendum;
+		public:
+			standalone_multimemory_driver__( void )
+			: multimemory_driver__( _Descriptor, _Addendum )
+			{}
+		};
 
-	#define E_MULTIMEMORY_DRIVER__	standalone_multimemory_driver__
+
+	#define E_MULTIMEMORY_DRIVER__	multimemory_driver__
 	E_AUTO( multimemory )
 
 	inline void multimemory_driver__::Liberer_( void )

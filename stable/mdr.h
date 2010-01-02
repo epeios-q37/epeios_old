@@ -106,22 +106,19 @@ namespace mdr {
 	//c Abstract memory driver. Use 'E_MEMORY_DRIVER__' instead directly this class.
 	class memory_driver__
 	{
-	private:
-		mdr::size__ &_Extent;
-#ifdef MDR_DBG
-		void _Test(
-			row_t__ Position,
-			size__ Amount ) const
-		{
-			if ( Position >= _Extent )
-				if ( Amount > 0 )
-					ERRu();
-
-			if ( ( Position + Amount ) > _Extent )
-				ERRu();
-		}
-#endif
 	protected:
+		// Alloue 'Size' octet.
+		virtual void MDRAllocate( size__ Size )
+		{
+			ERRu();
+			// For read-only memory.
+		}
+		/* Si la mémoire repose sur une mémoire persistante (un fichier, par exemple), retourne la taille de cette mémoire,
+		ou, si non initialisée (fichier absent, par exemple), ou non persistente, retourne 0 */
+		virtual size__ MDRUnderlyingSize( void )
+		{
+			return 0;
+		}
 		//v Recall 'Amount' at position 'Position' and put them in 'Buffer'.
 		virtual void MDRRecall(
 			row_t__ Position,
@@ -136,22 +133,14 @@ namespace mdr {
 			ERRu();
 			// For read-only memory.
 		}
-		//v Alloue 'Size' octet.
-		virtual void MDRAllocate( size__ Size )
-		{
-			ERRu();
-			// For read-only memory.
-		}
 		//v Flush caches.
 		virtual void MDRFlush( void )
 		{
 			ERRu();
 			// for read-only memory.
 		}
-		datum__ *_Pointer;	// Only for the conventional memory driver.
 	public:
-		memory_driver__( mdr::size__ &Extent )
-		: _Extent( Extent )
+		memory_driver__( void )
 		{
 			reset( false );
 		}
@@ -161,13 +150,21 @@ namespace mdr {
 		}
 		void reset( bool = true )
 		{
-			_Extent = 0;
-			_Pointer = NULL;
+			// A des fins de standardisation.
 		}
 		//f Initialization.
 		void Init( void )
 		{
 			reset();
+		}
+		//f Allocate 'Size' bytes in memory.
+		void Allocate( size__ Size )
+		{
+			MDRAllocate( Size );
+		}
+		size__ UnderlyingSize( void )
+		{
+			return MDRUnderlyingSize();
 		}
 		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
 		void Recall(
@@ -175,13 +172,7 @@ namespace mdr {
 			size__ Amount,
 			datum__ *Buffer )
 		{
-#ifdef MDR_DBG
-			_Test( Position, Amount );
-#endif
-			if ( _Pointer != NULL )
-				memcpy( Buffer, _Pointer + Position, Amount );
-			else
-				MDRRecall( Position, Amount, Buffer );
+			MDRRecall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
 		void Store(
@@ -189,61 +180,16 @@ namespace mdr {
 			size__ Amount,
 			row_t__ Position )
 		{
-#ifdef MDR_DBG
-			_Test( Position, Amount );
-#endif
-			if ( _Pointer != NULL )
-				memcpy( _Pointer + Position, Buffer, Amount );
-			else
-				MDRStore( Buffer, Amount, Position );
-		}
-		//f Allocate 'Size' bytes in memory.
-		void Allocate( size__ Size )
-		{
-			MDRAllocate( Size );
-			_Extent = Size;
+			MDRStore( Buffer, Amount, Position );
 		}
 		//f Flush buffers.
 		void Flush( void )
 		{
-			if ( _Pointer == NULL )
-				MDRFlush();
-		}
-		E_RWDISCLOSE__( bso::size__, Extent );
-	};
-
-/*
-	class memory_driver
-	: public memory_driver_
-	{
-	public:
-		memory_driver_::s static_;
-		memory_driver( void )
-		: memory_driver_( static_ )
-		{
-			memory_driver_::reset( false );
-		}
-		virtual ~memory_driver( void )
-		{
-			memory_driver_::reset( true );
+			MDRFlush();
 		}
 	};
-*/
 
 	#define E_MEMORY_DRIVER__	memory_driver__
-
-	template <typename md> class standalone_memory_driver__
-	: public md
-	{
-	private:
-		mdr::size__ _Extent;
-	public:
-		standalone_memory_driver__( void )
-		: md( _Extent )
-		{}
-	};
-
-	#define E_STANDALONE_MEMORY_DRIVER__( md ) standalone_memory_driver__<md>
 }
 
 /*$END$*/

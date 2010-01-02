@@ -78,7 +78,7 @@ extern class ttr_tutor &UYMTutor;
 #ifdef UYM__DEFAULT_MEMORY_DRIVER
 #	define UYM_DEFAULT_MEMORY_DRIVER UYM__DEFAULT_MEMORY_DRIVER
 #else
-#	define UYM_DEFAULT_MEMORY_DRIVER cvm::E_CONVENTIONAL_MEMORY_DRIVER__
+#	define UYM_DEFAULT_MEMORY_DRIVER cvm::conventional_memory_driver__
 #endif
 
 /*
@@ -99,89 +99,128 @@ extern class ttr_tutor &UYMTutor;
 
 namespace uym {
 	// Pilote mémoire.
-	class _memory_driver
+	class _memory_driver__
 	{
 	private:
 		// Le pilote.
-		mdr::E_MEMORY_DRIVER__ *Pilote_;
+		mdr::E_MEMORY_DRIVER__ *_Driver;
 		// Indique si le pilote a été défini de manière interne ou non.
-		bso::bool__ Interne_;
+		bso::bool__ _Internal;
+		// Uniquement pour la 'conventional_memory__'.
+		mdr::datum__ *_CVMBuffer;
+		void _Test( void ) const
+		{
+#ifdef UYM_DBG
+			if ( _Driver == NULL )
+				ERRu();
+#endif
+		}
 	public:
 		void reset( bool P = true )
 		{
 			if ( P )
 			{
-				if ( Interne_ )
+				if ( _Internal )
 				{
-					delete Pilote_;
-					Interne_ = false;
-					Pilote_ = NULL;
+					delete _Driver;
+					_Internal = false;
+					_Driver = NULL;
 				}
 
 			} else {
-				Pilote_ = NULL;
-				Interne_ = false;
+				_Driver = NULL;
+				_Internal = false;
 			}
+
+			_CVMBuffer = NULL;
 		}
-		_memory_driver( void )
+		_memory_driver__( void )
 		{
 			reset( false );
 		}
-		virtual ~_memory_driver( void )
+		virtual ~_memory_driver__( void )
 		{
 			reset( true );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &Pilote )
+		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &Driver )
 		{
-			if ( &Pilote != NULL )
-			{
-				if ( Interne_ )
-					delete Pilote_;
+			reset();
 
-				Pilote_ = &Pilote;
-				Interne_ = false;
-			}
-			else if ( !Interne_ )
-				Pilote_ = NULL;
+			if ( &Driver != NULL ) {
+				_Driver = &Driver;
+
+				return UnderlyingSize();
+			} else
+				return 0;
 		}
 		// Initialization.
 		void Init( void )
 		{
-			if ( Pilote_ == NULL )
+			if ( _Driver == NULL )
 			{
-				if ( ( Pilote_ = new UYM_DEFAULT_MEMORY_DRIVER ) == NULL )
+				if ( ( _Driver = new UYM_DEFAULT_MEMORY_DRIVER( _CVMBuffer ) ) == NULL )
 					ERRa();
 				else
 				{
-					Interne_ = true;
-					((UYM_DEFAULT_MEMORY_DRIVER *)Pilote_)->Init();
+					_Internal = true;
+					((UYM_DEFAULT_MEMORY_DRIVER *)_Driver)->Init();
 				}
 			}
 		}
 		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYM_DBG
-			if ( !Ignore && !Pilote_ )
+			if ( !Ignore && !_Driver )
 				ERRu();
 	#endif
-			return Pilote_;
+			return _Driver;
 		}
-		// Operateur d'indirection.
-		mdr::E_MEMORY_DRIVER__ *operator ->( void ) const
+		void Allocate( mdr::size__ Size )
 		{
-			return Driver();
+			_Test();
+
+			_Driver->Allocate( Size );
 		}
-		operator bool( void ) const
+		mdr::size__ UnderlyingSize( void )
 		{
-			return Pilote_ != NULL;
+			_Test();
+
+			return _Driver->UnderlyingSize();
 		}
-		bso::size__ Extent( void ) const
+		void Recall(
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer ) const
 		{
-			return Pilote_->Extent();
+			_Test();
+
+			if ( _CVMBuffer != NULL )
+				memcpy( Buffer, _CVMBuffer + Position, Amount );
+			else
+				_Driver->Recall( Position, Amount, Buffer );
 		}
-		void SetExtent( bso::size__ Value )
+		void Store(
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
+			mdr::row_t__ Position )
 		{
-			Pilote_->Extent() = Value;
+			_Test();
+
+			if ( _CVMBuffer != NULL )
+				memcpy( _CVMBuffer + Position, Buffer, Amount );
+			else
+				_Driver->Store( Buffer, Amount, Position );
+		}
+		void Flush( void )
+		{
+			_Test();
+
+			if ( _CVMBuffer == NULL )
+				_Driver->Flush();
+		}
+		bso::bool__ IsSet( void ) const
+		{
+			return _Driver != NULL;
 		}
 	};
 
@@ -190,74 +229,86 @@ namespace uym {
 	{
 	private:
 		// Le pilote mémoire.
-		_memory_driver Pilote_;
+		_memory_driver__ _Driver;
 		// l'éventuel pilote de la multimemoire
-		mmm::multimemory_driver__ PiloteMultimemoire_;
-	#ifdef UYM_DBG
-		void _Test( void ) const
+		mmm::multimemory_driver__ _MultimemoryDriver;
+		void _Test(
+			mdr::row_t__ Position,
+			mdr::size__ Amount ) const
 		{
-			if ( !Pilote_ )
+#ifdef UYM_DBG
+			if ( Position >= S_.Size )
+				if ( Amount > 0 )
+					ERRu();
+
+			if ( ( Position + Amount ) > S_.Size )
 				ERRu();
+#endif
 		}
-	#endif
 		void _Recall(
 			mdr::row_t__ Position,
-			mdr::size__ Nombre, 
-			mdr::datum__ *Tampon ) const
+			mdr::size__ Amount, 
+			mdr::datum__ *Buffer ) const
 		{
-	#ifdef UYM_DBG
-			_Test();
-	#endif
-			Pilote_->Recall( Position, Nombre, Tampon );
+			_Test( Position, Amount );
+
+			_Driver.Recall( Position, Amount, Buffer );
 		}
 		void _Store(
-			const mdr::datum__ *Tampon,
-			mdr::size__ Nombre,
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
 			mdr::row_t__ Position )
 		{
-	#ifdef UYM_DBG
-			_Test();
-	#endif
-			Pilote_->Store( Tampon, Nombre, Position );
+			_Test( Position, Amount );
+
+			_Driver.Store( Buffer, Amount, Position );
 		}
 		void _Allocate( mdr::size__ Size )
 		{
-	#ifdef UYM_DBG
-			_Test();
-	#endif
-			Pilote_->Allocate( Size );
+			_Driver.Allocate( Size );
+			S_.Size = Size;
 		}
-		void _Flush( void ) const
+		void _Flush( void )
 		{
-			if ( Pilote_ )
-				Pilote_->Flush();
+			_Driver.Flush();
 		}
 	public:
 		struct s {
+			mdr::size__ Size;
 			mmm::descriptor__ MultimemoryDriverDescriptor;
-			mdr::size__ MultimemoryDriverExtent;
-			bso::ubyte__ Addendum;
+			bso::ubyte__ MultimemoryDriverAddendum;
 		} &S_;
-		void reset( bool P )
+		void reset( bool P = true )
 		{
-			Pilote_.reset( P );
-			PiloteMultimemoire_.reset( P );
+			_Driver.reset( P );
+			_MultimemoryDriver.reset( P );
+
+			S_.Size = 0;
+			S_.MultimemoryDriverDescriptor = MMM_UNDEFINED_DESCRIPTOR;
+			S_.MultimemoryDriverAddendum = 0;
 		}
 		untyped_memory_( s &S )
 		: S_( S ),
-		  PiloteMultimemoire_( S.MultimemoryDriverDescriptor, S.Addendum, S.MultimemoryDriverExtent )
+		  _MultimemoryDriver( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum )
 		{
 			reset( false );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &Driver  )
+		~untyped_memory_( void )
 		{
-			PiloteMultimemoire_.reset();
-			Pilote_.plug( Driver );
+			reset();
+		}
+		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &Driver  )
+		{
+			reset();
+
+			return _Driver.plug( Driver );
 		}
 		void plug( mmm::multimemory_ &MMM )
 		{
-			PiloteMultimemoire_.Init( MMM );
-			Pilote_.plug( PiloteMultimemoire_ );
+			reset();
+
+			_MultimemoryDriver.Init( MMM );
+			_Driver.plug( _MultimemoryDriver );
 		}
 		untyped_memory_ &operator =( const untyped_memory_ & ) const
 		{
@@ -268,7 +319,10 @@ namespace uym {
 		//f Initialization.
 		void Init( void )
 		{
-			Pilote_.Init();
+			if ( !_Driver.IsSet() )
+				reset();
+
+			_Driver.Init();
 		}
 		void WriteToFlow(
 			mdr::row_t__ Position,
@@ -351,22 +405,14 @@ namespace uym {
 		//f Return the used memory driver. 'Ignore' is only for 'UYM_DBG' mode and for the 'MMG' library.
 		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false )
 		{
-			return Pilote_.Driver( Ignore );
+			return _Driver.Driver( Ignore );
 		}
 		//f Flushes all the caches.
-		void Flush( void ) const
+		void Flush( void )
 		{
 			_Flush();
 		}
-		bso::size__ GetDriverExtent( void ) const
-		{
-			return Pilote_.Extent();
-		}
-		void SetDriverExtent( bso::size__ Value )
-		{
-			Pilote_.SetExtent( Value );
-		}
-
+		E_RWDISCLOSE_( mdr::size__, Size );
 	};
 
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
