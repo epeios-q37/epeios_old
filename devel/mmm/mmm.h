@@ -135,6 +135,9 @@ namespace mmm {
 		bso::ubyte__ &_Addendum;
 		void Liberer_();
 	protected:
+		virtual void MDRAllocate( mdr::size__ Size );
+		// Fonction déportée.
+		virtual mdr::size__ MDRUnderlyingSize( void );
 		// fonction déportée
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
 		virtual void MDRRecall(
@@ -149,7 +152,6 @@ namespace mmm {
 			mdr::row_t__ Position );
 		// fonction déportée
 		// alloue 'Capacite' octets
-		virtual void MDRAllocate( mdr::size__ Size );
 		virtual void MDRFlush( void );
 	public:
 		void reset( bool P = true )
@@ -1778,6 +1780,19 @@ namespace mmm {
 			Multimemoire_->Free( _Descriptor );
 	}
 
+	inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
+	{
+		_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size, _Addendum );
+	}
+
+	inline mdr::size__ multimemory_driver__::MDRUnderlyingSize( void )
+	{
+		if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
+			return Multimemoire_->Size( _Descriptor );
+		else
+			return 0;
+	}
+
 	inline void multimemory_driver__::MDRRecall(
 		mdr::row_t__ Position,
 		mdr::size__ Amount,
@@ -1794,11 +1809,6 @@ namespace mmm {
 		Multimemoire_->Write( Buffer, Amount, _Descriptor, Position, _Addendum );
 	}
 	// écrit 'Nombre' octets à la position 'Position'
-	inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
-	{
-		_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size, _Addendum );
-	}
-	// alloue 'Capacite' octets
 
 	inline void multimemory_driver__::MDRFlush( void )
 	{

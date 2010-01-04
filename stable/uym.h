@@ -146,11 +146,11 @@ namespace uym {
 		{
 			reset();
 
-			if ( &Driver != NULL ) {
-				_Driver = &Driver;
+			_Driver = &Driver;
 
+			if ( _Driver != NULL )
 				return UnderlyingSize();
-			} else
+			else
 				return 0;
 		}
 		// Initialization.
@@ -218,7 +218,7 @@ namespace uym {
 			if ( _CVMBuffer == NULL )
 				_Driver->Flush();
 		}
-		bso::bool__ IsSet( void ) const
+		bso::bool__ IsPlugged( void ) const
 		{
 			return _Driver != NULL;
 		}
@@ -301,7 +301,7 @@ namespace uym {
 		{
 			reset();
 
-			return _Driver.plug( Driver );
+			return S_.Size = _Driver.plug( Driver );
 		}
 		void plug( mmm::multimemory_ &MMM )
 		{
@@ -319,10 +319,14 @@ namespace uym {
 		//f Initialization.
 		void Init( void )
 		{
-			if ( !_Driver.IsSet() )
+			if ( !IsPlugged() )
 				reset();
 
 			_Driver.Init();
+		}
+		bso::bool__ IsPlugged( void ) const
+		{
+			return _Driver.IsPlugged();
 		}
 		void WriteToFlow(
 			mdr::row_t__ Position,

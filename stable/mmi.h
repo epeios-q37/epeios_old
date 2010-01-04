@@ -80,6 +80,17 @@ namespace mmi {
 		index__ _Index;
 		const indexed_multimemory_ *&Multimemoire_;
 	protected:
+		virtual void MDRAllocate( mdr::size__ Capacity )
+		{
+			ERRu();
+		}
+		virtual mdr::size__ MDRUnderlyingSize( void )
+		{
+			if ( Multimemoire_ != NULL )
+				return Size();
+			else
+				return 0;
+		}
 		// Déportée.
 		virtual void MDRRecall(
 			mdr::row_t__ Position,
@@ -89,10 +100,6 @@ namespace mmi {
 			const mdr::datum__ *Buffer,
 			mdr::size__ Amount,
 			mdr::row_t__ Position )
-		{
-			ERRu();
-		}
-		virtual void MDRAllocate( mdr::size__ Capacity )
 		{
 			ERRu();
 		}

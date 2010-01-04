@@ -1,5 +1,9 @@
 $Id$
 
+04/01/2010 :
+	- GENERAL :
+		- Refonte globale de la gestion de la notion d''extent'.
+
 02/01/2010 :
 	- GENERAL :
 		- Refonte globale de la gestion de la notion d''extent'.

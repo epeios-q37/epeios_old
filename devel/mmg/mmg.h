@@ -108,10 +108,10 @@ namespace mmg
 		{
 			mdr::size__ Size = Memory.Size();
 
-			if ( Size < sizeof( st ) )
-				ERRc();
-			else
+			if ( Size >= sizeof( st ) )
 				Size -= sizeof( st );
+			else if ( Size != 0 )
+				ERRc();
 
 			return Size;
 		}
@@ -170,7 +170,8 @@ namespace mmg
 			st *Static,
 			rule Regle )
 		{
-			reset();
+			if ( !IsPlugged() )
+				reset();
 
 			Static_ = (mdr::datum__ *)Static;
 			mdr::E_MEMORY_DRIVER__::Init();
@@ -210,6 +211,10 @@ namespace mmg
 		mdr::mode__ Mode( void )
 		{
 			return Mode_;
+		}
+		bso::bool__ IsPlugged( void ) const
+		{
+			return Memory.IsPlugged();
 		}
 	};
 
@@ -277,10 +282,26 @@ namespace mmg
 			S_.State = mmg::sMortal;
 
 		}
+		//f Utilisation de 'Pilote' comme pilote mémoire.
+		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			mdr::size__ Size = Driver_.plug( MD );
+			Memoire.plug( Driver_ );	// Notamment pour initialiser correctement le 'size'.
+
+			return Size;
+		}
+		void plug( mmm::multimemory_ &MM )
+		{
+			Memoire.Synchronize();
+
+			PiloteMultimemoire_.plug( MM );
+			Driver_.plug( PiloteMultimemoire_ );
+		}
 		//f Initialization with rule 'Rule' and mode 'Mode'.
 		void Init( mmg::rule Rule )
 		{
-			reset();
+			if ( !Driver_.IsPlugged() )
+				reset();
 
 			Object.plug( Memoire );
 
@@ -291,23 +312,11 @@ namespace mmg
 			if ( Rule == mmg::rCreation )
 				Memoire.Init();
 		}
-		//f Utilisation de 'Pilote' comme pilote mémoire.
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
-		{
-			Driver_.plug( MD );
-		}
 		//f The memory is unpluged and can be used by an other object.
 		void Immortalize( void )
 		{
 			Driver_.StockerStatique();
 			Driver_.plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
-		}
-		void plug( mmm::multimemory_ &M )
-		{
-			Memoire.Synchronize();
-
-			PiloteMultimemoire_.plug( M );
-			Driver_.Memory.plug( PiloteMultimemoire_ );
 		}
 		//f Write to 'OFLow' as raw data.
 		void Write( flw::oflow__ &OFlow ) const
