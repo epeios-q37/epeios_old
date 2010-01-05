@@ -174,6 +174,9 @@ namespace ndbidx {
 	class index_
 	{
 	private:
+		sort_function__ *_SortPointer;
+		const ndbctt::content__ *_ContentPointer;
+		time_t _ModificationTimeStamp;
 		bso::sign__ _Seek(
 			const datum_ &Data,
 			skip_level__ SkipLevel,
@@ -187,7 +190,7 @@ namespace ndbidx {
 			if ( !S_.Content->InitializationCompleted() && CompleteInitializationIfNeeded )
 				S_.Content->CompleteInitialization();
 */
-			return *S_.Content;
+			return *_ContentPointer;
 		}
 		void _Retrieve(
 			rrow__ Row,
@@ -198,10 +201,10 @@ namespace ndbidx {
 		}
 		void _Touch( bso::bool__ CompareWithContent )
 		{
-			S_.ModificationTimeStamp = tol::Clock( false );
+			_ModificationTimeStamp = tol::Clock( false );
 
-			if ( CompareWithContent && ( S_.ModificationTimeStamp == Content( true ).ModificationTimeStamp() ) )
-				S_.ModificationTimeStamp = tol::Clock( true );
+			if ( CompareWithContent && ( _ModificationTimeStamp == Content( true ).ModificationTimeStamp() ) )
+				_ModificationTimeStamp = tol::Clock( true );
 		}
 		rrow__ _SearchStrictGreater(
 			rrow__ Row,
@@ -212,9 +215,6 @@ namespace ndbidx {
 		{
 			_index_::s BaseIndex;
 			rrow__ Root;
-			sort_function__ *Sort;
-			const ndbctt::content__ *Content;
-			time_t ModificationTimeStamp;
 		} &S_;
 		index_( s &S )
 		: S_( S ),
@@ -225,10 +225,10 @@ namespace ndbidx {
 			BaseIndex.reset( P );
 			S_.Root = NONE;
 
-			S_.Sort = NULL;
-			S_.Content = NULL;
+			_SortPointer = NULL;
+			_ContentPointer = NULL;
 
-			S_.ModificationTimeStamp = 0;
+			_ModificationTimeStamp = 0;
 		}
 		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -240,10 +240,10 @@ namespace ndbidx {
 			BaseIndex = I.BaseIndex;
 			S_.Root = I.S_.Root;
 
-			S_.Sort = I.S_.Sort;
+/*			S_.Sort = I.S_.Sort;
 			S_.Content = I.S_.Content;
 
-			S_.ModificationTimeStamp = I.S_.ModificationTimeStamp;
+*/			_ModificationTimeStamp = I._ModificationTimeStamp;
 
 			return *this;
 		}
@@ -254,10 +254,10 @@ namespace ndbidx {
 			BaseIndex.Init();
 			S_.Root = NONE;
 
-			S_.Content = &Content;
-			S_.Sort = &Sort;
+			_ContentPointer = &Content;
+			_SortPointer = &Sort;
 
-			S_.ModificationTimeStamp = 0;
+			_ModificationTimeStamp = 0;
 		}
 		// Vide l'index.
 		void Reset( void )
@@ -265,7 +265,7 @@ namespace ndbidx {
 			S_.Root = NONE;
 			BaseIndex.Init();
 
-			S_.ModificationTimeStamp = 0;
+			_ModificationTimeStamp = 0;
 		}
 		void Allocate(
 			mdr::size__ Size,
@@ -339,7 +339,7 @@ namespace ndbidx {
 			skip_level__ SkipLevel ) const;
 		rrow__ SearchRoot( void )
 		{	
-			rrow__ Candidate = S_.Root = S_.Content->First();
+			rrow__ Candidate = S_.Root = _Content( false ).First();
 
 			if ( Candidate != NONE ) 
 				while ( ( Candidate = BaseIndex.GetTreeParent( Candidate ) ) != NONE )
@@ -388,11 +388,11 @@ namespace ndbidx {
 		}
 		bso::bool__ IsSynchronized( void ) const
 		{
-			return S_.ModificationTimeStamp > _Content( false ).ModificationTimeStamp();
+			return _ModificationTimeStamp > _Content( false ).ModificationTimeStamp();
 		}
 		sort_function__ &SortFunction( void ) const
 		{
-			return *S_.Sort;
+			return *_SortPointer;
 		}
 		const ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const
 		{
@@ -414,7 +414,7 @@ namespace ndbidx {
 		}
 		rrow__ Test( void ) const;
 		void Reindex( observer_functions__ &Observer );
-		E_RODISCLOSE_( time_t, ModificationTimeStamp );
+		E_RODISCLOSE__( time_t, ModificationTimeStamp );
 	};
 
 	E_AUTO( index )

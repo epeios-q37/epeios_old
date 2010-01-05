@@ -100,7 +100,7 @@ ERRBegin
 
 		_Retrieve( Row, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, SkipLevel ) ) {
+		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, SkipLevel ) ) {
 		case 0:
 			switch ( EqualBehavior ) {
 			case bStop:
@@ -241,7 +241,7 @@ ERRBegin
 
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
+		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
 			Result = -1;	// Pour forcer son positionnement en tant que premier.
 		case -1:
@@ -265,7 +265,7 @@ ERRBegin
 
 		_Retrieve( TargetRow, DatumToCompare, Cache );
 
-		switch ( Result = S_.Sort->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
+		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
 			Result = 1;	// Pour forcer son positionnement en tant que dernier.
 		case 1:
@@ -399,7 +399,7 @@ ERRBegin
 
 	_Content( true ).Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL );
 
-	Result = S_.Sort->Compare( Datum, Pattern, SkipLevel  );
+	Result = _SortPointer->Compare( Datum, Pattern, SkipLevel  );
 ERRErr
 ERREnd
 ERREpilog
@@ -470,7 +470,7 @@ static inline void Reindex_(
 void ndbidx::index_::Reindex( observer_functions__ &Observer )
 {
 ERRProlog
-	const ndbctt::content__ &Content = *S_.Content;
+	const ndbctt::content__ &Content = _Content( false );
 	mdr::size__ HandledRecordAmount = 0;
 	tol::chrono__ Chrono;
 	ndbidx::index IndexInMemory;

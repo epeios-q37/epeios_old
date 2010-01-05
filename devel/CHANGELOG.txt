@@ -1,5 +1,9 @@
 $Id$
 
+05/01/2010 :
+	- NDBIDX :
+		- Correction problème pointeur.
+
 04/01/2010 :
 	- GENERAL :
 		- Refonte globale de la gestion de la notion d''extent'.
