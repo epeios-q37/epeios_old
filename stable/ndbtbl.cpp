@@ -61,26 +61,26 @@ using namespace ndbtbl;
 
 void ndbtbl::table_::_InsertInIndexes( rrow__ Row )
 {
-	epeios::row__ IRow = Indexes.First();
+	epeios::row__ IRow = _Indexes.First();
 
 	while ( IRow != NONE ) {
-		Indexes( IRow )->Index( Row, false );
+		_Indexes( IRow )->Index( Row, false );
 
-		IRow = Indexes.Next( IRow );
+		IRow = _Indexes.Next( IRow );
 	}
 }
 
 void ndbtbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
-	epeios::row__ IRow = Indexes.First();
+	epeios::row__ IRow = _Indexes.First();
 
 	while ( IRow != NONE ) {
 /*		if ( !Indexes( IRow )->InitializationCompleted() )
 			Indexes( IRow )->CompleteInitialization();
 */
-		Indexes( IRow )->Delete( Row );
+		_Indexes( IRow )->Delete( Row );
 
-		IRow = Indexes.Next( IRow );
+		IRow = _Indexes.Next( IRow );
 	}
 }
 
@@ -88,19 +88,19 @@ void ndbtbl::table_::_ReindexAll( observer_functions__ &Observer )
 {
 	_Test( mReadWrite );
 
-	epeios::row__ Row = Indexes.First();
+	epeios::row__ Row = _Indexes.First();
 
 	if ( &Observer != NULL ) {
-		Observer.Set( Indexes.Amount() );
+		Observer.Set( _Indexes.Amount() );
 	}
 
 	while ( Row != NONE ) {
-		Indexes( Row )->Reindex( Observer );
+		_Indexes( Row )->Reindex( Observer );
 
 		if ( &Observer )
 			Observer.IncrementHandledIndexAmount();
 
-		Row = Indexes.Next( Row );
+		Row = _Indexes.Next( Row );
 	}
 }
 
@@ -185,12 +185,12 @@ void ndbtbl::table_::Delete( const rrows_ &RecordRows )
 
 void ndbtbl::table_::_ResetAllIndexes( void )
 {
-	epeios::row__ Row = Indexes.First();
+	epeios::row__ Row = _Indexes.First();
 
 	while ( Row != NONE ) {
-		Indexes( Row )->Reset();
+		_Indexes( Row )->Reset();
 
-		Row = Indexes.Next( Row );
+		Row = _Indexes.Next( Row );
 	}
 }
 
@@ -215,13 +215,13 @@ bso::bool__ ndbtbl::table_::AreAllIndexesSynchronized( void ) const
 {
 	_Test( mReadOnly );
 
-	epeios::row__ Row = Indexes.First();
+	epeios::row__ Row = _Indexes.First();
 
 	while ( Row != NONE ) {
-		if ( !Indexes( Row )->IsSynchronized() )
+		if ( !_Indexes( Row )->IsSynchronized() )
 			return false;
 
-		Row = Indexes.Next( Row );
+		Row = _Indexes.Next( Row );
 	}
 
 	return true;

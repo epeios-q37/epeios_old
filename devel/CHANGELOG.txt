@@ -1,5 +1,24 @@
 $Id$
 
+13/01/2010 :
+	- MMG :
+		- Petites modifications facilitant le débogage.
+		- Suppression membre en doublon.
+
+10/01/2010 :
+	- MMG :
+		- Mise a&u point.
+	- NDBTBL :
+		- Correction bogue concernant les indexes.
+
+08/01/2010 :
+	- MMG :
+		- Ajout 'Immortalize(...)(.
+
+07/01/2010 :
+	- NBIDX :
+		- Correction bogue synchronisation taille avec taille contenu.
+
 05/01/2010 :
 	- NDBIDX :
 		- Correction problème pointeur.

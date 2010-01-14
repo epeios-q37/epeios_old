@@ -215,8 +215,8 @@ ERRProlog
 //	cio::aware_cout___ cout;
 ERRBegin
 
-	if ( _Content( true ).Extent() > BaseIndex.Extent() )
-		BaseIndex.Allocate( _Content( true ).Extent(), aem::mDefault );
+	if ( _Content( true ).Amount() > BaseIndex.Amount() )
+		BaseIndex.Allocate( _Content( true ).Amount(), aem::mDefault );
 
 	if ( S_.Root == NONE ) {
 		S_.Root = Row;

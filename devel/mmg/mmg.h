@@ -97,7 +97,7 @@ namespace mmg
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
-		mdr::datum__ *Static_;
+		st *Static_;
 	protected:
 		// Alloue 'Capacite' octets.
 		virtual void MDRAllocate( mdr::size__ Capacity )
@@ -173,7 +173,7 @@ namespace mmg
 			if ( !IsPlugged() )
 				reset();
 
-			Static_ = (mdr::datum__ *)Static;
+			Static_ = Static;
 			mdr::E_MEMORY_DRIVER__::Init();
 			Memory.Init();
 
@@ -190,7 +190,7 @@ namespace mmg
 		void StockerStatique( void )
 		{
 			if ( Static_ /* && ( Mode_== mdr::mReadWrite )*/ )
-				Memory.Store( Static_, sizeof( st ), 0 );
+				Memory.Store( (mdr::datum__ *)Static_, sizeof( st ), 0 );
 		}
 		void EcrireDansFlot( flw::oflow__ &Flot ) const
 		{
@@ -202,7 +202,7 @@ namespace mmg
 		}
 		void RecupererStatique( void )
 		{
-			Memory.Recall( 0, sizeof( st ), Static_ );
+			Memory.Recall( 0, sizeof( st ), (mdr::datum__ *)Static_ );
 		}
 		void Mode( mdr::mode__ Mode )
 		{
@@ -216,11 +216,16 @@ namespace mmg
 		{
 			return Memory.IsPlugged();
 		}
+		void Immortalize( void )
+		{
+			reset();
+			plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
+		}
+
 	};
 
 	// Pour VC++, qui ne comprend rien sinon.
 	template <class st> struct mmg_s
-	: public st
 	{
 		mmm::multimemory_::s Memoire;
 		// A vrai si le contenu survit à l'objet.
@@ -252,7 +257,7 @@ namespace mmg
 		: public mmg::mmg_s < st > {} &S_;
 	private:
 		// Le pilote gèrant les particularités de cet objet
-		mmg::merger_memory_driver_ < mmg_s < st > > Driver_;
+		mmg::merger_memory_driver_ < st > Driver_;
 	public:
 		memory_merger_( s &S )
 		: S_( S ),
@@ -267,7 +272,7 @@ namespace mmg
 				if ( S_.State == mmg::sImmortal )
 					Immortalize();
 
-				if ( !Driver_.Memory.Driver( true ) )	// Test si immortalisation ...
+				if ( !Driver_.IsPlugged() )	// Test si immortalisation ...
 				{
 					Object.reset( false );
 					Memoire.reset( false );
@@ -305,7 +310,7 @@ namespace mmg
 
 			Object.plug( Memoire );
 
-			Driver_.Init( &S_, Rule );
+			Driver_.Init( &S_.Object, Rule );
 
 			Memoire.plug( Driver_ );
 
@@ -315,8 +320,7 @@ namespace mmg
 		//f The memory is unpluged and can be used by an other object.
 		void Immortalize( void )
 		{
-			Driver_.StockerStatique();
-			Driver_.plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
+			Driver_.Immortalize();
 		}
 		//f Write to 'OFLow' as raw data.
 		void Write( flw::oflow__ &OFlow ) const

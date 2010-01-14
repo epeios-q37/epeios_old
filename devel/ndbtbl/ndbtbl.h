@@ -108,7 +108,7 @@ namespace ndbtbl {
 		return mdr::m_Undefined;	// Pour éviter un 'warning'.
 	}
 
-	typedef bch::E_BUNCH_( index_ * ) _indexes_;
+	typedef bch::E_BUNCH( index_ * ) _indexes;
 
 	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
 	E_AUTO( data );
@@ -119,6 +119,7 @@ namespace ndbtbl {
 	class table_
 	{
 	private:
+		_indexes _Indexes;
 		void _TestMode( mode__ Mode ) const
 		{
 			switch ( Mode ) {
@@ -236,33 +237,27 @@ namespace ndbtbl {
 		struct s
 		{
 			content_::s Content;
-			_indexes_::s Indexes;
-										// une opération non 'const' dans une méthode 'const'.
 			mode__ Mode;
 		} &S_;
 		content_ Content;
-		_indexes_ Indexes;
 		table_( s &S )
 		: S_( S ),
-		  Content( S.Content ),
-		  Indexes( S.Indexes )
+		  Content( S.Content )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Content.reset( P );
-			Indexes.reset( P );
 			S_.Mode = m_Undefined;
 		}
 		E_VDTOR( table_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Content.plug( MM );
-			Indexes.plug( MM );
 		}
 		table_ &operator =( const table_ &T )
 		{
 			Content = T.Content;
-			Indexes = T.Indexes;
+			_Indexes = T._Indexes;
 			S_.Content = T.S_.Content;
 			S_.Mode = T.S_.Mode;
 
@@ -273,7 +268,7 @@ namespace ndbtbl {
 			reset();
 
 			Content.Init();
-			Indexes.Init();
+			_Indexes.Init();
 
 			S_.Mode = Mode;
 		}
@@ -296,7 +291,7 @@ namespace ndbtbl {
 		{
 			_Test( mAdmin );
 
-			Indexes.Append( &Index );
+			_Indexes.Append( &Index );
 		}
 		rrow__ Insert( const datum_ &Datum )
 		{
