@@ -162,9 +162,9 @@ namespace mmm {
 			} else
 				Multimemoire_ = NULL;
 
-			_Descriptor = MMM_UNDEFINED_DESCRIPTOR;
-			
 			E_MEMORY_DRIVER__::reset( P );
+
+			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
 		multimemory_driver__(
 			descriptor__ &Descriptor,
@@ -185,9 +185,9 @@ namespace mmm {
 			reset();
 
 			Multimemoire_ = &Multimemory;
-			_Descriptor = MMM_UNDEFINED_DESCRIPTOR;
-
 			E_MEMORY_DRIVER__::Init();
+
+			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
 		//f Return the current descriptor.
 		descriptor__ Descriptor( void ) const

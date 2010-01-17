@@ -305,8 +305,6 @@ namespace uym {
 		}
 		void plug( mmm::multimemory_ &MMM )
 		{
-			reset();
-
 			_MultimemoryDriver.Init( MMM );
 			_Driver.plug( _MultimemoryDriver );
 		}

@@ -1,5 +1,11 @@
 $Id$
 
+17/01/2010 :
+	- MMM :
+		- Modification rendant son fonctionnement plus cohérent.
+	- UYM :
+		- Modification rendant son fonctionnement plus cohérent.
+
 13/01/2010 :
 	- MMG :
 		- Petites modifications facilitant le débogage.
