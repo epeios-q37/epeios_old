@@ -257,9 +257,9 @@ namespace ndbtbl {
 		table_ &operator =( const table_ &T )
 		{
 			Content = T.Content;
-			_Indexes = T._Indexes;
-			S_.Content = T.S_.Content;
-			S_.Mode = T.S_.Mode;
+			
+			// _Indexes = T._Indexes;	// Ne contient que des pointeurs; les indexes correspondant doivent être copiés extèrieurement.
+			// S_.Mode = T.S_.Mode;	// N'est pas du contenu.
 
 			return *this;
 		}

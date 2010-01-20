@@ -1,5 +1,9 @@
 $Id$
 
+20/01/2009 :
+	- NDBTBL :
+		- Correction incohérence opératur '='.
+
 17/01/2010 :
 	- MMM :
 		- Modification rendant son fonctionnement plus cohérent.
