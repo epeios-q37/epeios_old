@@ -434,14 +434,18 @@ namespace ndbdct {
 		}
 		dynamic_content_ &operator =( const dynamic_content_ &DC )
 		{
-			Storage.Memory.Allocate( *DC.S_.Unallocated );
-			Storage.Memory.Store( DC.Storage.Memory, *DC.S_.Unallocated );
-			S_.Unallocated = DC.S_.Unallocated;
-			S_.ModificationTimeStamp = DC.S_.ModificationTimeStamp;
+			if ( ( Amount() != 0 ) || ( DC.Amount() != 0 ) ) {
+				Storage.Memory.Allocate( *DC.S_.Unallocated );
+				Storage.Memory.Store( DC.Storage.Memory, *DC.S_.Unallocated );
+				S_.Unallocated = DC.S_.Unallocated;
+				// S_.ModificationTimeStamp = DC.S_.ModificationTimeStamp;	// Ecraser par le '_Touch()' ci-dessous.
 
-			Availables = DC.Availables;
+				Availables = DC.Availables;
 
-			Entries = DC.Entries;
+				Entries = DC.Entries;
+
+				_Touch();
+			}
 
 			return *this;
 		}

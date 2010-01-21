@@ -107,6 +107,12 @@ namespace ndbctt {
 		{
 			reset( false );
 		}
+		content__ &operator =( const content__ &C )
+		{
+			// Pour éviter la copie des pointeurs.
+
+			return *this;
+		}
 		void Init( void )
 		{
 			reset();
@@ -408,6 +414,7 @@ namespace ndbctt {
 		{
 			reset();
 
+			_Static.Init( 0 );
 			_Dynamic.Init();
 			_Content.Init( _Dynamic );
 		}
@@ -415,6 +422,7 @@ namespace ndbctt {
 		{
 			reset();
 
+			_Dynamic.Init();
 			_Static.Init( Size );
 			_Content.Init( _Static );
 		}

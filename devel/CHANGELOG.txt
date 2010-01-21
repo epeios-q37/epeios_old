@@ -1,8 +1,17 @@
 $Id$
 
-20/01/2009 :
+21/01/2010 :
+	- NDBDCT, NDBSCT :
+		- Correction bogue opérateur '=' qui mettait à jour le marquage horaire mais si les deux objets étaient vides.
+	- XML :
+		- Correction bogue 'BelongsToNamespace(...)'.
+
+20/01/2010 :
+	- LTF :
+		- Un 'CR()' ne fait dorénavant reculer que jusqu'à la position d'un éventuel 'Freeze()', et non plus jusqu'au début de la ligne.
+		- Un 'Clear()' n'efface dorénavant qu'à partir de la position d'un éventuel 'Freeze()' et non plus du début de la ligne.
 	- NDBTBL :
-		- Correction incohérence opératur '='.
+		- Correction incohérence opérateur '='.
 
 17/01/2010 :
 	- MMM :

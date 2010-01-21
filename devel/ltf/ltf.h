@@ -106,13 +106,6 @@ namespace ltf {
 		}
 		virtual void FWFSynchronize( void )
 		{
-			if ( Amount_ > Size_ ) {
-				TFlow_ << txf::rfl;
-				TFlow_.Put( Data_, Size_ );
-			}
-
-			_FreezePosition = 0;
-
 			TFlow_ << txf::sync;
 		}
 	public:
@@ -146,20 +139,21 @@ namespace ltf {
 			Data_[Size_] = 0;
 			Amount_ = 0;
 			_FreezePosition = 0;
+
+			Clear();
 		}
 		void Clear( void )
 		{
-			CR();
-			memset( Data_, ' ', Size_ );
-			TFlow_.Put( Data_, Size_ );
+			memset( Data_ + _FreezePosition, ' ', Size_ - _FreezePosition);
 			TFlow_ << txf::rfl;
-			_FreezePosition = 0;
+			TFlow_.Put( Data_, Size_ );
+			CR();
 		}
 		void CR( void )
 		{
 			TFlow_ << txf::rfl;
-			Amount_ = 0;
-			_FreezePosition = 0;
+			TFlow_.Put( Data_, _FreezePosition );
+			Amount_ = _FreezePosition;
 		}
 		void Freeze( void )
 		{

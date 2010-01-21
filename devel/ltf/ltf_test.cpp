@@ -33,6 +33,7 @@
 #include "err.h"
 #include "cio.h"
 #include "tol.h"
+#include "tht.h"
 
 using cio::cin;
 using cio::cout;
@@ -41,8 +42,22 @@ using cio::cerr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	ltf::line_text_flow__<> LC( cout );
+	ltf::line_text_oflow___<> LC( cout );
 ERRBegin
+	LC.Init();
+
+	LC << "Freezer - ";
+	LC.Freeze();
+
+	LC << "volatile 1" << txf::sync;
+	LC.CR();
+
+	tht::Suspend( 1000 );
+	LC << "volatile 2" << txf::sync;
+	LC.CR();
+
+	tht::Suspend( 1000 );
+
 	while ( 1 )
 		if ( rand() % 60 ) {
 			LC << (char)( rand() % 26 + 'A' );
@@ -50,7 +65,7 @@ ERRBegin
 			if ( ( rand() % 5 ) == 0 )
 				LC << txf::sync;
 
-			tol::Suspend( 100 );
+			tht::Suspend( 100 );
 		} else if ( rand() % 3 ) {
 			LC.Clear();
 		} else

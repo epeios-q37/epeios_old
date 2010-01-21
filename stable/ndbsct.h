@@ -118,11 +118,16 @@ namespace ndbsct {
 		}
 		static_content_ &operator =( const static_content_ &SC )
 		{
-			_list_::operator =( SC );
-			Storage.Allocate( SC.Amount() * S_.Size );
-			Storage.Store( SC.Storage, SC.Amount() * S_.Size );
+			if ( ( Amount() != 0 ) || ( SC.Amount() != 0 ) ) {
+				_list_::operator =( SC );
+				Storage.Allocate( SC.Amount() * S_.Size );
+				Storage.Store( SC.Storage, SC.Amount() * S_.Size );
+				//S_.ModificationTimeStamp = SC.S_.ModificationTimeStamp;	// Ecrasé par le '_Touch()' ci-dessous.
+
+				_Touch();
+			}
+
 			S_.Size = SC.S_.Size;
-			S_.ModificationTimeStamp = SC.S_.ModificationTimeStamp;
 
 			return *this;
 		}

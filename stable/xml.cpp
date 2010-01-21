@@ -1712,6 +1712,9 @@ private:
 		if ( TagName.Amount() == 0 )
 			ERRc();
 
+		if ( TagName.Amount() < _Namespace.Amount() )
+			return false;
+
 		return str::Compare( TagName, _Namespace, TagName.First(), _Namespace.First(), _Namespace.Amount() ) == 0;
 	}
 	extended_status__ _Ignore( xtf::extended_text_iflow__ &Flow )
