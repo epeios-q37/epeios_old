@@ -481,10 +481,15 @@ namespace rgstry {
 			const path_item_ &Item,
 			row__ Row )
 		{
-			Row = _AddKey( Item.KeyName, Row );
+			if ( Item.KeyName.Amount() != 0 ) {
+				Row = _AddKey( Item.KeyName, Row );
 
-			if ( Item.AttributeName.Amount() != 0 )
-				_AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
+				if ( Item.AttributeName.Amount() != 0 )
+					ERRu();
+			} else if ( Item.AttributeName.Amount() != 0 )
+				Row = _AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
+			else
+				ERRu();
 
 			return Row;
 		}

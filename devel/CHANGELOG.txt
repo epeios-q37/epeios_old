@@ -1,5 +1,9 @@
 $Id$
 
+22/01/2010
+	- RGSTRY :
+		- Correction bogue 'Dump()' qui traitait mal les attributs.
+
 21/01/2010 :
 	- NDBDCT, NDBSCT :
 		- Correction bogue opérateur '=' qui mettait à jour le marquage horaire mais si les deux objets étaient vides.

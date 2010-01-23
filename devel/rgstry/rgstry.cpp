@@ -654,7 +654,8 @@ ERRBegin
 	Row = Children.First();
 
 	while ( Row != NONE ) {
-		_Dump( Children( Row ), true, Writer, Buffer );
+		if ( Buffer( Children( Row ) ).GetNature() != nAttribute )
+			_Dump( Children( Row ), true, Writer, Buffer );
 
 		Row = Children.Next( Row );
 	}

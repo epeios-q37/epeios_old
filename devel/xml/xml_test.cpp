@@ -36,6 +36,7 @@
 #include "flf.h"
 
 #include "fnm.h"
+#include "lcl.h"
 
 using cio::cin;
 using cio::cout;
@@ -125,6 +126,8 @@ ERRProlog
 	const char *Directory;
 	xml::extended_status__ Status = xml::xs_Undefined;
 	FNM_BUFFER___ Buffer;
+	lcl::locales Locales;
+	str::string Translation;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -146,7 +149,9 @@ ERRBegin
 		if ( GuiltyFileName.Amount() != 0 )
 			cerr << " in file '" << GuiltyFileName << '\'';
 
-		cerr << " : " << xml::GetLabel( Status );
+		Locales.Init();
+		Translation.Init();
+		cerr << " : " << xml::GetTranslation( Status, str::string(), Locales, Translation );
 
 		cerr << txf::nl;
 	}

@@ -54,6 +54,10 @@ void Consult(
 
 	cout << "Service : " << Registry.GetValue( str::string( "Backend/Service" ), Root, Buffer ) << txf::nl << txf::sync;
 #endif
+
+	Registry.Dump( Root, true, true, cout );
+
+	cout << txf::nl << txf::sync;
 }
 
 
@@ -64,9 +68,9 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Registry;
 	rgstry::row__ Root;
-	rgstry::xcoord Coord;
+	xtf::coord__ Coord;
 	str::string FileName;
-	xml::extended_status__ Status = xml::xs_Undefined;
+	rgstry::error_details ErrorDetails;
 ERRBegin
 	FFlow.Init( "essai.xml" );
 	FFlow.EOFD( XTF_EOXT );
@@ -79,7 +83,8 @@ ERRBegin
 
 	Coord.Init();
 
-	Root = rgstry::Parse( XFlow, str::string( "" ), Registry, NONE, Status, Coord );
+	ErrorDetails.Init();
+	Root = rgstry::Parse( XFlow, str::string( "" ), Registry, NONE, ErrorDetails );
 
 	if ( Root == NONE ) {
 	 cerr << "Erreur";
@@ -87,10 +92,18 @@ ERRBegin
 	 if ( FileName.Amount() )
 		 cerr << " fichier '" << FileName << '\'';
 	 
-	 cerr << " ligne " << Coord.GetCoord().Line << " colonne " << Coord.GetCoord().Column << txf::nl;
+	 cerr << " ligne " << ErrorDetails.GetCoord().Line << " colonne " << ErrorDetails.GetCoord().Column << txf::nl;
 
 	 ERRu();
 	}
+
+	Consult( Registry, Root );
+
+	Registry.SetValue( str::string( "Test/@Id" ), str::string( "coucou" ), Root );
+
+	Consult( Registry, Root );
+
+	Registry.SetValue( str::string( "Test/@Id" ), str::string( "Hello !" ), Root );
 
 	Consult( Registry, Root );
 ERRErr
