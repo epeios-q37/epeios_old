@@ -53,12 +53,12 @@ ERRBegin
 	mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
 //	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
 	TableRecordFieldIndex.Init( _table_::Content(), FileMode );
-	S_.SpreadedFileManager.TableRecordFieldIndex.Init( TableRecordFieldIndex, LocatedBaseFileName, FileMode, S_.FilesgroupID );
+	S_.SpreadedFileManager.TableRecordFieldIndex.Init( TableRecordFieldIndex, LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
 	TableFieldDatumIndex.Init( _table_::Content(), FileMode );
-	S_.SpreadedFileManager.TableFieldDatumIndex.Init( TableFieldDatumIndex, LocatedBaseFileName, FileMode, S_.FilesgroupID );
+	S_.SpreadedFileManager.TableFieldDatumIndex.Init( TableFieldDatumIndex, LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
 
 	_table_::AddIndex( TableRecordFieldIndex );
 	_table_::AddIndex( TableFieldDatumIndex );

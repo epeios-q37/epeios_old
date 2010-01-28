@@ -35,9 +35,10 @@ ERRProlog
 	str::string LibraryPath;
 ERRBegin
 	if ( Local ) {
-		UI().K().GetBackendConfigurationFileLocation( LibraryLo
-		UI().K().BackendSelection().SetLocal();
-	else {
+		LibraryPath.Init();
+		UI().K().GetBackendConfigurationFileLocation( LibraryPath );
+		UI().K().BackendSelection().SetLocal( LibraryPath );
+	} else {
 		HostService.Init();
 		HostServiceTextbox.GetValue( HostService );
 		UI().K().BackendSelection().SetRemote( HostService );

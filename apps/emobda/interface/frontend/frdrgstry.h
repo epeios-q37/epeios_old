@@ -106,7 +106,7 @@ namespace frdrgstry {
 		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
 	}
 
-	bso::bool__ GetBackendConfigurationFileLocation(
+	inline bso::bool__ GetBackendConfigurationFileLocation(
 		const registry___ &Registry,
 		str::string_ &Value )
 	{

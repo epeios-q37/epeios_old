@@ -186,6 +186,7 @@ ERRProlog
 	bso::char__ C;
 	path_item Item;
 	bso::bool__ KeyNameAsAttribute = false;
+	bso::bool__ AttributeMarkerFound = false;
 ERRBegin
 	Row = PathString.First();
 
@@ -211,6 +212,7 @@ ERRBegin
 					Continue = false;
 				State = sAttributeName;
 				Item.AttributeName.Init();
+				AttributeMarkerFound = false;
 				break;
 			case '/':
 				if ( KeyNameAsAttribute )
@@ -239,6 +241,14 @@ ERRBegin
 					break;
 				case '"':
 					Continue = false;
+					break;
+				case '@':
+					if ( Item.AttributeName.Amount() != 0 )
+						Continue = false;
+					else if ( AttributeMarkerFound )
+						Continue = false;
+					else
+						AttributeMarkerFound = true;
 					break;
 				case '=':
 					if ( Item.AttributeName.Amount() == 0 )
@@ -483,10 +493,10 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
-		Row = NONE;
-	else
+	if ( BuildPath_( PathString, Path, PathErrorRow ) )
 		Row = SetValue( Path, Value, Row );
+	else
+		Row = NONE;
 
 ERRErr
 ERREnd

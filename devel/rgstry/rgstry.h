@@ -376,16 +376,7 @@ namespace rgstry {
 			const value_ &Value,
 			row__ Row ) const
 		{
-			Row = _SearchAttribute( Name, Value, Row );
-
-			if ( Row != NONE ) {
-				buffer Buffer;
-
-				if ( _GetValue( Row, Buffer ) != Value )
-					Row = NONE;
-			}
-
-			return Row != NONE;
+			return _SearchAttribute( Name, Value, Row ) != NONE;
 		}
 		row__ _Search(
 			const name_ &KeyName,
@@ -485,7 +476,11 @@ namespace rgstry {
 				Row = _AddKey( Item.KeyName, Row );
 
 				if ( Item.AttributeName.Amount() != 0 )
-					ERRu();
+					_AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
+				else
+					if ( Item.AttributeValue.Amount() != 0 )
+						ERRu();
+
 			} else if ( Item.AttributeName.Amount() != 0 )
 				Row = _AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
 			else

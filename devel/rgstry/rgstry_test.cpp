@@ -71,6 +71,7 @@ ERRProlog
 	xtf::coord__ Coord;
 	str::string FileName;
 	rgstry::error_details ErrorDetails;
+	rgstry::buffer Buffer;
 ERRBegin
 	FFlow.Init( "essai.xml" );
 	FFlow.EOFD( XTF_EOXT );
@@ -103,9 +104,16 @@ ERRBegin
 
 	Consult( Registry, Root );
 
-	Registry.SetValue( str::string( "Test/@Id" ), str::string( "Hello !" ), Root );
+	Registry.SetValue( str::string( "Test[@Id=\"coucou\"]/@Other" ), str::string( "Hello !" ), Root );
 
 	Consult( Registry, Root );
+
+	Registry.SetValue( str::string( "Profiles/Profile[name=\"Default\"]/Tables/Table[id=\"0\"]/Outfits/Outfit[display=\"ListView\"]" ), str::string( "Essai" ), Root );
+
+	Consult( Registry, Root );
+
+	cout << Registry.GetValue( str::string( "Test[@Id=\"coucou\"]/@Other" ), Root, Buffer ) << txf::nl << txf::sync;
+	cout << Registry.GetValue( str::string( "Test[Other=\"Hello !\"]" ), Root, Buffer ) << txf::nl << txf::sync;
 ERRErr
 ERREnd
 ERREpilog

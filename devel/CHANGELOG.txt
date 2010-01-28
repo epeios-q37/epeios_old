@@ -1,5 +1,9 @@
 $Id$
 
+26/01/2009 :
+	- RGSTRY :
+		- L'écriture 'Tag[@Attribute="Value"]...' et 'Tag[Attribute="Value"]...' sont maintenant toutes deux acceptées (bien que la dernière soit incorrecte).
+
 22/01/2010
 	- RGSTRY :
 		- Correction bogue 'Dump()' qui traitait mal les attributs.
@@ -237,7 +241,7 @@ $Id$
 		- Ajout du tag de la gestion de la balise d'indice '0' (qui est remplacé par l'ensemble des valeurs).
 	- RGSTRY :
 		- Modification du label des erreurs, pour y inclure la balise d'indice '0' (voir 'LCL').
-		- Les fichiers résultants en un fichier vide sont maintenent correctement rconnu.
+		- Les fichiers résultants en un fichier vide sont maintenant correctement rconnu.
 	- XML :
 		- Les attributs 'xmlns:...' sont maintenant acceptés.
 
@@ -347,7 +351,7 @@ $Id$
 		
 27/085/2009 :
 	- RGSTRY :
-		- Mise en oeuvre 'xcooRd[_]'.
+		- Mise en oeuvre 'xcoord[_]'.
 
 24/08/2009 :
 	- LCL :
@@ -364,7 +368,7 @@ $Id$
 	- LGG, MSG : rendus obsolètes (peuvent quand même être réactivé en definissant 'LGG_REVIVAL' ).
 
 17/08/2009 :
-	- RGDTRY :
+	- RGSTRY :
 		- Le domaine de ome pour le preprocesseur est maintenant par défaut 'xpp' (et non plus 'xcf'). Cela peut être modifier
 		en définissant 'RGSTRY_PREPROCESSOR_NAMESPACE'.
 	- XML :
