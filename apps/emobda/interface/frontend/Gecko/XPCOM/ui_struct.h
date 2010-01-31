@@ -31,32 +31,32 @@ namespace frdkernl {
 namespace ui_struct {
 	using namespace ui_base;
 
-	UI_TYPEDEF( broadcaster__, item_edition_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, item_browsing_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, item_action_broadcaster__ );
+	UI_UWIDGET( broadcaster__, item_edition_broadcaster__ );
+	UI_UWIDGET( broadcaster__, item_browsing_broadcaster__ );
+	UI_UWIDGET( broadcaster__, item_action_broadcaster__ );
 
-	UI_ETYPEDEF( tree__, browse_tree__ );
+	UI_SWIDGET( tree__, browse_tree__ );
 
-	UI_TYPEDEF( deck__, item_action_deck__ );
+	UI_UWIDGET( deck__, item_action_deck__ );
 
-	UI_ETYPEDEF( command__, modify_database_command__ );
-	UI_ETYPEDEF( command__, delete_database_command__ );
+	UI_SWIDGET( command__, modify_database_command__ );
+	UI_SWIDGET( command__, delete_database_command__ );
 
-	UI_ETYPEDEF( command__, create_table_command__ );
-	UI_ETYPEDEF( command__, modify_table_command__ );
-	UI_ETYPEDEF( command__, delete_table_command__ );
+	UI_SWIDGET( command__, create_table_command__ );
+	UI_SWIDGET( command__, modify_table_command__ );
+	UI_SWIDGET( command__, delete_table_command__ );
 
-	UI_ETYPEDEF( command__, create_field_command__ );
-	UI_ETYPEDEF( command__, modify_field_command__ );
-	UI_ETYPEDEF( command__, delete_field_command__ );
+	UI_SWIDGET( command__, create_field_command__ );
+	UI_SWIDGET( command__, modify_field_command__ );
+	UI_SWIDGET( command__, delete_field_command__ );
 
-	UI_TYPEDEF( textbox__, name_textbox__ );
-	UI_TYPEDEF( textbox__, comment_textbox__ );
+	UI_UWIDGET( textbox__, name_textbox__ );
+	UI_UWIDGET( textbox__, comment_textbox__ );
 
-	UI_ETYPEDEF( command__, apply_item_command__ );
-	UI_ETYPEDEF( command__, cancel_item_command__ );
+	UI_SWIDGET( command__, apply_item_command__ );
+	UI_SWIDGET( command__, cancel_item_command__ );
 
-	UI_TYPEDEF( deck__, form_deck__ );
+	UI_UWIDGET( deck__, form_deck__ );
 
 	struct structure__
 	: public _ui_core__,
@@ -113,11 +113,11 @@ namespace ui_struct {
 		nsIDOMElement *DatabaseFormPanel, *TableFormPanel, *FieldFormPanel;
 		nsIDOMElement *DatabaseSelectionPanel, *TableSelectionPanel, *FieldSelectionPanel;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 			Items = NULL;
 			DatabaseFormPanel = TableFormPanel = FieldFormPanel = NULL;
 			DatabaseSelectionPanel = TableSelectionPanel = FieldSelectionPanel = NULL;

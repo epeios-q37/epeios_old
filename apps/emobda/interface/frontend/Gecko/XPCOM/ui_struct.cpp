@@ -450,182 +450,182 @@ void ui_struct::browse_tree__::NSXPCMOnEvent( event__ Event )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	broadcaster__ &Broadcaster,
+	ui___ &UI,
+	broadcaster__<ui___> &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Broadcaster, Document, Id );
+	ui_base::Register( UI, Broadcaster, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	tree__ &Tree,
+	ui___ &UI,
+	tree__<ui___> &Tree,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Tree, Document, Id );
+	ui_base::Register( UI, Tree, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	deck__ &Deck,
+	ui___ &UI,
+	deck__<ui___> &Deck,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Deck, Document, Id );
+	ui_base::Register( UI, Deck, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	textbox__ &Textbox,
+	ui___ &UI,
+	textbox__<ui___> &Textbox,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Textbox, Document, Id );
+	ui_base::Register( UI, Textbox, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	button__ &Button,
+	ui___ &UI,
+	button__<ui___> &Button,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Button, Document, Id );
+	ui_base::Register( UI, Button, Document, Id );
 }
 
 /* 'broadcaster's */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::broadcasters__::database__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::broadcasters__::database__ &DUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Modification, Document, "bcrDatabaseModification" );
-	Register_( Functions, UI.Deletion, Document, "bcrDatabaseDeletion" );
+	Register_( UI, DUI.Modification, Document, "bcrDatabaseModification" );
+	Register_( UI, DUI.Deletion, Document, "bcrDatabaseDeletion" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::broadcasters__::table__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::broadcasters__::table__ &TUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Creation, Document, "bcrTableModification" );
-	Register_( Functions, UI.Modification, Document, "bcrTableModification" );
-	Register_( Functions, UI.Deletion, Document, "bcrTableDeletion" );
+	Register_( UI, TUI.Creation, Document, "bcrTableModification" );
+	Register_( UI, TUI.Modification, Document, "bcrTableModification" );
+	Register_( UI, TUI.Deletion, Document, "bcrTableDeletion" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::broadcasters__::field__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::broadcasters__::field__ &FUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Creation, Document, "bcrFieldCreation" );
-	Register_( Functions, UI.Modification, Document, "bcrFieldModification" );
-	Register_( Functions, UI.Deletion, Document, "bcrFieldDeletion" );
+	Register_( UI, FUI.Creation, Document, "bcrFieldCreation" );
+	Register_( UI, FUI.Modification, Document, "bcrFieldModification" );
+	Register_( UI, FUI.Deletion, Document, "bcrFieldDeletion" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::broadcasters__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::broadcasters__ &BUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.ItemEdition, Document, "bcrItemEdition" );
-	Register_( Functions, UI.ItemBrowsing, Document, "bcrItemBrowsing" );
-	Register_( Functions, UI.Database, Document );
-	Register_( Functions, UI.Table, Document );
-	Register_( Functions, UI.Field, Document );
+	Register_( UI, BUI.ItemEdition, Document, "bcrItemEdition" );
+	Register_( UI, BUI.ItemBrowsing, Document, "bcrItemBrowsing" );
+	Register_( UI, BUI.Database, Document );
+	Register_( UI, BUI.Table, Document );
+	Register_( UI, BUI.Field, Document );
 }
 
 /* 'command's */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::commands__::database__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::commands__::database__ &DUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Modify, Document, "cmdModifyDatabase" );
-	Register_( Functions, UI.Delete, Document, "cmdDeleteDatabase" );
+	Register_( UI, DUI.Modify, Document, "cmdModifyDatabase" );
+	Register_( UI, DUI.Delete, Document, "cmdDeleteDatabase" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::commands__::table__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::commands__::table__ &TUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Create, Document, "cmdCreateTable" );
-	Register_( Functions, UI.Modify, Document, "cmdModifyTable" );
-	Register_( Functions, UI.Delete, Document, "cmdDeleteTable" );
+	Register_( UI, TUI.Create, Document, "cmdCreateTable" );
+	Register_( UI, TUI.Modify, Document, "cmdModifyTable" );
+	Register_( UI, TUI.Delete, Document, "cmdDeleteTable" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::commands__::field__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::commands__::field__ &FUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Create, Document, "cmdCreateField" );
-	Register_( Functions, UI.Modify, Document, "cmdModifyField" );
-	Register_( Functions, UI.Delete, Document, "cmdDeleteField" );
+	Register_( UI, FUI.Create, Document, "cmdCreateField" );
+	Register_( UI, FUI.Modify, Document, "cmdModifyField" );
+	Register_( UI, FUI.Delete, Document, "cmdDeleteField" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::commands__::item__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::commands__::item__ &IUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Apply, Document, "cmdApplyItem" );
-	Register_( Functions, UI.Cancel, Document, "cmdCancelItem" );
+	Register_( UI, IUI.Apply, Document, "cmdApplyItem" );
+	Register_( UI, IUI.Cancel, Document, "cmdCancelItem" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__::commands__ &UI,
+	ui___ &UI,
+	ui_struct::structure__::commands__ &CUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Database, Document );
-	Register_( Functions, UI.Table, Document );
-	Register_( Functions, UI.Field, Document );
-	Register_( Functions, UI.Item, Document );
+	Register_( UI, CUI.Database, Document );
+	Register_( UI, CUI.Table, Document );
+	Register_( UI, CUI.Field, Document );
+	Register_( UI, CUI.Item, Document );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	ui_struct::structure__ &UI )
+	ui___ &UI,
+	ui_struct::structure__ &SUI )
 {
-	UI.Items = nsxpcm::GetElementById( UI.Document, "tchItems" );
+	SUI.Items = nsxpcm::GetElementById( SUI.Document, "tchItems" );
 
-	Register_( Functions, UI.BrowseTree, UI.Document, "treBrowse" );
+	Register_( UI, SUI.BrowseTree, SUI.Document, "treBrowse" );
 
-	Register_( Functions, UI.Broadcasters, UI.Document );
-	Register_( Functions, UI.Commands, UI.Document );
+	Register_( UI, SUI.Broadcasters, SUI.Document );
+	Register_( UI, SUI.Commands, SUI.Document );
 
-	Register_( Functions, UI.ActionDeck, UI.Document, "itemActionDeck" );
+	Register_( UI, SUI.ActionDeck, SUI.Document, "itemActionDeck" );
 
-	UI.DatabaseSelectionPanel = nsxpcm::GetElementById( UI.Document, "databaseSelectionPanel" );
-	UI.TableSelectionPanel = nsxpcm::GetElementById( UI.Document, "tableSelectionPanel" );
-	UI.FieldSelectionPanel = nsxpcm::GetElementById( UI.Document, "fieldSelectionPanel" );
+	SUI.DatabaseSelectionPanel = nsxpcm::GetElementById( SUI.Document, "databaseSelectionPanel" );
+	SUI.TableSelectionPanel = nsxpcm::GetElementById( SUI.Document, "tableSelectionPanel" );
+	SUI.FieldSelectionPanel = nsxpcm::GetElementById( SUI.Document, "fieldSelectionPanel" );
 
-	Register_( Functions, UI.FormDeck, UI.Document, "formDeck" );
+	Register_( UI, SUI.FormDeck, SUI.Document, "formDeck" );
 
-	Register_( Functions, UI.NameTextbox, UI.Document, "txbName" );
-	Register_( Functions, UI.CommentTextbox, UI.Document, "txbComment" );
+	Register_( UI, SUI.NameTextbox, SUI.Document, "txbName" );
+	Register_( UI, SUI.CommentTextbox, SUI.Document, "txbComment" );
 
-	UI.DatabaseFormPanel = nsxpcm::GetElementById( UI.Document, "databaseFormPanel" );
-	UI.TableFormPanel = nsxpcm::GetElementById( UI.Document, "tableFormPanel" );
-	UI.FieldFormPanel = nsxpcm::GetElementById( UI.Document, "fieldFormPanel" );
+	SUI.DatabaseFormPanel = nsxpcm::GetElementById( SUI.Document, "databaseFormPanel" );
+	SUI.TableFormPanel = nsxpcm::GetElementById( SUI.Document, "tableFormPanel" );
+	SUI.FieldFormPanel = nsxpcm::GetElementById( SUI.Document, "fieldFormPanel" );
 }
 
 void ui_struct::RegisterStructureUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.Structure.Init( UI, Window );

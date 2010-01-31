@@ -27,36 +27,38 @@
 namespace ui_main {
 	using namespace ui_base;
 
-	UI_TYPEDEF( broadcaster__, project_opened_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, database_opened_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, table_with_field_selected_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, record_selected_broadcaster__ );
+	UI_UWIDGET( broadcaster__, project_opened_broadcaster__ );
+	UI_UWIDGET( broadcaster__, database_opened_broadcaster__ );
+	UI_UWIDGET( broadcaster__, table_with_field_selected_broadcaster__ );
+	UI_UWIDGET( broadcaster__, record_selected_broadcaster__ );
 
-	UI_TYPEDEF( menu__, table_menu__ );
+	UI_UWIDGET( menu__, table_menu__ );
 
-	UI_ETYPEDEF( menu_item__, table_menu_item__ );
+	UI_SWIDGET( menu_item__, table_menu_item__ );
 
-	UI_ETYPEDEF( command__, version_command__ );
-	UI_ETYPEDEF( command__, web_site_command__ );
-	UI_ETYPEDEF( command__, jsconsole_command__ );
-	UI_ETYPEDEF( command__, dom_inspector_command__ );
+	UI_UWIDGET( panel__, main_panel__ );
 
-	UI_ETYPEDEF( command__, open_project_command__ );
-	UI_ETYPEDEF( command__, close_project_command__ );
-	UI_ETYPEDEF( command__, connect_to_backend_command__ );
+	UI_SWIDGET( command__, version_command__ );
+	UI_SWIDGET( command__, web_site_command__ );
+	UI_SWIDGET( command__, jsconsole_command__ );
+	UI_SWIDGET( command__, dom_inspector_command__ );
 
-	UI_ETYPEDEF( command__, create_database_command__ );
-	UI_ETYPEDEF( command__, open_database_command__ );
-	UI_ETYPEDEF( command__, define_database_command__ );
-	UI_ETYPEDEF( command__, close_database_command__ );
+	UI_SWIDGET( command__, open_project_command__ );
+	UI_SWIDGET( command__, close_project_command__ );
+	UI_SWIDGET( command__, connect_to_backend_command__ );
 
-	UI_ETYPEDEF( command__, create_record_command__ );
-	UI_ETYPEDEF( command__, modify_record_command__ );
-	UI_ETYPEDEF( command__, duplicate_record_command__ );
-	UI_ETYPEDEF( command__, browse_record_command__ );
-	UI_ETYPEDEF( command__, delete_record_command__ );
+	UI_SWIDGET( command__, create_database_command__ );
+	UI_SWIDGET( command__, open_database_command__ );
+	UI_SWIDGET( command__, define_database_command__ );
+	UI_SWIDGET( command__, close_database_command__ );
 
-	UI_TYPEDEF( deck__, main_deck__ );
+	UI_SWIDGET( command__, create_record_command__ );
+	UI_SWIDGET( command__, modify_record_command__ );
+	UI_SWIDGET( command__, duplicate_record_command__ );
+	UI_SWIDGET( command__, browse_record_command__ );
+	UI_SWIDGET( command__, delete_record_command__ );
+
+	UI_UWIDGET( deck__, main_deck__ );
 
 	struct main__
 	: public _ui_core__
@@ -94,7 +96,7 @@ namespace ui_main {
 		table_menu__ TableMenu;
 		main_deck__ MainDeck;
 		struct panels__ {
-			panel__
+			main_panel__
 				Home,
 				StructureFormAndView,
 				ListView,

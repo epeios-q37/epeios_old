@@ -27,10 +27,10 @@
 namespace ui_rcd_f {
 	using namespace ui_base;
 
-	UI_TYPEDEF( box__, record_box__ );
+	UI_UWIDGET( box__, record_box__ );
 
-	UI_ETYPEDEF( command__, apply_record_command__ );
-	UI_ETYPEDEF( command__, cancel_record_command__ );
+	UI_SWIDGET( command__, apply_record_command__ );
+	UI_SWIDGET( command__, cancel_record_command__ );
 
 	struct record_form__
 	: public _ui_core__,
@@ -43,11 +43,11 @@ namespace ui_rcd_f {
 			cancel_record_command__ CancelRecord;
 		} Commands;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 	};
 

@@ -96,59 +96,59 @@ void ui_rcd_v::last_record_command__::NSXPCMOnEvent( event__ )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	broadcaster__ &Broadcaster,
+	ui___ &UI,
+	broadcaster__<ui___> &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Broadcaster, Document, Id, nsxpcm::efNone );
+	ui_base::Register( UI, Broadcaster, Document, Id, nsxpcm::efNone );
 }
 
 
 static void Register_(
-	bridge_functions__ &Functions,
-	record_view__::broadcasters__ &UI,
+	ui___ &UI,
+	record_view__::broadcasters__ &BUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.NotFirstRecord, Document, "bcrNotFirstRecord" );
-	Register_( Functions, UI.NotLastRecord, Document, "bcrNotLastRecord" );
+	Register_( UI, BUI.NotFirstRecord, Document, "bcrNotFirstRecord" );
+	Register_( UI, BUI.NotLastRecord, Document, "bcrNotLastRecord" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	record_view__::commands__ &UI,
+	ui___ &UI,
+	record_view__::commands__ &CUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.FirstRecord, Document, "cmdFirstRecord" );
-	Register_( Functions, UI.PreviousRecord, Document, "cmdPreviousRecord" );
-	Register_( Functions, UI.NextRecord, Document, "cmdNextRecord" );
-	Register_( Functions, UI.LastRecord, Document, "cmdLastRecord" );
+	Register_( UI, CUI.FirstRecord, Document, "cmdFirstRecord" );
+	Register_( UI, CUI.PreviousRecord, Document, "cmdPreviousRecord" );
+	Register_( UI, CUI.NextRecord, Document, "cmdNextRecord" );
+	Register_( UI, CUI.LastRecord, Document, "cmdLastRecord" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	record_view__ &UI )
+	ui___ &UI,
+	record_view__ &RVUI )
 {
-	Register_( Functions, UI.Broadcasters, UI.Document );
-	Register_( Functions, UI.Commands, UI.Document );
+	Register_( UI, RVUI.Broadcasters, RVUI.Document );
+	Register_( UI, RVUI.Commands, RVUI.Document );
 
-	ui_base::Register( Functions, UI.RecordNumberTextbox, UI.Document, "txbRecordNumber", nsxpcm::efKeyPress | nsxpcm::efBlur );
-	ui_base::Register( Functions, UI.RecordsAmountDescription, UI.Document, "dscRecordsAmount" );
-	ui_base::Register( Functions, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
+	ui_base::Register( UI, RVUI.RecordNumberTextbox, RVUI.Document, "txbRecordNumber", nsxpcm::efKeyPress | nsxpcm::efBlur );
+	ui_base::Register( UI, RVUI.RecordsAmountDescription, RVUI.Document, "dscRecordsAmount" );
+	ui_base::Register( UI, RVUI.RecordBox, RVUI.Document, "boxRecord", nsxpcm::efNone );
 
 }
 
 void ui_rcd_v::RegisterRecordViewUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.RecordView.Init( UI, Window );

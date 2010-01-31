@@ -27,14 +27,14 @@
 namespace ui_dbsdb {
 	using namespace ui_base;
 
-	UI_ETYPEDEF( ui_base::window__, window__ );
+	UI_SWIDGET( ui_base::window__, window__ );
 
-	UI_TYPEDEF( broadcaster__, database_selection_broadcaster__ );
+	UI_UWIDGET( broadcaster__, database_selection_broadcaster__ );
 
-	UI_ETYPEDEF( tree__, database_tree__ );
+	UI_SWIDGET( tree__, database_tree__ );
 
-	UI_ETYPEDEF( command__, apply_command__ );
-	UI_ETYPEDEF( command__, cancel_command__ );
+	UI_SWIDGET( command__, apply_command__ );
+	UI_SWIDGET( command__, cancel_command__ );
 
 	struct database_selection__
 	: public _ui_core__,
@@ -51,11 +51,11 @@ namespace ui_dbsdb {
 			cancel_command__ Cancel;
 		} Commands;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 		void ExtractSelectedDatabase( void );
 	};

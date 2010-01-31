@@ -159,7 +159,7 @@ static inline extended_status__ Convert_( status__ Status )
 
 #define CASE( m )	CASE_( xs, m )
 
-static inline const char *GetLabel_( extended_status__ Status )
+const char *xml::GetLabel( extended_status__ Status )
 {
 	if ( Status < Convert_( s_amount ) )
 		return GetLabel_( (status__)Status );
@@ -258,7 +258,7 @@ ERRProlog
 ERRBegin
 	MessageLabel.Init( "EXML_" );
 
-	MessageLabel.Append( GetLabel_( Status ) );
+	MessageLabel.Append( GetLabel( Status ) );
 
 	Locales.GetTranslation( MessageLabel, Language, Translation );
 ERRErr

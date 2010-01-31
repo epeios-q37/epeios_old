@@ -1,5 +1,13 @@
 $Id$
 
+31/01/2010 :
+	- GENERAL :
+		- Codage 'XUI'.
+
+29/01/2009 :
+	- XML :
+		- Réactivation 'GetLabel(...).
+
 26/01/2009 :
 	- RGSTRY :
 		- L'écriture 'Tag[@Attribute="Value"]...' et 'Tag[Attribute="Value"]...' sont maintenant toutes deux acceptées (bien que la dernière soit incorrecte).
@@ -110,7 +118,7 @@ $Id$
 	- MMG :
 		- Suite refonte ...
 	- NDB... :
-		- Exposition 'BaseFielName'.
+		- Exposition 'BaseFieldName'.
 		
 
 01/12/2009 :

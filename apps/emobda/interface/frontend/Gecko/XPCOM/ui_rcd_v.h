@@ -27,19 +27,19 @@
 namespace ui_rcd_v {
 	using namespace ui_base;
 
-	UI_TYPEDEF( box__, record_box__ );
+	UI_UWIDGET( box__, record_box__ );
 
-	UI_TYPEDEF( broadcaster__, not_first_record_broadcaster__ );
-	UI_TYPEDEF( broadcaster__, not_last_record_broadcaster__ );
+	UI_UWIDGET( broadcaster__, not_first_record_broadcaster__ );
+	UI_UWIDGET( broadcaster__, not_last_record_broadcaster__ );
 
-	UI_ETYPEDEF( command__, first_record_command__ );
-	UI_ETYPEDEF( command__, previous_record_command__ );
-	UI_ETYPEDEF( command__, next_record_command__ );
-	UI_ETYPEDEF( command__, last_record_command__ );
+	UI_SWIDGET( command__, first_record_command__ );
+	UI_SWIDGET( command__, previous_record_command__ );
+	UI_SWIDGET( command__, next_record_command__ );
+	UI_SWIDGET( command__, last_record_command__ );
 
-	UI_ETYPEDEF( textbox__, record_number_textbox__ );
+	UI_SWIDGET( textbox__, record_number_textbox__ );
 
-	UI_TYPEDEF( description__, records_amount_description__ );
+	UI_UWIDGET( description__, records_amount_description__ );
 
 
 	struct record_view__
@@ -61,11 +61,11 @@ namespace ui_rcd_v {
 		record_number_textbox__ RecordNumberTextbox;
 		records_amount_description__ RecordsAmountDescription;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 		void UpdateInterface(
 			bso::size__ RecordPosition,

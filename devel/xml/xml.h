@@ -282,6 +282,8 @@ namespace xml {
 		xs_Undefined,
 	};
 
+	const char *GetLabel( extended_status__ Status );
+
 	// Label de message préfixé par 'EXML_'.
 	const str::string_ &GetTranslation(
 		extended_status__ Status,

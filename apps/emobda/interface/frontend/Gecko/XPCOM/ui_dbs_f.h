@@ -27,16 +27,16 @@
 namespace ui_dbs_f {
 	using namespace ui_base;
 
-	UI_ETYPEDEF( ui_base::window__, window__ );
+	UI_SWIDGET( ui_base::window__, window__ );
 
-	UI_TYPEDEF( broadcaster__, database_naming_broadcaster__ );
+	UI_UWIDGET( broadcaster__, database_naming_broadcaster__ );
 
-	UI_ETYPEDEF( command__, apply_command__ );
-	UI_ETYPEDEF( command__, cancel_command__ );
+	UI_SWIDGET( command__, apply_command__ );
+	UI_SWIDGET( command__, cancel_command__ );
 
-	UI_TYPEDEF( textbox__, name_textbox__ );
-	UI_TYPEDEF( textbox__, path_textbox__ );
-	UI_TYPEDEF( textbox__, comment_textbox__ );
+	UI_UWIDGET( textbox__, name_textbox__ );
+	UI_UWIDGET( textbox__, path_textbox__ );
+	UI_UWIDGET( textbox__, comment_textbox__ );
 
 	struct database_form__
 	: public _ui_core__,
@@ -57,11 +57,11 @@ namespace ui_dbs_f {
 			comment_textbox__ Comment;
 		} Textboxes;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 	};
 

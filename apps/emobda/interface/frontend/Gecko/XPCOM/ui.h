@@ -60,7 +60,7 @@ namespace ui {
 	};
 
 	class ui___
-	: public ui_base::bridge_functions__
+	: public bridge__
 	{
 	public:
 		ui_main::main__ Main;
@@ -83,15 +83,6 @@ namespace ui {
 		}
 		virtual void UIExposeKernel( void ) = 0;	// Kernel used by UI becomes current kernel to use for coming UI part.
 		virtual void UIRevokeKernel( void ) = 0;	// Kernel used by this UI do no more be availabe for coming UI part.
-	protected:
-		virtual const ui::ui___ &__UI( void ) const
-		{
-			return *this;
-		}
-		virtual ui::ui___ &__UI( void )
-		{
-			return *this;
-		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -104,6 +95,7 @@ namespace ui {
 		void Init( _kernel___ &Kernel )
 		{
 			// 'ui_...' type member are are initalized later.
+			bridge__::Init( *this );
 			_Kernel = &Kernel;
 		}
 		void SaveLocalRegistry( void ) const;

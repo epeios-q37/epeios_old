@@ -42,35 +42,35 @@ void ui_rcd_f::cancel_record_command__::NSXPCMOnEvent( event__ )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	record_form__::commands__ &UI,
+	ui___ &UI,
+	record_form__::commands__ &CUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.ApplyRecord, Document, "cmdApplyRecord" );
-	Register_( Functions, UI.CancelRecord, Document, "cmdCancelRecord" );
+	Register_( UI, CUI.ApplyRecord, Document, "cmdApplyRecord" );
+	Register_( UI, CUI.CancelRecord, Document, "cmdCancelRecord" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	record_form__ &UI )
+	ui___ &UI,
+	record_form__ &RFUI )
 {
-	ui_base::Register( Functions, UI.RecordBox, UI.Document, "boxRecord", nsxpcm::efNone );
+	ui_base::Register( UI, RFUI.RecordBox, RFUI.Document, "boxRecord", nsxpcm::efNone );
 
-	Register_( Functions, UI.Commands, UI.Document );
+	Register_( UI, RFUI.Commands, RFUI.Document );
 }
 
 
 void ui_rcd_f::RegisterRecordFormUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.RecordForm.Init( UI, Window );

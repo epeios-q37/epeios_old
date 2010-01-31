@@ -27,12 +27,12 @@
 namespace ui_bksdb {
 	using namespace ui_base;
 
-	UI_ETYPEDEF( ui_base::window__, window__ );
+	UI_SWIDGET( ui_base::window__, window__ );
 
-	UI_ETYPEDEF( textbox__, host_service_textbox__ );
+	UI_SWIDGET( textbox__, host_service_textbox__ );
 
-	UI_ETYPEDEF( command__, local_command__ );
-	UI_ETYPEDEF( command__, remote_command__ );
+	UI_SWIDGET( command__, local_command__ );
+	UI_SWIDGET( command__, remote_command__ );
 
 	struct backend_selection__
 	: public _ui_core__,
@@ -46,11 +46,11 @@ namespace ui_bksdb {
 			remote_command__ Remote;
 		} Commands;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 		void ExtractSelectedBackend( bso::bool__ Local );
 	};

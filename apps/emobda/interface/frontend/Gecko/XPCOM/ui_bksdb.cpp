@@ -100,42 +100,42 @@ ERREpilog
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	broadcaster__ &Broadcaster,
+	ui___ &UI,
+	broadcaster__<ui___> &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Broadcaster, Document, Id );
+	ui_base::Register( UI, Broadcaster, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	backend_selection__::commands__ &UI,
+	ui___ &UI,
+	backend_selection__::commands__ &CUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Local, Document, "cmdLocal" );
-	Register_( Functions, UI.Remote, Document, "cmdRemote" );
+	Register_( UI, CUI.Local, Document, "cmdLocal" );
+	Register_( UI, CUI.Remote, Document, "cmdRemote" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	backend_selection__ &UI )
+	ui___ &UI,
+	backend_selection__ &BSUI )
 {
-	Register_( Functions, UI.Commands, UI.Document );
-	ui_base::Register( Functions, UI.HostServiceTextbox, UI.Document, "txbHostService", nsxpcm::efAllButAnnoying );
+	Register_( UI, BSUI.Commands, BSUI.Document );
+	ui_base::Register( UI, BSUI.HostServiceTextbox, BSUI.Document, "txbHostService", nsxpcm::efAllButAnnoying );
 }
 
 void ui_bksdb::RegisterBackendSelectionUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.BackendSelection.Init( UI, Window );

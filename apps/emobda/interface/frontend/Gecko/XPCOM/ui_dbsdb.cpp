@@ -98,48 +98,48 @@ void ui_dbsdb::cancel_command__::NSXPCMOnEvent( event__ )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	broadcaster__ &Broadcaster,
+	ui___ &UI,
+	broadcaster__<ui___> &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Broadcaster, Document, Id );
+	ui_base::Register( UI, Broadcaster, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_selection__::broadcasters__ &UI,
+	ui___ &UI,
+	database_selection__::broadcasters__ &BUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.DatabaseSelection, Document, "bcrDatabaseSelection" );
+	Register_( UI, BUI.DatabaseSelection, Document, "bcrDatabaseSelection" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_selection__::commands__ &UI,
+	ui___ &UI,
+	database_selection__::commands__ &CUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Apply, Document, "cmdApply" );
-	Register_( Functions, UI.Cancel, Document, "cmdCancel" );
+	Register_( UI, CUI.Apply, Document, "cmdApply" );
+	Register_( UI, CUI.Cancel, Document, "cmdCancel" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_selection__ &UI )
+	ui___ &UI,
+	database_selection__ &DSUI )
 {
-	ui_base::Register( Functions, UI.DatabaseTree, UI.Document, "treDatabases" );
+	ui_base::Register( UI, DSUI.DatabaseTree, DSUI.Document, "treDatabases" );
 
-	Register_( Functions, UI.Broadcasters, UI.Document );
-	Register_( Functions, UI.Commands, UI.Document );
+	Register_( UI, DSUI.Broadcasters, DSUI.Document );
+	Register_( UI, DSUI.Commands, DSUI.Document );
 }
 
 void ui_dbsdb::RegisterDatabaseSelectionUI(

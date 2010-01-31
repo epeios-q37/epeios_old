@@ -79,70 +79,70 @@ void ui_dbs_f::cancel_command__::NSXPCMOnEvent( event__ )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	broadcaster__ &Broadcaster,
+	ui___ &UI,
+	broadcaster__<ui___> &Broadcaster,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Broadcaster, Document, Id );
+	ui_base::Register( UI, Broadcaster, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	command__ &Command,
+	ui___ &UI,
+	command__<ui___> &Command,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Command, Document, Id );
+	ui_base::Register( UI, Command, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	textbox__ &Textbox,
+	ui___ &UI,
+	textbox__<ui___> &Textbox,
 	nsIDOMDocument *Document,
 	const char *Id )
 {
-	ui_base::Register( Functions, Textbox, Document, Id );
+	ui_base::Register( UI, Textbox, Document, Id );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_form__::broadcasters__ &UI,
+	ui___ &UI,
+	database_form__::broadcasters__ &BUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.DatabaseNaming, Document, "bcrDatabaseNaming" );
+	Register_( UI, BUI.DatabaseNaming, Document, "bcrDatabaseNaming" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_form__::commands__ &UI,
+	ui___ &UI,
+	database_form__::commands__ &DFUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Apply, Document, "cmdApply" );
-	Register_( Functions, UI.Cancel, Document, "cmdCancel" );
+	Register_( UI, DFUI.Apply, Document, "cmdApply" );
+	Register_( UI, DFUI.Cancel, Document, "cmdCancel" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_form__::textboxes__ &UI,
+	ui___ &UI,
+	database_form__::textboxes__ &TUI,
 	nsIDOMDocument *Document )
 {
-	Register_( Functions, UI.Name, Document, "txbName" );
-	Register_( Functions, UI.Path, Document, "txbPath" );
-	Register_( Functions, UI.Comment, Document, "txbComment" );
+	Register_( UI, TUI.Name, Document, "txbName" );
+	Register_( UI, TUI.Path, Document, "txbPath" );
+	Register_( UI, TUI.Comment, Document, "txbComment" );
 }
 
 static void Register_(
-	bridge_functions__ &Functions,
-	database_form__ &UI )
+	ui___ &UI,
+	database_form__ &DFUI )
 {
-	Register_( Functions, UI.Broadcasters, UI.Document );
-	Register_( Functions, UI.Commands, UI.Document );
-	Register_( Functions, UI.Textboxes, UI.Document );
+	Register_( UI, DFUI.Broadcasters, DFUI.Document );
+	Register_( UI, DFUI.Commands, DFUI.Document );
+	Register_( UI, DFUI.Textboxes, DFUI.Document );
 }
 
 void ui_dbs_f::RegisterDatabaseFormUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.DatabaseForm.Init( UI, Window );

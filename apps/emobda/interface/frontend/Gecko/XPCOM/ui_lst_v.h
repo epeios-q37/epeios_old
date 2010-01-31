@@ -27,7 +27,7 @@
 namespace ui_lst_v {
 	using namespace ui_base;
 
-	UI_ETYPEDEF( ui_base::tree__, content_tree__ );
+	UI_SWIDGET( ui_base::tree__, content_tree__ );
 
 	struct list_view__
 	: public _ui_core__,
@@ -36,11 +36,11 @@ namespace ui_lst_v {
 	public:
 		content_tree__ ContentTree;
 		void Init(
-			bridge_functions__ &Functions,
+			ui___ &UI,
 			nsIDOMWindow *Window)
 		{
 			_ui_core__::Init( Window );
-			bridge__::Init( Functions );
+			bridge__::Init( UI );
 		}
 	};
 

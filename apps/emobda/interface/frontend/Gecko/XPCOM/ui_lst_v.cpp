@@ -48,14 +48,14 @@ void ui_lst_v::content_tree__::NSXPCMOnEvent( event__ Event )
 /* UI Registrations */
 
 static void Register_(
-	bridge_functions__ &Functions,
-	list_view__ &UI )
+	ui___ &UI,
+	list_view__ &LVUI )
 {
-	ui_base::Register( Functions, UI.ContentTree, UI.Document, "treContent" );
+	ui_base::Register( UI, LVUI.ContentTree, LVUI.Document, "treContent" );
 }
 
 void ui_lst_v::RegisterListViewUI(
-	ui::ui___ &UI,
+	ui___ &UI,
 	nsIDOMWindow *Window )
 {
 	UI.ListView.Init( UI, Window );

@@ -105,7 +105,7 @@ ERREpilog
 
 static void Register_(
 	nsIDOMNode *Node,
-	ui_base::bridge_functions__ &Functions )
+	ui___ &UI )
 {
 ERRProlog
 	ui_main::table_menu_item__ *Item = NULL;
@@ -122,7 +122,7 @@ ERRBegin
 		if ( Row.Amount() ) {
 			Item = new ui_main::table_menu_item__;
 
-			Register( Functions, *Item, nsxpcm::QueryInterface<nsIDOMElement>( Node ), nsxpcm::efCommand );
+			Register( UI, *Item, nsxpcm::QueryInterface<nsIDOMElement>( Node ), nsxpcm::efCommand );
 		}
 	}
 
