@@ -1,5 +1,13 @@
 $Id$
 
+02/01/2010 :
+	- NSBBSC :
+		- Ajout méthodes 'Size(...)' et 'Resize(...)' à l'objet '_cache[_]'.
+	- NDBCTT :
+		- Mise en oeuvre systématique d'un cache.
+	- NDBIDX :
+		- Adaptation aux modifications 'NDB...'.
+
 31/01/2010 :
 	- GENERAL :
 		- Codage 'XUI'.

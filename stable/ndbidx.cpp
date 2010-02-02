@@ -230,7 +230,6 @@ ERRBegin
 
 	_Retrieve( Row, Datum, *(ndbctt::cache_ *)NULL );
 
-
 	if ( Extremities != NULL ) {
 		if ( Extremities->Smallest == NONE )
 			Extremities->Smallest = BaseIndex.First( S_.Root );
@@ -397,7 +396,7 @@ ERRProlog
 ERRBegin
 	Datum.Init();
 
-	_Content( true ).Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL );
+	_Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL );
 
 	Result = _SortPointer->Compare( Datum, Pattern, SkipLevel  );
 ERRErr
@@ -417,7 +416,7 @@ ERRProlog
 ERRBegin
 	Pattern.Init();
 
-	_Content( true ).Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL );
+	_Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL );
 
 	Result = Compare( RecordRow1, Pattern, SkipLevel );
 ERRErr

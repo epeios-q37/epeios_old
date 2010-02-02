@@ -83,7 +83,13 @@ namespace ndbctt {
 	private:
 		ndbdct::dynamic_content_ *_Dynamic;
 		ndbsct::static_content_ *_Static;
-		type__ _Test( void ) const
+		ndbbsc::cache _CacheObject;
+		ndbbsc::cache_ &_Cache;	// Pour permettre l'accés à '_CacheObject' même à partir d'une méthode 'const'.
+/*		cache_ &_Cache( void ) const
+		{
+			return *_CachePointer;
+		}
+*/		type__ _Test( void ) const
 		{
 			if ( ( _Static == NULL ) == ( _Dynamic == NULL ) )
 				ERRu();
@@ -97,19 +103,46 @@ namespace ndbctt {
 
 			return t_Undefined;	// Pour éviter un 'warning'.
 		}
+		bso::bool__ _UseCache( void ) const
+		{
+			epeios::size__ Size = 0;
+
+			switch ( _Test() ) {
+			case tStatic:
+				Size = _Static->Amount();
+				break;
+			case tDynamic:
+				Size = _Dynamic->Amount();
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			if ( Size > _Cache.Size() )
+				_Cache.Resize( Size );	/* Normalement fait à l'initialisation ou lors de l'ajout d'un enregistrement,
+										mais donné pas encore initialisé lors de l'initialisation en mode 'mono-fichier'. */
+
+			return true;
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
 			_Dynamic = NULL;
 			_Static = NULL;
+			_CacheObject.reset();
+//			_CachePointer = NULL;
 		}
 		content__( void )
+			:	_Cache( _CacheObject )
 		{
 			reset( false );
 		}
 		content__ &operator =( const content__ &C )
 		{
 			// Pour éviter la copie des pointeurs.
+
+			_CacheObject = C._CacheObject;
 
 			return *this;
 		}
@@ -123,6 +156,7 @@ namespace ndbctt {
 				ERRu();
 
 			_Dynamic = &Dynamic;
+			_CacheObject.Init( Dynamic.Amount() );
 		}
 		void Init( ndbsct::static_content_ &Static )
 		{
@@ -130,22 +164,33 @@ namespace ndbctt {
 				ERRu();
 
 			_Static = &Static;
+			_Cache.Init( Static.Amount() );
 		}
-		rrow__ Store( const datum_ &Data )
+		rrow__ Store( const datum_ &Datum )
 		{
+			rrow__ Row = NONE;
+			epeios::size__ Amount = 0;
+
 			switch ( _Test() ) {
 			case tStatic:
-				return _Static->Store( Data );
+				Row = _Static->Store( Datum );
+				Amount = _Static->Amount();
 				break;
 			case tDynamic:
-				return _Dynamic->Store( Data );
+				Row = _Dynamic->Store( Datum );
+				Amount = _Dynamic->Amount();
 				break;
 			default:
 				ERRc();
 				break;
 			}
 
-			return NONE;	// Pour éviter un 'warning'.
+			if ( _UseCache() ) {
+				_Cache.Resize( Amount );
+				_Cache.Store( Datum, Row );
+			}
+
+			return Row;
 		}
 		void Erase( rrow__ Row )
 		{
@@ -160,21 +205,29 @@ namespace ndbctt {
 				ERRc();
 				break;
 			}
+
+			if ( _UseCache() )
+				_Cache.Remove( Row );
 		}
 		void Store(
-			const datum_ &Data,
+			const datum_ &Datum,
 			rrow__ Row )
 		{
 			switch ( _Test() ) {
 			case tStatic:
-				_Static->Store( Data, Row );
+				_Static->Store( Datum, Row );
 				break;
 			case tDynamic:
-				_Dynamic->Store( Data, Row );
+				_Dynamic->Store( Datum, Row );
 				break;
 			default:
 				ERRc();
 				break;
+			}
+
+			if ( _UseCache ()) {
+				_Cache.Remove( Row );
+				_Cache.Store( Datum, Row );
 			}
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
@@ -182,23 +235,31 @@ namespace ndbctt {
 			rrow__ Row,
 			datum_ &Datum ) const
 		{
-			switch ( _Test() ) {
-			case tStatic:
-				 _Static->Retrieve( Row, Datum );
-				 return true;
-				break;
-			case tDynamic:
-				return _Dynamic->Retrieve( Row, Datum );
-				break;
-			default:
-				ERRc();
-				break;
-			}
+			bso::bool__ Exists = false;
 
-			return false;	// Pour éviter un 'warning'.
+			if ( !_UseCache() || ( !_Cache.Retrieve( Row, Datum ) ) ) {
+				switch ( _Test() ) {
+				case tStatic:
+					 _Static->Retrieve( Row, Datum );
+					 Exists = true;
+					break;
+				case tDynamic:
+					Exists = _Dynamic->Retrieve( Row, Datum );
+					break;
+				default:
+					ERRc();
+					break;
+				}
+
+				if ( _UseCache() && Exists )
+					_Cache.Store( Datum, Row );
+			} else
+				Exists = true;
+
+			return Exists;
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
-		bso::bool__ Retrieve(
+/*		bso::bool__ Retrieve(
 			rrow__ Row,
 			datum_ &Datum,
 			cache_ &Cache ) const
@@ -218,7 +279,7 @@ namespace ndbctt {
 
 			return false;	// Pour éviter un 'warning'.
 		}
-		time_t ModificationTimeStamp( void ) const
+*/		time_t ModificationTimeStamp( void ) const
 		{
 			switch ( _Test() ) {
 			case tStatic:

@@ -192,12 +192,17 @@ namespace ndbidx {
 */
 			return *_ContentPointer;
 		}
+
 		void _Retrieve(
 			rrow__ Row,
 			datum_ &Datum,
 			ndbctt::cache_ &Cache ) const
 		{
+#if 1
+			_Content( true ).Retrieve( Row, Datum );
+#else
 			_Content( true ).Retrieve( Row, Datum, Cache );
+#endif
 		}
 		void _Touch( bso::bool__ CompareWithContent )
 		{

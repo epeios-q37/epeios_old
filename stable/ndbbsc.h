@@ -86,7 +86,7 @@ namespace ndbbsc {
 	typedef bch::E_BUNCHt_( crow__, rrow__ ) _list_;
 	typedef bch::E_BUNCHt_( rrow__, crow__ ) _links_;
 
-	#define NDBBSC_CACHE_DEFAULT_AMOUNT_MAX	( 2 << 15 )
+	#define NDBBSC_CACHE_DEFAULT_AMOUNT_MAX	( 2 << 12 )
 
 	class cache_
 	{
@@ -176,6 +176,18 @@ namespace ndbbsc {
 
 			S_.AmountMax = AmountMax;
 		}
+		void Resize( epeios::size__ Size )
+		{
+			epeios::size__ CurrentSize = List.Amount();
+
+			if ( CurrentSize > Size )
+				ERRu();
+			else if ( CurrentSize < Size ) {
+				List.Allocate( Size );
+
+				List.Set( NONE, CurrentSize );
+			}
+		}
 		bso::bool__ Retrieve(
 			rrow__ Row,
 			datum_ &Datum )
@@ -221,6 +233,10 @@ namespace ndbbsc {
 				Queue.Delete( CacheRow );
 				List.Store( NONE, Row );
 			}
+		}
+		const epeios::size__ Size( void ) const
+		{
+			return List.Amount();
 		}
 	};
 
