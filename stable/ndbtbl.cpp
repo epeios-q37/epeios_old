@@ -261,10 +261,7 @@ ERRBegin
 
 //	GetFileName_( Path, BaseFileName, FileName );
 
-	if ( Mode == ndbtbl::mReadOnly )
-		_Static.Init( Table.Content.Static(), BaseFileName, mdr::mReadOnly, ID );
-	else
-		_Static.Init( Table.Content.Static(), BaseFileName, mdr::mReadWrite, ID );
+	_Static.Init( Table.Content.Static(), BaseFileName, Convert( Mode ), ID );
 ERRErr
 ERREnd
 ERREpilog
@@ -283,10 +280,7 @@ ERRBegin
 
 //	GetFileName_( Path, RootFileName, FileName );
 
-	if ( Mode == ndbtbl::mReadOnly )
-		_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, mdr::mReadOnly, ID );
-	else
-		_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, mdr::mReadWrite, ID );
+	_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, Convert( Mode ), ID );
 ERRErr
 ERREnd
 ERREpilog

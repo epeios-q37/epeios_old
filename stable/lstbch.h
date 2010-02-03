@@ -209,7 +209,7 @@ namespace lstbch {
 		void Init(
 			const char *BunchFileName,
 			const char *ListFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{

@@ -201,7 +201,7 @@ namespace ndbsct {
 		static_content_ *_Content;
 		str::string _BaseFileName;
 		tym::memory_file_manager___ _FileManager;
-		mdr::mode__ _Mode;
+		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
 			return _FileManager.TimeStamp();
@@ -219,7 +219,7 @@ namespace ndbsct {
 			}
 
 			_FileManager.reset( P );
-			_Mode = mdr::m_Undefined;
+			_Mode = fil::m_Undefined;
 			_BaseFileName.reset( P );
 			_Content = NULL;
 		}
@@ -234,7 +234,7 @@ namespace ndbsct {
 		void Init(
 			static_content_ &Content,
 			const str::string_ &BaseFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			flm::id__ ID );
 		void WriteLocationsFile( void )	// Met à jour les fichiers.
 		{
@@ -244,7 +244,7 @@ namespace ndbsct {
 		{
 			_FileManager.ReleaseFile();
 		}
-		void SwitchMode( mdr::mode__ Mode )
+		void SwitchMode( fil::mode__ Mode )
 		{
 			if ( Mode != _Mode ) {
 				_FileManager.Mode( Mode );

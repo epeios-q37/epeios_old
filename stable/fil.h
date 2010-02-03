@@ -114,7 +114,8 @@ namespace fil {
 		//i Ouvre le fichier en lecture seule.
 		mReadOnly,
 		//i Amount of mode.
-		m_amount
+		m_amount,
+		m_Undefined
 	};
  	//e Status.
 	enum status__ {

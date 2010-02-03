@@ -90,19 +90,6 @@ namespace mdr {
 	//t The type of the datum in a memory.
 	typedef bso::raw__	datum__;
 
-	//e Access mode to the memory.
-	enum mode__
-	{
-		//i Read only.
-		mReadOnly,
-		//i Read/write
-		mReadWrite,
-		//i amount of mode.
-		m_amount,
-		//i Undefined.
-		m_Undefined,
-	};
-
 	//c Abstract memory driver. Use 'E_MEMORY_DRIVER__' instead directly this class.
 	class memory_driver__
 	{

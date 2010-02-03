@@ -280,7 +280,7 @@ namespace idxbtq {
 		void Init( 
 			const char *TreeFileName,
 			const char *QueueFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{
@@ -295,7 +295,7 @@ namespace idxbtq {
 			_TreeFileManager.ReleaseFile();
 			_QueueFileManager.ReleaseFile();
 		}
-		void Mode( mdr::mode__ Mode )
+		void Mode( fil::mode__ Mode )
 		{
 			_TreeFileManager.Mode( Mode );
 			_QueueFileManager.Mode( Mode );

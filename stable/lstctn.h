@@ -197,7 +197,7 @@ namespace lstctn {
 			const char *ContainerMultimemoryFileName,
 			const char *ContainerMultimemoryFreeFragmentPositionsFileName,
 			const char *ListFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{

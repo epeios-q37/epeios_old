@@ -474,7 +474,7 @@ namespace ndbidx {
 		index_ *_Index;
 		str::string _BaseFileName;
 		idxbtq::index_file_manager___ _FileManager;
-		mdr::mode__ _Mode;
+		fil::mode__ _Mode;
 		void _ErasePhysically( void )
 		{
 			_FileManager.Drop();
@@ -485,7 +485,7 @@ namespace ndbidx {
 			_FileManager.ReleaseFiles();
 
 			_FileManager.reset( P );
-			_Mode = mdr::m_Undefined;
+			_Mode = fil::m_Undefined;
 			_BaseFileName.reset( P );
 			_Index = NULL;
 		}
@@ -501,7 +501,7 @@ namespace ndbidx {
 			index_ &Index,
 			const str::string_ &BaseFileName,
 			bso::bool__ Erase,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			flm::id__ ID );
 		void CloseFiles( void )
 		{

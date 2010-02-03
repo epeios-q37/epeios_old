@@ -87,15 +87,15 @@ namespace ndbtbl {
 		m_Undefined
 	};
 
-	inline mdr::mode__ Convert( mode__ Mode )
+	inline fil::mode__ Convert( mode__ Mode )
 	{
 		switch ( Mode ) {
 		case mBulk:
 		case mReadWrite:
-			return mdr::mReadWrite;
+			return fil::mReadWrite;
 			break;
 		case mReadOnly:
-			return mdr::mReadOnly;
+			return fil::mReadOnly;
 			break;
 		case m_Undefined:
 			ERRu();
@@ -105,7 +105,7 @@ namespace ndbtbl {
 			break;
 		}
 
-		return mdr::m_Undefined;	// Pour éviter un 'warning'.
+		return fil::m_Undefined;	// Pour éviter un 'warning'.
 	}
 
 	typedef bch::E_BUNCH( index_ * ) _indexes;

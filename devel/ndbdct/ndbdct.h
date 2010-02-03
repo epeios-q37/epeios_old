@@ -545,7 +545,7 @@ namespace ndbdct {
 		str::string _BaseFileName;
 		tym::memory_file_manager___ _StorageFileManager;
 		entries_file_manager___ _EntriesFileManager;
-		mdr::mode__ _Mode;
+		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
 			time_t ContentTimeStamp, EntriesTimeStamp;
@@ -574,7 +574,7 @@ namespace ndbdct {
 
 			_StorageFileManager.reset( P );
 			_EntriesFileManager.reset( P );
-			_Mode = mdr::m_Undefined;
+			_Mode = fil::m_Undefined;
 			_BaseFileName.reset( P );
 			_Content = NULL;
 		}
@@ -589,7 +589,7 @@ namespace ndbdct {
 		void Init(
 			dynamic_content_ &Content,
 			const str::string_ &BaseFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			flm::id__ ID );
 		bso::bool__ ConnectToFiles( void );
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
@@ -601,7 +601,7 @@ namespace ndbdct {
 			_StorageFileManager.ReleaseFile();
 			_EntriesFileManager.ReleaseFile();
 		}
-		void SwitchMode( mdr::mode__ Mode )
+		void SwitchMode( fil::mode__ Mode )
 		{
 			if ( Mode != _Mode ) {
 				_StorageFileManager.Mode( Mode );

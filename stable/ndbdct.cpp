@@ -138,7 +138,7 @@ void ndbdct::dynamic_content_atomized_file_manager___::_SaveLocationsAndAvailabl
 void ndbdct::dynamic_content_atomized_file_manager___::Init(
 	dynamic_content_ &Content,
 	const str::string_ &BaseFileName,
-	mdr::mode__ Mode,
+	fil::mode__ Mode,
 	flm::id__ ID )
 {
 ERRProlog

@@ -425,7 +425,7 @@ namespace uym {
 	public:
 		void Init( 
 			const char *FileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{

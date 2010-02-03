@@ -93,7 +93,7 @@ void ndbsct::static_content_atomized_file_manager___::_SaveLocations( void ) con
 void ndbsct::static_content_atomized_file_manager___::Init(
 	static_content_ &Content,
 	const str::string_ &BaseFileName,
-	mdr::mode__ Mode,
+	fil::mode__ Mode,
 	flm::id__ ID )
 {
 ERRProlog

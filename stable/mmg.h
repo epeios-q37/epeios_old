@@ -134,14 +134,8 @@ namespace mmg
 		typedef merger_memory_driver_s__ s;
 		s &S_;
 		uym::untyped_memory_ Memory;
-		void reset(	bool P = true )
+		void reset( bool P = true )
 		{
-			if ( P )
-			{
-				if ( Ecriture )
-					StockerStatique();
-			}
-
 			E_MEMORY_DRIVER__::reset( P );
 			Memory.reset( P );
 			Static_ = NULL;
@@ -201,14 +195,6 @@ namespace mmg
 		void RecupererStatique( void )
 		{
 			Memory.Recall( 0, sizeof( st ), (mdr::datum__ *)Static_ );
-		}
-		void Mode( mdr::mode__ Mode )
-		{
-			Mode_ = Mode;
-		}
-		mdr::mode__ Mode( void )
-		{
-			return Mode_;
 		}
 		bso::bool__ IsPlugged( void ) const
 		{
@@ -344,16 +330,6 @@ namespace mmg
 		{
 			S_.State = State;
 		}
-		//f The mode of the object decames 'Mode'.
-		void Mode( mdr::mode__ Mode )
-		{
-			Pilote_.Mode( Mode );
-		}
-		//f Return the mode of the object.
-		mdr::mode__ Mode( void ) const
-		{
-			return Pilote_.Mode();
-		}
 		//f Return the object which is handled by.
 		t &operator ()( void )
 		{
@@ -409,7 +385,7 @@ namespace mmg
 		both 'ObjectMode' and 'FileMode' are forced for to 'mdr::mReadWrite'. */
 		mmg::rule Init(
 			const char *FileName,
-			mdr::mode__ FileMode )
+			fil::mode__ FileMode )
 		{	
 			reset();
 
@@ -433,7 +409,7 @@ namespace mmg
 			else
 			{
 				memory_merger<t, st>::Init( mmg::rCreation );
-				PiloteFichier_.Mode( mdr::mReadWrite );
+				PiloteFichier_.Mode( fil::mReadWrite );
 			}
 
 			memory_merger<t, st>::State( mmg::sImmortal );
@@ -441,17 +417,9 @@ namespace mmg
 			return ( Test ? mmg::rRecovery : mmg::rCreation );
 		}
 		//f The object is placed in 'ObjectMode', the file in 'FileMode'.
-		void Mode(
-			mdr::mode__ ObjectMode,
-			mdr::mode__ FileMode  )
+		void Mode( fil::mode__ Mode  )
 		{
-			memory_merger<t, st>::Mode( ObjectMode );
 			PiloteFichier_.Mode( FileMode );
-		}
-		//f Fila and object are placed in 'Mode' mode.
-		void Mode( mdr::mode__ Mode )
-		{
-			this->Mode( Mode, Mode );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ & )
 		{

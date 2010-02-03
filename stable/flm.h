@@ -303,7 +303,7 @@ namespace flm {
 				// Signale que le nom du fichier a été crée de manière interne
 				Interne			:1;
 				// Loi d'accés à la mémoire.
-				mdr::mode__ Mode;
+				fil::mode__ Mode;
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 		// différents témoins
@@ -319,10 +319,7 @@ namespace flm {
 
 			if ( !Temoin_.Ouvert )
 			{
-				if ( Temoin_.Mode == mdr::mReadOnly )
-					Success = File_.Init( Nom_, fil::mReadOnly, _FlushToDevice, ErrHandle ) == fil::sSuccess;
-				else
-					Success = File_.Init( Nom_, fil::mReadWrite, _FlushToDevice, ErrHandle ) == fil::sSuccess;
+				Success = File_.Init( Nom_, Temoin_.Mode, _FlushToDevice, ErrHandle ) == fil::sSuccess;
 
 				if ( Success )
 					Temoin_.Ouvert = 1;
@@ -444,7 +441,7 @@ namespace flm {
 			Temoin_.Manuel = true;
 			Temoin_.Persistant = false;
 			Temoin_.Interne = false;
-			Temoin_.Mode = mdr::mReadOnly;
+			Temoin_.Mode = fil::mReadOnly;
 			TailleFichier_ = 0;
 			_Row = NONE;
 			_ID = FLM_UNDEFINED_ID;
@@ -455,7 +452,7 @@ namespace flm {
 			id__ ID,
 			bso::bool__ FlushToDevice,
 			const char *NomFichier = NULL,
-			mdr::mode__ Mode = mdr::mReadWrite,
+			fil::mode__ Mode = fil::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
 			if ( NomFichier )
@@ -495,7 +492,7 @@ namespace flm {
 			Temoin_.Mode = Mode;
 
 			if ( Creation == flm::cNow  )
-				if ( Mode == mdr::mReadWrite )
+				if ( Mode == fil::mReadWrite )
 					Open_( false );
 				else
 					ERRu();
@@ -534,7 +531,7 @@ namespace flm {
 			return Temoin_.Persistant != 0;
 		}
 		// bascule en mode d'acces 'Acces'.
-		void Mode( mdr::mode__ Mode )
+		void Mode( fil::mode__ Mode )
 		{
 			if ( Temoin_.Mode != Mode )
 			{
@@ -543,7 +540,7 @@ namespace flm {
 			}
 		}
 		// Retourne le mode d'accés.
-		mdr::mode__ Mode( void )
+		fil::mode__ Mode( void )
 		{
 			return Temoin_.Mode;
 		}
@@ -646,12 +643,12 @@ namespace flm {
 			E_MEMORY_DRIVER__::reset( P );
 		}
 		//f Return the mode.
-		mdr::mode__ Mode( void )
+		fil::mode__ Mode( void )
 		{
 			return memoire_fichier_base___::Mode();
 		}
 		//f 'Mode' becomes the mode.
-		void Mode( mdr::mode__ Mode )
+		void Mode( fil::mode__ Mode )
 		{
 			memoire_fichier_base___::Mode( Mode );
 		}
@@ -660,7 +657,7 @@ namespace flm {
 			id__ ID,
 			bso::bool__ FlushToDevice,
 			const char *FileName = NULL,
-			mdr::mode__ Mode = mdr::mReadWrite,
+			fil::mode__ Mode = fil::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
 			memoire_fichier_base___::Init( ID, FlushToDevice, FileName, Mode, Creation );

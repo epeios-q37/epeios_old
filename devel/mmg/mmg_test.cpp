@@ -41,7 +41,7 @@ void Generic( int argc, char *argv[] )
 ERRProlog
 	mmg::E_FILE_MERGER___( str::string_ ) C;
 ERRBegin
-	if ( C.Init( "test", mdr::mReadWrite ) == mmg::rCreation ) {
+	if ( C.Init( "test", fil::mReadWrite ) == mmg::rCreation ) {
 		C().Init();
 
 		C().Append( "toto" );

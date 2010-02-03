@@ -638,10 +638,6 @@ ERRBegin
 
 	cout << "--------------" << txf::nl;
 
-	ECM.ChangeMode( mdr::mReadOnly );
-//	ECm.ChangeMode( mdr::mReadOnly );
-	ECC.ChangeMode( mdr::mReadOnly );
-
 	for ( M = 'A'; M <= LM; M++ )
 	{
 		Cm = ECM(M - 'A');
@@ -696,7 +692,7 @@ ERRProlog
 	char M, m, C;
 ERRBegin
 	ID = flm::GetId();
-	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", mdr::mReadWrite, true, ID );
+	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", fil::mReadWrite, true, ID );
 
 	Cm.Init();
 	CC.Init();
@@ -764,10 +760,6 @@ ERRBegin
 
 
 	cout << "--------------" << txf::nl;
-
-	ECM.ChangeMode( mdr::mReadOnly );
-//	ECm.ChangeMode( mdr::mReadOnly );
-	ECC.ChangeMode( mdr::mReadOnly );
 
 	for ( M = 'A'; M <= LM; M++ )
 	{

@@ -1,6 +1,10 @@
 $Id$
 
 03/02/210 :
+	- GENERAL :
+		- Adaptation modifications 'MDR'.
+	- MDR :
+		- Suppression 'mode' apparament inutile.
 	- NDBDCT :
 		- La connection aux fichiers de l''atomized_file_manager' peut maintenant être diffèrée.
 	- NDBSCT :

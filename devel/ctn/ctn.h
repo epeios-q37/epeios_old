@@ -354,7 +354,7 @@ namespace ctn {
 			const char *DynamicsDescriptorsFileName,
 			const char *DynamicsMultimemoryFileName,
 			const char *DynamicsMultimemoryFreeFragmentPositionsFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{
@@ -366,7 +366,7 @@ namespace ctn {
 			_Statics.ReleaseFile();
 			_Dynamics.ReleaseFile();
 		}
-		void Mode( mdr::mode__ Mode )
+		void Mode( fil::mode__ Mode )
 		{
 			_Statics.Mode( Mode );
 			_Dynamics.Mode( Mode );
@@ -451,7 +451,7 @@ namespace ctn {
 		}
 		void Vider_( void )
 		{
-			if ( ( !Vide_() && ( Mode_ == mdr::mReadWrite ) ) /*&& ( Conteneur_->Mode() == plm::mModification )*/ ) {
+			if ( !Vide_() ) {
 #ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
 					ERRu();
@@ -468,8 +468,6 @@ namespace ctn {
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
 		mmi::indexed_multimemory_driver__ Pilote_;
-		// Mode d'accés
-		mdr::mode__ Mode_;
 	public:
 		struct s
 		: public st
@@ -483,7 +481,6 @@ namespace ctn {
 			Pilote_.reset( P );
 
 			Conteneur_ = NULL;
-			Mode_ = mdr::mReadOnly;
 		}
 		item_base_volatile__( void )
 		{
@@ -499,23 +496,18 @@ namespace ctn {
 		}
 	*/
 		// Rattache au conteneur 'Conteneur'.
-		void Init(
-			basic_container_<st, r> &Conteneur,
-			mdr::mode__ Mode = mdr::mReadWrite )
+		void Init( basic_container_<st, r> &Conteneur )
 		{
-			Init( &Conteneur, Mode );
+			Init( &Conteneur );
 		}
 		// Rattache au conteneur 'Conteneur'.
-		void Init(
-			basic_container_<st,r> *Conteneur,
-			mdr::mode__ Mode = mdr::mReadWrite )
+		void Init( basic_container_<st,r> *Conteneur )
 		{
 #ifdef CTN_DBG
 			Conteneur->FlushTest();
 #endif
 			Conteneur_ = Conteneur;
 			Pilote_.Init( Conteneur->Dynamics );
-			Mode_ = Mode;
 		}
 		//* Cale l'élément sur l'élément du conteneur à la position 'Position'
 		void Set( r Position )
@@ -554,15 +546,6 @@ namespace ctn {
 		void Erase( void )
 		{
 			Pilote_.Index( NONE );
-		}
-		// Bascule en mde 'Mode'.
-		void ChangeMode( mdr::mode__ Mode )
-		{
-			if ( Mode_ != Mode )
-			{
-				Vider_();
-				Mode_ = Mode;
-			}
 		}
 		r Index( void ) const
 		{
@@ -1117,15 +1100,13 @@ namespace ctn {
 			reset( true );
 		}
 		//f Initialize with container 'Container', in mode 'Mode'.
-		void Init(
-			basic_container_< item_multi_statique__< typename t::s >, r > &Container,
-			mdr::mode__ Mode = mdr::mReadWrite )
+		void Init( basic_container_< item_multi_statique__< typename t::s >, r > &Container )
 		{
 #ifdef CTN_DBG
 			Container.FlushTest();
 #endif
 			Multimemoire.Init();
-			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container, Mode );
+			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
 		}
 		volatile_multi_item &operator =( const volatile_multi_item &O )
 		{

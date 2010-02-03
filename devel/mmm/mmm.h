@@ -1733,7 +1733,7 @@ namespace mmm {
 			multimemory_ &Multimemory,
 			const char *FileName,
 			const char *FreeFragmentPositionsFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{

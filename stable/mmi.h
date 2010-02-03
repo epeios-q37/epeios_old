@@ -491,7 +491,7 @@ namespace mmi {
 			const char *DescriptorsFileName,
 			const char *MultimemoryFileName,
 			const char *MultimemoryFreeFragmentPositionsFileName,
-			mdr::mode__ Mode,
+			fil::mode__ Mode,
 			bso::bool__ Persistent,
 			flm::id__ ID )
 		{
@@ -503,7 +503,7 @@ namespace mmi {
 			_Descriptors.ReleaseFile();
 			_Multimemory.ReleaseFile();
 		}
-		void Mode( mdr::mode__ Mode )
+		void Mode( fil::mode__ Mode )
 		{
 			_Descriptors.Mode( Mode );
 			_Multimemory.Mode( Mode );
