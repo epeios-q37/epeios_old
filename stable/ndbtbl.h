@@ -68,7 +68,10 @@ extern class ttr_tutor &NDBTBLTutor;
 
 namespace ndbtbl {
 	using namespace ndbctt;
+	typedef ndbctt::post_initialization_function__ content_post_initialization_function__;
+
 	using namespace ndbidx;
+	typedef ndbidx::post_initialization_function__ index_post_initialization_function__;
 
 	using ndbbsc::rrows_;
 	using ndbbsc::rrows;
@@ -80,8 +83,6 @@ namespace ndbtbl {
 		mReadOnly,
 		// Lecture/écriture.
 		mReadWrite,
-		// Administrateur : changement de la structure  (création/suppression d'index, p. ex.).
-		mAdmin,
 		m_amount,
 		m_Undefined
 	};
@@ -91,7 +92,6 @@ namespace ndbtbl {
 		switch ( Mode ) {
 		case mBulk:
 		case mReadWrite:
-		case mAdmin:
 			return mdr::mReadWrite;
 			break;
 		case mReadOnly:
@@ -126,26 +126,9 @@ namespace ndbtbl {
 			case mBulk:
 				ERRc();
 				break;
-			case mAdmin:
-				switch ( S_.Mode ) {
-				case mBulk:
-					ERRu();
-					break;
-				case mAdmin:
-					break;
-				case mReadWrite:
-				case mReadOnly:
-					ERRu();
-					break;
-				default:
-					ERRc();
-					break;
-				}
-				break;
 			case mReadWrite:
 				switch ( S_.Mode ) {
 				case mBulk:
-				case mAdmin:
 				case mReadWrite:
 					break;
 				case mReadOnly:
@@ -162,7 +145,6 @@ namespace ndbtbl {
 				case mBulk:
 					ERRu();
 					break;
-				case mAdmin:
 				case mReadWrite:
 				case mReadOnly:
 					break;
@@ -183,7 +165,6 @@ namespace ndbtbl {
 			switch ( S_.Mode ) {
 			case mBulk:
 			case mReadWrite:
-			case mAdmin:
 				break;
 			case mReadOnly:
 				ERRu();
@@ -201,7 +182,6 @@ namespace ndbtbl {
 			case mBulk:
 			case mReadWrite:
 			case mReadOnly:
-			case mAdmin:
 				break;
 			default:
 				ERRu();
@@ -224,7 +204,6 @@ namespace ndbtbl {
 				return true;
 			case mReadWrite:
 			case mReadOnly:
-			case mAdmin:
 				return false;
 				break;
 			default:
@@ -274,23 +253,24 @@ namespace ndbtbl {
 		}
 		void InitStatic(
 			epeios::size__ Size,
-			mode__ Mode )
+			mode__ Mode,
+			content_post_initialization_function__ &Function )
 		{
 			Init( Mode );
 
-			Content.InitStatic( Size );
+			Content.InitStatic( Size, Function );
 		}
-		void InitDynamic( mode__ Mode )
+		void InitDynamic(
+			mode__ Mode,
+			content_post_initialization_function__ &Function )
 		{
 			Init( Mode );
 
-			Content.InitDynamic();
+			Content.InitDynamic( Function );
 		}
 		E_NAVt( Content()., rrow__ );
 		void AddIndex( index_ &Index )
 		{
-			_Test( mAdmin );
-
 			_Indexes.Append( &Index );
 		}
 		rrow__ Insert( const datum_ &Datum )
@@ -353,7 +333,6 @@ namespace ndbtbl {
 			case mBulk:
 //				_ResetAllIndexes();
 				break;
-			case mAdmin:
 			case mReadWrite:
 			case mReadOnly:
 				switch( OldMode ) {
@@ -361,7 +340,6 @@ namespace ndbtbl {
 					if ( !AreAllIndexesSynchronized() )
 						ERRu();
 					break;
-				case mAdmin:
 				case mReadOnly:
 				case mReadWrite:
 					break;
@@ -471,6 +449,20 @@ namespace ndbtbl {
 			}
 
 			return Dummy;	// Pour éviter un 'warning'.
+		}
+		void ConnectToFiles( type__ Type )
+		{
+			switch ( Type ) {
+			case tStatic:
+				_Static.ConnectToFiles();
+				break;
+			case tDynamic:
+				_Dynamic.ConnectToFiles();
+				break;
+			default:
+				ERRu();
+				break;
+			}
 		}
 
 	};

@@ -171,12 +171,34 @@ namespace ndbidx {
 		friend class index_;
 	};
 
+	struct post_initialization_function__
+	{
+	protected:
+		virtual void NDBIDXCompleteInitialization( void ) = 0;
+	public:
+		void CompleteInitialization( void )
+		{
+			NDBIDXCompleteInitialization();
+		}
+	};
+
 	class index_
 	{
+	protected:
 	private:
 		sort_function__ *_SortPointer;
 		const ndbctt::content__ *_ContentPointer;
 		time_t _ModificationTimeStamp;
+		mutable post_initialization_function__ *_PostInitializationFunction;
+		void _CompleteInitialization( void ) const
+		{
+			if ( _PostInitializationFunction != NULL ) {
+				// On passe par un 'Buffer' pour éviter un appel récursif.
+				post_initialization_function__ *Buffer = _PostInitializationFunction;
+				_PostInitializationFunction = NULL;
+				Buffer->CompleteInitialization();
+			}
+		}
 		bso::sign__ _Seek(
 			const datum_ &Data,
 			skip_level__ SkipLevel,
@@ -234,6 +256,7 @@ namespace ndbidx {
 			_ContentPointer = NULL;
 
 			_ModificationTimeStamp = 0;
+			_PostInitializationFunction = NULL;
 		}
 		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
@@ -254,7 +277,8 @@ namespace ndbidx {
 		}
 		void Init(
 			const ndbctt::content__ &Content = *(const ndbctt::content__ *)NULL,
-			sort_function__ &Sort = *(sort_function__ *)NULL )
+			sort_function__ &Sort = *(sort_function__ *)NULL,
+			post_initialization_function__ &PostInitializationFunction = *(post_initialization_function__ *)NULL )
 		{
 			BaseIndex.Init();
 			S_.Root = NONE;
@@ -263,6 +287,7 @@ namespace ndbidx {
 			_SortPointer = &Sort;
 
 			_ModificationTimeStamp = 0;
+			_PostInitializationFunction = &PostInitializationFunction;
 		}
 		// Vide l'index.
 		void Reset( void )
@@ -276,6 +301,7 @@ namespace ndbidx {
 			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
+			_CompleteInitialization();
 			BaseIndex.Allocate( Size, Mode );
 		}
 		bso::ubyte__ Index(
@@ -300,10 +326,10 @@ namespace ndbidx {
 		rrow__ StrictSeek(
 			const datum_ &Datum,
 			behavior__ EqualBehavior,
-			skip_level__ SkipLevel ) const
+			skip_level__ SkipLevel )
 		{
 			bso::sign__ Sign;
-			rrow__ Row = LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );
+			rrow__ Row = LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );	// Procède au '_CompleteIntialization()'.
 
 			switch ( Sign ) {
 			case -1:
@@ -336,14 +362,16 @@ namespace ndbidx {
 			rrow__ RecordId,
 			skip_level__ SkipLevel ) const
 		{
-			return -Compare( RecordId, Pattern, SkipLevel );
+			return -Compare( RecordId, Pattern, SkipLevel );	// Procède au '_CompleteInitialization()'.
 		}
 		bso::sign__ Compare(
 			rrow__ RecordRow1,
 			rrow__ RecordRow2,
 			skip_level__ SkipLevel ) const;
-		rrow__ SearchRoot( void )
+		rrow__ SearchRoot( void ) const
 		{	
+			_CompleteInitialization();
+
 			rrow__ Candidate = S_.Root = _Content( false ).First();
 
 			if ( Candidate != NONE ) 
@@ -354,6 +382,8 @@ namespace ndbidx {
 		}
 		rrow__ First( void ) const
 		{
+			_CompleteInitialization();
+
 			if ( S_.Root != NONE )
 				return BaseIndex.First( S_.Root );
 			else
@@ -361,6 +391,8 @@ namespace ndbidx {
 		}
 		rrow__ Last( void ) const
 		{
+			_CompleteInitialization();
+
 			if ( S_.Root != NONE )
 				return BaseIndex.Last( S_.Root );
 			else
@@ -368,12 +400,16 @@ namespace ndbidx {
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
+			_CompleteInitialization();
+
 			return BaseIndex.Next( Row );
 		}
 		rrow__ StrictGreater(
 			rrow__ Row,
 			skip_level__ SkipLevel ) const
 		{
+			_CompleteInitialization();
+
 			rrow__ Candidate = Next( Row );
 
 			if ( Candidate == NONE )
@@ -385,10 +421,14 @@ namespace ndbidx {
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
+			_CompleteInitialization();
+
 			return BaseIndex.Previous( Row );
 		}
 		mdr::size__ Amount( void ) const
 		{
+			_CompleteInitialization();
+
 			return BaseIndex.Amount();
 		}
 		bso::bool__ IsSynchronized( void ) const
@@ -405,6 +445,8 @@ namespace ndbidx {
 		}
 		void Balance( void )
 		{
+			_CompleteInitialization();
+
 			if ( S_.Root != NONE )
 				S_.Root = BaseIndex.Balance( S_.Root );
 
@@ -412,6 +454,8 @@ namespace ndbidx {
 		}
 		rrow__ CompareTreeAndQueue( void ) const
 		{
+			_CompleteInitialization();
+
 			if ( S_.Root != NONE )
 				return BaseIndex.Compare( S_.Root );
 			else
@@ -431,15 +475,6 @@ namespace ndbidx {
 		str::string _BaseFileName;
 		idxbtq::index_file_manager___ _FileManager;
 		mdr::mode__ _Mode;
-		bso::bool__ _ConnectToFiles()
-		{
-			if ( idxbtq::Connect( _Index->BaseIndex, _FileManager ) ) {
-				_Index->SearchRoot();
-				return true;
-			} else {
-				return false;
-			}
-		}
 		void _ErasePhysically( void )
 		{
 			_FileManager.Drop();
@@ -475,6 +510,15 @@ namespace ndbidx {
 		const str::string_ &BaseFileName( void ) const
 		{
 			return _BaseFileName;
+		}
+		bso::bool__ ConnectToFiles()
+		{
+			if ( idxbtq::Connect( _Index->BaseIndex, _FileManager ) ) {
+				_Index->SearchRoot();
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
 

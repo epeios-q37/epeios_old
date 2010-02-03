@@ -83,6 +83,8 @@ ERRProlog
 	datum DatumToCompare;
 	idxbtq::E_ISEEKERt__( rrow__ ) Seeker;
 ERRBegin
+	_CompleteInitialization();
+
 	Round = 0;
 
 	if ( S_.Root == NONE ) {
@@ -149,6 +151,8 @@ rrow__ ndbidx::index_::_SearchStrictGreater(
 	rrow__ Row,
 	skip_level__ SkipLevel ) const
 {
+	_CompleteInitialization();	
+
 	rrow__ Buffer = BaseIndex.GetTreeGreater( Row );
 	rrow__ Candidate = NONE;
 
@@ -214,6 +218,7 @@ ERRProlog
 //	tol::buffer__ Buffer;
 //	cio::aware_cout___ cout;
 ERRBegin
+	_CompleteInitialization();
 
 	if ( _Content( true ).Amount() > BaseIndex.Amount() )
 		BaseIndex.Allocate( _Content( true ).Amount(), aem::mDefault );
@@ -338,6 +343,8 @@ rrow__ ndbidx::index_::LooseSeek(
 	rrow__ Row = NONE;
 	bso::ubyte__ Round;
 
+	_CompleteInitialization();
+
 	if ( S_.Root == NONE )
 		return NONE;
 
@@ -357,6 +364,8 @@ rrow__ ndbidx::index_::Test( void ) const
 ERRProlog
 	datum Datum;
 ERRBegin
+	_CompleteInitialization();
+
 	if ( S_.Root == NONE )
 		ERRReturn;
 
@@ -396,6 +405,8 @@ ERRProlog
 ERRBegin
 	Datum.Init();
 
+	_CompleteInitialization();
+
 	_Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL );
 
 	Result = _SortPointer->Compare( Datum, Pattern, SkipLevel  );
@@ -415,6 +426,8 @@ ERRProlog
 	datum Pattern;
 ERRBegin
 	Pattern.Init();
+
+	_CompleteInitialization();
 
 	_Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL );
 
@@ -483,6 +496,8 @@ ERRProlog
 	bso::ulong__ PanelRecordSize;
 	bso::bool__ Randomly = false;
 ERRBegin
+	_CompleteInitialization();
+
 	Reset();
 
 	if ( Content.Amount() == 0 )
@@ -580,8 +595,6 @@ ERRBegin
 
 	if ( Erase )
 		_ErasePhysically();
-
-	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog

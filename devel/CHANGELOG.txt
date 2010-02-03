@@ -1,12 +1,24 @@
 $Id$
 
-02/01/2010 :
+03/02/210 :
+	- NDBDCT :
+		- La connection aux fichiers de l''atomized_file_manager' peut maintenant être diffèrée.
+	- NDBSCT :
+		- La connection aux fichiers de l''atomized_file_manager' peut maintenant être diffèrée.
+	- NDBTBL :
+		- Ajout 'ConnectToFiles(...)'.
+		- Retrait mode 'mAdmin'.
+
+02/02/2010 :
+	- FLM :
+		- 'FileSize()' ne requiert plus l'ouverture du fichier concerné.
 	- NSBBSC :
 		- Ajout méthodes 'Size(...)' et 'Resize(...)' à l'objet '_cache[_]'.
 	- NDBCTT :
 		- Mise en oeuvre systématique d'un cache.
 	- NDBIDX :
 		- Adaptation aux modifications 'NDB...'.
+		- Mise en place de la post-initialization, qui retarde la connection aux fichiers.
 
 31/01/2010 :
 	- GENERAL :

@@ -571,9 +571,13 @@ namespace flm {
 		}
 		mdr::size__ FileSize( void )
 		{
+#	if 0
 			Open_( false );
 
 			return File_.Size();
+#	else
+			return fil::GetFileSize( Nom_ );
+#	endif
 		}
 #ifdef CPE__C_VC
 #	undef CreateFile

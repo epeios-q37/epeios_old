@@ -134,9 +134,7 @@ namespace mmg
 		typedef merger_memory_driver_s__ s;
 		s &S_;
 		uym::untyped_memory_ Memory;
-		void reset(
-			bool P = true,
-			bool Ecriture = true )
+		void reset(	bool P = true )
 		{
 			if ( P )
 			{

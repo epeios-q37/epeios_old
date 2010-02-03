@@ -207,7 +207,6 @@ namespace ndbsct {
 			return _FileManager.TimeStamp();
 		}
 		void _SaveLocations( void ) const;
-		bso::bool__ _ConnectToFiles( void );
 		void _ErasePhysically( void );
 	public:
 		void reset( bso::bool__ P = true )
@@ -257,6 +256,7 @@ namespace ndbsct {
 		{
 			return _BaseFileName;
 		}
+		bso::bool__ ConnectToFiles( void );
 	};
 
 

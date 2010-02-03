@@ -78,21 +78,40 @@ namespace ndbctt {
 		t_Undefined
 	};
 
+	struct post_initialization_function__
+	{
+	protected:
+		virtual void NDBIDXCompleteInitialization( void ) = 0;
+	public:
+		void CompleteInitialization( void )
+		{
+			NDBIDXCompleteInitialization();
+		}
+	};
+
 	class content__
 	{
 	private:
 		ndbdct::dynamic_content_ *_Dynamic;
 		ndbsct::static_content_ *_Static;
-		ndbbsc::cache _CacheObject;
-		ndbbsc::cache_ &_Cache;	// Pour permettre l'accés à '_CacheObject' même à partir d'une méthode 'const'.
-/*		cache_ &_Cache( void ) const
+		mutable ndbbsc::cache _Cache;
+		mutable post_initialization_function__ *_PostInitializationFunction;
+		void _CompleteInitialization( void ) const
 		{
-			return *_CachePointer;
+			if ( _PostInitializationFunction != NULL ) {
+				// On passe par un 'Buffer' pour éviter un appel récursif.
+				post_initialization_function__ *Buffer = _PostInitializationFunction;
+				_PostInitializationFunction = NULL;
+				Buffer->CompleteInitialization();
+			}
 		}
-*/		type__ _Test( void ) const
+		type__ _Test( bso::bool__ CompleteInitializationIfNeeded = true ) const
 		{
 			if ( ( _Static == NULL ) == ( _Dynamic == NULL ) )
 				ERRu();
+
+			if ( CompleteInitializationIfNeeded	)
+				_CompleteInitialization();
 
 			if ( _Static != NULL )
 				return tStatic;
@@ -130,19 +149,18 @@ namespace ndbctt {
 		{
 			_Dynamic = NULL;
 			_Static = NULL;
-			_CacheObject.reset();
-//			_CachePointer = NULL;
+			_Cache.reset();
+			_PostInitializationFunction = NULL;
 		}
 		content__( void )
-			:	_Cache( _CacheObject )
 		{
 			reset( false );
 		}
 		content__ &operator =( const content__ &C )
 		{
-			// Pour éviter la copie des pointeurs.
+			// Pas de copie des pointeurs !
 
-			_CacheObject = C._CacheObject;
+			_Cache = C._Cache;
 
 			return *this;
 		}
@@ -150,21 +168,27 @@ namespace ndbctt {
 		{
 			reset();
 		}
-		void Init( ndbdct::dynamic_content_ &Dynamic )
+		void Init(
+			ndbdct::dynamic_content_ &Dynamic,
+			post_initialization_function__ &Function )
 		{
 			if ( ( _Dynamic != NULL ) || ( _Static != NULL ) )
 				ERRu();
 
 			_Dynamic = &Dynamic;
-			_CacheObject.Init( Dynamic.Amount() );
+			_Cache.Init( Dynamic.Amount() );
+			_PostInitializationFunction = &Function;
 		}
-		void Init( ndbsct::static_content_ &Static )
+		void Init(
+			ndbsct::static_content_ &Static,
+			post_initialization_function__ &Function )
 		{
 			if ( ( _Dynamic != NULL ) || ( _Static != NULL ) )
 				ERRu();
 
 			_Static = &Static;
 			_Cache.Init( Static.Amount() );
+			_PostInitializationFunction = &Function;
 		}
 		rrow__ Store( const datum_ &Datum )
 		{
@@ -281,7 +305,7 @@ namespace ndbctt {
 		}
 */		time_t ModificationTimeStamp( void ) const
 		{
-			switch ( _Test() ) {
+			switch ( _Test( false ) ) {
 			case tStatic:
 				return _Static->ModificationTimeStamp();
 				break;
@@ -425,7 +449,7 @@ namespace ndbctt {
 		}
 		type__ Type( void ) const
 		{
-			return _Test();
+			return _Test( false );
 		}
 	};
 
@@ -471,21 +495,23 @@ namespace ndbctt {
 
 			_Content.Init();
 		}
-		void InitDynamic( void )
+		void InitDynamic( post_initialization_function__ &Function )
 		{
 			reset();
 
 			_Static.Init( 0 );
 			_Dynamic.Init();
-			_Content.Init( _Dynamic );
+			_Content.Init( _Dynamic, Function );
 		}
-		void InitStatic( epeios::size__ Size )
+		void InitStatic(
+			epeios::size__ Size,
+			post_initialization_function__ &Function )
 		{
 			reset();
 
 			_Dynamic.Init();
 			_Static.Init( Size );
-			_Content.Init( _Static );
+			_Content.Init( _Static, Function );
 		}
 		const content__ &operator ()( void ) const
 		{

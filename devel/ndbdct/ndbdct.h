@@ -559,7 +559,6 @@ namespace ndbdct {
 				return EntriesTimeStamp;
 		}
 		void _SaveLocationsAndAvailables( void ) const;
-		bso::bool__ _ConnectToFiles( void );
 		void _ErasePhysically( void );
 	public:
 		void reset( bso::bool__ P = true )
@@ -592,6 +591,7 @@ namespace ndbdct {
 			const str::string_ &BaseFileName,
 			mdr::mode__ Mode,
 			flm::id__ ID );
+		bso::bool__ ConnectToFiles( void );
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();

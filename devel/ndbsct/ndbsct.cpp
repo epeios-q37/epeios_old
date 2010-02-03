@@ -112,7 +112,7 @@ ERRBegin
 
 	_Content = &Content;
 
-	_ConnectToFiles();
+//	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog
@@ -121,7 +121,7 @@ ERREpilog
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
-bso::bool__ ndbsct::static_content_atomized_file_manager___::_ConnectToFiles( void )
+bso::bool__ ndbsct::static_content_atomized_file_manager___::ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog

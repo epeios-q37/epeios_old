@@ -168,7 +168,7 @@ ERRBegin
 
 	_Content = &Content;
 
-	_ConnectToFiles();
+//	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog
@@ -258,7 +258,7 @@ ERREpilog
 }
 
 
-bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::_ConnectToFiles( void )
+bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::ConnectToFiles( void )
 {
 	bso::bool__ Exists = false;
 ERRProlog
