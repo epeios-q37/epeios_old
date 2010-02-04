@@ -1618,6 +1618,41 @@ namespace nsxpcm {
 		const char *Title,
 		str::string_ &DirectoryName );
 
+	inline void OpenWindow(
+		nsIDOMWindow *ParentWindow,
+		const char *URL,
+		const char *Name,
+		nsIDOMWindow **Window = NULL )
+	{
+		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL;
+		nsEmbedString TransformedURL, TransformedName;
+
+		if ( Window != NULL )
+			WindowBuffer = Window;
+		else
+			WindowBuffer = &DummyWindow;
+
+
+		Transform( URL, TransformedURL );
+		Transform( Name, TransformedName );
+
+		if ( ParentWindow == NULL )
+			if ( MasterWindow != NULL )
+				ParentWindow = MasterWindow;
+			else
+				ERRu();
+
+		GetWindowInternal( ParentWindow )->Open( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), WindowBuffer );
+	}
+
+	inline void OpenWindow(
+		const char *URL,
+		const char *Name,
+		nsIDOMWindow **Window = NULL )
+	{
+		OpenWindow( NULL, URL, Name, Window );
+	}
+
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,
 		nsIDOMWindowInternal **JSConsoleWindow )
@@ -1625,7 +1660,8 @@ namespace nsxpcm {
 		nsIDOMWindow *Window = NULL;
 
 		if ( ( *JSConsoleWindow == NULL ) || ( IsClosed( *JSConsoleWindow ) ) ) {
-			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+//			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+			OpenWindow( "chrome://global/content/console.xul", "_blank", &Window );
 			*JSConsoleWindow = GetWindowInternal( Window );
 		} else
 			(*JSConsoleWindow)->Focus();
@@ -1637,23 +1673,22 @@ namespace nsxpcm {
 
 	inline void GetJSConsole( void )
 	{
-		if ( MasterWindow != NULL )
-			GetJSConsole( MasterWindow );
+		GetJSConsole( NULL );
 	}
 
 	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
 	inline void GetDOMInspector( nsIDOMWindow *ParentWindow )
 	{
-		nsIDOMWindow *Window = NULL;
+//		nsIDOMWindow *Window = NULL;
 
-		GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://inspector/content/inspector.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+//		GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://inspector/content/inspector.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
+		OpenWindow( ParentWindow, "chrome://inspector/content/inspector.xul", "_blank" );
 	}
 
 	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
 	inline void GetDOMInspector( void )
 	{
-		if ( MasterWindow != NULL )
-			GetDOMInspector( MasterWindow );
+		GetDOMInspector( NULL );
 	}
 
 	template <typename type, typename row> E_TTYPEDEF( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.
@@ -2014,7 +2049,7 @@ namespace nsxpcm {
 	d'enregistrement de 'XULRunner', cet object est commun à tous les composants utilisant la gestion d'évènement
 	des bibliothèques Epeios. Une modification de cet objet	peut ne donc par être répercuté dans le composant,
 	parce que l'ancienne version de ce composant est encore	actif car existant dans un autre composant.
-	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modification
+	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modifications
 	de cet objet soient prises en compte.
 	*/
 	struct event_listener

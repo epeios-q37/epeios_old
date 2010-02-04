@@ -1,6 +1,12 @@
 $Id$
 
-03/02/210 :
+04/02/2010 :
+	- ERR :
+		- 'uTest' -> 'iTest'.
+	- NSXPCM :
+		- Ajout et mise en oeuvre 'OpenWindow(...)'.
+
+03/02/2010 :
 	- GENERAL :
 		- Adaptation modifications 'MDR'.
 	- MDR :

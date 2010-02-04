@@ -131,7 +131,6 @@ namespace err {
 	enum u
 	{
 		uGeneric,
-		uTest,	// for testing purpose.
 		uObsolete,	// Calling of obsolete code.
 	};
 		// user error
@@ -144,6 +143,7 @@ namespace err {
 	enum i
 	{
 		iGeneric,
+		iTest,		// for testing purpose.
 		iError,		// To signal an error (generally a user error, an error in command line, for example).
 		iBeam,		// To rapidly go back to a certain point.
 		iReturn		// To quickly exit, without an error.
