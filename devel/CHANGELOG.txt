@@ -1,5 +1,9 @@
 $Id$
 
+05/02/2010 :
+	- NSXPCM :
+		- Ajout 'GetArguments()', qui permet de récupèrer les arguments d'une ligne de commande.
+
 04/02/2010 :
 	- ERR :
 		- 'uTest' -> 'iTest'.

@@ -1418,6 +1418,34 @@ void nsxpcm::RemoveEntriesForName( const str::string_ &RawName )
 #endif
 }
 
+bso::ulong__ nsxpcm::GetArguments(
+	nsICommandLine *CommandLine,
+	arguments_ &Arguments )
+{
+	PRInt32 Amount = 0;
+ERRProlog
+	PRInt32 Counter = 0;
+	str::string Argument;
+	nsEmbedString RawArgument;
+ERRBegin
+	CommandLine->GetLength( &Amount );
+
+	if ( ( Amount < 0 ) || ( Amount > BSO_ULONG_MAX ) )
+		ERRs();
+
+	while ( Counter < Amount ) {
+		CommandLine->GetArgument( Counter++, RawArgument );
+
+		Argument.Init();
+		Transform( RawArgument, Argument );
+		Arguments.Append( Argument );
+	}
+		
+ERRErr
+ERREnd
+ERREpilog
+	return (bso::ulong__ )Amount;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -103,6 +103,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIGenericFactory.h"
 #include "nsIDOMHTMLAnchorElement.h"
 #include "nsIDOMDocumentFragment.h"
+#include "nsICommandLine.h" // Situé dans 'toolkitcomps'.
 
 #include "commandhandler/nsICommandManager.h"
 
@@ -1929,6 +1930,12 @@ namespace nsxpcm {
 		RemoveEntriesForName( str::string( Name ) );
 	}
 
+	typedef ctn::E_XMCONTAINER_( str::string_ ) arguments_;
+	E_AUTO( arguments )
+
+	bso::ulong__ GetArguments(
+		nsICommandLine *CommandLine,
+		arguments_ &Arguments );
 
 #ifdef NSXPCM__BKD
 	void Convert(
