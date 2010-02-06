@@ -1,5 +1,13 @@
 $Id$
 
+06/02/2010 :
+	- NDBBSC :
+		- Il n'y a plud de préallocation; l'allocation se fait à la demande.
+	- NDBCTT :
+		- Correction bogue post-initialisation non réalisée lors de l'appel de l'opérateur '='.
+	- NDBIDX :
+		- Correction bogue post-initialisation non réalisée lors de l'appel de l'opérateur '='.
+
 05/02/2010 :
 	- NSXPCM :
 		- Ajout 'GetArguments()', qui permet de récupèrer les arguments d'une ligne de commande.

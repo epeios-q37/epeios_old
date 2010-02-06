@@ -265,8 +265,11 @@ namespace ndbidx {
 		}
 		index_ &operator =( const index_ &I )
 		{
-			BaseIndex = I.BaseIndex;
+			I._CompleteInitialization();
+			_CompleteInitialization();
+
 			S_.Root = I.S_.Root;
+			BaseIndex = I.BaseIndex;
 
 /*			S_.Sort = I.S_.Sort;
 			S_.Content = I.S_.Content;

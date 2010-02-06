@@ -160,6 +160,9 @@ namespace ndbctt {
 		{
 			// Pas de copie des pointeurs !
 
+			C._CompleteInitialization();
+			_CompleteInitialization();
+
 			_Cache = C._Cache;
 
 			return *this;

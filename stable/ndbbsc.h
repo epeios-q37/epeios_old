@@ -165,12 +165,6 @@ namespace ndbbsc {
 			List.Init();
 			Links.Init();
 
-			Queue.Allocate( AmountMax );
-			Container.Allocate( AmountMax );
-
-			Links.Allocate( AmountMax );
-			Links.Set( NONE );
-
 			List.Allocate( Size );
 			List.Set( NONE );
 
@@ -215,8 +209,11 @@ namespace ndbbsc {
 			if ( Queue.Amount() >= S_.AmountMax ) {
 				CacheRow = Queue.Tail();
 				List.Store( NONE, Links( CacheRow ) );
-			} else
+			} else {
 				CacheRow = Container.New();
+				Links.Allocate( Container.Amount() );
+				Queue.Allocate( Container.Amount() );
+			}
 
 			Container.Store( Datum, CacheRow );
 			Links.Store( Row, CacheRow );
