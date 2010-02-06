@@ -1930,7 +1930,10 @@ namespace nsxpcm {
 		RemoveEntriesForName( str::string( Name ) );
 	}
 
-	typedef ctn::E_XMCONTAINER_( str::string_ ) arguments_;
+	typedef str::string_ argument_;
+	typedef str::string argument;
+
+	typedef ctn::E_XMCONTAINER_( argument_ ) arguments_;
 	E_AUTO( arguments )
 
 	bso::ulong__ GetArguments(
