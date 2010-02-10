@@ -313,6 +313,8 @@ namespace ndbidx {
 			ndbctt::cache_ &Cache  = *(ndbctt:: cache_ *)NULL );	// Retourne le nombre de noeuds parcourus pour cette indexation.
 		void Delete( rrow__ Row )
 		{
+			_CompleteInitialization();
+
 #ifdef NDBIDX_DBG
 			if ( S_.Root == NONE )
 				ERRu();

@@ -1,5 +1,11 @@
 $Id$
 
+07/02/2010 :
+	- NDBIDX
+		- Correction bogue 'Delete()' post-initialisation manquante.*
+	- EPSMSC :
+		- Changement de quelques libellés.
+
 06/02/2010 :
 	- NDBBSC :
 		- Il n'y a plud de préallocation; l'allocation se fait à la demande.
