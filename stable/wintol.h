@@ -64,6 +64,7 @@ extern class ttr_tutor &WINTOLTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "cpe.h"
 
 namespace wintol {
 
@@ -77,7 +78,9 @@ namespace wintol {
 
 	inline void PatchSignalHandlingForWindowsService( void )
 	{
+#	ifndef CPE__P_CYGWIN
 		signal( SIGBREAK, SIG_DFL );
+#	endif
 	}
 	// Used by below class.
 

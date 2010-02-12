@@ -89,7 +89,7 @@ namespace clnarg {
 	// if modified, modify below.
 
 	//d Value the get an id when no value.
-	#define CLNARG_NONE			BSO_UBYTE_MAX
+	#define CLNARG_NONE			BSO_SBYTE_MAX
 	#define CLNARG_ID_MAX		( CLNARG_NONE - 1 )
 
 	//d Value of no short option/command.

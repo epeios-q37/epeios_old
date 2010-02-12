@@ -3,4 +3,3 @@ $Id$
 The 'stable' directory contains the stable version of the various Epeios libraries.
 The 'devel' directory contains the development version of the various Epeios libraries.
 The 'tools' directory contains tools which the Epeios libraries.
-The 'web' directory is only useful for the webmaster of the Epeios web site 'http://epeios.sourceforge.net/'. It contains scripts/templates to build this site.

@@ -281,10 +281,10 @@ namespace mmg
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			Memoire.Synchronize();
+			Memoire.Flush();
 
-			PiloteMultimemoire_.plug( MM );
-			Driver_.plug( PiloteMultimemoire_ );
+			Driver_.plug( MM );
+			Memoire.plug( Driver_ );
 		}
 		//f Initialization with rule 'Rule' and mode 'Mode'.
 		void Init( mmg::rule Rule )
@@ -305,19 +305,6 @@ namespace mmg
 		void Immortalize( void )
 		{
 			Driver_.Immortalize();
-		}
-		//f Write to 'OFLow' as raw data.
-		void Write( flw::oflow__ &OFlow ) const
-		{
-			Memoire.Flush();
-			Pilote_.EcrireDansFlot( OFlow );
-			Memoire.write( OFlow );
-		}
-		//f Read from 'IFLow' as raw data.
-		void Read( flw::iflow__ &IFlow )
-		{
-			Pilote_.LireDeFlot( IFlow );
-			Memoire.read( IFlow );
 		}
 		memory_merger_ &operator =( const memory_merger_ & )
 		{
@@ -419,7 +406,7 @@ namespace mmg
 		//f The object is placed in 'ObjectMode', the file in 'FileMode'.
 		void Mode( fil::mode__ Mode  )
 		{
-			PiloteFichier_.Mode( FileMode );
+			PiloteFichier_.Mode( Mode );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ & )
 		{

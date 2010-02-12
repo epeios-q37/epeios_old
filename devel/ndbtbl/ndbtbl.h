@@ -434,8 +434,6 @@ namespace ndbtbl {
 		}
 		const str::string_ &BaseFileName( type__ Type ) const
 		{
-			str::string Dummy;
-
 			switch ( Type ) {
 			case tStatic:
 				return _Static.BaseFileName();
@@ -448,7 +446,9 @@ namespace ndbtbl {
 				break;
 			}
 
-			return Dummy;	// Pour éviter un 'warning'.
+			ERRc();
+
+			return _Static.BaseFileName();	// Pour éviter un 'warning'.
 		}
 		void ConnectToFiles( type__ Type )
 		{
