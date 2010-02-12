@@ -1,13 +1,19 @@
 $Id$
 
 12/02/2010 :
+	- DTR :
+		- Renommage de certaines méthodes pour plus de clareté.
 	- MMG :
 		- Correction erreurs détectées par g++.
 	- NDBTBL :
 		- Petite moficiation pour éviter un 'warning' sous g++.
+	- NSXPCM :
+		- Correction erreur traitement macro 'EF()'.
 	- WINTOL :
 		- Correction problème signal 'SIGBREAK' inconnu sous Cygwin.
-
+	- XML :
+		- Mise en oeuvre de 'token_flag__'.
+		
 07/02/2010 :
 	- NDBIDX
 		- Correction bogue 'Delete()' post-initialisation manquante.*

@@ -154,7 +154,7 @@ namespace dtr {
 			Queue.Allocate( Size, Mode );
 		}
 		//f 'First' becomes first of 'Node'.
-		void BecomeFirstSibling( 
+		void BecomeFirstChild( 
 			r First,
 			r Node )
 		{
@@ -166,7 +166,7 @@ namespace dtr {
 			Tree.BecomeOverridingLeft( First, Node );
 		}
 		//f 'Last' becomes last of 'Node'.
-		void BecomeLast( 
+		void BecomeLastChild( 
 			r Last,
 			r Node )
 		{
@@ -178,7 +178,7 @@ namespace dtr {
 			Tree.BecomeOverridingRight( Last, Node );
 		}
 		//f 'Previous' becomes node previous to 'Node'.
-		void BecomePrevious(
+		void BecomePreviousSibling(
 			r Previous,
 			r Node )
 		{
@@ -193,7 +193,7 @@ namespace dtr {
 			}
 		}
 		//f 'Next' becomes node next to 'Node'.
-		void BecomeNext(
+		void BecomeNextSibling(
 			r Next,
 			r Node )
 		{

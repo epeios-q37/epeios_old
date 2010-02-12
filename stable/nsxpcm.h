@@ -186,9 +186,10 @@ namespace nsxpcm {
 		efAllButAnnoying = efAll & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
 	};
 
+#undef EF
+
 #ifdef NSXPCM__F_BUFFER
 #	define	EF	NSXPCM__EF_BUFFER
-#	undef EF
 #endif
 
 

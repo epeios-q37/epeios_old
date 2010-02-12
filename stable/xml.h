@@ -493,6 +493,32 @@ namespace xml {
 		t_Undefined
 	};
 
+#ifdef TF
+#	define XML__TF_BUFFER	TF
+#	undef TF
+#endif
+
+#define TF( name )	tf##name = ( 1 << t##name )
+
+	// Permet de n'avoir à traiter que certains 'token's.
+	enum token_flag__
+	{
+		TF( ProcessingInstruction ),
+		TF( StartTag ),
+		TF( StartTagClosed ),
+		TF( Attribute ),
+		TF( Value ),
+		TF( EndTag ),
+		tfAll = ( ( 1 << t_amount ) - 1 ),
+		tfObvious = tfStartTag | tfAttribute | tValue | tfEndTag,
+	};
+
+#undef TF
+
+#ifdef XML__TF_BUFFER
+#	define	TF	NSXPCM__TF_BUFFER
+#endif
+
 	class browser___
 	{
 	private:
@@ -543,13 +569,14 @@ namespace xml {
 			_Value.Init();
 			_Dump.Init();
 		}
-		token__  Browse( void );
+		token__  Browse( int TokenToReport = tfAll );
 		token__ Browse(
 			str::string_ &TagName,
 			str::string_ &AttributeName,
 			str::string_ &Value,	// Tag value or attribute value depending on returned value.
 			xml::dump_ &Dump,
-			status__ &Status )	// 'Status' initialisé seulement si 'item__' == 'iError'.
+			status__ &Status,
+			int TokenToReport = tfAll )	// 'Status' initialisé seulement si 'item__' == 'iError'.
 		{
 			token__ Token = Browse();
 

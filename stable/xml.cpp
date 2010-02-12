@@ -967,13 +967,13 @@ ERREpilog
 		ERRReturn;\
 	}
 
-token__ xml::browser___::Browse( void )
+token__ xml::browser___::Browse( int TokenToReport )
 {
 ERRProlog
-	bso::bool__ OnlySpaces = false, Retry = true;
+	bso::bool__ OnlySpaces = false, Continue = true;
 ERRBegin
 
-	while ( Retry ) {
+	while ( Continue ) {
 		if ( _Flow.EOX() )
 			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
@@ -994,7 +994,8 @@ ERRBegin
 
 						_Token = tProcessingInstruction;
 
-						Retry = false;
+						if ( ( 1 << _Token ) & TokenToReport )
+							Continue = false;
 
 					} else {
 						_Context = cTagExpected;
@@ -1048,7 +1049,8 @@ ERRBegin
 
 					_Token = tStartTag;
 
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 				}
 				break;
 			case tStartTag:
@@ -1076,7 +1078,8 @@ ERRBegin
 
 					_Token = tStartTagClosed;
 
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 
 					_EmptyTag = true;
 
@@ -1092,7 +1095,8 @@ ERRBegin
 
 					_EmptyTag = false;
 
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 
 					break;
 				default:
@@ -1108,7 +1112,8 @@ ERRBegin
 
 					_Token = tEndTag;
 	
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 				} else {
 					_Token = t_Undefined;
 
@@ -1149,7 +1154,8 @@ ERRBegin
 
 				_Token = tAttribute;
 
-				Retry = false;
+				if ( ( 1 << _Token ) & TokenToReport )
+					Continue = false;
 
 				break;
 			case tAttribute:
@@ -1178,7 +1184,8 @@ ERRBegin
 
 						_Token = tStartTagClosed;
 
-						Retry = false;
+						if ( ( 1 << _Token ) & TokenToReport )
+							Continue = false;
 
 						_EmptyTag = true;
 
@@ -1194,7 +1201,8 @@ ERRBegin
 
 					_Token = tStartTagClosed;
 
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 
 					_EmptyTag = false;
 
@@ -1213,7 +1221,8 @@ ERRBegin
 
 					_Token = tEndTag;
 
-					Retry = false;
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
 				} else {
 					_Token = t_Undefined;
 
@@ -1271,7 +1280,8 @@ ERRBegin
 
 				_Token = tEndTag;
 
-				Retry = false;
+				if ( ( 1 << _Token ) & TokenToReport )
+					Continue = false;
 
 				break;
 			case tEndTag:
@@ -1286,7 +1296,7 @@ ERRBegin
 				_Context = cValueExpected;
 
 				if ( _Tags.IsEmpty() )
-					Retry = false;
+					Continue = false;
 				break;
 			default:
 				ERRc();
@@ -1312,7 +1322,8 @@ ERRBegin
 
 						_Token = tValue;
 
-						Retry = false;
+						if ( ( 1 << _Token ) & TokenToReport )
+							Continue = false;
 					}
 				} else
 					_Context = cTagExpected;
