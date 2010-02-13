@@ -147,7 +147,6 @@ ERRBegin
 
 		P = Options.Next( P );
 	}
-
 ERRErr
 ERREnd
 ERREpilog
@@ -308,11 +307,12 @@ public:
 	{
 		row__ Row = NONE;
 
-		if ( S_.Root == NONE )
-			ERRu();
-
 		Row = _Add( Item );
-		tree_::BecomeFirstChild( Row, Parent );
+
+		if ( S_.Root == NONE )
+			S_.Root = Row;
+		else
+			tree_::BecomeFirstChild( Row, Parent );
 
 		return Row;
 	}
@@ -334,18 +334,223 @@ public:
 
 E_AUTO( structure )
 
-static void HandleProject_( xml::browser___ &Browser )
+class table_ {
+public:
+	struct s {
+		structure_::s Structure;
+	};
+	structure_ Structure;
+	table_( s &S )
+	: Structure( S.Structure )
+	{
+	};
+	void reset( bso::bool__ P = true )
+	{
+		Structure.reset( P );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		Structure.plug( MM );
+	}
+	table_ &operator =(const table_ &T )
+	{
+		Structure = T.Structure;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		reset();
+
+		Structure.Init();
+	}
+};
+
+E_AUTO( table )
+
+typedef ctn::E_XCONTAINER_( table_ ) tables_;
+E_AUTO( tables );
+
+typedef tables_	data_;
+E_AUTO( data )
+
+
+	
+
+#define NAMESPACE		NAME ":"
+#define DATA_TAG		NAMESPACE "data"
+#define TABLE_TAG		NAMESPACE "table"
+#define STRUCTURE_TAG	NAMESPACE "structure"
+#define CONTENT_TAG		NAMESPACE "content"
+#define TAG_TAG			NAMESPACE "tag"
+#define ATTRIBUTE_TAG	NAMESPACE "attribute"
+#define NAME_ATTRIBUTE	"name"
+
+static void PrintPosition_(
+	const xtf::coord__ &Coord,
+	txf::text_oflow__ TFlow )
+{
+	TFlow << "at line " << Coord.Line << ", column " << Coord.Column;
+}
+
+static void PrintPosition_(
+	const xml::browser___ &Browser,
+	txf::text_oflow__ &TFlow )
+{
+	PrintPosition_( Browser.Dump().Coord(), TFlow );
+}
+
+static void ProcessTag_(
+	xml::browser___ &Browser,
+	structure_ &Structure,
+	row__ Parent,
+	lcl::locales_ &Locales )
+{
+}
+
+static void ProcessStructure_(
+	xml::browser___ &Browser,
+	structure_ &Structure,
+	lcl::locales_ &Locales )
 {
 ERRProlog
-	structure Structure;
+	bso::bool__ Continue = true;
+	str::string ErrorMessage;
 ERRBegin
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == ATTRIBUTE_TAG ) {
+				cerr << "Orphan attribute definition at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} else if ( Browser.TagName() != TAG_TAG ) {
+				cerr << "Unknown tag at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			break;
+		case xml::tAttribute:
+			if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {
+				ProcessTag_( Browser, Structure, Structure.BecomeChild( Browser.Value(), NONE ), Locales );
+			} else {
+				cerr << "Unknown attribute at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} 
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
+		case xml::tError:
+			Locales.Init();
+			ErrorMessage.Init();
+			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
 ERRErr
 ERREnd
 ERREpilog
 }
 
+static void ProcessTable_(
+	xml::browser___ &Browser,
+	table_ &Table,
+	lcl::locales_ &Locales )
+{
+ERRProlog
+	bso::bool__ Continue = true;
+	bso::bool__ StructureDetected = false;
+	str::string ErrorMessage;
+ERRBegin
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == STRUCTURE_TAG ) {
+				if ( StructureDetected ) {
+					cerr << "Duplicate '" STRUCTURE_TAG " ";
+					PrintPosition_( Browser, cerr );
+					cerr << " !" << txf::nl;
+				}
+				StructureDetected = true;
+				ProcessStructure_( Browser, Table.Structure, Locales );
+			} else {
+				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} 
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
+		case xml::tError:
+			Locales.Init();
+			ErrorMessage.Init();
+			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
-static void Process_( const char *Project )
+static void ProcessData_(
+	xml::browser___ &Browser,
+	data_ &Data,
+	lcl::locales_ &Locales )
+{
+ERRProlog
+	bso::bool__ Continue = true;
+	bso::bool__ TableDetected = false;
+	table Table;
+	str::string ErrorMessage;
+ERRBegin
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == TABLE_TAG ) {
+				TableDetected = true;
+				Table.Init();
+				ProcessTable_( Browser, Table, Locales );
+				Data.Append( Table );
+			} else {
+				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} 
+			break;
+		case xml::tEndTag:
+			if ( !TableDetected ) {
+				cerr << "No '" TABLE_TAG "' tag in data file !" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} else
+				Continue = false;
+			break;
+		case xml::tError:
+			Locales.Init();
+			ErrorMessage.Init();
+			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void ProcessDataFile_( const char *DataFileName )
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
@@ -354,10 +559,11 @@ ERRProlog
 	bso::bool__ Continue = true;
 	lcl::locales Locales;
 	str::string ErrorMessage;
-	bso::bool__ PrjectDetected = false;
+	bso::bool__ DataDetected = false;
+	data Data;
 ERRBegin
-	if ( FFlow.Init( Project, err::hSkip ) != fil::sSuccess ) {
-		cerr << "Unable to open '" << Project << "' !" << txf::nl;
+	if ( FFlow.Init( DataFileName, err::hSkip ) != fil::sSuccess ) {
+		cerr << "Unable to open data file'" << DataFileName << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -368,33 +574,80 @@ ERRBegin
 	Browser.Init( XFlow );
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed |xml::tfEndTag ) ) {
-		case xml::tAttribute:
-			if ( ( Browser.TagName() == "Project" ) && ( Browser.AttributeName() == "Target" ) && ( Browser.Value == NAME ) ) {
-				HandleProject( Browser, Struvture );
-				ProjectDetected = true;
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( ( Browser.TagName() == DATA_TAG ) ) {
+				ProcessData_( Browser, Data, Locales );
+				DataDetected = true;
 			} else {
-				cerr << '\'' << Project << "' is not a '" << NAME << '" project file !" << txf::nl;
+				cerr << '\'' << DataFileName << "' is not a '" NAME "' data file !" << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			} 
 			break;
 		case xml::tEndTag:
-			if ( !Projectdetected ) {
-				cerr << "No '" << NAME << "' project in '" << Project << "' !" << txf::nl;
+			if ( !DataDetected ) {
+				cerr << "No '" << NAME << "' data in '" << DataFileName << "' !" << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			} else
 				Continue = false;
 			break;
 		case xml::tError:
 			Locales.Init();
-			ErrorMessages.INit();
-			cerr << xml::GetTranslation( Browser.Status, str::string(), Locales, Message ) << txf::nl;
+			ErrorMessage.Init();
+			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
 			break;
 		default:
 			ERRc();
 			break;
 		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
+#define DATA_FILENAME_TAG	"Data"
+
+void Process_(
+	const rgstry::registry_ &Registry,
+	rgstry::row__ RegistryRoot )
+{
+ERRProlog
+	str::string DataFileName;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	DataFileName.Init();
+
+	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), RegistryRoot, DataFileName ) ) {
+		cerr << "No '" << DATA_FILENAME_TAG << "' tag found !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	ProcessDataFile_( DataFileName.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void Process_( const char *Project )
+{
+ERRProlog
+	rgstry::error__ Error = rgstry::e_Undefined;
+	rgstry::error_details ErrorDetails;
+	rgstry::registry Registry;
+	lcl::locales Locales;
+	str::string ErrorMessage;
+	rgstry::row__ RegistryRoot = NONE;
+ERRBegin
+	Registry.Init();
+	ErrorDetails.Init();
+
+	if ( ( Error = rgstry::FillRegistry( Project, "Projects/Project[@Target=\"" NAME "\']", Registry, RegistryRoot, ErrorDetails ) ) != rgstry::eOK ) {
+		Locales.Init();
+		ErrorMessage.Init();
+		cerr << rgstry::GetTranslation( Error, ErrorDetails,  str::string(), Locales, ErrorMessage ) << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
 ERRErr
 ERREnd
 ERREpilog
