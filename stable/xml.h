@@ -131,7 +131,7 @@ namespace xml {
 			else
 				RawData.Append( Dump.RawData );
 		}
-		void Reset( void )
+		void Purge( void )
 		{
 			Init();
 		}
@@ -183,9 +183,9 @@ namespace xml {
 
 			Dump.RawData.Truncate();
 		}
-		void Reset( void )
+		void Purge( void )
 		{
-			Dump.RawData.Init();
+			Dump.Purge();
 		}
 		void Init( xtf::extended_text_iflow__ &Flow )
 		{
@@ -194,6 +194,10 @@ namespace xml {
 			_Flow = &Flow;
 
 			Dump.Init();
+		}
+		const xtf::coord__ &GetCurrentCoord( void ) const
+		{
+			return _Flow->Coord();
 		}
 	};
 
@@ -593,6 +597,10 @@ namespace xml {
 		E_RODISCLOSE__( str::string_, Value );
 		E_RODISCLOSE__( dump_, Dump );
 		E_RODISCLOSE__( status__, Status );
+		const xtf::coord__ &GetCurrentCoord( void ) const
+		{
+			return _Flow.GetCurrentCoord();
+		}
 	};
 }
 

@@ -665,7 +665,7 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( Flow ) );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 				} else
 					Flow.Unget( '<' );
 			}
@@ -703,7 +703,7 @@ ERRBegin
 			if ( !Callback.XMLStartTag( Name, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			if ( Level == BSO_ULONG_MAX )
 				Level = 1;
@@ -738,7 +738,7 @@ ERRBegin
 				if ( !Callback.XMLEndTag( Name, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				Level--;
 
@@ -750,7 +750,7 @@ ERRBegin
 				if ( !Callback.XMLStartTagClosed( Name, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				State = ValueExpected;
 				break;
@@ -775,7 +775,7 @@ ERRBegin
 			if ( !Callback.XMLAttribute( Tag, Name, Value, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			HANDLE( SkipSpaces_( Flow ) );
 
@@ -799,12 +799,12 @@ ERRBegin
 					if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 
 					if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 
 					Level--;
 
@@ -821,7 +821,7 @@ ERRBegin
 				if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				State = ValueExpected;
 			}
@@ -852,7 +852,7 @@ ERRBegin
 			if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			Level--;
 
@@ -876,7 +876,7 @@ ERRBegin
 					if ( !Callback.XMLValue( Tag, Value, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 				}
 			}
 			State = TagExpected;
@@ -915,7 +915,7 @@ ERRBegin
 		TagName.Init();
 		AttributeName.Init();
 		Value.Init();
-		Dump.Init();
+		Purge();
 
 		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
 		case tProcessingInstruction:
@@ -1008,7 +1008,7 @@ ERRBegin
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				_Context = cTagExpected;
 				break;
@@ -1056,7 +1056,7 @@ ERRBegin
 			case tStartTag:
 				_Token = t_Undefined;
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1117,7 +1117,7 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Dump.Init();
+					_Flow.Purge();
 
 					_Context = cValueExpected;
 				}
@@ -1129,7 +1129,7 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				_Context = cValueExpected;
 				break;
@@ -1161,7 +1161,7 @@ ERRBegin
 			case tAttribute:
 				_Token = t_Undefined;
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1217,7 +1217,7 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
-					_Flow.Dump.Init();
+					_Flow.Purge();
 
 					_Token = tEndTag;
 
@@ -1226,7 +1226,7 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Dump.Init();
+					_Flow.Purge();
 
 					_Context = cValueExpected;
 				}
@@ -1234,7 +1234,7 @@ ERRBegin
 			case tEndTag:
 				_Token = t_Undefined;
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				_TagName.Init();
 
@@ -1291,7 +1291,7 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				_Context = cValueExpected;
 
@@ -1331,7 +1331,7 @@ ERRBegin
 			case tValue:
 				_Token  = t_Undefined;
 
-				_Flow.Dump.Init();
+				_Flow.Purge();
 
 				_Context = cTagExpected;
 			break;
@@ -2189,7 +2189,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Reset();
+			_BlocPendingDump.Purge();
 		}
 
 		switch ( _GetTag( Name ) ) {
@@ -2286,7 +2286,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Init();
+			_BlocPendingDump.Purge();
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;

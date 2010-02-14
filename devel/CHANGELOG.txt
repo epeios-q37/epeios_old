@@ -1,5 +1,9 @@
 $Id$
 
+14/02/2010 :
+	- XML :
+		- Modification gestion objet 'dump[_]' pour plus de cohérence.
+
 12/02/2010 :
 	- DTR :
 		- Renommage de certaines méthodes pour plus de clareté.

@@ -397,7 +397,7 @@ static void PrintPosition_(
 	const xml::browser___ &Browser,
 	txf::text_oflow__ &TFlow )
 {
-	PrintPosition_( Browser.Dump().Coord(), TFlow );
+	PrintPosition_( Browser.GetCurrentCoord(), TFlow );
 }
 
 static void ProcessTag_(
@@ -406,17 +406,9 @@ static void ProcessTag_(
 	row__ Parent,
 	lcl::locales_ &Locales )
 {
-}
-
-static void ProcessStructure_(
-	xml::browser___ &Browser,
-	structure_ &Structure,
-	lcl::locales_ &Locales )
-{
-ERRProlog
 	bso::bool__ Continue = true;
-	str::string ErrorMessage;
-ERRBegin
+	row__ Root = NONE;
+
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
 		case xml::tStartTag:
@@ -431,6 +423,72 @@ ERRBegin
 				cerr << '!' << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			}
+			break;
+		case xml::tAttribute:
+			if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {
+				Root = Structure.BecomeChild( Browser.Value(), Parent );
+			} else {
+				cerr << "Unknown attribute at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} 
+			break;
+		case xml::tStartTagClosed:
+			if ( Root != NONE )
+				ProcessTag_( Browser, Structure, Root, Locales );
+			else {
+				cerr << "Unamed tag at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
+		case xml::tError:
+			Locales.Init();
+			ErrorMessage.Init();
+			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+}
+
+static void ProcessStructure_(
+	xml::browser___ &Browser,
+	structure_ &Structure,
+	lcl::locales_ &Locales )
+{
+ERRProlog
+	bso::bool__ Continue = true;
+	str::string ErrorMessage;
+ERRBegin
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( RootTagDetected ) {
+				cerr << "No other tag can be defined at this position ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			if ( Browser.TagName() == ATTRIBUTE_TAG ) {
+				cerr << "Orphan attribute definition at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} else if ( Browser.TagName() != TAG_TAG ) {
+				cerr << "Unknown tag at ";
+				PrintPosition_( Browser, cerr );
+				cerr << '!' << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			} else
+				RootTagDetected = true;
+
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {

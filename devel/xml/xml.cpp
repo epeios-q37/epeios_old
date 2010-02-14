@@ -665,7 +665,7 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( Flow ) );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 				} else
 					Flow.Unget( '<' );
 			}
@@ -703,7 +703,7 @@ ERRBegin
 			if ( !Callback.XMLStartTag( Name, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			if ( Level == BSO_ULONG_MAX )
 				Level = 1;
@@ -738,7 +738,7 @@ ERRBegin
 				if ( !Callback.XMLEndTag( Name, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				Level--;
 
@@ -750,7 +750,7 @@ ERRBegin
 				if ( !Callback.XMLStartTagClosed( Name, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				State = ValueExpected;
 				break;
@@ -775,7 +775,7 @@ ERRBegin
 			if ( !Callback.XMLAttribute( Tag, Name, Value, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			HANDLE( SkipSpaces_( Flow ) );
 
@@ -799,12 +799,12 @@ ERRBegin
 					if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 
 					if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 
 					Level--;
 
@@ -821,7 +821,7 @@ ERRBegin
 				if ( !Callback.XMLStartTagClosed( Tag, Flow.Dump ) )
 					RETURN( sUserDefinedError );
 
-				Flow.Dump.Init();
+				Flow.Purge();
 
 				State = ValueExpected;
 			}
@@ -852,7 +852,7 @@ ERRBegin
 			if ( !Callback.XMLEndTag( Tag, Flow.Dump ) )
 				RETURN( sUserDefinedError );
 
-			Flow.Dump.Init();
+			Flow.Purge();
 
 			Level--;
 
@@ -876,7 +876,7 @@ ERRBegin
 					if ( !Callback.XMLValue( Tag, Value, Flow.Dump ) )
 						RETURN( sUserDefinedError );
 
-					Flow.Dump.Init();
+					Flow.Purge();
 				}
 			}
 			State = TagExpected;
@@ -915,7 +915,7 @@ ERRBegin
 		TagName.Init();
 		AttributeName.Init();
 		Value.Init();
-		Dump.Init();
+		Purge();
 
 		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
 		case tProcessingInstruction:
@@ -973,6 +973,8 @@ ERRProlog
 	bso::bool__ OnlySpaces = false, Continue = true;
 ERRBegin
 
+	_Flow.Purge();
+
 	while ( Continue ) {
 		if ( _Flow.EOX() )
 			if ( _Token != tEndTag )
@@ -1007,8 +1009,6 @@ ERRBegin
 				_Token = t_Undefined;
 
 				HANDLE( SkipSpaces_( _Flow ) );
-
-				_Flow.Dump.Init();
 
 				_Context = cTagExpected;
 				break;
@@ -1055,8 +1055,6 @@ ERRBegin
 				break;
 			case tStartTag:
 				_Token = t_Undefined;
-
-				_Flow.Dump.Init();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1117,8 +1115,6 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Dump.Init();
-
 					_Context = cValueExpected;
 				}
 				break;
@@ -1128,8 +1124,6 @@ ERRBegin
 				_TagName.Init();
 
 				_Tags.Pop( _TagName );
-
-				_Flow.Dump.Init();
 
 				_Context = cValueExpected;
 				break;
@@ -1160,8 +1154,6 @@ ERRBegin
 				break;
 			case tAttribute:
 				_Token = t_Undefined;
-
-				_Flow.Dump.Init();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1217,8 +1209,6 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
-					_Flow.Dump.Init();
-
 					_Token = tEndTag;
 
 					if ( ( 1 << _Token ) & TokenToReport )
@@ -1226,15 +1216,11 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Dump.Init();
-
 					_Context = cValueExpected;
 				}
 				break;
 			case tEndTag:
 				_Token = t_Undefined;
-
-				_Flow.Dump.Init();
 
 				_TagName.Init();
 
@@ -1291,8 +1277,6 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Flow.Dump.Init();
-
 				_Context = cValueExpected;
 
 				if ( _Tags.IsEmpty() )
@@ -1330,8 +1314,6 @@ ERRBegin
 				break;
 			case tValue:
 				_Token  = t_Undefined;
-
-				_Flow.Dump.Init();
 
 				_Context = cTagExpected;
 			break;
@@ -2189,7 +2171,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Reset();
+			_BlocPendingDump.Purge();
 		}
 
 		switch ( _GetTag( Name ) ) {
@@ -2286,7 +2268,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Init();
+			_BlocPendingDump.Purge();
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
