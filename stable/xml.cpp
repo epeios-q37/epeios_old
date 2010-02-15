@@ -955,7 +955,10 @@ ERREpilog
 
 #define HANDLE( F )\
 	if ( ( _Status = ( F ) ) != sOK )\
-		ERRReturn;
+	{\
+		_Token = tError;\
+		ERRReturn;\
+	}
 
 
 #undef RETURN
@@ -972,6 +975,8 @@ token__ xml::browser___::Browse( int TokenToReport )
 ERRProlog
 	bso::bool__ OnlySpaces = false, Continue = true;
 ERRBegin
+
+	_Flow.Purge();
 
 	while ( Continue ) {
 		if ( _Flow.EOX() )
@@ -1007,8 +1012,6 @@ ERRBegin
 				_Token = t_Undefined;
 
 				HANDLE( SkipSpaces_( _Flow ) );
-
-				_Flow.Purge();
 
 				_Context = cTagExpected;
 				break;
@@ -1055,8 +1058,6 @@ ERRBegin
 				break;
 			case tStartTag:
 				_Token = t_Undefined;
-
-				_Flow.Purge();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1117,8 +1118,6 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Purge();
-
 					_Context = cValueExpected;
 				}
 				break;
@@ -1128,8 +1127,6 @@ ERRBegin
 				_TagName.Init();
 
 				_Tags.Pop( _TagName );
-
-				_Flow.Purge();
 
 				_Context = cValueExpected;
 				break;
@@ -1160,8 +1157,6 @@ ERRBegin
 				break;
 			case tAttribute:
 				_Token = t_Undefined;
-
-				_Flow.Purge();
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
@@ -1217,8 +1212,6 @@ ERRBegin
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
-					_Flow.Purge();
-
 					_Token = tEndTag;
 
 					if ( ( 1 << _Token ) & TokenToReport )
@@ -1226,15 +1219,11 @@ ERRBegin
 				} else {
 					_Token = t_Undefined;
 
-					_Flow.Purge();
-
 					_Context = cValueExpected;
 				}
 				break;
 			case tEndTag:
 				_Token = t_Undefined;
-
-				_Flow.Purge();
 
 				_TagName.Init();
 
@@ -1291,8 +1280,6 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Flow.Purge();
-
 				_Context = cValueExpected;
 
 				if ( _Tags.IsEmpty() )
@@ -1330,8 +1317,6 @@ ERRBegin
 				break;
 			case tValue:
 				_Token  = t_Undefined;
-
-				_Flow.Purge();
 
 				_Context = cTagExpected;
 			break;

@@ -1,5 +1,9 @@
 $Id$
 
+15/02/2010 :
+	- XML :
+		- Correction mauvaise propagation erreur.
+
 14/02/2010 :
 	- XML :
 		- Modification gestion objet 'dump[_]' pour plus de cohérence.

@@ -955,7 +955,10 @@ ERREpilog
 
 #define HANDLE( F )\
 	if ( ( _Status = ( F ) ) != sOK )\
-		ERRReturn;
+	{\
+		_Token = tError;\
+		ERRReturn;\
+	}
 
 
 #undef RETURN
