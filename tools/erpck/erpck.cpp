@@ -233,57 +233,35 @@ ERREpilog
 
 /* End of the part which handles command line arguments. */
 
-E_ROW( row__ );
+typedef bso::ubyte__ weight__;
+#define DEFAULT_WEIGHT	1
 
-typedef str::string_	item_;
-typedef str::string	item;
+typedef str::string_ _string_;
 
-typedef dtr::E_DTREEt_( row__ ) tree_;
-typedef ctn::E_XMCONTAINERt_( str::string_, row__ ) container_;
-
-class structure_
-: public tree_,
-  public container_
+class item_
+: public _string_
 {
-private:
-	row__ _Add( const item_ &Item )
-	{
-		row__ Row = container_::Append( Item );
-		tree_::Allocate( container_::Amount() );
-
-		return Row;
-	}
 public:
 	struct s
-	: public tree_::s,
-	public container_::s
+	: public _string_::s
 	{
-		row__ Root;
+		weight__ Weight;
 	} &S_;
-	structure_( s &S )
+	item_( s &S )
 	: S_( S ),
-	  tree_( S ),
-	  container_( S )
+	  str::string_( S )
 	{
 	}
 	void reset( bso::bool__ P = true )
 	{
-		tree_::reset( P );
-		container_::reset( P );
-
-		S_.Root = NONE;
+		_string_::reset( P );
+		S_.Weight = DEFAULT_WEIGHT;
 	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
+	item_ &operator =( const item_ &I )
 	{
-		tree_::plug( MM );
-		container_::plug( MM );
-	}
-	structure_ &operator =( const structure_ &S )
-	{
-		tree_::operator =( S );
-		container_::operator =( S );
+		_string_::operator =( I );
 
-		S_.Root = S.S_.Root;
+		S_.Weight = I.S_.Weight;
 
 		return *this;
 	}
@@ -291,77 +269,44 @@ public:
 	{
 		reset();
 
-		tree_::Init();
-		container_::Init();
+		_string_::Init();
 	}
-	row__ Create( const item_ &Item )
+	void Init(
+		const str::string_ &Value,
+		weight__ Weight )
 	{
-		if ( S_.Root != NONE )
-			ERRu();
+		reset();
 
-		S_.Root = _Add( Item );
+		_string_::Init( Value );
 	}
-	row__ BecomeChild(
-		const item_ &Item,
-		row__ Parent )
-	{
-		row__ Row = NONE;
-
-		Row = _Add( Item );
-
-		if ( S_.Root == NONE )
-			S_.Root = Row;
-		else
-			tree_::BecomeFirstChild( Row, Parent );
-
-		return Row;
-	}
-	row__ BecomeSibling(
-		const item_ &Item,
-		row__ Sibling )
-	{
-		row__ Row = NONE;
-
-		if ( S_.Root == NONE )
-			ERRu();
-
-		Row = _Add( Item );
-		tree_::BecomeNextSibling( Row, Sibling );
-
-		return Row;
-	}
+	E_RWDISCLOSE_( weight__, Weight );
 };
 
-E_AUTO( structure )
+E_AUTO( item )
 
-typedef ctn:: E_XMCONTAINER_( str::string_ ) content_;
+typedef ctn:: E_XMCONTAINER_( item_ ) content_;
 E_AUTO( content )
 
 class table_ {
 public:
 	struct s {
-		structure_::s Structure;
 		content_::s Content;
 	};
-	structure_ Structure;
 	content_ Content;
 	table_( s &S )
-	: Structure( S.Structure ),
-	  Content( S.Content )
+	: Content( S.Content )
 	{};
 	void reset( bso::bool__ P = true )
 	{
-		Structure.reset( P );
 		Content.reset( P );
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
-		Structure.plug( MM );
 		Content.plug( MM );
 	}
 	table_ &operator =(const table_ &T )
 	{
-		Structure = T.Structure;
+		Content = T.Content;
 
 		return *this;
 	}
@@ -369,7 +314,6 @@ public:
 	{
 		reset();
 
-		Structure.Init();
 		Content.Init();
 	}
 };
@@ -413,133 +357,6 @@ static void PrintPosition_(
 	PrintPosition_( Browser.GetCurrentCoord(), TFlow );
 }
 
-static void ProcessTag_(
-	xml::browser___ &Browser,
-	structure_ &Structure,
-	row__ Parent,
-	lcl::locales_ &Locales )
-{
-ERRProlog
-	bso::bool__ Continue = true;
-	row__ Root = NONE;
-	str::string ErrorMessage;
-ERRBegin
-	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
-		case xml::tStartTag:
-			if ( Browser.TagName() == ATTRIBUTE_TAG ) {
-				cerr << "Orphan attribute definition at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} else if ( Browser.TagName() != TAG_TAG ) {
-				cerr << "Unknown tag at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			}
-			break;
-		case xml::tAttribute:
-			if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {
-				Root = Structure.BecomeChild( Browser.Value(), Parent );
-			} else {
-				cerr << "Unknown attribute at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} 
-			break;
-		case xml::tStartTagClosed:
-			if ( Root != NONE )
-				ProcessTag_( Browser, Structure, Root, Locales );
-			else {
-				cerr << "Unamed tag at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			}
-			break;
-		case xml::tEndTag:
-			Continue = false;
-			break;
-		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << txf::nl;
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
-
-static void ProcessStructure_(
-	xml::browser___ &Browser,
-	structure_ &Structure,
-	lcl::locales_ &Locales )
-{
-ERRProlog
-	bso::bool__ Continue = true;
-	str::string ErrorMessage;
-	bso::bool__ RootTagDetected = false;
-ERRBegin
-	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
-		case xml::tStartTag:
-			if ( RootTagDetected ) {
-				cerr << "No other tag can be defined at this position ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} else if ( Browser.TagName() == ATTRIBUTE_TAG ) {
-				cerr << "Orphan attribute definition at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} else if ( Browser.TagName() != TAG_TAG ) {
-				cerr << "Unknown tag at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} else
-				RootTagDetected = true;
-
-			break;
-		case xml::tAttribute:
-			if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {
-				ProcessTag_( Browser, Structure, Structure.BecomeChild( Browser.Value(), NONE ), Locales );
-			} else {
-				cerr << "Unknown attribute at ";
-				PrintPosition_( Browser, cerr );
-				cerr << '!' << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} 
-			break;
-		case xml::tEndTag:
-			Continue = false;
-			break;
-		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-			PrintPosition_( Browser, cerr );
-			cerr << '!' << txf::nl;
-			ERRExit( EXIT_FAILURE );
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
-
 static void ProcessContent_(
 	xml::browser___ &Browser,
 	content_ &Content,
@@ -548,8 +365,9 @@ static void ProcessContent_(
 ERRProlog
 	bso::bool__ Continue = true;
 	str::string ErrorMessage;
-	str::string Item;
+	item Item;
 	bso::ubyte__ Level = 0;
+	weight__ Weight = DEFAULT_WEIGHT;
 ERRBegin
 	Item.Init();
 
@@ -559,9 +377,18 @@ ERRBegin
 			Item.Append( Browser.Dump().RawData );
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == WEIGHT_ATTRIBUTE )
-				cout << "Weight : " << Browser.Value() << txf::nl;
-			else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
+			if ( Browser.AttributeName() == WEIGHT_ATTRIBUTE ) {
+				epeios::row__ Error = NONE;
+
+				Weight = Browser.Value().ToUB( &Error );
+
+				if ( Error != NONE ) {
+					cerr << "Bad value for '" << WEIGHT_ATTRIBUTE << "' attribute at ";
+					PrintPosition_( Browser.Dump().Coord(), cerr );
+					cerr << '!' << txf::nl;
+					ERRExit( EXIT_FAILURE );
+				}
+			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
 				cerr << "Unknown attribute at ";
 				PrintPosition_( Browser.GetCurrentCoord(), cerr );
 				cerr << " !" << txf::nl;
@@ -582,7 +409,9 @@ ERRBegin
 				break;
 			case 1:
 				Item.Append( Browser.Dump().RawData );
+				Item.SetWeight( Weight );
 				Content.Append( Item );
+				Weight = DEFAULT_WEIGHT;
 				cout << Item << txf::nl;
 				cout << "-------------------" << txf::nl;
 				Item.Init();
@@ -634,7 +463,7 @@ ERRBegin
 					cerr << " !" << txf::nl;
 				}
 				StructureDetected = true;
-				ProcessStructure_( Browser, Table.Structure, Locales );
+//				ProcessStructure_( Browser, Table.Structure, Locales );
 			} else if ( Browser.TagName() == CONTENT_TAG ) {
 				if ( ContentDetected ) {
 					cerr << "Duplicate '" CONTENT_TAG " ";
