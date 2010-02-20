@@ -233,6 +233,8 @@ ERREpilog
 
 /* End of the part which handles command line arguments. */
 
+E_ROW( trow__ );	// 'table row'.
+
 typedef bso::ubyte__ weight__;
 #define DEFAULT_WEIGHT	1
 
@@ -287,25 +289,86 @@ E_AUTO( item )
 typedef ctn:: E_XMCONTAINER_( item_ ) content_;
 E_AUTO( content )
 
+class substitution_
+{
+public:
+	struct s {
+		trow__ TableRow;
+		str::string_::s TagName;
+	} &S_;
+	str::string_ TagName;
+	substitution_( s &S )
+	: S_( S ),
+	  TagName( S.TagName )
+	{}
+	void reset( bso::bool__ P = true )
+	{
+		TagName.reset( P );
+		S_.TableRow = NONE;
+	}
+	void plug( mdr::E_MEMORY_DRIVER__ &MD )
+	{
+		TagName.plug( MD );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		TagName.plug( MM );
+	}
+	substitution_ &operator =( const substitution_ &S )
+	{
+		TagName = S.TagName;
+		S_.TableRow = S.S_.TableRow;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		reset();
+
+		TagName.Init();
+	}
+	void Init(
+		const str::string_ &TagName,
+		trow__ TableRow )
+	{
+		reset();
+
+		this->TagName.Init( TagName );
+		S_.TableRow = TableRow;
+	}
+	E_RODISCLOSE_( trow__, TableRow );
+};
+
+E_AUTO( substitution );
+
+typedef ctn::E_XMCONTAINER_( substitution_ ) substitutions_;
+E_AUTO( substitutions );
+
 class table_ {
 public:
 	struct s {
+		substitutions_::s Substitutions;
 		content_::s Content;
 	};
+	substitutions_ Substitutions;
 	content_ Content;
 	table_( s &S )
-	: Content( S.Content )
+	: Substitutions( S.Substitutions ),
+	  Content( S.Content )
 	{};
 	void reset( bso::bool__ P = true )
 	{
+		Substitutions.reset( P );
 		Content.reset( P );
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
+		Substitutions.plug( MM );
 		Content.plug( MM );
 	}
 	table_ &operator =(const table_ &T )
 	{
+		Substitutions = T.Substitutions;
 		Content = T.Content;
 
 		return *this;
@@ -314,13 +377,14 @@ public:
 	{
 		reset();
 
+		Substitutions.Init();
 		Content.Init();
 	}
 };
 
 E_AUTO( table )
 
-typedef ctn::E_XCONTAINER_( table_ ) tables_;
+typedef ctn::E_XCONTAINERt_( table_, trow__ ) tables_;
 E_AUTO( tables );
 
 typedef tables_	data_;
@@ -341,7 +405,6 @@ static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
 {
 	return str::Compare( Name, str::string( NAMESPACE ), 0, 0, strlen( NAMESPACE ) ) == 0;
 }
-
 
 static void PrintPosition_(
 	const xtf::coord__ &Coord,
@@ -412,8 +475,6 @@ ERRBegin
 				Item.SetWeight( Weight );
 				Content.Append( Item );
 				Weight = DEFAULT_WEIGHT;
-				cout << Item << txf::nl;
-				cout << "-------------------" << txf::nl;
 				Item.Init();
 				Level--;
 				break;
@@ -440,7 +501,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
 
 static void ProcessTable_(
 	xml::browser___ &Browser,
@@ -547,7 +607,9 @@ ERREnd
 ERREpilog
 }
 
-static void ProcessDataFile_( const char *DataFileName )
+static void RetrieveData_(
+	const char *DataFileName,
+	data_ &Data )
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
@@ -557,7 +619,6 @@ ERRProlog
 	lcl::locales Locales;
 	str::string ErrorMessage;
 	bso::bool__ DataDetected = false;
-	data Data;
 ERRBegin
 	if ( FFlow.Init( DataFileName, err::hSkip ) != fil::sSuccess ) {
 		cerr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
@@ -603,9 +664,39 @@ ERRBegin
 			break;
 		}
 	}
+
+	tol::InitializeRandomGenerator();
 ERRErr
 ERREnd
 ERREpilog
+}
+
+static void Pick_( const content_ &Content )
+{
+	ctn::E_CMITEM( item_ ) Item;
+	epeios::row__ Row = NONE;
+
+	Item.Init( Content );
+
+	tol::InitializeRandomGenerator();
+
+	Row = Content.First( rand() % Content.Amount() );
+
+	cout << Item( Row ) << txf::nl;
+}
+
+static void Pick_( const table_ &Table )
+{
+	Pick_( Table.Content );	
+}
+
+static void Pick_( const data_ &Data )
+{
+	ctn::E_CITEMt( table_, trow__ ) Table;
+
+	Table.Init( Data );
+
+	Pick_( Table( Data.Last() ) );
 }
 
 #define DATA_FILENAME_TAG	"Data"
@@ -617,6 +708,7 @@ void Process_(
 ERRProlog
 	str::string DataFileName;
 	STR_BUFFER___ Buffer;
+	data Data;
 ERRBegin
 	DataFileName.Init();
 
@@ -625,7 +717,11 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	ProcessDataFile_( DataFileName.Convert( Buffer ) );
+	Data.Init();
+
+	RetrieveData_( DataFileName.Convert( Buffer ), Data );
+
+	Pick_( Data );
 ERRErr
 ERREnd
 ERREpilog
