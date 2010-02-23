@@ -392,14 +392,14 @@ E_AUTO( data )
 
 #define NAMESPACE			NAME ":"
 #define DATA_TAG			NAMESPACE "data"
+
 #define TABLE_TAG			NAMESPACE "table"
-#define STRUCTURE_TAG		NAMESPACE "structure"
-#define CONTENT_TAG			NAMESPACE "content"
-#define TAG_TAG				NAMESPACE "tag"
-#define ATTRIBUTE_TAG		NAMESPACE "attribute"
-#define NAME_ATTRIBUTE		"name"
 #define CONTENT_TAG			NAMESPACE "content"
 #define WEIGHT_ATTRIBUTE	NAMESPACE "weight"
+
+#define SUBSTITUTIONS_TAG	NAMESPACE "substitutions"
+#define SUBSTITUTION_TAG	NAMESPACE "substitution"
+#define TAG_ATTRIBUTE		"Tag"
 
 static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
 {
@@ -408,7 +408,7 @@ static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
 
 static void PrintPosition_(
 	const xtf::coord__ &Coord,
-	txf::text_oflow__ TFlow )
+	txf::text_oflow__ &TFlow )
 {
 	TFlow << "at line " << Coord.Line << ", column " << Coord.Column;
 }
@@ -420,14 +420,112 @@ static void PrintPosition_(
 	PrintPosition_( Browser.GetCurrentCoord(), TFlow );
 }
 
-static void ProcessContent_(
+static void ReportError_( 
+	const str::string_ &Message,
+	xml::browser___ &Browser )
+{
+	cerr << Message << " at ";
+	PrintPosition_( Browser.Dump().Coord(), cerr );
+	cerr << '!' << txf::nl;
+	ERRExit( EXIT_FAILURE );
+}
+
+static void ReportError_( 
+	const char *Message,
+	xml::browser___ &Browser )
+{
+	ReportError_( str::string( Message ), Browser );
+}
+
+static void ReportError_( xml::browser___ &Browser )
+{
+ERRProlog
+	lcl::locales Locales;
+	str::string ErrorMessage;
+ERRBegin
+	Locales.Init();
+	ErrorMessage.Init();
+	cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
+	PrintPosition_( Browser, cerr );
+	cerr << '!' << txf::nl;
+	ERRExit( EXIT_FAILURE );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void ProcessSubstitution_(
 	xml::browser___ &Browser,
-	content_ &Content,
-	lcl::locales_ &Locales )
+	substitution_ &Substitution )
+{
+	bso::bool__ Continue = true;
+
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			ReportError_( "Unexpected tag", Browser );
+			break;
+		case xml::tAttribute:
+			if ( Browser.TagName() != SUBSTITUTION_TAG )
+				ERRc();
+			if ( Browser.AttributeName() == TAG_ATTRIBUTE ) {
+			}
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
+		case xml::tError:
+			ReportError_( Browser );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+}
+
+static void ProcessSubstitutions_(
+	xml::browser___ &Browser,
+	substitutions_ &Substitutions )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	str::string ErrorMessage;
+	substitution Substitution;
+ERRBegin
+
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == SUBSTITUTION_TAG ) {
+				Substitution.Init();
+				ProcessSubstitution_( Browser, Substitution );
+				Substitutions.Append( Substitution );
+			} else {
+				ReportError_( "Unexpected tag at ", Browser );
+			}
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
+		case xml::tError:
+			ReportError_( Browser );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void ProcessContent_(
+	xml::browser___ &Browser,
+	content_ &Content )
+{
+ERRProlog
+	bso::bool__ Continue = true;
 	item Item;
 	bso::ubyte__ Level = 0;
 	weight__ Weight = DEFAULT_WEIGHT;
@@ -446,16 +544,10 @@ ERRBegin
 				Weight = Browser.Value().ToUB( &Error );
 
 				if ( Error != NONE ) {
-					cerr << "Bad value for '" << WEIGHT_ATTRIBUTE << "' attribute at ";
-					PrintPosition_( Browser.Dump().Coord(), cerr );
-					cerr << '!' << txf::nl;
-					ERRExit( EXIT_FAILURE );
+					ReportError_( "Bad value for '" WEIGHT_ATTRIBUTE "\'", Browser );
 				}
 			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
-				cerr << "Unknown attribute at ";
-				PrintPosition_( Browser.GetCurrentCoord(), cerr );
-				cerr << " !" << txf::nl;
-				ERRExit( EXIT_FAILURE );
+				ReportError_( "Unknown attribute", Browser );
 			} else
 				Item.Append( Browser.Dump().RawData );
 			break;
@@ -485,12 +577,7 @@ ERRBegin
 			}
 			break;
 		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-			PrintPosition_( Browser, cerr );
-			cerr << '!' << txf::nl;
-			ERRExit( EXIT_FAILURE );
+			ReportError_( Browser );
 			break;
 		default:
 			ERRc();
@@ -504,70 +591,41 @@ ERREpilog
 
 static void ProcessTable_(
 	xml::browser___ &Browser,
-	table_ &Table,
-	lcl::locales_ &Locales )
+	table_ &Table )
 {
-ERRProlog
+
 	bso::bool__ Continue = true;
-	bso::bool__ StructureDetected = false;
-	bso::bool__ ContentDetected = false;
-	str::string ErrorMessage;
-ERRBegin
+
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTagClosed | xml::tfEndTag ) ) {
 		case xml::tStartTagClosed:
-			if ( Browser.TagName() == STRUCTURE_TAG ) {
-				if ( StructureDetected ) {
-					cerr << "Duplicate '" STRUCTURE_TAG " ";
-					PrintPosition_( Browser, cerr );
-					cerr << " !" << txf::nl;
-				}
-				StructureDetected = true;
-//				ProcessStructure_( Browser, Table.Structure, Locales );
+			if ( Browser.TagName() == SUBSTITUTIONS_TAG ) {
+				ProcessSubstitutions_( Browser, Table.Substitutions );
 			} else if ( Browser.TagName() == CONTENT_TAG ) {
-				if ( ContentDetected ) {
-					cerr << "Duplicate '" CONTENT_TAG " ";
-					PrintPosition_( Browser, cerr );
-					cerr << " !" << txf::nl;
-				}
-				ContentDetected = true;
-				ProcessContent_( Browser, Table.Content, Locales );
-			} else {
-				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
-				ERRExit( EXIT_FAILURE );
+				ProcessContent_( Browser, Table.Content );
 			} 
 			break;
 		case xml::tEndTag:
 			Continue = false;
 			break;
 		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-			PrintPosition_( Browser, cerr );
-			cerr << '!' << txf::nl;
-			ERRExit( EXIT_FAILURE );
+			ReportError_( Browser );
 			break;
 		default:
 			ERRc();
 			break;
 		}
 	}
-ERRErr
-ERREnd
-ERREpilog
 }
 
 static void ProcessData_(
 	xml::browser___ &Browser,
-	data_ &Data,
-	lcl::locales_ &Locales )
+	data_ &Data )
 {
 ERRProlog
 	bso::bool__ Continue = true;
 	bso::bool__ TableDetected = false;
 	table Table;
-	str::string ErrorMessage;
 ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTagClosed | xml::tfEndTag ) ) {
@@ -575,7 +633,7 @@ ERRBegin
 			if ( Browser.TagName() == TABLE_TAG ) {
 				TableDetected = true;
 				Table.Init();
-				ProcessTable_( Browser, Table, Locales );
+				ProcessTable_( Browser, Table );
 				Data.Append( Table );
 			} else {
 				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
@@ -590,12 +648,7 @@ ERRBegin
 				Continue = false;
 			break;
 		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-			PrintPosition_( Browser, cerr );
-			cerr << '!' << txf::nl;
-			ERRExit( EXIT_FAILURE );
+			ReportError_( Browser );
 			break;
 		default:
 			ERRc();
@@ -617,7 +670,6 @@ ERRProlog
 	xml::browser___ Browser;
 	bso::bool__ Continue = true;
 	lcl::locales Locales;
-	str::string ErrorMessage;
 	bso::bool__ DataDetected = false;
 ERRBegin
 	if ( FFlow.Init( DataFileName, err::hSkip ) != fil::sSuccess ) {
@@ -637,7 +689,7 @@ ERRBegin
 		switch ( Browser.Browse( xml::tfStartTagClosed ) ) {
 		case xml::tStartTagClosed:
 			if ( ( Browser.TagName() == DATA_TAG ) ) {
-				ProcessData_( Browser, Data, Locales );
+				ProcessData_( Browser, Data );
 				DataDetected = true;
 			} else {
 				cerr << '\'' << DataFileName << "' is not a '" NAME "' data file !" << txf::nl;
@@ -652,12 +704,7 @@ ERRBegin
 				Continue = false;
 			break;
 		case xml::tError:
-			Locales.Init();
-			ErrorMessage.Init();
-			cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-			PrintPosition_( Browser, cerr );
-			cerr << '!' << txf::nl;
-			ERRExit( EXIT_FAILURE );
+			ReportError_( Browser );
 			break;
 		default:
 			ERRc();
