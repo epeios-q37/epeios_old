@@ -240,30 +240,43 @@ typedef bso::ubyte__ weight__;
 
 typedef str::string_ _string_;
 
-class item_
-: public _string_
+class record_
 {
 public:
 	struct s
-	: public _string_::s
 	{
+		str::string_::s
+			Label,
+			Content;
 		weight__ Weight;
 	} &S_;
-	item_( s &S )
+	str::string_
+		Label,
+		Content;
+	record_( s &S )
 	: S_( S ),
-	  str::string_( S )
+	  Label( S.Label ),
+	  Content( S.Content )
 	{
 	}
 	void reset( bso::bool__ P = true )
 	{
-		_string_::reset( P );
+		Label.reset( P );
+		Content.reset( P );
+
 		S_.Weight = DEFAULT_WEIGHT;
 	}
-	item_ &operator =( const item_ &I )
+	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
-		_string_::operator =( I );
+		Label.plug( MM );
+		Content.plug( MM );
+	}
+	record_ &operator =( const record_ &R )
+	{
+		Label = R.Label;
+		Content = R.Content;
 
-		S_.Weight = I.S_.Weight;
+		S_.Weight = R.S_.Weight;
 
 		return *this;
 	}
@@ -271,23 +284,28 @@ public:
 	{
 		reset();
 
-		_string_::Init();
+		Label.Init();
+		Content.Init();
+
 	}
 	void Init(
-		const str::string_ &Value,
+		const str::string_ &Label,
+		const str::string_ &Content,
 		weight__ Weight )
 	{
 		reset();
 
-		_string_::Init( Value );
+		this->Label.Init( Label );
+		this->Content.Init( Content );
+
 	}
 	E_RWDISCLOSE_( weight__, Weight );
 };
 
-E_AUTO( item )
+E_AUTO( record )
 
-typedef ctn:: E_XMCONTAINER_( item_ ) content_;
-E_AUTO( content )
+typedef ctn:: E_XCONTAINER_( record_ ) records_;
+E_AUTO( records )
 
 class substitution_
 {
@@ -327,16 +345,7 @@ public:
 
 		TagName.Init();
 	}
-	void Init(
-		const str::string_ &TagName,
-		trow__ TableRow )
-	{
-		reset();
-
-		this->TagName.Init( TagName );
-		S_.TableRow = TableRow;
-	}
-	E_RODISCLOSE_( trow__, TableRow );
+	E_RWDISCLOSE_( trow__, TableRow );
 };
 
 E_AUTO( substitution );
@@ -347,29 +356,35 @@ E_AUTO( substitutions );
 class table_ {
 public:
 	struct s {
+		str::string_::s Name;
 		substitutions_::s Substitutions;
-		content_::s Content;
+		records_::s Records;
 	};
+	str::string_ Name;
 	substitutions_ Substitutions;
-	content_ Content;
+	records_ Records;
 	table_( s &S )
-	: Substitutions( S.Substitutions ),
-	  Content( S.Content )
+	: Name( S.Name ),
+	  Substitutions( S.Substitutions ),
+	  Records( S.Records )
 	{};
 	void reset( bso::bool__ P = true )
 	{
+		Name.reset( P );
 		Substitutions.reset( P );
-		Content.reset( P );
+		Records.reset( P );
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
+		Name.plug( MM );
 		Substitutions.plug( MM );
-		Content.plug( MM );
+		Records.plug( MM );
 	}
 	table_ &operator =(const table_ &T )
 	{
+		Name = T.Name;
 		Substitutions = T.Substitutions;
-		Content = T.Content;
+		Records = T.Records;
 
 		return *this;
 	}
@@ -377,8 +392,9 @@ public:
 	{
 		reset();
 
+		Name.Init();
 		Substitutions.Init();
-		Content.Init();
+		Records.Init();
 	}
 };
 
@@ -393,13 +409,19 @@ E_AUTO( data )
 #define NAMESPACE			NAME ":"
 #define DATA_TAG			NAMESPACE "data"
 
-#define TABLE_TAG			NAMESPACE "table"
-#define CONTENT_TAG			NAMESPACE "content"
-#define WEIGHT_ATTRIBUTE	NAMESPACE "weight"
+#define TABLE_TAG								NAMESPACE "table"
 
-#define SUBSTITUTIONS_TAG	NAMESPACE "substitutions"
-#define SUBSTITUTION_TAG	NAMESPACE "substitution"
-#define TAG_ATTRIBUTE		"Tag"
+#define CONTENT_TAG								NAMESPACE "content"
+#define CONTENT_WEIGHT_ATTRIBUTE				NAMESPACE "weight"
+#define CONTENT_SUBSTITUTION_ID_ATTRIBUTE		NAMESPACE "id"
+#define CONTENT_SUBSTITUTION_LABEL_ATTRIBUTE	NAMESPACE "label"
+
+#define SUBSTITUTIONS_TAG					NAMESPACE "substitutions"
+#define SUBSTITUTION_TAG					NAMESPACE "substitution"
+#define SUBSTITUTION_TAG_NAME_ATTRIBUTE		"TagName"
+#define SUBSTITUTION_TABLE_NAME_ATTRIBUTE	"TagName"
+#define SUBSTITUTION_TABLE_ID_ATTRIBUTE		"TagName"
+
 
 static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
 {
@@ -421,20 +443,13 @@ static void PrintPosition_(
 }
 
 static void ReportError_( 
-	const str::string_ &Message,
+	const char *Message,
 	xml::browser___ &Browser )
 {
 	cerr << Message << " at ";
 	PrintPosition_( Browser.Dump().Coord(), cerr );
 	cerr << '!' << txf::nl;
 	ERRExit( EXIT_FAILURE );
-}
-
-static void ReportError_( 
-	const char *Message,
-	xml::browser___ &Browser )
-{
-	ReportError_( str::string( Message ), Browser );
 }
 
 static void ReportError_( xml::browser___ &Browser )
@@ -454,9 +469,26 @@ ERREnd
 ERREpilog
 }
 
+trow__ SearchTable_(
+	const str::string_ &Name,
+	const tables_ &Tables )
+{
+	ctn::E_CITEMt( table_, trow__ ) Table;
+	trow__ Row = Tables.First();
+
+	Table.Init( Tables );
+
+	while ( ( Row != NONE ) && ( Table( Row ).Name != Name ) )
+		Row = Tables.Next( Row );
+
+	return Row;
+
+}
+
 static void ProcessSubstitution_(
 	xml::browser___ &Browser,
-	substitution_ &Substitution )
+	substitution_ &Substitution,
+	const tables_ &Tables )
 {
 	bso::bool__ Continue = true;
 
@@ -468,8 +500,37 @@ static void ProcessSubstitution_(
 		case xml::tAttribute:
 			if ( Browser.TagName() != SUBSTITUTION_TAG )
 				ERRc();
-			if ( Browser.AttributeName() == TAG_ATTRIBUTE ) {
-			}
+
+			if ( Browser.AttributeName() == SUBSTITUTION_TAG_NAME_ATTRIBUTE ) {
+				if ( Substitution.TagName.Amount() != 0 )
+					ReportError_( "Duplicate '" SUBSTITUTION_TAG_NAME_ATTRIBUTE "' attribute", Browser );
+
+				if ( Browser.Value().Amount() == 0 )
+					ReportError_( "No value for '" SUBSTITUTION_TAG_NAME_ATTRIBUTE "'", Browser );
+			} else if ( Browser.AttributeName() == SUBSTITUTION_TABLE_NAME_ATTRIBUTE ) {
+				if ( Substitution.TableRow() != NONE )
+					ReportError_( "Table already defined", Browser );
+
+				if ( Browser.Value().Amount() == 0 )
+					ReportError_( "No value for '" SUBSTITUTION_TABLE_NAME_ATTRIBUTE "'", Browser );
+
+				if ( ( Substitution.TableRow() = SearchTable_( Browser.Value(), Tables ) ) == NONE )
+					ReportError_( "Unable to find corresponding table", Browser );
+			} else if ( Browser.AttributeName() == SUBSTITUTION_TABLE_ID_ATTRIBUTE ) {
+				epeios::row__ Error = NONE;
+
+				if ( Substitution.TableRow() != NONE )
+					ReportError_( "Table already defined", Browser );
+
+				*Substitution.TableRow() = Browser.Value().ToUL( &Error );
+
+				if ( Error != NONE )
+					ReportError_( "Bad value for '" SUBSTITUTION_TABLE_ID_ATTRIBUTE "'", Browser );
+
+				if ( !Tables.Exists( Substitution.TableRow() ) )
+					ReportError_( "No such table", Browser );
+			} else
+				ReportError_( "Unexpected attribute", Browser );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -486,7 +547,8 @@ static void ProcessSubstitution_(
 
 static void ProcessSubstitutions_(
 	xml::browser___ &Browser,
-	substitutions_ &Substitutions )
+	substitutions_ &Substitutions,
+	const tables_ &Tables )
 {
 ERRProlog
 	bso::bool__ Continue = true;
@@ -498,7 +560,7 @@ ERRBegin
 		case xml::tStartTag:
 			if ( Browser.TagName() == SUBSTITUTION_TAG ) {
 				Substitution.Init();
-				ProcessSubstitution_( Browser, Substitution );
+				ProcessSubstitution_( Browser, Substitution, Tables );
 				Substitutions.Append( Substitution );
 			} else {
 				ReportError_( "Unexpected tag at ", Browser );
@@ -520,17 +582,75 @@ ERREnd
 ERREpilog
 }
 
-static void ProcessContent_(
+static const char *Substitute_(
+	const str::string_ &Label,
+	const records_ &Records,
+	str::string_ &Item )
+{
+	ctn::E_CITEM( record_ ) Record;
+	epeios::row__ Row = Records.First();
+
+	Record.Init( Records );
+
+	while ( ( Row != NONE ) && ( Record( Row ).Label != Label ) )
+		Row = Records.Next( Row );
+
+	if ( Row == NONE )
+		return "Unable to find corresponding record";
+
+	Item.Append( Record( Row ).Content );
+}
+
+
+static const char *Substitute_(
+	const str::string_ &Label,
+	const substitution_ &Substitution,
+	const tables_ &Tables,
+	str::string_ &Item )
+{
+	ctn::E_CITEMt( table_, trow__ ) Table;
+
+	Table.Init( Tables );
+
+	if ( !Tables.Exists( Substitution.GetTableRow() ) )
+		ERRc();
+
+	return Substitute_( Label, Table( Substitution.GetTableRow() ).Records, Item );
+}
+
+static const char *Substitute_(
+	const str::string_ &Label,
+	const str::string_ &Tag,
+	const substitutions_ &Substitutions,
+	const tables_ &Tables,
+	str::string_ &Item )
+{
+	epeios::row__ Row = Substitutions.First();
+	ctn::E_CMITEM( substitution_ ) Substitution;
+
+	Substitution.Init( Substitutions );
+
+	while ( ( Row != NONE ) && ( Substitution( Row ).TagName != Tag ) )
+		Row = Substitutions.Next( Row );
+
+	if ( Row == NONE )
+		return "Unable to find corresponding tag";
+
+	Substitute_( Label, Substitution( Row ), Tables, Item );
+}
+
+
+static void ProcessRecords_(
 	xml::browser___ &Browser,
-	content_ &Content )
+	records_ &Records )
 {
 ERRProlog
 	bso::bool__ Continue = true;
-	item Item;
+	record Record;
 	bso::ubyte__ Level = 0;
 	weight__ Weight = DEFAULT_WEIGHT;
 ERRBegin
-	Item.Init();
+	Record.Init();
 
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
@@ -538,14 +658,18 @@ ERRBegin
 			Item.Append( Browser.Dump().RawData );
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == WEIGHT_ATTRIBUTE ) {
+			if ( Browser.AttributeName() == CONTENT_WEIGHT_ATTRIBUTE ) {
 				epeios::row__ Error = NONE;
 
 				Weight = Browser.Value().ToUB( &Error );
 
 				if ( Error != NONE ) {
-					ReportError_( "Bad value for '" WEIGHT_ATTRIBUTE "\'", Browser );
+					ReportError_( "Bad value for '" CONTENT_WEIGHT_ATTRIBUTE "\'", Browser );
 				}
+			} else if ( Browser.AttributeName() == CONTENT_SUBSTITUTION_LABEL_ATTRIBUTE ) {
+				SubstituteWithLabel_( Browser.TagName(), Browser.Value() );
+			} else if ( Browser.AttributeName() == CONTENT_SUBSTITUTION_ID_ATTRIBUTE ) {
+				SubstituteWithId_( Browser.TagName(), Browser.Value() );
 			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
 				ReportError_( "Unknown attribute", Browser );
 			} else
@@ -591,16 +715,26 @@ ERREpilog
 
 static void ProcessTable_(
 	xml::browser___ &Browser,
-	table_ &Table )
+	table_ &Table,
+	const tables_ &Tables )
 {
 
 	bso::bool__ Continue = true;
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		case xml::tAttribute:
+			if ( Browser.AttributeName() == TABLE_DEFAULT_RECORD_LABEL_TAG ) {
+				if ( Table.DefaultRecordLabelTag.Amount() != 0 )
+					ReportError_( "Default record label tag value already defined", Browser );
+
+				if ( Browser.Value().Amount() == 0 )
+					ReportError_( "Attribute value can not be empty", Browser );
+			}
+
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == SUBSTITUTIONS_TAG ) {
-				ProcessSubstitutions_( Browser, Table.Substitutions );
+				ProcessSubstitutions_( Browser, Table.Substitutions , Tables);
 			} else if ( Browser.TagName() == CONTENT_TAG ) {
 				ProcessContent_( Browser, Table.Content );
 			} 
@@ -628,12 +762,12 @@ ERRProlog
 	table Table;
 ERRBegin
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTagClosed | xml::tfEndTag ) ) {
-		case xml::tStartTagClosed:
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		case xml::tStartTag:
 			if ( Browser.TagName() == TABLE_TAG ) {
 				TableDetected = true;
 				Table.Init();
-				ProcessTable_( Browser, Table );
+				ProcessTable_( Browser, Table, Data );
 				Data.Append( Table );
 			} else {
 				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
