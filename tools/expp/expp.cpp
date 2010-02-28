@@ -36,7 +36,7 @@
 #define VERSION			"0.2.4"
 #define COPYRIGHT_YEARS	"2007-2009"
 #define DESCRIPTION		"Epeios XML preprocessor"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -115,8 +115,8 @@ void PrintHeader( void )
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
 	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
-	cout << INFO << txf::nl;
-	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cout << AFFILIATION << txf::nl;
+//	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -336,12 +336,12 @@ ERREpilog
 
 static inline void Main(
 	int argc,
-	const char *argv[] )
+	char **argv )
 {
 ERRProlog
 	parameters Parameters;
 ERRBegin
-	AnalyzeArgs( argc, argv, Parameters );
+//	AnalyzeArgs( argc, argv, Parameters );
 
 	Go( Parameters );
 ERRErr
@@ -351,7 +351,7 @@ ERREpilog
 
 int main(
 	int argc,
-	const char *argv[] )
+	char **argv )
 {
 ERRFProlog
 ERRFBegin
