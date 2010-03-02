@@ -238,15 +238,17 @@ typedef bso::ubyte__ weight__;
 E_ROW( rrow__ );	// 'record row'.
 E_ROW( trow__ );	// 'table row'.
 
-template <typename row> class generic_alias_
+
+class record_alias_
 {
 public:
 	struct s {
 		str::string_::s Label;
-		row Row;
+		trow__ TableRow;
+		rrow__ RecordRow;
 	}&S_;
 	str::string_ Label;
-	generic_alias_( s &S )
+	record_alias_( s &S )
 	: S_( S ),
 	  Label( S.Label )
 	{}
@@ -254,7 +256,8 @@ public:
 	{
 		Label.reset( P );
 
-		S_.Row = NONE;
+		S_.TableRow = NONE;
+		S_.RecordRow = NONE;
 	}
 	void plug( mdr::E_MEMORY_DRIVER__ &MD )
 	{
@@ -264,10 +267,12 @@ public:
 	{
 		Label.plug( MM );
 	}
-	generic_alias_ &operator =( const generic_alias_ &GA )
+	record_alias_ &operator =( const record_alias_ &RA )
 	{
-		Label = GA.Label;
-		S_.Row = GA.S_.Row;
+		Label = RA.Label;
+
+		S_.TableRow = RA.S_.TableRow;
+		S_.RecordRow = RA.S_.RecordRow;
 
 		return *this;
 	}
@@ -279,22 +284,78 @@ public:
 	}
 	void Init(
 		const str::string_ &LAbel,
-		row Row )
+		trow__ TableRow,
+		rrow__ RecordRow )
 	{
 		reset();
 
 		this->Label.Init( Label );
-		S_.Row = Row;
+
+		S_.TableRow = TableRow;
+		S_.RecordRow = RecordRow;
 	}
-	E_RODISCLOSE_( row, Row );
+	E_RODISCLOSE_( trow__, TableRow );
+	E_RODISCLOSE_( rrow__, RecordRow );
 };
 
-typedef generic_alias_<rrow__> record_alias_ ;
+E_AUTO( record_alias );
 
 typedef ctn::E_XMCONTAINER_( record_alias_ ) record_aliases_;
 E_AUTO( record_aliases )
 
-typedef generic_alias_<trow__> table_alias_;
+class table_alias_
+{
+public:
+	struct s {
+		str::string_::s Label;
+		trow__ TableRow;
+	}&S_;
+	str::string_ Label;
+	table_alias_( s &S )
+	: S_( S ),
+	  Label( S.Label )
+	{}
+	void reset( bso::bool__ P = true )
+	{
+		Label.reset( P );
+
+		S_.TableRow = NONE;
+	}
+	void plug( mdr::E_MEMORY_DRIVER__ &MD )
+	{
+		Label.plug( MD );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		Label.plug( MM );
+	}
+	table_alias_ &operator =( const table_alias_ &TA )
+	{
+		Label = TA.Label;
+		S_.TableRow = TA.S_.TableRow;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		reset();
+
+		Label.Init();
+	}
+	void Init(
+		const str::string_ &Label,
+		trow__ TableRow )
+	{
+		reset();
+
+		this->Label.Init( Label );
+		S_.TableRow = TableRow;
+	}
+	E_RODISCLOSE_( trow__, TableRow );
+};
+
+E_AUTO( table_alias );
+
 
 typedef ctn::E_XMCONTAINER_( table_alias_ ) table_aliases_;
 E_AUTO( table_aliases )
@@ -459,11 +520,19 @@ E_AUTO( tables );
 typedef tables_	data_;
 E_AUTO( data )
 
-#define NAMESPACE			NAME ":"
-#define DATA_TAG			NAMESPACE "data"
+#define NAMESPACE	NAME ":"
 
-#define TABLE_TAG									NAMESPACE "table"
-#define TABLE_LABEL_ATTRIBUTE						"label"
+#define DATA_TAG	NAMESPACE "data"
+
+#define TABLE_TAG				NAMESPACE "table"
+#define TABLE_LABEL_ATTRIBUTE	"label"
+
+#define ALIASES_TAG	NAMESPACE "aliases"
+
+#define ALIAS_TAG									NAMESPACE "alias"
+#define ALIAS_TABLE_LABEL_ATTRIBUTE					"TableLabel"
+#define ALIAS_TABLE_ALIAS_ATTRIBUTE					"TableAlias"
+#define ALIAS_RECORD_LABEL_ATTRIBUTE				"RecordLabel"
 
 #define CONTENT_TAG									NAMESPACE "content"
 #define CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE	"DefaultRecordLabelTag"
@@ -474,6 +543,8 @@ E_AUTO( data )
 #define INSERTION_TAG						NAMESPACE "insert"
 #define INSERTION_TABLE_LABEL_ATTRIBUTE		"TableLabel"
 #define INSERTION_RECORD_LABEL_ATTRIBUTE	"RecordLabel"
+#define INSERTION_TABLE_ALIAS_ATTRIBUTE		"TableLabel"
+#define INSERTION_RECORD_ALIAS_ATTRIBUTE	"RecordLabel"
 
 
 static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
@@ -544,11 +615,54 @@ static trow__ SearchTable_(
 	return Search_<tables_, table_, trow__>( Label, Tables );
 }
 
+static trow__ SearchTable_(
+	const str::string_ &Label,
+	const table_aliases_ &Aliases )
+{
+	ctn::E_CMITEM( table_alias_ ) Alias;
+	epeios::row__ Row = Aliases.First();
+
+	Alias.Init( Aliases );
+
+	if ( ( Row != NONE ) && ( Alias( Row ).Label != Label ) )
+		Row = Aliases.Next( Row );
+
+	if ( Row != NONE )
+		return Alias( Row ).TableRow();
+	else
+		return NONE;
+}
+
+
 static rrow__ SearchRecord_(
 	const str::string_ &Label,
 	const records_ &Records )
 {
 	return Search_<records_, record_, rrow__>( Label, Records );
+}
+
+static rrow__ SearchRecord_(
+	const str::string_ &Label,
+	trow__ TableRow,
+	const tables_ &Tables )
+{
+	ctn::E_CITEMt( table_, trow__ ) Table;
+
+	Table.Init( Tables );
+
+	return SearchRecord_( Label, Table( TableRow ).Records );
+}
+
+static void Insert_(
+	rrow__ Row,
+	const records_ &Records,
+	record_ &Record )
+{
+	ctn::E_CITEMt( record_, rrow__ ) SourceRecord;
+
+	SourceRecord.Init( Records );
+
+	Record.Content.Append( SourceRecord( Row ).Content );
 }
 
 static void Insert_(
@@ -558,14 +672,11 @@ static void Insert_(
 	record_ &Record )
 {
 	rrow__ Row = SearchRecord_( RecordLabel, Records );
-	ctn::E_CITEMt( record_, rrow__ ) SourceRecord;
 
 	if ( Row == NONE )
 		ReportErrorAndExit_( "Unable to find record", Browser );
 
-	SourceRecord.Init( Records );
-
-	Record.Content.Append( SourceRecord( Row ).Content );
+	Insert_( Row, Records, Record );
 }
 
 static void Insert_(
@@ -773,8 +884,8 @@ ERREnd
 ERREpilog
 }
 
-// '...<erpck::table ...><erpck:content ...>...' -> '....</erpck:table>...'
-//                       ^                                             ^
+// '...<erpck::table ...>...<erpck:content ...>...' -> '...</erpck:content>...'
+//                                         ^                               ^
 static void ProcessContent_(
 	xml::browser___ &Browser,
 	table_ &Table,
@@ -790,7 +901,7 @@ ERRBegin
 		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
 		case xml::tAttribute:
 			if ( Browser.TagName() != CONTENT_TAG )
-				ReportErrorAndExit_( "Unknown tag", Browser );
+				ERRc();
 
 			if ( Browser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
 				if ( DefaultRecordLabelTag.Amount() != 0 )
@@ -801,17 +912,190 @@ ERRBegin
 
 				DefaultRecordLabelTag = Browser.Value();
 			} else
-				ReportErrorAndExit_( "Unkown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == CONTENT_TAG ) {
 				ProcessRecords_( Browser, DefaultRecordLabelTag, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
+				Continue = false;
 			}  else														        			//                    ^                         ^
-				ReportErrorAndExit_( "Unknown tag", Browser );
+				ERRc();
 			break;
 		case xml::tEndTag:
-			Continue = false;	// '</erpck:table>...'
-			break;				//                ^
+			Continue = false;	// '</erpck:content>...'
+			break;				//                  ^
+		case xml::tError:
+			ReportErrorAndExit_( Browser );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+enum alias_type__ {
+	atRecord,
+	atTable,
+	at_amount,
+	at_Undefined
+};
+// '...<erpck:alias ...>...' -> '...</alias>...'
+//                  ^                       ^
+static alias_type__ ProcessAlias_(
+	xml::browser___ &Browser,
+	const table_aliases_ &TableAliases,
+	const tables_ &Tables,
+	record_alias_ &RecordAlias,
+	table_alias_ &TableAlias )
+{
+	alias_type__ AliasType = at_Undefined;
+ERRProlog
+	bso::bool__ Continue = true;
+	trow__ TableRow = NONE;
+	rrow__ RecordRow = NONE;
+	str::string TableAliasLabel, TableLabel, RecordLabel;
+ERRBegin
+	TableAliasLabel.Init();
+	TableLabel.Init();
+	RecordLabel.Init();
+
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			ReportErrorAndExit_( "No tag allowed here", Browser );
+			break;
+		case xml::tAttribute:
+			if ( Browser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
+				if ( Browser.Value().Amount() == 0 )
+					ReportErrorAndExit_( "Value cannot be empty", Browser );
+
+				if ( TableAliasLabel.Amount() != 0  )
+					ReportErrorAndExit_( "Attribute already defined", Browser );
+
+				if ( TableLabel.Amount() != 0 )
+					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
+
+				TableAliasLabel = Browser.Value();
+			} else if ( Browser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
+				if ( Browser.Value().Amount() == 0 )
+					ReportErrorAndExit_( "Value cannot be empty", Browser );
+
+				if ( TableLabel.Amount() != 0  )
+					ReportErrorAndExit_( "Attribute already defined", Browser );
+
+				if ( TableAliasLabel.Amount() != 0 )
+					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
+
+				TableLabel = Browser.Value();
+			} else if ( Browser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
+				if ( Browser.Value().Amount() == 0 )
+					ReportErrorAndExit_( "Value cannot be empty", Browser );
+
+				if ( RecordLabel.Amount() != 0  )
+					ReportErrorAndExit_( "Attribute already defined", Browser );
+
+				RecordLabel = Browser.Value();
+			} else
+				ReportErrorAndExit_( "Unknown attribute", Browser );
+			break;
+		case xml::tStartTagClosed:
+			if ( TableLabel.Amount() != 0 ) {
+				if ( ( TableRow = SearchTable_( TableLabel, Tables ) ) == NONE )
+					ReportErrorAndExit_( "Unable to find table", Browser );
+			} else if ( TableAliasLabel.Amount() != 0 ) {
+				if ( ( TableRow = SearchTable_( TableAliasLabel, TableAliases ) ) == NONE )
+					ReportErrorAndExit_( "Unable to find table", Browser );
+			} else
+				ReportErrorAndExit_( "Missing table reference", Browser );
+
+			if ( RecordLabel.Amount() ) {
+				if ( ( RecordRow = SearchRecord_( RecordLabel, TableRow, Tables ) ) == NONE )
+					ReportErrorAndExit_( "Unable to find record", Browser );
+
+				AliasType = atRecord;
+			} else
+				AliasType = atTable;
+			break;
+		case xml::tValue:
+			switch ( AliasType ) {
+			case atRecord:
+				RecordAlias.Init( Browser.Value(), TableRow, RecordRow );
+				break;
+			case atTable:
+				TableAlias.Init( Browser.Value(), TableRow );
+				break;
+			break;
+			default:
+				ERRc();
+			}
+			break;
+		case xml::tEndTag:
+			switch ( AliasType ) {
+			case atRecord:
+			case atTable:
+				Continue = false;
+				break;
+			case at_Undefined:
+				ReportErrorAndExit_( "Incomplete alias definition", Browser );
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		case xml::tError:
+			ReportErrorAndExit_( Browser );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return AliasType;
+}
+
+ // '<erpck:table ...>...<erpck:aliases ...>...'
+ static void ProcessAliases_(
+	xml::browser___ &Browser,
+	const tables_ &Tables,
+	aliases_ &Aliases )
+{
+ERRProlog
+	bso::bool__ Continue = true;
+	record_alias RecordAlias;
+	table_alias TableAlias;
+ERRBegin
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == ALIAS_TAG ) {
+				RecordAlias.Init();
+				TableAlias.Init();
+
+				switch ( ProcessAlias_( Browser, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
+				case atRecord:																			//                  ^                       ^
+					Aliases.Records.Append( RecordAlias );
+					break;
+				case atTable:
+					Aliases.Tables.Append( TableAlias );
+					break;
+				default:
+					ERRc();
+					break;
+				}
+			} else
+				ReportErrorAndExit_( "Unknow tag", Browser );
+			break;
+		case xml::tEndTag:
+			Continue = false;
+			break;
 		case xml::tError:
 			ReportErrorAndExit_( Browser );
 			break;
@@ -832,11 +1116,19 @@ static void ProcessTable_(
 	table_ &Table,
 	const tables_ &Tables )
 {
-ERRProlog
+
 	bso::bool__ Continue = true;
-ERRBegin
+
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
+		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() == ALIASES_TAG )
+				ProcessAliases_( Browser, Tables, Table.Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
+			else if ( Browser.TagName() == CONTENT_TAG )			//                                     ^
+				ProcessContent_( Browser, Table, Tables );			// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
+			else													//                                     ^                              ^
+				ReportErrorAndExit_( "Unknown tag", Browser );
+			break;
 		case xml::tAttribute:
 			if ( Browser.TagName() != TABLE_TAG )
 				ERRc();
@@ -852,12 +1144,9 @@ ERRBegin
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
-		case xml::tStartTagClosed:
-			if ( Browser.TagName() != TABLE_TAG )
-				ERRc();
-			ProcessContent_( Browser, Table, Tables );	// '...<erpck::table ...><erpck:content ...>...' -> '....</erpck:table>...'
-			Continue = false;							//                       ^                                             ^
-			break;				
+		case xml::tEndTag:
+			Continue = false;
+			break;
 		case xml::tError:
 			ReportErrorAndExit_( Browser );
 			break;
@@ -866,9 +1155,6 @@ ERRBegin
 			break;
 		}
 	}
-ERRErr
-ERREnd
-ERREpilog
 }
 
 // '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
