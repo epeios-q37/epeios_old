@@ -567,13 +567,20 @@ static void PrintPosition_(
 }
 
 static void ReportErrorAndExit_( 
-	const char *Message,
+	const str::string_ Message,
 	xml::browser___ &Browser )
 {
 	cerr << Message << " at ";
 	PrintPosition_( Browser.Dump().Coord(), cerr );
 	cerr << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
+}
+
+static void ReportErrorAndExit_( 
+	const char *Message,
+	xml::browser___ &Browser )
+{
+	ReportErrorAndExit_( str::string( Message ), Browser );
 }
 
 static void ReportErrorAndExit_( xml::browser___ &Browser )
@@ -593,11 +600,11 @@ ERREnd
 ERREpilog
 }
 
-template <typename container, typename item, typename row> row Search_(
+template <typename container, typename item, typename row> row BaseSearch_(
 	const str::string_ &Label,
 	const container &Container )
 {
-	ctn::E_CITEMt( item, row ) Item;
+	item Item;
 	row Row = Container.First();
 
 	Item.Init( Container );
@@ -608,11 +615,25 @@ template <typename container, typename item, typename row> row Search_(
 	return Row;
 }
 
+template <typename container, typename item, typename row> row SearchInMulti_(
+	const str::string_ &Label,
+	const container &Container )
+{
+	return BaseSearch_<container, ctn::E_CITEMt( item, row ), row >( Label, Container );
+}
+
+template <typename container, typename item, typename row> row SearchInMono_(
+	const str::string_ &Label,
+	const container &Container )
+{
+	return BaseSearch_<container, ctn::E_CMITEMt( item, row ), row >( Label, Container );
+}
+
 static trow__ SearchTable_(
 	const str::string_ &Label,
 	const tables_ &Tables )
 {
-	return Search_<tables_, table_, trow__>( Label, Tables );
+	return SearchInMulti_<tables_, table_, trow__>( Label, Tables );
 }
 
 static trow__ SearchTable_(
@@ -638,7 +659,7 @@ static rrow__ SearchRecord_(
 	const str::string_ &Label,
 	const records_ &Records )
 {
-	return Search_<records_, record_, rrow__>( Label, Records );
+	return SearchInMulti_<records_, record_, rrow__>( Label, Records );
 }
 
 static rrow__ SearchRecord_(
@@ -666,6 +687,19 @@ static void Insert_(
 }
 
 static void Insert_(
+	rrow__ RecordRow,
+	trow__ TableRow,
+	const tables_ &Tables,
+	record_ &Record )
+{
+	ctn::E_CITEMt( table_, trow__ ) Table;
+
+	Table.Init( Tables );
+
+	Insert_( RecordRow, Table( TableRow ).Records, Record );
+}
+
+static void Insert_(
 	const str::string_ &RecordLabel,
 	const records_ &Records,
 	xml::browser___ &Browser,
@@ -679,6 +713,48 @@ static void Insert_(
 	Insert_( Row, Records, Record );
 }
 
+static epeios::row__ FindRecordAlias_(
+	const str::string_ &Label,
+	const record_aliases_ &Aliases )
+{
+	return SearchInMono_<record_aliases_, record_alias_, epeios::row__>( Label, Aliases );
+}
+
+static epeios::row__ FindTableAlias_(
+	const str::string_ &Label,
+	const table_aliases_ &Aliases )
+{
+	return SearchInMono_<table_aliases_, table_alias_, epeios::row__>( Label, Aliases );
+}
+
+static void Insert_(
+	epeios::row__ AliasRow,
+	const record_aliases_ &Aliases,
+	const tables_ &Tables,
+	record_ &Record )
+{
+	ctn::E_CMITEM( record_alias_ ) Alias;
+
+	Alias.Init( Aliases );
+
+	Insert_( Alias( AliasRow ).RecordRow(), Alias( AliasRow ).TableRow(), Tables, Record );
+}
+
+static void InsertUsingRecordAlias_(
+	const str::string_ &RecordAlias,
+	const record_aliases_ &Aliases,
+	const tables_ &Tables,
+	xml::browser___ &Browser,
+	record_ &Record )
+{
+	epeios::row__ Row = FindRecordAlias_( RecordAlias, Aliases );
+
+	if ( Row == NONE )
+		ReportErrorAndExit_( "Unable to find record alias", Browser );
+
+	Insert_( Row, Aliases, Tables, Record );
+}
+
 static void Insert_(
 	const str::string_ &RecordLabel,
 	const table_ &Table,
@@ -689,6 +765,51 @@ static void Insert_(
 }
 
 static void Insert_(
+	const str::string_ &RecordLabel,	
+	trow__ TableRow,
+	const tables_ &Tables,
+	xml::browser___ &Browser,
+	record_ &Record )
+{
+	ctn::E_CITEMt( table_, trow__ )Table;
+
+	Table.Init( Tables );
+
+	Insert_( RecordLabel, Table( TableRow ), Browser, Record );
+}
+
+static void Insert_(
+	const str::string_ &RecordLabel,
+	epeios::row__ AliasRow,
+	const table_aliases_ &Aliases,
+	const tables_ &Tables,
+	xml::browser___ &Browser,
+	record_ &Record )
+{
+	ctn::E_CMITEM( table_alias_ ) Alias;
+
+	Alias.Init( Aliases );
+
+	Insert_( RecordLabel, Alias( AliasRow ).TableRow(), Tables, Browser, Record );
+}
+
+static void InsertUsingTableAlias_(
+	const str::string_ &RecordLabel,
+	const str::string_ &TableAlias,
+	const table_aliases_ &Aliases,
+	const tables_ &Tables,
+	xml::browser___ &Browser,
+	record_ &Record )
+{
+	epeios::row__ Row = FindTableAlias_( TableAlias, Aliases );
+
+	if ( Row == NONE )
+		ReportErrorAndExit_( "Unable to find table alias", Browser );
+
+	Insert_( RecordLabel, Row, Aliases, Tables, Browser, Record );
+}
+
+static void InsertUsingLabels_(
 	const str::string_ &TableLabel,
 	const str::string_ &RecordLabel,
 	const tables_ &Tables,
@@ -705,6 +826,34 @@ static void Insert_(
 
 	Insert_( RecordLabel, Table( Row ), Browser, Record );
 }
+
+static void Assign_(
+	str::string_ &Target,
+	const char *TargetLabel,
+	xml::browser___ &Browser )
+{
+ERRProlog
+	str::string ErrorMessage;
+ERRBegin
+	ErrorMessage.Init( TargetLabel );
+
+	if ( Target.Amount() != 0 ) {
+		ErrorMessage.Append( " already defined" );
+		ReportErrorAndExit_( ErrorMessage, Browser );
+	}
+
+	if ( Browser.Value().Amount() != 0 ) {
+		ErrorMessage.Append( " value can not be empty" );
+		ReportErrorAndExit_( ErrorMessage, Browser );
+	}
+
+	Target = Browser.Value();
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 					
 
 // '...<erpck:insert ...>...' -> '...</erpck:insert>...'
@@ -715,7 +864,7 @@ static void ProcessInsertion_(
 	record_ &Record )
 {
 ERRProlog
-	str::string TableLabel, RecordLabel;
+	str::string TableLabel, RecordLabel, TableAlias, RecordAlias;
 	bso::bool__ Continue = true;
 ERRBegin
 	TableLabel.Init();
@@ -728,26 +877,14 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == INSERTION_TABLE_LABEL_ATTRIBUTE ) {
-				if ( TableLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Table label already define", Browser );
-
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Attribute value cannot be empty", Browser );
-
-				TableLabel = Browser.Value();
+				Assign_( TableLabel, "Table label", Browser );
 			} else if ( Browser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
-				if ( RecordLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Record label already define", Browser );
-
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Attribute value cannot be empty", Browser );
-
-				RecordLabel = Browser.Value();
+				Assign_( RecordLabel, "Record label", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
 		case xml::tEndTag:
-			Insert_( TableLabel, RecordLabel, Tables, Browser, Record );
+			InsertUsingLabels_( TableLabel, RecordLabel, Tables, Browser, Record );
 			Continue = false;
 			break;
 		case xml::tError:
@@ -850,13 +987,7 @@ ERRBegin
 				if ( Error != NONE )
 					ReportErrorAndExit_( "Bad attribute value", Browser );
 			} else if ( Browser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
-				if ( Record.Label.Amount() != 0 )
-					ReportErrorAndExit_( "Record label already defined", Browser );
-
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Attribute alue cannot be empty", Browser );
-
-				Record.Label = Browser.Value();
+					Assign_( Record.Label, "Record label", Browser );
 			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			} else
@@ -904,13 +1035,7 @@ ERRBegin
 				ERRc();
 
 			if ( Browser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
-				if ( DefaultRecordLabelTag.Amount() != 0 )
-					ReportErrorAndExit_( "Default record label tag value already defined", Browser );
-
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Attribute value can not be empty", Browser );
-
-				DefaultRecordLabelTag = Browser.Value();
+				Assign_( DefaultRecordLabelTag, "Default record label", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
@@ -970,35 +1095,17 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Value cannot be empty", Browser );
-
-				if ( TableAliasLabel.Amount() != 0  )
-					ReportErrorAndExit_( "Attribute already defined", Browser );
-
 				if ( TableLabel.Amount() != 0 )
 					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
 
-				TableAliasLabel = Browser.Value();
+				Assign_( TableAliasLabel, "Table alias", Browser );
 			} else if ( Browser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Value cannot be empty", Browser );
-
-				if ( TableLabel.Amount() != 0  )
-					ReportErrorAndExit_( "Attribute already defined", Browser );
-
 				if ( TableAliasLabel.Amount() != 0 )
 					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
 
-				TableLabel = Browser.Value();
+				Assign_( TableLabel, "Table alias", Browser );
 			} else if ( Browser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Value cannot be empty", Browser );
-
-				if ( RecordLabel.Amount() != 0  )
-					ReportErrorAndExit_( "Attribute already defined", Browser );
-
-				RecordLabel = Browser.Value();
+				Assign_( RecordLabel, "Record label", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
@@ -1134,13 +1241,7 @@ static void ProcessTable_(
 				ERRc();
 
 			if ( Browser.AttributeName() == TABLE_LABEL_ATTRIBUTE ) {
-				if ( Table.Label.Amount() != 0 )
-					ReportErrorAndExit_( "Table label already defined", Browser );
-
-				if ( Browser.Value().Amount() == 0 )
-					ReportErrorAndExit_( "Attribute value can not be empty", Browser );
-
-				Table.Label = Browser.Value();
+				Assign_( Table.Label, "Table label", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
