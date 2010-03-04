@@ -128,10 +128,10 @@ namespace ndbctt {
 
 			switch ( _Test() ) {
 			case tStatic:
-				Size = _Static->Amount();
+				Size = _Static->Extent();
 				break;
 			case tDynamic:
-				Size = _Dynamic->Amount();
+				Size = _Dynamic->Extent();
 				break;
 			default:
 				ERRc();
@@ -140,7 +140,7 @@ namespace ndbctt {
 
 			if ( Size > _Cache.Size() )
 				_Cache.Resize( Size );	/* Normalement fait à l'initialisation ou lors de l'ajout d'un enregistrement,
-										mais donné pas encore initialisé lors de l'initialisation en mode 'mono-fichier'. */
+										mais donnée pas encore initialisée lors de l'initialisation en mode 'mono-fichier'. */
 
 			return true;
 		}
@@ -179,7 +179,7 @@ namespace ndbctt {
 				ERRu();
 
 			_Dynamic = &Dynamic;
-			_Cache.Init( Dynamic.Amount() );
+			_Cache.Init( Dynamic.Extent() );
 			_PostInitializationFunction = &Function;
 		}
 		void Init(
@@ -190,22 +190,22 @@ namespace ndbctt {
 				ERRu();
 
 			_Static = &Static;
-			_Cache.Init( Static.Amount() );
+			_Cache.Init( Static.Extent() );
 			_PostInitializationFunction = &Function;
 		}
 		rrow__ Store( const datum_ &Datum )
 		{
 			rrow__ Row = NONE;
-			epeios::size__ Amount = 0;
+			epeios::size__ Size = 0;
 
 			switch ( _Test() ) {
 			case tStatic:
 				Row = _Static->Store( Datum );
-				Amount = _Static->Amount();
+				Size = _Static->Extent();
 				break;
 			case tDynamic:
 				Row = _Dynamic->Store( Datum );
-				Amount = _Dynamic->Amount();
+				Size = _Dynamic->Extent();
 				break;
 			default:
 				ERRc();
@@ -213,7 +213,7 @@ namespace ndbctt {
 			}
 
 			if ( _UseCache() ) {
-				_Cache.Resize( Amount );
+				_Cache.Resize( Size );
 				_Cache.Store( Datum, Row );
 			}
 

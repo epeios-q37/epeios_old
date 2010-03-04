@@ -283,7 +283,7 @@ public:
 		Label.Init();
 	}
 	void Init(
-		const str::string_ &LAbel,
+		const str::string_ &Label,
 		trow__ TableRow,
 		rrow__ RecordRow )
 	{
@@ -530,6 +530,7 @@ E_AUTO( data )
 #define ALIASES_TAG	NAMESPACE "aliases"
 
 #define ALIAS_TAG									NAMESPACE "alias"
+#define ALIAS_LABEL_ATTRIBUTE						"Label"
 #define ALIAS_TABLE_LABEL_ATTRIBUTE					"TableLabel"
 #define ALIAS_TABLE_ALIAS_ATTRIBUTE					"TableAlias"
 #define ALIAS_RECORD_LABEL_ATTRIBUTE				"RecordLabel"
@@ -543,8 +544,8 @@ E_AUTO( data )
 #define INSERTION_TAG						NAMESPACE "insert"
 #define INSERTION_TABLE_LABEL_ATTRIBUTE		"TableLabel"
 #define INSERTION_RECORD_LABEL_ATTRIBUTE	"RecordLabel"
-#define INSERTION_TABLE_ALIAS_ATTRIBUTE		"TableLabel"
-#define INSERTION_RECORD_ALIAS_ATTRIBUTE	"RecordLabel"
+#define INSERTION_TABLE_ALIAS_ATTRIBUTE		"TableAlias"
+#define INSERTION_RECORD_ALIAS_ATTRIBUTE	"RecordAlias"
 
 
 static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
@@ -567,7 +568,7 @@ static void PrintPosition_(
 }
 
 static void ReportErrorAndExit_( 
-	const str::string_ Message,
+	const str::string_ &Message,
 	xml::browser___ &Browser )
 {
 	cerr << Message << " at ";
@@ -794,8 +795,8 @@ static void Insert_(
 }
 
 static void InsertUsingTableAlias_(
-	const str::string_ &RecordLabel,
 	const str::string_ &TableAlias,
+	const str::string_ &RecordLabel,
 	const table_aliases_ &Aliases,
 	const tables_ &Tables,
 	xml::browser___ &Browser,
@@ -842,7 +843,7 @@ ERRBegin
 		ReportErrorAndExit_( ErrorMessage, Browser );
 	}
 
-	if ( Browser.Value().Amount() != 0 ) {
+	if ( Browser.Value().Amount() == 0 ) {
 		ErrorMessage.Append( " value can not be empty" );
 		ReportErrorAndExit_( ErrorMessage, Browser );
 	}
@@ -854,12 +855,36 @@ ERREnd
 ERREpilog
 }
 
-					
+static inline bso::bool__ Test_( const str::string_ &Value )
+{
+	return Value.Amount() != 0;
+}
+
+static void ReportInsertionErrorAndExit_(
+	const char *ItemLabel1,
+	const char *ItemLabel2,
+	xml::browser___ &Browser )
+{
+ERRProlog
+	str::string ErrorMessage;
+ERRBegin
+	ErrorMessage.Init( "Both " );
+	ErrorMessage.Append( ItemLabel1 );
+	ErrorMessage.Append( " and " );
+	ErrorMessage.Append( ItemLabel2 );
+	ErrorMessage.Append( " cannot be define together" );
+
+	ReportErrorAndExit_( ErrorMessage, Browser );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 // '...<erpck:insert ...>...' -> '...</erpck:insert>...'
 //                   ^                              ^
 static void ProcessInsertion_(
 	xml::browser___ &Browser,
+	const aliases_ &Aliases,
 	const tables_ &Tables,
 	record_ &Record )
 {
@@ -869,6 +894,8 @@ ERRProlog
 ERRBegin
 	TableLabel.Init();
 	RecordLabel.Init();
+	TableAlias.Init();
+	RecordAlias.Init();
 
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
@@ -880,13 +907,50 @@ ERRBegin
 				Assign_( TableLabel, "Table label", Browser );
 			} else if ( Browser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
 				Assign_( RecordLabel, "Record label", Browser );
+			} else if ( Browser.AttributeName() == INSERTION_TABLE_ALIAS_ATTRIBUTE ) {
+				Assign_( TableAlias, "Table alias", Browser );
+			} else if ( Browser.AttributeName() == INSERTION_RECORD_ALIAS_ATTRIBUTE ) {
+				Assign_( RecordAlias, "Record alias", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
 		case xml::tEndTag:
-			InsertUsingLabels_( TableLabel, RecordLabel, Tables, Browser, Record );
+		{
+			bso::bool__ 
+				TA = Test_( TableAlias ),
+				TL = Test_( TableLabel ),
+				RA = Test_( RecordAlias ),
+				RL = Test_( RecordLabel );
+
+			if ( TA )
+				if ( TL )
+					ReportInsertionErrorAndExit_( "table alias", "table label", Browser );
+				else if ( RA )
+					ReportInsertionErrorAndExit_( "table alias", "record alias", Browser );
+				else if ( !RL )
+					ReportErrorAndExit_( "Record label missing", Browser );
+				else
+					InsertUsingTableAlias_( TableAlias, RecordLabel, Aliases.Tables, Tables, Browser, Record );
+			else if ( TL )
+				if ( RA )
+					ReportInsertionErrorAndExit_( "table label", "record alias", Browser );
+				else if ( !RL )
+					ReportErrorAndExit_( "Record label missing", Browser );
+				else
+					InsertUsingLabels_( TableLabel, RecordLabel, Tables, Browser, Record );
+			else if ( RL )
+				if ( RA )
+					ReportInsertionErrorAndExit_( "record label", "record alias", Browser );
+				else
+					ERRc();	// Normally already handled before.
+			else if ( RA )
+				InsertUsingRecordAlias_( RecordAlias, Aliases.Records, Tables, Browser, Record );
+			else
+				ReportErrorAndExit_( "Missing insertion parameters", Browser );
+
 			Continue = false;
 			break;
+		}
 		case xml::tError:
 			ReportErrorAndExit_( Browser );
 			break;
@@ -905,6 +969,7 @@ ERREpilog
 static void ProcessRecord_(
 	xml::browser___ &Browser,
 	const str::string_ &DefaultRecordLabelTag,
+	const aliases_ &Aliases,
 	const tables_ &Tables,
 	record_ &Record )
 {
@@ -915,7 +980,7 @@ static void ProcessRecord_(
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Browser.TagName() == INSERTION_TAG )
-				ProcessInsertion_( Browser, Tables, Record );	// '...<erpck:insert ...
+				ProcessInsertion_( Browser, Aliases, Tables, Record );	// '...<erpck:insert ...
 			else {												//                   ^
 				Level++;
 				Record.Content.Append( Browser.Dump().RawData );
@@ -963,6 +1028,7 @@ static void ProcessRecord_(
 static void ProcessRecords_(
 	xml::browser___ &Browser,
 	const str::string_ &DefaultRecordLabelTag,
+	const aliases_ &Aliases,
 	const tables_ &Tables,
 	records_ &Records )
 {
@@ -995,7 +1061,7 @@ ERRBegin
 			break;
 		case xml::tStartTagClosed:
 			Record.Content.Append( Browser.Dump().RawData );
-			ProcessRecord_( Browser, DefaultRecordLabelTag, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
+			ProcessRecord_( Browser, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
 			Records.Append( Record );									//                                   ^                 ^
 			Record.Init();
 			break;														
@@ -1041,7 +1107,7 @@ ERRBegin
 			break;
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == CONTENT_TAG ) {
-				ProcessRecords_( Browser, DefaultRecordLabelTag, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
+				ProcessRecords_( Browser, DefaultRecordLabelTag, Table.Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else														        			//                    ^                         ^
 				ERRc();
@@ -1082,11 +1148,12 @@ ERRProlog
 	bso::bool__ Continue = true;
 	trow__ TableRow = NONE;
 	rrow__ RecordRow = NONE;
-	str::string TableAliasLabel, TableLabel, RecordLabel;
+	str::string TableAliasLabel, TableLabel, RecordLabel, AliasLabel;
 ERRBegin
 	TableAliasLabel.Init();
 	TableLabel.Init();
 	RecordLabel.Init();
+	AliasLabel.Init();
 
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
@@ -1106,6 +1173,8 @@ ERRBegin
 				Assign_( TableLabel, "Table alias", Browser );
 			} else if ( Browser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
 				Assign_( RecordLabel, "Record label", Browser );
+			} else if ( Browser.AttributeName() == ALIAS_LABEL_ATTRIBUTE ) {
+				Assign_( AliasLabel, "Alias label", Browser );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", Browser );
 			break;
@@ -1119,6 +1188,9 @@ ERRBegin
 			} else
 				ReportErrorAndExit_( "Missing table reference", Browser );
 
+			if ( AliasLabel.Amount() == 0 )
+				ReportErrorAndExit_( "Alias label missing", Browser );
+
 			if ( RecordLabel.Amount() ) {
 				if ( ( RecordRow = SearchRecord_( RecordLabel, TableRow, Tables ) ) == NONE )
 					ReportErrorAndExit_( "Unable to find record", Browser );
@@ -1126,8 +1198,7 @@ ERRBegin
 				AliasType = atRecord;
 			} else
 				AliasType = atTable;
-			break;
-		case xml::tValue:
+
 			switch ( AliasType ) {
 			case atRecord:
 				RecordAlias.Init( Browser.Value(), TableRow, RecordRow );
@@ -1139,6 +1210,9 @@ ERRBegin
 			default:
 				ERRc();
 			}
+			break;
+		case xml::tValue:
+			ReportErrorAndExit_( "No value allowed here", Browser );
 			break;
 		case xml::tEndTag:
 			switch ( AliasType ) {

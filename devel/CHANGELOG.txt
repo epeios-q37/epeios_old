@@ -1,5 +1,9 @@
 $Id$
 
+04/03/2010 :
+	- NDBCTT :
+		- Correction bogue mauvaise gestion de la taille du cache dû à l'utilisation de 'Amount()' à la place de 'Extent()'.
+
 15/02/2010 :
 	- XML :
 		- Correction mauvaise propagation erreur.
