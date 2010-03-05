@@ -215,13 +215,13 @@ namespace ndbidx {
 			return *_ContentPointer;
 		}
 
-		void _Retrieve(
+		bso::bool__ _Retrieve(
 			rrow__ Row,
 			datum_ &Datum,
 			ndbctt::cache_ &Cache ) const
 		{
 #if 1
-			_Content( true ).Retrieve( Row, Datum );
+			return _Content( true ).Retrieve( Row, Datum );
 #else
 			_Content( true ).Retrieve( Row, Datum, Cache );
 #endif

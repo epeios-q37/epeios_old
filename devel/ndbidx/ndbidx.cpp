@@ -100,7 +100,8 @@ ERRBegin
 	while ( Row != NONE ) {
 		DatumToCompare.Init();
 
-		_Retrieve( Row, DatumToCompare, Cache );
+		if ( !_Retrieve( Row, DatumToCompare, Cache ) )
+			ERRc();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, SkipLevel ) ) {
 		case 0:
@@ -233,7 +234,9 @@ ERRBegin
 
 	Datum.Init();
 
-	_Retrieve( Row, Datum, *(ndbctt::cache_ *)NULL );
+	if ( !_Retrieve( Row, Datum, *(ndbctt::cache_ *)NULL ) )
+		ERRReturn;	// L'enregistrement n'existe pas, on ne va donc pas l'inclure dans l'index.
+					// Ce cas ne devrait pas arrivé, sauf lorsqu'il y a eu des problèmes de corruption corrigés à la main.
 
 	if ( Extremities != NULL ) {
 		if ( Extremities->Smallest == NONE )
@@ -243,7 +246,8 @@ ERRBegin
 
 		DatumToCompare.Init();
 
-		_Retrieve( TargetRow, DatumToCompare, Cache );
+		if ( !_Retrieve( TargetRow, DatumToCompare, Cache ) )
+			ERRc();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
@@ -267,7 +271,8 @@ ERRBegin
 
 		DatumToCompare.Init();
 
-		_Retrieve( TargetRow, DatumToCompare, Cache );
+		if ( !_Retrieve( TargetRow, DatumToCompare, Cache ) )
+			ERRc();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
@@ -407,7 +412,8 @@ ERRBegin
 
 	_CompleteInitialization();
 
-	_Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL );
+	if ( !_Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL ) )
+		ERRc();
 
 	Result = _SortPointer->Compare( Datum, Pattern, SkipLevel  );
 ERRErr
@@ -429,7 +435,8 @@ ERRBegin
 
 	_CompleteInitialization();
 
-	_Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL );
+	if ( !_Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL ) )
+		ERRc();
 
 	Result = Compare( RecordRow1, Pattern, SkipLevel );
 ERRErr
