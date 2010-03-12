@@ -1,5 +1,10 @@
 $Id$
 
+11/03/2010 :	
+	- MMM :
+		- Gestion d'une taille interne, pour permettre la préallocation.
+		- Correction bogue variable non initialisées 'standalone_multimemory_driver__'.
+
 05/03/2010 :
 	- NDBIDX :
 		- Prise en compte du cas où l'on indexe un enregistrement inexsitant.

@@ -265,8 +265,10 @@ namespace uym {
 		}
 		void _Allocate( mdr::size__ Size )
 		{
-			_Driver.Allocate( Size );
-			S_.Size = Size;
+			if ( Size != S_.Size ) {
+				_Driver.Allocate( Size );
+				S_.Size = Size;
+			}
 		}
 		void _Flush( void )
 		{
