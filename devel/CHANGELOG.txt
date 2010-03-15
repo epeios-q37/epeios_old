@@ -1,5 +1,12 @@
 $Id$
 
+15/03/2010 :
+	- CVM :
+		- Par défaut, la taille de la mémoire ne peut que grandir durant sa durée de vie. Combiné au fait qu'un 'Init()' ne vide pas la mémoire,
+		on obtient un gain de temps appréciable.
+	- MMM :
+		- La préallocation est déportée vers 'CVM' (on défait en partie les modifications apportées le 11/03/2010).
+
 11/03/2010 :	
 	- MMM :
 		- Gestion d'une taille interne, pour permettre la préallocation.

@@ -116,6 +116,9 @@ namespace ndbtbl {
 	typedef bch::E_BUNCH_( epeios::row__ ) rows_;
 	E_AUTO( rows );
 
+
+	typedef ndbctt::content_ _content_;
+
 	class table_
 	{
 	private:
@@ -215,10 +218,10 @@ namespace ndbtbl {
 	public:
 		struct s
 		{
-			content_::s Content;
+			_content_::s Content;
 			mode__ Mode;
 		} &S_;
-		content_ Content;
+		_content_ Content;
 		table_( s &S )
 		: S_( S ),
 		  Content( S.Content )
@@ -267,6 +270,10 @@ namespace ndbtbl {
 			Init( Mode );
 
 			Content.InitDynamic( Function );
+		}
+		void Bufferize( void )
+		{
+			Content.Bufferize();
 		}
 		E_NAVt( Content()., rrow__ );
 		void AddIndex( index_ &Index )

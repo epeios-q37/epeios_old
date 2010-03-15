@@ -221,20 +221,17 @@ namespace mmm {
 	class multimemory_
 	{
 	private:
-		mdr::size__ _Allocate( mdr::size__ Size )
+		mdr::size__ _Grow( mdr::size__ Size )
 		{
-			mdr::size__ Buffer = S_.Size;
+			mdr::size__ Buffer = Memory.GetSize();
 
-			S_.Size += Size;
-
-			if ( Memory.GetSize() < S_.Size )
-				Memory.Allocate( S_.Size );
+			Memory.Allocate( Buffer + Size );
 
 			return Buffer;
 		}
 		bso::size__ _Size( void ) const
 		{
-			return S_.Size;
+			return Memory.GetSize();
 		}
 		bso::ubyte__ _GetSizeLength( mdr::size__ Size ) const
 		{
@@ -895,7 +892,7 @@ namespace mmm {
 
 						Memory.Allocate( S_.Size );
 */
-						_Allocate( Size - FreeFragmentSize );
+						_Grow( Size - FreeFragmentSize );
 					}
 
 					S_.TailingFreeFragmentPosition = NONE;
@@ -903,13 +900,13 @@ namespace mmm {
 					ERRc();
 
 			} else {
-				Row = _Size();
-/*
+/*				Row = _Size();
+
 				S_.Size += Size;
 
 				Memory.Allocate( S_.Size );
 */
-				_Allocate( Size );
+				Row = _Grow( Size );
 			}
 
 			return Row;
@@ -1283,7 +1280,7 @@ namespace mmm {
 
 			Memory.Allocate( S_.Size );
 */
-			_Allocate( _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header ) );
+			_Grow( _GuessTotalSizeForUsedFragment( DataSize, false ) - _GetUsedFragmentTotalSize( Header ) );
 
 			_HandleResizedUsedFragmentHeader( Descriptor, Header, _GetUsedFragmentDataSize( Header ), DataSize, Addendum );
 		}
@@ -1304,8 +1301,8 @@ namespace mmm {
 #endif
 			S_.TailingFreeFragmentPosition = NONE;
 
-//			#pragma message( "Point délicat ici !" )
-			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
+			#pragma message( "Point délicat ici !" )
+//			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
 
 			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
 		}
@@ -1505,14 +1502,13 @@ namespace mmm {
 		struct s 
 		{
 			uym::untyped_memory_ ::s Memory;
-			mdr::size__ Size;
 			row__ FreeFragment;	// Position d'un fragment libre. NONE si aucun.
 			row__ TailingFreeFragmentPosition;	// If the last fragment is a free one, this is its position (orphan or not).
 		} &S_;
 		void reset( bso::bool__ P = true )
 		{
 			Memory.reset( P );
-			S_.Size = 0;
+//			S_.Size = 0;
 			S_.FreeFragment = NONE;
 			S_.TailingFreeFragmentPosition = NONE;
 		}
@@ -1539,7 +1535,7 @@ namespace mmm {
 			Memory.Allocate( M._Size() );
 			Memory.Store( M.Memory, M._Size(), 0 );
 
-			S_.Size = M.S_.Size;
+//			S_.Size = M.S_.Size;
 			S_.FreeFragment = M.S_.FreeFragment;
 			S_.TailingFreeFragmentPosition = M.S_.TailingFreeFragmentPosition;
 
@@ -1549,7 +1545,8 @@ namespace mmm {
 		{
 			Memory.Init();
 
-			S_.Size = 0;
+//			S_.Size = 0;
+			
 			S_.FreeFragment = NONE;
 			S_.TailingFreeFragmentPosition = NONE;
 		}

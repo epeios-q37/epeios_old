@@ -186,10 +186,25 @@ namespace ndbidx {
 	{
 	protected:
 	private:
+		bso::bool__ _Bufferized;
 		sort_function__ *_SortPointer;
-		const ndbctt::content__ *_ContentPointer;
+		const ndbctt::content_ *_ContentPointer;
 		time_t _ModificationTimeStamp;
 		mutable post_initialization_function__ *_PostInitializationFunction;
+		_index_ &_Index( void )
+		{
+			if ( _Bufferized )
+				return BIndex;
+			else
+				return DIndex;
+		}
+		const _index_ &_Index( void ) const
+		{
+			if ( _Bufferized )
+				return BIndex;
+			else
+				return DIndex;
+		}
 		void _CompleteInitialization( void ) const
 		{
 			if ( _PostInitializationFunction != NULL ) {
@@ -206,13 +221,9 @@ namespace ndbidx {
 			rrow__ &Row,
 			bso::ubyte__ &Round,
 			ndbctt::cache_ &Cache ) const;
-		const ndbctt::content__ &_Content( bso::bool__ CompleteInitializationIfNeeded ) const
+		const ndbctt::content__ &_Content( void ) const
 		{
-/*
-			if ( !S_.Content->InitializationCompleted() && CompleteInitializationIfNeeded )
-				S_.Content->CompleteInitialization();
-*/
-			return *_ContentPointer;
+			return _ContentPointer->operator()();
 		}
 
 		bso::bool__ _Retrieve(
@@ -221,7 +232,7 @@ namespace ndbidx {
 			ndbctt::cache_ &Cache ) const
 		{
 #if 1
-			return _Content( true ).Retrieve( Row, Datum );
+			return _Content().Retrieve( Row, Datum );
 #else
 			_Content( true ).Retrieve( Row, Datum, Cache );
 #endif
@@ -230,27 +241,30 @@ namespace ndbidx {
 		{
 			_ModificationTimeStamp = tol::Clock( false );
 
-			if ( CompareWithContent && ( _ModificationTimeStamp == Content( true ).ModificationTimeStamp() ) )
+			if ( CompareWithContent && ( _ModificationTimeStamp == Content().ModificationTimeStamp() ) )
 				_ModificationTimeStamp = tol::Clock( true );
 		}
 		rrow__ _SearchStrictGreater(
 			rrow__ Row,
 			skip_level__ SkipLevel ) const;
 	public:
-		_index_ BaseIndex;
+		_index BIndex;	// 'bufferized index'.
+		_index_ DIndex;	// 'direct index'.
 		struct s
 		{
-			_index_::s BaseIndex;
+			_index_::s DIndex;
 			rrow__ Root;
 		} &S_;
 		index_( s &S )
 		: S_( S ),
-		  BaseIndex( S.BaseIndex )
+		  DIndex( S.DIndex )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			BaseIndex.reset( P );
+			BIndex.reset( P );
+			DIndex.reset( P );
 			S_.Root = NONE;
+			_Bufferized = false;
 
 			_SortPointer = NULL;
 			_ContentPointer = NULL;
@@ -261,7 +275,7 @@ namespace ndbidx {
 		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			BaseIndex.plug( MM );
+			DIndex.plug( MM );
 		}
 		index_ &operator =( const index_ &I )
 		{
@@ -269,7 +283,9 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 			S_.Root = I.S_.Root;
-			BaseIndex = I.BaseIndex;
+			BIndex = I.BIndex;
+			DIndex = I.DIndex;
+			_Bufferized = I._Bufferized;
 
 /*			S_.Sort = I.S_.Sort;
 			S_.Content = I.S_.Content;
@@ -279,11 +295,12 @@ namespace ndbidx {
 			return *this;
 		}
 		void Init(
-			const ndbctt::content__ &Content = *(const ndbctt::content__ *)NULL,
+			const ndbctt::content_ &Content = *(const ndbctt::content_ *)NULL,
 			sort_function__ &Sort = *(sort_function__ *)NULL,
 			post_initialization_function__ &PostInitializationFunction = *(post_initialization_function__ *)NULL )
 		{
-			BaseIndex.Init();
+			BIndex.Init();
+			DIndex.Init();
 			S_.Root = NONE;
 
 			_ContentPointer = &Content;
@@ -296,7 +313,11 @@ namespace ndbidx {
 		void Reset( void )
 		{
 			S_.Root = NONE;
-			BaseIndex.Init();
+
+			BIndex.Init();
+			DIndex.Init();
+
+			_Bufferized = false;
 
 			_ModificationTimeStamp = 0;
 		}
@@ -304,8 +325,11 @@ namespace ndbidx {
 			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
+			if ( _Bufferized )
+				ERRu();
+
 			_CompleteInitialization();
-			BaseIndex.Allocate( Size, Mode );
+			DIndex.Allocate( Size, Mode );
 		}
 		bso::ubyte__ Index(
 			rrow__ Row,
@@ -319,7 +343,10 @@ namespace ndbidx {
 			if ( S_.Root == NONE )
 				ERRu();
 #endif
-			S_.Root = BaseIndex.Delete( Row, S_.Root );
+			if ( _Bufferized )
+				ERRu();
+
+			S_.Root = DIndex.Delete( Row, S_.Root );
 
 			_Touch( false );
 		}
@@ -377,10 +404,10 @@ namespace ndbidx {
 		{	
 			_CompleteInitialization();
 
-			rrow__ Candidate = S_.Root = _Content( false ).First();
+			rrow__ Candidate = S_.Root = _Content().First();
 
 			if ( Candidate != NONE ) 
-				while ( ( Candidate = BaseIndex.GetTreeParent( Candidate ) ) != NONE )
+				while ( ( Candidate = _Index().GetTreeParent( Candidate ) ) != NONE )
 					S_.Root = Candidate;
 
 			return S_.Root;
@@ -390,7 +417,7 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 			if ( S_.Root != NONE )
-				return BaseIndex.First( S_.Root );
+				return _Index().First( S_.Root );
 			else
 				return NONE;
 		}
@@ -399,7 +426,7 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 			if ( S_.Root != NONE )
-				return BaseIndex.Last( S_.Root );
+				return _Index().Last( S_.Root );
 			else
 				return NONE;
 		}
@@ -407,7 +434,7 @@ namespace ndbidx {
 		{
 			_CompleteInitialization();
 
-			return BaseIndex.Next( Row );
+			return _Index().Next( Row );
 		}
 		rrow__ StrictGreater(
 			rrow__ Row,
@@ -428,32 +455,35 @@ namespace ndbidx {
 		{
 			_CompleteInitialization();
 
-			return BaseIndex.Previous( Row );
+			return _Index().Previous( Row );
 		}
 		mdr::size__ Amount( void ) const
 		{
 			_CompleteInitialization();
 
-			return BaseIndex.Amount();
+			return _Index().Amount();
 		}
 		bso::bool__ IsSynchronized( void ) const
 		{
-			return _ModificationTimeStamp > _Content( false ).ModificationTimeStamp();
+			return _ModificationTimeStamp > _Content().ModificationTimeStamp();
 		}
 		sort_function__ &SortFunction( void ) const
 		{
 			return *_SortPointer;
 		}
-		const ndbctt::content__ &Content( bso::bool__ CompleteInitializationIfNeeded ) const
+		const ndbctt::content__ &Content( void ) const
 		{
-			return _Content( CompleteInitializationIfNeeded );
+			return _Content();
 		}
 		void Balance( void )
 		{
+			if ( _Bufferized )
+				ERRu();
+
 			_CompleteInitialization();
 
 			if ( S_.Root != NONE )
-				S_.Root = BaseIndex.Balance( S_.Root );
+				S_.Root = DIndex.Balance( S_.Root );
 
 			_Touch( false );
 		}
@@ -462,9 +492,17 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 			if ( S_.Root != NONE )
-				return BaseIndex.Compare( S_.Root );
+				return _Index().Compare( S_.Root );
 			else
 				return NONE;
+		}
+		void Bufferize( void )
+		{
+			if ( !_Bufferized ) {
+				BIndex = DIndex;
+
+				_Bufferized = true;
+			}
 		}
 		rrow__ Test( void ) const;
 		void Reindex( observer_functions__ &Observer );
@@ -518,7 +556,7 @@ namespace ndbidx {
 		}
 		bso::bool__ ConnectToFiles()
 		{
-			if ( idxbtq::Connect( _Index->BaseIndex, _FileManager ) ) {
+			if ( idxbtq::Connect( _Index->DIndex, _FileManager ) ) {
 				_Index->SearchRoot();
 				return true;
 			} else {

@@ -456,7 +456,7 @@ namespace ndbctt {
 		}
 	};
 
-	class content_
+	class _content_
 	{
 	private:
 		content__ _Content;
@@ -467,7 +467,7 @@ namespace ndbctt {
 			ndbdct::dynamic_content_::s Dynamic;
 			ndbsct::static_content_::s Static;
 		};
-		content_( s &S )
+		_content_( s &S )
 		: _Dynamic( S.Dynamic ),
 		  _Static( S.Static )
 		{
@@ -483,7 +483,7 @@ namespace ndbctt {
 			_Dynamic.plug( MM );
 			_Static.plug( MM );
 		}
-		content_ &operator =( const content_ &C )
+		_content_ &operator =( const _content_ &C )
 		{
 			_Content = C._Content;
 
@@ -558,7 +558,119 @@ namespace ndbctt {
 		}
 	};
 
-	E_AUTO( content )
+	E_AUTO( _content )
+
+	class content_
+	{
+	private:
+		bso::bool__ _Bufferized;
+		const _content_ &_Content( void ) const
+		{
+			if ( _Bufferized )
+				return BContent;
+			else
+				return DContent;
+		}
+		_content_ &_Content( void )
+		{
+			if ( _Bufferized )
+				return BContent;
+			else
+				return DContent;
+		}
+	public:
+		_content BContent;	// 'Bufferized content'.
+		struct s
+		{
+			_content_::s DContent;
+		}& S_;
+		_content_ DContent;	// 'Direct content'.
+		content_( s &S )
+		: S_( S ),
+		  DContent( S.DContent )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_Bufferized = false;
+			DContent.reset( P );
+			BContent.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			DContent.plug( MM );
+		}
+		content_ &operator =( const content_ &C )
+		{
+			DContent = C.DContent;
+			BContent = C.BContent;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			_Bufferized = false;
+
+			DContent.Init();
+			BContent.Init();
+		}
+		void InitStatic(
+			epeios::size__ Size,
+			post_initialization_function__ &Function )
+		{
+			_Bufferized = false;
+
+			DContent.InitStatic( Size, Function );
+
+			BContent.InitStatic( Size, *(post_initialization_function__ *)NULL );
+//			BContent = DContent;
+		}
+		void InitDynamic( post_initialization_function__ &Function )
+		{
+			_Bufferized = false;
+
+			DContent.InitDynamic( Function );
+
+			BContent.InitDynamic( *(post_initialization_function__ *)NULL );
+//			BContent = DContent;
+		}
+		const content__ &operator ()( void ) const
+		{
+			return _Content()();
+		}
+		content__ &operator ()( void )
+		{
+			return _Content()();
+		}
+		type__ Type( void ) const
+		{
+			return _Content().Type();
+		}
+		ndbsct::static_content_ &Static( void )
+		{
+			return _Content().Static();
+		}
+		const ndbsct::static_content_ &Static( void ) const
+		{
+			return _Content().Static();
+		}
+		const ndbdct::dynamic_content_ &Dynamic( void ) const
+		{
+			return _Content().Dynamic();
+		}
+		ndbdct::dynamic_content_ &Dynamic( void )
+		{
+			return _Content().Dynamic();
+		}
+		void Bufferize( void )
+		{
+			if ( !_Bufferized ) {
+				BContent = DContent;
+				
+				_Bufferized = true;
+			}
+		}
+	};
+
 
 
 }

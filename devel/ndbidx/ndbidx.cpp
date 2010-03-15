@@ -93,7 +93,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Seeker.Init( BaseIndex, S_.Root );
+	Seeker.Init( _Index(), S_.Root );
 
 	Row = Seeker.GetCurrent();
 
@@ -154,21 +154,21 @@ rrow__ ndbidx::index_::_SearchStrictGreater(
 {
 	_CompleteInitialization();	
 
-	rrow__ Buffer = BaseIndex.GetTreeGreater( Row );
+	rrow__ Buffer = _Index().GetTreeGreater( Row );
 	rrow__ Candidate = NONE;
 
 	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
-		Buffer = BaseIndex.GetTreeGreater( Buffer );
+		Buffer = _Index().GetTreeGreater( Buffer );
 
 	if ( Buffer != NONE ) {
 		Candidate = Buffer;
 
-		Buffer = BaseIndex.GetTreeLesser( Buffer );
+		Buffer = _Index().GetTreeLesser( Buffer );
 
 		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
 			Candidate = Buffer;
 
-			Buffer = BaseIndex.GetTreeLesser( Buffer );
+			Buffer = _Index().GetTreeLesser( Buffer );
 		}
 
 		if ( Buffer != NONE ) {
@@ -178,18 +178,18 @@ rrow__ ndbidx::index_::_SearchStrictGreater(
 				Candidate = Buffer;
 		}
 	} else {
-		Buffer = BaseIndex.GetTreeParent( Row );
+		Buffer = _Index().GetTreeParent( Row );
 
 		if ( Buffer != NONE ) {
 
-			if ( BaseIndex.IsTreeGreater( Row ) ) {
-				while ( ( Buffer != NONE ) && BaseIndex.IsTreeGreater( Buffer ) )
-					Buffer = BaseIndex.GetTreeParent( Buffer );
+			if ( _Index().IsTreeGreater( Row ) ) {
+				while ( ( Buffer != NONE ) && _Index().IsTreeGreater( Buffer ) )
+					Buffer = _Index().GetTreeParent( Buffer );
 			} else
 				Buffer = Row;
 
 			if ( Buffer != NONE ) {
-				Buffer = BaseIndex.GetTreeParent( Buffer );
+				Buffer = _Index().GetTreeParent( Buffer );
 
 				if ( Buffer != NONE ) {
 					if ( Compare( Row, Buffer, SkipLevel ) != 0 )
@@ -219,15 +219,18 @@ ERRProlog
 //	tol::buffer__ Buffer;
 //	cio::aware_cout___ cout;
 ERRBegin
+	if ( _Bufferized )
+		ERRu();
+
 	_CompleteInitialization();
 
-	if ( _Content( true ).Amount() > BaseIndex.Amount() )
-		BaseIndex.Allocate( _Content( true ).Amount(), aem::mDefault );
+	if ( _Content().Amount() > DIndex.Amount() )
+		DIndex.Allocate( _Content().Amount(), aem::mDefault );
 
 	if ( S_.Root == NONE ) {
 		S_.Root = Row;
 
-		BaseIndex.BecomeRoot( Row );
+		DIndex.BecomeRoot( Row );
 
 		ERRReturn;
 	}
@@ -240,7 +243,7 @@ ERRBegin
 
 	if ( Extremities != NULL ) {
 		if ( Extremities->Smallest == NONE )
-			Extremities->Smallest = BaseIndex.First( S_.Root );
+			Extremities->Smallest = DIndex.First( S_.Root );
 
 		TargetRow = Extremities->Smallest;
 
@@ -265,7 +268,7 @@ ERRBegin
 
 	if ( ( TargetRow == NONE ) && ( Extremities != NULL ) ) {
 		if ( Extremities->Greatest == NONE )
-			Extremities->Greatest = BaseIndex.Last( S_.Root );
+			Extremities->Greatest = DIndex.Last( S_.Root );
 
 		TargetRow = Extremities->Greatest;
 
@@ -300,20 +303,20 @@ ERRBegin
 	case -1:
 		if ( ( Extremities != NULL ) && ( Extremities->Smallest == TargetRow ) )
 			Extremities->Smallest = Row;
-		S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
+		S_.Root = DIndex.BecomeLesser( Row, TargetRow, S_.Root );
 		break;
 	case 0:	// Pas de problème avec la gestion des 'extremities', 
-		if ( !BaseIndex.TreeHasLesser( TargetRow ) )
-			S_.Root = BaseIndex.BecomeLesser( Row, TargetRow, S_.Root );
-		else if ( !BaseIndex.TreeHasGreater( TargetRow ) )
-			S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
+		if ( !DIndex.TreeHasLesser( TargetRow ) )
+			S_.Root = DIndex.BecomeLesser( Row, TargetRow, S_.Root );
+		else if ( !DIndex.TreeHasGreater( TargetRow ) )
+			S_.Root = DIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		else
 			ERRc();
 		break;
 	case 1:
 		if ( ( Extremities != NULL ) && ( Extremities->Greatest == TargetRow ) )
 			Extremities->Greatest = Row;
-		S_.Root = BaseIndex.BecomeGreater( Row, TargetRow, S_.Root );
+		S_.Root = DIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	default:
 		ERRc();
@@ -323,7 +326,7 @@ ERRBegin
 //	Display( BaseIndex, S_.Root, cout );
 
 #ifdef NDBIDX_DBG
-	if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 1 ) ) > _Content( true ).Amount() ) )
+	if ( ( Round > 32 ) || ( ( 2UL << ( Round >> 1 ) ) > _Content().Amount() ) )
 		S_.Root = S_.Root;	// Juste pour pouvoir placer un point d'arrêt.
 #endif
 
@@ -378,7 +381,7 @@ ERRBegin
 
 	Datum.Init();
 
-	_Content( true ).Retrieve( Row, Datum );
+	_Content().Retrieve( Row, Datum );
 
 	Row = Next( Row );
 
@@ -388,7 +391,7 @@ ERRBegin
 
 		Datum.Init();
 
-		_Content( true ).Retrieve( Row, Datum );
+		_Content().Retrieve( Row, Datum );
 
 		Row = Next( Row );
 	}
@@ -479,7 +482,7 @@ static inline void Reindex_(
 		HandledRecordAmount++;
 
 		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
-			Observer.Notify( HandledRecordAmount, Index.Content( true ).Amount(), BalancingCount );
+			Observer.Notify( HandledRecordAmount, Index.Content().Amount(), BalancingCount );
 
 			Chrono.Launch();
 		}
@@ -489,7 +492,7 @@ static inline void Reindex_(
 void ndbidx::index_::Reindex( observer_functions__ &Observer )
 {
 ERRProlog
-	const ndbctt::content__ &Content = _Content( false );
+	const ndbctt::content__ &Content = _Content();
 	mdr::size__ HandledRecordAmount = 0;
 	tol::chrono__ Chrono;
 	ndbidx::index IndexInMemory;
@@ -511,7 +514,7 @@ ERRBegin
 		ERRReturn;
 
 	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
-		IndexInMemory.Init( Content, SortFunction() );
+		IndexInMemory.Init( *_ContentPointer, SortFunction() );
 
 		IndexInMemory.Allocate( Content.Extent(), aem::mDefault );
 

@@ -68,6 +68,7 @@ namespace cvm {
 	//c Basic conventional memory.
 	class basic_conventional_memory__
 	{
+		mdr::size__ _Size;
 		mdr::datum__ *&Tampon_;
 			// le contenu de la mémoire
 	#ifdef CVM_DBG
@@ -105,12 +106,15 @@ namespace cvm {
 		// alloue 'Nombre' octets
 		void Allocate( mdr::size__ Size )
 		{
-			mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
+			if ( Size > _Size ) {
+				mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
 
-			if ( ( Tampon == NULL ) && ( Size != 0 ) )
-				ERRa();
+				if ( ( Tampon == NULL ) && ( Size != 0 ) )
+					ERRa();
 
-			Tampon_ = Tampon;
+				Tampon_ = Tampon;
+				_Size = Size;
+			}
 		}
 	public:
 		void reset( bool P = true )
@@ -121,6 +125,7 @@ namespace cvm {
 			}
 
 			Tampon_ = NULL;
+			_Size = 0;
 		}
 		basic_conventional_memory__( mdr::datum__ *&Pointer )
 		: Tampon_( Pointer )
