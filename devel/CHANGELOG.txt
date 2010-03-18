@@ -1,5 +1,11 @@
 $Id$
 
+17/03/2010 :
+	- UYM :
+		- Suppression de 'IsPlugged()'.
+		- 'plug()' est désormais de type (coid(.
+		- La récupération de la taille de la mémoire affectée au 'driver' (lorsque c'est une mémoire persistante) est récupéré lors de l'initialisation.
+		
 15/03/2010 :
 	- CVM :
 		- Par défaut, la taille de la mémoire ne peut que grandir durant sa durée de vie. Combiné au fait qu'un 'Init()' ne vide pas la mémoire,

@@ -150,9 +150,9 @@ namespace mmg
 		{
 			reset();
 		}
-		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			return Memory.plug( MD );
+			Memory.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
@@ -162,9 +162,6 @@ namespace mmg
 			st *Static,
 			rule Regle )
 		{
-			if ( !IsPlugged() )
-				reset();
-
 			Static_ = Static;
 			mdr::E_MEMORY_DRIVER__::Init();
 			Memory.Init();
@@ -196,13 +193,9 @@ namespace mmg
 		{
 			Memory.Recall( 0, sizeof( st ), (mdr::datum__ *)Static_ );
 		}
-		bso::bool__ IsPlugged( void ) const
-		{
-			return Memory.IsPlugged();
-		}
 		void Immortalize( void )
 		{
-			reset();
+			reset( false );
 			plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
 		}
 
@@ -251,33 +244,23 @@ namespace mmg
 		{}
 		void reset( bool P = true )
 		{
-			if ( P )
-			{
+			if ( P ) {
 				if ( S_.State == mmg::sImmortal )
 					Immortalize();
-
-				if ( !Driver_.IsPlugged() )	// Test si immortalisation ...
-				{
-					Object.reset( false );
-					Memoire.reset( false );
-					Driver_.reset( false );
-				}
-			} else {
-				Driver_.reset( P );
-				Memoire.reset( P );
-				Object.reset( P );
 			}
+
+			Object.reset( P );
+			Memoire.reset( P );
+			Driver_.reset( P );
 
 			S_.State = mmg::sMortal;
 
 		}
 		//f Utilisation de 'Pilote' comme pilote mémoire.
-		mdr::size__ plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			mdr::size__ Size = Driver_.plug( MD );
+			Driver_.plug( MD );
 			Memoire.plug( Driver_ );	// Notamment pour initialiser correctement le 'size'.
-
-			return Size;
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
@@ -289,8 +272,10 @@ namespace mmg
 		//f Initialization with rule 'Rule' and mode 'Mode'.
 		void Init( mmg::rule Rule )
 		{
-			if ( !Driver_.IsPlugged() )
-				reset();
+			if ( S_.State == mmg::sImmortal )
+				Immortalize();
+
+			S_.State = mmg::sMortal;
 
 			Object.plug( Memoire );
 
@@ -305,6 +290,9 @@ namespace mmg
 		void Immortalize( void )
 		{
 			Driver_.Immortalize();
+			Object.reset( false );
+			Memoire.reset( false );
+			Driver_.reset( false );
 		}
 		memory_merger_ &operator =( const memory_merger_ & )
 		{
