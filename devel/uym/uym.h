@@ -180,7 +180,10 @@ namespace uym {
 		{
 			_Test();
 
-			return _Driver->UnderlyingSize();
+			if ( _Driver != NULL )
+				return _Driver->UnderlyingSize();
+			else
+				return 0;
 		}
 		void Recall(
 			mdr::row_t__ Position,
@@ -295,11 +298,15 @@ namespace uym {
 			reset();
 
 			_Driver.plug( Driver );
+			S_.Size = _Driver.UnderlyingSize();
+
 		}
 		void plug( mmm::multimemory_ &MMM )
 		{
 			_MultimemoryDriver.Init( MMM );
 			_Driver.plug( _MultimemoryDriver );
+			S_.Size = _Driver.UnderlyingSize();
+
 		}
 		untyped_memory_ &operator =( const untyped_memory_ & ) const
 		{

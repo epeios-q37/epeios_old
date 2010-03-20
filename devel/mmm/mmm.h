@@ -1263,14 +1263,16 @@ namespace mmm {
 			_Move( SourceFirstFragmentRow, SourceFirstFragmentHeader, TargetFirstFragmentRow, TargetFirstFragmentHeader );
 		}
 		void _ExtendUsedFragmentNotFollowedByAnyFragment(
-			row__ Descriptor,
+			row__ Descriptor,	// Le fragment ne doit pas être un 'linked fragment'.
 			const mdr::datum__ *Header,
 			mdr::size__ DataSize,
-			addendum__ &Addendum )	// The fragment must not be a linked fragment.
+			addendum__ &Addendum,
+			bso::bool__ SkipSizeTest = false )
 		{
 #ifdef MMM_DBG
 			if ( ( *Descriptor + _GetUsedFragmentTotalSize( Header ) ) != _Size() )
-				ERRc();
+				if ( !SkipSizeTest )
+					ERRc();
 
 			if ( _IsUsedFragmentLinked( Header ) )
 				ERRc();
@@ -1302,9 +1304,10 @@ namespace mmm {
 			S_.TailingFreeFragmentPosition = NONE;
 
 			#pragma message( "Point délicat ici !" )
-//			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// This allows to use following method.
+//			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// Permet l'utilisation de la méthode qui suit.
 
-			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum );
+			// Le paramètre à 'true' dans l'appel qui suit est la prise en compte de la ligne précédente.
+			_ExtendUsedFragmentNotFollowedByAnyFragment( Descriptor, Header, DataSize, Addendum, true );
 		}
 		void _ExtendUsedFragmentFollowedByBigEnoughFreeFragment(
 			row__ Descriptor,	// The fragment must not be linked.

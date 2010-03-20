@@ -1,5 +1,9 @@
 $Id$
 
+19/03/2040 :
+	- MMM :
+		- Prend en compte le problème souleve par la méthode '_ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment()' depuis que 'S_.Size' n'existe plus.
+
 17/03/2010 :
 	- UYM :
 		- Suppression de 'IsPlugged()'.
