@@ -178,7 +178,7 @@ namespace uym {
 		}
 		mdr::size__ UnderlyingSize( void )
 		{
-			_Test();
+//			_Test();	// Traité ci-dessous.
 
 			if ( _Driver != NULL )
 				return _Driver->UnderlyingSize();
