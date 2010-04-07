@@ -79,9 +79,8 @@ extern class ttr_tutor &CLNARGTutor;
 //d The command seperator for the detail usage printing ('GetCommandLabels' method).
 #define CLNARG_DETAIL_SEPARATOR	", "
 
-#define CLNARG_STRING_PARAM( name )\
-	STR_BUFFER___ name##Buffer;\
-	const char *name
+#define CLNARG_STRING_PARAM___( name )\
+	STR_BUFFER___ name
 
 namespace clnarg {
 	//t An option/argument id.

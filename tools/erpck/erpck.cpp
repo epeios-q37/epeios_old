@@ -79,10 +79,10 @@ enum option {
 };
 */
 
-#define STRING_PARAM( name )	CLNARG_STRING_PARAM( name )
+#define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
 struct parameters {
-	STRING_PARAM( Project );
+	STRING_PARAM___( Project );
 	parameters( void )
 	{
 	}
@@ -167,7 +167,7 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 1:
-		Parameters.Project = Free( P ).Convert( Parameters.ProjectBuffer );
+		Free( P ).Convert( Parameters.Project );
 		break;
 	default:
 		cerr << "Wrong amount of arguments." << txf::nl;

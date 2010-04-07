@@ -78,12 +78,12 @@ enum option {
 
 };
 
-#define STRING_PARAM( name )	CLNARG_STRING_PARAM( name )
+#define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
 struct parameters {
-	STRING_PARAM( Namespace );
-	STRING_PARAM(  Source );
-	STRING_PARAM( Destination );
+	STRING_PARAM___( Namespace );
+	STRING_PARAM___(  Source );
+	STRING_PARAM___( Destination );
 	bso::bool__ NoIndent;
 	parameters( void )
 	{
@@ -153,7 +153,7 @@ ERRBegin
 				ERRExit( evParameters );
 			}
 
-			Parameters.Namespace = Argument.Convert( Parameters.NamespaceBuffer );
+			Argument.Convert( Parameters.Namespace );
 
 			break;
 		case oNoIndent:
@@ -187,10 +187,10 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 2:
-		Parameters.Destination = Free( P ).Convert( Parameters.DestinationBuffer );
+		Free( P ).Convert( Parameters.Destination );
 		P = Free.Previous( P );
 	case 1:
-		Parameters.Source = Free( P ).Convert( Parameters.SourceBuffer );
+		Free( P ).Convert( Parameters.Source );
 		break;
 	case 0:
 		break;
@@ -336,12 +336,12 @@ ERREpilog
 
 static inline void Main(
 	int argc,
-	char **argv )
+	const char *argv[] )
 {
 ERRProlog
 	parameters Parameters;
 ERRBegin
-//	AnalyzeArgs( argc, argv, Parameters );
+	AnalyzeArgs( argc, argv, Parameters );
 
 	Go( Parameters );
 ERRErr
@@ -351,7 +351,7 @@ ERREpilog
 
 int main(
 	int argc,
-	char **argv )
+	const char *argv[] )
 {
 ERRFProlog
 ERRFBegin

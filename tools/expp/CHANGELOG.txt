@@ -1,5 +1,8 @@
 $Id$
 
+- 01/04/2010 :
+	- Adaptation aux modifications 'CLNARG'.
+
 ---------------
 Version 0.2.4 :
 ---------------

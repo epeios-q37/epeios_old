@@ -1,6 +1,10 @@
 $Id$
 
-19/03/2040 :
+01/04/2010 :
+	- CLNARG :
+		- Redéfinition de 'CLNARG_STRING_PARAM___(...)' pour éviter source de bogue.
+
+19/03/2010 :
 	- MMM :
 		- Prend en compte le problème souleve par la méthode '_ExtendUsedFragmentFollowedByUndersizedTailingFreeFragment()' depuis que 'S_.Size' n'existe plus.
 

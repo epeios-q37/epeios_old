@@ -140,7 +140,7 @@ namespace xml {
 
 	E_AUTO( dump )
 
-	class _flow {
+	class _flow___ {
 	private:
 		xtf::extended_text_iflow__ *_Flow;
 	public:
@@ -150,11 +150,11 @@ namespace xml {
 			Dump.reset( P );
 			_Flow = NULL;
 		}
-		_flow( void )
+		_flow___( void )
 		{
 			reset( false );
 		}
-		~_flow( void )
+		~_flow___( void )
 		{
 			reset();
 		}
@@ -200,10 +200,6 @@ namespace xml {
 			return _Flow->Coord();
 		}
 	};
-
-	typedef _flow _flow_;
-
-
 
 	struct callback__
 	{
@@ -530,7 +526,7 @@ namespace xml {
 		token__ _Token;
 		stk::E_XMCSTACK( str::string_ ) _Tags;
 		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
-		_flow _Flow;
+		_flow___ _Flow;
 		str::string _TagName;
 		str::string _AttributeName;
 		str::string _Value;
@@ -601,6 +597,51 @@ namespace xml {
 		{
 			return _Flow.GetCurrentCoord();
 		}
+	};
+
+#	define XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
+
+	struct _qualified_preprocessor_tags___ {
+		str::string Define;
+		str::string Expand;
+		str::string Set;
+		str::string Ifeq;
+		str::string Bloc;
+	};
+
+	class extended_browser___
+	{
+	private:
+		browser___ _RawBrowser;
+		str::string _NamespaceWithSeparator;
+		_qualified_preprocessor_tags___ _Tags;
+		dump _Dump;
+		token__ _HandlePreprocessorTag( const str::string_ &TagName );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_RawBrowser.reset( P );
+
+			_NamespaceWithSeparator.reset( P );
+
+			_Tags.Define.reset( P );
+			_Tags.Expand.reset( P );
+			_Tags.Set.reset( P );
+			_Tags.Ifeq.reset( P );
+			_Tags.Bloc.reset( P );
+		}
+		extended_browser___( void )
+		{
+			reset( false );
+		}
+		~extended_browser___( void )
+		{
+			reset();
+		}
+		void Init(
+			xtf::extended_text_iflow__ &Flow,
+			const str::string_ &Namespace = str::string( XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE ) );
+		token__  Browse( int TokenToReport = tfAll );
 	};
 }
 

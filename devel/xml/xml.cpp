@@ -271,7 +271,7 @@ ERREpilog
 #define	EXPAND_MAX_NESTING_LEVEL	100
 #define	IFEQ_MAX_NESTING_LEVEL		100
 
-static status__ SkipSpaces_( _flow_ &Flow )
+static status__ SkipSpaces_( _flow___ &Flow )
 {
 	while ( !Flow.EOX() && isspace( Flow.View() ) )
 		Flow.Get();
@@ -306,7 +306,7 @@ enum entity_handling_state__ {
 
 #define ENTITY_ERROR_VALUE	0
 
-static unsigned char HandleEntity_( _flow_ &Flow )
+static unsigned char HandleEntity_( _flow___ &Flow )
 {
 	entity_handling_state__ State = ehsStart;
 
@@ -431,7 +431,7 @@ static unsigned char HandleEntity_( _flow_ &Flow )
 }
 
 static void GetId_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Id )
 {
 	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) )
@@ -439,14 +439,14 @@ static void GetId_(
 }
 
 static inline void GetName_( 
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Name )
 {
 	GetId_( Flow, Name );
 }
 
 static status__ GetValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	bso::char__ Delimiter,
 	bso::bool__ ErrorIfSpaceInValue,
 	str::string_ &Value,
@@ -479,7 +479,7 @@ static status__ GetValue_(
 }
 
 inline static status__ GetTagValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Value,
 	bso::bool__ &OnlySpaces )
 {
@@ -487,7 +487,7 @@ inline static status__ GetTagValue_(
 }
 
 inline status__ GetAttributeValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	char Delimiter,
 	str::string_ &Value )
 {	
@@ -503,7 +503,7 @@ inline status__ GetAttributeValue_(
 		Status = s_Undefined;
 
 static status__ GetAttribute_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Name,
 	str::string_ &Value )
 {
@@ -542,7 +542,7 @@ static status__ GetAttribute_(
 	return sOK;
 }
 
-static status__ SkipComment_( _flow_ &Flow )
+static status__ SkipComment_( _flow___ &Flow )
 {
 	bso::bool__ Continue = true;
 
@@ -587,7 +587,7 @@ static status__ SkipComment_( _flow_ &Flow )
 	return sOK;
 }
 
-static status__ HandleProcessingInstruction_( _flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
+static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
 		ERRc();
@@ -638,7 +638,7 @@ ERRProlog
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 	bso::ulong__ Level = BSO_ULONG_MAX;
-	_flow Flow;
+	_flow___ Flow;
 	bso::bool__ OnlySpaces;
 ERRBegin
 	Flow.Init( UserFlow );
@@ -1344,7 +1344,184 @@ ERREpilog
 	return _Token;
 }
 
+static inline bso::bool__ BelongsToNamespace_(
+	const str::string_ &Name,
+	const str::string_ &NamespaceWithSeparator )
+{
+	if ( Name.Amount() == 0 )
+		ERRc();
 
+	if ( Name.Amount() < NamespaceWithSeparator.Amount() )
+		return false;
+
+	return str::Compare( Name, NamespaceWithSeparator, Name.First(), NamespaceWithSeparator.First(), NamespaceWithSeparator.Amount() ) == 0;
+}
+
+enum tag__ {
+	tUser,	// Balise n'appartenant pas au 'namespace'.
+	tDefine,
+	tExpand,
+	tIfeq,
+	tBloc,
+	tSet,
+	t_amount,
+	// Balise appartenant au namesapce mais non reconnue !
+	t_Undefined
+};
+
+#define NAME_ATTRIBUTE		"name"
+#define SELECT_ATTRIBUTE	"select"
+#define HREF_ATTRIBUTE		"href"
+#define VALUE_ATTRIBUTE		"value"
+
+#define DEFINE_TAG	"define"
+#define EXPAND_TAG	"expand"
+#define IFEQ_TAG	"ifeq"
+#define SET_TAG		"set"
+#define BLOC_TAG	"bloc"
+
+static inline tag__ GetTag_(
+	const str::string_ &Name,
+	const _qualified_preprocessor_tags___ &Tags )
+{
+	if ( Tags.Define == Name )
+		return tDefine;
+	else if ( Tags.Expand == Name )
+		return tExpand;
+	else if ( Tags.Ifeq == Name )
+		return tIfeq;
+	else if ( Tags.Bloc == Name )
+		return tBloc;
+	else if ( Tags.Set == Name )
+		return tSet;
+
+	return ::t_Undefined;
+}
+
+static void SetTags_(
+	const str::string_ &NamespaceWithSeparator,
+	_qualified_preprocessor_tags___ &Tags )
+{
+	Tags.Define.Init( NamespaceWithSeparator );
+	Tags.Define.Append( DEFINE_TAG );
+
+	Tags.Expand.Init( NamespaceWithSeparator );
+	Tags.Expand.Append( EXPAND_TAG );
+
+	Tags.Set.Init( NamespaceWithSeparator );
+	Tags.Set.Append( SET_TAG );
+
+	Tags.Ifeq.Init( NamespaceWithSeparator );
+	Tags.Ifeq.Append( IFEQ_TAG );
+
+	Tags.Bloc.Init( NamespaceWithSeparator );
+	Tags.Bloc.Append( BLOC_TAG );
+}
+
+void xml::extended_browser___::Init(
+	xtf::extended_text_iflow__ &Flow,
+	const str::string_ &Namespace )
+{
+	_RawBrowser.Init( Flow );
+
+	_NamespaceWithSeparator.Init( Namespace );
+	_NamespaceWithSeparator.Append( ':' );
+
+	SetTags_( _NamespaceWithSeparator, _Tags );
+}
+
+token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &TagName )
+{
+	switch ( GetTag_( TagName, _Tags ) ) {
+	case tUser:
+		// Ammené à disparaître dés que l'on aura basculé 
+		ERRc();
+		break;
+	case tDefine:
+		break;
+	case tExpand:
+		break;
+	case tIfeq:
+		break;
+	case tBloc:
+		break;
+	case tSet:
+		break;
+	default:
+		return tError;
+		break;
+	}
+
+	return t_Undefined;	// Pour éviter un 'warning'.
+
+}
+
+token__ xml::extended_browser___::Browse( int TokenToReport )
+{
+	bso::bool__ Continue = true;
+	token__ Token = t_Undefined;
+
+	_Dump.Init();
+
+	while ( Continue ) {
+		switch( Token = _RawBrowser.Browse( tfAll ) ) {
+		case tProcessingInstruction:
+			_Dump.Append( _RawBrowser.GetDump() );
+
+			if ( tfProcessingInstruction & TokenToReport )
+				Continue = false;
+			break;
+		case tStartTag:
+			if ( BelongsToNamespace_( _RawBrowser.GetTagName(), _NamespaceWithSeparator ) )
+				_HandlePreprocessorTag();
+			else {
+				_Dump.Append( _RawBrowser.GetDump() );
+
+				if ( tfStartTag & TokenToReport )
+					Continue = false;
+			}
+			break;
+		case tStartTagClosed:
+			_Dump.Append( _RawBrowser.GetDump() );
+
+			if ( tfStartTagClosed & TokenToReport )
+				Continue = false;
+			break;
+		case tAttribute:
+			_Dump.Append( _RawBrowser.GetDump() );
+
+			if ( tfAttribute & TokenToReport )
+				Continue = false;
+			break;
+		case tValue:
+			_Dump.Append( _RawBrowser.GetDump() );
+
+			if ( tfValue & TokenToReport )
+				Continue = false;
+			break;
+		case tEndTag:
+			_Dump.Append( _RawBrowser.GetDump() );
+
+			if ( tfEndTag & TokenToReport )
+				Continue = false;
+			break;
+		case tProcessed:
+			_Dump.Append( _RawBrowser.GetDump() );
+			Continue = false;
+			break;
+		case tError:
+			_Dump.Append( _RawBrowser.GetDump() );
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	return Token;
+
+}
 
 E_ROW( rrow__ );	// Repository row.
 
@@ -1517,18 +1694,6 @@ public:
 	}
 };
 
-enum tag__ {
-	tUser,	// Balise n'appartenant pas au 'namespace'.
-	tDefine,
-	tExpand,
-	tIfeq,
-	tBloc,
-	tSet,
-	t_amount,
-	// Balise appartenant au namesapce mais non reconnue !
-	t_Undefined
-};
-
 class donothing_callback__
 : public callback__
 {
@@ -1647,17 +1812,6 @@ public:
 		_Flow = &Flow;
 	}
 };
-
-#define NAME_ATTRIBUTE		"name"
-#define SELECT_ATTRIBUTE	"select"
-#define HREF_ATTRIBUTE		"href"
-#define VALUE_ATTRIBUTE		"value"
-
-#define DEFINE_TAG	"define"
-#define EXPAND_TAG	"expand"
-#define IFEQ_TAG	"ifeq"
-#define SET_TAG		"set"
-#define BLOC_TAG	"bloc"
 
 #undef RETURN
 
@@ -2531,6 +2685,8 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
