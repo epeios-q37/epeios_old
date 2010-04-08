@@ -609,6 +609,102 @@ namespace xml {
 		str::string Bloc;
 	};
 
+	E_ROW( _rrow__ );	// Repository row.
+
+	class _repository_
+	{
+	private:
+		_rrow__ _Locate( const str::string_ &Name ) const
+		{
+			ctn::E_CMITEMt( str::string_, _rrow__ ) NamesItem;
+			_rrow__ Row = Names.First();
+
+			NamesItem.Init( Names );
+
+			while ( ( Row!= NONE ) && ( NamesItem( Row ) != Name ) )
+				Row = Names.Next( Row );
+
+			return Row;
+		}
+	public:
+		struct s {
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Names;
+			bch::E_BUNCHt_( coord__, _rrow__ )::s Coords;
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Strings;
+		};
+		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Names;
+		bch::E_BUNCHt_( coord__, _rrow__ ) Coords;
+		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Strings;
+		_repository_( s &S )
+		: Names( S.Names ),
+		  Coords( S.Coords ),
+		  Strings( S.Strings )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Names.reset( P );
+			Coords.reset( P );
+			Strings.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Names.plug( MM );
+			Coords.plug( MM );
+			Strings.plug( MM );
+		}
+		_repository_ &operator =( const _repository_ &R )
+		{
+			Names = R.Names;
+			Coords = R.Coords;
+			Strings = R.Strings;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Names.Init();
+			Coords.Init();
+			Strings.Init();
+		}
+		bso::bool__ Store(
+			const str::string_ &Name,
+			coord__ Coord,
+			const str::string_ &String )
+		{
+			if ( _Locate( Name ) != NONE )
+				return false;
+
+			_rrow__ Row = Names.Append( Name );
+
+			if ( Row != Coords.Append( Coord ) )
+				ERRc();
+
+			if ( Row != Strings.Append( String ) )
+				ERRc();
+
+			return true;
+		}
+		bso::bool__ Get(
+			const str::string_ &Name,
+			coord__ &Coord,
+			str::string_ &String ) const
+		{
+			_rrow__ Row = _Locate( Name );
+
+			if ( Row == NONE )
+				return false;
+
+			Coord = Coords.Get( Row );
+
+			Strings.Recall( Row, String );
+
+			return true;
+		}
+	};
+
+	E_AUTO( _repository )
+
+
 	class extended_browser___
 	{
 	private:
@@ -616,6 +712,9 @@ namespace xml {
 		str::string _NamespaceWithSeparator;
 		_qualified_preprocessor_tags___ _Tags;
 		dump _Dump;
+		extended_status__ _Status;
+		_repository _Repository;
+		extended_status__ _HandleDefineTag( void );
 		token__ _HandlePreprocessorTag( const str::string_ &TagName );
 	public:
 		void reset( bso::bool__ P = true )
@@ -629,6 +728,12 @@ namespace xml {
 			_Tags.Set.reset( P );
 			_Tags.Ifeq.reset( P );
 			_Tags.Bloc.reset( P );
+
+			_Dump.Init();
+
+			_Repository.Init();
+
+			_Status = xs_Undefined;
 		}
 		extended_browser___( void )
 		{

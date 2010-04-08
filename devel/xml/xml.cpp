@@ -1428,18 +1428,156 @@ void xml::extended_browser___::Init(
 	_NamespaceWithSeparator.Append( ':' );
 
 	SetTags_( _NamespaceWithSeparator, _Tags );
+
+	_Dump.Init();
+
+	_Repository.Init();
+
+	_Status = xs_Undefined;
+}
+
+static extended_status__ AwaitingToken_(
+	browser___ &Browser,
+	token__ AwaitedToken,
+	extended_status__ StatusIfNotAwaitedToken )
+{
+	token__ Token = xml::t_Undefined;
+
+	switch ( Token = Browser.Browse() ) {
+		case tProcessed:
+			ERRc();
+			break;
+		case tError:
+			return Convert_( Browser.Status() );
+			break;
+		default:
+			if ( Token != AwaitedToken )
+				return StatusIfNotAwaitedToken;
+			break;
+	}
+
+	return xsOK;
+}
+
+static extended_status__ GetNameAttributeValue_(
+	browser___ &Browser,
+	str::string_ &Value )
+{
+	extended_status__ Status = AwaitingToken_( Browser, tAttribute, xsMissingNameAttribute );
+
+	if ( Status != xsOK )
+		return Status;
+
+	if ( Browser.AttributeName() != NAME_ATTRIBUTE )
+		return xsUnexpectedAttribute;
+
+	Value = Browser.GetValue();
+
+	return xsOK;
+}
+
+static extended_status__ RetrieveTree_(
+	browser___ &Browser,
+	str::string_ &Tree )
+{
+	bso::ulong__ Nesting = 0;
+	bso::bool__ Continue = true;
+
+	while ( Continue ) {
+		switch ( Browser.Browse( tfStartTag | tfEndTag ) ) {
+		case tStartTag:
+			Tree.Append( Browser.GetDump().RawData );
+			if ( Nesting == BSO_ULONG_MAX )
+				ERRc();
+			break;
+		case tEndTag:
+			switch ( Nesting ) {
+			case 0:
+				ERRc();
+				break;
+			case 1:
+				Continue = false;
+				break;
+			default:
+				Nesting--;
+				break;
+			}
+		case tError:
+			return (extended_status__)Browser.Status();
+			break;
+		case tProcessed:
+			ERRc();
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	return xsOK;
+}
+
+static extended_status__ GetExpandNameAndContent_(
+	browser___ &Browser,
+	str::string_ &Name,
+	str::string_ &Content )
+{
+	extended_status__ Status = xsOK;
+
+	Name.Init();
+
+	if ( ( Status = GetNameAttributeValue_( Browser, Name ) ) != xsOK )
+		return Status;
+
+	if ( ( Status = AwaitingToken_( Browser, tStartTagClosed, xsUnexpectedAttribute ) ) != xsOK )
+		return Status;
+
+	if ( ( Status = RetrieveTree_( Browser, Content ) ) != xsOK )
+		return Status;
+
+	return xsOK;
+}
+
+
+extended_status__ xml::extended_browser___::_HandleDefineTag( void )
+{
+	extended_status__ Status = xs_Undefined;
+ERRProlog
+	str::string Name, Content;
+	coord__ Coord;
+ERRBegin
+	Coord = _RawBrowser.GetCurrentCoord();
+
+	Name.Init();
+	Content.Init();
+
+	if ( ( Status = GetExpandNameAndContent_( _RawBrowser, Name, Content ) ) != xsOK )
+		ERRReturn;
+
+	_Repository.Store( Name, Coord, Content );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &TagName )
 {
 	switch ( GetTag_( TagName, _Tags ) ) {
 	case tUser:
-		// Ammené à disparaître dés que l'on aura basculé 
+		// Ammené à disparaître dés que l'on aura basculé sur la nouvrl version de 'l'extended_browser'.
 		ERRc();
 		break;
 	case tDefine:
+		if ( ( _Status = _HandleDefineTag() ) != xsOK )
+			return tError;
+		else
+			return t_Undefined;	// Pour signaler que l'on continue le 'browsing'.
 		break;
 	case tExpand:
+		if ( ( _Status = _HandleExpandTag() ) != xsOK )
+			return tError;
+		else
+			return t_Undefined;	// Pour signaler que l'on continue le 'browsing'.
 		break;
 	case tIfeq:
 		break;
@@ -1456,6 +1594,15 @@ token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &T
 
 }
 
+bso::bool__ IsTokenToReport_(
+	token__ Token,
+	int TokenToReport )
+{
+	return ( ( 1 << Token ) & TokenToReport )
+		    || ( Token == tProcessed )
+			|| ( Token == tError );
+}
+
 token__ xml::extended_browser___::Browse( int TokenToReport )
 {
 	bso::bool__ Continue = true;
@@ -1467,60 +1614,40 @@ token__ xml::extended_browser___::Browse( int TokenToReport )
 		switch( Token = _RawBrowser.Browse( tfAll ) ) {
 		case tProcessingInstruction:
 			_Dump.Append( _RawBrowser.GetDump() );
-
-			if ( tfProcessingInstruction & TokenToReport )
-				Continue = false;
 			break;
 		case tStartTag:
 			if ( BelongsToNamespace_( _RawBrowser.GetTagName(), _NamespaceWithSeparator ) )
-				_HandlePreprocessorTag();
-			else {
+				Token = _HandlePreprocessorTag( _RawBrowser.TagName() );
+			else
 				_Dump.Append( _RawBrowser.GetDump() );
-
-				if ( tfStartTag & TokenToReport )
-					Continue = false;
-			}
 			break;
 		case tStartTagClosed:
 			_Dump.Append( _RawBrowser.GetDump() );
-
-			if ( tfStartTagClosed & TokenToReport )
-				Continue = false;
 			break;
 		case tAttribute:
 			_Dump.Append( _RawBrowser.GetDump() );
-
-			if ( tfAttribute & TokenToReport )
-				Continue = false;
 			break;
 		case tValue:
 			_Dump.Append( _RawBrowser.GetDump() );
-
-			if ( tfValue & TokenToReport )
-				Continue = false;
 			break;
 		case tEndTag:
 			_Dump.Append( _RawBrowser.GetDump() );
-
-			if ( tfEndTag & TokenToReport )
-				Continue = false;
 			break;
 		case tProcessed:
 			_Dump.Append( _RawBrowser.GetDump() );
-			Continue = false;
 			break;
 		case tError:
 			_Dump.Append( _RawBrowser.GetDump() );
-			Continue = false;
 			break;
 		default:
 			ERRc();
 			break;
 		}
+
+		Continue = !IsTokenToReport_( Token, TokenToReport );
 	}
 
 	return Token;
-
 }
 
 E_ROW( rrow__ );	// Repository row.
