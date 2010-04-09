@@ -471,7 +471,7 @@ namespace flx {
 			oflow_functions___::Init();
 		}
 
-	};
+	};	
 
 	extern dump_oflow_functions___ dump;
 

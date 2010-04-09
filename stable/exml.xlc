@@ -61,6 +61,10 @@
 			<Translation language="fr">Attribut 'name' manquant !</Translation>
 			<Translation language="en-US">Missing 'name' attribute !</Translation>
 		</Translations>
+		<Translations message="EXML_MissingSelectOrHRefAttribute">
+			<Translation language="fr">Attribut 'select' ou 'href' manquant !</Translation>
+			<Translation language="en-US">Missing 'select' or 'href' attribute !</Translation>
+		</Translations>
 		<Translations message="EXML_MissingSelectAttribute">
 			<Translation language="fr">Attribut 'select' manquant !</Translation>
 			<Translation language="en-US">Missing 'select' attribute !</Translation>

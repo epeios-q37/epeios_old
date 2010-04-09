@@ -30,7 +30,7 @@ $_RAW_$
 #define XML__COMPILATION
 
 #include "xml.h"
-#include "stk.h"
+#include "flx.h"
 
 #ifdef XML__MT
 #	include "mtk.h"
@@ -174,6 +174,7 @@ const char *xml::GetLabel( extended_status__ Status )
 	CASE( UnexpectedAttribute );
 	CASE( UnknownAttribute );
 	CASE( MissingNameAttribute );
+	CASE( MissingSelectOrHRefAttribute );
 	CASE( MissingSelectAttribute );
 	CASE( MissingValueAttribute );
 	CASE( UnknownVariable );
@@ -1380,6 +1381,16 @@ enum tag__ {
 #define SET_TAG		"set"
 #define BLOC_TAG	"bloc"
 
+void xml::extended_browser___::_DeleteBrowsers( void )
+{
+	if ( _CurrentBrowser != NULL )
+		delete _CurrentBrowser;
+
+	while ( _BrowserStack.Amount() )
+		delete _BrowserStack.Pop();
+}
+
+
 static inline tag__ GetTag_(
 	const str::string_ &Name,
 	const _qualified_preprocessor_tags___ &Tags )
@@ -1418,11 +1429,72 @@ static void SetTags_(
 	Tags.Bloc.Append( BLOC_TAG );
 }
 
+class enlarged_browser___
+: public browser___
+{
+private:
+	flx::E_STRING_IFLOW__ _StringFlow;
+	flf::file_iflow___ _FileFlow;
+	xtf::extended_text_iflow__ _XFlow;
+public:
+	void Init( xtf::extended_text_iflow__ &Flow )
+	{
+		browser___::Init( Flow );
+	}
+	bso::bool__ Init(
+		const str::string_ &Location,
+		const str::string_ &FileName,
+		str::string_ &NewLocation )
+	{
+		bso::bool__ Success = false;
+	ERRProlog
+		FNM_BUFFER___ HandledFileNameBuffer;
+		const char *HandledFileName;
+		STR_BUFFER___ LocationBuffer, FileNameBuffer;
+	ERRBegin
+		HandledFileName = fnm::BuildFileName( Location.Convert( LocationBuffer ), FileName.Convert( FileNameBuffer ), "", HandledFileNameBuffer );
+
+		if ( _FileFlow.Init( fnm::CorrectLocation( HandledFileName, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess )
+			ERRReturn;
+
+		_FileFlow.EOFD( XTF_EOXT );
+
+		_XFlow.Init( _FileFlow );
+
+		NewLocation.Append( LocationBuffer );
+
+		Success = true;
+
+		browser___::Init( _XFlow );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Success;
+	}
+	void Init( const str::string_ &Content )
+	{
+		_StringFlow.Init( Content );
+
+		_StringFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
+
+		_XFlow.Init( _StringFlow );
+
+		browser___::Init( _XFlow );
+	}
+};
+
 void xml::extended_browser___::Init(
 	xtf::extended_text_iflow__ &Flow,
 	const str::string_ &Namespace )
 {
-	_RawBrowser.Init( Flow );
+	enlarged_browser___ *Browser = new enlarged_browser___;
+
+	if ( Browser == NULL )
+		ERRa();
+
+	Browser->Init( Flow );
+
+	_CurrentBrowser = Browser;
 
 	_NamespaceWithSeparator.Init( Namespace );
 	_NamespaceWithSeparator.Append( ':' );
@@ -1539,25 +1611,90 @@ static extended_status__ GetExpandNameAndContent_(
 }
 
 
-extended_status__ xml::extended_browser___::_HandleDefineTag( void )
+bso::bool__ xml::extended_browser___::_HandleDefineTag( void )
 {
-	extended_status__ Status = xs_Undefined;
+	bso::bool__ Success = false;
 ERRProlog
 	str::string Name, Content;
 	coord__ Coord;
 ERRBegin
-	Coord = _RawBrowser.GetCurrentCoord();
+	Coord = _Browser().GetCurrentCoord();
 
 	Name.Init();
 	Content.Init();
 
-	if ( ( Status = GetExpandNameAndContent_( _RawBrowser, Name, Content ) ) != xsOK )
+	if ( ( _Status = GetExpandNameAndContent_( _Browser(), Name, Content ) ) != xsOK )
 		ERRReturn;
 
 	_Repository.Store( Name, Coord, Content );
+
+	Success = true;
 ERRErr
 ERREnd
 ERREpilog
+	return Success;
+}
+
+static enum expand_type__ {
+	etMacro,
+	etFile,
+	et_amount,
+	et_Undefined
+};
+
+static inline expand_type__ GetExpandTypeAndValue_(
+	browser___ &Browser,
+	str::string_ &Value,
+	extended_status__ &Status )	// Siginfiant seulement si valeur retournée == 'et_Undefined'.
+{
+	expand_type__ Type = et_Undefined;
+ERRProlog
+	str::string AttributeName;
+ERRBegin
+	AttributeName.Init();
+
+	if ( ( Status = AwaitingToken_( Browser, tAttribute, xsMissingSelectOrHRefAttribute ) ) != xsOK )
+		ERRReturn;
+
+	if ( Browser.AttributeName() == HREF_ATTRIBUTE )
+		Type = etFile;
+	else if ( Browser.AttributeName() == SELECT_ATTRIBUTE )
+		Type = etMacro;
+	else {
+		Status = xsUnknownAttribute;
+		ERRReturn;
+	}
+
+	Value = Browser.GetValue();
+ERRErr
+ERREnd
+ERREpilog
+	return Type;
+}
+
+
+token__ xml::extended_browser___::_HandleExpandTag( void )
+{
+	token__ Token = tError;
+ERRProlog
+	expand_type__ Type = et_Undefined;
+	str::string Value;
+ERRBegin
+	switch ( GetExpandTypeAndValue_( _Browser(), Value, _Status ) ) {
+	case etMacro:
+
+		break;
+	case etFile:
+		break;
+	case et_Undefined:
+		ERRReturn;
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Token;
 }
 
 token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &TagName )
@@ -1568,16 +1705,13 @@ token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &T
 		ERRc();
 		break;
 	case tDefine:
-		if ( ( _Status = _HandleDefineTag() ) != xsOK )
+		if ( !_HandleDefineTag() )
 			return tError;
 		else
 			return t_Undefined;	// Pour signaler que l'on continue le 'browsing'.
 		break;
 	case tExpand:
-		if ( ( _Status = _HandleExpandTag() ) != xsOK )
-			return tError;
-		else
-			return t_Undefined;	// Pour signaler que l'on continue le 'browsing'.
+		return _HandleExpandTag();
 		break;
 	case tIfeq:
 		break;
@@ -1611,33 +1745,40 @@ token__ xml::extended_browser___::Browse( int TokenToReport )
 	_Dump.Init();
 
 	while ( Continue ) {
-		switch( Token = _RawBrowser.Browse( tfAll ) ) {
+		switch( Token = _Browser().Browse( tfAll ) ) {
 		case tProcessingInstruction:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		case tStartTag:
-			if ( BelongsToNamespace_( _RawBrowser.GetTagName(), _NamespaceWithSeparator ) )
-				Token = _HandlePreprocessorTag( _RawBrowser.TagName() );
+			if ( BelongsToNamespace_( _Browser().GetTagName(), _NamespaceWithSeparator ) )
+				Token = _HandlePreprocessorTag( _Browser().TagName() );
 			else
-				_Dump.Append( _RawBrowser.GetDump() );
+				_Dump.Append( _Browser().GetDump() );
 			break;
 		case tStartTagClosed:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		case tAttribute:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		case tValue:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		case tEndTag:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		case tProcessed:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
+
+			if ( _BrowserStack.Amount() ) {
+				delete _CurrentBrowser;
+				_CurrentBrowser = _BrowserStack.Pop();
+				Token = t_Undefined;	// Pour continer le 'browsing'.
+			}
+
 			break;
 		case tError:
-			_Dump.Append( _RawBrowser.GetDump() );
+			_Dump.Append( _Browser().GetDump() );
 			break;
 		default:
 			ERRc();
@@ -2369,7 +2510,7 @@ protected:
 		}
 		case tExpand:
 			if ( _SelectAttribute.Amount() == 0 )
-				RETURN( xsMissingSelectAttribute )
+				RETURN( xsMissingSelectOrHRefAttribute )
 
 			_RepositoryStack.Push( _CurrentRepository );
 			_CurrentRepository.Init();

@@ -269,6 +269,7 @@ namespace xml {
 		xsUnexpectedAttribute,
 		xsUnknownAttribute,
 		xsMissingNameAttribute,
+		xsMissingSelectOrHRefAttribute,
 		xsMissingSelectAttribute,
 		xsMissingValueAttribute,
 		xsUnknownVariable,
@@ -552,7 +553,7 @@ namespace xml {
 		{
 			reset( false );
 		}
-		~browser___( void )
+		virtual ~browser___( void )
 		{
 			reset();
 		}
@@ -704,22 +705,38 @@ namespace xml {
 
 	E_AUTO( _repository )
 
+	typedef stk::E_BSTACK_( browser___ * ) _browser_stack_;
+
+	E_AUTO( _browser_stack );
 
 	class extended_browser___
 	{
 	private:
-		browser___ _RawBrowser;
+		browser___ *_CurrentBrowser;
+		_browser_stack _BrowserStack;
 		str::string _NamespaceWithSeparator;
 		_qualified_preprocessor_tags___ _Tags;
 		dump _Dump;
 		extended_status__ _Status;
 		_repository _Repository;
-		extended_status__ _HandleDefineTag( void );
+		browser___ &_Browser( void )
+		{
+			return *_CurrentBrowser;
+		}
+		void _DeleteBrowsers( void );
+		token__ _HandleExpandTag( void );
+		bso::bool__ _HandleDefineTag( void );
 		token__ _HandlePreprocessorTag( const str::string_ &TagName );
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_RawBrowser.reset( P );
+			if ( P ) {
+				_DeleteBrowsers();
+			}
+
+			_CurrentBrowser = NULL;
+			
+			_BrowserStack.reset( P );
 
 			_NamespaceWithSeparator.reset( P );
 
