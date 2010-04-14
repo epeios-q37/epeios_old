@@ -30,7 +30,7 @@
 #define XML__COMPILATION
 
 #include "xml.h"
-#include "stk.h"
+#include "flx.h"
 
 #ifdef XML__MT
 #	include "mtk.h"
@@ -174,6 +174,7 @@ const char *xml::GetLabel( extended_status__ Status )
 	CASE( UnexpectedAttribute );
 	CASE( UnknownAttribute );
 	CASE( MissingNameAttribute );
+	CASE( MissingSelectOrHRefAttribute );
 	CASE( MissingSelectAttribute );
 	CASE( MissingValueAttribute );
 	CASE( UnknownVariable );
@@ -271,7 +272,7 @@ ERREpilog
 #define	EXPAND_MAX_NESTING_LEVEL	100
 #define	IFEQ_MAX_NESTING_LEVEL		100
 
-static status__ SkipSpaces_( _flow_ &Flow )
+static status__ SkipSpaces_( _flow___ &Flow )
 {
 	while ( !Flow.EOX() && isspace( Flow.View() ) )
 		Flow.Get();
@@ -306,7 +307,7 @@ enum entity_handling_state__ {
 
 #define ENTITY_ERROR_VALUE	0
 
-static unsigned char HandleEntity_( _flow_ &Flow )
+static unsigned char HandleEntity_( _flow___ &Flow )
 {
 	entity_handling_state__ State = ehsStart;
 
@@ -431,7 +432,7 @@ static unsigned char HandleEntity_( _flow_ &Flow )
 }
 
 static void GetId_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Id )
 {
 	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) )
@@ -439,14 +440,14 @@ static void GetId_(
 }
 
 static inline void GetName_( 
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Name )
 {
 	GetId_( Flow, Name );
 }
 
 static status__ GetValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	bso::char__ Delimiter,
 	bso::bool__ ErrorIfSpaceInValue,
 	str::string_ &Value,
@@ -479,7 +480,7 @@ static status__ GetValue_(
 }
 
 inline static status__ GetTagValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Value,
 	bso::bool__ &OnlySpaces )
 {
@@ -487,7 +488,7 @@ inline static status__ GetTagValue_(
 }
 
 inline status__ GetAttributeValue_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	char Delimiter,
 	str::string_ &Value )
 {	
@@ -503,7 +504,7 @@ inline status__ GetAttributeValue_(
 		Status = s_Undefined;
 
 static status__ GetAttribute_(
-	_flow_ &Flow,
+	_flow___ &Flow,
 	str::string_ &Name,
 	str::string_ &Value )
 {
@@ -542,7 +543,7 @@ static status__ GetAttribute_(
 	return sOK;
 }
 
-static status__ SkipComment_( _flow_ &Flow )
+static status__ SkipComment_( _flow___ &Flow )
 {
 	bso::bool__ Continue = true;
 
@@ -587,7 +588,7 @@ static status__ SkipComment_( _flow_ &Flow )
 	return sOK;
 }
 
-static status__ HandleProcessingInstruction_( _flow_ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
+static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
 		ERRc();
@@ -638,7 +639,7 @@ ERRProlog
 	str::string Name, Value, Tag;
 	stk::E_XMCSTACKt( str::string_, srow__ ) Tags;
 	bso::ulong__ Level = BSO_ULONG_MAX;
-	_flow Flow;
+	_flow___ Flow;
 	bso::bool__ OnlySpaces;
 ERRBegin
 	Flow.Init( UserFlow );
@@ -1336,15 +1337,536 @@ ERRBegin
 			_Token = tProcessed;
 
 	_Status = sOK;
-
-	_Dump = _Flow.Dump;
 ERRErr
 ERREnd
 ERREpilog
 	return _Token;
 }
 
+static inline bso::bool__ BelongsToNamespace_(
+	const str::string_ &Name,
+	const str::string_ &NamespaceWithSeparator )
+{
+	if ( Name.Amount() == 0 )
+		ERRc();
 
+	if ( Name.Amount() < NamespaceWithSeparator.Amount() )
+		return false;
+
+	return str::Compare( Name, NamespaceWithSeparator, Name.First(), NamespaceWithSeparator.First(), NamespaceWithSeparator.Amount() ) == 0;
+}
+
+enum tag__ {
+	tUser,	// Balise n'appartenant pas au 'namespace'.
+	tDefine,
+	tExpand,
+	tIfeq,
+	tBloc,
+	tSet,
+	t_amount,
+	// Balise appartenant au namesapce mais non reconnue !
+	t_Undefined
+};
+
+#define NAME_ATTRIBUTE		"name"
+#define SELECT_ATTRIBUTE	"select"
+#define HREF_ATTRIBUTE		"href"
+#define VALUE_ATTRIBUTE		"value"
+
+#define DEFINE_TAG	"define"
+#define EXPAND_TAG	"expand"
+#define IFEQ_TAG	"ifeq"
+#define SET_TAG		"set"
+#define BLOC_TAG	"bloc"
+#if 0
+void xml::extended_browser___::_DeleteBrowsers( void )
+{
+	if ( _CurrentBrowser != NULL )
+		delete _CurrentBrowser;
+
+	while ( _BrowserStack.Amount() )
+		delete _BrowserStack.Pop();
+}
+
+
+static inline tag__ GetTag_(
+	const str::string_ &Name,
+	const _qualified_preprocessor_tags___ &Tags )
+{
+	if ( Tags.Define == Name )
+		return tDefine;
+	else if ( Tags.Expand == Name )
+		return tExpand;
+	else if ( Tags.Ifeq == Name )
+		return tIfeq;
+	else if ( Tags.Bloc == Name )
+		return tBloc;
+	else if ( Tags.Set == Name )
+		return tSet;
+
+	return ::t_Undefined;
+}
+
+static void SetTags_(
+	const str::string_ &NamespaceWithSeparator,
+	_qualified_preprocessor_tags___ &Tags )
+{
+	Tags.Define.Init( NamespaceWithSeparator );
+	Tags.Define.Append( DEFINE_TAG );
+
+	Tags.Expand.Init( NamespaceWithSeparator );
+	Tags.Expand.Append( EXPAND_TAG );
+
+	Tags.Set.Init( NamespaceWithSeparator );
+	Tags.Set.Append( SET_TAG );
+
+	Tags.Ifeq.Init( NamespaceWithSeparator );
+	Tags.Ifeq.Append( IFEQ_TAG );
+
+	Tags.Bloc.Init( NamespaceWithSeparator );
+	Tags.Bloc.Append( BLOC_TAG );
+}
+
+class enlarged_browser___
+: public browser___
+{
+private:
+	flx::E_STRING_IFLOW__ _StringFlow;
+	flf::file_iflow___ _FileFlow;
+	xtf::extended_text_iflow__ _XFlow;
+	str::string _Directory;
+public:
+	void Init(
+		const str::string_ &Directory,
+		xtf::extended_text_iflow__ &Flow )
+	{
+		_Directory.Init( Directory );
+		browser___::Init( Flow );
+	}
+	bso::bool__ Init(
+		const str::string_ &Directory,
+		const str::string_ &FileName,
+		str::string_ &NewDirectory )
+	{
+		bso::bool__ Success = false;
+	ERRProlog
+		FNM_BUFFER___ HandledFileNameBuffer;
+		const char *HandledFileName;
+		STR_BUFFER___ DirectoryBuffer, FileNameBuffer;
+	ERRBegin
+		_Directory.Init( Directory );
+
+		HandledFileName = fnm::BuildFileName( _Directory.Convert( DirectoryBuffer ), FileName.Convert( FileNameBuffer ), "", HandledFileNameBuffer );
+
+		if ( _FileFlow.Init( fnm::CorrectLocation( HandledFileName, DirectoryBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess )
+			ERRReturn;
+
+		_FileFlow.EOFD( XTF_EOXT );
+
+		_XFlow.Init( _FileFlow );
+
+		NewDirectory.Init( DirectoryBuffer );
+
+		Success = true;
+
+		browser___::Init( _XFlow );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Success;
+	}
+	void Init(
+		const str::string_ &Directory,
+		const str::string_ &Content,
+		const xtf::coord__ &Coord )
+	{
+		_StringFlow.Init( Content );
+
+		_StringFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
+
+		_XFlow.Init( _StringFlow, Coord );
+
+		browser___::Init( _XFlow );
+	}
+};
+
+void xml::extended_browser___::Init(
+	xtf::extended_text_iflow__ &Flow,
+	const str::string_ &Directory,
+	const str::string_ &Namespace )
+{
+	enlarged_browser___ *Browser = new enlarged_browser___;
+
+	if ( Browser == NULL )
+		ERRa();
+
+	Browser->Init( Directory, Flow );
+
+	_CurrentBrowser = Browser;
+
+	_NamespaceWithSeparator.Init( Namespace );
+	_NamespaceWithSeparator.Append( ':' );
+
+	SetTags_( _NamespaceWithSeparator, _Tags );
+
+	_GuiltyFileName.Init();
+
+	_Dump.Init();
+
+	_Repository.Init();
+
+	_Status = xs_Undefined;
+}
+
+static extended_status__ AwaitingToken_(
+	browser___ &Browser,
+	token__ AwaitedToken,
+	extended_status__ StatusIfNotAwaitedToken )
+{
+	token__ Token = xml::t_Undefined;
+
+	switch ( Token = Browser.Browse() ) {
+		case tProcessed:
+			ERRc();
+			break;
+		case tError:
+			return Convert_( Browser.Status() );
+			break;
+		default:
+			if ( Token != AwaitedToken )
+				return StatusIfNotAwaitedToken;
+			break;
+	}
+
+	return xsOK;
+}
+
+static extended_status__ GetNameAttributeValue_(
+	browser___ &Browser,
+	str::string_ &Value )
+{
+	extended_status__ Status = AwaitingToken_( Browser, tAttribute, xsMissingNameAttribute );
+
+	if ( Status != xsOK )
+		return Status;
+
+	if ( Browser.AttributeName() != NAME_ATTRIBUTE )
+		return xsUnexpectedAttribute;
+
+	Value = Browser.GetValue();
+
+	return xsOK;
+}
+
+static extended_status__ RetrieveTree_(
+	browser___ &Browser,
+	str::string_ &Tree )
+{
+	bso::ulong__ Nesting = 0;
+	bso::bool__ Continue = true;
+
+	while ( Continue ) {
+		switch ( Browser.Browse( tfStartTag | tfEndTag ) ) {
+		case tStartTag:
+			Tree.Append( Browser.GetDump().Data );
+			if ( Nesting == BSO_ULONG_MAX )
+				ERRc();
+			break;
+		case tEndTag:
+			switch ( Nesting ) {
+			case 0:
+				ERRc();
+				break;
+			case 1:
+				Continue = false;
+				break;
+			default:
+				Nesting--;
+				break;
+			}
+		case tError:
+			return (extended_status__)Browser.Status();
+			break;
+		case tProcessed:
+			ERRc();
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	return xsOK;
+}
+
+static extended_status__ GetExpandNameAndContent_(
+	browser___ &Browser,
+	str::string_ &Name,
+	str::string_ &Content )
+{
+	extended_status__ Status = xsOK;
+
+	Name.Init();
+
+	if ( ( Status = GetNameAttributeValue_( Browser, Name ) ) != xsOK )
+		return Status;
+
+	if ( ( Status = AwaitingToken_( Browser, tStartTagClosed, xsUnexpectedAttribute ) ) != xsOK )
+		return Status;
+
+	if ( ( Status = RetrieveTree_( Browser, Content ) ) != xsOK )
+		return Status;
+
+	return xsOK;
+}
+
+
+bso::bool__ xml::extended_browser___::_HandleDefineTag( void )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string Name, Content;
+	coord__ Coord;
+ERRBegin
+	Coord = _Browser().GetCurrentCoord();
+
+	Name.Init();
+	Content.Init();
+
+	if ( ( _Status = GetExpandNameAndContent_( _Browser(), Name, Content ) ) != xsOK )
+		ERRReturn;
+
+	_Repository.Store( Name, Coord, Content );
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+static enum expand_type__ {
+	etMacro,
+	etFile,
+	et_amount,
+	et_Undefined
+};
+
+static inline expand_type__ GetExpandTypeAndValue_(
+	browser___ &Browser,
+	str::string_ &Value,
+	extended_status__ &Status )	// Siginfiant seulement si valeur retournée == 'et_Undefined'.
+{
+	expand_type__ Type = et_Undefined;
+ERRProlog
+	str::string AttributeName;
+ERRBegin
+	AttributeName.Init();
+
+	if ( ( Status = AwaitingToken_( Browser, tAttribute, xsMissingSelectOrHRefAttribute ) ) != xsOK )
+		ERRReturn;
+
+	if ( Browser.AttributeName() == HREF_ATTRIBUTE )
+		Type = etFile;
+	else if ( Browser.AttributeName() == SELECT_ATTRIBUTE )
+		Type = etMacro;
+	else {
+		Status = xsUnknownAttribute;
+		ERRReturn;
+	}
+
+	Value = Browser.GetValue();
+ERRErr
+ERREnd
+ERREpilog
+	return Type;
+}
+
+bso::bool__ xml::extended_browser___::_HandleMacroExpand( const str::string_ &MacroName )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	enlarged_browser___ *Browser = NULL;
+	epeios::row__ Row = NONE;
+	xtf::coord__ Coord;
+	str::string Content;
+ERRBegin
+	Content.Init();
+
+	if ( !_Repository.Get( MacroName, Coord, Content ) ) {
+		_Status = xsUnknownMacro;
+		ERRReturn;
+	}
+
+	if ( ( Browser = new enlarged_browser___ ) == NULL )
+		ERRa();
+
+//	Browser->Init( _Content, Coord );
+
+	_BrowserStack.Push( _CurrentBrowser );
+
+	_CurrentBrowser = Browser;
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ xml::extended_browser___::_HandleFileExpand( const str::string_ &File )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	enlarged_browser___ *Browser = NULL;
+	epeios::row__ Row = NONE;
+	xtf::coord__ Coord;
+	str::string Content;
+ERRBegin
+	Content.Init();
+
+	if ( !_Repository.Get( MacroName, Coord, Content ) ) {
+		_Status = xsUnknownMacro;
+		ERRReturn;
+	}
+
+	if ( ( Browser = new enlarged_browser___ ) == NULL )
+		ERRa();
+
+	Browser->Init( Content, Coord );
+
+	_BrowserStack.Push( _CurrentBrowser );
+
+	_CurrentBrowser = Browser;
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+token__ xml::extended_browser___::_HandleExpandTag( void )
+{
+	token__ Token = tError;
+ERRProlog
+	expand_type__ Type = et_Undefined;
+	str::string Value;
+ERRBegin
+	switch ( GetExpandTypeAndValue_( _Browser(), Value, _Status ) ) {
+	case etMacro:
+		if ( _HandleMacroExpand( Value ) )	// Met à jour le contenu de '_Status' si nécessaire.
+			Token = t_Undefined;	// Pour signaler de poursuivre le 'browsing', le 'browser' en cours étant celui correspondant à la macro de nom 'Value'.
+		break;
+	case etFile:
+		if ( _HandleFileExpand( Value ) )	// Met à jour le contenu de '_Status' si nécessaire.
+			Token = t_Undefined;	// Pour signaler de poursuivre le 'browsing', le 'browser' en cours étant celui correspondant au ficher de nom 'Value'.
+		break;
+	case et_Undefined:
+		ERRReturn;
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Token;
+}
+
+token__  xml::extended_browser___::_HandlePreprocessorTag( const str::string_ &TagName )
+{
+	switch ( GetTag_( TagName, _Tags ) ) {
+	case tUser:
+		// Ammené à disparaître dés que l'on aura basculé sur la nouvrl version de 'l'extended_browser'.
+		ERRc();
+		break;
+	case tDefine:
+		if ( !_HandleDefineTag() )
+			return tError;
+		else
+			return t_Undefined;	// Pour signaler que l'on continue le 'browsing'.
+		break;
+	case tExpand:
+		return _HandleExpandTag();
+		break;
+	case tIfeq:
+		break;
+	case tBloc:
+		break;
+	case tSet:
+		break;
+	default:
+		return tError;
+		break;
+	}
+
+	return t_Undefined;	// Pour éviter un 'warning'.
+
+}
+
+bso::bool__ IsTokenToReport_(
+	token__ Token,
+	int TokenToReport )
+{
+	return ( ( 1 << Token ) & TokenToReport )
+		    || ( Token == tProcessed )
+			|| ( Token == tError );
+}
+
+token__ xml::extended_browser___::Browse( int TokenToReport )
+{
+	bso::bool__ Continue = true;
+	token__ Token = t_Undefined;
+
+	_Dump.Init();
+
+	while ( Continue ) {
+		switch( Token = _Browser().Browse( tfAll ) ) {
+		case tProcessingInstruction:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		case tStartTag:
+			if ( BelongsToNamespace_( _Browser().GetTagName(), _NamespaceWithSeparator ) )
+				Token = _HandlePreprocessorTag( _Browser().TagName() );
+			else
+				_Dump.Append( _Browser().GetDump() );
+			break;
+		case tStartTagClosed:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		case tAttribute:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		case tValue:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		case tEndTag:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		case tProcessed:
+			_Dump.Append( _Browser().GetDump() );
+
+			if ( _BrowserStack.Amount() ) {
+				delete _CurrentBrowser;
+				_CurrentBrowser = _BrowserStack.Pop();
+				Token = t_Undefined;	// Pour continer le 'browsing'.
+			}
+
+			break;
+		case tError:
+			_Dump.Append( _Browser().GetDump() );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		Continue = !IsTokenToReport_( Token, TokenToReport );
+	}
+
+	return Token;
+}
+
+#endif
 
 E_ROW( rrow__ );	// Repository row.
 
@@ -1517,18 +2039,6 @@ public:
 	}
 };
 
-enum tag__ {
-	tUser,	// Balise n'appartenant pas au 'namespace'.
-	tDefine,
-	tExpand,
-	tIfeq,
-	tBloc,
-	tSet,
-	t_amount,
-	// Balise appartenant au namesapce mais non reconnue !
-	t_Undefined
-};
-
 class donothing_callback__
 : public callback__
 {
@@ -1601,7 +2111,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -1609,7 +2119,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -1619,7 +2129,7 @@ protected:
 		const str::string_ &Value,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -1628,7 +2138,7 @@ protected:
 		const str::string_ &Value,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -1636,7 +2146,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -1647,17 +2157,6 @@ public:
 		_Flow = &Flow;
 	}
 };
-
-#define NAME_ATTRIBUTE		"name"
-#define SELECT_ATTRIBUTE	"select"
-#define HREF_ATTRIBUTE		"href"
-#define VALUE_ATTRIBUTE		"value"
-
-#define DEFINE_TAG	"define"
-#define EXPAND_TAG	"expand"
-#define IFEQ_TAG	"ifeq"
-#define SET_TAG		"set"
-#define BLOC_TAG	"bloc"
 
 #undef RETURN
 
@@ -2088,7 +2587,7 @@ protected:
 		}
 		case tExpand:
 			if ( _SelectAttribute.Amount() == 0 )
-				RETURN( xsMissingSelectAttribute )
+				RETURN( xsMissingSelectOrHRefAttribute )
 
 			_RepositoryStack.Push( _CurrentRepository );
 			_CurrentRepository.Init();
@@ -2174,7 +2673,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Purge();
+			_BlocPendingDump.PurgeData();
 		}
 
 		switch ( _GetTag( Name ) ) {
@@ -2271,7 +2770,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Purge();
+			_BlocPendingDump.PurgeData();
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
@@ -2322,7 +2821,7 @@ private:
 protected:
 	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
-		_Writer.GetFlow() << Dump.RawData;
+		_Writer.GetFlow() << Dump.Data;
 		
 		if ( _Writer.Indent() )
 			_Writer.GetFlow() << txf::nl;
@@ -2531,6 +3030,8 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

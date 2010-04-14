@@ -39,17 +39,17 @@
 		<xpp:expand select="Windows"/>
 	</xpp:ifeq>
 	<SomeFile>
+		<xpp:define name="FileName">
+			<xpp:bloc>SomeFile</xpp:bloc>
+		</xpp:define>
 		<xpp:expand select="File">
-			<xpp:define name="FileName">
-				<xpp:bloc>SomeFile</xpp:bloc>
-			</xpp:define>
 		</xpp:expand>
 	</SomeFile>
 	<OtherFile>
+		<xpp:define name="FileName">
+			<xpp:bloc>OtherFile</xpp:bloc>
+		</xpp:define>
 		<xpp:expand select="File">
-			<xpp:define name="FileName">
-				<xpp:bloc>OtherFile</xpp:bloc>
-			</xpp:define>
 		</xpp:expand>
 	</OtherFile>
 	<SomeURL>

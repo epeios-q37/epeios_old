@@ -1337,8 +1337,6 @@ ERRBegin
 			_Token = tProcessed;
 
 	_Status = sOK;
-
-	_Dump = _Flow.Dump;
 ERRErr
 ERREnd
 ERREpilog
@@ -1380,7 +1378,7 @@ enum tag__ {
 #define IFEQ_TAG	"ifeq"
 #define SET_TAG		"set"
 #define BLOC_TAG	"bloc"
-
+#if 0
 void xml::extended_browser___::_DeleteBrowsers( void )
 {
 	if ( _CurrentBrowser != NULL )
@@ -1436,32 +1434,38 @@ private:
 	flx::E_STRING_IFLOW__ _StringFlow;
 	flf::file_iflow___ _FileFlow;
 	xtf::extended_text_iflow__ _XFlow;
+	str::string _Directory;
 public:
-	void Init( xtf::extended_text_iflow__ &Flow )
+	void Init(
+		const str::string_ &Directory,
+		xtf::extended_text_iflow__ &Flow )
 	{
+		_Directory.Init( Directory );
 		browser___::Init( Flow );
 	}
 	bso::bool__ Init(
-		const str::string_ &Location,
+		const str::string_ &Directory,
 		const str::string_ &FileName,
-		str::string_ &NewLocation )
+		str::string_ &NewDirectory )
 	{
 		bso::bool__ Success = false;
 	ERRProlog
 		FNM_BUFFER___ HandledFileNameBuffer;
 		const char *HandledFileName;
-		STR_BUFFER___ LocationBuffer, FileNameBuffer;
+		STR_BUFFER___ DirectoryBuffer, FileNameBuffer;
 	ERRBegin
-		HandledFileName = fnm::BuildFileName( Location.Convert( LocationBuffer ), FileName.Convert( FileNameBuffer ), "", HandledFileNameBuffer );
+		_Directory.Init( Directory );
 
-		if ( _FileFlow.Init( fnm::CorrectLocation( HandledFileName, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess )
+		HandledFileName = fnm::BuildFileName( _Directory.Convert( DirectoryBuffer ), FileName.Convert( FileNameBuffer ), "", HandledFileNameBuffer );
+
+		if ( _FileFlow.Init( fnm::CorrectLocation( HandledFileName, DirectoryBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess )
 			ERRReturn;
 
 		_FileFlow.EOFD( XTF_EOXT );
 
 		_XFlow.Init( _FileFlow );
 
-		NewLocation.Append( LocationBuffer );
+		NewDirectory.Init( DirectoryBuffer );
 
 		Success = true;
 
@@ -1471,13 +1475,16 @@ public:
 	ERREpilog
 		return Success;
 	}
-	void Init( const str::string_ &Content )
+	void Init(
+		const str::string_ &Directory,
+		const str::string_ &Content,
+		const xtf::coord__ &Coord )
 	{
 		_StringFlow.Init( Content );
 
 		_StringFlow.EOFD( XTF_EOXT );	// Normalement inutile (la conformité au format XML à déjà été traité), mais aide au déboguage.
 
-		_XFlow.Init( _StringFlow );
+		_XFlow.Init( _StringFlow, Coord );
 
 		browser___::Init( _XFlow );
 	}
@@ -1485,6 +1492,7 @@ public:
 
 void xml::extended_browser___::Init(
 	xtf::extended_text_iflow__ &Flow,
+	const str::string_ &Directory,
 	const str::string_ &Namespace )
 {
 	enlarged_browser___ *Browser = new enlarged_browser___;
@@ -1492,7 +1500,7 @@ void xml::extended_browser___::Init(
 	if ( Browser == NULL )
 		ERRa();
 
-	Browser->Init( Flow );
+	Browser->Init( Directory, Flow );
 
 	_CurrentBrowser = Browser;
 
@@ -1500,6 +1508,8 @@ void xml::extended_browser___::Init(
 	_NamespaceWithSeparator.Append( ':' );
 
 	SetTags_( _NamespaceWithSeparator, _Tags );
+
+	_GuiltyFileName.Init();
 
 	_Dump.Init();
 
@@ -1558,7 +1568,7 @@ static extended_status__ RetrieveTree_(
 	while ( Continue ) {
 		switch ( Browser.Browse( tfStartTag | tfEndTag ) ) {
 		case tStartTag:
-			Tree.Append( Browser.GetDump().RawData );
+			Tree.Append( Browser.GetDump().Data );
 			if ( Nesting == BSO_ULONG_MAX )
 				ERRc();
 			break;
@@ -1672,6 +1682,68 @@ ERREpilog
 	return Type;
 }
 
+bso::bool__ xml::extended_browser___::_HandleMacroExpand( const str::string_ &MacroName )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	enlarged_browser___ *Browser = NULL;
+	epeios::row__ Row = NONE;
+	xtf::coord__ Coord;
+	str::string Content;
+ERRBegin
+	Content.Init();
+
+	if ( !_Repository.Get( MacroName, Coord, Content ) ) {
+		_Status = xsUnknownMacro;
+		ERRReturn;
+	}
+
+	if ( ( Browser = new enlarged_browser___ ) == NULL )
+		ERRa();
+
+//	Browser->Init( _Content, Coord );
+
+	_BrowserStack.Push( _CurrentBrowser );
+
+	_CurrentBrowser = Browser;
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ xml::extended_browser___::_HandleFileExpand( const str::string_ &File )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	enlarged_browser___ *Browser = NULL;
+	epeios::row__ Row = NONE;
+	xtf::coord__ Coord;
+	str::string Content;
+ERRBegin
+	Content.Init();
+
+	if ( !_Repository.Get( MacroName, Coord, Content ) ) {
+		_Status = xsUnknownMacro;
+		ERRReturn;
+	}
+
+	if ( ( Browser = new enlarged_browser___ ) == NULL )
+		ERRa();
+
+	Browser->Init( Content, Coord );
+
+	_BrowserStack.Push( _CurrentBrowser );
+
+	_CurrentBrowser = Browser;
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 token__ xml::extended_browser___::_HandleExpandTag( void )
 {
@@ -1682,9 +1754,12 @@ ERRProlog
 ERRBegin
 	switch ( GetExpandTypeAndValue_( _Browser(), Value, _Status ) ) {
 	case etMacro:
-
+		if ( _HandleMacroExpand( Value ) )	// Met à jour le contenu de '_Status' si nécessaire.
+			Token = t_Undefined;	// Pour signaler de poursuivre le 'browsing', le 'browser' en cours étant celui correspondant à la macro de nom 'Value'.
 		break;
 	case etFile:
+		if ( _HandleFileExpand( Value ) )	// Met à jour le contenu de '_Status' si nécessaire.
+			Token = t_Undefined;	// Pour signaler de poursuivre le 'browsing', le 'browser' en cours étant celui correspondant au ficher de nom 'Value'.
 		break;
 	case et_Undefined:
 		ERRReturn;
@@ -1790,6 +1865,8 @@ token__ xml::extended_browser___::Browse( int TokenToReport )
 
 	return Token;
 }
+
+#endif
 
 E_ROW( rrow__ );	// Repository row.
 
@@ -2034,7 +2111,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -2042,7 +2119,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -2052,7 +2129,7 @@ protected:
 		const str::string_ &Value,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -2061,7 +2138,7 @@ protected:
 		const str::string_ &Value,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -2069,7 +2146,7 @@ protected:
 		const str::string_ &Name,
 		const dump_ &Dump )
 	{
-		_Store( Dump.RawData );
+		_Store( Dump.Data );
 
 		return true;
 	}
@@ -2596,7 +2673,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Purge();
+			_BlocPendingDump.PurgeData();
 		}
 
 		switch ( _GetTag( Name ) ) {
@@ -2693,7 +2770,7 @@ protected:
 
 			_BlocPendingTag.Init();
 			_BlocPendingValue.Init();
-			_BlocPendingDump.Purge();
+			_BlocPendingDump.PurgeData();
 
 			_IsDefining = false;
 			_ExpandNestingLevel = 0;
@@ -2744,7 +2821,7 @@ private:
 protected:
 	virtual bso::bool__ XMLProcessingInstruction( const dump_ &Dump )
 	{
-		_Writer.GetFlow() << Dump.RawData;
+		_Writer.GetFlow() << Dump.Data;
 		
 		if ( _Writer.Indent() )
 			_Writer.GetFlow() << txf::nl;

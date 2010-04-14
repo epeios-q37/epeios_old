@@ -330,6 +330,17 @@ namespace flw {
 		{
 			reset();
 		}
+		void Init( void )
+		{
+			if ( _Red )
+				Dismiss();
+
+			_Red = 0;
+			_Available = _Position = 0;
+			EOFD_.Data = NULL;
+			EOFD_.Size = 0;
+			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
+		}
 		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return amount of bytes red. */
 		size__ ReadUpTo(
@@ -600,6 +611,13 @@ namespace flw {
 		virtual ~oflow__( void )
 		{
 			reset();
+		}
+		void Init( void )
+		{
+			if ( _Size != _Free )
+				Synchronize();
+
+			_Written = 0;
 		}
 		//f Put up to 'Amount' bytes from 'Buffer'. Return number of bytes written.
 		size__ WriteUpTo(

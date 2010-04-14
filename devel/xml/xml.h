@@ -83,32 +83,32 @@ namespace xml {
 	class dump_ {
 	public:
 		struct s {
-			str::string_::s RawData;
+			str::string_::s Data;
 			coord__ Coord;
 		} &S_;
-		str::string_ RawData;
+		str::string_ Data;
 		dump_( s &S )
 		: S_( S ),
-		  RawData( S.RawData )
+		  Data( S.Data )
 		{
 		}
 		void reset( bso::bool__ P = true )
 		{
-			RawData.reset( P );
+			Data.reset( P );
 
 			S_.Coord.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			RawData.plug( MD );
+			Data.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			RawData.plug( MM );
+			Data.plug( MM );
 		}
 		dump_ &operator =( const dump_ &D )
 		{
-			RawData = D.RawData;
+			Data = D.Data;
 
 			S_.Coord = D.S_.Coord;
 
@@ -116,7 +116,7 @@ namespace xml {
 		}
 		void Init( void )
 		{
-			RawData.Init();
+			Data.Init();
 
 			S_.Coord.Init();
 		}
@@ -126,12 +126,12 @@ namespace xml {
 		}
 		void Append( const dump_ &Dump )
 		{
-			if ( RawData.Amount() == 0 )
+			if ( Data.Amount() == 0 )
 				this->operator =( Dump );
 			else
-				RawData.Append( Dump.RawData );
+				Data.Append( Dump.Data );
 		}
-		void Purge( void )
+		void PurgeData( void )
 		{
 			Init();
 		}
@@ -162,10 +162,10 @@ namespace xml {
 		{
 			unsigned char C = _Flow->Get();
 
-			if ( Dump.RawData.Amount() == 0 )
+			if ( Dump.Data.Amount() == 0 )
 				Dump.Set( _Flow->Coord() );
 
-			Dump.RawData.Append( C );
+			Dump.Data.Append( C );
 
 			return C;
 		}
@@ -181,11 +181,11 @@ namespace xml {
 		{
 			_Flow->Unget( C );
 
-			Dump.RawData.Truncate();
+			Dump.Data.Truncate();
 		}
 		void Purge( void )
 		{
-			Dump.Purge();
+			Dump.PurgeData();
 		}
 		void Init( xtf::extended_text_iflow__ &Flow )
 		{
@@ -198,6 +198,10 @@ namespace xml {
 		const xtf::coord__ &GetCurrentCoord( void ) const
 		{
 			return _Flow->Coord();
+		}
+		xtf::extended_text_iflow__ &Flow( void )
+		{
+			return *_Flow;
 		}
 	};
 
@@ -531,7 +535,6 @@ namespace xml {
 		str::string _TagName;
 		str::string _AttributeName;
 		str::string _Value;
-		xml::dump _Dump;
 		status__ _Status;
 	public:
 		void reset( bso::bool__ P = true )
@@ -544,7 +547,6 @@ namespace xml {
 			_TagName.reset( P );
 			_AttributeName.reset( P );
 			_Value.reset( P );
-			_Dump.reset( P );
 			_Status = s_Undefined;
 
 			_Tags.reset( P );
@@ -568,7 +570,6 @@ namespace xml {
 			_TagName.Init();
 			_AttributeName.Init();
 			_Value.Init();
-			_Dump.Init();
 		}
 		token__  Browse( int TokenToReport = tfAll );
 		token__ Browse(
@@ -584,19 +585,33 @@ namespace xml {
 			TagName = _TagName;
 			AttributeName = _AttributeName;
 			Value = _Value;
-			Dump = _Dump;
 			Status = _Status;
 
 			return Token;
 		}
+		const xtf::coord__ &DumpCoord( void ) const
+		{
+			return _Flow.Dump.Coord();
+		}
+		const str::string_ &DumpData( void ) const
+		{
+			return _Flow.Dump.Data;
+		}
+		void PurgeDumpData( void )
+		{
+			_Flow.Dump.PurgeData();
+		}
 		E_RODISCLOSE__( str::string_, TagName );
 		E_RODISCLOSE__( str::string_, AttributeName );
 		E_RODISCLOSE__( str::string_, Value );
-		E_RODISCLOSE__( dump_, Dump );
 		E_RODISCLOSE__( status__, Status );
 		const xtf::coord__ &GetCurrentCoord( void ) const
 		{
 			return _Flow.GetCurrentCoord();
+		}
+		xtf::extended_text_iflow__ &Flow( void )
+		{
+			return _Flow.Flow();
 		}
 	};
 
@@ -709,12 +724,15 @@ namespace xml {
 
 	E_AUTO( _browser_stack );
 
+#if 0
+
 	class extended_browser___
 	{
 	private:
 		browser___ *_CurrentBrowser;
 		_browser_stack _BrowserStack;
 		str::string _NamespaceWithSeparator;
+		str::string _GuiltyFileName;
 		_qualified_preprocessor_tags___ _Tags;
 		dump _Dump;
 		extended_status__ _Status;
@@ -724,6 +742,7 @@ namespace xml {
 			return *_CurrentBrowser;
 		}
 		void _DeleteBrowsers( void );
+		bso::bool__ _HandleMacroExpand( const str::string_ &MacroName );
 		token__ _HandleExpandTag( void );
 		bso::bool__ _HandleDefineTag( void );
 		token__ _HandlePreprocessorTag( const str::string_ &TagName );
@@ -739,6 +758,7 @@ namespace xml {
 			_BrowserStack.reset( P );
 
 			_NamespaceWithSeparator.reset( P );
+			_GuiltyFileName.reset( P );
 
 			_Tags.Define.reset( P );
 			_Tags.Expand.reset( P );
@@ -762,9 +782,11 @@ namespace xml {
 		}
 		void Init(
 			xtf::extended_text_iflow__ &Flow,
+			const str::string_ &Directory,
 			const str::string_ &Namespace = str::string( XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE ) );
 		token__  Browse( int TokenToReport = tfAll );
 	};
+#endif
 }
 
 /*$END$*/

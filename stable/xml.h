@@ -83,32 +83,32 @@ namespace xml {
 	class dump_ {
 	public:
 		struct s {
-			str::string_::s RawData;
+			str::string_::s Data;
 			coord__ Coord;
 		} &S_;
-		str::string_ RawData;
+		str::string_ Data;
 		dump_( s &S )
 		: S_( S ),
-		  RawData( S.RawData )
+		  Data( S.Data )
 		{
 		}
 		void reset( bso::bool__ P = true )
 		{
-			RawData.reset( P );
+			Data.reset( P );
 
 			S_.Coord.reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
-			RawData.plug( MD );
+			Data.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			RawData.plug( MM );
+			Data.plug( MM );
 		}
 		dump_ &operator =( const dump_ &D )
 		{
-			RawData = D.RawData;
+			Data = D.Data;
 
 			S_.Coord = D.S_.Coord;
 
@@ -116,7 +116,7 @@ namespace xml {
 		}
 		void Init( void )
 		{
-			RawData.Init();
+			Data.Init();
 
 			S_.Coord.Init();
 		}
@@ -126,12 +126,12 @@ namespace xml {
 		}
 		void Append( const dump_ &Dump )
 		{
-			if ( RawData.Amount() == 0 )
+			if ( Data.Amount() == 0 )
 				this->operator =( Dump );
 			else
-				RawData.Append( Dump.RawData );
+				Data.Append( Dump.Data );
 		}
-		void Purge( void )
+		void PurgeData( void )
 		{
 			Init();
 		}
@@ -140,7 +140,7 @@ namespace xml {
 
 	E_AUTO( dump )
 
-	class _flow {
+	class _flow___ {
 	private:
 		xtf::extended_text_iflow__ *_Flow;
 	public:
@@ -150,11 +150,11 @@ namespace xml {
 			Dump.reset( P );
 			_Flow = NULL;
 		}
-		_flow( void )
+		_flow___( void )
 		{
 			reset( false );
 		}
-		~_flow( void )
+		~_flow___( void )
 		{
 			reset();
 		}
@@ -162,10 +162,10 @@ namespace xml {
 		{
 			unsigned char C = _Flow->Get();
 
-			if ( Dump.RawData.Amount() == 0 )
+			if ( Dump.Data.Amount() == 0 )
 				Dump.Set( _Flow->Coord() );
 
-			Dump.RawData.Append( C );
+			Dump.Data.Append( C );
 
 			return C;
 		}
@@ -181,11 +181,11 @@ namespace xml {
 		{
 			_Flow->Unget( C );
 
-			Dump.RawData.Truncate();
+			Dump.Data.Truncate();
 		}
 		void Purge( void )
 		{
-			Dump.Purge();
+			Dump.PurgeData();
 		}
 		void Init( xtf::extended_text_iflow__ &Flow )
 		{
@@ -199,11 +199,11 @@ namespace xml {
 		{
 			return _Flow->Coord();
 		}
+		xtf::extended_text_iflow__ &Flow( void )
+		{
+			return *_Flow;
+		}
 	};
-
-	typedef _flow _flow_;
-
-
 
 	struct callback__
 	{
@@ -273,6 +273,7 @@ namespace xml {
 		xsUnexpectedAttribute,
 		xsUnknownAttribute,
 		xsMissingNameAttribute,
+		xsMissingSelectOrHRefAttribute,
 		xsMissingSelectAttribute,
 		xsMissingValueAttribute,
 		xsUnknownVariable,
@@ -530,11 +531,10 @@ namespace xml {
 		token__ _Token;
 		stk::E_XMCSTACK( str::string_ ) _Tags;
 		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
-		_flow _Flow;
+		_flow___ _Flow;
 		str::string _TagName;
 		str::string _AttributeName;
 		str::string _Value;
-		xml::dump _Dump;
 		status__ _Status;
 	public:
 		void reset( bso::bool__ P = true )
@@ -547,7 +547,6 @@ namespace xml {
 			_TagName.reset( P );
 			_AttributeName.reset( P );
 			_Value.reset( P );
-			_Dump.reset( P );
 			_Status = s_Undefined;
 
 			_Tags.reset( P );
@@ -556,7 +555,7 @@ namespace xml {
 		{
 			reset( false );
 		}
-		~browser___( void )
+		virtual ~browser___( void )
 		{
 			reset();
 		}
@@ -571,7 +570,6 @@ namespace xml {
 			_TagName.Init();
 			_AttributeName.Init();
 			_Value.Init();
-			_Dump.Init();
 		}
 		token__  Browse( int TokenToReport = tfAll );
 		token__ Browse(
@@ -587,21 +585,208 @@ namespace xml {
 			TagName = _TagName;
 			AttributeName = _AttributeName;
 			Value = _Value;
-			Dump = _Dump;
 			Status = _Status;
 
 			return Token;
 		}
+		const xtf::coord__ &DumpCoord( void ) const
+		{
+			return _Flow.Dump.Coord();
+		}
+		const str::string_ &DumpData( void ) const
+		{
+			return _Flow.Dump.Data;
+		}
+		void PurgeDumpData( void )
+		{
+			_Flow.Dump.PurgeData();
+		}
 		E_RODISCLOSE__( str::string_, TagName );
 		E_RODISCLOSE__( str::string_, AttributeName );
 		E_RODISCLOSE__( str::string_, Value );
-		E_RODISCLOSE__( dump_, Dump );
 		E_RODISCLOSE__( status__, Status );
 		const xtf::coord__ &GetCurrentCoord( void ) const
 		{
 			return _Flow.GetCurrentCoord();
 		}
+		xtf::extended_text_iflow__ &Flow( void )
+		{
+			return _Flow.Flow();
+		}
 	};
+
+#	define XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
+
+	struct _qualified_preprocessor_tags___ {
+		str::string Define;
+		str::string Expand;
+		str::string Set;
+		str::string Ifeq;
+		str::string Bloc;
+	};
+
+	E_ROW( _rrow__ );	// Repository row.
+
+	class _repository_
+	{
+	private:
+		_rrow__ _Locate( const str::string_ &Name ) const
+		{
+			ctn::E_CMITEMt( str::string_, _rrow__ ) NamesItem;
+			_rrow__ Row = Names.First();
+
+			NamesItem.Init( Names );
+
+			while ( ( Row!= NONE ) && ( NamesItem( Row ) != Name ) )
+				Row = Names.Next( Row );
+
+			return Row;
+		}
+	public:
+		struct s {
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Names;
+			bch::E_BUNCHt_( coord__, _rrow__ )::s Coords;
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Strings;
+		};
+		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Names;
+		bch::E_BUNCHt_( coord__, _rrow__ ) Coords;
+		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Strings;
+		_repository_( s &S )
+		: Names( S.Names ),
+		  Coords( S.Coords ),
+		  Strings( S.Strings )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Names.reset( P );
+			Coords.reset( P );
+			Strings.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Names.plug( MM );
+			Coords.plug( MM );
+			Strings.plug( MM );
+		}
+		_repository_ &operator =( const _repository_ &R )
+		{
+			Names = R.Names;
+			Coords = R.Coords;
+			Strings = R.Strings;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Names.Init();
+			Coords.Init();
+			Strings.Init();
+		}
+		bso::bool__ Store(
+			const str::string_ &Name,
+			coord__ Coord,
+			const str::string_ &String )
+		{
+			if ( _Locate( Name ) != NONE )
+				return false;
+
+			_rrow__ Row = Names.Append( Name );
+
+			if ( Row != Coords.Append( Coord ) )
+				ERRc();
+
+			if ( Row != Strings.Append( String ) )
+				ERRc();
+
+			return true;
+		}
+		bso::bool__ Get(
+			const str::string_ &Name,
+			coord__ &Coord,
+			str::string_ &String ) const
+		{
+			_rrow__ Row = _Locate( Name );
+
+			if ( Row == NONE )
+				return false;
+
+			Coord = Coords.Get( Row );
+
+			Strings.Recall( Row, String );
+
+			return true;
+		}
+	};
+
+	E_AUTO( _repository )
+
+	typedef stk::E_BSTACK_( browser___ * ) _browser_stack_;
+
+	E_AUTO( _browser_stack );
+
+#if 0
+
+	class extended_browser___
+	{
+	private:
+		browser___ *_CurrentBrowser;
+		_browser_stack _BrowserStack;
+		str::string _NamespaceWithSeparator;
+		str::string _GuiltyFileName;
+		_qualified_preprocessor_tags___ _Tags;
+		dump _Dump;
+		extended_status__ _Status;
+		_repository _Repository;
+		browser___ &_Browser( void )
+		{
+			return *_CurrentBrowser;
+		}
+		void _DeleteBrowsers( void );
+		bso::bool__ _HandleMacroExpand( const str::string_ &MacroName );
+		token__ _HandleExpandTag( void );
+		bso::bool__ _HandleDefineTag( void );
+		token__ _HandlePreprocessorTag( const str::string_ &TagName );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				_DeleteBrowsers();
+			}
+
+			_CurrentBrowser = NULL;
+			
+			_BrowserStack.reset( P );
+
+			_NamespaceWithSeparator.reset( P );
+			_GuiltyFileName.reset( P );
+
+			_Tags.Define.reset( P );
+			_Tags.Expand.reset( P );
+			_Tags.Set.reset( P );
+			_Tags.Ifeq.reset( P );
+			_Tags.Bloc.reset( P );
+
+			_Dump.Init();
+
+			_Repository.Init();
+
+			_Status = xs_Undefined;
+		}
+		extended_browser___( void )
+		{
+			reset( false );
+		}
+		~extended_browser___( void )
+		{
+			reset();
+		}
+		void Init(
+			xtf::extended_text_iflow__ &Flow,
+			const str::string_ &Directory,
+			const str::string_ &Namespace = str::string( XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE ) );
+		token__  Browse( int TokenToReport = tfAll );
+	};
+#endif
 }
 
 /*$END$*/

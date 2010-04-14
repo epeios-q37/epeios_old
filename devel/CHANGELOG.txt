@@ -1,5 +1,14 @@
 $Id$
 
+14/04/2010:
+	- XML :
+		- Suppression du realais vers 'Dump' inutile.
+		- Remaniement 'dump_'.
+
+11/04/2010 :
+	- FLW :
+		- Ajout méthodes 'Init(...)' à des fins de standardisation.
+
 01/04/2010 :
 	- CLNARG :
 		- Redéfinition de 'CLNARG_STRING_PARAM___(...)' pour éviter source de bogue.
@@ -11,7 +20,7 @@ $Id$
 17/03/2010 :
 	- UYM :
 		- Suppression de 'IsPlugged()'.
-		- 'plug()' est désormais de type (coid(.
+		- 'plug()' est désormais de type 'void'.
 		- La récupération de la taille de la mémoire affectée au 'driver' (lorsque c'est une mémoire persistante) est récupéré lors de l'initialisation.
 		
 15/03/2010 :

@@ -265,6 +265,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Windows Low-Level Input/Output
 &xml		&epeios		&\
 	&Extensible Markup Language
+&xpp		&epeios		&\
+	&XML PreProcessor
 &xtf		&epeios		&2000-\
 	&eXtended Text Flow.
 &xui		&epeios		&2009-\
