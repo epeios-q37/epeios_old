@@ -1022,16 +1022,21 @@ ERRBegin
 			}
 			break;
 		case cTagExpected:
-			if ( _Flow.Get() != '<' )
-				RETURN( sUnexpectedCharacter )
+			if ( _Tags.Amount() == 0 ) {
+				_Token = tProcessed;
+				Continue = false;
+			} else {
+				if ( _Flow.Get() != '<' )
+					RETURN( sUnexpectedCharacter )
 
-			HANDLE( SkipSpaces_( _Flow ) );
+				HANDLE( SkipSpaces_( _Flow ) );
 
-			if ( _Flow.View() == '/' ) {
-				_Context = cClosingTag;
-				_Flow.Get();
-			} else
-				_Context = cOpeningTag;
+				if ( _Flow.View() == '/' ) {
+					_Context = cClosingTag;
+					_Flow.Get();
+				} else
+					_Context = cOpeningTag;
+			}
 			break;
 		case cOpeningTag:
 			switch ( _Token ) {

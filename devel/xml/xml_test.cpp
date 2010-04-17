@@ -55,7 +55,7 @@ struct callback__
 	}
 	virtual bso::bool__ XMLProcessingInstruction( const xml::dump_ &Dump )
 	{
-		cout << "PI : " << Dump.RawData << txf::nl;
+		cout << "PI : " << Dump.Data << txf::nl;
 
 		return true;
 	}
