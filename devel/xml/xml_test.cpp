@@ -42,6 +42,17 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+#define TEST_CASE	1
+
+#if TEST_CASE == 1
+#	define FILE	"test.xml"
+#endif
+
+#if TEST_CASE == 2
+#	define FILE	"basic.xml"
+#endif
+
+
 struct callback__
 : public xml::callback__
 {
@@ -111,10 +122,7 @@ struct callback__
 	}
 };
 
-#define FILE	"test.xml"
-
-
-void Generic( int argc, char *argv[] )
+void TestParse( void )
 {
 ERRProlog
 //	str::string	Example;
@@ -136,7 +144,7 @@ ERRBegin
 
 	Directory = fnm::GetLocation( FILE, Buffer );
 
-	Flow.EOFD( XTF_EOXT );
+//	Flow.EOFD( XTF_EOXT );
 
 	XTFlow.Init( Flow );
 
@@ -163,6 +171,48 @@ ERRErr
 ERREnd
 ERREpilog
 }
+void TestBrowse( void )
+{
+ERRProlog
+	flf::file_iflow___ Flow;
+	xtf::extended_text_iflow__ XTFlow;
+	xml::extended_status__ Status = xml::xs_Undefined;
+	FNM_BUFFER___ Buffer;
+	lcl::locales Locales;
+	str::string Translation;
+	xml::browser___ Browser;
+ERRBegin
+	Flow.Init( FILE );
+
+	XTFlow.Init( Flow );
+
+	Browser.Init( XTFlow );
+
+	switch( Browser.Browse( 0 ) ) {
+	case xml::tProcessed:
+		cout << Browser.DumpData();
+		break;
+	case xml::tError:
+		ERRu();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+	
+	cout << txf::nl << txf::sync;
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Generic( int argc, char *argv[] )
+{
+	TestBrowse();
+//	TestParse();
+}
+
 
 int main( int argc, char *argv[] )
 {

@@ -974,13 +974,25 @@ ERREpilog
 token__ xml::browser___::Browse( int TokenToReport )
 {
 ERRProlog
-	bso::bool__ OnlySpaces = false, Continue = true;
+	bso::bool__ OnlySpaces = false, Continue = true, EOT = false;	// 'EOT' : End Of Tree.
 ERRBegin
 
 	_Flow.Purge();
 
 	while ( Continue ) {
-		if ( _Flow.EOX() )
+		EOT = false;
+
+		switch ( _Token ) {
+		case tStartTagClosed:
+		case tEndTag:
+			if ( _Tags.Amount() <= 1 )
+				EOT = true;
+			break;
+		default:
+			break;
+		}
+
+		if ( !EOT && _Flow.EOX() )
 			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
 
@@ -1022,21 +1034,16 @@ ERRBegin
 			}
 			break;
 		case cTagExpected:
-			if ( _Tags.Amount() == 0 ) {
-				_Token = tProcessed;
-				Continue = false;
-			} else {
-				if ( _Flow.Get() != '<' )
-					RETURN( sUnexpectedCharacter )
+			if ( _Flow.Get() != '<' )
+				RETURN( sUnexpectedCharacter )
 
-				HANDLE( SkipSpaces_( _Flow ) );
+			HANDLE( SkipSpaces_( _Flow ) );
 
-				if ( _Flow.View() == '/' ) {
-					_Context = cClosingTag;
-					_Flow.Get();
-				} else
-					_Context = cOpeningTag;
-			}
+			if ( _Flow.View() == '/' ) {
+				_Context = cClosingTag;
+				_Flow.Get();
+			} else
+				_Context = cOpeningTag;
 			break;
 		case cOpeningTag:
 			switch ( _Token ) {
@@ -1134,7 +1141,11 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Context = cValueExpected;
+				if ( _Tags.Amount() == 0 ) {
+					_Token = tProcessed;
+					Continue = false;
+				} else
+					_Context = cValueExpected;
 				break;
 			default:
 				ERRc();
@@ -1216,7 +1227,8 @@ ERRBegin
 
 					_Tags.Top( _TagName );
 
-					HANDLE( SkipSpaces_( _Flow ) );
+					if ( !EOT )
+						HANDLE( SkipSpaces_( _Flow ) );
 
 					_Token = tEndTag;
 
@@ -1235,7 +1247,11 @@ ERRBegin
 
 				_Tags.Pop( _TagName );
 
-				_Context = cValueExpected;
+				if ( _Tags.Amount() == 0 ) {
+					_Token = tProcessed;
+					Continue = false;
+				} else
+					_Context = cValueExpected;
 				break;
 			default:
 				ERRc();

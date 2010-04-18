@@ -1,5 +1,11 @@
 $Id$
 
+18/04/2010 :
+	- XML :
+		- Ne tente plus de lire la suite si l'arbre XML a été entièrement parcouru.
+	- XPP (création):
+		- Prise en charge de la partie préprocesseur de la bibliothèque 'XML' (reste à purger cette dernière de cette partie).
+
 14/04/2010:
 	- XML :
 		- Suppression du realais vers 'Dump' inutile.
