@@ -258,7 +258,7 @@ namespace xtf {
 			}
 		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
-		const coord__ &Coord( void )
+		const coord__ &Coord( void ) const
 		{
 			return _Coord;
 		}

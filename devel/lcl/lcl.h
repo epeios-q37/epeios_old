@@ -117,7 +117,7 @@ namespace lcl {
 			Registry.Init();
 		}
 		error__ Init(
-			xtf::extended_text_iflow__ &XTFlow,
+			flw::iflow__ &IFlow,
 			const char *RootPath,
 			const str::string_ &BaseDirectory,
 			error_details_ &ErrorDetails )
@@ -126,10 +126,10 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( XTFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( IFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
 		}
 		error__ Init(
-			xtf::extended_text_iflow__ &XTFlow,
+			flw::iflow__ &IFlow,
 			const char *RootPath,
 			const str::string_ &BaseDirectory = str::string( "" ) )
 		{
@@ -137,7 +137,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( XTFlow, RootPath, Registry, S_.Root, BaseDirectory );
+			return rgstry::FillRegistry( IFlow, RootPath, Registry, S_.Root, BaseDirectory );
 		}
 		error__ Init(
 			const char *FileName,

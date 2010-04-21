@@ -78,10 +78,8 @@ namespace xpp {
 	enum status__ {
 		sOK = xml::sOK,
 		sNoTagsAllowedHere = xml::s_amount,
-		sUnexpectedTag,
 		sUnexpectedValue,
 		sUnknownTag,
-		sAttributeAlreadyDefined,
 		sUnexpectedAttribute,
 		sUnknownAttribute,
 		sMissingNameAttribute,
@@ -90,17 +88,24 @@ namespace xpp {
 		sMissingValueAttribute,
 		sMissingNameAndValueAttributes,
 		sMissingSelectAndValueAttributes,
-		sUnknownVariable,
 		sMustBeEmpty,
 		sTooManyTags,
 		sUnableToOpenFile,
-		sNestingOverflow,
 		sUnknownMacro,
 
 		s_amount,
 		s_Undefined,
 		s_Pending,
 	};
+
+	const char *GetLabel( status__ Status );
+
+	const str::string_ &GetTranslation(
+		status__ Status,
+		const str::string_ &Language,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
+
 
 	struct _qualified_preprocessor_tags___ {
 		str::string NamespaceWithSeparator;
@@ -336,7 +341,9 @@ namespace xpp {
 		_repository_ &_Repository;
 		_variables_ &_Variables;
 		_qualified_preprocessor_tags___ &_Tags;
+		str::string _LocalizedFileName;	// Si le 'browser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
+		bso::bool__ _IgnorePreprocessingInstruction;
 		status__ _HandleDefineTag( _extended_browser___ *&Browser );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
@@ -359,8 +366,10 @@ namespace xpp {
 			_FFlow.reset( P );
 			_SFlow.reset( P );
 			_XFlow.reset( P );
+			_LocalizedFileName.reset( P );
 			_Directory.reset( P );
 			_Browser.reset( P );
+			_IgnorePreprocessingInstruction = false;
 		}
 		_extended_browser___(
 			_repository_ &Repository,
@@ -378,13 +387,16 @@ namespace xpp {
 		}
 		status__ Init(
 			xtf::extended_text_iflow__ &XFlow,
+			const str::string_ &LocalizedFileName,	// Si 'XFlow' est rattaché à un fichier, le nom de ce fichier (utile pour la gestion d'erreurs).
 			const str::string_ &Directory )
 		{
 			// _Repository.Init();
 			// _Tags.Init();
 
 			_Browser.Init( XFlow );
+			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
+			_IgnorePreprocessingInstruction = false;
 
 			return sOK;
 		}
@@ -400,6 +412,15 @@ namespace xpp {
 		{
 			return _Browser.DumpData();
 		}
+		const xtf::coord__ &DumpCoord( void ) const
+		{
+			return _Browser.DumpCoord();
+		}
+		const xtf::coord__ &Coord( void ) const
+		{
+			return _Browser.Flow().Coord();
+		}
+		E_RODISCLOSE__( str::string_, LocalizedFileName );
 	};
 
 	typedef stk::E_BSTACK_(_extended_browser___ *) _xbrowser_stack_;
@@ -441,6 +462,14 @@ namespace xpp {
 #endif
 			return *_CurrentBrowser;
 		}
+		const _extended_browser___ &_Browser( void ) const
+		{
+#ifdef XPP_DBG
+			if ( _CurrentBrowser == NULL )
+				ERRu();
+#endif
+			return *_CurrentBrowser;
+		}
 	protected:
 		virtual mdr::size__ FWFRead(
 			mdr::size__ Minimum,
@@ -475,7 +504,7 @@ namespace xpp {
 		void Init(
 			xtf::extended_text_iflow__ &XFlow,
 			const str::string_ &Directory,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+			const str::string_ &Namespace )
 		{
 			_DeleteBrowsers();
 			_Repository.Init();
@@ -486,12 +515,21 @@ namespace xpp {
 			_iflow_functions___::Init();
 			_CurrentBrowser = NewBrowser( _Repository, _Variables, _Tags );
 			_Browsers.Init();
-			if ( _Browser().Init( XFlow, Directory ) != sOK )
+			if ( _Browser().Init( XFlow, str::string(), Directory ) != sOK )
 				ERRc();
+		}
+		E_RODISCLOSE__( status__, Status );
+		const xtf::coord__ &Coord( void ) const
+		{
+			return _Browser().Coord();
+		}
+		const str::string_ &LocalizedFileName( void ) const
+		{
+			return _Browser().LocalizedFileName();
 		}
 	};
 
-	typedef flw::iflow___ _iflow___;
+	typedef flw::unsafe_iflow___ _iflow___;
 	typedef xtf::extended_text_iflow__ _extended_text_iflow__;
 
 	class preprocessing_extended_text_iflow___
@@ -522,15 +560,37 @@ namespace xpp {
 		}
 		void Init(
 			flw::iflow__ &IFlow,
-			const str::string_ &Directory )
+			const str::string_ &Directory,
+			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
 		{
 			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, Directory );
+			_FlowFunctions.Init( _XFlow, Directory, Namespace );
 			_IFlow.Init();
 			_IFlow.EOFD( XTF_EOXT );
 			_extended_text_iflow__::Init( _IFlow );
 		}
+		status__ Status( void ) const
+		{
+			return _FlowFunctions.Status();
+		}
+		const xtf::coord__ &Coord( void ) const
+		{
+			return _FlowFunctions.Coord();
+		}
+		const str::string_ &LocalizedFileName( void ) const
+		{
+			return _FlowFunctions.LocalizedFileName();
+		}
 	};
+
+	status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Namespace,
+		bso::bool__ Indent,
+		const str::string_ &Directory,
+		txf::text_oflow__ &OFlow,
+		xtf::coord__ &Coord,
+		str::string_ &GuiltyFileName );
 }
 
 /*$END$*/

@@ -185,7 +185,7 @@ ERREpilog
 	return Buffer;
 }
 
-// Remplace le tag d'indice '04 par la liste des valeurs.
+// Remplace le tag d'indice '0' par la liste des valeurs.
 static void Replace0Tag_(
 	str::string_ &Message,
 	const lcl::strings_ &Values,

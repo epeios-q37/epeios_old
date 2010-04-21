@@ -65,7 +65,6 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Registry;
 	rgstry::row__ Root;
 	xtf::coord__ Coord;
@@ -74,9 +73,6 @@ ERRProlog
 	rgstry::buffer Buffer;
 ERRBegin
 	FFlow.Init( "essai.xml" );
-	FFlow.EOFD( XTF_EOXT );
-
-	XFlow.Init( FFlow );
 
 	Registry.Init();
 
@@ -85,17 +81,17 @@ ERRBegin
 	Coord.Init();
 
 	ErrorDetails.Init();
-	Root = rgstry::Parse( XFlow, str::string( "" ), Registry, NONE, ErrorDetails );
+	Root = rgstry::Parse( FFlow, str::string( "" ), Registry, NONE, ErrorDetails );
 
 	if ( Root == NONE ) {
-	 cerr << "Erreur";
+		cerr << "Erreur";
 
-	 if ( FileName.Amount() )
-		 cerr << " fichier '" << FileName << '\'';
+		if ( FileName.Amount() )
+			cerr << " fichier '" << FileName << '\'';
 	 
-	 cerr << " ligne " << ErrorDetails.GetCoord().Line << " colonne " << ErrorDetails.GetCoord().Column << txf::nl;
+		cerr << " ligne " << ErrorDetails.GetCoord().Line << " colonne " << ErrorDetails.GetCoord().Column << txf::nl;
 
-	 ERRu();
+		ERRu();
 	}
 
 	Consult( Registry, Root );

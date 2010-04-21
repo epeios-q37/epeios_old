@@ -271,7 +271,13 @@ public:\
 
 
 //d Create a new type for a row named 'Type'.
-#define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )
+
+template <typename row> class _row__
+: public E_TYPEDEF( row, row_t__ )
+{
+}
+
+#define E_ROW( type )	_row__<type>
 
 
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro

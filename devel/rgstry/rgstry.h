@@ -67,7 +67,7 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "lstctn.h"
 #include "xtf.h"
 #include "cpe.h"
-#include "xml.h"
+#include "xpp.h"
 
 namespace rgstry {
 
@@ -758,7 +758,7 @@ namespace rgstry {
 		struct s {
 			xml::coord__ Coord;
 			epeios::row__ PathErrorRow;
-			xml::extended_status__ XMLStatus;
+			xpp::status__ XPPStatus;
 			str::string_::s FileName;
 		} &S_;
 		str::string_ FileName;
@@ -770,7 +770,7 @@ namespace rgstry {
 		{
 			S_.Coord.reset( P );
 			S_.PathErrorRow = NONE;
-			S_.XMLStatus = xml::xs_Undefined;
+			S_.XPPStatus = xpp::s_Undefined;
 
 			S_.Coord.reset( P );
 			FileName.reset( P );
@@ -787,7 +787,7 @@ namespace rgstry {
 		{
 			S_.Coord = ED.S_.Coord;
 			S_.PathErrorRow = ED.S_.PathErrorRow;
-			S_.XMLStatus = ED.S_.XMLStatus;
+			S_.XPPStatus = ED.S_.XPPStatus;
 
 			FileName = ED.FileName;
 
@@ -802,20 +802,20 @@ namespace rgstry {
 		}
 		E_RODISCLOSE_( xml::coord__, Coord );
 		E_RODISCLOSE_( epeios::row__, PathErrorRow );
-		E_RODISCLOSE_( xml::extended_status__, XMLStatus );
+		E_RODISCLOSE_( xpp::status__, XPPStatus );
 	};
 
 	E_AUTO( error_details );
 
 	row__ Parse(
-		xtf::extended_text_iflow__ &Flow,
+		flw::iflow__ &Flow,
 		const str::string_ &Directory,
 		registry_ &Registry,
 		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 		error_details_ &ErrorDetails );
 
 	inline row__ Parse(
-		xtf::extended_text_iflow__ &Flow,
+		flw::iflow__ &Flow,
 		const str::string_ &Directory,
 		registry_ &Registry,
 		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
@@ -1035,7 +1035,7 @@ namespace rgstry {
 		str::string_ &Translation );
 
 	error__ FillRegistry(
-		xtf::extended_text_iflow__ XTFlow,
+		flw::iflow__ &IFlow,
 		const str::string_ &BaseDirectory,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
@@ -1043,7 +1043,7 @@ namespace rgstry {
 		error_details_ &ErrorDetails );
 
 	error__ FillRegistry(
-		xtf::extended_text_iflow__ XTFlow,
+		flw::iflow__ &IFlow,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,

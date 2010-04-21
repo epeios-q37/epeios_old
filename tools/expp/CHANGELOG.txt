@@ -1,7 +1,10 @@
 $Id$
 
+- 21/04/2010 :
+	- Adaptation to changes in underlying libraries ('XML', notably).
+
 - 01/04/2010 :
-	- Adaptation aux modifications 'CLNARG'.
+	- Adaptation to changes in 'CLNARG'.
 
 ---------------
 Version 0.2.4 :

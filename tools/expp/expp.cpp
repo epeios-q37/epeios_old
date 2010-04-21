@@ -28,7 +28,7 @@
 #include "cio.h"
 #include "epsmsc.h"
 #include "clnarg.h"
-#include "xml.h"
+#include "xpp.h"
 #include "fnm.h"
 #include "flf.h"
 
@@ -43,7 +43,7 @@
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define CVS_DETAILS		("$Id$\b " + 5)
 
-#define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
+#define DEFAULT_NAMESPACE	XPP_PREPROCESSOR_DEFAULT_NAMESPACE
 
 using cio::cin;
 using cio::cout;
@@ -270,12 +270,12 @@ ERRProlog
 	flf::file_oflow___ OFlow;
 	txf::text_oflow__ TOFlow( OFlow );
 	flf::file_iflow___ IFlow;
-	xtf::extended_text_iflow__ XTFlow;
 	str::string ErrorFileName;
 	const char *Directory;
 	bso::bool__ BackedUp = false;
-	xml::extended_status__ Status = xml::xs_Undefined;
+	xpp::status__ Status = xpp::s_Undefined;
 	FNM_BUFFER___ Buffer;
+	xtf::coord__ Coord;
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
@@ -283,12 +283,7 @@ ERRBegin
 			ERRExit( evInputOutput );
 		}
 
-		XTFlow.Init( IFlow );
-
 		Directory = fnm::GetLocation( Source, Buffer );
-	} else {
-		cio::cinf.EOFD( XTF_EOXT );
-		XTFlow.Init( cio::cinf );
 	}
 
 	if ( Destination != NULL ) {
@@ -304,16 +299,16 @@ ERRBegin
 
 	ErrorFileName.Init();
 
-	if ( ( Status = xml::Normalize( XTFlow,
+	if ( ( Status = xpp::Process( IFlow,
 									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 									Indent, str::string( Directory == NULL ? (const char *)"" : Directory ),
-									( Destination == NULL ? cout : TOFlow ),  ErrorFileName ) ) != xml::xsOK ) {
+									( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )
 			cerr << "in file '" << ErrorFileName << "' ";
 
-		cerr << "at line " << XTFlow.Coord().Line << " position " << XTFlow.Coord().Column << " : " << xml::GetLabel( Status ) << " !" << txf::nl;
+		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::GetLabel( Status ) << " !" << txf::nl;
 
 		ERRExit( evProcessing );
 	}

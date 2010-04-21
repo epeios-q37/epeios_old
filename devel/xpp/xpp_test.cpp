@@ -52,6 +52,11 @@ using cio::cerr;
 #define FILENAME	"basic.xml"
 #endif
 
+#if TEST_CASE == 3
+#define LOCATION	""	
+#define FILENAME	"test.xml"
+#endif
+
 
 #define FILE		LOCATION FILENAME
 
@@ -63,7 +68,6 @@ ERRProlog
 	xpp::preprocessing_extended_text_iflow___ XTFlow;
 	FNM_BUFFER___ Buffer;
 	xml::browser___ Browser;
-	bso::bool__ Continue = true;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -78,16 +82,19 @@ ERRBegin
 
 	Browser.Init( XTFlow );
 
-	while ( Continue ) {
-		switch ( Browser.Browse( 0 ) ) {
-		case xml::tProcessed:
-			cout << Browser.DumpData() << txf::sync;
-			Continue = false;
-			break;
-		default:
-			ERRc();
-			break;
-		}
+	switch ( Browser.Browse( 0 ) ) {
+	case xml::tProcessed:
+		cout << Browser.DumpData() << txf::sync;
+		break;
+	case xml::tError:
+		cerr << "Error '" << xpp::GetLabel( XTFlow.Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
+		if ( XTFlow.LocalizedFileName().Amount() != 0 )
+			cerr << " in file '" << XTFlow.LocalizedFileName() << '\'';
+		cerr << " !" << txf::nl << txf::sync;
+		break;
+	default:
+		ERRc();
+		break;
 	}
 	
 	cout << txf::nl << txf::sync;

@@ -65,16 +65,15 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XFlow;
 	lcl::locales Locales;
 	lcl::strings Labels, Wordings;
 	str::string Translation;
 	lcl::strings Values;
 ERRBegin
-	FFlow.Init( "test.xml" );
-	XFlow.Init( FFlow );
+	if ( FFlow.Init( "test.xml" ) != fil::sSuccess )
+		ERRu();
 
-	if ( !Locales.Init( XFlow, "Locale[target=\"test\"]" ) )
+	if ( Locales.Init( FFlow, "Locales/Locale[target=\"test\"]" ) != rgstry::eOK )
 		ERRc();
 
 	Labels.Init();
@@ -93,7 +92,7 @@ ERRBegin
 
 	Translation.Init();
 
-	if ( Locales.GetTranslation( "UnableToCreateDatabase", "fr", Translation  ) )
+	if ( Locales.GetTranslation( str::string( "UnableToCreateDatabase" ), str::string( "fr" ), Translation  ) )
 		cout << Translation << txf::nl;
 	else
 		cout << "Not found !" << txf::nl;
@@ -103,7 +102,7 @@ ERRBegin
 
 	Translation.Init();
 
-	if ( Locales.GetTranslation( "UnableToFindFile", "en", Translation  ) )
+	if ( Locales.GetTranslation( str::string( "UnableToFindFile" ), str::string( "en" ), Translation  ) )
 		cout << Translation << txf::nl;
 	else
 		cout << "Not found !" << txf::nl;

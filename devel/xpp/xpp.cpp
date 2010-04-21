@@ -56,6 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "fnm.h"
+#include "lcl.h"
 
 using namespace xpp;
 
@@ -72,6 +73,70 @@ using xml::token__;
 #define IFEQ_TAG	"ifeq"
 #define SET_TAG		"set"
 #define BLOC_TAG	"bloc"
+
+static inline status__ Convert_( xml::status__ Status )
+{
+	return (status__)Status;
+}
+
+#define CASE( m )\
+	case s##m:\
+	return #m;\
+	break
+
+const char *xpp::GetLabel( status__ Status )
+{
+	if ( Status < Convert_( xml::s_amount ) )
+		return xml::GetLabel( (xml::status__)Status );
+
+	switch( Status ) {
+	CASE( OK );
+	CASE( NoTagsAllowedHere );
+//	CASE( UnexpectedTag );
+	CASE( UnexpectedValue );
+	CASE( UnknownTag );
+//	CASE( AttributeAlreadyDefined );
+	CASE( UnexpectedAttribute );
+	CASE( UnknownAttribute );
+	CASE( MissingNameAttribute );
+	CASE( MissingSelectOrHRefAttribute );
+	CASE( MissingSelectAttribute );
+	CASE( MissingValueAttribute );
+	CASE( MissingNameAndValueAttributes );
+	CASE( MissingSelectAndValueAttributes );
+//	CASE( UnknownVariable );
+	CASE( MustBeEmpty );
+	CASE( TooManyTags );
+	CASE( UnableToOpenFile );
+//	CASE( NestingOverflow );
+	CASE( UnknownMacro );
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+const str::string_ &xpp::GetTranslation(
+	status__ Status,
+	const str::string_ &Language,
+	const lcl::locales_ &Locales,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "EXML_" );
+
+	MessageLabel.Append( GetLabel( Status ) );
+
+	Locales.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
 
 void xpp::_qualified_preprocessor_tags___::Init( const str::string_ &Namespace )
 {
@@ -155,11 +220,6 @@ static inline tag__ GetTag_(
 		return tSet;
 
 	return ::t_Undefined;
-}
-
-static inline status__ Convert_( xml::status__ Status )
-{
-	return (status__)Status;
 }
 
 static status__ AwaitingToken_(
@@ -614,9 +674,9 @@ ERRProlog
 	const char *LocalizedFileName = NULL;
 	const char *Location = NULL;
 ERRBegin
-	LocalizedFileName =  fnm::BuildFileName( Directory.Convert( DirectoryBuffer ), FileName.Convert( MacroNameBuffer ), "", LocalizedFileNameBuffer );
+	LocalizedFileName = fnm::BuildFileName( Directory.Convert( DirectoryBuffer ), FileName.Convert( MacroNameBuffer ), "", LocalizedFileNameBuffer );
 
-	if ( _FFlow.Init( fnm::CorrectLocation( LocalizedFileName, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
+	if ( _FFlow.Init( fnm::CorrectLocation( LocalizedFileNameBuffer, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
 		Status = sUnableToOpenFile;
 		ERRReturn;
 	}
@@ -625,9 +685,11 @@ ERRBegin
 
 	_XFlow.Init( _FFlow );
 
-	Location = fnm::GetLocation( LocalizedFileName, LocationBuffer );
+	Location = fnm::GetLocation( LocalizedFileNameBuffer, LocationBuffer );
 
-	Init( _XFlow, str::string( Location ) );
+	Init( _XFlow, str::string( LocalizedFileName ), str::string( Location ) );
+
+	_IgnorePreprocessingInstruction = true;
 
 	Status = sOK;
 ERRErr
@@ -650,7 +712,9 @@ ERRBegin
 
 	_XFlow.Init( _SFlow, Coord );
 
-	Init( _XFlow, _Directory );
+	Init( _XFlow, str::string(), _Directory );
+
+	_IgnorePreprocessingInstruction = false;
 
 	Status = sOK;
 ERRErr
@@ -669,7 +733,12 @@ status__ xpp::_extended_browser___::Handle( _extended_browser___ *&Browser )
 
 	while ( Continue ) {
 		Continue = false;
-		switch ( _Browser.Browse( xml::tfAll & ~xml::tfProcessingInstruction ) ) {
+		switch ( _Browser.Browse( xml::tfAll ) ) {
+		case  xml::tProcessingInstruction:
+			if ( _IgnorePreprocessingInstruction )
+					_Browser.PurgeDumpData();
+			Continue = true;
+			break;
 		case xml::tStartTag:
 			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) )
 				if ( GetTag_( _Browser.TagName(), _Tags ) != tBloc ) {
@@ -725,7 +794,7 @@ status__ xpp::_extended_browser___::Handle( _extended_browser___ *&Browser )
 			Status = s_Pending;
 			break;
 		case xml::tError:
-			ERRl();
+			Status = Convert_( _Browser.Status() );
 			break;
 		default:
 			ERRc();
@@ -774,8 +843,11 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 
 			if ( _Browsers.Amount() )
 				_CurrentBrowser = _Browsers.Pop();
-		} else if ( _Status != sOK )
-			ERRl();
+		} else if ( _Status != sOK ) {
+			*Buffer = XTF_EOXC;	// Pour provoquer une erreur.
+			Red++;
+			break;
+		}
 
 		if ( Browser != NULL ) {
 			_Browsers.Push( _CurrentBrowser );
@@ -791,6 +863,71 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 
 	return Red;
 }
+
+status__ xpp::Process(
+	flw::iflow__ &IFlow,
+	const str::string_ &Namespace,
+	bso::bool__ Indent,
+	const str::string_ &Directory,
+	txf::text_oflow__ &OFlow,
+	xtf::coord__ &Coord,
+	str::string_ &GuiltyFileName )
+{
+	status__ Status = sOK;
+ERRProlog
+	xpp::preprocessing_extended_text_iflow___ XFlow;
+	xml::token__ Token = xml::t_Undefined;
+	bso::bool__ Continue = true;
+	xml::browser___ Browser;
+	xml::writer Writer;
+ERRBegin
+	XFlow.Init( IFlow, Directory, Namespace );
+
+	Browser.Init( XFlow );
+
+	Writer.Init( OFlow, Indent );
+
+	while ( Continue ) {
+		switch( Browser.Browse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
+		case xml::tProcessingInstruction:
+			OFlow << Browser.DumpData();
+			
+			if ( Indent )
+				OFlow << txf::nl;
+
+			break;
+		case xml::tStartTag:
+			Writer.PushTag( Browser.TagName() );
+			break;
+		case xml::tAttribute:
+			Writer.PutAttribute( Browser.AttributeName(), Browser.Value() );
+			break;
+		case xml::tValue:
+			Writer.PutValue( Browser.Value() );
+			break;
+		case xml::tEndTag:
+			Writer.PopTag();
+			break;
+		case xml::tProcessed:
+			Continue = false;
+			break;
+		case xml::tError:
+			Status = XFlow.Status();
+			Coord = XFlow.Coord();
+			GuiltyFileName = XFlow.LocalizedFileName();
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -1,5 +1,23 @@
 $Id$
 
+20/04/2010 :
+	- XML :
+		- Nettoyage (suite au transfert du préprocesseur vers 'XPP').
+	- XPP :
+		- Ajout 'Process(...)'.
+		- Nettoyage.
+		- Correction bogue provoqué lorsque qu'une 'processing instruction' est présent dans un fichier inclus.
+
+19/04/2010 :
+	- GENERAL :
+		- Adaptation aux modifications dans 'XML'; mise en oeuvre 'XPP'.
+	- XML :
+		- Rajout version 'const ...(...) const ' de certaines méthodes.
+		- 'GetLabel_(status__ ...)' devient publique ('GetLabel(extended_status__ ...)' va être déplacé ver 'xpp').
+		- Purge de tout ce qui concerne le préprocesseur (déplacé si n"cessaire dans 'XPP').
+	- XTF :
+		- Rajout d'un 'const' manquant.
+
 18/04/2010 :
 	- XML :
 		- Ne tente plus de lire la suite si l'arbre XML a été entièrement parcouru.

@@ -68,10 +68,6 @@ extern class ttr_tutor &XMLTutor;
 #include "ctn.h"
 #include "cpe.h"
 
-#ifndef XML_USE_NEW
-#	define XML__USE_OLD
-#endif
-
 // Prédéclaration.
 namespace lcl {
 	class locales_;
@@ -79,6 +75,31 @@ namespace lcl {
 
 namespace xml {
 	using xtf::coord__;
+
+	// Code d'erreur retournée par 'Parse()'.
+	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
+	enum status__ {
+		sOK,
+		sUnexpectedEOF,
+		sUnknownEntity,
+		sMissingEqualSign,
+		sBadAttributeValueDelimiter,
+		sUnexpectedCharacter,
+		sEmptyTagName,
+		sMismatchedTag,
+		s_amount,
+		s_Undefined,
+	};
+
+	const char *GetLabel( status__ Status );
+
+	// Label de message préfixé par 'EXML_'.
+	inline const str::string_ &GetTranslation(
+		status__ Status,
+		const str::string_ &Language,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
+
 
 	class dump_ {
 	public:
@@ -203,6 +224,157 @@ namespace xml {
 		{
 			return *_Flow;
 		}
+		const xtf::extended_text_iflow__ &Flow( void ) const
+		{
+			return *_Flow;
+		}
+	};
+
+	enum _context__ {
+		cHeaderExpected,
+		cTagExpected,
+		cOpeningTag,
+		cClosingTag,
+		cAttribute,
+		cValueExpected,
+		c_amount,
+		c_Undefined
+	};
+
+	enum token__
+	{
+		tProcessingInstruction,
+		tStartTag,
+		tStartTagClosed,
+		tAttribute,
+		tValue,
+		tEndTag,
+		tProcessed,	// Tout le flux XML a été traité.
+		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
+		t_amount,
+		t_Undefined
+	};
+
+#ifdef TF
+#	define XML__TF_BUFFER	TF
+#	undef TF
+#endif
+
+#define TF( name )	tf##name = ( 1 << t##name )
+
+	// Permet de n'avoir à traiter que certains 'token's.
+	enum token_flag__
+	{
+		tfNone = 0,	// Pour n'obtenir que 'tError' et 'tProcessed', qui ne peuvent être ignorés.
+		TF( ProcessingInstruction ),
+		TF( StartTag ),
+		TF( StartTagClosed ),
+		TF( Attribute ),
+		TF( Value ),
+		TF( EndTag ),
+		tfAll = ( ( 1 << t_amount ) - 1 ),
+		tfObvious = tfStartTag | tfAttribute | tValue | tfEndTag,
+	};
+
+#undef TF
+
+#ifdef XML__TF_BUFFER
+#	define	TF	XML__TF_BUFFER
+#endif
+
+	class browser___
+	{
+	private:
+		_context__ _Context;
+		token__ _Token;
+		stk::E_XMCSTACK( str::string_ ) _Tags;
+		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
+		_flow___ _Flow;
+		str::string _TagName;
+		str::string _AttributeName;
+		str::string _Value;
+		status__ _Status;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Context = c_Undefined;
+			_Token = t_Undefined;
+			_EmptyTag = false;
+			_Flow.reset( P );
+
+			_TagName.reset( P );
+			_AttributeName.reset( P );
+			_Value.reset( P );
+			_Status = s_Undefined;
+
+			_Tags.reset( P );
+		}
+		browser___( void )
+		{
+			reset( false );
+		}
+		virtual ~browser___( void )
+		{
+			reset();
+		}
+		void Init( xtf::extended_text_iflow__ &Flow )
+		{
+			reset();
+
+			_Tags.Init();
+			_Flow.Init( Flow );
+			_Context = cHeaderExpected;
+
+			_TagName.Init();
+			_AttributeName.Init();
+			_Value.Init();
+		}
+		token__  Browse( int TokenToReport = tfAll );
+		token__ Browse(
+			str::string_ &TagName,
+			str::string_ &AttributeName,
+			str::string_ &Value,	// Contient la valeur d'une balise ('tag') our d'un attribut, en fonction de la valeur retournée ('tTag' ou 'tAttribute').
+			xml::dump_ &Dump,
+			status__ &Status,
+			int TokenToReport = tfAll )	// 'Status' initialisé seulement si valeur retournée == 'tError'.
+		{
+			token__ Token = Browse();
+
+			TagName = _TagName;
+			AttributeName = _AttributeName;
+			Value = _Value;
+			Status = _Status;
+
+			return Token;
+		}
+		const xtf::coord__ &DumpCoord( void ) const
+		{
+			return _Flow.Dump.Coord();
+		}
+		const str::string_ &DumpData( void ) const
+		{
+			return _Flow.Dump.Data;
+		}
+		void PurgeDumpData( void )
+		{
+			_Flow.Dump.PurgeData();
+		}
+		E_RODISCLOSE__( str::string_, TagName );
+		E_RODISCLOSE__( str::string_, AttributeName );
+		E_RODISCLOSE__( str::string_, Value );
+		E_RODISCLOSE__( status__, Status );
+		const xtf::coord__ &GetCurrentCoord( void ) const
+		{
+			return _Flow.GetCurrentCoord();
+		}
+		xtf::extended_text_iflow__ &Flow( void )
+		{
+			return _Flow.Flow();
+		}
+		const xtf::extended_text_iflow__ &Flow( void ) const
+		{
+			return _Flow.Flow();
+		}
 	};
 
 	struct callback__
@@ -233,93 +405,10 @@ namespace xml {
 		{}
 	};
 
-	// Code d'erreur retournée par 'Parse()'.
-	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
-	enum status__ {
-		sOK,
-		sUnexpectedEOF,
-		sUnknownEntity,
-		sMissingEqualSign,
-		sBadAttributeValueDelimiter,
-		sUnexpectedCharacter,
-		sEmptyTagName,
-		sMismatchedTag,
-		sUserDefinedError,
-		s_amount,
-		s_Undefined,
-	};
-
-	// Label de message préfixé par 'EXML_'.
-	const str::string_ &GetTranslation(
-		status__ Status,
-		const str::string_ &Language,
-		const lcl::locales_ &Locales,
-		str::string_ &Translation );
-
 	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
 		callback__ &Callback );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
-
-	// Codes d'erreur retournée par 'ExtendedParse()'.
-	// Code d'erreur retournée par 'Parse()'.
-	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
-	enum extended_status__ {
-		xsOK = sOK,
-		xsNoTagsAllowedHere = s_amount,
-		xsUnexpectedTag,
-		xsUnknownTag,
-		xsAttributeAlreadyDefined,
-		xsUnexpectedAttribute,
-		xsUnknownAttribute,
-		xsMissingNameAttribute,
-		xsMissingSelectOrHRefAttribute,
-		xsMissingSelectAttribute,
-		xsMissingValueAttribute,
-		xsUnknownVariable,
-		xsNoValueAllowedHere,
-		xsTooManyTags,
-		xsUnableToOpenFile,
-		xsNestingOverflow,
-		xsUnknownMacro,
-
-		xs_amount,
-		xs_Undefined,
-	};
-
-	const char *GetLabel( extended_status__ Status );
-
-	// Label de message préfixé par 'EXML_'.
-	const str::string_ &GetTranslation(
-		extended_status__ Status,
-		const str::string_ &Language,
-		const lcl::locales_ &Locales,
-		str::string_ &Translation );
-
-#define XML_EXTENDED_PARSER_DEFAULT_NAMESPACE	"xpp"
-
-	// 'Parsing' avec gestin des extensions ('xxx:define', 'xxx:expand', 'xxx:set', 'xxx::ifeq', ...
-	// où 'xxx' est la valeur donné à 'NameSpace'.
-	extended_status__ ExtendedParse(
-		xtf::extended_text_iflow__ &Flow,
-		const str::string_ &Namespace,
-		callback__ &Callback,
-		const str::string_ &Directory,
-		str::string_ &GuiltyFileName );
-	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
-	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
-
-	/* Traite toutes les balises 'xxx:...' (où 'xxx' correspond à 'Namespace') du flux XML 'IFlow' et
-	   génère un flux XML sans balises 'xxx:...' dans 'IFlow'. */
-	extended_status__ Normalize(
-		xtf::extended_text_iflow__ &IFlow,
-		const str::string_ &Namespace,
-		bso::bool__ Indent,
-		const str::string_ &Directory,
-		txf::text_oflow__ &OFlow,
-		str::string_ &GuiltyFileName );
-	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
-	// Si 'GuiltyFileName' n'est pas vide, alors ce paramètre contient le nom du fichier contenant l'erreur.
 
 	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
 
@@ -472,321 +561,6 @@ namespace xml {
 	{
 		OFlow << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 	}
-
-	enum _context__ {
-		cHeaderExpected,
-		cTagExpected,
-		cOpeningTag,
-		cClosingTag,
-		cAttribute,
-		cValueExpected,
-		c_amount,
-		c_Undefined
-	};
-
-	enum token__
-	{
-		tProcessingInstruction,
-		tStartTag,
-		tStartTagClosed,
-		tAttribute,
-		tValue,
-		tEndTag,
-		tProcessed,	// Tout le flux XML a été traité.
-		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
-		t_amount,
-		t_Undefined
-	};
-
-#ifdef TF
-#	define XML__TF_BUFFER	TF
-#	undef TF
-#endif
-
-#define TF( name )	tf##name = ( 1 << t##name )
-
-	// Permet de n'avoir à traiter que certains 'token's.
-	enum token_flag__
-	{
-		TF( ProcessingInstruction ),
-		TF( StartTag ),
-		TF( StartTagClosed ),
-		TF( Attribute ),
-		TF( Value ),
-		TF( EndTag ),
-		tfAll = ( ( 1 << t_amount ) - 1 ),
-		tfObvious = tfStartTag | tfAttribute | tValue | tfEndTag,
-	};
-
-#undef TF
-
-#ifdef XML__TF_BUFFER
-#	define	TF	NSXPCM__TF_BUFFER
-#endif
-
-	class browser___
-	{
-	private:
-		_context__ _Context;
-		token__ _Token;
-		stk::E_XMCSTACK( str::string_ ) _Tags;
-		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
-		_flow___ _Flow;
-		str::string _TagName;
-		str::string _AttributeName;
-		str::string _Value;
-		status__ _Status;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_Context = c_Undefined;
-			_Token = t_Undefined;
-			_EmptyTag = false;
-			_Flow.reset( P );
-
-			_TagName.reset( P );
-			_AttributeName.reset( P );
-			_Value.reset( P );
-			_Status = s_Undefined;
-
-			_Tags.reset( P );
-		}
-		browser___( void )
-		{
-			reset( false );
-		}
-		virtual ~browser___( void )
-		{
-			reset();
-		}
-		void Init( xtf::extended_text_iflow__ &Flow )
-		{
-			reset();
-
-			_Tags.Init();
-			_Flow.Init( Flow );
-			_Context = cHeaderExpected;
-
-			_TagName.Init();
-			_AttributeName.Init();
-			_Value.Init();
-		}
-		token__  Browse( int TokenToReport = tfAll );
-		token__ Browse(
-			str::string_ &TagName,
-			str::string_ &AttributeName,
-			str::string_ &Value,	// Tag value or attribute value depending on returned value.
-			xml::dump_ &Dump,
-			status__ &Status,
-			int TokenToReport = tfAll )	// 'Status' initialisé seulement si 'item__' == 'iError'.
-		{
-			token__ Token = Browse();
-
-			TagName = _TagName;
-			AttributeName = _AttributeName;
-			Value = _Value;
-			Status = _Status;
-
-			return Token;
-		}
-		const xtf::coord__ &DumpCoord( void ) const
-		{
-			return _Flow.Dump.Coord();
-		}
-		const str::string_ &DumpData( void ) const
-		{
-			return _Flow.Dump.Data;
-		}
-		void PurgeDumpData( void )
-		{
-			_Flow.Dump.PurgeData();
-		}
-		E_RODISCLOSE__( str::string_, TagName );
-		E_RODISCLOSE__( str::string_, AttributeName );
-		E_RODISCLOSE__( str::string_, Value );
-		E_RODISCLOSE__( status__, Status );
-		const xtf::coord__ &GetCurrentCoord( void ) const
-		{
-			return _Flow.GetCurrentCoord();
-		}
-		xtf::extended_text_iflow__ &Flow( void )
-		{
-			return _Flow.Flow();
-		}
-	};
-
-#	define XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
-
-	struct _qualified_preprocessor_tags___ {
-		str::string Define;
-		str::string Expand;
-		str::string Set;
-		str::string Ifeq;
-		str::string Bloc;
-	};
-
-	E_ROW( _rrow__ );	// Repository row.
-
-	class _repository_
-	{
-	private:
-		_rrow__ _Locate( const str::string_ &Name ) const
-		{
-			ctn::E_CMITEMt( str::string_, _rrow__ ) NamesItem;
-			_rrow__ Row = Names.First();
-
-			NamesItem.Init( Names );
-
-			while ( ( Row!= NONE ) && ( NamesItem( Row ) != Name ) )
-				Row = Names.Next( Row );
-
-			return Row;
-		}
-	public:
-		struct s {
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Names;
-			bch::E_BUNCHt_( coord__, _rrow__ )::s Coords;
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Strings;
-		};
-		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Names;
-		bch::E_BUNCHt_( coord__, _rrow__ ) Coords;
-		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Strings;
-		_repository_( s &S )
-		: Names( S.Names ),
-		  Coords( S.Coords ),
-		  Strings( S.Strings )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			Names.reset( P );
-			Coords.reset( P );
-			Strings.reset( P );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Names.plug( MM );
-			Coords.plug( MM );
-			Strings.plug( MM );
-		}
-		_repository_ &operator =( const _repository_ &R )
-		{
-			Names = R.Names;
-			Coords = R.Coords;
-			Strings = R.Strings;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			Names.Init();
-			Coords.Init();
-			Strings.Init();
-		}
-		bso::bool__ Store(
-			const str::string_ &Name,
-			coord__ Coord,
-			const str::string_ &String )
-		{
-			if ( _Locate( Name ) != NONE )
-				return false;
-
-			_rrow__ Row = Names.Append( Name );
-
-			if ( Row != Coords.Append( Coord ) )
-				ERRc();
-
-			if ( Row != Strings.Append( String ) )
-				ERRc();
-
-			return true;
-		}
-		bso::bool__ Get(
-			const str::string_ &Name,
-			coord__ &Coord,
-			str::string_ &String ) const
-		{
-			_rrow__ Row = _Locate( Name );
-
-			if ( Row == NONE )
-				return false;
-
-			Coord = Coords.Get( Row );
-
-			Strings.Recall( Row, String );
-
-			return true;
-		}
-	};
-
-	E_AUTO( _repository )
-
-	typedef stk::E_BSTACK_( browser___ * ) _browser_stack_;
-
-	E_AUTO( _browser_stack );
-
-#if 0
-
-	class extended_browser___
-	{
-	private:
-		browser___ *_CurrentBrowser;
-		_browser_stack _BrowserStack;
-		str::string _NamespaceWithSeparator;
-		str::string _GuiltyFileName;
-		_qualified_preprocessor_tags___ _Tags;
-		dump _Dump;
-		extended_status__ _Status;
-		_repository _Repository;
-		browser___ &_Browser( void )
-		{
-			return *_CurrentBrowser;
-		}
-		void _DeleteBrowsers( void );
-		bso::bool__ _HandleMacroExpand( const str::string_ &MacroName );
-		token__ _HandleExpandTag( void );
-		bso::bool__ _HandleDefineTag( void );
-		token__ _HandlePreprocessorTag( const str::string_ &TagName );
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			if ( P ) {
-				_DeleteBrowsers();
-			}
-
-			_CurrentBrowser = NULL;
-			
-			_BrowserStack.reset( P );
-
-			_NamespaceWithSeparator.reset( P );
-			_GuiltyFileName.reset( P );
-
-			_Tags.Define.reset( P );
-			_Tags.Expand.reset( P );
-			_Tags.Set.reset( P );
-			_Tags.Ifeq.reset( P );
-			_Tags.Bloc.reset( P );
-
-			_Dump.Init();
-
-			_Repository.Init();
-
-			_Status = xs_Undefined;
-		}
-		extended_browser___( void )
-		{
-			reset( false );
-		}
-		~extended_browser___( void )
-		{
-			reset();
-		}
-		void Init(
-			xtf::extended_text_iflow__ &Flow,
-			const str::string_ &Directory,
-			const str::string_ &Namespace = str::string( XML_EXTENDED_BROWSER_DEFAULT_NAMESPACE ) );
-		token__  Browse( int TokenToReport = tfAll );
-	};
-#endif
 }
 
 /*$END$*/

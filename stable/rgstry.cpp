@@ -507,7 +507,7 @@ ERREpilog
 #ifdef RGSTRY_PREPROCESSOR_NAMESPACE
 #	define NAMESPACE RGSTRY_PREPROCESSOR_NAMESPACE
 #else
-#	define NAMESPACE "xpp"
+#	define NAMESPACE XPP_PREPROCESSOR_DEFAULT_NAMESPACE
 #endif
 
 class callback___
@@ -833,7 +833,7 @@ ERREpilog
 }
 
 row__ rgstry::Parse(
-	xtf::extended_text_iflow__ &Flow,
+	flw::iflow__ &Flow,
 	const str::string_ &Directory,
 	registry_ &Registry,
 	row__ Root,
@@ -841,18 +841,28 @@ row__ rgstry::Parse(
 {
 ERRProlog
 	callback___ Callback( Registry );
-	str::string ErrorFileName;
+	xpp::preprocessing_extended_text_iflow___ XFlow;
 ERRBegin
 	Callback.Init( Root );
 
-	ErrorFileName.Init();
+	Flow.EOFD( XTF_EOXT );
 
-	if ( ( ErrorDetails.S_.XMLStatus = xml::ExtendedParse( Flow, str::string( NAMESPACE ), Callback, Directory, ErrorFileName ) ) == xml::xsOK )
+	XFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
+
+	switch ( xml::Parse( XFlow, Callback ) ) {
+	case xml::sOK:
 		Root = Callback.GetRoot();
-	else {
+		break;
+	case xml::sUnexpectedEOF:
 		Root = NONE;
-		ErrorDetails.FileName = ErrorFileName;
-		ErrorDetails.S_.Coord = Flow.Coord();
+		ErrorDetails.FileName = XFlow.LocalizedFileName();
+		ErrorDetails.S_.Coord = XFlow.Coord();
+		ErrorDetails.S_.XPPStatus = XFlow.Status();
+		break;
+	default:
+		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut retourner normalkement que 'xml::sUndexpectedEOF'.
+		ERRc();
+		break;
 	}
 ERRErr
 ERREnd
@@ -973,7 +983,7 @@ ERRBegin
 		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Column, Buffer ) ) );
 
 		TagValue.Init();
-		xml::GetTranslation( ErrorDetails.XMLStatus(), Language, Locales, TagValue );
+		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locales, TagValue );
 		TagValues.Append( TagValue );
 
 		lcl::ReplaceTags( Translation, TagValues );
@@ -996,7 +1006,7 @@ ERREpilog
 
 
 error__ rgstry::FillRegistry(
-	xtf::extended_text_iflow__ XTFlow,
+	flw::iflow__ &IFlow,
 	const str::string_ &BaseDirectory,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
@@ -1008,8 +1018,8 @@ error__ rgstry::FillRegistry(
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
-	if ( ( RegistryRoot = rgstry::Parse( XTFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
-		if ( ErrorDetails.GetXMLStatus() == xml::xsOK )
+	if ( ( RegistryRoot = rgstry::Parse( IFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
+		if ( ErrorDetails.GetXPPStatus() == xpp::sOK )
 			return eRootPathError;
 		else
 			return eParseError;
@@ -1023,7 +1033,7 @@ error__ rgstry::FillRegistry(
 }
 
 error__ rgstry::FillRegistry(
-	xtf::extended_text_iflow__ XTFlow,
+	flw::iflow__ &IFlow,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
@@ -1035,7 +1045,7 @@ ERRProlog
 ERRBegin
 	Dummy.Init();
 
-	Error = FillRegistry( XTFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
+	Error = FillRegistry( IFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog
@@ -1053,7 +1063,6 @@ error__ rgstry::FillRegistry(
 	error__ Error = e_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XTFlow;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
@@ -1064,11 +1073,9 @@ ERRBegin
 
 	FFlow.EOFD( XTF_EOXT );
 
-	XTFlow.Init( FFlow );
-
 	Registry.Init();
 
-	Error = FillRegistry( XTFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+	Error = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
 
 	if ( Error == eParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )
