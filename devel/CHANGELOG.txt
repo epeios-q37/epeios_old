@@ -1,5 +1,9 @@
 $Id$
 
+22/04/2010 :
+	- XPP :
+		- Retrait d'un 'static' inutile.
+
 20/04/2010 :
 	- XML :
 		- Nettoyage (suite au transfert du préprocesseur vers 'XPP').

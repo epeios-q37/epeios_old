@@ -358,7 +358,7 @@ ERREpilog
 	return Status;
 }
 
-static enum expand_type__ {
+enum expand_type__ {
 	etMacro,
 	etFile,
 	et_amount,
