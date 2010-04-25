@@ -912,9 +912,9 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			Status = XFlow.Status();
-			Coord = XFlow.Coord();
-			GuiltyFileName = XFlow.LocalizedFileName();
+			Status = XFlow.Preprocessor().Status();
+			Coord = XFlow.Preprocessor().Coord();
+			GuiltyFileName = XFlow.Preprocessor().LocalizedFileName();
 			Continue = false;
 			break;
 		default:

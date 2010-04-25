@@ -371,9 +371,9 @@ static status__ GetValue_(
 		Value.Append( C );
 	}
 
-	if ( Flow.EOX() )
+/*	if ( Flow.EOX() )
 		return sUnexpectedEOF;
-
+*/
 	return sOK;
 }
 
@@ -713,9 +713,9 @@ ERRBegin
 
 					_Tags.Top( _TagName );
 
-					if ( !EOT )
+/*					if ( !EOT )
 						HANDLE( SkipSpaces_( _Flow ) );
-
+*/
 					_Token = tEndTag;
 
 					if ( ( 1 << _Token ) & TokenToReport )

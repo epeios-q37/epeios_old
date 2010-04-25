@@ -569,17 +569,9 @@ namespace xpp {
 			_IFlow.EOFD( XTF_EOXT );
 			_extended_text_iflow__::Init( _IFlow );
 		}
-		status__ Status( void ) const
+		const _preprocessing_iflow_functions___ &Preprocessor( void ) const
 		{
-			return _FlowFunctions.Status();
-		}
-		const xtf::coord__ &Coord( void ) const
-		{
-			return _FlowFunctions.Coord();
-		}
-		const str::string_ &LocalizedFileName( void ) const
-		{
-			return _FlowFunctions.LocalizedFileName();
+			return _FlowFunctions;
 		}
 	};
 

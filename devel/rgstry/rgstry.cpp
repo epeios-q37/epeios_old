@@ -855,9 +855,9 @@ ERRBegin
 		break;
 	case xml::sUnexpectedEOF:
 		Root = NONE;
-		ErrorDetails.FileName = XFlow.LocalizedFileName();
-		ErrorDetails.S_.Coord = XFlow.Coord();
-		ErrorDetails.S_.XPPStatus = XFlow.Status();
+		ErrorDetails.FileName = XFlow.Preprocessor().LocalizedFileName();
+		ErrorDetails.S_.Coord = XFlow.Preprocessor().Coord();
+		ErrorDetails.S_.XPPStatus = XFlow.Preprocessor().Status();
 		break;
 	default:
 		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut retourner normalkement que 'xml::sUndexpectedEOF'.

@@ -1,5 +1,13 @@
 $Id$
 
+25/04/2010 :
+	- XML :
+		- Correction de problèmes gênant la détection de la bonne position d'une éventuelle erreur lorsque l'on passe par 'XPP'. 
+	- XPP :
+		- Ajout de la méthode 'Preprocessor()'.
+	- RGSTRY :
+		- Adaptation aux modification 'XPP'.
+
 22/04/2010 :
 	- XPP :
 		- Retrait d'un 'static' inutile.

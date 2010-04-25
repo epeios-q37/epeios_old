@@ -28,7 +28,7 @@
 #include "cio.h"
 #include "epsmsc.h"
 #include "clnarg.h"
-#include "xml.h"
+#include "xpp.h"
 #include "fnm.h"
 #include "flf.h"
 #include "dtr.h"
@@ -530,7 +530,7 @@ E_AUTO( data )
 #define ALIASES_TAG	NAMESPACE "aliases"
 
 #define ALIAS_TAG									NAMESPACE "alias"
-#define ALIAS_LABEL_ATTRIBUTE						"Label"
+#define ALIAS_LABEL_ATTRIBUTE						"label"
 #define ALIAS_TABLE_LABEL_ATTRIBUTE					"TableLabel"
 #define ALIAS_TABLE_ALIAS_ATTRIBUTE					"TableAlias"
 #define ALIAS_RECORD_LABEL_ATTRIBUTE				"RecordLabel"
@@ -538,7 +538,7 @@ E_AUTO( data )
 #define CONTENT_TAG									NAMESPACE "content"
 #define CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE	"DefaultRecordLabelTag"
 
-#define RECORD_WEIGHT_ATTRIBUTE					NAMESPACE "weight"
+#define RECORD_WEIGHT_ATTRIBUTE					NAMESPACE "Weight"
 #define RECORD_LABEL_ATTRIBUTE					NAMESPACE "label"
 
 #define INSERTION_TAG						NAMESPACE "insert"
@@ -561,30 +561,39 @@ static void PrintPosition_(
 }
 
 static void PrintPosition_(
-	const xml::browser___ &Browser,
+	const xpp::preprocessing_extended_text_iflow___ &XFlow,
 	txf::text_oflow__ &TFlow )
 {
-	PrintPosition_( Browser.GetCurrentCoord(), TFlow );
+	PrintPosition_( XFlow.Preprocessor().Coord(), TFlow );
+
+	if ( XFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
+		TFlow << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
 }
 
 static void ReportErrorAndExit_( 
 	const str::string_ &Message,
-	xml::browser___ &Browser )
+	xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
 	cerr << Message << " at ";
-	PrintPosition_( Browser.Dump().Coord(), cerr );
+/*
+	PrintPosition_( XFlow.Coord(), cerr );
+	if ( XFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
+		cerr << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
+*/
+	PrintPosition_( XFlow, cerr );
 	cerr << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
+
 }
 
 static void ReportErrorAndExit_( 
 	const char *Message,
-	xml::browser___ &Browser )
+	xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
-	ReportErrorAndExit_( str::string( Message ), Browser );
+	ReportErrorAndExit_( str::string( Message ), XFlow );
 }
 
-static void ReportErrorAndExit_( xml::browser___ &Browser )
+static void ReportErrorAndExit_( xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
 ERRProlog
 	lcl::locales Locales;
@@ -592,8 +601,8 @@ ERRProlog
 ERRBegin
 	Locales.Init();
 	ErrorMessage.Init();
-	cerr << xml::GetTranslation( Browser.Status(), str::string(), Locales, ErrorMessage ) << " at ";
-	PrintPosition_( Browser, cerr );
+	cerr << xpp::GetTranslation( XFlow.Preprocessor().Status(), str::string(), Locales, ErrorMessage ) << " at ";
+	PrintPosition_( XFlow, cerr );
 	cerr << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 ERRErr
@@ -703,13 +712,13 @@ static void Insert_(
 static void Insert_(
 	const str::string_ &RecordLabel,
 	const records_ &Records,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	rrow__ Row = SearchRecord_( RecordLabel, Records );
 
 	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find record", Browser );
+		ReportErrorAndExit_( "Unable to find record", XFlow );
 
 	Insert_( Row, Records, Record );
 }
@@ -745,13 +754,13 @@ static void InsertUsingRecordAlias_(
 	const str::string_ &RecordAlias,
 	const record_aliases_ &Aliases,
 	const tables_ &Tables,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	epeios::row__ Row = FindRecordAlias_( RecordAlias, Aliases );
 
 	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find record alias", Browser );
+		ReportErrorAndExit_( "Unable to find record alias", XFlow );
 
 	Insert_( Row, Aliases, Tables, Record );
 }
@@ -759,24 +768,24 @@ static void InsertUsingRecordAlias_(
 static void Insert_(
 	const str::string_ &RecordLabel,
 	const table_ &Table,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
-	Insert_( RecordLabel, Table.Records, Browser, Record );
+	Insert_( RecordLabel, Table.Records, XFlow, Record );
 }
 
 static void Insert_(
 	const str::string_ &RecordLabel,	
 	trow__ TableRow,
 	const tables_ &Tables,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	ctn::E_CITEMt( table_, trow__ )Table;
 
 	Table.Init( Tables );
 
-	Insert_( RecordLabel, Table( TableRow ), Browser, Record );
+	Insert_( RecordLabel, Table( TableRow ), XFlow, Record );
 }
 
 static void Insert_(
@@ -784,14 +793,14 @@ static void Insert_(
 	epeios::row__ AliasRow,
 	const table_aliases_ &Aliases,
 	const tables_ &Tables,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	ctn::E_CMITEM( table_alias_ ) Alias;
 
 	Alias.Init( Aliases );
 
-	Insert_( RecordLabel, Alias( AliasRow ).TableRow(), Tables, Browser, Record );
+	Insert_( RecordLabel, Alias( AliasRow ).TableRow(), Tables, XFlow, Record );
 }
 
 static void InsertUsingTableAlias_(
@@ -799,39 +808,40 @@ static void InsertUsingTableAlias_(
 	const str::string_ &RecordLabel,
 	const table_aliases_ &Aliases,
 	const tables_ &Tables,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	epeios::row__ Row = FindTableAlias_( TableAlias, Aliases );
 
 	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find table alias", Browser );
+		ReportErrorAndExit_( "Unable to find table alias", XFlow );
 
-	Insert_( RecordLabel, Row, Aliases, Tables, Browser, Record );
+	Insert_( RecordLabel, Row, Aliases, Tables, XFlow, Record );
 }
 
 static void InsertUsingLabels_(
 	const str::string_ &TableLabel,
 	const str::string_ &RecordLabel,
 	const tables_ &Tables,
-	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
 	trow__ Row = SearchTable_( TableLabel, Tables );
 	ctn::E_CITEMt( table_, trow__ ) Table;
 
 	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find table", Browser );
+		ReportErrorAndExit_( "Unable to find table", XFlow );
 
 	Table.Init( Tables );
 
-	Insert_( RecordLabel, Table( Row ), Browser, Record );
+	Insert_( RecordLabel, Table( Row ), XFlow, Record );
 }
 
 static void Assign_(
 	str::string_ &Target,
 	const char *TargetLabel,
-	xml::browser___ &Browser )
+	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
 ERRProlog
 	str::string ErrorMessage;
@@ -840,12 +850,12 @@ ERRBegin
 
 	if ( Target.Amount() != 0 ) {
 		ErrorMessage.Append( " already defined" );
-		ReportErrorAndExit_( ErrorMessage, Browser );
+		ReportErrorAndExit_( ErrorMessage, XFlow );
 	}
 
 	if ( Browser.Value().Amount() == 0 ) {
 		ErrorMessage.Append( " value can not be empty" );
-		ReportErrorAndExit_( ErrorMessage, Browser );
+		ReportErrorAndExit_( ErrorMessage, XFlow );
 	}
 
 	Target = Browser.Value();
@@ -863,7 +873,7 @@ static inline bso::bool__ Test_( const str::string_ &Value )
 static void ReportInsertionErrorAndExit_(
 	const char *ItemLabel1,
 	const char *ItemLabel2,
-	xml::browser___ &Browser )
+	xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
 ERRProlog
 	str::string ErrorMessage;
@@ -874,7 +884,7 @@ ERRBegin
 	ErrorMessage.Append( ItemLabel2 );
 	ErrorMessage.Append( " cannot be define together" );
 
-	ReportErrorAndExit_( ErrorMessage, Browser );
+	ReportErrorAndExit_( ErrorMessage, XFlow );
 ERRErr
 ERREnd
 ERREpilog
@@ -884,6 +894,7 @@ ERREpilog
 //                   ^                              ^
 static void ProcessInsertion_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	const aliases_ &Aliases,
 	const tables_ &Tables,
 	record_ &Record )
@@ -900,19 +911,19 @@ ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			ReportErrorAndExit_( "No tag allowed", Browser );
+			ReportErrorAndExit_( "No tag allowed", XFlow );
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == INSERTION_TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( TableLabel, "Table label", Browser );
+				Assign_( TableLabel, "Table label", Browser, XFlow );
 			} else if ( Browser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Browser );
+				Assign_( RecordLabel, "Record label", Browser, XFlow );
 			} else if ( Browser.AttributeName() == INSERTION_TABLE_ALIAS_ATTRIBUTE ) {
-				Assign_( TableAlias, "Table alias", Browser );
+				Assign_( TableAlias, "Table alias", Browser, XFlow );
 			} else if ( Browser.AttributeName() == INSERTION_RECORD_ALIAS_ATTRIBUTE ) {
-				Assign_( RecordAlias, "Record alias", Browser );
+				Assign_( RecordAlias, "Record alias", Browser, XFlow );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			break;
 		case xml::tEndTag:
 		{
@@ -924,35 +935,35 @@ ERRBegin
 
 			if ( TA )
 				if ( TL )
-					ReportInsertionErrorAndExit_( "table alias", "table label", Browser );
+					ReportInsertionErrorAndExit_( "table alias", "table label", XFlow );
 				else if ( RA )
-					ReportInsertionErrorAndExit_( "table alias", "record alias", Browser );
+					ReportInsertionErrorAndExit_( "table alias", "record alias", XFlow );
 				else if ( !RL )
-					ReportErrorAndExit_( "Record label missing", Browser );
+					ReportErrorAndExit_( "Record label missing", XFlow );
 				else
-					InsertUsingTableAlias_( TableAlias, RecordLabel, Aliases.Tables, Tables, Browser, Record );
+					InsertUsingTableAlias_( TableAlias, RecordLabel, Aliases.Tables, Tables, XFlow, Record );
 			else if ( TL )
 				if ( RA )
-					ReportInsertionErrorAndExit_( "table label", "record alias", Browser );
+					ReportInsertionErrorAndExit_( "table label", "record alias", XFlow );
 				else if ( !RL )
-					ReportErrorAndExit_( "Record label missing", Browser );
+					ReportErrorAndExit_( "Record label missing", XFlow );
 				else
-					InsertUsingLabels_( TableLabel, RecordLabel, Tables, Browser, Record );
+					InsertUsingLabels_( TableLabel, RecordLabel, Tables, XFlow, Record );
 			else if ( RL )
 				if ( RA )
-					ReportInsertionErrorAndExit_( "record label", "record alias", Browser );
+					ReportInsertionErrorAndExit_( "record label", "record alias", XFlow );
 				else
 					ERRc();	// Normally already handled before.
 			else if ( RA )
-				InsertUsingRecordAlias_( RecordAlias, Aliases.Records, Tables, Browser, Record );
+				InsertUsingRecordAlias_( RecordAlias, Aliases.Records, Tables, XFlow, Record );
 			else
-				ReportErrorAndExit_( "Missing insertion parameters", Browser );
+				ReportErrorAndExit_( "Missing insertion parameters", XFlow );
 
 			Continue = false;
 			break;
 		}
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -968,6 +979,7 @@ ERREpilog
 //                                   ^                 ^
 static void ProcessRecord_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	const str::string_ &DefaultRecordLabelTag,
 	const aliases_ &Aliases,
 	const tables_ &Tables,
@@ -979,28 +991,31 @@ static void ProcessRecord_(
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == INSERTION_TAG )
-				ProcessInsertion_( Browser, Aliases, Tables, Record );	// '...<erpck:insert ...
-			else {												//                   ^
+			if ( BelongsToNamespace_( Browser.TagName() ) ) {
+				if ( Browser.TagName() == INSERTION_TAG )
+					ProcessInsertion_( Browser, XFlow, Aliases, Tables, Record );	// '...<erpck:insert ...
+				else																//                   ^
+					ReportErrorAndExit_( "'" INSERTION_TAG "' is the only '" NAMESPACE "' tag allowed here", XFlow );
+			} else {
 				Level++;
-				Record.Content.Append( Browser.Dump().RawData );
+				Record.Content.Append( Browser.DumpData() );
 			}
 			break;
 		case xml::tAttribute:
 			if ( BelongsToNamespace_( Browser.AttributeName() ) )
-				ReportErrorAndExit_( "Unexpected attribute", Browser );
+				ReportErrorAndExit_( "Unexpected attribute", XFlow );
 
-			Record.Content.Append( Browser.Dump().RawData );
+			Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tValue:
 			if ( Level == 0 )
-				ReportErrorAndExit_( "Missing tag", Browser );
+				ReportErrorAndExit_( "Missing tag", XFlow );
 
 			if ( Record.Label.Amount() == 0 )
 				if ( Browser.TagName() == DefaultRecordLabelTag )
 					Record.Label = Browser.Value();
 
-			Record.Content.Append( Browser.Dump().RawData );
+			Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tEndTag:
 			switch ( Level ) {
@@ -1011,10 +1026,10 @@ static void ProcessRecord_(
 				Level--;
 				break;
 			}
-			Record.Content.Append( Browser.Dump().RawData );
+			Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1027,6 +1042,7 @@ static void ProcessRecord_(
 //                       ^                            ^
 static void ProcessRecords_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	const str::string_ &DefaultRecordLabelTag,
 	const aliases_ &Aliases,
 	const tables_ &Tables,
@@ -1042,7 +1058,7 @@ ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:	// Mandatory, otherwise the tag name is missed when there is an attribute.
-			Record.Content.Append( Browser.Dump().RawData );
+			Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == RECORD_WEIGHT_ATTRIBUTE ) {
@@ -1051,17 +1067,17 @@ ERRBegin
 				Weight = Browser.Value().ToUB( &Error );
 
 				if ( Error != NONE )
-					ReportErrorAndExit_( "Bad attribute value", Browser );
+					ReportErrorAndExit_( "Bad attribute value", XFlow );
 			} else if ( Browser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
-					Assign_( Record.Label, "Record label", Browser );
+					Assign_( Record.Label, "Record label", Browser, XFlow );
 			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
-				ReportErrorAndExit_( "Unknown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			} else
-				Record.Content.Append( Browser.Dump().RawData );
+				Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tStartTagClosed:
-			Record.Content.Append( Browser.Dump().RawData );
-			ProcessRecord_( Browser, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
+			Record.Content.Append( Browser.DumpData() );
+			ProcessRecord_( Browser, XFlow, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
 			Records.Append( Record );									//                                   ^                 ^
 			Record.Init();
 			break;														
@@ -1069,7 +1085,7 @@ ERRBegin
 			Continue = false;	// '...<ercp:content ...></ercp:content>...'
 			break;				//                                      ^
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1085,6 +1101,7 @@ ERREpilog
 //                                         ^                               ^
 static void ProcessContent_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	table_ &Table,
 	const tables_ &Tables )
 {
@@ -1101,13 +1118,13 @@ ERRBegin
 				ERRc();
 
 			if ( Browser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
-				Assign_( DefaultRecordLabelTag, "Default record label", Browser );
+				Assign_( DefaultRecordLabelTag, "Default record label", Browser, XFlow );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			break;
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == CONTENT_TAG ) {
-				ProcessRecords_( Browser, DefaultRecordLabelTag, Table.Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
+				ProcessRecords_( Browser, XFlow, DefaultRecordLabelTag, Table.Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else														        			//                    ^                         ^
 				ERRc();
@@ -1116,7 +1133,7 @@ ERRBegin
 			Continue = false;	// '</erpck:content>...'
 			break;				//                  ^
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1138,6 +1155,7 @@ enum alias_type__ {
 //                  ^                       ^
 static alias_type__ ProcessAlias_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	const table_aliases_ &TableAliases,
 	const tables_ &Tables,
 	record_alias_ &RecordAlias,
@@ -1158,42 +1176,42 @@ ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			ReportErrorAndExit_( "No tag allowed here", Browser );
+			ReportErrorAndExit_( "No tag allowed here", XFlow );
 			break;
 		case xml::tAttribute:
 			if ( Browser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
 				if ( TableLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
+					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", XFlow );
 
-				Assign_( TableAliasLabel, "Table alias", Browser );
+				Assign_( TableAliasLabel, "Table alias", Browser, XFlow );
 			} else if ( Browser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
 				if ( TableAliasLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", Browser );
+					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", XFlow );
 
-				Assign_( TableLabel, "Table alias", Browser );
+				Assign_( TableLabel, "Table alias", Browser, XFlow );
 			} else if ( Browser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Browser );
+				Assign_( RecordLabel, "Record label", Browser, XFlow );
 			} else if ( Browser.AttributeName() == ALIAS_LABEL_ATTRIBUTE ) {
-				Assign_( AliasLabel, "Alias label", Browser );
+				Assign_( AliasLabel, "Alias label", Browser, XFlow );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			break;
 		case xml::tStartTagClosed:
 			if ( TableLabel.Amount() != 0 ) {
 				if ( ( TableRow = SearchTable_( TableLabel, Tables ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find table", Browser );
+					ReportErrorAndExit_( "Unable to find table", XFlow );
 			} else if ( TableAliasLabel.Amount() != 0 ) {
 				if ( ( TableRow = SearchTable_( TableAliasLabel, TableAliases ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find table", Browser );
+					ReportErrorAndExit_( "Unable to find table", XFlow );
 			} else
-				ReportErrorAndExit_( "Missing table reference", Browser );
+				ReportErrorAndExit_( "Missing table reference", XFlow );
 
 			if ( AliasLabel.Amount() == 0 )
-				ReportErrorAndExit_( "Alias label missing", Browser );
+				ReportErrorAndExit_( "Alias label missing", XFlow );
 
 			if ( RecordLabel.Amount() ) {
 				if ( ( RecordRow = SearchRecord_( RecordLabel, TableRow, Tables ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find record", Browser );
+					ReportErrorAndExit_( "Unable to find record", XFlow );
 
 				AliasType = atRecord;
 			} else
@@ -1212,7 +1230,7 @@ ERRBegin
 			}
 			break;
 		case xml::tValue:
-			ReportErrorAndExit_( "No value allowed here", Browser );
+			ReportErrorAndExit_( "No value allowed here", XFlow );
 			break;
 		case xml::tEndTag:
 			switch ( AliasType ) {
@@ -1221,7 +1239,7 @@ ERRBegin
 				Continue = false;
 				break;
 			case at_Undefined:
-				ReportErrorAndExit_( "Incomplete alias definition", Browser );
+				ReportErrorAndExit_( "Incomplete alias definition", XFlow );
 				break;
 			default:
 				ERRc();
@@ -1229,7 +1247,7 @@ ERRBegin
 			}
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1245,6 +1263,7 @@ ERREpilog
  // '<erpck:table ...>...<erpck:aliases ...>...'
  static void ProcessAliases_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	const tables_ &Tables,
 	aliases_ &Aliases )
 {
@@ -1260,7 +1279,7 @@ ERRBegin
 				RecordAlias.Init();
 				TableAlias.Init();
 
-				switch ( ProcessAlias_( Browser, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
+				switch ( ProcessAlias_( Browser, XFlow, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
 				case atRecord:																			//                  ^                       ^
 					Aliases.Records.Append( RecordAlias );
 					break;
@@ -1272,13 +1291,13 @@ ERRBegin
 					break;
 				}
 			} else
-				ReportErrorAndExit_( "Unknow tag", Browser );
+				ReportErrorAndExit_( "Unknow tag", XFlow );
 			break;
 		case xml::tEndTag:
 			Continue = false;
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1294,6 +1313,7 @@ ERREpilog
 //                               ^                         ^
 static void ProcessTable_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	table_ &Table,
 	const tables_ &Tables )
 {
@@ -1304,26 +1324,26 @@ static void ProcessTable_(
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Browser.TagName() == ALIASES_TAG )
-				ProcessAliases_( Browser, Tables, Table.Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
+				ProcessAliases_( Browser, XFlow, Tables, Table.Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
 			else if ( Browser.TagName() == CONTENT_TAG )			//                                     ^
-				ProcessContent_( Browser, Table, Tables );			// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
+				ProcessContent_( Browser, XFlow, Table, Tables );			// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
 			else													//                                     ^                              ^
-				ReportErrorAndExit_( "Unknown tag", Browser );
+				ReportErrorAndExit_( "Unknown tag", XFlow );
 			break;
 		case xml::tAttribute:
 			if ( Browser.TagName() != TABLE_TAG )
 				ERRc();
 
 			if ( Browser.AttributeName() == TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( Table.Label, "Table label", Browser );
+				Assign_( Table.Label, "Table label", Browser, XFlow );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", Browser );
+				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			break;
 		case xml::tEndTag:
 			Continue = false;
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1336,6 +1356,7 @@ static void ProcessTable_(
 //                 ^                                       ^
 static void ProcessData_(
 	xml::browser___ &Browser,
+	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	data_ &Data )
 {
 ERRProlog
@@ -1349,12 +1370,10 @@ ERRBegin
 			if ( Browser.TagName() == TABLE_TAG ) {
 				TableDetected = true;
 				Table.Init();
-				ProcessTable_( Browser, Table, Data );	// '...<erpck::table ...><erpck:content>...' -> '....</erpck:table>...'
-				Data.Append( Table );					//                   ^                                             ^
-			} else {
-				cerr << "No '" TABLE_TAG "' in data file !" << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} 
+				ProcessTable_( Browser, XFlow, Table, Data );	// '...<erpck::table ...><erpck:content>...' -> '....</erpck:table>...'
+				Data.Append( Table );							//                   ^                                             ^
+			} else
+				ReportErrorAndExit_( "Missing '" TABLE_TAG "'", XFlow );
 			break;
 		case xml::tEndTag:
 			if ( !TableDetected ) {
@@ -1364,7 +1383,7 @@ ERRBegin
 				Continue = false;
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1382,11 +1401,12 @@ static void RetrieveData_(
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
-	xtf::extended_text_iflow__ XFlow;
+	xpp::preprocessing_extended_text_iflow___ XFlow;
 	xml::browser___ Browser;
 	bso::bool__ Continue = true;
 	lcl::locales Locales;
 	bso::bool__ DataDetected = false;
+	FNM_BUFFER___ Buffer;
 ERRBegin
 	if ( FFlow.Init( DataFileName, err::hSkip ) != fil::sSuccess ) {
 		cerr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
@@ -1395,7 +1415,7 @@ ERRBegin
 
 	FFlow.EOFD( XTF_EOXT );
 
-	XFlow.Init( FFlow );
+	XFlow.Init( FFlow, str::string( fnm::GetLocation( DataFileName, Buffer ) ) );
 
 	Browser.Init( XFlow );
 
@@ -1405,11 +1425,10 @@ ERRBegin
 		switch ( Browser.Browse( xml::tfStartTagClosed ) ) {
 		case xml::tStartTagClosed:
 			if ( ( Browser.TagName() == DATA_TAG ) ) {
-				ProcessData_( Browser, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
+				ProcessData_( Browser, XFlow, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
 				DataDetected = true;			//                 ^                                       ^
 			} else {
-				cerr << '\'' << DataFileName << "' is not a '" NAME "' data file !" << txf::nl;
-				ERRExit( EXIT_FAILURE );
+				ReportErrorAndExit_( "Unexpected tag", XFlow );
 			} 
 			break;
 		case xml::tProcessed:
@@ -1420,7 +1439,7 @@ ERRBegin
 				Continue = false;
 			break;
 		case xml::tError:
-			ReportErrorAndExit_( Browser );
+			ReportErrorAndExit_( XFlow );
 			break;
 		default:
 			ERRc();
@@ -1503,7 +1522,7 @@ ERRBegin
 	Registry.Init();
 	ErrorDetails.Init();
 
-	if ( ( Error = rgstry::FillRegistry( Project, "Projects/Project[@target=\"" NAME "\"]", Registry, RegistryRoot, ErrorDetails ) ) != rgstry::eOK ) {
+	if ( ( Error = rgstry::FillRegistry( Project, "Projects/Project[target=\"" NAME "\"]", Registry, RegistryRoot, ErrorDetails ) ) != rgstry::eOK ) {
 		Locales.Init();
 		ErrorMessage.Init();
 		cerr << rgstry::GetTranslation( Error, ErrorDetails,  str::string(), Locales, ErrorMessage ) << txf::nl;
