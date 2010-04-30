@@ -163,7 +163,7 @@ namespace xtf {
 		{
 			CacheAdjust_();
 			_Coord.Line++;
-			_Coord.Column = 1;
+			_Coord.Column = 0;
 		}
 	public:
 		void reset( bool P = true )
@@ -185,7 +185,7 @@ namespace xtf {
 		//f Initialization with 'Flow'..
 		void Init(
 			flw::iflow__ &IStream,
-			coord__ Coord = coord__( 1, 1 ) )
+			coord__ Coord = coord__( 1, 0 ) )
 		{
 			_Coord.Init( Coord );
 			Position_ = Nombre_ = 0;

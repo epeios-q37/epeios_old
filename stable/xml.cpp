@@ -371,9 +371,9 @@ static status__ GetValue_(
 		Value.Append( C );
 	}
 
-/*	if ( Flow.EOX() )
+	if ( Flow.EOX() )
 		return sUnexpectedEOF;
-*/
+
 	return sOK;
 }
 
@@ -417,11 +417,8 @@ static status__ GetAttribute_(
 
 	HANDLE( GetAttributeValue_( Flow, Delimiter, Value ) );
 
-	if ( Flow.EOX() )
-		return sUnexpectedEOF;
-
 	Flow.Get();	// To skip the '"' or '''.
-
+/*
 	if ( Flow.EOX() )
 		return sUnexpectedEOF;
 
@@ -429,7 +426,7 @@ static status__ GetAttribute_(
 		return sUnexpectedCharacter;
 
 	HANDLE( SkipSpaces_( Flow ) );
-
+*/
 	return sOK;
 }
 
@@ -550,6 +547,10 @@ ERRBegin
 					_Tags.Push( _TagName );
 
 					_Token = tStartTag;
+
+					// Pour faciliter la localisation d'une erreur.
+					if ( isspace( _Flow.View() ) )
+						_Flow.Get();
 
 					if ( ( 1 << _Token ) & TokenToReport )
 						Continue = false;
@@ -688,8 +689,10 @@ ERRBegin
 						_EmptyTag = true;
 
 
-					} else
+					} else {
+						_Flow.Get();	// Pour la mise à jour des coordonnées.
 						RETURN( sUnexpectedCharacter );
+					}
 				} else if ( _Flow.View() == '>' ) {
 					_Flow.Get();
 
@@ -703,9 +706,10 @@ ERRBegin
 						Continue = false;
 
 					_EmptyTag = false;
-
+				} else {
+					_Flow.Get();	// Pour la mise à jour des coordonnées.
+					RETURN( sUnexpectedCharacter );
 				}
-
 				break;
 			case tStartTagClosed:
 				if ( _EmptyTag ) {

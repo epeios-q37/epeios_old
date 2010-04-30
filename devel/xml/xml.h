@@ -181,10 +181,10 @@ namespace xml {
 		}
 		unsigned char Get( void )
 		{
-			unsigned char C = _Flow->Get();
-
 			if ( Dump.Data.Amount() == 0 )
 				Dump.Set( _Flow->Coord() );
+
+			unsigned char C = _Flow->Get();
 
 			Dump.Data.Append( C );
 

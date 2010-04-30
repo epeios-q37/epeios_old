@@ -1261,6 +1261,7 @@ ERREpilog
 }
 
  // '<erpck:table ...>...<erpck:aliases ...>...'
+//                                     ^
  static void ProcessAliases_(
 	xml::browser___ &Browser,
 	xpp::preprocessing_extended_text_iflow___ &XFlow,
@@ -1325,9 +1326,9 @@ static void ProcessTable_(
 		case xml::tStartTag:
 			if ( Browser.TagName() == ALIASES_TAG )
 				ProcessAliases_( Browser, XFlow, Tables, Table.Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
-			else if ( Browser.TagName() == CONTENT_TAG )			//                                     ^
+			else if ( Browser.TagName() == CONTENT_TAG )					//                                     ^
 				ProcessContent_( Browser, XFlow, Table, Tables );			// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
-			else													//                                     ^                              ^
+			else															//                                     ^                              ^
 				ReportErrorAndExit_( "Unknown tag", XFlow );
 			break;
 		case xml::tAttribute:
@@ -1422,14 +1423,17 @@ ERRBegin
 	Data.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTagClosed ) ) {
+		switch ( Browser.Browse( xml::tfStartTagClosed |xml::tfAttribute ) ) {
 		case xml::tStartTagClosed:
 			if ( ( Browser.TagName() == DATA_TAG ) ) {
 				ProcessData_( Browser, XFlow, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
-				DataDetected = true;			//                 ^                                       ^
+				DataDetected = true;					//                 ^                                       ^
 			} else {
 				ReportErrorAndExit_( "Unexpected tag", XFlow );
 			} 
+			break;
+		case xml::tAttribute:
+			ReportErrorAndExit_( "Unexpected attribute", XFlow );
 			break;
 		case xml::tProcessed:
 			if ( !DataDetected ) {

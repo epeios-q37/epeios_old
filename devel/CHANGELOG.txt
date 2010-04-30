@@ -1,5 +1,18 @@
 $Id$
 
+30/04/2010 :
+	- XML :
+		- Différentes modifications pour que les coordonnées localisant une éventuelle erreur soient correctes.
+		- Corrections suite aux modifications ci-dessus pour que la nature de l'erreur soit correcte.
+	- XPP :
+		- Adaptation aux modifications 'XML'.
+	- XTF :
+		- Correction du bogue de décalage des coordonnées d'un caractère.
+
+27/04/2010 :
+	- XML :
+		- Les coordonnées du 'Dump' ne sont plus décalées de 1.
+
 25/04/2010 :
 	- XML :
 		- Correction de problèmes gênant la détection de la bonne position d'une éventuelle erreur lorsque l'on passe par 'XPP'. 
