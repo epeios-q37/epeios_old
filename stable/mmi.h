@@ -587,7 +587,10 @@ namespace mmi {
 
 	inline epeios::size__ _base_indexed_multimemory_driver__::Size( void ) const
 	{
-		return Multimemoire_->Size( _Index );
+		if ( _Index == NONE )
+			return 0;
+		else
+			return Multimemoire_->Size( _Index );
 	}
 
 	inline void indexed_multimemory_driver__::MDRStore(

@@ -40,7 +40,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	1
+#define TEST_CASE	2
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
@@ -82,14 +82,17 @@ ERRBegin
 
 	Browser.Init( XTFlow );
 
-	switch ( Browser.Browse( 0 ) ) {
+	switch ( Browser.Browse( xml::tfValue ) ) {
+	case xml::tValue:
+		cout << '>' << Browser.Value() << '<' << txf::sync;
+		break;
 	case xml::tProcessed:
 		cout << Browser.DumpData() << txf::sync;
 		break;
 	case xml::tError:
-		cerr << "Error '" << xpp::GetLabel( XTFlow.Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
-		if ( XTFlow.LocalizedFileName().Amount() != 0 )
-			cerr << " in file '" << XTFlow.LocalizedFileName() << '\'';
+		cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
+		if ( XTFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
+			cerr << " in file '" << XTFlow.Preprocessor().LocalizedFileName() << '\'';
 		cerr << " !" << txf::nl << txf::sync;
 		break;
 	default:

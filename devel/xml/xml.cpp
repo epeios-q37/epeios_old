@@ -183,19 +183,25 @@ static status__ SkipComment_( _flow___ &Flow )
 	return sOK;
 }
 
-static void GetId_(
+static mdr::size__ GetId_(
 	_flow___ &Flow,
 	str::string_ &Id )
 {
-	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) )
+	bso::ulong__ Size = 0;
+
+	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) ) {
 		Id.Append( Flow.Get() );
+		Size++;
+	}
+
+	return Size;
 }
 
-static inline void GetName_( 
+static inline mdr::size__ GetName_( 
 	_flow___ &Flow,
 	str::string_ &Name )
 {
-	GetId_( Flow, Name );
+	return GetId_( Flow, Name );
 }
 
 enum entity_handling_state__ {
@@ -401,7 +407,10 @@ static status__ GetAttribute_(
 	char Delimiter;
 	status__ Status = s_Undefined;
 
-	GetName_( Flow, Name );
+	if ( GetName_( Flow, Name ) == 0 ) {
+		Flow.Get();	// Pour ajuster les coordonnées de l'errreur.
+		return sUnexpectedCharacter;
+	}
 
 	HANDLE( SkipSpaces_( Flow ) );
 
@@ -706,11 +715,11 @@ ERRBegin
 						Continue = false;
 
 					_EmptyTag = false;
-				} else {
+				}/* else {
 					_Flow.Get();	// Pour la mise à jour des coordonnées.
 					RETURN( sUnexpectedCharacter );
 				}
-				break;
+*/				break;
 			case tStartTagClosed:
 				if ( _EmptyTag ) {
 					_TagName.Init();

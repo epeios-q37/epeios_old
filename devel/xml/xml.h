@@ -94,7 +94,7 @@ namespace xml {
 	const char *GetLabel( status__ Status );
 
 	// Label de message préfixé par 'EXML_'.
-	inline const str::string_ &GetTranslation(
+	const str::string_ &GetTranslation(
 		status__ Status,
 		const str::string_ &Language,
 		const lcl::locales_ &Locales,

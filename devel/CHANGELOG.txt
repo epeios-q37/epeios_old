@@ -1,5 +1,13 @@
 $Id$
 
+02/05/2010 :
+	- MMI :
+		- Correction bogue 'UnderlyingSize' lors de l'initialisation.
+	- XML :
+		- Correction bogue second attribut provoquant une erreur.
+	- XPP :
+		- Correction bogue de l'ajout d'un saut de ligne à la valeur d'un tag lorsque cette valeur était encadrée par un 'xcf:bloc' sur une ligne à soi.
+
 30/04/2010 :
 	- XML :
 		- Différentes modifications pour que les coordonnées localisant une éventuelle erreur soient correctes.

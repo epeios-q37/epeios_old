@@ -407,7 +407,9 @@ namespace xpp {
 			const str::string_ &Content,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory );
-		status__ Handle( _extended_browser___ *&Browser );
+		status__ Handle(
+			_extended_browser___ *&Browser,
+			bso::bool__ &StripHeadingSpaces );
 		const str::string_ &DumpData( void ) const
 		{
 			return _Browser.DumpData();

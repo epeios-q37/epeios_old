@@ -724,7 +724,9 @@ ERREpilog
 }
 
 
-status__ xpp::_extended_browser___::Handle( _extended_browser___ *&Browser )
+status__ xpp::_extended_browser___::Handle(
+	_extended_browser___ *&Browser,
+	bso::bool__ &StripHeadingSpaces )
 {
 	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
@@ -779,6 +781,7 @@ status__ xpp::_extended_browser___::Handle( _extended_browser___ *&Browser )
 				case tBloc:
 				case tIfeq:
 					Continue = true;
+					StripHeadingSpaces = true;
 					break;
 				default:
 					ERRc();
@@ -817,6 +820,11 @@ void xpp::_preprocessing_iflow_functions___::_DeleteBrowsers( void )
 		delete _Browsers.Pop();
 }
 
+static void StripHeadingSpaces_( str::string_ &Data )
+{
+	while ( ( Data.First() != NONE ) && ( isspace( Data( Data.First() ) ) ) )
+		Data.Remove( Data.First() );
+}
 
 mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 	mdr::size__ Minimum,
@@ -825,13 +833,15 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 {
 	mdr::size__ Red = Fill_( Buffer, Wanted, _Data, _Position );
 	_extended_browser___ *Browser = NULL;
+	bso::bool__ StripHeadingSpaces = false;
 
 	while ( ( Minimum > Red ) && ( _CurrentBrowser != NULL ) ) {
 		_Position = 0;
 
 		Browser = NULL;
 
-		_Status = _Browser().Handle( Browser );
+		StripHeadingSpaces = false;
+		_Status = _Browser().Handle( Browser, StripHeadingSpaces );
 
 		if ( _Status == s_Pending ) {
 #ifdef XPP_DBG
@@ -857,6 +867,9 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 		if ( _CurrentBrowser != NULL )
 			_Data.Init( _Browser().DumpData() );
 
+
+		if ( StripHeadingSpaces )
+			StripHeadingSpaces_( _Data );
 
 		Red += Fill_( Buffer, Wanted, _Data, _Position );
 	}
