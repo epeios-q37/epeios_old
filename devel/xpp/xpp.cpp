@@ -723,6 +723,16 @@ ERREpilog
 	return Status;
 }
 
+static bso::bool__ StripHeadingSpaces_(
+	xml::token__ PreviousToken,
+	const xml::browser___ &Browser,
+	const str::string_ &NamespaceWithSeparator )
+{
+	return ( PreviousToken == xml::tValue )
+		   || ( ( PreviousToken == xml::tEndTag )
+		      && BelongsToNamespace_( Browser.TagName(), NamespaceWithSeparator ) );
+}
+
 
 status__ xpp::_extended_browser___::Handle(
 	_extended_browser___ *&Browser,
@@ -730,11 +740,13 @@ status__ xpp::_extended_browser___::Handle(
 {
 	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
+	xml::token__ PreviousToken = xml::t_Undefined;
 
 	Browser = NULL;
 
 	while ( Continue ) {
 		Continue = false;
+		PreviousToken = _Browser.Token();
 		switch ( _Browser.Browse( xml::tfAll ) ) {
 		case  xml::tProcessingInstruction:
 			if ( _IgnorePreprocessingInstruction )
@@ -780,8 +792,8 @@ status__ xpp::_extended_browser___::Handle(
 				switch ( GetTag_( _Browser.TagName(), _Tags ) ) {
 				case tBloc:
 				case tIfeq:
+					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Tags.NamespaceWithSeparator );
 					Continue = true;
-					StripHeadingSpaces = true;
 					break;
 				default:
 					ERRc();
@@ -794,6 +806,7 @@ status__ xpp::_extended_browser___::Handle(
 			Status = sOK;
 			break;
 		case xml::tProcessed:
+//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Tags.NamespaceWithSeparator );
 			Status = s_Pending;
 			break;
 		case xml::tError:
@@ -843,7 +856,7 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 		StripHeadingSpaces = false;
 		_Status = _Browser().Handle( Browser, StripHeadingSpaces );
 
-		if ( _Status == s_Pending ) {
+		while ( _Status == s_Pending ) {
 #ifdef XPP_DBG
 			if ( Browser != NULL )
 				ERRc();
@@ -853,7 +866,12 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 
 			if ( _Browsers.Amount() )
 				_CurrentBrowser = _Browsers.Pop();
-		} else if ( _Status != sOK ) {
+
+			_Status = _Browser().Handle( Browser, StripHeadingSpaces );
+
+		} 
+		
+		if ( _Status != sOK ) {
 			*Buffer = XTF_EOXC;	// Pour provoquer une erreur.
 			Red++;
 			break;

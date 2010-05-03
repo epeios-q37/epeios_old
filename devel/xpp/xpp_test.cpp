@@ -68,6 +68,8 @@ ERRProlog
 	xpp::preprocessing_extended_text_iflow___ XTFlow;
 	FNM_BUFFER___ Buffer;
 	xml::browser___ Browser;
+	bso::bool__ Continue = true;
+	int TokenFlags = 0;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -82,23 +84,29 @@ ERRBegin
 
 	Browser.Init( XTFlow );
 
-	switch ( Browser.Browse( xml::tfValue ) ) {
-	case xml::tValue:
-		cout << '>' << Browser.Value() << '<' << txf::sync;
-		break;
-	case xml::tProcessed:
-		cout << Browser.DumpData() << txf::sync;
-		break;
-	case xml::tError:
-		cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
-		if ( XTFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
-			cerr << " in file '" << XTFlow.Preprocessor().LocalizedFileName() << '\'';
-		cerr << " !" << txf::nl << txf::sync;
-		break;
-	default:
-		ERRc();
-		break;
-	}
+	TokenFlags |= xml::tfValue;
+
+	while ( Continue )
+		switch ( Browser.Browse( TokenFlags ) ) {
+		case xml::tValue:
+			cout << Browser.DumpData() << txf::sync;
+			cout << '}' << Browser.Value() << '{' << txf::sync;
+			break;
+		case xml::tProcessed:
+			cout << Browser.DumpData() << txf::sync;
+			Continue = false;
+			break;
+		case xml::tError:
+			cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
+			if ( XTFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
+				cerr << " in file '" << XTFlow.Preprocessor().LocalizedFileName() << '\'';
+			cerr << " !" << txf::nl << txf::sync;
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
 	
 	cout << txf::nl << txf::sync;
 

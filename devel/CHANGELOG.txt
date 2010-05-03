@@ -1,5 +1,11 @@
 $Id$
 
+03/05/2010 :
+	- XML :
+		- Ajour de la méthode 'Token()' à l'objet 'browser__' permettant de connaître de manière diffèré le dernier 'token'.
+	- XPP :
+		- Correction du bogue qui voyait des valeurs suivies de sauts de lignes lorsqu'encapsulé dans des instructions du préprocesseur.
+
 02/05/2010 :
 	- MMI :
 		- Correction bogue 'UnderlyingSize' lors de l'initialisation.

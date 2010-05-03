@@ -42,15 +42,13 @@
 		<xpp:define name="FileName">
 			<xpp:bloc>SomeFile</xpp:bloc>
 		</xpp:define>
-		<xpp:expand select="File">
-		</xpp:expand>
+		<xpp:expand select="File"/>
 	</SomeFile>
 	<OtherFile>
 		<xpp:define name="FileName">
 			<xpp:bloc>OtherFile</xpp:bloc>
 		</xpp:define>
-		<xpp:expand select="File">
-		</xpp:expand>
+		<xpp:expand select="File"/>
 	</OtherFile>
 	<SomeURL>
 		<xpp:bloc>http://</xpp:bloc>

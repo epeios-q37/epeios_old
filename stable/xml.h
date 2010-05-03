@@ -363,6 +363,7 @@ namespace xml {
 		E_RODISCLOSE__( str::string_, AttributeName );
 		E_RODISCLOSE__( str::string_, Value );
 		E_RODISCLOSE__( status__, Status );
+		E_RODISCLOSE__( token__, Token );
 		const xtf::coord__ &GetCurrentCoord( void ) const
 		{
 			return _Flow.GetCurrentCoord();
