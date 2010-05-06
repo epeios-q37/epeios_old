@@ -427,6 +427,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&GeSBib NaTiVe field
 &gsbqry		&lgsb		&\
 	&GeSBib QueRY
+&gsbrcd		&lgsb		&\
+	&GeSBib ReCorD
 &gsbrdc		&lgsb		&\
 	&GeSBib Repository DesCription
 &gsbrgl		&lgsb		&2003-\
