@@ -585,6 +585,21 @@ namespace xpp {
 		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
+
+	status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Namespace,
+		bso::bool__ Indent,
+		const str::string_ &Directory,
+		txf::text_oflow__ &OFlow );
+
+	inline status__ Process(
+		flw::iflow__ &IFlow,
+		bso::bool__ Indent,
+		txf::text_oflow__ &OFlow )
+	{
+		return Process( IFlow, str::string(""), Indent, str::string( "" ), OFlow );
+	}
 }
 
 /*$END$*/

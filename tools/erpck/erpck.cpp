@@ -472,33 +472,33 @@ public:
 	struct s {
 		str::string_::s Label;
 		records_::s Records;
-		aliases_::s Aliases;
+//		aliases_::s Aliases;
 	};
 	str::string_ Label;
 	records_ Records;
-	aliases_ Aliases;
+//	aliases_ Aliases;
 	table_( s &S )
 	: Label( S.Label ),
-	  Records( S.Records ),
-	  Aliases( S.Aliases )
+	  Records( S.Records )/*,
+	  Aliases( S.Aliases ) */
 	{};
 	void reset( bso::bool__ P = true )
 	{
 		Label.reset( P );
 		Records.reset( P );
-		Aliases.reset( P );
+//		Aliases.reset( P );
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
 		Label.plug( MM );
 		Records.plug( MM );
-		Aliases.plug( MM );
+//		Aliases.plug( MM );
 	}
 	table_ &operator =(const table_ &T )
 	{
 		Label = T.Label;
 		Records = T.Records;
-		Aliases = T.Aliases;
+//		Aliases = T.Aliases;
 
 		return *this;
 	}
@@ -508,7 +508,7 @@ public:
 
 		Label.Init();
 		Records.Init();
-		Aliases.Init();
+//		Aliases.Init();
 	}
 };
 
@@ -574,14 +574,14 @@ static void ReportErrorAndExit_(
 	const str::string_ &Message,
 	xpp::preprocessing_extended_text_iflow___ &XFlow )
 {
-	cerr << Message << " at ";
+	cerr << "Parsing interrupted at ";
 /*
 	PrintPosition_( XFlow.Coord(), cerr );
 	if ( XFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
 		cerr << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
 */
 	PrintPosition_( XFlow, cerr );
-	cerr << " !" << txf::nl;
+	cerr << " : " << Message << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 
 }
@@ -962,6 +962,9 @@ ERRBegin
 			Continue = false;
 			break;
 		}
+		case xml::tValue:
+			ReportErrorAndExit_( "No value allowed here", XFlow );
+			break;
 		case xml::tError:
 			ReportErrorAndExit_( XFlow );
 			break;
@@ -1103,7 +1106,8 @@ static void ProcessContent_(
 	xml::browser___ &Browser,
 	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	table_ &Table,
-	const tables_ &Tables )
+	const tables_ &Tables,
+	const aliases_ &Aliases )
 {
 ERRProlog
 	bso::bool__ Continue = true;
@@ -1124,7 +1128,7 @@ ERRBegin
 			break;
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == CONTENT_TAG ) {
-				ProcessRecords_( Browser, XFlow, DefaultRecordLabelTag, Table.Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
+				ProcessRecords_( Browser, XFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else														        			//                    ^                         ^
 				ERRc();
@@ -1219,10 +1223,10 @@ ERRBegin
 
 			switch ( AliasType ) {
 			case atRecord:
-				RecordAlias.Init( Browser.Value(), TableRow, RecordRow );
+				RecordAlias.Init( AliasLabel, TableRow, RecordRow );
 				break;
 			case atTable:
-				TableAlias.Init( Browser.Value(), TableRow );
+				TableAlias.Init( AliasLabel, TableRow );
 				break;
 			break;
 			default:
@@ -1281,7 +1285,7 @@ ERRBegin
 				TableAlias.Init();
 
 				switch ( ProcessAlias_( Browser, XFlow, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
-				case atRecord:																			//                  ^                       ^
+				case atRecord:																					//                  ^                       ^
 					Aliases.Records.Append( RecordAlias );
 					break;
 				case atTable:
@@ -1318,16 +1322,19 @@ static void ProcessTable_(
 	table_ &Table,
 	const tables_ &Tables )
 {
-
+ERRProlog
 	bso::bool__ Continue = true;
+	aliases Aliases;
+ERRBegin
+	Aliases.Init();
 
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Browser.TagName() == ALIASES_TAG )
-				ProcessAliases_( Browser, XFlow, Tables, Table.Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
-			else if ( Browser.TagName() == CONTENT_TAG )					//                                     ^
-				ProcessContent_( Browser, XFlow, Table, Tables );			// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
+				ProcessAliases_( Browser, XFlow, Tables, Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
+			else if ( Browser.TagName() == CONTENT_TAG )			//                                     ^
+				ProcessContent_( Browser, XFlow, Table, Tables, Aliases );	// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
 			else															//                                     ^                              ^
 				ReportErrorAndExit_( "Unknown tag", XFlow );
 			break;
@@ -1351,6 +1358,9 @@ static void ProcessTable_(
 			break;
 		}
 	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 // '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
@@ -1457,6 +1467,22 @@ ERREnd
 ERREpilog
 }
 
+static void PrintFormatted_(
+	const str::string_ &XML,
+	txf::text_oflow__ &Output )
+{
+ERRProlog
+	flx::E_STRING_IFLOW__ IFlow;
+ERRBegin
+	IFlow.Init( XML );
+
+	if ( xpp::Process( IFlow, true, Output ) != xpp::sOK )
+		ERRc();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static void Pick_( const records_ &Records )
 {
 	ctn::E_CITEMt( record_, rrow__ ) Record;
@@ -1468,7 +1494,7 @@ static void Pick_( const records_ &Records )
 
 	Row = Records.First( rand() % Records.Amount() );
 
-	cout << Record( Row ).Label << ':' << txf::nl << Record( Row ).Content << txf::nl;
+	PrintFormatted_( Record( Row ).Content, cout );
 }
 
 static void Pick_( const table_ &Table )

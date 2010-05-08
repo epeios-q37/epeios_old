@@ -466,25 +466,27 @@ inline static status__ GetTagValue_(
 token__ xml::browser___::Browse( int TokenToReport )
 {
 ERRProlog
-	bso::bool__ OnlySpaces = false, Continue = true, EOT = false;	// 'EOT' : End Of Tree.
+	bso::bool__ OnlySpaces = false, Continue = true, TEOX = true;	// 'TEOX' : Test EOX.
 ERRBegin
 
 	_Flow.Purge();
 
 	while ( Continue ) {
-		EOT = false;
+		 TEOX = true;
 
 		switch ( _Token ) {
 		case tStartTagClosed:
+			TEOX = false;
+			break;
 		case tEndTag:
 			if ( _Tags.Amount() <= 1 )
-				EOT = true;
+				TEOX = false;
 			break;
 		default:
 			break;
 		}
 
-		if ( !EOT && _Flow.EOX() )
+		if ( TEOX && _Flow.EOX() )
 			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
 

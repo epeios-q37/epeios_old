@@ -1,5 +1,9 @@
 $Id$
 
+08/05/2010 :
+	- XPP :
+		- Rajout variantes fonction 'Parse(...)'.
+
 03/05/2010 :
 	- XML :
 		- Ajour de la méthode 'Token()' à l'objet 'browser__' permettant de connaître de manière diffèré le dernier 'token'.

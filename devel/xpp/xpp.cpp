@@ -959,6 +959,26 @@ ERREpilog
 	return Status;
 }
 
+status__ xpp::Process(
+	flw::iflow__ &IFlow,
+	const str::string_ &Namespace,
+	bso::bool__ Indent,
+	const str::string_ &Directory,
+	txf::text_oflow__ &OFlow )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	xtf::coord__ DummyCoord;
+	str::string DummyString;
+ERRBegin
+	DummyString.Init();
+
+	Status = Process( IFlow, Namespace, Indent, Directory, OFlow, DummyCoord, DummyString );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
