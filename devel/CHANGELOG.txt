@@ -1,5 +1,9 @@
 $Id$
 
+09/05/2010 :
+	- XML :
+		- Rajout méthode 'WriteXSLDeclaration(...)'.
+
 08/05/2010 :
 	- XPP :
 		- Rajout variantes fonction 'Parse(...)'.

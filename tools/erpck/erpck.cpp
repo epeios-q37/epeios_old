@@ -1483,7 +1483,9 @@ ERREnd
 ERREpilog
 }
 
-static void Pick_( const records_ &Records )
+static void Pick_(
+	const records_ &Records,
+	txf::text_oflow__ &Output )
 {
 	ctn::E_CITEMt( record_, rrow__ ) Record;
 	rrow__ Row = NONE;
@@ -1494,24 +1496,106 @@ static void Pick_( const records_ &Records )
 
 	Row = Records.First( rand() % Records.Amount() );
 
-	PrintFormatted_( Record( Row ).Content, cout );
+	PrintFormatted_( Record( Row ).Content, Output );
 }
 
-static void Pick_( const table_ &Table )
+static void Pick_(
+	const table_ &Table,
+	const str::string_ &XSLFileName,
+	txf::text_oflow__ &Output )
 {
-	Pick_( Table.Records );	
+	xml::WriteXMLHeader( Output );
+	Output << txf::nl;
+
+	if ( XSLFileName.Amount() != 0 ) {
+		xml::WriteXSLDeclaration( XSLFileName, Output );
+		Output << txf::nl;
+	}
+
+	Pick_( Table.Records, Output );	
 }
 
-static void Pick_( const data_ &Data )
+static void Pick_(
+	const data_ &Data,
+	const str::string_ &XSLFileName,
+	txf::text_oflow__ &Output )
 {
 	ctn::E_CITEMt( table_, trow__ ) Table;
 
 	Table.Init( Data );
 
-	Pick_( Table( Data.Last() ) );
+	Pick_( Table( Data.Last() ), XSLFileName, Output );
+}
+
+static void Pick_(
+	const data_ &Data,
+	const str::string_ &XSLFileName,
+	const char *FileName )
+{
+ERRProlog
+	bso::bool__ Backuped = false;
+	flf::file_oflow___ FFlow;
+	txf::text_oflow__ TFlow( FFlow );
+ERRBegin
+	fil::CreateBackupFile( FileName, fil::hbfRename );
+
+	Backuped = true;
+
+	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
+		cerr << "Unable to open '" << FileName << "' for output !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	Pick_( Data, XSLFileName, TFlow );
+ERRErr
+	if ( Backuped )
+		fil::RecoverBackupFile( FileName );
+ERREnd
+ERREpilog
+}
+
+static void Pick_(
+	const data_ &Data,
+	const str::string_ &XSLFileName,
+	const str::string_ &OutputFileName )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	if ( OutputFileName.Amount() == 0 )
+		Pick_( Data, XSLFileName, cout );
+	else
+		Pick_( Data, XSLFileName, OutputFileName.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 #define DATA_FILENAME_TAG	"Data"
+#define OUTPUT_FILENAME_TAG	"Output"
+#define XSL_FILENAME_TAG	"XSL"
+#define COMMAND_TAG			"Command"
+
+void LaunchCommand_(
+	const str::string_ &Command,
+	const str::string_ &OutputFileName )
+{
+ERRProlog
+	str::string CompleteCommand;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	if ( ( Command.Amount() != 0 ) && ( OutputFileName.Amount() != 0 ) ) {
+		CompleteCommand.Init( Command );
+		CompleteCommand.Append( " \"" );
+		CompleteCommand.Append( OutputFileName );
+		CompleteCommand.Append( '"' );
+		system( CompleteCommand.Convert( Buffer ) );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
 
 void Process_(
 	const rgstry::registry_ &Registry,
@@ -1521,19 +1605,31 @@ ERRProlog
 	str::string DataFileName;
 	STR_BUFFER___ Buffer;
 	data Data;
+	str::string OutputFileName;
+	str::string XSLFileName;
+	str::string Command;
 ERRBegin
 	DataFileName.Init();
-
 	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), RegistryRoot, DataFileName ) ) {
 		cerr << "No '" << DATA_FILENAME_TAG << "' tag found !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Data.Init();
+	OutputFileName.Init();
+	Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), RegistryRoot, OutputFileName );
 
+	XSLFileName.Init();
+	Registry.GetValue( str::string( XSL_FILENAME_TAG ), RegistryRoot, XSLFileName );
+
+	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	Pick_( Data );
+	Pick_( Data, XSLFileName, OutputFileName );
+
+	Command.Init();
+	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
+
+	LaunchCommand_( Command, OutputFileName );
 ERRErr
 ERREnd
 ERREpilog

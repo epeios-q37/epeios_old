@@ -562,6 +562,13 @@ namespace xml {
 	{
 		OFlow << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 	}
+
+	inline void WriteXSLDeclaration(
+		const str::string_ &XSLHRef,
+		txf::text_oflow__ &OFlow )
+	{
+		OFlow << "<?xml-stylesheet type=\"text/xsl\" href=\"" << XSLHRef << "\"?>";
+	}
 }
 
 /*$END$*/

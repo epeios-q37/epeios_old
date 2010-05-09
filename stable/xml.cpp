@@ -903,6 +903,7 @@ ERRBegin
 		case tEndTag:
 			Stop = !Callback.XMLEndTag( TagName, Dump );
 			break;
+		case tError:
 		case tProcessed:
 			Stop = true;
 			break;
