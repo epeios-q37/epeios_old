@@ -299,6 +299,9 @@ ERRBegin
 
 	ErrorFileName.Init();
 
+	xml::WriteXMLHeader( Destination == NULL ? cout : TOFlow );
+	( Destination == NULL ? cout : TOFlow ) << txf::nl;
+
 	if ( ( Status = xpp::Process( IFlow,
 									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 									Indent, str::string( Directory == NULL ? (const char *)"" : Directory ),

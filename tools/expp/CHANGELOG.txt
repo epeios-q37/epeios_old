@@ -1,5 +1,8 @@
 $Id$
 
+- 10/05/2010 :
+	- Adding XML header.
+
 - 21/04/2010 :
 	- Adaptation to changes in underlying libraries ('XML', notably).
 

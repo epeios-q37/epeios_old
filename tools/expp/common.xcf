@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:define name="LinuxURL">
-		<xpp:bloc>linuxfr.org</xpp:bloc>
+		<xpp:bloc>linux.org</xpp:bloc>
 	</xpp:define>
 	<xpp:define name="WindowsURL">
-		<xpp:bloc>windowsfr.org</xpp:bloc>
+		<xpp:bloc>windows.com</xpp:bloc>
 	</xpp:define>
 	<xpp:define name="Linux">
 		<xpp:bloc>
