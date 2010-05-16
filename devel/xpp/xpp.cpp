@@ -267,9 +267,9 @@ static status__ RetrieveTree_(
 	str::string_ &Tree )
 {
 	bso::ulong__ Nesting = 0;
-	bso::bool__ Continue = true;
+	status__ Status = s_Undefined;
 
-	while ( Continue ) {
+	while ( Status == s_Undefined ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
 		case xml::tStartTag:
 			Tree.Append( Browser.DumpData() );
@@ -290,7 +290,7 @@ static status__ RetrieveTree_(
 				ERRc();
 				break;
 			case 1:
-				Continue = false;
+				Status = AwaitingToken_( Browser, xml::tEndTag, sTooManyTags );
 				break;
 			default:
 				Nesting--;
@@ -309,10 +309,10 @@ static status__ RetrieveTree_(
 		}
 	}
 
-	return sOK;
+	return Status;
 }
 
-static status__ GetExpandNameAndContent_(
+static status__ GetDefineNameAndContent_(
 	browser___ &Browser,
 	str::string_ &Name,
 	str::string_ &Content )
@@ -328,9 +328,9 @@ static status__ GetExpandNameAndContent_(
 	if ( ( Status = RetrieveTree_( Browser, Content ) ) != sOK )
 		return Status;
 
-	if ( ( Status = AwaitingToken_( Browser, xml::tEndTag, sTooManyTags ) ) != sOK )
+/*	if ( ( Status = AwaitingToken_( Browser, xml::tEndTag, sTooManyTags ) ) != sOK )
 		return Status;
-
+*/
 	return sOK;
 }
 
@@ -348,7 +348,7 @@ ERRBegin
 	Name.Init();
 	Content.Init();
 
-	if ( ( Status = GetExpandNameAndContent_( _Browser, Name, Content ) ) != sOK )
+	if ( ( Status = GetDefineNameAndContent_( _Browser, Name, Content ) ) != sOK )
 		ERRReturn;
 
 	_Repository.Store( Name, Coord, Content );
@@ -421,8 +421,10 @@ ERRErr
 	}
 ERREnd
 	if ( Status != sOK ) {
-		delete Browser;
-		Browser = NULL;
+		if ( Browser != NULL ) {
+			delete Browser;
+			Browser = NULL;
+		}
 	}
 ERREpilog
 	return Status;
@@ -591,7 +593,8 @@ status__ xpp::_extended_browser___::_HandleIfeqTag( _extended_browser___ *&Brows
 {
 	status__ Status = s_Undefined;
 ERRProlog
-	str::string Name, ExpectedValue, TrueValue, DummyContent;
+	str::string Name, ExpectedValue, TrueValue, Content;
+	xtf::coord__ Coord;
 ERRBegin
 	Browser = NULL;
 
@@ -604,13 +607,19 @@ ERRBegin
 	if ( ( Status = AwaitingToken_( _Browser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
 		ERRReturn;
 
+
+	Content.Init();
+
+	if ( ( Status = RetrieveTree_( _Browser, Content ) ) != sOK)
+		ERRReturn;
+
+
 	TrueValue.Init();
 
-	if ( ( !_Variables.Get( Name, TrueValue ) ) || ( ExpectedValue != TrueValue ) ) {
-		DummyContent.Init();
+	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
+		Browser = NewBrowser( _Repository, _Variables, _Tags );
 
-		if ( ( Status = RetrieveTree_( _Browser, DummyContent ) ) != sOK)
-			ERRReturn;
+		Status = Browser->InitWithContent( Content, Coord, _Directory );
 	}
 ERRErr
 	if ( Browser != NULL ) {
@@ -791,7 +800,6 @@ status__ xpp::_extended_browser___::Handle(
 			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) )
 				switch ( GetTag_( _Browser.TagName(), _Tags ) ) {
 				case tBloc:
-				case tIfeq:
 					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Tags.NamespaceWithSeparator );
 					Continue = true;
 					break;
@@ -898,9 +906,8 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 status__ xpp::Process(
 	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
-	bso::bool__ Indent,
 	const str::string_ &Directory,
-	txf::text_oflow__ &OFlow,
+	xml::writer_ &Writer,
 	xtf::coord__ &Coord,
 	str::string_ &GuiltyFileName )
 {
@@ -910,21 +917,18 @@ ERRProlog
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
 	xml::browser___ Browser;
-	xml::writer Writer;
 ERRBegin
 	XFlow.Init( IFlow, Directory, Namespace );
 
 	Browser.Init( XFlow );
 
-	Writer.Init( OFlow, Indent );
-
 	while ( Continue ) {
 		switch( Browser.Browse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
 		case xml::tProcessingInstruction:
-			OFlow << Browser.DumpData();
+			Writer.GetFlow() << Browser.DumpData();
 			
-			if ( Indent )
-				OFlow << txf::nl;
+			if ( Writer.Indent() )
+				Writer.GetFlow() << txf::nl;
 
 			break;
 		case xml::tStartTag:
@@ -953,6 +957,48 @@ ERRBegin
 			break;
 		}
 	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ xpp::Process(
+	flw::iflow__ &IFlow,
+	const str::string_ &Namespace,
+	bso::bool__ Indent,
+	const str::string_ &Directory,
+	txf::text_oflow__ &OFlow,
+	xtf::coord__ &Coord,
+	str::string_ &GuiltyFileName )
+{
+	status__ Status = sOK;
+ERRProlog
+	xml::writer Writer;
+ERRBegin
+	Writer.Init( OFlow, Indent );
+
+	Status = Process( IFlow, Namespace, Directory, Writer, Coord, GuiltyFileName );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ xpp::Process(
+	flw::iflow__ &IFlow,
+	const str::string_ &Namespace,
+	const str::string_ &Directory,
+	xml::writer_ &Writer )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	xtf::coord__ DummyCoord;
+	str::string DummyString;
+ERRBegin
+	DummyString.Init();
+
+	Status = Process( IFlow, Namespace, Directory, Writer, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog

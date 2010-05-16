@@ -1469,14 +1469,14 @@ ERREpilog
 
 static void PrintFormatted_(
 	const str::string_ &XML,
-	txf::text_oflow__ &Output )
+	xml::writer_ &Writer )
 {
 ERRProlog
 	flx::E_STRING_IFLOW__ IFlow;
 ERRBegin
 	IFlow.Init( XML );
 
-	if ( xpp::Process( IFlow, true, Output ) != xpp::sOK )
+	if ( xpp::Process( IFlow, Writer ) != xpp::sOK )
 		ERRc();
 ERRErr
 ERREnd
@@ -1485,7 +1485,7 @@ ERREpilog
 
 static void Pick_(
 	const records_ &Records,
-	txf::text_oflow__ &Output )
+	xml::writer_ &Writer )
 {
 	ctn::E_CITEMt( record_, rrow__ ) Record;
 	rrow__ Row = NONE;
@@ -1496,7 +1496,7 @@ static void Pick_(
 
 	Row = Records.First( rand() % Records.Amount() );
 
-	PrintFormatted_( Record( Row ).Content, Output );
+	PrintFormatted_( Record( Row ).Content, Writer );
 }
 
 static void Pick_(
@@ -1504,6 +1504,9 @@ static void Pick_(
 	const str::string_ &XSLFileName,
 	txf::text_oflow__ &Output )
 {
+ERRProlog
+	xml::writer Writer;
+ERRBegin
 	xml::WriteXMLHeader( Output );
 	Output << txf::nl;
 
@@ -1512,7 +1515,16 @@ static void Pick_(
 		Output << txf::nl;
 	}
 
-	Pick_( Table.Records, Output );	
+	Writer.Init( Output );
+	Writer.PushTag( Table.Label );
+
+	Pick_( Table.Records, Writer );	
+
+	Writer.PopTag();
+
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void Pick_(
@@ -1586,11 +1598,11 @@ ERRProlog
 ERRBegin
 	if ( ( Command.Amount() != 0 ) && ( OutputFileName.Amount() != 0 ) ) {
 		CompleteCommand.Init( Command );
-		CompleteCommand.Append( " \"" );
-		CompleteCommand.Append( OutputFileName );
-		CompleteCommand.Append( '"' );
+		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
+	cout << "Launching '" << CompleteCommand << "\"." << txf::nl;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
+
 
 ERRErr
 ERREnd

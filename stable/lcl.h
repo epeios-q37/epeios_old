@@ -70,9 +70,8 @@ namespace lcl {
 	using rgstry::error__;
 	using rgstry::error_details_;
 	using rgstry::error_details;
-
-	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
-	E_AUTO( strings );
+	using str::strings_;
+	using str::strings;
 
 	class locales_ {
 	private:
@@ -175,16 +174,22 @@ namespace lcl {
 
 	E_AUTO( locales );
 
-	void ReplaceTags(
+	inline void ReplaceTags(
 		str::string_ &Message,
 		const strings_ &Values,
-		char TagMarker = LCL_DEFAULT_TAG_MARKER );
+		char TagMarker = LCL_DEFAULT_TAG_MARKER )
+	{
+		str::ReplaceTags( Message, Values, TagMarker );
+	}
 
-	void ReplaceTag(
+	inline void ReplaceTag(
 		str::string_ &Message,
 		bso::ubyte__ Indice,
 		const str::string_ &Value,
-		char TagMarker = LCL_DEFAULT_TAG_MARKER );
+		char TagMarker = LCL_DEFAULT_TAG_MARKER )
+	{
+		str::ReplaceTag( Message, Indice, Value, TagMarker );
+	}
 }
 
 /*$END$*/

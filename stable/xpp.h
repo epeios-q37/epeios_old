@@ -580,11 +580,25 @@ namespace xpp {
 	status__ Process(
 		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
+		const str::string_ &Directory,
+		xml::writer_ &Writer,
+		xtf::coord__ &Coord,
+		str::string_ &GuiltyFileName );
+
+	status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Namespace,
 		bso::bool__ Indent,
 		const str::string_ &Directory,
 		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
+
+	status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Namespace,
+		const str::string_ &Directory,
+		xml::writer_ &Writer );
 
 	status__ Process(
 		flw::iflow__ &IFlow,
@@ -595,11 +609,19 @@ namespace xpp {
 
 	inline status__ Process(
 		flw::iflow__ &IFlow,
+		xml::writer_ &Writer )
+	{
+		return Process( IFlow, str::string(""), str::string( "" ), Writer );
+	}
+
+	inline status__ Process(
+		flw::iflow__ &IFlow,
 		bso::bool__ Indent,
 		txf::text_oflow__ &OFlow )
 	{
 		return Process( IFlow, str::string(""), Indent, str::string( "" ), OFlow );
 	}
+
 }
 
 /*$END$*/

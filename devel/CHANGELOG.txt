@@ -1,5 +1,17 @@
 $Id$
 
+16/05/2010 :
+	- STR :
+		- Ajout 'ReplaceTag(...)' et 'ReplaceTags(...)' et des objets 'strings[_]' (issus de 'LCL').
+	- LCL :
+		- Déplacement vers et utilisation des fonctions 'ReplaceTag(...)' et 'ReplaceTags(...)' des objets 'strings[_]' de 'STR'.
+	- XPP :
+		- Correction bogue non-détection balises multiples dans un 'ifeq'.
+
+10/05/2010 :
+	- XPP :
+		- Ajout variantes fonctions 'Process(...)' prenant un 'xml::writer_'.
+
 09/05/2010 :
 	- XML :
 		- Rajout méthode 'WriteXSLDeclaration(...)'.

@@ -64,6 +64,7 @@ extern class ttr_tutor &STRTutor;
 #include "txf.h"
 #include "bch.h"
 #include "cpe.h"
+#include "ctn.h"
 
 #ifndef STR_64_BITS_FORBIDDEN
 #	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined( STR_64_BITS_TYPES_ALLOWED )
@@ -630,6 +631,9 @@ namespace str {
 		}
 	};
 
+	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
+	E_AUTO( strings );
+
 	inline bso::bool__ operator ==(
 		const str::string_ &Op1,
 		const char *Op2 )
@@ -681,6 +685,18 @@ namespace str {
 	string_ &ToLower(
 		string_ &String,
 		bso::bool__ dontHandleAccent = false );
+
+	void ReplaceTag(
+		str::string_ &String,
+		bso::ubyte__ Indice,
+		const str::string_ &Value,
+		char TagMarker );
+
+	void ReplaceTags(
+		str::string_ &String,
+		const strings_ &Values,
+		char TagMarker );
+
 }
 
 /*$END$*/

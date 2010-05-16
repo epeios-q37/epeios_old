@@ -455,6 +455,156 @@ bso::lfloat__ string_::ToLF(
 		return Result;
 }
 
+// Remplace le tag d'indice '0' par la liste des valeurs.
+static void Replace0Tag_(
+	str::string_ &Message,
+	const strings_ &Values,
+	const char TagMarker )
+{
+ERRProlog
+	str::string MergedValues;
+	ctn::E_CMITEM( str::string_ ) Value;
+	epeios::row__ Row = NONE;
+	str::string Tag;
+ERRBegin
+	Value.Init( Values );
+
+	Row = Values.First();
+
+	MergedValues.Init( " (" );
+
+	if ( Row != NONE ) {
+		MergedValues.Append( '\'' );
+		MergedValues.Append( Value( Row ) );
+		MergedValues.Append( '\'' );
+		Row = Values.Next( Row );
+	}
+
+	while ( Row != NONE ) {
+		MergedValues.Append( " ,'" );
+		MergedValues.Append( Value( Row ) );
+		MergedValues.Append( '\'' );
+		Row = Values.Next( Row );
+	}
+
+	MergedValues.Append( ") " );
+
+	Tag.Init();
+	Tag.Append( TagMarker );
+	Tag.Append( '0' );
+	
+	Row = Message.Search( Tag );
+
+	while ( Row != NONE ) {
+		Message.Remove( Row, Tag.Amount() );
+
+		Message.Insert( MergedValues, Row );
+
+		Row = Message.Search( Tag, Row );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+void str::ReplaceTags(
+	str::string_ &String,
+	const strings_ &Values,
+	const char TagMarker )
+{
+ERRProlog
+	ctn::E_CMITEM( str::string_ ) Value;
+	bso::ubyte__ Indice = 1;
+	epeios::row__ Row = NONE, SearchRow = NONE;
+	str::string Tag;
+	bso::integer_buffer__ Buffer;
+ERRBegin
+	if ( Values.Amount() > 9 )
+		ERRl();
+
+	Replace0Tag_( String, Values, TagMarker );
+
+	Value.Init( Values );
+
+	Row = Values.First();
+
+	while ( Row != NONE ) {
+		Tag.Init();
+		Tag.Append( TagMarker );
+		Tag.Append( bso::Convert( Indice, Buffer ) );
+
+		SearchRow = String.Search( Tag );
+
+		while ( SearchRow != NONE ) {
+			String.Remove( SearchRow, Tag.Amount() );
+
+			String.Insert( Value( Row ), SearchRow );
+
+			SearchRow = String.Search( Tag, SearchRow );
+		}
+
+		Row = Values.Next( Row );
+
+		Indice++;
+	}
+
+	Tag.Init();
+	Tag.Append( TagMarker );
+	Tag.Append( TagMarker );
+
+	SearchRow = String.Search( Tag );
+
+	while ( SearchRow != NONE ) {
+		String.Remove( SearchRow, Tag.Amount() );
+
+		String.Insert( TagMarker, SearchRow );
+
+		SearchRow = String.Search( Tag, SearchRow );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void str::ReplaceTag(
+	str::string_ &String,
+	bso::ubyte__ Indice,
+	const str::string_ &Value,
+	const char TagMarker )
+{
+ERRProlog
+	strings Values;
+	bso::ubyte__ Counter = 1;
+	bso::integer_buffer__ Buffer;
+	str::string Tag;
+ERRBegin
+	if ( ( Indice == 0 ) || ( Indice > 9 ) )
+		ERRu();
+
+	Values.Init();
+
+	while ( Counter != Indice ) {
+		Tag.Init();
+		Tag.Append( TagMarker );
+		Tag.Append( bso::Convert( Counter, Buffer ) );
+
+		Values.Append( Tag );
+
+		Counter++;
+	}
+
+	Values.Append( Value );
+
+	ReplaceTags( String, Values, TagMarker );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

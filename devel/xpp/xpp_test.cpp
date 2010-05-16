@@ -57,6 +57,10 @@ using cio::cerr;
 #define FILENAME	"test.xml"
 #endif
 
+#if TEST_CASE == 4
+#define LOCATION	"H:\\svn\\Partitions\\"	
+#define FILENAME	"Segment.xprj"
+#endif
 
 #define FILE		LOCATION FILENAME
 
@@ -90,14 +94,13 @@ ERRBegin
 		switch ( Browser.Browse( TokenFlags ) ) {
 		case xml::tValue:
 			cout << Browser.DumpData() << txf::sync;
-			cout << '}' << Browser.Value() << '{' << txf::sync;
 			break;
 		case xml::tProcessed:
 			cout << Browser.DumpData() << txf::sync;
 			Continue = false;
 			break;
 		case xml::tError:
-			cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Coord().Line << " column " << XTFlow.Coord().Column;
+			cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Preprocessor().Coord().Line << " column " << XTFlow.Preprocessor().Coord().Column;
 			if ( XTFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
 				cerr << " in file '" << XTFlow.Preprocessor().LocalizedFileName() << '\'';
 			cerr << " !" << txf::nl << txf::sync;
