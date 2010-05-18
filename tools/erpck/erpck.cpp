@@ -238,6 +238,8 @@ typedef bso::ubyte__ weight__;
 E_ROW( rrow__ );	// 'record row'.
 E_ROW( trow__ );	// 'table row'.
 
+typedef bso::ulong__	id__;
+#define ALL				BSO_ULONG_MAX
 
 class record_alias_
 {
@@ -409,6 +411,7 @@ public:
 			Label,
 			Content;
 		weight__ Weight;
+		bso::bool__ Skip;
 	} &S_;
 	str::string_
 		Label,
@@ -425,6 +428,7 @@ public:
 		Content.reset( P );
 
 		S_.Weight = DEFAULT_WEIGHT;
+		S_.Skip = false;
 	}
 	void plug( mmm::E_MULTIMEMORY_ &MM )
 	{
@@ -437,16 +441,17 @@ public:
 		Content = R.Content;
 
 		S_.Weight = R.S_.Weight;
+		S_.Skip = R.S_.Skip;
 
 		return *this;
 	}
 	void Init( void )
 	{
-		reset();
+		S_.Weight = DEFAULT_WEIGHT;
+		S_.Skip = false;
 
 		Label.Init();
 		Content.Init();
-
 	}
 	void Init(
 		const str::string_ &Label,
@@ -460,6 +465,7 @@ public:
 
 	}
 	E_RWDISCLOSE_( weight__, Weight );
+	E_RWDISCLOSE_( bso::bool__, Skip );
 };
 
 E_AUTO( record )
@@ -538,8 +544,11 @@ E_AUTO( data )
 #define CONTENT_TAG									NAMESPACE "content"
 #define CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE	"DefaultRecordLabelTag"
 
-#define RECORD_WEIGHT_ATTRIBUTE					NAMESPACE "Weight"
 #define RECORD_LABEL_ATTRIBUTE					NAMESPACE "label"
+#define RECORD_WEIGHT_ATTRIBUTE					NAMESPACE "Weight"
+#define RECORD_HANDLING_ATTRIBUTE				NAMESPACE "Handling"
+#define RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE	"Ignore"
+#define RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE	"Skip"
 
 #define INSERTION_TAG						NAMESPACE "insert"
 #define INSERTION_TABLE_LABEL_ATTRIBUTE		"TableLabel"
@@ -1055,6 +1064,8 @@ ERRProlog
 	bso::bool__ Continue = true;
 	record Record;
 	weight__ Weight = DEFAULT_WEIGHT;
+	bso::integer_buffer__ Buffer;
+	bso::bool__ Ignore = false;
 ERRBegin
 	Record.Init();
 
@@ -1073,15 +1084,28 @@ ERRBegin
 					ReportErrorAndExit_( "Bad attribute value", XFlow );
 			} else if ( Browser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
 					Assign_( Record.Label, "Record label", Browser, XFlow );
+			} else if ( Browser.AttributeName() == RECORD_HANDLING_ATTRIBUTE ) {
+				if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE )
+					Record.Skip() = true;
+				else if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
+					Ignore = true;
+				else
+					ReportErrorAndExit_( "Unknown attribute value", XFlow );
 			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
 				ReportErrorAndExit_( "Unknown attribute", XFlow );
 			} else
 				Record.Content.Append( Browser.DumpData() );
 			break;
 		case xml::tStartTagClosed:
+			Record.Content.Append( " id=\"" );
+			Record.Content.Append( bso::Convert( Records.Amount() + 1, Buffer ) );
+			Record.Content.Append( '"' );
 			Record.Content.Append( Browser.DumpData() );
 			ProcessRecord_( Browser, XFlow, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
-			Records.Append( Record );									//                                   ^                 ^
+			if ( !Ignore )
+				Records.Append( Record );															//                                   ^                 ^	
+			else
+				Ignore = false;
 			Record.Init();
 			break;														
 		case xml::tEndTag:
@@ -1467,7 +1491,7 @@ ERREnd
 ERREpilog
 }
 
-static void PrintFormatted_(
+static void Display_(
 	const str::string_ &XML,
 	xml::writer_ &Writer )
 {
@@ -1483,20 +1507,71 @@ ERREnd
 ERREpilog
 }
 
-static void Pick_(
+static void Display_(
+	const record_ &Record,
+	xml::writer_ &Writer )
+{
+	Display_( Record.Content, Writer );
+}
+
+static void Display_(
+	rrow__ Row,						
 	const records_ &Records,
 	xml::writer_ &Writer )
 {
 	ctn::E_CITEMt( record_, rrow__ ) Record;
-	rrow__ Row = NONE;
 
 	Record.Init( Records );
 
-	tol::InitializeRandomGenerator();
+	Display_( Record( Row ), Writer );
+}
 
-	Row = Records.First( rand() % Records.Amount() );
+static void DisplayAll_(
+	const records_ &Records,
+	xml::writer_ &Writer )
+{
+	ctn::E_CITEMt( record_, rrow__ ) Record;
+	rrow__ Row = Records.First();
 
-	PrintFormatted_( Record( Row ).Content, Writer );
+	Record.Init( Records );
+
+	while ( Row != NONE ) {
+		Display_( Record( Row ), Writer );
+
+		Row = Records.Next( Row );
+	}
+}
+
+static void Display_(
+	id__ Id,
+	const records_ &Records,
+	xml::writer_ &Writer )
+{
+	rrow__ Row = NONE;
+	bso::integer_buffer__ Buffer;
+
+	Writer.PutAttribute( "TotalAmount", bso::Convert( Records.Amount(), Buffer ) );
+
+	if ( Id == ALL ) {
+		Writer.PutAttribute( "Amount", bso::Convert( Records.Amount(), Buffer ) );
+		DisplayAll_( Records, Writer );
+	} else {
+		Writer.PutAttribute( "Amount", "1" );
+
+		if ( Id == 0 ) {
+			tol::InitializeRandomGenerator();
+			Row = Records.First( rand() % Records.Amount() );
+		} else {
+			if ( Id > Records.Amount() ) {
+				cerr << "No record of id '" << Id << "'! " << txf::nl;
+				ERRExit( EXIT_FAILURE )
+			} else
+				Row = Id - 1;
+		}
+
+		Display_( Row, Records, Writer );
+	}
+
 }
 
 static void Pick_(
@@ -1518,7 +1593,7 @@ ERRBegin
 	Writer.Init( Output );
 	Writer.PushTag( Table.Label );
 
-	Pick_( Table.Records, Writer );	
+	Display_( 0, Table.Records, Writer );	
 
 	Writer.PopTag();
 
@@ -1560,6 +1635,7 @@ ERRBegin
 
 	Pick_( Data, XSLFileName, TFlow );
 ERRErr
+	FFlow.reset();
 	if ( Backuped )
 		fil::RecoverBackupFile( FileName );
 ERREnd
