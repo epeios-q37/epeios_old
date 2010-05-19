@@ -51,6 +51,9 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
+typedef bso::ulong__	id__;
+#define ALL				BSO_ULONG_MAX
+
 /* Beginning of the part which handles command line arguments. */
 
 enum exit_value__ {
@@ -83,8 +86,10 @@ enum option {
 
 struct parameters {
 	STRING_PARAM___( Project );
+	id__ Id;
 	parameters( void )
 	{
+		Id = 0;	// By default, a randomrecord is displayed.
 	}
 };
 
@@ -95,10 +100,11 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " <command> [options] <project-file>" << txf::nl;
+	cout << NAME << " <command> [options] <project-file> [id]" << txf::nl;
 	cout << txf::tab << "project-file:" << txf::tab << "file containing the project defintions." << txf::nl;
 	cout << "command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cPick, "Pick a random entry according to project file.", clnarg::vSplit, true );
+	cout << txf::tab << "Id : the id of the reocrd to diaplay; if 0, all records are displayed; if absent, a random record is diaplayed." << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 //	cout << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
@@ -133,7 +139,7 @@ ERRBegin
 	}
 
 	P = Options.First();
-
+	
 	while( P != NONE ) {
 		Argument.Init();
 
@@ -157,7 +163,8 @@ static void AnalyzeFreeArguments(
 {
 ERRProlog
 	clnarg::arguments Free;
-	epeios::row__ P;
+	epeios::row__ P = NONE, Error = NONE;
+	id__ Id = 0;
 ERRBegin
 	Free.Init();
 
@@ -166,6 +173,16 @@ ERRBegin
 	P = Free.Last();
 
 	switch( Free.Amount() ) {
+	case 2:
+		Id = Free( P ).ToUL( &Error );
+
+		if ( Error != NONE ) {
+			cerr << "Bad value for record id !" << txf::nl;
+			ERRExit( EXIT_FAILURE );
+		}
+
+		Parameters.Id = ( Id == 0 ? ALL : Id );
+		P = Free.Previous( P );
 	case 1:
 		Free( P ).Convert( Parameters.Project );
 		break;
@@ -237,9 +254,6 @@ typedef bso::ubyte__ weight__;
 
 E_ROW( rrow__ );	// 'record row'.
 E_ROW( trow__ );	// 'table row'.
-
-typedef bso::ulong__	id__;
-#define ALL				BSO_ULONG_MAX
 
 class record_alias_
 {
@@ -1574,7 +1588,8 @@ static void Display_(
 
 }
 
-static void Pick_(
+static void Display_(
+	id__ Id,
 	const table_ &Table,
 	const str::string_ &XSLFileName,
 	txf::text_oflow__ &Output )
@@ -1593,7 +1608,7 @@ ERRBegin
 	Writer.Init( Output );
 	Writer.PushTag( Table.Label );
 
-	Display_( 0, Table.Records, Writer );	
+	Display_( Id, Table.Records, Writer );	
 
 	Writer.PopTag();
 
@@ -1602,7 +1617,8 @@ ERREnd
 ERREpilog
 }
 
-static void Pick_(
+static void Display_(
+	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	txf::text_oflow__ &Output )
@@ -1611,10 +1627,11 @@ static void Pick_(
 
 	Table.Init( Data );
 
-	Pick_( Table( Data.Last() ), XSLFileName, Output );
+	Display_( Id, Table( Data.Last() ), XSLFileName, Output );
 }
 
-static void Pick_(
+static void Display_(
+	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	const char *FileName )
@@ -1633,7 +1650,7 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Pick_( Data, XSLFileName, TFlow );
+	Display_( Id, Data, XSLFileName, TFlow );
 ERRErr
 	FFlow.reset();
 	if ( Backuped )
@@ -1642,7 +1659,8 @@ ERREnd
 ERREpilog
 }
 
-static void Pick_(
+static void Display_(
+						id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	const str::string_ &OutputFileName )
@@ -1651,9 +1669,9 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Pick_( Data, XSLFileName, cout );
+		Display_( Id, Data, XSLFileName, cout );
 	else
-		Pick_( Data, XSLFileName, OutputFileName.Convert( Buffer ) );
+		Display_( Id, Data, XSLFileName, OutputFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -1686,6 +1704,7 @@ ERREpilog
 }
 
 void Process_(
+	id__ Id,				
 	const rgstry::registry_ &Registry,
 	rgstry::row__ RegistryRoot )
 {
@@ -1712,7 +1731,7 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	Pick_( Data, XSLFileName, OutputFileName );
+	Display_( Id, Data, XSLFileName, OutputFileName );
 
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
@@ -1723,7 +1742,9 @@ ERREnd
 ERREpilog
 }
 
-static void Process_( const char *Project )
+static void Process_(
+	id__ Id,						
+	const char *Project )
 {
 ERRProlog
 	rgstry::error__ Error = rgstry::e_Undefined;
@@ -1743,7 +1764,7 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Process_( Registry, RegistryRoot );
+	Process_( Id, Registry, RegistryRoot );
 ERRErr
 ERREnd
 ERREpilog
@@ -1753,7 +1774,7 @@ void Go( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
-	Process_( Parameters.Project );
+	Process_( Parameters.Id, Parameters.Project );
 ERRErr
 ERREnd
 ERREpilog
