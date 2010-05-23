@@ -40,7 +40,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	2
+#define TEST_CASE	3
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	

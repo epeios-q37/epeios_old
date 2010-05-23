@@ -79,7 +79,7 @@ namespace xpp {
 		sOK = xml::sOK,
 		sNoTagsAllowedHere = xml::s_amount,
 		sUnexpectedValue,
-		sUnknownTag,
+		sUnknownDirective,
 		sUnexpectedAttribute,
 		sUnknownAttribute,
 		sMissingNameAttribute,
@@ -92,6 +92,7 @@ namespace xpp {
 		sTooManyTags,
 		sUnableToOpenFile,
 		sUnknownMacro,
+		sBadAttributeDefinitionSyntax,
 
 		s_amount,
 		s_Undefined,
@@ -107,28 +108,30 @@ namespace xpp {
 		str::string_ &Translation );
 
 
-	struct _qualified_preprocessor_tags___ {
+	struct _qualified_preprocessor_directives___ {
 		str::string NamespaceWithSeparator;
-		str::string Define;
-		str::string Expand;
-		str::string Set;
-		str::string Ifeq;
-		str::string Bloc;
+		str::string DefineTag;
+		str::string ExpandTag;
+		str::string SetTag;
+		str::string IfeqTag;
+		str::string BlocTag;
+		str::string AttributeAttribute;	//'<tag xpp:attribute="..." ...>'//
 		void reset( bso::bool__ P = true )
 		{
 			NamespaceWithSeparator.reset( P );
 
-			Define.reset( P );
-			Expand.reset( P );
-			Set.reset( P );
-			Ifeq.reset( P );
-			Bloc.reset( P );
+			DefineTag.reset( P );
+			ExpandTag.reset( P );
+			SetTag.reset( P );
+			IfeqTag.reset( P );
+			BlocTag.reset( P );
+			AttributeAttribute.reset( P );
 		}
-		_qualified_preprocessor_tags___( void )
+		_qualified_preprocessor_directives___( void )
 		{
 			reset( false );
 		}
-		~_qualified_preprocessor_tags___( void )
+		~_qualified_preprocessor_directives___( void )
 		{
 			reset();
 		}
@@ -340,22 +343,27 @@ namespace xpp {
 		xml::browser___ _Browser;
 		_repository_ &_Repository;
 		_variables_ &_Variables;
-		_qualified_preprocessor_tags___ &_Tags;
+		_qualified_preprocessor_directives___ &_Directives;
 		str::string _LocalizedFileName;	// Si le 'browser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
 		bso::bool__ _IgnorePreprocessingInstruction;
-		status__ _HandleDefineTag( _extended_browser___ *&Browser );
+		bso::bool__ _AttributeDefinitionInProgress;
+		status__ _HandleDefineDirective( _extended_browser___ *&Browser );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
 			_extended_browser___ *&Browser );
 		status__ _HandleFileExpand(
 			const str::string_ &FileName,
 			_extended_browser___ *&Browser );
-		status__ _HandleExpandTag( _extended_browser___ *&Browser );
-		status__ _HandleSetTag( _extended_browser___ *&Browser );
-		status__ _HandleIfeqTag( _extended_browser___ *&Browser );
-		status__ _HandlePreprocessorTag(
-			const str::string_ &TagName,
+		status__ _HandleExpandDirective( _extended_browser___ *&Browser );
+		status__ _HandleSetDirective( _extended_browser___ *&Browser );
+		status__ _HandleIfeqDirective( _extended_browser___ *&Browser );
+		status__ _HandleAttributeDirective(
+			const str::string_ &Parameters,
+			_extended_browser___ *&Browser,
+			str::string_ &Data );
+		status__ _HandlePreprocessorDirective(
+			const str::string_ &DirectiveName,
 			_extended_browser___ *&Browser );
 	public:
 		void reset( bso::bool__ P = true )
@@ -370,14 +378,15 @@ namespace xpp {
 			_Directory.reset( P );
 			_Browser.reset( P );
 			_IgnorePreprocessingInstruction = false;
+			_AttributeDefinitionInProgress = false;
 		}
 		_extended_browser___(
 			_repository_ &Repository,
 			_variables_ &Variables,
-			_qualified_preprocessor_tags___ &Tags )
+			_qualified_preprocessor_directives___ &Directives )
 		: _Repository( Repository ),
 		  _Variables( Variables ),
-		  _Tags( Tags )
+		  _Directives( Directives )
 		{
 			reset( true );
 		}
@@ -397,6 +406,7 @@ namespace xpp {
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
 			_IgnorePreprocessingInstruction = false;
+			_AttributeDefinitionInProgress = false;
 
 			return sOK;
 		}
@@ -409,8 +419,8 @@ namespace xpp {
 			const str::string_ &Directory );
 		status__ Handle(
 			_extended_browser___ *&Browser,
-			bso::bool__ &StripHeadingSpaces );
-		const str::string_ &DumpData( void ) const
+			str::string_ &Data );
+		const str::string_ &DumpData_( void ) const
 		{
 			return _Browser.DumpData();
 		}
@@ -433,9 +443,9 @@ namespace xpp {
 	inline _extended_browser___ *NewBrowser(
 		_repository_ &Repository,
 		_variables_ &Variables,
-		_qualified_preprocessor_tags___ &Tags )
+		_qualified_preprocessor_directives___ &Directives )
 	{
-		_extended_browser___ *Browser = new _extended_browser___( Repository, Variables, Tags );
+		_extended_browser___ *Browser = new _extended_browser___( Repository, Variables, Directives );
 
 		if ( Browser == NULL )
 			ERRa();
@@ -448,7 +458,7 @@ namespace xpp {
 	{
 	private:
 		status__ _Status;
-		_qualified_preprocessor_tags___ _Tags;
+		_qualified_preprocessor_directives___ _Directives;
 		_repository _Repository;
 		_variables _Variables;
 		str::string _Data;
@@ -488,7 +498,7 @@ namespace xpp {
 
 			_Repository.reset( P );
 			_Variables.reset( P );
-			_Tags.reset();
+			_Directives.reset();
 			_Data.reset( P );
 			_Position = 0;
 			_iflow_functions___::reset( P );
@@ -511,11 +521,11 @@ namespace xpp {
 			_DeleteBrowsers();
 			_Repository.Init();
 			_Variables.Init();
-			_Tags.Init( Namespace );
+			_Directives.Init( Namespace );
 			_Data.Init();
 			_Position = 0;
 			_iflow_functions___::Init();
-			_CurrentBrowser = NewBrowser( _Repository, _Variables, _Tags );
+			_CurrentBrowser = NewBrowser( _Repository, _Variables, _Directives );
 			_Browsers.Init();
 			if ( _Browser().Init( XFlow, str::string(), Directory ) != sOK )
 				ERRc();

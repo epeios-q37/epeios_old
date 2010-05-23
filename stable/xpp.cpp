@@ -68,11 +68,12 @@ using xml::token__;
 #define HREF_ATTRIBUTE		"href"
 #define VALUE_ATTRIBUTE		"value"
 
-#define DEFINE_TAG	"define"
-#define EXPAND_TAG	"expand"
-#define IFEQ_TAG	"ifeq"
-#define SET_TAG		"set"
-#define BLOC_TAG	"bloc"
+#define DEFINE_TAG			"define"
+#define EXPAND_TAG			"expand"
+#define IFEQ_TAG			"ifeq"
+#define SET_TAG				"set"
+#define BLOC_TAG			"bloc"
+#define ATTRIBUTE_ATTRIBUTE	"attribute"
 
 static inline status__ Convert_( xml::status__ Status )
 {
@@ -94,7 +95,7 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( NoTagsAllowedHere );
 //	CASE( UnexpectedTag );
 	CASE( UnexpectedValue );
-	CASE( UnknownTag );
+	CASE( UnknownDirective );
 //	CASE( AttributeAlreadyDefined );
 	CASE( UnexpectedAttribute );
 	CASE( UnknownAttribute );
@@ -110,6 +111,7 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( UnableToOpenFile );
 //	CASE( NestingOverflow );
 	CASE( UnknownMacro );
+	CASE( BadAttributeDefinitionSyntax );
 	default:
 		ERRu();
 		break;
@@ -138,27 +140,29 @@ ERREpilog
 	return Translation;
 }
 
-void xpp::_qualified_preprocessor_tags___::Init( const str::string_ &Namespace )
+void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Namespace )
 {
 	NamespaceWithSeparator.Init( Namespace );
 	NamespaceWithSeparator.Append( ':' );
 
-	Define.Init( NamespaceWithSeparator );
-	Define.Append( DEFINE_TAG );
+	DefineTag.Init( NamespaceWithSeparator );
+	DefineTag.Append( DEFINE_TAG );
 
-	Expand.Init( NamespaceWithSeparator );
-	Expand.Append( EXPAND_TAG );
+	ExpandTag.Init( NamespaceWithSeparator );
+	ExpandTag.Append( EXPAND_TAG );
 
-	Set.Init( NamespaceWithSeparator );
-	Set.Append( SET_TAG );
+	SetTag.Init( NamespaceWithSeparator );
+	SetTag.Append( SET_TAG );
 
-	Ifeq.Init( NamespaceWithSeparator );
-	Ifeq.Append( IFEQ_TAG );
+	IfeqTag.Init( NamespaceWithSeparator );
+	IfeqTag.Append( IFEQ_TAG );
 
-	Bloc.Init( NamespaceWithSeparator );
-	Bloc.Append( BLOC_TAG );
+	BlocTag.Init( NamespaceWithSeparator );
+	BlocTag.Append( BLOC_TAG );
+
+	AttributeAttribute.Init( NamespaceWithSeparator );
+	AttributeAttribute.Append( ATTRIBUTE_ATTRIBUTE );
 }
-
 
 static mdr::size__ Fill_(
 	mdr::datum__ *&Buffer,
@@ -194,30 +198,33 @@ static inline bso::bool__ BelongsToNamespace_(
 	return str::Compare( Name, NamespaceWithSeparator, Name.First(), NamespaceWithSeparator.First(), NamespaceWithSeparator.Amount() ) == 0;
 }
 
-enum tag__ {
-	tDefine,
-	tExpand,
-	tIfeq,
-	tBloc,
-	tSet,
+enum directive__ {
+	dDefine,
+	dExpand,
+	dIfeq,
+	dBloc,
+	dSet,
+	dAttribute,
 	t_amount,
 	t_Undefined
 };
 
-static inline tag__ GetTag_(
+static inline directive__ GetDirective_(
 	const str::string_ &Name,
-	const _qualified_preprocessor_tags___ &Tags )
+	const _qualified_preprocessor_directives___ &Directives )
 {
-	if ( Tags.Define == Name )
-		return tDefine;
-	else if ( Tags.Expand == Name )
-		return tExpand;
-	else if ( Tags.Ifeq == Name )
-		return tIfeq;
-	else if ( Tags.Bloc == Name )
-		return tBloc;
-	else if ( Tags.Set == Name )
-		return tSet;
+	if ( Directives.DefineTag == Name )
+		return dDefine;
+	else if ( Directives.ExpandTag == Name )
+		return dExpand;
+	else if ( Directives.IfeqTag == Name )
+		return dIfeq;
+	else if ( Directives.BlocTag == Name )
+		return dBloc;
+	else if ( Directives.SetTag == Name )
+		return dSet;
+	else if ( Directives.AttributeAttribute == Name )
+		return dAttribute;
 
 	return ::t_Undefined;
 }
@@ -334,7 +341,7 @@ static status__ GetDefineNameAndContent_(
 	return sOK;
 }
 
-status__ xpp::_extended_browser___::_HandleDefineTag( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
+status__ xpp::_extended_browser___::_HandleDefineDirective( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -411,7 +418,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Browser = NewBrowser( _Repository, _Variables, _Tags );
+	Browser = NewBrowser( _Repository, _Variables, _Directives );
 
 	Status = Browser->InitWithContent( Content, Coord, _Directory );
 ERRErr
@@ -437,7 +444,7 @@ status__ xpp::_extended_browser___::_HandleFileExpand(
 	status__ Status = s_Undefined;
 ERRProlog
 ERRBegin
-	Browser = NewBrowser( _Repository, _Variables, _Tags );
+	Browser = NewBrowser( _Repository, _Variables, _Directives );
 
 	Status = Browser->InitWithFile( FileName, _Directory );
 ERRErr
@@ -456,7 +463,7 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandleExpandTag( _extended_browser___ *&Browser )
+status__ xpp::_extended_browser___::_HandleExpandDirective( _extended_browser___ *&Browser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -526,7 +533,7 @@ static status__ GetSetNameAndValue_(
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandleSetTag( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
+status__ xpp::_extended_browser___::_HandleSetDirective( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -589,7 +596,7 @@ static status__ GetIfeqSelectAndValue_(
 }
 
 
-status__ xpp::_extended_browser___::_HandleIfeqTag( _extended_browser___ *&Browser )
+status__ xpp::_extended_browser___::_HandleIfeqDirective( _extended_browser___ *&Browser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -617,7 +624,7 @@ ERRBegin
 	TrueValue.Init();
 
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
-		Browser = NewBrowser( _Repository, _Variables, _Tags );
+		Browser = NewBrowser( _Repository, _Variables, _Directives );
 
 		Status = Browser->InitWithContent( Content, Coord, _Directory );
 	}
@@ -637,30 +644,30 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandlePreprocessorTag(
-	const str::string_ &TagName,
+status__ xpp::_extended_browser___::_HandlePreprocessorDirective(
+	const str::string_ &DirectiveName,
 	_extended_browser___ *&Browser )
 {
 	Browser = NULL;
 
-	switch ( GetTag_( TagName, _Tags ) ) {
-	case tDefine:
-		return _HandleDefineTag( Browser );
+	switch ( GetDirective_( DirectiveName, _Directives ) ) {
+	case dDefine:
+		return _HandleDefineDirective( Browser );
 		break;
-	case tBloc:
+	case dBloc:
 		ERRc();	// Traité en amont.
 		break;
-	case tExpand:
-		return _HandleExpandTag( Browser );
+	case dExpand:
+		return _HandleExpandDirective( Browser );
 		break;
-	case tSet:
-		return _HandleSetTag( Browser );
+	case dSet:
+		return _HandleSetDirective( Browser );
 		break;
-	case tIfeq:
-		return _HandleIfeqTag( Browser );
+	case dIfeq:
+		return _HandleIfeqDirective( Browser );
 		break;
 	default:
-		return sUnknownTag;
+		return sUnknownDirective;
 		break;
 	}
 
@@ -668,6 +675,56 @@ status__ xpp::_extended_browser___::_HandlePreprocessorTag(
 
 	return s_Undefined;	// Pour éviter un 'warning'.
 
+}
+
+static epeios::row__ ExtractAttributeName_(
+	const str::string_ &Source,
+	str::string_ &Value )
+{
+	epeios::row__ Row = Source.First();
+
+	while ( ( Row != NONE )
+		    && ( isalnum( Source( Row ) ) || ( Source( Row ) == ':' ) || ( Source( Row ) == '_' ) ) ) {
+		Value.Append( Source( Row ) );
+		Row = Source.Next( Row );
+	}
+
+	return Row;
+}
+
+status__ xpp::_extended_browser___::_HandleAttributeDirective(
+	const str::string_ &Parameters,
+	_extended_browser___ *&Browser,
+	str::string_ &Data )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string AttributeName, MacroName;
+	epeios::row__ Row = NONE;
+ERRBegin
+	AttributeName.Init();
+
+	Row = ExtractAttributeName_( Parameters, AttributeName );
+
+	if ( ( Row == NONE )
+		  || ( AttributeName.Amount() == 0 )
+		  || ( Parameters( Row ) != ',' ) ) {
+		Status = sBadAttributeDefinitionSyntax;
+		ERRReturn;
+	}
+
+	MacroName.Init( Parameters );
+	MacroName.Remove( MacroName.First(), *Row + 1 );
+
+	Data.Append( AttributeName );
+	Data.Append( "=\"" );
+	Status = this->_HandleMacroExpand( MacroName, Browser );
+
+	_AttributeDefinitionInProgress = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
 }
 
 status__ xpp::_extended_browser___::InitWithFile(
@@ -739,19 +796,31 @@ static bso::bool__ StripHeadingSpaces_(
 {
 	return ( PreviousToken == xml::tValue )
 		   || ( ( PreviousToken == xml::tEndTag )
-		      && BelongsToNamespace_( Browser.TagName(), NamespaceWithSeparator ) );
+		      && ( BelongsToNamespace_( Browser.TagName(), NamespaceWithSeparator )
+			  || ( Browser.Token() == xml::tEndTag ) ) );
 }
 
+static void StripHeadingSpaces_( str::string_ &Data )
+{
+	while ( ( Data.First() != NONE ) && ( isspace( Data( Data.First() ) ) ) )
+		Data.Remove( Data.First() );
+}
 
 status__ xpp::_extended_browser___::Handle(
 	_extended_browser___ *&Browser,
-	bso::bool__ &StripHeadingSpaces )
+	str::string_ &Data )
 {
 	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
 	xml::token__ PreviousToken = xml::t_Undefined;
+	bso::bool__ StripHeadingSpaces = false;
 
 	Browser = NULL;
+
+	if ( _AttributeDefinitionInProgress ) {
+		Data.Append( '"' );
+		_AttributeDefinitionInProgress = false;
+	}
 
 	while ( Continue ) {
 		Continue = false;
@@ -763,9 +832,9 @@ status__ xpp::_extended_browser___::Handle(
 			Continue = true;
 			break;
 		case xml::tStartTag:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) )
-				if ( GetTag_( _Browser.TagName(), _Tags ) != tBloc ) {
-					Status = _HandlePreprocessorTag( _Browser.TagName(), Browser );
+			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
+				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc ) {
+					Status = _HandlePreprocessorDirective( _Browser.TagName(), Browser );
 					
 					if ( Browser == NULL )
 						Continue = true;
@@ -775,8 +844,8 @@ status__ xpp::_extended_browser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tAttribute:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) ) {
-				if ( GetTag_( _Browser.TagName(), _Tags ) != tBloc )
+			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) ) {
+				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc )
 					ERRc();
 				else {
 //					Status = sUnexpectedAttribute;
@@ -784,12 +853,18 @@ status__ xpp::_extended_browser___::Handle(
 					Status = sOK;
 					_Browser.PurgeDumpData();
 				}
-			} else
+			} else if ( BelongsToNamespace_( _Browser.AttributeName(), _Directives.NamespaceWithSeparator ) ) {
+				if ( GetDirective_( _Browser.AttributeName(), _Directives ) == dAttribute ) {
+					_Browser.PurgeDumpData();
+					Status = _HandleAttributeDirective( _Browser.Value(), Browser, Data );
+				} else
+					Status = sUnknownDirective;
+			} else 
 				Status = sOK;
 			break;
 		case xml::tStartTagClosed:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) )
-				if ( GetTag_( _Browser.TagName(), _Tags ) != tBloc )
+			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
+				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc )
 					ERRc();
 				else
 					Continue = true;
@@ -797,24 +872,26 @@ status__ xpp::_extended_browser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tEndTag:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Tags.NamespaceWithSeparator ) )
-				switch ( GetTag_( _Browser.TagName(), _Tags ) ) {
-				case tBloc:
-					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Tags.NamespaceWithSeparator );
+			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
+				switch ( GetDirective_( _Browser.TagName(), _Directives ) ) {
+				case dBloc:
+					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
 					Continue = true;
 					break;
 				default:
 					ERRc();
 					break;
 				}
-			else
+			else {
+				StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
 				Status = sOK;
+			}
 			break;
 		case xml::tValue:
 			Status = sOK;
 			break;
 		case xml::tProcessed:
-//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Tags.NamespaceWithSeparator );
+//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
 			Status = s_Pending;
 			break;
 		case xml::tError:
@@ -829,6 +906,13 @@ status__ xpp::_extended_browser___::Handle(
 			Continue = false;
 	}
 
+	if ( Browser == NULL ) {
+		Data.Append( _Browser.DumpData() );
+
+		if ( StripHeadingSpaces )
+			StripHeadingSpaces_( Data );
+	}
+
 	return Status;
 }
 
@@ -841,12 +925,6 @@ void xpp::_preprocessing_iflow_functions___::_DeleteBrowsers( void )
 		delete _Browsers.Pop();
 }
 
-static void StripHeadingSpaces_( str::string_ &Data )
-{
-	while ( ( Data.First() != NONE ) && ( isspace( Data( Data.First() ) ) ) )
-		Data.Remove( Data.First() );
-}
-
 mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 	mdr::size__ Minimum,
 	mdr::datum__ *Buffer,
@@ -854,15 +932,14 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 {
 	mdr::size__ Red = Fill_( Buffer, Wanted, _Data, _Position );
 	_extended_browser___ *Browser = NULL;
-	bso::bool__ StripHeadingSpaces = false;
 
 	while ( ( Minimum > Red ) && ( _CurrentBrowser != NULL ) ) {
+		_Data.Init();
 		_Position = 0;
 
 		Browser = NULL;
 
-		StripHeadingSpaces = false;
-		_Status = _Browser().Handle( Browser, StripHeadingSpaces );
+		_Status = _Browser().Handle( Browser, _Data );
 
 		while ( _Status == s_Pending ) {
 #ifdef XPP_DBG
@@ -875,7 +952,7 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 			if ( _Browsers.Amount() )
 				_CurrentBrowser = _Browsers.Pop();
 
-			_Status = _Browser().Handle( Browser, StripHeadingSpaces );
+			_Status = _Browser().Handle( Browser, _Data );
 
 		} 
 		
@@ -889,13 +966,6 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 			_Browsers.Push( _CurrentBrowser );
 			_CurrentBrowser = Browser;
 		}
-
-		if ( _CurrentBrowser != NULL )
-			_Data.Init( _Browser().DumpData() );
-
-
-		if ( StripHeadingSpaces )
-			StripHeadingSpaces_( _Data );
 
 		Red += Fill_( Buffer, Wanted, _Data, _Position );
 	}

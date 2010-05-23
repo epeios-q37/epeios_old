@@ -1,5 +1,9 @@
 $Id$
 
+23/05/2010 :
+	- XPP :
+		- Ajout directive 'xpp:attribute'.
+
 16/05/2010 :
 	- STR :
 		- Ajout 'ReplaceTag(...)' et 'ReplaceTags(...)' et des objets 'strings[_]' (issus de 'LCL').
