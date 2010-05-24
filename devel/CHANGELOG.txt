@@ -1,5 +1,9 @@
 $Id$
 
+24/05/2010 :
+	- XPP :
+		- Correction du bogue se produisant lors de l'inclusion d'un fichier vide.
+
 23/05/2010 :
 	- XPP :
 		- Ajout directive 'xpp:attribute'.

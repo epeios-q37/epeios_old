@@ -747,7 +747,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-//	_FFlow.EOFD( XTF_EOXT );
+	_FFlow.EOFD( XTF_EOXT );
 
 	_XFlow.Init( _FFlow );
 
