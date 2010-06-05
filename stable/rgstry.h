@@ -747,6 +747,10 @@ namespace rgstry {
 		epeios::size__ Dump(
 			row__ Root,
 			bso::bool__ RootToo,
+			xml::writer_ &Writer ) const;	// Retourne le nombre d'enfants.
+		epeios::size__ Dump(
+			row__ Root,
+			bso::bool__ RootToo,
 			bso::bool__ Indent,
 			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
@@ -950,6 +954,19 @@ namespace rgstry {
 
 			return Result;
 		}
+		void Search(
+			const path_ &Path,
+			row__ &GlobalRow,
+			row__ &LocalRow ) const
+		{
+			GlobalRow = Global.Registry->Search( Path, Global.Root );
+			LocalRow = Local.Registry->Search( Path, Local.Root );
+		}
+		void Search(
+			const str::string_ &Path,
+			row__ &GlobalRow,
+			row__ &LocalRow,
+			epeios::row__ *PathErrorRow = NULL ) const;
  	};
 
 	class overloaded_unique_registry___	// La base de registre de base et locale sont la même.

@@ -193,7 +193,7 @@ static bso::ulong__ GetULong_(
 	bso::ulong__ Value = 0;
 ERRProlog
 	str::string SValue;
-	epeios::row__ Error;
+	epeios::row__ Error = NONE;
 ERRBegin
 	SValue.Init();
 

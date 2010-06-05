@@ -1140,7 +1140,7 @@ ERREpilog
 }
 
 
-nsIDOMDocumentFragment *nsxpcm::XSLTTransform(
+nsIDOMDocumentFragment *nsxpcm::XSLTransform(
 	nsIDOMDocument *XMLDocument,
 	nsIDOMDocument *XSLStylesheet,
 	nsIDOMDocument *Owner,
@@ -1236,7 +1236,7 @@ static void _GetXSLStylesheet(
 		ERRu();
 }
 
-nsIDOMDocumentFragment *nsxpcm::XSLTTransform(
+nsIDOMDocumentFragment *nsxpcm::XSLTransform(
 	const str::string_ &XMLString,
 	const str::string_ &XSLStylesheetFileName,
 	nsIDOMDocument *Owner,
@@ -1250,7 +1250,7 @@ ERRBegin
 
 	_GetXSLStylesheet( XSLStylesheetFileName, XSLStylesheet );
 
-	Fragment = XSLTTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
+	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
 ERRErr
 	Fragment = NULL;
 ERREnd

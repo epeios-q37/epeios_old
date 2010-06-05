@@ -684,6 +684,24 @@ ERREpilog
 epeios::size__ rgstry::registry_::Dump(
 	row__ Root,
 	bso::bool__ RootToo,
+	xml::writer_ &Writer ) const
+{
+	epeios::size__ ChildAmount = 0;
+ERRProlog
+	buffer Buffer;
+ERRBegin
+	Buffer.Init( Nodes );
+
+	ChildAmount = _Dump( Root, RootToo, Writer, Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return ChildAmount;
+}
+
+epeios::size__ rgstry::registry_::Dump(
+	row__ Root,
+	bso::bool__ RootToo,
 	bso::bool__ Indent,
 	txf::text_oflow__ &Flow ) const
 {
@@ -696,7 +714,7 @@ ERRBegin
 
 	Writer.Init( Flow, Indent );
 
-	ChildAmount = _Dump( Root, RootToo, Writer, Buffer );
+	ChildAmount = Dump( Root, RootToo, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -948,6 +966,24 @@ ERRErr
 ERREnd
 ERREpilog
 	return Exists;
+}
+
+void rgstry::overloaded_registry___::Search(
+	const str::string_ &RawPath,
+	row__ &GlobalRow,
+	row__ &LocalRow,
+	epeios::row__ *PathErrorRow ) const
+{
+ERRProlog
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( BuildPath_( RawPath, Path, PathErrorRow ) )
+		Search( Path, GlobalRow, LocalRow );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 const str::string_ &rgstry::GetTranslation(

@@ -1884,13 +1884,13 @@ namespace nsxpcm {
 
 	E_AUTO( xslt_parameters );
 
-	nsIDOMDocumentFragment *XSLTTransform(
+	nsIDOMDocumentFragment *XSLTransform(
 		nsIDOMDocument *XMLDocument,
 		nsIDOMDocument *XSLTStylesheet,
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 
-	nsIDOMDocumentFragment *XSLTTransform(
+	nsIDOMDocumentFragment *XSLTransform(
 		const str::string_ &XMLString,
 		const str::string_ &XSLStylesheetFileName,
 		nsIDOMDocument *Owner,

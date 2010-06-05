@@ -1,5 +1,18 @@
 $Id$
 
+05/06/2010 :
+	- RGSTRY :
+		- Ajout 'Search(...)' to 'overloaded_registry___'.
+		- Rajout variante méthode 'Dump(...)' prenant un 'xml::writer_' comme paramètre.
+	- NSXPCM :
+		- 'XSLTTransform(...)' -> 'XSLTransform(...)'
+
+03/06/2010 :
+	- HTP :
+		- Correction bogue 'GetULong_()' qui signalait une erreur alors qu'il n'y avait pas lieu ('Error' non initialisé).
+	- XTF :
+		- Correction bogue cellule vide 'GetCell()' suite modification précédente.
+
 24/05/2010 :
 	- XPP :
 		- Correction du bogue se produisant lors de l'inclusion d'un fichier vide.
