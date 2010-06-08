@@ -36,7 +36,6 @@ ERRProlog
 	str::string UserData;
 	str::string UserProjectPath;
 	flx::E_STRING_IFLOW__ SIFlow;
-	xtf::extended_text_iflow__ XTFlow;
 	str::string DatabasePath;
 ERRBegin
 	ProjectName.Init();
@@ -61,9 +60,8 @@ ERRBegin
 			UserData.Init( "<Projects/>" );
 
 		SIFlow.Init( UserData );
-		XTFlow.Init( SIFlow );
 
-		K().SetLocalRegistry( XTFlow, UserProjectPath );
+		K().SetLocalRegistry( SIFlow, UserProjectPath );
 
 		DatabasePath.Init();
 
@@ -145,7 +143,7 @@ ERRBegin
 
 	Main.TableMenu.RemoveChildren();
 
-	Main.TableMenu.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "TableMenu.xsl" ), Main.Document, Parameters ) );
+	Main.TableMenu.AppendChild( nsxpcm::XSLTransform( XML, str::string( XSL_ROOT_PATH "TableMenu.xsl" ), Main.Document, Parameters ) );
 
 	Register_( Main.TableMenu.GetElement(), *this );
 ERRErr
@@ -171,7 +169,7 @@ ERRBegin
 
 	ListView.ContentTree.RemoveChildren();
 
-	ListView.ContentTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "ListView.xsl" ), ListView.Document, Parameters ) );
+	ListView.ContentTree.AppendChild( nsxpcm::XSLTransform( XML, str::string( XSL_ROOT_PATH "ListView.xsl" ), ListView.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -208,7 +206,7 @@ ERRBegin
 
 	RecordForm.RecordBox.RemoveChildren();
 
-	RecordForm.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "RecordForm.xsl" ), RecordForm.Document, Parameters ) );
+	RecordForm.RecordBox.AppendChild( nsxpcm::XSLTransform( XML, str::string( XSL_ROOT_PATH "RecordForm.xsl" ), RecordForm.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -228,7 +226,7 @@ ERRBegin
 
 	RecordView.RecordBox.RemoveChildren();
 
-	RecordView.RecordBox.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "RecordView.xsl" ), RecordView.Document, Parameters ) );
+	RecordView.RecordBox.AppendChild( nsxpcm::XSLTransform( XML, str::string( XSL_ROOT_PATH "RecordView.xsl" ), RecordView.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -496,7 +494,7 @@ ERRBegin
 
 	DatabaseSelection.DatabaseTree.RemoveChildren();
 
-	DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTTransform( XML, str::string( XSL_ROOT_PATH "DatabaseSelectionList.xsl" ), DatabaseSelection.Document, Parameters ) );
+	DatabaseSelection.DatabaseTree.AppendChild( nsxpcm::XSLTransform( XML, str::string( XSL_ROOT_PATH "DatabaseSelectionList.xsl" ), DatabaseSelection.Document, Parameters ) );
 ERRErr
 ERREnd
 ERREpilog

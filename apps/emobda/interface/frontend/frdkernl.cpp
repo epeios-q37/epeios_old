@@ -128,7 +128,7 @@ ERRProlog
 	str::string RemoteHostServiceOrLocalLibraryPath;
 	rgstry::row__ BaseRoot = NONE;
 	csducl::type__ Type = csducl::t_Undefined;
-	xml::extended_status__ Status = xml::xs_Undefined;
+	xpp::status__ Status = xpp::s_Undefined;
 	rgstry::error_details ErrorDetails;
 	rgstry::error__ Error = rgstry::e_Undefined;
 ERRBegin
@@ -270,7 +270,7 @@ ERREpilog
 }
 
 void frdkernl::kernel___::SetLocalRegistry(
-	xtf::extended_text_iflow__ &Project,
+	flw::iflow__ &Project,
 	const str::string_ &Path )
 {
 ERRProlog

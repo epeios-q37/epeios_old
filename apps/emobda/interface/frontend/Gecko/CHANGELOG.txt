@@ -4,6 +4,13 @@ REMINDER :
 	- Before publication, merge with the content of ../CHANGELOG.txt.
 	- This file is for both C++ and XUL part of the program..
 	
+	
+	
+- 08/06/2010 :
+	- Adaptation to changes in 'NSXPCM'.
+	- Adaptation to changes in 'EPSMSC'.
+	- Adaptation to changes in 'XML' and use of 'XPP'.
+	
 - 31/01/2010 :
 	- Using the new 'XUI' library.
 	

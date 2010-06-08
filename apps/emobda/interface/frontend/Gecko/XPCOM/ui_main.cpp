@@ -40,7 +40,7 @@ using nsxpcm::event__;
 #endif
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define EMOBDA_TEXT		"Part of the 'EMobDa' software (http://zeusw.org/intl/emobda/)"
 

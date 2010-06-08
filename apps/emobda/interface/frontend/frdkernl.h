@@ -339,7 +339,7 @@ namespace frdkernl {
 			return _backend___::IsConnected();
 		}
 		void SetLocalRegistry(
-			xtf::extended_text_iflow__ &Project,
+			flw::iflow__ &Project,
 			const str::string_ &Path );	/* To call after 'Init()'. 'Project' contains the 'XML' tree containing the user configuration.
 											'Path' contains the path of the root subtree. */
 		void DumpRegistry(
