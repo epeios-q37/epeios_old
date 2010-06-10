@@ -257,7 +257,7 @@ inline static void LaunchFlusher_( void )
 		ERRc();
 #endif
 	if ( FlusherData_.Row == NONE )
-		mtk::Launch( Flusher_, NULL );	// Le verrou est posé, donc ne fait rien tant que l'appelenat n'ôte pas le verrou.
+		mtk::Launch( Flusher_, NULL );	// Le verrou est posé, donc ne fait rien tant que l'appelant n'ôte pas le verrou.
 
 	FlusherData_.Row = Queue_.Last();
 #endif

@@ -317,7 +317,7 @@ namespace uym {
 		//f Initialization.
 		void Init( void )
 		{
-			reset();
+//			reset();
 
 			_Driver.Init();
 

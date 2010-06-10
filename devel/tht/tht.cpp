@@ -64,6 +64,7 @@ using namespace tht;
 #	include <unistd.h>
 #	include <sched.h>
 #	include <errno.h>
+#	include <time.h>
 #else
 #	error "Unknown compilation enviroment"
 #endif

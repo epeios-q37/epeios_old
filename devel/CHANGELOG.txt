@@ -1,5 +1,13 @@
 $Id$
 
+10/06/2010 :
+	- THT :
+		- Ajout 'include' manquant détecté par g++ sous Cygwin.
+
+09/06/2010 :
+	- UYM :
+		- Suppression d'un 'reset()' source de ralentissements.
+
 05/06/2010 :
 	- RGSTRY :
 		- Ajout 'Search(...)' to 'overloaded_registry___'.

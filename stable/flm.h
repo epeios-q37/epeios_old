@@ -393,7 +393,7 @@ namespace flm {
 			{
 				mdr::datum__ Datum = 0;
 
-				Open_( true );
+/*				Open_( true );
 				
 				File_.Seek( Capacite - (iop::amount__)1 );
 
@@ -405,6 +405,7 @@ namespace flm {
 				} else
 					if ( !Temoin_.Manuel )
 						ReleaseFile();
+*/
 
 				TailleFichier_ = Capacite;
 			}
