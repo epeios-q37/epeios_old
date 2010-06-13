@@ -1,5 +1,9 @@
 $Id$
 
+13/06/2010 :
+	- NSXPCM :
+		- Modification pour compatitbilité avec XULRunner 1.9.0.4 et 1.9.2.
+
 10/06/2010 :
 	- THT :
 		- Ajout 'include' manquant détecté par g++ sous Cygwin.

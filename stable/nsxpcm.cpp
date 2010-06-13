@@ -56,19 +56,19 @@ public:
 /*$BEGIN$*/
 
 #include "nsMemory.h"
-#include "dom/nsIDOMEvent.h"
-#include "dom/nsIDOMEventTarget.h"
-#include "widget/nsIFilePicker.h"
+#include "nsIDOMEvent.h"
+#include "nsIDOMEventTarget.h"
+#include "nsIFilePicker.h"
 #include "nsILocalFile.h"
 #include "nsIConsoleService.h"
-#include "content/nsIXSLTProcessor.h"
+#include "nsIXSLTProcessor.h"
 #include "nsIVariant.h"
 #include "nsIDOMParser.h"
 #include "nsIXMLHttpRequest.h"
 #include "nsIIOService.h"
 #include "nsIExternalProtocolService.h"
 #include "nsIDirectoryService.h"
-#include "satchel/nsIFormHistory.h"
+#include "nsIFormHistory.h"
 
 #if defined NSXPCM__ENABLE_FORMHISTORY
 #	define ENABLE_FORMHISTORY

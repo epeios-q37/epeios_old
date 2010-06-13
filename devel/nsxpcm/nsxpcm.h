@@ -70,27 +70,27 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #include "xpcom-config.h"
 
-#include "layout/nsITreeView.h"
-#include "layout/nsITreeContentView.h"
-#include "layout/nsITreeSelection.h"
-#include "layout/nsIListBoxObject.h"
+#include "nsITreeView.h"
+#include "nsITreeContentView.h"
+#include "nsITreeSelection.h"
+#include "nsIListBoxObject.h"
 
-#include "dom/nsIDOMDocument.h"
-#include "dom/nsIDOMElement.h"
-#include "dom/nsIDOMXULMultSelectCntrlEl.h"
-#include "dom/nsIDOMXULSelectCntrlItemEl.h"
-#include "dom/nsIDOMXULTextboxElement.h"
-#include "dom/nsIDOMXULMenuListElement.h"
-#include "dom/nsIDOMXULCheckboxElement.h"
-#include "dom/nsIDOMXULButtonElement.h"
-#include "dom/nsIDOMXULTreeElement.h"
-#include "dom/nsIDOMXULDescriptionElement.h"
-#include "dom/nsIDOMWindowInternal.h"
-#include "dom/nsIDOMXULLabelElement.h"
-#include "dom/nsIDOMMutationEvent.h"
-#include "dom/nsIDOMKeyEvent.h"
+#include "nsIDOMDocument.h"
+#include "nsIDOMElement.h"
+#include "nsIDOMXULMultSelectCntrlEl.h"
+#include "nsIDOMXULSelectCntrlItemEl.h"
+#include "nsIDOMXULTextboxElement.h"
+#include "nsIDOMXULMenuListElement.h"
+#include "nsIDOMXULCheckboxElement.h"
+#include "nsIDOMXULButtonElement.h"
+#include "nsIDOMXULTreeElement.h"
+#include "nsIDOMXULDescriptionElement.h"
+#include "nsIDOMWindowInternal.h"
+#include "nsIDOMXULLabelElement.h"
+#include "nsIDOMMutationEvent.h"
+#include "nsIDOMKeyEvent.h"
 
-#include "appshell/nsIXULWindow.h"
+#include "nsIXULWindow.h"
 
 // #include "content/nsIXSLTProcessor.h"
 
@@ -105,7 +105,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsIDOMDocumentFragment.h"
 #include "nsICommandLine.h" // Situé dans 'toolkitcomps'.
 
-#include "commandhandler/nsICommandManager.h"
+#include "nsICommandManager.h"
 
 #undef NSXPCM__ENABLE_FORMHISTORY
 
