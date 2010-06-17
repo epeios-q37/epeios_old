@@ -211,8 +211,8 @@ namespace ndbbsc {
 				List.Store( NONE, Links( CacheRow ) );
 			} else {
 				CacheRow = Container.New();
-				Links.Allocate( Container.Amount() );
-				Queue.Allocate( Container.Amount() );
+				Links.Allocate( Container.Extent() );
+				Queue.Allocate( Container.Extent() );
 			}
 
 			Container.Store( Datum, CacheRow );
