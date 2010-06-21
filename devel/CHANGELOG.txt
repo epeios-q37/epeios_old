@@ -1,5 +1,9 @@
 $Id$
 
+21/06/2010 :
+	- XPP :
+		- Correction bogue non propagation du nom de fichier lors d'une expansion de macro.
+
 13/06/2010 :
 	- NSXPCM :
 		- Modification pour compatitbilité avec XULRunner 1.9.0.4 et 1.9.2.

@@ -159,32 +159,38 @@ namespace xpp {
 		struct s {
 			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Names;
 			bch::E_BUNCHt_( xtf::coord__, _rrow__ )::s Coords;
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s FileNames;
 			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Contents;
 		};
 		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Names;
 		bch::E_BUNCHt_( xtf::coord__, _rrow__ ) Coords;
+			ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) FileNames;
 		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Contents;
 		_repository_( s &S )
 		: Names( S.Names ),
 		  Coords( S.Coords ),
+		  FileNames( S.FileNames ),
 		  Contents( S.Contents )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Names.reset( P );
 			Coords.reset( P );
+			FileNames.reset( P );
 			Contents.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Names.plug( MM );
 			Coords.plug( MM );
+			FileNames.plug( MM );
 			Contents.plug( MM );
 		}
 		_repository_ &operator =( const _repository_ &R )
 		{
 			Names = R.Names;
 			Coords = R.Coords;
+			FileNames = R.FileNames;
 			Contents = R.Contents;
 
 			return *this;
@@ -193,6 +199,7 @@ namespace xpp {
 		{
 			Names.Init();
 			Coords.Init();
+			FileNames.Init();
 			Contents.Init();
 		}
 		bso::bool__ Delete( const str::string_ &Name )
@@ -202,6 +209,7 @@ namespace xpp {
 			if ( Row != NONE ) {
 				Names.Remove( Row );
 				Coords.Remove( Row );
+				FileNames.Remove( Row );
 				Contents.Remove( Row );
 
 				return true;
@@ -211,12 +219,16 @@ namespace xpp {
 		bso::bool__ Store(
 			const str::string_ &Name,
 			xtf::coord__ Coord,
+			const str::string_ &FileName,
 			const str::string_ &Content )
 		{
 			bso::bool__ AlreadyExists = Delete( Name );
 			_rrow__ Row = Names.Append( Name );
 
 			if ( Row != Coords.Append( Coord ) )
+				ERRc();
+
+			if ( Row != FileNames.Append( FileName ) )
 				ERRc();
 
 			if ( Row != Contents.Append( Content ) )
@@ -227,6 +239,7 @@ namespace xpp {
 		bso::bool__ Get(
 			const str::string_ &Name,
 			xtf::coord__ &Coord,
+			str::string_ &FileName,
 			str::string_ &Content ) const
 		{
 			_rrow__ Row = _Locate( Name );
@@ -235,6 +248,8 @@ namespace xpp {
 				return false;
 
 			Coord = Coords.Get( Row );
+
+			FileNames.Recall( Row, FileName );
 
 			Contents.Recall( Row, Content );
 
@@ -415,6 +430,7 @@ namespace xpp {
 			const str::string_ &Directory );
 		status__ InitWithContent(
 			const str::string_ &Content,
+			const str::string_ &NameOfTheCurrentFile,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory );
 		status__ Handle(

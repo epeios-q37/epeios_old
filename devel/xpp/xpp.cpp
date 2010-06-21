@@ -358,7 +358,7 @@ ERRBegin
 	if ( ( Status = GetDefineNameAndContent_( _Browser, Name, Content ) ) != sOK )
 		ERRReturn;
 
-	_Repository.Store( Name, Coord, Content );
+	_Repository.Store( Name, Coord, _LocalizedFileName, Content );
 ERRErr
 ERREnd
 ERREpilog
@@ -408,19 +408,21 @@ status__ xpp::_extended_browser___::_HandleMacroExpand(
 {
 	status__ Status = s_Undefined;
 ERRProlog
+	str::string FileName;
 	str::string Content;
 	xtf::coord__ Coord;
 ERRBegin
+	FileName.Init();
 	Content.Init();
 
-	if ( !_Repository.Get( MacroName, Coord, Content ) ) {
+	if ( !_Repository.Get( MacroName, Coord, FileName, Content ) ) {
 		Status = sUnknownMacro;
 		ERRReturn;
 	}
 
 	Browser = NewBrowser( _Repository, _Variables, _Directives );
 
-	Status = Browser->InitWithContent( Content, Coord, _Directory );
+	Status = Browser->InitWithContent( Content, FileName, Coord, _Directory );
 ERRErr
 	if ( Browser != NULL ) {
 		delete Browser;
@@ -626,7 +628,7 @@ ERRBegin
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
 		Browser = NewBrowser( _Repository, _Variables, _Directives );
 
-		Status = Browser->InitWithContent( Content, Coord, _Directory );
+		Status = Browser->InitWithContent( Content, _LocalizedFileName, Coord, _Directory );
 	}
 ERRErr
 	if ( Browser != NULL ) {
@@ -766,6 +768,7 @@ ERREpilog
 
 status__ xpp::_extended_browser___::InitWithContent(
 	const str::string_ &Content,
+	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory )
 {
@@ -778,7 +781,7 @@ ERRBegin
 
 	_XFlow.Init( _SFlow, Coord );
 
-	Init( _XFlow, str::string(), _Directory );
+	Init( _XFlow, NameOfTheCurrentFile, _Directory );
 
 	_IgnorePreprocessingInstruction = false;
 
