@@ -5,10 +5,10 @@ Version 0.3.0 :
 ---------------
 
 - (from underlying libraries) :
-	- Addition of the 'xpp:attribute' directive (experimental).
+	- Addition the 'xpp:attribute' directive (experimental).
 	- 'xmlns:...' attributes are now allowed.
-	- When an error occurs, position is more accurate.
-	- Somewhat faster.
+	- When an error occurs, its position is more accurate.
+	- Somewhat overall faster.
 
 - 10/05/2010 :
 	- Adding XML header.
