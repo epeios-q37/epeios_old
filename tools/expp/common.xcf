@@ -56,5 +56,4 @@
 		<xpp:expand select="RootURL"/>
 		<xpp:bloc>/something</xpp:bloc>
 	</SomeURL>
-	<URLInOtherForm xpp:attribute="TargetOs,OS"/>
 </xpp:bloc>
