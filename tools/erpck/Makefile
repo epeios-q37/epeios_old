@@ -32,7 +32,9 @@ copt =
 # Forcing code generation for 32 bits enviroment.
 #copt += -m32
 lopt = 
-libs = cio clnarg epsmsc err fil flw fnm mmi str tol ttr uym xml lcl rgstry xpp
+libs = cio clnarg epsmsc err fil flw fnm mmi
+libs += str tol ttr uym xml lcl rgstry xpp
+libs += rpkals rpkbsc rpkctx rpkrcd rpktbl
 
 ifndef EPEIOS_SRC
 	src=

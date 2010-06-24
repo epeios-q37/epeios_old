@@ -457,7 +457,7 @@ void clnarg::PrintOptionUsage(
 	clnarg::view View,
 	txf::text_oflow__ &Flow )
 {
-	Flow << txf::tab;
+	Flow << txf::pad;
 		
 	Flow << Description.GetOptionLabels( OptionId );
 	

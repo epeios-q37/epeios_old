@@ -1,5 +1,9 @@
 $Id$
 
+24/06/2010 :
+	- XML :
+		- Correction définition 'tfObvious'.
+
 21/06/2010 :
 	- XPP :
 		- Correction bogue non propagation du nom de fichier lors d'une expansion de macro.
@@ -109,8 +113,8 @@ $Id$
 		- Adaptation aux modifications dans 'XML'; mise en oeuvre 'XPP'.
 	- XML :
 		- Rajout version 'const ...(...) const ' de certaines méthodes.
-		- 'GetLabel_(status__ ...)' devient publique ('GetLabel(extended_status__ ...)' va être déplacé ver 'xpp').
-		- Purge de tout ce qui concerne le préprocesseur (déplacé si n"cessaire dans 'XPP').
+		- 'GetLabel_(status__ ...)' devient publique ('GetLabel(extended_status__ ...)' va être déplacé ver 'XPP').
+		- Purge de tout ce qui concerne le préprocesseur (déplacé si nécessaire dans 'XPP').
 	- XTF :
 		- Rajout d'un 'const' manquant.
 

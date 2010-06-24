@@ -34,8 +34,14 @@
 #include "dtr.h"
 #include "lcl.h"
 
+#include "rpkbsc.h"
+#include "rpkals.h"
+#include "rpkrcd.h"
+#include "rpktbl.h"
+#include "rpkctx.h"
+
 #define NAME					"erpck"
-#define VERSION					"0.1.0"
+#define VERSION					"0.2.0"
 #define COPYRIGHT_YEARS			"2010"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
@@ -249,293 +255,10 @@ ERREpilog
 
 /* End of the part which handles command line arguments. */
 
-typedef bso::ubyte__ weight__;
-#define DEFAULT_WEIGHT	1
+using namespace rpkals;
+using namespace rpkrcd;
+using namespace rpktbl;
 
-E_ROW( rrow__ );	// 'record row'.
-E_ROW( trow__ );	// 'table row'.
-
-class record_alias_
-{
-public:
-	struct s {
-		str::string_::s Label;
-		trow__ TableRow;
-		rrow__ RecordRow;
-	}&S_;
-	str::string_ Label;
-	record_alias_( s &S )
-	: S_( S ),
-	  Label( S.Label )
-	{}
-	void reset( bso::bool__ P = true )
-	{
-		Label.reset( P );
-
-		S_.TableRow = NONE;
-		S_.RecordRow = NONE;
-	}
-	void plug( mdr::E_MEMORY_DRIVER__ &MD )
-	{
-		Label.plug( MD );
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Label.plug( MM );
-	}
-	record_alias_ &operator =( const record_alias_ &RA )
-	{
-		Label = RA.Label;
-
-		S_.TableRow = RA.S_.TableRow;
-		S_.RecordRow = RA.S_.RecordRow;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		reset();
-
-		Label.Init();
-	}
-	void Init(
-		const str::string_ &Label,
-		trow__ TableRow,
-		rrow__ RecordRow )
-	{
-		reset();
-
-		this->Label.Init( Label );
-
-		S_.TableRow = TableRow;
-		S_.RecordRow = RecordRow;
-	}
-	E_RODISCLOSE_( trow__, TableRow );
-	E_RODISCLOSE_( rrow__, RecordRow );
-};
-
-E_AUTO( record_alias );
-
-typedef ctn::E_XMCONTAINER_( record_alias_ ) record_aliases_;
-E_AUTO( record_aliases )
-
-class table_alias_
-{
-public:
-	struct s {
-		str::string_::s Label;
-		trow__ TableRow;
-	}&S_;
-	str::string_ Label;
-	table_alias_( s &S )
-	: S_( S ),
-	  Label( S.Label )
-	{}
-	void reset( bso::bool__ P = true )
-	{
-		Label.reset( P );
-
-		S_.TableRow = NONE;
-	}
-	void plug( mdr::E_MEMORY_DRIVER__ &MD )
-	{
-		Label.plug( MD );
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Label.plug( MM );
-	}
-	table_alias_ &operator =( const table_alias_ &TA )
-	{
-		Label = TA.Label;
-		S_.TableRow = TA.S_.TableRow;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		reset();
-
-		Label.Init();
-	}
-	void Init(
-		const str::string_ &Label,
-		trow__ TableRow )
-	{
-		reset();
-
-		this->Label.Init( Label );
-		S_.TableRow = TableRow;
-	}
-	E_RODISCLOSE_( trow__, TableRow );
-};
-
-E_AUTO( table_alias );
-
-
-typedef ctn::E_XMCONTAINER_( table_alias_ ) table_aliases_;
-E_AUTO( table_aliases )
-
-class aliases_ {
-public:
-	struct s {
-		record_aliases_::s Records;
-		table_aliases_::s Tables;
-	};
-	record_aliases_ Records;
-	table_aliases_ Tables;
-	aliases_ ( s &S )
-	: Records( S.Records ),
-	  Tables( S.Tables )
-	{}
-	void reset( bso::bool__ P = true )
-	{
-		Records.reset( P );
-		Tables.reset( P );
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Records.plug( MM );
-		Tables.plug( MM );
-	}
-	aliases_ &operator =( const aliases_ &A )
-	{
-		Records = A.Records;
-		Tables = A.Tables;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		reset();
-
-		Records.Init();
-		Tables.Init();
-	}
-};
-
-E_AUTO( aliases )
-
-class record_
-{
-public:
-	struct s
-	{
-		str::string_::s
-			Label,
-			Content;
-		weight__ Weight;
-		bso::bool__ Skip;
-	} &S_;
-	str::string_
-		Label,
-		Content;
-	record_( s &S )
-	: S_( S ),
-	  Label( S.Label ),
-	  Content( S.Content )
-	{
-	}
-	void reset( bso::bool__ P = true )
-	{
-		Label.reset( P );
-		Content.reset( P );
-
-		S_.Weight = DEFAULT_WEIGHT;
-		S_.Skip = false;
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Label.plug( MM );
-		Content.plug( MM );
-	}
-	record_ &operator =( const record_ &R )
-	{
-		Label = R.Label;
-		Content = R.Content;
-
-		S_.Weight = R.S_.Weight;
-		S_.Skip = R.S_.Skip;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		S_.Weight = DEFAULT_WEIGHT;
-		S_.Skip = false;
-
-		Label.Init();
-		Content.Init();
-	}
-	void Init(
-		const str::string_ &Label,
-		const str::string_ &Content,
-		weight__ Weight )
-	{
-		reset();
-
-		this->Label.Init( Label );
-		this->Content.Init( Content );
-
-	}
-	E_RWDISCLOSE_( weight__, Weight );
-	E_RWDISCLOSE_( bso::bool__, Skip );
-};
-
-E_AUTO( record )
-
-typedef ctn:: E_XCONTAINERt_( record_, rrow__ ) records_;
-E_AUTO( records )
-
-class table_ {
-public:
-	struct s {
-		str::string_::s Label;
-		records_::s Records;
-//		aliases_::s Aliases;
-	};
-	str::string_ Label;
-	records_ Records;
-//	aliases_ Aliases;
-	table_( s &S )
-	: Label( S.Label ),
-	  Records( S.Records )/*,
-	  Aliases( S.Aliases ) */
-	{};
-	void reset( bso::bool__ P = true )
-	{
-		Label.reset( P );
-		Records.reset( P );
-//		Aliases.reset( P );
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Label.plug( MM );
-		Records.plug( MM );
-//		Aliases.plug( MM );
-	}
-	table_ &operator =(const table_ &T )
-	{
-		Label = T.Label;
-		Records = T.Records;
-//		Aliases = T.Aliases;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		reset();
-
-		Label.Init();
-		Records.Init();
-//		Aliases.Init();
-	}
-};
-
-E_AUTO( table )
-
-typedef ctn::E_XCONTAINERt_( table_, trow__ ) tables_;
-E_AUTO( tables );
 
 typedef tables_	data_;
 E_AUTO( data )
@@ -633,144 +356,18 @@ ERREnd
 ERREpilog
 }
 
-template <typename container, typename item, typename row> row BaseSearch_(
-	const str::string_ &Label,
-	const container &Container )
-{
-	item Item;
-	row Row = Container.First();
-
-	Item.Init( Container );
-
-	while ( ( Row != NONE ) && ( Item( Row ).Label != Label ) )
-		Row = Container.Next( Row );
-
-	return Row;
-}
-
-template <typename container, typename item, typename row> row SearchInMulti_(
-	const str::string_ &Label,
-	const container &Container )
-{
-	return BaseSearch_<container, ctn::E_CITEMt( item, row ), row >( Label, Container );
-}
-
-template <typename container, typename item, typename row> row SearchInMono_(
-	const str::string_ &Label,
-	const container &Container )
-{
-	return BaseSearch_<container, ctn::E_CMITEMt( item, row ), row >( Label, Container );
-}
-
-static trow__ SearchTable_(
-	const str::string_ &Label,
-	const tables_ &Tables )
-{
-	return SearchInMulti_<tables_, table_, trow__>( Label, Tables );
-}
-
-static trow__ SearchTable_(
-	const str::string_ &Label,
-	const table_aliases_ &Aliases )
-{
-	ctn::E_CMITEM( table_alias_ ) Alias;
-	epeios::row__ Row = Aliases.First();
-
-	Alias.Init( Aliases );
-
-	if ( ( Row != NONE ) && ( Alias( Row ).Label != Label ) )
-		Row = Aliases.Next( Row );
-
-	if ( Row != NONE )
-		return Alias( Row ).TableRow();
-	else
-		return NONE;
-}
-
-
-static rrow__ SearchRecord_(
-	const str::string_ &Label,
-	const records_ &Records )
-{
-	return SearchInMulti_<records_, record_, rrow__>( Label, Records );
-}
-
-static rrow__ SearchRecord_(
-	const str::string_ &Label,
-	trow__ TableRow,
-	const tables_ &Tables )
-{
-	ctn::E_CITEMt( table_, trow__ ) Table;
-
-	Table.Init( Tables );
-
-	return SearchRecord_( Label, Table( TableRow ).Records );
-}
-
-static void Insert_(
-	rrow__ Row,
-	const records_ &Records,
-	record_ &Record )
-{
-	ctn::E_CITEMt( record_, rrow__ ) SourceRecord;
-
-	SourceRecord.Init( Records );
-
-	Record.Content.Append( SourceRecord( Row ).Content );
-}
-
-static void Insert_(
-	rrow__ RecordRow,
-	trow__ TableRow,
-	const tables_ &Tables,
-	record_ &Record )
-{
-	ctn::E_CITEMt( table_, trow__ ) Table;
-
-	Table.Init( Tables );
-
-	Insert_( RecordRow, Table( TableRow ).Records, Record );
-}
-
 static void Insert_(
 	const str::string_ &RecordLabel,
 	const records_ &Records,
 	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
-	rrow__ Row = SearchRecord_( RecordLabel, Records );
+	rrow__ Row = rpkrcd::SearchRecord( RecordLabel, Records );
 
 	if ( Row == NONE )
 		ReportErrorAndExit_( "Unable to find record", XFlow );
 
-	Insert_( Row, Records, Record );
-}
-
-static epeios::row__ FindRecordAlias_(
-	const str::string_ &Label,
-	const record_aliases_ &Aliases )
-{
-	return SearchInMono_<record_aliases_, record_alias_, epeios::row__>( Label, Aliases );
-}
-
-static epeios::row__ FindTableAlias_(
-	const str::string_ &Label,
-	const table_aliases_ &Aliases )
-{
-	return SearchInMono_<table_aliases_, table_alias_, epeios::row__>( Label, Aliases );
-}
-
-static void Insert_(
-	epeios::row__ AliasRow,
-	const record_aliases_ &Aliases,
-	const tables_ &Tables,
-	record_ &Record )
-{
-	ctn::E_CMITEM( record_alias_ ) Alias;
-
-	Alias.Init( Aliases );
-
-	Insert_( Alias( AliasRow ).RecordRow(), Alias( AliasRow ).TableRow(), Tables, Record );
+	rpkrcd::Insert( Row, Records, Record );
 }
 
 static void InsertUsingRecordAlias_(
@@ -785,7 +382,7 @@ static void InsertUsingRecordAlias_(
 	if ( Row == NONE )
 		ReportErrorAndExit_( "Unable to find record alias", XFlow );
 
-	Insert_( Row, Aliases, Tables, Record );
+	Insert( Row, Aliases, Tables, Record );
 }
 
 static void Insert_(
@@ -849,7 +446,7 @@ static void InsertUsingLabels_(
 	xpp::preprocessing_extended_text_iflow___ &XFlow,
 	record_ &Record )
 {
-	trow__ Row = SearchTable_( TableLabel, Tables );
+	trow__ Row = SearchTable( TableLabel, Tables );
 	ctn::E_CITEMt( table_, trow__ ) Table;
 
 	if ( Row == NONE )
@@ -1240,10 +837,10 @@ ERRBegin
 			break;
 		case xml::tStartTagClosed:
 			if ( TableLabel.Amount() != 0 ) {
-				if ( ( TableRow = SearchTable_( TableLabel, Tables ) ) == NONE )
+				if ( ( TableRow = SearchTable( TableLabel, Tables ) ) == NONE )
 					ReportErrorAndExit_( "Unable to find table", XFlow );
 			} else if ( TableAliasLabel.Amount() != 0 ) {
-				if ( ( TableRow = SearchTable_( TableAliasLabel, TableAliases ) ) == NONE )
+				if ( ( TableRow = SearchTable( TableAliasLabel, TableAliases ) ) == NONE )
 					ReportErrorAndExit_( "Unable to find table", XFlow );
 			} else
 				ReportErrorAndExit_( "Missing table reference", XFlow );
@@ -1252,7 +849,7 @@ ERRBegin
 				ReportErrorAndExit_( "Alias label missing", XFlow );
 
 			if ( RecordLabel.Amount() ) {
-				if ( ( RecordRow = SearchRecord_( RecordLabel, TableRow, Tables ) ) == NONE )
+				if ( ( RecordRow = SearchRecord( RecordLabel, TableRow, Tables ) ) == NONE )
 					ReportErrorAndExit_( "Unable to find record", XFlow );
 
 				AliasType = atRecord;
@@ -1559,10 +1156,15 @@ static void DisplayAll_(
 static void Display_(
 	id__ Id,
 	const records_ &Records,
+	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
 {
 	rrow__ Row = NONE;
 	bso::integer_buffer__ Buffer;
+	ctn::E_CITEMt( record_, rrow__ ) Record;
+	epeios::size__ Counter = 0;
+
+	Record.Init( Records );
 
 	Writer.PutAttribute( "TotalAmount", bso::Convert( Records.Amount(), Buffer ) );
 
@@ -1573,8 +1175,20 @@ static void Display_(
 		Writer.PutAttribute( "Amount", "1" );
 
 		if ( Id == 0 ) {
+/*
 			tol::InitializeRandomGenerator();
 			Row = Records.First( rand() % Records.Amount() );
+*/
+			do {
+				Row = Context.Pick( Records.Amount() );
+				Counter++;
+			} while ( Record( Row ).GetSkip() && ( Counter < Records.Amount() ) );
+
+			if ( Record( Row ).GetSkip() ) {
+				cout << "Unable to pick a record : all are marked as skipped !" << txf::nl;
+				ERRExit( EXIT_SUCCESS );
+			}
+
 		} else {
 			if ( Id > Records.Amount() ) {
 				cerr << "No record of id '" << Id << "'! " << txf::nl;
@@ -1592,6 +1206,7 @@ static void Display_(
 	id__ Id,
 	const table_ &Table,
 	const str::string_ &XSLFileName,
+	rpkctx::context_ &Context,
 	txf::text_oflow__ &Output )
 {
 ERRProlog
@@ -1608,7 +1223,7 @@ ERRBegin
 	Writer.Init( Output );
 	Writer.PushTag( Table.Label );
 
-	Display_( Id, Table.Records, Writer );	
+	Display_( Id, Table.Records, Context, Writer );	
 
 	Writer.PopTag();
 
@@ -1621,38 +1236,54 @@ static void Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	rpkctx::context_ &Context,
 	txf::text_oflow__ &Output )
 {
 	ctn::E_CITEMt( table_, trow__ ) Table;
 
 	Table.Init( Data );
 
-	Display_( Id, Table( Data.Last() ), XSLFileName, Output );
+	Display_( Id, Table( Data.Last() ), XSLFileName, Context, Output );
+}
+
+static void DisplayWithoutBackup_(
+	id__ Id,
+	const data_ &Data,
+	const str::string_ &XSLFileName,
+	rpkctx::context_ &Context,
+	const char *FileName )
+{
+ERRProlog
+	flf::file_oflow___ FFlow;
+	txf::text_oflow__ TFlow( FFlow );
+ERRBegin
+	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
+		cerr << "Unable to open '" << FileName << "' for output !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	Display_( Id, Data, XSLFileName, Context, TFlow );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	rpkctx::context_ &Context,
 	const char *FileName )
 {
 ERRProlog
 	bso::bool__ Backuped = false;
-	flf::file_oflow___ FFlow;
-	txf::text_oflow__ TFlow( FFlow );
 ERRBegin
 	fil::CreateBackupFile( FileName, fil::hbfRename );
 
 	Backuped = true;
 
-	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		cerr << "Unable to open '" << FileName << "' for output !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
-
-	Display_( Id, Data, XSLFileName, TFlow );
+	DisplayWithoutBackup_( Id, Data, XSLFileName, Context, FileName );
 ERRErr
-	FFlow.reset();
 	if ( Backuped )
 		fil::RecoverBackupFile( FileName );
 ERREnd
@@ -1660,27 +1291,29 @@ ERREpilog
 }
 
 static void Display_(
-						id__ Id,
+	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	rpkctx::context_ &Context,
 	const str::string_ &OutputFileName )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Display_( Id, Data, XSLFileName, cout );
+		Display_( Id, Data, XSLFileName, Context, cout );
 	else
-		Display_( Id, Data, XSLFileName, OutputFileName.Convert( Buffer ) );
+		Display_( Id, Data, XSLFileName, Context, OutputFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-#define DATA_FILENAME_TAG	"Data"
-#define OUTPUT_FILENAME_TAG	"Output"
-#define XSL_FILENAME_TAG	"XSL"
-#define COMMAND_TAG			"Command"
+#define DATA_FILENAME_TAG		"Data"
+#define OUTPUT_FILENAME_TAG		"Output"
+#define XSL_FILENAME_TAG		"XSL"
+#define COMMAND_TAG				"Command"
+#define CONTEXT_FILENAME_TAG	"Context"
 
 void LaunchCommand_(
 	const str::string_ &Command,
@@ -1693,11 +1326,145 @@ ERRBegin
 	if ( ( Command.Amount() != 0 ) && ( OutputFileName.Amount() != 0 ) ) {
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
-	cout << "Launching '" << CompleteCommand << "\"." << txf::nl;
+		cout << "Launching '" << CompleteCommand << "\"." << txf::nl;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
 
 
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void DumpContext_(
+	const rpkctx::context_ &Context,
+	xml::writer_ &Writer )
+{
+	Writer.PushTag( "Context" );
+	Writer.PutAttribute( "Target", NAME );
+
+	Dump( Context, Writer );
+
+	Writer.PopTag();
+}
+
+static void DumpContextWithoutBackup_(
+	const rpkctx::context_ &Context,
+	const char *FileName )
+{
+ERRProlog
+	flf::file_oflow___ FFlow;
+	txf::text_oflow__ TFlow( FFlow );
+	xml::writer Writer;
+ERRBegin
+	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
+		cerr << "Unable to open file '" << FileName << "'!" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	Writer.Init( TFlow );
+
+	DumpContext_( Context, Writer ); 
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+static void DumpContext_(
+	const rpkctx::context_ &Context,
+	const char *FileName )
+{
+ERRProlog
+	bso::bool__ Backuped = false;
+ERRBegin
+	if ( fil::CreateBackupFile( FileName, fil::hbfRename ) != fil::rbfOK ) {
+		cerr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	Backuped = true;
+
+	DumpContextWithoutBackup_( Context, FileName );
+ERRErr
+	if ( Backuped )
+		fil::RecoverBackupFile( FileName );
+ERREnd
+ERREpilog
+}
+
+static void RetrieveContext_(
+	xml::browser___ &Browser,							 
+	rpkctx::context_ &Context )
+{
+ERRProlog
+	bso::bool__ Continue = true;
+	str::string Target;
+ERRBegin
+
+	Target.Init();
+
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
+		case xml::tStartTag:
+			if ( Browser.TagName() != "Context" )
+				ERRc();
+
+			break;
+		case xml::tAttribute:
+			if ( Browser.AttributeName() != "Target" )
+				ERRc();
+
+			if ( Target.Amount() != 0 )
+				ERRc();
+
+			Target = Browser.Value();
+			break;
+		case xml::tStartTagClosed:
+			if ( Target != NAME )
+				ERRc();
+
+			rpkctx::Retrieve( Browser, Context );
+			break;
+		case xml::tProcessed:
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void RetrieveContext_(
+	const char *FileName,
+	rpkctx::context_ &Context )
+{
+ERRProlog
+	xml::browser___ Browser;
+	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	if ( !fil::FileExists( FileName ) ) {
+		cout << "Unable to find context file '" << FileName << "'! It will be created at exit." << txf::nl;
+		ERRReturn;
+	}
+
+	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
+		cerr << "Unable to open file '" << FileName << "' !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	FFlow.EOFD( XTF_EOXT );
+
+	XFlow.Init( FFlow );
+
+	Browser.Init( XFlow );
+
+	RetrieveContext_( Browser, Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -1712,9 +1479,11 @@ ERRProlog
 	str::string DataFileName;
 	STR_BUFFER___ Buffer;
 	data Data;
+	rpkctx::context Context;
 	str::string OutputFileName;
 	str::string XSLFileName;
 	str::string Command;
+	str::string ContextFileName;
 ERRBegin
 	DataFileName.Init();
 	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), RegistryRoot, DataFileName ) ) {
@@ -1723,20 +1492,34 @@ ERRBegin
 	}
 
 	OutputFileName.Init();
-	Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), RegistryRoot, OutputFileName );
+	if ( !Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), RegistryRoot, OutputFileName ) ) {
+		cerr << "No output file defined !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
 
 	XSLFileName.Init();
 	Registry.GetValue( str::string( XSL_FILENAME_TAG ), RegistryRoot, XSLFileName );
 
+	ContextFileName.Init();
+	if ( !Registry.GetValue( str::string( CONTEXT_FILENAME_TAG ), RegistryRoot, ContextFileName ) ) {
+		cerr << "No context file name defined !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	Context.Init();
+	RetrieveContext_( ContextFileName.Convert( Buffer ), Context );
+
 	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	Display_( Id, Data, XSLFileName, OutputFileName );
+	Display_( Id, Data, XSLFileName, Context, OutputFileName );
 
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
 
 	LaunchCommand_( Command, OutputFileName );
+
+	DumpContext_( Context, ContextFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog

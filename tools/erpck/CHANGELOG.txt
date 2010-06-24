@@ -1,2 +1,12 @@
 $Id$
 
+*********
+* 0.2.0 *
+*********
+
+- 24/06/2010 :
+	- Gestion historique des 'record's affichés pour équilibrer la sorie des différents enregistrements.
+
+*********
+* 0.1.0 *
+*********

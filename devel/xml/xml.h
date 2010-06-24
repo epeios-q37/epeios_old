@@ -273,7 +273,7 @@ namespace xml {
 		TF( Value ),
 		TF( EndTag ),
 		tfAll = ( ( 1 << t_amount ) - 1 ),
-		tfObvious = tfStartTag | tfAttribute | tValue | tfEndTag,
+		tfObvious = tfStartTag | tfAttribute | tfValue | tfEndTag,
 	};
 
 #undef TF

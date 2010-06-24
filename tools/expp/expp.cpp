@@ -1,7 +1,7 @@
 /*
 	'expp' by Claude SIMON (claude.simon@zeusw.org)
 	Preprocesseur XML
-	Copyright (C) 2007 Claude SIMON
+	Copyright (C) 2007-2010 Claude SIMON
 
 	This file is part of the Epeios project (http://zeusw.org/epeios/).
 
@@ -33,8 +33,8 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.2.4"
-#define COPYRIGHT_YEARS	"2007-2009"
+#define VERSION			"0.3.0"
+#define COPYRIGHT_YEARS	"2007-2010"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -99,8 +99,8 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 	cout << NAME << " <command> [options] [source-file [dest-file]]" << txf::nl;
-	cout << txf::tab << "source-file:" << txf::tab << "source file; stdin if none." << txf::nl;
-	cout << txf::tab << "dest-file:" << txf::tab << "destination file; stdout if none." << txf::nl;
+	cout << txf::pad << "source-file:" << txf::nl << txf::tab << "source file; stdin if none." << txf::nl;
+	cout << txf::pad << "dest-file:" << txf::nl << txf::tab << "destination file; stdout if none." << txf::nl;
 	cout << "command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vSplit, true );
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
