@@ -281,7 +281,7 @@ $Id$
 
 10/01/2010 :
 	- MMG :
-		- Mise a&u point.
+		- Mise au point.
 	- NDBTBL :
 		- Correction bogue concernant les indexes.
 

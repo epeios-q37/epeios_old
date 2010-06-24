@@ -1,7 +1,14 @@
 $Id$
 
-- 22/06/2010 :
-	- (à complèter par rapport à XPP).
+---------------
+Version 0.3.0 :
+---------------
+
+- (from underlying libraries) :
+	- Addition of the 'xpp:attribute' directive (experimental).
+	- 'xmlns:...' attributes are now allowed.
+	- When an error occurs, position is more accurate.
+	- Somewhat faster.
 
 - 10/05/2010 :
 	- Adding XML header.
