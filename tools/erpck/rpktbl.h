@@ -8,7 +8,7 @@
 #ifndef RPKTBL__INC
 #define RPKTBL__INC
 
-#include "rpkals.h"
+#include "rpkals.H"
 #include "rpkrcd.h"
 
 namespace rpktbl {
