@@ -1317,6 +1317,7 @@ ERREpilog
 
 void LaunchCommand_(
 	const str::string_ &Command,
+	id__ Id,
 	const str::string_ &OutputFileName )
 {
 ERRProlog
@@ -1326,6 +1327,7 @@ ERRBegin
 	if ( ( Command.Amount() != 0 ) && ( OutputFileName.Amount() != 0 ) ) {
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
+		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
 		cout << "Launching '" << CompleteCommand << "\"." << txf::nl;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
@@ -1517,7 +1519,7 @@ ERRBegin
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
 
-	LaunchCommand_( Command, OutputFileName );
+	LaunchCommand_( Command, Id, OutputFileName );
 
 	DumpContext_( Context, ContextFileName.Convert( Buffer ) );
 ERRErr
