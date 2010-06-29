@@ -1153,7 +1153,7 @@ static void DisplayAll_(
 	}
 }
 
-static void Display_(
+id__  Display_(
 	id__ Id,
 	const records_ &Records,
 	rpkctx::context_ &Context,
@@ -1189,6 +1189,8 @@ static void Display_(
 				ERRExit( EXIT_SUCCESS );
 			}
 
+			Id = *Row + 1;
+
 		} else {
 			if ( Id > Records.Amount() ) {
 				cerr << "No record of id '" << Id << "'! " << txf::nl;
@@ -1200,9 +1202,10 @@ static void Display_(
 		Display_( Row, Records, Writer );
 	}
 
+	return Id;
 }
 
-static void Display_(
+static id__ Display_(
 	id__ Id,
 	const table_ &Table,
 	const str::string_ &XSLFileName,
@@ -1223,16 +1226,17 @@ ERRBegin
 	Writer.Init( Output );
 	Writer.PushTag( Table.Label );
 
-	Display_( Id, Table.Records, Context, Writer );	
+	Id = Display_( Id, Table.Records, Context, Writer );	
 
 	Writer.PopTag();
 
 ERRErr
 ERREnd
 ERREpilog
+	return Id;
 }
 
-static void Display_(
+static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
@@ -1243,10 +1247,10 @@ static void Display_(
 
 	Table.Init( Data );
 
-	Display_( Id, Table( Data.Last() ), XSLFileName, Context, Output );
+	return  Display_( Id, Table( Data.Last() ), XSLFileName, Context, Output );
 }
 
-static void DisplayWithoutBackup_(
+static id__ DisplayWithoutBackup_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
@@ -1262,13 +1266,14 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Display_( Id, Data, XSLFileName, Context, TFlow );
+	Id = Display_( Id, Data, XSLFileName, Context, TFlow );
 ERRErr
 ERREnd
 ERREpilog
+	return Id;
 }
 
-static void Display_(
+static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
@@ -1282,15 +1287,16 @@ ERRBegin
 
 	Backuped = true;
 
-	DisplayWithoutBackup_( Id, Data, XSLFileName, Context, FileName );
+	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, Context, FileName );
 ERRErr
 	if ( Backuped )
 		fil::RecoverBackupFile( FileName );
 ERREnd
 ERREpilog
+	return Id;
 }
 
-static void Display_(
+static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
@@ -1301,12 +1307,13 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Display_( Id, Data, XSLFileName, Context, cout );
+		Id = Display_( Id, Data, XSLFileName, Context, cout );
 	else
-		Display_( Id, Data, XSLFileName, Context, OutputFileName.Convert( Buffer ) );
+		Id = Display_( Id, Data, XSLFileName, Context, OutputFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
+	return Id;
 }
 
 #define DATA_FILENAME_TAG		"Data"
@@ -1514,7 +1521,7 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	Display_( Id, Data, XSLFileName, Context, OutputFileName );
+	Id = Display_( Id, Data, XSLFileName, Context, OutputFileName );
 
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
