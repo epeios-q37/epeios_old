@@ -751,7 +751,7 @@ namespace rgstry {
 		epeios::size__ Dump(
 			row__ Root,
 			bso::bool__ RootToo,
-			bso::bool__ Indent,
+			xml::outfit__ Outfit,
 			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
 	E_AUTO( registry )

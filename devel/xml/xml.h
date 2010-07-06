@@ -281,6 +281,14 @@ namespace xml {
 #ifdef XML__TF_BUFFER
 #	define	TF	XML__TF_BUFFER
 #endif
+	// Traitement des entités ('&...;').
+	enum entities_handling__ {
+		ehReplace,	// Les 'entity's sont remplacés par leur caractère correspondant.
+		ehKeep,		// Les 'entity's sont gardés tel quel.
+		eh_amount,
+		eh_Undefined,
+		eh_Default = ehReplace,
+	};
 
 	class browser___
 	{
@@ -294,6 +302,7 @@ namespace xml {
 		str::string _AttributeName;
 		str::string _Value;
 		status__ _Status;
+		entities_handling__ _EntitiesHandling;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -306,6 +315,7 @@ namespace xml {
 			_AttributeName.reset( P );
 			_Value.reset( P );
 			_Status = s_Undefined;
+			_EntitiesHandling = eh_Undefined;
 
 			_Tags.reset( P );
 		}
@@ -317,7 +327,9 @@ namespace xml {
 		{
 			reset();
 		}
-		void Init( xtf::extended_text_iflow__ &Flow )
+		void Init(
+			xtf::extended_text_iflow__ &Flow,
+			entities_handling__ EntitiesHandling )
 		{
 			reset();
 
@@ -328,6 +340,8 @@ namespace xml {
 			_TagName.Init();
 			_AttributeName.Init();
 			_Value.Init();
+
+			_EntitiesHandling = EntitiesHandling;
 		}
 		token__  Browse( int TokenToReport = tfAll );
 		token__ Browse(
@@ -338,7 +352,7 @@ namespace xml {
 			status__ &Status,
 			int TokenToReport = tfAll )	// 'Status' initialisé seulement si valeur retournée == 'tError'.
 		{
-			token__ Token = Browse();
+			token__ Token = Browse( TokenToReport );
 
 			TagName = _TagName;
 			AttributeName = _AttributeName;
@@ -364,6 +378,7 @@ namespace xml {
 		E_RODISCLOSE__( str::string_, Value );
 		E_RODISCLOSE__( status__, Status );
 		E_RODISCLOSE__( token__, Token );
+		E_RODISCLOSE__( entities_handling__, EntitiesHandling );
 		const xtf::coord__ &GetCurrentCoord( void ) const
 		{
 			return _Flow.GetCurrentCoord();
@@ -408,18 +423,23 @@ namespace xml {
 
 	status__ Parse(
 		xtf::extended_text_iflow__ &Flow,
+		bso::bool__ HandleEntities,
 		callback__ &Callback );
 	// Si valeur retournée == 'false', 'Flow.Line()' et 'Flow.Column()' est positionné là où il y a l'erreur.
 
-	void Transform( str::string_ &Target );	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
+	// Transformation des caractères spéciaux, comm '<' qui devient '&lt;'.
+	void TransformUsingEntities(
+		str::string_ &Target,
+		bso::bool__ DelimiterOnly );	// Si à true', seul les délimiteurs de valeur d'attributs (''' et '"') sont modifiés.
 
-	inline void Convert(
+	inline void TransformUsingEntities(
 		const str::string_ &Source,
+		bso::bool__ DelimiterOnly,
 		str::string_ &Target )	// Conversion des caractères spéciaux, comme '<' qui devient '&lt;'.
 	{
 		Target = Source;
 
-		Transform( Target );
+		TransformUsingEntities( Target, DelimiterOnly );
 	}
 
 
@@ -428,6 +448,24 @@ namespace xml {
 
 	typedef str::string_	value_;
 	typedef str::string		value;
+
+	// Mise en forme de la sortie.
+	enum outfit__ {
+		oCompact,	// Tout sur une seule ligne.
+		oIndent,	// Indenté.
+		o_amount,
+		o_Undefined
+	};	// 
+
+	// Traitement des caractères spéciaux ('<', '&', ...).
+	enum special_char_handling__ {
+		schReplace,	// Sont remplacés par les 'entity's dédiés.
+		schKeep,	// Ne sont pas remplacés. Cependant, les '"' sont tout de même remplacé per leur 'entity' correspondante dans les valeurs d'attributs.
+		sch_amount,
+		sch_Undefined,
+		sch_Default = schReplace
+	};
+
 
 	class writer_
 	{
@@ -440,7 +478,9 @@ namespace xml {
 			txf::text_oflow__ *Flow;
 			bso::bool__ TagNameInProgress;
 			bso::bool__ TagValueInProgress;
-			bso::bool__ Indent;
+			outfit__ Outfit;
+			special_char_handling__ SpecialCharHandling;
+			bso::bool__ Ignore;
 		} &S_;
 		stk::E_XMCSTACK_( name_ ) Tags;
 		writer_( s &S )
@@ -457,7 +497,9 @@ namespace xml {
 
 			Tags.reset( P );
 			S_.Flow = NULL;
-			bso::bool__ Indent = false;
+			S_.Outfit = o_Undefined;
+			S_.SpecialCharHandling = sch_Undefined;
+			S_.Ignore = false;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -470,30 +512,34 @@ namespace xml {
 			S_.TagNameInProgress = W.S_.TagNameInProgress;
 			S_.TagValueInProgress = W.S_.TagValueInProgress;
 			S_.Flow = W.S_.Flow;
-			S_.Indent = W.S_.Indent;
+			S_.Outfit = W.S_.Outfit;
+			S_.SpecialCharHandling = W.S_.SpecialCharHandling;
+			S_.Ignore = W.S_.Ignore;
 
 			return *this;
 		}
 		void Init(
 			txf::text_oflow__ &Flow,
-			bso::bool__ Indent = true )
+			outfit__ Outfit,
+			special_char_handling__ SpecialCharHandling = sch_Default )
 		{
 			reset();
 
 			Tags.Init();
 			S_.Flow = &Flow;
-			S_.Indent = Indent;
+			S_.Outfit = Outfit;
+			S_.SpecialCharHandling = SpecialCharHandling;
 		}
 		void PushTag( const name_ &Name )
 		{
 			if ( S_.TagNameInProgress ) {
 				*S_.Flow << '>';
 
-				if ( S_.Indent )
+				if ( S_.Outfit == oIndent )
 					*S_.Flow << txf::nl;
 			}
 
-			if ( S_.Indent )
+			if ( S_.Outfit == oIndent )
 				_WriteTabs( Tags.Amount() );
 
 			*S_.Flow << '<' << Name;
@@ -505,7 +551,8 @@ namespace xml {
 		{
 			PushTag( name( Name ) );
 		}
-		void PutValue( const value_ &Value );
+		void PutValue(
+			const value_ &Value );
 		void PutValue( const char *Value )
 		{
 			PutValue( value( Value ) );
@@ -552,7 +599,8 @@ namespace xml {
 		{
 			return *S_.Flow;
 		}
-		E_RODISCLOSE_( bso::bool__, Indent )
+		E_RODISCLOSE_( outfit__, Outfit )
+		E_RODISCLOSE_( special_char_handling__, SpecialCharHandling )
 	};
 
 	E_AUTO( writer )

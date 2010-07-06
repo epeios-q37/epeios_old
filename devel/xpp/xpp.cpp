@@ -828,7 +828,7 @@ status__ xpp::_extended_browser___::Handle(
 	while ( Continue ) {
 		Continue = false;
 		PreviousToken = _Browser.Token();
-		switch ( _Browser.Browse( xml::tfAll ) ) {
+		switch ( _Browser.Browse() ) {
 		case  xml::tProcessingInstruction:
 			if ( _IgnorePreprocessingInstruction )
 					_Browser.PurgeDumpData();
@@ -993,14 +993,14 @@ ERRProlog
 ERRBegin
 	XFlow.Init( IFlow, Directory, Namespace );
 
-	Browser.Init( XFlow );
+	Browser.Init( XFlow, xml::ehKeep );
 
 	while ( Continue ) {
 		switch( Browser.Browse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
 		case xml::tProcessingInstruction:
 			Writer.GetFlow() << Browser.DumpData();
 			
-			if ( Writer.Indent() )
+			if ( Writer.GetOutfit() == xml::oIndent )
 				Writer.GetFlow() << txf::nl;
 
 			break;
@@ -1039,7 +1039,7 @@ ERREpilog
 status__ xpp::Process(
 	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
-	bso::bool__ Indent,
+	xml::outfit__ Outfit,
 	const str::string_ &Directory,
 	txf::text_oflow__ &OFlow,
 	xtf::coord__ &Coord,
@@ -1049,7 +1049,7 @@ status__ xpp::Process(
 ERRProlog
 	xml::writer Writer;
 ERRBegin
-	Writer.Init( OFlow, Indent );
+	Writer.Init( OFlow, Outfit, xml::schKeep );
 
 	Status = Process( IFlow, Namespace, Directory, Writer, Coord, GuiltyFileName );
 ERRErr
@@ -1081,7 +1081,7 @@ ERREpilog
 status__ xpp::Process(
 	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
-	bso::bool__ Indent,
+	xml::outfit__ Outfit,
 	const str::string_ &Directory,
 	txf::text_oflow__ &OFlow )
 {
@@ -1092,7 +1092,7 @@ ERRProlog
 ERRBegin
 	DummyString.Init();
 
-	Status = Process( IFlow, Namespace, Indent, Directory, OFlow, DummyCoord, DummyString );
+	Status = Process( IFlow, Namespace, Outfit, Directory, OFlow, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog

@@ -1891,8 +1891,10 @@ namespace nsxpcm {
 		const xslt_parameters_ &Parameters );
 
 	nsIDOMDocumentFragment *XSLTransform(
-		const str::string_ &XMLString,
-		const str::string_ &XSLStylesheetFileName,
+		flw::iflow__ &XMLFlow,
+		const str::string_ &XMLBaseDirectory,
+		flw::iflow__ &XSLFlow,
+		const str::string_ &XSLBaseDirectory,
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 

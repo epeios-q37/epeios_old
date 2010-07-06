@@ -702,7 +702,7 @@ ERREpilog
 epeios::size__ rgstry::registry_::Dump(
 	row__ Root,
 	bso::bool__ RootToo,
-	bso::bool__ Indent,
+	xml::outfit__ Outfit,
 	txf::text_oflow__ &Flow ) const
 {
 	epeios::size__ ChildAmount = 0;
@@ -712,7 +712,7 @@ ERRProlog
 ERRBegin
 	Buffer.Init( Nodes );
 
-	Writer.Init( Flow, Indent );
+	Writer.Init( Flow, Outfit );
 
 	ChildAmount = Dump( Root, RootToo, Writer );
 ERRErr
@@ -867,7 +867,7 @@ ERRBegin
 
 	XFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
 
-	switch ( xml::Parse( XFlow, Callback ) ) {
+	switch ( xml::Parse( XFlow, true, Callback ) ) {
 	case xml::sOK:
 		Root = Callback.GetRoot();
 		break;

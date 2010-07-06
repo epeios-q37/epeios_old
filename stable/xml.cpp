@@ -189,7 +189,7 @@ static mdr::size__ GetId_(
 {
 	bso::ulong__ Size = 0;
 
-	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' ) ) {
+	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' || Flow.View() == '-' ) ) {
 		Id.Append( Flow.Get() );
 		Size++;
 	}
@@ -354,6 +354,7 @@ static status__ GetValue_(
 	_flow___ &Flow,
 	bso::char__ Delimiter,
 	bso::bool__ ErrorIfSpaceInValue,
+	entities_handling__ EntitiesHandling,
 	str::string_ &Value,
 	bso::bool__ &OnlySpaces )
 {
@@ -367,7 +368,7 @@ static status__ GetValue_(
 		else if ( !OnlySpaces && ErrorIfSpaceInValue && ( C != ' ' ) )
 			return sUnexpectedCharacter;
 
-		if ( C == '&' ) {
+		if ( ( C == '&' ) && ( EntitiesHandling == ehReplace ) ) {
 			C = HandleEntity_( Flow );
 
 			if ( C == ENTITY_ERROR_VALUE )
@@ -386,11 +387,12 @@ static status__ GetValue_(
 inline status__ GetAttributeValue_(
 	_flow___ &Flow,
 	char Delimiter,
+	entities_handling__ EntitiesHandling,
 	str::string_ &Value )
 {	
 	bso::bool__ Dummy;
 
-	return GetValue_( Flow, Delimiter, true, Value, Dummy );
+	return GetValue_( Flow, Delimiter, true, EntitiesHandling, Value, Dummy );
 }
 
 #define HANDLE( F )\
@@ -401,6 +403,7 @@ inline status__ GetAttributeValue_(
 
 static status__ GetAttribute_(
 	_flow___ &Flow,
+	entities_handling__ EntitiesHandling,
 	str::string_ &Name,
 	str::string_ &Value )
 {
@@ -408,7 +411,7 @@ static status__ GetAttribute_(
 	status__ Status = s_Undefined;
 
 	if ( GetName_( Flow, Name ) == 0 ) {
-		Flow.Get();	// Pour ajuster les coordonnées de l'errreur.
+		Flow.Get();	// Pour ajuster les coordonnées de l'erreur.
 		return sUnexpectedCharacter;
 	}
 
@@ -424,7 +427,7 @@ static status__ GetAttribute_(
 	if ( ( Delimiter != '"' ) && ( Delimiter != '\'' ) )
 		return sBadAttributeValueDelimiter;
 
-	HANDLE( GetAttributeValue_( Flow, Delimiter, Value ) );
+	HANDLE( GetAttributeValue_( Flow, Delimiter, EntitiesHandling, Value ) );
 
 	Flow.Get();	// To skip the '"' or '''.
 /*
@@ -442,9 +445,10 @@ static status__ GetAttribute_(
 inline static status__ GetTagValue_(
 	_flow___ &Flow,
 	str::string_ &Value,
+	entities_handling__ EntitiesHandling,
 	bso::bool__ &OnlySpaces )
 {
-	return GetValue_( Flow, '<', false, Value, OnlySpaces );
+	return GetValue_( Flow, '<', false, EntitiesHandling, Value, OnlySpaces );
 }
 
 #undef HANDLE
@@ -655,7 +659,7 @@ ERRBegin
 				_AttributeName.Init();
 				_Value.Init();
 
-				HANDLE( GetAttribute_( _Flow, _AttributeName, _Value ) );
+				HANDLE( GetAttribute_( _Flow, _EntitiesHandling, _AttributeName, _Value ) );
 
 				if ( _Tags.IsEmpty() )
 					ERRc();
@@ -819,7 +823,7 @@ ERRBegin
 				if ( _Flow.View() != '<' ) {
 					_Value.Init();
 					
-					HANDLE( GetTagValue_( _Flow, _Value, OnlySpaces ) );
+					HANDLE( GetTagValue_( _Flow, _Value, _EntitiesHandling, OnlySpaces ) );
 
 					if ( !OnlySpaces ) {
 
@@ -867,6 +871,7 @@ ERREpilog
 
 status__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
+	bso::bool__ HandleEntities,
 	callback__ &Callback )
 {
 	status__ Status = s_Undefined;
@@ -876,7 +881,7 @@ ERRProlog
 	bso::bool__ Stop = false;
 	xml::dump Dump;
 ERRBegin
-	Browser.Init( UserFlow );
+	Browser.Init( UserFlow, xml::ehKeep );
 
 	while ( !Stop ) {
 		TagName.Init();
@@ -918,7 +923,9 @@ ERREpilog
 	return Status;
 }
 
-void xml::Transform( str::string_ &Target )
+void xml::TransformUsingEntities(
+	str::string_ &Target,
+	bso::bool__ DelimiterOnly )
 {
 ERRProlog
 	epeios::row__ Position = Target.First();
@@ -928,9 +935,11 @@ ERRBegin
 	while( Position != NONE ) {
 		switch ( C = Target( Position ) ) {
 		case '\'':
-			Buffer.Init( "&apos;" );
-			Target.Remove( Position );
-			Target.Insert( Buffer, Position );
+			if ( !DelimiterOnly ) {
+				Buffer.Init( "&apos;" );
+				Target.Remove( Position );
+				Target.Insert( Buffer, Position );
+			}
 			break;
 		case '"':
 			Buffer.Init( "&quot;" );
@@ -938,19 +947,25 @@ ERRBegin
 			Target.Insert( Buffer, Position );
 			break;
 		case '<':
-			Buffer.Init( "&lt;" );
-			Target.Remove( Position );
-			Target.Insert( Buffer, Position );
+			if ( !DelimiterOnly ) {
+				Buffer.Init( "&lt;" );
+				Target.Remove( Position );
+				Target.Insert( Buffer, Position );
+			}
 			break;
 		case '>':
-			Buffer.Init( "&gt;" );
-			Target.Remove( Position );
-			Target.Insert( Buffer, Position );
+			if ( !DelimiterOnly ) {
+				Buffer.Init( "&gt;" );
+				Target.Remove( Position );
+				Target.Insert( Buffer, Position );
+			}
 			break;
 		case '&':
-			Buffer.Init( "&amp;" );
-			Target.Remove( Position );
-			Target.Insert( Buffer, Position );
+			if ( !DelimiterOnly ) {
+				Buffer.Init( "&amp;" );
+				Target.Remove( Position );
+				Target.Insert( Buffer, Position );
+			}
 			break;
 		default:
 			break;
@@ -982,9 +997,18 @@ ERRProlog
 ERRBegin
 	TransformedValue.Init();
 
-	Convert( Value, TransformedValue );
-
-
+	switch ( S_.SpecialCharHandling ) {
+	case schReplace:
+		TransformUsingEntities( Value, false, TransformedValue );
+		break;
+	case schKeep:
+		TransformedValue = Value;
+		break;
+	default:
+		ERRu();
+		break;
+	}
+	
 	if ( S_.TagNameInProgress ) {
 		*S_.Flow << '>';
 		S_.TagNameInProgress = false;
@@ -1007,7 +1031,7 @@ ERRProlog
 ERRBegin
 	TransformedValue.Init();
 
-	Convert( Value, TransformedValue );
+	TransformUsingEntities( Value, S_.SpecialCharHandling == schKeep, TransformedValue );
 
 	if ( !S_.TagNameInProgress )
 		ERRu();
@@ -1034,12 +1058,12 @@ ERRBegin
 	if ( S_.TagNameInProgress )
 		*S_.Flow << "/>";
 	else {
-		if ( !S_.TagValueInProgress && S_.Indent )
+		if ( !S_.TagValueInProgress && ( S_.Outfit = oIndent ) )
 			_WriteTabs( Tags.Amount() );
 		*S_.Flow << "</" << Name << ">";
 	}
 
-	if ( S_.Indent )
+	if ( S_.Outfit = oIndent )
 		*S_.Flow << txf::nl;
 
 	S_.TagNameInProgress = false;

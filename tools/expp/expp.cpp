@@ -304,7 +304,7 @@ ERRBegin
 
 	if ( ( Status = xpp::Process( IFlow,
 									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
-									Indent, str::string( Directory == NULL ? (const char *)"" : Directory ),
+									Indent ? xml::oIndent : xml::oCompact, str::string( Directory == NULL ? (const char *)"" : Directory ),
 									( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
 		cerr << "Error ";
 

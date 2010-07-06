@@ -70,6 +70,9 @@ public:
 #include "nsIDirectoryService.h"
 #include "nsIFormHistory.h"
 
+#include "xpp.h"
+#include "txf.h"
+
 #if defined NSXPCM__ENABLE_FORMHISTORY
 #	define ENABLE_FORMHISTORY
 #endif
@@ -1193,19 +1196,48 @@ ERREpilog
 	return Fragment;
 }
 
+static void Preprocess_(
+	flw::iflow__ &IFlow,
+	const str::string_ &BaseDirectory,
+	str::string_ &ProcessedXMLString )
+{
+ERRProlog
+	flx::E_STRING_OFLOW___ SFlow;
+	txf::text_oflow__ TFlow( SFlow );
+ERRBegin
+	SFlow.Init( ProcessedXMLString );
+
+	if ( xpp::Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE) , xml::oCompact, BaseDirectory, TFlow ) != xpp::sOK )
+		ERRu();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static void _GetXMLDocument(
-	const str::string_ &XMLString,
+	flw::iflow__ &IFlow,
+	const str::string_ &BaseDirectory,
 	nsIDOMDocument *&XMLDocument )
 {
+ERRProlog
 	nsEmbedString XMLEmbedString;
 	nsCOMPtr<nsIDOMParser> Parser;
+	str::string ProcessedXMLString;
+ERRBegin
+	ProcessedXMLString.Init();
 
-	nsxpcm::Transform( XMLString, XMLEmbedString );
+	Preprocess_( IFlow, BaseDirectory, ProcessedXMLString );
+
+	nsxpcm::Transform( ProcessedXMLString, XMLEmbedString );
 	
 	CreateInstance( NS_DOMPARSER_CONTRACTID, Parser );
 	Parser->ParseFromString( XMLEmbedString.get(), "text/xml", &XMLDocument );
+ERRErr
+ERREnd
+ERREpilog
 }
 
+#if 0
 static void _GetXSLStylesheet(
 	const str::string_ &XSLStylesheetFileName,
 	nsIDOMDocument *&XSLStylesheet )
@@ -1235,10 +1267,13 @@ static void _GetXSLStylesheet(
 	if ( Result != NS_OK )
 		ERRu();
 }
+#endif
 
 nsIDOMDocumentFragment *nsxpcm::XSLTransform(
-	const str::string_ &XMLString,
-	const str::string_ &XSLStylesheetFileName,
+	flw::iflow__ &XMLFlow,
+	const str::string_ &XMLBaseDirectory,
+	flw::iflow__ &XSLFlow,
+	const str::string_ &XSLBaseDirectory,
 	nsIDOMDocument *Owner,
 	const xslt_parameters_ &Parameters )
 {
@@ -1246,9 +1281,9 @@ nsIDOMDocumentFragment *nsxpcm::XSLTransform(
 ERRProlog
 	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
 ERRBegin
-	_GetXMLDocument( XMLString, XMLDocument );
+	_GetXMLDocument( XMLFlow, XMLBaseDirectory, XMLDocument );
 
-	_GetXSLStylesheet( XSLStylesheetFileName, XSLStylesheet );
+	_GetXMLDocument( XSLFlow, XSLBaseDirectory, XSLStylesheet );
 
 	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
 ERRErr

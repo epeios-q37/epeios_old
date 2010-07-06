@@ -417,7 +417,7 @@ namespace xpp {
 			// _Repository.Init();
 			// _Tags.Init();
 
-			_Browser.Init( XFlow );
+			_Browser.Init( XFlow, xml::ehKeep );
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
 			_IgnorePreprocessingInstruction = false;
@@ -614,7 +614,7 @@ namespace xpp {
 	status__ Process(
 		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
-		bso::bool__ Indent,
+		xml::outfit__ Outfit,
 		const str::string_ &Directory,
 		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord,
@@ -629,7 +629,7 @@ namespace xpp {
 	status__ Process(
 		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
-		bso::bool__ Indent,
+		xml::outfit__ Outfit,
 		const str::string_ &Directory,
 		txf::text_oflow__ &OFlow );
 
@@ -637,15 +637,15 @@ namespace xpp {
 		flw::iflow__ &IFlow,
 		xml::writer_ &Writer )
 	{
-		return Process( IFlow, str::string(""), str::string( "" ), Writer );
+		return Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), str::string( "" ), Writer );
 	}
 
 	inline status__ Process(
 		flw::iflow__ &IFlow,
-		bso::bool__ Indent,
+		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow )
 	{
-		return Process( IFlow, str::string(""), Indent, str::string( "" ), OFlow );
+		return Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), Outfit, str::string( "" ), OFlow );
 	}
 
 }

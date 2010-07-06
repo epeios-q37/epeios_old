@@ -1,5 +1,33 @@
 $Id$
 
+06/07/2010 :
+	- GENERAL :
+		- Adaptation aux modification dans 'XML'.
+	- NSXPCM :
+		- Ajout pour 'XSLTransfom(...)' de répertoires de base à l'usage du préprocesseur.
+	- RGSTRY :
+		- A l'instar de 'XML', mise en oeuvre de 'xml::outfit__' pour l'indetation en lieu et place d'un booléen.
+	- XML :
+		- Les caratères spéciaux ('&', '<') ne sont remaplacés par leur 'entity' correspondant que sur demande (à l'exception des '"'
+		qui sont toujours remplacés par leur 'entity' dans les valeurs d'attributs.
+		- Mise en oeuvre de 'entities_handling__', 'outfit__' et 'special_char_handling__' pour remplacer des nooléens pour certains.
+	- XPP :
+		- Les 'entity's ne sont plus remplacés par leur caractères équivalent (sauf pour '"' dans les valeurs d'attributs).
+		- A l'instar de 'XML', mise en oeuvre de 'xml::outfit__' pour l'indexation en lieu et place d'un booléen.
+		- Corrections du bogues de certaines fonctions qui avaient un 'namespace' vide par défaut.
+
+05/07/2010 :
+	- GENERAL :
+		- Adaptation aux modifications de 'XML'.
+	- NSXPCM :
+		- Dû a des problèmes de stratégies de sécurité trop contraignante (et mal documentée), ce n'est plus un nom du fichier XSL qui est passé à 'XLSTransform(...)',
+		  mais un flux au format XSL.
+		- Le contenu XML n'est plus passé sous forme de chaine de caractères, mais sous forme de flux dans 'XSLTransform(...)'.
+		- Le flux XML, ainsi que le flux XSL, sont passés par le préprocesseur ('xpp').
+	- XML :
+		- '-' est maintenant accepté dans un identifiant d'attribut/de balise.
+		- Ajout d'un paramètre ('HandleEntities') permettant de traiter ou non les 'entities'.
+
 24/06/2010 :
 	- XML :
 		- Correction définition 'tfObvious'.
