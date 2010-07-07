@@ -99,7 +99,7 @@ namespace flw {
 	class iflow__	/* Bien que cette classe ai un destructeur, elle est suffixée par '__', d'une part pour simplifier
 					son utilisation (comme déclaration de paramètre d'une fonction) et, d'autre part,
 					parce qu'elle ne sera jamais instanciée telle quelle, mais toujours héritée (bien que ce ne
-					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
+					soit pas obligatoire d'un point de vue C++, car ce n'est pas une fonction abstraite).*/
 	{
 	private:
 		fwf::iflow_functions___ &_Functions;
@@ -460,23 +460,18 @@ namespace flw {
 	};
 
 
-	class unsafe_iflow___	// Classe non thread-safe.
+	class unsafe_iflow__	// Classe non thread-safe.
 	: public iflow__
 	{
 	private:
 		flw::datum__ _Cache[FLW__ICACHE_SIZE];
 	public:
-		unsafe_iflow___(
+		unsafe_iflow__(
 			fwf::iflow_functions___ &Functions,
 			size__ AmountMax )
 			: iflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
 	};
-
-
-#ifndef CPE__T_MT
-	typedef unsafe_iflow___	iflow___;
-#endif
 
 
 	//f Get 'StaticObject' from 'InputFlow'.
@@ -681,24 +676,18 @@ namespace flw {
 		}
 	};
 
-	class unsafe_oflow___	// Classe non thread-safe.
+	class unsafe_oflow__	// Classe non thread-safe.
 	: public oflow__
 	{
 	private:
 		flw::datum__ _Cache[FLW__OCACHE_SIZE];
 	public:
-		unsafe_oflow___(
+		unsafe_oflow__(
 			fwf::oflow_functions___ &Functions,
 			size__ AmountMax )
 			: oflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{}
 	};
-
-
-#ifndef CPE__T_MT
-	typedef unsafe_iflow___	iflow___;
-#endif
-
 
 
 	//f Write to 'OutputFlow' 'StaticObject'.
@@ -771,30 +760,26 @@ namespace flw {
 	};
 
 
-	class unsafe_ioflow___	// Classe non thread-safe.
+	class unsafe_ioflow__	// Classe non thread-safe.
 	: public ioflow__
 	{
 	private:
 		flw::datum__ _ICache[FLW__ICACHE_SIZE];
 		flw::datum__ _OCache[FLW__OCACHE_SIZE];
 	public:
-		unsafe_ioflow___(
+		unsafe_ioflow__(
 			fwf::ioflow_functions___ &Functions,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax )
 		{}
-		unsafe_ioflow___(
+		unsafe_ioflow__(
 			fwf::ioflow_functions___ &Functions,
 			size__ AmountMax )
 			: ioflow__( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax )
 		{}
 	};
 
-
-#ifndef CPE__T_MT
-	typedef unsafe_ioflow___	ioflow___;
-#endif
 
 	// Copie 'Amount' octets de 'IFlow' dans 'OFlow'.
 	void Copy(

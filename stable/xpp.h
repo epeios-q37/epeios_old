@@ -557,9 +557,101 @@ namespace xpp {
 		}
 	};
 
-	typedef flw::unsafe_iflow___ _iflow___;
-	typedef xtf::extended_text_iflow__ _extended_text_iflow__;
+	typedef flw::unsafe_iflow__ _iflow__;
 
+	class preprocessing_iflow___
+	: public _iflow__
+	{
+	private:
+		xtf::extended_text_iflow__ _XFlow;
+		_preprocessing_iflow_functions___ _FlowFunctions;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_XFlow.reset( P );
+			_FlowFunctions.reset( P );
+			_iflow__::reset( P );
+		}
+		preprocessing_iflow___( void )
+		: _iflow__(
+			_FlowFunctions,
+			FLW_SIZE_MAX )
+		{
+			reset( false );
+		}
+		~preprocessing_iflow___( void )
+		{
+			reset( true );
+		}
+		void Init(
+			flw::iflow__ &IFlow,
+			const str::string_ &Directory,
+			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+		{
+			_XFlow.Init( IFlow );
+			_FlowFunctions.Init( _XFlow, Directory, Namespace );
+			_iflow__::Init();
+			_iflow__::EOFD( XTF_EOXT );
+		}
+		status__ Status( void ) const
+		{
+			return _FlowFunctions.Status();
+		}
+		const xtf::coord__ &Coord( void ) const
+		{
+			return _FlowFunctions.Coord();
+		}
+		const str::string_ &LocalizedFileName( void ) const
+		{
+			return _FlowFunctions.LocalizedFileName();
+		}
+	};
+
+
+#if 0
+	class preprocessing_extended_text_iflow___
+	: public _extended_text_iflow__
+	{
+	private:
+		preprocessing_iflow___ _IFlow;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_IFlow.reset( P );
+			_extended_text_iflow__::reset( P );
+		}
+		preprocessing_extended_text_iflow___( void )
+		{
+			reset( false );
+		}
+		~preprocessing_extended_text_iflow___( void )
+		{
+			reset( true );
+		}
+		void Init(
+			flw::iflow__ &IFlow,
+			const str::string_ &Directory,
+			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+		{
+			_IFlow.Init( IFlow, Directory, Namespace );
+			_extended_text_iflow__::Init( _IFlow );
+		}
+		const _preprocessing_iflow_functions___ &Preprocessor( void ) const
+		{
+			return _IFlow.Preprocessor();
+		}
+		const xtf::coord__ &Coord( void ) const
+		{
+			return Preprocessor().Coord();
+		}
+		const str::string_ &LocalizedFileName( void ) const
+		{
+			return Preprocessor().LocalizedFileName();
+		}
+	};
+#endif
+
+#if 0
 	class preprocessing_extended_text_iflow___
 	: public _extended_text_iflow__
 	{
@@ -602,6 +694,7 @@ namespace xpp {
 			return _FlowFunctions;
 		}
 	};
+#endif
 
 	status__ Process(
 		flw::iflow__ &IFlow,

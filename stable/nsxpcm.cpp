@@ -1214,31 +1214,24 @@ ERREnd
 ERREpilog
 }
 
-static void _GetXMLDocument(
-	flw::iflow__ &IFlow,
-	const str::string_ &BaseDirectory,
+static bso::bool__ _GetXMLDocument(
+	const str::string_ &XMLString,
 	nsIDOMDocument *&XMLDocument )
 {
-ERRProlog
+	nsresult Result = NS_OK;
+
 	nsEmbedString XMLEmbedString;
 	nsCOMPtr<nsIDOMParser> Parser;
-	str::string ProcessedXMLString;
-ERRBegin
-	ProcessedXMLString.Init();
 
-	Preprocess_( IFlow, BaseDirectory, ProcessedXMLString );
-
-	nsxpcm::Transform( ProcessedXMLString, XMLEmbedString );
+	nsxpcm::Transform( XMLString, XMLEmbedString );
 	
 	CreateInstance( NS_DOMPARSER_CONTRACTID, Parser );
-	Parser->ParseFromString( XMLEmbedString.get(), "text/xml", &XMLDocument );
-ERRErr
-ERREnd
-ERREpilog
+	Result = Parser->ParseFromString( XMLEmbedString.get(), "text/xml", &XMLDocument );
+
+	return Result != NS_OK;
 }
 
-#if 0
-static void _GetXSLStylesheet(
+static bso::bool__ _GetXSLStylesheet(
 	const str::string_ &XSLStylesheetFileName,
 	nsIDOMDocument *&XSLStylesheet )
 {
@@ -1266,14 +1259,13 @@ static void _GetXSLStylesheet(
 
 	if ( Result != NS_OK )
 		ERRu();
-}
-#endif
 
-nsIDOMDocumentFragment *nsxpcm::XSLTransform(
-	flw::iflow__ &XMLFlow,
-	const str::string_ &XMLBaseDirectory,
-	flw::iflow__ &XSLFlow,
-	const str::string_ &XSLBaseDirectory,
+	return true;
+}
+
+nsIDOMDocumentFragment *nsxpcm::XSLTransformByContent(
+	const str::string_ &XMLString,
+	const str::string_ &XSLString,
 	nsIDOMDocument *Owner,
 	const xslt_parameters_ &Parameters )
 {
@@ -1281,9 +1273,35 @@ nsIDOMDocumentFragment *nsxpcm::XSLTransform(
 ERRProlog
 	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
 ERRBegin
-	_GetXMLDocument( XMLFlow, XMLBaseDirectory, XMLDocument );
+	if ( !_GetXMLDocument( XMLString, XMLDocument ) )
+		ERRu();
 
-	_GetXMLDocument( XSLFlow, XSLBaseDirectory, XSLStylesheet );
+	if ( !_GetXMLDocument( XSLString, XSLStylesheet ) )
+		ERRu();
+
+	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
+ERRErr
+	Fragment = NULL;
+ERREnd
+ERREpilog
+	return Fragment;
+}
+
+nsIDOMDocumentFragment *nsxpcm::XSLTransformByFileName(
+	const str::string_ &XMLString,
+	const str::string_ &XSLFileName,
+	nsIDOMDocument *Owner,
+	const xslt_parameters_ &Parameters )
+{
+	nsIDOMDocumentFragment *Fragment = NULL;
+ERRProlog
+	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
+ERRBegin
+	if ( !_GetXMLDocument( XMLString, XMLDocument ) )
+		ERRu();
+
+	if ( !_GetXSLStylesheet( XSLFileName, XSLStylesheet ) )
+		ERRu();
 
 	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
 ERRErr

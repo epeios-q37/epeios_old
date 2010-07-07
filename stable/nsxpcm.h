@@ -1890,11 +1890,15 @@ namespace nsxpcm {
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 
-	nsIDOMDocumentFragment *XSLTransform(
-		flw::iflow__ &XMLFlow,
-		const str::string_ &XMLBaseDirectory,
-		flw::iflow__ &XSLFlow,
-		const str::string_ &XSLBaseDirectory,
+	nsIDOMDocumentFragment *XSLTransformByContent(
+		const str::string_ &XMLString,	// Doit être du XML valide.
+		const str::string_ &XSLString,	// Doit être du XSL valide.
+		nsIDOMDocument *Owner,
+		const xslt_parameters_ &Parameters );
+
+	nsIDOMDocumentFragment *XSLTransformByFileName(
+		const str::string_ &XMLString,	// Doit être du XML valide.
+		const str::string_ &XSLFileName,	// Doit être du XSL valide.
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 

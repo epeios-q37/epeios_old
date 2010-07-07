@@ -986,12 +986,14 @@ status__ xpp::Process(
 {
 	status__ Status = sOK;
 ERRProlog
-	xpp::preprocessing_extended_text_iflow___ XFlow;
+	preprocessing_iflow___ PFlow;
+	xtf::extended_text_iflow__ XFlow;
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
 	xml::browser___ Browser;
 ERRBegin
-	XFlow.Init( IFlow, Directory, Namespace );
+	PFlow.Init( IFlow, Directory, Namespace );
+	XFlow.Init( PFlow );
 
 	Browser.Init( XFlow, xml::ehKeep );
 
@@ -1020,9 +1022,9 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			Status = XFlow.Preprocessor().Status();
-			Coord = XFlow.Preprocessor().Coord();
-			GuiltyFileName = XFlow.Preprocessor().LocalizedFileName();
+			Status = PFlow.Status();
+			Coord = PFlow.Coord();
+			GuiltyFileName = PFlow.LocalizedFileName();
 			Continue = false;
 			break;
 		default:

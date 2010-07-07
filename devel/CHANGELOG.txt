@@ -1,5 +1,16 @@
 $Id$
 
+07/07/2010 :
+	- GENERAL :
+		- Adaptation aux modifications 'FLW' et 'XPP'.
+	- FLW :
+		- Change les 'unsafe_...___' en 'unsafe_...__' (un '_' de moins), plus cohérents.
+		- Suppression des version '___' (3 '_') des objets.
+	- NSXPCM :
+		- Simplification et diversification de 'XSLTransform...(...)'.
+	- XPP :
+		- Le coeur du préprocesseur n'est plus un 'xtf::extended_text_iflow__', mais un simple 'flw::unsafe__iflow__'.
+
 06/07/2010 :
 	- GENERAL :
 		- Adaptation aux modification dans 'XML'.

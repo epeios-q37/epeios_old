@@ -859,13 +859,15 @@ row__ rgstry::Parse(
 {
 ERRProlog
 	callback___ Callback( Registry );
-	xpp::preprocessing_extended_text_iflow___ XFlow;
+	xpp::preprocessing_iflow___ PFlow;
+	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	Callback.Init( Root );
 
 	Flow.EOFD( XTF_EOXT );
 
-	XFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
+	PFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
+	XFlow.Init( PFlow );
 
 	switch ( xml::Parse( XFlow, true, Callback ) ) {
 	case xml::sOK:
@@ -873,9 +875,9 @@ ERRBegin
 		break;
 	case xml::sUnexpectedEOF:
 		Root = NONE;
-		ErrorDetails.FileName = XFlow.Preprocessor().LocalizedFileName();
-		ErrorDetails.S_.Coord = XFlow.Preprocessor().Coord();
-		ErrorDetails.S_.XPPStatus = XFlow.Preprocessor().Status();
+		ErrorDetails.FileName = PFlow.LocalizedFileName();
+		ErrorDetails.S_.Coord = PFlow.Coord();
+		ErrorDetails.S_.XPPStatus = PFlow.Status();
 		break;
 	default:
 		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut retourner normalkement que 'xml::sUndexpectedEOF'.
