@@ -553,27 +553,27 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios XML libraries.
-&xmlbsc		&exml		&2001-\
+&xmlbsc		&epeios		&2001-\
 	&XML BaSiC
-&xmlcor		&exml		&2001-\
+&xmlcor		&epeios		&2001-\
 	&XML CORe
-&xmldbs		&exml		&2001\
+&xmldbs		&epeios		&2001\
 	&XML DataBaSe
-&xmldoc		&exml		&\
+&xmldoc		&epeios		&\
 	&XML DOCument
-&xmldcm		&exml		&2001-\
+&xmldcm		&epeios		&2001-\
 	&XML DoCuMent
-&xmlelm		&exml		&\
+&xmlelm		&epeios		&\
 	&XML ELeMent
-&xmlflr		&exml		&\
+&xmlflr		&epeios		&\
 	&XML FiLleR
-&xmlprs		&exml		&2000-\		&XML PaRSer
-&xmllpr		&exml		&\
+&xmlprs		&epeios		&2000-\		&XML PaRSer
+&xmllpr		&epeios		&\
 	&XML Light PaRser
-&xmltag		&exml		&2000-\
+&xmltag		&epeios		&2000-\
 	&XML TAG
-&xmltol		&exml		&2000-		&XML TOoL
-&xmlval		&exml		&2001-\
+&xmltol		&epeios		&2000-		&XML TOoL
+&xmlval		&epeios		&2001-\
 	&XML VALue
 
 #Private librarise.
