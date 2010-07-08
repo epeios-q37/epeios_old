@@ -977,8 +977,8 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 }
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
+	flw::iflow__ &IFlow,
 	const str::string_ &Directory,
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord,
@@ -1039,10 +1039,10 @@ ERREpilog
 }
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
-	xml::outfit__ Outfit,
+	flw::iflow__ &IFlow,
 	const str::string_ &Directory,
+	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow,
 	xtf::coord__ &Coord,
 	str::string_ &GuiltyFileName )
@@ -1053,7 +1053,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::schKeep );
 
-	Status = Process( IFlow, Namespace, Directory, Writer, Coord, GuiltyFileName );
+	Status = Process( Namespace, IFlow, Directory, Writer, Coord, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -1061,8 +1061,8 @@ ERREpilog
 }
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
+	flw::iflow__ &IFlow,
 	const str::string_ &Directory,
 	xml::writer_ &Writer )
 {
@@ -1073,7 +1073,7 @@ ERRProlog
 ERRBegin
 	DummyString.Init();
 
-	Status = Process( IFlow, Namespace, Directory, Writer, DummyCoord, DummyString );
+	Status = Process( Namespace, IFlow, Directory, Writer, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog
@@ -1081,10 +1081,10 @@ ERREpilog
 }
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
 	const str::string_ &Namespace,
-	xml::outfit__ Outfit,
+	flw::iflow__ &IFlow,
 	const str::string_ &Directory,
+	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow )
 {
 	status__ Status = s_Undefined;
@@ -1094,7 +1094,7 @@ ERRProlog
 ERRBegin
 	DummyString.Init();
 
-	Status = Process( IFlow, Namespace, Outfit, Directory, OFlow, DummyCoord, DummyString );
+	Status = Process( Namespace, IFlow, Directory, Outfit, OFlow, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog

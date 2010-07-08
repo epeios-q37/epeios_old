@@ -1,5 +1,12 @@
 $Id$
 
+08/07/2010 :
+	- NSXPCM
+		- Correction bogue introduit lors des dernières modifications.
+		- Adaptation modifications 'XPP'.
+	- XPP :
+		- Changement ordre arguments 'Transform(...)' et ajout variations.
+
 07/07/2010 :
 	- GENERAL :
 		- Adaptation aux modifications 'FLW' et 'XPP'.

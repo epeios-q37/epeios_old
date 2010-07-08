@@ -302,10 +302,11 @@ ERRBegin
 	xml::WriteXMLHeader( Destination == NULL ? cout : TOFlow );
 	( Destination == NULL ? cout : TOFlow ) << txf::nl;
 
-	if ( ( Status = xpp::Process( IFlow,
-									str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
-									Indent ? xml::oIndent : xml::oCompact, str::string( Directory == NULL ? (const char *)"" : Directory ),
-									( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
+	if ( ( Status = xpp::Process( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
+								  IFlow,
+								  str::string( Directory == NULL ? (const char *)"" : Directory ),
+								  Indent ? xml::oIndent : xml::oCompact,
+								  ( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
 		cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )

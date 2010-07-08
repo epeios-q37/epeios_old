@@ -1207,7 +1207,7 @@ ERRProlog
 ERRBegin
 	SFlow.Init( ProcessedXMLString );
 
-	if ( xpp::Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE) , xml::oCompact, BaseDirectory, TFlow ) != xpp::sOK )
+	if ( xpp::Process( IFlow, BaseDirectory, xml::oCompact, TFlow ) != xpp::sOK )
 		ERRu();
 ERRErr
 ERREnd
@@ -1228,7 +1228,7 @@ static bso::bool__ _GetXMLDocument(
 	CreateInstance( NS_DOMPARSER_CONTRACTID, Parser );
 	Result = Parser->ParseFromString( XMLEmbedString.get(), "text/xml", &XMLDocument );
 
-	return Result != NS_OK;
+	return Result == NS_OK;
 }
 
 static bso::bool__ _GetXSLStylesheet(

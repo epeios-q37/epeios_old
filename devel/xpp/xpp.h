@@ -697,40 +697,57 @@ namespace xpp {
 #endif
 
 	status__ Process(
-		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
+		flw::iflow__ &IFlow,
 		const str::string_ &Directory,
 		xml::writer_ &Writer,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
 
 	status__ Process(
-		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
-		xml::outfit__ Outfit,
+		flw::iflow__ &IFlow,
 		const str::string_ &Directory,
+		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
 
 	status__ Process(
-		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
+		flw::iflow__ &IFlow,
 		const str::string_ &Directory,
 		xml::writer_ &Writer );
 
 	status__ Process(
-		flw::iflow__ &IFlow,
 		const str::string_ &Namespace,
-		xml::outfit__ Outfit,
+		flw::iflow__ &IFlow,
 		const str::string_ &Directory,
+		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow );
+
+	inline status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Directory,
+		xml::writer_ &Writer )
+	{
+		return Process( str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), IFlow, Directory, Writer );
+	}
+
+	inline status__ Process(
+		flw::iflow__ &IFlow,
+		const str::string_ &Directory,
+		xml::outfit__ Outfit,
+		txf::text_oflow__ &OFlow )
+	{
+		return Process( str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), IFlow, Directory, Outfit, OFlow );
+	}
 
 	inline status__ Process(
 		flw::iflow__ &IFlow,
 		xml::writer_ &Writer )
 	{
-		return Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), str::string( "" ), Writer );
+		return Process( IFlow, str::string( "" ), Writer );
 	}
 
 	inline status__ Process(
@@ -738,7 +755,7 @@ namespace xpp {
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow )
 	{
-		return Process( IFlow, str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), Outfit, str::string( "" ), OFlow );
+		return Process( IFlow, str::string( "" ), Outfit, OFlow );
 	}
 
 }
