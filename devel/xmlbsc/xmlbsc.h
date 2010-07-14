@@ -338,8 +338,8 @@ namespace xmlbsc {
 
 	E_AUTO2( basic )
 
-	using xml::Transform;
-	using xml::Convert;
+	
+	using xml::TransformUsingEntities;
 	using xml::WriteXMLHeader;
 }
 

@@ -1,25 +1,24 @@
 /*
-  Header for the 'xmlbsc' library by Claude L. Simon (csimon@webmails.com)
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com) 
+	Header for the 'xmlbsc' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2001-2004 Claude SIMON.
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
@@ -30,22 +29,22 @@
 
 #define XMLBSC_NAME		"XMLBSC"
 
-#define	XMLBSC_VERSION	"$Revision$"	
+#define	XMLBSC_VERSION	"$Revision$"
 
-#define XMLBSC_OWNER		"the Epeios project (http://epeios.org/)"
+#define XMLBSC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
 extern class ttr_tutor &XMLBSCTutor;
 
 #if defined( XXX_DBG ) && !defined( XMLBSC_NODBG )
-#define XMLBSC_DBG 
+#define XMLBSC_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude L. SIMON (csimon@webmails.com)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -54,13 +53,16 @@ extern class ttr_tutor &XMLBSCTutor;
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
+
+/* Addendum to the automatic documentation generation part. */
+//D XML BaSiC 
+/* End addendum to automatic documentation generation part. */
+
 /*$BEGIN$*/
 
 /* Addendum to the automatic documentation generation part. */
-//D eXtended Markup Langage BaSiCs
+//D Hierarchically Organized Structures BaSiCs
 /* End addendum to automatic documentation generation part. */
-
-#error "Obsolete. Use library 'HOSBSC' instead."
 
 #include "err.h"
 #include "flw.h"
@@ -68,11 +70,14 @@ extern class ttr_tutor &XMLBSCTutor;
 #include "lst.h"
 #include "ctn.h"
 #include "flm.h"
+#include "str.h"
+#include "xml.h"
 
 namespace xmlbsc {
 
 	using dtr::dynamic_tree_;
 	using lst::list_;
+	using bch::bunch_;
 	using ctn::mono_extended_container_;
 
 	/*c Contains the file memory driver tu use together with the 'hdbbsc' class.
@@ -80,139 +85,112 @@ namespace xmlbsc {
 	class file_memory_drivers {
 	public:
 		struct tree_drivers {
-			flm::file_memory_driver Tree, Queue;
+			flm::file_memory_driver___ Tree, Queue;
 		} DTree;
-		flm::file_memory_driver List;
+		flm::file_memory_driver___ List;
+		flm::file_memory_driver___ Bunch;
 		struct container_drivers {
-			flm::file_memory_driver Statics;
+			flm::file_memory_driver___ Statics;
 			struct descriptors_drivers {
-				flm::file_memory_driver Descriptors;
-				flm::file_memory_driver Multimemory;
+				flm::file_memory_driver___ Descriptors;
+				flm::file_memory_driver___ Multimemory;
 			} Dynamics;
 		} Container;
 		//f Initialize with generic name 'Name', directory 'Directory' and  suffix 'Suffix'.
 		void Init(
-			const char *Name,	
+			const char *Name,
+			flm::id__ ID,
 			const char *Directory = NULL,
 			const char *Suffix = "hdb" );
 		//f Make persistent.
 		void MakePersistent( void )
 		{
-			DTree.Tree.Persistant();
-			DTree.Queue.Persistant();
-			List.Persistant();
-			Container.Statics.Persistant();
-			Container.Dynamics.Descriptors.Persistant();
-			Container.Dynamics.Multimemory.Persistant();
-		}		
+			DTree.Tree.Persistent();
+			DTree.Queue.Persistent();
+			List.Persistent();
+			Bunch.Persistent();
+			Container.Statics.Persistent();
+			Container.Dynamics.Descriptors.Persistent();
+			Container.Dynamics.Multimemory.Persistent();
+		}
 		//f Manual mode.
 		void Manual( void )
 		{
-			DTree.Tree.Manuel();
-			DTree.Queue.Manuel();
-			List.Manuel();
-			Container.Statics.Manuel();
-			Container.Dynamics.Descriptors.Manuel();
-			Container.Dynamics.Multimemory.Manuel();
+			DTree.Tree.Manual();
+			DTree.Queue.Manual();
+			List.Manual();
+			Bunch.Manual();
+			Container.Statics.Manual();
+			Container.Dynamics.Descriptors.Manual();
+			Container.Dynamics.Multimemory.Manual();
 		}
 	};
 
+	typedef str::string_	item_;
+	typedef str::string		item;
+
 	//c The basic manager of item type 'i' and referred by 'referrence__'
-	template <typename i, typename r> class basic_
+	template <typename o, typename r> class basic_
 	: public E_LISTt_( r ),
 	  public E_DTREEt_( r ),
-	  public E_XMCONTAINERt_( i, r )
+	  public E_BUNCHt_( o, r ),
+	  public E_XMCONTAINERt_( item_, r )
 	{
 	private:
-		r Create_( const i &Item )
+		r Create_(
+			const item_ &Item,
+			o Oddity )
 		{
-			r P = E_LISTt_( r )::CreateEntry();
+			r P = E_LISTt_( r )::New();
 
-			E_XMCONTAINERt_( i, r )::Write( Item, P );
-
-			return P;
-		}
-		void CreateRoot_( r Position )
-		{
-	#ifdef HDBBSC_DBG
-			if ( S_.Root != NONE )
-				ERRu();
-	#endif
-			S_.Root = Position;
-		}
-		r CreateRoot_( const i &Item )
-		{
-			r P = Create_( Item );
-
-			CreateRoot_( P );
+			E_BUNCHt_( o, r )::Store( Oddity, P );
+			E_XMCONTAINERt_( item_, r )::Store( Item, P );
 
 			return P;
 		}
 	protected:
-		void LSTAllocate( epeios::size__ Size )
+		void LSTAllocate(
+			epeios::size__ Size,
+			aem::mode__ Mode )
 		{
-			E_DTREEt_( r )::Allocate( Size, aem::mFit );
+			E_DTREEt_( r )::Allocate( Size, Mode );
 
-			E_XMCONTAINERt_( i, r )::Allocate( Size, aem::mFit );
-		}
-		void BecomeFirst( 
-			r First,
-			r Node )
-		{
-			E_DTREEt_( r )::BecomeFirst( First, Node );
-		}
-		void BecomeLast( 
-			r Last,
-			r Node )
-		{
-			E_DTREEt_( r )::BecomeLast( Last, Node );
-		}
-		void BecomePrevious(
-			r Previous,
-			r Node )
-		{
-			E_DTREEt_( r )::BecomePrevious( Previous, Node );
-		}
-		void BecomeNext(
-			r Next,
-			r Node )
-		{
-			E_DTREEt_( r )::BecomeNext( Next, Node );
+			E_BUNCHt_( o, r )::Allocate( Size, Mode );
+			E_XMCONTAINERt_( item_, r )::Allocate( Size, Mode );
 		}
 	public:
 		struct s
 		: public E_LISTt_( r )::s,
 		  public E_DTREEt_( r )::s,
-		  public E_XMCONTAINERt_( i, r )::s
-		{
-			r Root;
-		} &S_;
+		  public E_BUNCHt_( o, r )::s,
+		  public E_XMCONTAINERt_( item_, r )::s
+		{};
 		basic_( s &S )
-		: S_( S ),
-		  E_LISTt_( r )( S ),
+		: E_LISTt_( r )( S ),
 		  E_DTREEt_( r )( S ),
-		  E_XMCONTAINERt_( i, r )( S )
+		  E_BUNCHt_( o, r )( S ),
+		  E_XMCONTAINERt_( item_, r )( S )
 		{}
 		void reset( bool P = true )
 		{
 			E_LISTt_( r )::reset( P );
 			E_DTREEt_( r )::reset( P );
-			E_XMCONTAINERt_( i, r )::reset( P );
-
-			S_.Root = NONE;
+			E_BUNCHt_( o, r )::reset( P );
+			E_XMCONTAINERt_( item_, r )::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( mmm::multimemory_ &MM )
 		{
-			E_LISTt_( r )::plug( M );
-			E_DTREEt_( r )::plug( M );
-			E_XMCONTAINERt_( i, r )::plug( M );
+			E_LISTt_( r )::plug( MM );
+			E_DTREEt_( r )::plug( MM );
+			E_BUNCHt_( o, r )::plug( MM );
+			E_XMCONTAINERt_( item_, r )::plug( MM );
 		}
 		basic_ &operator =( const basic_ &BM )
 		{
 			E_LISTt_( r )::operator =( BM );
 			E_DTREEt_( r )::operator =( BM );
-			E_XMCONTAINERt_( i, r )::operator =( BM );
-			S_.Root = BM.S_.Root;
+			E_BUNCHt_( o, r )::operator =( BM );
+			E_XMCONTAINERt_( item_, r )::operator =( BM );
 
 			return *this;
 		}
@@ -222,91 +200,101 @@ namespace xmlbsc {
 			E_DTREEt_( r )::Tree.plug( Drivers.DTree.Tree );
 			E_DTREEt_( r )::Queue.plug( Drivers.DTree.Queue );
 			E_LISTt_( r )::plug( Drivers.List );
-			E_XMCONTAINERt_( i, r )::Statics.plug( Drivers.Container.Statics );
-			E_XMCONTAINERt_( i, r )::Dynamics.Descripteurs.plug( Drivers.Container.Dynamics.Descriptors );
-			E_XMCONTAINERt_( i, r )::Dynamics.Multimemoire.plug( Drivers.Container.Dynamics.Multimemory );
+			E_BUNCHt_( o, r )::plug( Drivers.Bunch );
+			E_XMCONTAINERt_( item_, r )::Statics.plug( Drivers.Container.Statics );
+			E_XMCONTAINERt_( item_, r )::Dynamics.Descripteurs.plug( Drivers.Container.Dynamics.Descriptors );
+			E_XMCONTAINERt_( item_, r )::Dynamics.Multimemoire.plug( Drivers.Container.Dynamics.Multimemory );
 		}
-		/*f Initialization with root 'Root'. Return reference of the root
-		node. */
-		r Init( const i &Root )
+		void Init( void )
 		{
 			E_LISTt_( r )::Init();
 			E_DTREEt_( r )::Init();
-			E_XMCONTAINERt_( i, r )::Init();
-
-			S_.Root = NONE;
-
-			return CreateRoot_( Root );
+			E_BUNCHt_( o, r )::Init();
+			E_XMCONTAINERt_( item_, r )::Init();
+		}
+		void BecomeFirstChild(
+			r First,
+			r Node )
+		{
+			E_DTREEt_( r )::BecomeFirstChild( First, Node );
+		}
+		void BecomeLastChild(
+			r Last,
+			r Node )
+		{
+			E_DTREEt_( r )::BecomeLastChild( Last, Node );
+		}
+		void BecomePreviousSibling(
+			r Previous,
+			r Node )
+		{
+			E_DTREEt_( r )::BecomePreviousSibling( Previous, Node );
+		}
+		void BecomeNextSibling(
+			r Next,
+			r Node )
+		{
+			E_DTREEt_( r )::BecomeNext( Next, Node );
 		}
 		//f Return the position where new item 'Item' is put.
-		r Create( const i &Item )
+		r Create(
+			const item_ &Item,
+			o Oddity )
 		{
-			return Create_( Item );
+			return Create_( Item, Oddity );
 		}
 		//f Return the psotion of a new empty item which would be initialized later.
 		r Create( void )
 		{
-			return E_LISTt_( r )::CreateEntry();
-		}
-		//f Return the root of the tree, 'NONE' if none.
-		r GetRoot( void ) const
-		{
-			return S_.Root;
+			return E_LISTt_( r )::New();
 		}
 		/*f The new item 'Item' becomes first child of node 'Node'.
 		Return position where 'Item' is put. */
-		r BecomeFirst(
-			const i &Item,
+		r BecomeFirstChild(
+			const item_ &Item,
+			o Oddity,
 			r Node )
 		{
-			r P = Create( Item );
+			r P = Create( Item, Oddity );
 
-			E_DTREEt_( r )::BecomeFirst( P, Node );
+			E_DTREEt_( r )::BecomeFirstChild( P, Node );
 
 			return P;
 		}
 		/*f The new name 'Name' becomes last child of node 'Node'.
 		Return position where 'Name' is put. */
-		r BecomeLast(
-			const i &Item,
+		r BecomeLastChild(
+			const item_ &Item,
+			o Oddity,
 			r Node )
 		{
-			r P = Create( Item );
+			r P = Create( Item, Oddity );
 
-			E_DTREEt_( r )::BecomeLast( P, Node );
+			E_DTREEt_( r )::BecomeLastChild( P, Node );
 
 			return P;
 		}
 		/*f The new name 'Name' becomes node next to node 'Node'.
 		Return position where 'Name' is put. */
-		r BecomeNext(
-			const i &Item,
+		r BecomeNextSibling(
+			const item_ &Item,
+			o Oddity,
 			r Node )
 		{
-			r P = Create( Item );
-	#ifdef HDBBSC__DEBUG
-			if ( Node == S_.Root )
-				ERRu();
-	#endif
+			r P = Create( Item, Oddity );
 
-			E_DTREEt_( r )::BecomeNext( P, Node );
+			E_DTREEt_( r )::BecomeNextSibling( P, Node );
 
 			return P;
 		}
-		/*f The new name 'Name' becomes node previous to node 'Node'.
-		Return position where 'Name' is put. */
-		r BecomePrevious(
-			const i &Item,
+		r BecomePreviousSibling(
+			const item_ &Item,
+			o Oddity,
 			r Node )
 		{
-			r P = Create( Item );
+			r P = Create( Item, Oddity );
 
-	#ifdef HDBBSC__DEBUG
-			if ( Node == S_.Root )
-				ERRu();
-	#endif
-
-			E_DTREEt_( r )::BecomePrevious( P, Node );
+			E_DTREEt_( r )::BecomePreviousSibling( P, Node );
 
 			return P;
 		}
@@ -335,10 +323,24 @@ namespace xmlbsc {
 		{
 			return E_DTREEt_( r )::Amount();
 		}
+		o GetOddity( r Row ) const 
+		{
+			return E_BUNCHt_( o, r )::Get( Row );
+		}
+		void Store(
+			const item_ &Item,
+			r Row )
+		{
+			E_XMCONTAINERt_( item_, r )::Store( Item, Row );
+			E_XMCONTAINERt_( item_, r )::Flush();
+		}
 	};
 
-	AUTO1( basic )
+	E_AUTO2( basic )
 
+	
+	using xml::TransformUsingEntities;
+	using xml::WriteXMLHeader;
 }
 
 /*$END$*/

@@ -1,5 +1,13 @@
 $Id$
 
+14/07/2010 :
+	- GENERAL :
+		- Déplacement des sous-projets dans le projet principal.
+	- MTX :
+		- Correction d'un bogue entraînant un quasi-blocage sous Linux.
+	- XMLBSC : 
+		- Adaptation aux modifications 'XML'.
+
 08/07/2010 :
 	- NSXPCM
 		- Correction bogue introduit lors des dernières modifications.

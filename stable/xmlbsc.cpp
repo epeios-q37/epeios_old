@@ -1,28 +1,29 @@
 /*
-  'xmlbsc' library by Claude L. Simon (csimon@webmails.com)
-  Requires the 'xmlbsc' header file ('xmlbsc.h').
-  Copyright (C) 2000,2001 Claude L. SIMON (csimon@webmails.com).
+	'xmlbsc' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'xmlbsc' header file ('xmlbsc.h').
+	Copyright (C) 2001-2004 Claude SIMON.
 
-  This file is part of the Epeios (http://epeios.org/) project.
-  
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org/
-  or write to the:
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
   
-                        Free Software Foundation, Inc.,
+         	         Free Software Foundation, Inc.,
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+
 
 //	$Id$
 
@@ -60,34 +61,34 @@ namespace xmlbsc {
 #include "fnm.h"
 
 static void Init_(
-	flm::file_memory_driver &Driver,
+	flm::file_memory_driver___ &Driver,
 	char *Buffer,
 	const char *Discriminator,
-	const char *Name,	
+	const char *Name,
 	const char *Directory,
-	const char *Suffix )
+	const char *Suffix,
+	flm::id__ ID )
 {
 ERRProlog
-	char *FileName = NULL;
+	const char *FileName = NULL;
+	FNM_BUFFER___ FileNameBuffer;
 ERRBegin
-ERRErr
-ERREnd
-	if ( FileName != NULL )
-		free( FileName );
-		
 	sprintf( Buffer, "%s%s", Name, Discriminator );
 
-	FileName = fnm::MakeFileName( Directory, Buffer, Suffix );
-	
-	Driver.Init( FileName );
+	FileName = fnm::BuildFileName( Directory, Buffer, Suffix, FileNameBuffer );
+
+	Driver.Init( ID, true, FileName );
+ERRErr
+ERREnd
 ERREpilog
 }
 
 
 void xmlbsc::file_memory_drivers::Init(
-	const char *Name,	
+	const char *Name,
+	flm::id__ ID,
 	const char *Directory,
-	const char *Suffix)
+	const char *Suffix )
 {
 ERRProlog
 	char *Buffer = NULL;
@@ -95,20 +96,19 @@ ERRBegin
 	if ( ( Buffer = (char *)malloc( strlen( Name ) + 2 ) ) == NULL )
 		ERRa();
 
-	Init_( DTree.Tree, Buffer, "T", Name, Directory, Suffix );			
-	Init_( DTree.Queue, Buffer, "Q", Name, Directory, Suffix );
-	Init_( List, Buffer, "L", Name, Directory, Suffix );
-	Init_( Container.Statics, Buffer, "S", Name, Directory, Suffix );
-	Init_( Container.Dynamics.Descriptors, Buffer, "D", Name, Directory, Suffix );
-	Init_( Container.Dynamics.Multimemory, Buffer, "M", Name, Directory, Suffix );
-	
+	Init_( DTree.Tree, Buffer, "T", Name, Directory, Suffix, ID );
+	Init_( DTree.Queue, Buffer, "Q", Name, Directory, Suffix, ID );
+	Init_( List, Buffer, "L", Name, Directory, Suffix, ID );
+	Init_( Container.Statics, Buffer, "S", Name, Directory, Suffix, ID );
+	Init_( Container.Dynamics.Descriptors, Buffer, "D", Name, Directory, Suffix, ID );
+	Init_( Container.Dynamics.Multimemory, Buffer, "M", Name, Directory, Suffix, ID );
+
 ERRErr
 ERREnd
 	if ( Buffer != NULL )
 		free( Buffer );
 ERREpilog
 }
-	
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

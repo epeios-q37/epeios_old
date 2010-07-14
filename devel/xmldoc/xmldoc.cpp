@@ -83,7 +83,7 @@ ERRBegin
 			Flow << ' ' << Name( Document.Data.GetOddity( Row ) ) << "=\"";
 
 			Result.Init();
-			xmlbsc::Convert( Value( Row ), Result );
+			xmlbsc::TransformUsingEntities( Value( Row ), false, Result );
 			Flow << Result << '"';
 		}
 
@@ -115,7 +115,7 @@ ERRBegin
 	Flow << '>';
 
 	Result.Init();
-	xmlbsc::Convert( Value( Root ), Result );
+	xmlbsc::TransformUsingEntities( Value( Root ), false, Result );
 	Flow << Result;
 
 #ifdef XMLDOC_DBG
@@ -138,7 +138,7 @@ ERRBegin
 #endif
 
 				Result.Init();
-				xmlbsc::Convert( Value( Browser.Position() ), Result );
+				xmlbsc::TransformUsingEntities( Value( Browser.Position() ), false, Result );
 				Flow << Result;
 #ifdef XMLDOC_DBG
 				Flow << txf::sync;

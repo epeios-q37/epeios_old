@@ -277,49 +277,49 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios BKD libraries.
-&bkdacc		&ebkd		&2001-\
+&bkdacc		&epeios		&2001-\
 	&BacKenD ACCess
-&bkdcmd		&ebkd		&2001-\
+&bkdcmd		&epeios		&2001-\
 	&BacKenD CoMmanDs
-&bkdcst		&ebkd		&2001, 2003-\
+&bkdcst		&epeios		&2001, 2003-\
 	&BacKenD CaSTs
-&bkddcb		&ebkd		&2001, 2003-\
+&bkddcb		&epeios		&2001, 2003-\
 	&BacKenD DesCriBer
-&bkddsc		&ebkd		&2001, 2003-\
+&bkddsc		&epeios		&2001, 2003-\
 	&BacKenD DeSCriptions
-&bkdlac		&ebkd		&\
+&bkdlac		&epeios		&\
 	&BacKenD Local ACcess
-&bkdlcl		&ebkd		&2002-\
+&bkdlcl		&epeios		&2002-\
 	&BacKenD LoCaLes
-&bkdlgg		&ebkd		&2002-\
+&bkdlgg		&epeios		&2002-\
 	&BacKenD LanGuaGes
-&bkdlrm		&ebkd		&\
+&bkdlrm		&epeios		&\
 	&BacKenD Local Request Manager.
-&bkdmng		&ebkd		&2001-\
+&bkdmng		&epeios		&2001-\
 	&BacKenD MaNaGer
-&bkdprp		&ebkd		&2004\
+&bkdprp		&epeios		&2004\
 	&BackEnD Parameter RePository.
-&bkdrac		&ebkd		&\
+&bkdrac		&epeios		&\
 	&BacKenD Remote ACcess
-&bkdrqm		&ebkd		&2001-\
+&bkdrqm		&epeios		&2001-\
 	&BacKenD ReQuest Manager
-&bkdrrm		&ebkd		&\
+&bkdrrm		&epeios		&\
 	&BacKenD Remote Request Manager.
-&bkdtpm		&ebkd		&2001-\
+&bkdtpm		&epeios		&2001-\
 	&BacKenD TyPes Manager
-&bkduac		&ebkd		&\
+&bkduac		&epeios		&\
 	&BacKenD Universal ACcess
 
 
 
 #Epeios CGI libraries.
-&cgiarg		&ecgi		&2001-\
+&cgiarg		&epeios		&2001-\
 	&CGI (Common Gateway Interface) ARGument
-&cgidat		&ecgi		&2002-\
+&cgidat		&epeios		&2002-\
 	&CGI (Common Gateway Interface) DATa
-&cgimng		&ecgi		&2001,2003-\
+&cgimng		&epeios		&2001,2003-\
 	&CGI (Common Gateway Interface) MaNaGer
-&cgitol		&ecgi		&2002-\
+&cgitol		&epeios		&2002-\
 	&CGI (Common Gateway Interface) TOoL
 
 
@@ -469,40 +469,40 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 
 #Epeios MSC libraries.
-&msccmq		&emsc		&\
+&msccmq		&epeios		&\
 	&MuSiC Customized Midi Quantizer
-&mscmdd		&emsc		&\
+&mscmdd		&epeios		&\
 	&MuSiC MiDi Device
-&mscmdf		&emsc		&2002, \
+&mscmdf		&epeios		&2002, \
 	&MuSiC MiDi File		
-&mscmdm		&emsc		&2002, \
+&mscmdm		&epeios		&2002, \
 	&MuSiC MiDi Messages
-&mscmdx	&emsc	&\
+&mscmdx	&epeios	&\
 	&MuSiC MiDi Xml features
-&mscmld	&emsc	&\
+&mscmld	&epeios	&\
 	&MuSiC MeLody Description
-&mscsf2		&emsc		&\
+&mscsf2		&epeios		&\
 	&MuSiC SoudFont 2
-&mscvkp		&emsc		&2002-\
+&mscvkp		&epeios		&2002-\
 	&MuSiC VK (from Roland VK combo organ) Parameters
-&mscvkt		&emsc		&\
+&mscvkt		&epeios		&\
 	&MuSiC VK (from Roland VK combo organ) Tree
-&mscvkx		&emsc		&2002, \
+&mscvkx		&epeios		&2002, \
 	&MuSiC VK (from Roland VK combo organ) XML
 
 
 
 #Epeios MTH libraries.
-&mthfrc		&emth		&\
+&mthfrc		&epeios		&\
 	&MaTH FRaCtion
-&mthitg		&emth		&2000-2001, 	&MaTH InTeGer
-&mthmtx		&emth		&\
+&mthitg		&epeios		&2000-2001, 	&MaTH InTeGer
+&mthmtx		&epeios		&\
 	&MaTH MaTriX
-&mthpln		&emth		&\
+&mthpln		&epeios		&\
 	&MaTH PoLyNomial
-&mthtmc		&emth		&\
+&mthtmc		&epeios		&\
 	&MaTH TiMeCode
-&mthvct		&emth		&2000-2001, 	&MaTH VeCTor
+&mthvct		&epeios		&2000-2001, 	&MaTH VeCTor
 
 
 
