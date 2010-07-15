@@ -92,11 +92,11 @@ static fil::status__ WriteFile_(
 {
 	fil::status__ Return = fil::s_Undefined;
 ERRProlog
-	char *Name = NULL;
+	STR_BUFFER___ Name;
 	flf::file_iflow___ File;
 	xtf::extended_text_iflow__ IFlow;
 ERRBegin
-	Name = FileName.Convert();
+	FileName.Convert( Name );
 
 	if ( ( Return = File.Init( Name, ErrHandle ) ) == fil::sSuccess ){
 		File.EOFD( XTF_EOXT );
@@ -108,8 +108,6 @@ ERRBegin
 	}
 ERRErr
 ERREnd
-	if ( Name != NULL )
-		free( Name );
 ERREpilog
 
 	return Return;

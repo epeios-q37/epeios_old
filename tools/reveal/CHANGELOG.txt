@@ -1,5 +1,8 @@
 $Id$
 
+15/07/2010 :
+	- Adaptations aux changements dans les différentes bibliothèques.
+
 04/02/06 :
 	- Adaptations aux changements dans les différentes bibliothèques.
 

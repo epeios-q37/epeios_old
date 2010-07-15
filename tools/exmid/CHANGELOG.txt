@@ -1,5 +1,8 @@
 $Id$
 
+- 15/07/2010 :
+	- Adaptation to modifications in underlying libraries.
+
 ---------------
 Version 0.1.2 :
 ---------------

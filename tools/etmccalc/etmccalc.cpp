@@ -35,7 +35,7 @@
 #define VERSION			"0.7.2"
 #define COPYRIGHT_YEARS	"2007-2009"
 #define DESCRIPTION		"Epeios timecode calculator"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -82,12 +82,12 @@ enum exit_value__ {
 typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
 E_AUTO( strings )
 
-#define STRING_PARAM( name )	CLNARG_STRING_PARAM( name )
+#define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
 struct parameters {
 	strings Strings;
-	STRING_PARAM( Format );
-	STRING_PARAM( Punctuations );
+	STRING_PARAM___( Format );
+	STRING_PARAM___( Punctuations );
 	parameters( void )
 	{
 		Strings.Init();
@@ -206,7 +206,7 @@ ERRBegin
 				cerr << "'" << Analyzer.Description().GetOptionLabels( oFormat ) << "' option must have an argument!" << txf::nl;
 				ERRExit( evParameters );
 			}
-			Parameters.Format = Argument.Convert( Parameters.FormatBuffer );
+			Argument.Convert( Parameters.Format );
 			break;
 		case oPunctuations:
 			Analyzer.GetArgument( Option, Argument );
@@ -214,7 +214,7 @@ ERRBegin
 				cerr << "'" << Analyzer.Description().GetOptionLabels( oPunctuations ) << "' option must have an argument!" << txf::nl;
 				ERRExit( evParameters );
 			}
-			Parameters.Punctuations = Argument.Convert( Parameters.PunctuationsBuffer );
+			Argument.Convert( Parameters.Punctuations );
 			break;
 //		case o:
 		default:

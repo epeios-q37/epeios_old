@@ -39,7 +39,7 @@
 #define VERSION			"0.1.2"
 #define COPYRIGHT_YEARS	"2007; 2009"
 #define DESCRIPTION		"MIDI to XML and XML to MIDI converter."
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -72,13 +72,13 @@ enum option {
 	// o
 };
 
-#define STRING_PARAM( name )	CLNARG_STRING_PARAM( name )
+#define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
 struct parameters {
 	command__ Command;
-	STRING_PARAM( MIDIFileName );
-	STRING_PARAM( XMIDFileName );
-	STRING_PARAM( AutomaticFileName );
+	STRING_PARAM___( MIDIFileName );
+	STRING_PARAM___( XMIDFileName );
+	STRING_PARAM___( AutomaticFileName );
 	parameters( void )
 	{
 		Command = c_Undefined;
@@ -185,10 +185,10 @@ ERRBegin
 	case cMIDToX:
 		switch ( Free.Amount() ) {
 		case 2:
-			Parameters.XMIDFileName = Free( P ).Convert( Parameters.AutomaticFileNameBuffer );
+			Free( P ).Convert( Parameters.AutomaticFileName );
 			P = Free.Previous( P );
 		case 1:
-			Parameters.MIDIFileName = Free( P ).Convert( Parameters.MIDIFileNameBuffer );
+			Free( P ).Convert( Parameters.MIDIFileName );
 			break;
 		default:
 			cerr << "Bad amount of arguments." << txf::nl;
@@ -200,9 +200,9 @@ ERRBegin
 	case cXToMID:
 		switch ( Free.Amount() ) {
 		case 2:
-			Parameters.MIDIFileName = Free( P ).Convert( Parameters.MIDIFileNameBuffer );
+			Free( P ).Convert( Parameters.MIDIFileName );
 			P = Free.Previous( P );
-			Parameters.XMIDFileName = Free( P ).Convert( Parameters.MIDIFileNameBuffer );
+			Free( P ).Convert( Parameters.MIDIFileName );
 			break;
 		default:
 			cerr << "Bad amount of arguments." << txf::nl;
@@ -214,7 +214,7 @@ ERRBegin
 	case cAutomatic:
 		switch ( Free.Amount() ) {
 		case 1:
-			Parameters.AutomaticFileName = Free( P ).Convert( Parameters.AutomaticFileNameBuffer );
+			Free( P ).Convert( Parameters.AutomaticFileName );
 			break;
 		default:
 			cerr << "Bad amount of arguments." << txf::nl;
@@ -303,7 +303,7 @@ ERRBegin
 	xml::WriteXMLHeader( OFlow );
 	OFlow << txf::nl;
 
-	Writer.Init( OFlow );
+	Writer.Init( OFlow, xml::oIndent );
 
 	mscmdx::MIDIToXMID( IFlow, mscmdm::oFile, Writer );
 ERRErr

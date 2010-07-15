@@ -38,11 +38,11 @@
 #define VERSION			"1.0.5"
 #define COPYRIGHT_YEARS	"1999-2004, 2006"
 #define DESCRIPTION		"Replaces tags in a file by text or file content."
-#define INFO EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 #define DEFAULT_TAG_DELIMITER_S		"$"
@@ -215,7 +215,7 @@ inline void AdditionalTags(
 	Expander.Add( estring( tol::Time( Buffer ) ), tagexp::nText, estring( "_TIME_" ) );
 	Expander.Add( estring( NAME ), tagexp::nText, estring( "_NAME_" ) );
 	Expander.Add( estring( AUTHOR_NAME ), tagexp::nText, estring( "_AUTHOR_" ) );
-	Expander.Add( estring( AUTHOR_EMAIL ), tagexp::nText, estring( "_EMAIL_" ) );
+	Expander.Add( estring( AUTHOR_CONTACT ), tagexp::nText, estring( "_CONTACT_" ) );
 	Expander.Add( estring( EPSMSC_EPEIOS_URL ), tagexp::nText, estring( "_LINK_" ) );
 	Expander.Add( estring( VERSION ), tagexp::nText, estring( "_VERSION_" ) );
 }
@@ -267,7 +267,7 @@ ERRBegin
 		ERRi();
 		break;
 	case tagexp::sUnknowTag:
-		cerr << "Error with tag at line " << IFlow.Line() << " column " << IFlow.Column() << '.' << txf::nl;
+		cerr << "Error with tag at line " << IFlow.Coord().Line << " column " << IFlow.Coord().Column << '.' << txf::nl;
 		ERRi();
 		break;
 	default:
@@ -570,7 +570,7 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << INFO << txf::nl;
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
@@ -673,9 +673,9 @@ ERREpilog
 
 static void AnalyzeFreeArguments(
 	clnarg::analyzer___ &Analyzer,
-	char *&Desc,
-	char *&Source,
-	char *&Dest )
+	STR_BUFFER___ &Desc,
+	STR_BUFFER___ &Source,
+	STR_BUFFER___ &Dest )
 {
 ERRProlog
 	clnarg::arguments Free;
@@ -689,13 +689,13 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 3:
-		Dest = Free( P ).Convert();
+		Free( P ).Convert( Dest );
 		P = Free.Previous( P );
 	case 2:
-		Source = Free( P ).Convert();
+		Free( P ).Convert( Source );
 		P = Free.Previous( P );
 	case 1:
-		Desc = Free( P ).Convert();
+		Free( P ).Convert( Desc );
 		P = Free.Previous( P );
 		break;
 	case 0:
@@ -718,9 +718,9 @@ ERREpilog
 static void AnalyzeArgs(
 	int argc,
 	const char *argv[],
-	char *&Desc,
-	char *&Source,
-	char *&Dest,
+	STR_BUFFER___ &Desc,
+	STR_BUFFER___ &Source,
+	STR_BUFFER___ &Dest,
 	tagexp::action &Action,
 	char &Delimiter,
 	char &Comment,
@@ -789,9 +789,9 @@ ERRProlog
 	txf::text_oflow__ *OFlow = NULL;
 	flw::iflow__ *IFlow = NULL;
 	bso::bool__ Backup = false;
-	char *Desc = NULL;
-	char *Source = NULL;
-	char *Dest = NULL;
+	STR_BUFFER___ Desc;
+	STR_BUFFER___ Source;
+	STR_BUFFER___ Dest;
 	tagexp::action Action = tagexp::aPrint;
 	char Delimiter = DEFAULT_TAG_DELIMITER;
 	char Comment = DEFAULT_COMMENT_MARKER;
@@ -866,14 +866,6 @@ ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Dest );
 ERREnd
-	if ( Desc != NULL )
-		free( Desc );
-
-	if ( Source != NULL )
-		free( Source );
-
-	if ( Dest != NULL )
-		free( Dest );
 ERREpilog
 }
 

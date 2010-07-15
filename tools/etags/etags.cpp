@@ -24,11 +24,11 @@ $NOTICE$
 #define VERSION			"0.1.0"
 #define COPYRIGHT_YEARS	"2008"
 #define DESCRIPTION		"FLAC file tagging utility"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 using cio::cin;
@@ -98,7 +98,7 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << INFO << txf::nl;
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
@@ -696,7 +696,7 @@ ERRBegin
 	if ( XMLFile == NULL )  {
 		xml::WriteXMLHeader( cout );
 		cout << txf::nl;
-		Writer.Init( cout, true );
+		Writer.Init( cout, xml::oIndent );
 	}else {
 		fil::CreateBackupFile( XMLFile, fil::hbfRename );
 		BackupFileCreated = true;
@@ -708,7 +708,7 @@ ERRBegin
 
 		xml::WriteXMLHeader( TFlow );
 		TFlow << txf::nl;
-		Writer.Init( TFlow, true );
+		Writer.Init( TFlow, xml::oIndent );
 	}
 
 	Writer.PushTag( FILES_TAG );
@@ -786,7 +786,7 @@ static void Error_(
 	browser___ &Browser,
 	const char *Message )
 {
-	cerr << "Error in XML file line " << Browser.Dump().Coord().Line << ", column " << Browser.Dump().Coord().Column << " : " << Message << " !" << txf::nl;
+	cerr << "Error in XML file line " << Browser.DumpCoord().Line << ", column " << Browser.DumpCoord().Column << " : " << Message << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 }
 
@@ -1073,7 +1073,7 @@ ERRProlog
 	browser___ Browser;
 	bso::bool__ Continue = true;
 ERRBegin
-	Browser.Init( XFlow );
+	Browser.Init( XFlow, xml::eh_Default );
 
 	Retrieve_( Browser, FilesTags );
 ERRErr
