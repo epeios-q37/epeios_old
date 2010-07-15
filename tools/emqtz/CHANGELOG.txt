@@ -1,0 +1,4 @@
+$Id$
+
+- 15/07/2010 :
+	- Adapting to modifications in underlying libraries.

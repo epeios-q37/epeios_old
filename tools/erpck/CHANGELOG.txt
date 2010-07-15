@@ -1,5 +1,8 @@
 $Id$
 
+- 15/07/2010 :
+	- Adaptation to changes in underlying libraries.
+
 - 28/06/2010 :
 	- Ajout argument '$2'.
 

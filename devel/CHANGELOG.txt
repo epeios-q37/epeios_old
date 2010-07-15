@@ -1,5 +1,10 @@
 $Id$
 
+15/07/2010 :
+	- GENERAL :
+		- Déplacement des différentes applications des les sous-projets vers le projet principal.
+		- Adpatation des différents bibliothèques aux modifications des bibliothèques sous-jacentes.
+
 14/07/2010 :
 	- GENERAL :
 		- Déplacement des sous-projets dans le projet principal.

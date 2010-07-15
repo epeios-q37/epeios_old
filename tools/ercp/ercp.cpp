@@ -22,11 +22,11 @@ $NOTICE$
 #define VERSION			"0.1.0"
 #define COPYRIGHT_YEARS	"2008"
 #define DESCRIPTION		"copy files randomly"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 using cio::cin;
@@ -109,8 +109,8 @@ enum option {
 };
 
 struct parameters {
-	tol::E_FPOINTER___( char ) SourceDir;
-	tol::E_FPOINTER___( char ) DestDir;
+	STR_BUFFER___ SourceDir;
+	STR_BUFFER___ DestDir;
 	dssize__ MinSize;
 	dssize__ MaxSize;
 	dssize__ TotalSize;
@@ -145,7 +145,7 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << INFO << txf::nl;
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
@@ -224,10 +224,10 @@ ERRBegin
 		Parameters.TotalSize = GetSize( Free( P ), "total amount argument" );
 
 		P = Free.Previous( P );
-		Parameters.DestDir = Free( P ).Convert();
+		Free( P ).Convert( Parameters.DestDir );
 
 		P = Free.Previous( P );
-		Parameters.SourceDir = Free( P ).Convert();
+		Free( P ).Convert( Parameters.SourceDir );
 		break;
 	default:
 		cerr << "Bad amount of arguments." << txf::nl;
@@ -362,19 +362,19 @@ ERRProlog
 	str::string LocalizedFileName;
 	dir::handle___ Handle = DIR_INVALID_HANDLE;
 	const char *Name;
-	tol::E_FPOINTER___( char ) Buffer;
+	STR_BUFFER___ LocalizedFileNameBuffer;
 	file File;
 ERRBegin
 	LocalizedFileName.Init( RootDir );
 
 	Build( Path, LocalizedFileName );
 
-	Buffer = LocalizedFileName.Convert();
+	LocalizedFileName.Convert( LocalizedFileNameBuffer );
 
-	Name = dir::GetFirstFile( Buffer, Handle );
+	Name = dir::GetFirstFile( LocalizedFileNameBuffer, Handle );
 
 	if ( Name == NULL ) {
-		cerr << "Unable to parse directory '" << Buffer << "' !" << txf::nl;
+		cerr << "Unable to parse directory '" << LocalizedFileNameBuffer << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -390,13 +390,13 @@ ERRBegin
 
 			LocalizedFileName.Append( Name );
 
-			Buffer = LocalizedFileName.Convert();
+			LocalizedFileName.Convert( LocalizedFileNameBuffer );
 
-			if ( fil::IsDirectory( Buffer ) ) {
+			if ( fil::IsDirectory( LocalizedFileNameBuffer ) ) {
 				Path.Push( str::string( Name ) );
 				GetFiles( RootDir, Path, Files );
 				Path.Pop();
-			} else if ( fil::IsFile( Buffer ) ) {
+			} else if ( fil::IsFile( LocalizedFileNameBuffer ) ) {
 				File.Init();
 
 				Fill( Path, File );
@@ -471,13 +471,13 @@ inline bso::bool__ Match(
 ERRProlog
 	bso::size__ FileSize = BSO_SIZE_MAX;
 	str::string FileName;
-	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
+	STR_BUFFER___ FileNameBuffer;
 ERRBegin
 	FileName.Init( RootDir );
 
 	Build( File, FileName );
 
-	FileNameBuffer = FileName.Convert();
+	FileName.Convert( FileNameBuffer );
 
 	FileSize = fil::GetFileSize( FileNameBuffer );
 
@@ -497,7 +497,7 @@ ERRProlog
 	epeios::row__ Row = NONE;
 	ctn::E_CMITEM( str::string_) Item;
 	str::string Directory;
-	tol::E_FPOINTER___( bso::char__) DirectoryBuffer;
+	STR_BUFFER___ DirectoryBuffer;
 ERRBegin
 	LastRow = File.Last();
 	Row = File.First();
@@ -512,7 +512,7 @@ ERRBegin
 
 		Directory.Append( Item( Row ) );
 
-		DirectoryBuffer = Directory.Convert();
+		Directory.Convert( DirectoryBuffer );
 
 		switch ( dir::CreateDir( DirectoryBuffer ) ) {
 		case dir::sOK:
@@ -576,10 +576,10 @@ bso::size__ Copy(
 {
 	bso::size__ Extent = 0;
 ERRProlog
-	tol::E_FPOINTER___( bso::char__ ) SourceBuffer, DestBuffer;
+	STR_BUFFER___ SourceBuffer, DestBuffer;
 ERRBegin
-	SourceBuffer = Source.Convert();
-	DestBuffer = Dest.Convert();
+	Source.Convert( SourceBuffer );
+	Dest.Convert( DestBuffer );
 
 	if ( !fil::FileExists( DestBuffer ) ) {
 		Extent = fil::GetFileSize( SourceBuffer );
