@@ -43,11 +43,11 @@
 #define VERSION			"0.1.2"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Roland VK(77) parameters management tool"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_EMAIL	EPSMSC_AUTHOR_EMAIL
+#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		"Copyright (c) " COPYRIGHT_YEARS " " AUTHOR_NAME " (" AUTHOR_EMAIL ")."
+#define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 #define CVS_DETAILS		("$Id$\b " + 5)
 
 /*$RAW$*/
@@ -82,7 +82,7 @@ enum option {
 
 struct parameters {
 	command__ Command;
-	tol::E_FPOINTER___( char ) MidiFile, XVKFile, TargetFile;
+	STR_BUFFER___ MidiFile, XVKFile, TargetFile;
 	bso::sbyte__ MidiOutDeviceId;
 	parameters( void )
 	{
@@ -130,7 +130,7 @@ void PrintUsage( const clnarg::description_ &Description )
 void PrintHeader( void )
 {
 	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_EMAIL ")" << txf::nl;
+	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << INFO << txf::nl;
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
@@ -194,10 +194,10 @@ ERRBegin
 	case cMIDI:
 		switch ( Free.Amount() ) {
 		case 2:
-			Parameters.TargetFile = Free( P ).Convert();
+			Free( P ).Convert( Parameters.TargetFile );
 
 			P = Free.Previous( P );
-			Parameters.XVKFile = Free( P ).Convert();
+			Free( P ).Convert( Parameters.XVKFile );
 			break;
 		default:
 			cerr << "Bad amount of arguments." << txf::nl;
@@ -221,7 +221,7 @@ ERRBegin
 			break;
 
 			P = Free.Previous( P );
-			Parameters.XVKFile = Free( P ).Convert();
+			Free( P ).Convert( Parameters.XVKFile );
 		}
 		case 1:
 		default:
@@ -234,9 +234,9 @@ ERRBegin
 	case cConvert:
 		switch ( Free.Amount() ) {
 		case 2:
-			Parameters.XVKFile = Free( P ).Convert();
+			Free( P ).Convert( Parameters.XVKFile );
 			P = Free.Previous( P );
-			Parameters.MidiFile = Free( P ).Convert();
+			Free( P ).Convert( Parameters.MidiFile );
 			break;
 		case 1:
 		default:
@@ -426,18 +426,18 @@ ERREpilog
 }
 
 static void Handle_(
-	xml::extended_status__ Status,
-	xtf::extended_text_iflow__ &XFlow,
+	xpp::status__ Status,
+	xtf::coord__ Coord,
 	const str::string_ &GuiltyFileName,
 	txf::text_oflow__ &OFlow )
 {
-	if ( Status != xml::xsOK ) {
-		OFlow << "Error at line " << XFlow.Line() << " position " << XFlow.Column() << " ";
+	if ( Status != xpp::sOK ) {
+		OFlow << "Error at line " << Coord.Line << " position " << Coord.Column << " ";
 
 		if ( GuiltyFileName.Amount() != 0 )
 			OFlow << "in file '" << GuiltyFileName << "' ";
 
-		OFlow << ": " << xml::GetLabel( Status ) << " ! " << txf::nl << txf::sync;
+		OFlow << ": " << xpp::GetLabel( Status ) << " ! " << txf::nl << txf::sync;
 		ERRExit( EXIT_FAILURE );
 	}
 }
@@ -448,8 +448,8 @@ void Read(
 {
 ERRProlog
 	flf::file_iflow___ Flow;
-	xtf::extended_text_iflow__ XFlow;
-	xml::extended_status__ Status = xml::xs_Undefined;
+	xpp::status__ Status = xpp::s_Undefined;
+	xtf::coord__ Coord;
 	str::string GuiltyFileName;
 	FNM_BUFFER___ LocationBuffer;
 	const char *Location = NULL;
@@ -461,13 +461,11 @@ ERRBegin
 
 	Location = fnm::GetLocation( FileName, LocationBuffer );	
 
-	XFlow.Init( Flow );
-
 	GuiltyFileName.Init();
 
-	Status = mscvkx::Parse( XFlow, str::string( Location ), DataSets, GuiltyFileName );
+	Status = mscvkx::Parse( Flow, str::string( Location ), DataSets, Coord, GuiltyFileName );
 
-	Handle_( Status, XFlow, GuiltyFileName, cerr );
+	Handle_( Status, Coord, GuiltyFileName, cerr );
 
 ERRErr
 ERREnd
