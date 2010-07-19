@@ -190,7 +190,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( !Manager.Init( Repository, BaseName, ndbtbl::mAdmin, true, mbdmng::tCreate ) ) {
+	if ( !Manager.Init( Repository, BaseName, ndbtbl::mReadWrite, true, mbdmng::tCreate ) ) {
 		Message = mUnableToCreateDatabase;
 		ERRReturn;
 	}
@@ -243,7 +243,7 @@ ERRBegin
 	if ( !bkdrgstry::GetRepository( Repository ) )
 		ERRc();
 
-	if ( !Manager.Init( Repository, FileBaseName, ndbtbl::mAdmin, false, mbdmng::tRetrieve ) ) {
+	if ( !Manager.Init( Repository, FileBaseName, ndbtbl::mReadWrite, false, mbdmng::tRetrieve ) ) {
 		Message = mUnableToOpenDatabase;
 		ERRReturn;
 	}

@@ -1303,7 +1303,7 @@ namespace mmm {
 #endif
 			S_.TailingFreeFragmentPosition = NONE;
 
-			#pragma message( "Point délicat ici !" )
+//			#pragma message( "Point délicat ici !" )
 //			S_.Size = *Descriptor + _GetUsedFragmentTotalSize( Header );	// Permet l'utilisation de la méthode qui suit.
 
 			// Le paramètre à 'true' dans l'appel qui suit est la prise en compte de la ligne précédente.

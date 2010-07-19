@@ -353,7 +353,7 @@ ERRBegin
 
 	nsxpcm::RemoveChildren( Items );	// Launch an event which reset '_Target'.
 
-	nsxpcm::AppendChild( Items, nsxpcm::XSLTransform( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), Document, Parameters ) );
+	nsxpcm::AppendChild( Items, nsxpcm::XSLTransformByFileName( XML, str::string( "chrome://emobda/content/StructureView.xsl" ), Document, Parameters ) );
 
 	UpdateDecks();
 

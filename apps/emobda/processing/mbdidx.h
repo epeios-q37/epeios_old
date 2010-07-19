@@ -102,8 +102,8 @@ namespace mbdidx {
 			return *this;
 		}
 		void Init(
-			const ndbctt::content__ &Content,
-			mdr::mode__ Mode )
+			const ndbctt::content_ &Content,
+			fil::mode__ Mode )
 		{
 			reset();
 

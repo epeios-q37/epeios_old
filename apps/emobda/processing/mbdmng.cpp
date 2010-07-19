@@ -495,7 +495,7 @@ ERRBegin
 	if ( Flow.Init( GetStructureFileName_( BaseDirectoryName, Buffer ), err::hSkip ) == fil::sSuccess ) {
 		Success = true;
 
-		Writer.Init( TFlow );
+		Writer.Init( TFlow, xml::oIndent );
 
 		mbddsc::Export( Structure, Writer, true );
 	}

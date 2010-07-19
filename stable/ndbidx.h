@@ -358,7 +358,7 @@ namespace ndbidx {
 		rrow__ StrictSeek(
 			const datum_ &Datum,
 			behavior__ EqualBehavior,
-			skip_level__ SkipLevel )
+			skip_level__ SkipLevel ) const
 		{
 			bso::sign__ Sign;
 			rrow__ Row = LooseSeek( Datum, EqualBehavior, SkipLevel, Sign );	// Procède au '_CompleteIntialization()'.

@@ -346,7 +346,7 @@ namespace frdkernl {
 			rgstry::row__ Root,
 			txf::text_oflow__ &OFlow ) const
 		{
-			_GlobalRegistry.Dump( Root, true, true, OFlow );
+			_GlobalRegistry.Dump( Root, true, xml::oIndent, OFlow );
 		}
 		void DumpLocalRegistry( txf::text_oflow__ &OFlow ) const
 		{

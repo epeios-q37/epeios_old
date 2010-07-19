@@ -2,9 +2,10 @@ $Id$
 
 REMINDER :
 	- Before publication, merge with the content of ../CHANGELOG.txt.
-	- This file is for both C++ and XUL part of the program..
+	- This file is for both C++ and XUL part of the program.
 	
-	
+- 17/07/2010 :
+	- Adapting to changes in undelying libraries.
 	
 - 08/06/2010 :
 	- Adaptation to changes in 'NSXPCM'.

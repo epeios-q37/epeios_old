@@ -786,7 +786,7 @@ ERRProlog
 	xml::writer Writer;
 ERRBegin
 	Flow.Init( XML );
-	Writer.Init( TFlow, true );
+	Writer.Init( TFlow, xml::oIndent );
 
 	Writer.PushTag( "emobda" );
 

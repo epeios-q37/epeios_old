@@ -32,7 +32,7 @@
 
 #define NAME			"emobdadmn"
 #define DESCRIPTION		"Backend daemon for 'EMobDa' software"
-#define INFO			EPSMSC_EPEIOS_TEXT
+#define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )

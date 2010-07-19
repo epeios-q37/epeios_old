@@ -39,7 +39,7 @@ bso::bool__ bkdrgstry::FillRegistry(
 ERRProlog
 	epeios::row__ PathErrorRow = NONE;
 	rgstry::error_details ErrorDetails;
-	xml::extended_status__ Status = xml::xs_Undefined;
+	xpp::status__ Status = xpp::s_Undefined;
 	rgstry::error__ Error = rgstry::e_Undefined;
 	str::string Message;
 	lcl::locales DummyLocales;

@@ -33,7 +33,7 @@ void mbdeng::engine_::Init(
 	bso::bool__ Partial )
 {
 ERRProlog
-	mdr::mode__ FileMode = mdr::m_Undefined;
+	fil::mode__ FileMode = fil::m_Undefined;
 	str::string	LocatedBaseFileName;
 ERRBegin
 	reset();
@@ -42,7 +42,7 @@ ERRBegin
 
 	S_.FilesgroupID = flm::GetId();
 
-	_table_::InitDynamic( Mode );
+	_table_::InitDynamic( Mode, *((ndbtbl::content_post_initialization_function__ *)NULL) );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );

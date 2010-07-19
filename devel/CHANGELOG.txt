@@ -1,5 +1,9 @@
 $Id$
 
+18/07/2010 :
+	- NDBIDX :
+		- Ajout d'un 'const' manquant.
+
 16/07/2010 :
 	- GENERAL :
 		- Adpatation des différents bibliothèques aux modifications des bibliothèques sous-jacentes.
