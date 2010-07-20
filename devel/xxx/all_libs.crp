@@ -157,8 +157,6 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&LanGuaGes
 &lcl		&epeios		&2009\
 	&LoCaLes
-&lgpmsc		&epeios		&\
-	&LoGiPlus (Logi+) MiSC
 &llio		&epeios		&\
 	&Low-Level Input/Output
 &lst		&epeios		&2000-\
@@ -322,148 +320,153 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &cgitol		&epeios		&2002-\
 	&CGI (Common Gateway Interface) TOoL
 
+	
+#Logi+ libraries
+
+&lgpmsc		&Logiplus		&\
+ 	&LoGiPlus (Logi+) MiSC
 
 
 #Logi+ DBI libraries.
-&dbiapi		&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface
-&dbiapi_	&ldbi		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
-&dbibsc		&ldbi		&2002-\
+&dbiapi		&Logiplus		&2002-		&DataBase Interface Adavanced Programmer Interface
+&dbiapi_	&Logiplus		&2002-		&DataBase Interface Adavanced Programmer Interface (for backend)
+&dbibsc		&Logiplus		&2002-\
 	&DataBase Interface BaSiCs
-&dbibsc_	&ldbi		&2002-\
+&dbibsc_	&Logiplus		&2002-\
 	&DataBase Interface BaSiCs (for backend)
-&dbicch		&ldbi		&\
+&dbicch		&Logiplus		&\
 	&DataBase Interface CaCHed
-&dbidbs		&ldbi		&\
+&dbidbs		&Logiplus		&\
 	&DataBase Interface DataBase Switch
-&dbidpd		&ldbi		&2002-\
+&dbidpd		&Logiplus		&2002-\
 	&DataBase Interface Database DePenDences
-&dbidtp		&ldbi		&2002-		&DataBase Interface Data TyPEs
-&dbiedb		&ldbi		&\
+&dbidtp		&Logiplus		&2002-		&DataBase Interface Data TyPEs
+&dbiedb		&Logiplus		&\
 	&DataBase Interface Epeios DataBase
-&dbigrd		&ldbi		&\
+&dbigrd		&Logiplus		&\
 	&DataBase Interface GRiD
-&dbiibp		&ldbi		&\
+&dbiibp		&Logiplus		&\
 	&DataBase Interface IBPhoenix (FireBird)
-&dbiifl_	&ldbi		&2002-		&Database Interface Index FieLds (for backend)
-&dbiimp		&ldbi		&\
+&dbiifl_	&Logiplus		&2002-		&Database Interface Index FieLds (for backend)
+&dbiimp		&Logiplus		&\
 	&DataBase Interface IMPortation
-&dbilvw		&ldbi		&\
+&dbilvw		&Logiplus		&\
 	&DataBase Interface List VieWer
-&dbimng		&ldbi		&2002-\
+&dbimng		&Logiplus		&2002-\
 	&Database Interface MaNaGer
-&dbimng_	&ldbi		&2002-		&Database Interface MaNaGer (for backend)
-&dbimsc		&ldbi		&2002-		&BataBase Interface MiSC
-&dbimsq		&ldbi		&2002-\
+&dbimng_	&Logiplus		&2002-		&Database Interface MaNaGer (for backend)
+&dbimsc		&Logiplus		&2002-		&BataBase Interface MiSC
+&dbimsq		&Logiplus		&2002-\
 	&DataBase Interface MySQl (from MySQL database)
-&dbimsq_	&ldbi		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
-&dbipgs		&ldbi		&2002-		&DataBase Interface PostGreS
-&dbiscb		&ldbi		&\
+&dbimsq_	&Logiplus		&2002-		&DataBase Interface MySQl (from MySQL database) (for backend)
+&dbipgs		&Logiplus		&2002-		&DataBase Interface PostGreS
+&dbiscb		&Logiplus		&\
 	&DataBase Interface Sequiter CodeBase
-&dbireg		&ldbi		&\
+&dbireg		&Logiplus		&\
 	&DataBase Interface REGistry
-&dbisql		&ldbi		&2002-\
+&dbisql		&Logiplus		&2002-\
 	&DataBase Interface SQL (from language)
-&dbisrq		&ldbi		&2002-\
+&dbisrq		&Logiplus		&2002-\
 	&DataBase Interface Search ReQuest
-&dbisrq_	&ldbi		&		&DataBase Interface Search ReQuest (for backend)
-&dbitfl_	&ldbi		&2002-		&Database Interface Table FieLds (for backend)
-&dbitst		&ldbi		&/\
+&dbisrq_	&Logiplus		&		&DataBase Interface Search ReQuest (for backend)
+&dbitfl_	&Logiplus		&2002-		&Database Interface Table FieLds (for backend)
+&dbitst		&Logiplus		&/\
 	&Database Interface TeST
-&dbixpr		&ldbi		&\
+&dbixpr		&Logiplus		&\
 	&DataBase Interface eXPoRtation
 
 
 
 #Logi+ GSB libraries.
-&gsbbld		&lgsb		&\
+&gsbbld		&Logiplus		&\
 	&GeSBib BuiLDing
-&gsbbsc		&lgsb		&2002-\
+&gsbbsc		&Logiplus		&2002-\
 	&GeSBib BaSiC
-&gsbbsc_	&lgsb		&2003-\
+&gsbbsc_	&Logiplus		&2003-\
 	&GeSBib BaSiC (for backend)
-&gsbbsk		&lgsb		&\
+&gsbbsk		&Logiplus		&\
 	&GeSBib BaSKet
-&gsbbsk_		&lgsb		&\
+&gsbbsk_		&Logiplus		&\
 	&GeSBib BaSKet (for backend).
-&gsbcch		&lgsb		&\
+&gsbcch		&Logiplus		&\
 	&GeSBib CaCHe
-&gsbcor		&lgsb		&2003-\
+&gsbcor		&Logiplus		&2003-\
 	&GeSBib field CORe
-&gsbdbm		&lgsb		&2003-\
+&gsbdbm		&Logiplus		&2003-\
 	&GeSBib DataBase Manager
-&gsbdbm_	&lgsb		&2003-\
+&gsbdbm_	&Logiplus		&2003-\
 	&GeSBib DataBase Manager (for backend)
-&gsbdrv		&lgsb		&2003-\
+&gsbdrv		&Logiplus		&2003-\
 	&GeSBib DeRiVed field
-&gsbdtb		&lgsb		&2003-\
+&gsbdtb		&Logiplus		&2003-\
 	&GeSBib DaTaBase
-&gsbetr		&lgsb		&\
+&gsbetr		&Logiplus		&\
 	&GeSBib EnTRies
-&gsbetr_	&lgsb		&\
+&gsbetr_	&Logiplus		&\
 	&GeSBib EnTRies (for backend).
-&gsbbfc		&lgsb		&\
+&gsbbfc		&Logiplus		&\
 	&GeSBib Backend/Frontend Commons
-&gsbfil		&lgsb		&\
+&gsbfil		&Logiplus		&\
 	&GeSBib FILler
-&gsbfld		&lgsb		&2002-\
+&gsbfld		&Logiplus		&2002-\
 	&GeSBib FieLDs
-&gsbflr		&lgsb		&2003-\
+&gsbflr		&Logiplus		&2003-\
 	&GeSBib FieLd Repository
-&gsbimp		&lgsb		&2003-\
+&gsbimp		&Logiplus		&2003-\
 	&GeSBib IMportatioN
-&gsbkrn		&lgsb		&\
+&gsbkrn		&Logiplus		&\
 	&GeSBib KeRNel
-&gsblst		&lgsb		&\
+&gsblst		&Logiplus		&\
 	&GeSBib LiST
-&gsblst_	&lgsb		&\
+&gsblst_	&Logiplus		&\
 	&GeSBib LiST (for backend)
-&gsbmgr		&lgsb		&2003-\
+&gsbmgr		&Logiplus		&2003-\
 	&GeSBib MiGRation
-&gsbmlt		&lgsb		&2002-\
+&gsbmlt		&Logiplus		&2002-\
 	&GeSBib MuLTi field
-&gsbmno		&lgsb		&2002-\
+&gsbmno		&Logiplus		&2002-\
 	&GeSBib MoNO field
-&gsbmta		&lgsb		&2003-\
+&gsbmta		&Logiplus		&2003-\
 	&GeSBib MeTA field
-&gsbntv		&lgsb		&2003-\
+&gsbntv		&Logiplus		&2003-\
 	&GeSBib NaTiVe field
-&gsbqry		&lgsb		&\
+&gsbqry		&Logiplus		&\
 	&GeSBib QueRY
-&gsbrcd		&lgsb		&\
+&gsbrcd		&Logiplus		&\
 	&GeSBib ReCorD
-&gsbrdc		&lgsb		&\
+&gsbrdc		&Logiplus		&\
 	&GeSBib Repository DesCription
-&gsbrgl		&lgsb		&2003-\
+&gsbrgl		&Logiplus		&2003-\
 	&GeSBib ReGuLar field
-&gsbrlt		&lgsb		&2002\
+&gsbrlt		&Logiplus		&2002\
 	&GeSBib ReLaTional field
-&gsbrmd		&lgsb		&2003-\
+&gsbrmd		&Logiplus		&2003-\
 	&GeSBib Record Multi Data
-&gsbrmd_	&lgsb		&2003-\
+&gsbrmd_	&Logiplus		&2003-\
 	&GeSBib Record Multi Data (for backend)
-&gsbsrb		&lgsb		&2003-\
+&gsbsrb		&Logiplus		&2003-\
 	&GeSBib Search Request Builder
-&gsbsrq		&lgsb		&2003-\
+&gsbsrq		&Logiplus		&2003-\
 	&GeSBib Search ReQuest
-&gsbsrq_	&lgsb		&2003-\
+&gsbsrq_	&Logiplus		&2003-\
 	&GeSBib Search ReQuest (for backend)
-&gsbtbl		&lgsb		&2003-\
+&gsbtbl		&Logiplus		&2003-\
 	&GeSBib TaBLe
-&gsbtfd		&lgsb		&2003-\
+&gsbtfd		&Logiplus		&2003-\
 	&GeSBib Table Fields Definition
-&gsbtfd_	&lgsb		&2003-\
+&gsbtfd_	&Logiplus		&2003-\
 	&GeSBib Table Fields Definition (for backend)
-&gsbtol		&lgsb		&\
+&gsbtol		&Logiplus		&\
 	&GeSBib TOoLs
-&gsbv4f		&lgsb		&2003-\
+&gsbv4f		&Logiplus		&2003-\
 	&GeSBib Version 4 Files
-&gsbv4m		&lgsb		&\
+&gsbv4m		&Logiplus		&\
 	&GeSBib Version 4 Modules
-&gsbxpr		&lgsb		&2003-\
+&gsbxpr		&Logiplus		&2003-\
 	&GeSBib eXPoTation
-&gsbwix		&lgsb		&2002-\
+&gsbwix		&Logiplus		&2002-\
 	&GeSBib Word IndeX
-&gsbwrd		&lgsb		&2002-\
+&gsbwrd		&Logiplus		&2002-\
 	&GeSBib WoRDs
 
 
