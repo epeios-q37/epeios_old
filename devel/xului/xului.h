@@ -1,5 +1,5 @@
 /*
-	Header for the 'xui' library by Claude SIMON (csimon at zeusw dot org)
+	Header for the 'xului' library by Claude SIMON (csimon at zeusw dot org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef XUI__INC
-#define XUI__INC
+#ifndef XULUI__INC
+#define XULUI__INC
 
-#define XUI_NAME		"XUI"
+#define XULUI_NAME		"XULUI"
 
-#define	XUI_VERSION	"$Revision$"
+#define	XULUI_VERSION	"$Revision$"
 
-#define XUI_OWNER		"Claude SIMON"
+#define XULUI_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &XUITutor;
+extern class ttr_tutor &XULUITutor;
 
-#if defined( XXX_DBG ) && !defined( XUI_NODBG )
-#define XUI_DBG
+#if defined( XXX_DBG ) && !defined( XULUI_NODBG )
+#define XULUI_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -60,13 +60,11 @@ extern class ttr_tutor &XUITutor;
 
 /*$BEGIN$*/
 
-#error "Obsolete ! Use 'XULUI' instead !"
-
 #include "err.h"
 #include "flw.h"
 #include "nsxpcm.h"
 
-namespace xui {
+namespace xului {
 
 	template <typename ui> class bare_bridge__
 	{
@@ -108,25 +106,25 @@ namespace xui {
 		}
 	};
 
-#	define XUI__WN( widget, name )\
+#	define XULUI__WN( widget, name )\
 	template <typename ui> E_TTYPEDEF__( E_COVER2( _generic__<ui, nsxpcm::widget##__> ), name##__ )
 
-#	define XUI__W( widget )	XUI__WN( widget, widget )
+#	define XULUI__W( widget )	XULUI__WN( widget, widget )
 
-	XUI__W( textbox );
-	XUI__W( radio );
-	XUI__W( button );
-	XUI__W( listbox );
-	XUI__W( tree );
-	XUI__W( deck );
-	XUI__W( broadcaster );
-	XUI__W( command );
-	XUI__W( menu );
-	XUI__W( menu_item );
-	XUI__W( panel );
-	XUI__WN( element, box );
-	XUI__W( window );
-	XUI__W( description );
+	XULUI__W( textbox );
+	XULUI__W( radio );
+	XULUI__W( button );
+	XULUI__W( listbox );
+	XULUI__W( tree );
+	XULUI__W( deck );
+	XULUI__W( broadcaster );
+	XULUI__W( command );
+	XULUI__W( menu );
+	XULUI__W( menu_item );
+	XULUI__W( panel );
+	XULUI__WN( element, box );
+	XULUI__W( window );
+	XULUI__W( description );
 
 	template <typename ui, typename widget> void Register(
 		ui &UI,

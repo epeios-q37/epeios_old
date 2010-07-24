@@ -60,6 +60,8 @@ extern class ttr_tutor &XUITutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'XULUI' instead !"
+
 #include "err.h"
 #include "flw.h"
 #include "nsxpcm.h"
