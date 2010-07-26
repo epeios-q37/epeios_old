@@ -1655,6 +1655,41 @@ namespace nsxpcm {
 		OpenWindow( NULL, URL, Name, Window );
 	}
 
+	inline void OpenDialog(
+		nsIDOMWindow *ParentWindow,
+		const char *URL,
+		const char *Name,
+		nsIDOMWindow **Window = NULL )
+	{
+		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL;
+		nsEmbedString TransformedURL, TransformedName;
+
+		if ( Window != NULL )
+			WindowBuffer = Window;
+		else
+			WindowBuffer = &DummyWindow;
+
+
+		Transform( URL, TransformedURL );
+		Transform( Name, TransformedName );
+
+		if ( ParentWindow == NULL )
+			if ( MasterWindow != NULL )
+				ParentWindow = MasterWindow;
+			else
+				ERRu();
+
+		GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), NULL, WindowBuffer );
+	}
+
+	inline void OpenDialog(
+		const char *URL,
+		const char *Name,
+		nsIDOMWindow **Window = NULL )
+	{
+		OpenDialog( NULL, URL, Name, Window );
+	}
+
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,
 		nsIDOMWindowInternal **JSConsoleWindow )

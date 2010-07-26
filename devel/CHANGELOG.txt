@@ -1,5 +1,9 @@
 $Id$
 
+26/07/2010 :
+	- NSXPCM :
+		- Ajout 'OpenDialog(...)'.
+
 18/07/2010 :
 	- NDBIDX :
 		- Ajout d'un 'const' manquant.
