@@ -605,13 +605,25 @@ namespace rgstry {
 			const path_ &Path,
 			row__ Row,
 			bso::bool__ *Missing,
-			buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+			buffer &Buffer ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		bso::bool__ GetValue(
+			const path_ &Path,
+			row__ Row,
+			value_ &Value ) const
+		{
+			buffer Buffer;
+			bso::bool__ Missing = false;
+
+			Value = GetValue( Path, Row, &Missing, Buffer );
+
+			return !Missing;
+		}
 		const value_ &GetValue(
 			const str::string_ &PathString,
 			row__ Row,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+			epeios::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			row__ Row,
@@ -913,7 +925,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas.
+			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			value_ &Value ) const
@@ -943,17 +955,6 @@ namespace rgstry {
 		bso::bool__ Exists(
 			const str::string_ &Path,
 			epeios::row__ *PathErrorRow = NULL ) const;
-		bso::bool__ Exists( const str::string_ &PathString ) const
-		{
-			epeios::row__ PathErrorRow = NONE;
-
-			bso::bool__ Result = Exists( PathString, &PathErrorRow );
-
-			if ( PathErrorRow != NONE )
-				ERRu();
-
-			return Result;
-		}
 		void Search(
 			const path_ &Path,
 			row__ &GlobalRow,
@@ -1029,9 +1030,150 @@ namespace rgstry {
 			else
 				overloaded_registry___::SetLocal( Registry, Root );
 
-
 			return Root;
 		}
+	};
+
+	E_ROW( level__ );
+
+	typedef bch::E_BUNCHt_( row__, level__ ) _roots_;
+
+	// Registre multi-niveau
+	class multi_level_registry_
+	{
+	public:
+		struct s {
+			registry_::s Registry;
+			_roots_::s Roots;
+		};
+		registry_ Registry;
+		_roots_ Roots;
+		multi_level_registry_( s &S )
+		: Registry( S.Registry ),
+		  Roots( S.Roots )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Registry.reset( P );
+			Roots.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Registry.plug( MM );
+			Roots.plug( MM );
+		}
+		multi_level_registry_ &operator =( const multi_level_registry_ &MLR )
+		{
+			Registry = MLR.Registry;
+			Roots = MLR.Roots;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Registry.Init();
+			Roots.Init();
+		}
+		level__ AddLevel( void )
+		{
+			return Roots.Append( Registry.CreateNewRegistry( name() ) );
+		}
+		const value_ &GetValue(
+			level__ Level,
+			const path_ &Path,
+			bso::bool__ *Missing,
+			buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		{
+			return Registry.GetValue( Path, Roots( Level ), Missing, Buffer );
+		}
+		const value_ &GetValue(
+			level__ Level,
+			const str::string_ &PathString,
+			bso::bool__ *Missing,
+			buffer &Buffer,
+			epeios::row__ *PathErrorRow = NULL  ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		{
+			return Registry.GetValue( PathString, Roots( Level ), Missing, Buffer, PathErrorRow );
+		}
+		const value_ &GetValue(
+			const str::string_ &PathString,
+			bso::bool__ *Missing,
+			buffer &Buffer,
+			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		bso::bool__ GetValue(
+			level__ Level,
+			const path_ &Path,
+			value_ &Value ) const
+		{
+			return Registry.GetValue( Path, Roots( Level ), Value );
+		}
+		bso::bool__ GetValue(
+			level__ Level,
+			const str::string_ &PathString,
+			value_ &Value,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			buffer Buffer;
+			bso::bool__ Missing = false;
+
+			Value = GetValue( Level, PathString, &Missing, Buffer, PathErrorRow );
+
+			return !Missing;
+		}
+		bso::bool__ GetValue(
+			const str::string_ &PathString,
+			value_ &Value,
+			epeios::row__ *PathErrorRow = NULL ) const;
+		bso::bool__ GetValues(
+			level__ Level,
+			const path_ &Path,
+			values_ &Values ) const
+		{
+			return Registry.GetValues( Path, Roots( Level ), Values );
+		}
+		bso::bool__ GetValues(
+			level__ Level,
+			const str::string_ &PathString,
+			values_ &Values,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return Registry.GetValues( PathString, Roots( Level ), Values, PathErrorRow );
+		}
+		bso::bool__ GetValues(
+			const str::string_ &PathString,
+			values_ &Values,
+			epeios::row__ *PathErrorRow = NULL ) const;
+		void SetValue(
+			level__ Level,
+			const str::string_ &PathString,
+			const value_ &Value,
+			epeios::row__ *PathErrorRow = NULL )
+		{
+			Registry.SetValue( PathString, Value, Roots( Level ), PathErrorRow );
+		}
+		void SetValue(
+			const str::string_ &PathString,
+			const value_ &Value,
+			epeios::row__ *PathErrorRow = NULL )
+		{
+			SetValue( Roots.Last(), PathString, Value, PathErrorRow );
+		}
+		bso::bool__ Exists(
+			level__ Level,
+			const path_ &Path ) const
+		{
+			return Registry.Exists( Path, Roots( Level ) );
+		}
+		bso::bool__ Exists(
+			level__ Level,
+			const str::string_ &PathString,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return Registry.Exists( PathString, Roots( Level ), PathErrorRow );
+		}
+		bso::bool__ Exists(
+			const str::string_ &PathString,
+			epeios::row__ *PathErrorRow = NULL ) const;
 	};
 
 	// NOTA : Si modifié, modifier 'GetTranslation(...)' en conséquent, ainsi que le fichier de traduction 'ergstry.xlc'.
@@ -1065,7 +1207,6 @@ namespace rgstry {
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		const str::string_ &BaseDirectory = str::string( "" ));
-
 
 	error__ FillRegistry(
 		const char *FileName,

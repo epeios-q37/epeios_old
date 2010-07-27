@@ -1,5 +1,12 @@
 $Id$
 
+27/07/2010 :
+	- RGSTRY :
+		- Suppression 'Exists(...)' redondant.
+		- Pour toute les fonctions prenant 'Missing' (en 'bso::bool__ *') pour paramètre, si cette variable est à 'true', elle ne réalisent aucune action.
+		- Ajout de certaines méthodes qui sont des variantes de méthodes existantes avec des variations dans les paramètres.
+		- Ajout 'multi_level_registry[_]'.
+
 26/07/2010 :
 	- NSXPCM :
 		- Ajout 'OpenDialog(...)'.

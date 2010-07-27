@@ -737,11 +737,14 @@ const value_ &rgstry::registry_::GetValue(
 	const path_ &Path,
 	row__ Row,
 	bso::bool__ *Missing,
-	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
 	row__ ResultRow = NONE;
+
+	if ( *Missing )
+		return *Result;
 
 	Empty.Init();
 	Buffer.Init( Nodes );
@@ -759,7 +762,7 @@ const value_ &rgstry::registry_::GetValue(
 	row__ Row,
 	bso::bool__ *Missing,
 	buffer &Buffer,
-	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -768,6 +771,9 @@ ERRProlog
 ERRBegin
 	Path.Init();
 	Empty.Init();
+
+	if ( *Missing )
+		ERRReturn;
 
 	if ( BuildPath_( PathString, Path, PathErrorRow ) )
 		Result = &GetValue( Path, Row, Missing, Buffer );
@@ -894,15 +900,17 @@ const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
 	buffer &Buffer,
-	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Le laisse inchangé sinon.
+	epeios::row__ *PathErrorRow )const // Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
 ERRProlog
 	row__ Row = NONE;
 	path Path;
-	bso::bool__ LocalMissing = false;
 ERRBegin
+	if ( *Missing )
+		ERRReturn;
+
 	Path.Init();
 	Empty.Init();
 
@@ -912,13 +920,16 @@ ERRBegin
 	}
 
 	if ( Local.Registry != NULL )
-		Result = &Local.Registry->GetValue( Path, Local.Root, &LocalMissing, Buffer );
+		Result = &Local.Registry->GetValue( Path, Local.Root, Missing, Buffer );
 	else
-		LocalMissing = true;
+		*Missing = true;
 
-	if ( LocalMissing )
+	if ( *Missing ) {
+		*Missing = false;
+
 		if ( Global.Registry != NULL )
 			Result = &Global.Registry->GetValue( Path, Global.Root, Missing, Buffer );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -987,6 +998,129 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+const value_ &rgstry::multi_level_registry_::GetValue(
+	const str::string_ &PathString,
+	bso::bool__ *Missing,
+	buffer &Buffer,
+	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+{
+	static value Empty;
+	const value_ *Result = &Empty;
+ERRProlog
+	level__ Level = NONE;
+	path Path;
+ERRBegin
+	if ( *Missing )
+		ERRReturn;
+
+	Path.Init();
+
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
+		ERRReturn;
+
+	Level = Roots.Last();
+
+	while ( Level != NONE ) {
+		*Missing = false;
+
+		Result = &GetValue( Level, Path, Missing, Buffer );
+
+		if ( *Missing  )
+			Level = Roots.Previous( Level );
+		else
+			Level = NONE;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return *Result;
+}
+
+bso::bool__ rgstry::multi_level_registry_::GetValue(
+	const str::string_ &PathString,
+	value_ &Value,
+	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+{
+	bso::bool__ Found = false;
+ERRProlog
+	level__ Level = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
+		ERRReturn;
+
+	Level = Roots.Last();
+
+	while ( ( Level != NONE ) && ( !Found ) ) {
+		Found = GetValue( Level, Path, Value );
+
+		Level = Roots.Previous( Level );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+
+bso::bool__ rgstry::multi_level_registry_::GetValues(
+	const str::string_ &PathString,
+	values_ &Values,
+	epeios::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	level__ Level = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
+		ERRReturn;
+
+	Level = Roots.Last();
+
+	while ( Level != NONE ) {
+		Found |= GetValues( Level, Path, Values );
+
+		Level = Roots.Previous( Level );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+bso::bool__ rgstry::multi_level_registry_::Exists(
+	const str::string_ &PathString,
+	epeios::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	level__ Level = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
+		ERRReturn;
+
+	Level = Roots.Last();
+
+	while ( ( Level != NONE ) && ( !Found ) ) {
+		Found = Exists( Level, Path );
+
+		Level = Roots.Previous( Level );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
 
 const str::string_ &rgstry::GetTranslation(
 	error__ Error,
