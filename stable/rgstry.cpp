@@ -886,7 +886,7 @@ ERRBegin
 		ErrorDetails.S_.XPPStatus = PFlow.Status();
 		break;
 	default:
-		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut retourner normalkement que 'xml::sUndexpectedEOF'.
+		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
 		ERRc();
 		break;
 	}

@@ -1,5 +1,13 @@
 $Id$
 
+30/07/2010 :	
+	- RGSTRY :
+		- Ajout métohodes 'Dump(...)' et 'Fill(...)'.
+
+28/07/2010 :
+	- RGSTRY :
+		- Ajout paramètre à la méthode 'AddLevel(...)'.
+
 27/07/2010 :
 	- RGSTRY :
 		- Suppression 'Exists(...)' redondant.

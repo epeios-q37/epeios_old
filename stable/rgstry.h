@@ -766,6 +766,7 @@ namespace rgstry {
 			xml::outfit__ Outfit,
 			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
+
 	E_AUTO( registry )
 
 	class error_details_
@@ -848,6 +849,52 @@ namespace rgstry {
 	ERREpilog
 		return Result;
 	}
+
+		// NOTA : Si modifié, modifier 'GetTranslation(...)' en conséquent, ainsi que le fichier de traduction 'ergstry.xlc'.
+	enum error__ {
+		eOK,
+		eUnableToOpenFile,
+		eParseError,
+		eRootPathError,
+		e_amount,
+		e_Undefined
+	};
+
+	const str::string_ &GetTranslation(
+		error__ Error,
+		const error_details_ &ErrorDetails,
+		const str::string_ &Language,
+		const lcl::locales_ &Locales,
+		str::string_ &Translation );
+
+	error__ FillRegistry(
+		flw::iflow__ &IFlow,
+		const str::string_ &BaseDirectory,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		error_details_ &ErrorDetails );
+
+	error__ FillRegistry(
+		flw::iflow__ &IFlow,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		const str::string_ &BaseDirectory = str::string( "" ));
+
+	error__ FillRegistry(
+		const char *FileName,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot,
+		error_details_ &ErrorDetails );
+
+	error__ FillRegistry(
+		const char *FileName,
+		const char *RootPath,
+		rgstry::registry_ &Registry,
+		rgstry::row__ &RegistryRoot );
+
 
 	class overloaded_registry___
 	{
@@ -1035,6 +1082,7 @@ namespace rgstry {
 	};
 
 	E_ROW( level__ );
+#	define RGSTRY_UNDEFINED_LEVEL	NONE
 
 	typedef bch::E_BUNCHt_( row__, level__ ) _roots_;
 
@@ -1074,9 +1122,9 @@ namespace rgstry {
 			Registry.Init();
 			Roots.Init();
 		}
-		level__ AddLevel( void )
+		level__ AddNewLevel( const name_ &Name = name() )
 		{
-			return Roots.Append( Registry.CreateNewRegistry( name() ) );
+			return Roots.Append( Registry.CreateNewRegistry( Name ) );
 		}
 		const value_ &GetValue(
 			level__ Level,
@@ -1174,52 +1222,83 @@ namespace rgstry {
 		bso::bool__ Exists(
 			const str::string_ &PathString,
 			epeios::row__ *PathErrorRow = NULL ) const;
+		error__ Fill(
+			level__ Level,
+			flw::iflow__ &IFlow,
+			const str::string_ &BaseDirectory,
+			const char *RootPath,
+			error_details_ &ErrorDetails )
+		{
+			error__ Error = e_Undefined;
+			row__ Root = Roots( Level );
+			
+			Error = FillRegistry( IFlow, BaseDirectory, RootPath, Registry, Root, ErrorDetails ); 
+
+			Roots.Set( Root, Level );
+
+			return Error;
+		}
+		error__ Fill(
+			level__ Level,
+			flw::iflow__ &IFlow,
+			const char *RootPath,
+			const str::string_ &BaseDirectory = str::string( "" ))
+		{
+			error__ Error = e_Undefined;
+			row__ Root = Roots( Level );
+			
+			Error = FillRegistry( IFlow, RootPath, Registry, Root, BaseDirectory ); 
+
+			Roots.Set( Root, Level );
+
+			return Error;
+		}
+		error__ Fill(
+			level__ Level,
+			const char *FileName,
+			const char *RootPath,
+			error_details_ &ErrorDetails )
+		{
+			error__ Error = e_Undefined;
+			row__ Root = Roots( Level );
+			
+			Error = FillRegistry( FileName, RootPath, Registry, Root, ErrorDetails ); 
+
+			Roots.Set( Root, Level );
+
+			return Error;
+		}
+		error__ Fill(
+			level__ Level,
+			const char *FileName,
+			const char *RootPath )
+		{
+			error__ Error = e_Undefined;
+			row__ Root = Roots( Level );
+			
+			Error = FillRegistry( FileName, RootPath, Registry, Root ); 
+
+			Roots.Set( Root, Level );
+
+			return Error;
+		}
+		epeios::size__ Dump(
+				level__ Level,
+				bso::bool__ RootToo,
+				xml::writer_ &Writer ) const
+			{
+				return Registry.Dump( Roots( Level ), RootToo, Writer );
+			}
+		epeios::size__ Dump(
+			level__ Level,
+			bso::bool__ RootToo,
+			xml::outfit__ Outfit,
+			txf::text_oflow__ &TFlow ) const
+		{
+			return Registry.Dump( Roots( Level ), RootToo, Outfit, TFlow );
+		}
 	};
 
-	// NOTA : Si modifié, modifier 'GetTranslation(...)' en conséquent, ainsi que le fichier de traduction 'ergstry.xlc'.
-	enum error__ {
-		eOK,
-		eUnableToOpenFile,
-		eParseError,
-		eRootPathError,
-		e_amount,
-		e_Undefined
-	};
-
-	const str::string_ &GetTranslation(
-		error__ Error,
-		const error_details_ &ErrorDetails,
-		const str::string_ &Language,
-		const lcl::locales_ &Locales,
-		str::string_ &Translation );
-
-	error__ FillRegistry(
-		flw::iflow__ &IFlow,
-		const str::string_ &BaseDirectory,
-		const char *RootPath,
-		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot,
-		error_details_ &ErrorDetails );
-
-	error__ FillRegistry(
-		flw::iflow__ &IFlow,
-		const char *RootPath,
-		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot,
-		const str::string_ &BaseDirectory = str::string( "" ));
-
-	error__ FillRegistry(
-		const char *FileName,
-		const char *RootPath,
-		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot,
-		error_details_ &ErrorDetails );
-
-	error__ FillRegistry(
-		const char *FileName,
-		const char *RootPath,
-		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot );
 }
 
 
