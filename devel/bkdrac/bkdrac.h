@@ -68,6 +68,7 @@ extern class ttr_tutor &BKDRACTutor;
 #define BKDRAC_OUT_PARAMETERS_AMOUNT_MAX		20	// Le nombre maximum de paramètres en sortie.
 
 namespace bkdrac {
+
 	struct datum__ {
 		bkdcst::cast Cast;
 		void *Pointer;
@@ -84,6 +85,10 @@ namespace bkdrac {
 	{
 	public:
 		bch::E_BUNCH__( datum__, BKDRAC_OUT_PARAMETERS_AMOUNT_MAX ) Data;
+		void reset( bso::bool__ = true )
+		{
+			// Standardization.
+		}
 		void Init( void )
 		{
 			Data.Init();
@@ -101,9 +106,10 @@ namespace bkdrac {
 			flw::ioflow__ &Flow );
 	};
 
+	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
 
-	class backend_remote_access___
-	: public bkdacc::backend_access___
+	class backend_remote_access_functions__
+	: public _backend_access_functions__
 	{
 	private:
 		backend_remote_access_base___ _Base;
@@ -129,10 +135,25 @@ namespace bkdrac {
 			return _Base.Handle( Success, Flow );
 		}
 	public:
-		void Init( flw::ioflow__ &Flow )
+		void reset( bso::bool__ P = true )
+		{
+			_Base.reset( P );
+			_backend_access_functions__::reset( P );
+		}
+		backend_remote_access_functions__( void )
+		{
+			reset( false );
+		}
+		virtual ~backend_remote_access_functions__( void )
+		{
+			reset();
+		}
+		void Init(
+			flw::ioflow__ &Flow,
+			bkdacc::backend_access_functions__ &Functions )
 		{
 			_Base.Init();
-			backend_access___::Init( Flow );
+			_backend_access_functions__::Init();
 		}
 	};
 

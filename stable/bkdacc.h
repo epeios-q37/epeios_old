@@ -131,12 +131,9 @@ namespace bkdacc {
 		_Out( bkdcst::c##name, &O );\
 	}\
 
-
-	//c The backend access core.
-	class backend_access___
+	struct backend_access_functions__
 	{
 	protected:
-		virtual void BKDACCTestMessages( void ) = 0;
 		virtual void BKDACCIn(
 			bkdcst::cast Cast,
 			const void *Pointer,
@@ -148,40 +145,92 @@ namespace bkdacc {
 		virtual bso::bool__ BKDACCHandle(
 			bso::bool__ Success,
 			flw::ioflow__ &Flow ) = 0;
-	private:
-		virtual void _In(
-			bkdcst::cast Cast,
-			const void *Pointer )
+	public:
+		void reset( bso::bool__ = true )
 		{
-			BKDACCIn( Cast, Pointer, *Channel_ );
+			// A des fins de standadisation.
 		}
-		virtual void _Out(
+		backend_access_functions__( void )
+		{
+			reset( false );
+		}
+		virtual ~backend_access_functions__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			// A des fins de standadisation.
+		}
+		void In(
+			bkdcst::cast Cast,
+			const void *Pointer,
+			flw::ioflow__ &Flow )
+		{
+			BKDACCIn( Cast, Pointer, Flow );
+		}
+		void Out(
+			flw::ioflow__ &Flow,
 			bkdcst::cast Cast,
 			void *Pointer )
 		{
-			BKDACCOut( *Channel_, Cast, Pointer );
+			BKDACCOut( Flow, Cast, Pointer );
+		}
+		bso::bool__ Handle(
+			bso::bool__ Success,
+			flw::ioflow__ &Flow )
+		{
+			return BKDACCHandle( Success, Flow );
+		}
+	};
+
+
+
+	//c The backend access core.
+	class backend_access___
+	{
+	private:
+		backend_access_functions__ *_Functions;
+//		virtual void _In(
+		void _In(
+			bkdcst::cast Cast,
+			const void *Pointer )
+		{
+			_Functions->In( Cast, Pointer, *Channel_ );
+		}
+//		virtual void _Out(
+		void _Out(
+			bkdcst::cast Cast,
+			void *Pointer )
+		{
+			_Functions->Out( *Channel_, Cast, Pointer );
+		}
+		bso::bool__ _Handle(
+			bso::bool__ Success,
+			flw::ioflow__ &Flow )
+		{
+			return _Functions->Handle( Success, Flow );
 		}
 		id16__ Commands_[bkdcmd::c_amount];
 		char RawMessage_[100];
 		char I18Message_[100];
 		flw::ioflow__ *Channel_;
-		void TestBackendCastsAndLanguages_( void );
+		bso::bool__ TestBackendCasts_( void );
 		command__ GetBackendDefaultCommand_( void );
 		void GetGetCommandsCommand_( command__ DefaultCommand );
 		void GetBackendCommands_( void );
-		void TestBackend_( void )
+		void RetrieveBackendCommands_( void )
 		{
 				command__ DefaultCommand;
 
-				TestBackendCastsAndLanguages_();
+				if ( !TestBackendCasts_() )
+					ERRb();
 
 				DefaultCommand = GetBackendDefaultCommand_();
 
 				GetGetCommandsCommand_( DefaultCommand );
 
 				GetBackendCommands_();
-
-				BKDACCTestMessages();
 		}
 		void Internal_( bkdcmd::command Command )
 		{
@@ -191,22 +240,6 @@ namespace bkdacc {
 		{
 			Channel_->Put( Cast );
 		}
-#if 0
-		void TestOutput_( bkdcst::cast Cast )
-		{
-			if ( Channel_->Get() != Cast )
-				ERRb();
-		}
-		void _TestInput( bkdcst::cast Cast )
-		{
-			Channel_->Put( Cast );
-		}
-		void _TestOutput( bkdcst::cast Cast )
-		{
-			if ( Channel_->Get() != Cast )
-				ERRb();
-		}
-#endif
 		void _Handle( void )
 		{
 			if ( !Handle() )
@@ -250,15 +283,18 @@ namespace bkdacc {
 			reset( true );
 		}
 		//f Initialization with 'Channel' to parse/answer the request.
-		void Init( flw::ioflow__ &Channel )
+		void Init(
+			flw::ioflow__ &Channel,
+			backend_access_functions__ &Functions )
 		{
 		ERRProlog
 		ERRBegin
 			reset();
 
 			Channel_ = &Channel;
+			_Functions = &Functions;
 
-			TestBackend_();
+			RetrieveBackendCommands_();
 		ERRErr
 			Channel_ = NULL;	// Pour éviter toute future tentative de communication avec le backend.
 		ERREnd
@@ -311,7 +347,7 @@ namespace bkdacc {
 		//f Send the request.
 		bso::bool__ Handle( void )
 		{
-			bso::bool__ Success = BKDACCHandle( _Send(), *Channel_ );
+			bso::bool__ Success = _Handle( _Send(), *Channel_ );
 
 			if ( Channel_->Get() != bkdcst::cEnd )
 				ERRb();
@@ -548,29 +584,25 @@ namespace bkdacc {
 
 			_Handle();
 		}
-		void TestMessages( void )
-		{
-			BKDACCTestMessages();
-		}
-		void In(
+/*		void In(
 			bkdcst::cast Cast,
 			const void *Pointer,
 			flw::ioflow__ &Flow )
 		{
-			BKDACCIn( Cast, Pointer, Flow );
+			_In( Cast, Pointer, Flow );
 		}
 		void Out(
 			flw::ioflow__ &Flow,
 			bkdcst::cast Cast,
 			void *Pointer )
 		{
-			BKDACCOut( Flow, Cast, Pointer );
+			_Out( Flow, Cast, Pointer );
 		}
-		bso::bool__ Handle(
+*/		bso::bool__ Handle(
 			bso::bool__ Success,
 			flw::ioflow__ &Flow )
 		{
-			return BKDACCHandle( Success, Flow );
+			return _Handle( Success, Flow );
 		}
 	};
 }

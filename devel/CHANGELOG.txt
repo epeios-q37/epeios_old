@@ -1,5 +1,12 @@
 $Id$
 
+01/08/2010 :
+	- BKDACC :
+		- Mise en oeuvre de 'backed_access_functions__'.
+	- BKDxxx :
+		- Adaptation aux modifications 'BKDACC'.
+		- Suppression du test des messages (déporté en aval).
+
 30/07/2010 :	
 	- RGSTRY :
 		- Ajout métohodes 'Dump(...)' et 'Fill(...)'.

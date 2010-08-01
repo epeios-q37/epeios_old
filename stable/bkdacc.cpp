@@ -57,7 +57,7 @@ public:
 
 using namespace bkdacc;
 
-void bkdacc::backend_access___::TestBackendCastsAndLanguages_()
+bso::bool__ bkdacc::backend_access___::TestBackendCasts_()
 {
 	int i;
 
@@ -68,32 +68,18 @@ void bkdacc::backend_access___::TestBackendCastsAndLanguages_()
 
 	Channel_->Put( 0 );
 
-/*
-#ifdef LGG_REVIVAL
-	for( i = 1; i < bkdlgg::l_amount; i++ )
-		flw::PutString( bkdlgg::LanguageNames[i], *Channel_ );
-
-	Channel_->Put( 0 );	// End of request
-#endif
-*/
-
 	_SendAndTest();
 
 	for( i = 0; i < bkdcst::c_amount; i++ )
 		if ( i != Channel_->Get() )
-			ERRb();
-/*
-#ifdef LGG_REVIVAL
-	for( i = 1; i < bkdlgg::l_amount; i++ )
-		if ( i != Channel_->Get() )
-			ERRb();
-#endif
-*/
+			return false;
 
 	if ( Channel_->Get() != bkdcst::cEnd )
-		ERRb();
+		return false;
 
 	Channel_->Dismiss();
+
+	return true;
 }
 
 command__ bkdacc::backend_access___::GetBackendDefaultCommand_()

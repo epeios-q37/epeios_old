@@ -74,8 +74,11 @@ namespace bkduac {
 		t_Undefined
 	};
 
-	class backend_universal_access___
-	: public bkdacc::backend_access___
+	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
+
+
+	class backend_universal_access_functions__
+	: public _backend_access_functions__
 	{
 	private:
 		bkdlac::backend_local_access_base__ _Local;
@@ -139,20 +142,20 @@ namespace bkduac {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			backend_access___::reset( P );
+			_Local.reset( P );
+			_Remote.reset( P );
+			_backend_access_functions__::reset( P );
 			_Type = t_Undefined;
 		}
-		backend_universal_access___( void )
+		backend_universal_access_functions__( void )
 		{
 			reset( false );
 		}
-		virtual ~backend_universal_access___( void )
+		virtual ~backend_universal_access_functions__( void )
 		{
 			reset();
 		}
-		void Init(
-			flw::ioflow__ &Flow,
-			type__ Type )
+		void Init( type__ Type )
 		{
 			reset();
 
@@ -170,7 +173,7 @@ namespace bkduac {
 
 			_Type = Type;
 
-			backend_access___::Init( Flow );
+			_backend_access_functions__::Init();
 		}
 	};
 }
