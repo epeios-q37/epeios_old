@@ -1529,9 +1529,9 @@ ERRBegin
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
 
-	LaunchCommand_( Command, Id, OutputFileName );
-
 	DumpContext_( Context, ContextFileName.Convert( Buffer ) );
+
+	LaunchCommand_( Command, Id, OutputFileName );
 ERRErr
 ERREnd
 ERREpilog

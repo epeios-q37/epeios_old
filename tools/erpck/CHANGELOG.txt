@@ -1,5 +1,8 @@
 $Id$
 
+- 02/08/2010 :
+	- The 'context' is now saved before the command is launched.
+
 - 15/07/2010 :
 	- Adaptation to changes in underlying libraries.
 
