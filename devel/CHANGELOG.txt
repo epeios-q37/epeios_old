@@ -1,5 +1,17 @@
 $Id$
 
+03/08/2010 :
+	- CSDDLC :
+		- Adaptation aux modifications 'CSDEBD'.
+		- 'dynamic_library_client' -> 'dynamic_library_client_ioflow___'
+	- CSDEBD :
+		- 'embed_client_server' -> 'embed_client_server_ioflow___'
+	- 'CSDSNC' :
+		- 'client_flow___' -> 'client_ioflow___'
+	- 'CSDUCL' :
+		- 'universal_client' -> 'universal_client_ioflow___'.
+		- Adaptation aux modifications des bibliothèques sous-jacentes.
+
 01/08/2010 :
 	- BKDACC :
 		- Mise en oeuvre de 'backed_access_functions__'.

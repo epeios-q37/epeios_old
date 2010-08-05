@@ -133,8 +133,8 @@ namespace csducl {
 	: public fwf::ioflow_functions___
 	{
 	private:
-		csdsnc::client_flow___ _DaemonAccess;
-		csddlc::dynamic_library_client _Library;
+		csdsnc::client_ioflow___ _DaemonAccess;
+		csddlc::dynamic_library_client_ioflow___ _Library;
 		universal_client_core *_Core;
 		flw::ioflow__ &_Get( void )
 		{
@@ -213,7 +213,7 @@ namespace csducl {
 		}
 	};
 
-	class universal_client
+	class universal_client_ioflow___
 	: public flw::ioflow__
 	{
 	private:
@@ -224,12 +224,12 @@ namespace csducl {
 		{
 			_Functions.reset();
 		}
-		universal_client( flw::size__ AmountMax = FLW_SIZE_MAX )
+		universal_client_ioflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
 		{
 			reset( false );
 		}
-		~universal_client( void )
+		~universal_client_ioflow___( void )
 		{
 			reset();
 		}

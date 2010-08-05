@@ -389,7 +389,7 @@ ERREpilog
 			}
 	};
 
-	class client_flow___
+	class client_ioflow___
 	: public flw::ioflow__
 	{
 	private:
@@ -401,7 +401,7 @@ ERREpilog
 //			flw::ioflow__::reset( P );
 			_Functions.reset( P );
 		}
-		client_flow___( void )
+		client_ioflow___( void )
 		: ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX )
 		{
 			reset( false );

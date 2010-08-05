@@ -223,7 +223,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	};
 
 
-	class embed_client_server
+	class embed_client_server_ioflow___
 	: public flw::ioflow__
 	{
 	private:
@@ -256,14 +256,14 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			}
 		} _Backend;
 	public:
-		embed_client_server( void )
+		embed_client_server_ioflow___( void )
 		: _Functions( _Master, _Slave ),
 		  ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX ),
 		  _Backend( _Slave ,_Master )
 		{
 			reset( false );
 		}
-		~embed_client_server( void )
+		~embed_client_server_ioflow___( void )
 		{
 			reset();
 		}

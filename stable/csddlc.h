@@ -85,12 +85,14 @@ namespace csddlc {
 		bso::bool__ Init(
 			const char *LibraryName,
 			void *UP );
-		friend class dynamic_library_client;
+		friend class dynamic_library_client_ioflow___;
 	};
 
+	typedef csdebd::embed_client_server_ioflow___ _embed_client_server_ioflow___;
+
 	
-	class dynamic_library_client
-	: public csdebd::embed_client_server
+	class dynamic_library_client_ioflow___
+	: public _embed_client_server_ioflow___
 	{
 	public:
 		void Init( dynamic_library_client_core &Core )
@@ -98,7 +100,7 @@ namespace csddlc {
 			if ( Core._UserFunctions == NULL )
 				ERRu();
 
-			embed_client_server::Init( *Core._UserFunctions );
+			_embed_client_server_ioflow___::Init( *Core._UserFunctions );
 		}
 	};
 }
