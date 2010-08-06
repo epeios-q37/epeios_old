@@ -1,5 +1,8 @@
 $Id$
 
+- 06/08/2010 :
+	- Adaptation to unserlying libraries.
+
 - 14/07/2010 :
 	- Moved to core project.
 	- Adaptation to modifications in underlying libraries.

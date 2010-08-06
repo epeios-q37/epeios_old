@@ -721,10 +721,14 @@ namespace bkdmng {
 	private:
 		const lcl::locales_ *_Locales;
 		master_module Master_;
-		// Contient le libellé du serveur d'objet. Usage interne.
-		const char *Name_;
-		// Contient le libellé de la version du serveur d'objet. Usage interne.
-		const char *Version_;
+		// Libellé du 'backend'.
+		const char *_BackendName;
+		// Version du 'backend'.
+		const char *_BackendVersion;
+		// Libellé du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
+		const char *_PublisherName;
+		// Version du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
+		const char *_PublisherVersion;
 		str::string Language_;
 		// Retourne le module correspondant à 'IdType'.
 		untyped_module &Module_( type__ IdType ) const
@@ -761,14 +765,17 @@ namespace bkdmng {
 		{
 			Language_.Init( BKDMNG__DEFAULT_LANGUAGE );
 
-			Name_ = "";
-			Version_ = "";
+			_BackendName = NULL;
+			_BackendVersion = NULL;
+			_PublisherName = NULL;
+			_PublisherVersion = NULL;
 		}
-		/*f Initialization with 'Name' and 'Version'.
-		'Name' and 'Version' are NOT duplicated and should not be modified. */
+		// '[Backend|Publisher]Name' and '[Backend|Publisher]Version' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
-			const char *Name,
-			const char *Version,
+			const char *BackendName,
+			const char *BackendVersion,
+			const char *PublisherName,
+			const char *PublisherVersion,
 			const lcl::locales_ &Locales )
 		{
 			Master_.Init( *this );
@@ -776,8 +783,11 @@ namespace bkdmng {
 			Modules.Init();
 			Links.Init();
 
-			Name_ = Name;
-			Version_ = Version;
+			_BackendName = BackendName;
+			_BackendVersion = BackendVersion;
+
+			_PublisherName = PublisherName;
+			_PublisherVersion = PublisherVersion;
 
 			_Locales = &Locales;
 		}
@@ -877,15 +887,21 @@ namespace bkdmng {
 		{
 			return Add( Name, FP, &Cast );
 		}
-		//f Return the name string of the backend.
-		const char *GetName( void ) const 
+		const char *GetBackendName( void ) const 
 		{
-			return Name_;
+			return _BackendName;
 		}
-		//f Return the version string of the backend.
-		const char *GetVersion( void ) const
+		const char *GetBackendVersion( void ) const
 		{
-			return Version_;
+			return _BackendVersion;
+		}
+		const char *GetPublisherName( void ) const 
+		{
+			return _PublisherName;
+		}
+		const char *GetPublisherVersion( void ) const
+		{
+			return _PublisherVersion;
 		}
 		//f Return 'true' if 'Object' is of type given by 'Prefix' and 'Name'.
 		bso::bool__ IsOfType(

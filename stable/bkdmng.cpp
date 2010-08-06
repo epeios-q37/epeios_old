@@ -397,8 +397,7 @@ static void GetParameters_(
 }
 
 
-// Donne le libellé et la version du serveur d'objets.
-static void About_(
+static void AboutBackend_(
 	backend_ &Backend,
 	untyped_module &Module,
 	index__,
@@ -407,8 +406,22 @@ static void About_(
 	bso::bool__ &,
 	void * )
 {
-	Requete.StringOut() = Backend.GetName();
-	Requete.StringOut() = Backend.GetVersion();
+	Requete.StringOut() = Backend.GetBackendName();
+	Requete.StringOut() = Backend.GetBackendVersion();
+	Requete.Complete();
+}
+
+static void AboutPublisher_(
+	backend_ &Backend,
+	untyped_module &Module,
+	index__,
+	command__ Command,
+	request_manager__ &Requete,
+	bso::bool__ &,
+	void * )
+{
+	Requete.StringOut() = Backend.GetPublisherName();
+	Requete.StringOut() = Backend.GetPublisherVersion();
 	Requete.Complete();
 }
 
@@ -765,8 +778,11 @@ namespace bkdmng {
 		// Remove the given object.
 		ADD( RemoveObject );
 
-		// The string of the interface version.
-		ADD( About );
+		// Libellé et version du 'backend'.
+		ADD( AboutBackend );
+
+		// Libellé et version du 'Publisher'.
+		ADD( AboutPublisher );
 
 		// Disconnection.
 		ADD( Disconnect );

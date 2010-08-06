@@ -490,11 +490,24 @@ namespace bkdacc {
 			_Handle();
 		}
 		//f Put in 'Name' and 'Version' the name and version of the backend.
-		void About(
+		void AboutBackend(
 			string_ &Name,
 			string_ &Version)
 		{
-			Internal_( bkdcmd::cAbout );
+			Internal_( bkdcmd::cAboutBackend );
+
+			EndOfInParameters();
+
+			StringOut( Name );
+			StringOut( Version );
+
+			_Handle();
+		}
+		void AboutPublisher(
+			string_ &Name,
+			string_ &Version)
+		{
+			Internal_( bkdcmd::cAboutPublisher );
 
 			EndOfInParameters();
 

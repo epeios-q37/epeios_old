@@ -665,28 +665,23 @@ void Generate(
 	
 	Writer.PopTag();
 }
-	
-class backend_access___
-: public bkduac::backend_universal_access___
-{
-protected:
-	virtual void BKDACCTestMessages( void )
-	{
-	}
-};
+
 
 void GetBackendData(
 	const char *Location,
 	csducl::type__ Type,
 	types_ &Types,
 	bkdacc::strings_ &RawMessages,
-	str::string_ &Name,
-	str::string_ &Version )
+	str::string_ &BackendName,
+	str::string_ &BackendVersion,
+	str::string_ &PublisherName,
+	str::string_ &PublisherVersion )
 {
 ERRProlog
 	csducl::universal_client_core Core;
-	csducl::universal_client Flow;
-	backend_access___ Backend;
+	csducl::universal_client_ioflow___ Flow;
+	bkduac::backend_universal_access_functions__ BackendAccessFunctions;
+	bkdacc::backend_access___ Backend;
 ERRBegin
 	Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type );
 
@@ -694,24 +689,27 @@ ERRBegin
 
 	switch ( Type ) {
 	case csducl::tDaemon:
-		Backend.Init( Flow, bkduac::tRemote );
+		BackendAccessFunctions.Init( bkduac::tRemote );
 		break;
 	case csducl::tLibrary:
-		Backend.Init( Flow, bkduac::tLocal );
+		BackendAccessFunctions.Init( bkduac::tLocal );
 		break;
 	default:
 		ERRc();
 		break;
 	}
+
+	Backend.Init( Flow, BackendAccessFunctions );
 		
 	GetDescription( Backend, Types );
 	GetRawMessages( Backend, RawMessages );
 	
-	Backend.About( Name, Version );
+	Backend.AboutBackend( BackendName, BackendVersion );
+	Backend.AboutPublisher( PublisherName, PublisherVersion );
 
 	Backend.Disconnect();
 ERRErr
-	CErr << "Unable to reach the backend !" << txf::nl;
+	CErr << "Unable to communicate with the backend !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 ERREnd
 ERREpilog
@@ -787,8 +785,10 @@ void Generate(
 }
 
 void GenerateMisc(
-	const str::string_ &Name,
-	const str::string_ &Version,
+	const str::string_ &BackendName,
+	const str::string_ &BackendVersion,
+	const str::string_ &PublisherName,
+	const str::string_ &PublisherVersion,
 	writer_ &Writer )
 {
 	tol::buffer__ Buffer;
@@ -807,8 +807,12 @@ void GenerateMisc(
 	Writer.PopTag();
 	Writer.PopTag();
 	Writer.PushTag( "Backend" );
-	Writer.PutValue( Name, "Name" );
-	Writer.PutValue( Version, "Version" );
+	Writer.PutValue( BackendName, "Name" );
+	Writer.PutValue( BackendVersion, "Version" );
+	Writer.PopTag();
+	Writer.PushTag( "Publisher" );
+	Writer.PutValue( PublisherName, "Name" );
+	Writer.PutValue( PublisherVersion, "Version" );
 	Writer.PopTag();
 	Writer.PutValue( tol::Date( Buffer ), "Date" );
 	Writer.PutValue( tol::Time( Buffer ), "Time" );
@@ -820,8 +824,10 @@ void Generate(
 	const bkdacc::strings_ &RawMessages,
 	const types_ &Types,
 	epeios::row__ MasterRow,
-	const str::string_ &Name,
-	const str::string_ &Version,
+	const str::string_ &BackendName,
+	const str::string_ &BackendVersion,
+	const str::string_ &PublisherName,
+	const str::string_ &PublisherVersion,
 	txf::text_oflow__ &Flow )
 {
 ERRProlog
@@ -836,7 +842,7 @@ ERRBegin
 	
 	Writer.PushTag( "API" );
 
-	GenerateMisc( Name, Version, Writer );	
+	GenerateMisc( BackendName, BackendVersion, PublisherName, PublisherVersion, Writer );	
 	Generate( RawMessages, Types, MasterRow, Writer );
 
 	Writer.PopTag();
@@ -873,7 +879,8 @@ void Go(
 {
 ERRProlog
 	types Types;
-	str::string Name, Version;
+	str::string BackendName, BackendVersion;
+	str::string PublisherName, PublisherVersion;
 	epeios::row__ MasterRow = NONE;
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
@@ -881,12 +888,16 @@ ERRProlog
 	bkdacc::strings RawMessages;
 ERRBegin
 	Types.Init();
-	
-	Name.Init();
-	Version.Init();
+
+	BackendName.Init();
+	BackendVersion.Init();
+
+	PublisherName.Init();
+	PublisherVersion.Init();
+
 	RawMessages.Init();
 	
-	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, Name, Version );
+	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, BackendName, BackendVersion, PublisherName, PublisherVersion );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -899,9 +910,9 @@ ERRBegin
 		Backup = true;
 
 		File.Init( Arguments.FileName );
-		Generate( RawMessages, Types, MasterRow, Name, Version, TFile );
+		Generate( RawMessages, Types, MasterRow, BackendName, BackendVersion, PublisherName, PublisherVersion, TFile );
 	} else
-		Generate( RawMessages, Types, MasterRow, Name, Version, COut );
+		Generate( RawMessages, Types, MasterRow, BackendName, BackendVersion, PublisherName, PublisherVersion, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, CErr );
@@ -939,7 +950,6 @@ ERRFErr
 
 	if ( ERRMajor == err::itn )
 		ERRRst();
-
 ERRFEnd
 ERRFEpilog
 	COut << txf::sync;
