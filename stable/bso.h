@@ -409,14 +409,38 @@ namespace bso {
 	//t A portable sign.
 	typedef sign__ p_sign__;
 
-	//d Maximum size of an ASCII converted signed/unsigned integer.
-	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	11
+	//d Maximum size of an ASCII converted signed/unsigned 64 bits integer.
+	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	22
 
 	struct integer_buffer__ {
 		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
 	};
 
-	//f Return 'Value' as string in 'String'.
+#ifdef BSO__64_BITS_TYPES_ALLOWED
+	typedef ullong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+
+	inline const char *Convert(
+		ullong__ Value,
+		integer_buffer__ &Buffer )
+	{
+		sprintf( Buffer.Datum, "%llu", Value );
+
+		return Buffer.Datum;
+	}
+
+#	ifndef CPE__T_MT
+	inline const char *Convert( ullong__ Value )
+	{
+		static integer_buffer__ Buffer;
+
+		return Convert( Value, Buffer );
+	}
+#	endif
+
+#else
+	typedef ulong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#endif
+
 	inline const char *Convert(
 		bso::ulong__ Value,
 		integer_buffer__ &Buffer )
@@ -441,7 +465,7 @@ namespace bso {
 		bso::ushort__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (bso::ulong__)Value, Buffer );
+		return Convert( (_guint__)Value, Buffer );
 	}
 
 #ifndef CPE__T_MT
@@ -457,7 +481,7 @@ namespace bso {
 		bso::ubyte__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (bso::ulong__)Value, Buffer );
+		return Convert( (_guint__)Value, Buffer );
 	}
 
 #ifndef CPE__T_MT
@@ -468,9 +492,35 @@ namespace bso {
 	}
 #endif
 
+#ifdef BSO__64_BITS_TYPES_ALLOWED
+	typedef sllong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		bso::slong__ Value,
+		sllong__ Value,
+		integer_buffer__ &Buffer )
+	{
+		sprintf( Buffer.Datum, "%lli", Value );
+
+		return Buffer.Datum;
+	}
+
+#	ifndef CPE__T_MT
+	inline const char *Convert( sllong__ Value )
+	{
+		static integer_buffer__ Buffer;
+
+		return Convert( Value, Buffer );
+	}
+#	endif
+
+#else
+	typedef slong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#endif
+
+	//f Return 'Value' as string in 'String'.
+	inline const char *Convert(
+		slong__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%li", Value );
@@ -493,7 +543,7 @@ namespace bso {
 		bso::sshort__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (bso::slong__)Value, Buffer );
+		return Convert( (_gsint__)Value, Buffer );
 	}
 
 #ifndef CPE__T_MT
@@ -509,7 +559,7 @@ namespace bso {
 		bso::sbyte__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (bso::slong__)Value, Buffer );
+		return Convert( (_gsint__)Value, Buffer );
 	}
 
 #ifndef CPE__T_MT

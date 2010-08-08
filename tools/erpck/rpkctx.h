@@ -20,16 +20,48 @@ namespace rpkctx {
 	typedef epeios::size__ amount__;
 #	define RPKCTX_AMOUNT_MAX	EPEIOS_SIZE_MAX
 
-	typedef bch::E_BUNCH_( rrow__ ) pool_;
+	class pool_ {
+	public:
+		struct s {
+			rrows_::s Records;
+			time_t TimeStamp;
+		} &S_;
+		rrows_ Records;
+		pool_( s &S )
+		: S_( S ),
+		  Records( S.Records )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Records.reset( P );
+			S_.TimeStamp = 0;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			Records.plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Records.plug( MM );
+		}
+		pool_ &operator =( const pool_ &P )
+		{
+			Records = P.Records;
+			S_.TimeStamp = P.S_.TimeStamp;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Records.Init();
+
+			S_.TimeStamp = 0;
+		}
+		E_RWDISCLOSE_( time_t, TimeStamp )
+	};
+
 	E_AUTO( pool );
 
-	void Dump(
-		const pool_ &Pool,
-		xml::writer_ &Writer );
-
-	void Retrieve(
-		xml::browser___ &Browser,
-		pool_ &Pool );
 
 	class context_ {
 	public:

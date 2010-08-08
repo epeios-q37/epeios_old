@@ -1,5 +1,9 @@
 $Id$
 
+08/08/2010 :
+	- BSO :
+		- Ajout méthodes manquantes concernant les type 64 bits.
+
 06/08/2010 :
 	- BKDxxx :
 		- Introduction de la notion de 'Publisher'.

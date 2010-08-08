@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.2.0"
+#define VERSION					"0.3.0"
 #define COPYRIGHT_YEARS			"2010"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
@@ -669,7 +669,8 @@ static void ProcessRecords_(
 	const str::string_ &DefaultRecordLabelTag,
 	const aliases_ &Aliases,
 	const tables_ &Tables,
-	records_ &Records )
+	records_ &Records,
+	rpktbl::counter__ &Skipped )
 {
 ERRProlog
 	bso::bool__ Continue = true;
@@ -696,9 +697,13 @@ ERRBegin
 			} else if ( Browser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
 					Assign_( Record.Label, "Record label", Browser, IFlow );
 			} else if ( Browser.AttributeName() == RECORD_HANDLING_ATTRIBUTE ) {
-				if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE )
+				if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE ) {
+					if ( Skipped == RPKBSC_COUNTER_MAX )
+						ERRl();
+					Skipped++;
+
 					Record.Skip() = true;
-				else if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
+				}else if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
 					Ignore = true;
 				else
 					ReportErrorAndExit_( "Unknown attribute value", IFlow );
@@ -763,7 +768,7 @@ ERRBegin
 			break;
 		case xml::tStartTagClosed:
 			if ( Browser.TagName() == CONTENT_TAG ) {
-				ProcessRecords_( Browser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records );	// '<ercp:content ...><...' -> '</erpck:content>...'
+				ProcessRecords_( Browser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records, Table.Skipped() );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else														        			//                    ^                         ^
 				ERRc();
@@ -1156,8 +1161,33 @@ static void DisplayAll_(
 	}
 }
 
+counter__ GetSkippedAmount_(
+	const rrows_ &RecordRows,
+	const records_ &Records )
+{
+	counter__ Skipped = 0;
+	epeios::row__ Row = RecordRows.First();
+	ctn::E_CITEMt( record_, rrow__ ) Record;
+
+	Record.Init( Records );
+
+	while ( Row != NONE ) {
+		if ( Record( RecordRows( Row ) ).Skip() ) {
+			if ( Skipped == RPKBSC_COUNTER_MAX )
+				ERRl();
+			Skipped++;
+		}
+
+		Row = RecordRows.Next( Row );
+	}
+
+	return Skipped;
+
+}
+
 id__  Display_(
 	id__ Id,
+	counter__ Skipped,
 	const records_ &Records,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
@@ -1165,11 +1195,12 @@ id__  Display_(
 	rrow__ Row = NONE;
 	bso::integer_buffer__ Buffer;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
-	epeios::size__ Counter = 0;
+	counter__ Counter = 0;
 
 	Record.Init( Records );
 
 	Writer.PutAttribute( "TotalAmount", bso::Convert( Records.Amount(), Buffer ) );
+	Writer.PutAttribute( "SkippedTotalAmount", bso::Convert( Skipped, Buffer ) );
 
 	if ( Id == ALL ) {
 		Writer.PutAttribute( "Amount", bso::Convert( Records.Amount(), Buffer ) );
@@ -1184,6 +1215,10 @@ id__  Display_(
 */
 			do {
 				Row = Context.Pick( Records.Amount() );
+
+				if ( Counter == RPKBSC_COUNTER_MAX )
+					ERRl();
+
 				Counter++;
 			} while ( Record( Row ).GetSkip() && ( Counter < Records.Amount() ) );
 
@@ -1193,6 +1228,9 @@ id__  Display_(
 			}
 
 			Id = *Row + 1;
+
+			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.Current.Records.Amount() ) );
+			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.Current.Records, Records ) ) );
 
 		} else {
 			if ( Id > Records.Amount() ) {
@@ -1229,7 +1267,7 @@ ERRBegin
 	Writer.Init( Output, xml::oIndent );
 	Writer.PushTag( Table.Label );
 
-	Id = Display_( Id, Table.Records, Context, Writer );	
+	Id = Display_( Id, Table.Skipped(), Table.Records, Context, Writer );	
 
 	Writer.PopTag();
 

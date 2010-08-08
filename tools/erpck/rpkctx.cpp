@@ -9,6 +9,7 @@
 #include "rpkctx.h"
 
 #include "bitbch.h"
+#include "dte.h"
 
 using namespace rpkctx;
 
@@ -17,18 +18,36 @@ E_AUTO( grid );
 
 #define COEFF	3	// 
 
-void rpkctx::Dump(
-	const pool_ &Pool,
+#define CONTEXT_TAG_NAME				"Context"
+#define CONTEXTE_TARGET_ATTRIBUTE_NAME	"target"
+
+#define POOLS_TAG_NAME					"Pools"
+
+
+#define POOL_TAG_NAME						"Pool"
+
+#define POOL_STATE_ATTRIBUTE_NAME			"State"
+#define POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE	"Previous"
+#define POOL_CURRENT_STATE_ATTRIBUTE_VALUE	"Current"
+
+#define POOL_TIMESTAMP_ATTRIBUTE_NAME		"TimeStamp"
+
+
+#define RECORD_TAG_NAME					"Record"
+#define RECORD_ID_ATTRIBUTE_NAME		"Id"
+
+void Dump_(
+	const rrows_ &Records,
 	xml::writer_ &Writer )
 {
-	epeios::row__ Row = Pool.First();
+	epeios::row__ Row = Records.First();
 
 	while ( Row != NONE ) {
-		Writer.PushTag( "Record" );
-		Writer.PutAttribute( "Id", bso::Convert( *Pool.Get( Row ) ) );
+		Writer.PushTag( RECORD_TAG_NAME );
+		Writer.PutAttribute( RECORD_ID_ATTRIBUTE_NAME, bso::Convert( *Records.Get( Row ) ) );
 		Writer.PopTag();
 
-		Row = Pool.Next( Row );
+		Row = Records.Next( Row );
 	}
 }
 
@@ -44,7 +63,7 @@ static rrow__ RetrieveRecordId_( xml::browser___ &Browser )
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfObvious ) ) {
 		case xml::tAttribute:
-			if ( Browser.AttributeName() != "Id" )
+			if ( Browser.AttributeName() != RECORD_ID_ATTRIBUTE_NAME )
 				ERRc();
 
 			Id = Browser.Value().ToUL( &Error );
@@ -71,9 +90,9 @@ static rrow__ RetrieveRecordId_( xml::browser___ &Browser )
 // '<... >...</...>...
 //        ^
 //				   ^
-void rpkctx::Retrieve(
+static void Retrieve_(
 	xml::browser___ &Browser,
-	pool_ &Pool )
+	rrows_ &Records )
 {
 	bso::bool__ Continue = true;
 	epeios::row__ Error = NONE;
@@ -82,10 +101,10 @@ void rpkctx::Retrieve(
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfObvious ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != "Record" )
+			if ( Browser.TagName() != RECORD_TAG_NAME )
 				ERRc();
 
-			Pool.Append( RetrieveRecordId_( Browser ) );
+			Records.Append( RetrieveRecordId_( Browser ) );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -97,21 +116,26 @@ void rpkctx::Retrieve(
 	}
 }
 
+static void Dump_(
+	const pool_ &Pool,
+	const char *State,
+	xml::writer_ &Writer )
+{
+	Writer.PushTag( POOL_TAG_NAME );
+	Writer.PutAttribute( POOL_STATE_ATTRIBUTE_NAME, State );
+	Writer.PutAttribute( POOL_TIMESTAMP_ATTRIBUTE_NAME, bso::Convert( Pool.TimeStamp() ) );
+	Dump_( Pool.Records, Writer );
+	Writer.PopTag();
+}
+
 void rpkctx::Dump(
 	const context_ &Context,
 	xml::writer_ &Writer )
 {
-	Writer.PushTag( "Pools" );
+	Writer.PushTag( POOLS_TAG_NAME );
 
-	Writer.PushTag( "Pool" );
-	Writer.PutAttribute( "State", "Previous" );
-	Dump( Context.Previous, Writer );
-	Writer.PopTag();
-
-	Writer.PushTag( "Pool" );
-	Writer.PutAttribute( "State", "Current" );
-	Dump( Context.Current, Writer );
-	Writer.PopTag();
+	Dump_( Context.Previous, POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE, Writer );
+	Dump_( Context.Current, POOL_CURRENT_STATE_ATTRIBUTE_VALUE, Writer );
 
 	Writer.PopTag();
 }
@@ -123,28 +147,34 @@ static void RetrievePools_(
 ERRProlog
 	bso::bool__ Continue = true;
 	str::string State;
+	time_t TimeStamp = 0;
 ERRBegin
 	State.Init();
 
 	while ( Continue ) {
 		switch( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != "Pool" )
+			if ( Browser.TagName() != POOL_TAG_NAME )
 				ERRc();
 
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() != "State" )
+			if ( Browser.AttributeName() == POOL_STATE_ATTRIBUTE_NAME )
+				State = Browser.Value();
+			else if ( Browser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
+				TimeStamp = Browser.Value().ToULL();
+			else
 				ERRc();
 
-			State = Browser.Value();
 			break;
 		case xml::tStartTagClosed:
-			if ( State == "Previous" )
-				Retrieve( Browser, Context.Previous );
-			else if ( State == "Current" )
-				Retrieve( Browser, Context.Current );
-			else
+			if ( State == POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE ) {
+				Context.Previous.TimeStamp() = TimeStamp;
+				Retrieve_( Browser, Context.Previous.Records );
+			} else if ( State == POOL_CURRENT_STATE_ATTRIBUTE_VALUE ) {
+				Context.Current.TimeStamp() = TimeStamp;
+				Retrieve_( Browser, Context.Current.Records );
+			} else
 				ERRc();
 
 			State.Init();
@@ -172,7 +202,7 @@ void rpkctx::Retrieve(
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != "Pools" )
+			if ( Browser.TagName() != POOLS_TAG_NAME )
 				ERRc();
 			break;
 		case xml::tStartTagClosed:
@@ -189,21 +219,21 @@ void rpkctx::Retrieve(
 }
 
 static amount__ Fill_(
-	const pool_ &Pool,
+	const rrows_ &Records,
 	amount__ Amount,
 	amount__ TotalAmount,
 	grid_ &Grid )
 {
-	epeios::row__ Row = Pool.Last();
+	epeios::row__ Row = Records.Last();
 	amount__ Counter = 0;
 
 	while ( ( Row != NONE ) && ( Counter < Amount ) ) {
-		if ( *Pool( Row ) < TotalAmount ) {
-			Grid.Store( false, Pool( Row ) );
+		if ( *Records( Row ) < TotalAmount ) {
+			Grid.Store( false, Records( Row ) );
 			Counter++;
 		}
 
-		Row = Pool.Previous( Row );
+		Row = Records.Previous( Row );
 	}
 
 	return Counter;
@@ -222,6 +252,29 @@ static rrow__ Pick_( const grid_ &Grid )
 	return Row;
 }
 
+static void Add_(
+	const rrows_ &Source,
+	rrows_ &Target )
+{
+	epeios::row__ Row = Source.First();
+	epeios::row__ Position = NONE;
+
+	while ( Row != NONE ) {
+		if ( ( Position = ( Target.Search( Source( Row ) ) ) ) != NONE )
+			Target.Remove( Position );
+
+		Target.Append( Source ( Row ) );
+
+		Row = Source.Next( Row );
+	}
+}
+
+static inline bso::bool__ IsNewSession_( time_t TimeStamp )
+{
+	return difftime( time( NULL ), TimeStamp ) > ( 3600 * 8 ); // 8 heures.
+}
+
+
 rrow__ rpkctx::context_::Pick( amount__ Amount )
 {
 	rrow__ Row = NONE;
@@ -234,22 +287,28 @@ ERRBegin
 
 	Grid.Reset( true );
 
-	if ( Current.Amount() >= Amount ) {
+	if ( Current.Records.Amount() >= Amount ) {
 		Previous = Current;
 		Current.Init();
 	}
 
-	Remainder = Amount - Fill_( Current, Amount, Amount, Grid );
+	if ( IsNewSession_( Current.TimeStamp() ) ) {
+		Add_( Current.Records, Previous.Records );
+		Current.Records.Init();
+	}
+
+	Remainder = Amount - Fill_( Current.Records, Amount, Amount, Grid );
 
 	if ( ( RPKCTX_AMOUNT_MAX / COEFF ) < Remainder )
 		ERRl();
 
 	if ( ( Remainder * COEFF ) > Amount )
-		Fill_( Previous, Amount / COEFF, Amount, Grid );
+		Fill_( Previous.Records, Amount / COEFF, Amount, Grid );
 
 	Row = Pick_( Grid );
 
-	Current.Append( Row );
+	Current.Records.Append( Row );
+	Current.TimeStamp() = time( NULL );
 ERRErr
 ERREnd
 ERREpilog

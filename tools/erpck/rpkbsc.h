@@ -17,7 +17,13 @@ namespace rpkbsc {
 	typedef bso::ubyte__ weight__;
 #	define DEFAULT_WEIGHT	1
 
+	typedef bso::ulong__ counter__;
+#define RPKBSC_COUNTER_MAX	BSO_ULONG_MAX
+
 	E_ROW( rrow__ );	// 'record row'.
+	typedef bch::E_BUNCH_( rrow__ ) rrows_;
+	E_AUTO( rrows );
+
 	E_ROW( trow__ );	// 'table row'.
 
 	template <typename container, typename item, typename row> inline row BaseSearch(

@@ -8,7 +8,7 @@
 #ifndef RPKTBL__INC
 #define RPKTBL__INC
 
-#include "rpkals.H"
+#include "rpkals.h"
 #include "rpkrcd.h"
 
 namespace rpktbl {
@@ -21,13 +21,15 @@ namespace rpktbl {
 		struct s {
 			str::string_::s Label;
 			records_::s Records;
+			counter__ Skipped;
 	//		aliases_::s Aliases;
-		};
+		} &S_;
 		str::string_ Label;
 		records_ Records;
 	//	aliases_ Aliases;
 		table_( s &S )
-		: Label( S.Label ),
+		: S_( S ),
+		  Label( S.Label ),
 		  Records( S.Records )/*,
 		  Aliases( S.Aliases ) */
 		{};
@@ -36,6 +38,9 @@ namespace rpktbl {
 			Label.reset( P );
 			Records.reset( P );
 	//		Aliases.reset( P );
+
+			S_.Skipped = 0;
+
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -48,17 +53,18 @@ namespace rpktbl {
 			Label = T.Label;
 			Records = T.Records;
 	//		Aliases = T.Aliases;
+			S_.Skipped = T.S_.Skipped;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			reset();
-
 			Label.Init();
 			Records.Init();
 	//		Aliases.Init();
+			S_.Skipped = 0;
 		}
+		E_RWDISCLOSE_( counter__, Skipped );
 	};
 
 	E_AUTO( table )

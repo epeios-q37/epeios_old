@@ -1,5 +1,14 @@
 $Id$
 
+*********
+* 0.3.0 *
+*********
+
+- 08/08/2010
+	- There is now a session notion which is reset every 8 hours of inactivity. Inside the 8 las hours since last activity,
+	it's now indicated how much items you have already picked, so you know if you have already picked or not
+	all the items for the current session.
+
 - 02/08/2010 :
 	- The 'context' is now saved before the command is launched.
 
@@ -7,14 +16,16 @@ $Id$
 	- Adaptation to changes in underlying libraries.
 
 - 28/06/2010 :
-	- Ajout argument '$2'.
+	- Adding argument '$2'.
+
 
 *********
 * 0.2.0 *
 *********
 
 - 24/06/2010 :
-	- Gestion historique des 'record's affichés pour équilibrer la sorie des différents enregistrements.
+	- For a better repartition of the picked items, a history of the already picked records is kept.
+
 
 *********
 * 0.1.0 *
