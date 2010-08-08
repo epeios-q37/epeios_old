@@ -871,7 +871,7 @@ ERREpilog
 
 status__ xml::Parse(
 	xtf::extended_text_iflow__ &UserFlow,
-	bso::bool__ HandleEntities,
+	entities_handling__ EntitiesHandling,
 	callback__ &Callback )
 {
 	status__ Status = s_Undefined;
@@ -881,7 +881,7 @@ ERRProlog
 	bso::bool__ Stop = false;
 	xml::dump Dump;
 ERRBegin
-	Browser.Init( UserFlow, xml::ehKeep );
+	Browser.Init( UserFlow, EntitiesHandling );
 
 	while ( !Stop ) {
 		TagName.Init();

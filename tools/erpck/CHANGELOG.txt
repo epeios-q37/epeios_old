@@ -1,5 +1,9 @@
 $Id$
 
+- 08/08/2010
+	- Petite correction typgraphique.
+	- Prise en compte bogue bibliothèque 'XML' ('entities' ma gèré).
+
 *********
 * 0.3.0 *
 *********

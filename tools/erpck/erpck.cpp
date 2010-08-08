@@ -1376,7 +1376,7 @@ ERRBegin
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
 		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
-		cout << "Launching '" << CompleteCommand << "\"." << txf::nl;
+		cout << "Launching '" << CompleteCommand << "\'." << txf::nl;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
 

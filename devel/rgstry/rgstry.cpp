@@ -875,7 +875,7 @@ ERRBegin
 	PFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
 	XFlow.Init( PFlow );
 
-	switch ( xml::Parse( XFlow, true, Callback ) ) {
+	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {
 	case xml::sOK:
 		Root = Callback.GetRoot();
 		break;
