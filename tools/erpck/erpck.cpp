@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.3.0"
+#define VERSION					"0.3.2"
 #define COPYRIGHT_YEARS			"2010"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
@@ -259,6 +259,8 @@ using namespace rpkals;
 using namespace rpkrcd;
 using namespace rpktbl;
 
+typedef rgstry::multi_level_registry_ registry_;
+E_AUTO( registry );
 
 typedef tables_	data_;
 E_AUTO( data )
@@ -1188,6 +1190,7 @@ counter__ GetSkippedAmount_(
 id__  Display_(
 	id__ Id,
 	counter__ Skipped,
+	bso::ulong__ SessionMaxDuration,
 	const records_ &Records,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
@@ -1214,7 +1217,7 @@ id__  Display_(
 			Row = Records.First( rand() % Records.Amount() );
 */
 			do {
-				Row = Context.Pick( Records.Amount() );
+				Row = Context.Pick( Records.Amount(), SessionMaxDuration );
 
 				if ( Counter == RPKBSC_COUNTER_MAX )
 					ERRl();
@@ -1249,12 +1252,30 @@ id__  Display_(
 static id__ Display_(
 	id__ Id,
 	const table_ &Table,
+	bso::ulong__ SessionMaxDuration,
+	rpkctx::context_ &Context,
+	xml::writer_ &Writer )
+{
+	Writer.PushTag( Table.Label );
+
+	Id = Display_( Id, Table.Skipped(), SessionMaxDuration, Table.Records, Context, Writer );	
+
+	Writer.PopTag();
+
+	return Id;
+}
+
+static id__ Display_(
+	id__ Id,
+	const data_ &Data,
 	const str::string_ &XSLFileName,
+	bso::ulong__ SessionMaxDuration,
 	rpkctx::context_ &Context,
 	txf::text_oflow__ &Output )
 {
 ERRProlog
 	xml::writer Writer;
+	ctn::E_CITEMt( table_, trow__ ) Table;
 ERRBegin
 	xml::WriteXMLHeader( Output );
 	Output << txf::nl;
@@ -1264,37 +1285,62 @@ ERRBegin
 		Output << txf::nl;
 	}
 
-	Writer.Init( Output, xml::oIndent );
-	Writer.PushTag( Table.Label );
+	Table.Init( Data );
 
-	Id = Display_( Id, Table.Skipped(), Table.Records, Context, Writer );	
+	Writer.Init( Output, xml::oIndent );
+
+	Writer.PushTag( "Picking" );
+
+	Writer.PushTag( "Misc" );
+
+	Writer.PushTag( "Generator" );
+
+	Writer.PushTag( "Name" );
+	Writer.PutValue( NAME );
+	Writer.PopTag();
+
+	Writer.PushTag( "Version" );
+	Writer.PutValue( VERSION );
+	Writer.PopTag();
+
+	Writer.PushTag( "Author" );
+
+	Writer.PushTag( "Name" );
+	Writer.PutValue( AUTHOR_NAME );
+	Writer.PopTag();
+
+	Writer.PushTag( "Contact" );
+	Writer.PutValue( AUTHOR_CONTACT );
+	Writer.PopTag();
+
+	Writer.PopTag();
+	Writer.PopTag();
+
+	Writer.PushTag( "Session" );
+	Writer.PushTag( "MaxDuration" );
+	Writer.PutValue( bso::Convert( SessionMaxDuration ) );
+	Writer.PopTag();
+	Writer.PopTag();
+	Writer.PopTag();
+
+	Writer.PushTag( "Data" );
+
+	Id = Display_( Id, Table( Data.Last() ), SessionMaxDuration, Context, Writer );
 
 	Writer.PopTag();
 
+	Writer.PopTag();
 ERRErr
 ERREnd
 ERREpilog
-	return Id;
-}
-
-static id__ Display_(
-	id__ Id,
-	const data_ &Data,
-	const str::string_ &XSLFileName,
-	rpkctx::context_ &Context,
-	txf::text_oflow__ &Output )
-{
-	ctn::E_CITEMt( table_, trow__ ) Table;
-
-	Table.Init( Data );
-
-	return  Display_( Id, Table( Data.Last() ), XSLFileName, Context, Output );
+	return  Id;
 }
 
 static id__ DisplayWithoutBackup_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	bso::ulong__ SessionMaxDuration,
 	rpkctx::context_ &Context,
 	const char *FileName )
 {
@@ -1307,7 +1353,7 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Id = Display_( Id, Data, XSLFileName, Context, TFlow );
+	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, TFlow );
 ERRErr
 ERREnd
 ERREpilog
@@ -1318,6 +1364,7 @@ static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	bso::ulong__ SessionMaxDuration,
 	rpkctx::context_ &Context,
 	const char *FileName )
 {
@@ -1328,7 +1375,7 @@ ERRBegin
 
 	Backuped = true;
 
-	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, Context, FileName );
+	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, SessionMaxDuration, Context, FileName );
 ERRErr
 	if ( Backuped )
 		fil::RecoverBackupFile( FileName );
@@ -1341,6 +1388,7 @@ static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
+	bso::ulong__ SessionMaxDuration,
 	rpkctx::context_ &Context,
 	const str::string_ &OutputFileName )
 {
@@ -1348,9 +1396,9 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Id = Display_( Id, Data, XSLFileName, Context, cout );
+		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, cout );
 	else
-		Id = Display_( Id, Data, XSLFileName, Context, OutputFileName.Convert( Buffer ) );
+		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, OutputFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -1362,6 +1410,7 @@ ERREpilog
 #define XSL_FILENAME_TAG		"XSL"
 #define COMMAND_TAG				"Command"
 #define CONTEXT_FILENAME_TAG	"Context"
+#define SESSION_MAX_DURATION_TAG	"SessionMaxDuration"
 
 void LaunchCommand_(
 	const str::string_ &Command,
@@ -1522,7 +1571,7 @@ ERREpilog
 
 void Process_(
 	id__ Id,				
-	const rgstry::registry_ &Registry,
+	const registry_ &Registry,
 	rgstry::row__ RegistryRoot )
 {
 ERRProlog
@@ -1534,24 +1583,27 @@ ERRProlog
 	str::string XSLFileName;
 	str::string Command;
 	str::string ContextFileName;
+	bso::ulong__ SessionMaxDuration = 0;
+	bso::bool__ Error = false;
 ERRBegin
 	DataFileName.Init();
-	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), RegistryRoot, DataFileName ) ) {
+
+	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), DataFileName ) ) {
 		cerr << "No '" << DATA_FILENAME_TAG << "' tag found !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	OutputFileName.Init();
-	if ( !Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), RegistryRoot, OutputFileName ) ) {
+	if ( !Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), OutputFileName ) ) {
 		cerr << "No output file defined !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	XSLFileName.Init();
-	Registry.GetValue( str::string( XSL_FILENAME_TAG ), RegistryRoot, XSLFileName );
+	Registry.GetValue( str::string( XSL_FILENAME_TAG ), XSLFileName );
 
 	ContextFileName.Init();
-	if ( !Registry.GetValue( str::string( CONTEXT_FILENAME_TAG ), RegistryRoot, ContextFileName ) ) {
+	if ( !Registry.GetValue( str::string( CONTEXT_FILENAME_TAG ), ContextFileName ) ) {
 		cerr << "No context file name defined !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -1562,10 +1614,12 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	Id = Display_( Id, Data, XSLFileName, Context, OutputFileName );
+	SessionMaxDuration = rgstry::GetUL( Registry, str::string( SESSION_MAX_DURATION_TAG ), 0, &Error );
+
+	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, OutputFileName );
 
 	Command.Init();
-	Registry.GetValue( str::string( COMMAND_TAG ), RegistryRoot, Command );
+	Registry.GetValue( str::string( COMMAND_TAG ), Command );
 
 	DumpContext_( Context, ContextFileName.Convert( Buffer ) );
 
@@ -1582,15 +1636,18 @@ static void Process_(
 ERRProlog
 	rgstry::error__ Error = rgstry::e_Undefined;
 	rgstry::error_details ErrorDetails;
-	rgstry::registry Registry;
+	registry Registry;
 	lcl::locales Locales;
 	str::string ErrorMessage;
 	rgstry::row__ RegistryRoot = NONE;
+	rgstry::level__ Level = RGSTRY_UNDEFINED_LEVEL;
 ERRBegin
 	Registry.Init();
+	Level = Registry.AddNewLevel();
+
 	ErrorDetails.Init();
 
-	if ( ( Error = rgstry::FillRegistry( Project, "Projects/Project[target=\"" NAME "\"]", Registry, RegistryRoot, ErrorDetails ) ) != rgstry::eOK ) {
+	if ( ( Error = Registry.Fill( Level, Project, "Projects/Project[target=\"" NAME "\"]", ErrorDetails ) ) != rgstry::eOK ) {
 		Locales.Init();
 		ErrorMessage.Init();
 		cerr << rgstry::GetTranslation( Error, ErrorDetails,  str::string(), Locales, ErrorMessage ) << txf::nl;

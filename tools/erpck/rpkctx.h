@@ -89,7 +89,9 @@ namespace rpkctx {
 			Previous.Init();
 			Current.Init();
 		}
-		rrow__ Pick( amount__ Amount );
+		rrow__ Pick(
+			amount__ Amount,
+			bso::ulong__ SessionDuration );	// In minute; '0' for infinite.
 	};
 
 	E_AUTO( context );

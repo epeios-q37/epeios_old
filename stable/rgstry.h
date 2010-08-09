@@ -1299,6 +1299,122 @@ namespace rgstry {
 		}
 	};
 
+	template <typename registry> inline str::_guint__ _GetUnsigned(
+		const registry &Registry,
+		const str::string_ &Path,
+		str::_guint__ Default,
+		bso::bool__ *Error,
+		str::_guint__ Min,
+		str::_guint__ Max )
+	{
+		str::_guint__ Value = Default;
+	ERRProlog
+		str::string RawValue;
+		epeios::row__ GenericError = NONE;
+	ERRBegin
+		RawValue.Init();
+
+		if ( Registry.GetValue( Path, RawValue, &GenericError ) )
+			Value = str::_GenericUnsignedConversion( RawValue, 0, &GenericError, str::bAuto, Max );
+
+		if ( ( GenericError != NONE ) || ( Value < Min ) ) {
+			Value = Default;
+			*Error = true;
+		}
+
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Value;
+	}
+
+#ifdef _M
+#	define RGSRTY__M_BACKUP	_M
+#endif
+
+#define _M( name, type, min, max )\
+	template <typename registry> inline bso::ulong__ Get##name(\
+		const registry &Registry,\
+		const str::string_ &Path,\
+		type Default,\
+		bso::bool__ *Error = NULL,\
+		type Min = min,\
+		type Max = max )\
+	{\
+		return (type)_GetUnsigned( Registry, Path, Default, Error, Min, Max );\
+	}
+
+#ifdef CPE__64_BITS_TYPES_ALLOWED
+	_M( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
+#endif
+	_M( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
+	_M( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
+	_M( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
+
+#ifdef RGSRTY__M_BACKUP
+#	define _M RGSRTY__M_BACKUP
+#else
+#	undef _M
+#endif
+
+	template <typename registry> inline str::_gsint__ _GetSigned(
+		const registry &Registry,
+		const str::string_ &Path,
+		str::_gsint__ Default,
+		bso::bool__ *Error,
+		str::_gsint__ Min,
+		str::_gsint__ Max )
+	{
+		str::_gsint__ Value = Default;
+	ERRProlog
+		str::string RawValue;
+		epeios::row__ GenericError = NONE;
+	ERRBegin
+		RawValue.Init();
+
+		if ( Registry.GetValue( Path, RawValue, &GenericError ) )
+			Value = str::_GenericSignedConversion( RawValue, 0, &GenericError, str::bAuto, Min, Max );
+
+		if ( ( GenericError != NONE ) ) {
+			Value = Default;
+			*Error = true;
+		}
+
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Value;
+	}
+
+#ifdef _M
+#	define RGSRTY__M_BACKUP	_M
+#endif
+
+#define _M( name, type, min, max )\
+	template <typename registry> inline bso::ulong__ Get##name(\
+		const registry &Registry,\
+		const str::string_ &Path,\
+		type Default,\
+		bso::bool__ *Error = NULL,\
+		type Min = min,\
+		type Max = max )\
+	{\
+		return (type)_GetSigned( Registry, Path, Default, Error, Min, Max );\
+	}
+
+#ifdef CPE__64_BITS_TYPES_ALLOWED
+	_M( SLL, bso::ullong__, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
+#endif
+	_M( SL, bso::slong__, BSO_SLONG_MIN, BSO_SLONG_MAX )
+	_M( SS, bso::sshort__, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
+	_M( SB, bso::sbyte__, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
+
+#ifdef RGSRTY__M_BACKUP
+#	define _M RGSRTY__M_BACKUP
+#else
+#	undef _M
+#endif
+
 }
 
 

@@ -269,13 +269,20 @@ static void Add_(
 	}
 }
 
-static inline bso::bool__ IsNewSession_( time_t TimeStamp )
+static inline bso::bool__ IsNewSession_(
+	time_t TimeStamp,
+	bso::ulong__ Duration )	// in minutes.
 {
-	return difftime( time( NULL ), TimeStamp ) > ( 3600 * 8 ); // 8 heures.
+	if ( Duration == 0 )
+		return false;
+	else
+		return difftime( time( NULL ), TimeStamp ) > ( Duration * 60 );
 }
 
 
-rrow__ rpkctx::context_::Pick( amount__ Amount )
+rrow__ rpkctx::context_::Pick(
+	amount__ Amount,
+	bso::ulong__ Duration )
 {
 	rrow__ Row = NONE;
 ERRProlog
@@ -292,7 +299,7 @@ ERRBegin
 		Current.Init();
 	}
 
-	if ( IsNewSession_( Current.TimeStamp() ) ) {
+	if ( IsNewSession_( Current.TimeStamp(), Duration ) ) {
 		Add_( Current.Records, Previous.Records );
 		Current.Records.Init();
 	}

@@ -66,22 +66,16 @@ extern class ttr_tutor &STRTutor;
 #include "cpe.h"
 #include "ctn.h"
 
-#ifndef STR_64_BITS_FORBIDDEN
-#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined( STR_64_BITS_TYPES_ALLOWED )
-#		define STR__64_BITS_TYPES_ALLOWED
-#	endif
-#endif
-
-#ifdef STR__64_BITS_TYPES_ALLOWED
-#	ifndef BSO__64_BITS_TYPES_ALLOWED
-#		error "64 bits types allowed in 'STR' library, but not in 'BSO' library !".
-#	endif
+#ifdef CPE__64_BITS_TYPES_ALLOWED
+#	define STR__64_BITS_TYPES_ALLOWED
 #endif
 
 namespace str {
 
 	namespace {
 		using bch::bunch_;
+		using bso::_guint__;
+		using bso::_gsint__;
 	}
 
 	enum base__ {
@@ -90,23 +84,25 @@ namespace str {
 		b16 = 16,	// Base hexadécimale.
 	};
 
-#ifdef STR__64_BITS_TYPES_ALLOWED
-	typedef bso::ullong__ _generic_integer__;
-#else
-	typedef bso::ulong__ _generic_integer__;
-#endif
-
 	class string_;	// Prédéclaration.
 
 #define STR_BUFFER___	tol::E_FPOINTER___( bso::char__ )
 
 
-	_generic_integer__ _GenericConversion(
+	_guint__ _GenericUnsignedConversion(
 		const class string_ &String,
 		epeios::row__ Begin,
 		epeios::row__ *ErrP,
 		base__ Base,
-		_generic_integer__ Limit );
+		_guint__ Limit );
+
+	_gsint__ _GenericSignedConversion(
+		const class string_ &String,
+		epeios::row__ Begin,
+		epeios::row__ *ErrP,
+		base__ Base,
+		_gsint__ PositiveLimit,
+		_gsint__ NegativeLimit );
 
 	class _string_size_handler {
 	public:
@@ -248,7 +244,7 @@ namespace str {
 			base__ Base,
 			bso::ullong__ Limit = BSO_ULLONG_MAX ) const
 		{
-			return _GenericConversion( *this, Begin, ErrP, Base, Limit );
+			return _GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
 		}
 		bso::ullong__ ToULL(
 			epeios::row__ *ErrP = NULL,
@@ -266,7 +262,7 @@ namespace str {
 			base__ Base,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const
 		{
-			return (bso::ulong__)_GenericConversion( *this, Begin, ErrP, Base, Limit );
+			return (bso::ulong__)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
 		}
 		//f Variation in parameters.
 		bso::ulong__ ToUL(
@@ -274,38 +270,46 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ulong__ Limit = BSO_ULONG_MAX ) const
 		{
-			return (bso::ulong__)ToUL( 0, ErrP, Base, Limit );
+			return ToUL( 0, ErrP, Base, Limit );
 		}
+#ifdef STR__64_BITS_TYPES_ALLOWED
+		bso::sllong__ ToSLL(
+			epeios::row__ Begin,
+			epeios::row__ *ErrP,
+			base__ Base,
+			bso::sllong__ PositiveLimit = BSO_SLONG_MAX,
+			bso::sllong__ NegativeLimit = BSO_SLONG_MIN ) const
+		{
+			return _GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
+		}
+		bso::sllong__ ToUSL(
+			epeios::row__ *ErrP = NULL,
+			base__ Base = bAuto,
+			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
+			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
+		{
+			return ToSLL( 0, ErrP, Base, PositiveLimit, NegativeLimit );
+		}
+#endif
 		/*f Convert to signed long. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max absolute value that the returned value can have. */
 		bso::slong__ ToSL(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ulong__ PositiveLimit = BSO_SLONG_MAX,
+			base__ Base,
+			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
 			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
 		{
-			if ( Get( Begin ) == '-' )
-				if ( Next( Begin ) == NONE ) {
-					*ErrP = *Begin + 1;
-					return 0;
-				} else 
-					return -(bso::slong__)_GenericConversion( *this, Next( Begin ), ErrP, b10, -NegativeLimit );
-			else if ( Get( Begin ) == '+' )
-				if ( Next( Begin ) == NONE ) {
-					*ErrP = *Begin + 1;
-					return 0;
-				} else 
-					return (bso::slong__)_GenericConversion( *this, Next( Begin ), ErrP, b10, PositiveLimit );
-			else 
-				return (bso::slong__)_GenericConversion( *this, Begin, ErrP, b10, PositiveLimit );
+			return (bso::slong__)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		//f Variation in parameters.
 		bso::slong__ ToSL(
 			epeios::row__ *ErrP = NULL,
-			bso::ulong__ PositiveLimit = BSO_SLONG_MAX,
+			base__ Base = bAuto,
+			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
 			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
 		{
-			return ToSL( 0, ErrP, PositiveLimit, NegativeLimit );
+			return ToSL( 0, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to unsigned short. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
@@ -315,7 +319,7 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ushort__ Limit = BSO_USHORT_MAX ) const
 		{
-			return (bso::ushort__)_GenericConversion( *this, Begin, ErrP, Base, Limit );
+			return (bso::ushort__)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
 		}
 		bso::ushort__ ToUS(
 			epeios::row__ *ErrP,
@@ -338,18 +342,20 @@ namespace str {
 		bso::sshort__ ToSS(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ushort__ PositiveLimit = BSO_SSHORT_MAX,
+			base__ Base,
+			bso::sshort__ PositiveLimit = BSO_SSHORT_MAX,
 			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
 		{
-			return (bso::sshort__)ToSL( Begin, ErrP, PositiveLimit, NegativeLimit );
+			return (bso::sshort__)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		//f Variation in parameters.
 		bso::sshort__ ToSS(
 			epeios::row__ *ErrP = NULL,
-			bso::ushort__ PositiveLimit = BSO_SSHORT_MAX,
+			base__ Base = bAuto,
+			bso::sshort__ PositiveLimit = BSO_SSHORT_MAX,
 			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
 		{
-			return ToSS( 0, ErrP, PositiveLimit, NegativeLimit );
+			return ToSS( 0, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to unsigned byte. If 'ErrP' != NULL, put in it the position of the bad character
 		if there is one. 'Limit' is the max value that the returned value can have. */
@@ -359,7 +365,7 @@ namespace str {
 			base__ Base = bAuto,
 			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
 		{
-			return (bso::ubyte__)_GenericConversion(*this, Begin, ErrP, Base, Limit );
+			return (bso::ubyte__)_GenericUnsignedConversion(*this, Begin, ErrP, Base, Limit );
 		}
 		bso::ubyte__ ToUB(
 			epeios::row__ *ErrP,
@@ -382,18 +388,20 @@ namespace str {
 		bso::sbyte__ ToSB(
 			epeios::row__ Begin,
 			epeios::row__ *ErrP,
-			bso::ubyte__ PositiveLimit = BSO_SBYTE_MAX,
+			base__ Base,
+			bso::sbyte__ PositiveLimit = BSO_SBYTE_MAX,
 			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
 		{
-			return (bso::sbyte__)ToSL( 0, ErrP, PositiveLimit, NegativeLimit );
+			return (bso::sbyte__)_GenericSignedConversion( *this, 0, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		//f Variation in parameters.
 		bso::sbyte__ ToSB(
 			epeios::row__ *ErrP = NULL,
-			bso::ubyte__ PositiveLimit = BSO_SBYTE_MAX,
+			base__ Base = bAuto,
+			bso::sbyte__ PositiveLimit = BSO_SBYTE_MAX,
 			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
 		{
-			return ToSB( 0, ErrP, PositiveLimit, NegativeLimit );
+			return ToSB( 0, ErrP, Base, PositiveLimit, NegativeLimit );
 		}
 		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
 		an error or 'NONE' when no error. */

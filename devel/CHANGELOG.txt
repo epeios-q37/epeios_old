@@ -1,5 +1,11 @@
 $Id$
 
+09/08/2010 :
+	- RGSTRY :
+		- Ajout des fonctions permettant de récupèrer un entier.
+	- STR :
+		- Remaniement pour gestion complète des conversions en 64 bits, signés et non signés.
+
 08/08/2010 :
 	- BSO :
 		- Ajout méthodes manquantes concernant les type 64 bits.

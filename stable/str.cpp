@@ -347,18 +347,18 @@ epeios::row__ string_::Search(
 		return Start;
 }
 
-_generic_integer__ str::_GenericConversion(
+_guint__ str::_GenericUnsignedConversion(
 	const str::string_ &String,
 	epeios::row__ Begin,
 	epeios::row__ *ErrP,
 	base__ BaseFlag,
-	_generic_integer__ Limit )
+	_guint__ Limit )
 {
-	_generic_integer__ Result = 0;
+	_guint__ Result = 0;
 	epeios::row__ &P = Begin;
 	bso::ubyte__ C;
 	bso::ubyte__ Base;
-	_generic_integer__ OtherLimit = 0;
+	_guint__ OtherLimit = 0;
 
 	if ( BaseFlag == bAuto )
 		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == '#' ) ) {
@@ -407,6 +407,34 @@ _generic_integer__ str::_GenericConversion(
 
 	return Result;
 }
+
+_gsint__ str::_GenericSignedConversion(
+	const class string_ &String,
+	epeios::row__ Begin,
+	epeios::row__ *ErrP,
+	base__ Base,
+	_gsint__ PositiveLimit,
+	_gsint__ NegativeLimit )
+{
+	if ( PositiveLimit < 0 )
+		ERRu();
+
+	if ( String.Get( Begin ) == '-' )
+		if ( String.Next( Begin ) == NONE ) {
+			*ErrP = *Begin + 1;
+			return 0;
+		} else 
+			return -(_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
+	else if ( String.Get( Begin ) == '+' )
+		if ( String.Next( Begin ) == NONE ) {
+			*ErrP = *Begin + 1;
+			return 0;
+		} else 
+			return (_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
+	else 
+		return (_gsint__)_GenericUnsignedConversion( String, Begin, ErrP, Base, PositiveLimit );
+}
+
 
 bso::lfloat__ string_::ToLF(
 	epeios::row__ *ErrP,
