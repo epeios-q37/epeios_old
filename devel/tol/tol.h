@@ -271,13 +271,7 @@ public:\
 
 
 //d Create a new type for a row named 'Type'.
-
-template <typename row> class _row__
-: public E_TYPEDEF( row, row_t__ )
-{
-}
-
-#define E_ROW( type )	_row__<type>
+#define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )
 
 
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
@@ -903,12 +897,33 @@ namespace tol {
 	}
 #endif
 
-// Permet de créer un destructeur virtuel.
-#define E_VDTOR( name )\
-	virtual ~name( void )\
+// Création d'un constructeur standardisé.
+#define E_CTOR( name )\
+	name( void )\
+	{\
+		reset( false );\
+	}\
+
+// Création d'un destructeur standardisé.
+#define E_DTOR( name )\
+	~name( void )\
 	{\
 		reset();\
 	}\
+
+// Création d'un destructeur virtuel standardisé.
+#define E_VDTOR( name )	virtual E_DTOR( name )
+
+// Création d'un constructeur et d'un destructeur standardisé.
+#define E_CDTOR( name )\
+	E_CTOR( name )\
+	E_DTOR( name )
+
+// Création d'un constructeur et d'un destructeur virtuel standardisé.
+#define E_CVDTOR( name )\
+	E_CTOR( name )\
+	E_VDTOR( name )
+
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
 #define E_RRODISCLOSE_(type__, name )\

@@ -1,5 +1,9 @@
 $Id$
 
+10/08/2010 :
+	- TOL :
+		- Ajout 'E_DTOR(...)' et 'E_CTOR(...)'.
+
 09/08/2010 :
 	- RGSTRY :
 		- Ajout des fonctions permettant de récupèrer un entier.

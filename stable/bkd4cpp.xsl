@@ -148,12 +148,31 @@ This header file contains then the API to access to the backend to which 'getbkd
 				<xsl:text>&tab;&tab;bkdacc::id16__</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-		<xsl:text> ID_;&nl;</xsl:text>
-		<xsl:text>&tab;public:&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::backend_access___ *Backend;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::command__ Commands[</xsl:text>
+		<xsl:text> _ID;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;bkdacc::backend_access___ *_Backend;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;bkdacc::command__ _Commands[</xsl:text>
 		<xsl:value-of select="Commands/@Amount"/>
 		<xsl:text>];&nl;</xsl:text>
+		<xsl:text>&tab;public:&nl;</xsl:text>
+		<xsl:text>&tab;&tab;void reset( bso::bool__ = true )&nl;</xsl:text>
+		<xsl:text>&tab;&tab;{&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_Backend = NULL;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = BKDACC_UNDEFINED_OBJECT;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;}&nl;</xsl:text>
+		<xsl:text>&tab;&tab;E_CVDTOR( </xsl:text>
+		<xsl:choose>
+			<xsl:when test="@Object='Master'">
+				<xsl:text>statics___</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="Prefix/@Default"/>
+				<xsl:text>_</xsl:text>
+				<xsl:value-of select="Name/@Underscored"/>
+				<xsl:text>_common__</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;void Init( bkdacc::backend_access___ &amp;Backend )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;bkdacc::commands_details CommandsDetails;&nl;</xsl:text>
@@ -164,15 +183,15 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:apply-templates select="Commands" mode="data"/>
 		<xsl:text>&tab;&tab;&tab;};&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;this->Backend = &amp;Backend;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_Backend = &amp;Backend;&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;ID_ = </xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = </xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
 				<xsl:text>BKDACC_MASTER_OBJECT;</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>this->Backend->GetType( str::string( "</xsl:text>
+				<xsl:text>_Backend->GetType( str::string( "</xsl:text>
 				<xsl:value-of select="Name/@Raw"/>
 				<xsl:text>" ) );&nl;</xsl:text>
 			</xsl:otherwise>
@@ -182,19 +201,19 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 		<xsl:apply-templates select="Commands" mode="affectation"/>
 		<xsl:text>&tab;&tab;&tab;Commands.Init();&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;this->Backend->GetCommands( </xsl:text>
+		<xsl:text>&tab;&tab;&tab;_Backend->GetCommands( </xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
 				<xsl:text>BKDACC_MASTER_TYPE</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>ID_</xsl:text>
+				<xsl:text>_ID</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>, CommandsDetails, Commands );&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;Commands.Recall( 0, </xsl:text>
 		<xsl:value-of select="Commands/@Amount"/>
-		<xsl:text>, this->Commands );&nl;</xsl:text>
+		<xsl:text>, _Commands );&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
@@ -203,14 +222,18 @@ This header file contains then the API to access to the backend to which 'getbkd
 			<xsl:otherwise>
 				<xsl:text>&tab;&tab;bkdacc::object__ GetNewObject( void )&nl;</xsl:text>
 				<xsl:text>&tab;&tab;{&nl;</xsl:text>
-				<xsl:text>&tab;&tab;&tab;return Backend->GetNewObject( ID_ );&nl;</xsl:text>
+				<xsl:text>&tab;&tab;&tab;return _Backend->GetNewObject( _ID );&nl;</xsl:text>
 				<xsl:text>&tab;&tab;}&nl;</xsl:text>
-				<xsl:text>&tab;&tab;void RemoveObject( bkdacc::object__ Object)&nl;</xsl:text>
+				<xsl:text>&tab;&tab;void RemoveObject( bkdacc::object__ Object )&nl;</xsl:text>
 				<xsl:text>&tab;&tab;{&nl;</xsl:text>
-				<xsl:text>&tab;&tab;&tab;Backend->RemoveObject( Object );&nl;</xsl:text>
+				<xsl:text>&tab;&tab;&tab;_Backend->RemoveObject( Object );&nl;</xsl:text>
 				<xsl:text>&tab;&tab;}&nl;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
+		<xsl:text>&tab;&tab;bkdacc::backend_access___ &amp;Backend( void ) const&nl;</xsl:text>
+		<xsl:text>&tab;&tab;{&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;return *_Backend;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;};&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 	</xsl:template>
@@ -223,7 +246,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>___&nl;</xsl:text>
 		<xsl:text>&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;private:&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::object__ ID_;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;bkdacc::object__ _ID;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;</xsl:text>
 		<xsl:value-of select="Prefix/@Default"/>
 		<xsl:text>_</xsl:text>
@@ -233,11 +256,11 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;void reset( bso::bool__ P = true )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;if ( P == true )&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;&tab;if ( ( Common_ != NULL ) &amp;&amp; ( ID_ != BKDACC_UNDEFINED_OBJECT ) )&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;&tab;&tab;Common_->RemoveObject( ID_ );&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;&tab;if ( ( Common_ != NULL ) &amp;&amp; ( _ID != BKDACC_UNDEFINED_OBJECT ) )&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;&tab;&tab;Common_->RemoveObject( _ID );&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;Common_ = NULL;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;ID_ = BKDACC_UNDEFINED_OBJECT;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = BKDACC_UNDEFINED_OBJECT;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;&tab;</xsl:text>
 		<xsl:value-of select="Prefix/@Default"/>
@@ -257,7 +280,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;&tab;bkdacc::object__ ID( void ) const&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;return ID_;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;return _ID;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;&tab;void Init( </xsl:text>
 		<xsl:value-of select="Prefix/@Default"/>
@@ -267,7 +290,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;Common_ = &amp;Common;&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;ID_ = Common_->GetNewObject();&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = Common_->GetNewObject();&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:apply-templates select="Commands" mode="function">
 			<xsl:with-param name="Base">Common_-></xsl:with-param>
@@ -309,9 +332,9 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;</xsl:text>
 		<xsl:value-of select="$Base"/>
-		<xsl:text>Backend->PushHeader( ID_, </xsl:text>
+		<xsl:text>Backend().PushHeader( _ID, </xsl:text>
 		<xsl:value-of select="$Base"/>
-		<xsl:text>Commands[</xsl:text>
+		<xsl:text>_Commands[</xsl:text>
 		<xsl:value-of select="position()-1"/>
 		<xsl:text>] );&nl;</xsl:text>
 		<xsl:apply-templates select="Parameters" mode="instruction">
@@ -410,7 +433,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;</xsl:text>
 		<xsl:value-of select="$Base"/>
-		<xsl:text>Backend->EndOfInParameters();&nl;</xsl:text>
+		<xsl:text>_Backend->EndOfInParameters();&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:apply-templates select="Out/Parameter" mode="instruction">
 			<xsl:with-param name="Base" select="$Base"/>
@@ -418,14 +441,14 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;return </xsl:text>
 		<xsl:value-of select="$Base"/>
-		<xsl:text>Backend->Handle();&nl;</xsl:text>
+		<xsl:text>_Backend->Handle();&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 </xsl:template>
 <xsl:template match="In/Parameter" mode="instruction">
 	<xsl:param name="Base"/>
 	<xsl:text>&tab;&tab;&tab;</xsl:text>
 	<xsl:value-of select="$Base"/>
-      <xsl:text>Backend-></xsl:text>
+      <xsl:text>_Backend-></xsl:text>
       <xsl:choose>
 		<xsl:when test="substring(Name,1,2)='xi'">XI<xsl:value-of select="substring(Name,3)"/></xsl:when>
 		<xsl:when test="substring(Name,1,8)='xstrings'">XStrings<xsl:value-of select="substring(Name,9)"/></xsl:when>
@@ -446,7 +469,7 @@ This header file contains then the API to access to the backend to which 'getbkd
     <xsl:param name="Base"/>
     <xsl:text>&tab;&tab;&tab;</xsl:text>
     <xsl:value-of select="$Base"/>
-    <xsl:text>Backend-></xsl:text>
+    <xsl:text>_Backend-></xsl:text>
     <xsl:choose>
     <xsl:when test="substring(Name,1,2)='xi'">XI<xsl:value-of select="substring(Name,3)"/></xsl:when>
 		<xsl:when test="substring(Name,1,8)='xstrings'">XStrings<xsl:value-of select="substring(Name,9)"/></xsl:when>
