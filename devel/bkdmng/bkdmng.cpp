@@ -397,7 +397,7 @@ static void GetParameters_(
 }
 
 
-static void AboutBackend_(
+static void About_(
 	backend_ &Backend,
 	untyped_module &Module,
 	index__,
@@ -406,22 +406,8 @@ static void AboutBackend_(
 	bso::bool__ &,
 	void * )
 {
-	Requete.StringOut() = Backend.GetBackendName();
-	Requete.StringOut() = Backend.GetBackendVersion();
-	Requete.Complete();
-}
-
-static void AboutPublisher_(
-	backend_ &Backend,
-	untyped_module &Module,
-	index__,
-	command__ Command,
-	request_manager__ &Requete,
-	bso::bool__ &,
-	void * )
-{
-	Requete.StringOut() = Backend.GetPublisherName();
-	Requete.StringOut() = Backend.GetPublisherVersion();
+	Requete.StringOut() = Backend.GetBackendInformations();
+	Requete.StringOut() = Backend.GetPublisherInformations();
 	Requete.Complete();
 }
 
@@ -778,11 +764,8 @@ namespace bkdmng {
 		// Remove the given object.
 		ADD( RemoveObject );
 
-		// Libellé et version du 'backend'.
-		ADD( AboutBackend );
-
-		// Libellé et version du 'Publisher'.
-		ADD( AboutPublisher );
+		// Informations au sujet du 'backend' et du 'publisher'.
+		ADD( About );
 
 		// Disconnection.
 		ADD( Disconnect );

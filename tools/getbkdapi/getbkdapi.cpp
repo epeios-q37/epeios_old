@@ -672,10 +672,8 @@ void GetBackendData(
 	csducl::type__ Type,
 	types_ &Types,
 	bkdacc::strings_ &RawMessages,
-	str::string_ &BackendName,
-	str::string_ &BackendVersion,
-	str::string_ &PublisherName,
-	str::string_ &PublisherVersion )
+	str::string_ &BackendInformations,
+	str::string_ &PublisherInformations )
 {
 ERRProlog
 	csducl::universal_client_core Core;
@@ -704,8 +702,7 @@ ERRBegin
 	GetDescription( Backend, Types );
 	GetRawMessages( Backend, RawMessages );
 	
-	Backend.AboutBackend( BackendName, BackendVersion );
-	Backend.AboutPublisher( PublisherName, PublisherVersion );
+	Backend.About( BackendInformations, PublisherInformations );
 
 	Backend.Disconnect();
 ERRErr
@@ -785,10 +782,8 @@ void Generate(
 }
 
 void GenerateMisc(
-	const str::string_ &BackendName,
-	const str::string_ &BackendVersion,
-	const str::string_ &PublisherName,
-	const str::string_ &PublisherVersion,
+	const str::string_ &BackendInformations,
+	const str::string_ &PublisherInformations,
 	writer_ &Writer )
 {
 	tol::buffer__ Buffer;
@@ -806,14 +801,8 @@ void GenerateMisc(
 	Writer.PutValue( COPYRIGHT_YEARS, "Date" );
 	Writer.PopTag();
 	Writer.PopTag();
-	Writer.PushTag( "Backend" );
-	Writer.PutValue( BackendName, "Name" );
-	Writer.PutValue( BackendVersion, "Version" );
-	Writer.PopTag();
-	Writer.PushTag( "Publisher" );
-	Writer.PutValue( PublisherName, "Name" );
-	Writer.PutValue( PublisherVersion, "Version" );
-	Writer.PopTag();
+	Writer.PutValue( BackendInformations, "Backend" );
+	Writer.PutValue( PublisherInformations, "Publisher" );
 	Writer.PutValue( tol::Date( Buffer ), "Date" );
 	Writer.PutValue( tol::Time( Buffer ), "Time" );
 	Writer.PopTag();
@@ -824,10 +813,8 @@ void Generate(
 	const bkdacc::strings_ &RawMessages,
 	const types_ &Types,
 	epeios::row__ MasterRow,
-	const str::string_ &BackendName,
-	const str::string_ &BackendVersion,
-	const str::string_ &PublisherName,
-	const str::string_ &PublisherVersion,
+	const str::string_ &BackendInformations,
+	const str::string_ &PublisherInformations,
 	txf::text_oflow__ &Flow )
 {
 ERRProlog
@@ -842,7 +829,7 @@ ERRBegin
 	
 	Writer.PushTag( "API" );
 
-	GenerateMisc( BackendName, BackendVersion, PublisherName, PublisherVersion, Writer );	
+	GenerateMisc( BackendInformations, PublisherInformations, Writer );	
 	Generate( RawMessages, Types, MasterRow, Writer );
 
 	Writer.PopTag();
@@ -879,8 +866,8 @@ void Go(
 {
 ERRProlog
 	types Types;
-	str::string BackendName, BackendVersion;
-	str::string PublisherName, PublisherVersion;
+	str::string BackendInformations;
+	str::string PublisherInformations;
 	epeios::row__ MasterRow = NONE;
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
@@ -889,15 +876,13 @@ ERRProlog
 ERRBegin
 	Types.Init();
 
-	BackendName.Init();
-	BackendVersion.Init();
-
-	PublisherName.Init();
-	PublisherVersion.Init();
+	BackendInformations.Init();
+	
+	PublisherInformations.Init();
 
 	RawMessages.Init();
 	
-	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, BackendName, BackendVersion, PublisherName, PublisherVersion );
+	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, BackendInformations, PublisherInformations );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -907,12 +892,15 @@ ERRBegin
 			ERRi();
 		}
 
+		COut << "Backend : " << BackendInformations << txf::nl;
+		COut << "Publisher : " << PublisherInformations << txf::nl;
+
 		Backup = true;
 
 		File.Init( Arguments.FileName );
-		Generate( RawMessages, Types, MasterRow, BackendName, BackendVersion, PublisherName, PublisherVersion, TFile );
+		Generate( RawMessages, Types, MasterRow, BackendInformations, PublisherInformations, TFile );
 	} else
-		Generate( RawMessages, Types, MasterRow, BackendName, BackendVersion, PublisherName, PublisherVersion, COut );
+		Generate( RawMessages, Types, MasterRow, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, CErr );

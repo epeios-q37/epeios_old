@@ -1,5 +1,13 @@
 $Id$
 
+11/08/2010 :
+	- BKDACC :
+		- Adaptation aux modifications 'BKDxxx'.
+	- BKDCMD :
+		- Modifications pour accompagner les modifications de 'BKDMNG'.
+	- BKDMNG :
+		- Simplification de la gestion des informations concernant le 'backend' et le 'publisher'.
+
 10/08/2010 :
 	- TOL :
 		- Ajout 'E_DTOR(...)' et 'E_CTOR(...)'.

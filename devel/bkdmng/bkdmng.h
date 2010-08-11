@@ -60,11 +60,6 @@ extern class ttr_tutor &BKDMNGTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D BacKenD MaNaGer
-/* End addendum to automatic documentation generation part. */
-
-
 #include "err.h"
 #include "flw.h"
 #include "lst.h"
@@ -721,14 +716,10 @@ namespace bkdmng {
 	private:
 		const lcl::locales_ *_Locales;
 		master_module Master_;
-		// Libellé du 'backend'.
-		const char *_BackendName;
-		// Version du 'backend'.
-		const char *_BackendVersion;
-		// Libellé du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
-		const char *_PublisherName;
-		// Version du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
-		const char *_PublisherVersion;
+		// Informations à propos du 'backend'.
+		const char *_BackendInformations;
+		// Information à propos du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
+		const char *_PublisherInformations;
 		str::string Language_;
 		// Retourne le module correspondant à 'IdType'.
 		untyped_module &Module_( type__ IdType ) const
@@ -765,29 +756,22 @@ namespace bkdmng {
 		{
 			Language_.Init( BKDMNG__DEFAULT_LANGUAGE );
 
-			_BackendName = NULL;
-			_BackendVersion = NULL;
-			_PublisherName = NULL;
-			_PublisherVersion = NULL;
+			_BackendInformations = NULL;
+			_PublisherInformations = NULL;
 		}
-		// '[Backend|Publisher]Name' and '[Backend|Publisher]Version' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
+		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
-			const char *BackendName,
-			const char *BackendVersion,
-			const char *PublisherName,
-			const char *PublisherVersion,
-			const lcl::locales_ &Locales )
+			const lcl::locales_ &Locales,
+			const char *BackendInformations,
+			const char *PublisherInformations )
 		{
 			Master_.Init( *this );
 
 			Modules.Init();
 			Links.Init();
 
-			_BackendName = BackendName;
-			_BackendVersion = BackendVersion;
-
-			_PublisherName = PublisherName;
-			_PublisherVersion = PublisherVersion;
+			_BackendInformations = BackendInformations;
+			_PublisherInformations = PublisherInformations;
 
 			_Locales = &Locales;
 		}
@@ -887,21 +871,13 @@ namespace bkdmng {
 		{
 			return Add( Name, FP, &Cast );
 		}
-		const char *GetBackendName( void ) const 
+		const char *GetBackendInformations( void ) const 
 		{
-			return _BackendName;
+			return _BackendInformations;
 		}
-		const char *GetBackendVersion( void ) const
+		const char *GetPublisherInformations( void ) const 
 		{
-			return _BackendVersion;
-		}
-		const char *GetPublisherName( void ) const 
-		{
-			return _PublisherName;
-		}
-		const char *GetPublisherVersion( void ) const
-		{
-			return _PublisherVersion;
+			return _PublisherInformations;
 		}
 		//f Return 'true' if 'Object' is of type given by 'Prefix' and 'Name'.
 		bso::bool__ IsOfType(

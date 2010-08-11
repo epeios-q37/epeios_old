@@ -65,7 +65,7 @@ extern class ttr_tutor &BKDCMDTutor;
 #include "bkdcst.h"
 
 //d Version of the commands.
-#define BKDCMD_COMMANDS_VERSION	"2"
+#define BKDCMD_COMMANDS_VERSION	"3"
 
 namespace bkdcmd {
 	using namespace bkdcst;
@@ -80,8 +80,7 @@ namespace bkdcmd {
 		cGetCommands,
 		cGetTypeAndCommands,
 		cRemoveObject,
-		cAboutBackend,
-		cAboutPublisher,
+		cAbout,
 		cDisconnect,
 		cGetTypesIDAndPrefixAndName,
 		cGetCommandsIDAndName,
