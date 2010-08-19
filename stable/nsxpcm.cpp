@@ -69,9 +69,14 @@ public:
 #include "nsIExternalProtocolService.h"
 #include "nsIDirectoryService.h"
 #include "nsIFormHistory.h"
+#include "nsIDOMNodeList.h"
 
 #include "xpp.h"
 #include "txf.h"
+
+#define T( f )\
+	if ( ( f ) != NS_OK )\
+		ERRx()
 
 #if defined NSXPCM__ENABLE_FORMHISTORY
 #	define ENABLE_FORMHISTORY
@@ -408,7 +413,7 @@ ERRBegin
 
 	if ( *DefaultExtension != 0 ) {
 		Transform( DefaultExtension, EString );
-		FilePicker->SetDefaultExtension( EString );
+		T( FilePicker->SetDefaultExtension( EString ) );
 	}
 
 	PRInt16 _retval = 0;
@@ -847,7 +852,7 @@ ERRProlog
 ERRBegin
 	nsxpcm::Transform( Text, NSText );
 
-	GetWindowInternal( Window )->Alert( NSText );
+	T( GetWindowInternal( Window )->Alert( NSText ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -877,7 +882,7 @@ ERRProlog
 ERRBegin
 	nsxpcm::Transform( Text, NSText );
 
-	GetWindowInternal( Window )->Confirm( NSText, &Answer );
+	T( GetWindowInternal( Window )->Confirm( NSText, &Answer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -908,7 +913,7 @@ void nsxpcm::Log( const char *Text )
 
 	nsxpcm::Transform( Text, String );
 
-	ConsoleService->LogStringMessage( String.get() );
+	T( ConsoleService->LogStringMessage( String.get() ) );
 }
 
 void nsxpcm::Log( const str::string_ &Text )
@@ -1008,7 +1013,7 @@ ERRBegin
 
 	_RawEvent = RawEvent;
 
-	RawEvent->GetType( String );
+	T( RawEvent->GetType( String ) );
 
 	EventString.Init();
 
@@ -1174,7 +1179,7 @@ ERRBegin
 		Transform( Parameter( Row ).Name, Name );
 
 		nsxpcm::CreateInstance( NS_VARIANT_CONTRACTID, Value );
-		Value->SetAsString( Parameter( Row ).Value.Convert( NameBuffer ) );
+		T( Value->SetAsString( Parameter( Row ).Value.Convert( NameBuffer ) ) );
 
 		Result = Processor->SetParameter( NS_LITERAL_STRING( "" ), Name, Value );
 
@@ -1374,7 +1379,7 @@ ERRBegin
 	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
 
 	PRBool Persistent = false;
-	DirectoryServiceProvider->GetFile( "CurWorkD", &Persistent, &File );
+	T( DirectoryServiceProvider->GetFile( "CurWorkD", &Persistent, &File ) );
 
 	if ( ( Result = File->GetPath( Path ) ) != NS_OK )
 		ERRu();
@@ -1481,13 +1486,13 @@ ERRProlog
 	str::string Argument;
 	nsEmbedString RawArgument;
 ERRBegin
-	CommandLine->GetLength( &Amount );
+	T( CommandLine->GetLength( &Amount ) );
 
 	if ( ( Amount < 0 ) || ( Amount > BSO_ULONG_MAX ) )
 		ERRs();
 
 	while ( Counter < Amount ) {
-		CommandLine->GetArgument( Counter++, RawArgument );
+		T( CommandLine->GetArgument( Counter++, RawArgument ) );
 
 		Argument.Init();
 		Transform( RawArgument, Argument );
@@ -1499,6 +1504,99 @@ ERREnd
 ERREpilog
 	return (bso::ulong__ )Amount;
 }
+
+static void GetBroadcastAttributeValue_(
+	nsIDOMDocument *Document,
+	const str::string_ &Id,
+	const char *AttributeName,
+	str::string_ &Value )
+{
+	nsIDOMNode *Node = nsxpcm::GetElementById( Document, Id );
+
+	if ( Node != NULL )
+		nsxpcm::GetAttribute( Node, AttributeName, Value );
+}
+
+static void CopyBroadcastCommand_(
+	nsIDOMDocument *Document,
+	nsIDOMNode *Node )
+{
+ERRProlog
+	str::string ObservesAttributeValue;
+	str::string CommandAttributeValue;
+ERRBegin
+	ObservesAttributeValue.Init();
+
+	nsxpcm::GetAttribute( Node, "observes", ObservesAttributeValue );
+
+	if ( ObservesAttributeValue.Amount() != 0 ) {
+		CommandAttributeValue.Init();
+		GetBroadcastAttributeValue_( Document, ObservesAttributeValue, "command", CommandAttributeValue );
+
+		if ( CommandAttributeValue.Amount() != 0 )
+			nsxpcm::SetAttribute( Node, "command", CommandAttributeValue );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void CopyBroadcastCommand_(
+	nsIDOMDocument *Document,
+	nsIDOMNodeList *List )
+{
+	PRUint32 Length = 0;
+	nsIDOMNode *Node = NULL;
+
+	T( List->GetLength( &Length ) );
+
+	while ( Length-- ) {
+		T( List->Item( Length, &Node ) );
+
+		CopyBroadcastCommand_( Document, Node );
+	}
+}
+
+void nsxpcm::PatchBadCommandBehaviorForListeningMenuItems( nsIDOMDocument *Document )
+{
+	nsIDOMNodeList *List = NULL;
+	nsEmbedString EId;
+
+	nsxpcm::Transform( "menuitem", EId );
+
+	T( Document->GetElementsByTagName( EId, &List ) );
+
+	CopyBroadcastCommand_( Document, List );
+}
+
+
+static void AddSemiColonCommand_(nsIDOMNodeList *List )
+{
+	PRUint32 Length = 0;
+	nsIDOMNode *Node = NULL;
+
+	T( List->GetLength( &Length ) );
+
+	while ( Length-- ) {
+		T( List->Item( Length, &Node ) );
+
+		nsxpcm::SetAttribute( Node, "oncommand", ";" );
+	}
+}
+
+void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Document )
+{
+	nsIDOMNodeList *List = NULL;
+	nsEmbedString EId;
+
+	nsxpcm::Transform( "command", EId );
+
+	if ( Document->GetElementsByTagName( EId, &List ) != NS_OK )
+		ERRu();
+
+	AddSemiColonCommand_( List );
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

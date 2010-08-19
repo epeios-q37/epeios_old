@@ -1,5 +1,13 @@
 $Id$
 
+19/08/2010 :
+	- NWXPCM :
+		- Reforcement détection d'erreurs.
+		- Suppression 'ErrorHandling'.
+		- Ajout fonctions 'p les bogues suivant :
+			- un 'menuitem' n'hérite pas de l'attribut 'command' du 'broadcast' qu'il écoute; le 'patch' consiste à copier l'attribut 'command' du 'broadcast' qu'il écoute.
+			- un 'key' ne lance pas la commande qui lui est affecté à travers l'attribut 'command'; le patch consiste à rajouter un attribut 'oncommand=";"' à toutes les balises 'command'.
+
 11/08/2010 :
 	- BKDACC :
 		- Adaptation aux modifications 'BKDxxx'.

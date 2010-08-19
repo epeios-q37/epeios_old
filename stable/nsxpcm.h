@@ -273,6 +273,15 @@ namespace nsxpcm {
 		bso::char__ Separator,
 		char **JString );
 
+#ifdef T
+#	define NSXPCM__T_BUFFER T
+#	undef T
+#endif
+
+#define T( f )\
+	if ( ( f ) != NS_OK )\
+		ERRx()
+
 	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
 	template <typename t> inline t *GetService(
 		const char *ContractID,
@@ -282,8 +291,7 @@ namespace nsxpcm {
 
 		Service = do_GetService( ContractID, &Error );
 
-		if ( Error != NS_OK )
-			ERRu();
+		T( Error );
 
 		return Service;
 	}
@@ -297,8 +305,7 @@ namespace nsxpcm {
 
 		Instance = do_CreateInstance( ContractID, &Error );
 
-		if ( Error != NS_OK )
-			ERRu();
+		T( Error  );
 
 		return Instance;
 	}
@@ -312,8 +319,7 @@ namespace nsxpcm {
 
 		Transform( Id, EId );
 
-		if ( Document->GetElementById( EId, &Element ) != NS_OK )
-			ERRu();
+		T( Document->GetElementById( EId, &Element ) );
 
 		return Element;
 	}
@@ -327,26 +333,21 @@ namespace nsxpcm {
 
 		Transform( Id, EId );
 
-		if ( Document->GetElementById( EId, &Element ) != NS_OK )
-			ERRu();
+		T( Document->GetElementById( EId, &Element ) );
 
 		return Element;
 	}
 
-	template <typename element> inline element *QueryInterface(
-		nsISupports *GenericElement,
-		err::handle ErrHandle = err::hUsual )
+	template <typename element> inline element *QueryInterface( nsISupports *GenericElement )
 	{
 		element *Element = NULL;
-		nsresult Result = NS_OK;	// Aide au débogage.
 
 #ifdef NSXPCM_DBG
-
 		if ( GenericElement == NULL )
 			ERRu();
 #endif
-		if ( ( ( Result = GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) ) != NS_OK ) && ( ErrHandle != err::hSkip ) )
-			ERRu();
+
+		T( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) );
 
 		return Element;
 	}
@@ -357,15 +358,14 @@ namespace nsxpcm {
 		element *Element = NULL;
 
 #ifdef NSXPCM_DBG
-
 		if ( GenericElement == NULL )
 			ERRu();
 #endif
+
 		Requestor = QueryInterface<nsIInterfaceRequestor>( GenericElement );
 
 
-		if ( Requestor->GetInterface( element::GetIID(), (void **)&Element ) != NS_OK )
-			ERRu();
+		T( Requestor->GetInterface( element::GetIID(), (void **)&Element ) );
 
 		return Element;
 	}
@@ -398,7 +398,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Document->CreateElement( EName, &Element );
+		T( Document->CreateElement( EName, &Element ) );
 
 		if ( Element == NULL )
 			ERRs();
@@ -507,7 +507,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		
-		Element->SetAttribute( EName, EValue );
+		T( Element->SetAttribute( EName, EValue ) );
 	}
 
 	inline void SetAttribute(
@@ -531,7 +531,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		
-		Element->RemoveAttribute( EName );
+		T( Element->RemoveAttribute( EName ) );
 	}
 
 	template <typename t> inline void SetValue(
@@ -547,7 +547,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		
-		Element->SetValue( EValue );
+		T( Element->SetValue( EValue ) );
 	}
 
 	inline const str::string_ &GetAttribute(
@@ -558,7 +558,7 @@ namespace nsxpcm {
 		nsEmbedString EName, EValue;
 		Transform( Name, EName );
 
-		Element->GetAttribute( EName, EValue );
+		T( Element->GetAttribute( EName, EValue ) );
 
 		Transform( EValue, Value );
 
@@ -568,10 +568,9 @@ namespace nsxpcm {
 	inline const str::string_ &GetAttribute(
 		nsIDOMNode *Node,
 		const char *Name,
-		str::string_ &Value,
-		err::handle ErrHandle = err::hUsual )
+		str::string_ &Value )
 	{
-		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node, ErrHandle );
+ 		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node );
 
 		if ( Element != NULL )
 			return GetAttribute( Element, Name, Value );
@@ -584,7 +583,8 @@ namespace nsxpcm {
 		str::string_ &Value )
 	{
 		nsEmbedString EValue;
-		Element->GetValue( EValue );
+
+		T( Element->GetValue( EValue ) );
 
 		Transform( EValue, Value );
 
@@ -613,7 +613,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		
-		Element->SetAttribute( EName, EValue );
+		T( Element->SetAttribute( EName, EValue ) );
 	}
 
 	inline void SetAttribute(
@@ -638,7 +638,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 		
-		Element->SetValue( EValue );
+		T( Element->SetValue( EValue ) );
 	}
 
 	inline void CloneNode(
@@ -646,7 +646,7 @@ namespace nsxpcm {
 		bso::bool__ Deep,
 		nsIDOMNode **Clone )
 	{
-		Node->CloneNode( Deep, Clone );
+		T( Node->CloneNode( Deep, Clone ) );
 	}
 
 	inline void AppendChild(
@@ -662,8 +662,7 @@ namespace nsxpcm {
 		if ( Child == NULL )
 			ERRu();
 #endif
-		Node->AppendChild( Child, &Dummy );
-
+		T( Node->AppendChild( Child, &Dummy ) );
 	}
 
 	inline void InsertBefore(
@@ -673,7 +672,7 @@ namespace nsxpcm {
 		nsIDOMNode *Parent = NULL;
 		nsIDOMNode *&Dummy = Parent;
 
-		Node->GetParentNode( &Parent );
+		T( Node->GetParentNode( &Parent ) );
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
@@ -685,8 +684,7 @@ namespace nsxpcm {
 		if ( Parent == NULL )
 			ERRu();
 #endif
-		Parent->InsertBefore( Sibling, Node, &Dummy );
-
+		T( Parent->InsertBefore( Sibling, Node, &Dummy ) );
 	}
 
 	inline bso::bool__ HasAttributes( nsIDOMNode *Node )
@@ -698,7 +696,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->HasAttributes( &Result );
+		T( Node->HasAttributes( &Result ) );
 
 		return Result != 0;
 	}
@@ -712,7 +710,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->GetFirstChild( &Child );
+		T( Node->GetFirstChild( &Child ) );
 
 		return Child;
 	}
@@ -726,7 +724,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->GetLastChild( &Child );
+		T( Node->GetLastChild( &Child ) );
 
 		return Child;
 	}
@@ -740,7 +738,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->GetPreviousSibling( &Child );
+		T( Node->GetPreviousSibling( &Child ) );
 
 		return Child;
 	}
@@ -754,7 +752,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->GetNextSibling( &Child );
+		T( Node->GetNextSibling( &Child ) );
 
 		return Child;
 	}
@@ -768,7 +766,7 @@ namespace nsxpcm {
 			ERRu();
 #endif
 
-		Node->GetParentNode( &Parent );
+		T( Node->GetParentNode( &Parent ) );
 
 		return Parent;
 	}
@@ -786,8 +784,7 @@ namespace nsxpcm {
 		if ( Child == NULL )
 			ERRu();
 #endif
-		if ( Node->RemoveChild( Child, &Dummy ) != NS_OK )
-			ERRu();
+		T( Node->RemoveChild( Child, &Dummy ) );
 	}
 
 	inline void RemoveChildren( nsIDOMNode *Node )
@@ -807,7 +804,7 @@ namespace nsxpcm {
 	{
 		nsEmbedString EName;
 
-		Node->GetNodeName( EName );
+		T( Node->GetNodeName( EName ) );
 
 		Transform( EName, Name );
 
@@ -848,8 +845,7 @@ namespace nsxpcm {
 	{
 		PRInt32 Index;
 
-		if ( Element->GetSelectedIndex( &Index ) != NS_OK )
-			ERRx();
+		T( Element->GetSelectedIndex( &Index ) );
 
 		return Index;
 	}
@@ -858,8 +854,7 @@ namespace nsxpcm {
 	{
 		PRBool Checked;
 
-		if ( Element->GetChecked( &Checked ) != NS_OK )
-			ERRx();
+		T( Element->GetChecked( &Checked ) );
 
 		return Checked != 0;
 	}
@@ -868,8 +863,7 @@ namespace nsxpcm {
 		element *Element,
 		bso::bool__ State )
 	{
-		if ( Element->SetChecked( State ) != NS_OK )
-			ERRx();
+		T( Element->SetChecked( State ) );
 	}
 
 	void RemoveListboxContent( listbox_ *Listbox );
@@ -882,14 +876,14 @@ namespace nsxpcm {
 		nsIBoxObject *BoxObject = NULL;
 		nsIListBoxObject *ListBoxObject = NULL;
 
-		Listbox->GetBoxObject( &BoxObject );
+		T( Listbox->GetBoxObject( &BoxObject ) );
 
 		ListBoxObject = QueryInterface<nsIListBoxObject>( BoxObject );
 
-		ListBoxObject->GetIndexOfItem( Listitem, &Index );
-		ListBoxObject->ScrollToIndex( Index );
+		T( ListBoxObject->GetIndexOfItem( Listitem, &Index ) );
+		T( ListBoxObject->ScrollToIndex( Index ) );
 
-		Listbox->SelectItem( Listitem );
+		T( Listbox->SelectItem( Listitem ) );
 	}
 
 	nsIDOMNode *_FindParent(
@@ -900,8 +894,7 @@ namespace nsxpcm {
 	{
 		nsIDOMElement *Element = NULL;
 
-		if ( Document->GetDocumentElement( &Element ) != NS_OK )
-			ERRu();
+		T( Document->GetDocumentElement( &Element ) );
 
 		return Element;
 	}
@@ -910,8 +903,7 @@ namespace nsxpcm {
 	{
 		nsIDOMDocument *Document = NULL;
 
-		if ( Window->GetDocument( &Document ) != NS_OK )
-			ERRu();
+		T( Window->GetDocument( &Document ) );
 
 		return Document;
 	}
@@ -937,16 +929,14 @@ namespace nsxpcm {
 	{
 		PRBool Value = false;
 
-		if ( Window->GetClosed( &Value ) != NS_OK )
-			ERRu();
+		T( Window->GetClosed( &Value ) );
 
 		return Value == PR_TRUE;
 	}
 
 	inline void Close( nsIDOMWindowInternal *Window )
 	{
-		if ( Window->Close() != NS_OK )
-			ERRu();
+		T( Window->Close() );
 	}
 
 	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
@@ -1279,34 +1269,29 @@ namespace nsxpcm {
 		}
 		void Select( void )
 		{
-			if ( GetObject()->Select() != NS_OK )
-				ERRs();
+			T( GetObject()->Select() );
 		}
 		void SetSize( bso::size__ Size )
 		{
-			if ( GetObject()->SetSize( Size ) != NS_OK )
-				ERRu();
+			T( GetObject()->SetSize( Size ) );
 		}
 		bso::size__ GetSize( void )
 		{
 			PRInt32 Buffer;
 
-			if ( GetObject()->GetSize( &Buffer ) != NS_OK )
-				ERRs();
+			T( GetObject()->GetSize( &Buffer )  );
 
 			return Buffer;
 		}
 		void SetMaxLength( bso::size__ Size )
 		{
-			if ( GetObject()->SetMaxLength( Size ) != NS_OK )
-				ERRu();
+			T( GetObject()->SetMaxLength( Size ) );
 		}
 		bso::size__ GetMaxLength( void )
 		{
 			PRInt32 Buffer;
 
-			if ( GetObject()->GetMaxLength( &Buffer ) != NS_OK )
-				ERRs();
+			T( GetObject()->GetMaxLength( &Buffer ) );
 
 			return Buffer;
 		}
@@ -1373,7 +1358,7 @@ namespace nsxpcm {
 		{
 			nsIDOMXULSelectControlItemElement *Item = NULL;
 
-			GetObject()->GetCurrentItem( &Item );
+			T( GetObject()->GetCurrentItem( &Item ) );
 
 			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
 				ERRu();
@@ -1394,7 +1379,7 @@ namespace nsxpcm {
 		{
 			PRInt32 Count = 0;
 
-			GetObject()->GetSelectedCount( &Count );
+			T( GetObject()->GetSelectedCount( &Count ) );
 
 			return Count;
 		}
@@ -1460,7 +1445,7 @@ namespace nsxpcm {
 		{
 			nsITreeView *View = NULL;
 
-			GetObject()->GetView( &View );
+			T( GetObject()->GetView( &View ) );
 
 			if ( View == NULL )
 				ERRu();
@@ -1471,7 +1456,7 @@ namespace nsxpcm {
 		{
 			nsITreeSelection *Selection = NULL;
 
-			_GetView()->GetSelection( &Selection );
+			T( _GetView()->GetSelection( &Selection ) );
 
 			if ( Selection == NULL )
 				ERRu();
@@ -1487,20 +1472,20 @@ namespace nsxpcm {
 		{
 			PRInt32 Count = 0;
 
-			_GetSelection()->GetCurrentIndex( &Count );
+			T( _GetSelection()->GetCurrentIndex( &Count ) );
 
 			return Count;
 		}
 		void Select( bso::slong__ Index )
 		{
 //			_GetSelection()->SetCurrentIndex( Index );
-			_GetSelection()->Select( Index );
+			T( _GetSelection()->Select( Index ) );
 		}
 		nsIDOMElement *GetCurrentItem( bso::bool__ ErrorIfInexistent = true )
 		{
 			nsIDOMElement *Element = NULL;
 
-			_GetContentView()->GetItemAtIndex( GetCurrentIndex(), &Element );
+			T( _GetContentView()->GetItemAtIndex( GetCurrentIndex(), &Element ) );
 
 			if ( ( Element == NULL ) && ErrorIfInexistent )
 				ERRu();
@@ -1511,8 +1496,7 @@ namespace nsxpcm {
 		{
 			PRInt32 Index = -1;
 
-			if ( _GetContentView()->GetIndexOfItem( Element, &Index ) != NS_OK )
-				ERRu();
+			T( _GetContentView()->GetIndexOfItem( Element, &Index ) );
 
 			Select( Index );
 		}
@@ -1540,7 +1524,7 @@ namespace nsxpcm {
 		{
 			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : efNone );
 
-			_GetSelection()->ClearSelection();
+			T( _GetSelection()->ClearSelection() );
 
 			SetEventsToIgnore( Buffer );
 		}
@@ -1644,7 +1628,7 @@ namespace nsxpcm {
 			else
 				ERRu();
 
-		GetWindowInternal( ParentWindow )->Open( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), WindowBuffer );
+		T( GetWindowInternal( ParentWindow )->Open( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), WindowBuffer ) );;
 	}
 
 	inline void OpenWindow(
@@ -1679,7 +1663,7 @@ namespace nsxpcm {
 			else
 				ERRu();
 
-		GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), NULL, WindowBuffer );
+		T( GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), NULL, WindowBuffer ) );
 	}
 
 	inline void OpenDialog(
@@ -1701,7 +1685,7 @@ namespace nsxpcm {
 			OpenWindow( "chrome://global/content/console.xul", "_blank", &Window );
 			*JSConsoleWindow = GetWindowInternal( Window );
 		} else
-			(*JSConsoleWindow)->Focus();
+			T( (*JSConsoleWindow)->Focus() );
 
 		return *JSConsoleWindow;
 	}
@@ -1982,6 +1966,16 @@ namespace nsxpcm {
 		nsICommandLine *CommandLine,
 		arguments_ &Arguments );
 
+	void PatchBadCommandBehaviorForListeningMenuItems( nsIDOMDocument *Document );
+
+	void PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Document );
+
+	inline void PatchOverallBadCommandBehavior( nsIDOMDocument *Document )
+	{
+		PatchBadCommandBehaviorForListeningMenuItems( Document );
+		PatchCommandBadCommandBehaviorforKeysetListener( Document );
+	}
+
 #ifdef NSXPCM__BKD
 	void Convert(
 		const strings_ &Items,
@@ -2209,6 +2203,12 @@ namespace nsxpcm {
        NSXPCM_EVENT_LISTENER_CONTRACTID,\
 	   nsxpcm::event_listenerConstructor,\
     }
+
+#ifdef NSXPCM__T_BUFFER
+#	define T	NSXPCM__T_BUFFER
+#else
+#	undef T
+#endif
 
 /*$END$*/
 				  /********************************************/
