@@ -672,6 +672,7 @@ void GetBackendData(
 	csducl::type__ Type,
 	types_ &Types,
 	bkdacc::strings_ &RawMessages,
+	str::string_ &TargetLabel,
 	str::string_ &BackendInformations,
 	str::string_ &PublisherInformations )
 {
@@ -702,6 +703,7 @@ ERRBegin
 	GetDescription( Backend, Types );
 	GetRawMessages( Backend, RawMessages );
 	
+	Backend.TargetLabel( TargetLabel );
 	Backend.About( BackendInformations, PublisherInformations );
 
 	Backend.Disconnect();
@@ -813,6 +815,7 @@ void Generate(
 	const bkdacc::strings_ &RawMessages,
 	const types_ &Types,
 	epeios::row__ MasterRow,
+	const str::string_ &TargetLabel,
 	const str::string_ &BackendInformations,
 	const str::string_ &PublisherInformations,
 	txf::text_oflow__ &Flow )
@@ -828,6 +831,7 @@ ERRBegin
 	Flow << "<!-- CVS feature : $Id$ -->" << txf::nl;
 	
 	Writer.PushTag( "API" );
+	Writer.PutAttribute( "target", TargetLabel );
 
 	GenerateMisc( BackendInformations, PublisherInformations, Writer );	
 	Generate( RawMessages, Types, MasterRow, Writer );
@@ -866,6 +870,7 @@ void Go(
 {
 ERRProlog
 	types Types;
+	str::string TargetLabel;
 	str::string BackendInformations;
 	str::string PublisherInformations;
 	epeios::row__ MasterRow = NONE;
@@ -876,13 +881,13 @@ ERRProlog
 ERRBegin
 	Types.Init();
 
+	TargetLabel.Init();
 	BackendInformations.Init();
-	
 	PublisherInformations.Init();
 
 	RawMessages.Init();
 	
-	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, BackendInformations, PublisherInformations );
+	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, TargetLabel, BackendInformations, PublisherInformations );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -898,9 +903,9 @@ ERRBegin
 		Backup = true;
 
 		File.Init( Arguments.FileName );
-		Generate( RawMessages, Types, MasterRow, BackendInformations, PublisherInformations, TFile );
+		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, TFile );
 	} else
-		Generate( RawMessages, Types, MasterRow, BackendInformations, PublisherInformations, COut );
+		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, CErr );

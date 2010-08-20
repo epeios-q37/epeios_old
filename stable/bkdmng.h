@@ -716,6 +716,7 @@ namespace bkdmng {
 	private:
 		const lcl::locales_ *_Locales;
 		master_module Master_;
+		const char *_TargetLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
 		// Information à propos du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
@@ -756,11 +757,13 @@ namespace bkdmng {
 		{
 			Language_.Init( BKDMNG__DEFAULT_LANGUAGE );
 
+			_TargetLabel = NULL;
 			_BackendInformations = NULL;
 			_PublisherInformations = NULL;
 		}
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
+			const char *TargetLabel,
 			const lcl::locales_ &Locales,
 			const char *BackendInformations,
 			const char *PublisherInformations )
@@ -770,10 +773,13 @@ namespace bkdmng {
 			Modules.Init();
 			Links.Init();
 
+			_TargetLabel = TargetLabel;
+
+			_Locales = &Locales;
+
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
 
-			_Locales = &Locales;
 		}
 		//f Add 'Module' to the interface.
 		const char *GetTranslation(
@@ -870,6 +876,10 @@ namespace bkdmng {
 			... )
 		{
 			return Add( Name, FP, &Cast );
+		}
+		const char *GetTargetLabel( void ) const
+		{
+			return _TargetLabel;
 		}
 		const char *GetBackendInformations( void ) const 
 		{

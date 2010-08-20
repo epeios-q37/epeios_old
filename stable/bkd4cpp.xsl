@@ -20,14 +20,14 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>// $Id$	(CVS feature).&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>#ifndef </xsl:text>
-		<xsl:value-of select="/API/Misc/Backend/Name"/>
+		<xsl:value-of select="/API/@target"/>
 		<xsl:text>__INC&nl;</xsl:text>
 		<xsl:text>#define </xsl:text>
-		<xsl:value-of select="/API/Misc/Backend/Name"/>
+		<xsl:value-of select="/API/@target"/>
 		<xsl:text>__INC&nl;</xsl:text>
 		<xsl:apply-templates select="API"/>
 		<xsl:text>#endif //#ifndef </xsl:text>
-		<xsl:value-of select="/API/Misc/Backend/Name"/>
+		<xsl:value-of select="/API/@target"/>
 	  <xsl:text>__INC&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="API">
@@ -35,7 +35,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 	  <xsl:text>#include "cpe.h"&nl;</xsl:text>
 	  <xsl:text>&nl;</xsl:text>
 	  <xsl:text>namespace </xsl:text>
-		<xsl:value-of select="/API/Misc/Backend/Name"/>
+		<xsl:value-of select="/API/@target"/>
 		<xsl:text> {&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:apply-templates select="Messages" mode="enum"/>

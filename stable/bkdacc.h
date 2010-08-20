@@ -489,6 +489,16 @@ namespace bkdacc {
 
 			_Handle();
 		}
+		void TargetLabel( string_ &Label )
+		{
+			Internal_( bkdcmd::cTargetLabel );
+
+			EndOfInParameters();
+
+			StringOut( Label );
+
+			_Handle();
+		}
 		void About(
 			string_ &Backend,
 			string_ &Publisher)

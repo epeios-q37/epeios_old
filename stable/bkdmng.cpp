@@ -396,6 +396,18 @@ static void GetParameters_(
 	Requete.Complete();
 }
 
+static void TargetLabel_(
+	backend_ &Backend,
+	untyped_module &Module,
+	index__,
+	command__ Command,
+	request_manager__ &Requete,
+	bso::bool__ &,
+	void * )
+{
+	Requete.StringOut() = Backend.GetTargetLabel();
+	Requete.Complete();
+}
 
 static void About_(
 	backend_ &Backend,
@@ -763,6 +775,9 @@ namespace bkdmng {
 
 		// Remove the given object.
 		ADD( RemoveObject );
+
+		// Label de la cible du backend.
+		ADD( TargetLabel );
 
 		// Informations au sujet du 'backend' et du 'publisher'.
 		ADD( About );

@@ -117,7 +117,7 @@ namespace xului {
 	XULUI__W( listbox );
 	XULUI__W( tree );
 	XULUI__W( deck );
-	XULUI__W( broadcaster );
+	XULUI__W( broadcast );
 	XULUI__W( command );
 	XULUI__W( menu );
 	XULUI__W( menu_item );
@@ -157,11 +157,11 @@ namespace xului {
 
 	template <typename ui> inline void Register(
 		ui &UI,
-		broadcaster__<ui> &Broadcaster,
+		broadcast__<ui> &Broadcast,
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( UI, Broadcaster, Document, Id, nsxpcm::efNone );
+		Register( UI, Broadcast, Document, Id, nsxpcm::efNone );
 	}
 
 	template <typename ui> inline void Register(

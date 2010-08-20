@@ -1188,12 +1188,54 @@ namespace nsxpcm {
 		{
 			return QueryInterface<object>( GetSupports() );
 		}
+		const str::string_ &GetAttribute(
+			const str::string_ &Name,
+			str::string_ &Value )
+		{
+			return nsxpcm::GetAttribute( GetObject(), Name, Value );
+		}
+		const str::string_ &GetAttribute(
+			const char *Name,
+			str::string_ &Value )
+		{
+			return nsxpcm::GetAttribute( GetObject(), Name, Value );
+		}
+		void SetAttribute(
+			const str::string_ &Name,
+			str::string_ &Value )
+		{
+			nsxpcm::SetAttribute( GetObject(), Name, Value );
+		}
+		void SetAttribute(
+			const char *Name,
+			str::string_ &Value )
+		{
+			nsxpcm::SetAttribute( GetObject(), Name, Value );
+		}
+		void SetAttribute(
+			const char *Name,
+			const char *Value )
+		{
+			nsxpcm::SetAttribute( GetObject(), Name, Value );
+		}
+		void RemoveAttribute( const str::string_ &Name )
+		{
+			nsxpcm::RemoveAttribute( GetObject(), Name );
+		}
+		void RemoveAttribute( const char *Name )
+		{
+			nsxpcm::RemoveAttribute( GetObject(), Name );
+		}
+		const str::string_ &GetId( str::string_ &Value )
+		{
+			return GetAttribute( "id", Value );
+		}
 		void Enable( bso::bool__ Value = true )
 		{
 			if ( Value )
-				nsxpcm::RemoveAttribute( GetObject(), "disabled" );
+				RemoveAttribute( "disabled" );
 			else
-				nsxpcm::SetAttribute( GetObject(), "disabled", "true" );
+				SetAttribute( "disabled", "true" );
 		}
 		void Disable( void )
 		{
@@ -1207,7 +1249,7 @@ namespace nsxpcm {
 		ERRBegin
 			Value.Init();
 
-			nsxpcm::GetAttribute( GetObject(), "disabled", Value );
+			GetAttribute( "disabled", Value );
 
 			Enabled = Value != "true";
 		ERRErr
@@ -1229,11 +1271,11 @@ namespace nsxpcm {
 		}
 		void SetLabel( str::string_ &Label )
 		{
-			nsxpcm::SetAttribute( GetObject(), "label", Label );
+			SetAttribute( "label", Label );
 		}
 		void SetLabel( const char *Label )
 		{
-			nsxpcm::SetAttribute( GetObject(), "label", Label );
+			SetAttribute( "label", Label );
 		}
 		void RemoveChildren( void )
 		{
@@ -1530,7 +1572,7 @@ namespace nsxpcm {
 		}
 	};
 
-	class broadcaster__
+	class broadcast__
 	: public _element__<nsIDOMElement>
 	{};
 

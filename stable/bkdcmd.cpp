@@ -67,6 +67,7 @@ const char *bkdcmd::CommandsNames[bkdcmd::c_amount] = {
 	"_GetCommands$1",
 	"_GetTypeAndCommands$1",
 	"_RemoveObject$1",
+	"_TargetLabel$1",
 	"_About$2",
 	"_Disconnect$1",
 	"_GetTypesIDAndPrefixAndName$1",
@@ -120,6 +121,10 @@ static const cast RemoveObject[] = {
 		cObject,	// The object to remove.
 	cEnd,
 	cEnd };
+static const cast TargetLabel[] = {
+	cEnd,
+		cString,	// Label du backend cible.
+	cEnd };
 static const cast About[] = {
 	cEnd,
 		cString,	// Informations au sujet du 'backend'.
@@ -163,6 +168,7 @@ const cast *bkdcmd::CommandsParameters[bkdcmd::c_amount] = {
 	GetCommands,
 	GetTypeAndCommands,
 	RemoveObject,
+	TargetLabel,
 	About,
 	Disconnect,
 	GetTypesIDAndPrefixAndName,

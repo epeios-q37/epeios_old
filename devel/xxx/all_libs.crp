@@ -127,6 +127,12 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&FLow eXtension
 &fnm		&epeios		&2000-2001, \
 	&File Name Manager
+&frdbkd		&epeios		&\
+	&FRontenD BacKenD
+&frdkrn		&epeios		&\
+	&FRontenD KeRNel
+&frdrgy		&epeios		&\
+	&FRontenD ReGistrY
 &fwf		&epeios		&\
 	&FloW Functions
 &gnumll		&epeios		&2000-2001, \

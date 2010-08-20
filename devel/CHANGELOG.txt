@@ -1,7 +1,16 @@
 $Id$
 
+20/08/2010 :	
+	- BKDxxx :
+		- Rajout de la commande 'TargetLabel'.
+	- NSXPCM :
+		- Renommage 'broadcaster__' en  'broadcast__' qui est le nom XUL de la balise.
+		- Ajout de quelques méthodes triviale à '_element__'.
+	- XULUI :
+		- Adaptation aux modifications 'NSXPCM'
+
 19/08/2010 :
-	- NWXPCM :
+	- NSXPCM :
 		- Reforcement détection d'erreurs.
 		- Suppression 'ErrorHandling'.
 		- Ajout fonctions 'p les bogues suivant :
