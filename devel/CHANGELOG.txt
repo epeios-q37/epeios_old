@@ -1,5 +1,9 @@
 $Id$
 
+24/08/2010 :
+	- NSXPCM :
+		- Enrichissement et modification des fonctions concernant la sélection d'un fichier ou d'un répertoire (partiellement réalisé).
+
 20/08/2010 :	
 	- BKDxxx :
 		- Rajout de la commande 'TargetLabel'.

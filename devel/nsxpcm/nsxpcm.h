@@ -188,7 +188,7 @@ namespace nsxpcm {
 
 #undef EF
 
-#ifdef NSXPCM__F_BUFFER
+#ifdef NSXPCM__EF_BUFFER
 #	define	EF	NSXPCM__EF_BUFFER
 #endif
 
@@ -1611,39 +1611,209 @@ namespace nsxpcm {
 		}
 	};
 
+	class file_picker_filter_ 
+	{
+	public:
+		struct s {
+			str::string_::s
+				Title,
+				Mask;
+		};
+		str::string_
+			Title,
+			Mask;
+		file_picker_filter_( s &S )
+			: Title( S.Title ),
+			  Mask( S.Mask )
+		{}
+		void reset( bso::bool__ P = true  )
+		{
+			Title.reset( P );
+			Mask.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Title.plug( MM );
+			Mask.plug( MM );
+		}
+		file_picker_filter_ &operator =( const file_picker_filter_ &FPF )
+		{
+			Title = FPF.Title;
+			Mask = FPF.Mask;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Title.Init();
+			Mask.Init();
+		}
+	};
+
+	E_AUTO( file_picker_filter );
+
+	typedef ctn::E_XCONTAINER_( file_picker_filter_ ) file_picker_filters_;
+	E_AUTO( file_picker_filters );
+
+	enum file_picker_type__
+	{
+		fptOpen,
+		fptSave,
+		fptFolder,
+		fpt_amount,
+		fpt_Undefined
+	};
+
+	enum file_picker_mask__ {
+		fpmAll,	// '*.*'.
+		fpmHTML,
+		fpmText,
+		fpmImages,
+		fpmXML,
+		fpmXUL,
+		fpmApps,
+		fpmXPRJ,
+		fpm_amount,
+		fpm_Undefined
+	};
+
+#ifdef MF
+#	define NSXPCM__MF_BUFFER	MF
+#	undef MF
+#endif
+
+#define MF( name )	fpmf##name = ( 1 << fpm##name )
+
+	enum file_picker_mode_flag__ {
+		MF( All ),
+		MF( HTML ),
+		MF( Text ),
+		MF( Images ),
+		MF( XML ),
+		MF( XUL ),
+		MF( Apps ),
+		MF( XPRJ )
+	};
+	
+#undef MF
+
+#ifdef NSXPCM__MF_BUFFER
+#	define	MF	NSXPCM__MF_BUFFER
+#endif
+
+
+
+
+
+	class file_picker_
+	{
+	public:
+		struct s {
+			str::string_::s Title;
+			file_picker_filters_::s Filters;
+		};
+		str::string_ Title;
+		file_picker_filters_ Filters;
+		file_picker_( s &S )
+		: Title( S.Title ),
+		  Filters( S.Filters )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Title.reset( P );
+			Filters.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Title.plug( MM );
+			Filters.plug( MM );
+		}
+		file_picker_ &operator =( const file_picker_ &FP )
+		{
+			Title = FP.Title;
+			Filters = FP.Filters;
+
+			return *this;
+		};
+		void Init( const str::string_ &Title )
+		{
+			this->Title.Init( Title );
+			Filters.Init();
+		}
+		void AddFilter(
+			const str::string_ &Title,
+			const str::string_ &Mask );
+		/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+		'false' si 'Cancel' a été sélectionné. */
+		bso::bool__ Show(
+			file_picker_type__ Type,
+			str::string_ &FileName,
+			nsIDOMWindow *ParentWindow = NULL );
+	};
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
+		const char *DefaultExtendion,
 		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		nsIDOMWindow *Parent,
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( Parent, Title, NULL, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		const str::string_ &Title,
+		const char *DefaultExtension,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( NULL, Title, DefaultExtension, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( NULL, Title, NULL, FileName );
+	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ HTMLFileOpenDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileSaveDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ HTMLFileSaveDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ DirectorySelectDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &DirectoryName );
 
 	inline void OpenWindow(

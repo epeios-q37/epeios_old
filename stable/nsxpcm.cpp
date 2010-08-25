@@ -389,7 +389,7 @@ ERREpilog
 */
 static bso::bool__ FileDialogBox_(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	const char *DefaultExtension,
 	PRInt16 Mode,
 	PRInt32 FilterMask,
@@ -405,13 +405,19 @@ ERRBegin
 
 	Transform( Title, EString );
 
+	if ( Parent == NULL )
+		Parent = ::MasterWindow;
+
+	if ( Parent == NULL )
+		ERRu();
+
 	if ( ( Error = FilePicker->Init( Parent, EString, Mode ) ) != NS_OK )
 		ERRx();
 
 	if ( ( Error = FilePicker->AppendFilters( FilterMask ) ) != NS_OK )
 		ERRx();
 
-	if ( *DefaultExtension != 0 ) {
+	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
 		Transform( DefaultExtension, EString );
 		T( FilePicker->SetDefaultExtension( EString ) );
 	}
@@ -446,15 +452,16 @@ ERREpilog
 
 bso::bool__ nsxpcm::FileOpenDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
+	const char *DefaultExtension,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeOpen, nsIFilePicker::filterAll, FileName );
+	return FileDialogBox_( Parent, Title, DefaultExtension, nsIFilePicker::modeOpen, nsIFilePicker::filterAll, FileName );
 }
 
 bso::bool__ nsxpcm::HTMLFileOpenDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_  &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeOpen, nsIFilePicker::filterHTML, FileName );
@@ -462,7 +469,7 @@ bso::bool__ nsxpcm::HTMLFileOpenDialogBox(
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeSave, nsIFilePicker::filterAll, FileName );
@@ -470,7 +477,7 @@ bso::bool__ nsxpcm::FileSaveDialogBox(
 
 bso::bool__ nsxpcm::HTMLFileSaveDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+		const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeSave, nsIFilePicker::filterHTML, FileName );
@@ -478,7 +485,7 @@ bso::bool__ nsxpcm::HTMLFileSaveDialogBox(
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeGetFolder, nsIFilePicker::filterAll, FileName );

@@ -1615,35 +1615,65 @@ namespace nsxpcm {
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
+		const char *DefaultExtendion,
 		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		nsIDOMWindow *Parent,
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( Parent, Title, NULL, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		const str::string_ &Title,
+		const char *DefaultExtension,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( NULL, Title, DefaultExtension, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ FileOpenDialogBox(
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( NULL, Title, NULL, FileName );
+	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ HTMLFileOpenDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileSaveDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ HTMLFileSaveDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ DirectorySelectDialogBox(
 		nsIDOMWindow *Parent,
-		const char *Title,
+		const str::string_ &Title,
 		str::string_ &DirectoryName );
 
 	inline void OpenWindow(

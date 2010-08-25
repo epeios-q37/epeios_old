@@ -387,9 +387,167 @@ ERREnd
 ERREpilog
 }
 */
+
+void nsxpcm::file_picker_::AddFilter(
+	const str::string_ &Title,
+	const str::string_ &Mask )
+{
+ERRProlog
+	file_picker_filter FilePickerFilter;
+ERRBegin
+	FilePickerFilter.Init();
+
+	FilePickerFilter.Title = Title;
+	FilePickerFilter.Mask = Mask;
+
+	Filters.Append( FilePickerFilter );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static inline PRInt16 ConvertType_( file_picker_type__ Type )
+{
+	switch( Type ) {
+	case fptOpen :
+		return nsIFilePicker::modeOpen;
+		break;
+	case fptSave :
+		return nsIFilePicker::modeSave;
+		break;
+	case fptFolder :
+		return nsIFilePicker::modeGetFolder;
+		break;
+	default:
+		ERRu();
+		break;
+	}
+}
+
+static inline void AddFilter_(
+	const str::string_ &Title,
+	const str::string_ &Mask,
+	nsIFilePicker *FilePicker )
+{
+	nsEmbedString ETitle, EMask;
+
+	Transform( Title, ETitle );
+	Transform( Mask, EMask );
+
+	FilePicker->AppendFilter( ETitle, EMask );
+}
+
+
+static inline void AddFilter_(
+	const file_picker_filter_ &Filter,
+	nsIFilePicker *FilePicker )
+{
+	AddFilter_( Filter.Title, Filter.Mask, FilePicker );
+}
+
+
+static void AddFilters_(
+	const file_picker_filters_ &Filters,
+	nsIFilePicker *FilePicker )
+{
+	ctn::E_CITEM( file_picker_filter_ ) Filter;
+	epeios::row__ Row = Filters.First();
+
+	Filter.Init( Filters );
+
+	while( Row != NONE ) {
+		AddFilter_( Filter( Row ), FilePicker );
+
+		Row = Filters.Next( Row );
+	}
+}
+
+#define H( mask, value )	ConvertedMask += ( Masks & fpmf##mask ? nsIFilePicker::filter##value : 0 )
+#define SH( mask )	H( mask, mask )
+
+
+static PRInt32 ConvertMask_( int Masks )
+{
+	PRInt32 ConvertedMask= 0;
+
+	SH( All );
+	SH( HTML );
+	SH( Text );
+	SH( Images );
+	SH( XML );
+	SH( XUL );
+	SH( Apps );
+
+	return ConvertedMask;
+}
+
+#undef H
+#undef SH
+
+bso::bool__ nsxpcm::file_picker_::Show(
+	file_picker_type__ Type,
+	str::string_ &FileName,
+	nsIDOMWindow *ParentWindow )
+{
+	bso::bool__ FileSelected = false;
+ERRProlog
+	nsCOMPtr<nsIFilePicker> FilePicker = NULL;
+	nsresult Error = NS_OK;
+	nsEmbedString EString;
+ERRBegin
+	CreateInstance( "@mozilla.org/filepicker;1", FilePicker );
+
+	Transform( Title, EString );
+
+	if ( ParentWindow == NULL )
+		ParentWindow = ::MasterWindow;
+
+	if ( ParentWindow == NULL )
+		ERRu();
+
+	if ( ( Error = FilePicker->Init( ParentWindow, EString, ConvertType_( Type ) ) ) != NS_OK )
+		ERRx();
+
+	if ( ( Error = FilePicker->AppendFilters( FilterMask ) ) != NS_OK )
+		ERRx();
+
+	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
+		Transform( DefaultExtension, EString );
+		T( FilePicker->SetDefaultExtension( EString ) );
+	}
+
+	PRInt16 _retval = 0;
+
+	if ( ( Error = FilePicker->Show( &_retval ) ) != NS_OK )
+		ERRx();
+
+	if ( _retval == nsIFilePicker::returnCancel ) {
+		Success = false;
+		ERRReturn;
+	} else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
+		ERRx();
+
+	nsILocalFile *File;
+
+	if ( ( Error = FilePicker->GetFile( &File ) ) != NS_OK )
+		ERRx();
+
+	if ( ( Error = File->GetPath( EString ) ) != NS_OK )
+		ERRx();
+
+	nsxpcm::Transform( EString, Name );
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+
 static bso::bool__ FileDialogBox_(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	const char *DefaultExtension,
 	PRInt16 Mode,
 	PRInt32 FilterMask,
@@ -405,13 +563,19 @@ ERRBegin
 
 	Transform( Title, EString );
 
+	if ( Parent == NULL )
+		Parent = ::MasterWindow;
+
+	if ( Parent == NULL )
+		ERRu();
+
 	if ( ( Error = FilePicker->Init( Parent, EString, Mode ) ) != NS_OK )
 		ERRx();
 
 	if ( ( Error = FilePicker->AppendFilters( FilterMask ) ) != NS_OK )
 		ERRx();
 
-	if ( *DefaultExtension != 0 ) {
+	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
 		Transform( DefaultExtension, EString );
 		T( FilePicker->SetDefaultExtension( EString ) );
 	}
@@ -446,15 +610,16 @@ ERREpilog
 
 bso::bool__ nsxpcm::FileOpenDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
+	const char *DefaultExtension,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeOpen, nsIFilePicker::filterAll, FileName );
+	return FileDialogBox_( Parent, Title, DefaultExtension, nsIFilePicker::modeOpen, nsIFilePicker::filterAll, FileName );
 }
 
 bso::bool__ nsxpcm::HTMLFileOpenDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_  &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeOpen, nsIFilePicker::filterHTML, FileName );
@@ -462,7 +627,7 @@ bso::bool__ nsxpcm::HTMLFileOpenDialogBox(
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeSave, nsIFilePicker::filterAll, FileName );
@@ -470,7 +635,7 @@ bso::bool__ nsxpcm::FileSaveDialogBox(
 
 bso::bool__ nsxpcm::HTMLFileSaveDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+		const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "html", nsIFilePicker::modeSave, nsIFilePicker::filterHTML, FileName );
@@ -478,7 +643,7 @@ bso::bool__ nsxpcm::HTMLFileSaveDialogBox(
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	nsIDOMWindow *Parent,
-	const char *Title,
+	const str::string_ &Title,
 	str::string_ &FileName )
 {
 	return FileDialogBox_( Parent, Title, "", nsIFilePicker::modeGetFolder, nsIFilePicker::filterAll, FileName );
