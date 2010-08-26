@@ -161,7 +161,7 @@ namespace xului {
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( UI, Broadcast, Document, Id, nsxpcm::efNone );
+		Register( UI, Broadcast, Document, Id, nsxpcm::ef_None );
 	}
 
 	template <typename ui> inline void Register(
@@ -188,7 +188,7 @@ namespace xului {
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( UI, Deck, Document, Id, nsxpcm::efNone );
+		Register( UI, Deck, Document, Id, nsxpcm::ef_None );
 	}
 
 	template <typename ui> inline void Register(
@@ -197,7 +197,7 @@ namespace xului {
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( UI, Textbox, Document, Id, nsxpcm::efNone );
+		Register( UI, Textbox, Document, Id, nsxpcm::ef_None );
 	}
 
 	template <typename ui> inline void Register(
@@ -215,7 +215,7 @@ namespace xului {
 		nsIDOMDocument *Document,
 		const char *Id )
 	{
-		Register( UI, Description, Document, Id, nsxpcm::efNone );
+		Register( UI, Description, Document, Id, nsxpcm::ef_None );
 	}
 }
 

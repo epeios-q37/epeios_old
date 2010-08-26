@@ -609,6 +609,33 @@ namespace tol {
 			return Clock( false ) > _Limit;
 		}
 	};
+
+	inline bso::char__ GetLocaleDecimalSeparator( void )
+	{
+		lconv *LConv = localeconv();
+
+		if ( LConv->decimal_point == NULL )
+			ERRs();
+
+		if ( LConv->decimal_point[0] == 0 )
+			ERRs();
+
+		if ( LConv->decimal_point[1] != 0 )
+			ERRs();
+
+		return *LConv->decimal_point;
+	}
+
+	template <typename i> inline i Swap(
+		i &I1,
+		i &I2 )	// Echange le contenu des entiers I1 et I2. Retourne I1 (avant échange).
+	{
+		I2 = I1 ^ I2;
+		I1 = I2 ^ I1;
+		I2 = I1 ^ I2;
+
+		return I1;
+	}
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
@@ -867,23 +894,6 @@ namespace tol {
 	};
 
 	#define E_DPOINTER___( t )	delete_pointer___<t>
-
-	inline bso::char__ GetLocaleDecimalSeparator( void )
-	{
-		lconv *LConv = localeconv();
-
-		if ( LConv->decimal_point == NULL )
-			ERRs();
-
-		if ( LConv->decimal_point[0] == 0 )
-			ERRs();
-
-		if ( LConv->decimal_point[1] != 0 )
-			ERRs();
-
-		return *LConv->decimal_point;
-	}
-
 }
 
 #if 0

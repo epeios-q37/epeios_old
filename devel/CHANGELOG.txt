@@ -1,5 +1,14 @@
 $Id$
 
+25/08/2010 :
+	- NSXPCM :
+		- Mise en oeuvre de 'xxxf_' pour les entrée étant une combinaisons de plusieurs drapeaux.
+	- TOL :
+		- Ajout fonction 'Swap(...).
+		- Légère réorganisation.
+	- XULUI :
+		- Adaptation aux modifications 'NSXPCM'.
+
 24/08/2010 :
 	- NSXPCM :
 		- Enrichissement et modification des fonctions concernant la sélection d'un fichier ou d'un répertoire (partiellement réalisé).

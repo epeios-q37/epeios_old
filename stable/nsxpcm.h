@@ -181,14 +181,14 @@ namespace nsxpcm {
 		EF( AttributeChange ),
 		EF( KeyPress ),
 		EF( Close ),
-		efNone = 0,
-		efAll = ( ( 1 << e_amount ) - 1 ),
-		efAllButAnnoying = efAll & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
+		ef_None = 0,
+		ef_All = ( ( 1 << e_amount ) - 1 ),
+		ef_AllButAnnoying = ef_All & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
 	};
 
 #undef EF
 
-#ifdef NSXPCM__F_BUFFER
+#ifdef NSXPCM__EF_BUFFER
 #	define	EF	NSXPCM__EF_BUFFER
 #endif
 
@@ -1071,7 +1071,7 @@ namespace nsxpcm {
 			_MutationEvent = NULL;
 			_KeyEvent = NULL;
 			_EventImbricationLevel = -1;
-			_EventsToIgnore = efNone;
+			_EventsToIgnore = ef_None;
 		}
 		element_core__( void )
 		{
@@ -1564,7 +1564,7 @@ namespace nsxpcm {
 		Cela peut être évité en mettant 'SkipSelectEvent' à 'true'. */
 		void ClearSelection( bso::bool__ SkipSelectEvent )
 		{
-			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : efNone );
+			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : ef_None );
 
 			T( _GetSelection()->ClearSelection() );
 
@@ -1611,68 +1611,221 @@ namespace nsxpcm {
 		}
 	};
 
+	class file_picker_filter_ 
+	{
+	public:
+		struct s {
+			str::string_::s
+				Title,
+				Mask;
+		};
+		str::string_
+			Title,
+			Mask;
+		file_picker_filter_( s &S )
+			: Title( S.Title ),
+			  Mask( S.Mask )
+		{}
+		void reset( bso::bool__ P = true  )
+		{
+			Title.reset( P );
+			Mask.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Title.plug( MM );
+			Mask.plug( MM );
+		}
+		file_picker_filter_ &operator =( const file_picker_filter_ &FPF )
+		{
+			Title = FPF.Title;
+			Mask = FPF.Mask;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Title.Init();
+			Mask.Init();
+		}
+	};
+
+	E_AUTO( file_picker_filter );
+
+	typedef ctn::E_XCONTAINER_( file_picker_filter_ ) file_picker_filters_;
+	E_AUTO( file_picker_filters );
+
+	enum file_picker_type__
+	{
+		fptOpen,
+		fptSave,
+		fptFolder,
+		fpt_amount,
+		fpt_Undefined
+	};
+
+	enum file_picker_mask__ {
+		fpmAll,	// '*.*'.
+		fpmHTML,
+		fpmText,
+		fpmImages,
+		fpmXML,
+		fpmXUL,
+		fpmApps,
+		fpmXPRJ,
+		fpm_amount,
+		fpm_Undefined
+	};
+
+#ifdef MF
+#	define NSXPCM__MF_BUFFER	MF
+#	undef MF
+#endif
+
+#define MF( name )	fpmf##name = ( 1 << fpm##name )
+
+	enum file_picker_mask_flag__ {
+		MF( All ),
+		MF( HTML ),
+		MF( Text ),
+		MF( Images ),
+		MF( XML ),
+		MF( XUL ),
+		MF( Apps ),
+		MF( XPRJ ),
+		fpmf_None = 0,
+		fpmf_All = ( ( 1 << fpm_amount ) - 1 )	// Ne pas confondre avec 'fpmfAll', désignat que l'on désire tous les fichiers (filtre '*.*').
+	};
+	
+#undef MF
+
+#ifdef NSXPCM__MF_BUFFER
+#	define	MF	NSXPCM__MF_BUFFER
+#endif
+
+	class file_picker_
+	{
+	public:
+		struct s {
+			str::string_::s Title;
+			file_picker_filters_::s Filters;
+			int PredefinedFilters;
+		} &S_;
+		str::string_ Title;
+		file_picker_filters_ Filters;
+		file_picker_( s &S )
+		: S_( S ),
+		  Title( S.Title ),
+		  Filters( S.Filters )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			S_.PredefinedFilters = fpmf_None;
+
+			Title.reset( P );
+			Filters.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Title.plug( MM );
+			Filters.plug( MM );
+		}
+		file_picker_ &operator =( const file_picker_ &FP )
+		{
+			S_.PredefinedFilters = FP.S_.PredefinedFilters;
+
+			Title = FP.Title;
+			Filters = FP.Filters;
+
+			return *this;
+		};
+		void Init( const str::string_ &Title )
+		{
+			this->Title.Init( Title );
+			Filters.Init();
+		}
+		int SetPredefinedFilter( int Filters )	// 'Filters' : combinaison de 'file_picker_mask_flag__'. Retourne les anciens filtres.
+		{
+			return tol::Swap( S_.PredefinedFilters, Filters );
+		}
+		void AddFilter(
+			const str::string_ &Title,
+			const str::string_ &Mask );	// Pour ajouter un filtre ne faisant pas partie de ceux prédéfinis.
+		/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+		'false' si 'Cancel' a été sélectionné. */
+		bso::bool__ Show(
+			file_picker_type__ Type,
+			const char *DefaultExtension,
+			str::string_ &FileName,
+			nsIDOMWindow *ParentWindow = NULL );
+		bso::bool__ Show(
+			file_picker_type__ Type,
+			str::string_ &FileName,
+			nsIDOMWindow *ParentWindow = NULL )
+		{
+			return Show( Type, NULL, FileName, ParentWindow );
+		}
+		E_RODISCLOSE_( int, PredefinedFilters );
+	};
+
+	E_AUTO( file_picker );
+
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
-		nsIDOMWindow *Parent,
-		const str::string_ &Title,
-		const char *DefaultExtendion,
-		str::string_ &FileName );
-
-	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
-	'false' si 'Cancel' a été sélectionné. */
-	inline bso::bool__ FileOpenDialogBox(
-		nsIDOMWindow *Parent,
-		const str::string_ &Title,
-		str::string_ &FileName )
-	{
-		return FileOpenDialogBox( Parent, Title, NULL, FileName );
-	}
-
-	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
-	'false' si 'Cancel' a été sélectionné. */
-	inline bso::bool__ FileOpenDialogBox(
 		const str::string_ &Title,
 		const char *DefaultExtension,
-		str::string_ &FileName )
-	{
-		return FileOpenDialogBox( NULL, Title, DefaultExtension, FileName );
-	}
-
-	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
-	'false' si 'Cancel' a été sélectionné. */
-	inline bso::bool__ FileOpenDialogBox(
-		const str::string_ &Title,
-		str::string_ &FileName )
-	{
-		return FileOpenDialogBox( NULL, Title, NULL, FileName );
-	}
-
-	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
-	'false' si 'Cancel' a été sélectionné. */
-	bso::bool__ HTMLFileOpenDialogBox(
-		nsIDOMWindow *Parent,
-		const str::string_ &Title,
+		int PredefinedFilters,
 		str::string_ &FileName );
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ HTMLFileOpenDialogBox(
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( Title, "html", fpmfHTML, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ XPRJFileOpenDialogBox(
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( Title, "xprj", fpmfXPRJ, FileName );
+	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileSaveDialogBox(
-		nsIDOMWindow *Parent,
 		const str::string_ &Title,
+		const char *DefaultExtension,
+		int PredefinedFilters,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
-	bso::bool__ HTMLFileSaveDialogBox(
+	inline bso::bool__ HTMLFileSaveDialogBox(
+		const str::string_ &Title,
+		str::string_ &FileName )
+	{
+		return FileSaveDialogBox( Title, "html", fpmfHTML, FileName );
+	}
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ XPRJFileSaveDialogBox(
 		nsIDOMWindow *Parent,
 		const str::string_ &Title,
-		str::string_ &FileName );
+		str::string_ &FileName )
+	{
+		return FileSaveDialogBox( Title, "xprj", fpmfXPRJ, FileName );
+	}
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ DirectorySelectDialogBox(
-		nsIDOMWindow *Parent,
 		const str::string_ &Title,
 		str::string_ &DirectoryName );
 
