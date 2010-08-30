@@ -67,6 +67,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "str.h"
 #include "ctn.h"
 #include "lstbch.h"
+#include "lcl.h"
 
 #include "xpcom-config.h"
 
@@ -146,6 +147,18 @@ namespace nsxpcm {
 
 	// Log to the javascript console.
 	void Log( const str::string_ &Text );
+
+	// Si modifié, modifier 'GetTranslation(...)' et le '.xlcl' en conséquence.
+	enum text__ {
+		tXPRJFilterLabel,
+		t_amount,
+		t_Undefined
+	};
+
+	const str::string_ &GetTranslation(
+		text__ Text,
+		const lcl::locales_rack___ &Locales,
+		str::string_ &Translation );
 
 	enum event__
 	{
@@ -1756,14 +1769,16 @@ namespace nsxpcm {
 		bso::bool__ Show(
 			file_picker_type__ Type,
 			const char *DefaultExtension,
+			const lcl::locales_rack___ &Locales,
 			str::string_ &FileName,
 			nsIDOMWindow *ParentWindow = NULL );
 		bso::bool__ Show(
 			file_picker_type__ Type,
+			const lcl::locales_rack___ &Locales,
 			str::string_ &FileName,
 			nsIDOMWindow *ParentWindow = NULL )
 		{
-			return Show( Type, NULL, FileName, ParentWindow );
+			return Show( Type, NULL, Locales, FileName, ParentWindow );
 		}
 		E_RODISCLOSE_( int, PredefinedFilters );
 	};
@@ -1776,24 +1791,27 @@ namespace nsxpcm {
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ HTMLFileOpenDialogBox(
 		const str::string_ &Title,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName )
 	{
-		return FileOpenDialogBox( Title, "html", fpmfHTML, FileName );
+		return FileOpenDialogBox( Title, "html", fpmfHTML, Locales, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ XPRJFileOpenDialogBox(
 		const str::string_ &Title,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName )
 	{
-		return FileOpenDialogBox( Title, "xprj", fpmfXPRJ, FileName );
+	return FileOpenDialogBox( Title, "xprj", fpmfXPRJ, Locales, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -1802,15 +1820,17 @@ namespace nsxpcm {
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ HTMLFileSaveDialogBox(
 		const str::string_ &Title,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( Title, "html", fpmfHTML, FileName );
+		return FileSaveDialogBox( Title, "html", fpmfHTML, Locales, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -1818,15 +1838,17 @@ namespace nsxpcm {
 	inline bso::bool__ XPRJFileSaveDialogBox(
 		nsIDOMWindow *Parent,
 		const str::string_ &Title,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( Title, "xprj", fpmfXPRJ, FileName );
+		return FileSaveDialogBox( Title, "xprj", fpmfXPRJ, Locales, FileName );
 	}
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ DirectorySelectDialogBox(
 		const str::string_ &Title,
+		const lcl::locales_rack___ &Locales,
 		str::string_ &DirectoryName );
 
 	inline void OpenWindow(

@@ -90,7 +90,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenMessage(
-	const str::string_ &RawMessage,
+	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
@@ -101,7 +101,7 @@ ERRBegin
 	Path.Init( "Translations[language=\"" );
 	Path.Append( Language );
 	Path.Append( "\"]/Translation[message=\"" );
-	Path.Append( RawMessage );
+	Path.Append( Text );
 	Path.Append( "\"]" );
 
 	Found = Registry.GetValue( Path, S_.Root, Translation );
@@ -112,7 +112,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locales_::_GetTranslationFollowingMessageThenLanguage(
-	const str::string_ &RawMessage,
+	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
@@ -121,7 +121,51 @@ ERRProlog
 	str::string Path;
 ERRBegin
 	Path.Init( "Translations[message=\"" );
-	Path.Append( RawMessage );
+	Path.Append( Text );
+	Path.Append( "\"]/Translation[language=\"" );
+	Path.Append( Language );
+	Path.Append( "\"]" );
+
+	Found = Registry.GetValue( Path, S_.Root, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenText(
+	const str::string_ &Text,
+	const str::string_ &Language,
+	str::string_ &Translation ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init( "Translations[language=\"" );
+	Path.Append( Language );
+	Path.Append( "\"]/Translation[text=\"" );
+	Path.Append( Text );
+	Path.Append( "\"]" );
+
+	Found = Registry.GetValue( Path, S_.Root, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+bso::bool__ lcl::locales_::_GetTranslationFollowingTextThenLanguage(
+	const str::string_ &Text,
+	const str::string_ &Language,
+	str::string_ &Translation ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init( "Translations[text=\"" );
+	Path.Append( Text );
 	Path.Append( "\"]/Translation[language=\"" );
 	Path.Append( Language );
 	Path.Append( "\"]" );
@@ -150,24 +194,26 @@ void lcl::locales_::GetLanguages(
 }
 
 bso::bool__ lcl::locales_::GetTranslation(
-	const str::string_ &RawMessage,
+	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
 
 	if ( S_.Root != NONE )
-		if ( !( Found = _GetTranslationFollowingLanguageThenMessage( RawMessage, Language, Translation ) ) )
-			Found = _GetTranslationFollowingMessageThenLanguage( RawMessage, Language, Translation );
+		if ( !( Found = _GetTranslationFollowingLanguageThenText( Text, Language, Translation ) ) )
+			if ( !( Found = _GetTranslationFollowingTextThenLanguage( Text, Language, Translation ) ) )
+				if ( !( Found = _GetTranslationFollowingLanguageThenMessage( Text, Language, Translation ) ) )	// Pour des raisons de compatibilité ascendante.
+					Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Translation );	// Pour des raisons de compatibilité ascendante.
 
 	if ( !Found )
-		Translation = RawMessage;
+		Translation = Text;
 
 	return Found;
 }
 
 const char *lcl::locales_::GetTranslation(
-	const str::string_ &RawMessage,
+	const str::string_ &Text,
 	const str::string_ &Language,
 	STR_BUFFER___ &Buffer ) const
 {
@@ -176,7 +222,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	GetTranslation( RawMessage, Language, Translation );
+	GetTranslation( Text, Language, Translation );
 
 	Translation.Convert( Buffer );
 ERRErr

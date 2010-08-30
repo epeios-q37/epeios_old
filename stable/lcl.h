@@ -78,12 +78,22 @@ namespace lcl {
 		void _GetCorrespondingLabels(
 			const strings_ &Labels,
 			strings_ &Wordings ) const;
+		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
-			const str::string_ &RawMessage,
+			const str::string_ &Text,
 			const str::string_ &Language,
 			str::string_ &Translation ) const;
+		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
-			const str::string_ &RawMessage,
+			const str::string_ &Text,
+			const str::string_ &Language,
+			str::string_ &Translation ) const;
+		bso::bool__ _GetTranslationFollowingLanguageThenText(
+			const str::string_ &Text,
+			const str::string_ &Language,
+			str::string_ &Translation ) const;
+		bso::bool__ _GetTranslationFollowingTextThenLanguage(
+			const str::string_ &Text,
 			const str::string_ &Language,
 			str::string_ &Translation ) const;
 	public:
@@ -163,32 +173,81 @@ namespace lcl {
 			strings_ &Labels,
 			strings_ &Wordings ) const;
 		bso::bool__ GetTranslation(
-			const str::string_ &RawMessage,
+			const str::string_ &Text,
 			const str::string_ &Language,
 			str::string_ &Translation ) const;
 		const char *GetTranslation(
-			const str::string_ &RawMessage,
+			const str::string_ &Text,
 			const str::string_ &Language,
-			STR_BUFFER___ &Buffer ) const;	// Si la traducation n'existe pas, 'RawMessage' est renvoyé.
+			STR_BUFFER___ &Buffer ) const;	// Si la traducation n'existe pas, 'Text' est renvoyé.
 	};
 
 	E_AUTO( locales );
 
+	class locales_rack___ {
+	private:
+		const locales_ *_Locales;
+		str::string _Language;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Locales = NULL;
+			_Language.reset( P );
+		}
+		locales_rack___( void )
+		{
+			reset( false );
+		}
+		~locales_rack___( void )
+		{
+			reset();
+		}
+		void Init(
+			const locales_ &Locales,	// N'est pas dupliquer.
+			const str::string_ &Language )
+		{
+			_Locales = &Locales;
+
+			_Language.Init( Language );
+		}
+		const locales_ &Locales( void ) const
+		{
+			if ( _Locales == NULL )
+				ERRu();
+
+			return *_Locales;
+		}
+		E_RODISCLOSE__( str::string_, Language );
+		bso::bool__ GetTranslation(
+			const str::string_ &Text,
+			str::string_ &Translation ) const
+		{
+			return Locales().GetTranslation( Text, Language(), Translation );
+		}
+		const char *GetTranslation(
+			const str::string_ Text,
+			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
+		{
+			return Locales().GetTranslation( Text, Language(), Buffer );
+		}
+	};
+
+
 	inline void ReplaceTags(
-		str::string_ &Message,
+		str::string_ &Text,
 		const strings_ &Values,
 		char TagMarker = LCL_DEFAULT_TAG_MARKER )
 	{
-		str::ReplaceTags( Message, Values, TagMarker );
+		str::ReplaceTags( Text, Values, TagMarker );
 	}
 
 	inline void ReplaceTag(
-		str::string_ &Message,
+		str::string_ &Text,
 		bso::ubyte__ Indice,
 		const str::string_ &Value,
 		char TagMarker = LCL_DEFAULT_TAG_MARKER )
 	{
-		str::ReplaceTag( Message, Indice, Value, TagMarker );
+		str::ReplaceTag( Text, Indice, Value, TagMarker );
 	}
 }
 

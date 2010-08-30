@@ -1,5 +1,12 @@
 $Id$
 
+30/08/2010 :
+	- LCL :
+		- Remplacement de 'Message' par 'Text'.
+		- Création de "lacales_rack___'.
+	- NSXPCM :
+		- Ajout gestion des 'locales'.
+
 25/08/2010 :
 	- NSXPCM :
 		- Mise en oeuvre de 'xxxf_' pour les entrée étant une combinaisons de plusieurs drapeaux.

@@ -91,6 +91,43 @@ static nsCOMPtr<nsIFormHistory2> FormHistory_;
 mtx::mutex_handler__ FormHistoryMutex_;
 #endif
 
+#define CASE( m )\
+	case t##m:\
+	return #m;\
+	break
+
+
+static const char *GetLabel_( text__ Text )
+{
+	switch ( Text ) {
+		CASE( XPRJFilterLabel );
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+const str::string_ &nsxpcm::GetTranslation(
+	text__ Text,
+	const lcl::locales_rack___ &Locales,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string RawText;
+ERRBegin
+	RawText.Init( "NSXPCM_" );
+	RawText.Append( GetLabel_( Text ) );
+
+	Locales.GetTranslation( RawText,Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
 void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 {
 	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
@@ -485,10 +522,19 @@ static inline PRInt32 ConvertPredefinedFilters_( int Filters )
 
 void AddExtraPredefinedFilters_(
 	int Filters,
+	const lcl::locales_rack___ &Locales,
 	nsIFilePicker *FilePicker )
 {
+ERRProlog
+		str::string Translation;
+ERRBegin
+	Translation.Init();
+
 	if ( Filters & fpmfXPRJ )
-		AddFilter_( str::string( "XML-Based project file" ), str::string( "*.xprj" ), FilePicker );
+		AddFilter_( GetTranslation( nsxpcm::tXPRJFilterLabel, Locales, Translation ), str::string( "*.xprj" ), FilePicker );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 #undef H
@@ -497,6 +543,7 @@ void AddExtraPredefinedFilters_(
 bso::bool__ nsxpcm::file_picker_::Show(
 	file_picker_type__ Type,
 	const char *DefaultExtension,
+	const lcl::locales_rack___ &Locales,
 	str::string_ &FileName,
 	nsIDOMWindow *ParentWindow )
 {
@@ -524,7 +571,7 @@ ERRBegin
 
 	AddFilters_( Filters, FilePicker );
 
-	AddExtraPredefinedFilters_( S_.PredefinedFilters, FilePicker );
+	AddExtraPredefinedFilters_( S_.PredefinedFilters, Locales, FilePicker );
 
 	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
 		Transform( DefaultExtension, EString );
@@ -626,9 +673,10 @@ ERREpilog
 static bso::bool__ FileDialogBox_(
 	nsIDOMWindow *ParentWindow,
 	const str::string_ &Title,
-	const char *DefaultExtension,
 	file_picker_type__ Type,
+	const char *DefaultExtension,
 	int PredefineFilters,
+	const lcl::locales_rack___ &Locales,
 	str::string_ &FileName )
 {
 	bso::bool__ FileSelected = false;
@@ -639,7 +687,7 @@ ERRBegin
 
 	FilePicker.SetPredefinedFilter( PredefineFilters );
 
-	FileSelected = FilePicker.Show( Type, DefaultExtension, FileName, ParentWindow );
+	FileSelected = FilePicker.Show( Type, DefaultExtension, Locales, FileName, ParentWindow );
 ERRErr
 ERREnd
 ERREpilog
@@ -651,25 +699,28 @@ bso::bool__ nsxpcm::FileOpenDialogBox(
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
+	const lcl::locales_rack___ &Locales,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, DefaultExtension, fptOpen, PredefinedFilters, FileName );
+	return FileDialogBox_( NULL, Title, fptOpen, DefaultExtension, PredefinedFilters, Locales, FileName );
 }
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
+	const lcl::locales_rack___ &Locales,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, "", fptSave, PredefinedFilters, FileName );
+	return FileDialogBox_( NULL, Title, fptSave, "", PredefinedFilters, Locales, FileName );
 }
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	const str::string_ &Title,
+	const lcl::locales_rack___ &Locales,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, "", fptFolder, fpmf_None, FileName );
+	return FileDialogBox_( NULL, Title, fptFolder, "", fpmf_None, Locales, FileName );
 }
 
 void nsxpcm::Delete( element_cores_ &Cores )
