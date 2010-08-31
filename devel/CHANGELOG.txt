@@ -31,7 +31,7 @@ $Id$
 
 19/08/2010 :
 	- NSXPCM :
-		- Reforcement détection d'erreurs.
+		- Renforcement détection d'erreurs.
 		- Suppression 'ErrorHandling'.
 		- Ajout fonctions 'p les bogues suivant :
 			- un 'menuitem' n'hérite pas de l'attribut 'command' du 'broadcast' qu'il écoute; le 'patch' consiste à copier l'attribut 'command' du 'broadcast' qu'il écoute.
