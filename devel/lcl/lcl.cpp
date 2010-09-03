@@ -57,7 +57,7 @@ public:
 
 using namespace lcl;
 
-void lcl::locales_::_GetCorrespondingLabels(
+void lcl::locale_::_GetCorrespondingLabels(
 	const strings_ &Labels,
 	strings_ &Wordings ) const
 {
@@ -89,7 +89,7 @@ ERREnd
 ERREpilog
 }
 
-bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenMessage(
+bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenMessage(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
@@ -111,7 +111,7 @@ ERREpilog
 	return Found;
 }
 
-bso::bool__ lcl::locales_::_GetTranslationFollowingMessageThenLanguage(
+bso::bool__ lcl::locale_::_GetTranslationFollowingMessageThenLanguage(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
@@ -133,7 +133,7 @@ ERREpilog
 	return Found;
 }
 
-bso::bool__ lcl::locales_::_GetTranslationFollowingLanguageThenText(
+bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenText(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
@@ -155,7 +155,7 @@ ERREpilog
 	return Found;
 }
 
-bso::bool__ lcl::locales_::_GetTranslationFollowingTextThenLanguage(
+bso::bool__ lcl::locale_::_GetTranslationFollowingTextThenLanguage(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
@@ -177,7 +177,7 @@ ERREpilog
 	return Found;
 }
 
-void lcl::locales_::GetLanguages(
+void lcl::locale_::GetLanguages(
 	strings_ &Labels,
 	strings_ &Wordings ) const
 {
@@ -193,7 +193,7 @@ void lcl::locales_::GetLanguages(
 	}
 }
 
-bso::bool__ lcl::locales_::GetTranslation(
+bso::bool__ lcl::locale_::GetTranslation(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	str::string_ &Translation ) const
@@ -212,7 +212,7 @@ bso::bool__ lcl::locales_::GetTranslation(
 	return Found;
 }
 
-const char *lcl::locales_::GetTranslation(
+const char *lcl::locale_::GetTranslation(
 	const str::string_ &Text,
 	const str::string_ &Language,
 	STR_BUFFER___ &Buffer ) const

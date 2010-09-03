@@ -123,7 +123,7 @@ const char *xpp::GetLabel( status__ Status )
 const str::string_ &xpp::GetTranslation(
 	status__ Status,
 	const str::string_ &Language,
-	const lcl::locales_ &Locales,
+	const lcl::locale_ &Locale,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -133,7 +133,7 @@ ERRBegin
 
 	MessageLabel.Append( GetLabel( Status ) );
 
-	Locales.GetTranslation( MessageLabel, Language, Translation );
+	Locale.GetTranslation( MessageLabel, Language, Translation );
 ERRErr
 ERREnd
 ERREpilog

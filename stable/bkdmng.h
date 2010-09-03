@@ -714,7 +714,7 @@ namespace bkdmng {
 	class backend
 	{
 	private:
-		const lcl::locales_ *_Locales;
+		const lcl::locale_ *_Locale;
 		master_module Master_;
 		const char *_TargetLabel;
 		// Informations à propos du 'backend'.
@@ -764,7 +764,7 @@ namespace bkdmng {
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
 			const char *TargetLabel,
-			const lcl::locales_ &Locales,
+			const lcl::locale_ &Locale,
 			const char *BackendInformations,
 			const char *PublisherInformations )
 		{
@@ -775,7 +775,7 @@ namespace bkdmng {
 
 			_TargetLabel = TargetLabel;
 
-			_Locales = &Locales;
+			_Locale = &Locale;
 
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
@@ -786,7 +786,7 @@ namespace bkdmng {
 			const str::string_ &Message,
 			STR_BUFFER___ &Buffer )
 		{
-			return _Locales->GetTranslation( Message, Language_, Buffer );
+			return _Locale->GetTranslation( Message, Language_, Buffer );
 		}
 		void Add( untyped_module &Module )
 		{

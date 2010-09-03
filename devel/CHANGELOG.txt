@@ -1,9 +1,23 @@
 $Id$
 
+03/09/2010 :
+	- GENERAL :
+		- Adaptation aux modifications 'LCL'.
+	- FRDKRN :
+		- Ajout 'GetDefaultConfigurationFileName(...)'.
+	- TOL :
+		- Ajout de 'E_STRING(...).
+
+02/09/2010 :
+	- GENERAL :
+		- Adaptation aux modifications dans 'LCL'.
+	- LCL :
+		- 'locales[...]' ->'locale[...]'
+
 30/08/2010 :
 	- LCL :
 		- Remplacement de 'Message' par 'Text'.
-		- Création de "lacales_rack___'.
+		- Création de "locales_rack___'.
 	- NSXPCM :
 		- Ajout gestion des 'locales'.
 

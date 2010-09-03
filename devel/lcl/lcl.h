@@ -73,7 +73,7 @@ namespace lcl {
 	using str::strings_;
 	using str::strings;
 
-	class locales_ {
+	class locale_ {
 	private:
 		void _GetCorrespondingLabels(
 			const strings_ &Labels,
@@ -102,7 +102,7 @@ namespace lcl {
 			rgstry::row__ Root;
 		} &S_;
 		rgstry::registry_ Registry;
-		locales_( s &S )
+		locale_( s &S )
 		: S_( S ),
 		  Registry( S.Registry )
 		{}
@@ -111,7 +111,7 @@ namespace lcl {
 			Registry.reset( P );
 			S_.Root = NONE;
 		}
-		locales_ &operator =( const locales_ &L )
+		locale_ &operator =( const locale_ &L )
 		{
 			S_.Root = L.S_.Root;
 
@@ -182,53 +182,53 @@ namespace lcl {
 			STR_BUFFER___ &Buffer ) const;	// Si la traducation n'existe pas, 'Text' est renvoyé.
 	};
 
-	E_AUTO( locales );
+	E_AUTO( locale );
 
-	class locales_rack___ {
+	class locale_rack___ {
 	private:
-		const locales_ *_Locales;
+		const locale_ *_Locale;
 		str::string _Language;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_Locales = NULL;
+			_Locale = NULL;
 			_Language.reset( P );
 		}
-		locales_rack___( void )
+		locale_rack___( void )
 		{
 			reset( false );
 		}
-		~locales_rack___( void )
+		~locale_rack___( void )
 		{
 			reset();
 		}
 		void Init(
-			const locales_ &Locales,	// N'est pas dupliquer.
+			const locale_ &Locale,	// N'est pas dupliquer.
 			const str::string_ &Language )
 		{
-			_Locales = &Locales;
+			_Locale = &Locale;
 
 			_Language.Init( Language );
 		}
-		const locales_ &Locales( void ) const
+		const locale_ &Locale( void ) const
 		{
-			if ( _Locales == NULL )
+			if ( _Locale == NULL )
 				ERRu();
 
-			return *_Locales;
+			return *_Locale;
 		}
 		E_RODISCLOSE__( str::string_, Language );
 		bso::bool__ GetTranslation(
 			const str::string_ &Text,
 			str::string_ &Translation ) const
 		{
-			return Locales().GetTranslation( Text, Language(), Translation );
+			return Locale().GetTranslation( Text, Language(), Translation );
 		}
 		const char *GetTranslation(
 			const str::string_ Text,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
-			return Locales().GetTranslation( Text, Language(), Buffer );
+			return Locale().GetTranslation( Text, Language(), Buffer );
 		}
 	};
 

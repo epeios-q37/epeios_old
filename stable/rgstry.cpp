@@ -1126,7 +1126,7 @@ const str::string_ &rgstry::GetTranslation(
 	error__ Error,
 	const error_details_ &ErrorDetails,
 	const str::string_ &Language,
-	const lcl::locales_ &Locales,
+	const lcl::locale_ &Locale,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -1138,7 +1138,7 @@ ERRBegin
 		ERRu();
 		break;
 	case eUnableToOpenFile:
-		Locales.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1%0" ), Language, Translation );
+		Locale.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1%0" ), Language, Translation );
 
 		TagValues.Init();
 		TagValues.Append( ErrorDetails.FileName );
@@ -1147,7 +1147,7 @@ ERRBegin
 		break;
 	case eParseError:
 		bso::integer_buffer__ Buffer;
-		Locales.GetTranslation( str::string( "ERGSTRY_ParseError_4%0" ), Language, Translation );
+		Locale.GetTranslation( str::string( "ERGSTRY_ParseError_4%0" ), Language, Translation );
 	
 		TagValues.Init();
 		TagValues.Append( str::string(  ErrorDetails.FileName ) );
@@ -1155,7 +1155,7 @@ ERRBegin
 		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Column, Buffer ) ) );
 
 		TagValue.Init();
-		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locales, TagValue );
+		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locale, TagValue );
 		TagValues.Append( TagValue );
 
 		lcl::ReplaceTags( Translation, TagValues );
@@ -1163,7 +1163,7 @@ ERRBegin
 	case eRootPathError:
 		if ( ErrorDetails.GetPathErrorRow() != NONE )
 			ERRu();
-		Locales.GetTranslation( str::string( "ERGSTRY_UnableToFindRootPath" ), Language, Translation );
+		Locale.GetTranslation( str::string( "ERGSTRY_UnableToFindRootPath" ), Language, Translation );
 		break;
 	default:
 		ERRu();

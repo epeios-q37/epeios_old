@@ -273,11 +273,23 @@ public:\
 //d Create a new type for a row named 'Type'.
 #define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )
 
-
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
 'E_COVER2( a, b )' donne 'a, b' */
 #define E_COVER2(a, b)	a, b
+
+/* Permet de convertir un entier en chaîne (l'encadre par des '"').
+Utile pour afficher le numéro de ligne dans un #pragma message (...). */
+#define E__STRING(x) #x
+#define E_STRING(x) E__STRING(x)
+
+// Inspiré du site msdn.microsoft.com.
+#define __LOC__ __FILE__ "(" E_STRING(__LINE__) ")"
+
+// Utilisation :
+// #pragma message(__LOC__ " : Message")
+
+
 
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
@@ -1010,16 +1022,6 @@ namespace tol {
 #define E_RWDISCLOSE__(type__, name )\
 	E_RODISCLOSE__( type__, name )\
 	E_WODISCLOSE__( type__, name )
-
-// Inspiré du site msdn.microsoft.com.
-#define __STR2__(x) #x
-#define __STR1__(x) __STR2__(x)
-#define __LOC__ __FILE__ "("__STR1__(__LINE__)") : "
-
-// Utilisation :
-// #pragma message(__LOC__"Message")
-
-
 
 
 /*$END$*/

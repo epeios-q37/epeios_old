@@ -864,7 +864,7 @@ namespace rgstry {
 		error__ Error,
 		const error_details_ &ErrorDetails,
 		const str::string_ &Language,
-		const lcl::locales_ &Locales,
+		const lcl::locale_ &Locale,
 		str::string_ &Translation );
 
 	error__ FillRegistry(

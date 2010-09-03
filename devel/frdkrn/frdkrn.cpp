@@ -197,6 +197,25 @@ ERREnd
 ERREpilog
 }
 
+bso::bool__ frdkrn::GetDefaultConfigurationFileName(
+	const char *Affix,
+	str::string_ &FileName )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	FileName.Init( Affix );
+	FileName.Append( '.' );
+	FileName.Append( FRDKRN_PROJECT_FILE_EXTENSION );
+
+	Exists = fil::FileExists( FileName.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

@@ -104,7 +104,7 @@ namespace xpp {
 	const str::string_ &GetTranslation(
 		status__ Status,
 		const str::string_ &Language,
-		const lcl::locales_ &Locales,
+		const lcl::locale_ &Locale,
 		str::string_ &Translation );
 
 

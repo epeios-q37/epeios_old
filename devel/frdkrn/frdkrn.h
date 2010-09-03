@@ -66,6 +66,10 @@ extern class ttr_tutor &FRDKRNTutor;
 #include "frdbkd.h"
 #include "frdrgy.h"
 
+#define FRDKRN_CONFIGURATION_FILE_EXTENSION	"xcfg"
+#define FRDKRN_PROJECT_FILE_EXTENSION		"xprj"
+#define FRDKRN_LOCALE_FILE_EXTENSION		"xlcl"
+
 namespace frdkrn {
 	using namespace frdbkd;
 
@@ -85,7 +89,7 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		lcl::locales_rack___ _Locales;
+		lcl::locale_rack___ _Locale;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
@@ -123,7 +127,7 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
-			_Locales.reset( P );
+			_Locale.reset( P );
 		}
 		kernel___( void )
 		{
@@ -136,14 +140,14 @@ namespace frdkrn {
 		void Init(
 			const frdrgy::registry_ &Registry,
 			const str::string_ &Language,
-			const lcl::locales_ &Locales )	// 'Locales' n'est pas dupliqué !
+			const lcl::locale_ &Locale )	// 'Locale' n'est pas dupliqué !
 		{
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 
 			_Registry.Init();
 			_Registry = Registry;
 
-			_Locales.Init( Locales, Language );
+			_Locale.Init( Locale, Language );
 		}
 		bso::bool__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
@@ -205,9 +209,14 @@ namespace frdkrn {
 		}
 		const str::string_ &Language( void ) const
 		{
-			return _Locales.Language();
+			return _Locale.Language();
 		}
+		E_RODISCLOSE__( lcl::locale_rack___, Locale );
 	};
+
+	bso::bool__ GetDefaultConfigurationFileName(
+		const char *Affix,
+		str::string_ &FileName );
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )
 	{
