@@ -1921,9 +1921,7 @@ namespace nsxpcm {
 		OpenDialog( NULL, URL, Name, Window );
 	}
 
-	inline nsIDOMWindowInternal *GetJSConsole(
-		nsIDOMWindow *ParentWindow,
-		nsIDOMWindowInternal **JSConsoleWindow )
+	inline nsIDOMWindowInternal *GetJSConsole( nsIDOMWindowInternal **JSConsoleWindow )
 	{
 		nsIDOMWindow *Window = NULL;
 
@@ -1937,12 +1935,7 @@ namespace nsxpcm {
 		return *JSConsoleWindow;
 	}
 
-	void GetJSConsole( nsIDOMWindow *ParentWindow );
-
-	inline void GetJSConsole( void )
-	{
-		GetJSConsole( NULL );
-	}
+	void GetJSConsole( void );
 
 	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
 	inline void GetDOMInspector( nsIDOMWindow *ParentWindow )

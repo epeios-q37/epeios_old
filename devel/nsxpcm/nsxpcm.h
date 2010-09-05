@@ -1929,7 +1929,7 @@ namespace nsxpcm {
 
 		if ( ( *JSConsoleWindow == NULL ) || ( IsClosed( *JSConsoleWindow ) ) ) {
 //			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
-			OpenWindow( "chrome://global/content/console.xul", "_blank", &Window );
+			OpenWindow( ParentWindow, "chrome://global/content/console.xul", "_blank", &Window );
 			*JSConsoleWindow = GetWindowInternal( Window );
 		} else
 			T( (*JSConsoleWindow)->Focus() );

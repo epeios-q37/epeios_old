@@ -1,5 +1,9 @@
 $Id$
 
+05/09/2010 :
+	- NSXPCM :
+		- Correction non prise en compte paramètre 'ParentWindow' dans 'GetJSConsole(...)'.
+
 03/09/2010 :
 	- GENERAL :
 		- Adaptation aux modifications 'LCL'.

@@ -128,9 +128,9 @@ ERREpilog
 }
 
 
-void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
+void nsxpcm::GetJSConsole( void )
 {
-	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
+	nsxpcm::GetJSConsole( &JSConsoleWindow_ );
 }
 
 void nsxpcm::Transform(
