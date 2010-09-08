@@ -1,5 +1,16 @@
 $Id$
 
+08/09/2010 :
+	- ERR :
+		- 'iError' -> 'iExit'.
+		- Suppression de 'iBeam'.
+	- LCL :
+		- 'locales' ->'locale'.
+	- NSXPCM :
+		- Ajout variante 'Close(...)'.
+		- Adaptation modifications bibliothèque 'ERR'.
+		- Création de 'NSXPCM_ERR'.
+
 05/09/2010 :
 	- NSXPCM :
 		- Correction non prise en compte paramètre 'ParentWindow' dans 'GetJSConsole(...)'.

@@ -63,7 +63,7 @@ using namespace frdrgy;
 
 #define PARAMETERS	FRDRGY_PARAMETERS_PATH
 
-const char *frdrgy::paths::parameters::Locales							= "Locales";
+const char *frdrgy::paths::parameters::Locale					= "Locale";
 
 #define BACKEND		PARAMETERS "Backend" S
 const char *frdrgy::paths::parameters::backend::Location		= BACKEND "Location";

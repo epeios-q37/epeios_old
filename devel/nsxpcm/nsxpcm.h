@@ -134,6 +134,22 @@ extern class ttr_tutor &NSXPCMTutor;
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
+// Permet de 'logger' une erreur et d'éviter qu'elle soit remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
+#define NSXPCM_ERR\
+	if ( ERRMajor == err::itn ) {\
+		if ( ERRMinor == err::iExit )\
+			nsxpcm::Close();\
+		else if ( ERRMinor != err::iReturn ) {\
+			err::buffer__ Buffer;\
+			nsxpcm::Log( err::Message( Buffer ) );\
+		}\
+	} else {\
+		err::buffer__ Buffer;\
+		nsxpcm::Log( err::Message( Buffer ) );\
+	}\
+	ERRRst()
+
+
 namespace nsxpcm {
 	using str::string_;
 	using str::string;
@@ -965,6 +981,15 @@ namespace nsxpcm {
 	{
 		Close( GetWindowInternal( Window ) );
 	}
+
+	inline void Close( void )
+	{
+		if ( MasterWindow == NULL )
+			ERRu();
+
+		Close(  MasterWindow );
+	}
+
 
 	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
 	{

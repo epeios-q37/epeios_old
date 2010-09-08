@@ -76,7 +76,7 @@ extern class ttr_tutor &FRDRGYTutor;
 namespace frdrgy {
 	struct paths {
 		static struct parameters {
-			static const char *Locales;
+			static const char *Locale;
 			static struct backend {
 				static const char
 					*Location,
@@ -236,7 +236,7 @@ namespace frdrgy {
 		const registry_ &Registry,
 		str::string_ &Locales )
 	{
-		return GetValue( paths::Parameters.Locales, Registry, Locales );
+		return GetValue( paths::Parameters.Locale, Registry, Locales );
 	}
 
 }

@@ -134,6 +134,22 @@ extern class ttr_tutor &NSXPCMTutor;
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
+// Permet de 'logger' une erreur et d'éviter qu'elle soit remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
+#define NSXPCM_ERR\
+	if ( ERRMajor == err::itn ) {\
+		if ( ERRMinor == err::iExit )\
+			nsxpcm::Close();\
+		else if ( ERRMinor != err::iReturn ) {\
+			err::buffer__ Buffer;\
+			nsxpcm::Log( err::Message( Buffer ) );\
+		}\
+	} else {\
+		err::buffer__ Buffer;\
+		nsxpcm::Log( err::Message( Buffer ) );\
+	}\
+	ERRRst()
+
+
 namespace nsxpcm {
 	using str::string_;
 	using str::string;
@@ -965,6 +981,15 @@ namespace nsxpcm {
 	{
 		Close( GetWindowInternal( Window ) );
 	}
+
+	inline void Close( void )
+	{
+		if ( MasterWindow == NULL )
+			ERRu();
+
+		Close(  MasterWindow );
+	}
+
 
 	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
 	{
@@ -1921,13 +1946,15 @@ namespace nsxpcm {
 		OpenDialog( NULL, URL, Name, Window );
 	}
 
-	inline nsIDOMWindowInternal *GetJSConsole( nsIDOMWindowInternal **JSConsoleWindow )
+	inline nsIDOMWindowInternal *GetJSConsole(
+		nsIDOMWindow *ParentWindow,
+		nsIDOMWindowInternal **JSConsoleWindow )
 	{
 		nsIDOMWindow *Window = NULL;
 
 		if ( ( *JSConsoleWindow == NULL ) || ( IsClosed( *JSConsoleWindow ) ) ) {
 //			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
-			OpenWindow( "chrome://global/content/console.xul", "_blank", &Window );
+			OpenWindow( ParentWindow, "chrome://global/content/console.xul", "_blank", &Window );
 			*JSConsoleWindow = GetWindowInternal( Window );
 		} else
 			T( (*JSConsoleWindow)->Focus() );
@@ -1935,7 +1962,12 @@ namespace nsxpcm {
 		return *JSConsoleWindow;
 	}
 
-	void GetJSConsole( void );
+	void GetJSConsole( nsIDOMWindow *ParentWindow );
+
+	inline void GetJSConsole( void )
+	{
+		GetJSConsole( NULL );
+	}
 
 	// Voir https://developer.mozilla.org/en/XULRunner_tips#DOM_Inspector
 	inline void GetDOMInspector( nsIDOMWindow *ParentWindow )

@@ -144,9 +144,9 @@ namespace err {
 	{
 		iGeneric,
 		iTest,		// for testing purpose.
-		iError,		// To signal an error (generally a user error, an error in command line, for example).
-		iBeam,		// To rapidly go back to a certain point.
-		iReturn		// To quickly exit, without an error.
+		iExit,		// Pour termnier rapidement un programme, suite à une erreur (erreur utilisateur, d'arguments de la ligne de commande, ...).
+		iBeam,		// Pour retourner rapidement à un point donné.
+		iReturn		// Pour retourner à la fonction appelante (en dehors d'un contexte d'erreur).
 	};
 		// throw error
 	enum c
@@ -382,7 +382,7 @@ namespace err {
 
 
 // Exits the software returning 'v'.
-#define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iError ); }
+#define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iExit ); }
 
 // Jump to 'ERRErr' and reset the reset the err::itn/iNoError' error.
 #define	ERRReturn		ERRI( iReturn )

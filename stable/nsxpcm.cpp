@@ -128,9 +128,9 @@ ERREpilog
 }
 
 
-void nsxpcm::GetJSConsole( void )
+void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 {
-	nsxpcm::GetJSConsole( &JSConsoleWindow_ );
+	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
 }
 
 void nsxpcm::Transform(
@@ -1239,7 +1239,6 @@ bso::bool__ nsxpcm::element_core__::Handle( nsIDOMEvent *RawEvent )
 {
 	bso::bool__ Success = false;
 ERRProlog
-	err::buffer__ Buffer;
 	nsEmbedString String;
 	str::string EventString;
 	event__ Event = e_Undefined;
@@ -1281,12 +1280,7 @@ ERRBegin
 
 	Success = true;
 ERRErr
-	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) ) {
-		Log( err::Message( Buffer ) );	
-		GetJSConsole();
-	}
-
-ERRRst();
+	NSXPCM_ERR;
 ERREnd
 ERREpilog
 	return Success;
