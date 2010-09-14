@@ -138,7 +138,9 @@ static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le 
 	return sOK;
 }
 
-static status__ SkipComment_( _flow___ &Flow )
+static status__ GetComment_(
+	_flow___ &Flow,
+	str::string_ &Content )
 {
 	bso::bool__ Continue = true;
 
@@ -161,7 +163,10 @@ static status__ SkipComment_( _flow___ &Flow )
 		return sUnexpectedEOF;
 
 	while ( Continue ) {
-		while ( !Flow.EOX() && ( Flow.Get() != '-' ) );
+		while ( !Flow.EOX() && ( Flow.View() != '-' ) )
+			Content.Append( Flow.Get() );
+
+		Flow.Get();	// Pour passer le '-' de début de fin de commentaire.
 
 		if ( Flow.EOX() )
 			return sUnexpectedEOF;
@@ -176,7 +181,8 @@ static status__ SkipComment_( _flow___ &Flow )
 				Flow.Get();
 
 				Continue = false;
-			}
+			} else
+				Content.Append( "--" );
 		}
 	}
 
@@ -545,10 +551,18 @@ ERRBegin
 			break;
 		case cOpeningTag:
 			switch ( _Token ) {
+			case tComment:
 			case t_Undefined:
 				if ( _Flow.View() == '!' ) {
-					HANDLE( SkipComment_( _Flow ) );
+					_Value.Init();
+
+					HANDLE( GetComment_( _Flow, _Value ) );
 					_Context = cTagExpected;
+
+					if ( ( 1 << _Token ) & TokenToReport )
+						Continue = false;
+
+					_Token = tComment;
 
 					HANDLE( SkipSpaces_( _Flow ) );
 				} else {
@@ -767,6 +781,7 @@ ERRBegin
 			switch ( _Token ) {
 			case t_Undefined:
 			case tValue:
+			case tComment:
 				HANDLE( SkipSpaces_( _Flow ) );
 
 				_TagName.Init();
@@ -907,6 +922,9 @@ ERRBegin
 			break;
 		case tEndTag:
 			Stop = !Callback.XMLEndTag( TagName, Dump );
+			break;
+		case tComment:
+			Stop = !Callback.XMLComment( Value, Dump );
 			break;
 		case tError:
 		case tProcessed:

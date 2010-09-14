@@ -525,13 +525,13 @@ protected:
 		const str::string_ &TagName,
 		const xml::dump_ &Dump )
 	{
-		if ( _Current == NONE ) {
+		if ( _Current == NONE )
 			if ( _Root == NONE )
-				_Root = _Current = _Registry.CreateNewRegistry( TagName );
+				_Root = _Current = _Registry.CreateNewRegistry( str::string( "_root" ) );
 			else
 				ERRc();
-		} else
-			_Current = _Registry.AddKey( TagName, _Current );
+
+		_Current = _Registry.AddKey( TagName, _Current );
 
 		return true;
 	}
@@ -570,6 +570,12 @@ protected:
 		if ( ( _Current == NONE ) && ( _Root == NONE ) )
 			return false;
 
+		return true;
+	}
+	virtual bso::bool__ XMLComment(
+		const str::string_ &Value,
+		const xml::dump_ &Dump )
+	{
 		return true;
 	}
 public:
@@ -1185,8 +1191,6 @@ error__ rgstry::FillRegistry(
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
 {
-	Registry.Init();
-
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
@@ -1244,8 +1248,6 @@ ERRBegin
 	}
 
 	FFlow.EOFD( XTF_EOXT );
-
-	Registry.Init();
 
 	Error = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
 

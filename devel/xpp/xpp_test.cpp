@@ -40,7 +40,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	3
+#define TEST_CASE	5
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
@@ -62,6 +62,11 @@ using cio::cerr;
 #define FILENAME	"Segment.xprj"
 #endif
 
+#if TEST_CASE == 5
+#define LOCATION	""	
+#define FILENAME	"gesbibcom.xcfg"
+#endif
+
 #define FILE		LOCATION FILENAME
 
 
@@ -69,7 +74,8 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	flf::file_iflow___ Flow;
-	xpp::preprocessing_extended_text_iflow___ XTFlow;
+	xpp::preprocessing_iflow___ PFlow;
+	xtf::extended_text_iflow__ XFlow;
 	FNM_BUFFER___ Buffer;
 	xml::browser___ Browser;
 	bso::bool__ Continue = true;
@@ -84,9 +90,11 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	XTFlow.Init( Flow, str::string( LOCATION ) );
+	PFlow.Init( Flow, str::string( LOCATION ), str::string( "xcf" ) );
 
-	Browser.Init( XTFlow );
+	XFlow.Init( PFlow );
+
+	Browser.Init( XFlow, xml::eh_Default );
 
 	TokenFlags |= xml::tfValue;
 
@@ -100,9 +108,9 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			cerr << "Error '" << xpp::GetLabel( XTFlow.Preprocessor().Status() ) << "' at line " << XTFlow.Preprocessor().Coord().Line << " column " << XTFlow.Preprocessor().Coord().Column;
-			if ( XTFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
-				cerr << " in file '" << XTFlow.Preprocessor().LocalizedFileName() << '\'';
+			cerr << "Error '" << xpp::GetLabel( PFlow.Status() ) << "' at line " << PFlow.Coord().Line << " column " << PFlow.Coord().Column;
+			if ( PFlow.LocalizedFileName().Amount() != 0 )
+				cerr << " in file '" << PFlow.LocalizedFileName() << '\'';
 			cerr << " !" << txf::nl << txf::sync;
 			Continue = false;
 			break;

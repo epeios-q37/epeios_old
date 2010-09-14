@@ -249,6 +249,7 @@ namespace xml {
 		tAttribute,
 		tValue,
 		tEndTag,
+		tComment,
 		tProcessed,	// Tout le flux XML a été traité.
 		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
 		t_amount,
@@ -272,6 +273,7 @@ namespace xml {
 		TF( Attribute ),
 		TF( Value ),
 		TF( EndTag ),
+		TF( Comment ),
 		tfAll = ( ( 1 << t_amount ) - 1 ),
 		tfObvious = tfStartTag | tfAttribute | tfValue | tfEndTag,
 	};
@@ -416,6 +418,9 @@ namespace xml {
 			const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLEndTag(
 			const str::string_ &Name,
+			const dump_ &Dump ) = 0;
+		virtual bso::bool__ XMLComment(
+			const str::string_ &Value,
 			const dump_ &Dump ) = 0;
 		void Init( void )
 		{}

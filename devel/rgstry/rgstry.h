@@ -1122,9 +1122,17 @@ namespace rgstry {
 			Registry.Init();
 			Roots.Init();
 		}
+		level__ CreateNewLevel( void )
+		{
+			return Roots.Append( NONE );
+		}
 		level__ AddNewLevel( const name_ &Name = name() )
 		{
-			return Roots.Append( Registry.CreateNewRegistry( Name ) );
+			level__ Level = RGSTRY_UNDEFINED_LEVEL;
+
+			Roots.Set( Registry.CreateNewRegistry( Name ), Level = CreateNewLevel() );
+
+			return Level;
 		}
 		const value_ &GetValue(
 			level__ Level,

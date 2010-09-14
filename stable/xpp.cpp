@@ -236,7 +236,7 @@ static status__ AwaitingToken_(
 {
 	token__ Token = xml::t_Undefined;
 
-	switch ( Token = Browser.Browse() ) {
+	switch ( Token = Browser.Browse( xml::tfAll & ~xml::tfComment ) ) {
 		case xml::tProcessed:
 			ERRc();
 			break;
@@ -899,6 +899,10 @@ status__ xpp::_extended_browser___::Handle(
 			break;
 		case xml::tError:
 			Status = Convert_( _Browser.Status() );
+			break;
+		case xml::tComment:
+			_Browser.PurgeDumpData();
+			Continue = true;
 			break;
 		default:
 			ERRc();

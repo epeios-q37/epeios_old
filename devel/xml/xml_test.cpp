@@ -42,7 +42,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	2
+#define TEST_CASE	3
 
 #if TEST_CASE == 1
 #	define FILE	"test.xml"
@@ -50,6 +50,10 @@ using cio::cerr;
 
 #if TEST_CASE == 2
 #	define FILE	"basic.xml"
+#endif
+
+#if TEST_CASE == 3
+#	define FILE	"gesbibcom.xcfg"
 #endif
 
 
@@ -116,6 +120,14 @@ struct callback__
 
 		return true;
 	}
+	virtual bso::bool__ XMLComment(
+		const str::string_ &Value,
+		const xml::dump_ &Dump )
+	{
+		cout << "Comment : '" << Value << '\'' << txf::nl;
+
+		return true;
+	}
 	callback__( void )
 	{
 		ident = 0;
@@ -134,7 +146,7 @@ ERRProlog
 	const char *Directory;
 	xml::status__ Status = xml::s_Undefined;
 	FNM_BUFFER___ Buffer;
-	lcl::locales Locales;
+	lcl::locale Locale;
 	str::string Translation;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
@@ -150,16 +162,16 @@ ERRBegin
 
 	GuiltyFileName.Init();
 
-	if ( ( Status = xml::Parse( XTFlow, Callback ) ) != xml::sOK ) {
+	if ( ( Status = xml::Parse( XTFlow, xml::eh_Default, Callback ) ) != xml::sOK ) {
 		cout << txf::sync;
 		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
 
 		if ( GuiltyFileName.Amount() != 0 )
 			cerr << " in file '" << GuiltyFileName << '\'';
 
-		Locales.Init();
+		Locale.Init();
 		Translation.Init();
-		cerr << " : " << xml::GetTranslation( Status, str::string(), Locales, Translation );
+		cerr << " : " << xml::GetTranslation( Status, str::string(), Locale, Translation );
 
 		cerr << txf::nl;
 	}
@@ -177,7 +189,8 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XTFlow;
 	xml::status__ Status = xml::s_Undefined;
-	FNM_BUFFER___ Buffer;	lcl::locales Locales;
+	FNM_BUFFER___ Buffer;
+	lcl::locale Locale;
 	str::string Translation;
 	xml::browser___ Browser;
 ERRBegin
@@ -185,17 +198,17 @@ ERRBegin
 
 	XTFlow.Init( Flow );
 
-	Browser.Init( XTFlow );
+	Browser.Init( XTFlow, xml::eh_Default );
 
 	switch( Browser.Browse( 0 ) ) {
 	case xml::tProcessed:
 		cout << Browser.DumpData();
 		break;
 	case xml::tError:
-		Locales.Init();
+		Locale.Init();
 		Translation.Init();
 		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
-		cerr << " : " << xml::GetTranslation( Browser.Status(), str::string(), Locales, Translation ) << txf::nl;
+		cerr << " : " << xml::GetTranslation( Browser.Status(), str::string(), Locale, Translation ) << txf::nl;
 		ERRu();
 		break;
 	default:

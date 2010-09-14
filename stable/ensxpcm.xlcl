@@ -1,11 +1,11 @@
 <!-- $Id$ -->
 <xpp:bloc>
-	<!--Translations text="NXSPCM_">
+	<!--Translations text="NSXPCM_">
 		<Translation language="fr"></Translation>
 		<Translation language="en-US"></Translation>
 	</Translations-->
-	<Translations text="NXSPCM_XPRJFilterLabel">
-		<Translation language="fr">Fichier de projet au format XML</Translation>
+	<Translations text="NSXPCM_XPRJFilterLabel">
+		<Translation language="fr">Fichier XML de projet</Translation>
 		<Translation language="en-US">XML-Based project file</Translation>
 	</Translations>
 </xpp:bloc>
