@@ -134,11 +134,11 @@ extern class ttr_tutor &NSXPCMTutor;
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
-// Permet de 'logger' une erreur et d'éviter qu'elle soit remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
-#define NSXPCM_ERR\
+// Permet de 'logger' une erreur et d'éviter qu'elle soit ne remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
+#define NSXPCM_ERR( window )\
 	if ( ERRMajor == err::itn ) {\
 		if ( ERRMinor == err::iExit )\
-			nsxpcm::Close();\
+			nsxpcm::Close( window );\
 		else if ( ERRMinor != err::iReturn ) {\
 			err::buffer__ Buffer;\
 			nsxpcm::Log( err::Message( Buffer ) );\
@@ -154,9 +154,19 @@ namespace nsxpcm {
 	using str::string_;
 	using str::string;
 
-	// A éventuellement initialiser par l'utilisateur, pour faciliter l'utilisation
+	// Rajoute une fenêtre pour pouvant être utilisé pour faciliter l'utilisation
 	// de certaines fonctions ('GetJSConsole(...)', 'Alert(...)', ...).
-	extern nsIDOMWindow *MasterWindow;
+	void AddMasterWindow( nsIDOMWindow *Window );
+
+	// Retire 'Window' de la liste des 'MasterWindow's
+	void RemoveMasterWindow( nsIDOMWindow *Window );
+
+	// Retourne un 'MasterWindows'. 'RealeaseWindow' doit être appelé dés que la 'Window' retournée n'est plus utilisée.
+	// Retourne 'NULL" si pas de fenêtre disponible.
+	nsIDOMWindow *RetrieveMasterWindow( void );
+
+	void ReleaseMasterWindow( nsIDOMWindow *Window );
+
 
 	// Log to the javascript console.
 	void Log( const char *Text );
@@ -981,15 +991,15 @@ namespace nsxpcm {
 	{
 		Close( GetWindowInternal( Window ) );
 	}
-
+/*
 	inline void Close( void )
 	{
-		if ( MasterWindow == NULL )
+		if ( GetMasterWindow() == NULL )
 			ERRu();
 
-		Close(  MasterWindow );
+		Close( GetMasterWindow() );
 	}
-
+*/
 
 	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
 	{
@@ -1176,28 +1186,36 @@ namespace nsxpcm {
 		nsIDOMWindow *Window,
 		const char *Text );
 
-	inline void Alert(
-		const char *Text,
-		bso::bool__ IgnoreError = false )
+	inline void Alert( const char *Text )
 	{
-		if ( MasterWindow != NULL )
+	ERRProlog
+		nsIDOMWindow *MasterWindow = NULL;
+	ERRBegin
+		if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 			Alert( MasterWindow, Text );
-		else if ( !IgnoreError )
-			ERRu();
+	ERRErr
+	ERREnd
+		if ( MasterWindow != NULL )
+			ReleaseMasterWindow( MasterWindow );
+	ERREpilog
 	}
 
 	void Alert(
 		nsIDOMWindow *Window,
 		const str::string_ &Text );
 
-	inline void Alert(
-		const str::string_ &Text,
-		bso::bool__ IgnoreError = false )
+	inline void Alert( const str::string_ &Text )
 	{
-		if ( MasterWindow != NULL )
+	ERRProlog
+		nsIDOMWindow *MasterWindow = NULL;
+	ERRBegin
+		if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 			Alert( MasterWindow, Text );
-		else if ( !IgnoreError )
-			ERRu();
+	ERRErr
+	ERREnd
+		if ( MasterWindow != NULL )
+			ReleaseMasterWindow( MasterWindow );
+	ERREpilog
 	}
 
 	bso::bool__ Confirm(
@@ -1882,9 +1900,10 @@ namespace nsxpcm {
 		const char *Name,
 		nsIDOMWindow **Window = NULL )
 	{
-		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL;
+	ERRProlog
+		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL, *MasterWindow = NULL;
 		nsEmbedString TransformedURL, TransformedName;
-
+	ERRBegin
 		if ( Window != NULL )
 			WindowBuffer = Window;
 		else
@@ -1895,12 +1914,17 @@ namespace nsxpcm {
 		Transform( Name, TransformedName );
 
 		if ( ParentWindow == NULL )
-			if ( MasterWindow != NULL )
+			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 				ParentWindow = MasterWindow;
 			else
 				ERRu();
 
 		T( GetWindowInternal( ParentWindow )->Open( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), WindowBuffer ) );;
+	ERRErr
+	ERREnd
+		if ( MasterWindow != NULL )
+			ReleaseMasterWindow( MasterWindow );
+	ERREpilog
 	}
 
 	inline void OpenWindow(
@@ -1917,9 +1941,10 @@ namespace nsxpcm {
 		const char *Name,
 		nsIDOMWindow **Window = NULL )
 	{
-		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL;
+	ERRProlog
+		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL, *MasterWindow = NULL;
 		nsEmbedString TransformedURL, TransformedName;
-
+	ERRBegin
 		if ( Window != NULL )
 			WindowBuffer = Window;
 		else
@@ -1930,12 +1955,17 @@ namespace nsxpcm {
 		Transform( Name, TransformedName );
 
 		if ( ParentWindow == NULL )
-			if ( MasterWindow != NULL )
+			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 				ParentWindow = MasterWindow;
 			else
 				ERRu();
 
 		T( GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), NULL, WindowBuffer ) );
+	ERRErr
+	ERREnd
+		if ( MasterWindow != NULL )
+			ReleaseMasterWindow( MasterWindow );
+	ERREpilog
 	}
 
 	inline void OpenDialog(

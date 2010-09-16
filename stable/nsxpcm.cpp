@@ -73,6 +73,7 @@ public:
 
 #include "xpp.h"
 #include "txf.h"
+#include "mtk.h"
 
 #define T( f )\
 	if ( ( f ) != NS_OK )\
@@ -84,7 +85,122 @@ public:
 
 using namespace nsxpcm;
 
-nsIDOMWindow *nsxpcm::MasterWindow = NULL;
+nsIDOMWindow *MasterWindow_ = NULL;
+bch::E_BUNCH( nsIDOMWindow *) MasterWindows_;
+mtx::mutex_handler__ MasterWindowMutex_;
+bso::ulong__ MasterWindowCounter_ = 0;
+
+void nsxpcm::AddMasterWindow( nsIDOMWindow *Window )
+{
+ERRProlog
+	bso::bool__ Locked = false;
+ERRBegin
+	if ( Window == NULL )
+		ERRu();
+
+	mtx::Lock( MasterWindowMutex_ );
+
+	Locked = true;
+
+	if ( MasterWindow_ == NULL )
+		MasterWindow_ = Window;
+	else
+		MasterWindows_.Append( Window );
+ERRErr
+ERREnd
+	if ( Locked )
+		mtx::Unlock( MasterWindowMutex_ );
+ERREpilog
+}
+
+void nsxpcm::RemoveMasterWindow( nsIDOMWindow *Window )
+{
+ERRProlog
+	bso::bool__ Locked = false;
+ERRBegin
+	if ( Window == NULL )
+		ERRu();
+
+	mtx::Lock( MasterWindowMutex_ );
+
+	Locked = true;
+
+	if ( MasterWindow_ == Window ) {
+		while ( MasterWindowCounter_ != 0 ) {
+			mtx::Unlock( MasterWindowMutex_ );
+			Locked = false;
+
+			tht::Defer();
+
+			mtx::Lock( MasterWindowMutex_ );
+			Locked = true;
+		}
+
+		if ( MasterWindows_.Amount() != 0 ) {
+			MasterWindow_ = MasterWindows_( MasterWindows_.First() );
+
+			MasterWindows_.Remove( MasterWindows_.First() );
+		} else
+			MasterWindow_ = NULL;
+	} else {
+		epeios::row__ Row = MasterWindows_.Search( Window );
+
+		if ( Row == NONE )
+			ERRu();
+
+		MasterWindows_.Remove( Row );
+	}
+ERRErr
+ERREnd
+	if ( Locked )
+		mtx::Unlock( MasterWindowMutex_ );
+ERREpilog
+}
+
+nsIDOMWindow *nsxpcm::RetrieveMasterWindow( void )
+{
+	nsIDOMWindow *Window = NULL;
+ERRProlog
+	bso::bool__ Locked = false;
+ERRBegin
+	mtx::Lock( MasterWindowMutex_ );
+	Locked = true;
+
+	if ( MasterWindow_ != NULL ) {
+		if ( MasterWindowCounter_ == BSO_ULONG_MAX )
+			ERRl();
+
+		Window = MasterWindow_;
+		MasterWindowCounter_++;
+	}
+ERRErr
+ERREnd
+	if ( Locked )
+		mtx::Unlock( MasterWindowMutex_ );
+ERREpilog
+	return Window;
+}
+
+void nsxpcm::ReleaseMasterWindow( nsIDOMWindow *Window )
+{
+ERRProlog
+	bso::bool__ Locked = false;
+ERRBegin
+	mtx::Lock( MasterWindowMutex_ );
+	Locked = true;
+
+	if ( MasterWindow_ != Window )
+		ERRu();
+
+	if ( MasterWindowCounter_ == 0 )
+		ERRu();
+
+	MasterWindowCounter_++;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static nsIDOMWindowInternal *JSConsoleWindow_ = NULL;
 static nsCOMPtr<nsIFormHistory2> FormHistory_;
 #ifdef CPE__T_MT
@@ -552,13 +668,14 @@ ERRProlog
 	nsCOMPtr<nsIFilePicker> FilePicker = NULL;
 	nsresult Error = NS_OK;
 	nsEmbedString EString;
+	nsIDOMWindow *MasterWindow = NULL;
 ERRBegin
 	CreateInstance( "@mozilla.org/filepicker;1", FilePicker );
 
 	Transform( Title, EString );
 
 	if ( ParentWindow == NULL )
-		ParentWindow = ::MasterWindow;
+		ParentWindow = MasterWindow = RetrieveMasterWindow();
 
 	if ( ParentWindow == NULL )
 		ERRu();
@@ -602,6 +719,8 @@ ERRBegin
 	FileSelected = true;
 ERRErr
 ERREnd
+	if ( MasterWindow != NULL )
+		ReleaseMasterWindow( MasterWindow );
 ERREpilog
 	return FileSelected;
 }
@@ -1243,6 +1362,7 @@ ERRProlog
 	str::string EventString;
 	event__ Event = e_Undefined;
 	STR_BUFFER___ StrBuffer;
+	nsIDOMWindow *Window = NULL;
 ERRBegin
 	// Sauvegarde pour la gestion d'évènements imbriqués.
 	nsIDOMEvent *RawEventBuffer = _RawEvent;
@@ -1258,6 +1378,9 @@ ERRBegin
 	nsxpcm::Transform( String, EventString );
 
 	Event = Convert_( EventString.Convert( StrBuffer ) );
+
+	Window = QueryInterface<nsIDOMWindow>( RawEvent );
+
 
 	if ( EventString == "DOMAttrModified" )
 		_MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
@@ -1280,7 +1403,7 @@ ERRBegin
 
 	Success = true;
 ERRErr
-	NSXPCM_ERR;
+	NSXPCM_ERR( Window );
 ERREnd
 ERREpilog
 	return Success;
@@ -1848,6 +1971,8 @@ public:
 		FormHistoryMutex_ = mtx::Create( mtx::mOwned );
 #	endif
 #endif
+		MasterWindowMutex_ = mtx::Create( mtx::mOwned );
+		MasterWindows_.Init();
 	}
 	~nsxpcmpersonnalization( void )
 	{
@@ -1856,6 +1981,7 @@ public:
 		mtx::Delete( FormHistoryMutex_ );
 #	endif
 #endif
+		mtx::Delete( MasterWindowMutex_ );
 	}
 };
 
