@@ -1,6 +1,15 @@
 $Id$
 
-15/06/2010 : masterwindows
+17/09/2010 :
+	- NSXPCM :
+		- Ajout d'un 'window' dans 'core_element__'.
+		- Correction bogue dans gestion 'MasterWindows'.
+	- XULUI :
+		- Adaptation aux modifications 'NSXPCM'.
+
+15/09/2010 :
+	- NSXPCM :
+		- Révision gestion de la 'MasterWindow'.
 
 14/09/2010 :
 	- XPP :

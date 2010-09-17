@@ -195,7 +195,7 @@ ERRBegin
 	if ( MasterWindowCounter_ == 0 )
 		ERRu();
 
-	MasterWindowCounter_++;
+	MasterWindowCounter_--;
 ERRErr
 ERREnd
 ERREpilog
@@ -1362,7 +1362,6 @@ ERRProlog
 	str::string EventString;
 	event__ Event = e_Undefined;
 	STR_BUFFER___ StrBuffer;
-	nsIDOMWindow *Window = NULL;
 ERRBegin
 	// Sauvegarde pour la gestion d'évènements imbriqués.
 	nsIDOMEvent *RawEventBuffer = _RawEvent;
@@ -1378,9 +1377,6 @@ ERRBegin
 	nsxpcm::Transform( String, EventString );
 
 	Event = Convert_( EventString.Convert( StrBuffer ) );
-
-	Window = QueryInterface<nsIDOMWindow>( RawEvent );
-
 
 	if ( EventString == "DOMAttrModified" )
 		_MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
@@ -1403,7 +1399,7 @@ ERRBegin
 
 	Success = true;
 ERRErr
-	NSXPCM_ERR( Window );
+	NSXPCM_ERR( _Window );
 ERREnd
 ERREpilog
 	return Success;
@@ -1413,6 +1409,7 @@ ERREpilog
 
 void nsxpcm::element_core__::Init(
 	nsISupports *Supports,
+	nsIDOMWindow *Window,
 	int Events )
 {
 #ifdef NSXPCM_DBG
@@ -1421,6 +1418,7 @@ void nsxpcm::element_core__::Init(
 #endif
 	reset();
 
+	_Window = Window;
 	_Supports = Supports;
 
 	nsIDOMEventTarget *EventTarget = NULL;
@@ -1953,6 +1951,28 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	AddSemiColonCommand_( List );
 }
 
+nsIDOMWindow *nsxpcm::GetDocumentWindow( nsIDOMDocument *Document )
+{
+	nsEmbedString EId;
+	nsIDOMNodeList *List = NULL;
+	PRUint32 Length = 0;
+	nsIDOMNode *Node = NULL;
+	nsIDOMWindow *Window = NULL;
+
+	nsxpcm::Transform( "window", EId );
+
+	if ( Document->GetElementsByTagName( EId, &List ) != NS_OK )
+		ERRu();
+
+	T( List->GetLength( &Length ) );
+
+	if ( Length != 1 )
+		ERRx();
+
+	T( List->Item( Length, &Node ) );
+
+	return QueryInterface<nsIDOMWindow>( Node );
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

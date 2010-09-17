@@ -129,12 +129,12 @@ namespace xului {
 	template <typename ui, typename widget> void Register(
 		ui &UI,
 		widget &Widget,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id,
 		int Events )
 	{
 		Widget.Init( UI );
-		nsxpcm::Register( Widget, Document, Id, Events );
+		nsxpcm::Register( Widget, Window, Id, Events );
 	}
 
 	template <typename ui, typename widget> void Register(
@@ -158,34 +158,34 @@ namespace xului {
 	template <typename ui> inline void Register(
 		ui &UI,
 		broadcast__<ui> &Broadcast,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Broadcast, Document, Id, nsxpcm::ef_None );
+		Register( UI, Broadcast, Window, Id, nsxpcm::ef_None );
 	}
 
 	template <typename ui> inline void Register(
 		ui &UI,
 		command__<ui> &Command,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Command, Document, Id, nsxpcm::efCommand );
+		Register( UI, Command, Window, Id, nsxpcm::efCommand );
 	}
 
 	template <typename ui> inline void Register(
 		ui &UI,
 		tree__<ui> &Tree,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Tree, Document, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
+		Register( UI, Tree, Window, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
 	}
 
 	template <typename ui> inline void Register(
 		ui &UI,
 		deck__<ui> &Deck,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
 		Register( UI, Deck, Document, Id, nsxpcm::ef_None );
@@ -194,28 +194,28 @@ namespace xului {
 	template <typename ui> inline void Register(
 		ui &UI,
 		textbox__<ui> &Textbox,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Textbox, Document, Id, nsxpcm::ef_None );
+		Register( UI, Textbox, Window, Id, nsxpcm::ef_None );
 	}
 
 	template <typename ui> inline void Register(
 		ui &UI,
 		button__<ui> &Button,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Button, Document, Id, nsxpcm::efCommand );
+		Register( UI, Button, Window, Id, nsxpcm::efCommand );
 	}
 
 	template <typename ui> inline void Register(
 		ui &UI,
 		description__<ui> &Description,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const char *Id )
 	{
-		Register( UI, Description, Document, Id, nsxpcm::ef_None );
+		Register( UI, Description, Window, Id, nsxpcm::ef_None );
 	}
 }
 

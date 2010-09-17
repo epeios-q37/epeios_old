@@ -1031,6 +1031,7 @@ namespace nsxpcm {
 	class element_core__
 	{
 	private:
+		nsIDOMWindow *_Window;
 		nsISupports *_Supports;
 		nsCOMPtr<struct event_listener> _EventListener;
 		nsIDOMEvent *_RawEvent;
@@ -1114,6 +1115,7 @@ namespace nsxpcm {
 	public:
 		void reset( bso::bool__ = true )
 		{
+			_Window = NULL;
 			_Supports = NULL;
 			_RawEvent = NULL;
 			_MutationEvent = NULL;
@@ -1135,6 +1137,7 @@ namespace nsxpcm {
 		}
 		void Init(
 			nsISupports *Supports,
+			nsIDOMWindow *Window,
 			int Events );
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
 		bso::bool__ Handle( nsIDOMEvent *Event );
@@ -1168,18 +1171,19 @@ namespace nsxpcm {
 	inline void Register(
 		nsxpcm::element_core__ &Core,
 		nsISupports *Supports,
+		nsIDOMWindow *Window,
 		int Events )
 	{
-		Core.Init( Supports, Events );
+		Core.Init( Supports, Window, Events );
 	}
 
 	template <class id_type> inline void Register(
 		nsxpcm::element_core__ &Core,
-		nsIDOMDocument *Document,
+		nsIDOMWindow *Window,
 		const id_type &Id,
 		int Events )
 	{
-		Register( Core, nsxpcm::GetElementById( Document, Id ), Events );
+		Register( Core, nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
 	}
 
 	void Alert(
@@ -2277,6 +2281,9 @@ namespace nsxpcm {
 		PatchBadCommandBehaviorForListeningMenuItems( Document );
 		PatchCommandBadCommandBehaviorforKeysetListener( Document );
 	}
+
+	nsIDOMWindow *GetDocumentWindow( nsIDOMDocument *Document );
+
 
 #ifdef NSXPCM__BKD
 	void Convert(
