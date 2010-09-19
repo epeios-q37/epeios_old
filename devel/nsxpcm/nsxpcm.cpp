@@ -657,11 +657,11 @@ ERREpilog
 #undef SH
 
 bso::bool__ nsxpcm::file_picker_::Show(
+	nsIDOMWindow *ParentWindow,
 	file_picker_type__ Type,
 	const char *DefaultExtension,
 	const lcl::locale_rack___ &Locale,
-	str::string_ &FileName,
-	nsIDOMWindow *ParentWindow )
+	str::string_ &FileName )
 {
 	bso::bool__ FileSelected = false;
 ERRProlog
@@ -675,10 +675,11 @@ ERRBegin
 	Transform( Title, EString );
 
 	if ( ParentWindow == NULL )
-		ParentWindow = MasterWindow = RetrieveMasterWindow();
-
-	if ( ParentWindow == NULL )
 		ERRu();
+	/* 'ParentWindow' doit être fourni et ne peut êtr edéduit de 'MAsterWindow', car,
+	cette fonction bloquant toute action sur 'ParentWindow', si plusieurs sessions,
+	c'est une mauvaise fenêtre (c'est-à-dire une qui n'a pas initié l'ouverture de
+	sélecteur) qui rique d'être bloquée). */
 
 	if ( ( Error = FilePicker->Init( ParentWindow, EString, ConvertType_( Type ) ) ) != NS_OK )
 		ERRx();
@@ -806,7 +807,7 @@ ERRBegin
 
 	FilePicker.SetPredefinedFilter( PredefineFilters );
 
-	FileSelected = FilePicker.Show( Type, DefaultExtension, Locale, FileName, ParentWindow );
+	FileSelected = FilePicker.Show( ParentWindow, Type, DefaultExtension, Locale, FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -815,31 +816,34 @@ ERREpilog
 #endif
 
 bso::bool__ nsxpcm::FileOpenDialogBox(
+	nsIDOMWindow *ParentWindow,
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, fptOpen, DefaultExtension, PredefinedFilters, Locale, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptOpen, DefaultExtension, PredefinedFilters, Locale, FileName );
 }
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
+	nsIDOMWindow *ParentWindow,
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, fptSave, "", PredefinedFilters, Locale, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptSave, "", PredefinedFilters, Locale, FileName );
 }
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
+	nsIDOMWindow *ParentWindow,
 	const str::string_ &Title,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( NULL, Title, fptFolder, "", fpmf_None, Locale, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_None, Locale, FileName );
 }
 
 void nsxpcm::Delete( element_cores_ &Cores )
@@ -1262,28 +1266,29 @@ bso::bool__ nsxpcm::Confirm(
 }
 
 
-void nsxpcm::Log( const char *Text )
-{
-	nsEmbedString String;
-	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
-
-	nsxpcm::GetService<nsIConsoleService>( NS_CONSOLESERVICE_CONTRACTID, ConsoleService );
-
-	nsxpcm::Transform( Text, String );
-
-	T( ConsoleService->LogStringMessage( String.get() ) );
-}
-
 void nsxpcm::Log( const str::string_ &Text )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	nsEmbedString String;
+	nsCOMPtr<nsIConsoleService> ConsoleService = NULL;
+	str::string StampedText;
+	tol::buffer__ Buffer;
 ERRBegin
-	Log( Text.Convert( Buffer ) );
+	StampedText.Init( "[" );
+	StampedText.Append( tol::DateAndTime( Buffer ) );
+	StampedText.Append( "]\n" );
+	StampedText.Append( Text );
+
+	nsxpcm::GetService<nsIConsoleService>( NS_CONSOLESERVICE_CONTRACTID, ConsoleService );
+
+	nsxpcm::Transform( StampedText, String );
+
+	T( ConsoleService->LogStringMessage( String.get() ) );
 ERRErr
 ERREnd
 ERREpilog
 }
+
 
 void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
 {

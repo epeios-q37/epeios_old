@@ -167,12 +167,15 @@ namespace nsxpcm {
 
 	void ReleaseMasterWindow( nsIDOMWindow *Window );
 
-
-	// Log to the javascript console.
-	void Log( const char *Text );
-
 	// Log to the javascript console.
 	void Log( const str::string_ &Text );
+
+	// Log to the javascript console.
+	inline void Log( const char *Text )
+	{
+		Log( str::string( Text ) );
+	}
+
 
 	// Si modifié, modifier 'GetTranslation(...)' et le '.xlcl' en conséquence.
 	enum text__ {
@@ -1140,6 +1143,7 @@ namespace nsxpcm {
 			nsIDOMWindow *Window,
 			int Events );
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
+		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
 		bso::bool__ Handle( nsIDOMEvent *Event );
 		nsIDOMElement *GetElement( void )
 		{
@@ -1814,18 +1818,18 @@ namespace nsxpcm {
 		/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 		'false' si 'Cancel' a été sélectionné. */
 		bso::bool__ Show(
+			nsIDOMWindow *ParentWindow,	// Cette fonction bloque toute action sur 'ParentWindow', donc pas possibilité d'utiliser 'MasterWindow'.
 			file_picker_type__ Type,
 			const char *DefaultExtension,
 			const lcl::locale_rack___ &Locale,
-			str::string_ &FileName,
-			nsIDOMWindow *ParentWindow = NULL );
+			str::string_ &FileName );
 		bso::bool__ Show(
+			nsIDOMWindow *ParentWindow,	// Cette fonction bloque toute action sur 'ParentWindow', donc pas possibilité d'utiliser 'MasterWindow'.
 			file_picker_type__ Type,
 			const lcl::locale_rack___ &Locale,
-			str::string_ &FileName,
-			nsIDOMWindow *ParentWindow = NULL )
+			str::string_ &FileName )
 		{
-			return Show( Type, NULL, Locale, FileName, ParentWindow );
+			return Show( ParentWindow, Type, NULL, Locale, FileName );
 		}
 		E_RODISCLOSE_( int, PredefinedFilters );
 	};
@@ -1835,6 +1839,7 @@ namespace nsxpcm {
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileOpenDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
@@ -1844,26 +1849,29 @@ namespace nsxpcm {
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ HTMLFileOpenDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &FileName )
 	{
-		return FileOpenDialogBox( Title, "html", fpmfHTML, Locale, FileName );
+		return FileOpenDialogBox( ParentWindow, Title, "html", fpmfHTML, Locale, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ XPRJFileOpenDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &FileName )
 	{
-	return FileOpenDialogBox( Title, "xprj", fpmfXPRJ, Locale, FileName );
+		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ FileSaveDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
@@ -1873,27 +1881,29 @@ namespace nsxpcm {
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ HTMLFileSaveDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( Title, "html", fpmfHTML, Locale, FileName );
+		return FileSaveDialogBox( ParentWindow, Title, "html", fpmfHTML, Locale, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */
 	inline bso::bool__ XPRJFileSaveDialogBox(
-		nsIDOMWindow *Parent,
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( Title, "xprj", fpmfXPRJ, Locale, FileName );
+		return FileSaveDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, FileName );
 	}
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
 	'false' si 'Cancel' a été sélectionné. */
 	bso::bool__ DirectorySelectDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &DirectoryName );
@@ -1959,12 +1969,9 @@ namespace nsxpcm {
 		Transform( Name, TransformedName );
 
 		if ( ParentWindow == NULL )
-			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
-				ParentWindow = MasterWindow;
-			else
-				ERRu();
+			ERRu();	// Fonction bloquante, donc on ne peut pas prendre 'MAsterWindow' (risque de bloquer la fenêtre non initiatrice de l'ouverture de la boîte de dialogue).
 
-		T( GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), NULL, WindowBuffer ) );
+		T( GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), NULL, WindowBuffer ) );
 	ERRErr
 	ERREnd
 		if ( MasterWindow != NULL )
@@ -1972,13 +1979,14 @@ namespace nsxpcm {
 	ERREpilog
 	}
 
-	inline void OpenDialog(
+	/*inline void OpenDialog(
 		const char *URL,
 		const char *Name,
 		nsIDOMWindow **Window = NULL )
 	{
 		OpenDialog( NULL, URL, Name, Window );
 	}
+	*/
 
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,

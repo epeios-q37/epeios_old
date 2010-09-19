@@ -1,5 +1,12 @@
 $Id$
 
+19/09/2010 :
+	- NSXPCM :
+		- Suppression utilisation de 'MasterWindow' si 'ParentWindow' non fourni pour les boîtes de dialogues.
+		- Exposition 'Window' dans 'core_element__'.
+		- 'OpenDialog(...)' ouvre maintenant des fenêtres modales.
+		- Horodatage des entrées de 'Log(...)'.
+
 17/09/2010 :
 	- NSXPCM :
 		- Ajout d'un 'window' dans 'core_element__'.
