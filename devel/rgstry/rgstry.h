@@ -69,6 +69,12 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "cpe.h"
 #include "xpp.h"
 
+// Prédéclaration.
+namespace lcl {
+	class locale_;
+	class locale_rack___;
+}
+
 namespace rgstry {
 
 	typedef str::string		_term;
@@ -865,6 +871,12 @@ namespace rgstry {
 		const error_details_ &ErrorDetails,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
+	const str::string_ &GetTranslation(
+		error__ Error,
+		const error_details_ &ErrorDetails,
+		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
 
 	error__ FillRegistry(

@@ -1,6 +1,7 @@
 <!-- $Id$ -->
 <!-- Permet d'inclure à l'aide d'un seul fichier l'ensemble des '.xlcl' relatifs aux bibliothques Epeios -->
 <xpp:bloc>
+	<xpp:expand href="efrdkrn.xlcl"/>
 	<xpp:expand href="ensxpcm.xlcl"/>
 	<xpp:expand href="ergstry.xlcl"/>
 	<xpp:expand href="exml.xlcl"/>

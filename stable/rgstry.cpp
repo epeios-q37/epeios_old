@@ -1182,6 +1182,14 @@ ERREpilog
 	return Translation;
 }
 
+const str::string_ &rgstry::GetTranslation(
+	error__ Error,
+	const error_details_ &ErrorDetails,
+	const lcl::locale_rack___ &Locale,
+	str::string_ &Translation )
+{
+	return GetTranslation( Error, ErrorDetails, Locale.GetLanguage(), Locale.Locale(), Translation );
+}
 
 error__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,

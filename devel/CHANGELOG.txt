@@ -1,5 +1,11 @@
 $Id$
 
+21/09/2010 :
+	- FRDKRN :
+		- Codage.
+	- RGSTRY: 
+		- Ajout variante 'GetTranslation(...)'.
+
 19/09/2010 :
 	- NSXPCM :
 		- Suppression utilisation de 'MasterWindow' si 'ParentWindow' non fourni pour les boîtes de dialogues.

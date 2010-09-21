@@ -86,10 +86,53 @@ namespace frdkrn {
 		{}
 	};
 
+	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
+	enum status__ {
+		sOK,
+		sConfigurationError,	// Error during configuration file handling. See 'ErrorSet' for more details.
+		sLocalesError,			// Error during locales file handling. See 'ErrorSet' for more details.
+		sNoLocaleFileDefined,		// No locales file is defined. 
+		sProjectError,			// Error during project file handling. See 'ErrorSet' for more details.
+		s_amount,
+		s_Undefined
+	};
+
+	const str::string_ &GetTranslation(
+		status__ Status,
+		const lcl::locale_rack___ &Locale,
+		str::string_ &Translation );
+
+	struct error_set___
+	{
+	public:
+		rgstry::error__ Error;
+		rgstry::error_details Details;
+		void reset( bso::bool__ P = true )
+		{
+			Error = rgstry::e_Undefined;
+			Details.reset( P );
+		}
+		error_set___( void )
+		{
+			reset( false );
+		}
+		~error_set___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			Error = rgstry::e_Undefined;
+
+			Details.Init();
+		}
+	};
+
 	class kernel___
 	{
 	private:
-		lcl::locale_rack___ _Locale;
+		lcl::locale _Locale;
+		lcl::locale_rack___ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
@@ -128,6 +171,7 @@ namespace frdkrn {
 			_ClientCore.reset( P );
 			_Registry.reset( P );
 			_Locale.reset( P );
+			_LocaleRack.reset( P );
 		}
 		kernel___( void )
 		{
@@ -137,18 +181,11 @@ namespace frdkrn {
 		{
 			reset();
 		}
-		void Init(
-			const frdrgy::registry_ &Registry,
+		status__ Init(
+			const str::string_ &ConfigurationFileName,
+			const char *TargetName,
 			const str::string_ &Language,
-			const lcl::locale_ &Locale )	// 'Locale' n'est pas dupliqué !
-		{
-			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
-
-			_Registry.Init();
-			_Registry = Registry;
-
-			_Locale.Init( Locale, Language );
-		}
+			error_set___ &ErrorSet );
 		bso::bool__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
@@ -184,6 +221,10 @@ namespace frdkrn {
 		{
 			return _Backend.IsConnected();
 		}
+		status__ FillProjectRegistry(
+			const str::string_ &FileName,
+			const char *TargetName,
+			error_set___ &ErrorSet );
 		void FillUserRegistry( flw::iflow__ &User );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
 		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
 		{
@@ -207,11 +248,10 @@ namespace frdkrn {
 		{
 			return FRDKERNLGetVersionFormatedText( Version );
 		}
-		const str::string_ &Language( void ) const
+		const lcl::locale_rack___ &Locale( void ) const
 		{
-			return _Locale.Language();
+			return _LocaleRack;
 		}
-		E_RODISCLOSE__( lcl::locale_rack___, Locale );
 	};
 
 	bso::bool__ GetDefaultConfigurationFileName(

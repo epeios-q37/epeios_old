@@ -60,6 +60,45 @@ using namespace frdkrn;
 #define DAEMON_BACKEND_TYPE		"daemon"
 #define LIBRARY_BACKEND_TYPE	"library"
 
+#define CASE( m )\
+	case s##m:\
+	return #m;\
+	break
+
+const char *GetLabel_( status__ Status )
+{
+	switch( Status ) {
+		CASE( ConfigurationError );
+		CASE( LocalesError );
+		CASE( NoLocaleFileDefined );
+		CASE( ProjectError );
+		default:
+			ERRu();
+			break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+const str::string_ &frdkrn::GetTranslation(
+	status__ Status,
+	const lcl::locale_rack___ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string RawText;
+ERRBegin
+	RawText.Init( "FRDKRN_" );
+	RawText.Append( GetLabel_( Status ) );
+
+	Locale.GetTranslation( RawText,Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
 csducl::type__ frdkrn::GetBackendType( const frdrgy::registry_ &Registry )
 {
 	csducl::type__ Type = csducl::t_Undefined;
@@ -183,7 +222,7 @@ ERREpilog
 	return Success;
 }
 
-void frdkrn::kernel___::FillUserRegistry(	flw::iflow__ &User )
+void frdkrn::kernel___::FillUserRegistry( flw::iflow__ &User )
 {
 ERRProlog
 	rgstry::error_details ErrorDetails;
@@ -215,6 +254,87 @@ ERREnd
 ERREpilog
 	return Exists;
 }
+
+status__ frdkrn::kernel___::Init(
+	const str::string_ &ConfigurationFileName,
+	const char *TargetName,
+	const str::string_ &Language,
+	error_set___ &ErrorSet )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string LocaleFileName;
+	STR_BUFFER___ LocaleBuffer, PathBuffer, ConfigurationFileNameBuffer;
+	str::string TargetAttribute;
+	str::string Path;
+ERRBegin
+	_Registry.Init();
+	_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
+
+	TargetAttribute.Init( "[target=\"" );
+	TargetAttribute.Append( TargetName );
+	TargetAttribute.Append( "\"]" );
+
+	Path.Init( "Configurations/Configuration" );
+	Path.Append( TargetAttribute );
+
+	if ( ( ErrorSet.Error = _Registry.FillConfiguration( ConfigurationFileName.Convert( ConfigurationFileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+		Status = sConfigurationError;
+		ERRReturn;
+	}
+
+	_Locale.Init();
+
+	LocaleFileName.Init();
+
+	if ( frdrgy::GetLocalesFileName( _Registry, LocaleFileName ) ) {
+
+		Path.Init( "Locales/Locale" );
+		Path.Append( TargetAttribute );
+
+		if ( ( ErrorSet.Error = _Locale.Init( LocaleFileName.Convert( LocaleBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+			Status = sLocalesError;
+			ERRReturn;
+		}
+
+		Status = sOK;
+	} else
+		Status = sNoLocaleFileDefined;
+
+	// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ frdkrn::kernel___::FillProjectRegistry(
+	const str::string_ &FileName,
+	const char *Target,
+	error_set___ &ErrorSet )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string Path;
+	STR_BUFFER___ FileNameBuffer, PathBuffer;
+ERRBegin
+	Path.Init( "Projects/Project[@target=\"" );
+	Path.Append( Target );
+	Path.Append( "]\"" );
+
+	if ( ( ErrorSet.Error = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+		Status = sProjectError;
+		ERRReturn;
+	}
+
+	Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+
 
 
 
