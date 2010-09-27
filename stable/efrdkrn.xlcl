@@ -4,20 +4,20 @@
 		<Translation language="fr"></Translation>
 		<Translation language="en-US"></Translation>
 	</Translations-->
-	<Translations text="FRDKRN_ConfigurationError">
-		<Translation language="fr">Erreur durant le traitement du fichier de configuration</Translation>
-		<Translation language="en-US">Error during configuration file handling</Translation>
+	<Translations text="FRDKRN_ConfigurationParsingError">
+		<Translation language="fr">Erreur durant l'analyse de la configuration</Translation>
+		<Translation language="en-US">Error during configuration parsing</Translation>
 	</Translations>
-	<Translations text="FRDKRN_LocaleError">
-		<Translation language="fr">Erreur durant le traitement du fichier de 'locale'</Translation>
-		<Translation language="en-US">Error during locale file handling</Translation>
+	<Translations text="FRDKRN_LocaleParsingError">
+		<Translation language="fr">Erreur durant l'analyse des données 'locale'</Translation>
+		<Translation language="en-US">Error during locale handling</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoLocaleFileDefined">
-		<Translation language="fr">Pas de fichier de 'locale' d�fini</Translation>
+		<Translation language="fr">Pas de fichier de 'locale' défini</Translation>
 		<Translation language="en-US">No locale file defined</Translation>
 	</Translations>
-	<Translations text="FRDKRN_ProjectError">
-		<Translation language="fr">Erreur durant le traitement du fichier de projet</Translation>
-		<Translation language="en-US">Error during project fiel handling</Translation>
+	<Translations text="FRDKRN_ProjectParsingError">
+		<Translation language="fr">Erreur durant l'analyse du projet</Translation>
+		<Translation language="en-US">Error during project handling</Translation>
 	</Translations>
 </xpp:bloc>

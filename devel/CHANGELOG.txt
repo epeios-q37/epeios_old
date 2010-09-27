@@ -1,5 +1,9 @@
 $Id$
 
+27/09/2010 :
+	- FRDKRN :
+		- Réorganisation de la gestion des messages d'erreurs et des traductions associées.
+
 21/09/2010 :
 	- FRDKRN :
 		- Codage.

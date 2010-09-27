@@ -67,11 +67,15 @@ using namespace frdkrn;
 
 const char *GetLabel_( status__ Status )
 {
+#if FRDKRN__S_AMOUNT != 6
+#	error "'status__' modified !"
+#endif
+
 	switch( Status ) {
-		CASE( ConfigurationError );
-		CASE( LocalesError );
+		CASE( ConfigurationParsingError );
+		CASE( LocaleParsingError );
 		CASE( NoLocaleFileDefined );
-		CASE( ProjectError );
+		CASE( ProjectParsingError );
 		default:
 			ERRu();
 			break;
@@ -98,6 +102,21 @@ ERREpilog
 	return Translation;
 }
 
+inline const str::string_ &GetTranslation(
+	status__ Status,
+	const error_set___ ErrorSet,
+	const lcl::locale_rack___ &Locale,
+	str::string_ &Translation )
+{
+	GetTranslation( Status, Locale, Translation );
+	
+	if ( IsErrorSetRelevant( Status ) ) {
+		Translation.Append( " :\n" );
+		GetTranslation( ErrorSet, Locale, Translation );
+	}
+
+	return Translation;
+}
 
 csducl::type__ frdkrn::GetBackendType( const frdrgy::registry_ &Registry )
 {
@@ -117,6 +136,25 @@ ERRErr
 ERREnd
 ERREpilog
 	return Type;
+}
+
+bso::bool__ frdkrn::GetDefaultConfigurationFileName(
+	const char *Affix,
+	str::string_ &FileName )
+{
+	bso::bool__ Exists = false;
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	FileName.Init( Affix );
+	FileName.Append( '.' );
+	FileName.Append( FRDKRN_PROJECT_FILE_EXTENSION );
+
+	Exists = fil::FileExists( FileName.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return Exists;
 }
 
 /*
@@ -236,25 +274,6 @@ ERREnd
 ERREpilog
 }
 
-bso::bool__ frdkrn::GetDefaultConfigurationFileName(
-	const char *Affix,
-	str::string_ &FileName )
-{
-	bso::bool__ Exists = false;
-ERRProlog
-	STR_BUFFER___ Buffer;
-ERRBegin
-	FileName.Init( Affix );
-	FileName.Append( '.' );
-	FileName.Append( FRDKRN_PROJECT_FILE_EXTENSION );
-
-	Exists = fil::FileExists( FileName.Convert( Buffer ) );
-ERRErr
-ERREnd
-ERREpilog
-	return Exists;
-}
-
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
@@ -279,7 +298,7 @@ ERRBegin
 	Path.Append( TargetAttribute );
 
 	if ( ( ErrorSet.Error = _Registry.FillConfiguration( ConfigurationFileName.Convert( ConfigurationFileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-		Status = sConfigurationError;
+		Status = sConfigurationParsingError;
 		ERRReturn;
 	}
 
@@ -293,7 +312,7 @@ ERRBegin
 		Path.Append( TargetAttribute );
 
 		if ( ( ErrorSet.Error = _Locale.Init( LocaleFileName.Convert( LocaleBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-			Status = sLocalesError;
+			Status = sLocaleParsingError;
 			ERRReturn;
 		}
 
@@ -323,7 +342,7 @@ ERRBegin
 	Path.Append( "]\"" );
 
 	if ( ( ErrorSet.Error = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-		Status = sProjectError;
+		Status = sProjectParsingError;
 		ERRReturn;
 	}
 
@@ -334,10 +353,6 @@ ERREpilog
 	return Status;
 }
 
-
-
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -347,6 +362,8 @@ class frdkrnpersonnalization
 public:
 	frdkrnpersonnalization( void )
 	{
+		if ( FRDKRN__S_AMOUNT != 6 )
+			ERRc();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

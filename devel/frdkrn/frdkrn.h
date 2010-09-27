@@ -89,13 +89,15 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum status__ {
 		sOK,
-		sConfigurationError,	// Error during configuration file handling. See 'ErrorSet' for more details.
-		sLocalesError,			// Error during locales file handling. See 'ErrorSet' for more details.
+		sConfigurationParsingError,	// Error during configuration file parsing. See 'ErrorSet' for more details.
+		sLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
 		sNoLocaleFileDefined,		// No locales file is defined. 
-		sProjectError,			// Error during project file handling. See 'ErrorSet' for more details.
+		sProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
 		s_amount,
 		s_Undefined
 	};
+
+#define FRDKRN__S_AMOUNT	6	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'status__' est modifié.
 
 	const str::string_ &GetTranslation(
 		status__ Status,
@@ -127,6 +129,53 @@ namespace frdkrn {
 			Details.Init();
 		}
 	};
+
+	inline bso::bool__ IsErrorSetRelevant( status__ Status )
+	{
+#if FRDKRN__S_AMOUNT != 6
+#	error "'status__' modified !"
+#endif
+		switch ( Status  ) {
+		case sOK:
+			return false;
+			break;
+		case sConfigurationParsingError:
+		case sLocaleParsingError:
+			return true;
+			break;
+		case sNoLocaleFileDefined:
+			return false;
+			break;
+		case sProjectParsingError:
+			return true;
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return false;	// Pour éviter un 'warning'.
+	}
+
+
+	inline const str::string_ &GetTranslation(
+		const error_set___ ErrorSet,
+		const lcl::locale_rack___ &Locale,
+		str::string_ &Translation )
+	{
+		return rgstry::GetTranslation( ErrorSet.Error, ErrorSet.Details, Locale, Translation );
+	}
+
+	inline const str::string_ &GetTranslation(
+		status__ Status,
+		const error_set___ ErrorSet,
+		const lcl::locale_rack___ &Locale,
+		str::string_ &Translation );
+
+
+	bso::bool__ GetDefaultConfigurationFileName(
+		const char *Affix,
+		str::string_ &FileName );
 
 	class kernel___
 	{
@@ -253,10 +302,6 @@ namespace frdkrn {
 			return _LocaleRack;
 		}
 	};
-
-	bso::bool__ GetDefaultConfigurationFileName(
-		const char *Affix,
-		str::string_ &FileName );
 
 	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )
 	{
