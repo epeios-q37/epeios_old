@@ -1893,7 +1893,8 @@ ERRBegin
 		GetBroadcastAttributeValue_( Document, ObservesAttributeValue, "command", CommandAttributeValue );
 
 		if ( CommandAttributeValue.Amount() != 0 )
-			nsxpcm::SetAttribute( Node, "command", CommandAttributeValue );
+			if ( !HasAttribute( Node, "oncommand" ) )
+				nsxpcm::SetAttribute( Node, "command", CommandAttributeValue );
 	}
 ERRErr
 ERREnd
@@ -1939,7 +1940,8 @@ static void AddSemiColonCommand_(nsIDOMNodeList *List )
 	while ( Length-- ) {
 		T( List->Item( Length, &Node ) );
 
-		nsxpcm::SetAttribute( Node, "oncommand", ";" );
+		if ( !HasAttribute( Node, "oncommand" ) )
+			nsxpcm::SetAttribute( Node, "oncommand", ";" );
 	}
 }
 

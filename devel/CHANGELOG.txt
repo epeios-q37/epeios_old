@@ -1,5 +1,10 @@
 $Id$
 
+28/09/2010 :
+	- NSXPCM :
+		- Ajout fonction 'HasAttribute(...='.
+		- Les fonctions corrigeant les bogues ne touchent plus à l'attribut 'oncommand' que s'il est inexistant.
+
 27/09/2010 :
 	- FRDKRN :
 		- Réorganisation de la gestion des messages d'erreurs et des traductions associées.
@@ -108,7 +113,7 @@ $Id$
 	- NSXPCM :
 		- Renforcement détection d'erreurs.
 		- Suppression 'ErrorHandling'.
-		- Ajout fonctions 'p les bogues suivant :
+		- Ajout fonctions permettant de contourner les bogues XUL suivant :
 			- un 'menuitem' n'hérite pas de l'attribut 'command' du 'broadcast' qu'il écoute; le 'patch' consiste à copier l'attribut 'command' du 'broadcast' qu'il écoute.
 			- un 'key' ne lance pas la commande qui lui est affecté à travers l'attribut 'command'; le patch consiste à rajouter un attribut 'oncommand=";"' à toutes les balises 'command'.
 

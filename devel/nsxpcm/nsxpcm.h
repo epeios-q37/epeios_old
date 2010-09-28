@@ -534,6 +534,33 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
 	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
 
+
+	inline bso::bool__ HasAttribute(
+		nsIDOMElement *Element,
+		const char *Name )
+	{
+		nsEmbedString EName;
+		PRBool Result;
+
+		Transform( Name, EName );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		T( Element->HasAttribute( EName, &Result ) );
+
+		return Result != 0;
+	}
+
+	inline bso::bool__ HasAttribute(
+		nsIDOMNode *Node,
+		const char *Name )
+	{
+		return HasAttribute( QueryInterface<nsIDOMElement>( Node ), Name );
+	}
+
 	inline void SetAttribute(
 		nsIDOMElement *Element,
 		const char *Name,
