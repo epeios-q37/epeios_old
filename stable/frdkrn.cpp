@@ -102,9 +102,9 @@ ERREpilog
 	return Translation;
 }
 
-inline const str::string_ &GetTranslation(
+const str::string_ &frdkrn::GetTranslation(
 	status__ Status,
-	const error_set___ ErrorSet,
+	const error_set___ &ErrorSet,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &Translation )
 {

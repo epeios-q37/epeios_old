@@ -1,5 +1,13 @@
 $Id$
 
+29/09/2010 :
+	- FRDKRN :
+		- Correction oublis.
+	- NSXPCM :
+		- Correction oubli déverouillage mutex.
+	- RGSTRY :
+		- Correction bogue.
+
 28/09/2010 :
 	- NSXPCM :
 		- Ajout fonction 'HasAttribute(...='.

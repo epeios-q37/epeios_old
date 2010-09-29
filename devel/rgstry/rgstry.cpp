@@ -1188,7 +1188,7 @@ const str::string_ &rgstry::GetTranslation(
 	const lcl::locale_rack___ &Locale,
 	str::string_ &Translation )
 {
-	return GetTranslation( Error, ErrorDetails, Locale.GetLanguage(), Locale.Locale(), Translation );
+	return GetTranslation( Error, ErrorDetails, Locale.Language(), Locale.Locale(), Translation );
 }
 
 error__ rgstry::FillRegistry(

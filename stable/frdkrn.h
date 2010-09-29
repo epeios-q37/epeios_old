@@ -159,16 +159,16 @@ namespace frdkrn {
 
 
 	inline const str::string_ &GetTranslation(
-		const error_set___ ErrorSet,
+		const error_set___ &ErrorSet,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation )
 	{
 		return rgstry::GetTranslation( ErrorSet.Error, ErrorSet.Details, Locale, Translation );
 	}
 
-	inline const str::string_ &GetTranslation(
+	const str::string_ &GetTranslation(
 		status__ Status,
-		const error_set___ ErrorSet,
+		const error_set___ &ErrorSet,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
 

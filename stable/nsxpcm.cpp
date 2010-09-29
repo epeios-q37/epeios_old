@@ -198,6 +198,8 @@ ERRBegin
 	MasterWindowCounter_--;
 ERRErr
 ERREnd
+	if ( Locked )
+		mtx::Unlock( MasterWindowMutex_ );
 ERREpilog
 }
 
