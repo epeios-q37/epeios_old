@@ -66,31 +66,31 @@ extern class ttr_tutor &XULUITutor;
 
 namespace xului {
 
-	template <typename ui> class bare_bridge__
+	template <typename target> class bare_bridge__
 	{
 	private:
-		ui *_UI;
+		target *_Target;
 	public:
 		bare_bridge__( void )
 		{
-			_UI = NULL;
+			_Target = NULL;
 		}
-		void Init( ui &UI )
+		void Init( target &Target )
 		{
-			_UI = &UI;
+			_Target = &Target;
 		}
-		const ui &UI( void ) const
+		const target &Target( void ) const
 		{
-			return *_UI;
+			return *_Target;
 		}
-		ui &UI( void )
+		target &Target( void )
 		{
-			return *_UI;
+			return *_Target;
 		}
 	};
 
-	template <typename ui, typename widget> class _generic__
-	: public bare_bridge__<ui>,
+	template <typename target, typename widget> class _generic__
+	: public bare_bridge__<target>,
 	  public widget
 	{
 	protected:
@@ -99,55 +99,70 @@ namespace xului {
 			ERRu();
 		}
 	public:
-		void Init( ui &UI )
+		void Init( target &Target )
 		{
-			bridge__::Init( UI );
+			bridge__::Init( Target );
 			widget::Init();
 		}
 	};
 
-#	define XULUI__WN( widget, name )\
-	template <typename ui> E_TTYPEDEF__( E_COVER2( _generic__<ui, nsxpcm::widget##__> ), name##__ )
+#	define XULUI__WN( widget, name, events )\
+	template <typename target> E_TTYPEDEF__( E_COVER2( _generic__<target, nsxpcm::widget##__> ), name##__ );\
+	template <typename target> inline void Register(\
+		target &Target,\
+		name##__<target> &Widget,\
+		nsIDOMWindow *Element )\
+	{\
+		Register( Target, Widget, Element, events );\
+	}\
+	template <typename target> inline void Register(\
+		target &Target,\
+		name##__<target> &Widget,\
+		nsIDOMWindow *Window,\
+		const char *Id )\
+	{\
+		Register( Target, Widget, Window, Id, events );\
+	}
 
-#	define XULUI__W( widget )	XULUI__WN( widget, widget )
+#	define XULUI__W( widget, events )	XULUI__WN( widget, widget, events )
 
-	XULUI__W( textbox );
-	XULUI__W( radio );
-	XULUI__W( button );
-	XULUI__W( listbox );
-	XULUI__W( tree );
-	XULUI__W( deck );
-	XULUI__W( broadcast );
-	XULUI__W( command );
-	XULUI__W( menu );
-	XULUI__W( menu_item );
-	XULUI__W( panel );
-	XULUI__WN( element, box );
-	XULUI__W( window );
-	XULUI__W( description );
+	XULUI__W( textbox, nsxpcm::ef_None );
+	XULUI__W( radio, nsxpcm::efCommand );
+	XULUI__W( button, nsxpcm::efCommand );
+	XULUI__W( listbox, nsxpcm::efCommand );
+	XULUI__W( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
+	XULUI__W( deck, nsxpcm::ef_None );
+	XULUI__W( broadcast, nsxpcm::ef_None );
+	XULUI__W( command, nsxpcm::efCommand );
+	XULUI__W( menu, nsxpcm::ef_None );
+	XULUI__W( menu_item, nsxpcm::efCommand );
+	XULUI__W( panel, nsxpcm::ef_None );
+	XULUI__WN( element, box, nsxpcm::ef_None );
+	XULUI__W( window, nsxpcm::efClose );
+	XULUI__W( description, nsxpcm::ef_None );
 
-	template <typename ui, typename widget> void Register(
-		ui &UI,
+	template <typename target, typename widget> void Register(
+		target &Target,
 		widget &Widget,
 		nsIDOMWindow *Window,
 		const char *Id,
 		int Events )
 	{
-		Widget.Init( UI );
+		Widget.Init( Target );
 		nsxpcm::Register( Widget, Window, Id, Events );
 	}
 
-	template <typename ui, typename widget> void Register(
-		ui &UI,
+	template <typename target, typename widget> void Register(
+		target &Target,
 		widget &Widget,
 		nsISupports *Supports,
 		int Events )
 	{
-		Widget.Init( UI );
+		Widget.Init( Target );
 		nsxpcm::Register( Widget, Supports, Events );
 	}
-
-	template <typename ui> inline void Register(
+/*
+	template <typename target> inline void Register(
 		ui &UI,
 		window__<ui> &Window,
 		nsIDOMWindow *Element )
@@ -155,7 +170,7 @@ namespace xului {
 		Register( UI, Window, Element, nsxpcm::efClose );
 	}
 
-	template <typename ui> inline void Register(
+	template <typename target> inline void Register(
 		ui &UI,
 		broadcast__<ui> &Broadcast,
 		nsIDOMWindow *Window,
@@ -164,7 +179,7 @@ namespace xului {
 		Register( UI, Broadcast, Window, Id, nsxpcm::ef_None );
 	}
 
-	template <typename ui> inline void Register(
+	template <typename target> inline void Register(
 		ui &UI,
 		command__<ui> &Command,
 		nsIDOMWindow *Window,
@@ -173,7 +188,7 @@ namespace xului {
 		Register( UI, Command, Window, Id, nsxpcm::efCommand );
 	}
 
-	template <typename ui> inline void Register(
+	template <typename target> inline void Register(
 		ui &UI,
 		tree__<ui> &Tree,
 		nsIDOMWindow *Window,
@@ -182,7 +197,7 @@ namespace xului {
 		Register( UI, Tree, Window, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
 	}
 
-	template <typename ui> inline void Register(
+	template <typename target> inline void Register(
 		ui &UI,
 		deck__<ui> &Deck,
 		nsIDOMWindow *Window,
@@ -217,6 +232,7 @@ namespace xului {
 	{
 		Register( UI, Description, Window, Id, nsxpcm::ef_None );
 	}
+	*/
 }
 
 /*$END$*/

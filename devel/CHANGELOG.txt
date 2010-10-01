@@ -1,5 +1,9 @@
 $Id$
 
+01/10/2010 :
+	- XULUI :
+		- Factorisation.
+
 29/09/2010 :
 	- FRDKRN :
 		- Correction oublis.
