@@ -1,5 +1,11 @@
 $Id$
 
+04/10/2010 :
+	- FRDKRN :
+		- Ajout 'Connect(...)' avec paramètres déduits de la 'registry'.
+	- FRDRGY :
+		- Completion.
+
 01/10/2010 :
 	- XULUI :
 		- Factorisation.

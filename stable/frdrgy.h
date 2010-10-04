@@ -232,6 +232,13 @@ namespace frdrgy {
 		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
 	}
 
+	inline bso::bool__ GetBackendLocation(
+		const registry_ &Registry,
+		str::string_ &Target )
+	{
+		return GetValue( paths::Parameters.Backend.Location, Registry, Target );
+	}
+
 	inline bso::bool__ GetLocalesFileName(
 		const registry_ &Registry,
 		str::string_ &Locales )

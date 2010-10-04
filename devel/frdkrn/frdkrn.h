@@ -93,11 +93,14 @@ namespace frdkrn {
 		sLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
 		sNoLocaleFileDefined,		// No locales file is defined. 
 		sProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
+		sNoBackendDefined,
+		sNoBackendLocation,
+		sUnableToConnect,
 		s_amount,
 		s_Undefined
 	};
 
-#define FRDKRN__S_AMOUNT	6	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'status__' est modifié.
+#define FRDKRN__S_AMOUNT	8	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'status__' est modifié.
 
 	const str::string_ &GetTranslation(
 		status__ Status,
@@ -132,7 +135,7 @@ namespace frdkrn {
 
 	inline bso::bool__ IsErrorSetRelevant( status__ Status )
 	{
-#if FRDKRN__S_AMOUNT != 6
+#if FRDKRN__S_AMOUNT != 8
 #	error "'status__' modified !"
 #endif
 		switch ( Status  ) {
@@ -149,6 +152,9 @@ namespace frdkrn {
 		case sProjectParsingError:
 			return true;
 			break;
+		case sNoBackendDefined:
+		case sNoBackendLocation:
+			return false;
 		default:
 			ERRu();
 			break;
@@ -185,12 +191,12 @@ namespace frdkrn {
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
-		bso::bool__ _Connect(
+		status__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			csdsnc::log_functions__ &LogFunctions,
 			error_reporting_functions___ &ErrorReportingFunctions );
-		bso::bool__ _Connect(
+		status__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			csdsnc::log_functions__ &LogFunctions,
@@ -235,22 +241,25 @@ namespace frdkrn {
 			const char *TargetName,
 			const str::string_ &Language,
 			error_set___ &ErrorSet );
-		bso::bool__ Connect(
+		status__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			csdsnc::log_functions__ &LogFunctions,
 			error_reporting_functions___ &ErrorReportingFunctions )
 		{
-			_Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
+			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
 		}
-		bso::bool__ Connect(
+		status__ Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			csdsnc::log_functions__ &LogFunctions,
 			error_reporting_functions___ &ErrorReportingFunctions )
 		{
-			_Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
+			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
 		}
+		status__ Connect( // Try to connect using registry content.
+			csdsnc::log_functions__ &LogFunctions,
+			error_reporting_functions___ &ErrorReportingFunctions );
 		const void AboutBackend(
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )
