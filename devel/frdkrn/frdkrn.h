@@ -194,13 +194,13 @@ namespace frdkrn {
 		status__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			csdsnc::log_functions__ &LogFunctions,
-			error_reporting_functions___ &ErrorReportingFunctions );
+			error_reporting_functions___ &ErrorReportingFunctions,
+			csdsnc::log_functions__ &LogFunctions );
 		status__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			csdsnc::log_functions__ &LogFunctions,
-			error_reporting_functions___ &ErrorReportingFunctions );
+			error_reporting_functions___ &ErrorReportingFunctions,
+			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
 		{
 			if ( !IsConnected() )
@@ -244,22 +244,22 @@ namespace frdkrn {
 		status__ Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			csdsnc::log_functions__ &LogFunctions,
-			error_reporting_functions___ &ErrorReportingFunctions )
+			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL )
 		{
-			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
+			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, ErrorReportingFunctions, LogFunctions );
 		}
 		status__ Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			csdsnc::log_functions__ &LogFunctions,
-			error_reporting_functions___ &ErrorReportingFunctions )
+			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL )
 		{
-			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, LogFunctions, ErrorReportingFunctions );
+			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, ErrorReportingFunctions, LogFunctions );
 		}
 		status__ Connect( // Try to connect using registry content.
-			csdsnc::log_functions__ &LogFunctions,
-			error_reporting_functions___ &ErrorReportingFunctions );
+			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		const void AboutBackend(
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )

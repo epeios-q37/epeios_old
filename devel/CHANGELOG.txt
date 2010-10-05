@@ -1,5 +1,11 @@
 $Id$
 
+05/10/2010 :
+	- FRDBKD :
+		- Si pas de fonction fournie pour traiter une erreur du 'backend', une erreur 'ERRb()' est lancée.
+	- FRDKRN :
+		- Réorganisation paramètres 'Connect(...)'.
+
 04/10/2010 :
 	- FRDKRN :
 		- Ajout 'Connect(...)' avec paramètres déduits de la 'registry'.

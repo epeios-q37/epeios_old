@@ -97,6 +97,8 @@ namespace frdbkd {
 		{
 			if ( _ErrorReportingFunctions != NULL )
 				_ErrorReportingFunctions->ReportError( Message );
+			else
+				ERRb();
 		}
 	public:
 		void reset( bso::bool__ P = true )

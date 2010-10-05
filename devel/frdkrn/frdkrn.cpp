@@ -280,8 +280,8 @@ ERREpilog
 status__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
-	csdsnc::log_functions__ &LogFunctions,
-	frdkrn::error_reporting_functions___ &ErrorReportingFunctions )
+	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -303,14 +303,14 @@ ERREpilog
 status__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
-	csdsnc::log_functions__ &LogFunctions,
-	frdbkd::error_reporting_functions___ &ErrorReportingFunctions )
+	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Status = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, LogFunctions, ErrorReportingFunctions );
+	Status = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, ErrorReportingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -318,8 +318,8 @@ ERREpilog
 }
 
 status__ frdkrn::kernel___::Connect(
-	csdsnc::log_functions__ &LogFunctions,
-	error_reporting_functions___ &ErrorReportingFunctions )
+	error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -335,7 +335,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Status = Connect( Location, Type, LogFunctions, ErrorFunctions );
+		Status = Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Status = sNoBackendDefined;
@@ -399,7 +399,7 @@ class frdkrnpersonnalization
 public:
 	frdkrnpersonnalization( void )
 	{
-		if ( FRDKRN__S_AMOUNT != 6 )
+		if ( FRDKRN__S_AMOUNT != s_amount )
 			ERRc();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

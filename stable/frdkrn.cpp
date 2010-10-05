@@ -67,7 +67,7 @@ using namespace frdkrn;
 
 const char *GetLabel_( status__ Status )
 {
-#if FRDKRN__S_AMOUNT != 6
+#if FRDKRN__S_AMOUNT != 8
 #	error "'status__' modified !"
 #endif
 
@@ -76,6 +76,8 @@ const char *GetLabel_( status__ Status )
 		CASE( LocaleParsingError );
 		CASE( NoLocaleFileDefined );
 		CASE( ProjectParsingError );
+		CASE( NoBackendDefined );
+		CASE( NoBackendLocation );
 		default:
 			ERRu();
 			break;
@@ -222,58 +224,6 @@ ERREpilog
 }
 */
 
-bso::bool__ frdkrn::kernel___::_Connect(
-	const char *RemoteHostServiceOrLocalLibraryPath,
-	csducl::type__ Type,
-	csdsnc::log_functions__ &LogFunctions,
-	frdkrn::error_reporting_functions___ &ErrorReportingFunctions )
-{
-	bso::bool__ Success = false;
-ERRProlog
-ERRBegin
-	_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, LogFunctions, Type );
-	_Backend.Init( _ClientCore, ErrorReportingFunctions );
-
-	Success = true;
-ERRErr
-	ERRRst();
-ERREnd
-ERREpilog
-	return Success;
-}
-
-
-bso::bool__ frdkrn::kernel___::_Connect(
-	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
-	csducl::type__ Type,
-	csdsnc::log_functions__ &LogFunctions,
-	frdbkd::error_reporting_functions___ &ErrorReportingFunctions )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
-ERRBegin
-	Success = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, LogFunctions, ErrorReportingFunctions );
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
-}
-
-void frdkrn::kernel___::FillUserRegistry( flw::iflow__ &User )
-{
-ERRProlog
-	rgstry::error_details ErrorDetails;
-ERRBegin
-	ErrorDetails.Init();	
-
-	_Registry.FillUser( User, NULL, ErrorDetails );
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
@@ -327,6 +277,93 @@ ERREpilog
 	return Status;
 }
 
+status__ frdkrn::kernel___::_Connect(
+	const char *RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type,
+	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+ERRBegin
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, LogFunctions, Type ) ) {
+		Status = sUnableToConnect;
+		ERRReturn;
+	}
+
+	_Backend.Init( _ClientCore, ErrorReportingFunctions );
+
+	Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ frdkrn::kernel___::_Connect(
+	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+	csducl::type__ Type,
+	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
+ERRBegin
+	Status = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, ErrorReportingFunctions, LogFunctions );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ frdkrn::kernel___::Connect(
+	error_reporting_functions___ &ErrorReportingFunctions,
+	csdsnc::log_functions__ &LogFunctions )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string Location;
+	csducl::type__ Type = csducl::t_Undefined;
+ERRBegin
+	switch ( Type = GetBackendType( _Registry ) ) {
+	case csducl::tDaemon:
+	case csducl::tLibrary:
+		Location.Init();
+		if ( !frdrgy::GetBackendLocation( _Registry, Location ) ) {
+			Status = sNoBackendLocation;
+			ERRReturn;
+		}
+
+		Status = Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
+		break;
+	case csducl::t_Undefined:
+		Status = sNoBackendDefined;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+void frdkrn::kernel___::FillUserRegistry( flw::iflow__ &User )
+{
+ERRProlog
+	rgstry::error_details ErrorDetails;
+ERRBegin
+	ErrorDetails.Init();	
+
+	_Registry.FillUser( User, NULL, ErrorDetails );
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 status__ frdkrn::kernel___::FillProjectRegistry(
 	const str::string_ &FileName,
 	const char *Target,
@@ -362,7 +399,7 @@ class frdkrnpersonnalization
 public:
 	frdkrnpersonnalization( void )
 	{
-		if ( FRDKRN__S_AMOUNT != 6 )
+		if ( FRDKRN__S_AMOUNT != s_amount )
 			ERRc();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
