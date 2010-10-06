@@ -620,7 +620,7 @@ namespace rgstry {
 			buffer Buffer;
 			bso::bool__ Missing = false;
 
-			Value = GetValue( Path, Row, &Missing, Buffer );
+			Value.Append( GetValue( Path, Row, &Missing, Buffer ) );
 
 			return !Missing;
 		}
@@ -638,7 +638,7 @@ namespace rgstry {
 			buffer Buffer;
 			bso::bool__ Missing = false;
 
-			Value = GetValue( PathString, Row, &Missing, Buffer );
+			Value.Append( GetValue( PathString, Row, &Missing, Buffer ) );
 
 			return !Missing;
 		}
@@ -992,7 +992,7 @@ namespace rgstry {
 			buffer Buffer;
 			bso::bool__ Missing = false;
 
-			Value = GetValue( PathString, &Missing, Buffer );
+			Value.Append( GetValue( PathString, &Missing, Buffer ) );
 
 			return !Missing;
 		}
@@ -1184,7 +1184,7 @@ namespace rgstry {
 			buffer Buffer;
 			bso::bool__ Missing = false;
 
-			Value = GetValue( Level, PathString, &Missing, Buffer, PathErrorRow );
+			Value.Append( GetValue( Level, PathString, &Missing, Buffer, PathErrorRow ) );
 
 			return !Missing;
 		}

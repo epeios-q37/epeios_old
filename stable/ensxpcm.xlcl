@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<!--Translations text="NSXPCM_">
 		<Translation language="fr"></Translation>
 		<Translation language="en-US"></Translation>

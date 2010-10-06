@@ -207,7 +207,7 @@ bso::bool__ lcl::locale_::GetTranslation(
 					Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Translation );	// Pour des raisons de compatibilité ascendante.
 
 	if ( !Found )
-		Translation = Text;
+		Translation.Append( Text );
 
 	return Found;
 }

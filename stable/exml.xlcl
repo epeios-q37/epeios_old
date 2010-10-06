@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations message="EXML_Unexpected_EOF">
 		<Translation language="fr">Fin de fichier innatendue !</Translation>
 		<Translation language="en-US">Unexpected end of file !</Translation>
 	</Translations>
 	<Translations message="EXML_UnknownEntity">
-		<Translation language="fr">EntitÃ© inconnue !</Translation>
+		<Translation language="fr">Entité inconnue !</Translation>
 		<Translation language="en-US">Unknown entity !</Translation>
 	</Translations>
 	<Translations message="EXML_MissingEqualSign">
@@ -13,11 +14,11 @@
 		<Translation language="en-US">missing '=' !</Translation>
 	</Translations>
 	<Translations message="EXML_BadAttributeValueDelimiter">
-		<Translation language="fr">Mauvais dÃ©limiteur d'attribut !</Translation>
+		<Translation language="fr">Mauvais délimiteur d'attribut !</Translation>
 		<Translation language="en-US">Bad attribute delimiter !</Translation>
 	</Translations>
 	<Translations message="EXML_UnexpectedCharacter">
-		<Translation language="fr">CaractÃšre inattendu !</Translation>
+		<Translation language="fr">Caractère inattendu !</Translation>
 		<Translation language="en-US">Unexpected character !</Translation>
 	</Translations>
 	<Translations message="EXML_EmptyTagName">
@@ -25,15 +26,15 @@
 		<Translation language="en-US">Empty tag name !</Translation>
 	</Translations>
 	<Translations message="EXML_MismatchedTag">
-		<Translation language="fr">Balise non appariÃ©e !</Translation>
+		<Translation language="fr">Balise non appariée !</Translation>
 		<Translation language="en-US">Mismatched tag !</Translation>
 	</Translations>
 	<Translations message="EXML_UserDefinedError">
-		<Translation language="fr">Erreur dÃ©finie par l'utilisateur !</Translation>
+		<Translation language="fr">Erreur définie par l'utilisateur !</Translation>
 		<Translation language="en-US">User defined error !</Translation>
 	</Translations>
 	<Translations message="EXML_NoTagsAllowedHere">
-		<Translation language="fr">Balises non autorisÃ©e ici !</Translation>
+		<Translation language="fr">Balises non autorisée ici !</Translation>
 		<Translation language="en-US">No tag allowed here !</Translation>
 	</Translations>
 	<Translations message="EXML_UnexpectedTag">
@@ -45,7 +46,7 @@
 		<Translation language="en-US">Unknown tag !</Translation>
 	</Translations>
 	<Translations message="EXML_AttributeAlreadyDefined">
-		<Translation language="fr">Attribut dÃ©jÃ  dÃ©fini !</Translation>
+		<Translation language="fr">Attribut déjà défini !</Translation>
 		<Translation language="en-US">Attribute already defined !</Translation>
 	</Translations>
 	<Translations message="EXML_UnexpectedAttribute">
@@ -77,7 +78,7 @@
 		<Translation language="en-US">Unknown variable !</Translation>
 	</Translations>
 	<Translations message="EXML_NoValueAllowedHere">
-		<Translation language="fr">Valeur non autorisÃ©e ici !</Translation>
+		<Translation language="fr">Valeur non autorisée ici !</Translation>
 		<Translation language="en-US">No value allowed here !</Translation>
 	</Translations>
 	<Translations message="EXML_TooManyTags">
@@ -89,7 +90,7 @@
 		<Translation language="en-US">Unable to open file !</Translation>
 	</Translations>
 	<Translations message="EXML_NestingOverflow">
-		<Translation language="fr">DÃ©pacement de capacitÃ© d'imbrication !</Translation>
+		<Translation language="fr">Dépacement de capacité d'imbrication !</Translation>
 		<Translation language="en-US">Nesting overflow !</Translation>
 	</Translations>
 	<Translations message="EXML_UnknownMacro">

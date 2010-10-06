@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations message="ERGSTRY_UnableToOpenFile_1%0">
 		<Translation language="fr">Impossible d'ouvrir le fichier '%1'!</Translation>
 		<Translation language="en-US">Unable to open file '%1'!</Translation>

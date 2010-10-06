@@ -93,7 +93,7 @@ namespace frdkrn {
 		sLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
 		sNoLocaleFileDefined,		// No locales file is defined. 
 		sProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
-		sNoBackendDefined,
+		sNoOrBadBackendDefinition,
 		sNoBackendLocation,
 		sUnableToConnect,
 		s_amount,
@@ -152,8 +152,9 @@ namespace frdkrn {
 		case sProjectParsingError:
 			return true;
 			break;
-		case sNoBackendDefined:
+		case sNoOrBadBackendDefinition:
 		case sNoBackendLocation:
+		case sUnableToConnect:
 			return false;
 		default:
 			ERRu();

@@ -72,12 +72,14 @@ const char *GetLabel_( status__ Status )
 #endif
 
 	switch( Status ) {
+		// CASE( OK );	// Cette fonction n'a pas à être appelée dans ce cas.
 		CASE( ConfigurationParsingError );
 		CASE( LocaleParsingError );
 		CASE( NoLocaleFileDefined );
 		CASE( ProjectParsingError );
-		CASE( NoBackendDefined );
+		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
+		CASE( UnableToConnect );
 		default:
 			ERRu();
 			break;
@@ -150,7 +152,7 @@ ERRProlog
 ERRBegin
 	FileName.Init( Affix );
 	FileName.Append( '.' );
-	FileName.Append( FRDKRN_PROJECT_FILE_EXTENSION );
+	FileName.Append( FRDKRN_CONFIGURATION_FILE_EXTENSION );
 
 	Exists = fil::FileExists( FileName.Convert( Buffer ) );
 ERRErr
@@ -338,7 +340,7 @@ ERRBegin
 		Status = Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
-		Status = sNoBackendDefined;
+		Status = sNoOrBadBackendDefinition;
 		break;
 	default:
 		ERRc();
@@ -376,7 +378,7 @@ ERRProlog
 ERRBegin
 	Path.Init( "Projects/Project[@target=\"" );
 	Path.Append( Target );
-	Path.Append( "]\"" );
+	Path.Append( "\"]" );
 
 	if ( ( ErrorSet.Error = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
 		Status = sProjectParsingError;

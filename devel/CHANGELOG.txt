@@ -1,5 +1,15 @@
 $Id$
 
+06/10/2010 :
+	- FRDKRN :
+		- Correction erreur sur l'extension par défaut du fichier de configuration.
+		- Correction erreur 'path' dans 'FillProjectRegistry(...)'.
+		- Changement d'un libellé de 'status__'.
+	- LCL :
+		- La traduction est ajouté dans la variable destination et n'en écrase plus le contenu.
+	- RGSTRY :
+		- 'GetValue(...)' ajoute la valeur demandée au contenu de la variable destination, et ne l'écrase plus.
+
 05/10/2010 :
 	- FRDBKD :
 		- Si pas de fonction fournie pour traiter une erreur du 'backend', une erreur 'ERRb()' est lancée.
