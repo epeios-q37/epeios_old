@@ -230,14 +230,22 @@ ERREpilog
 
 			Flows.Init();
 
+			_flow___ *Flow = Get( err::hUserDefined );
+
+			if ( Flow == NULL )
+				return false;
+
+			Release( Flow );
+
 			return true;
 		}
-		_flow___ *Get( void )
+		_flow___ *Get( err::handling__ ErrorHandling = err::h_Default )
 		{
 			_flow___ *Flow = NULL;
 		ERRProlog
 			log__ Log = l_Undefined;
 			bso::bool__ Locked = false;
+			sck::socket__ Socket = SCK_INVALID_SOCKET;
 		ERRBegin
 			_Lock( S_.Mutex );
 			Locked = true;
@@ -251,7 +259,13 @@ ERREpilog
 				if ( Flow == NULL )
 					ERRa();
 
-				Flow->Init( csdbnc::Connect( S_.HostService ) );
+				if ( ( Socket = csdbnc::Connect( S_.HostService, ErrorHandling ) ) == SCK_INVALID_SOCKET ) {
+					delete Flow;
+					Flow = NULL;
+					ERRReturn;
+				}
+
+				Flow->Init( Socket );
 
 				Log = lCreation;
 			}
@@ -261,6 +275,10 @@ ERREpilog
 
 			_Log( Log, Flow );
 		ERRErr
+			if ( Flow != NULL ) {
+				delete Flow;
+				Flow = NULL;
+			}
 		ERREnd
 			if ( Locked )
 				_Unlock( S_.Mutex );

@@ -199,7 +199,7 @@ void fil::Close( iop::descriptor__ D )
 
 bso::bool__ fil::CreateFile(
 	const char *FileName,
-	err::handle ErrHandle )
+	err::handling__ ErrorHandling )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -209,7 +209,7 @@ ERRBegin
 
 	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
 
-	if ( !Success && ( ErrHandle == err::hUsual ) )
+	if ( !Success && ( ErrorHandling == err::hThrowException ) )
 		ERRf();
 ERRErr
 ERREnd
@@ -225,7 +225,7 @@ rbf fil::CreateBackupFile(
 	hbf Handle,
 	txf::text_oflow__ &Flow,
 	const char *Extension,
-	err::handle Error )
+	err::handling__ ErrorHandling )
 {
 	rbf Etat = rbfOK;
 ERRProlog
@@ -270,7 +270,7 @@ ERRBegin
 				ERRu();
 	}
 
-	if ( Error == err::hUsual )
+	if ( ErrorHandling == err::hThrowException )
 	{
 		switch( Etat ) {
 		case rbfSuppression:
@@ -307,7 +307,7 @@ rbf fil::RecoverBackupFile(
 	const char *NomFichier,
 	txf::text_oflow__ &Flow,
 	const char *Extension,
-	err::handle Error )
+	err::handling__ ErrorHandling )
 {
 	rbf Etat = rbfOK;
 ERRProlog
@@ -330,7 +330,7 @@ ERRBegin
 				Etat = rbfRenaming;
 	}
 
-	if ( Error == err::hUsual )
+	if ( ErrorHandling == err::hThrowException )
 	{
 		switch( Etat ) {
 		case rbfAllocation:

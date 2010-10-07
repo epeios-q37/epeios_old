@@ -1,12 +1,12 @@
 /*
-	Header for the 'csdbnc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'csdbnc' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@
 
 #define	CSDBNC_VERSION	"$Revision$"
 
-#define CSDBNC_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define CSDBNC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &CSDBNCTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -124,7 +124,7 @@ namespace csdbnc {
 		const char *Host,
 		const char *Service,
 		socket__ Desc = SCK_INVALID_SOCKET,
-		err::handle ErrHandle = err::hUsual );
+		err::handling__ ErrorHandling = err::h_Default );
 
 	/*f Return a descriptor to a socket connected to 'Host' at 'Service'.
 	'Host' can be in '212.95.72.3' format, or in 'www.epeios.org' format,
@@ -133,9 +133,9 @@ namespace csdbnc {
 	inline socket__ Connect(
 		const char *Host,
 		const char *Service,
-		err::handle ErrHandle )
+		err::handling__ ErrorHandling )
 	{
-		return Connect( Host, Service, SCK_INVALID_SOCKET, ErrHandle );
+		return Connect( Host, Service, SCK_INVALID_SOCKET, ErrorHandling );
 	}
 
 	/*f Return a descriptor to a socket connected to 'HostService'.
@@ -145,11 +145,11 @@ namespace csdbnc {
 	inline socket__ Connect(
 		const char *HostService,
 		socket__ Desc = SCK_INVALID_SOCKET,
-		err::handle ErrHandle = err::hUsual )
+		err::handling__ ErrorHandling = err::h_Default )
 	{
 		buffer__ Buffer;
 
-		return Connect( Host( HostService, Buffer ), Service( HostService ), Desc, ErrHandle );
+		return Connect( Host( HostService, Buffer ), Service( HostService ), Desc, ErrorHandling );
 	} 
 
 	/*f Return a descriptot to a socket connected to 'HostService'.
@@ -157,9 +157,9 @@ namespace csdbnc {
 	If connection failed, and 'ErrHandler' == 'err::hSkip', return 'SCK_INVALID'. */
 	inline socket__ Connect(
 		const char *HostService,
-		err::handle ErrHandle )
+		err::handling__ ErrorHandling )
 	{
-		return Connect( HostService, SCK_INVALID_SOCKET, ErrHandle );
+		return Connect( HostService, SCK_INVALID_SOCKET, ErrorHandling );
 	} 
 }
 

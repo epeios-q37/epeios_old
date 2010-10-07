@@ -1249,7 +1249,7 @@ ERRProlog
 	flf::file_iflow___ FFlow;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
-	if ( FFlow.Init( FileName, err::hSkip ) != fil::sSuccess ) {
+	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
 		Error = eUnableToOpenFile;
 		ErrorDetails.FileName = FileName;
 		ERRReturn;

@@ -241,9 +241,9 @@ namespace lstctn {
 
 			return Exists;
 		}
-		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::_Default )
 		{
-			bso::bool__ Success = _container_file_manager___<container>::CreateFiles( ErrHandle );
+			bso::bool__ Success = _container_file_manager___<container>::CreateFiles( ErrorHandling );
 
 			if ( !Success )
 				return false;

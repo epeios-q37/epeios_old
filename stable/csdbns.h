@@ -131,7 +131,7 @@ namespace csdbns {
 			return _UserFunctions != NULL;
 		}
 		socket__ _Interroger(
-			err::handle ErrHandle,
+			err::handling__ ErrorHandling,
 			sck::duration__ TimeOut );
 	public:
 		void reset( bool P = true )
@@ -162,36 +162,36 @@ namespace csdbns {
 		bso::bool__ Init(
 			port__ Port,
 			int Amount,
-			err::handle ErrHandle = err::hUsual );
+			err::handling__ ErrorHandling = err::h_Default );
 		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
 			port__ Port,
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			int Amount = 5 )
 		{
-			return Init( Port, Amount, ErrHandle );
+			return Init( Port, Amount, ErrorHandling );
 		}
 		//f Return the first available connection. BLOCKING FUNCTION if 'TimeOut == 'SCK_INFINITE'.
 		socket__ GetConnection(
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			sck::duration__ TimeOut = SCK_INFINITE )
 		{
-			return _Interroger( ErrHandle, TimeOut );
+			return _Interroger( ErrorHandling, TimeOut );
 		}
 		//f Initialize 'Socket' with the first connection available. BLOCKING FUNCTION if 'TimeOut' == 'SCK_INFINITE'.
 		void GetConnection(
 			socket__ &Socket,
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			sck::duration__ TimeOut = 0 )
 		{
-			Socket = _Interroger( ErrHandle, TimeOut );
+			Socket = _Interroger( ErrorHandling, TimeOut );
 		}
 		// If returned value = 'true', then exiting is because 'TimeOut' reached.
 		// If returned value == 'false', then underlying user function retuns 'bStop'.
 		bso::bool__ Process(
 			socket_user_functions__ &Functions,
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			sck::duration__ TimeOut = SCK_INFINITE );
 	};
 
@@ -305,7 +305,7 @@ namespace csdbns {
 			port__ Port,
 			socket_user_functions__ &SocketFunctions,
 			int Amount,
-			err::handle ErrHandle = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
@@ -313,14 +313,14 @@ namespace csdbns {
 #endif
 			_SocketFunctions = &SocketFunctions;
 			
-			return listener___::Init( Port, Amount, ErrHandle );
+			return listener___::Init( Port, Amount, ErrorHandling );
 		}
 		/*f Initialzation with 'Port' as port to listen.
 		A maximum of 'Amount' are accepted in the waiting queue. */
 		bso::bool__ Init(
 			port__ Port,
 			socket_user_functions__ &SocketFunctions,
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			int Amount = 5 )
 		{
 #ifdef CSD__HANDLE_SERVICE
@@ -329,12 +329,12 @@ namespace csdbns {
 #endif
 			_SocketFunctions = &SocketFunctions;
 
-			return listener___::Init( Port, Amount, ErrHandle );
+			return listener___::Init( Port, Amount, ErrorHandling );
 		}
 		bso::bool__ Init(
 			port__ Port,
 			user_functions__ &UserFunctions,
-			err::handle ErrHandle = err::hUsual,
+			err::handling__ ErrorHandling = err::h_Default,
 			int Amount = 5 )
 		{
 #ifdef CSD__HANDLE_SERVICE
@@ -343,13 +343,13 @@ namespace csdbns {
 #endif
 			_Functions.UserFunctions = &UserFunctions;
 
-			return Init( Port, this->_Functions, Amount, ErrHandle );
+			return Init( Port, this->_Functions, Amount, ErrorHandling );
 		}
 		bso::bool__ Init(
 			port__ Port,
 			user_functions__ &UserFunctions,
 			int Amount,
-			err::handle ErrHandle = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
@@ -357,7 +357,7 @@ namespace csdbns {
 #endif
 			_Functions.UserFunctions = &UserFunctions;
 
-			return Init( Port, this->_Functions, Amount, ErrHandle );
+			return Init( Port, this->_Functions, Amount, ErrorHandling );
 		}
 		bso::bool__ LaunchService( const char *ServiceName )
 		{
@@ -369,7 +369,7 @@ namespace csdbns {
 		}
 		void Process(
 			sck::duration__ TimeOut = CSDNBS__DEFAULT_TIMEOUT,
-			err::handle ErrHandle = err::hUsual );
+			err::handling__ ErrorHandling = err::h_Default );
 	};
 
 #endif

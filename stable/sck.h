@@ -173,14 +173,14 @@ namespace sck {
 	}
 
 	//f Create a socket. Only used in some particular multitasking program.
-	inline socket__ CreateSocket( err::handle ErrHandle = err::hUsual )
+	inline socket__ CreateSocket( err::handling__ ErrorHandling = err::h_Default )
 	{
 	#ifdef CPE__T_BEOS
 		socket__ Desc = socket( AF_INET, SOCK_STREAM, 0 );
 	#else
 		socket__ Desc = socket( PF_INET, SOCK_STREAM, 0 );
 	#endif
-		if ( ( Desc == SCK_INVALID_SOCKET ) && ( ErrHandle == err::hUsual ) )
+		if ( ( Desc == SCK_INVALID_SOCKET ) && ( ErrorHandling == err::hThrowException ) )
 			ERRs();
 
 		return Desc;

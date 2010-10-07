@@ -387,7 +387,7 @@ namespace lst {
 			return Occupation_.Previous( Entry, true );
 		}
 		//f Return the position of a new entry.
-		r CreateEntry( err::handle Error = err::hUsual  )
+		r CreateEntry( err::handling__ ErrorHandling = err::h_Default  )
 		{
 			epeios::row_t__ Position = NONE;
 

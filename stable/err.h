@@ -78,9 +78,13 @@ namespace err {
 
 	typedef char buffer__[150];
 
-	enum handle {
-		hUsual,
-		hSkip };
+	enum handling__ {
+		hThrowException,	// Une erreur provoque une exception.
+		hUserDefined,		// Le traitement de l'erreur est à la charge de l'utilisateur.
+		h_amount,
+		h_Undefined,
+		h_Default = hThrowException	// Comportement par défaut.
+	};
 
 	enum type {
 		ok = 0,

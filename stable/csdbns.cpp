@@ -70,7 +70,7 @@ using namespace csdbns;
 bso::bool__ csdbns::listener___::Init(
 	port__ Port,
 	int Amount,
-	err::handle ErrHandle)
+	err::handling__ ErrorHandling )
 {
 	sockaddr_in nom;
 
@@ -94,7 +94,7 @@ bso::bool__ csdbns::listener___::Init(
 #endif
 
 	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
-		if ( ErrHandle == err::hUsual )
+		if ( ErrorHandling == err::hThrowException )
 			ERRs();
 		else
 			return false;
@@ -106,7 +106,7 @@ bso::bool__ csdbns::listener___::Init(
 }
 
 socket__ csdbns::listener___::_Interroger(
-	err::handle ErrHandle,
+	err::handling__ ErrorHandling,
 	sck::duration__ TimeOut )
 {
 	fd_set fds;
@@ -150,12 +150,11 @@ ERRBegin
 			}
 		}
 ERRErr
-	if ( ErrHandle == err::hSkip )
+	if ( ErrorHandling == err::hUserDefined )
 	{
 		ERRRst();
 		Boucler = true;
-	}
-	else if ( ErrHandle != err::hUsual )
+	} else if ( ErrorHandling != err::hUserDefined )
 		ERRu();
 ERREnd
 ERREpilog
@@ -166,7 +165,7 @@ ERREpilog
 
 bso::bool__ csdbns::listener___::Process(
 	socket_user_functions__ &Functions,
-	err::handle ErrHandle,
+	err::handling__ ErrorHandling,
 	sck::duration__ TimeOut )
 {
 	bso::bool__ Continue = true;
@@ -174,7 +173,7 @@ ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
 	action__ Action = a_Undefined;
 ERRBegin
-	Socket = _Interroger( ErrHandle, TimeOut );
+	Socket = _Interroger( ErrorHandling, TimeOut );
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
@@ -337,7 +336,7 @@ ERRFEpilog
 
 void server___::Process(
 	sck::duration__ TimeOut,
-	err::handle ErrHandle )
+	err::handling__ ErrorHandling )
 {
 ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
@@ -345,7 +344,7 @@ ERRProlog
 	bso::bool__ Continue = true;
 ERRBegin
 
-	Socket = listener___::GetConnection( ErrHandle, TimeOut );
+	Socket = listener___::GetConnection( ErrorHandling, TimeOut );
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
@@ -365,7 +364,7 @@ ERRBegin
 
 		Socket = SCK_INVALID_SOCKET;
 
-		Socket = listener___::GetConnection( ErrHandle, TimeOut );
+		Socket = listener___::GetConnection( ErrorHandling, TimeOut );
 
 		if ( Socket != SCK_INVALID_SOCKET ) {
 			mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.

@@ -744,7 +744,7 @@ ERRProlog
 ERRBegin
 	LocalizedFileName = fnm::BuildFileName( Directory.Convert( DirectoryBuffer ), FileName.Convert( MacroNameBuffer ), "", LocalizedFileNameBuffer );
 
-	if ( _FFlow.Init( fnm::CorrectLocation( LocalizedFileNameBuffer, LocationBuffer ), fil::mReadOnly, err::hSkip ) != fil::sSuccess ) {
+	if ( _FFlow.Init( fnm::CorrectLocation( LocalizedFileNameBuffer, LocationBuffer ), fil::mReadOnly, err::hUserDefined ) != fil::sSuccess ) {
 		Status = sUnableToOpenFile;
 		ERRReturn;
 	}

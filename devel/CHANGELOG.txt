@@ -1,5 +1,13 @@
 $Id$
 
+07/10/2010 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'ERR'.
+	- CSDSNC :
+		- Une tentative de connection est réalisée dés l'initialisation, la valeur retournée signalant la réussite ou l'échec de cette tentative.
+	- ERR :
+		- 'handle' -> 'handling__', + changement des libellés et mise aux normes.
+
 06/10/2010 :
 	- FRDKRN :
 		- Correction erreur sur l'extension par défaut du fichier de configuration.

@@ -550,14 +550,14 @@ namespace mmi {
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
-		bso::bool__ CreateFiles( err::handle ErrHandle )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling )
 		{
-			bso::bool__ Success = _Descriptors.CreateFile( ErrHandle );
+			bso::bool__ Success = _Descriptors.CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			Success = _Multimemory.CreateFile( ErrHandle );
+			Success = _Multimemory.CreateFile( ErrorHandling );
 
 			return Success;
 		}

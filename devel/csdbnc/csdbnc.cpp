@@ -1,13 +1,13 @@
 /*
-	'csdbnc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+	'csdbnc' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'csdbnc' header file ('csdbnc.h').
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -117,7 +117,7 @@ socket__ csdbnc::Connect(
 	const char *Host,
 	const char *Service,
 	socket__ Desc,
-	err::handle ErrHandle )
+	err::handling__ ErrorHandling )
 {
 	struct sockaddr_in Nom;
 
@@ -127,18 +127,18 @@ socket__ csdbnc::Connect(
 
 	if ( GetHost_( Host, Nom ) && GetService_( Service, Nom ) ) {
 		if ( Desc == SCK_INVALID_SOCKET )
-			Desc = CreateSocket( ErrHandle );
+			Desc = CreateSocket( ErrorHandling );
 
 		if ( Desc != SCK_INVALID_SOCKET )
 			if ( connect( Desc, (sockaddr *)&Nom, sizeof( Nom ) ) == SCK_SOCKET_ERROR )
 				Desc = SCK_INVALID_SOCKET;
 
-		if ( ( Desc == SCK_INVALID_SOCKET ) && ( ErrHandle == err::hUsual ) )
+		if ( ( Desc == SCK_INVALID_SOCKET ) && ( ErrorHandling == err::hThrowException ) )
 			ERRs();
 	} else {
 		Desc = SCK_INVALID_SOCKET;
 
-		if ( ErrHandle == err::hUsual )
+		if ( ErrorHandling == err::hThrowException )
 			ERRu();
 	}
 

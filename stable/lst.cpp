@@ -131,7 +131,7 @@ bso::bool__ lst::ReadFromFile(
 ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
-	if ( Flow.Init( FileName, err::hSkip ) == fil::sSuccess ) {
+	if ( Flow.Init( FileName, err::hUserDefined ) == fil::sSuccess ) {
 		if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
 			ERRReturn;
 

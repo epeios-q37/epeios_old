@@ -410,14 +410,14 @@ namespace ctn {
 
 			return ( StaticsTimeStamp > DynamicsTimeStamp ? StaticsTimeStamp : DynamicsTimeStamp );
 		}
-		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _Statics.CreateFile( ErrHandle );
+			bso::bool__ Success = _Statics.CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			Success = _Dynamics.CreateFiles( ErrHandle );
+			Success = _Dynamics.CreateFiles( ErrorHandling );
 
 			return Success;
 		}

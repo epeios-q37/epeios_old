@@ -177,7 +177,7 @@ namespace flm {
 			const char *FileName,
 			fil::mode__ Mode,
 			bso::bool__ FlushToDevice,
-			err::handle ErrHandle = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
 
@@ -188,11 +188,11 @@ namespace flm {
 			_D = fil::Open( FileName, Mode );
 
 			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
-				switch ( ErrHandle ) {
-				case err::hSkip:
+				switch ( ErrorHandling ) {
+				case err::hUserDefined:
 					return fil::sFailure;
 					break;
-				case err::hUsual:
+				case err::hThrowException:
 					ERRd();
 					break;
 				default:
@@ -313,13 +313,13 @@ namespace flm {
 	// Fonctions
 		bso::bool__ Open_(
 			bso::bool__ ToFlush,
-			err::handle ErrHandle = err::hUsual )	// Si à 'true', le fichier doit être 'flushé' (accés en écriture).
+			err::handling__ ErrorHandling = err::h_Default )	// Si à 'true', le fichier doit être 'flushé' (accés en écriture).
 		{
 			bso::bool__ Success = true;
 
 			if ( !Temoin_.Ouvert )
 			{
-				Success = File_.Init( Nom_, Temoin_.Mode, _FlushToDevice, ErrHandle ) == fil::sSuccess;
+				Success = File_.Init( Nom_, Temoin_.Mode, _FlushToDevice, ErrorHandling ) == fil::sSuccess;
 
 				if ( Success )
 					Temoin_.Ouvert = 1;
@@ -580,7 +580,7 @@ namespace flm {
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
-		bso::bool__ CreateFile( err::handle ErrHandle = err::hUsual )
+		bso::bool__ CreateFile( err::handling__ ErrHandle = err::h_Default )
 		{
 			return Open_( false, ErrHandle );
 		}

@@ -284,7 +284,7 @@ namespace fil {
 
 	bso::bool__ CreateFile(
 		const char *FileName,
-		err::handle ErrHandle = err::hUsual );	// Crée un fichier de nom 'FileName'.
+		err::handling__ ErrorHandling = err::h_Default );	// Crée un fichier de nom 'FileName'.
 
 
 	//e Error code which can occurs during backup file operation.
@@ -324,7 +324,7 @@ namespace fil {
 		txf::text_oflow__ &Flow,
 #endif
 		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
-		err::handle = err::hUsual  );
+		err::handling__ = err::h_Default  );
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
 	rbf RecoverBackupFile(
@@ -335,7 +335,7 @@ namespace fil {
 		txf::text_oflow__ &Flow,
 #endif
 		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
-		err::handle = err::hUsual  );
+		err::handling__ = err::h_Default  );
 }
 
 /*$END$*/

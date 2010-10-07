@@ -95,7 +95,7 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mReadOnly,
-			err::handle ErrHandling = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
 
@@ -104,10 +104,10 @@ namespace flf {
 
 			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
 				Status = fil::sFailure;
-				switch ( ErrHandling ) {
-				case err::hSkip:
+				switch ( ErrorHandling ) {
+				case err::hUserDefined:
 					break;
-				case err::hUsual:
+				case err::hThrowException:
 					ERRf();
 					break;
 				default:
@@ -123,10 +123,10 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
-			err::handle ErrHandle,
+			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mReadOnly )
 		{
-			return Init( FileName, Mode, ErrHandle );
+			return Init( FileName, Mode, ErrorHandling );
 		}
 	};
 
@@ -162,18 +162,18 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mReadOnly,
-			err::handle ErrHandle = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
 
 			D_ = fil::Open( FileName, Mode );
 
 			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
-				switch ( ErrHandle ) {
-				case err::hSkip:
+				switch ( ErrorHandling ) {
+				case err::hUserDefined:
 					return fil::sFailure;
 					break;
-				case err::hUsual:
+				case err::hThrowException:
 					ERRd();
 					break;
 				default:
@@ -188,10 +188,10 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
-			err::handle ErrHandle,
+			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mReadOnly )
 		{
-			return Init( FileName, Mode, ErrHandle );
+			return Init( FileName, Mode, ErrorHandling );
 		}
 	};
 
@@ -223,7 +223,7 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mRemove,
-			err::handle ErrHandling = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
 
@@ -232,10 +232,10 @@ namespace flf {
 
 			if ( _D == IOP_UNDEFINED_DESCRIPTOR ) {
 				Status = fil::sFailure;
-				switch ( ErrHandling ) {
-				case err::hSkip:
+				switch ( ErrorHandling ) {
+				case err::hUserDefined:
 					break;
-				case err::hUsual:
+				case err::hThrowException:
 					ERRf();
 					break;
 				default:
@@ -251,10 +251,10 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
-			err::handle ErrHandle,
+			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mRemove )
 		{
-			return Init( FileName, Mode, ErrHandle );
+			return Init( FileName, Mode, ErrorHandling );
 		}
 	};
 
@@ -291,18 +291,18 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mRemove,
-			err::handle ErrHandle = err::hUsual )
+			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
 
 			D_ = fil::Open( FileName, Mode );
 
 			if ( D_ == IOP_UNDEFINED_DESCRIPTOR ) {
-				switch ( ErrHandle ) {
-				case err::hSkip:
+				switch ( ErrorHandling ) {
+				case err::hUserDefined:
 					return fil::sFailure;
 					break;
-				case err::hUsual:
+				case err::hThrowException:
 					ERRd();
 					break;
 				default:
@@ -317,10 +317,10 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
-			err::handle ErrHandle,
+			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mRemove )
 		{
-			return Init( FileName, Mode, ErrHandle );
+			return Init( FileName, Mode, ErrorHandling );
 		}
 	};
 }

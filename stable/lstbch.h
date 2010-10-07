@@ -256,20 +256,20 @@ namespace lstbch {
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
-		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _bunch_file_manager___::CreateFile( ErrHandle );
+			bso::bool__ Success = _bunch_file_manager___::CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
 			if ( fil::FileExists( _ListFileName ) )
-				if ( ErrHandle == err::hUsual )
+				if ( ErrorHandling == err::hThrowException )
 					ERRf();
 				else
 					return false;
 
-			Success = fil::CreateFile( _ListFileName, ErrHandle );
+			Success = fil::CreateFile( _ListFileName, ErrorHandling );
 
 			return Success;
 		}
