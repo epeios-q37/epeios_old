@@ -423,20 +423,23 @@ namespace ctn {
 		}
 	};
 
-	template <typename container, typename file_manager> inline bso::bool__ Connect(
+	template <typename container, typename file_manager> inline uym::status__ Connect(
 		container &Container,
-		file_manager &FileManager )
+		file_manager &FileManager,
+		uym::purpose__ Purpose )
 	{
-		bso::bool__ Exists = tym::Connect( Container.Statics, FileManager.StaticsFileManager() );
+		uym::status__ Exists = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
 
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
-		if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager() ) != Exists )
-			ERRc();
+		if ( !uym::IsError( Status ) ) {
+			if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager(), Purpose ) != Status )
+				Status = uym::sInconsistent;
+			else
+				Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
+		}
 
-		Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
-
-		return Exists;
+		return Status;
 	}
 
 

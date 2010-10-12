@@ -216,7 +216,7 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
-	if ( Flow.Init( BaseFileName, err::hSkip ) == fil::sSuccess ) {
+	if ( Flow.Init( BaseFileName, err::hUserDefined ) == fil::sSuccess ) {
 		if ( fil::GetFileLastModificationTime( BaseFileName ) < TimeStamp )
 			ERRReturn;
 
@@ -258,30 +258,33 @@ ERREpilog
 }
 
 
-bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::ConnectToFiles( void )
+uym::status__ ndbdct::dynamic_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
 {
-	bso::bool__ Exists = false;
+	uym::status__ Status = uym::s_Undefined;
 ERRProlog
 	available__ TestAvailable;
 ERRBegin
-	Exists = tym::Connect( _Content->Storage.Memory, _StorageFileManager );
+	Status = tym::Connect( _Content->Storage.Memory, _StorageFileManager, Purpose );
 
-	if ( lstbch::Connect( _Content->Entries, _EntriesFileManager ) != Exists )
-		ERRu();
+	if ( lstbch::Connect( _Content->Entries, _EntriesFileManager, Purpose ) != Status ) {
+		Status = uym::sInconsistent;
+		ERRReturn;
+	}
 
-	if ( Exists )
+	if ( Status == uym::sExists )
 		_Content->S_.Unallocated = _StorageFileManager.FileSize();
 	else
 		_Content->S_.Unallocated = 0;
 
-	if ( Exists ) {
+	if ( Status == uym::sExists ) {
 		if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-			_Content->RebuildAvailables();
+			Status = uym::sInconsistent;
+//			_Content->RebuildAvailables();
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Exists;
+	return Status;
 }
 
 void ndbdct::dynamic_content_atomized_file_manager___::_ErasePhysically( void )

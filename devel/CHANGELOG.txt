@@ -1,5 +1,17 @@
 $Id$
 
+12/10/2010 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèques 'UYM'.
+	- NSXPCM :
+		- Ajout paramètre à la méthode 'disable(...)'.
+	- UYM :
+		- Ajout 'status__' et 'purpose__' pour être utilisé avec 'Connect(...)'.
+
+08/10/2010 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèque 'ERR'.
+
 07/10/2010 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèque 'ERR'.

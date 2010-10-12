@@ -256,7 +256,7 @@ namespace ndbsct {
 		{
 			return _BaseFileName;
 		}
-		bso::bool__ ConnectToFiles( void );
+		uym::status__ ConnectToFiles( uym::purpose__ Purpose );
 	};
 
 

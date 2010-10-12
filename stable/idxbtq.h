@@ -316,14 +316,14 @@ namespace idxbtq {
 
 			return Exists;
 		}
-		bso::bool__ CreateFiles( err::handle ErrHandle = err::hUsual )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _TreeFileManager.CreateFile( ErrHandle );
+			bso::bool__ Success = _TreeFileManager.CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			Success = _QueueFileManager.CreateFile( ErrHandle );
+			Success = _QueueFileManager.CreateFile( ErrorHandling );
 
 			return Success;
 		}
@@ -352,16 +352,17 @@ namespace idxbtq {
 	};
 
 
-	template <typename index> bso::bool__ Connect(
+	template <typename index> uym::status__ Connect(
 		index &Index,
-		index_file_manager___ &FileManager )
+		index_file_manager___ &FileManager,
+		uym::purpose__ Purpose )
 	{
-		bso::bool__ Exists = idxbtr::Connect( Index, FileManager.TreeFileManager() );
+		uym::status__ Status = idxbtr::Connect( Index, FileManager.TreeFileManager(), Purpose );
 
-		if ( Exists != idxque::Connect( Index, FileManager.QueueFileManager() ) )
-			ERRc();
+		if ( Status != idxque::Connect( Index, FileManager.QueueFileManager(), Purpose ) )
+			Status = uym::sInconsistent;
 
-		return Exists;
+		return Status;
 	}
 
 

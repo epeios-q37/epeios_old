@@ -554,14 +554,14 @@ namespace ndbidx {
 		{
 			return _BaseFileName;
 		}
-		bso::bool__ ConnectToFiles()
+		uym::status__ ConnectToFiles( uym::purpose__ Purpose )
 		{
-			if ( idxbtq::Connect( _Index->DIndex, _FileManager ) ) {
+			uym::status__ Status = idxbtq::Connect( _Index->DIndex, _FileManager, Purpose );
+
+			if ( ( Status == uym::sExists ) && ( Purpose == uym::pProceed ) )
 				_Index->SearchRoot();
-				return true;
-			} else {
-				return false;
-			}
+
+			return Status;
 		}
 	};
 

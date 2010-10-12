@@ -433,18 +433,59 @@ namespace uym {
 		}
 	};
 
-	inline bso::bool__ Connect(
-		untyped_memory_ &Memory,
-		untyped_memory_file_manager___ &FileManager )
+	enum status__ {	// Statut de l'opération de connection.
+		sExists,		// le fichier rattaché existe.
+		sAbsent,		// Fichier rattaché absent (ce n'est pas une erreur, cela signifie que des données n'ont pas encore été stockées).
+		sInconsistent,	// Les fichiers sont dans une état incohérent, probablement dû à un arrêt inopiné du logiciel. Utilisé par les bibliothèques en amont.
+		s_amount,
+		s_Undefined
+	};
+
+#define UYM__STATUS_AMOUNT	3
+
+	bso::bool__ IsError( status__ Status )
 	{
-		bso::bool__ Exists = FileManager.Exists();
+#if UYM__STATUS_AMOUNT != 3
+#	error "'status__' changed !"
+#endif
+		switch ( Status ) {
+		case sExists:
+		case sAbsent:
+			return false;
+			break;
+		case sInconsistent:
+			return true;
+			break;
+		default:
+			ERRu();
+			break;
+		}
 
-		Memory.plug( FileManager );
+		return true;	// To avoid a 'warning'.
+	}
 
-		if ( Exists )
-			Memory.Allocate( FileManager.FileSize() );
+	enum purpose__ {	// But de l'appel de la fonction.
+		pTesting,	// Test de la cohérence des fichiers.
+		pProceed,	// La connection doit effect'eivement être réalisée.
+		p_amount,
+		p_Undefined
+	};
+	
+	inline status__ Connect(
+		untyped_memory_ &Memory,
+		untyped_memory_file_manager___ &FileManager,
+		purpose__ Purpose )
+	{
+		status__ Status = ( FileManager.Exists() ? sExists : sAbsent );
 
-		return Exists;
+		if ( Purpose == pProceed ) {
+			Memory.plug( FileManager );
+
+			if ( Status == sExists )
+				Memory.Allocate( FileManager.FileSize() );
+		}
+
+		return Status;
 	}
 
 	//c Untyped memory. 

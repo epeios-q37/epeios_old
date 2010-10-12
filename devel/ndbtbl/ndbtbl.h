@@ -457,19 +457,23 @@ namespace ndbtbl {
 
 			return _Static.BaseFileName();	// Pour éviter un 'warning'.
 		}
-		void ConnectToFiles( type__ Type )
+		uym::status__ ConnectToFiles(
+			type__ Type,
+			uym::purpose__ Purpose )
 		{
 			switch ( Type ) {
 			case tStatic:
-				_Static.ConnectToFiles();
+				return _Static.ConnectToFiles( Purpose );
 				break;
 			case tDynamic:
-				_Dynamic.ConnectToFiles();
+				return _Dynamic.ConnectToFiles( Purpose );
 				break;
 			default:
 				ERRu();
 				break;
 			}
+
+			return uym::s_Undefined;	// Pour éviter un 'warning'.
 		}
 
 	};

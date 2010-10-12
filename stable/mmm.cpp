@@ -156,17 +156,18 @@ ERREnd
 ERREpilog
 }
 
-bso::bool__ mmm::Connect(
+uym::status__ mmm::Connect(
 	multimemory_ &Multimemory,
-	multimemory_file_manager___ &FileManager )
+	multimemory_file_manager___ &FileManager,
+	uym::purpose__ Purpose)
 {
-	bso::bool__ Exists = false;
+	uym::status__ Status = uym::s_Undefined;
 ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
-	Exists = uym::Connect( Multimemory.Memory, FileManager );
+	Status = uym::Connect( Multimemory.Memory, FileManager, Purpose );
 
-	if ( Exists ) {
+	if ( ( Status == uym::sExists ) && ( Purpose == uym::pProceed ) ) {
 		Multimemory.SetSize( FileManager.FileSize() );
 		IFlow.Init( FileManager._FreeFragmentPositionFileName );
 
@@ -176,7 +177,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Exists;
+	return Status;
 }
 
 

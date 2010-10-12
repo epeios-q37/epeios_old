@@ -460,7 +460,7 @@ namespace bch {
 	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
 	{
 	private:
-		mmi::standalone_indexed_multimemory_driver__ _IndexedMultimemoryDriver;
+		mmi::indexed_multimemory_driver__ _IndexedMultimemoryDriver;
 	public:
 		struct s
 		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s
@@ -552,20 +552,22 @@ namespace bch {
 #ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
 
-	template <typename bunch> bso::bool__ Connect(
+	template <typename bunch> uym::status__ Connect(
 		bunch &Bunch,
-		bunch_file_manager___ &FileManager )
+		bunch_file_manager___ &FileManager,
+		uym::purpose__ Purpose )
 	{
-		bso::bool__ Exists = false;
+		uym::status__ Status = tym::Connect( Bunch, FileManager, Purpose );
 
-		Bunch.SetStepValue( 0 );	// Pas de préallocation.
+		if ( Purpose == uym::pProceed ) {
 
-		Exists = tym::Connect( Bunch, FileManager );
+			Bunch.SetStepValue( 0 );	// Pas de préallocation.
 
-		if ( Exists )
-			Bunch.Allocate( FileManager.FileSize() / Bunch.GetItemSize(), aem::mFit );
+			if ( Status == uym::sExists )
+				Bunch.Allocate( FileManager.FileSize() / Bunch.GetItemSize(), aem::mFit );
+		}
 
-		return Exists;
+		return Status;
 	}
 #endif
 /*

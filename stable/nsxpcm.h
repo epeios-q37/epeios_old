@@ -142,10 +142,12 @@ extern class ttr_tutor &NSXPCMTutor;
 		else if ( ERRMinor != err::iReturn ) {\
 			err::buffer__ Buffer;\
 			nsxpcm::Log( err::Message( Buffer ) );\
+			nsxpcm::GetJSConsole();\
 		}\
 	} else {\
 		err::buffer__ Buffer;\
 		nsxpcm::Log( err::Message( Buffer ) );\
+		nsxpcm::GetJSConsole();\
 	}\
 	ERRRst()
 
@@ -1328,9 +1330,9 @@ namespace nsxpcm {
 			else
 				SetAttribute( "disabled", "true" );
 		}
-		void Disable( void )
+		void Disable( bso::bool__ Value = true )
 		{
-			Enable( false );
+			Enable( !Value );
 		}
 		bso::bool__ IsEnabled( void )
 		{
@@ -1665,7 +1667,19 @@ namespace nsxpcm {
 
 	class broadcast__
 	: public _element__<nsIDOMElement>
-	{};
+	{
+	public:
+		void Enable( bso::bool__ = true )
+		{
+			ERRu();
+			// L'attribut 'disable' d'un 'broadcaster' lorsque mis à 'true' n'est pas repercuté sur les éléments qui 'observe'.
+			// Lancer 'Disable()/Enable()' sue le 'command' correspondant.
+		}
+		void Disable( bso::bool__ Value = true )
+		{
+			Enable( !Value );
+		}
+	};
 
 	class command__
 	: public _element__<nsIDOMElement>

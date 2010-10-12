@@ -388,11 +388,12 @@ namespace idxbtr {
 
 	typedef btr::binary_tree_file_manager___ tree_index_file_manager___;
 
-	template <typename index> bso::bool__ Connect(
+	template <typename index> uym::status__ Connect(
 		index &Index,
-		tree_index_file_manager___ &FileManager )
+		tree_index_file_manager___ &FileManager,
+		uym::purpose__ Purpose)
 	{
-		return btr::Connect( Index.BaseTree, FileManager );
+		return btr::Connect( Index.BaseTree, FileManager, Purpose );
 	}
 
 

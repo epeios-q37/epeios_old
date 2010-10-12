@@ -140,11 +140,12 @@ namespace idxque {
 
 	typedef que::queue_file_manager___ queue_index_file_manager___;
 
-	template <typename index> bso::bool__ Connect(
+	template <typename index> uym::status__ Connect(
 		index &Index,
-		queue_index_file_manager___ &FileManager )
+		queue_index_file_manager___ &FileManager,
+		uym::purpose__ Purpose )
 	{
-		return que::Connect( Index, FileManager );
+		return que::Connect( Index, FileManager, Purpose );
 	}
 
 	

@@ -280,19 +280,22 @@ namespace lstbch {
 	};
 
 
-	template <typename list_bunch> bso::bool__ Connect(
+	template <typename list_bunch> uym::status__ Connect(
 		list_bunch &ListBunch,
-		list_bunch_file_manager___ &FileManager )
+		list_bunch_file_manager___ &FileManager,
+		uym::purpose__ Purpose )
 	{
-		bso::bool__ Exists = bch::Connect( ListBunch.Bunch(), FileManager );
+		uym::status__ Status = bch::Connect( ListBunch.Bunch(), FileManager, Purpose );
 
-		FileManager.Set( ListBunch.Locations );
+		if ( Purpose == uym::pProceed ) {
+			FileManager.Set( ListBunch.Locations );
 
-		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), FileManager.TimeStamp(), ListBunch.Locations ) )
-				ERRu();
+			if ( Status == uym::sExists )
+				if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), FileManager.TimeStamp(), ListBunch.Locations ) )
+					Status = uym::sInconsistent;
+		}
 
-		return Exists;
+		return Status;
 	}
 #endif
 

@@ -241,7 +241,7 @@ namespace lstctn {
 
 			return Exists;
 		}
-		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::_Default )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
 			bso::bool__ Success = _container_file_manager___<container>::CreateFiles( ErrorHandling );
 
@@ -264,19 +264,22 @@ namespace lstctn {
 		}
 	};
 
-	template <typename list_container> bso::bool__ Connect(
+	template <typename list_container> uym::status__ Connect(
 		list_container &ListContainer,
-		list_container_file_manager___<list_container> &FileManager )
+		list_container_file_manager___<list_container> &FileManager,
+		uym::purpose__ Purpose)
 	{
-		bso::bool__ Exists = ctn::Connect( ListContainer.Container(), FileManager );
+		uym::status__ Status = ctn::Connect( ListContainer.Container(), FileManager, Purpose );
 
-		FileManager.Set( ListContainer.Locations );
+		if ( !uym::IsError( Status ) ) {
+			FileManager.Set( ListContainer.Locations );
 
-		if ( Exists )
-			if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations ) )
-				ERRu();
+			if ( uym::sExists == Status )
+				if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations ) )
+					Status = uym::sInconsistent;
+		}
 
-		return Exists;
+		return Status;
 	}
 
 

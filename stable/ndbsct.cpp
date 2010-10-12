@@ -121,9 +121,9 @@ ERREpilog
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
-bso::bool__ ndbsct::static_content_atomized_file_manager___::ConnectToFiles( void )
+uym::status__ ndbsct::static_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
 {
-	bso::bool__ Exists = false;
+	uym::status__ Status = uym::s_Undefined;
 ERRProlog
 	str::string ContentFileName;
 	STR_BUFFER___ ContentFileNameBuffer;
@@ -143,20 +143,21 @@ ERRBegin
 	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
 #else
 //	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
-	Exists = tym::Connect( _Content->Storage, _FileManager );
+	Status = tym::Connect( _Content->Storage, _FileManager, Purpose );
 #endif
 
-	if ( Exists ) {
+	if ( ( Purpose = uym::pProceed ) && ( Status == uym::sExists ) ) {
 		ListFileName.Init( _BaseFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
 		if ( !lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / _Content->S_.Size, *_Content, _GetUnderlyingFilesLastModificationTime() ) )
-			_Content->RebuildLocations();
+			Status = uym::sInconsistent;
+//			_Content->RebuildLocations();
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Exists;
+	return Status;
 }
 
 void ndbsct::static_content_atomized_file_manager___::_ErasePhysically( void )

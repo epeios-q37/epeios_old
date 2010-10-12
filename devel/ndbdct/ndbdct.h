@@ -591,7 +591,7 @@ namespace ndbdct {
 			const str::string_ &BaseFileName,
 			fil::mode__ Mode,
 			flm::id__ ID );
-		bso::bool__ ConnectToFiles( void );
+		uym::status__ ConnectToFiles( uym::purpose__ Purpose );
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();

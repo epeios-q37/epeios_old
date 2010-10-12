@@ -550,29 +550,30 @@ namespace mmi {
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
-		bso::bool__ CreateFiles( err::handle ErrHandle )
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling )
 		{
-			bso::bool__ Success = _Descriptors.CreateFile( ErrHandle );
+			bso::bool__ Success = _Descriptors.CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			Success = _Multimemory.CreateFile( ErrHandle );
+			Success = _Multimemory.CreateFile( ErrorHandling );
 
 			return Success;
 		}
 	};
 
-	inline bso::bool__ Connect(
+	inline uym::status__ Connect(
 		indexed_multimemory_ &Memory,
-		indexed_multimemory_file_manager___ &FileManager )
+		indexed_multimemory_file_manager___ &FileManager,
+		uym::purpose__ Purpose )
 	{
-		bso::bool__ Exists = bch::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
+		uym::status__ Status = bch::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager(), Purpose );
 
-		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != Exists )
-			ERRc();
+		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager(), Purpose ) != Status )
+			Status = uym::sInconsistent;
 
-		return Exists;
+		return Status;
 	}
 
 #endif
@@ -612,8 +613,6 @@ namespace mmi {
 			Multimemoire_->Flush();
 	}
 }
-
-
 
 /*$END$*/
 				  /********************************************/
