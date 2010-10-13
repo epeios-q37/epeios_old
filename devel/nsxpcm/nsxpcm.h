@@ -1698,6 +1698,10 @@ namespace nsxpcm {
 	: public _element__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
 	{};
 
+	class document__
+	: public _element__<nsIDOMDocument>
+	{};
+
 	class window__
 	: public _element__<nsIDOMWindow>
 	{

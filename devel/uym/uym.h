@@ -443,7 +443,7 @@ namespace uym {
 
 #define UYM__STATUS_AMOUNT	3
 
-	bso::bool__ IsError( status__ Status )
+	inline bso::bool__ IsError( status__ Status )
 	{
 #if UYM__STATUS_AMOUNT != 3
 #	error "'status__' changed !"

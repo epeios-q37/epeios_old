@@ -1,5 +1,11 @@
 $Id$
 
+13/10/2010 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèques 'UYM'.
+	- UYM :
+		- Ajout 'inline' manqaunt.
+
 12/10/2010 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèques 'UYM'.

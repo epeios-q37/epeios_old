@@ -249,7 +249,7 @@ namespace lstctn {
 				return false;
 
 			if ( fil::FileExists( _ListFileName ) )
-				if ( ErrHandle == err::hUsual )
+				if ( ErrorHandling == err::hThrowException )
 					ERRf();
 				else
 					return false;
@@ -257,8 +257,7 @@ namespace lstctn {
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
-
-			Success = fil::CreateFile( _ListFileName, ErrHandle );
+			Success = fil::CreateFile( _ListFileName, ErrorHandling );
 
 			return Success;
 		}

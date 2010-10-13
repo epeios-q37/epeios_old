@@ -138,6 +138,7 @@ namespace xului {
 	XULUI__W( menu_item, nsxpcm::efCommand );
 	XULUI__W( panel, nsxpcm::ef_None );
 	XULUI__WN( element, box, nsxpcm::ef_None );
+	XULUI__W( document, nsxpcm::efClose );
 	XULUI__W( window, nsxpcm::efClose );
 	XULUI__W( description, nsxpcm::ef_None );
 

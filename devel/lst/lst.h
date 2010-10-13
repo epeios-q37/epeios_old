@@ -393,7 +393,7 @@ namespace lst {
 
 			if ( Nombre_ == t ) 
 			{
-				if ( Error == err::hUsual )
+				if ( ErrorHandling == err::hThrowException )
 					ERRu();
 			}
 			else

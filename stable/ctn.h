@@ -428,7 +428,7 @@ namespace ctn {
 		file_manager &FileManager,
 		uym::purpose__ Purpose )
 	{
-		uym::status__ Exists = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
+		uym::status__ Status = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
 
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
