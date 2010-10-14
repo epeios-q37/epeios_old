@@ -322,9 +322,18 @@ namespace nsxpcm {
 #	undef T
 #endif
 
+	inline bso::bool__ _T( nsresult NSResult )
+	{
+		if ( NSResult != NS_OK )
+			return false;
+		else
+			return true;
+	}
+
+
 #define T( f )\
-	if ( ( f ) != NS_OK )\
-		ERRx()
+		if ( !_T( f ) )\
+			ERRx()
 
 	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
 	template <typename t> inline t *GetService(

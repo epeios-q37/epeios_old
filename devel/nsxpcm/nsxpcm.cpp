@@ -1471,7 +1471,7 @@ void nsxpcm::element_core__::Init(
 			ERRc();
 
 	if ( Events & efClose )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventListener, true ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventListener, false ) != NS_OK )
 			ERRc();
 
 	_EventListener->Init( *this );

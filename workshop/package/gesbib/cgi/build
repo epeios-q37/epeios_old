@@ -8,23 +8,17 @@ GET=../../../get_cvs
 $GET epeios $DIR stable/*.h
 $GET epeios $DIR stable/*.cpp
 
-$GET ecgi $DIR stable/*.h
-$GET ecgi $DIR stable/*.cpp
+$GET Logiplus $DIR apps/gesbib/frontend/*.h
+$GET Logiplus $DIR apps/gesbib/frontend/*.cpp
+$GET Logiplus $DIR apps/gesbib/frontend/cgid/*.h
+$GET Logiplus $DIR apps/gesbib/frontend/cgid/*.cpp
+$GET Logiplus $DIR apps/gesbib/frontend/cgid/Makefile
 
-$GET exml $DIR stable/*.h
-$GET exml $DIR stable/*.cpp
+$GET Logiplus $DIR stable/gsbbfc.h
+$GET Logiplus $DIR stable/gsbbfc.cpp
 
-$GET ebkd $DIR stable/*.h
-$GET ebkd $DIR stable/*.cpp
-
-$GET lgsb $DIR apps/gesbib/frontend/*.h
-$GET lgsb $DIR apps/gesbib/frontend/*.cpp
-$GET lgsb $DIR apps/gesbib/frontend/cgid/*.h
-$GET lgsb $DIR apps/gesbib/frontend/cgid/*.cpp
-$GET lgsb $DIR apps/gesbib/frontend/cgid/Makefile
-
-$GET lgsb $DIR stable/gsbbfc.h
-$GET lgsb $DIR stable/gsbbfc.cpp
+$GET Logiplus $DIR stable/lgpmsc.h
+$GET Logiplus $DIR stable/lgpmsc.cpp
 
 #../../../create_pkg $DIR
 tar --gzip -cf $DIR.tar.gz $DIR
