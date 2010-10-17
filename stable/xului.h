@@ -111,9 +111,10 @@ namespace xului {
 	template <typename target> inline void Register(\
 		target &Target,\
 		name##__<target> &Widget,\
-		nsIDOMWindow *Element )\
+		nsISupports *Element,\
+		nsIDOMWindow *Window )\
 	{\
-		Register( Target, Widget, Element, events );\
+		Register( Target, Widget, Element, Window, events );\
 	}\
 	template <typename target> inline void Register(\
 		target &Target,\
@@ -153,14 +154,27 @@ namespace xului {
 		nsxpcm::Register( Widget, Window, Id, Events );
 	}
 
+	// Un 'GetElementById(...)' d'un" balise 'window' ne retourne pas un 'nsIDOMWindow'
+	// Cette fonction a pour donc but d'empêcher toute tentative dans ce sens.
+	template <typename target> void Register(
+		target &Target,
+		window__<target> &Widget,
+		nsIDOMWindow *Window,
+		const char *Id,
+		int Events )
+	{
+		ERRl();	
+	}
+
 	template <typename target, typename widget> void Register(
 		target &Target,
 		widget &Widget,
 		nsISupports *Supports,
+		nsIDOMWindow *Window,
 		int Events )
 	{
 		Widget.Init( Target );
-		nsxpcm::Register( Widget, Supports, Events );
+		nsxpcm::Register( Widget, Supports, Window, Events );
 	}
 /*
 	template <typename target> inline void Register(

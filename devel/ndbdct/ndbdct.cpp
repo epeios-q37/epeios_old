@@ -206,7 +206,7 @@ template <typename item> static void Load_(
 }
 
 template <typename item> static bso::bool__ Load_(
-	const char *BaseFileName,
+	const char *FileName,
 	stk::E_BSTACK_( item ) &Bunch,
 	item TestValue,
 	time_t TimeStamp )
@@ -216,8 +216,8 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
-	if ( Flow.Init( BaseFileName, err::hUserDefined ) == fil::sSuccess ) {
-		if ( fil::GetFileLastModificationTime( BaseFileName ) < TimeStamp )
+	if ( Flow.Init( FileName, err::hUserDefined ) == fil::sSuccess ) {
+		if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
 			ERRReturn;
 
 		memcpy( Buffer, &TestValue, sizeof( item ) );
@@ -236,6 +236,24 @@ ERREpilog
 	return Success;
 }
 
+const char *BuildFileName_(
+	const str::string_ &BaseFileName,
+	const char *Extension,
+	STR_BUFFER___ &Buffer )
+{
+ERRProlog
+	str::string FileName;
+ERRBegin
+	FileName.Init( BaseFileName );
+	FileName.Append( Extension );
+	FileName.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+
 template <typename item> static bso::bool__ Load_(
 	const str::string_ &BaseFileName,
 	stk::E_BSTACK_( item ) &Bunch,
@@ -245,17 +263,40 @@ template <typename item> static bso::bool__ Load_(
 {
 	bso::bool__ Success = false;
 ERRProlog
-	str::string FileName;
-	STR_BUFFER___ FileNameBuffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	FileName.Init( BaseFileName );
-	FileName.Append( Extension );
-	Success = Load_( FileName.Convert( FileNameBuffer ), Bunch, TestValue, TimeStamp );
+	Success = Load_( BuildFileName_( BaseFileName, Extension, Buffer ), Bunch, TestValue, TimeStamp );
 ERRErr
 ERREnd
 ERREpilog
 	return Success;
 }
+
+bso::bool__ Test_(
+	const str::string_ &BaseFileName,
+	const char *Extension,
+	time_t TimeStamp )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *FileName = NULL;
+ERRBegin
+	FileName = BuildFileName_( BaseFileName, Extension, Buffer );
+
+	if ( !fil::FileExists( FileName ) )
+		ERRReturn;
+
+	if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
+		ERRReturn;
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
 
 
 uym::status__ ndbdct::dynamic_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
@@ -271,16 +312,19 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( Status == uym::sExists )
-		_Content->S_.Unallocated = _StorageFileManager.FileSize();
-	else
-		_Content->S_.Unallocated = 0;
+	if ( Purpose == uym::pProceed )
+		if ( Status == uym::sExists )
+			_Content->S_.Unallocated = _StorageFileManager.FileSize();
+		else
+			_Content->S_.Unallocated = 0;
 
-	if ( Status == uym::sExists ) {
-		if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-			Status = uym::sInconsistent;
-//			_Content->RebuildAvailables();
-	}
+	if ( Status == uym::sExists )
+		if ( Purpose == uym::pProceed ) {
+			if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
+				Status = uym::sInconsistent;
+		} else
+			if ( !Test_( _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
+					Status = uym::sInconsistent;
 ERRErr
 ERREnd
 ERREpilog

@@ -121,6 +121,7 @@ ERREpilog
 // Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
 //#define IN_MEMORY
 
+
 uym::status__ ndbsct::static_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
 {
 	uym::status__ Status = uym::s_Undefined;
@@ -146,13 +147,12 @@ ERRBegin
 	Status = tym::Connect( _Content->Storage, _FileManager, Purpose );
 #endif
 
-	if ( ( Purpose = uym::pProceed ) && ( Status == uym::sExists ) ) {
+	if ( Status == uym::sExists ) {
+
 		ListFileName.Init( _BaseFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
-		if ( !lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / _Content->S_.Size, *_Content, _GetUnderlyingFilesLastModificationTime() ) )
-			Status = uym::sInconsistent;
-//			_Content->RebuildLocations();
+		Status = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / _Content->S_.Size, *_Content, Purpose, _GetUnderlyingFilesLastModificationTime() );
 	}
 ERRErr
 ERREnd

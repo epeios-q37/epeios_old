@@ -1,10 +1,22 @@
 $Id$
 
+14/10/2010 :
+	- LST :
+		- Utilisation de 'uym::status__' et 'uym::purpose__' dans 'ReadFromFile(...)'.
+	- LSTCTN :
+		- Adaptation aux modifications bibliothèque 'LST'.
+	- NDBDCT :
+		- 'Purpose' n'était pas pris en compte dans 'ConnectToFiles(...)'.
+		- Le test de 'ConnectToFiles(...)' n'était pas assez poussé.
+	- XULUI :
+		- Correction visant à autoriser un 'Register(...)' directement un élément en passant par son pointeur, et non pas seulement avec son 'id'.
+		- Ajout d'une fonction interdisant de récupèrer un 'nsIDOMWindow' par son id; 'GetDocumentById(...)' en passant l'id d'une balise 'window' ne retourne pas un 'nsIDOMWindow'.
+
 13/10/2010 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèques 'UYM'.
 	- UYM :
-		- Ajout 'inline' manqaunt.
+		- Ajout 'inline' manqaunt
 
 12/10/2010 :
 	- GENERAL :

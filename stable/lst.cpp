@@ -121,30 +121,43 @@ static void Load_(
 	}
 }
 
-bso::bool__ lst::ReadFromFile(
+uym::status__ lst::ReadFromFile(
 	const char *FileName,
 	epeios::row__ FirstUnused,
 	time_t TimeStamp,
-	store_ &Store )
+	store_ &Store,
+	uym::purpose__ Purpose)
 {
-	bso::bool__ Success = false;
+	uym::status__ Status = uym::s_Undefined;
 ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
-	if ( Flow.Init( FileName, err::hUserDefined ) == fil::sSuccess ) {
-		if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
+	if ( !fil::FileExists( FileName ) ) {
+		Status = uym::sAbsent;
+		ERRReturn;
+	}
+
+	if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp ) {
+		Status = uym::sInconsistent;
+		ERRReturn;
+	}
+
+	if ( Purpose == uym::pProceed ) {
+		if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
+			Status = uym::sInconsistent;
 			ERRReturn;
+		}
 
 		Store.Init( FirstUnused );
 
 		Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
-
-		Success = true;
 	}
+
+	Status = uym::sExists;
 ERRErr
 ERREnd
 ERREpilog
-	return Success;
+	return Status;
 }
 
 

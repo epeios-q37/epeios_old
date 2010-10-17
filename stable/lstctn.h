@@ -273,9 +273,7 @@ namespace lstctn {
 		if ( !uym::IsError( Status ) ) {
 			FileManager.Set( ListContainer.Locations );
 
-			if ( uym::sExists == Status )
-				if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations ) )
-					Status = uym::sInconsistent;
+			Status = lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations, Purpose );
 		}
 
 		return Status;
