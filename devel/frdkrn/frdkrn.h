@@ -287,15 +287,19 @@ namespace frdkrn {
 		void FillUserRegistry( flw::iflow__ &User );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
 		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
 		{
-			_Registry.DumpConfigurationRegistry( OFlow );
+			_Registry.DumpConfiguration( OFlow );
 		}
 		void DumpProjectRegistry( txf::text_oflow__ &OFlow ) const
 		{
-			_Registry.DumpProjectRegistry( OFlow );
+			_Registry.DumpProject( OFlow );
 		}
 		void DumpUserRegistry( txf::text_oflow__ &OFlow ) const
 		{
-			_Registry.DumpUserRegistry( OFlow );
+			_Registry.DumpUser( OFlow );
+		}
+		time_t ProjectTimeStamp( void ) const
+		{
+			return ProjectTimeStamp();
 		}
 		bso::bool__ GetRegistryValue(
 			const char *Path,

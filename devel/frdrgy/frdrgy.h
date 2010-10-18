@@ -145,15 +145,15 @@ namespace frdrgy {
 			S_.Project = _registry_::AddNewLevel( rgstry::name( "Project" ) );
 			S_.User = _registry_::AddNewLevel( rgstry::name( "User" ) );
 		}
-		void DumpConfigurationRegistry( txf::text_oflow__ &TFlow ) const
+		void DumpConfiguration( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Configuration, TFlow );
 		}
-		void DumpProjectRegistry( txf::text_oflow__ &TFlow ) const
+		void DumpProject( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Project, TFlow );
 		}
-		void DumpUserRegistry( txf::text_oflow__ &TFlow ) const
+		void DumpUser( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.User, TFlow );
 		}
@@ -184,6 +184,18 @@ namespace frdrgy {
 			rgstry::error_details_ &ErrorDetails )
 		{
 			return _registry_::Fill( S_.User, Flow, str::string( "" ), RootPath, ErrorDetails );
+		}
+		time_t ConfigurationTimeStamp( void ) const
+		{
+			return TimeStamp( S_.Configuration );
+		}
+		time_t ProjectTimeStamp( void ) const
+		{
+			return TimeStamp( S_.Project );
+		}
+		time_t UserTimeStamp( void ) const
+		{
+			return TimeStamp( S_.User );
 		}
 	};
 

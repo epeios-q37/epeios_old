@@ -1,5 +1,13 @@
 $Id$
 
+18/10/2010 :
+	- FRDKRN :
+		- Adaptation aux modifications 'FRDRGY'.
+	- FRDRGY :
+		- Adaptation aux modifications 'RGSTRY'.
+	- RGSTRY :
+		- Toute modification de 'multi_level_registry_' est maintenant horodatée.
+
 14/10/2010 :
 	- LST :
 		- Utilisation de 'uym::status__' et 'uym::purpose__' dans 'ReadFromFile(...)'.

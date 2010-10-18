@@ -1097,35 +1097,47 @@ namespace rgstry {
 #	define RGSTRY_UNDEFINED_LEVEL	NONE
 
 	typedef bch::E_BUNCHt_( row__, level__ ) _roots_;
+	typedef bch::E_BUNCHt_( time_t, level__ ) _timestamps_;
 
 	// Registre multi-niveau
 	class multi_level_registry_
 	{
+	private:
+		void _Touch( level__ Level )
+		{
+			TimeStamps.Set( time( NULL ), Level );
+		}
 	public:
 		struct s {
 			registry_::s Registry;
 			_roots_::s Roots;
+			_timestamps_::s TimeStamps;
 		};
 		registry_ Registry;
 		_roots_ Roots;
+		_timestamps_ TimeStamps;
 		multi_level_registry_( s &S )
 		: Registry( S.Registry ),
-		  Roots( S.Roots )
+		  Roots( S.Roots ),
+		  TimeStamps( S.TimeStamps )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Registry.reset( P );
 			Roots.reset( P );
+			TimeStamps.reset( P );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Registry.plug( MM );
 			Roots.plug( MM );
+			TimeStamps.plug( MM );
 		}
 		multi_level_registry_ &operator =( const multi_level_registry_ &MLR )
 		{
 			Registry = MLR.Registry;
 			Roots = MLR.Roots;
+			TimeStamps = MLR.TimeStamps;
 
 			return *this;
 		}
@@ -1133,10 +1145,18 @@ namespace rgstry {
 		{
 			Registry.Init();
 			Roots.Init();
+			TimeStamps.Init();
 		}
 		level__ CreateNewLevel( void )
 		{
-			return Roots.Append( NONE );
+			level__ Level = TimeStamps.New();
+
+			if ( Roots.Append( NONE ) != Level )
+				ERRc();
+
+			_Touch( Level );
+
+			return Level;
 		}
 		level__ AddNewLevel( const name_ &Name = name() )
 		{
@@ -1218,6 +1238,9 @@ namespace rgstry {
 			epeios::row__ *PathErrorRow = NULL )
 		{
 			Registry.SetValue( PathString, Value, Roots( Level ), PathErrorRow );
+
+			_Touch( Level );
+
 		}
 		void SetValue(
 			const str::string_ &PathString,
@@ -1256,6 +1279,8 @@ namespace rgstry {
 
 			Roots.Set( Root, Level );
 
+			_Touch( Level );
+
 			return Error;
 		}
 		error__ Fill(
@@ -1270,6 +1295,8 @@ namespace rgstry {
 			Error = FillRegistry( IFlow, RootPath, Registry, Root, BaseDirectory ); 
 
 			Roots.Set( Root, Level );
+
+			_Touch( Level );
 
 			return Error;
 		}
@@ -1286,6 +1313,8 @@ namespace rgstry {
 
 			Roots.Set( Root, Level );
 
+			_Touch( Level );
+
 			return Error;
 		}
 		error__ Fill(
@@ -1300,15 +1329,17 @@ namespace rgstry {
 
 			Roots.Set( Root, Level );
 
+			_Touch( Level );
+
 			return Error;
 		}
 		epeios::size__ Dump(
-				level__ Level,
-				bso::bool__ RootToo,
-				xml::writer_ &Writer ) const
-			{
-				return Registry.Dump( Roots( Level ), RootToo, Writer );
-			}
+			level__ Level,
+			bso::bool__ RootToo,
+			xml::writer_ &Writer ) const
+		{
+			return Registry.Dump( Roots( Level ), RootToo, Writer );
+		}
 		epeios::size__ Dump(
 			level__ Level,
 			bso::bool__ RootToo,
@@ -1316,6 +1347,10 @@ namespace rgstry {
 			txf::text_oflow__ &TFlow ) const
 		{
 			return Registry.Dump( Roots( Level ), RootToo, Outfit, TFlow );
+		}
+		time_t TimeStamp( level__ Level ) const
+		{
+			return TimeStamps( Level );
 		}
 	};
 
