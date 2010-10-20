@@ -291,8 +291,7 @@ namespace lstbch {
 			FileManager.Set( ListBunch.Locations );
 
 			if ( Status == uym::sExists )
-				if ( !lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), FileManager.TimeStamp(), ListBunch.Locations ) )
-					Status = uym::sInconsistent;
+				Status = lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), ListBunch, Purpose, FileManager.TimeStamp() );
 		}
 
 		return Status;

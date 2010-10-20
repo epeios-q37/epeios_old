@@ -1,5 +1,12 @@
 $Id$
 
+20/10/2010 :
+	- FRDKRN :
+		- Réorganisation.
+		- 'status__' -> 'report__'.
+	- GENERAL :
+		- Adaptation aux modifications bibliothèques 'UYM'.
+
 18/10/2010 :
 	- FRDKRN :
 		- Adaptation aux modifications 'FRDRGY'.

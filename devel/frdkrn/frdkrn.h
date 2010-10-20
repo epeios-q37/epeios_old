@@ -86,24 +86,32 @@ namespace frdkrn {
 		{}
 	};
 
-	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum status__ {
 		sOK,
-		sConfigurationParsingError,	// Error during configuration file parsing. See 'ErrorSet' for more details.
-		sLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
-		sNoLocaleFileDefined,		// No locales file is defined. 
-		sProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
-		sNoOrBadBackendDefinition,
-		sNoBackendLocation,
-		sUnableToConnect,
+		sError,		// An error occured; it must be corrected.
+		sWarning,	// There was a problem, but the program can continue.
 		s_amount,
 		s_Undefined
 	};
 
-#define FRDKRN__S_AMOUNT	8	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'status__' est modifié.
+	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
+	enum report__ {
+		rOK,
+		rConfigurationParsingError,	// Error during configuration file parsing. See 'ErrorSet' for more details.
+		rLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
+		rNoLocaleFileDefined,		// No locales file is defined. 
+		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
+		rNoOrBadBackendDefinition,
+		rNoBackendLocation,
+		rUnableToConnect,
+		r_amount,
+		r_Undefined
+	};
+
+#define FRDKRN__R_AMOUNT	8	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
 	const str::string_ &GetTranslation(
-		status__ Status,
+		report__ Report,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
 
@@ -133,28 +141,28 @@ namespace frdkrn {
 		}
 	};
 
-	inline bso::bool__ IsErrorSetRelevant( status__ Status )
+	inline bso::bool__ IsErrorSetRelevant( report__ Report )
 	{
-#if FRDKRN__S_AMOUNT != 8
-#	error "'status__' modified !"
+#if FRDKRN__R_AMOUNT != 8
+#	error "'report__' modified !"
 #endif
-		switch ( Status  ) {
-		case sOK:
+		switch ( Report  ) {
+		case rOK:
 			return false;
 			break;
-		case sConfigurationParsingError:
-		case sLocaleParsingError:
+		case rConfigurationParsingError:
+		case rLocaleParsingError:
 			return true;
 			break;
-		case sNoLocaleFileDefined:
+		case rNoLocaleFileDefined:
 			return false;
 			break;
-		case sProjectParsingError:
+		case rProjectParsingError:
 			return true;
 			break;
-		case sNoOrBadBackendDefinition:
-		case sNoBackendLocation:
-		case sUnableToConnect:
+		case rNoOrBadBackendDefinition:
+		case rNoBackendLocation:
+		case rUnableToConnect:
 			return false;
 		default:
 			ERRu();
@@ -174,7 +182,7 @@ namespace frdkrn {
 	}
 
 	const str::string_ &GetTranslation(
-		status__ Status,
+		report__ Report,
 		const error_set___ &ErrorSet,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
@@ -192,12 +200,9 @@ namespace frdkrn {
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
-		status__ _Connect(
-			const char *RemoteHostServiceOrLocalLibraryPath,
-			csducl::type__ Type,
-			error_reporting_functions___ &ErrorReportingFunctions,
-			csdsnc::log_functions__ &LogFunctions );
-		status__ _Connect(
+		str::string _Message;
+		time_t _ProjectOriginalTimeStamp;	// Horodatage de la création ou du chargement du projet. Si == 0, pas de projet en cours d'utilisation.
+		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			error_reporting_functions___ &ErrorReportingFunctions,
@@ -217,6 +222,41 @@ namespace frdkrn {
 	protected:
 		virtual const str::string_ &FRDKERNLGetVersionFormatedText( str::string_ &Version ) = 0;
 		virtual void FRDKERNLClose( void ) = 0;
+		report__ _LoadConfiguration(
+			const str::string_ &ConfigurationFileName,
+			const char *TargetName,
+			error_set___ &ErrorSet );
+		report__ _LoadLocale(
+			const str::string_ &FileName,
+			const char *TargetName,
+			error_set___ &ErrorSet );
+		report__ _LoadLocale(
+			const char *TargetName,
+			error_set___ &ErrorSet );
+		report__ _LoadConfigurationAndLocale(
+			const str::string_ &ConfigurationFileName,
+			const char *TargetName,
+			error_set___ &ErrorSet )
+		{
+			report__ Report = r_Undefined;
+
+			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, ErrorSet ) ) == rOK )
+				Report = _LoadLocale( TargetName, ErrorSet );
+
+			return Report;
+		}
+		report__ _FillProjectRegistry(
+			const str::string_ &FileName,
+			const char *TargetName,
+			error_set___ &ErrorSet );
+		report__ _Connect(
+			const char *RemoteHostServiceOrLocalLibraryPath,
+			csducl::type__ Type,
+			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
+		report__ _Connect( // Try to connect using registry content.
+			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -228,6 +268,8 @@ namespace frdkrn {
 			_Registry.reset( P );
 			_Locale.reset( P );
 			_LocaleRack.reset( P );
+			_Message.reset( P );
+			_ProjectOriginalTimeStamp = 0;
 		}
 		kernel___( void )
 		{
@@ -237,30 +279,53 @@ namespace frdkrn {
 		{
 			reset();
 		}
-		status__ Init(
+		report__ Init(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const str::string_ &Language,
-			error_set___ &ErrorSet );
-		status__ Connect(
-			const char *RemoteHostServiceOrLocalLibraryPath,
-			csducl::type__ Type,
-			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
-			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL )
+			error_set___ &ErrorSet )
 		{
-			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, ErrorReportingFunctions, LogFunctions );
+			_Registry.Init();
+			_Message.Init();
+			_Locale.Init();
+			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
+			_ProjectOriginalTimeStamp = 0;
+
+			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, ErrorSet );
+
+			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 		}
-		status__ Connect(
-			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
-			csducl::type__ Type,
-			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
-			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL )
+		status__ Init(
+			const str::string_ &ConfigurationFileName,
+			const char *TargetName,
+			const str::string_ &Language );
+		report__ LoadProject(
+			const str::string_ &FileName,
+			const char *TargetName,
+			error_set___ &ErrorSet )
 		{
-			return _Connect( RemoteHostServiceOrLocalLibraryPath, Type, ErrorReportingFunctions, LogFunctions );
+			report__ Report = r_Undefined;
+
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, ErrorSet ) ) = rOK )
+				Report = _Connect();
+
+			if ( Report == rOK )
+				_ProjectOriginalTimeStamp = time( NULL );
+
+			return Report;
 		}
-		status__ Connect( // Try to connect using registry content.
-			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
-			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
+		status__ LoadProject(
+			const str::string_ &FileName,
+			const char *TargetName );
+		bso::bool__ IsProjectInProgress( void ) const
+		{
+			return _ProjectOriginalTimeStamp != 0;
+		}
+		bso::bool__ IsProjectModified( void ) const
+		{
+			return _ProjectOriginalTimeStamp < ProjectTimeStamp();
+		}
+		E_RWDISCLOSE__( str::string_, Message );
 		const void AboutBackend(
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )
@@ -280,10 +345,6 @@ namespace frdkrn {
 		{
 			return _Backend.IsConnected();
 		}
-		status__ FillProjectRegistry(
-			const str::string_ &FileName,
-			const char *TargetName,
-			error_set___ &ErrorSet );
 		void FillUserRegistry( flw::iflow__ &User );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
 		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
 		{

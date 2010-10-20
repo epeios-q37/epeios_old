@@ -61,17 +61,17 @@ using namespace frdkrn;
 #define LIBRARY_BACKEND_TYPE	"library"
 
 #define CASE( m )\
-	case s##m:\
+	case r##m:\
 	return #m;\
 	break
 
-const char *GetLabel_( status__ Status )
+const char *GetLabel_( report__ Report )
 {
-#if FRDKRN__S_AMOUNT != 8
-#	error "'status__' modified !"
+#if FRDKRN__R_AMOUNT != 8
+#	error "'report__' modified !"
 #endif
 
-	switch( Status ) {
+	switch( Report ) {
 		// CASE( OK );	// Cette fonction n'a pas à être appelée dans ce cas.
 		CASE( ConfigurationParsingError );
 		CASE( LocaleParsingError );
@@ -89,7 +89,7 @@ const char *GetLabel_( status__ Status )
 }
 
 const str::string_ &frdkrn::GetTranslation(
-	status__ Status,
+	report__ Report,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &Translation )
 {
@@ -97,7 +97,7 @@ ERRProlog
 	str::string RawText;
 ERRBegin
 	RawText.Init( "FRDKRN_" );
-	RawText.Append( GetLabel_( Status ) );
+	RawText.Append( GetLabel_( Report ) );
 
 	Locale.GetTranslation( RawText,Translation );
 ERRErr
@@ -107,14 +107,14 @@ ERREpilog
 }
 
 const str::string_ &frdkrn::GetTranslation(
-	status__ Status,
+	report__ Report,
 	const error_set___ &ErrorSet,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &Translation )
 {
-	GetTranslation( Status, Locale, Translation );
+	GetTranslation( Report, Locale, Translation );
 	
-	if ( IsErrorSetRelevant( Status ) ) {
+	if ( IsErrorSetRelevant( Report ) ) {
 		Translation.Append( " :\n" );
 		GetTranslation( ErrorSet, Locale, Translation );
 	}
@@ -161,169 +161,148 @@ ERREpilog
 	return Exists;
 }
 
-/*
-void frdkrn::kernel___::Init(
-	const str::string_ &Language,
-	const char *LocalesFileName )
+static str::string_ &AppendTargetAttributePathItem_(
+	const char *TargetName,
+	str::string_ &Target )
 {
+	Target.Append( "[target=\"" );
+	Target.Append( TargetName );
+	Target.Append( "\"]" );
+
+	return Target;
+}
+
+report__ frdkrn::kernel___::_LoadConfiguration(
+	const str::string_ &FileName,
+	const char *TargetName,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
 ERRProlog
-	flf::file_iflow___ FIFlow;
+	str::string Path;
+	STR_BUFFER___ PathBuffer, FileNameBuffer;
 ERRBegin
-	reset();
+	Path.Init( "Configurations/Configuration" );
+	AppendTargetAttributePathItem_( TargetName, Path );
 
-	_Language.Init( Language );
-
-	_Registry.Init();
-
-	if ( FIFlow.Init( LocalesFileName, err::hSkip ) == fil::sSuccess ) {
-		FIFlow.EOFD( XTF_EOXT );
-
-		_Locales.Init( FIFlow, "Locale[target=\"" FRDKERNL_FRONTEND_NAME "\"]" );
+	if ( ( ErrorSet.Error = _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+		Report = rConfigurationParsingError;
+		ERRReturn;
 	}
 
-	// Other initialisations happend in 'OpenProject'.
+	Report = rOK;
 ERRErr
 ERREnd
 ERREpilog
-	// Other initialisations happend in 'OpenProject'.
+	return Report;
 }
-*/
 
-/*
-bso::bool__ frdkrn::kernel___::LoadConfigAndLocales(
-	const char *ConfigFileName,
-	const char *RootPath,
-	const char *DefaultLocalesFileName,
-	const char *LocalesRootPath,
-	str::string_ &ErrorMessage )
+report__ frdkrn::kernel___::_LoadLocale(
+	const char *TargetName,
+	error_set___ &ErrorSet )
 {
-	bso::bool__ NoProblem = false;
+	report__ Report = r_Undefined;
 ERRProlog
-	rgstry::error_details ErrorDetails;
-	rgstry::error__ Error = rgstry::e_Undefined;
-	str::string LocalesFileName;
-	STR_BUFFER___ Buffer;
+	str::string FileName;
 ERRBegin
-	ErrorDetails.Init();
+	FileName.Init();
 
-	if ( ( Error = _Registry.FillConfiguration( ConfigFileName, RootPath, ErrorDetails ) ) == rgstry::eOK ) {
-		LocalesFileName.Init();
-
-		if ( !frdrgy::GetLocalesFileName( _Registry, LocalesFileName ) )
-			LocalesFileName.Init( DefaultLocalesFileName );
-
-		Error = _Locales.Init( LocalesFileName.Convert( Buffer ), LocalesRootPath, ErrorDetails );
-	}
-
-	if ( Error != rgstry::eOK )
-		rgstry::GetTranslation( Error, ErrorDetails, _Language, _Locales, ErrorMessage );
+	if ( !frdrgy::GetLocalesFileName( _Registry, FileName ) )
+		Report = rNoLocaleFileDefined;
 	else
-		NoProblem = true;
+		Report = _LoadLocale( FileName, TargetName, ErrorSet );
 ERRErr
 ERREnd
 ERREpilog
-	return NoProblem;
+	return Report;
 }
-*/
 
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
-	const str::string_ &Language,
-	error_set___ &ErrorSet )
+	const str::string_ &Language )
 {
 	status__ Status = s_Undefined;
 ERRProlog
-	str::string LocaleFileName;
-	STR_BUFFER___ LocaleBuffer, PathBuffer, ConfigurationFileNameBuffer;
-	str::string TargetAttribute;
-	str::string Path;
+	report__ Report = r_Undefined;
+	frdkrn::error_set___ ErrorSet;
 ERRBegin
-	_Registry.Init();
-	_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
+	ErrorSet.Init();
 
-	TargetAttribute.Init( "[target=\"" );
-	TargetAttribute.Append( TargetName );
-	TargetAttribute.Append( "\"]" );
-
-	Path.Init( "Configurations/Configuration" );
-	Path.Append( TargetAttribute );
-
-	if ( ( ErrorSet.Error = _Registry.FillConfiguration( ConfigurationFileName.Convert( ConfigurationFileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-		Status = sConfigurationParsingError;
-		ERRReturn;
+	switch( Report = Init( ConfigurationFileName, TargetName, Language, ErrorSet ) ) {
+	case rOK:
+		Status = sOK;
+		break;
+	case rConfigurationParsingError:
+		Status = sError;
+		break;
+	case rNoLocaleFileDefined:
+		Status = sWarning;
+		break;
+	case rLocaleParsingError:
+		Status = sError;
+		break;
+	default:
+		ERRc();
+		break;
 	}
 
-	_Locale.Init();
-
-	LocaleFileName.Init();
-
-	if ( frdrgy::GetLocalesFileName( _Registry, LocaleFileName ) ) {
-
-		Path.Init( "Locales/Locale" );
-		Path.Append( TargetAttribute );
-
-		if ( ( ErrorSet.Error = _Locale.Init( LocaleFileName.Convert( LocaleBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-			Status = sLocaleParsingError;
-			ERRReturn;
-		}
-
-		Status = sOK;
-	} else
-		Status = sNoLocaleFileDefined;
-
-	// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
+	if ( Report != sOK ) {
+		_Message.Init();
+		frdkrn::GetTranslation( Report, ErrorSet, Locale(), _Message );
+		_Message.Append( " !" );
+	}
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-status__ frdkrn::kernel___::_Connect(
+report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
 	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	status__ Status = s_Undefined;
+	report__ Report = r_Undefined;
 ERRProlog
 ERRBegin
 	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, LogFunctions, Type ) ) {
-		Status = sUnableToConnect;
+		Report = rUnableToConnect;
 		ERRReturn;
 	}
 
 	_Backend.Init( _ClientCore, ErrorReportingFunctions );
 
-	Status = sOK;
+	Report = rOK;
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return Report;
 }
 
-status__ frdkrn::kernel___::_Connect(
+report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
 	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	status__ Status = s_Undefined;
+	report__ Report = r_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Status = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, ErrorReportingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, ErrorReportingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return Report;
 }
 
-status__ frdkrn::kernel___::Connect(
+report__ frdkrn::kernel___::_Connect(
 	error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	status__ Status = s_Undefined;
+	report__ Report = r_Undefined;
 ERRProlog
 	str::string Location;
 	csducl::type__ Type = csducl::t_Undefined;
@@ -333,14 +312,14 @@ ERRBegin
 	case csducl::tLibrary:
 		Location.Init();
 		if ( !frdrgy::GetBackendLocation( _Registry, Location ) ) {
-			Status = sNoBackendLocation;
+			Report = rNoBackendLocation;
 			ERRReturn;
 		}
 
-		Status = Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
+		Report = _Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
-		Status = sNoOrBadBackendDefinition;
+		Report = rNoOrBadBackendDefinition;
 		break;
 	default:
 		ERRc();
@@ -349,8 +328,35 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+	return Report;
+}
+
+status__ frdkrn::kernel___::LoadProject(
+	const str::string_ &FileName,
+	const char *TargetName )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	error_set___ ErrorSet;
+	report__ Report = r_Undefined;
+ERRBegin
+	ErrorSet.Init();
+
+	if ( ( Report = LoadProject( FileName, TargetName, ErrorSet ) ) != rOK ) {
+		_Message.Init();
+		GetTranslation( Report, ErrorSet, Locale(), _Message );
+		_Message.Append( " !" );
+		Status = sError;
+		ERRReturn;
+	}
+
+	Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
 	return Status;
 }
+
 
 void frdkrn::kernel___::FillUserRegistry( flw::iflow__ &User )
 {
@@ -366,12 +372,12 @@ ERREnd
 ERREpilog
 }
 
-status__ frdkrn::kernel___::FillProjectRegistry(
+report__ frdkrn::kernel___::_FillProjectRegistry(
 	const str::string_ &FileName,
 	const char *Target,
 	error_set___ &ErrorSet )
 {
-	status__ Status = s_Undefined;
+	report__ Report = r_Undefined;
 ERRProlog
 	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
@@ -381,15 +387,15 @@ ERRBegin
 	Path.Append( "\"]" );
 
 	if ( ( ErrorSet.Error = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
-		Status = sProjectParsingError;
+		Report = rProjectParsingError;
 		ERRReturn;
 	}
 
-	Status = sOK;
+	Report = rOK;
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return Report;
 }
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -401,7 +407,7 @@ class frdkrnpersonnalization
 public:
 	frdkrnpersonnalization( void )
 	{
-		if ( FRDKRN__S_AMOUNT != s_amount )
+		if ( FRDKRN__R_AMOUNT != r_amount )
 			ERRc();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
