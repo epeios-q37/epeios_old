@@ -1,5 +1,10 @@
 $Id$
 
+21/10/2010 :
+	- FRDKRN :
+		- Ajout '_LoadLocale(_)' manquant.
+		- '=' -> '==' dans un  test dans 'LoadProject'.
+
 20/10/2010 :
 	- FRDKRN :
 		- Réorganisation.

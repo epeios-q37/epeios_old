@@ -198,6 +198,31 @@ ERREpilog
 }
 
 report__ frdkrn::kernel___::_LoadLocale(
+	const str::string_ &FileName,
+	const char *TargetName,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string Path;
+	STR_BUFFER___ PathBuffer, FileNameBuffer;
+ERRBegin
+	Path.Init( "Locales/Locale" );
+	AppendTargetAttributePathItem_( TargetName, Path );
+
+	if ( ( ErrorSet.Error = _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+		Report = rLocaleParsingError;
+		ERRReturn;
+	}
+
+	Report = rOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
+report__ frdkrn::kernel___::_LoadLocale(
 	const char *TargetName,
 	error_set___ &ErrorSet )
 {

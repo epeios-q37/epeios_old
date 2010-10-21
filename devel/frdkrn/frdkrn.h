@@ -306,7 +306,7 @@ namespace frdkrn {
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, ErrorSet ) ) = rOK )
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, ErrorSet ) ) == rOK )
 				Report = _Connect();
 
 			if ( Report == rOK )
