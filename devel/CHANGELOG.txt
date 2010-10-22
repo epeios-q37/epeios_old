@@ -1,5 +1,12 @@
 $Id$
 
+22/10/2010 :
+	- NSXPCM :
+		- '{...]element[...]' -> '[...]widget[...]'.
+		- La gestion des évènements est pris en charge par une classe dédiée ('event_handler__').
+	- XULUI :
+		- Adaptation aux modifications bibliothèque 'NSXPCM'.
+
 21/10/2010 :
 	- FRDKRN :
 		- Ajout '_LoadLocale(_)' manquant.

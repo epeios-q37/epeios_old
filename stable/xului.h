@@ -138,8 +138,8 @@ namespace xului {
 	XULUI__W( menu, nsxpcm::ef_None );
 	XULUI__W( menu_item, nsxpcm::efCommand );
 	XULUI__W( panel, nsxpcm::ef_None );
-	XULUI__WN( element, box, nsxpcm::ef_None );
-	XULUI__W( document, nsxpcm::efClose );
+	XULUI__WN( widget, box, nsxpcm::ef_None );
+//	XULUI__W( document, nsxpcm::efClose );
 	XULUI__W( window, nsxpcm::efClose );
 	XULUI__W( description, nsxpcm::ef_None );
 
@@ -154,18 +154,6 @@ namespace xului {
 		nsxpcm::Register( Widget, Window, Id, Events );
 	}
 
-	// Un 'GetElementById(...)' d'un" balise 'window' ne retourne pas un 'nsIDOMWindow'
-	// Cette fonction a pour donc but d'empêcher toute tentative dans ce sens.
-	template <typename target> void Register(
-		target &Target,
-		window__<target> &Widget,
-		nsIDOMWindow *Window,
-		const char *Id,
-		int Events )
-	{
-		ERRl();	
-	}
-
 	template <typename target, typename widget> void Register(
 		target &Target,
 		widget &Widget,
@@ -176,78 +164,6 @@ namespace xului {
 		Widget.Init( Target );
 		nsxpcm::Register( Widget, Supports, Window, Events );
 	}
-/*
-	template <typename target> inline void Register(
-		ui &UI,
-		window__<ui> &Window,
-		nsIDOMWindow *Element )
-	{
-		Register( UI, Window, Element, nsxpcm::efClose );
-	}
-
-	template <typename target> inline void Register(
-		ui &UI,
-		broadcast__<ui> &Broadcast,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Broadcast, Window, Id, nsxpcm::ef_None );
-	}
-
-	template <typename target> inline void Register(
-		ui &UI,
-		command__<ui> &Command,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Command, Window, Id, nsxpcm::efCommand );
-	}
-
-	template <typename target> inline void Register(
-		ui &UI,
-		tree__<ui> &Tree,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Tree, Window, Id, nsxpcm::efSelect | nsxpcm::efDblClick );
-	}
-
-	template <typename target> inline void Register(
-		ui &UI,
-		deck__<ui> &Deck,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Deck, Document, Id, nsxpcm::ef_None );
-	}
-
-	template <typename ui> inline void Register(
-		ui &UI,
-		textbox__<ui> &Textbox,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Textbox, Window, Id, nsxpcm::ef_None );
-	}
-
-	template <typename ui> inline void Register(
-		ui &UI,
-		button__<ui> &Button,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Button, Window, Id, nsxpcm::efCommand );
-	}
-
-	template <typename ui> inline void Register(
-		ui &UI,
-		description__<ui> &Description,
-		nsIDOMWindow *Window,
-		const char *Id )
-	{
-		Register( UI, Description, Window, Id, nsxpcm::ef_None );
-	}
-	*/
 }
 
 /*$END$*/

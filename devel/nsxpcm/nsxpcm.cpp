@@ -848,19 +848,19 @@ bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_None, Locale, FileName );
 }
 
-void nsxpcm::Delete( element_cores_ &Cores )
+void nsxpcm::Delete( widget_cores_ &Widgets )
 {
-	epeios::row__ Row = Cores.First();
+	epeios::row__ Row = Widgets.First();
 
 	while ( Row != NONE ) {
-		delete Cores( Row );
+		delete Widgets( Row );
 
-		Cores.Set( NULL, Row );
+		Widgets.Set( NULL, Row );
 
-		Row = Cores.Next( Row );
+		Row = Widgets.Next( Row );
 	}
 
-	Cores.Init();
+	Widgets.Init();
 }
 
 
@@ -1292,44 +1292,6 @@ ERREpilog
 }
 
 
-void nsxpcm::element_core__::NSXPCMOnEvent( event__ Event )
-{
-	switch( Event ) {
-	case eCommand:
-		NSXPCMOnCommand();
-		break;
-	case eInput:
-		NSXPCMOnInput();
-		break;
-	case eClick:
-		NSXPCMOnClick();
-		break;
-	case eDblClick:
-		NSXPCMOnDblClick();
-		break;
-	case eFocus:
-		NSXPCMOnFocus();
-		break;
-	case eBlur:
-		NSXPCMOnBlur();
-		break;
-	case eSelect:
-		NSXPCMOnSelect();
-		break;
-	case eAttributeChange:
-		NSXPCMOnAttributeChange();
-		break;
-	case eKeyPress:
-		NSXPCMOnKeyPress();
-		break;
-	case eClose:
-		NSXPCMOnClose();
-		break;
-	default:
-		ERRc();
-		break;
-	}
-}
 
 static event__ Convert_( const char *RawEvent )
 {
@@ -1361,7 +1323,7 @@ static event__ Convert_( const char *RawEvent )
 	return Event;
 }
 
-bso::bool__ nsxpcm::element_core__::Handle( nsIDOMEvent *RawEvent )
+bso::bool__ nsxpcm::widget_core__::Handle( nsIDOMEvent *RawEvent )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -1371,11 +1333,11 @@ ERRProlog
 	STR_BUFFER___ StrBuffer;
 ERRBegin
 	// Sauvegarde pour la gestion d'évènements imbriqués.
-	nsIDOMEvent *RawEventBuffer = _RawEvent;
-	nsIDOMMutationEvent *MutationEventBuffer = _MutationEvent;
-	nsIDOMKeyEvent *KeyEventBuffer = _KeyEvent;
+	nsIDOMEvent *RawEventBuffer = _EventData._RawEvent;
+	nsIDOMMutationEvent *MutationEventBuffer = _EventData._MutationEvent;
+	nsIDOMKeyEvent *KeyEventBuffer = _EventData._KeyEvent;
 
-	_RawEvent = RawEvent;
+	_EventData._RawEvent = RawEvent;
 
 	T( RawEvent->GetType( String ) );
 
@@ -1386,23 +1348,26 @@ ERRBegin
 	Event = Convert_( EventString.Convert( StrBuffer ) );
 
 	if ( EventString == "DOMAttrModified" )
-		_MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
+		_EventData._MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
 
 	if ( EventString == "keypress" )
-		_KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
+		_EventData._KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
 
-	if ( _EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
+	if ( _EventData._EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
 		ERRl();
 
-	if ( !( _EventsToIgnore & ( 1 << Event ) ) )
-		NSXPCMOnEvent( Event );
+	if ( !( _EventData._EventsToIgnore & ( 1 << Event ) ) )
+		if ( _EventHandler != NULL )
+			_EventHandler->OnEvent( _EventData, Event );
+		else
+			NSXPCMOnEvent( Event );
 
-	if ( _EventImbricationLevel-- < -1 )
+	if ( _EventData._EventImbricationLevel-- < -1 )
 		ERRc();
 
-	_RawEvent = RawEventBuffer;
-	_MutationEvent = MutationEventBuffer;
-	_KeyEvent = KeyEventBuffer;
+	_EventData._RawEvent = RawEventBuffer;
+	_EventData._MutationEvent = MutationEventBuffer;
+	_EventData._KeyEvent = KeyEventBuffer;
 
 	Success = true;
 ERRErr
@@ -1412,9 +1377,7 @@ ERREpilog
 	return Success;
 }
 
-
-
-void nsxpcm::element_core__::Init(
+void nsxpcm::widget_core__::Init(
 	nsISupports *Supports,
 	nsIDOMWindow *Window,
 	int Events )
@@ -1432,49 +1395,49 @@ void nsxpcm::element_core__::Init(
 
 	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
-	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventListener );
+	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventData._EventListener );
 
 	if ( Events & efCommand )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efInput )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efClick )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efDblClick )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "dblclick" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "dblclick" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efFocus )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efBlur )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efSelect )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efAttributeChange )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efKeyPress )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "keypress" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "keypress" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efClose )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventListener, false ) != NS_OK )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
-	_EventListener->Init( *this );
+	_EventData._EventListener->Init( *this );
 }
 
 NS_IMPL_ISUPPORTS1(nsxpcm::event_listener, nsxpcm::ievent_listener)
@@ -1484,7 +1447,7 @@ NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
 {
 	nsresult NSResult = NS_OK;
 
-	if ( !_Core->Handle( Event ) )
+	if ( !_Widget->Handle( Event ) )
 		NSResult = NS_ERROR_FAILURE;
 
     return NSResult;

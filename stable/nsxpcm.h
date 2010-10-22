@@ -1066,21 +1066,40 @@ namespace nsxpcm {
 		}
 	};
 
+
 	typedef bso::slong__ event_imbrication_level__;
 #define NSXPCM__EVENT_IMBRICATION_LEVEL_MAX	BSO_SLONG_MAX
 
-	class element_core__
+	class event_data__
 	{
 	private:
-		nsIDOMWindow *_Window;
-		nsISupports *_Supports;
 		nsCOMPtr<struct event_listener> _EventListener;
 		nsIDOMEvent *_RawEvent;
 		nsIDOMMutationEvent *_MutationEvent;
 		nsIDOMKeyEvent *_KeyEvent;
 		event_imbrication_level__ _EventImbricationLevel;
 		int _EventsToIgnore;
-	protected:
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_RawEvent = NULL;
+			_MutationEvent = NULL;
+			_KeyEvent = NULL;
+			_EventImbricationLevel = -1;
+			_EventsToIgnore = ef_None;
+		}
+		event_data__( void )
+		{
+			reset( false );
+		}
+		~event_data__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			reset();
+		}
 		nsIDOMEvent &RawEvent( void )
 		{
 			return *_RawEvent;
@@ -1112,81 +1131,6 @@ namespace nsxpcm {
 
 			_RawEvent->PreventDefault();
 		}
-		virtual void NSXPCMOnEvent( event__ Event );
-		virtual void NSXPCMOnCommand( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnClick( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnDblClick( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnInput( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnFocus( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnBlur( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnSelect( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnAttributeChange( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnKeyPress( void )
-		{
-			ERRu();
-		}
-		virtual void NSXPCMOnClose( void )
-		{
-			ERRu();
-		}
-	public:
-		void reset( bso::bool__ = true )
-		{
-			_Window = NULL;
-			_Supports = NULL;
-			_RawEvent = NULL;
-			_MutationEvent = NULL;
-			_KeyEvent = NULL;
-			_EventImbricationLevel = -1;
-			_EventsToIgnore = ef_None;
-		}
-		element_core__( void )
-		{
-			reset( false );
-		}
-		virtual ~element_core__( void )
-		{
-			reset( );
-		}
-		void Init( void )
-		{
-			reset();
-		}
-		void Init(
-			nsISupports *Supports,
-			nsIDOMWindow *Window,
-			int Events );
-		E_RODISCLOSE__( nsISupportsPointer, Supports );
-		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
-		bso::bool__ Handle( nsIDOMEvent *Event );
-		nsIDOMElement *GetElement( void )
-		{
-			return QueryInterface<nsIDOMElement>( _Supports );
-		}
 		int SetEventsToIgnore( int Events )
 		{
 			int Buffer = _EventsToIgnore;
@@ -1203,29 +1147,129 @@ namespace nsxpcm {
 
 			return Buffer;
 		}
-/*		void Register(
-			nsIDOMElement *Element,
-			nsIDOMWindow *Window );
-*/	};
+		friend class widget_core__;
+	};
+
+	class _event_handler__ {
+	protected:
+		virtual void NSXPCMOnEvent(
+			event_data__ &,
+			event__ Event )
+		{
+			NSXPCMOnEvent( Event );
+		}
+		virtual void NSXPCMOnEvent(
+			event__ Event )
+		{
+			ERRu();
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// A des fins de standardisation.
+		}
+		_event_handler__( void )
+		{
+			reset( false );
+		}
+		~_event_handler__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			// A des fins de standardisation.
+		}
+		void OnEvent(
+			event_data__ &Data,
+			event__ Event )
+		{
+			NSXPCMOnEvent( Data, Event );
+		}
+	};
+
+	typedef _event_handler__ event_handler__;
+
+	class widget_core__
+	{
+	private:
+		nsIDOMWindow *_Window;
+		nsISupports *_Supports;
+		event_data__ _EventData;
+		_event_handler__ *_EventHandler;	// Si défini, est prioritaire sur le traitement des évènements défini par surcharge.
+	protected:
+		virtual void NSXPCMOnEvent( event__ Event )
+		{
+			ERRu();
+		}
+		event_data__ &EventData( void )
+		{
+			return _EventData;
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Window = NULL;
+			_Supports = NULL;
+			_EventData.reset( P );
+			_EventHandler = NULL;
+		}
+		widget_core__( void )
+		{
+			reset( false );
+		}
+		virtual ~widget_core__( void )
+		{
+			reset( );
+		}
+		void Init( void )
+		{
+			reset();
+			_EventData.Init();
+		}
+		void Init(
+			nsISupports *Supports,
+			nsIDOMWindow *Window,
+			int Events );
+		void SupersedEventHandling( _event_handler__ &EventHandler )
+		{
+			_EventHandler = &EventHandler;
+		}
+		E_RODISCLOSE__( nsISupportsPointer, Supports );
+		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
+		bso::bool__ Handle( nsIDOMEvent *Event );
+		nsIDOMElement *GetElement( void )
+		{
+			return QueryInterface<nsIDOMElement>( _Supports );
+		}
+		int SetEventsToIgnore( int Events )
+		{
+			return _EventData.SetEventsToIgnore( Events );
+		}
+		int AddEventsToIgnore( int Events )
+		{
+			return _EventData.AddEventsToIgnore( Events );
+		}
+	};
 
 	E_ROW( row__ );
 
 	inline void Register(
-		nsxpcm::element_core__ &Core,
+		nsxpcm::widget_core__ &Widget,
 		nsISupports *Supports,
 		nsIDOMWindow *Window,
 		int Events )
 	{
-		Core.Init( Supports, Window, Events );
+		Widget.Init( Supports, Window, Events );
 	}
 
 	template <class id_type> inline void Register(
-		nsxpcm::element_core__ &Core,
+		nsxpcm::widget_core__ &Widget,
 		nsIDOMWindow *Window,
 		const id_type &Id,
 		int Events )
 	{
-		Register( Core, nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
+		Register( Widget, nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
 	}
 
 	void Alert(
@@ -1272,18 +1316,18 @@ namespace nsxpcm {
 		nsIDOMWindow *Window,
 		const str::string_ &Text );
 
-	typedef bch::E_BUNCH_( element_core__ * ) element_cores_;
-	E_AUTO( element_cores );
+	typedef bch::E_BUNCH_( widget_core__ * ) widget_cores_;
+	E_AUTO( widget_cores );
 
 	// Supprime (désalloue) tous les éléments stockés dans 'Cores'.
-	void Delete( element_cores_ &Cores );
+	void Delete( widget_cores_ &Widgets );
 /*
 	void Handle( 
 		nsIDOMEvent *Event,
 		const element_cores_ &Cores );
 */
-	template <typename object> class _element__
-	: public element_core__
+	template <typename object> class _widget__
+	: public widget_core__
 	{
 	public:
 		object *GetObject( void )
@@ -1389,16 +1433,16 @@ namespace nsxpcm {
 		}
 	};
 
-	class element__	// Classe générique.
-	: public _element__<nsIDOMElement>
+	class widget__	// Classe générique.
+	: public _widget__<nsIDOMElement>
 	{};
 
 	class button__
-	: public _element__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
+	: public _widget__<nsIDOMElement>	// Devrait normalement être '<nsIButton>', mais l'inclusion de 'nsIButton.h' pose problème.
 	{};
 
 	class textbox__
-	: public _element__<nsIDOMXULTextBoxElement>
+	: public _widget__<nsIDOMXULTextBoxElement>
 	{
 	public:
 		void SetValue( const str::string_ &Value )
@@ -1442,7 +1486,7 @@ namespace nsxpcm {
 	};
 
 	class description__
-	: public _element__<nsIDOMXULDescriptionElement>
+	: public _widget__<nsIDOMXULDescriptionElement>
 	{
 	public:
 		void SetValue( const str::string_ &Value )
@@ -1456,7 +1500,7 @@ namespace nsxpcm {
 	};
 
 	class label__
-	: public _element__<nsIDOMXULLabelElement>
+	: public _widget__<nsIDOMXULLabelElement>
 	{
 	public:
 		void SetValue( const str::string_ &Value )
@@ -1470,7 +1514,7 @@ namespace nsxpcm {
 	};
 
 	class checkbox__
-	: public _element__<nsIDOMXULCheckboxElement>
+	: public _widget__<nsIDOMXULCheckboxElement>
 	{
 	public:
 		bso::bool__ IsChecked( void )
@@ -1480,7 +1524,7 @@ namespace nsxpcm {
 	};
 
 	class radio__
-	: public _element__<nsIDOMXULButtonElement>
+	: public _widget__<nsIDOMXULButtonElement>
 	{
 	public:
 		bso::bool__ IsChecked( void )
@@ -1490,11 +1534,11 @@ namespace nsxpcm {
 	};
 
 	class listitem__
-	: public _element__<nsIDOMXULSelectControlItemElement>
+	: public _widget__<nsIDOMXULSelectControlItemElement>
 	{};
 
 	class listbox__
-	: public _element__<nsIDOMXULMultiSelectControlElement>
+	: public _widget__<nsIDOMXULMultiSelectControlElement>
 	{
 	private:
 	public:
@@ -1530,11 +1574,11 @@ namespace nsxpcm {
 	};
 
 	class panel__
-	: public _element__<nsIDOMElement>
+	: public _widget__<nsIDOMElement>
 	{};
 
 	class deck__
-	: public _element__<nsIDOMElement>
+	: public _widget__<nsIDOMElement>
 	{
 	private:
 	public:
@@ -1582,7 +1626,7 @@ namespace nsxpcm {
 
 
 	class tree__
-	: public _element__<nsIDOMXULTreeElement>
+	: public _widget__<nsIDOMXULTreeElement>
 	{
 	private:
 		nsITreeView *_GetView( void )
@@ -1675,7 +1719,7 @@ namespace nsxpcm {
 	};
 
 	class broadcast__
-	: public _element__<nsIDOMElement>
+	: public _widget__<nsIDOMElement>
 	{
 	public:
 		void Enable( bso::bool__ = true )
@@ -1691,28 +1735,28 @@ namespace nsxpcm {
 	};
 
 	class command__
-	: public _element__<nsIDOMElement>
+	: public _widget__<nsIDOMElement>
 	{};
 
 
 	class html_anchor__
-	: public _element__<nsIDOMHTMLAnchorElement>
+	: public _widget__<nsIDOMHTMLAnchorElement>
 	{};
 
 	class menu__
-	: public _element__<nsIDOMElement>	// Pas cherché le 'nsI...' correspondant ...
+	: public _widget__<nsIDOMElement>	// Pas cherché le 'nsI...' correspondant ...
 	{};
 
 	class menu_item__
-	: public _element__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
+	: public _widget__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
 	{};
-
+/*
 	class document__
-	: public _element__<nsIDOMDocument>
+	: public _widget__<nsIDOMDocument>
 	{};
-
+*/
 	class window__
-	: public _element__<nsIDOMWindow>
+	: public _widget__<nsIDOMWindow>
 	{
 	public:
 		void Close( void )
@@ -1728,6 +1772,18 @@ namespace nsxpcm {
 			return nsxpcm::GetWindowInternal( GetObject() );
 		}
 	};
+
+	// Un 'GetElementById(...)' d'une balise 'window' ne retourne pas un 'nsIDOMWindow'
+	// Cette fonction a pour donc but d'empêcher toute tentative dans ce sens.
+	template <class id_type> inline void Register(
+		window__ &Widget,
+		nsIDOMWindow *Window,
+		const id_type &Id,
+		int Events )
+	{
+		ERRl();	
+		Register( (widget_core__)Widget, Window, Id, Events );	// Pour détecter tout changement de la signature de la fonction dont on est censé interdire l'accés.
+	}
 
 	class file_picker_filter_ 
 	{
@@ -2485,22 +2541,22 @@ namespace nsxpcm {
 		  }
 		  void reset( bso::bool__ = true )
 		  {
-			  _Core = NULL;
+			  _Widget = NULL;
 		  }
 	protected:
 		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	private:
-		element_core__ *_Core;
+		widget_core__ *_Widget;
 	public:
-		void Init( element_core__ &Core )
+		void Init( widget_core__ &Widget )
 		{
 #ifdef NSXPCM_DBG
-			if ( _Core != NULL )
+			if ( _Widget != NULL )
 				ERRu();
 #endif
 			reset();
 
-			_Core = &Core;
+			_Widget = &Widget;
 		}
 	};
 
