@@ -60,6 +60,8 @@ extern class ttr_tutor &XULUITutor;
 
 /*$BEGIN$*/
 
+#error "Obolete : Use 'XULWDG'."
+
 #include "err.h"
 #include "flw.h"
 #include "nsxpcm.h"

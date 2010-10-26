@@ -1,5 +1,12 @@
 $Id$
 
+26/10/2010 :
+	- FRDKRN :
+		Réorganisation.
+
+24/10/2010 :
+	- 'XULUI' -> 'XULWDG'.
+
 22/10/2010 :
 	- NSXPCM :
 		- '{...]element[...]' -> '[...]widget[...]'.

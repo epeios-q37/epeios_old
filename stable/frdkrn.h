@@ -215,13 +215,7 @@ namespace frdkrn {
 			_Backend.reset();
 			_ClientCore.reset();
 		}
-		void _EndClosing( void )
-		{
-			_Registry.Init();
-		}
 	protected:
-		virtual const str::string_ &FRDKERNLGetVersionFormatedText( str::string_ &Version ) = 0;
-		virtual void FRDKERNLClose( void ) = 0;
 		report__ _LoadConfiguration(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
@@ -335,11 +329,10 @@ namespace frdkrn {
 		void Close( void )
 		{
 			if ( IsConnected() ) {
-				FRDKERNLClose();
 				_CloseConnection();
 			}
 
-			_EndClosing();
+			_Registry.Init();
 		}
 		bso::bool__ IsConnected( void ) const
 		{
@@ -367,10 +360,6 @@ namespace frdkrn {
 			str::string_ &Value )
 		{
 			return _Registry.GetValue( str::string( Path ), Value );
-		}
-		const str::string_ &GetVersionFormatedText( str::string_ &Version )
-		{
-			return FRDKERNLGetVersionFormatedText( Version );
 		}
 		const lcl::locale_rack___ &Locale( void ) const
 		{

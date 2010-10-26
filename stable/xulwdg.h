@@ -1,6 +1,6 @@
 /*
-	Header for the 'xului' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) 2009-2004 Claude SIMON.
+	Header for the 'xulwdg' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef XULUI__INC
-#define XULUI__INC
+#ifndef XULWDG__INC
+#define XULWDG__INC
 
-#define XULUI_NAME		"XULUI"
+#define XULWDG_NAME		"XULWDG"
 
-#define	XULUI_VERSION	"$Revision$"
+#define	XULWDG_VERSION	"$Revision$"
 
-#define XULUI_OWNER		"Claude SIMON"
+#define XULWDG_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &XULUITutor;
+extern class ttr_tutor &XULWDGTutor;
 
-#if defined( XXX_DBG ) && !defined( XULUI_NODBG )
-#define XULUI_DBG
+#if defined( XXX_DBG ) && !defined( XULWDG_NODBG )
+#define XULWDG_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,19 +55,17 @@ extern class ttr_tutor &XULUITutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D XUL User Interface. 
+//D XUL WiDGets 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-#error "Obolete : Use 'XULWDG'."
 
 #include "err.h"
 #include "flw.h"
 #include "nsxpcm.h"
 
-namespace xului {
 
+namespace xulwdg {
 	template <typename target> class bare_bridge__
 	{
 	private:
@@ -108,7 +106,7 @@ namespace xului {
 		}
 	};
 
-#	define XULUI__WN( widget, name, events )\
+#	define XULWDG__WN( widget, name, events )\
 	template <typename target> E_TTYPEDEF__( E_COVER2( _generic__<target, nsxpcm::widget##__> ), name##__ );\
 	template <typename target> inline void Register(\
 		target &Target,\
@@ -127,23 +125,23 @@ namespace xului {
 		Register( Target, Widget, Window, Id, events );\
 	}
 
-#	define XULUI__W( widget, events )	XULUI__WN( widget, widget, events )
+#	define XULWDG__W( widget, events )	XULWDG__WN( widget, widget, events )
 
-	XULUI__W( textbox, nsxpcm::ef_None );
-	XULUI__W( radio, nsxpcm::efCommand );
-	XULUI__W( button, nsxpcm::efCommand );
-	XULUI__W( listbox, nsxpcm::efCommand );
-	XULUI__W( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
-	XULUI__W( deck, nsxpcm::ef_None );
-	XULUI__W( broadcast, nsxpcm::ef_None );
-	XULUI__W( command, nsxpcm::efCommand );
-	XULUI__W( menu, nsxpcm::ef_None );
-	XULUI__W( menu_item, nsxpcm::efCommand );
-	XULUI__W( panel, nsxpcm::ef_None );
-	XULUI__WN( widget, box, nsxpcm::ef_None );
-//	XULUI__W( document, nsxpcm::efClose );
-	XULUI__W( window, nsxpcm::efClose );
-	XULUI__W( description, nsxpcm::ef_None );
+	XULWDG__W( textbox, nsxpcm::ef_None );
+	XULWDG__W( radio, nsxpcm::efCommand );
+	XULWDG__W( button, nsxpcm::efCommand );
+	XULWDG__W( listbox, nsxpcm::efCommand );
+	XULWDG__W( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
+	XULWDG__W( deck, nsxpcm::ef_None );
+	XULWDG__W( broadcast, nsxpcm::ef_None );
+	XULWDG__W( command, nsxpcm::efCommand );
+	XULWDG__W( menu, nsxpcm::ef_None );
+	XULWDG__W( menu_item, nsxpcm::efCommand );
+	XULWDG__W( panel, nsxpcm::ef_None );
+	XULWDG__WN( widget, box, nsxpcm::ef_None );
+//	XULWDG__W( document, nsxpcm::efClose );
+	XULWDG__W( window, nsxpcm::efClose );
+	XULWDG__W( description, nsxpcm::ef_None );
 
 	template <typename target, typename widget> void Register(
 		target &Target,
@@ -166,6 +164,7 @@ namespace xului {
 		Widget.Init( Target );
 		nsxpcm::Register( Widget, Supports, Window, Events );
 	}
+
 }
 
 /*$END$*/

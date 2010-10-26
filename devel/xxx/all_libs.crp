@@ -201,8 +201,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Light XML PaRser
 &nsxpcm	&epeios		&\
 	&from nsXPCOM
-	
-&ndbbsc	&epeios	&\
+
+	&ndbbsc	&epeios	&\
 	&New DataBase BaSiCs (will be moved on its own project in the future)
 &ndbctt	&epeios	&\
 	&New DataBase ConTenT (will be moved on its own project in the future)
@@ -277,8 +277,18 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&eXtended Text Flow.
 &xui		&epeios		&2009-\
 	&XUL User Interface.
+&xulfbs		&epeios		&\
+	&XUL Frontend BaSe
+&xulfrd		&epeios		&\
+	&XUL WiDGets
+&xulfmn		&epeios		&\
+	&XUL Frontend MaiN
+&xulftk		&epeios		&\
+	&XUL Frontend TrunK
 &xului		&epeios		&2009-\
 	&XUL User Interface.
+&xulwdg		&epeios		&\
+	&XUL WiDGets
 
 
 
