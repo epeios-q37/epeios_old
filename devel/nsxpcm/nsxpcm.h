@@ -2163,11 +2163,11 @@ namespace nsxpcm {
 		{}
 		void plug( mmm::E_MULTIMEMORY_ &MMM )
 		{
-			_lpbunch_<type *, row>::plug();
+			_lpbunch_<type, row>::plug();
 		}
 		repository_ &operator =( const repository_ &R )
 		{
-			_lpbunch_<type *, row>::operator =( *this );
+			_lpbunch_<type, row>::operator =( *this );
 			S_.Row = R.S_.Row;
 
 			return *this;

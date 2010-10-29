@@ -277,14 +277,20 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&eXtended Text Flow.
 &xui		&epeios		&2009-\
 	&XUL User Interface.
+&xulfdg		&epeios		&\
+	&XUL Frontend DebuG
 &xulfbs		&epeios		&\
 	&XUL Frontend BaSe
+&xulfkl		&epeios		&\
+	&XUL Frontend KerneL
 &xulfrd		&epeios		&\
 	&XUL WiDGets
 &xulfmn		&epeios		&\
 	&XUL Frontend MaiN
 &xulftk		&epeios		&\
 	&XUL Frontend TrunK
+&xulfui		&epeios		&\
+	&XUL Frontend User Interface
 &xului		&epeios		&2009-\
 	&XUL User Interface.
 &xulwdg		&epeios		&\

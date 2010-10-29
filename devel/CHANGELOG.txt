@@ -1,5 +1,9 @@
 $Id$
 
+29/10/2010 :
+	- NSXPCM :
+		- Correction erreur dans définition 'repository_'.
+
 26/10/2010 :
 	- FRDKRN :
 		Réorganisation.

@@ -64,6 +64,30 @@ extern class ttr_tutor &XULWDGTutor;
 #include "flw.h"
 #include "nsxpcm.h"
 
+// Sensitive widget (reacts to events).
+#define XULWDG_SWIDGET( widget, name )\
+	class name\
+	: public widget\
+	{\
+	protected:\
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
+	}
+
+// Unsensitive widget (reacts to no event).
+#define XULWDG_UWIDGET( widget, name )\
+	class name\
+	: public widget\
+	{}
+
+#define XULWDG_ALL_WIDGETS( target )\
+	typedef xulwdg::broadcast__<target> broadcast__;\
+	typedef xulwdg::command__<target> command__;\
+	typedef xulwdg::button__<target> button__;\
+	typedef xulwdg::textbox__<target> textbox__;\
+	typedef xulwdg::listbox__<target> listbox__;\
+	typedef xulwdg::tree__<target> tree__;\
+	typedef xulwdg::window__<target> window__;\
+
 
 namespace xulwdg {
 	template <typename target> class bare_bridge__
@@ -101,7 +125,7 @@ namespace xulwdg {
 	public:
 		void Init( target &Target )
 		{
-			bridge__::Init( Target );
+			bare_bridge__<target>::Init( Target );
 			widget::Init();
 		}
 	};
