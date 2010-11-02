@@ -563,17 +563,17 @@ namespace mmi {
 		}
 	};
 
-	inline uym::status__ Connect(
+	inline uym::state__ Connect(
 		indexed_multimemory_ &Memory,
 		indexed_multimemory_file_manager___ &FileManager,
-		uym::purpose__ Purpose )
+		uym::action__ Action )
 	{
-		uym::status__ Status = bch::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager(), Purpose );
+		uym::state__ State = bch::Connect( Memory.Descripteurs, FileManager.DescriptorsFileManager(), Action );
 
-		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager(), Purpose ) != Status )
-			Status = uym::sInconsistent;
+		if ( mmm::Connect( Memory.Multimemoire, FileManager.MultimemoryFileManager(), Action ) != State )
+			State = uym::sInconsistent;
 
-		return Status;
+		return State;
 	}
 
 #endif

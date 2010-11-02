@@ -423,18 +423,18 @@ namespace ctn {
 		}
 	};
 
-	template <typename container, typename file_manager> inline uym::status__ Connect(
+	template <typename container, typename file_manager> inline uym::state__ Connect(
 		container &Container,
 		file_manager &FileManager,
-		uym::purpose__ Purpose )
+		uym::action__ Action )
 	{
-		uym::status__ Status = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
+		uym::state__ State = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
 
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
-		if ( !uym::IsError( Status ) ) {
-			if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager(), Purpose ) != Status )
-				Status = uym::sInconsistent;
+		if ( !uym::IsError( State ) ) {
+			if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager(), Purpose ) != State )
+				State = uym::sInconsistent;
 			else
 				Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
 		}

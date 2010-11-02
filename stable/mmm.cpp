@@ -156,28 +156,43 @@ ERREnd
 ERREpilog
 }
 
-uym::status__ mmm::Connect(
+uym::state__ mmm::Connect(
 	multimemory_ &Multimemory,
 	multimemory_file_manager___ &FileManager,
-	uym::purpose__ Purpose)
+	uym::action__ Action)
 {
-	uym::status__ Status = uym::s_Undefined;
+	uym::state__ State = uym::s_Undefined;
 ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
-	Status = uym::Connect( Multimemory.Memory, FileManager, Purpose );
+	State = uym::Connect( Multimemory.Memory, FileManager, Action );
 
-	if ( ( Status == uym::sExists ) && ( Purpose == uym::pProceed ) ) {
-		Multimemory.SetSize( FileManager.FileSize() );
-		IFlow.Init( FileManager._FreeFragmentPositionFileName );
+#if UYM_ACTION_AMOUNT != 3
+#	error "'uym::s_amount__' changed !"
+#endif
 
-		flw::Get( IFlow, Multimemory.S_.FreeFragment );
-		flw::Get( IFlow, Multimemory.S_.TailingFreeFragmentPosition );
+	switch ( Action ) {
+		case uym::aTest:
+			break;
+		case uym::aProceed:
+			if ( State == uym::sExists ) {
+				Multimemory.SetSize( FileManager.FileSize() );
+				IFlow.Init( FileManager._FreeFragmentPositionFileName );
+
+				flw::Get( IFlow, Multimemory.S_.FreeFragment );
+				flw::Get( IFlow, Multimemory.S_.TailingFreeFragmentPosition );
+			}
+			break;
+		case uym::aSync:
+			break;
+		default:
+			ERRu();
+			break;
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return State;
 }
 
 

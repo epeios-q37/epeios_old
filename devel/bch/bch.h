@@ -552,22 +552,34 @@ namespace bch {
 #ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
 
-	template <typename bunch> uym::status__ Connect(
+	template <typename bunch> uym::state__ Connect(
 		bunch &Bunch,
 		bunch_file_manager___ &FileManager,
-		uym::purpose__ Purpose )
+		uym::action__ Action )
 	{
-		uym::status__ Status = tym::Connect( Bunch, FileManager, Purpose );
+		uym::state__ State = tym::Connect( Bunch, FileManager, Action );
 
-		if ( Purpose == uym::pProceed ) {
+#if UYM_ACTION_AMOUNT != 3
+#	error "'uym::a_amount' changed !"
+#endif
 
+		switch ( Action ) {
+		case uym::aTest:
+			break;
+		case uym::aProceed:
 			Bunch.SetStepValue( 0 );	// Pas de préallocation.
 
-			if ( Status == uym::sExists )
+			if ( State == uym::sExists )
 				Bunch.Allocate( FileManager.FileSize() / Bunch.GetItemSize(), aem::mFit );
+			break;
+		case uym::aSync:
+			break;
+		default:
+			ERRu();
+			break;
 		}
 
-		return Status;
+		return State;
 	}
 #endif
 /*

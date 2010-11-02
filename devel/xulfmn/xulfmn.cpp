@@ -107,12 +107,12 @@ void xulfmn::about_command__::NSXPCMOnEvent( event__ )
 {
 	Target().BrowseInformations();
 }
-/*
+
 void xulfmn::web_site_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::LaunchURI( SKTINF_URL );
+	Target().BrowseWEBSite();
 }
-*/
+
 void xulfmn::debug_command__::NSXPCMOnEvent( event__ )
 {
 	Target().Expose();
@@ -152,7 +152,7 @@ static void Register_(
 	Register_( Trunk, Commands.CloseProject, Window, "cmdCloseProject" );
 	Register_( Trunk, Commands.Exit, Window, "cmdExit" );
 	Register_( Trunk, Commands.About, Window, "cmdAbout" );
-//	Register_( Trunk, Commands.WebSite, Window, "cmdWebSite" );
+	Register_( Trunk, Commands.WebSite, Window, "cmdWebSite" );
 	Register_( Trunk, Commands.Debug, Window, "cmdDebug" );
 }
 

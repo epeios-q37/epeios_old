@@ -149,7 +149,15 @@ namespace xulftk {
 		xulfkl::kernel___ *_Kernel;
 		_repository_functions__ *_RepositoryFunctions;
 		const char *_TargetName;
-		virtual const str::string_ &_GetVersionFormatedText( str::string_ &Version ) = 0;
+	protected:
+		virtual void XULFTKFormatedInformations( str::string_ &Informations )
+		{
+			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent(...)' doir être redéfini.
+		}
+		virtual void XULFTKSiteURL( str::string_ &URL )
+		{
+			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent'///)' doit être redéfini.
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -274,7 +282,23 @@ namespace xulftk {
 		ERRBegin
 			Informations.Init();
 
-			UI().Alert( _GetVersionFormatedText( Informations ) );
+			XULFTKFormatedInformations( Informations ),
+
+			UI().Alert( Informations );
+		ERRErr
+		ERREnd
+		ERREpilog
+		}
+		void BrowseWEBSite( void )
+		{
+		ERRProlog
+			str::string URL;
+		ERRBegin
+			URL.Init();
+
+			XULFTKSiteURL( URL );
+
+			nsxpcm::LaunchURI( URL );
 		ERRErr
 		ERREnd
 		ERREpilog

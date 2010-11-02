@@ -342,7 +342,10 @@ class uympersonnalization
 public:
 	uympersonnalization( void )
 	{
-		if ( UYM__STATUS_AMOUNT != s_amount )
+		if ( UYM_STATE_AMOUNT != s_amount )
+			ERRc();
+
+		if ( UYM_ACTION_AMOUNT != a_amount )
 			ERRc();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

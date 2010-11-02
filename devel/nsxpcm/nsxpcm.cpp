@@ -1664,7 +1664,7 @@ nsIDOMNode *browser__::GetNext( void )
 	return _Current;
 }
 
-void nsxpcm::LaunchURI( const char *RawURI )
+void nsxpcm::LaunchURI( const str::string_ &RawURI )
 {
 	nsCOMPtr<nsIIOService> IOService = NULL;
 	nsCOMPtr<nsIExternalProtocolService> ExternalProtocolService = NULL;

@@ -70,7 +70,7 @@ namespace xulfmn {
 
 	XULFBS_WINDOW( window__ );
 	XULFBS_COMMAND( about_command__ );
-//	XULFBS_COMMAND( web_site_command__ );
+	XULFBS_COMMAND( web_site_command__ );
 	XULFBS_COMMAND( debug_command__ );
 	XULFBS_COMMAND( new_project_command__ );
 	XULFBS_COMMAND( open_project_command__ );
@@ -90,7 +90,7 @@ namespace xulfmn {
 				open_project_command__ OpenProject;
 				close_project_command__ CloseProject;
 				about_command__ About;
-//				web_site_command__ WebSite;
+				web_site_command__ WebSite;
 				debug_command__ Debug;
 				exit_command__ Exit;
 			} Commands;

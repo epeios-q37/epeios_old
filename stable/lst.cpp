@@ -121,43 +121,58 @@ static void Load_(
 	}
 }
 
-uym::status__ lst::ReadFromFile(
+uym::state__ lst::ReadFromFile(
 	const char *FileName,
 	epeios::row__ FirstUnused,
 	time_t TimeStamp,
 	store_ &Store,
-	uym::purpose__ Purpose)
+	uym::action__ Action )
 {
-	uym::status__ Status = uym::s_Undefined;
+	uym::state__ State = uym::s_Undefined;
 ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
+
 	if ( !fil::FileExists( FileName ) ) {
-		Status = uym::sAbsent;
+		State = uym::sAbsent;
 		ERRReturn;
 	}
 
 	if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp ) {
-		Status = uym::sInconsistent;
+		State = uym::sInconsistent;
 		ERRReturn;
 	}
 
-	if ( Purpose == uym::pProceed ) {
+#if UYM_ACTION_AMOUNT != 3
+#	error "'uym::a_amount changed !"
+#endif
+
+	switch ( Action ) {
+	case uym::aTest:
+		break;
+	case uym::aProceed:
 		if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-			Status = uym::sInconsistent;
+			State = uym::sInconsistent;
 			ERRReturn;
 		}
 
 		Store.Init( FirstUnused );
 
 		Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
+	break;
+	case uym::aSync:
+		ERRu();	// N'a pas être appelé avec cette valeur.
+		break;
+	default:
+		ERRu();
+		break;
 	}
 
-	Status = uym::sExists;
+	State = uym::sExists;
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return State;
 }
 
 

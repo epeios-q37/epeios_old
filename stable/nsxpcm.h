@@ -2345,7 +2345,12 @@ namespace nsxpcm {
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 
-	void LaunchURI( const char *URI );
+	void LaunchURI( const str::string_ &URI );
+
+	inline void LaunchURI( const char *URI )
+	{
+		LaunchURI( str::string( URI ) );
+	}
 
 	void LaunchEmbedFile( const char *File );	// 'File' doit contenir un fichier avec un chemin relatif par rapport à où est situé 'xulrunner.exe'.
 

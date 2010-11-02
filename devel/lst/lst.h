@@ -74,12 +74,12 @@ namespace lst {
 		const char *FileName,
 		time_t TimeStamp );
 
-	uym::status__ ReadFromFile(
+	uym::state__ ReadFromFile(
 		const char *FileName,
 		epeios::row__ FirstUnused,
 		time_t TimeStamp,
 		store_ &Store,
-		uym::purpose__ Purpose );
+		uym::action__ Action );
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
@@ -332,14 +332,14 @@ namespace lst {
 		return WriteToFile( List.Locations, FileName, TimeStamp );
 	}
 
-	template <typename list> uym::status__ ReadFromFile(
+	template <typename list> uym::state__ ReadFromFile(
 		const char *FileName,
 		epeios::row__ FirstUnused,
 		list &List,
-		uym::purpose__ Purpose,
+		uym::action__,
 		time_t TimeStamp = 0 )
 	{
-		return ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations, Purpose );
+		return ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations, Action );
 	}
 
 

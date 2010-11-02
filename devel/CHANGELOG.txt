@@ -1,5 +1,17 @@
 $Id$
 
+02/11/2010 :
+	- GENERAL :
+		- Adaptation aux modification bibliothqèue 'UYM4'.
+	- NSXPCM :
+		- Ajout version 'const str::string_ &' de 'LanchURI(...)'.
+	- UYM :
+		- 'status__' -> 'state__'.
+		- 'purpose__' -> 'acition__'.
+		- Ajout de 'aSync'.
+	- XULFTK :
+		- Mise en oeuvre de 'BrowseInformations()' et 'BrowseWEBSite()'.
+
 29/10/2010 :
 	- NSXPCM :
 		- Correction erreur dans définition 'repository_'.

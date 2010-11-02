@@ -433,7 +433,7 @@ namespace uym {
 		}
 	};
 
-	enum status__ {	// Statut de l'opération de connection.
+	enum state__ {	// Statut de l'opération de connection.
 		sExists,		// le fichier rattaché existe.
 		sAbsent,		// Fichier rattaché absent (ce n'est pas une erreur, cela signifie que des données n'ont pas encore été stockées).
 		sInconsistent,	// Les fichiers sont dans une état incohérent, probablement dû à un arrêt inopiné du logiciel. Utilisé par les bibliothèques en amont.
@@ -441,14 +441,14 @@ namespace uym {
 		s_Undefined
 	};
 
-#define UYM__STATUS_AMOUNT	3
+#define UYM_STATE_AMOUNT	3
 
-	inline bso::bool__ IsError( status__ Status )
+	inline bso::bool__ IsError( state__ State )
 	{
-#if UYM__STATUS_AMOUNT != 3
+#if UYM_STATE_AMOUNT != 3
 #	error "'status__' changed !"
 #endif
-		switch ( Status ) {
+		switch ( State ) {
 		case sExists:
 		case sAbsent:
 			return false;
@@ -464,28 +464,42 @@ namespace uym {
 		return true;	// To avoid a 'warning'.
 	}
 
-	enum purpose__ {	// But de l'appel de la fonction.
-		pTesting,	// Test de la cohérence des fichiers.
-		pProceed,	// La connection doit effect'eivement être réalisée.
-		p_amount,
-		p_Undefined
+	enum action__ {	// But de l'appel de la fonction.
+		aTest,		// Test de la cohérence des fichiers.
+		aProceed,	// La connection aux fichiers doit effctivement être établie.
+		aSync,		// Procède aux écritures nécessaires pour assurer la cohérence des fichiers.
+		a_amount,
+		a_Undefined
 	};
+
+#define UYM_ACTION_AMOUNT	3
 	
-	inline status__ Connect(
+	inline state__ Connect(
 		untyped_memory_ &Memory,
 		untyped_memory_file_manager___ &FileManager,
-		purpose__ Purpose )
+		action__ Action )
 	{
-		status__ Status = ( FileManager.Exists() ? sExists : sAbsent );
+#if UYM_ACTION_AMOUNT != 3
+#	error "'action__' changed'.
+#endif
+		state__ State = ( FileManager.Exists() ? sExists : sAbsent );
 
-		if ( Purpose == pProceed ) {
+		switch ( Action ) {
+		case aTest:
+			break;
+		case aProceed:
 			Memory.plug( FileManager );
 
-			if ( Status == sExists )
+			if ( State == sExists )
 				Memory.Allocate( FileManager.FileSize() );
+		case aSync:
+			break;
+		default:
+			ERRu();
+			break;
 		}
 
-		return Status;
+		return State;
 	}
 
 	//c Untyped memory. 

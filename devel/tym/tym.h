@@ -274,23 +274,17 @@ namespace tym {
 		}
 	};
 
-	/*
-	template <class t> class memory
-	: public memory_<t>
-	{};
-	*/
-
 	E_AUTO2( memory )
 
 #ifndef FLM__COMPILATION
 	typedef uym::untyped_memory_file_manager___ memory_file_manager___;
 
-	template <typename memory> inline uym::status__ Connect(
+	template <typename memory> inline uym::state__ Connect(
 		memory &Memory,
 		memory_file_manager___ &FileManager,
-		uym::purpose__ Purpose )
+		uym::action__ Action )
 	{
-		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager, Purpose );
+		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager, Action );
 	}
 #endif
 

@@ -1697,10 +1697,10 @@ namespace mmm {
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
-		friend uym::status__ Connect(
+		friend uym::state__ Connect(
 			multimemory_ &Multimemory,
 			class multimemory_file_manager___ &FileManager,
-				uym::purpose__ Purpose );
+				uym::action__ Action );
 	};
 
 	typedef uym::untyped_memory_file_manager___ _untyped_memory_file_manager___;
@@ -1760,17 +1760,17 @@ namespace mmm {
 
 			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
-		friend uym::status__ Connect(
+		friend uym::state__ Connect(
 			multimemory_ &Multimemory,
 			multimemory_file_manager___ &FileManager,
-			uym::purpose__ Purpose );
+			uym::action__ Action );
 	};
 
 
-	uym::status__ Connect(
+	uym::state__ Connect(
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager,
-		uym::purpose__ Purpose );
+		uym::action__ Action );
 
 	class standalone_multimemory_driver__
 	: public multimemory_driver__
