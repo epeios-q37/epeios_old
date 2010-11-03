@@ -76,10 +76,8 @@ namespace lst {
 
 	uym::state__ ReadFromFile(
 		const char *FileName,
-		epeios::row__ FirstUnused,
 		time_t TimeStamp,
-		store_ &Store,
-		uym::action__ Action );
+		store_ &Store );
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
@@ -334,14 +332,19 @@ namespace lst {
 
 	template <typename list> uym::state__ ReadFromFile(
 		const char *FileName,
-		epeios::row__ FirstUnused,
 		list &List,
-		uym::action__,
 		time_t TimeStamp = 0 )
 	{
-		return ReadFromFile( FileName, FirstUnused, TimeStamp, List.Locations, Action );
+		return ReadFromFile( FileName, TimeStamp, List.Locations );
 	}
 
+	template <typename list> uym::state__ ReadFromFile(
+		const char *FileName,
+		time_t TimeStamp,
+		list &List )
+	{
+		return ReadFromFile( FileName, TimeStamp, List.Locations );
+	}
 
 	#define E_LISTtx( r, r_t )	list<r, r_t>
 	#define E_LISTtx_( r, r_t )	list_<r, r_t>

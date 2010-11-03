@@ -123,10 +123,8 @@ static void Load_(
 
 uym::state__ lst::ReadFromFile(
 	const char *FileName,
-	epeios::row__ FirstUnused,
 	time_t TimeStamp,
-	store_ &Store,
-	uym::action__ Action )
+	store_ &Store )
 {
 	uym::state__ State = uym::s_Undefined;
 ERRProlog
@@ -143,30 +141,14 @@ ERRBegin
 		ERRReturn;
 	}
 
-#if UYM_ACTION_AMOUNT != 3
-#	error "'uym::a_amount changed !"
-#endif
-
-	switch ( Action ) {
-	case uym::aTest:
-		break;
-	case uym::aProceed:
-		if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-			State = uym::sInconsistent;
-			ERRReturn;
-		}
-
-		Store.Init( FirstUnused );
-
-		Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
-	break;
-	case uym::aSync:
-		ERRu();	// N'a pas être appelé avec cette valeur.
-		break;
-	default:
-		ERRu();
-		break;
+	if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
+		State = uym::sInconsistent;
+		ERRReturn;
 	}
+
+//	Store.Init( FirstUnused );	// De la responsabilité de l'appelant.
+
+	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
 
 	State = uym::sExists;
 ERRErr

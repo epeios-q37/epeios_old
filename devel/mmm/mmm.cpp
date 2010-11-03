@@ -55,8 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "flf.h"
-
 using namespace mmm;
 
 static void Display_(
@@ -155,46 +153,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-uym::state__ mmm::Connect(
-	multimemory_ &Multimemory,
-	multimemory_file_manager___ &FileManager,
-	uym::action__ Action)
-{
-	uym::state__ State = uym::s_Undefined;
-ERRProlog
-	flf::file_iflow___ IFlow;
-ERRBegin
-	State = uym::Connect( Multimemory.Memory, FileManager, Action );
-
-#if UYM_ACTION_AMOUNT != 3
-#	error "'uym::s_amount__' changed !"
-#endif
-
-	switch ( Action ) {
-		case uym::aTest:
-			break;
-		case uym::aProceed:
-			if ( State == uym::sExists ) {
-				Multimemory.SetSize( FileManager.FileSize() );
-				IFlow.Init( FileManager._FreeFragmentPositionFileName );
-
-				flw::Get( IFlow, Multimemory.S_.FreeFragment );
-				flw::Get( IFlow, Multimemory.S_.TailingFreeFragmentPosition );
-			}
-			break;
-		case uym::aSync:
-			break;
-		default:
-			ERRu();
-			break;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return State;
-}
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

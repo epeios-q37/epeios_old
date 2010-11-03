@@ -361,6 +361,24 @@ namespace ctn {
 			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
 			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
+		uym::state__ Bind( void )
+		{
+			uym::state__ State = _Statics.Bind();
+
+			if ( _Dynamics.Bind() != Status )
+				Status = uym::sInconsistent;
+
+			return Status;
+		}
+		uym::state__ Sync( void )
+		{
+			uym::state__ State = _Statics.Sync();
+
+			if ( _Dynamics.Sync() != Status )
+				Status = uym::sInconsistent;
+
+			return Status;
+		}
 		void ReleaseFiles( void )
 		{
 			_Statics.ReleaseFile();
@@ -423,23 +441,22 @@ namespace ctn {
 		}
 	};
 
-	template <typename container, typename file_manager> inline uym::state__ Connect(
+	template <typename container, typename file_manager> inline uym::state__ Plug(
 		container &Container,
-		file_manager &FileManager,
-		uym::action__ Action )
+		file_manager &FileManager )
 	{
-		uym::state__ State = tym::Connect( Container.Statics, FileManager.StaticsFileManager(), Purpose );
+		uym::state__ State = tym::Plug( Container.Statics, FileManager.StaticsFileManager() );
 
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
 		if ( !uym::IsError( State ) ) {
-			if ( mmi::Connect( Container.Dynamics, FileManager.DynamicsFileManager(), Purpose ) != State )
+			if ( mmi::Plug( Container.Dynamics, FileManager.DynamicsFileManager() ) != State )
 				State = uym::sInconsistent;
 			else
 				Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
 		}
 
-		return Status;
+		return State;
 	}
 
 

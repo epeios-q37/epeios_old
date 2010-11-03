@@ -168,13 +168,7 @@ namespace lstctn {
 			_container_file_manager___<container>::ReleaseFiles();
 
 			if ( P ) {
-				if ( ( _ListStore != NULL )
-					 && _container_file_manager___<container>::IsPersistent()
-					 && _container_file_manager___<container>::Exists()
-					 && ( !fil::FileExists( _ListFileName )
-					      || ( _container_file_manager___<container>::TimeStamp()
-						       >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___<container>::TimeStamp() );
+				Sync();
 			}
 
 			_container_file_manager___<container>::reset( P );
@@ -209,6 +203,25 @@ namespace lstctn {
 				ERRa();
 
 			strcpy( _ListFileName, ListFileName );
+		}
+		uym::state__ Bind( void )
+		{
+			uym::state__ State = _container_file_manager___<container>::Bind();
+
+			lst::ReadFromFile( FileManager.ListFileName(), *_ListStore, FileManager.TimeStamp() );
+		}
+		uym::state__ Sync( void )
+		{
+			if ( ( _ListStore != NULL )
+					&& _container_file_manager___<container>::IsPersistent()
+					&& _container_file_manager___<container>::Exists()
+					&& ( !fil::FileExists( _ListFileName )
+					    || ( _container_file_manager___<container>::TimeStamp()
+						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
+				lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___<container>::TimeStamp() );
+
+			return _container_file_manager___<container>::Sync();
+
 		}
 		void Drop( void )
 		{
@@ -263,20 +276,17 @@ namespace lstctn {
 		}
 	};
 
-	template <typename list_container> uym::status__ Connect(
+	template <typename list_container> uym::state__ Plug(
 		list_container &ListContainer,
-		list_container_file_manager___<list_container> &FileManager,
-		uym::purpose__ Purpose)
+		list_container_file_manager___<list_container> &FileManager )
 	{
-		uym::status__ Status = ctn::Connect( ListContainer.Container(), FileManager, Purpose );
+		uym::status__ Status = ctn::Plug( ListContainer.Container(), FileManager );
 
-		if ( !uym::IsError( Status ) ) {
-			FileManager.Set( ListContainer.Locations );
+		ListContainer.Set( FileManager.StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
 
-			Status = lst::ReadFromFile( FileManager.ListFileName(), FileManager.StaticsFileManager().FileSize() / ListContainer.GetStaticsItemSize(), FileManager.TimeStamp(), ListContainer.Locations, Purpose );
-		}
+		FileManager.Set( ListContainer.Locations );
 
-		return Status;
+		return State;
 	}
 
 

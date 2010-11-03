@@ -414,6 +414,14 @@ namespace uym {
 		E_RWDISCLOSE_( mdr::size__, Size );
 	};
 
+	enum state__ {	// Statut de l'opération de connection.
+		sExists,		// le fichier rattaché existe.
+		sAbsent,		// Fichier rattaché absent (ce n'est pas une erreur, cela signifie que des données n'ont pas encore été stockées).
+		sInconsistent,	// Les fichiers sont dans une état incohérent, probablement dû à un arrêt inopiné du logiciel. Utilisé par les bibliothèques en amont.
+		s_amount,
+		s_Undefined
+	};
+
 	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
 
 	class untyped_memory_file_manager___
@@ -431,14 +439,20 @@ namespace uym {
 			if ( Persistent )
 				_file_memory_driver___::Persistent();
 		}
-	};
-
-	enum state__ {	// Statut de l'opération de connection.
-		sExists,		// le fichier rattaché existe.
-		sAbsent,		// Fichier rattaché absent (ce n'est pas une erreur, cela signifie que des données n'ont pas encore été stockées).
-		sInconsistent,	// Les fichiers sont dans une état incohérent, probablement dû à un arrêt inopiné du logiciel. Utilisé par les bibliothèques en amont.
-		s_amount,
-		s_Undefined
+		state__ Bind( void )	// To call only after a 'Plugt(...)'.
+		{
+			if ( Exists() )
+				return sExists;
+			else
+				return sAbsent;
+		}
+		state__ Sync( void )
+		{
+			if ( Exists() )
+				return sExists;
+			else
+				return sAbsent;
+		}
 	};
 
 #define UYM_STATE_AMOUNT	3
@@ -464,40 +478,13 @@ namespace uym {
 		return true;	// To avoid a 'warning'.
 	}
 
-	enum action__ {	// But de l'appel de la fonction.
-		aTest,		// Test de la cohérence des fichiers.
-		aProceed,	// La connection aux fichiers doit effctivement être établie.
-		aSync,		// Procède aux écritures nécessaires pour assurer la cohérence des fichiers.
-		a_amount,
-		a_Undefined
-	};
-
-#define UYM_ACTION_AMOUNT	3
-	
-	inline state__ Connect(
+	inline state__ Plug(
 		untyped_memory_ &Memory,
-		untyped_memory_file_manager___ &FileManager,
-		action__ Action )
+		untyped_memory_file_manager___ &FileManager )
 	{
-#if UYM_ACTION_AMOUNT != 3
-#	error "'action__' changed'.
-#endif
 		state__ State = ( FileManager.Exists() ? sExists : sAbsent );
 
-		switch ( Action ) {
-		case aTest:
-			break;
-		case aProceed:
-			Memory.plug( FileManager );
-
-			if ( State == sExists )
-				Memory.Allocate( FileManager.FileSize() );
-		case aSync:
-			break;
-		default:
-			ERRu();
-			break;
-		}
+		Memory.Allocate( FileManager.UnderlyingSize() );
 
 		return State;
 	}

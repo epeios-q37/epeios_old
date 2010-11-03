@@ -67,6 +67,7 @@ extern class ttr_tutor &MMMTutor;
 #include "tol.h"
 #include "txf.h"
 #include "flm.h"
+#include "flf.h"
 
 #ifdef UYM__INC
 #	ifndef UYM__HEADER_HANDLED
@@ -1697,10 +1698,9 @@ namespace mmm {
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
-		friend uym::state__ Connect(
+		friend uym::state__ Plug(
 			multimemory_ &Multimemory,
-			class multimemory_file_manager___ &FileManager,
-				uym::action__ Action );
+			class multimemory_file_manager___ &FileManager );
 	};
 
 	typedef uym::untyped_memory_file_manager___ _untyped_memory_file_manager___;
@@ -1718,13 +1718,7 @@ namespace mmm {
 			_untyped_memory_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				if ( ( _Multimemory != NULL )
-					 && _untyped_memory_file_manager___::IsPersistent()
-					 && untyped_memory_file_manager___::Exists()
-					 && ( !fil::FileExists( _FreeFragmentPositionFileName )
-					      || ( untyped_memory_file_manager___::TimeStamp()
-						       >= fil::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
-					_WriteFreeFragmentPositions();
+				Sync();
 			}
 
 			_untyped_memory_file_manager___::reset( P );
@@ -1760,17 +1754,48 @@ namespace mmm {
 
 			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
-		friend uym::state__ Connect(
-			multimemory_ &Multimemory,
-			multimemory_file_manager___ &FileManager,
-			uym::action__ Action );
+		uym::state__ Bind( void )	// A appeler seulement aprés un 'Plug(...)'.
+		{
+			uym::state__ State = uym::s_Undefined;
+		ERRProlog
+			flf::file_iflow___ IFlow;
+		ERRBegin
+			if ( ( State = _untyped_memory_file_manager___::Bind() ) == uym::sExists ) {
+				IFlow.Init( _FreeFragmentPositionFileName );
+
+				flw::Get( IFlow, _Multimemory->S_.FreeFragment );
+				flw::Get( IFlow, _Multimemory->S_.TailingFreeFragmentPosition );
+			}
+		ERRErr
+		ERREnd
+		ERREpilog
+			return State;
+		}
+		uym::state__ Sync( void )
+		{
+			uym::state__ State = _untyped_memory_file_manager___::Sync();
+
+			if ( ( _Multimemory != NULL )
+					&& _untyped_memory_file_manager___::IsPersistent()
+					&& untyped_memory_file_manager___::Exists()
+					&& ( !fil::FileExists( _FreeFragmentPositionFileName )
+					    || ( untyped_memory_file_manager___::TimeStamp()
+						    >= fil::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
+				_WriteFreeFragmentPositions();
+
+		}
 	};
 
-
-	uym::state__ Connect(
+	inline uym::state__ Plug(
 		multimemory_ &Multimemory,
-		multimemory_file_manager___ &FileManager,
-		uym::action__ Action );
+		multimemory_file_manager___ &FileManager )
+	{
+		uym::state__ State = uym::Plug( Multimemory.Memory, FileManager );
+
+		Multimemory.SetSize( FileManager.UnderlyingSize() );
+
+		return State;
+	}
 
 	class standalone_multimemory_driver__
 	: public multimemory_driver__

@@ -552,45 +552,19 @@ namespace bch {
 #ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
 
-	template <typename bunch> uym::state__ Connect(
+	template <typename bunch> uym::state__ Plug(
 		bunch &Bunch,
-		bunch_file_manager___ &FileManager,
-		uym::action__ Action )
+		bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::Connect( Bunch, FileManager, Action );
+		uym::state__ State = tym::Plug( Bunch, FileManager );
 
-#if UYM_ACTION_AMOUNT != 3
-#	error "'uym::a_amount' changed !"
-#endif
+		Bunch.SetStepValue( 0 );	// Pas de préallocation.
 
-		switch ( Action ) {
-		case uym::aTest:
-			break;
-		case uym::aProceed:
-			Bunch.SetStepValue( 0 );	// Pas de préallocation.
-
-			if ( State == uym::sExists )
-				Bunch.Allocate( FileManager.FileSize() / Bunch.GetItemSize(), aem::mFit );
-			break;
-		case uym::aSync:
-			break;
-		default:
-			ERRu();
-			break;
-		}
+		Bunch.Allocate( FileManager.UnderlyingSize() / Bunch.GetItemSize(), aem::mFit );
 
 		return State;
 	}
 #endif
-/*
-	template <typename bunch> epeios::row__ Connect(
-		bunch &Bunch,
-		mmi::indexed_multimemory_ &IndexedMultimemory,
-		epeios::row__ *Tow = NULL )
-	{
-		Bunch.I
-	}
-*/
 
 	typedef E_BUNCH_( epeios::row__ ) relations_;
 	E_AUTO( relations )

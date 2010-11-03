@@ -1,13 +1,21 @@
-$Id$
+$Id$*
+
+03/11/2010 :
+	- UYM :
+		- Suppression de 'action__' (ex-'purpose__').
+		- 'Connect(...)' -> 'Plug(...)'.
+		- Création 'Bind(...)' et 'Sync(...)'.
+	- GENERAL :
+		- Adaptation aux modification bibliothqèue 'UYM'.
 
 02/11/2010 :
 	- GENERAL :
-		- Adaptation aux modification bibliothqèue 'UYM4'.
+		- Adaptation aux modification bibliothqèue 'UYM'.
 	- NSXPCM :
 		- Ajout version 'const str::string_ &' de 'LanchURI(...)'.
 	- UYM :
 		- 'status__' -> 'state__'.
-		- 'purpose__' -> 'acition__'.
+		- 'purpose__' -> 'action__'.
 		- Ajout de 'aSync'.
 	- XULFTK :
 		- Mise en oeuvre de 'BrowseInformations()' et 'BrowseWEBSite()'.

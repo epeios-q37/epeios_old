@@ -279,12 +279,11 @@ namespace tym {
 #ifndef FLM__COMPILATION
 	typedef uym::untyped_memory_file_manager___ memory_file_manager___;
 
-	template <typename memory> inline uym::state__ Connect(
+	template <typename memory> inline uym::state__ Plug(
 		memory &Memory,
-		memory_file_manager___ &FileManager,
-		uym::action__ Action )
+		memory_file_manager___ &FileManager )
 	{
-		return uym::Connect( Memory.GetUnderlyingMemory(), FileManager, Action );
+		return uym::Plug( Memory.GetUnderlyingMemory(), FileManager );
 	}
 #endif
 

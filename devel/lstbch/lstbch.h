@@ -184,13 +184,7 @@ namespace lstbch {
 			_bunch_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				if ( ( _ListStore != NULL )
-					 && _bunch_file_manager___::IsPersistent()
-					 && _bunch_file_manager___::Exists()
-					 && ( !fil::FileExists( _ListFileName )
-					      || ( _bunch_file_manager___::TimeStamp()
-						       >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
-					lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
+				Sync();
 			}
 
 			_bunch_file_manager___::reset( P );
@@ -221,6 +215,22 @@ namespace lstbch {
 				ERRa();
 
 			strcpy( _ListFileName, ListFileName );
+		}
+		uym::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		{
+			return lst::ReadFromFile( ListFileName(), TimeStamp(), *_ListStore );
+		}
+		uym::state__ Sync( void )
+		{
+			if ( ( _ListStore != NULL )
+					&& _bunch_file_manager___::IsPersistent()
+					&& _bunch_file_manager___::Exists()
+					&& ( !fil::FileExists( _ListFileName )
+					    || ( _bunch_file_manager___::TimeStamp()
+						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
+				lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
+
+			return _bunch_file_manager___::Sync();
 		}
 		void Drop( void )
 		{
@@ -280,21 +290,17 @@ namespace lstbch {
 	};
 
 
-	template <typename list_bunch> uym::status__ Connect(
+	template <typename list_bunch> uym::state__ Plug(
 		list_bunch &ListBunch,
-		list_bunch_file_manager___ &FileManager,
-		uym::purpose__ Purpose )
+		list_bunch_file_manager___ &FileManager )
 	{
-		uym::status__ Status = bch::Connect( ListBunch.Bunch(), FileManager, Purpose );
+		uym::state__ State = bch::Plug( ListBunch.Bunch(), FileManager );
 
-		if ( Purpose == uym::pProceed ) {
-			FileManager.Set( ListBunch.Locations );
+		ListBunch.Locations.Set( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
 
-			if ( Status == uym::sExists )
-				Status = lst::ReadFromFile( FileManager.ListFileName(), FileManager.FileSize() / ListBunch.GetItemSize(), ListBunch, Purpose, FileManager.TimeStamp() );
-		}
+		FileManager.Set( ListBunch.Locations );
 
-		return Status;
+		return State;
 	}
 #endif
 
