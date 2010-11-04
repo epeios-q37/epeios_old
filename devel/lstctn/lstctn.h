@@ -162,6 +162,13 @@ namespace lstctn {
 	private:
 		lst::store_ *_ListStore;
 		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+		void _Set( lst::store_ &Store )
+		{
+			if ( _ListStore != NULL )
+				ERRu();
+
+			_ListStore = &Store;
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -185,7 +192,6 @@ namespace lstctn {
 			reset();
 		}
 		void Init(
-			container &Container,
 			const char *ContainerStaticsFileName,
 			const char *ContainerDynamicsFileName,
 			const char *ContainerMultimemoryFileName,
@@ -197,7 +203,7 @@ namespace lstctn {
 		{
 			reset();
 
-			_container_file_manager___<container>::Init( Container, ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_container_file_manager___<container>::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 
 			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
 				ERRa();
@@ -208,7 +214,9 @@ namespace lstctn {
 		{
 			uym::state__ State = _container_file_manager___<container>::Bind();
 
-			lst::ReadFromFile( FileManager.ListFileName(), *_ListStore, FileManager.TimeStamp() );
+			lst::ReadFromFile( _ListFileName, TimeStamp(), *_ListStore );
+
+			return State;
 		}
 		uym::state__ Sync( void )
 		{
@@ -218,7 +226,7 @@ namespace lstctn {
 					&& ( !fil::FileExists( _ListFileName )
 					    || ( _container_file_manager___<container>::TimeStamp()
 						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
-				lst::WriteToFile( *_ListStore, _ListFileName, _container_file_manager___<container>::TimeStamp() );
+				lst::WriteToFile( *_ListStore, _ListFileName, TimeStamp() );
 
 			return _container_file_manager___<container>::Sync();
 
@@ -274,19 +282,23 @@ namespace lstctn {
 
 			return Success;
 		}
+		uym::state__ Plug( container &ListContainer )
+		{
+			uym::state__ State = ctn::Plug( ListContainer.Container(), *this );
+
+			ListContainer.Locations.SetFirstUnused( StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
+
+			_Set( ListContainer.Locations );
+
+			return State;
+		}
 	};
 
-	template <typename list_container> uym::state__ Plug(
+	template <typename list_container> inline uym::state__ Plug(
 		list_container &ListContainer,
 		list_container_file_manager___<list_container> &FileManager )
 	{
-		uym::status__ Status = ctn::Plug( ListContainer.Container(), FileManager );
-
-		ListContainer.Set( FileManager.StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
-
-		FileManager.Set( ListContainer.Locations );
-
-		return State;
+		return FileManager.Plug( ListContainer );
 	}
 
 

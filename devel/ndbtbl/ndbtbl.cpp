@@ -249,7 +249,6 @@ static const str::string_ &GetFileName_(
 */
 
 void ndbtbl::table_atomized_file_manager___::_InitStatic(
-	table_ &Table,
 	const str::string_ &BaseFileName,
 	mode__ Mode,
 	flm::id__ ID )
@@ -261,14 +260,13 @@ ERRBegin
 
 //	GetFileName_( Path, BaseFileName, FileName );
 
-	_Static.Init( Table.Content.Static(), BaseFileName, Convert( Mode ), ID );
+	_Static.Init( BaseFileName, Convert( Mode ), ID );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 void ndbtbl::table_atomized_file_manager___::_InitDynamic(
-	table_ &Table,
 	const str::string_ &BaseFileName,
 	mode__ Mode,
 	flm::id__ ID )
@@ -280,7 +278,7 @@ ERRBegin
 
 //	GetFileName_( Path, RootFileName, FileName );
 
-	_Dynamic.Init( Table.Content.Dynamic(), BaseFileName, Convert( Mode ), ID );
+	_Dynamic.Init( BaseFileName, Convert( Mode ), ID );
 ERRErr
 ERREnd
 ERREpilog

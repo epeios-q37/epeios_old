@@ -214,8 +214,7 @@ namespace ndbsct {
 			_FileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				if ( ( _Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
-					_SaveLocations();
+				Sync();
 			}
 
 			_FileManager.reset( P );
@@ -232,10 +231,26 @@ namespace ndbsct {
 			reset();
 		}
 		void Init(
-			static_content_ &Content,
 			const str::string_ &BaseFileName,
 			fil::mode__ Mode,
 			flm::id__ ID );
+		void Set( static_content_ &Content )
+		{
+			if ( _Content != NULL )
+				ERRu();
+
+			_Content = &Content;
+		}
+		uym::state__ Bind( void );
+		uym::state__ Sync( void )
+		{
+			uym::state__ State = _FileManager.Sync();
+
+			if ( ( _Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+				_SaveLocations();
+
+			return State;
+		}
 		void WriteLocationsFile( void )	// Met à jour les fichiers.
 		{
 			_SaveLocations();
@@ -256,8 +271,21 @@ namespace ndbsct {
 		{
 			return _BaseFileName;
 		}
-		uym::status__ ConnectToFiles( uym::purpose__ Purpose );
+		friend uym::state__ Plug(
+			static_content_ &Content,
+			static_content_atomized_file_manager___ &FileManager );
 	};
+
+	inline uym::state__ Plug(
+		static_content_ &Content,
+		static_content_atomized_file_manager___ &FileManager )
+	{
+		uym::state__ State = tym::Plug( Content.Storage, FileManager._FileManager );
+
+		FileManager.Set( Content );
+
+		return State;
+	}
 
 
 }

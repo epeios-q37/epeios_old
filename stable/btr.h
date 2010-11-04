@@ -918,12 +918,11 @@ namespace btr {
 
 	typedef bch::bunch_file_manager___ binary_tree_file_manager___;
 
-	template <typename tree> uym::status__ Connect(
+	template <typename tree> uym::state__ Plug(
 		tree &Tree,
-		binary_tree_file_manager___ &FileManager,
-		uym::purpose__ Purpose)
+		binary_tree_file_manager___ &FileManager )
 	{
-		return bch::Connect( Tree.Nodes, FileManager, Purpose );
+		return bch::Plug( Tree.Nodes, FileManager );
 	}
 
 

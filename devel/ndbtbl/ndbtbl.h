@@ -394,22 +394,22 @@ namespace ndbtbl {
 	class table_atomized_file_manager___
 	{
 	private:
+		type__ _Type;
 		// Seulement l'un des deux est utilisé.
 		ndbdct::dynamic_content_atomized_file_manager___ _Dynamic;
 		ndbsct::static_content_atomized_file_manager___ _Static;
 		void _InitStatic(
-			table_ &Table,
 			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID );
 		void _InitDynamic(
-			table_ &Table,
 			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID );
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			_Type = t_Undefined;
 			_Dynamic.reset( P );
 			_Static.reset( P );
 		}
@@ -422,22 +422,70 @@ namespace ndbtbl {
 			reset();
 		}
 		void Init(
-			table_ &Table,
+			type__ Type,
 			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID )
 		{
-			switch ( Table.Type() ) {
+			_Type = Type;
+
+			switch ( _Type ) {
 			case tStatic:
-				_InitStatic( Table, BaseFileName, Mode, ID );
+				_InitStatic( BaseFileName, Mode, ID );
 				break;
 			case tDynamic:
-				_InitDynamic( Table, BaseFileName, Mode, ID );
+				_InitDynamic( BaseFileName, Mode, ID );
 				break;
 			default:
 				ERRu();
 				break;
 			}
+		}
+		void Set( table_ &Table )
+		{
+			switch ( _Type ) {
+			case tStatic:
+				_Static.Set( Table.Content.Static() );
+				break;
+			case tDynamic:
+				_Dynamic.Set( Table.Content.Dynamic() );
+				break;
+			default:
+				ERRu();
+				break;
+			}
+		}
+		uym::state__ Bind( void )
+		{
+			switch ( _Type ) {
+			case tStatic:
+				return _Static.Bind();
+				break;
+			case tDynamic:
+				return _Dynamic.Bind();
+				break;
+			default:
+				ERRu();
+				break;
+			}
+
+			return uym::s_Undefined;	// Pour éviter un 'warning'.
+		}
+		uym::state__ Sync( void )
+		{
+			switch ( _Type ) {
+			case tStatic:
+				return _Static.Sync();
+				break;
+			case tDynamic:
+				return _Dynamic.Sync();
+				break;
+			default:
+				ERRu();
+				break;
+			}
+
+			return uym::s_Undefined;	// Pour éviter un 'warning'.
 		}
 		const str::string_ &BaseFileName( type__ Type ) const
 		{
@@ -457,26 +505,33 @@ namespace ndbtbl {
 
 			return _Static.BaseFileName();	// Pour éviter un 'warning'.
 		}
-		uym::status__ ConnectToFiles(
-			type__ Type,
-			uym::purpose__ Purpose )
-		{
-			switch ( Type ) {
-			case tStatic:
-				return _Static.ConnectToFiles( Purpose );
-				break;
-			case tDynamic:
-				return _Dynamic.ConnectToFiles( Purpose );
-				break;
-			default:
-				ERRu();
-				break;
-			}
+		friend uym::state__ Plug(
+			table_ &Table,
+			table_atomized_file_manager___ &FileManager );
+	};
 
-			return uym::s_Undefined;	// Pour éviter un 'warning'.
+	inline uym::state__ Plug(
+		table_ &Table,
+		table_atomized_file_manager___ &FileManager )
+	{
+		uym::state__ State = uym::s_Undefined;
+		switch ( Table.Type() ) {
+		case tStatic:
+			ndbsct::Plug( Table.Content.Static(), FileManager._Static );
+			break;
+		case tDynamic:
+			ndbdct::Plug( Table.Content.Dynamic(), FileManager._Dynamic );
+			break;
+		default:
+			ERRu();
+			break;
 		}
 
-	};
+		FileManager.Set( Table );
+
+		return State;
+
+	}
 
 
 

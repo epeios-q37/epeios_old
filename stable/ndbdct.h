@@ -568,8 +568,7 @@ namespace ndbdct {
 			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
-					_SaveLocationsAndAvailables();
+				Sync();
 			}
 
 			_StorageFileManager.reset( P );
@@ -587,11 +586,29 @@ namespace ndbdct {
 			reset();
 		}
 		void Init(
-			dynamic_content_ &Content,
 			const str::string_ &BaseFileName,
 			fil::mode__ Mode,
 			flm::id__ ID );
-		uym::status__ ConnectToFiles( uym::purpose__ Purpose );
+		void Set( dynamic_content_ &Content )
+		{
+			if ( _Content != NULL )
+				ERRu();
+
+			_Content = &Content;
+		}
+		uym::state__ Bind( void );
+		uym::state__ Sync( void )
+		{
+			uym::state__ State = _StorageFileManager.Sync();
+
+			if ( _EntriesFileManager.Bind()  != State )
+				State = uym::sInconsistent;
+
+			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+				_SaveLocationsAndAvailables();
+
+			return State;
+		}
 		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
 		{
 			_SaveLocationsAndAvailables();
@@ -614,7 +631,14 @@ namespace ndbdct {
 		{
 			return _BaseFileName;
 		}
+		friend uym::state__ Plug(
+			dynamic_content_ &Content,
+			dynamic_content_atomized_file_manager___ &FileManager );
 	};
+
+	uym::state__ Plug(
+		dynamic_content_ &Content,
+		dynamic_content_atomized_file_manager___ &FileManager );
 }
 
 /*$END$*/

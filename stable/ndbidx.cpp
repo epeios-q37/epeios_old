@@ -575,7 +575,6 @@ ERREpilog
 
 
 void ndbidx::index_atomized_file_manager___::Init(
-	index_ &Index,
 	const str::string_ &BaseFileName,
 	bso::bool__ Erase,
 	fil::mode__ Mode,
@@ -588,8 +587,6 @@ ERRProlog
 	STR_BUFFER___ QueueFileNameBuffer;
 ERRBegin
 	reset();
-
-	_Index = &Index;
 
 	TreeFileName.Init( BaseFileName );
 	TreeFileName.Append( TREE_FILE_NAME_EXTENSION );

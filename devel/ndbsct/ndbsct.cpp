@@ -91,7 +91,6 @@ void ndbsct::static_content_atomized_file_manager___::_SaveLocations( void ) con
 }
 
 void ndbsct::static_content_atomized_file_manager___::Init(
-	static_content_ &Content,
 	const str::string_ &BaseFileName,
 	fil::mode__ Mode,
 	flm::id__ ID )
@@ -109,10 +108,6 @@ ERRBegin
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
 
 	_FileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
-
-	_Content = &Content;
-
-//	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog
@@ -122,42 +117,31 @@ ERREpilog
 //#define IN_MEMORY
 
 
-uym::status__ ndbsct::static_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
+uym::state__ ndbsct::static_content_atomized_file_manager___::Bind( void )
 {
-	uym::status__ Status = uym::s_Undefined;
+	uym::state__ State = uym::s_Undefined;
 ERRProlog
 	str::string ContentFileName;
 	STR_BUFFER___ ContentFileNameBuffer;
 	str::string ListFileName;
 	STR_BUFFER___ ListFileNameBuffer;
-#ifdef IN_MEMORY
-	tym::E_MEMORY( atom__) Storage;
-#endif
 ERRBegin
 	ContentFileName.Init( _BaseFileName );
 	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-#ifdef IN_MEMORY
-	Storage.Init();
-	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, Storage );
 
-	static_content_::Storage.Allocate( tol::GetFileSize( ContentFileNameBuffer ) );
-	static_content_::Storage.Store( Storage, tol::GetFileSize( ContentFileNameBuffer ) );
-#else
-//	Exists = Set_( S_.MemoryDriver.Storage, ContentFileNameBuffer, S_.Mode, static_content_::Storage );
-	Status = tym::Connect( _Content->Storage, _FileManager, Purpose );
-#endif
+	State = _FileManager.Bind();
 
-	if ( Status == uym::sExists ) {
+	if ( State == uym::sExists ) {
 
 		ListFileName.Init( _BaseFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
-		Status = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), fil::GetFileSize( ContentFileName.Convert( ContentFileNameBuffer ) ) / _Content->S_.Size, *_Content, Purpose, _GetUnderlyingFilesLastModificationTime() );
+		State = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), *_Content, _GetUnderlyingFilesLastModificationTime() );
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Status;
+	return State;
 }
 
 void ndbsct::static_content_atomized_file_manager___::_ErasePhysically( void )

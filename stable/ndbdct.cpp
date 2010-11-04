@@ -136,7 +136,6 @@ void ndbdct::dynamic_content_atomized_file_manager___::_SaveLocationsAndAvailabl
 }
 
 void ndbdct::dynamic_content_atomized_file_manager___::Init(
-	dynamic_content_ &Content,
 	const str::string_ &BaseFileName,
 	fil::mode__ Mode,
 	flm::id__ ID )
@@ -165,10 +164,6 @@ ERRBegin
 
 	_BaseFileName.Init( BaseFileName );
 	_Mode = Mode;
-
-	_Content = &Content;
-
-//	_ConnectToFiles();
 ERRErr
 ERREnd
 ERREpilog
@@ -297,38 +292,20 @@ ERREpilog
 	return Success;
 }
 
-
-
-uym::status__ ndbdct::dynamic_content_atomized_file_manager___::ConnectToFiles( uym::purpose__ Purpose )
+uym::state__ ndbdct::dynamic_content_atomized_file_manager___::Bind( void )
 {
-	uym::status__ Status = uym::s_Undefined;
-ERRProlog
 	available__ TestAvailable;
-ERRBegin
-	Status = tym::Connect( _Content->Storage.Memory, _StorageFileManager, Purpose );
 
-	if ( lstbch::Connect( _Content->Entries, _EntriesFileManager, Purpose ) != Status ) {
-		Status = uym::sInconsistent;
-		ERRReturn;
-	}
+	uym::state__ State = _StorageFileManager.Bind();
 
-	if ( Purpose == uym::pProceed )
-		if ( Status == uym::sExists )
-			_Content->S_.Unallocated = _StorageFileManager.FileSize();
-		else
-			_Content->S_.Unallocated = 0;
+	if ( _EntriesFileManager.Bind() != State )
+		return uym::sInconsistent;
 
-	if ( Status == uym::sExists )
-		if ( Purpose == uym::pProceed ) {
-			if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-				Status = uym::sInconsistent;
-		} else
-			if ( !Test_( _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-					Status = uym::sInconsistent;
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
+	if ( State == uym::sExists )
+		if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
+			State = uym::sInconsistent;
+
+	return State;
 }
 
 void ndbdct::dynamic_content_atomized_file_manager___::_ErasePhysically( void )
@@ -343,6 +320,27 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+uym::state__ ndbdct::Plug(
+	dynamic_content_ &Content,
+	dynamic_content_atomized_file_manager___ &FileManager )
+{
+	uym::state__ State = tym::Plug( Content.Storage.Memory, FileManager._StorageFileManager );
+
+	if ( lstbch::Plug( Content.Entries, FileManager._EntriesFileManager ) != State )
+		return uym::sInconsistent;
+
+	FileManager.Set( Content );
+
+	Content.S_.Unallocated = FileManager._StorageFileManager.UnderlyingSize();
+
+	if ( State == uym::sExists )
+		if ( !Test_( FileManager._BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, FileManager._GetUnderlyingFilesLastModificationTime() ) )
+				State = uym::sInconsistent;
+
+	return State;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -109,11 +109,15 @@ namespace ids {
 			return *this;
 		}
 		//f Initialization with 'First' as first unused.
-		void Init( id__ First = 0 )
+		void Init( id__ FirstUnused = 0 )
 		{
-			S_.FirstUnused = First;
+			S_.FirstUnused = FirstUnused;
 
 			Released.Init();
+		}
+		void SetFirstUnused( id__ FirstUnused )
+		{
+			S_.FirstUnused = FirstUnused;
 		}
 		//f Return a new unused id. 'Released' is set at 'true' if the id is a released one.
 		id__ New( bso::bool__ &Released )

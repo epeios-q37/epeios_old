@@ -1712,6 +1712,13 @@ namespace mmm {
 		multimemory_ *_Multimemory;
 		void _WriteFreeFragmentPositions( void );
 		tol::E_FPOINTER___( bso::char__ ) _FreeFragmentPositionFileName;
+		void _Set( multimemory_ &Multimemory )
+		{
+			if ( _Multimemory != NULL )
+				ERRu();
+
+			_Multimemory = &Multimemory;
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -1736,7 +1743,6 @@ namespace mmm {
 			reset();
 		}
 		void Init(
-			multimemory_ &Multimemory,
 			const char *FileName,
 			const char *FreeFragmentPositionsFileName,
 			fil::mode__ Mode,
@@ -1749,8 +1755,6 @@ namespace mmm {
 				ERRa();
 
 			strcpy( _FreeFragmentPositionFileName, FreeFragmentPositionsFileName );
-
-			_Multimemory = &Multimemory;
 
 			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
@@ -1783,7 +1787,12 @@ namespace mmm {
 						    >= fil::GetFileLastModificationTime( _FreeFragmentPositionFileName ) ) ) )
 				_WriteFreeFragmentPositions();
 
+			return State;
+
 		}
+		friend uym::state__ Plug(
+			multimemory_ &Multimemory,
+			multimemory_file_manager___ &FileManager );
 	};
 
 	inline uym::state__ Plug(
@@ -1791,6 +1800,8 @@ namespace mmm {
 		multimemory_file_manager___ &FileManager )
 	{
 		uym::state__ State = uym::Plug( Multimemory.Memory, FileManager );
+
+		FileManager._Set( Multimemory );
 
 		Multimemory.SetSize( FileManager.UnderlyingSize() );
 

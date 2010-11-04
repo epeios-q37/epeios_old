@@ -330,7 +330,8 @@ namespace ctn {
 	};
 
 
-	template <typename container> class container_file_manager___ {
+	template <typename container> class container_file_manager___
+	{
 	private:
 		tym::memory_file_manager___ _Statics;
 		mmi::indexed_multimemory_file_manager___ _Dynamics;
@@ -349,7 +350,6 @@ namespace ctn {
 			reset();
 		}
 		void Init( 
-			container &Container,
 			const char *StaticsFileName,
 			const char *DynamicsDescriptorsFileName,
 			const char *DynamicsMultimemoryFileName,
@@ -359,25 +359,25 @@ namespace ctn {
 			flm::id__ ID )
 		{
 			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
-			_Dynamics.Init( Container.Dynamics, DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
 		uym::state__ Bind( void )
 		{
 			uym::state__ State = _Statics.Bind();
 
-			if ( _Dynamics.Bind() != Status )
-				Status = uym::sInconsistent;
+			if ( _Dynamics.Bind() != State )
+				State = uym::sInconsistent;
 
-			return Status;
+			return State;
 		}
 		uym::state__ Sync( void )
 		{
 			uym::state__ State = _Statics.Sync();
 
-			if ( _Dynamics.Sync() != Status )
-				Status = uym::sInconsistent;
+			if ( _Dynamics.Sync() != State )
+				State = uym::sInconsistent;
 
-			return Status;
+			return State;
 		}
 		void ReleaseFiles( void )
 		{

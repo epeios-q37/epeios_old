@@ -453,6 +453,9 @@ namespace uym {
 			else
 				return sAbsent;
 		}
+		friend state__ Plug(
+			untyped_memory_ &Memory,
+			untyped_memory_file_manager___ &FileManager );
 	};
 
 #define UYM_STATE_AMOUNT	3

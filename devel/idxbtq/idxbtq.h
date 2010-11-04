@@ -266,6 +266,10 @@ namespace idxbtq {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				Sync();
+			}
+
 			_TreeFileManager.reset( P );
 			_QueueFileManager.reset( P );
 		}
@@ -289,6 +293,26 @@ namespace idxbtq {
 			_TreeFileManager.Init( TreeFileName, Mode, Persistent, ID );
 
 			_QueueFileManager.Init( QueueFileName, Mode, Persistent, ID );
+		}
+		uym::state__ Bind( void )
+		{
+			uym::state__ State = _TreeFileManager.Bind();
+
+			if ( _QueueFileManager.Bind() != State )
+				State = uym::sInconsistent;
+
+			return State;
+
+		}
+		uym::state__ Sync( void )
+		{
+			uym::state__ State = _TreeFileManager.Sync();
+
+			if ( _QueueFileManager.Sync() != State )
+				State = uym::sInconsistent;
+
+			return State;
+
 		}
 		void ReleaseFiles( void )
 		{
@@ -352,17 +376,16 @@ namespace idxbtq {
 	};
 
 
-	template <typename index> uym::status__ Connect(
+	template <typename index> uym::state__ Plug(
 		index &Index,
-		index_file_manager___ &FileManager,
-		uym::purpose__ Purpose )
+		index_file_manager___ &FileManager )
 	{
-		uym::status__ Status = idxbtr::Connect( Index, FileManager.TreeFileManager(), Purpose );
+		uym::state__ State = idxbtr::Plug( Index, FileManager.TreeFileManager() );
 
-		if ( Status != idxque::Connect( Index, FileManager.QueueFileManager(), Purpose ) )
-			Status = uym::sInconsistent;
+		if ( State != idxque::Plug( Index, FileManager.QueueFileManager() ) )
+			State = uym::sInconsistent;
 
-		return Status;
+		return State;
 	}
 
 

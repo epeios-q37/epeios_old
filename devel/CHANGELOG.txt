@@ -1,5 +1,11 @@
 $Id$*
 
+04/11/2010 :
+	- GENERAL :
+		- Adaptation aux modification bibliothqèue 'UYM'.
+	- IDS :
+		- Ajout 'SetFirstUnused(...)'.
+
 03/11/2010 :
 	- UYM :
 		- Suppression de 'action__' (ex-'purpose__').

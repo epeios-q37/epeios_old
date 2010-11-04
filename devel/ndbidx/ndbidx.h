@@ -525,7 +525,10 @@ namespace ndbidx {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_FileManager.ReleaseFiles();
+			if ( P ) {
+				Sync();
+			}
+
 
 			_FileManager.reset( P );
 			_Mode = fil::m_Undefined;
@@ -541,11 +544,30 @@ namespace ndbidx {
 			reset();
 		}
 		void Init(
-			index_ &Index,
 			const str::string_ &BaseFileName,
 			bso::bool__ Erase,
 			fil::mode__ Mode,
 			flm::id__ ID );
+		void Set( index_ &Index )
+		{
+			if ( _Index != NULL )
+				_Index = &Index;
+
+			_Index = &Index;
+		}
+		uym::state__ Bind( void )
+		{
+			uym::state__ State = _FileManager.Bind();
+
+			if ( State == uym::sExists )
+				_Index->SearchRoot();
+
+			return State;
+		}
+		uym::state__ Sync( void )
+		{
+			return _FileManager.Sync();
+		}
 		void CloseFiles( void )
 		{
 			_FileManager.ReleaseFiles();
@@ -554,16 +576,22 @@ namespace ndbidx {
 		{
 			return _BaseFileName;
 		}
-		uym::status__ ConnectToFiles( uym::purpose__ Purpose )
-		{
-			uym::status__ Status = idxbtq::Connect( _Index->DIndex, _FileManager, Purpose );
-
-			if ( ( Status == uym::sExists ) && ( Purpose == uym::pProceed ) )
-				_Index->SearchRoot();
-
-			return Status;
-		}
+		friend uym::state__ Plug(
+			index_ &Index,
+			index_atomized_file_manager___	&FileManager );
 	};
+
+	inline uym::state__ Plug(
+		index_ &Index,
+		index_atomized_file_manager___	&FileManager )
+	{
+		uym::state__ State = idxbtq::Plug( Index.DIndex, FileManager._FileManager );
+
+		FileManager.Set( Index );
+
+		return State;
+	}
+
 
 
 }

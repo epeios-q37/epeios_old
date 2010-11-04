@@ -487,7 +487,6 @@ namespace mmi {
 			reset();
 		}
 		void Init( 
-			indexed_multimemory_ &IndexedMultimemory,
 			const char *DescriptorsFileName,
 			const char *MultimemoryFileName,
 			const char *MultimemoryFreeFragmentPositionsFileName,
@@ -496,7 +495,7 @@ namespace mmi {
 			flm::id__ ID )
 		{
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, ID );
-			_Multimemory.Init( IndexedMultimemory.Multimemoire, MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_Multimemory.Init( MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
 		uym::state__ Bind( void )	// A appeler seulement aprés 'Plug(...)'.
 		{
