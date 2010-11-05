@@ -601,7 +601,7 @@ namespace ndbdct {
 		{
 			uym::state__ State = _StorageFileManager.Sync();
 
-			if ( _EntriesFileManager.Bind()  != State )
+			if ( _EntriesFileManager.Sync()  != State )
 				State = uym::sInconsistent;
 
 			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )

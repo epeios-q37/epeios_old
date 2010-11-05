@@ -441,14 +441,18 @@ namespace uym {
 		}
 		state__ Bind( void )	// To call only after a 'Plugt(...)'.
 		{
-			if ( Exists() )
+			if ( GetFileName() == NULL )
+				return sInconsistent;
+			else if ( Exists() )
 				return sExists;
 			else
 				return sAbsent;
 		}
 		state__ Sync( void )
 		{
-			if ( Exists() )
+			if ( GetFileName() == NULL )
+				return sInconsistent;
+			else if ( Exists() )
 				return sExists;
 			else
 				return sAbsent;
@@ -486,6 +490,8 @@ namespace uym {
 		untyped_memory_file_manager___ &FileManager )
 	{
 		state__ State = ( FileManager.Exists() ? sExists : sAbsent );
+
+		Memory.plug( FileManager );
 
 		Memory.Allocate( FileManager.UnderlyingSize() );
 

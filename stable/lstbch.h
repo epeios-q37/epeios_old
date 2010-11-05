@@ -296,7 +296,7 @@ namespace lstbch {
 	{
 		uym::state__ State = bch::Plug( ListBunch.Bunch(), FileManager );
 
-		ListBunch.Locations.Set( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
+		ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
 
 		FileManager.Set( ListBunch.Locations );
 

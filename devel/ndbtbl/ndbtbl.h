@@ -441,20 +441,6 @@ namespace ndbtbl {
 				break;
 			}
 		}
-		void Set( table_ &Table )
-		{
-			switch ( _Type ) {
-			case tStatic:
-				_Static.Set( Table.Content.Static() );
-				break;
-			case tDynamic:
-				_Dynamic.Set( Table.Content.Dynamic() );
-				break;
-			default:
-				ERRu();
-				break;
-			}
-		}
 		uym::state__ Bind( void )
 		{
 			switch ( _Type ) {
@@ -515,19 +501,18 @@ namespace ndbtbl {
 		table_atomized_file_manager___ &FileManager )
 	{
 		uym::state__ State = uym::s_Undefined;
+
 		switch ( Table.Type() ) {
 		case tStatic:
-			ndbsct::Plug( Table.Content.Static(), FileManager._Static );
+			State = ndbsct::Plug( Table.Content.Static(), FileManager._Static );
 			break;
 		case tDynamic:
-			ndbdct::Plug( Table.Content.Dynamic(), FileManager._Dynamic );
+			State = ndbdct::Plug( Table.Content.Dynamic(), FileManager._Dynamic );
 			break;
 		default:
 			ERRu();
 			break;
 		}
-
-		FileManager.Set( Table );
 
 		return State;
 
