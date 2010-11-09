@@ -69,6 +69,7 @@ extern class ttr_tutor &NDBTBLTutor;
 namespace ndbtbl {
 	using namespace ndbctt;
 	typedef ndbctt::post_initialization_function__ content_post_initialization_function__;
+	using ndbctt::synchronization_function__;
 
 	using namespace ndbidx;
 	typedef ndbidx::post_initialization_function__ index_post_initialization_function__;
@@ -257,19 +258,21 @@ namespace ndbtbl {
 		void InitStatic(
 			epeios::size__ Size,
 			mode__ Mode,
-			content_post_initialization_function__ &Function )
+			content_post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction )
 		{
 			Init( Mode );
 
-			Content.InitStatic( Size, Function );
+			Content.InitStatic( Size, PostInitializationFunction, SynchronizationFunction  );
 		}
 		void InitDynamic(
 			mode__ Mode,
-			content_post_initialization_function__ &Function )
+			content_post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction )
 		{
 			Init( Mode );
 
-			Content.InitDynamic( Function );
+			Content.InitDynamic( PostInitializationFunction, SynchronizationFunction  );
 		}
 		void Bufferize( void )
 		{
@@ -280,11 +283,13 @@ namespace ndbtbl {
 		{
 			_Indexes.Append( &Index );
 		}
-		rrow__ Insert( const datum_ &Datum )
+		rrow__ Insert(
+			const datum_ &Datum,
+			bso::bool__ Synchronize )
 		{
 			_Test( mReadWrite );
 
-			rrow__ Row = Content().Store( Datum );
+			rrow__ Row = Content().Store( Datum, Synchronize );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( Row );
@@ -293,24 +298,27 @@ namespace ndbtbl {
 		}
 		void Insert(
 			const data_ &Data,
-			rrows_ &RecordRows );
+			rrows_ &RecordRows,
+			bso::bool__ Synchronize );
 		void Update(
 			const datum_ &Datum,
-			rrow__ RecordRow )
+			rrow__ RecordRow,
+			bso::bool__ Synchronize )
 		{
 			_Test( mReadWrite );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 
-			Content().Store( Datum, RecordRow );
+			Content().Store( Datum, RecordRow, Synchronize );
 
 			if ( !_IsBulk() )
 				_InsertInIndexes( RecordRow );
 		}
 		void Update(
 			const data_ &Data,
-			const rrows_ &RecordRows );
+			const rrows_ &RecordRows,
+			bso::bool__ Synchronize );
 		void Retrieve(
 			rrow__ Row,
 			datum_ &Datum ) const
@@ -322,16 +330,24 @@ namespace ndbtbl {
 		void Retrieve(
 			const rrows_ &Rows,
 			data_ &Data ) const;
-		void Delete( rrow__ RecordRow )
+		void Delete(
+			rrow__ RecordRow,
+			bso::bool__ Synchronize )
 		{
 			_Test( mReadWrite );
 
-			Content().Erase( RecordRow );
+			Content().Erase( RecordRow, Synchronize );
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
 		}
-		void Delete( const rrows_ &RecordRows );
+		void Delete(
+			const rrows_ &RecordRows,
+			bso::bool__ Synchronize );
+		void Synchronize( void )
+		{
+			Content().Synchronize();
+		}
 		mode__ SwitchMode( mode__ Mode )
 		{
 			mode__ OldMode = S_.Mode;
@@ -392,6 +408,7 @@ namespace ndbtbl {
 	E_AUTO( table )
 
 	class table_atomized_file_manager___
+	: public synchronization_function__
 	{
 	private:
 		type__ _Type;
@@ -406,6 +423,11 @@ namespace ndbtbl {
 			const str::string_ &BaseFileName,
 			mode__ Mode,
 			flm::id__ ID );
+	protected:
+		void NDBCTTSynchronize( void )
+		{
+			Sync();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{

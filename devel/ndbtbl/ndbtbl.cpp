@@ -132,7 +132,8 @@ ERREpilog
 
 void ndbtbl::table_::Insert(
 	const data_ &Data,
-	rrows_ &RecordRows )
+	rrows_ &RecordRows,
+	bso::bool__ Synchronize )
 {
 	_Test( mReadWrite );
 
@@ -142,15 +143,19 @@ void ndbtbl::table_::Insert(
 	Datum.Init( Data );
 
 	while ( Row != NONE ) {
-		RecordRows.Append( Insert( Datum( Row ) ) );
+		RecordRows.Append( Insert( Datum( Row ), false ) );
 
 		Row = Data.Next( Row );
 	}
+
+	if ( Synchronize )
+		Content().Synchronize();
 }
 
 void ndbtbl::table_::Update(
 	const data_ &Data,
-	const rrows_ &RecordRows )
+	const rrows_ &RecordRows,
+	bso::bool__ Synchronize )
 {
 	if ( Data.Amount() != RecordRows.Amount() )
 		ERRu();
@@ -163,23 +168,31 @@ void ndbtbl::table_::Update(
 	Datum.Init( Data );
 
 	while ( Row != NONE ) {
-		Update( Datum( Row ), RecordRows( Row ) );
+		Update( Datum( Row ), RecordRows( Row ), false );
 
 		Row = Data.Next( Row );
 	}
+
+	if ( Synchronize )
+		Content().Synchronize();
 }
 
-void ndbtbl::table_::Delete( const rrows_ &RecordRows )
+void ndbtbl::table_::Delete(
+	const rrows_ &RecordRows,
+	bso::bool__ Synchronize )
 {
 	_Test( mReadWrite );
 
 	epeios::row__ Row = RecordRows.First();
 
 	while ( Row != NONE ) {
-		Delete( RecordRows( Row ) );
+		Delete( RecordRows( Row ), false );
 
 		Row = RecordRows.Next( Row );
 	}
+
+	if ( Synchronize )
+		Content().Synchronize();
 }
 
 

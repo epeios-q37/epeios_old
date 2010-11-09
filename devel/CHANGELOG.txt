@@ -1,4 +1,11 @@
-$Id$*
+$Id$
+
+09/11/2010 :
+	- NDBCTT :
+		- 'NDBIDXCompleteInitialization()' -> 'NDBCTTCompleteInitialization(...)'.
+		- Mise en oeuvre de la fonction de synchronisation.
+	- NDBTBL :
+		- Adaptation aux modifications bibliothèque 'NDBCTT'.
 
 04/11/2010 :
 	- GENERAL :

@@ -165,7 +165,6 @@ namespace xulftk {
 			_Kernel =  NULL;
 			_TRow = NONE;
 			_RepositoryFunctions = NULL;
-//			_TrunkFunctions.reset();
 		}
 		trunk___( void )
 		{
@@ -249,7 +248,6 @@ namespace xulftk {
 		{
 			SaveUserRegistry();
 			UI().Main().Widgets.Window.Close();
-			// nsxpcm::Close( UI().Main.Window );
 			Kernel().Close();
 
 			return true;

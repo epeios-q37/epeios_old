@@ -81,11 +81,22 @@ namespace ndbctt {
 	struct post_initialization_function__
 	{
 	protected:
-		virtual void NDBIDXCompleteInitialization( void ) = 0;
+		virtual void NDBCTTCompleteInitialization( void ) = 0;
 	public:
 		void CompleteInitialization( void )
 		{
-			NDBIDXCompleteInitialization();
+			NDBCTTCompleteInitialization();
+		}
+	};
+
+	struct synchronization_function__
+	{
+	protected:
+		virtual void NDBCTTSynchronize( void ) = 0;
+	public:
+		void Synchronize( void )
+		{
+			NDBCTTSynchronize();
 		}
 	};
 
@@ -96,6 +107,7 @@ namespace ndbctt {
 		ndbsct::static_content_ *_Static;
 		mutable ndbbsc::cache _Cache;
 		mutable post_initialization_function__ *_PostInitializationFunction;
+		mutable synchronization_function__ *_SynchronizationFunction;
 		void _CompleteInitialization( void ) const
 		{
 			if ( _PostInitializationFunction != NULL ) {
@@ -151,6 +163,7 @@ namespace ndbctt {
 			_Static = NULL;
 			_Cache.reset();
 			_PostInitializationFunction = NULL;
+			_SynchronizationFunction = NULL;
 		}
 		content__( void )
 		{
@@ -173,27 +186,35 @@ namespace ndbctt {
 		}
 		void Init(
 			ndbdct::dynamic_content_ &Dynamic,
-			post_initialization_function__ &Function )
+			post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction )
 		{
 			if ( ( _Dynamic != NULL ) || ( _Static != NULL ) )
 				ERRu();
 
 			_Dynamic = &Dynamic;
 			_Cache.Init( Dynamic.Extent() );
-			_PostInitializationFunction = &Function;
+
+			_PostInitializationFunction = &PostInitializationFunction;
+			_SynchronizationFunction = &SynchronizationFunction;
 		}
 		void Init(
 			ndbsct::static_content_ &Static,
-			post_initialization_function__ &Function )
+			post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction )
 		{
 			if ( ( _Dynamic != NULL ) || ( _Static != NULL ) )
 				ERRu();
 
 			_Static = &Static;
 			_Cache.Init( Static.Extent() );
-			_PostInitializationFunction = &Function;
+
+			_PostInitializationFunction = &PostInitializationFunction;
+			_SynchronizationFunction = &SynchronizationFunction;
 		}
-		rrow__ Store( const datum_ &Datum )
+		rrow__ Store(
+			const datum_ &Datum,
+			bso::bool__ Synchronize )
 		{
 			rrow__ Row = NONE;
 			epeios::size__ Size = 0;
@@ -217,9 +238,15 @@ namespace ndbctt {
 				_Cache.Store( Datum, Row );
 			}
 
+			if ( Synchronize )
+				if ( _SynchronizationFunction != NULL )
+					_SynchronizationFunction->Synchronize();
+
 			return Row;
 		}
-		void Erase( rrow__ Row )
+		void Erase(
+			rrow__ Row,
+			bso::bool__ Synchronize )
 		{
 			switch ( _Test() ) {
 			case tStatic:
@@ -235,10 +262,15 @@ namespace ndbctt {
 
 			if ( _UseCache() )
 				_Cache.Remove( Row );
+
+			if ( Synchronize )
+				if ( _SynchronizationFunction != NULL )
+					_SynchronizationFunction->Synchronize();
 		}
 		void Store(
 			const datum_ &Datum,
-			rrow__ Row )
+			rrow__ Row,
+			bso::bool__ Synchronize )
 		{
 			switch ( _Test() ) {
 			case tStatic:
@@ -256,6 +288,10 @@ namespace ndbctt {
 				_Cache.Remove( Row );
 				_Cache.Store( Datum, Row );
 			}
+
+			if ( Synchronize )
+				if ( _SynchronizationFunction != NULL )
+					_SynchronizationFunction->Synchronize();
 		}
 		// Retourne 'true' si l'enregistrement existe, faux sinon.
 		bso::bool__ Retrieve(
@@ -285,28 +321,12 @@ namespace ndbctt {
 
 			return Exists;
 		}
-		// Retourne 'true' si l'enregistrement existe, faux sinon.
-/*		bso::bool__ Retrieve(
-			rrow__ Row,
-			datum_ &Datum,
-			cache_ &Cache ) const
+		void Synchronize( void )
 		{
-			switch ( _Test() ) {
-			case tStatic:
-				_Static->Retrieve( Row, Datum, Cache );
-				return true;
-				break;
-			case tDynamic:
-				return _Dynamic->Retrieve( Row, Datum, Cache );
-				break;
-			default:
-				ERRc();
-				break;
-			}
-
-			return false;	// Pour éviter un 'warning'.
+			if ( _SynchronizationFunction != NULL )
+				_SynchronizationFunction->Synchronize();
 		}
-*/		time_t ModificationTimeStamp( void ) const
+		time_t ModificationTimeStamp( void ) const
 		{
 			switch ( _Test( false ) ) {
 			case tStatic:
@@ -498,23 +518,26 @@ namespace ndbctt {
 
 			_Content.Init();
 		}
-		void InitDynamic( post_initialization_function__ &Function )
+		void InitDynamic(
+			post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction  )
 		{
 			reset();
 
 			_Static.Init( 0 );
 			_Dynamic.Init();
-			_Content.Init( _Dynamic, Function );
+			_Content.Init( _Dynamic, PostInitializationFunction, SynchronizationFunction );
 		}
 		void InitStatic(
 			epeios::size__ Size,
-			post_initialization_function__ &Function )
+			post_initialization_function__&PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction  )
 		{
 			reset();
 
 			_Dynamic.Init();
 			_Static.Init( Size );
-			_Content.Init( _Static, Function );
+			_Content.Init( _Static, PostInitializationFunction, SynchronizationFunction );
 		}
 		const content__ &operator ()( void ) const
 		{
@@ -615,22 +638,25 @@ namespace ndbctt {
 		}
 		void InitStatic(
 			epeios::size__ Size,
-			post_initialization_function__ &Function )
+			post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction  )
 		{
 			_Bufferized = false;
 
-			DContent.InitStatic( Size, Function );
+			DContent.InitStatic( Size, PostInitializationFunction, SynchronizationFunction );
 
-			BContent.InitStatic( Size, *(post_initialization_function__ *)NULL );
+			BContent.InitStatic( Size, *(post_initialization_function__ *)NULL, *(synchronization_function__ *)NULL );
 //			BContent = DContent;
 		}
-		void InitDynamic( post_initialization_function__ &Function )
+		void InitDynamic(
+			post_initialization_function__ &PostInitializationFunction,
+			synchronization_function__ &SynchronizationFunction  )
 		{
 			_Bufferized = false;
 
-			DContent.InitDynamic( Function );
+			DContent.InitDynamic( PostInitializationFunction, SynchronizationFunction );
 
-			BContent.InitDynamic( *(post_initialization_function__ *)NULL );
+			BContent.InitDynamic( *(post_initialization_function__ *)NULL, *(synchronization_function__ *)NULL );
 //			BContent = DContent;
 		}
 		const content__ &operator ()( void ) const
