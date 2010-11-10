@@ -169,6 +169,10 @@ namespace lstctn {
 
 			_ListStore = &Store;
 		}
+		time_t _ContainerTimeStamp( void )
+		{
+			return _container_file_manager___<container>::TimeStamp();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -214,7 +218,7 @@ namespace lstctn {
 		{
 			uym::state__ State = _container_file_manager___<container>::Bind();
 
-			lst::ReadFromFile( _ListFileName, TimeStamp(), *_ListStore );
+			lst::ReadFromFile( _ListFileName, _ContainerTimeStamp(), *_ListStore );
 
 			return State;
 		}
@@ -226,7 +230,7 @@ namespace lstctn {
 					&& ( !fil::FileExists( _ListFileName )
 					    || ( _container_file_manager___<container>::TimeStamp()
 						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
-				lst::WriteToFile( *_ListStore, _ListFileName, TimeStamp() );
+				lst::WriteToFile( *_ListStore, _ListFileName, _ContainerTimeStamp() );
 
 			return _container_file_manager___<container>::Sync();
 
@@ -286,7 +290,7 @@ namespace lstctn {
 		{
 			uym::state__ State = ctn::Plug( ListContainer.Container(), *this );
 
-			ListContainer.Locations.SetFirstUnused( StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
+			ListContainer.Locations.SetFirstUnused( _container_file_manager___<container>::StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
 
 			_Set( ListContainer.Locations );
 

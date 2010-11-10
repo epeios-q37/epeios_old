@@ -1,5 +1,9 @@
 $Id$
 
+10/11/2010 :
+	- LSTCTN :
+		- Modifications pour adaptation aux exigences de 'g++'.
+
 09/11/2010 :
 	- NDBCTT :
 		- 'NDBIDXCompleteInitialization()' -> 'NDBCTTCompleteInitialization(...)'.
