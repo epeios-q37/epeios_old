@@ -558,7 +558,8 @@ namespace ndbdct {
 			else
 				return EntriesTimeStamp;
 		}
-		void _SaveLocationsAndAvailables( void ) const;
+		void _SaveAvailables( void ) const;
+		bso::bool__ _LoadAvailables( void );
 		void _ErasePhysically( void );
 	public:
 		void reset( bso::bool__ P = true )
@@ -568,7 +569,7 @@ namespace ndbdct {
 			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_StorageFileManager.reset( P );
@@ -596,22 +597,34 @@ namespace ndbdct {
 
 			_Content = &Content;
 		}
-		uym::state__ Bind( void );
-		uym::state__ Sync( void )
+		uym::state__ Bind( void )
 		{
-			uym::state__ State = _StorageFileManager.Sync();
+			uym::state__ State = _StorageFileManager.Bind();
 
-			if ( _EntriesFileManager.Sync()  != State )
-				State = uym::sInconsistent;
+			if ( _EntriesFileManager.Bind() != State )
+				return uym::sInconsistent;
 
-			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
-				_SaveLocationsAndAvailables();
+			if ( State == uym::sExists )
+				if ( !_LoadAvailables() )
+					State = uym::sInconsistent;
 
 			return State;
 		}
-		void WriteLocationsAndAvailablesFiles( void )	// Met à jour les fichiers.
+		uym::state__ Settle( void )
 		{
-			_SaveLocationsAndAvailables();
+			uym::state__ State = _StorageFileManager.Settle();
+
+			if ( _EntriesFileManager.Settle()  != State )
+				State = uym::sInconsistent;
+
+			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+				_SaveAvailables();
+
+			return State;
+		}
+		void WriteAvailables( void )	// Met à jour les fichiers.
+		{
+			_SaveAvailables();
 		}
 		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
 		{

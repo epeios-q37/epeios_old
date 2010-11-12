@@ -501,9 +501,9 @@ namespace mmi {
 		{
 			return _Multimemory.Bind();
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			return _Multimemory.Sync();
+			return _Multimemory.Settle();
 		}
 		void ReleaseFile( void )
 		{

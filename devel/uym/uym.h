@@ -448,7 +448,7 @@ namespace uym {
 			else
 				return sAbsent;
 		}
-		state__ Sync( void )
+		state__ Settle( void )
 		{
 			if ( GetFileName() == NULL )
 				return sInconsistent;

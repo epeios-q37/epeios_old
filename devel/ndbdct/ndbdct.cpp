@@ -111,7 +111,7 @@ template <typename item> static void Save_(
 	const stk::E_BSTACK_( item ) &Bunch,
 	const str::string_ &BaseFileName,
 	const char *Extension,
-	time_t UnderlyingFilesLastModificationTime )
+	time_t ReferenceTimeStamp )
 {
 ERRProlog
 	str::string FileName;
@@ -119,9 +119,12 @@ ERRProlog
 ERRBegin
 	FileName.Init( BaseFileName );
 	FileName.Append( Extension );
-	Save_( Bunch, FileName.Convert( FileNameBuffer ) );
 
-	while ( UnderlyingFilesLastModificationTime >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
+	if ( !fil::FileExists( FileName.Convert( FileNameBuffer ) )
+		 || ( fil::GetFileLastModificationTime( FileNameBuffer ) <= ReferenceTimeStamp ) )
+			Save_( Bunch, FileNameBuffer );
+
+	while ( ReferenceTimeStamp >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
 		tol::Clock( true );
 		fil::TouchFile( FileNameBuffer );
 	}
@@ -130,43 +133,9 @@ ERREnd
 ERREpilog
 }
 
-void ndbdct::dynamic_content_atomized_file_manager___::_SaveLocationsAndAvailables( void ) const
+void ndbdct::dynamic_content_atomized_file_manager___::_SaveAvailables( void ) const
 {
 	Save_( _Content->Availables, _BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
-}
-
-void ndbdct::dynamic_content_atomized_file_manager___::Init(
-	const str::string_ &BaseFileName,
-	fil::mode__ Mode,
-	flm::id__ ID )
-{
-ERRProlog
-	str::string ContentFileName;
-	STR_BUFFER___ ContentFileNameBuffer;
-	str::string EntriesBunchFileName;
-	STR_BUFFER___ EntriesBunchFileNameBuffer;
-	str::string EntriesListFileName;
-	STR_BUFFER___ EntriesListFileNameBuffer;
-ERRBegin
-	reset();
-
-	ContentFileName.Init( BaseFileName );
-	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-	_StorageFileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
-
-	EntriesBunchFileName.Init( BaseFileName );
-	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
-
-	EntriesListFileName.Init( BaseFileName );
-	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
-
-	_EntriesFileManager.Init( EntriesBunchFileName.Convert( EntriesBunchFileNameBuffer) , EntriesListFileName.Convert( EntriesListFileNameBuffer ), Mode, true, ID );
-
-	_BaseFileName.Init( BaseFileName );
-	_Mode = Mode;
-ERRErr
-ERREnd
-ERREpilog
 }
 
 static inline void Load_(
@@ -204,7 +173,7 @@ template <typename item> static bso::bool__ Load_(
 	const char *FileName,
 	stk::E_BSTACK_( item ) &Bunch,
 	item TestValue,
-	time_t TimeStamp )
+	time_t ReferenceTimeStamp )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -212,7 +181,7 @@ ERRProlog
 	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
 	if ( Flow.Init( FileName, err::hUserDefined ) == fil::sSuccess ) {
-		if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
+		if ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp )
 			ERRReturn;
 
 		memcpy( Buffer, &TestValue, sizeof( item ) );
@@ -267,6 +236,61 @@ ERREpilog
 	return Success;
 }
 
+static bso::bool__ LoadAvailables_(
+	const str::string_ &BaseFileName,
+	availables_ &Availables,
+	time_t ReferenceTimeStamp )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Success = Load_( BuildFileName_( BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, Buffer ), Availables, available__(), ReferenceTimeStamp );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::_LoadAvailables( void )
+{
+	return LoadAvailables_( _BaseFileName, _Content->Availables, _GetUnderlyingFilesLastModificationTime() );
+}
+
+void ndbdct::dynamic_content_atomized_file_manager___::Init(
+	const str::string_ &BaseFileName,
+	fil::mode__ Mode,
+	flm::id__ ID )
+{
+ERRProlog
+	str::string ContentFileName;
+	STR_BUFFER___ ContentFileNameBuffer;
+	str::string EntriesBunchFileName;
+	STR_BUFFER___ EntriesBunchFileNameBuffer;
+	str::string EntriesListFileName;
+	STR_BUFFER___ EntriesListFileNameBuffer;
+ERRBegin
+	reset();
+
+	ContentFileName.Init( BaseFileName );
+	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
+	_StorageFileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
+
+	EntriesBunchFileName.Init( BaseFileName );
+	EntriesBunchFileName.Append( ENTRIES_FILE_NAME_EXTENSION );
+
+	EntriesListFileName.Init( BaseFileName );
+	EntriesListFileName.Append( LIST_FILE_NAME_EXTENSION );
+
+	_EntriesFileManager.Init( EntriesBunchFileName.Convert( EntriesBunchFileNameBuffer) , EntriesListFileName.Convert( EntriesListFileNameBuffer ), Mode, true, ID );
+
+	_BaseFileName.Init( BaseFileName );
+	_Mode = Mode;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 bso::bool__ Test_(
 	const str::string_ &BaseFileName,
 	const char *Extension,
@@ -290,22 +314,6 @@ ERRErr
 ERREnd
 ERREpilog
 	return Success;
-}
-
-uym::state__ ndbdct::dynamic_content_atomized_file_manager___::Bind( void )
-{
-	available__ TestAvailable;
-
-	uym::state__ State = _StorageFileManager.Bind();
-
-	if ( _EntriesFileManager.Bind() != State )
-		return uym::sInconsistent;
-
-	if ( State == uym::sExists )
-		if ( !Load_<available__>( _BaseFileName, _Content->Availables, TestAvailable, AVAILABLES_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() ) )
-			State = uym::sInconsistent;
-
-	return State;
 }
 
 void ndbdct::dynamic_content_atomized_file_manager___::_ErasePhysically( void )

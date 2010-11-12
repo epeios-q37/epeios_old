@@ -72,11 +72,11 @@ namespace lst {
 	epeios::row__ WriteToFile(
 		const store_ &Store,
 		const char *FileName,
-		time_t TimeStamp );
+		time_t ReferenceTimeStamp );
 
 	uym::state__ ReadFromFile(
 		const char *FileName,
-		time_t TimeStamp,
+		time_t ReferenceTimeStamp,
 		store_ &Store );
 
 	epeios::row_t__ Successeur_(
@@ -325,25 +325,17 @@ namespace lst {
 	template <typename list> epeios::row__ WriteToFile(
 		const list &List,
 		const char *FileName,
-		time_t TimeStamp )
+		time_t ReferenceTimeStamp )
 	{
-		return WriteToFile( List.Locations, FileName, TimeStamp );
+		return WriteToFile( List.Locations, FileName, ReferenceTimeStamp );
 	}
 
 	template <typename list> uym::state__ ReadFromFile(
 		const char *FileName,
-		list &List,
-		time_t TimeStamp = 0 )
-	{
-		return ReadFromFile( FileName, TimeStamp, List.Locations );
-	}
-
-	template <typename list> uym::state__ ReadFromFile(
-		const char *FileName,
-		time_t TimeStamp,
+		time_t ReferenceTimeStamp,
 		list &List )
 	{
-		return ReadFromFile( FileName, TimeStamp, List.Locations );
+		return ReadFromFile( FileName, ReferenceTimeStamp, List.Locations );
 	}
 
 	#define E_LISTtx( r, r_t )	list<r, r_t>

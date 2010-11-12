@@ -72,14 +72,8 @@ ERRProlog
 ERRBegin
 	FileName.Init( BaseFileName );
 	FileName.Append( Extension );
-	lst::WriteToFile( List, FileName.Convert( FileNameBuffer ), UnderlyingFilesLastModificationTime );
 
-/*
-	while ( UnderlyingFilesLastModificationTime >= tol::GetFileLastModificationTime( FileNameBuffer ) ) {
-		tol::Clock( true );
-		tol::Touch( FileNameBuffer );
-	}
-*/
+	lst::WriteToFile( List, FileName.Convert( FileNameBuffer ), UnderlyingFilesLastModificationTime );
 ERRErr
 ERREnd
 ERREpilog
@@ -136,7 +130,7 @@ ERRBegin
 		ListFileName.Init( _BaseFileName );
 		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
 
-		State = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), *_Content, _GetUnderlyingFilesLastModificationTime() );
+		State = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), _GetUnderlyingFilesLastModificationTime(), *_Content );
 	}
 ERRErr
 ERREnd

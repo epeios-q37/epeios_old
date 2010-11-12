@@ -184,7 +184,7 @@ namespace lstbch {
 			_bunch_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_bunch_file_manager___::reset( P );
@@ -220,17 +220,14 @@ namespace lstbch {
 		{
 			return lst::ReadFromFile( ListFileName(), TimeStamp(), *_ListStore );
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
 			if ( ( _ListStore != NULL )
 					&& _bunch_file_manager___::IsPersistent()
-					&& _bunch_file_manager___::Exists()
-					&& ( !fil::FileExists( _ListFileName )
-					    || ( _bunch_file_manager___::TimeStamp()
-						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
+					&& _bunch_file_manager___::Exists() )
 				lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
 
-			return _bunch_file_manager___::Sync();
+			return _bunch_file_manager___::Settle();
 		}
 		void Drop( void )
 		{

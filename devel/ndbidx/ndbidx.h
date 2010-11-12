@@ -526,7 +526,7 @@ namespace ndbidx {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 
@@ -564,9 +564,9 @@ namespace ndbidx {
 
 			return State;
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			return _FileManager.Sync();
+			return _FileManager.Settle();
 		}
 		void CloseFiles( void )
 		{

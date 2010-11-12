@@ -1725,7 +1725,7 @@ namespace mmm {
 			_untyped_memory_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_untyped_memory_file_manager___::reset( P );
@@ -1775,9 +1775,9 @@ namespace mmm {
 		ERREpilog
 			return State;
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _untyped_memory_file_manager___::Sync();
+			uym::state__ State = _untyped_memory_file_manager___::Settle();
 
 			if ( ( _Multimemory != NULL )
 					&& _untyped_memory_file_manager___::IsPersistent()

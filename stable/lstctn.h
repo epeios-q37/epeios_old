@@ -179,7 +179,7 @@ namespace lstctn {
 			_container_file_manager___<container>::ReleaseFiles();
 
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_container_file_manager___<container>::reset( P );
@@ -222,17 +222,14 @@ namespace lstctn {
 
 			return State;
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
 			if ( ( _ListStore != NULL )
 					&& _container_file_manager___<container>::IsPersistent()
-					&& _container_file_manager___<container>::Exists()
-					&& ( !fil::FileExists( _ListFileName )
-					    || ( _container_file_manager___<container>::TimeStamp()
-						    >= fil::GetFileLastModificationTime( _ListFileName ) ) ) )
+					&& _container_file_manager___<container>::Exists() )
 				lst::WriteToFile( *_ListStore, _ListFileName, _ContainerTimeStamp() );
 
-			return _container_file_manager___<container>::Sync();
+			return _container_file_manager___<container>::Settle();
 
 		}
 		void Drop( void )

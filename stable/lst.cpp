@@ -79,7 +79,7 @@ static void Save_(
 epeios::row__ lst::WriteToFile(
 	const store_ &Store,
 	const char *FileName,
-	time_t TimeStamp )
+	time_t ReferenceTimeStamp )
 {
 	epeios::row__ Row;
 ERRProlog
@@ -87,9 +87,12 @@ ERRProlog
 ERRBegin
 	Flow.Init( FileName );
 
-	Save_( Store.Released, Flow );
+	if ( ( ReferenceTimeStamp == 0 )
+		|| ( !fil::FileExists( FileName ) )
+		|| ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp ) )
+			Save_( Store.Released, Flow );
 
-	while ( fil::GetFileLastModificationTime( FileName ) <= TimeStamp ) {
+	while ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp ) {
 		tol::Clock( true );	// Permet d'attendre une unité de temps.
 		fil::TouchFile( FileName );
 	}
@@ -123,7 +126,7 @@ static void Load_(
 
 uym::state__ lst::ReadFromFile(
 	const char *FileName,
-	time_t TimeStamp,
+	time_t ReferenceTimeStamp,
 	store_ &Store )
 {
 	uym::state__ State = uym::s_Undefined;
@@ -136,7 +139,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp ) {
+	if ( fil::GetFileLastModificationTime( FileName ) < ReferenceTimeStamp ) {
 		State = uym::sInconsistent;
 		ERRReturn;
 	}

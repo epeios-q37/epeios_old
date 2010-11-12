@@ -1,5 +1,18 @@
 $Id$
 
+12/11/2010 :
+	- GENERAL :
+		- Adaptation aux modification bibliothèque 'UYM'.
+	- LST :
+		- L'écriture des données accessoires n'est réalisé que si le contenu du fichier correspondant est obsolète.
+	- NDBCTT :
+		- Suppression de 'synchronization_function__'.
+	- NDBDCT :
+		- '...LocationsAndAvailables...' -> '...Availables...'.
+		- Les données accessoires ne sont sauvés que si ceux contenues dans le fichier sont obsolètes.
+	- UYM :
+		- 'Sync' -> 'Settle'.
+
 10/11/2010 :
 	- LSTCTN :
 		- Modifications pour adaptation aux exigences de 'g++'.

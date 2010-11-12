@@ -214,7 +214,7 @@ namespace ndbsct {
 			_FileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_FileManager.reset( P );
@@ -242,9 +242,9 @@ namespace ndbsct {
 			_Content = &Content;
 		}
 		uym::state__ Bind( void );
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _FileManager.Sync();
+			uym::state__ State = _FileManager.Settle();
 
 			if ( ( _Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
 				_SaveLocations();

@@ -370,11 +370,11 @@ namespace ctn {
 
 			return State;
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _Statics.Sync();
+			uym::state__ State = _Statics.Settle();
 
-			if ( _Dynamics.Sync() != State )
+			if ( _Dynamics.Settle() != State )
 				State = uym::sInconsistent;
 
 			return State;

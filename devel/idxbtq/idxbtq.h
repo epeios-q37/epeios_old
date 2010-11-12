@@ -267,7 +267,7 @@ namespace idxbtq {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Sync();
+				Settle();
 			}
 
 			_TreeFileManager.reset( P );
@@ -304,11 +304,11 @@ namespace idxbtq {
 			return State;
 
 		}
-		uym::state__ Sync( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _TreeFileManager.Sync();
+			uym::state__ State = _TreeFileManager.Settle();
 
-			if ( _QueueFileManager.Sync() != State )
+			if ( _QueueFileManager.Settle() != State )
 				State = uym::sInconsistent;
 
 			return State;
