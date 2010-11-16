@@ -205,6 +205,7 @@ namespace frdkrn {
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
+			void *LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
@@ -246,9 +247,11 @@ namespace frdkrn {
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
+			void *LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
+			void *LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
@@ -293,15 +296,20 @@ namespace frdkrn {
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const str::string_ &Language );
+		const frdrgy::registry_ &Registry( void ) const
+		{
+			return _Registry;
+		}
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			void *LibraryData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
 			if ( ( Report = _FillProjectRegistry( FileName, TargetName, ErrorSet ) ) == rOK )
-				Report = _Connect();
+				Report = _Connect( LibraryData );
 
 			if ( Report == rOK )
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -310,7 +318,8 @@ namespace frdkrn {
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
-			const char *TargetName );
+			const char *TargetName,
+			void *LibraryData );
 		bso::bool__ IsProjectInProgress( void ) const
 		{
 			return _ProjectOriginalTimeStamp != 0;

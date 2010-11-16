@@ -552,11 +552,11 @@ namespace bch {
 #ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
 
-	template <typename bunch> uym::state__ Plug(
+	template <typename bunch> uym::state__ P_lug(
 		bunch &Bunch,
 		bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::Plug( Bunch, FileManager );
+		uym::state__ State = tym::P_lug( Bunch, FileManager );
 
 		Bunch.SetStepValue( 0 );	// Pas de préallocation.
 

@@ -1725,7 +1725,7 @@ namespace mmm {
 			_untyped_memory_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 			_untyped_memory_file_manager___::reset( P );
@@ -1758,13 +1758,13 @@ namespace mmm {
 
 			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
-		uym::state__ Bind( void )	// A appeler seulement aprés un 'Plug(...)'.
+		uym::state__ B_ind( void )	// A appeler seulement aprés un 'Plug(...)'.
 		{
 			uym::state__ State = uym::s_Undefined;
 		ERRProlog
 			flf::file_iflow___ IFlow;
 		ERRBegin
-			if ( ( State = _untyped_memory_file_manager___::Bind() ) == uym::sExists ) {
+			if ( ( State = _untyped_memory_file_manager___::B_ind() ) == uym::sExists ) {
 				IFlow.Init( _FreeFragmentPositionFileName );
 
 				flw::Get( IFlow, _Multimemory->S_.FreeFragment );
@@ -1775,9 +1775,9 @@ namespace mmm {
 		ERREpilog
 			return State;
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
-			uym::state__ State = _untyped_memory_file_manager___::Settle();
+			uym::state__ State = _untyped_memory_file_manager___::S_ettle();
 
 			if ( ( _Multimemory != NULL )
 					&& _untyped_memory_file_manager___::IsPersistent()
@@ -1790,16 +1790,16 @@ namespace mmm {
 			return State;
 
 		}
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			multimemory_ &Multimemory,
 			multimemory_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{
-		uym::state__ State = uym::Plug( Multimemory.Memory, FileManager );
+		uym::state__ State = uym::P_lug( Multimemory.Memory, FileManager );
 
 		FileManager._Set( Multimemory );
 

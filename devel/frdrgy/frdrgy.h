@@ -145,6 +145,18 @@ namespace frdrgy {
 			S_.Project = _registry_::AddNewLevel( rgstry::name( "Project" ) );
 			S_.User = _registry_::AddNewLevel( rgstry::name( "User" ) );
 		}
+		rgstry::row__ GetConfigurationRoot( void ) const
+		{
+			return _registry_::GetRoot( S_.Configuration );
+		}
+		rgstry::row__ GetProjectRoot( void ) const
+		{
+			return _registry_::GetRoot( S_.User );
+		}
+		rgstry::row__ GetUserRoot( void ) const
+		{
+			return _registry_::GetRoot( S_.User );
+		}
 		void DumpConfiguration( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Configuration, TFlow );

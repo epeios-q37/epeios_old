@@ -76,7 +76,7 @@ static void Save_(
 	}
 }
 
-epeios::row__ lst::WriteToFile(
+epeios::row__ lst::WriteToFile_(
 	const store_ &Store,
 	const char *FileName,
 	time_t ReferenceTimeStamp )
@@ -124,7 +124,7 @@ static void Load_(
 	}
 }
 
-uym::state__ lst::ReadFromFile(
+uym::state__ lst::ReadFromFile_(
 	const char *FileName,
 	time_t ReferenceTimeStamp,
 	store_ &Store )
@@ -134,22 +134,18 @@ ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
 
-	if ( !fil::FileExists( FileName ) ) {
-		State = uym::sAbsent;
-		ERRReturn;
-	}
+	State = Test_( FileName, ReferenceTimeStamp );
 
-	if ( fil::GetFileLastModificationTime( FileName ) < ReferenceTimeStamp ) {
-		State = uym::sInconsistent;
+	if ( uym::IsError( State ) )
 		ERRReturn;
-	}
+
+	if ( State == uym::sAbsent )
+		ERRReturn;
 
 	if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
 		State = uym::sInconsistent;
 		ERRReturn;
 	}
-
-//	Store.Init( FirstUnused );	// De la responsabilité de l'appelant.
 
 	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
 
@@ -159,7 +155,6 @@ ERREnd
 ERREpilog
 	return State;
 }
-
 
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
 epeios::row_t__ lst::Successeur_(

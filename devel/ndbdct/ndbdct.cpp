@@ -306,7 +306,7 @@ ERRBegin
 	if ( !fil::FileExists( FileName ) )
 		ERRReturn;
 
-	if ( fil::GetFileLastModificationTime( FileName ) < TimeStamp )
+	if ( fil::GetFileLastModificationTime( FileName ) <= TimeStamp )
 		ERRReturn;
 
 	Success = true;

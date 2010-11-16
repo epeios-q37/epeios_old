@@ -170,27 +170,23 @@ namespace lstbch {
 	E_AUTO3( list_bunch )
 
 #ifndef FLM__COMPILATION
-	typedef bch::bunch_file_manager___ _bunch_file_manager___;
 
 	class list_bunch_file_manager___
-	: public _bunch_file_manager___
 	{
 	private:
-		lst::store_ *_ListStore;
-		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+		bch::bunch_file_manager___ _BunchFileManager;
+		lst::list_file_manager___ _ListFileManager;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_bunch_file_manager___::ReleaseFile();
+			_BunchFileManager.ReleaseFile();	// Pour mettre à jour l'horodatage du/des fichiers correspondant.
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
-			_bunch_file_manager___::reset( P );
-			_ListFileName.reset( P );
-
-			_ListStore = NULL;
+			_ListFileManager.reset( P );reset( P );
+			_BunchFileManager.reset( P );
 		}
 		list_bunch_file_manager___( void )
 		{
@@ -216,18 +212,18 @@ namespace lstbch {
 
 			strcpy( _ListFileName, ListFileName );
 		}
-		uym::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		uym::state__ B_ind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
 		{
 			return lst::ReadFromFile( ListFileName(), TimeStamp(), *_ListStore );
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
 			if ( ( _ListStore != NULL )
 					&& _bunch_file_manager___::IsPersistent()
 					&& _bunch_file_manager___::Exists() )
 				lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
 
-			return _bunch_file_manager___::Settle();
+			return _bunch_file_manager___::S_ettle();
 		}
 		void Drop( void )
 		{
@@ -287,15 +283,19 @@ namespace lstbch {
 	};
 
 
-	template <typename list_bunch> uym::state__ Plug(
+	template <typename list_bunch> uym::state__ P_lug(
 		list_bunch &ListBunch,
 		list_bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::Plug( ListBunch.Bunch(), FileManager );
+		uym::state__ State = bch::P_lug( ListBunch.Bunch(), FileManager );
 
-		ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
+		if ( uym::IsError( State ) )
+			FileManager.reset();
+		else {
+			ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
 
-		FileManager.Set( ListBunch.Locations );
+			FileManager.Set( ListBunch.Locations );
+		}
 
 		return State;
 	}

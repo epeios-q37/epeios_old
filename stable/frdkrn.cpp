@@ -286,13 +286,14 @@ ERREpilog
 report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
+	void *LibraryData,
 	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
 ERRBegin
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, NULL, LogFunctions, Type ) ) {
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
@@ -309,6 +310,7 @@ ERREpilog
 report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
+	void *LibraryData,
 	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -316,7 +318,7 @@ report__ frdkrn::kernel___::_Connect(
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, ErrorReportingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, LibraryData, ErrorReportingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -324,6 +326,7 @@ ERREpilog
 }
 
 report__ frdkrn::kernel___::_Connect(
+	void *LibraryData,
 	error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -341,7 +344,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, Type, ErrorReportingFunctions, LogFunctions );
+		Report = _Connect( Location, Type, LibraryData, ErrorReportingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -358,7 +361,8 @@ ERREpilog
 
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
-	const char *TargetName )
+	const char *TargetName,
+	void *LibraryData )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -367,7 +371,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, LibraryData, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, Locale(), _Message );
 		_Message.Append( " !" );

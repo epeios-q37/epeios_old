@@ -1,5 +1,22 @@
 $Id$
 
+16/11/2010 :
+	- FRDRGY :
+		- Ajout de 'Get(Configuration|Project|User)Root()'.
+	- RGSTRY :
+		- Ajout 'GetRoot(...)' à 'multi_level_registry[_]'.
+		- 'Registry' -> 'BaseRegistry' dans 'multi_level_registry[_]'.
+	- XULFKL :
+		- Standardisation ordre des paramètres.
+	- XULFTK :
+		- Ajout paramètre 'LibraryData'.
+
+15/11/2010 :
+	- FRDKRN :
+		- Ajout paramètre 'LibraryData'.
+	- XULFKL :
+		- Adaptation aux modifications bibliothqèue 'FRDKRN'.
+
 12/11/2010 :
 	- GENERAL :
 		- Adaptation aux modification bibliothèque 'UYM'.

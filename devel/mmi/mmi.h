@@ -497,13 +497,13 @@ namespace mmi {
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, ID );
 			_Multimemory.Init( MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
-		uym::state__ Bind( void )	// A appeler seulement aprés 'Plug(...)'.
+		uym::state__ B_ind( void )	// A appeler seulement aprés 'Plug(...)'.
 		{
-			return _Multimemory.Bind();
+			return _Multimemory.B_ind();
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
-			return _Multimemory.Settle();
+			return _Multimemory.S_ettle();
 		}
 		void ReleaseFile( void )
 		{
@@ -570,14 +570,19 @@ namespace mmi {
 		}
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		indexed_multimemory_ &Memory,
 		indexed_multimemory_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::Plug( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
+		uym::state__ State = bch::P_lug( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
 
-		if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State )
-			State = uym::sInconsistent;
+		if ( uym::IsError( State ) )
+			FileManager.reset();
+		else
+			if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
+				State = uym::sInconsistent;
+				FileManager.reset();
+			}
 
 		return State;
 	}

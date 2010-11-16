@@ -165,6 +165,7 @@ namespace xulftk {
 			_Kernel =  NULL;
 			_TRow = NONE;
 			_RepositoryFunctions = NULL;
+//			_TrunkFunctions.reset();
 		}
 		trunk___( void )
 		{
@@ -221,6 +222,10 @@ namespace xulftk {
 #endif
 			return *_UI;
 		}
+		const frdrgy::registry_ &Registry( void ) const
+		{
+			return Kernel().Registry();
+		}
 		const str::string_ &Message( void ) const
 		{
 			return Kernel().Message();
@@ -248,6 +253,7 @@ namespace xulftk {
 		{
 			SaveUserRegistry();
 			UI().Main().Widgets.Window.Close();
+			// nsxpcm::Close( UI().Main.Window );
 			Kernel().Close();
 
 			return true;
@@ -301,14 +307,16 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void ApplySession( const str::string_ &FileName )
+		void ApplySession(
+			const str::string_ &FileName,
+			void *LibraryData )
 		{
-			if ( Kernel().LoadProject( FileName, _TargetName ) != frdkrn::sOK )
+			if ( Kernel().LoadProject( FileName, _TargetName, LibraryData ) != frdkrn::sOK )
 				UI().Alert( Kernel().Message() );
 
 			UpdateUI();
 		}
-		void  ApplySession( void )
+		void  ApplySession( void *LibraryData )
 		{
 		ERRProlog
 			str::string Translation;
@@ -318,7 +326,7 @@ namespace xulftk {
 			FileName.Init();
 
 			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().Locale(), FileName ) )
-				ApplySession( FileName );
+				ApplySession( FileName, LibraryData );
 		ERRErr
 		ERREnd
 		ERREpilog

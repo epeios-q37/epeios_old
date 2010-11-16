@@ -439,7 +439,7 @@ namespace uym {
 			if ( Persistent )
 				_file_memory_driver___::Persistent();
 		}
-		state__ Bind( void )	// To call only after a 'Plugt(...)'.
+		state__ B_ind( void )	// To call only after a 'Plugt(...)'.
 		{
 			if ( GetFileName() == NULL )
 				return sInconsistent;
@@ -448,7 +448,7 @@ namespace uym {
 			else
 				return sAbsent;
 		}
-		state__ Settle( void )
+		state__ S_ettle( void )
 		{
 			if ( GetFileName() == NULL )
 				return sInconsistent;
@@ -457,7 +457,7 @@ namespace uym {
 			else
 				return sAbsent;
 		}
-		friend state__ Plug(
+		friend state__ P_lug(
 			untyped_memory_ &Memory,
 			untyped_memory_file_manager___ &FileManager );
 	};
@@ -485,7 +485,7 @@ namespace uym {
 		return true;	// To avoid a 'warning'.
 	}
 
-	inline state__ Plug(
+	inline state__ P_lug(
 		untyped_memory_ &Memory,
 		untyped_memory_file_manager___ &FileManager )
 	{

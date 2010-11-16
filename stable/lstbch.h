@@ -184,7 +184,7 @@ namespace lstbch {
 			_bunch_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 			_bunch_file_manager___::reset( P );
@@ -216,18 +216,18 @@ namespace lstbch {
 
 			strcpy( _ListFileName, ListFileName );
 		}
-		uym::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		uym::state__ B_ind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
 		{
 			return lst::ReadFromFile( ListFileName(), TimeStamp(), *_ListStore );
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
 			if ( ( _ListStore != NULL )
 					&& _bunch_file_manager___::IsPersistent()
 					&& _bunch_file_manager___::Exists() )
 				lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
 
-			return _bunch_file_manager___::Settle();
+			return _bunch_file_manager___::S_ettle();
 		}
 		void Drop( void )
 		{
@@ -287,15 +287,19 @@ namespace lstbch {
 	};
 
 
-	template <typename list_bunch> uym::state__ Plug(
+	template <typename list_bunch> uym::state__ P_lug(
 		list_bunch &ListBunch,
 		list_bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::Plug( ListBunch.Bunch(), FileManager );
+		uym::state__ State = bch::P_lug( ListBunch.Bunch(), FileManager );
 
-		ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
+		if ( uym::IsError( State ) )
+			FileManager.reset();
+		else {
+			ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
 
-		FileManager.Set( ListBunch.Locations );
+			FileManager.Set( ListBunch.Locations );
+		}
 
 		return State;
 	}

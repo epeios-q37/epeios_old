@@ -109,9 +109,10 @@ namespace xulfkl {
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
-			const char *TargetName )
+			const char *TargetName,
+			void *LibraryData )
 		{
-			return _kernel___::LoadProject( FileName, TargetName );
+			return _kernel___::LoadProject( FileName, TargetName, LibraryData );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

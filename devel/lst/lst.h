@@ -69,15 +69,29 @@ namespace lst {
 	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
 
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
-	epeios::row__ WriteToFile(
+	epeios::row__ WriteToFile_(
 		const store_ &Store,
 		const char *FileName,
 		time_t ReferenceTimeStamp );
 
-	uym::state__ ReadFromFile(
+	inline uym::state__ Test_(
+		const char *FileName,
+		time_t ReferenceTimeStamp )
+	{
+		if ( !fil::FileExists( FileName ) )
+			return uym::sAbsent;
+
+		if ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp )
+			return uym::sInconsistent;
+
+		return uym::sExists;
+	}
+
+	uym::state__ ReadFromFile_(
 		const char *FileName,
 		time_t ReferenceTimeStamp,
 		store_ &Store );
+
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
@@ -321,22 +335,6 @@ namespace lst {
 
 	E_AUTO2( list )
 
-	// Retourne l'id de la première entrée disponible (hors pile des 'released').
-	template <typename list> epeios::row__ WriteToFile(
-		const list &List,
-		const char *FileName,
-		time_t ReferenceTimeStamp )
-	{
-		return WriteToFile( List.Locations, FileName, ReferenceTimeStamp );
-	}
-
-	template <typename list> uym::state__ ReadFromFile(
-		const char *FileName,
-		time_t ReferenceTimeStamp,
-		list &List )
-	{
-		return ReadFromFile( FileName, ReferenceTimeStamp, List.Locations );
-	}
 
 	#define E_LISTtx( r, r_t )	list<r, r_t>
 	#define E_LISTtx_( r, r_t )	list_<r, r_t>
@@ -348,6 +346,104 @@ namespace lst {
 	#define E_LIST	E_LISTt( epeios::row__ )
 	#define E_LIST_	E_LISTt_( epeios::row__ )
 
+#ifndef FLM__COMPILATION
+
+	class list_file_manager___
+	{
+	private:
+		lst::store_ *_ListStore;
+		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+			//	Settle();	// Fait en amoont, car il manque le 'TimeStamp()'.
+			}
+
+			_ListFileName.reset( P );
+			_ListStore = NULL;
+		}
+		list_file_manager___( void )
+		{
+			reset( false );
+		}
+		~list_file_manager___( void )
+		{
+			reset();
+		}
+		void Init( const char *ListFileName )
+		{
+			reset();
+
+			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
+				ERRa();
+
+			strcpy( _ListFileName, ListFileName );
+		}
+		uym::state__ B_ind( time_t ReferenceTimeStamp )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		{
+			return ReadFromFile_( ListFileName(), ReferenceTimeStamp, *_ListStore );
+		}
+		uym::state__ S_ettle( time_t ReferenceTimeStamp )
+		{
+			if ( _ListStore != NULL )
+				lst::WriteToFile_( *_ListStore, _ListFileName, ReferenceTimeStamp );
+		}
+		void Drop( void )
+		{
+			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
+				ERRu();
+
+			if ( fil::FileExists( _ListFileName ) )
+				if ( remove( _ListFileName ) != 0 )
+					ERRu();
+		}
+		const char *ListFileName( void ) const
+		{
+			return _ListFileName;
+		}
+		void Set( lst::store_ &Store )
+		{
+			if ( _ListStore != NULL )
+				ERRu();
+
+			_ListStore = &Store;
+		}
+		bso::bool__ Exists( void ) const
+		{
+			return fil::FileExists( _ListFileName );
+		}
+#ifdef CPE__C_VC
+#	undef CreateFile
+#endif
+		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
+		{
+			if ( fil::FileExists( _ListFileName ) )
+				if ( ErrorHandling == err::hThrowException )
+					ERRf();
+				else
+					return false;
+
+			return fil::CreateFile( _ListFileName, ErrorHandling );
+		}
+	};
+
+
+	template <typename list> uym::state__ P_lug(
+		list &List,
+		list_file_manager___ &FileManager,
+		time_t ReferenceTimeStamp )
+	{
+		uym::state__ State = Test_( FileManager.FileName(), ReferenceTimeStamp );
+
+		if ( uym::IsError( State ) )
+			FileManager.reset();
+		else
+			FileManager.Set( List.Locations );
+
+		return State;
+	}
+#endif
 
 	//c Handle a list with a maximum of 't' entries. Use 'LIST__' rather than directly this class.
 	template <int t, typename r> class list__
