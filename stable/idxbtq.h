@@ -267,7 +267,7 @@ namespace idxbtq {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 			_TreeFileManager.reset( P );
@@ -294,21 +294,27 @@ namespace idxbtq {
 
 			_QueueFileManager.Init( QueueFileName, Mode, Persistent, ID );
 		}
-		uym::state__ Bind( void )
+		uym::state__ B_ind( void )
 		{
-			uym::state__ State = _TreeFileManager.Bind();
+			uym::state__ State = _TreeFileManager.B_ind();
 
-			if ( _QueueFileManager.Bind() != State )
+			if ( uym::IsError( State ) )
+				return State;
+
+			if ( _QueueFileManager.B_ind() != State )
 				State = uym::sInconsistent;
 
 			return State;
 
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
-			uym::state__ State = _TreeFileManager.Settle();
+			uym::state__ State = _TreeFileManager.S_ettle();
 
-			if ( _QueueFileManager.Settle() != State )
+			if ( uym::IsError( State ) )
+				return State;
+
+			if ( _QueueFileManager.S_ettle() != State )
 				State = uym::sInconsistent;
 
 			return State;
@@ -376,14 +382,21 @@ namespace idxbtq {
 	};
 
 
-	template <typename index> uym::state__ Plug(
+	template <typename index> uym::state__ P_lug(
 		index &Index,
 		index_file_manager___ &FileManager )
 	{
-		uym::state__ State = idxbtr::Plug( Index, FileManager.TreeFileManager() );
+		uym::state__ State = idxbtr::P_lug( Index, FileManager.TreeFileManager() );
 
-		if ( State != idxque::Plug( Index, FileManager.QueueFileManager() ) )
+		if ( uym::IsError( State ) ) {
+			FileManager.reset();
+			return State;
+		}
+
+		if ( State != idxque::P_lug( Index, FileManager.QueueFileManager() ) ) {
+			FileManager.reset();
 			State = uym::sInconsistent;
+		}
 
 		return State;
 	}

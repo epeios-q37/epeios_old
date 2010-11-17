@@ -69,15 +69,21 @@ namespace lst {
 	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
 
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
-	epeios::row__ WriteToFile_(
+	uym::state__ WriteToFile_(
 		const store_ &Store,
+		const char *FileName );
+
+	uym::state__ ReadFromFile_(
 		const char *FileName,
-		time_t ReferenceTimeStamp );
+		store_ &Store );
 
 	inline uym::state__ Test_(
 		const char *FileName,
 		time_t ReferenceTimeStamp )
 	{
+		if ( FileName == NULL )
+			return uym::sInconsistent;
+
 		if ( !fil::FileExists( FileName ) )
 			return uym::sAbsent;
 
@@ -86,12 +92,6 @@ namespace lst {
 
 		return uym::sExists;
 	}
-
-	uym::state__ ReadFromFile_(
-		const char *FileName,
-		time_t ReferenceTimeStamp,
-		store_ &Store );
-
 
 	epeios::row_t__ Successeur_(
 		epeios::row_t__ Element,
@@ -351,8 +351,8 @@ namespace lst {
 	class list_file_manager___
 	{
 	private:
-		lst::store_ *_ListStore;
-		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+		lst::store_ *_Store;
+		tol::E_FPOINTER___( bso::char__ ) _FileName;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -360,8 +360,8 @@ namespace lst {
 			//	Settle();	// Fait en amoont, car il manque le 'TimeStamp()'.
 			}
 
-			_ListFileName.reset( P );
-			_ListStore = NULL;
+			_FileName.reset( P );
+			_Store = NULL;
 		}
 		list_file_manager___( void )
 		{
@@ -371,60 +371,102 @@ namespace lst {
 		{
 			reset();
 		}
-		void Init( const char *ListFileName )
+		void Init( const char *FileName )
 		{
 			reset();
 
-			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
+			if ( ( _FileName = malloc( strlen( FileName ) + 1 ) ) == NULL )
 				ERRa();
 
-			strcpy( _ListFileName, ListFileName );
+			strcpy( _FileName, FileName );
 		}
-		uym::state__ B_ind( time_t ReferenceTimeStamp )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		uym::state__ S_tate( void ) const
 		{
-			return ReadFromFile_( ListFileName(), ReferenceTimeStamp, *_ListStore );
+			return Test_( _FileName, 0 );
+		}
+		uym::state__ B_ind( time_t ReferenceTimeStamp )
+		{
+			uym::state__ State = this->S_tate();
+
+			if ( uym::IsError( State ) )
+				return State;
+
+			if ( State == uym::sExists )
+				State = ReadFromFile_( FileName(), *_Store );
+
+			return State;
 		}
 		uym::state__ S_ettle( time_t ReferenceTimeStamp )
 		{
-			if ( _ListStore != NULL )
-				lst::WriteToFile_( *_ListStore, _ListFileName, ReferenceTimeStamp );
+			uym::state__ State = uym::s_Undefined;
+
+			if ( _Store == NULL )
+				return uym::sInconsistent;
+
+			if ( ( ReferenceTimeStamp == 0 )
+				|| ( !fil::FileExists( _FileName ) )
+				|| ( fil::GetFileLastModificationTime( _FileName ) <= ReferenceTimeStamp ) )
+					State = WriteToFile_( *_Store, _FileName );
+			else
+				State = uym::sExists;
+
+			if ( uym::IsError( State ) )
+				return State;
+			
+			while ( fil::GetFileLastModificationTime( _FileName ) <= ReferenceTimeStamp ) {
+				tol::Clock( true );	// Permet d'attendre une unité de temps.
+				fil::TouchFile( _FileName );
+			}
+
+			return State;
 		}
 		void Drop( void )
 		{
-			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
+			if ( ( _Store == NULL ) || ( _FileName == NULL ) )
 				ERRu();
 
-			if ( fil::FileExists( _ListFileName ) )
-				if ( remove( _ListFileName ) != 0 )
+			if ( fil::FileExists( _FileName ) )
+				if ( remove( _FileName ) != 0 )
 					ERRu();
 		}
-		const char *ListFileName( void ) const
+		const char *FileName( void ) const
 		{
-			return _ListFileName;
+			return _FileName;
 		}
 		void Set( lst::store_ &Store )
 		{
-			if ( _ListStore != NULL )
+			if ( _Store != NULL )
 				ERRu();
 
-			_ListStore = &Store;
+			_Store = &Store;
 		}
 		bso::bool__ Exists( void ) const
 		{
-			return fil::FileExists( _ListFileName );
+			return uym::Exists( S_tate() );
 		}
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			if ( fil::FileExists( _ListFileName ) )
+			if ( fil::FileExists( _FileName ) )
 				if ( ErrorHandling == err::hThrowException )
 					ERRf();
 				else
 					return false;
 
-			return fil::CreateFile( _ListFileName, ErrorHandling );
+			return fil::CreateFile( _FileName, ErrorHandling );
+		}
+		void ReleaseFile( void )
+		{
+			// A des fins de standardisation.
+		}
+		time_t TimeStamp( void ) const
+		{
+			if ( Exists() )
+				return fil::GetFileLastModificationTime( _FileName );
+			else
+				return 0;
 		}
 	};
 
@@ -432,14 +474,17 @@ namespace lst {
 	template <typename list> uym::state__ P_lug(
 		list &List,
 		list_file_manager___ &FileManager,
+		epeios::row__ FirstUnused,
 		time_t ReferenceTimeStamp )
 	{
 		uym::state__ State = Test_( FileManager.FileName(), ReferenceTimeStamp );
 
 		if ( uym::IsError( State ) )
 			FileManager.reset();
-		else
+		else {
 			FileManager.Set( List.Locations );
+			List.Locations.SetFirstUnused( FirstUnused );
+		}
 
 		return State;
 	}

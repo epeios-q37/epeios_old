@@ -579,7 +579,7 @@ namespace mmi {
 		if ( uym::IsError( State ) )
 			FileManager.reset();
 		else
-			if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
+			if ( mmm::P_lug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
 				State = uym::sInconsistent;
 				FileManager.reset();
 			}

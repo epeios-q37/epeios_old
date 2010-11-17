@@ -157,11 +157,11 @@ namespace lstctn {
 	template <typename container> E_TTYPEDEF___( ctn::container_file_manager___<container>, _container_file_manager___ );
 
 	template <typename container> class list_container_file_manager___
-	: public _container_file_manager___<container>
 	{
 	private:
 		lst::store_ *_ListStore;
-		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+		_container_file_manager___<container> _ContainerFileManager;
+		lst::list_file_manager___ _ListFileManager;
 		void _Set( lst::store_ &Store )
 		{
 			if ( _ListStore != NULL )
@@ -176,14 +176,14 @@ namespace lstctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_container_file_manager___<container>::ReleaseFiles();
+			_ContainerFileManager.ReleaseFiles(); // Pour mettre à jour l'horodatage des fichiers.
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
-			_container_file_manager___<container>::reset( P );
-			_ListFileName.reset( P );
+			_ContainerFileManager.reset( P );
+			_ListFileManager.reset( P );
 
 			_ListStore = NULL;
 		}
@@ -207,30 +207,35 @@ namespace lstctn {
 		{
 			reset();
 
-			_container_file_manager___<container>::Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
-
-			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
-				ERRa();
-
-			strcpy( _ListFileName, ListFileName );
+			_ContainerFileManager.Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_ListFileManager.Init( ListFileName );
 		}
-		uym::state__ Bind( void )
+		uym::state__ B_ind( void )
 		{
-			uym::state__ State = _container_file_manager___<container>::Bind();
+			uym::state__ State = _ContainerFileManager.B_ind();
 
-			lst::ReadFromFile( _ListFileName, _ContainerTimeStamp(), *_ListStore );
+			if ( uym::IsError( State ) )
+				return State;
+
+			if ( _ListFileManager.B_ind( _ContainerFileManager.TimeStamp() ) != State )
+				State = uym::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
+			uym::state__ State = _ContainerFileManager.S_ettle();
+
+			if ( uym::IsError( State ) )
+				return State;
+
 			if ( ( _ListStore != NULL )
-					&& _container_file_manager___<container>::IsPersistent()
-					&& _container_file_manager___<container>::Exists() )
-				lst::WriteToFile( *_ListStore, _ListFileName, _ContainerTimeStamp() );
+					&& _ContainerFileManager.IsPersistent()
+					&& _ContainerFileManager.Exists() )
+				if ( _ListFileManager.S_ettle( _ContainerFileManager.TimeStamp() ) != State )
+						State = uym::sInconsistent;
 
-			return _container_file_manager___<container>::Settle();
-
+			return State;
 		}
 		void Drop( void )
 		{
@@ -283,25 +288,30 @@ namespace lstctn {
 
 			return Success;
 		}
-		uym::state__ Plug( container &ListContainer )
+		uym::state__ P_lug( container &ListContainer )
 		{
-			uym::state__ State = ctn::Plug( ListContainer.Container(), *this );
+			uym::state__ State = ctn::P_lug( ListContainer.Container(), _ContainerFileManager );
 
-			ListContainer.Locations.SetFirstUnused( _container_file_manager___<container>::StaticsFileManager().UnderlyingSize() / ListContainer.GetStaticsItemSize() );
+			if ( uym::IsError( State ) ) {
+				reset();
+				return State;
+			}
 
-			_Set( ListContainer.Locations );
+			if ( lst::P_lug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
+				reset();
+				State = uym::sInconsistent;
+			}
 
 			return State;
 		}
 	};
 
-	template <typename list_container> inline uym::state__ Plug(
+	template <typename list_container> inline uym::state__ P_lug(
 		list_container &ListContainer,
 		list_container_file_manager___<list_container> &FileManager )
 	{
-		return FileManager.Plug( ListContainer );
+		return FileManager.P_lug( ListContainer );
 	}
-
 
 
 	template <typename container, typename object, typename row, typename row_t> class list_xcontainer_

@@ -76,32 +76,26 @@ static void Save_(
 	}
 }
 
-epeios::row__ lst::WriteToFile_(
+uym::state__ lst::WriteToFile_(
 	const store_ &Store,
-	const char *FileName,
-	time_t ReferenceTimeStamp )
+	const char *FileName )
 {
-	epeios::row__ Row;
+	uym::state__ State = uym::s_Undefined;
 ERRProlog
 	flf::file_oflow___ Flow;
 ERRBegin
-	Flow.Init( FileName );
-
-	if ( ( ReferenceTimeStamp == 0 )
-		|| ( !fil::FileExists( FileName ) )
-		|| ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp ) )
-			Save_( Store.Released, Flow );
-
-	while ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp ) {
-		tol::Clock( true );	// Permet d'attendre une unité de temps.
-		fil::TouchFile( FileName );
+	if ( Flow.Init( FileName ) != fil::sSuccess ) {
+		State = uym::sInconsistent;
+		ERRReturn;
 	}
 
-	Row = Store.GetFirstAvailable();
+	Save_( Store.Released, Flow );
+
+	State = uym::sExists;
 ERRErr
 ERREnd
 ERREpilog
-	return Row;
+	return State;
 }
 
 static inline void Load_(
@@ -126,22 +120,12 @@ static void Load_(
 
 uym::state__ lst::ReadFromFile_(
 	const char *FileName,
-	time_t ReferenceTimeStamp,
 	store_ &Store )
 {
 	uym::state__ State = uym::s_Undefined;
 ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
-
-	State = Test_( FileName, ReferenceTimeStamp );
-
-	if ( uym::IsError( State ) )
-		ERRReturn;
-
-	if ( State == uym::sAbsent )
-		ERRReturn;
-
 	if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
 		State = uym::sInconsistent;
 		ERRReturn;

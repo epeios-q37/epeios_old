@@ -569,7 +569,7 @@ namespace ndbdct {
 			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 			_StorageFileManager.reset( P );
@@ -597,24 +597,35 @@ namespace ndbdct {
 
 			_Content = &Content;
 		}
-		uym::state__ Bind( void )
+		uym::state__ B_ind( void )
 		{
-			uym::state__ State = _StorageFileManager.Bind();
+			uym::state__ State = _StorageFileManager.B_ind();
 
-			if ( _EntriesFileManager.Bind() != State )
+			if ( uym::IsError( State ) ) {
+				_StorageFileManager.B_ind();
+				return State;
+			}
+
+			if ( _EntriesFileManager.B_ind() != State ) {
+				_StorageFileManager.reset();
+				_EntriesFileManager.reset();
 				return uym::sInconsistent;
+			}
 
-			if ( State == uym::sExists )
-				if ( !_LoadAvailables() )
+			if ( uym::Exists( State ) )
+				if ( !_LoadAvailables() ) {
+					_StorageFileManager.reset();
+					_EntriesFileManager.reset();
 					State = uym::sInconsistent;
+				}
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
-			uym::state__ State = _StorageFileManager.Settle();
+			uym::state__ State = _StorageFileManager.S_ettle();
 
-			if ( _EntriesFileManager.Settle()  != State )
+			if ( _EntriesFileManager.S_ettle() != State )
 				State = uym::sInconsistent;
 
 			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
@@ -644,12 +655,12 @@ namespace ndbdct {
 		{
 			return _BaseFileName;
 		}
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			dynamic_content_ &Content,
 			dynamic_content_atomized_file_manager___ &FileManager );
 	};
 
-	uym::state__ Plug(
+	uym::state__ P_lug(
 		dynamic_content_ &Content,
 		dynamic_content_atomized_file_manager___ &FileManager );
 }

@@ -526,7 +526,7 @@ namespace ndbidx {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 
@@ -555,18 +555,21 @@ namespace ndbidx {
 
 			_Index = &Index;
 		}
-		uym::state__ Bind( void )
+		uym::state__ B_ind( void )
 		{
-			uym::state__ State = _FileManager.Bind();
+			uym::state__ State = _FileManager.B_ind();
+
+			if ( uym::IsError( State ) )
+				return State;
 
 			if ( State == uym::sExists )
 				_Index->SearchRoot();
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
-			return _FileManager.Settle();
+			return _FileManager.S_ettle();
 		}
 		void CloseFiles( void )
 		{
@@ -576,16 +579,21 @@ namespace ndbidx {
 		{
 			return _BaseFileName;
 		}
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			index_ &Index,
 			index_atomized_file_manager___	&FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		index_ &Index,
 		index_atomized_file_manager___	&FileManager )
 	{
-		uym::state__ State = idxbtq::Plug( Index.DIndex, FileManager._FileManager );
+		uym::state__ State = idxbtq::P_lug( Index.DIndex, FileManager._FileManager );
+
+		if ( uym::IsError( State ) ) {
+			FileManager.reset();
+			return State;
+		}
 
 		FileManager.Set( Index );
 

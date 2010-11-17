@@ -170,27 +170,23 @@ namespace lstbch {
 	E_AUTO3( list_bunch )
 
 #ifndef FLM__COMPILATION
-	typedef bch::bunch_file_manager___ _bunch_file_manager___;
 
 	class list_bunch_file_manager___
-	: public _bunch_file_manager___
 	{
 	private:
-		lst::store_ *_ListStore;
-		tol::E_FPOINTER___( bso::char__ ) _ListFileName;
+		bch::bunch_file_manager___ _BunchFileManager;
+		lst::list_file_manager___ _ListFileManager;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_bunch_file_manager___::ReleaseFile();
+			_BunchFileManager.ReleaseFile();	// Pour mettre à jour l'horodatage du/des fichiers correspondant.
 
 			if ( P ) {
 				S_ettle();
 			}
 
-			_bunch_file_manager___::reset( P );
-			_ListFileName.reset( P );
-
-			_ListStore = NULL;
+			_ListFileManager.reset( P );
+			_BunchFileManager.reset( P );
 		}
 		list_bunch_file_manager___( void )
 		{
@@ -209,81 +205,88 @@ namespace lstbch {
 		{
 			reset();
 
-			_bunch_file_manager___::Init( BunchFileName, Mode, Persistent, ID );
+			_BunchFileManager.Init( BunchFileName, Mode, Persistent, ID );
+			_ListFileManager.Init( ListFileName );
 
-			if ( ( _ListFileName = malloc( strlen( ListFileName ) + 1 ) ) == NULL )
-				ERRa();
-
-			strcpy( _ListFileName, ListFileName );
 		}
 		uym::state__ B_ind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
 		{
-			return lst::ReadFromFile( ListFileName(), TimeStamp(), *_ListStore );
+			uym::state__ State = _BunchFileManager.B_ind();
+
+			if ( uym::IsError( State ) )
+				return State;
+			
+			if ( _ListFileManager.B_ind( _BunchFileManager.TimeStamp() ) != State )
+				State = uym::sInconsistent;
+
+			return State;
 		}
 		uym::state__ S_ettle( void )
 		{
-			if ( ( _ListStore != NULL )
-					&& _bunch_file_manager___::IsPersistent()
-					&& _bunch_file_manager___::Exists() )
-				lst::WriteToFile( *_ListStore, _ListFileName, _bunch_file_manager___::TimeStamp() );
+			uym::state__ State = _BunchFileManager.S_ettle();
 
-			return _bunch_file_manager___::S_ettle();
+			if ( _BunchFileManager.IsPersistent() && _BunchFileManager.Exists() )
+				if ( _ListFileManager.S_ettle( _BunchFileManager.TimeStamp() ) != State )
+					State = uym::sInconsistent;
+
+			return State;
 		}
 		void Drop( void )
 		{
-			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
-				ERRu();
-
-			_bunch_file_manager___::Drop();
-
-			if ( fil::FileExists( _ListFileName ) )
-				if ( remove( _ListFileName ) != 0 )
-					ERRu();
+			_ListFileManager.Drop();
+			_BunchFileManager.Drop();
 		}
-		const char *ListFileName( void ) const
+		uym::state__ S_tate( void ) const
 		{
-			return _ListFileName;
-		}
-		void Set( lst::store_ &Store )
-		{
-			if ( _ListStore != NULL )
-				ERRu();
+			uym::state__ State = _BunchFileManager.S_tate();
 
-			_ListStore = &Store;
+			if ( State != _ListFileManager.S_tate() )
+				State = uym::sInconsistent;
+
+			return State;
 		}
 		bso::bool__ Exists( void ) const
 		{
-			bso::bool__ Exists = _bunch_file_manager___::Exists();
-
-			if ( Exists != fil::FileExists( _ListFileName ) )
-				ERRc();
-
-			return Exists;
+			return uym::Exists( S_tate() );
 		}
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _bunch_file_manager___::CreateFile( ErrorHandling );
+			bso::bool__ Success = _BunchFileManager.CreateFile( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			if ( fil::FileExists( _ListFileName ) )
-				if ( ErrorHandling == err::hThrowException )
-					ERRf();
-				else
-					return false;
+			Success = _ListFileManager.CreateFiles( ErrorHandling );
 
-			Success = fil::CreateFile( _ListFileName, ErrorHandling );
+			if ( !Success )
+				_BunchFileManager.Drop();
 
 			return Success;
 		}
-		void CreateFile( int )	// Pour éviter un appel à la fonction correspondante de '_bunch_file_manager___'.
+		time_t TimeStamp( void ) const
 		{
-			ERRu();
+			time_t BunchTimeStamp = _BunchFileManager.TimeStamp();
+			time_t ListTimeStamp = _ListFileManager.TimeStamp();
+
+			if ( BunchTimeStamp > ListTimeStamp )
+				return BunchTimeStamp;
+			else
+				return ListTimeStamp;
 		}
+		void ReleaseFile( void )
+		{
+			_BunchFileManager.ReleaseFile();
+		}
+		void Mode( fil::mode__ Mode )
+		{
+			_BunchFileManager.Mode( Mode );
+		}
+		template <typename list_bunch> friend uym::state__ P_lug(
+			list_bunch &ListBunch,
+			list_bunch_file_manager___ &FileManager );
 	};
 
 
@@ -291,14 +294,14 @@ namespace lstbch {
 		list_bunch &ListBunch,
 		list_bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::P_lug( ListBunch.Bunch(), FileManager );
+		uym::state__ State = bch::P_lug( ListBunch.Bunch(), FileManager._BunchFileManager );
 
 		if ( uym::IsError( State ) )
 			FileManager.reset();
 		else {
-			ListBunch.Locations.SetFirstUnused( FileManager.UnderlyingSize() / ListBunch.GetItemSize() );
-
-			FileManager.Set( ListBunch.Locations );
+			if ( lst::P_lug( ListBunch, FileManager._ListFileManager, FileManager._BunchFileManager.FileSize() / ListBunch.GetItemSize(), FileManager._BunchFileManager.TimeStamp() ) != State )
+				FileManager.reset();
+				State = uym::sInconsistent;
 		}
 
 		return State;

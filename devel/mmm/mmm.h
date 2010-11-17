@@ -1698,7 +1698,7 @@ namespace mmm {
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			multimemory_ &Multimemory,
 			class multimemory_file_manager___ &FileManager );
 	};

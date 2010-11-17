@@ -329,22 +329,31 @@ ERREnd
 ERREpilog
 }
 
-uym::state__ ndbdct::Plug(
+uym::state__ ndbdct::P_lug(
 	dynamic_content_ &Content,
 	dynamic_content_atomized_file_manager___ &FileManager )
 {
-	uym::state__ State = tym::Plug( Content.Storage.Memory, FileManager._StorageFileManager );
+	uym::state__ State = tym::P_lug( Content.Storage.Memory, FileManager._StorageFileManager );
 
-	if ( lstbch::Plug( Content.Entries, FileManager._EntriesFileManager ) != State )
+	if ( uym::IsError( State ) ) {
+		FileManager.reset();
+		return State;
+	}
+
+	if ( lstbch::P_lug( Content.Entries, FileManager._EntriesFileManager ) != State ) {
+		FileManager.reset();
 		return uym::sInconsistent;
+	}
 
 	FileManager.Set( Content );
 
 	Content.S_.Unallocated = FileManager._StorageFileManager.UnderlyingSize();
 
-	if ( State == uym::sExists )
-		if ( !Test_( FileManager._BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, FileManager._GetUnderlyingFilesLastModificationTime() ) )
-				State = uym::sInconsistent;
+	if ( uym::Exists( State ) )
+		if ( !Test_( FileManager._BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, FileManager._GetUnderlyingFilesLastModificationTime() ) ) {
+			FileManager.reset();
+			State = uym::sInconsistent;
+		}
 
 	return State;
 }

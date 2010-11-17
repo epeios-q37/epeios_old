@@ -60,97 +60,34 @@ using namespace ndbsct;
 #define LIST_FILE_NAME_EXTENSION	".edl"
 #define CONTENT_FILE_NAME_EXTENSION		".edc"
 
-static void Save_(
-	const _list_ &List,
-	const str::string_ &BaseFileName,
-	const char *Extension,
-	time_t UnderlyingFilesLastModificationTime )
-{
-ERRProlog
-	str::string FileName;
-	STR_BUFFER___ FileNameBuffer;
-ERRBegin
-	FileName.Init( BaseFileName );
-	FileName.Append( Extension );
-
-	lst::WriteToFile( List, FileName.Convert( FileNameBuffer ), UnderlyingFilesLastModificationTime );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void ndbsct::static_content_atomized_file_manager___::_SaveLocations( void ) const
-{
-	Save_( *_Content, _BaseFileName, LIST_FILE_NAME_EXTENSION, _GetUnderlyingFilesLastModificationTime() );
-}
-
 void ndbsct::static_content_atomized_file_manager___::Init(
 	const str::string_ &BaseFileName,
 	fil::mode__ Mode,
 	flm::id__ ID )
 {
 ERRProlog
-	str::string ContentFileName;
-	tol::E_FPOINTER___( bso::char__ ) ContentFileNameBuffer;
+	str::string FileName;
+	tol::E_FPOINTER___( bso::char__ ) FileNameBuffer;
 ERRBegin
 	reset();
 
-	_BaseFileName.Init( BaseFileName );
 	_Mode = Mode;
+	_BaseFileName.Init( BaseFileName );
 
-	ContentFileName.Init( BaseFileName );
-	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
+	FileName.Init( FileName );
+	FileName.Append( CONTENT_FILE_NAME_EXTENSION );
 
-	_FileManager.Init( ContentFileName.Convert( ContentFileNameBuffer ), Mode, true, ID );
+	_MemoryFileManager.Init( FileName.Convert( FileNameBuffer ), Mode, true, ID );
+
+
+	FileName.Init( FileName );
+	FileName.Append( LIST_FILE_NAME_EXTENSION );
+
+	_ListFileManager.Init( FileName.Convert( FileNameBuffer ) );
 ERRErr
 ERREnd
 ERREpilog
 }
-
-// Permet de stocker les données entièrement en mémoire. NON UTILISABLE_EN_EXPOITATION !
-//#define IN_MEMORY
-
-
-uym::state__ ndbsct::static_content_atomized_file_manager___::Bind( void )
-{
-	uym::state__ State = uym::s_Undefined;
-ERRProlog
-	str::string ContentFileName;
-	STR_BUFFER___ ContentFileNameBuffer;
-	str::string ListFileName;
-	STR_BUFFER___ ListFileNameBuffer;
-ERRBegin
-	ContentFileName.Init( _BaseFileName );
-	ContentFileName.Append( CONTENT_FILE_NAME_EXTENSION );
-
-	State = _FileManager.Bind();
-
-	if ( State == uym::sExists ) {
-
-		ListFileName.Init( _BaseFileName );
-		ListFileName.Append( LIST_FILE_NAME_EXTENSION );
-
-		State = lst::ReadFromFile( ListFileName.Convert( ListFileNameBuffer ), _GetUnderlyingFilesLastModificationTime(), *_Content );
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return State;
-}
-
-void ndbsct::static_content_atomized_file_manager___::_ErasePhysically( void )
-{
-ERRProlog
-ERRBegin
-	_FileManager.Drop();
-
-	ndbbsc::DropFile( _BaseFileName, LIST_FILE_NAME_EXTENSION );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

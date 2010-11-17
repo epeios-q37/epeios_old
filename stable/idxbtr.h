@@ -388,11 +388,11 @@ namespace idxbtr {
 
 	typedef btr::binary_tree_file_manager___ tree_index_file_manager___;
 
-	template <typename index> uym::state__ Plug(
+	template <typename index> uym::state__ P_lug(
 		index &Index,
 		tree_index_file_manager___ &FileManager )
 	{
-		return btr::Plug( Index.BaseTree, FileManager );
+		return btr::P_lug( Index.BaseTree, FileManager );
 	}
 
 

@@ -441,14 +441,14 @@ namespace ndbtbl {
 				break;
 			}
 		}
-		uym::state__ Bind( void )
+		uym::state__ B_ind( void )
 		{
 			switch ( _Type ) {
 			case tStatic:
-				return _Static.Bind();
+				return _Static.B_ind();
 				break;
 			case tDynamic:
-				return _Dynamic.Bind();
+				return _Dynamic.B_ind();
 				break;
 			default:
 				ERRu();
@@ -457,14 +457,14 @@ namespace ndbtbl {
 
 			return uym::s_Undefined;	// Pour éviter un 'warning'.
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
 			switch ( _Type ) {
 			case tStatic:
-				return _Static.Settle();
+				return _Static.S_ettle();
 				break;
 			case tDynamic:
-				return _Dynamic.Settle();
+				return _Dynamic.S_ettle();
 				break;
 			default:
 				ERRu();
@@ -491,12 +491,12 @@ namespace ndbtbl {
 
 			return _Static.BaseFileName();	// Pour éviter un 'warning'.
 		}
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			table_ &Table,
 			table_atomized_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		table_ &Table,
 		table_atomized_file_manager___ &FileManager )
 	{
@@ -504,10 +504,10 @@ namespace ndbtbl {
 
 		switch ( Table.Type() ) {
 		case tStatic:
-			State = ndbsct::Plug( Table.Content.Static(), FileManager._Static );
+			State = ndbsct::P_lug( Table.Content.Static(), FileManager._Static );
 			break;
 		case tDynamic:
-			State = ndbdct::Plug( Table.Content.Dynamic(), FileManager._Dynamic );
+			State = ndbdct::P_lug( Table.Content.Dynamic(), FileManager._Dynamic );
 			break;
 		default:
 			ERRu();

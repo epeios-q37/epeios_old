@@ -439,7 +439,7 @@ namespace uym {
 			if ( Persistent )
 				_file_memory_driver___::Persistent();
 		}
-		state__ B_ind( void )	// To call only after a 'Plugt(...)'.
+		state__ S_tate( void ) const
 		{
 			if ( GetFileName() == NULL )
 				return sInconsistent;
@@ -448,14 +448,13 @@ namespace uym {
 			else
 				return sAbsent;
 		}
+		state__ B_ind( void )
+		{
+			return S_tate();
+		}
 		state__ S_ettle( void )
 		{
-			if ( GetFileName() == NULL )
-				return sInconsistent;
-			else if ( Exists() )
-				return sExists;
-			else
-				return sAbsent;
+			return S_tate();
 		}
 		friend state__ P_lug(
 			untyped_memory_ &Memory,
@@ -483,6 +482,32 @@ namespace uym {
 		}
 
 		return true;	// To avoid a 'warning'.
+	}
+
+	inline bso::bool__ Exists( state__ State )
+	{
+		if ( IsError( State ) )
+			ERRu();
+
+#if UYM_STATE_AMOUNT != 3
+#	error "'status__' changed !"
+#endif
+		switch ( State ) {
+		case sExists:
+			return true;
+			break;
+		case sAbsent:
+			return false;
+			break;
+		case sInconsistent:
+			ERRc();
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return false;	// Pour éviter un 'warning'.
 	}
 
 	inline state__ P_lug(

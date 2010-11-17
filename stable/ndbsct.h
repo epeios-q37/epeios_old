@@ -191,6 +191,7 @@ namespace ndbsct {
 			ERRl();
 		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
+		E_RODISCLOSE_( epeios::size__, Size );
 	};
 
 	E_AUTO( static_content )
@@ -200,26 +201,31 @@ namespace ndbsct {
 	private:
 		static_content_ *_Content;
 		str::string _BaseFileName;
-		tym::memory_file_manager___ _FileManager;
+		tym::memory_file_manager___ _MemoryFileManager;
+		lst::list_file_manager___ _ListFileManager;
 		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
-			return _FileManager.TimeStamp();
+			return _MemoryFileManager.TimeStamp();
 		}
-		void _SaveLocations( void ) const;
-		void _ErasePhysically( void );
+		void _ErasePhysically( void )
+		{
+			_MemoryFileManager.Drop();
+			_ListFileManager.Drop();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_FileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+			_MemoryFileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
-			_FileManager.reset( P );
-			_Mode = fil::m_Undefined;
 			_BaseFileName.reset( P );
+			_MemoryFileManager.reset( P );
+			_ListFileManager.reset( P );
+			_Mode = fil::m_Undefined;
 			_Content = NULL;
 		}
 		static_content_atomized_file_manager___( void )
@@ -241,48 +247,58 @@ namespace ndbsct {
 
 			_Content = &Content;
 		}
-		uym::state__ Bind( void );
-		uym::state__ Settle( void )
+		uym::state__ B_ind( void )
 		{
-			uym::state__ State = _FileManager.Settle();
+			uym::state__ State = _MemoryFileManager.B_ind();
 
-			if ( ( _Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
-				_SaveLocations();
+			if ( State != _ListFileManager.B_ind( _MemoryFileManager.TimeStamp() ) )
+				return uym::sInconsistent;
 
 			return State;
 		}
-		void WriteLocationsFile( void )	// Met à jour les fichiers.
+		uym::state__ S_ettle( void )
 		{
-			_SaveLocations();
+			uym::state__ State = _MemoryFileManager.S_ettle();
+
+			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() != 0 ) )
+				_ListFileManager.S_ettle( _MemoryFileManager.TimeStamp() );
+
+			return State;
 		}
 		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
 		{
-			_FileManager.ReleaseFile();
+			_MemoryFileManager.ReleaseFile();
+			_ListFileManager.ReleaseFile();
 		}
 		void SwitchMode( fil::mode__ Mode )
 		{
 			if ( Mode != _Mode ) {
-				_FileManager.Mode( Mode );
+				_MemoryFileManager.Mode( Mode );
 
 				_Mode = Mode;
 			}
 		}
-		const str::string_ &BaseFileName( void ) const
-		{
-			return _BaseFileName;
-		}
-		friend uym::state__ Plug(
+		E_RODISCLOSE__( str::string_, BaseFileName );
+		friend uym::state__ P_lug(
 			static_content_ &Content,
 			static_content_atomized_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		static_content_ &Content,
 		static_content_atomized_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::Plug( Content.Storage, FileManager._FileManager );
+		uym::state__ State = tym::P_lug( Content.Storage, FileManager._MemoryFileManager );
 
-		FileManager.Set( Content );
+		if ( uym::IsError( State ) ) {
+			FileManager.reset();
+			return State;
+		}
+
+		if ( State != lst::P_lug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
+			FileManager.reset();
+			return uym::sInconsistent;
+		}
 
 		return State;
 	}
