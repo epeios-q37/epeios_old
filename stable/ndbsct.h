@@ -292,12 +292,12 @@ namespace ndbsct {
 
 		if ( uym::IsError( State ) ) {
 			FileManager.reset();
-			return State;
-		}
-
-		if ( State != lst::P_lug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
-			FileManager.reset();
-			return uym::sInconsistent;
+		} else if (uym::Exists( State ) ) {
+			if ( State != lst::P_lug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
+				FileManager.reset();
+				return uym::sInconsistent;
+			} else 
+				FileManager.Set( Content );
 		}
 
 		return State;

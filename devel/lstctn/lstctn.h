@@ -294,12 +294,11 @@ namespace lstctn {
 
 			if ( uym::IsError( State ) ) {
 				reset();
-				return State;
-			}
-
-			if ( lst::P_lug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
-				reset();
-				State = uym::sInconsistent;
+			} else if ( uym::Exists( State ) ) {
+				if ( lst::P_lug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
+					reset();
+					State = uym::sInconsistent;
+				}
 			}
 
 			return State;

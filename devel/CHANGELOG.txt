@@ -1,5 +1,13 @@
 $Id$
 
+18/11/2010 !
+	- GENERAL :
+		- Refonte gestion '[...]_file_manager__'.
+
+17/11/2010 !
+	- GENERAL :
+		- Refonte gestion '[...]_file_manager__'.
+
 16/11/2010 :
 	- FRDRGY :
 		- Ajout de 'Get(Configuration|Project|User)Root()'.

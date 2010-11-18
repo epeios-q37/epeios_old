@@ -74,13 +74,13 @@ ERRBegin
 	_Mode = Mode;
 	_BaseFileName.Init( BaseFileName );
 
-	FileName.Init( FileName );
+	FileName.Init( BaseFileName );
 	FileName.Append( CONTENT_FILE_NAME_EXTENSION );
 
 	_MemoryFileManager.Init( FileName.Convert( FileNameBuffer ), Mode, true, ID );
 
 
-	FileName.Init( FileName );
+	FileName.Init( BaseFileName );
 	FileName.Append( LIST_FILE_NAME_EXTENSION );
 
 	_ListFileManager.Init( FileName.Convert( FileNameBuffer ) );

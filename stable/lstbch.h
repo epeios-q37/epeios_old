@@ -298,10 +298,11 @@ namespace lstbch {
 
 		if ( uym::IsError( State ) )
 			FileManager.reset();
-		else {
-			if ( lst::P_lug( ListBunch, FileManager._ListFileManager, FileManager._BunchFileManager.FileSize() / ListBunch.GetItemSize(), FileManager._BunchFileManager.TimeStamp() ) != State )
+		else if ( uym::Exists( State ) ) {
+			if ( lst::P_lug( ListBunch, FileManager._ListFileManager, FileManager._BunchFileManager.FileSize() / ListBunch.GetItemSize(), FileManager._BunchFileManager.TimeStamp() ) != State ) {
 				FileManager.reset();
 				State = uym::sInconsistent;
+			}
 		}
 
 		return State;

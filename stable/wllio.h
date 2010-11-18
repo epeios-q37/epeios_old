@@ -238,6 +238,10 @@ namespace wllio {
 			if ( ( Amount = _write( _D, Buffer, Amount ) ) == -1 )
 				ERRd();
 
+			if ( _D  > 2 )
+				if ( _commit( _D ) != 0 )
+					ERRd();
+
 			return Amount;
 		}
 		void Flush( void )
