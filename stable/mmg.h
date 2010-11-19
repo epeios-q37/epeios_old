@@ -370,7 +370,7 @@ namespace mmg
 
 			_ID = flm::GetId();
 
-			PiloteFichier_.Init( _ID, false, FileName, FileMode );
+			PiloteFichier_.Init( _ID, FileName, FileMode );
 			PiloteFichier_.Persistent();
 			PiloteFichier_.Manual();
 

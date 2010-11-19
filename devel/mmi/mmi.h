@@ -103,10 +103,6 @@ namespace mmi {
 		{
 			ERRu();
 		}
-		virtual void MDRFlush( void )
-		{
-			ERRu();
-		}
 	public:
 		_base_indexed_multimemory_driver__( const indexed_multimemory_ *&Multimemoire )
 		: Multimemoire_( Multimemoire )
@@ -158,8 +154,6 @@ namespace mmi {
 			mdr::row_t__ Position );
 		// Déportée.
 		virtual void MDRAllocate( mdr::size__ Capacity );
-		// Déportée.
-		virtual void MDRFlush( void );
 	public:
 		indexed_multimemory_driver__( void )
 		: _base_indexed_multimemory_driver__( Multimemoire_ ) {}
@@ -417,12 +411,6 @@ namespace mmi {
 		{
 			Liberer_( Index );
 		}
-		//f Flushes the memory.
-		void Flush( void )
-		{
-			Descripteurs.Flush();
-			Multimemoire.Flush();
-		}
 		//f Return the size of the 'Index' memory.
 		epeios::size__ Size( index__ Index ) const
 		{
@@ -497,13 +485,13 @@ namespace mmi {
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, ID );
 			_Multimemory.Init( MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
-		uym::state__ B_ind( void )	// A appeler seulement aprés 'Plug(...)'.
+		uym::state__ Bind( void )	// A appeler seulement aprés 'Plug(...)'.
 		{
-			return _Multimemory.B_ind();
+			return _Multimemory.Bind();
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
-			return _Multimemory.S_ettle();
+			return _Multimemory.Settle();
 		}
 		void ReleaseFile( void )
 		{
@@ -570,16 +558,16 @@ namespace mmi {
 		}
 	};
 
-	inline uym::state__ P_lug(
+	inline uym::state__ Plug(
 		indexed_multimemory_ &Memory,
 		indexed_multimemory_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::P_lug( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
+		uym::state__ State = bch::Plug( Memory.Descripteurs, FileManager.DescriptorsFileManager() );
 
 		if ( uym::IsError( State ) )
 			FileManager.reset();
 		else
-			if ( mmm::P_lug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
+			if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
 				State = uym::sInconsistent;
 				FileManager.reset();
 			}
@@ -616,12 +604,6 @@ namespace mmi {
 	inline void indexed_multimemory_driver__::MDRAllocate( mdr::size__ Capacity )
 	{
 		Multimemoire_->Reallocate( _Index, Capacity );
-	}
-
-	inline void indexed_multimemory_driver__::MDRFlush( void )
-	{
-		if ( Multimemoire_ )
-			Multimemoire_->Flush();
 	}
 }
 

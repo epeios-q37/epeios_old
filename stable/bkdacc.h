@@ -247,7 +247,7 @@ namespace bkdacc {
 		}
 		bso::bool__ _Send( void )
 		{
-			Channel_->Synchronize();
+			Channel_->Commit();
 
 			if ( ( !flw::GetString( *Channel_, RawMessage_, sizeof( RawMessage_ ) ) ) )
 				ERRl();

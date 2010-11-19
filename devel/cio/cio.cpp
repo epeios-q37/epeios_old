@@ -104,9 +104,9 @@ void cio::Initialize( void )
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::_coutf.Init( coutd, false );
+		cio::_coutf.Init( coutd );
 		cio::_cinf.Init( cind );
-		cio::_cerrf.Init( cerrd, false );
+		cio::_cerrf.Init( cerrd );
 
 		::Initialized_ = true;
 }

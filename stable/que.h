@@ -411,11 +411,11 @@ namespace que {
 #ifndef FLM__COMPILATION
 	typedef bch::bunch_file_manager___ queue_file_manager___;
 
-	template <typename queue> uym::state__ P_lug(
+	template <typename queue> uym::state__ Plug(
 		queue &Queue,
 		queue_file_manager___ &FileManager )
 	{
-		return bch::P_lug( Queue.Links, FileManager );
+		return bch::Plug( Queue.Links, FileManager );
 	}
 #endif
 

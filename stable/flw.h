@@ -554,10 +554,10 @@ namespace flw {
 				return _WriteIntoCache( Buffer, Amount );
 		}
 		// Synchronization.
-		void _Synchronize( void )
+		void _Commit( void )
 		{
 			_DumpCache();
-			_Functions.Synchronize();
+			_Functions.Commit();
 
 			_Written = 0;
 		}
@@ -584,7 +584,7 @@ namespace flw {
 		{
 			if ( P ) {
 				if ( _Size != _Free )
-					Synchronize();
+					Commit();
 			}
 
 			_Written = 0;
@@ -610,7 +610,7 @@ namespace flw {
 		void Init( void )
 		{
 			if ( _Size != _Free )
-				Synchronize();
+				Commit();
 
 			_Written = 0;
 		}
@@ -634,9 +634,9 @@ namespace flw {
 			_Write( &C, 1 );
 		}
 		//f Synchronization.
-		void Synchronize( void )
+		void Commit( void )
 		{
-			_Synchronize();
+			_Commit();
 		}
 		//f Return the amount of data written since last 'Synchronize()'.
 		size__ AmountWritten( void ) const

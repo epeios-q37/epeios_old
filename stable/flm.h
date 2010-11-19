@@ -176,7 +176,6 @@ namespace flm {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode,
-			bso::bool__ FlushToDevice,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
@@ -201,7 +200,7 @@ namespace flm {
 				}
 			}
 
-			_Core.Init( _D, FlushToDevice );
+			_Core.Init( _D );
 
 			return fil::sSuccess;
 		}
@@ -309,7 +308,6 @@ namespace flm {
 		// différents témoins
 		time_t _LastAccessTime;	// Last access time.
 		id__ _ID;
-		bso::bool__ _FlushToDevice;	// Voir 'wllio' ou 'pllio'.
 	// Fonctions
 		bso::bool__ Open_(
 			bso::bool__ ToFlush,
@@ -319,7 +317,7 @@ namespace flm {
 
 			if ( !Temoin_.Ouvert )
 			{
-				Success = File_.Init( Nom_, Temoin_.Mode, _FlushToDevice, ErrorHandling ) == fil::sSuccess;
+				Success = File_.Init( Nom_, Temoin_.Mode, ErrorHandling ) == fil::sSuccess;
 
 				if ( Success )
 					Temoin_.Ouvert = 1;
@@ -410,6 +408,11 @@ namespace flm {
 				TailleFichier_ = Capacite;
 			}
 		}
+		void Flush( void )
+		{
+			if ( Temoin_.Ouvert )
+				File_.Flush();
+		}
 	public:
 		memoire_fichier_base___( void )
 		{
@@ -447,11 +450,9 @@ namespace flm {
 			_Row = NONE;
 			_ID = FLM_UNDEFINED_ID;
 			_LastAccessTime = 0;
-			_FlushToDevice = false;
 		}
 		void Init(
 			id__ ID,
-			bso::bool__ FlushToDevice,
 			const char *NomFichier = NULL,
 			fil::mode__ Mode = fil::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
@@ -471,7 +472,6 @@ namespace flm {
 
 				_Row = _Register( *this, _ID );
 
-				_FlushToDevice = FlushToDevice;
 			}
 			else if ( !Temoin_.Interne )
 			{
@@ -632,7 +632,6 @@ namespace flm {
 #endif
 			memoire_fichier_base___::Write( Buffer, (unsigned int)Amount, (position__)Position );
 		}
-		// écrit 'Nombre' octets à la position 'Position'
 	public:
 		file_memory_driver___( void )
 		: memory_driver__(),
@@ -656,12 +655,11 @@ namespace flm {
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
 			id__ ID,
-			bso::bool__ FlushToDevice,
 			const char *FileName = NULL,
 			fil::mode__ Mode = fil::mReadWrite,
 			flm::creation Creation = flm::cFirstUse )
 		{
-			memoire_fichier_base___::Init( ID, FlushToDevice, FileName, Mode, Creation );
+			memoire_fichier_base___::Init( ID, FileName, Mode, Creation );
 			E_MEMORY_DRIVER__::Init();
 		}
 	};

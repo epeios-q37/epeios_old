@@ -134,7 +134,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -180,7 +180,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_UserFunctions->PostProcess( _UP );
 		}
 	protected:
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
 			_UserFunctions->Process( *_Flow, _UP );
 		}

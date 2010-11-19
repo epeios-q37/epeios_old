@@ -120,12 +120,6 @@ namespace mdr {
 			ERRu();
 			// For read-only memory.
 		}
-		//v Flush caches.
-		virtual void MDRFlush( void )
-		{
-			ERRu();
-			// for read-only memory.
-		}
 	public:
 		memory_driver__( void )
 		{
@@ -168,11 +162,6 @@ namespace mdr {
 			row_t__ Position )
 		{
 			MDRStore( Buffer, Amount, Position );
-		}
-		//f Flush buffers.
-		void Flush( void )
-		{
-			MDRFlush();
 		}
 	};
 

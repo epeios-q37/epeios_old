@@ -176,10 +176,10 @@ namespace lstctn {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_ContainerFileManager.ReleaseFiles(); // Pour mettre à jour l'horodatage des fichiers.
+//			_ContainerFileManager.ReleaseFiles(); // Pour mettre à jour l'horodatage des fichiers.
 
 			if ( P ) {
-				S_ettle();
+				Settle();
 			}
 
 			_ContainerFileManager.reset( P );
@@ -210,21 +210,21 @@ namespace lstctn {
 			_ContainerFileManager.Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 			_ListFileManager.Init( ListFileName );
 		}
-		uym::state__ B_ind( void )
+		uym::state__ Bind( void )
 		{
-			uym::state__ State = _ContainerFileManager.B_ind();
+			uym::state__ State = _ContainerFileManager.Bind();
 
 			if ( uym::IsError( State ) )
 				return State;
 
-			if ( _ListFileManager.B_ind( _ContainerFileManager.TimeStamp() ) != State )
+			if ( _ListFileManager.Bind( _ContainerFileManager.TimeStamp() ) != State )
 				State = uym::sInconsistent;
 
 			return State;
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _ContainerFileManager.S_ettle();
+			uym::state__ State = _ContainerFileManager.Settle();
 
 			if ( uym::IsError( State ) )
 				return State;
@@ -232,7 +232,7 @@ namespace lstctn {
 			if ( ( _ListStore != NULL )
 					&& _ContainerFileManager.IsPersistent()
 					&& _ContainerFileManager.Exists() )
-				if ( _ListFileManager.S_ettle( _ContainerFileManager.TimeStamp() ) != State )
+				if ( _ListFileManager.Settle( _ContainerFileManager.TimeStamp() ) != State )
 						State = uym::sInconsistent;
 
 			return State;
@@ -288,14 +288,14 @@ namespace lstctn {
 
 			return Success;
 		}
-		uym::state__ P_lug( container &ListContainer )
+		uym::state__ Plug( container &ListContainer )
 		{
-			uym::state__ State = ctn::P_lug( ListContainer.Container(), _ContainerFileManager );
+			uym::state__ State = ctn::Plug( ListContainer.Container(), _ContainerFileManager );
 
 			if ( uym::IsError( State ) ) {
 				reset();
 			} else if ( uym::Exists( State ) ) {
-				if ( lst::P_lug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
+				if ( lst::Plug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
 					reset();
 					State = uym::sInconsistent;
 				}
@@ -305,11 +305,11 @@ namespace lstctn {
 		}
 	};
 
-	template <typename list_container> inline uym::state__ P_lug(
+	template <typename list_container> inline uym::state__ Plug(
 		list_container &ListContainer,
 		list_container_file_manager___<list_container> &FileManager )
 	{
-		return FileManager.P_lug( ListContainer );
+		return FileManager.Plug( ListContainer );
 	}
 
 

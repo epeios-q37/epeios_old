@@ -329,18 +329,18 @@ ERREnd
 ERREpilog
 }
 
-uym::state__ ndbdct::P_lug(
+uym::state__ ndbdct::Plug(
 	dynamic_content_ &Content,
 	dynamic_content_atomized_file_manager___ &FileManager )
 {
-	uym::state__ State = tym::P_lug( Content.Storage.Memory, FileManager._StorageFileManager );
+	uym::state__ State = tym::Plug( Content.Storage.Memory, FileManager._StorageFileManager );
 
 	if ( uym::IsError( State ) ) {
 		FileManager.reset();
 		return State;
 	}
 
-	if ( lstbch::P_lug( Content.Entries, FileManager._EntriesFileManager ) != State ) {
+	if ( lstbch::Plug( Content.Entries, FileManager._EntriesFileManager ) != State ) {
 		FileManager.reset();
 		return uym::sInconsistent;
 	}

@@ -300,14 +300,14 @@ namespace sck {
 			fwf::size__ Minimum );
 		virtual void FWFDismiss( void )
 		{}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bool P = true )
 		{
 			if ( P ) {
 				if ( _Socket != SCK_INVALID_SOCKET ) {
-					ioflow_functions___::Synchronize();
+					ioflow_functions___::Commit();
 					Close( _Socket );
 				}
 			}

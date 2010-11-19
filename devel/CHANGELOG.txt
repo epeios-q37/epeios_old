@@ -1,5 +1,16 @@
 $Id$
 
+19/11/2010 :
+	- GENERAL :
+		- Adaptation aux modifications bibliothèques 'FWF' et 'MDR'.
+	- FWF :
+		- 'Sync[...]' -> 'Commit'.
+	- MDR :
+		- Suppression de 'MDRFlush()' (non-utilisé).
+	- WLLIO :
+		- Suppression du paramètre 'FlushToDevice'.
+		- Mise en oeuvre de '_commit'.
+
 18/11/2010 !
 	- GENERAL :
 		- Refonte gestion '[...]_file_manager__'.

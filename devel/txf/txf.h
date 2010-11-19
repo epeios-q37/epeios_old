@@ -241,9 +241,9 @@ namespace txf {
 		{
 			Flow_.Write( Tampon, Nombre );
 		}
-		void Synchroniser_( void )
+		void Commit_( void )
 		{
-			Flow_.Synchronize();
+			Flow_.Commit();
 		}
 	public:
 		text_oflow__( flw::oflow__ &Flow )
@@ -343,9 +343,9 @@ namespace txf {
 			Ecrire_( Buffer, Amount );
 		}
 		//f Synchronization.
-		void Synchronize( void )
+		void Commit( void )
 		{
-			Synchroniser_();
+			Commit_();
 		}
 	};
 
@@ -354,9 +354,9 @@ namespace txf {
 	#define TXF_DFS( Nom ) inline text_oflow__ & Nom ( text_oflow__ &Flow )
 
 	// Synchronisation (vide les caches).
-	TXF_DFS( sync )
+	TXF_DFS( commit )
 	{
-		Flow.Synchronize();
+		Flow.Commit();
 		return Flow;
 	}
 
@@ -364,7 +364,7 @@ namespace txf {
 	TXF_DFS( nl )
 	{
 #if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
-		return Flow << "\r\n" << sync;
+		return Flow << "\r\n" << commit;
 #elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
 		return Flow << '\n' << sync;
 #else
@@ -387,7 +387,7 @@ namespace txf {
 	// Revient en début de ligne.
 	TXF_DFS( rfl )
 	{
-		return Flow << '\r' << sync;
+		return Flow << '\r' << commit;
 	}
 
 	//o All written in this object is erased.

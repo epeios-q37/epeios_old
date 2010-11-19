@@ -342,7 +342,7 @@ void btr::_nodes_manager_::PrintStructure(
 		}
 	} while ( Niveau || Left );
 
-	Flot << txf::nl << txf::sync;
+	Flot << txf::nl << txf::commit;
 }
 
 /* Remonte l'arbre 'Racine' à partir de 'Depart', dont la présence d'une fille

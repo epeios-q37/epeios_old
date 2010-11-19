@@ -380,13 +380,13 @@ namespace lst {
 
 			strcpy( _FileName, FileName );
 		}
-		uym::state__ S_tate( void ) const
+		uym::state__ State( void ) const
 		{
 			return Test_( _FileName, 0 );
 		}
-		uym::state__ B_ind( time_t ReferenceTimeStamp )
+		uym::state__ Bind( time_t ReferenceTimeStamp )
 		{
-			uym::state__ State = this->S_tate();
+			uym::state__ State = this->State();
 
 			if ( uym::IsError( State ) )
 				return State;
@@ -396,7 +396,7 @@ namespace lst {
 
 			return State;
 		}
-		uym::state__ S_ettle( time_t ReferenceTimeStamp )
+		uym::state__ Settle( time_t ReferenceTimeStamp )
 		{
 			uym::state__ State = uym::s_Undefined;
 
@@ -442,7 +442,7 @@ namespace lst {
 		}
 		bso::bool__ Exists( void ) const
 		{
-			return uym::Exists( S_tate() );
+			return uym::Exists( State() );
 		}
 #ifdef CPE__C_VC
 #	undef CreateFile
@@ -471,7 +471,7 @@ namespace lst {
 	};
 
 
-	template <typename list> uym::state__ P_lug(
+	template <typename list> uym::state__ Plug(
 		list &List,
 		list_file_manager___ &FileManager,
 		epeios::row__ FirstUnused,

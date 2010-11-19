@@ -119,7 +119,7 @@ ERRBegin
 	Flow << Result;
 
 #ifdef XMLDOC_DBG
-	Flow << txf::sync;
+	Flow << txf::commit;
 #endif
 
 	Browser.Init( Root );
@@ -134,14 +134,14 @@ ERRBegin
 				HasChild = WriteAttributes_( Document, Browser.Position(), Flow );
 				Flow << '>';
 #ifdef XMLDOC_DBG
-				Flow << txf::sync;
+				Flow << txf::commit;
 #endif
 
 				Result.Init();
 				xmlbsc::TransformUsingEntities( Value( Browser.Position() ), false, Result );
 				Flow << Result;
 #ifdef XMLDOC_DBG
-				Flow << txf::sync;
+				Flow << txf::commit;
 #endif
 				if ( HasChild )
 					break;
@@ -150,7 +150,7 @@ ERRBegin
 		case dtr::kParent:
 			Flow << "</" << Name( Document.Data.GetOddity( Browser.Position() ) ) << '>';
 #ifdef XMLDOC_DBG
-			Flow << txf::sync;
+			Flow << txf::commit;
 #endif
 			break;
 		default:
@@ -164,7 +164,7 @@ ERRBegin
 	Flow << "</" << Name( Document.Data.GetOddity( Root ) ) << '>';
 
 #ifdef XMLDOC_DBG
-	Flow << txf::sync;
+	Flow << txf::commit;
 #endif
 
 ERRErr

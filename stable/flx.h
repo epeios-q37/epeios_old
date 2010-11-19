@@ -60,8 +60,6 @@ extern class ttr_tutor &FLXTutor;
 
 /*$BEGIN$*/
 
-//D FLow eXtension. Some class which extend the 'FLW' library.
-
 #include "err.h"
 #include "fwf.h"
 #include "flw.h"
@@ -218,7 +216,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bool P = true )
@@ -387,7 +385,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize()
+		virtual void FWFCommit()
 		{}
 	private:
 		bunch_ *_Bunch;
@@ -463,7 +461,7 @@ namespace flx {
 		{
 			return Wanted;
 		}
-		virtual void FWFSynchronize()
+		virtual void FWFCommit()
 		{}
 	public:
 		void Init( void )
@@ -494,7 +492,6 @@ namespace flx {
 
 	};
 }
-
 
 /*$END$*/
 				  /********************************************/

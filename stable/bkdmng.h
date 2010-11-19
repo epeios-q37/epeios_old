@@ -168,7 +168,7 @@ namespace bkdmng {
 			bso::bool__ Exit )
 		{
 			tol::buffer__ Buffer;
-			*_TOFlow << "[" << tol::DateAndTime( Buffer ) << "] (" << tht::GetTID() << ") : " << ( Exit ? "<-- " : "--> " ) << ObjectPrefix << ':' << ObjectName << ':' << MethodName << txf::nl << txf::sync;
+			*_TOFlow << "[" << tol::DateAndTime( Buffer ) << "] (" << tht::GetTID() << ") : " << ( Exit ? "<-- " : "--> " ) << ObjectPrefix << ':' << ObjectName << ':' << MethodName << txf::nl << txf::commit;
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -523,19 +523,19 @@ namespace bkdmng {
 	protected:
 		virtual void LSTAllocate( epeios::size__ Size )
 		{
-			Element_.Sync();
+			Element_.Commit();
 			Objets.Allocate( Size, aem::mFit );
 		}
 		virtual index__ BKDMNGNew( void )
 		{
-			Element_.Sync();
+			Element_.Commit();
 			return _List().New();
 		}
 		virtual void BKDMNGDelete( index__ Index )
 		{
 			Element_( Index ).reset();
 			_List().Delete( Index );
-			Element_.Sync();
+			Element_.Commit();
 		}
 		virtual void *BKDMNGObject( index__ Index )
 		{
@@ -549,7 +549,7 @@ namespace bkdmng {
 		ctn::E_CONTAINER( t ) Objets;
 		void reset( bool P = true )
 		{
-			Element_.Sync();
+			Element_.Commit();
 			Objets.reset( P );
 			_List().reset( P );
 		}
@@ -918,6 +918,7 @@ namespace bkdmng {
 
 //d A shared module of an object od type 't'.
 #define BKDMNG_SHARED_MODULE( t )	bkdmng::shared_module<t, t::s>	
+
 
 
 /*$END$*/

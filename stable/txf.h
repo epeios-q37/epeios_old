@@ -1,6 +1,6 @@
 /*
-	Header for the 'txf' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'txf' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2000-2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
@@ -31,7 +31,7 @@
 
 #define	TXF_VERSION	"$Revision$"
 
-#define TXF_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define TXF_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &TXFTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -241,9 +241,9 @@ namespace txf {
 		{
 			Flow_.Write( Tampon, Nombre );
 		}
-		void Synchroniser_( void )
+		void Commit_( void )
 		{
-			Flow_.Synchronize();
+			Flow_.Commit();
 		}
 	public:
 		text_oflow__( flw::oflow__ &Flow )
@@ -343,9 +343,9 @@ namespace txf {
 			Ecrire_( Buffer, Amount );
 		}
 		//f Synchronization.
-		void Synchronize( void )
+		void Commit( void )
 		{
-			Synchroniser_();
+			Commit_();
 		}
 	};
 
@@ -354,9 +354,9 @@ namespace txf {
 	#define TXF_DFS( Nom ) inline text_oflow__ & Nom ( text_oflow__ &Flow )
 
 	// Synchronisation (vide les caches).
-	TXF_DFS( sync )
+	TXF_DFS( commit )
 	{
-		Flow.Synchronize();
+		Flow.Commit();
 		return Flow;
 	}
 
@@ -364,7 +364,7 @@ namespace txf {
 	TXF_DFS( nl )
 	{
 #if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
-		return Flow << "\r\n" << sync;
+		return Flow << "\r\n" << commit;
 #elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
 		return Flow << '\n' << sync;
 #else
@@ -387,7 +387,7 @@ namespace txf {
 	// Revient en début de ligne.
 	TXF_DFS( rfl )
 	{
-		return Flow << '\r' << sync;
+		return Flow << '\r' << commit;
 	}
 
 	//o All written in this object is erased.

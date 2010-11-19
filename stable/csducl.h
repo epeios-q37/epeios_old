@@ -171,9 +171,9 @@ namespace csducl {
 		{
 			return _Get().WriteRelay( Buffer, Wanted, Minimum );
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
-			_Get().Synchronize();
+			_Get().Commit();
 		}
 	public:
 		void reset( bso::bool__ P = true )

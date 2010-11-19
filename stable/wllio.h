@@ -200,15 +200,10 @@ namespace wllio {
 	class lowlevel_output__
 	: public virtual io_core__
 	{
-	private:
-		bso::bool__ _FlushToDevice;	// Si à 'true', un 'Flush()' force l'écriture sur le périphérique,
-									// sinon 'Flush()' ne fait rien, les données n'étant pas 'bufférisée'
-									// lors d'opération de bas-niveau ('_write(...)'.
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			io_core__::reset( P );
-			_FlushToDevice = false;
 		}
 		lowlevel_output__( void )
 		{
@@ -218,18 +213,9 @@ namespace wllio {
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( descriptor__ D )
 		{
-			if ( FlushToDevice )
-				if ( IsSTDOUT() )
-					ERRu();
-				else if ( IsSTDERR() )
-					ERRu();
-
 			io_core__::Init( D );
-			_FlushToDevice = FlushToDevice;
 		}
 		int Write(
 			const void *Buffer,
@@ -238,18 +224,14 @@ namespace wllio {
 			if ( ( Amount = _write( _D, Buffer, Amount ) ) == -1 )
 				ERRd();
 
-			if ( _D  > 2 )
-				if ( _commit( _D ) != 0 )
-					ERRd();
-
 			return Amount;
 		}
 		void Flush( void )
 		{
-			if ( _FlushToDevice ) {
-				if ( _commit( _D ) != 0 )
-					ERRd();
-			}
+			if ( _D != WLLIO_UNDEFINED_DESCRIPTOR )
+				if ( !IsSTDOUT() && !IsSTDERR() )	// '_commit' n'est pas utilisable sur 'stdout' et 'stderr' (et accessoirement sur 'stdin').
+					if ( _commit( _D ) != 0 )
+						ERRd();
 		}
 	};
 
@@ -271,11 +253,9 @@ namespace wllio {
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( descriptor__ D )
 		{
-			lowlevel_output__::Init( D, FlushToDevice );
+			lowlevel_output__::Init( D );
 			lowlevel_input__::Init( D );
 		}
 	};

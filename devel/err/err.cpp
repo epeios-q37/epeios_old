@@ -254,8 +254,8 @@ ERRProlog
 #	endif
 ERRBegin
 	if ( cio::IsInitialized() ) {
-		cout << txf::sync;
-		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::sync /*<< '\a'*/;
+		cout << txf::commit;
+		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::commit /*<< '\a'*/;
 	}
 ERRErr
 ERREnd

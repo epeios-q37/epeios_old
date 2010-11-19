@@ -277,7 +277,7 @@ namespace bkdrqm {
 
 			Parsed_ = false;
 
-			Channel_->Synchronize();
+			Channel_->Commit();
 		}
 		//f Send a message that explain the reason of no treatment.
 		void SendExplanationMessage(
@@ -293,7 +293,7 @@ namespace bkdrqm {
 
 			Closed_ = true;
 
-			Channel_->Synchronize();
+			Channel_->Commit();
 		}
 		const casts_ &GetCasts( void ) const
 		{

@@ -319,14 +319,14 @@ ERREpilog
 
 			return !Created;
 		}
-		void _Synchronize( void )
+		void _Commit( void )
 		{
 #ifdef CSDSNC_DBG
 			if ( _Flow == NULL )
 				ERRu();
 #endif
 
-			_Flow->Synchronize();
+			_Flow->Commit();
 
 			if ( _Id == CSDSNC_UNDEFINED )
 				_Flow->Read( sizeof( _Id ), &_Id );
@@ -345,10 +345,10 @@ ERREpilog
 
 			return _Flow->WriteRelay( Buffer, Wanted, Minimum );
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
 			if ( _Flow != NULL )
-				_Synchronize();
+				_Commit();
 		}
 		virtual fwf::size__ FWFRead(
 			fwf::size__ Minimum,
@@ -358,7 +358,7 @@ ERREpilog
 			fwf::size__ Amount = 0;
 
 			if ( !_Prepare() )
-				_Synchronize();
+				_Commit();
 
 
 			Amount = _Flow->ReadUpTo( Wanted, Buffer );

@@ -244,7 +244,7 @@ namespace flf {
 				}
 			} else {
 				Status = fil::sSuccess;
-				io_oflow_functions___::Init( _D, false );
+				io_oflow_functions___::Init( _D );
 			}
 
 			return Status;
@@ -311,7 +311,7 @@ namespace flf {
 				}
 			}
 
-			io_oflow___::Init( D_, false );
+			io_oflow___::Init( D_ );
 
 			return fil::sSuccess;
 		}

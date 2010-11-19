@@ -246,14 +246,14 @@ namespace fwf {
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum ) = 0;
-		virtual void FWFSynchronize( void ) = 0;
+		virtual void FWFCommit( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
 		{
 			if ( P ) {
 				if ( _Mutex != FWF_NO_MUTEX ) {
 					if ( IsOwner_( _Mutex ) )
-						Synchronize();
+						Commit();
 					Delete_( _Mutex );
 				}
 			}
@@ -274,10 +274,10 @@ namespace fwf {
 
 			_Mutex = Create_();
 		}
-		void Synchronize( void )
+		void Commit( void )
 		{
 			if ( _Mutex != FWF_NO_MUTEX ) {
-				FWFSynchronize();
+				FWFCommit();
 				_Unlock();
 			}
 		}

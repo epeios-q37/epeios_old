@@ -564,12 +564,12 @@ namespace ndbdct {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_StorageFileManager.ReleaseFile();
-			_EntriesFileManager.ReleaseFile();
+//			_StorageFileManager.ReleaseFile();
+//			_EntriesFileManager.ReleaseFile();
 			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				S_ettle();
+				Settle();
 			}
 
 			_StorageFileManager.reset( P );
@@ -597,16 +597,16 @@ namespace ndbdct {
 
 			_Content = &Content;
 		}
-		uym::state__ B_ind( void )
+		uym::state__ Bind( void )
 		{
-			uym::state__ State = _StorageFileManager.B_ind();
+			uym::state__ State = _StorageFileManager.Bind();
 
 			if ( uym::IsError( State ) ) {
-				_StorageFileManager.B_ind();
+				_StorageFileManager.Bind();
 				return State;
 			}
 
-			if ( _EntriesFileManager.B_ind() != State ) {
+			if ( _EntriesFileManager.Bind() != State ) {
 				_StorageFileManager.reset();
 				_EntriesFileManager.reset();
 				return uym::sInconsistent;
@@ -621,11 +621,11 @@ namespace ndbdct {
 
 			return State;
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _StorageFileManager.S_ettle();
+			uym::state__ State = _StorageFileManager.Settle();
 
-			if ( _EntriesFileManager.S_ettle() != State )
+			if ( _EntriesFileManager.Settle() != State )
 				State = uym::sInconsistent;
 
 			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
@@ -655,12 +655,12 @@ namespace ndbdct {
 		{
 			return _BaseFileName;
 		}
-		friend uym::state__ P_lug(
+		friend uym::state__ Plug(
 			dynamic_content_ &Content,
 			dynamic_content_atomized_file_manager___ &FileManager );
 	};
 
-	uym::state__ P_lug(
+	uym::state__ Plug(
 		dynamic_content_ &Content,
 		dynamic_content_atomized_file_manager___ &FileManager );
 }

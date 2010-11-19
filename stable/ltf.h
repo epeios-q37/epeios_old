@@ -104,9 +104,9 @@ namespace ltf {
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
-			TFlow_ << txf::sync;
+			TFlow_ << txf::commit;
 		}
 	public:
 		void reset( bso::bool__ P = true )

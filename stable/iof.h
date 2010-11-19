@@ -91,7 +91,7 @@ namespace iof {
 
 			return Written;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
 			Flush();
 		}
@@ -109,11 +109,9 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init(
-			iop::descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( iop::descriptor__ D )
 		{
-			_output__::Init( D, FlushToDevice );
+			_output__::Init( D );
 			oflow_functions___::Init();
 		}
 	};
@@ -139,11 +137,9 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init(
-			iop::descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( iop::descriptor__ D )
 		{
-			_Functions.Init( D, FlushToDevice );
+			_Functions.Init( D );
 		}
 	};
 
@@ -240,7 +236,7 @@ namespace iof {
 
 			return Written;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{
 			Flush();
 		}
@@ -263,12 +259,10 @@ namespace iof {
 		virtual void FWFDismiss( void )
 		{}
 	public:
-		void Init(
-			iop::descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( iop::descriptor__ D )
 		{
 			_input__::Init( D );
-			_output__::Init( D, FlushToDevice );
+			_output__::Init( D );
 		}
 
 	};
@@ -297,11 +291,10 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax,
-			bso::bool__ FlushToDevice )
+			iop::amount__ AmountMax )
 		{
-			_io__::Init( D, FlushToDevice );
-			_Functions.Init( D, FlushToDevice );
+			_io__::Init( D );
+			_Functions.Init( D );
 		}
 	};
 }

@@ -361,26 +361,26 @@ namespace ctn {
 			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
 			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
-		uym::state__ B_ind( void )
+		uym::state__ Bind( void )
 		{
-			uym::state__ State = _Statics.B_ind();
+			uym::state__ State = _Statics.Bind();
 
 			if ( uym::IsError( State ) )
 				return State;
 
-			if ( _Dynamics.B_ind() != State )
+			if ( _Dynamics.Bind() != State )
 				State = uym::sInconsistent;
 
 			return State;
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _Statics.S_ettle();
+			uym::state__ State = _Statics.Settle();
 
 			if ( uym::IsError( State ) )
 				return State;
 
-			if ( _Dynamics.S_ettle() != State )
+			if ( _Dynamics.Settle() != State )
 				State = uym::sInconsistent;
 
 			return State;
@@ -447,11 +447,11 @@ namespace ctn {
 		}
 	};
 
-	template <typename container, typename file_manager> inline uym::state__ P_lug(
+	template <typename container, typename file_manager> inline uym::state__ Plug(
 		container &Container,
 		file_manager &FileManager )
 	{
-		uym::state__ State = tym::P_lug( Container.Statics, FileManager.StaticsFileManager() );
+		uym::state__ State = tym::Plug( Container.Statics, FileManager.StaticsFileManager() );
 
 		if ( uym::IsError( State ) ) {
 			FileManager.reset();
@@ -461,7 +461,7 @@ namespace ctn {
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
 		if ( !uym::IsError( State ) ) {
-			if ( mmi::P_lug( Container.Dynamics, FileManager.DynamicsFileManager() ) != State ) {
+			if ( mmi::Plug( Container.Dynamics, FileManager.DynamicsFileManager() ) != State ) {
 				FileManager.reset();
 				State = uym::sInconsistent;
 			} else

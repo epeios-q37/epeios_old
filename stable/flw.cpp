@@ -141,7 +141,7 @@ ERRBegin
 		ERRf();
 ERRErr
 	_Size = _Free = 0;	// Pour éviter toute nouvelle écriture dans le cache. La prochaine tentative génèrera une erreur.
-	Synchronize();	// N'écrit rien (à priori) ; juste pour déverouiiler.
+	Commit();	// N'écrit rien (à priori) ; juste pour déverouiiler.
 ERREnd
 ERREpilog
 	return Amount;

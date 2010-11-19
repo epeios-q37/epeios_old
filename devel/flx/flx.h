@@ -60,8 +60,6 @@ extern class ttr_tutor &FLXTutor;
 
 /*$BEGIN$*/
 
-//D FLow eXtension. Some class which extend the 'FLW' library.
-
 #include "err.h"
 #include "fwf.h"
 #include "flw.h"
@@ -93,17 +91,17 @@ namespace flx {
 		// Pointeur sur le prochain caractère à lire.
 		const fwf::datum__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
-		bso::bsize__ Taille_;
+		bso::size__ Taille_;
 	protected:
 		//v Is called if there is asked for more data as availble.
 		virtual void FLXUnavailable( void )
 		{
 			ERRf();
 		}
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted )
+			fwf::size__ Wanted )
 		{
 			if ( !Taille_ )
 				if ( Minimum )
@@ -149,7 +147,7 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const fwf::datum__ *Buffer,
-			bso::bsize__ Size = BSO_BSIZE_MAX )
+			bso::size__ Size = BSO_SIZE_MAX )
 		{
 			reset();
 
@@ -187,7 +185,7 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const flw::datum__ *Buffer,
-			bso::bsize__ Size = BSO_BSIZE_MAX )
+			bso::size__ Size = BSO_SIZE_MAX )
 		{
 			_Functions.Init( Buffer, Size );
 		}
@@ -201,12 +199,12 @@ namespace flx {
 		// Pointeur sur le prochain caractère à écrire.
 		fwf::datum__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
-		bso::bsize__ Taille_;
+		bso::size__ Taille_;
 	protected:
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 			if ( Wanted > Taille_ )
 				ERRu();
@@ -218,7 +216,7 @@ namespace flx {
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bool P = true )
@@ -239,7 +237,7 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			fwf::datum__ *Buffer,
-			bso::bsize__ Size )
+			bso::size__ Size )
 		{
 			reset();
 
@@ -275,7 +273,7 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			flw::datum__ *Buffer,
-			bso::bsize__ Size )
+			bso::size__ Size )
 		{
 			reset();
 
@@ -288,10 +286,10 @@ namespace flx {
 	: public fwf::iflow_functions___
 	{ 
 	protected:
-		virtual fwf::bsize__ FWFRead(
-			fwf::bsize__ Minimum,
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Minimum,
 			fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted )
+			fwf::size__ Wanted )
 		{
 			if ( (fwf::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
 				Wanted = ( Bunch_->Amount() - Position_ );
@@ -378,16 +376,16 @@ namespace flx {
 	: public fwf::oflow_functions___
 	{
 	protected:
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ Minimum )
+			fwf::size__ Wanted,
+			fwf::size__ Minimum )
 		{
 			_Bunch->Append( (const so__ *)Buffer, Wanted );
 
 			return Wanted;
 		}
-		virtual void FWFSynchronize()
+		virtual void FWFCommit()
 		{}
 	private:
 		bunch_ *_Bunch;
@@ -456,14 +454,14 @@ namespace flx {
 	: public fwf::oflow_functions___
 	{
 	protected:
-		virtual fwf::bsize__ FWFWrite(
+		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *,
-			fwf::bsize__ Wanted,
-			fwf::bsize__ )
+			fwf::size__ Wanted,
+			fwf::size__ )
 		{
 			return Wanted;
 		}
-		virtual void FWFSynchronize()
+		virtual void FWFCommit()
 		{}
 	public:
 		void Init( void )
@@ -471,7 +469,7 @@ namespace flx {
 			oflow_functions___::Init();
 		}
 
-	};
+	};	
 
 	extern dump_oflow_functions___ dump;
 
@@ -494,7 +492,6 @@ namespace flx {
 
 	};
 }
-
 
 /*$END$*/
 				  /********************************************/

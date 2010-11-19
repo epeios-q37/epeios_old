@@ -209,13 +209,6 @@ namespace uym {
 			else
 				_Driver->Store( Buffer, Amount, Position );
 		}
-		void Flush( void )
-		{
-			_Test();
-
-			if ( _CVMBuffer == NULL )
-				_Driver->Flush();
-		}
 	};
 
 	//c Untyped memory.
@@ -263,10 +256,6 @@ namespace uym {
 				_Driver.Allocate( Size );
 				S_.Size = Size;
 			}
-		}
-		void _Flush( void )
-		{
-			_Driver.Flush();
 		}
 	public:
 		struct s {
@@ -406,11 +395,6 @@ namespace uym {
 		{
 			return _Driver.Driver( Ignore );
 		}
-		//f Flushes all the caches.
-		void Flush( void )
-		{
-			_Flush();
-		}
 		E_RWDISCLOSE_( mdr::size__, Size );
 	};
 
@@ -422,51 +406,12 @@ namespace uym {
 		s_Undefined
 	};
 
-	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
-
-	class untyped_memory_file_manager___
-	: public _file_memory_driver___
-	{
-	public:
-		void Init( 
-			const char *FileName,
-			fil::mode__ Mode,
-			bso::bool__ Persistent,
-			flm::id__ ID )
-		{
-			_file_memory_driver___::Init( ID, Persistent, FileName, Mode, flm::cFirstUse );
-
-			if ( Persistent )
-				_file_memory_driver___::Persistent();
-		}
-		state__ S_tate( void ) const
-		{
-			if ( GetFileName() == NULL )
-				return sInconsistent;
-			else if ( Exists() )
-				return sExists;
-			else
-				return sAbsent;
-		}
-		state__ B_ind( void )
-		{
-			return S_tate();
-		}
-		state__ S_ettle( void )
-		{
-			return S_tate();
-		}
-		friend state__ P_lug(
-			untyped_memory_ &Memory,
-			untyped_memory_file_manager___ &FileManager );
-	};
-
 #define UYM_STATE_AMOUNT	3
 
 	inline bso::bool__ IsError( state__ State )
 	{
 #if UYM_STATE_AMOUNT != 3
-#	error "'status__' changed !"
+#	error "'state__' changed !"
 #endif
 		switch ( State ) {
 		case sExists:
@@ -490,7 +435,7 @@ namespace uym {
 			ERRu();
 
 #if UYM_STATE_AMOUNT != 3
-#	error "'status__' changed !"
+#	error "'state__' changed !"
 #endif
 		switch ( State ) {
 		case sExists:
@@ -510,7 +455,48 @@ namespace uym {
 		return false;	// Pour éviter un 'warning'.
 	}
 
-	inline state__ P_lug(
+	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
+
+	class untyped_memory_file_manager___
+	: public _file_memory_driver___
+	{
+	public:
+		void Init( 
+			const char *FileName,
+			fil::mode__ Mode,
+			bso::bool__ Persistent,
+			flm::id__ ID )
+		{
+			_file_memory_driver___::Init( ID, FileName, Mode, flm::cFirstUse );
+
+			if ( Persistent )
+				_file_memory_driver___::Persistent();
+		}
+		state__ State( void ) const
+		{
+			if ( GetFileName() == NULL )
+				return sInconsistent;
+			else if ( Exists() )
+				return sExists;
+			else
+				return sAbsent;
+		}
+		state__ Bind( void )
+		{
+			return State();
+		}
+		state__ Settle( void )
+		{
+			_file_memory_driver___::Flush();
+
+			return State();
+		}
+		friend state__ Plug(
+			untyped_memory_ &Memory,
+			untyped_memory_file_manager___ &FileManager );
+	};
+
+	inline state__ Plug(
 		untyped_memory_ &Memory,
 		untyped_memory_file_manager___ &FileManager )
 	{

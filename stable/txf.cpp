@@ -1,7 +1,7 @@
 /*
-	'txf' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+	'txf' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'txf' header file ('txf.h').
-	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Copyright (C) 2000-2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 

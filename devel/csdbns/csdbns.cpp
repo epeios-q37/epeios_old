@@ -140,7 +140,7 @@ ERRBegin
 					cio::aware_cerr___ cerr;
 					tol::buffer__ Buffer;
 				ERRBegin
-					cerr << tol::DateAndTime( Buffer ) << " (" << __FILE__ << ", " << (bso::ulong__)__LINE__  << ") : ("  << (bso::ulong__)Error << ") " << sck::ErrorDescription( Error ) << txf::nl << txf::sync;
+					cerr << tol::DateAndTime( Buffer ) << " (" << __FILE__ << ", " << (bso::ulong__)__LINE__  << ") : ("  << (bso::ulong__)Error << ") " << sck::ErrorDescription( Error ) << txf::nl << txf::commit;
 				ERRErr
 				ERREnd
 				ERREpilog

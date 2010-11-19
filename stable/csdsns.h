@@ -297,7 +297,7 @@ ERREpilog
 			} else {
 				if ( !_Core.TestAndGet( Id, UP ) ) {
 					Flow.Put( (flw::datum__)-1 );
-					Flow.Synchronize();
+					Flow.Commit();
 					Action = aStop;
 				} else {
 					Flow.Put( 0 );

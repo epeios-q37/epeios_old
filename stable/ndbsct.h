@@ -216,10 +216,10 @@ namespace ndbsct {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_MemoryFileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+			//_MemoryFileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				S_ettle();
+				Settle();
 			}
 
 			_BaseFileName.reset( P );
@@ -247,21 +247,21 @@ namespace ndbsct {
 
 			_Content = &Content;
 		}
-		uym::state__ B_ind( void )
+		uym::state__ Bind( void )
 		{
-			uym::state__ State = _MemoryFileManager.B_ind();
+			uym::state__ State = _MemoryFileManager.Bind();
 
-			if ( State != _ListFileManager.B_ind( _MemoryFileManager.TimeStamp() ) )
+			if ( State != _ListFileManager.Bind( _MemoryFileManager.TimeStamp() ) )
 				return uym::sInconsistent;
 
 			return State;
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
-			uym::state__ State = _MemoryFileManager.S_ettle();
+			uym::state__ State = _MemoryFileManager.Settle();
 
 			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() != 0 ) )
-				_ListFileManager.S_ettle( _MemoryFileManager.TimeStamp() );
+				_ListFileManager.Settle( _MemoryFileManager.TimeStamp() );
 
 			return State;
 		}
@@ -279,21 +279,21 @@ namespace ndbsct {
 			}
 		}
 		E_RODISCLOSE__( str::string_, BaseFileName );
-		friend uym::state__ P_lug(
+		friend uym::state__ Plug(
 			static_content_ &Content,
 			static_content_atomized_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ P_lug(
+	inline uym::state__ Plug(
 		static_content_ &Content,
 		static_content_atomized_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::P_lug( Content.Storage, FileManager._MemoryFileManager );
+		uym::state__ State = tym::Plug( Content.Storage, FileManager._MemoryFileManager );
 
 		if ( uym::IsError( State ) ) {
 			FileManager.reset();
 		} else if (uym::Exists( State ) ) {
-			if ( State != lst::P_lug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
+			if ( State != lst::Plug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
 				FileManager.reset();
 				return uym::sInconsistent;
 			} else 
