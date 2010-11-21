@@ -80,11 +80,11 @@ namespace csducl {
 	private:
 		type__ _Type;
 		csdsnc::core _DaemonAccess;
-		csddlc::dynamic_library_client_core _LibraryName;
+		csddlc::dynamic_library_client_core _LibraryAccess;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_LibraryName.reset( P );
+			_LibraryAccess.reset( P );
 			_DaemonAccess.reset( P );
 			_Type = t_Undefined;
 		}
@@ -111,7 +111,7 @@ namespace csducl {
 				Success = _DaemonAccess.Init( Backend, Log );
 				break;
 			case tLibrary:
-				Success = _LibraryName.Init( Backend, UP );
+				Success = _LibraryAccess.Init( Backend, UP );
 				break;
 			default:
 				ERRu();
@@ -204,7 +204,7 @@ namespace csducl {
 				_DaemonAccess.Init( Core._DaemonAccess );
 				break;
 			case tLibrary:
-				_Library.Init( Core._LibraryName );
+				_Library.Init( Core._LibraryAccess );
 				break;
 			default:
 				ERRu();

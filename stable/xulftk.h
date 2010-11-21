@@ -156,7 +156,21 @@ namespace xulftk {
 		}
 		virtual void XULFTKSiteURL( str::string_ &URL )
 		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent'///)' doit être redéfini.
+			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent') doit être redéfini.
+		}
+		// Normalement appelé par la redéfintion de la fonciton qui suit.
+		void _ApplySession(
+			const str::string_ &FileName,
+			void *LibraryData )
+		{
+			if ( Kernel().LoadProject( FileName, _TargetName, LibraryData ) != frdkrn::sOK )
+				UI().Alert( Kernel().Message() );
+
+			UpdateUI();
+		}
+		virtual void XULFTKApplySession( const str::string_ &FileName )
+		{
+			ERRu();	//	Si pas surchargé, alors xulfmn::open_project_command__::NSXPCMOnEvent') doit être redéfini.
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -307,16 +321,7 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void ApplySession(
-			const str::string_ &FileName,
-			void *LibraryData )
-		{
-			if ( Kernel().LoadProject( FileName, _TargetName, LibraryData ) != frdkrn::sOK )
-				UI().Alert( Kernel().Message() );
-
-			UpdateUI();
-		}
-		void  ApplySession( void *LibraryData )
+		void  ApplySession( void )
 		{
 		ERRProlog
 			str::string Translation;
@@ -326,7 +331,7 @@ namespace xulftk {
 			FileName.Init();
 
 			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().Locale(), FileName ) )
-				ApplySession( FileName, LibraryData );
+				XULFTKApplySession( FileName );
 		ERRErr
 		ERREnd
 		ERREpilog
