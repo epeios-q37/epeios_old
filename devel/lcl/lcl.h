@@ -179,7 +179,7 @@ namespace lcl {
 		const char *GetTranslation(
 			const str::string_ &Text,
 			const str::string_ &Language,
-			STR_BUFFER___ &Buffer ) const;	// Si la traducation n'existe pas, 'Text' est renvoyé.
+			STR_BUFFER___ &Buffer ) const;	// Si la traduction n'existe pas, 'Text' est renvoyé.
 	};
 
 	E_AUTO( locale );
@@ -203,8 +203,8 @@ namespace lcl {
 			reset();
 		}
 		void Init(
-			const locale_ &Locale,	// N'est pas dupliquer.
-			const str::string_ &Language )
+			const locale_ &Locale,	// N'est pas dupliqué !.
+			const str::string_ &Language = str::string() )
 		{
 			_Locale = &Locale;
 
@@ -217,7 +217,7 @@ namespace lcl {
 
 			return *_Locale;
 		}
-		E_RODISCLOSE__( str::string_, Language );
+		E_RWDISCLOSE__( str::string_, Language );
 		bso::bool__ GetTranslation(
 			const str::string_ &Text,
 			str::string_ &Translation ) const

@@ -1,5 +1,11 @@
 $Id$
 
+22/11/2010 :
+	- BKDMNG :
+		- Utilisation de 'lcl::locale_rack___' à la place de 'lcl::locale_'.
+	- FLM :
+		- 'TimeStamp()' retourne '0' (valeur entrainant généralement un traitement particulier) si le fichier n'existe pas.
+
 19/11/2010 :
 	- GENERAL :
 		- Adaptation aux modifications bibliothèques 'FWF' et 'MDR'.

@@ -714,14 +714,13 @@ namespace bkdmng {
 	class backend
 	{
 	private:
-		const lcl::locale_ *_Locale;
+		lcl::locale_rack___ _Locale;
 		master_module Master_;
 		const char *_TargetLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
 		// Information à propos du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
 		const char *_PublisherInformations;
-		str::string Language_;
 		// Retourne le module correspondant à 'IdType'.
 		untyped_module &Module_( type__ IdType ) const
 		{
@@ -755,8 +754,6 @@ namespace bkdmng {
 		links Links;
 		backend( void )
 		{
-			Language_.Init( BKDMNG__DEFAULT_LANGUAGE );
-
 			_TargetLabel = NULL;
 			_BackendInformations = NULL;
 			_PublisherInformations = NULL;
@@ -764,7 +761,7 @@ namespace bkdmng {
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
 			const char *TargetLabel,
-			const lcl::locale_ &Locale,
+			const lcl::locale_ &Locale,	// N'est pas dupliqué !
 			const char *BackendInformations,
 			const char *PublisherInformations )
 		{
@@ -775,7 +772,7 @@ namespace bkdmng {
 
 			_TargetLabel = TargetLabel;
 
-			_Locale = &Locale;
+			_Locale.Init( Locale, str::string( BKDMNG__DEFAULT_LANGUAGE ) );
 
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
@@ -786,7 +783,7 @@ namespace bkdmng {
 			const str::string_ &Message,
 			STR_BUFFER___ &Buffer )
 		{
-			return _Locale->GetTranslation( Message, Language_, Buffer );
+			return _Locale.GetTranslation( Message, Buffer );
 		}
 		void Add( untyped_module &Module )
 		{
@@ -852,12 +849,12 @@ namespace bkdmng {
 		//f Return the current language.
 		const str::string_ &GetLanguage( void ) const
 		{
-			return Language_;
+			return _Locale.Language();
 		}
 		//f 'Language' becomes the current language.
 		void SetLanguage( const str::string_ &Language )
 		{
-			Language_ = Language;
+			_Locale.SetLanguage( Language );
 		}
 		/*f Add a request description with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first

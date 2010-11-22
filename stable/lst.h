@@ -386,12 +386,9 @@ namespace lst {
 		}
 		uym::state__ Bind( time_t ReferenceTimeStamp )
 		{
-			uym::state__ State = this->State();
+			uym::state__ State = Test_( FileName(), ReferenceTimeStamp );
 
-			if ( uym::IsError( State ) )
-				return State;
-
-			if ( State == uym::sExists )
+			if ( uym::Exists( State ) )
 				State = ReadFromFile_( FileName(), *_Store );
 
 			return State;

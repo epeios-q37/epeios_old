@@ -565,7 +565,10 @@ namespace flm {
 		}
 		time_t TimeStamp( void ) const
 		{
-			return fil::GetFileLastModificationTime( Nom_ );
+			if ( Exists() )
+				return fil::GetFileLastModificationTime( Nom_ );
+			else
+				return 0;
 		}
 		mdr::size__ FileSize( void )
 		{

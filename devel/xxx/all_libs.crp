@@ -129,6 +129,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&File Name Manager
 &frdbkd		&epeios		&\
 	&FRontenD BacKenD
+&frdfbc		&epeios		&\
+	&FRontenD Frontend Backend Common
 &frdkrn		&epeios		&\
 	&FRontenD KeRNel
 &frdrgy		&epeios		&\
