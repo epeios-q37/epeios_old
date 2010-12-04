@@ -144,6 +144,10 @@ namespace idxbtr {
 		{
 			BaseTree.Init();
 		}
+		r GetRoot( r Row ) const
+		{
+			return BaseTree.GetRoot( Row );
+		}
 		void Allocate(
 			epeios::size__ Size,
 			aem::mode__ Mode = aem::mDefault )

@@ -472,6 +472,18 @@ namespace uym {
 			if ( Persistent )
 				_file_memory_driver___::Persistent();
 		}
+		bso::bool__ CreateFiles( err::handling__ ErrHandling = err::h_Default )
+		{
+			return CreateFile( ErrHandling );
+		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			return _file_memory_driver___::Mode( Mode );
+		}
+		fil::mode__ Mode( void ) const
+		{
+			return _file_memory_driver___::Mode();
+		}
 		state__ State( void ) const
 		{
 			if ( GetFileName() == NULL )

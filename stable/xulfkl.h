@@ -110,7 +110,7 @@ namespace xulfkl {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			void *LibraryData )
+			frdfbc::data___ &LibraryData )
 		{
 			return _kernel___::LoadProject( FileName, TargetName, LibraryData );
 		}

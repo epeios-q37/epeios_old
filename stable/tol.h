@@ -638,15 +638,13 @@ namespace tol {
 		return *LConv->decimal_point;
 	}
 
-	template <typename i> inline i Swap(
+	template <typename i> inline void Swap(
 		i &I1,
 		i &I2 )	// Echange le contenu des entiers I1 et I2. Retourne I1 (avant échange).
 	{
-		I2 = I1 ^ I2;
-		I1 = I2 ^ I1;
-		I2 = I1 ^ I2;
-
-		return I1;
+		I2 = (i)( I1 ^ I2 );
+		I1 = (i)( I2 ^ I1 );
+		I2 = (i)( I1 ^ I2 );
 	}
 }
 

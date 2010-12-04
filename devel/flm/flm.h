@@ -532,16 +532,18 @@ namespace flm {
 			return Temoin_.Persistant != 0;
 		}
 		// bascule en mode d'acces 'Acces'.
-		void Mode( fil::mode__ Mode )
+		fil::mode__ Mode( fil::mode__ Mode )
 		{
 			if ( Temoin_.Mode != Mode )
 			{
-				Temoin_.Mode = Mode;
+				tol::Swap( Temoin_.Mode, Mode );
 				ReleaseFile();
 			}
+
+			return Mode;
 		}
 		// Retourne le mode d'accés.
-		fil::mode__ Mode( void )
+		fil::mode__ Mode( void ) const
 		{
 			return Temoin_.Mode;
 		}
@@ -577,7 +579,10 @@ namespace flm {
 
 			return File_.Size();
 #	else
-			return fil::GetFileSize( Nom_ );
+			if ( Exists() )
+				return fil::GetFileSize( Nom_ );
+			else
+				return 0;
 #	endif
 		}
 #ifdef CPE__C_VC
@@ -607,10 +612,7 @@ namespace flm {
 		// alloue 'Taille' octets
 		virtual mdr::size__ MDRUnderlyingSize( void )
 		{
-			if ( Exists() )
-				return FileSize();
-			else
-				return 0;
+			return FileSize();
 		}
 		virtual void MDRRecall(
 			mdr::row_t__ Position,
@@ -646,14 +648,14 @@ namespace flm {
 			E_MEMORY_DRIVER__::reset( P );
 		}
 		//f Return the mode.
-		fil::mode__ Mode( void )
+		fil::mode__ Mode( void ) const
 		{
 			return memoire_fichier_base___::Mode();
 		}
 		//f 'Mode' becomes the mode.
-		void Mode( fil::mode__ Mode )
+		fil::mode__ Mode( fil::mode__ Mode )
 		{
-			memoire_fichier_base___::Mode( Mode );
+			return memoire_fichier_base___::Mode( Mode );
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(

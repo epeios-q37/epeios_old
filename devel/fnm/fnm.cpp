@@ -143,8 +143,10 @@ ERRBegin
 	if ( ( P = calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
 		ERRa();
 
-	if ( ( TailleNom == 0 ) && ( TailleExt == 0 ) )
-		return NULL;
+	if ( ( TailleNom == 0 ) && ( TailleExt == 0 ) ) {
+		P.reset();
+		ERRReturn;
+	}
 
 	if ( TailleRep != 0 ) {
 		sprintf( P, "%s", Rep );
@@ -164,13 +166,16 @@ ERRBegin
 				   ( ( P[TailleRep] == '/' )
 					 || ( P[TailleRep] == '\\' ) ) );
 
-			if ( ( P[TailleRep] == ':' ) || ( TailleRep == 0 ) )
-				return NULL;
-			else 
+			if ( ( P[TailleRep] == ':' ) || ( TailleRep == 0 ) ) {
+				P.reset();
+				ERRReturn;
+			} else 
 				P[TailleRep+1] = 0;
 		}
-	} else if ( TailleNom == 0 )
-		return NULL;
+	} else if ( TailleNom == 0 ) {
+		P.reset();
+		ERRReturn;
+	}
 
 	switch ( Type( Nom ) ) {
 	case fnm::tEmpty:

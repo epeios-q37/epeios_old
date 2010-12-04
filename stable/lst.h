@@ -353,6 +353,8 @@ namespace lst {
 	private:
 		lst::store_ *_Store;
 		tol::E_FPOINTER___( bso::char__ ) _FileName;
+		fil::mode__ _Mode;	// Ne sert à rien, juste présent à des fins de standardisation.
+		bso::bool__ _Persistent;	// Ne sert à rien, juste présent à des fins de standardisation.
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -362,6 +364,8 @@ namespace lst {
 
 			_FileName.reset( P );
 			_Store = NULL;
+			_Mode = fil::m_Undefined;
+			_Persistent = false;
 		}
 		list_file_manager___( void )
 		{
@@ -371,7 +375,10 @@ namespace lst {
 		{
 			reset();
 		}
-		void Init( const char *FileName )
+		void Init(
+			const char *FileName,
+			fil::mode__ Mode,
+			bso::bool__ Persistent )
 		{
 			reset();
 
@@ -379,6 +386,23 @@ namespace lst {
 				ERRa();
 
 			strcpy( _FileName, FileName );
+
+			_Mode = Mode;
+			_Persistent = Persistent;
+		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			tol::Swap( Mode, _Mode );
+
+			return Mode;
+		}
+		fil::mode__ Mode( void ) const
+		{
+			return _Mode;
+		}
+		bso::bool__ IsPersistent( void ) const
+		{
+			return _Persistent;
 		}
 		uym::state__ State( void ) const
 		{
@@ -454,7 +478,7 @@ namespace lst {
 
 			return fil::CreateFile( _FileName, ErrorHandling );
 		}
-		void ReleaseFile( void )
+		void ReleaseFiles( void )
 		{
 			// A des fins de standardisation.
 		}

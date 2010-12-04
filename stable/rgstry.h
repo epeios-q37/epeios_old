@@ -1244,7 +1244,6 @@ namespace rgstry {
 			BaseRegistry.SetValue( PathString, Value, Roots( Level ), PathErrorRow );
 
 			_Touch( Level );
-
 		}
 		void SetValue(
 			const str::string_ &PathString,
@@ -1253,22 +1252,41 @@ namespace rgstry {
 		{
 			SetValue( Roots.Last(), PathString, Value, PathErrorRow );
 		}
+		row__ Search(
+			level__ Level,
+			const path_ &Path ) const
+		{
+			return BaseRegistry.Search( Path, Roots( Level ) );
+		}
+		row__ Search(
+			level__ Level,
+			const str::string_ &PathString,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return BaseRegistry.Search( PathString, Roots( Level ), PathErrorRow );
+		}
+		row__ Search(
+			const str::string_ &PathString,
+			epeios::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ Exists(
 			level__ Level,
 			const path_ &Path ) const
 		{
-			return BaseRegistry.Exists( Path, Roots( Level ) );
+			return Search( Level, Path ) != NONE;
 		}
 		bso::bool__ Exists(
 			level__ Level,
 			const str::string_ &PathString,
 			epeios::row__ *PathErrorRow = NULL ) const
 		{
-			return BaseRegistry.Exists( PathString, Roots( Level ), PathErrorRow );
+			return Search( Level, PathString, PathErrorRow ) != NONE;
 		}
 		bso::bool__ Exists(
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return Search( PathString, PathErrorRow ) != NONE;
+		}
 		error__ Fill(
 			level__ Level,
 			flw::iflow__ &IFlow,

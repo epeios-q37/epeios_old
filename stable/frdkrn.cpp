@@ -286,14 +286,16 @@ ERREpilog
 report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
-	void *LibraryData,
+	frdfbc::data___ &LibraryData,
 	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
 ERRBegin
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type ) ) {
+	LibraryData.Locale = &_LocaleForLibrary;
+
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
@@ -310,7 +312,7 @@ ERREpilog
 report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
-	void *LibraryData,
+	frdfbc::data___ &LibraryData,
 	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -326,7 +328,7 @@ ERREpilog
 }
 
 report__ frdkrn::kernel___::_Connect(
-	void *LibraryData,
+	frdfbc::data___ &LibraryData,
 	error_reporting_functions___ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -336,8 +338,14 @@ ERRProlog
 	csducl::type__ Type = csducl::t_Undefined;
 ERRBegin
 	switch ( Type = GetBackendType( _Registry ) ) {
-	case csducl::tDaemon:
 	case csducl::tLibrary:
+		LibraryData.Registry = &Registry().BaseRegistry;
+		if ( ( LibraryData.Root = Registry().Search( str::string( frdrgy::GetBackendRootPath() ) ) ) == NONE ) {
+			Report = rNoOrBadBackendDefinition;
+			ERRReturn;
+		}
+		// break;	// La suite doit être exécutée.
+	case csducl::tDaemon:
 		Location.Init();
 		if ( !frdrgy::GetBackendLocation( _Registry, Location ) ) {
 			Report = rNoBackendLocation;
@@ -362,7 +370,7 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	void *LibraryData )
+	frdfbc::data___ &LibraryData )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -377,9 +385,12 @@ ERRBegin
 		_Message.Append( " !" );
 		Status = sError;
 		ERRReturn;
-	}
-
-	Status = sOK;
+	} else if ( LibraryData.Message.Amount() != 0 ) {
+		_Message.Init();
+		_Message.Append( LibraryData.Message );
+		Status = sWarning;
+	} else
+		Status = sOK;
 ERRErr
 ERREnd
 ERREpilog

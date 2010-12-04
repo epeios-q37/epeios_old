@@ -2,7 +2,7 @@
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations message="EXML_Unexpected_EOF">
-		<Translation language="fr">Fin de fichier innatendue !</Translation>
+		<Translation language="fr">Fin de fichier inattendue !</Translation>
 		<Translation language="en-US">Unexpected end of file !</Translation>
 	</Translations>
 	<Translations message="EXML_UnknownEntity">

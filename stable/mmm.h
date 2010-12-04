@@ -1718,7 +1718,7 @@ namespace mmm {
 			_untyped_memory_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				Settle();
+				S_ettle();
 			}
 
 			_untyped_memory_file_manager___::reset( P );
@@ -1751,6 +1751,14 @@ namespace mmm {
 
 			_untyped_memory_file_manager___::Init( FileName, Mode, Persistent, ID );
 		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			return _untyped_memory_file_manager___::Mode( Mode );
+		}
+		fil::mode__ Mode( void ) const
+		{
+			return _untyped_memory_file_manager___::Mode();
+		}
 		uym::state__ Bind( void )	// A appeler seulement aprés un 'Plug(...)'.
 		{
 			uym::state__ State = uym::s_Undefined;
@@ -1768,7 +1776,7 @@ namespace mmm {
 		ERREpilog
 			return State;
 		}
-		uym::state__ Settle( void )
+		uym::state__ S_ettle( void )
 		{
 			uym::state__ State = _untyped_memory_file_manager___::Settle();
 
@@ -1783,12 +1791,12 @@ namespace mmm {
 			return State;
 
 		}
-		friend uym::state__ Plug(
+		friend uym::state__ P_lug(
 			multimemory_ &Multimemory,
 			multimemory_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uym::state__ P_lug(
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{

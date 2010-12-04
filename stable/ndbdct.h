@@ -564,12 +564,12 @@ namespace ndbdct {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-//			_StorageFileManager.ReleaseFile();
-//			_EntriesFileManager.ReleaseFile();
-			// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+			// Nécessaire, sinon le 'Settle(...)' qui suit peut ne pas fonctionner correctement.
+			_StorageFileManager.ReleaseFile();
+			_EntriesFileManager.ReleaseFile();
 
 			if ( P ) {
-				Settle();
+				Settle();	// Lancé explicitement, pour la sauvegarde des 'availables'.
 			}
 
 			_StorageFileManager.reset( P );

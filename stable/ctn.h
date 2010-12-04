@@ -361,6 +361,16 @@ namespace ctn {
 			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
 			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
+		uym::state__ State( void ) const
+		{
+			uym::state__ State = _Statics.State();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _Dynamics.State() )
+					State = uym::sInconsistent;
+
+			return State;
+		}
 		uym::state__ Bind( void )
 		{
 			uym::state__ State = _Statics.Bind();
@@ -390,10 +400,23 @@ namespace ctn {
 			_Statics.ReleaseFile();
 			_Dynamics.ReleaseFile();
 		}
-		void Mode( fil::mode__ Mode )
+		fil::mode__ Mode( void ) const
 		{
-			_Statics.Mode( Mode );
-			_Dynamics.Mode( Mode );
+			mode__ Mode = _Statics.Mode();
+
+			if ( Mode != _Dynamics.Mode() )
+				ERRc();
+
+			return Mode;
+		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			fil::mode__ ModeBuffer = _Statics.Mode( Mode );
+
+			if ( ModeBuffer != _Dynamics.Mode( ModeBuffer ) )
+				ERRc();
+
+			return ModeBuffer;
 		}
 		bso::bool__ IsPersistent( void ) const
 		{

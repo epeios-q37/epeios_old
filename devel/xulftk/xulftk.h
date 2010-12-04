@@ -161,7 +161,7 @@ namespace xulftk {
 		// Normalement appelé par la redéfintion de la fonciton qui suit.
 		void _ApplySession(
 			const str::string_ &FileName,
-			void *LibraryData )
+			frdfbc::data___ &LibraryData )
 		{
 			if ( Kernel().LoadProject( FileName, _TargetName, LibraryData ) != frdkrn::sOK )
 				UI().Alert( Kernel().Message() );

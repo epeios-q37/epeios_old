@@ -1,5 +1,69 @@
 $Id$
 
+03/12/2010 :
+	- NDBSCT :
+		- Adaptation aux modifications bibliothèques sous-jacentes.
+
+02/12/2010 :
+	- GENERAL :
+		- Diverses modifications relatives aux '..._file_manager___'s.
+
+02/12/2010 :
+	- GENERAL :
+		- Diverses modifications relatives aux '..._file_manager___'s.
+	- BTR, IDXBTR :
+		- Ajout 'GetRoot(...)'.
+	- LST :
+		- Rajout gestion de 'mode__' au '..._file_manager___', uniquement à des fins de standardisation.
+		- Rajout gestion de la persistence au '..._file_manager___', uniquement à des fins de standardisation.
+
+30/11/2010 :
+	-  LSTBCH, LSTCTN, NDBDCT, NDBSCT :
+		- Correction bogue fichiers accessoires non sauvés lors de la déstructuin d'un '..._file_manager___'.
+
+28/11/2010 :
+	- CTN :
+		- Rajout 'State()' to '..._file_manager___'.
+	- FIL :
+		- Suppression 'mode__::mUnknown'.
+	- FLM :
+		- 'Mode(...)' renvoit maintenant la valeur précédente.
+	- IDXBTQ :
+		- Rajout 'State()' to '..._file_manager___'.
+	- LSTCTN :
+		- Rajout 'State()' to '..._file_manager___'.
+	- MMI :
+		- Rajout 'State()' to '..._file_manager___'.
+	- TOL :
+		- Modification de 'Swap(...)' pour pouvoir être utilisé avec des 'enum's.
+
+25/11/2010 :
+	- FNM :
+		- Correction mauvaise gestion mémoire 'BuildFileName(...)'.
+	- FRDKRN :
+		- Gestion mise en place contenu 'LibaryData'.
+
+23/11/2010 :
+	- FRDFBC :
+		- Ajout 'Message' à la place de 'Log'.
+		- 'data__' -> 'data___'.
+	- FRDRGY :
+		- Suppression chemin 'Configuration' pour le 'backend'.
+		- Ajout chemin 'Root' pour le 'backend'.
+	- FRDKRN :
+		- Mise en place de la 'locale' à l'usage de la bibliothèque en mode 'library'.
+		- Adaptation aux modifications bibliothèque 'FRDFBC'.
+	- LCL :
+		- Ajout d'un '&' manquant (provoquant un plantage).
+	- RGSTRY :
+		- Ajout 'Search(...)' à 'multi_level_registry[_]'.
+	- XULFKL :
+		- Adaptation aux modifications bibliothèque 'FRDKRN'.
+		- Adaptation aux modifications bibliothèque 'FRDFBC'.
+	- XULFTK :
+		- Adaptation aux modifications bibliothèque 'FRDFBC'.
+		- Adaptation aux modifications bibliothèque 'FRDKRN'.
+
 22/11/2010 :
 	- BKDMNG :
 		- Utilisation de 'lcl::locale_rack___' à la place de 'lcl::locale_'.

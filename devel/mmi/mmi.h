@@ -456,7 +456,8 @@ namespace mmi {
 
 #ifndef FLM__COMPILATION
 
-	class indexed_multimemory_file_manager___ {
+	class indexed_multimemory_file_manager___
+	{
 	private:
 		bch::bunch_file_manager___ _Descriptors;
 		mmm::multimemory_file_manager___ _Multimemory;
@@ -485,23 +486,58 @@ namespace mmi {
 			_Descriptors.Init( DescriptorsFileName, Mode, Persistent, ID );
 			_Multimemory.Init( MultimemoryFileName, MultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
 		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			fil::mode__ ModeBuffer = _Descriptors.Mode( Mode );
+
+			if ( ModeBuffer != _Multimemory.Mode( Mode ) )
+				ERRc();
+
+			return ModeBuffer;
+		}
+		fil::mode__ Mode( void ) const
+		{
+			fil::mode__ Mode = _Descriptors.Mode();
+
+			if ( Mode != _Multimemory.Mode() )
+				ERRc();
+
+			return Mode;
+		}
+		uym::state__ State( void ) const
+		{
+			uym::state__ State = _Descriptors.State();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _Multimemory.State() )
+					State = uym::sInconsistent;
+
+			return State;
+		}
 		uym::state__ Bind( void )	// A appeler seulement aprés 'Plug(...)'.
 		{
-			return _Multimemory.Bind();
+			uym::state__ State = _Descriptors.Bind();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _Multimemory.Bind() )
+					State = uym::sInconsistent;
+
+			return State;
 		}
 		uym::state__ Settle( void )
 		{
-			return _Multimemory.Settle();
+			uym::state__ State = _Descriptors.Settle();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _Multimemory.S_ettle() )
+					State = uym::sInconsistent;
+
+			return State;
 		}
 		void ReleaseFile( void )
 		{
 			_Descriptors.ReleaseFile();
 			_Multimemory.ReleaseFile();
-		}
-		void Mode( fil::mode__ Mode )
-		{
-			_Descriptors.Mode( Mode );
-			_Multimemory.Mode( Mode );
 		}
 		bso::bool__ IsPersistent( void ) const
 		{
@@ -567,7 +603,7 @@ namespace mmi {
 		if ( uym::IsError( State ) )
 			FileManager.reset();
 		else
-			if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
+			if ( mmm::P_lug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
 				State = uym::sInconsistent;
 				FileManager.reset();
 			}

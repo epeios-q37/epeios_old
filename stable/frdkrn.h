@@ -65,6 +65,7 @@ extern class ttr_tutor &FRDKRNTutor;
 
 #include "frdbkd.h"
 #include "frdrgy.h"
+#include "frdfbc.h"
 
 #define FRDKRN_CONFIGURATION_FILE_EXTENSION	"xcfg"
 #define FRDKRN_PROJECT_FILE_EXTENSION		"xprj"
@@ -195,6 +196,7 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
+		lcl::locale _LocaleForLibrary;	// Uniquement utilisé en mode 'library'.
 		lcl::locale _Locale;
 		lcl::locale_rack___ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
@@ -205,7 +207,7 @@ namespace frdkrn {
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			void *LibraryData,
+			frdfbc::data___ &LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
@@ -247,11 +249,11 @@ namespace frdkrn {
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
-			void *LibraryData,
+			frdfbc::data___ &LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
-			void *LibraryData,
+			frdfbc::data___ &LibraryData,
 			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
@@ -263,6 +265,7 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
+			_LocaleForLibrary.reset();
 			_Locale.reset( P );
 			_LocaleRack.reset( P );
 			_Message.reset( P );
@@ -284,6 +287,7 @@ namespace frdkrn {
 		{
 			_Registry.Init();
 			_Message.Init();
+			_LocaleForLibrary.reset();
 			_Locale.Init();
 			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
 			_ProjectOriginalTimeStamp = 0;
@@ -303,7 +307,7 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			void *LibraryData,
+			frdfbc::data___ &LibraryData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
@@ -319,7 +323,7 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			void *LibraryData );
+			frdfbc::data___ &LibraryData );
 		bso::bool__ IsProjectInProgress( void ) const
 		{
 			return _ProjectOriginalTimeStamp != 0;

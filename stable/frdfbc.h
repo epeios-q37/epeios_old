@@ -69,19 +69,22 @@ extern class ttr_tutor &FRDFBCTutor;
 namespace frdfbc {
 
 	// If modified, update 'FRDFBC_DATA_STRUCTURE_VERSION'.
-	struct data__ {
+	struct data___ {
 		const char *Id;
 		const rgstry::registry_ *Registry;
 		rgstry::row__ Root;
-		txf::text_oflow__ *Log;
 		lcl::locale_ *Locale;
-		data__( void )
+		str::string Message;
+		data___( void )
 		{
 			Id = NULL;
 			Registry = NULL;
-			Log = NULL;
 			Root = NONE;
 			Locale = NULL;
+		}
+		void Init( void )
+		{
+			Message.Init();
 		}
 	};
 }

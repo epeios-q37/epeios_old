@@ -179,14 +179,14 @@ namespace lstbch {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-//			_BunchFileManager.ReleaseFile();	// Pour mettre à jour l'horodatage du/des fichiers correspondant.
+			_BunchFileManager.ReleaseFile();	// Sinon le 'Settle()'  ci-dessous ne fonctionne pas correctement.
 
 			if ( P ) {
-				Settle();
+				Settle();	// Lancé explicitement, car le 'reset(...)' de '_ListFileManager' ne peut lancer son propre 'Settle(...)'.
 			}
 
-			_ListFileManager.reset( P );
 			_BunchFileManager.reset( P );
+			_ListFileManager.reset( P );
 		}
 		list_bunch_file_manager___( void )
 		{
@@ -206,7 +206,7 @@ namespace lstbch {
 			reset();
 
 			_BunchFileManager.Init( BunchFileName, Mode, Persistent, ID );
-			_ListFileManager.Init( ListFileName );
+			_ListFileManager.Init( ListFileName, Mode, Persistent );
 
 		}
 		uym::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
@@ -245,10 +245,6 @@ namespace lstbch {
 
 			return State;
 		}
-		bso::bool__ Exists( void ) const
-		{
-			return uym::Exists( State() );
-		}
 #ifdef CPE__C_VC
 #	undef CreateFile
 #endif
@@ -259,10 +255,10 @@ namespace lstbch {
 			if ( !Success )
 				return false;
 
-			Success = _ListFileManager.CreateFiles( ErrorHandling );
-
-			if ( !Success )
+			if ( uym::IsError( Settle() ) ) {
 				_BunchFileManager.Drop();
+				Success = false;
+			}
 
 			return Success;
 		}
@@ -284,6 +280,15 @@ namespace lstbch {
 		{
 			_BunchFileManager.Mode( Mode );
 		}
+		bso::bool__ IsPersistent( void ) const
+		{
+			bso::bool__ Is = _BunchFileManager.IsPersistent();
+
+			if ( Is != _ListFileManager.IsPersistent() )
+				ERRc();
+
+			return Is;
+		}
 		template <typename list_bunch> friend uym::state__ Plug(
 			list_bunch &ListBunch,
 			list_bunch_file_manager___ &FileManager );
@@ -298,7 +303,7 @@ namespace lstbch {
 
 		if ( uym::IsError( State ) )
 			FileManager.reset();
-		else if ( uym::Exists( State ) ) {
+		else {
 			if ( lst::Plug( ListBunch, FileManager._ListFileManager, FileManager._BunchFileManager.FileSize() / ListBunch.GetItemSize(), FileManager._BunchFileManager.TimeStamp() ) != State ) {
 				FileManager.reset();
 				State = uym::sInconsistent;

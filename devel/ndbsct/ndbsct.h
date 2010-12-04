@@ -216,15 +216,15 @@ namespace ndbsct {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			//_MemoryFileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
+			_MemoryFileManager.ReleaseFile();	// Pour que les 'TimeStamp' des fichiers soient mis à jour.
 
 			if ( P ) {
-				Settle();
+				Settle();	// Lancé explicitement, car le 'reset(...)' de '_ListFileManager' ne peut lancer son propre 'Settle(...)'.
 			}
 
-			_BaseFileName.reset( P );
 			_MemoryFileManager.reset( P );
 			_ListFileManager.reset( P );
+			_BaseFileName.reset( P );
 			_Mode = fil::m_Undefined;
 			_Content = NULL;
 		}
@@ -265,10 +265,10 @@ namespace ndbsct {
 
 			return State;
 		}
-		void CloseFiles( void )	// Pour libèrer les 'file handlers'.
+		void ReleaseFiles( void )	// Pour libèrer les 'file handlers'.
 		{
 			_MemoryFileManager.ReleaseFile();
-			_ListFileManager.ReleaseFile();
+			_ListFileManager.ReleaseFiles();
 		}
 		void SwitchMode( fil::mode__ Mode )
 		{
@@ -292,7 +292,7 @@ namespace ndbsct {
 
 		if ( uym::IsError( State ) ) {
 			FileManager.reset();
-		} else if (uym::Exists( State ) ) {
+		} else {
 			if ( State != lst::Plug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
 				FileManager.reset();
 				return uym::sInconsistent;

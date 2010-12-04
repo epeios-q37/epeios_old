@@ -527,6 +527,15 @@ namespace btr {
 		{
 			Nodes.Init();
 		}
+		r GetRoot( r Row ) const
+		{
+			r Candidate = Row;
+
+			while ( ( Candidate = Parent( Row ) ) != NONE )
+				Row = Candidate;
+
+			return Row;
+		}
 		//f Extent of the tree.
 		epeios::size__ Extent( void ) const
 		{

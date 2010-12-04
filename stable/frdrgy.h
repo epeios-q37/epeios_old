@@ -79,8 +79,8 @@ namespace frdrgy {
 			static const char *Locale;
 			static struct backend {
 				static const char
+					*Root,
 					*Location,
-					*Configuration,
 					*AccessMode,
 					*Type;
 			} Backend;
@@ -247,6 +247,11 @@ namespace frdrgy {
 		bso::integer_buffer__ Buffer;
 
 		SetProfileValue( Path, Registry, str::string( bso::Convert( Id, Buffer ) ) );
+	}
+
+	inline const char *GetBackendRootPath( void )
+	{
+		return paths::Parameters.Backend.Root;
 	}
 
 	inline bso::bool__ GetBackendType(

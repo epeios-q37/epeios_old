@@ -159,33 +159,27 @@ namespace lstctn {
 	template <typename container> class list_container_file_manager___
 	{
 	private:
-		lst::store_ *_ListStore;
 		_container_file_manager___<container> _ContainerFileManager;
 		lst::list_file_manager___ _ListFileManager;
-		void _Set( lst::store_ &Store )
+		time_t _ContainerTimeStamp( void ) const
 		{
-			if ( _ListStore != NULL )
-				ERRu();
-
-			_ListStore = &Store;
+			return _ContainerFileManager.TimeStamp();
 		}
-		time_t _ContainerTimeStamp( void )
+		time_t _ListTimeStamp( void ) const
 		{
-			return _container_file_manager___<container>::TimeStamp();
+			return _ListFileManager.TimeStamp();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-//			_ContainerFileManager.ReleaseFiles(); // Pour mettre à jour l'horodatage des fichiers.
+			_ContainerFileManager.ReleaseFiles();	// Sinon le 'Settle()'  ci'dessous ne fonctionne pas correctement.
 
 			if ( P ) {
-				Settle();
+				Settle();	// Lancé explicitement, car le 'reset(...)' de '_ListFileManager' ne peut lancer son propre 'Settle(...)'.
 			}
 
 			_ContainerFileManager.reset( P );
 			_ListFileManager.reset( P );
-
-			_ListStore = NULL;
 		}
 		list_container_file_manager___( void )
 		{
@@ -208,7 +202,35 @@ namespace lstctn {
 			reset();
 
 			_ContainerFileManager.Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
-			_ListFileManager.Init( ListFileName );
+			_ListFileManager.Init( ListFileName, Mode, Persistent );
+		}
+		fil::mode__ Mode( fil::mode__ Mode )
+		{
+			fil::mode__ ModeBuffer = _ContainerFileManager.Mode( Mode );
+
+			if ( ModeBuffer != _ListFileManager.Mode( Mode ) )
+				ERRc();
+
+			return ModeBuffer;
+		}
+		fil::mode__ Mode( void ) const
+		{
+			fil::mode__ Mode = _ContainerFileManager.Mode();
+
+			if ( Mode != _ListFileManager.Mode() )
+				ERRc();
+
+			return Mode;
+		}
+		uym::state__ State( void ) const
+		{
+			uym::state__ State = _ContainerFileManager.State();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _ListFileManager.State() )
+					State = uym::sInconsistent;
+
+			return State;
 		}
 		uym::state__ Bind( void )
 		{
@@ -229,9 +251,7 @@ namespace lstctn {
 			if ( uym::IsError( State ) )
 				return State;
 
-			if ( ( _ListStore != NULL )
-					&& _ContainerFileManager.IsPersistent()
-					&& _ContainerFileManager.Exists() )
+			if ( _ContainerFileManager.IsPersistent() && _ContainerFileManager.Exists() )
 				if ( _ListFileManager.Settle( _ContainerFileManager.TimeStamp() ) != State )
 						State = uym::sInconsistent;
 
@@ -239,54 +259,31 @@ namespace lstctn {
 		}
 		void Drop( void )
 		{
-			if ( ( _ListStore == NULL ) || ( _ListFileName == NULL ) )
-				ERRu();
-
-			_container_file_manager___<container>::Drop();
-
-			if ( fil::FileExists( _ListFileName ) )
-				if ( remove( _ListFileName ) != 0 )
-					ERRu();
+			 _ContainerFileManager.Drop();
+			_ListFileManager.Drop();
 		}
 		const char *ListFileName( void ) const
 		{
 			return _ListFileName;
 		}
-		void Set( lst::store_ &Store )
-		{
-			if ( _ListStore != NULL )
-				ERRu();
-
-			_ListStore = &Store;
-		}
-		bso::bool__ Exists( void ) const
-		{
-			bso::bool__ Exists = _container_file_manager___<container>::Exists();
-
-			if ( Exists != fil::FileExists( _ListFileName ) )
-				ERRc();
-
-			return Exists;
-		}
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _container_file_manager___<container>::CreateFiles( ErrorHandling );
+			bso::bool__ Success = _ContainerFileManager.CreateFiles( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			if ( fil::FileExists( _ListFileName ) )
-				if ( ErrorHandling == err::hThrowException )
-					ERRf();
-				else
-					return false;
-
-#ifdef CPE__C_VC
-#	undef CreateFile
-#endif
-			Success = fil::CreateFile( _ListFileName, ErrorHandling );
+			if ( uym::IsError( Settle() ) ) {
+				_ContainerFileManager.Drop();
+				Success = false;
+			}
 
 			return Success;
+		}
+		void ReleaseFiles( void )
+		{
+			_ContainerFileManager.ReleaseFiles();
+			_ListFileManager.ReleaseFiles();
 		}
 		uym::state__ Plug( container &ListContainer )
 		{
@@ -294,7 +291,7 @@ namespace lstctn {
 
 			if ( uym::IsError( State ) ) {
 				reset();
-			} else if ( uym::Exists( State ) ) {
+			} else {
 				if ( lst::Plug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
 					reset();
 					State = uym::sInconsistent;
@@ -302,6 +299,25 @@ namespace lstctn {
 			}
 
 			return State;
+		}
+		time_t TimeStamp( void ) const
+		{
+			time_t ContainerTimeStamp = _ContainerTimeStamp();
+			time_t ListTimeStamp = _ListTimeStamp();
+
+			if ( ContainerTimeStamp > ListTimeStamp )
+				return ContainerTimeStamp;
+			else
+				return ListTimeStamp;
+		}
+		bso::bool__ IsPersistent( void ) const
+		{
+			bso::bool__ Is = _ContainerFileManager.IsPersistent();
+
+			if ( Is != _ListFileManager.IsPersistent() )
+				ERRc();
+
+			return Is;
 		}
 	};
 

@@ -294,6 +294,16 @@ namespace idxbtq {
 
 			_QueueFileManager.Init( QueueFileName, Mode, Persistent, ID );
 		}
+		uym::state__ State( void ) const
+		{
+			uym::state__ State = _TreeFileManager.State();
+
+			if ( !uym::IsError( State ) )
+				if ( State != _QueueFileManager.State() )
+					State = uym::sInconsistent;
+
+			return State;
+		}
 		uym::state__ Bind( void )
 		{
 			uym::state__ State = _TreeFileManager.Bind();
@@ -348,12 +358,12 @@ namespace idxbtq {
 		}
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _TreeFileManager.CreateFile( ErrorHandling );
+			bso::bool__ Success = _TreeFileManager.CreateFiles( ErrorHandling );
 
 			if ( !Success )
 				return false;
 
-			Success = _QueueFileManager.CreateFile( ErrorHandling );
+			Success = _QueueFileManager.CreateFiles( ErrorHandling );
 
 			return Success;
 		}

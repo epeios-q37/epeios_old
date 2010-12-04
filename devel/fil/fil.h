@@ -103,8 +103,6 @@ namespace fil {
 	using namespace iop;
 
 	enum mode__ {
-		//i Unknow.
-		mUnknow,
 		//i Ecrase le contenu du fichier.
 		mRemove,
 		//i Ajoute à la fin du fichier.
@@ -115,7 +113,7 @@ namespace fil {
 		mReadOnly,
 		//i Amount of mode.
 		m_amount,
-		m_Undefined
+		m_Undefined,
 	};
  	//e Status.
 	enum status__ {

@@ -225,7 +225,7 @@ namespace lcl {
 			return Locale().GetTranslation( Text, Language(), Translation );
 		}
 		const char *GetTranslation(
-			const str::string_ Text,
+			const str::string_ &Text,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
 			return Locale().GetTranslation( Text, Language(), Buffer );

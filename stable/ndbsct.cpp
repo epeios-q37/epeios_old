@@ -83,7 +83,7 @@ ERRBegin
 	FileName.Init( BaseFileName );
 	FileName.Append( LIST_FILE_NAME_EXTENSION );
 
-	_ListFileManager.Init( FileName.Convert( FileNameBuffer ) );
+	_ListFileManager.Init( FileName.Convert( FileNameBuffer ), Mode, true );
 ERRErr
 ERREnd
 ERREpilog

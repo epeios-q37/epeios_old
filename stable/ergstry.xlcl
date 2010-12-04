@@ -2,15 +2,15 @@
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations message="ERGSTRY_UnableToOpenFile_1%0">
-		<Translation language="fr">Impossible d'ouvrir le fichier '%1'!</Translation>
-		<Translation language="en-US">Unable to open file '%1'!</Translation>
+		<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
+		<Translation language="en-US">Unable to open file '%1'</Translation>
 	</Translations>
 	<Translations message="ERGSTRY_ParseError_4%0">
-		<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : %4)!</Translation>
-		<Translation language="en-US">Error in file '%1' (line %2, column %3 : %4)!</Translation>
+		<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : %4)</Translation>
+		<Translation language="en-US">Error in file '%1' (line %2, column %3 : %4)</Translation>
 	</Translations>
 	<Translations message="ERGSTRY_UnableToFindRootPath">
-		<Translation language="fr">Impossible de trouver le chemin de la racine !</Translation>
-		<Translation language="en-US">Unable to find root path !</Translation>
+		<Translation language="fr">Impossible de trouver le chemin de la racine</Translation>
+		<Translation language="en-US">Unable to find root path</Translation>
 	</Translations>
 </xpp:bloc>

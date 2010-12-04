@@ -1100,11 +1100,11 @@ ERREpilog
 	return Found;
 }
 
-bso::bool__ rgstry::multi_level_registry_::Exists(
+row__ rgstry::multi_level_registry_::Search(
 	const str::string_ &PathString,
 	epeios::row__ *PathErrorRow ) const
 {
-	bso::bool__ Found = false;
+	row__ Row = NONE;
 ERRProlog
 	level__ Level = NONE;
 	path Path;
@@ -1116,17 +1116,16 @@ ERRBegin
 
 	Level = Roots.Last();
 
-	while ( ( Level != NONE ) && ( !Found ) ) {
-		Found = Exists( Level, Path );
+	while ( ( Level != NONE ) && ( Row == NONE ) ) {
+		Row = Search( Level, Path );
 
 		Level = Roots.Previous( Level );
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Found;
+	return Row;
 }
-
 
 const str::string_ &rgstry::GetTranslation(
 	error__ Error,
