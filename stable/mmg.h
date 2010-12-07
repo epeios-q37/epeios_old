@@ -264,8 +264,6 @@ namespace mmg
 		}
 		void plug( mmm::multimemory_ &MM )
 		{
-			Memoire.Flush();
-
 			Driver_.plug( MM );
 			Memoire.plug( Driver_ );
 		}

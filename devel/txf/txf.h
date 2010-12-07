@@ -366,7 +366,7 @@ namespace txf {
 #if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
 		return Flow << "\r\n" << commit;
 #elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
-		return Flow << '\n' << sync;
+		return Flow << '\n' << commit;
 #else
 #	error "Unknow target !"
 #endif

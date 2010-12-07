@@ -402,7 +402,7 @@ namespace ctn {
 		}
 		fil::mode__ Mode( void ) const
 		{
-			mode__ Mode = _Statics.Mode();
+			fil::mode__ Mode = _Statics.Mode();
 
 			if ( Mode != _Dynamics.Mode() )
 				ERRc();

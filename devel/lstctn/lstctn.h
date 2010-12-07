@@ -262,10 +262,6 @@ namespace lstctn {
 			 _ContainerFileManager.Drop();
 			_ListFileManager.Drop();
 		}
-		const char *ListFileName( void ) const
-		{
-			return _ListFileName;
-		}
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
 			bso::bool__ Success = _ContainerFileManager.CreateFiles( ErrorHandling );

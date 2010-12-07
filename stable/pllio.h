@@ -204,9 +204,7 @@ namespace pllio {
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			bso::bool__ ) // Normalement 'FlushToDevice', mais seulement utile sous Windows (voir 'wllio').
+		void Init( descriptor__ D )
 		{
 			io_core__::Init( D );
 		}
@@ -227,13 +225,10 @@ namespace pllio {
 		void Flush( void )
 		{
 			_Test();
-/*
-#ifdef CPE__CYGWIN
+
 			fsync( _D );
-#else
-			fdatasync( _D );
-#endif
-			*/
+
+//			fdatasync( _D );	// N'existe que sous Linux. Alternative à 'fsync()', sauf que les meta-données (herure de modification, p. ex.) ne sont pas stockées, économisant une écriture disque.
 		}
 	};
 
@@ -255,11 +250,9 @@ namespace pllio {
 		{
 			reset();
 		}
-		void Init(
-			descriptor__ D,
-			bso::bool__ FlushToDevice )
+		void Init( descriptor__ D )
 		{
-			lowlevel_output__::Init( D, FlushToDevice );
+			lowlevel_output__::Init( D );
 			lowlevel_input__::Init( D );
 		}
 	};

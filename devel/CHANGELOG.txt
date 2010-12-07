@@ -1,5 +1,13 @@
 $Id$
 
+06/12/2010 :
+	- PLLIO
+		- Adaptation aux modifications gestion des bibliothèques '...LLIO'.
+	- CTN, LSTCTN, MMG :
+		- Correction anomalies détectées par 'g++'.
+	- TXF :
+		- Adaptation aux modifications bibliothèques sous-jacentes.
+
 03/12/2010 :
 	- NDBSCT :
 		- Adaptation aux modifications bibliothèques sous-jacentes.
