@@ -1,5 +1,9 @@
 $Id$
 
+08/12/2011 :
+	- FLM :
+		- Correction du bogue se produisant lorsque l'on tente de lire un emplacement alloué avant d'avoir écrit dedans.
+
 06/12/2010 :
 	- PLLIO
 		- Adaptation aux modifications gestion des bibliothèques '...LLIO'.

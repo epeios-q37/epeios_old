@@ -499,7 +499,8 @@ namespace uym {
 		}
 		state__ Settle( void )
 		{
-			_file_memory_driver___::Flush();
+			if ( Mode() == fil::mReadWrite )
+				_file_memory_driver___::Flush();
 
 			return State();
 		}

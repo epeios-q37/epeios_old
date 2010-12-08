@@ -333,7 +333,7 @@ namespace flm {
 	protected:
 		void Read(
 			position__ Position,
-			unsigned int Nombre,
+			iop::amount__ Nombre,
 			void *Tampon )
 		{
 			Open_( false );
@@ -347,7 +347,17 @@ namespace flm {
 				Amount = File_.Read( Nombre, Tampon );
 					
 				if ( Amount <= 0 )
-					ERRd();
+					if ( Amount == 0 )
+						if ( ( Position + Nombre ) <= TailleFichier_ )	/* Lors d'une allocation, la nouvelle taille est notée, mais le taille du fichier n'est pas modifiée
+																		   (gain de temps). Or, certaines bibliothèques ('MMM', par exemple) lisent un emplacement alloué
+																		   avant d'avoir écrit dedans, on considère donc que la quantité, si correcte par rapport à la taille allouée,
+																		   de données demandée est disponible, peu importe le contenu.
+																		*/
+							Amount = Nombre;
+						else
+							ERRu();
+					else
+						ERRd();
 					
 				Nombre -= Amount;
 				Tampon = (char *)Tampon + Amount;
