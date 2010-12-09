@@ -1,6 +1,10 @@
 $Id$
 
-08/12/2011 :
+09/12/2010 :
+	- NSXPCM :
+		- Adaptation modification 'tol::Swap(...)'.
+
+08/12/2010 :
 	- FLM :
 		- Correction du bogue se produisant lorsque l'on tente de lire un emplacement alloué avant d'avoir écrit dedans.
 

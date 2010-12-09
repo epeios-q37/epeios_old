@@ -1920,7 +1920,9 @@ namespace nsxpcm {
 		}
 		int SetPredefinedFilter( int Filters )	// 'Filters' : combinaison de 'file_picker_mask_flag__'. Retourne les anciens filtres.
 		{
-			return tol::Swap( S_.PredefinedFilters, Filters );
+			tol::Swap( S_.PredefinedFilters, Filters );
+
+			return Filters;
 		}
 		void AddFilter(
 			const str::string_ &Title,
