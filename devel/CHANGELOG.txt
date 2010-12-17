@@ -1,5 +1,8 @@
 $Id$
 
+17/12/2010 :
+	- TXF : Suppression du 'commit' d'office pour 'nl' et 'rfl' qui ralentissait considérablement l'écriture dans des fichiers.
+
 09/12/2010 :
 	- NSXPCM :
 		- Adaptation modification 'tol::Swap(...)'.

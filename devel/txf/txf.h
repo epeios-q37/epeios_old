@@ -364,9 +364,9 @@ namespace txf {
 	TXF_DFS( nl )
 	{
 #if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
-		return Flow << "\r\n" << commit;
+		return Flow << "\r\n";
 #elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
-		return Flow << '\n' << commit;
+		return Flow << '\n';
 #else
 #	error "Unknow target !"
 #endif
@@ -387,7 +387,7 @@ namespace txf {
 	// Revient en début de ligne.
 	TXF_DFS( rfl )
 	{
-		return Flow << '\r' << commit;
+		return Flow << '\r';
 	}
 
 	//o All written in this object is erased.
