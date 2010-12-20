@@ -1,5 +1,9 @@
 $Id$
 
+19/12/2010 :
+	- CSDBNC :
+		- 'Service(...)' ne génère plus une exception d'office si pas de service.
+
 17/12/2010 :
 	- TXF : Suppression du 'commit' d'office pour 'nl' et 'rfl' qui ralentissait considérablement l'écriture dans des fichiers.
 

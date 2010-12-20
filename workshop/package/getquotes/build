@@ -12,9 +12,6 @@ $GET epeios $DIR stable/*.cpp
 $GET private $DIR stable/*.h
 $GET private $DIR stable/*.cpp
 
-$GET private $DIR stable/*.h
-$GET private $DIR stable/*.cpp
-
 $GET private $DIR tools/$DIR/*.cpp
 $GET private $DIR tools/$DIR/Makefile
 

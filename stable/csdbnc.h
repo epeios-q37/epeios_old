@@ -102,17 +102,24 @@ namespace csdbnc {
 	}
 #endif
 
-	//f Return the Service contained in 'HostService'.
-	inline const char *Service( const char *HostService )
+	//f Retourne le service contenu dans 'HostService', NULL si pas de service présent (si 'ErrorHandling' a la bonne valeur).
+	inline const char *Service(
+		const char *HostService,
+		err::handling__ ErrorHandling = err::h_Default )
 	{
 		const char *P;
 
 		P = strchr( HostService, ':' );
 
 		if ( P == NULL )
-			ERRu();
+			if ( ErrorHandling == err::hThrowException )
+				ERRu();
+			else
+				return NULL;
+		else
+			return P + 1;
 
-		return P + 1;
+		return NULL;	// Pour éviter un 'warnng'.
 	}
 
 	/*f Return a descriptor to a socket connected to 'Host' at 'Service'.
