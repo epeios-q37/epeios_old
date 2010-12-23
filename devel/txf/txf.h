@@ -81,21 +81,42 @@ namespace txf {
 	{
 	private:
 		// Flow from which data are red.
-		flw::iflow__ &Flow_;
+		flw::iflow__ *_Flow;
+		flw::iflow__ &_F( void )
+		{
+#ifdef TXF_DBG
+			if ( _Flow == NULL )
+				ERRu();
+#endif
+			return *_Flow;
+		}
 		datum__ Lire_( void )
 		{
-			return Flow_.Get();
+			return _F().Get();
 		}
 		size__ Lire_(
 			size__ Nombre,
 			datum__ *Tampon )
 		{
-			return Flow_.ReadUpTo( Nombre, Tampon );
+			return _F().ReadUpTo( Nombre, Tampon );
 		}
 	public:
-		text_iflow__( flw::iflow__ &Flow )
-		: Flow_( Flow )
-		{}
+		void reset( bso::bool__ = true )
+		{
+			_Flow = NULL;
+		}
+		text_iflow__( void )
+		{
+			reset( false );
+		}
+		~text_iflow__( void )
+		{
+			reset( false );
+		}
+		void Init( flw::iflow__ &Flow )
+		{
+			_Flow = &Flow;
+		}
 		text_iflow__ &operator >>( char &C )
 		{
 			C = (char)Lire_();
@@ -230,25 +251,47 @@ namespace txf {
 	{
 	private:
 		// Flow to write into.
-		flw::oflow__ &Flow_;
+		flw::oflow__ *_Flow;
+		flw::oflow__ &_F( void )
+		{
+#ifdef TXF_DBG
+			if ( _Flow == NULL )
+				ERRu();
+#endif
+			return *_Flow;
+		}
 		void Ecrire_( datum__ C )
 		{
-			Flow_.Put( C );
+			_F().Put( C );
 		}
 		void Ecrire_(
 			const datum__ *Tampon,
 			size__ Nombre )
 		{
-			Flow_.Write( Tampon, Nombre );
+			_F().Write( Tampon, Nombre );
 		}
 		void Commit_( void )
 		{
-			Flow_.Commit();
+			_F().Commit();
 		}
 	public:
-		text_oflow__( flw::oflow__ &Flow )
-		: Flow_( Flow )
-		{}
+		void reset( bso::bool__ = true )
+		{
+			_Flow = NULL;
+		}
+		text_oflow__( void )
+		{
+			reset( false );
+		}
+		~text_oflow__( void )
+		{
+			reset();
+		}
+		void Init( flw::oflow__ &Flow )
+		{
+			_Flow = &Flow;
+		}
+
 		text_oflow__ &operator <<( text_oflow__ &(* Function )( text_oflow__ &Flot ) )
 		{
 			return Function( *this );

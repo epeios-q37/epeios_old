@@ -1,5 +1,14 @@
 $Id$
 
+23/12/2010 :
+	- CIO :
+		- 'aware_...' -> 'unsafe_...' (plus explicite).
+	- ERR :
+		- Adaptation aux modifications 'CIO'.
+	- TXF :
+		- Standardisation.
+		- Adaptation aux modifications 'CIO'.
+
 19/12/2010 :
 	- CSDBNC :
 		- 'Service(...)' ne génère plus une exception d'office si pas de service.

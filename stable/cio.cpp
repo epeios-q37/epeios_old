@@ -83,13 +83,13 @@ iof::io_oflow_functions___ cio::_cerrf;
 iof::io_iflow_functions___ cio::_cinf;
 
 #ifndef CPE__T_MT
-	aware_coutf___ cio::coutf;
-	aware_cerrf___ cio::cerrf;
-	aware_cinf___ cio::cinf;
+	unsafe_coutf___ cio::coutf;
+	unsafe_cerrf___ cio::cerrf;
+	unsafe_cinf___ cio::cinf;
 
-	aware_cout___ cio::cout;
-	aware_cerr___ cio::cerr;
-	aware_cin___ cio::cin;
+	unsafe_cout___ cio::cout;
+	unsafe_cerr___ cio::cerr;
+	unsafe_cin___ cio::cin;
 #endif
 
 void cio::Initialize( void )

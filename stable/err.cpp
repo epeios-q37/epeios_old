@@ -246,14 +246,18 @@ void err::Final( void )
 #ifdef CPE__T_CONSOLE
 ERRProlog
 #	ifdef CPE__T_MT
-	cio::aware_cout___ cout;
-	cio::aware_cerr___ cerr;
+	cio::unsafe_cout___ cout;
+	cio::unsafe_cerr___ cerr;
 #	else
 	static txf::text_oflow__ &cout = cio::cout;
 	static txf::text_oflow__ &cerr = cio::cerr;
 #	endif
 ERRBegin
 	if ( cio::IsInitialized() ) {
+#	ifdef CPE__T_MT
+		cout.Init();
+		cerr.Init();
+#	endif
 		cout << txf::commit;
 		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::commit /*<< '\a'*/;
 	}

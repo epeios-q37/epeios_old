@@ -88,87 +88,94 @@ namespace cio {
 	//o Standard input as a pure flow (not a text flow).
 	extern iof::io_iflow_functions___ _cinf;
 
-	class aware_coutf___
+	class unsafe_coutf___
 	: public flw::oflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		aware_coutf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		unsafe_coutf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: oflow__( _coutf, _Cache, sizeof( _Cache ), AmountMax ) 
 		{}
 		void Init( void )
 		{}
 	};
 
-	class aware_cout___
+	class unsafe_cout___
 	: public txf::text_oflow__
 	{
 	private:
-		aware_coutf___ _CoutF;
+		unsafe_coutf___ _CoutF;
 	public:
-		aware_cout___( void )
-		: text_oflow__( _CoutF )
-		{}
+		void Init( void )
+		{
+			_CoutF.Init();
+			text_oflow__::Init( _CoutF );
+		}
 	};
 
 
-	class aware_cerrf___
+	class unsafe_cerrf___
 	: public flw::oflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		aware_cerrf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		unsafe_cerrf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: oflow__( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) 
 		{}
 		void Init( void )
 		{}
 	};
 
-	class aware_cerr___
+	class unsafe_cerr___
 	: public txf::text_oflow__
 	{
 	private:
-		aware_cerrf___ _CerrF;
+		unsafe_cerrf___ _CerrF;
 	public:
-		aware_cerr___( void )
-		: text_oflow__( _CerrF )
-		{}
+		void Init( void )
+		{
+			_CerrF.Init();
+			text_oflow__::Init( _CerrF );
+		}
+
 	};
 
-	class aware_cinf___
+	class unsafe_cinf___
 	: public flw::iflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		aware_cinf___( flw::size__ AmountMax = FLW_SIZE_MAX )
+		unsafe_cinf___( flw::size__ AmountMax = FLW_SIZE_MAX )
 		: iflow__( _cinf, _Cache, sizeof( _Cache ), AmountMax ) 
 		{}
 		void Init( void )
 		{}
 	};
 
-	class aware_cin___
+	class unsafe_cin___
 	: public txf::text_iflow__
 	{
 	private:
-		aware_cinf___ _CinF;
+		unsafe_cinf___ _CinF;
 	public:
-		aware_cin___( void )
-		: text_iflow__( _CinF )
-		{}
+		void Init( void )
+		{
+			_CinF.Init();
+			text_iflow__::Init( _CinF );
+		}
 	};
 
 #ifndef CPE__T_MT
-	extern aware_coutf___ coutf;
-	extern aware_cerrf___ cerrf;
-	extern aware_cinf___ cinf;
+	extern unsafe_coutf___ coutf;
+	extern unsafe_cerrf___ cerrf;
+	extern unsafe_cinf___ cinf;
 
-	extern aware_cout___ cout;
-	extern aware_cerr___ cerr;
-	extern aware_cin___ cin;
+	extern unsafe_cout___ cout;
+	extern unsafe_cerr___ cerr;
+	extern unsafe_cin___ cin;
 #endif
 
 	void Initialize( void );
