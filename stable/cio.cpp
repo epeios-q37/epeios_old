@@ -108,6 +108,13 @@ void cio::Initialize( void )
 		cio::_cinf.Init( cind );
 		cio::_cerrf.Init( cerrd );
 
+#	ifndef CPE__T_MT
+		cio::cout.Init();
+		cio::cerr.Init();
+		cio::cin.Init();
+#endif
+
+
 		::Initialized_ = true;
 }
 
