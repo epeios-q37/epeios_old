@@ -1532,9 +1532,10 @@ static void Preprocess_(
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ SFlow;
-	txf::text_oflow__ TFlow( SFlow );
+	txf::text_oflow__ TFlow;
 ERRBegin
 	SFlow.Init( ProcessedXMLString );
+	TFlow.Init( SFlow );
 
 	if ( xpp::Process( IFlow, BaseDirectory, xml::oCompact, TFlow ) != xpp::sOK )
 		ERRu();

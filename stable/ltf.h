@@ -219,10 +219,10 @@ namespace ltf {
 			Flow_.reset( P );
 		}
 		line_text_oflow___( txf::text_oflow__ &TFlow )
-		: Flow_( TFlow ),
-		  text_oflow__( Flow_ )
+		: Flow_( TFlow )
 		{
 			reset( false );
+			txf::text_oflow__::reset( false );
 		}
 		virtual ~line_text_oflow___( void )
 		{
@@ -231,7 +231,7 @@ namespace ltf {
 		void Init()
 		{
 			Flow_.Init( Data_, sizeof( Data_ ) );
-//			txf::text_oflow__::Init( Flow_ );
+			txf::text_oflow__::Init( Flow_ );
 		}
 		void CR( void )
 		{

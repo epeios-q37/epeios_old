@@ -1,5 +1,9 @@
 $Id$
 
+04/01/2011 :
+	- CSDBNS :
+		- Adaptation modifications 'CIO'.
+
 23/12/2010 :
 	- CIO :
 		- 'aware_...' -> 'unsafe_...' (plus explicite).
