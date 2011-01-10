@@ -275,8 +275,13 @@ namespace txf {
 			_F().Commit();
 		}
 	public:
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
+			if ( P ) {
+				if ( _Flow != NULL )
+					Commit_();
+			}
+
 			_Flow = NULL;
 		}
 		text_oflow__( void )

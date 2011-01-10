@@ -205,17 +205,17 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&from nsXPCOM
 
 	&ndbbsc	&epeios	&\
-	&New DataBase BaSiCs (will be moved on its own project in the future)
+	&New DataBase BaSiCs
 &ndbctt	&epeios	&\
-	&New DataBase ConTenT (will be moved on its own project in the future)
+	&New DataBase ConTenT
 &ndbdct	&epeios	&\
-	&New DataBase Dynamic ConTent (will be moved on its own project in the future)
+	&New DataBase Dynamic ConTent
 &ndbsct	&epeios	&\
-	&New DataBase Static Content (will be moved on its own project in the future)
+	&New DataBase Static Content
 &ndbidx	&epeios	&\
-	&New DataBase InDeXes (will be moved on its own project in the future)
+	&New DataBase InDeXes
 &ndbtbl	&epeios	&\
-	&New DataBase TaBLe (will be moved on its own project in the future)
+	&New DataBase TaBLe
 	
 &pip		&epeios		&2000-		&PIPe
 &pllio		&epeios		&\
@@ -565,6 +565,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STock eXchange BSE
 &stxcde		&private		&2000-2002 ,\
 	&STock eXchange CoDE
+&stxchk		&private		&2010\
+	&STock eXchange CHecK
 &stxdbs		&private		&2000-2002 ,\
 	&STock eXchange DataBaSe
 &stxdte		&private		&2000-2002, \
