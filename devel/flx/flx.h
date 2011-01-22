@@ -99,32 +99,24 @@ namespace flx {
 			ERRf();
 		}
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
 			if ( !Taille_ )
-				if ( Minimum )
-					FLXUnavailable();
-				else
-					Wanted = 0;
+				FLXUnavailable();
 			else
 			{
-				if ( Wanted > Taille_ )
-					Wanted = Taille_;
+				if ( Maximum > Taille_ )
+					Maximum = Taille_;
+		
+				memcpy( Buffer, Tampon_, (size_t)Maximum );
 
-				if ( Wanted < Minimum )
-					FLXUnavailable();
-					
-				memcpy( Buffer, Tampon_, (size_t)Wanted );
+				Tampon_ += Maximum;
 
-				Tampon_ += Wanted;
-
-				Taille_ -= Wanted;
-
+				Taille_ -= Maximum;
 			}
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFDismiss( void )
 		{}
@@ -160,7 +152,7 @@ namespace flx {
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow___
-		: public flw::iflow__
+	: public flw::iflow__
 	{
 	private:
 		buffer_iflow_functions___ _Functions;
@@ -203,18 +195,17 @@ namespace flx {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
-			if ( Wanted > Taille_ )
-				ERRu();
+			if ( Maximum > Taille_ )
+				Maximum = Taille_;
 
-			memcpy( Tampon_, Buffer, Wanted );
+			memcpy( Tampon_, Buffer, Maximum );
 
-			Tampon_ += Wanted;
-			Taille_ -= Wanted;
+			Tampon_ += Maximum;
+			Taille_ -= Maximum;
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFCommit( void )
 		{}
@@ -287,20 +278,19 @@ namespace flx {
 	{ 
 	protected:
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
-			if ( (fwf::size__)Wanted > ( Bunch_->Amount() - Position_ ) )
-				Wanted = ( Bunch_->Amount() - Position_ );
+			if ( (fwf::size__)Maximum > ( Bunch_->Amount() - Position_ ) )
+				Maximum = ( Bunch_->Amount() - Position_ );
 
-			if ( Wanted )
+			if ( Maximum )
 			{
-				Bunch_->Recall( Position_, Wanted, (so__ *)Buffer );
-				Position_ += Wanted;
+				Bunch_->Recall( Position_, Maximum, (so__ *)Buffer );
+				Position_ += Maximum;
 			}
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFDismiss( void )
 		{}
@@ -378,12 +368,11 @@ namespace flx {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
-			_Bunch->Append( (const so__ *)Buffer, Wanted );
+			_Bunch->Append( (const so__ *)Buffer, Maximum );
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFCommit()
 		{}
@@ -456,10 +445,9 @@ namespace flx {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *,
-			fwf::size__ Wanted,
-			fwf::size__ )
+			fwf::size__ Maximum )
 		{
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFCommit()
 		{}

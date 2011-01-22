@@ -82,9 +82,8 @@ namespace csdebd {
 		epeios::row__ _Row;
 	protected:
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
 			if ( _Row == NONE )
 				_Row = _Read.First();
@@ -92,16 +91,12 @@ namespace csdebd {
 			if ( _Row == NONE )
 				ERRu();
 
-			if ( ( _Read.Amount() - *_Row ) < (epeios::size__)Wanted )
-				Wanted = _Read.Amount() - *_Row;
+			if ( ( _Read.Amount() - *_Row ) < (epeios::size__)Maximum )
+				Maximum = _Read.Amount() - *_Row;
 
-#ifdef CSDEBD_DBG
-			if ( Minimum > Wanted )
-				ERRu();
-#endif
-			_Read.Recall( _Row, Wanted, Buffer );
+			_Read.Recall( _Row, Maximum, Buffer );
 
-			_Row = _Read.Next( _Row, Wanted );
+			_Row = _Read.Next( _Row, Maximum );
 
 /* Concernant GESBIB, si l'on enlève le bloc ci-dessous, le logiciel est susceptible de se planter lorsque l'on manipule
 une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme si le 'Dismiss()' n'était pas lancé correctement. */
@@ -110,8 +105,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_Read.Init();
 // Fin bloc.
 
-
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFDismiss( void )
 		{
@@ -123,16 +117,11 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
-#ifdef CSDEBD_DBG
-			if ( _Read.Amount() != 0 )
-				Minimum = Wanted;	// Juste pour avoir un point d'arrêt.
-#endif
-			_Write.Append( Buffer, Wanted );
+			_Write.Append( Buffer, Maximum );
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFCommit( void )
 		{}

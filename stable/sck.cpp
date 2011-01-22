@@ -169,62 +169,6 @@ flw::size__ sck::Write(
 }
 
 
-fwf::size__ sck::socket_ioflow_functions___::FWFRead(
-	fwf::size__ Minimum,
-	fwf::datum__ *Buffer,
-	fwf::size__ Wanted )
-{
-	fwf::size__ Amount = 0;
-	fwf::size__ Result;
-		
-	while( Minimum > Amount ) {
-		if ( ( Result = sck::Read( _Socket, ( Wanted - Amount ), Buffer + Amount, _TimeOut ) ) == SCK_DISCONNECTED )
-			break;
-		Amount += Result;
-	}
-
-	return Amount;
-}
-
-
-fwf::size__ sck::socket_ioflow_functions___::FWFWrite(
-	const fwf::datum__ *Buffer,
-	fwf::size__ Wanted,
-	fwf::size__ Minimum )
-{
-	fwf::size__ Amount = 0;
-
-	if ( _Error )
-		ERRd();
-
-	if ( Minimum != 0 )
-	{
-		fwf::size__ Result;
-		
-		while( Minimum > Amount ) {
-			if ( ( Result = sck::Write( _Socket, Buffer + Amount, Wanted - Amount, _TimeOut ) ) == SCK_DISCONNECTED ) {
-				_Socket = SCK_INVALID_SOCKET;
-				_Error = true;
-				ERRd();
-			}
-			Amount += Result;
-		}
-	}
-	else
-		Amount = sck::Write( _Socket, Buffer, Wanted, 0 );
-
-	if ( Amount == SCK_DISCONNECTED ) {
-		_Socket = SCK_INVALID_SOCKET;
-		_Error = true;
-		ERRd();
-	}
-
-	return Amount;
-}
-
-
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class sckpersonnalization

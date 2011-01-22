@@ -37,8 +37,11 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CLienT
 &clthvy		&epeios		&\
 	&CLienT for HeaVY operations.
+	
 &cpe		&epeios		&2000-2001, \
 	&ComPilation Enviroment
+&crptgr		&epeios		&2011\
+	&CRyPToGRaphy
 	
 &csdbnc		&epeios	&\
 	&Client-Server Base Network Client

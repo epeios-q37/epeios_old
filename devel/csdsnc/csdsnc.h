@@ -336,14 +336,13 @@ ERREpilog
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
 			fwf::size__ Amount = 0;
 
 			_Prepare();
 
-			return _Flow->WriteRelay( Buffer, Wanted, Minimum );
+			return _Flow->WriteUpTo( Buffer, Maximum );
 		}
 		virtual void FWFCommit( void )
 		{
@@ -351,23 +350,10 @@ ERREpilog
 				_Commit();
 		}
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
-			fwf::size__ Amount = 0;
-
-			if ( !_Prepare() )
-				_Commit();
-
-
-			Amount = _Flow->ReadUpTo( Wanted, Buffer );
-
-			while ( Amount < Minimum ) {
-				Amount += _Flow->ReadUpTo( Wanted - Amount, Buffer + Amount );
-			}
-
-			return Amount;
+			return _Flow->ReadUpTo( Maximum, Buffer );
 		}
 		virtual void FWFDismiss( void )
 		{

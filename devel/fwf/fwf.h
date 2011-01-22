@@ -164,13 +164,10 @@ namespace fwf {
 			}
 		}
 	protected:
-		/* Place un minimum de 'Miimum' octets et jusqu'à 'Wanted' octets dans 'Buffer'. Retourne le nombre d'octets
-		effectivement place dans 'Buffer'. Cette value peut être infèrieure à 'Minimum' uniquement si toutes les données 
-		ont été lues du périphérique sous-jacent. */
+		// Retourne le nombre d'octets effectivement lus. Ne retourne '0' que si plus aucune donnée n'est disponibe.
 		virtual size__ FWFRead(
-			size__ Minimum,
-			datum__ *Buffer,
-			size__ Wanted ) = 0;
+			size__ Maximum,
+			datum__ *Buffer ) = 0;
 		virtual void FWFDismiss( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
@@ -208,17 +205,16 @@ namespace fwf {
 			}
 		}
 		size__ Read(
-			size__ Minimum,
-			datum__ *Buffer,
-			size__ Wanted )
+			size__ Maximum,
+			datum__ *Buffer )
 		{
 #ifdef FWF_DBG
-			if ( Minimum < 1 )
+			if ( Maximum < 1 )
 				ERRu();
 #endif
 			_Lock();
 
-			return FWFRead( Minimum, Buffer, Wanted );
+			return FWFRead( Maximum, Buffer );
 		}
 	};
 
@@ -242,10 +238,10 @@ namespace fwf {
 			}
 		}
 	protected:
+		// Retourne le nombre d'octets effectivement écrits. Ne retourne '0' que si plus aucune donnée ne peut être écrite.
 		virtual size__ FWFWrite(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum ) = 0;
+			size__ MAximum ) = 0;
 		virtual void FWFCommit( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
@@ -283,11 +279,10 @@ namespace fwf {
 		}
 		size__ Write(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum )
+			size__ Maximum )
 		{
 			_Lock();
-			return FWFWrite( Buffer, Wanted, Minimum );
+			return FWFWrite( Buffer, Maximum );
 		}
 	};
 

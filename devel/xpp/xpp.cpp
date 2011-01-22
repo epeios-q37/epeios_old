@@ -933,16 +933,18 @@ void xpp::_preprocessing_iflow_functions___::_DeleteBrowsers( void )
 }
 
 mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
-	mdr::size__ Minimum,
-	mdr::datum__ *Buffer,
-	mdr::size__ Wanted )
+	mdr::size__ Maximum,
+	mdr::datum__ *Buffer )
 {
-	mdr::size__ Red = Fill_( Buffer, Wanted, _Data, _Position );
+	mdr::size__ CumulativeRed = 0;
 	_extended_browser___ *Browser = NULL;
+	mdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
 
-	while ( ( Minimum > Red ) && ( _CurrentBrowser != NULL ) ) {
+
+	while ( ( PonctualRed != 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
 		_Data.Init();
 		_Position = 0;
+		CumulativeRed += PonctualRed;
 
 		Browser = NULL;
 
@@ -965,7 +967,7 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 		
 		if ( _Status != sOK ) {
 			*Buffer = XTF_EOXC;	// Pour provoquer une erreur.
-			Red++;
+			CumulativeRed++;
 			break;
 		}
 
@@ -974,10 +976,10 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 			_CurrentBrowser = Browser;
 		}
 
-		Red += Fill_( Buffer, Wanted, _Data, _Position );
+		PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
 	}
 
-	return Red;
+	return CumulativeRed;
 }
 
 status__ xpp::Process(

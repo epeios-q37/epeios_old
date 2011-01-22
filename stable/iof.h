@@ -70,35 +70,45 @@ namespace iof {
 	typedef iop::output__		_output__;
 	typedef iop::io__			_io__;
 
+	class _output_functions__
+	: public _output__
+	{
+	protected:
+		fwf::size__ _Write(
+			const fwf::datum__ *Buffer,
+			fwf::size__ Maximum )
+		{
+#ifdef IOF_DBG
+			if ( Buffer == NULL )
+				ERRu();
+#endif
+			return _output__::Write( Buffer, Maximum );
+		}
+		void _Commit( void )
+		{
+			_output__::Flush();
+		}
+	};
+
 	class io_oflow_functions___
-	: public _output__,
+	: public _output_functions__,
 	  public fwf::oflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Tampon,
-			fwf::size__ Minimum,
-			fwf::size__ Demande )
+			fwf::size__ Maximum )
 		{
-#ifdef IOF_DBG
-			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
-				ERRu();
-#endif
-			fwf::size__ Written = 0;
-
-			while ( Written < Minimum )
-				Written += _output__::Write( Tampon, Demande - Written );
-
-			return Written;
+			return _output_functions__::Write( Tampon, Maximum );
 		}
 		virtual void FWFCommit( void )
 		{
-			Flush();
+			return _output_functions__::_Commit();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_output__::reset( P );
+			_output_functions__::reset( P );
 			oflow_functions___::reset( P );
 		}
 		io_oflow_functions___( void )
@@ -111,7 +121,7 @@ namespace iof {
 		}
 		void Init( iop::descriptor__ D )
 		{
-			_output__::Init( D );
+			_output_functions__::Init( D );
 			oflow_functions___::Init();
 		}
 	};
@@ -143,33 +153,47 @@ namespace iof {
 		}
 	};
 
+	class _input_functions__
+	: public _input__
+	{
+	protected:
+		virtual fwf::size__ _Read(
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
+		{
+	#ifdef IOF_DBG
+			if( Buffer == NULL )
+				ERRu();
+	#endif
+			if ( !OnEOF() )
+				return _input__::Read( Maximum, Buffer );
+			else
+				return 0;
+		}
+		virtual void _Dismiss( void )
+		{}
+	};
+
+
 	class io_iflow_functions___
-	: public _input__,
+	: public _input_functions__,
 	  public fwf::iflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Tampon,
-			fwf::size__ Desire )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
-	#ifdef STF_DBG
-			if( Tampon == NULL )
-				ERRu();
-	#endif
-			fwf::size__ NombreLus = 0;
-
-			while ( !OnEOF() && ( NombreLus < Minimum ) )
-				NombreLus += _input__::Read( Desire - NombreLus, Tampon );
-
-			return NombreLus;
+			return _input_functions__::_Read( Maximum, Buffer );
 		}
 		virtual void FWFDismiss( void )
-		{}
+		{
+			_input_functions__::_Dismiss();
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_input__::reset( P );
+			_input_functions__::reset( P );
 			iflow_functions___::reset( P );
 		}
 		io_iflow_functions___( void )
@@ -182,7 +206,7 @@ namespace iof {
 		}
 		void Init( iop::descriptor__ D )
 		{
-			_input__::Init( D );
+			_input_functions__::Init( D );
 			iflow_functions___::Init();
 		}
 	};
@@ -215,54 +239,36 @@ namespace iof {
 	};
 
 	class io_flow_functions___
-	: public _output__,
-	  public _input__,
+	: public _output_functions__,
+	  public _input_functions__,
 	  public fwf::ioflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Tampon,
-			fwf::size__ Minimum,
-			fwf::size__ Demande )
+			const fwf::datum__ *Buffer,
+			fwf::size__ Maximum )
 		{
-#ifdef IOF_DBG
-			if ( ( Tampon == NULL ) && ( Minimum || Demande ) )
-				ERRu();
-#endif
-			fwf::size__ Written = 0;
-
-			while ( Written < Minimum )
-				Written += _output__::Write( Tampon, Demande - Written );
-
-			return Written;
+			return _output_functions__::_Write( Buffer, Maximum );
 		}
 		virtual void FWFCommit( void )
 		{
-			Flush();
+			_output_functions__::_Commit();
 		}
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Tampon,
-			fwf::size__ Desire )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
-	#ifdef STF_DBG
-			if( Tampon == NULL )
-				ERRu();
-	#endif
-			fwf::size__ NombreLus = 0;
-
-			while ( !OnEOF() && ( NombreLus < Minimum ) )
-				NombreLus += _input__::Read( Desire - NombreLus, Tampon );
-
-			return NombreLus;
+			return _input_functions__::_Read( Maximum, Buffer );
 		}
 		virtual void FWFDismiss( void )
-		{}
+		{
+			return _input_functions__::_Dismiss();
+		}
 	public:
 		void Init( iop::descriptor__ D )
 		{
-			_input__::Init( D );
-			_output__::Init( D );
+			_input_functions__::Init( D );
+			_output_functions__::Init( D );
 		}
 
 	};

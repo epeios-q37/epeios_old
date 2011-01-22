@@ -80,29 +80,28 @@ namespace ltf {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
-			if ( ( Amount_ + Wanted ) > Size_ ) {
-				if ( Wanted >= (fwf::size__)( Size_ - _FreezePosition ) ) {
-					memcpy( Data_ + _FreezePosition, Buffer + ( Size_ - _FreezePosition - Wanted ), Size_ - _FreezePosition );
+			if ( ( Amount_ + Maximum ) > Size_ ) {
+				if ( Maximum >= (fwf::size__)( Size_ - _FreezePosition ) ) {
+					memcpy( Data_ + _FreezePosition, Buffer + ( Size_ - _FreezePosition - Maximum ), Size_ - _FreezePosition );
 				} else {
-					memcpy( Data_ + _FreezePosition, Data_ + _FreezePosition + Wanted, Size_ - Wanted - _FreezePosition );
-					memcpy( Data_ + Size_ - Wanted, Buffer, Wanted );
+					memcpy( Data_ + _FreezePosition, Data_ + _FreezePosition + Maximum, Size_ - Maximum - _FreezePosition );
+					memcpy( Data_ + Size_ - Maximum, Buffer, Maximum );
 				}
 
 				Amount_ = Size_ + 1;
 			} else {
-				memcpy( Data_ + Amount_, Buffer, Wanted );
-				Amount_ += (bso::ubyte__)Wanted;
+				memcpy( Data_ + Amount_, Buffer, Maximum );
+				Amount_ += (bso::ubyte__)Maximum;
 			}
 
 			if ( Amount_ < Size_ ) {
-				TFlow_.Put( Buffer, Wanted );
+				TFlow_.Put( Buffer, Maximum );
 			} else if ( Amount_ > Size_ )
 				Data_[_FreezePosition] = '<';
 
-			return Wanted;
+			return Maximum;
 		}
 		virtual void FWFCommit( void )
 		{
@@ -219,8 +218,7 @@ namespace ltf {
 			Flow_.reset( P );
 		}
 		line_text_oflow___( txf::text_oflow__ &TFlow )
-		: Flow_( TFlow ),
-		  text_oflow__( Flow_ )
+		: Flow_( TFlow )
 		{
 			reset( false );
 		}
@@ -231,7 +229,7 @@ namespace ltf {
 		void Init()
 		{
 			Flow_.Init( Data_, sizeof( Data_ ) );
-//			txf::text_oflow__::Init( Flow_ );
+			txf::text_oflow__::Init( Flow_ );
 		}
 		void CR( void )
 		{

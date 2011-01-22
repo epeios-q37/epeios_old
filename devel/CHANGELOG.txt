@@ -1,5 +1,11 @@
 $Id$
 
+22/01/2011 :
+	- GENERAL :
+		- Adaptation aux modifications 'FWF'.
+	- FWF :
+		- Simplification 'FWFRead(...)' et 'FWFWrite(...)'.
+
 04/01/2011 :
 	- CSDBNS :
 		- Adaptation modifications 'CIO'.

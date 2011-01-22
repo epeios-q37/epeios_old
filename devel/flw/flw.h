@@ -264,6 +264,21 @@ namespace flw {
 			_ReadUpTo( Amount, Buffer, Amount );
 		}
 		// Generic read.
+		size__ _LoopingRead(
+			size__ Minimum,
+			datum__ *Buffer,
+			size__ Wanted )
+		{
+			size__ PonctualAmount = _Functions.Read( Wanted, Buffer );
+			size__ CumulativeAmount = PonctualAmount;
+
+			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
+				PonctualAmount = _Functions.Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount );
+				CumulativeAmount += PonctualAmount;
+			}
+
+			return CumulativeAmount;
+		}
 		size__ _Read(
 			size__ Minimum,
 			datum__ *Buffer,
@@ -428,7 +443,7 @@ namespace flw {
 		{
 			_Dismiss();
 		}
-		size__ ReadRelay(
+/*		size__ ReadRelay(
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted )
@@ -442,7 +457,7 @@ namespace flw {
 
 			return Amount;
 		}
-		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+*/		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
 
 		{
 			if ( _Available == 0 )
@@ -510,6 +525,22 @@ namespace flw {
 		size__ _Written;
 		// Max amount of data between 2 synchronizing.
 		size__ _AmountMax;
+		size__ _LoopingWrite(
+			const datum__ *Buffer,
+			size__ Wanted,
+			size__ Minimum )
+		{
+			size__ PonctualAmount = _Functions.Write( Buffer, Wanted );
+			size__ CumulativeAmount = PonctualAmount;
+
+			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
+				PonctualAmount = _Functions.Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
+				CumulativeAmount += PonctualAmount;
+			}
+
+			return CumulativeAmount;
+		}
+
 		// Put up to 'Wanted' and a minimum of 'Minimum' bytes from buffer directly into the device.
 		size__ _DirectWrite(
 			const datum__ *Buffer,
@@ -647,21 +678,13 @@ namespace flw {
 		{
 			_AmountMax = AmountMax;
 		}
-		size__ WriteRelay(
+/*		size__ WriteRelay(
 			const datum__ *Buffer,
-			size__ Wanted,
-			size__ Minimum )
+			size__ Maximum )
 		{
-			size__ Amount = 0;
-
-			Amount = WriteUpTo( Buffer, Wanted );
-
-			while ( Amount < Minimum )
-				Amount += WriteUpTo( Buffer + Amount, Wanted - Amount);
-
-			return Amount;
+			return WriteUpTo( Buffer, Maximum );
 		}
-		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+*/		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
 		{
 			if ( _Free == 0 )
 				_DumpCache();

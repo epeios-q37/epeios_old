@@ -291,13 +291,30 @@ namespace sck {
 		bso::bool__ _Error;
 	protected:
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted );
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
+		{
+			if ( ( Maximum = sck::Read( _Socket, ( Maximum ), Buffer, _TimeOut ) ) == SCK_DISCONNECTED )
+				Maximum = 0;
+
+			return Maximum;
+		}
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum );
+			fwf::size__ Maximum )
+		{
+			if ( _Error )
+				ERRd();
+
+			if ( Maximum = sck::Write( _Socket, Buffer, Maximum, 0 ) == SCK_DISCONNECTED ) {
+				_Socket = SCK_INVALID_SOCKET;
+				_Error = true;
+				Maximum = 0;
+				ERRd();
+			}
+
+			return Maximum;
+		}
 		virtual void FWFDismiss( void )
 		{}
 		virtual void FWFCommit( void )

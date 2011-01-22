@@ -96,7 +96,18 @@ ERRBegin
 	if ( _Size == 0 )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
 
-	Amount = _Functions.Read( Minimum, Buffer, Wanted );
+#ifdef FLW_DBG
+	if ( Minimum < 1 )
+		ERRc();
+
+	if ( Wanted < Minimum )
+		ERRc();
+#endif
+
+	Amount = _LoopingRead( Minimum, Buffer, Wanted );
+
+	if ( Amount == 0 )
+		ERRf();
 
 	_Red += Amount;
 
@@ -121,18 +132,24 @@ ERRBegin
 		ERRd();
 
 #ifdef FLW_DBG
+		if ( Wanted < 1 )
+			ERRc();
+
 		if ( Wanted < Minimum )
-			ERRu();
+			ERRc();
 #endif
 
-	Amount = _Functions.Write( Buffer, Wanted, Minimum );
+	Amount = _LoopingWrite( Buffer, Wanted, Minimum );
+
+	if ( Amount == 0 )
+		ERRf();
 
 #ifdef FLW_DBG
 		if ( Amount > Wanted )
-			ERRu();
+			ERRc();
 
 		if ( Amount < Minimum )
-			ERRu();
+			ERRc();
 #endif
 
 	_Written += Amount;

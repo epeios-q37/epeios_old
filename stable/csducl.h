@@ -154,11 +154,10 @@ namespace csducl {
 		}
 	protected:
 		virtual fwf::size__ FWFRead(
-			fwf::size__ Minimum,
-			fwf::datum__ *Buffer,
-			fwf::size__ Wanted )
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
 		{
-			return _Get().ReadRelay( Minimum, Buffer, Wanted );
+			return _Get().ReadUpTo( Maximum, Buffer );
 		}
 		virtual void FWFDismiss( void )
 		{
@@ -166,10 +165,9 @@ namespace csducl {
 		}
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
-			return _Get().WriteRelay( Buffer, Wanted, Minimum );
+			return _Get().WriteUpTo( Buffer, Maximum );
 		}
 		virtual void FWFCommit( void )
 		{

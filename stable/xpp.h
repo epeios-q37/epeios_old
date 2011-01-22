@@ -500,9 +500,8 @@ namespace xpp {
 		}
 	protected:
 		virtual mdr::size__ FWFRead(
-			mdr::size__ Minimum,
-			mdr::datum__ *Buffer,
-			mdr::size__ Wanted );
+			mdr::size__ Maximum,
+			mdr::datum__ *Buffer );
 		virtual void FWFDismiss( void )
 		{}
 	public:
