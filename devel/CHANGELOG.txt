@@ -1,5 +1,13 @@
 $Id$
 
+23/01/2011 :
+	- GENERAL :
+		- Adaptation aux modifications 'FWF' et 'FWL'.
+	- FWF :
+		- La sécurisation par rapport au 'multi-threading' ne se fait plus de manière globale à la compilation, mais par objet à l'exécution.
+	- FWL :
+		- Standardisation.
+	
 22/01/2011 :
 	- GENERAL :
 		- Adaptation aux modifications 'FWF'.

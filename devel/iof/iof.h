@@ -119,10 +119,12 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_output_functions__::Init( D );
-			oflow_functions___::Init();
+			oflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -138,8 +140,7 @@ namespace iof {
 			oflow__::reset( P );
 			_Functions.reset( P );
 		}
-		io_oflow___( iop::amount__ AmountMax )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		io_oflow___( void )
 		{
 			reset( false );
 		}
@@ -147,9 +148,12 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			iop::amount__ AmountMax )
 		{
-			_Functions.Init( D );
+			_Functions.Init( D, fwf::tsDisabled );
+			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -204,10 +208,12 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_input_functions__::Init( D );
-			iflow_functions___::Init();
+			iflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -223,8 +229,7 @@ namespace iof {
 			_Functions.reset( P );
 			iflow__::reset( P );
 		}
-		io_iflow___( iop::amount__ AmountMax )
-		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		io_iflow___( void )
 		{
 			reset( false );
 		}
@@ -232,9 +237,12 @@ namespace iof {
 		{
 			reset();
 		}
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			iop::amount__ AmountMax )
 		{
-			_Functions.Init( D );
+			_Functions.Init( D, fwf::tsDisabled );
+			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -265,10 +273,13 @@ namespace iof {
 			return _input_functions__::_Dismiss();
 		}
 	public:
-		void Init( iop::descriptor__ D )
+		void Init(
+			iop::descriptor__ D,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_input_functions__::Init( D );
 			_output_functions__::Init( D );
+			ioflow_functions___::Init( ThreadSafety );
 		}
 
 	};
@@ -286,8 +297,7 @@ namespace iof {
 			_io__::reset( P );
 			ioflow__::reset( P );
 		}
-		io_flow___( iop::amount__ AmountMax )
-		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		io_flow___( void )
 		{
 			reset( false );
 		}
@@ -297,10 +307,12 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax )
+			iop::amount__ AmountMax,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_io__::Init( D );
-			_Functions.Init( D );
+			_Functions.Init( D, ThreadSafety );
+			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 }

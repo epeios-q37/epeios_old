@@ -530,6 +530,7 @@ namespace xpp {
 		}
 		void Init(
 			xtf::extended_text_iflow__ &XFlow,
+			fwf::thread_safety__ ThreadSafety,
 			const str::string_ &Directory,
 			const str::string_ &Namespace )
 		{
@@ -539,7 +540,7 @@ namespace xpp {
 			_Directives.Init( Namespace );
 			_Data.Init();
 			_Position = 0;
-			_iflow_functions___::Init();
+			_iflow_functions___::Init( ThreadSafety );
 			_CurrentBrowser = NewBrowser( _Repository, _Variables, _Directives );
 			_Browsers.Init();
 			if ( _Browser().Init( XFlow, str::string(), Directory ) != sOK )
@@ -556,7 +557,7 @@ namespace xpp {
 		}
 	};
 
-	typedef flw::unsafe_iflow__ _iflow__;
+	typedef flw::standalone_iflow__ _iflow__;
 
 	class preprocessing_iflow___
 	: public _iflow__
@@ -572,9 +573,6 @@ namespace xpp {
 			_iflow__::reset( P );
 		}
 		preprocessing_iflow___( void )
-		: _iflow__(
-			_FlowFunctions,
-			FLW_SIZE_MAX )
 		{
 			reset( false );
 		}
@@ -588,8 +586,8 @@ namespace xpp {
 			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
 		{
 			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, Directory, Namespace );
-			_iflow__::Init();
+			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Directory, Namespace );
+			_iflow__::Init( _FlowFunctions, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
 		status__ Status( void ) const

@@ -40,7 +40,7 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	5
+#define TEST_CASE	2
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
@@ -101,17 +101,17 @@ ERRBegin
 	while ( Continue )
 		switch ( Browser.Browse( TokenFlags ) ) {
 		case xml::tValue:
-			cout << Browser.DumpData() << txf::sync;
+			cout << Browser.DumpData() << txf::commit;
 			break;
 		case xml::tProcessed:
-			cout << Browser.DumpData() << txf::sync;
+			cout << Browser.DumpData() << txf::commit;
 			Continue = false;
 			break;
 		case xml::tError:
 			cerr << "Error '" << xpp::GetLabel( PFlow.Status() ) << "' at line " << PFlow.Coord().Line << " column " << PFlow.Coord().Column;
 			if ( PFlow.LocalizedFileName().Amount() != 0 )
 				cerr << " in file '" << PFlow.LocalizedFileName() << '\'';
-			cerr << " !" << txf::nl << txf::sync;
+			cerr << " !" << txf::nl << txf::commit;
 			Continue = false;
 			break;
 		default:
@@ -119,7 +119,7 @@ ERRBegin
 			break;
 		}
 	
-	cout << txf::nl << txf::sync;
+	cout << txf::nl << txf::commit;
 
 ERRErr
 ERREnd
@@ -143,7 +143,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << XPPTutor.Name << " [/i]\n\n";
 		ERRi();

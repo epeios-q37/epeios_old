@@ -63,7 +63,15 @@ extern class ttr_tutor &FWFTutor;
 #include "err.h"
 #include "bso.h"
 
-#ifdef CPE__T_MT
+#ifdef FWF_THREAD_SAFE
+#	define FWF__TS
+#elif !defined( FWF_THREAD_UNSAFE )
+#	ifdef CPE__T_MT
+#		define FWF__TS
+#	endif
+#endif
+
+#ifdef FWF__TS
 #	include "mtx.h"
 #	define FWF_NO_MUTEX	MTX_INVALID_HANDLER
 	typedef mtx::mutex_handler__ mutex__;
@@ -77,13 +85,27 @@ namespace fwf {
 		//t Amount of data.
 	using bso::size__;
 
+	enum thread_safety__
+	{
+		tsEnabled,
+		tsDisabled,
+		ts_amount,
+		ts_Undefined,
+		ts_Default =
+#ifdef FWF__TS
+		tsEnabled
+#else
+		tsDisabled
+#endif
+	};
+
 	//d The max value for a amount.
 #	define FWF_SIZE_MAX			BSO_SIZE_MAX
 
 	//t Type of a datum.
 	typedef unsigned char		datum__;
 
-#ifdef CPE__T_MT
+#ifdef FWF__TS
 	inline void Test_( mutex__ Mutex )
 	{
 		if ( Mutex == FWF_NO_MUTEX )
@@ -91,55 +113,66 @@ namespace fwf {
 	}
 #endif
 
-	inline mutex__ Create_( void )
+	inline mutex__ Create_( thread_safety__ ThreadSafety )
 	{
-#ifdef CPE__T_MT
-		return mtx::Create( mtx::mOwned );
+		switch ( ThreadSafety ) {
+		case tsEnabled:
+#ifdef FWF__TS
+			return mtx::Create( mtx::mOwned );
 #else
-		static int A;
-		return &A;	// Peur importe la valeur, pour peu qu'elle ne soit pas nulle.
+			ERRu();
 #endif
+			break;
+		case tsDisabled:
+			return FWF_NO_MUTEX;
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return FWF_NO_MUTEX;	// Pour éviter un 'warning'.
 	}
 
 
 	inline void Delete_( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
-		Test_( Mutex );
-		mtx::Delete( Mutex );
+#ifdef FWF__TS
+		if ( Mutex != FWF_NO_MUTEX )
+			mtx::Delete( Mutex );
 #endif
 	}
 
 	inline void Lock_( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
-		Test_( Mutex );
-		mtx::Lock( Mutex );
+#ifdef FWF__TS
+		if ( Mutex != FWF_NO_MUTEX )
+			mtx::Lock( Mutex );
 #endif
 	}
 
 	inline void Unlock_( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
-		Test_( Mutex );
-		mtx::Unlock( Mutex );
-#endif
+#ifdef FWF__TS
+		if ( Mutex != FWF_NO_MUTEX )
+			mtx::Unlock( Mutex );
+	#endif
 	}
 
 	inline bso::bool__ IsLocked_( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
-		Test_( Mutex );
-		return mtx::IsLocked( Mutex );
+#ifdef FWF__TS
+		if ( Mutex != FWF_NO_MUTEX )
+			return mtx::IsLocked( Mutex );
 #endif
 		return false;
 	}
 
 	inline bso::bool__ IsOwner_( mutex__ Mutex )
 	{
-#ifdef CPE__T_MT
-		Test_( Mutex );
-		return mtx::IsOwner( Mutex );
+#ifdef FWF__TS
+		if ( Mutex != FWF_NO_MUTEX )
+			return mtx::IsOwner( Mutex );
 #endif
 		return false;
 	}
@@ -190,11 +223,11 @@ namespace fwf {
 		{
 			reset();
 		}
-		void Init( void )
+		void Init( thread_safety__ ThreadSafety )
 		{
 			reset();
 
-			_Mutex = Create_();
+			_Mutex = Create_( ThreadSafety );
 		}
 		void Dismiss( void )
 		{
@@ -264,11 +297,11 @@ namespace fwf {
 		{
 			reset();
 		}
-		void Init( void )
+		void Init( thread_safety__ ThreadSafety )
 		{
 			reset();
 
-			_Mutex = Create_();
+			_Mutex = Create_( ThreadSafety );
 		}
 		void Commit( void )
 		{
@@ -296,10 +329,10 @@ namespace fwf {
 			iflow_functions___::reset( P );
 			oflow_functions___::reset( P );
 		}
-		void Init( void )
+		void Init( thread_safety__ ThreadSafety )
 		{
-			iflow_functions___::Init();
-			oflow_functions___::Init();;
+			iflow_functions___::Init( ThreadSafety );
+			oflow_functions___::Init( ThreadSafety );
 		}
 	};
 }

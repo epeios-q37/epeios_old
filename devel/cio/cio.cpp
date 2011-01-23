@@ -83,13 +83,13 @@ iof::io_oflow_functions___ cio::_cerrf;
 iof::io_iflow_functions___ cio::_cinf;
 
 #ifndef CPE__T_MT
-	unsafe_coutf___ cio::coutf;
-	unsafe_cerrf___ cio::cerrf;
-	unsafe_cinf___ cio::cinf;
+	coutf___ cio::coutf;
+	cerrf___ cio::cerrf;
+	cinf___ cio::cinf;
 
-	unsafe_cout___ cio::cout;
-	unsafe_cerr___ cio::cerr;
-	unsafe_cin___ cio::cin;
+	cout___ cio::cout;
+	cerr___ cio::cerr;
+	cin___ cio::cin;
 #endif
 
 void cio::Initialize( void )
@@ -104,11 +104,11 @@ void cio::Initialize( void )
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::_coutf.Init( coutd );
-		cio::_cinf.Init( cind );
-		cio::_cerrf.Init( cerrd );
+		cio::_coutf.Init( coutd, fwf::ts_Default );
+		cio::_cinf.Init( cind, fwf::ts_Default );
+		cio::_cerrf.Init( cerrd, fwf::ts_Default );
 
-#	ifndef CPE__T_MT
+#ifndef CPE__T_MT
 		cio::cout.Init();
 		cio::cerr.Init();
 		cio::cin.Init();

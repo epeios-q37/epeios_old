@@ -66,7 +66,7 @@ class flxpersonnalization
 public:
 	flxpersonnalization( void )
 	{
-		flx::dump.Init();
+		flx::dump.Init( fwf::ts_Default );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

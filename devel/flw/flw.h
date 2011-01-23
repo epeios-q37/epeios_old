@@ -102,7 +102,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une fonction abstraite).*/
 	{
 	private:
-		fwf::iflow_functions___ &_Functions;
+		fwf::iflow_functions___ *_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// Size of the cache.
@@ -269,11 +269,11 @@ namespace flw {
 			datum__ *Buffer,
 			size__ Wanted )
 		{
-			size__ PonctualAmount = _Functions.Read( Wanted, Buffer );
+			size__ PonctualAmount = _Functions->Read( Wanted, Buffer );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions.Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount );
+				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -285,7 +285,7 @@ namespace flw {
 			size__ Wanted );
 		void _Dismiss( void )
 		{
-			_Functions.Dismiss();
+			_Functions->Dismiss();
 			_Red = 0;
 		}
 		/*f Handle EOFD. To call when no more data available in the medium.
@@ -328,27 +328,27 @@ namespace flw {
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
-		iflow__(
-			fwf::iflow_functions___ &Functions,
-			datum__ *Cache,
-			size__ Size,
-			size__ AmountMax )
-		: _Functions( Functions )
+		iflow__( void )
 		{
 			reset( false );
-
-			_Cache = Cache;
-			_Size = Size;
-			_AmountMax = AmountMax;
 		}
 		~iflow__( void )
 		{
 			reset();
 		}
-		void Init( void )
+		void Init(
+			fwf::iflow_functions___ &Functions,
+			datum__ *Cache,
+			size__ Size,
+			size__ AmountMax )
 		{
 			if ( _Red )
 				Dismiss();
+
+			_Functions = &Functions;
+			_Cache = Cache;
+			_Size = Size;
+			_AmountMax = AmountMax;
 
 			_Red = 0;
 			_Available = _Position = 0;
@@ -475,17 +475,18 @@ namespace flw {
 	};
 
 
-	class unsafe_iflow__	// Classe non thread-safe.
+	class standalone_iflow__
 	: public iflow__
 	{
 	private:
 		flw::datum__ _Cache[FLW__ICACHE_SIZE];
 	public:
-		unsafe_iflow__(
+		void Init( 
 			fwf::iflow_functions___ &Functions,
 			size__ AmountMax )
-			: iflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
-		{}
+		{
+			iflow__::Init( Functions, _Cache, sizeof( _Cache ), AmountMax );
+		}
 	};
 
 
@@ -514,7 +515,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		fwf::oflow_functions___ &_Functions;
+		fwf::oflow_functions___ *_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// The size of the cache.
@@ -530,11 +531,11 @@ namespace flw {
 			size__ Wanted,
 			size__ Minimum )
 		{
-			size__ PonctualAmount = _Functions.Write( Buffer, Wanted );
+			size__ PonctualAmount = _Functions->Write( Buffer, Wanted );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions.Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
+				PonctualAmount = _Functions->Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -588,7 +589,7 @@ namespace flw {
 		void _Commit( void )
 		{
 			_DumpCache();
-			_Functions.Commit();
+			_Functions->Commit();
 
 			_Written = 0;
 		}
@@ -620,17 +621,8 @@ namespace flw {
 
 			_Written = 0;
 		}
-		oflow__(
-			fwf::oflow_functions___ &Functions,
-			datum__ *Cache,
-			size__ Size,
-			size__ AmountMax )
-		: _Functions( Functions )
+		oflow__( void )
 		{
-			_Cache = Cache;
-			_Size = _Free = Size;
-			_AmountMax = AmountMax;
-
 			reset( false );
 
 		}
@@ -638,10 +630,19 @@ namespace flw {
 		{
 			reset();
 		}
-		void Init( void )
+		void Init(
+			fwf::oflow_functions___ &Functions,
+			datum__ *Cache,
+			size__ Size,
+			size__ AmountMax )
 		{
 			if ( _Size != _Free )
 				Commit();
+
+			_Functions = &Functions;
+			_Cache = Cache;
+			_Size = _Free = Size;
+			_AmountMax = AmountMax;
 
 			_Written = 0;
 		}
@@ -699,17 +700,18 @@ namespace flw {
 		}
 	};
 
-	class unsafe_oflow__	// Classe non thread-safe.
+	class standalone_oflow__
 	: public oflow__
 	{
 	private:
 		flw::datum__ _Cache[FLW__OCACHE_SIZE];
 	public:
-		unsafe_oflow__(
+		void Init(
 			fwf::oflow_functions___ &Functions,
 			size__ AmountMax )
-			: oflow__( Functions, _Cache, sizeof( _Cache ), AmountMax )
-		{}
+		{
+			oflow__::Init( Functions, _Cache, sizeof( _Cache ), AmountMax );
+		}
 	};
 
 
@@ -746,26 +748,7 @@ namespace flw {
 			iflow__::reset( P );
 			oflow__::reset( P );
 		}
-		ioflow__(
-			fwf::ioflow_functions___ &Functions,
-			datum__ *ICache,
-			size__ ISize,
-			size__ ReadAmountMax,
-			datum__ *OCache,
-			size__ OSize,
-			size__ WriteAmountMax )
-			: iflow__( Functions, ICache, ISize, ReadAmountMax ),
-			  oflow__( Functions, OCache, OSize, WriteAmountMax )
-		{
-			reset( false );
-		}
-		ioflow__(
-			fwf::ioflow_functions___ &Functions,
-			datum__ *Cache,
-			size__ Size,
-			size__ AmountMax )
-			: iflow__( Functions, Cache, Size / 2, AmountMax ),
-			  oflow__( Functions, Cache + Size / 2, Size / 2, AmountMax )
+		ioflow__( void )
 		{
 			reset( false );
 		}
@@ -780,27 +763,50 @@ namespace flw {
 		{
 			SetAmountMax( AmountMax, AmountMax );
 		}
+		void Init(
+			fwf::ioflow_functions___ &Functions,
+			datum__ *ICache,
+			size__ ISize,
+			size__ ReadAmountMax,
+			datum__ *OCache,
+			size__ OSize,
+			size__ WriteAmountMax )
+		{
+			iflow__::Init( Functions, ICache, ISize, ReadAmountMax );
+			oflow__::Init( Functions, OCache, OSize, WriteAmountMax );
+
+		}
+		void Init(
+			fwf::ioflow_functions___ &Functions,
+			datum__ *Cache,
+			size__ Size,
+			size__ AmountMax )
+		{
+			iflow__::Init( Functions, Cache, Size / 2, AmountMax );
+			oflow__::Init( Functions, Cache + Size / 2, Size / 2, AmountMax );
+		}
 	};
 
-
-	class unsafe_ioflow__	// Classe non thread-safe.
+	class standalone_ioflow__	// Classe non thread-safe.
 	: public ioflow__
 	{
 	private:
 		flw::datum__ _ICache[FLW__ICACHE_SIZE];
 		flw::datum__ _OCache[FLW__OCACHE_SIZE];
 	public:
-		unsafe_ioflow__(
+		void Init(
 			fwf::ioflow_functions___ &Functions,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
-			: ioflow__( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax )
-		{}
-		unsafe_ioflow__(
+		{
+			ioflow__::Init( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax );
+		}
+		void Init(
 			fwf::ioflow_functions___ &Functions,
 			size__ AmountMax )
-			: ioflow__( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax )
-		{}
+		{
+			ioflow__::Init( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax );
+		}
 	};
 
 

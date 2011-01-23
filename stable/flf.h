@@ -94,6 +94,7 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
+			fwf::thread_safety__ ThreadSafety,
 			fil::mode__ Mode = fil::mReadOnly,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
@@ -116,17 +117,18 @@ namespace flf {
 				}
 			} else {
 				Status = fil::sSuccess;
-				io_iflow_functions___::Init( _D );
+				io_iflow_functions___::Init( _D, ThreadSafety );
 			}
 
 			return Status;
 		}
 		fil::status__ Init(
 			const char *FileName,
+			fwf::thread_safety__ ThreadSafety,
 			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mReadOnly )
 		{
-			return Init( FileName, Mode, ErrorHandling );
+			return Init( FileName, ThreadSafety, Mode, ErrorHandling );
 		}
 	};
 
@@ -150,8 +152,7 @@ namespace flf {
 
 			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}
-		file_iflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: _io_iflow___( AmountMax )
+		file_iflow___( void )
 		{
 			reset( false );
 		}
@@ -162,6 +163,7 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mReadOnly,
+			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
@@ -182,16 +184,17 @@ namespace flf {
 				}
 			}
 
-			_io_iflow___::Init( D_ );
+			_io_iflow___::Init( D_, AmountMax );
 
 			return fil::sSuccess;
 		}
 		fil::status__ Init(
 			const char *FileName,
 			err::handling__ ErrorHandling,
-			fil::mode__ Mode = fil::mReadOnly )
+			fil::mode__ Mode = fil::mReadOnly,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			return Init( FileName, Mode, ErrorHandling );
+			return Init( FileName, Mode, AmountMax, ErrorHandling );
 		}
 	};
 
@@ -222,6 +225,7 @@ namespace flf {
 		}
 		fil::status__ Init(
 			const char *FileName,
+			fwf::thread_safety__ ThreadSafety,
 			fil::mode__ Mode = fil::mRemove,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
@@ -244,17 +248,18 @@ namespace flf {
 				}
 			} else {
 				Status = fil::sSuccess;
-				io_oflow_functions___::Init( _D );
+				io_oflow_functions___::Init( _D, ThreadSafety );
 			}
 
 			return Status;
 		}
 		fil::status__ Init(
 			const char *FileName,
+			fwf::thread_safety__ ThreadSafety,
 			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mRemove )
 		{
-			return Init( FileName, Mode, ErrorHandling );
+			return Init( FileName, ThreadSafety, Mode, ErrorHandling );
 		}
 	};
 
@@ -279,8 +284,7 @@ namespace flf {
 
 			D_ = IOP_UNDEFINED_DESCRIPTOR;
 		}
-		file_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: _io_oflow___( AmountMax )
+		file_oflow___( void ) 
 		{
 			reset( false );
 		}
@@ -291,6 +295,7 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mRemove,
+			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
 			reset();
@@ -311,7 +316,7 @@ namespace flf {
 				}
 			}
 
-			io_oflow___::Init( D_ );
+			io_oflow___::Init( D_, AmountMax );
 
 			return fil::sSuccess;
 		}

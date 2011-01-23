@@ -88,94 +88,90 @@ namespace cio {
 	//o Standard input as a pure flow (not a text flow).
 	extern iof::io_iflow_functions___ _cinf;
 
-	class unsafe_coutf___
+	class coutf___
 	: public flw::oflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		unsafe_coutf___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _coutf, _Cache, sizeof( _Cache ), AmountMax ) 
-		{}
-		void Init( void )
-		{}
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		{
+			oflow__::Init( _coutf, _Cache, sizeof( _Cache ), AmountMax );
+		}
 	};
 
-	class unsafe_cout___
+	class cout___
 	: public txf::text_oflow__
 	{
 	private:
-		unsafe_coutf___ _CoutF;
+		coutf___ _CoutF;
 	public:
-		void Init( void )
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_CoutF.Init();
+			_CoutF.Init( AmountMax );
 			text_oflow__::Init( _CoutF );
 		}
 	};
 
 
-	class unsafe_cerrf___
+	class cerrf___
 	: public flw::oflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		unsafe_cerrf___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) 
-		{}
-		void Init( void )
-		{}
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		{
+			oflow__::Init( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) ;
+		}
 	};
 
-	class unsafe_cerr___
+	class cerr___
 	: public txf::text_oflow__
 	{
 	private:
-		unsafe_cerrf___ _CerrF;
+		cerrf___ _CerrF;
 	public:
-		void Init( void )
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_CerrF.Init();
+			_CerrF.Init( AmountMax );
 			text_oflow__::Init( _CerrF );
 		}
-
 	};
 
-	class unsafe_cinf___
+	class cinf___
 	: public flw::iflow__
 	{
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		unsafe_cinf___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: iflow__( _cinf, _Cache, sizeof( _Cache ), AmountMax ) 
-		{}
-		void Init( void )
-		{}
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		{
+			iflow__::Init( _cinf, _Cache, sizeof( _Cache ), AmountMax );
+		}
 	};
 
-	class unsafe_cin___
+	class cin___
 	: public txf::text_iflow__
 	{
 	private:
-		unsafe_cinf___ _CinF;
+		cinf___ _CinF;
 	public:
-		void Init( void )
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_CinF.Init();
+			_CinF.Init( AmountMax );
 			text_iflow__::Init( _CinF );
 		}
 	};
 
 #ifndef CPE__T_MT
-	extern unsafe_coutf___ coutf;
-	extern unsafe_cerrf___ cerrf;
-	extern unsafe_cinf___ cinf;
+	extern coutf___ coutf;
+	extern cerrf___ cerrf;
+	extern cinf___ cinf;
 
-	extern unsafe_cout___ cout;
-	extern unsafe_cerr___ cerr;
-	extern unsafe_cin___ cin;
+	extern cout___ cout;
+	extern cerr___ cerr;
+	extern cin___ cin;
 #endif
 
 	void Initialize( void );

@@ -941,7 +941,7 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 	mdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
 
 
-	while ( ( PonctualRed != 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
+	while ( ( ( PonctualRed != 0 ) || ( CumulativeRed == 0 ) ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
 		_Data.Init();
 		_Position = 0;
 		CumulativeRed += PonctualRed;

@@ -139,11 +139,12 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const fwf::datum__ *Buffer,
+			fwf::thread_safety__ ThreadSafety,
 			bso::size__ Size = BSO_SIZE_MAX )
 		{
 			reset();
 
-			iflow_functions___::Init();
+			iflow_functions___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -164,8 +165,7 @@ namespace flx {
 			_Functions.reset( P );
 			iflow__::reset( P );
 		}
-		buffer_iflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax ) 
+		buffer_iflow___( void )
 		{
 			reset( false );
 		}
@@ -177,9 +177,11 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const flw::datum__ *Buffer,
-			bso::size__ Size = BSO_SIZE_MAX )
+			bso::size__ Size = BSO_SIZE_MAX,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( Buffer, Size );
+			_Functions.Init( Buffer, fwf::tsDisabled, Size );
+			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -228,11 +230,12 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			fwf::datum__ *Buffer,
+			fwf::thread_safety__ ThreadSafety,
 			bso::size__ Size )
 		{
 			reset();
 
-			oflow_functions___::Init();
+			oflow_functions___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -252,8 +255,7 @@ namespace flx {
 		{
 			_Functions.reset( P );
 		}
-		buffer_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		buffer_oflow___( void )
 		{
 			reset( false );
 		}
@@ -264,11 +266,13 @@ namespace flx {
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
 			flw::datum__ *Buffer,
-			bso::size__ Size )
+			bso::size__ Size,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 
-			_Functions.Init( Buffer, Size );
+			_Functions.Init( Buffer, fwf::tsDisabled, Size );
+			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -315,6 +319,7 @@ namespace flx {
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
+			fwf::thread_safety__ ThreadSafety,
 			epeios::row_t__ Position = 0 )
 		{
 			reset();
@@ -322,7 +327,7 @@ namespace flx {
 			Bunch_ = &Bunch;
 			Position_ = Position;
 
-			iflow_functions___::Init();
+			iflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -335,8 +340,7 @@ namespace flx {
 		// The cache.
 		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_iflow__( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: iflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		bunch_iflow__( void )
 		{
 			reset( false );
 		}
@@ -351,11 +355,13 @@ namespace flx {
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
-			epeios::row_t__ Position = 0 )
+			epeios::row_t__ Position = 0,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 
-			_Functions.Init( Bunch, Position );
+			_Functions.Init( Bunch, fwf::tsDisabled, Position );
+			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -452,9 +458,9 @@ namespace flx {
 		virtual void FWFCommit()
 		{}
 	public:
-		void Init( void )
+		void Init( fwf::thread_safety__ ThreadSafety )
 		{
-			oflow_functions___::Init();
+			oflow_functions___::Init( ThreadSafety );
 		}
 
 	};	
@@ -470,12 +476,10 @@ namespace flx {
 			// The cache.
 		flw::datum__ _Cache[FLX_DUMP_BUFFER_SIZE];
 	public:
-		dump_oflow__( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
-		{}
-		void Init( void )
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init();
+			_Functions.Init( fwf::tsDisabled );
+			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 
 	};
