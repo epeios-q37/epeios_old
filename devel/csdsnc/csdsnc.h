@@ -119,7 +119,7 @@ namespace csdsnc {
 #endif
 	}
 
-	typedef sck::unsafe_socket_ioflow___ _flow___;
+	typedef sck::socket_ioflow___ _flow___;
 
 	typedef stk::E_BSTACK_( _flow___ * )	flows_;
 
@@ -384,11 +384,13 @@ ERREpilog
 			{
 				reset();
 			}
-			void Init( core_ &Core )
+			void Init(
+				core_ &Core,
+				fwf::thread_safety__ ThreadSafety )
 			{
 				reset();
 
-				ioflow_functions___::Init();
+				ioflow_functions___::Init( ThreadSafety );
 				_Core = &Core;
 			}
 	};
@@ -406,7 +408,6 @@ ERREpilog
 			_Functions.reset( P );
 		}
 		client_ioflow___( void )
-		: ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX )
 		{
 			reset( false );
 		}
@@ -414,9 +415,8 @@ ERREpilog
 		{
 			reset();
 
-			_Functions.Init( Core );
-
-			// ioflow__::Init( _Cache, sizeof( _Cache ), FLW_SIZE_MAX, Mutex, Mutex );
+			_Functions.Init( Core, fwf::tsDisabled );
+			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
 		}
 	};
 }

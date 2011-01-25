@@ -144,11 +144,11 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset();
 		}
-		void Init(void )
+		void Init( fwf::thread_safety__ ThreadSafety )
 		{
 			reset();
 			
-			ioflow_functions___::Init();
+			ioflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -198,14 +198,15 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		void Init(
 			csdscm::user_functions__ &UserFunctions,
-			flw::ioflow__ &Flow )
+			flw::ioflow__ &Flow,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			reset();
 
 			_UserFunctions = &UserFunctions;
 			_Flow = &Flow;
 
-			_passive_generic_functions___::Init();
+			_passive_generic_functions___::Init( ThreadSafety );
 
 			_Create();
 		}
@@ -230,8 +231,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			backend(
 				data_ &Read,
 				data_ &Write )
-			: Functions( Read, Write ),
-			  Flow( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX )
+			: Functions( Read, Write )
 			{
 				reset( false );
 			}
@@ -241,13 +241,13 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			}
 			void Init( void )
 			{
-				Functions.Init();
+				Functions.Init( fwf::tsDisabled );
+				Flow.Init( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX );
 			}
 		} _Backend;
 	public:
 		embed_client_server_ioflow___( void )
 		: _Functions( _Master, _Slave ),
-		  ioflow__( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX ),
 		  _Backend( _Slave ,_Master )
 		{
 			reset( false );
@@ -277,7 +277,8 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			_Backend.Init();
 
-			_Functions.Init( UserFunctions, _Backend.Flow );
+			_Functions.Init( UserFunctions, _Backend.Flow, fwf::tsDisabled );
+			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
 		}
 	};
 }

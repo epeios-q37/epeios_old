@@ -137,7 +137,7 @@ ERRBegin
 				error__ Error = sck::Error();
 #ifdef CPE__T_CONSOLE
 				ERRProlog
-					cio::unsafe_cerr___ cerr;
+					cio::cerr___ cerr;
 					tol::buffer__ Buffer;
 				ERRBegin
 					cerr << tol::DateAndTime( Buffer ) << " (" << __FILE__ << ", " << (bso::ulong__)__LINE__  << ") : ("  << (bso::ulong__)Error << ") " << sck::ErrorDescription( Error ) << txf::nl << txf::commit;

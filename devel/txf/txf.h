@@ -296,7 +296,6 @@ namespace txf {
 		{
 			_Flow = &Flow;
 		}
-
 		text_oflow__ &operator <<( text_oflow__ &(* Function )( text_oflow__ &Flot ) )
 		{
 			return Function( *this );

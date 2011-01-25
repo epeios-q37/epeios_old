@@ -75,7 +75,7 @@ namespace ltf {
 		fwf::datum__ *Data_;
 		bso::ubyte__ Size_;
 		bso::ubyte__ Amount_;
-		txf::text_oflow__ &TFlow_;
+		txf::text_oflow__ *TFlow_;
 		bso::ubyte__ _FreezePosition;
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -97,7 +97,7 @@ namespace ltf {
 			}
 
 			if ( Amount_ < Size_ ) {
-				TFlow_.Put( Buffer, Maximum );
+				TFlow_->Put( Buffer, Maximum );
 			} else if ( Amount_ > Size_ )
 				Data_[_FreezePosition] = '<';
 
@@ -105,15 +105,14 @@ namespace ltf {
 		}
 		virtual void FWFCommit( void )
 		{
-			TFlow_ << txf::commit;
+			*TFlow_ << txf::commit;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			oflow_functions___::reset( P );
 		}
-		_line_text_oflow_functions___( txf::text_oflow__ &TFlow )
-		: TFlow_( TFlow )
+		_line_text_oflow_functions___( void )
 		{
 			reset( false );
 		}
@@ -122,13 +121,17 @@ namespace ltf {
 			reset();
 		}
 		void Init(
+			txf::text_oflow__ &TFlow,
 			fwf::datum__ *Data,
-			fwf::size__ Size )
+			fwf::size__ Size,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
-			oflow_functions___::Init();
+			TFlow_ = &TFlow;
+
+			oflow_functions___::Init( ThreadSafety );
 			
 			Data_ = Data;
 
@@ -144,14 +147,14 @@ namespace ltf {
 		void Clear( void )
 		{
 			memset( Data_ + _FreezePosition, ' ', Size_ - _FreezePosition);
-			TFlow_ << txf::rfl;
-			TFlow_.Put( Data_, Size_ );
+			*TFlow_ << txf::rfl;
+			TFlow_->Put( Data_, Size_ );
 			CR();
 		}
 		void CR( void )
 		{
-			TFlow_ << txf::rfl;
-			TFlow_.Put( Data_, _FreezePosition );
+			*TFlow_ << txf::rfl;
+			TFlow_->Put( Data_, _FreezePosition );
 			Amount_ = _FreezePosition;
 		}
 		void Freeze( void )
@@ -171,11 +174,10 @@ namespace ltf {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			flw::oflow__::reset( P );
 			_Functions.reset( P );
 		}
-		_line_text_oflow___( txf::text_oflow__ &TFlow )
-		: _Functions( TFlow ),
-		 oflow__( _Functions, NULL, 0, FLW_SIZE_MAX )
+		_line_text_oflow___(  )
 		{
 			reset( false );
 		}
@@ -184,10 +186,12 @@ namespace ltf {
 			reset();
 		}
 		void Init(
+			txf::text_oflow__ &TFlow,
 			flw::datum__ *Data,
 			flw::size__ Size )
 		{
-			_Functions.Init( Data, Size );
+			_Functions.Init( TFlow, Data, Size, fwf::tsDisabled );
+			oflow__::Init( _Functions, NULL, 0, FLW_SIZE_MAX );
 		}
 		void Clear( void )
 		{
@@ -214,11 +218,10 @@ namespace ltf {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-//			text_oflow__::operator()();
+			text_oflow__::reset( P );
 			Flow_.reset( P );
 		}
-		line_text_oflow___( txf::text_oflow__ &TFlow )
-		: Flow_( TFlow )
+		line_text_oflow___( void )
 		{
 			reset( false );
 		}
@@ -226,9 +229,9 @@ namespace ltf {
 		{
 			reset();
 		}
-		void Init()
+		void Init( txf::text_oflow__ &TFlow )
 		{
-			Flow_.Init( Data_, sizeof( Data_ ) );
+			Flow_.Init( TFlow, Data_, sizeof( Data_ ) );
 			txf::text_oflow__::Init( Flow_ );
 		}
 		void CR( void )

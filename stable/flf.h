@@ -163,8 +163,8 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mReadOnly,
-			flw::size__ AmountMax = FLW_SIZE_MAX,
-			err::handling__ ErrorHandling = err::h_Default )
+			err::handling__ ErrorHandling = err::h_Default,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 
@@ -194,7 +194,7 @@ namespace flf {
 			fil::mode__ Mode = fil::mReadOnly,
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			return Init( FileName, Mode, AmountMax, ErrorHandling );
+			return Init( FileName, Mode, ErrorHandling, AmountMax );
 		}
 	};
 

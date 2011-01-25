@@ -40,31 +40,36 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define TEST_CASE	2
+#define TEST_CASE	5
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
 #define FILENAME	"linux.xcf"
+#define NAMESPACE	"xpp"
 #endif
 
 #if TEST_CASE == 2
 #define LOCATION	""	
 #define FILENAME	"basic.xml"
+#define NAMESPACE	"xpp"
 #endif
 
 #if TEST_CASE == 3
 #define LOCATION	""	
 #define FILENAME	"test.xml"
+#define NAMESPACE	"xpp"
 #endif
 
 #if TEST_CASE == 4
 #define LOCATION	"H:\\svn\\Partitions\\"	
-#define FILENAME	"Segment.xprj"
+#define FILENAME	"SgmI.xprj"
+#define NAMESPACE	"xpp"
 #endif
 
 #if TEST_CASE == 5
 #define LOCATION	""	
 #define FILENAME	"gesbibcom.xcfg"
+#define NAMESPACE	"xcf"
 #endif
 
 #define FILE		LOCATION FILENAME
@@ -90,7 +95,7 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, str::string( LOCATION ), str::string( "xcf" ) );
+	PFlow.Init( Flow, str::string( LOCATION ), str::string( NAMESPACE ) );
 
 	XFlow.Init( PFlow );
 

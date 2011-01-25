@@ -246,8 +246,8 @@ void err::Final( void )
 #ifdef CPE__T_CONSOLE
 ERRProlog
 #	ifdef CPE__T_MT
-	cio::unsafe_cout___ cout;
-	cio::unsafe_cerr___ cerr;
+	cio::cout___ cout;
+	cio::cerr___ cerr;
 #	else
 	static txf::text_oflow__ &cout = cio::cout;
 	static txf::text_oflow__ &cerr = cio::cerr;

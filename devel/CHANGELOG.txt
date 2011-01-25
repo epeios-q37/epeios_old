@@ -1,5 +1,13 @@
 $Id$
 
+25/01/2011 :
+	- GENERAL :
+		- Adaptation aux modifications 'FWF' et 'FWL'.
+
+24/01/2011 :
+	- GENERAL :
+		- Adaptation aux modifications 'FWF' et 'FWL'.
+
 23/01/2011 :
 	- GENERAL :
 		- Adaptation aux modifications 'FWF' et 'FWL'.

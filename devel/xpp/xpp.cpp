@@ -936,15 +936,14 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 	mdr::size__ Maximum,
 	mdr::datum__ *Buffer )
 {
-	mdr::size__ CumulativeRed = 0;
 	_extended_browser___ *Browser = NULL;
 	mdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
+	mdr::size__ CumulativeRed = PonctualRed;
 
 
-	while ( ( ( PonctualRed != 0 ) || ( CumulativeRed == 0 ) ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
+	while ( ( CumulativeRed == 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
 		_Data.Init();
 		_Position = 0;
-		CumulativeRed += PonctualRed;
 
 		Browser = NULL;
 
@@ -977,6 +976,7 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 		}
 
 		PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
+		CumulativeRed += PonctualRed;
 	}
 
 	return CumulativeRed;

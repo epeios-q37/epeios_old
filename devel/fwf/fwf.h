@@ -85,6 +85,8 @@ namespace fwf {
 		//t Amount of data.
 	using bso::size__;
 
+	extern mutex__ _FakeMutex;	// Sert de leurre lorsqu'on n'a pas besoin que d'un objet 'thread-safe'.
+
 	enum thread_safety__
 	{
 		tsEnabled,
@@ -124,7 +126,7 @@ namespace fwf {
 #endif
 			break;
 		case tsDisabled:
-			return FWF_NO_MUTEX;
+			return _FakeMutex;
 			break;
 		default:
 			ERRu();
@@ -139,7 +141,8 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			mtx::Delete( Mutex );
+			if ( Mutex != _FakeMutex )
+				mtx::Delete( Mutex );
 #endif
 	}
 
@@ -147,7 +150,8 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			mtx::Lock( Mutex );
+			if ( Mutex != _FakeMutex )
+				mtx::Lock( Mutex );
 #endif
 	}
 
@@ -155,7 +159,8 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			mtx::Unlock( Mutex );
+			if ( Mutex != _FakeMutex )
+				mtx::Unlock( Mutex );
 	#endif
 	}
 
@@ -163,7 +168,8 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			return mtx::IsLocked( Mutex );
+			if ( Mutex != _FakeMutex )
+				return mtx::IsLocked( Mutex );
 #endif
 		return false;
 	}
@@ -172,9 +178,10 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			return mtx::IsOwner( Mutex );
+			if ( Mutex != _FakeMutex )
+				return mtx::IsOwner( Mutex );
 #endif
-		return false;
+		return true;
 	}
 
 		//c Base input flow.
@@ -207,8 +214,8 @@ namespace fwf {
 		{
 			if ( P ) {
 				if ( _Mutex != FWF_NO_MUTEX ) {
-						if ( IsOwner_( _Mutex ) )
-							Dismiss();
+					if ( IsOwner_( _Mutex ) )
+						Dismiss();
 					Delete_( _Mutex );
 				}
 			}
@@ -305,10 +312,8 @@ namespace fwf {
 		}
 		void Commit( void )
 		{
-			if ( _Mutex != FWF_NO_MUTEX ) {
-				FWFCommit();
-				_Unlock();
-			}
+			FWFCommit();
+			_Unlock();
 		}
 		size__ Write(
 			const datum__ *Buffer,

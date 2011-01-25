@@ -346,11 +346,12 @@ namespace sck {
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
+			fwf::thread_safety__ ThreadSafety,
 			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )	// En secondes.
 		{
 			reset();
 		
-			ioflow_functions___::Init();
+			ioflow_functions___::Init( ThreadSafety );
 
 			_Socket = Socket;
 			_TimeOut = TimeOut;
@@ -359,7 +360,7 @@ namespace sck {
 	};
 
 	//c Socket as input/output flow driver.
-	class unsafe_socket_ioflow___
+	class socket_ioflow___
 	: public flw::ioflow__
 	{
 	private:
@@ -371,23 +372,24 @@ namespace sck {
 			ioflow__::reset( P );
 			_Functions.reset( P );
 		}
-		unsafe_socket_ioflow___( flw::size__ AmountMax = SCK__DEFAULT_AMOUNT )
-		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		socket_ioflow___( void )
 		{
 			reset( false );
 		}
-		virtual ~unsafe_socket_ioflow___( void )
+		virtual ~socket_ioflow___( void )
 		{
 			reset();
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
+			flw::size__ AmountMax = SCK__DEFAULT_AMOUNT,
 			duration__ TimeOut = SCK__DEFAULT_TIMEOUT ) // En secondes.
 		{
 			reset();
 
-			_Functions.Init( Socket, TimeOut );
+			_Functions.Init( Socket, fwf::tsDisabled, TimeOut );
+			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 		socket__ Socket( void ) const
 		{

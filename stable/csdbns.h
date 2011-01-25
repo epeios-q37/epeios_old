@@ -198,7 +198,7 @@ namespace csdbns {
 #ifdef CPE__T_MT
 
 	struct _flow_data__ {
-		sck::unsafe_socket_ioflow___ Flow;
+		sck::socket_ioflow___ Flow;
 		void *UP;
 	};
 

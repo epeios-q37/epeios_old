@@ -402,13 +402,15 @@ namespace flx {
 			_Bunch = NULL;
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
-		void Init( bunch_ &Bunch )
+		void Init(
+			bunch_ &Bunch,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			reset();
 
 			_Bunch = &Bunch;
 
-			oflow_functions___::Init();
+			oflow_functions___::Init( ThreadSafety );
 		}
 	};
 	//c A bunch as output flow.driver.
@@ -419,8 +421,7 @@ namespace flx {
 		bunch_oflow_functions___<bunch_, so__> _Functions;
 		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
 	public:
-		bunch_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		bunch_oflow___( )
 		{
 			reset( false );
 		}
@@ -434,11 +435,14 @@ namespace flx {
 			_Functions.reset( P );
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
-		void Init( bunch_ &Bunch )
+		void Init(
+			bunch_ &Bunch,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 
-			_Functions.Init( Bunch );
+			_Functions.Init( Bunch, fwf::tsDisabled );
+			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 

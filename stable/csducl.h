@@ -189,13 +189,15 @@ namespace csducl {
 		{
 			reset();
 		}
-		void Init( universal_client_core &Core )
+		void Init(
+			universal_client_core &Core,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			reset();
 
 			_Core = &Core;
 
-			ioflow_functions___::Init();
+			ioflow_functions___::Init( ThreadSafety );
 
 			switch ( Core._Type ) {
 			case tDaemon:
@@ -222,8 +224,7 @@ namespace csducl {
 		{
 			_Functions.reset();
 		}
-		universal_client_ioflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: ioflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		universal_client_ioflow___( void )
 		{
 			reset( false );
 		}
@@ -231,11 +232,14 @@ namespace csducl {
 		{
 			reset();
 		}
-		void Init( universal_client_core &Core )
+		void Init(
+			universal_client_core &Core,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 
-			_Functions.Init( Core );
+			_Functions.Init( Core, fwf::tsDisabled );
+			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 }
