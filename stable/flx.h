@@ -480,6 +480,19 @@ namespace flx {
 			// The cache.
 		flw::datum__ _Cache[FLX_DUMP_BUFFER_SIZE];
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			oflow__::reset( P );
+			_Functions.reset( P );
+		}
+		dump_oflow__( void )
+		{
+			reset( false );
+		}
+		~dump_oflow__( void )
+		{
+			reset();
+		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Functions.Init( fwf::tsDisabled );

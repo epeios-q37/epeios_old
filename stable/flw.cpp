@@ -97,17 +97,11 @@ ERRBegin
 		ERRd();
 
 #ifdef FLW_DBG
-	if ( Minimum < 1 )
-		ERRc();
-
 	if ( Wanted < Minimum )
 		ERRc();
 #endif
 
 	Amount = _LoopingRead( Minimum, Buffer, Wanted );
-
-	if ( Amount == 0 )
-		ERRf();
 
 	_Red += Amount;
 

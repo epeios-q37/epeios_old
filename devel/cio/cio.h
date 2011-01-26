@@ -106,6 +106,19 @@ namespace cio {
 	private:
 		coutf___ _CoutF;
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			text_oflow__::reset( P );
+			_CoutF.reset( P );
+		}
+		cout___( void )
+		{
+			reset( false );
+		}
+		~cout___( void )
+		{
+			reset();
+		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_CoutF.Init( AmountMax );
@@ -132,6 +145,19 @@ namespace cio {
 	private:
 		cerrf___ _CerrF;
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			text_oflow__::reset( P );
+			_CerrF.reset( P );
+		}
+		cerr___( void )
+		{
+			reset( false );
+		}
+		~cerr___( void )
+		{
+			reset();
+		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_CerrF.Init( AmountMax );
@@ -157,6 +183,19 @@ namespace cio {
 	private:
 		cinf___ _CinF;
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			text_iflow__::reset( P );
+			_CinF.reset( P );
+		}
+		cin___( void )
+		{
+			reset( false );
+		}
+		~cin___( void )
+		{
+			reset();
+		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_CinF.Init( AmountMax );

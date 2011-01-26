@@ -1,5 +1,13 @@
 $Id$
 
+26/01/2011 :
+	- GENERAL :
+		- Adaptation aux modifications 'FWF' et 'FWL'.
+	- LTF :
+		- Ajout 'ClearAll()'.
+	- RGSTRY :
+		- Ajout décrypteur (temporaire !).
+
 25/01/2011 :
 	- GENERAL :
 		- Adaptation aux modifications 'FWF' et 'FWL'.

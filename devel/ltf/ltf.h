@@ -151,6 +151,12 @@ namespace ltf {
 			TFlow_->Put( Data_, Size_ );
 			CR();
 		}
+		void ClearAll( void )
+		{
+			_FreezePosition = 0;
+
+			Clear();
+		}
 		void CR( void )
 		{
 			*TFlow_ << txf::rfl;
@@ -197,6 +203,10 @@ namespace ltf {
 		{
 			_Functions.Clear();
 		}
+		void ClearAll( void )
+		{
+			_Functions.ClearAll();
+		}
 		void CR( void )
 		{
 			_Functions.CR();
@@ -241,6 +251,10 @@ namespace ltf {
 		void Clear( void )
 		{
 			Flow_.Clear();
+		}
+		void ClearAll( void )
+		{
+			Flow_.ClearAll();
 		}
 		void Freeze( void )
 		{

@@ -59,6 +59,7 @@ public:
 #include "flf.h"
 #include "fnm.h"
 #include "lcl.h"
+#include "crptgr.h"
 
 using namespace rgstry;
 
@@ -1239,6 +1240,7 @@ ERREpilog
 error__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
+	const char *Key,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
@@ -1246,6 +1248,7 @@ error__ rgstry::FillRegistry(
 	error__ Error = e_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
+	crptgr::decrypt_iflow___ Decrypter;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
@@ -1254,9 +1257,16 @@ ERRBegin
 		ERRReturn;
 	}
 
-	FFlow.EOFD( XTF_EOXT );
+	if ( Key != NULL ) {
+		Decrypter.Init( FFlow, Key );
+		Decrypter.EOFD( XTF_EOXT );
 
-	Error = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+		Error = FillRegistry( Decrypter, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+	} else {
+		FFlow.EOFD( XTF_EOXT );
+
+		Error = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+	}
 
 	if ( Error == eParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )
@@ -1270,6 +1280,7 @@ ERREpilog
 error__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
+	const char *Key,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot )
 {
@@ -1279,7 +1290,7 @@ ERRProlog
 ERRBegin
 	Dummy.Init();
 
-	Error = FillRegistry( FileName, RootPath, Registry, RegistryRoot, Dummy );
+	Error = FillRegistry( FileName, RootPath, Key, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog

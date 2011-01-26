@@ -157,7 +157,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( FileName, RootPath, NULL, Registry, S_.Root, ErrorDetails );
 		}
 		error__ Init(
 			const char *FileName,
@@ -167,7 +167,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, RootPath, Registry, S_.Root );
+			return rgstry::FillRegistry( FileName, RootPath, NULL, Registry, S_.Root );
 		}
 		void GetLanguages(
 			strings_ &Labels,

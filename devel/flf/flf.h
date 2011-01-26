@@ -295,8 +295,8 @@ namespace flf {
 		fil::status__ Init(
 			const char *FileName,
 			fil::mode__ Mode = fil::mRemove,
-			flw::size__ AmountMax = FLW_SIZE_MAX,
-			err::handling__ ErrorHandling = err::h_Default )
+			err::handling__ ErrorHandling = err::h_Default,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			reset();
 

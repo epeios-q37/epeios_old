@@ -306,7 +306,7 @@ namespace sck {
 			if ( _Error )
 				ERRd();
 
-			if ( Maximum = sck::Write( _Socket, Buffer, Maximum, 0 ) == SCK_DISCONNECTED ) {
+			if ( ( Maximum = sck::Write( _Socket, Buffer, Maximum, 0 ) ) == SCK_DISCONNECTED ) {
 				_Socket = SCK_INVALID_SOCKET;
 				_Error = true;
 				Maximum = 0;

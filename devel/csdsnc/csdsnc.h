@@ -367,14 +367,16 @@ ERREpilog
 		public:
 			void reset( bso::bool__ P = true )
 			{
+				ioflow_functions___::reset( P );
+
 				if ( P ) {
 					if ( _Flow != NULL )
 						delete _Flow;
-			}
+				}
 
-			_Flow = NULL;
-			_Id = CSDSNC_UNDEFINED;
-			_Core = NULL;
+				_Flow = NULL;
+				_Id = CSDSNC_UNDEFINED;
+				_Core = NULL;
 			}
 			_functions___( void )
 			{
@@ -404,7 +406,7 @@ ERREpilog
 	public:
 		void reset( bso::bool__ P = true )
 		{
-//			flw::ioflow__::reset( P );
+			flw::ioflow__::reset( P );
 			_Functions.reset( P );
 		}
 		client_ioflow___( void )

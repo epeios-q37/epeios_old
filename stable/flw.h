@@ -136,10 +136,6 @@ namespace flw {
 			datum__ *Buffer,
 			size__ Wanted )
 		{
-#ifdef FLW_DBG
-			if ( Minimum < 1 )
-				ERRu();
-#endif
 			size__ Amount = 0;
 
 			if ( EOFD_.HandlingEOFD ) {
@@ -168,12 +164,12 @@ namespace flw {
 			} else {
 				Amount = _Read( Minimum, Buffer, Wanted );
 
-				if ( Amount < Minimum ) {
+				if ( (Amount < Minimum ) || ( Amount == 0 ) ) {
 					Amount += HandleEOFD( Buffer, Wanted - Amount );
 				}
 			}
 
-			if ( Amount < Minimum  )
+			if ( ( Amount < Minimum  ) && ( Amount != 0 ) )
 				ERRf();
 
 			return Amount;
@@ -251,7 +247,7 @@ namespace flw {
 		{
 			size__ Available = _ReadFromCache( Amount, Buffer );
 
-			if ( ( Available < Minimum ) || ( ( Available == 0 ) && ( Minimum != 0 ) ) )
+			if ( ( Available < Minimum ) || ( Available == 0 ) )
 				Available += _ReadFromCacheOrDirectly( Minimum - Available, Buffer + Available, Amount  - Available );
 
 			return Available;
@@ -261,7 +257,8 @@ namespace flw {
 			size__ Amount,
 			datum__ *Buffer )
 		{
-			_ReadUpTo( Amount, Buffer, Amount );
+			if ( _ReadUpTo( Amount, Buffer, Amount ) != Amount )
+				ERRf();
 		}
 		// Generic read.
 		size__ _LoopingRead(
@@ -619,6 +616,10 @@ namespace flw {
 					Commit();
 			}
 
+			_Functions = NULL;
+			_Cache = NULL;
+			_Size = _Free = 0;
+			_AmountMax = 0;
 			_Written = 0;
 		}
 		oflow__( void )

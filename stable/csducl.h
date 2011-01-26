@@ -176,6 +176,7 @@ namespace csducl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			ioflow_functions___::reset( P );
 			_DaemonAccess.reset( P );
 			_Library.reset( P );
 
@@ -197,8 +198,6 @@ namespace csducl {
 
 			_Core = &Core;
 
-			ioflow_functions___::Init( ThreadSafety );
-
 			switch ( Core._Type ) {
 			case tDaemon:
 				_DaemonAccess.Init( Core._DaemonAccess );
@@ -210,6 +209,8 @@ namespace csducl {
 				ERRu();
 				break;
 			}
+
+			ioflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -222,6 +223,7 @@ namespace csducl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			ioflow__::reset( P );
 			_Functions.reset();
 		}
 		universal_client_ioflow___( void )

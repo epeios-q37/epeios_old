@@ -897,6 +897,7 @@ namespace rgstry {
 	error__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
+		const char *Key,	// Clef de décryptage; 'NULL' si pas de décryptage requis.
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
@@ -904,6 +905,7 @@ namespace rgstry {
 	error__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
+		const char *Key,	// Clef de décryptage; 'NULL' si pas de décryptage requis.
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot );
 
@@ -1326,12 +1328,13 @@ namespace rgstry {
 			level__ Level,
 			const char *FileName,
 			const char *RootPath,
+			const char *Key,
 			error_details_ &ErrorDetails )
 		{
 			error__ Error = e_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( FileName, RootPath, BaseRegistry, Root, ErrorDetails ); 
+			Error = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root, ErrorDetails ); 
 
 			Roots.Set( Root, Level );
 
@@ -1342,12 +1345,13 @@ namespace rgstry {
 		error__ Fill(
 			level__ Level,
 			const char *FileName,
-			const char *RootPath )
+			const char *RootPath,
+			const char *Key )
 		{
 			error__ Error = e_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( FileName, RootPath, BaseRegistry, Root ); 
+			Error = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root ); 
 
 			Roots.Set( Root, Level );
 
