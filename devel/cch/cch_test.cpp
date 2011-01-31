@@ -76,7 +76,7 @@ ERRBegin
 		if ( RWCaches.Get( rnd / 100, rnd % 100 ) != rnd )
 			ERRc();
 
-		cio::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::sync;
+		cio::cout << (unsigned long)rnd << ": " << (unsigned long)RWCaches.Get( rnd / 100, rnd % 100 ) << txf::tab << txf::commit;
 	}
 ERRErr
 ERREnd
@@ -148,7 +148,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cio::cout << txf::sync;
+		cio::cout << txf::commit;
 		cio::cerr << "\nBad arguments.\n";
 		cio::cout << "Usage: " << CCHTutor.Name << " [/i]\n\n";
 		ERRi();
