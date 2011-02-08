@@ -515,6 +515,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MuSiC MiDi Xml features
 &mscmld	&epeios	&\
 	&MuSiC MeLody Description
+&mscrmi	&epeios	&\
+	&MuSiC Roland MIDI Implementation
 &mscsf2		&epeios		&\
 	&MuSiC SoudFont 2
 &mscvkp		&epeios		&2002-\
