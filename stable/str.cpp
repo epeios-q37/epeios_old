@@ -361,7 +361,7 @@ _guint__ str::_GenericUnsignedConversion(
 	_guint__ OtherLimit = 0;
 
 	if ( BaseFlag == bAuto )
-		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == '#' ) ) {
+		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == STR_HEXADECIMAL_MARKER ) ) {
 			BaseFlag = b16;
 			P = String.Next( P );
 		} else

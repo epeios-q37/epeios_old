@@ -70,6 +70,8 @@ extern class ttr_tutor &STRTutor;
 #	define STR__64_BITS_TYPES_ALLOWED
 #endif
 
+#define STR_HEXADECIMAL_MARKER	'#'	// LEs nombres préfixés par ce caractère sont considèrés comme exprimés en hexadécimal.
+
 namespace str {
 
 	namespace {

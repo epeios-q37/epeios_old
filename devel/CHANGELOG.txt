@@ -1,5 +1,9 @@
 $Id$
 
+09/02/2011 :
+	- STR :
+		- Mise en oeuvre 'STR_HEXADECIMAL_MARKER'.
+
 26/01/2011 :
 	- GENERAL :
 		- Adaptation aux modifications 'FWF' et 'FWL'.
