@@ -93,15 +93,14 @@ namespace mscmdd {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
 			MIDIHDR     midiHdr;
 			int Err;
 
 			midiHdr.lpData = (LPSTR)Buffer;
 
-			midiHdr.dwBufferLength = Wanted;
+			midiHdr.dwBufferLength = Maximum;
 
 			midiHdr.dwFlags = 0;
 
@@ -122,9 +121,9 @@ namespace mscmdd {
 			if ( Err != MMSYSERR_NOERROR )
 				ERRf();
 
-			return Wanted;
+			return Maximum;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -146,12 +145,12 @@ namespace mscmdd {
 		}
 		bso::bool__ Init(
 			int Device,
-			err::handle ErrHandle )
+			err::handling__ ErrHandling = err::h_Default )
 		{
 			reset();
 
 			if ( midiOutOpen( &_Handle, Device, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR ) {
-				if ( ErrHandle != err::hSkip )
+				if ( ErrHandling != err::hUserDefined )
 					ERRf();
 				else
 					return false;
@@ -161,7 +160,7 @@ namespace mscmdd {
 		}
 	};
 
-	class unsafe_midi_oflow___
+	class midi_oflow___
 	: public flw::oflow__
 	{
 	private:
@@ -173,21 +172,21 @@ namespace mscmdd {
 			flw::oflow__::reset( P );
 			_Functions.reset( P );
 		}
-		unsafe_midi_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		midi_oflow___( void )
 		{
 			reset( false );
 		}
-		virtual ~unsafe_midi_oflow___( void )
+		virtual ~midi_oflow___( void )
 		{
 			reset();
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		bso::bool__ Init(
 			int DeviceId,
-			err::handle ErrHandle = err::hUsual )
+			flw::size__ AmountMax = FLW_SIZE_MAX,
+			err::handling__ ErrHandle = err::h_Default )
 		{
-			reset();
+			flw::oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 
 			return _Functions.Init( DeviceId, ErrHandle );
 		}

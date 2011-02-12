@@ -96,13 +96,15 @@ ERREnd
 ERREpilog
 }
 
-void Dump( const str::string_ &Buffer )
+void Dump(
+	const str::string_ &Buffer,
+	mscmdm::origin__ Origin )
 {
 ERRProlog
 	flx::bunch_iflow__<str::string_, bso::char__> Flow;
-	mscmdf::header_chunk__ HeaderChunk;
+/*	mscmdf::header_chunk__ HeaderChunk;
 	mscmdf::track_chunk_size__ TrackChunkSize;
-	mscmdm::event_header__ EventHeader;
+*/	mscmdm::event_header__ EventHeader;
 	mscvkp::data_set DataSet;
 	mscvkp::data_sets DataSets;
 ERRBegin
@@ -110,25 +112,25 @@ ERRBegin
 
 	DataSets.Init();
 
-		mscmdm::GetEventHeader( Flow, EventHeader, true );
+	mscmdm::GetEventHeader( Flow, Origin, EventHeader );
 
-		while ( ( ( EventHeader.Event != mscmdm::eSystem ) || ( EventHeader.SystemEvent != mscmdm::seExclusive ) ) ) {
-			mscmdm::PrintEvent( EventHeader, Flow, cout, mscmdm::oDevice );
-			mscmdm::GetEventHeader( Flow, EventHeader, true );
+	while ( ( ( EventHeader.EventType != mscmdm::etSystem ) || ( EventHeader.SystemEvent.Event != mscmdm::sysExclusive ) ) ) {
+		mscmdm::PrintEvent( EventHeader, Buffer, cout );
+		mscmdm::GetEventHeader( Flow, Origin, EventHeader );
 
-			cout << txf::nl;
-		}
+		cout << txf::nl;
+	}
 
-		while ( ( Flow.AmountRed() < Buffer.Amount() ) && ( EventHeader.Event == mscmdm::eSystem ) && ( EventHeader.SystemEvent == mscmdm::seExclusive ) ) {
-			DataSet.Init();
-			mscvkp::Fill( Flow, DataSet, mscmdm::oDevice );
-			DataSets.Append( DataSet );
-			if ( Flow.AmountRed() < Buffer.Amount() )
-				mscmdm::GetEventHeader( Flow, EventHeader, true );
-		}
+	while ( ( Flow.AmountRed() < Buffer.Amount() ) && ( EventHeader.SystemEvent.Event == mscmdm::etSystem ) && ( EventHeader.SystemEvent.Event == mscmdm::sysExclusive ) ) {
+		DataSet.Init();
+		mscvkp::Fill( Flow, mscmdm::oDevice, DataSet );
+		DataSets.Append( DataSet );
+		if ( Flow.AmountRed() < Buffer.Amount() )
+			mscmdm::GetEventHeader( Flow, Origin, EventHeader );
+	}
 /*
-		if ( ( EventHeader.Event != mscmdm::eMeta ) && ( EventHeader.MetaEvent = mscmdm::meEndOfTrack ) )
-			ERRf();
+	if ( ( EventHeader.Event != mscmdm::eMeta ) && ( EventHeader.MetaEvent = mscmdm::meEndOfTrack ) )
+		ERRf();
 */
 	cio::cout << DataSets;
 ERRErr
@@ -141,7 +143,7 @@ void In( void )
 {
 ERRProlog
 	MIDIOUTCAPS OutCaps;
-	MIDIINCAPS InCaps;
+//	MIDIINCAPS InCaps;
 	HMIDIIN Device;
 	MMRESULT Result;
 	char Buffer[100];
@@ -183,7 +185,7 @@ ERRBegin
 
 	Flow.reset();
 
-	Dump( String );
+	Dump( String, mscmdm::oDevice );
 
 ERRErr
 ERREnd
@@ -220,11 +222,13 @@ ERRBegin
 
 	DataSet.Init();
 
-	DataSet.SetAddress( 0x1000000000 );
+	DataSet.SetAddress( 0x10000000 );
 
 	DataSet.Append( "coucou" );
 
 	String.Init();
+
+	mscmdm::
 
 	mscvkp::CreateMessage( DataSet, String );
 

@@ -1,5 +1,11 @@
 $Id$
 
+12/02/2011 :
+	- MSCMDD :
+		- Adaptation modifications bibliothèques sous-jacentes.
+	- MSCMDM :
+		- Adaptation modifications bibliothèques sous-jacentes.
+
 09/02/2011 :
 	- STR :
 		- Mise en oeuvre 'STR_HEXADECIMAL_MARKER'.

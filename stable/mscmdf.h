@@ -88,7 +88,7 @@ namespace mscmdf {
 	bso::bool__ GetHeaderChunk(
 		flw::iflow__ &Flow,
 		header_chunk__ &HeaderChunk,
-		err::handle ErrHandling = err::hUsual );
+		err::handling__ ErrHandling = err::h_Default );
 
 	void PutHeaderChunk(
 		smf_type__ SMFType,
@@ -109,7 +109,7 @@ namespace mscmdf {
 	//f Return the size of the track chunk
 	track_chunk_size__  GetTrackChunkSize(
 		flw::iflow__ &Flow,
-		err::handle ErrHandling = err::hUsual );
+		err::handling__ ErrHandling = err::h_Default );
 
 	void PutTrackChunkHeader(
 		track_chunk_size__ Size,

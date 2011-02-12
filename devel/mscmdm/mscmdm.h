@@ -340,7 +340,7 @@ namespace mscmdm {
 		flw::iflow__ &IFlow,
 		origin__ Origin,
 		event_header__ &EventHeader,
-		err::handle ErrHandling = err::hUsual );
+		err::handling__ ErrHandling = err::h_Default );
 
 	void GetEventData(
 		const event_header__ &EventHeader,

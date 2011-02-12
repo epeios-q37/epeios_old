@@ -370,7 +370,7 @@ bso::bool__ mscmdm::GetEventHeader(
    flw::iflow__ &IFlow,
    origin__ Origin,
    event_header__ &EventHeader,
-   err::handle ErrHandling )
+   err::handling__ ErrHandling )
 {
 	flw::datum__ Datum;
 
