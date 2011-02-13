@@ -206,6 +206,11 @@ namespace mscmdm {
 		flw::datum__ AdditionalDatum,	// For meta event only.
 		bso::ubyte__ &Event );
 
+	midi_event__ DetermineMIDIEvent( flw::datum__ Datum );
+
+	bso::size__ GetMIDIEventDataSize( midi_event__ Event );
+
+
 	inline event_type__ DetermineEvent(
 		flw::datum__ Datum,
 		flw::datum__ AdditionalDatum,

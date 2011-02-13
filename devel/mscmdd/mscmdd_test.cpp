@@ -31,7 +31,6 @@
 #include "mscmdd.h"
 #include "mscmdm.h"
 #include "mscmdf.h"
-#include "mscvkp.h"
 
 #include "err.h"
 #include "cio.h"
@@ -41,14 +40,41 @@
 #include "mmreg.h"
 #include "mmsystem.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+cio::cout___ cout;
+cio::cerr___ cerr;
+
+void Print( const mscmdd::descriptions_ &Descriptions )
+{
+	ctn::E_CMITEM( mscmdd::description_ ) Description;
+	epeios::row__ Row = Descriptions.First();
+
+	Description.Init( Descriptions );
+
+	while ( Row != NONE ){
+		cout << Description( Row ) << txf::nl;
+		Row = Descriptions.Next( Row );
+	}
+
+}
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	mscmdd::descriptions Descriptions;
 ERRBegin
+	Descriptions.Init();
+	mscmdd::GetMidiInDeviceDescriptions( Descriptions );
+
+	cout << "IN :" << txf::nl;
+	Print( Descriptions );
+
+	Descriptions.Init();
+	mscmdd::GetMidiOutDeviceDescriptions( Descriptions );
+
+	cout << "OUT :" << txf::nl;
+	Print( Descriptions );
+
+	cout << txf::commit;
 ERRErr
 ERREnd
 ERREpilog
@@ -60,28 +86,56 @@ void Recycle(
 {
 	MMRESULT Result;
 
+	while ( ( Header->dwFlags != 0 ) && ( Header->dwFlags == MHDR_DONE ) );
+
 	Header->dwFlags = 0;
 
+//	Result = midiInUnprepareHeader( Device, Header, sizeof( *Header ) );
 	Result = midiInPrepareHeader( Device, Header, sizeof( *Header ) );
 	Result = midiInAddBuffer( Device, Header, sizeof( *Header ) );
 }
+
+bso::bool__ SysEx = false;
 
 void CALLBACK MidiInProc(
   HMIDIIN hMidiIn,  
   UINT wMsg,        
   DWORD dwInstance, 
   DWORD dwParam1,   
-  DWORD dwParam2    
-)
+  DWORD dwParam2 )
 {
 ERRProlog
 	MIDIHDR *Header = NULL;
 	flw::oflow__ &Flow = *(flw::oflow__ *)dwInstance;
+	bso::ubyte__ Event = 0;
 ERRBegin
 	switch( wMsg ) {
 	case MIM_DATA:
+		Flow.Put( dwParam1 & 0xff );
+		switch ( mscmdm::DetermineEvent( dwParam1 & 0xff, ( dwParam1 & 0xff00 ) >> 8, Event ) ) {
+		case mscmdm::etMIDI:
+			switch ( mscmdm::GetMIDIEventDataSize( (mscmdm::midi_event__)Event ) ) {
+			case 0:
+				break;
+			case 1:
+				Flow.Put( ( dwParam1 & 0xff00 ) >> 8 );
+				break;
+			case 2:
+				Flow.Put( ( dwParam1 & 0xff00 ) >> 8 );
+				Flow.Put( ( dwParam1 & 0xff0000 ) >> 16 );
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		default:
+			ERRc();
+			break;
+		}
 		break;
 	case MIM_OPEN:
+		Header = Header;
 		break;
 	case MIM_LONGDATA:
 		Header = (MIDIHDR *)dwParam1;
@@ -89,6 +143,10 @@ ERRBegin
 		Recycle( Header, hMidiIn );
 		break;
 	case MIM_CLOSE:
+		Header = Header;
+		break;
+	default:
+		Header = Header;
 		break;
 	}
 ERRErr
@@ -101,67 +159,41 @@ void Dump(
 	mscmdm::origin__ Origin )
 {
 ERRProlog
-	flx::bunch_iflow__<str::string_, bso::char__> Flow;
-/*	mscmdf::header_chunk__ HeaderChunk;
-	mscmdf::track_chunk_size__ TrackChunkSize;
-*/	mscmdm::event_header__ EventHeader;
-	mscvkp::data_set DataSet;
-	mscvkp::data_sets DataSets;
-ERRBegin
+	flx::E_STRING_IFLOW__ Flow;
+	mscmdm::event_header__ EventHeader;
 	Flow.Init( Buffer );
-
-	DataSets.Init();
-
-	mscmdm::GetEventHeader( Flow, Origin, EventHeader );
-
-	while ( ( ( EventHeader.EventType != mscmdm::etSystem ) || ( EventHeader.SystemEvent.Event != mscmdm::sysExclusive ) ) ) {
-		mscmdm::PrintEvent( EventHeader, Buffer, cout );
+	mscmdm::data Data;
+ERRBegin
+	while ( Flow.AmountRed() != Buffer.Amount() ) {
 		mscmdm::GetEventHeader( Flow, Origin, EventHeader );
 
-		cout << txf::nl;
+		Data.Init();
+		mscmdm::GetEventData( EventHeader, Flow, Origin, Data );
+
+		mscmdm::PrintEvent( EventHeader, Data, cout );
+
+		cout << txf::nl << txf::commit;
 	}
 
-	while ( ( Flow.AmountRed() < Buffer.Amount() ) && ( EventHeader.SystemEvent.Event == mscmdm::etSystem ) && ( EventHeader.SystemEvent.Event == mscmdm::sysExclusive ) ) {
-		DataSet.Init();
-		mscvkp::Fill( Flow, mscmdm::oDevice, DataSet );
-		DataSets.Append( DataSet );
-		if ( Flow.AmountRed() < Buffer.Amount() )
-			mscmdm::GetEventHeader( Flow, Origin, EventHeader );
-	}
-/*
-	if ( ( EventHeader.Event != mscmdm::eMeta ) && ( EventHeader.MetaEvent = mscmdm::meEndOfTrack ) )
-		ERRf();
-*/
-	cio::cout << DataSets;
 ERRErr
 ERREnd
 ERREpilog
 }
 
-
 void In( void )
 {
 ERRProlog
-	MIDIOUTCAPS OutCaps;
-//	MIDIINCAPS InCaps;
-	HMIDIIN Device;
+	HMIDIIN Device = 0;
 	MMRESULT Result;
 	char Buffer[100];
 	MIDIHDR Header;
 	str::string String;
 	flx::bunch_oflow___<str::string_, bso::char__> Flow;
+	bso::bool__ Continue = true;
 ERRBegin
-	cout << (unsigned long)midiInGetNumDevs() << txf::nl;
-	cout << (unsigned long)midiOutGetNumDevs() << txf::nl;
-
-	midiOutGetDevCaps( 0, &OutCaps, sizeof( OutCaps ) );
-	midiOutGetDevCaps( 1, &OutCaps, sizeof( OutCaps ) );
-	midiOutGetDevCaps( 2, &OutCaps, sizeof( OutCaps ) );
-
-//	midiInGetDevCaps( 0, &InCaps, sizeof( InCaps ) );
-
 	Header.dwBufferLength = sizeof( Buffer );
 	Header.lpData = Buffer;
+	Header.dwFlags = 0;
 
 	String.Init();
 	Flow.Init( String );
@@ -175,6 +207,9 @@ ERRBegin
 		ERRx();
 
 	getchar();
+
+	Result = midiInStop( Device );
+
 
 	Result = midiInUnprepareHeader( Device, &Header, sizeof( Header ) );
 
@@ -192,6 +227,36 @@ ERREnd
 ERREpilog
 }
 
+void In( mscmdm::origin__ Origin )
+{
+ERRProlog
+	mscmdd::midi_iflow___<10> Flow;
+	mscmdm::event_header__ EventHeader;
+	mscmdm::data Data;
+ERRBegin
+	Flow.Init( 0 );
+
+	while ( true ) {
+		mscmdm::GetEventHeader( Flow, Origin, EventHeader );
+
+		Data.Init();
+		mscmdm::GetEventData( EventHeader, Flow, Origin, Data );
+
+		mscmdm::PrintEvent( EventHeader, Data, cout );
+
+		cout << txf::nl << txf::commit;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+
+
+
+}
+
+
+#if 0
 #define DATA "\xF0\x41\x10\x00\x1A\x12\x10\x00\x00\0Coucou\xF7"
 
 void StreamOut( void )
@@ -361,18 +426,23 @@ ERRErr
 ERREnd
 ERREpilog
 }
+#endif
 
 int main( int argc, char *argv[] )
 {
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
+	cout.Init();
+	cerr.Init();
+
 	cout << "Test of library " << MSCMDDTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
 		Generic( argc, argv );
-		In();
+		In( mscmdm::oDevice );
+//		In();
 //		Out();
 //		OutWithFlow();
 		break;
@@ -383,7 +453,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << MSCMDDTutor.Name << " [/i]\n\n";
 		ERRi();
@@ -393,6 +463,8 @@ ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
 	cout << "\nEnd of program " << MSCMDDTutor.Name << ".\n";
+	cout.Commit();
+	cerr.Commit();
 ERRFEpilog
 	return ExitCode;
 }

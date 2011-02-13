@@ -125,7 +125,7 @@ const char *mscmdm::GetMIDIEventLabel( midi_event__ Event )
 	return MIDIEventLabels_[Event];
 }
 
-static bso::size__ GetMIDIEventDataSize_( midi_event__ Event )
+bso::size__ mscmdm::GetMIDIEventDataSize( midi_event__ Event )
 {
 	if ( Event >= mid_amount )
 		ERRu();
@@ -231,7 +231,7 @@ void mscmdm::Encode(
 	Data.Append( (bso::char__)( Ticks & BASE_MASK ) );
 }
 
-static inline midi_event__ DetermineMIDIEvent_( flw::datum__ Datum )
+midi_event__ mscmdm::DetermineMIDIEvent( flw::datum__ Datum )
 {
 	switch( Datum & 0xf0 ) {
 	case 0x80:
@@ -360,7 +360,7 @@ event_type__ mscmdm::DetermineEvent(
 		Event = DetermineSystemEvent_( Datum );
 	} else {
 		EventType = etMIDI;
-		Event = DetermineMIDIEvent_( Datum );
+		Event = DetermineMIDIEvent( Datum );
 	}
 
 	return EventType;
@@ -512,7 +512,7 @@ static void GetMIDIEventData_(
 	flw::iflow__ &IFlow,
 	data_ &Data )
 {
-	bso::size__ Size = GetMIDIEventDataSize_( Event.Event );
+	bso::size__ Size = GetMIDIEventDataSize( Event.Event );
 
 	while ( Size-- )
 		Data.Append( IFlow.Get() );

@@ -472,11 +472,11 @@ namespace flw {
 	};
 
 
-	class standalone_iflow__
+	template <int CacheSize = FLW__ICACHE_SIZE> class standalone_iflow__
 	: public iflow__
 	{
 	private:
-		flw::datum__ _Cache[FLW__ICACHE_SIZE];
+		flw::datum__ _Cache[CacheSize];
 	public:
 		void Init( 
 			fwf::iflow_functions___ &Functions,
@@ -701,11 +701,11 @@ namespace flw {
 		}
 	};
 
-	class standalone_oflow__
+	template <int CacheSize> class standalone_oflow__
 	: public oflow__
 	{
 	private:
-		flw::datum__ _Cache[FLW__OCACHE_SIZE];
+		flw::datum__ _Cache[CacheSize];
 	public:
 		void Init(
 			fwf::oflow_functions___ &Functions,
@@ -788,12 +788,12 @@ namespace flw {
 		}
 	};
 
-	class standalone_ioflow__	// Classe non thread-safe.
+	template <int InCacheSize = FLW__ICACHE_SIZE, int OutCacheSize = FLW__OCACHE_SIZE> class standalone_ioflow__
 	: public ioflow__
 	{
 	private:
-		flw::datum__ _ICache[FLW__ICACHE_SIZE];
-		flw::datum__ _OCache[FLW__OCACHE_SIZE];
+		flw::datum__ _ICache[InCacheSize];
+		flw::datum__ _OCache[OutCacheSize];
 	public:
 		void Init(
 			fwf::ioflow_functions___ &Functions,
@@ -809,7 +809,6 @@ namespace flw {
 			ioflow__::Init( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax );
 		}
 	};
-
 
 	// Copie 'Amount' octets de 'IFlow' dans 'OFlow'.
 	void Copy(

@@ -69,18 +69,18 @@ it is necessary to personalize it, or certain compiler would not work properly *
 bso::bool__ mscmdf::GetHeaderChunk(
 	flw::iflow__ &Flow,
 	header_chunk__ &HeaderChunk,
-	err::handle ErrHandle )
+	err::handling__ ErrHandling )
 {
 	flw::datum__ Buffer[HEADER_CHUNK_HEAD_SIZE];
 
 	Flow.Read( HEADER_CHUNK_HEAD_SIZE, Buffer );
 
 	if ( memcmp( Buffer, HEADER_CHUNK_HEAD, HEADER_CHUNK_HEAD_SIZE ) )
-		switch ( ErrHandle ) {
-		case err::hUsual:
+		switch ( ErrHandling ) {
+		case err::hThrowException:
 			ERRf();
 			break;
-		case err::hSkip:
+		case err::hUserDefined:
 			return false;
 			break;
 		default:
@@ -131,18 +131,18 @@ static inline bso::bool__ HandleDeltaTimeTicks_(
 
 track_chunk_size__  mscmdf::GetTrackChunkSize(
 	flw::iflow__ &IFlow,
-	err::handle ErrHandle )
+	err::handling__ ErrHandling )
 {
 	flw::datum__ Buffer[TRACK_CHUNK_HEAD_SIZE];
 
 	IFlow.Read( TRACK_CHUNK_HEAD_SIZE, Buffer );
 
 	if ( memcmp( Buffer, TRACK_CHUNK_HEAD, TRACK_CHUNK_HEAD_SIZE ) )
-		switch ( ErrHandle ) {
-		case err::hUsual:
+		switch ( ErrHandling ) {
+		case err::hThrowException:
 			ERRf();
 			break;
-		case err::hSkip:
+		case err::hUserDefined:
 			return 0;	// I suppose that no track chunk can have a size of 0.
 			break;
 		default:

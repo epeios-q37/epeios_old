@@ -57,6 +57,181 @@ public:
 
 using namespace mscmdd;
 
+#include "mscmdm.h"
+
+static void CALLBACK MidiInProc_(
+  HMIDIIN hMidiIn,  
+  UINT wMsg,        
+  DWORD dwInstance, 
+  DWORD dwParam1,   
+  DWORD dwParam2 )
+{
+ERRProlog
+	_data___ &Data = *(_data___ *)dwInstance;
+	bso::ubyte__ Event = 0;
+	MIDIHDR *Header = NULL;
+ERRBegin
+	if ( !Data.Purge ) {
+		mtx::Lock( Data.WriteLock );	// On attend que les précédentes données soient toutes lues.
+		mtx::Unlock( Data.WriteLock );
+	}
+
+#ifdef MSCMDD_DBG
+	if ( Data.Available != 0 )
+		ERRc();
+#endif
+
+	switch( wMsg ) {
+	case MIM_DATA:
+		if ( !Data.Purge ) {
+			Data.Buffer[0] = dwParam1 & 0xff;
+			switch ( mscmdm::DetermineEvent( dwParam1 & 0xff, ( dwParam1 & 0xff00 ) >> 8, Event ) ) {
+			case mscmdm::etMIDI:
+				switch ( mscmdm::GetMIDIEventDataSize( (mscmdm::midi_event__)Event ) ) {
+				case 0:
+					break;
+				case 1:
+					Data.Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
+					Data.Available = 2;
+					break;
+				case 2:
+					Data.Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
+					Data.Buffer[2] =(fwf::datum__)( ( dwParam1 & 0xff0000 ) >> 16 );
+					Data.Available = 3;
+					break;
+				default:
+					ERRc();
+					break;
+				}
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			mtx::Lock( Data.WriteLock );
+			mtx::Unlock( Data.ReadLock );	// On signale au consommateur que de nouvelles données sont disponibles.
+		}
+		break;
+	case MIM_OPEN:
+		break;
+	case MIM_LONGDATA:
+		if ( !Data.Purge ) {
+			Header = (MIDIHDR *)dwParam1;
+			memcpy( Data.Buffer, Header->lpData, Header->dwBytesRecorded );
+			Data.Available = Header->dwBytesRecorded;
+			Data.Recycle = true;
+
+			mtx::Lock( Data.WriteLock );
+			mtx::Unlock( Data.ReadLock );	// On signale au consommateur que de nouvelles données sont disponibles.
+		}
+		break;
+	case MIM_CLOSE:
+		break;
+	default:
+		ERRs();
+		break;
+	}
+
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
+	fwf::size__ Maximum,
+	fwf::datum__ *Buffer )
+{
+	if ( !_Data.Available ) {
+		if ( !_Started ) {
+			midiInStart( _Handle );
+			_Started = true;
+		}
+
+		mtx::Lock( _Data.ReadLock );	// On attend que des données soient disponibles.
+		mtx::Unlock( _Data.ReadLock );
+
+		if ( _Data.Recycle ) {
+
+//			tht::Suspend( 200 );
+
+			while ( ( _Header.dwFlags & MHDR_DONE ) != MHDR_DONE)
+				_Started = _Started;
+
+			if ( midiInUnprepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
+				ERRs();
+
+			_Header.lpData = _HeaderBuffer;
+			_Header.dwBufferLength = sizeof( _HeaderBuffer );
+			_Header.dwFlags = 0;
+
+			if ( midiInPrepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
+				ERRs();
+
+			if ( midiInAddBuffer( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
+				ERRs();
+
+			_Data.Recycle = false;
+		}
+	}
+
+	if ( Maximum > _Data.Available )
+		Maximum = _Data.Available;
+
+	memcpy( Buffer, _Data.Buffer + _Data.Position, Maximum );
+
+	_Data.Available -= Maximum;
+	_Data.Position += Maximum;
+
+	if ( _Data.Available == 0 ) {
+		_Data.Position = 0;
+		mtx::Lock( _Data.ReadLock );
+		mtx::Unlock( _Data.WriteLock );
+	}
+
+	return Maximum;
+}
+
+bso::bool__ mscmdd::midi_iflow_functions___::Init(
+	int Device,
+	err::handling__ ErrHandling,
+	fwf::thread_safety__ ThreadSafety )
+{
+	reset();
+
+	fwf::iflow_functions___::Init( ThreadSafety );
+
+	_Data.ReadLock = mtx::Create( mtx::mFree );
+	_Data.WriteLock = mtx::Create( mtx::mFree );
+	_Data.Purge = false;
+
+	_Data.Buffer = _Cache;
+
+	if ( midiInOpen( &_Handle, Device, (DWORD)MidiInProc_, (DWORD)&_Data, CALLBACK_FUNCTION ) != MMSYSERR_NOERROR ) {
+		if ( ErrHandling != err::hUserDefined )
+			ERRf();
+		else
+			return false;
+	}
+
+	_Header.lpData = _HeaderBuffer;
+	_Header.dwBufferLength = sizeof( _HeaderBuffer );
+	_Header.dwFlags = 0;
+
+	if ( midiInPrepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
+		ERRs();
+
+	if ( midiInAddBuffer( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
+		ERRs();
+
+	mtx::Lock( _Data.ReadLock );
+
+	_Data.Recycle = false;;
+
+	return true;
+}
+
+
 static void Convert_(
 	const WCHAR *WString,
 	description_ &String )
