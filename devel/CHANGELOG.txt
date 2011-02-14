@@ -1,5 +1,9 @@
 $Id$
 
+14/02/2011 :
+	- MSCMDD :
+		- Ajout 'mdi_idlow___'.
+
 13/02/2011 :
 	- FLW :
 		- La taille du cahce pour les objets 'standalone_...' est maintenant passé en paramètre via un 'template'.

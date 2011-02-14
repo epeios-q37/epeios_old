@@ -701,7 +701,7 @@ namespace flw {
 		}
 	};
 
-	template <int CacheSize> class standalone_oflow__
+	template <int CacheSize = FLW__OCACHE_SIZE> class standalone_oflow__
 	: public oflow__
 	{
 	private:

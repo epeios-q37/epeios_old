@@ -205,7 +205,7 @@ namespace mscmdd {
 			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrHandle = err::h_Default )
 		{
-			flw::standalone_oflow__::Init( _Functions, AmountMax );
+			flw::standalone_oflow__<CacheSize>::Init( _Functions, AmountMax );
 
 			return _Functions.Init( DeviceId, ErrHandle );
 		}
@@ -213,13 +213,41 @@ namespace mscmdd {
 
 	struct _data___
 	{
-		mtx::mutex_handler__ ReadLock;	// Verrouillage de l'accés en lecture.
-		mtx::mutex_handler__ WriteLock;	// Verrouillage de l'accés en écriture.
+		mtx::mutex_handler__ Access;	// Pour protèger l'accés aus données de cet structure.
+		mtx::mutex_handler__ Full;		// Pour faire attendre le producteur si 'Buffer' est plein.
+		mtx::mutex_handler__ Empty;		// Pout faire attendre le consommateur si 'Buffer est vide.
 		fwf::datum__ *Buffer;
-		fwf::size__ Available, Position;
+		fwf::size__ Size, Available, Position;
 		bso::bool__ Purge;	// Lorsque à 'true', purge l'ensemble des données MIDI.
-		bso::bool__ Recycle;	// Lorsque à 'true', _Header soit être recyclé.
 	};
+
+	inline bso::bool__ _IsFull( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( ( Data.Available + Data.Position ) == Data.Size );
+	}
+
+	inline bso::bool__ _IsEmpty( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( Data.Available == 0 );
+	}
+
+	inline bso::size__ _Emptyness( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( Data.Size - ( Data.Available + Data.Position ) );
+	}
+
 
 	class midi_iflow_functions___
 	: public fwf::iflow_functions___
@@ -227,9 +255,9 @@ namespace mscmdd {
 	private:
 		bso::bool__ _Started;
 		HMIDIIN _Handle;
-		MIDIHDR _Header;
-		fwf::datum__ _Cache[128];
-		char _HeaderBuffer[128];
+		MIDIHDR _Header[3];
+		fwf::datum__ _Cache[2000];
+		char _HeaderBuffer[512][3];
 		_data___ _Data;
 		virtual fwf::size__ FWFRead(
 			fwf::size__ Maximum,
@@ -257,8 +285,9 @@ namespace mscmdd {
 					if ( _Started )
 						midiInStop( _Handle );
 
-					mtx::Delete( _Data.ReadLock );
-					mtx::Delete( _Data.WriteLock );
+					mtx::Delete( _Data.Access );
+					mtx::Delete( _Data.Full );
+					mtx::Delete( _Data.Empty );
 
 					_Purge();
 
@@ -267,9 +296,8 @@ namespace mscmdd {
 			}
 
 			_Started = false;
-			_Data.Available = _Data.Position = 0;
-			_Data.ReadLock = _Data.WriteLock = MTX_INVALID_HANDLER;
-			_Data.Recycle = false;
+			_Data.Available = _Data.Position = _Data.Size = 0;
+			_Data.Access = _Data.Full = _Data.Empty = MTX_INVALID_HANDLER;
 			_Data.Buffer = NULL;
 		}
 		midi_iflow_functions___( void )

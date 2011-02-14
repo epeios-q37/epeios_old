@@ -129,7 +129,7 @@ namespace crptgr {
 		}
 	};
 
-	typedef flw::standalone_oflow__ _oflow__;
+	typedef flw::standalone_oflow__<> _oflow__;
 
 	class encrypt_oflow___
 	: public _oflow__
@@ -228,7 +228,7 @@ namespace crptgr {
 		}
 	};
 
-	typedef flw::standalone_iflow__ _iflow__;
+	typedef flw::standalone_iflow__<> _iflow__;
 
 	class decrypt_iflow___
 	: public _iflow__

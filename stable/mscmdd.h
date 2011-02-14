@@ -65,6 +65,7 @@ extern class ttr_tutor &MSCMDDTutor;
 #include "cpe.h"
 #include "str.h"
 #include "ctn.h"
+#include "mtx.h"
 
 #ifndef CPE__T_MS
 #	error "Only implemented for windows".
@@ -76,6 +77,18 @@ extern class ttr_tutor &MSCMDDTutor;
 
 #ifdef CPE__T_MS
 #	include "windows.h"
+#endif
+
+#ifdef MSCMDD_ICACHE_SIZE
+#	define MSCMDD__ICACHE_SIZE	MSCMDD_ICACHE_SIZE
+#else
+#	define MSCMDD__ICACHE_SIZE FLW__ICACHE_SIZE
+#endif
+
+#ifdef MSCMDD_OCACHE_SIZE
+#	define MSCMDD__OCACHE_SIZE	MSCMDD_OCACHE_SIZE
+#else
+#	define MSCMDD__OCACHE_SIZE FLW__OCACHE_SIZE
 #endif
 
 
@@ -93,15 +106,14 @@ namespace mscmdd {
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
-			fwf::size__ Wanted,
-			fwf::size__ Minimum )
+			fwf::size__ Maximum )
 		{
 			MIDIHDR     midiHdr;
 			int Err;
 
 			midiHdr.lpData = (LPSTR)Buffer;
 
-			midiHdr.dwBufferLength = Wanted;
+			midiHdr.dwBufferLength = Maximum;
 
 			midiHdr.dwFlags = 0;
 
@@ -122,13 +134,15 @@ namespace mscmdd {
 			if ( Err != MMSYSERR_NOERROR )
 				ERRf();
 
-			return Wanted;
+			return Maximum;
 		}
-		virtual void FWFSynchronize( void )
+		virtual void FWFCommit( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			fwf::oflow_functions___::reset( P );
+
 			if ( P )
 				if ( _Handle != NULL )
 					if ( midiOutClose( _Handle ) != MMSYSERR_NOERROR )
@@ -146,12 +160,15 @@ namespace mscmdd {
 		}
 		bso::bool__ Init(
 			int Device,
-			err::handle ErrHandle )
+			err::handling__ ErrHandling = err::h_Default,
+			fwf::thread_safety__ ThreadSafety = fwf::ts_Default )
 		{
 			reset();
 
+			fwf::oflow_functions___::Init( ThreadSafety );
+
 			if ( midiOutOpen( &_Handle, Device, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR ) {
-				if ( ErrHandle != err::hSkip )
+				if ( ErrHandling != err::hUserDefined )
 					ERRf();
 				else
 					return false;
@@ -161,37 +178,173 @@ namespace mscmdd {
 		}
 	};
 
-	class unsafe_midi_oflow___
-	: public flw::oflow__
+	// VK77 n'accepte que 128 octets à la fois.
+
+	template <int CacheSize = MSCMDD__OCACHE_SIZE> class midi_oflow___
+	: public flw::standalone_oflow__<CacheSize>
 	{
 	private:
 		midi_oflow_functions___ _Functions;
-		flw::datum__ _Cache[128];	// VK77 n'accepte que 128 octets à la fois.
 	public:
 		void reset( bool P = true )
 		{
 			flw::oflow__::reset( P );
 			_Functions.reset( P );
 		}
-		unsafe_midi_oflow___( flw::size__ AmountMax = FLW_SIZE_MAX )
-		: oflow__( _Functions, _Cache, sizeof( _Cache ), AmountMax )
+		midi_oflow___( void )
 		{
 			reset( false );
 		}
-		virtual ~unsafe_midi_oflow___( void )
+		virtual ~midi_oflow___( void )
 		{
 			reset();
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		bso::bool__ Init(
 			int DeviceId,
-			err::handle ErrHandle = err::hUsual )
+			flw::size__ AmountMax = FLW_SIZE_MAX,
+			err::handling__ ErrHandle = err::h_Default )
 		{
-			reset();
+			flw::standalone_oflow__<CacheSize>::Init( _Functions, AmountMax );
 
 			return _Functions.Init( DeviceId, ErrHandle );
 		}
 	};
+
+	struct _data___
+	{
+		mtx::mutex_handler__ Access;	// Pour protèger l'accés aus données de cet structure.
+		mtx::mutex_handler__ Full;		// Pour faire attendre le producteur si 'Buffer' est plein.
+		mtx::mutex_handler__ Empty;		// Pout faire attendre le consommateur si 'Buffer est vide.
+		fwf::datum__ *Buffer;
+		fwf::size__ Size, Available, Position;
+		bso::bool__ Purge;	// Lorsque à 'true', purge l'ensemble des données MIDI.
+	};
+
+	inline bso::bool__ _IsFull( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( ( Data.Available + Data.Position ) == Data.Size );
+	}
+
+	inline bso::bool__ _IsEmpty( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( Data.Available == 0 );
+	}
+
+	inline bso::size__ _Emptyness( const _data___ &Data )
+	{
+#ifdef MSCMDD_DBG
+		if ( !mtx::IsLocked( Data.Access ) )
+			ERRc();
+#endif
+		return ( Data.Size - ( Data.Available + Data.Position ) );
+	}
+
+
+	class midi_iflow_functions___
+	: public fwf::iflow_functions___
+	{
+	private:
+		bso::bool__ _Started;
+		HMIDIIN _Handle;
+		MIDIHDR _Header[3];
+		fwf::datum__ _Cache[2000];
+		char _HeaderBuffer[512][3];
+		_data___ _Data;
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer );
+		virtual void FWFDismiss( void )
+		{
+			if ( _Started ) {
+				midiInStop( _Handle );
+				_Started = false;
+			}
+		}
+		void _Purge( void )
+		{
+			_Data.Purge = true;
+
+			midiInReset( _Handle );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			fwf::iflow_functions___::reset( P );
+
+			if ( P ) {
+				if ( _Data.Buffer != NULL ) {
+					if ( _Started )
+						midiInStop( _Handle );
+
+					mtx::Delete( _Data.Access );
+					mtx::Delete( _Data.Full );
+					mtx::Delete( _Data.Empty );
+
+					_Purge();
+
+					midiInClose( _Handle );
+				}
+			}
+
+			_Started = false;
+			_Data.Available = _Data.Position = _Data.Size = 0;
+			_Data.Access = _Data.Full = _Data.Empty = MTX_INVALID_HANDLER;
+			_Data.Buffer = NULL;
+		}
+		midi_iflow_functions___( void )
+		{
+			reset( false );
+		}
+		~midi_iflow_functions___( void )
+		{
+			reset();
+		}
+		bso::bool__ Init(
+			int Device,
+			err::handling__ ErrHandling = err::h_Default,
+			fwf::thread_safety__ ThreadSafety = fwf::ts_Default );
+	};
+
+	template <int CacheSize = MSCMDD__OCACHE_SIZE> class midi_iflow___
+	: public flw::standalone_iflow__<CacheSize>
+	{
+	private:
+		midi_iflow_functions___ _Functions;
+	public:
+		void reset( bool P = true )
+		{
+			flw::iflow__::reset( P );
+			_Functions.reset( P );
+		}
+		midi_iflow___( void )
+		{
+			reset( false );
+		}
+		virtual ~midi_iflow___( void )
+		{
+			reset();
+		}
+		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
+		bso::bool__ Init(
+			int DeviceId,
+			flw::size__ AmountMax = FLW_SIZE_MAX,
+			err::handling__ ErrHandle = err::h_Default )
+		{
+			flw::standalone_iflow__<CacheSize>::Init( _Functions, AmountMax );
+
+			return _Functions.Init( DeviceId, ErrHandle );
+		}
+	};
+
 
 	typedef str::string_	description_;
 	typedef str::string		description;

@@ -587,7 +587,8 @@ namespace str {
 			reset( false );
 
 #ifdef STR_DBG
-			ERRu();
+			if ( Length > EPEIOS_SIZE_MAX )
+				ERRu();
 #endif
 
 			string_::Init();

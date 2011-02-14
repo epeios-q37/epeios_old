@@ -59,6 +59,45 @@ using namespace mscmdd;
 
 #include "mscmdm.h"
 
+static void Fill_(
+	const char *Buffer,
+	bso::size__ Amount,
+	_data___ &Data )
+{
+	bso::bool__ Wait = false;
+	bso::size__ AwareAmount = 0;
+
+	if ( Data.Purge )	// Pas de protection; c'est un booléen uniquement accèdé en lecture.
+		return;
+
+	while ( Amount != 0 ) {
+		mtx::Lock( Data.Full );	// On attend tant que 'Data.Buffer' est plein.
+		mtx::Unlock( Data.Full );
+
+		mtx::Lock( Data.Access ) ;
+
+		AwareAmount = _Emptyness( Data );
+
+		if ( AwareAmount > Amount )
+			AwareAmount = Amount;
+
+		memcpy( Data.Buffer + Data.Available + Data.Position, Buffer, AwareAmount );
+
+		if ( _IsEmpty( Data ) )
+			mtx::Unlock( Data.Empty );	// Si 'Data.Buffer' était vide, on signale au consommateur que ce n'est plus le cas.
+
+		Amount -= AwareAmount;
+		Buffer += AwareAmount;
+
+		Data.Available += AwareAmount;
+
+		if( _IsFull( Data ) )
+			mtx::Lock( Data.Full );
+
+		mtx::Unlock( Data.Access );
+	}
+}
+
 static void CALLBACK MidiInProc_(
   HMIDIIN hMidiIn,  
   UINT wMsg,        
@@ -70,60 +109,49 @@ ERRProlog
 	_data___ &Data = *(_data___ *)dwInstance;
 	bso::ubyte__ Event = 0;
 	MIDIHDR *Header = NULL;
+	bso::bool__ Wait = false;
 ERRBegin
-	if ( !Data.Purge ) {
-		mtx::Lock( Data.WriteLock );	// On attend que les précédentes données soient toutes lues.
-		mtx::Unlock( Data.WriteLock );
-	}
-
-#ifdef MSCMDD_DBG
-	if ( Data.Available != 0 )
-		ERRc();
-#endif
-
 	switch( wMsg ) {
 	case MIM_DATA:
-		if ( !Data.Purge ) {
-			Data.Buffer[0] = dwParam1 & 0xff;
-			switch ( mscmdm::DetermineEvent( dwParam1 & 0xff, ( dwParam1 & 0xff00 ) >> 8, Event ) ) {
-			case mscmdm::etMIDI:
-				switch ( mscmdm::GetMIDIEventDataSize( (mscmdm::midi_event__)Event ) ) {
-				case 0:
-					break;
-				case 1:
-					Data.Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
-					Data.Available = 2;
-					break;
-				case 2:
-					Data.Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
-					Data.Buffer[2] =(fwf::datum__)( ( dwParam1 & 0xff0000 ) >> 16 );
-					Data.Available = 3;
-					break;
-				default:
-					ERRc();
-					break;
-				}
+		char Buffer[3];
+		Buffer[0] = dwParam1 & 0xff;
+		switch ( mscmdm::DetermineEvent( dwParam1 & 0xff, ( dwParam1 & 0xff00 ) >> 8, Event ) ) {
+		case mscmdm::etMIDI:
+			switch ( mscmdm::GetMIDIEventDataSize( (mscmdm::midi_event__)Event ) ) {
+			case 0:
+				Fill_( Buffer, 1, Data );
+				break;
+			case 1:
+				Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
+				Fill_( Buffer, 2, Data );
+				break;
+			case 2:
+				Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
+				Buffer[2] =(fwf::datum__)( ( dwParam1 & 0xff0000 ) >> 16 );
+				Fill_( Buffer, 3, Data );
 				break;
 			default:
 				ERRc();
 				break;
 			}
-			mtx::Lock( Data.WriteLock );
-			mtx::Unlock( Data.ReadLock );	// On signale au consommateur que de nouvelles données sont disponibles.
+			break;
+		case mscmdm::etSystem:
+			Fill_( Buffer, 1, Data );
+			break;
+		default:
+			ERRc();
+			break;
 		}
 		break;
 	case MIM_OPEN:
 		break;
 	case MIM_LONGDATA:
-		if ( !Data.Purge ) {
-			Header = (MIDIHDR *)dwParam1;
-			memcpy( Data.Buffer, Header->lpData, Header->dwBytesRecorded );
-			Data.Available = Header->dwBytesRecorded;
-			Data.Recycle = true;
+		Header = (MIDIHDR *)dwParam1;
 
-			mtx::Lock( Data.WriteLock );
-			mtx::Unlock( Data.ReadLock );	// On signale au consommateur que de nouvelles données sont disponibles.
-		}
+		Fill_( Header->lpData, Header->dwBytesRecorded, Data );
+
+		Header->dwUser = 0;
+
 		break;
 	case MIM_CLOSE:
 		break;
@@ -142,41 +170,49 @@ fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
 	fwf::size__ Maximum,
 	fwf::datum__ *Buffer )
 {
-	if ( !_Data.Available ) {
+	bso::ubyte__ Amount = sizeof( _Header ) / sizeof( *_Header );
+
+	while ( Amount-- ) {
+		if( _Header[Amount].dwUser == 0 ) {
+			_Header[Amount].lpData = _HeaderBuffer[Amount];
+			_Header[Amount].dwUser = _Header[Amount].dwBufferLength = sizeof( _HeaderBuffer ) / sizeof( *_HeaderBuffer );
+
+			if ( midiInUnprepareHeader( _Handle, &_Header[Amount], sizeof( _Header[Amount] ) ) != MMSYSERR_NOERROR )
+				ERRs();
+
+			_Header[Amount].dwFlags = 0;
+
+			if ( midiInPrepareHeader( _Handle, &_Header[Amount], sizeof( _Header[Amount] ) ) != MMSYSERR_NOERROR )
+				ERRs();
+
+			if ( midiInAddBuffer( _Handle, &_Header[Amount], sizeof( _Header[Amount] ) ) != MMSYSERR_NOERROR )
+				ERRs();
+		}
+	}
+
+	mtx::Lock( _Data.Access );
+
+	if ( _IsEmpty( _Data ) ) {
 		if ( !_Started ) {
 			midiInStart( _Handle );
 			_Started = true;
 		}
 
-		mtx::Lock( _Data.ReadLock );	// On attend que des données soient disponibles.
-		mtx::Unlock( _Data.ReadLock );
+		mtx::Unlock( _Data.Access );
 
-		if ( _Data.Recycle ) {
+		mtx::Lock( _Data.Empty );	// On attend si nécessaire que des données soient didponibles.
+		mtx::Unlock( _Data.Empty );
 
-//			tht::Suspend( 200 );
-
-			while ( ( _Header.dwFlags & MHDR_DONE ) != MHDR_DONE)
-				_Started = _Started;
-
-			if ( midiInUnprepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
-				ERRs();
-
-			_Header.lpData = _HeaderBuffer;
-			_Header.dwBufferLength = sizeof( _HeaderBuffer );
-			_Header.dwFlags = 0;
-
-			if ( midiInPrepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
-				ERRs();
-
-			if ( midiInAddBuffer( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
-				ERRs();
-
-			_Data.Recycle = false;
-		}
+		mtx::Lock( _Data.Access );
 	}
+
+	// Bien que '_Data.Empty' ne soit pas verrouilles à ce point, il peut ne pas y avoir de données disponibles, si toutes les données ont été lues.
 
 	if ( Maximum > _Data.Available )
 		Maximum = _Data.Available;
+
+	if ( _IsFull( _Data ) )
+		mtx::Unlock( _Data.Full );	// Si '_Data.Buffer' était plein, on signale au producteur que ce n'est plus le cas.
 
 	memcpy( Buffer, _Data.Buffer + _Data.Position, Maximum );
 
@@ -185,9 +221,10 @@ fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
 
 	if ( _Data.Available == 0 ) {
 		_Data.Position = 0;
-		mtx::Lock( _Data.ReadLock );
-		mtx::Unlock( _Data.WriteLock );
+		mtx::Lock( _Data.Empty );
 	}
+
+	mtx::Unlock( _Data.Access );
 
 	return Maximum;
 }
@@ -197,12 +234,15 @@ bso::bool__ mscmdd::midi_iflow_functions___::Init(
 	err::handling__ ErrHandling,
 	fwf::thread_safety__ ThreadSafety )
 {
+	bso::ubyte__ Amount = sizeof( _Header ) / sizeof( *_Header );
 	reset();
 
 	fwf::iflow_functions___::Init( ThreadSafety );
 
-	_Data.ReadLock = mtx::Create( mtx::mFree );
-	_Data.WriteLock = mtx::Create( mtx::mFree );
+	_Data.Access = mtx::Create( mtx::mFree );
+	_Data.Full = mtx::Create( mtx::mFree );
+	_Data.Empty = mtx::Create( mtx::mFree );
+
 	_Data.Purge = false;
 
 	_Data.Buffer = _Cache;
@@ -214,19 +254,24 @@ bso::bool__ mscmdd::midi_iflow_functions___::Init(
 			return false;
 	}
 
-	_Header.lpData = _HeaderBuffer;
-	_Header.dwBufferLength = sizeof( _HeaderBuffer );
-	_Header.dwFlags = 0;
+	while( Amount-- ) {
+		_Header[Amount].lpData = _HeaderBuffer[Amount];
+		_Header[Amount].dwUser = _Header[Amount].dwBufferLength = sizeof( _HeaderBuffer ) / sizeof( *_HeaderBuffer );
+		_Header[Amount].dwFlags = 0;
 
-	if ( midiInPrepareHeader( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
-		ERRs();
+		if ( midiInPrepareHeader( _Handle, &_Header[Amount], sizeof( _Header[Amount] ) ) != MMSYSERR_NOERROR )
+			ERRs();
 
-	if ( midiInAddBuffer( _Handle, &_Header, sizeof( _Header ) ) != MMSYSERR_NOERROR )
-		ERRs();
+		if ( midiInAddBuffer( _Handle, &_Header[Amount], sizeof( _Header[Amount] ) ) != MMSYSERR_NOERROR )
+			ERRs();
+	}
 
-	mtx::Lock( _Data.ReadLock );
+	_Data.Size = sizeof( _Cache ) / sizeof( *_Cache );
 
-	_Data.Recycle = false;;
+	mtx::Lock( _Data.Empty );
+
+	midiInStart( _Handle );
+	_Started = true;
 
 	return true;
 }

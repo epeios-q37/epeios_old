@@ -557,7 +557,7 @@ namespace xpp {
 		}
 	};
 
-	typedef flw::standalone_iflow__ _iflow__;
+	typedef flw::standalone_iflow__<> _iflow__;
 
 	class preprocessing_iflow___
 	: public _iflow__
