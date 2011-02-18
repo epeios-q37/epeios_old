@@ -194,7 +194,8 @@ fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
 
 	if ( _IsEmpty( _Data ) ) {
 		if ( !_Started ) {
-			midiInStart( _Handle );
+				if ( midiInStart( _Handle ) != MMSYSERR_NOERROR )
+					ERRf();
 			_Started = true;
 		}
 
@@ -269,9 +270,6 @@ bso::bool__ mscmdd::midi_iflow_functions___::Init(
 	_Data.Size = sizeof( _Cache ) / sizeof( *_Cache );
 
 	mtx::Lock( _Data.Empty );
-
-	midiInStart( _Handle );
-	_Started = true;
 
 	return true;
 }

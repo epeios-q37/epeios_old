@@ -283,7 +283,8 @@ namespace mscmdd {
 			if ( P ) {
 				if ( _Data.Buffer != NULL ) {
 					if ( _Started )
-						midiInStop( _Handle );
+						if ( midiInStop( _Handle ) != MMSYSERR_NOERROR )
+						ERRf();
 
 					mtx::Delete( _Data.Access );
 					mtx::Delete( _Data.Full );
@@ -312,6 +313,23 @@ namespace mscmdd {
 			int Device,
 			err::handling__ ErrHandling = err::h_Default,
 			fwf::thread_safety__ ThreadSafety = fwf::ts_Default );
+		void Start( void )
+		{
+			if ( !_Started ) {
+				if ( midiInStart( _Handle ) != MMSYSERR_NOERROR )
+					ERRf();
+				_Started = true;
+			}
+		}
+		void Stop( void )
+		{
+			if ( !_Started ) {
+				if ( midiInStop( _Handle ) != MMSYSERR_NOERROR )
+					ERRf();
+				_Started = false;
+			}
+
+		}
 	};
 
 	template <int CacheSize = MSCMDD__OCACHE_SIZE> class midi_iflow___
@@ -342,6 +360,14 @@ namespace mscmdd {
 			flw::standalone_iflow__<CacheSize>::Init( _Functions, AmountMax );
 
 			return _Functions.Init( DeviceId, ErrHandle );
+		}
+		void Start( void )
+		{
+			_Functions.Start();
+		}
+		void Stop( void )
+		{
+			_Functions.Stop();
 		}
 	};
 

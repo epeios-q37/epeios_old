@@ -125,7 +125,7 @@ const char *mscmdm::GetMIDIEventLabel( midi_event__ Event )
 	return MIDIEventLabels_[Event];
 }
 
-bso::size__ mscmdm::GetMIDIEventDataSize( midi_event__ Event )
+size__ mscmdm::GetMIDIEventDataSize( midi_event__ Event )
 {
 	if ( Event >= mid_amount )
 		ERRu();
@@ -507,30 +507,35 @@ void mscmdm::PrintEvent(
 	}
 }
 
-static void GetMIDIEventData_(
+static size__ GetMIDIEventData_(
 	const extended_midi_event__ &Event,
 	flw::iflow__ &IFlow,
 	data_ &Data )
 {
-	bso::size__ Size = GetMIDIEventDataSize( Event.Event );
+	size__ Counter = GetMIDIEventDataSize( Event.Event );
 
-	while ( Size-- )
+	while ( Counter-- )
 		Data.Append( IFlow.Get() );
+
+	return GetMIDIEventDataSize( Event.Event );
 }
 
-static void GetSystemEventData_(
+static size__ GetSystemEventData_(
 	const extended_system_event__ &Event,
 	flw::iflow__ &IFlow,
 	origin__ Origin,
 	data_ &Data )
 {
+	size__ Size = 0;
+
 	if ( Event.Event == sysExclusive ) {
 		switch( Origin ) {
 		case oFile:
 		{
-			delta_time_ticks__ Size  = GetDeltaTimeTicks( IFlow ) - 1;
+			delta_time_ticks__ Counter  = GetDeltaTimeTicks( IFlow ) - 1;
+			Size = Counter;
 
-			while ( Size-- )
+			while ( Counter-- )
 				Data.Append( IFlow.Get() );
 
 			if ( IFlow.Get() != 0xf7 )
@@ -539,28 +544,34 @@ static void GetSystemEventData_(
 		}
 		case oDevice:
 			flw::datum__ Datum;
-			while( ( Datum = IFlow.Get() ) != 0xf7 )
+			while( ( Datum = IFlow.Get() ) != 0xf7 ) {
+				Size++;
 				Data.Append( Datum );
+			}
 			break;
 		default:
 			ERRu();
 			break;
 		}
 	}
+
+	return Size;
 }
 
-static void GetMetaEventData_(
+static size__ GetMetaEventData_(
 	const extended_meta_event__ &Event,
 	flw::iflow__ &IFlow,
 	data_ &Data )
 {
-	bso::size__ Size = Event.Size;
+	size__ Counter = Event.Size;
 
-	while ( Size-- )
+	while ( Counter-- )
 		Data.Append( IFlow.Get() );
+
+	return Event.Size;
 }
 
-void mscmdm::GetEventData(
+size__ mscmdm::GetEventData(
 	const event_header__ &EventHeader,
 	flw::iflow__ &IFlow,
 	origin__ Origin,
@@ -568,18 +579,20 @@ void mscmdm::GetEventData(
 {
 	switch( EventHeader.EventType ) {
 	case etMIDI:
-		GetMIDIEventData_( EventHeader.MIDIEvent, IFlow, Data );
+		return GetMIDIEventData_( EventHeader.MIDIEvent, IFlow, Data );
 		break;
 	case etMeta:
-		GetMetaEventData_( EventHeader.MetaEvent, IFlow, Data );
+		return GetMetaEventData_( EventHeader.MetaEvent, IFlow, Data );
 		break;
 	case etSystem:
-		GetSystemEventData_( EventHeader.SystemEvent, IFlow, Origin, Data );
+		return GetSystemEventData_( EventHeader.SystemEvent, IFlow, Origin, Data );
 		break;
 	default:
 		ERRl();
 		break;
 	}
+
+	return 0;	// Pour éviter un 'warning'.
 }
 
 void Write_(

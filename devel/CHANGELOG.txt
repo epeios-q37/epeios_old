@@ -1,5 +1,13 @@
 $Id$
 
+17/02/2011 :
+	- MSCMDM :
+		- 'GetEventData( ... )' retourne dorénavant la taille des données lues.
+
+15/02/2011 :
+	- MSCMDD :
+		- Rajout 'Start()' a 'Stop()'.
+
 14/02/2011 :
 	- MSCMDD :
 		- Ajout 'mdi_idlow___'.

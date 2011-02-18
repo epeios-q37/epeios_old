@@ -70,6 +70,8 @@ namespace mscmdm {
 
 	typedef flw::datum__ event_id__;
 
+	using flw::size__;
+
 	//e Origin of the midi message.
 	enum origin__ {
 		//i Messages are red from a file.
@@ -208,7 +210,7 @@ namespace mscmdm {
 
 	midi_event__ DetermineMIDIEvent( flw::datum__ Datum );
 
-	bso::size__ GetMIDIEventDataSize( midi_event__ Event );
+	size__ GetMIDIEventDataSize( midi_event__ Event );
 
 
 	inline event_type__ DetermineEvent(
@@ -254,7 +256,7 @@ namespace mscmdm {
 		// The midi event.
 		meta_event__ Event;
 		// Data size.
-		bso::size__ Size;
+		size__ Size;
 		// Meta-event id.
 		event_id__ Id;
 	};
@@ -347,7 +349,7 @@ namespace mscmdm {
 		event_header__ &EventHeader,
 		err::handling__ ErrHandling = err::h_Default );
 
-	void GetEventData(
+	size__ GetEventData(
 		const event_header__ &EventHeader,
 		flw::iflow__ &IFlow,
 		origin__ Origin,
@@ -518,7 +520,7 @@ namespace mscmdm {
 
 	inline void GetText(
 		flw::iflow__ &IFlow,
-		bso::size__ Size,
+		size__ Size,
 		text_ &Text )
 	{
 		while( Size-- )
