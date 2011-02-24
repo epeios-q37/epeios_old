@@ -57,6 +57,8 @@ public:
 
 #include "mscmdm.h"
 
+#include "tht.h"
+
 using namespace mscrmi;
 
 using xml::browser___;
@@ -174,10 +176,10 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Definition.Label );
 
-	sprintf( Address, "%08X", Definition.Address() );
+	sprintf( Address, "%08lX", Definition.Address() );
 	Writer.PutAttribute( "Address", Address );
 
-	sprintf( Address, "%0*X", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
 	Writer.PutAttribute( "Offset", Address );
 
 	if ( Definition.Size() != 0 )
@@ -1065,7 +1067,7 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Definition( Parameter.Row() ).Label );
 
-	sprintf( Address, "%0*X", 2 * ( 4 - _StencilSize( Definition( Parameter.Row() ).S_.Address ) ), Definition( Parameter.Row() ).Offset() );
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition( Parameter.Row() ).S_.Address ) ), Definition( Parameter.Row() ).Offset() );
 	Writer.PutAttribute( "Address", Address );
 
 	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Parameter.Data ) ), Buffer ) );
@@ -1317,7 +1319,7 @@ ERRBegin
 
 		Row = Blocs.Next( Row );
 
-		Sleep( 40 );
+		tht::Suspend( 40 );
 	}
 ERRErr
 ERREnd

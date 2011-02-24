@@ -30,7 +30,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err
+libs = ttr tol flw cio err str xml mscmdm mmm uym lcl xpp fwf fil mmi rgstry fnm mscmdf lst tht
 
 
 

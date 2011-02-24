@@ -308,6 +308,7 @@ namespace flf {
 					return fil::sFailure;
 					break;
 				case err::hThrowException:
+					cio::cout << (bso::ulong__)errno << txf::nl << txf::commit;
 					ERRd();
 					break;
 				default:

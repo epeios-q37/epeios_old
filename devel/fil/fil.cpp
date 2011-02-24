@@ -112,12 +112,12 @@ static inline iop::descriptor__ Open_(
 
 	switch ( Mode ) {
 	case mRemove:
-		Flags |= _O_TRUNC | _O_CREAT |_O_RDWR;
+		Flags |= _O_TRUNC | _O_CREAT |_O_WRONLY;
 		PMode |= _S_IWRITE;
 		break;
 	case mAppend:
-		Flags |= _O_CREAT | _O_APPEND | _O_RDWR;
-		PMode |= _S_IWRITE | _S_IREAD;
+		Flags |= _O_CREAT | _O_APPEND | _O_WRONLY;
+		PMode |= _S_IWRITE /*| _S_IREAD*/;
 		break;
 	case mReadWrite:
 		Flags |= _O_CREAT | _O_RDWR;
@@ -153,10 +153,10 @@ static inline iop::descriptor__ Open_(
 
 	switch ( Mode ) {
 	case mRemove:
-		Flags |= O_TRUNC | O_CREAT | O_RDWR;
+		Flags |= O_TRUNC | O_CREAT | O_WRONLY;
 		break;
 	case mAppend:
-		Flags |= O_APPEND | O_RDWR;
+		Flags |= _APPEND | O_WRONLY;
 		break;
 	case mReadWrite:
 		Flags |= O_CREAT | O_RDWR;

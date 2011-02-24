@@ -1,5 +1,9 @@
 $Id$
 
+24/02/011 :
+	- FIL :	
+		- Les fichiers étaient ouverts jusqu'à présent en lecture seule ou en lecture écriture; dorénavatn, ils sont ouverts en lecture seule lorsque nécessaire.
+
 17/02/2011 :
 	- MSCMDM :
 		- 'GetEventData( ... )' retourne dorénavant la taille des données lues.

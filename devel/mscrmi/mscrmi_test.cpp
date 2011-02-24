@@ -28,8 +28,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cpe.h"
+
+#ifdef CPE__T_LINUX
+#	define LINUX
+#endif
+
 #include "mscrmi.h"
-#include "mscmdd.h"
+#ifndef LINUX
+#	include "mscmdd.h"
+#endif
 #include "mscmdm.h"
 
 #include "err.h"
@@ -47,7 +55,7 @@ void PrintAddress( mscrmi::address__ Address )
 {
 	char AddressBuffer[] = "12345678";
 
-	sprintf( AddressBuffer, "%08X", Address );
+	sprintf( AddressBuffer, "%08lX", Address );
 	cout << AddressBuffer;
 }
 
@@ -220,13 +228,23 @@ void RetrieveDataSet(
 	mscrmi::adata_set_ &DataSet )
 {
 ERRProlog
-	mscmdd::midi_oflow___<> OFlow;
+#ifdef LINUX
+	flf::file_iflow___ IFlow;
+	flf::file_oflow___ OFlow;
+#else
 	mscmdd::midi_iflow___<> IFlow;
+	mscmdd::midi_oflow___<> OFlow;
+#endif
 	mscrmi::adata Data;
 ERRBegin
+#ifdef LINUX
+	IFlow.Init( "/dev/midi1" );
+	OFlow.Init( "/dev/midi1", fil::mAppend );
+#else
 	OFlow.Init( 5 );
 	IFlow.Init( 4 );
 	IFlow.Start();
+#endif
 	Data.Init();
 	mscrmi::RetrieveDataSet( OFlow, IFlow, Blocs, ModelID, DataSet );
 ERRErr
@@ -271,6 +289,7 @@ ERRBegin
 	mscrmi::Fill( DataSet, Implementation, Parameters );
 
 	Print( Parameters, Implementation );
+
 ERRErr
 ERREnd
 ERREpilog
@@ -279,14 +298,23 @@ ERREpilog
 void Communicate( void )
 {
 ERRProlog
+#ifdef LINUX
+	flf::file_iflow___ IFlow;
+	flf::file_oflow___ OFlow;
+#else
 	mscmdd::midi_oflow___<> OFlow;
 	mscmdd::midi_iflow___<> IFlow;
+#endif
 	mscrmi::adata Data;
-
 ERRBegin
-	OFlow.Init( 1 );
+#ifdef LINUX
+	IFlow.Init( "/dev/midi1" );
+	OFlow.Init( "/dev/midi1", fil::mAppend );
+#else
+	OFlow.Init( 5 );
 	IFlow.Init( 4 );
 	IFlow.Start();
+#endif
 	Data.Init();
 	mscrmi::RetrieveData( OFlow, IFlow, 0x03000000, 20, str::string( "\x0\x0\x39", 3 ), Data );
 ERRErr
