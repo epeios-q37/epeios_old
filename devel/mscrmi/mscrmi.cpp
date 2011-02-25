@@ -178,12 +178,13 @@ static inline void Print_(
 
 	sprintf( Address, "%08lX", Definition.Address() );
 	Writer.PutAttribute( "Address", Address );
-
+/*
 	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
 	Writer.PutAttribute( "Offset", Address );
 
 	if ( Definition.Size() != 0 )
 		Writer.PutAttribute( "Size", bso::Convert( Definition.Size(), Buffer ) );
+*/
 }
 
 typedef stk::E_BSTACK_( row__ ) srows_;
@@ -300,49 +301,6 @@ static bso::bool__ ConvertModelID_(
 	return true;
 }
 
-
-static fill_status__ BrowseImplementationSpecifications_(
-	browser___ &Browser,
-	midi_implementation_ &Implementation )
-{
-	bso::bool__ Continue = true;
-
-	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
-		case xml::tAttribute:
-			if ( Browser.AttributeName() == "ModelID" ) {
-				if ( Implementation.ModelID.Amount() != 0 )
-					return fsAttributeDefinedTwice;
-				if ( !ConvertModelID_( Browser.Value(), Implementation.ModelID ) )
-					return fsBadValue;
-			} else if ( Browser.AttributeName() == "ModelLabel" ) {
-				if ( Implementation.ModelLabel.Amount() != 0 )
-					return fsAttributeDefinedTwice;
-				Implementation.ModelLabel = Browser.Value();
-			} else
-				return fsUnexpectedAttribute;
-			break;
-		case xml::tStartTagClosed:
-			Continue = false;
-			break;
-		case xml::tProcessed:
-			ERRc();
-			break;
-		case xml::tError:
-			return fsBrowserError;
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
-
-	if ( ( Implementation.ModelID.Amount() == 0 ) || ( Implementation.ModelLabel.Amount() == 0 ) )
-		return fsMissingAttribute;
-
-	return fsOK;
-}
-
 static xaddress__ HandleAddress_(
 	xaddress__ Address,
 	const str::string_ &Value )
@@ -378,18 +336,26 @@ static xaddress__ HandleAddress_(
 typedef ctn::E_XMCONTAINER_( str::string_ ) labels_;
 E_AUTO( labels );
 
+class callback__
+{
+public:
+	virtual fill_status__ Handle(
+		const _parameter_core_ &Parameter,
+		const str::string_ &Value ) = 0;
+};
+
 static fill_status__ BrowseParametersSpecifications_(
 	browser___ &Browser,
 	xaddress__ &Address,
-	row__ &GroupRow,
-	midi_implementation_ &Implementation )
+	callback__ &Callback )
 {
 	fill_status__ Status = fs_Undefined;
 ERRProlog
 	bso::bool__ NoLabel = true;
 	bso::bool__ Continue = true;
-	parameter_definition Definition;
+	_parameter_core Core;
 	label Label;
+	str::string Value;
 ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
@@ -435,11 +401,11 @@ ERRBegin
 
 	Status = fsOK;
 
-	Definition.Init();
+	Core.Init( Label, Address, 0 );
 
-	Definition.Init( Label, Address, 0, GroupRow );
+	Value.Init();
 
-	GroupRow = Implementation.Definitions.Add( Definition );
+	Callback.Handle( Core, Value );
 ERRErr
 ERREnd
 ERREpilog
@@ -450,15 +416,17 @@ static fill_status__ BrowseParameter_(
 	browser___ &Browser,
 	xaddress__ &Address,
 	size__ &Size,
-	row__ &GroupRow,
-	parameter_definition_ &Definition )
+	callback__ &Callback )
 {
 	fill_status__ Status = fs_Undefined;
 ERRProlog
 	bso::bool__ Continue = true;
 	label Label;
+	_parameter_core Core;
+	str::string Value;
 ERRBegin
 	Label.Init();
+	Value.Init();
 
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfAttribute | xml::tfEndTag ) ) {
@@ -492,6 +460,18 @@ ERRBegin
 					  Status = fsBadValue;
 					  ERRReturn;
 				  }
+			} else if ( Browser.AttributeName() == "Value" ) {
+				if ( Value.Amount() != 0 ) {
+					Status = fsAttributeDefinedTwice;
+					ERRReturn;
+				}
+
+				Value = Browser.Value();
+
+				if ( Value.Amount() == 0 ) {
+					Status = fsBadValue;
+					ERRReturn;
+				}
 			} else {
 				Status = fsUnexpectedAttribute;
 				ERRReturn;
@@ -519,7 +499,9 @@ ERRBegin
 
 	Status = fsOK;
 
-	Definition.Init( Label, Address, Size, GroupRow );
+	Core.Init( Label, Address, Size );
+
+	Callback.Handle( Core, Value );
 
 	Address = Sum_( Address, Size );
 
@@ -534,34 +516,31 @@ static fill_status__ BrowseParameters_(
 	browser___ &Browser,
 	xaddress__ &Address,
 	size__ &Size,
-	row__ &GroupRow,
-	midi_implementation_ &Implementation )
+	callback__ &Callback )
 {
 	fill_status__ Status = fs_Undefined;
 ERRProlog
 	bso::bool__ Continue = true;
-	parameter_definition Definition;
+	_parameter_core Core;
+	str::string Value;
 ERRBegin
 	while ( Continue ) {
 		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Browser.TagName() == "Parameters" ) {
-				if ( ( Status = BrowseParametersSpecifications_( Browser, Address, GroupRow, Implementation ) ) != fsOK )
+				if ( ( Status = BrowseParametersSpecifications_( Browser, Address, Callback ) ) != fsOK )
 					ERRReturn;
 
-				if ( ( Status = BrowseParameters_( Browser, Address, Size, GroupRow, Implementation ) ) != fsOK )
+				if ( ( Status = BrowseParameters_( Browser, Address, Size, Callback ) ) != fsOK )
 					ERRReturn;
 
-				if ( ( GroupRow = Implementation.Definitions( GroupRow ).GroupRow() ) == NONE )
-					ERRc();
+				Core.Init();
+				Value.Init();
 
-				Implementation.Definitions.Flush();
+				Callback.Handle( Core, Value );
 			} else if ( Browser.TagName() == "Parameter" ) {
-				Definition.Init();
-				if ( ( Status = BrowseParameter_( Browser, Address, Size, GroupRow, Definition ) ) != fsOK )
+				if ( ( Status = BrowseParameter_( Browser, Address, Size, Callback ) ) != fsOK )
 					ERRReturn;
-
-				Implementation.Definitions.Add( Definition );
 			} else {
 				Status = fsUnexpectedTag;
 				ERRReturn;
@@ -590,39 +569,42 @@ ERREpilog
 	return Status;
 }
 
-static fill_status__ BrowseImplementation_( 
+static fill_status__ BrowseParameters_(
+	browser___ &Browser,
+	callback__ &Callback )
+{
+	xaddress__ Address = 0;
+	size__ Size = 1;
+
+	return BrowseParameters_( Browser, Address, Size, Callback );
+}
+
+static fill_status__ BrowseImplementationSpecifications_(
 	browser___ &Browser,
 	midi_implementation_ &Implementation )
 {
-	fill_status__ Status = fs_Undefined;
-ERRProlog
-	xaddress__ Address = 0;
-	row__ GroupRow = NONE;
 	bso::bool__ Continue = true;
-	size__ Size = 1;
-ERRBegin
-	while( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
-		case xml::tStartTag:
-			if ( Browser.TagName() == "Parameters" ) {
-				if ( ( Status = BrowseParametersSpecifications_( Browser, Address, GroupRow, Implementation ) ) != fsOK )
-					ERRReturn;
 
-				if ( ( Status = BrowseParameters_( Browser, Address, Size, GroupRow, Implementation ) ) != fsOK )
-					ERRReturn;
-
-				if ( ( GroupRow = Implementation.Definitions( GroupRow ).GroupRow() ) != NONE )
-					ERRc();
-
-				Implementation.Definitions.Flush();
-			} else {
-				Status = fsUnexpectedTag;
-				ERRReturn;
-			}
-
+	while ( Continue ) {
+		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
+		case xml::tAttribute:
+			if ( Browser.AttributeName() == "ModelID" ) {
+				if ( Implementation.ModelID.Amount() != 0 )
+					return fsAttributeDefinedTwice;
+				if ( !ConvertModelID_( Browser.Value(), Implementation.ModelID ) )
+					return fsBadValue;
+			} else if ( Browser.AttributeName() == "ModelLabel" ) {
+				if ( Implementation.ModelLabel.Amount() != 0 )
+					return fsAttributeDefinedTwice;
+				Implementation.ModelLabel = Browser.Value();
+			} else
+				return fsUnexpectedAttribute;
 			break;
-		case xml::tEndTag:
+		case xml::tStartTagClosed:
 			Continue = false;
+			break;
+		case xml::tProcessed:
+			ERRc();
 			break;
 		case xml::tError:
 			return fsBrowserError;
@@ -633,13 +615,67 @@ ERRBegin
 		}
 	}
 
-	Status = fsOK;
+	if ( ( Implementation.ModelID.Amount() == 0 ) || ( Implementation.ModelLabel.Amount() == 0 ) )
+		return fsMissingAttribute;
 
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
+	return fsOK;
 }
+
+class implementation_callback__
+: public callback__
+{
+private:
+	parameter_definitions_ *_Definitions;
+	row__ _GroupRow;
+protected:
+	virtual fill_status__ Handle(
+		const _parameter_core_ &Core,
+		const str::string_ &Value )
+	{
+		fill_status__ Status = fs_Undefined;
+	ERRProlog
+		parameter_definition Definition;
+		row__ GroupRow = NONE;
+	ERRBegin
+		if ( Core.Address() == MSCRMI_UNDEFINED_ADDRESS ) {
+			_GroupRow = _Definitions->Get( _GroupRow ).GroupRow();
+			_Definitions->Flush();
+		} else {
+			Definition.Init( Core, _GroupRow );
+
+			GroupRow = _Definitions->Add( Definition );
+
+			if ( Core.Size() == 0 )
+				_GroupRow = GroupRow;
+		}
+
+		Status = fsOK;
+
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Status;
+	}
+public:
+	void reset( bso::bool__ = true )
+	{
+		_Definitions = NULL;
+		_GroupRow = NONE;
+	}
+	implementation_callback__( void )
+	{
+		reset( false );
+	}
+	~implementation_callback__( void )
+	{
+		reset();
+	}
+	void Init( parameter_definitions_ &Definitions )
+	{
+		_Definitions = &Definitions;
+		_GroupRow = NONE;
+	}
+};
 
 fill_status__ mscrmi::Fill(
 	browser___ &Browser,
@@ -647,7 +683,10 @@ fill_status__ mscrmi::Fill(
 {
 	fill_status__ Status = fs_Undefined;
 ERRProlog
+	implementation_callback__ Callback;
 ERRBegin
+	Callback.Init( Implementation.Definitions );
+
 	switch ( Browser.Browse( xml::tfStartTag ) ) {
 	case xml::tStartTag:
 		if ( Browser.TagName() != "MIDIImplementation" ) {
@@ -658,7 +697,7 @@ ERRBegin
 		if ( ( Status = BrowseImplementationSpecifications_( Browser, Implementation ) ) != fsOK )
 			ERRReturn;
 
-		if ( ( Status = BrowseImplementation_( Browser, Implementation ) ) != fsOK )
+		if ( ( Status = BrowseParameters_( Browser, Callback ) ) != fsOK )
 			ERRReturn;
 
 	case xml::tProcessed:
@@ -706,17 +745,19 @@ static fill_status__ BrowseImplementations_(
 ERRProlog
 	midi_implementation Implementation;
 	bso::bool__ Continue = true;
+	implementation_callback__ Callback;
 ERRBegin
 	while ( Continue ) {
 		switch( Browser.Browse( xml::tfStartTag |xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Browser.TagName() == "MIDIImplementation" ) {
 				Implementation.Init();
+				Callback.Init( Implementation.Definitions );
 
 				if ( ( Status = BrowseImplementationSpecifications_( Browser, Implementation ) ) != fsOK )
 					ERRReturn;
 
-				if ( ( Status = BrowseImplementation_( Browser, Implementation ) ) != fsOK )
+				if ( ( Status = BrowseParameters_( Browser, Callback ) ) != fsOK )
 					ERRReturn;
 
 				Implementations.Append( Implementation );
@@ -782,6 +823,194 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+class settings_callback___
+: public callback__
+{
+private:
+	adata_set_ *_DataSet;
+	adata _Data;
+	const parameter_definitions_ *_Definitions;
+	row__ _Row;
+	row__ _Search( address__ Address ) const
+	{
+		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+		row__ Row = ( _Row == NONE ? _Definitions->First() : _Row );
+
+		Definition.Init( *_Definitions );
+
+		while ( ( Row != NONE ) &&
+			    ( ( Definition( Row ).Address() < Address )
+				   || ( ( Definition( Row ).Size() ) == 0 ) ) )
+			Row = _Definitions->Next( Row );
+
+		return Row;
+	}
+	fill_status__ _Convert( 
+		const str::string_ &Value,
+		size__ Size,
+		data_ &Data )
+	{
+		bso::ulong__ Long;
+		epeios::row__ Error = NONE;
+
+		switch ( Size ) {
+		case 0:
+			ERRc();
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			Long = Value.ToUL( &Error, str::b10, ( 0xffffffff >> ( 8 * ( 4 - Size ) ) ) );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		if ( Error != NONE )
+			return fsBadValue;
+
+		switch ( Size ) {
+		case 0:
+			ERRc();
+			break;
+		case 4:
+			Data.Append( Long >> 24 );
+		case 3:
+			Data.Append( ( Long >> 16 ) & 0xff );
+		case 2:
+			Data.Append( ( Long >> 8 ) & 0xff );
+		case 1:
+			Data.Append( Long & 0xff );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		return fsOK;
+	}
+protected:
+	virtual fill_status__ Handle(
+		const _parameter_core_ &Core,
+		const str::string_ &Value )
+	{
+		fill_status__ Status = fs_Undefined;
+	ERRProlog
+		data RawData;
+		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ERRBegin
+		Definition.Init( *_Definitions );
+
+		if ( Core.Size() != 0 ) {
+
+			if ( ( _Row = _Search( Core.Address() ) ) == NONE ) {
+				Status = fsBadValue;
+				ERRReturn;
+			}
+
+			if ( Value.Amount() == 0 ) {
+				Status = fsBadValue;
+				ERRReturn;
+			}
+
+			RawData.Init();
+
+			_Convert( Value, Definition( _Row ).Size(), RawData );
+
+			if ( _Data.Address() == MSCRMI_UNDEFINED_ADDRESS )
+				_Data.Init( RawData, Core.Address() );
+
+			if ( ( ( RawData.Amount() + _Data.Amount() ) > 128 )
+			     || ( Sum_( _Data.Address(), (size__)_Data.Amount() ) != Core.Address() ) ) 
+			{
+				_DataSet->Append( _Data );
+				_Data.Init( RawData, Core.Address() );
+			}
+
+			_Data.Append( RawData );
+		}
+
+		Status = fsOK;
+
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Status;
+	}
+public:
+	void reset( bso::bool__ P = true )
+	{
+		if ( P  ) {
+			if ( _Data.Address() != MSCRMI_UNDEFINED_ADDRESS )
+				_DataSet->Append( _Data );
+		}
+
+		_Data.reset( P );
+		_DataSet = NULL;
+		_Definitions = NULL;
+		_Row = NONE;
+
+	}
+	settings_callback___( void )
+	{
+		reset( false );
+	}
+	~settings_callback___( void )
+	{
+		reset();
+	}
+	void Init(
+		adata_set_ &DataSet,
+		const parameter_definitions_ &Definitions )
+	{
+		reset();
+
+		_DataSet = &DataSet;
+		_Definitions = &Definitions;
+	}
+};
+
+
+fill_status__ mscrmi::Fill(
+	browser___ &Browser,
+	const midi_implementation_ &Implementation,
+	adata_set_ &DataSet )
+{
+	fill_status__ Status = fs_Undefined;
+ERRProlog
+	settings_callback___ Callback;
+ERRBegin
+	Callback.Init( DataSet, Implementation.Definitions );
+
+	switch ( Browser.Browse( xml::tfStartTag ) ) {
+	case xml::tStartTag:
+		if ( Browser.TagName() != "Settings" ) {
+			Status = fsUnexpectedTag;
+			ERRReturn;
+		}
+
+		if ( ( Status = BrowseParameters_( Browser, Callback ) ) != fsOK )
+			ERRReturn;
+
+	case xml::tProcessed:
+		break;
+	case xml::tError:
+		Status = fsBrowserError;
+		ERRReturn;
+	default:
+		ERRc();
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 static void ConvertModelID_(
 	const str::string_ &RawModelID,
@@ -1324,6 +1553,56 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+void mscrmi::SendData(
+	const str::string_ &ModelID,
+	const adata_ &Data,
+	flw::oflow__ &Flow )
+{
+ERRProlog
+	data Message;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Message.Init();
+
+	Put_( Data.Address(), Message );
+	Message.Append( Data );
+
+
+	Flow.Write( "\xf0\x41\x10", 3 );
+	Flow.Write( ModelID.Convert( Buffer ), ModelID.Amount() );
+	Flow.Put( 0x12 );
+
+	Flow.Write( Message.Convert( Buffer ), Message.Amount() );
+	Flow.Put( Checksum_( Message ) );
+
+	Flow.Put( 0xF7 );
+
+	Flow.Commit();
+ERRErr
+
+ERREnd
+ERREpilog
+}
+
+void mscrmi::SendData(
+	const str::string_ &ModelID,
+	const adata_set_ &DataSet,
+	flw::oflow__ &Flow )
+{
+	ctn::E_CMITEM( adata_ ) Data;
+	epeios::row__ Row = DataSet.First();
+
+	Data.Init( DataSet );
+
+	while ( Row != NONE ) {
+		SendData( ModelID, Data( Row ), Flow );
+
+		Row = DataSet.Next( Row );
+
+		tht::Suspend( 40 );
+	}
 }
 
 

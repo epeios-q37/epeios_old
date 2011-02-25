@@ -322,6 +322,58 @@ ERREnd
 ERREpilog
 }
 
+void RetrieveSettings(
+	const mscrmi::midi_implementation_ &Implementation,
+	mscrmi::adata_set_ &DataSet )
+{
+ERRProlog
+	flf::file_iflow___ Flow;
+	xtf::extended_text_iflow__ XFlow;
+	xml::browser___ Browser;
+ERRBegin
+	Flow.Init( "Settings.xml" );
+	XFlow.Init( Flow );
+	Browser.Init( XFlow, xml::eh_Default );
+
+	mscrmi::Fill( Browser, Implementation, DataSet );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Send(
+	const mscrmi::adata_set_ &DataSet,
+	const mscrmi::midi_implementation_ &Implementation )
+{
+ERRProlog
+	mscmdd::midi_oflow___<> Flow;
+ERRBegin
+	Flow.Init( 5 );
+	mscrmi::SendData( Implementation.ModelID, DataSet, Flow );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void Send( void )
+{
+ERRProlog
+	mscrmi::midi_implementation Implementation;
+	mscrmi::adata_set DataSet;
+ERRBegin
+	Implementation.Init();
+	ParseImplementation( Implementation );
+
+	DataSet.Init();
+
+	RetrieveSettings( Implementation, DataSet );
+
+	Send( DataSet, Implementation );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 int main( int argc, char *argv[] )
 {
 ERRFProlog
@@ -335,7 +387,8 @@ ERRFBegin
 	case 1:
 //		Communicate();
 //		ReadMI();
-		RetrieveAll();
+//		RetrieveAll();
+		Send();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
