@@ -60,7 +60,7 @@ public:
 
 using namespace xpp;
 
-using xml::browser___;
+using xml::parser___;
 using xml::token__;
 
 #define NAME_ATTRIBUTE		"name"
@@ -230,18 +230,18 @@ static inline directive__ GetDirective_(
 }
 
 static status__ AwaitingToken_(
-	browser___ &Browser,
+	parser___ &Parser,
 	token__ AwaitedToken,
 	status__ StatusIfNotAwaitedToken )
 {
 	token__ Token = xml::t_Undefined;
 
-	switch ( Token = Browser.Browse( xml::tfAll & ~xml::tfComment ) ) {
+	switch ( Token = Parser.Parse( xml::tfAll & ~xml::tfComment ) ) {
 		case xml::tProcessed:
 			ERRc();
 			break;
 		case xml::tError:
-			return Convert_( Browser.Status() );
+			return Convert_( Parser.Status() );
 			break;
 		default:
 			if ( Token != AwaitedToken )
@@ -253,33 +253,33 @@ static status__ AwaitingToken_(
 }
 
 static status__ GetNameAttributeValue_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Value )
 {
-	status__ Status = AwaitingToken_( Browser, xml::tAttribute, sMissingNameAttribute );
+	status__ Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAttribute );
 
 	if ( Status != sOK )
 		return Status;
 
-	if ( Browser.AttributeName() != NAME_ATTRIBUTE )
+	if ( Parser.AttributeName() != NAME_ATTRIBUTE )
 		return sUnexpectedAttribute;
 
-	Value = Browser.Value();
+	Value = Parser.Value();
 
 	return sOK;
 }
 
 static status__ RetrieveTree_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Tree )
 {
 	bso::ulong__ Nesting = 0;
 	status__ Status = s_Undefined;
 
 	while ( Status == s_Undefined ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
 		case xml::tStartTag:
-			Tree.Append( Browser.DumpData() );
+			Tree.Append( Parser.DumpData() );
 			if ( Nesting == BSO_ULONG_MAX )
 				ERRc();
 			Nesting++;
@@ -288,16 +288,16 @@ static status__ RetrieveTree_(
 			if( Nesting == 0 )
 				return sUnexpectedValue;
 			else
-				Tree.Append( Browser.DumpData() );
+				Tree.Append( Parser.DumpData() );
 			break;
 		case xml::tEndTag:
-			Tree.Append( Browser.DumpData() );
+			Tree.Append( Parser.DumpData() );
 			switch ( Nesting ) {
 			case 0:
 				ERRc();
 				break;
 			case 1:
-				Status = AwaitingToken_( Browser, xml::tEndTag, sTooManyTags );
+				Status = AwaitingToken_( Parser, xml::tEndTag, sTooManyTags );
 				break;
 			default:
 				Nesting--;
@@ -305,7 +305,7 @@ static status__ RetrieveTree_(
 			}
 			break;
 		case xml::tError:
-			return Convert_( Browser.Status() );
+			return Convert_( Parser.Status() );
 			break;
 		case xml::tProcessed:
 			ERRc();
@@ -320,42 +320,42 @@ static status__ RetrieveTree_(
 }
 
 static status__ GetDefineNameAndContent_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Name,
 	str::string_ &Content )
 {
 	status__ Status = sOK;
 
-	if ( ( Status = GetNameAttributeValue_( Browser, Name ) ) != sOK )
+	if ( ( Status = GetNameAttributeValue_( Parser, Name ) ) != sOK )
 		return Status;
 
-	if ( ( Status = AwaitingToken_( Browser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
+	if ( ( Status = AwaitingToken_( Parser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
 		return Status;
 
-	if ( ( Status = RetrieveTree_( Browser, Content ) ) != sOK )
+	if ( ( Status = RetrieveTree_( Parser, Content ) ) != sOK )
 		return Status;
 
-/*	if ( ( Status = AwaitingToken_( Browser, xml::tEndTag, sTooManyTags ) ) != sOK )
+/*	if ( ( Status = AwaitingToken_( Parser, xml::tEndTag, sTooManyTags ) ) != sOK )
 		return Status;
 */
 	return sOK;
 }
 
-status__ xpp::_extended_browser___::_HandleDefineDirective( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
+status__ xpp::_extended_parser___::_HandleDefineDirective( _extended_parser___ *&Parser )	// 'Parser' est mis à 'NULL', ce qui est normal. 
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Name, Content;
 	xtf::coord__ Coord;
 ERRBegin
-	Browser = NULL;
+	Parser = NULL;
 
-	Coord = _Browser.GetCurrentCoord();
+	Coord = _Parser.GetCurrentCoord();
 
 	Name.Init();
 	Content.Init();
 
-	if ( ( Status = GetDefineNameAndContent_( _Browser, Name, Content ) ) != sOK )
+	if ( ( Status = GetDefineNameAndContent_( _Parser, Name, Content ) ) != sOK )
 		ERRReturn;
 
 	_Repository.Store( Name, Coord, _LocalizedFileName, Content );
@@ -373,7 +373,7 @@ enum expand_type__ {
 };
 
 static inline expand_type__ GetExpandTypeAndValue_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Value,
 	status__ &Status )	// Siginfiant seulement si valeur retournée == 'et_Undefined'.
 {
@@ -383,28 +383,28 @@ ERRProlog
 ERRBegin
 	AttributeName.Init();
 
-	if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingSelectOrHRefAttribute ) ) != sOK )
+	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectOrHRefAttribute ) ) != sOK )
 		ERRReturn;
 
-	if ( Browser.AttributeName() == HREF_ATTRIBUTE )
+	if ( Parser.AttributeName() == HREF_ATTRIBUTE )
 		Type = etFile;
-	else if ( Browser.AttributeName() == SELECT_ATTRIBUTE )
+	else if ( Parser.AttributeName() == SELECT_ATTRIBUTE )
 		Type = etMacro;
 	else {
 		Status = sUnknownAttribute;
 		ERRReturn;
 	}
 
-	Value = Browser.Value();
+	Value = Parser.Value();
 ERRErr
 ERREnd
 ERREpilog
 	return Type;
 }
 
-status__ xpp::_extended_browser___::_HandleMacroExpand(
+status__ xpp::_extended_parser___::_HandleMacroExpand(
 	const str::string_ &MacroName,
-	_extended_browser___ *&Browser )
+	_extended_parser___ *&Parser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -420,52 +420,52 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Browser = NewBrowser( _Repository, _Variables, _Directives );
+	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Browser->InitWithContent( Content, FileName, Coord, _Directory );
+	Status = Parser->InitWithContent( Content, FileName, Coord, _Directory );
 ERRErr
-	if ( Browser != NULL ) {
-		delete Browser;
-		Browser = NULL;
+	if ( Parser != NULL ) {
+		delete Parser;
+		Parser = NULL;
 	}
 ERREnd
 	if ( Status != sOK ) {
-		if ( Browser != NULL ) {
-			delete Browser;
-			Browser = NULL;
+		if ( Parser != NULL ) {
+			delete Parser;
+			Parser = NULL;
 		}
 	}
 ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandleFileExpand(
+status__ xpp::_extended_parser___::_HandleFileExpand(
 	const str::string_ &FileName,
-	_extended_browser___ *&Browser )
+	_extended_parser___ *&Parser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
 ERRBegin
-	Browser = NewBrowser( _Repository, _Variables, _Directives );
+	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Browser->InitWithFile( FileName, _Directory );
+	Status = Parser->InitWithFile( FileName, _Directory );
 ERRErr
-	if ( Browser != NULL ) {
-		delete Browser;
-		Browser = NULL;
+	if ( Parser != NULL ) {
+		delete Parser;
+		Parser = NULL;
 	}
 ERREnd
 	if ( Status != sOK ) {
-		if ( Browser != NULL ) {
-			delete Browser;
-			Browser = NULL;
+		if ( Parser != NULL ) {
+			delete Parser;
+			Parser = NULL;
 		}
 	}
 ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandleExpandDirective( _extended_browser___ *&Browser )
+status__ xpp::_extended_parser___::_HandleExpandDirective( _extended_parser___ *&Parser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -474,12 +474,12 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	switch ( GetExpandTypeAndValue_( _Browser, Value, Status ) ) {
+	switch ( GetExpandTypeAndValue_( _Parser, Value, Status ) ) {
 	case etMacro:
-		Status = _HandleMacroExpand( Value, Browser );
+		Status = _HandleMacroExpand( Value, Parser );
 		break;
 	case etFile:
-		Status = _HandleFileExpand( Value, Browser );
+		Status = _HandleFileExpand( Value, Parser );
 		break;
 	case et_Undefined:
 		// 'Status' initialisé par 'etExpandTypeAndValue_(...)'.
@@ -490,12 +490,12 @@ ERRBegin
 	}
 
 	if ( Status == sOK )
-		Status = AwaitingToken_( _Browser, xml::tStartTagClosed, sUnexpectedAttribute );
+		Status = AwaitingToken_( _Parser, xml::tStartTagClosed, sUnexpectedAttribute );
 
 	if ( Status == sOK )
-		Status = AwaitingToken_( _Browser, xml::tEndTag, sMustBeEmpty );
+		Status = AwaitingToken_( _Parser, xml::tEndTag, sMustBeEmpty );
 
-	_Browser.PurgeDumpData();
+	_Parser.PurgeDumpData();
 
 ERRErr
 ERREnd
@@ -504,28 +504,28 @@ ERREpilog
 }
 
 static status__ GetSetNameAndValue_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Name,
 	str::string_ &Value )
 {
 	status__ Status = sOK;
 
-	if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingNameAndValueAttributes ) ) == sOK ) {
-		if ( Browser.AttributeName() == NAME_ATTRIBUTE ) {
-			Name.Append( Browser.Value() );
+	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAndValueAttributes ) ) == sOK ) {
+		if ( Parser.AttributeName() == NAME_ATTRIBUTE ) {
+			Name.Append( Parser.Value() );
 
-			if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
-				if ( Browser.AttributeName() == VALUE_ATTRIBUTE )
-					Value.Append( Browser.Value() );
+			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
+				if ( Parser.AttributeName() == VALUE_ATTRIBUTE )
+					Value.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
-		} else if ( Browser.AttributeName() == VALUE_ATTRIBUTE ) {
-			Value.Append( Browser.Value() );
+		} else if ( Parser.AttributeName() == VALUE_ATTRIBUTE ) {
+			Value.Append( Parser.Value() );
 
-			if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingNameAttribute ) ) == sOK ) {
-				if ( Browser.AttributeName() == NAME_ATTRIBUTE )
-					Name.Append( Browser.Value() );
+			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAttribute ) ) == sOK ) {
+				if ( Parser.AttributeName() == NAME_ATTRIBUTE )
+					Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
@@ -535,29 +535,29 @@ static status__ GetSetNameAndValue_(
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandleSetDirective( _extended_browser___ *&Browser )	// 'Browser' est mis à 'NULL', ce qui est normal. 
+status__ xpp::_extended_parser___::_HandleSetDirective( _extended_parser___ *&Parser )	// 'Parser' est mis à 'NULL', ce qui est normal. 
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Name, Value;
 ERRBegin
-	Browser = NULL;
+	Parser = NULL;
 
 	Name.Init();
 	Value.Init();
 
-	if ( ( Status = GetSetNameAndValue_( _Browser, Name, Value ) ) != sOK )
+	if ( ( Status = GetSetNameAndValue_( _Parser, Name, Value ) ) != sOK )
 		ERRReturn;
 
 	_Variables.Set( Name, Value );
 
 	if ( Status == sOK )
-		Status = AwaitingToken_( _Browser, xml::tStartTagClosed, sUnexpectedAttribute );
+		Status = AwaitingToken_( _Parser, xml::tStartTagClosed, sUnexpectedAttribute );
 
 	if ( Status == sOK )
-		Status = AwaitingToken_( _Browser, xml::tEndTag, sMustBeEmpty );
+		Status = AwaitingToken_( _Parser, xml::tEndTag, sMustBeEmpty );
 
-	_Browser.PurgeDumpData();
+	_Parser.PurgeDumpData();
 
 ERRErr
 ERREnd
@@ -566,28 +566,28 @@ ERREpilog
 }
 
 static status__ GetIfeqSelectAndValue_(
-	browser___ &Browser,
+	parser___ &Parser,
 	str::string_ &Name,
 	str::string_ &Value )
 {
 	status__ Status = sOK;
 
-	if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingSelectAndValueAttributes ) ) == sOK ) {
-		if ( Browser.AttributeName() == SELECT_ATTRIBUTE ) {
-			Name.Append( Browser.Value() );
+	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectAndValueAttributes ) ) == sOK ) {
+		if ( Parser.AttributeName() == SELECT_ATTRIBUTE ) {
+			Name.Append( Parser.Value() );
 
-			if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
-				if ( Browser.AttributeName() == VALUE_ATTRIBUTE )
-					Value.Append( Browser.Value() );
+			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
+				if ( Parser.AttributeName() == VALUE_ATTRIBUTE )
+					Value.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
-		} else if ( Browser.AttributeName() == VALUE_ATTRIBUTE ) {
-			Value.Append( Browser.Value() );
+		} else if ( Parser.AttributeName() == VALUE_ATTRIBUTE ) {
+			Value.Append( Parser.Value() );
 
-			if ( ( Status = AwaitingToken_( Browser, xml::tAttribute, sMissingSelectAttribute ) ) == sOK ) {
-				if ( Browser.AttributeName() == SELECT_ATTRIBUTE )
-					Name.Append( Browser.Value() );
+			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectAttribute ) ) == sOK ) {
+				if ( Parser.AttributeName() == SELECT_ATTRIBUTE )
+					Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
@@ -598,75 +598,75 @@ static status__ GetIfeqSelectAndValue_(
 }
 
 
-status__ xpp::_extended_browser___::_HandleIfeqDirective( _extended_browser___ *&Browser )
+status__ xpp::_extended_parser___::_HandleIfeqDirective( _extended_parser___ *&Parser )
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Name, ExpectedValue, TrueValue, Content;
 	xtf::coord__ Coord;
 ERRBegin
-	Browser = NULL;
+	Parser = NULL;
 
 	Name.Init();
 	ExpectedValue.Init();
 
-	if ( ( Status = GetIfeqSelectAndValue_( _Browser, Name, ExpectedValue ) ) != sOK )
+	if ( ( Status = GetIfeqSelectAndValue_( _Parser, Name, ExpectedValue ) ) != sOK )
 		ERRReturn;
 
-	if ( ( Status = AwaitingToken_( _Browser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
+	if ( ( Status = AwaitingToken_( _Parser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
 		ERRReturn;
 
 
 	Content.Init();
 
-	if ( ( Status = RetrieveTree_( _Browser, Content ) ) != sOK)
+	if ( ( Status = RetrieveTree_( _Parser, Content ) ) != sOK)
 		ERRReturn;
 
 
 	TrueValue.Init();
 
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
-		Browser = NewBrowser( _Repository, _Variables, _Directives );
+		Parser = NewParser( _Repository, _Variables, _Directives );
 
-		Status = Browser->InitWithContent( Content, _LocalizedFileName, Coord, _Directory );
+		Status = Parser->InitWithContent( Content, _LocalizedFileName, Coord, _Directory );
 	}
 ERRErr
-	if ( Browser != NULL ) {
-		delete Browser;
-		Browser = NULL;
+	if ( Parser != NULL ) {
+		delete Parser;
+		Parser = NULL;
 	}
 ERREnd
 	if ( Status != sOK ) {
-		if ( Browser != NULL ) {
-			delete Browser;
-			Browser = NULL;
+		if ( Parser != NULL ) {
+			delete Parser;
+			Parser = NULL;
 		}
 	}
 ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::_HandlePreprocessorDirective(
+status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 	const str::string_ &DirectiveName,
-	_extended_browser___ *&Browser )
+	_extended_parser___ *&Parser )
 {
-	Browser = NULL;
+	Parser = NULL;
 
 	switch ( GetDirective_( DirectiveName, _Directives ) ) {
 	case dDefine:
-		return _HandleDefineDirective( Browser );
+		return _HandleDefineDirective( Parser );
 		break;
 	case dBloc:
 		ERRc();	// Traité en amont.
 		break;
 	case dExpand:
-		return _HandleExpandDirective( Browser );
+		return _HandleExpandDirective( Parser );
 		break;
 	case dSet:
-		return _HandleSetDirective( Browser );
+		return _HandleSetDirective( Parser );
 		break;
 	case dIfeq:
-		return _HandleIfeqDirective( Browser );
+		return _HandleIfeqDirective( Parser );
 		break;
 	default:
 		return sUnknownDirective;
@@ -694,9 +694,9 @@ static epeios::row__ ExtractAttributeName_(
 	return Row;
 }
 
-status__ xpp::_extended_browser___::_HandleAttributeDirective(
+status__ xpp::_extended_parser___::_HandleAttributeDirective(
 	const str::string_ &Parameters,
-	_extended_browser___ *&Browser,
+	_extended_parser___ *&Parser,
 	str::string_ &Data )
 {
 	status__ Status = s_Undefined;
@@ -720,7 +720,7 @@ ERRBegin
 
 	Data.Append( AttributeName );
 	Data.Append( "=\"" );
-	Status = this->_HandleMacroExpand( MacroName, Browser );
+	Status = this->_HandleMacroExpand( MacroName, Parser );
 
 	_AttributeDefinitionInProgress = true;
 ERRErr
@@ -729,7 +729,7 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::InitWithFile(
+status__ xpp::_extended_parser___::InitWithFile(
 	const str::string_ &FileName,
 	const str::string_ &Directory )
 {
@@ -766,7 +766,7 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_browser___::InitWithContent(
+status__ xpp::_extended_parser___::InitWithContent(
 	const str::string_ &Content,
 	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
@@ -794,13 +794,13 @@ ERREpilog
 
 static bso::bool__ StripHeadingSpaces_(
 	xml::token__ PreviousToken,
-	const xml::browser___ &Browser,
+	const xml::parser___ &Parser,
 	const str::string_ &NamespaceWithSeparator )
 {
 	return ( PreviousToken == xml::tValue )
 		   || ( ( PreviousToken == xml::tEndTag )
-		      && ( BelongsToNamespace_( Browser.TagName(), NamespaceWithSeparator )
-			  || ( Browser.Token() == xml::tEndTag ) ) );
+		      && ( BelongsToNamespace_( Parser.TagName(), NamespaceWithSeparator )
+			  || ( Parser.Token() == xml::tEndTag ) ) );
 }
 
 static void StripHeadingSpaces_( str::string_ &Data )
@@ -809,8 +809,8 @@ static void StripHeadingSpaces_( str::string_ &Data )
 		Data.Remove( Data.First() );
 }
 
-status__ xpp::_extended_browser___::Handle(
-	_extended_browser___ *&Browser,
+status__ xpp::_extended_parser___::Handle(
+	_extended_parser___ *&Parser,
 	str::string_ &Data )
 {
 	status__ Status = s_Undefined;
@@ -818,7 +818,7 @@ status__ xpp::_extended_browser___::Handle(
 	xml::token__ PreviousToken = xml::t_Undefined;
 	bso::bool__ StripHeadingSpaces = false;
 
-	Browser = NULL;
+	Parser = NULL;
 
 	if ( _AttributeDefinitionInProgress ) {
 		Data.Append( '"' );
@@ -827,19 +827,19 @@ status__ xpp::_extended_browser___::Handle(
 
 	while ( Continue ) {
 		Continue = false;
-		PreviousToken = _Browser.Token();
-		switch ( _Browser.Browse() ) {
+		PreviousToken = _Parser.Token();
+		switch ( _Parser.Parse() ) {
 		case  xml::tProcessingInstruction:
 			if ( _IgnorePreprocessingInstruction )
-					_Browser.PurgeDumpData();
+					_Parser.PurgeDumpData();
 			Continue = true;
 			break;
 		case xml::tStartTag:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
-				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc ) {
-					Status = _HandlePreprocessorDirective( _Browser.TagName(), Browser );
+			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
+				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc ) {
+					Status = _HandlePreprocessorDirective( _Parser.TagName(), Parser );
 					
-					if ( Browser == NULL )
+					if ( Parser == NULL )
 						Continue = true;
 				} else
 					Continue = true;
@@ -847,27 +847,27 @@ status__ xpp::_extended_browser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tAttribute:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) ) {
-				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc )
+			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) ) {
+				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
 					ERRc();
 				else {
 //					Status = sUnexpectedAttribute;
 //					Tous les attributs sont acceptés (et ignorés), notamment les 'xmlns:...'. Ils ne sont cependant pas reportés sur le flux de sortie.
 					Status = sOK;
-					_Browser.PurgeDumpData();
+					_Parser.PurgeDumpData();
 				}
-			} else if ( BelongsToNamespace_( _Browser.AttributeName(), _Directives.NamespaceWithSeparator ) ) {
-				if ( GetDirective_( _Browser.AttributeName(), _Directives ) == dAttribute ) {
-					_Browser.PurgeDumpData();
-					Status = _HandleAttributeDirective( _Browser.Value(), Browser, Data );
+			} else if ( BelongsToNamespace_( _Parser.AttributeName(), _Directives.NamespaceWithSeparator ) ) {
+				if ( GetDirective_( _Parser.AttributeName(), _Directives ) == dAttribute ) {
+					_Parser.PurgeDumpData();
+					Status = _HandleAttributeDirective( _Parser.Value(), Parser, Data );
 				} else
 					Status = sUnknownDirective;
 			} else 
 				Status = sOK;
 			break;
 		case xml::tStartTagClosed:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
-				if ( GetDirective_( _Browser.TagName(), _Directives ) != dBloc )
+			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
+				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
 					ERRc();
 				else
 					Continue = true;
@@ -875,10 +875,10 @@ status__ xpp::_extended_browser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tEndTag:
-			if ( BelongsToNamespace_( _Browser.TagName(), _Directives.NamespaceWithSeparator ) )
-				switch ( GetDirective_( _Browser.TagName(), _Directives ) ) {
+			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
+				switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
 				case dBloc:
-					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
+					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
 					Continue = true;
 					break;
 				default:
@@ -886,7 +886,7 @@ status__ xpp::_extended_browser___::Handle(
 					break;
 				}
 			else {
-				StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
+				StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
 				Status = sOK;
 			}
 			break;
@@ -894,14 +894,14 @@ status__ xpp::_extended_browser___::Handle(
 			Status = sOK;
 			break;
 		case xml::tProcessed:
-//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Browser, _Directives.NamespaceWithSeparator );
+//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
 			Status = s_Pending;
 			break;
 		case xml::tError:
-			Status = Convert_( _Browser.Status() );
+			Status = Convert_( _Parser.Status() );
 			break;
 		case xml::tComment:
-			_Browser.PurgeDumpData();
+			_Parser.PurgeDumpData();
 			Continue = true;
 			break;
 		default:
@@ -913,8 +913,8 @@ status__ xpp::_extended_browser___::Handle(
 			Continue = false;
 	}
 
-	if ( Browser == NULL ) {
-		Data.Append( _Browser.DumpData() );
+	if ( Parser == NULL ) {
+		Data.Append( _Parser.DumpData() );
 
 		if ( StripHeadingSpaces )
 			StripHeadingSpaces_( Data );
@@ -923,44 +923,44 @@ status__ xpp::_extended_browser___::Handle(
 	return Status;
 }
 
-void xpp::_preprocessing_iflow_functions___::_DeleteBrowsers( void )
+void xpp::_preprocessing_iflow_functions___::_DeleteParsers( void )
 {
-	if ( _CurrentBrowser != NULL )
-		delete _CurrentBrowser;
+	if ( _CurrentParser != NULL )
+		delete _CurrentParser;
 
-	while ( _Browsers.Amount() )
-		delete _Browsers.Pop();
+	while ( _Parsers.Amount() )
+		delete _Parsers.Pop();
 }
 
 mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 	mdr::size__ Maximum,
 	mdr::datum__ *Buffer )
 {
-	_extended_browser___ *Browser = NULL;
+	_extended_parser___ *Parser = NULL;
 	mdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
 	mdr::size__ CumulativeRed = PonctualRed;
 
 
-	while ( ( CumulativeRed == 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentBrowser != NULL ) ) {
+	while ( ( CumulativeRed == 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentParser != NULL ) ) {
 		_Data.Init();
 		_Position = 0;
 
-		Browser = NULL;
+		Parser = NULL;
 
-		_Status = _Browser().Handle( Browser, _Data );
+		_Status = _Parser().Handle( Parser, _Data );
 
 		while ( _Status == s_Pending ) {
 #ifdef XPP_DBG
-			if ( Browser != NULL )
+			if ( Parser != NULL )
 				ERRc();
 #endif
-			delete _CurrentBrowser;
-			_CurrentBrowser = NULL;
+			delete _CurrentParser;
+			_CurrentParser = NULL;
 
-			if ( _Browsers.Amount() )
-				_CurrentBrowser = _Browsers.Pop();
+			if ( _Parsers.Amount() )
+				_CurrentParser = _Parsers.Pop();
 
-			_Status = _Browser().Handle( Browser, _Data );
+			_Status = _Parser().Handle( Parser, _Data );
 
 		} 
 		
@@ -970,9 +970,9 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 			break;
 		}
 
-		if ( Browser != NULL ) {
-			_Browsers.Push( _CurrentBrowser );
-			_CurrentBrowser = Browser;
+		if ( Parser != NULL ) {
+			_Parsers.Push( _CurrentParser );
+			_CurrentParser = Parser;
 		}
 
 		PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
@@ -996,30 +996,30 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 ERRBegin
 	PFlow.Init( IFlow, Directory, Namespace );
 	XFlow.Init( PFlow );
 
-	Browser.Init( XFlow, xml::ehKeep );
+	Parser.Init( XFlow, xml::ehKeep );
 
 	while ( Continue ) {
-		switch( Browser.Browse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
+		switch( Parser.Parse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
 		case xml::tProcessingInstruction:
-			Writer.GetFlow() << Browser.DumpData();
+			Writer.GetFlow() << Parser.DumpData();
 			
 			if ( Writer.GetOutfit() == xml::oIndent )
 				Writer.GetFlow() << txf::nl;
 
 			break;
 		case xml::tStartTag:
-			Writer.PushTag( Browser.TagName() );
+			Writer.PushTag( Parser.TagName() );
 			break;
 		case xml::tAttribute:
-			Writer.PutAttribute( Browser.AttributeName(), Browser.Value() );
+			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
 			break;
 		case xml::tValue:
-			Writer.PutValue( Browser.Value() );
+			Writer.PutValue( Parser.Value() );
 			break;
 		case xml::tEndTag:
 			Writer.PopTag();

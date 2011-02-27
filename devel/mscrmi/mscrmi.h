@@ -80,8 +80,8 @@ namespace mscrmi {
 	E_ROW( row__ );
 
 	typedef bso::ulong__ xaddress__;	// 'eXtended address'.
-	// 0 - 29 : adresse du paramètre.
-	// 30 - 31 : taille du 'stencil', en octets.
+										// 0 - 29 : adresse du paramètre.
+										// 30 - 31 : taille du 'stencil', en octets.
 	typedef bso::ulong__ address__;
 	typedef bso::ulong__ segment__;
 	typedef bso::ulong__ offset__;	
@@ -158,8 +158,16 @@ namespace mscrmi {
 
 	E_AUTO( adata )
 
+	void Print(
+		const adata_ &Data,
+		txf::text_oflow__ &Flow );
+
 	typedef ctn::E_XMCONTAINER_( adata_ ) adata_set_;
 	E_AUTO( adata_set );
+
+	void Print(
+		const adata_set_ &DataSet,
+		txf::text_oflow__ &Flow );
 
 #define MSCRMI_MASK( size, pos )	( ( ~0UL >> ( 32 - ( size ) ) ) << ( pos ) )
 
@@ -438,27 +446,27 @@ namespace mscrmi {
 		const midi_implementation_ &Implementation,
 		xml::writer_ &Writer );
 
-	enum fill_status__ {
-		fsOK,
-		fsBrowserError,	// Une erreur s'est prioduite durant le parsage. Consulter le 'browser' pour connaître l'erreur.
-		fsUnexpectedTag,
-		fsAttributeDefinedTwice,
-		fsUnexpectedAttribute,
-		fsMissingAttribute,
-		fsBadValue,
-		fs_amount,
-		fs_Undefined
+	enum parse_status__ {
+		psOK,
+		psParserError,	// Une erreur s'est produite durant le 'parsage'. Consulter le 'parser' pour connaître l'erreur.
+		psUnexpectedTag,
+		psAttributeAlreadyDefined,
+		psUnexpectedAttribute,
+		psMissingAttribute,
+		psBadValue,
+		ps_amount,
+		ps_Undefined
 	};
 
-	const char *Label( fill_status__ Status );
+	const char *Label( parse_status__ Status );
 
-	fill_status__ Fill(
-		xml::browser___ &Browser,
+	parse_status__ Parse(
+		xml::parser___ &Parser,
 		const midi_implementation_ &Implementation,
 		adata_set_ &DataSet );
 
-	fill_status__ Fill(
-		xml::browser___ &Browser,
+	parse_status__ Parse(
+		xml::parser___ &Parser,
 		midi_implementation_ &Implementation );
 
 	typedef ctn::E_XCONTAINER_( midi_implementation_ ) midi_implementations_;
@@ -468,8 +476,8 @@ namespace mscrmi {
 		const midi_implementations_ &Implementations,
 		xml::writer_ &Writer );
 
-	fill_status__ Fill(
-		xml::browser___ &Browser,
+	parse_status__ Parse(
+		xml::parser___ &Parser,
 		midi_implementations_ &Implementations );
 
 	void RequestData(
@@ -556,7 +564,7 @@ namespace mscrmi {
 		xs_Undefined
 	};
 
-	extraction_status__ ExtractData(
+	extraction_status__ Extract(
 		flw::iflow__ &Flow,
 		const str::string_ &ModelID,
 		mscmdm::origin__ Origin,
@@ -564,7 +572,7 @@ namespace mscrmi {
 		data_ &Data );
 
 
-	extraction_status__ RetrieveData(
+	extraction_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		address__ Address,
@@ -572,21 +580,21 @@ namespace mscrmi {
 		const str::string_ &ModelID,
 		adata_ &Data );
 
-	extraction_status__ RetrieveDataSet(
+	extraction_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		const blocs_ &Blocs,
 		const str::string_ &ModelID,
 		adata_set_ &Data );
 
-	void SendData(
-		const str::string_ &ModelID,
+	void Send(
 		const adata_ &Data,
+		const str::string_ &ModelID,
 		flw::oflow__ &Flow );
 
-	void SendData(
-		const str::string_ &ModelID,
+	void Send(
 		const adata_set_ &DataSet,
+		const str::string_ &ModelID,
 		flw::oflow__ &Flow );
 
 

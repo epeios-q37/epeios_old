@@ -1,6 +1,12 @@
 $Id$
 
-24/02/011 :
+27/02/2011 :
+	- GENERAL :
+		- Adapatation modifications 'XML'.
+	- XML :
+		- Renommage 'browse[r]' en 'parse[r]'.
+
+24/02/2011 :
 	- FIL :	
 		- Les fichiers étaient ouverts jusqu'à présent en lecture seule ou en lecture écriture; dorénavatn, ils sont ouverts en lecture seule lorsque nécessaire.
 

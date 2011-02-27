@@ -473,7 +473,7 @@ inline static status__ GetTagValue_(
 		ERRReturn;\
 	}
 
-token__ xml::browser___::Browse( int TokenToReport )
+token__ xml::parser___::Parse( int TokenToReport )
 {
 ERRProlog
 	bso::bool__ OnlySpaces = false, Continue = true, TEOX = true;	// 'TEOX' : Test EOX.
@@ -891,12 +891,12 @@ status__ xml::Parse(
 {
 	status__ Status = s_Undefined;
 ERRProlog
-	browser___ Browser;
+	parser___ Parser;
 	str::string TagName, AttributeName, Value;	
 	bso::bool__ Stop = false;
 	xml::dump Dump;
 ERRBegin
-	Browser.Init( UserFlow, EntitiesHandling );
+	Parser.Init( UserFlow, EntitiesHandling );
 
 	while ( !Stop ) {
 		TagName.Init();
@@ -904,7 +904,7 @@ ERRBegin
 		Value.Init();
 		Dump.PurgeData();
 
-		switch ( Browser.Browse( TagName, AttributeName, Value, Dump, Status ) ) {
+		switch ( Parser.Parse( TagName, AttributeName, Value, Dump, Status ) ) {
 		case tProcessingInstruction:
 			Stop = !Callback.XMLProcessingInstruction( Dump );
 			break;

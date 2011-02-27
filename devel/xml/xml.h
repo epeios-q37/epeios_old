@@ -292,7 +292,7 @@ namespace xml {
 		eh_Default = ehReplace,
 	};
 
-	class browser___
+	class parser___
 	{
 	private:
 		_context__ _Context;
@@ -321,11 +321,11 @@ namespace xml {
 
 			_Tags.reset( P );
 		}
-		browser___( void )
+		parser___( void )
 		{
 			reset( false );
 		}
-		virtual ~browser___( void )
+		virtual ~parser___( void )
 		{
 			reset();
 		}
@@ -345,8 +345,8 @@ namespace xml {
 
 			_EntitiesHandling = EntitiesHandling;
 		}
-		token__  Browse( int TokenToReport = tfAll );
-		token__ Browse(
+		token__  Parse( int TokenToReport = tfAll );
+		token__ Parse(
 			str::string_ &TagName,
 			str::string_ &AttributeName,
 			str::string_ &Value,	// Contient la valeur d'une balise ('tag') our d'un attribut, en fonction de la valeur retournée ('tTag' ou 'tAttribute').
@@ -354,7 +354,7 @@ namespace xml {
 			status__ &Status,
 			int TokenToReport = tfAll )	// 'Status' initialisé seulement si valeur retournée == 'tError'.
 		{
-			token__ Token = Browse( TokenToReport );
+			token__ Token = Parse( TokenToReport );
 
 			TagName = _TagName;
 			AttributeName = _AttributeName;

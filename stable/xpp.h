@@ -348,38 +348,38 @@ namespace xpp {
 
 	typedef _variables	_variables_;
 
-	class _extended_browser___
+	class _extended_parser___
 	{
 	private:
 		flf::file_iflow___ _FFlow;
 		str::string _MacroContent;
 		flx::E_STRING_IFLOW__ _SFlow;
 		xtf::extended_text_iflow__ _XFlow;
-		xml::browser___ _Browser;
+		xml::parser___ _Parser;
 		_repository_ &_Repository;
 		_variables_ &_Variables;
 		_qualified_preprocessor_directives___ &_Directives;
-		str::string _LocalizedFileName;	// Si le 'browser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
+		str::string _LocalizedFileName;	// Si le 'parser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
-		status__ _HandleDefineDirective( _extended_browser___ *&Browser );
+		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
-			_extended_browser___ *&Browser );
+			_extended_parser___ *&Parser );
 		status__ _HandleFileExpand(
 			const str::string_ &FileName,
-			_extended_browser___ *&Browser );
-		status__ _HandleExpandDirective( _extended_browser___ *&Browser );
-		status__ _HandleSetDirective( _extended_browser___ *&Browser );
-		status__ _HandleIfeqDirective( _extended_browser___ *&Browser );
+			_extended_parser___ *&Parser );
+		status__ _HandleExpandDirective( _extended_parser___ *&Parser );
+		status__ _HandleSetDirective( _extended_parser___ *&Parser );
+		status__ _HandleIfeqDirective( _extended_parser___ *&Parser );
 		status__ _HandleAttributeDirective(
 			const str::string_ &Parameters,
-			_extended_browser___ *&Browser,
+			_extended_parser___ *&Parser,
 			str::string_ &Data );
 		status__ _HandlePreprocessorDirective(
 			const str::string_ &DirectiveName,
-			_extended_browser___ *&Browser );
+			_extended_parser___ *&Parser );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -391,11 +391,11 @@ namespace xpp {
 			_XFlow.reset( P );
 			_LocalizedFileName.reset( P );
 			_Directory.reset( P );
-			_Browser.reset( P );
+			_Parser.reset( P );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
 		}
-		_extended_browser___(
+		_extended_parser___(
 			_repository_ &Repository,
 			_variables_ &Variables,
 			_qualified_preprocessor_directives___ &Directives )
@@ -405,7 +405,7 @@ namespace xpp {
 		{
 			reset( true );
 		}
-		~_extended_browser___( void )
+		~_extended_parser___( void )
 		{
 			reset();
 		}
@@ -417,7 +417,7 @@ namespace xpp {
 			// _Repository.Init();
 			// _Tags.Init();
 
-			_Browser.Init( XFlow, xml::ehKeep );
+			_Parser.Init( XFlow, xml::ehKeep );
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
 			_IgnorePreprocessingInstruction = false;
@@ -434,39 +434,39 @@ namespace xpp {
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory );
 		status__ Handle(
-			_extended_browser___ *&Browser,
+			_extended_parser___ *&Parser,
 			str::string_ &Data );
 		const str::string_ &DumpData_( void ) const
 		{
-			return _Browser.DumpData();
+			return _Parser.DumpData();
 		}
 		const xtf::coord__ &DumpCoord( void ) const
 		{
-			return _Browser.DumpCoord();
+			return _Parser.DumpCoord();
 		}
 		const xtf::coord__ &Coord( void ) const
 		{
-			return _Browser.Flow().Coord();
+			return _Parser.Flow().Coord();
 		}
 		E_RODISCLOSE__( str::string_, LocalizedFileName );
 	};
 
-	typedef stk::E_BSTACK_(_extended_browser___ *) _xbrowser_stack_;
-	E_AUTO( _xbrowser_stack );
+	typedef stk::E_BSTACK_(_extended_parser___ *) _xparser_stack_;
+	E_AUTO( _xparser_stack );
 
 	typedef fwf::iflow_functions___ _iflow_functions___;
 
-	inline _extended_browser___ *NewBrowser(
+	inline _extended_parser___ *NewParser(
 		_repository_ &Repository,
 		_variables_ &Variables,
 		_qualified_preprocessor_directives___ &Directives )
 	{
-		_extended_browser___ *Browser = new _extended_browser___( Repository, Variables, Directives );
+		_extended_parser___ *Parser = new _extended_parser___( Repository, Variables, Directives );
 
-		if ( Browser == NULL )
+		if ( Parser == NULL )
 			ERRa();
 
-		return Browser;
+		return Parser;
 	}
 
 	class _preprocessing_iflow_functions___
@@ -479,24 +479,24 @@ namespace xpp {
 		_variables _Variables;
 		str::string _Data;
 		mdr::size__ _Position;	// Position du premier caractère non lu dans le '_Data'.
-		_xbrowser_stack _Browsers;
-		_extended_browser___ *_CurrentBrowser;
-		void _DeleteBrowsers( void );
-		_extended_browser___ &_Browser( void )
+		_xparser_stack _Parsers;
+		_extended_parser___ *_CurrentParser;
+		void _DeleteParsers( void );
+		_extended_parser___ &_Parser( void )
 		{
 #ifdef XPP_DBG
-			if ( _CurrentBrowser == NULL )
+			if ( _CurrentParser == NULL )
 				ERRu();
 #endif
-			return *_CurrentBrowser;
+			return *_CurrentParser;
 		}
-		const _extended_browser___ &_Browser( void ) const
+		const _extended_parser___ &_Parser( void ) const
 		{
 #ifdef XPP_DBG
-			if ( _CurrentBrowser == NULL )
+			if ( _CurrentParser == NULL )
 				ERRu();
 #endif
-			return *_CurrentBrowser;
+			return *_CurrentParser;
 		}
 	protected:
 		virtual mdr::size__ FWFRead(
@@ -508,7 +508,7 @@ namespace xpp {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				_DeleteBrowsers();
+				_DeleteParsers();
 			}
 
 			_Repository.reset( P );
@@ -517,8 +517,8 @@ namespace xpp {
 			_Data.reset( P );
 			_Position = 0;
 			_iflow_functions___::reset( P );
-			_Browsers.reset( P );
-			_CurrentBrowser = NULL;
+			_Parsers.reset( P );
+			_CurrentParser = NULL;
 		}
 		_preprocessing_iflow_functions___( void )
 		{
@@ -534,26 +534,26 @@ namespace xpp {
 			const str::string_ &Directory,
 			const str::string_ &Namespace )
 		{
-			_DeleteBrowsers();
+			_DeleteParsers();
 			_Repository.Init();
 			_Variables.Init();
 			_Directives.Init( Namespace );
 			_Data.Init();
 			_Position = 0;
 			_iflow_functions___::Init( ThreadSafety );
-			_CurrentBrowser = NewBrowser( _Repository, _Variables, _Directives );
-			_Browsers.Init();
-			if ( _Browser().Init( XFlow, str::string(), Directory ) != sOK )
+			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
+			_Parsers.Init();
+			if ( _Parser().Init( XFlow, str::string(), Directory ) != sOK )
 				ERRc();
 		}
 		E_RODISCLOSE__( status__, Status );
 		const xtf::coord__ &Coord( void ) const
 		{
-			return _Browser().Coord();
+			return _Parser().Coord();
 		}
 		const str::string_ &LocalizedFileName( void ) const
 		{
-			return _Browser().LocalizedFileName();
+			return _Parser().LocalizedFileName();
 		}
 	};
 

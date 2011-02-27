@@ -82,7 +82,7 @@ ERRProlog
 	xpp::preprocessing_iflow___ PFlow;
 	xtf::extended_text_iflow__ XFlow;
 	FNM_BUFFER___ Buffer;
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 	bso::bool__ Continue = true;
 	int TokenFlags = 0;
 ERRBegin
@@ -99,17 +99,17 @@ ERRBegin
 
 	XFlow.Init( PFlow );
 
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
 	TokenFlags |= xml::tfValue;
 
 	while ( Continue )
-		switch ( Browser.Browse( TokenFlags ) ) {
+		switch ( Parser.Parse( TokenFlags ) ) {
 		case xml::tValue:
-			cout << Browser.DumpData() << txf::commit;
+			cout << Parser.DumpData() << txf::commit;
 			break;
 		case xml::tProcessed:
-			cout << Browser.DumpData() << txf::commit;
+			cout << Parser.DumpData() << txf::commit;
 			Continue = false;
 			break;
 		case xml::tError:

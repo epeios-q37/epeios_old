@@ -127,9 +127,9 @@ ERRProlog
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
 	xpp::preprocessing_iflow___ XPPFlow;
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 	mscrmi::midi_implementations Implementations;
-	mscrmi::fill_status__ Status = mscrmi::fs_Undefined;
+	mscrmi::parse_status__ Status = mscrmi::ps_Undefined;
 	lcl::locale Locale;
 	str::string Message;
 	xml::writer Writer;
@@ -139,17 +139,17 @@ ERRBegin
 	FFlow.EOFD( XTF_EOXT );
 	XPPFlow.Init( FFlow, str::string( "" ) );
 	XFlow.Init( XPPFlow );
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
 	Implementations.Init();
 
-	Status = mscrmi::Fill( Browser, Implementations );
+	Status = mscrmi::Parse( Parser, Implementations );
 
 	switch ( Status ) {
-	case mscrmi::fsOK:
+	case mscrmi::psOK:
 		break;
-	case mscrmi::fsBrowserError:
-		if ( Browser.Status() == xml::sOK )
+	case mscrmi::psParserError:
+		if ( Parser.Status() == xml::sOK )
 			ERRc();
 
 		Message.Init();
@@ -185,8 +185,8 @@ ERRProlog
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
 	xpp::preprocessing_iflow___ XPPFlow;
-	xml::browser___ Browser;
-	mscrmi::fill_status__ Status = mscrmi::fs_Undefined;
+	xml::parser___ Parser;
+	mscrmi::parse_status__ Status = mscrmi::ps_Undefined;
 	lcl::locale Locale;
 	str::string Message;
 ERRBegin
@@ -194,15 +194,15 @@ ERRBegin
 	FFlow.EOFD( XTF_EOXT );
 	XPPFlow.Init( FFlow, str::string( "" ) );
 	XFlow.Init( XPPFlow );
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
-	Status = mscrmi::Fill( Browser, Implementation );
+	Status = mscrmi::Parse( Parser, Implementation );
 
 	switch ( Status ) {
-	case mscrmi::fsOK:
+	case mscrmi::psOK:
 		break;
-	case mscrmi::fsBrowserError:
-		if ( Browser.Status() == xml::sOK )
+	case mscrmi::psParserError:
+		if ( Parser.Status() == xml::sOK )
 			ERRc();
 
 		Message.Init();
@@ -246,7 +246,7 @@ ERRBegin
 	IFlow.Start();
 #endif
 	Data.Init();
-	mscrmi::RetrieveDataSet( OFlow, IFlow, Blocs, ModelID, DataSet );
+	mscrmi::Retrieve( OFlow, IFlow, Blocs, ModelID, DataSet );
 ERRErr
 ERREnd
 ERREpilog
@@ -316,7 +316,7 @@ ERRBegin
 	IFlow.Start();
 #endif
 	Data.Init();
-	mscrmi::RetrieveData( OFlow, IFlow, 0x03000000, 20, str::string( "\x0\x0\x39", 3 ), Data );
+	mscrmi::Retrieve( OFlow, IFlow, 0x03000000, 20, str::string( "\x0\x0\x39", 3 ), Data );
 ERRErr
 ERREnd
 ERREpilog
@@ -329,13 +329,13 @@ void RetrieveSettings(
 ERRProlog
 	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XFlow;
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 ERRBegin
 	Flow.Init( "Settings.xml" );
 	XFlow.Init( Flow );
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
-	mscrmi::Fill( Browser, Implementation, DataSet );
+	mscrmi::Parse( Parser, Implementation, DataSet );
 ERRErr
 ERREnd
 ERREpilog
@@ -348,8 +348,9 @@ void Send(
 ERRProlog
 	mscmdd::midi_oflow___<> Flow;
 ERRBegin
+//	Flow.Init( 1 );
 	Flow.Init( 5 );
-	mscrmi::SendData( Implementation.ModelID, DataSet, Flow );
+	mscrmi::Send( DataSet, Implementation.ModelID, Flow );
 ERRErr
 ERREnd
 ERREpilog
