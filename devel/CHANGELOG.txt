@@ -1,5 +1,9 @@
 $Id$
 
+28/02/2011 :
+	- LCL :
+		- Rajout 'LCL_CASE'.
+
 27/02/2011 :
 	- GENERAL :
 		- Adapatation modifications 'XML'.

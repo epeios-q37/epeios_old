@@ -278,11 +278,7 @@ ERREnd
 ERREpilog
 }
 
-#define CASE( label )\
-	case ps##label:\
-	return #label;\
-	break;
-
+#define CASE( label )	LCL_CASE( label, ps )
 
 const char *mscrmi::Label( parse_status__ Status )
 {
@@ -301,6 +297,29 @@ const char *mscrmi::Label( parse_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 
 }
+
+#undef CASE
+
+const str::string_ &mscrmi::Translate(
+	parse_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "MSCRMI_" );
+
+	MessageLabel.Append( Label( Status ) );
+
+	Locale.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
 
 static bso::bool__ ConvertModelID_(
 	const str::string_ &RawModelID,
@@ -1195,13 +1214,52 @@ ERREpilog
 	return Size;
 }
 
-static extraction_status__  Extract_(
+#define CASE( label )	LCL_CASE( label, ts )
+
+const char *mscrmi::Label( transmission_status__ Status )
+{
+	switch( Status ) {
+	CASE( ChecksumError )
+	CASE( IncorrectData )
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+#undef CASE
+
+const str::string_ &mscrmi::Translate(
+	transmission_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "MSCRMI_" );
+
+	MessageLabel.Append( Label( Status ) );
+
+	Locale.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
+
+static transmission_status__  Extract_(
 	const mscmdm::data_ &RawData,
 	const str::string_ &ModelID,
 	address__ &Address,
 	data_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	epeios::row__ Row = RawData.First();
 	bso::size__ Counter = 0;
@@ -1221,17 +1279,17 @@ ERRBegin
 	}
 
 	if ( Row == NONE ) {
-		Status = xsBadData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 
 	if ( Buffer != Header ) {
-		Status = xsIncorrectData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 
 	if ( Checksum_( RawData, Row, RawData.Previous( RawData.Last() ) ) != RawData( RawData.Last() ) ) {
-		Status =  xsChecksumError;
+		Status =  tsChecksumError;
 		ERRReturn;
 	}
 
@@ -1240,7 +1298,7 @@ ERRBegin
 	while ( Counter-- ) {
 
 		if ( Row == NONE ) {
-			Status = xsBadData;
+			Status = tsIncorrectData;
 			ERRReturn;
 		}
 
@@ -1250,13 +1308,13 @@ ERRBegin
 	}
 
 	if ( Row == NONE ) {
-		Status = xsBadData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 	
 	Data.Append( RawData, Row, RawData.Previous( RawData.Last() ) );
 
-	Status = xsOK;
+	Status = tsOK;
 ERRErr
 ERREnd
 ERREpilog
@@ -1513,14 +1571,14 @@ void mscrmi::Fill(
 }
 
 
-extraction_status__ mscrmi::Extract(
+transmission_status__ mscrmi::Extract(
 	flw::iflow__ &Flow,
 	const str::string_ &ModelID,
 	mscmdm::origin__ Origin,
 	address__ &Address,
 	data_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	mscmdm::data RawData;
 	epeios::row__ Row = NONE;
@@ -1528,17 +1586,17 @@ ERRBegin
 	RawData.Init();
 	ExtractSysEx_( Flow, Origin, RawData );
 
-	if ( ( Status = Extract_( RawData, ModelID, Address, Data ) ) != xsOK )
+	if ( ( Status = Extract_( RawData, ModelID, Address, Data ) ) != tsOK )
 		ERRReturn;
 
-	Status = xsOK;
+	Status = tsOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-extraction_status__ mscrmi::Retrieve(
+transmission_status__ mscrmi::Retrieve(
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
 	address__ Address,
@@ -1546,7 +1604,7 @@ extraction_status__ mscrmi::Retrieve(
 	const str::string_ &ModelID,
 	adata_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 	mscmdm::size__ HandledSize = Size + Data.Amount();
 
 	RequestData( ModelID, Address, Size, OFlow );
@@ -1554,29 +1612,29 @@ extraction_status__ mscrmi::Retrieve(
 	Data.Address() = MSCRMI_UNDEFINED_ADDRESS;
 
 	if ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Data.Address(), Data ) ) != xsOK )
+		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
 			return Status;
 
 	if ( Data.Address() != Address )
 		ERRf();
 
 	while ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Address, Data ) ) != xsOK )
+		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Address, Data ) ) != tsOK )
 			return Status;
 
-	Status = xsOK;
+	Status = tsOK;
 
 	return Status;
 }
 
-extraction_status__ mscrmi::Retrieve(
+transmission_status__ mscrmi::Retrieve(
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
 	const blocs_ &Blocs,
 	const str::string_ &ModelID,
 	adata_set_ &DataSet )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	epeios::row__ Row = NONE;
 	adata Data;
@@ -1586,7 +1644,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		Data.Init();
 
-		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, ModelID, Data ) ) != xsOK )
+		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, ModelID, Data ) ) != tsOK )
 			ERRReturn;
 
 		DataSet.Append( Data );

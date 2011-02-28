@@ -66,6 +66,13 @@ extern class ttr_tutor &LCLTutor;
 
 #define LCL_DEFAULT_TAG_MARKER	'%'
 
+// Facilite la gestion des messages.
+#define LCL_CASE( label, prefix )\
+	case prefix##label:\
+	return #label;\
+	break;
+
+
 namespace lcl {
 	using rgstry::error__;
 	using rgstry::error_details_;

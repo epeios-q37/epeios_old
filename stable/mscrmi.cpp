@@ -57,18 +57,62 @@ public:
 
 #include "mscmdm.h"
 
+#include "tht.h"
+#include "cio.h"
+
 using namespace mscrmi;
 
-using xml::browser___;
+void mscrmi::Print(
+	const adata_ &Data,
+	txf::text_oflow__ &Flow )
+{
+	char Buffer[]= "12345678";
+	epeios::row__ Row = Data.First();
 
-// Encodage pour flux MIDI.
+	sprintf( Buffer, "%08lX", Data.Address() );
+	Flow << Buffer << " : ";
+
+	while ( Row != NONE ) {
+		sprintf( Buffer, "%02lX", (bso::ulong__)Data( Row ) );
+
+		Flow << Buffer << txf::pad;
+
+		Row = Data.Next( Row );
+	}
+}
+
+void mscrmi::Print(
+	const adata_set_ &DataSet,
+	txf::text_oflow__ &Flow )
+{
+	ctn::E_CMITEM( adata_ ) Data;
+	epeios::row__ Row = DataSet.First();
+
+	Data.Init( DataSet );
+
+	while ( Row != NONE ) {
+		Print( Data( Row ), Flow );
+
+		Flow << txf::nl;
+
+		Row = DataSet.Next( Row );
+	}
+
+}
+
+
+using xml::parser___;
+
+
 static inline bso::ulong__ Encode_( bso::ulong__ Value )
+// Encodage pour flux MIDI.
 {
 	return ( Value & 0x7f ) | ( ( Value & 0x3f80) << 1 ) | ( ( Value & 0x1fc000 ) << 2 ) | ( ( Value & 0xfe00000 ) << 3 );
 }
 
-// Decodage d'un flux MIDI.
+
 static inline bso::ulong__ Decode_( bso::ulong__ Value )
+// Decodage d'un flux MIDI.
 {
 	return ( Value & 0x7f ) + ( ( Value & 0x7f00 ) >> 1 ) + ( ( Value & 0x7f0000 ) >> 2 ) + ( ( Value & 0x7f000000 ) >> 3 );
 }
@@ -170,18 +214,18 @@ static inline void Print_(
 	xml::writer_ &Writer )
 {
 	char Address[] = "12345678";
-	bso::integer_buffer__ Buffer;
 
 	Writer.PutAttribute( "Label", Definition.Label );
 
-	sprintf( Address, "%08X", Definition.Address() );
+	sprintf( Address, "%08lX", Definition.Address() );
 	Writer.PutAttribute( "Address", Address );
-
-	sprintf( Address, "%0*X", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
+/*
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
 	Writer.PutAttribute( "Offset", Address );
 
 	if ( Definition.Size() != 0 )
 		Writer.PutAttribute( "Size", bso::Convert( Definition.Size(), Buffer ) );
+*/
 }
 
 typedef stk::E_BSTACK_( row__ ) srows_;
@@ -234,18 +278,14 @@ ERREnd
 ERREpilog
 }
 
-#define CASE( label )\
-	case fs##label:\
-	return #label;\
-	break;
+#define CASE( label )	LCL_CASE( label, ps )
 
-
-const char *mscrmi::Label( fill_status__ Status )
+const char *mscrmi::Label( parse_status__ Status )
 {
 	switch ( Status ) {
-		CASE( BrowserError )
+		CASE( ParserError )
 		CASE( UnexpectedTag )
-		CASE( AttributeDefinedTwice )
+		CASE( AttributeAlreadyDefined )
 		CASE( UnexpectedAttribute )
 		CASE( MissingAttribute )
 		CASE( BadValue )
@@ -257,6 +297,29 @@ const char *mscrmi::Label( fill_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 
 }
+
+#undef CASE
+
+const str::string_ &mscrmi::Translate(
+	parse_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "MSCRMI_" );
+
+	MessageLabel.Append( Label( Status ) );
+
+	Locale.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
 
 static bso::bool__ ConvertModelID_(
 	const str::string_ &RawModelID,
@@ -298,49 +361,6 @@ static bso::bool__ ConvertModelID_(
 	return true;
 }
 
-
-static fill_status__ BrowseImplementationSpecifications_(
-	browser___ &Browser,
-	midi_implementation_ &Implementation )
-{
-	bso::bool__ Continue = true;
-
-	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
-		case xml::tAttribute:
-			if ( Browser.AttributeName() == "ModelID" ) {
-				if ( Implementation.ModelID.Amount() != 0 )
-					return fsAttributeDefinedTwice;
-				if ( !ConvertModelID_( Browser.Value(), Implementation.ModelID ) )
-					return fsBadValue;
-			} else if ( Browser.AttributeName() == "ModelLabel" ) {
-				if ( Implementation.ModelLabel.Amount() != 0 )
-					return fsAttributeDefinedTwice;
-				Implementation.ModelLabel = Browser.Value();
-			} else
-				return fsUnexpectedAttribute;
-			break;
-		case xml::tStartTagClosed:
-			Continue = false;
-			break;
-		case xml::tProcessed:
-			ERRc();
-			break;
-		case xml::tError:
-			return fsBrowserError;
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
-
-	if ( ( Implementation.ModelID.Amount() == 0 ) || ( Implementation.ModelLabel.Amount() == 0 ) )
-		return fsMissingAttribute;
-
-	return fsOK;
-}
-
 static xaddress__ HandleAddress_(
 	xaddress__ Address,
 	const str::string_ &Value )
@@ -376,38 +396,46 @@ static xaddress__ HandleAddress_(
 typedef ctn::E_XMCONTAINER_( str::string_ ) labels_;
 E_AUTO( labels );
 
-static fill_status__ BrowseParametersSpecifications_(
-	browser___ &Browser,
-	xaddress__ &Address,
-	row__ &GroupRow,
-	midi_implementation_ &Implementation )
+class callback__
 {
-	fill_status__ Status = fs_Undefined;
+public:
+	virtual parse_status__ Handle(
+		const _parameter_core_ &Parameter,
+		const str::string_ &Value ) = 0;
+};
+
+static parse_status__ ParseParametersSpecifications_(
+	parser___ &Parser,
+	xaddress__ &Address,
+	callback__ &Callback )
+{
+	parse_status__ Status = ps_Undefined;
 ERRProlog
 	bso::bool__ NoLabel = true;
 	bso::bool__ Continue = true;
-	parameter_definition Definition;
+	_parameter_core Core;
 	label Label;
+	str::string Value;
 ERRBegin
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
+		switch ( Parser.Parse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == "Address" ) {
-				if ( ( Address = HandleAddress_( Address, Browser.Value() ) ) == MSCRMI_UNDEFINED_ADDRESS ) {
-					Status = fsBadValue;
+			if ( Parser.AttributeName() == "Address" ) {
+				if ( ( Address = HandleAddress_( Address, Parser.Value() ) ) == MSCRMI_UNDEFINED_ADDRESS ) {
+					Status = psBadValue;
 					ERRReturn;
 				}
-			} else if ( Browser.AttributeName() == "Label" ) {
-				if ( Browser.Value().Amount() == 0 ) {
-					Status = fsBadValue;
+			} else if ( Parser.AttributeName() == "Label" ) {
+				if ( Parser.Value().Amount() == 0 ) {
+					Status = psBadValue;
 					ERRReturn;
 				}
 
 				NoLabel = false;
 
-				Label.Init( Browser.Value() );
+				Label.Init( Parser.Value() );
 			} else {
-				Status = fsUnexpectedAttribute;
+				Status = psUnexpectedAttribute;
 				ERRReturn;
 			}
 			break;
@@ -417,7 +445,7 @@ ERRBegin
 		case xml::tProcessed:
 			break;
 		case xml::tError:
-			Status = fsBrowserError;
+			Status = psParserError;
 			ERRReturn;
 			break;
 		default:
@@ -427,71 +455,85 @@ ERRBegin
 	}
 
 	if ( NoLabel ) {
-		Status = fsMissingAttribute;
+		Status = psMissingAttribute;
 		ERRReturn;
 	}
 
-	Status = fsOK;
+	Status = psOK;
 
-	Definition.Init();
+	Core.Init( Label, Address, 0 );
 
-	Definition.Init( Label, Address, 0, GroupRow );
+	Value.Init();
 
-	GroupRow = Implementation.Definitions.Add( Definition );
+	Callback.Handle( Core, Value );
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-static fill_status__ BrowseParameter_(
-	browser___ &Browser,
+static parse_status__ ParseParameter_(
+	parser___ &Parser,
 	xaddress__ &Address,
 	size__ &Size,
-	row__ &GroupRow,
-	parameter_definition_ &Definition )
+	callback__ &Callback )
 {
-	fill_status__ Status = fs_Undefined;
+	parse_status__ Status = ps_Undefined;
 ERRProlog
 	bso::bool__ Continue = true;
 	label Label;
+	_parameter_core Core;
+	str::string Value;
 ERRBegin
 	Label.Init();
+	Value.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == "Label" ) {
+			if ( Parser.AttributeName() == "Label" ) {
 				if ( Label.Amount() != 0 ) {
-					Status = fsAttributeDefinedTwice;
+					Status = psAttributeAlreadyDefined;
 					ERRReturn;
 				}
 
-				Label = Browser.Value();
+				Label = Parser.Value();
 
 				if ( Label.Amount() == 0 ) {
-					Status = fsBadValue;
+					Status = psBadValue;
 					ERRReturn;
 				}
-			} else if ( Browser.AttributeName() == "Address" ) {
-				if ( ( Address = HandleAddress_( Address, Browser.Value() ) ) == MSCRMI_UNDEFINED_ADDRESS )
-					return fsBadValue;
-			} else if ( Browser.AttributeName() == "Size" ) {
+			} else if ( Parser.AttributeName() == "Address" ) {
+				if ( ( Address = HandleAddress_( Address, Parser.Value() ) ) == MSCRMI_UNDEFINED_ADDRESS )
+					return psBadValue;
+			} else if ( Parser.AttributeName() == "Size" ) {
 				  epeios::row__ Error = NONE;
 
-				  Size = Browser.Value().ToUB( &Error );
+				  Size = Parser.Value().ToUB( &Error );
 
 				  if ( Error != NONE ) {
-					  Status = fsBadValue;
+					  Status = psBadValue;
 					  ERRReturn;
 				  }
 
 				  if ( Size == 0 ) {
-					  Status = fsBadValue;
+					  Status = psBadValue;
 					  ERRReturn;
 				  }
+			} else if ( Parser.AttributeName() == "Value" ) {
+				if ( Value.Amount() != 0 ) {
+					Status = psAttributeAlreadyDefined;
+					ERRReturn;
+				}
+
+				Value = Parser.Value();
+
+				if ( Value.Amount() == 0 ) {
+					Status = psBadValue;
+					ERRReturn;
+				}
 			} else {
-				Status = fsUnexpectedAttribute;
+				Status = psUnexpectedAttribute;
 				ERRReturn;
 			}
 			break;
@@ -502,7 +544,7 @@ ERRBegin
 			ERRc();
 			break;
 		case xml::tError:
-			return fsBrowserError;
+			return psParserError;
 			break;
 		default:
 			ERRc();
@@ -511,13 +553,15 @@ ERRBegin
 	}
 
 	if( Label.Amount() == 0 ) {
-		Status = fsMissingAttribute;
+		Status = psMissingAttribute;
 		ERRReturn;
 	}
 
-	Status = fsOK;
+	Status = psOK;
 
-	Definition.Init( Label, Address, Size, GroupRow );
+	Core.Init( Label, Address, Size );
+
+	Callback.Handle( Core, Value );
 
 	Address = Sum_( Address, Size );
 
@@ -528,40 +572,37 @@ ERREpilog
 
 }
 
-static fill_status__ BrowseParameters_(
-	browser___ &Browser,
+static parse_status__ ParseParameters_(
+	parser___ &Parser,
 	xaddress__ &Address,
 	size__ &Size,
-	row__ &GroupRow,
-	midi_implementation_ &Implementation )
+	callback__ &Callback )
 {
-	fill_status__ Status = fs_Undefined;
+	parse_status__ Status = ps_Undefined;
 ERRProlog
 	bso::bool__ Continue = true;
-	parameter_definition Definition;
+	_parameter_core Core;
+	str::string Value;
 ERRBegin
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == "Parameters" ) {
-				if ( ( Status = BrowseParametersSpecifications_( Browser, Address, GroupRow, Implementation ) ) != fsOK )
+			if ( Parser.TagName() == "Parameters" ) {
+				if ( ( Status = ParseParametersSpecifications_( Parser, Address, Callback ) ) != psOK )
 					ERRReturn;
 
-				if ( ( Status = BrowseParameters_( Browser, Address, Size, GroupRow, Implementation ) ) != fsOK )
+				if ( ( Status = ParseParameters_( Parser, Address, Size, Callback ) ) != psOK )
 					ERRReturn;
 
-				if ( ( GroupRow = Implementation.Definitions( GroupRow ).GroupRow() ) == NONE )
-					ERRc();
+				Core.Init();
+				Value.Init();
 
-				Implementation.Definitions.Flush();
-			} else if ( Browser.TagName() == "Parameter" ) {
-				Definition.Init();
-				if ( ( Status = BrowseParameter_( Browser, Address, Size, GroupRow, Definition ) ) != fsOK )
+				Callback.Handle( Core, Value );
+			} else if ( Parser.TagName() == "Parameter" ) {
+				if ( ( Status = ParseParameter_( Parser, Address, Size, Callback ) ) != psOK )
 					ERRReturn;
-
-				Implementation.Definitions.Add( Definition );
 			} else {
-				Status = fsUnexpectedTag;
+				Status = psUnexpectedTag;
 				ERRReturn;
 			}
 
@@ -573,7 +614,7 @@ ERRBegin
 			ERRc();
 			break;
 		case xml::tError:
-			return fsBrowserError;
+			return psParserError;
 			break;
 		default:
 			ERRc();
@@ -581,49 +622,52 @@ ERRBegin
 		}
 	}
 
-	Status = fsOK;
+	Status = psOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-static fill_status__ BrowseImplementation_( 
-	browser___ &Browser,
+static parse_status__ ParseParameters_(
+	parser___ &Parser,
+	callback__ &Callback )
+{
+	xaddress__ Address = 0;
+	size__ Size = 1;
+
+	return ParseParameters_( Parser, Address, Size, Callback );
+}
+
+static parse_status__ ParseImplementationSpecifications_(
+	parser___ &Parser,
 	midi_implementation_ &Implementation )
 {
-	fill_status__ Status = fs_Undefined;
-ERRProlog
-	xaddress__ Address = 0;
-	row__ GroupRow = NONE;
 	bso::bool__ Continue = true;
-	size__ Size = 1;
-ERRBegin
-	while( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
-		case xml::tStartTag:
-			if ( Browser.TagName() == "Parameters" ) {
-				if ( ( Status = BrowseParametersSpecifications_( Browser, Address, GroupRow, Implementation ) ) != fsOK )
-					ERRReturn;
 
-				if ( ( Status = BrowseParameters_( Browser, Address, Size, GroupRow, Implementation ) ) != fsOK )
-					ERRReturn;
-
-				if ( ( GroupRow = Implementation.Definitions( GroupRow ).GroupRow() ) != NONE )
-					ERRc();
-
-				Implementation.Definitions.Flush();
-			} else {
-				Status = fsUnexpectedTag;
-				ERRReturn;
-			}
-
+	while ( Continue ) {
+		switch ( Parser.Parse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
+		case xml::tAttribute:
+			if ( Parser.AttributeName() == "ModelID" ) {
+				if ( Implementation.ModelID.Amount() != 0 )
+					return psAttributeAlreadyDefined;
+				if ( !ConvertModelID_( Parser.Value(), Implementation.ModelID ) )
+					return psBadValue;
+			} else if ( Parser.AttributeName() == "ModelLabel" ) {
+				if ( Implementation.ModelLabel.Amount() != 0 )
+					return psAttributeAlreadyDefined;
+				Implementation.ModelLabel = Parser.Value();
+			} else
+				return psUnexpectedAttribute;
 			break;
-		case xml::tEndTag:
+		case xml::tStartTagClosed:
 			Continue = false;
 			break;
+		case xml::tProcessed:
+			ERRc();
+			break;
 		case xml::tError:
-			return fsBrowserError;
+			return psParserError;
 			break;
 		default:
 			ERRc();
@@ -631,38 +675,95 @@ ERRBegin
 		}
 	}
 
-	Status = fsOK;
+	if ( ( Implementation.ModelID.Amount() == 0 ) || ( Implementation.ModelLabel.Amount() == 0 ) )
+		return psMissingAttribute;
 
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
+	return psOK;
 }
 
-fill_status__ mscrmi::Fill(
-	browser___ &Browser,
+class implementation_callback__
+: public callback__
+{
+private:
+	parameter_definitions_ *_Definitions;
+	row__ _GroupRow;
+protected:
+	virtual parse_status__ Handle(
+		const _parameter_core_ &Core,
+		const str::string_ &Value )
+	{
+		parse_status__ Status = ps_Undefined;
+	ERRProlog
+		parameter_definition Definition;
+		row__ GroupRow = NONE;
+	ERRBegin
+		if ( Core.Address() == MSCRMI_UNDEFINED_ADDRESS ) {
+			_GroupRow = _Definitions->Get( _GroupRow ).GroupRow();
+			_Definitions->Flush();
+		} else {
+			Definition.Init( Core, _GroupRow );
+
+			GroupRow = _Definitions->Add( Definition );
+
+			if ( Core.Size() == 0 )
+				_GroupRow = GroupRow;
+		}
+
+		Status = psOK;
+
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Status;
+	}
+public:
+	void reset( bso::bool__ = true )
+	{
+		_Definitions = NULL;
+		_GroupRow = NONE;
+	}
+	implementation_callback__( void )
+	{
+		reset( false );
+	}
+	~implementation_callback__( void )
+	{
+		reset();
+	}
+	void Init( parameter_definitions_ &Definitions )
+	{
+		_Definitions = &Definitions;
+		_GroupRow = NONE;
+	}
+};
+
+parse_status__ mscrmi::Parse(
+	parser___ &Parser,
 	midi_implementation_ &Implementation )
 {
-	fill_status__ Status = fs_Undefined;
+	parse_status__ Status = ps_Undefined;
 ERRProlog
+	implementation_callback__ Callback;
 ERRBegin
-	switch ( Browser.Browse( xml::tfStartTag ) ) {
+	Callback.Init( Implementation.Definitions );
+
+	switch ( Parser.Parse( xml::tfStartTag ) ) {
 	case xml::tStartTag:
-		if ( Browser.TagName() != "MIDIImplementation" ) {
-			Status = fsUnexpectedTag;
+		if ( Parser.TagName() != "MIDIImplementation" ) {
+			Status = psUnexpectedTag;
 			ERRReturn;
 		}
 
-		if ( ( Status = BrowseImplementationSpecifications_( Browser, Implementation ) ) != fsOK )
+		if ( ( Status = ParseImplementationSpecifications_( Parser, Implementation ) ) != psOK )
 			ERRReturn;
 
-		if ( ( Status = BrowseImplementation_( Browser, Implementation ) ) != fsOK )
+		if ( ( Status = ParseParameters_( Parser, Callback ) ) != psOK )
 			ERRReturn;
 
 	case xml::tProcessed:
 		break;
 	case xml::tError:
-		Status = fsBrowserError;
+		Status = psParserError;
 		ERRReturn;
 	default:
 		ERRc();
@@ -675,51 +776,53 @@ ERREpilog
 	return Status;
 }
 
-static fill_status__ BrowseImplementationsSpecifications_(
-	browser___ &Browser,
+static parse_status__ ParseImplementationsSpecifications_(
+	parser___ &Parser,
 	midi_implementations_ &Implementations )
 {
-	switch ( Browser.Browse( xml::tfStartTagClosed ) ) {
+	switch ( Parser.Parse( xml::tfStartTagClosed ) ) {
 	case xml::tStartTagClosed:
 		break;
 	case xml::tProcessed:
 		ERRc();
 		break;
 	case xml::tError:
-		return fsBrowserError;
+		return psParserError;
 		ERRReturn;
 	default:
 		ERRc();
 		break;
 	}
 
-	return fsOK;
+	return psOK;
 }
 
-static fill_status__ BrowseImplementations_(
-	browser___ &Browser,
+static parse_status__ ParseImplementations_(
+	parser___ &Parser,
 	midi_implementations_ &Implementations )
 {
-	fill_status__ Status = fs_Undefined;
+	parse_status__ Status = ps_Undefined;
 ERRProlog
 	midi_implementation Implementation;
 	bso::bool__ Continue = true;
+	implementation_callback__ Callback;
 ERRBegin
 	while ( Continue ) {
-		switch( Browser.Browse( xml::tfStartTag |xml::tfEndTag ) ) {
+		switch( Parser.Parse( xml::tfStartTag |xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == "MIDIImplementation" ) {
+			if ( Parser.TagName() == "MIDIImplementation" ) {
 				Implementation.Init();
+				Callback.Init( Implementation.Definitions );
 
-				if ( ( Status = BrowseImplementationSpecifications_( Browser, Implementation ) ) != fsOK )
+				if ( ( Status = ParseImplementationSpecifications_( Parser, Implementation ) ) != psOK )
 					ERRReturn;
 
-				if ( ( Status = BrowseImplementation_( Browser, Implementation ) ) != fsOK )
+				if ( ( Status = ParseParameters_( Parser, Callback ) ) != psOK )
 					ERRReturn;
 
 				Implementations.Append( Implementation );
 			} else {
-				Status = fsUnexpectedTag;
+				Status = psUnexpectedTag;
 				ERRReturn;
 			}
 			break;
@@ -730,7 +833,7 @@ ERRBegin
 			ERRc();
 			break;
 		case xml::tError:
-			return fsBrowserError;
+			return psParserError;
 			ERRReturn;
 		default:
 			ERRc();
@@ -738,37 +841,37 @@ ERRBegin
 		}
 	}
 
-	Status = fsOK;
+	Status = psOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-fill_status__ mscrmi::Fill(
-	browser___ &Browser,
+parse_status__ mscrmi::Parse(
+	parser___ &Parser,
 	midi_implementations_ &Implementations )
 {
-	fill_status__ Status = fs_Undefined;
+	parse_status__ Status = ps_Undefined;
 ERRProlog
 ERRBegin
-	switch ( Browser.Browse( xml::tfStartTag ) ) {
+	switch ( Parser.Parse( xml::tfStartTag ) ) {
 	case xml::tStartTag:
-		if ( Browser.TagName() != "MIDIImplementations" ) {
-			Status = fsUnexpectedTag;
+		if ( Parser.TagName() != "MIDIImplementations" ) {
+			Status = psUnexpectedTag;
 			ERRReturn;
 		}
 
-		if ( ( Status = BrowseImplementationsSpecifications_( Browser, Implementations ) ) != fsOK )
+		if ( ( Status = ParseImplementationsSpecifications_( Parser, Implementations ) ) != psOK )
 			ERRReturn;
 
-		if ( ( Status = BrowseImplementations_( Browser, Implementations ) ) != fsOK )
+		if ( ( Status = ParseImplementations_( Parser, Implementations ) ) != psOK )
 			ERRReturn;
 
 	case xml::tProcessed:
 		break;
 	case xml::tError:
-		Status = fsBrowserError;
+		Status = psParserError;
 		ERRReturn;
 	default:
 		ERRc();
@@ -780,6 +883,195 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+class settings_callback___
+: public callback__
+{
+private:
+	adata_set_ *_DataSet;
+	adata _Data;
+	const parameter_definitions_ *_Definitions;
+	row__ _Row;
+	row__ _Search( address__ Address ) const
+	{
+		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+		row__ Row = ( _Row == NONE ? _Definitions->First() : _Row );
+
+		Definition.Init( *_Definitions );
+
+		while ( ( Row != NONE ) &&
+			    ( ( Definition( Row ).Address() < Address )
+				   || ( ( Definition( Row ).Size() ) == 0 ) ) )
+			Row = _Definitions->Next( Row );
+
+		return Row;
+	}
+	parse_status__ _Convert( 
+		const str::string_ &Value,
+		size__ Size,
+		data_ &Data )
+	{
+		bso::ulong__ Long;
+		epeios::row__ Error = NONE;
+
+		switch ( Size ) {
+		case 0:
+			ERRc();
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			Long = Encode_( Value.ToUL( &Error, str::b10, ( 0xffffffff >> ( 8 * ( 4 - Size ) ) ) ) );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		if ( Error != NONE )
+			return psBadValue;
+
+		switch ( Size ) {
+		case 0:
+			ERRc();
+			break;
+		case 4:
+			Data.Append( Long >> 24 );
+		case 3:
+			Data.Append( ( Long >> 16 ) & 0xff );
+		case 2:
+			Data.Append( ( Long >> 8 ) & 0xff );
+		case 1:
+			Data.Append( Long & 0xff );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		return psOK;
+	}
+protected:
+	virtual parse_status__ Handle(
+		const _parameter_core_ &Core,
+		const str::string_ &Value )
+	{
+		parse_status__ Status = ps_Undefined;
+	ERRProlog
+		data RawData;
+		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ERRBegin
+		Definition.Init( *_Definitions );
+
+		if ( Core.Size() != 0 ) {
+
+			if ( ( _Row = _Search( Core.Address() ) ) == NONE ) {
+				Status = psBadValue;
+				ERRReturn;
+			}
+
+			if ( Value.Amount() == 0 ) {
+				Status =psBadValue;
+				ERRReturn;
+			}
+
+			RawData.Init();
+
+			_Convert( Value, Definition( _Row ).Size(), RawData );
+
+			if ( _Data.Address() == MSCRMI_UNDEFINED_ADDRESS )
+				_Data.Init( RawData, Core.Address() );
+			else if ( ( ( RawData.Amount() + _Data.Amount() ) > 128 )
+			     || ( Sum_( _Data.Address(), (size__)_Data.Amount() ) != Core.Address() ) ) 
+
+			{
+				_DataSet->Append( _Data );
+				_Data.Init( RawData, Core.Address() );
+			} else {
+				_Data.Append( RawData );
+			}
+		}
+
+		Status = psOK;
+
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Status;
+	}
+public:
+	void reset( bso::bool__ P = true )
+	{
+		if ( P  ) {
+			if ( _Data.Address() != MSCRMI_UNDEFINED_ADDRESS ) {
+				_DataSet->Append( _Data );
+			}
+		}
+
+		_Data.reset( P );
+		_DataSet = NULL;
+		_Definitions = NULL;
+		_Row = NONE;
+
+	}
+	settings_callback___( void )
+	{
+		reset( false );
+	}
+	~settings_callback___( void )
+	{
+		reset();
+	}
+	void Init(
+		adata_set_ &DataSet,
+		const parameter_definitions_ &Definitions )
+	{
+		reset();
+
+		_DataSet = &DataSet;
+		_Definitions = &Definitions;
+	}
+};
+
+
+parse_status__ mscrmi::Parse(
+	parser___ &Parser,
+	const midi_implementation_ &Implementation,
+	adata_set_ &DataSet )
+{
+	parse_status__ Status = ps_Undefined;
+ERRProlog
+	settings_callback___ Callback;
+ERRBegin
+	Callback.Init( DataSet, Implementation.Definitions );
+
+	switch ( Parser.Parse( xml::tfStartTag ) ) {
+	case xml::tStartTag:
+		if ( Parser.TagName() != "Settings" ) {
+			Status = psUnexpectedTag;
+			ERRReturn;
+		}
+
+		if ( ( Status = ParseParameters_( Parser, Callback ) ) != psOK )
+			ERRReturn;
+
+	case xml::tProcessed:
+		break;
+	case xml::tError:
+		Status = psParserError;
+		ERRReturn;
+	default:
+		ERRc();
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 static void ConvertModelID_(
 	const str::string_ &RawModelID,
@@ -922,13 +1214,52 @@ ERREpilog
 	return Size;
 }
 
-static extraction_status__  Extract_(
+#define CASE( label )	LCL_CASE( label, ts )
+
+const char *mscrmi::Label( transmission_status__ Status )
+{
+	switch( Status ) {
+	CASE( ChecksumError )
+	CASE( IncorrectData )
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+#undef CASE
+
+const str::string_ &mscrmi::Translate(
+	transmission_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string MessageLabel;
+ERRBegin
+	MessageLabel.Init( "MSCRMI_" );
+
+	MessageLabel.Append( Label( Status ) );
+
+	Locale.GetTranslation( MessageLabel, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
+
+static transmission_status__  Extract_(
 	const mscmdm::data_ &RawData,
 	const str::string_ &ModelID,
 	address__ &Address,
 	data_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	epeios::row__ Row = RawData.First();
 	bso::size__ Counter = 0;
@@ -948,17 +1279,17 @@ ERRBegin
 	}
 
 	if ( Row == NONE ) {
-		Status = xsBadData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 
 	if ( Buffer != Header ) {
-		Status = xsIncorrectData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 
 	if ( Checksum_( RawData, Row, RawData.Previous( RawData.Last() ) ) != RawData( RawData.Last() ) ) {
-		Status =  xsChecksumError;
+		Status =  tsChecksumError;
 		ERRReturn;
 	}
 
@@ -967,7 +1298,7 @@ ERRBegin
 	while ( Counter-- ) {
 
 		if ( Row == NONE ) {
-			Status = xsBadData;
+			Status = tsIncorrectData;
 			ERRReturn;
 		}
 
@@ -977,13 +1308,13 @@ ERRBegin
 	}
 
 	if ( Row == NONE ) {
-		Status = xsBadData;
+		Status = tsIncorrectData;
 		ERRReturn;
 	}
 	
 	Data.Append( RawData, Row, RawData.Previous( RawData.Last() ) );
 
-	Status = xsOK;
+	Status = tsOK;
 ERRErr
 ERREnd
 ERREpilog
@@ -1065,7 +1396,7 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Definition( Parameter.Row() ).Label );
 
-	sprintf( Address, "%0*X", 2 * ( 4 - _StencilSize( Definition( Parameter.Row() ).S_.Address ) ), Definition( Parameter.Row() ).Offset() );
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition( Parameter.Row() ).S_.Address ) ), Definition( Parameter.Row() ).Offset() );
 	Writer.PutAttribute( "Address", Address );
 
 	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Parameter.Data ) ), Buffer ) );
@@ -1240,14 +1571,14 @@ void mscrmi::Fill(
 }
 
 
-extraction_status__ mscrmi::ExtractData(
+transmission_status__ mscrmi::Extract(
 	flw::iflow__ &Flow,
 	const str::string_ &ModelID,
 	mscmdm::origin__ Origin,
 	address__ &Address,
 	data_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	mscmdm::data RawData;
 	epeios::row__ Row = NONE;
@@ -1255,17 +1586,17 @@ ERRBegin
 	RawData.Init();
 	ExtractSysEx_( Flow, Origin, RawData );
 
-	if ( ( Status = Extract_( RawData, ModelID, Address, Data ) ) != xsOK )
+	if ( ( Status = Extract_( RawData, ModelID, Address, Data ) ) != tsOK )
 		ERRReturn;
 
-	Status = xsOK;
+	Status = tsOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
 
-extraction_status__ mscrmi::RetrieveData(
+transmission_status__ mscrmi::Retrieve(
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
 	address__ Address,
@@ -1273,7 +1604,7 @@ extraction_status__ mscrmi::RetrieveData(
 	const str::string_ &ModelID,
 	adata_ &Data )
 {
-	extraction_status__ Status = xs_Undefined;
+	transmission_status__ Status = ts_Undefined;
 	mscmdm::size__ HandledSize = Size + Data.Amount();
 
 	RequestData( ModelID, Address, Size, OFlow );
@@ -1281,28 +1612,29 @@ extraction_status__ mscrmi::RetrieveData(
 	Data.Address() = MSCRMI_UNDEFINED_ADDRESS;
 
 	if ( Data.Amount() != HandledSize )
-		if ( ( Status = ExtractData( IFlow, ModelID, mscmdm::oDevice, Data.Address(), Data ) ) != xsOK )
+		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
 			return Status;
 
 	if ( Data.Address() != Address )
 		ERRf();
 
 	while ( Data.Amount() != HandledSize )
-		if ( ( Status = ExtractData( IFlow, ModelID, mscmdm::oDevice, Address, Data ) ) != xsOK )
+		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Address, Data ) ) != tsOK )
 			return Status;
 
-	Status = xsOK;
+	Status = tsOK;
 
 	return Status;
 }
 
-extraction_status__ mscrmi::RetrieveDataSet(
+transmission_status__ mscrmi::Retrieve(
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
 	const blocs_ &Blocs,
 	const str::string_ &ModelID,
 	adata_set_ &DataSet )
 {
+	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	epeios::row__ Row = NONE;
 	adata Data;
@@ -1311,22 +1643,71 @@ ERRBegin
 
 	while ( Row != NONE ) {
 		Data.Init();
-		RetrieveData( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, ModelID, Data );
+
+		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, ModelID, Data ) ) != tsOK )
+			ERRReturn;
 
 		DataSet.Append( Data );
 
 		Row = Blocs.Next( Row );
 
-		Sleep( 40 );
+		tht::Suspend( 40 );
 	}
 ERRErr
 ERREnd
 ERREpilog
+	return Status;
 }
 
+void mscrmi::Send(
+	const adata_ &Data,
+	const str::string_ &ModelID,
+	flw::oflow__ &Flow )
+{
+ERRProlog
+	data Message;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Message.Init();
+
+	Put_( Data.Address(), Message );
+	Message.Append( Data );
 
 
+	Flow.Write( "\xf0\x41\x10", 3 );
+	Flow.Write( ModelID.Convert( Buffer ), ModelID.Amount() );
+	Flow.Put( 0x12 );
 
+	Flow.Write( Message.Convert( Buffer ), Message.Amount() );
+	Flow.Put( Checksum_( Message ) );
+
+	Flow.Put( 0xF7 );
+
+	Flow.Commit();
+ERRErr
+
+ERREnd
+ERREpilog
+}
+
+void mscrmi::Send(
+	const adata_set_ &DataSet,
+	const str::string_ &ModelID,
+	flw::oflow__ &Flow )
+{
+	ctn::E_CMITEM( adata_ ) Data;
+	epeios::row__ Row = DataSet.First();
+
+	Data.Init( DataSet );
+
+	while ( Row != NONE ) {
+		Send(Data( Row ),  ModelID, Flow );
+
+		Row = DataSet.Next( Row );
+
+		tht::Suspend( 40 );
+	}
+}
 
 
 /* Although in theory this class is inaccessible to the different modules,

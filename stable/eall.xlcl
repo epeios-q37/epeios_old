@@ -2,8 +2,8 @@
 <!-- $Id$ -->
 <!-- Permet d'inclure à l'aide d'un seul fichier l'ensemble des '.xlcl' relatifs aux bibliothèques Epeios -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<xpp:expand href="exulfkl.xlcl"/>
 	<xpp:expand href="efrdkrn.xlcl"/>
+	<xpp:expand href="exulfkl.xlcl"/>
 	<xpp:expand href="ensxpcm.xlcl"/>
 	<xpp:expand href="ergstry.xlcl"/>
 	<xpp:expand href="exml.xlcl"/>

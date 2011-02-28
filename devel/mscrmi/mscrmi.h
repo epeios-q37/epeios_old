@@ -67,6 +67,7 @@ extern class ttr_tutor &MSCRMITutor;
 #include "lstctn.h"
 #include "xml.h"
 #include "mscmdm.h"
+#include "lcl.h"
 
 namespace mscrmi {
 	typedef str::string_	label_;
@@ -460,6 +461,12 @@ namespace mscrmi {
 
 	const char *Label( parse_status__ Status );
 
+	const str::string_ &Translate(
+		parse_status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
 	parse_status__ Parse(
 		xml::parser___ &Parser,
 		const midi_implementation_ &Implementation,
@@ -555,16 +562,23 @@ namespace mscrmi {
 		Print( Parameters, Implementation.Definitions, Writer );
 	}
 
-	enum extraction_status__ {
-		xsOK,
-		xsChecksumError,
-		xsBadData,
-		xsIncorrectData,
-		sx_amount,
-		xs_Undefined
+	enum transmission_status__ {
+		tsOK,
+		tsChecksumError,
+		tsIncorrectData,
+		tx_amount,
+		ts_Undefined
 	};
 
-	extraction_status__ Extract(
+	const char *Label( transmission_status__ Status );
+
+	const str::string_ &Translate(
+		transmission_status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
+	transmission_status__ Extract(
 		flw::iflow__ &Flow,
 		const str::string_ &ModelID,
 		mscmdm::origin__ Origin,
@@ -572,7 +586,7 @@ namespace mscrmi {
 		data_ &Data );
 
 
-	extraction_status__ Retrieve(
+	transmission_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		address__ Address,
@@ -580,7 +594,7 @@ namespace mscrmi {
 		const str::string_ &ModelID,
 		adata_ &Data );
 
-	extraction_status__ Retrieve(
+	transmission_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		const blocs_ &Blocs,

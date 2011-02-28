@@ -67,6 +67,7 @@ extern class ttr_tutor &MSCRMITutor;
 #include "lstctn.h"
 #include "xml.h"
 #include "mscmdm.h"
+#include "lcl.h"
 
 namespace mscrmi {
 	typedef str::string_	label_;
@@ -80,14 +81,17 @@ namespace mscrmi {
 	E_ROW( row__ );
 
 	typedef bso::ulong__ xaddress__;	// 'eXtended address'.
-	// 0 - 29 : adresse du paramètre.
-	// 30 - 31 : taille du 'stencil', en octets.
+										// 0 - 29 : adresse du paramètre.
+										// 30 - 31 : taille du 'stencil', en octets.
 	typedef bso::ulong__ address__;
 	typedef bso::ulong__ segment__;
 	typedef bso::ulong__ offset__;	
-	typedef bso::ushort__ size__;
 	typedef bso::ulong__ mask__;
 	typedef bso::ulong__ stencil__;
+
+	typedef bso::ushort__ size__;
+	#define MSCRMI_SIZE_MAX	BSO_USHORT_MAX
+
 
 	struct bloc__ {
 		address__ Address;
@@ -117,9 +121,7 @@ namespace mscrmi {
 		}
 		void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				S_.Address = MSCRMI_UNDEFINED_ADDRESS;
-
+			S_.Address = MSCRMI_UNDEFINED_ADDRESS;
 			data_::reset( P );
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
@@ -145,14 +147,28 @@ namespace mscrmi {
 
 			data_::Init();
 		}
+		void Init(
+			const str::string_ &Value,
+			address__ Address = MSCRMI_UNDEFINED_ADDRESS )
+		{
+			data_::Init( Value );
+			S_.Address = Address;
+		}
 		E_RWDISCLOSE_( address__, Address );
 	};
 
 	E_AUTO( adata )
 
+	void Print(
+		const adata_ &Data,
+		txf::text_oflow__ &Flow );
+
 	typedef ctn::E_XMCONTAINER_( adata_ ) adata_set_;
 	E_AUTO( adata_set );
 
+	void Print(
+		const adata_set_ &DataSet,
+		txf::text_oflow__ &Flow );
 
 #define MSCRMI_MASK( size, pos )	( ( ~0UL >> ( 32 - ( size ) ) ) << ( pos ) )
 
@@ -211,8 +227,7 @@ namespace mscrmi {
 
 	inline address__ _Address( xaddress__ Address )
 	{
-		mask__ Mask = MSCRMI_ADDRESS_MASK;
-		return Address & MSCRMI_ADDRESS_MASK;
+		return Address & ( Address == MSCRMI_UNDEFINED_ADDRESS ? 0xffffffff : MSCRMI_ADDRESS_MASK );
 	}
 
 	inline segment__ _Segment( xaddress__ Address )
@@ -225,17 +240,16 @@ namespace mscrmi {
 		return _Address( Address ) & ~_Stencil( Address );
 	}
 
-	class parameter_definition_
+	class _parameter_core_
 	{
 	public:
 		struct s {
 			label_::s Label;
 			xaddress__ Address;
-			size__ Size;
-			row__ GroupRow;	// Position du groupe de paramètres (paramètre de taill nulle) auquel il appartient.
+			size__ Size;	// Si == 0, correspond à un groupe de poaramètres.
 		} &S_;
 		label_ Label;
-		parameter_definition_( s &S )
+		_parameter_core_( s &S )
 		: S_( S ),
 		  Label( S.Label )
 		{}
@@ -244,7 +258,6 @@ namespace mscrmi {
 			Label.reset( P );
 			S_.Address = MSCRMI_UNDEFINED_ADDRESS;
 			S_.Size = 0;
-			S_.GroupRow = NONE;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -254,12 +267,11 @@ namespace mscrmi {
 		{
 			Label.plug( MM );
 		}
-		parameter_definition_ &operator =( const parameter_definition_ &PD )
+		_parameter_core_ &operator =( const _parameter_core_ &PC )
 		{
-			Label = PD.Label;
-			S_.Address = PD.S_.Address;
-			S_.Size = PD.S_.Size;
-			S_.GroupRow = PD.S_.GroupRow;
+			Label = PC.Label;
+			S_.Address = PC.S_.Address;
+			S_.Size = PC.S_.Size;
 
 			return *this;
 		}
@@ -268,18 +280,15 @@ namespace mscrmi {
 			Label.Init();
 			S_.Address = MSCRMI_UNDEFINED_ADDRESS;
 			S_.Size = 0;
-			S_.GroupRow = NONE;
 		}
 		void Init(
 			const label_ &Label,
 			xaddress__ Address,
-			size__ Size,
-			row__ GroupRow )
+			size__ Size )
 		{
 			this->Label.Init( Label );
 			S_.Address = Address;
 			S_.Size = Size;
-			S_.GroupRow = GroupRow;
 		}
 		address__ Address( void ) const
 		{
@@ -294,6 +303,68 @@ namespace mscrmi {
 			return _Offset( S_.Address );
 		}
 		E_RODISCLOSE_( size__, Size )
+	};
+
+	E_AUTO( _parameter_core );
+
+
+
+	class parameter_definition_
+	: public _parameter_core_
+	{
+	public:
+		struct s
+		: public _parameter_core_::s
+		{
+			row__ GroupRow;	// Position du groupe de paramètres (paramètre de taille nulle) auquel il appartient.
+		} &S_;
+		parameter_definition_( s &S )
+		: S_( S ),
+		  _parameter_core_( S )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			_parameter_core_::reset( P );
+			S_.GroupRow = NONE;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			_parameter_core_::plug( MD );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			_parameter_core_::plug( MM );
+		}
+		parameter_definition_ &operator =( const parameter_definition_ &PD )
+		{
+			_parameter_core_::operator =( PD );
+			S_.GroupRow = PD.S_.GroupRow;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			_parameter_core_::Init();
+			S_.GroupRow = NONE;
+		}
+		void Init(
+			const label_ &Label,
+			xaddress__ Address,
+			size__ Size,
+			row__ GroupRow )
+		{
+			_parameter_core_::Init( Label, Address, Size );
+			S_.GroupRow = GroupRow;
+		}
+		void Init(
+			const _parameter_core_ &Core,
+			row__ GroupRow )
+		{
+			_parameter_core_::Init();
+			_parameter_core_::operator =( Core );
+
+			S_.GroupRow = GroupRow;
+		}
 		E_RODISCLOSE_( row__, GroupRow )
 	};
 
@@ -376,22 +447,33 @@ namespace mscrmi {
 		const midi_implementation_ &Implementation,
 		xml::writer_ &Writer );
 
-	enum fill_status__ {
-		fsOK,
-		fsBrowserError,	// Une erreur s'est prioduite durant le parsage. Consulter le 'browser' pour connaître l'erreur.
-		fsUnexpectedTag,
-		fsAttributeDefinedTwice,
-		fsUnexpectedAttribute,
-		fsMissingAttribute,
-		fsBadValue,
-		fs_amount,
-		fs_Undefined
+	enum parse_status__ {
+		psOK,
+		psParserError,	// Une erreur s'est produite durant le 'parsage'. Consulter le 'parser' pour connaître l'erreur.
+		psUnexpectedTag,
+		psAttributeAlreadyDefined,
+		psUnexpectedAttribute,
+		psMissingAttribute,
+		psBadValue,
+		ps_amount,
+		ps_Undefined
 	};
 
-	const char *Label( fill_status__ Status );
+	const char *Label( parse_status__ Status );
 
-	fill_status__ Fill(
-		xml::browser___ &Browser,
+	const str::string_ &Translate(
+		parse_status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
+	parse_status__ Parse(
+		xml::parser___ &Parser,
+		const midi_implementation_ &Implementation,
+		adata_set_ &DataSet );
+
+	parse_status__ Parse(
+		xml::parser___ &Parser,
 		midi_implementation_ &Implementation );
 
 	typedef ctn::E_XCONTAINER_( midi_implementation_ ) midi_implementations_;
@@ -401,8 +483,8 @@ namespace mscrmi {
 		const midi_implementations_ &Implementations,
 		xml::writer_ &Writer );
 
-	fill_status__ Fill(
-		xml::browser___ &Browser,
+	parse_status__ Parse(
+		xml::parser___ &Parser,
 		midi_implementations_ &Implementations );
 
 	void RequestData(
@@ -480,16 +562,23 @@ namespace mscrmi {
 		Print( Parameters, Implementation.Definitions, Writer );
 	}
 
-	enum extraction_status__ {
-		xsOK,
-		xsChecksumError,
-		xsBadData,
-		xsIncorrectData,
-		sx_amount,
-		xs_Undefined
+	enum transmission_status__ {
+		tsOK,
+		tsChecksumError,
+		tsIncorrectData,
+		tx_amount,
+		ts_Undefined
 	};
 
-	extraction_status__ ExtractData(
+	const char *Label( transmission_status__ Status );
+
+	const str::string_ &Translate(
+		transmission_status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
+	transmission_status__ Extract(
 		flw::iflow__ &Flow,
 		const str::string_ &ModelID,
 		mscmdm::origin__ Origin,
@@ -497,7 +586,7 @@ namespace mscrmi {
 		data_ &Data );
 
 
-	extraction_status__ RetrieveData(
+	transmission_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		address__ Address,
@@ -505,12 +594,23 @@ namespace mscrmi {
 		const str::string_ &ModelID,
 		adata_ &Data );
 
-	extraction_status__ RetrieveDataSet(
+	transmission_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		const blocs_ &Blocs,
 		const str::string_ &ModelID,
 		adata_set_ &Data );
+
+	void Send(
+		const adata_ &Data,
+		const str::string_ &ModelID,
+		flw::oflow__ &Flow );
+
+	void Send(
+		const adata_set_ &DataSet,
+		const str::string_ &ModelID,
+		flw::oflow__ &Flow );
+
 
 }
 

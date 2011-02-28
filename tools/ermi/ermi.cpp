@@ -33,7 +33,7 @@
 #define NAME			"ermi"
 #define VERSION			"0.1.0"
 #define COPYRIGHT_YEARS	"2011"
-#define DESCRIPTION		"(description)"
+#define DESCRIPTION		"Manage settingd from Roland devices"
 #define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
@@ -53,7 +53,8 @@ enum command__ {
 	cHelp,
 	cVersion,
 	cLicense,
-	cDevices,
+	cDevices,	// Diplay available MIDI devices.
+	cRetrieve,	// Retrieve settings from device.
 	c_amount,
 	c_Undefined
 };
@@ -62,8 +63,12 @@ enum option {
 	// o
 };
 
+#define PARAM( name )	CLNARG_STRING_PARAM___( name )
+
 struct parameters {
 	command__ Command;
+	PARAM( din );	// MIDI device in.
+	PARAM( dout );	// MIDI device out.
 	parameters( void )
 	{
 		Command = c_Undefined;
@@ -79,7 +84,9 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false, cout );
 
 	cout << NAME << ' ' << Description.GetCommandLabels( cDevices, "," ) << txf::nl;
-	cout << txf::tab << "displays MIDI out devices id and name." << txf::nl;
+	cout << txf::tab << "displays available MIDI devices id and name." << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve, "," ) << txf::nl;
+	cout << txf::tab << "retrieve settings from device." << txf::nl;
 
 	cout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
@@ -208,7 +215,8 @@ ERRBegin
 			break;
 		}
 		break;
-*/	case cDevices:
+*/
+	case cDevices:
 		switch( Free.Amount() ) {
 		case 0:
 			break;
@@ -219,6 +227,7 @@ ERRBegin
 			break;
 		}
 		break;
+	case cRetrieve:
 	default:
 		ERRc();
 		break;
