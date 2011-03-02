@@ -224,7 +224,7 @@ ERREpilog
 
 void RetrieveDataSet(
 	const mscrmi::blocs_ &Blocs,
-	const str::string_ &ModelID,
+	const mscrmi::identity__ &Identity,
 	mscrmi::adata_set_ &DataSet )
 {
 ERRProlog
@@ -246,7 +246,7 @@ ERRBegin
 	IFlow.Start();
 #endif
 	Data.Init();
-	mscrmi::Retrieve( OFlow, IFlow, Blocs, ModelID, DataSet );
+	mscrmi::Retrieve( OFlow, IFlow, Blocs, Identity, DataSet );
 ERRErr
 ERREnd
 ERREpilog
@@ -275,48 +275,24 @@ ERRProlog
 	mscrmi::blocs Blocs;
 	mscrmi::adata_set DataSet;
 	mscrmi::parameters Parameters;
+	mscrmi::identity__ Identity;
 ERRBegin
 	Implementation.Init();
 	ParseImplementation( Implementation );
+
+	mscrmi::Set( 0x10, Implementation, Identity );
 
 	Blocs.Init();
 	mscrmi::GetBlocs( Implementation, Blocs );
 
 	DataSet.Init();
-	RetrieveDataSet( Blocs, Implementation.ModelID, DataSet );
+	RetrieveDataSet( Blocs, Identity, DataSet );
 
 	Parameters.Init();
 	mscrmi::Fill( DataSet, Implementation, Parameters );
 
 	Print( Parameters, Implementation );
 
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void Communicate( void )
-{
-ERRProlog
-#ifdef LINUX
-	flf::file_iflow___ IFlow;
-	flf::file_oflow___ OFlow;
-#else
-	mscmdd::midi_oflow___<> OFlow;
-	mscmdd::midi_iflow___<> IFlow;
-#endif
-	mscrmi::adata Data;
-ERRBegin
-#ifdef LINUX
-	IFlow.Init( "/dev/midi1" );
-	OFlow.Init( "/dev/midi1", fil::mAppend );
-#else
-	OFlow.Init( 5 );
-	IFlow.Init( 4 );
-	IFlow.Start();
-#endif
-	Data.Init();
-	mscrmi::Retrieve( OFlow, IFlow, 0x03000000, 20, str::string( "\x0\x0\x39", 3 ), Data );
 ERRErr
 ERREnd
 ERREpilog
@@ -347,10 +323,13 @@ void Send(
 {
 ERRProlog
 	mscmdd::midi_oflow___<> Flow;
+mscrmi::identity__ Identity;
 ERRBegin
 //	Flow.Init( 1 );
 	Flow.Init( 5 );
-	mscrmi::Send( DataSet, Implementation.ModelID, Flow );
+
+	mscrmi::Set( 0x10, Implementation, Identity );
+	mscrmi::Send( DataSet, Identity, Flow );
 ERRErr
 ERREnd
 ERREpilog

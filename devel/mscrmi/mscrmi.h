@@ -377,55 +377,65 @@ namespace mscrmi {
 		const parameter_definitions_ &Definitions,
 		xml::writer_ &Writer );
 
+	typedef bso::char__ device_family__[4];
+
+#define MSCRMI_UNDEFINED_DEVICE_FAMILY	"void"
+#define MSCRMI_UNDEFINED_MODEL_ID	"void"
+
+	typedef bso::char__ model_id__[4];
+
 	class midi_implementation_
 	{
 	public:
-		struct s {
-			str::string_::s ModelID;
+		struct s
+		{
+			model_id__ ModelID;
+			bso::ubyte__ ModelIDLength;
 			str::string_::s ModelLabel;
 			parameter_definitions_::s Definitions;
-		};
-		str::string_ ModelID;
+			device_family__ DeviceFamily;
+		} &S_;
 		str::string_ ModelLabel;
 		parameter_definitions_ Definitions;
 		midi_implementation_( s &S )
-		: ModelID( S.ModelID ),
-			ModelLabel( S.ModelLabel ),
-			Definitions( S.Definitions )
+		: S_( S ),
+		  ModelLabel( S.ModelLabel ),
+		  Definitions( S.Definitions )
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			ModelID.reset( P );
 			ModelLabel.reset( P );
 			Definitions.reset( P );
+
+			memcpy( S_.DeviceFamily, MSCRMI_UNDEFINED_DEVICE_FAMILY, sizeof( S_.DeviceFamily ) );
+			S_.ModelIDLength = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			ModelID.plug( MM );
 			ModelLabel.plug( MM );
 			Definitions.plug( MM );
 		}
 		midi_implementation_ &operator=( const midi_implementation_ &MI )
 		{
-			ModelID = MI.ModelID;
 			ModelLabel = MI.ModelLabel;
 			Definitions = MI.Definitions;
+
+			memcpy( S_.DeviceFamily, MI.S_.DeviceFamily, sizeof( S_.DeviceFamily ) );
+
+			memcpy( S_.ModelID, MI.S_.ModelID, sizeof( S_.ModelID ) );
+			S_.ModelIDLength = MI.S_.ModelIDLength;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			ModelID.Init();
 			ModelLabel.Init();
 			Definitions.Init();
-		}
-		void Init(
-			const str::string_ &ModelID,
-			const str::string_ &ModelLabel )
-		{
-			this->ModelID.Init( ModelID );
-			this->ModelLabel.Init( ModelLabel );
-			Definitions.Init();
+
+			memcpy( S_.DeviceFamily, "void", sizeof( S_.DeviceFamily ) );
+
+			S_.ModelIDLength = 0;
+
 		}
 	};
 
@@ -469,12 +479,12 @@ namespace mscrmi {
 
 	parse_status__ Parse(
 		xml::parser___ &Parser,
-		const midi_implementation_ &Implementation,
-		adata_set_ &DataSet );
+		midi_implementation_ &Implementation );
 
 	parse_status__ Parse(
 		xml::parser___ &Parser,
-		midi_implementation_ &Implementation );
+		const midi_implementation_ &Implementation,
+		adata_set_ &DataSet );
 
 	typedef ctn::E_XCONTAINER_( midi_implementation_ ) midi_implementations_;
 	E_AUTO( midi_implementations );
@@ -487,8 +497,35 @@ namespace mscrmi {
 		xml::parser___ &Parser,
 		midi_implementations_ &Implementations );
 
+	typedef bso::ubyte__ device_id__;
+
+	struct identity__
+	{
+		device_id__ DeviceID;
+		model_id__ ModelID;
+		bso::ubyte__ ModelIDLength;
+		identity__( void )
+		{
+			DeviceID = 0;
+			ModelIDLength = 0;
+		}
+	};
+
+	inline void Set(
+		device_id__ DeviceId,
+		const midi_implementation_ &Implementation,
+		identity__ &Identity )
+	{
+		if ( Implementation.S_.ModelIDLength == 0 )
+			ERRu();
+
+		Identity.DeviceID = DeviceId;
+		memcpy( Identity.ModelID, Implementation.S_.ModelID, Implementation.S_.ModelIDLength );
+		Identity.ModelIDLength = Implementation.S_.ModelIDLength;
+	}
+
 	void RequestData(
-		const str::string_ &ModelID,
+		const identity__ &Identify,
 		address__ Address,
 		size__ Size,
 		flw::oflow__ &Flow );
@@ -578,9 +615,15 @@ namespace mscrmi {
 		const lcl::locale_ &Locale,
 		str::string_ &Translation );
 
+	transmission_status__ GetIdentity(
+		device_id__ Id,
+		flw::oflow__ &OFlow,
+		flw::iflow__ &IFlow,
+		device_family__ &DeviceFamily );
+
 	transmission_status__ Extract(
 		flw::iflow__ &Flow,
-		const str::string_ &ModelID,
+		const identity__ &Identity,
 		mscmdm::origin__ Origin,
 		address__ &Address,
 		data_ &Data );
@@ -591,24 +634,24 @@ namespace mscrmi {
 		flw::iflow__ &IFlow,
 		address__ Address,
 		size__ Size,
-		const str::string_ &ModelID,
+		const identity__ &Identity,
 		adata_ &Data );
 
 	transmission_status__ Retrieve(
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,
 		const blocs_ &Blocs,
-		const str::string_ &ModelID,
+		const identity__ &Identity,
 		adata_set_ &Data );
 
 	void Send(
 		const adata_ &Data,
-		const str::string_ &ModelID,
+		const identity__ &Identity,
 		flw::oflow__ &Flow );
 
 	void Send(
 		const adata_set_ &DataSet,
-		const str::string_ &ModelID,
+		const identity__ &Identity,
 		flw::oflow__ &Flow );
 
 

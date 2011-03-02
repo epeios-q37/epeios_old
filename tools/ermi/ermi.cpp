@@ -54,12 +54,15 @@ enum command__ {
 	cVersion,
 	cLicense,
 	cDevices,	// Diplay available MIDI devices.
+	cIdentify,	// Retrieve identity from a device.
 	cRetrieve,	// Retrieve settings from device.
 	c_amount,
 	c_Undefined
 };
 
 enum option {
+	oDIn,	// Device in.
+	oDOut,	// Device out.
 	// o
 };
 
@@ -67,8 +70,8 @@ enum option {
 
 struct parameters {
 	command__ Command;
-	PARAM( din );	// MIDI device in.
-	PARAM( dout );	// MIDI device out.
+	PARAM( DIn );	// MIDI device in.
+	PARAM( DOut );	// MIDI device out.
 	parameters( void )
 	{
 		Command = c_Undefined;
@@ -85,6 +88,8 @@ void PrintUsage( const clnarg::description_ &Description )
 
 	cout << NAME << ' ' << Description.GetCommandLabels( cDevices, "," ) << txf::nl;
 	cout << txf::tab << "displays available MIDI devices id and name." << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cIdentify, "," ) << txf::nl;
+	cout << txf::tab << "displays identity of a MIDI device." << txf::nl;
 	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve, "," ) << txf::nl;
 	cout << txf::tab << "retrieve settings from device." << txf::nl;
 
@@ -131,6 +136,22 @@ ERRBegin
 		Argument.Init();
 
 		switch( Option = Options( P ) ) {
+		case oDIn:
+			Analyzer.GetArgument( Option, Argument );
+			if ( Argument.Amount() == 0 ) {
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oDIn ) << "' option must have an argument!" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			Argument.Convert( Parameters.DIn );
+			break;
+		case oDIn:
+			Analyzer.GetArgument( Option, Argument );
+			if ( Argument.Amount() == 0 ) {
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oDOut ) << "' option must have an argument!" << txf::nl;
+				ERRExit( EXIT_FAILURE );
+			}
+			Argument.Convert( Parameters.DOut );
+			break;
 //		case o:
 		default:
 			ERRc();
@@ -227,7 +248,11 @@ ERRBegin
 			break;
 		}
 		break;
+	case cIdentify:
+
 	case cRetrieve:
+		ERRl();
+		break;
 	default:
 		ERRc();
 		break;
@@ -248,11 +273,15 @@ ERRProlog
 ERRBegin
 	Description.Init();
 
-//	Description.AddCommand( '', "", c );
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( CLNARG_NO_SHORT, "devices", cDevices );
+	Description.AddCommand( CLNARG_NO_SHORT, "identify", cIdentify );
+//	Description.AddCommand( '', "", c );
+
+	Description.AddOption( CLNARG_NO_SHORT, "din", oDIn );
+	Description.AddOption( CLNARG_NO_SHORT, "dout", oDOut );
 //	Description.AddOption( '', "", o );
 
 	Analyzer.Init( argc, argv, Description );
@@ -272,6 +301,8 @@ ERRBegin
 		ERRi();
 		break;
 	case cDevices:
+	case cIdentify:
+	case cRetrieve:
 		Parameters.Command = (command__)Analyzer.GetCommand();
 		break;
 //	case c:
@@ -360,6 +391,22 @@ void DisplayMidiDevices( void )
 	DisplayMidiOutDevices();
 }
 
+void Identify( const parameters &Parameters )
+{
+	int DIn, DOut;
+	epeios::row__ Error = NULL;
+
+	if ( ( Parameters.DIn == NULL ) || ( *Parameters.DIn == 0 ) ) {
+		cerr << "Missing 'Device in' parameter !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	if ( ( Parameters.DOut == NULL ) || ( *Parameters.DOut == 0 ) ) {
+		cerr << "Missing 'Device in' parameter !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+}
+
 void Go( const parameters &Parameters )
 {
 ERRProlog
@@ -369,6 +416,9 @@ ERRBegin
 	switch ( Parameters.Command ) {
 	case cDevices:
 		DisplayMidiDevices();
+		break;
+	case cIdentify:
+		Identify();
 		break;
 	default:
 		ERRc();

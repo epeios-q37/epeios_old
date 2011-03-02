@@ -321,44 +321,44 @@ ERREpilog
 }
 
 
-static bso::bool__ ConvertModelID_(
-	const str::string_ &RawModelID,
-	str::string_ &ModelID )
+static bso::ubyte__ Convert_(
+	const str::string_ &Source,
+	bso::char__ *Target )
 {
-	bso::size__ Amount = RawModelID.Amount();
+	bso::size__ Amount = Source.Amount();
 	bso::ulong__ Value;
 	epeios::row__ Error = NONE;
 
 	if ( Amount == 0 )
-		return false;
+		return 0;
 
 	if ( Amount & 1 )
-		return false;
+		return 0;
 
 	if ( Amount > 8 )
-		return false;
+		return 0;
 
-	Value = RawModelID.ToUL( &Error, str::b16 );
+	Value = Source.ToUL( &Error, str::b16 );
 
 	if ( Error != NONE )
-		return false;
+		return 0;
 
 	switch ( Amount >> 1 ) {
 	case 4:
-		ModelID.Append( (bso::ubyte__)( ( Value & 0xff000000 ) >> 24 ) );
+		Target[3] = ( Value >> 24 ) & 0xff;
 	case 3:
-		ModelID.Append( (bso::ubyte__)( ( Value & 0xff0000 ) >> 16 ) );
+		Target[2] = ( Value >> 16 ) & 0xff;;
 	case 2:
-		ModelID.Append( (bso::ubyte__)( ( Value & 0xff00 ) >> 8 ) );
+		Target[1] = ( Value >> 8 ) & 0xff;
 	case 1:
-		ModelID.Append( (bso::ubyte__)( Value & 0xff ) );
+		Target[0] = Value & 0xff;
 		break;
 	default:
 		ERRc();
 		break;
 	}
 
-	return true;
+	return (bso::ubyte__)( Amount >> 1);
 }
 
 static xaddress__ HandleAddress_(
@@ -649,14 +649,19 @@ static parse_status__ ParseImplementationSpecifications_(
 		switch ( Parser.Parse( xml::tfAttribute | xml::tfStartTagClosed ) ) {
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == "ModelID" ) {
-				if ( Implementation.ModelID.Amount() != 0 )
+				if ( Implementation.S_.ModelIDLength != 0 )
 					return psAttributeAlreadyDefined;
-				if ( !ConvertModelID_( Parser.Value(), Implementation.ModelID ) )
+				if ( ( Implementation.S_.ModelIDLength = Convert_( Parser.Value(), Implementation.S_.ModelID ) ) == 0 )
 					return psBadValue;
 			} else if ( Parser.AttributeName() == "ModelLabel" ) {
 				if ( Implementation.ModelLabel.Amount() != 0 )
 					return psAttributeAlreadyDefined;
 				Implementation.ModelLabel = Parser.Value();
+			} else if ( Parser.AttributeName() == "DeviceFamily" ) {
+				if ( memcmp( Implementation.S_.DeviceFamily, MSCRMI_UNDEFINED_DEVICE_FAMILY, sizeof( Implementation.S_.DeviceFamily ) ) != 0 )
+					return psAttributeAlreadyDefined;
+				if ( Convert_( Parser.Value(), Implementation.S_.DeviceFamily ) == 0 )
+					return psBadValue;
 			} else
 				return psUnexpectedAttribute;
 			break;
@@ -675,7 +680,8 @@ static parse_status__ ParseImplementationSpecifications_(
 		}
 	}
 
-	if ( ( Implementation.ModelID.Amount() == 0 ) || ( Implementation.ModelLabel.Amount() == 0 ) )
+	if ( ( Implementation.S_.ModelIDLength == 0 )
+		 || ( memcmp( Implementation.S_.DeviceFamily, MSCRMI_UNDEFINED_DEVICE_FAMILY, sizeof( Implementation.S_.DeviceFamily ) ) == 0 ) )
 		return psMissingAttribute;
 
 	return psOK;
@@ -1073,22 +1079,19 @@ ERREpilog
 }
 
 
-static void ConvertModelID_(
-	const str::string_ &RawModelID,
-	char *Buffer )
+static void Convert_(
+	const char *Source,
+	bso::ulong__ SourceLength,
+	char *Target )
 {
-	epeios::row__ Row = RawModelID.First();
-
-	if ( RawModelID.Amount() > 4 )
+	if ( SourceLength > 4 )
 		ERRc();
 
-	if ( RawModelID.Amount() == 0 )
-		ERRc();
+	while ( SourceLength-- ) {
+		sprintf( Target, "%02X", *Source );
 
-	while ( Row != NONE ) {
-		sprintf( Buffer + ( *Row << 1 ), "%02X", RawModelID( Row ) );
-
-		Row = RawModelID.Next( Row );
+		Target += 2;
+		Source++;
 	}
 }
 
@@ -1096,13 +1099,16 @@ void mscrmi::Print(
 	const midi_implementation_ &Implementation,
 	xml::writer_ &Writer )
 {
-	char ModelID[] ="12345678";
+	char Buffer[] ="12345678";
 
 	Writer.PushTag( "MIDIImplementation" );
 	Writer.PutAttribute( "Model" , Implementation.ModelLabel );
 
-	ConvertModelID_( Implementation.ModelID, ModelID );
-	Writer.PutAttribute( "ModelID", ModelID );
+	Convert_( Implementation.S_.ModelID, Implementation.S_.ModelIDLength, Buffer );
+	Writer.PutAttribute( "ModelID", Buffer );
+
+	Convert_( Implementation.S_.DeviceFamily, sizeof( Implementation.S_.DeviceFamily ), Buffer );
+	Writer.PutAttribute( "DeviceFamily", Buffer );
 
 	Print( Implementation.Definitions, Writer );
 
@@ -1155,7 +1161,7 @@ static void Put_(
 }
 
 void mscrmi::RequestData(
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	address__ Address,
 	size__ Size,
 	flw::oflow__ &Flow )
@@ -1170,8 +1176,9 @@ ERRBegin
 	Put_( Encode_( Size ), Data );
 
 
-	Flow.Write( "\xf0\x41\x10", 3 );
-	Flow.Write( ModelID.Convert( Buffer ), ModelID.Amount() );
+	Flow.Write( "\xf0\x41", 2 );
+	Flow.Put( Identity.DeviceID );
+	Flow.Write( Identity.ModelID, Identity.ModelIDLength );
 	Flow.Put( 0x11 );
 
 	Flow.Write( Data.Convert( Buffer ), Data.Amount() );
@@ -1255,7 +1262,7 @@ ERREpilog
 
 static transmission_status__  Extract_(
 	const mscmdm::data_ &RawData,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	address__ &Address,
 	data_ &Data )
 {
@@ -1265,8 +1272,9 @@ ERRProlog
 	bso::size__ Counter = 0;
 	str::string Header, Buffer;
 ERRBegin
-	Buffer.Init( "\x41\x10" );
-	Buffer.Append( ModelID );
+	Buffer.Init( "\x41" );
+	Buffer.Append( Identity.DeviceID );
+	Buffer.Append( Identity.ModelID, Identity.ModelIDLength );
 	Buffer.Append( '\x12' );
 
 	Header.Init();
@@ -1570,10 +1578,66 @@ void mscrmi::Fill(
 	Fill_( DataSet, Implementation.Definitions, Parameters );
 }
 
+inline transmission_status__ SendIdentityRequest_(
+	device_id__ Id,
+	flw::oflow__ &Flow )
+{
+	Flow.Write( "\f0e\x7e", 2 );
+	Flow.Put( Id );
+	Flow.Write( "\x0\x01\xF7", 3 );
+
+	return tsOK;
+}
+
+transmission_status__ mscrmi::GetIdentity(
+	device_id__ Id,
+	flw::oflow__ &OFlow,
+	flw::iflow__ &IFlow,
+	device_family__ &DeviceFamily )
+{
+	transmission_status__ Status = ts_Undefined;
+ERRProlog
+	data Data;
+	char Buffer[3];
+ERRBegin
+
+	if ( ( Status = SendIdentityRequest_( Id, OFlow ) ) != tsOK )
+		ERRReturn;
+
+	OFlow.Commit();
+
+	Data.Init();
+
+	ExtractSysEx_( IFlow, mscmdm::oDevice, Data );
+
+	if ( IFlow.Get() != '\x7e' ) {
+		Status =tsIncorrectData;
+		ERRReturn;
+	}
+
+	if ( IFlow.Get() != Id ) {
+		Status = tsIncorrectData;
+		ERRReturn;
+	}
+
+	IFlow.Read( 3, Buffer );
+
+	if ( memcmp( Buffer, "\x06\x02\x01", 3 ) != 0 ) {
+		Status = tsIncorrectData;
+		ERRReturn;
+	}
+
+	IFlow.Read( sizeof( DeviceFamily ), DeviceFamily );
+
+	IFlow.Skip( 4 );	// Software version.
+ERRErr
+ERREnd
+ERREpilog
+}
 
 transmission_status__ mscrmi::Extract(
 	flw::iflow__ &Flow,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	mscmdm::origin__ Origin,
 	address__ &Address,
 	data_ &Data )
@@ -1586,7 +1650,7 @@ ERRBegin
 	RawData.Init();
 	ExtractSysEx_( Flow, Origin, RawData );
 
-	if ( ( Status = Extract_( RawData, ModelID, Address, Data ) ) != tsOK )
+	if ( ( Status = Extract_( RawData, Identity, Address, Data ) ) != tsOK )
 		ERRReturn;
 
 	Status = tsOK;
@@ -1601,25 +1665,25 @@ transmission_status__ mscrmi::Retrieve(
 	flw::iflow__ &IFlow,
 	address__ Address,
 	size__ Size,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	adata_ &Data )
 {
 	transmission_status__ Status = ts_Undefined;
 	mscmdm::size__ HandledSize = Size + Data.Amount();
 
-	RequestData( ModelID, Address, Size, OFlow );
+	RequestData( Identity, Address, Size, OFlow );
 
 	Data.Address() = MSCRMI_UNDEFINED_ADDRESS;
 
 	if ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
+		if ( ( Status = Extract( IFlow, Identity, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
 			return Status;
 
 	if ( Data.Address() != Address )
 		ERRf();
 
 	while ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, ModelID, mscmdm::oDevice, Address, Data ) ) != tsOK )
+		if ( ( Status = Extract( IFlow, Identity, mscmdm::oDevice, Address, Data ) ) != tsOK )
 			return Status;
 
 	Status = tsOK;
@@ -1631,7 +1695,7 @@ transmission_status__ mscrmi::Retrieve(
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
 	const blocs_ &Blocs,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	adata_set_ &DataSet )
 {
 	transmission_status__ Status = ts_Undefined;
@@ -1644,7 +1708,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		Data.Init();
 
-		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, ModelID, Data ) ) != tsOK )
+		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, Identity, Data ) ) != tsOK )
 			ERRReturn;
 
 		DataSet.Append( Data );
@@ -1661,7 +1725,7 @@ ERREpilog
 
 void mscrmi::Send(
 	const adata_ &Data,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	flw::oflow__ &Flow )
 {
 ERRProlog
@@ -1674,8 +1738,9 @@ ERRBegin
 	Message.Append( Data );
 
 
-	Flow.Write( "\xf0\x41\x10", 3 );
-	Flow.Write( ModelID.Convert( Buffer ), ModelID.Amount() );
+	Flow.Write( "\xf0\x41", 2 );
+	Flow.Put( Identity.DeviceID );
+	Flow.Write( Identity.ModelID, Identity.ModelIDLength );
 	Flow.Put( 0x12 );
 
 	Flow.Write( Message.Convert( Buffer ), Message.Amount() );
@@ -1692,7 +1757,7 @@ ERREpilog
 
 void mscrmi::Send(
 	const adata_set_ &DataSet,
-	const str::string_ &ModelID,
+	const identity__ &Identity,
 	flw::oflow__ &Flow )
 {
 	ctn::E_CMITEM( adata_ ) Data;
@@ -1701,7 +1766,7 @@ void mscrmi::Send(
 	Data.Init( DataSet );
 
 	while ( Row != NONE ) {
-		Send(Data( Row ),  ModelID, Flow );
+		Send(Data( Row ),  Identity, Flow );
 
 		Row = DataSet.Next( Row );
 
