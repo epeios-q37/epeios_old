@@ -435,7 +435,10 @@ namespace mscrmi {
 			memcpy( S_.DeviceFamily, "void", sizeof( S_.DeviceFamily ) );
 
 			S_.ModelIDLength = 0;
-
+		}
+		const device_family__ &DeviceFamily( void ) const
+		{
+			return S_.DeviceFamily;
 		}
 	};
 
@@ -499,6 +502,9 @@ namespace mscrmi {
 
 	typedef bso::ubyte__ device_id__;
 
+#	define MSCRMI_UNDEFINED_DEVICE_ID	128		// Une donnée transmise à travers un canal MIDI ne peut être > 127.
+#	define MSCRMI_DEFAULT_DEVICE_ID		0x10	// Réglage d'usine.
+
 	struct identity__
 	{
 		device_id__ DeviceID;
@@ -506,7 +512,7 @@ namespace mscrmi {
 		bso::ubyte__ ModelIDLength;
 		identity__( void )
 		{
-			DeviceID = 0;
+			DeviceID = MSCRMI_UNDEFINED_DEVICE_ID;
 			ModelIDLength = 0;
 		}
 	};
@@ -643,6 +649,10 @@ namespace mscrmi {
 		const blocs_ &Blocs,
 		const identity__ &Identity,
 		adata_set_ &Data );
+
+	epeios::row__ GetCorrespondingMIDIImplementation(
+		const device_family__ &DeviceFamily,
+		const midi_implementations_ &Implementations );
 
 	void Send(
 		const adata_ &Data,

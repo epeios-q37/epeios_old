@@ -26,20 +26,10 @@
 
 #include "err.h"
 #include "cio.h"
-#include "epsmsc.h"
 #include "clnarg.h"
 #include "mscmdd.h"
-
-#define NAME			"ermi"
-#define VERSION			"0.1.0"
-#define COPYRIGHT_YEARS	"2011"
-#define DESCRIPTION		"Manage settingd from Roland devices"
-#define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
-#define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
-#define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
-#define CVS_DETAILS		("$Id$\b " + 5)
+#include "dir.h"
+#include "ermi.h"
 
 /*$RAW$*/
 

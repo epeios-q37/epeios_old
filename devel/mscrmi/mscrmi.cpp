@@ -100,7 +100,6 @@ void mscrmi::Print(
 
 }
 
-
 using xml::parser___;
 
 
@@ -1614,7 +1613,7 @@ ERRBegin
 		Status =tsIncorrectData;
 		ERRReturn;
 	}
-
+	
 	if ( IFlow.Get() != Id ) {
 		Status = tsIncorrectData;
 		ERRReturn;
@@ -1630,9 +1629,12 @@ ERRBegin
 	IFlow.Read( sizeof( DeviceFamily ), DeviceFamily );
 
 	IFlow.Skip( 4 );	// Software version.
+
+	Status = tsOK;
 ERRErr
 ERREnd
 ERREpilog
+	return Status;
 }
 
 transmission_status__ mscrmi::Extract(
@@ -1721,6 +1723,25 @@ ERRErr
 ERREnd
 ERREpilog
 	return Status;
+}
+
+epeios::row__ mscrmi::GetCorrespondingMIDIImplementation(
+	const device_family__ &DeviceFamily,
+	const midi_implementations_ &Implementations )
+{
+	ctn::E_CITEM( midi_implementation_ ) Implementation;
+	epeios::row__ Row = Implementations.First();
+
+	Implementation.Init( Implementations );
+
+	while ( Row != NONE ) {
+		if ( memcmp( Implementation( Row ).DeviceFamily(), DeviceFamily, sizeof( DeviceFamily ) ) == 0 )
+			break;
+
+		Row = Implementations.Next( Row );
+	}
+
+	return Row;
 }
 
 void mscrmi::Send(

@@ -1218,6 +1218,13 @@ namespace rgstry {
 			const str::string_ &PathString,
 			value_ &Value,
 			epeios::row__ *PathErrorRow = NULL ) const;
+		bso::bool__ GetValue(
+			const char *PathString,
+			value_ &Value,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return GetValue( str::string( PathString ), Value, PathErrorRow );
+		}
 		bso::bool__ GetValues(
 			level__ Level,
 			const path_ &Path,
@@ -1237,6 +1244,13 @@ namespace rgstry {
 			const str::string_ &PathString,
 			values_ &Values,
 			epeios::row__ *PathErrorRow = NULL ) const;
+		bso::bool__ GetValues(
+			const char *PathString,
+			values_ &Values,
+			epeios::row__ *PathErrorRow = NULL ) const
+		{
+			return GetValues( str::string( PathString ), Values, PathErrorRow );
+		}
 		void SetValue(
 			level__ Level,
 			const str::string_ &PathString,
@@ -1380,6 +1394,8 @@ namespace rgstry {
 		}
 	};
 
+	E_AUTO( multi_level_registry )
+
 	template <typename registry> inline str::_guint__ _GetUnsigned(
 		const registry &Registry,
 		const str::string_ &Path,
@@ -1414,7 +1430,7 @@ namespace rgstry {
 #endif
 
 #define _M( name, type, min, max )\
-	template <typename registry> inline bso::ulong__ Get##name(\
+	template <typename registry> inline type Get##name(\
 		const registry &Registry,\
 		const str::string_ &Path,\
 		type Default,\

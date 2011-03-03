@@ -1,5 +1,12 @@
 $Id$
 
+03/03/2011 :
+	- MSCMDD :
+		- Ajout variantes au niveau des paramètres de certaines méthodes.
+	- RGSTRY :
+		- Ajout variantes au niveau des paramètres de certaines méthodes.
+		- Correction non prise en compte du type dans la macro '_M(...)'.
+
 28/02/2011 :
 	- LCL :
 		- Rajout 'LCL_CASE'.
@@ -28,7 +35,7 @@ $Id$
 
 13/02/2011 :
 	- FLW :
-		- La taille du cahce pour les objets 'standalone_...' est maintenant passé en paramètre via un 'template'.
+		- La taille du cache pour les objets 'standalone_...' est maintenant passé en paramètre via un 'template'.
 	- MSCMDF :
 		- Adaptation modifications bibliothèques sous-jacentes.
 	- MSCMDM :

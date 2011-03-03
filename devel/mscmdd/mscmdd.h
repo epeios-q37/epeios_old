@@ -209,6 +209,12 @@ namespace mscmdd {
 
 			return _Functions.Init( DeviceId, ErrHandle );
 		}
+		bso::bool__ Init(
+			int DeviceId,
+			err::handling__ ErrHandle )
+		{
+			return Init( DeviceId, FLW_SIZE_MAX, ErrHandle );
+		}
 	};
 
 	struct _data___
@@ -351,7 +357,6 @@ namespace mscmdd {
 		{
 			reset();
 		}
-		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		bso::bool__ Init(
 			int DeviceId,
 			flw::size__ AmountMax = FLW_SIZE_MAX,
@@ -360,6 +365,12 @@ namespace mscmdd {
 			flw::standalone_iflow__<CacheSize>::Init( _Functions, AmountMax );
 
 			return _Functions.Init( DeviceId, ErrHandle );
+		}
+		bso::bool__ Init(
+			int DeviceId,
+			err::handling__ ErrHandle )
+		{
+			return Init( DeviceId, FLW_SIZE_MAX, ErrHandle );
 		}
 		void Start( void )
 		{
