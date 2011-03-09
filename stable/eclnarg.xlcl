@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Translations message="CLNARG_TryHelpCommand">
+		<Translation language="fr">Essayer la commande '--help' pour plus d'informations</Translation>
+		<Translation language="en-US">Try '--help' command for more informations</Translation>
+	</Translations>
+	<Translations message="CLNARG_UnknownOption">
+		<Translation language="fr">option '%1' inconnue</Translation>
+		<Translation language="en-US">unkown '%1' option</Translation>
+	</Translations>
+	<Translations message="CLNARG_MissingOptionArgument">
+		<Translation language="fr">argument manquant pour l'option '%1'</Translation>
+		<Translation language="en-US">msiing argument for '%1' option</Translation>
+	</Translations>
+	<Translations message="CLNARG_UnexpectedOption">
+		<Translation language="fr">Option '%1' inattendue</Translation>
+		<Translation language="en-US">Unexpected '%1' option</Translation>
+	</Translations>
+	<Translations message="CLNARG_WrongNumberOfArgument">
+		<Translation language="fr">Nombre d'arguments incorrect</Translation>
+		<Translation language="en-US">Wrong number of arguments</Translation>
+	</Translations>
+</xpp:bloc>

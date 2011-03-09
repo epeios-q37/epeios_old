@@ -62,6 +62,8 @@ public:
 
 using namespace mscrmi;
 
+using xml::parser___;
+
 void mscrmi::Print(
 	const adata_ &Data,
 	txf::text_oflow__ &Flow )
@@ -99,9 +101,6 @@ void mscrmi::Print(
 	}
 
 }
-
-using xml::parser___;
-
 
 static inline bso::ulong__ Encode_( bso::ulong__ Value )
 // Encodage pour flux MIDI.
@@ -298,26 +297,6 @@ const char *mscrmi::Label( parse_status__ Status )
 }
 
 #undef CASE
-
-const str::string_ &mscrmi::Translate(
-	parse_status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
-	str::string_ &Translation )
-{
-ERRProlog
-	str::string MessageLabel;
-ERRBegin
-	MessageLabel.Init( "MSCRMI_" );
-
-	MessageLabel.Append( Label( Status ) );
-
-	Locale.GetTranslation( MessageLabel, Language, Translation );
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
-}
 
 
 static bso::ubyte__ Convert_(
@@ -638,6 +617,12 @@ static parse_status__ ParseParameters_(
 	return ParseParameters_( Parser, Address, Size, Callback );
 }
 
+static void RevertDeviceFamily_( device_family__ DeviceFamily )
+{
+	tol::Swap( DeviceFamily[0], DeviceFamily[3] );
+	tol::Swap( DeviceFamily[1], DeviceFamily[2] );
+}
+
 static parse_status__ ParseImplementationSpecifications_(
 	parser___ &Parser,
 	midi_implementation_ &Implementation )
@@ -661,6 +646,7 @@ static parse_status__ ParseImplementationSpecifications_(
 					return psAttributeAlreadyDefined;
 				if ( Convert_( Parser.Value(), Implementation.S_.DeviceFamily ) == 0 )
 					return psBadValue;
+				RevertDeviceFamily_( Implementation.S_.DeviceFamily );
 			} else
 				return psUnexpectedAttribute;
 			break;
@@ -1094,6 +1080,18 @@ static void Convert_(
 	}
 }
 
+void mscrmi::ToString(
+	const device_family__ &DeviceFamily,
+	str::string_ &Target )
+{
+	char Buffer[] ="12345678";
+
+	Convert_( DeviceFamily, sizeof( DeviceFamily ), Buffer );
+
+	Target.Append( Buffer );
+
+}
+
 void mscrmi::Print(
 	const midi_implementation_ &Implementation,
 	xml::writer_ &Writer )
@@ -1236,28 +1234,6 @@ const char *mscrmi::Label( transmission_status__ Status )
 }
 
 #undef CASE
-
-const str::string_ &mscrmi::Translate(
-	transmission_status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
-	str::string_ &Translation )
-{
-ERRProlog
-	str::string MessageLabel;
-ERRBegin
-	MessageLabel.Init( "MSCRMI_" );
-
-	MessageLabel.Append( Label( Status ) );
-
-	Locale.GetTranslation( MessageLabel, Language, Translation );
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
-}
-
-
 
 static transmission_status__  Extract_(
 	const mscmdm::data_ &RawData,
@@ -1581,14 +1557,14 @@ inline transmission_status__ SendIdentityRequest_(
 	device_id__ Id,
 	flw::oflow__ &Flow )
 {
-	Flow.Write( "\f0e\x7e", 2 );
+	Flow.Write( "\xf0\x7e", 2 );
 	Flow.Put( Id );
-	Flow.Write( "\x0\x01\xF7", 3 );
+	Flow.Write( "\x06\x01\xF7", 3 );
 
 	return tsOK;
 }
 
-transmission_status__ mscrmi::GetIdentity(
+transmission_status__ mscrmi::GetDeviceFamily(
 	device_id__ Id,
 	flw::oflow__ &OFlow,
 	flw::iflow__ &IFlow,
@@ -1597,7 +1573,8 @@ transmission_status__ mscrmi::GetIdentity(
 	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	data Data;
-	char Buffer[3];
+	epeios::row__ Row = NONE;
+	data Model;
 ERRBegin
 
 	if ( ( Status = SendIdentityRequest_( Id, OFlow ) ) != tsOK )
@@ -1609,26 +1586,22 @@ ERRBegin
 
 	ExtractSysEx_( IFlow, mscmdm::oDevice, Data );
 
-	if ( IFlow.Get() != '\x7e' ) {
+	if ( Data.Amount() != 13 ) {
 		Status =tsIncorrectData;
 		ERRReturn;
 	}
-	
-	if ( IFlow.Get() != Id ) {
+
+	Model.Init( "\x7e" );
+	Model.Append( Id );
+	Model.Append( "\x06\x02\x41" );
+
+
+	if ( str::Compare( Data, Model, Data.First(), Model.First(), Model.Amount() ) != 0 ) {
 		Status = tsIncorrectData;
 		ERRReturn;
 	}
 
-	IFlow.Read( 3, Buffer );
-
-	if ( memcmp( Buffer, "\x06\x02\x01", 3 ) != 0 ) {
-		Status = tsIncorrectData;
-		ERRReturn;
-	}
-
-	IFlow.Read( sizeof( DeviceFamily ), DeviceFamily );
-
-	IFlow.Skip( 4 );	// Software version.
+	Data.Recall( Data.First( Model.Amount() ), sizeof( DeviceFamily ), DeviceFamily );
 
 	Status = tsOK;
 ERRErr

@@ -1,5 +1,8 @@
 $Id$
 
+- 04/03/2011 :
+	- Adaptation modifications bibliothèques sous-jacentes.
+
 - 08/07/2010 :
 	- Adaptation modifications 'XPP'.
 

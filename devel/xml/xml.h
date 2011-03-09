@@ -76,8 +76,7 @@ namespace lcl {
 namespace xml {
 	using xtf::coord__;
 
-	// Code d'erreur retournée par 'Parse()'.
-	// NOTA : Si modifié, modifier 'GetTranslation()' en conséquent, ainsi que le contenu du ficher 'exml.xlc'.
+	// Code d'erreur 'retourné' par 'Parse()'.
 	enum status__ {
 		sOK,
 		sUnexpectedEOF,
@@ -91,13 +90,20 @@ namespace xml {
 		s_Undefined,
 	};
 
-	const char *GetLabel( status__ Status );
+	const char *Label( status__ Status );
 
-	// Label de message préfixé par 'EXML_'.
 	const str::string_ &GetTranslation(
 		status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
+		str::string_ &Translation );
+
+
+	const str::string_ &GetTranslation(
+		status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		const coord__ &Coord,	// Obtenu de 'xtf::extended_text_iflow__'.
 		str::string_ &Translation );
 
 

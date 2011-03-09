@@ -59,6 +59,9 @@ public:
 #include <fstream>
 #include <stdlib.h>
 
+#include "str.h"
+#include "lcl.h"
+
 using namespace fil;
 
 #ifdef IOP__USE_STANDARD_IO
@@ -156,13 +159,13 @@ static inline iop::descriptor__ Open_(
 		Flags |= O_TRUNC | O_CREAT | O_WRONLY;
 		break;
 	case mAppend:
-		Flags |=  O_WRONLY;
+		Flags |= _APPEND | O_WRONLY;
 		break;
 	case mReadWrite:
 		Flags |= O_CREAT | O_RDWR;
 		break;
 	case mReadOnly:
-		Flags |= O_RDONLY | O_RSYNC;
+		Flags |= O_RDONLY;
 		break;
 	default:
 		ERRu();
@@ -219,142 +222,217 @@ ERREpilog
 	return Success;
 }
 
+#define BUFFER___	tol::free_pointer___< char>
 
-rbf fil::CreateBackupFile(
-	const char *NomFichier,
-	hbf Handle,
-	txf::text_oflow__ &Flow,
-	const char *Extension,
-	err::handling__ ErrorHandling )
+static const char* BuildBackupFileName_(
+	const char *FileName,
+	BUFFER___ &Buffer )
 {
-	rbf Etat = rbfOK;
-ERRProlog
-	char *NomFichierSecurite = NULL;
-ERRBegin
-	if ( FileExists( NomFichier ) )
-	{
-		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
-			ERRa();
 
-		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
+	if ( ( Buffer = (char *)malloc( strlen( FileName ) + sizeof( FIL__BACKUP_FILE_EXTENSION  ) + 1 ) ) == NULL )
+		ERRa();
 
-		if ( FileExists( NomFichierSecurite ) )
-			if ( remove( NomFichierSecurite ) )
-				Etat = rbfSuppression;
+	sprintf( Buffer, "%s%s", FileName, FIL__BACKUP_FILE_EXTENSION );
 
-		if ( Etat == rbfOK )
-			if ( Handle == hbfDuplicate )
-			{
-				std::ofstream Out( NomFichierSecurite );
-				std::ifstream In( NomFichier );
-				int C;
-
-				while( Out && In && ( ( C = In.get() ) != EOF ) )
-					Out.put( (char)C );
-
-				Out.close();
-				In.close();
-
-				if ( C != EOF )
-				{
-					Etat = rbfDuplication;
-					remove( NomFichierSecurite );
-				}
-			}
-			else if ( Handle == hbfRename )
-			{
-				if ( rename( NomFichier, NomFichierSecurite ) )
-					Etat = rbfRenaming;
-			}
-			else
-				ERRu();
-	}
-
-	if ( ErrorHandling == err::hThrowException )
-	{
-		switch( Etat ) {
-		case rbfSuppression:
-			Flow << "Backup file creation: error at deletion of '" << NomFichierSecurite << "' file." << txf::nl;
-			ERRu();
-			break;
-		case rbfDuplication:
-			Flow << "Backup file creation: error while duplicating '" << NomFichier << "'." << txf::nl;
-			ERRu();
-			break;
-		case rbfRenaming:
-			Flow << "Backup file creation: error while renaming '" << NomFichier << "' in '" << NomFichierSecurite << "'." << txf::nl;
-			ERRu();
-			break;
-		case rbfOK:
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
-
-ERRErr
-ERREnd
-	if ( NomFichierSecurite )
-		free( NomFichierSecurite );
-ERREpilog
-	return Etat;
+	return FileName;
 }
 
+#define CASE( label )	LCL_CASE( label, bs )
 
+#define CASE_1( label )	LCL_CASE_N( label, bs, 1 )
 
-rbf fil::RecoverBackupFile(
-	const char *NomFichier,
-	txf::text_oflow__ &Flow,
-	const char *Extension,
-	err::handling__ ErrorHandling )
+const char *fil::Label( backup_status__ Status )
 {
-	rbf Etat = rbfOK;
-ERRProlog
-	char *NomFichierSecurite = NULL;
-ERRBegin
-	if ( FileExists( NomFichier ) )
-		if ( remove( NomFichier ) )
-			Etat = rbfSuppression;
-
-	if ( Etat == rbfOK )
-		if ( ( NomFichierSecurite = (char *)malloc( strlen( NomFichier ) + strlen( Extension ) + 1 ) ) == NULL )
-			Etat = rbfAllocation;
-
-	if ( Etat == rbfOK )
-	{
-		sprintf( NomFichierSecurite, "%s%s", NomFichier, Extension );
-
-		if ( FileExists( NomFichierSecurite ) )
-			if ( rename( NomFichierSecurite, NomFichier ) )
-				Etat = rbfRenaming;
+	switch ( Status ) {
+	CASE_1( UnableToRename )
+	CASE_1( UnableToDuplicate )
+	CASE_1( UnableToSuppress )
+	default:
+		ERRu();
+		break;
 	}
 
-	if ( ErrorHandling == err::hThrowException )
-	{
-		switch( Etat ) {
-		case rbfAllocation:
-			Flow << "Backup file recovering: error during memory allocation (is about file '" << NomFichier << "')." << txf::nl;
-			break;
-		case rbfSuppression:
-			Flow << "Backup file recovering: error at suppression of file'" << NomFichier << "'." << txf::nl;
-			break;
-		case rbfRenaming:
-			Flow << "Backup file recovering: error while renaming '" << NomFichierSecurite << "' in '" << NomFichier << "'." << txf::nl;
-			break;
-		case rbfOK:
-			break;
-		default:
-			ERRc();
-			break;
-		}
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+const str::string_ &fil::GetTranslation(
+	backup_status__ Status,
+	const char *FileName,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string Message;
+	const char *BackupFileName = NULL;
+	BUFFER___ Buffer;
+ERRBegin
+	Message.Init();
+
+	Locale.GetTranslation( Label( Status ), Language, "EFIL_", Translation );
+
+	switch ( Status ) {
+	case bsUnableToRename:
+	case bsUnableToDuplicate:
+		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
+		break;
+	case bsUnableToSuppress:
+		lcl::ReplaceTag( Message, 1, str::string( BuildBackupFileName_( FileName, Buffer ) ) );
+		break;
+	default:
+		ERRu();
+		break;
 	}
 ERRErr
 ERREnd
-	if ( NomFichierSecurite )
-		free( NomFichierSecurite );
 ERREpilog
-	return Etat;
+	return Translation;
+}
+
+backup_status__ fil::CreateBackupFile(
+	const char *NomFichier,
+	backup_mode__ Mode,
+	err::handling__ ErrorHandling )
+{
+	backup_status__ Status = bs_Undefined;
+ERRProlog
+	const char *NomFichierSecurite = NULL;
+	BUFFER___ Buffer;
+ERRBegin
+	if ( FileExists( NomFichier ) )
+	{
+		NomFichierSecurite = BuildBackupFileName_( NomFichier, Buffer );
+
+		if ( FileExists( NomFichierSecurite ) )
+			if ( remove( NomFichierSecurite ) ) {
+				Status = bsUnableToSuppress;
+				ERRReturn;
+			}
+
+		if ( Mode == bmDuplicate )
+		{
+			std::ofstream Out( NomFichierSecurite );
+			std::ifstream In( NomFichier );
+			int C;
+
+			while( Out && In && ( ( C = In.get() ) != EOF ) )
+				Out.put( (char)C );
+
+			Out.close();
+			In.close();
+
+			if ( C != EOF )
+			{
+				Status = bsUnableToDuplicate;
+				remove( NomFichierSecurite );
+				ERRReturn;
+			}
+		}
+		else if ( Mode == bmRename )
+		{
+			if ( rename( NomFichier, NomFichierSecurite ) )
+				Status = bsUnableToRename;
+		}
+		else
+			ERRu();
+	}
+
+	Status = bsOK;
+
+ERRErr
+ERREnd
+	if ( Status != bsOK )
+		if ( ErrorHandling == err::hThrowException )
+			ERRd();
+ERREpilog
+	return Status;
+}
+
+#undef CASE
+#undef CASE_1
+
+#define CASE( label )	LCL_CASE( label, bs )
+
+#define CASE_1( label )	LCL_CASE_N( label, rs, 1 )
+
+const char *fil::Label( recover_status__ Status )
+{
+	switch ( Status ) {
+	CASE_1( UnableToRename )
+	CASE_1( UnableToSuppress )
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+const str::string_ &fil::GetTranslation(
+	recover_status__ Status,
+	const char *FileName,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string Message;
+	const char *BackupFileName = NULL;
+	BUFFER___ Buffer;
+ERRBegin
+	Message.Init();
+
+	Locale.GetTranslation( Label( Status ), Language, "EFIL_", Translation );
+
+	switch ( Status ) {
+	case rsUnableToRename:
+		lcl::ReplaceTag( Message, 1, str::string( BuildBackupFileName_( FileName, Buffer ) ) );
+		break;
+	case rsUnableToSuppress:
+		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+recover_status__ fil::RecoverBackupFile(
+	const char *NomFichier,
+	err::handling__ ErrorHandling )
+{
+	recover_status__ Status = rs_Undefined;
+ERRProlog
+	const char *NomFichierSecurite = NULL;
+	BUFFER___ Buffer;
+ERRBegin
+	if ( FileExists( NomFichier ) )
+		if ( remove( NomFichier ) ) {
+			Status = rsUnableToSuppress;
+			ERRReturn;
+		}
+
+	NomFichierSecurite = BuildBackupFileName_( NomFichier, Buffer );
+
+	if ( FileExists( NomFichierSecurite ) )
+		if ( rename( NomFichierSecurite, NomFichier ) ) {
+			Status = rsUnableToRename;
+			ERRReturn;
+		}
+
+	Status = rsOK;
+
+ERRErr
+ERREnd
+	if ( Status != bsOK )
+		if ( ErrorHandling == err::hThrowException )
+			ERRd();
+ERREpilog
+	return Status;
 }
 
 

@@ -24,18 +24,22 @@
 
 // $Id$
 
+#include "ermi.h"
+
 #include "err.h"
 #include "cio.h"
 #include "clnarg.h"
-#include "mscmdd.h"
 #include "dir.h"
-#include "ermi.h"
+#include "mscmdd.h"
+
+#include "common.h"
+#include "identity.h"
+#include "get.h"
+
+using namespace common;
+
 
 /*$RAW$*/
-
-cio::cin___ cin;
-cio::cout___ cout;
-cio::cerr___ cerr;
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -60,8 +64,9 @@ enum option {
 
 struct parameters {
 	command__ Command;
-	PARAM( DIn );	// MIDI device in.
-	PARAM( DOut );	// MIDI device out.
+	PARAM( DIn );		// MIDI device in.
+	PARAM( DOut );		// MIDI device out.
+	PARAM( Output );	// Output file.
 	parameters( void )
 	{
 		Command = c_Undefined;
@@ -114,11 +119,8 @@ ERRProlog
 ERRBegin
 	Options.Init();
 
-	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		cout << HELP << txf::nl;
-		ERRi();
-	}
+	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL )
+		clnarg::ReportUnexpectedOption( Unknow, LocaleRack );
 
 	P = Options.First();
 
@@ -128,18 +130,14 @@ ERRBegin
 		switch( Option = Options( P ) ) {
 		case oDIn:
 			Analyzer.GetArgument( Option, Argument );
-			if ( Argument.Amount() == 0 ) {
-				cerr << "'" << Analyzer.Description().GetOptionLabels( oDIn ) << "' option must have an argument!" << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			}
+			if ( Argument.Amount() == 0 )
+				clnarg::ReportMissingOptionArgument( Analyzer.Description().GetOptionLabels( oDIn ), LocaleRack );
 			Argument.Convert( Parameters.DIn );
 			break;
-		case oDIn:
+		case oDOut:
 			Analyzer.GetArgument( Option, Argument );
-			if ( Argument.Amount() == 0 ) {
-				cerr << "'" << Analyzer.Description().GetOptionLabels( oDOut ) << "' option must have an argument!" << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			}
+			if ( Argument.Amount() == 0 )
+				clnarg::ReportMissingOptionArgument( Analyzer.Description().GetOptionLabels( oDOut ), LocaleRack );
 			Argument.Convert( Parameters.DOut );
 			break;
 //		case o:
@@ -232,16 +230,30 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			cerr << "Too many arguments." << txf::nl;
-			cout << HELP << txf::nl;
-			ERRi();
+			clnarg::ReportWrongNumberOfArguments( LocaleRack );
 			break;
 		}
 		break;
 	case cIdentify:
-
+		switch( Free.Amount() ) {
+		case 0:
+			break;
+		default:
+			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			break;
+		}
+		break;
 	case cRetrieve:
-		ERRl();
+		switch( Free.Amount() ) {
+		case 1:
+			Free( P ).Convert( Parameters.Output );
+			break;
+		case 0:
+			break;
+		default:
+			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			break;
+		}
 		break;
 	default:
 		ERRc();
@@ -297,6 +309,7 @@ ERRBegin
 		break;
 //	case c:
 	case CLNARG_NONE:
+		clnarg::ReportMissingCommand( LocaleRack );
 		break;
 	default:
 		ERRc();
@@ -323,11 +336,10 @@ ERRBegin
 
 	mscmdd::GetMidiOutDeviceDescriptions( Descriptions );
 
-	if ( Descriptions.Amount() == 0 ) {
-		cout << "No MIDI out devices availables :" << txf::nl;
-		ERRReturn;
-	} else
-		cout << "MIDI out devices available : " << txf::nl;
+	if ( Descriptions.Amount() == 0 )
+		Display( mNoMIDIOutDevicesAvailable );
+	else
+		Display( mAvailableMIDIOutDevices );
 
 
 	Row = Descriptions.First();
@@ -354,11 +366,11 @@ ERRBegin
 
 	mscmdd::GetMidiInDeviceDescriptions( Descriptions );
 
-	if ( Descriptions.Amount() == 0 ) {
-		cout << "No MIDI in devices availables :" << txf::nl;
-		ERRReturn;
-	} else
-		cout << "MIDI in devices available : " << txf::nl;
+	if ( Descriptions.Amount() == 0 )
+		Display( mNoMIDIInDevicesAvailable );
+	else
+		Display( mAvailableMIDIInDevices );
+
 
 
 	Row = Descriptions.First();
@@ -381,22 +393,6 @@ void DisplayMidiDevices( void )
 	DisplayMidiOutDevices();
 }
 
-void Identify( const parameters &Parameters )
-{
-	int DIn, DOut;
-	epeios::row__ Error = NULL;
-
-	if ( ( Parameters.DIn == NULL ) || ( *Parameters.DIn == 0 ) ) {
-		cerr << "Missing 'Device in' parameter !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
-
-	if ( ( Parameters.DOut == NULL ) || ( *Parameters.DOut == 0 ) ) {
-		cerr << "Missing 'Device in' parameter !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
-}
-
 void Go( const parameters &Parameters )
 {
 ERRProlog
@@ -408,7 +404,10 @@ ERRBegin
 		DisplayMidiDevices();
 		break;
 	case cIdentify:
-		Identify();
+		identity::Identify( NULL, Parameters.DIn, Parameters.DOut );
+		break;
+	case cRetrieve:
+		get::GetSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.Output );
 		break;
 	default:
 		ERRc();
@@ -443,14 +442,12 @@ int main(
 {
 ERRFProlog
 ERRFBegin
-	cin.Init();
-	cout.Init();
-	cerr.Init();
+	GlobalInitization();
+
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
-	cout.Commit();
-	cerr.Commit();
+	GlobalRelease();
 ERRFEpilog
 	return ERRExitValue;
 }

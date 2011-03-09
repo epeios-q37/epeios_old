@@ -456,6 +456,10 @@ namespace mscrmi {
 		GetBlocs( Implementation.Definitions, Blocs );
 	}
 
+	void ToString(
+		const device_family__ &DeviceFamily,
+		str::string_ &Target );
+
 	void Print(
 		const midi_implementation_ &Implementation,
 		xml::writer_ &Writer );
@@ -474,11 +478,14 @@ namespace mscrmi {
 
 	const char *Label( parse_status__ Status );
 
-	const str::string_ &Translate(
+	inline const char *Translate(
 		parse_status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
-		str::string_ &Translation );
+		STR_BUFFER___ &Buffer )
+	{
+		return Locale.GetTranslation( Label( Status ), Language, "MSCRMI_", Buffer );
+	}
 
 	parse_status__ Parse(
 		xml::parser___ &Parser,
@@ -615,13 +622,18 @@ namespace mscrmi {
 
 	const char *Label( transmission_status__ Status );
 
-	const str::string_ &Translate(
+	inline const str::string_ &GetTranslation(
 		transmission_status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
-		str::string_ &Translation );
+		str::string_ &Translation  )
+	{
+		Locale.GetTranslation( Label( Status ), Language, "ERMI_", Translation );
 
-	transmission_status__ GetIdentity(
+		return Translation;
+	}
+
+	transmission_status__ GetDeviceFamily(
 		device_id__ Id,
 		flw::oflow__ &OFlow,
 		flw::iflow__ &IFlow,

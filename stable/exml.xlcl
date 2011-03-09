@@ -1,100 +1,36 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Translations message="EXML_Unexpected_EOF">
-		<Translation language="fr">Fin de fichier inattendue !</Translation>
-		<Translation language="en-US">Unexpected end of file !</Translation>
+  <Translations message="EXML_ErrorAtLineColumn"><!-- Generic message displayed before error description. -->
+    <Translation language="fr">Erreur ligne %1, colonne %2 :</Translation>
+    <Translation language="en-US">Error line %1, column %2</Translation>
+  </Translations>
+  <Translations message="EXML_Unexpected_EOF">
+		<Translation language="fr">fin de fichier inattendue !</Translation>
+		<Translation language="en-US">unexpected end of file !</Translation>
 	</Translations>
 	<Translations message="EXML_UnknownEntity">
-		<Translation language="fr">Entité inconnue !</Translation>
-		<Translation language="en-US">Unknown entity !</Translation>
+		<Translation language="fr">entité inconnue !</Translation>
+		<Translation language="en-US">unknown entity !</Translation>
 	</Translations>
 	<Translations message="EXML_MissingEqualSign">
 		<Translation language="fr">'=' manquant !</Translation>
 		<Translation language="en-US">missing '=' !</Translation>
 	</Translations>
 	<Translations message="EXML_BadAttributeValueDelimiter">
-		<Translation language="fr">Mauvais délimiteur d'attribut !</Translation>
-		<Translation language="en-US">Bad attribute delimiter !</Translation>
+		<Translation language="fr">mauvais délimiteur d'attribut !</Translation>
+		<Translation language="en-US">bad attribute delimiter !</Translation>
 	</Translations>
 	<Translations message="EXML_UnexpectedCharacter">
-		<Translation language="fr">Caractère inattendu !</Translation>
-		<Translation language="en-US">Unexpected character !</Translation>
+		<Translation language="fr">caractère inattendu !</Translation>
+		<Translation language="en-US">unexpected character !</Translation>
 	</Translations>
 	<Translations message="EXML_EmptyTagName">
-		<Translation language="fr">Nom de balise vide !</Translation>
-		<Translation language="en-US">Empty tag name !</Translation>
+		<Translation language="fr">nom de balise vide !</Translation>
+		<Translation language="en-US">empty tag name !</Translation>
 	</Translations>
 	<Translations message="EXML_MismatchedTag">
-		<Translation language="fr">Balise non appariée !</Translation>
-		<Translation language="en-US">Mismatched tag !</Translation>
-	</Translations>
-	<Translations message="EXML_UserDefinedError">
-		<Translation language="fr">Erreur définie par l'utilisateur !</Translation>
-		<Translation language="en-US">User defined error !</Translation>
-	</Translations>
-	<Translations message="EXML_NoTagsAllowedHere">
-		<Translation language="fr">Balises non autorisée ici !</Translation>
-		<Translation language="en-US">No tag allowed here !</Translation>
-	</Translations>
-	<Translations message="EXML_UnexpectedTag">
-		<Translation language="fr">Balise inattendue !</Translation>
-		<Translation language="en-US">Unexpected tag !</Translation>
-	</Translations>
-	<Translations message="EXML_UnknwonTag">
-		<Translation language="fr">Balise inconnue !</Translation>
-		<Translation language="en-US">Unknown tag !</Translation>
-	</Translations>
-	<Translations message="EXML_AttributeAlreadyDefined">
-		<Translation language="fr">Attribut déjà défini !</Translation>
-		<Translation language="en-US">Attribute already defined !</Translation>
-	</Translations>
-	<Translations message="EXML_UnexpectedAttribute">
-		<Translation language="fr">Attribut inattendu !</Translation>
-		<Translation language="en-US">Unexpected attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_UnknownAttribute">
-		<Translation language="fr">Attribut inconnu !</Translation>
-		<Translation language="en-US">Unknown attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_MissingNameAttribute">
-		<Translation language="fr">Attribut 'name' manquant !</Translation>
-		<Translation language="en-US">Missing 'name' attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_MissingSelectOrHRefAttribute">
-		<Translation language="fr">Attribut 'select' ou 'href' manquant !</Translation>
-		<Translation language="en-US">Missing 'select' or 'href' attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_MissingSelectAttribute">
-		<Translation language="fr">Attribut 'select' manquant !</Translation>
-		<Translation language="en-US">Missing 'select' attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_MissingValueAttribute">
-		<Translation language="fr">Attribut 'value' manquant !</Translation>
-		<Translation language="en-US">Missing 'value' attribute !</Translation>
-	</Translations>
-	<Translations message="EXML_UnknownVariable">
-		<Translation language="fr">Variable inconnue !</Translation>
-		<Translation language="en-US">Unknown variable !</Translation>
-	</Translations>
-	<Translations message="EXML_NoValueAllowedHere">
-		<Translation language="fr">Valeur non autorisée ici !</Translation>
-		<Translation language="en-US">No value allowed here !</Translation>
-	</Translations>
-	<Translations message="EXML_TooManyTags">
-		<Translation language="fr">Trop de balises !</Translation>
-		<Translation language="en-US">Too many tags !</Translation>
-	</Translations>
-	<Translations message="EXML_UnableToOpenFile">
-		<Translation language="fr">Impossible d'ouvrir le fichier !</Translation>
-		<Translation language="en-US">Unable to open file !</Translation>
-	</Translations>
-	<Translations message="EXML_NestingOverflow">
-		<Translation language="fr">Dépacement de capacité d'imbrication !</Translation>
-		<Translation language="en-US">Nesting overflow !</Translation>
-	</Translations>
-	<Translations message="EXML_UnknownMacro">
-		<Translation language="fr">Macro inconnue !</Translation>
-		<Translation language="en-US">Unknown macro !</Translation>
+		<Translation language="fr">balise non appariée !</Translation>
+		<Translation language="en-US">mismatched tag !</Translation>
 	</Translations>
 </xpp:bloc>

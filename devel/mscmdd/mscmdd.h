@@ -188,7 +188,7 @@ namespace mscmdd {
 	public:
 		void reset( bool P = true )
 		{
-			flw::oflow__::reset( P );
+			flw::standalone_oflow__<CacheSize>::reset( P );
 			_Functions.reset( P );
 		}
 		midi_oflow___( void )
@@ -221,7 +221,7 @@ namespace mscmdd {
 	{
 		mtx::mutex_handler__ Access;	// Pour protèger l'accés aus données de cet structure.
 		mtx::mutex_handler__ Full;		// Pour faire attendre le producteur si 'Buffer' est plein.
-		mtx::mutex_handler__ Empty;		// Pout faire attendre le consommateur si 'Buffer est vide.
+		mtx::mutex_handler__ Empty;		// Pout faire attendre le consommateur si 'Buffer' est vide.
 		fwf::datum__ *Buffer;
 		fwf::size__ Size, Available, Position;
 		bso::bool__ Purge;	// Lorsque à 'true', purge l'ensemble des données MIDI.
@@ -279,7 +279,8 @@ namespace mscmdd {
 		{
 			_Data.Purge = true;
 
-			midiInReset( _Handle );
+			if ( midiInReset( _Handle ) != MMSYSERR_NOERROR )
+				ERRf();
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -292,11 +293,12 @@ namespace mscmdd {
 						if ( midiInStop( _Handle ) != MMSYSERR_NOERROR )
 						ERRf();
 
+					_Purge();
+
 					mtx::Delete( _Data.Access );
 					mtx::Delete( _Data.Full );
-					mtx::Delete( _Data.Empty );
+					mtx::Delete( _Data.Empty, true );	// Comme toute les données ont été lues, ce mutex est verrouillé, on autorise donc sa destruction même si verrouillé.
 
-					_Purge();
 
 					midiInClose( _Handle );
 				}
@@ -346,7 +348,7 @@ namespace mscmdd {
 	public:
 		void reset( bool P = true )
 		{
-			flw::iflow__::reset( P );
+			flw::standalone_iflow__<CacheSize>::reset( P );
 			_Functions.reset( P );
 		}
 		midi_iflow___( void )

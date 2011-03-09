@@ -64,7 +64,8 @@ extern class ttr_tutor &LCLTutor;
 #include "flw.h"
 #include "rgstry.h"
 
-#define LCL_DEFAULT_TAG_MARKER	'%'
+#define LCL_TAG_MARKER_C	'%'
+#define LCL_TAG_MARKER_S	"%"
 
 // Facilite la gestion des messages.
 #define LCL_CASE( label, prefix )\
@@ -72,9 +73,14 @@ extern class ttr_tutor &LCLTutor;
 	return #label;\
 	break;
 
+#define LCL_CASE_N( label, prefix, count )\
+	case prefix##label:\
+	return #label "_" #count;\
+	break;
+
 
 namespace lcl {
-	using rgstry::error__;
+	using rgstry::status__;
 	using rgstry::error_details_;
 	using rgstry::error_details;
 	using str::strings_;
@@ -87,21 +93,25 @@ namespace lcl {
 			strings_ &Wordings ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			str::string_ &Translation ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingLanguageThenText(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingTextThenLanguage(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			str::string_ &Translation ) const;
 	public:
 		struct s {
@@ -132,7 +142,7 @@ namespace lcl {
 
 			Registry.Init();
 		}
-		error__ Init(
+		status__ Init(
 			flw::iflow__ &IFlow,
 			const char *RootPath,
 			const str::string_ &BaseDirectory,
@@ -144,7 +154,7 @@ namespace lcl {
 
 			return rgstry::FillRegistry( IFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
 		}
-		error__ Init(
+		status__ Init(
 			flw::iflow__ &IFlow,
 			const char *RootPath,
 			const str::string_ &BaseDirectory = str::string( "" ) )
@@ -155,7 +165,7 @@ namespace lcl {
 
 			return rgstry::FillRegistry( IFlow, RootPath, Registry, S_.Root, BaseDirectory );
 		}
-		error__ Init(
+		status__ Init(
 			const char *FileName,
 			const char *RootPath,
 			error_details_ &ErrorDetails )
@@ -166,7 +176,7 @@ namespace lcl {
 
 			return rgstry::FillRegistry( FileName, RootPath, NULL, Registry, S_.Root, ErrorDetails );
 		}
-		error__ Init(
+		status__ Init(
 			const char *FileName,
 			const char *RootPath )
 		{
@@ -180,12 +190,14 @@ namespace lcl {
 			strings_ &Labels,
 			strings_ &Wordings ) const;
 		bso::bool__ GetTranslation(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			str::string_ &Translation ) const;
 		const char *GetTranslation(
-			const str::string_ &Text,
+			const char *Text,
 			const str::string_ &Language,
+			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const;	// Si la traduction n'existe pas, 'Text' est renvoyé.
 	};
 
@@ -226,35 +238,35 @@ namespace lcl {
 		}
 		E_RWDISCLOSE__( str::string_, Language );
 		bso::bool__ GetTranslation(
-			const str::string_ &Text,
+			const char *Text,
+			const char *Prefix,
 			str::string_ &Translation ) const
 		{
-			return Locale().GetTranslation( Text, Language(), Translation );
+			return Locale().GetTranslation( Text, Language(), Prefix, Translation );
 		}
 		const char *GetTranslation(
-			const str::string_ &Text,
+			const char *Text,
+			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
-			return Locale().GetTranslation( Text, Language(), Buffer );
+			return Locale().GetTranslation( Text, Language(), Prefix, Buffer );
 		}
 	};
 
 
 	inline void ReplaceTags(
 		str::string_ &Text,
-		const strings_ &Values,
-		char TagMarker = LCL_DEFAULT_TAG_MARKER )
+		const strings_ &Values )
 	{
-		str::ReplaceTags( Text, Values, TagMarker );
+		str::ReplaceTags( Text, Values, LCL_TAG_MARKER_C );
 	}
 
 	inline void ReplaceTag(
 		str::string_ &Text,
 		bso::ubyte__ Indice,
-		const str::string_ &Value,
-		char TagMarker = LCL_DEFAULT_TAG_MARKER )
+		const str::string_ &Value )
 	{
-		str::ReplaceTag( Text, Indice, Value, TagMarker );
+		str::ReplaceTag( Text, Indice, Value, LCL_TAG_MARKER_C );
 	}
 }
 

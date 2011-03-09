@@ -99,14 +99,15 @@ namespace xpp {
 		s_Pending,
 	};
 
-	const char *GetLabel( status__ Status );
+	const char *Label( status__ Status );
 
 	const str::string_ &GetTranslation(
 		status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
+		const str::string_ LocalizedFileName,
+		const xtf::coord__ &Coord,
 		str::string_ &Translation );
-
 
 	struct _qualified_preprocessor_directives___ {
 		str::string NamespaceWithSeparator;
@@ -604,6 +605,15 @@ namespace xpp {
 		}
 	};
 
+	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
+	inline const str::string_ &GetTranslation(
+		const preprocessing_iflow___ &PFlow,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( PFlow.Status(), Language, Locale, PFlow.LocalizedFileName(), PFlow.Coord(), Translation );
+	}
 
 #if 0
 	class preprocessing_extended_text_iflow___

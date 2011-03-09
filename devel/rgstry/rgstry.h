@@ -856,30 +856,31 @@ namespace rgstry {
 		return Result;
 	}
 
-		// NOTA : Si modifié, modifier 'GetTranslation(...)' en conséquent, ainsi que le fichier de traduction 'ergstry.xlc'.
-	enum error__ {
-		eOK,
-		eUnableToOpenFile,
-		eParseError,
-		eRootPathError,
-		e_amount,
-		e_Undefined
+	enum status__ {
+		sOK,
+		sUnableToOpenFile,
+		sParseError,	// Pas d'entrée dans le fichier de traduction : ce sont les traductions du 'parser__' qui sont utilisés.
+		sRootPathError,
+		s_amount,
+		s_Undefined
 	};
 
+	const char *Label( status__ Status );
+
 	const str::string_ &GetTranslation(
-		error__ Error,
+		status__ Status,
 		const error_details_ &ErrorDetails,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		str::string_ &Translation );
 
 	const str::string_ &GetTranslation(
-		error__ Error,
+		status__ Status,
 		const error_details_ &ErrorDetails,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
 
-	error__ FillRegistry(
+	status__ FillRegistry(
 		flw::iflow__ &IFlow,
 		const str::string_ &BaseDirectory,
 		const char *RootPath,
@@ -887,14 +888,14 @@ namespace rgstry {
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
 
-	error__ FillRegistry(
+	status__ FillRegistry(
 		flw::iflow__ &IFlow,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		const str::string_ &BaseDirectory = str::string( "" ));
 
-	error__ FillRegistry(
+	status__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		const char *Key,	// Clef de décryptage; 'NULL' si pas de décryptage requis.
@@ -902,7 +903,7 @@ namespace rgstry {
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
 
-	error__ FillRegistry(
+	status__ FillRegistry(
 		const char *FileName,
 		const char *RootPath,
 		const char *Key,	// Clef de décryptage; 'NULL' si pas de décryptage requis.
@@ -1303,75 +1304,75 @@ namespace rgstry {
 		{
 			return Search( PathString, PathErrorRow ) != NONE;
 		}
-		error__ Fill(
+		status__ Fill(
 			level__ Level,
 			flw::iflow__ &IFlow,
 			const str::string_ &BaseDirectory,
 			const char *RootPath,
 			error_details_ &ErrorDetails )
 		{
-			error__ Error = e_Undefined;
+			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( IFlow, BaseDirectory, RootPath, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( IFlow, BaseDirectory, RootPath, BaseRegistry, Root, ErrorDetails ); 
 
 			Roots.Set( Root, Level );
 
 			_Touch( Level );
 
-			return Error;
+			return Status;
 		}
-		error__ Fill(
+		status__ Fill(
 			level__ Level,
 			flw::iflow__ &IFlow,
 			const char *RootPath,
 			const str::string_ &BaseDirectory = str::string( "" ))
 		{
-			error__ Error = e_Undefined;
+			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( IFlow, RootPath, BaseRegistry, Root, BaseDirectory ); 
+			Status = FillRegistry( IFlow, RootPath, BaseRegistry, Root, BaseDirectory ); 
 
 			Roots.Set( Root, Level );
 
 			_Touch( Level );
 
-			return Error;
+			return Status;
 		}
-		error__ Fill(
+		status__ Fill(
 			level__ Level,
 			const char *FileName,
 			const char *RootPath,
 			const char *Key,
 			error_details_ &ErrorDetails )
 		{
-			error__ Error = e_Undefined;
+			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root, ErrorDetails ); 
 
 			Roots.Set( Root, Level );
 
 			_Touch( Level );
 
-			return Error;
+			return Status;
 		}
-		error__ Fill(
+		status__ Fill(
 			level__ Level,
 			const char *FileName,
 			const char *RootPath,
 			const char *Key )
 		{
-			error__ Error = e_Undefined;
+			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Error = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root ); 
+			Status = FillRegistry( FileName, RootPath, Key, BaseRegistry, Root ); 
 
 			Roots.Set( Root, Level );
 
 			_Touch( Level );
 
-			return Error;
+			return Status;
 		}
 		epeios::size__ Dump(
 			level__ Level,

@@ -66,6 +66,7 @@ extern class ttr_tutor &CLNARGTutor;
 #include "bch.h"
 #include "ctn.h"
 #include "str.h"
+#include "lcl.h"
 #ifndef CPE__T_MT
 #	include "cio.h"
 #endif
@@ -96,6 +97,89 @@ namespace clnarg {
 
 	//d Value to gice if no long option/command.
 	#define CLNARG_NO_LONG	NULL
+
+	enum message__ {
+		mTryHelpCommand,
+		mMissingCommand,
+		mUnknownOption,
+		mMissingOptionArgument,
+		mUnexpectedOption,
+		mWrongNumberOfArguments,
+		b_amount,
+		b_Undefined
+	};
+
+	const char *Label( message__ Message );
+
+	const str::string_ &GetTranslation(
+		message__ Message,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation,
+		... );
+
+	inline const str::string_ &GetMissingCommandTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mMissingCommand, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetUnknownOptionTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		const char *Option,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mUnknownOption, Language, Locale, Translation, Option );
+	}
+
+	inline const str::string_ &GetMissingOptionArgumentTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		const char *Option,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mMissingOptionArgument, Language, Locale, Translation, Option );
+	}
+
+	inline const str::string_ &GetUnexpectedOptionTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		const char *Option,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mUnexpectedOption, Language, Locale, Translation, Option );
+	}
+
+	inline const str::string_ &GetWrongNumberOfArgumentsTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mWrongNumberOfArguments, Language, Locale, Translation );
+	}
+
+	void Report(
+		const str::string_ &Message,
+		const lcl::locale_rack___ &Rack );
+
+	void ReportMissingCommand( const lcl::locale_rack___ &Rack );
+
+	void ReportUnknownOption(
+		const char *Option,
+		const lcl::locale_rack___ &Rack );
+
+	void ReportMissingOptionArgument(
+		const char *Option,
+		const lcl::locale_rack___ &Rack );
+
+	void ReportUnexpectedOption(
+		const char *Option,
+		const lcl::locale_rack___ &Rack );
+
+	void ReportWrongNumberOfArguments( const lcl::locale_rack___ &Rack );
 
 	//e View mode
 	enum view {

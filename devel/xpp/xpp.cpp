@@ -75,6 +75,8 @@ using xml::token__;
 #define BLOC_TAG			"bloc"
 #define ATTRIBUTE_ATTRIBUTE	"attribute"
 
+#define MESSAGE_PREFIX	"XPP_"
+
 static inline status__ Convert_( xml::status__ Status )
 {
 	return (status__)Status;
@@ -85,10 +87,10 @@ static inline status__ Convert_( xml::status__ Status )
 	return #m;\
 	break
 
-const char *xpp::GetLabel( status__ Status )
+const char *xpp::Label( status__ Status )
 {
 	if ( Status < Convert_( xml::s_amount ) )
-		return xml::GetLabel( (xml::status__)Status );
+		return xml::Label( (xml::status__)Status );
 
 	switch( Status ) {
 	CASE( OK );
@@ -124,16 +126,36 @@ const str::string_ &xpp::GetTranslation(
 	status__ Status,
 	const str::string_ &Language,
 	const lcl::locale_ &Locale,
+	const str::string_ LocalizedFileName,
+	const xtf::coord__ &Coord,
 	str::string_ &Translation )
 {
 ERRProlog
-	str::string MessageLabel;
+	str::string Message;
+	STR_BUFFER___ SBuffer;
+	bso::integer_buffer__ IBuffer;
+	lcl::strings Values;
 ERRBegin
-	MessageLabel.Init( "EXML_" );
+	if ( LocalizedFileName.Amount() == 0 )
+		Message.Init( Locale.GetTranslation( "ErrorAtLineColumn", Language, "EXPP_", SBuffer ) );
+	else
+		Message.Init( Locale.GetTranslation( "ErrorInFileAtLineColumn", Language, "EXPP_", SBuffer ) );
 
-	MessageLabel.Append( GetLabel( Status ) );
+	
+	Values.Init();	
 
-	Locale.GetTranslation( MessageLabel, Language, Translation );
+	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
+	Values.Append( str::string( bso::Convert( Coord.Column, IBuffer ) ) );
+	Values.Append( LocalizedFileName );
+
+	lcl::ReplaceTags( Message, Values );
+
+	Translation.Append( Message );
+
+	if ( Status < xml::s_amount )
+		xml::GetTranslation( (xml::status__)Status, Language, Locale, Coord, Translation );
+	else
+		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Translation );
 ERRErr
 ERREnd
 ERREpilog

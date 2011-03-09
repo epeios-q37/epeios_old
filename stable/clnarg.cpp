@@ -55,7 +55,201 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "cio.h"
+
 using namespace clnarg;
+
+#define CASE( label )	LCL_CASE( label, m )
+
+#define CASE_N( label, count )	LCL_CASE_N( label, m, count )
+
+const char *clnarg::Label( message__ Message )
+{
+	switch ( Message ) {
+		CASE( TryHelpCommand )
+		CASE( MissingCommand )
+		CASE_N( UnknownOption, 1 )
+		CASE_N( MissingOptionArgument, 1 )
+		CASE_N( UnexpectedOption, 1 )
+		CASE( WrongNumberOfArguments )
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+
+}
+
+const str::string_ &clnarg::GetTranslation(
+	message__ Message,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation,
+	... )
+{
+ERRProlog
+	va_list Args;
+	str::string Intermediate;
+	str::string TagValue;
+ERRBegin
+	Intermediate.Init();
+
+	Locale.GetTranslation( Label( Message ), Language, "CLNARG_", Intermediate );
+
+	va_start( Args, Translation );
+
+	switch ( Message ) {
+	case mTryHelpCommand:
+	case mWrongNumberOfArguments:
+	case mMissingCommand:
+		break;
+	case mUnknownOption:
+	case mMissingOptionArgument:
+	case mUnexpectedOption:
+		TagValue.Init();
+		TagValue.Append( va_arg( Args, const char *) );
+
+		lcl::ReplaceTag( Intermediate, 1, TagValue );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	va_end( Args );
+
+	Translation.Append( Intermediate );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+static void Report_(
+	const str::string_ &Message,
+	const str::string_ &HelpMessage )
+{
+ERRProlog
+	cio::cerr___ cerr;
+	cio::cout___ cout;
+	str::string HelpMessage;
+ERRBegin
+	cerr.Init();
+	cout.Init();
+
+	cerr << Message << txf::nl;
+
+	HelpMessage.Init();
+
+	cout << HelpMessage << txf::nl;
+
+	ERRExit( EXIT_FAILURE );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void clnarg::ReportMissingCommand( const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	GetMissingCommandTranslation( Rack.Language(), Rack.Locale(),Message );
+
+	Report( Message, Rack );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void clnarg::Report(
+	const str::string_ &Message,
+	const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string HelpMessage;
+ERRBegin
+	HelpMessage.Init();
+
+	GetTranslation( mTryHelpCommand, Rack.Language(), Rack.Locale(), HelpMessage );
+
+	Report_( Message, HelpMessage );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void clnarg::ReportUnknownOption(
+	const char *Option,
+	const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	GetUnknownOptionTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+
+	Report( Message, Rack );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void clnarg::ReportMissingOptionArgument(
+	const char *Option,
+	const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	GetMissingOptionArgumentTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+
+	Report( Message, Rack );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void clnarg::ReportUnexpectedOption(
+	const char *Option,
+	const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	GetUnexpectedOptionTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+
+	Report( Message, Rack );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void clnarg::ReportWrongNumberOfArguments( const lcl::locale_rack___ &Rack )
+{
+ERRProlog
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	GetWrongNumberOfArgumentsTranslation( Rack.Language(), Rack.Locale(),Message );
+
+	Report( Message, Rack );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 enum type {
 	tUnknow,

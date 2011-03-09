@@ -1,5 +1,22 @@
 $Id$
 
+09/03/2011 :
+	- CLNARG :
+		- Mise en oeuvre internationalisation.
+	- FIL :
+		- Mise en oeuvre internationalisation.
+
+07/03/2011 :
+	- GENERAL :
+		- Réorganisation mécanisme de traduction.
+
+06/03/2011 :
+	- LCL :
+		- Le marqueur est maintenant d'office '%' (plus possible d'en choisir un autre), sachant que pour afficher un '%', il suffit de mettre '%%'.
+		- Lorsqu'une traduction n'est pas trouvée, un '%0' (remplacé par la liste des paramètres) est rajouté d'office à l'argument retourné.
+		- Prise en compte d'un prefixe pour le libellé des messages bruts.
+		- Changement du type d'argument de certaines fonctions/méthodes.
+
 03/03/2011 :
 	- MSCMDD :
 		- Ajout variantes au niveau des paramètres de certaines méthodes.

@@ -63,6 +63,86 @@ public:
 
 using namespace rgstry;
 
+#define MESSAGE_PREFIX	"RGSTRY_"
+
+#define CASE( name )			LCL_CASE( name, s )
+#define CASE_N( name, count )	LCL_CASE_N( name, s, count )
+
+const char *rgstry::Label( status__ Status )
+{
+	switch ( Status ) {
+	CASE_N( UnableToOpenFile, 1 )
+	CASE_N( ParseError, 4 )
+	CASE( RootPathError )
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un '<arbibg'.
+
+}
+
+const str::string_ &rgstry::GetTranslation(
+	status__ Status,
+	const error_details_ &ErrorDetails,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	lcl::strings TagValues;
+	str::string TagValue;
+	str::string Message;
+ERRBegin
+	Message.Init();
+
+	switch ( Status ) {
+	case sOK:
+		ERRu();
+		break;
+	case sUnableToOpenFile:
+		Message.Init();
+
+		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Message );
+
+		TagValues.Init();
+		TagValues.Append( ErrorDetails.FileName );
+
+		lcl::ReplaceTags( Message, TagValues );
+
+		Translation.Append( Message );
+		break;
+	case sParseError:
+		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locale, ErrorDetails.FileName, ErrorDetails.Coord(), Message );
+		break;
+	case sRootPathError:
+		if ( ErrorDetails.GetPathErrorRow() != NONE )
+			ERRu();
+		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Message );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	Translation.Append( Message );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+const str::string_ &rgstry::GetTranslation(
+	status__ Error,
+	const error_details_ &ErrorDetails,
+	const lcl::locale_rack___ &Locale,
+	str::string_ &Translation )
+{
+	return GetTranslation( Error, ErrorDetails, Locale.Language(), Locale.Locale(), Translation );
+}
+
 row__ rgstry::registry_::_Search(
 	const name_ &Name,
 	const rows_ &NodeRows,
@@ -183,7 +263,7 @@ epeios::row__ rgstry::BuildPath(
 	epeios::row__ Row = NONE;
 ERRProlog
 	bso::bool__ Continue = true;
-	state__ State = s_Undefined;
+	state__ State = ::s_Undefined;
 	bso::char__ C;
 	path_item Item;
 	bso::bool__ KeyNameAsAttribute = false;
@@ -1128,70 +1208,8 @@ ERREpilog
 	return Row;
 }
 
-const str::string_ &rgstry::GetTranslation(
-	error__ Error,
-	const error_details_ &ErrorDetails,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
-	str::string_ &Translation )
-{
-ERRProlog
-	lcl::strings TagValues;
-	str::string TagValue;
-ERRBegin
-	switch ( Error ) {
-	case eOK:
-		ERRu();
-		break;
-	case eUnableToOpenFile:
-		Locale.GetTranslation( str::string( "ERGSTRY_UnableToOpenFile_1%0" ), Language, Translation );
 
-		TagValues.Init();
-		TagValues.Append( ErrorDetails.FileName );
-
-		lcl::ReplaceTags( Translation, TagValues );
-		break;
-	case eParseError:
-		bso::integer_buffer__ Buffer;
-		Locale.GetTranslation( str::string( "ERGSTRY_ParseError_4%0" ), Language, Translation );
-	
-		TagValues.Init();
-		TagValues.Append( str::string(  ErrorDetails.FileName ) );
-		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Line, Buffer ) ) );
-		TagValues.Append( str::string( bso::Convert( ErrorDetails.Coord().Column, Buffer ) ) );
-
-		TagValue.Init();
-		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locale, TagValue );
-		TagValues.Append( TagValue );
-
-		lcl::ReplaceTags( Translation, TagValues );
-		break;
-	case eRootPathError:
-		if ( ErrorDetails.GetPathErrorRow() != NONE )
-			ERRu();
-		Locale.GetTranslation( str::string( "ERGSTRY_UnableToFindRootPath" ), Language, Translation );
-		break;
-	default:
-		ERRu();
-		break;
-	}
-
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
-}
-
-const str::string_ &rgstry::GetTranslation(
-	error__ Error,
-	const error_details_ &ErrorDetails,
-	const lcl::locale_rack___ &Locale,
-	str::string_ &Translation )
-{
-	return GetTranslation( Error, ErrorDetails, Locale.Language(), Locale.Locale(), Translation );
-}
-
-error__ rgstry::FillRegistry(
+status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
 	const str::string_ &BaseDirectory,
 	const char *RootPath,
@@ -1204,40 +1222,40 @@ error__ rgstry::FillRegistry(
 
 	if ( ( RegistryRoot = rgstry::Parse( IFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
 		if ( ErrorDetails.GetXPPStatus() == xpp::sOK )
-			return eRootPathError;
+			return sRootPathError;
 		else
-			return eParseError;
+			return sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
 		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &ErrorDetails.S_.PathErrorRow ) ) == NONE )
 			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
-				return eRootPathError;
+				return sRootPathError;
 
-	return eOK;
+	return sOK;
 }
 
-error__ rgstry::FillRegistry(
+status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	const str::string_ &BaseDirectory )
 {
-	error__ Error = e_Undefined;
+	status__ Status = s_Undefined;
 ERRProlog
 	error_details Dummy;
 ERRBegin
 	Dummy.Init();
 
-	Error = FillRegistry( IFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
+	Status = FillRegistry( IFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog
-	return Error;
+	return Status;
 }
 
 
-error__ rgstry::FillRegistry(
+status__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
 	const char *Key,
@@ -1245,14 +1263,14 @@ error__ rgstry::FillRegistry(
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
 {
-	error__ Error = e_Undefined;
+	status__ Status = s_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
 	crptgr::decrypt_iflow___ Decrypter;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-		Error = eUnableToOpenFile;
+		Status = sUnableToOpenFile;
 		ErrorDetails.FileName = FileName;
 		ERRReturn;
 	}
@@ -1261,40 +1279,40 @@ ERRBegin
 		Decrypter.Init( FFlow, Key );
 		Decrypter.EOFD( XTF_EOXT );
 
-		Error = FillRegistry( Decrypter, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+		Status = FillRegistry( Decrypter, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
 	} else {
 		FFlow.EOFD( XTF_EOXT );
 
-		Error = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
+		Status = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
 	}
 
-	if ( Error == eParseError )
+	if ( Status == sParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )
 			ErrorDetails.FileName = FileName;
 ERRErr
 ERREnd
 ERREpilog
-	return Error;
+	return Status;
 }
 
-error__ rgstry::FillRegistry(
+status__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
 	const char *Key,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot )
 {
-	error__ Error = e_Undefined;
+	status__ Status = s_Undefined;
 ERRProlog
 	error_details Dummy;
 ERRBegin
 	Dummy.Init();
 
-	Error = FillRegistry( FileName, RootPath, Key, Registry, RegistryRoot, Dummy );
+	Status = FillRegistry( FileName, RootPath, Key, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog
-	return Error;
+	return Status;
 }
 
 

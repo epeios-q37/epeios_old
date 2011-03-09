@@ -268,7 +268,7 @@ static void Process_(
 {
 ERRProlog
 	flf::file_oflow___ OFlow;
-	txf::text_oflow__ TOFlow( OFlow );
+	txf::text_oflow__ TOFlow;
 	flf::file_iflow___ IFlow;
 	str::string ErrorFileName;
 	const char *Directory;
@@ -278,7 +278,7 @@ ERRProlog
 	xtf::coord__ Coord;
 ERRBegin
 	if ( Source != NULL ) {
-		if ( IFlow.Init( Source, err::hSkip ) != fil::sSuccess ) {
+		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess ) {
 			cerr << "Unable to open file '" << Source << "' for reading !" << txf::nl;
 			ERRExit( evInputOutput );
 		}
@@ -291,15 +291,18 @@ ERRBegin
 
 		BackedUp = true;
 
-		if ( OFlow.Init( Destination, err::hSkip ) != fil::sSuccess ) {
+		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess ) {
 			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
 			ERRExit( evInputOutput );
 		}
+
+		TOFlow.Init( OFlow );
 	}
 
 	ErrorFileName.Init();
 
-	xml::WriteXMLHeader( Destination == NULL ? cout : TOFlow );
+
+	xml::WriteXMLHeader( Destination == NULL ? cio::cout : TOFlow );
 	( Destination == NULL ? cout : TOFlow ) << txf::nl;
 
 	if ( ( Status = xpp::Process( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
@@ -307,7 +310,7 @@ ERRBegin
 								  str::string( Directory == NULL ? (const char *)"" : Directory ),
 								  Indent ? xml::oIndent : xml::oCompact,
 								  ( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
-		cerr << "Error ";
+		cio::cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )
 			cerr << "in file '" << ErrorFileName << "' ";
@@ -357,6 +360,8 @@ ERRFBegin
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
+	cio::cout.reset();
+	cio::cerr.reset();
 ERRFEpilog
 	return ERRExitValue;
 }

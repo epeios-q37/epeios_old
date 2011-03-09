@@ -71,13 +71,15 @@ extern class ttr_tutor &FILTutor;
 #include "tol.h"
 #include "cpe.h"
 
-#if defined( CPE__T_CONSOLE ) && !defined( CPE__T_MT )
-#	define FIL__USE_CIO
-#endif
+// Prédéclaration, car l'incusion des fichiers d'entête correspondants posent des problèmes dû à l'inclusion circulaire.
 
-#ifdef FIL__USE_CIO
-#	include "cio.h"
-#endif
+namespace str {
+	class string_;
+}
+
+namespace lcl {
+	class locale_;
+}
 
 #if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
 #	define FIL__POSIX
@@ -88,8 +90,11 @@ extern class ttr_tutor &FILTutor;
 #endif
 
 
-//d The default backup file extension.
-#define FIL_DEFAULT_BACKUP_FILE_EXTENSION	".bak"
+#ifdef FIL_BACKUP_FILE_EXTENSION
+#	define FIL__BACKUP_FILE_EXTENSION	FIL_BACKUP_FILE_EXTENSION
+#else
+#	define FIL__BACKUP_FILE_EXTENSION	".bak"
+#endif
 
 #define FIL_UNDEFINED_DESCRIPTOR	IOP_UNDEFINED_DESCRIPTOR
 
@@ -284,55 +289,64 @@ namespace fil {
 		const char *FileName,
 		err::handling__ ErrorHandling = err::h_Default );	// Crée un fichier de nom 'FileName'.
 
-
-	//e Error code which can occurs during backup file operation.
-	enum rbf
+	enum backup_status__
 	{
-		//i No error.
-		rbfOK,
-		//i error by renaming.
-		rbfRenaming,
-		//i Error by duplication. Occurs only with 'FILCreateBackupFile()'.
-		rbfDuplication,
-		//i Error by suppression. 
-		rbfSuppression,
-		//i Erreur by allocation. Occurs only with 'FILRecoverBackupFile()'.
-		rbfAllocation
+		bsOK,
+		bsUnableToRename,
+		bsUnableToDuplicate,
+		bsUnableToSuppress,
+		bs_amount,
+		bs_Undefined
 	};
 
+	const char *Label( backup_status__ Status );
+
+	const str::string_ &GetTranslation(
+		backup_status__ Status,
+		const char *FileName,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Tranlsation );
+
 	//e How handle the backuped file.
-	enum hbf
+	enum backup_mode__
 	{
-		//i Rename it.
-		hbfRename,
-		//i Duplicate it.
-		hbfDuplicate
+		bmRename,
+		bmDuplicate,
+		bm_amount,
+		bm_Undefined
 	};
 
 
 	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
 	If 'Handle' == 'fil::hbfDuplicate', the backup file is create by duplicating the original one.
 	If 'Handle' == 'fil::hbfRename', the bachup file is create by renaming the original one. */
-	rbf CreateBackupFile(
+	backup_status__ CreateBackupFile(
 		const char *Name,
-		hbf Handle,
-#ifdef FIL__USE_CIO
-		txf::text_oflow__ &Flow = cio::cerr,
-#else
-		txf::text_oflow__ &Flow,
-#endif
-		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
+		backup_mode__ Mode,
 		err::handling__ = err::h_Default  );
 
+	enum recover_status__
+	{
+		rsOK,
+		rsUnableToRename,
+		rsUnableToSuppress,
+		rs_amount,
+		rs_Undefined
+	};
+
+	const char *Label( recover_status__ Status );
+
+	const str::string_ &GetTranslation(
+		recover_status__ Status,
+		const char *FileName,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Tranlsation );
+
 	//f Recover the backup file 'Name' with 'Extension' as extension.
-	rbf RecoverBackupFile(
+	recover_status__ RecoverBackupFile(
 		const char *Name,
-#ifdef FIL__USE_CIO
-		txf::text_oflow__ &Flow = cio::cerr,
-#else
-		txf::text_oflow__ &Flow,
-#endif
-		const char *Extension = FIL_DEFAULT_BACKUP_FILE_EXTENSION,
 		err::handling__ = err::h_Default  );
 }
 
