@@ -61,16 +61,14 @@ using namespace clnarg;
 
 #define CASE( label )	LCL_CASE( label, m )
 
-#define CASE_N( label, count )	LCL_CASE_N( label, m, count )
-
 const char *clnarg::Label( message__ Message )
 {
 	switch ( Message ) {
 		CASE( TryHelpCommand )
 		CASE( MissingCommand )
-		CASE_N( UnknownOption, 1 )
-		CASE_N( MissingOptionArgument, 1 )
-		CASE_N( UnexpectedOption, 1 )
+		CASE( UnknownOption )
+		CASE( MissingOptionArgument )
+		CASE( UnexpectedOption )
 		CASE( WrongNumberOfArguments )
 	default:
 		ERRu();
@@ -133,16 +131,13 @@ static void Report_(
 ERRProlog
 	cio::cerr___ cerr;
 	cio::cout___ cout;
-	str::string HelpMessage;
 ERRBegin
 	cerr.Init();
 	cout.Init();
 
-	cerr << Message << txf::nl;
+	cerr << Message << '.' << txf::nl << txf::commit;
 
-	HelpMessage.Init();
-
-	cout << HelpMessage << txf::nl;
+	cout << HelpMessage << '.' << txf::nl  << txf::commit;
 
 	ERRExit( EXIT_FAILURE );
 ERRErr

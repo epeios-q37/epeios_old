@@ -280,6 +280,7 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( CLNARG_NO_SHORT, "devices", cDevices );
 	Description.AddCommand( CLNARG_NO_SHORT, "identify", cIdentify );
+	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve );
 //	Description.AddCommand( '', "", c );
 
 	Description.AddOption( CLNARG_NO_SHORT, "din", oDIn );
@@ -313,6 +314,7 @@ ERRBegin
 		break;
 	default:
 		ERRc();
+		break;
 	}
 
 	AnalyzeOptions( Analyzer, Parameters );
@@ -340,6 +342,8 @@ ERRBegin
 		Display( mNoMIDIOutDevicesAvailable );
 	else
 		Display( mAvailableMIDIOutDevices );
+
+	cout << " : " << txf::nl;
 
 
 	Row = Descriptions.First();
@@ -370,6 +374,8 @@ ERRBegin
 		Display( mNoMIDIInDevicesAvailable );
 	else
 		Display( mAvailableMIDIInDevices );
+
+	cout << " : " << txf::nl;
 
 
 

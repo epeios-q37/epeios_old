@@ -234,19 +234,17 @@ static const char* BuildBackupFileName_(
 
 	sprintf( Buffer, "%s%s", FileName, FIL__BACKUP_FILE_EXTENSION );
 
-	return FileName;
+	return Buffer;
 }
 
 #define CASE( label )	LCL_CASE( label, bs )
 
-#define CASE_1( label )	LCL_CASE_N( label, bs, 1 )
-
 const char *fil::Label( backup_status__ Status )
 {
 	switch ( Status ) {
-	CASE_1( UnableToRename )
-	CASE_1( UnableToDuplicate )
-	CASE_1( UnableToSuppress )
+	CASE( UnableToRename )
+	CASE( UnableToDuplicate )
+	CASE( UnableToSuppress )
 	default:
 		ERRu();
 		break;
@@ -349,17 +347,14 @@ ERREpilog
 }
 
 #undef CASE
-#undef CASE_1
 
 #define CASE( label )	LCL_CASE( label, bs )
-
-#define CASE_1( label )	LCL_CASE_N( label, rs, 1 )
 
 const char *fil::Label( recover_status__ Status )
 {
 	switch ( Status ) {
-	CASE_1( UnableToRename )
-	CASE_1( UnableToSuppress )
+	CASE( UnableToRename )
+	CASE( UnableToSuppress )
 	default:
 		ERRu();
 		break;

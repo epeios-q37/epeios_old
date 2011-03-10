@@ -46,6 +46,7 @@ ERRProlog
 	dir::handle___ Handle = NULL;
 	const char *Name = NULL;
 	char LocalizedName[MAX_PATH];
+	DIR_BUFFER___ Buffer;
 ERRBegin
 /*	if ( dir::CreateDir( "coucou" ) != dir::sOK )
 		ERRu();
@@ -70,6 +71,8 @@ ERRBegin
 
 		Name = dir::GetNextFile( Handle );
 	}
+
+	cout << dir::GetSelfPath( Buffer ) << txf::nl << txf::commit;
 		
 ERRErr
 ERREnd
@@ -95,7 +98,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << DIRTutor.Name << " [/i]\n\n";
 		ERRi();

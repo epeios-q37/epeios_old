@@ -21,4 +21,14 @@
 		<Translation language="fr">Nombre d'arguments incorrect</Translation>
 		<Translation language="en-US">Wrong number of arguments</Translation>
 	</Translations>
+	<Translations message="CLNARG_MissingCommand">
+		<Translation language="fr">Commande manquante</Translation>
+		<Translation language="en-US">Missing command</Translation>
+	</Translations>
+	<!--
+	<Translations message="CLNARG_">
+		<Translation language="fr"></Translation>
+		<Translation language="en-US"></Translation>
+	</Translations>
+	-->
 </xpp:bloc>

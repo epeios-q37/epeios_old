@@ -1,5 +1,21 @@
 $Id$
 
+10/03/2011 :
+	- GENERAL :
+		- Adaptation modifications 'LCL'.
+	- DIR :
+		- Ajout de 'GetSelfPath(...)' (version Windows).
+	- FIL :
+		- Correction bogue mauvaise construction nom fichier de sauvegarde.
+	- LCL :
+		- Ajout du prefix lorsqu'une traduction n'a pas été trouvée.
+		- Suppression macro 'LCL_CASE_N'.
+	- RGSTRY :
+		- Correction bogue traduction en double.
+	- XPP :
+		- Ajout '&' manquant (source de plantage).
+		- Correction inconsistence gestion des traductions.
+
 09/03/2011 :
 	- CLNARG :
 		- Mise en oeuvre internationalisation.

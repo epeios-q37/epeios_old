@@ -73,12 +73,6 @@ extern class ttr_tutor &LCLTutor;
 	return #label;\
 	break;
 
-#define LCL_CASE_N( label, prefix, count )\
-	case prefix##label:\
-	return #label "_" #count;\
-	break;
-
-
 namespace lcl {
 	using rgstry::status__;
 	using rgstry::error_details_;

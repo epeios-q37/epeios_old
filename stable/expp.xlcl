@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-  <xpp:expand hre="exml.lcl"/>"
+  <xpp:expand href="exml.xlcl"/>"
   <Translations message="EXPP_ErrorAtLineColumn"><!-- One of the 2 generic message displayed before error description. -->
-    <Translation language="fr">Erreur ligne %1, colonne %2 :</Translation>
+    <Translation language="fr">Erreur ligne %1, colonne %2</Translation>
     <Translation language="en-US">Error line %1, column %2</Translation>
   </Translations>
-  <Translations message="EXPP_InFileErrorAtLineColumn"><!-- One of the 2 generic message displayed before error description. -->
-    <Translation language="fr">Erreur dans le fichier '%1' à la ligne %2, colonne %3 :</Translation>
+  <Translations message="EXPP_ErrorInFileAtLineColumn"><!-- One of the 2 generic message displayed before error description. -->
+    <Translation language="fr">Erreur dans le fichier '%1' à la ligne %2, colonne %3</Translation>
     <Translation language="en-US">Error in file '%1' at line %2, column %3</Translation>
   </Translations>
 	<Translations message="EXPP_NoTagsAllowedHere">
-		<Translation language="fr">balises non autorisée ici !</Translation>
-		<Translation language="en-US">no tag allowed here !</Translation>
+		<Translation language="fr">balises non autorisée ici</Translation>
+		<Translation language="en-US">no tag allowed here</Translation>
 	</Translations>
 	<Translations message="EXPP_UnexpectedTag">
-		<Translation language="fr">balise inattendue !</Translation>
-		<Translation language="en-US">unexpected tag !</Translation>
+		<Translation language="fr">balise inattendue</Translation>
+		<Translation language="en-US">unexpected tag</Translation>
 	</Translations>
 	<Translations message="EXPP_UnknwonTag">
-		<Translation language="fr">balise inconnue !</Translation>
-		<Translation language="en-US">unknown tag !</Translation>
+		<Translation language="fr">balise inconnue</Translation>
+		<Translation language="en-US">unknown tag</Translation>
 	</Translations>
 	<Translations message="EXPP_AttributeAlreadyDefined">
-		<Translation language="fr">attribut déjà défini !</Translation>
-		<Translation language="en-US">attribute already defined !</Translation>
+		<Translation language="fr">attribut déjà défini</Translation>
+		<Translation language="en-US">attribute already defined</Translation>
 	</Translations>
 	<Translations message="EXPP_UnexpectedAttribute">
-		<Translation language="fr">attribut inattendu !</Translation>
-		<Translation language="en-US">unexpected attribute !</Translation>
+		<Translation language="fr">attribut inattendu</Translation>
+		<Translation language="en-US">unexpected attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_UnknownAttribute">
-		<Translation language="fr">attribut inconnu !</Translation>
-		<Translation language="en-US">unknown attribute !</Translation>
+		<Translation language="fr">attribut inconnu</Translation>
+		<Translation language="en-US">unknown attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_MissingNameAttribute">
-		<Translation language="fr">attribut 'name' manquant !</Translation>
-		<Translation language="en-US">missing 'name' attribute !</Translation>
+		<Translation language="fr">attribut 'name' manquant</Translation>
+		<Translation language="en-US">missing 'name' attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_MissingSelectOrHRefAttribute">
-		<Translation language="fr">attribut 'select' ou 'href' manquant !</Translation>
-		<Translation language="en-US">missing 'select' or 'href' attribute !</Translation>
+		<Translation language="fr">attribut 'select' ou 'href' manquant</Translation>
+		<Translation language="en-US">missing 'select' or 'href' attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_MissingSelectAttribute">
-		<Translation language="fr">attribut 'select' manquant !</Translation>
-		<Translation language="en-US">missing 'select' attribute !</Translation>
+		<Translation language="fr">attribut 'select' manquant</Translation>
+		<Translation language="en-US">missing 'select' attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_MissingValueAttribute">
-		<Translation language="fr">attribut 'value' manquant !</Translation>
-		<Translation language="en-US">missing 'value' attribute !</Translation>
+		<Translation language="fr">attribut 'value' manquant</Translation>
+		<Translation language="en-US">missing 'value' attribute</Translation>
 	</Translations>
 	<Translations message="EXPP_UnknownVariable">
-		<Translation language="fr">variable inconnue !</Translation>
-		<Translation language="en-US">unknown variable !</Translation>
+		<Translation language="fr">variable inconnue</Translation>
+		<Translation language="en-US">unknown variable</Translation>
 	</Translations>
 	<Translations message="EXPP_NoValueAllowedHere">
-		<Translation language="fr">valeur non autorisée ici !</Translation>
-		<Translation language="en-US">no value allowed here !</Translation>
+		<Translation language="fr">valeur non autorisée ici</Translation>
+		<Translation language="en-US">no value allowed here</Translation>
 	</Translations>
 	<Translations message="EXPP_TooManyTags">
-		<Translation language="fr">trop de balises !</Translation>
-		<Translation language="en-US">too many tags !</Translation>
+		<Translation language="fr">trop de balises</Translation>
+		<Translation language="en-US">too many tags</Translation>
 	</Translations>
 	<Translations message="EXPP_UnableToOpenFile">
-		<Translation language="fr">impossible d'ouvrir le fichier !</Translation>
-		<Translation language="en-US">unable to open file !</Translation>
+		<Translation language="fr">impossible d'ouvrir le fichier</Translation>
+		<Translation language="en-US">unable to open file</Translation>
 	</Translations>
 	<Translations message="EXPP_NestingOverflow">
-		<Translation language="fr">dépacement de capacité d'imbrication !</Translation>
-		<Translation language="en-US">nesting overflow !</Translation>
+		<Translation language="fr">dépacement de capacité d'imbrication</Translation>
+		<Translation language="en-US">nesting overflow</Translation>
 	</Translations>
 	<Translations message="EXPP_UnknownMacro">
-		<Translation language="fr">macro inconnue !</Translation>
-		<Translation language="en-US">unknown macro !</Translation>
+		<Translation language="fr">macro inconnue</Translation>
+		<Translation language="en-US">unknown macro</Translation>
 	</Translations>
 </xpp:bloc>

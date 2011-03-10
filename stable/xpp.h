@@ -105,7 +105,7 @@ namespace xpp {
 		status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
-		const str::string_ LocalizedFileName,
+		const str::string_ &LocalizedFileName,
 		const xtf::coord__ &Coord,
 		str::string_ &Translation );
 

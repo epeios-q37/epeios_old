@@ -219,6 +219,7 @@ bso::bool__ lcl::locale_::GetTranslation(
 					Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Prefix, Translation );	// Pour des raisons de compatibilité ascendante.
 
 	if ( !Found ) {
+		Translation.Append( Prefix );
 		Translation.Append( Text );
 		Translation.Append( LCL_TAG_MARKER_S "0" );	// Lorsque pas de traduction trouvée, on rajoute le 'marker' remplacé par l'ensemble des paramètres.
 	}

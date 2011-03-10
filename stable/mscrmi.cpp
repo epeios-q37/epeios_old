@@ -320,7 +320,7 @@ static bso::ubyte__ Convert_(
 
 	if ( Error != NONE )
 		return 0;
-
+#if 0
 	switch ( Amount >> 1 ) {
 	case 4:
 		Target[3] = ( Value >> 24 ) & 0xff;
@@ -335,6 +335,26 @@ static bso::ubyte__ Convert_(
 		ERRc();
 		break;
 	}
+#else
+	switch ( Amount >> 1 ) {
+	case 4:
+		*Target = ( Value >> 24 ) & 0xff;
+		Target++;
+	case 3:
+		*Target = ( Value >> 16 ) & 0xff;;
+		Target++;
+	case 2:
+		*Target = ( Value >> 8 ) & 0xff;
+		Target++;
+	case 1:
+		*Target = Value & 0xff;
+		Target++;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+#endif
 
 	return (bso::ubyte__)( Amount >> 1);
 }
@@ -646,7 +666,7 @@ static parse_status__ ParseImplementationSpecifications_(
 					return psAttributeAlreadyDefined;
 				if ( Convert_( Parser.Value(), Implementation.S_.DeviceFamily ) == 0 )
 					return psBadValue;
-				RevertDeviceFamily_( Implementation.S_.DeviceFamily );
+				// RevertDeviceFamily_( Implementation.S_.DeviceFamily );
 			} else
 				return psUnexpectedAttribute;
 			break;

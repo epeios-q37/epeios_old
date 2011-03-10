@@ -75,7 +75,7 @@ using xml::token__;
 #define BLOC_TAG			"bloc"
 #define ATTRIBUTE_ATTRIBUTE	"attribute"
 
-#define MESSAGE_PREFIX	"XPP_"
+#define MESSAGE_PREFIX	"EXPP_"
 
 static inline status__ Convert_( xml::status__ Status )
 {
@@ -126,7 +126,7 @@ const str::string_ &xpp::GetTranslation(
 	status__ Status,
 	const str::string_ &Language,
 	const lcl::locale_ &Locale,
-	const str::string_ LocalizedFileName,
+	const str::string_ &LocalizedFileName,
 	const xtf::coord__ &Coord,
 	str::string_ &Translation )
 {
@@ -137,20 +137,22 @@ ERRProlog
 	lcl::strings Values;
 ERRBegin
 	if ( LocalizedFileName.Amount() == 0 )
-		Message.Init( Locale.GetTranslation( "ErrorAtLineColumn", Language, "EXPP_", SBuffer ) );
+		Message.Init( Locale.GetTranslation( "ErrorAtLineColumn", Language, MESSAGE_PREFIX, SBuffer ) );
 	else
-		Message.Init( Locale.GetTranslation( "ErrorInFileAtLineColumn", Language, "EXPP_", SBuffer ) );
+		Message.Init( Locale.GetTranslation( "ErrorInFileAtLineColumn", Language, MESSAGE_PREFIX, SBuffer ) );
 
 	
 	Values.Init();	
 
+	Values.Append( LocalizedFileName );
 	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
 	Values.Append( str::string( bso::Convert( Coord.Column, IBuffer ) ) );
-	Values.Append( LocalizedFileName );
 
 	lcl::ReplaceTags( Message, Values );
 
 	Translation.Append( Message );
+
+	Translation.Append( " : " );
 
 	if ( Status < xml::s_amount )
 		xml::GetTranslation( (xml::status__)Status, Language, Locale, Coord, Translation );

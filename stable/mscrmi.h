@@ -609,7 +609,15 @@ namespace mscrmi {
 		const midi_implementation_ &Implementation,
 		xml::writer_ &Writer )
 	{
+		tol::buffer__ Buffer;
+
+		Writer.PushTag( "Settings" );
+		Writer.PutAttribute( "TimeStamp", tol::DateAndTime( Buffer ) );
+		Writer.PutAttribute( "ModelLabel", Implementation.ModelLabel );
+
 		Print( Parameters, Implementation.Definitions, Writer );
+
+		Writer.PopTag();
 	}
 
 	enum transmission_status__ {

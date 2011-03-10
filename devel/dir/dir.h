@@ -64,6 +64,7 @@ extern class ttr_tutor &DIRTutor;
 #include "flw.h"
 #include "cpe.h"
 #include "tol.h"
+#include "fnm.h"
 
 #if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS ) || defined( CPE__T_MAC )
 #	define DIR__POSIX
@@ -96,6 +97,32 @@ namespace dir {
 		s_amount,
 		s_Undefined
 	};
+
+	typedef tol::E_FPOINTER___(bso::char__) buffer___;
+#	define DIR_BUFFER___ dir::buffer___
+
+
+
+	inline const char *GetSelfPath( DIR_BUFFER___ &Buffer )
+	{
+#ifdef DIR__MS
+		char szPath[MAX_PATH+1];
+		DWORD Size = 0;
+
+		if ( ( Size = GetModuleFileNameA( NULL, szPath, MAX_PATH + 1) ) == 0 )
+			ERRs();
+
+		if ( Size == ( MAX_PATH + 1 ) )
+			ERRl();
+
+		return fnm::GetLocation( szPath, Buffer );
+#endif
+#ifdef DIR__POSIX
+		ERRL( err::lNotImplemented );
+
+		return NULL;	// Pour évitert un 'warning'.
+#endif
+	}
 
 	inline state__ CreateDir( const char *Path )
 	{

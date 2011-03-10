@@ -66,13 +66,12 @@ using namespace rgstry;
 #define MESSAGE_PREFIX	"RGSTRY_"
 
 #define CASE( name )			LCL_CASE( name, s )
-#define CASE_N( name, count )	LCL_CASE_N( name, s, count )
 
 const char *rgstry::Label( status__ Status )
 {
 	switch ( Status ) {
-	CASE_N( UnableToOpenFile, 1 )
-	CASE_N( ParseError, 4 )
+	CASE( UnableToOpenFile )
+	CASE( ParseError )
 	CASE( RootPathError )
 	default:
 		ERRu();
@@ -110,8 +109,6 @@ ERRBegin
 		TagValues.Append( ErrorDetails.FileName );
 
 		lcl::ReplaceTags( Message, TagValues );
-
-		Translation.Append( Message );
 		break;
 	case sParseError:
 		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locale, ErrorDetails.FileName, ErrorDetails.Coord(), Message );
