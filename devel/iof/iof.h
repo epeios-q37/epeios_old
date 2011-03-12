@@ -92,7 +92,7 @@ namespace iof {
 
 	class io_oflow_functions___
 	: public _output_functions__,
-	  public fwf::oflow_functions___
+	  public fwf::oflow_functions___<>
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -181,7 +181,7 @@ namespace iof {
 
 	class io_iflow_functions___
 	: public _input_functions__,
-	  public fwf::iflow_functions___
+	  public fwf::iflow_functions___<>
 	{
 	protected:
 		virtual fwf::size__ FWFRead(
@@ -221,7 +221,6 @@ namespace iof {
 	: public flw::iflow__
 	{
 	private:
-		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 		io_iflow_functions___ _Functions;
 	public:
 		void reset( bso::bool__ P = true )
@@ -242,14 +241,14 @@ namespace iof {
 			iop::amount__ AmountMax )
 		{
 			_Functions.Init( D, fwf::tsDisabled );
-			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			iflow__::Init( _Functions, AmountMax );
 		}
 	};
 
 	class io_flow_functions___
 	: public _output_functions__,
 	  public _input_functions__,
-	  public fwf::ioflow_functions___
+	  public fwf::ioflow_functions___<>
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(

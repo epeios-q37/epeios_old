@@ -1,5 +1,11 @@
 $Id$
 
+11/03/2011 :
+	- GENERAL :
+		- Adaptation modifications 'FWF'.
+	- FWF :
+		- Déportation de la prise en charge du cache en lecture depuis 'FWL' vers 'FWF'.
+
 10/03/2011 :
 	- GENERAL :
 		- Adaptation modifications 'LCL'.

@@ -455,7 +455,7 @@ namespace xpp {
 	typedef stk::E_BSTACK_(_extended_parser___ *) _xparser_stack_;
 	E_AUTO( _xparser_stack );
 
-	typedef fwf::iflow_functions___ _iflow_functions___;
+	typedef fwf::iflow_functions___<> _iflow_functions___;
 
 	inline _extended_parser___ *NewParser(
 		_repository_ &Repository,

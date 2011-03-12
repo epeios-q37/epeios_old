@@ -85,7 +85,7 @@ namespace flx {
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow_functions___
-	: public fwf::iflow_functions___
+	: public fwf::iflow_functions___<>
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
@@ -157,8 +157,6 @@ namespace flx {
 	{
 	private:
 		buffer_iflow_functions___ _Functions;
-		// The cache.
-		flw::datum__ _Cache[FLX_BUFFER_BUFFER_SIZE];
 	public:
 		void reset( bool P = true )
 		{
@@ -181,13 +179,13 @@ namespace flx {
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Functions.Init( Buffer, fwf::tsDisabled, Size );
-			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			iflow__::Init( _Functions, AmountMax );
 		}
 	};
 
 	//c Buffer as a standard ouput flow.driver
 	class buffer_oflow_functions___
-		: public fwf::oflow_functions___
+	: public fwf::oflow_functions___<>
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
@@ -277,8 +275,8 @@ namespace flx {
 	};
 
 	//c A bunch as input flow.driver.
-	template < typename bunch_, typename so__> class bunch_iflow_functions___
-	: public fwf::iflow_functions___
+	template < typename bunch_, typename so__, int cache_size = FLX_SET_BUFFER_SIZE> class bunch_iflow_functions___
+	: public fwf::iflow_functions___<cache_size>
 	{ 
 	protected:
 		virtual fwf::size__ FWFRead(
@@ -337,8 +335,6 @@ namespace flx {
 	{ 
 	private:
 		bunch_iflow_functions___<bunch_, so__> _Functions;
-		// The cache.
-		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
 	public:
 		bunch_iflow__( void )
 		{
@@ -361,7 +357,7 @@ namespace flx {
 			reset();
 
 			_Functions.Init( Bunch, fwf::tsDisabled, Position );
-			iflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			iflow__::Init( _Functions, AmountMax );
 		}
 	};
 
@@ -369,7 +365,7 @@ namespace flx {
 
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow_functions___
-	: public fwf::oflow_functions___
+	: public fwf::oflow_functions___<>
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -450,7 +446,7 @@ namespace flx {
 
 	//c A output flow which write to nothing.
 	class dump_oflow_functions___
-	: public fwf::oflow_functions___
+	: public fwf::oflow_functions___<>
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(

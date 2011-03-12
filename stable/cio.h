@@ -168,12 +168,10 @@ namespace cio {
 	class cinf___
 	: public flw::iflow__
 	{
-	private:
-		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			iflow__::Init( _cinf, _Cache, sizeof( _Cache ), AmountMax );
+			iflow__::Init( _cinf, AmountMax );
 		}
 	};
 

@@ -88,27 +88,32 @@ bool flw::GetString(
 size__ flw::iflow__::_Read(
 	size__ Minimum,
 	datum__ *Buffer,
-	size__ Wanted )
+	size__ Wanted,
+	bso::bool__ Adjust )
 {
 	size__ Amount = 0;
 ERRProlog
 ERRBegin
+#ifdef OLD
 	if ( _Size == 0 )	// There was an error before. See below, in 'ERRErr'.
 		ERRd();
+#endif
 
 #ifdef FLW_DBG
 	if ( Wanted < Minimum )
 		ERRc();
 #endif
 
-	Amount = _LoopingRead( Minimum, Buffer, Wanted );
+	Amount = _LoopingRead( Minimum, Buffer, Wanted, Adjust );
 
 	_Red += Amount;
 
 	if ( _Red > _AmountMax )
 		ERRf();
 ERRErr
+#ifdef OLD
 	_Size = _Available = 0;	// To avoid further reading from cache. Next reading will generate an error. 
+#endif
 ERREnd
 ERREpilog
 	return Amount;

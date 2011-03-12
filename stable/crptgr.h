@@ -66,7 +66,7 @@ extern class ttr_tutor &CRPTGRTutor;
 
 namespace crptgr {
 
-	typedef fwf::oflow_functions___	_oflow_functions___;
+	typedef fwf::oflow_functions___<>	_oflow_functions___;
 	
 	class encrypt_oflow_functions___
 	: public _oflow_functions___
@@ -161,7 +161,7 @@ namespace crptgr {
 	};
 
 
-	typedef fwf::iflow_functions___	_iflow_functions___;
+	typedef fwf::iflow_functions___<>	_iflow_functions___;
 	
 	class decrypt_iflow_functions___
 	: public _iflow_functions___

@@ -65,22 +65,17 @@ extern class ttr_tutor &FLWTutor;
 #include "cpe.h"
 #include "fwf.h"
 
-#ifndef FLW_CACHE_SIZE
-#	define FLW__CACHE_SIZE	1024
+// Non utilisé dabs cette bibliothèque, mais dans des bibliothèques appelantes.
+#ifndef FLW_INPUT_CACHE_SIZE
+#	define FLW__INPUT_CACHE_SIZE	FWF__DEFAULT_CACHE_SIZE
 #else
-#	define FLW__CACHE_SIZE	FLW_CACHE_SIZE
+#	define FLW__INPUT_CACHE_SIZE	FLW_INPUT_CACHE_SIZE
 #endif
 
-#ifndef FLW_ICACHE_SIZE
-#	define FLW__ICACHE_SIZE	FLW__CACHE_SIZE
+#ifndef FLW_OUTPUT_CACHE_SIZE
+#	define FLW__OUTPUT_CACHE_SIZE	FWF__DEFAULT_CACHE_SIZE
 #else
-#	define FLW__ICACHE_SIZE	FLW_ICACHE_SIZE
-#endif
-
-#ifndef FLW_OCACHE_SIZE
-#	define FLW__OCACHE_SIZE	FLW__CACHE_SIZE
-#else
-#	define FLW__OCACHE_SIZE	FLW_OCACHE_SIZE
+#	define FLW__OUTPUT_CACHE_SIZE	FLW_OUTPUT_CACHE_SIZE
 #endif
 
 #ifdef CPE__UNIX
@@ -102,7 +97,8 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une fonction abstraite).*/
 	{
 	private:
-		fwf::iflow_functions___ *_Functions;
+		fwf::iflow_functions_base___ *_Functions;
+#ifdef OLD
 		// The cache.
 		datum__ *_Cache;
 		// Size of the cache.
@@ -111,6 +107,7 @@ namespace flw {
 		size__ _Available;
 		// Position of the available data.
 		size__ _Position;
+#endif
 		// Amount of data red since the last reset.
 		size__ _Red;
 		// Max amount of data alllowed between 2 reset.
@@ -134,7 +131,8 @@ namespace flw {
 		size__ _DirectRead(
 			size__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
+			size__ Wanted,
+			bso::bool__ Adjust )
 		{
 			size__ Amount = 0;
 
@@ -149,7 +147,7 @@ namespace flw {
 
 				// 'ToRead' ne peut être < 1, car on ne serait pas ici sinon.
 
-				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead );
+				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust );
 
 				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
 				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
@@ -162,7 +160,7 @@ namespace flw {
 					EOFD_.HandlingEOFD = true;
 
 			} else {
-				Amount = _Read( Minimum, Buffer, Wanted );
+				Amount = _Read( Minimum, Buffer, Wanted, Adjust );
 
 				if ( (Amount < Minimum ) || ( Amount == 0 ) ) {
 					Amount += HandleEOFD( Buffer, Wanted - Amount );
@@ -174,6 +172,7 @@ namespace flw {
 
 			return Amount;
 		}
+#ifdef OLD
 #ifdef FLW_DBG
 		// Test if there is a cache available.
 		void _Test( void )
@@ -185,7 +184,9 @@ namespace flw {
 				ERRu();
 		}				
 #endif		
+#endif
 		// Fill the cache with a minimum of 'Minimum' bytes. The cache must be empty.
+#ifdef OLD
 		void _FillCache( size__ Minimum )
 		{
 #ifdef FLW_DBG
@@ -197,8 +198,10 @@ namespace flw {
 			_Available = _DirectRead( Minimum, _Cache, _Size );
 			_Position = 0;
 		}
+#endif
 		/* Read from cache up to 'Amount' bytes and place them to 'Buffer'.
 		Return amount of data red. */
+#ifdef OLD
 		size__ _ReadFromCache(
 			size__ Amount,
 			datum__ *Buffer )
@@ -218,9 +221,11 @@ namespace flw {
 			
 			return Amount;
 		}
+#endif
 		/* Put a minimum of 'Minimum' and up to 'Wanted' bytes in 'Buffer',
 		directly or through the cache. Return amount of byte red.
 		The cache must be empty. */
+#ifdef OLD
 		size__ _ReadFromCacheOrDirectly(
 			size__ Minimum,
 			datum__ *Buffer,
@@ -238,8 +243,10 @@ namespace flw {
 			} else
 				return _DirectRead( Minimum, Buffer, Wanted );
 		}
+#endif
 		/* Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
 		Return number of bytes red. */
+#ifdef OLD
 		size__ _ReadUpTo(
 			size__ Amount,
 			datum__ *Buffer,
@@ -252,25 +259,37 @@ namespace flw {
 
 			return Available;
 		}
+#else
+		size__ _ReadUpTo(
+			size__ Amount,
+			datum__ *Buffer,
+			size__ Minimum,
+			bso::bool__ Adjust )
+		{
+			return _Read( Minimum, Buffer, Amount, Adjust );
+		}
+#endif
 		// Place 'Amount' bytes in 'Buffer'.
 		void _Read(
 			size__ Amount,
-			datum__ *Buffer )
+			datum__ *Buffer,
+			bso::bool__ Adjust )
 		{
-			if ( _ReadUpTo( Amount, Buffer, Amount ) != Amount )
+			if ( _ReadUpTo( Amount, Buffer, Amount, Adjust ) != Amount )
 				ERRf();
 		}
 		// Generic read.
 		size__ _LoopingRead(
 			size__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted )
+			size__ Wanted,
+			bso::bool__ Adjust )
 		{
-			size__ PonctualAmount = _Functions->Read( Wanted, Buffer );
+			size__ PonctualAmount = _Functions->Read( Wanted, Buffer, Adjust );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount );
+				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -279,7 +298,8 @@ namespace flw {
 		size__ _Read(
 			size__ Minimum,
 			datum__ *Buffer,
-			size__ Wanted );
+			size__ Wanted,
+			bso::bool__ Adjust );
 		void _Dismiss( void )
 		{
 			_Functions->Dismiss();
@@ -320,7 +340,9 @@ namespace flw {
 			}
 
 			_Red = 0;
+#ifdef OLD
 			_Available = _Position = 0;
+#endif
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
@@ -334,21 +356,27 @@ namespace flw {
 			reset();
 		}
 		void Init(
-			fwf::iflow_functions___ &Functions,
+			fwf::iflow_functions_base___ &Functions,
+#ifdef OLD
 			datum__ *Cache,
 			size__ Size,
+#endif
 			size__ AmountMax )
 		{
 			if ( _Red )
 				Dismiss();
 
 			_Functions = &Functions;
+#ifdef OLD
 			_Cache = Cache;
 			_Size = Size;
+#endif
 			_AmountMax = AmountMax;
 
 			_Red = 0;
+#ifdef OLD
 			_Available = _Position = 0;
+#endif
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
@@ -360,21 +388,29 @@ namespace flw {
 			void *Buffer,
 			size__ Minimum = 1 )
 		{
-			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum );
+			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum, true );
 		}
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Read(
 			size__ Amount,
 			void *Buffer )
 		{
-			_Read( Amount, (datum__ *)Buffer );
+			_Read( Amount, (datum__ *)Buffer, true );
+		}
+		datum__ View( void )
+		{
+			datum__ C;
+
+			_Read( 1, &C, false );
+
+			return C;
 		}
 		//f Get next byte.
 		datum__ Get( void )
 		{
 			datum__ C;
 
-			_Read( 1, &C );
+			_Read( 1, &C, true );
 
 			return C;
 		}
@@ -415,14 +451,21 @@ namespace flw {
 		{
 			EOFD( Data );
 
+#ifdef OLD
 			if ( _Available > Amount )	// This means we have red too much data.
 				ERRf();
+#else
+			if ( _Red > Amount )	// This means we have red too much data.
+				ERRf();
+#endif
 
 			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
 			_AmountMax = Amount;
 
+#ifdef OLD
 			_Red = _Available;
+#endif
 
 			if ( _Red == _AmountMax )
 				EOFD_.HandlingEOFD = true;
@@ -430,7 +473,11 @@ namespace flw {
 		//f Return the amount of data red since last 'Reset()'.
 		size__ AmountRed( void ) const
 		{
+#ifdef OLD
 			return _Red - _Available;
+#else
+			return _Red;
+#endif
 		}
 		void SetAmountMax( size__ AmountMax )
 		{
@@ -454,7 +501,9 @@ namespace flw {
 
 			return Amount;
 		}
-*/		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+*/		
+#ifdef OLD
+		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
 
 		{
 			if ( _Available == 0 )
@@ -469,22 +518,13 @@ namespace flw {
 			} else
 				return _Cache + _Position;
 		}
+#endif
 	};
 
 
-	template <int CacheSize = FLW__ICACHE_SIZE> class standalone_iflow__
+	template <int = 0> class standalone_iflow__
 	: public iflow__
-	{
-	private:
-		flw::datum__ _Cache[CacheSize];
-	public:
-		void Init( 
-			fwf::iflow_functions___ &Functions,
-			size__ AmountMax )
-		{
-			iflow__::Init( Functions, _Cache, sizeof( _Cache ), AmountMax );
-		}
-	};
+	{};
 
 
 	//f Get 'StaticObject' from 'InputFlow'.
@@ -512,7 +552,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		fwf::oflow_functions___ *_Functions;
+		fwf::oflow_functions_base___ *_Functions;
 		// The cache.
 		datum__ *_Cache;
 		// The size of the cache.
@@ -632,7 +672,7 @@ namespace flw {
 			reset();
 		}
 		void Init(
-			fwf::oflow_functions___ &Functions,
+			fwf::oflow_functions_base___ &Functions,
 			datum__ *Cache,
 			size__ Size,
 			size__ AmountMax )
@@ -701,14 +741,14 @@ namespace flw {
 		}
 	};
 
-	template <int CacheSize = FLW__OCACHE_SIZE> class standalone_oflow__
+	template <int CacheSize = FLW__OUTPUT_CACHE_SIZE> class standalone_oflow__
 	: public oflow__
 	{
 	private:
 		flw::datum__ _Cache[CacheSize];
 	public:
 		void Init(
-			fwf::oflow_functions___ &Functions,
+			fwf::oflow_functions_base___ &Functions,
 			size__ AmountMax )
 		{
 			oflow__::Init( Functions, _Cache, sizeof( _Cache ), AmountMax );
@@ -765,48 +805,57 @@ namespace flw {
 			SetAmountMax( AmountMax, AmountMax );
 		}
 		void Init(
-			fwf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions_base___ &Functions,
+#ifdef OLD
 			datum__ *ICache,
 			size__ ISize,
+#endif
 			size__ ReadAmountMax,
 			datum__ *OCache,
 			size__ OSize,
 			size__ WriteAmountMax )
 		{
+#ifdef OLD
 			iflow__::Init( Functions, ICache, ISize, ReadAmountMax );
+#else
+			iflow__::Init( Functions, ReadAmountMax );
+#endif
 			oflow__::Init( Functions, OCache, OSize, WriteAmountMax );
 
 		}
 		void Init(
-			fwf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions_base___ &Functions,
 			datum__ *Cache,
 			size__ Size,
 			size__ AmountMax )
 		{
+#ifdef OLD
 			iflow__::Init( Functions, Cache, Size / 2, AmountMax );
+#else
+			iflow__::Init( Functions, AmountMax );
+#endif
 			oflow__::Init( Functions, Cache + Size / 2, Size / 2, AmountMax );
 		}
 	};
 
-	template <int InCacheSize = FLW__ICACHE_SIZE, int OutCacheSize = FLW__OCACHE_SIZE> class standalone_ioflow__
+	template <int OutCacheSize = FLW__OUTPUT_CACHE_SIZE> class standalone_ioflow__
 	: public ioflow__
 	{
 	private:
-		flw::datum__ _ICache[InCacheSize];
-		flw::datum__ _OCache[OutCacheSize];
+		flw::datum__ _OutputCache[OutCacheSize];
 	public:
 		void Init(
-			fwf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions_base___ &Functions,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 		{
-			ioflow__::Init( Functions, _ICache, sizeof( _ICache ), ReadAmountMax, _OCache, sizeof( _OCache ), WriteAmountMax );
+			ioflow__::Init( Functions, ReadAmountMax, _OCache, sizeof( _OutputCache ), WriteAmountMax );
 		}
 		void Init(
-			fwf::ioflow_functions___ &Functions,
+			fwf::ioflow_functions_base___ &Functions,
 			size__ AmountMax )
 		{
-			ioflow__::Init( Functions, _ICache, sizeof( _ICache ), AmountMax, _OCache, sizeof( _OCache ), AmountMax );
+			ioflow__::Init( Functions, AmountMax, _OutputCache, sizeof( _OutputCache ), AmountMax );
 		}
 	};
 

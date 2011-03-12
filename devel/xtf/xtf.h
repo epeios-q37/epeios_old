@@ -117,7 +117,8 @@ namespace xtf {
 		// Remplit le tampon. Il est supposé vide.
 		void RemplirTampon_( _amount__ Offset )
 		{
-			Nombre_ = (_amount__)Entree_->ReadUpTo( (_amount__)( sizeof( Cache_ ) - Offset ), Cache_ + Offset, 1 );
+			if ( ( Nombre_ = (_amount__)Entree_->ReadUpTo( (_amount__)( sizeof( Cache_ ) - Offset ), Cache_ + Offset, 1 ) ) == 0 )
+				ERRf();
 
 			Position_ = Offset;
 		}

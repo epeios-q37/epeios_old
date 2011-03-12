@@ -63,6 +63,8 @@ extern class ttr_tutor &FWFTutor;
 #include "err.h"
 #include "bso.h"
 
+#include <string.h>
+
 #ifdef FWF_THREAD_SAFE
 #	define FWF__TS
 #elif !defined( FWF_THREAD_UNSAFE )
@@ -79,6 +81,13 @@ extern class ttr_tutor &FWFTutor;
 	typedef void *mutex__;
 #	define FWF_NO_MUTEX	NULL
 #endif
+
+#ifdef FWF_DEFAULT_CACHE_SIZE
+#	define FWF__DEFAULT_CACHE_SIZE	FWF_DEFAULT_CACHE_SIZE
+#else
+#	define FWF__DEFAULT_CACHE_SIZE	1024
+#endif
+
 
 
 namespace fwf {
@@ -184,11 +193,14 @@ namespace fwf {
 		return true;
 	}
 
-		//c Base input flow.
-	class iflow_functions___
+	class iflow_functions_base___
 	{
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		datum__ *_Cache;
+		size__ _Size;
+		size__ _Available;
+		size__ _Position;
 		void _Lock( void )
 		{
 			Lock_( _Mutex );
@@ -202,6 +214,18 @@ namespace fwf {
 #endif
 				Unlock_( _Mutex );
 			}
+		}
+		void _FillCache( void )
+		{
+#ifdef FWF_DBG
+			if ( ( _Cache == NULL ) || ( _Size == 0 ) )
+				ERRu();
+
+			if ( _Available != 0 )
+				ERRc();
+#endif
+			_Position = 0;
+			_Available = FWFRead( _Size, _Cache );
 		}
 	protected:
 		// Retourne le nombre d'octets effectivement lus. Ne retourne '0' que si plus aucune donnée n'est disponibe.
@@ -220,20 +244,29 @@ namespace fwf {
 				}
 			}
 
+			_Cache = NULL;
+			_Size = _Available = _Position = 0;
 			_Mutex = FWF_NO_MUTEX;
 		}
-		iflow_functions___( void )
+		iflow_functions_base___( void )
 		{
 			reset( false );
 		}
-		virtual ~iflow_functions___( void )
+		virtual ~iflow_functions_base___( void )
 		{
 			reset();
 		}
-		void Init( thread_safety__ ThreadSafety )
+		void Init(
+			datum__ *Cache,
+			size__ Size,
+			thread_safety__ ThreadSafety )
 		{
 			reset();
 
+			_Cache = Cache;
+			_Size = Size;
+
+			_Available = _Position = 0;
 			_Mutex = Create_( ThreadSafety );
 		}
 		void Dismiss( void )
@@ -246,7 +279,8 @@ namespace fwf {
 		}
 		size__ Read(
 			size__ Maximum,
-			datum__ *Buffer )
+			datum__ *Buffer,
+			bso::bool__ Adjust )
 		{
 #ifdef FWF_DBG
 			if ( Maximum < 1 )
@@ -254,12 +288,36 @@ namespace fwf {
 #endif
 			_Lock();
 
-			return FWFRead( Maximum, Buffer );
+			if ( _Available == 0 )
+				_FillCache();
+
+			if ( Maximum > _Available )
+				Maximum = _Available;
+
+			memcpy( Buffer, _Cache + _Position, Maximum );
+
+			if ( Adjust ) {
+				_Available -= Maximum;
+				_Position += Maximum;
+			}
+
+			return Maximum;
 		}
 	};
 
-	//c Basic output flow.
-	class oflow_functions___
+	template <int cache_size = FWF__DEFAULT_CACHE_SIZE> class iflow_functions___
+	: public iflow_functions_base___
+	{
+	private:
+		datum__ _Cache[cache_size];
+	public:
+		void Init( thread_safety__ ThreadSafety )
+		{
+			iflow_functions_base___::Init( _Cache, sizeof( _Cache ), ThreadSafety );
+		}
+	};
+
+	class oflow_functions_base___
 	{
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
@@ -296,11 +354,11 @@ namespace fwf {
 
 			_Mutex = FWF_NO_MUTEX;
 		}
-		oflow_functions___( void )
+		oflow_functions_base___( void )
 		{
 			reset( false );
 		}
-		virtual ~oflow_functions___( void )
+		virtual ~oflow_functions_base___( void )
 		{
 			reset();
 		}
@@ -324,20 +382,39 @@ namespace fwf {
 		}
 	};
 
-	class ioflow_functions___
-	: public iflow_functions___,
-	  public oflow_functions___
+	template <int = 0> class oflow_functions___
+	: public oflow_functions_base___
+	{};
+
+	class ioflow_functions_base___
+	: public iflow_functions_base___,
+	  public oflow_functions_base___
 	{
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			iflow_functions___::reset( P );
-			oflow_functions___::reset( P );
+			iflow_functions_base___::reset( P );
+			oflow_functions_base___::reset( P );
 		}
+		void Init(
+			datum__ *InputCache,
+			size__ InputCacheSize,
+			thread_safety__ ThreadSafety )
+		{
+			iflow_functions_base___::Init( InputCache, InputCacheSize, ThreadSafety );
+			oflow_functions_base___::Init( ThreadSafety );
+		}
+	};
+
+	template <int input_cache_size = FWF__DEFAULT_CACHE_SIZE> class ioflow_functions___
+	: public ioflow_functions_base___
+	{
+	private:
+		datum__ _InputCache[input_cache_size];
+	public:
 		void Init( thread_safety__ ThreadSafety )
 		{
-			iflow_functions___::Init( ThreadSafety );
-			oflow_functions___::Init( ThreadSafety );
+			ioflow_functions_base___::Init( _InputCache, sizeof( _InputCache ), ThreadSafety );
 		}
 	};
 }

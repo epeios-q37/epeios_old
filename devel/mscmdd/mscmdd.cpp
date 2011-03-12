@@ -166,7 +166,7 @@ ERREnd
 ERREpilog
 }
 
-fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
+fwf::size__ mscmdd::midi_in___::Read(
 	fwf::size__ Maximum,
 	fwf::datum__ *Buffer )
 {
@@ -230,15 +230,12 @@ fwf::size__ mscmdd::midi_iflow_functions___::FWFRead(
 	return Maximum;
 }
 
-bso::bool__ mscmdd::midi_iflow_functions___::Init(
+bso::bool__ mscmdd::midi_in___::Init(
 	int Device,
-	err::handling__ ErrHandling,
-	fwf::thread_safety__ ThreadSafety )
+	err::handling__ ErrHandling )
 {
 	bso::ubyte__ Amount = sizeof( _Header ) / sizeof( *_Header );
 	reset();
-
-	fwf::iflow_functions___::Init( ThreadSafety );
 
 	_Data.Access = mtx::Create( mtx::mFree );
 	_Data.Full = mtx::Create( mtx::mFree );

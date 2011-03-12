@@ -377,7 +377,7 @@ bso::bool__ mscmdm::GetEventHeader(
 	if ( Origin == oFile )
 		EventHeader.DeltaTimeTicks = GetDeltaTimeTicks( IFlow );
 
-	Datum = *IFlow.GetCurrentCacheDatum( false );
+	Datum = IFlow.View();
 
 	if ( EventHeader.EventType == etMIDI )
 		if ( Datum & 0x80 ) {
@@ -392,7 +392,7 @@ bso::bool__ mscmdm::GetEventHeader(
 
 	EventHeader.MIDIEvent.ChannelID = Datum & 0xf;
 
-	PartiallyFillEventHeader( Datum, *IFlow.GetCurrentCacheDatum( false ), EventHeader );
+	PartiallyFillEventHeader( Datum, IFlow.View(), EventHeader );
 
 	switch ( EventHeader.EventType ) {
 	case etMIDI:

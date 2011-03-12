@@ -643,8 +643,7 @@ namespace mscrmi {
 
 	transmission_status__ GetDeviceFamily(
 		device_id__ Id,
-		flw::oflow__ &OFlow,
-		flw::iflow__ &IFlow,
+		flw::ioflow__ &Flow,
 		device_family__ &DeviceFamily );
 
 	transmission_status__ Extract(
@@ -656,16 +655,14 @@ namespace mscrmi {
 
 
 	transmission_status__ Retrieve(
-		flw::oflow__ &OFlow,
-		flw::iflow__ &IFlow,
+		flw::ioflow__ &Flow,
 		address__ Address,
 		size__ Size,
 		const identity__ &Identity,
 		adata_ &Data );
 
 	transmission_status__ Retrieve(
-		flw::oflow__ &OFlow,
-		flw::iflow__ &IFlow,
+		flw::ioflow__ &Flow,
 		const blocs_ &Blocs,
 		const identity__ &Identity,
 		adata_set_ &Data );

@@ -1586,8 +1586,7 @@ inline transmission_status__ SendIdentityRequest_(
 
 transmission_status__ mscrmi::GetDeviceFamily(
 	device_id__ Id,
-	flw::oflow__ &OFlow,
-	flw::iflow__ &IFlow,
+	flw::ioflow__ &Flow,
 	device_family__ &DeviceFamily )
 {
 	transmission_status__ Status = ts_Undefined;
@@ -1597,14 +1596,16 @@ ERRProlog
 	data Model;
 ERRBegin
 
-	if ( ( Status = SendIdentityRequest_( Id, OFlow ) ) != tsOK )
+	if ( ( Status = SendIdentityRequest_( Id, Flow ) ) != tsOK )
 		ERRReturn;
 
-	OFlow.Commit();
+	Flow.Commit();
 
 	Data.Init();
 
-	ExtractSysEx_( IFlow, mscmdm::oDevice, Data );
+	ExtractSysEx_( Flow, mscmdm::oDevice, Data );
+
+	Flow.Dismiss();
 
 	if ( Data.Amount() != 13 ) {
 		Status =tsIncorrectData;
@@ -1656,8 +1657,7 @@ ERREpilog
 }
 
 transmission_status__ mscrmi::Retrieve(
-	flw::oflow__ &OFlow,
-	flw::iflow__ &IFlow,
+	flw::ioflow__ &Flow,
 	address__ Address,
 	size__ Size,
 	const identity__ &Identity,
@@ -1666,29 +1666,30 @@ transmission_status__ mscrmi::Retrieve(
 	transmission_status__ Status = ts_Undefined;
 	mscmdm::size__ HandledSize = Size + Data.Amount();
 
-	RequestData( Identity, Address, Size, OFlow );
+	RequestData( Identity, Address, Size, Flow );
 
 	Data.Address() = MSCRMI_UNDEFINED_ADDRESS;
 
 	if ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, Identity, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
+		if ( ( Status = Extract( Flow, Identity, mscmdm::oDevice, Data.Address(), Data ) ) != tsOK )
 			return Status;
 
 	if ( Data.Address() != Address )
 		ERRf();
 
 	while ( Data.Amount() != HandledSize )
-		if ( ( Status = Extract( IFlow, Identity, mscmdm::oDevice, Address, Data ) ) != tsOK )
+		if ( ( Status = Extract( Flow, Identity, mscmdm::oDevice, Address, Data ) ) != tsOK )
 			return Status;
 
 	Status = tsOK;
+
+	Flow.Dismiss();
 
 	return Status;
 }
 
 transmission_status__ mscrmi::Retrieve(
-	flw::oflow__ &OFlow,
-	flw::iflow__ &IFlow,
+	flw::ioflow__ &Flow,
 	const blocs_ &Blocs,
 	const identity__ &Identity,
 	adata_set_ &DataSet )
@@ -1703,7 +1704,7 @@ ERRBegin
 	while ( Row != NONE ) {
 		Data.Init();
 
-		if( ( Status = Retrieve( OFlow, IFlow, Blocs( Row ).Address, Blocs( Row ).Size, Identity, Data ) ) != tsOK )
+		if( ( Status = Retrieve( Flow, Blocs( Row ).Address, Blocs( Row ).Size, Identity, Data ) ) != tsOK )
 			ERRReturn;
 
 		DataSet.Append( Data );
