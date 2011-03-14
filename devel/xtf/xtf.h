@@ -114,55 +114,20 @@ namespace xtf {
 	class extended_text_iflow__
 	{
 	private:
-		// Remplit le tampon. Il est supposé vide.
-		void RemplirTampon_( _amount__ Offset )
-		{
-			if ( ( Nombre_ = (_amount__)Entree_->ReadUpTo( (_amount__)( sizeof( Cache_ ) - Offset ), Cache_ + Offset, 1 ) ) == 0 )
-				ERRf();
-
-			Position_ = Offset;
-		}
-		// Retourne le prochain caractère sans l'extraire.
-		unsigned char Consulter_( _amount__ Offset = 0 )
-		{
-			if ( !Nombre_ )
-				RemplirTampon_( Offset );
-
-			return (unsigned char)Cache_[Position_];
-		}
-		// Retourne vrai lorsque le cache est vide, faux sinon.
-		bool CacheVide_( void )
-		{
-			return !Nombre_;
-		}
 		// L'entree de base.
 		flw::iflow__ *Entree_;
-		// Un petit cache. Taille doit être < 256.
-		flw::datum__ Cache_[255];
-		// Position dans le cache
-		_amount__ Position_;
-		// Nombre de caractères encore disponibles dans le cache.
-		_amount__ Nombre_;
 		// Corrdonnée du prochain caractère.
 		coord__ _Coord;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
-		// Adjust cache counters after reading a char.
-		void CacheAdjust_( void )
-		{
-			Nombre_--;
-			Position_++;
-		}
 		// Adjust counters.after reading a new character.
 		void NewCharAdjust_( void )
 		{
-			CacheAdjust_();
 			_Coord.Column++;
 		}
 		// Adjust counters.after reading a new line character.
 		void NewLineAdjust_( void )
 		{
-			CacheAdjust_();
 			_Coord.Line++;
 			_Coord.Column = 0;
 		}
@@ -171,7 +136,6 @@ namespace xtf {
 		{
 			_Coord.reset( P );
 			_Coord.Line = _Coord.Column = 1;
-			Position_ = Nombre_ = 0;
 			Entree_ = NULL;
 			EOL_ = false;
 		}
@@ -189,7 +153,6 @@ namespace xtf {
 			coord__ Coord = coord__( 1, 0 ) )
 		{
 			_Coord.Init( Coord );
-			Position_ = Nombre_ = 0;
 			Entree_ = NULL;
 			EOL_ = false;
 
@@ -198,7 +161,7 @@ namespace xtf {
 		//f Extract and return next character in flow.
 		unsigned char Get( void )
 		{
-			unsigned char C = Consulter_();
+			unsigned char C = Entree_->Get();
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
@@ -210,7 +173,6 @@ namespace xtf {
 			} else if ( EOL_ == '\r' ) {
 				if ( C == '\n' ) {
 					EOL_ = 0;
-					CacheAdjust_();
 				} else if ( C == '\r' ) {
 					EOL_ = C;
 					NewLineAdjust_();
@@ -221,7 +183,6 @@ namespace xtf {
 			} else if ( EOL_ == '\n' ) {
 				if ( C == '\r' ) {
 					EOL_ = 0;
-					CacheAdjust_();
 				} else if ( C == '\n' ) {
 					EOL_ = C;
 					NewLineAdjust_();
@@ -240,14 +201,6 @@ namespace xtf {
 			if ( EOL_ )
 				EOL_ = 0;
 
-			if ( Nombre_ )
-				Position_--;
-			else
-				Position_ = 0;
-
-			Nombre_++;
-			Cache_[Position_] = (flw::datum__)C;
-
 			if ( ( C != '\n' ) && ( C != '\r' ) )
 				_Coord.Column--;
 			else
@@ -257,6 +210,8 @@ namespace xtf {
 
 				_Coord.Column = 0;
 			}
+
+			Entree_->Unget( C );
 		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
 		const coord__ &Coord( void ) const
@@ -281,24 +236,15 @@ namespace xtf {
 		//f Return the next character in the flow, but let it in the flow.
 		unsigned char View( bso::bool__ HandleNL = false )
 		{
-			unsigned char C = Consulter_( 1 );
+			unsigned char C = Entree_->View();
 
 			if ( HandleNL && EOL_ ) {
 
 				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
 					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
-
-					 if ( Nombre_ == 1 ) {
-						 RemplirTampon_( 2 );
-						 Nombre_++;
-						 Position_--;
-						 Cache_[Position_] = C;
-					 }
-
-					 if ( Nombre_ < 2 )
-						 ERRf();
-
-					 C = Cache_[Position_+1];
+						 EOL_ = 0;
+						 Entree_->Get();
+						 C = Entree_->View();
 				}
 			}
 
@@ -312,11 +258,15 @@ namespace xtf {
 		//f Return the amount of data red.
 		flw::size__ AmountRed( void ) const
 		{
-			return Entree_->AmountRed() - Nombre_;
+			return Entree_->AmountRed();
 		}
 		void Set( coord__ Coord )
 		{
 			_Coord = Coord;
+		}
+		flw::iflow__ &UndelyingFlow( void ) const
+		{
+			return *Entree_;
 		}
 	};
 }

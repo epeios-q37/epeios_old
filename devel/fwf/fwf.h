@@ -224,8 +224,8 @@ namespace fwf {
 			if ( _Available != 0 )
 				ERRc();
 #endif
-			_Position = 0;
-			_Available = FWFRead( _Size, _Cache );
+			_Position = 1;
+			_Available = FWFRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
 		}
 	protected:
 		// Retourne le nombre d'octets effectivement lus. Ne retourne '0' que si plus aucune donnée n'est disponibe.
@@ -302,6 +302,17 @@ namespace fwf {
 			}
 
 			return Maximum;
+		}
+		void Unget( datum__ Datum )
+		{
+			if ( _Available == 0 )
+				_Position = 1;
+
+			if ( _Position == 0 )
+				ERRu();	// Appeler 'Unget(...)' deux fois de suite (ou seulement avec des 'View(...)' entre) n'est pas conseillé.
+
+			_Cache[--_Position] = Datum;
+			_Available++;
 		}
 	};
 

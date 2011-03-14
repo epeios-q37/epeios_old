@@ -93,6 +93,8 @@ namespace xpp {
 		sUnableToOpenFile,
 		sUnknownMacro,
 		sBadAttributeDefinitionSyntax,
+		sBadCypherKey,
+		sMissingCypherKey,
 
 		s_amount,
 		s_Undefined,
@@ -116,6 +118,7 @@ namespace xpp {
 		str::string SetTag;
 		str::string IfeqTag;
 		str::string BlocTag;
+		str::string CypherTag;
 		str::string AttributeAttribute;	//'<tag xpp:attribute="..." ...>'//
 		void reset( bso::bool__ P = true )
 		{
@@ -362,9 +365,20 @@ namespace xpp {
 		_qualified_preprocessor_directives___ &_Directives;
 		str::string _LocalizedFileName;	// Si le 'parser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
+		str::string _CypherKey;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
 		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
+		status__ _InitWithFile(
+			const str::string_ &FileName,
+			const str::string_ &Directory,
+			const str::string_ &CypherKey );
+		status__ _InitWithContent(
+			const str::string_ &Content,
+			const str::string_ &NameOfTheCurrentFile,
+			const xtf::coord__ &Coord,
+			const str::string_ &Directory,
+			const str::string_ &CypherKey );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
@@ -374,6 +388,13 @@ namespace xpp {
 		status__ _HandleExpandDirective( _extended_parser___ *&Parser );
 		status__ _HandleSetDirective( _extended_parser___ *&Parser );
 		status__ _HandleIfeqDirective( _extended_parser___ *&Parser );
+		status__ _HandleCypherDecryption(
+			const str::string_ &MacroName,
+			_extended_parser___ *&Parser );
+		status__ _HandleCypherOverride(
+			const str::string_ &MacroName,
+			_extended_parser___ *&Parser );
+		status__ _HandleCypherDirective( _extended_parser___ *&Parser );
 		status__ _HandleAttributeDirective(
 			const str::string_ &Parameters,
 			_extended_parser___ *&Parser,
@@ -392,6 +413,7 @@ namespace xpp {
 			_XFlow.reset( P );
 			_LocalizedFileName.reset( P );
 			_Directory.reset( P );
+			_CypherKey.reset( P );
 			_Parser.reset( P );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
@@ -413,7 +435,8 @@ namespace xpp {
 		status__ Init(
 			xtf::extended_text_iflow__ &XFlow,
 			const str::string_ &LocalizedFileName,	// Si 'XFlow' est rattaché à un fichier, le nom de ce fichier (utile pour la gestion d'erreurs).
-			const str::string_ &Directory )
+			const str::string_ &Directory,
+			const str::string_ &CypherKey )
 		{
 			// _Repository.Init();
 			// _Tags.Init();
@@ -421,19 +444,12 @@ namespace xpp {
 			_Parser.Init( XFlow, xml::ehKeep );
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
+			_CypherKey.Init( CypherKey );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
 
 			return sOK;
 		}
-		status__ InitWithFile(
-			const str::string_ &FileName,
-			const str::string_ &Directory );
-		status__ InitWithContent(
-			const str::string_ &Content,
-			const str::string_ &NameOfTheCurrentFile,
-			const xtf::coord__ &Coord,
-			const str::string_ &Directory );
 		status__ Handle(
 			_extended_parser___ *&Parser,
 			str::string_ &Data );
@@ -533,6 +549,7 @@ namespace xpp {
 			xtf::extended_text_iflow__ &XFlow,
 			fwf::thread_safety__ ThreadSafety,
 			const str::string_ &Directory,
+			const str::string_ &CypherKey,
 			const str::string_ &Namespace )
 		{
 			_DeleteParsers();
@@ -544,7 +561,7 @@ namespace xpp {
 			_iflow_functions___::Init( ThreadSafety );
 			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
 			_Parsers.Init();
-			if ( _Parser().Init( XFlow, str::string(), Directory ) != sOK )
+			if ( _Parser().Init( XFlow, str::string(), Directory, CypherKey ) != sOK )
 				ERRc();
 		}
 		E_RODISCLOSE__( status__, Status );
@@ -584,10 +601,11 @@ namespace xpp {
 		void Init(
 			flw::iflow__ &IFlow,
 			const str::string_ &Directory,
+			const str::string_ &CypherKey,
 			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
 		{
 			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Directory, Namespace );
+			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Directory, CypherKey, Namespace );
 			_iflow__::Init( _FlowFunctions, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
@@ -702,6 +720,11 @@ namespace xpp {
 		}
 	};
 #endif
+	status__ Encrypt(
+		const str::string_ &Namespace,
+		flw::iflow__ &IFlow,
+		xml::writer_ &Writer,
+		xtf::coord__ &Coord );
 
 	status__ Process(
 		const str::string_ &Namespace,

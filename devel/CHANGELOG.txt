@@ -1,5 +1,14 @@
 $Id$
 
+14/03/2011 :
+	- FLW :
+		- Ajout de 'Unget()'.
+	- FWF :
+		- Ajout de 'Unget()'.
+	- XTF :
+		- Suppression du cache pour rendre l'objet le plus neutre possible.
+		- Rajout de 'UnderlyingFlow(...)'.
+
 11/03/2011 :
 	- GENERAL :
 		- Adaptation modifications 'FWF'.

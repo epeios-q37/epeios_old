@@ -414,6 +414,10 @@ namespace flw {
 
 			return C;
 		}
+		void Unget( datum__ Datum )
+		{
+			return _Functions->Unget( Datum );
+		}
 		//f Skip 'Amount' bytes.
 		void Skip( size__ Amount = 1 )
 		{
