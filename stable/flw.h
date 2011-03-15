@@ -132,7 +132,8 @@ namespace flw {
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
-			bso::bool__ Adjust )
+			bso::bool__ Adjust,
+			bso::bool__ &CacheIsEmpty )
 		{
 			size__ Amount = 0;
 
@@ -147,7 +148,7 @@ namespace flw {
 
 				// 'ToRead' ne peut être < 1, car on ne serait pas ici sinon.
 
-				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust );
+				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust, CacheIsEmpty );
 
 				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
 				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
@@ -160,7 +161,7 @@ namespace flw {
 					EOFD_.HandlingEOFD = true;
 
 			} else {
-				Amount = _Read( Minimum, Buffer, Wanted, Adjust );
+				Amount = _Read( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
 
 				if ( (Amount < Minimum ) || ( Amount == 0 ) ) {
 					Amount += HandleEOFD( Buffer, Wanted - Amount );
@@ -264,18 +265,20 @@ namespace flw {
 			size__ Amount,
 			datum__ *Buffer,
 			size__ Minimum,
-			bso::bool__ Adjust )
+			bso::bool__ Adjust,
+			bso::bool__ CacheIsEmpty )
 		{
-			return _Read( Minimum, Buffer, Amount, Adjust );
+			return _Read( Minimum, Buffer, Amount, Adjust, CacheIsEmpty );
 		}
 #endif
 		// Place 'Amount' bytes in 'Buffer'.
 		void _Read(
 			size__ Amount,
 			datum__ *Buffer,
-			bso::bool__ Adjust )
+			bso::bool__ Adjust,
+			bso::bool__ &CacheIsEmpty )
 		{
-			if ( _ReadUpTo( Amount, Buffer, Amount, Adjust ) != Amount )
+			if ( _ReadUpTo( Amount, Buffer, Amount, Adjust, CacheIsEmpty ) != Amount )
 				ERRf();
 		}
 		// Generic read.
@@ -283,13 +286,14 @@ namespace flw {
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
-			bso::bool__ Adjust )
+			bso::bool__ Adjust,
+			bso::bool__ &CacheIsEmpty )
 		{
-			size__ PonctualAmount = _Functions->Read( Wanted, Buffer, Adjust );
+			size__ PonctualAmount = _Functions->Read( Wanted, Buffer, Adjust, CacheIsEmpty );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust );
+				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust, CacheIsEmpty );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -299,7 +303,8 @@ namespace flw {
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
-			bso::bool__ Adjust );
+			bso::bool__ Adjust,
+			bso::bool__ &CacheIsEmpty );
 		void _Dismiss( void )
 		{
 			_Functions->Dismiss();
@@ -388,20 +393,25 @@ namespace flw {
 			void *Buffer,
 			size__ Minimum = 1 )
 		{
-			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum, true );
+			bso::bool__ Dummy = false;
+
+			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum, true, Dummy );
 		}
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Read(
 			size__ Amount,
 			void *Buffer )
 		{
-			_Read( Amount, (datum__ *)Buffer, true );
+			bso::bool__ Dummy = false;
+
+			_Read( Amount, (datum__ *)Buffer, true, Dummy );
 		}
 		datum__ View( void )
 		{
 			datum__ C;
+			bso::bool__ Dummy = false;
 
-			_Read( 1, &C, false );
+			_Read( 1, &C, false, Dummy );
 
 			return C;
 		}
@@ -409,8 +419,17 @@ namespace flw {
 		datum__ Get( void )
 		{
 			datum__ C;
+			bso::bool__ Dummy = false;
 
-			_Read( 1, &C, true );
+			_Read( 1, &C, true, Dummy );
+
+			return C;
+		}
+		datum__ Get( bso::bool__ CacheIsEmpty )
+		{
+			datum__ C;
+
+			_Read( 1, &C, true, CacheIsEmpty );
 
 			return C;
 		}

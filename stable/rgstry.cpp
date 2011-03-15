@@ -945,6 +945,7 @@ row__ rgstry::Parse(
 	const str::string_ &Directory,
 	registry_ &Registry,
 	row__ Root,
+	const char *CypherKey,
 	error_details_ &ErrorDetails )
 {
 ERRProlog
@@ -956,7 +957,7 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, Directory, str::string( NAMESPACE ) );
+	PFlow.Init( Flow, Directory, CypherKey, str::string( NAMESPACE ) );
 	XFlow.Init( PFlow );
 
 	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {
@@ -1210,6 +1211,7 @@ status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
 	const str::string_ &BaseDirectory,
 	const char *RootPath,
+	const char *CypherKey,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
@@ -1217,7 +1219,7 @@ status__ rgstry::FillRegistry(
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
-	if ( ( RegistryRoot = rgstry::Parse( IFlow, BaseDirectory, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
+	if ( ( RegistryRoot = rgstry::Parse( IFlow, BaseDirectory, Registry, RegistryRoot, CypherKey, ErrorDetails ) ) == NONE )
 		if ( ErrorDetails.GetXPPStatus() == xpp::sOK )
 			return sRootPathError;
 		else
@@ -1234,6 +1236,7 @@ status__ rgstry::FillRegistry(
 status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
 	const char *RootPath,
+	const char *CypherKey,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	const str::string_ &BaseDirectory )
@@ -1244,7 +1247,7 @@ ERRProlog
 ERRBegin
 	Dummy.Init();
 
-	Status = FillRegistry( IFlow, BaseDirectory, RootPath, Registry, RegistryRoot, Dummy );
+	Status = FillRegistry( IFlow, BaseDirectory, RootPath, CypherKey, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog
@@ -1255,7 +1258,7 @@ ERREpilog
 status__ rgstry::FillRegistry(
 	const char *FileName,
 	const char *RootPath,
-	const char *Key,
+	const char *CypherKey,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
@@ -1263,7 +1266,6 @@ status__ rgstry::FillRegistry(
 	status__ Status = s_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
-	crptgr::decrypt_iflow___ Decrypter;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
@@ -1272,16 +1274,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( Key != NULL ) {
-		Decrypter.Init( FFlow, Key );
-		Decrypter.EOFD( XTF_EOXT );
-
-		Status = FillRegistry( Decrypter, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
-	} else {
-		FFlow.EOFD( XTF_EOXT );
-
-		Status = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, Registry, RegistryRoot, ErrorDetails );
-	}
+	Status = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, CypherKey, Registry, RegistryRoot, ErrorDetails );
 
 	if ( Status == sParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )

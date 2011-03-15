@@ -76,8 +76,8 @@ using xml::token__;
 #define IFEQ_TAG_SELECT_ATTRIBUTE	"select"
 #define IFEQ_TAG_VALUE_ATTRIBUTE	"value"
 
-#define CYPHER_TAG_PASSWORD_ATTRIBUTE	"password"
-#define CYPHER_TAG_VERSION_ATTRIBUTE	"version"
+#define CYPHER_TAG_KEY_ATTRIBUTE	"key"
+#define CYPHER_TAG_FORMAT_ATTRIBUTE	"format"
 
 #define DEFINE_TAG			"define"
 #define EXPAND_TAG			"expand"
@@ -128,6 +128,7 @@ const char *xpp::Label( status__ Status )
 	CASE( BadAttributeDefinitionSyntax );
 	CASE( BadCypherKey );
 	CASE( MissingCypherKey );
+	CASE( MissingKeyOrFormatAttribute );
 	default:
 		ERRu();
 		break;
@@ -198,8 +199,8 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 	BlocTag.Init( NamespaceWithSeparator );
 	BlocTag.Append( BLOC_TAG );
 
-	BlocTag.Init( NamespaceWithSeparator );
-	BlocTag.Append( CYPHER_TAG );
+	CypherTag.Init( NamespaceWithSeparator );
+	CypherTag.Append( CYPHER_TAG );
 
 	AttributeAttribute.Init( NamespaceWithSeparator );
 	AttributeAttribute.Append( ATTRIBUTE_ATTRIBUTE );
@@ -313,17 +314,30 @@ static status__ GetDefineNameAttributeValue_(
 	return sOK;
 }
 
+void Dump_(
+	const str::string_ &Data,
+	flw::oflow__ &Flow )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Flow.Write( Data.Convert( Buffer ), Data.Amount() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static status__ RetrieveTree_(
 	parser___ &Parser,
-	str::string_ &Tree )
+	flw::oflow__ &Flow  )
 {
-	bso::ulong__ Nesting = 0;
 	status__ Status = s_Undefined;
+	bso::ulong__ Nesting = 0;
 
 	while ( Status == s_Undefined ) {
 		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
 		case xml::tStartTag:
-			Tree.Append( Parser.DumpData() );
+			Dump_( Parser.DumpData(), Flow );
 			if ( Nesting == BSO_ULONG_MAX )
 				ERRc();
 			Nesting++;
@@ -332,10 +346,10 @@ static status__ RetrieveTree_(
 			if( Nesting == 0 )
 				return sUnexpectedValue;
 			else
-				Tree.Append( Parser.DumpData() );
+				Dump_( Parser.DumpData(), Flow );
 			break;
 		case xml::tEndTag:
-			Tree.Append( Parser.DumpData() );
+			Dump_( Parser.DumpData(), Flow );
 			switch ( Nesting ) {
 			case 0:
 				ERRc();
@@ -362,6 +376,24 @@ static status__ RetrieveTree_(
 
 	return Status;
 }
+
+static status__ RetrieveTree_(
+	parser___ &Parser,
+	str::string_ &Tree )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	flx::E_STRING_OFLOW___ Flow;
+ERRBegin
+	Flow.Init( Tree );
+
+	Status = RetrieveTree_( Parser, Flow);
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 static status__ GetDefineNameAndContent_(
 	parser___ &Parser,
@@ -709,12 +741,12 @@ ERRProlog
 ERRBegin
 	AttributeName.Init();
 
-	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectOrHRefAttribute ) ) != sOK )
+	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingKeyOrFormatAttribute ) ) != sOK )
 		ERRReturn;
 
-	if ( Parser.AttributeName() == CYPHER_TAG_PASSWORD_ATTRIBUTE )
+	if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE )
 		Mode = cmOverriden;
-	else if ( Parser.AttributeName() == CYPHER_TAG_VERSION_ATTRIBUTE )
+	else if ( Parser.AttributeName() == CYPHER_TAG_FORMAT_ATTRIBUTE )
 		Mode = cmEncrypted;
 	else {
 		Status = sUnknownAttribute;
@@ -737,10 +769,9 @@ ERRProlog
 	cdgb64::decoding_iflow___ Decoder;
 	crptgr::decrypt_iflow___ Decrypter;
 	xtf::extended_text_iflow__ XFlow;
-	STR_BUFFER___ Buffer;
 ERRBegin
-	Decoder.Init( _XFlow.UndelyingFlow() );
-	Decrypter.Init( Decoder, _CypherKey.Convert( Buffer ) );
+	Decoder.Init( _Parser.Flow().UndelyingFlow() );
+	Decrypter.Init( Decoder, _CypherKey );
 	XFlow.Init( Decrypter );
 
 	Parser = NewParser( _Repository, _Variables, _Directives );
@@ -753,15 +784,15 @@ ERREpilog
 }
 
 status__ xpp::_extended_parser___::_HandleCypherOverride(
-	const str::string_ &CypherKey,
+	const char *CypherKey,
 	_extended_parser___ *&Parser )
 {
-	if ( _CypherKey != CypherKey )
+	if ( strcmp( _CypherKey, CypherKey ) != 0 )
 		return sBadCypherKey;
 	else {
 		Parser = NewParser( _Repository, _Variables, _Directives );
 
-		return Parser->Init( Parser->_XFlow, _LocalizedFileName, _Directory, _CypherKey );
+		return Parser->Init( _Parser.Flow(), _LocalizedFileName, _Directory, _CypherKey );
 	}
 }
 
@@ -772,15 +803,19 @@ status__ xpp::_extended_parser___::_HandleCypherDirective( _extended_parser___ *
 ERRProlog
 	cypher_mode__ Mode = cm_Undefined;
 	str::string Value;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Value.Init();
 
 	switch ( GetCypherModeAndValue_( _Parser, Value, Status ) ) {
 	case cmEncrypted:
-		Status = _HandleCypherDecryption( Value, Parser );
+		if ( ( _CypherKey == NULL ) || ( *_CypherKey == 0 ) )
+			Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
+		else
+			Status = _HandleCypherDecryption( Value, Parser );
 		break;
 	case cmOverriden:
-		Status = _HandleCypherOverride( Value, Parser );
+		Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
 		break;
 	case et_Undefined:
 		// 'Status' initialisé par 'etCypherModeAndValue_(...)'.
@@ -792,9 +827,6 @@ ERRBegin
 
 	if ( Status == sOK )
 		Status = AwaitingToken_( _Parser, xml::tStartTagClosed, sUnexpectedAttribute );
-
-	if ( Status == sOK )
-		Status = AwaitingToken_( _Parser, xml::tEndTag, sMustBeEmpty );
 
 	_Parser.PurgeDumpData();
 ERRErr
@@ -893,7 +925,7 @@ ERREpilog
 status__ xpp::_extended_parser___::_InitWithFile(
 	const str::string_ &FileName,
 	const str::string_ &Directory,
-	const str::string_ &CypherKey )
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -933,7 +965,7 @@ status__ xpp::_extended_parser___::_InitWithContent(
 	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory,
-	const str::string_ &CypherKey )
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1161,7 +1193,7 @@ ERRProlog
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
 ERRBegin
-	PFlow.Init( IFlow, Directory, Namespace );
+	PFlow.Init( IFlow, Directory, NULL, Namespace );
 	XFlow.Init( PFlow );
 
 	Parser.Init( XFlow, xml::ehKeep );
@@ -1207,45 +1239,115 @@ ERREpilog
 	return Status;
 }
 
+static status__ Encrypt_(
+	xml::parser___ &Parser,
+	const char *CypherKey,
+	str::string_ &Target,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	flx::E_STRING_OFLOW___ Flow;
+	cdgb64::encoding_oflow___ Encoder;
+	crptgr::encrypt_oflow___ Encrypter;
+ERRBegin
+	Flow.Init( Target );
+	Encoder.Init( Flow );
+	Encrypter.Init( Encoder, CypherKey );
+
+	Status = RetrieveTree_( Parser, Encrypter );
+
+	Coord = Parser.GetCurrentCoord();
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+static status__ Encrypt_(
+	xml::parser___ &Parser,
+	const char *CypherKey,
+	xml::writer_ &Writer,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string Tree;
+ERRBegin
+	Writer.PushTag( CYPHER_TAG );
+
+	Writer.PutAttribute( CYPHER_TAG_FORMAT_ATTRIBUTE, "beta" );
+
+	Tree.Init();
+
+	Status = Encrypt_( Parser, CypherKey, Tree, Coord );
+
+	Writer.PutValue( Tree );
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 // <xpp::cypher ...
 static status__ HandleCypherDirective_(
 	xml::parser___ &Parser,
-	xml::writer_ &Writer )
+	xml::writer_ &Writer,
+	xtf::coord__ &Coord )
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string CypherKey;
+	STR_BUFFER___ Buffer;
+	bso::bool__ CypheringComplete = false;
+	bso::bool__ Continue = true;
 ERRBegin
 	CypherKey.Init();
 
-	switch ( Parser.Parse( xml::tfAll ) ) {
-	case xml::tfAttribute:
-		if ( Parser.AttributeName() == CYPHER_TAG_PASSWORD_ATTRIBUTE ) {
-			if ( CypherKey.Amount() != 0 ) {
+	while ( Continue ) {
+		switch ( Parser.Parse( xml::tfAll ) ) {
+		case xml::tAttribute:
+			if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE ) {
+				if ( CypherKey.Amount() != 0 ) {
+					Status = sUnexpectedAttribute;
+					ERRReturn;
+				}
+
+				CypherKey = Parser.Value();
+			} else {
 				Status = sUnexpectedAttribute;
 				ERRReturn;
 			}
+			break;
+		case xml::tStartTagClosed:
+			if ( CypherKey.Amount() == 0 ) {
+				Status = sMissingCypherKey;
+				ERRReturn;
+			}
+			if ( ( Status = Encrypt_( Parser, CypherKey.Convert( Buffer ), Writer, Coord ) ) != sOK )
+				ERRReturn;
+			CypheringComplete = true;
+			break;
+		case xml::tEndTag:
+			if ( !CypheringComplete ) {
+				Status = sMissingCypherKey;
+				ERRReturn;
+			}
 
-			CypherKey = Parser.Value();
-		} else {
-			Status = sUnexpectedAttribute;
-			ERRReturn;
-		break;
-	case xml::tfStartTagClosed:
-		if ( CypherKey.Amount() == 0 ) {
-			Status = sMissingCypherKey;
-			ERRReturn;
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
 		}
-		Status = Encrypt_( Parser, Writer );
-		break;
-	default:
-		ERRc();
-		break;
-		}
+	}
 
 ERRErr
 ERREnd
 ERREpilog
+	return Status;
 }
 
 status__ xpp::Encrypt(
@@ -1254,13 +1356,16 @@ status__ xpp::Encrypt(
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord )
 {
-	status__ Status = xml::sOK;
+	status__ Status = s_Undefined;
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
+	_qualified_preprocessor_directives___ Directives;
 ERRBegin
+	Directives.Init( Namespace );
+
 	XFlow.Init( IFlow );
 
 	Parser.Init( XFlow, xml::ehKeep );
@@ -1275,7 +1380,11 @@ ERRBegin
 
 			break;
 		case xml::tStartTag:
-			Writer.PushTag( Parser.TagName() );
+			if ( Parser.TagName() == Directives.CypherTag ) {
+				if ( ( Status = HandleCypherDirective_( Parser, Writer, Coord ) ) != sOK )
+					ERRReturn;
+			} else
+				Writer.PushTag( Parser.TagName() );
 			break;
 		case xml::tAttribute:
 			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
@@ -1290,7 +1399,7 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			Status = Parser.Status();
+			Status = _Convert( Parser.Status() );
 			Coord = XFlow.Coord();
 			Continue = false;
 			break;
@@ -1299,11 +1408,34 @@ ERRBegin
 			break;
 		}
 	}
+
+	Status = sOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
+
+status__ xpp::Encrypt(
+	const str::string_ &Namespace,
+	flw::iflow__ &IFlow,
+	xml::outfit__ Outfit,
+	txf::text_oflow__ &OFlow,
+	xtf::coord__ &Coord )
+{
+	status__ Status = sOK;
+ERRProlog
+	xml::writer Writer;
+ERRBegin
+	Writer.Init( OFlow, Outfit, xml::schKeep );
+
+	Status = Encrypt( Namespace, IFlow, Writer, Coord );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 status__ xpp::Process(
 	const str::string_ &Namespace,

@@ -95,11 +95,17 @@ namespace xpp {
 		sBadAttributeDefinitionSyntax,
 		sBadCypherKey,
 		sMissingCypherKey,
+		sMissingKeyOrFormatAttribute,
 
 		s_amount,
 		s_Undefined,
 		s_Pending,
 	};
+
+	inline status__ _Convert( xml::status__ Status )
+	{
+		return (status__)Status;
+	}
 
 	const char *Label( status__ Status );
 
@@ -365,20 +371,20 @@ namespace xpp {
 		_qualified_preprocessor_directives___ &_Directives;
 		str::string _LocalizedFileName;	// Si le 'parser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
-		str::string _CypherKey;
+		const char *_CypherKey;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
 		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
 		status__ _InitWithFile(
 			const str::string_ &FileName,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey );
+			const char *CypherKey );
 		status__ _InitWithContent(
 			const str::string_ &Content,
 			const str::string_ &NameOfTheCurrentFile,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey );
+			const char *CypherKey );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
@@ -392,7 +398,7 @@ namespace xpp {
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
 		status__ _HandleCypherOverride(
-			const str::string_ &MacroName,
+			const char *CypherKey,
 			_extended_parser___ *&Parser );
 		status__ _HandleCypherDirective( _extended_parser___ *&Parser );
 		status__ _HandleAttributeDirective(
@@ -413,7 +419,7 @@ namespace xpp {
 			_XFlow.reset( P );
 			_LocalizedFileName.reset( P );
 			_Directory.reset( P );
-			_CypherKey.reset( P );
+			_CypherKey = NULL;
 			_Parser.reset( P );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
@@ -436,7 +442,7 @@ namespace xpp {
 			xtf::extended_text_iflow__ &XFlow,
 			const str::string_ &LocalizedFileName,	// Si 'XFlow' est rattaché à un fichier, le nom de ce fichier (utile pour la gestion d'erreurs).
 			const str::string_ &Directory,
-			const str::string_ &CypherKey )
+			const char *CypherKey )	// Ne pas modifier 'CypherKey'.
 		{
 			// _Repository.Init();
 			// _Tags.Init();
@@ -444,7 +450,7 @@ namespace xpp {
 			_Parser.Init( XFlow, xml::ehKeep );
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
-			_CypherKey.Init( CypherKey );
+			_CypherKey = CypherKey;
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
 
@@ -549,7 +555,7 @@ namespace xpp {
 			xtf::extended_text_iflow__ &XFlow,
 			fwf::thread_safety__ ThreadSafety,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey,
+			const char *CypherKey,
 			const str::string_ &Namespace )
 		{
 			_DeleteParsers();
@@ -601,7 +607,7 @@ namespace xpp {
 		void Init(
 			flw::iflow__ &IFlow,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey,
+			const char *CypherKey,
 			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
 		{
 			_XFlow.Init( IFlow );
@@ -724,6 +730,13 @@ namespace xpp {
 		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
 		xml::writer_ &Writer,
+		xtf::coord__ &Coord );
+
+	status__ Encrypt(
+		const str::string_ &Namespace,
+		flw::iflow__ &IFlow,
+		xml::outfit__ Outfit,
+		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord );
 
 	status__ Process(

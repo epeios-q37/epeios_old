@@ -1,5 +1,17 @@
 $Id$
 
+15/03/2011 :
+	- GENERAL :
+		- Adaptation modifications 'XPP'.
+	- CLNARG :
+		- Ajout '#include' manquant.
+	- FLW :
+		- Ajout de la possibilité de savoir si le cache est vide.
+	- FWF :
+		- Ajout de la possibilité de savoir si le cache est vide.
+	- XPP :
+		- Ajout gestion directive 'cypher'.
+
 14/03/2011 :
 	- FLW :
 		- Ajout de 'Unget()'.

@@ -146,7 +146,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, BaseDirectory, RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( IFlow, BaseDirectory, RootPath, NULL, Registry, S_.Root, ErrorDetails );
 		}
 		status__ Init(
 			flw::iflow__ &IFlow,
@@ -157,7 +157,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, RootPath, Registry, S_.Root, BaseDirectory );
+			return rgstry::FillRegistry( IFlow, RootPath, NULL, Registry, S_.Root, BaseDirectory );
 		}
 		status__ Init(
 			const char *FileName,

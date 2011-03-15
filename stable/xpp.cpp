@@ -57,25 +57,37 @@ public:
 
 #include "fnm.h"
 #include "lcl.h"
+#include "crptgr.h"
+#include "cdgb64.h"
 
 using namespace xpp;
 
 using xml::parser___;
 using xml::token__;
 
-#define NAME_ATTRIBUTE		"name"
-#define SELECT_ATTRIBUTE	"select"
-#define HREF_ATTRIBUTE		"href"
-#define VALUE_ATTRIBUTE		"value"
+#define DEFINE_TAG_NAME_ATTRIBUTE	"name"
+
+#define EXPAND_TAG_SELECT_ATTRIBUTE	"select"
+#define EXPAND_TAG_HREF_ATTRIBUTE	"href"
+
+#define SET_TAG_NAME_ATTRIBUTE	"name"
+#define SET_TAG_VALUE_ATTRIBUTE	"value"
+
+#define IFEQ_TAG_SELECT_ATTRIBUTE	"select"
+#define IFEQ_TAG_VALUE_ATTRIBUTE	"value"
+
+#define CYPHER_TAG_KEY_ATTRIBUTE	"key"
+#define CYPHER_TAG_FORMAT_ATTRIBUTE	"format"
 
 #define DEFINE_TAG			"define"
 #define EXPAND_TAG			"expand"
 #define IFEQ_TAG			"ifeq"
 #define SET_TAG				"set"
 #define BLOC_TAG			"bloc"
+#define CYPHER_TAG			"cypher"
 #define ATTRIBUTE_ATTRIBUTE	"attribute"
 
-#define MESSAGE_PREFIX	"EXPP_"
+#define MESSAGE_PREFIX	"XPP_"
 
 static inline status__ Convert_( xml::status__ Status )
 {
@@ -114,6 +126,9 @@ const char *xpp::Label( status__ Status )
 //	CASE( NestingOverflow );
 	CASE( UnknownMacro );
 	CASE( BadAttributeDefinitionSyntax );
+	CASE( BadCypherKey );
+	CASE( MissingCypherKey );
+	CASE( MissingKeyOrFormatAttribute );
 	default:
 		ERRu();
 		break;
@@ -184,6 +199,9 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 	BlocTag.Init( NamespaceWithSeparator );
 	BlocTag.Append( BLOC_TAG );
 
+	CypherTag.Init( NamespaceWithSeparator );
+	CypherTag.Append( CYPHER_TAG );
+
 	AttributeAttribute.Init( NamespaceWithSeparator );
 	AttributeAttribute.Append( ATTRIBUTE_ATTRIBUTE );
 }
@@ -228,6 +246,7 @@ enum directive__ {
 	dIfeq,
 	dBloc,
 	dSet,
+	dCypher,
 	dAttribute,
 	t_amount,
 	t_Undefined
@@ -247,6 +266,8 @@ static inline directive__ GetDirective_(
 		return dBloc;
 	else if ( Directives.SetTag == Name )
 		return dSet;
+	else if ( Directives.CypherTag == Name )
+		return dCypher;
 	else if ( Directives.AttributeAttribute == Name )
 		return dAttribute;
 
@@ -276,7 +297,7 @@ static status__ AwaitingToken_(
 	return sOK;
 }
 
-static status__ GetNameAttributeValue_(
+static status__ GetDefineNameAttributeValue_(
 	parser___ &Parser,
 	str::string_ &Value )
 {
@@ -285,7 +306,7 @@ static status__ GetNameAttributeValue_(
 	if ( Status != sOK )
 		return Status;
 
-	if ( Parser.AttributeName() != NAME_ATTRIBUTE )
+	if ( Parser.AttributeName() != DEFINE_TAG_NAME_ATTRIBUTE )
 		return sUnexpectedAttribute;
 
 	Value = Parser.Value();
@@ -293,17 +314,30 @@ static status__ GetNameAttributeValue_(
 	return sOK;
 }
 
+void Dump_(
+	const str::string_ &Data,
+	flw::oflow__ &Flow )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Flow.Write( Data.Convert( Buffer ), Data.Amount() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static status__ RetrieveTree_(
 	parser___ &Parser,
-	str::string_ &Tree )
+	flw::oflow__ &Flow  )
 {
-	bso::ulong__ Nesting = 0;
 	status__ Status = s_Undefined;
+	bso::ulong__ Nesting = 0;
 
 	while ( Status == s_Undefined ) {
 		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
 		case xml::tStartTag:
-			Tree.Append( Parser.DumpData() );
+			Dump_( Parser.DumpData(), Flow );
 			if ( Nesting == BSO_ULONG_MAX )
 				ERRc();
 			Nesting++;
@@ -312,10 +346,10 @@ static status__ RetrieveTree_(
 			if( Nesting == 0 )
 				return sUnexpectedValue;
 			else
-				Tree.Append( Parser.DumpData() );
+				Dump_( Parser.DumpData(), Flow );
 			break;
 		case xml::tEndTag:
-			Tree.Append( Parser.DumpData() );
+			Dump_( Parser.DumpData(), Flow );
 			switch ( Nesting ) {
 			case 0:
 				ERRc();
@@ -343,6 +377,24 @@ static status__ RetrieveTree_(
 	return Status;
 }
 
+static status__ RetrieveTree_(
+	parser___ &Parser,
+	str::string_ &Tree )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	flx::E_STRING_OFLOW___ Flow;
+ERRBegin
+	Flow.Init( Tree );
+
+	Status = RetrieveTree_( Parser, Flow);
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+
 static status__ GetDefineNameAndContent_(
 	parser___ &Parser,
 	str::string_ &Name,
@@ -350,7 +402,7 @@ static status__ GetDefineNameAndContent_(
 {
 	status__ Status = sOK;
 
-	if ( ( Status = GetNameAttributeValue_( Parser, Name ) ) != sOK )
+	if ( ( Status = GetDefineNameAttributeValue_( Parser, Name ) ) != sOK )
 		return Status;
 
 	if ( ( Status = AwaitingToken_( Parser, xml::tStartTagClosed, sUnexpectedAttribute ) ) != sOK )
@@ -410,9 +462,9 @@ ERRBegin
 	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectOrHRefAttribute ) ) != sOK )
 		ERRReturn;
 
-	if ( Parser.AttributeName() == HREF_ATTRIBUTE )
+	if ( Parser.AttributeName() == EXPAND_TAG_HREF_ATTRIBUTE )
 		Type = etFile;
-	else if ( Parser.AttributeName() == SELECT_ATTRIBUTE )
+	else if ( Parser.AttributeName() == EXPAND_TAG_SELECT_ATTRIBUTE )
 		Type = etMacro;
 	else {
 		Status = sUnknownAttribute;
@@ -446,7 +498,7 @@ ERRBegin
 
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->InitWithContent( Content, FileName, Coord, _Directory );
+	Status = Parser->_InitWithContent( Content, FileName, Coord, _Directory, _CypherKey );
 ERRErr
 	if ( Parser != NULL ) {
 		delete Parser;
@@ -472,7 +524,7 @@ ERRProlog
 ERRBegin
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->InitWithFile( FileName, _Directory );
+	Status = Parser->_InitWithFile( FileName, _Directory, _CypherKey );
 ERRErr
 	if ( Parser != NULL ) {
 		delete Parser;
@@ -535,20 +587,20 @@ static status__ GetSetNameAndValue_(
 	status__ Status = sOK;
 
 	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAndValueAttributes ) ) == sOK ) {
-		if ( Parser.AttributeName() == NAME_ATTRIBUTE ) {
+		if ( Parser.AttributeName() == SET_TAG_NAME_ATTRIBUTE ) {
 			Name.Append( Parser.Value() );
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
-				if ( Parser.AttributeName() == VALUE_ATTRIBUTE )
+				if ( Parser.AttributeName() == SET_TAG_VALUE_ATTRIBUTE )
 					Value.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
-		} else if ( Parser.AttributeName() == VALUE_ATTRIBUTE ) {
+		} else if ( Parser.AttributeName() == SET_TAG_VALUE_ATTRIBUTE ) {
 			Value.Append( Parser.Value() );
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAttribute ) ) == sOK ) {
-				if ( Parser.AttributeName() == NAME_ATTRIBUTE )
+				if ( Parser.AttributeName() == SET_TAG_NAME_ATTRIBUTE )
 					Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
@@ -597,20 +649,20 @@ static status__ GetIfeqSelectAndValue_(
 	status__ Status = sOK;
 
 	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectAndValueAttributes ) ) == sOK ) {
-		if ( Parser.AttributeName() == SELECT_ATTRIBUTE ) {
+		if ( Parser.AttributeName() == IFEQ_TAG_SELECT_ATTRIBUTE ) {
 			Name.Append( Parser.Value() );
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingValueAttribute ) ) == sOK ) {
-				if ( Parser.AttributeName() == VALUE_ATTRIBUTE )
+				if ( Parser.AttributeName() == IFEQ_TAG_VALUE_ATTRIBUTE )
 					Value.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
-		} else if ( Parser.AttributeName() == VALUE_ATTRIBUTE ) {
+		} else if ( Parser.AttributeName() == IFEQ_TAG_VALUE_ATTRIBUTE ) {
 			Value.Append( Parser.Value() );
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectAttribute ) ) == sOK ) {
-				if ( Parser.AttributeName() == SELECT_ATTRIBUTE )
+				if ( Parser.AttributeName() == IFEQ_TAG_SELECT_ATTRIBUTE )
 					Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
@@ -652,7 +704,7 @@ ERRBegin
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
 		Parser = NewParser( _Repository, _Variables, _Directives );
 
-		Status = Parser->InitWithContent( Content, _LocalizedFileName, Coord, _Directory );
+		Status = Parser->_InitWithContent( Content, _LocalizedFileName, Coord, _Directory, _CypherKey );
 	}
 ERRErr
 	if ( Parser != NULL ) {
@@ -669,6 +721,120 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+enum cypher_mode__
+{
+	cmOverriden,
+	cmEncrypted,
+	cm_amount,
+	cm_Undefined
+};
+
+static inline cypher_mode__ GetCypherModeAndValue_(
+	parser___ &Parser,
+	str::string_ &Value,
+	status__ &Status )	// Siginfiant seulement si valeur retournée == 'et_Undefined'.
+{
+	cypher_mode__ Mode = cm_Undefined;
+ERRProlog
+	str::string AttributeName;
+ERRBegin
+	AttributeName.Init();
+
+	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingKeyOrFormatAttribute ) ) != sOK )
+		ERRReturn;
+
+	if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE )
+		Mode = cmOverriden;
+	else if ( Parser.AttributeName() == CYPHER_TAG_FORMAT_ATTRIBUTE )
+		Mode = cmEncrypted;
+	else {
+		Status = sUnknownAttribute;
+		ERRReturn;
+	}
+
+	Value = Parser.Value();
+ERRErr
+ERREnd
+ERREpilog
+	return Mode;
+}
+
+status__ xpp::_extended_parser___::_HandleCypherDecryption(
+	const str::string_ &Version,
+	_extended_parser___ *&Parser )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	cdgb64::decoding_iflow___ Decoder;
+	crptgr::decrypt_iflow___ Decrypter;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	Decoder.Init( _Parser.Flow().UndelyingFlow() );
+	Decrypter.Init( Decoder, _CypherKey );
+	XFlow.Init( Decrypter );
+
+	Parser = NewParser( _Repository, _Variables, _Directives );
+
+	Status = Parser->Init( XFlow, _LocalizedFileName, _Directory, _CypherKey );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ xpp::_extended_parser___::_HandleCypherOverride(
+	const char *CypherKey,
+	_extended_parser___ *&Parser )
+{
+	if ( strcmp( _CypherKey, CypherKey ) != 0 )
+		return sBadCypherKey;
+	else {
+		Parser = NewParser( _Repository, _Variables, _Directives );
+
+		return Parser->Init( _Parser.Flow(), _LocalizedFileName, _Directory, _CypherKey );
+	}
+}
+
+
+status__ xpp::_extended_parser___::_HandleCypherDirective( _extended_parser___ *&Parser )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	cypher_mode__ Mode = cm_Undefined;
+	str::string Value;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Value.Init();
+
+	switch ( GetCypherModeAndValue_( _Parser, Value, Status ) ) {
+	case cmEncrypted:
+		if ( ( _CypherKey == NULL ) || ( *_CypherKey == 0 ) )
+			Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
+		else
+			Status = _HandleCypherDecryption( Value, Parser );
+		break;
+	case cmOverriden:
+		Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
+		break;
+	case et_Undefined:
+		// 'Status' initialisé par 'etCypherModeAndValue_(...)'.
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	if ( Status == sOK )
+		Status = AwaitingToken_( _Parser, xml::tStartTagClosed, sUnexpectedAttribute );
+
+	_Parser.PurgeDumpData();
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 	const str::string_ &DirectiveName,
@@ -691,6 +857,9 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 		break;
 	case dIfeq:
 		return _HandleIfeqDirective( Parser );
+		break;
+	case dCypher:
+		return _HandleCypherDirective( Parser );
 		break;
 	default:
 		return sUnknownDirective;
@@ -753,9 +922,10 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_parser___::InitWithFile(
+status__ xpp::_extended_parser___::_InitWithFile(
 	const str::string_ &FileName,
-	const str::string_ &Directory )
+	const str::string_ &Directory,
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -779,7 +949,7 @@ ERRBegin
 
 	Location = fnm::GetLocation( LocalizedFileNameBuffer, LocationBuffer );
 
-	Init( _XFlow, str::string( LocalizedFileName ), str::string( Location ) );
+	Init( _XFlow, str::string( LocalizedFileName ), str::string( Location ), CypherKey );
 
 	_IgnorePreprocessingInstruction = true;
 
@@ -790,11 +960,12 @@ ERREpilog
 	return Status;
 }
 
-status__ xpp::_extended_parser___::InitWithContent(
+status__ xpp::_extended_parser___::_InitWithContent(
 	const str::string_ &Content,
 	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
-	const str::string_ &Directory )
+	const str::string_ &Directory,
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -805,7 +976,7 @@ ERRBegin
 
 	_XFlow.Init( _SFlow, Coord );
 
-	Init( _XFlow, NameOfTheCurrentFile, _Directory );
+	Init( _XFlow, NameOfTheCurrentFile, _Directory, CypherKey );
 
 	_IgnorePreprocessingInstruction = false;
 
@@ -1022,7 +1193,7 @@ ERRProlog
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
 ERRBegin
-	PFlow.Init( IFlow, Directory, Namespace );
+	PFlow.Init( IFlow, Directory, NULL, Namespace );
 	XFlow.Init( PFlow );
 
 	Parser.Init( XFlow, xml::ehKeep );
@@ -1067,6 +1238,204 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+static status__ Encrypt_(
+	xml::parser___ &Parser,
+	const char *CypherKey,
+	str::string_ &Target,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	flx::E_STRING_OFLOW___ Flow;
+	cdgb64::encoding_oflow___ Encoder;
+	crptgr::encrypt_oflow___ Encrypter;
+ERRBegin
+	Flow.Init( Target );
+	Encoder.Init( Flow );
+	Encrypter.Init( Encoder, CypherKey );
+
+	Status = RetrieveTree_( Parser, Encrypter );
+
+	Coord = Parser.GetCurrentCoord();
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+static status__ Encrypt_(
+	xml::parser___ &Parser,
+	const char *CypherKey,
+	xml::writer_ &Writer,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string Tree;
+ERRBegin
+	Writer.PushTag( CYPHER_TAG );
+
+	Writer.PutAttribute( CYPHER_TAG_FORMAT_ATTRIBUTE, "beta" );
+
+	Tree.Init();
+
+	Status = Encrypt_( Parser, CypherKey, Tree, Coord );
+
+	Writer.PutValue( Tree );
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+// <xpp::cypher ...
+static status__ HandleCypherDirective_(
+	xml::parser___ &Parser,
+	xml::writer_ &Writer,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string CypherKey;
+	STR_BUFFER___ Buffer;
+	bso::bool__ CypheringComplete = false;
+	bso::bool__ Continue = true;
+ERRBegin
+	CypherKey.Init();
+
+	while ( Continue ) {
+		switch ( Parser.Parse( xml::tfAll ) ) {
+		case xml::tAttribute:
+			if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE ) {
+				if ( CypherKey.Amount() != 0 ) {
+					Status = sUnexpectedAttribute;
+					ERRReturn;
+				}
+
+				CypherKey = Parser.Value();
+			} else {
+				Status = sUnexpectedAttribute;
+				ERRReturn;
+			}
+			break;
+		case xml::tStartTagClosed:
+			if ( CypherKey.Amount() == 0 ) {
+				Status = sMissingCypherKey;
+				ERRReturn;
+			}
+			if ( ( Status = Encrypt_( Parser, CypherKey.Convert( Buffer ), Writer, Coord ) ) != sOK )
+				ERRReturn;
+			CypheringComplete = true;
+			break;
+		case xml::tEndTag:
+			if ( !CypheringComplete ) {
+				Status = sMissingCypherKey;
+				ERRReturn;
+			}
+
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ xpp::Encrypt(
+	const str::string_ &Namespace,
+	flw::iflow__ &IFlow,
+	xml::writer_ &Writer,
+	xtf::coord__ &Coord )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	xtf::extended_text_iflow__ XFlow;
+	xml::token__ Token = xml::t_Undefined;
+	bso::bool__ Continue = true;
+	xml::parser___ Parser;
+	_qualified_preprocessor_directives___ Directives;
+ERRBegin
+	Directives.Init( Namespace );
+
+	XFlow.Init( IFlow );
+
+	Parser.Init( XFlow, xml::ehKeep );
+
+	while ( Continue ) {
+		switch( Parser.Parse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
+		case xml::tProcessingInstruction:
+			Writer.GetFlow() << Parser.DumpData();
+			
+			if ( Writer.GetOutfit() == xml::oIndent )
+				Writer.GetFlow() << txf::nl;
+
+			break;
+		case xml::tStartTag:
+			if ( Parser.TagName() == Directives.CypherTag ) {
+				if ( ( Status = HandleCypherDirective_( Parser, Writer, Coord ) ) != sOK )
+					ERRReturn;
+			} else
+				Writer.PushTag( Parser.TagName() );
+			break;
+		case xml::tAttribute:
+			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
+			break;
+		case xml::tValue:
+			Writer.PutValue( Parser.Value() );
+			break;
+		case xml::tEndTag:
+			Writer.PopTag();
+			break;
+		case xml::tProcessed:
+			Continue = false;
+			break;
+		case xml::tError:
+			Status = _Convert( Parser.Status() );
+			Coord = XFlow.Coord();
+			Continue = false;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+
+	Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ xpp::Encrypt(
+	const str::string_ &Namespace,
+	flw::iflow__ &IFlow,
+	xml::outfit__ Outfit,
+	txf::text_oflow__ &OFlow,
+	xtf::coord__ &Coord )
+{
+	status__ Status = sOK;
+ERRProlog
+	xml::writer Writer;
+ERRBegin
+	Writer.Init( OFlow, Outfit, xml::schKeep );
+
+	Status = Encrypt( Namespace, IFlow, Writer, Coord );
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 status__ xpp::Process(
 	const str::string_ &Namespace,

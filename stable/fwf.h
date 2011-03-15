@@ -280,7 +280,8 @@ namespace fwf {
 		size__ Read(
 			size__ Maximum,
 			datum__ *Buffer,
-			bso::bool__ Adjust )
+			bso::bool__ AdjustCache,
+			bso::bool__ &CacheIsEmpty )
 		{
 #ifdef FWF_DBG
 			if ( Maximum < 1 )
@@ -296,15 +297,19 @@ namespace fwf {
 
 			memcpy( Buffer, _Cache + _Position, Maximum );
 
-			if ( Adjust ) {
+			if ( AdjustCache ) {
 				_Available -= Maximum;
 				_Position += Maximum;
 			}
+
+			CacheIsEmpty = _Available == 0;
 
 			return Maximum;
 		}
 		void Unget( datum__ Datum )
 		{
+			_Lock();
+
 			if ( _Available == 0 )
 				_Position = 1;
 

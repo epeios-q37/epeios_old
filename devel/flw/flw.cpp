@@ -89,7 +89,8 @@ size__ flw::iflow__::_Read(
 	size__ Minimum,
 	datum__ *Buffer,
 	size__ Wanted,
-	bso::bool__ Adjust )
+	bso::bool__ Adjust,
+	bso::bool__ &CacheIsEmpty )
 {
 	size__ Amount = 0;
 ERRProlog
@@ -104,7 +105,7 @@ ERRBegin
 		ERRc();
 #endif
 
-	Amount = _LoopingRead( Minimum, Buffer, Wanted, Adjust );
+	Amount = _LoopingRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
 
 	_Red += Amount;
 

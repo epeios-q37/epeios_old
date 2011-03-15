@@ -63,11 +63,14 @@ enum exit_value__ {
 	ev_amount
 };
 
-enum command {
+enum command__ {
 	cHelp,
 	cVersion,
 	cLicense,
-	cProcess
+	cProces,
+	cEncrypt,
+	c_amount,
+	c_Undefined
 };
 
 enum option {
@@ -85,9 +88,11 @@ struct parameters {
 	STRING_PARAM___(  Source );
 	STRING_PARAM___( Destination );
 	bso::bool__ NoIndent;
+	command__ Command;
 	parameters( void )
 	{
 		NoIndent = false;
+		Command = c_Undefined;
 	}
 };
 
@@ -102,7 +107,8 @@ void PrintUsage( const clnarg::description_ &Description )
 	cout << txf::pad << "source-file:" << txf::nl << txf::tab << "source file; stdin if none." << txf::nl;
 	cout << txf::pad << "dest-file:" << txf::nl << txf::tab << "destination file; stdout if none." << txf::nl;
 	cout << "command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cProcess, "Process XML file.", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cProces, "Process XML file.", clnarg::vSplit, true );
+	clnarg::PrintCommandUsage( Description, cEncrypt, "Encrypt XML file.", clnarg::vSplit, true );
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
 	cout << "options:" << txf::nl;
 	clnarg::PrintOptionUsage( Description, oNamespace, "<namespace>", "<namespace> becomes tags namespace; '" DEFAULT_NAMESPACE "' by default.", clnarg::vSplit );
@@ -221,7 +227,8 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
-	Description.AddCommand( 'p', "process", cProcess );
+	Description.AddCommand( 'p', "process", cProces );
+	Description.AddCommand( CLNARG_NO_SHORT, "encrypt", cEncrypt );
 //	Description.AddOption( '', "", o );
 	Description.AddOption( 'n', "namespace", oNamespace );
 	Description.AddOption( CLNARG_NO_SHORT, "no-indent", oNoIndent );
@@ -242,8 +249,12 @@ ERRBegin
 		epsmsc::PrintLicense( cout );
 		ERRi();
 		break;
-	case cProcess:
+	case cProces:
+	case cEncrypt:
+		Parameters.Command = (command__)Analyzer.GetCommand();
+		break;
 	case CLNARG_NONE:
+		Parameters.Command = cProces;
 		break;
 	default:
 		ERRc();
@@ -287,7 +298,7 @@ ERRBegin
 	}
 
 	if ( Destination != NULL ) {
-		fil::CreateBackupFile( Destination, fil::hbfDuplicate );
+		fil::CreateBackupFile( Destination, fil::bmDuplicate );
 
 		BackedUp = true;
 
@@ -315,7 +326,56 @@ ERRBegin
 		if ( ErrorFileName.Amount() != 0 )
 			cerr << "in file '" << ErrorFileName << "' ";
 
-		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::GetLabel( Status ) << " !" << txf::nl;
+		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
+
+		ERRExit( evProcessing );
+	}
+ERRErr
+	if ( BackedUp )
+		fil::RecoverBackupFile( Destination );
+ERREnd
+ERREpilog
+}
+
+static void Encrypt_(
+	const char *Source,
+	const char *Destination,
+	const char *Namespace,
+	bso::bool__ Indent )
+{
+ERRProlog
+	flf::file_oflow___ OFlow;
+	txf::text_oflow__ TOFlow;
+	flf::file_iflow___ IFlow;
+	bso::bool__ BackedUp = false;
+	xpp::status__ Status = xpp::s_Undefined;
+	xtf::coord__ Coord;
+ERRBegin
+	if ( Source != NULL ) {
+		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess ) {
+			cerr << "Unable to open file '" << Source << "' for reading !" << txf::nl;
+			ERRExit( evInputOutput );
+		}
+	}
+
+	if ( Destination != NULL ) {
+		fil::CreateBackupFile( Destination, fil::bmDuplicate );
+
+		BackedUp = true;
+
+		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess ) {
+			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
+			ERRExit( evInputOutput );
+		}
+
+		TOFlow.Init( OFlow );
+	}
+
+	if ( ( Status = xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
+								  IFlow,
+								  Indent ? xml::oIndent : xml::oCompact,
+								  ( Destination == NULL ? cout : TOFlow ),  Coord ) ) != xpp::sOK ) {
+		cio::cerr << "Error at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
 
 		ERRExit( evProcessing );
 	}
@@ -330,7 +390,18 @@ void Go( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
-	Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
+	switch ( Parameters.Command ) {
+	case cProces:
+		Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
+		break;
+	case cEncrypt:
+		Encrypt_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
+		break;
+	default:
+		ERRc();
+		break;
+}
+
 ERRErr
 ERREnd
 ERREpilog

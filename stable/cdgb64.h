@@ -343,9 +343,9 @@ namespace cdgb64 {
 			fwf::size__ Maximum,
 			fwf::datum__ *Buffer )
 		{
-			bso::size__
-				TotalAmount = 0,
-				PonctualAmount = 0;
+			bso::size__ Amount = 0;
+			fwf::datum__ Datum;
+			bso::bool__ CacheIsEmpty = false;
 
 #ifdef CDGB64_DBG
 			if ( Maximum < 4 )
@@ -353,30 +353,19 @@ namespace cdgb64 {
 #endif
 			Maximum &= ~3UL;	// On veut un multiple de 4.
 
-			TotalAmount = PonctualAmount = _Flow->ReadUpTo( Maximum, Buffer );
+			while ( Maximum-- && ( ( Datum = _Flow->Get( CacheIsEmpty ) ) != '=' ) &&  !CacheIsEmpty )
+				Buffer[Amount++] = Datum;
 
-			while ( ( PonctualAmount != 0 ) && ( Buffer[TotalAmount-1] != '=' ) && ( TotalAmount & 3 ) )
-				TotalAmount += PonctualAmount = _Flow->ReadUpTo( 4 - ( TotalAmount & 3 ), Buffer + TotalAmount );
-				// On essaye d'avoir un nombre d'octets multiple de 4.
+			if ( Amount != 0 ) {
 
+				if ( Amount >= 4 )
+					Decode_( Buffer, Amount & ~3UL );
 
-			if ( TotalAmount != 0 ) {
-				if ( Buffer[TotalAmount-1] == '=' )
-					TotalAmount--;
-
-				if ( TotalAmount >= 4 )
-					Decode_( Buffer, TotalAmount & ~3UL );
-
-				if ( TotalAmount & 3 ) {
-#ifdef CDGB64_DBG
-					if ( Buffer[TotalAmount] != '=' )
-						ERRc();
-#endif
-					DecodePartial_( Buffer + ( TotalAmount & ~3UL ), TotalAmount & 3, Buffer + 3 * ( TotalAmount >> 2 ) );
-				}
+				if ( Amount & 3 )
+					DecodePartial_( Buffer + ( Amount & ~3UL ), Amount & 3, Buffer + 3 * ( Amount >> 2 ) );
 			}
 
-			return 3 * ( TotalAmount >> 2 ) + ( ( TotalAmount & 3 ) > 1 ? ( TotalAmount & 3 ) - 1 : 0 ); 
+			return 3 * ( Amount >> 2 ) + ( ( Amount & 3 ) > 1 ? ( Amount & 3 ) - 1 : 0 ); 
 		}
 		virtual void FWFDismiss( void )
 		{

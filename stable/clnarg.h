@@ -71,6 +71,8 @@ extern class ttr_tutor &CLNARGTutor;
 #	include "cio.h"
 #endif
 
+#include <stdarg.h>
+
 
 #define CLNARG_DEFAULT_FLAG	'-'
 
