@@ -74,7 +74,7 @@ namespace csdebd {
 	E_AUTO( data )
 
 	class _passive_generic_functions___
-	: public fwf::ioflow_functions___
+	: public fwf::ioflow_functions___<>
 	{
 	private:
 		data_ &_Read;

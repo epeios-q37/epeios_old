@@ -130,7 +130,7 @@ namespace csducl {
 	};
 
 	class universal_client_ioflow_functions___
-	: public fwf::ioflow_functions___
+	: public fwf::ioflow_functions___<>
 	{
 	private:
 		csdsnc::client_ioflow___ _DaemonAccess;

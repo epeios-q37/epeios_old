@@ -1,12 +1,28 @@
 $Id$
 
+16/03/2011 :
+	- Général :
+		- Adaptation aux modifications des différentes bibliothèques.
+	- FIL :
+		- Création de versions des fonctions relatives à la gestion des fichiers de 'backup' qui prennent en charge l'affichage des messages d'erreur.
+	- FLW :
+		- Correction bogue mauvaise gestion 'EOFD'.
+	- XPP :
+		- Correction bogue 'Process(...)' sans clé d'encryptage.
+		- Correction bogue lors de l'encryptage empêchant la remontée certaines erreurs.
+		- Correction bogue du '>' résiduel accompagnant les commentaires lors de l'encryptage.
+	- XTF :
+		- Correction bogue mauvaise gestion 'EOXD'.
+
 15/03/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'XPP'.
 	- CLNARG :
 		- Ajout '#include' manquant.
 	- FLW :
 		- Ajout de la possibilité de savoir si le cache est vide.
+	- FLX :
+		- Ajout du 'mediator_ioflow[_function___]'.
 	- FWF :
 		- Ajout de la possibilité de savoir si le cache est vide.
 	- XPP :
@@ -22,13 +38,13 @@ $Id$
 		- Rajout de 'UnderlyingFlow(...)'.
 
 11/03/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'FWF'.
 	- FWF :
 		- Déportation de la prise en charge du cache en lecture depuis 'FWL' vers 'FWF'.
 
 10/03/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'LCL'.
 	- DIR :
 		- Ajout de 'GetSelfPath(...)' (version Windows).
@@ -50,7 +66,7 @@ $Id$
 		- Mise en oeuvre internationalisation.
 
 07/03/2011 :
-	- GENERAL :
+	- Géneral :
 		- Réorganisation mécanisme de traduction.
 
 06/03/2011 :
@@ -72,7 +88,7 @@ $Id$
 		- Rajout 'LCL_CASE'.
 
 27/02/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adapatation modifications 'XML'.
 	- XML :
 		- Renommage 'browse[r]' en 'parse[r]'.
@@ -112,7 +128,7 @@ $Id$
 		- Mise en oeuvre 'STR_HEXADECIMAL_MARKER'.
 
 26/01/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FWF' et 'FWL'.
 	- LTF :
 		- Ajout 'ClearAll()'.
@@ -120,15 +136,15 @@ $Id$
 		- Ajout décrypteur (temporaire !).
 
 25/01/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FWF' et 'FWL'.
 
 24/01/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FWF' et 'FWL'.
 
 23/01/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FWF' et 'FWL'.
 	- FWF :
 		- La sécurisation par rapport au 'multi-threading' ne se fait plus de manière globale à la compilation, mais par objet à l'exécution.
@@ -136,7 +152,7 @@ $Id$
 		- Standardisation.
 	
 22/01/2011 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FWF'.
 	- FWF :
 		- Simplification 'FWFRead(...)' et 'FWFWrite(...)'.
@@ -182,11 +198,11 @@ $Id$
 		- Adaptation aux modifications bibliothèques sous-jacentes.
 
 02/12/2010 :
-	- GENERAL :
+	- Géneral :
 		- Diverses modifications relatives aux '..._file_manager___'s.
 
 02/12/2010 :
-	- GENERAL :
+	- Géneral :
 		- Diverses modifications relatives aux '..._file_manager___'s.
 	- BTR, IDXBTR :
 		- Ajout 'GetRoot(...)'.
@@ -248,7 +264,7 @@ $Id$
 		- 'TimeStamp()' retourne '0' (valeur entrainant généralement un traitement particulier) si le fichier n'existe pas.
 
 19/11/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèques 'FWF' et 'MDR'.
 	- FWF :
 		- 'Sync[...]' -> 'Commit'.
@@ -259,11 +275,11 @@ $Id$
 		- Mise en oeuvre de '_commit'.
 
 18/11/2010 !
-	- GENERAL :
+	- Géneral :
 		- Refonte gestion '[...]_file_manager__'.
 
 17/11/2010 !
-	- GENERAL :
+	- Géneral :
 		- Refonte gestion '[...]_file_manager__'.
 
 16/11/2010 :
@@ -284,7 +300,7 @@ $Id$
 		- Adaptation aux modifications bibliothqèue 'FRDKRN'.
 
 12/11/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification bibliothèque 'UYM'.
 	- LST :
 		- L'écriture des données accessoires n'est réalisé que si le contenu du fichier correspondant est obsolète.
@@ -308,7 +324,7 @@ $Id$
 		- Adaptation aux modifications bibliothèque 'NDBCTT'.
 
 04/11/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification bibliothqèue 'UYM'.
 	- IDS :
 		- Ajout 'SetFirstUnused(...)'.
@@ -318,11 +334,11 @@ $Id$
 		- Suppression de 'action__' (ex-'purpose__').
 		- 'Connect(...)' -> 'Plug(...)'.
 		- Création 'Bind(...)' et 'Sync(...)'.
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification bibliothqèue 'UYM'.
 
 02/11/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification bibliothqèue 'UYM'.
 	- NSXPCM :
 		- Ajout version 'const str::string_ &' de 'LanchURI(...)'.
@@ -360,7 +376,7 @@ $Id$
 	- FRDKRN :
 		- Réorganisation.
 		- 'status__' -> 'report__'.
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèques 'UYM'.
 
 18/10/2010 :
@@ -384,13 +400,13 @@ $Id$
 		- Ajout d'une fonction interdisant de récupèrer un 'nsIDOMWindow' par son id; 'GetDocumentById(...)' en passant l'id d'une balise 'window' ne retourne pas un 'nsIDOMWindow'.
 
 13/10/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèques 'UYM'.
 	- UYM :
 		- Ajout 'inline' manqaunt
 
 12/10/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèques 'UYM'.
 	- NSXPCM :
 		- Ajout paramètre à la méthode 'disable(...)'.
@@ -398,11 +414,11 @@ $Id$
 		- Ajout 'status__' et 'purpose__' pour être utilisé avec 'Connect(...)'.
 
 08/10/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'ERR'.
 
 07/10/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'ERR'.
 	- CSDSNC :
 		- Une tentative de connection est réalisée dés l'initialisation, la valeur retournée signalant la réussite ou l'échec de cette tentative.
@@ -510,7 +526,7 @@ $Id$
 		- Correction non prise en compte paramètre 'ParentWindow' dans 'GetJSConsole(...)'.
 
 03/09/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'LCL'.
 	- FRDKRN :
 		- Ajout 'GetDefaultConfigurationFileName(...)'.
@@ -518,7 +534,7 @@ $Id$
 		- Ajout de 'E_STRING(...).
 
 02/09/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications dans 'LCL'.
 	- LCL :
 		- 'locales[...]' ->'locale[...]'
@@ -633,16 +649,16 @@ $Id$
 		- Ajout d'un 'const' manquant.
 
 16/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adpatation des différents bibliothèques aux modifications des bibliothèques sous-jacentes.
 
 15/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Déplacement des différentes applications des les sous-projets vers le projet principal.
 		- Adpatation des différents bibliothèques aux modifications des bibliothèques sous-jacentes.
 
 14/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Déplacement des sous-projets dans le projet principal.
 	- MTX :
 		- Correction d'un bogue entraînant un quasi-blocage sous Linux.
@@ -657,7 +673,7 @@ $Id$
 		- Changement ordre arguments 'Transform(...)' et ajout variations.
 
 07/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FLW' et 'XPP'.
 	- FLW :
 		- Change les 'unsafe_...___' en 'unsafe_...__' (un '_' de moins), plus cohérents.
@@ -668,7 +684,7 @@ $Id$
 		- Le coeur du préprocesseur n'est plus un 'xtf::extended_text_iflow__', mais un simple 'flw::unsafe__iflow__'.
 
 06/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification dans 'XML'.
 	- NSXPCM :
 		- Ajout pour 'XSLTransfom(...)' de répertoires de base à l'usage du préprocesseur.
@@ -684,7 +700,7 @@ $Id$
 		- Corrections du bogues de certaines fonctions qui avaient un 'namespace' vide par défaut.
 
 05/07/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications de 'XML'.
 	- NSXPCM :
 		- Dû a des problèmes de stratégies de sécurité trop contraignante (et mal documentée), ce n'est plus un nom du fichier XSL qui est passé à 'XLSTransform(...)',
@@ -804,7 +820,7 @@ $Id$
 		- Correction bogue provoqué lorsque qu'une 'processing instruction' est présent dans un fichier inclus.
 
 19/04/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications dans 'XML'; mise en oeuvre 'XPP'.
 	- XML :
 		- Rajout version 'const ...(...) const ' de certaines méthodes.
@@ -911,7 +927,7 @@ $Id$
 		- Ajout et mise en oeuvre 'OpenWindow(...)'.
 
 03/02/2010 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'MDR'.
 	- MDR :
 		- Suppression 'mode' apparament inutile.
@@ -935,7 +951,7 @@ $Id$
 		- Mise en place de la post-initialization, qui retarde la connection aux fichiers.
 
 31/01/2010 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'XUI'.
 
 29/01/2009 :
@@ -993,19 +1009,19 @@ $Id$
 		- Correction problème pointeur.
 
 04/01/2010 :
-	- GENERAL :
+	- Géneral :
 		- Refonte globale de la gestion de la notion d''extent'.
 
 02/01/2010 :
-	- GENERAL :
+	- Géneral :
 		- Refonte globale de la gestion de la notion d''extent'.
 
 01/01/2010 :
-	- GENERAL :
+	- Géneral :
 		- Refonte globale de la gestion de la notion d''extent'.
 
 31/12/2009 :
-	- GENERAL :
+	- Géneral :
 		- Refonte globale de la gestion de la notion d''extent'.
 
 22/12/2009 :
@@ -1064,25 +1080,25 @@ $Id$
 		- 'untyped_memory[_]' accepte maintenant la 'multimémoire'.
 
 30/11/2009 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'NDB...'.
 	- MMG :
 		- Légère refonte pour faciliter utilisation avec 'NDB...'.
 		
 29/11/2009 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'NDB...'.
 		
 27/11/2009 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'NDB...'.
 		
 25/11/2009 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'NDB...'.
 		
 24/11/2009 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'NDB...'.
 		
 18/11/2009 :
@@ -1302,7 +1318,7 @@ $Id$
 21/08/2009 :
 	- LGG :
 		- Obsolescence définitive au profit de la bibliothèque 'LCL', sans possibilité de réactivation (trop compliqué).
-	- GENERAL :
+	- Géneral :
 		- Adaptation à la modification ci-dessus.
 
 20/08/2009 :
@@ -1437,7 +1453,7 @@ $Id$
 06/04/2009 :
 	- DBSIDX :
 		- Introduction de 'LooseSeek()' et 'StrictSeek()' pour éviter des bogues ptentiels.
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'DBSIDX'.
 
 03/04/2009 :
@@ -1493,7 +1509,7 @@ $Id$
 		- Ajouts 'SetAttribute(...)' prenant un 'nsIDOMNode *'.
 
 18/02/2009 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications de 'STR'.
 	- STR :
 		- 'Convert()' prend maintenant un 'buffer'.
@@ -1561,7 +1577,7 @@ $Id$
 08/01/2008 :
 	- IDS :
 		- Renommage de 'RestorationNew(...)' en 'New(...)'.
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'IDS'.
 
 06/01/2009 :
@@ -1688,15 +1704,15 @@ $Id$
 		- Ajout 'GetLabel(...)' a 'GetFormat(...)'.
 
 29/08/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modification 'TOL' et 'FIL'
 
 27/08/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modification 'TOL' et 'FIL'
 
 25/08/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modification 'TOL' et 'FIL'
 
 24/08/2008 :
@@ -1704,7 +1720,7 @@ $Id$
 		- Mise en oeuvre 'Freeze(...)'.
 
 22/08/2008 :
-	- GENERAL
+	- Géneral
 		- Introduction des particularités liés au 64 bits.
 		- Adaptations aux modification 'FIL' et 'TOL'.
 	- BSO :
@@ -1717,7 +1733,7 @@ $Id$
 		- Optimisation fonction 'Copy(...)'.
 
 19/08/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modifications 'TOL' et 'FIL'.
 	- DIR :
 		- Poursuite codage ...
@@ -1785,7 +1801,7 @@ $Id$
 		- Refonte du 'flushage' automatique.
 
 03/04/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications de 'UYM'.
 	- FLM :
 		- Mise en oeuvre d'un 'flushage' automatique.
@@ -1793,11 +1809,11 @@ $Id$
 02/04/2008 :
 	- UYM :
 		- Remise en oeuvre de 'Store(...)' à la place de 'Store_(..)' (crée à des fins de test).
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications de 'UYM'.
 
 31/03/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adptation aux modifications 'FLM' (devrait accèlèrer l'ouverture des fichiers).
 	- WLLIO :
 		- Ajout méthode ('IsSDTOUT()' et 'IsSTDERR()').
@@ -1808,7 +1824,7 @@ $Id$
 		- Adaptation à la modification de 'WLLIO' (contournement temporaire).
 
 19/03/2008 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'WLLIO'.
 	- WLLIO :
 		- Ajout '_FlushToDevice', pour moduler l'action du 'Flush()'.
@@ -1870,7 +1886,7 @@ $Id$
 		- Ajout de la gestion de l'évènement 'onblur' (inverse de 'onfocus').
 
 22/10/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'FNM'.
 	- FNM:
 		- Ajout 'GetExtension(...)'.
@@ -1883,11 +1899,11 @@ $Id$
 		- Un 'string' peut maintenant être initialisé avec lui-même sans que cela l'initialise.
 
 06/10/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'MMI' et 'MMM'.
 
 05/10/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications 'MMI' et 'MMM'.
 	- MMM
 		- Mise en place définitive du nouvel algorithme ('MMM2') de gestion de la 'multimémoire'.
@@ -1936,7 +1952,7 @@ $Id$
 		- Ajout paramètre 'TimeOut'.
 		
 12/09/2007 :
-	- GENERAL :
+	- Géneral :
 		- Création de 'WINTOL', bibliothèque facilitant la mise en place d'une application en tant que service Windows.
 
 11/09/2007 :
@@ -1959,7 +1975,7 @@ $Id$
 		- Correction bogue vidage cache au mauvais endroit.
 
 10/08/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'IOP'.
 	- CSLIO :
 		- Modification pour que le retour chariot ne soit pas bufferisé lorsqu'on lit l'entrée standard ('stdin').
@@ -1991,7 +2007,7 @@ $Id$
 		- Correction bogue 'Shrink(...)' lorsque fragment 'linké' complètement supprimé.
 
 19/07/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modifications bibliothèque 'DBSBSC'.
 	- DBSBSC :
 		- Ajout paramètre 'IgnoreAdditionalFiles' méthode 'DBSBSCCompleteInitialization(...)'.
@@ -2013,13 +2029,13 @@ $Id$
 		- Correction bogue 'Shrink...(...)'.
 
 12/07/2007 :
-	- GENERAL :
+	- Géneral :
 		- Correction erreurs détectées par g++.
 	- MMM2 :
 		- Quelques statistiques sont affichées par 'DisplayStructure()'.
 
 11/07/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications 'AEM'.
 	- AEM :
 		- Mise aux normes du type 'mode(__)'.
@@ -2088,11 +2104,11 @@ $Id$
 		- Retrait de ce qui a trait à la compilation conditionnelle par rapport à la bibliothèque 'FLM'.
 	
 21/06/2007 :
-	- GENERAL :
+	- Géneral :
 		- Suite de ce qui a été commencé le 20/06/2007.
 	
 20/06/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications de la bibliothèque 'FML'.
 		- Adaptation aux modifications de la bibliothèque 'UYM'.
 	- FLM :
@@ -2127,7 +2143,7 @@ $Id$
 		- Correction bogue construction nom de fichier ('BuildFileName(...)').
 	
 22/05/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications bibliothèque 'MMM(0)'.
 	- MMM :
 		- Déportation définition version 'MMM' vers 'MMM0'.
@@ -2139,7 +2155,7 @@ $Id$
 		- Ajout de l'opérateur '=' pour détecter son utilisation (ce qui est interdit) à l'exécution.
 	
 21/05/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications bibliothèque 'MMM'.
 	
 20/05/2007 :
@@ -2260,7 +2276,7 @@ Publication
 		- Ajout 'XMLProcessingIntruction(...)'.
 
 02/04/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'XML'.
 	- FNM :
 		- Modification liste 'type'.
@@ -2283,7 +2299,7 @@ Publication
 		- Correction 'SubInit(...)'.
 
 25/03/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'LST'.
 	- AEM :
 		- Amélioration métohod( 'Init(...)'.
@@ -2297,13 +2313,13 @@ Publication
 		- Correction bogue allocation.
 
 21/03/2007 :
-	- GENERAL :
+	- Géneral :
 		- Ajout méthode 'CreateFile(s)()' dans les '..._file_manager___' ou elle n'existait pas.
 	- TOL :
 		- Ajout 'CreateFile(...)'.
 
 20/03/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation modifications bibliothèque 'CTN'.
 	- CTN :
 		- 'ReleaseFile()' -> 'ReleaseFiles()'
@@ -2361,12 +2377,12 @@ Publication
 		- Correction définition 'MDR_ROW_T_MAX'.
 
 16/02/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'LST'.
 		- Généralisation et remaniement des '..._file_manager___'.
 
 15/02/2007 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications bibliothèque 'LST'.
 		- Généralisation et remaniement des '..._file_manager___'.
 	- CTN :
@@ -2380,7 +2396,7 @@ Publication
 		- Macro 'XNAVt()'  est enrichie de la méthode 'Allocate()'.
 
 14/02/2007 :
-	- GENERAL :
+	- Géneral :
 		- Généralisation et remaniement des '..._file_manager___'.
 	- FLM :
 		- Renommage 'Size' en 'FileSize' pour éviter certaines ambigüités.
@@ -2390,7 +2406,7 @@ Publication
 		- Adaptation modification bibliothèque 'FLM'.
 
 13/02/2007 :
-	- GENERAL :
+	- Géneral :
 		- Généralisation des '..._file_manager___'.
 	- NSXPCM
 		- Enrichissement.
@@ -2426,7 +2442,7 @@ Publication
 		- '<... />' appelle maintenant 'StartTagClosed()' avant 'EndTag()'.
 
 03/12/2006 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation à VC++ 8.
 
 20/11/2006 :
@@ -2439,13 +2455,13 @@ Publication
 		- Ajout de code pour traquer bogue apparu sous Linux concernant cette bibliothèque.
 
 16/11/2006 :
-	- GENERAL :
+	- Géneral :
 		- Correction bogues apparus lors de la compilation sous Linux.
 	- RGSTRY :
 		- Correction bogue apparus suite modification 'XML'.
 
 15/11/2006 :
-	- GENERAL :
+	- Géneral :
 		- Correction bogues apparus lors de la compilation sous Linux.
 
 07/11/2006 :
@@ -2456,15 +2472,15 @@ Publication
 		- Modifications pour faciliter les modification bibliothèque 'XML'.
 
 30/10/2006 :
-	- GENERAL :
+	- Géneral :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
 27/10/2006 :
-	- GENERAL :
+	- Géneral :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
 26/10/2006 :
-	- GENERAL :
+	- Géneral :
 		- Mise en place des routines pour le stockage des données dans fichier (stockage en temps réel).
 
 19/10/2006 :
@@ -2499,7 +2515,7 @@ Publication
 		- Ajout méthodes 'Get[Exclusive|Shared]Access()' et 'Release[Exclusive|Shared]Access()'.
 
 07/10/2006 :
-	- GENERAL :
+	- Géneral :
 		- Création DBSBSC.
 		- Adaptation aux modifications 'MDR'.
 	- MDR :
@@ -2571,15 +2587,15 @@ Publication
 		- Codage nouvelles fonctions.
 
 27/08/2006 :
-	- GENERAL :
+	- Géneral :
 		- Creation 'DBSTBL'
 
 26/08/2006 :
-	- GENERAL :
+	- Géneral :
 		- Codage 'DBSxxx'.
 
 23/08/06
-	- GENERAL :
+	- Géneral :
 		- Correction erreurs apparus lors d'une compilation sous Linux.
 
 21/08/2006 :
@@ -2632,7 +2648,7 @@ Publication
 		- Suppression méthode 'MarkAsSame', source de bogues.
 
 14/08/06 
-	- GENERAL :
+	- Géneral :
 		- Début codage de la version portable de différentes bibliothèques.
 
 13/08/2006 :
@@ -2641,7 +2657,7 @@ Publication
 		
 
 11/08/2006 :
-	- GENERAL :
+	- Géneral :
 		- Corrections bogues apparus suite aux modifications 'MDR'.
 
 10/08/2006 :
@@ -2659,7 +2675,7 @@ Publication
 		- Suppression d'un test en mode débogage qui n'avait pas de sens.
 
 07/08/2006 :
-	- GENERAL :
+	- Géneral :
 		- Déplacement test capacité en mode débogage de 'UYM' vers 'MDR'.
 		- Adaptation aux modifications 'MDR' et 'UYM'.
 
@@ -2684,7 +2700,7 @@ Publication
 		- Simplification.
 
 24/06/2006 :
-	- GENERAL :
+	- Géneral :
 		- Création 'FWF' pour remplacer 'FLF'.
 		- Création 'IOP'.
 		- Adaptation aux modifications des différents bibliothèques.
@@ -2699,7 +2715,7 @@ Publication
 
 
 13/06/06
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modifications dans 'FLF'.
 	- TOL :
 		- Ajout fonction 'SignalExits()'.
@@ -2707,7 +2723,7 @@ Publication
 		- Toutes les méthodes virtuelles doivent maintenant être surchargées.
 
 05/06/2006 :
-	- GENERAL :
+	- Géneral :
 		- Création bibliothèque 'BFL' (Bit FLow) de lecture/écriture par bit.
 	- FLW :
 		- Rajout méthode 'GetCurrentCacheDatum'.
@@ -2720,7 +2736,7 @@ Publication
 		- Correction erreurs typographiques.
 
 25/05/2006 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux changements dans 'FLW'.
 	- FLF :
 		- Création (voir 'FLW').
@@ -2808,17 +2824,17 @@ Publication
 		- Ajout objet 'dump'.
 
 21/02/2006 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 	- FLW :
 		- Retrait paramètre 'Synchronization' de la méthode 'FLWWrite(...)'.
 
 20/02/2006 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 
 19/02/2006 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux changements de la bibliothèque 'FLW'.
 	- FLW :
 		- Réecriture pour faciliter la mise en oeuvre du verouillage.
@@ -2828,7 +2844,7 @@ Publication
 		- Renommage '...RELEASED...' en '...DELETED...'.
 
 28/01/2006 :
-	- General :
+	- Géneral :
 		- Création de la bibliothèque 'THT' (void 'MTK' et 'TOL' ).
 		- Adaptation aux changements de la bibliothèque 'MTX'.
 	- MTX :
@@ -2898,7 +2914,7 @@ Publication
 		- Adaptation aux particularités de la compilation d'une bibliothèque sous Unix.
 
 20/11/2005 :
-	- General :
+	- Géneral :
 		- Création de la bibliothèque 'DIR', de gestion des répertoires.
 	- TOL : 
 		- Correction bogue marco 'E_TYPEDEF_'.
@@ -2960,7 +2976,7 @@ Publication
 		- Ajout fonction 'Now()'.
 
 25/09/2005 :
-	- GENERAL :
+	- Géneral :
 		- Adaptations aux modifications de la bibliothèque 'FLW'.
 
 24/09/2005 :
@@ -2993,7 +3009,7 @@ Publication
 		- Adaptation changements différentes bibliothèques.
 
 18/09/2005
-	- GENERAL:
+	- Géneral:
 		- Adaptation aux changememnts de la bibliothèque 'STK'.
 		- Nouvelle bibliothèque 'XML' à la place de 'LXMLPR'.
 		- Mise en oeuvre de la bibliothèque 'XML'.
@@ -3053,7 +3069,7 @@ Publication
 		- Lors d'une erreur lors de l'analyse, la ligne et la colonne incriminées sont disponibles.
 
 16/07/2005 :
-	- General :
+	- Géneral :
 		- Adaptation à VC8.
 
 11/07/2005 :
@@ -3075,7 +3091,7 @@ Publication
 		- Correction bogue.
 
 02/07/2005 :
-	- GENERAL :
+	- Géneral :
 		- Adaptation aux modification de la bibliothèque 'FLW'.
 	- FLW :
 		- Ajout des méthodes '<Write|Read>Relay(...)'.
@@ -3099,7 +3115,7 @@ Publication
 	- Ajout 'const' manquant.
 
 18/06/2005
-- GENERAL:
+- Géneral:
 	- Adapting to G++ 3.4.4
 
 01/06/2005
@@ -3107,7 +3123,7 @@ Publication
 		- Completion.
 
 25/05/2005
-	- GENERAL
+	- Géneral
 		- Ajout bibliothèque 'NSXPCM', dédié à l'interaction Epeios/XPCOM.
 
 09/05/2005
@@ -3119,11 +3135,11 @@ Publication
 	- Modifications pour rendre cette biliothèque 'thread-safe'.
 
 04/05/2005:
-- GENERAL :
+- Géneral :
 	- Modifications pour rendre les biliothèques 'thread-safe'.
 
 18/04/2005:
-- GENERAL:
+- Géneral:
 	- Adaptation aux changements de la bibliothèque 'TOL'.
 
 17/04/2005:
@@ -3232,7 +3248,7 @@ Publication
 
 ==== Ancien format ====
 
-GENERAL:
+Géneral:
 - (01/02/2005) Adding 'IODEF', 'WLLIO', 'PLLIO', MLLIO' and 'CSLIO' libraries.
 - (02/02/2005) Adding 'LLIO' and 'io' libraries.
 
@@ -3291,7 +3307,7 @@ TYM:
 20050109
 --------
 
-GENERAL:
+Géneral:
 - (23/05/2004) Creation of the 'FLF' library.
 - (24/05/2004) Creation of the 'CIO' library.
 - (24/05/2004) Adapting to changes in 'FLW' library.
@@ -3506,7 +3522,7 @@ XTF:
 20040215
 --------
 
-GENERAL:
+Géneral:
 - Adapting to Code Warrior for Windows and Macintosh.
 - Fixing g++ warning.
 - Fixing CW warnings (all but 'unused argument').
@@ -3749,7 +3765,7 @@ XTF:
 20030219
 --------
 
-GENERAL:
+Géneral:
 - Creating library 'BTS'.
 - Creating library 'BTF'.
 - Creating library 'LSTBCH'.
@@ -3793,7 +3809,7 @@ TOL:
 20030104
 --------
 
-GENERAL:
+Géneral:
 - Adding 'CCH'.
 - Adding 'SMA' to use in 'CCH'.
 - Adding portable data types.
@@ -3996,7 +4012,7 @@ TXF:
 20010804
 --------
 
-GENERAL:
+Géneral:
 - moving backed-related libraries ('BKDEND', 'BKDxxx' & also 'FRTEND') to 'ebkd' sub-project.
 - moving cgi-related libraries and software ('FRTEND', 'URLARG' and 'getbkdapi') to 'ecgi' sub-project.
 - Using the g++ 3.0 due to an ICE by gcc 2.95.3
@@ -4119,7 +4135,7 @@ XMLTAG:
 20010604
 --------
 
-GENERAL:
+Géneral:
 - Adding 'DTE'.
 
 BSO:

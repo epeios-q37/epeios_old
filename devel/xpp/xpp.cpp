@@ -57,8 +57,6 @@ public:
 
 #include "fnm.h"
 #include "lcl.h"
-#include "crptgr.h"
-#include "cdgb64.h"
 
 using namespace xpp;
 
@@ -77,7 +75,7 @@ using xml::token__;
 #define IFEQ_TAG_VALUE_ATTRIBUTE	"value"
 
 #define CYPHER_TAG_KEY_ATTRIBUTE	"key"
-#define CYPHER_TAG_FORMAT_ATTRIBUTE	"format"
+#define CYPHER_TAG_METHOD_ATTRIBUTE	"method"
 
 #define DEFINE_TAG			"define"
 #define EXPAND_TAG			"expand"
@@ -746,7 +744,7 @@ ERRBegin
 
 	if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE )
 		Mode = cmOverriden;
-	else if ( Parser.AttributeName() == CYPHER_TAG_FORMAT_ATTRIBUTE )
+	else if ( Parser.AttributeName() == CYPHER_TAG_METHOD_ATTRIBUTE )
 		Mode = cmEncrypted;
 	else {
 		Status = sUnknownAttribute;
@@ -764,30 +762,17 @@ status__ xpp::_extended_parser___::_HandleCypherDecryption(
 	const str::string_ &Version,
 	_extended_parser___ *&Parser )
 {
-	status__ Status = s_Undefined;
-ERRProlog
-	cdgb64::decoding_iflow___ Decoder;
-	crptgr::decrypt_iflow___ Decrypter;
-	xtf::extended_text_iflow__ XFlow;
-ERRBegin
-	Decoder.Init( _Parser.Flow().UndelyingFlow() );
-	Decrypter.Init( Decoder, _CypherKey );
-	XFlow.Init( Decrypter );
-
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->Init( XFlow, _LocalizedFileName, _Directory, _CypherKey );
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
+	return Parser->_InitCypher( _Parser.Flow().UndelyingFlow(), _LocalizedFileName, Coord(), _Directory, _CypherKey );
 }
 
 status__ xpp::_extended_parser___::_HandleCypherOverride(
 	const char *CypherKey,
 	_extended_parser___ *&Parser )
 {
-	if ( strcmp( _CypherKey, CypherKey ) != 0 )
+
+	if ( ( _CypherKey != NULL ) && ( *_CypherKey != 0 ) && ( strcmp( _CypherKey, CypherKey ) != 0 ) )
 		return sBadCypherKey;
 	else {
 		Parser = NewParser( _Repository, _Variables, _Directives );
@@ -949,7 +934,8 @@ ERRBegin
 
 	Location = fnm::GetLocation( LocalizedFileNameBuffer, LocationBuffer );
 
-	Init( _XFlow, str::string( LocalizedFileName ), str::string( Location ), CypherKey );
+	if ( ( Status = Init( _XFlow, str::string( LocalizedFileName ), str::string( Location ), CypherKey ) ) != sOK )
+		ERRReturn;
 
 	_IgnorePreprocessingInstruction = true;
 
@@ -976,16 +962,30 @@ ERRBegin
 
 	_XFlow.Init( _SFlow, Coord );
 
-	Init( _XFlow, NameOfTheCurrentFile, _Directory, CypherKey );
+	if ( ( Status = Init( _XFlow, NameOfTheCurrentFile, Directory, CypherKey ) ) != sOK )
+		ERRReturn;
 
 	_IgnorePreprocessingInstruction = false;
-
-	Status = sOK;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
+
+status__ xpp::_extended_parser___::_InitCypher(
+	flw::iflow__ &Flow,
+	const str::string_ &FileName,
+	const xtf::coord__ &Coord,
+	const str::string_ &Directory,
+	const char *CypherKey )
+{
+	_Decoder.Init( Flow );
+	_Decrypter.Init( _Decoder, CypherKey );
+	_XFlow.Init( _Decrypter, Coord );
+
+	return Init( _XFlow, FileName, Directory, CypherKey );
+}
+
 
 static bso::bool__ StripHeadingSpaces_(
 	xml::token__ PreviousToken,
@@ -1073,6 +1073,7 @@ status__ xpp::_extended_parser___::Handle(
 			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
 				switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
 				case dBloc:
+				case dCypher:
 					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
 					Continue = true;
 					break;
@@ -1266,6 +1267,7 @@ ERREpilog
 
 static status__ Encrypt_(
 	xml::parser___ &Parser,
+	const str::string_ &Namespace,
 	const char *CypherKey,
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord )
@@ -1273,10 +1275,13 @@ static status__ Encrypt_(
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Tree;
+	_qualified_preprocessor_directives___ Directives;
 ERRBegin
-	Writer.PushTag( CYPHER_TAG );
+	Directives.Init( Namespace );
 
-	Writer.PutAttribute( CYPHER_TAG_FORMAT_ATTRIBUTE, "beta" );
+	Writer.PushTag( Directives.CypherTag );
+
+	Writer.PutAttribute( CYPHER_TAG_METHOD_ATTRIBUTE, "beta" );
 
 	Tree.Init();
 
@@ -1293,6 +1298,7 @@ ERREpilog
 
 // <xpp::cypher ...
 static status__ HandleCypherDirective_(
+	const str::string_ &Namespace,
 	xml::parser___ &Parser,
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord )
@@ -1326,16 +1332,8 @@ ERRBegin
 				Status = sMissingCypherKey;
 				ERRReturn;
 			}
-			if ( ( Status = Encrypt_( Parser, CypherKey.Convert( Buffer ), Writer, Coord ) ) != sOK )
+			if ( ( Status = Encrypt_( Parser, Namespace, CypherKey.Convert( Buffer ), Writer, Coord ) ) != sOK )
 				ERRReturn;
-			CypheringComplete = true;
-			break;
-		case xml::tEndTag:
-			if ( !CypheringComplete ) {
-				Status = sMissingCypherKey;
-				ERRReturn;
-			}
-
 			Continue = false;
 			break;
 		default:
@@ -1371,7 +1369,7 @@ ERRBegin
 	Parser.Init( XFlow, xml::ehKeep );
 
 	while ( Continue ) {
-		switch( Parser.Parse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
+		switch( Parser.Parse( xml::tfAll ) ) {
 		case xml::tProcessingInstruction:
 			Writer.GetFlow() << Parser.DumpData();
 			
@@ -1381,10 +1379,13 @@ ERRBegin
 			break;
 		case xml::tStartTag:
 			if ( Parser.TagName() == Directives.CypherTag ) {
-				if ( ( Status = HandleCypherDirective_( Parser, Writer, Coord ) ) != sOK )
+				if ( ( Status = HandleCypherDirective_( Namespace, Parser, Writer, Coord ) ) != sOK )
 					ERRReturn;
 			} else
 				Writer.PushTag( Parser.TagName() );
+			break;
+		case xml::tStartTagClosed:
+			// Pour purger le 'Dump' d'un éventuel '>' en attente (gênant lors du relayage d'un commentaire.
 			break;
 		case xml::tAttribute:
 			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
@@ -1395,13 +1396,17 @@ ERRBegin
 		case xml::tEndTag:
 			Writer.PopTag();
 			break;
+		case xml::tComment:
+			Writer.PutValue( "" );	// Pour mettre un éventuel '>' en attente.
+			Writer.GetFlow() << Parser.DumpData();
+			break;
 		case xml::tProcessed:
 			Continue = false;
 			break;
 		case xml::tError:
 			Status = _Convert( Parser.Status() );
 			Coord = XFlow.Coord();
-			Continue = false;
+			ERRReturn;
 			break;
 		default:
 			ERRc();

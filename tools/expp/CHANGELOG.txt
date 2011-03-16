@@ -1,5 +1,9 @@
 $Id$
 
+- 15/03/2011 :
+	- Adaptation modifications bibliothèques sous-jacentes.
+	- Ajout option '--encrypt'.
+
 - 04/03/2011 :
 	- Adaptation modifications bibliothèques sous-jacentes.
 

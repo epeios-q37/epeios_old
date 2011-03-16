@@ -283,7 +283,7 @@ namespace sck {
 
 	//c Socket as input/output flow driver.
 	class socket_ioflow_functions___
-	: public fwf::ioflow_functions___
+	: public fwf::ioflow_functions___<>
 	{
 	private:
 		socket__ _Socket;

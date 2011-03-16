@@ -589,10 +589,10 @@ ERRBegin
 					HANDLE( GetComment_( _Flow, _Value ) );
 					_Context = cTagExpected;
 
+					_Token = tComment;
+
 					if ( ( 1 << _Token ) & TokenToReport )
 						Continue = false;
-
-					_Token = tComment;
 
 					HANDLE( SkipSpaces_( _Flow ) );
 				} else {

@@ -98,16 +98,6 @@ namespace flw {
 	{
 	private:
 		fwf::iflow_functions_base___ *_Functions;
-#ifdef OLD
-		// The cache.
-		datum__ *_Cache;
-		// Size of the cache.
-		size__ _Size;
-		// Amount of data available in the cache.
-		size__ _Available;
-		// Position of the available data.
-		size__ _Position;
-#endif
 		// Amount of data red since the last reset.
 		size__ _Red;
 		// Max amount of data alllowed between 2 reset.
@@ -128,7 +118,7 @@ namespace flw {
 		} EOFD_;
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
-		size__ _DirectRead(
+		size__ _EOFAwareRead(
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
@@ -148,7 +138,7 @@ namespace flw {
 
 				// 'ToRead' ne peut être < 1, car on ne serait pas ici sinon.
 
-				Amount = _Read( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust, CacheIsEmpty );
+				Amount = _RawRead( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust, CacheIsEmpty );
 
 				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
 				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
@@ -161,7 +151,7 @@ namespace flw {
 					EOFD_.HandlingEOFD = true;
 
 			} else {
-				Amount = _Read( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
+				Amount = _RawRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
 
 				if ( (Amount < Minimum ) || ( Amount == 0 ) ) {
 					Amount += HandleEOFD( Buffer, Wanted - Amount );
@@ -173,104 +163,18 @@ namespace flw {
 
 			return Amount;
 		}
-#ifdef OLD
-#ifdef FLW_DBG
-		// Test if there is a cache available.
-		void _Test( void )
-		{
-			if ( ( _Cache == NULL ) )
-				ERRu();
-				
-			if ( _Size == 0 )
-				ERRu();
-		}				
-#endif		
-#endif
 		// Fill the cache with a minimum of 'Minimum' bytes. The cache must be empty.
-#ifdef OLD
-		void _FillCache( size__ Minimum )
-		{
-#ifdef FLW_DBG
-			_Test();
-
-			if ( _Available != 0 )				
-				ERRc();
-#endif
-			_Available = _DirectRead( Minimum, _Cache, _Size );
-			_Position = 0;
-		}
-#endif
 		/* Read from cache up to 'Amount' bytes and place them to 'Buffer'.
 		Return amount of data red. */
-#ifdef OLD
-		size__ _ReadFromCache(
-			size__ Amount,
-			datum__ *Buffer )
-		{
-#ifdef FLW_DBG
-			_Test();
-#endif
-			if ( _Available < Amount )
-				Amount = _Available;
-				
-			if ( Amount != 0 ) {
-				memcpy( Buffer, _Cache + _Position, (size_t)Amount );
-				
-				_Position += Amount;
-				_Available -= Amount;
-			}
-			
-			return Amount;
-		}
-#endif
-		/* Put a minimum of 'Minimum' and up to 'Wanted' bytes in 'Buffer',
-		directly or through the cache. Return amount of byte red.
-		The cache must be empty. */
-#ifdef OLD
-		size__ _ReadFromCacheOrDirectly(
-			size__ Minimum,
-			datum__ *Buffer,
-			size__ Wanted )
-		{
-#ifdef FLW_DBG
-			_Test();
-
-			if ( _Available != 0 )				
-				ERRc();
-#endif
-			if ( _Size > Wanted ) {
-				_FillCache( Minimum );
-				return _ReadFromCache( Wanted, Buffer );
-			} else
-				return _DirectRead( Minimum, Buffer, Wanted );
-		}
-#endif
-		/* Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
-		Return number of bytes red. */
-#ifdef OLD
-		size__ _ReadUpTo(
-			size__ Amount,
-			datum__ *Buffer,
-			size__ Minimum )
-		{
-			size__ Available = _ReadFromCache( Amount, Buffer );
-
-			if ( ( Available < Minimum ) || ( Available == 0 ) )
-				Available += _ReadFromCacheOrDirectly( Minimum - Available, Buffer + Available, Amount  - Available );
-
-			return Available;
-		}
-#else
 		size__ _ReadUpTo(
 			size__ Amount,
 			datum__ *Buffer,
 			size__ Minimum,
 			bso::bool__ Adjust,
-			bso::bool__ CacheIsEmpty )
+			bso::bool__ &CacheIsEmpty )
 		{
-			return _Read( Minimum, Buffer, Amount, Adjust, CacheIsEmpty );
+			return _EOFAwareRead( Minimum, Buffer, Amount, Adjust, CacheIsEmpty );
 		}
-#endif
 		// Place 'Amount' bytes in 'Buffer'.
 		void _Read(
 			size__ Amount,
@@ -282,7 +186,7 @@ namespace flw {
 				ERRf();
 		}
 		// Generic read.
-		size__ _LoopingRead(
+		size__ _LoopingRawRead(
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
@@ -299,7 +203,7 @@ namespace flw {
 
 			return CumulativeAmount;
 		}
-		size__ _Read(
+		size__ _RawRead(
 			size__ Minimum,
 			datum__ *Buffer,
 			size__ Wanted,
@@ -345,9 +249,6 @@ namespace flw {
 			}
 
 			_Red = 0;
-#ifdef OLD
-			_Available = _Position = 0;
-#endif
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
@@ -362,26 +263,15 @@ namespace flw {
 		}
 		void Init(
 			fwf::iflow_functions_base___ &Functions,
-#ifdef OLD
-			datum__ *Cache,
-			size__ Size,
-#endif
 			size__ AmountMax )
 		{
 			if ( _Red )
 				Dismiss();
 
 			_Functions = &Functions;
-#ifdef OLD
-			_Cache = Cache;
-			_Size = Size;
-#endif
 			_AmountMax = AmountMax;
 
 			_Red = 0;
-#ifdef OLD
-			_Available = _Position = 0;
-#endif
 			EOFD_.Data = NULL;
 			EOFD_.Size = 0;
 			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
@@ -425,7 +315,7 @@ namespace flw {
 
 			return C;
 		}
-		datum__ Get( bso::bool__ CacheIsEmpty )
+		datum__ Get( bso::bool__ &CacheIsEmpty )
 		{
 			datum__ C;
 
@@ -474,21 +364,12 @@ namespace flw {
 		{
 			EOFD( Data );
 
-#ifdef OLD
-			if ( _Available > Amount )	// This means we have red too much data.
-				ERRf();
-#else
 			if ( _Red > Amount )	// This means we have red too much data.
 				ERRf();
-#endif
 
 			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
 			_AmountMax = Amount;
-
-#ifdef OLD
-			_Red = _Available;
-#endif
 
 			if ( _Red == _AmountMax )
 				EOFD_.HandlingEOFD = true;
@@ -496,11 +377,7 @@ namespace flw {
 		//f Return the amount of data red since last 'Reset()'.
 		size__ AmountRed( void ) const
 		{
-#ifdef OLD
-			return _Red - _Available;
-#else
 			return _Red;
-#endif
 		}
 		void SetAmountMax( size__ AmountMax )
 		{
@@ -510,38 +387,6 @@ namespace flw {
 		{
 			_Dismiss();
 		}
-/*		size__ ReadRelay(
-			size__ Minimum,
-			datum__ *Buffer,
-			size__ Wanted )
-		{
-			size__ Amount = 0;
-
-			Amount = ReadUpTo( Wanted, Buffer );
-
-			while ( Amount < Minimum )
-				Amount += ReadUpTo( Wanted - Amount, Buffer + Amount );
-
-			return Amount;
-		}
-*/		
-#ifdef OLD
-		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
-
-		{
-			if ( _Available == 0 )
-				_FillCache( 1 );
-
-			if ( _Available == 0 )
-				ERRf();
-
-			if ( MarkAsUsed ) {
-				_Available--;
-				return _Cache + _Position++;
-			} else
-				return _Cache + _Position;
-		}
-#endif
 	};
 
 
@@ -829,20 +674,12 @@ namespace flw {
 		}
 		void Init(
 			fwf::ioflow_functions_base___ &Functions,
-#ifdef OLD
-			datum__ *ICache,
-			size__ ISize,
-#endif
 			size__ ReadAmountMax,
 			datum__ *OCache,
 			size__ OSize,
 			size__ WriteAmountMax )
 		{
-#ifdef OLD
-			iflow__::Init( Functions, ICache, ISize, ReadAmountMax );
-#else
 			iflow__::Init( Functions, ReadAmountMax );
-#endif
 			oflow__::Init( Functions, OCache, OSize, WriteAmountMax );
 
 		}
@@ -852,11 +689,7 @@ namespace flw {
 			size__ Size,
 			size__ AmountMax )
 		{
-#ifdef OLD
-			iflow__::Init( Functions, Cache, Size / 2, AmountMax );
-#else
 			iflow__::Init( Functions, AmountMax );
-#endif
 			oflow__::Init( Functions, Cache + Size / 2, Size / 2, AmountMax );
 		}
 	};

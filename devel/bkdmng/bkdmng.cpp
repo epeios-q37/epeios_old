@@ -96,7 +96,7 @@ static const char *GetMessage_(
 	backend_ &Backend,
 	STR_BUFFER___ &Buffer )
 {
-	return Backend.GetTranslation( str::string( GetRawMessage_( MessageId ) ), Buffer );
+	return Backend.GetTranslation( GetRawMessage_( MessageId ), Buffer );
 }
 
 void bkdmng::DumpRawMessages( txf::text_oflow__ &Flow )

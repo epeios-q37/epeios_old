@@ -346,6 +346,28 @@ ERREpilog
 	return Status;
 }
 
+backup_status__ fil::CreateBackupFile(
+	const char *FileName,
+	backup_mode__ Mode,
+	lcl::locale_rack___ &Locale,
+	txf::text_oflow__ &Flow )
+{
+	backup_status__ Status = bs_Undefined;
+ERRProlog
+	str::string Translation;
+ERRBegin
+	if ( ( Status = CreateBackupFile( FileName, Mode, err::hUserDefined ) ) != bsOK ) {
+		Translation.Init();
+		GetTranslation( Status, FileName, Locale.Language(), Locale.Locale(), Translation );
+		Flow << Translation << txf::nl << txf::commit;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+
 #undef CASE
 
 #define CASE( label )	LCL_CASE( label, bs )
@@ -429,6 +451,27 @@ ERREnd
 ERREpilog
 	return Status;
 }
+
+recover_status__ fil::RecoverBackupFile(
+	const char *FileName,
+	lcl::locale_rack___ &Locale,
+	txf::text_oflow__ &Flow )
+{
+	recover_status__ Status = rs_Undefined;
+ERRProlog
+	str::string Translation;
+ERRBegin
+	if ( ( Status = RecoverBackupFile( FileName, err::hUserDefined ) ) != rsOK ) {
+		Translation.Init();
+		GetTranslation( Status, FileName, Locale.Language(), Locale.Locale(), Translation );
+		Flow << Translation << txf::nl << txf::commit;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

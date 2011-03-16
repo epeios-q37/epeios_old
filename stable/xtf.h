@@ -115,12 +115,12 @@ namespace xtf {
 	{
 	private:
 		// L'entree de base.
-		flw::iflow__ *Entree_;
+		flw::iflow__ *_Flow;
 		// Corrdonnée du prochain caractère.
 		coord__ _Coord;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
-		// Adjust counters.after reading a new character.
+		bso::bool__ _EOX;	// Mise à 'true' lorsque 'EOX' atteint.
 		void NewCharAdjust_( void )
 		{
 			_Coord.Column++;
@@ -136,8 +136,9 @@ namespace xtf {
 		{
 			_Coord.reset( P );
 			_Coord.Line = _Coord.Column = 1;
-			Entree_ = NULL;
-			EOL_ = false;
+			_Flow = NULL;
+			EOL_ = 0;
+			_EOX = false;
 		}
 		extended_text_iflow__( void )
 		{
@@ -153,15 +154,17 @@ namespace xtf {
 			coord__ Coord = coord__( 1, 0 ) )
 		{
 			_Coord.Init( Coord );
-			Entree_ = NULL;
-			EOL_ = false;
+			_Flow = NULL;
+			EOL_ = 0;
+			_EOX = false;
 
-			Entree_ = &IStream;
+			_Flow = &IStream;
 		}
 		//f Extract and return next character in flow.
 		unsigned char Get( void )
 		{
-			unsigned char C = Entree_->Get();
+			unsigned char C = _Flow->Get();
+			_EOX = C == XTF_EOXC;
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
@@ -211,7 +214,8 @@ namespace xtf {
 				_Coord.Column = 0;
 			}
 
-			Entree_->Unget( C );
+			_Flow->Unget( C );
+			_EOX = C == XTF_EOXC;
 		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
 		const coord__ &Coord( void ) const
@@ -236,15 +240,17 @@ namespace xtf {
 		//f Return the next character in the flow, but let it in the flow.
 		unsigned char View( bso::bool__ HandleNL = false )
 		{
-			unsigned char C = Entree_->View();
+			unsigned char C = _Flow->View();
+			_EOX = C == XTF_EOXC;
 
 			if ( HandleNL && EOL_ ) {
 
 				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
 					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
 						 EOL_ = 0;
-						 Entree_->Get();
-						 C = Entree_->View();
+						 _Flow->Get();
+						 C = _Flow->View();
+						_EOX = C == XTF_EOXC;
 				}
 			}
 
@@ -253,12 +259,15 @@ namespace xtf {
 		//f True if at end of text.
 		bso::bool__ EOX( bso::bool__ HandleNL = false)
 		{
-			return View( HandleNL ) == XTF_EOXC;
+			if ( _EOX )
+				return true;
+
+			return View( HandleNL ) == XTF_EOXC;	// 'View' met '_EOX' à jour.
 		}
 		//f Return the amount of data red.
 		flw::size__ AmountRed( void ) const
 		{
-			return Entree_->AmountRed();
+			return _Flow->AmountRed();
 		}
 		void Set( coord__ Coord )
 		{
@@ -266,7 +275,7 @@ namespace xtf {
 		}
 		flw::iflow__ &UndelyingFlow( void ) const
 		{
-			return *Entree_;
+			return *_Flow;
 		}
 	};
 }

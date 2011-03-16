@@ -780,10 +780,10 @@ namespace bkdmng {
 		}
 		//f Add 'Module' to the interface.
 		const char *GetTranslation(
-			const str::string_ &Message,
+			const char *Message,
 			STR_BUFFER___ &Buffer )
 		{
-			return _Locale.GetTranslation( Message, Buffer );
+			return _Locale.GetTranslation( Message, "BKDMNG_", Buffer );
 		}
 		void Add( untyped_module &Module )
 		{

@@ -65,6 +65,15 @@ extern class ttr_tutor &FLXTutor;
 #include "flw.h"
 #include "bso.h"
 #include "bch.h"
+#include "cpe.h"
+
+#ifdef CPE__T_MT
+#	define FLX__MT
+#endif
+
+#ifdef FLX__MT
+#	include "mtx.h"
+#endif
 
 #ifndef FLX_BUFFER_BUFFER_SIZE
 //d Size of the buffer of a 'flx::buffer_flow___'.
@@ -494,8 +503,122 @@ namespace flx {
 			_Functions.Init( fwf::tsDisabled );
 			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
 		}
-
 	};
+
+#ifdef FLX__MT
+
+	// Permet de lire à partir d'un 'iflow' ce qui est écrit dans un 'oflow'.
+	class mediator_ioflow_functions___
+	: public fwf::ioflow_functions___<>
+	{
+	private:
+		mtx::mutex_handler__ 
+			_Read,
+			_Write;
+		const fwf::datum__ *_Buffer;
+		fwf::size__ _Size;
+		fwf::size__ _Red;
+	protected:
+		virtual fwf::size__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::size__ Maximum )
+		{
+			mtx::Lock( _Write );
+			mtx::Unlock( _Write );
+
+			_Buffer = Buffer;
+			_Size = Maximum;
+			_Red = 0;
+
+			mtx::Unlock( _Read );
+			mtx::Lock( _Write );
+
+			return _Red;
+		}
+		virtual void FWFCommit( void )
+		{}
+		virtual fwf::size__ FWFRead(
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
+		{
+
+			mtx::Lock( _Read );
+			mtx::Unlock( _Read );
+
+			if ( Maximum > _Size )
+				Maximum = _Size;
+
+			memcpy( Buffer, _Buffer, Maximum );
+
+			_Red = Maximum;
+
+			mtx::Unlock( _Write );
+			mtx::Lock( _Read );
+
+			return Maximum;
+		}
+		virtual void FWFDismiss( void )
+		{}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+
+			if ( P ) {
+				if ( _Read != MTX_INVALID_HANDLER )
+					mtx::Delete( _Read, true );
+
+				if ( _Write != MTX_INVALID_HANDLER )
+					mtx::Delete( _Write,true );
+			}
+
+			fwf::ioflow_functions___<>::reset( P );
+
+			_Buffer = NULL;
+			_Red = _Size = NULL;
+			_Read = _Write = MTX_INVALID_HANDLER;
+		}
+		mediator_ioflow_functions___( void )
+		{
+			reset( false );
+		}
+		~mediator_ioflow_functions___( void )
+		{
+			reset();
+		}
+		void Init( fwf::thread_safety__ ThreadSafety )
+		{
+			if ( _Read != MTX_INVALID_HANDLER )
+				mtx::Delete( _Read, true );
+
+			if ( _Write != MTX_INVALID_HANDLER )
+				mtx::Delete( _Write, true );
+
+			fwf::ioflow_functions___<>::Init( ThreadSafety );
+
+			_Size = _Red = 0;
+
+			_Buffer = NULL;
+
+			_Read = mtx::Create( mtx::mFree );
+			_Write = mtx::Create( mtx::mFree );
+
+			mtx::Lock( _Read );
+		}
+	};
+
+	template <int OutCacheSize = FLW__OUTPUT_CACHE_SIZE> class mediator_ioflow___
+		: public flw::standalone_ioflow__<OutCacheSize>
+	{
+	private:
+		mediator_ioflow_functions___ _Functions;
+	public:
+		void Init( void )
+		{
+			_Functions.Init( fwf::tsDisabled );
+			flw::standalone_ioflow__<OutCacheSize>Init( Functions );
+		}
+	};
+#endif
 }
 
 /*$END$*/

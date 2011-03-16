@@ -227,22 +227,20 @@ static const char *GetLabel_( text__ Text )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
-const str::string_ &nsxpcm::GetTranslation(
+bso::bool__ nsxpcm::GetTranslation(
 	text__ Text,
 	const lcl::locale_rack___ &Locale,
 	str::string_ &Translation )
 {
-ERRProlog
-	str::string RawText;
-ERRBegin
-	RawText.Init( "NSXPCM_" );
-	RawText.Append( GetLabel_( Text ) );
+	return Locale.GetTranslation( GetLabel_( Text ), "NSXPCM_", Translation );
+}
 
-	Locale.GetTranslation( RawText,Translation );
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
+const char *nsxpcm::GetTranslation(
+	text__ Text,
+	const lcl::locale_rack___ &Locale,
+	STR_BUFFER___ &Buffer  )
+{
+	return Locale.GetTranslation( GetLabel_( Text ), "NSXPCM_", Buffer );
 }
 
 
@@ -582,8 +580,8 @@ static inline PRInt16 ConvertType_( file_picker_type__ Type )
 }
 
 static inline void AddFilter_(
-	const str::string_ &Title,
-	const str::string_ &Mask,
+	const char *Title,
+	const char *Mask,
 	nsIFilePicker *FilePicker )
 {
 	nsEmbedString ETitle, EMask;
@@ -599,7 +597,13 @@ static inline void AddFilter_(
 	const file_picker_filter_ &Filter,
 	nsIFilePicker *FilePicker )
 {
-	AddFilter_( Filter.Title, Filter.Mask, FilePicker );
+ERRProlog
+	STR_BUFFER___ TitleBuffer, MaskBuffer;
+ERRBegin
+	AddFilter_( Filter.Title.Convert( TitleBuffer ), Filter.Mask.Convert( MaskBuffer ), FilePicker );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 
@@ -644,12 +648,10 @@ void AddExtraPredefinedFilters_(
 	nsIFilePicker *FilePicker )
 {
 ERRProlog
-		str::string Translation;
+	STR_BUFFER___ Buffer;
 ERRBegin
-	Translation.Init();
-
 	if ( Filters & fpmfXPRJ )
-		AddFilter_( GetTranslation( nsxpcm::tXPRJFilterLabel, Locale, Translation ), str::string( "*.xprj" ), FilePicker );
+		AddFilter_( GetTranslation( nsxpcm::tXPRJFilterLabel, Locale, Buffer ), "*.xprj", FilePicker );
 ERRErr
 ERREnd
 ERREpilog

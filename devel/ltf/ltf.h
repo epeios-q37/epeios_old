@@ -69,7 +69,7 @@ namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
 	class _line_text_oflow_functions___
-	: public fwf::oflow_functions___
+	: public fwf::oflow_functions___<>
 	{
 	private:
 		fwf::datum__ *Data_;

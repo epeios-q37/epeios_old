@@ -68,6 +68,9 @@ extern class ttr_tutor &XPPTutor;
 #	include "xtf.h"
 #	include "flx.h"
 #	include "flf.h"
+#	include "crptgr.h"
+#	include "cdgb64.h"
+
 
 
 #	define XPP_PREPROCESSOR_DEFAULT_NAMESPACE	"xpp"
@@ -364,6 +367,8 @@ namespace xpp {
 		flf::file_iflow___ _FFlow;
 		str::string _MacroContent;
 		flx::E_STRING_IFLOW__ _SFlow;
+		cdgb64::decoding_iflow___ _Decoder;
+		crptgr::decrypt_iflow___ _Decrypter;
 		xtf::extended_text_iflow__ _XFlow;
 		xml::parser___ _Parser;
 		_repository_ &_Repository;
@@ -382,6 +387,12 @@ namespace xpp {
 		status__ _InitWithContent(
 			const str::string_ &Content,
 			const str::string_ &NameOfTheCurrentFile,
+			const xtf::coord__ &Coord,
+			const str::string_ &Directory,
+			const char *CypherKey );
+		status__ _InitCypher(
+			flw::iflow__ &Flow,
+			const str::string_ &FileName,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
 			const char *CypherKey );
@@ -416,6 +427,8 @@ namespace xpp {
 			_MacroContent.reset( P );
 			_FFlow.reset( P );
 			_SFlow.reset( P );
+			_Decoder.reset( P );
+			_Decrypter.reset( P );
 			_XFlow.reset( P );
 			_LocalizedFileName.reset( P );
 			_Directory.reset( P );

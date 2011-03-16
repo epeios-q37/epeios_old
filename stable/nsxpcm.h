@@ -186,10 +186,15 @@ namespace nsxpcm {
 		t_Undefined
 	};
 
-	const str::string_ &GetTranslation(
+	bso::bool__ GetTranslation(
 		text__ Text,
 		const lcl::locale_rack___ &Locale,
 		str::string_ &Translation );
+
+	const char *GetTranslation(
+		text__ Text,
+		const lcl::locale_rack___ &Locale,
+		STR_BUFFER___ &Buffer  );
 
 	enum event__
 	{

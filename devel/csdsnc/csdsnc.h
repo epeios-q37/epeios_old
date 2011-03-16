@@ -301,7 +301,7 @@ ERREpilog
 	E_AUTO( core );
 
 	class _functions___
-	: public fwf::ioflow_functions___
+	: public fwf::ioflow_functions___<>
 	{
 	private:
 		_flow___ *_Flow;

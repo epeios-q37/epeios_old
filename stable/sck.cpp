@@ -102,11 +102,9 @@ flw::size__ sck::Read(
 
 		if ( Result == SCK_SOCKET_ERROR )
 		{
-			int Err = Error();
-
 			Result = SCK_DISCONNECTED;
 
-			if ( Err != SCK_ECONNRESET )
+			if ( Error() != SCK_ECONNRESET )
 				ERRd();
 		}
 		else if ( !Result && Amount )

@@ -58,17 +58,17 @@ void Encode(
 ERRProlog
 	flx::E_STRING_OFLOW___ OFlow;
 	cdgb64::encoding_oflow___ Encoder;
-	crptgr::encrypt_oflow___ Encrypter;
+//	crptgr::encrypt_oflow___ Encrypter;
 	epeios::row__ Row = NONE;
 ERRBegin
 	OFlow.Init( Target );
 	Encoder.Init( OFlow );
-	Encrypter.Init( Encoder, KEY );
+//	Encrypter.Init( Encoder, KEY );
 
 	Row = Source.First();
 
 	while ( Row != NONE ) {
-		Encrypter.Put( Source( Row ) );
+		Encoder.Put( Source( Row ) );
 
 		Row = Source.Next( Row );
 	}
@@ -84,15 +84,15 @@ void Decode(
 {
 ERRProlog
 	flx::E_STRING_IFLOW__ IFlow;
-	crptgr::decrypt_iflow___ Decrypter;
+//	crptgr::decrypt_iflow___ Decrypter;
 	cdgb64::decoding_iflow___ Decoder;
 ERRBegin
 	IFlow.Init( Source );
 	Decoder.Init( IFlow );
-	Decrypter.Init( Decoder, KEY );
+//	Decrypter.Init( Decoder, KEY );
 
 	while ( Amount-- )
-		Target.Append( Decrypter.Get() );
+		Target.Append( Decoder.Get() );
 ERRErr
 ERREnd
 ERREpilog
@@ -119,7 +119,7 @@ ERREpilog
 
 //#define TEXT	"!"
 //#define TEXT	"!"
-#define TEXT	"Hello, the world, and thank you for all the fish (42) !"
+#define TEXT	"Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !"
 
 void Test( void )
 {

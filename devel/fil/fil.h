@@ -79,6 +79,7 @@ namespace str {
 
 namespace lcl {
 	class locale_;
+	class locale_rack___;
 }
 
 #if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
@@ -319,12 +320,18 @@ namespace fil {
 
 
 	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
-	If 'Handle' == 'fil::hbfDuplicate', the backup file is create by duplicating the original one.
-	If 'Handle' == 'fil::hbfRename', the bachup file is create by renaming the original one. */
+	If 'Mode' == 'fil::mDuplicate', the backup file is create by duplicating the original one.
+	If 'Mode' == 'fil::mRename', the bachup file is create by renaming the original one. */
 	backup_status__ CreateBackupFile(
-		const char *Name,
+		const char *FileName,
 		backup_mode__ Mode,
 		err::handling__ = err::h_Default  );
+
+	backup_status__ CreateBackupFile(
+		const char *FileName,
+		backup_mode__ Mode,
+		lcl::locale_rack___ &Locale,
+		txf::text_oflow__ &Flow );
 
 	enum recover_status__
 	{
@@ -346,8 +353,13 @@ namespace fil {
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
 	recover_status__ RecoverBackupFile(
-		const char *Name,
+		const char *FileName,
 		err::handling__ = err::h_Default  );
+
+	recover_status__ RecoverBackupFile(
+		const char *FileName,
+		lcl::locale_rack___ &Locale,
+		txf::text_oflow__ &Flow );
 }
 
 /*$END$*/
