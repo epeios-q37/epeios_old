@@ -1,5 +1,13 @@
 $Id$
 
+18/03/2011 :
+	- XML :
+		- Généralisation encodage.
+
+17/03/2011 :
+	- FLW :
+		- Ajout 'GetCacheSize()' à 'oflow___'.
+
 16/03/2011 :
 	- Général :
 		- Adaptation aux modifications des différentes bibliothèques.

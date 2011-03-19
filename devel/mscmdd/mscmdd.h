@@ -66,6 +66,7 @@ extern class ttr_tutor &MSCMDDTutor;
 #include "str.h"
 #include "ctn.h"
 #include "mtx.h"
+#include "lcl.h"
 
 #ifndef CPE__T_MS
 #	error "Only implemented for windows".
@@ -449,6 +450,28 @@ namespace mscmdd {
 		}
 	};
 
+	enum status__ 
+	{
+		sOK,
+		sUnableToOpenMIDIInDevice,
+		sUnableToOpenMIDIOutDevice,
+		s_amount,
+		s_Undefined
+	};
+
+	const char *Label( status__ Status );
+
+	inline const str::string_ &GetTranslation(
+		status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation  )
+	{
+		Locale.GetTranslation( Label( Status ), Language, "MSCMDD_", Translation );
+
+		return Translation;
+	}
+
 	typedef fwf::ioflow_functions___<MSCMDD__INPUT_CACHE_SIZE> _ioflow_functions___;
 
 	class midi_ioflow_functions___
@@ -492,21 +515,21 @@ namespace mscmdd {
 		{
 			reset();
 		}
-		bso::bool__ Init(
+		status__ Init(
 			int DeviceIn,
 			int DeviceOut,
 			err::handling__ ErrorHandling = err::h_Default,
 			fwf::thread_safety__ ThreadSafety = fwf::ts_Default )
 		{
 			if ( !_In.Init( DeviceIn, ErrorHandling ) )
-				return false;
+				return sUnableToOpenMIDIInDevice;
 
 			if ( !_Out.Init( DeviceOut, ErrorHandling ) )
-				return false;
+				return sUnableToOpenMIDIOutDevice;
 
 			_ioflow_functions___::Init( ThreadSafety );
 
-			return true;
+			return sOK;
 		}
 	};
 
@@ -531,18 +554,20 @@ namespace mscmdd {
 		{
 			reset();
 		}
-		bso::bool__ Init(
+		status__ Init(
 			int DeviceIn,
 			int DeviceOut,
 			err::handling__ ErrorHandling = err::h_Default,
 			bso::size__ AmountMax = FLW_SIZE_MAX  )
 		{
-			if ( !_Functions.Init( DeviceIn, DeviceOut, ErrorHandling ) )
-				return false;
+			status__ Status = _Functions.Init( DeviceIn, DeviceOut, ErrorHandling );
+
+			if ( Status != sOK )
+				return Status;
 
 			_ioflow___::Init( _Functions, AmountMax );
 
-			return true;
+			return Status;
 		}
 	};
 

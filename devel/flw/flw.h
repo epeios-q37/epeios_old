@@ -390,9 +390,17 @@ namespace flw {
 	};
 
 
-	template <int = 0> class standalone_iflow__
+	// Uniquement pour avoir une symétrie par rapport à 'standalone_iflow__'.
+	template <int Dummy = 0> class standalone_iflow__
 	: public iflow__
-	{};
+	{
+	public:
+		standalone_iflow__( void )
+		{
+			if ( Dummy != 0 )	
+				ERRu();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
+		}
+	};
 
 
 	//f Get 'StaticObject' from 'InputFlow'.
@@ -588,13 +596,14 @@ namespace flw {
 		{
 			_AmountMax = AmountMax;
 		}
+# if 0
 /*		size__ WriteRelay(
 			const datum__ *Buffer,
 			size__ Maximum )
 		{
 			return WriteUpTo( Buffer, Maximum );
 		}
-*/		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
+		datum__ *GetCurrentCacheDatum( bso::bool__ MarkAsUsed )	/* Si 'AsUsed' à vrai, considère le 'datum' retourné comme utilisé. */
 		{
 			if ( _Free == 0 )
 				_DumpCache();
@@ -606,6 +615,11 @@ namespace flw {
 				return _Cache + _Size - _Free--;
 			else
 				return _Cache + _Size - _Free;
+		}
+#endif
+		size__ GetCacheSize( void) const
+		{
+			return _Size;
 		}
 	};
 

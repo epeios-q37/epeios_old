@@ -83,7 +83,7 @@ void Decode(
 	str::string_ &Target )
 {
 ERRProlog
-	flx::E_STRING_IFLOW__ IFlow;
+	flx::bunch_iflow__<str::string_, bso::char__,1023> IFlow;
 //	crptgr::decrypt_iflow___ Decrypter;
 	cdgb64::decoding_iflow___ Decoder;
 ERRBegin
@@ -109,7 +109,7 @@ ERRBegin
 
 	Encode( Source, Coded );
 
-	cout << "Encodé : " << Coded << txf::nl;
+	cout << "Encodé : " << Coded << txf::nl << txf::commit;
 
 	Decode( Source.Amount(),Coded, Target );
 ERRErr
@@ -119,7 +119,8 @@ ERREpilog
 
 //#define TEXT	"!"
 //#define TEXT	"!"
-#define TEXT	"Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !Hello, the world, and thank you for all the fish (42) !"
+//#define TEXT	"Hello, the world, and thank you for all the fish (42) !"
+#define TEXT "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 void Test( void )
 {
@@ -129,7 +130,7 @@ ERRBegin
 	Source.Init( TEXT );
 	Target.Init();
 
-	cout << "Source : '" << Source << '\'' << txf::nl;
+	cout << "Source : '" << Source << '\'' << txf::nl << txf::commit;
 
 	EncodeDecode( Source, Target );
 

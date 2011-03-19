@@ -477,6 +477,76 @@ namespace xml {
 		sch_Default = schReplace
 	};
 
+	enum _encoding__ {
+		eISO_8859_1,
+		e_amount,
+		e_Undefined,
+		e_Default = eISO_8859_1,
+		e_None,
+	};
+
+	inline const char *Label( _encoding__ Encoding )
+	{
+		switch ( Encoding ) {
+		case eISO_8859_1:
+			return "ISO-8859-1";
+			break;
+		case e_None:
+			return NULL;
+			break;
+		default:ERRu();
+			break;
+		}
+		return NULL;	// Pour éviter un 'Warning'.
+	}
+
+	class encoding__
+	{
+	private:
+		const char *_EncodingString;
+	public:
+		encoding__( void )
+		{
+			_EncodingString = Label( e_Default );
+		}
+		encoding__( _encoding__ Encoding )
+		{
+			_EncodingString = Label( Encoding );
+		}
+		encoding__( const char *Encoding )
+		{
+			_EncodingString = Encoding;
+		}
+		const char *EncodingString( void ) const
+		{
+			return _EncodingString;
+		}
+	};
+
+	inline bso::bool__ WriteXMLHeader(
+		txf::text_oflow__ &OFlow,
+		const char *Encoding )
+	{
+		if ( Encoding != NULL ) {
+			OFlow << "<?xml version=\"1.0\" encoding=\"" << Encoding << "\"?>";
+			return true;
+		} else
+			return false;
+	}
+
+	inline bso::bool__ WriteXMLHeader(
+		txf::text_oflow__ &OFlow,
+		_encoding__ Encoding )
+	{
+		return WriteXMLHeader( OFlow, Label( Encoding ) );
+	}
+
+	inline bso::bool__ WriteXMLHeader(
+		txf::text_oflow__ &OFlow,
+		encoding__ Encoding )
+	{
+		return WriteXMLHeader( OFlow, Encoding.EncodingString() );
+	}
 
 	class writer_
 	{
@@ -532,6 +602,7 @@ namespace xml {
 		void Init(
 			txf::text_oflow__ &Flow,
 			outfit__ Outfit,
+			encoding__ Encoding,
 			special_char_handling__ SpecialCharHandling = sch_Default )
 		{
 			reset();
@@ -540,6 +611,18 @@ namespace xml {
 			S_.Flow = &Flow;
 			S_.Outfit = Outfit;
 			S_.SpecialCharHandling = SpecialCharHandling;
+
+			if ( WriteXMLHeader( Flow, Encoding ) )
+				switch ( Outfit ) {
+				case oIndent:
+					Flow << txf::nl;
+					break;
+				case oCompact:
+					break;
+				default:
+					ERRu();
+					break;
+			}
 		}
 		void PushTag( const name_ &Name )
 		{
@@ -615,12 +698,6 @@ namespace xml {
 	};
 
 	E_AUTO( writer )
-
-
-	inline void WriteXMLHeader( txf::text_oflow__ &OFlow )
-	{
-		OFlow << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
-	}
 
 	inline void WriteXSLDeclaration(
 		const str::string_ &XSLHRef,

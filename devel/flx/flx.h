@@ -80,9 +80,9 @@ extern class ttr_tutor &FLXTutor;
 #define FLX_BUFFER_BUFFER_SIZE	100
 #endif
 
-#ifndef FLX_SET_BUFFER_SIZE
+#ifndef FLX_BUNCH_BUFFER_SIZE
 //d Size of the buffer of a 'flx::bunch_flow___'.
-#define FLX_SET_BUFFER_SIZE		500
+#define FLX_BUNCH_BUFFER_SIZE		500
 #endif
 
 #ifndef FLX_DUMP_BUFFER_SIZE
@@ -284,7 +284,7 @@ namespace flx {
 	};
 
 	//c A bunch as input flow.driver.
-	template < typename bunch_, typename so__, int cache_size = FLX_SET_BUFFER_SIZE> class bunch_iflow_functions___
+	template < typename bunch_, typename so__, int cache_size> class bunch_iflow_functions___
 	: public fwf::iflow_functions___<cache_size>
 	{ 
 	protected:
@@ -339,11 +339,11 @@ namespace flx {
 	};
 
 	//c A bunch as input flow.driver.
-	template < typename bunch_, typename so__> class bunch_iflow__
+	template < typename bunch_, typename so__,int  CacheSize = FLX_BUNCH_BUFFER_SIZE> class bunch_iflow__
 	: public flw::iflow__
 	{ 
 	private:
-		bunch_iflow_functions___<bunch_, so__> _Functions;
+		bunch_iflow_functions___<bunch_, so__, CacheSize> _Functions;
 	public:
 		bunch_iflow__( void )
 		{
@@ -424,7 +424,7 @@ namespace flx {
 	{
 	private:
 		bunch_oflow_functions___<bunch_, so__> _Functions;
-		flw::datum__ _Cache[FLX_SET_BUFFER_SIZE];
+		flw::datum__ _Cache[FLX_BUNCH_BUFFER_SIZE];
 	public:
 		bunch_oflow___( )
 		{

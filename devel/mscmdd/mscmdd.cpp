@@ -334,6 +334,22 @@ ERREpilog
 	return Count;
 }
 
+#define CASE( label ) LCL_CASE( label, s )
+
+const char *mscmdd::Label( status__ Status )
+{
+	switch ( Status ) {
+	CASE( UnableToOpenMIDIInDevice );
+	CASE( UnableToOpenMIDIOutDevice );
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+
 
 using namespace mscmdd;
 

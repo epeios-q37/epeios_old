@@ -1281,7 +1281,7 @@ ERRBegin
 
 	Writer.PushTag( Directives.CypherTag );
 
-	Writer.PutAttribute( CYPHER_TAG_METHOD_ATTRIBUTE, "beta" );
+	Writer.PutAttribute( CYPHER_TAG_METHOD_ATTRIBUTE, "basic" );
 
 	Tree.Init();
 
@@ -1432,7 +1432,7 @@ status__ xpp::Encrypt(
 ERRProlog
 	xml::writer Writer;
 ERRBegin
-	Writer.Init( OFlow, Outfit, xml::schKeep );
+	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
 	Status = Encrypt( Namespace, IFlow, Writer, Coord );
 ERRErr
@@ -1455,7 +1455,7 @@ status__ xpp::Process(
 ERRProlog
 	xml::writer Writer;
 ERRBegin
-	Writer.Init( OFlow, Outfit, xml::schKeep );
+	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
 	Status = Process( Namespace, IFlow, Directory, Writer, Coord, GuiltyFileName );
 ERRErr

@@ -325,7 +325,7 @@ namespace fwf {
 	: public iflow_functions_base___
 	{
 	private:
-		datum__ _Cache[cache_size];
+		datum__ _Cache[cache_size+1];	// '+1' pour gèrer le 'Unget()'.
 	public:
 		void Init( thread_safety__ ThreadSafety )
 		{
@@ -398,9 +398,17 @@ namespace fwf {
 		}
 	};
 
-	template <int = 0> class oflow_functions___
+	// Uniquement pour avoir une symétrie par rapport à 'iflow_functions___'.
+	template <int Dummy = 0> class oflow_functions___
 	: public oflow_functions_base___
-	{};
+	{
+	public:
+		oflow_functions___( void )
+		{
+			if ( Dummy != 0 )	
+				ERRu();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
+		}
+	};
 
 	class ioflow_functions_base___
 	: public iflow_functions_base___,

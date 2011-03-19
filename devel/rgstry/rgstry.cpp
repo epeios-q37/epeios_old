@@ -796,7 +796,7 @@ ERRProlog
 ERRBegin
 	Buffer.Init( Nodes );
 
-	Writer.Init( Flow, Outfit );
+	Writer.Init( Flow, Outfit, xml::e_Default );
 
 	ChildAmount = Dump( Root, RootToo, Writer );
 ERRErr

@@ -1,5 +1,12 @@
 $Id$
 
+---------------
+Version 0.3.0 :
+---------------
+
+- 18/03/2011 :
+	- Publication (à l'usage de Logiplus uniquement).
+
 - 15/03/2011 :
 	- Adaptation modifications bibliothèques sous-jacentes.
 	- Ajout option '--encrypt'.

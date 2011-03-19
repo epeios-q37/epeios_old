@@ -33,8 +33,8 @@
 #include "flf.h"
 
 #define NAME			"expp"
-#define VERSION			"0.3.0"
-#define COPYRIGHT_YEARS	"2007-2010"
+#define VERSION			"0.3.1"
+#define COPYRIGHT_YEARS	"2007-2011"
 #define DESCRIPTION		"Epeios XML preprocessor"
 #define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -313,7 +313,8 @@ ERRBegin
 	ErrorFileName.Init();
 
 
-	xml::WriteXMLHeader( Destination == NULL ? cio::cout : TOFlow );
+	xml::WriteXMLHeader( Destination == NULL ? cio::cout : TOFlow, xml::encoding__() );
+
 	( Destination == NULL ? cout : TOFlow ) << txf::nl;
 
 	if ( ( Status = xpp::Process( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),

@@ -89,91 +89,81 @@ namespace cdgb64 {
 		Result[3] = Encode_( Data[2] >> 2 );
 	}
 
+#	define CDGB64__PROCESSED	BSO_UBYTE_MAX
+
 	typedef fwf::oflow_functions___<> _oflow_functions___;
 
 	class encoding_oflow_functions___
 	: public _oflow_functions___
 	{
 	private:
-		fwf::datum__ _Cache[4];
+		fwf::datum__ _Cache[3];
 		bso::ubyte__ _Amount;
-		flw::oflow__ *_Flow;
+		flw::oflow__ *_Flow;	
 	protected:
 		virtual fwf::size__ FWFWrite(
 			const fwf::datum__ *Buffer,
 			fwf::size__ Maximum )
 		{
+			flw::datum__ Result[4];
 			fwf::size__ Amount = 0;
-			flw::datum__ Item[4];
 
-			switch ( _Amount ) {
-			case 0:
-				while ( Maximum >= 3 ) {
-					Encode_( Buffer, Item );
+			if ( _Amount == CDGB64__PROCESSED )
+				_Amount = 0;
 
-					_Flow->Write( &Item, 4 );
+			if ( _Amount != 0 ) {
+				if ( (fwf::size__)( 3 - _Amount ) < Maximum )
+					Amount = 3 - _Amount;
+				else
+					Amount = Maximum;
 
-					Maximum -= 3;
-					Buffer += 3;
-					Amount += 3;
-				}
+				memcpy( _Cache + _Amount, Buffer, Amount );
 
-				switch ( Maximum ) {
+				_Amount += (bso::ubyte__)Amount;
+				Maximum -= Amount;
+				Buffer += Amount;
+
+				switch ( _Amount ) {
+				case 0:
+					ERRc();
+					break;
+				case 1:
 				case 2:
-					_Cache[1] = Buffer[1];
-				case 1:
-					_Cache[0] = Buffer[0];
-					_Amount = (bso::ubyte__)Maximum;
-					Amount += Maximum;
-				case 0:
+					break;
+				case 3:
+					Encode_( _Cache, Result );
+					_Flow->Write( Result, 4 );
+					_Amount = 0;
 					break;
 				default:
 					ERRc();
 					break;
 				}
-				break;
-			case 1:
-				switch( Maximum ) {
-				case 0:
+			}
+
+			while ( Maximum >= 3 ) {
+				Encode_( Buffer, Result );
+
+				_Flow->Write( Result, 4 );
+
+				Amount += 3;
+				Maximum -= 3;
+				Buffer += 3;
+
+			}
+
+			if ( Maximum != 0 ) {
+#ifdef CDGB64_DBG
+				if ( Maximum > 3 )
 					ERRc();
-					break;
-				case 1:
-					_Amount++;
-					_Cache[1] = *Buffer;
-					Amount = 1;
-					break;
-				default:
-					Item[0] = _Cache[0];
-					Item[1] = Buffer[0];
-					Item[2] = Buffer[1];
 
-					_Flow->Write( &Item, 4 );
-
-					Amount = 2;
-
-					break;
-				};
-				break;
-			case 2:
-				switch( Maximum ) {
-				case 0:
+				if ( _Amount != 0 )
 					ERRc();
-					break;
-				default:
-					Item[0] = _Cache[0];
-					Item[1] = _Cache[2];
-					Item[2] = *Buffer;
+#endif
+				memcpy( _Cache, Buffer, Maximum );
 
-					_Flow->Write( &Item, 4 );
-
-					Amount = 1;
-
-					break;
-				};
-				break;
-			default:
-				ERRc();
-				break;
+				_Amount = (bso::ubyte__)Maximum;
+				Amount += Maximum;
 			}
 
 			return Amount;
@@ -185,11 +175,13 @@ namespace cdgb64 {
 			if ( _Flow == NULL )
 				return;
 
+			if ( _Amount == CDGB64__PROCESSED )
+				return;
+
 			Encode_( _Cache, Result );
 
 			switch ( _Amount ) {
 			case 0:
-				return;
 				break;
 			case 1:
 				_Flow->Write( &Result, 2 );
@@ -203,7 +195,7 @@ namespace cdgb64 {
 
 			_Flow->Put( '=' );
 
-			_Amount = 0;
+			_Amount = CDGB64__PROCESSED;
 
 			_Flow->Commit();
 		}
@@ -214,7 +206,7 @@ namespace cdgb64 {
 				Commit();
 
 			_oflow_functions___::reset( P );
-			_Amount = 0;
+			_Amount = CDGB64__PROCESSED;
 			_Flow = NULL;
 		}
 		encoding_oflow_functions___( void )
@@ -231,22 +223,24 @@ namespace cdgb64 {
 		{
 			Commit();
 
-			_Amount = 0;
+			_Amount = CDGB64__PROCESSED;
 			_Flow = &Flow;
 
 			_oflow_functions___::Init( ThreadSafety );
 		}
 	};
 
+	typedef flw::standalone_oflow__<>	_oflow__;	// NOTA : la taille du cache doit être supérieur ou égal à 3.
+
 	class encoding_oflow___
-	: public flw::standalone_oflow__<>
+	: public _oflow__
 	{
 	private:
 		encoding_oflow_functions___ _Functions;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			flw::standalone_oflow__<>::reset( P );
+			_oflow__::reset( P );
 			_Functions.reset( P );
 		}
 		encoding_oflow___( void )
@@ -262,7 +256,12 @@ namespace cdgb64 {
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Functions.Init( Flow, fwf::tsDisabled );
-			flw::standalone_oflow__<>::Init( _Functions, AmountMax  );
+			_oflow__::Init( _Functions, AmountMax  );
+
+#ifdef CDGB64_DBG
+			if ( GetCacheSize() < 3 )
+				ERRc();
+#endif
 		}
 	};
 
@@ -285,8 +284,6 @@ namespace cdgb64 {
 		Target[1] = ( Decode_( Source[1] ) >> 2 ) | ( Decode_( Source[2] ) << 4 );
 		Target[2] = ( Decode_( Source[2] ) >> 4 ) | ( Decode_( Source[3] ) << 2 );
 	}
-
-	typedef fwf::iflow_functions___<> _iflow_functions____;
 
 	inline void Decode_(
 		fwf::datum__ *Data,
@@ -333,11 +330,15 @@ namespace cdgb64 {
 		Decode_( Target, 4 );
 	}
 
+	typedef fwf::iflow_functions___<1023> _iflow_functions____;
+
 	class decoding_iflow_functions___
 	: public _iflow_functions____
 	{
 	private:
 		flw::iflow__ *_Flow;
+		fwf::datum__ _Cache[4];
+		bso::ubyte__ _Size;
 	protected:
 		virtual fwf::size__ FWFRead(
 			fwf::size__ Maximum,
@@ -353,16 +354,29 @@ namespace cdgb64 {
 #endif
 			Maximum &= ~3UL;	// On veut un multiple de 4.
 
-			while ( Maximum-- && ( ( Datum = _Flow->Get( CacheIsEmpty ) ) != '=' ) &&  !CacheIsEmpty )
+			if ( _Size != 0 ) {
+				memcpy( Buffer, _Cache, _Size );
+				Maximum -= _Size;
+				Amount = _Size;
+				_Size = 0;
+			}
+
+			while ( ( !CacheIsEmpty || Amount < 4 ) && Maximum-- && ( ( Datum = _Flow->Get( CacheIsEmpty ) ) != '=' ) )
 				Buffer[Amount++] = Datum;
 
 			if ( Amount != 0 ) {
-
 				if ( Amount >= 4 )
 					Decode_( Buffer, Amount & ~3UL );
 
 				if ( Amount & 3 )
-					DecodePartial_( Buffer + ( Amount & ~3UL ), Amount & 3, Buffer + 3 * ( Amount >> 2 ) );
+					if ( Datum == '=' )
+						DecodePartial_( Buffer + ( Amount & ~3UL ), Amount & 3, Buffer + 3 * ( Amount >> 2 ) );
+					else {
+						_Size = Amount & 3;
+						memcpy( _Cache, Buffer + ( Amount & ~3UL ), _Size );
+						Amount &= ~3UL;
+					}
+
 			}
 
 			return 3 * ( Amount >> 2 ) + ( ( Amount & 3 ) > 1 ? ( Amount & 3 ) - 1 : 0 ); 
@@ -380,6 +394,7 @@ namespace cdgb64 {
 		{
 			_iflow_functions____::reset( P );
 			_Flow = NULL;
+			_Size = 0;
 		}
 		decoding_iflow_functions___( void )
 		{
@@ -395,18 +410,21 @@ namespace cdgb64 {
 		{
 			_Flow = &Flow;
 			_iflow_functions____::Init( ThreadSafety );
+			_Size = 0;
 		}
 	};
 
+	typedef flw::standalone_iflow__<> _iflow___;
+
 	class decoding_iflow___
-	: public flw::standalone_iflow__<>
+	: public _iflow___
 	{
 	private:
 		decoding_iflow_functions___ _Functions;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			flw::standalone_iflow__<>::reset( P );
+			_iflow___::reset( P );
 			_Functions.reset( P );
 		}
 		void Init(
@@ -414,7 +432,7 @@ namespace cdgb64 {
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Functions.Init( Flow );
-			flw::standalone_iflow__<>::Init( _Functions, AmountMax  );
+			_iflow___::Init( _Functions, AmountMax  );
 		}
 	};
 

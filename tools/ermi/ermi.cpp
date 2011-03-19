@@ -413,7 +413,7 @@ ERRBegin
 		identity::Identify( NULL, Parameters.DIn, Parameters.DOut );
 		break;
 	case cRetrieve:
-		get::GetSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.Output );
+		get::ReadSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.Output );
 		break;
 	default:
 		ERRc();
