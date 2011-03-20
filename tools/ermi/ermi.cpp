@@ -35,6 +35,7 @@
 #include "common.h"
 #include "identity.h"
 #include "get.h"
+#include "set.h"
 
 using namespace common;
 
@@ -49,7 +50,9 @@ enum command__ {
 	cLicense,
 	cDevices,	// Diplay available MIDI devices.
 	cIdentify,	// Retrieve identity from a device.
-	cRetrieve,	// Retrieve settings from device.
+	cRetrieve_,	// Retrieve settings from device.
+	cWrite,		// Set settings to device.
+	cRandom,	// Set a range of settings with random value (between 2 values).
 	c_amount,
 	c_Undefined
 };
@@ -66,7 +69,10 @@ struct parameters {
 	command__ Command;
 	PARAM( DIn );		// MIDI device in.
 	PARAM( DOut );		// MIDI device out.
-	PARAM( Output );	// Output file.
+	PARAM( OutputFileName );	// Output file name.
+	PARAM( SettingsFileName );	// Settings file name.
+	PARAM( AddressRange );	// Adress range for the '--random' command.
+	PARAM( ValueRange );	// Value range for the '--random' command.
 	parameters( void )
 	{
 		Command = c_Undefined;
@@ -85,8 +91,12 @@ void PrintUsage( const clnarg::description_ &Description )
 	cout << txf::tab << "displays available MIDI devices id and name." << txf::nl;
 	cout << NAME << ' ' << Description.GetCommandLabels( cIdentify, "," ) << txf::nl;
 	cout << txf::tab << "displays identity of a MIDI device." << txf::nl;
-	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve, "," ) << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve_, "," ) << txf::nl;
 	cout << txf::tab << "retrieve settings from device." << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cWrite, "," ) << txf::nl;
+	cout << txf::tab << "write settings to device." << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cRandom, "," ) << txf::nl;
+	cout << txf::tab << "send randomized settings to device." << txf::nl;
 
 	cout << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
@@ -243,12 +253,34 @@ ERRBegin
 			break;
 		}
 		break;
-	case cRetrieve:
+	case cRetrieve_:
 		switch( Free.Amount() ) {
 		case 1:
-			Free( P ).Convert( Parameters.Output );
+			Free( P ).Convert( Parameters.OutputFileName );
 			break;
 		case 0:
+			break;
+		default:
+			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			break;
+		}
+		break;
+	case cWrite:
+		switch( Free.Amount() ) {
+		case 1:
+			Free( P ).Convert( Parameters.SettingsFileName );
+			break;
+		default:
+			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			break;
+		}
+		break;
+	case cRandom:
+		switch( Free.Amount() ) {
+		case 2:
+			Free( P ).Convert( Parameters.ValueRange );
+			P = Free.Previous( P );
+			Free( P ).Convert( Parameters.AddressRange );
 			break;
 		default:
 			clnarg::ReportWrongNumberOfArguments( LocaleRack );
@@ -280,7 +312,9 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( CLNARG_NO_SHORT, "devices", cDevices );
 	Description.AddCommand( CLNARG_NO_SHORT, "identify", cIdentify );
-	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve );
+	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve_ );
+	Description.AddCommand( CLNARG_NO_SHORT, "write", cWrite );
+	Description.AddCommand( CLNARG_NO_SHORT, "random", cRandom );
 //	Description.AddCommand( '', "", c );
 
 	Description.AddOption( CLNARG_NO_SHORT, "din", oDIn );
@@ -305,7 +339,9 @@ ERRBegin
 		break;
 	case cDevices:
 	case cIdentify:
-	case cRetrieve:
+	case cRetrieve_:
+	case cWrite:
+	case cRandom:
 		Parameters.Command = (command__)Analyzer.GetCommand();
 		break;
 //	case c:
@@ -412,8 +448,13 @@ ERRBegin
 	case cIdentify:
 		identity::Identify( NULL, Parameters.DIn, Parameters.DOut );
 		break;
-	case cRetrieve:
-		get::ReadSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.Output );
+	case cRetrieve_:
+		get::ReadSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.OutputFileName );
+	case cWrite:
+		set::WriteSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.SettingsFileName );
+		break;
+	case cRandom:
+		set::Randomize( NULL, Parameters.DIn, Parameters.DOut, Parameters.AddressRange, Parameters.ValueRange );
 		break;
 	default:
 		ERRc();
@@ -448,7 +489,7 @@ int main(
 {
 ERRFProlog
 ERRFBegin
-	GlobalInitization();
+	GlobalInitialization();
 
 	Main( argc, argv );
 ERRFErr

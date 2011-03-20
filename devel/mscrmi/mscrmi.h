@@ -309,7 +309,7 @@ namespace mscrmi {
 
 
 
-	class parameter_definition_
+	class parameter_
 	: public _parameter_core_
 	{
 	public:
@@ -318,7 +318,7 @@ namespace mscrmi {
 		{
 			row__ GroupRow;	// Position du groupe de paramètres (paramètre de taille nulle) auquel il appartient.
 		} &S_;
-		parameter_definition_( s &S )
+		parameter_( s &S )
 		: S_( S ),
 		  _parameter_core_( S )
 		{}
@@ -335,10 +335,10 @@ namespace mscrmi {
 		{
 			_parameter_core_::plug( MM );
 		}
-		parameter_definition_ &operator =( const parameter_definition_ &PD )
+		parameter_ &operator =( const parameter_ &P )
 		{
-			_parameter_core_::operator =( PD );
-			S_.GroupRow = PD.S_.GroupRow;
+			_parameter_core_::operator =( P );
+			S_.GroupRow = P.S_.GroupRow;
 
 			return *this;
 		}
@@ -368,13 +368,13 @@ namespace mscrmi {
 		E_RODISCLOSE_( row__, GroupRow )
 	};
 
-	E_AUTO( parameter_definition )
+	E_AUTO( parameter )
 
-	typedef lstctn::E_LXMCONTAINERt_( parameter_definition_, row__ ) parameter_definitions_;
-	E_AUTO( parameter_definitions );
+	typedef lstctn::E_LXMCONTAINERt_( parameter_, row__ ) parameters_;
+	E_AUTO( parameters );
 
 	void Print(
-		const parameter_definitions_ &Definitions,
+		const parameters_ &Parameters,
 		xml::writer_ &Writer );
 
 	typedef bso::char__ device_family__[4];
@@ -392,20 +392,20 @@ namespace mscrmi {
 			model_id__ ModelID;
 			bso::ubyte__ ModelIDLength;
 			str::string_::s ModelLabel;
-			parameter_definitions_::s Definitions;
+			parameters_::s Parameters;
 			device_family__ DeviceFamily;
 		} &S_;
 		str::string_ ModelLabel;
-		parameter_definitions_ Definitions;
+		parameters_ Parameters;
 		midi_implementation_( s &S )
 		: S_( S ),
 		  ModelLabel( S.ModelLabel ),
-		  Definitions( S.Definitions )
+		  Parameters( S.Parameters )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			ModelLabel.reset( P );
-			Definitions.reset( P );
+			Parameters.reset( P );
 
 			memcpy( S_.DeviceFamily, MSCRMI_UNDEFINED_DEVICE_FAMILY, sizeof( S_.DeviceFamily ) );
 			S_.ModelIDLength = 0;
@@ -413,12 +413,12 @@ namespace mscrmi {
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			ModelLabel.plug( MM );
-			Definitions.plug( MM );
+			Parameters.plug( MM );
 		}
 		midi_implementation_ &operator=( const midi_implementation_ &MI )
 		{
 			ModelLabel = MI.ModelLabel;
-			Definitions = MI.Definitions;
+			Parameters = MI.Parameters;
 
 			memcpy( S_.DeviceFamily, MI.S_.DeviceFamily, sizeof( S_.DeviceFamily ) );
 
@@ -430,7 +430,7 @@ namespace mscrmi {
 		void Init( void )
 		{
 			ModelLabel.Init();
-			Definitions.Init();
+			Parameters.Init();
 
 			memcpy( S_.DeviceFamily, "void", sizeof( S_.DeviceFamily ) );
 
@@ -446,14 +446,14 @@ namespace mscrmi {
 
 	// Donnet les blocs d'adresses contigües d'une implémentation MIDI.
 	void GetBlocs(
-		const parameter_definitions_ &Definitions,
+		const parameters_ &Parameters,
 		blocs_ &Blocs );
 
 	inline void GetBlocs(
 		const midi_implementation_ &Implementation,
 		blocs_ &Blocs )
 	{
-		GetBlocs( Implementation.Definitions, Blocs );
+		GetBlocs( Implementation.Parameters, Blocs );
 	}
 
 	void ToString(
@@ -543,14 +543,14 @@ namespace mscrmi {
 		size__ Size,
 		flw::oflow__ &Flow );
 
-	class parameter_ {
+	class setting_ {
 	public:
 		struct s {
 			row__ Row;
 			data_::s Data;
 		} &S_;
 		data_ Data;
-		parameter_( s &S )
+		setting_( s &S )
 		: S_( S ),
 		Data( S.Data )
 		{}
@@ -567,10 +567,10 @@ namespace mscrmi {
 		{
 			Data.plug( MM );
 		}
-		parameter_ &operator =( const parameter_ &P )
+		setting_ &operator =( const setting_ &S )
 		{
-			S_.Row = P.S_.Row;
-			Data = P.Data;
+			S_.Row = S.S_.Row;
+			Data = S.Data;
 
 			return *this;
 		}
@@ -589,23 +589,23 @@ namespace mscrmi {
 		E_RODISCLOSE_( row__, Row )
 	};
 
-	E_AUTO( parameter );
+	E_AUTO( setting );
 
-	typedef ctn::E_XMCONTAINER_( parameter_ ) parameters_;
-	E_AUTO( parameters );
+	typedef ctn::E_XMCONTAINER_( setting_ ) settings_;
+	E_AUTO( settings );
 
 	void Fill(
 		const adata_set_ &DataSet,
 		const midi_implementation_ &Implementation,
-		parameters_ &Parameters );
+		settings_ &Settings );
 
 	void Print(
+		const settings_ &Settings,
 		const parameters_ &Parameters,
-		const parameter_definitions_ &Definitions,
 		xml::writer_ &Writer );
 
 	inline void Print(
-		const parameters_ &Parameters,
+		const settings_ &Settings,
 		const midi_implementation_ &Implementation,
 		xml::writer_ &Writer )
 	{
@@ -615,7 +615,7 @@ namespace mscrmi {
 		Writer.PutAttribute( "TimeStamp", tol::DateAndTime( Buffer ) );
 		Writer.PutAttribute( "ModelLabel", Implementation.ModelLabel );
 
-		Print( Parameters, Implementation.Definitions, Writer );
+		Print( Settings, Implementation.Parameters, Writer );
 
 		Writer.PopTag();
 	}

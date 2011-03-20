@@ -136,43 +136,43 @@ static inline xaddress__ Sum_(
 }
 
 void mscrmi::GetBlocs(
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	blocs_ &Blocs )
 {
 	bloc__ Bloc;
-	row__ Row = Definitions.First();
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	row__ Row = Parameters.First();
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 
-	Definition.Init( Definitions );
+	Parameter.Init( Parameters );
 
 	if ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Definition( Row ).Size() == 0 ) )
-			Row = Definitions.Next( Row );
+		while ( ( Row != NONE ) && ( Parameter( Row ).Size() == 0 ) )
+			Row = Parameters.Next( Row );
 
 		if ( Row != NONE ) {
-			Bloc.Address = Definition( Row ).Address();
-			Bloc.Size = Definition( Row ).Size();
+			Bloc.Address = Parameter( Row ).Address();
+			Bloc.Size = Parameter( Row ).Size();
 
-			Row = Definitions.Next( Row );
+			Row = Parameters.Next( Row );
 		}
 	}
 
 
 	while ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Definition( Row ).Size() == 0 ) )
-			Row = Definitions.Next( Row );
+		while ( ( Row != NONE ) && ( Parameter( Row ).Size() == 0 ) )
+			Row = Parameters.Next( Row );
 
 		if ( Row != NONE ) {
-			if ( Sum_( Bloc.Address, Bloc.Size ) == Definition( Row ).Address() )
-				Bloc.Size += Definition( Row ).Size();
+			if ( Sum_( Bloc.Address, Bloc.Size ) == Parameter( Row ).Address() )
+				Bloc.Size += Parameter( Row ).Size();
 			else {
 				Blocs.Append( Bloc );
-				Bloc.Address = Definition( Row ).Address();
-				Bloc.Size = Definition( Row ).Size();
+				Bloc.Address = Parameter( Row ).Address();
+				Bloc.Size = Parameter( Row ).Size();
 			}
 		}
 
-		Row = Definitions.Next( Row );
+		Row = Parameters.Next( Row );
 	}
 
 	Blocs.Append( Bloc );
@@ -181,23 +181,23 @@ void mscrmi::GetBlocs(
 
 static void PrintPath_(
 	row__ Row,
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	txf::text_oflow__ &Flow )
 {
 ERRProlog
 	str::string Path;
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 ERRBegin
-	Definition.Init( Definitions );
+	Parameter.Init( Parameters );
 	Path.Init();
 
-	Row = Definition( Row ).GroupRow();
+	Row = Parameter( Row ).GroupRow();
 
 	while ( Row != NONE ) {
 		Path.Insert( '/', 0 );
-		Path.Insert( Definition( Row ).Label, 0 );
+		Path.Insert( Parameter( Row ).Label, 0 );
 
-		Row = Definition( Row ).GroupRow();
+		Row = Parameter( Row ).GroupRow();
 	}
 
 	Flow << Path;
@@ -208,21 +208,21 @@ ERREpilog
 }
 
 static inline void Print_(
-	const parameter_definition_ &Definition,
+	const parameter_ &Parameter,
 	xml::writer_ &Writer )
 {
 	char Address[] = "12345678";
 
-	Writer.PutAttribute( "Label", Definition.Label );
+	Writer.PutAttribute( "Label", Parameter.Label );
 
-	sprintf( Address, "%08lX", Definition.Address() );
+	sprintf( Address, "%08lX", Parameter.Address() );
 	Writer.PutAttribute( "Address", Address );
 /*
-	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition.S_.Address ) ), Definition.Offset() );
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter.S_.Address ) ), Parameter.Offset() );
 	Writer.PutAttribute( "Offset", Address );
 
-	if ( Definition.Size() != 0 )
-		Writer.PutAttribute( "Size", bso::Convert( Definition.Size(), Buffer ) );
+	if ( Parameter.Size() != 0 )
+		Writer.PutAttribute( "Size", bso::Convert( Parameter.Size(), Buffer ) );
 */
 }
 
@@ -230,41 +230,40 @@ typedef stk::E_BSTACK_( row__ ) srows_;
 E_AUTO( srows );
 
 void mscrmi::Print(
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	xml::writer_ &Writer )
 {
 ERRProlog
 	srows Rows;
 	row__ Row = NONE;
 	row__ ParentRow = NONE;
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
-	Definition.Init( Definitions );
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 ERRBegin
-	Definition.Init( Definitions );
-	Row = Definitions.First();
+	Parameter.Init( Parameters );
+	Row = Parameters.First();
 
 	Rows.Init();
 
 	while ( Row != NONE ) {
 
-		while ( Definition( Row ).GroupRow() != ParentRow ) {
+		while ( Parameter( Row ).GroupRow() != ParentRow ) {
 			Writer.PopTag();
 			ParentRow = Rows.Pop();
 		}
 
-		if ( Definition( Row ).Size() == 0 ) {
+		if ( Parameter( Row ).Size() == 0 ) {
 			Rows.Push( ParentRow );
 			ParentRow = Row;
 			Writer.PushTag( "Parameters" );
 		} else
 			Writer.PushTag( "Parameter" );
 
-		Print_( Definition( Row ), Writer );
+		Print_( Parameter( Row ), Writer );
 
-		if ( Definition( Row ).Size() != 0 )
+		if ( Parameter( Row ).Size() != 0 )
 			Writer.PopTag();
 
-		Row = Definitions.Next( Row );
+		Row = Parameters.Next( Row );
 	}
 
 	while ( Rows.Amount() != 0 ) {
@@ -696,7 +695,7 @@ class implementation_callback__
 : public callback__
 {
 private:
-	parameter_definitions_ *_Definitions;
+	parameters_ *_Parameters;
 	row__ _GroupRow;
 protected:
 	virtual parse_status__ Handle(
@@ -705,16 +704,16 @@ protected:
 	{
 		parse_status__ Status = ps_Undefined;
 	ERRProlog
-		parameter_definition Definition;
+		parameter Parameter;
 		row__ GroupRow = NONE;
 	ERRBegin
 		if ( Core.Address() == MSCRMI_UNDEFINED_ADDRESS ) {
-			_GroupRow = _Definitions->Get( _GroupRow ).GroupRow();
-			_Definitions->Flush();
+			_GroupRow = _Parameters->Get( _GroupRow ).GroupRow();
+			_Parameters->Flush();
 		} else {
-			Definition.Init( Core, _GroupRow );
+			Parameter.Init( Core, _GroupRow );
 
-			GroupRow = _Definitions->Add( Definition );
+			GroupRow = _Parameters->Add( Parameter );
 
 			if ( Core.Size() == 0 )
 				_GroupRow = GroupRow;
@@ -730,7 +729,7 @@ protected:
 public:
 	void reset( bso::bool__ = true )
 	{
-		_Definitions = NULL;
+		_Parameters = NULL;
 		_GroupRow = NONE;
 	}
 	implementation_callback__( void )
@@ -741,9 +740,9 @@ public:
 	{
 		reset();
 	}
-	void Init( parameter_definitions_ &Definitions )
+	void Init( parameters_ &Parameters )
 	{
-		_Definitions = &Definitions;
+		_Parameters = &Parameters;
 		_GroupRow = NONE;
 	}
 };
@@ -756,7 +755,7 @@ parse_status__ mscrmi::Parse(
 ERRProlog
 	implementation_callback__ Callback;
 ERRBegin
-	Callback.Init( Implementation.Definitions );
+	Callback.Init( Implementation.Parameters );
 
 	switch ( Parser.Parse( xml::tfStartTag ) ) {
 	case xml::tStartTag:
@@ -823,7 +822,7 @@ ERRBegin
 		case xml::tStartTag:
 			if ( Parser.TagName() == "MIDIImplementation" ) {
 				Implementation.Init();
-				Callback.Init( Implementation.Definitions );
+				Callback.Init( Implementation.Parameters );
 
 				if ( ( Status = ParseImplementationSpecifications_( Parser, Implementation ) ) != psOK )
 					ERRReturn;
@@ -901,19 +900,19 @@ class settings_callback___
 private:
 	adata_set_ *_DataSet;
 	adata _Data;
-	const parameter_definitions_ *_Definitions;
+	const parameters_ *_Parameters;
 	row__ _Row;
 	row__ _Search( address__ Address ) const
 	{
-		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
-		row__ Row = ( _Row == NONE ? _Definitions->First() : _Row );
+		ctn::E_CMITEMt( parameter_, row__ ) Parameter;
+		row__ Row = ( _Row == NONE ? _Parameters->First() : _Row );
 
-		Definition.Init( *_Definitions );
+		Parameter.Init( *_Parameters );
 
 		while ( ( Row != NONE ) &&
-			    ( ( Definition( Row ).Address() < Address )
-				   || ( ( Definition( Row ).Size() ) == 0 ) ) )
-			Row = _Definitions->Next( Row );
+			    ( ( Parameter( Row ).Address() < Address )
+				   || ( ( Parameter( Row ).Size() ) == 0 ) ) )
+			Row = _Parameters->Next( Row );
 
 		return Row;
 	}
@@ -971,9 +970,9 @@ protected:
 		parse_status__ Status = ps_Undefined;
 	ERRProlog
 		data RawData;
-		ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+		ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	ERRBegin
-		Definition.Init( *_Definitions );
+		Parameter.Init( *_Parameters );
 
 		if ( Core.Size() != 0 ) {
 
@@ -989,7 +988,7 @@ protected:
 
 			RawData.Init();
 
-			_Convert( Value, Definition( _Row ).Size(), RawData );
+			_Convert( Value, Parameter( _Row ).Size(), RawData );
 
 			if ( _Data.Address() == MSCRMI_UNDEFINED_ADDRESS )
 				_Data.Init( RawData, Core.Address() );
@@ -1022,7 +1021,7 @@ public:
 
 		_Data.reset( P );
 		_DataSet = NULL;
-		_Definitions = NULL;
+		_Parameters = NULL;
 		_Row = NONE;
 
 	}
@@ -1036,12 +1035,12 @@ public:
 	}
 	void Init(
 		adata_set_ &DataSet,
-		const parameter_definitions_ &Definitions )
+		const parameters_ &Parameters )
 	{
 		reset();
 
 		_DataSet = &DataSet;
-		_Definitions = &Definitions;
+		_Parameters = &Parameters;
 	}
 };
 
@@ -1055,7 +1054,7 @@ parse_status__ mscrmi::Parse(
 ERRProlog
 	settings_callback___ Callback;
 ERRBegin
-	Callback.Init( DataSet, Implementation.Definitions );
+	Callback.Init( DataSet, Implementation.Parameters );
 
 	switch ( Parser.Parse( xml::tfStartTag ) ) {
 	case xml::tStartTag:
@@ -1127,7 +1126,7 @@ void mscrmi::Print(
 	Convert_( Implementation.S_.DeviceFamily, sizeof( Implementation.S_.DeviceFamily ), Buffer );
 	Writer.PutAttribute( "DeviceFamily", Buffer );
 
-	Print( Implementation.Definitions, Writer );
+	Print( Implementation.Parameters, Writer );
 
 	Writer.PopTag();
 }
@@ -1326,39 +1325,39 @@ ERREpilog
 
 static void Fill_(
 	const adata_ &Data,
-	const parameter_definitions_ &Definitions,
-	row__ &DefinitionRow,
-	parameters_ &Parameters )
+	const parameters_ &Parameters,
+	row__ &ParameterRow,
+	settings_ &Settings )
 {
 ERRProlog
-	parameter Parameter;
+	setting Setting;
 	epeios::row__ DataRow = NONE;
 	address__ Address = NONE;
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	size__ Size;
 ERRBegin
 	Address = Data.Address();
 	DataRow = Data.First();
-	Definition.Init( Definitions );
+	Parameter.Init( Parameters );
 
 	while ( DataRow != NONE ) {
-		while ( ( DefinitionRow != NONE ) &&
-			    ( ( Definition( DefinitionRow ).Address() < Address )
-				   || ( ( Size = Definition( DefinitionRow ).Size() ) == 0 ) ) )
-			DefinitionRow = Definitions.Next( DefinitionRow );
+		while ( ( ParameterRow != NONE ) &&
+			    ( ( Parameter( ParameterRow ).Address() < Address )
+				   || ( ( Size = Parameter( ParameterRow ).Size() ) == 0 ) ) )
+			ParameterRow = Parameters.Next( ParameterRow );
 
-		if ( ( DefinitionRow == NONE ) || ( Definition( DefinitionRow ).Address() > Address ) )
+		if ( ( ParameterRow == NONE ) || ( Parameter( ParameterRow ).Address() > Address ) )
 			ERRu();
 
 		if ( !Data.Exists( Data.Next( DataRow, Size - 1 ) ) )
 			ERRu();
 
-		Parameter.Init( DefinitionRow );
+		Setting.Init( ParameterRow );
 
-		Parameter.Data.Allocate( Size );
-		Parameter.Data.Store( Data, Size, 0, DataRow );
+		Setting.Data.Allocate( Size );
+		Setting.Data.Store( Data, Size, 0, DataRow );
 
-		Parameters.Append( Parameter );
+		Settings.Append( Setting );
 
 		Address = Sum_( Address, Size );
 
@@ -1387,22 +1386,22 @@ static bso::ulong__ Convert_( const str::string_ &Value )
 }
 
 static inline void Print_(
-	const parameter_ &Parameter,
-	const parameter_definitions_ &Definitions,
+	const setting_ &Setting,
+	const parameters_ &Parameters,
 	xml::writer_ &Writer )
 {
 	char Address[] = "12345678";
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	bso::integer_buffer__ Buffer;
 
-	Definition.Init( Definitions );
+	Parameter.Init( Parameters );
 
-	Writer.PutAttribute( "Label", Definition( Parameter.Row() ).Label );
+	Writer.PutAttribute( "Label", Parameter( Setting.Row() ).Label );
 
-	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Definition( Parameter.Row() ).S_.Address ) ), Definition( Parameter.Row() ).Offset() );
+	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter( Setting.Row() ).S_.Address ) ), Parameter( Setting.Row() ).Offset() );
 	Writer.PutAttribute( "Address", Address );
 
-	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Parameter.Data ) ), Buffer ) );
+	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Setting.Data ) ), Buffer ) );
 }
 
 typedef bch::E_BUNCH_( row__ ) rows_;
@@ -1410,19 +1409,19 @@ E_AUTO( rows );
 
 static void BuildPath_(
 	row__ Row,
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	rows_ &Rows )
 {
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 
-	Definition.Init( Definitions );
+	Parameter.Init( Parameters );
 
 	if ( Row != NONE )
-		Row = Definition( Row ).GroupRow();
+		Row = Parameter( Row ).GroupRow();
 
 	while ( Row != NONE ) {
 		Rows.Insert( Row, 0 );
-		Row = Definition( Row ).GroupRow();
+		Row = Parameter( Row ).GroupRow();
 	}
 }
 
@@ -1464,17 +1463,17 @@ static void Pop_(
 static void Push_(
 	const rows_ &Rows,
 	epeios::row__ Row,
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	xml::writer_ &Writer )
 {
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
-	Definition.Init( Definitions );
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
+	Parameter.Init( Parameters );
 
 	Row = ( Row == NONE ? Rows.First() : Rows.Next( Row ) );
 
 	while ( Row != NONE ) {
 		Writer.PushTag( "Parameters" );
-		Print_( Definition( Rows( Row ) ), Writer );
+		Print_( Parameter( Rows( Row ) ), Writer );
 
 		Row = Rows.Next( Row );
 	}
@@ -1483,7 +1482,7 @@ static void Push_(
 static void PrintTags_(
 	row__ Current,
 	row__ Previous,
-	const parameter_definitions_ &Definitions,
+	const parameters_ &Parameters,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -1491,55 +1490,55 @@ ERRProlog
 	epeios::row__ Row = NONE;
 ERRBegin
 	CurrentRows.Init();
-	BuildPath_( Current, Definitions, CurrentRows );
+	BuildPath_( Current, Parameters, CurrentRows );
 
 	PreviousRows.Init();
-	BuildPath_( Previous, Definitions, PreviousRows );
+	BuildPath_( Previous, Parameters, PreviousRows );
 
 	Row = SearchLastCommon_( CurrentRows, PreviousRows );
 
 	Pop_( PreviousRows, Row, Writer );
 
-	Push_( CurrentRows, Row, Definitions, Writer );
+	Push_( CurrentRows, Row, Parameters, Writer );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 void mscrmi::Print(
+	const settings_ &Settings,
 	const parameters_ &Parameters,
-	const parameter_definitions_ &Definitions,
 	xml::writer_ &Writer )
 {
 ERRProlog
 	rows Rows;
-	row__ DefinitionRow = NONE;
+	row__ ParameterRow = NONE;
 	epeios::row__ Row = NONE;
 	row__ PreviousRow = NONE;
-	ctn::E_CMITEM( parameter_ ) Parameter;
-	ctn::E_CMITEMt( parameter_definition_, row__ ) Definition;
-	Definition.Init( Definitions );
-ERRBegin
+	ctn::E_CMITEM( setting_ ) Setting;
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	Parameter.Init( Parameters );
-	Definition.Init( Definitions );
-	Row = Parameters.First();
+ERRBegin
+	Setting.Init( Settings );
+	Parameter.Init( Parameters );
+	Row = Settings.First();
 
 	Rows.Init();
 
 	while ( Row != NONE ) {
 
-		PrintTags_( Parameter( Row ).Row(), PreviousRow, Definitions, Writer );
+		PrintTags_( Setting( Row ).Row(), PreviousRow, Parameters, Writer );
 
 		Writer.PushTag( "Parameter" );
-		Print_( Parameter( Row ), Definitions, Writer );
+		Print_( Setting( Row ), Parameters, Writer );
 		Writer.PopTag();
 
-		PreviousRow = Parameter( Row ).Row();
+		PreviousRow = Setting( Row ).Row();
 
-		Row = Parameters.Next( Row );
+		Row = Settings.Next( Row );
 	}
 
-	PrintTags_( NONE, PreviousRow, Definitions, Writer );
+	PrintTags_( NONE, PreviousRow, Parameters, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -1548,17 +1547,17 @@ ERREpilog
 
 static void Fill_(
 	const adata_set_ &DataSet,
-	const parameter_definitions_ &Definitions,
-	parameters_ &Parameters )
+	const parameters_ &Parameters,
+	settings_ &Settings )
 {
 	epeios::row__ DataSetRow = DataSet.First();
-	row__ DefinitionRow = Definitions.First();
+	row__ ParameterRow = Parameters.First();
 	ctn::E_CMITEM( adata_ ) Data;
 
 	Data.Init( DataSet );
 
 	while ( DataSetRow != NONE ) {
-		Fill_( Data( DataSetRow ), Definitions, DefinitionRow, Parameters );
+		Fill_( Data( DataSetRow ), Parameters, ParameterRow, Settings );
 
 		DataSetRow = DataSet.Next( DataSetRow );
 	}
@@ -1568,9 +1567,9 @@ static void Fill_(
 void mscrmi::Fill(
 	const adata_set_ &DataSet,
 	const midi_implementation_ &Implementation,
-	parameters_ &Parameters )
+	settings_ &Settings )
 {
-	Fill_( DataSet, Implementation.Definitions, Parameters );
+	Fill_( DataSet, Implementation.Parameters, Settings );
 }
 
 inline transmission_status__ SendIdentityRequest_(

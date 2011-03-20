@@ -1,5 +1,11 @@
 $Id$
 
+19/03/2011 :
+	- LCL :
+		- Ajout suffixe par défaut.
+	- MSCRMI :
+		- Renommages.
+
 18/03/2011 :
 	- XML :
 		- Généralisation encodage.

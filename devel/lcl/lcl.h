@@ -67,6 +67,8 @@ extern class ttr_tutor &LCLTutor;
 #define LCL_TAG_MARKER_C	'%'
 #define LCL_TAG_MARKER_S	"%"
 
+#	define LCL_DEFAULT_FILENAME_SUFFIX	".xlcl"
+
 // Facilite la gestion des messages.
 #define LCL_CASE( label, prefix )\
 	case prefix##label:\
