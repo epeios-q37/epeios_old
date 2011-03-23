@@ -719,7 +719,7 @@ namespace flw {
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 		{
-			ioflow__::Init( Functions, ReadAmountMax, _OCache, sizeof( _OutputCache ), WriteAmountMax );
+			ioflow__::Init( Functions, ReadAmountMax, _OutputCache, sizeof( _OutputCache ), WriteAmountMax );
 		}
 		void Init(
 			fwf::ioflow_functions_base___ &Functions,

@@ -92,6 +92,14 @@ namespace mscrmi {
 	typedef bso::ushort__ size__;
 	#define MSCRMI_SIZE_MAX	BSO_USHORT_MAX
 
+	address__ Sum(
+		address__ Address,
+		size__ Size );
+
+	bso::bool__ Append(
+		bso::ulong__ Value,
+		size__ Size,
+		data_ &Data );
 
 	struct bloc__ {
 		address__ Address;
@@ -372,6 +380,11 @@ namespace mscrmi {
 
 	typedef lstctn::E_LXMCONTAINERt_( parameter_, row__ ) parameters_;
 	E_AUTO( parameters );
+
+	row__ Search(
+		address__ Address,
+		row__ Current,	// Si == 'NONE', on part du premier élément de 'Parameters'.
+		const parameters_ &Parameters );
 
 	void Print(
 		const parameters_ &Parameters,

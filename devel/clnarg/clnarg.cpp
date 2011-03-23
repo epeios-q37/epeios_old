@@ -59,17 +59,26 @@ public:
 
 using namespace clnarg;
 
+#define TRANSLATION_PREFIX	"CLNARG_"
+
 #define CASE( label )	LCL_CASE( label, m )
 
 const char *clnarg::Label( message__ Message )
 {
 	switch ( Message ) {
 		CASE( TryHelpCommand )
-		CASE( MissingCommand )
-		CASE( UnknownOption )
-		CASE( MissingOptionArgument )
-		CASE( UnexpectedOption )
-		CASE( WrongNumberOfArguments )
+		CASE( OptionWording )
+		CASE( OptionsWording )
+		CASE( ArgumentWording )
+		CASE( ArgumentsWording )
+		CASE( VersionCommandDescription )
+		CASE( LicenseCommandDescription )
+		CASE( HelpCommandDescription )
+		CASE( MissingCommandError )
+		CASE( UnknownOptionError )
+		CASE( MissingOptionArgumentError )
+		CASE( UnexpectedOptionError )
+		CASE( WrongNumberOfArgumentsError )
 	default:
 		ERRu();
 		break;
@@ -93,18 +102,25 @@ ERRProlog
 ERRBegin
 	Intermediate.Init();
 
-	Locale.GetTranslation( Label( Message ), Language, "CLNARG_", Intermediate );
+	Locale.GetTranslation( Label( Message ), Language, TRANSLATION_PREFIX, Intermediate );
 
 	va_start( Args, Translation );
 
 	switch ( Message ) {
 	case mTryHelpCommand:
-	case mWrongNumberOfArguments:
-	case mMissingCommand:
+	case mOptionWording:
+	case mOptionsWording:
+	case mArgumentWording:
+	case mArgumentsWording:
+	case mVersionCommandDescription:
+	case mLicenseCommandDescription:
+	case mHelpCommandDescription:
+	case mWrongNumberOfArgumentsError:
+	case mMissingCommandError:
 		break;
-	case mUnknownOption:
-	case mMissingOptionArgument:
-	case mUnexpectedOption:
+	case mUnknownOptionError:
+	case mMissingOptionArgumentError:
+	case mUnexpectedOptionError:
 		TagValue.Init();
 		TagValue.Append( va_arg( Args, const char *) );
 
@@ -145,14 +161,14 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportMissingCommand( const lcl::locale_rack___ &Rack )
+void clnarg::ReportMissingCommandError( const lcl::locale_rack___ &Rack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetMissingCommandTranslation( Rack.Language(), Rack.Locale(),Message );
+	GetMissingCommandErrorTranslation( Rack.Language(), Rack.Locale(),Message );
 
 	Report( Message, Rack );
 ERRErr
@@ -177,7 +193,7 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportUnknownOption(
+void clnarg::ReportUnknownOptionError(
 	const char *Option,
 	const lcl::locale_rack___ &Rack )
 {
@@ -186,7 +202,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	GetUnknownOptionTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetUnknownOptionErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
 
 	Report( Message, Rack );
 ERRErr
@@ -194,7 +210,7 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportMissingOptionArgument(
+void clnarg::ReportMissingOptionArgumentError(
 	const char *Option,
 	const lcl::locale_rack___ &Rack )
 {
@@ -203,7 +219,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	GetMissingOptionArgumentTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetMissingOptionArgumentErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
 
 	Report( Message, Rack );
 ERRErr
@@ -212,7 +228,7 @@ ERREpilog
 }
 
 
-void clnarg::ReportUnexpectedOption(
+void clnarg::ReportUnexpectedOptionError(
 	const char *Option,
 	const lcl::locale_rack___ &Rack )
 {
@@ -221,7 +237,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	GetUnexpectedOptionTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetUnexpectedOptionErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
 
 	Report( Message, Rack );
 ERRErr
@@ -230,14 +246,14 @@ ERREpilog
 }
 
 
-void clnarg::ReportWrongNumberOfArguments( const lcl::locale_rack___ &Rack )
+void clnarg::ReportWrongNumberOfArgumentsError( const lcl::locale_rack___ &Rack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetWrongNumberOfArgumentsTranslation( Rack.Language(), Rack.Locale(),Message );
+	GetWrongNumberOfArgumentsErrorTranslation( Rack.Language(), Rack.Locale(),Message );
 
 	Report( Message, Rack );
 ERRErr
@@ -547,36 +563,37 @@ void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 static const char *GetLabel_(
 	const item__ &Item,
 	int Id,
-	const char *Separator )
+	const char *Separator,
+	buffer__ &Buffer )
 {
-	static char Label[50];
-	
+
 	if ( Item.Short != CLNARG_NO_SHORT ) {
-		Label[0] = '-';
-		Label[1] = Item.Short;
-		Label[2] = 0;
+		Buffer[0] = '-';
+		Buffer[1] = Item.Short;
+		Buffer[2] = 0;
 	} else
-		Label[0] = 0;
+		Buffer[0] = 0;
 		
 	if ( Item.Long != NULL ) {
-		if ( Label[0] != 0 )
-			strcat( Label, Separator );
+		if ( Buffer[0] != 0 )
+			strcat( Buffer, Separator );
 		
-		strcat( Label, "--" );
+		strcat( Buffer, "--" );
 		
-		if (  strlen( Label ) + strlen( Item.Long ) >= sizeof( Label ) )
+		if (  strlen( Buffer ) + strlen( Item.Long ) > sizeof( Buffer ) )
 			ERRl();
 		
-		strcat( Label, Item.Long );
+		strcat( Buffer, Item.Long );
 	}
 	
-	return Label;
+	return Buffer;
 }	
 		
 static const char *GetLabel_(
 	const bch::E_BUNCH_( item__ ) &Items,
 	int Id,
-	const char *Separator )
+	const char *Separator,
+	buffer__ &Buffer )
 {
 	epeios::row__ P = Items.First();
 	
@@ -586,19 +603,23 @@ static const char *GetLabel_(
 	if ( P == NONE )
 		ERRu();
 		
-	return  GetLabel_( Items( P ), Id, Separator );
+	return  GetLabel_( Items( P ), Id, Separator, Buffer );
 }
 	
 const char *description_::GetCommandLabels(
 	int Id,
+	buffer__ &Buffer,
 	const char *Separator ) const
 {
-	return GetLabel_( Commands, Id, Separator );
+	return GetLabel_( Commands, Id, Separator, Buffer );
 }
 	
-const char *description_::GetOptionLabels( int Id ) const
+const char *description_::GetOptionLabels(
+	int Id,
+	buffer__ &Buffer,
+	const char *Separator ) const
 {
-	return GetLabel_( Options, Id, CLNARG_GENERAL_SEPARATOR );
+	return GetLabel_( Options, Id, Separator, Buffer );
 }
 
 static void HandleView_(
@@ -626,12 +647,14 @@ void clnarg::PrintCommandUsage(
 	txf::text_oflow__ &Flow,
 	bso::bool__ Default )
 {
+	buffer__ Buffer;
+
 	Flow << txf::pad;
 		
 	if ( Default )
 		Flow << "<none>, ";
 			
-	Flow << Description.GetCommandLabels( CommandId, CLNARG_DETAIL_SEPARATOR ) << ':';
+	Flow << Description.GetCommandLabels( CommandId, Buffer, CLNARG_DETAIL_SEPARATOR ) << ':';
 	
 	HandleView_( View, Flow );
 		
@@ -646,9 +669,11 @@ void clnarg::PrintOptionUsage(
 	clnarg::view View,
 	txf::text_oflow__ &Flow )
 {
+	buffer__ Buffer;
+
 	Flow << txf::pad;
 		
-	Flow << Description.GetOptionLabels( OptionId );
+	Flow << Description.GetOptionLabels( OptionId, Buffer );
 	
 	if ( ( Parameter != NULL )
 		 && ( Parameter[0] != 0 ) ) 

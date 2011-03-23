@@ -167,7 +167,7 @@ ERRBegin
 
 	Translation.Append( " : " );
 
-	if ( Status < xml::s_amount )
+	if ( Status < (xpp::status__)xml::s_amount )
 		xml::GetTranslation( (xml::status__)Status, Language, Locale, Coord, Translation );
 	else
 		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Translation );

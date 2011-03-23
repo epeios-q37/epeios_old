@@ -71,11 +71,14 @@ void mscrmi::Print(
 	char Buffer[]= "12345678";
 	epeios::row__ Row = Data.First();
 
-	sprintf( Buffer, "%08lX", Data.Address() );
+	if ( sprintf( Buffer, "%08lX", Data.Address() ) < 0 )
+		ERRs();
+
 	Flow << Buffer << " : ";
 
 	while ( Row != NONE ) {
-		sprintf( Buffer, "%02lX", (bso::ulong__)Data( Row ) );
+		if ( sprintf( Buffer, "%02lX", (bso::ulong__)Data( Row ) ) < 0 )
+			ERRs();
 
 		Flow << Buffer << txf::pad;
 
@@ -115,24 +118,21 @@ static inline bso::ulong__ Decode_( bso::ulong__ Value )
 	return ( Value & 0x7f ) + ( ( Value & 0x7f00 ) >> 1 ) + ( ( Value & 0x7f0000 ) >> 2 ) + ( ( Value & 0x7f000000 ) >> 3 );
 }
 
+address__ mscrmi::Sum(
+	address__ Address,
+	size__ Size )
+{
+	if ( ( Address & 0x80808080 ) != 0 )
+		ERRu();
+
+	return Encode_( Address = Decode_( Address ) + Size );
+}
+
 static inline xaddress__ Sum_(
 	xaddress__ Address,
 	size__ Size )
 {
-	bso::ubyte__ StencilSize = mscrmi::_StencilSize( Address );
-
-	Address = mscrmi::_Address( Address );
-
-	if ( ( Address & 0x80808080 ) != 0 )
-		ERRc();
-
-	Address = Decode_( Address ) + Size;
-
-	Address = Encode_( Address );
-
-	Address = mscrmi::_SetStencilSize( Address, StencilSize );
-
-	return Address;
+	return mscrmi::_SetStencilSize( Sum( mscrmi::_Address( Address ), Size ), mscrmi::_StencilSize( Address ) );
 }
 
 void mscrmi::GetBlocs(
@@ -215,7 +215,9 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Parameter.Label );
 
-	sprintf( Address, "%08lX", Parameter.Address() );
+	if ( sprintf( Address, "%08lX", Parameter.Address() ) < 0 )
+		ERRs();
+
 	Writer.PutAttribute( "Address", Address );
 /*
 	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter.S_.Address ) ), Parameter.Offset() );
@@ -225,6 +227,31 @@ static inline void Print_(
 		Writer.PutAttribute( "Size", bso::Convert( Parameter.Size(), Buffer ) );
 */
 }
+
+row__ mscrmi::Search(
+	address__ Address,
+	row__ Current,
+	const parameters_ &Parameters )
+{
+	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
+	row__ &Row = Current;
+	
+	if ( Row == NONE )
+		Row = Parameters.First();
+
+	Parameter.Init( Parameters );
+
+	while ( ( Row != NONE ) &&
+			( ( Parameter( Row ).Address() < Address )
+				|| ( ( Parameter( Row ).Size() ) == 0 ) ) )
+		Row = Parameters.Next( Row );
+
+	if ( ( Row != NONE ) && ( Parameter( Row ).Address() > Address ) )
+		Row = NONE;
+
+	return Row;
+}
+
 
 typedef stk::E_BSTACK_( row__ ) srows_;
 E_AUTO( srows );
@@ -894,6 +921,40 @@ ERREpilog
 	return Status;
 }
 
+bso::bool__ mscrmi::Append(
+	bso::ulong__ Value,
+	size__ Size,
+	data_ &Data )
+{
+	Value = Encode_( Value );
+
+	if ( Size > 4 )
+		ERRu();
+
+	if ( ( Value & ~( ~0UL >> ( Size << 3 ) ) ) != 0 )
+		return false;	// 'Value' trop grand par rapport au 'Size' donné.
+
+	switch ( Size ) {
+	case 0:
+		ERRc();
+		break;
+	case 4:
+		Data.Append( Value >> 24 );
+	case 3:
+		Data.Append( ( Value >> 16 ) & 0xff );
+	case 2:
+		Data.Append( ( Value >> 8 ) & 0xff );
+	case 1:
+		Data.Append( Value & 0xff );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return true;
+}
+
 class settings_callback___
 : public callback__
 {
@@ -904,6 +965,7 @@ private:
 	row__ _Row;
 	row__ _Search( address__ Address ) const
 	{
+#if 0
 		ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 		row__ Row = ( _Row == NONE ? _Parameters->First() : _Row );
 
@@ -915,6 +977,8 @@ private:
 			Row = _Parameters->Next( Row );
 
 		return Row;
+#endif
+		return Search( Address, _Row, *_Parameters );
 	}
 	parse_status__ _Convert( 
 		const str::string_ &Value,
@@ -942,23 +1006,8 @@ private:
 		if ( Error != NONE )
 			return psBadValue;
 
-		switch ( Size ) {
-		case 0:
+		if ( !Append( Long, Size, Data ) )
 			ERRc();
-			break;
-		case 4:
-			Data.Append( Long >> 24 );
-		case 3:
-			Data.Append( ( Long >> 16 ) & 0xff );
-		case 2:
-			Data.Append( ( Long >> 8 ) & 0xff );
-		case 1:
-			Data.Append( Long & 0xff );
-			break;
-		default:
-			ERRc();
-			break;
-		}
 
 		return psOK;
 	}
@@ -1092,7 +1141,8 @@ static void Convert_(
 		ERRc();
 
 	while ( SourceLength-- ) {
-		sprintf( Target, "%02X", *Source );
+		if ( sprintf( Target, "%02X", *Source ) < 0 )
+			ERRs();
 
 		Target += 2;
 		Source++;
@@ -1398,7 +1448,9 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Parameter( Setting.Row() ).Label );
 
-	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter( Setting.Row() ).S_.Address ) ), Parameter( Setting.Row() ).Offset() );
+	if ( sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter( Setting.Row() ).S_.Address ) ), Parameter( Setting.Row() ).Offset() ) < 0 )
+		ERRs();
+
 	Writer.PutAttribute( "Address", Address );
 
 	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Setting.Data ) ), Buffer ) );

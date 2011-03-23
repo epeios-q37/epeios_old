@@ -118,7 +118,7 @@ namespace dir {
 		return fnm::GetLocation( szPath, Buffer );
 #endif
 #ifdef DIR__POSIX
-		ERRL( err::lNotImplemented );
+		ERRL( lNotImplemented );
 
 		return NULL;	// Pour évitert un 'warning'.
 #endif

@@ -159,7 +159,7 @@ static inline iop::descriptor__ Open_(
 		Flags |= O_TRUNC | O_CREAT | O_WRONLY;
 		break;
 	case mAppend:
-		Flags |= _APPEND | O_WRONLY;
+		Flags |= O_APPEND | O_WRONLY;
 		break;
 	case mReadWrite:
 		Flags |= O_CREAT | O_RDWR;
@@ -445,7 +445,7 @@ ERRBegin
 
 ERRErr
 ERREnd
-	if ( Status != bsOK )
+	if ( Status != rsOK )
 		if ( ErrorHandling == err::hThrowException )
 			ERRd();
 ERREpilog

@@ -237,20 +237,21 @@ bso::bool__ mscmdd::midi_in___::Init(
 	bso::ubyte__ Amount = sizeof( _Header ) / sizeof( *_Header );
 	reset();
 
-	_Data.Access = mtx::Create( mtx::mFree );
-	_Data.Full = mtx::Create( mtx::mFree );
-	_Data.Empty = mtx::Create( mtx::mFree );
-
-	_Data.Purge = false;
-
-	_Data.Buffer = _Cache;
-
+	// '_Data' n'est pas initialisé, mais ce n'est pas grave, car ne sera ps utilisé tant qu'un 'Start' n'aura pas été lancé.
 	if ( midiInOpen( &_Handle, Device, (DWORD)MidiInProc_, (DWORD)&_Data, CALLBACK_FUNCTION ) != MMSYSERR_NOERROR ) {
 		if ( ErrHandling != err::hUserDefined )
 			ERRf();
 		else
 			return false;
 	}
+
+	_Data.Access = mtx::Create( mtx::mFree );
+	_Data.Full = mtx::Create( mtx::mFree );
+	_Data.Empty = mtx::Create( mtx::mFree );
+	_Data.Purge = false;
+	_Data.Buffer = _Cache;
+
+	// '_Data' seulement initialisé maintenant pour signaler la réussite de l'opération d'ouverture.
 
 	while( Amount-- ) {
 		_Header[Amount].lpData = _HeaderBuffer[Amount];
@@ -282,6 +283,14 @@ static void Convert_(
 		WString++;
 	}
 
+}
+
+// For g++ under 'cygwin'.
+static inline void Convert_(
+	const CHAR *SString,
+	description_ &String )
+{
+	String.Append( String );
 }
 
 bso::ulong__ mscmdd::GetMidiInDeviceDescriptions( descriptions_ &Descriptions )

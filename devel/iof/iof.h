@@ -90,9 +90,11 @@ namespace iof {
 		}
 	};
 
+	typedef fwf::oflow_functions___<> _oflow_functions___;
+
 	class io_oflow_functions___
 	: public _output_functions__,
-	  public fwf::oflow_functions___<>
+	  public _oflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -109,7 +111,7 @@ namespace iof {
 		void reset( bso::bool__ P = true )
 		{
 			_output_functions__::reset( P );
-			oflow_functions___::reset( P );
+			_oflow_functions___::reset( P );
 		}
 		io_oflow_functions___( void )
 		{
@@ -124,7 +126,7 @@ namespace iof {
 			fwf::thread_safety__ ThreadSafety )
 		{
 			_output_functions__::Init( D );
-			oflow_functions___::Init( ThreadSafety );
+			_oflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -178,10 +180,11 @@ namespace iof {
 		{}
 	};
 
+	typedef fwf::iflow_functions___<> _iflow_functions___;
 
 	class io_iflow_functions___
 	: public _input_functions__,
-	  public fwf::iflow_functions___<>
+	  public _iflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFRead(
@@ -198,7 +201,7 @@ namespace iof {
 		void reset( bso::bool__ P = true )
 		{
 			_input_functions__::reset( P );
-			iflow_functions___::reset( P );
+			_iflow_functions___::reset( P );
 		}
 		io_iflow_functions___( void )
 		{
@@ -213,7 +216,7 @@ namespace iof {
 			fwf::thread_safety__ ThreadSafety )
 		{
 			_input_functions__::Init( D );
-			iflow_functions___::Init( ThreadSafety );
+			_iflow_functions___::Init( ThreadSafety );
 		}
 	};
 
@@ -245,10 +248,12 @@ namespace iof {
 		}
 	};
 
+	typedef fwf::ioflow_functions___<> _ioflow_functions___;
+
 	class io_flow_functions___
 	: public _output_functions__,
 	  public _input_functions__,
-	  public fwf::ioflow_functions___<>
+	  public _ioflow_functions___
 	{
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -278,7 +283,7 @@ namespace iof {
 		{
 			_input_functions__::Init( D );
 			_output_functions__::Init( D );
-			ioflow_functions___::Init( ThreadSafety );
+			_ioflow_functions___::Init( ThreadSafety );
 		}
 
 	};

@@ -77,7 +77,8 @@ extern class ttr_tutor &MSCMDDTutor;
 #endif
 
 #ifdef CPE__T_MS
-#	include "windows.h"
+#	include <Windows.h>
+#	include <MMSystem.h>
 #endif
 
 #ifdef MSCMDD_INPUT_CACHE_SIZE
@@ -248,12 +249,20 @@ namespace mscmdd {
 
 	struct _data___
 	{
+	public:
 		mtx::mutex_handler__ Access;	// Pour protèger l'accés aus données de cet structure.
 		mtx::mutex_handler__ Full;		// Pour faire attendre le producteur si 'Buffer' est plein.
 		mtx::mutex_handler__ Empty;		// Pout faire attendre le consommateur si 'Buffer' est vide.
 		fwf::datum__ *Buffer;
 		fwf::size__ Size, Available, Position;
 		bso::bool__ Purge;	// Lorsque à 'true', purge l'ensemble des données MIDI.
+		void _data__( void )
+		{
+			Access = Full = Empty = MTX_INVALID_HANDLER;
+			Buffer = NULL;
+			Size = Available = Position = 0;
+			Purge = false;
+		}
 	};
 
 	inline bso::bool__ _IsFull( const _data___ &Data )

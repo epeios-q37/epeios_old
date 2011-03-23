@@ -85,7 +85,18 @@ extern class ttr_tutor &CLNARGTutor;
 #define CLNARG_STRING_PARAM___( name )\
 	STR_BUFFER___ name
 
+#	ifdef CLNARG_BUFFER_SIZE
+#		define CLNARG__BUFFER_SIZE	CLNARG_BUFFER_SIZE
+#else
+#	define CLNARG__BUFFER_SIZE	50
+#endif
+
+#define CLNARG_BUFFER__	clnarg::buffer__
+
 namespace clnarg {
+
+	typedef char buffer__[CLNARG__BUFFER_SIZE+1];	// +1 pour '\0'.
+
 	//t An option/argument id.
 	typedef bso::ubyte__ id__;
 	// if modified, modify below.
@@ -102,11 +113,18 @@ namespace clnarg {
 
 	enum message__ {
 		mTryHelpCommand,
-		mMissingCommand,
-		mUnknownOption,
-		mMissingOptionArgument,
-		mUnexpectedOption,
-		mWrongNumberOfArguments,
+		mOptionWording,
+		mOptionsWording,
+		mArgumentWording,
+		mArgumentsWording,
+		mVersionCommandDescription,
+		mLicenseCommandDescription,
+		mHelpCommandDescription,
+		mMissingCommandError,
+		mUnknownOptionError,
+		mMissingOptionArgumentError,
+		mUnexpectedOptionError,
+		mWrongNumberOfArgumentsError,
 		b_amount,
 		b_Undefined
 	};
@@ -120,68 +138,124 @@ namespace clnarg {
 		str::string_ &Translation,
 		... );
 
-	inline const str::string_ &GetMissingCommandTranslation(
+	inline const str::string_ &GetOptionWordingTranslation( 
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingCommand, Language, Locale, Translation );
+		return GetTranslation( mOptionWording, Language, Locale, Translation );
 	}
 
-	inline const str::string_ &GetUnknownOptionTranslation(
+	inline const str::string_ &GetOptionsWordingTranslation( 
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mOptionsWording, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetArgumentWordingTranslation( 
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mArgumentWording, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetArgumentsWordingTranslation( 
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mArgumentsWording, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetVersionCommandDescription(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mVersionCommandDescription, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetLicenseCommandDescription(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mLicenseCommandDescription, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetHelpCommandDescription(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mHelpCommandDescription, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetMissingCommandErrorTranslation(
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mMissingCommandError, Language, Locale, Translation );
+	}
+
+	inline const str::string_ &GetUnknownOptionErrorTranslation(
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnknownOption, Language, Locale, Translation, Option );
+		return GetTranslation( mUnknownOptionError, Language, Locale, Translation, Option );
 	}
 
-	inline const str::string_ &GetMissingOptionArgumentTranslation(
+	inline const str::string_ &GetMissingOptionArgumentErrorTranslation(
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingOptionArgument, Language, Locale, Translation, Option );
+		return GetTranslation( mMissingOptionArgumentError, Language, Locale, Translation, Option );
 	}
 
-	inline const str::string_ &GetUnexpectedOptionTranslation(
+	inline const str::string_ &GetUnexpectedOptionErrorTranslation(
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnexpectedOption, Language, Locale, Translation, Option );
+		return GetTranslation( mUnexpectedOptionError, Language, Locale, Translation, Option );
 	}
 
-	inline const str::string_ &GetWrongNumberOfArgumentsTranslation(
+	inline const str::string_ &GetWrongNumberOfArgumentsErrorTranslation(
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mWrongNumberOfArguments, Language, Locale, Translation );
+		return GetTranslation( mWrongNumberOfArgumentsError, Language, Locale, Translation );
 	}
 
 	void Report(
 		const str::string_ &Message,
 		const lcl::locale_rack___ &Rack );
 
-	void ReportMissingCommand( const lcl::locale_rack___ &Rack );
+	void ReportMissingCommandError( const lcl::locale_rack___ &Rack );
 
-	void ReportUnknownOption(
+	void ReportUnknownOptionError(
 		const char *Option,
 		const lcl::locale_rack___ &Rack );
 
-	void ReportMissingOptionArgument(
+	void ReportMissingOptionArgumentError(
 		const char *Option,
 		const lcl::locale_rack___ &Rack );
 
-	void ReportUnexpectedOption(
+	void ReportUnexpectedOptionError(
 		const char *Option,
 		const lcl::locale_rack___ &Rack );
 
-	void ReportWrongNumberOfArguments( const lcl::locale_rack___ &Rack );
+	void ReportWrongNumberOfArgumentsError( const lcl::locale_rack___ &Rack );
 
 	//e View mode
 	enum view {
@@ -300,9 +374,13 @@ namespace clnarg {
 		//f Return the long and short command label corresponding to 'Id' using 'Separator' to seperate them.
 		const char *GetCommandLabels(
 			int Id,
+			buffer__ &Buffer,
 			const char *Separator = CLNARG_GENERAL_SEPARATOR ) const;
 		//f Return the option label corresponding to 'Id'.
-		const char *GetOptionLabels( int Id ) const;
+		const char *GetOptionLabels(
+			int Id,
+			buffer__ &Buffer,
+			const char *Separator = CLNARG_GENERAL_SEPARATOR ) const;
 	};
 
 	E_AUTO( description )

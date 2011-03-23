@@ -50,7 +50,7 @@ enum command__ {
 	cLicense,
 	cDevices,	// Diplay available MIDI devices.
 	cIdentify,	// Retrieve identity from a device.
-	cRetrieve_,	// Retrieve settings from device.
+	cRetrieve,	// Retrieve settings from device.
 	cWrite,		// Set settings to device.
 	cRandom,	// Set a range of settings with random value (between 2 values).
 	c_amount,
@@ -79,31 +79,137 @@ struct parameters {
 	}
 };
 
+static void PrintSpecialsCommandsDescriptions( const clnarg::description_ &Description )
+{
+ERRProlog
+	str::string Text;
+	STR_BUFFER___ TranslationBuffer;
+	CLNARG_BUFFER__ Buffer;
+ERRBegin
+	cout << common::LocaleRack.Locale().GetTranslation( "ProgramDescription", common::LocaleRack.Language(), "", TranslationBuffer ) << '.'  << txf::nl;
+	cout << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetVersionCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetLicenseCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetHelpCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void PrintUsage( const clnarg::description_ &Description )
 {
-	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help" << txf::nl;
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false, cout );
-	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false, cout );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false, cout );
+ERRProlog
+	str::string Translation;
+	STR_BUFFER___ TBuffer;
+	CLNARG_BUFFER__ Buffer;
+ERRBegin
+	PrintSpecialsCommandsDescriptions( Description );
 
-	cout << NAME << ' ' << Description.GetCommandLabels( cDevices, "," ) << txf::nl;
-	cout << txf::tab << "displays available MIDI devices id and name." << txf::nl;
-	cout << NAME << ' ' << Description.GetCommandLabels( cIdentify, "," ) << txf::nl;
-	cout << txf::tab << "displays identity of a MIDI device." << txf::nl;
-	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve_, "," ) << txf::nl;
-	cout << txf::tab << "retrieve settings from device." << txf::nl;
-	cout << NAME << ' ' << Description.GetCommandLabels( cWrite, "," ) << txf::nl;
-	cout << txf::tab << "write settings to device." << txf::nl;
-	cout << NAME << ' ' << Description.GetCommandLabels( cRandom, "," ) << txf::nl;
-	cout << txf::tab << "send randomized settings to device." << txf::nl;
+	cout << NAME << ' ' << Description.GetCommandLabels( cDevices, Buffer, "," );
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mDevicesCommandDescription, Translation ) << '.' << txf::nl;
 
-	cout << NAME << " <command> [options] ..." << txf::nl;
-	// Free argument description.
-	cout << "command:" << txf::nl;
-//	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	cout << "options:" << txf::nl;
-//	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cIdentify, Buffer, "," );
+	cout << " " << Description.GetOptionLabels( oDIn, Buffer ) << " <din>";
+	cout << " " << Description.GetOptionLabels( oDOut, Buffer ) << " <dout>";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mIdentifyCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cRetrieve, Buffer, "," );
+	cout << " " << Description.GetOptionLabels( oDIn, Buffer ) << " <din>";
+	cout << " " << Description.GetOptionLabels( oDOut, Buffer ) << " <dout>";
+	cout << " [<target>]";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mRetrieveCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cWrite, Buffer, "," );
+	cout << " " << Description.GetOptionLabels( oDIn, Buffer ) << " <din>";
+	cout << " " << Description.GetOptionLabels( oDOut, Buffer ) << " <dout>";
+	cout << " <settings>";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mWriteCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cRandom, Buffer, "," );
+	cout << " " << Description.GetOptionLabels( oDIn, Buffer ) << " <din>";
+	cout << " " << Description.GetOptionLabels( oDOut, Buffer ) << " <dout>";
+	cout << " <address-range> <value-range>";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mRandomCommandDescription, Translation ) << '.' << txf::nl;
+
+/*
+
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mWriteCommandDescription, Translation ) << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cRandom, Buffer, "," ) << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mRandomCommandDescription, Translation ) << txf::nl;
+*/
+	cout << txf::nl;
+
+
+	Translation.Init();
+	cout << clnarg::GetOptionsWordingTranslation( LocaleRack.Language(), LocaleRack.Locale(), Translation );
+	cout << " :" << txf::nl;
+
+	cout << txf::pad << "- <din> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mDInOptionDescription, Description.GetCommandLabels( cDevices, Buffer ) );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << "- <dout> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mDOutOptionDescription, Description.GetCommandLabels( cDevices, Buffer ) );
+	cout << '.' << txf::nl;
+
+	cout << txf::nl;
+
+	Translation.Init();
+	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack.Language(), LocaleRack.Locale(), Translation );
+	cout << " :" << txf::nl;
+
+	cout << txf::pad << "- <target> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mTargetArgumentDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << "- <settings> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mSettingsArgumentDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << "- <address-range> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mAddressRangeArgumentDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << "- <address-range> :" << txf::nl;
+	cout << txf::tab;
+	common::Display( mValueRangeArgumentDescription );
+	cout << '.' << txf::nl;
+
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void PrintHeader( void )
@@ -115,7 +221,6 @@ void PrintHeader( void )
 	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
-
 static void AnalyzeOptions(
 	clnarg::analyzer___ &Analyzer,
 	parameters &Parameters )
@@ -126,11 +231,12 @@ ERRProlog
 	clnarg::id__ Option;
 	const char *Unknow = NULL;
 	clnarg::argument Argument;
+	CLNARG_BUFFER__ Buffer;
 ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL )
-		clnarg::ReportUnexpectedOption( Unknow, LocaleRack );
+		clnarg::ReportUnexpectedOptionError( Unknow, LocaleRack );
 
 	P = Options.First();
 
@@ -141,13 +247,13 @@ ERRBegin
 		case oDIn:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 )
-				clnarg::ReportMissingOptionArgument( Analyzer.Description().GetOptionLabels( oDIn ), LocaleRack );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDIn, Buffer ), LocaleRack );
 			Argument.Convert( Parameters.DIn );
 			break;
 		case oDOut:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 )
-				clnarg::ReportMissingOptionArgument( Analyzer.Description().GetOptionLabels( oDOut ), LocaleRack );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDOut, Buffer ), LocaleRack );
 			Argument.Convert( Parameters.DOut );
 			break;
 //		case o:
@@ -240,7 +346,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
 		break;
@@ -249,11 +355,11 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
 		break;
-	case cRetrieve_:
+	case cRetrieve:
 		switch( Free.Amount() ) {
 		case 1:
 			Free( P ).Convert( Parameters.OutputFileName );
@@ -261,7 +367,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
 		break;
@@ -271,7 +377,7 @@ ERRBegin
 			Free( P ).Convert( Parameters.SettingsFileName );
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
 		break;
@@ -283,7 +389,7 @@ ERRBegin
 			Free( P ).Convert( Parameters.AddressRange );
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArguments( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
 		break;
@@ -312,7 +418,7 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( CLNARG_NO_SHORT, "devices", cDevices );
 	Description.AddCommand( CLNARG_NO_SHORT, "identify", cIdentify );
-	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve_ );
+	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve );
 	Description.AddCommand( CLNARG_NO_SHORT, "write", cWrite );
 	Description.AddCommand( CLNARG_NO_SHORT, "random", cRandom );
 //	Description.AddCommand( '', "", c );
@@ -339,14 +445,14 @@ ERRBegin
 		break;
 	case cDevices:
 	case cIdentify:
-	case cRetrieve_:
+	case cRetrieve:
 	case cWrite:
 	case cRandom:
 		Parameters.Command = (command__)Analyzer.GetCommand();
 		break;
 //	case c:
 	case CLNARG_NONE:
-		clnarg::ReportMissingCommand( LocaleRack );
+		clnarg::ReportMissingCommandError( LocaleRack );
 		break;
 	default:
 		ERRc();
@@ -448,8 +554,9 @@ ERRBegin
 	case cIdentify:
 		identity::Identify( NULL, Parameters.DIn, Parameters.DOut );
 		break;
-	case cRetrieve_:
+	case cRetrieve:
 		get::ReadSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.OutputFileName );
+		break;
 	case cWrite:
 		set::WriteSettings( NULL, Parameters.DIn, Parameters.DOut, Parameters.SettingsFileName );
 		break;

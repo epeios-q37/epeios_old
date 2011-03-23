@@ -92,9 +92,11 @@ extern class ttr_tutor &FLXTutor;
 
 namespace flx {
 
+	typedef fwf::iflow_functions___<> _iflow_functions___;
+
 	//c Buffer as a standard input flow.
 	class buffer_iflow_functions___
-	: public fwf::iflow_functions___<>
+	: public _iflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
@@ -132,7 +134,7 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			iflow_functions___::reset( P );
+			_iflow_functions___::reset( P );
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
@@ -153,7 +155,7 @@ namespace flx {
 		{
 			reset();
 
-			iflow_functions___::Init( ThreadSafety );
+			_iflow_functions___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -192,9 +194,11 @@ namespace flx {
 		}
 	};
 
+	typedef fwf::oflow_functions___<> _oflow_functions___;
+
 	//c Buffer as a standard ouput flow.driver
 	class buffer_oflow_functions___
-	: public fwf::oflow_functions___<>
+	: public _oflow_functions___
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
@@ -221,7 +225,7 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			oflow_functions___::reset( P );
+			_oflow_functions___::reset( P );
 
 			Tampon_ = NULL;
 			Taille_ = 0;
@@ -242,7 +246,7 @@ namespace flx {
 		{
 			reset();
 
-			oflow_functions___::Init( ThreadSafety );
+			_oflow_functions___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -319,7 +323,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			iflow_functions___::reset( P );
+			fwf::iflow_functions___<cache_size>::reset( P );
 			Bunch_ = NULL;
 			Position_ = 0;
 		}
@@ -334,7 +338,7 @@ namespace flx {
 			Bunch_ = &Bunch;
 			Position_ = Position;
 
-			iflow_functions___::Init( ThreadSafety );
+			fwf::iflow_functions___<cache_size>::Init( ThreadSafety );
 		}
 	};
 
@@ -402,7 +406,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			oflow_functions___::reset( P );
+			fwf::oflow_functions___<>::reset( P );
 
 			_Bunch = NULL;
 		}
@@ -415,7 +419,7 @@ namespace flx {
 
 			_Bunch = &Bunch;
 
-			oflow_functions___::Init( ThreadSafety );
+			fwf::oflow_functions___<>::Init( ThreadSafety );
 		}
 	};
 	//c A bunch as output flow.driver.
@@ -469,7 +473,7 @@ namespace flx {
 	public:
 		void Init( fwf::thread_safety__ ThreadSafety )
 		{
-			oflow_functions___::Init( ThreadSafety );
+			fwf::oflow_functions___<>::Init( ThreadSafety );
 		}
 
 	};	
@@ -574,7 +578,7 @@ namespace flx {
 			fwf::ioflow_functions___<>::reset( P );
 
 			_Buffer = NULL;
-			_Red = _Size = NULL;
+			_Red = _Size = 0;
 			_Read = _Write = MTX_INVALID_HANDLER;
 		}
 		mediator_ioflow_functions___( void )
@@ -615,7 +619,7 @@ namespace flx {
 		void Init( void )
 		{
 			_Functions.Init( fwf::tsDisabled );
-			flw::standalone_ioflow__<OutCacheSize>Init( Functions );
+			flw::standalone_ioflow__<OutCacheSize>Init( _Functions );
 		}
 	};
 #endif

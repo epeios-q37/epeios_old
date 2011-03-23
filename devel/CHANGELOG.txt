@@ -1,5 +1,19 @@
 $Id$
 
+23/03/2011 :
+	- Général :
+		- Correction erreurs détectées par 'g++'.
+	- CLNARG :
+		- Ajout de buffer.
+
+22/03/2011 :
+	- CLNARG :
+		- Internationalisation.
+
+21/03/2011 :
+	- MSCRMI :
+		- Ajout 'Search(...)'.
+
 19/03/2011 :
 	- LCL :
 		- Ajout suffixe par défaut.
