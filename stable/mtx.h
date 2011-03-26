@@ -193,7 +193,7 @@ namespace mtx {
 		} else {
 			if ( pthread_mutexattr_init( &Counter.MutexAttr ) )
 				ERRs();
-			if ( pthread_mutexattr_setpshared( &Counter.MutexAttr, PTHREAD_PROCESS_SHARED ) )
+			if ( pthread_mutexattr_setpshared( &Counter.MutexAttr, PTHREAD_PROCESS_PRIVATE ) )
 				ERRs();
 			if ( pthread_mutex_init( &Counter.Mutex, &Counter.MutexAttr ) )
 				ERRs();

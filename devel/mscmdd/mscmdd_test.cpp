@@ -37,9 +37,6 @@
 #include "flx.h"
 #include "str.h"
 
-#include "mmreg.h"
-#include "mmsystem.h"
-
 cio::cout___ cout;
 cio::cerr___ cerr;
 
@@ -61,17 +58,18 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	mscmdd::descriptions Descriptions;
+	bso::size__ Count = 0;
 ERRBegin
 	Descriptions.Init();
-	mscmdd::GetMidiInDeviceDescriptions( Descriptions );
+	Count = mscmdd::GetMidiInDeviceDescriptions( Descriptions );
 
-	cout << "IN :" << txf::nl;
+	cout << "IN (" << Count << ") :" << txf::nl;
 	Print( Descriptions );
 
 	Descriptions.Init();
-	mscmdd::GetMidiOutDeviceDescriptions( Descriptions );
+	Count = mscmdd::GetMidiOutDeviceDescriptions( Descriptions );
 
-	cout << "OUT :" << txf::nl;
+	cout << "OUT (" << Count << ") :" << txf::nl;
 	Print( Descriptions );
 
 	cout << txf::commit;
@@ -80,79 +78,7 @@ ERREnd
 ERREpilog
 }
 
-void Recycle( 
-	MIDIHDR *Header,
-	HMIDIIN Device )
-{
-	MMRESULT Result;
-
-	while ( ( Header->dwFlags != 0 ) && ( Header->dwFlags == MHDR_DONE ) );
-
-	Header->dwFlags = 0;
-
-//	Result = midiInUnprepareHeader( Device, Header, sizeof( *Header ) );
-	Result = midiInPrepareHeader( Device, Header, sizeof( *Header ) );
-	Result = midiInAddBuffer( Device, Header, sizeof( *Header ) );
-}
-
 bso::bool__ SysEx = false;
-
-void CALLBACK MidiInProc(
-  HMIDIIN hMidiIn,  
-  UINT wMsg,        
-  DWORD dwInstance, 
-  DWORD dwParam1,   
-  DWORD dwParam2 )
-{
-ERRProlog
-	MIDIHDR *Header = NULL;
-	flw::oflow__ &Flow = *(flw::oflow__ *)dwInstance;
-	bso::ubyte__ Event = 0;
-ERRBegin
-	switch( wMsg ) {
-	case MIM_DATA:
-		Flow.Put( dwParam1 & 0xff );
-		switch ( mscmdm::DetermineEvent( dwParam1 & 0xff, ( dwParam1 & 0xff00 ) >> 8, Event ) ) {
-		case mscmdm::etMIDI:
-			switch ( mscmdm::GetMIDIEventDataSize( (mscmdm::midi_event__)Event ) ) {
-			case 0:
-				break;
-			case 1:
-				Flow.Put( ( dwParam1 & 0xff00 ) >> 8 );
-				break;
-			case 2:
-				Flow.Put( ( dwParam1 & 0xff00 ) >> 8 );
-				Flow.Put( ( dwParam1 & 0xff0000 ) >> 16 );
-				break;
-			default:
-				ERRc();
-				break;
-			}
-			break;
-		default:
-			ERRc();
-			break;
-		}
-		break;
-	case MIM_OPEN:
-		Header = Header;
-		break;
-	case MIM_LONGDATA:
-		Header = (MIDIHDR *)dwParam1;
-		Flow.Write( Header->lpData, Header->dwBytesRecorded );
-		Recycle( Header, hMidiIn );
-		break;
-	case MIM_CLOSE:
-		Header = Header;
-		break;
-	default:
-		Header = Header;
-		break;
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
 
 void Dump(
 	const str::string_ &Buffer,
@@ -180,61 +106,14 @@ ERREnd
 ERREpilog
 }
 
-void In( void )
-{
-ERRProlog
-	HMIDIIN Device = 0;
-	MMRESULT Result;
-	char Buffer[100];
-	MIDIHDR Header;
-	str::string String;
-	flx::bunch_oflow___<str::string_, bso::char__> Flow;
-	bso::bool__ Continue = true;
-ERRBegin
-	Header.dwBufferLength = sizeof( Buffer );
-	Header.lpData = Buffer;
-	Header.dwFlags = 0;
-
-	String.Init();
-	Flow.Init( String );
-
-	if ( ( Result = midiInOpen( &Device, 0, (DWORD)MidiInProc, (DWORD)&Flow, CALLBACK_FUNCTION ) ) != MMSYSERR_NOERROR )
-		ERRx();
-
-	Recycle( &Header, Device );
-
-	if ( ( Result = midiInStart( Device ) ) != MMSYSERR_NOERROR )
-		ERRx();
-
-	getchar();
-
-	Result = midiInStop( Device );
-
-
-	Result = midiInUnprepareHeader( Device, &Header, sizeof( Header ) );
-
-	Result = midiInReset( Device );
-
-
-	midiInClose( Device );
-
-	Flow.reset();
-
-	Dump( String, mscmdm::oDevice );
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
 void In( mscmdm::origin__ Origin )
 {
 ERRProlog
-	mscmdd::midi_iflow___<10> Flow;
+	mscmdd::midi_iflow___<> Flow;
 	mscmdm::event_header__ EventHeader;
 	mscmdm::data Data;
 ERRBegin
-	Flow.Init( 0 );
+	Flow.Init( 1 );
 
 	while ( true ) {
 		mscmdm::GetEventHeader( Flow, Origin, EventHeader );

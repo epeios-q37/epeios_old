@@ -30,9 +30,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err
-
-
+libs = cio err flw fwf mmi mscmdf mscmdm str tht tol ttr txf uym
 
 ifeq ("$(EPEIOS_ENV)","windows")
 # compilation options
@@ -51,7 +49,8 @@ co += -g
 #co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lpthread
+lo += -lpthread
+lo += -lasound
 endif
 
 ifeq ("$(EPEIOS_ENV)","beos")

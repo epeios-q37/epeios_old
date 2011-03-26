@@ -59,6 +59,11 @@ using namespace mscmdd;
 
 #include "mscmdm.h"
 
+#ifdef MSCMDD__ALSA
+
+#endif
+
+#ifdef MSCMDD__WINDOWS
 static void Fill_(
 	const char *Buffer,
 	bso::size__ Amount,
@@ -272,7 +277,6 @@ bso::bool__ mscmdd::midi_in___::Init(
 	return true;
 }
 
-
 static void Convert_(
 	const WCHAR *WString,
 	description_ &String )
@@ -285,17 +289,188 @@ static void Convert_(
 
 }
 
-// For g++ under 'cygwin'.
+
+// Pour g++ sous 'cygwin'.
 static inline void Convert_(
-	const CHAR *SString,
+	const CHAR *RawString,
 	description_ &String )
 {
-	String.Append( String );
+	String.Append( RawString );
 }
+#endif
+
+#ifdef MSCMDD__ALSA
+typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
+E_AUTO( strings )
+
+static bso::ulong__ GetMIDIDevices_(
+	strings_ &Names,
+	descriptions_ &Descriptions,
+	snd_rawmidi_stream_t Direction )
+{
+	bso::ulong__ Count = 0;
+ERRProlog
+	str::string Name;
+	bso::integer_buffer__ Buffer;
+ERRBegin
+	int	cardNum;
+
+   // Start with first card
+   cardNum = -1;
+
+	for (;;) {
+		snd_ctl_t *cardHandle;
+
+		// Get next sound card's card number. When "cardNum" == -1, then ALSA
+		// fetches the first card
+		if ( snd_card_next (&cardNum ) < 0)
+			ERRs();
+
+		// No more cards? ALSA sets "cardNum" to -1 if so
+		if ( cardNum < 0 ) break;
+
+		// Open this card's control interface. We specify only the card number -- not
+		// any device nor sub-device too
+		{
+				char   str[64];
+
+				sprintf(str, "hw:%i", cardNum);
+
+				if ( snd_ctl_open(&cardHandle, str, 0) < 0)
+					ERRs();
+		  }
+
+		{
+			int      devNum;
+
+			// Start with the first MIDI device on this card
+			devNum = -1;
+		
+			for (;;)
+			{
+				snd_rawmidi_info_t  *rawMidiInfo;
+				register int        subDevCount, i;
+
+				// Get the number of the next MIDI device on this card
+				if ( snd_ctl_rawmidi_next_device(cardHandle, &devNum) )
+					ERRs();
+
+				// No more MIDI devices on this card? ALSA sets "devNum" to -1 if so.
+				// NOTE: It's possible that this sound card may have no MIDI devices on it
+				// at all, for example if it's only a digital audio card
+				if (devNum < 0) break;
+
+				// To get some info about the subdevices of this MIDI device (on the card), we need a
+				// snd_rawmidi_info_t, so let's allocate one on the stack
+				snd_rawmidi_info_alloca(&rawMidiInfo);
+				memset(rawMidiInfo, 0, snd_rawmidi_info_sizeof());
+
+				// Tell ALSA which device (number) we want info about
+				snd_rawmidi_info_set_device(rawMidiInfo, devNum);
+
+				// Get info on the MIDI outs of this device
+				snd_rawmidi_info_set_stream(rawMidiInfo, Direction );
+
+				i = -1;
+				subDevCount = 1;
+
+				// More subdevices?
+				while (++i < subDevCount) {
+					// Tell ALSA to fill in our snd_rawmidi_info_t with info on this subdevice
+					snd_rawmidi_info_set_subdevice(rawMidiInfo, i);
+
+					if ( snd_ctl_rawmidi_info(cardHandle, rawMidiInfo) < 0 )
+						ERRs();
+
+					// Print out how many subdevices (once only)
+					if (!i)
+						subDevCount = snd_rawmidi_info_get_subdevices_count(rawMidiInfo);
+
+					// NOTE: If there's only one subdevice, then the subdevice number is immaterial,
+					// and can be omitted when you specify the hardware name
+
+					Name.Init( "hw:" );
+					Name.Append( bso::Convert( (bso::ulong__)cardNum, Buffer ) );
+					Name.Append( ',' );
+					Name.Append( bso::Convert( (bso::ulong__)devNum, Buffer ) );
+					Name.Append( ',' );
+					Name.Append( bso::Convert( (bso::ulong__)i, Buffer ) );
+
+					Names.Append( Name );
+
+					Descriptions.Append( str::string( snd_rawmidi_info_get_subdevice_name( rawMidiInfo ) ) );
+
+					Count++;
+
+				}
+			}
+			// Close the card's control interface after we're done with it
+			snd_ctl_close(cardHandle);
+		}
+	}
+
+	snd_config_update_free_global();
+ERRErr
+ERREnd
+ERREpilog
+	return Count;
+}
+
+bso::bool__ mscmdd::GetMIDIInDeviceName(
+	int Device,
+	str::string_ &Name )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	strings Names;
+	descriptions Descriptions;
+ERRBegin
+	Names.Init();
+	Descriptions.Init();
+	
+	 if ( GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_INPUT ) <= Device )
+		 ERRReturn;
+	 
+	 Success = true;
+	 
+	 Name = Names( Device );
+ERRErr
+ERREnd
+ERREpilog
+	 return Success;
+}
+
+bso::bool__ mscmdd::GetMIDIOutDeviceName(
+	int Device,
+	str::string_ &Name )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	strings Names;
+	descriptions Descriptions;
+ERRBegin
+	Names.Init();
+	Descriptions.Init();
+	
+	 if ( GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_OUTPUT ) <= Device )
+		 ERRReturn;
+	 
+	 Success = true;
+	 
+	 Name = Names( Device );
+ERRErr
+ERREnd
+ERREpilog
+	 return Success;
+}
+
+#endif
+
 
 bso::ulong__ mscmdd::GetMidiInDeviceDescriptions( descriptions_ &Descriptions )
 {
-	bso::ulong__ Count;
+	bso::ulong__ Count = 0;
+#ifdef MSCMDD__WINDOWS
 ERRProlog
 	MIDIINCAPS InCaps;
 	bso::ulong__ Counter = 0;
@@ -315,12 +490,24 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+#elif defined( MSCMDD__ALSA )
+ERRProlog
+	strings Names;
+ERRBegin
+	Names.Init();
+	
+	Count = GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_INPUT );
+ERRErr
+ERREnd
+ERREpilog
+#endif
 	return Count;
 }
 
 bso::ulong__ mscmdd::GetMidiOutDeviceDescriptions( descriptions_ &Descriptions )
 {
-	bso::ulong__ Count;
+	bso::ulong__ Count = 0;
+#ifdef MSCMDD__WINDOWS
 ERRProlog
 	MIDIOUTCAPS OutCaps;
 	bso::ulong__ Counter = 0;
@@ -340,6 +527,17 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+#elif defined( MSCMDD__ALSA )
+ERRProlog
+	strings Names;
+ERRBegin
+	Names.Init();
+	
+	Count = GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_OUTPUT );
+ERRErr
+ERREnd
+ERREpilog
+#endif
 	return Count;
 }
 

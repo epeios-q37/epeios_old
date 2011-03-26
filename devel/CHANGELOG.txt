@@ -1,5 +1,11 @@
 $Id$
 
+24/03/2011 :
+	- DIR :
+		- Adaptation à 'GNU/Linux'/'Cygwin' ('POSIX' ?).
+	- MTX :
+		- Correction problème avec mutexes 'pthread' sous 'cygwin'.
+
 23/03/2011 :
 	- Général :
 		- Correction erreurs détectées par 'g++'.

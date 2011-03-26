@@ -66,6 +66,8 @@ extern class ttr_tutor &DIRTutor;
 #include "tol.h"
 #include "fnm.h"
 
+#include <limits.h>
+
 #if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS ) || defined( CPE__T_MAC )
 #	define DIR__POSIX
 #elif defined( CPE__T_MS )
@@ -106,22 +108,24 @@ namespace dir {
 	inline const char *GetSelfPath( DIR_BUFFER___ &Buffer )
 	{
 #ifdef DIR__MS
-		char szPath[MAX_PATH+1];
-		DWORD Size = 0;
-
-		if ( ( Size = GetModuleFileNameA( NULL, szPath, MAX_PATH + 1) ) == 0 )
+		char Path[MAX_PATH];
+		DWORD Size = GetModuleFileNameA( NULL, Path, sizeof( Path ) );
+#endif
+#ifdef DIR__POSIX	// Ne fonctionne peur-être oas sur tous les sytèmes POSIX, mais du moins avec 'GNU/Linux' et 'Cygwin'.
+		char Path[PATH_MAX];
+		int Size = readlink( "/proc/self/exe", Path, sizeof( Path ) );
+#endif
+		// Valeur d"erreur retournée par 'GetModuleFileName(..)'.
+		// Valeur d'erreur retrounée par 'readlink(...)', mais '0' est normalement une impossibilité.
+		if ( Size <= 0 )
 			ERRs();
 
-		if ( Size == ( MAX_PATH + 1 ) )
+		if ( Size == sizeof( Path ) )
 			ERRl();
 
-		return fnm::GetLocation( szPath, Buffer );
-#endif
-#ifdef DIR__POSIX
-		ERRL( lNotImplemented );
+		Path[Size] = 0;	//'readlink(...) ne rajoute pas le '\0' final.
 
-		return NULL;	// Pour évitert un 'warning'.
-#endif
+		return fnm::GetLocation( Path, Buffer );
 	}
 
 	inline state__ CreateDir( const char *Path )

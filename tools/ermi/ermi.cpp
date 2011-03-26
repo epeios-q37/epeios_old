@@ -197,7 +197,7 @@ ERRBegin
 	common::Display( mSettingsArgumentDescription );
 	cout << '.' << txf::nl;
 
-	cout << txf::pad << "- <address-range> :" << txf::nl;
+	cout << txf::pad << "- <value-range> :" << txf::nl;
 	cout << txf::tab;
 	common::Display( mAddressRangeArgumentDescription );
 	cout << '.' << txf::nl;

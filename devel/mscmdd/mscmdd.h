@@ -68,18 +68,18 @@ extern class ttr_tutor &MSCMDDTutor;
 #include "mtx.h"
 #include "lcl.h"
 
-#ifndef CPE__T_MS
-#	error "Only implemented for windows".
-#endif
+#	ifdef CPE__T_MS
+#		define MSCMDD__WINDOWS
+#	elif defined( CPE__T_LINUX )
+#		define MSCMDD__ALSA
+#	endif
 
-#ifndef MSCMDD_ALLOWED
-#	error "'MSCMDD' works only under Windows. If you want to use it, define 'MSCMDD_ALLOWED'."
-#endif
-
-#ifdef CPE__T_MS
-#	include <Windows.h>
-#	include <MMSystem.h>
-#endif
+#	ifdef MSCMDD__WINDOWS
+#		include <Windows.h>
+#		include <MMSystem.h>
+#	elif defined( MSCMDD__ALSA )
+#		include <alsa/asoundlib.h>
+#	endif
 
 #ifdef MSCMDD_INPUT_CACHE_SIZE
 #	define MSCMDD__INPUT_CACHE_SIZE	MSCMDD_INPUT_CACHE_SIZE
@@ -100,6 +100,7 @@ namespace mscmdd {
 	typedef char name__[MAXPNAMELEN];
 #endif
 
+#ifdef MSCMDD__WINDOWS
 	class midi_out___
 	{
 	private:
@@ -170,6 +171,78 @@ namespace mscmdd {
 			return Maximum;
 		}
 	};
+#	elif defined( MSCMDD__ALSA )
+	bso::bool__ GetMIDIOutDeviceName(
+		int Device,
+		str::string_ &Name );
+	
+	class midi_out___
+	{
+	private:
+		snd_rawmidi_t    *_Handle;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( _Handle != NULL ) {
+					if ( snd_rawmidi_drain( _Handle ) < 0 )
+						ERRf();
+
+					if ( snd_rawmidi_close( _Handle ) < 0 )
+						ERRf();
+				}
+
+			_Handle = NULL;
+		}
+		midi_out___( void )
+		{
+			reset( false );
+		}
+		~midi_out___( void )
+		{
+			reset();
+		}
+		bso::bool__ Init(
+			int Device,
+			err::handling__ ErrorHandling )
+		{
+			bso::bool__ Success = false;
+		ERRProlog
+			str::string Name;
+			STR_BUFFER___ SBuffer;
+		ERRBegin
+			Name.Init( );
+			
+			if ( !GetMIDIOutDeviceName( Device, Name ) )
+				ERRReturn;
+			
+			if ( snd_rawmidi_open( NULL, &_Handle, Name.Convert( SBuffer ), 0 ) < 0 ) {
+				if ( ErrorHandling != err::hUserDefined )
+					ERRf();
+				else
+					ERRReturn;
+			}
+			
+			Success = true;
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Success;
+		}
+		fwf::size__ Write(
+			const fwf::datum__ *Buffer,
+			fwf::size__ Maximum )
+		{
+			return snd_rawmidi_write( _Handle, Buffer, Maximum );
+		}
+		void Commit( void )
+		{
+			if ( _Handle != NULL )
+				if ( snd_rawmidi_drain( _Handle ) < 0 )
+					ERRf();
+		}
+	};
+#	endif
 
 	class midi_oflow_functions___
 	: public fwf::oflow_functions___<>
@@ -247,6 +320,7 @@ namespace mscmdd {
 		}
 	};
 
+#	ifdef MSCMDD__WINDOWS
 	struct _data___
 	{
 	public:
@@ -366,6 +440,82 @@ namespace mscmdd {
 			fwf::size__ Maximum,
 			fwf::datum__ *Buffer );
 	};
+#	elif defined( MSCMDD__ALSA )
+	bso::bool__ GetMIDIInDeviceName(
+		int Device,
+		str::string_ &Name );
+	
+	class midi_in___
+	{
+	private:
+		snd_rawmidi_t    *_Handle;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P )
+				if ( _Handle != NULL ) {
+					if ( snd_rawmidi_drain( _Handle ) < 0 )
+						ERRf();
+					if ( snd_rawmidi_close( _Handle ) < 0 )
+						ERRf();
+				}
+
+			_Handle = NULL;
+		}
+		midi_in___( void )
+		{
+			reset( false );
+		}
+		~midi_in___( void )
+		{
+			reset();
+		}
+		bso::bool__ Init(
+			int Device,
+			err::handling__ ErrorHandling )
+		{
+			bso::bool__ Success = false;
+		ERRProlog
+			str::string Name;
+			STR_BUFFER___ SBuffer;
+		ERRBegin
+			Name.Init( );
+			
+			if ( !GetMIDIInDeviceName( Device, Name ) )
+				ERRReturn;
+			
+			if ( snd_rawmidi_open( &_Handle, NULL, Name.Convert( SBuffer ), 0 ) < 0 ) {
+				if ( ErrorHandling != err::hUserDefined )
+					ERRf();
+				else
+					ERRReturn;
+			}
+			
+			Success = true;
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Success;
+		}
+		fwf::size__ Read(
+			fwf::size__ Maximum,
+			fwf::datum__ *Buffer )
+		{
+			return snd_rawmidi_read( _Handle, Buffer, Maximum );
+		}
+		void Dismiss( void )
+		{
+			if ( _Handle != NULL )
+				if ( snd_rawmidi_drain( _Handle ) < 0 )
+					ERRf();
+		}
+		// 'Start', 'Stop': pour singer la version 'Windows'.
+		void Stop( void )
+		{}
+		void Start( void )
+		{}
+	};
+#	endif
 
 	class midi_iflow_functions___
 	: public fwf::iflow_functions___<MSCMDD__INPUT_CACHE_SIZE>
@@ -415,7 +565,7 @@ namespace mscmdd {
 		}
 	};
 
-	template <int CacheSize = MSCMDD__OUTPUT_CACHE_SIZE> class midi_iflow___
+	template <int CacheSize = 0> class midi_iflow___
 	: public flw::standalone_iflow__<CacheSize>
 	{
 	private:
@@ -435,19 +585,19 @@ namespace mscmdd {
 			reset();
 		}
 		bso::bool__ Init(
-			int DeviceId,
+			int Device,
 			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrHandle = err::h_Default )
 		{
 			flw::standalone_iflow__<CacheSize>::Init( _Functions, AmountMax );
 
-			return _Functions.Init( DeviceId, ErrHandle );
+			return _Functions.Init( Device, ErrHandle );
 		}
 		bso::bool__ Init(
-			int DeviceId,
+			int Device,
 			err::handling__ ErrHandle )
 		{
-			return Init( DeviceId, FLW_SIZE_MAX, ErrHandle );
+			return Init( Device, FLW_SIZE_MAX, ErrHandle );
 		}
 		void Start( void )
 		{
