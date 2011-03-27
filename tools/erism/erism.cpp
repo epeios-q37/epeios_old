@@ -1,5 +1,5 @@
 /*
-	'ermi' by Claude SIMON
+	'erism' by Claude SIMON
 	Handles Roland devices parameters.
 	Copyright (C) 2011 Claude SIMON
 
@@ -24,7 +24,7 @@
 
 // $Id$
 
-#include "ermi.h"
+#include "erism.h"
 
 #include "err.h"
 #include "cio.h"
@@ -508,8 +508,6 @@ ERRBegin
 		Display( mAvailableMIDIInDevices );
 
 	cout << " : " << txf::nl;
-
-
 
 	Row = Descriptions.First();
 

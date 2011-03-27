@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id$ -->
+<Locales xmlns="http://zeusw.org/epeios/lcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Locale target="erism">
+		<xpp:expand href="eall.xlcl"/>
+		<Translations message="ProgramDescription">
+			<Translation language="fr">Gestion des réglages d'instruments Roland</Translation>
+			<Translation language="en-US">Manage Roland instrument settings</Translation>
+		</Translations>
+
+		<xpp:bloc><!-- 'message__' -->
+			<Translations message="DevicesCommandDescription">
+				<Translation language="fr">Affiche les identifiants et noms des dispositifs MIDI disponibles</Translation>
+				<Translation language="en-US">Displays the IDs and names of the avaialable MIDI devices </Translation>
+			</Translations>
+			<Translations message="IdentifyCommandDescription">
+				<Translation language="fr">Affiche l'identification d'un dispositif MIDI</Translation>
+				<Translation language="en-US">Displays identification of a MIDI device</Translation>
+			</Translations>
+			<Translations message="RetrieveCommandDescription">
+				<Translation language="fr">Récupère les réglages d'un dispositif MIDI</Translation>
+				<Translation language="en-US">Retrieve settings from a MIDI device</Translation>
+			</Translations>
+			<Translations message="WriteCommandDescription">
+				<Translation language="fr">Envoit les règlauges au dispositif MIDI</Translation>
+				<Translation language="en-US">Write settings to MIDI device</Translation>
+			</Translations>
+			<Translations message="RandomCommandDescription">
+				<Translation language="fr">Envoit des règlages de valeur aléatoire au dispositif MIDI</Translation>
+				<Translation language="en-US">Write random settings value to MIDI device</Translation>
+			</Translations>
+
+			<Translations message="DInOptionDescription">
+				<Translation language="fr">Identifiant du dispositif MIDI d'entrée (voir commande '%1' )</Translation>
+				<Translation language="en-US">ID of the MIDI in device (see '%1' command)</Translation>
+			</Translations>
+			<Translations message="DOutOptionDescription">
+				<Translation language="fr">Identifiant du dispositif MIDI de sortie (voir commande '%1' )</Translation>
+				<Translation language="en-US">ID of the MIDI out device (see '%1' command)</Translation>
+			</Translations>
+
+			<Translations message="TargetArgumentDescription">
+				<Translation language="fr">Nom du fichier destination (utilisation sortie standard si absent)</Translation>
+				<Translation language="en-US">Target file name (use standard output if absent)</Translation>
+			</Translations>
+			<Translations message="SettingsArgumentDescription">
+				<Translation language="fr">Nom du fichier des réglages</Translation>
+				<Translation language="en-US">Settings file name</Translation>
+			</Translations>
+			<Translations message="AddressRangeArgumentDescription">
+				<Translation language="fr">Plage d'adresses (&lt;min&gt;-&lt;max&gt; en hexadecimal; ex. : 300062c-300075a)</Translation>
+				<Translation language="en-US">Address range (&lt;min&gt;-&lt;max&gt; in hexadecimal; ex. : 300062c-300075a)</Translation>
+			</Translations>
+			<Translations message="ValueRangeArgumentDescription">
+				<Translation language="fr">Plage de valeurs (&lt;min&gt;-&lt;max&gt;; ex. : 8092-8292)</Translation>
+				<Translation language="en-US">Value range (&lt;min&gt;-&lt;max&gt;; ex. : 8092-8292)</Translation>
+			</Translations>
+
+			<Translations message="NoMIDIOutDevicesAvailable">
+				<Translation language="fr">Pas de dispositif de sortie MIDI disponible</Translation>
+				<Translation language="en-US">No MIDI out devices avalable</Translation>
+			</Translations>
+			<Translations message="AvailableMIDIOutDevices">
+				<Translation language="fr">Identifiants et noms des dispositifs de sortie MIDI disponibles</Translation>
+				<Translation language="en-US">IDs and names of available MIDI out devices</Translation>
+			</Translations>
+			<Translations message="NoMIDIInDevicesAvailable">
+				<Translation language="fr">Pas de dispositif d'entrée MIDI disponible</Translation>
+				<Translation language="en-US">No MIDI in devices avalable</Translation>
+			</Translations>
+			<Translations message="AvailableMIDIInDevices">
+				<Translation language="fr">Identifiants et noms des dispositifs d'entrée MIDI disponibles</Translation>
+				<Translation language="en-US">IDs and names of available MIDI in devices</Translation>
+			</Translations>
+			<Translations message="DeviceModel">
+				<Translation language="fr">Modèle de l'appareil : %1</Translation>
+				<Translation language="en-US">Device model : %1</Translation>
+			</Translations>
+		</xpp:bloc>
+
+		<xpp:bloc>
+			<!-- 'error__' -->
+			<Translations message="MissingDOutID">
+				<Translation language="fr">Identifiant du dispositif de sortie MIDI maquant</Translation>
+				<Translation language="en-US">Missing MIDI out device ID</Translation>
+			</Translations>
+			<Translations message="MissingDInID">
+				<Translation language="fr">Identifiant du dispositif d'entrée MIDI maquant</Translation>
+				<Translation language="en-US">Missing MIDI in device ID</Translation>
+			</Translations>
+			<Translations message="BadOutID">
+				<Translation language="fr">Mauvais identifiant du dispositif de sortie MIDI</Translation>
+				<Translation language="en-US">Bad MIDI in device ID</Translation>
+			</Translations>
+			<Translations message="BadDInID">
+				<Translation language="fr">Mauvais identifiant du dispositif d'entrée MIDI</Translation>
+				<Translation language="en-US">Bad MIDI in device ID</Translation>
+			</Translations>
+
+			<Translations message="UnableToOpenMIDIDevices"/>
+			<!-- NOTA : not used directly; using translation from an undelying library. -->
+
+			<Translations message="MIDIImplementationsFileNameNotDefined">
+				<Translation language="fr">Nom du fichier des implémentations MIDI non défini</Translation>
+				<Translation language="en-US">Name of the MIDI implementations file not defined</Translation>
+			</Translations>
+			<Translations message="MIDIImplementationFileError"/>
+			<!-- NOTA : not used directly; using translation from an undelying library. -->
+
+			<Translations message="BadDeviceID">
+				<Translation language="fr">Mauvais identifiant d'appareil</Translation>
+				<Translation language="en-US">Bad device ID</Translation>
+			</Translations>
+
+			<Translations message="UnableToIdentifyDevice">
+				<Translation language="fr">Impossible d'identifier l'appareil d'identifiant '%1'</Translation>
+				<Translation language="en-US">Unable to identify device of ID '%1'</Translation>
+			</Translations>
+
+			<Translations message="ErrorParsingConfigurationFile">
+				<Translation language="fr">Erreur dans le fichier de configuration : %1</Translation>
+				<Translation language="en-US">Error in the configuration fiie : %1</Translation>
+			</Translations>
+			<Translations message="ErrorParsingLocaleFile">
+				<Translation language="fr">Erreur dans le fichier de locale : %1</Translation>
+				<Translation language="en-US">Error in the locale file : %1</Translation>
+			</Translations>
+
+			<Translations message="MissingSettingsFileName">
+				<Translation language="fr">Nom du fichier des réglages manquant</Translation>
+				<Translation language="en-US">Missing settings file name</Translation>
+			</Translations>
+			<Translations message="SettingsFileError">
+				<Translation language="fr">Erreur dans le fichier des réglages</Translation>
+				<Translation language="en-US">Error in the settings file</Translation>
+			</Translations>
+
+			<Translations message="UnableToOpenFile">
+				<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
+				<Translation language="en-US">Unable to open file '%1'</Translation>
+			</Translations>
+		</xpp:bloc>
+
+		<Translations message="eErrorDuringTransmission"/><!-- NOTA : not used directly; using translation from an undelying library. -->
+
+		<Translations message="BadAddressRange">
+			<Translation language="fr">Mauvaise plage d'adresses</Translation>
+			<Translation language="en-US">Bad address range</Translation>
+		</Translations>
+		<Translations message="BadValueRange">
+			<Translation language="fr">Mauvaise plage de valeurs</Translation>
+			<Translation language="en-US">Bad value range</Translation>
+		</Translations>
+		<Translations message="UnableToFindParameterForAddress">
+			<Translation language="fr">Impossible de trouver un paramètre correspondant à l'addresse '%1'</Translation>
+			<Translation language="en-US">Unable to find a parameter corresponding to address '%1'</Translation>
+		</Translations>
+
+
+		<!--
+			<Translations message="">
+				<Translation language="fr"></Translation>
+				<Translation language="en-US"></Translation>
+			</Translations>
+		-->
+	</Locale>
+</Locales>
+

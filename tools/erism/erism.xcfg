@@ -1,0 +1,6 @@
+<Configurations>
+	<Configuration target="erism">
+		<MIDIImplementationsFileName>Roland.xml</MIDIImplementationsFileName>
+	    <Language>en-US</Language>
+	</Configuration>
+</Configurations>
