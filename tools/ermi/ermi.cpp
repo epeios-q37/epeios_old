@@ -155,17 +155,7 @@ ERRBegin
 	Translation.Init();
 	cout << txf::pad << common::GetTranslation( common::mRandomCommandDescription, Translation ) << '.' << txf::nl;
 
-/*
-
-	Translation.Init();
-	cout << txf::pad << common::GetTranslation( common::mWriteCommandDescription, Translation ) << txf::nl;
-
-	cout << NAME << ' ' << Description.GetCommandLabels( cRandom, Buffer, "," ) << txf::nl;
-	Translation.Init();
-	cout << txf::pad << common::GetTranslation( common::mRandomCommandDescription, Translation ) << txf::nl;
-*/
 	cout << txf::nl;
-
 
 	Translation.Init();
 	cout << clnarg::GetOptionsWordingTranslation( LocaleRack.Language(), LocaleRack.Locale(), Translation );
@@ -197,12 +187,12 @@ ERRBegin
 	common::Display( mSettingsArgumentDescription );
 	cout << '.' << txf::nl;
 
-	cout << txf::pad << "- <value-range> :" << txf::nl;
+	cout << txf::pad << "- <address-range> :" << txf::nl;
 	cout << txf::tab;
 	common::Display( mAddressRangeArgumentDescription );
 	cout << '.' << txf::nl;
 
-	cout << txf::pad << "- <address-range> :" << txf::nl;
+	cout << txf::pad << "- <value-range> :" << txf::nl;
 	cout << txf::tab;
 	common::Display( mValueRangeArgumentDescription );
 	cout << '.' << txf::nl;
