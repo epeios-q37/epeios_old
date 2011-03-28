@@ -110,7 +110,7 @@ fnm::type__ fnm::Type( const char *Nom )
 
 	if ( ( *Repere == '/' ) || ( *Repere == '\\' ) )
 		return fnm::tAbsolute;
-	else
+	else if ( ( strrchr( Repere, '/' ) != NULL ) || ( ( strrchr( Repere, '\\' ) != NULL ) ) )
 		return fnm::tRelative;
 
 	if ( Repere < strrchr( Nom, '.' ) )

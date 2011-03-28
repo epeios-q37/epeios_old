@@ -1,5 +1,9 @@
 $Id$
 
+27/03/2011 :
+	- FNM :
+		- Correction bogue 'Type(...)'.
+
 24/03/2011 :
 	- DIR :
 		- Adaptation à 'GNU/Linux'/'Cygwin' ('POSIX' ?).

@@ -2,7 +2,7 @@
 <!-- $Id$ -->
 <Locales xmlns="http://zeusw.org/epeios/lcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Locale target="erism">
-		<xpp:expand href="eall.xlcl"/>
+		<xpp:expand href="epeios.xlcl"/>
 		<Translations message="ProgramDescription">
 			<Translation language="fr">Gestion des réglages d'instruments Roland</Translation>
 			<Translation language="en-US">Manage Roland instrument settings</Translation>
@@ -11,23 +11,23 @@
 		<xpp:bloc><!-- 'message__' -->
 			<Translations message="DevicesCommandDescription">
 				<Translation language="fr">Affiche les identifiants et noms des dispositifs MIDI disponibles</Translation>
-				<Translation language="en-US">Displays the IDs and names of the avaialable MIDI devices </Translation>
+				<Translation language="en-US">Displays the IDs and names of the available MIDI devices</Translation>
 			</Translations>
 			<Translations message="IdentifyCommandDescription">
-				<Translation language="fr">Affiche l'identification d'un dispositif MIDI</Translation>
-				<Translation language="en-US">Displays identification of a MIDI device</Translation>
+				<Translation language="fr">Affiche l'identification d'un instrument MIDI</Translation>
+				<Translation language="en-US">Displays identification of a MIDI instrument</Translation>
 			</Translations>
 			<Translations message="RetrieveCommandDescription">
-				<Translation language="fr">Récupère les réglages d'un dispositif MIDI</Translation>
-				<Translation language="en-US">Retrieve settings from a MIDI device</Translation>
+				<Translation language="fr">Récupère les réglages d'un instrument MIDI</Translation>
+				<Translation language="en-US">Retrieve settings from a MIDI instrument</Translation>
 			</Translations>
 			<Translations message="WriteCommandDescription">
-				<Translation language="fr">Envoit les règlauges au dispositif MIDI</Translation>
-				<Translation language="en-US">Write settings to MIDI device</Translation>
+				<Translation language="fr">Envoit les règlages à l'instrument MIDI</Translation>
+				<Translation language="en-US">Write settings to MIDI instrument</Translation>
 			</Translations>
 			<Translations message="RandomCommandDescription">
-				<Translation language="fr">Envoit des règlages de valeur aléatoire au dispositif MIDI</Translation>
-				<Translation language="en-US">Write random settings value to MIDI device</Translation>
+				<Translation language="fr">Envoit des règlages de valeur aléatoire à l'instrument MIDI</Translation>
+				<Translation language="en-US">Write random settings value to MIDI instrument</Translation>
 			</Translations>
 
 			<Translations message="DInOptionDescription">
@@ -58,7 +58,7 @@
 
 			<Translations message="NoMIDIOutDevicesAvailable">
 				<Translation language="fr">Pas de dispositif de sortie MIDI disponible</Translation>
-				<Translation language="en-US">No MIDI out devices avalable</Translation>
+				<Translation language="en-US">No MIDI out devices available</Translation>
 			</Translations>
 			<Translations message="AvailableMIDIOutDevices">
 				<Translation language="fr">Identifiants et noms des dispositifs de sortie MIDI disponibles</Translation>
@@ -66,7 +66,7 @@
 			</Translations>
 			<Translations message="NoMIDIInDevicesAvailable">
 				<Translation language="fr">Pas de dispositif d'entrée MIDI disponible</Translation>
-				<Translation language="en-US">No MIDI in devices avalable</Translation>
+				<Translation language="en-US">No MIDI in devices available</Translation>
 			</Translations>
 			<Translations message="AvailableMIDIInDevices">
 				<Translation language="fr">Identifiants et noms des dispositifs d'entrée MIDI disponibles</Translation>

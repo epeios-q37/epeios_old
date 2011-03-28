@@ -295,10 +295,11 @@ ERRBegin
 	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
 		if ( Status == rgstry::sUnableToOpenFile ) {
 			registry::Registry.Init();
-			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( NULL, NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
-				Report( eErrorParsingConfigurationFile, Status, &ErrorDetails );
+			ErrorDetails.Init();
+			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
+				Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
 		} else
-			Report( eErrorParsingConfigurationFile, Status, &ErrorDetails );
+			Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
 
 	LocaleFileName.Init();
 
