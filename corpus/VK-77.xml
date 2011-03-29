@@ -1,0 +1,945 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<MIDIImplementation ModelLabel="Roland VK-77" ModelID="001A" DeviceFamily="1A010000">
+	<xpp:define name="Harmonic Bars">
+		<xpp:bloc>
+			<Parameter Label="16'"/>
+			<Parameter Label="5-1/3'"/>
+			<Parameter Label="8'"/>
+			<Parameter Label="4'"/>
+			<Parameter Label="2-2/3'"/>
+			<Parameter Label="2'"/>
+			<Parameter Label="1-3/5'"/>
+			<Parameter Label="1-1/3'"/>
+			<Parameter Label="1'"/>
+		</xpp:bloc>
+	</xpp:define>
+	<Parameters Label="System" Address="00000000">
+		<Parameters Label="Basic" Address="00">
+			<Parameter Label="Master Tune"/>
+			<Parameter Label="Key Transpose"/>
+			<Parameter Label="Note Remain"/>
+			<Parameter Label="Hold Polarity"/>
+			<Parameters Label="Control Pedal">
+				<xpp:define name="Control Pedal">
+					<xpp:bloc>
+						<Parameter Label="Polarity"/>
+						<Parameter Label="Assign"/>
+					</xpp:bloc>
+				</xpp:define>
+				<Parameters Label="1">
+					<xpp:expand select="Control Pedal"/>
+				</Parameters>
+				<Parameters Label="2">
+					<xpp:expand select="Control Pedal"/>
+				</Parameters>
+			</Parameters>
+			<Parameters Label="PK Foot">
+				<Parameter Label="Switch-L Assign"/>
+				<Parameter Label="Switch-R Assign"/>
+			</Parameters>
+			<Parameter Label="Tune Cabinet Effects"/>
+			<Parameters Label="Power Up Registration">
+				<Parameter Label="Mode"/>
+				<Parameter Label="Number"/>
+			</Parameters>
+			<Parameter Label="Master Reverb Level"/>
+		</Parameters>
+		<Parameters Label="MIDI">
+			<Parameter Label="MIDI Thru"/>
+			<Parameter Label="Tx Organ Orch MIDI"/>
+			<Parameter Label="Rx Organ Orch MIDI"/>
+			<Parameter Label="Organ Control MIDI Channel"/>
+			<xpp:define name="MIDI Channel">
+				<xpp:bloc>
+					<Parameter Label="Upper"/>
+					<Parameter Label="Lower"/>
+					<Parameter Label="Pedal"/>
+				</xpp:bloc>
+			</xpp:define>
+			<Parameters Label="Organ MIDI Channel">
+				<xpp:expand select="MIDI Channel"/>
+			</Parameters>
+			<Parameters Label="Orch MIDI Channel">
+				<xpp:expand select="MIDI Channel"/>
+			</Parameters>
+			<Parameters Label="Ext MIDI Channel">
+				<xpp:expand select="MIDI Channel"/>
+			</Parameters>
+			<Parameter Label="Harmonic Bar MIDI Mode"/>
+			<Parameters Label="Harmonic Bar Ctrl No.">
+				<xpp:expand select="Harmonic Bars"/>
+			</Parameters>
+		</Parameters>
+	</Parameters>
+	<Parameters Label="Registration" Address="01000000">
+		<xpp:define name="Registration Part">
+			<xpp:bloc>
+				<Parameters Label="Keyboard Assign">
+					<Parameter Label="Organ"/>
+					<Parameter Label="Orch"/>
+					<Parameter Label="Ext"/>
+				</Parameters>
+				<Parameter Label="Organ Hold Switch"/>
+				<Parameters Label="Orch">
+					<Parameter Label="Part Level"/>
+					<Parameter Label="Hold Switch"/>
+					<Parameter Label="Bend Switch"/>
+					<Parameter Label="Modulation Switch"/>
+					<Parameter Label="Expression Switch"/>
+					<Parameter Label="Voice Select"/>
+					<Parameters Label="Variations">
+						<Parameter Label="Strings"/>
+						<Parameter Label="Choir"/>
+						<Parameter Label="Piano"/>
+						<Parameter Label="Bass"/>
+						<Parameter Label="Wind/Brass"/>
+						<Parameter Label="Attack"/>
+						<Parameter Label="Sunth"/>
+						<Parameter Label="Others"/>
+					</Parameters>
+					<Parameters Label="Ext">
+						<Parameters Label="Tone Select">
+							<Parameter Label="PC Change Send Switch"/>
+							<Parameter Label="Bank Select Send Switch"/>
+							<Parameter Label="PC Number"/>
+							<Parameters Label="Bank Select">
+								<Parameter Label="MSB"/>
+								<Parameter Label="LSB"/>
+							</Parameters>
+						</Parameters>
+						<Parameter Label="Key Shift"/>
+						<Parameters Label="Velocity">
+							<Parameter Label="Sense"/>
+							<Parameter Label="Offset"/>
+						</Parameters>
+						<Parameter Label="Volume Switch"/>
+						<Parameter Label="Hold Switch"/>
+						<Parameter Label="Expression Switch"/>
+						<Parameter Label="Modulation Switch"/>
+						<Parameters Label="Bender">
+							<Parameter Label="Switch"/>
+							<Parameter Label="Range"/>
+						</Parameters>
+						<Parameter Label="Aftertouch Switch"/>
+						<Parameters Label="Panpot">
+							<Parameter Label="Switch"/>
+							<Parameter Label="Value"/>
+						</Parameters>
+						<Parameters Label="Coarse Tune">
+							<Parameter Label="Transmit Switch"/>
+							<Parameter Label="Level"/>
+						</Parameters>
+						<Parameters Label="Fine Tune">
+							<Parameter Label="Transmit Switch"/>
+							<Parameter Label="Level"/>
+						</Parameters>
+						<Parameters Label="Reverb">
+							<Parameter Label="Transmit Switch"/>
+							<Parameter Label="Level"/>
+						</Parameters>
+						<Parameters Label="Chorus">
+							<Parameter Label="Transmit Switch"/>
+							<Parameter Label="Level"/>
+						</Parameters>
+					</Parameters>
+				</Parameters>
+			</xpp:bloc>
+		</xpp:define>
+		<xpp:define name="Registration">
+			<xpp:bloc>
+				<Parameters Label="Common" Address="0000">
+					<Parameters Label="Registration Name">
+						<Parameter Label="1"/>
+						<Parameter Label="2"/>
+						<Parameter Label="3"/>
+						<Parameter Label="4"/>
+						<Parameter Label="5"/>
+						<Parameter Label="6"/>
+						<Parameter Label="7"/>
+						<Parameter Label="8"/>
+						<Parameter Label="9"/>
+						<Parameter Label="10"/>
+						<Parameter Label="11"/>
+						<Parameter Label="12"/>
+						<Parameter Label="13"/>
+						<Parameter Label="14"/>
+						<Parameter Label="15"/>
+						<Parameter Label="16"/>
+					</Parameters>
+					<Parameter Label="Pedal to Lower"/>
+					<Parameter Label="Lower Keyboard Split Point"/>
+					<Parameters Label="Organ Part">
+						<Parameter Label="Bender Assign"/>
+						<Parameter Label="Modulation Assign"/>
+						<Parameter Label="Aftertouch Assign"/>
+						<Parameter Label="Bender Range"/>
+					</Parameters>
+					<Parameter Label="Orch Part Aftertouch Switch"/>
+					<Parameter Label="Bend/Mod Organ Control Switch"/>
+					<Parameters Label="Orch">
+						<Parameters Label="Reverb">
+							<Parameter Label="Character"/>
+							<Parameter Label="Time"/>
+						</Parameters> 
+						<Parameters Label="Delay">
+							<Parameter Label="Time"/>
+							<Parameter Label="Feedback"/>
+						</Parameters>
+					</Parameters>
+				</Parameters>
+				<Parameters Label="Upper" Address="1000">
+					<xpp:expand select="Registration Part"/>
+				</Parameters>
+				<Parameters Label="Lower" Address="1200">
+					<xpp:expand select="Registration Part"/>
+				</Parameters>
+				<Parameters Label="Pedal" Address="1400">
+					<xpp:expand select="Registration Part"/>
+				</Parameters>
+				<Parameters Label="Basic" Address="4000">
+					<Parameters Label="Organ">
+						<Parameter Label="Level"/>
+						<Parameter Label="Wheel Type"/>
+					</Parameters>
+					<Parameter Label="Flod Back Switch"/>
+					<Parameter Label="Wheel Level Table"/>
+					<Parameter Label="Leakage Level"/>
+					<Parameter Label="Key On Click Level"/>
+					<Parameter Label="Key Off Click Level"/>
+					<Parameters Label="Percussion">
+						<Parameter Label="Switch"/>
+						<Parameter Label="Harmonic"/>
+						<Parameter Label="Soft"/>
+						<Parameter Label="Decay"/>
+						<Parameters Label="Level">
+							<Parameter Label="Soft"/>
+							<Parameter Label="Norm"/>
+						</Parameters>
+						<Parameters Label="Decay Time">
+							<Parameter Label="Slow"/>
+							<Parameter Label="Fast"/>
+						</Parameters>
+						<Parameter Label="Recharge Time"/>
+						<Parameter Label="2' Cancel"/>
+						<Parameter Label="H.Bar Level"/>
+						<Parameter Label="Direct Switch"/>
+					</Parameters>
+					<Parameters Label="Upper H.Bar">
+						<xpp:expand select="Harmonic Bars"/>
+					</Parameters>
+					<Parameters Label="Lower H.Bar">
+						<xpp:expand select="Harmonic Bars"/>
+					</Parameters>
+					<Parameters Label="Pedal">
+						<Parameters Label="H.Bar">
+							<Parameter Label="16'"/>
+							<Parameter Label="8'"/>
+						</Parameters>
+						<Parameters Label="Pedal 16' H.Bar Mixing Ratio">
+							<xpp:expand select="Harmonic Bars"/>
+						</Parameters>
+						<Parameters Label="Pedal 8' H.Bar Mixing Ratio">
+							<xpp:expand select="Harmonic Bars"/>
+						</Parameters>
+					</Parameters>
+					<Parameters Label="Sustain">
+						<Parameter Label="Switch"/>
+						<Parameter Label="Time"/>
+					</Parameters>
+					<Parameters Label="Pedal Attack">
+						<Parameter Label="Switch"/>
+						<Parameter Label="Time"/>
+						<Parameter Label="Level"/>
+					</Parameters>
+				</Parameters>
+				<Parameters Label="Effect" Address="5000">
+					<Parameters Label="Vibrato/Chorus">
+						<Parameters Label="Switch">
+							<Parameter Label="Upper"/>
+							<Parameter Label="Lower"/>
+						</Parameters>
+						<Parameter Label="Type"/>
+						<Parameter Label="Vintage"/>
+						<Parameter Label="Lower"/>
+					</Parameters>
+					<Parameter Label="Amp &amp; Speaker Type"/>
+					<Parameters Label="Overdrive">
+						<Parameter Label="Character"/>
+						<Parameter Label="Level"/>
+					</Parameters>
+					<Parameters Label="Equalize Gain">
+						<Parameter Label="Bass"/>
+						<Parameter Label="Middle"/>
+						<Parameter Label="Treble"/>
+					</Parameters>
+					<Parameters Label="Rotary">
+						<Parameter Label="Sound"/>
+						<Parameter Label="Speed"/>
+						<Parameter Label="Rotation"/>
+						<Parameter Label="Type"/>
+						<Parameters Label="Level">
+							<Parameter Label="Woofer"/>
+							<Parameter Label="Tweeter"/>
+						</Parameters>
+						<Parameters Label="Woofer">
+							<Parameter Label="Rise Time"/>
+							<Parameter Label="Fall Time"/>
+						</Parameters>
+						<Parameters Label="Tweeter">
+							<Parameter Label="Rise Time"/>
+							<Parameter Label="Fall Time"/>
+						</Parameters>
+						<Parameters Label="Woofer Speed">
+							<Parameter Label="Slow"/>
+							<Parameter Label="Fast"/>
+						</Parameters>
+						<Parameters Label="Twweter Speed">
+							<Parameter Label="Slow"/>
+							<Parameter Label="Fast"/>
+						</Parameters>
+						<Parameter Label="Mic Distance"/>
+						<Parameters Label="Spread">
+							<Parameter Label="Woofer"/>
+							<Parameter Label="Tweeter"/>
+						</Parameters>
+						<Parameter Label="Randomize"/>
+					</Parameters>
+					<Parameters Label="Ring Modulator">
+						<Parameter Label="Switch"/>
+						<Parameter Label="Mode"/>
+						<Parameter Label="Frequency"/>
+					</Parameters>
+					<Parameters Label="Organ">
+						<Parameters Label="Reverb">
+							<Parameter Label="Structure"/>
+							<Parameter Label="Type"/>
+							<Parameter Label="Level"/>
+							<Parameter Label="Time"/>
+						</Parameters>
+						<Parameters Label="Delay">
+							<Parameter Label="Level"/>
+							<Parameter Label="Time"/>
+							<Parameter Label="Feedback"/>
+						</Parameters>
+					</Parameters>
+				</Parameters>
+			</xpp:bloc>
+		</xpp:define>
+		<Parameters Label="Temporary" Address="01000000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A11" Address="10000000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A12" Address="10010000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A13" Address="10020000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A14" Address="10030000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A15" Address="10040000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A16" Address="10050000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A17" Address="10060000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A18" Address="10070000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A21" Address="10080000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A22" Address="10090000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A23" Address="100A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A24" Address="100B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A25" Address="100C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A26" Address="100D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A27" Address="100E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A28" Address="100F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A31" Address="10100000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A32" Address="10110000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A33" Address="10120000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A34" Address="10130000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A35" Address="10140000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A36" Address="10150000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A37" Address="10160000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A38" Address="10170000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A41" Address="10180000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A42" Address="10190000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A43" Address="101A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A44" Address="101B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A45" Address="101C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A46" Address="101D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A47" Address="101E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A48" Address="101F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A51" Address="10200000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A52" Address="10210000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A53" Address="10220000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A54" Address="10230000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A55" Address="10240000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A56" Address="10250000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A57" Address="10260000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A58" Address="10270000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A61" Address="10280000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A62" Address="10290000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A63" Address="102A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A64" Address="102B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A65" Address="102C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A66" Address="102D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A67" Address="102E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A68" Address="102F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A71" Address="10300000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A72" Address="10310000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A73" Address="10320000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A74" Address="10330000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A75" Address="10340000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A76" Address="10350000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A77" Address="10360000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A78" Address="10370000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A81" Address="10380000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A82" Address="10390000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A83" Address="103A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A84" Address="103B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A85" Address="103C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A86" Address="103D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A87" Address="103E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="A88" Address="103F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B11" Address="10400000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B12" Address="10410000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B13" Address="10420000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B14" Address="10430000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B15" Address="10440000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B16" Address="10450000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B17" Address="10460000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B18" Address="10470000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B21" Address="10480000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B22" Address="10490000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B23" Address="104A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B24" Address="104B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B25" Address="104C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B26" Address="104D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B27" Address="104E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B28" Address="104F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B31" Address="10500000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B32" Address="10510000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B33" Address="10520000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B34" Address="10530000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B35" Address="10540000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B36" Address="10550000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B37" Address="10560000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B38" Address="10570000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B41" Address="10580000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B42" Address="10590000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B43" Address="105A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B44" Address="105B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B45" Address="105C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B46" Address="105D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B47" Address="105E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B48" Address="105F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B51" Address="10600000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B52" Address="10610000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B53" Address="10620000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B54" Address="10630000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B55" Address="10640000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B56" Address="10650000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B57" Address="10660000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B58" Address="10670000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B61" Address="10680000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B62" Address="10690000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B63" Address="106A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B64" Address="106B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B65" Address="106C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B66" Address="106D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B67" Address="106e0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B68" Address="106F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B71" Address="10700000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B72" Address="10710000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B73" Address="10720000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B74" Address="10730000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B75" Address="10740000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B76" Address="10750000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B77" Address="10760000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B78" Address="10770000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B81" Address="10780000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B82" Address="10790000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B83" Address="107A0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B84" Address="107B0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B85" Address="107C0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B86" Address="107D0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B87" Address="107E0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+		<Parameters Label="B88" Address="107F0000">
+			<xpp:expand select="Registration"/>
+		</Parameters>
+	</Parameters>
+	<Parameters Label="Orchestral Voice" Address="20000000">
+		<xpp:define name="Orchestral">
+			<xpp:bloc>
+				<Parameter Label="Instrument" Address="00"/>
+				<Parameter Label="Level"/>
+				<Parameters Label="Velocity">
+					<Parameter Label="Sensitivity"/>
+					<Parameter Label="Offset"/>
+				</Parameters>
+				<Parameter Label="Key Shift"/>
+				<Parameter Label="Fine Tune"/>
+				<Parameter Label="Pitch LFO Depth"/>
+				<Parameter Label="LFO Rate"/>
+				<Parameter Label="Brilliance"/>
+				<Parameters Label="Envelope">
+					<Parameter Label="Attack"/>
+					<Parameter Label="Release"/>
+				</Parameters>
+				<Parameters Label="Glide">
+					<Parameter Label="Switch"/>
+					<Parameter Label="Rate"/>
+					<Parameter Label="Depth"/>
+				</Parameters>
+				<Parameter Label="Pitch Bend Control Sensitivity"/>
+				<Parameter Label="Modulation Control Sensitivity"/>
+				<Parameter Label="Aftertouch Sensitivity"/>
+				<Parameter Label="Reverb Send Level"/>
+				<Parameters Label="Chorus">
+					<Parameter Label="Type"/>
+					<Parameter Label="Rate (Time)"/>
+					<Parameter Label="Depth (Feedback)"/>
+					<Parameter Label="Level"/>
+				</Parameters>
+			</xpp:bloc>
+		</xpp:define>
+		<Parameters Label="1" Address="20000000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="2" Address="20010000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="3" Address="20020000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="4" Address="20030000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="5" Address="20040000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="6" Address="20050000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="7" Address="20060000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="8" Address="20070000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="9" Address="20080000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="10" Address="20090000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="11" Address="200A0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="12" Address="200B0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="13" Address="200C0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="14" Address="200D0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="15" Address="200E0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="16" Address="200F0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="17" Address="20100000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="18" Address="20110000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="19" Address="20120000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="20" Address="20130000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="21" Address="20140000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="22" Address="20150000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="23" Address="20160000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="24" Address="20170000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="25" Address="20180000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="26" Address="20190000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="27" Address="201A0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="28" Address="201B0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="29" Address="201c0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="30" Address="201d0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="31" Address="201E0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="32" Address="201F0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="33" Address="20200000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="34" Address="20210000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="35" Address="20220000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="36" Address="20230000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="37" Address="20240000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="38" Address="20250000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="39" Address="20260000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="40" Address="20270000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="41" Address="20280000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="42" Address="20290000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="43" Address="202A0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="44" Address="202B0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="45" Address="202C0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="46" Address="202D0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="47" Address="202E0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="48" Address="202F0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="49" Address="20300000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="50" Address="20310000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="51" Address="20320000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="52" Address="20330000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="53" Address="20340000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="54" Address="20350000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="55" Address="20360000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="56" Address="20370000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="57" Address="20380000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="58" Address="20390000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="59" Address="203A0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="50" Address="203B0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="61" Address="203C0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="62" Address="203D0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="63" Address="203E0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+		<Parameters Label="64" Address="203F0000">
+			<xpp:expand select="Orchestral"/>
+		</Parameters>
+	</Parameters>
+</MIDIImplementation>

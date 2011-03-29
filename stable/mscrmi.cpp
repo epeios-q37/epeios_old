@@ -215,7 +215,7 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Label", Parameter.Label );
 
-	if ( sprintf( Address, "%08lX", Parameter.Address() ) < 0 )
+	if ( sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter.S_.Address ) ), Parameter.Offset() ) < 0 )
 		ERRs();
 
 	Writer.PutAttribute( "Address", Address );
@@ -996,7 +996,7 @@ private:
 		case 2:
 		case 3:
 		case 4:
-			Long = Encode_( Value.ToUL( &Error, str::b10, ( 0xffffffff >> ( 8 * ( 4 - Size ) ) ) ) );
+			Long = Value.ToUL( &Error, str::b10, ( 0xffffffff >> ( 8 * ( 4 - Size ) ) ) );
 			break;
 		default:
 			ERRc();

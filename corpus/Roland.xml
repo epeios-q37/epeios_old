@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<MIDIImplementations xmlns="http://zeusw.org/epeios/ermi" xmlns:xpp="http://zeusw.org/epeios/expp">
+	<xpp:expand href="V-Piano.xml"/>
+	<xpp:expand href="VK-77.xml"/> 
+</MIDIImplementations>

@@ -35,7 +35,7 @@ using namespace common;
 
 static void GetSettings_(
 	const char *SettingsFileName,
-	const mscrmi::midi_implementation_ Implementation,
+	const mscrmi::midi_implementation_ &Implementation,
 	mscrmi::adata_set_ &DataSet )
 {
 ERRProlog
@@ -111,7 +111,7 @@ void set::WriteSettings(
 
 	common::Normalize( RawDeviceID, RawDIn, RawDOut, DeviceID, DIn, DOut );
 
-	if ( ( RawInput != NULL ) || ( RawInput == 0 ) ) 
+	if ( ( RawInput == NULL ) || ( *RawInput == 0 ) ) 
 		Report( eMissingSettingsFileName );
 
 	WriteSettings_( DeviceID, DIn, DOut, RawInput );

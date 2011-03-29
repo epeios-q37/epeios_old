@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-  <Translations message="EFIL_UnableToDuplicate">
+  <Translations message="FIL_UnableToDuplicate">
     <Translation language="fr">Impossible de dupliquer le fichier '%1'</Translation>
     <Translation language="en-US">Unable to duplicate file '%1'</Translation>
   </Translations>
-  <Translations message="EFIL_UnableToSuppress"><!-- Shared by both 'recover_status__' and 'backup_status__' -->
+  <Translations message="FIL_UnableToSuppress"><!-- Shared by both 'recover_status__' and 'backup_status__' -->
     <Translation language="fr">Impossible de supprimer le fichier '%1'</Translation>
     <Translation language="en-US">Unable to suppress file '%1'</Translation>
   </Translations>
-  <Translations message="EFIL_UnableToRename"><!-- Shared by both 'recover_status__' and 'backup_status__' -->
+  <Translations message="FIL_UnableToRename"><!-- Shared by both 'recover_status__' and 'backup_status__' -->
     <Translation language="fr">Impossible de renommer le fichier '%1'</Translation>
     <Translation language="en-US">Unable to rename file '%1'</Translation>
   </Translations>
   <!--
-	<Translations message="EFIL_">
+	<Translations message="FIL_">
 		<Translation language="fr"></Translation>
 		<Translation language="en-US"></Translation>
 	</Translations>

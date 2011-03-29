@@ -88,7 +88,7 @@
 				<Translation language="fr">Identifiant du dispositif d'entrée MIDI maquant</Translation>
 				<Translation language="en-US">Missing MIDI in device ID</Translation>
 			</Translations>
-			<Translations message="BadOutID">
+			<Translations message="BadDOutID">
 				<Translation language="fr">Mauvais identifiant du dispositif de sortie MIDI</Translation>
 				<Translation language="en-US">Bad MIDI in device ID</Translation>
 			</Translations>

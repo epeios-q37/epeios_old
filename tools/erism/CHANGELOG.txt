@@ -1,5 +1,18 @@
 $Id$
 
+'erism' changelog.
+
+*********
+* 0.1.1 *
+*********
+
+29/03/2011 : Publication.
+
+29/03/2001 :
+	- Fixing the bug causing that all the 'Parameters' addresses in a settings file were absolute, despite defined relative in the MIDI implementation definitions file.
+	- In the 'VK-77.xml' MIDI implmentation definitions file, adding some addresses to obtain better settings files.
+	- Fixing '--write' dysfonctionnements.
+	
 *********
 * 0.1.0 *
 *********

@@ -4,11 +4,11 @@ $Id$
 ------------------------------------------------------
 'eRISM' is a tool from the Epeios project (http://zeusw.org/epeios/) for managing Roland instruments settings.
 
-'eRISM' is published under GNU General Public Licesnse (see LICENSE file).
+'eRISM' is published under GNU General Public License (see LICENSE file).
 
 The windows binary is provided with this package ('erism.exe').
 
-Under GNU/Linux, cygwin (and theoritically under Mac), unpack the archive, then launch 'make'.
+Under GNU/Linux, Cygwin (and theoritically under Mac), unpack the archive, then launch 'make'.
 
 Launch 'erism --help' to obtain a help page.
 

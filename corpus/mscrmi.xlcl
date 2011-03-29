@@ -2,12 +2,13 @@
 <!-- $Id$ -->
 <!-- Traductions pour la bibliothèque 'MSCRMI' -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-<!--
+	<!--
 	<Translations message="MSCRMI_">
 		<Translation language="fr"></Translation>
 		<Translation language="en-US"></Translation>
 	</Translations>
- -->
+	 -->
+	
 	<!-- Début traductions 'parse_status' -->
 	<Translations message="MSCRMI_ParserError">
 		<Translation language="fr">Erreur durant l'analyse du fichier</Translation>
@@ -34,6 +35,7 @@
 		<Translation language="en-US">Bad value</Translation>
 	</Translations>
 	<!-- Fin traductions 'parse_status' -->
+	
 	<!-- Début traductions 'transmission_status' -->
 	<Translations message="MSCRMI_ChecksumError">
 		<Translation language="fr">Somme de contrôle incorrecte</Translation>
@@ -43,9 +45,5 @@
 		<Translation language="fr">Données incorrectes</Translation>
 		<Translation language="en-US">Incorrect data</Translation>
 	</Translations>
-
-	<Translations message="MSCRMI_">
-		<Translation language="fr"></Translation>
-		<Translation language="en-US"></Translation>
-	</Translations>
+	<!-- Fin traductions 'transmission_status' -->
 </xpp:bloc>
