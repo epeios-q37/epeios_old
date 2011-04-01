@@ -1,5 +1,9 @@
 $Id$
 
+01/04/2011 :
+	- MSCRMI :
+		- Mise en oeuvre de la notion de 'type', remplaçant 'size' dans un paramètre.
+
 29/03/2011 :
 	- MSCRMI :
 		- L'adresse affichée des 'Parameters' est maintenant relative lorsque c'est adapté, et non plus systématiquement relatif.

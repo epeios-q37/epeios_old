@@ -9,6 +9,16 @@
 	</Translations>
 	 -->
 	
+	<!-- Message générique -->
+	<Translations message="MSCRMI_ErrorAtLineColumnInFile">
+		<Translation language="fr">Erreur à la ligne %1, colonne %2 dans le fichier '%3'</Translation>
+		<Translation language="en-US">Error at line %1, column %2 in file '%3'</Translation>
+	</Translations>
+	<Translations message="MSCRMI_ErrorAtLineColumn">
+		<Translation language="fr">Erreur à la ligne %1, colonne %2</Translation>
+		<Translation language="en-US">Error at line %1, column %2</Translation>
+	</Translations>
+
 	<!-- Début traductions 'parse_status' -->
 	<Translations message="MSCRMI_ParserError">
 		<Translation language="fr">Erreur durant l'analyse du fichier</Translation>

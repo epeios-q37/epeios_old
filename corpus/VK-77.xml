@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <MIDIImplementation ModelLabel="Roland VK-77" ModelID="001A" DeviceFamily="1A010000">
-	<xpp:define name="Harmonic Bars">
-		<xpp:bloc>
-			<Parameter Label="16'"/>
-			<Parameter Label="5-1/3'"/>
-			<Parameter Label="8'"/>
-			<Parameter Label="4'"/>
-			<Parameter Label="2-2/3'"/>
-			<Parameter Label="2'"/>
-			<Parameter Label="1-3/5'"/>
-			<Parameter Label="1-1/3'"/>
-			<Parameter Label="1'"/>
-		</xpp:bloc>
-	</xpp:define>
 	<Parameters Label="System" Address="00000000">
 		<Parameters Label="Basic" Address="00">
 			<Parameter Label="Master Tune"/>
@@ -68,7 +55,15 @@
 			</Parameters>
 			<Parameter Label="Harmonic Bar MIDI Mode"/>
 			<Parameters Label="Harmonic Bar Ctrl No.">
-				<xpp:expand select="Harmonic Bars"/>
+				<Parameter Label="16'"/>
+				<Parameter Label="5-1/3'"/>
+				<Parameter Label="8'"/>
+				<Parameter Label="4'"/>
+				<Parameter Label="2-2/3'"/>
+				<Parameter Label="2'"/>
+				<Parameter Label="1-3/5'"/>
+				<Parameter Label="1-1/3'"/>
+				<Parameter Label="1'"/>
 			</Parameters>
 		</Parameters>
 	</Parameters>
@@ -149,6 +144,9 @@
 		<xpp:define name="Registration">
 			<xpp:bloc>
 				<Parameters Label="Common" Address="0000">
+					<Parameter Label="Registration Name" Type="Name"/>
+
+					<!--
 					<Parameters Label="Registration Name">
 						<Parameter Label="1"/>
 						<Parameter Label="2"/>
@@ -167,7 +165,8 @@
 						<Parameter Label="15"/>
 						<Parameter Label="16"/>
 					</Parameters>
-					<Parameter Label="Pedal to Lower"/>
+					-->
+					<Parameter Label="Pedal to Lower" Type="Raw1"/>
 					<Parameter Label="Lower Keyboard Split Point"/>
 					<Parameters Label="Organ Part">
 						<Parameter Label="Bender Assign"/>
@@ -225,26 +224,18 @@
 						<Parameter Label="H.Bar Level"/>
 						<Parameter Label="Direct Switch"/>
 					</Parameters>
-					<Parameters Label="Upper H.Bar">
-						<xpp:expand select="Harmonic Bars"/>
-					</Parameters>
-					<Parameters Label="Lower H.Bar">
-						<xpp:expand select="Harmonic Bars"/>
-					</Parameters>
+					<Parameter Label="Upper H.Bar" Type="HBars"/>
+					<Parameter Label="Lower H.Bar" Type="HBars"/>
 					<Parameters Label="Pedal">
 						<Parameters Label="H.Bar">
-							<Parameter Label="16'"/>
+							<Parameter Label="16'" Type="Raw1"/>
 							<Parameter Label="8'"/>
 						</Parameters>
-						<Parameters Label="Pedal 16' H.Bar Mixing Ratio">
-							<xpp:expand select="Harmonic Bars"/>
-						</Parameters>
-						<Parameters Label="Pedal 8' H.Bar Mixing Ratio">
-							<xpp:expand select="Harmonic Bars"/>
-						</Parameters>
+						<Parameter Label="Pedal 16' H.Bar Mixing Ratio" Type="HBars"/>
+						<Parameter Label="Pedal 8' H.Bar Mixing Ratio" Type="HBars"/>
 					</Parameters>
 					<Parameters Label="Sustain">
-						<Parameter Label="Switch"/>
+						<Parameter Label="Switch" Type="Raw1"/>
 						<Parameter Label="Time"/>
 					</Parameters>
 					<Parameters Label="Pedal Attack">

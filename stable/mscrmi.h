@@ -248,13 +248,26 @@ namespace mscrmi {
 		return _Address( Address ) & ~_Stencil( Address );
 	}
 
+	enum type__ {
+		tRaw1,	// Donnée brute, de taille 1 octet.
+		tRaw2,	// Donnée brute, de taille 2 octet.
+		tRaw4,	// Donnée brute, de taille 4 octet.
+		tName,	// Nom, de taille 16.
+		tHBars,	// 'Harmonic Bars' pour des réglages type orgue Hammond.
+		t_amount,
+		t_Undefined,
+		t_Group,	// Signale un groupe de paramètre.
+	};
+
+	size__ Size( type__ Type );
+
 	class _parameter_core_
 	{
 	public:
 		struct s {
 			label_::s Label;
 			xaddress__ Address;
-			size__ Size;	// Si == 0, correspond à un groupe de poaramètres.
+			type__ Type;
 		} &S_;
 		label_ Label;
 		_parameter_core_( s &S )
@@ -265,7 +278,7 @@ namespace mscrmi {
 		{
 			Label.reset( P );
 			S_.Address = MSCRMI_UNDEFINED_ADDRESS;
-			S_.Size = 0;
+			S_.Type = t_Undefined;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -279,7 +292,7 @@ namespace mscrmi {
 		{
 			Label = PC.Label;
 			S_.Address = PC.S_.Address;
-			S_.Size = PC.S_.Size;
+			S_.Type = PC.S_.Type;
 
 			return *this;
 		}
@@ -287,16 +300,16 @@ namespace mscrmi {
 		{
 			Label.Init();
 			S_.Address = MSCRMI_UNDEFINED_ADDRESS;
-			S_.Size = 0;
+			S_.Type = t_Undefined;
 		}
 		void Init(
 			const label_ &Label,
 			xaddress__ Address,
-			size__ Size )
+			type__ Type )
 		{
 			this->Label.Init( Label );
 			S_.Address = Address;
-			S_.Size = Size;
+			S_.Type = Type;
 		}
 		address__ Address( void ) const
 		{
@@ -310,7 +323,11 @@ namespace mscrmi {
 		{
 			return _Offset( S_.Address );
 		}
-		E_RODISCLOSE_( size__, Size )
+		size__ Size( void ) const
+		{
+			return mscrmi::Size( S_.Type );
+		}
+		E_RODISCLOSE_( type__, Type );
 	};
 
 	E_AUTO( _parameter_core );
@@ -358,10 +375,10 @@ namespace mscrmi {
 		void Init(
 			const label_ &Label,
 			xaddress__ Address,
-			size__ Size,
+			type__ Type,
 			row__ GroupRow )
 		{
-			_parameter_core_::Init( Label, Address, Size );
+			_parameter_core_::Init( Label, Address, Type );
 			S_.GroupRow = GroupRow;
 		}
 		void Init(
@@ -495,10 +512,16 @@ namespace mscrmi {
 		parse_status__ Status,
 		const str::string_ &Language,
 		const lcl::locale_ &Locale,
-		STR_BUFFER___ &Buffer )
-	{
-		return Locale.GetTranslation( Label( Status ), Language, "MSCRMI_", Buffer );
-	}
+		STR_BUFFER___ &Buffer );
+
+	const str::string_ &GetTranslation(
+		parse_status__ Status,
+		const str::string_ &Language,
+		const lcl::locale_ &Locale,
+		const xtf::coord__ &Coord,
+		const str::string_ &FileName,
+		str::string_ &Translation );
+
 
 	parse_status__ Parse(
 		xml::parser___ &Parser,

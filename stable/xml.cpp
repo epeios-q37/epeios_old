@@ -66,7 +66,7 @@ public:
 #include "fnm.h"
 #include "lcl.h"
 
-#define MESSAGE_PREFIX	"EXML_"
+#define MESSAGE_PREFIX	"XML_"
 
 using namespace xml;
 

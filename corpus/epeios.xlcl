@@ -6,6 +6,7 @@
 	<xpp:expand href="fil.xlcl"/>
 	<xpp:expand href="frdkrn.xlcl"/>
 	<xpp:expand href="mscmdd.xlcl"/>
+	<xpp:expand href="mscrmi.xlcl"/>
 	<xpp:expand href="nsxpcm.xlcl"/>
 	<xpp:expand href="rgstry.xlcl"/>
 	<xpp:expand href="xpp.xlcl"/>

@@ -216,8 +216,16 @@ ERRBegin
 		va_end( Args );
 		break;
 	case eMIDIImplementationFileError:
-		xpp::GetTranslation( *va_arg( Args, const xpp::preprocessing_iflow___ *), LocaleRack.Language(), _Locale, Translation );
+	{
+		mscrmi::parse_status__ &Status = *va_arg( Args, mscrmi::parse_status__ *);
+		const xpp::preprocessing_iflow___ &Flow = *va_arg( Args, const xpp::preprocessing_iflow___ *);
+		
+		if ( Status == mscrmi::psParserError )
+			xpp::GetTranslation( Flow, LocaleRack.Language(), _Locale, Translation );
+		else
+			mscrmi::GetTranslation( Status, LocaleRack.Language(), _Locale, Flow.Coord(), Flow.LocalizedFileName(), Translation );
 		break;
+	}
 	case eUnableToIdentifyDevice:
 		GetTranslation( Error, Translation );
 		TagValue.Init();
@@ -508,7 +516,10 @@ ERRBegin
 		break;
 	case fnm::tSuffixed:
 	case fnm::tFree:
-		FileName.Init( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), RawFileName, "", FNMBuffer ) );
+		if ( !fil::FileExists( RawFileName ) )
+			FileName.Init( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), RawFileName, "", FNMBuffer ) );
+		else
+			FileName.Init( RawFileName );
 		break;
 	default:
 		ERRc();
@@ -527,7 +538,7 @@ ERRBegin
 	case mscrmi::psOK:
 		break;
 	default:
-		Report( eMIDIImplementationFileError, &PFlow );
+		Report( eMIDIImplementationFileError, &Status, &PFlow );
 		break;
 	}
 

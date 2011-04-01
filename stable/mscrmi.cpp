@@ -62,6 +62,8 @@ public:
 
 using namespace mscrmi;
 
+#define MESSAGE_PREFIX	"MSCRMI_"
+
 using xml::parser___;
 
 void mscrmi::Print(
@@ -135,6 +137,35 @@ static inline xaddress__ Sum_(
 	return mscrmi::_SetStencilSize( Sum( mscrmi::_Address( Address ), Size ), mscrmi::_StencilSize( Address ) );
 }
 
+size__ mscrmi::Size( type__ Type )
+{
+	switch ( Type ) {
+	case tRaw1:
+		return 1;
+		break;
+	case tRaw2:
+		return 2;
+		break;
+	case tRaw4:
+		return 4;
+		break;
+	case tName:
+		return 16;
+		break;
+	case tHBars:
+		return 9;
+		break;
+	case t_Group:
+		ERRc();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return 0;	// Pour éviter un 'warning'.
+}
+
 void mscrmi::GetBlocs(
 	const parameters_ &Parameters,
 	blocs_ &Blocs )
@@ -146,7 +177,7 @@ void mscrmi::GetBlocs(
 	Parameter.Init( Parameters );
 
 	if ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Parameter( Row ).Size() == 0 ) )
+		while ( ( Row != NONE ) && ( Parameter( Row ).Type() == t_Group ) )
 			Row = Parameters.Next( Row );
 
 		if ( Row != NONE ) {
@@ -159,7 +190,7 @@ void mscrmi::GetBlocs(
 
 
 	while ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Parameter( Row ).Size() == 0 ) )
+		while ( ( Row != NONE ) && ( Parameter( Row ).Type() == t_Group ) )
 			Row = Parameters.Next( Row );
 
 		if ( Row != NONE ) {
@@ -243,7 +274,7 @@ row__ mscrmi::Search(
 
 	while ( ( Row != NONE ) &&
 			( ( Parameter( Row ).Address() < Address )
-				|| ( ( Parameter( Row ).Size() ) == 0 ) ) )
+				|| ( ( Parameter( Row ).Type() ) == t_Group ) ) )
 		Row = Parameters.Next( Row );
 
 	if ( ( Row != NONE ) && ( Parameter( Row ).Address() > Address ) )
@@ -278,7 +309,7 @@ ERRBegin
 			ParentRow = Rows.Pop();
 		}
 
-		if ( Parameter( Row ).Size() == 0 ) {
+		if ( Parameter( Row ).Type() == t_Group ) {
 			Rows.Push( ParentRow );
 			ParentRow = Row;
 			Writer.PushTag( "Parameters" );
@@ -287,7 +318,7 @@ ERRBegin
 
 		Print_( Parameter( Row ), Writer );
 
-		if ( Parameter( Row ).Size() != 0 )
+		if ( Parameter( Row ).Type() != t_Group )
 			Writer.PopTag();
 
 		Row = Parameters.Next( Row );
@@ -321,6 +352,59 @@ const char *mscrmi::Label( parse_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 
 }
+
+const char *mscrmi::Translate(
+	parse_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	STR_BUFFER___ &Buffer )
+{
+	return Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Buffer );
+}
+
+const str::string_ &mscrmi::GetTranslation(
+	parse_status__ Status,
+	const str::string_ &Language,
+	const lcl::locale_ &Locale,
+	const xtf::coord__ &Coord,
+	const str::string_ &FileName,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::string Message;
+	STR_BUFFER___ SBuffer;
+	bso::integer_buffer__ IBuffer;
+	lcl::strings Values;
+ERRBegin
+	Message.Init();
+
+	if ( FileName.Amount() != 0 )
+		Locale.GetTranslation( "ErrorAtLineColumnInFile", Language, MESSAGE_PREFIX, Message );
+	else
+		Locale.GetTranslation( "ErrorAtLineColumn", Language, MESSAGE_PREFIX, Message );
+
+	Values.Init();
+	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
+	Values.Append( str::string( bso::Convert( Coord.Column, IBuffer ) ) );
+	Values.Append( FileName );
+
+	lcl::ReplaceTags( Message, Values );
+
+	Translation.Append( Message );
+
+	Translation.Append( " : " );
+
+	Message.Init( Translate( Status, Language, Locale, SBuffer ) );
+
+	Translation.Append( Message );
+
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
 
 #undef CASE
 
@@ -485,7 +569,7 @@ ERRBegin
 
 	Status = psOK;
 
-	Core.Init( Label, Address, 0 );
+	Core.Init( Label, Address, t_Group );
 
 	Value.Init();
 
@@ -496,10 +580,28 @@ ERREpilog
 	return Status;
 }
 
+static inline type__ Type_( const str::string_ &Wording )
+{
+	type__ Type = t_Undefined;
+
+	if ( Wording == "Raw1" )
+		Type = tRaw1;
+	else if ( Wording == "Raw2" )
+		Type = tRaw1;
+	else if ( Wording == "Raw4" )
+		Type = tRaw4;
+	else if ( Wording == "Name" )
+		Type = tName;
+	else if ( Wording == "HBars" )
+		Type = tHBars;
+
+	return Type;
+}
+
 static parse_status__ ParseParameter_(
 	parser___ &Parser,
 	xaddress__ &Address,
-	size__ &Size,
+	type__ &Type,
 	callback__ &Callback )
 {
 	parse_status__ Status = ps_Undefined;
@@ -508,6 +610,7 @@ ERRProlog
 	label Label;
 	_parameter_core Core;
 	str::string Value;
+	bso::bool__ TypeDefined = false;
 ERRBegin
 	Label.Init();
 	Value.Init();
@@ -530,20 +633,18 @@ ERRBegin
 			} else if ( Parser.AttributeName() == "Address" ) {
 				if ( ( Address = HandleAddress_( Address, Parser.Value() ) ) == MSCRMI_UNDEFINED_ADDRESS )
 					return psBadValue;
-			} else if ( Parser.AttributeName() == "Size" ) {
-				  epeios::row__ Error = NONE;
+			} else if ( Parser.AttributeName() == "Type" ) {
+				if ( TypeDefined ) {
+					Status = psAttributeAlreadyDefined;
+					ERRReturn;
+				}
 
-				  Size = Parser.Value().ToUB( &Error );
+				TypeDefined = true;
 
-				  if ( Error != NONE ) {
-					  Status = psBadValue;
-					  ERRReturn;
-				  }
-
-				  if ( Size == 0 ) {
-					  Status = psBadValue;
-					  ERRReturn;
-				  }
+				if ( ( Type = Type_( Parser.Value() ) ) == t_Undefined ) {
+					Status = psAttributeAlreadyDefined;
+					ERRReturn;
+				}
 			} else if ( Parser.AttributeName() == "Value" ) {
 				if ( Value.Amount() != 0 ) {
 					Status = psAttributeAlreadyDefined;
@@ -557,9 +658,9 @@ ERRBegin
 					ERRReturn;
 				}
 			} else {
-				Status = psUnexpectedAttribute;
-				ERRReturn;
-			}
+					Status = psUnexpectedAttribute;
+					ERRReturn;
+				}
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -583,11 +684,11 @@ ERRBegin
 
 	Status = psOK;
 
-	Core.Init( Label, Address, Size );
+	Core.Init( Label, Address, Type );
 
 	Callback.Handle( Core, Value );
 
-	Address = Sum_( Address, Size );
+	Address = Sum_( Address, Size( Type ) );
 
 ERRErr
 ERREnd
@@ -599,7 +700,7 @@ ERREpilog
 static parse_status__ ParseParameters_(
 	parser___ &Parser,
 	xaddress__ &Address,
-	size__ &Size,
+	type__ &Type,
 	callback__ &Callback )
 {
 	parse_status__ Status = ps_Undefined;
@@ -615,7 +716,7 @@ ERRBegin
 				if ( ( Status = ParseParametersSpecifications_( Parser, Address, Callback ) ) != psOK )
 					ERRReturn;
 
-				if ( ( Status = ParseParameters_( Parser, Address, Size, Callback ) ) != psOK )
+				if ( ( Status = ParseParameters_( Parser, Address, Type, Callback ) ) != psOK )
 					ERRReturn;
 
 				Core.Init();
@@ -623,7 +724,7 @@ ERRBegin
 
 				Callback.Handle( Core, Value );
 			} else if ( Parser.TagName() == "Parameter" ) {
-				if ( ( Status = ParseParameter_( Parser, Address, Size, Callback ) ) != psOK )
+				if ( ( Status = ParseParameter_( Parser, Address, Type, Callback ) ) != psOK )
 					ERRReturn;
 			} else {
 				Status = psUnexpectedTag;
@@ -658,9 +759,9 @@ static parse_status__ ParseParameters_(
 	callback__ &Callback )
 {
 	xaddress__ Address = 0;
-	size__ Size = 1;
+	type__ Type = tRaw1;
 
-	return ParseParameters_( Parser, Address, Size, Callback );
+	return ParseParameters_( Parser, Address, Type, Callback );
 }
 
 static void RevertDeviceFamily_( device_family__ DeviceFamily )
@@ -742,7 +843,7 @@ protected:
 
 			GroupRow = _Parameters->Add( Parameter );
 
-			if ( Core.Size() == 0 )
+			if ( Core.Type() == t_Group )
 				_GroupRow = GroupRow;
 		}
 
@@ -965,22 +1066,9 @@ private:
 	row__ _Row;
 	row__ _Search( address__ Address ) const
 	{
-#if 0
-		ctn::E_CMITEMt( parameter_, row__ ) Parameter;
-		row__ Row = ( _Row == NONE ? _Parameters->First() : _Row );
-
-		Parameter.Init( *_Parameters );
-
-		while ( ( Row != NONE ) &&
-			    ( ( Parameter( Row ).Address() < Address )
-				   || ( ( Parameter( Row ).Size() ) == 0 ) ) )
-			Row = _Parameters->Next( Row );
-
-		return Row;
-#endif
 		return Search( Address, _Row, *_Parameters );
 	}
-	parse_status__ _Convert( 
+	parse_status__ _ConvertRawValue( 
 		const str::string_ &Value,
 		size__ Size,
 		data_ &Data )
@@ -1011,6 +1099,59 @@ private:
 
 		return psOK;
 	}
+	parse_status__ _ConvertTextValue( 
+		const str::string_ &Value,
+		size__ Size,
+		data_ &Data )
+	{
+		epeios::row__ Row = Value.First();
+		bso::char__ Char = 0;
+
+		if ( Value.Amount() > Size )
+			return psBadValue;
+
+		while ( Row != NONE ) {
+			Char = Value( Row );
+
+			if ( ( Char < 32 ) ||( Char > 127 ) )
+				return psBadValue;
+
+			Data.Append( Char );
+
+			Size--;
+
+			Row = Value.Next( Row );
+		}
+
+		while ( Size-- )
+			Data.Append( ' ' );
+
+		return psOK;
+	}
+	parse_status__ _ConvertHBarsValue( 
+		const str::string_ &Value,
+		size__ Size,
+		data_ &Data )
+	{
+		epeios::row__ Row = Value.First();
+		bso::char__ Char = 0;
+
+		if ( Value.Amount() != 9 )
+			return psBadValue;
+
+		while ( Row != NONE ) {
+			Char = Value( Row );
+
+			if ( ( Char < '0' ) ||( Char > '8' ) )
+				return psBadValue;
+
+			Data.Append( Char - '0' );
+
+			Row = Value.Next( Row );
+		}
+
+		return psOK;
+	}
 protected:
 	virtual parse_status__ Handle(
 		const _parameter_core_ &Core,
@@ -1023,7 +1164,7 @@ protected:
 	ERRBegin
 		Parameter.Init( *_Parameters );
 
-		if ( Core.Size() != 0 ) {
+		if ( Core.Type() != t_Group ) {
 
 			if ( ( _Row = _Search( Core.Address() ) ) == NONE ) {
 				Status = psBadValue;
@@ -1037,14 +1178,30 @@ protected:
 
 			RawData.Init();
 
-			_Convert( Value, Parameter( _Row ).Size(), RawData );
+			switch ( Parameter( _Row ).Type() ) {
+			case tRaw1:
+			case tRaw2:
+			case tRaw4:
+				Status = _ConvertRawValue( Value, Parameter( _Row ).Size(), RawData );
+				break;
+			case tName:
+				Status = _ConvertTextValue( Value, Parameter( _Row ).Size(), RawData );
+				break;
+			case tHBars:
+				Status = _ConvertHBarsValue( Value, Parameter( _Row ).Size(), RawData );
+				break;
+			default:
+				ERRc();
+				break;
+			}
+
+			if ( Status != psOK )
+				ERRReturn;
 
 			if ( _Data.Address() == MSCRMI_UNDEFINED_ADDRESS )
 				_Data.Init( RawData, Core.Address() );
 			else if ( ( ( RawData.Amount() + _Data.Amount() ) > 128 )
-			     || ( Sum_( _Data.Address(), (size__)_Data.Amount() ) != Core.Address() ) ) 
-
-			{
+			          || ( Sum_( _Data.Address(), (size__)_Data.Amount() ) != Core.Address() ) ) {
 				_DataSet->Append( _Data );
 				_Data.Init( RawData, Core.Address() );
 			} else {
@@ -1384,7 +1541,7 @@ ERRProlog
 	epeios::row__ DataRow = NONE;
 	address__ Address = NONE;
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
-	size__ Size;
+	type__ Type;
 ERRBegin
 	Address = Data.Address();
 	DataRow = Data.First();
@@ -1393,25 +1550,25 @@ ERRBegin
 	while ( DataRow != NONE ) {
 		while ( ( ParameterRow != NONE ) &&
 			    ( ( Parameter( ParameterRow ).Address() < Address )
-				   || ( ( Size = Parameter( ParameterRow ).Size() ) == 0 ) ) )
+				   || ( ( Type = Parameter( ParameterRow ).Type() ) == t_Group ) ) )
 			ParameterRow = Parameters.Next( ParameterRow );
 
 		if ( ( ParameterRow == NONE ) || ( Parameter( ParameterRow ).Address() > Address ) )
 			ERRu();
 
-		if ( !Data.Exists( Data.Next( DataRow, Size - 1 ) ) )
+		if ( !Data.Exists( Data.Next( DataRow, Size( Type ) - 1 ) ) )
 			ERRu();
 
 		Setting.Init( ParameterRow );
 
-		Setting.Data.Allocate( Size );
-		Setting.Data.Store( Data, Size, 0, DataRow );
+		Setting.Data.Allocate( Size( Type ) );
+		Setting.Data.Store( Data, Size( Type ), 0, DataRow );
 
 		Settings.Append( Setting );
 
-		Address = Sum_( Address, Size );
+		Address = Sum_( Address, Size( Type ) );
 
-		DataRow = Data.Next( DataRow, Size );
+		DataRow = Data.Next( DataRow, Size( Type ) );
 	}
 ERRErr
 ERREnd
@@ -1435,14 +1592,83 @@ static bso::ulong__ Convert_( const str::string_ &Value )
 	return V;
 }
 
+static const str::string_ &ConvertToRawValue_(
+	const str::string_ &Data,
+	str::string_ &Buffer )
+{
+	bso::integer_buffer__ IBuffer;
+
+	Buffer.Append( bso::Convert( Decode_( Convert_( Data ) ), IBuffer ) );
+
+	return Buffer;
+}
+
+static const str::string_ &ConvertToNameValue_(
+	const data_ &Data,
+	size__ Size,
+	str::string_ &Buffer )
+{
+	epeios::row__ Row = Data.First();
+	epeios::size__ Amount = 0;
+	bso::char__ Char = 0;
+
+	if ( Data.Amount() > Size )
+		ERRc();
+
+	while ( Row != NONE ) {
+		Char = Data( Row );
+
+		if ( ( Char < 32 ) ||( Char > 127 ) )
+			ERRc();
+
+		Buffer.Append( Char );
+
+		if ( Char != ' ' )
+			Amount = Buffer.Amount();
+
+		Row = Data.Next( Row );
+	}
+
+	Buffer.Allocate( Amount );
+
+	return Buffer;
+}
+
+static const str::string_ &ConvertToHBarsValue_(
+	const data_ &Data,
+	size__ Size,
+	str::string_ &Buffer )
+{
+	epeios::row__ Row = Data.First();
+	bso::char__ Char = 0;
+
+	if ( Data.Amount() > Size )
+		ERRc();
+
+	while ( Row != NONE ) {
+		Char = Data( Row );
+
+		if ( ( Char < 0 ) ||( Char > 8 ) )
+			ERRc();
+
+		Buffer.Append( Char + '0' );
+
+		Row = Data.Next( Row );
+	}
+
+	return Buffer;
+}
+
 static inline void Print_(
 	const setting_ &Setting,
 	const parameters_ &Parameters,
 	xml::writer_ &Writer )
 {
+ERRProlog
 	char Address[] = "12345678";
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
-	bso::integer_buffer__ Buffer;
+	str::string Buffer;
+ERRBegin
 
 	Parameter.Init( Parameters );
 
@@ -1453,7 +1679,33 @@ static inline void Print_(
 
 	Writer.PutAttribute( "Address", Address );
 
-	Writer.PutAttribute( "Value", bso::Convert( Decode_( Convert_( Setting.Data ) ), Buffer ) );
+	Buffer.Init();
+
+	switch ( Parameter( Setting.Row() ).Type() ) {
+	case tRaw1:
+	case tRaw2:
+	case tRaw4:
+		ConvertToRawValue_( Setting.Data, Buffer );
+		/// Attention : si un jour ajout d'un 'tRawx' ou x > 4, la fonction ci-dessus ne fonctionne pas !
+		break;
+	case tName:
+		ConvertToNameValue_( Setting.Data, Size( Parameter( Setting.Row() ).Type() ), Buffer );
+		break;
+	case tHBars:
+		ConvertToHBarsValue_( Setting.Data, Size( Parameter( Setting.Row() ).Type() ), Buffer );
+		break;
+	case t_Group:
+		ERRc();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	Writer.PutAttribute( "Value", Buffer);
+ERRErr
+ERREnd
+ERREpilog
 }
 
 typedef bch::E_BUNCH_( row__ ) rows_;
