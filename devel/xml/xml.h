@@ -427,7 +427,10 @@ namespace xml {
 			const dump_ &Dump ) = 0;
 		virtual bso::bool__ XMLComment(
 			const str::string_ &Value,
-			const dump_ &Dump ) = 0;
+			const dump_ &Dump )
+		{
+			return true;
+		}
 		void Init( void )
 		{}
 	};

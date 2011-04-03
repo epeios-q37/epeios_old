@@ -87,19 +87,21 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
+	clnarg::buffer__ Buffer;
+
 	cout << DESCRIPTION << txf::nl;
 	cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 
-	cout << NAME << " " << Description.GetCommandLabels( cMIDToX, "," ) << " <MIDI-source-file> [XMID-target-file]" << txf::nl;
+	cout << NAME << " " << Description.GetCommandLabels( cMIDToX, Buffer, "," ) << " <MIDI-source-file> [XMID-target-file]" << txf::nl;
 	cout << txf::tab << "converts file in MIDI format to XMID format." << txf::nl;
 
-	cout << NAME << " " << Description.GetCommandLabels( cXToMID, "," ) << " <XMID-source-file> <MIDI-target-file>" << txf::nl;
+	cout << NAME << " " << Description.GetCommandLabels( cXToMID, Buffer, "," ) << " <XMID-source-file> <MIDI-target-file>" << txf::nl;
 	cout << txf::tab << "converts file in XMID format to MIDI file." << txf::nl;
 
-	cout << NAME << " " << Description.GetCommandLabels( cAutomatic, "," ) << " <source-file>" << txf::nl;
+	cout << NAME << " " << Description.GetCommandLabels( cAutomatic, Buffer, "," ) << " <source-file>" << txf::nl;
 	cout << txf::tab << "make conversion depending from 'source-file' extension." << txf::nl;
 
 	cout << txf::nl;
@@ -300,10 +302,10 @@ void MIDToX(
 ERRProlog
 	xml::writer Writer;
 ERRBegin
-	xml::WriteXMLHeader( OFlow );
+	xml::WriteXMLHeader( OFlow, xml::e_Default );
 	OFlow << txf::nl;
 
-	Writer.Init( OFlow, xml::oIndent );
+	Writer.Init( OFlow, xml::oIndent, xml::e_Default );
 
 	mscmdx::MIDIToXMID( IFlow, mscmdm::oFile, Writer );
 ERRErr
@@ -317,20 +319,22 @@ void MIDToX(
 {
 ERRProlog
 	flf::file_oflow___ OFlow;
-	txf::text_oflow__ TOFlow( OFlow );
+	txf::text_oflow__ TOFlow;
 	bso::bool__ BackupCreated = false;
 ERRBegin
 	if ( TargetFile == NULL )
 		MIDToX( IFlow, cout );
 	else {
-		fil::CreateBackupFile( TargetFile, fil::hbfRename );
+		fil::CreateBackupFile( TargetFile, fil::bmRename );
 
 		BackupCreated = true;
 
-		if ( OFlow.Init( TargetFile, fil::mRemove, err::hSkip ) != fil::sSuccess ) {
+		if ( OFlow.Init( TargetFile, fil::mRemove, err::hUserDefined ) != fil::sSuccess ) {
 			cerr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
 			ERRExit( EXIT_FAILURE );
 		}
+
+		TOFlow.Init( OFlow );
 
 		MIDToX( IFlow, TOFlow );
 	}
@@ -348,7 +352,7 @@ void MIDToX(
 ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
-	if ( IFlow.Init( SourceFile, err::hSkip ) != fil::sSuccess ) {
+	if ( IFlow.Init( SourceFile, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -369,7 +373,7 @@ ERRProlog
 	xml::status__ Status = xml::s_Undefined;
 ERRBegin
 	if ( ( Status = mscmdx::XMIDToMIDI( IFlow, OFlow ) ) != xml::sOK ) {
-		cerr << "Error " << xml::GetLabel( Status ) << " : line " << IFlow.Coord().Line << ", character " << IFlow.Coord().Column << txf::nl;
+		cerr << "Error " << xml::Label( Status ) << " : line " << IFlow.Coord().Line << ", character " << IFlow.Coord().Column << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -388,11 +392,11 @@ ERRBegin
 	if ( TargetFile == NULL )
 		ERRc();
 
-	fil::CreateBackupFile( TargetFile, fil::hbfRename );
+	fil::CreateBackupFile( TargetFile, fil::bmRename );
 
 	BackupCreated = true;
 
-	if ( OFlow.Init( TargetFile, fil::mRemove, err::hSkip ) != fil::sSuccess ) {
+	if ( OFlow.Init( TargetFile, fil::mRemove, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -413,7 +417,7 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 	xtf::extended_text_iflow__ TFlow;
 ERRBegin
-	if ( IFlow.Init( SourceFile, err::hSkip ) != fil::sSuccess ) {
+	if ( IFlow.Init( SourceFile, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}

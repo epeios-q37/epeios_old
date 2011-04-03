@@ -109,7 +109,7 @@ static bso::bool__ ParseTrackChunk_(
 	flw::iflow__ &IFlow,
 	mscmdm::origin__ Origin,
 	xml::writer_ &Writer,
-	err::handle ErrHandling )
+	err::handling__ ErrHandling )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -193,7 +193,7 @@ bso::bool__ mscmdx::MIDIToXMID(
 	flw::iflow__ &IFlow,
 	origin__ Origin,
 	xml::writer_ &Writer,
-	err::handle ErrHandling )
+	err::handling__ ErrHandling )
 {
 	bso::integer_buffer__ IBuffer;
 	mscmdf::header_chunk__ HeaderChunk;
@@ -241,6 +241,8 @@ private:
 		epeios::row__ Row = Value.First();
 
 		while ( Row != NONE ) {
+			Error = NONE;
+
 			Data.Append( Value.ToUB( Row, &Error, str::b16 ) );
 
 			if ( Error != NONE ) {
@@ -415,7 +417,7 @@ ERRProlog
 ERRBegin
 	Callback.Init( OFlow );
 
-	Status = xml::Parse( IFlow, true, Callback );
+	Status = xml::Parse( IFlow, xml::eh_Default, Callback );
 ERRErr
 ERREnd
 ERREpilog

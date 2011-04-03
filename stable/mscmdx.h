@@ -74,7 +74,7 @@ namespace mscmdx {
 		flw::iflow__ &IFlow,
 		origin__ Origin,
 		xml::writer_ &Writer,
-		err::handle ErrHandle = err::hUsual );
+		err::handling__ ErrHandling = err::h_Default );
 
 	xml::status__ XMIDToMIDI(
 		xtf::extended_text_iflow__ &IFlow,

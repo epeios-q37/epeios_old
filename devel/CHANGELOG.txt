@@ -1,5 +1,11 @@
 $Id$
 
+03/04/2011 :
+	- MSCMDX :
+		- Adaptation aux modifications des bibliothèques sous-jacentes.
+	- XML :
+		- 'XMLComment(...)' est rendue concrète (suppression du '== 0'; ajout d'une définition par défaut) car mise en oeuvre trop exceptionnelle pour forcer sa définition dans une classe fille.
+
 01/04/2011 :
 	- MSCRMI :
 		- Mise en oeuvre de la notion de 'type', remplaçant 'size' dans un paramètre.
