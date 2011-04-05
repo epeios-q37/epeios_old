@@ -137,8 +137,7 @@ const char *xpp::Label( status__ Status )
 
 const str::string_ &xpp::GetTranslation(
 	status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	const str::string_ &LocalizedFileName,
 	const xtf::coord__ &Coord,
 	str::string_ &Translation )
@@ -150,9 +149,9 @@ ERRProlog
 	lcl::strings Values;
 ERRBegin
 	if ( LocalizedFileName.Amount() == 0 )
-		Message.Init( Locale.GetTranslation( "ErrorAtLineColumn", Language, MESSAGE_PREFIX, SBuffer ) );
+		Message.Init( LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
 	else
-		Message.Init( Locale.GetTranslation( "ErrorInFileAtLineColumn", Language, MESSAGE_PREFIX, SBuffer ) );
+		Message.Init( LocaleRack.GetTranslation( "ErrorInFileAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
 
 	
 	Values.Init();	
@@ -168,9 +167,9 @@ ERRBegin
 	Translation.Append( " : " );
 
 	if ( Status < (xpp::status__)xml::s_amount )
-		xml::GetTranslation( (xml::status__)Status, Language, Locale, Coord, Translation );
+		xml::GetTranslation( (xml::status__)Status, LocaleRack, Coord, Translation );
 	else
-		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Translation );
+		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Translation );
 ERRErr
 ERREnd
 ERREpilog

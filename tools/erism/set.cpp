@@ -132,23 +132,24 @@ ERRProlog
 ERRBegin
 	Min = Range.ToUL( &Error, Base );
 
-	if ( Error == NONE )
-		common::Report( ErrorValue );
+	if ( Error != NONE ) {
 
-	if ( Range( Error ) != '-' )
-		common::Report( ErrorValue );
+		if ( Range( Error ) != '-' )
+			common::Report( ErrorValue );
 
-	Position = Range.Next( Error );
+		Position = Range.Next( Error );
 
-	if ( Position == NONE )
-		common::Report( ErrorValue );
+		if ( Position == NONE )
+			common::Report( ErrorValue );
 
-	Error = NONE;
+		Error = NONE;
 
-	Max = Range.ToUL( Position, &Error, Base );
+		Max = Range.ToUL( Position, &Error, Base );
 
-	if ( Error != NONE )
-		common::Report( ErrorValue );
+		if ( Error != NONE )
+			common::Report( ErrorValue );
+	} else
+		Max = Min;
 
 	if ( Min > Max )
 		common::Report( ErrorValue );

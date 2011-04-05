@@ -85,8 +85,7 @@ const char *rgstry::Label( status__ Status )
 const str::string_ &rgstry::GetTranslation(
 	status__ Status,
 	const error_details_ &ErrorDetails,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -103,7 +102,7 @@ ERRBegin
 	case sUnableToOpenFile:
 		Message.Init();
 
-		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Message );
 
 		TagValues.Init();
 		TagValues.Append( ErrorDetails.FileName );
@@ -111,12 +110,12 @@ ERRBegin
 		lcl::ReplaceTags( Message, TagValues );
 		break;
 	case sParseError:
-		xpp::GetTranslation( ErrorDetails.XPPStatus(), Language, Locale, ErrorDetails.FileName, ErrorDetails.Coord(), Message );
+		xpp::GetTranslation( ErrorDetails.XPPStatus(), LocaleRack, ErrorDetails.FileName, ErrorDetails.Coord(), Message );
 		break;
 	case sRootPathError:
 		if ( ErrorDetails.GetPathErrorRow() != NONE )
 			ERRu();
-		Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Message );
 		break;
 	default:
 		ERRu();
@@ -129,15 +128,6 @@ ERRErr
 ERREnd
 ERREpilog
 	return Translation;
-}
-
-const str::string_ &rgstry::GetTranslation(
-	status__ Error,
-	const error_details_ &ErrorDetails,
-	const lcl::locale_rack___ &Locale,
-	str::string_ &Translation )
-{
-	return GetTranslation( Error, ErrorDetails, Locale.Language(), Locale.Locale(), Translation );
 }
 
 row__ rgstry::registry_::_Search(

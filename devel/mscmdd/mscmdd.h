@@ -622,11 +622,10 @@ namespace mscmdd {
 
 	inline const str::string_ &GetTranslation(
 		status__ Status,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation  )
 	{
-		Locale.GetTranslation( Label( Status ), Language, "MSCMDD_", Translation );
+		LocaleRack.GetTranslation( Label( Status ), "MSCMDD_", Translation );
 
 		return Translation;
 	}

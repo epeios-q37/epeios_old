@@ -113,8 +113,8 @@
 			</Translations>
 
 			<Translations message="UnableToIdentifyDevice">
-				<Translation language="fr">Impossible d'identifier l'appareil d'identifiant '%1'</Translation>
-				<Translation language="en-US">Unable to identify device of ID '%1'</Translation>
+				<Translation language="fr">Impossible d'identifier l'appareil d'identifiant '%1' (révision logicielle : %2)</Translation>
+				<Translation language="en-US">Unable to identify device of ID '%1' (software revision : %2)</Translation>
 			</Translations>
 
 			<Translations message="ErrorParsingConfigurationFile">

@@ -34,18 +34,18 @@ using namespace identity;
 
 static void Display_( const mscrmi::midi_implementation_ &Implementation )
 {
-	common::cout << Implementation.ModelLabel << txf::nl;
+	common::cout << Implementation.ModelLabel;
 }
 
 static void Display_(
 	const mscrmi::midi_implementations_ &Implementations,
 	epeios::row__ Row )
 {
-	ctn::E_CITEM( mscrmi::midi_implementation_ ) Implmenetation;
+	ctn::E_CITEM( mscrmi::midi_implementation_ ) Implementation;
 
-	Implmenetation.Init( Implementations );
+	Implementation.Init( Implementations );
 
-	Display_( Implmenetation( Row ) );
+	Display_( Implementation( Row ) );
 }
 
 void Identify_(
@@ -56,12 +56,23 @@ void Identify_(
 ERRProlog
 	mscrmi::midi_implementations Implementations;
 	epeios::row__ Row = NONE;
+	mscrmi::device_family__ DeviceFamily;
+	mscrmi::software_revision__ SoftwareRevision;
+	str::string Buffer;
 ERRBegin
 	Implementations.Init();
 
 	common::GetImplementations( Implementations );
 
-	Display_( Implementations, common::Identify( DeviceID, DIn, DOut, Implementations ) );
+	Display_( Implementations, common::Identify( DeviceID, DIn, DOut, Implementations, DeviceFamily, SoftwareRevision ) );
+
+	Buffer.Init();
+	common::cout << " (" << mscrmi::ToString( DeviceFamily, Buffer ) << ';';
+	
+	Buffer.Init();
+	common::cout << mscrmi::ToString( SoftwareRevision, Buffer ) << ')';
+
+	common::cout << txf::nl;
 ERRErr
 ERREnd
 ERREpilog

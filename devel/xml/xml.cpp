@@ -98,11 +98,10 @@ const char *xml::Label( status__ Status )
 
 const str::string_ &xml::GetTranslation(
 	status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
-	Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Translation );
+	LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Translation );
 
 	return Translation;
 }
@@ -110,8 +109,7 @@ const str::string_ &xml::GetTranslation(
 
 const str::string_ &xml::GetTranslation(
 	status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	const coord__ &Coord,
 	str::string_ &Translation )
 {
@@ -123,7 +121,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	Locale.GetTranslation( "ErrorAtLineColumn", Language, MESSAGE_PREFIX, Message );
+	LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, Message );
 
 	Values.Init();
 	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
@@ -134,7 +132,7 @@ ERRBegin
 	Translation.Append( Message );
 
 	Message.Init();
-	GetTranslation( Status, Language, Locale, Message );
+	GetTranslation( Status, LocaleRack, Message );
 
 	Translation.Append( Message );
 

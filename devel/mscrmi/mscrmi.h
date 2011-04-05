@@ -408,6 +408,7 @@ namespace mscrmi {
 		xml::writer_ &Writer );
 
 	typedef bso::char__ device_family__[4];
+	typedef bso::char__ software_revision__[4];
 
 #define MSCRMI_UNDEFINED_DEVICE_FAMILY	"void"
 #define MSCRMI_UNDEFINED_MODEL_ID	"void"
@@ -486,8 +487,8 @@ namespace mscrmi {
 		GetBlocs( Implementation.Parameters, Blocs );
 	}
 
-	void ToString(
-		const device_family__ &DeviceFamily,
+	const str::string_ &ToString(
+		const bso::char__ (&Value)[4],
 		str::string_ &Target );
 
 	void Print(
@@ -510,14 +511,12 @@ namespace mscrmi {
 
 	inline const char *Translate(
 		parse_status__ Status,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		STR_BUFFER___ &Buffer );
 
 	const str::string_ &GetTranslation(
 		parse_status__ Status,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		const xtf::coord__ &Coord,
 		const str::string_ &FileName,
 		str::string_ &Translation );
@@ -668,19 +667,19 @@ namespace mscrmi {
 
 	inline const str::string_ &GetTranslation(
 		transmission_status__ Status,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation  )
 	{
-		Locale.GetTranslation( Label( Status ), Language, "ERMI_", Translation );
+		LocaleRack.GetTranslation( Label( Status ), "ERMI_", Translation );
 
 		return Translation;
 	}
 
-	transmission_status__ GetDeviceFamily(
+	transmission_status__ GetDeviceFamilyAndSoftwareRevision(
 		device_id__ Id,
 		flw::ioflow__ &Flow,
-		device_family__ &DeviceFamily );
+		device_family__ &DeviceFamily,
+		software_revision__ &SoftwareRevision );
 
 	transmission_status__ Extract(
 		flw::iflow__ &Flow,

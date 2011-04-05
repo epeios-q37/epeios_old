@@ -114,8 +114,7 @@ namespace xpp {
 
 	const str::string_ &GetTranslation(
 		status__ Status,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		const str::string_ &LocalizedFileName,
 		const xtf::coord__ &Coord,
 		str::string_ &Translation );
@@ -645,11 +644,10 @@ namespace xpp {
 	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
 	inline const str::string_ &GetTranslation(
 		const preprocessing_iflow___ &PFlow,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( PFlow.Status(), Language, Locale, PFlow.LocalizedFileName(), PFlow.Coord(), Translation );
+		return GetTranslation( PFlow.Status(), LocaleRack, PFlow.LocalizedFileName(), PFlow.Coord(), Translation );
 	}
 
 #if 0

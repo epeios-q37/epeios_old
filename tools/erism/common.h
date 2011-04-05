@@ -39,7 +39,7 @@ namespace common {
 	extern cio::cerr___ cerr;
 	extern cio::cout___ cout;
 
-	extern lcl::locale_rack___ LocaleRack;
+	extern lcl::rack__ LocaleRack;
 	
 
 	using registry::value_;
@@ -80,7 +80,7 @@ namespace common {
 		message__ Message,
 		str::string_ &Translation )
 	{
-		LocaleRack.Locale().GetTranslation( Label( Message ), LocaleRack.Language(), "", Translation );
+		LocaleRack.GetTranslation( Label( Message ), "", Translation );
 
 		return Translation;
 	}
@@ -129,7 +129,7 @@ namespace common {
 		error__ Error,
 		str::string_ &Translation )
 	{
-		LocaleRack.Locale().GetTranslation( Label( Error ), LocaleRack.Language(), "", Translation );
+		LocaleRack.GetTranslation( Label( Error ), "", Translation );
 
 		return Translation;
 	}
@@ -178,27 +178,33 @@ namespace common {
 		mscrmi::Set( DeviceID, Implementation, Identity );
 	}
 
-	const mscrmi::device_family__ &GetDeviceFamily(
+	const mscrmi::device_family__ &GetDeviceFamilyAndSoftwareRevision(
 		mscrmi::device_id__ DeviceID,
 		flw::ioflow__ &Flow,
-		mscrmi::device_family__ &DeviceFamily );
+		mscrmi::device_family__ &DeviceFamily,
+		mscrmi::software_revision__ &SoftwareRevision );
 
-	const mscrmi::device_family__ &GetDeviceFamily(
+	const mscrmi::device_family__ &GetDeviceFamilyAndSoftwareRevision(
 		mscrmi::device_id__ DeviceID,
 		int DIn,
 		int DOut,
-		mscrmi::device_family__ &DeviceFamily );
+		mscrmi::device_family__ &DeviceFamily,
+		mscrmi::software_revision__ &SoftwareRevision );
 
 	epeios::row__ Identify(
 		mscrmi::device_id__ DeviceID,
 		flw::ioflow__ &Flow,
-		const mscrmi::midi_implementations_ &Implementations );
+		const mscrmi::midi_implementations_ &Implementations,
+		mscrmi::device_family__ &DeviceFamily,
+		mscrmi::software_revision__ &SoftwareRevision );
 
 	epeios::row__ Identify(
 		mscrmi::device_id__ DeviceID,
 		int DIn,
 		int DOut,
-		const mscrmi::midi_implementations_ &Implementations );
+		const mscrmi::midi_implementations_ &Implementations,
+		mscrmi::device_family__ &DeviceFamily,
+		mscrmi::software_revision__ &SoftwareRevision );
 
 	 const mscrmi::midi_implementation_ &GetImplementation(
 		mscrmi::device_id__ DeviceID,

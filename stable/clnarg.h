@@ -133,129 +133,116 @@ namespace clnarg {
 
 	const str::string_ &GetTranslation(
 		message__ Message,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation,
 		... );
 
 	inline const str::string_ &GetOptionWordingTranslation( 
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mOptionWording, Language, Locale, Translation );
+		return GetTranslation( mOptionWording, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetOptionsWordingTranslation( 
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mOptionsWording, Language, Locale, Translation );
+		return GetTranslation( mOptionsWording, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetArgumentWordingTranslation( 
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mArgumentWording, Language, Locale, Translation );
+		return GetTranslation( mArgumentWording, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetArgumentsWordingTranslation( 
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mArgumentsWording, Language, Locale, Translation );
+		return GetTranslation( mArgumentsWording, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetVersionCommandDescription(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mVersionCommandDescription, Language, Locale, Translation );
+		return GetTranslation( mVersionCommandDescription, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetLicenseCommandDescription(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mLicenseCommandDescription, Language, Locale, Translation );
+		return GetTranslation( mLicenseCommandDescription, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetHelpCommandDescription(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mHelpCommandDescription, Language, Locale, Translation );
+		return GetTranslation( mHelpCommandDescription, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetMissingCommandErrorTranslation(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingCommandError, Language, Locale, Translation );
+		return GetTranslation( mMissingCommandError, LocaleRack, Translation );
 	}
 
 	inline const str::string_ &GetUnknownOptionErrorTranslation(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnknownOptionError, Language, Locale, Translation, Option );
+		return GetTranslation( mUnknownOptionError, LocaleRack, Translation, Option );
 	}
 
 	inline const str::string_ &GetMissingOptionArgumentErrorTranslation(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingOptionArgumentError, Language, Locale, Translation, Option );
+		return GetTranslation( mMissingOptionArgumentError, LocaleRack, Translation, Option );
 	}
 
 	inline const str::string_ &GetUnexpectedOptionErrorTranslation(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnexpectedOptionError, Language, Locale, Translation, Option );
+		return GetTranslation( mUnexpectedOptionError, LocaleRack, Translation, Option );
 	}
 
 	inline const str::string_ &GetWrongNumberOfArgumentsErrorTranslation(
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mWrongNumberOfArgumentsError, Language, Locale, Translation );
+		return GetTranslation( mWrongNumberOfArgumentsError, LocaleRack, Translation );
 	}
 
 	void Report(
 		const str::string_ &Message,
-		const lcl::locale_rack___ &Rack );
+		const lcl::rack__ &LocaleRack );
 
-	void ReportMissingCommandError( const lcl::locale_rack___ &Rack );
+	void ReportMissingCommandError( const lcl::rack__ &LocalRack );
 
 	void ReportUnknownOptionError(
 		const char *Option,
-		const lcl::locale_rack___ &Rack );
+		const lcl::rack__ &LocaleRack );
 
 	void ReportMissingOptionArgumentError(
 		const char *Option,
-		const lcl::locale_rack___ &Rack );
+		const lcl::rack__ &LocaleRack );
 
 	void ReportUnexpectedOptionError(
 		const char *Option,
-		const lcl::locale_rack___ &Rack );
+		const lcl::rack__ &LocaleRack );
 
-	void ReportWrongNumberOfArgumentsError( const lcl::locale_rack___ &Rack );
+	void ReportWrongNumberOfArgumentsError( const lcl::rack__ &LocaleRack );
 
 	//e View mode
 	enum view {

@@ -40,7 +40,8 @@ cio::cerr___ common::cerr;
 cio::cout___ common::cout;
 
 static lcl::locale _Locale;
-lcl::locale_rack___ common::LocaleRack;
+static str::string _Language;
+lcl::rack__ common::LocaleRack( _Locale, _Language );
 
 #define DEFAULT_LANGUAGE	"en-US"
 
@@ -206,7 +207,7 @@ ERRBegin
 		break;
 	case eUnableToOpenMIDIDevices:
 		// Parameter : 'mscmdd::status__'.
-		mscmdd::GetTranslation( *va_arg( Args, const mscmdd::status__ *),LocaleRack.Language(), LocaleRack.Locale(), Translation );
+		mscmdd::GetTranslation( *va_arg( Args, const mscmdd::status__ *), LocaleRack, Translation );
 		break;
 	case eUnableToOpenFile:
 		// Parameter : 'const char *'.
@@ -221,28 +222,33 @@ ERRBegin
 		const xpp::preprocessing_iflow___ &Flow = *va_arg( Args, const xpp::preprocessing_iflow___ *);
 		
 		if ( Status == mscrmi::psParserError )
-			xpp::GetTranslation( Flow, LocaleRack.Language(), _Locale, Translation );
+			xpp::GetTranslation( Flow, LocaleRack, Translation );
 		else
-			mscrmi::GetTranslation( Status, LocaleRack.Language(), _Locale, Flow.Coord(), Flow.LocalizedFileName(), Translation );
+			mscrmi::GetTranslation( Status, LocaleRack, Flow.Coord(), Flow.LocalizedFileName(), Translation );
 		break;
 	}
 	case eUnableToIdentifyDevice:
 		GetTranslation( Error, Translation );
+
 		TagValue.Init();
 		mscrmi::ToString( *va_arg( Args, const mscrmi::device_family__ *), TagValue );
 		lcl::ReplaceTag( Translation, 1, TagValue );
+
+		TagValue.Init();
+		mscrmi::ToString( *va_arg( Args, const mscrmi::software_revision__ *), TagValue );
+		lcl::ReplaceTag( Translation, 2, TagValue );
 		break;
 	case eErrorParsingConfigurationFile:
 	case eErrorParsingLocaleFile:
 	{
 		const rgstry::status__ &Status = *va_arg(Args, const rgstry::status__ *);
 
-		rgstry::GetTranslation( Status,*va_arg( Args, const rgstry::error_details *), LocaleRack.Language(), _Locale, Translation );
+		rgstry::GetTranslation( Status,*va_arg( Args, const rgstry::error_details *), LocaleRack, Translation );
 		break;
 	}
 	case eTransmissionError:
 		// Parameter : 'mscrmi::transmission_status__'
-		mscrmi::GetTranslation( *va_arg( Args, const mscrmi::transmission_status__ *), LocaleRack.Language(), _Locale, Translation );
+		mscrmi::GetTranslation( *va_arg( Args, const mscrmi::transmission_status__ *), LocaleRack, Translation );
 		break;
 	case eUnableToFindParameterForAddress:
 	{
@@ -285,7 +291,6 @@ ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
 	rgstry::error_details ErrorDetails;
 	str::string LocaleFileName;
-	str::string Language;
 	DIR_BUFFER___ DIRBuffer;
 	FNM_BUFFER___ FNMBuffer;
 	STR_BUFFER___ STRBuffer;
@@ -298,7 +303,9 @@ ERRBegin
 	ErrorDetails.Init();
 
 	_Locale.Init();
-	LocaleRack.Init( _Locale, str::string( "" ) );	// Even if no 'locale' loaded, to display raw messages (not translated). Language parameter doesn't matter.
+	_Language.Init();
+
+	LocaleRack.Init( _Locale, _Language );	// Even if no 'locale' loaded, to display raw messages (not translated). Language parameter doesn't matter.
 
 	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
 		if ( Status == rgstry::sUnableToOpenFile ) {
@@ -321,8 +328,8 @@ ERRBegin
 	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", ErrorDetails ) ) != rgstry::sOK )
 		Report( eErrorParsingLocaleFile, &Status, &ErrorDetails );
 
-	Language.Init();
-	LocaleRack.Init( _Locale, str::string( GetLanguage_( Language ) ) );	// To configure with the correct language, because the configuration is now available.
+	GetLanguage_( _Language );
+	LocaleRack.Init( _Locale, _Language );	// To configure with the correct language, because the configuration is now available.
 ERRErr
 ERREnd
 ERREpilog
@@ -399,7 +406,7 @@ ERRProlog
 ERRBegin
 	if ( ( Status = fil::CreateBackupFile( FileName, fil::bmDuplicate, err::hUserDefined ) )!= fil::bsOK ) {
 		Translation.Init();
-		fil::GetTranslation( Status, FileName, LocaleRack.Language(), LocaleRack.Locale(), Translation );
+		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
 		cerr << Translation << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -416,7 +423,7 @@ ERRProlog
 ERRBegin
 	if ( ( Status = fil::RecoverBackupFile( FileName, err::hUserDefined ) )!= fil::rsOK ) {
 		Translation.Init();
-		fil::GetTranslation( Status, FileName, LocaleRack.Language(), LocaleRack.Locale(), Translation );
+		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
 		cerr << Translation << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -426,12 +433,13 @@ ERREpilog
 }
 
 
-const mscrmi::device_family__ &common::GetDeviceFamily(
+const mscrmi::device_family__ &common::GetDeviceFamilyAndSoftwareRevision(
 	mscrmi::device_id__ DeviceID,
 	flw::ioflow__ &Flow,
-	mscrmi::device_family__ &DeviceFamily )
+	mscrmi::device_family__ &DeviceFamily,
+	mscrmi::software_revision__ &SoftwareRevision )
 {
-	mscrmi::transmission_status__ Status = mscrmi::GetDeviceFamily( DeviceID, Flow, DeviceFamily );
+	mscrmi::transmission_status__ Status = mscrmi::GetDeviceFamilyAndSoftwareRevision( DeviceID, Flow, DeviceFamily, SoftwareRevision );
 
 	if ( Status != mscrmi::tsOK )
 		Report( eTransmissionError, &Status );
@@ -440,16 +448,17 @@ const mscrmi::device_family__ &common::GetDeviceFamily(
 }
 
 
-const mscrmi::device_family__ &common::GetDeviceFamily(
+const mscrmi::device_family__ &common::GetDeviceFamilyAndSoftwareRevision(
 	mscrmi::device_id__ DeviceID,
 	int DIn,
 	int DOut,
-	mscrmi::device_family__ &DeviceFamily )
+	mscrmi::device_family__ &DeviceFamily,
+	mscrmi::software_revision__ &SoftwareRevision )
 {
 ERRProlog
 	mscmdd::midi_ioflow___ Flow;
 ERRBegin
-	GetDeviceFamily( DeviceID, common::OpenDevices( DIn, DOut, Flow ), DeviceFamily );
+	GetDeviceFamilyAndSoftwareRevision( DeviceID, common::OpenDevices( DIn, DOut, Flow ), DeviceFamily, SoftwareRevision );
 ERRErr
 ERREnd
 ERREpilog
@@ -459,15 +468,16 @@ ERREpilog
 epeios::row__ common::Identify(
 	mscrmi::device_id__ DeviceID,
 	flw::ioflow__ &Flow,
-	const mscrmi::midi_implementations_ &Implementations )
+	const mscrmi::midi_implementations_ &Implementations,
+	mscrmi::device_family__ &DeviceFamily,
+	mscrmi::software_revision__ &SoftwareRevision )
 {
 	epeios::row__ Row = NONE;
-	mscrmi::device_family__ DeviceFamily;
 
-	common::GetDeviceFamily( DeviceID, Flow, DeviceFamily );
+	common::GetDeviceFamilyAndSoftwareRevision( DeviceID, Flow, DeviceFamily, SoftwareRevision );
 
 	if ( ( Row = mscrmi::GetCorrespondingMIDIImplementation( DeviceFamily, Implementations ) ) == NONE )
-		common::Report( common::eUnableToIdentifyDevice, &DeviceFamily );
+		common::Report( common::eUnableToIdentifyDevice, &DeviceFamily, &SoftwareRevision );
 
 	return Row;
 }
@@ -476,13 +486,15 @@ epeios::row__ common::Identify(
 	mscrmi::device_id__ DeviceID,
 	int DIn,
 	int DOut,
-	const mscrmi::midi_implementations_ &Implementations )
+	const mscrmi::midi_implementations_ &Implementations,
+		mscrmi::device_family__ &DeviceFamily,
+	mscrmi::software_revision__ &SoftwareRevision )
 {
 	epeios::row__ Row = NONE;
 ERRProlog
 	mscmdd::midi_ioflow___ Flow;
 ERRBegin
-	Row = Identify( DeviceID, common::OpenDevices( DIn, DOut, Flow ), Implementations );
+	Row = Identify( DeviceID, common::OpenDevices( DIn, DOut, Flow ), Implementations, DeviceFamily, SoftwareRevision );
 ERRErr
 ERREnd
 ERREpilog
@@ -572,12 +584,14 @@ const mscrmi::midi_implementation_ &common::GetImplementation(
 ERRProlog
 	mscrmi::midi_implementations Implementations;
 	epeios::row__ Row = NONE;
+	mscrmi::device_family__ DeviceFamily;
+	mscrmi::software_revision__ SoftwareRevision;
 ERRBegin
 	Implementations.Init();
 
 	GetImplementations( Implementations );
 
-	Row = Identify( DeviceID, Flow, Implementations );
+	Row = Identify( DeviceID, Flow, Implementations, DeviceFamily, SoftwareRevision );
 
 	Implementation = Implementations( Row );
 ERRErr

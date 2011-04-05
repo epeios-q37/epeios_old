@@ -86,22 +86,22 @@ ERRProlog
 	STR_BUFFER___ TranslationBuffer;
 	CLNARG_BUFFER__ Buffer;
 ERRBegin
-	cout << common::LocaleRack.Locale().GetTranslation( "ProgramDescription", common::LocaleRack.Language(), "", TranslationBuffer ) << '.'  << txf::nl;
+	cout << common::LocaleRack.GetTranslation( "ProgramDescription", "", TranslationBuffer ) << '.'  << txf::nl;
 	cout << txf::nl;
 
 	cout << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
 	Text.Init();
-	clnarg::GetVersionCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	clnarg::GetVersionCommandDescription( LocaleRack, Text );
 	cout << txf::pad << Text << '.' << txf::nl;
 
 	cout << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
 	Text.Init();
-	clnarg::GetLicenseCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	clnarg::GetLicenseCommandDescription( LocaleRack, Text );
 	cout << txf::pad << Text << '.' << txf::nl;
 
 	cout << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
 	Text.Init();
-	clnarg::GetHelpCommandDescription( LocaleRack.Language(), LocaleRack.Locale(), Text );
+	clnarg::GetHelpCommandDescription( LocaleRack, Text );
 	cout << txf::pad << Text << '.' << txf::nl;
 
 ERRErr
@@ -158,7 +158,7 @@ ERRBegin
 	cout << txf::nl;
 
 	Translation.Init();
-	cout << clnarg::GetOptionsWordingTranslation( LocaleRack.Language(), LocaleRack.Locale(), Translation );
+	cout << clnarg::GetOptionsWordingTranslation( LocaleRack, Translation );
 	cout << " :" << txf::nl;
 
 	cout << txf::pad << "- <din> :" << txf::nl;
@@ -174,7 +174,7 @@ ERRBegin
 	cout << txf::nl;
 
 	Translation.Init();
-	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack.Language(), LocaleRack.Locale(), Translation );
+	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
 	cout << " :" << txf::nl;
 
 	cout << txf::pad << "- <target> :" << txf::nl;

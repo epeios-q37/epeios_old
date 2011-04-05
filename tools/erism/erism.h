@@ -29,7 +29,7 @@
 #	define ERISM__INC
 
 #	define NAME				"erism"
-#	define VERSION			"0.1.1"
+#	define VERSION			"0.2.0"
 #	define COPYRIGHT_YEARS	"2011"
 #	define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
 #	define AUTHOR_NAME		EPSMSC_AUTHOR_NAME

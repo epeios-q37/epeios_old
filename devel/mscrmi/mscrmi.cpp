@@ -355,17 +355,15 @@ const char *mscrmi::Label( parse_status__ Status )
 
 const char *mscrmi::Translate(
 	parse_status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	STR_BUFFER___ &Buffer )
 {
-	return Locale.GetTranslation( Label( Status ), Language, MESSAGE_PREFIX, Buffer );
+	return LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Buffer );
 }
 
 const str::string_ &mscrmi::GetTranslation(
 	parse_status__ Status,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	const xtf::coord__ &Coord,
 	const str::string_ &FileName,
 	str::string_ &Translation )
@@ -379,9 +377,9 @@ ERRBegin
 	Message.Init();
 
 	if ( FileName.Amount() != 0 )
-		Locale.GetTranslation( "ErrorAtLineColumnInFile", Language, MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( "ErrorAtLineColumnInFile", MESSAGE_PREFIX, Message );
 	else
-		Locale.GetTranslation( "ErrorAtLineColumn", Language, MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, Message );
 
 	Values.Init();
 	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
@@ -394,7 +392,7 @@ ERRBegin
 
 	Translation.Append( " : " );
 
-	Message.Init( Translate( Status, Language, Locale, SBuffer ) );
+	Message.Init( Translate( Status, LocaleRack, SBuffer ) );
 
 	Translation.Append( Message );
 
@@ -587,7 +585,7 @@ static inline type__ Type_( const str::string_ &Wording )
 	if ( Wording == "Raw1" )
 		Type = tRaw1;
 	else if ( Wording == "Raw2" )
-		Type = tRaw1;
+		Type = tRaw2;
 	else if ( Wording == "Raw4" )
 		Type = tRaw4;
 	else if ( Wording == "Name" )
@@ -1306,17 +1304,20 @@ static void Convert_(
 	}
 }
 
-void mscrmi::ToString(
-	const device_family__ &DeviceFamily,
+const str::string_  &mscrmi::ToString(
+	const bso::char__ (&Value)[4],
 	str::string_ &Target )
 {
 	char Buffer[] ="12345678";
 
-	Convert_( DeviceFamily, sizeof( DeviceFamily ), Buffer );
+	Convert_( Value, sizeof( Value ), Buffer );
 
 	Target.Append( Buffer );
 
+	return Target;
+
 }
+
 
 void mscrmi::Print(
 	const midi_implementation_ &Implementation,
@@ -1887,10 +1888,11 @@ inline transmission_status__ SendIdentityRequest_(
 	return tsOK;
 }
 
-transmission_status__ mscrmi::GetDeviceFamily(
+transmission_status__ mscrmi::GetDeviceFamilyAndSoftwareRevision(
 	device_id__ Id,
 	flw::ioflow__ &Flow,
-	device_family__ &DeviceFamily )
+	device_family__ &DeviceFamily,
+	software_revision__ &SoftwareRevision )
 {
 	transmission_status__ Status = ts_Undefined;
 ERRProlog
@@ -1926,6 +1928,7 @@ ERRBegin
 	}
 
 	Data.Recall( Data.First( Model.Amount() ), sizeof( DeviceFamily ), DeviceFamily );
+	Data.Recall( Data.First( Model.Amount() + sizeof( DeviceFamily ) ), sizeof( SoftwareRevision ), SoftwareRevision );
 
 	Status = tsOK;
 ERRErr

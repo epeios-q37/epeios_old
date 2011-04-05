@@ -256,8 +256,7 @@ const char *fil::Label( backup_status__ Status )
 const str::string_ &fil::GetTranslation(
 	backup_status__ Status,
 	const char *FileName,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -267,7 +266,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	Locale.GetTranslation( Label( Status ), Language, "EFIL_", Translation );
+	LocaleRack.GetTranslation( Label( Status ), "EFIL_", Translation );
 
 	switch ( Status ) {
 	case bsUnableToRename:
@@ -349,7 +348,7 @@ ERREpilog
 backup_status__ fil::CreateBackupFile(
 	const char *FileName,
 	backup_mode__ Mode,
-	lcl::locale_rack___ &Locale,
+	const lcl::rack__ &LocaleRack,
 	txf::text_oflow__ &Flow )
 {
 	backup_status__ Status = bs_Undefined;
@@ -358,7 +357,7 @@ ERRProlog
 ERRBegin
 	if ( ( Status = CreateBackupFile( FileName, Mode, err::hUserDefined ) ) != bsOK ) {
 		Translation.Init();
-		GetTranslation( Status, FileName, Locale.Language(), Locale.Locale(), Translation );
+		GetTranslation( Status, FileName, LocaleRack, Translation );
 		Flow << Translation << txf::nl << txf::commit;
 	}
 ERRErr
@@ -388,8 +387,7 @@ const char *fil::Label( recover_status__ Status )
 const str::string_ &fil::GetTranslation(
 	recover_status__ Status,
 	const char *FileName,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -399,7 +397,7 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	Locale.GetTranslation( Label( Status ), Language, "EFIL_", Translation );
+	LocaleRack.GetTranslation( Label( Status ), "EFIL_", Translation );
 
 	switch ( Status ) {
 	case rsUnableToRename:
@@ -454,7 +452,7 @@ ERREpilog
 
 recover_status__ fil::RecoverBackupFile(
 	const char *FileName,
-	lcl::locale_rack___ &Locale,
+	const lcl::rack__ &LocaleRack,
 	txf::text_oflow__ &Flow )
 {
 	recover_status__ Status = rs_Undefined;
@@ -463,7 +461,7 @@ ERRProlog
 ERRBegin
 	if ( ( Status = RecoverBackupFile( FileName, err::hUserDefined ) ) != rsOK ) {
 		Translation.Init();
-		GetTranslation( Status, FileName, Locale.Language(), Locale.Locale(), Translation );
+		GetTranslation( Status, FileName, LocaleRack, Translation );
 		Flow << Translation << txf::nl << txf::commit;
 	}
 ERRErr

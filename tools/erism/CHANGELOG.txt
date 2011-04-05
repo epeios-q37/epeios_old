@@ -3,6 +3,21 @@ $Id$
 'erism' changelog.
 
 *********
+* 0.2.0 *
+*********
+
+05/04/2011 : publication.
+
+05/04/2011 :
+	- Retrieving now 'Software Revision'.
+	- 'MSVCR100.dll' is no more required.
+
+04/04/2011 :
+	- 'Size' attribute is replaced by 'Type' attribute.
+	- Name settings and harmonic bars settings are now presented in a more readable form in settings file.
+	- Adaptation of the MIDI implementation defintion files to above modifications.
+
+*********
 * 0.1.1 *
 *********
 

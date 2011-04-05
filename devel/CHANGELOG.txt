@@ -1,5 +1,17 @@
 $Id$
 
+05/04/2011 :
+	- Général :
+		- Adaptation aux modifications bibliothèque 'LCL'.
+	- MSCRMI :
+		- Récupération du 'Software Revision'.
+
+04/04/2011 :
+	- Général :
+		- Adaptation aux modifications bibliothèque 'LCL'.
+	- LCL :
+		- 'locale_rack___' est simplifié et deviens 'rack__'.
+
 03/04/2011 :
 	- MSCMDX :
 		- Adaptation aux modifications des bibliothèques sous-jacentes.
@@ -148,7 +160,7 @@ $Id$
 
 24/02/2011 :
 	- FIL :	
-		- Les fichiers étaient ouverts jusqu'à présent en lecture seule ou en lecture écriture; dorénavatn, ils sont ouverts en lecture seule lorsque nécessaire.
+		- Les fichiers étaient ouverts jusqu'à présent en lecture seule ou en lecture écriture; dorénavant, ils sont ouverts en lecture seule lorsque nécessaire.
 
 17/02/2011 :
 	- MSCMDM :
@@ -160,7 +172,7 @@ $Id$
 
 14/02/2011 :
 	- MSCMDD :
-		- Ajout 'mdi_idlow___'.
+		- Ajout 'midi_iflow___'.
 
 13/02/2011 :
 	- FLW :

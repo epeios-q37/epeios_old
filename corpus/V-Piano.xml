@@ -53,7 +53,7 @@
 				</xpp:define>
 				<xpp:define name="Keys">
 					<xpp:bloc>
-						<Parameter Label="A0" Size="2"/>
+						<Parameter Label="A0" Type="Raw2"/>
 						<Parameter Label="A#0"/>
 						<Parameter Label="B0"/>
 						<Parameter Label="C1"/>
@@ -145,7 +145,7 @@
 				</xpp:define>
 				<xpp:define name="Ambience">
 					<xpp:bloc>
-						<Parameter Label="Type" Size="1"/>
+						<Parameter Label="Type" Type="Raw1"/>
 						<Parameter Label="Level"/>
 					</xpp:bloc>
 				</xpp:define>
@@ -154,7 +154,7 @@
 				<xpp:bloc><!-- defines -->
 					<xpp:define name="Tone EQ Zone">
 						<xpp:bloc>
-							<Parameter Label="Switch" Size="2"/>
+							<Parameter Label="Switch" Type="Raw2"/>
 							<Parameter Label="Key Lower"/>
 							<Parameter Label="Key Upper"/>
 							<xpp:expand select="EQ"/>
@@ -170,13 +170,11 @@
 						</xpp:bloc>
 					</xpp:define>
 				</xpp:bloc>
-				<Parameters Label="Tone Name" Address="0000">
-					<xpp:expand select="Name"/>
-				</Parameters>
-				<Parameter Label="SoundLift" Address="0024" Size="2"/>
+				<Parameter Label="Tone Name" Address="0000" Type="Name"/>
+				<Parameter Label="SoundLift" Address="0024" Type="Raw2"/>
 				<Parameters Label="Tone color">
-					<Parameter Label="Value" Size="2"/>
-					<Parameter Label="Velocity Follow" Size="2"/>
+					<Parameter Label="Value" Type="Raw2"/>
+					<Parameter Label="Velocity Follow" Type="Raw2"/>
 					<Parameters Label="Each Key">
 						<xpp:expand select="Keys"/>
 					</Parameters>
@@ -243,8 +241,8 @@
 			</Parameters>
 			<Parameters Label="System" Address="20000000">
 				<Parameters Label="Common" Address="0000">
-					<Parameter Label="Master Tune" Size="4"/>
-					<Parameter Label="Temperament" Size="1"/>
+					<Parameter Label="Master Tune" Type="Raw4"/>
+					<Parameter Label="Temperament" Type="Raw1"/>
 					<Parameter Label="Temperamet Key"/>
 					<Parameter Label="Master Volume"/>
 					<Parameter Label="Output Gain"/>
@@ -332,10 +330,8 @@
 						</xpp:bloc>
 					</xpp:define>
 				</xpp:bloc>
-				<Parameters Label="Setup Name">
-					<xpp:expand select="Name"/>
-				</Parameters>
-				<Parameter Label="Setup FC1 Assign 1" Address="011B"/>
+				<Parameter Label="Setup Name" Type="Name"/>
+				<Parameter Label="Setup FC1 Assign 1" Address="011B" Type="Raw1"/>
 				<Parameter Label="Setup FC2 Assign 1" Address="011E"/>
 				<Parameter Label="Setup FC1 Assign 2" Address="0121"/>
 				<Parameter Label="Setup FC2 Assign 2" Address="0124"/>

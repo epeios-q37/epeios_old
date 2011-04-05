@@ -199,53 +199,44 @@ namespace lcl {
 
 	E_AUTO( locale );
 
-	class locale_rack___ {
-	private:
-		const locale_ *_Locale;
-		str::string _Language;
+	struct rack__
+	{
 	public:
-		void reset( bso::bool__ P = true )
+		const locale_ *Locale;
+		const str::string_ *Language;
+		rack__( void )
 		{
-			_Locale = NULL;
-			_Language.reset( P );
+			Locale = NULL;
+			Language = NULL;
 		}
-		locale_rack___( void )
+		rack__(
+			const locale_ &Locale,
+			const str::string_ &Language )
 		{
-			reset( false );
-		}
-		~locale_rack___( void )
-		{
-			reset();
+			this->Locale = &Locale;
+			this->Language = &Language;
 		}
 		void Init(
 			const locale_ &Locale,	// N'est pas dupliqué !.
-			const str::string_ &Language = str::string() )
+			const str::string_ &Language ) // N'est pas dupliqué !
 		{
-			_Locale = &Locale;
+			this->Locale = &Locale;
 
-			_Language.Init( Language );
+			this->Language = &Language;
 		}
-		const locale_ &Locale( void ) const
-		{
-			if ( _Locale == NULL )
-				ERRu();
-
-			return *_Locale;
-		}
-		E_RWDISCLOSE__( str::string_, Language );
 		bso::bool__ GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			str::string_ &Translation ) const
 		{
-			return Locale().GetTranslation( Text, Language(), Prefix, Translation );
+			return Locale->GetTranslation( Text, *Language, Prefix, Translation );
 		}
 		const char *GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
-			return Locale().GetTranslation( Text, Language(), Prefix, Buffer );
+			return Locale->GetTranslation( Text, *Language, Prefix, Buffer );
 		}
 	};
 

@@ -71,8 +71,7 @@ extern class ttr_tutor &RGSTRYTutor;
 
 // Prédéclaration.
 namespace lcl {
-	class locale_;
-	class locale_rack___;
+	struct rack__;
 }
 
 namespace rgstry {
@@ -872,14 +871,7 @@ namespace rgstry {
 	const str::string_ &GetTranslation(
 		status__ Status,
 		const error_details_ &ErrorDetails,
-		const str::string_ &Language,
-		const lcl::locale_ &Locale,
-		str::string_ &Translation );
-
-	const str::string_ &GetTranslation(
-		status__ Status,
-		const error_details_ &ErrorDetails,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation );
 
 	status__ FillRegistry(

@@ -90,8 +90,7 @@ const char *clnarg::Label( message__ Message )
 
 const str::string_ &clnarg::GetTranslation(
 	message__ Message,
-	const str::string_ &Language,
-	const lcl::locale_ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation,
 	... )
 {
@@ -102,7 +101,7 @@ ERRProlog
 ERRBegin
 	Intermediate.Init();
 
-	Locale.GetTranslation( Label( Message ), Language, TRANSLATION_PREFIX, Intermediate );
+	LocaleRack.GetTranslation( Label( Message ), TRANSLATION_PREFIX, Intermediate );
 
 	va_start( Args, Translation );
 
@@ -161,16 +160,16 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportMissingCommandError( const lcl::locale_rack___ &Rack )
+void clnarg::ReportMissingCommandError( const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetMissingCommandErrorTranslation( Rack.Language(), Rack.Locale(),Message );
+	GetMissingCommandErrorTranslation( LocaleRack ,Message );
 
-	Report( Message, Rack );
+	Report( Message, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -178,14 +177,14 @@ ERREpilog
 
 void clnarg::Report(
 	const str::string_ &Message,
-	const lcl::locale_rack___ &Rack )
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string HelpMessage;
 ERRBegin
 	HelpMessage.Init();
 
-	GetTranslation( mTryHelpCommand, Rack.Language(), Rack.Locale(), HelpMessage );
+	GetTranslation( mTryHelpCommand, LocaleRack, HelpMessage );
 
 	Report_( Message, HelpMessage );
 ERRErr
@@ -195,16 +194,16 @@ ERREpilog
 
 void clnarg::ReportUnknownOptionError(
 	const char *Option,
-	const lcl::locale_rack___ &Rack )
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetUnknownOptionErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetUnknownOptionErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, Rack );
+	Report( Message, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -212,16 +211,16 @@ ERREpilog
 
 void clnarg::ReportMissingOptionArgumentError(
 	const char *Option,
-	const lcl::locale_rack___ &Rack )
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetMissingOptionArgumentErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetMissingOptionArgumentErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, Rack );
+	Report( Message, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -230,32 +229,32 @@ ERREpilog
 
 void clnarg::ReportUnexpectedOptionError(
 	const char *Option,
-	const lcl::locale_rack___ &Rack )
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetUnexpectedOptionErrorTranslation( Rack.Language(), Rack.Locale(), Option, Message );
+	GetUnexpectedOptionErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, Rack );
+	Report( Message, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 
-void clnarg::ReportWrongNumberOfArgumentsError( const lcl::locale_rack___ &Rack )
+void clnarg::ReportWrongNumberOfArgumentsError( const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
 ERRBegin
 	Message.Init();
 
-	GetWrongNumberOfArgumentsErrorTranslation( Rack.Language(), Rack.Locale(),Message );
+	GetWrongNumberOfArgumentsErrorTranslation( LocaleRack ,Message );
 
-	Report( Message, Rack );
+	Report( Message, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog

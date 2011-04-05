@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <MIDIImplementations xmlns="http://zeusw.org/epeios/ermi" xmlns:xpp="http://zeusw.org/epeios/expp">
-	<xpp:set name="V-Piano" value="no"/>
+	<xpp:set name="V-Piano" value="yes"/>
 	<xpp:set name="VK-77" value="yes"/>
 	<xpp:ifeq select="V-Piano" value="yes">
 		<xpp:expand href="V-Piano.xml"/>
