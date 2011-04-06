@@ -1,5 +1,9 @@
 $Id$
 
+06/04/2011 :
+	- Général :
+		- Adaptation aux modifications bibliothèque 'LCL'.
+
 05/04/2011 :
 	- Général :
 		- Adaptation aux modifications bibliothèque 'LCL'.

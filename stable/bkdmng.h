@@ -714,7 +714,8 @@ namespace bkdmng {
 	class backend
 	{
 	private:
-		lcl::locale_rack___ _Locale;
+		lcl::rack__ _LocaleRack;
+		str::string _Language;
 		master_module Master_;
 		const char *_TargetLabel;
 		// Informations à propos du 'backend'.
@@ -772,7 +773,8 @@ namespace bkdmng {
 
 			_TargetLabel = TargetLabel;
 
-			_Locale.Init( Locale, str::string( BKDMNG__DEFAULT_LANGUAGE ) );
+			_Language.Init( BKDMNG__DEFAULT_LANGUAGE );
+			_LocaleRack.Init( Locale, _Language );
 
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
@@ -783,7 +785,7 @@ namespace bkdmng {
 			const char *Message,
 			STR_BUFFER___ &Buffer )
 		{
-			return _Locale.GetTranslation( Message, "BKDMNG_", Buffer );
+			return _LocaleRack.GetTranslation( Message, "BKDMNG_", Buffer );
 		}
 		void Add( untyped_module &Module )
 		{
@@ -849,12 +851,13 @@ namespace bkdmng {
 		//f Return the current language.
 		const str::string_ &GetLanguage( void ) const
 		{
-			return _Locale.Language();
+			return _Language;
 		}
 		//f 'Language' becomes the current language.
 		void SetLanguage( const str::string_ &Language )
 		{
-			_Locale.SetLanguage( Language );
+			_Language = Language;
+			_LocaleRack.Init( *_LocaleRack.Locale, _Language );
 		}
 		/*f Add a request description with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
