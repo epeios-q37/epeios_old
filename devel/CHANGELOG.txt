@@ -1,5 +1,11 @@
 $Id$
 
+12/04/2001 :
+	- CCH :
+		- Correction bogue mauvaise gestion méthode 'Append(...)' lorsque taille du cache nulle.
+	- MSCRMI :
+		- Mise en oeuvre de 'Octetx' et 'Nibblex' à la palce de 'Rawx'.
+
 06/04/2011 :
 	- Général :
 		- Adaptation aux modifications bibliothèque 'LCL'.

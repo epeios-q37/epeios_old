@@ -506,6 +506,9 @@ namespace cch {
 		{
 			r Position;
 
+			if ( Size_ == 0 )
+				return CCHGetBunch().Append( Data );
+
 			if ( AppendMode_ && ( this->Amount_ == this->Size_ ) )
 			{
 				Synchronize();
@@ -846,7 +849,10 @@ namespace cch {
 			if ( *PositionInContainer >= Caches_.Amount() )
 				ERRu();
 #endif
-			GetCache_( PositionInContainer ).Read( PositionInBunch, Amount, Buffer );
+			if ( CacheSize_ == 0 )
+				Item_( PositionInContainer ).Recall( PositionInBunch, Amount, Buffer );
+			else
+				GetCache_( PositionInContainer ).Read( PositionInBunch, Amount, Buffer );
 
 		}
 		//f Return data at 'Position'.
@@ -946,7 +952,10 @@ namespace cch {
 			rc PositionInContainer,
 			rb PositionInBunch )
 		{
-			GetCache_( PositionInContainer ).Write( Buffer, Amount, PositionInBunch );
+			if ( CacheSize_ == 0 )
+				Item_( PositionInContainer ).Store( Buffer, Amount, PositionInBunch );
+			else
+				GetCache_( PositionInContainer ).Write( Buffer, Amount, PositionInBunch );
 
 		}
 		//f Return data at 'Position'.
@@ -962,7 +971,12 @@ namespace cch {
 			type__ Data,
 			rc PositionInContainer )
 		{
-			return GetCache_( PositionInContainer ).Append( Data );
+			if ( CacheSize_ == 0 ) {
+				rb Row = Item_( PositionInContainer ).Append( Data );
+				Item_.Flush();
+				return Row;
+			} else
+				return GetCache_( PositionInContainer ).Append( Data );
 		}
 	};
 

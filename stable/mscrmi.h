@@ -249,11 +249,13 @@ namespace mscrmi {
 	}
 
 	enum type__ {
-		tRaw1,	// Donnée brute, de taille 1 octet.
-		tRaw2,	// Donnée brute, de taille 2 octet.
-		tRaw4,	// Donnée brute, de taille 4 octet.
-		tName,	// Nom, de taille 16.
-		tHBars,	// 'Harmonic Bars' pour des réglages type orgue Hammond.
+		tNibble2,	// Donnée brute, de taille 2 x 4 bits réparties sur 2 octets.
+		tNibble4,	// Donnée brute, de taille 4 x 4 bits, répartis sur 4 octets.
+		tOctet,		// Donnée brute, de 7 bits (8 ème bit réservé par le protocole MIDI)
+		tOctet2,	// Donnée brute, de 14 bits (8 ème bit de chaque octet réservé par le protocole MIDI)
+		tOctet4,	// Donnée brute, de 21 bits (8 ème bit de chaque octet réservé par le protocole MIDI)
+		tName,		// Nom, de taille 16 octets.
+		tHBars,		// 'Harmonic Bars' pour des réglages type orgue Hammond.
 		t_amount,
 		t_Undefined,
 		t_Group,	// Signale un groupe de paramètre.

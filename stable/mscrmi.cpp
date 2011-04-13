@@ -140,13 +140,15 @@ static inline xaddress__ Sum_(
 size__ mscrmi::Size( type__ Type )
 {
 	switch ( Type ) {
-	case tRaw1:
+	case tOctet:
 		return 1;
 		break;
-	case tRaw2:
+	case tNibble2:
+	case tOctet2:
 		return 2;
 		break;
-	case tRaw4:
+	case tNibble4:
+	case tOctet4:
 		return 4;
 		break;
 	case tName:
@@ -578,23 +580,26 @@ ERREpilog
 	return Status;
 }
 
+#define TEST( name )\
+	if ( Wording == #name )\
+		Type = t##name
+
 static inline type__ Type_( const str::string_ &Wording )
 {
 	type__ Type = t_Undefined;
 
-	if ( Wording == "Raw1" )
-		Type = tRaw1;
-	else if ( Wording == "Raw2" )
-		Type = tRaw2;
-	else if ( Wording == "Raw4" )
-		Type = tRaw4;
-	else if ( Wording == "Name" )
-		Type = tName;
-	else if ( Wording == "HBars" )
-		Type = tHBars;
+	TEST( Octet );
+	else TEST( Nibble2 );
+	else TEST( Octet2 );
+	else TEST( Nibble4 );
+	else TEST( Octet4 );
+	else TEST( Name );
+	else TEST( HBars );
 
 	return Type;
 }
+
+#undef TEST
 
 static parse_status__ ParseParameter_(
 	parser___ &Parser,
@@ -757,7 +762,7 @@ static parse_status__ ParseParameters_(
 	callback__ &Callback )
 {
 	xaddress__ Address = 0;
-	type__ Type = tRaw1;
+	type__ Type = tOctet;
 
 	return ParseParameters_( Parser, Address, Type, Callback );
 }
@@ -1066,7 +1071,7 @@ private:
 	{
 		return Search( Address, _Row, *_Parameters );
 	}
-	parse_status__ _ConvertRawValue( 
+	parse_status__ _ConvertOctetNibbleValue( 
 		const str::string_ &Value,
 		size__ Size,
 		data_ &Data )
@@ -1082,7 +1087,7 @@ private:
 		case 2:
 		case 3:
 		case 4:
-			Long = Value.ToUL( &Error, str::b10, ( 0xffffffff >> ( 8 * ( 4 - Size ) ) ) );
+			Long = Value.ToUL( &Error, str::b10, ~( 0xffffffff << ( Size * 7 ) ) );
 			break;
 		default:
 			ERRc();
@@ -1177,10 +1182,12 @@ protected:
 			RawData.Init();
 
 			switch ( Parameter( _Row ).Type() ) {
-			case tRaw1:
-			case tRaw2:
-			case tRaw4:
-				Status = _ConvertRawValue( Value, Parameter( _Row ).Size(), RawData );
+			case tOctet:
+			case tNibble2:
+			case tOctet2:
+			case tNibble4:
+			case tOctet4:
+				Status = _ConvertOctetNibbleValue( Value, Parameter( _Row ).Size(), RawData );
 				break;
 			case tName:
 				Status = _ConvertTextValue( Value, Parameter( _Row ).Size(), RawData );
@@ -1593,13 +1600,35 @@ static bso::ulong__ Convert_( const str::string_ &Value )
 	return V;
 }
 
-static const str::string_ &ConvertToRawValue_(
+static const str::string_ &ConvertToOctetValue_(
 	const str::string_ &Data,
 	str::string_ &Buffer )
 {
 	bso::integer_buffer__ IBuffer;
 
 	Buffer.Append( bso::Convert( Decode_( Convert_( Data ) ), IBuffer ) );
+
+	return Buffer;
+}
+
+static const str::string_ &ConvertToNibbleValue_(
+	const str::string_ &Data,
+	str::string_ &Buffer )
+{
+	bso::integer_buffer__ IBuffer;
+	bso::ulong__ Value = 0;
+	epeios::row__ Row = Data.First();
+
+	while ( Row != NONE ) {
+		if ( Data( Row ) > 15 )
+			ERRc();
+
+		Value = ( Value << 2 ) + Data( Row );
+
+		Row = Data.Next( Row );
+	}
+
+	Buffer.Append( bso::Convert( Value, IBuffer ) );
 
 	return Buffer;
 }
@@ -1683,11 +1712,16 @@ ERRBegin
 	Buffer.Init();
 
 	switch ( Parameter( Setting.Row() ).Type() ) {
-	case tRaw1:
-	case tRaw2:
-	case tRaw4:
-		ConvertToRawValue_( Setting.Data, Buffer );
-		/// Attention : si un jour ajout d'un 'tRawx' ou x > 4, la fonction ci-dessus ne fonctionne pas !
+	case tOctet:
+	case tOctet2:
+	case tOctet4:
+		ConvertToOctetValue_( Setting.Data, Buffer );
+		/// Attention : si un jour ajout d'un 'tOctetx' ou x > 4, la fonction ci-dessus ne fonctionne pas !
+		break;
+	case tNibble2:
+	case tNibble4:
+		ConvertToNibbleValue_( Setting.Data, Buffer );
+		/// Attention : si un jour ajout d'un 'tNibblex' ou x > 4, la fonction ci-dessus ne fonctionne pas !
 		break;
 	case tName:
 		ConvertToNameValue_( Setting.Data, Size( Parameter( Setting.Row() ).Type() ), Buffer );
