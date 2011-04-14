@@ -1,5 +1,17 @@
 $Id$
 
+14/04/2011 :
+	- Général :
+		- Adaptation aux différentes modifications.
+	- BKDMNG :
+		- Mise en oeuvre de l'origine du client.
+	- CSDBNS :
+		- Récupération de l'adresse du client.
+	- CSDSCM :
+		- Mise en oeuvre de l'origine du client.
+	- MMM :
+		- Correction bogue copie incomplète lorsque extension sous-mémoire.
+
 12/04/2001 :
 	- CCH :
 		- Correction bogue mauvaise gestion méthode 'Append(...)' lorsque taille du cache nulle.

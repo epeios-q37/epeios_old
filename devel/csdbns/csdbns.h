@@ -89,16 +89,20 @@ namespace csdbns {
 	//c User functions with socket.
 	class socket_user_functions__ {
 	protected:
-		virtual void *CSDBNSPreProcess( sck::socket__ Socket ) = 0;
+		virtual void *CSDBNSPreProcess(
+			sck::socket__ Socket,
+			const char *IP ) = 0;
 		virtual action__ CSDBNSProcess(
 			sck::socket__ Socket,
 			void *UP ) = 0;
 		virtual void CSDBNSPostProcess( void *UP ) = 0;
 		virtual void CSDBNSExit( void ) = 0;	// Appelé lorsque l'on quitte l'application, principalement dnas le cadre d'un service Windows.
 	public:
-		void *PreProcess( sck::socket__ Socket )
+		void *PreProcess(
+			sck::socket__ Socket,
+			const char *IP )
 		{
-			return CSDBNSPreProcess( Socket );
+			return CSDBNSPreProcess( Socket, IP );
 		}
 		action__ Process(
 			sck::socket__ Socket,
@@ -132,7 +136,8 @@ namespace csdbns {
 		}
 		socket__ _Interroger(
 			err::handling__ ErrorHandling,
-			sck::duration__ TimeOut );
+			sck::duration__ TimeOut,
+			const char *&IP );
 	public:
 		void reset( bool P = true )
 		{
@@ -174,18 +179,20 @@ namespace csdbns {
 		}
 		//f Return the first available connection. BLOCKING FUNCTION if 'TimeOut == 'SCK_INFINITE'.
 		socket__ GetConnection(
+			const char *&IP,
 			err::handling__ ErrorHandling = err::h_Default,
 			sck::duration__ TimeOut = SCK_INFINITE )
 		{
-			return _Interroger( ErrorHandling, TimeOut );
+			return _Interroger( ErrorHandling, TimeOut, IP );
 		}
 		//f Initialize 'Socket' with the first connection available. BLOCKING FUNCTION if 'TimeOut' == 'SCK_INFINITE'.
 		void GetConnection(
 			socket__ &Socket,
+			const char *&IP,
 			err::handling__ ErrorHandling = err::h_Default,
 			sck::duration__ TimeOut = 0 )
 		{
-			Socket = _Interroger( ErrorHandling, TimeOut );
+			Socket = _Interroger( ErrorHandling, TimeOut, IP );
 		}
 		// If returned value = 'true', then exiting is because 'TimeOut' reached.
 		// If returned value == 'false', then underlying user function retuns 'bStop'.
@@ -206,7 +213,9 @@ namespace csdbns {
 	: public socket_user_functions__
 	{
 	protected:
-		virtual void *CSDBNSPreProcess( socket__ Socket )
+		virtual void *CSDBNSPreProcess(
+			socket__ Socket,
+			const char *IP )
 		{
 			_flow_data__ *Data = NULL;
 		ERRProlog
@@ -217,7 +226,7 @@ namespace csdbns {
 				ERRa();
 
 			Data->Flow.Init( Socket );
-			Data->UP = UserFunctions->PreProcess( Data->Flow );
+			Data->UP = UserFunctions->PreProcess( Data->Flow, IP );
 		ERRErr
 			if ( Data != NULL )
 				delete Data;

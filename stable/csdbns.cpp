@@ -107,7 +107,8 @@ bso::bool__ csdbns::listener___::Init(
 
 socket__ csdbns::listener___::_Interroger(
 	err::handling__ ErrorHandling,
-	sck::duration__ TimeOut )
+	sck::duration__ TimeOut,
+	const char *&IP )
 {
 	fd_set fds;
 	int Reponse;
@@ -117,8 +118,10 @@ socket__ csdbns::listener___::_Interroger(
 	while( Boucler )
 	{
 ERRProlog
-		Socket = SCK_INVALID_SOCKET;
-		timeval TimeOutStruct;
+	Socket = SCK_INVALID_SOCKET;
+	timeval TimeOutStruct;
+	struct sockaddr_in SockAddr;
+    int SockAddrSize = sizeof( SockAddr );
 ERRBegin
 		Boucler = false;
 		FD_ZERO( &fds );
@@ -133,9 +136,10 @@ ERRBegin
 			ERRs();
 		else if ( Reponse > 0 )
 		{
-			if ( ( Socket = accept( Socket_, NULL, NULL ) ) == SCK_INVALID_SOCKET ) {
+			if ( ( Socket = accept( Socket_, (sockaddr *)&SockAddr, &SockAddrSize ) ) == SCK_INVALID_SOCKET ) {
 				error__ Error = sck::Error();
-#ifdef CPE__T_CONSOLE
+//#ifdef CPE__T_CONSOLE
+#if 0
 				ERRProlog
 					cio::cerr___ cerr;
 					tol::buffer__ Buffer;
@@ -148,6 +152,9 @@ ERRBegin
 				if ( ( Error != SCK_EWOULDBLOCK ) && ( Error != SCK_EAGAIN ) )
 					ERRs();
 			}
+
+			IP = inet_ntoa( SockAddr.sin_addr );
+
 		}
 ERRErr
 	if ( ErrorHandling == err::hUserDefined )
@@ -172,8 +179,9 @@ bso::bool__ csdbns::listener___::Process(
 ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
 	action__ Action = a_Undefined;
+	const char *IP = NULL;
 ERRBegin
-	Socket = _Interroger( ErrorHandling, TimeOut );
+	Socket = _Interroger( ErrorHandling, TimeOut, IP );
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
@@ -183,7 +191,7 @@ ERRBegin
 			correctement l'objet qu'il a crée (référencé par 'UP'), même lors d'un ^C,
 			qui nous éjecte directement de cette fonction, mais provoque quand même un appel du destructeur. */
 
-		_UP = Functions.PreProcess( Socket );
+		_UP = Functions.PreProcess( Socket, IP );
 		_UserFunctions = &Functions;
 
 		while ( ( Action = Functions.Process( Socket, _UP ) ) == aContinue );
@@ -220,6 +228,7 @@ struct socket_data__
 {
 	socket_user_functions__ *Functions;
 	sck::socket__ Socket;
+	const char *IP;
 	mtx::mutex_handler__ Mutex;
 };
 
@@ -311,12 +320,17 @@ ERRFProlog
 	action__ Action = a_Undefined;
 	rrow__ Row = NONE;
 	csdbns_repository_item__ Item;
+	tol::E_FPOINTER___( char ) Buffer;
 ERRFBegin
+	if ( ( Buffer = malloc( strlen( Data.IP ) + 1 ) ) == NULL )
+		ERRa();
+
+	strcpy( Buffer, Data.IP );
 	mtx::Unlock( Data.Mutex );
 
 	ERRProlog
 	ERRBegin
-		UP = Functions.PreProcess( Socket );
+		UP = Functions.PreProcess( Socket, Buffer );
 
 		Item.UserFunctions = &Functions;
 		Item.UP = UP;
@@ -340,11 +354,12 @@ void server___::Process(
 {
 ERRProlog
 	sck::socket__ Socket = SCK_INVALID_SOCKET;
-	::socket_data__ Data = {NULL, SCK_INVALID_SOCKET, MTX_INVALID_HANDLER};
+	const char *IP = NULL;
+	::socket_data__ Data = {NULL, SCK_INVALID_SOCKET, NULL, MTX_INVALID_HANDLER};
 	bso::bool__ Continue = true;
 ERRBegin
 
-	Socket = listener___::GetConnection( ErrorHandling, TimeOut );
+	Socket = listener___::GetConnection( IP, ErrorHandling, TimeOut );
 
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
@@ -354,6 +369,7 @@ ERRBegin
 		mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 
 		Data.Socket = Socket;
+		Data.IP = IP;
 	} else
 		Continue = false;
 
@@ -364,12 +380,13 @@ ERRBegin
 
 		Socket = SCK_INVALID_SOCKET;
 
-		Socket = listener___::GetConnection( ErrorHandling, TimeOut );
+		Socket = listener___::GetConnection( IP, ErrorHandling, TimeOut );
 
 		if ( Socket != SCK_INVALID_SOCKET ) {
 			mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 
 			Data.Socket = Socket;
+			Data.IP = IP;
 		} else
 			Continue = false;
 	}

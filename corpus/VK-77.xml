@@ -166,7 +166,7 @@
 						<Parameter Label="16"/>
 					</Parameters>
 					-->
-					<Parameter Label="Pedal to Lower" Type="Raw1"/>
+					<Parameter Label="Pedal to Lower" Type="Octet"/>
 					<Parameter Label="Lower Keyboard Split Point"/>
 					<Parameters Label="Organ Part">
 						<Parameter Label="Bender Assign"/>
@@ -228,14 +228,14 @@
 					<Parameter Label="Lower H.Bar" Type="HBars"/>
 					<Parameters Label="Pedal">
 						<Parameters Label="H.Bar">
-							<Parameter Label="16'" Type="Raw1"/>
+							<Parameter Label="16'" Type="Octet"/>
 							<Parameter Label="8'"/>
 						</Parameters>
 						<Parameter Label="Pedal 16' H.Bar Mixing Ratio" Type="HBars"/>
 						<Parameter Label="Pedal 8' H.Bar Mixing Ratio" Type="HBars"/>
 					</Parameters>
 					<Parameters Label="Sustain">
-						<Parameter Label="Switch" Type="Raw1"/>
+						<Parameter Label="Switch" Type="Octet"/>
 						<Parameter Label="Time"/>
 					</Parameters>
 					<Parameters Label="Pedal Attack">

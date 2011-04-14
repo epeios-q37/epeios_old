@@ -267,10 +267,15 @@ ERREpilog
 	private:
 		core _Core;
 		user_functions__ *_Functions;
+		const char *_Origin;
 		void _Clean( void );	// Appelle tout le 'postProcess' pour tous les objets utilisateurs.
 	protected:
-		virtual void *CSDPreProcess( flw::ioflow__ &Flow )
+		virtual void *CSDPreProcess(
+			flw::ioflow__ &Flow,
+			const char *Origin )
 		{
+			_Origin = Origin;
+
 			return NULL;
 		}
 		virtual action__ CSDProcess(
@@ -291,7 +296,7 @@ ERREpilog
 			if ( Id == CSDSNS_UNDEFINED ) {
 				Id = _Core.New();
 				Flow.Write( &Id, sizeof( Id ) );
-				UP = _Functions->PreProcess( Flow );
+				UP = _Functions->PreProcess( Flow, _Origin );
 				_Core.Store( UP, Id );
 				_Functions->Process( Flow, UP );
 			} else {
@@ -337,6 +342,7 @@ ERREpilog
 
 			_Core.reset( P );
 			_Functions = NULL;
+			_Origin = NULL;
 		}
 		_functions___( void)
 		{

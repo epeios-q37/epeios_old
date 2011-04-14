@@ -714,6 +714,7 @@ namespace bkdmng {
 	class backend
 	{
 	private:
+		const char *_ClientOrigin;
 		lcl::rack__ _LocaleRack;
 		str::string _Language;
 		master_module Master_;
@@ -758,9 +759,11 @@ namespace bkdmng {
 			_TargetLabel = NULL;
 			_BackendInformations = NULL;
 			_PublisherInformations = NULL;
+			_ClientOrigin = NULL;
 		}
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		void Init(
+			const char *ClientOrigin,	// NON dupliqué.
 			const char *TargetLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
 			const char *BackendInformations,
@@ -778,6 +781,7 @@ namespace bkdmng {
 
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
+			_ClientOrigin = ClientOrigin;
 
 		}
 		//f Add 'Module' to the interface.
@@ -901,6 +905,10 @@ namespace bkdmng {
 		messages_ &GetMasterRawMessages( void )
 		{
 			return Master_.RawMessages;
+		}
+		const char *ClientOrigin( void ) const
+		{
+			return _ClientOrigin;
 		}
 	};
 

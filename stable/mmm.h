@@ -1136,7 +1136,7 @@ namespace mmm {
 				Memory, SourceFirstFragmentSize > TargetFirstFragmentSize ? TargetFirstFragmentSize : SourceFirstFragmentSize,
 				*TargetFirstFragmentRow, *SourceFirstFragmentRow );
 
-			if ( ( SourceSecondFragmentSize != 0 ) && ( ( SourceFirstFragmentSize + SourceSecondFragmentSize ) < TargetFirstFragmentSize ) )
+			if ( ( SourceSecondFragmentSize != 0 ) && ( ( SourceFirstFragmentSize + SourceSecondFragmentSize ) <= TargetFirstFragmentSize ) )
 				Memory.Store(
 					Memory, SourceSecondFragmentSize,
 					*TargetFirstFragmentRow + SourceFirstFragmentSize,

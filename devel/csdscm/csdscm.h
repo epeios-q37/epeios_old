@@ -73,7 +73,9 @@ namespace csdscm {
 
 	class user_functions__ {
 	protected:
-		virtual void *CSDPreProcess( flw::ioflow__ &Flow ) = 0;
+		virtual void *CSDPreProcess(
+			flw::ioflow__ &Flow,
+			const char *Origin ) = 0;
 		virtual action__ CSDProcess(
 			flw::ioflow__ &Flow,
 			void *UP ) = 0;
@@ -81,9 +83,11 @@ namespace csdscm {
 		virtual void CSDExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
 												// (facilite la mise en oeuvre en tant que service Windows).
 	public:
-		void *PreProcess( flw::ioflow__ &Flow )
+		void *PreProcess(
+			flw::ioflow__ &Flow,
+			const char *Origin )
 		{
-			return CSDPreProcess( Flow );
+			return CSDPreProcess( Flow, Origin );
 		}
 		action__ Process(
 			flw::ioflow__ &Flow,
