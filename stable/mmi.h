@@ -529,7 +529,7 @@ namespace mmi {
 			uym::state__ State = _Descriptors.Settle();
 
 			if ( !uym::IsError( State ) )
-				if ( State != _Multimemory.S_ettle() )
+				if ( State != _Multimemory.Settle() )
 					State = uym::sInconsistent;
 
 			return State;
@@ -603,7 +603,7 @@ namespace mmi {
 		if ( uym::IsError( State ) )
 			FileManager.reset();
 		else
-			if ( mmm::P_lug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
+			if ( mmm::Plug( Memory.Multimemoire, FileManager.MultimemoryFileManager() ) != State ) {
 				State = uym::sInconsistent;
 				FileManager.reset();
 			}

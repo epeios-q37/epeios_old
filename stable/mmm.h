@@ -1691,7 +1691,7 @@ namespace mmm {
 			}
 		}
 		void DisplayStructure( txf::text_oflow__ &Flow ) const;
-		friend uym::state__ P_lug(
+		friend uym::state__ Plug(
 			multimemory_ &Multimemory,
 			class multimemory_file_manager___ &FileManager );
 	};
@@ -1718,7 +1718,7 @@ namespace mmm {
 			_untyped_memory_file_manager___::ReleaseFile();
 
 			if ( P ) {
-				S_ettle();
+				Settle();
 			}
 
 			_untyped_memory_file_manager___::reset( P );
@@ -1776,7 +1776,7 @@ namespace mmm {
 		ERREpilog
 			return State;
 		}
-		uym::state__ S_ettle( void )
+		uym::state__ Settle( void )
 		{
 			uym::state__ State = _untyped_memory_file_manager___::Settle();
 
@@ -1791,12 +1791,12 @@ namespace mmm {
 			return State;
 
 		}
-		friend uym::state__ P_lug(
+		friend uym::state__ Plug(
 			multimemory_ &Multimemory,
 			multimemory_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ P_lug(
+	inline uym::state__ Plug(
 		multimemory_ &Multimemory,
 		multimemory_file_manager___ &FileManager )
 	{

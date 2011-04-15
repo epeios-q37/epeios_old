@@ -1,5 +1,9 @@
 $Id$
 
+15/04/2011 :
+	- FLM :
+		- Correction bogue taille fichier non ajustée losqu'allocation non suivie d'une écriture.
+
 14/04/2011 :
 	- Général :
 		- Adaptation aux différentes modifications.

@@ -330,6 +330,27 @@ namespace flm {
 
 			return Success;
 		}
+		void _AdjustPhysicalFileSize( void )	// Ajuste la taille physique du fichier à celle supposée.
+		{
+			if ( TailleFichier_ != 0 ) {
+				if ( !fil::FileExists( Nom_ ) || ( (bso::size__)TailleFichier_ > fil::GetFileSize( Nom_ ) ) ) {
+					mdr::datum__ Datum = 0;
+					
+					Open_( true );
+				
+					File_.Seek( TailleFichier_ - (iop::amount__)1 );
+
+					if ( File_.Write( &Datum, 1 ) != 1 ) {
+						if ( !Temoin_.Manuel )
+							ReleaseFile();
+
+						ERRm();
+					} else
+						if ( !Temoin_.Manuel )
+							ReleaseFile();
+				}
+			}
+		}
 	protected:
 		void Read(
 			position__ Position,
@@ -398,25 +419,7 @@ namespace flm {
 				TailleFichier_ = fil::GetFileSize( Nom_ );
 
 			if ( Capacite > TailleFichier_ )
-			{
-				mdr::datum__ Datum = 0;
-
-/*				Open_( true );
-				
-				File_.Seek( Capacite - (iop::amount__)1 );
-
-				if ( File_.Write( &Datum, 1 ) != 1 ) {
-					if ( !Temoin_.Manuel )
-						ReleaseFile();
-
-					ERRm();
-				} else
-					if ( !Temoin_.Manuel )
-						ReleaseFile();
-*/
-
 				TailleFichier_ = Capacite;
-			}
 		}
 		void Flush( void )
 		{
@@ -513,6 +516,8 @@ namespace flm {
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
 		void ReleaseFile( bso::bool__ ReportClosing = true )
 		{
+			_AdjustPhysicalFileSize();
+
 			if ( Temoin_.Ouvert ) {
 				File_.reset();
 
