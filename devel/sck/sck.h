@@ -281,9 +281,11 @@ namespace sck {
 #endif
 	}
 
+	typedef fwf::ioflow_functions___<> _ioflow_functions___;
+
 	//c Socket as input/output flow driver.
 	class socket_ioflow_functions___
-	: public fwf::ioflow_functions___<>
+	: public _ioflow_functions___
 	{
 	private:
 		socket__ _Socket;
@@ -324,12 +326,12 @@ namespace sck {
 		{
 			if ( P ) {
 				if ( _Socket != SCK_INVALID_SOCKET ) {
-					ioflow_functions___::Commit();
+					_ioflow_functions___::Commit();
 					Close( _Socket );
 				}
 			}
 
-			ioflow_functions___::reset( P );
+			_ioflow_functions___::reset( P );
 								
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
@@ -351,7 +353,7 @@ namespace sck {
 		{
 			reset();
 		
-			ioflow_functions___::Init( ThreadSafety );
+			_ioflow_functions___::Init( ThreadSafety );
 
 			_Socket = Socket;
 			_TimeOut = TimeOut;

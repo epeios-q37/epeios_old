@@ -364,15 +364,10 @@ namespace flw {
 		{
 			EOFD( Data );
 
-			if ( _Red > Amount )	// This means we have red too much data.
-				ERRf();
-
 			EOFD_.HandleAmount = true;
 			EOFD_.HandleToFew = true;
 			_AmountMax = Amount;
-
-			if ( _Red == _AmountMax )
-				EOFD_.HandlingEOFD = true;
+			_Red = 0;
 		}
 		//f Return the amount of data red since last 'Reset()'.
 		size__ AmountRed( void ) const

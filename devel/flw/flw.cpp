@@ -103,7 +103,8 @@ ERRBegin
 
 	Amount = _LoopingRawRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
 
-	_Red += Amount;
+	if ( Adjust )
+		_Red += Amount;
 
 	if ( _Red > _AmountMax )
 		ERRf();

@@ -1,5 +1,10 @@
 $Id$
 
+17/04/2011 :
+	- FLW :
+		- Correction bogue incrémentation du nombre d'octets lues lors d'un 'View()'.
+		- 'EOFD(...)' remet maintenant à 0 le nombre d'octets lus.
+
 15/04/2011 :
 	- FLM :
 		- Correction bogue taille fichier non ajustée losqu'allocation non suivie d'une écriture.
