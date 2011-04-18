@@ -88,7 +88,7 @@ namespace bch {
 			epeios::row_t__ Position,
 			epeios::size__ Quantite )
 		{
-			Allouer_( mng::Amount() + Quantite, aem::mDefault );
+			Allouer_( mng::Amount() + Quantite, aem::m_Default );
 			mmr::Store( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
 		}
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
@@ -122,7 +122,7 @@ namespace bch {
 		void AllocateIfNecessary_( epeios::size__ Quantity )
 		{
 			if ( Quantity > mng::Amount() )
-				Allouer_( Quantity, aem::mDefault );
+				Allouer_( Quantity, aem::m_Default );
 		}
 	public:
 		struct s
@@ -162,7 +162,7 @@ namespace bch {
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			Allouer_( Size, Mode );
 		}
@@ -170,7 +170,7 @@ namespace bch {
 		void Allocate(
 			epeios::size__ Size,
 			const type &Object,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			epeios::size__ PreviousSize = mng::Amount();
 
@@ -323,7 +323,7 @@ namespace bch {
 			if ( Amount > this->Amount() )
 				ERRu();
 #endif
-			Allouer_( this->Amount() - Amount, aem::mDefault );
+			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
 		//f Remove objects all objects beginning at 'Row'.
 		void Truncate( row Row )
@@ -399,14 +399,14 @@ namespace bch {
 		{
 			mmr::Store( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
 
-			Allouer_( this->Amount() - Amount, aem::mDefault );
+			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
 		//f Return the row of the first of 'Amount' new object.
 		row New( epeios::size__ Amount = 1 )
 		{
 			epeios::row_t__ P = this->Amount();
 
-			Allouer_( P + Amount, aem::mDefault );
+			Allouer_( P + Amount, aem::m_Default );
 
 			return P;
 		}

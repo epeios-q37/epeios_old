@@ -277,7 +277,7 @@ namespace ctn {
 		//f Remove 'Amount' objects from the end of the container.
 		void Truncate(
 			epeios::size__ Amount = 1,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 	#ifdef CTN_DBG
 			if ( Amount > this->Amount() )
@@ -288,7 +288,7 @@ namespace ctn {
 		//f Remove objects all objects beginning at 'Row'.
 		void Truncate(
 			r Row,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
 			if ( !Exists( Row ) )
@@ -300,7 +300,7 @@ namespace ctn {
 		void Crop(
 			epeios::size__ Amount,
 			r Row = 0,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			Truncate( this->Amount() - ( *Row + Amount ), Mode );
 
@@ -310,7 +310,7 @@ namespace ctn {
 		void Crop(
 			r First,
 			r Last,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef BCH_DBG
 			if ( Last < First )
@@ -954,7 +954,7 @@ namespace ctn {
 		//f Allocate room for 'Size' objects.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			E_MITEMt( t, r ) E;
 
@@ -963,7 +963,7 @@ namespace ctn {
 		void Insert(
 			const t &Object,
 			r Row,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
@@ -998,7 +998,7 @@ namespace ctn {
 		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
@@ -1370,7 +1370,7 @@ namespace ctn {
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
 			epeios::size__ Capacity,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			E_ITEMt( t, r ) E;
 
@@ -1379,7 +1379,7 @@ namespace ctn {
 		void Insert(
 			const t &Object,
 			r Row,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
@@ -1414,7 +1414,7 @@ namespace ctn {
 		void Remove(
 			r Position,
 			epeios::size__ Amount = 1,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )

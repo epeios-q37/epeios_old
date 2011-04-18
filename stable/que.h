@@ -263,7 +263,7 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			epeios::size__ Before = Links.Amount();
 			Links.Allocate( Size, Mode );
@@ -676,7 +676,7 @@ namespace que {
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			Queue.Allocate( Size, Mode );
 		}

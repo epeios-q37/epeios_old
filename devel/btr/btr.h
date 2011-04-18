@@ -825,7 +825,7 @@ namespace btr {
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Size > Nodes.Amount() )
 			{
@@ -1448,7 +1448,7 @@ namespace btr {
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode Mode = aem::mDefault )
+			aem::mode Mode = aem::m_Default )
 		{
 			if ( Size > Nodes.Amount() )
 			{

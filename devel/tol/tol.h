@@ -709,7 +709,7 @@ pour parvenir au même résultat que 'E_XNAVt(...)'. */
 	}\
 	void Allocate(\
 		epeios::size__ Size,\
-		aem::mode__ Mode = aem::mDefault )\
+		aem::mode__ Mode = aem::m_Default )\
 	{\
 		Object Allocate( Size, Mode );\
 	}

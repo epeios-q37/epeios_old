@@ -202,14 +202,14 @@ namespace lst {
 			Locations.Release( *Entry );
 		}
 		//f Return the position of a new entry.
-		r New( aem::mode__ Mode = aem::mDefault )
+		r New( aem::mode__ Mode = aem::m_Default )
 		{
 			return (r_t)Nouveau_( Mode );
 		}
 		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
 		r New(
 			r Row,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Row != NONE ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
@@ -322,7 +322,7 @@ namespace lst {
 		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
 		void Allocate(
 			epeios::size__ Size,
-			aem::mode__ Mode = aem::mDefault )
+			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Locations.Amount() != 0 )
 				ERRu();

@@ -77,11 +77,12 @@ namespace aem {
 	//e Mode of the allocation.
 	enum mode__ {
 		//i Extent is handled using step value.
-		mDefault,
+		mStepped,
 		//i Extent fits with amount.
 		mFit,
 		m_amount,
 		m_Undefined,
+		m_Default = mStepped,
 	};
 
 	//t Type of a step value.
@@ -218,7 +219,7 @@ namespace aem {
 		void reset( bso::bool__ = true )
 		{
 			S_.Amount = 0;
-			S_.Misc = 0;
+			S_.Misc = 1;
 		}
 		core_amount_extent_manager_ &operator =( const core_amount_extent_manager_ &AEM )
 		{
@@ -235,7 +236,6 @@ namespace aem {
 		void Init( size Amount = 0 )
 		{
 			S_.Amount = 0;
-			S_.Misc = 1;
 			Force( Amount );
 		}
 		//f Return the extent.

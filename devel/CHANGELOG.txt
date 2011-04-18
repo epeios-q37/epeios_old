@@ -1,6 +1,11 @@
 $Id$
 
 17/04/2011 :
+	- Général :
+		- Adaptation aux modifications 'AEM'.
+	- AEM :
+		- 'mDefault -> 'm_Default' (mise en conformité avec nouveau standard).
+		- Un 'Init(...)' ne touche plus dorémavant à la 'step value', celle-ci étant généralement initialisée (si nécessaire) lors d'un 'Plug(...)' (dont le résultat n'est pas non plus modifié lors d'un  'Init(...)').
 	- FLW :
 		- Correction bogue incrémentation du nombre d'octets lues lors d'un 'View()'.
 		- 'EOFD(...)' remet maintenant à 0 le nombre d'octets lus.

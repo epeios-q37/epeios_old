@@ -355,7 +355,7 @@ namespace mmi {
 		//f Allocate 'Capacity' memories in the indexed multimemory. 'ActualCapacity' is the actual capacity.
 		void Allocate(
 			epeios::size__ Amount,
-			aem::mode__ Mode = aem::mDefault)
+			aem::mode__ Mode = aem::m_Default )
 		{
 			epeios::size__ CurrentAmount = Descripteurs.Amount();
 
