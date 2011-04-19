@@ -277,6 +277,13 @@ namespace lck {
 			_Access.Lock.Init();
 			_Access.Mutex = mtx::Create( mtx::mFree );
 		}
+		control___ &operator =( const control___ &C )
+		{
+			// Pour des raisons de standardisation, car cet opérateur n'a pas de sens dans ce contexte.
+			ERRu();
+
+			return *this;	// Pour éviter un 'warning'.
+		}
 		const object &GetReadOnly( void ) const
 		{
 #ifdef LCK__DBG

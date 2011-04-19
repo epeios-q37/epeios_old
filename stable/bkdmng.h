@@ -449,7 +449,7 @@ namespace bkdmng {
 			aem::mode__ Mode )
 		{
 #ifdef BKDMNG_DBG
-			if ( Mode != aem::mDefault )
+			if ( Mode != aem::m_Default )
 				ERRu();
 #endif
 			Objets.Allocate( Size, aem::mFit );

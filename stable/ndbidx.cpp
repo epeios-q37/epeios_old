@@ -225,7 +225,7 @@ ERRBegin
 	_CompleteInitialization();
 
 	if ( _Content().Amount() > DIndex.Amount() )
-		DIndex.Allocate( _Content().Amount(), aem::mDefault );
+		DIndex.Allocate( _Content().Amount(), aem::m_Default );
 
 	if ( S_.Root == NONE ) {
 		S_.Root = Row;
@@ -516,7 +516,7 @@ ERRBegin
 	if ( Content.Extent() < MEMORY_REINDEXATION_LIMIT ) {
 		IndexInMemory.Init( *_ContentPointer, SortFunction() );
 
-		IndexInMemory.Allocate( Content.Extent(), aem::mDefault );
+		IndexInMemory.Allocate( Content.Extent(), aem::m_Default );
 
 		UsedIndex = &IndexInMemory;
 	} else
