@@ -161,7 +161,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		flw::ioflow__ *_Flow;
 		void _Create( void )
 		{
-			_UP = _UserFunctions->PreProcess( *_Flow );
+			_UP = _UserFunctions->PreProcess( *_Flow, "(embed)" );
 		}
 		void _Delete( void )
 		{

@@ -116,6 +116,13 @@ namespace flw {
 				// At true if we have to generate an error if not all awaited data are red. Only significant if 'HandleAmount' at true.
 				HandleToFew:	1;
 		} EOFD_;
+		fwf::iflow_functions_base___ &_F( void )
+		{
+			if ( _Functions == NULL )
+				ERRu();
+
+			return *_Functions;
+		}
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
 		size__ _EOFAwareRead(
@@ -193,11 +200,11 @@ namespace flw {
 			bso::bool__ Adjust,
 			bso::bool__ &CacheIsEmpty )
 		{
-			size__ PonctualAmount = _Functions->Read( Wanted, Buffer, Adjust, CacheIsEmpty );
+			size__ PonctualAmount = _F().Read( Wanted, Buffer, Adjust, CacheIsEmpty );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions->Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust, CacheIsEmpty );
+				PonctualAmount = _F().Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust, CacheIsEmpty );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -211,7 +218,7 @@ namespace flw {
 			bso::bool__ &CacheIsEmpty );
 		void _Dismiss( void )
 		{
-			_Functions->Dismiss();
+			_F().Dismiss();
 			_Red = 0;
 		}
 		/*f Handle EOFD. To call when no more data available in the medium.
@@ -325,7 +332,7 @@ namespace flw {
 		}
 		void Unget( datum__ Datum )
 		{
-			return _Functions->Unget( Datum );
+			return _F().Unget( Datum );
 		}
 		//f Skip 'Amount' bytes.
 		void Skip( size__ Amount = 1 )
@@ -382,6 +389,10 @@ namespace flw {
 		{
 			_Dismiss();
 		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _Functions != NULL;
+		}
 	};
 
 
@@ -434,16 +445,23 @@ namespace flw {
 		size__ _Written;
 		// Max amount of data between 2 synchronizing.
 		size__ _AmountMax;
+		fwf::oflow_functions_base___ &_F( void )
+		{
+			if ( _Functions == NULL )
+				ERRu();
+
+			return *_Functions;
+		}
 		size__ _LoopingWrite(
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum )
 		{
-			size__ PonctualAmount = _Functions->Write( Buffer, Wanted );
+			size__ PonctualAmount = _F().Write( Buffer, Wanted );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _Functions->Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
+				PonctualAmount = _F().Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -497,7 +515,7 @@ namespace flw {
 		void _Commit( void )
 		{
 			_DumpCache();
-			_Functions->Commit();
+			_F().Commit();
 
 			_Written = 0;
 		}
@@ -615,6 +633,10 @@ namespace flw {
 		size__ GetCacheSize( void) const
 		{
 			return _Size;
+		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _Functions != NULL;
 		}
 	};
 

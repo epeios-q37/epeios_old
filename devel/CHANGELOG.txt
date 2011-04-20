@@ -1,5 +1,13 @@
 $Id$
 
+20/04/2011 :
+	- CSDEBD :
+		- Adaptation aux modifications 'CSDxxx'.
+	- FLW :
+		- Ajout test validité '_Functions' et 'IsInitialized()'.
+	- NSXPCM :
+		- Adaptation aux modifications 'LCL'.
+
 19/04/2011 :
 	- Général :
 		- Adaptation aux modifications 'AEM'.

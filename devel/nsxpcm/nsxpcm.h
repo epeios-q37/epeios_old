@@ -188,12 +188,12 @@ namespace nsxpcm {
 
 	bso::bool__ GetTranslation(
 		text__ Text,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation );
 
 	const char *GetTranslation(
 		text__ Text,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		STR_BUFFER___ &Buffer  );
 
 	enum event__
@@ -1938,15 +1938,15 @@ namespace nsxpcm {
 			nsIDOMWindow *ParentWindow,	// Cette fonction bloque toute action sur 'ParentWindow', donc pas possibilité d'utiliser 'MasterWindow'.
 			file_picker_type__ Type,
 			const char *DefaultExtension,
-			const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 			str::string_ &FileName );
 		bso::bool__ Show(
 			nsIDOMWindow *ParentWindow,	// Cette fonction bloque toute action sur 'ParentWindow', donc pas possibilité d'utiliser 'MasterWindow'.
 			file_picker_type__ Type,
-			const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 			str::string_ &FileName )
 		{
-			return Show( ParentWindow, Type, NULL, Locale, FileName );
+			return Show( ParentWindow, Type, NULL, LocaleRack, FileName );
 		}
 		E_RODISCLOSE_( int, PredefinedFilters );
 	};
@@ -1960,7 +1960,7 @@ namespace nsxpcm {
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -1968,10 +1968,10 @@ namespace nsxpcm {
 	inline bso::bool__ HTMLFileOpenDialogBox(
 		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName )
 	{
-		return FileOpenDialogBox( ParentWindow, Title, "html", fpmfHTML, Locale, FileName );
+		return FileOpenDialogBox( ParentWindow, Title, "html", fpmfHTML, LocaleRack, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -1979,10 +1979,10 @@ namespace nsxpcm {
 	inline bso::bool__ XPRJFileOpenDialogBox(
 		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName )
 	{
-		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, FileName );
+		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, LocaleRack, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -1992,7 +1992,7 @@ namespace nsxpcm {
 		const str::string_ &Title,
 		const char *DefaultExtension,
 		int PredefinedFilters,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName );
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -2000,10 +2000,10 @@ namespace nsxpcm {
 	inline bso::bool__ HTMLFileSaveDialogBox(
 		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( ParentWindow, Title, "html", fpmfHTML, Locale, FileName );
+		return FileSaveDialogBox( ParentWindow, Title, "html", fpmfHTML, LocaleRack, FileName );
 	}
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
@@ -2011,10 +2011,10 @@ namespace nsxpcm {
 	inline bso::bool__ XPRJFileSaveDialogBox(
 		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &FileName )
 	{
-		return FileSaveDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, FileName );
+		return FileSaveDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, LocaleRack, FileName );
 	}
 
 	/* Retourne 'true' si un répertoire a été sélectionné ('DirectoryName' contient alors le répetoire),
@@ -2022,7 +2022,7 @@ namespace nsxpcm {
 	bso::bool__ DirectorySelectDialogBox(
 		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
 		const str::string_ &Title,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &DirectoryName );
 
 	inline void OpenWindow(
