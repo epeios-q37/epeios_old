@@ -111,19 +111,26 @@ namespace frdkrn {
 
 #define FRDKRN__R_AMOUNT	8	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
-	const str::string_ &GetTranslation(
+	const char *GetLabel( report__ Report );
+
+	inline const str::string_ &GetTranslation(
 		report__ Report,
-		const lcl::locale_rack___ &Locale,
-		str::string_ &Translation );
+		const lcl::rack__ &LocaleRack,
+		str::string_ &Translation )
+	{
+		LocaleRack.GetTranslation( GetLabel( Report ), "FRDKRN_", Translation );
+
+		return Translation;
+	}
 
 	struct error_set___
 	{
 	public:
-		rgstry::error__ Error;
+		rgstry::status__ Status;
 		rgstry::error_details Details;
 		void reset( bso::bool__ P = true )
 		{
-			Error = rgstry::e_Undefined;
+			Status = rgstry::s_Undefined;
 			Details.reset( P );
 		}
 		error_set___( void )
@@ -136,7 +143,7 @@ namespace frdkrn {
 		}
 		void Init( void )
 		{
-			Error = rgstry::e_Undefined;
+			Status = rgstry::s_Undefined;
 
 			Details.Init();
 		}
@@ -176,16 +183,16 @@ namespace frdkrn {
 
 	inline const str::string_ &GetTranslation(
 		const error_set___ &ErrorSet,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return rgstry::GetTranslation( ErrorSet.Error, ErrorSet.Details, Locale, Translation );
+		return rgstry::GetTranslation( ErrorSet.Status, ErrorSet.Details, LocaleRack, Translation );
 	}
 
 	const str::string_ &GetTranslation(
 		report__ Report,
 		const error_set___ &ErrorSet,
-		const lcl::locale_rack___ &Locale,
+		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation );
 
 
@@ -198,7 +205,7 @@ namespace frdkrn {
 	private:
 		lcl::locale _LocaleForLibrary;	// Uniquement utilisé en mode 'library'.
 		lcl::locale _Locale;
-		lcl::locale_rack___ _LocaleRack;
+		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
@@ -222,6 +229,7 @@ namespace frdkrn {
 		report__ _LoadConfiguration(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
+			const char *CypherKey,
 			error_set___ &ErrorSet );
 		report__ _LoadLocale(
 			const str::string_ &FileName,
@@ -233,11 +241,12 @@ namespace frdkrn {
 		report__ _LoadConfigurationAndLocale(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
+			const char *CypherKey,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, ErrorSet ) ) == rOK )
+			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, CypherKey, ErrorSet ) ) == rOK )
 				Report = _LoadLocale( TargetName, ErrorSet );
 
 			return Report;
@@ -245,6 +254,7 @@ namespace frdkrn {
 		report__ _FillProjectRegistry(
 			const str::string_ &FileName,
 			const char *TargetName,
+			const char *CypherKey,
 			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
@@ -283,6 +293,7 @@ namespace frdkrn {
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const str::string_ &Language,
+			const char *CypherKey,
 			error_set___ &ErrorSet )
 		{
 			_Registry.Init();
@@ -292,13 +303,14 @@ namespace frdkrn {
 			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
 			_ProjectOriginalTimeStamp = 0;
 
-			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, ErrorSet );
+			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, CypherKey, ErrorSet );
 
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 		}
 		status__ Init(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
+			const char *CypherKey,
 			const str::string_ &Language );
 		const frdrgy::registry_ &Registry( void ) const
 		{
@@ -307,12 +319,13 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			const char *CypherKey,
 			frdfbc::data___ &LibraryData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, ErrorSet ) ) == rOK )
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, CypherKey, ErrorSet ) ) == rOK )
 				Report = _Connect( LibraryData );
 
 			if ( Report == rOK )
@@ -323,6 +336,7 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			const char *CypkerKey,
 			frdfbc::data___ &LibraryData );
 		bso::bool__ IsProjectInProgress( void ) const
 		{
@@ -351,7 +365,9 @@ namespace frdkrn {
 		{
 			return _Backend.IsConnected();
 		}
-		void FillUserRegistry( flw::iflow__ &User );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
+		void FillUserRegistry(
+			flw::iflow__ &User,
+			const char *CypherKey );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
 		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
 		{
 			_Registry.DumpConfiguration( OFlow );
@@ -374,7 +390,7 @@ namespace frdkrn {
 		{
 			return _Registry.GetValue( str::string( Path ), Value );
 		}
-		const lcl::locale_rack___ &Locale( void ) const
+		const lcl::rack__ &LocaleRack( void ) const
 		{
 			return _LocaleRack;
 		}

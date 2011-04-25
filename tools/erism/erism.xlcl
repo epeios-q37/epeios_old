@@ -29,6 +29,10 @@
 				<Translation language="fr">Envoit des règlages de valeur aléatoire à l'instrument MIDI</Translation>
 				<Translation language="en-US">Write random settings value to MIDI instrument</Translation>
 			</Translations>
+			<Translations message="DetailCommandDescription">
+				<Translation language="fr">Affiche les implémentations MIDI de manière détaillée</Translation>
+				<Translation language="en-US">Print detailed MIDI implmentations</Translation>
+			</Translations>
 
 			<Translations message="DInOptionDescription">
 				<Translation language="fr">Identifiant du dispositif MIDI d'entrée (voir commande '%1' )</Translation>

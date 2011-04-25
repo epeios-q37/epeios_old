@@ -51,6 +51,7 @@ namespace common {
 		mRetrieveCommandDescription,
 		mWriteCommandDescription,
 		mRandomCommandDescription,
+		mDetailCommandDescription,
 
 		mDInOptionDescription,
 		mDOutOptionDescription,
@@ -72,7 +73,7 @@ namespace common {
 		m_Undefined
 	};
 
-#	define COMMON__MESSAGE_AMOUNT	16
+#	define COMMON__MESSAGE_AMOUNT	17
 
 	const char *Label( message__ Message );
 

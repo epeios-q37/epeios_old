@@ -65,7 +65,7 @@ using namespace frdkrn;
 	return #m;\
 	break
 
-const char *GetLabel_( report__ Report )
+const char *frdkrn::GetLabel( report__ Report )
 {
 #if FRDKRN__R_AMOUNT != 8
 #	error "'report__' modified !"
@@ -90,33 +90,15 @@ const char *GetLabel_( report__ Report )
 
 const str::string_ &frdkrn::GetTranslation(
 	report__ Report,
-	const lcl::locale_rack___ &Locale,
-	str::string_ &Translation )
-{
-ERRProlog
-	str::string RawText;
-ERRBegin
-	RawText.Init( "FRDKRN_" );
-	RawText.Append( GetLabel_( Report ) );
-
-	Locale.GetTranslation( RawText,Translation );
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
-}
-
-const str::string_ &frdkrn::GetTranslation(
-	report__ Report,
 	const error_set___ &ErrorSet,
-	const lcl::locale_rack___ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
-	GetTranslation( Report, Locale, Translation );
+	GetTranslation( Report, LocaleRack, Translation );
 	
 	if ( IsErrorSetRelevant( Report ) ) {
 		Translation.Append( " :\n" );
-		GetTranslation( ErrorSet, Locale, Translation );
+		GetTranslation( ErrorSet, LocaleRack, Translation );
 	}
 
 	return Translation;
@@ -175,6 +157,7 @@ static str::string_ &AppendTargetAttributePathItem_(
 report__ frdkrn::kernel___::_LoadConfiguration(
 	const str::string_ &FileName,
 	const char *TargetName,
+	const char *CypherKey,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
@@ -185,7 +168,7 @@ ERRBegin
 	Path.Init( "Configurations/Configuration" );
 	AppendTargetAttributePathItem_( TargetName, Path );
 
-	if ( ( ErrorSet.Error = _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+	if ( ( ErrorSet.Status = _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), CypherKey, ErrorSet.Details ) ) != rgstry::sOK ) {
 		Report = rConfigurationParsingError;
 		ERRReturn;
 	}
@@ -210,7 +193,7 @@ ERRBegin
 	Path.Init( "Locales/Locale" );
 	AppendTargetAttributePathItem_( TargetName, Path );
 
-	if ( ( ErrorSet.Error = _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+	if ( ( ErrorSet.Status = _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::sOK ) {
 		Report = rLocaleParsingError;
 		ERRReturn;
 	}
@@ -245,6 +228,7 @@ ERREpilog
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
+	const char *CypherKey,
 	const str::string_ &Language )
 {
 	status__ Status = s_Undefined;
@@ -254,7 +238,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	switch( Report = Init( ConfigurationFileName, TargetName, Language, ErrorSet ) ) {
+	switch( Report = Init( ConfigurationFileName, TargetName, Language, CypherKey, ErrorSet ) ) {
 	case rOK:
 		Status = sOK;
 		break;
@@ -274,7 +258,7 @@ ERRBegin
 
 	if ( Report != sOK ) {
 		_Message.Init();
-		frdkrn::GetTranslation( Report, ErrorSet, Locale(), _Message );
+		frdkrn::GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
 	}
 ERRErr
@@ -370,6 +354,7 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
+	const char *CypherKey,
 	frdfbc::data___ &LibraryData )
 {
 	status__ Status = s_Undefined;
@@ -379,9 +364,9 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, LibraryData, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, CypherKey, LibraryData, ErrorSet ) ) != rOK ) {
 		_Message.Init();
-		GetTranslation( Report, ErrorSet, Locale(), _Message );
+		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
 		Status = sError;
 		ERRReturn;
@@ -398,14 +383,16 @@ ERREpilog
 }
 
 
-void frdkrn::kernel___::FillUserRegistry( flw::iflow__ &User )
+void frdkrn::kernel___::FillUserRegistry(
+	flw::iflow__ &User,
+	const char *CypherKey )
 {
 ERRProlog
 	rgstry::error_details ErrorDetails;
 ERRBegin
 	ErrorDetails.Init();	
 
-	_Registry.FillUser( User, NULL, ErrorDetails );
+	_Registry.FillUser( User, NULL, CypherKey, ErrorDetails );
 
 ERRErr
 ERREnd
@@ -415,6 +402,7 @@ ERREpilog
 report__ frdkrn::kernel___::_FillProjectRegistry(
 	const str::string_ &FileName,
 	const char *Target,
+	const char *CypherKey,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
@@ -426,7 +414,7 @@ ERRBegin
 	Path.Append( Target );
 	Path.Append( "\"]" );
 
-	if ( ( ErrorSet.Error = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::eOK ) {
+	if ( ( ErrorSet.Status = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), CypherKey, ErrorSet.Details ) ) != rgstry::sOK ) {
 		Report = rProjectParsingError;
 		ERRReturn;
 	}

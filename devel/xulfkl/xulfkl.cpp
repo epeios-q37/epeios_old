@@ -84,17 +84,17 @@ static const char *GetRawMessage_( xulfkl::message__ MessageId )
 
 static const str::string_ &GetMessage_(
 	message__ Message,
-	const lcl::locale_rack___ &Locale,
+	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
-	Locale.GetTranslation( str::string( GetRawMessage_( Message ) ), Translation );
+	LocaleRack.GetTranslation( GetRawMessage_( Message ), "XULFKL_", Translation );
 
 	return Translation;
 }
 
 static const char *GetMessage_(
 	message__ Message,
-	const lcl::locale_rack___ &Locale,
+	const lcl::rack__ &LocaleRack,
 	STR_BUFFER___ &Buffer )
 {
 ERRProlog
@@ -102,7 +102,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	GetMessage_( Message, Locale, Translation );
+	GetMessage_( Message, LocaleRack, Translation );
 
 	Translation.Convert( Buffer );
 ERRErr
@@ -115,14 +115,14 @@ const str::string_ &xulfkl::kernel___::GetTranslation(
 	message__ MessageId,
 	str::string_ &Message  )
 {
-	return GetMessage_( MessageId, Locale(), Message );
+	return GetMessage_( MessageId, LocaleRack(), Message );
 }
 
 const char *xulfkl::kernel___::GetTranslation(
 	message__ MessageId,
 	STR_BUFFER___ &Buffer  )
 {
-	return GetMessage_( MessageId, Locale(), Buffer );
+	return GetMessage_( MessageId, LocaleRack(), Buffer );
 }
 
 

@@ -40,7 +40,7 @@
 		<Translation language="fr">Attribut manquant</Translation>
 		<Translation language="en-US">Unexpected attribute</Translation>
 	</Translations>
-	<Translations message="MSCRMI_">
+	<Translations message="MSCRMI_BadValue">
 		<Translation language="fr">Valeur incorrecte</Translation>
 		<Translation language="en-US">Bad value</Translation>
 	</Translations>

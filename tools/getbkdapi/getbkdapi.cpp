@@ -38,8 +38,8 @@
 
 using namespace bkddcb;
 
-cio::aware_cerr___ CErr;
-cio::aware_cout___ COut;
+cio::cerr___ CErr;
+cio::cout___ COut;
 
 using xml::writer_;
 
@@ -83,6 +83,8 @@ struct arguments {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
+	clnarg::buffer__ Buffer;
+
 	COut << DESCRIPTION << txf::nl;
 	COut << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false, COut );
@@ -95,8 +97,8 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cLibrary, "get the API from a library-type backend.", clnarg::vSplit, false, COut );
 	// Free argument description.
 	COut << "backend:" << txf::nl << txf::tab << "the backend location." << txf::nl;
-	COut << txf::tab << "- for " << Description.GetCommandLabels( cDaemon ) << " command, backend's host:port (ex.: 'localhost:1234')." << txf::nl; 
-	COut << txf::tab << "- for " << Description.GetCommandLabels( cLibrary ) << " command, backend's library name." << txf::nl; 
+	COut << txf::tab << "- for " << Description.GetCommandLabels( cDaemon, Buffer ) << " command, backend's host:port (ex.: 'localhost:1234')." << txf::nl; 
+	COut << txf::tab << "- for " << Description.GetCommandLabels( cLibrary, Buffer ) << " command, backend's library name." << txf::nl; 
 	COut << "file:" << txf::tab << "The XML output file. Standard output if not given." << txf::nl;
 ////	COut << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", false );
@@ -824,7 +826,7 @@ ERRProlog
 	xml::writer Writer;
 	tol::buffer__ Buffer;
 ERRBegin
-	Writer.Init( Flow, xml::oIndent );
+	Writer.Init( Flow, xml::oIndent, xml::e_Default );
 	
 	Flow << "<!-- Don't modify !" << txf::nl << "This document was generated using " NAME " " VERSION " (" URL ") ";
 	Flow << "on " << tol::DateAndTime( Buffer ) << ". -->" << txf::nl;
@@ -876,8 +878,9 @@ ERRProlog
 	epeios::row__ MasterRow = NONE;
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
-	txf::text_oflow__ TFile( File );
+	txf::text_oflow__ TFile;
 	bkdacc::strings RawMessages;
+	lcl::locale Dummy;
 ERRBegin
 	Types.Init();
 
@@ -892,7 +895,8 @@ ERRBegin
 	MasterRow = FindMasterType( Types );
 
 	if ( Arguments.FileName != NULL ) {
-		if ( fil::CreateBackupFile( Arguments.FileName, fil::hbfRename, CErr ) != fil::rbfOK ) {
+		Dummy.Init();
+		if ( fil::CreateBackupFile( Arguments.FileName, fil::bmRename, lcl::rack__( Dummy, str::string("") ), CErr ) != fil::bsOK ) {
 			CErr << "Unable to create backup file." << txf::nl;
 			ERRi();
 		}
@@ -903,12 +907,13 @@ ERRBegin
 		Backup = true;
 
 		File.Init( Arguments.FileName );
+		TFile.Init( File );
 		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, TFile );
 	} else
 		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
-		fil::RecoverBackupFile( Arguments.FileName, CErr );
+		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, str::string("") ), CErr );
 ERREnd
 ERREpilog
 }
@@ -922,6 +927,9 @@ ERRProlog
 	arguments Arguments;
 	csducl::type__ Type = csducl::t_Undefined;
 ERRBegin
+	COut.Init();
+	CErr.Init();
+
 	AnalyzeArgs( argc, argv, Arguments, Type );
 
 	Go( Arguments, Type );
@@ -945,7 +953,7 @@ ERRFErr
 		ERRRst();
 ERRFEnd
 ERRFEpilog
-	COut << txf::sync;
+	COut << txf::commit;
 
 	return ExitValue;
 }

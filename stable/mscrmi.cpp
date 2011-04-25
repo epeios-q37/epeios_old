@@ -147,6 +147,10 @@ size__ mscrmi::Size( type__ Type )
 	case tOctet2:
 		return 2;
 		break;
+	case tNibble3:
+	case tOctet3:
+		return 3;
+		break;
 	case tNibble4:
 	case tOctet4:
 		return 4;
@@ -591,6 +595,8 @@ static inline type__ Type_( const str::string_ &Wording )
 	TEST( Octet );
 	else TEST( Nibble2 );
 	else TEST( Octet2 );
+	else TEST( Nibble3 );
+	else TEST( Octet3 );
 	else TEST( Nibble4 );
 	else TEST( Octet4 );
 	else TEST( Name );
@@ -645,7 +651,7 @@ ERRBegin
 				TypeDefined = true;
 
 				if ( ( Type = Type_( Parser.Value() ) ) == t_Undefined ) {
-					Status = psAttributeAlreadyDefined;
+					Status = psBadValue;
 					ERRReturn;
 				}
 			} else if ( Parser.AttributeName() == "Value" ) {
@@ -1185,6 +1191,8 @@ protected:
 			case tOctet:
 			case tNibble2:
 			case tOctet2:
+			case tNibble3:
+			case tOctet3:
 			case tNibble4:
 			case tOctet4:
 				Status = _ConvertOctetNibbleValue( Value, Parameter( _Row ).Size(), RawData );
@@ -1355,11 +1363,15 @@ void mscrmi::Print(
 
 	Implementation.Init( Implementations );
 
+	Writer.PushTag( "MIDIImplementation" );
+
 	while ( Row != NONE ) {
 		Print( Implementation( Row ), Writer );
 
 		Row = Implementations.Next( Row );
 	}
+
+	Writer.PopTag();
 }
 
 static datum__ Checksum_(
@@ -1714,11 +1726,13 @@ ERRBegin
 	switch ( Parameter( Setting.Row() ).Type() ) {
 	case tOctet:
 	case tOctet2:
+	case tOctet3:
 	case tOctet4:
 		ConvertToOctetValue_( Setting.Data, Buffer );
 		/// Attention : si un jour ajout d'un 'tOctetx' ou x > 4, la fonction ci-dessus ne fonctionne pas !
 		break;
 	case tNibble2:
+	case tNibble3:
 	case tNibble4:
 		ConvertToNibbleValue_( Setting.Data, Buffer );
 		/// Attention : si un jour ajout d'un 'tNibblex' ou x > 4, la fonction ci-dessus ne fonctionne pas !

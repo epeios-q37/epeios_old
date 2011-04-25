@@ -53,6 +53,7 @@ enum command__ {
 	cRetrieve,	// Retrieve settings from device.
 	cWrite,		// Set settings to device.
 	cRandom,	// Set a range of settings with random value (between 2 values).
+	cDetail,	// Print the MIDI implemntations in details.
 	c_amount,
 	c_Undefined
 };
@@ -154,6 +155,11 @@ ERRBegin
 	cout << txf::nl;
 	Translation.Init();
 	cout << txf::pad << common::GetTranslation( common::mRandomCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cDetail, Buffer, "," );
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << common::GetTranslation( common::mDetailCommandDescription, Translation ) << '.' << txf::nl;
 
 	cout << txf::nl;
 
@@ -382,6 +388,14 @@ ERRBegin
 			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
 			break;
 		}
+	case cDetail:
+		switch( Free.Amount() ) {
+		case 0:
+			break;
+		default:
+			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			break;
+		}
 		break;
 	default:
 		ERRc();
@@ -411,6 +425,7 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "retrieve", cRetrieve );
 	Description.AddCommand( CLNARG_NO_SHORT, "write", cWrite );
 	Description.AddCommand( CLNARG_NO_SHORT, "random", cRandom );
+	Description.AddCommand( CLNARG_NO_SHORT, "detail", cDetail );
 //	Description.AddCommand( '', "", c );
 
 	Description.AddOption( CLNARG_NO_SHORT, "din", oDIn );
@@ -438,6 +453,7 @@ ERRBegin
 	case cRetrieve:
 	case cWrite:
 	case cRandom:
+	case cDetail:
 		Parameters.Command = (command__)Analyzer.GetCommand();
 		break;
 //	case c:
@@ -529,6 +545,23 @@ void DisplayMidiDevices( void )
 	DisplayMidiOutDevices();
 }
 
+void Detail( void )
+{
+ERRProlog
+	mscrmi::midi_implementations Implementations;
+	xml::writer Writer;
+ERRBegin
+	Implementations.Init();
+
+	common::GetImplementations( Implementations );
+
+	Writer.Init( common::cout, xml::oIndent, xml::e_Default );
+	mscrmi::Print( Implementations, Writer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void Go( const parameters &Parameters )
 {
 ERRProlog
@@ -550,6 +583,9 @@ ERRBegin
 		break;
 	case cRandom:
 		set::Randomize( NULL, Parameters.DIn, Parameters.DOut, Parameters.AddressRange, Parameters.ValueRange );
+		break;
+	case cDetail:
+		Detail();
 		break;
 	default:
 		ERRc();

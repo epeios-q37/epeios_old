@@ -2,6 +2,9 @@ $Id$
 
 'erism' changelog.
 
+25/04/2011 :
+	- Ajout 'detail' command.
+
 *********
 * 0.2.0 *
 *********

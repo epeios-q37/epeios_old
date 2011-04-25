@@ -204,15 +204,21 @@ namespace lcl {
 	public:
 		const locale_ *Locale;
 		const str::string_ *Language;
-		rack__( void )
+		void reset( bso::bool__ = true )
 		{
 			Locale = NULL;
 			Language = NULL;
+		}
+		rack__( void )
+		{
+			reset();
 		}
 		rack__(
 			const locale_ &Locale,
 			const str::string_ &Language )
 		{
+			reset( false );
+
 			this->Locale = &Locale;
 			this->Language = &Language;
 		}
@@ -220,8 +226,9 @@ namespace lcl {
 			const locale_ &Locale,	// N'est pas dupliqué !.
 			const str::string_ &Language ) // N'est pas dupliqué !
 		{
-			this->Locale = &Locale;
+			reset();
 
+			this->Locale = &Locale;
 			this->Language = &Language;
 		}
 		bso::bool__ GetTranslation(

@@ -1,5 +1,17 @@
 $Id$
 
+25/04/2011 :
+	- MSCRMI :
+		- Ajout balise racine manquante 'Print( midi_implmentations_ ... )'.
+		- Correction mauvais 'parse status'.
+		- Rajout 'Octet3' et "Nibble3'.
+
+21/04/2011 :
+	- FRDxxx, XULxxx :
+		- Adaptation aux modifications sous-jacentes.
+	- LCL :
+		- Standardisation 'rack__'.
+
 20/04/2011 :
 	- CSDEBD :
 		- Adaptation aux modifications 'CSDxxx'.

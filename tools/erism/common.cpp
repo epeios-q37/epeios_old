@@ -51,7 +51,7 @@ lcl::rack__ common::LocaleRack( _Locale, _Language );
 
 const char *common::Label( message__ Message )
 {
-#if	COMMON__MESSAGE_AMOUNT != 16
+#if	COMMON__MESSAGE_AMOUNT != 17
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
@@ -61,6 +61,7 @@ const char *common::Label( message__ Message )
 	CASE( RetrieveCommandDescription )
 	CASE( WriteCommandDescription )
 	CASE( RandomCommandDescription )
+	CASE( DetailCommandDescription )
 	CASE( DInOptionDescription )
 	CASE( DOutOptionDescription )
 	CASE( TargetArgumentDescription )
@@ -84,7 +85,7 @@ void common::Display(
 		message__ Message
 		... )
 {
-#if	COMMON__MESSAGE_AMOUNT != 16
+#if	COMMON__MESSAGE_AMOUNT != 17
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
@@ -109,6 +110,7 @@ ERRBegin
 	case mRetrieveCommandDescription:
 	case mWriteCommandDescription:
 	case mRandomCommandDescription:
+	case mDetailCommandDescription:
 	case mNoMIDIOutDevicesAvailable:
 	case mAvailableMIDIOutDevices:
 	case mNoMIDIInDevicesAvailable:

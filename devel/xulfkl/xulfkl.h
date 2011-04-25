@@ -103,16 +103,18 @@ namespace xulfkl {
 		status__ Init(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
+			const char *CypherKey,
 			const str::string_ &Language )
 		{
-			return _kernel___::Init( ConfigurationFileName, TargetName, Language );
+			return _kernel___::Init( ConfigurationFileName, TargetName, CypherKey, Language );
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			const char *CypherKey,
 			frdfbc::data___ &LibraryData )
 		{
-			return _kernel___::LoadProject( FileName, TargetName, LibraryData );
+			return _kernel___::LoadProject( FileName, TargetName, CypherKey, LibraryData );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

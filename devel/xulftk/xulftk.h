@@ -161,14 +161,17 @@ namespace xulftk {
 		// Normalement appelé par la redéfintion de la fonciton qui suit.
 		void _ApplySession(
 			const str::string_ &FileName,
+			const char *CypherKey,
 			frdfbc::data___ &LibraryData )
 		{
-			if ( Kernel().LoadProject( FileName, _TargetName, LibraryData ) != frdkrn::sOK )
+			if ( Kernel().LoadProject( FileName, _TargetName, CypherKey, LibraryData ) != frdkrn::sOK )
 				UI().Alert( Kernel().Message() );
 
 			UpdateUI();
 		}
-		virtual void XULFTKApplySession( const str::string_ &FileName )
+		virtual void XULFTKApplySession(
+			const str::string_ &FileName,
+			const char *CypherKey )
 		{
 			ERRu();	//	Si pas surchargé, alors xulfmn::open_project_command__::NSXPCMOnEvent') doit être redéfini.
 		}
@@ -249,9 +252,10 @@ namespace xulftk {
 		ERRProlog
 			str::string Data;
 			flx::E_STRING_OFLOW___ SOFlow;
-			txf::text_oflow__ TOFlow( SOFlow );
+			txf::text_oflow__ TOFlow;
 		ERRBegin
 			Data.Init();
+			TOFlow.Init( SOFlow );
 			SOFlow.Init( Data );
 
 			Kernel().DumpUserRegistry( TOFlow );
@@ -321,7 +325,7 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void  ApplySession( void )
+		void  ApplySession( const char *CypherKey )
 		{
 		ERRProlog
 			str::string Translation;
@@ -330,8 +334,8 @@ namespace xulftk {
 			Translation.Init();
 			FileName.Init();
 
-			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().Locale(), FileName ) )
-				XULFTKApplySession( FileName );
+			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) )
+				XULFTKApplySession( FileName, CypherKey );
 		ERRErr
 		ERREnd
 		ERREpilog
