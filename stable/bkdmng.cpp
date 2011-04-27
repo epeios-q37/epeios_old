@@ -74,7 +74,7 @@ enum message__ {
 		Message = #m + 1;\
 		break
 
-static const char *GetRawMessage_( message__ MessageId )
+static const char *Label_( message__ MessageId )
 {
 	const char *Message = NULL;
 	switch ( MessageId ) {
@@ -91,18 +91,31 @@ static const char *GetRawMessage_( message__ MessageId )
 	return Message;
 }
 
-static const char *GetMessage_(
-	message__ MessageId,
-	backend_ &Backend,
-	STR_BUFFER___ &Buffer )
+static const str::string_ &GetTranslation_(
+	message__ Message,
+	const bkdlcl::rack__ &Rack,
+	str::string_ &Translation )
 {
-	return Backend.GetTranslation( GetRawMessage_( MessageId ), Buffer );
+	Rack.GetTranslation( Label_( Message ), "NKDMNG_", Translation );
+
+	return Translation;
 }
 
-void bkdmng::DumpRawMessages( txf::text_oflow__ &Flow )
+static void ReportError_(
+	message__ Message,
+	const bkdlcl::rack__ &Rack,
+	request_manager__ &Request )
 {
-	for ( int i = 0; i < m__amount ; i++ )
-		Flow << GetRawMessage_( message__( i ) ) << txf::nl;
+ERRProlog
+	str::string Translation;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Translation.Init();
+
+	Request.ReportError( GetTranslation_( Message, Rack, Translation ).Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void bkdmng::untyped_module::_Clean( void )
@@ -219,44 +232,6 @@ ERREpilog
 		ERRb();
 }
 
-
-#if 0	// Obsolete
-// Donne la liste des identificateurs et des libellés des langues.
-static void GetLanguagesIDAndName_(
-	backend_ &Backend,
-	untyped_module &Module,
-	index__,
-	command__ Command,
-	request_manager__ &Requete,
-	bso::bool__ &,
-	void * )
-{
-ERRProlog
-	items16 Items;
-	item16 Item;
-ERRBegin
-	Items.Init();
-	Item.Init();
-
-	Item.ID( bkdlgg::lDefault );
-	Item.Value = bkdlgg::LanguageNames[bkdlgg::lDefault];
-	Items.Add( Item );
-
-	for ( bso::ushort__ I = 0; I < Backend.Langues_.Nombre; I++ )
-	{
-		Item.Init();
-		Item.ID( Backend.Langues_.Identificateurs[I] );
-		Item.Value = bkdlgg::LanguageNames[Backend.Langues_.Identificateurs[I]];
-		Items.Add( Item );
-	}
-
-	Requete.PushItems16( Items );
-	Requete.Complete();
-ERRErr
-ERREnd
-ERREpilog
-}
-#endif
 
 // Donne la liste des identificateurs et des libellés de types
 static void GetTypesIDAndPrefixAndName_(
@@ -460,15 +435,17 @@ static void GetNewObject_(
 	untyped_module &Module,
 	index__,
 	command__ Command,
-	request_manager__ &Requete,
+	request_manager__ &Request,
 	bso::bool__ &,
 	void * )
 {
 ERRProlog
-	type__ T = *Requete.Id16In();
+	type__ T = BKDMNG_INVALID_TYPE;
 	STR_BUFFER___ Buffer;
 	object__ O;
 ERRBegin
+	T = *Request.Id16In();
+
 	if ( *T >= Backend.Modules.Amount() )
 		ERRb();
 
@@ -478,13 +455,11 @@ ERRBegin
 	O = Backend.New( (type__)*T );
 
 	if ( O != BKDMNG_INVALID_TYPE )
-		Requete.ObjectOut() = O;
+		Request.ObjectOut() = O;
 	else
-		Requete.SendExplanationMessage(
-			GetRawMessage_( m_UnknowObjectType ),
-			GetMessage_( m_UnknowObjectType, Backend, Buffer ) );
+		ReportError_( m_UnknowObjectType, Backend.LocaleRack(), Request );
 
-	Requete.Complete();
+	Request.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -496,28 +471,28 @@ static void GetType_(
 	untyped_module &Module,
 	index__,
 	command__ Command,
-	request_manager__ &Requete,
+	request_manager__ &Request,
 	bso::bool__ &,
 	void * )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
-	const str::string_ &Type = Requete.StringIn();
-	type__ T = Backend.Type( Type );
+	type__ T = BKDMNG_INVALID_TYPE;
 ERRBegin
-	if ( ( T != BKDMNG_INVALID_TYPE ) )
-		Requete.Id16Out() = *T;
-	else
-		Requete.SendExplanationMessage(
-			GetRawMessage_( m_UnknowObjectTypeName ),
-			GetMessage_( m_UnknowObjectTypeName, Backend, Buffer ) );
+	const str::string_ &Type = Request.StringIn();
+	T = Backend.Type( Type );
 
-	Requete.Complete();
+	if ( ( T != BKDMNG_INVALID_TYPE ) )
+		Request.Id16Out() = *T;
+	else
+		ReportError_( m_UnknowObjectTypeName, Backend.LocaleRack(), Request );
+
+	Request.Complete();
 ERRErr
 ERREnd
 ERREpilog
 }
-
+#if 0
 // Returns all the raw messages.
 static void GetRawMessages_(
 	backend_ &Backend,
@@ -540,6 +515,7 @@ static void GetRawMessages_(
 		Row = Backend.Modules.Next( Row );
 	}
 }
+#endif
 
 // Supprime un objet.
 static void RemoveObject_(
@@ -628,7 +604,7 @@ static void GetCommand_(
 	untyped_module &Module,
 	index__,
 	command__ Command,
-	request_manager__ &Requete,
+	request_manager__ &Request,
 	bso::bool__ &,
 	void * )
 {
@@ -637,11 +613,11 @@ ERRProlog
 	command__ Command;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	type__ Type = *Requete.Id16In();
+	type__ Type = *Request.Id16In();
 
 	Description.Init();
-	Description.Name  = Requete.StringIn();
-	Description.Casts = Requete.Ids8In();
+	Description.Name  = Request.StringIn();
+	Description.Casts = Request.Ids8In();
 
 /*	if ( !Backend.Valide( T ) )
 		if ( T() != BKDEND9_TYPE_MAITRE )
@@ -650,13 +626,11 @@ ERRBegin
 	Command = Backend.Command( *Type, Description );
 
 	if ( ( Command != BKDMNG_INVALID_COMMAND ) )
-		Requete.Id16Out() = Command;
+		Request.Id16Out() = Command;
 	else
-		Requete.SendExplanationMessage(
-			GetRawMessage_( m_UnknowCommandNameOrDescription ),
-			GetMessage_( m_UnknowCommandNameOrDescription, Backend, Buffer ));
+		ReportError_( m_UnknowCommandNameOrDescription, Backend.LocaleRack(), Request );
 
-	Requete.Complete();
+	Request.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -717,23 +691,21 @@ static void SetLanguage_(
 	untyped_module &Module,
 	index__,
 	command__ Command,
-	request_manager__ &Requete,
+	request_manager__ &Request,
 	bso::bool__ &Deconnexion,
 	void * )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	const str::string_ &Language = Requete.StringIn();
+	const str::string_ &Language = Request.StringIn();
 
 	if ( Language.Amount() == 0 )
-		Requete.SendExplanationMessage(
-			GetRawMessage_( m_BadLanguage),
-			GetMessage_( m_BadLanguage, Backend, Buffer ));
+			ReportError_( m_BadLanguage, Backend.LocaleRack(), Request );
 	else
 		Backend.SetLanguage( Language );
 
-	Requete.Complete();
+	Request.Complete();
 ERRErr
 ERREnd
 ERREpilog
@@ -747,8 +719,9 @@ namespace bkdmng {
 	{
 		untyped_module::Init( NULL, NULL );
 		Backend_ = &Backend;
+#if 0
 		RawMessages.Init();
-
+#endif
 		// Throw an user error (ERRu), for testing purpose.
 		ADD( ThrowUError );
 
@@ -760,10 +733,10 @@ namespace bkdmng {
 
 		// Give the type corresponding to the given name.
 		ADD( GetType );
-
+#if 0
 		// Give all the raw messages.
 		ADD( GetRawMessages );
-
+#endif
 		// Give the command of the given object type and command name.
 		ADD( GetCommand );
 
@@ -799,9 +772,10 @@ namespace bkdmng {
 
 		// Set the current language.
 		ADD( SetLanguage );
-
+#if 0
 		for ( int i = 0; i < m__amount ; i++ )
 			Backend.GetMasterRawMessages().Append( str::string( GetRawMessage_( (message__)i ) ) );
+#endif
 	}
 
 	type__ backend::Type( const str::string_ &Name ) const
@@ -847,9 +821,7 @@ namespace bkdmng {
 
 		ERRRst();
 
-		Request.SendExplanationMessage(
-			GetRawMessage_( m_BackendError ),
-			ErrMsg );
+		Request.ReportBackendError(	ErrMsg );
 	ERREnd
 		Request.Complete();
 	ERREpilog

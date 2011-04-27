@@ -70,6 +70,7 @@ extern class ttr_tutor &BKDRQMTutor;
 #include "bso.h"
 #include "str.h"
 #include "ctn.h"
+#include "bkdrpl.h"
 #include "bkdtpm.h"
 #include "bkdcst.h"
 #include "bkddsc.h"
@@ -280,20 +281,32 @@ namespace bkdrqm {
 			Channel_->Commit();
 		}
 		//f Send a message that explain the reason of no treatment.
-		void SendExplanationMessage(
-			const char *RawMessage,
-			const char *I18Message )
+		void Report(
+			bkdrpl::reply__ Reply,
+			const char *Message )
 		{
-			if ( !RawMessage[0] )
+			flw::Put( (flw::datum__)Reply, *Channel_ );
+
+			if ( Reply == bkdrpl::rOK )
+					ERRu();
+
+			if ( ( Message == NULL ) || ( Message[0] == 0 ) )
 				ERRu();
 
-			flw::PutString( RawMessage, *Channel_ );
-			flw::PutString( I18Message, *Channel_ );
+			flw::PutString( Message, *Channel_ );
 			Channel_->Put( 0 );
 
 			Closed_ = true;
 
 			Channel_->Commit();
+		}
+		void ReportError( const char *Message )	// 'User error'.
+		{
+			Report( bkdrpl::rUserError, Message );
+		}
+		void ReportBackendError( const char *Message )
+		{
+			Report( bkdrpl::rBackendError, Message );
 		}
 		const casts_ &GetCasts( void ) const
 		{

@@ -232,8 +232,10 @@ namespace bkdmng {
 			ERRb();
 			return NULL;	// Pour éviter un 'warning'
 		}
+#if 0
 		//v To get the raw messages.
 		virtual void BKDMNGGetRawMessages( messages_ &Messages ) = 0;
+#endif
 		// Fonction appelée pour traiter la requête 'Requete' pour l'objet d'index 'Index'.
 		virtual void Handle_(
 			index__ Index,
@@ -305,10 +307,12 @@ namespace bkdmng {
 			return BKDMNGObject( Index );
 		}
 		//f Get the raw messages.
+#if 0
 		void GetRawMessages( messages_ &RawMessages )
 		{
 			BKDMNGGetRawMessages( RawMessages );
 		}
+#endif
 		/*f Initialization with the object prefix 'Prefix' and name 'Name'.
 		'Prefix' and 'Name' are not duplicated. They should NOT be modified. */
 		void Init(
@@ -407,10 +411,12 @@ namespace bkdmng {
 
 		}
 	protected:
+#if 0
 		virtual void BKDMNGGetRawMessages( messages_ &Messages )
 		{
 			t::RAW_MESSAGES( Messages );
 		}
+#endif
 		virtual void Handle_(
 			index__ Index,
 			bkdrqm::request_manager__ &Requete,
@@ -630,13 +636,17 @@ namespace bkdmng {
 			request_manager__ &Requete,
 			void *PU,
 			log_functions__ &LogFunctions );
+#if 0
 		virtual void BKDMNGGetRawMessages( messages_ &RawMessages )
 		{
 			RawMessages = this->RawMessages;
 		}
+#endif
 	public:
+#if 0
 		//o All raw messages from all modules.
 		messages RawMessages;
+#endif
 		// Initialisation avec rattachement à l'interface 'Backend'.
 		void Init( backend &Backend );
 	};
@@ -785,12 +795,6 @@ namespace bkdmng {
 
 		}
 		//f Add 'Module' to the interface.
-		const char *GetTranslation(
-			const char *Message,
-			STR_BUFFER___ &Buffer )
-		{
-			return _LocaleRack.GetTranslation( Message, "BKDMNG_", Buffer );
-		}
 		void Add( untyped_module &Module )
 		{
 			Module.Backend_ = this;
@@ -901,21 +905,21 @@ namespace bkdmng {
 		{
 			return !strcmp( Module( Object ).Prefix(), Prefix ) && !strcmp( Module( Object ).Name(), Name );
 		}
+#if 0
 		//f Return the raw messages.
 		messages_ &GetMasterRawMessages( void )
 		{
 			return Master_.RawMessages;
 		}
+#endif
 		const char *ClientOrigin( void ) const
 		{
 			return _ClientOrigin;
 		}
+		E_RODISCLOSE__( bkdlcl::rack__, LocaleRack );
 	};
 
 	typedef backend backend_;
-
-	void DumpRawMessages( txf::text_oflow__ &Flow );
-
 }
 
 //d A ram module of an object of type 't'.

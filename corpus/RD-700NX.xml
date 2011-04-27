@@ -438,7 +438,7 @@
 				<xpp:expand select="Parameters32"/>
 			</Parameters>
 		</Parameters>
-		<ICI>
+
 		<Parameters Label="Internal">
 			<Parameters Label="Layer 01" Address="003000">
 			</Parameters>

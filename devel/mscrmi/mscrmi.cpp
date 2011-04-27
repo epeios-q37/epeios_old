@@ -137,6 +137,34 @@ static inline xaddress__ Sum_(
 	return mscrmi::_SetStencilSize( Sum( mscrmi::_Address( Address ), Size ), mscrmi::_StencilSize( Address ) );
 }
 
+#define CASE( name )\
+	case t##name:\
+		return #name;\
+	break
+
+
+const char *mscrmi::Label( type__ Type )
+{
+	switch ( Type ) {
+	CASE( Nibble2 );
+	CASE( Nibble3 );
+	CASE( Nibble4 );
+	CASE( Octet );
+	CASE( Octet2 );
+	CASE( Octet3 );
+	CASE( Octet4 );
+	CASE( Name );
+	CASE( HBars );
+	default:
+		ERRu();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+#undef CASE
+
 size__ mscrmi::Size( type__ Type )
 {
 	switch ( Type ) {
@@ -256,6 +284,9 @@ static inline void Print_(
 		ERRs();
 
 	Writer.PutAttribute( "Address", Address );
+
+	if ( Parameter.Type() != t_Group )
+		Writer.PutAttribute( "Type", Label( Parameter.Type() ) );
 /*
 	sprintf( Address, "%0*lX", 2 * ( 4 - _StencilSize( Parameter.S_.Address ) ), Parameter.Offset() );
 	Writer.PutAttribute( "Offset", Address );
@@ -358,6 +389,8 @@ const char *mscrmi::Label( parse_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 
 }
+
+#undef CASE
 
 const char *mscrmi::Translate(
 	parse_status__ Status,

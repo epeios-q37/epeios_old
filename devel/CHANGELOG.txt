@@ -1,5 +1,12 @@
 $Id$
 
+27/04/2011 :
+	- BKDxxx :
+		- Implémentation nouveau protocole.
+	- MSCRMI :
+		- 'Print(...)' d'un paramètre affiche maintenant également le type.
+
+
 25/04/2011 :
 	- MSCRMI :
 		- Ajout balise racine manquante 'Print( midi_implmentations_ ... )'.

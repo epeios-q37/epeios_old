@@ -263,6 +263,8 @@ namespace mscrmi {
 		t_Group,	// Signale un groupe de paramètre.
 	};
 
+	const char *Label( type__ type );
+
 	size__ Size( type__ Type );
 
 	class _parameter_core_
