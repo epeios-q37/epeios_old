@@ -673,7 +673,6 @@ void GetBackendData(
 	const char *Location,
 	csducl::type__ Type,
 	types_ &Types,
-	bkdacc::strings_ &RawMessages,
 	str::string_ &TargetLabel,
 	str::string_ &BackendInformations,
 	str::string_ &PublisherInformations )
@@ -703,7 +702,6 @@ ERRBegin
 	Backend.Init( Flow, BackendAccessFunctions );
 		
 	GetDescription( Backend, Types );
-	GetRawMessages( Backend, RawMessages );
 	
 	Backend.TargetLabel( TargetLabel );
 	Backend.About( BackendInformations, PublisherInformations );
@@ -744,6 +742,7 @@ ERREnd
 ERREpilog
 }
 
+#if 0
 void Generate(
 	const bkdacc::strings_ &RawMessages,
 	writer_ &Writer )
@@ -784,6 +783,7 @@ void Generate(
 	Generate( RawMessages, Writer );
 	Generate( Types, MasterRow, Writer );
 }
+#endif
 
 void GenerateMisc(
 	const str::string_ &BackendInformations,
@@ -814,7 +814,7 @@ void GenerateMisc(
 
 
 void Generate(
-	const bkdacc::strings_ &RawMessages,
+//	const bkdacc::strings_ &RawMessages,
 	const types_ &Types,
 	epeios::row__ MasterRow,
 	const str::string_ &TargetLabel,
@@ -836,7 +836,7 @@ ERRBegin
 	Writer.PutAttribute( "target", TargetLabel );
 
 	GenerateMisc( BackendInformations, PublisherInformations, Writer );	
-	Generate( RawMessages, Types, MasterRow, Writer );
+	Generate( Types, MasterRow, Writer );
 
 	Writer.PopTag();
 ERRErr
@@ -879,7 +879,6 @@ ERRProlog
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
 	txf::text_oflow__ TFile;
-	bkdacc::strings RawMessages;
 	lcl::locale Dummy;
 ERRBegin
 	Types.Init();
@@ -888,9 +887,7 @@ ERRBegin
 	BackendInformations.Init();
 	PublisherInformations.Init();
 
-	RawMessages.Init();
-	
-	GetBackendData( Arguments.BackendLocation, Type, Types, RawMessages, TargetLabel, BackendInformations, PublisherInformations );
+	GetBackendData( Arguments.BackendLocation, Type, Types, TargetLabel, BackendInformations, PublisherInformations );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -908,9 +905,9 @@ ERRBegin
 
 		File.Init( Arguments.FileName );
 		TFile.Init( File );
-		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, TFile );
+		Generate( Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, TFile );
 	} else
-		Generate( RawMessages, Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, COut );
+		Generate( Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, str::string("") ), CErr );

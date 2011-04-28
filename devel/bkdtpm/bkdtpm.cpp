@@ -61,12 +61,12 @@ static inline void PutSize_(
 	bso::ulong__ Size,
 	flw::oflow__ &Flow )
 {
-	dtfptb::PutSize( Size, Flow );
+	dtfptb::NewPutSize( Size, Flow );
 }
 
 static inline bso::ulong__ GetSize_( flw::iflow__ &Flow )
 {
-	return dtfptb::GetSize( Flow);
+	return dtfptb::NewGetSize( Flow);
 }
 
 namespace {

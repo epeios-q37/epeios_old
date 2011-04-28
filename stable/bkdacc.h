@@ -427,6 +427,7 @@ namespace bkdacc {
 
 			return Type;
 		}
+#if 0
 		//f Put in 'RawMessages' all the raw messages from backend.
 		void GetRawMessages( strings_ &RawMessages )
 		{
@@ -438,6 +439,7 @@ namespace bkdacc {
 
 			_Handle();
 		}
+#endif
 		//f Return the command of object type 'Type', named 'Name' with parameter 'Parameters'.
 		command__ GetCommand(
 			type__ Type,

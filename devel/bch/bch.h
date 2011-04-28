@@ -483,21 +483,41 @@ namespace bch {
 
 			return *this;
 		}
-		void WriteToFlow(
+		void OldWriteToFlow(
 			flw::oflow__ &OFlow,
 			bso::bool__ WriteSize ) const
 		{
 			if ( WriteSize )
-				dtfptb::PutSize( mng::Amount(), OFlow );
+				dtfptb::OldPutSize( mng::Amount(), OFlow );
 
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
-		void ReadFromFlow(
+		void NewWriteToFlow(
+			flw::oflow__ &OFlow,
+			bso::bool__ WriteSize ) const
+		{
+			if ( WriteSize )
+				dtfptb::NewPutSize( mng::Amount(), OFlow );
+
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
+		}
+		void OldReadFromFlow(
 			flw::iflow__ &IFlow,
 			epeios::size__ Amount )
 		{
 			if ( Amount == 0 )
-				Amount = dtfptb::GetSize( IFlow );
+				Amount = dtfptb::OldGetSize( IFlow );
+
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
+			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );
+
+		}
+		void NewReadFromFlow(
+			flw::iflow__ &IFlow,
+			epeios::size__ Amount )
+		{
+			if ( Amount == 0 )
+				Amount = dtfptb::NewGetSize( IFlow );
 
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );

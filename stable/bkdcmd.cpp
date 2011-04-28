@@ -62,7 +62,7 @@ const char *bkdcmd::CommandsNames[bkdcmd::c_amount] = {
 	"_ThrowIError$1",
 	"_GetNewObject$1",
 	"_GetType$1",
-	"_GetRawMessages$1",
+//	"_GetRawMessages$1",
 	"_GetCommand$1",
 	"_GetCommands$1",
 	"_GetTypeAndCommands$1",
@@ -92,10 +92,6 @@ static const cast GetType[] = {
 		cString,	// The name of the type.
 	cEnd,
 		cId16,		// The type asked.
-	cEnd };
-static const cast GetRawMessages[] = {
-	cEnd,
-		cStrings,	// The messages.
 	cEnd };
 static const cast GetCommand[] = {
 		cId16,		// The object type.
@@ -163,7 +159,7 @@ const cast *bkdcmd::CommandsParameters[bkdcmd::c_amount] = {
 	ThrowIError,
 	GetNewObject,
 	GetType,
-	GetRawMessages,
+//	GetRawMessages,
 	GetCommand,
 	GetCommands,
 	GetTypeAndCommands,

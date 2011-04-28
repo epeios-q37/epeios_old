@@ -1,5 +1,14 @@
 $Id$
 
+28/04/2011 :
+	- Général :
+		- Adaptation aux modifications 'DTFPTB'.
+	- BKDxxx :
+		- Implémentation nouveau protocole.
+	- DTFPTB :
+		- Fonctions actuelles préfixées par 'Old' (amenée à disparaître).
+		- Fonctions implémentant le nouveau système préfixées par 'New'.
+
 27/04/2011 :
 	- BKDxxx :
 		- Implémentation nouveau protocole.

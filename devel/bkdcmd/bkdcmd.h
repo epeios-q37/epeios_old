@@ -75,7 +75,7 @@ namespace bkdcmd {
 		cThrowIError,
 		cGetNewObject,
 		cGetType,
-		cGetRawMessages,
+//		cGetRawMessages,
 		cGetCommand,
 		cGetCommands,
 		cGetTypeAndCommands,

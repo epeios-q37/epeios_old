@@ -166,7 +166,7 @@ namespace dtfptb {
 	#define DTFPTB_L2	65535
 	#define DTFPTB_L3	16777215
 
-	inline bso::ubyte__ GetSizeLength( bso::ulong__ Size )
+	inline bso::ubyte__ OldGetSizeLength( bso::ulong__ Size )
 	{
 		if ( Size >= ( DTFPTB_L3 + DTFPTB_L2 + DTFPTB_L1 ) )
 			return 10;
@@ -178,19 +178,55 @@ namespace dtfptb {
 			return 1;
 	}
 
-	void PutSize(
+	namespace {
+		inline bso::bool__ Fits_(
+			bso::ulong__ Size,
+			bso::ubyte__ Level )
+		{
+			return ( Size < ( 1UL << ( Level * 7 ) ) );
+		}
+	};
+
+#	define DTFPTB__TEST( l )	if ( Test_( Size, l ) ) return l;
+
+	inline bso::ubyte__ NewGetSizeLength( bso::ulong__ Size )
+	{
+		bso::ubyte__ Counter = 1;
+
+		while ( !Fits_( Size, Counter ) ) {
+#	ifdef DTFPTB_DBG
+			if ( Counter >= BSO_UBYTE_MAX )
+				ERRc();
+#endif
+			Counter++;
+		}
+
+		return Counter;
+	}
+
+	void OldPutSize(
 		bso::ulong__ Size,
 		size_buffer__ &Buffer );
 
-	//f Write 'Size' into 'Flow'.
-	void PutSize(
+	void NewPutSize(
+		bso::ulong__ Size,
+		size_buffer__ &Buffer );
+
+
+	void OldPutSize(
 		bso::ulong__ Size,
 		flw::oflow__ &Flow );
 	
-	//f Return size stored in 'Flow'.
-	bso::ulong__ GetSize( flw::iflow__ &Flow );
+	void NewPutSize(
+		bso::ulong__ Size,
+		flw::oflow__ &Flow );
 
-	bso::ulong__ GetSize( const size_buffer__ &Buffer );
+	
+	bso::ulong__ OldGetSize( flw::iflow__ &Flow );
+	bso::ulong__ NewGetSize( flw::iflow__ &Flow );
+
+	bso::ulong__ OldGetSize( const size_buffer__ &Buffer );
+	bso::ulong__ NewGetSize( const size_buffer__ &Buffer );
 }
 
 /*$END$*/

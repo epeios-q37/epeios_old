@@ -96,7 +96,7 @@ namespace ndbdct {
 			if ( Wanted >= Available )
 				Wanted = Available - 1;	// Il faut au moins 1 octet pour stocker la taille.
 
-			while ( Available < ( dtfptb::GetSizeLength( Wanted ) + Wanted ) )
+			while ( Available < ( dtfptb::OldGetSizeLength( Wanted ) + Wanted ) )
 				Wanted--;
 
 			return Wanted;
@@ -112,9 +112,9 @@ namespace ndbdct {
 			Amount = _AmountWritable( Data.Amount() - Offset, Available );
 
 			dtfptb::size_buffer__ SizeBuffer;
-			bso::ubyte__ SizeLength = dtfptb::GetSizeLength( Amount );
+			bso::ubyte__ SizeLength = dtfptb::OldGetSizeLength( Amount );
 
-			dtfptb::PutSize( Amount, SizeBuffer );
+			dtfptb::OldPutSize( Amount, SizeBuffer );
 
 			Memory.Store( (const ndbbsc::atom__ *)SizeBuffer, SizeLength, Row );
 
@@ -134,7 +134,7 @@ namespace ndbdct {
 			drow__ Unallocated )
 		{
 			size__ DataAmount = Data.Amount() - Offset;
-			size__ TotalSize = DataAmount + dtfptb::GetSizeLength( DataAmount );
+			size__ TotalSize = DataAmount + dtfptb::OldGetSizeLength( DataAmount );
 
 			Memory.Allocate( *Unallocated + TotalSize );
 
@@ -154,7 +154,7 @@ namespace ndbdct {
 
 			Memory.Recall( Row, PossibleSizeLength, (ndbbsc::atom__ *)SizeBuffer );
 
-			return dtfptb::GetSize( SizeBuffer );
+			return dtfptb::OldGetSize( SizeBuffer );
 		}
 		size__ _GetRawSize(
 			drow__ Row,
@@ -162,7 +162,7 @@ namespace ndbdct {
 		{
 			size__ Size = _GetComputedSize( Row, Unallocated );
 
-			return Size + dtfptb::GetSizeLength( Size );
+			return Size + dtfptb::OldGetSizeLength( Size );
 		}
 	public:
 		memory_ Memory;
@@ -202,7 +202,7 @@ namespace ndbdct {
 			size__ &Available )
 		{
 			size__ Written = _Store( Data, Offset, Row, Available );
-			size__ TotalWritten = Written + dtfptb::GetSizeLength( Written );
+			size__ TotalWritten = Written + dtfptb::OldGetSizeLength( Written );
 
 			Available -= TotalWritten;
 
@@ -246,9 +246,9 @@ namespace ndbdct {
 
 			Size = _AmountWritable( Size, Size );
 
-			dtfptb::PutSize( Size, SizeBuffer );
+			dtfptb::OldPutSize( Size, SizeBuffer );
 
-			Memory.Store( (const ndbbsc::atom__ *)SizeBuffer, dtfptb::GetSizeLength( Size ), Row );
+			Memory.Store( (const ndbbsc::atom__ *)SizeBuffer, dtfptb::OldGetSizeLength( Size ), Row );
 
 			return Size;
 		}
@@ -259,7 +259,7 @@ namespace ndbdct {
 		{
 			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
-			Data.Append( *(const tym::memory_<bso::char__, epeios::row__>*)&Memory, Size, *Row + dtfptb::GetSizeLength( Size ) );
+			Data.Append( *(const tym::memory_<bso::char__, epeios::row__>*)&Memory, Size, *Row + dtfptb::OldGetSizeLength( Size ) );
 		}
 	};
 

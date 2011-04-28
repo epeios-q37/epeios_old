@@ -215,7 +215,7 @@ namespace bkddcb {
 	void GetDescription(
 		bkdacc::backend_access___ &Backend,
 		types_ &Types );
-	
+#if 0	
 	//f Put in 'RawErrorMessages' the raw error messages from 'Backend'.
 	inline void GetRawMessages(
 		bkdacc::backend_access___ &Backend,
@@ -223,7 +223,7 @@ namespace bkddcb {
 	{
 		Backend.GetRawMessages( RawMessages );
 	}
-
+#endif
 }
 
 /*$END$*/
