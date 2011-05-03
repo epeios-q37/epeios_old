@@ -60,7 +60,7 @@ static inline void Save_(
 	epeios::row__ Row,
 	flw::oflow__ &Flow )
 {
-	dtfptb::PutULong( *Row, Flow );
+	dtfptb::FixedPutULong( *Row, Flow );
 }
 
 static void Save_(
@@ -102,7 +102,7 @@ static inline void Load_(
 	flw::iflow__ &Flow,
 	epeios::row__ &Row )
 {
-	Row = dtfptb::GetULong( Flow );
+	Row = dtfptb::FixedGetULong( Flow );
 }
 	
 static void Load_(

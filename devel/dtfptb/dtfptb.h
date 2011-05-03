@@ -67,7 +67,7 @@ extern class ttr_tutor &DTFPTBTutor;
 namespace dtfptb {
 	using namespace dtfbsc;
 
-	template <typename short__> inline void _PutShort(
+	template <typename short__> inline void _FixedPutShort(
 		short__ Short,
 		flw::oflow__ &Flow )
 	{
@@ -75,7 +75,7 @@ namespace dtfptb {
 		dtfbsc::PutUByte( Short >> 8, Flow );
 	}
 
-	template <typename short__> short__ _GetShort( flw::iflow__ &Flow )
+	template <typename short__> inline short__ _FixedGetShort( flw::iflow__ &Flow )
 	{
 		flw::datum__ Object[sizeof( short__ )];
 
@@ -85,35 +85,35 @@ namespace dtfptb {
 	}
 
 	//f Put 'SShort' into 'Flow'.
-	inline void PutSShort(
+	inline void FixedPutSShort(
 		sshort__ SShort,
 		flw::oflow__ &Flow )
 	{
-		_PutShort( SShort, Flow );
+		_FixedPutShort( SShort, Flow );
 	}
 
 	//f Return the signed short stored in 'Flow'.
-	inline sshort__ GetSShort( flw::iflow__ &Flow )
+	inline sshort__ FixedGetSShort( flw::iflow__ &Flow )
 	{
-		return _GetShort<sshort__>( Flow );
+		return _FixedGetShort<sshort__>( Flow );
 	}
 
 	//f Put 'UShort' into 'Flow'.
-	inline void PutUShort(
+	inline void FixedPutUShort(
 		ushort__ UShort,
 		flw::oflow__ &Flow )
 	{
-		_PutShort( UShort, Flow );
+		_FixedPutShort( UShort, Flow );
 	}
 
 	//f Return the unsigned short stored in 'Flow'.
-	inline ushort__ GetUShort( flw::iflow__ &Flow )
+	inline ushort__ FixedGetUShort( flw::iflow__ &Flow )
 	{
-		return _GetShort<ushort__>( Flow );
+		return _FixedGetShort<ushort__>( Flow );
 	}
 
 
-	template <typename long__> inline void _PutLong(
+	template <typename long__> inline void _FixedPutLong(
 		long__ Long,
 		flw::oflow__ &Flow )
 	{
@@ -123,7 +123,7 @@ namespace dtfptb {
 		dtfbsc::PutUByte( (dtfbsc::ubyte__)( Long >> 24 ), Flow );
 	}
 
-	template <typename long__> long__ _GetLong( flw::iflow__ &Flow )
+	template <typename long__> long__ _FixedGetLong( flw::iflow__ &Flow )
 	{
 		flw::datum__ Object[sizeof( long__ )];
 
@@ -133,31 +133,78 @@ namespace dtfptb {
 	}
 
 	//f Put 'SLong' into 'Flow'.
-	inline void PutSLong(
+	inline void FixedPutSLong(
 		slong__ SLong,
 		flw::oflow__ &Flow )
 	{
-		_PutLong( SLong, Flow );
+		_FixedPutLong( SLong, Flow );
 	}
 
 	//f Return the signed long stored in 'Flow'.
-	inline slong__ GetSLong( flw::iflow__ &Flow )
+	inline slong__ FixedGetSLong( flw::iflow__ &Flow )
 	{
-		return _GetLong<slong__>( Flow );
+		return _FixedGetLong<slong__>( Flow );
 	}
 
 	//f Put 'ULong' into 'Flow'.
-	inline void PutULong(
+	inline void FixedPutULong(
 		ulong__ ULong,
 		flw::oflow__ &Flow )
 	{
-		_PutLong( ULong, Flow );
+		_FixedPutLong( ULong, Flow );
 	}
 
 	//f Return the unsigned long stored in 'Flow'.
-	inline ulong__ GetULong( flw::iflow__ &Flow )
+	inline ulong__ FixedGetULong( flw::iflow__ &Flow )
 	{
-		return _GetLong<ulong__>( Flow );
+		return _FixedGetLong<ulong__>( Flow );
+	}
+
+	void FittedPutULong(
+		bso::ulong__ ULong,
+		flw::oflow__ &Flow );
+
+	bso::ulong__ FittedGetULong( flw::iflow__ &Flow );
+
+	inline void FittedPutSLong(
+		bso::slong__ SLong,
+		flw::oflow__ &Flow )
+	{
+		FittedPutULong( (bso::ulong__ )SLong, Flow );
+	}
+
+	inline bso::slong__ FittedGetSLong( flw::iflow__ &Flow )
+	{
+		return (bso::slong__)FittedGetULong( Flow );
+	}
+
+	inline void FittedPutUShort(
+		bso::ushort__ &UShort,
+		flw::oflow__ &Flow )
+	{
+		FittedPutULong( UShort, Flow );
+	}
+
+	inline bso::ushort__ FittedGetUShort( flw::iflow__ &Flow )
+	{
+		bso::ulong__ ULong = FittedGetULong( Flow );
+
+		if ( ULong > BSO_USHORT_MAX )
+			ERRf();
+
+		return (bso::ushort__)ULong;
+	}
+
+	inline void FittedPutSHort(
+		bso::sshort__ SShort,
+		flw::oflow__ &Flow )
+	{
+		FittedPutULong( (bso::ushort__ )SShort, Flow );
+	}
+
+	inline bso::sshort__ FittedGetShort( flw::iflow__ &Flow )
+	{
+		return (bso::sshort__)FittedGetUShort( Flow );
 	}
 
 	typedef bso::raw__ size_buffer__[10];
@@ -207,26 +254,33 @@ namespace dtfptb {
 	void OldPutSize(
 		bso::ulong__ Size,
 		size_buffer__ &Buffer );
-
-	void NewPutSize(
+/*
+	inline void NewPutSize(
 		bso::ulong__ Size,
 		size_buffer__ &Buffer );
-
-
+*/
 	void OldPutSize(
 		bso::ulong__ Size,
 		flw::oflow__ &Flow );
 	
-	void NewPutSize(
+	inline void NewPutSize(
 		bso::ulong__ Size,
-		flw::oflow__ &Flow );
+		flw::oflow__ &Flow )
+	{
+		FittedPutULong( Size, Flow );
+	}
 
 	
 	bso::ulong__ OldGetSize( flw::iflow__ &Flow );
-	bso::ulong__ NewGetSize( flw::iflow__ &Flow );
+
+	inline bso::ulong__ NewGetSize( flw::iflow__ &Flow )
+	{
+		return FittedGetULong( Flow );
+	}
 
 	bso::ulong__ OldGetSize( const size_buffer__ &Buffer );
-	bso::ulong__ NewGetSize( const size_buffer__ &Buffer );
+//	bso::ulong__ NewGetSize( const size_buffer__ &Buffer );
+
 }
 
 /*$END$*/

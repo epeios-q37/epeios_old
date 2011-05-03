@@ -82,7 +82,7 @@ namespace mscrmi {
 
 	typedef bso::ulong__ xaddress__;	// 'eXtended address'.
 										// 0 - 29 : adresse du paramètre.
-										// 30 - 31 : taille du 'stencil', en octets.
+										// 30 - 31 : 0, 1, 2 : taille du 'stencil', en mots; 3 la taille du 'stencil' est de 23 bits.
 	typedef bso::ulong__ address__;
 	typedef bso::ulong__ segment__;
 	typedef bso::ulong__ offset__;	
@@ -225,7 +225,21 @@ namespace mscrmi {
 
 	inline mask__ _Stencil( bso::ubyte__ Size )
 	{
-		return ~MSCRMI_MASK( 32 - ( Size << 3 ), 0 );
+		switch ( Size ) {
+		case 0:
+		case 1:
+		case 2:
+			return ~MSCRMI_MASK( 32 - ( Size << 3 ), 0 );
+			break;
+		case 3:
+			return 0Xfffffe00;
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return 0;	// Pour éviter un 'warning'.
 	}
 
 	inline mask__ _Stencil( xaddress__ Address )

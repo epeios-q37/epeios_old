@@ -1,13 +1,13 @@
 /*
-	'csdsnc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Requires the 'csdsnc' header file ('csdsnc.h').
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	'csdsnb' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'csdsnb' header file ('csdsnb.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define CSDSNC__COMPILATION
+#define CSDSNB__COMPILATION
 
-#include "csdsnc.h"
+#include "csdsnb.h"
 
-class csdsnctutor
+class csdsnbtutor
 : public ttr_tutor
 {
 public:
-	csdsnctutor( void )
-	: ttr_tutor( CSDSNC_NAME )
+	csdsnbtutor( void )
+	: ttr_tutor( CSDSNB_NAME )
 	{
-#ifdef CSDSNC_DBG
-		Version = CSDSNC_VERSION "\b\bD $";
+#ifdef CSDSNB_DBG
+		Version = CSDSNB_VERSION "\b\bD $";
 #else
-		Version = CSDSNC_VERSION;
+		Version = CSDSNB_VERSION;
 #endif
-		Owner = CSDSNC_OWNER;
+		Owner = CSDSNB_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~csdsnctutor( void ){}
+	virtual ~csdsnbtutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,48 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace csdsnc;
-
-#define CASE( n )\
-	case l##n:\
-		return #n;\
-		break
-
-const char *csdsnc::GetLogLabel( log__ Log )
-{
-	switch ( Log ) {
-		CASE( Creation );
-		CASE( Retrieval );
-		CASE( Release );
-	default:
-		ERRu();
-		return NULL;	// Pour éviter un 'warning'.
-		break;
-	}
-}
-
-void csdsnc::core_::_DeleteFlows( void )
-{
-	while ( Flows.Amount() != 0 )
-	{
-		PutId( CSDSNB_CLOSE, *Flows.Top() );
-		delete Flows.Pop();
-	}
-}
+using namespace csdsnb;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class csdsncpersonnalization
-: public csdsnctutor
+class csdsnbpersonnalization
+: public csdsnbtutor
 {
 public:
-	csdsncpersonnalization( void )
+	csdsnbpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~csdsncpersonnalization( void )
+	~csdsnbpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -112,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static csdsncpersonnalization Tutor;
+static csdsnbpersonnalization Tutor;
 
-ttr_tutor &CSDSNCTutor = Tutor;
+ttr_tutor &CSDSNBTutor = Tutor;

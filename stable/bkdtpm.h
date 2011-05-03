@@ -433,7 +433,7 @@ namespace bkdtpm {
 		slong__ SLong,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::PutSLong( SLong, OFlow );
+		dtfptb::FittedPutSLong( SLong, OFlow );
 	}
 
 	//f Get 'SLong' from 'IFlow'.
@@ -441,7 +441,7 @@ namespace bkdtpm {
 		flw::iflow__ &IFlow,
 		slong__ &SLong )
 	{
-		SLong = dtfptb::GetSLong( IFlow );
+		SLong = dtfptb::FittedGetSLong( IFlow );
 	}
 	
 	BKDTPM_S( SLong, slong__ )
@@ -463,7 +463,7 @@ namespace bkdtpm {
 		ulong__ ULong,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::PutULong( ULong, OFlow );
+		dtfptb::FittedPutULong( ULong, OFlow );
 	}
 
 	//f Get 'ULong' from 'IFlow'.
@@ -471,7 +471,7 @@ namespace bkdtpm {
 		flw::iflow__ &IFlow,
 		ulong__ &ULong )
 	{
-		ULong = dtfptb::GetULong( IFlow );
+		ULong = dtfptb::FittedGetULong( IFlow );
 	}
 	
 	BKDTPM_S( ULong, ulong__ )

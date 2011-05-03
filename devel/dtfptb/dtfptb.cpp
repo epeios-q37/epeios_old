@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flx.h"
+
 using namespace dtfptb;
 
 #define M1	DTFPTB_L1
@@ -99,38 +101,28 @@ void dtfptb::OldPutSize(
 	*(Pointer++) = (bso::raw__)( Size & 255 );
 }
 
+
 static inline bso::ulong__ Put_(
-	bso::ulong__ Size,
-	bso::raw__ &Buffer )
+	bso::ulong__ Value,
+	flw::oflow__ &Flow )
 {
-#ifdef DTFPTB_DBG
-	if ( Size == 0 )
-		ERRc();
-#endif
+	bso::raw__ Buffer = Value & 0x7F;
 
-	Buffer = Size & 0x7F;
+	Value >>= 7;
 
-	Size >>= 7;
-
-	if ( Size )
+	if ( Value != 0 )
 		Buffer |= 0x80;
 
-	return Size;
+	Flow.Put( Buffer );
+
+	return Value;
 }
 
-void dtfptb::NewPutSize(
-	bso::ulong__ Size,
-	size_buffer__ &Buffer )
+void dtfptb::FittedPutULong(
+	bso::ulong__ ULong,
+	flw::oflow__ &Flow )
 {
-	bso::ubyte__ i = 0;
-
-	if ( Size == 0 ) {
-		Buffer[0] = 0;
-		return;
-	}
-
-	while ( ( Size = Put_( Size, Buffer[i] ) ) != 0 )
-		i++;
+	while ( ( ULong = Put_( ULong, Flow ) ) != 0 );
 }
 
 
@@ -178,19 +170,8 @@ void dtfptb::OldPutSize(
 
 	Flow.Write( Buffer, OldGetSizeLength( Size ) );
 }
+
 #endif
-
-void dtfptb::NewPutSize(
-	bso::ulong__ Size,
-	flw::oflow__ &Flow )
-{
-	size_buffer__ Buffer;
-
-	NewPutSize( Size, Buffer );
-
-	Flow.Write( Buffer, NewGetSizeLength( Size ) );
-}
-
 
 bso::ulong__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
 {
@@ -222,27 +203,29 @@ bso::ulong__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
 	return Size;
 }
 
-bso::ulong__ dtfptb::NewGetSize( flw::iflow__ &IFlow )
+bso::ulong__ dtfptb::FittedGetULong( flw::iflow__ &IFlow )
 {
-	bso::ulong__ Size = 0;
+	bso::ulong__ Value = 0;
 	flw::datum__ Datum = IFlow.Get();
+	bso::ubyte__ Counter = 1;
 
-	Size = Datum & 0x7f;
+	Value = Datum & 0x7f;
 
 	while ( Datum & 0X80 ) {
 		Datum = IFlow.Get();
 
 #ifdef DTFPTB_DBG
-		if ( Size > ( BSO_ULONG_MAX - ( Datum & 0X7f ) ) )
+		if ( Counter >= 5 )
 			ERRf();
 #endif
 
-		Size = ( Size << 7 ) | ( Datum & 0X7f );
+		Value |= ( Datum & 0X7f ) << ( 7 * Counter );
+
+		Counter++;
 	}
 
-	return Size;
+	return Value;
 }
-
 
 bso::ulong__ dtfptb::OldGetSize( const size_buffer__ &Buffer )
 {
@@ -265,26 +248,17 @@ bso::ulong__ dtfptb::OldGetSize( const size_buffer__ &Buffer )
 
 	return Size;
 }
-
+/*
 bso::ulong__ dtfptb::NewGetSize( const size_buffer__ &Buffer )
 {
-	bso::ubyte__ i = 0;
-	bso::ulong__ Size = Buffer[i] & 0x7f;
+	size_buffer__ SizeBuffer;
+	flx::buffer_iflow___ Flow;
 
-	while ( Buffer[i] & 0X80 ) {
-		i++;
+	Flow.Init( SizeBuffer, sizeof( SizeBuffer ) );
 
-#ifdef DTFPTB_DBG
-		if ( Size > ( BSO_ULONG_MAX - ( Buffer[i] & 0X7f ) ) )
-			ERRf();
-#endif
-
-		Size = ( Size << 7 ) | ( Buffer[i] & 0X7f );
-	}
-
-	return Size;
+	return NewGetSize( Flow );
 }
-
+*/
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

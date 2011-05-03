@@ -64,12 +64,14 @@ extern class ttr_tutor &CSDSNSTutor;
 #include "flw.h"
 #include "csdscm.h"
 #include "csdbns.h"
+#include "csdsnb.h"
 #include "lstbch.h"
 #include "mtx.h"
 
 namespace csdsns {
 
 	using namespace csdscm;
+	using namespace csdsnb;
 	using csdbns::port__;
 
 	enum log__ {
@@ -82,10 +84,6 @@ namespace csdsns {
 	};
 
 	const char *GetLogLabel( log__ Log );
-
-	typedef bso::ushort__ id__;
-
-#define CSDSNS_UNDEFINED	BSO_USHORT_MAX
 
 	typedef void *_user_pointer__;
 
@@ -199,7 +197,7 @@ ERREpilog
 			id__ Id )
 		{
 #ifdef CSDSNS_DBG
-			if ( Id == CSDSNS_UNDEFINED )
+			if ( Id == CSDSNB_UNDEFINED )
 				ERRu();
 #endif
 			mtx::Lock( S_.Mutex );
@@ -286,16 +284,16 @@ ERREpilog
 			if ( UP != NULL )
 				ERRc();
 #endif
-			id__ Id = CSDSNS_UNDEFINED;
+			id__ Id = CSDSNB_UNDEFINED;
 			action__ Action = aContinue;
 
 			UP = NULL;
 
-			Flow.Read( sizeof( Id ), &Id );
+			Id = GetId( Flow );
 
-			if ( Id == CSDSNS_UNDEFINED ) {
+			if ( Id == CSDSNB_UNDEFINED ) {
 				Id = _Core.New();
-				Flow.Write( &Id, sizeof( Id ) );
+				PutId( Id, Flow );
 				UP = _Functions->PreProcess( Flow, _Origin );
 				_Core.Store( UP, Id );
 				_Functions->Process( Flow, UP );
@@ -314,7 +312,7 @@ ERREpilog
 					break;
 				case aStop:
 					_Functions->PostProcess( UP );
-					if ( Id != CSDSNS_UNDEFINED )
+					if ( Id < CSDSNB_RESERVED )
 						_Core.Delete( Id );
 					break;
 				default:
@@ -323,7 +321,7 @@ ERREpilog
 				}
 			}
 
-			return aContinue;
+			return Action;
 		}
 		virtual void CSDPostProcess( void *UP )
 		{

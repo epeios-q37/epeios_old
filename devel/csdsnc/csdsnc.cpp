@@ -78,7 +78,10 @@ const char *csdsnc::GetLogLabel( log__ Log )
 void csdsnc::core_::_DeleteFlows( void )
 {
 	while ( Flows.Amount() != 0 )
+	{
+		PutId( CSDSNB_CLOSE, *Flows.Top() );
 		delete Flows.Pop();
+	}
 }
 
 /* Although in theory this class is inaccessible to the different modules,

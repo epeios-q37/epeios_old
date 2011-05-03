@@ -57,6 +57,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Client-Server EmBeD
 &csdscm		&epeios		&\
 	&Client-Server Devices Server CoMmon
+&csdsnb		&epeios		&\
+	&Client-Server Standard Network Base
 &csdsnc		&epeios		&\
 	&Client-Server Standard Network Client
 &csdsns		&epeios		&\

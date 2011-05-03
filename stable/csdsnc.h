@@ -65,6 +65,7 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "sck.h"
 #include "stk.h"
 #include "csdbnc.h"
+#include "csdsnb.h"
 #include "bso.h"
 #include "cpe.h"
 #include "mmm.h"
@@ -77,10 +78,10 @@ extern class ttr_tutor &CSDSNCTutor;
 #	include "mtx.h"
 #endif
 
-#define CSDSNC_UNDEFINED			BSO_USHORT_MAX
 #define CSDSNC_DEFAULT_CACHE_SIZE	100
 
 namespace csdsnc {
+	using namespace csdsnb;
 #ifdef CSDSNC__MT
 	typedef mtx::mutex_handler__	mutex__;
 #	define CSDSNC_NO_MUTEX			MTX_INVALID_HANDLER
@@ -186,6 +187,8 @@ ERREpilog
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
+				_DeleteFlows();
+
 				if ( S_.HostService != NULL )
 					free( S_.HostService );
 				if ( S_.Mutex != CSDSNC_NO_MUTEX )
@@ -193,6 +196,8 @@ ERREpilog
 				if ( S_.Log.Mutex != CSDSNC_NO_MUTEX )
 					_Delete( S_.Log.Mutex );
 			}
+
+			Flows.reset( P );
 
 			S_.HostService = NULL;
 			S_.Mutex = CSDSNC_NO_MUTEX;
@@ -306,7 +311,7 @@ ERREpilog
 	private:
 		_flow___ *_Flow;
 		core_ *_Core;
-		bso::ushort__ _Id;
+		id__ _Id;
 		bso::bool__ _Prepare( void )	// Return true if has already a flow, false otherwise.
 		{
 			bso::bool__ Created = _Flow == NULL;
@@ -314,7 +319,7 @@ ERREpilog
 			if ( Created ) {
 				_Flow = _Core->Get();
 
-				_Flow->Write( &_Id, sizeof( _Id ) );
+				PutId( _Id, *_Flow );
 			}
 
 			return !Created;
@@ -328,8 +333,8 @@ ERREpilog
 
 			_Flow->Commit();
 
-			if ( _Id == CSDSNC_UNDEFINED )
-				_Flow->Read( sizeof( _Id ), &_Id );
+			if ( _Id == CSDSNB_UNDEFINED )
+				_Id = GetId( *_Flow );
 			else if ( _Flow->Get() != 0 )
 				ERRf();
 		}
@@ -375,7 +380,7 @@ ERREpilog
 				}
 
 				_Flow = NULL;
-				_Id = CSDSNC_UNDEFINED;
+				_Id = CSDSNB_UNDEFINED;
 				_Core = NULL;
 			}
 			_functions___( void )

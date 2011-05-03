@@ -68,15 +68,15 @@ static inline void Save_(
 	epeios::row__ Row,
 	flw::oflow__ &Flow )
 {
-	dtfptb::PutULong( *Row, Flow );
+	dtfptb::FixedPutULong( *Row, Flow );
 }
 
 static inline void Save_(
 	const available__ &Available,
 	flw::oflow__ &Flow )
 {
-	dtfptb::PutULong( *Available.Row, Flow );
-	dtfptb::PutULong( Available.RawSize, Flow );
+	dtfptb::FixedPutULong( *Available.Row, Flow );
+	dtfptb::FixedPutULong( Available.RawSize, Flow );
 }
 
 template <typename item> static void Save_(
@@ -142,15 +142,15 @@ static inline void Load_(
 	flw::iflow__ &Flow,
 	epeios::row__ &Row )
 {
-	Row = dtfptb::GetULong( Flow );
+	Row = dtfptb::FixedGetULong( Flow );
 }
 	
 static inline void Load_(
 	flw::iflow__ &Flow,
 	available__ &Available )
 {
-	Available.Row = dtfptb::GetULong( Flow );
-	Available.RawSize = dtfptb::GetULong( Flow );
+	Available.Row = dtfptb::FixedGetULong( Flow );
+	Available.RawSize = dtfptb::FixedGetULong( Flow );
 }
 	
 
