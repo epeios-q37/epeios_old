@@ -164,24 +164,18 @@ void Pop_(
 	}
 }
 
-bso::bool__ bkdrac::backend_remote_access_base___::Handle(
-	bso::bool__ Success,
-	flw::ioflow__ &Flow )
+void bkdrac::backend_remote_access_base___::PostProcess( flw::ioflow__ &Flow )
 {
-	if ( Success ) {
-		epeios::row__ Row = Data.First();
-		datum__ Datum;
+	epeios::row__ Row = Data.First();
+	datum__ Datum;
 
-		while ( Row != NONE ) {
-			Pop_( Data( Row ), Flow );
+	while ( Row != NONE ) {
+		Pop_( Data( Row ), Flow );
 
-			Row = Data.Next( Row );
-		}
+		Row = Data.Next( Row );
 	}
 
 	Data.Init();
-
-	return Success;
 }
 
 

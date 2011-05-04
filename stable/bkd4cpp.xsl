@@ -328,7 +328,7 @@ This header file contains then the API to access to the backend to which 'getbkd
    </xsl:template>
    <xsl:template match="Command" mode="function">
         <xsl:param name="Base"/>
-		<xsl:text>&tab;&tab;bso::bool__ </xsl:text>
+		<xsl:text>&tab;&tab;bkdrpl::reply__ </xsl:text>
 		<xsl:value-of select="Name"/>
 		<xsl:text>( </xsl:text>
 		<xsl:apply-templates select="Parameters" mode="function"/>

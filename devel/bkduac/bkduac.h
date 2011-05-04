@@ -121,23 +121,19 @@ namespace bkduac {
 				break;
 			}
 		}
-		virtual bso::bool__ BKDACCHandle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		virtual void BKDACCPostProcess( flw::ioflow__ &Flow )
 		{
 			switch ( _Type ) {
 			case tLocal:
-				return _Local.Handle( Success, Flow );
+				_Local.PostProcess( Flow );
 				break;
 			case tRemote:
-				return _Remote.Handle( Success, Flow );
+				_Remote.PostProcess( Flow );
 				break;
 			default:
 				ERRu();
 				break;
 			}
-
-			return false;	// Pour éviter un 'warning'.
 		}
 	public:
 		void reset( bso::bool__ P = true )

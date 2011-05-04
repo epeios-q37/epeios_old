@@ -71,6 +71,7 @@ extern class ttr_tutor &BKDACCTutor;
 #include "bkdcst.h"
 #include "bkdcmd.h"
 #include "bkdlcl.h"
+#include "bkdrpl.h"
 #include "bso.h"
 #include "str.h"
 #include "ctn.h"
@@ -142,9 +143,7 @@ namespace bkdacc {
 			flw::ioflow__ &Flow,
 			bkdcst::cast Cast,
 			void *Pointer ) = 0;
-		virtual bso::bool__ BKDACCHandle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow ) = 0;
+		virtual void BKDACCPostProcess( flw::ioflow__ &Flow ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -176,11 +175,9 @@ namespace bkdacc {
 		{
 			BKDACCOut( Flow, Cast, Pointer );
 		}
-		bso::bool__ Handle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		void PostProcess( flw::ioflow__ &Flow )
 		{
-			return BKDACCHandle( Success, Flow );
+			BKDACCPostProcess( Flow );
 		}
 	};
 
@@ -205,15 +202,12 @@ namespace bkdacc {
 		{
 			_Functions->Out( *Channel_, Cast, Pointer );
 		}
-		bso::bool__ _Handle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		void _PostProcess( flw::ioflow__ &Flow )
 		{
-			return _Functions->Handle( Success, Flow );
+			_Functions->PostProcess( Flow );
 		}
 		id16__ Commands_[bkdcmd::c_amount];
-		char RawMessage_[100];
-		char I18Message_[100];
+		char Message_[100];
 		flw::ioflow__ *Channel_;
 		bso::bool__ TestBackendCasts_( void );
 		command__ GetBackendDefaultCommand_( void );
@@ -242,26 +236,28 @@ namespace bkdacc {
 		}
 		void _Handle( void )
 		{
-			if ( !Handle() )
+			if ( Handle() != bkdrpl::rOK )
 				ERRu();
 		}
-		bso::bool__ _Send( void )
+		bkdrpl::reply__ _Send( void )
 		{
+			bkdrpl::reply__ Reply = bkdrpl::r_Undefined;
+
 			Channel_->Commit();
 
-			if ( ( !flw::GetString( *Channel_, RawMessage_, sizeof( RawMessage_ ) ) ) )
-				ERRl();
+			if ( ( Reply = (bkdrpl::reply__)Channel_->Get() ) != bkdrpl::rOK ) {
+				if ( Reply >= bkdrpl::r_amount )
+					ERRb();
 
-			if ( RawMessage_[0] == 0 )
-				I18Message_[0] = 0;
-			else if ( ( !flw::GetString( *Channel_, I18Message_, sizeof( I18Message_ ) ) ) )
-				ERRl();
+				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
+					ERRl();
+			}
 
-			return RawMessage_[0] == 0;
+			return Reply;
 		}
 		void _SendAndTest( void )
 		{
-			if ( !_Send() )
+			if ( _Send() != bkdrpl::rOK )
 				ERRb();
 		}
 	public:
@@ -345,25 +341,24 @@ namespace bkdacc {
 			Channel_->Put( 0 );	// End of request
 		}
 		//f Send the request.
-		bso::bool__ Handle( void )
+		bkdrpl::reply__ Handle( void )
 		{
-			bso::bool__ Success = _Handle( _Send(), *Channel_ );
+			bkdrpl::reply__  Reply = _Send();
+
+			if ( Reply == bkdrpl::rOK )
+				_PostProcess( *Channel_ );
 
 			if ( Channel_->Get() != bkdcst::cEnd )
 				ERRb();
 
 			Channel_->Dismiss();
 
-			return Success;
+			return Reply;
 		}
 		//f Return the explanation messag, if any.
-		const char *GetRawMessage( void ) const
+		const char *GetMessage( void ) const
 		{
-			return RawMessage_;
-		}
-		const char *GetI18Message( void ) const
-		{
-			return I18Message_;
+			return Message_;
 		}
 		//f Return the channel used to handle the request as input flow.
 		flw::iflow__ &Input( void )
@@ -376,7 +371,7 @@ namespace bkdacc {
 			return *Channel_;
 		}
 		//f Throw an user error, for testing purpose.
-		bso::bool__ ThrowUError( void )
+		bkdrpl::reply__ ThrowUError( void )
 		{
 			Internal_( bkdcmd::cThrowUError );
 
@@ -385,7 +380,7 @@ namespace bkdacc {
 			return Handle();	// NOTA : Always to 'true'.
 		}
 		//f Throw an intentional error, for testing purpose.
-		bso::bool__ ThrowIError( void )
+		bkdrpl::reply__ ThrowIError( void )
 		{
 			Internal_( bkdcmd::cThrowIError );
 
@@ -609,12 +604,14 @@ namespace bkdacc {
 		{
 			_Out( Flow, Cast, Pointer );
 		}
-*/		bso::bool__ Handle(
-			bso::bool__ Success,
+		*/
+/*		bkdrpl::reply__ Handle(
+			bkdrpl::reply__ Reply,
 			flw::ioflow__ &Flow )
 		{
-			return _Handle( Success, Flow );
+			return _Handle( Reply, Flow );
 		}
+*/
 	};
 }
 

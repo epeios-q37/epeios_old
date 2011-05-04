@@ -95,11 +95,9 @@ namespace bkdlac {
 
 			flw::Put( Pointer, Flow );
 		}
-		bso::bool__ Handle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		void PostProcess( flw::ioflow__ & )
 		{
-			return Success;
+			// Nothing to do.
 		}
 	};
 
@@ -125,11 +123,9 @@ namespace bkdlac {
 		{
 			_Base.Out( Flow, Cast, Pointer );
 		}
-		virtual bso::bool__ BKDACCHandle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		virtual void BKDACCPostProcess( flw::ioflow__ &Flow )
 		{
-			return _Base.Handle( Success, Flow );
+			_Base.PostProcess( Flow );
 		}
 	public:
 		void reset( bso::bool__ P = true )

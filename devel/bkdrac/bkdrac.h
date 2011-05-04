@@ -101,9 +101,7 @@ namespace bkdrac {
 			flw::ioflow__ &Flow,
 			bkdcst::cast Cast,
 			void *Pointer );
-		bso::bool__ Handle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow );
+		void PostProcess( flw::ioflow__ &Flow );
 	};
 
 	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
@@ -128,11 +126,9 @@ namespace bkdrac {
 		{
 			_Base.Out( Flow, Cast, Pointer );
 		}
-		bso::bool__ BKDACCHandle(
-			bso::bool__ Success,
-			flw::ioflow__ &Flow )
+		void BKDACCPostProcess( flw::ioflow__ &Flow )
 		{
-			return _Base.Handle( Success, Flow );
+			_Base.PostProcess( Flow );
 		}
 	public:
 		void reset( bso::bool__ P = true )
