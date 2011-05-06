@@ -73,6 +73,7 @@ namespace bkdcmd {
 	enum command {
 		cThrowUError,
 		cThrowIError,
+		cThrowUserDefinedError,
 		cGetNewObject,
 		cGetType,
 //		cGetRawMessages,

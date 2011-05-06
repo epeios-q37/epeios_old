@@ -66,6 +66,7 @@ extern class ttr_tutor &BKDUACTutor;
 #include "bkdrac.h"
 
 namespace bkduac {
+
 	enum type__
 	{
 		tLocal,
@@ -74,11 +75,11 @@ namespace bkduac {
 		t_Undefined
 	};
 
-	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
+	typedef bkdacc::parameters_handling_functions__ _parameters_handling_functions__;
 
 
-	class backend_universal_access_functions__
-	: public _backend_access_functions__
+	class universal_parameters_handling_functions__
+	: public _parameters_handling_functions__
 	{
 	private:
 		bkdlac::backend_local_access_base__ _Local;
@@ -140,14 +141,14 @@ namespace bkduac {
 		{
 			_Local.reset( P );
 			_Remote.reset( P );
-			_backend_access_functions__::reset( P );
+			_parameters_handling_functions__::reset( P );
 			_Type = t_Undefined;
 		}
-		backend_universal_access_functions__( void )
+		universal_parameters_handling_functions__( void )
 		{
 			reset( false );
 		}
-		virtual ~backend_universal_access_functions__( void )
+		virtual ~universal_parameters_handling_functions__( void )
 		{
 			reset();
 		}
@@ -169,7 +170,39 @@ namespace bkduac {
 
 			_Type = Type;
 
-			_backend_access_functions__::Init();
+			_parameters_handling_functions__::Init();
+		}
+	};
+
+	typedef bkdacc::backend_access___ _backend_access___;
+
+	class backend_universal_access___
+	: public _backend_access___
+	{
+	private:
+		universal_parameters_handling_functions__ _Functions;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_backend_access___::reset( P );
+			_Functions.reset( P );
+		}
+		backend_universal_access___( void )
+		{
+			reset( false );
+		}
+		~backend_universal_access___( void )
+		{
+			reset();
+		}
+		void Init(
+			flw::ioflow__ &Flow,
+			type__ Type,
+			bkdacc::error_handling_functions__ &ErrorHandlingFunctions )
+		{
+			_Functions.Init( Type );
+
+			_backend_access___::Init( Flow, _Functions, ErrorHandlingFunctions );
 		}
 	};
 }

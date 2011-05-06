@@ -428,6 +428,25 @@ static void ThrowIError_(
 	Requete.Complete();
 }
 
+// Throw an itentional error (ERRi), for testing purpose.
+static void ThrowUserDefinedError_(
+	backend_ &Backend,
+	untyped_module &Module,
+	index__,
+	command__ Command,
+	request_manager__ &Requete,
+	bso::bool__ &,
+	void * )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Requete.ReportError( Requete.StringIn().Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 // Retourne un nouvel objet.
 static void GetNewObject_(
@@ -727,6 +746,9 @@ namespace bkdmng {
 
 		// Throw a throw error (ERRt), for testing purpose.
 		ADD( ThrowIError );
+
+		// Gnération d'une erreur utilsateur.
+		ADD( ThrowUserDefinedError );
 
 		// Create a new object.
 		ADD( GetNewObject );

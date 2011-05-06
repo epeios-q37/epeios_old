@@ -319,6 +319,14 @@ namespace fwf {
 			_Cache[--_Position] = Datum;
 			_Available++;
 		}
+		bso::bool__ IsLocked( void )
+		{
+			return mtx::IsLocked( _Mutex );
+		}
+		bso::bool__ IFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
+		{
+			return IsLocked();
+		}
 	};
 
 	template <int cache_size = FWF__DEFAULT_CACHE_SIZE> class iflow_functions___
@@ -395,6 +403,14 @@ namespace fwf {
 		{
 			_Lock();
 			return FWFWrite( Buffer, Maximum );
+		}
+		bso::bool__ IsLocked( void )
+		{
+			return mtx::IsLocked( _Mutex );
+		}
+		bso::bool__ OFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
+		{
+			return IsLocked();
 		}
 	};
 

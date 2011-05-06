@@ -393,6 +393,19 @@ namespace flw {
 		{
 			return _Functions != NULL;
 		}
+		bso::bool__ IsLocked( void )
+		{
+#ifdef FLW_DBG
+			if ( !IsInitialized() )
+				ERRu();
+#endif
+
+			return _Functions->IsLocked();
+		}
+		bso::bool__ IFlowIsLocked( void )	// Facilite l'utilisation de 'ioflow__'
+		{
+			return IsLocked();
+		}
 	};
 
 
@@ -637,6 +650,19 @@ namespace flw {
 		bso::bool__ IsInitialized( void ) const
 		{
 			return _Functions != NULL;
+		}
+		bso::bool__ IsLocked( void )
+		{
+#ifdef FLW_DBG
+			if ( !IsInitialized() )
+				ERRu();
+#endif
+
+			return _Functions->IsLocked();
+		}
+		bso::bool__ OFlowIsLocked( void )	// Facilite l'utilisation de 'ioflow__'
+		{
+			return IsLocked();
 		}
 	};
 

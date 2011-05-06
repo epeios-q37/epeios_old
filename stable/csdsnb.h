@@ -64,7 +64,8 @@ extern class ttr_tutor &CSDSNBTutor;
 #	include "flw.h"
 #	include "dtfptb.h"
 
-#	define CSDSNB_CLOSE	BSO_ULONG_MAX
+#	define CSDSNB_PING	BSO_ULONG_MAX
+#	define CSDSNB_CLOSE	( CSDSNB_PING - 1 )
 #	define CSDSNB_UNDEFINED	( CSDSNB_CLOSE - 1 )
 #	define CSDSNB_RESERVED	CSDSNB_UNDEFINED
 
@@ -82,7 +83,6 @@ namespace csdsnb {
 	{
 		return dtfptb::FittedGetULong( Flow );
 	}
-
 }
 
 /*$END$*/

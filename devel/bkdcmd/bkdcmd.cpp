@@ -60,6 +60,7 @@ using namespace bkdcmd;
 const char *bkdcmd::CommandsNames[bkdcmd::c_amount] = {
 	"_ThrowUError$1",
 	"_ThrowIError$1",
+	"_ThrowUserDefinedError",
 	"_GetNewObject$1",
 	"_GetType$1",
 //	"_GetRawMessages$1",
@@ -81,6 +82,10 @@ static const cast ThrowUError[] = {
 	cEnd,
 	cEnd };
 static const cast ThrowIError[] = {
+	cEnd,
+	cEnd };
+static const cast ThrowUserDefinedError[] = {
+		cString,	// Un message devant être retourné comme message d'erreur utilisateur.
 	cEnd,
 	cEnd };
 static const cast GetNewObject[] = {
@@ -157,6 +162,7 @@ static const cast SetLanguage[] = {
 const cast *bkdcmd::CommandsParameters[bkdcmd::c_amount] = {
 	ThrowUError,
 	ThrowIError,
+	ThrowUserDefinedError,
 	GetNewObject,
 	GetType,
 //	GetRawMessages,

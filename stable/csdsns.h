@@ -297,28 +297,29 @@ ERREpilog
 				UP = _Functions->PreProcess( Flow, _Origin );
 				_Core.Store( UP, Id );
 				_Functions->Process( Flow, UP );
-			} else {
-				if ( !_Core.TestAndGet( Id, UP ) ) {
+			} else if ( Id == CSDSNB_PING ) {
+				Flow.Put( (flw::datum__)0 );
+				Flow.Commit();
+			} else if ( !_Core.TestAndGet( Id, UP ) ) {
 					Flow.Put( (flw::datum__)-1 );
 					Flow.Commit();
 					Action = aStop;
-				} else {
-					Flow.Put( 0 );
-					Action = _Functions->Process( Flow, UP );
-				}
+			} else {
+				Flow.Put( 0 );
+				Action = _Functions->Process( Flow, UP );
+			}
 
-				switch ( Action ) {
-				case aContinue:
-					break;
-				case aStop:
-					_Functions->PostProcess( UP );
-					if ( Id < CSDSNB_RESERVED )
-						_Core.Delete( Id );
-					break;
-				default:
-					ERRu();
-					break;
-				}
+			switch ( Action ) {
+			case aContinue:
+				break;
+			case aStop:
+				_Functions->PostProcess( UP );
+				if ( Id < CSDSNB_RESERVED )
+					_Core.Delete( Id );
+				break;
+			default:
+				ERRu();
+				break;
 			}
 
 			return Action;

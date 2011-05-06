@@ -78,6 +78,8 @@ extern class ttr_tutor &CSDSNCTutor;
 #	include "mtx.h"
 #endif
 
+#define CSDSNC_PING_RESOLUTION	( 1 * 1000 )	// Résolution du délai d'inactivité donnée pour les 'ping's.
+
 #define CSDSNC_DEFAULT_CACHE_SIZE	100
 
 namespace csdsnc {
@@ -154,6 +156,7 @@ namespace csdsnc {
 	class core_ {
 	private:
 		void _DeleteFlows( void );
+		void _KeepAlive( time_t Delay );	// Lance le thread permettant de 'pinger' les connections inactives durant plus de 'Delay' ms.
 		void _Log(
 			log__ Log,
 			const _flow___ *Flow )
@@ -178,6 +181,7 @@ ERREpilog
 				mutex__ Mutex;
 			} Log;
 			flows_::s Flows;
+			time_t PingDelay;	// Délai maximum d'inactivité.
 		} &S_;
 		flows_ Flows;
 		core_( s &S )
@@ -203,6 +207,7 @@ ERREpilog
 			S_.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Functions = NULL;
+			S_.PingDelay = 0;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -220,7 +225,8 @@ ERREpilog
 		}
 		bso::bool__ Init( 
 			const char *HostService,
-			log_functions__ &LogFunctions )
+			log_functions__ &LogFunctions,
+			time_t PingDelay )
 		{
 			reset();
 
@@ -241,6 +247,11 @@ ERREpilog
 				return false;
 
 			Release( Flow );
+
+			S_.PingDelay = PingDelay;
+
+			if ( PingDelay != 0 )
+				_KeepAlive( PingDelay );
 
 			return true;
 		}
@@ -301,6 +312,7 @@ ERREpilog
 
 			_Log( lRelease, Flow );
 		}
+		void Ping( void );	// Emet un 'ping' sur les connections restée inactives trop longtemps.
 	};
 
 	E_AUTO( core );

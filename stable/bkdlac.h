@@ -101,10 +101,10 @@ namespace bkdlac {
 		}
 	};
 
-	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
+	typedef bkdacc::parameters_handling_functions__ _parameters_handling_functions__;
 
-	struct backend_local_access_functions__
-	: public _backend_access_functions__
+	struct local_parameters_handling_functions__
+	: public _parameters_handling_functions__
 	{
 	private:
 		backend_local_access_base__ _Base;
@@ -131,20 +131,20 @@ namespace bkdlac {
 		void reset( bso::bool__ P = true )
 		{
 			_Base.reset( P );
-			_backend_access_functions__::reset( P );
+			_parameters_handling_functions__::reset( P );
 		}
-		backend_local_access_functions__( void )
+		local_parameters_handling_functions__( void )
 		{
 			reset( false );
 		}
-		virtual ~backend_local_access_functions__( void )
+		virtual ~local_parameters_handling_functions__( void )
 		{
 			reset();
 		}
 		void Init( void )
 		{
 			_Base.Init();
-			_backend_access_functions__::Init();
+			_parameters_handling_functions__::Init();
 		}
 	};
 

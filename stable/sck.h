@@ -291,6 +291,11 @@ namespace sck {
 		socket__ _Socket;
 		duration__ _TimeOut;	// En secondes.
 		bso::bool__ _Error;
+		time_t _TimeStamp;	// Horodatage de la dernière activité (lecture ou écriture);
+		void _Touch( void )
+		{
+			_TimeStamp = tol::Clock( false );
+		}
 	protected:
 		virtual fwf::size__ FWFRead(
 			fwf::size__ Maximum,
@@ -298,6 +303,8 @@ namespace sck {
 		{
 			if ( ( Maximum = sck::Read( _Socket, ( Maximum ), Buffer, _TimeOut ) ) == SCK_DISCONNECTED )
 				Maximum = 0;
+			else
+				_Touch();
 
 			return Maximum;
 		}
@@ -313,7 +320,8 @@ namespace sck {
 				_Error = true;
 				Maximum = 0;
 				ERRd();
-			}
+			} else
+				_Touch();
 
 			return Maximum;
 		}
@@ -336,6 +344,7 @@ namespace sck {
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
+			_TimeStamp = 0;
 		}
 		socket_ioflow_functions___( void )
 		{
@@ -357,8 +366,10 @@ namespace sck {
 
 			_Socket = Socket;
 			_TimeOut = TimeOut;
+			_Touch();	// On suppose qu'il n'y a pas une trop longue attente entre la création de la socket et l'appel à cette méthode ...
 		}
 		E_RODISCLOSE__( socket__, Socket )
+		E_RODISCLOSE__( time_t, TimeStamp )
 	};
 
 	//c Socket as input/output flow driver.
@@ -396,6 +407,10 @@ namespace sck {
 		socket__ Socket( void ) const
 		{
 			return _Functions.Socket();
+		}
+		time_t TimeStamp( void )
+		{
+			return _Functions.TimeStamp();
 		}
 	};
 

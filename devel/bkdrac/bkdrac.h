@@ -104,10 +104,10 @@ namespace bkdrac {
 		void PostProcess( flw::ioflow__ &Flow );
 	};
 
-	typedef bkdacc::backend_access_functions__ _backend_access_functions__;
+	typedef bkdacc::parameters_handling_functions__ _parameters_handling_functions__;
 
-	class backend_remote_access_functions__
-	: public _backend_access_functions__
+	class remote_parameters_handling_functions__
+	: public _parameters_handling_functions__
 	{
 	private:
 		backend_remote_access_base___ _Base;
@@ -134,22 +134,20 @@ namespace bkdrac {
 		void reset( bso::bool__ P = true )
 		{
 			_Base.reset( P );
-			_backend_access_functions__::reset( P );
+			_parameters_handling_functions__::reset( P );
 		}
-		backend_remote_access_functions__( void )
+		remote_parameters_handling_functions__( void )
 		{
 			reset( false );
 		}
-		virtual ~backend_remote_access_functions__( void )
+		virtual ~remote_parameters_handling_functions__( void )
 		{
 			reset();
 		}
-		void Init(
-			flw::ioflow__ &Flow,
-			bkdacc::backend_access_functions__ &Functions )
+		void Init( flw::ioflow__ &Flow )
 		{
 			_Base.Init();
-			_backend_access_functions__::Init();
+			_parameters_handling_functions__::Init();
 		}
 	};
 

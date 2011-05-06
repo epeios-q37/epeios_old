@@ -1,5 +1,19 @@
 $Id$
 
+06/05/2011 :
+	- Général :
+		- Mise en place nouveau protocole client/serveur.
+	- CSDxxx :
+		- Mise en place d'un 'ping' (pour éviter que certains sytème coupe d'autorité une connection pour cause d'absence d'activité).
+	- FWF, FLW :
+		- Rajout méthodes '...IsLocked()'.
+	- SCK :
+		- Rajout 'TimeStamp()'.
+
+05/05/2011 :
+	- Général :
+		- Mise en place nouveau protocole client/serveur.
+
 03/05/2011 :
 	- Général :
 		- Adaptation modifications 'DTFPTB'.

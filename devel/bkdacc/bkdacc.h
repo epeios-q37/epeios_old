@@ -132,7 +132,7 @@ namespace bkdacc {
 		_Out( bkdcst::c##name, &O );\
 	}\
 
-	struct backend_access_functions__
+	struct parameters_handling_functions__
 	{
 	protected:
 		virtual void BKDACCIn(
@@ -149,11 +149,11 @@ namespace bkdacc {
 		{
 			// A des fins de standadisation.
 		}
-		backend_access_functions__( void )
+		parameters_handling_functions__( void )
 		{
 			reset( false );
 		}
-		virtual ~backend_access_functions__( void )
+		virtual ~parameters_handling_functions__( void )
 		{
 			reset();
 		}
@@ -181,30 +181,64 @@ namespace bkdacc {
 		}
 	};
 
-
+	class error_handling_functions__
+	{
+	protected:
+		virtual void BKDACCHandleError(
+			bkdrpl::reply__ Reply,
+			const char *Message ) = 0;
+	public:
+		void reset ( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		error_handling_functions__( void )
+		{
+			reset( false );
+		}
+		~error_handling_functions__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			// Standardisation.
+		}
+		void HandleError(
+			bkdrpl::reply__ Reply,
+			const char *Message )
+		{
+			BKDACCHandleError( Reply, Message );
+		}
+	};
 
 	//c The backend access core.
 	class backend_access___
 	{
 	private:
-		backend_access_functions__ *_Functions;
-//		virtual void _In(
+		parameters_handling_functions__ *_ParametersHandlingFunctions;
+		error_handling_functions__ *_ErrorHandlingFunctions;
 		void _In(
 			bkdcst::cast Cast,
 			const void *Pointer )
 		{
-			_Functions->In( Cast, Pointer, *Channel_ );
+			_ParametersHandlingFunctions->In( Cast, Pointer, *Channel_ );
 		}
-//		virtual void _Out(
 		void _Out(
 			bkdcst::cast Cast,
 			void *Pointer )
 		{
-			_Functions->Out( *Channel_, Cast, Pointer );
+			_ParametersHandlingFunctions->Out( *Channel_, Cast, Pointer );
 		}
 		void _PostProcess( flw::ioflow__ &Flow )
 		{
-			_Functions->PostProcess( Flow );
+			_ParametersHandlingFunctions->PostProcess( Flow );
+		}
+		void _HandleError(
+			bkdrpl::reply__ Reply,
+			const char *Message )
+		{
+			_ErrorHandlingFunctions->HandleError( Reply, Message );
 		}
 		id16__ Commands_[bkdcmd::c_amount];
 		char Message_[100];
@@ -251,6 +285,8 @@ namespace bkdacc {
 
 				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
 					ERRl();
+
+				_HandleError( Reply, Message_ );
 			}
 
 			return Reply;
@@ -268,6 +304,8 @@ namespace bkdacc {
 					Disconnect();
 			}
 				
+			_ParametersHandlingFunctions = NULL;
+			_ErrorHandlingFunctions = NULL;
 			Channel_ = NULL;
 		}
 		backend_access___( void )
@@ -281,14 +319,16 @@ namespace bkdacc {
 		//f Initialization with 'Channel' to parse/answer the request.
 		void Init(
 			flw::ioflow__ &Channel,
-			backend_access_functions__ &Functions )
+			parameters_handling_functions__ &ParametersHandlingFunctions,
+			error_handling_functions__ &ErrorHandlingFunctions )
 		{
 		ERRProlog
 		ERRBegin
 			reset();
 
 			Channel_ = &Channel;
-			_Functions = &Functions;
+			_ParametersHandlingFunctions = &ParametersHandlingFunctions;
+			_ErrorHandlingFunctions = &ErrorHandlingFunctions;
 
 			RetrieveBackendCommands_();
 		ERRErr
@@ -383,6 +423,17 @@ namespace bkdacc {
 		bkdrpl::reply__ ThrowIError( void )
 		{
 			Internal_( bkdcmd::cThrowIError );
+
+			EndOfInParameters();
+
+			return  Handle();	// NOTA : Always to 'true'.
+		}
+		// Génère une erreur utilisateur retournant le messahe 'Message'.
+		bkdrpl::reply__ ThrowUserDefinedError( const string_ &Message )
+		{
+			Internal_( bkdcmd::cThrowUserDefinedError );
+
+			StringIn( Message );
 
 			EndOfInParameters();
 

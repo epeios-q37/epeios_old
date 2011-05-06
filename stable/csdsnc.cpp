@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "mtk.h"
+
 using namespace csdsnc;
 
 #define CASE( n )\
@@ -73,6 +75,57 @@ const char *csdsnc::GetLogLabel( log__ Log )
 		return NULL;	// Pour éviter un 'warning'.
 		break;
 	}
+}
+
+static void Ping_(
+	_flow___ &Flow,
+	time_t Delay )
+{
+	if ( ( tol::Clock( false ) - Flow.TimeStamp() ) >= Delay )
+		if ( !Flow.OFlowIsLocked() ) {
+			csdsnb::PutId( CSDSNB_PING, Flow );
+			Flow.Commit();
+
+			if ( Flow.Get() != 0 )
+				ERRf();
+
+			Flow.Dismiss();
+		}
+}
+
+void csdsnc::core_::Ping( void )
+{
+	_Lock( S_.Mutex );
+
+	stk::row__ Row = Flows.First();
+	
+	while ( Row != NONE )
+	{
+		Ping_( *Flows( Row ), S_.PingDelay );
+
+		Row = Flows.Next( Row );
+	}
+
+	_Unlock( S_.Mutex );
+}
+
+static void KeepAlive_( void *UP )
+{
+	csdsnc::core_ &Core = *(csdsnc::core_ *)UP;
+
+	while ( 1 ) {
+		tht::Suspend( CSDSNC_PING_RESOLUTION );	// Les test sont réalisés toutes les minutes.
+
+		Core.Ping();
+	}
+}
+
+void csdsnc::core_::_KeepAlive( time_t Delay )
+{
+	if ( Delay <= CSDSNC_PING_RESOLUTION )	// Le test est réalisé toutes les minutes.
+		ERRu();
+
+	mtk::Launch( ::KeepAlive_, this );
 }
 
 void csdsnc::core_::_DeleteFlows( void )

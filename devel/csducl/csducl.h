@@ -100,7 +100,8 @@ namespace csducl {
 			const char *Backend,
 			void *UP,
 			csdsnc::log_functions__ &Log,
-			type__ Type )
+			type__ Type,
+			time_t PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
 		{
 			reset();
 
@@ -108,7 +109,7 @@ namespace csducl {
 
 			switch ( Type ) {
 			case tDaemon:
-				Success = _DaemonAccess.Init( Backend, Log );
+				Success = _DaemonAccess.Init( Backend, Log, PingDelay );
 				break;
 			case tLibrary:
 				Success = _LibraryAccess.Init( Backend, UP );
