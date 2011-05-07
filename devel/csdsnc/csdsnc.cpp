@@ -95,34 +95,43 @@ static void Ping_(
 
 void csdsnc::core_::Ping( void )
 {
-	_Lock( S_.Mutex );
+	_Lock( S_.MainMutex );
 
 	stk::row__ Row = Flows.First();
 	
 	while ( Row != NONE )
 	{
-		Ping_( *Flows( Row ), S_.PingDelay );
+		Ping_( *Flows( Row ), S_.Ping.Delay );
 
 		Row = Flows.Next( Row );
 	}
 
-	_Unlock( S_.Mutex );
+	_Unlock( S_.MainMutex );
 }
 
 static void KeepAlive_( void *UP )
 {
 	csdsnc::core_ &Core = *(csdsnc::core_ *)UP;
+	tol::chrono__ Chrono;
 
-	while ( 1 ) {
-		tht::Suspend( CSDSNC_PING_RESOLUTION );	// Les test sont réalisés toutes les minutes.
+	Chrono.Init( Core.S_.Ping.Delay );
+	Chrono.Launch();
 
-		Core.Ping();
+	while ( !mtx::IsLocked( Core.S_.Ping.Mutex ) ) {	// Tant que pas de demande de terminaison.
+		tht::Suspend( CSDSNC_PING_RESOLUTION );
+
+		if ( Chrono.IsElapsed() ) {
+			Core.Ping();
+			Chrono.Launch();
+		}
 	}
+
+	_Unlock( Core.S_.Ping.Mutex );	// Signale que la demande de terminaison a été prise en compte.
 }
 
 void csdsnc::core_::_KeepAlive( time_t Delay )
 {
-	if ( Delay <= CSDSNC_PING_RESOLUTION )	// Le test est réalisé toutes les minutes.
+	if ( Delay <= CSDSNC_PING_RESOLUTION )
 		ERRu();
 
 	mtk::Launch( ::KeepAlive_, this );

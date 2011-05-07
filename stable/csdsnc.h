@@ -78,7 +78,7 @@ extern class ttr_tutor &CSDSNCTutor;
 #	include "mtx.h"
 #endif
 
-#define CSDSNC_PING_RESOLUTION	( 1 * 1000 )	// Résolution du délai d'inactivité donnée pour les 'ping's.
+#define CSDSNC_PING_RESOLUTION	( 2 * 1000 )	// Résolution du délai d'inactivité donnée pour les 'ping's.
 
 #define CSDSNC_DEFAULT_CACHE_SIZE	100
 
@@ -106,10 +106,12 @@ namespace csdsnc {
 #endif
 	}
 
-	inline void _Delete( mutex__ Mutex )
+	inline void _Delete(
+		mutex__ Mutex,
+		bso::bool__ EvenIfLocked = false )
 	{
 #ifdef CSDSNC__MT
-		mtx::Delete( Mutex );
+		mtx::Delete( Mutex, EvenIfLocked );
 #endif
 	}
 
@@ -175,13 +177,16 @@ ERREpilog
 	public:
 		struct s {
 			char *HostService;
-			mutex__ Mutex;
+			mutex__ MainMutex;
 			struct log__ {
 				log_functions__ *Functions;
 				mutex__ Mutex;
 			} Log;
+			struct ping__ {
+				time_t Delay;	// Délai maximum d'inactivité.
+				mutex__ Mutex;	// Pour signaler et attendre la terminaison du 'thread' dédié au 'ping'.
+			} Ping;
 			flows_::s Flows;
-			time_t PingDelay;	// Délai maximum d'inactivité.
 		} &S_;
 		flows_ Flows;
 		core_( s &S )
@@ -191,12 +196,22 @@ ERREpilog
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
+				if ( S_.Ping.Mutex != CSDSNC_NO_MUTEX )
+					_Lock( S_.Ping.Mutex );	// Signale au 'thread' du 'ping' qu'il doit se terminer.
+
 				_DeleteFlows();
 
 				if ( S_.HostService != NULL )
 					free( S_.HostService );
-				if ( S_.Mutex != CSDSNC_NO_MUTEX )
-					_Delete( S_.Mutex );
+
+				if ( S_.Ping.Mutex != CSDSNC_NO_MUTEX ) {
+					_Lock( S_.Ping.Mutex );	// Attend que le 'thread' ud 'ping' prenne acte de la demnade de terminaison.
+					_Delete( S_.Ping.Mutex, true );
+				}
+
+				if ( S_.MainMutex != CSDSNC_NO_MUTEX )
+					_Delete( S_.MainMutex );
+
 				if ( S_.Log.Mutex != CSDSNC_NO_MUTEX )
 					_Delete( S_.Log.Mutex );
 			}
@@ -204,10 +219,11 @@ ERREpilog
 			Flows.reset( P );
 
 			S_.HostService = NULL;
-			S_.Mutex = CSDSNC_NO_MUTEX;
+			S_.MainMutex = CSDSNC_NO_MUTEX;
 			S_.Log.Mutex = CSDSNC_NO_MUTEX;
 			S_.Log.Functions = NULL;
-			S_.PingDelay = 0;
+			S_.Ping.Delay = 0;
+			S_.Ping.Mutex = CSDSNC_NO_MUTEX;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -235,7 +251,7 @@ ERREpilog
 
 			strcpy( S_.HostService, HostService );
 
-			S_.Mutex = _Create();
+			S_.MainMutex = _Create();
 			S_.Log.Mutex = _Create();
 			S_.Log.Functions = &LogFunctions;
 
@@ -248,10 +264,12 @@ ERREpilog
 
 			Release( Flow );
 
-			S_.PingDelay = PingDelay;
+			S_.Ping.Delay = PingDelay;
 
-			if ( PingDelay != 0 )
+			if ( PingDelay != 0 ) {
+				S_.Ping.Mutex = _Create();
 				_KeepAlive( PingDelay );
+			}
 
 			return true;
 		}
@@ -263,7 +281,7 @@ ERREpilog
 			bso::bool__ Locked = false;
 			sck::socket__ Socket = SCK_INVALID_SOCKET;
 		ERRBegin
-			_Lock( S_.Mutex );
+			_Lock( S_.MainMutex );
 			Locked = true;
 
 			if ( Flows.Amount() ) {
@@ -286,7 +304,7 @@ ERREpilog
 				Log = lCreation;
 			}
 
-			_Unlock( S_.Mutex );
+			_Unlock( S_.MainMutex );
 			Locked = false;
 
 			_Log( Log, Flow );
@@ -297,18 +315,18 @@ ERREpilog
 			}
 		ERREnd
 			if ( Locked )
-				_Unlock( S_.Mutex );
+				_Unlock( S_.MainMutex );
 		ERREpilog
 
 			return Flow;
 		}
 		void Release( _flow___ *Flow )
 		{
-			_Lock( S_.Mutex );
+			_Lock( S_.MainMutex );
 
 			Flows.Push( Flow );
 
-			_Unlock( S_.Mutex );
+			_Unlock( S_.MainMutex );
 
 			_Log( lRelease, Flow );
 		}
