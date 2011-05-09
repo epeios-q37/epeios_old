@@ -1,5 +1,9 @@
 $Id$
 
+09/05/2011 :
+	- Général :
+		- Mise en place nouveau protocole client/serveur.
+
 07/05/2011 :
 	- Général :
 		- Mise en place nouveau protocole client/serveur.

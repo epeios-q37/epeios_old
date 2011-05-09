@@ -815,40 +815,88 @@ namespace bkdmng {
 		return (type_t__)*C;
 	}
 
-	bso::bool__ backend_::Handle(
-		request_manager__ &Request,
-		void *PU,
-		log_functions__ &LogFunctions )
-	{
-		master_data__ MasterData;
-	ERRProlog
-		object__ O;
-		err::buffer__ ErrorBuffer;
-	ERRBegin
-		MasterData.Deconnexion = false;
-		MasterData.UP = PU;
+bso::bool__ backend_::_TestCompatibility(
+	flw::ioflow__ &Flow,
+	const char *APIVersion,
+	const lcl::locale_ &Locale,
+	const char *MessageLabel,
+	const char *URLLabel )
+{
+	bso::bool__ Success = true;
+ERRProlog
+	char Language[10];
+	char RemoteProtocolVersion[10];
+	char RemoteAPIVersion[10];
+	lcl::rack__ LocaleRack;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	if ( !flw::GetString( Flow, Language, sizeof( Language ) ) )
+		ERRf();
 
-		flw::Get( Request.Input(), O );
+	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
+		ERRf();
 
-		if ( ( !Links.Exists( O ) ) && ( O != BKDMNG_MASTER_OBJECT ) )
-			ERRb();
+	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
+		ERRf();
 
-		if ( O != BKDMNG_MASTER_OBJECT ) {
-			Module_( O ).Handle( Index_( O ), Request, PU, LogFunctions );
-		} else
-			Master_.Handle( (index__)0, Request, &MasterData, LogFunctions );
+	Flow.Dismiss();
 
-	ERRErr
-		const char *ErrMsg = err::Message( ErrorBuffer );
+	if ( strcmp( RemoteProtocolVersion, BKDRPL_PROTOCOL_VERSION )
+		 || strcmp( RemoteAPIVersion, APIVersion ) ) {
+		Success = false;
 
-		ERRRst();
+		LocaleRack.Init( Locale, str::string( Language ) );
 
-		Request.ReportBackendError(	ErrMsg );
-	ERREnd
-		Request.Complete();
-	ERREpilog
-		return !MasterData.Deconnexion;
-	}
+		Flow.Put( -1 );
+
+		flw::PutString( LocaleRack.GetTranslation( MessageLabel, "", Buffer ), Flow );
+		flw::PutString( LocaleRack.GetTranslation( URLLabel, "", Buffer ), Flow );
+
+	} else
+		Flow.Put( 0 );
+
+	Flow.Commit();
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+
+bso::bool__ backend_::Handle(
+	request_manager__ &Request,
+	void *PU,
+	log_functions__ &LogFunctions )
+{
+	master_data__ MasterData;
+ERRProlog
+	object__ O;
+	err::buffer__ ErrorBuffer;
+ERRBegin
+	MasterData.Deconnexion = false;
+	MasterData.UP = PU;
+
+	flw::Get( Request.Input(), O );
+
+	if ( ( !Links.Exists( O ) ) && ( O != BKDMNG_MASTER_OBJECT ) )
+		ERRb();
+
+	if ( O != BKDMNG_MASTER_OBJECT ) {
+		Module_( O ).Handle( Index_( O ), Request, PU, LogFunctions );
+	} else
+		Master_.Handle( (index__)0, Request, &MasterData, LogFunctions );
+
+ERRErr
+	const char *ErrMsg = err::Message( ErrorBuffer );
+
+	ERRRst();
+
+	Request.ReportBackendError(	ErrMsg );
+ERREnd
+	Request.Complete();
+ERREpilog
+	return !MasterData.Deconnexion;
+}
 #if 0	
 	epeios::row__ untyped_module::Add(
 		const char *Name,

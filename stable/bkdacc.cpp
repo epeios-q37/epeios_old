@@ -57,6 +57,40 @@ public:
 
 using namespace bkdacc;
 
+bso::bool__ bkdacc::backend_access___::_TestCompatibility(
+	const char *Language,
+	const char *APIVersion,
+	flw::ioflow__ &Flow,
+	str::string_ &Message,
+	str::string_ &URL )
+{
+	char Buffer[100];
+
+	flw::PutString( Language, Flow );
+	flw::PutString( BKDRPL_PROTOCOL_VERSION, Flow );
+	flw::PutString( APIVersion, Flow );
+
+	Flow.Commit();
+
+	if ( Flow.Get() == 0 )
+		return true;
+
+	if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
+		ERRb();
+
+	Message.Append( Buffer );
+
+	if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
+		ERRb();
+
+	URL.Append( Buffer );
+
+	Flow.Dismiss();
+
+	return true;
+}
+
+
 bso::bool__ bkdacc::backend_access___::TestBackendCasts_()
 {
 	int i;

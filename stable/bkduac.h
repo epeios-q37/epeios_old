@@ -196,13 +196,17 @@ namespace bkduac {
 			reset();
 		}
 		void Init(
+			const char *Language,
+			const char *APIVersion,
 			flw::ioflow__ &Flow,
 			type__ Type,
-			bkdacc::error_handling_functions__ &ErrorHandlingFunctions )
+			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
+			str::string_ &Message,
+			str::string_ &URL )
 		{
 			_Functions.Init( Type );
 
-			_backend_access___::Init( Flow, _Functions, ErrorHandlingFunctions );
+			_backend_access___::Init( Language, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
 		}
 	};
 }

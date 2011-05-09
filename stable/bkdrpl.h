@@ -64,6 +64,8 @@ extern class ttr_tutor &BKDRPLTutor;
 #include "flw.h"
 #include "bkdlcl.h"
 
+#define BKDRPL_PROTOCOL_VERSION	"2"
+
 namespace bkdrpl {
 
 	enum reply__ {

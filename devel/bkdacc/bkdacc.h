@@ -296,6 +296,12 @@ namespace bkdacc {
 			if ( _Send() != bkdrpl::rOK )
 				ERRb();
 		}
+		bso::bool__ _TestCompatibility(
+			const char *Language,
+			const char *APIVersion,
+			flw::ioflow__ &Flow,
+			str::string_ &Message,
+			str::string_ &URL );
 	public:
 		void reset( bool P = true )
 		{
@@ -317,14 +323,24 @@ namespace bkdacc {
 			reset( true );
 		}
 		//f Initialization with 'Channel' to parse/answer the request.
-		void Init(
+		bso::bool__ Init(
+			const char *Language,
+			const char *APIVersion,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
-			error_handling_functions__ &ErrorHandlingFunctions )
+			error_handling_functions__ &ErrorHandlingFunctions,
+			str::string_ &Message,
+			str::string_ &URL )
 		{
+			bso::bool__ Success = true;
 		ERRProlog
 		ERRBegin
 			reset();
+
+			if ( !_TestCompatibility( Language, APIVersion, Channel, Message, URL ) ) {
+				Success = false;
+				ERRReturn;
+			}
 
 			Channel_ = &Channel;
 			_ParametersHandlingFunctions = &ParametersHandlingFunctions;
@@ -335,6 +351,7 @@ namespace bkdacc {
 			Channel_ = NULL;	// Pour éviter toute future tentative de communication avec le backend.
 		ERREnd
 		ERREpilog
+			return Success;
 		}
 		//f Add header with object 'Object' and command 'Command'.
 		void PushHeader(

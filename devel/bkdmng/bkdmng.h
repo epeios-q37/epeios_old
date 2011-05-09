@@ -759,6 +759,12 @@ namespace bkdmng {
 		{
 			return Links.Index( IdObjet );
 		}
+		bso::bool__ _TestCompatibility(
+			flw::ioflow__ &Flow,
+			const char *APIVersion,
+			const lcl::locale_ &Locale,
+			const char *MessageLabel,
+			const char *URLLabel );
 	public:
 		//o The different modules.
 		bch::E_BUNCH( untyped_module * ) Modules;
@@ -772,7 +778,11 @@ namespace bkdmng {
 			_ClientOrigin = NULL;
 		}
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
-		void Init(
+		bso::bool__ Init(
+			const char *APIVersion,
+			const char *MessageLabel,
+			const char *URLLabel,
+			flw::ioflow__ &Flow,
 			const char *ClientOrigin,	// NON dupliqué.
 			const char *TargetLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
@@ -780,6 +790,9 @@ namespace bkdmng {
 			const char *PublisherInformations )
 		{
 			Master_.Init( *this );
+
+			if ( !_TestCompatibility( Flow, APIVersion, Locale, MessageLabel, URLLabel ) )
+				return false;
 
 			Modules.Init();
 			Links.Init();
@@ -792,6 +805,8 @@ namespace bkdmng {
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
 			_ClientOrigin = ClientOrigin;
+
+			return true;
 
 		}
 		//f Add 'Module' to the interface.
