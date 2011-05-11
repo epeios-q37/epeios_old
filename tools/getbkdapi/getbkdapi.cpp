@@ -668,45 +668,68 @@ void Generate(
 	Writer.PopTag();
 }
 
+class dummy_error_handling_functions__
+: public bkdacc::error_handling_functions__
+{
+protected:
+	void BKDACCHandleError(
+		bkdrpl::reply__ Reply,
+		const char *Message )
+	{
+	}
+};
 
 void GetBackendData(
 	const char *Location,
 	csducl::type__ Type,
 	types_ &Types,
+	str::string_ &ProtocolVersion,
 	str::string_ &TargetLabel,
+	str::string_ &APIVersion,
 	str::string_ &BackendInformations,
 	str::string_ &PublisherInformations )
 {
 ERRProlog
+#if 1
 	csducl::universal_client_core Core;
 	csducl::universal_client_ioflow___ Flow;
-	bkduac::backend_universal_access_functions__ BackendAccessFunctions;
-	bkdacc::backend_access___ Backend;
+#else
+	sck::socket_ioflow___ Flow;
+#endif
+	bkduac::backend_universal_access___ BackendAccess;
+	str::string DummyMessage, DummyURL;
+	bkduac::mode__ Mode = bkduac::m_Undefined;
+	dummy_error_handling_functions__ DummyErrorHandlingFunctions;
 ERRBegin
-	Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type );
-
-	Flow.Init( Core );
-
 	switch ( Type ) {
 	case csducl::tDaemon:
-		BackendAccessFunctions.Init( bkduac::tRemote );
+		Mode = bkduac::mRemote;
 		break;
 	case csducl::tLibrary:
-		BackendAccessFunctions.Init( bkduac::tLocal );
+		Mode = bkduac::mLocal;
 		break;
 	default:
 		ERRc();
 		break;
 	}
 
-	Backend.Init( Flow, BackendAccessFunctions );
-		
-	GetDescription( Backend, Types );
-	
-	Backend.TargetLabel( TargetLabel );
-	Backend.About( BackendInformations, PublisherInformations );
+#if 1
+	Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type, 0 );
+	Flow.Init( Core );
+#else
+	Flow.Init( csdbnc::Connect( Location ) );
+#endif
 
-	Backend.Disconnect();
+	DummyMessage.Init();
+	DummyURL.Init();
+
+	BackendAccess.Init( "", "", "", Flow, Mode, DummyErrorHandlingFunctions, DummyMessage, DummyURL );
+
+	GetDescription( BackendAccess, Types );
+	
+	BackendAccess.About( TargetLabel, ProtocolVersion, APIVersion, BackendInformations, PublisherInformations );
+
+	BackendAccess.Disconnect();
 ERRErr
 	CErr << "Unable to communicate with the backend !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
@@ -817,7 +840,9 @@ void Generate(
 //	const bkdacc::strings_ &RawMessages,
 	const types_ &Types,
 	epeios::row__ MasterRow,
+	const str::string_ &ProtocolVersion,
 	const str::string_ &TargetLabel,
+	const str::string_ &APIVersion,
 	const str::string_ &BackendInformations,
 	const str::string_ &PublisherInformations,
 	txf::text_oflow__ &Flow )
@@ -834,6 +859,8 @@ ERRBegin
 	
 	Writer.PushTag( "API" );
 	Writer.PutAttribute( "target", TargetLabel );
+	Writer.PutAttribute( "ProtoclVersion", ProtocolVersion );
+	Writer.PutAttribute( "APIVersion", APIVersion );
 
 	GenerateMisc( BackendInformations, PublisherInformations, Writer );	
 	Generate( Types, MasterRow, Writer );
@@ -872,7 +899,7 @@ void Go(
 {
 ERRProlog
 	types Types;
-	str::string TargetLabel;
+	str::string TargetLabel, ProtocolVersion, APIVersion;
 	str::string BackendInformations;
 	str::string PublisherInformations;
 	epeios::row__ MasterRow = NONE;
@@ -884,10 +911,12 @@ ERRBegin
 	Types.Init();
 
 	TargetLabel.Init();
+	ProtocolVersion.Init();
+	APIVersion.Init();
 	BackendInformations.Init();
 	PublisherInformations.Init();
 
-	GetBackendData( Arguments.BackendLocation, Type, Types, TargetLabel, BackendInformations, PublisherInformations );
+	GetBackendData( Arguments.BackendLocation, Type, Types, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -905,9 +934,9 @@ ERRBegin
 
 		File.Init( Arguments.FileName );
 		TFile.Init( File );
-		Generate( Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, TFile );
+		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations, TFile );
 	} else
-		Generate( Types, MasterRow, TargetLabel, BackendInformations, PublisherInformations, COut );
+		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, str::string("") ), CErr );

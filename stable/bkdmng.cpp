@@ -371,19 +371,6 @@ static void GetParameters_(
 	Requete.Complete();
 }
 
-static void TargetLabel_(
-	backend_ &Backend,
-	untyped_module &Module,
-	index__,
-	command__ Command,
-	request_manager__ &Requete,
-	bso::bool__ &,
-	void * )
-{
-	Requete.StringOut() = Backend.GetTargetLabel();
-	Requete.Complete();
-}
-
 static void About_(
 	backend_ &Backend,
 	untyped_module &Module,
@@ -393,6 +380,9 @@ static void About_(
 	bso::bool__ &,
 	void * )
 {
+	Requete.StringOut() = BKDRPL_PROTOCOL_VERSION;
+	Requete.StringOut() = Backend.GetTargetLabel();
+	Requete.StringOut() = Backend.GetAPIVersion();
 	Requete.StringOut() = Backend.GetBackendInformations();
 	Requete.StringOut() = Backend.GetPublisherInformations();
 	Requete.Complete();
@@ -771,9 +761,6 @@ namespace bkdmng {
 		// Remove the given object.
 		ADD( RemoveObject );
 
-		// Label de la cible du backend.
-		ADD( TargetLabel );
-
 		// Informations au sujet du 'backend' et du 'publisher'.
 		ADD( About );
 
@@ -815,7 +802,7 @@ namespace bkdmng {
 		return (type_t__)*C;
 	}
 
-bso::bool__ backend_::_TestCompatibility(
+bso::bool__ bkdmng::backend_::_TestCompatibility(
 	flw::ioflow__ &Flow,
 	const char *APIVersion,
 	const lcl::locale_ &Locale,
@@ -824,6 +811,7 @@ bso::bool__ backend_::_TestCompatibility(
 {
 	bso::bool__ Success = true;
 ERRProlog
+	char RemoteTargetLabel[10];
 	char Language[10];
 	char RemoteProtocolVersion[10];
 	char RemoteAPIVersion[10];
@@ -836,13 +824,19 @@ ERRBegin
 	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
 		ERRf();
 
+	if ( !flw::GetString( Flow, RemoteTargetLabel, sizeof( RemoteTargetLabel ) ) )
+		ERRf();
+
 	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
 		ERRf();
 
 	Flow.Dismiss();
 
+	if ( RemoteTargetLabel[0] && strcmp( RemoteTargetLabel, _TargetLabel ) )
+		ERRl();	// Pas encore traité.
+
 	if ( strcmp( RemoteProtocolVersion, BKDRPL_PROTOCOL_VERSION )
-		 || strcmp( RemoteAPIVersion, APIVersion ) ) {
+		 || ( RemoteAPIVersion[0] && strcmp( RemoteAPIVersion, APIVersion ) ) ) {
 		Success = false;
 
 		LocaleRack.Init( Locale, str::string( Language ) );

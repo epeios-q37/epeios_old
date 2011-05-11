@@ -64,7 +64,7 @@ extern class ttr_tutor &BKDRPLTutor;
 #include "flw.h"
 #include "bkdlcl.h"
 
-#define BKDRPL_PROTOCOL_VERSION	"2"
+#define BKDRPL_PROTOCOL_VERSION	"3"
 
 namespace bkdrpl {
 

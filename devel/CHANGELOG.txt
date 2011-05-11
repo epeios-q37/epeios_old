@@ -1,5 +1,16 @@
 $Id$
 
+11/05/2011 :
+	- BKDUAC :
+		- 'type__' -> 'mode__'.
+	- BKDxxx :
+		- La commande 'About()' retourne maintenant également le 'TargetLabel', le 'ProtocolVersion' ainsi que le 'APIVersion'.
+		- Suppression de la commande 'TargetLabel()'.
+	- CSDSNC :
+		- Modification pour pouvoir l'utilisée en contexte 'single trheaded'.
+	- FWF :
+		- Modification pour pouvoir l'utilisée en contexte 'single trheaded'.
+
 09/05/2011 :
 	- Général :
 		- Mise en place nouveau protocole client/serveur.

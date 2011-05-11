@@ -321,7 +321,7 @@ namespace fwf {
 		}
 		bso::bool__ IsLocked( void )
 		{
-			return mtx::IsLocked( _Mutex );
+			return IsLocked_( _Mutex );
 		}
 		bso::bool__ IFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
 		{
@@ -406,7 +406,7 @@ namespace fwf {
 		}
 		bso::bool__ IsLocked( void )
 		{
-			return mtx::IsLocked( _Mutex );
+			return IsLocked_( _Mutex );
 		}
 		bso::bool__ OFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
 		{

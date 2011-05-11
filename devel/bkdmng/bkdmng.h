@@ -725,6 +725,7 @@ namespace bkdmng {
 	{
 	private:
 		const char *_ClientOrigin;
+		const char *_APIVersion;
 		lcl::rack__ _LocaleRack;
 		str::string _Language;
 		master_module Master_;
@@ -776,18 +777,19 @@ namespace bkdmng {
 			_BackendInformations = NULL;
 			_PublisherInformations = NULL;
 			_ClientOrigin = NULL;
+			_APIVersion = NULL;
 		}
 		// '[Backend|Publisher]Informations' ne sont PAS dupliqué. Leur contenu de doit pas êt emodifié.
 		bso::bool__ Init(
-			const char *APIVersion,
+			const char *APIVersion,	// NON dupliqué.
 			const char *MessageLabel,
 			const char *URLLabel,
 			flw::ioflow__ &Flow,
 			const char *ClientOrigin,	// NON dupliqué.
 			const char *TargetLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
-			const char *BackendInformations,
-			const char *PublisherInformations )
+			const char *BackendInformations,	// NON dupliqué.
+			const char *PublisherInformations )	// NON dupliqué.
 		{
 			Master_.Init( *this );
 
@@ -805,6 +807,7 @@ namespace bkdmng {
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
 			_ClientOrigin = ClientOrigin;
+			_APIVersion = APIVersion;
 
 			return true;
 
@@ -911,6 +914,10 @@ namespace bkdmng {
 		const char *GetPublisherInformations( void ) const 
 		{
 			return _PublisherInformations;
+		}
+		const char *GetAPIVersion( void ) const 
+		{
+			return _APIVersion;
 		}
 		//f Return 'true' if 'Object' is of type given by 'Prefix' and 'Name'.
 		bso::bool__ IsOfType(

@@ -296,7 +296,7 @@ ERREpilog
 				PutId( Id, Flow );
 				UP = _Functions->PreProcess( Flow, _Origin );
 				_Core.Store( UP, Id );
-				_Functions->Process( Flow, UP );
+//				Action = _Functions->Process( Flow, UP );
 			} else if ( Id == CSDSNB_PING ) {
 				Flow.Put( (flw::datum__)0 );
 				Flow.Commit();

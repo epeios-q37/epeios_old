@@ -55,7 +55,9 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "mtk.h"
+#ifdef CSDSNC__MT
+#	include "mtk.h"
+#endif
 
 using namespace csdsnc;
 
@@ -109,6 +111,7 @@ void csdsnc::core_::Ping( void )
 	_Unlock( S_.MainMutex );
 }
 
+#ifdef CSDSNC__MT
 static void KeepAlive_( void *UP )
 {
 	csdsnc::core_ &Core = *(csdsnc::core_ *)UP;
@@ -128,13 +131,19 @@ static void KeepAlive_( void *UP )
 
 	_Unlock( Core.S_.Ping.Mutex );	// Signale que la demande de terminaison a été prise en compte.
 }
+#endif
 
 void csdsnc::core_::_KeepAlive( time_t Delay )
 {
+#ifdef CSDSNC__MT
 	if ( Delay <= CSDSNC_PING_RESOLUTION )
 		ERRu();
 
 	mtk::Launch( ::KeepAlive_, this );
+#else
+	if ( Delay != 0 )
+		ERRu();
+#endif
 }
 
 void csdsnc::core_::_DeleteFlows( void )

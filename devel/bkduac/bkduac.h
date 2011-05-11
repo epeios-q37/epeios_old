@@ -67,12 +67,12 @@ extern class ttr_tutor &BKDUACTutor;
 
 namespace bkduac {
 
-	enum type__
+	enum mode__
 	{
-		tLocal,
-		tRemote,
-		t_Amount,
-		t_Undefined
+		mLocal,
+		mRemote,
+		m_Amount,
+		m_Undefined
 	};
 
 	typedef bkdacc::parameters_handling_functions__ _parameters_handling_functions__;
@@ -84,18 +84,18 @@ namespace bkduac {
 	private:
 		bkdlac::backend_local_access_base__ _Local;
 		bkdrac::backend_remote_access_base___ _Remote;
-		type__ _Type;
+		mode__ _Mode;
 	protected:
 		virtual void BKDACCIn(
 			bkdcst::cast Cast,
 			const void *Pointer,
 			flw::ioflow__ &Flow )
 		{
-			switch ( _Type ) {
-			case tLocal:
+			switch ( _Mode ) {
+			case mLocal:
 				_Local.In( Cast, Pointer, Flow );
 				break;
-			case tRemote:
+			case mRemote:
 				_Remote.In( Cast, Pointer, Flow );
 				break;
 			default:
@@ -110,11 +110,11 @@ namespace bkduac {
 			bkdcst::cast Cast,
 			void *Pointer )
 		{
-			switch ( _Type ) {
-			case tLocal:
+			switch ( _Mode ) {
+			case mLocal:
 				_Local.Out( Flow, Cast, Pointer );
 				break;
-			case tRemote:
+			case mRemote:
 				_Remote.Out( Flow, Cast, Pointer );
 				break;
 			default:
@@ -124,11 +124,11 @@ namespace bkduac {
 		}
 		virtual void BKDACCPostProcess( flw::ioflow__ &Flow )
 		{
-			switch ( _Type ) {
-			case tLocal:
+			switch ( _Mode ) {
+			case mLocal:
 				_Local.PostProcess( Flow );
 				break;
-			case tRemote:
+			case mRemote:
 				_Remote.PostProcess( Flow );
 				break;
 			default:
@@ -142,7 +142,7 @@ namespace bkduac {
 			_Local.reset( P );
 			_Remote.reset( P );
 			_parameters_handling_functions__::reset( P );
-			_Type = t_Undefined;
+			_Mode = m_Undefined;
 		}
 		universal_parameters_handling_functions__( void )
 		{
@@ -152,15 +152,15 @@ namespace bkduac {
 		{
 			reset();
 		}
-		void Init( type__ Type )
+		void Init( mode__ Mode )
 		{
 			reset();
 
-			switch ( Type ) {
-			case tLocal:
+			switch ( Mode ) {
+			case mLocal:
 				_Local.Init();
 				break;
-			case tRemote:
+			case mRemote:
 				_Remote.Init();
 				break;
 			default:
@@ -168,7 +168,7 @@ namespace bkduac {
 				break;
 			}
 
-			_Type = Type;
+			_Mode = Mode;
 
 			_parameters_handling_functions__::Init();
 		}
@@ -197,16 +197,17 @@ namespace bkduac {
 		}
 		void Init(
 			const char *Language,
+			const char *TargetLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Flow,
-			type__ Type,
+			mode__ Mode,
 			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
 			str::string_ &Message,
 			str::string_ &URL )
 		{
-			_Functions.Init( Type );
+			_Functions.Init( Mode );
 
-			_backend_access___::Init( Language, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
+			_backend_access___::Init( Language, TargetLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
 		}
 	};
 }

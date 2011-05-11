@@ -298,6 +298,7 @@ namespace bkdacc {
 		}
 		bso::bool__ _TestCompatibility(
 			const char *Language,
+			const char *TargetLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Flow,
 			str::string_ &Message,
@@ -325,6 +326,7 @@ namespace bkdacc {
 		//f Initialization with 'Channel' to parse/answer the request.
 		bso::bool__ Init(
 			const char *Language,
+			const char *TargetLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
@@ -337,7 +339,7 @@ namespace bkdacc {
 		ERRBegin
 			reset();
 
-			if ( !_TestCompatibility( Language, APIVersion, Channel, Message, URL ) ) {
+			if ( !_TestCompatibility( Language, TargetLabel, APIVersion, Channel, Message, URL ) ) {
 				Success = false;
 				ERRReturn;
 			}
@@ -554,17 +556,10 @@ namespace bkdacc {
 
 			_Handle();
 		}
-		void TargetLabel( string_ &Label )
-		{
-			Internal_( bkdcmd::cTargetLabel );
-
-			EndOfInParameters();
-
-			StringOut( Label );
-
-			_Handle();
-		}
 		void About(
+			string_ &ProtocolVersion,
+			string_ &TargetLabel,
+			string_ &APIVersion,
 			string_ &Backend,
 			string_ &Publisher)
 		{
@@ -572,6 +567,9 @@ namespace bkdacc {
 
 			EndOfInParameters();
 
+			StringOut( ProtocolVersion );
+			StringOut( TargetLabel );
+			StringOut( APIVersion );
 			StringOut( Backend );
 			StringOut( Publisher );
 
