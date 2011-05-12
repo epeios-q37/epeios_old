@@ -45,7 +45,7 @@ using xml::writer_;
 
 #define NAME			"getbkdapi"
 #define VERSION			"0.2.4"
-#define COPYRIGHT_YEARS	"2001-2006; 2009"
+#define COPYRIGHT_YEARS	"2001-2006; 2009-2011"
 #define DESCRIPTION		"Get the API from an Epeios-driven backend."
 #define INFO			EPSMSC_EPEIOS_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -640,7 +640,7 @@ ERRBegin
 
 	Convert( Buffer );
 
-	Writer.PutAttribute( "Uppercased", Buffer );
+	Writer.PutAttribute( "Mixedcased", Buffer );
 
 	Writer.PopTag();
 
@@ -727,7 +727,7 @@ ERRBegin
 
 	GetDescription( BackendAccess, Types );
 	
-	BackendAccess.About( TargetLabel, ProtocolVersion, APIVersion, BackendInformations, PublisherInformations );
+	BackendAccess.About( ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
 
 	BackendAccess.Disconnect();
 ERRErr
@@ -850,6 +850,7 @@ void Generate(
 ERRProlog
 	xml::writer Writer;
 	tol::buffer__ Buffer;
+	str::string Temp;
 ERRBegin
 	Writer.Init( Flow, xml::oIndent, xml::e_Default );
 	
@@ -859,7 +860,11 @@ ERRBegin
 	
 	Writer.PushTag( "API" );
 	Writer.PutAttribute( "target", TargetLabel );
-	Writer.PutAttribute( "ProtoclVersion", ProtocolVersion );
+
+	Temp.Init( TargetLabel );
+	Writer.PutAttribute( "TargetUppercased", str::ToUpper( Temp ) );
+
+	Writer.PutAttribute( "ProtocolVersion", ProtocolVersion );
 	Writer.PutAttribute( "APIVersion", APIVersion );
 
 	GenerateMisc( BackendInformations, PublisherInformations, Writer );	

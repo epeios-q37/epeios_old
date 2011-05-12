@@ -1,5 +1,9 @@
 $Id$
 
+12/05/2011 :
+	- Général :
+		- Mise au point nouveau protocole client/serveur.
+
 11/05/2011 :
 	- BKDUAC :
 		- 'type__' -> 'mode__'.

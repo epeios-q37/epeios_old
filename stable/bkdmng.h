@@ -793,9 +793,6 @@ namespace bkdmng {
 		{
 			Master_.Init( *this );
 
-			if ( !_TestCompatibility( Flow, APIVersion, Locale, MessageLabel, URLLabel ) )
-				return false;
-
 			Modules.Init();
 			Links.Init();
 
@@ -809,8 +806,7 @@ namespace bkdmng {
 			_ClientOrigin = ClientOrigin;
 			_APIVersion = APIVersion;
 
-			return true;
-
+			return _TestCompatibility( Flow, APIVersion, Locale, MessageLabel, URLLabel );
 		}
 		//f Add 'Module' to the interface.
 		void Add( untyped_module &Module )

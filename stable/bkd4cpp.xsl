@@ -20,11 +20,22 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>// $Id$	(CVS feature).&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>#ifndef </xsl:text>
-		<xsl:value-of select="/API/@target"/>
+		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>__INC&nl;</xsl:text>
 		<xsl:text>#define </xsl:text>
-		<xsl:value-of select="/API/@target"/>
+		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>__INC&nl;</xsl:text>
+		<xsl:text>&nl;&nl;</xsl:text>
+		<xsl:text>#define </xsl:text>
+		<xsl:value-of select="/API/@TargetUppercased"/>
+		<xsl:text>_TARGET "</xsl:text>
+		<xsl:value-of select="/API/@target"/>
+		<xsl:text>"&nl;</xsl:text>
+		<xsl:text>#define </xsl:text>
+		<xsl:value-of select="/API/@TargetUppercased"/>
+		<xsl:text>_API_VERSION "</xsl:text>
+		<xsl:value-of select="/API/@APIVersion"/>
+		<xsl:text>"&nl;</xsl:text>
 		<xsl:apply-templates select="API"/>
 		<xsl:text>#endif //#ifndef </xsl:text>
 		<xsl:value-of select="/API/@target"/>

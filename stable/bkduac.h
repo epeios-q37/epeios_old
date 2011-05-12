@@ -195,7 +195,7 @@ namespace bkduac {
 		{
 			reset();
 		}
-		void Init(
+		bso::bool__ Init(
 			const char *Language,
 			const char *TargetLabel,
 			const char *APIVersion,
@@ -207,7 +207,7 @@ namespace bkduac {
 		{
 			_Functions.Init( Mode );
 
-			_backend_access___::Init( Language, TargetLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
+			return _backend_access___::Init( Language, TargetLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
 		}
 	};
 }
