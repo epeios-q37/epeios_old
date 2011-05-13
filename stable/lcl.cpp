@@ -91,7 +91,7 @@ ERREpilog
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenMessage(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	str::string_ &Translation ) const
 {
@@ -115,7 +115,7 @@ ERREpilog
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingMessageThenLanguage(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	str::string_ &Translation ) const
 {
@@ -139,7 +139,7 @@ ERREpilog
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenText(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	str::string_ &Translation ) const
 {
@@ -163,7 +163,7 @@ ERREpilog
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingTextThenLanguage(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	str::string_ &Translation ) const
 {
@@ -203,7 +203,7 @@ void lcl::locale_::GetLanguages(
 
 bso::bool__ lcl::locale_::GetTranslation(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	str::string_ &Translation ) const
 {
@@ -229,7 +229,7 @@ bso::bool__ lcl::locale_::GetTranslation(
 
 const char *lcl::locale_::GetTranslation(
 	const char *Text,
-	const str::string_ &Language,
+	const char *Language,
 	const char *Prefix,
 	STR_BUFFER___ &Buffer ) const
 {

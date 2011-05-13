@@ -90,23 +90,23 @@ namespace lcl {
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			str::string_ &Translation ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingLanguageThenText(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingTextThenLanguage(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			str::string_ &Translation ) const;
 	public:
@@ -187,12 +187,12 @@ namespace lcl {
 			strings_ &Wordings ) const;
 		bso::bool__ GetTranslation(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			str::string_ &Translation ) const;
 		const char *GetTranslation(
 			const char *Text,
-			const str::string_ &Language,
+			const char *Language,
 			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const;	// Si la traduction n'existe pas, 'Text' est renvoyé.
 	};
@@ -203,7 +203,7 @@ namespace lcl {
 	{
 	public:
 		const locale_ *Locale;
-		const str::string_ *Language;
+		const char *Language;
 		void reset( bso::bool__ = true )
 		{
 			Locale = NULL;
@@ -214,36 +214,36 @@ namespace lcl {
 			reset();
 		}
 		rack__(
-			const locale_ &Locale,
-			const str::string_ &Language )
+			const locale_ &Locale,	// N'est pas dupliqué !
+			const char *Language )	// N'est pas dupliqué !
 		{
 			reset( false );
 
 			this->Locale = &Locale;
-			this->Language = &Language;
+			this->Language = Language;
 		}
 		void Init(
-			const locale_ &Locale,	// N'est pas dupliqué !.
-			const str::string_ &Language ) // N'est pas dupliqué !
+			const locale_ &Locale,	// N'est pas dupliqué !
+			const char *Language ) // N'est pas dupliqué !
 		{
 			reset();
 
 			this->Locale = &Locale;
-			this->Language = &Language;
+			this->Language = Language;
 		}
 		bso::bool__ GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			str::string_ &Translation ) const
 		{
-			return Locale->GetTranslation( Text, *Language, Prefix, Translation );
+			return Locale->GetTranslation( Text, Language, Prefix, Translation );
 		}
 		const char *GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
-			return Locale->GetTranslation( Text, *Language, Prefix, Buffer );
+			return Locale->GetTranslation( Text, Language, Prefix, Buffer );
 		}
 	};
 

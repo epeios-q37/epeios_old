@@ -29,7 +29,7 @@ namespace ui_dbsdb {
 
 	UI_SWIDGET( ui_base::window__, window__ );
 
-	UI_UWIDGET( broadcaster__, database_selection_broadcaster__ );
+	UI_UWIDGET( broadcast__, database_selection_broadcast__ );
 
 	UI_SWIDGET( tree__, database_tree__ );
 

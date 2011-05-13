@@ -726,9 +726,9 @@ namespace bkdmng {
 	private:
 		const char *_ClientOrigin;
 		const char *_APIVersion;
-		lcl::rack__ _LocaleRack;
-		str::string _Language;
 		master_module Master_;
+		STR_BUFFER___ _Language;
+		lcl::rack__ _LocaleRack;
 		const char *_TargetLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
@@ -763,7 +763,6 @@ namespace bkdmng {
 		bso::bool__ _TestCompatibility(
 			flw::ioflow__ &Flow,
 			const char *APIVersion,
-			const lcl::locale_ &Locale,
 			const char *MessageLabel,
 			const char *URLLabel );
 	public:
@@ -798,15 +797,14 @@ namespace bkdmng {
 
 			_TargetLabel = TargetLabel;
 
-			_Language.Init( BKDMNG__DEFAULT_LANGUAGE );
-			_LocaleRack.Init( Locale, _Language );
-
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
 			_ClientOrigin = ClientOrigin;
 			_APIVersion = APIVersion;
 
-			return _TestCompatibility( Flow, APIVersion, Locale, MessageLabel, URLLabel );
+			_LocaleRack.Init( Locale, str::string( BKDMNG__DEFAULT_LANGUAGE ).Convert( _Language ) );
+
+			return _TestCompatibility( Flow, APIVersion, MessageLabel, URLLabel );
 		}
 		//f Add 'Module' to the interface.
 		void Add( untyped_module &Module )
@@ -870,17 +868,6 @@ namespace bkdmng {
 
 			Links.Delete( Object );
 		}
-		//f Return the current language.
-		const str::string_ &GetLanguage( void ) const
-		{
-			return _Language;
-		}
-		//f 'Language' becomes the current language.
-		void SetLanguage( const str::string_ &Language )
-		{
-			_Language = Language;
-			_LocaleRack.Init( *_LocaleRack.Locale, _Language );
-		}
 		/*f Add a request description with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
@@ -934,7 +921,15 @@ namespace bkdmng {
 		{
 			return _ClientOrigin;
 		}
-		E_RODISCLOSE__( bkdlcl::rack__, LocaleRack );
+		const lcl::rack__ &LocaleRack() const 
+		{
+			return _LocaleRack;
+		}
+		void SetLanguage( const char *Language )
+		{
+			str::string( Language ).Convert( _Language );
+			_LocaleRack.Language = _Language;
+		}
 	};
 
 	typedef backend backend_;

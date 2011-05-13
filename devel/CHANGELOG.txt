@@ -1,5 +1,14 @@
 $Id$
 
+13/05/2011 :
+	- Général :
+		- Mise au point nouveau protocole client/serveur.
+		- adaptation modifications 'LCL'
+	- CGIMNG :
+		- Adaptation modifications 'CSDxxx'.
+	- LCL :
+		- Le paramètre 'Language' est systématiquement de type 'char *'.
+
 12/05/2011 :
 	- Général :
 		- Mise au point nouveau protocole client/serveur.
@@ -11,9 +20,9 @@ $Id$
 		- La commande 'About()' retourne maintenant également le 'TargetLabel', le 'ProtocolVersion' ainsi que le 'APIVersion'.
 		- Suppression de la commande 'TargetLabel()'.
 	- CSDSNC :
-		- Modification pour pouvoir l'utilisée en contexte 'single trheaded'.
+		- Modification pour pouvoir l'utilisée en contexte 'single threaded'.
 	- FWF :
-		- Modification pour pouvoir l'utilisée en contexte 'single trheaded'.
+		- Modification pour pouvoir l'utilisée en contexte 'single threaded'.
 
 09/05/2011 :
 	- Général :

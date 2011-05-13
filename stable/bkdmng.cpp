@@ -689,7 +689,7 @@ static void GetLanguage_(
 	bso::bool__ &Deconnexion,
 	void * )
 {
-	Requete.StringOut() = Backend.GetLanguage();
+	Requete.StringOut() = Backend.LocaleRack().Language;
 
 	Requete.Complete();
 }
@@ -712,7 +712,7 @@ ERRBegin
 	if ( Language.Amount() == 0 )
 			ReportError_( m_BadLanguage, Backend.LocaleRack(), Request );
 	else
-		Backend.SetLanguage( Language );
+		Backend.SetLanguage( Language.Convert( Buffer ) );
 
 	Request.Complete();
 ERRErr
@@ -805,7 +805,6 @@ namespace bkdmng {
 bso::bool__ bkdmng::backend_::_TestCompatibility(
 	flw::ioflow__ &Flow,
 	const char *APIVersion,
-	const lcl::locale_ &Locale,
 	const char *MessageLabel,
 	const char *URLLabel )
 {
@@ -815,7 +814,6 @@ ERRProlog
 	char Language[10];
 	char RemoteProtocolVersion[10];
 	char RemoteAPIVersion[10];
-	lcl::rack__ LocaleRack;
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( !flw::GetString( Flow, Language, sizeof( Language ) ) )
@@ -839,12 +837,13 @@ ERRBegin
 		 || ( RemoteAPIVersion[0] && strcmp( RemoteAPIVersion, APIVersion ) ) ) {
 		Success = false;
 
-		LocaleRack.Init( Locale, str::string( Language ) );
 
 		Flow.Put( -1 );
 
-		flw::PutString( LocaleRack.GetTranslation( MessageLabel, "", Buffer ), Flow );
-		flw::PutString( LocaleRack.GetTranslation( URLLabel, "", Buffer ), Flow );
+		SetLanguage( Language );
+
+		flw::PutString( _LocaleRack.GetTranslation( MessageLabel, "", Buffer ), Flow );
+		flw::PutString( _LocaleRack.GetTranslation( URLLabel, "", Buffer ), Flow );
 
 	} else
 		Flow.Put( 0 );

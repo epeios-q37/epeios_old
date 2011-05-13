@@ -67,67 +67,43 @@ extern class ttr_tutor &FRDBKDTutor;
 #include "bkduac.h"
 
 namespace frdbkd {
-	struct error_reporting_functions___
-	{
-	protected:
-		virtual void FRDBCKNDReportError( const char *Message ) = 0 ;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// A des fins de standardisation.
-		}
-		void Init( void )
-		{
-			// A des fins de standardisation.
-		}
-		void ReportError( const char *Message )
-		{
-			FRDBCKNDReportError( Message );
-		}
-	};
-
 	class _backend___
 	{
 	private:
-		error_reporting_functions___ *_ErrorReportingFunctions;
 		csducl::universal_client_ioflow___ _Flow;
-		bkduac::backend_universal_access_functions__ _Functions;
-		bkdacc::backend_access___ _BackendAccess;
-		void _ReportError( const char *Message )
-		{
-			if ( _ErrorReportingFunctions != NULL )
-				_ErrorReportingFunctions->ReportError( Message );
-			else
-				ERRb();
-		}
+		bkduac::backend_universal_access___ _BackendAccess;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_BackendAccess.reset( P );
 			_Flow.reset( P );
-			_ErrorReportingFunctions = NULL;
 		}
-		void Init(
+		bso::bool__ Init(
+			const char *Language,
+			const char *TargetLabel,
+			const char *APIVersion,
 			csducl::universal_client_core &ClientCore,
-			error_reporting_functions___ &ErrorReportingFunctions )
+			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
+			str::string_ &Message,
+			str::string_ &URL )
 		{
+			bkduac::mode__ Mode = bkduac::m_Undefined;
+
 			_Flow.Init( ClientCore );
 
 			switch ( ClientCore.GetType() ) {
 			case csducl::tLibrary:
-				_Functions.Init( bkduac::tLocal );
+				Mode = bkduac::mLocal;
 				break;
 			case csducl::tDaemon:
-				_Functions.Init( bkduac::tRemote );
+				Mode = bkduac::mRemote;
 				break;
 			default:
 				ERRu();
 				break;
 			}
 
-			_BackendAccess.Init( _Flow, _Functions );
-
-			_ErrorReportingFunctions = &ErrorReportingFunctions;
+			return _BackendAccess.Init( Language, TargetLabel, APIVersion,_Flow, Mode, ErrorHandlingFunctions, Message, URL );
 		}
 		bkdacc::backend_access___ &BackendAccess( void )
 		{
@@ -137,40 +113,18 @@ namespace frdbkd {
 		{
 			return _BackendAccess.IsConnected();
 		}
-		const char *GetRawMessage( void ) const
+		const char *GetMessage( void ) const
 		{
-			return _BackendAccess.GetRawMessage();
-		}
-		const char *GetI18Message( void ) const
-		{
-			return _BackendAccess.GetI18Message();
-		}
-		bso::bool__ Handle( bso::bool__ Result )
-		{
-		ERRProlog
-			STR_BUFFER___ Buffer;
-			str::string Message;
-		ERRBegin
-			if ( !Result ) {
-				Message.Init();
-				Message.Append( GetRawMessage() );
-				Message.Append( '\n' );
-				Message.Append( GetI18Message() );
-
-//				nsxpcm::Alert( UI.Main.Window, Message.Convert( Buffer ) );
-				_ReportError( Message.Convert( Buffer ) );
-				ERRReturn;
-			}
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Result;
+			return _BackendAccess.GetMessage();
 		}
 		void About(
+			str::string_ &ProtocolVersion,
+			str::string_ &TargetLabel,
+			str::string_ &APIVersion,
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )
 		{
-			_BackendAccess.About( BackendInformations, PublisherInformations );
+			_BackendAccess.About( ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
 		}
 	};
 
@@ -184,12 +138,18 @@ namespace frdbkd {
 			_backend___::reset( P );
 			statics::reset( P );
 		}
-		void Init(
+		E_CVDTOR( backend___ )
+		bso::bool__ Init(
+			const char *Language,
+			const char *TargetLabel,
+			const char *APIVersion,
 			csducl::universal_client_core &ClientCore,
-			error_reporting_functions___ &ErrorReportingFunctions )
+			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
+			str::string_ &Message,
+			str::string_ &URL )
 		{
-			_backend___::Init( ClientCore, ErrorReportingFunctions );
 			statics::Init( BackendAccess() );
+			return _backend___::Init( Language, TargetLabel, APIVersion,ClientCore, ErrorHandlingFunctions, MEssage, URL );
 		}
 	};
 

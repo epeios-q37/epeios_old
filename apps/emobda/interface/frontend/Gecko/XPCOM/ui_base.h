@@ -22,10 +22,10 @@
 #ifndef UI_BASE__INC
 #define UI_BASE__INC
 
-#include "xui.h"
+#include "xulwdg.h"
 
 namespace ui_base {
-	using namespace xui;
+	using namespace xulwdg;
 }
 
 // Predeclaration
