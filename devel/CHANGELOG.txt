@@ -1,5 +1,13 @@
 $Id$
 
+17/05/2011 :
+	- Génaral :
+		- Adaptation modifications 'CSDSCM'.
+	- CSDSCM :
+		- Suppression paramètre 'Flow' de la méthode 'CSDPreProcess(...)' (pouvait poser problème en utilisation en mode bibliothèque).
+	- FWF :
+		- Suppression '_FakeMutex'; posait problème dans des bibliothèques dynamiques.
+
 13/05/2011 :
 	- Général :
 		- Mise au point nouveau protocole client/serveur.
@@ -20,9 +28,9 @@ $Id$
 		- La commande 'About()' retourne maintenant également le 'TargetLabel', le 'ProtocolVersion' ainsi que le 'APIVersion'.
 		- Suppression de la commande 'TargetLabel()'.
 	- CSDSNC :
-		- Modification pour pouvoir l'utilisée en contexte 'single threaded'.
+		- Modification pour pouvoir l'utiliser en contexte 'single threaded'.
 	- FWF :
-		- Modification pour pouvoir l'utilisée en contexte 'single threaded'.
+		- Modification pour pouvoir l'utiliser en contexte 'single threaded'.
 
 09/05/2011 :
 	- Général :

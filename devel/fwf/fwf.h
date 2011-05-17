@@ -94,8 +94,6 @@ namespace fwf {
 		//t Amount of data.
 	using bso::size__;
 
-	extern mutex__ _FakeMutex;	// Sert de leurre lorsqu'on n'a pas besoin que d'un objet 'thread-safe'.
-
 	enum thread_safety__
 	{
 		tsEnabled,
@@ -135,7 +133,7 @@ namespace fwf {
 #endif
 			break;
 		case tsDisabled:
-			return _FakeMutex;
+			return FWF_NO_MUTEX;
 			break;
 		default:
 			ERRu();
@@ -150,8 +148,7 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			if ( Mutex != _FakeMutex )
-				mtx::Delete( Mutex );
+			mtx::Delete( Mutex );
 #endif
 	}
 
@@ -159,8 +156,7 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			if ( Mutex != _FakeMutex )
-				mtx::Lock( Mutex );
+			mtx::Lock( Mutex );
 #endif
 	}
 
@@ -168,8 +164,7 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			if ( Mutex != _FakeMutex )
-				mtx::Unlock( Mutex );
+			mtx::Unlock( Mutex );
 	#endif
 	}
 
@@ -177,8 +172,7 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			if ( Mutex != _FakeMutex )
-				return mtx::IsLocked( Mutex );
+			return mtx::IsLocked( Mutex );
 #endif
 		return false;
 	}
@@ -187,8 +181,7 @@ namespace fwf {
 	{
 #ifdef FWF__TS
 		if ( Mutex != FWF_NO_MUTEX )
-			if ( Mutex != _FakeMutex )
-				return mtx::IsOwner( Mutex );
+			return mtx::IsOwner( Mutex );
 #endif
 		return true;
 	}

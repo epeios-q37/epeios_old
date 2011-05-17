@@ -268,9 +268,7 @@ ERREpilog
 		const char *_Origin;
 		void _Clean( void );	// Appelle tout le 'postProcess' pour tous les objets utilisateurs.
 	protected:
-		virtual void *CSDPreProcess(
-			flw::ioflow__ &Flow,
-			const char *Origin )
+		virtual void *CSDPreProcess( const char *Origin )
 		{
 			_Origin = Origin;
 
@@ -294,9 +292,9 @@ ERREpilog
 			if ( Id == CSDSNB_UNDEFINED ) {
 				Id = _Core.New();
 				PutId( Id, Flow );
-				UP = _Functions->PreProcess( Flow, _Origin );
+				UP = _Functions->PreProcess( _Origin );
 				_Core.Store( UP, Id );
-//				Action = _Functions->Process( Flow, UP );
+				Action = _Functions->Process( Flow, UP );
 			} else if ( Id == CSDSNB_PING ) {
 				Flow.Put( (flw::datum__)0 );
 				Flow.Commit();

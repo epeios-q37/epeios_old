@@ -226,7 +226,7 @@ namespace csdbns {
 				ERRa();
 
 			Data->Flow.Init( Socket );
-			Data->UP = UserFunctions->PreProcess( Data->Flow, IP );
+			Data->UP = UserFunctions->PreProcess( IP );
 		ERRErr
 			if ( Data != NULL )
 				delete Data;

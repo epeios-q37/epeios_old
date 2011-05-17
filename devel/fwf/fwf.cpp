@@ -57,8 +57,6 @@ public:
 
 using namespace fwf;
 
-mutex__ fwf::_FakeMutex = (mutex__)&fwf::_FakeMutex;	// Peut avoir n'importe quelle valeur, pourvu qu'elle soit non nulle, est différente de celle d'un éventuel 'mutex'.
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
