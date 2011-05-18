@@ -471,6 +471,10 @@ namespace flx {
 		virtual void FWFCommit()
 		{}
 	public:
+		~dump_oflow_functions___( void )
+		{
+			reset();
+		}
 		void Init( fwf::thread_safety__ ThreadSafety )
 		{
 			fwf::oflow_functions___<>::Init( ThreadSafety );

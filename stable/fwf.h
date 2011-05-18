@@ -230,11 +230,8 @@ namespace fwf {
 		void reset( bso::bool__ P = true ) 
 		{
 			if ( P ) {
-				if ( _Mutex != FWF_NO_MUTEX ) {
-					if ( IsOwner_( _Mutex ) )
-						Dismiss();
-					Delete_( _Mutex );
-				}
+				Dismiss();
+				Delete_( _Mutex );
 			}
 
 			_Cache = NULL;
@@ -255,6 +252,10 @@ namespace fwf {
 			thread_safety__ ThreadSafety )
 		{
 			reset();
+#ifdef FWF_DBG
+			if ( Cache == NULL )
+				ERRu();
+#endif
 
 			_Cache = Cache;
 			_Size = Size;
@@ -264,9 +265,8 @@ namespace fwf {
 		}
 		void Dismiss( void )
 		{
-			if ( _Mutex != FWF_NO_MUTEX ) {
+			if ( _Cache != NULL ) {
 				FWFDismiss();
-
 				_Unlock();
 			}
 		}
@@ -338,6 +338,7 @@ namespace fwf {
 	{
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
+		bso::bool__ _Initialized;	// Pour éviter des 'pure virtual function call'.
 		void _Lock( void )
 		{
 			Lock_( _Mutex );
@@ -362,14 +363,12 @@ namespace fwf {
 		void reset( bso::bool__ P = true ) 
 		{
 			if ( P ) {
-				if ( _Mutex != FWF_NO_MUTEX ) {
-					if ( IsOwner_( _Mutex ) )
-						Commit();
-					Delete_( _Mutex );
-				}
+				Commit();
+				Delete_( _Mutex );
 			}
 
 			_Mutex = FWF_NO_MUTEX;
+			_Initialized = false;
 		}
 		oflow_functions_base___( void )
 		{
@@ -384,11 +383,14 @@ namespace fwf {
 			reset();
 
 			_Mutex = Create_( ThreadSafety );
+			_Initialized = true;
 		}
 		void Commit( void )
 		{
-			FWFCommit();
-			_Unlock();
+			if ( _Initialized ) {
+				FWFCommit();
+				_Unlock();
+			}
 		}
 		size__ Write(
 			const datum__ *Buffer,

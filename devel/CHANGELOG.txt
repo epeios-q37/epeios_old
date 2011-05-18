@@ -1,5 +1,13 @@
 $Id$
 
+18/05/2011 :
+	- Général :
+		- Adapataiton aux modifications 'FWF'.
+	- FWF :
+		- Réorganisation cause suspiscion de bogue.
+	- XPP :
+		- Correction bogue contructeur.
+
 17/05/2011 :
 	- Génaral :
 		- Adaptation modifications 'CSDSCM'.

@@ -444,7 +444,7 @@ namespace xpp {
 		  _Variables( Variables ),
 		  _Directives( Directives )
 		{
-			reset( true );
+			reset( false );
 		}
 		~_extended_parser___( void )
 		{

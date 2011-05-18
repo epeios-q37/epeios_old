@@ -159,6 +159,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		csdscm::user_functions__ *_UserFunctions;
 		void *_UP;
 		flw::ioflow__ *_Flow;
+		bso::bool__ _DataAvailable;
 		void _Create( void )
 		{
 			_UP = _UserFunctions->PreProcess( "(embed)" );
@@ -169,9 +170,20 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_UserFunctions->PostProcess( _UP );
 		}
 	protected:
+		virtual fwf::size__ FWFWrite(
+			const fwf::datum__ *Buffer,
+			fwf::size__ Maximum )
+		{
+			_DataAvailable = true;
+
+			return _passive_generic_functions___::FWFWrite( Buffer, Maximum );
+		}
 		virtual void FWFCommit( void )
 		{
-			_UserFunctions->Process( *_Flow, _UP );
+			if ( _DataAvailable )
+				_UserFunctions->Process( *_Flow, _UP );
+
+			_DataAvailable = false;
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -184,6 +196,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			_UserFunctions = NULL;
 			_UP = NULL;
 			_Flow = NULL;
+			_DataAvailable = false;
 		}
 		_active_generic_functions___(
 			data_ &Read,
