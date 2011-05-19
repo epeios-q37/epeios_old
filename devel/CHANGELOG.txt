@@ -1,8 +1,12 @@
 $Id$
 
+19/05/2011 :
+	- Général :
+		- Adaptation aux modifications des différentes bibliothèques.
+
 18/05/2011 :
 	- Général :
-		- Adapataiton aux modifications 'FWF'.
+		- Adaptation aux modifications 'FWF'.
 	- FWF :
 		- Réorganisation cause suspiscion de bogue.
 	- XPP :

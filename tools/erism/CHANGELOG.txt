@@ -2,8 +2,11 @@ $Id$
 
 'erism' changelog.
 
+19/05/2011 :
+	- Adapting to modifications in underltyong libraries.
+
 25/04/2011 :
-	- Ajout 'detail' command.
+	- Adding 'detail' command.
 
 *********
 * 0.2.0 *

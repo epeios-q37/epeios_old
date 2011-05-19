@@ -122,7 +122,7 @@ namespace mthitg {
 			S_.Size = ( ( S_.Size & ~MTHITG_SIGN_MASK ) | ( Sign << MTHITG_SIGN_POS ) );
 			return _GetSignFlag();
 		}
-		void Adjust_( aem::mode__ Mode = aem::mDefault );
+		void Adjust_( aem::mode__ Mode = aem::m_Default );
 		void Dup_( const integer_ &Interger );
 		friend int Comp_(
 			const integer_ &Num,

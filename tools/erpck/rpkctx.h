@@ -101,7 +101,7 @@ namespace rpkctx {
 		xml::writer_ &Writer );
 
 	void Retrieve(
-		xml::browser___ &Browser,
+		xml::parser___ &Parser,
 		context_ &Context );
 
 };

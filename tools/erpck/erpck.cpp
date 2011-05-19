@@ -344,12 +344,12 @@ static void ReportErrorAndExit_(
 static void ReportErrorAndExit_( xpp::preprocessing_iflow___ &IFlow )
 {
 ERRProlog
-	lcl::locales Locales;
+	lcl::locale Locale;
 	str::string ErrorMessage;
 ERRBegin
-	Locales.Init();
+	Locale.Init();
 	ErrorMessage.Init();
-	cerr << xpp::GetTranslation( IFlow.Status(), str::string(), Locales, ErrorMessage ) << " at ";
+	cerr << xpp::GetTranslation( IFlow, lcl::rack__( Locale, "" ), ErrorMessage ) << " at ";
 	PrintPosition_( IFlow, cerr );
 	cerr << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
@@ -462,7 +462,7 @@ static void InsertUsingLabels_(
 static void Assign_(
 	str::string_ &Target,
 	const char *TargetLabel,
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow )
 {
 ERRProlog
@@ -475,12 +475,12 @@ ERRBegin
 		ReportErrorAndExit_( ErrorMessage, IFlow );
 	}
 
-	if ( Browser.Value().Amount() == 0 ) {
+	if ( Parser.Value().Amount() == 0 ) {
 		ErrorMessage.Append( " value can not be empty" );
 		ReportErrorAndExit_( ErrorMessage, IFlow );
 	}
 
-	Target = Browser.Value();
+	Target = Parser.Value();
 
 ERRErr
 ERREnd
@@ -515,7 +515,7 @@ ERREpilog
 // '...<erpck:insert ...>...' -> '...</erpck:insert>...'
 //                   ^                              ^
 static void ProcessInsertion_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	const aliases_ &Aliases,
 	const tables_ &Tables,
@@ -531,19 +531,19 @@ ERRBegin
 	RecordAlias.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag |xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag |xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			ReportErrorAndExit_( "No tag allowed", IFlow );
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == INSERTION_TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( TableLabel, "Table label", Browser, IFlow );
-			} else if ( Browser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Browser, IFlow );
-			} else if ( Browser.AttributeName() == INSERTION_TABLE_ALIAS_ATTRIBUTE ) {
-				Assign_( TableAlias, "Table alias", Browser, IFlow );
-			} else if ( Browser.AttributeName() == INSERTION_RECORD_ALIAS_ATTRIBUTE ) {
-				Assign_( RecordAlias, "Record alias", Browser, IFlow );
+			if ( Parser.AttributeName() == INSERTION_TABLE_LABEL_ATTRIBUTE ) {
+				Assign_( TableLabel, "Table label", Parser, IFlow );
+			} else if ( Parser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
+				Assign_( RecordLabel, "Record label", Parser, IFlow );
+			} else if ( Parser.AttributeName() == INSERTION_TABLE_ALIAS_ATTRIBUTE ) {
+				Assign_( TableAlias, "Table alias", Parser, IFlow );
+			} else if ( Parser.AttributeName() == INSERTION_RECORD_ALIAS_ATTRIBUTE ) {
+				Assign_( RecordAlias, "Record alias", Parser, IFlow );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", IFlow );
 			break;
@@ -603,7 +603,7 @@ ERREpilog
 // '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
 //                                   ^                 ^
 static void ProcessRecord_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	const str::string_ &DefaultRecordLabelTag,
 	const aliases_ &Aliases,
@@ -614,33 +614,33 @@ static void ProcessRecord_(
 	bso::bool__ Continue = true;
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( BelongsToNamespace_( Browser.TagName() ) ) {
-				if ( Browser.TagName() == INSERTION_TAG )
-					ProcessInsertion_( Browser, IFlow, Aliases, Tables, Record );	// '...<erpck:insert ...
+			if ( BelongsToNamespace_( Parser.TagName() ) ) {
+				if ( Parser.TagName() == INSERTION_TAG )
+					ProcessInsertion_( Parser, IFlow, Aliases, Tables, Record );	// '...<erpck:insert ...
 				else																//                   ^
 					ReportErrorAndExit_( "'" INSERTION_TAG "' is the only '" NAMESPACE "' tag allowed here", IFlow );
 			} else {
 				Level++;
-				Record.Content.Append( Browser.DumpData() );
+				Record.Content.Append( Parser.DumpData() );
 			}
 			break;
 		case xml::tAttribute:
-			if ( BelongsToNamespace_( Browser.AttributeName() ) )
+			if ( BelongsToNamespace_( Parser.AttributeName() ) )
 				ReportErrorAndExit_( "Unexpected attribute", IFlow );
 
-			Record.Content.Append( Browser.DumpData() );
+			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tValue:
 			if ( Level == 0 )
 				ReportErrorAndExit_( "Missing tag", IFlow );
 
 			if ( Record.Label.Amount() == 0 )
-				if ( Browser.TagName() == DefaultRecordLabelTag )
-					Record.Label = Browser.Value();
+				if ( Parser.TagName() == DefaultRecordLabelTag )
+					Record.Label = Parser.Value();
 
-			Record.Content.Append( Browser.DumpData() );
+			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tEndTag:
 			switch ( Level ) {
@@ -651,7 +651,7 @@ static void ProcessRecord_(
 				Level--;
 				break;
 			}
-			Record.Content.Append( Browser.DumpData() );
+			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tError:
 			ReportErrorAndExit_( IFlow );
@@ -666,7 +666,7 @@ static void ProcessRecord_(
 // '...<ercp:content ...><...' -> '...</erpck:content>...'
 //                       ^                            ^
 static void ProcessRecords_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	const str::string_ &DefaultRecordLabelTag,
 	const aliases_ &Aliases,
@@ -684,42 +684,42 @@ ERRBegin
 	Record.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:	// Mandatory, otherwise the tag name is missed when there is an attribute.
-			Record.Content.Append( Browser.DumpData() );
+			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == RECORD_WEIGHT_ATTRIBUTE ) {
+			if ( Parser.AttributeName() == RECORD_WEIGHT_ATTRIBUTE ) {
 				epeios::row__ Error = NONE;
 
-				Weight = Browser.Value().ToUB( &Error );
+				Weight = Parser.Value().ToUB( &Error );
 
 				if ( Error != NONE )
 					ReportErrorAndExit_( "Bad attribute value", IFlow );
-			} else if ( Browser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
-					Assign_( Record.Label, "Record label", Browser, IFlow );
-			} else if ( Browser.AttributeName() == RECORD_HANDLING_ATTRIBUTE ) {
-				if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE ) {
+			} else if ( Parser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
+					Assign_( Record.Label, "Record label", Parser, IFlow );
+			} else if ( Parser.AttributeName() == RECORD_HANDLING_ATTRIBUTE ) {
+				if ( Parser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE ) {
 					if ( Skipped == RPKBSC_COUNTER_MAX )
 						ERRl();
 					Skipped++;
 
 					Record.Skip() = true;
-				}else if ( Browser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
+				}else if ( Parser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
 					Ignore = true;
 				else
 					ReportErrorAndExit_( "Unknown attribute value", IFlow );
-			} else if ( BelongsToNamespace_( Browser.AttributeName() ) ) {
+			} else if ( BelongsToNamespace_( Parser.AttributeName() ) ) {
 				ReportErrorAndExit_( "Unknown attribute", IFlow );
 			} else
-				Record.Content.Append( Browser.DumpData() );
+				Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tStartTagClosed:
 			Record.Content.Append( " id=\"" );
 			Record.Content.Append( bso::Convert( Records.Amount() + 1, Buffer ) );
 			Record.Content.Append( '"' );
-			Record.Content.Append( Browser.DumpData() );
-			ProcessRecord_( Browser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
+			Record.Content.Append( Parser.DumpData() );
+			ProcessRecord_( Parser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
 			if ( !Ignore )
 				Records.Append( Record );															//                                   ^                 ^	
 			else
@@ -745,7 +745,7 @@ ERREpilog
 // '...<erpck::table ...>...<erpck:content ...>...' -> '...</erpck:content>...'
 //                                         ^                               ^
 static void ProcessContent_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	table_ &Table,
 	const tables_ &Tables,
@@ -758,19 +758,19 @@ ERRBegin
 	DefaultRecordLabelTag.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
 		case xml::tAttribute:
-			if ( Browser.TagName() != CONTENT_TAG )
+			if ( Parser.TagName() != CONTENT_TAG )
 				ERRc();
 
-			if ( Browser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
-				Assign_( DefaultRecordLabelTag, "Default record label", Browser, IFlow );
+			if ( Parser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
+				Assign_( DefaultRecordLabelTag, "Default record label", Parser, IFlow );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", IFlow );
 			break;
 		case xml::tStartTagClosed:
-			if ( Browser.TagName() == CONTENT_TAG ) {
-				ProcessRecords_( Browser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records, Table.Skipped() );	// '<ercp:content ...><...' -> '</erpck:content>...'
+			if ( Parser.TagName() == CONTENT_TAG ) {
+				ProcessRecords_( Parser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records, Table.Skipped() );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else														        			//                    ^                         ^
 				ERRc();
@@ -800,7 +800,7 @@ enum alias_type__ {
 // '...<erpck:alias ...>...' -> '...</alias>...'
 //                  ^                       ^
 static alias_type__ ProcessAlias_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	const table_aliases_ &TableAliases,
 	const tables_ &Tables,
@@ -820,25 +820,25 @@ ERRBegin
 	AliasLabel.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			ReportErrorAndExit_( "No tag allowed here", IFlow );
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
+			if ( Parser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
 				if ( TableLabel.Amount() != 0 )
 					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", IFlow );
 
-				Assign_( TableAliasLabel, "Table alias", Browser, IFlow );
-			} else if ( Browser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
+				Assign_( TableAliasLabel, "Table alias", Parser, IFlow );
+			} else if ( Parser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
 				if ( TableAliasLabel.Amount() != 0 )
 					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", IFlow );
 
-				Assign_( TableLabel, "Table alias", Browser, IFlow );
-			} else if ( Browser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Browser, IFlow );
-			} else if ( Browser.AttributeName() == ALIAS_LABEL_ATTRIBUTE ) {
-				Assign_( AliasLabel, "Alias label", Browser, IFlow );
+				Assign_( TableLabel, "Table alias", Parser, IFlow );
+			} else if ( Parser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
+				Assign_( RecordLabel, "Record label", Parser, IFlow );
+			} else if ( Parser.AttributeName() == ALIAS_LABEL_ATTRIBUTE ) {
+				Assign_( AliasLabel, "Alias label", Parser, IFlow );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", IFlow );
 			break;
@@ -909,7 +909,7 @@ ERREpilog
  // '<erpck:table ...>...<erpck:aliases ...>...'
 //                                     ^
  static void ProcessAliases_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	const tables_ &Tables,
 	aliases_ &Aliases )
@@ -920,13 +920,13 @@ ERRProlog
 	table_alias TableAlias;
 ERRBegin
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == ALIAS_TAG ) {
+			if ( Parser.TagName() == ALIAS_TAG ) {
 				RecordAlias.Init();
 				TableAlias.Init();
 
-				switch ( ProcessAlias_( Browser, IFlow, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
+				switch ( ProcessAlias_( Parser, IFlow, Aliases.Tables, Tables, RecordAlias, TableAlias ) ) {	// '...<erpck:alias ...>...' -> '...</alias>...'
 				case atRecord:																					//                  ^                       ^
 					Aliases.Records.Append( RecordAlias );
 					break;
@@ -959,7 +959,7 @@ ERREpilog
 // '...<erpck:data><erpck::table ...>' -> '..</erpck:table>...'
 //                               ^                         ^
 static void ProcessTable_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	table_ &Table,
 	const tables_ &Tables )
@@ -971,21 +971,21 @@ ERRBegin
 	Aliases.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == ALIASES_TAG )
-				ProcessAliases_( Browser, IFlow, Tables, Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
-			else if ( Browser.TagName() == CONTENT_TAG )			//                                     ^
-				ProcessContent_( Browser, IFlow, Table, Tables, Aliases );	// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
+			if ( Parser.TagName() == ALIASES_TAG )
+				ProcessAliases_( Parser, IFlow, Tables, Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
+			else if ( Parser.TagName() == CONTENT_TAG )			//                                     ^
+				ProcessContent_( Parser, IFlow, Table, Tables, Aliases );	// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
 			else															//                                     ^                              ^
 				ReportErrorAndExit_( "Unknown tag", IFlow );
 			break;
 		case xml::tAttribute:
-			if ( Browser.TagName() != TABLE_TAG )
+			if ( Parser.TagName() != TABLE_TAG )
 				ERRc();
 
-			if ( Browser.AttributeName() == TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( Table.Label, "Table label", Browser, IFlow );
+			if ( Parser.AttributeName() == TABLE_LABEL_ATTRIBUTE ) {
+				Assign_( Table.Label, "Table label", Parser, IFlow );
 			} else
 				ReportErrorAndExit_( "Unknown attribute", IFlow );
 			break;
@@ -1008,7 +1008,7 @@ ERREpilog
 // '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
 //                 ^                                       ^
 static void ProcessData_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	xpp::preprocessing_iflow___ &IFlow,
 	data_ &Data )
 {
@@ -1018,12 +1018,12 @@ ERRProlog
 	table Table;
 ERRBegin
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTag | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() == TABLE_TAG ) {
+			if ( Parser.TagName() == TABLE_TAG ) {
 				TableDetected = true;
 				Table.Init();
-				ProcessTable_( Browser, IFlow, Table, Data );	// '...<erpck::table ...><erpck:content>...' -> '....</erpck:table>...'
+				ProcessTable_( Parser, IFlow, Table, Data );	// '...<erpck::table ...><erpck:content>...' -> '....</erpck:table>...'
 				Data.Append( Table );							//                   ^                                             ^
 			} else
 				ReportErrorAndExit_( "Missing '" TABLE_TAG "'", IFlow );
@@ -1055,33 +1055,33 @@ static void RetrieveData_(
 ERRProlog
 	flf::file_iflow___ FFlow;
 	xpp::preprocessing_iflow___ IFlow;
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 	bso::bool__ Continue = true;
-	lcl::locales Locales;
+	lcl::locale Locale;
 	bso::bool__ DataDetected = false;
 	FNM_BUFFER___ Buffer;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	if ( FFlow.Init( DataFileName, err::hSkip ) != fil::sSuccess ) {
+	if ( FFlow.Init( DataFileName, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	FFlow.EOFD( XTF_EOXT );
 
-	IFlow.Init( FFlow, str::string( fnm::GetLocation( DataFileName, Buffer ) ) );
+	IFlow.Init( FFlow, str::string( fnm::GetLocation( DataFileName, Buffer ) ), NULL );
 
 	XFlow.Init( IFlow );
 
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
 	Data.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfStartTagClosed |xml::tfAttribute ) ) {
+		switch ( Parser.Parse( xml::tfStartTagClosed |xml::tfAttribute ) ) {
 		case xml::tStartTagClosed:
-			if ( ( Browser.TagName() == DATA_TAG ) ) {
-				ProcessData_( Browser, IFlow, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
+			if ( ( Parser.TagName() == DATA_TAG ) ) {
+				ProcessData_( Parser, IFlow, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
 				DataDetected = true;					//                 ^                                       ^
 			} else {
 				ReportErrorAndExit_( "Unexpected tag", IFlow );
@@ -1277,7 +1277,7 @@ ERRProlog
 	xml::writer Writer;
 	ctn::E_CITEMt( table_, trow__ ) Table;
 ERRBegin
-	xml::WriteXMLHeader( Output );
+	xml::WriteXMLHeader( Output, xml::e_Default );
 	Output << txf::nl;
 
 	if ( XSLFileName.Amount() != 0 ) {
@@ -1287,7 +1287,7 @@ ERRBegin
 
 	Table.Init( Data );
 
-	Writer.Init( Output, xml::oIndent );
+	Writer.Init( Output, xml::oIndent, xml::e_Default );
 
 	Writer.PushTag( "Picking" );
 
@@ -1346,12 +1346,14 @@ static id__ DisplayWithoutBackup_(
 {
 ERRProlog
 	flf::file_oflow___ FFlow;
-	txf::text_oflow__ TFlow( FFlow );
+	txf::text_oflow__ TFlow;
 ERRBegin
 	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
 		cerr << "Unable to open '" << FileName << "' for output !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
+
+	TFlow.Init( FFlow );
 
 	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, TFlow );
 ERRErr
@@ -1371,7 +1373,10 @@ static id__ Display_(
 ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
-	fil::CreateBackupFile( FileName, fil::hbfRename );
+	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
+		cerr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
 
 	Backuped = true;
 
@@ -1453,7 +1458,7 @@ static void DumpContextWithoutBackup_(
 {
 ERRProlog
 	flf::file_oflow___ FFlow;
-	txf::text_oflow__ TFlow( FFlow );
+	txf::text_oflow__ TFlow;
 	xml::writer Writer;
 ERRBegin
 	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
@@ -1461,7 +1466,9 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	Writer.Init( TFlow, xml::oIndent );
+	TFlow.Init( FFlow );
+
+	Writer.Init( TFlow, xml::oIndent, xml::e_Default );
 
 	DumpContext_( Context, Writer ); 
 ERRErr
@@ -1477,7 +1484,7 @@ static void DumpContext_(
 ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
-	if ( fil::CreateBackupFile( FileName, fil::hbfRename ) != fil::rbfOK ) {
+	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
 		cerr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -1493,7 +1500,7 @@ ERREpilog
 }
 
 static void RetrieveContext_(
-	xml::browser___ &Browser,							 
+	xml::parser___ &Parser,							 
 	rpkctx::context_ &Context )
 {
 ERRProlog
@@ -1504,26 +1511,26 @@ ERRBegin
 	Target.Init();
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
+		switch ( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != "Context" )
+			if ( Parser.TagName() != "Context" )
 				ERRc();
 
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() != "Target" )
+			if ( Parser.AttributeName() != "Target" )
 				ERRc();
 
 			if ( Target.Amount() != 0 )
 				ERRc();
 
-			Target = Browser.Value();
+			Target = Parser.Value();
 			break;
 		case xml::tStartTagClosed:
 			if ( Target != NAME )
 				ERRc();
 
-			rpkctx::Retrieve( Browser, Context );
+			rpkctx::Retrieve( Parser, Context );
 			break;
 		case xml::tProcessed:
 			Continue = false;
@@ -1543,7 +1550,7 @@ static void RetrieveContext_(
 	rpkctx::context_ &Context )
 {
 ERRProlog
-	xml::browser___ Browser;
+	xml::parser___ Parser;
 	flf::file_iflow___ FFlow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
@@ -1561,9 +1568,9 @@ ERRBegin
 
 	XFlow.Init( FFlow );
 
-	Browser.Init( XFlow, xml::eh_Default );
+	Parser.Init( XFlow, xml::eh_Default );
 
-	RetrieveContext_( Browser, Context );
+	RetrieveContext_( Parser, Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -1631,13 +1638,13 @@ ERREpilog
 
 static void Process_(
 	id__ Id,						
-	const char *Project )
+	const char *ProjectFileName )
 {
 ERRProlog
-	rgstry::error__ Error = rgstry::e_Undefined;
+	rgstry::status__ Status = rgstry::s_Undefined;
 	rgstry::error_details ErrorDetails;
 	registry Registry;
-	lcl::locales Locales;
+	lcl::locale Locale;
 	str::string ErrorMessage;
 	rgstry::row__ RegistryRoot = NONE;
 	rgstry::level__ Level = RGSTRY_UNDEFINED_LEVEL;
@@ -1647,10 +1654,10 @@ ERRBegin
 
 	ErrorDetails.Init();
 
-	if ( ( Error = Registry.Fill( Level, Project, "Projects/Project[target=\"" NAME "\"]", ErrorDetails ) ) != rgstry::eOK ) {
-		Locales.Init();
+	if ( ( Status = Registry.Fill( Level, ProjectFileName, "Projects/Project[target=\"" NAME "\"]", NULL, ErrorDetails ) ) != rgstry::sOK ) {
+		Locale.Init();
 		ErrorMessage.Init();
-		cerr << rgstry::GetTranslation( Error, ErrorDetails,  str::string(), Locales, ErrorMessage ) << txf::nl;
+		cerr << rgstry::GetTranslation( Status, ErrorDetails,  lcl::rack__( Locale, ""), ErrorMessage ) << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 

@@ -54,19 +54,19 @@ void Dump_(
 // '<Record ...>/<Record>...
 //          ^
 //						 ^
-static rrow__ RetrieveRecordId_( xml::browser___ &Browser )
+static rrow__ RetrieveRecordId_( xml::parser___ &Parser )
 {
 	rrow__ Id = NONE;
 	bso::bool__ Continue = true;
 	epeios::row__ Error = NONE;
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfObvious ) ) {
+		switch ( Parser.Parse( xml::tfObvious ) ) {
 		case xml::tAttribute:
-			if ( Browser.AttributeName() != RECORD_ID_ATTRIBUTE_NAME )
+			if ( Parser.AttributeName() != RECORD_ID_ATTRIBUTE_NAME )
 				ERRc();
 
-			Id = Browser.Value().ToUL( &Error );
+			Id = Parser.Value().ToUL( &Error );
 
 			if ( Error != NONE )
 				ERRc();
@@ -91,7 +91,7 @@ static rrow__ RetrieveRecordId_( xml::browser___ &Browser )
 //        ^
 //				   ^
 static void Retrieve_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	rrows_ &Records )
 {
 	bso::bool__ Continue = true;
@@ -99,12 +99,12 @@ static void Retrieve_(
 	rrow__ Row = NONE;
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfObvious ) ) {
+		switch ( Parser.Parse( xml::tfObvious ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != RECORD_TAG_NAME )
+			if ( Parser.TagName() != RECORD_TAG_NAME )
 				ERRc();
 
-			Records.Append( RetrieveRecordId_( Browser ) );
+			Records.Append( RetrieveRecordId_( Parser ) );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -141,7 +141,7 @@ void rpkctx::Dump(
 }
 
 static void RetrievePools_(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	context_ &Context )
 {
 ERRProlog
@@ -152,17 +152,17 @@ ERRBegin
 	State.Init();
 
 	while ( Continue ) {
-		switch( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
+		switch( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != POOL_TAG_NAME )
+			if ( Parser.TagName() != POOL_TAG_NAME )
 				ERRc();
 
 			break;
 		case xml::tAttribute:
-			if ( Browser.AttributeName() == POOL_STATE_ATTRIBUTE_NAME )
-				State = Browser.Value();
-			else if ( Browser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
-				TimeStamp = Browser.Value().ToULL();
+			if ( Parser.AttributeName() == POOL_STATE_ATTRIBUTE_NAME )
+				State = Parser.Value();
+			else if ( Parser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
+				TimeStamp = Parser.Value().ToULL();
 			else
 				ERRc();
 
@@ -170,10 +170,10 @@ ERRBegin
 		case xml::tStartTagClosed:
 			if ( State == POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE ) {
 				Context.Previous.TimeStamp() = TimeStamp;
-				Retrieve_( Browser, Context.Previous.Records );
+				Retrieve_( Parser, Context.Previous.Records );
 			} else if ( State == POOL_CURRENT_STATE_ATTRIBUTE_VALUE ) {
 				Context.Current.TimeStamp() = TimeStamp;
-				Retrieve_( Browser, Context.Current.Records );
+				Retrieve_( Parser, Context.Current.Records );
 			} else
 				ERRc();
 
@@ -194,19 +194,19 @@ ERREpilog
 
 
 void rpkctx::Retrieve(
-	xml::browser___ &Browser,
+	xml::parser___ &Parser,
 	context_ &Context )
 {
 	bso::bool__ Continue = true;
 
 	while ( Continue ) {
-		switch ( Browser.Browse( xml::tfObvious | xml::tfStartTagClosed ) ) {
+		switch ( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
-			if ( Browser.TagName() != POOLS_TAG_NAME )
+			if ( Parser.TagName() != POOLS_TAG_NAME )
 				ERRc();
 			break;
 		case xml::tStartTagClosed:
-			RetrievePools_( Browser, Context );
+			RetrievePools_( Parser, Context );
 			break;
 		case xml::tEndTag:
 			Continue = false;

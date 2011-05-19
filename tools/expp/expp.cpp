@@ -136,6 +136,7 @@ ERRProlog
 	clnarg::id__ Option;
 	const char *Unknow = NULL;
 	clnarg::argument Argument;
+	clnarg::buffer__ Buffer;
 ERRBegin
 	Options.Init();
 
@@ -155,7 +156,7 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 
 			if ( Argument.Amount() == 0 ) {
-				cout << "Option " << Analyzer.Description().GetOptionLabels( oNamespace ) << " must have one argument !" << txf::nl;
+				cout << "Option " << Analyzer.Description().GetOptionLabels( oNamespace, Buffer ) << " must have one argument !" << txf::nl;
 				ERRExit( evParameters );
 			}
 

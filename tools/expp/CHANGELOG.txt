@@ -1,21 +1,24 @@
 $Id$
 
+- 19/05/2011 :
+	- Adaptating to changes in 'CLNARG'.
+
 ---------------
 Version 0.3.0 :
 ---------------
 
 - 18/03/2011 :
-	- Publication (à l'usage de Logiplus uniquement).
+	- Publication (for 'Logiplus' only).
 
 - 15/03/2011 :
-	- Adaptation modifications bibliothèques sous-jacentes.
-	- Ajout option '--encrypt'.
+	- Adaptation to changes in underlying libraries.
+	- Qdding '--encrypt' option.
 
 - 04/03/2011 :
-	- Adaptation modifications bibliothèques sous-jacentes.
+	- Adaptation to changes in underlying libraries.
 
 - 08/07/2010 :
-	- Adaptation modifications 'XPP'.
+	- Adaptating to changes in 'XPP'.
 
 ---------------
 Version 0.3.0 :

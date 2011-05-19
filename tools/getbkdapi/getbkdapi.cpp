@@ -927,7 +927,7 @@ ERRBegin
 
 	if ( Arguments.FileName != NULL ) {
 		Dummy.Init();
-		if ( fil::CreateBackupFile( Arguments.FileName, fil::bmRename, lcl::rack__( Dummy, str::string("") ), CErr ) != fil::bsOK ) {
+		if ( fil::CreateBackupFile( Arguments.FileName, fil::bmRename, lcl::rack__( Dummy, "" ), CErr ) != fil::bsOK ) {
 			CErr << "Unable to create backup file." << txf::nl;
 			ERRi();
 		}
@@ -944,7 +944,7 @@ ERRBegin
 		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations, COut );
 ERRErr
 	if ( Backup )
-		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, str::string("") ), CErr );
+		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, "" ), CErr );
 ERREnd
 ERREpilog
 }

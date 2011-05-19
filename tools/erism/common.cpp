@@ -40,8 +40,8 @@ cio::cerr___ common::cerr;
 cio::cout___ common::cout;
 
 static lcl::locale _Locale;
-static str::string _Language;
-lcl::rack__ common::LocaleRack( _Locale, _Language );
+STR_BUFFER___ _Language;
+lcl::rack__ common::LocaleRack( _Locale, _Language() );
 
 #define DEFAULT_LANGUAGE	"en-US"
 
@@ -297,6 +297,7 @@ ERRProlog
 	FNM_BUFFER___ FNMBuffer;
 	STR_BUFFER___ STRBuffer;
 	STR_BUFFER___ PathBuffer;
+	str::string Language;
 ERRBegin
 	cerr.Init();
 	cout.Init();
@@ -330,8 +331,10 @@ ERRBegin
 	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", ErrorDetails ) ) != rgstry::sOK )
 		Report( eErrorParsingLocaleFile, &Status, &ErrorDetails );
 
-	GetLanguage_( _Language );
-	LocaleRack.Init( _Locale, _Language );	// To configure with the correct language, because the configuration is now available.
+	Language.Init();
+	GetLanguage_( Language );
+
+	LocaleRack.Init( _Locale, Language.Convert( _Language ) );	// To configure with the correct language, because the configuration is now available.
 ERRErr
 ERREnd
 ERREpilog

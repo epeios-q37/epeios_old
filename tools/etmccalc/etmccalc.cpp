@@ -96,9 +96,11 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
+	clnarg::buffer__ Buffer;
+
 	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help|" << Description.GetCommandLabels( cHelpFormat) << '|';
-	cout << Description.GetCommandLabels( cHelpPunctuations) << txf::nl;
+	cout << NAME << " --version|--license|--help|" << Description.GetCommandLabels( cHelpFormat, Buffer ) << '|';
+	cout << Description.GetCommandLabels( cHelpPunctuations, Buffer ) << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vSplit, false );
@@ -106,14 +108,14 @@ void PrintUsage( const clnarg::description_ &Description )
 	clnarg::PrintCommandUsage( Description, cHelpPunctuations, "help page about punctuations (see below).", clnarg::vSplit, false );
 	cout << NAME << " [<options>] <fps> [<timecode> [<timecode> [...]]]" << txf::nl;
 	cout << txf::pad << "options :" << txf::nl;
-	cout << txf::tab << '(' << Description.GetOptionLabels( oFormat ) << ") <format> :" << txf::nl;
+	cout << txf::tab << '(' << Description.GetOptionLabels( oFormat, Buffer ) << ") <format> :" << txf::nl;
 	cout << txf::tab << txf::pad << "formating specification. Default is the content of enviroment" << txf::nl;
 	cout << txf::tab << txf::pad << "variable '" << FORMAT_ENV << "' or, if empty or not defined," << txf::nl;
-	cout << txf::tab << txf::pad << "'" << DEFAULT_FORMAT << "'. '" << NAME << ' ' << Description.GetCommandLabels( cHelpFormat) << "' for more details." << txf::nl;
-	cout << txf::tab << '(' << Description.GetOptionLabels( oPunctuations ) << ") <punctuations> :" << txf::nl;
+	cout << txf::tab << txf::pad << "'" << DEFAULT_FORMAT << "'. '" << NAME << ' ' << Description.GetCommandLabels( cHelpFormat, Buffer ) << "' for more details." << txf::nl;
+	cout << txf::tab << '(' << Description.GetOptionLabels( oPunctuations, Buffer ) << ") <punctuations> :" << txf::nl;
 	cout << txf::tab << txf::pad << "punctuations used for '%p' (see above). Default is the content of" << txf::nl;
 	cout << txf::tab << txf::pad << "enviroment variable '" << PUNCTUATIONS_ENV << "' or, if empty or not" << txf::nl;
-	cout << txf::tab << txf::pad << "defined, '" << DEFAULT_PUNCTUATIONS << "'. '" << NAME << ' ' << Description.GetCommandLabels( cHelpPunctuations) << "' for more details." << txf::nl;
+	cout << txf::tab << txf::pad << "defined, '" << DEFAULT_PUNCTUATIONS << "'. '" << NAME << ' ' << Description.GetCommandLabels( cHelpPunctuations, Buffer ) << "' for more details." << txf::nl;
 	cout << txf::pad << "<fps> : frames-per-second for output (see below for more details)." << txf::nl;
 	cout << txf::pad << "<timecode> :" << txf::nl;
 	cout << txf::tab << "timecode ('d:h:m:s:f@fps')." << txf::nl;
@@ -185,6 +187,7 @@ ERRProlog
 	clnarg::id__ Option;
 	const char *Unknow = NULL;
 	clnarg::argument Argument;
+	clnarg::buffer__ Buffer;
 ERRBegin
 	Options.Init();
 
@@ -203,7 +206,7 @@ ERRBegin
 		case oFormat:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 ) {
-				cerr << "'" << Analyzer.Description().GetOptionLabels( oFormat ) << "' option must have an argument!" << txf::nl;
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oFormat, Buffer ) << "' option must have an argument!" << txf::nl;
 				ERRExit( evParameters );
 			}
 			Argument.Convert( Parameters.Format );
@@ -211,7 +214,7 @@ ERRBegin
 		case oPunctuations:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 ) {
-				cerr << "'" << Analyzer.Description().GetOptionLabels( oPunctuations ) << "' option must have an argument!" << txf::nl;
+				cerr << "'" << Analyzer.Description().GetOptionLabels( oPunctuations, Buffer ) << "' option must have an argument!" << txf::nl;
 				ERRExit( evParameters );
 			}
 			Argument.Convert( Parameters.Punctuations );
@@ -480,7 +483,7 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	cout << txf::nl << txf::sync;
+	cout << txf::nl << txf::commit;
 ERRErr
 ERREnd
 ERREpilog
