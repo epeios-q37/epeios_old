@@ -333,6 +333,9 @@ namespace flm {
 		void _AdjustPhysicalFileSize( void )	// Ajuste la taille physique du fichier à celle supposée.
 		{
 			if ( TailleFichier_ != 0 ) {
+
+				Flush();	// Pour mettre à jour la taille physique du fichier pour que la méthode 'GetFileSize(...)' retourne la bonne valeur.
+
 				if ( !fil::FileExists( Nom_ ) || ( (bso::size__)TailleFichier_ > fil::GetFileSize( Nom_ ) ) ) {
 					mdr::datum__ Datum = 0;
 					

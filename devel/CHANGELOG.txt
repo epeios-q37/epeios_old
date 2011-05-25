@@ -1,5 +1,9 @@
 $Id$
 
+25/05/2011 :
+	- FLM
+		- Correction bogue synchronisation taille fichier écrasant la dernière donnée d'un fichier car taille physique ne correspondait pas aux données effectivement écrites.
+
 19/05/2011 :
 	- Général :
 		- Adaptation aux modifications des différentes bibliothèques.
