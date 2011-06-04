@@ -55,7 +55,8 @@ cd %DST%
 IF NOT EXIST %DST%\Makefile reveal --text-marker + %CRP% %SRC%\LibMakefile %DST%\Makefile
 IF NOT EXIST %DST%\%LNM%_test.cpp reveal --text-marker + %CRP% %SRC%\xxx_test.cpp %DST%\%LNM%_test.cpp
 REM IF NOT EXIST %DST%\%LNM%.dsp reveal --text-marker + %CRP% %SRC%\xxx.dsp %DST%\%LNM%.dsp
-IF NOT EXIST %DST%\%LNM%.vcproj reveal --text-marker + %CRP% %SRC%\xxx.vcproj %DST%\%LNM%.vcproj
+IF NOT EXIST %DST%\%LNM%.vcxproj reveal --text-marker + %CRP% %SRC%\xxx.vcxproj %DST%\%LNM%.vcxproj
+IF NOT EXIST %DST%\%LNM%.vcxproj.filters reveal --text-marker + %CRP% %SRC%\xxx.vcxproj.filters %DST%\%LNM%.vcxproj.filters
 REM reveal --text-marker + %CRP% %SRC%\lib_mcp.xml %DST%\%LNM%_mcp.xml
 
 reveal --text-marker + %CRP% %SRC%\xxx.cpp %TMP%\%LNM%.cpp

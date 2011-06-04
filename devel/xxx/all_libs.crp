@@ -211,7 +211,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &nsxpcm	&epeios		&\
 	&from nsXPCOM
 
-	&ndbbsc	&epeios	&\
+&ndbbsc	&epeios	&\
 	&New DataBase BaSiCs
 &ndbctt	&epeios	&\
 	&New DataBase ConTenT
@@ -305,7 +305,25 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &xulwdg		&epeios		&\
 	&XUL WiDGets
 
-
+# Epeios Frontend/Backend Layout (supersed BKD... libraries.
+&fblbkd		&epeios		&\
+	&Frontend/Backend Layout BaKenD
+&fblblr		&epeios		&\
+	&Frontend/Backend Layout Backend Local Request
+&fblbrd		&epeios		&\
+	&Frontend/Backend Layout Backend Request Description
+&fblbrq		&epeios		&\
+	&Frontend/Backend Layout Backend ReQuest
+&fblbrr		&epeios		&\
+	&Frontend/Backend Layout Backend Remote Request
+&fblcmd		&epeios		&\
+	&Frontend/Backend Layout CoMmanDs
+&fblcst		&epeios		&\
+	&Frontend/Backend Layout CaSTs
+&fbltyp	&epeios	&\
+	&Frontend/Backend Layout TYPes
+&fblrpl		&epeios		&\
+	&Frontend/Backend Layout RePLy
 
 #Epeios BKD libraries.
 &bkdacc		&epeios		&2001-\
