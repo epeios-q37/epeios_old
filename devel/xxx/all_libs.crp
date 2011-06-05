@@ -316,6 +316,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Frontend/Backend Layout Backend ReQuest
 &fblbrr		&epeios		&\
 	&Frontend/Backend Layout Backend Remote Request
+&fblbur		&epeios		&\
+	&Frontend/Backend Layout Backend Universal Request
 &fblcmd		&epeios		&\
 	&Frontend/Backend Layout CoMmanDs
 &fblcst		&epeios		&\
