@@ -308,8 +308,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 # Epeios Frontend/Backend Layout (supersed BKD... libraries.
 &fblbkd		&epeios		&\
 	&Frontend/Backend Layout BaKenD
-&fblblr		&epeios		&\
-	&Frontend/Backend Layout Backend Local Request
+&fblber		&epeios		&\
+	&Frontend/Backend Layout Backend Embed Request
 &fblbrd		&epeios		&\
 	&Frontend/Backend Layout Backend Request Description
 &fblbrq		&epeios		&\
