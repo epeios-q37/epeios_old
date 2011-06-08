@@ -1,5 +1,8 @@
 $Id$
 
+08/06/2011 :
+	- Retrait de ce qui est relatif à la gestion 'frontend'/'backend'.
+
 25/05/2011 :
 	- FLM
 		- Correction bogue synchronisation taille fichier écrasant la dernière donnée d'un fichier car taille physique ne correspondait pas aux données effectivement écrites.

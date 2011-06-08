@@ -114,14 +114,15 @@ extern class ttr_tutor &NSXPCMTutor;
 #	define NSXPCM__ENABLE_FORMHISTORY
 #endif
 
-#ifdef NSXPCM_BKD
-#	define NSXPCM__BKD
+/*
+#ifdef NSXPCM_FBL
+#	define NSXPCM__FBL
 #endif
 
-#ifdef NSXPCM__BKD
-#	include "bkdacc.h"
+#ifdef NSXPCM__FBL
+#	include "fblfrd.h"
 #endif
-
+*/
 #if defined( __ARMEL__ ) || defined( NSXPCM_USE_ARMEL_WORKAROUND )
 #	ifndef NSXPCM_NO_ARMEL_WORKAROUND
 #		define NSXPCM__USE_ARMEL_WORKAROUND

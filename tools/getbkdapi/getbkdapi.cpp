@@ -29,14 +29,14 @@
 #include "epsmsc.h"
 #include "clnarg.h"
 
-#include "bkddcb.h"
-#include "bkduac.h"
+#include "fblfaq.h"
+#include "fblbur.h"
 #include "xml.h"
 #include "sck.h"
 #include "csducl.h"
 #include "flf.h"
 
-using namespace bkddcb;
+using namespace fblfaq;
 
 cio::cerr___ CErr;
 cio::cout___ COut;
@@ -261,127 +261,127 @@ enum cast_type {
 };
 
 static inline const char *GetTypeName(
-	bkdcst::cast Cast,
+	fblcst::cast Cast,
 	cast_type &CastType)
 {
 	static const char *TypeName = NULL;
 	CastType = ctStatic;
 
 	switch ( Cast ) {
-	case bkdcst::cEnd:
+	case fblcst::cEnd:
 		ERRc();
 		break;
-	case bkdcst::cObject:
+	case fblcst::cObject:
 		TypeName = "object";
 		break;
-	case bkdcst::cBoolean:
+	case fblcst::cBoolean:
 		TypeName = "boolean";
 		break;
-	case bkdcst::cBooleans:
+	case fblcst::cBooleans:
 		TypeName = "booleans";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cSLong:
+	case fblcst::cSLong:
 		TypeName = "slong";
 		break;
-	case bkdcst::cSLongs:
+	case fblcst::cSLongs:
 		TypeName = "slongs";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cULong:
+	case fblcst::cULong:
 		TypeName = "ulong";
 		break;
-	case bkdcst::cULongs:
+	case fblcst::cULongs:
 		TypeName = "ulongs";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cId8:
+	case fblcst::cId8:
 		TypeName = "id8";
 		break;
-	case bkdcst::cIds8:
+	case fblcst::cIds8:
 		TypeName = "ids8";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cXIds8:
+	case fblcst::cXIds8:
 		TypeName = "xids8";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cId16:
+	case fblcst::cId16:
 		TypeName = "id16";
 		break;
-	case bkdcst::cIds16:
+	case fblcst::cIds16:
 		TypeName = "ids16";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cXIds16:
+	case fblcst::cXIds16:
 		TypeName = "xids16";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cId32:
+	case fblcst::cId32:
 		TypeName = "id32";
 		break;
-	case bkdcst::cIds32:
+	case fblcst::cIds32:
 		TypeName = "ids32";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cXIds32:
+	case fblcst::cXIds32:
 		TypeName = "xids32";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cChar:
+	case fblcst::cChar:
 		TypeName = "char";
 		break;
-	case bkdcst::cString:
+	case fblcst::cString:
 		TypeName = "string";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cStrings:
+	case fblcst::cStrings:
 		TypeName = "strings";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cXStrings:
+	case fblcst::cXStrings:
 		TypeName = "xstrings";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cByte:
+	case fblcst::cByte:
 		TypeName = "byte";
 		break;
-	case bkdcst::cBinary:
+	case fblcst::cBinary:
 		TypeName = "binary";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cBinaries:
+	case fblcst::cBinaries:
 		TypeName = "binaries";
 		break;
-	case bkdcst::cItems8:
+	case fblcst::cItems8:
 		TypeName = "items8";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cItems16:
+	case fblcst::cItems16:
 		TypeName = "items16";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cItems32:
+	case fblcst::cItems32:
 		TypeName = "items32";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cXItems8:
+	case fblcst::cXItems8:
 		TypeName = "xitems8";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cXItems16:
+	case fblcst::cXItems16:
 		TypeName = "xitems16";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cXItems32:
+	case fblcst::cXItems32:
 		TypeName = "xitems32";
 		CastType = ctContainer;
 		break;
-	case bkdcst::cCommandsDetails:
+	case fblcst::cCommandsDetails:
 		TypeName = "commands_details";
 		CastType = ctBunch;
 		break;
-	case bkdcst::cObjectsReferences:
+	case fblcst::cObjectsReferences:
 		TypeName = "objects_references";
 		CastType = ctContainer;
 		break;
@@ -394,7 +394,7 @@ static inline const char *GetTypeName(
 }
 
 void Generate(
-	const bkdcst::cast &Cast,
+	const fblcst::cast &Cast,
 	bso::ubyte__ ID,
 	writer_ &Writer,
 	bso::bool__ IsLast )
@@ -445,7 +445,7 @@ static inline bso::bool__ IsLast(
 	if ( ( Current = Parameters.Next( Current ) ) == NONE )
 		return true;
 
-	if ( *Parameters( Current ) != bkdcst::cEnd )
+	if ( *Parameters( Current ) != fblcst::cEnd )
 		return false;
 
 	return Parameters.Next( Current ) == NONE;
@@ -456,10 +456,10 @@ void Generate(
 	writer_ &Writer )
 {
 	epeios::row__ P = Parameters.First();
-	bkdcst::cast Cast;
+	fblcst::cast Cast;
 	bso::ubyte__ ID = 1;
 	
-	if ( ( Cast = (bkdcst::cast)*Parameters( P ) ) == bkdcst::cEnd )
+	if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd )
 		Writer.PushTag( "Out" );
 	else {
 		Writer.PushTag( "In" );
@@ -470,7 +470,7 @@ void Generate(
 	P = Parameters.Next( P );
 		
 	while( P != NONE ) {
-		if ( ( Cast = (bkdcst::cast)*Parameters( P ) ) == bkdcst::cEnd ) {
+		if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd ) {
 			
 			if ( Parameters.Next( P ) != NONE ) {
 				ID = 1;
@@ -669,11 +669,11 @@ void Generate(
 }
 
 class dummy_error_handling_functions__
-: public bkdacc::error_handling_functions__
+: public fblfrd::error_handling_functions__
 {
 protected:
 	void BKDACCHandleError(
-		bkdrpl::reply__ Reply,
+		fldrpl::reply__ Reply,
 		const char *Message )
 	{
 	}
@@ -696,7 +696,7 @@ ERRProlog
 #else
 	sck::socket_ioflow___ Flow;
 #endif
-	bkduac::backend_universal_access___ BackendAccess;
+	fblfrd::backend_access___ BackendAccess;
 	str::string DummyMessage, DummyURL;
 	bkduac::mode__ Mode = bkduac::m_Undefined;
 	dummy_error_handling_functions__ DummyErrorHandlingFunctions;

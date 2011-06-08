@@ -42,7 +42,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 	  <xsl:text>__INC&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="API">
-	  <xsl:text>&nl;#include "bkdacc.h"&nl;</xsl:text>
+	  <xsl:text>&nl;#include "fblfrd.h"&nl;</xsl:text>
 	  <xsl:text>#include "cpe.h"&nl;</xsl:text>
 	  <xsl:text>&nl;</xsl:text>
 	  <xsl:text>namespace </xsl:text>
@@ -70,7 +70,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>,&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="Messages" mode="code">
-		<xsl:text>&tab;inline message__ GetMessageCode( bkdacc::backend_access___ &amp;Backend )&nl;</xsl:text>
+		<xsl:text>&tab;inline message__ GetMessageCode( fblfrd::backend_access___ &amp;Backend )&nl;</xsl:text>
 		<xsl:text>&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;const char *Message = Backend.GetRawMessage();&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
@@ -92,9 +92,9 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="Messages" mode="test">
-		<xsl:text>&tab;inline void TestMessages( const bkdacc::strings_ &amp;Messages )&nl;</xsl:text>
+		<xsl:text>&tab;inline void TestMessages( const fblfrd::strings_ &amp;Messages )&nl;</xsl:text>
 		<xsl:text>&tab;{&nl;</xsl:text>
-		<xsl:text>&tab;&tab;ctn::E_CMITEM( bkdacc::string_ ) Message;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;ctn::E_CMITEM( fblfrd::string_ ) Message;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;epeios::row__ Row = NONE;&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;if ( Messages.Amount() != </xsl:text>
@@ -121,7 +121,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="Message" mode="test">
-		<xsl:text>&tab;&tab;if ( Message( Row ) != bkdacc::string( "</xsl:text>
+		<xsl:text>&tab;&tab;if ( Message( Row ) != fblfrd::string( "</xsl:text>
 		<xsl:value-of select="@Content"/>
 		<xsl:text>" ) )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;ERRb();&nl;</xsl:text>
@@ -152,15 +152,15 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;private:&nl;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
-				<xsl:text>&tab;&tab;bkdacc::object__</xsl:text>
+				<xsl:text>&tab;&tab;fblfrd::object__</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>&tab;&tab;bkdacc::id16__</xsl:text>
+				<xsl:text>&tab;&tab;fblfrd::id16__</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text> _ID;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::backend_access___ *_Backend;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::command__ _Commands[</xsl:text>
+		<xsl:text>&tab;&tab;fblfrd::backend_access___ *_Backend;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;fblfrd::command__ _Commands[</xsl:text>
 		<xsl:value-of select="Commands/@Amount"/>
 		<xsl:text>];&nl;</xsl:text>
 		<xsl:text>&tab;public:&nl;</xsl:text>
@@ -168,7 +168,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;_Backend = NULL;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;_ID = BKDACC_UNDEFINED_OBJECT;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = FBLFRD_UNDEFINED_OBJECT;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;&tab;E_CVDTOR( </xsl:text>
 		<xsl:choose>
@@ -183,13 +183,13 @@ This header file contains then the API to access to the backend to which 'getbkd
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text> )&nl;</xsl:text>
-		<xsl:text>&tab;&tab;void Init( bkdacc::backend_access___ &amp;Backend )&nl;</xsl:text>
+		<xsl:text>&tab;&tab;void Init( fblfrd::backend_access___ &amp;Backend )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;bkdacc::commands_details CommandsDetails;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;bkdacc::command_detail CommandDetail;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;bkdacc::ids16 Commands;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;fblfrd::commands_details CommandsDetails;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;fblfrd::command_detail CommandDetail;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;fblfrd::ids16 Commands;&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;bkdacc::id8__ Parameters[] = {&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;fblfrd::id8__ Parameters[] = {&nl;</xsl:text>
 		<xsl:apply-templates select="Commands" mode="data"/>
 		<xsl:text>&tab;&tab;&tab;};&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
@@ -198,7 +198,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;&tab;_ID = </xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
-				<xsl:text>BKDACC_MASTER_OBJECT;</xsl:text>
+				<xsl:text>FBLFRD_MASTER_OBJECT;</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>_Backend->GetType( str::string( "</xsl:text>
@@ -214,7 +214,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;&tab;_Backend->GetCommands( </xsl:text>
 		<xsl:choose>
 			<xsl:when test="@Object='Master'">
-				<xsl:text>BKDACC_MASTER_TYPE</xsl:text>
+				<xsl:text>FBLFRD_MASTER_TYPE</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>_ID</xsl:text>
@@ -230,21 +230,21 @@ This header file contains then the API to access to the backend to which 'getbkd
 				<xsl:apply-templates select="Commands" mode="function"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>&tab;&tab;bkdacc::object__ GetNewObject( void )&nl;</xsl:text>
+				<xsl:text>&tab;&tab;fblfrd::object__ GetNewObject( void )&nl;</xsl:text>
 				<xsl:text>&tab;&tab;{&nl;</xsl:text>
 				<xsl:text>&tab;&tab;&tab;return _Backend->GetNewObject( _ID );&nl;</xsl:text>
 				<xsl:text>&tab;&tab;}&nl;</xsl:text>
-				<xsl:text>&tab;&tab;void RemoveObject( bkdacc::object__ Object )&nl;</xsl:text>
+				<xsl:text>&tab;&tab;void RemoveObject( fblfrd::object__ Object )&nl;</xsl:text>
 				<xsl:text>&tab;&tab;{&nl;</xsl:text>
 				<xsl:text>&tab;&tab;&tab;_Backend->RemoveObject( Object );&nl;</xsl:text>
 				<xsl:text>&tab;&tab;}&nl;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-		<xsl:text>&tab;&tab;bkdacc::backend_access___ &amp;Backend( void ) const&nl;</xsl:text>
+		<xsl:text>&tab;&tab;fblfrd::backend_access___ &amp;Backend( void ) const&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;return *_Backend;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
-		<xsl:text>&tab;&tab;const bkdacc::command__ *Commands( void ) const&nl;</xsl:text>
+		<xsl:text>&tab;&tab;const fblfrd::command__ *Commands( void ) const&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;return _Commands;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
@@ -260,7 +260,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>___&nl;</xsl:text>
 		<xsl:text>&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;private:&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::object__ _ID;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;fblfrd::object__ _ID;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;</xsl:text>
 		<xsl:value-of select="Prefix/@Default"/>
 		<xsl:text>_</xsl:text>
@@ -270,11 +270,11 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;void reset( bso::bool__ P = true )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;if ( P == true )&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;&tab;if ( ( Common_ != NULL ) &amp;&amp; ( _ID != BKDACC_UNDEFINED_OBJECT ) )&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;&tab;if ( ( Common_ != NULL ) &amp;&amp; ( _ID != FBLFRD_UNDEFINED_OBJECT ) )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;&tab;&tab;Common_->RemoveObject( _ID );&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;Common_ = NULL;&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;_ID = BKDACC_UNDEFINED_OBJECT;&nl;</xsl:text>
+		<xsl:text>&tab;&tab;&tab;_ID = FBLFRD_UNDEFINED_OBJECT;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
 		<xsl:text>&tab;&tab;</xsl:text>
 		<xsl:value-of select="Prefix/@Default"/>
@@ -292,7 +292,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;reset();&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
-		<xsl:text>&tab;&tab;bkdacc::object__ ID( void ) const&nl;</xsl:text>
+		<xsl:text>&tab;&tab;fblfrd::object__ ID( void ) const&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;return _ID;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
@@ -339,7 +339,7 @@ This header file contains then the API to access to the backend to which 'getbkd
    </xsl:template>
    <xsl:template match="Command" mode="function">
         <xsl:param name="Base"/>
-		<xsl:text>&tab;&tab;bkdrpl::reply__ </xsl:text>
+		<xsl:text>&tab;&tab;fblrpl::reply__ </xsl:text>
 		<xsl:value-of select="Name"/>
 		<xsl:text>( </xsl:text>
 		<xsl:apply-templates select="Parameters" mode="function"/>
@@ -368,7 +368,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="In/Parameter" mode="function">
-		<xsl:text>&tab;&tab;&tab;const bkdacc::</xsl:text>
+		<xsl:text>&tab;&tab;&tab;const fblfrd::</xsl:text>
 		<xsl:value-of select="Type"/>
 		<xsl:value-of select="Name"/>
 		<xsl:choose>
@@ -388,7 +388,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="Out/Parameter" mode="function">
-		<xsl:text>&tab;&tab;&tab;bkdacc::</xsl:text>
+		<xsl:text>&tab;&tab;&tab;fblfrd::</xsl:text>
 		<xsl:value-of select="Name"/>
 		<xsl:choose>
 			<xsl:when test="@Type='Static'">
