@@ -114,7 +114,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #	define NSXPCM__ENABLE_FORMHISTORY
 #endif
 
-/*
+
 #ifdef NSXPCM_FBL
 #	define NSXPCM__FBL
 #endif
@@ -122,7 +122,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #ifdef NSXPCM__FBL
 #	include "fblfrd.h"
 #endif
-*/
+
 #if defined( __ARMEL__ ) || defined( NSXPCM_USE_ARMEL_WORKAROUND )
 #	ifndef NSXPCM_NO_ARMEL_WORKAROUND
 #		define NSXPCM__USE_ARMEL_WORKAROUND
@@ -243,9 +243,9 @@ namespace nsxpcm {
 #endif
 
 
-#ifdef NSXPCM__BKD
-	using bkdacc::strings_;
-	using bkdacc::strings;
+#ifdef NSXPCM__FBL
+	using fblfrd::strings_;
+	using fblfrd::strings;
 #else
 	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
@@ -2416,91 +2416,91 @@ namespace nsxpcm {
 	nsIDOMWindow *GetDocumentWindow( nsIDOMDocument *Document );
 
 
-#ifdef NSXPCM__BKD
+#ifdef NSXPCM__FBL
 	void Convert(
 		const strings_ &Items,
-		bkdacc::ids32_ &Ids );
+		fblfrd::ids32_ &Ids );
 
 	void Convert(
 		const strings_ &Items,
-		bkdacc::ids16_ &Ids );
+		fblfrd::ids16_ &Ids );
 
 	void Convert(
 		const strings_ &Items,
-		bkdacc::ids8_ &Ids );
+		fblfrd::ids8_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		bkdacc::ids32_ &Ids );
+		fblfrd::ids32_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		bkdacc::ids16_ &Ids );
+		fblfrd::ids16_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		bkdacc::ids8_ &Ids );
+		fblfrd::ids8_ &Ids );
 
 	void ConvertAndJoin(
-		const bkdacc::ids8_ &Ids,
+		const fblfrd::ids8_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::ids8_ &Ids,
+		const fblfrd::ids8_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const bkdacc::ids16_ &Ids,
+		const fblfrd::ids16_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::ids16_ &Ids,
+		const fblfrd::ids16_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const bkdacc::ids32_ &Ids,
+		const fblfrd::ids32_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::ids32_ &Ids,
+		const fblfrd::ids32_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const bkdacc::slongs_ &Ids,
+		const fblfrd::slongs_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::slongs_ &Ids,
+		const fblfrd::slongs_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const bkdacc::ulongs_ &Ids,
+		const fblfrd::ulongs_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::ulongs_ &Ids,
+		const fblfrd::ulongs_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const bkdacc::booleans_ &Booleans,
+		const fblfrd::booleans_ &Booleans,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const bkdacc::booleans_ &Booleans,
+		const fblfrd::booleans_ &Booleans,
 		bso::char__ Separator,
 		char **JString );
 
@@ -2508,7 +2508,7 @@ namespace nsxpcm {
 		const char *Joined,
 		const char *Amounts,
 		bso::char__ Separator,
-		bkdacc::xstrings_ &Strings );
+		fblfrd::xstrings_ &Strings );
 #endif
 }
 

@@ -60,10 +60,7 @@ extern class ttr_tutor &BKDRQMTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D BacKenD ReQuest Manager.
-/* End addendum to automatic documentation generation part. */
-
+# error "Obsolete ! Use 'FBL...' libraries instead !"
 
 #include "err.h"
 #include "flw.h"

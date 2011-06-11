@@ -64,6 +64,8 @@ extern class ttr_tutor &BKDACCTutor;
 //D BacKenD ACCess.
 /* End addendum to automatic documentation generation part. */
 
+# error "Obsolete ! Use 'FBL...' libraries instead !"
+
 
 #include "err.h"
 #include "flw.h"

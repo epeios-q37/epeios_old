@@ -595,7 +595,7 @@ $Id$
 
 21/10/2010 :
 	- FRDKRN :
-		- Ajout '_LoadLocale(_)' manquant.
+		- Ajout '_LoadEmbede(_)' manquant.
 		- '=' -> '==' dans un  test dans 'LoadProject'.
 
 20/10/2010 :
@@ -2307,7 +2307,7 @@ $Id$
 	- STR :
 		- Réorganisation des paramètres des méthodes 'To(U|S)(L|S|B)(...)'.
 	- TOL :
-		- Ajout 'GetLocaleDecimalPoint()'.
+		- Ajout 'GetEmbedeDecimalPoint()'.
 	
 29/06/2007 :
 	- STR :

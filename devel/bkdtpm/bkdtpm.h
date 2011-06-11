@@ -60,6 +60,7 @@ extern class ttr_tutor &BKDTPMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'FBL...' libraries instead !"
 
 #include "err.h"
 #include "flw.h"

@@ -29,8 +29,9 @@
 #include "epsmsc.h"
 #include "clnarg.h"
 
+#include "fblrpl.h"
 #include "fblfaq.h"
-#include "fblbur.h"
+#include "fblfub.h"
 #include "xml.h"
 #include "sck.h"
 #include "csducl.h"
@@ -672,8 +673,8 @@ class dummy_error_handling_functions__
 : public fblfrd::error_handling_functions__
 {
 protected:
-	void BKDACCHandleError(
-		fldrpl::reply__ Reply,
+	void FBLFRDHandleError(
+		fblrpl::reply__ Reply,
 		const char *Message )
 	{
 	}
@@ -696,17 +697,17 @@ ERRProlog
 #else
 	sck::socket_ioflow___ Flow;
 #endif
-	fblfrd::backend_access___ BackendAccess;
+	fblfub::backend_universal_access___ BackendAccess;
 	str::string DummyMessage, DummyURL;
-	bkduac::mode__ Mode = bkduac::m_Undefined;
+	fblfub::mode__ Mode = fblfub::m_Undefined;
 	dummy_error_handling_functions__ DummyErrorHandlingFunctions;
 ERRBegin
 	switch ( Type ) {
 	case csducl::tDaemon:
-		Mode = bkduac::mRemote;
+		Mode = fblfub::mRemote;
 		break;
 	case csducl::tLibrary:
-		Mode = bkduac::mLocal;
+		Mode = fblfub::mEmbed;
 		break;
 	default:
 		ERRc();
@@ -886,7 +887,7 @@ ERRBegin
 	
 	P = Types.First();
 	
-	while( ( P != NONE ) && ( Type( P ).ID() != BKDACC_MASTER_TYPE ) )
+	while( ( P != NONE ) && ( Type( P ).ID() != FBLFRD_MASTER_TYPE ) )
 		P = Types.Next( P );
 		
 	if ( P == NONE )

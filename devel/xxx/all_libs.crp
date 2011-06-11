@@ -320,8 +320,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Frontend/Backend Layout Backend Universal Request
 &fblfaq		&epeios		&\
 	&Frontend/Backend Layout Frontend API Querying
+&fblfeb		&epeios		&\
+	&Frontend/Backend Layout Frontend for Embed Backend
 &fblfrd		&epeios		&\
 	&Frontend/Backend Layout FrontEnD
+&fblfrb		&epeios		&\
+	&Frontend/Backend Layout Frontend for Remote Backend
+&fblfub		&epeios		&\
+	&Frontend/Backend Layout Frontend for Universal Backend
 &fblcmd		&epeios		&\
 	&Frontend/Backend Layout CoMmanDs
 &fblcst		&epeios		&\
