@@ -101,7 +101,8 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
-#include "nsIGenericFactory.h"
+//#include "nsIGenericFactory.h"	// Et remplacé par l'en-tête ci-dessous.
+# include "mozilla/ModuleUtils.h"
 #include "nsIDOMHTMLAnchorElement.h"
 #include "nsIDOMDocumentFragment.h"
 #include "nsICommandLine.h" // Situé dans 'toolkitcomps'.

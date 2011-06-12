@@ -1,5 +1,8 @@
 $Id$
 
+12/06/2011 :
+	- NXSPCM : adaptation à XULRunner 2.0.
+
 08/06/2011 :
 	- Retrait de ce qui est relatif à la gestion 'frontend'/'backend'.
 
