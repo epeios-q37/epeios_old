@@ -173,7 +173,7 @@ typedef ui_description__ ui_endianess_description__;
 #include "nsIDOMHTMLAnchorElement.h"
 
 class ui_link__
-: public nsxpcm::_element__<nsIDOMHTMLAnchorElement>,
+: public nsxpcm::_widget__<nsIDOMHTMLAnchorElement>,
   public bridge__
 {
 protected:

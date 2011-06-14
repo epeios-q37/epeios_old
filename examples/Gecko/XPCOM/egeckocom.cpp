@@ -76,7 +76,7 @@ template <typename element, typename ui, typename id > static void _Register(
 {
 	Core.Init( Global.GetCurrentRow() );
 
-	nsxpcm::Register( Core, UI.Document, Id, nsxpcm::efAll & ~nsxpcm::efFocus & ~nsxpcm::efBlur );
+	nsxpcm::Register( Core, UI.Window, Id, nsxpcm::ef_All & ~nsxpcm::efFocus & ~nsxpcm::efBlur );
 }
 
 static void _RegisterSpecific( ui__::main &UI )
@@ -310,7 +310,7 @@ ERRBegin
 	Parameters.Init();
 	Parameters.Append( "Value", Value );
 
-	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "chrome://epeios/content/epeios.xsl" ), UI().Main.Document, Parameters );
+	Fragment = nsxpcm::XSLTransformByFileName( str::string( "<Root/>" ), str::string( "chrome://epeios/content/epeios.xsl" ), UI().Main.Document, Parameters );
 //	Fragment = nsxpcm::XSLTTransform( str::string( "<Root/>" ), str::string( "file://H:/cvs/epeios/examples/Gecko/XUL/chrome/epeios/epeios.xsl" ), UI().Main.Document, Parameters );
 
 	nsxpcm::RemoveChildren( nsxpcm::GetElementById( UI().Main.Document, "xsltTarget" ) );
@@ -384,6 +384,7 @@ void ui_jsconsole_button__::NSXPCMOnCommand( void )
 
 
 /* Gecko required part. */
+#if 0
 
 #include "nsIGenericFactory.h"
 
@@ -401,3 +402,49 @@ static nsModuleComponentInfo components[] =
 };
 
 NS_IMPL_NSGETMODULE("EpeiosModule", components) 
+#else
+NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
+
+// The following line defines a kNS_SAMPLE_CID CID variable.
+NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
+
+// Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
+// should be completely unique UUIDs.
+// each entry has the form { CID, service, factoryproc, constructorproc }
+// where factoryproc is usually NULL.
+static const mozilla::Module::CIDEntry kEGeckoComCIDs[] = {
+    { &kEGECKOCOM_CID, false, NULL, egeckocomConstructor },
+    { NULL }
+};
+
+// Build a table which maps contract IDs to CIDs.
+// A contract is a string which identifies a particular set of functionality. In some
+// cases an extension component may override the contract ID of a builtin gecko component
+// to modify or extend functionality.
+static const mozilla::Module::ContractIDEntry kEGeckoComContracts[] = {
+    { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
+    { NULL }
+};
+
+// Category entries are category/key/value triples which can be used
+// to register contract ID as content handlers or to observe certain
+// notifications. Most modules do not need to register any category
+// entries: this is just a sample of how you'd do it.
+// @see nsICategoryManager for information on retrieving category data.
+static const mozilla::Module::CategoryEntry kGesbibCategories[] = {
+    { NULL }
+};
+
+static const mozilla::Module EGeckoComModule = {
+    mozilla::Module::kVersion,
+    kEGeckoComCIDs,
+    kEGeckoComContracts,
+    kGesbibCategories
+};
+
+// The following line implements the one-and-only "NSModule" symbol exported from this
+// shared library.
+NSMODULE_DEFN(EGeckoComModule) = &EGeckoComModule;
+//NSMODULE_DEFN(EventListenerModule) = &EventListenerModule;
+
+#endif
